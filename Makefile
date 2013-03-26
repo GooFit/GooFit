@@ -46,8 +46,11 @@ ROOTUTILLIB	= $(ROOTRIPDIR)/libRootUtils.so
 
 all:	goofit
 
+wrkdir:		
+		mkdir wrkdir 
+
 # One rule for GooFit objects.
-wrkdir/%.o:	%.cc %.hh 
+wrkdir/%.o:	%.cc %.hh wrkdir
 		$(CXX) $(INCLUDES) $(CXXFLAGS) $(DEFINEFLAGS) -c -o $@ $<
 
 # A different rule for user-level objects. Notice ROOT_INCLUDES. 

@@ -67,10 +67,14 @@ __host__ KinLimitBWThrustFunctor::KinLimitBWThrustFunctor (std::string n, Variab
   pindices.push_back(mean->getIndex());
   pindices.push_back(width->getIndex());
   pindices.push_back(registerConstants(2));
-  fptype constants[2];
-  constants[0] = 1.8645;
-  constants[1] = 0.13957;
-  cudaMemcpyToSymbol(functorConstants, constants, 2*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice); 
+  setMasses(1.8645, 0.13957); 
   cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_KinLimitBW, sizeof(void*));
   initialise(pindices);
+}
+
+__host__ void KinLimitBWThrustFunctor::setMasses (fptype bigM, fptype smallM) {
+  fptype constants[2];
+  constants[0] = bigM;
+  constants[1] = smallM;
+  cudaMemcpyToSymbol(functorConstants, constants, 2*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice); 
 }

@@ -36,7 +36,7 @@ public:
    virtual  double Gaus(double mean=0, double sigma=1);
    virtual  unsigned int   GetSeed() const {return fSeed;}
    virtual  unsigned int   Integer(unsigned int imax);
-   //virtual  double Landau(double mean=0, double sigma=1); // Dropped so I don't have to rip landau_quantile. 
+   virtual  double Landau(double mean=0, double sigma=1); // Dropped so I don't have to rip landau_quantile. 
    virtual  int    Poisson(double mean);
    virtual  double PoissonD(double mean);
    virtual  void     Rannor(float &a, float &b);
@@ -48,7 +48,7 @@ public:
    virtual  void     Sphere(double &x, double &y, double &z, double r);
    virtual  double Uniform(double x1=1);
    virtual  double Uniform(double x1, double x2);
-
+   double landau_quantile(double, double);
    static TRandom *gRandom;
 };
 

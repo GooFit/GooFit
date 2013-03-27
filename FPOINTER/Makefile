@@ -1,11 +1,11 @@
 
 
-wrkdir/%.cu:		$(SRCDIR)/%.cu $(SRCDIR)/%.hh 
-			@echo "#line 0 \"$<\"" > wrkdir/%.tmp 
-			@cat wrkdir/%.tmp $< > $@
-			@rm wrkdir/%.tmp
-			@echo "Created $@"
+build/%.cu:		$(SRCDIR)/%.cu $(SRCDIR)/%.hh 
+	@echo "#line 0 \"$<\"" > build/%.tmp 
+	@cat build/%.tmp $< > $@
+	@rm build/%.tmp
+	@echo "Created $@"
 
-wrkdir/CUDAglob.cu:	$(WRKFUNCTORLIST) $(HEADERLIST) 
-			@rm -f $@
-			@cat $(WRKFUNCTORLIST) > $@ 
+build/CUDAglob.cu:	$(WRKFUNCTORLIST) $(HEADERLIST) 
+	@rm -f $@
+	@cat $(WRKFUNCTORLIST) > $@ 

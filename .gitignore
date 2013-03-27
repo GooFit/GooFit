@@ -1,5 +1,6 @@
 *.o
 *.so
 .project
-examples/simpleFitExample
 build
+examples/simpleFitExample
+test/testStatic

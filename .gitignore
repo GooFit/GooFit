@@ -1,0 +1,5 @@
+*.o
+*.so
+.project
+examples/simpleFitExample
+build

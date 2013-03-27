@@ -3,7 +3,7 @@ CXX=nvcc
 LD=g++  
 OutPutOpt = -o
 
-CXXFLAGS     = -O3 -arch=sm_20 
+CXXFLAGS     = -O3 -m64 -arch=sm_20
 DEFINEFLAGS=-DDUMMY=dummy 
 
 ifneq ($(CUDAPRINT),)
@@ -35,9 +35,9 @@ FUNCTORLIST = $(SRCDIR)/ThrustPdfFunctor.cu
 FUNCTORLIST += $(wildcard $(SRCDIR)/*ThrustFunctor.cu)
 FUNCTORLIST += $(wildcard $(SRCDIR)/*Aux.cu)
 HEADERLIST = $(patsubst %.cu,%.hh,$(FUNCTORLIST))
-WRKFUNCTORLIST = $(patsubst $(SRCDIR)/%.cu,wrkdir/%.cu,$(FUNCTORLIST))
+WRKFUNCTORLIST = $(patsubst $(SRCDIR)/%.cu,build/%.cu,$(FUNCTORLIST))
 
-THRUSTO		= wrkdir/Variable.o wrkdir/PdfBuilder.o wrkdir/ThrustPdfFunctorCUDA.o wrkdir/Faddeeva.o wrkdir/FitControl.o wrkdir/FunctorBase.o wrkdir/DataSet.o wrkdir/BinnedDataSet.o wrkdir/UnbinnedDataSet.o wrkdir/FunctorWriter.o 
+THRUSTO		= build/Variable.o build/PdfBuilder.o build/ThrustPdfFunctorCUDA.o build/Faddeeva.o build/FitControl.o build/FunctorBase.o build/DataSet.o build/BinnedDataSet.o build/UnbinnedDataSet.o build/FunctorWriter.o 
 ROOTRIPDIR	= $(PWD)/rootstuff
 ROOTRIPOBJS	= $(ROOTRIPDIR)/TMinuit.o $(ROOTRIPDIR)/TRandom.o $(ROOTRIPDIR)/TRandom3.o 
 ROOTUTILLIB	= $(ROOTRIPDIR)/libRootUtils.so 
@@ -46,12 +46,12 @@ ROOTUTILLIB	= $(ROOTRIPDIR)/libRootUtils.so
 
 all:	goofit
 
-wrkdir:		
-		mkdir wrkdir 
+build:		
+	mkdir build 
 
 # One rule for GooFit objects.
-wrkdir/%.o:	%.cc %.hh wrkdir
-		$(CXX) $(INCLUDES) $(CXXFLAGS) $(DEFINEFLAGS) -c -o $@ $<
+build/%.o:	%.cc %.hh build
+	$(CXX) $(INCLUDES) $(CXXFLAGS) $(DEFINEFLAGS) -c -o $@ $<
 
 # A different rule for user-level objects. Notice ROOT_INCLUDES. 
 %.o:	%.cu
@@ -59,24 +59,24 @@ wrkdir/%.o:	%.cc %.hh wrkdir
 
 # Still a third rule for the ROOT objects - these have their own Makefile. 
 $(ROOTRIPDIR)/%.o:	$(ROOTRIPDIR)/%.cc 
-			rm -f $@ 
-			@echo "Postponing $@ for separate Makefile" 
+	rm -f $@ 
+	@echo "Postponing $@ for separate Makefile" 
 
 $(ROOTUTILLIB):	$(ROOTRIPOBJS)
-		@cd rootstuff; $(MAKE) 
+	@cd rootstuff; $(MAKE) 
 
 include $(SRCDIR)/Makefile 
 
-PdfBuilder.o:		PdfBuilder.cc PdfBuilder.hh wrkdir/ThrustPdfFunctorCUDA.o Variable.o 
-			$(CXX) $(DEFINEFLAGS) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
+PdfBuilder.o:		PdfBuilder.cc PdfBuilder.hh build/ThrustPdfFunctorCUDA.o Variable.o 
+	$(CXX) $(DEFINEFLAGS) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
 
-wrkdir/ThrustPdfFunctorCUDA.o:	wrkdir/CUDAglob.cu FunctorBase.cu 
-				nvcc $(CXXFLAGS) $(INCLUDES) -I. $(DEFINEFLAGS) -c $< -o $@ 
-				@echo "$@ done"
+build/ThrustPdfFunctorCUDA.o:	build/CUDAglob.cu FunctorBase.cu 
+	nvcc $(CXXFLAGS) $(INCLUDES) -I. $(DEFINEFLAGS) -c $< -o $@ 
+	@echo "$@ done"
 
 goofit:		$(THRUSTO)
-		@echo "Compiled GooFit objects" 
+	@echo "Compiled GooFit objects" 
 
 clean:
-		@rm -f *.o wrkdir/*
-		cd rootstuff; $(MAKE) clean 
+	@rm -f *.o build/*
+	cd rootstuff; $(MAKE) clean 

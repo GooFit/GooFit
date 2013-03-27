@@ -1,0 +1,6 @@
+*.o
+*.so
+.project
+build
+examples/simpleFitExample
+test/testStatic

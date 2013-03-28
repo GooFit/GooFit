@@ -1,7 +1,12 @@
 CXX=g++ 
 LD=g++  
 
-CXXFLAGS     = -O2 -m64 -fPIC -pthread -g
+CXXFLAGS     = -O2 -fPIC -pthread -g
+
+UNAME=$(shell uname)
+ifeq ($(UNAME), Darwin)
+CXXFLAGS+=-m64
+endif
 
 OBJECTS		= TMinuit.o TRandom.o TRandom3.o 
 
@@ -14,7 +19,6 @@ all:	libRootUtils.so
 
 libRootUtils.so:	$(OBJECTS)
 			$(LD) -shared $(CXXFLAGS) -o $@ $^ 
-#			$(LD) -shared -Wl,-soname,$@ $(CXXFLAGS) -o $@ $^ 
 
 clean:
 		@rm -f *.o *.so 

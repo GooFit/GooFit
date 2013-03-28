@@ -4,13 +4,20 @@ LD=g++
 OutPutOpt = -o
 
 CXXFLAGS     = -O3 -arch=sm_20
+CUDALIBDIR=lib64
+
+UNAME=$(shell uname)
+ifeq ($(UNAME), Darwin)
+CUDALIBDIR=lib
+CXXFLAGS+=-m64
+endif
 
 CUDALOCATION = /usr/local/cuda/
 CUDAHEADERS = $(CUDALOCATION)/include/
 GOOFITDIR = $(PWD)/../
 
 INCLUDES += -I$(CUDAHEADERS) -I$(GOOFITDIR) -I$(GOOFITDIR)/rootstuff -I$(GOOFITDIR)/FPOINTER/ 
-LIBS += -L$(CUDALOCATION)/lib64 -lcudart -L$(GOOFITDIR)/rootstuff -lRootUtils 
+LIBS += -L$(CUDALOCATION)/$(CUDALIBDIR) -lcudart -L$(GOOFITDIR)/rootstuff -lRootUtils 
 
 # These are for user-level programs that want access to the ROOT plotting stuff, 
 # not just the fitting stuff included in the GooFit-local ripped library. 

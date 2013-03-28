@@ -5,6 +5,13 @@ OutPutOpt = -o
 
 CXXFLAGS     = -O3 -arch=sm_20 
 DEFINEFLAGS=-DDUMMY=dummy 
+CUDALIBDIR=lib64
+
+UNAME=$(shell uname)
+ifeq ($(UNAME), Darwin)
+CUDALIBDIR=lib
+CXXFLAGS+=-m64
+endif
 
 ifneq ($(CUDAPRINT),)
 DEFINEFLAGS += -DCUDAPRINT=yes
@@ -24,7 +31,7 @@ CUDAHEADERS = $(CUDALOCATION)/include/
 SRCDIR = $(PWD)/FPOINTER
 
 INCLUDES += -I$(CUDAHEADERS) -I$(SRCDIR) -I$(PWD) -I$(PWD)/rootstuff 
-LIBS += -L$(CUDALOCATION)/lib64 -lcudart -L$(PWD)/rootstuff -lRootUtils 
+LIBS += -L$(CUDALOCATION)/$(CUDALIBDIR) -lcudart -L$(PWD)/rootstuff -lRootUtils 
 
 # These are for user-level programs that want access to the ROOT plotting stuff, 
 # not just the fitting stuff included in the GooFit-local ripped library. 

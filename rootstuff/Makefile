@@ -13,7 +13,8 @@ all:	libRootUtils.so
 	$(CXX) -I. $(CXXFLAGS) -c -o $@ $<
 
 libRootUtils.so:	$(OBJECTS)
-			$(LD) -shared -Wl,-soname,$@ $(CXXFLAGS) -o $@ $^ 
+			$(LD) -shared $(CXXFLAGS) -o $@ $^ 
+#			$(LD) -shared -Wl,-soname,$@ $(CXXFLAGS) -o $@ $^ 
 
 clean:
 		@rm -f *.o *.so 

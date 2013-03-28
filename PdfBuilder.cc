@@ -193,8 +193,7 @@ PdfFunctor::~PdfFunctor () {
   if (minuit) delete minuit; 
 }
 
-void PdfFunctor::fit () {
-  host_callnumber = 0;
+void PdfFunctor::setupMinuit () {
 #ifdef OMP_ON
   int tid = omp_get_thread_num(); 
   vars[tid].clear(); 
@@ -229,8 +228,17 @@ void PdfFunctor::fit () {
 #endif
   numPars = maxIndex+1; 
   pdfPointer->copyParams();   
-
   minuit->SetFCN(FitFun); 
+}
+
+void PdfFunctor::fit () {
+  setupMinuit();
+  runMigrad();
+}
+
+void PdfFunctor::runMigrad () { 
+  assert(minuit);
+  host_callnumber = 0;
   if (0 < overrideCallLimit) {
     std::cout << "Calling MIGRAD with call limit " << overrideCallLimit << std::endl; 
     double plist[1];

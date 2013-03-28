@@ -45,7 +45,7 @@ ROOTUTILLIB	= $(ROOTRIPDIR)/libRootUtils.so
 .SUFFIXES: 
 .PHONY:		goofit clean 
 
-goofit:		$(THRUSTO)
+goofit:		$(THRUSTO) $(ROOTUTILLIB) 
 		@echo "Built GooFit objects" 
 
 # One rule for GooFit objects.

@@ -867,7 +867,7 @@ L20:
    awid = (ah-al) / double(na);
    log_ = int(log10(awid));
    if (awid <= 1) --log_;
-   sigfig = awid*pow(10, -log_);
+   sigfig = awid*pow(10.0, -log_);
 //*-*-       ROUND MANTISSA UP TO 2, 2.5, 5, OR 10
    if (sigfig > 2) goto L40;
    sigrnd = 2;
@@ -884,7 +884,7 @@ L60:
    sigrnd = 1;
    ++log_;
 L100:
-   bwid = sigrnd*pow(10, log_);
+   bwid = sigrnd*pow(10.0, log_);
    goto L200;
 //*-*-       GET NEW BOUNDS FROM NEW WIDTH BWID
 L150:

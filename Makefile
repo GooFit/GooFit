@@ -43,14 +43,14 @@ ROOTRIPOBJS	= $(ROOTRIPDIR)/TMinuit.o $(ROOTRIPDIR)/TRandom.o $(ROOTRIPDIR)/TRan
 ROOTUTILLIB	= $(ROOTRIPDIR)/libRootUtils.so 
 
 .SUFFIXES: 
+.PHONY:		goofit clean 
 
-all:	goofit
-
-wrkdir:		
-		mkdir wrkdir 
+goofit:		$(THRUSTO)
+		@echo "Built GooFit objects" 
 
 # One rule for GooFit objects.
-wrkdir/%.o:	%.cc %.hh wrkdir
+wrkdir/%.o:	%.cc %.hh 
+		@mkdir -p wrkdir 
 		$(CXX) $(INCLUDES) $(CXXFLAGS) $(DEFINEFLAGS) -c -o $@ $<
 
 # A different rule for user-level objects. Notice ROOT_INCLUDES. 
@@ -73,9 +73,6 @@ PdfBuilder.o:		PdfBuilder.cc PdfBuilder.hh wrkdir/ThrustPdfFunctorCUDA.o Variabl
 wrkdir/ThrustPdfFunctorCUDA.o:	wrkdir/CUDAglob.cu FunctorBase.cu 
 				nvcc $(CXXFLAGS) $(INCLUDES) -I. $(DEFINEFLAGS) -c $< -o $@ 
 				@echo "$@ done"
-
-goofit:		$(THRUSTO)
-		@echo "Compiled GooFit objects" 
 
 clean:
 		@rm -f *.o wrkdir/*

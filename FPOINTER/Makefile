@@ -1,7 +1,7 @@
 
 
 wrkdir/%.cu:		$(SRCDIR)/%.cu $(SRCDIR)/%.hh 
-			@echo "#line 0 \"$<\"" > wrkdir/%.tmp 
+			@echo "#line 1 \"$<\"" > wrkdir/%.tmp 
 			@cat wrkdir/%.tmp $< > $@
 			@rm wrkdir/%.tmp
 			@echo "Created $@"

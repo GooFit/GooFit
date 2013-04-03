@@ -7,7 +7,7 @@ class AddThrustFunctor : public ThrustPdfFunctor {
 public:
 
   AddThrustFunctor (std::string n, std::vector<Variable*> weights, std::vector<FunctorBase*> comps); 
-  //AddThrustFunctor (std::string n, Variable* frac1, FunctorBase* func1, FunctorBase* func2); 
+  AddThrustFunctor (std::string n, Variable* frac1, FunctorBase* func1, FunctorBase* func2); 
   __host__ virtual fptype normalise () const;
   __host__ virtual bool hasAnalyticIntegral () const {return false;}
 

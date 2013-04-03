@@ -96,6 +96,29 @@ AddThrustFunctor::AddThrustFunctor (std::string n, std::vector<Variable*> weight
   initialise(pindices); 
 } 
 
+
+AddThrustFunctor::AddThrustFunctor (std::string n, Variable* frac1, FunctorBase* func1, FunctorBase* func2) 
+  : ThrustPdfFunctor(0, n) 
+  , extended(false)
+{
+  // Special-case constructor for common case of adding two functions.
+  components.push_back(func1);
+  components.push_back(func2);
+  getObservables(observables); 
+
+  std::vector<unsigned int> pindices;
+  pindices.push_back(func1->getFunctionIndex());
+  pindices.push_back(func1->getParameterIndex());
+  pindices.push_back(registerParameter(frac1)); 
+
+  pindices.push_back(func2->getFunctionIndex());
+  pindices.push_back(func2->getParameterIndex());
+    
+  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_AddPdfs, sizeof(void*));
+
+  initialise(pindices); 
+} 
+
 __host__ fptype AddThrustFunctor::normalise () const {
   //if (cpuDebug & 1) std::cout << "Normalising AddThrustFunctor " << getName() << std::endl;
 

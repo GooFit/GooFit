@@ -42,12 +42,13 @@ double novosib (double x, double peak, double width, double tail) {
   return exp(-qc);
 }
 
-void fitAndPlot (ThrustPdfFunctor* total, UnbinnedDataSet* data, TH1F* dataHist, Variable* xvar, const char* fname) {
+TCanvas* foo = 0;
+
+void fitAndPlot (ThrustPdfFunctor* total, UnbinnedDataSet* data, TH1F& dataHist, Variable* xvar, const char* fname) {
   total->setData(data);
   PdfFunctor fitter(total);
   fitter.fit(); 
   fitter.getMinuitValues(); 
-
 
   TH1F pdfHist("pdfHist", "", xvar->numbins, xvar->lowerlimit, xvar->upperlimit);
   pdfHist.SetStats(false);
@@ -58,8 +59,6 @@ void fitAndPlot (ThrustPdfFunctor* total, UnbinnedDataSet* data, TH1F* dataHist,
     xvar->value = xvar->lowerlimit + (i + 0.5) * step;
     grid.addEvent(); 
   }
-
-  TCanvas foo;
 
   total->setData(&grid);
   vector<vector<double> > pdfVals;
@@ -78,15 +77,14 @@ void fitAndPlot (ThrustPdfFunctor* total, UnbinnedDataSet* data, TH1F* dataHist,
     val *= data->getNumEvents(); 
     pdfHist.SetBinContent(i+1, val); 
   }
-
-  foo.SetLogy(true); 
-  dataHist->SetMarkerStyle(8);
-  dataHist->SetMarkerSize(0.5);
-  dataHist->Draw("p"); 
+  foo->SetLogy(true); 
+  dataHist.SetMarkerStyle(8);
+  dataHist.SetMarkerSize(0.5);
+  dataHist.Draw("p"); 
   pdfHist.SetLineColor(kBlue);
   pdfHist.SetLineWidth(3); 
   pdfHist.Draw("lsame"); 
-  foo.SaveAs(fname); 
+  foo->SaveAs(fname); 
 }
 
 int main (int argc, char** argv) {
@@ -168,23 +166,25 @@ int main (int argc, char** argv) {
     novoHist.Fill(xvar->value); 
   }
 
+  foo = new TCanvas(); 
 
   Variable* mpv            = new Variable("mpv", 40, 0, 150);
   Variable* sigma          = new Variable("sigma", 5, 0, 30);
   ThrustPdfFunctor* landau = new LandauThrustFunctor("landau", xvar, mpv, sigma); 
-  fitAndPlot(landau, &landdata, &landHist, xvar, "landau.png"); 
+  fitAndPlot(landau, &landdata, landHist, xvar, "landau.eps"); 
 
+  
   Variable* nmean = new Variable("nmean", 0.4, -10.0, 10.0);
   Variable* nsigm = new Variable("nsigm", 0.6, 0.0, 1.0);
   Variable* ntail = new Variable("ntail", 1.1, 0.1, 0.0, 3.0);
   ThrustPdfFunctor* novo = new NovosibirskThrustFunctor("novo", xvar, nmean, nsigm, ntail);
-  fitAndPlot(novo, &novodata, &novoHist, xvar, "novo.png"); 
+  fitAndPlot(novo, &novodata, novoHist, xvar, "novo.eps"); 
 
   Variable* gmean = new Variable("gmean", 3.0, 1, -15, 15); 
   Variable* lsigm = new Variable("lsigm", 10, 1, 10, 20); 
   Variable* rsigm = new Variable("rsigm", 20, 1, 10, 40); 
   ThrustPdfFunctor* bifur = new BifurGaussThrustFunctor("bifur", xvar, gmean, lsigm, rsigm); 
-  fitAndPlot(bifur, &bifgdata, &bifgHist, xvar, "bifur.png"); 
-
+  fitAndPlot(bifur, &bifgdata, bifgHist, xvar, "bifur.eps"); 
+   
   return 0;
 }

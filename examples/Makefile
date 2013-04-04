@@ -3,7 +3,7 @@ CXX=nvcc
 LD=g++  
 OutPutOpt = -o
 
-CXXFLAGS     = -O3 -arch=sm_20
+CXXFLAGS     = -O3 -arch=sm_20 -g 
 CUDALIBDIR=lib64
 
 UNAME=$(shell uname)

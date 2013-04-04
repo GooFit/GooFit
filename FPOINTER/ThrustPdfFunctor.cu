@@ -587,7 +587,6 @@ __device__ fptype MetricTaker::operator () (thrust::tuple<int, int, fptype*> t) 
   // Bin index, event size, base address [lower, upper, numbins] 
  
   int evtSize = thrust::get<1>(t);
-  assert(evtSize <= MAX_NUM_OBSERVABLES); 
   int binNumber = thrust::get<0>(t);
   
   // Do not understand why this cannot be declared __shared__. Dynamically allocating shared memory is apparently complicated. 

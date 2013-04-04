@@ -231,7 +231,7 @@ __host__ void ConvolutionThrustFunctor::setIntegrationConstants (fptype lo, fpty
   resolWorkSpace = new thrust::device_vector<fptype>(numbins);
 
   int offset = dependent->upperlimit / step; 
-  cudaMemcpyToSymbol(modelOffset, &offset, sizeof(int), workSpaceIndex, cudaMemcpyHostToDevice); 
+  cudaMemcpyToSymbol(modelOffset, &offset, sizeof(int), workSpaceIndex*sizeof(int), cudaMemcpyHostToDevice); 
 
   fptype* dev_address[1];
   dev_address[0] = (&((*modelWorkSpace)[0])).get();

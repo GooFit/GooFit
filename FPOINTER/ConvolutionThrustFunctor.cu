@@ -17,7 +17,7 @@ __constant__ fptype* dev_resWorkSpace[100];
 
 // Number which transforms model range (x1, x2) into resolution range (x1 - maxX, x2 - minX).
 // It is equal to the maximum possible value of x0, ie maxX, in bins. 
-__constant__ int modelOffset = 0; 
+__constant__ int modelOffset[100]; 
 
 __device__ fptype device_ConvolvePdfs (fptype* evt, fptype* p, unsigned int* indices) { 
   fptype ret     = 0; 
@@ -36,7 +36,7 @@ __device__ fptype device_ConvolvePdfs (fptype* evt, fptype* p, unsigned int* ind
   // Brute-force calculate integral M(x) * R(x - x0) dx
   for (int i = 0; i < numbins; ++i) {
     fptype model = dev_modWorkSpace[workSpaceIndex][i]; 
-    fptype resol = dev_resWorkSpace[workSpaceIndex][i + modelOffset - offsetInBins]; 
+    fptype resol = dev_resWorkSpace[workSpaceIndex][i + modelOffset[workSpaceIndex] - offsetInBins]; 
     ret += model*resol;
   }
 
@@ -92,7 +92,7 @@ __device__ fptype device_ConvolveSharedPdfs (fptype* evt, fptype* p, unsigned in
     for (int j = 0; j < numToLoad; ++j) {
       if (i + j >= numbins) break; 
       fptype model = modelCache[workSpaceIndex*numToLoad + j]; 
-      fptype resol = (model != 0) ? dev_resWorkSpace[workSpaceIndex][i + j + modelOffset - offsetInBins] : 0; 
+      fptype resol = (model != 0) ? dev_resWorkSpace[workSpaceIndex][i + j + modelOffset[workSpaceIndex] - offsetInBins] : 0; 
       ret += model*resol;
     }
       
@@ -230,9 +230,8 @@ __host__ void ConvolutionThrustFunctor::setIntegrationConstants (fptype lo, fpty
   cudaMemcpy(dev_iConsts, host_iConsts, 6*sizeof(fptype), cudaMemcpyHostToDevice); 
   resolWorkSpace = new thrust::device_vector<fptype>(numbins);
 
-  // NB, this could potentially be a problem with multiple convolutions. 
   int offset = dependent->upperlimit / step; 
-  cudaMemcpyToSymbol(modelOffset, &offset, sizeof(int), 0, cudaMemcpyHostToDevice); 
+  cudaMemcpyToSymbol(modelOffset, &offset, sizeof(int), workSpaceIndex, cudaMemcpyHostToDevice); 
 
   fptype* dev_address[1];
   dev_address[0] = (&((*modelWorkSpace)[0])).get();

@@ -1,5 +1,7 @@
-+*.o
-+*.so
-+.project
-+examples/simpleFitExample
-+wrkdir 
+*.so
+.project
+examples/simpleFitExample
+wrkdir 
+*.o
+*.png
+*.eps

@@ -1,22 +1,18 @@
-README for GooFit developers
-============================
+# README for GooFit developers
 
-Docs
-----
+## Docs
 
-Local
-+++++
+### Local
 
-We use `Doxygen <http://www.doxygen.org>`_ to generate GooFit API docs.
+We use [Doxygen](http://www.doxygen.org) to generate GooFit API docs.
 To generate html documentation locally on your machine and view it run
 ``doxygen`` in the top-level folder of the GooFit repo and then open
 ``html/index.html`` in your browser.
 
-Push Updated Version Online
-+++++++++++++++++++++++++++
+### Push Updated Version Online
 
-We use `Github Pages <http://pages.github.com>`_ to serve GooFit API docs
-online at `http://GooFit.github.com/GooFit/`_. If you want to update
+We use [Github Pages](http://pages.github.com) to serve GooFit API docs
+online at http://GooFit.github.com/GooFit/ . If you want to update
 the online version with your local ``html`` folder contents for the first
 time, execute these steps::
 
@@ -43,5 +39,5 @@ Now that you are set up, it's easy to update the online docs::
 	git commit -m 'update docs'
 	git push origin gh-pages
 
-Then go to `https://github.com/GooFit/GooFit/tree/gh-pages`_ or
-`http://GooFit.github.com/GooFit/`_ to review your changes.
+Then go to https://github.com/GooFit/GooFit/tree/gh-pages or
+http://GooFit.github.com/GooFit/ to review your changes.

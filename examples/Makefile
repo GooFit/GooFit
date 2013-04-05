@@ -10,6 +10,11 @@ UNAME=$(shell uname)
 ifeq ($(UNAME), Darwin)
 CUDALIBDIR=lib
 CXXFLAGS+=-m64
+else
+# Adds library symbols to debug info 
+# - not strictly required, nice to have.
+# Turn it off if it gives you trouble. 
+LDFLAGS += -rdynamic 
 endif
 
 CUDALOCATION = /usr/local/cuda/
@@ -22,7 +27,7 @@ LIBS += -L$(CUDALOCATION)/$(CUDALIBDIR) -lcudart -L$(GOOFITDIR)/rootstuff -lRoot
 # These are for user-level programs that want access to the ROOT plotting stuff, 
 # not just the fitting stuff included in the GooFit-local ripped library. 
 ROOT_INCLUDES = -I$(ROOTSYS)/include/
-ROOT_LIBS     = -L$(ROOTSYS)/lib/ -lCore -lCint -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lMatrix -lPhysics -lMathCore -pthread -lThread -lMinuit2 -lMinuit -rdynamic -lFoam 
+ROOT_LIBS     = -L$(ROOTSYS)/lib/ -lCore -lCint -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lMatrix -lPhysics -lMathCore -pthread -lThread -lMinuit2 -lMinuit -lFoam 
 WRKDIR = $(GOOFITDIR)/wrkdir/
 
 THRUSTO		= $(WRKDIR)/Variable.o $(WRKDIR)/PdfBuilder.o $(WRKDIR)/ThrustPdfFunctorCUDA.o $(WRKDIR)/Faddeeva.o $(WRKDIR)/FitControl.o $(WRKDIR)/FunctorBase.o $(WRKDIR)/DataSet.o $(WRKDIR)/BinnedDataSet.o $(WRKDIR)/UnbinnedDataSet.o $(WRKDIR)/FunctorWriter.o 

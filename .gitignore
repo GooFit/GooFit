@@ -5,3 +5,5 @@ wrkdir
 *.o
 *.png
 *.eps
+html/
+

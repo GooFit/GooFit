@@ -33,11 +33,6 @@ SRCDIR = $(PWD)/FPOINTER
 INCLUDES += -I$(CUDAHEADERS) -I$(SRCDIR) -I$(PWD) -I$(PWD)/rootstuff 
 LIBS += -L$(CUDALOCATION)/$(CUDALIBDIR) -lcudart -L$(PWD)/rootstuff -lRootUtils 
 
-# These are for user-level programs that want access to the ROOT plotting stuff, 
-# not just the fitting stuff included in the GooFit-local ripped library. 
-ROOT_INCLUDES = -I$(ROOTSYS)/include/
-ROOT_LIBS     = -L$(ROOTSYS)/lib/ -lCore -lCint -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lMatrix -lPhysics -lMathCore -pthread -lThread -lMinuit2 -lMinuit -rdynamic -lFoam 
-
 FUNCTORLIST = $(SRCDIR)/ThrustPdfFunctor.cu 
 FUNCTORLIST += $(wildcard $(SRCDIR)/*ThrustFunctor.cu)
 FUNCTORLIST += $(wildcard $(SRCDIR)/*Aux.cu)

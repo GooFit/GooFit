@@ -15,6 +15,8 @@
 
 #include "FunctorBase.hh" 
 
+__device__ int dev_powi (int base, int exp); // Implemented in SmoothHistogramThrustFunctor.
+
 #define CALLS_TO_PRINT 10 
 typedef fptype (*device_function_ptr) (fptype*, fptype*, unsigned int*);            // Pass event, parameters, index into parameters. 
 typedef fptype (*device_metric_ptr) (fptype, fptype*, unsigned int); 

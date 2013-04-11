@@ -15,7 +15,7 @@ using namespace std;
 #define DOUBLES 1
 
 
-
+__device__ int dev_powi (int base, int exp); // Implemented in SmoothHistogramThrustFunctor.
 void abortWithCudaPrintFlush (std::string file, int line); 
 
 #ifdef DOUBLES

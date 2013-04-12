@@ -8,12 +8,12 @@ Requirements
 
 Installation
 
-Clone with git:
+* Clone with git:
 
-git clone git://github.com/GooFit/GooFit.git
+** git clone git://github.com/GooFit/GooFit.git
 
-check that the path setting in Makefile for CUDALOCATION is correct for your system
+* check that the path setting in Makefile for CUDALOCATION is correct for your system
 
-then compile with gmake. 
+* then compile with gmake. 
 
 

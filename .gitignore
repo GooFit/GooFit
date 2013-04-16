@@ -3,7 +3,6 @@
 examples/simpleFitExample
 wrkdir 
 *.o
-*.png
 *.eps
 html/
 

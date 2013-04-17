@@ -23,7 +23,7 @@ public:
 
   varConstIt varsBegin () const {return variables.begin();}
   varConstIt varsEnd () const {return variables.end();}
-  void getVariables () const;
+  void getVariables (std::vector<Variable*>& vars); 
 
   varConstRIt varsRBegin () const {return variables.rbegin();}
   varConstRIt varsREnd () const {return variables.rend();}

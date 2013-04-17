@@ -58,6 +58,12 @@ vector<fptype> DataSet::getCurrentValues () const {
   return values; 
 }
 
+void DataSet::getVariables (std::vector<Variable*>& vars) const {
+  for (std::vector<Variable*>::iterator v = variables.begin(); v != variables.end(); ++v) {
+    vars.push_back(*v);
+  }
+}
+
 unsigned int DataSet::indexOfVariable (Variable* var) const {
   for (unsigned int i = 0; i < variables.size(); ++i) {
     if (var != variables[i]) continue;

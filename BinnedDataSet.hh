@@ -26,12 +26,14 @@ public:
   void setBinError (unsigned int bin, fptype error); 
 
 private:
+  void cacheNumBins (); 
   vector<unsigned int> convertValuesToBins (const vector<fptype>& vals) const; 
   unsigned int localToGlobal (std::vector<unsigned int>& locals) const; 
   void globalToLocal (std::vector<unsigned int>& locals, unsigned int global) const; 
 
   std::vector<fptype> binvalues; 
   std::vector<fptype> binerrors; 
+  std::map<Variable*, int> cachedNumBins; // Store these numbers in case they change on the user end - vast confusion possible. 
 };
 
 

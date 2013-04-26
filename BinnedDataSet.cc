@@ -5,18 +5,21 @@ BinnedDataSet::BinnedDataSet (Variable* var)
   : DataSet(var)
 {
   binvalues.resize(getNumBins()); 
+  cacheNumBins();
 }
 
 BinnedDataSet::BinnedDataSet (std::vector<Variable*>& vars) 
   : DataSet(vars)
 {
   binvalues.resize(getNumBins()); 
+  cacheNumBins();
 }
 
 BinnedDataSet::BinnedDataSet (std::set<Variable*>& vars) 
   : DataSet(vars)
 {
   binvalues.resize(getNumBins()); 
+  cacheNumBins();
 }
 
 BinnedDataSet::~BinnedDataSet () {} 
@@ -39,6 +42,12 @@ void BinnedDataSet::addEventVector (std::vector<fptype>& vals, fptype weight) {
   binvalues[bin] += weight; 
 }
 
+void BinnedDataSet::cacheNumBins () {
+  for (varConstIt v = varsBegin(); v != varsEnd(); ++v) {
+    cachedNumBins[*v] = (*v)->numbins; 
+  }
+}
+
 unsigned int BinnedDataSet::getBinNumber () const {
   vector<fptype> vals = getCurrentValues(); 
   vector<unsigned int> locals = convertValuesToBins(vals); 
@@ -51,7 +60,7 @@ unsigned int BinnedDataSet::localToGlobal (std::vector<unsigned int>& locals) co
   for (varConstIt v = varsBegin(); v != varsEnd(); ++v) {
     unsigned int localBin = locals[indexOfVariable(*v)]; 
     ret += localBin * priorMatrixSize;
-    priorMatrixSize *= (*v)->numbins; 
+    priorMatrixSize *= cachedNumBins.at(*v); // Use 'at' to preserve const-ness. 
   }
   return ret; 
 }
@@ -63,9 +72,9 @@ void BinnedDataSet::globalToLocal (std::vector<unsigned int>& locals, unsigned i
   // with the number of bins in that dimension. Then divide by the number of bins, in effect
   // collapsing so the grid has one fewer dimension. Rinse and repeat. 
   for (varConstIt v = varsBegin(); v != varsEnd(); ++v) {
-    int localBin = global % (*v)->numbins;
+    int localBin = global % cachedNumBins.at(*v);
     locals.push_back(localBin); 
-    global /= (*v)->numbins;
+    global /= cachedNumBins.at(*v);
   }
 } 
 
@@ -77,7 +86,7 @@ fptype BinnedDataSet::getBinCenter (Variable* var, unsigned int bin) const {
   unsigned int localBin = locals[varIndex];
   fptype ret = var->upperlimit;
   ret       -= var->lowerlimit; 
-  ret       /= var->numbins; 
+  ret       /= cachedNumBins.at(var);
   ret       *= (localBin + 0.5); 
   ret       += var->lowerlimit;
   return ret; 
@@ -88,7 +97,7 @@ fptype BinnedDataSet::getBinVolume (unsigned int bin) const {
   for (varConstIt v = varsBegin(); v != varsEnd(); ++v) {
     fptype step = (*v)->upperlimit; 
     step       -= (*v)->lowerlimit; 
-    step       /= (*v)->numbins;
+    step       /= cachedNumBins.at(*v);
     ret *= step;
   }
   return ret; 
@@ -109,7 +118,7 @@ void BinnedDataSet::setBinError (unsigned int bin, fptype error) {
 unsigned int BinnedDataSet::getNumBins () const {
   unsigned int ret = 1;
   for (varConstIt v = varsBegin(); v != varsEnd(); ++v) {
-    ret *= (*v)->numbins; 
+    ret *= cachedNumBins.at(*v); 
   }
   return ret; 
 }
@@ -149,7 +158,7 @@ vector<unsigned int> BinnedDataSet::convertValuesToBins (const vector<fptype>& v
 
     fptype step = (*currVar)->upperlimit;
     step       -= (*currVar)->lowerlimit;
-    step       /= (*currVar)->numbins; 
+    step       /= cachedNumBins.at(*currVar); 
 
     fptype curr = currVal; 
     curr -= (*currVar)->lowerlimit;  

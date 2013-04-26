@@ -4,22 +4,22 @@
 BinnedDataSet::BinnedDataSet (Variable* var) 
   : DataSet(var)
 {
-  binvalues.resize(getNumBins()); 
   cacheNumBins();
+  binvalues.resize(getNumBins()); 
 }
 
 BinnedDataSet::BinnedDataSet (std::vector<Variable*>& vars) 
   : DataSet(vars)
 {
-  binvalues.resize(getNumBins()); 
   cacheNumBins();
+  binvalues.resize(getNumBins()); 
 }
 
 BinnedDataSet::BinnedDataSet (std::set<Variable*>& vars) 
   : DataSet(vars)
 {
-  binvalues.resize(getNumBins()); 
   cacheNumBins();
+  binvalues.resize(getNumBins()); 
 }
 
 BinnedDataSet::~BinnedDataSet () {} 

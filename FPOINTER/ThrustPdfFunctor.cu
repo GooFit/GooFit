@@ -2,11 +2,7 @@
 #include "ThrustPdfFunctor.hh" 
 #include "thrust/sequence.h" 
 #include "thrust/iterator/constant_iterator.h" 
-
-//#ifdef CUDAPRINT
-//#include "cuPrintf.cu" 
 #include <fstream> 
-//#endif 
 
 // These variables are either function-pointer related (thus specific to this implementation)
 // or constrained to be in the CUDAglob translation unit by nvcc limitations; otherwise they 
@@ -73,10 +69,10 @@ void abortWithCudaPrintFlush (std::string file, int line, std::string reason, co
 #endif
   std::cout << "Abort called from " << file << " line " << line << " due to " << reason << std::endl; 
   if (pdf) {
-    std::set<Variable*> pars;
+    FunctorBase::parCont pars;
     pdf->getParameters(pars);
     std::cout << "Parameters of " << pdf->getName() << " : \n";
-    for (std::set<Variable*>::iterator v = pars.begin(); v != pars.end(); ++v) {
+    for (FunctorBase::parIter v = pars.begin(); v != pars.end(); ++v) {
       if (0 > (*v)->index) continue; 
       std::cout << "  " << (*v)->name << " (" << (*v)->index << ") :\t" << host_params[(*v)->index] << std::endl;
     }
@@ -268,10 +264,11 @@ __host__ double ThrustPdfFunctor::sumOfNll (int numVars) const {
   {
     gLognorm = 0;
     for (j = 0; j < nthreads; j++) gLognorm += lognorms[j];
+    //std::cout << tid << ": gLognorm " << gLognorm << std::endl;
   }
-
   #pragma omp barrier
-//  std::cout << tid << ": Full NLL: " << ret << " " << gLognorm << " " << lognorm << std::endl;
+
+
   return  gLognorm;
 
 #else
@@ -315,7 +312,7 @@ __host__ double ThrustPdfFunctor::calculateNLL () const {
   //if (cpuDebug & 1) std::cout << "Full NLL " << host_callnumber << " : " << 2*ret << std::endl;
   //setDebugMask(0); 
 
-  //if ((host_callnumber >= 1)) abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " debug abort", this); 
+  //if ((cpuDebug & 1) && (host_callnumber >= 1)) abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " debug abort", this); 
   return 2*ret; 
 }
 
@@ -416,9 +413,9 @@ __host__ void ThrustPdfFunctor::scan (Variable* var, std::vector<fptype>& values
 }
 
 __host__ void ThrustPdfFunctor::setParameterConstantness (bool constant) {
-  std::set<Variable*> pars;
+  FunctorBase::parCont pars; 
   getParameters(pars); 
-  for (std::set<Variable*>::iterator p = pars.begin(); p != pars.end(); ++p) {
+  for (FunctorBase::parIter p = pars.begin(); p != pars.end(); ++p) {
     (*p)->fixed = constant; 
   }
 }
@@ -504,9 +501,8 @@ __host__ fptype ThrustPdfFunctor::normalise () const {
     for (j=0; j<nthreads; j++) gSum += sums[j];
   }
     
-  //  std::cout << tid << ": sum = " << sum << " gSum = " << gSum << std::endl;
-
   #pragma omp barrier
+  //std::cout << tid << ": gSum = " << gSum << std::endl;
 
   if (isnan(gSum)) {
     abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " NaN in normalisation", this); 

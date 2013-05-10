@@ -47,18 +47,14 @@ __host__ void FunctorBase::copyParams (const std::vector<double>& pars) const {
 
 __host__ void FunctorBase::copyParams () {
   // Copies values of Variable objects
-  std::set<Variable*> pars;
+  parCont pars; 
   getParameters(pars); 
   std::vector<double> values; 
-  //if (cpuDebug & 1) std::cout << "Copying parameters: "; 
-  for (std::set<Variable*>::iterator v = pars.begin(); v != pars.end(); ++v) {
+  for (parIter v = pars.begin(); v != pars.end(); ++v) {
     int index = (*v)->getIndex(); 
     if (index >= (int) values.size()) values.resize(index + 1);
     values[index] = (*v)->value;
-    //if (cpuDebug & 1) std::cout << "(" << (*v)->index << " " << (*v)->value << ") ";
-    //if (isnan((*v)->value)) std::cout << "Major issue, " << (*v)->name << " is NaN.\n"; 
   }
-  //if (cpuDebug & 1) std::cout << std::endl;
   copyParams(values); 
 }
 

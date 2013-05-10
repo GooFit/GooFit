@@ -33,7 +33,7 @@ protected:
   ROOT::Minuit2::MnUserParameters* params;
   ROOT::Minuit2::MnMigrad* migrad; 
 
-  std::set<Variable*> vars; 
+  std::vector<Variable*> vars; 
   int numPars; 
 };
 #elif MINUIT_VERSION == 3
@@ -77,8 +77,8 @@ public:
   void fit (); 
   TMinuit* getMinuitObject () {return minuit;} 
   void getMinuitValues () const;
-private:
   TMinuit* minuit; 
+private:
   double overrideCallLimit; 
 };
 

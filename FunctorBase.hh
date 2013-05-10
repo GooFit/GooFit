@@ -44,8 +44,9 @@ public:
   typedef std::vector<Variable*> obsCont;
   typedef obsCont::iterator obsIter;
   typedef obsCont::const_iterator obsConstIter;
-  typedef std::set<Variable*> parCont; 
+  typedef std::vector<Variable*> parCont; 
   typedef parCont::iterator parIter; 
+  typedef parCont::const_iterator parConstIter; 
 
   __host__ void addSpecialMask (int m) {specialMask |= m;}
   __host__ void copyParams (const std::vector<double>& pars) const;

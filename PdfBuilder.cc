@@ -49,7 +49,7 @@ ROOT::Minuit2::FunctionMinimum* PdfFunctor::fit () {
 
   numPars = vars.size();
   int maxIndex = 0;
-  for (set<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
+  for (std::vector<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
     if ((*i)->lowerlimit == (*i)->upperlimit) params->Add((*i)->name, (*i)->value, (*i)->error); 
     else params->Add((*i)->name, (*i)->value, (*i)->error, (*i)->lowerlimit, (*i)->upperlimit); 
     if ((*i)->fixed) params->Fix(params->Index((*i)->name)); 
@@ -69,7 +69,7 @@ double PdfFunctor::operator () (const vector<double>& pars) const {
   vector<double> gooPars; // Translates from Minuit indexing to GooFit indexing
   gooPars.resize(numPars); 
   int counter = 0; 
-  for (set<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
+  for (std::vector<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
     gooPars[(*i)->index] = pars[counter++]; 
   }
 
@@ -84,9 +84,9 @@ double PdfFunctor::operator () (const vector<double>& pars) const {
 	    << host_callnumber << " : "
 	    << nll << " "
 	    << edm << " Pars: ";
-  set<Variable*> vars;
+  std::vector<Variable*> vars;
   pdfPointer->getParameters(vars); 
-  for (set<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
+  for (std::vector<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
     if (0 > (*i)->getIndex()) continue;
     if ((*i)->fixed) continue;
     cout << "(" << (*i)->name << " " << pars[(*i)->getIndex()] << ") "; // migrad->Value((*i)->getIndex()) << ") ";
@@ -107,9 +107,9 @@ PdfFunctor::PdfFunctor (FunctorBase* dat) {
 } 
 
 #ifdef OMP_ON
-set<Variable*> vars[MAX_THREADS]; 
+std::vector<Variable*> vars[MAX_THREADS]; 
 #else
-set<Variable*> vars; 
+std::vector<Variable*> vars; 
 #endif 
 
 #include "TMinuit.hh" 
@@ -122,7 +122,7 @@ void PdfFunctor::fit () {
 
   int maxIndex = 0; 
   int counter = 0; 
-  for (set<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
+  for (std::vector<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
     fitter->SetParameter(counter, (*i)->name.c_str(), (*i)->value, (*i)->error, (*i)->lowerlimit, (*i)->upperlimit);
     if ((*i)->fixed) fitter->FixParameter(counter); 
     counter++; 
@@ -133,7 +133,7 @@ void PdfFunctor::fit () {
   pdfPointer->copyParams();   
 
   // Hah! gMinuit is global, we can avoid the annoying wrapper. 
-  //gMinuit->fIdbg[2] = 1; // Debug for mnderi 
+  //currGlue->minuit->fIdbg[2] = 1; // Debug for mnderi 
 
   fitter->SetFCN(FitFun); 
   fitter->ExecuteCommand("MIGRAD", 0, 0); 
@@ -143,13 +143,13 @@ void PdfFunctor::getMinuitValues () const {
   int counter = 0; 
 #ifdef OMP_ON
   int tid = omp_get_thread_num();
-  for (set<Variable*>::iterator i = vars[tid].begin(); i != vars[tid].end(); ++i) {
+  for (std::vector<Variable*>::iterator i = vars[tid].begin(); i != vars[tid].end(); ++i) {
     (*i)->value = fitter->GetParameter(counter);
     (*i)->error = fitter->GetParError(counter);
     counter++;
   }
 #else
-  for (set<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
+  for (std::vector<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
     (*i)->value = fitter->GetParameter(counter);
     (*i)->error = fitter->GetParError(counter);
     counter++;
@@ -161,7 +161,7 @@ void FitFun (int &npar, double *gin, double &fun, double *fp, int iflag) { // MI
   vector<double> pars; // Translates from Minuit to GooFit indices
   pars.resize(numPars); 
   int counter = 0; 
-  for (set<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
+  for (std::vector<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
     pars[(*i)->getIndex()] = fp[counter++]; 
   }
 
@@ -176,9 +176,9 @@ void FitFun (int &npar, double *gin, double &fun, double *fp, int iflag) { // MI
 #else // MINUIT_VERSION is not 2 or 3
 
 #ifdef OMP_ON
-set<Variable*> vars[MAX_THREADS]; 
+std::vector<Variable*> vars[MAX_THREADS]; 
 #else
-set<Variable*> vars; 
+std::vector<Variable*> vars; 
 #endif 
 
 PdfFunctor::PdfFunctor (FunctorBase* dat) 
@@ -204,7 +204,7 @@ void PdfFunctor::setupMinuit () {
   minuit = new TMinuit(numPars); 
   int maxIndex = 0; 
   int counter = 0; 
-  for (set<Variable*>::iterator i = vars[tid].begin(); i != vars[tid].end(); ++i) {
+  for (std::vector<Variable*>::iterator i = vars[tid].begin(); i != vars[tid].end(); ++i) {
     minuit->DefineParameter(counter, (*i)->name.c_str(), (*i)->value, (*i)->error, (*i)->lowerlimit, (*i)->upperlimit); 
     if ((*i)->fixed) minuit->FixParameter(counter);
     counter++; 
@@ -219,7 +219,7 @@ void PdfFunctor::setupMinuit () {
   minuit = new TMinuit(numPars); 
   int maxIndex = 0; 
   int counter = 0; 
-  for (set<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
+  for (std::vector<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
     minuit->DefineParameter(counter, (*i)->name.c_str(), (*i)->value, (*i)->error, (*i)->lowerlimit, (*i)->upperlimit); 
     if ((*i)->fixed) minuit->FixParameter(counter);
     counter++; 
@@ -253,12 +253,12 @@ void PdfFunctor::getMinuitValues () const {
   int counter = 0; 
 #ifdef OMP_ON
   int tid = omp_get_thread_num();
-  for (set<Variable*>::iterator i = vars[tid].begin(); i != vars[tid].end(); ++i) {
+  for (std::vector<Variable*>::iterator i = vars[tid].begin(); i != vars[tid].end(); ++i) {
     //(*i)->value = host_params[(*i)->getIndex()];
     minuit->GetParameter(counter++, (*i)->value, (*i)->error);
   }
 #else
-  for (set<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
+  for (std::vector<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
     //(*i)->value = host_params[(*i)->getIndex()];
     minuit->GetParameter(counter++, (*i)->value, (*i)->error);
   }
@@ -274,11 +274,11 @@ void FitFun(int &npar, double *gin, double &fun, double *fp, int iflag) {
   int counter = 0; 
 #ifdef OMP_ON
   int tid = omp_get_thread_num();
-  for (set<Variable*>::iterator i = vars[tid].begin(); i != vars[tid].end(); ++i) {
+  for (std::vector<Variable*>::iterator i = vars[tid].begin(); i != vars[tid].end(); ++i) {
     pars[(*i)->getIndex()] = fp[counter++]; 
   }
 #else
-  for (set<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
+  for (std::vector<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
     if (isnan(fp[counter])) cout << "Variable " << (*i)->name << " " << (*i)->index << " is NaN\n"; 
     pars[(*i)->getIndex()] = fp[counter++]; 
   }
@@ -295,12 +295,13 @@ void FitFun(int &npar, double *gin, double &fun, double *fp, int iflag) {
 #endif 
 
 
+#ifdef PRINTCALLS
 void specialTddpPrint (double fun) {
   // Stupid amplitude-fit debugging method. 
   cout << "Function call " << host_callnumber << ": " << fun << "\n";
   currGlue->getMinuitValues();
   int varCount = 1; 
-  for (set<Variable*>::iterator v = vars.begin(); v != vars.end(); ++v) {
+  for (std::vector<Variable*>::iterator v = vars.begin(); v != vars.end(); ++v) {
     if (!(*v)) cout << "Null!" << endl; 
     if ((*v)->fixed) continue; 
 
@@ -339,3 +340,4 @@ void specialTddpPrint (double fun) {
 
   cout << endl; 
 }
+#endif

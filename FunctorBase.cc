@@ -58,7 +58,7 @@ __host__ unsigned int FunctorBase::registerParameter (Variable* var) {
   
   if (std::find(parameterList.begin(), parameterList.end(), var) != parameterList.end()) return (unsigned int) var->getIndex(); 
   
-  parameterList.insert(var); 
+  parameterList.push_back(var); 
 #ifdef OMP_ON
   int tid = omp_get_thread_num();
   variableRegistry[tid][var].insert(this); 
@@ -89,7 +89,8 @@ __host__ unsigned int FunctorBase::registerParameter (Variable* var) {
 
 __host__ void FunctorBase::unregisterParameter (Variable* var) {
   if (!var) return; 
-  parameterList.erase(var); 
+  parIter pos = std::find(parameterList.begin(), parameterList.end(), var);
+  if (pos != parameterList.end()) parameterList.erase(pos);  
 #ifdef OMP_ON
   int tid = omp_get_thread_num();
   variableRegistry[tid][var].erase(this);
@@ -103,8 +104,11 @@ __host__ void FunctorBase::unregisterParameter (Variable* var) {
   }
 }
 
-__host__ void FunctorBase::getParameters (std::set<Variable*>& ret) const { 
-  for (std::set<Variable*>::iterator p = parameterList.begin(); p != parameterList.end(); ++p) ret.insert(*p); 
+__host__ void FunctorBase::getParameters (parCont& ret) const { 
+  for (parConstIter p = parameterList.begin(); p != parameterList.end(); ++p) {
+    if (std::find(ret.begin(), ret.end(), (*p)) != ret.end()) continue; 
+    ret.push_back(*p); 
+  }
   for (unsigned int i = 0; i < components.size(); ++i) {
     components[i]->getParameters(ret); 
   }
@@ -141,10 +145,10 @@ __host__ void FunctorBase::setIntegrationFineness (int i) {
 __host__ bool FunctorBase::parametersChanged () const {
   if (!cachedParams) return true; 
 
-  std::set<Variable*> params;
+  parCont params;
   getParameters(params); 
   int counter = 0; 
-  for (std::set<Variable*>::iterator v = params.begin(); v != params.end(); ++v) {
+  for (parIter v = params.begin(); v != params.end(); ++v) {
     if (cachedParams[counter++] != host_params[(*v)->index]) return true;
   }
 
@@ -152,12 +156,12 @@ __host__ bool FunctorBase::parametersChanged () const {
 }
 
 __host__ void FunctorBase::storeParameters () const {
-  std::set<Variable*> params;
+  parCont params;
   getParameters(params); 
   if (!cachedParams) cachedParams = new fptype[params.size()]; 
 
   int counter = 0; 
-  for (std::set<Variable*>::iterator v = params.begin(); v != params.end(); ++v) {
+  for (parIter v = params.begin(); v != params.end(); ++v) {
     cachedParams[counter++] = host_params[(*v)->index];
   }
 }

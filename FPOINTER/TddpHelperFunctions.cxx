@@ -99,8 +99,8 @@ __device__ devcomplex<fptype> plainBW (fptype m12, fptype m13, fptype m23,
   if (0 != spin) {
     frFactor =  dampingFactorSquare(nominalDaughterMoms, spin, meson_radius);
     frFactor /= dampingFactorSquare(measureDaughterMoms, spin, meson_radius); 
-  }
-  
+  }  
+ 
   // RBW evaluation
   fptype A = (resmass - rMassSq); 
   fptype B = resmass*reswidth * POW(measureDaughterMoms / nominalDaughterMoms, 2.0*spin + 1) * frFactor / SQRT(rMassSq);
@@ -111,10 +111,18 @@ __device__ devcomplex<fptype> plainBW (fptype m12, fptype m13, fptype m23,
   fptype spinF = spinFactor(spin, motherMass, daug1Mass, daug2Mass, daug3Mass, m12, m13, m23, cyclic_index); 
 
   //if ((internalDebug1 == threadIdx.x) && (internalDebug2 == blockIdx.x))
+  //if ((0 == blockIdx.x) && (0 == threadIdx.x))
     //printf("Breit-Wigner: %f %f %f | %f %f %f\n", A, B, C, resmass, rMassSq, reswidth);
     //printf("Breit-Wigner: %i %i %f %f | (%f %f) %f\n", spin, cyclic_index, m12, m13, ret.real, ret.imag, spinF);
 
   ret *= spinF; 
+
+  //if ((m12 > 2.8) && (m12 < 2.81)) {
+    //printf("plainBW 1 %f %f %f %f %f\n", resmass, m12, m13, rMassSq, reswidth); //, frFactor);//, measureDaughterMoms, nominalDaughterMoms);
+    //printf("plainBW 2 %f %f %f %f %f\n", resmass, reswidth, frFactor, measureDaughterMoms, nominalDaughterMoms);
+    //printf("plainBW 3 %f %f %f %f %f\n", resmass, A, spinF, ret.real, ret.imag); 
+  //}
+
   return ret; 
 }
 

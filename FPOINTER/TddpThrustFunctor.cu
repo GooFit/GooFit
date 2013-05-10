@@ -36,9 +36,7 @@ __device__ ThreeComplex device_Tddp_calcIntegrals (fptype m12, fptype m13, int r
   fptype daug3Mass  = functorConstants[indices[1] + 3];  
 
   ThreeComplex ret; 
-  //if (0 == threadIdx.x) cuPrintf("%f %f eval %i %f %f %f %f %f\n", m12, m13, indices[1], functorConstants[0], motherMass, daug1Mass, daug2Mass, daug3Mass);  
   if (!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass)) return ret;
-  //if (0 == threadIdx.x) cuPrintf("%f %f eval 2\n", m12, m13);  
 
   int parameter_i = parIndexFromResIndex(res_i);
   int parameter_j = parIndexFromResIndex(res_j);
@@ -74,12 +72,6 @@ __device__ ThreeComplex device_Tddp_calcIntegrals (fptype m12, fptype m13, int r
   devcomplex<fptype> aj = conj(getResonanceAmplitude(m12, m13, mass_j, width_j, spin_j, cyclic_index_j, eval_type_j, indices)); 
   devcomplex<fptype> bj = conj(getResonanceAmplitude(m13, m12, mass_j, width_j, spin_j, cyclic_index_j, eval_type_j, indices)); 
 
-  //if ((3 == res_i) && (15 == res_j)) {
-  //cuPrintf("Tddp integral 1: %f %f %f %f %i %i %i\n", m12, m13, mass_i, width_i, spin_i, cyclic_index_i, eval_type_i); 
-  //cuPrintf("Tddp integral 2: %f %f %f %f %i %i %i\n", m12, m13, mass_j, width_j, spin_j, cyclic_index_j, eval_type_j); 
-    //cuPrintf("Tddp integral 1: (%f, %f) (%f, %f) (%f, %f) (%f, %f) \n", m12, m13, (ai*aj).real, (ai*aj).imag, (ai*bj).real, (ai*bj).imag, (bi*bj).real, (bi*bj).imag); 
-  //}
-  
   ret = ThreeComplex((ai*aj).real, (ai*aj).imag, (ai*bj).real, (ai*bj).imag, (bi*bj).real, (bi*bj).imag);
   return ret; 
 }
@@ -389,14 +381,6 @@ __host__ fptype TddpThrustFunctor::normalise () const {
 			strided_range<thrust::device_vector<WaveHolder>::iterator>(cachedWaves->begin() + i, cachedWaves->end(), decayInfo->resonances.size()).begin(), 
 			*(calculators[i]));
       //std::cout << "Integral for resonance " << i << " " << numEntries << " " << totalEventSize << std::endl; 
-      /*
-      WaveHolder hostWH = (*cachedWaves)[i]; 
-      
-      std::cout << "Resonance " << i << " "
-		<< normCall << " : (" 
-		<< hostWH.waveAreal << ", " << hostWH.waveAimag << ") ("
-		<< hostWH.waveBreal << ", " << hostWH.waveBimag << ")\n";
-      */
     }
     
     // Possibly this can be done more efficiently by exploiting symmetry? 
@@ -409,6 +393,15 @@ __host__ fptype TddpThrustFunctor::normalise () const {
 						      *(integrators[i][j]), 
 						      dummy, 
 						      complexSum); 
+      /*
+      std::cout << "With resonance " << j << ": " 
+		<< thrust::get<0>(*(integrals[i][j])) << " " 
+		<< thrust::get<1>(*(integrals[i][j])) << " " 
+		<< thrust::get<2>(*(integrals[i][j])) << " " 
+		<< thrust::get<3>(*(integrals[i][j])) << " " 
+		<< thrust::get<4>(*(integrals[i][j])) << " " 
+		<< thrust::get<5>(*(integrals[i][j])) << std::endl; 
+      */
     }
   }      
 
@@ -481,9 +474,6 @@ __host__ fptype TddpThrustFunctor::normalise () const {
   binSizeFactor *= ((_m12->upperlimit - _m12->lowerlimit) / _m12->numbins);
   binSizeFactor *= ((_m13->upperlimit - _m13->lowerlimit) / _m13->numbins);
   ret *= binSizeFactor;
-
-  //cudaPrintfDisplay(stdout, true);
-  //cudaPrintfEnd();
 
 #ifdef CUDAPRINT 
   std::cout << "Tddp dalitz integrals: " 

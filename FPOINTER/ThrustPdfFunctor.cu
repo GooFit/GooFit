@@ -4,7 +4,7 @@
 #include "thrust/iterator/constant_iterator.h" 
 
 //#ifdef CUDAPRINT
-#include "cuPrintf.cu" 
+//#include "cuPrintf.cu" 
 #include <fstream> 
 //#endif 
 
@@ -315,7 +315,7 @@ __host__ double ThrustPdfFunctor::calculateNLL () const {
   //if (cpuDebug & 1) std::cout << "Full NLL " << host_callnumber << " : " << 2*ret << std::endl;
   //setDebugMask(0); 
 
-  //if ((cpuDebug & 1) && (host_callnumber >= 1)) abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " debug abort", this); 
+  //if ((host_callnumber >= 1)) abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " debug abort", this); 
   return 2*ret; 
 }
 

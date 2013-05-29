@@ -26,7 +26,6 @@ Building the Examples Fits
 
         cd examples ; gmake all
 
-
 Running the Example Fit
 
 * Setup the bin and library paths for root
@@ -37,3 +36,9 @@ Running the Example Fit
 * To run the simple fit example type:
 
         ./simplefit
+
+Acknowledgement
+
+GooFit's development has been supported by the National Science Foundation under grant number NSF-1005530. 
+Any opinions, findings, and conclusions or recommendations expressed in this material are those of the developers
+and do not necessarily reflect the views of the National Science Foundation.

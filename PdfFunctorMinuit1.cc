@@ -103,12 +103,12 @@ void FitFun(int &npar, double *gin, double &fun, double *fp, int iflag) {
 #ifdef OMP_ON
   int tid = omp_get_thread_num();
   for (std::vector<Variable*>::iterator i = vars[tid].begin(); i != vars[tid].end(); ++i) {
-    pars[(*i)->getIndex()] = fp[counter++]; 
+    pars[(*i)->getIndex()] = fp[counter++] + (*i)->blind; // Minuit has the blinded value, give evaluation the true one. 
   }
 #else
   for (std::vector<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
     if (isnan(fp[counter])) cout << "Variable " << (*i)->name << " " << (*i)->index << " is NaN\n"; 
-    pars[(*i)->getIndex()] = fp[counter++]; 
+    pars[(*i)->getIndex()] = fp[counter++] + (*i)->blind; 
   }
 #endif // OMP_ON
   

@@ -1,5 +1,3 @@
-  // Removed nameToVariableMap and related methods to make the class thread safe.
-  // K. Tomko, May 11, 2012
 #include "Variable.hh"
 #include <cmath> 
 
@@ -10,8 +8,8 @@ Variable::Variable (std::string n)
   , numbins(100)
   , index(-1) 
   , fixed(false)
+  , blind(0)
 {
-  //  checkName(); 
 } 
 
 Variable::Variable (std::string n, fptype v) 
@@ -23,8 +21,8 @@ Variable::Variable (std::string n, fptype v)
   , numbins(100)
   , index(-1)
   , fixed(true)
+  , blind(0)
 {
-  // checkName(); 
 }
 
 Variable::Variable (std::string n, fptype dn, fptype up) 
@@ -34,8 +32,8 @@ Variable::Variable (std::string n, fptype dn, fptype up)
   , numbins(100)
   , index(-1)
   , fixed(false)
+  , blind(0)
 {
-  //  checkName(); 
 }
 
 Variable::Variable (std::string n, fptype v, fptype dn, fptype up) 
@@ -47,8 +45,8 @@ Variable::Variable (std::string n, fptype v, fptype dn, fptype up)
   , numbins(100)
   , index(-1)
   , fixed(false)
+  , blind(0)
 {
-  //  checkName(); 
 }
 
 Variable::Variable (std::string n, fptype v, fptype e, fptype dn, fptype up) 
@@ -60,30 +58,10 @@ Variable::Variable (std::string n, fptype v, fptype e, fptype dn, fptype up)
   , numbins(100)
   , index(-1)
   , fixed(false)
+  , blind(0)
 {
-  //  checkName(); 
 }
 
 Variable::~Variable () {
-  //  nameToVariableMap[name] = 0; 
 }
 
-//void Variable::checkName () {
-//  if (nameToVariableMap[name]) {
-//    std::cout << "Error: Variable with name " 
-//	      << name
-//	      << " already exists, aborting.\n";
-//    assert(false);
-//  }
-//  nameToVariableMap[name] = this; 
-//}
-
-//Variable* Variable::getVariable (std::string n) {
-  /*if (!nameToVariableMap[n]) {
-    std::cout << "Error: No variable named "
-	      << n
-	      << ", aborting.\n";
-    assert(false);
-    }*/
-//  return nameToVariableMap[n]; 
-//}

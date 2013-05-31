@@ -39,7 +39,7 @@ FUNCTORLIST += $(wildcard $(SRCDIR)/*Aux.cu)
 HEADERLIST = $(patsubst %.cu,%.hh,$(FUNCTORLIST))
 WRKFUNCTORLIST = $(patsubst $(SRCDIR)/%.cu,wrkdir/%.cu,$(FUNCTORLIST))
 
-THRUSTO		= wrkdir/Variable.o wrkdir/PdfBuilder.o wrkdir/ThrustPdfFunctorCUDA.o wrkdir/Faddeeva.o wrkdir/FitControl.o wrkdir/FunctorBase.o wrkdir/DataSet.o wrkdir/BinnedDataSet.o wrkdir/UnbinnedDataSet.o wrkdir/FunctorWriter.o 
+THRUSTO		= wrkdir/Variable.o wrkdir/PdfFunctor.o wrkdir/ThrustPdfFunctorCUDA.o wrkdir/Faddeeva.o wrkdir/FitControl.o wrkdir/FunctorBase.o wrkdir/DataSet.o wrkdir/BinnedDataSet.o wrkdir/UnbinnedDataSet.o wrkdir/FunctorWriter.o 
 ROOTRIPDIR	= $(PWD)/rootstuff
 ROOTRIPOBJS	= $(ROOTRIPDIR)/TMinuit.o $(ROOTRIPDIR)/TRandom.o $(ROOTRIPDIR)/TRandom3.o 
 ROOTUTILLIB	= $(ROOTRIPDIR)/libRootUtils.so 
@@ -69,7 +69,7 @@ $(ROOTUTILLIB):	$(ROOTRIPOBJS)
 
 include $(SRCDIR)/Makefile 
 
-PdfBuilder.o:		PdfBuilder.cc PdfBuilder.hh wrkdir/ThrustPdfFunctorCUDA.o Variable.o 
+PdfFunctor.o:		PdfFunctor.cc PdfFunctor.hh wrkdir/ThrustPdfFunctorCUDA.o Variable.o 
 			$(CXX) $(DEFINEFLAGS) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
 
 wrkdir/ThrustPdfFunctorCUDA.o:	wrkdir/CUDAglob.cu FunctorBase.cu 

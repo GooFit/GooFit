@@ -185,8 +185,26 @@ __device__ fptype device_Tddp (fptype* evt, fptype* p, unsigned int* indices) {
 												_tau, _time, _xmixing, _ymixing, _sigma, 
 												p, &(indices[2 + effFunctionIdx])); 
   
-  //if ((evtNum < 1) && (gpuDebug & 1)) internalDebug = 2;
-  //fptype eff = (*(reinterpret_cast<device_function_ptr>(device_function_table[indices[effFunctionIdx]])))(evt, p, paramIndices + indices[effFunctionIdx + 1]);
+  // For the reversed (mistagged) fraction, we make the 
+  // interchange A <-> B. So term1 stays the same, 
+  // term2 changes sign, and AB* becomes BA*. 
+  // Efficiency remains the same for the mistagged part,
+  // because it depends on the momenta of the pi+ and pi-,
+  // which don't change even though we tagged a D0 as D0bar. 
+  
+  fptype mistag = functorConstants[indices[1] + 5]; 
+  if (mistag > 0) { // This should be either true or false for all events, so no branch is caused.
+    // See header file for explanation of 'mistag' variable - it is actually the probability
+    // of having the correct sign, given that we have a correctly reconstructed D meson. 
+    mistag = evt[indices[7 + indices[0]]]; 
+    ret *= mistag; 
+    ret += (1 - mistag) * (*(reinterpret_cast<device_resfunction_ptr>(device_function_table[indices[5]])))(term1, -term2, sumWavesA.real, -sumWavesA.imag,
+													   _tau, _time, _xmixing, _ymixing, _sigma, 
+													   p, &(indices[2 + effFunctionIdx])); 
+  }
+   
+
+
   fptype eff = callFunction(evt, indices[effFunctionIdx], indices[effFunctionIdx + 1]); 
   //internalDebug = 0; 
   ret *= eff;
@@ -225,7 +243,7 @@ __device__ fptype device_Tddp (fptype* evt, fptype* p, unsigned int* indices) {
 
 __device__ device_function_ptr ptr_to_Tddp = device_Tddp; 
 
-__host__ TddpThrustFunctor::TddpThrustFunctor (std::string n, Variable* _dtime, Variable* _sigmat, Variable* m12, Variable* m13, Variable* eventNumber, DecayInfo* decay, MixingTimeResolution* r, ThrustPdfFunctor* efficiency) 
+__host__ TddpThrustFunctor::TddpThrustFunctor (std::string n, Variable* _dtime, Variable* _sigmat, Variable* m12, Variable* m13, Variable* eventNumber, DecayInfo* decay, MixingTimeResolution* r, ThrustPdfFunctor* efficiency, Variable* mistag) 
   : ThrustPdfFunctor(_dtime, n) 
   , decayInfo(decay)
   , _m12(m12)
@@ -246,15 +264,23 @@ __host__ TddpThrustFunctor::TddpThrustFunctor (std::string n, Variable* _dtime, 
   registerObservable(_m13);
   registerObservable(eventNumber); 
 
+  fptype decayConstants[6];
+  decayConstants[5] = 0; 
+  
+  if (mistag) {
+    registerObservable(mistag);
+    totalEventSize = 6; 
+    decayConstants[5] = 1; // Flags existence of mistag
+  } 
+
   std::vector<unsigned int> pindices;
-  pindices.push_back(registerConstants(5)); 
-  fptype decayConstants[5];
+  pindices.push_back(registerConstants(totalEventSize)); 
   decayConstants[0] = decayInfo->motherMass;
   decayConstants[1] = decayInfo->daug1Mass;
   decayConstants[2] = decayInfo->daug2Mass;
   decayConstants[3] = decayInfo->daug3Mass;
   decayConstants[4] = decayInfo->meson_radius;
-  cudaMemcpyToSymbol(functorConstants, decayConstants, 5*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice);  
+  cudaMemcpyToSymbol(functorConstants, decayConstants, totalEventSize*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice);  
   
   pindices.push_back(registerParameter(decayInfo->_tau));
   pindices.push_back(registerParameter(decayInfo->_xmixing));
@@ -562,6 +588,8 @@ SpecialWaveCalculator::SpecialWaveCalculator (int pIdx, unsigned int res_idx)
 
 __device__ WaveHolder SpecialWaveCalculator::operator () (thrust::tuple<int, fptype*, int> t) const {
   // Calculates the BW values for a specific resonance. 
+  // The 'A' wave stores the value at each point, the 'B' 
+  // at the opposite (reversed) point. 
 
   WaveHolder ret;
 

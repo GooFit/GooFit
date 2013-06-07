@@ -87,10 +87,35 @@ protected:
   
 class TddpThrustFunctor : public ThrustPdfFunctor {
 public:
-  TddpThrustFunctor (std::string n, Variable* _dtime, Variable* _sigmat, Variable* m12, Variable* m13, Variable* eventNumber, DecayInfo* decay, MixingTimeResolution* r, ThrustPdfFunctor* eff);
+  TddpThrustFunctor (std::string n, Variable* _dtime, Variable* _sigmat, Variable* m12, Variable* m13, Variable* eventNumber, DecayInfo* decay, MixingTimeResolution* r, ThrustPdfFunctor* eff, Variable* mistag = 0);
   // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the 
   // coherent sum. The caching method requires that it be done this way or the ProdThrustFunctor
   // normalisation will get *really* confused and give wrong answers. 
+
+  // The mistag variable is the probability that an event has a mother particle
+  // that was correctly reconstructed but wrongly tagged. Consider an analysis
+  // with three components: Signal, mistagged signal, and background. We want to
+  // have the PDF be a sum, thus:
+  // P = p_s S(m+, m-) + p_m(l_f S(m+, m-) + (1 - l_f)S(m-, m+)) + p_B B(m+, m-)
+  // where p_s, p_m, p_B are the respective probabilities that this event
+  // are signal, mistagged, or background, and l_f is the "lucky fraction", 
+  // that fraction of the mistagged signal which, by chance, got assigned
+  // the correct charge. ('Mistagged' means that the wrong track was used
+  // to determine charge, but about 50% of random tracks will have the same
+  // charge as the right track did.) Clearly the above can be simplified (using
+  // S and S' to indicate non-flipped and flipped versions of the signal):
+  // P = (p_s + p_m*l_f) S + p_m*(1-l_f) S' + p_B B
+  //   = a(bS + (1-b)S') + p_B B. 
+  // where
+  // a = p_s + p_m
+  // b = (p_s + p_m*l_f) / (p_s + p_m)
+  // or in other words, b is the fraction of signal + mistag that has the right
+  // charge. It's up to the user to create this variable. The default is to take
+  // b as 1, if 'mistag' is not supplied. 
+  // Note that normalisation is not affected because the integrals of S and S'
+  // are identical and the weights sum to one, and efficiency is not affected
+  // because it depends on the momenta of the daughter tracks, which are not
+  // affected by making the wrong charge assignment to the mother. 
 
   __host__ virtual fptype normalise () const;
   __host__ void setDataSize (unsigned int dataSize, unsigned int evtSize = 5); 

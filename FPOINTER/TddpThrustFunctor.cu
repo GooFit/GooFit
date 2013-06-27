@@ -11,6 +11,7 @@ const int resonanceOffset = 8; // Offset of the first resonance into the paramet
 // of resolution function, and finally number of resonances (not calculable from nP
 // because we don't know what the efficiency and time resolution might need). Efficiency 
 // and time-resolution parameters are after the resonance information. 
+const unsigned int SPECIAL_RESOLUTION_FLAG = 999999999; 
 
 // The function of this array is to hold all the cached waves; specific 
 // waves are recalculated when the corresponding resonance mass or width 
@@ -181,9 +182,38 @@ __device__ fptype device_Tddp (fptype* evt, fptype* p, unsigned int* indices) {
 
   // Cannot use callFunction on resolution function. 
   int effFunctionIdx = parIndexFromResIndex(numResonances); 
-  fptype ret = (*(reinterpret_cast<device_resfunction_ptr>(device_function_table[indices[5]])))(term1, term2, sumWavesA.real, sumWavesA.imag,
-												_tau, _time, _xmixing, _ymixing, _sigma, 
-												p, &(indices[2 + effFunctionIdx])); 
+  int resFunctionIdx = indices[5]; 
+  int resFunctionPar = 2 + effFunctionIdx; 
+  fptype ret = 0; 
+  int md0_offset = 0; 
+  if (resFunctionIdx == SPECIAL_RESOLUTION_FLAG) {
+    // In this case there are multiple resolution functions, they are stored after the efficiency function,
+    // and which one we use depends on the measured mother-particle mass. 
+    md0_offset = 1; 
+    fptype massd0 = evt[indices[7 + indices[0]]]; 
+    fptype minMass = functorConstants[indices[1] + 6];
+    fptype md0Step = functorConstants[indices[1] + 7];
+    int res_to_use = (massd0 <= minMass) ? 0 : (int) FLOOR((massd0 - minMass) / md0Step); 
+    int maxFcn     = indices[2+effFunctionIdx]; 
+    if (res_to_use > maxFcn) res_to_use = maxFcn; 
+
+    // Now calculate index of resolution function.
+    // At the end of the array are indices efficiency_function, efficiency_parameters, maxFcn, res_function_1, res_function_1_nP, par1, par2 ... res_function_2, res_function_2_nP, ... 
+    res_to_use = 3 + effFunctionIdx + res_to_use * (2 + indices[effFunctionIdx + 4]); 
+    // NB this assumes all resolution functions have the same number of parameters. The number
+    // of parameters in the first resolution function is stored in effFunctionIdx+3; add one to 
+    // account for the index of the resolution function itself in the device function table, one
+    // to account for the number-of-parameters index, and this is the space taken up by each 
+    // resolution function. Multiply by res_to_use to get the number of spaces to skip to get to 
+    // the one we want. 
+
+    resFunctionIdx = indices[res_to_use]; 
+    resFunctionPar = res_to_use + 1; 
+  }
+  
+  ret = (*(reinterpret_cast<device_resfunction_ptr>(device_function_table[resFunctionIdx])))(term1, term2, sumWavesA.real, sumWavesA.imag,
+											     _tau, _time, _xmixing, _ymixing, _sigma, 
+											     p, indices + resFunctionPar); 
   
   // For the reversed (mistagged) fraction, we make the 
   // interchange A <-> B. So term1 stays the same, 
@@ -196,11 +226,11 @@ __device__ fptype device_Tddp (fptype* evt, fptype* p, unsigned int* indices) {
   if (mistag > 0) { // This should be either true or false for all events, so no branch is caused.
     // See header file for explanation of 'mistag' variable - it is actually the probability
     // of having the correct sign, given that we have a correctly reconstructed D meson. 
-    mistag = evt[indices[7 + indices[0]]]; 
+    mistag = evt[indices[md0_offset + 7 + indices[0]]]; 
     ret *= mistag; 
-    ret += (1 - mistag) * (*(reinterpret_cast<device_resfunction_ptr>(device_function_table[indices[5]])))(term1, -term2, sumWavesA.real, -sumWavesA.imag,
+    ret += (1 - mistag) * (*(reinterpret_cast<device_resfunction_ptr>(device_function_table[resFunctionIdx])))(term1, -term2, sumWavesA.real, -sumWavesA.imag,
 													   _tau, _time, _xmixing, _ymixing, _sigma, 
-													   p, &(indices[2 + effFunctionIdx])); 
+													   p, &(indices[resFunctionPar])); 
   }
    
 
@@ -274,13 +304,13 @@ __host__ TddpThrustFunctor::TddpThrustFunctor (std::string n, Variable* _dtime, 
   } 
 
   std::vector<unsigned int> pindices;
-  pindices.push_back(registerConstants(totalEventSize)); 
+  pindices.push_back(registerConstants(6)); 
   decayConstants[0] = decayInfo->motherMass;
   decayConstants[1] = decayInfo->daug1Mass;
   decayConstants[2] = decayInfo->daug2Mass;
   decayConstants[3] = decayInfo->daug3Mass;
   decayConstants[4] = decayInfo->meson_radius;
-  cudaMemcpyToSymbol(functorConstants, decayConstants, totalEventSize*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice);  
+  cudaMemcpyToSymbol(functorConstants, decayConstants, 6*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice);  
   
   pindices.push_back(registerParameter(decayInfo->_tau));
   pindices.push_back(registerParameter(decayInfo->_xmixing));
@@ -335,6 +365,109 @@ __host__ TddpThrustFunctor::TddpThrustFunctor (std::string n, Variable* _dtime, 
 
   addSpecialMask(FunctorBase::ForceSeparateNorm); 
 }
+
+__host__ TddpThrustFunctor::TddpThrustFunctor (std::string n, Variable* _dtime, Variable* _sigmat, Variable* m12, Variable* m13, Variable* eventNumber, DecayInfo* decay, vector<MixingTimeResolution*>& r, ThrustPdfFunctor* efficiency, Variable* md0, Variable* mistag) 
+  : ThrustPdfFunctor(_dtime, n) 
+  , decayInfo(decay)
+  , _m12(m12)
+  , _m13(m13)
+  , dalitzNormRange(0)
+  , cachedWaves(0) 
+  , integrals(0)
+  , resolution(r[0])  // Only used for normalisation, which only depends on x and y - it doesn't matter which one we use. 
+  , forceRedoIntegrals(true)
+  , totalEventSize(6) // This case adds the D0 mass by default. 
+  , cacheToUse(0) 
+  , integrators(0)
+  , calculators(0) 
+{
+  // NB, _dtime already registered!
+  registerObservable(_sigmat);
+  registerObservable(_m12);
+  registerObservable(_m13);
+  registerObservable(eventNumber); 
+  registerObservable(md0); 
+
+  fptype decayConstants[8];
+  decayConstants[5] = 0; 
+  decayConstants[6] = md0->lowerlimit;
+  decayConstants[7] = (md0->upperlimit - md0->lowerlimit) / r.size();
+  
+  if (mistag) {
+    registerObservable(mistag);
+    totalEventSize++; 
+    decayConstants[5] = 1; // Flags existence of mistag
+  } 
+
+  std::vector<unsigned int> pindices;
+  pindices.push_back(registerConstants(8)); 
+  decayConstants[0] = decayInfo->motherMass;
+  decayConstants[1] = decayInfo->daug1Mass;
+  decayConstants[2] = decayInfo->daug2Mass;
+  decayConstants[3] = decayInfo->daug3Mass;
+  decayConstants[4] = decayInfo->meson_radius;
+  cudaMemcpyToSymbol(functorConstants, decayConstants, 8*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice);  
+  
+  pindices.push_back(registerParameter(decayInfo->_tau));
+  pindices.push_back(registerParameter(decayInfo->_xmixing));
+  pindices.push_back(registerParameter(decayInfo->_ymixing));
+  pindices.push_back(SPECIAL_RESOLUTION_FLAG); // Flag existence of multiple resolution functions.
+  pindices.push_back(decayInfo->resonances.size()); 
+
+  static int cacheCount = 0; 
+  cacheToUse = cacheCount++; 
+  pindices.push_back(cacheToUse); 
+
+  for (std::vector<ResonanceInfo*>::iterator res = decayInfo->resonances.begin(); res != decayInfo->resonances.end(); ++res) {
+    pindices.push_back(registerParameter((*res)->amp_real));
+    pindices.push_back(registerParameter((*res)->amp_imag));
+    pindices.push_back(registerParameter((*res)->mass));
+    pindices.push_back(registerParameter((*res)->width));
+    pindices.push_back((*res)->spin);
+    pindices.push_back((*res)->cyclic_index);
+    pindices.push_back((*res)->eval_type);
+    pindices.push_back((*res)->resonance_type); 
+  }
+
+  pindices.push_back(efficiency->getFunctionIndex());
+  pindices.push_back(efficiency->getParameterIndex());
+  components.push_back(efficiency); 
+
+  pindices.push_back(r.size() - 1); // Highest index, not number of functions. 
+  for (int i = 0; i < r.size(); ++i) {
+    assert(r[i]->getDeviceFunction() >= 0); 
+    pindices.push_back((unsigned int) r[i]->getDeviceFunction()); 
+    r[i]->createParameters(pindices, this); 
+  }
+
+  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_Tddp, sizeof(void*));
+  initialise(pindices);
+
+  redoIntegral = new bool[decayInfo->resonances.size()];
+  cachedMasses = new fptype[decayInfo->resonances.size()];
+  cachedWidths = new fptype[decayInfo->resonances.size()];
+  integrals    = new ThreeComplex**[decayInfo->resonances.size()];
+  integrators  = new SpecialDalitzIntegrator**[decayInfo->resonances.size()];
+  calculators  = new SpecialWaveCalculator*[decayInfo->resonances.size()];
+
+  for (int i = 0; i < decayInfo->resonances.size(); ++i) {
+    redoIntegral[i] = true;
+    cachedMasses[i] = -1;
+    cachedWidths[i] = -1; 
+    integrators[i]  = new SpecialDalitzIntegrator*[decayInfo->resonances.size()];
+    calculators[i]  = new SpecialWaveCalculator(parameters, i); 
+    integrals[i]    = new ThreeComplex*[decayInfo->resonances.size()];
+    
+    for (int j = 0; j < decayInfo->resonances.size(); ++j) {
+      integrals[i][j]   = new ThreeComplex(0, 0, 0, 0, 0, 0);
+      integrators[i][j] = new SpecialDalitzIntegrator(parameters, i, j); 
+    }
+  }
+
+  addSpecialMask(FunctorBase::ForceSeparateNorm); 
+}
+
+
 
 __host__ void TddpThrustFunctor::setDataSize (unsigned int dataSize, unsigned int evtSize) {
   // Default 5 is m12, m13, time, sigma_t, evtNum
@@ -485,17 +618,6 @@ __host__ fptype TddpThrustFunctor::normalise () const {
 
   fptype ret = resolution->normalisation(dalitzIntegralOne, dalitzIntegralTwo, dalitzIntegralThr, dalitzIntegralFou, tau, xmixing, ymixing); 
 
-  /*
-  fptype timeIntegralOne = tau / (1 - ymixing*ymixing); 
-  fptype timeIntegralTwo = tau / (1 + xmixing*xmixing);
-  fptype timeIntegralThr = ymixing * timeIntegralOne;
-  fptype timeIntegralFou = xmixing * timeIntegralTwo;
-       
-  double ret = timeIntegralOne * (dalitzIntegralOne + dalitzIntegralTwo);
-  ret       += timeIntegralTwo * (dalitzIntegralOne - dalitzIntegralTwo);
-  ret       -= 2*timeIntegralThr * dalitzIntegralThr;
-  ret       -= 2*timeIntegralFou * dalitzIntegralFou;
-  */
   double binSizeFactor = 1;
   binSizeFactor *= ((_m12->upperlimit - _m12->lowerlimit) / _m12->numbins);
   binSizeFactor *= ((_m13->upperlimit - _m13->lowerlimit) / _m13->numbins);

@@ -127,15 +127,20 @@ void ThreeGaussResolution::createParameters (std::vector<unsigned int>& pindices
 }
 
 fptype ThreeGaussResolution::normalisation (fptype di1, fptype di2, fptype di3, fptype di4, fptype tau, fptype xmixing, fptype ymixing) const {
+  // NB! In thesis notation, A_1 = (A + B), A_2 = (A - B). 
+  // Here di1 = |A^2|, di2 = |B^2|, di3,4 = Re,Im(AB^*). 
+  // Distinction between numerical subscribts and A,B is crucial
+  // for comparing thesis math to this math! 
+
   fptype timeIntegralOne = tau / (1 - ymixing*ymixing); 
   fptype timeIntegralTwo = tau / (1 + xmixing*xmixing);
   fptype timeIntegralThr = ymixing * timeIntegralOne;
   fptype timeIntegralFou = xmixing * timeIntegralTwo;
        
-  fptype ret = timeIntegralOne * (di1 + di2);
-  ret       += timeIntegralTwo * (di1 - di2);
-  ret       -= 2*timeIntegralThr * di3;
-  ret       -= 2*timeIntegralFou * di4;
+  fptype ret = timeIntegralOne * (di1 + di2); // ~ |A|^2 + |B|^2
+  ret       += timeIntegralTwo * (di1 - di2); // ~ Re(A_1 A_2^*)
+  ret       -= 2*timeIntegralThr * di3;       // ~ |A|^2 - |B|^2
+  ret       -= 2*timeIntegralFou * di4;       // ~ Im(A_1 A_2^*)
 
   return ret; 
 }

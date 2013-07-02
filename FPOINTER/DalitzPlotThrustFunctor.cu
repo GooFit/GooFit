@@ -3,6 +3,7 @@
 #include <complex>
 using std::complex; 
 
+const int resonanceSize_DP = 8; // Dirty fix of order-of-compilation problem on Oakley - should be temporary. 
 const int resonanceOffset_DP = 4; // Offset of the first resonance into the parameter index array 
 // Offset is number of parameters, constant index, number of resonances (not calculable 
 // from nP because we don't know what the efficiency might need), and cache index. Efficiency 
@@ -15,7 +16,7 @@ const int resonanceOffset_DP = 4; // Offset of the first resonance into the para
 __device__ devcomplex<fptype>* cResonances[10]; 
 
 __device__ inline int parIndexFromResIndex_DP (int resIndex) {
-  return resonanceOffset_DP + resIndex*resonanceSize; 
+  return resonanceOffset_DP + resIndex*resonanceSize_DP; 
 }
 
 __device__ devcomplex<fptype> device_DalitzPlot_calcIntegrals (fptype m12, fptype m13, int res_i, int res_j, fptype* p, unsigned int* indices) {
@@ -209,7 +210,7 @@ __host__ fptype DalitzPlotThrustFunctor::normalise () const {
   }
 
   for (unsigned int i = 0; i < decayInfo->resonances.size(); ++i) {
-    int param_i = parameters + resonanceOffset_DP + resonanceSize*i; 
+    int param_i = parameters + resonanceOffset_DP + resonanceSize_DP*i; 
     redoIntegral[i] = forceRedoIntegrals; 
     if ((host_params[host_indices[param_i + 2]] == cachedMasses[i]) && (host_params[host_indices[param_i + 3]] == cachedWidths[i])) continue;
     redoIntegral[i] = true; 
@@ -256,10 +257,10 @@ __host__ fptype DalitzPlotThrustFunctor::normalise () const {
   // End of time-consuming integrals. 
   complex<fptype> sumIntegral(0, 0);
   for (unsigned int i = 0; i < decayInfo->resonances.size(); ++i) {
-    int param_i = parameters + resonanceOffset_DP + resonanceSize*i; 
+    int param_i = parameters + resonanceOffset_DP + resonanceSize_DP*i; 
     complex<fptype> amplitude_i(host_params[host_indices[param_i]], host_params[host_indices[param_i + 1]]);
     for (unsigned int j = 0; j < decayInfo->resonances.size(); ++j) {
-      int param_j = parameters + resonanceOffset_DP + resonanceSize*j; 
+      int param_j = parameters + resonanceOffset_DP + resonanceSize_DP*j; 
       complex<fptype> amplitude_j(host_params[host_indices[param_j]], -host_params[host_indices[param_j + 1]]); 
       // Notice complex conjugation
 

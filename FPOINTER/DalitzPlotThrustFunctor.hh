@@ -3,6 +3,7 @@
 
 #include "ThrustPdfFunctor.hh" 
 #include "DalitzPlotHelpers.hh" 
+#include "devcomplex.hh"
 
 class SpecialResonanceIntegrator;
 class SpecialResonanceCalculator; 

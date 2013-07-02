@@ -20,6 +20,8 @@ struct ResonanceInfo {
   unsigned int resonance_type; 
 };
 
+extern const int resonanceSize; 
+
 struct DecayInfo {
   fptype motherMass;
   fptype daug1Mass;

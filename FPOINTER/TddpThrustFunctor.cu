@@ -30,6 +30,11 @@ __device__ ThreeComplex device_Tddp_calcIntegrals (fptype m12, fptype m13, int r
   // and Bi reverses the sign of the second BW. 
   // This function returns the above values at a single point. 
   // NB: Multiplication by efficiency is done by the calling function. 
+  // Note that this function expects
+  // to be called on a normalisation grid, not on 
+  // observed points, that's why it doesn't use 
+  // cWaves. No need to cache the values at individual
+  // grid points - we only care about totals. 
 
   fptype motherMass = functorConstants[indices[1] + 0]; 
   fptype daug1Mass  = functorConstants[indices[1] + 1]; 

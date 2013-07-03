@@ -15,7 +15,7 @@ __device__ fptype bwFactor (fptype momentum) {
 }
 
 __device__ fptype device_KinLimitBW (fptype* evt, fptype* p, unsigned int* indices) {
-  fptype x = evt[0]; 
+  fptype x = evt[indices[2 + indices[0]]]; 
   fptype mean  = p[indices[1]];
   fptype width = p[indices[2]];
   fptype d0mass = functorConstants[indices[3]+0]; 

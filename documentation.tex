@@ -1,0 +1,203 @@
+\documentclass[12pt,pdflatex]{article} 
+\usepackage{color}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{colortbl} 
+\usepackage{graphicx} 
+\usepackage{colordvi} 
+\usepackage{amssymb} 
+\usepackage{ulem} 
+
+\begin{document}
+\section{Introduction}
+
+
+\section{User-level code}
+
+\section{Creating new PDF classes}
+
+\subsection{The indices array}
+
+The heart of a PDF's organisation is its index array, which 
+appears in the arguments to its device-side evaluation function
+as \verb|unsigned int* indices|. The index array stores the position
+of the parameters of the PDF within the global parameter array;
+this allows different PDFs to share the same parameters, as in two
+Gaussians with a common mean. It also stores the position of the
+event variables, sometimes called observables, within the event array
+passed to the evaluation function; this is the argument \verb|fptype* evt|.
+
+The index array is created by the constructor of a PDF class; in particular, 
+the constructor should call \verb|registerParameter| 
+so as to obtain the global indices of its parameters, store these
+numbers in a \verb|vector<unsigned int>| (conventionally called \verb|pindices|),
+and pass this \verb|vector| to \verb|initialise|. The PDF constructor should
+also call \verb|registerObservable| on each of the event variables it depends
+on. 
+
+The \verb|initialise| method constructs the array that is used on the GPU side,
+which consists of four parts. First is stored the number of parameters,
+which is equal to the size of the \verb|pindices vector|. Next come the indices
+of the parameters, in the order they were put into \verb|pindices|. Then comes
+the number of observables, and finally the indices of the observables, again
+in the order they were registered. 
+
+An example may be useful at this point. Consider the simple Gaussian PDF constructor:
+\begin{verbatim}
+__host__ GaussianThrustFunctor::GaussianThrustFunctor (std::string n, 
+                                                       Variable* _x, 
+                                                       Variable* mean, 
+                                                       Variable* sigma) 
+  : ThrustPdfFunctor(_x, n) 
+{
+  std::vector<unsigned int> pindices;
+  pindices.push_back(registerParameter(mean));
+  pindices.push_back(registerParameter(sigma));
+  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_Gaussian, sizeof(void*));
+  initialise(pindices); 
+}
+\end{verbatim}
+This is almost the simplest possible PDF: Two parameters, one observable, 
+no messing about! Notice that the call to \verb|registerObservable| is done
+in the parent \verb|ThrustPdfFunctor| constructor - this saves some boilerplate
+in the constructors of one-observable PDFs. For the second and subsequent
+observables the calls should be done manually. The device-side index array
+for the Gaussian, assuming it is the only PDF in the system, looks like this:
+\begin{verbatim}
+index  0 1 2 3 4
+value  2 0 1 1 0
+\end{verbatim}
+Here the initial 2 is the number of parameters - mean and sigma. Then come their
+respective indices; since by assumption the Gaussian is the only PDF we're constructing,
+these will simply be 0 and 1. Then comes the number of observables, which is 1, and
+finally the index of the observable - which, as it is the only observable registered,
+must be 0. Now we can consider how the device-side code makes use of this:
+\begin{verbatim}
+__device__ fptype device_Gaussian (fptype* evt, fptype* p, unsigned int* indices) {
+  fptype x = evt[indices[2 + indices[0]]]; 
+  fptype mean = p[indices[1]];
+  fptype sigma = p[indices[2]];
+
+  fptype ret = EXP(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
+  return ret; 
+}
+\end{verbatim}
+The calculation of the Gaussian is straightforward enough, but let's look
+at where the numbers \verb|mean, sigma| and especially \verb|x| come from. 
+The function is passed a pointer to the particular event it is to calculate
+the value for, a global parameter array, and the index array. The parameter
+array, in the case of a single Gaussian, consists simply of the values for
+the mean and sigma in the current MINUIT iteration. Let us replace the index
+lookups in those lines with their values from above:
+\begin{verbatim}
+  fptype mean = p[0];
+  fptype sigma = p[1]; 
+\end{verbatim}
+which is exactly what we want. The lookup of \verb|x| appears a little
+more formidable, with its double \verb|indices| lookup; it calls for
+some explanation. First, \verb|indices[0]| is the number of parameters
+of the function; we want to skip ahead by this number to get to the 'event'
+part of the array. In the Gaussian, this is known at compile-time to be
+2, but not every PDF writer is so fortunate; a polynomial PDF, for example,
+could have an arbitrary number of parameters. (Or it might specify a maximum
+number, say 10, and in most cases leave seven or eight of them fixed at zero - 
+but then there would be a lot of wasted multiplications-by-zero and additions-of-zero.) 
+Thus, as a convention, lookups of event variables should always use 
+\verb|indices[0]| even if the coder knows what that number is going to be.
+Then, 2 must be added to this number to account for the space taken
+by the number-of-parameters and number-of-observables entries in the array.
+So, replacing the first level of lookup by the values, we have:
+\begin{verbatim}
+  fptype x = evt[indices[4]]; 
+\end{verbatim}
+and \verb|indices[4]| is just 0; so in other words, |x| is the first
+observable in the event. In the case of the single Gaussian, it is
+also the \emph{only} observable, so we've done quite a bit of work to
+arrive at a zero that we knew from the start; but in more complex fits this would not be true. 
+The \verb|x| variable could be observable number 5, for all we know
+to the contrary in the general case. Likewise the mean and sigma
+could be stored at positions 80 and 101 of the global parameter array. 
+
+\subsection{Constants}
+
+There are two ways of storing constants, or three if we count
+registering a Variable as a parameter and telling MINUIT to keep
+it fixed. For integer constants, we may simply store them in the
+index array; since it is up to the programmer to interpret the
+indices, there is no rule that says it absolutely must be taken
+as an offset into the global parameter array! An index can also
+store integers for any other purpose - the maximum degree of a 
+polynomial, flagging the use of an optional parameter, or anything
+else you can think of. Indeed, this is exactly
+what the framework does in enforcing the convention that the first
+number in the index array is the number of parameters. 
+
+However, this will not serve for non-integer-valued constants. They must either
+go through MINUIT as fixed parameters, or else go into the \verb|functorConstants|
+array. \verb|functorConstants| works just like the global parameters
+array, except that it does not update on every MINUIT iteration since
+it is meant for storing constants. To use it, you should first reserve
+some space in it using the \verb|registerConstants| method, which takes
+the number of constants you want as an argument and returns the index
+of the first one. Usually you will want to put that index in the \verb|pindices|
+array. For example, suppose I want to store $\sqrt{2\pi}$ as a constant
+for use in the Gaussian. Then I would modify the constructor thus:
+\begin{verbatim}
+__host__ GaussianThrustFunctor::GaussianThrustFunctor (std::string n, 
+                                                       Variable* _x, 
+                                                       Variable* mean, 
+                                                       Variable* sigma) 
+  : ThrustPdfFunctor(_x, n) 
+{
+  std::vector<unsigned int> pindices;
+  pindices.push_back(registerParameter(mean));
+  pindices.push_back(registerParameter(sigma));
+
+  pindices.push_back(registerConstants(1)); 
+  fptype sqrt2pi = SQRT(2*M_PI);
+  cudaMemcpyToSymbol(functorConstants, &sqrt2pi, sizeof(fptype), 
+                     cIndex*sizeof(fptype), cudaMemcpyHostToDevice); 
+
+  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_Gaussian, sizeof(void*));
+  initialise(pindices); 
+}
+\end{verbatim}
+Notice the member variable \verb|cIndex|, which is set by \verb|registerConstants|; it is the
+index of the first constant belonging to this object. To extract my constant for
+use in the device function, I look it up as though it were a parameter, but the
+target array is \verb|functorConstants| instead of the passed-in \verb|p|:
+\begin{verbatim}
+__device__ fptype device_Gaussian (fptype* evt, fptype* p, unsigned int* indices) {
+  fptype x = evt[indices[2 + indices[0]]]; 
+  fptype mean = p[indices[1]];
+  fptype sigma = p[indices[2]];
+  fptype sqrt2pi = functorConstants[indices[3]];
+
+  fptype ret = EXP(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
+  ret /= sqrt2pi; 
+  return ret; 
+}
+\end{verbatim}
+
+If I had registered two constants instead of one, the second one would be looked
+up by \verb|functorConstants[indices[3] + 1]|, not the \verb|functorConstants[indices[4]]|
+one might naively expect. This is because the constant is stored next to the first one
+registered, but its \emph{index} is not stored at all; it has to be calculated from the
+index of the first constant. Thus the \verb|+1| must go outside the indices lookup,
+not inside it! Keeping the levels of indirection
+straight when constructing this sort of code calls for some care and attention,
+and is a frequent source of errors. 
+
+Note that \verb|functorConstants[0]| is reserved for the number of events
+in the fit. 
+
+
+
+\section{Engine core} 
+
+
+
+\section{Existing PDF classes}
+
+
+
+\end{document}

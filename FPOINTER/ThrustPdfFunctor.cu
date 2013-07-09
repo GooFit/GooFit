@@ -566,7 +566,6 @@ __device__ fptype MetricTaker::operator () (thrust::tuple<int, fptype*, int> t) 
 
   // Causes stack size to be statically undeterminable.
   fptype ret = callFunction(eventAddress, functionIdx, parameters);
-  //fptype ret = (*(reinterpret_cast<device_function_ptr>(device_function_table[functionIdx])))(eventAddress, cudaArray, paramIndices + parameters);
 
   // Notice assumption here! For unbinned fits the 'eventAddress' pointer won't be used
   // in the metric, so it doesn't matter what it is. For binned fits it is assumed that
@@ -605,27 +604,17 @@ __device__ fptype MetricTaker::operator () (thrust::tuple<int, int, fptype*> t) 
     x += lowerBound;
     binCenters[indices[indices[0] + 2 + i]+threadIdx.x*MAX_NUM_OBSERVABLES] = x; 
     binNumber /= numBins;
-
-    //if (gpuDebug & 1) 
-    //if ((gpuDebug & 1) && (0 == threadIdx.x) && (0 == blockIdx.x)) 
-      //printf("[%i, %i] Bins: %i %i %i %f %f %f %f %i\n", blockIdx.x, threadIdx.x, binNumber, numBins, localBin, x, lowerBound, upperBound, thrust::get<2>(t)[3*i+2], indices[indices[0] + 2 + i]); 
-      //printf("Bins: %i %i %i %f %f\n", i, indices[indices[0] + 2 + i]+threadIdx.x*MAX_NUM_OBSERVABLES, indices[indices[0] + 2 + i], x, binCenters[threadIdx.x*MAX_NUM_OBSERVABLES]); 
   }
 
   // Causes stack size to be statically undeterminable.
-  //fptype ret = (*(reinterpret_cast<device_function_ptr>(device_function_table[functionIdx])))(binCenters+threadIdx.x*MAX_NUM_OBSERVABLES, cudaArray, indices);
   fptype ret = callFunction(binCenters+threadIdx.x*MAX_NUM_OBSERVABLES, functionIdx, parameters); 
-  //if (gpuDebug & 1) printf("[%i, %i] Binned eval: %f %f\n", blockIdx.x, threadIdx.x, binCenters[threadIdx.x*4], ret);
   return ret; 
 }
 
 __host__ void ThrustPdfFunctor::getCompProbsAtDataPoints (std::vector<std::vector<fptype> >& values) {
-  //cpuDebug = 1; 
   copyParams(); 
   double overall = normalise();
   cudaMemcpyToSymbol(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
-  //setDebugMask(1); 
-  //cpuDebug = 0; 
 
   int numVars = observables.size(); 
   if (fitControl->binnedFit()) {
@@ -641,11 +630,9 @@ __host__ void ThrustPdfFunctor::getCompProbsAtDataPoints (std::vector<std::vecto
 		    thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
 		    results.begin(), 
 		    evalor); 
-  //setDebugMask(0); 
   values.clear(); 
   values.resize(components.size() + 1);
   thrust::host_vector<fptype> host_results = results;
-  //std::cout << "Overall: " << overall << " " << host_normalisation[getParameterIndex()] << " " << host_results[0] << " " << numVars << " " << numEntries << " " << host_results.size() << std::endl; 
   for (unsigned int i = 0; i < host_results.size(); ++i) {
     values[0].push_back(host_results[i]);
   }
@@ -658,11 +645,9 @@ __host__ void ThrustPdfFunctor::getCompProbsAtDataPoints (std::vector<std::vecto
 		      results.begin(), 
 		      compevalor); 
     host_results = results;
-    //std::cout << "Normalisation " << components[i]->getName() << ": " << host_results[0] << ", " << host_normalisation[components[i]->getParameterIndex()] << std::endl; 
     for (unsigned int j = 0; j < host_results.size(); ++j) {
       values[1 + i].push_back(host_results[j]); 
-    }
-    
+    }    
   }
 }
 

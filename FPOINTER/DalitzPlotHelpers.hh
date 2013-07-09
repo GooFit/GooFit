@@ -20,7 +20,10 @@ struct ResonanceInfo {
   unsigned int resonance_type; 
 };
 
-extern const int resonanceSize; 
+const int resonanceSize = 8;   // Number of parameters to describe one resonance.
+// Why not make this a static const member of ResonanceInfo? Because the 'static'
+// keyword (and 'extern' as well) interacts badly with some nvcc versions when the
+// variable is used in device code. 
 
 struct DecayInfo {
   fptype motherMass;

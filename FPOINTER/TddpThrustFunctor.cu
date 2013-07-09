@@ -5,7 +5,6 @@ using std::complex;
 #include "TddpHelperFunctions.hh"
 #include "TddpHelperFunctions.cxx"
 
-const int resonanceSize = 8;   // Number of parameters to describe one resonance
 const int resonanceOffset = 8; // Offset of the first resonance into the parameter index array 
 // Offset is number of parameters, constant index, indices for tau, xmix, and ymix, index
 // of resolution function, and finally number of resonances (not calculable from nP

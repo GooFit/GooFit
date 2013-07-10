@@ -297,7 +297,9 @@ __host__ double ThrustPdfFunctor::calculateNLL () const {
   //std::cout << std::endl;
   //} 
    
-  
+  if (host_normalisation[parameters] <= 0) 
+    abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " non-positive normalisation", this);
+
   cudaMemcpyToSymbol(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
   cudaDeviceSynchronize(); // Ensure normalisation integrals are finished
 
@@ -520,8 +522,8 @@ __host__ fptype ThrustPdfFunctor::normalise () const {
   if (isnan(sum)) {
     abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " NaN in normalisation", this); 
   }
-  else if (0 == sum) { 
-    abortWithCudaPrintFlush(__FILE__, __LINE__, "Zero in normalisation", this); 
+  else if (0 >= sum) { 
+    abortWithCudaPrintFlush(__FILE__, __LINE__, "Non-positive normalisation", this); 
   }
 
   //if (cpuDebug & 1) std::cout << getName() << " integral is " << ret << " " << sum << " " << (ret*sum) << " " << (1.0/(ret*sum)) << std::endl; 

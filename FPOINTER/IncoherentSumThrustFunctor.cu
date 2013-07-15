@@ -31,8 +31,6 @@ __device__ fptype device_incoherent (fptype* evt, fptype* p, unsigned int* indic
   int effFunctionIdx = parIndexFromResIndex_incoherent(numResonances); 
   fptype eff = callFunction(evt, indices[effFunctionIdx], indices[effFunctionIdx + 1]); 
 
-  if ((isnan(ret)) || (isnan(eff))) printf("NaN: %f %f, %i\n", ret, eff, evtNum); 
-
   ret *= eff;
 
   return ret; 
@@ -289,6 +287,7 @@ __device__ devcomplex<fptype> SpecialIncoherentResonanceCalculator::operator () 
   fptype daug1Mass  = functorConstants[indices[1] + 1]; 
   fptype daug2Mass  = functorConstants[indices[1] + 2]; 
   fptype daug3Mass  = functorConstants[indices[1] + 3];  
+  if (!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass)) return devcomplex<fptype>(0, 0); 
   fptype m23 = motherMass*motherMass + daug1Mass*daug1Mass + daug2Mass*daug2Mass + daug3Mass*daug3Mass - m12 - m13; 
 
   int parameter_i = parIndexFromResIndex_incoherent(resonance_i); // Find position of this resonance relative to TDDP start 

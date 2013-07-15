@@ -112,9 +112,10 @@ __device__ devcomplex<fptype> plainBW (fptype m12, fptype m13, fptype m23, unsig
 }
 
 __device__ devcomplex<fptype> gaussian (fptype m12, fptype m13, fptype m23, unsigned int* indices) {
-  fptype resmass                = cudaArray[indices[1]];
-  fptype reswidth               = cudaArray[indices[2]];
-  unsigned int cyclic_index     = indices[3]; 
+  // indices[1] is unused constant index, for consistency with other function types. 
+  fptype resmass                = cudaArray[indices[2]];
+  fptype reswidth               = cudaArray[indices[3]];
+  unsigned int cyclic_index     = indices[4]; 
 
   // Notice sqrt - this function uses mass, not mass-squared like the other resonance types. 
   fptype massToUse = SQRT(PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
@@ -292,6 +293,9 @@ ResonanceThrustFunctor::ResonanceThrustFunctor (string name,
   , amp_imag(ai)
 {
   vector<unsigned int> pindices; 
+  pindices.push_back(0); 
+  // Dummy index for constants - won't use it, but calling 
+  // functions can't know that and will call setConstantIndex anyway. 
   cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_NONRES, sizeof(void*));
   initialise(pindices); 
 }
@@ -307,6 +311,9 @@ ResonanceThrustFunctor::ResonanceThrustFunctor (string name,
   , amp_imag(ai)
 {
   vector<unsigned int> pindices; 
+  pindices.push_back(0); 
+  // Dummy index for constants - won't use it, but calling 
+  // functions can't know that and will call setConstantIndex anyway. 
   pindices.push_back(registerParameter(mean));
   pindices.push_back(registerParameter(sigma)); 
   pindices.push_back(cyc); 

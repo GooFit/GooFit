@@ -1,5 +1,4 @@
 #include "DalitzPlotThrustFunctor.hh"
-#include "TddpHelperFunctions.hh"
 #include <complex>
 using std::complex; 
 
@@ -33,25 +32,18 @@ __device__ devcomplex<fptype> device_DalitzPlot_calcIntegrals (fptype m12, fptyp
 
   devcomplex<fptype> ret; 
   if (!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass)) return ret;
+  fptype m23 = motherMass*motherMass + daug1Mass*daug1Mass + daug2Mass*daug2Mass + daug3Mass*daug3Mass - m12 - m13; 
 
   int parameter_i = parIndexFromResIndex_DP(res_i);
+  unsigned int functn_i = indices[parameter_i+2];
+  unsigned int params_i = indices[parameter_i+3];
+  ret = getResonanceAmplitude(m12, m13, m23, functn_i, params_i);
+
   int parameter_j = parIndexFromResIndex_DP(res_j);
+  unsigned int functn_j = indices[parameter_j+2];
+  unsigned int params_j = indices[parameter_j+3];
+  ret *= conj(getResonanceAmplitude(m12, m13, m23, functn_j, params_j));
 
-  fptype mass_i                 = p[indices[parameter_i+2]];
-  fptype width_i                = p[indices[parameter_i+3]];
-  unsigned int spin_i           = indices[parameter_i+4];
-  unsigned int cyclic_index_i   = indices[parameter_i+5];
-  unsigned int eval_type_i      = indices[parameter_i+6];
-
-  ret = getResonanceAmplitude(m12, m13, mass_i, width_i, spin_i, cyclic_index_i, eval_type_i, indices); 
-
-  fptype mass_j                 = p[indices[parameter_j+2]];
-  fptype width_j                = p[indices[parameter_j+3]];
-  unsigned int spin_j           = indices[parameter_j+4];
-  unsigned int cyclic_index_j   = indices[parameter_j+5];
-  unsigned int eval_type_j      = indices[parameter_j+6];
-      
-  ret *= conj(getResonanceAmplitude(m12, m13, mass_j, width_j, spin_j, cyclic_index_j, eval_type_j, indices)); 
   return ret; 
 }
 
@@ -86,6 +78,9 @@ __device__ fptype device_DalitzPlot (fptype* evt, fptype* p, unsigned int* indic
   int effFunctionIdx = parIndexFromResIndex_DP(numResonances); 
   fptype eff = callFunction(evt, indices[effFunctionIdx], indices[effFunctionIdx + 1]); 
   ret *= eff;
+
+  //if (0 == ret) printf("DalitzPlot evt %i zero.\n", evtNum); 
+
   return ret; 
 }
 
@@ -130,15 +125,13 @@ __host__ DalitzPlotThrustFunctor::DalitzPlotThrustFunctor (std::string n,
   cacheToUse = cacheCount++; 
   pindices.push_back(cacheToUse); 
 
-  for (std::vector<ResonanceInfo*>::iterator res = decayInfo->resonances.begin(); res != decayInfo->resonances.end(); ++res) {
+  for (std::vector<ResonanceThrustFunctor*>::iterator res = decayInfo->resonances.begin(); res != decayInfo->resonances.end(); ++res) {
     pindices.push_back(registerParameter((*res)->amp_real));
     pindices.push_back(registerParameter((*res)->amp_imag));
-    pindices.push_back(registerParameter((*res)->mass));
-    pindices.push_back(registerParameter((*res)->width));
-    pindices.push_back((*res)->spin);
-    pindices.push_back((*res)->cyclic_index);
-    pindices.push_back((*res)->eval_type);
-    pindices.push_back((*res)->resonance_type); 
+    pindices.push_back((*res)->getFunctionIndex());
+    pindices.push_back((*res)->getParameterIndex());
+    (*res)->setConstantIndex(cIndex); 
+    components.push_back(*res);
   }
 
   pindices.push_back(efficiency->getFunctionIndex());
@@ -209,12 +202,10 @@ __host__ fptype DalitzPlotThrustFunctor::normalise () const {
   }
 
   for (unsigned int i = 0; i < decayInfo->resonances.size(); ++i) {
-    int param_i = parameters + resonanceOffset_DP + resonanceSize*i; 
     redoIntegral[i] = forceRedoIntegrals; 
-    if ((host_params[host_indices[param_i + 2]] == cachedMasses[i]) && (host_params[host_indices[param_i + 3]] == cachedWidths[i])) continue;
+    if (!(decayInfo->resonances[i]->parametersChanged())) continue;
     redoIntegral[i] = true; 
-    cachedMasses[i] = host_params[host_indices[param_i + 2]];
-    cachedWidths[i] = host_params[host_indices[param_i + 3]];
+    decayInfo->resonances[i]->storeParameters();
   }
   forceRedoIntegrals = false; 
 
@@ -231,7 +222,6 @@ __host__ fptype DalitzPlotThrustFunctor::normalise () const {
 
   for (int i = 0; i < decayInfo->resonances.size(); ++i) {
     if (redoIntegral[i]) {
-      
       thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
 			thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
 			strided_range<thrust::device_vector<devcomplex<fptype> >::iterator>(cachedWaves->begin() + i, 
@@ -345,19 +335,15 @@ __device__ devcomplex<fptype> SpecialResonanceCalculator::operator () (thrust::t
   fptype daug2Mass  = functorConstants[indices[1] + 2]; 
   fptype daug3Mass  = functorConstants[indices[1] + 3];  
   if (!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass)) return ret;
+  fptype m23 = motherMass*motherMass + daug1Mass*daug1Mass + daug2Mass*daug2Mass + daug3Mass*daug3Mass - m12 - m13; 
 
   int parameter_i = parIndexFromResIndex_DP(resonance_i); // Find position of this resonance relative to DALITZPLOT start 
 
-  // Now extract actual parameters using indices found above. Notice double indirection: 
-  // 'parameters'  into paramIndices, then paramIndices content into cudaArray. 
-  fptype mass_i                 = cudaArray[indices[parameter_i+2]];
-  fptype width_i                = cudaArray[indices[parameter_i+3]];
-  unsigned int spin_i           = indices[parameter_i+4]; 
-  // Bit of a kludge to allow constant integer `parameters' without casting from functorConstants. 
-  unsigned int cyclic_index_i   = indices[parameter_i+5];
-  unsigned int eval_type_i      = indices[parameter_i+6];
+  unsigned int functn_i = indices[parameter_i+2];
+  unsigned int params_i = indices[parameter_i+3];
 
-  ret = getResonanceAmplitude(m12, m13, mass_i, width_i, spin_i, cyclic_index_i, eval_type_i, indices); 
-  return ret; 
+  ret = getResonanceAmplitude(m12, m13, m23, functn_i, params_i);
+  //printf("Amplitude %f %f %f (%f, %f)\n ", m12, m13, m23, ret.real, ret.imag); 
+  return ret;
 }
 

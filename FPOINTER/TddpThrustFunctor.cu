@@ -2,9 +2,6 @@
 #include <complex>
 using std::complex; 
 
-#include "TddpHelperFunctions.hh"
-#include "TddpHelperFunctions.cxx"
-
 const int resonanceOffset = 8; // Offset of the first resonance into the parameter index array 
 // Offset is number of parameters, constant index, indices for tau, xmix, and ymix, index
 // of resolution function, and finally number of resonances (not calculable from nP
@@ -18,8 +15,31 @@ const unsigned int SPECIAL_RESOLUTION_FLAG = 999999999;
 // own cache, hence the '10'. Ten threads should be enough for anyone! 
 __device__ WaveHolder* cWaves[10]; 
 
+__device__ bool inDalitz (fptype m12, fptype m13, fptype bigM, fptype dm1, fptype dm2, fptype dm3) {
+  if (m12 < POW(dm1 + dm2, 2)) return false; // This m12 cannot exist, it's less than the square of the (1,2) particle mass.
+  if (m12 > POW(bigM - dm3, 2)) return false;   // This doesn't work either, there's no room for an at-rest 3 daughter. 
+  
+  // Calculate energies of 1 and 3 particles in m12 rest frame. 
+  fptype e1star = 0.5 * (m12 - dm2*dm2 + dm1*dm1) / SQRT(m12); 
+  fptype e3star = 0.5 * (bigM*bigM - m12 - dm3*dm3) / SQRT(m12); 
+
+  // Bounds for m13 at this value of m12.
+  fptype minimum = POW(e1star + e3star, 2) - POW(SQRT(e1star*e1star - dm1*dm1) + SQRT(e3star*e3star - dm3*dm3), 2);
+  if (m13 < minimum) return false;
+  fptype maximum = POW(e1star + e3star, 2) - POW(SQRT(e1star*e1star - dm1*dm1) - SQRT(e3star*e3star - dm3*dm3), 2);
+  if (m13 > maximum) return false;
+
+  return true; 
+}
+
 __device__ inline int parIndexFromResIndex (int resIndex) {
   return resonanceOffset + resIndex*resonanceSize; 
+}
+
+__device__ devcomplex<fptype> getResonanceAmplitude (fptype m12, fptype m13, fptype m23, 
+						     unsigned int functionIdx, unsigned int pIndex) {
+  resonance_function_ptr func = reinterpret_cast<resonance_function_ptr>(device_function_table[functionIdx]);
+  return (*func)(m12, m13, m23, paramIndices + pIndex); 
 }
 
 __device__ ThreeComplex device_Tddp_calcIntegrals (fptype m12, fptype m13, int res_i, int res_j, fptype* p, unsigned int* indices) {
@@ -42,40 +62,22 @@ __device__ ThreeComplex device_Tddp_calcIntegrals (fptype m12, fptype m13, int r
 
   ThreeComplex ret; 
   if (!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass)) return ret;
+  fptype m23 = motherMass*motherMass + daug1Mass*daug1Mass + daug2Mass*daug2Mass + daug3Mass*daug3Mass - m12 - m13; 
 
   int parameter_i = parIndexFromResIndex(res_i);
   int parameter_j = parIndexFromResIndex(res_j);
 
   //fptype amp_real             = p[indices[parameter_i+0]];
   //fptype amp_imag             = p[indices[parameter_i+1]];
-  fptype mass_i                 = p[indices[parameter_i+2]];
-  fptype width_i                = p[indices[parameter_i+3]];
-  unsigned int spin_i           = indices[parameter_i+4];
-  unsigned int cyclic_index_i   = indices[parameter_i+5];
-  unsigned int eval_type_i      = indices[parameter_i+6];
+  unsigned int functn_i = indices[parameter_i+2];
+  unsigned int params_i = indices[parameter_i+3];
+  devcomplex<fptype> ai = getResonanceAmplitude(m12, m13, m23, functn_i, params_i);
+  devcomplex<fptype> bi = getResonanceAmplitude(m13, m12, m23, functn_i, params_i);
 
-  // I don't use this anymore. We have wave A and wave B; 
-  // it used to be the case that we calculated wave A as the sum of
-  // flavour eigenstates plus CP-even states, and B as flavour plus CP-odd, 
-  // because of the way the CP states cancel across the Dalitz plot. 
-  // This was meant as an optimisation. However, since I need to calculate
-  // the opposite-side numbers anyway to put them in the cache and 
-  // use them for the normalisation integrals, it doesn't actually
-  // save any time anymore. 
-  //unsigned int resonance_type_i = indices[parameter_i+7];
-
-  devcomplex<fptype> ai = getResonanceAmplitude(m12, m13, mass_i, width_i, spin_i, cyclic_index_i, eval_type_i, indices); 
-  devcomplex<fptype> bi = getResonanceAmplitude(m13, m12, mass_i, width_i, spin_i, cyclic_index_i, eval_type_i, indices); 
-
-  fptype mass_j                 = p[indices[parameter_j+2]];
-  fptype width_j                = p[indices[parameter_j+3]];
-  unsigned int spin_j           = indices[parameter_j+4];
-  unsigned int cyclic_index_j   = indices[parameter_j+5];
-  unsigned int eval_type_j      = indices[parameter_j+6];
-  //unsigned int resonance_type_j = indices[parameter_j+7];
-      
-  devcomplex<fptype> aj = conj(getResonanceAmplitude(m12, m13, mass_j, width_j, spin_j, cyclic_index_j, eval_type_j, indices)); 
-  devcomplex<fptype> bj = conj(getResonanceAmplitude(m13, m12, mass_j, width_j, spin_j, cyclic_index_j, eval_type_j, indices)); 
+  unsigned int functn_j = indices[parameter_j+2];
+  unsigned int params_j = indices[parameter_j+3];
+  devcomplex<fptype> aj = conj(getResonanceAmplitude(m12, m13, m23, functn_j, params_j));
+  devcomplex<fptype> bj = conj(getResonanceAmplitude(m13, m12, m23, functn_j, params_j)); 
 
   ret = ThreeComplex((ai*aj).real, (ai*aj).imag, (ai*bj).real, (ai*bj).imag, (bi*bj).real, (bi*bj).imag);
   return ret; 
@@ -109,7 +111,6 @@ __device__ fptype device_Tddp (fptype* evt, fptype* p, unsigned int* indices) {
 
     devcomplex<fptype> matrixelement(thrust::get<0>(cWaves[cacheToUse][evtNum*numResonances + i]),
 				     thrust::get<1>(cWaves[cacheToUse][evtNum*numResonances + i])); 
-    //if (evtNum == 43008) printf("Tddp: %i %i (%f %f) (%f %f) %i\n", evtNum, i, matrixelement.real, matrixelement.imag, amp_real, amp_imag, numResonances); 
     matrixelement.multiply(amp_real, amp_imag); 
     sumWavesA += matrixelement; 
 
@@ -124,7 +125,6 @@ __device__ fptype device_Tddp (fptype* evt, fptype* p, unsigned int* indices) {
 	int paramIndex_j  = parIndexFromResIndex(j);
 	fptype amp_real_j = p[indices[paramIndex_j+0]];
 	fptype amp_imag_j = p[indices[paramIndex_j+1]];
-	
 
 	devcomplex<fptype> waveA_j(thrust::get<0>(cWaves[cacheToUse][evtNum*numResonances + j]),
 				   thrust::get<1>(cWaves[cacheToUse][evtNum*numResonances + j])); 
@@ -137,8 +137,6 @@ __device__ fptype device_Tddp (fptype* evt, fptype* p, unsigned int* indices) {
 	devcomplex<fptype> rateAA = conj(waveA_i)*waveA_j*amps;
 	devcomplex<fptype> rateAB = conj(waveA_i)*waveB_j*amps;
 	devcomplex<fptype> rateBB = conj(waveB_i)*waveB_j*amps;
-
-	//printf("Wave (%i, %i): (%f, %f) (%f, %f) (%f, %f) \n", i, j, rateAA.real, rateAA.imag, rateAB.real, rateAB.imag, rateBB.real, rateBB.imag); 
 	
 	sumRateAA += rateAA;
 	sumRateAB += rateAB;
@@ -146,10 +144,8 @@ __device__ fptype device_Tddp (fptype* evt, fptype* p, unsigned int* indices) {
       }
       waveA_i.multiply(amp_real, amp_imag);
       waveB_i.multiply(amp_real, amp_imag);
-      //printf("WaveA,B %i (%f, %f), (%f, %f)\n", i, waveA_i.real, waveA_i.imag, waveB_i.real, waveB_i.imag); 
     }
 #endif
-    
 
     matrixelement = devcomplex<fptype>(thrust::get<2>(cWaves[cacheToUse][evtNum*numResonances + i]),
 				       thrust::get<3>(cWaves[cacheToUse][evtNum*numResonances + i])); 
@@ -237,8 +233,6 @@ __device__ fptype device_Tddp (fptype* evt, fptype* p, unsigned int* indices) {
 													   p, &(indices[resFunctionPar])); 
   }
    
-
-
   fptype eff = callFunction(evt, indices[effFunctionIdx], indices[effFunctionIdx + 1]); 
   //internalDebug = 0; 
   ret *= eff;
@@ -250,7 +244,7 @@ __device__ fptype device_Tddp (fptype* evt, fptype* p, unsigned int* indices) {
 
 
 
-  //if ((evtNum < 50) && (gpuDebug & 1)) {
+  //if (evtNum < 50) {
   //if ((gpuDebug & 1) && (0 == threadIdx.x)) {
   //if ((gpuDebug & 1) && (180 == evtNum)) {
   //if ((0 == threadIdx.x) && (0 == blockIdx.x) && (gpuDebug & 1)) {
@@ -258,7 +252,7 @@ __device__ fptype device_Tddp (fptype* evt, fptype* p, unsigned int* indices) {
   //sumRateAB *= eff;
   //sumRateBB *= eff;
   //printf("Signal1 %i (%f, %f) (%f, %f) (%f, %f)\n", evtNum, sumRateAA.real, sumRateAA.imag, sumRateAB.real, sumRateAB.imag, sumRateBB.real, sumRateBB.imag); 
-  //printf("Signal1 %i (%f, %f) (%f, %f) (%f, %f %f)\n", evtNum, term1, term2, sumWavesA.real, sumWavesA.imag, _tau, _xmixing, _ymixing);
+  //printf("Signal1 %i (%f, %f) (%f, %f) (%f, %f %f) %f\n", evtNum, term1, term2, sumWavesA.real, sumWavesA.imag, _tau, _xmixing, _ymixing, ret);
   //fptype m23 = motherMass*motherMass + daug1Mass*daug1Mass + daug2Mass*daug2Mass + daug3Mass*daug3Mass - m12 - m13; 
   //printf("Signal2 %i (%f, %f, %f) %f, %f | %f %f %f\n", evtNum, m12, m13, m23, _time, _sigma, eff, ret, normalisationFactors[(indices - paramIndices)]);
   //printf("Signal3 %f %f %f %f %f %f %f %f\n", cudaArray[indices[effFunctionIdx+1]+1], cudaArray[indices[effFunctionIdx+1]+2], cudaArray[indices[effFunctionIdx+1]+3], 
@@ -327,18 +321,16 @@ __host__ TddpThrustFunctor::TddpThrustFunctor (std::string n, Variable* _dtime, 
   cacheToUse = cacheCount++; 
   pindices.push_back(cacheToUse); 
 
-  for (std::vector<ResonanceInfo*>::iterator res = decayInfo->resonances.begin(); res != decayInfo->resonances.end(); ++res) {
+  for (std::vector<ResonanceThrustFunctor*>::iterator res = decayInfo->resonances.begin(); res != decayInfo->resonances.end(); ++res) {
     pindices.push_back(registerParameter((*res)->amp_real));
     pindices.push_back(registerParameter((*res)->amp_imag));
-    pindices.push_back(registerParameter((*res)->mass));
-    pindices.push_back(registerParameter((*res)->width));
-    pindices.push_back((*res)->spin);
-    pindices.push_back((*res)->cyclic_index);
-    pindices.push_back((*res)->eval_type);
-    pindices.push_back((*res)->resonance_type); 
+    pindices.push_back((*res)->getFunctionIndex());
+    pindices.push_back((*res)->getParameterIndex());
+    (*res)->setConstantIndex(cIndex); 
+    components.push_back(*res);
   }
 
-  pindices.push_back(efficiency->getFunctionIndex());
+  pindices.push_back(efficiency->getFunctionIndex()); 
   pindices.push_back(efficiency->getParameterIndex());
   components.push_back(efficiency); 
 
@@ -422,15 +414,13 @@ __host__ TddpThrustFunctor::TddpThrustFunctor (std::string n, Variable* _dtime, 
   cacheToUse = cacheCount++; 
   pindices.push_back(cacheToUse); 
 
-  for (std::vector<ResonanceInfo*>::iterator res = decayInfo->resonances.begin(); res != decayInfo->resonances.end(); ++res) {
+  for (std::vector<ResonanceThrustFunctor*>::iterator res = decayInfo->resonances.begin(); res != decayInfo->resonances.end(); ++res) {
     pindices.push_back(registerParameter((*res)->amp_real));
     pindices.push_back(registerParameter((*res)->amp_imag));
-    pindices.push_back(registerParameter((*res)->mass));
-    pindices.push_back(registerParameter((*res)->width));
-    pindices.push_back((*res)->spin);
-    pindices.push_back((*res)->cyclic_index);
-    pindices.push_back((*res)->eval_type);
-    pindices.push_back((*res)->resonance_type); 
+    pindices.push_back((*res)->getFunctionIndex());
+    pindices.push_back((*res)->getParameterIndex());
+    (*res)->setConstantIndex(cIndex); 
+    components.push_back(*res);
   }
 
   pindices.push_back(efficiency->getFunctionIndex());
@@ -470,8 +460,6 @@ __host__ TddpThrustFunctor::TddpThrustFunctor (std::string n, Variable* _dtime, 
 
   addSpecialMask(FunctorBase::ForceSeparateNorm); 
 }
-
-
 
 __host__ void TddpThrustFunctor::setDataSize (unsigned int dataSize, unsigned int evtSize) {
   // Default 5 is m12, m13, time, sigma_t, evtNum
@@ -513,12 +501,10 @@ __host__ fptype TddpThrustFunctor::normalise () const {
   }
 
   for (unsigned int i = 0; i < decayInfo->resonances.size(); ++i) {
-    int param_i = parameters + resonanceOffset + resonanceSize*i; 
     redoIntegral[i] = forceRedoIntegrals; 
-    if ((host_params[host_indices[param_i + 2]] == cachedMasses[i]) && (host_params[host_indices[param_i + 3]] == cachedWidths[i])) continue;
+    if (!(decayInfo->resonances[i]->parametersChanged())) continue;
     redoIntegral[i] = true; 
-    cachedMasses[i] = host_params[host_indices[param_i + 2]];
-    cachedWidths[i] = host_params[host_indices[param_i + 3]];
+    decayInfo->resonances[i]->storeParameters();
   }
   forceRedoIntegrals = false; 
 
@@ -731,22 +717,17 @@ __device__ WaveHolder SpecialWaveCalculator::operator () (thrust::tuple<int, fpt
   fptype daug2Mass  = functorConstants[indices[1] + 2]; 
   fptype daug3Mass  = functorConstants[indices[1] + 3];  
 
-  //printf("(%i, %i) Special: %i %i %f %f\n", blockIdx.x, threadIdx.x, evtNum, thrust::get<2>(t), m12, m13); 
   if (!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass)) return ret;
+  fptype m23 = motherMass*motherMass + daug1Mass*daug1Mass + daug2Mass*daug2Mass + daug3Mass*daug3Mass - m12 - m13; 
 
   int parameter_i = parIndexFromResIndex(resonance_i); // Find position of this resonance relative to TDDP start 
+  unsigned int functn_i = indices[parameter_i+2];
+  unsigned int params_i = indices[parameter_i+3];
 
-  // Now extract actual parameters using indices found above. Notice double indirection: 'parameters'  into paramIndices, then paramIndices content into cudaArray. 
-  fptype mass_i                 = cudaArray[indices[parameter_i+2]];
-  fptype width_i                = cudaArray[indices[parameter_i+3]];
-  unsigned int spin_i           = indices[parameter_i+4]; // Bit of a kludge to allow constant integer `parameters' without casting from functorConstants. 
-  unsigned int cyclic_index_i   = indices[parameter_i+5];
-  unsigned int eval_type_i      = indices[parameter_i+6];
+  devcomplex<fptype> ai = getResonanceAmplitude(m12, m13, m23, functn_i, params_i);
+  devcomplex<fptype> bi = getResonanceAmplitude(m13, m12, m23, functn_i, params_i);
 
-  devcomplex<fptype> ai = getResonanceAmplitude(m12, m13, mass_i, width_i, spin_i, cyclic_index_i, eval_type_i, indices); 
-  devcomplex<fptype> bi = getResonanceAmplitude(m13, m12, mass_i, width_i, spin_i, cyclic_index_i, eval_type_i, indices); 
-
-  //if (evtNum < 1) cuPrintf("Wave %i %i: (%f, %f) (%f, %f)\n", evtNum, resonance_i, ai.real, ai.imag, bi.real, bi.imag); 
+  //printf("Amplitudes %f, %f => (%f %f) (%f %f)\n", m12, m13, ai.real, ai.imag, bi.real, bi.imag);
 
   thrust::get<0>(ret) = ai.real;
   thrust::get<1>(ret) = ai.imag;

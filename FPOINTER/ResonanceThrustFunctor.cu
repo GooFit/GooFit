@@ -1,3 +1,5 @@
+#include "ResonanceThrustFunctor.hh" 
+
 __device__ fptype twoBodyCMmom (double rMassSq, fptype d1m, fptype d2m) {
   // For A -> B + C, calculate momentum of B and C in rest frame of A. 
   // PDG 38.16.
@@ -20,23 +22,6 @@ __device__ fptype dampingFactorSquare (fptype cmmom, int spin, fptype mRadius) {
 
   // Spin 3 and up not accounted for. 
   return dfsq; 
-}
-
-__device__ bool inDalitz (fptype m12, fptype m13, fptype bigM, fptype dm1, fptype dm2, fptype dm3) {
-  if (m12 < POW(dm1 + dm2, 2)) return false; // This m12 cannot exist, it's less than the square of the (1,2) particle mass.
-  if (m12 > POW(bigM - dm3, 2)) return false;   // This doesn't work either, there's no room for an at-rest 3 daughter. 
-  
-  // Calculate energies of 1 and 3 particles in m12 rest frame. 
-  fptype e1star = 0.5 * (m12 - dm2*dm2 + dm1*dm1) / SQRT(m12); 
-  fptype e3star = 0.5 * (bigM*bigM - m12 - dm3*dm3) / SQRT(m12); 
-
-  // Bounds for m13 at this value of m12.
-  fptype minimum = POW(e1star + e3star, 2) - POW(SQRT(e1star*e1star - dm1*dm1) + SQRT(e3star*e3star - dm3*dm3), 2);
-  if (m13 < minimum) return false;
-  fptype maximum = POW(e1star + e3star, 2) - POW(SQRT(e1star*e1star - dm1*dm1) - SQRT(e3star*e3star - dm3*dm3), 2);
-  if (m13 > maximum) return false;
-
-  return true; 
 }
 
 __device__ fptype spinFactor (unsigned int spin, fptype motherMass, fptype daug1Mass, fptype daug2Mass, fptype daug3Mass, fptype m12, fptype m13, fptype m23, unsigned int cyclic_index) {
@@ -84,17 +69,29 @@ __device__ fptype spinFactor (unsigned int spin, fptype motherMass, fptype daug1
   return sFactor; 
 }
 
-__device__ devcomplex<fptype> plainBW (fptype m12, fptype m13, fptype m23, 
-				       fptype resmass, fptype reswidth, fptype meson_radius, 
-				       fptype motherMass, fptype daug1Mass, fptype daug2Mass, fptype daug3Mass, 
-				       unsigned int spin, unsigned int cyclic_index) {
+__device__ devcomplex<fptype> plainBW (fptype m12, fptype m13, fptype m23, unsigned int* indices) {
+  fptype motherMass             = functorConstants[indices[1]+0];
+  fptype daug1Mass              = functorConstants[indices[1]+1];
+  fptype daug2Mass              = functorConstants[indices[1]+2];
+  fptype daug3Mass              = functorConstants[indices[1]+3];
+  fptype meson_radius           = functorConstants[indices[1]+4];
+
+  fptype resmass                = cudaArray[indices[2]];
+  fptype reswidth               = cudaArray[indices[3]];
+  unsigned int spin             = indices[4];
+  unsigned int cyclic_index     = indices[5]; 
+
   fptype rMassSq = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
   fptype frFactor = 1;
 
   resmass *= resmass; 
   // Calculate momentum of the two daughters in the resonance rest frame; note symmetry under interchange (dm1 <-> dm2). 
-  fptype measureDaughterMoms = twoBodyCMmom(rMassSq, (PAIR_23 == cyclic_index ? daug2Mass : daug1Mass), (PAIR_12 == cyclic_index ? daug2Mass : daug3Mass));
-  fptype nominalDaughterMoms = twoBodyCMmom(resmass, (PAIR_23 == cyclic_index ? daug2Mass : daug1Mass), (PAIR_12 == cyclic_index ? daug2Mass : daug3Mass));
+  fptype measureDaughterMoms = twoBodyCMmom(rMassSq, 
+					    (PAIR_23 == cyclic_index ? daug2Mass : daug1Mass), 
+					    (PAIR_12 == cyclic_index ? daug2Mass : daug3Mass));
+  fptype nominalDaughterMoms = twoBodyCMmom(resmass, 
+					    (PAIR_23 == cyclic_index ? daug2Mass : daug1Mass), 
+					    (PAIR_12 == cyclic_index ? daug2Mass : daug3Mass));
 
   if (0 != spin) {
     frFactor =  dampingFactorSquare(nominalDaughterMoms, spin, meson_radius);
@@ -109,28 +106,18 @@ __device__ devcomplex<fptype> plainBW (fptype m12, fptype m13, fptype m23,
 
   ret *= SQRT(frFactor); 
   fptype spinF = spinFactor(spin, motherMass, daug1Mass, daug2Mass, daug3Mass, m12, m13, m23, cyclic_index); 
-
-  //if ((internalDebug1 == threadIdx.x) && (internalDebug2 == blockIdx.x))
-  //if ((0 == blockIdx.x) && (0 == threadIdx.x))
-    //printf("Breit-Wigner: %f %f %f | %f %f %f\n", A, B, C, resmass, rMassSq, reswidth);
-    //printf("Breit-Wigner: %i %i %f %f | (%f %f) %f\n", spin, cyclic_index, m12, m13, ret.real, ret.imag, spinF);
-
   ret *= spinF; 
-
-  //if ((m12 > 2.8) && (m12 < 2.81)) {
-    //printf("plainBW 1 %f %f %f %f %f\n", resmass, m12, m13, rMassSq, reswidth); //, frFactor);//, measureDaughterMoms, nominalDaughterMoms);
-    //printf("plainBW 2 %f %f %f %f %f\n", resmass, reswidth, frFactor, measureDaughterMoms, nominalDaughterMoms);
-    //printf("plainBW 3 %f %f %f %f %f\n", resmass, A, spinF, ret.real, ret.imag); 
-  //}
 
   return ret; 
 }
 
-__device__ devcomplex<fptype> gaussian (fptype m12, fptype m13, fptype m23, fptype resmass, fptype reswidth, unsigned int cyclic_index) {
+__device__ devcomplex<fptype> gaussian (fptype m12, fptype m13, fptype m23, unsigned int* indices) {
+  fptype resmass                = cudaArray[indices[1]];
+  fptype reswidth               = cudaArray[indices[2]];
+  unsigned int cyclic_index     = indices[3]; 
+
   // Notice sqrt - this function uses mass, not mass-squared like the other resonance types. 
   fptype massToUse = SQRT(PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
-  //reswidth *= root2; 
-  //reswidth = 1.0 / reswidth; 
   massToUse -= resmass;
   massToUse /= reswidth;
   massToUse *= massToUse;
@@ -138,16 +125,12 @@ __device__ devcomplex<fptype> gaussian (fptype m12, fptype m13, fptype m23, fpty
 
   // Ignore factor 1/sqrt(2pi). 
   ret /= reswidth;
-  //ret *= invRootPi;
-
-  //if ((internalDebug1 == threadIdx.x) && (internalDebug2 == blockIdx.x))
-  //printf("Gaussian: %f %f %f | %f %f %f\n", m12, m13, m23, resmass, reswidth, ret); 
 
   return devcomplex<fptype>(ret, 0); 
 }
 
 __device__ fptype hFun (double s, double daug2Mass, double daug3Mass) {
-  //Last helper function
+  // Last helper function
   const fptype _pi = 3.14159265359;
   double sm   = daug2Mass + daug3Mass;
   double SQRTs = sqrt(s);
@@ -158,9 +141,8 @@ __device__ fptype hFun (double s, double daug2Mass, double daug3Mass) {
   return val;
 }
 
-
 __device__ fptype dh_dsFun (double s, double daug2Mass, double daug3Mass) {
-  //Yet another helper function
+  // Yet another helper function
   const fptype _pi = 3.14159265359;
   double k_s = twoBodyCMmom(s, daug2Mass, daug3Mass);
   
@@ -171,7 +153,6 @@ __device__ fptype dh_dsFun (double s, double daug2Mass, double daug3Mass) {
 
 __device__ fptype dFun (double s, double daug2Mass, double daug3Mass) {
   // Helper function used in Gronau-Sakurai
-  // static double _pi = TMath::Pi();
   const fptype _pi = 3.14159265359;
   double sm   = daug2Mass + daug3Mass;
   double sm24 = sm*sm/4.0;
@@ -179,7 +160,6 @@ __device__ fptype dFun (double s, double daug2Mass, double daug3Mass) {
   double k_m2 = twoBodyCMmom(s, daug2Mass, daug3Mass);
  
   double val = 3.0/_pi * sm24/pow(k_m2, 2) * log((m + 2*k_m2)/sm) + m/(2*_pi*k_m2) - sm24*m/(_pi * pow(k_m2, 3));
- 
   return val;
 }
 
@@ -195,10 +175,18 @@ __device__ fptype fsFun (double s, double m2, double gam, double daug2Mass, doub
   return f;
 }
 
-__device__ devcomplex<fptype> gouSak (fptype m12, fptype m13, fptype m23, 
-				       fptype resmass, fptype reswidth, fptype meson_radius, 
-				       fptype motherMass, fptype daug1Mass, fptype daug2Mass, fptype daug3Mass, 
-				       unsigned int spin, unsigned int cyclic_index) {
+__device__ devcomplex<fptype> gouSak (fptype m12, fptype m13, fptype m23, unsigned int* indices) {
+  fptype motherMass             = functorConstants[indices[1]+0];
+  fptype daug1Mass              = functorConstants[indices[1]+1];
+  fptype daug2Mass              = functorConstants[indices[1]+2];
+  fptype daug3Mass              = functorConstants[indices[1]+3];
+  fptype meson_radius           = functorConstants[indices[1]+4];
+
+  fptype resmass                = cudaArray[indices[2]];
+  fptype reswidth               = cudaArray[indices[3]];
+  unsigned int spin             = indices[4];
+  unsigned int cyclic_index     = indices[5]; 
+
   fptype rMassSq = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
   fptype frFactor = 1;
 
@@ -226,27 +214,10 @@ __device__ devcomplex<fptype> gouSak (fptype m12, fptype m13, fptype m23,
   return retur; 
 }
 
-
-__device__ devcomplex<fptype> getResonanceAmplitude (fptype m12, fptype m13, fptype resmass, fptype reswidth, unsigned int spin, unsigned int cyclic_index, unsigned int eval_type, unsigned int* indices) {
-  fptype motherMass   = functorConstants[indices[1] + 0]; 
-  fptype daug1Mass    = functorConstants[indices[1] + 1]; 
-  fptype daug2Mass    = functorConstants[indices[1] + 2]; 
-  fptype daug3Mass    = functorConstants[indices[1] + 3]; 
-  if (!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass)) return devcomplex<fptype>(0, 0); 
-  fptype meson_radius = functorConstants[indices[1] + 4]; 
-
-  fptype m23 = motherMass*motherMass + daug1Mass*daug1Mass + daug2Mass*daug2Mass + daug3Mass*daug3Mass - m12 - m13; 
-
-  // This switch evaluates identically for each thread, since we're going through the resonances
-  // in sequence. So there should not be any branching because of it. 
-  switch (eval_type) {
-  case RBW:    return plainBW(m12, m13, m23, resmass, reswidth, meson_radius, motherMass, daug1Mass, daug2Mass, daug3Mass, spin, cyclic_index); 
-  case GOU_SAK: return  gouSak(m12, m13, m23, resmass, reswidth, meson_radius, motherMass, daug1Mass, daug2Mass, daug3Mass, spin, cyclic_index);
-  case GAUSSIAN: return gaussian(m12, m13, m23, resmass, reswidth, cyclic_index); 
-  default: 
-  case NONRES: return devcomplex<fptype>(1, 0); 
-  }  
+__device__ devcomplex<fptype> nonres (fptype m12, fptype m13, fptype m23, unsigned int* indices) {
+  return devcomplex<fptype>(1, 0); 
 }
+
 
 __device__ void getAmplitudeCoefficients (devcomplex<fptype> a1, devcomplex<fptype> a2, fptype& a1sq, fptype& a2sq, fptype& a1a2real, fptype& a1a2imag) {
   // Returns A_1^2, A_2^2, real and imaginary parts of A_1A_2^*
@@ -256,3 +227,93 @@ __device__ void getAmplitudeCoefficients (devcomplex<fptype> a1, devcomplex<fpty
   a1a2real = a1.real;
   a1a2imag = a1.imag; 
 }
+
+__device__ resonance_function_ptr ptr_to_RBW = plainBW;
+__device__ resonance_function_ptr ptr_to_GOUSAK = gouSak; 
+__device__ resonance_function_ptr ptr_to_GAUSSIAN = gaussian;
+__device__ resonance_function_ptr ptr_to_NONRES = nonres;
+
+
+ResonanceThrustFunctor::ResonanceThrustFunctor (string name, 
+						Variable* ar, 
+						Variable* ai, 
+						Variable* mass, 
+						Variable* width, 
+						unsigned int sp, 
+						unsigned int cyc) 
+  : ThrustPdfFunctor(0, name)
+  , amp_real(ar)
+  , amp_imag(ai)
+{
+  vector<unsigned int> pindices; 
+  pindices.push_back(0); 
+  // Making room for index of decay-related constants. Assumption:
+  // These are mother mass and three daughter masses in that order.
+  // They will be registered by the object that uses this resonance,
+  // which will tell this object where to find them by calling setConstantIndex. 
+
+  pindices.push_back(registerParameter(mass));
+  pindices.push_back(registerParameter(width)); 
+  pindices.push_back(sp);
+  pindices.push_back(cyc); 
+
+  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_RBW, sizeof(void*));
+  initialise(pindices); 
+}
+
+ResonanceThrustFunctor::ResonanceThrustFunctor (string name, 
+						Variable* ar, 
+						Variable* ai, 
+						unsigned int sp, 
+						Variable* mass, 
+						Variable* width, 
+						unsigned int cyc) 
+  : ThrustPdfFunctor(0, name)
+  , amp_real(ar)
+  , amp_imag(ai)
+{
+  // Same as BW except for function pointed to. 
+  vector<unsigned int> pindices; 
+  pindices.push_back(0); 
+  pindices.push_back(registerParameter(mass));
+  pindices.push_back(registerParameter(width)); 
+  pindices.push_back(sp);
+  pindices.push_back(cyc); 
+
+  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_GOUSAK, sizeof(void*));
+  initialise(pindices); 
+}
+
+ResonanceThrustFunctor::ResonanceThrustFunctor (string name, 
+						Variable* ar, 
+						Variable* ai) 
+  : ThrustPdfFunctor(0, name)
+  , amp_real(ar)
+  , amp_imag(ai)
+{
+  vector<unsigned int> pindices; 
+  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_NONRES, sizeof(void*));
+  initialise(pindices); 
+}
+
+ResonanceThrustFunctor::ResonanceThrustFunctor (string name,
+						Variable* ar, 
+						Variable* ai,
+						Variable* mean, 
+						Variable* sigma,
+						unsigned int cyc) 
+  : ThrustPdfFunctor(0, name)
+  , amp_real(ar)
+  , amp_imag(ai)
+{
+  vector<unsigned int> pindices; 
+  pindices.push_back(registerParameter(mean));
+  pindices.push_back(registerParameter(sigma)); 
+  pindices.push_back(cyc); 
+
+  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_GAUSSIAN, sizeof(void*));
+  initialise(pindices); 
+
+}
+
+

@@ -1,18 +1,15 @@
 #include "IncoherentSumThrustFunctor.hh"
 #include "devcomplex.hh" 
+#include "ResonanceThrustFunctor.hh"
 
-#include "TddpHelperFunctions.hh"
-
-const int resonanceSize_incoherent = 7;   // Number of parameters to describe one resonance. Note this is
-// one less than in the coherent case, as the 'amplitudes' (really just weights) have no imaginary part. 
 const int resonanceOffset_incoherent = 4; // Offset of the first resonance into the parameter index array. 
 // Notice that this is different from the TddpThrustFunctor case because there's no time information. 
-// In particular the offset consists of nP, constant index, and number of resonances. 
+// In particular the offset consists of nP, constant index, number of resonances, and cache index. 
 
 __device__ devcomplex<fptype>* cResonanceValues[10]; 
 
 __device__ inline int parIndexFromResIndex_incoherent (int resIndex) {
-  return resonanceOffset_incoherent + resIndex*resonanceSize_incoherent; 
+  return resonanceOffset_incoherent + resIndex*resonanceSize; 
 }
 
 __device__ fptype device_incoherent (fptype* evt, fptype* p, unsigned int* indices) {
@@ -22,26 +19,21 @@ __device__ fptype device_incoherent (fptype* evt, fptype* p, unsigned int* indic
   fptype ret = 0; 
   unsigned int numResonances = indices[2]; 
   unsigned int cacheToUse    = indices[3]; 
-  //unsigned int numResonances = 1; 
   for (int i = 0; i < numResonances; ++i) {
     int paramIndex  = parIndexFromResIndex_incoherent(i);
     fptype amplitude = p[indices[paramIndex+0]];
 
     devcomplex<fptype> matrixelement = cResonanceValues[cacheToUse][evtNum*numResonances + i];
     ret += amplitude * matrixelement.abs2();
-
-    //if ((20 > (int) floor(0.5 + evt[8])) && (gpuDebug & 1) && (paramIndices + debugParamIndex == indices))
-    //printf("Incoherent: %i %f * %f = %f -> %f (%f, %f)\n", i, amplitude, matrixelement.abs2(), amplitude * matrixelement.abs2(), ret, evt[6], evt[7]);
   } 
 
   // Multiply by efficiency  
   int effFunctionIdx = parIndexFromResIndex_incoherent(numResonances); 
-  //fptype eff = (*(reinterpret_cast<device_function_ptr>(device_function_table[indices[effFunctionIdx]])))(evt, cudaArray, paramIndices + indices[effFunctionIdx + 1]);
   fptype eff = callFunction(evt, indices[effFunctionIdx], indices[effFunctionIdx + 1]); 
-  ret *= eff;
 
-  //if ((1 > (int) floor(0.5 + evt[8])) && (gpuDebug & 1) && (paramIndices + debugParamIndex == indices))
-  //printf("Incoherent efficiency: %f -> %f\n", eff, ret); 
+  if ((isnan(ret)) || (isnan(eff))) printf("NaN: %f %f, %i\n", ret, eff, evtNum); 
+
+  ret *= eff;
 
   return ret; 
 }
@@ -82,15 +74,14 @@ __host__ IncoherentSumThrustFunctor::IncoherentSumThrustFunctor (std::string n, 
   cacheToUse = cacheCount++; 
   pindices.push_back(cacheToUse); 
 
-  for (std::vector<ResonanceInfo*>::iterator res = decayInfo->resonances.begin(); res != decayInfo->resonances.end(); ++res) {
+  for (std::vector<ResonanceThrustFunctor*>::iterator res = decayInfo->resonances.begin(); res != decayInfo->resonances.end(); ++res) {
     pindices.push_back(registerParameter((*res)->amp_real));
-    //pindices.push_back(registerParameter((*res)->amp_imag)); // Incoherent resonances are just added as real numbers. 
-    pindices.push_back(registerParameter((*res)->mass));
-    pindices.push_back(registerParameter((*res)->width));
-    pindices.push_back((*res)->spin);
-    pindices.push_back((*res)->cyclic_index);
-    pindices.push_back((*res)->eval_type);
-    pindices.push_back((*res)->resonance_type); 
+    pindices.push_back(registerParameter((*res)->amp_real)); 
+    // Not going to use amp_imag, but need a dummy index so the resonance size will be consistent.
+    pindices.push_back((*res)->getFunctionIndex());
+    pindices.push_back((*res)->getParameterIndex());
+    (*res)->setConstantIndex(cIndex); 
+    components.push_back(*res);
   }
 
   pindices.push_back(efficiency->getFunctionIndex());
@@ -169,12 +160,10 @@ __host__ fptype IncoherentSumThrustFunctor::normalise () const {
 
   // Check for changed masses or forced integral redo. 
   for (unsigned int i = 0; i < decayInfo->resonances.size(); ++i) {
-    int param_i = parameters + resonanceOffset_incoherent + resonanceSize_incoherent * i; 
     redoIntegral[i] = forceRedoIntegrals; 
-    if ((host_params[host_indices[param_i + 1]] == cachedMasses[i]) && (host_params[host_indices[param_i + 2]] == cachedWidths[i])) continue;
+    if (!(decayInfo->resonances[i]->parametersChanged())) continue;
     redoIntegral[i] = true; 
-    cachedMasses[i] = host_params[host_indices[param_i + 1]];
-    cachedWidths[i] = host_params[host_indices[param_i + 2]];
+    decayInfo->resonances[i]->storeParameters();
   }
   forceRedoIntegrals = false; 
 
@@ -192,7 +181,9 @@ __host__ fptype IncoherentSumThrustFunctor::normalise () const {
     if (redoIntegral[i]) {      
       thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
 			thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
-			strided_range<thrust::device_vector<devcomplex<fptype> >::iterator>(cachedResonances->begin() + i, cachedResonances->end(), decayInfo->resonances.size()).begin(), 
+			strided_range<thrust::device_vector<devcomplex<fptype> >::iterator>(cachedResonances->begin() + i, 
+											    cachedResonances->end(), 
+											    decayInfo->resonances.size()).begin(), 
 			*(calculators[i]));
 
       fptype dummy = 0;
@@ -209,7 +200,7 @@ __host__ fptype IncoherentSumThrustFunctor::normalise () const {
 
   fptype ret = 0; 
   for (unsigned int i = 0; i < decayInfo->resonances.size(); ++i) {
-    int param_i = parameters + resonanceOffset_incoherent + resonanceSize_incoherent * i; 
+    int param_i = parameters + resonanceOffset_incoherent + resonanceSize * i; 
     fptype amplitude = host_params[host_indices[param_i]];
     ret += amplitude * integrals[i]; 
   }
@@ -256,22 +247,24 @@ __device__ fptype SpecialIncoherentIntegrator::operator () (thrust::tuple<int, f
   binCenterM13        += lowerBoundM13; 
 
   unsigned int* indices = paramIndices + parameters;   
+  fptype motherMass = functorConstants[indices[1] + 0]; 
+  fptype daug1Mass  = functorConstants[indices[1] + 1]; 
+  fptype daug2Mass  = functorConstants[indices[1] + 2]; 
+  fptype daug3Mass  = functorConstants[indices[1] + 3];  
+
+  if (!inDalitz(binCenterM12, binCenterM13, motherMass, daug1Mass, daug2Mass, daug3Mass)) return 0;
 
   int parameter_i = parIndexFromResIndex_incoherent(resonance_i); // Find position of this resonance relative to TDDP start 
-  fptype mass_i                 = cudaArray[indices[parameter_i+1]];
-  fptype width_i                = cudaArray[indices[parameter_i+2]];
-  unsigned int spin_i           = indices[parameter_i+3];
-  unsigned int cyclic_index_i   = indices[parameter_i+4];
-  unsigned int eval_type_i      = indices[parameter_i+5];
-
-  devcomplex<fptype> ret = getResonanceAmplitude(binCenterM12, binCenterM13, mass_i, width_i, spin_i, cyclic_index_i, eval_type_i, indices); 
+  unsigned int functn_i = indices[parameter_i+2];
+  unsigned int params_i = indices[parameter_i+3];
+  fptype m23 = motherMass*motherMass + daug1Mass*daug1Mass + daug2Mass*daug2Mass + daug3Mass*daug3Mass - binCenterM12 - binCenterM13; 
+  devcomplex<fptype> ret = getResonanceAmplitude(binCenterM12, binCenterM13, m23, functn_i, params_i);
 
   unsigned int numResonances = indices[2]; 
   fptype fakeEvt[10]; // Need room for many observables in case m12 or m13 were assigned a high index in an event-weighted fit. 
   fakeEvt[indices[indices[0] + 2 + 0]] = binCenterM12;
   fakeEvt[indices[indices[0] + 2 + 1]] = binCenterM13;
   int effFunctionIdx = parIndexFromResIndex_incoherent(numResonances); 
-  //fptype eff = (*(reinterpret_cast<device_function_ptr>(device_function_table[indices[effFunctionIdx]])))(fakeEvt, cudaArray, paramIndices + indices[effFunctionIdx + 1]);
   fptype eff = callFunction(fakeEvt, indices[effFunctionIdx], indices[effFunctionIdx + 1]); 
 
   return ret.abs2() * eff; 
@@ -292,31 +285,16 @@ __device__ devcomplex<fptype> SpecialIncoherentResonanceCalculator::operator () 
   unsigned int* indices = paramIndices + parameters;   // Jump to TDDP position within parameters array
   fptype m12 = evt[indices[2 + indices[0]]]; 
   fptype m13 = evt[indices[3 + indices[0]]];
+  fptype motherMass = functorConstants[indices[1] + 0]; 
+  fptype daug1Mass  = functorConstants[indices[1] + 1]; 
+  fptype daug2Mass  = functorConstants[indices[1] + 2]; 
+  fptype daug3Mass  = functorConstants[indices[1] + 3];  
+  fptype m23 = motherMass*motherMass + daug1Mass*daug1Mass + daug2Mass*daug2Mass + daug3Mass*daug3Mass - m12 - m13; 
 
   int parameter_i = parIndexFromResIndex_incoherent(resonance_i); // Find position of this resonance relative to TDDP start 
-
-  // Now extract actual parameters using indices found above. Notice double indirection: 'parameters'  into paramIndices, then paramIndices content into cudaArray. 
-  // Notice also difference from coherent mixing, whose amplitude has an imaginary part so 
-  // that the first offset is 2, not 1. 
-  fptype mass_i                 = cudaArray[indices[parameter_i+1]];
-  fptype width_i                = cudaArray[indices[parameter_i+2]];
-  unsigned int spin_i           = indices[parameter_i+3]; 
-  unsigned int cyclic_index_i   = indices[parameter_i+4];
-  unsigned int eval_type_i      = indices[parameter_i+5];
-
-  //if ((1 == (int) floor(0.5 + evt[8])) && (debugParamIndex == parameters)) {
-  //internalDebug1 = threadIdx.x;
-  //internalDebug2 = blockIdx.x;
-  //}
-
-  devcomplex<fptype> ret = getResonanceAmplitude(m12, m13, mass_i, width_i, spin_i, cyclic_index_i, eval_type_i, indices); 
-
-  //if ((1 > (int) floor(0.5 + evt[8])) && (debugParamIndex == parameters)) {
-  //printf("Got here (%f %f) %i %i\n", ret.real, ret.imag, internalDebug1, internalDebug2); 
-  //internalDebug1 = -1;
-  //internalDebug2 = -1; 
-  //}
-
+  unsigned int functn_i = indices[parameter_i+2];
+  unsigned int params_i = indices[parameter_i+3];
+  devcomplex<fptype> ret = getResonanceAmplitude(m12, m13, m23, functn_i, params_i);
 
   return ret; 
 }

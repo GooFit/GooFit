@@ -6,7 +6,6 @@ __device__ fptype device_AddPdfs (fptype* evt, fptype* p, unsigned int* indices)
   fptype totalWeight = 0; 
   for (int i = 1; i < numParameters-3; i += 3) {
     totalWeight += p[indices[i+2]];
-    //fptype curr = (*(reinterpret_cast<device_function_ptr>(device_function_table[indices[i]])))(evt, p, paramIndices + indices[i+1]);
     fptype curr = callFunction(evt, indices[i], indices[i+1]); 
     fptype weight = p[indices[i+2]];
     ret += weight * curr * normalisationFactors[indices[i+1]]; 
@@ -22,6 +21,8 @@ __device__ fptype device_AddPdfs (fptype* evt, fptype* p, unsigned int* indices)
   //fptype last = (*(reinterpret_cast<device_function_ptr>(device_function_table[indices[numParameters-1]])))(evt, p, paramIndices + indices[numParameters]);
   fptype last = callFunction(evt, indices[numParameters - 1], indices[numParameters]);
   ret += (1 - totalWeight) * last * normalisationFactors[indices[numParameters]]; 
+
+  //if ((threadIdx.x < 50) && (isnan(ret))) printf("NaN final component %f %f\n", last, totalWeight); 
 
   //if ((gpuDebug & 1) && (0 == threadIdx.x) && (0 == blockIdx.x)) 
   //if ((1 > (int) floor(0.5 + evt[8])) && (gpuDebug & 1) && (paramIndices + debugParamIndex == indices))
@@ -43,6 +44,7 @@ __device__ fptype device_AddPdfsExt (fptype* evt, fptype* p, unsigned int* indic
     fptype curr = callFunction(evt, indices[i], indices[i+1]); 
     fptype weight = p[indices[i+2]];
     ret += weight * curr * normalisationFactors[indices[i+1]]; 
+
     totalWeight += weight; 
     //if ((gpuDebug & 1) && (threadIdx.x == 0) && (0 == blockIdx.x)) 
     //if ((1 > (int) floor(0.5 + evt[8])) && (gpuDebug & 1) && (paramIndices + debugParamIndex == indices))
@@ -128,7 +130,6 @@ __host__ fptype AddThrustFunctor::normalise () const {
     fptype weight = host_params[host_indices[parameters + 3*(i+1)]]; 
     totalWeight += weight;
     fptype curr = components[i]->normalise(); 
-    //if (cpuDebug & 1) std::cout << getName() << " normalised comp " << i << " (" << components[i]->getName() << ") to get " << curr << " " << weight << " " << (1.0 / curr) << "\n"; 
     ret += curr*weight;
   }
   fptype last = components.back()->normalise(); 
@@ -137,7 +138,6 @@ __host__ fptype AddThrustFunctor::normalise () const {
     totalWeight += lastWeight;
     ret += last * lastWeight; 
     ret /= totalWeight; 
-    //if (cpuDebug & 1) std::cout << getName() << " normalised comp " << components.back()->getName() << " to get " << last << " " << lastWeight << " " << (1.0 / last) << " " << totalWeight << " " << ret << "\n"; 
   }
   else {
     ret += (1 - totalWeight) * last;

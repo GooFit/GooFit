@@ -1,5 +1,5 @@
 #include "DalitzVetoThrustFunctor.hh"
-#include "TddpHelperFunctions.hh" 
+#include "DalitzPlotHelpers.hh" 
 
 __device__ fptype device_DalitzVeto (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x         = evt[indices[2 + indices[0] + 0]]; 

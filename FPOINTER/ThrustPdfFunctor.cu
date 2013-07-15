@@ -107,6 +107,7 @@ __device__ fptype calculateEval (fptype rawPdf, fptype* evtVal, unsigned int par
 
 __device__ fptype calculateNLL (fptype rawPdf, fptype* evtVal, unsigned int par) {
   //if ((10 > callnumber) && (threadIdx.x < 10) && (blockIdx.x == 0)) cuPrintf("calculateNll %i %f %f %f\n", callnumber, rawPdf, normalisationFactors[par], rawPdf*normalisationFactors[par]);
+  //if (threadIdx.x < 50) printf("Thread %i %f %f\n", threadIdx.x, rawPdf, normalisationFactors[par]); 
   rawPdf *= normalisationFactors[par];
   return rawPdf > 0 ? -LOG(rawPdf) : 0; 
 }

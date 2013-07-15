@@ -8,7 +8,6 @@ __device__ fptype device_EventWeightedAddPdfs (fptype* evt, fptype* p, unsigned 
   for (int i = 0; i < numParameters/2 - 1; ++i) {
     fptype weight = evt[indices[2 + numParameters + i]];
     totalWeight += weight;
-    //fptype curr = (*(reinterpret_cast<device_function_ptr>(device_function_table[indices[2*i + 1]])))(evt, p, paramIndices + indices[2*(i+1)]);
     fptype curr = callFunction(evt, indices[2*i + 1], indices[2*(i+1)]); 
     ret += weight * curr * normalisationFactors[indices[2*(i+1)]]; 
   }
@@ -31,8 +30,8 @@ __device__ fptype device_EventWeightedAddPdfsExt (fptype* evt, fptype* p, unsign
   fptype ret = 0;
   fptype totalWeight = 0; 
   for (int i = 0; i < numParameters/2; ++i) {
-    //fptype curr = (*(reinterpret_cast<device_function_ptr>(device_function_table[indices[2*i + 1]])))(evt, p, paramIndices + indices[2*(i+1)]);
     fptype curr = callFunction(evt, indices[2*i + 1], indices[2*(i+1)]); 
+    //if ((0 == blockIdx.x) && (threadIdx.x < 5) && (isnan(curr))) printf("NaN component %i %i\n", i, threadIdx.x); 
     fptype weight = evt[indices[2 + numParameters + i]];
     ret += weight * curr * normalisationFactors[indices[2*(i+1)]]; 
     totalWeight += weight; 
@@ -45,6 +44,8 @@ __device__ fptype device_EventWeightedAddPdfsExt (fptype* evt, fptype* p, unsign
     //printf("EventWeightedExt: %i : %i %.10f %.10f %.10f %f %f %f\n", (int) floor(0.5 + evt[8]), i, curr, weight, ret, normalisationFactors[indices[2*(i+1)]], evt[6], evt[7]);
   }
   ret /= totalWeight; 
+
+  //if (0 >= ret) printf("Zero sum %f %f %f %f %f %f %f %f %f %f\n", evt[0], evt[1], evt[2], evt[3], evt[4], evt[5], evt[6], evt[7], evt[8], evt[9]); 
   
   return ret; 
 }

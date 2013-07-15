@@ -16,7 +16,7 @@ public:
   // normalisation will get *really* confused and give wrong answers. 
 
   __host__ virtual fptype normalise () const;
-  __host__ void setDataSize (unsigned int dataSize, unsigned int evtSize = 5); 
+  __host__ void setDataSize (unsigned int dataSize, unsigned int evtSize = 3); 
   __host__ void setForceIntegrals (bool f = true) {forceRedoIntegrals = f;}  
 
 protected:

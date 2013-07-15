@@ -1,27 +1,16 @@
 #ifndef DALITZ_PLOT_HELPERS_HH
 #define DALITZ_PLOT_HELPERS_HH
 
-enum EvaluateType {
-  RBW = 0, 
-  NONRES, 
-  GOU_SAK, 
-  GAUSSIAN // Notice that Gaussian uses mass, not mass-squared!
-};
+#include "ResonanceThrustFunctor.hh"
+
+__device__ bool inDalitz (fptype m12, fptype m13, fptype bigM, fptype dm1, fptype dm2, fptype dm3); 
+__device__ devcomplex<fptype> getResonanceAmplitude (fptype m12, fptype m13, fptype m23, 
+						     unsigned int functionIdx, unsigned int pIndex); 
+
 enum DaughterPair {PAIR_12 = 0, PAIR_13, PAIR_23}; 
 
-struct ResonanceInfo {
-  Variable* amp_real;
-  Variable* amp_imag;
-  Variable* mass;
-  Variable* width;
-  unsigned int spin;
-  unsigned int cyclic_index;
-  unsigned int eval_type;
-  unsigned int resonance_type; 
-};
-
-const int resonanceSize = 8;   // Number of parameters to describe one resonance.
-// Why not make this a static const member of ResonanceInfo? Because the 'static'
+const int resonanceSize = 4;   // Number of parameters to describe one resonance.
+// Why not make this a static const member of ResonanceThrustFunctor? Because the 'static'
 // keyword (and 'extern' as well) interacts badly with some nvcc versions when the
 // variable is used in device code. 
 
@@ -35,7 +24,7 @@ struct DecayInfo {
   Variable* _tau; 
   Variable* _xmixing;
   Variable* _ymixing;
-  std::vector<ResonanceInfo*> resonances; 
+  std::vector<ResonanceThrustFunctor*> resonances; 
 };
 
 // Copied from strided_range thrust example by Nathan Bell.

@@ -6,6 +6,13 @@
 typedef devcomplex<fptype> (*resonance_function_ptr) (fptype, fptype, fptype, unsigned int*); 
 
 class ResonanceThrustFunctor : public ThrustPdfFunctor {
+  // Service class intended to hold parametrisations of
+  // resonances on Dalitz plots. Don't try to use this
+  // as a standalone PDF! It should only be used as a
+  // component in one of the friend classes. It extends
+  // ThrustPdfFunctor so as to take advantage of the 
+  // infrastructure, but will crash if used on its own. 
+
   friend class TddpThrustFunctor;
   friend class DalitzPlotThrustFunctor; 
   friend class IncoherentSumThrustFunctor; 

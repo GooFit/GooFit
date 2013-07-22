@@ -32,6 +32,8 @@ __host__ void FunctorBase::copyParams (const std::vector<double>& pars) const {
 }
 #else 
 __host__ void FunctorBase::copyParams (const std::vector<double>& pars) const {
+  // copyParams method performs eponymous action! 
+
   for (unsigned int i = 0; i < pars.size(); ++i) {
     host_params[i] = pars[i]; 
     

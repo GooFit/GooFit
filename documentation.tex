@@ -197,7 +197,7 @@ evaluation function:
 \begin{verbatim}
 __device__ device_function_ptr ptr_to_Gaussian = device_Gaussian; 
 \end{verbatim}
-where \texttt{device_function_ptr} is \texttt{typedef}d as a pointer
+where \texttt{device\_function\_ptr} is \texttt{typedef}d as a pointer
 a function with the signature shown in listing \ref{listing:fsign}:
 \begin{verbatim}
 typedef fptype (*device_function_ptr) (fptype*, fptype*, unsigned int*);
@@ -207,7 +207,7 @@ function directly? The reason is that \texttt{cudaMemcpy} doesn't
 like to get the address of a function, but \texttt{nvcc} is perfectly
 happy to statically initialise a pointer. It's a workaround, in other
 words.} 
-will be copied into the \texttt{device_function_table} array,
+will be copied into the \texttt{device\_function\_table} array,
 and its index in that array is the PDF's internal representation of ``my evaluation
 function''. 
 
@@ -714,8 +714,8 @@ Suppose the fit is the default NLL: Then all the operator needs to do at this
 point is take the logarithm of what the PDF returned, multiply by -2, and be
 on its way. But if it is a chi-square fit, then it must calculate the expected
 number of hits in the bin, which depends on the PDF value, the bin volume,
-and the total number of events\footnote{This is why \verb|functorConstants[0]| is reserved
-for that value!}, subtract the observed number, square, and divide by the observed
+and the total number of events\footnote{This is why \texttt{functorConstants[0]} is reserved for that value!}
+, subtract the observed number, square, and divide by the observed
 number. Hence there is a second function-pointer lookup, but now the \verb|void*|
 stored in \verb|device_function_table| is to be interpreted as a different kind
 of function - a ``take the metric'' function rather than a ``calculate the PDF''

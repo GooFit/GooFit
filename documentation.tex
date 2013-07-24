@@ -5,17 +5,221 @@
 \usepackage{graphicx} 
 \usepackage{colordvi} 
 \usepackage{amssymb} 
+\usepackage{mathtools}
 \usepackage{ulem} 
+
+\newtheorem{listing}{Listing}
 
 \begin{document}
 \section{Introduction}
 
+GooFit\footnote{Named in homage to RooFit, with the 'G' standing for 'GPU'.}
+is a framework for creating arbitrary probability density functions (PDFs) 
+and evaluating them over large datasets using nVidia Graphics Processing Units (GPUs). 
+New PDFs are written partly in nVidia's CUDA programming language and
+partly in C++; however, no expertise in CUDA is required to get started, 
+because the already-existing PDFs can be put together in plain C++. 
+
+Aside from the mass of unenlightened hominids who have not yet discovered
+their need for a massively-parallel fitting framework, there are three kinds
+of GooFit users:
+\begin{itemize}
+\item Initiates, who write ``user-level code'' - that is, code which 
+instantiates existing PDF classes in some combination. No knowledge of
+CUDA is required for this level.
+If your data can be described
+by a combination of not-too-esoteric functions, even if the combination is 
+complicated, then user code is sufficient. Section \ref{sec:usercode}
+gives an example of how to write a simple fit.
+\item Acolytes, or advanced users, who have grasped the art of creating new PDF classes.
+This involves some use of CUDA, but is mainly a question of understanding
+the variable-index organisation that GooFit PDFs use. Section \ref{sec:newpdfs}
+considers this organisation in some depth.
+\item Ascended Masters, or architects, who by extended meditation have 
+acquired a full understanding of the core engine of GooFit, and can modify it
+to their desire. Section \ref{sec:engine} gives a detailed narrative of the
+progress of a PDF evaluation through the engine core, thus elucidating its
+mysteries. It should only rarely be necessary to acquire this level of 
+mastery; in principle only the developers of GooFit need to know its 
+internal details. 
+\end{itemize}
+
+Aside from considerations of the user's understanding, GooFit does require
+a CUDA-capable graphics card to run on, with compute capability at least 2.1.
+Further, you will need nVidia's CUDA SDK, in particular the \texttt{nvcc} compiler.
+Aside from this, GooFit is known to compile and run on Fedora 14, Ubuntu 12.04,
+and OSC (get this from Manjula). It has been tested on the Tesla, Fermi, and Kepler
+generations of nVidia GPUs. 
 
 \section{User-level code}
+\label{sec:usercode}
+
+From the outside, GooFit code should look like ordinary,
+object-oriented C++ code: The CUDA parts are hidden away
+inside the engine, invisible to the user. Thus, to construct
+a simple Gaussian fit, merely declare three \texttt{Variable}
+objects and a \texttt{GaussianThrustFunctor} object that uses them,
+and create an appropriate \texttt{UnbinnedDataSet} to fit to:
+\begin{listing}
+\label{listing:gaussfit}
+Simple Gaussian fit.
+
+\begin{verbatim}
+int main (int argc, char** argv) {
+  Variable* xvar = new Variable("xvar", -5, 5); 
+  xvar->numbins = 1000; 
+  TRandom donram(42); 
+  UnbinnedDataSet data(xvar);
+  for (int i = 0; i < 10000; ++i) {
+    fptype val = donram.Gaus(0.2, 1.1);
+    if (fabs(val) > 5) {--i; continue;} 
+    data.addEvent(val); 
+  }
+
+  Variable* mean = new Variable("mean", 0, 1, -10, 10);
+  Variable* sigm = new Variable("sigm", 1, 0.5, 1.5); 
+  GaussianThrustFunctor gauss("gauss", xvar, mean, sigm); 
+
+  gauss.setData(&data);
+  PdfFunctor fitter(&gauss); 
+  fitter.fit(); 
+  return 0;
+}
+\end{verbatim}
+\end{listing} 
+
+\subsection{Data sets}
+
+To create a data set with several dimensions, supply a vector
+of \texttt{Variables}:
+\begin{verbatim}
+vector<Variable*> vars;
+Variable* xvar = new Variable("xvar", -10, 10)
+Variable* yvar = new Variable("yvar", -10, 10)
+vars.push_back(xvar);
+vars.push_back(yvar);
+UnbinnedDataSet data(vars);
+\end{verbatim}
+In this case, to fill the data set, set the \texttt{Variable}
+values and call the \texttt{addEvent} method without arguments:
+\begin{verbatim}
+xvar->value = 3;
+yvar->value = -2;
+data.addEvent();
+\end{verbatim}
+This will add an event with the current values of the \texttt{Variable}
+list to the data set. In general, where an unknown number of arguments
+are wanted, GooFit prefers to use a \texttt{vector} of pointers. 
+
+\subsection{Fit types} 
+
+By default, GooFit will do an unbinned maximum-likelihood fit, where
+the goodness-of-fit metric that is maximised is 
+the negative logarithm of the sum of the
+probabilities, which is equivalent to maximising the joint
+overall probability: 
+\begin{eqnarray}
+{\cal P} &=& -2\sum\limits_{events} \log(P_i)
+\end{eqnarray}
+where $P_i$ is the PDF value for event $i$. 
+
+To get a binned fit, you should create a \texttt{BinnedDataSet} instead of the
+\texttt{UnbinnedDataSet}; the procedure is otherwise the same. Notice that
+the \texttt{BinnedDataSet} will use the number of bins that its constituent
+\texttt{Variable}s have at the moment of its creation. Supplying a \texttt{BinnedDataSet}
+%to a ThrustPdfFunctor (which is the base class of all the \texttt{FooThrustFunctor}
+to a \texttt{Thrust\-Pdf\-Functor} (which is the base class of all the \texttt{FooThrustFunctor}
+classes such as \texttt{GaussianThrustFunctor}) will, by default, make it
+do a binned negative-log-likelihood fit, in which the goodness-of-fit criterion
+is the sum of the logarithms of the Poisson probability of each bin:
+\begin{eqnarray}
+{\cal P} &=& -2*\sum\limits_{bins}(N * \log(E) - E)
+\end{eqnarray}
+where $E$ is the expected number of events in a bin and $N$ is
+the observed number. 
+
+There are two non-default variants of binned fits: A chisquare
+fit where the error on a bin entry is taken as the square root
+of the number of observed entries in it (or 1 if the bin is empty),
+and a ``bin error'' fit where the error on each bin is supplied
+by the \texttt{BinnedDataSet}. To do such a fit, in addition to
+supplying the \texttt{BinnedDataSet} (and providing the errors
+through the \texttt{setBinError} method in the case of the bin error fit),
+you should create a suitable \texttt{FitControl} object and send
+it to the \texttt{PdfThrustFunctor}:
+\begin{verbatim}
+decayTime = new Variable("decayTime", 100, 0, 10); 
+BinnedDataSet* ratioData = new BinnedDataSet(decayTime); 
+for (int i = 0; i < 100; ++i) {
+  ratioData->SetBinContent(getRatio(i));
+  ratioData->SetBinError(getError(i));
+}
+
+vector<Variable*> weights;
+weights.push_back(new Variable("constaCoef", 0.03, 0.01, -1, 1));
+weights.push_back(new Variable("linearCoef", 0, 0.01, -1, 1));
+weights.push_back(new Variable("secondCoef", 0, 0.01, -1, 1));
+
+PolynomialThrustFunctor* poly = new PolynomialThrustFunctor("poly", decayTime, weights); 
+poly->setFitControl(new BinnedErrorFit()); 
+poly->setData(ratioData); 
+\end{verbatim}
+The \texttt{FitControl} classes are \texttt{UnbinnedNLLFit} (the default), 
+\texttt{BinnedNLLFit} (the default for binned fits), \texttt{BinnedErrorFit}
+and \texttt{BinnedChisqFit}. 
 
 \section{Creating new PDF classes}
+\label{sec:newpdfs}
+
+The simplest way to create a new PDF is to take the existing 
+\texttt{GaussianThrustFunctor} class as a template. The existence of
+a \texttt{FooThrustFunctor.cu} file in the \texttt{FPOINTER} directory
+is, because of Makefile magic, sufficient to get the \texttt{Foo} PDF
+included in the GooFit library. However, a certain amount of boilerplate
+is necessary to make the PDF actually work. First of all, it needs a 
+device-side function with a particular signature:
+\begin{listing}
+\label{listing:fsign}
+Signature of evaluation functions.
+
+\begin{verbatim}
+__device__ fptype device_Gaussian (fptype* evt, 
+                                   fptype* p, 
+                                   unsigned int* indices); 
+\end{verbatim}
+\end{listing}
+
+Notice that this is a standalone function, not part of any class - \texttt{nvcc}
+does not play entirely nicely with device-side polymorphism, which is why we organise the
+code using a table of function pointers - a poor man's implementation of the
+virtual-function lookups built into C++. Second, we need a pointer to the 
+evaluation function:
+\begin{verbatim}
+__device__ device_function_ptr ptr_to_Gaussian = device_Gaussian; 
+\end{verbatim}
+where \texttt{device_function_ptr} is \texttt{typedef}d as a pointer
+a function with the signature shown in listing \ref{listing:fsign}:
+\begin{verbatim}
+typedef fptype (*device_function_ptr) (fptype*, fptype*, unsigned int*);
+\end{verbatim}
+This pointer\footnote{You might ask, why not copy the
+function directly? The reason is that \texttt{cudaMemcpy} doesn't
+like to get the address of a function, but \texttt{nvcc} is perfectly
+happy to statically initialise a pointer. It's a workaround, in other
+words.} 
+will be copied into the \texttt{device_function_table} array,
+and its index in that array is the PDF's internal representation of ``my evaluation
+function''. 
+
+Finally, the new PDF needs a bog-standard C++ class definition, extending
+the \texttt{ThrustPdfFunctor} superclass, which will allow it to be instantiated
+and passed around in user-level code. Section \ref{subsec:indexarray} discusses
+what should happen in the constructor; otherwise the class may have any supporting
+paraphernalia that are necessary or useful to its evaluation - caches, 
+lists of components, pointers to device-side constants, whatever. 
 
 \subsection{The indices array}
+\label{subsec:indexarray}
 
 The heart of a PDF's organisation is its index array, which 
 appears in the arguments to its device-side evaluation function
@@ -109,7 +313,7 @@ So, replacing the first level of lookup by the values, we have:
 \begin{verbatim}
   fptype x = evt[indices[4]]; 
 \end{verbatim}
-and \verb|indices[4]| is just 0; so in other words, |x| is the first
+and \verb|indices[4]| is just 0; so in other words, \verb.|x|. is the first
 observable in the event. In the case of the single Gaussian, it is
 also the \emph{only} observable, so we've done quite a bit of work to
 arrive at a zero that we knew from the start; but in more complex fits this would not be true. 
@@ -161,7 +365,7 @@ __host__ GaussianThrustFunctor::GaussianThrustFunctor (std::string n,
   initialise(pindices); 
 }
 \end{verbatim}
-Notice the member variable \verb|cIndex|, which is set by \verb|registerConstants|; it is the
+Notice the member variable \verb|cIndex|, which is set (and returned) by \verb|registerConstants|; it is the
 index of the first constant belonging to this object. To extract my constant for
 use in the device function, I look it up as though it were a parameter, but the
 target array is \verb|functorConstants| instead of the passed-in \verb|p|:
@@ -184,19 +388,491 @@ one might naively expect. This is because the constant is stored next to the fir
 registered, but its \emph{index} is not stored at all; it has to be calculated from the
 index of the first constant. Thus the \verb|+1| must go outside the indices lookup,
 not inside it! Keeping the levels of indirection
-straight when constructing this sort of code calls for some care and attention,
-and is a frequent source of errors. 
+straight when constructing this sort of code calls for some care and attention. 
 
 Note that \verb|functorConstants[0]| is reserved for the number of events
 in the fit. 
 
+\section{Program flow} 
+\label{sec:engine}
 
+This section narrates the course of a fit after it is created, passing through
+MINUIT and the core GooFit engine. In particular, we will consider the example
+Gaussian fit shown in listing \ref{listing:gaussfit} and look at what happens
+in these innocent-looking lines:
+\begin{listing}
+\label{listing:actualfit}
+Data transfer and fit invocation.
 
-\section{Engine core} 
+\begin{verbatim}
+  gauss.setData(&data);
+  PdfFunctor fitter(&gauss); 
+  fitter.fit(); 
+\end{verbatim}
+\end{listing} 
 
+\subsection{Copying data} 
 
+The \texttt{setData} method copies the contents of the supplied \texttt{DataSet}
+to the GPU:
+\begin{listing}
+\label{listing:setData}
+Internals of the setData method.
+
+\begin{verbatim}
+setIndices();
+int dimensions = observables.size();
+numEntries = data->getNumEvents(); 
+numEvents = numEntries; 
+
+fptype* host_array = new fptype[numEntries*dimensions];
+for (int i = 0; i < numEntries; ++i) {
+  for (obsIter v = obsBegin(); v != obsEnd(); ++v) {
+    fptype currVal = data->getValue((*v), i);
+    host_array[i*dimensions + (*v)->index] = currVal; 
+  }
+}
+
+cudaMalloc((void**) &cudaDataArray, dimensions*numEntries*sizeof(fptype)); 
+cudaMemcpy(cudaDataArray, host_array, dimensions*numEntries*sizeof(fptype), cudaMemcpyHostToDevice);
+cudaMemcpyToSymbol(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice); 
+delete[] host_array; 
+\end{verbatim}
+\end{listing} 
+Notice the call to \texttt{setIndices}; this is where the indices
+of observables passed to the PDF are decided and copied into the indices
+array. This step cannot be done before all the subcomponents of the 
+PDF have had a chance to register their observables. Hence \texttt{setData}
+should be called only after the creation of all PDF components, and only
+on the top-level PDF. 
+
+The array thus created has the simple structure \verb|x1 y1 z1 x2 y2 z2 ... xN yN zN|,
+that is, the events are laid out contiguously in memory, each event consisting simply
+of the observables, in the same order every time. Notice that if the \texttt{DataSet} contains \texttt{Variables}s
+that have not been registered as observables, they are ignored. 
+If \texttt{setData}
+is called with an \texttt{UnbinnedDataSet} object, the procedure is similar
+except that each `event' consists of the coordinates of the bin center, the
+number of events in the bin, and either the bin error or the bin size. We will
+see later how the engine uses the \texttt{cudaDataArray} either as a list
+of events or a list of bins. 
+
+\subsection{MINUIT setup} 
+
+Having copied the data to the GPU, the next task is to create the MINUIT object
+that will do the actual fit; this is done by creating a \texttt{PdfFunctor} object,
+with the top-level PDF as its argument, and calling its \texttt{fit} method. 
+The \texttt{fit} method does two things: First it calls the \texttt{getParameters}
+method of the supplied PDF, which recursively gets the registered parameters of
+all the component PDFs, and from the resulting list of \texttt{Variable}s it creates
+MINUIT parameters by calling \texttt{DefineParameter}. Second, it sets the method
+\texttt{FitFun} to be MINUIT's function-to-minimise, and calls MINUIT's \texttt{mnmigr}
+method. 
+
+A few variants on the above procedure exist. Most obviously, ROOT contains three 
+implementations of the MINUIT algorithm, named \texttt{TMinuit}, \texttt{TMinuit2}, 
+and \texttt{TVirtualFitter}\footnote{These are, respectively, ancient FORTRAN code
+translated line-by-line into C++, almost literally by the addition of semicolons; 
+someone's obsessively-detailed object-oriented
+implementation of the same algorithm, with the same spaghetti logic chopped into
+classes instead of lines of code; and what seems to be intended as a common interface
+for a large number of possible fitting backends, which falls a little flat since it
+has only the MINUIT backend to talk to. You pays your money and takes your choice.}. 
+One can switch between these by setting the constant 
+\texttt{MINUIT\_VERSION} in PdfFunctor.hh to, respectively, 1, 2, and 3. The interfaces differ,
+but the essential procedure is the one described above: Define parameters, set
+function-to-minimise, run MIGRAD. (NB: As of v0.2, GooFit has not recently been
+tested with \texttt{MINUIT\_VERSION} set to 2 or 3.) In the case of \texttt{TMinuit},
+one can call \texttt{setMaxCalls} to override the usual MINUIT limitation on the
+number of iterations, although my experience is that this is not usually helpful
+because running into the iteration limit tends to indicate a deeper problem with
+the fit. Finally, the underlying \texttt{TMinuit} object is available through the
+\texttt{getMinuitObject} method, allowing fine-grained control of what MINUIT does, 
+for example by calling \texttt{mnhess} in place of \texttt{mnmigr}.
+
+\subsection{PDF evaluation}
+
+We have copied the data to the GPU, set up MINUIT, and invoked \texttt{mnmigr}. 
+Program flow now passes to MINUIT, which for purposes of this documentation
+is a black box, for some time; it returns to GooFit by calling the \texttt{FitFun}
+method with a list of parameters for which MINUIT would like us to evaluate the NLL. 
+\texttt{FitFun} translates MINUIT indices into GooFit indices, and calls \texttt{copyParams}, 
+which eponymously copies the parameter array to \texttt{cudaArray} on the GPU. 
+\texttt{FitFun} then returns the value from \texttt{ThrustPdfFunctor::calculateNLL}
+to MINUIT, which absorbs the number into its inner workings and eventually comes
+back with another set of parameters to be evaluated. Control continues to pass back
+and forth in this way until MINUIT converges or gives up, or until GooFit crashes. 
+
+The \texttt{calculateNLL} method does two things: First it calls the \texttt{normalise}
+function of the PDF, which in turn will usually recursively normalise the components;
+the results of the \texttt{normalise} call are copied into the \texttt{normalisationFactors}
+array on the GPU. Next it calls \texttt{sumOfNll} and returns the resulting value.
+Particular PDF implementations may override \texttt{sumOfNll}; most notably
+\texttt{AddThrustFunctor} does so in order to have the option of returning
+an `extended' likelihood, with a term for the Poisson probability of the observed
+number of events in addition to the event probabilities. 
+
+The \texttt{normalise} method, by default, simply evaluates the PDF at a grid of points,
+returning the sum of all the values multiplied by the grid fineness - a primitive algorithm
+for numerical integration, but one which takes advantage of the GPU's massive parallelisation.
+The fineness of the grid usually depends on the \texttt{numbins} member of the observables; in
+the case of the example Gaussian fit in listing \ref{listing:gaussfit}, the PDF will be evaluated at 1000 points, evenly
+spaced between -5 and 5. However, this behaviour can be overridden by calling the 
+\texttt{setIntegrationFineness} method of the PDF object, in which case the number of bins
+(in each observable) will be equal to the supplied fineness. 
+
+Stripped of complications, the essential part of the \texttt{normalise} function
+is a call to \texttt{transform\_reduce}:
+\begin{listing}
+\label{listing:normalisation}
+Normalisation code.
+
+\begin{verbatim}
+  fptype dummy = 0; 
+  static plus<fptype> cudaPlus;
+  constant_iterator<fptype*> arrayAddress(normRanges); 
+  constant_iterator<int> eventSize(observables.size());
+  counting_iterator<int> binIndex(0); 
+
+  fptype sum = transform_reduce(make_zip_iterator(make_tuple(binIndex, 
+                                                             eventSize, 
+                                                             arrayAddress)),
+                                make_zip_iterator(make_tuple(binIndex + totalBins, 
+                                                             eventSize, 
+                                                             arrayAddress)),
+				*logger, dummy, cudaPlus); 
+\end{verbatim}
+\end{listing}
+Here \texttt{normRanges} is an array of triplets \verb|lower, upper, bins| for each observable, created
+by the \texttt{generateNormRanges} method. The member \texttt{logger} points to an instance of the
+\texttt{MetricTaker} class, which has an operator method that Thrust will invoke on each bin index between
+the initial value of zero and the final value of \texttt{totalBins$-$1}. This operator method, which is invoked once per
+thread with a separate (global) bin number for each invocation, calculates
+the bin center and returns the value of the PDF at that point.
+The \texttt{dummy} and \texttt{cudaPlus} variables
+merely indicate that Thrust should add (rather than, say, multiply) all the returned
+values, and that it should start the sum at zero. The \texttt{normalisation} method
+returns this sum, but stores its inverse in the \texttt{host\_normalisation} array
+that will eventually be copied to \texttt{normalisationFactors} on the GPU; this is to allow the micro-optimisation of 
+multiplying by the inverse rather than dividing in every thread. 
+
+PDF implementations may override the \texttt{normalisation} method, and among the default
+PDFs, both \texttt{AddThrustFunctor} and \texttt{ProdThrustFunctor} do so in order to
+ensure that their components are correctly normalised. Among the more specialised
+implementations, \texttt{TddpThrustFunctor} overrides \texttt{normalise} in order that
+it may cache the slowly-changing Breit-Wigner calculations, and also because its time dependence
+is analytically integrable and it is a good optimisation to do only the Dalitz-plot
+part numerically. This points to a more general rule, that once a PDF depends on three
+or four observables, the relatively primitive numerical integration outlined above may
+become unmanageable because of the number of points it creates. Finally, note that PDFs
+may, without overriding \texttt{normalise}, advertise an analytical integral by overriding
+\texttt{ThrustPdfFunctor}'s \texttt{hasAnalyticIntegral} method to return \texttt{true}, 
+and then implementing an \texttt{integrate} method to be evaluated on the CPU. 
+
+The \texttt{logger} object will appear again in the actual PDF evaluation,
+performing a very similar function, so it is worth taking a moment to 
+consider in detail exactly what the \texttt{transform\_reduce} call does. 
+The first two parameters (involving \texttt{make\_tuple} calls) define 
+the range of evaluation: In this case, global bins\footnote{
+A global bin ranges from 0 to $n_1n_2\ldots n_N-1$ where $n_j$ is the number
+of bins in the $j$th variable and $N$ is the number of variables. In two dimensions,
+with three bins in each of $x$ and $y$, the global bin is given by $3b_y+b_x$,
+where $b_{x,y}$ is the bin number in $x$ or $y$ respectively, as shown here:
+\begin{displaymath}
+\begin{array}{l|ccc}
+2 & 6 & 7 & 8 \\
+1 & 3 & 4 & 5 \\
+0 & 0 & 1 & 2 \\
+\hline
+  & 0 & 1 & 2 
+\end{array} 
+\end{displaymath}
+where the leftmost column and bottom row indicate the $y$ and $x$ bin number. 
+}
+ 0 through $N-1$. They also specify which \texttt{operator} method of 
+\texttt{MetricTaker} should be called: It is the one which takes as arguments
+two integers (the bin index and event size) and an \texttt{fptype} array (holding the \texttt{normRanges} values), in 
+that order. Conceptually, Thrust will create one thread for each unique value
+of the iterator range thus created - that is, one per global bin - and have each
+thread invoke the indicated \texttt{operator} method. As a matter of organisation
+on the physical chip, it is likely that Thrust will actually create a thousand or
+so threads and have each thread evaluate as many bins as needed; but at any rate,
+the \verb|operator(int, int, fptype*)| method will be called once per global bin.
+The last two arguments indicate that the return value should be calculated as 
+the sum of the return values from each \texttt{operator} invocation, and that the sum
+should start at zero. Finally, the \verb|*logger| argument indicates the specific
+\texttt{MetricTaker} object to use, which is important because this is where the
+function-pointer and parameter indices are stored. 
+
+The \texttt{operator} does two things: First it calculates the bin centers,
+in each, observable, of the global bin:
+\begin{listing}
+\label{listing:bincenter}
+Bin-center calculation.
+
+\begin{verbatim}
+__shared__ fptype binCenters[1024*MAX_NUM_OBSERVABLES];
+
+// To convert global bin number to (x,y,z...) coordinates: For each dimension, take the mod 
+// with the number of bins in that dimension. Then divide by the number of bins, in effect
+// collapsing so the grid has one fewer dimension. Rinse and repeat. 
+unsigned int* indices = paramIndices + parameters;
+for (int i = 0; i < evtSize; ++i) {
+  fptype lowerBound = thrust::get<2>(t)[3*i+0];
+  fptype upperBound = thrust::get<2>(t)[3*i+1];
+  int numBins    = (int) FLOOR(thrust::get<2>(t)[3*i+2] + 0.5); 
+  int localBin = binNumber % numBins;
+
+  fptype x = upperBound - lowerBound; 
+  x /= numBins;
+  x *= (localBin + 0.5); 
+  x += lowerBound;
+  binCenters[indices[indices[0] + 2 + i]+threadIdx.x*MAX_NUM_OBSERVABLES] = x; 
+  binNumber /= numBins;
+}
+\end{verbatim}
+\end{listing}
+in the straightforward way, and stores the bin centers in a \emph{fake event}.
+Since events are just lists of observables, all that's necessary is to keep track
+of which part of the \verb|__shared__| \texttt{binCenters} array is owned by this
+thread, look up the index-within-events of each observable, and set the entries
+of the locally-owned part of \texttt{binCenters} accordingly. This fake event is then
+sent to the PDF for evaluation:
+\begin{verbatim}
+fptype ret = callFunction(binCenters+threadIdx.x*MAX_NUM_OBSERVABLES, functionIdx, parameters); 
+\end{verbatim}
+where \texttt{callFunction} is just a wrapper for looking up the function referred to
+by \texttt{functionIdx} and calling it with the right part of the parameter array:
+\begin{verbatim}
+__device__ fptype callFunction (fptype* eventAddress, 
+                                unsigned int functionIdx, 
+                                unsigned int paramIdx) {
+  device_function_ptr fcn = reinterpret_cast<device_function_ptr>(device_function_table[functionIdx]);
+  return (*fcn)(eventAddress, cudaArray, paramIndices + paramIdx);
+}
+\end{verbatim}
+This, finally, is where the \verb|__device__| function from the PDF definitions
+in section \ref{sec:newpdfs} is called; we have now connected all this engine
+code with the evaluation code for the Gaussian, Breit-Wigner, polynomial, sum of
+functions, or whatever calculation we happen to be doing today. 
+
+Having found the integral of the PDF, either using fake events as outlined above
+or with an analytic calculation, we are now ready to find the actual NLL, or sum of
+chi-squares, or other goodness-of-fit metric, using the actual, observed events that
+we copied across in \texttt{setData}. The procedure is similar to that for the normalisation:
+\begin{listing}
+\label{listing:nlleval}
+Goodness-of-fit evaluation.
+
+\begin{verbatim}
+  return transform_reduce(make_zip_iterator(make_tuple(eventIndex, arrayAddress, eventSize)),
+                          make_zip_iterator(make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
+                          *logger, dummy, cudaPlus);   
+\end{verbatim}
+\end{listing}
+
+Here the \verb|*logger|, \verb|dummy|, and \verb|cudaPlus| arguments are doing
+the same jobs as before. The tuple arguments, however, differ: In particular,
+they are now indicating the range 0 to $N-1$ in \emph{events}, not bins, and
+\verb|arrayAddress| this time points to the array of events, not to a set of 
+normalisation triplets from which bin centers can be calculated. Since the order
+of the arguments differs - it is now \verb|int, fptype*, int| - a different 
+\texttt{operator} method is called: 
+\begin{listing}
+\label{listing:maineval} 
+Main evaluation operator.
+
+\begin{verbatim}
+__device__ fptype MetricTaker::operator () (thrust::tuple<int, fptype*, int> t) const {
+  // Calculate event offset for this thread. 
+  int eventIndex = thrust::get<0>(t);
+  int eventSize  = thrust::get<2>(t);
+  fptype* eventAddress = thrust::get<1>(t) + (eventIndex * abs(eventSize)); 
+
+  // Causes stack size to be statically undeterminable.
+  fptype ret = callFunction(eventAddress, functionIdx, parameters);
+
+  // Notice assumption here! For unbinned fits the 'eventAddress' pointer won't be used
+  // in the metric, so it doesn't matter what it is. For binned fits it is assumed that
+  // the structure of the event is (obs1 obs2... binentry binvolume), so that the array
+  // passed to the metric consists of (binentry binvolume). 
+  ret = (*(reinterpret_cast<device_metric_ptr>(device_function_table[metricIndex])))(ret, eventAddress + (abs(eventSize)-2), parameters);
+  return ret; 
+}
+\end{verbatim}
+\end{listing}
+
+Observe that, for binned events, \texttt{eventSize} is negative; in this case
+the event array looks like \verb|x1 y1 n1 v1 x2 y2 n2 v2 ... xN yN nN vN| where
+\texttt{x} and \texttt{y} are bin centers, \texttt{n} is the number of entries, 
+and \texttt{v} is the bin volume or error. This does not matter for the PDF evaluation
+invoked by \texttt{callFunction}, which will just get a pointer to the start of
+the event and read off the bin centers as event variables; hence the \verb|abs(eventSize)|
+in the calculation of the event address allows binned and unbinned PDFs to be 
+treated the same. However, it very much does matter for the goodness-of-fit metric.
+Suppose the fit is the default NLL: Then all the operator needs to do at this
+point is take the logarithm of what the PDF returned, multiply by -2, and be
+on its way. But if it is a chi-square fit, then it must calculate the expected
+number of hits in the bin, which depends on the PDF value, the bin volume,
+and the total number of events\footnote{This is why \verb|functorConstants[0]| is reserved
+for that value!}, subtract the observed number, square, and divide by the observed
+number. Hence there is a second function-pointer lookup, but now the \verb|void*|
+stored in \verb|device_function_table| is to be interpreted as a different kind
+of function - a ``take the metric'' function rather than a ``calculate the PDF''
+function. The \verb|metricIndex| member of \verb|MetricTaker| is set by the \texttt{FitControl}
+object of the PDF; it points to one of the \texttt{calculateFoo} functions:
+\begin{listing}
+\label{listing:metrics}
+Metric-taking functions.
+
+\begin{verbatim}
+__device__ fptype calculateEval (fptype rawPdf, fptype* evtVal, unsigned int par) {
+  // Just return the raw PDF value, for use in (eg) normalisation. 
+  return rawPdf; 
+}
+
+__device__ fptype calculateNLL (fptype rawPdf, fptype* evtVal, unsigned int par) {
+  rawPdf *= normalisationFactors[par];
+  return rawPdf > 0 ? -LOG(rawPdf) : 0; 
+}
+
+__device__ fptype calculateProb (fptype rawPdf, fptype* evtVal, unsigned int par) {
+  // Return probability, ie normalised PDF value.
+  return rawPdf * normalisationFactors[par];
+}
+
+__device__ fptype calculateBinAvg (fptype rawPdf, fptype* evtVal, unsigned int par) {
+  rawPdf *= normalisationFactors[par];
+  rawPdf *= evtVal[1]; // Bin volume 
+  // Log-likelihood of numEvents with expectation of exp is (-exp + numEvents*ln(exp) - ln(numEvents!)). 
+  // The last is constant, so we drop it; and then multiply by minus one to get the negative log-likelihood. 
+  if (rawPdf > 0) {
+    fptype expEvents = functorConstants[0]*rawPdf;
+    return (expEvents - evtVal[0]*log(expEvents)); 
+  }
+  return 0; 
+}
+
+__device__ fptype calculateBinWithError (fptype rawPdf, fptype* evtVal, unsigned int par) {
+  // In this case interpret the rawPdf as just a number, not a number of events. 
+  // Do not divide by integral over phase space, do not multiply by bin volume, 
+  // and do not collect 200 dollars. evtVal should have the structure (bin entry, bin error). 
+  rawPdf -= evtVal[0]; // Subtract observed value.
+  rawPdf /= evtVal[1]; // Divide by error.
+  rawPdf *= rawPdf; 
+  return rawPdf; 
+}
+
+__device__ fptype calculateChisq (fptype rawPdf, fptype* evtVal, unsigned int par) {
+  rawPdf *= normalisationFactors[par];
+  rawPdf *= evtVal[1]; // Bin volume 
+
+  return pow(rawPdf * functorConstants[0] - evtVal[0], 2) / (evtVal[0] > 1 ? evtVal[0] : 1); 
+}
+\end{verbatim}
+\end{listing}
+Notice the use of \verb|normalisationFactors| in most of the metric functions,
+and the special cases when the PDF or the observed number of events is zero. 
+
+It is worth noting that the PDF evaluation function may itself call other functions,
+either using \verb|callFunction| or manually casting a function index into other
+kinds of functions, as in the metric calculation of listing \ref{listing:maineval}.
+For example, in \verb|DalitzPlotThrustFunctor|, each resonance may be parametrised
+by a relativistic Breit-Wigner, a Gaussian, a Flatte function, or more esoteric forms;
+so the main function is supplied with a list of function indices and parameter indices
+for them, and interprets the \verb|void*| from \verb|device_function_table| as a specialised
+function type taking Dalitz-plot location (rather than a generic event) as its argument. 
+More prosaically, \verb|AddThrustFunctor| simply carries a list of PDF function indices
+and indices of weights to assign them, and invokes \verb|callFunction| several times,
+multiplying the results by its weight parameters and returning the sum. 
+
+We have now calculated the function value that we ask MINUIT to minimise, for 
+a single set of parameters; this value is passed back to MINUIT, which does its
+thing and comes up with another set of parameters for us, completing the loop. 
+This completes the narrative of a fit iteration; you now know the entire essential
+functionality of GooFit's core engine. 
 
 \section{Existing PDF classes}
+
+The GooFit PDFs, like ancient Gaul, are roughly divisible into three:
+\begin{itemize}
+\item Basic functions, written because they are (expected to be) frequently used,
+such as the Gaussian and polynomial PDFs.
+\item Combiners, functions that take other functions as arguments and
+spit out some combination of the inputs, for example sums and products.
+\item Specialised PDFs written for the $D^0\to\pi\pi\pi^0$ mixing analysis
+that is the driving test case for GooFit's capabilities. 
+\end{itemize}
+
+In the lists below, note that all the constructors
+take pointers to \texttt{Variable} objects; rather than 
+repetitively repeat ``\texttt{Variable} pointer''
+in a redundantly recurring manner, we just say \texttt{Variable}. 
+
+\subsection{Base PDFs}
+
+Basic PDFs are relatively straightforward: They take one or more observables
+and one or more parameters, and implement operations that are in some sense
+`atomic' - they do not combine several functions in any way. Usually they have
+a reasonably well-known given name, for example ``the threshold function'' or ``a polynomial''. 
+The canonical example is the Gaussian PDF. 
+
+\begin{itemize}
+\item \texttt{ArgusThrustFunctor}: Implements a threshold function
+\begin{eqnarray}
+P(x;m_0,a,p) &=& \left\{ \begin{matrix}
+0 & x \le m_0 \\
+x\left(\frac{x^2-m_0^2}{m_0^2}\right)^p e^{a\frac{x^2-m_0^2}{m_0^2}} & x > m_0 \\
+\end{matrix}
+\right. 
+\end{eqnarray}
+where the power $p$ is, by default, fixed at 0.5. The constructor takes \texttt{Variable}s
+representing $x$, $m_0$,
+and $a$, followed by a boolean indicating whether the threshold is an upper or lower
+bound. The equation above shows the PDF for a lower bound; for upper bounds, $x^2-m_0^2$
+becomes instead $m_0^2-x^2$, and the value is zero above rather than below $m_0$. 
+The constructor also takes an optional \texttt{Variable} representing the power $p$;
+if not given, a default parameter with value 0.5 is created. 
+\item BifurGaussThrustFunctor.hh
+\item BWThrustFunctor.hh
+\item CorrGaussianThrustFunctor.hh
+\item CrystalBallThrustFunctor.hh
+\item ExpGausThrustFunctor.hh
+\item ExpThrustFunctor.hh
+\item GaussianThrustFunctor.hh
+\item InterHistThrustFunctor.hh
+\item JohnsonSUThrustFunctor.hh
+\item KinLimitBWThrustFunctor.hh
+\item LandauThrustFunctor.hh
+\item NovosibirskThrustFunctor.hh
+\item PolynomialThrustFunctor.hh
+\item ScaledGaussianThrustFunctor.hh
+\item SmoothHistogramThrustFunctor.hh
+\item StepThrustFunctor.hh
+\item VoigtianThrustFunctor.hh
+\end{itemize}
+
+\begin{itemize}
+\item AddThrustFunctor.hh
+\item BinTransformThrustFunctor.hh
+\item CompositeThrustFunctor.hh
+\item ConvolutionThrustFunctor.hh
+\item DalitzPlotHelpers.hh
+\item DalitzPlotThrustFunctor.hh
+\item DalitzVetoThrustFunctor.hh
+\item devcomplex.hh
+\item EventWeightedAddThrustFunctor.hh
+\item IncoherentSumThrustFunctor.hh
+\item MappedThrustFunctor.hh
+\item MixingTimeResolution\_Aux.hh
+\item ProdThrustFunctor.hh
+\item ResonanceThrustFunctor.hh
+\item TddpThrustFunctor.hh
+\item ThreeGaussResolution\_Aux.hh
+\item ThrustPdfFunctor.hh
+\item TrigThresholdThrustFunctor.hh
+\item TruthResolution\_Aux.hh
+\end{itemize}
 
 
 

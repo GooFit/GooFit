@@ -166,19 +166,3 @@ __host__ InterHistThrustFunctor::InterHistThrustFunctor (std::string n,
 
   totalHistograms++; 
 }
-/*
-__host__ fptype InterHistThrustFunctor::normalise () const {
-  fptype ret = thrust::reduce(dev_base_histogram->begin(), dev_base_histogram->end()); 
-
-  for (unsigned int varIndex = 0; varIndex < numVars; ++varIndex) {
-    ret *= host_constants[2*varIndex + 1]; // Bin size cached by constructor. 
-  }
-
-  ret = 50*host_params[0]; 
-  host_normalisation[parameters] = 1.0/ret; 
-
-  std::cout << getName() << " found integral " << ret << " with parameter " << host_params[0] << std::endl; 
-  return ret; 
-}
-*/
-

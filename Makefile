@@ -38,6 +38,7 @@ FUNCTORLIST += $(wildcard $(SRCDIR)/*ThrustFunctor.cu)
 FUNCTORLIST += $(wildcard $(SRCDIR)/*Aux.cu)
 HEADERLIST = $(patsubst %.cu,%.hh,$(FUNCTORLIST))
 WRKFUNCTORLIST = $(patsubst $(SRCDIR)/%.cu,wrkdir/%.cu,$(FUNCTORLIST))
+#NB, the above are used in the FPOINTER Makefile.
 
 THRUSTO		= wrkdir/Variable.o wrkdir/PdfFunctor.o wrkdir/ThrustPdfFunctorCUDA.o wrkdir/Faddeeva.o wrkdir/FitControl.o wrkdir/FunctorBase.o wrkdir/DataSet.o wrkdir/BinnedDataSet.o wrkdir/UnbinnedDataSet.o wrkdir/FunctorWriter.o 
 ROOTRIPDIR	= $(PWD)/rootstuff

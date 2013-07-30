@@ -51,6 +51,38 @@ Aside from this, GooFit is known to compile and run on Fedora 14, Ubuntu 12.04,
 and OSX 10.8.4. It has been tested on the Tesla, Fermi, and Kepler
 generations of nVidia GPUs. 
 
+\subsection{Getting started}
+
+Assuming you have a CUDA-capable device with the nVidia dev environment
+set up so that, eg, \texttt{nvcc} works:
+\begin{itemize}
+\item Clone from the GitHub repository:
+\begin{verbatim}
+git clone git://github.com/GooFit/GooFit.git
+cd GooFit
+\end{verbatim}
+\item If necessary, edit the Makefile so the variable \texttt{CUDALOCATION}
+points to your local CUDA install.
+\item Compile GooFit with \texttt{gmake} or \texttt{make}. Do not be alarmed
+by warning messages saying that such-and-such a function's stack size could
+not be statically determined; this is an unavoidable (so far) side effect 
+of the function-pointer implementation discussed in section \ref{sec:engine}.
+\item Install and run the tutorial as a starting point:
+\begin{verbatim}
+cd ..
+wget http://www.slac.stanford.edu/~rolfa/dalitzTutorial.tar.gz
+gunzip dalitzTutorial.tar.gz
+tar -xvf dalitzTutorial.tar
+cd dalitzTutorial
+export CUDALOCATION=/usr/local/cuda/
+gmake
+./dalitz dalitz_toyMC_000.txt
+\end{verbatim}
+The expected output is a MINUIT fit log showing that the fit
+converged, with such-and-such values for the real and imaginary
+parts of the resonance coefficients. 
+\end{itemize}
+
 \section{User-level code}
 \label{sec:usercode}
 
@@ -1227,18 +1259,119 @@ if you are doing a Dalitz-plot analysis, you may find them, and
 conceivably even this documentation, helpful. 
 
 \begin{itemize}
-\item \texttt{DalitzPlotHelpers}:
-\item \texttt{DalitzPlotThrustFunctor}:
-\item \texttt{DalitzVetoThrustFunctor}:
-\item \texttt{devcomplex}:
-\item \texttt{IncoherentSumThrustFunctor}:
-\item \texttt{MixingTimeResolution\_Aux}:
-\item \texttt{ResonanceThrustFunctor}:
-\item \texttt{TddpThrustFunctor}:
-\item \texttt{ThreeGaussResolution\_Aux}:
-\item \texttt{ThrustPdfFunctor}:
-\item \texttt{TrigThresholdThrustFunctor}:
-\item \texttt{TruthResolution\_Aux}:
+\item \texttt{DalitzPlotThrustFunctor}: A time-independent description
+of the Dalitz plot as a coherent sum of resonances:
+\begin{eqnarray}
+P(m^2_{12},m^2_{13};\vec\alpha) &=& \left|\sum\limits_i \alpha_i B_i(m^2_{12},m^2_{13})\right|^2\epsilon(m^2_{12},m^2_{13})
+\end{eqnarray}
+where $\alpha_i$ is a complex coefficient, $B_i$ is a resonance parametrisation (see \texttt{ResonanceThrustFunctor}, below),
+and $\epsilon$ is a real-valued efficiency function. The constructor takes the squared-mass variables $m_{12}$ and
+$m_{13}$, an event index (this is used in caching), a \texttt{DecayInfo} object which contains a \texttt{vector}
+of \texttt{ResonanceThrustFunctor}s as well as some global information like the mother and daughter masses, 
+and the efficiency function. 
+\item \texttt{DalitzVetoThrustFunctor}: Tests whether a point is in a particular 
+region of the Dalitz plot, and returns zero if so, one otherwise. Intended for
+use as part of an efficiency function, excluding particular regions - canonically
+the one containing the  $K^0\to\pi\pi$ decay, as a large source of backgrounds that
+proved hard to model. The constructor takes the squared-mass variables $m_{12}$ and
+$m_{13}$, the masses (contained in \texttt{Variable}s) of the mother and three daughter
+particles involved in the decay, and a \texttt{vector} of \texttt{VetoInfo} objects.
+The \texttt{VetoInfo} objects just contain a cyclic index (either \texttt{PAIR\_12},
+\texttt{PAIR\_13}, or \texttt{PAIR\_23}) and the lower and upper bounds of the veto region.
+\item \texttt{IncoherentSumThrustFunctor}: Similar to \texttt{DalitzPlotThrustFunctor}, 
+but the resonances are added incoherently:
+\begin{eqnarray}
+P(m^2_{12},m^2_{13};\vec\alpha) &=& \sum\limits_i \left|\alpha_i B_i(m^2_{12},m^2_{13})\right|^2\epsilon(m^2_{12},m^2_{13})
+\end{eqnarray}
+The constructor is the same, but note that the \texttt{amp\_imag} member of \texttt{ResonanceThrustFunctor}
+is not used, so the $\alpha$ are in effect interpreted as real numbers. 
+\item \texttt{MixingTimeResolution\_Aux}: The abstract base class of \texttt{TruthResolution\_Aux}
+and \texttt{ThreeGaussResolution\_Aux}. Represents a parametrisation of the time resolution. 
+\item \texttt{ResonanceThrustFunctor}: Represents a resonance-shape parametrisation, the $B_i$
+that appear in the equations for \texttt{DalitzPlotThrustFunctor}, \texttt{IncoherentSumThrustFunctor},
+and \texttt{TddpThrustFunctor}. Canonically a relativistic Breit-Wigner. The constructor takes
+the real and imaginary parts of the coefficient $\alpha$ (note that this is actually used by
+the containing function), and additional parameters depending on which function the resonance
+is modelled by:
+\begin{itemize}
+\item Relativistic Breit-Wigner: Mass, width, spin, and cyclic index. The two last are integer constants.
+Only spins 0, 1, and 2 are supported. 
+\item Gounaris-Sakurai parametrisation: Spin, mass, width, and cyclic index. Notice that this
+is the same list as for the relativistic BW, just a different order.
+\item Nonresonant component (ie, constant across the Dalitz plot): Nothing additional.
+\item Gaussian: Mean and width of the Gaussian, cyclic index. Notice that the Gaussian
+takes the mass $m_{12,13,23}$ as its argument, not the squared mass $m^2_{12,13,23}$
+like the other parametrisations. 
+\end{itemize}
+\item \texttt{TddpThrustFunctor}: If the Gaussian is a potato, this is a five-course banquet
+dinner involving entire roasted animals stuffed with other animals, large dance troupes 
+performing between the courses, an orchestra playing in the background, and lengthy
+speeches. There will not be a vegetarian option. Without going too deeply into the physics, 
+the function models a decay, eg $D^0\to\pi\pi\pi^0$, that can happen either directly or
+through a mixed path $D^0\to \overline{D^0}\to\pi\pi\pi^0$. The probability of the mixing
+path depends on the decay time, and quantum-mechanically interferes with the direct path.
+Consequently the full Time-Dependent Dalitz-Plot (Tddp) amplitude is (suppressing
+the dependence on squared masses, for clarity):
+\begin{eqnarray}
+\label{eq:fullmix}
+P(m^2_{12}, m^2_{13}, t, \sigma_t;x,y,\tau,\vec\alpha) &=&
+e^{-t/\tau}\Big(|A+B|^2\cosh(yt/\tau)\\
+&& + |A-B|^2\cos(xt/\tau)\\
+&& - 2\Re(AB^*)\sinh(yt/\tau)\\
+&& - 2\Im(AB^*)\sin(xt/\tau)\Big)
+\end{eqnarray}
+where (notice the reversed masses in the $B$ calculation)
+\begin{eqnarray}
+A &=& \sum\limits_i \alpha_iB_i(m^2_{12}, m^2_{13}) \\
+B &=& \sum\limits_i \alpha_iB_i(m^2_{13}, m^2_{12}), 
+\end{eqnarray}
+\emph{convolved with} a time-resolution function and \emph{multiplied by} an efficiency. 
+The implementation involves a large
+amount of caching of the intermediate $B_i$ values, because these are expected
+to change slowly relative to the coefficients $\alpha$ (in many cases, not at all, 
+since masses and widths are often held constant) and are relatively expensive to calculate. 
+
+The constructor takes the measured decay time $t$, error on decay time $\sigma_t$, 
+squared masses $m^2_{12}$ and $m^2_{13}$, event number, decay information (the same
+class as in \texttt{DalitzPlotThrustFunctor}; it also holds the mixing parameters
+$x$ and $y$ and lifetime $\tau$), time-resolution function, efficiency, and optionally
+a mistag fraction. A variant constructor takes, instead of a single time-resolution
+function, a \texttt{vector} of functions and an additional observable $m_{D^0}$;
+in this case the resolution function used depends on which bin of $m_{D^0}$ the event
+is in, and the number of bins is taken as equal to the number of resolution functions
+supplied. 
+
+It is not suggested to try to use this thing from scratch. Start with a working
+example and modify it gradually. 
+\item \texttt{ThreeGaussResolution\_Aux}: A resolution function
+consisting of a sum of three Gaussians, referred to as the `core', 
+`tail', and `outlier' components. The constructor takes the core and
+tail fractions (the outlier fraction is 1 minus the other two), core
+mean and width, tail mean and width, and outlier mean and width. Notice
+that this is a resolution function, so the full probability is found by
+convolving Gaussians with Equation \ref{eq:fullmix}, and this runs to a page
+or so of algebra involving error functions. It is beyond the scope of this
+documentation. 
+\item \texttt{TrigThresholdThrustFunctor}: Intended as part of an efficiency
+function, modelling a gradual fall-off near the edges of phase space:
+\begin{eqnarray}
+P(x;a,b,t) &=& \left\{\begin{matrix}
+1 & d > 1/2 \\
+a + (1-a) \sin(d\pi) & \mathrm{otherwise}
+\end{matrix}
+\right. 
+\end{eqnarray}
+where $d=b(x-t)$ or $d=b(t-x)$ depending on whether the function is modelling
+a lower or upper threshold. The constructor takes the observable $x$ 
+(which will be either $m^2_{12}$ or $m^2_{13}$), 
+threshold value $t$, trig constant $b$, linear constant $a$, and a boolean
+which if true indicates an upper threshold. A variant
+constructor, for modelling a threshold in the ``third'' Dalitz-plot dimension
+$m^2_{23}$, takes both $m^2_{12}$ and $m^2_{13}$, and an additional mass constant $m$;
+it then forms $x = m - m^2_{12} - m^2_{13}$, and otherwise does the same calculation. 
+\item \texttt{TruthResolution\_Aux}: The simplest possible resolution
+function, a simple delta spike at zero - ie, time is always measured
+perfectly. The constructor takes no arguments at all! 
 \end{itemize}
 
 

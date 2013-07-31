@@ -7,10 +7,15 @@
 \usepackage{amssymb} 
 \usepackage{mathtools}
 \usepackage{ulem} 
+\usepackage{hyperref}
 
 \newtheorem{listing}{Listing}
 
 \begin{document}
+\tableofcontents
+
+\newpage 
+
 \section{Introduction}
 
 GooFit\footnote{Named in homage to RooFit, with the 'G' standing for 'GPU'.}
@@ -351,7 +356,7 @@ So, replacing the first level of lookup by the values, we have:
 \begin{verbatim}
   fptype x = evt[indices[4]]; 
 \end{verbatim}
-and \verb|indices[4]| is just 0; so in other words, \verb.|x|. is the first
+and \verb|indices[4]| is just 0; so in other words, \verb|x| is the first
 observable in the event. In the case of the single Gaussian, it is
 also the \emph{only} observable, so we've done quite a bit of work to
 arrive at a zero that we knew from the start; but in more complex fits this would not be true. 
@@ -1314,7 +1319,9 @@ dinner involving entire roasted animals stuffed with other animals, large dance 
 performing between the courses, an orchestra playing in the background, and lengthy
 speeches. There will not be a vegetarian option. Without going too deeply into the physics, 
 the function models a decay, eg $D^0\to\pi\pi\pi^0$, that can happen either directly or
-through a mixed path $D^0\to \overline{D^0}\to\pi\pi\pi^0$. The probability of the mixing
+through a mixed path $D^0\to \overline{D^0}\to\pi\pi\pi^0$. (Although developed for the
+$\pi\pi\pi^0$ case, it should be useful for any decay where the final state is its own anti-state.)
+The probability of the mixing
 path depends on the decay time, and quantum-mechanically interferes with the direct path.
 Consequently the full Time-Dependent Dalitz-Plot (Tddp) amplitude is (suppressing
 the dependence on squared masses, for clarity):

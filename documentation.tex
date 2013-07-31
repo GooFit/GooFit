@@ -120,6 +120,11 @@ int main (int argc, char** argv) {
 \end{verbatim}
 \end{listing} 
 
+Notice that, behind the scenes, GooFit assumes that there
+will be exactly one top-level PDF and data set; it is not
+advised to break this assumption unless you know what you
+are doing and exactly how you are getting around it. 
+
 \subsection{Data sets}
 
 To create a data set with several dimensions, supply a vector
@@ -146,8 +151,9 @@ are wanted, GooFit prefers to use a \texttt{vector} of pointers.
 \subsection{Fit types} 
 
 By default, GooFit will do an unbinned maximum-likelihood fit, where
-the goodness-of-fit metric that is maximised is 
-the negative logarithm of the sum of the
+the goodness-of-fit metric that is minimised\footnote{For historical reasons, 
+MINUIT always minimises rather than maximising.} is 
+the negative sum of logarithms of 
 probabilities, which is equivalent to maximising the joint
 overall probability: 
 \begin{eqnarray}
@@ -483,7 +489,7 @@ that is, the events are laid out contiguously in memory, each event consisting s
 of the observables, in the same order every time. Notice that if the \texttt{DataSet} contains \texttt{Variables}s
 that have not been registered as observables, they are ignored. 
 If \texttt{setData}
-is called with an \texttt{UnbinnedDataSet} object, the procedure is similar
+is called with an \texttt{BinnedDataSet} object, the procedure is similar
 except that each `event' consists of the coordinates of the bin center, the
 number of events in the bin, and either the bin error or the bin size. We will
 see later how the engine uses the \texttt{cudaDataArray} either as a list

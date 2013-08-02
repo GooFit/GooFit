@@ -72,13 +72,20 @@ points to your local CUDA install.
 by warning messages saying that such-and-such a function's stack size could
 not be statically determined; this is an unavoidable (so far) side effect 
 of the function-pointer implementation discussed in section \ref{sec:engine}.
-\item Install and run the tutorial as a starting point:
+\item Compile and run the `simpleFitExample' program, which generates
+three distributions, fits them, and plots the results:
 \begin{verbatim}
-cd ..
-wget http://www.slac.stanford.edu/~rolfa/dalitzTutorial.tar.gz
-gunzip dalitzTutorial.tar.gz
-tar -xvf dalitzTutorial.tar
-cd dalitzTutorial
+cd examples/simpleFit
+gmake
+./simpleFitExample
+\end{verbatim}
+The expected output is a MINUIT log for three different fits, 
+and three image files. 
+\item Compile and run the Dalitz-plot tutorial, which fits a 
+text file containing toy Monte Carlo data to a coherent sum of
+Breit-Wigner resonances: 
+\begin{verbatim}
+cd examples/dalitz
 export CUDALOCATION=/usr/local/cuda/
 gmake
 ./dalitz dalitz_toyMC_000.txt

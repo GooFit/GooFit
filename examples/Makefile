@@ -30,7 +30,7 @@ ROOT_INCLUDES = -I$(ROOTSYS)/include/
 ROOT_LIBS     = -L$(ROOTSYS)/lib/ -lCore -lCint -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lMatrix -lPhysics -lMathCore -pthread -lThread -lMinuit2 -lMinuit -lFoam 
 WRKDIR = $(GOOFITDIR)/wrkdir/
 
-THRUSTO		= $(WRKDIR)/Variable.o $(WRKDIR)/PdfBuilder.o $(WRKDIR)/ThrustPdfFunctorCUDA.o $(WRKDIR)/Faddeeva.o $(WRKDIR)/FitControl.o $(WRKDIR)/FunctorBase.o $(WRKDIR)/DataSet.o $(WRKDIR)/BinnedDataSet.o $(WRKDIR)/UnbinnedDataSet.o $(WRKDIR)/FunctorWriter.o 
+THRUSTO		= $(WRKDIR)/Variable.o $(WRKDIR)/PdfFunctor.o $(WRKDIR)/ThrustPdfFunctorCUDA.o $(WRKDIR)/Faddeeva.o $(WRKDIR)/FitControl.o $(WRKDIR)/FunctorBase.o $(WRKDIR)/DataSet.o $(WRKDIR)/BinnedDataSet.o $(WRKDIR)/UnbinnedDataSet.o $(WRKDIR)/FunctorWriter.o 
 ROOTRIPDIR	= $(GOOFITDIR)/rootstuff
 ROOTUTILLIB	= $(ROOTRIPDIR)/libRootUtils.so 
 PROGRAMS	= simpleFitExample

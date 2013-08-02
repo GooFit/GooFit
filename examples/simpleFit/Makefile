@@ -19,7 +19,7 @@ endif
 
 CUDALOCATION = /usr/local/cuda/
 CUDAHEADERS = $(CUDALOCATION)/include/
-GOOFITDIR = $(PWD)/../
+GOOFITDIR = $(PWD)/../../
 
 INCLUDES += -I$(CUDAHEADERS) -I$(GOOFITDIR) -I$(GOOFITDIR)/rootstuff -I$(GOOFITDIR)/FPOINTER/ 
 LIBS += -L$(CUDALOCATION)/$(CUDALIBDIR) -lcudart -L$(GOOFITDIR)/rootstuff -lRootUtils 

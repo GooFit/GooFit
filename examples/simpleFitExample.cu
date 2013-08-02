@@ -1,5 +1,5 @@
 #include "Variable.hh" 
-#include "PdfBuilder.hh" 
+#include "PdfFunctor.hh"
 #include "UnbinnedDataSet.hh" 
 #include "LandauThrustFunctor.hh" 
 #include "NovosibirskThrustFunctor.hh"

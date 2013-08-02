@@ -31,11 +31,14 @@ Running the Example Fit
 * Setup the bin and library paths for root
 
         export PATH=${PATH}:${ROOTSYS}/bin/:./
+        # On Linux:
         export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${ROOTSYS}/lib:<GooFit path>/rootstuff
+        # On Mac:
+        export DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}:${ROOTSYS}/lib:<GooFit path>/rootstuff
 
 * To run the simple fit example type:
 
-        ./simplefit
+        ./simpleFitExample
 
 Acknowledgement
 

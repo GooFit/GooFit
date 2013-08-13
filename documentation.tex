@@ -18,7 +18,7 @@
 
 \section{Introduction}
 
-GooFit\footnote{Named in homage to RooFit, with the 'G' standing for 'GPU'.}
+GooFit\footnote{Named in homage to RooFit, with the `G' standing for `GPU'.}
 is a framework for creating arbitrary probability density functions (PDFs) 
 and evaluating them over large datasets using nVidia Graphics Processing Units (GPUs). 
 New PDFs are written partly in nVidia's CUDA programming language and
@@ -42,7 +42,9 @@ the variable-index organisation that GooFit PDFs use. Section \ref{sec:newpdfs}
 considers this organisation in some depth.
 \item Ascended Masters, or architects, who by extended meditation have 
 acquired a full understanding of the core engine of GooFit, and can modify it
-to their desire. Section \ref{sec:engine} gives a detailed narrative of the
+to their desire\footnote{Although, if they are \emph{Buddhist} masters,
+they don't even though they can, since they have transcended desire - and suffering 
+with it.}. Section \ref{sec:engine} gives a detailed narrative of the
 progress of a PDF evaluation through the engine core, thus elucidating its
 mysteries. It should only rarely be necessary to acquire this level of 
 mastery; in principle only the developers of GooFit need to know its 
@@ -58,8 +60,13 @@ generations of nVidia GPUs.
 
 \subsection{Getting started}
 
-Assuming you have a CUDA-capable device with the nVidia dev environment
-set up so that, eg, \texttt{nvcc} works:
+You will need to have a CUDA-capable device and to have the development
+environment (also known as the software development kit or SDK) 
+set up, with access to the compiler \texttt{nvcc} and its libraries.
+If you have the hardware, you can get the SDK 
+from \href{https://developer.nvidia.com/gpu-computing-sdk}{nVidia's website}.
+
+With your CUDA environment set up, you can install GooFit thus: 
 \begin{itemize}
 \item Clone from the GitHub repository:
 \begin{verbatim}
@@ -90,6 +97,19 @@ export CUDALOCATION=/usr/local/cuda/
 gmake
 ./dalitz dalitz_toyMC_000.txt
 \end{verbatim}
+Quick troubleshooting: If your shell doesn't like \texttt{export},
+try instead \verb|setenv CUDALOCATION /usr/local/cuda/|. Check
+that \verb|/usr/local/cuda/| exists and contains, eg, \verb|bin/nvcc| - 
+otherwise, track down the directory that does and set \verb|CUDALOCATION|
+to point to that instead. Some installs have \verb|make| in place of \verb|gmake|. 
+
+The text file contains information about simulated decays of the
+$D^0$ particle to $\pi^+\pi^-\pi^0$; in particular, in each line, the second and
+third numbers are the Dalitz-plot coordinates $m^2(pi^+\pi^0)$ and
+$m^2(pi^-\pi^0)$. The \texttt{dalitz} program creates a PDF describing the distribution of
+these two variables in terms of Breit-Wigner resonances, 
+reads the data, sends it to the GPU, and fits the PDF to the data
+ - the floating parameters are the complex coefficients of the resonances.
 The expected output is a MINUIT fit log showing that the fit
 converged, with such-and-such values for the real and imaginary
 parts of the resonance coefficients. 
@@ -110,22 +130,49 @@ Simple Gaussian fit.
 
 \begin{verbatim}
 int main (int argc, char** argv) {
+  // Create an object to represent the observable, 
+  // the number we have measured. Give it a name,
+  // upper and lower bounds, and a number of bins
+  // to use in numerical integration. 
   Variable* xvar = new Variable("xvar", -5, 5); 
   xvar->numbins = 1000; 
-  TRandom donram(42); 
+
+  // A data set to store our observations in.
   UnbinnedDataSet data(xvar);
+
+  // "Observe" ten thousand events and add them
+  // to the data set, throwing out any events outside
+  // the allowed range. In a real fit this step would
+  // involve reading a previously created file of data
+  // from an _actual_ experiment. 
+  TRandom donram(42); 
   for (int i = 0; i < 10000; ++i) {
     fptype val = donram.Gaus(0.2, 1.1);
     if (fabs(val) > 5) {--i; continue;} 
     data.addEvent(val); 
   }
 
+  // Variables to represent the mean and standard deviation
+  // of the Gaussian PDF we're going to fit to the data.
+  // They take a name, starting value, optional initial 
+  // step size and upper and lower bounds. Notice that
+  // here only the mean is given a step size; the sigma
+  // will use the default step of one-tenth of its range.
   Variable* mean = new Variable("mean", 0, 1, -10, 10);
   Variable* sigm = new Variable("sigm", 1, 0.5, 1.5); 
+
+  // The actual PDF. The Gaussian takes a name, an independent
+  // (ie observed) variable, and a mean and width. 
   GaussianThrustFunctor gauss("gauss", xvar, mean, sigm); 
 
+  // Copy the data to the GPU. 
   gauss.setData(&data);
+
+  // A class that talks to MINUIT and GooFit. It needs
+  // to know what PDF it should set up in MINUIT. 
   PdfFunctor fitter(&gauss); 
+
+  // The actual fit. 
   fitter.fit(); 
   return 0;
 }
@@ -210,7 +257,8 @@ weights.push_back(new Variable("constaCoef", 0.03, 0.01, -1, 1));
 weights.push_back(new Variable("linearCoef", 0, 0.01, -1, 1));
 weights.push_back(new Variable("secondCoef", 0, 0.01, -1, 1));
 
-PolynomialThrustFunctor* poly = new PolynomialThrustFunctor("poly", decayTime, weights); 
+PolynomialThrustFunctor* poly;
+poly = new PolynomialThrustFunctor("poly", decayTime, weights); 
 poly->setFitControl(new BinnedErrorFit()); 
 poly->setData(ratioData); 
 \end{verbatim}
@@ -247,10 +295,12 @@ evaluation function:
 \begin{verbatim}
 __device__ device_function_ptr ptr_to_Gaussian = device_Gaussian; 
 \end{verbatim}
-where \texttt{device\_function\_ptr} is \texttt{typedef}d as a pointer
+where \texttt{device\_function\_ptr} is defined (using \texttt{typedef}) as a pointer
 a function with the signature shown in listing \ref{listing:fsign}:
 \begin{verbatim}
-typedef fptype (*device_function_ptr) (fptype*, fptype*, unsigned int*);
+typedef fptype (*device_function_ptr) (fptype*, 
+                                       fptype*, 
+                                       unsigned int*);
 \end{verbatim}
 This pointer\footnote{You might ask, why not copy the
 function directly? The reason is that \texttt{cudaMemcpy} doesn't
@@ -297,16 +347,18 @@ in the order they were registered.
 
 An example may be useful at this point. Consider the simple Gaussian PDF constructor:
 \begin{verbatim}
-__host__ GaussianThrustFunctor::GaussianThrustFunctor (std::string n, 
-                                                       Variable* _x, 
-                                                       Variable* mean, 
-                                                       Variable* sigma) 
+GaussianThrustFunctor::GaussianThrustFunctor (std::string n, 
+                                              Variable* _x, 
+                                              Variable* mean, 
+                                              Variable* sigma) 
   : ThrustPdfFunctor(_x, n) 
 {
   std::vector<unsigned int> pindices;
   pindices.push_back(registerParameter(mean));
   pindices.push_back(registerParameter(sigma));
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_Gaussian, sizeof(void*));
+  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, 
+                       ptr_to_Gaussian, 
+                       sizeof(void*));
   initialise(pindices); 
 }
 \end{verbatim}
@@ -326,7 +378,9 @@ these will simply be 0 and 1. Then comes the number of observables, which is 1, 
 finally the index of the observable - which, as it is the only observable registered,
 must be 0. Now we can consider how the device-side code makes use of this:
 \begin{verbatim}
-__device__ fptype device_Gaussian (fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_Gaussian (fptype* evt, 
+                                   fptype* p, 
+                                   unsigned int* indices) {
   fptype x = evt[indices[2 + indices[0]]]; 
   fptype mean = p[indices[1]];
   fptype sigma = p[indices[2]];
@@ -346,10 +400,10 @@ lookups in those lines with their values from above:
   fptype mean = p[0];
   fptype sigma = p[1]; 
 \end{verbatim}
-which is exactly what we want. The lookup of \verb|x| appears a little
+which is exactly what we want. The fetching of \verb|x| appears a little
 more formidable, with its double \verb|indices| lookup; it calls for
 some explanation. First, \verb|indices[0]| is the number of parameters
-of the function; we want to skip ahead by this number to get to the 'event'
+of the function; we want to skip ahead by this number to get to the `event'
 part of the array. In the Gaussian, this is known at compile-time to be
 2, but not every PDF writer is so fortunate; a polynomial PDF, for example,
 could have an arbitrary number of parameters. (Or it might specify a maximum
@@ -374,7 +428,7 @@ could be stored at positions 80 and 101 of the global parameter array.
 \subsection{Constants}
 
 There are two ways of storing constants, or three if we count
-registering a Variable as a parameter and telling MINUIT to keep
+registering a \texttt{Variable} as a parameter and telling MINUIT to keep
 it fixed. For integer constants, we may simply store them in the
 index array; since it is up to the programmer to interpret the
 indices, there is no rule that says it absolutely must be taken
@@ -386,7 +440,7 @@ what the framework does in enforcing the convention that the first
 number in the index array is the number of parameters. 
 
 However, this will not serve for non-integer-valued constants. They must either
-go through MINUIT as fixed parameters, or else go into the \verb|functorConstants|
+go through MINUIT as fixed parameters, or else go into the \texttt{functorConstants}
 array. \verb|functorConstants| works just like the global parameters
 array, except that it does not update on every MINUIT iteration since
 it is meant for storing constants. To use it, you should first reserve
@@ -420,7 +474,9 @@ index of the first constant belonging to this object. To extract my constant for
 use in the device function, I look it up as though it were a parameter, but the
 target array is \verb|functorConstants| instead of the passed-in \verb|p|:
 \begin{verbatim}
-__device__ fptype device_Gaussian (fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_Gaussian (fptype* evt, 
+                                   fptype* p, 
+                                   unsigned int* indices) {
   fptype x = evt[indices[2 + indices[0]]]; 
   fptype mean = p[indices[1]];
   fptype sigma = p[indices[2]];
@@ -433,7 +489,7 @@ __device__ fptype device_Gaussian (fptype* evt, fptype* p, unsigned int* indices
 \end{verbatim}
 
 If I had registered two constants instead of one, the second one would be looked
-up by \verb|functorConstants[indices[3] + 1]|, not the \verb|functorConstants[indices[4]]|
+up by \verb|functorConstants[indices[3] + 1]|, not the \texttt{functorConstants[indices[4]]}
 one might naively expect. This is because the constant is stored next to the first one
 registered, but its \emph{index} is not stored at all; it has to be calculated from the
 index of the first constant. Thus the \verb|+1| must go outside the indices lookup,
@@ -498,7 +554,7 @@ on the top-level PDF.
 
 The array thus created has the simple structure \verb|x1 y1 z1 x2 y2 z2 ... xN yN zN|,
 that is, the events are laid out contiguously in memory, each event consisting simply
-of the observables, in the same order every time. Notice that if the \texttt{DataSet} contains \texttt{Variables}s
+of the observables, in the same order every time. Notice that if the \texttt{DataSet} contains \texttt{Variable}s
 that have not been registered as observables, they are ignored. 
 If \texttt{setData}
 is called with an \texttt{BinnedDataSet} object, the procedure is similar
@@ -584,12 +640,14 @@ Normalisation code.
   constant_iterator<int> eventSize(observables.size());
   counting_iterator<int> binIndex(0); 
 
-  fptype sum = transform_reduce(make_zip_iterator(make_tuple(binIndex, 
-                                                             eventSize, 
-                                                             arrayAddress)),
-                                make_zip_iterator(make_tuple(binIndex + totalBins, 
-                                                             eventSize, 
-                                                             arrayAddress)),
+  fptype sum = transform_reduce(make_zip_iterator(
+                                 make_tuple(binIndex, 
+                                            eventSize, 
+                                            arrayAddress)),
+                                make_zip_iterator(
+                                 make_tuple(binIndex + totalBins, 
+                                            eventSize, 
+                                            arrayAddress)),
 				*logger, dummy, cudaPlus); 
 \end{verbatim}
 \end{listing}
@@ -607,9 +665,9 @@ that will eventually be copied to \texttt{normalisationFactors} on the GPU; this
 multiplying by the inverse rather than dividing in every thread. 
 
 PDF implementations may override the \texttt{normalisation} method, and among the default
-PDFs, both \texttt{AddThrustFunctor} and \texttt{ProdThrustFunctor} do so in order to
+PDFs, both \texttt{AddThrustFunctor} and \texttt{ProdThrustFunctor} do so to
 ensure that their components are correctly normalised. Among the more specialised
-implementations, \texttt{TddpThrustFunctor} overrides \texttt{normalise} in order that
+implementations, \texttt{TddpThrustFunctor} overrides \texttt{normalise} so that
 it may cache the slowly-changing Breit-Wigner calculations, and also because its time dependence
 is analytically integrable and it is a good optimisation to do only the Dalitz-plot
 part numerically. This points to a more general rule, that once a PDF depends on three
@@ -655,7 +713,7 @@ should start at zero. Finally, the \verb|*logger| argument indicates the specifi
 function-pointer and parameter indices are stored. 
 
 The \texttt{operator} does two things: First it calculates the bin centers,
-in each, observable, of the global bin:
+in each observable, of the global bin:
 \begin{listing}
 \label{listing:bincenter}
 Bin-center calculation.
@@ -663,9 +721,13 @@ Bin-center calculation.
 \begin{verbatim}
 __shared__ fptype binCenters[1024*MAX_NUM_OBSERVABLES];
 
-// To convert global bin number to (x,y,z...) coordinates: For each dimension, take the mod 
-// with the number of bins in that dimension. Then divide by the number of bins, in effect
-// collapsing so the grid has one fewer dimension. Rinse and repeat. 
+// To convert global bin number to (x,y,z...) coordinates: 
+// For each dimension, take the mod with the number of bins 
+// in that dimension. Then divide by the number of bins, in 
+// effect collapsing so the grid has one fewer dimension. 
+// Rinse and repeat. 
+
+int offset = threadIdx.x*MAX_NUM_OBSERVABLES;
 unsigned int* indices = paramIndices + parameters;
 for (int i = 0; i < evtSize; ++i) {
   fptype lowerBound = thrust::get<2>(t)[3*i+0];
@@ -677,7 +739,7 @@ for (int i = 0; i < evtSize; ++i) {
   x /= numBins;
   x *= (localBin + 0.5); 
   x += lowerBound;
-  binCenters[indices[indices[0] + 2 + i]+threadIdx.x*MAX_NUM_OBSERVABLES] = x; 
+  binCenters[indices[indices[0] + 2 + i]+offset] = x; 
   binNumber /= numBins;
 }
 \end{verbatim}
@@ -689,18 +751,30 @@ thread, look up the index-within-events of each observable, and set the entries
 of the locally-owned part of \texttt{binCenters} accordingly. This fake event is then
 sent to the PDF for evaluation:
 \begin{verbatim}
-fptype ret = callFunction(binCenters+threadIdx.x*MAX_NUM_OBSERVABLES, functionIdx, parameters); 
+fptype ret = callFunction(binCenters+offset, 
+                          functionIdx, 
+                          parameters); 
 \end{verbatim}
 where \texttt{callFunction} is just a wrapper for looking up the function referred to
 by \texttt{functionIdx} and calling it with the right part of the parameter array:
+\begin{listing}
+\label{listing:callfunction}
+Code to call device-side PDF implementations (some lines
+broken up for clarity). 
+
 \begin{verbatim}
 __device__ fptype callFunction (fptype* eventAddress, 
                                 unsigned int functionIdx, 
                                 unsigned int paramIdx) {
-  device_function_ptr fcn = reinterpret_cast<device_function_ptr>(device_function_table[functionIdx]);
-  return (*fcn)(eventAddress, cudaArray, paramIndices + paramIdx);
+  void* rawPtr = device_function_table[functionIdx];
+  device_function_ptr fcn;
+  fcn = reinterpret_cast<device_function_ptr>(rawPtr);
+  return (*fcn)(eventAddress, 
+                cudaArray, 
+                paramIndices + paramIdx);
 }
 \end{verbatim}
+\end{listing}
 This, finally, is where the \verb|__device__| function from the PDF definitions
 in section \ref{sec:newpdfs} is called; we have now connected all this engine
 code with the evaluation code for the Gaussian, Breit-Wigner, polynomial, sum of
@@ -749,7 +823,7 @@ __device__ fptype MetricTaker::operator ()
   fptype ret = callFunction(eventAddress, functionIdx, parameters);
 
   // Notice assumption here! For unbinned fits the 
-  // 'eventAddress' pointer won't be used in the metric, 
+  // eventAddress pointer won't be used in the metric, 
   // so it doesn't matter what it is. For binned fits it 
   // is assumed that the structure of the event is 
   // (obs1 obs2... binentry binvolume), so that the array
@@ -881,7 +955,7 @@ The GooFit PDFs, like ancient Gaul, are roughly divisible into three:
 such as the Gaussian and polynomial PDFs.
 \item Combiners, functions that take other functions as arguments and
 spit out some combination of the inputs, for example sums and products.
-\item Specialised PDFs written for the $D^0\to\pi\pi\pi^0$ mixing analysis
+\item Specialised PDFs, written for the $D^0\to\pi\pi\pi^0$ mixing analysis
 that is the driving test case for GooFit's capabilities. 
 \end{itemize}
 
@@ -893,7 +967,7 @@ Additionally, the first argument in every constructor is the name
 of the object being created; again this is not mentioned in every
 item. By convention, constructors take observables first, then parameters. 
 
-\subsection{Base PDFs}
+\subsection{Basic PDFs}
 
 Basic PDFs are relatively straightforward: They take one or more observables
 and one or more parameters, and implement operations that are in some sense
@@ -1166,7 +1240,7 @@ to your fit.
 \item \texttt{AddThrustFunctor}: A weighted sum of two or more PDFs. There are two variants,
 `extended' and `unextended'. In the extended version the weights are interpreted as numbers
 of events, and $N$ PDFs have $N$ weights; in the unextended version the weights are probabilities
-(ie, between 0 and 1) and $N$ PDFs have $N-1$ weights, with the probability of the last PDF
+(i.e., between 0 and 1) and $N$ PDFs have $N-1$ weights, with the probability of the last PDF
 being 1 minus the sum of the weights of the others. 
 \begin{eqnarray}
 P(F_1,\ldots, F_n,w_1,\ldots,w_n) &=& w_1F_1 + \ldots + w_nF_n \\
@@ -1210,7 +1284,7 @@ which slice each event is in.
 The constructor
 takes \texttt{vector}s of the observables $\vec x$, lower bounds $\vec l$,
 bin sizes $\vec b$, and number of bins $\vec n$. The last is used for converting
-local (ie one-dimensional) bins into global bins in the case of multiple dimensions. 
+local (i.e. one-dimensional) bins into global bins in the case of multiple dimensions. 
 \item \texttt{CompositeThrustFunctor}: A chained function, 
 \begin{eqnarray}
 P(x) &=& h(g(x)).
@@ -1390,7 +1464,7 @@ constructor, for modelling a threshold in the ``third'' Dalitz-plot dimension
 $m^2_{23}$, takes both $m^2_{12}$ and $m^2_{13}$, and an additional mass constant $m$;
 it then forms $x = m - m^2_{12} - m^2_{13}$, and otherwise does the same calculation. 
 \item \texttt{TruthResolution\_Aux}: The simplest possible resolution
-function, a simple delta spike at zero - ie, time is always measured
+function, a simple delta spike at zero - i.e., time is always measured
 perfectly. The constructor takes no arguments at all! 
 \end{itemize}
 

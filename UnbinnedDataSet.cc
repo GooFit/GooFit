@@ -37,9 +37,15 @@ fptype UnbinnedDataSet::getValue (Variable* var, int idx) const {
 
   std::map<Variable*, fptype>::const_iterator event = data[idx].find(var); 
   if (event == data[idx].end()) {
-    std::cout << "UnbinnedDataSet error: Could not find variable "
-	      << var->name
-	      << " in this data set.\n";
+    static map<string, bool> printed;
+    if (!printed[var->name]) {
+      std::cout << "UnbinnedDataSet error: Could not find variable "
+		<< var->name
+		<< " in event "
+		<< idx
+		<< " of this data set. This message will only be printed once.\n";
+      printed[var->name] = true; 
+    }
     return -1; 
   }
 

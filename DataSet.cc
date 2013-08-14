@@ -2,28 +2,34 @@
 #include <cstdlib> 
 #include <climits> 
 
-DataSet::DataSet (Variable* var)  
+DataSet::DataSet (Variable* var, string n)  
   : numEventsAdded(0)
+  , name(n)
 {
   variables.push_back(var); 
+  if (n == "") generateName();
 }
 
-DataSet::DataSet (std::vector<Variable*>& vars) 
+DataSet::DataSet (std::vector<Variable*>& vars, string n)  
   : numEventsAdded(0)
+  , name(n)
 {
   for (std::vector<Variable*>::iterator v = vars.begin(); v != vars.end(); ++v) {
     variables.push_back(*v); 
   }
+  if (n == "") generateName();
 }
 
-DataSet::DataSet (std::set<Variable*>& vars) 
+DataSet::DataSet (std::set<Variable*>& vars, string n)  
   : numEventsAdded(0)
+  , name(n)
 {
   variables.resize(vars.size()); 
   
   for (std::set<Variable*>::iterator v = vars.begin(); v != vars.end(); ++v) {
     variables[(*v)->index] = (*v); 
   }
+  if (n == "") generateName();
 }
 
 DataSet::~DataSet () {
@@ -80,4 +86,14 @@ unsigned int DataSet::indexOfVariable (Variable* var) const {
   assert(false); 
   abort(); 
   return 0; 
+}
+
+void DataSet::generateName () {
+  // Create default name as list of variables.
+  if (name != "") return; 
+  for (varConstIt v = varsBegin(); v != varsEnd(); ++v) {
+    name += (*v)->name;
+    varConstIt next = v; next++; if (next == varsEnd()) continue;
+    name += ", "; 
+  }
 }

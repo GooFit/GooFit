@@ -7,9 +7,9 @@ class BinnedDataSet : public DataSet {
   // Class for rectangularly binned datasets - every bin the same size. 
 
 public: 
-  BinnedDataSet (Variable* var); 
-  BinnedDataSet (std::vector<Variable*>& vars); 
-  BinnedDataSet (std::set<Variable*>& vars); 
+  BinnedDataSet (Variable* var, string n = ""); 
+  BinnedDataSet (std::vector<Variable*>& vars, string n = ""); 
+  BinnedDataSet (std::set<Variable*>& vars, string n = ""); 
   ~BinnedDataSet (); 
 
   virtual void addEventVector (std::vector<fptype>& vals, fptype weight = 1);

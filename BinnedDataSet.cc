@@ -1,22 +1,22 @@
 #include "BinnedDataSet.hh"
 
 // Special constructor for one variable
-BinnedDataSet::BinnedDataSet (Variable* var) 
-  : DataSet(var)
+BinnedDataSet::BinnedDataSet (Variable* var, string n) 
+  : DataSet(var, n)
 {
   cacheNumBins();
   binvalues.resize(getNumBins()); 
 }
 
-BinnedDataSet::BinnedDataSet (std::vector<Variable*>& vars) 
-  : DataSet(vars)
+BinnedDataSet::BinnedDataSet (std::vector<Variable*>& vars, string n) 
+  : DataSet(vars, n)
 {
   cacheNumBins();
   binvalues.resize(getNumBins()); 
 }
 
-BinnedDataSet::BinnedDataSet (std::set<Variable*>& vars) 
-  : DataSet(vars)
+BinnedDataSet::BinnedDataSet (std::set<Variable*>& vars, string n) 
+  : DataSet(vars, n)
 {
   cacheNumBins();
   binvalues.resize(getNumBins()); 

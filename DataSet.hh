@@ -5,15 +5,16 @@
 #include "GlobalCudaDefines.hh"
 #include <vector> 
 #include <set> 
+#include <string> 
 
 typedef std::vector<Variable*>::const_iterator varConstIt; 
 typedef std::vector<Variable*>::const_reverse_iterator varConstRIt; 
 
 class DataSet {
 public:
-  DataSet (Variable* var); 
-  DataSet (std::vector<Variable*>& vars); 
-  DataSet (std::set<Variable*>& vars); 
+  DataSet (Variable* var, string n = ""); 
+  DataSet (std::vector<Variable*>& vars, string n = ""); 
+  DataSet (std::set<Variable*>& vars, string n = ""); 
   ~DataSet (); 
 
   void addEvent ();
@@ -30,13 +31,18 @@ public:
   int numVariables () const {return variables.size();} 
   int numEvents () const {return numEventsAdded;}
 
+  string getName () const {return name;} 
+
 protected:
   vector<fptype> getCurrentValues () const; 
   unsigned int indexOfVariable (Variable* var) const;
   int numEventsAdded; 
 
 private: 
+  void generateName (); 
+
   std::vector<Variable*> variables; 
+  string name; 
 }; 
 
 

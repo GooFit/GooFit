@@ -7,9 +7,9 @@ class UnbinnedDataSet : public DataSet {
   // Class for unbinned datasets. 
 
 public: 
-  UnbinnedDataSet (Variable* var);
-  UnbinnedDataSet (std::vector<Variable*>& vars); 
-  UnbinnedDataSet (std::set<Variable*>& vars); 
+  UnbinnedDataSet (Variable* var, string n = "");
+  UnbinnedDataSet (std::vector<Variable*>& vars, string n = "");
+  UnbinnedDataSet (std::set<Variable*>& vars, string n = "");
   ~UnbinnedDataSet (); 
 
   virtual void addEventVector (std::vector<fptype>& vals, fptype weight = 1); 

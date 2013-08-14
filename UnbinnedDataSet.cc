@@ -1,16 +1,16 @@
 #include "UnbinnedDataSet.hh"
 
 // Special constructor for one variable
-UnbinnedDataSet::UnbinnedDataSet (Variable* var) 
-  : DataSet(var)
+UnbinnedDataSet::UnbinnedDataSet (Variable* var, string n)
+  : DataSet(var, n)
 {}
 
-UnbinnedDataSet::UnbinnedDataSet (std::vector<Variable*>& vars) 
-  : DataSet(vars)
+UnbinnedDataSet::UnbinnedDataSet (std::vector<Variable*>& vars, string n)
+  : DataSet(vars, n)
 {}
 
-UnbinnedDataSet::UnbinnedDataSet (std::set<Variable*>& vars) 
-  : DataSet(vars)
+UnbinnedDataSet::UnbinnedDataSet (std::set<Variable*>& vars, string n)
+  : DataSet(vars, n)
 {}
   
 UnbinnedDataSet::~UnbinnedDataSet () {} 
@@ -43,7 +43,9 @@ fptype UnbinnedDataSet::getValue (Variable* var, int idx) const {
 		<< var->name
 		<< " in event "
 		<< idx
-		<< " of this data set. This message will only be printed once.\n";
+		<< " of data set "
+		<< getName()
+		<< ". Returning -1. This message will only be printed once.\n";
       printed[var->name] = true; 
     }
     return -1; 

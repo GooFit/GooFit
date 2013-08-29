@@ -34,6 +34,16 @@ public:
 			  Variable* mass, 
 			  Variable* width, 
 			  unsigned int cyc); 
+ 
+  // LASS constructor
+  ResonanceThrustFunctor (string name,
+                          Variable* ar,
+                          Variable* ai,
+			  Variable* mass,
+			  unsigned int sp,
+                          Variable* width,
+                          unsigned int cyc);
+  
 
   // Nonresonant constructor
   ResonanceThrustFunctor (string name, 

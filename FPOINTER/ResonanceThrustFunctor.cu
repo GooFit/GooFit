@@ -201,7 +201,7 @@ __device__ devcomplex<fptype> gouSak (fptype m12, fptype m13, fptype m23, unsign
     frFactor /= dampingFactorSquare(measureDaughterMoms, spin, meson_radius); 
   }
   
-  // Implement Gro-Sak:
+  // Implement Gou-Sak:
 
   fptype D = (1.0 + dFun(resmass, daug2Mass, daug3Mass) * reswidth/SQRT(resmass));
   fptype E = resmass - rMassSq + fsFun(rMassSq, resmass, reswidth, daug2Mass, daug3Mass);
@@ -214,6 +214,75 @@ __device__ devcomplex<fptype> gouSak (fptype m12, fptype m13, fptype m23, unsign
 
   return retur; 
 }
+
+
+__device__ devcomplex<fptype> lass (fptype m12, fptype m13, fptype m23, unsigned int* indices) {
+  fptype motherMass             = functorConstants[indices[1]+0];
+  fptype daug1Mass              = functorConstants[indices[1]+1];
+  fptype daug2Mass              = functorConstants[indices[1]+2];
+  fptype daug3Mass              = functorConstants[indices[1]+3];
+  fptype meson_radius           = functorConstants[indices[1]+4];
+
+  fptype resmass                = cudaArray[indices[2]];
+  fptype reswidth               = cudaArray[indices[3]];
+  unsigned int spin             = indices[4];
+  unsigned int cyclic_index     = indices[5];
+
+  fptype rMassSq = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
+  fptype frFactor = 1;
+
+  resmass *= resmass;
+  // Calculate momentum of the two daughters in the resonance rest frame; note symmetry under interchange (dm1 <-> dm2).
+  
+  fptype measureDaughterMoms = twoBodyCMmom(rMassSq, (PAIR_23 == cyclic_index ? daug2Mass : daug1Mass), (PAIR_23 == cyclic_index ? daug3Mass : daug2Mass));
+  fptype nominalDaughterMoms = twoBodyCMmom(resmass, (PAIR_23 == cyclic_index ? daug2Mass : daug1Mass), (PAIR_23 == cyclic_index ? daug3Mass : daug2Mass));
+
+  if (0 != spin) {
+    frFactor =  dampingFactorSquare(nominalDaughterMoms, spin, meson_radius);
+    frFactor /= dampingFactorSquare(measureDaughterMoms, spin, meson_radius);
+  }
+
+  //Implement LASS:
+  /*
+  fptype s = kinematics(m12, m13, _trackinfo[i]);
+  fptype q = twoBodyCMmom(s, _trackinfo[i]);
+  fptype m0  = _massRes[i]->getValFast();
+  fptype _g0 = _gammaRes[i]->getValFast();
+  int spin   = _spinRes[i];
+  fptype g = runningWidthFast(s, m0, _g0, spin, _trackinfo[i], FrEval(s, m0, _trackinfo[i], spin));
+  */
+
+  fptype q = measureDaughterMoms;
+  fptype g = reswidth * POW(measureDaughterMoms / nominalDaughterMoms, 2.0*spin + 1) * frFactor / SQRT(rMassSq);
+
+  fptype _a    = 0.22357;
+  fptype _r    = -15.042;
+  fptype _R    = 1; // ?
+  fptype _phiR = 1.10644;
+  fptype _B    = 0.614463;
+  fptype _phiB = -0.0981907;
+
+  // background phase motion
+  fptype cot_deltaB = (1.0 / (_a*q)) + 0.5*_r*q;
+  fptype qcot_deltaB = (1.0 / _a) + 0.5*_r*q*q;
+
+  // calculate resonant part
+  devcomplex<fptype> expi2deltaB = devcomplex<fptype>(qcot_deltaB,q)/devcomplex<fptype>(qcot_deltaB,-q);
+  devcomplex<fptype>  resT = devcomplex<fptype>(cos(_phiR+2*_phiB),sin(_phiR+2*_phiB))*_R;
+
+  devcomplex<fptype> prop = devcomplex<fptype>(1, 0)/devcomplex<fptype>(resmass-rMassSq, SQRT(resmass)*g);
+  // resT *= prop*m0*_g0*m0/twoBodyCMmom(m0*m0, _trackinfo[i])*expi2deltaB;
+  resT *= prop*(resmass*reswidth/nominalDaughterMoms)*expi2deltaB;
+
+  // calculate bkg part
+  resT += devcomplex<fptype>(cos(_phiB),sin(_phiB))*_B*(cos(_phiB)+cot_deltaB*sin(_phiB))*SQRT(rMassSq)/devcomplex<fptype>(qcot_deltaB,-q);
+
+  resT *= SQRT(frFactor);
+  resT *= spinFactor(spin, motherMass, daug1Mass, daug2Mass, daug3Mass, m12, m13, m23, cyclic_index);
+  
+  return resT;
+}
+
 
 __device__ devcomplex<fptype> nonres (fptype m12, fptype m13, fptype m23, unsigned int* indices) {
   return devcomplex<fptype>(1, 0); 
@@ -233,7 +302,7 @@ __device__ resonance_function_ptr ptr_to_RBW = plainBW;
 __device__ resonance_function_ptr ptr_to_GOUSAK = gouSak; 
 __device__ resonance_function_ptr ptr_to_GAUSSIAN = gaussian;
 __device__ resonance_function_ptr ptr_to_NONRES = nonres;
-
+__device__ resonance_function_ptr ptr_to_LASS = lass;
 
 ResonanceThrustFunctor::ResonanceThrustFunctor (string name, 
 						Variable* ar, 
@@ -283,7 +352,32 @@ ResonanceThrustFunctor::ResonanceThrustFunctor (string name,
 
   cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_GOUSAK, sizeof(void*));
   initialise(pindices); 
+} 
+ 
+   
+ResonanceThrustFunctor::ResonanceThrustFunctor (string name,
+                                                Variable* ar,
+                                                Variable* ai,
+						Variable* mass,
+                                                unsigned int sp,
+                                                Variable* width,
+                                                unsigned int cyc)
+  : ThrustPdfFunctor(0, name)
+  , amp_real(ar)
+  , amp_imag(ai)
+{
+  // Same as BW except for function pointed to.
+  vector<unsigned int> pindices;
+  pindices.push_back(0);
+  pindices.push_back(registerParameter(mass));
+  pindices.push_back(registerParameter(width));
+  pindices.push_back(sp);
+  pindices.push_back(cyc);
+
+  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_LASS, sizeof(void*));
+  initialise(pindices);
 }
+
 
 ResonanceThrustFunctor::ResonanceThrustFunctor (string name, 
 						Variable* ar, 

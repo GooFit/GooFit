@@ -14,14 +14,14 @@
 class FitManager : public ROOT::Minuit2::FCNBase {
   friend class FitManager; 
 public:
-  FitManager (FunctorBase* dat) {pdfPointer = dat;} 
+  FitManager (PdfBase* dat) {pdfPointer = dat;} 
   virtual double Up() const {return 1.0;}
   double operator () (const std::vector<double>& pars) const; 
   ROOT::Minuit2::FunctionMinimum* fit (); 
   void getMinuitValues () const;
 
 protected:
-  FunctorBase* pdfPointer; 
+  PdfBase* pdfPointer; 
   ROOT::Minuit2::MnUserParameters* params;
   ROOT::Minuit2::MnMigrad* migrad; 
 

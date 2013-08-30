@@ -1,16 +1,16 @@
 #include "FunctorWriter.hh"
 #include <fstream> 
 #include <map>
-#include "FunctorBase.hh" 
+#include "PdfBase.hh" 
 
-void writeToFile (FunctorBase* pdf, const char* fname) {
-  FunctorBase::parCont params;
+void writeToFile (PdfBase* pdf, const char* fname) {
+  PdfBase::parCont params;
   pdf->getParameters(params); 
 
   std::ofstream writer;
   writer.open(fname);
 
-  for (FunctorBase::parIter p = params.begin(); p != params.end(); ++p) {
+  for (PdfBase::parIter p = params.begin(); p != params.end(); ++p) {
     writer << (*p)->name << " " 
 	   << (*p)->value << " " 
 	   << (*p)->error << " "
@@ -24,12 +24,12 @@ void writeToFile (FunctorBase* pdf, const char* fname) {
 }
 
 
-void readFromFile (FunctorBase* pdf, const char* fname) {
-  FunctorBase::parCont params;
+void readFromFile (PdfBase* pdf, const char* fname) {
+  PdfBase::parCont params;
   pdf->getParameters(params); 
 
   std::map<string, Variable*> tempMap;
-  for (FunctorBase::parIter p = params.begin(); p != params.end(); ++p) {
+  for (PdfBase::parIter p = params.begin(); p != params.end(); ++p) {
     tempMap[(*p)->name] = (*p); 
   }  
 

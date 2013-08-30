@@ -1,6 +1,6 @@
-#include "FunctorBase.hh"
+#include "PdfBase.hh"
 
-// This is code that belongs to the FunctorBase class, that is, 
+// This is code that belongs to the PdfBase class, that is, 
 // it is common across all implementations. But it calls on device-side
 // functions, and due to the nvcc translation-unit limitations, it cannot
 // sit in its own object file; it must go in the CUDAglob.cu. So it's
@@ -8,7 +8,7 @@
 // should include. 
 
 #ifdef CUDAPRINT
-__host__ void FunctorBase::copyParams (const std::vector<double>& pars) const {
+__host__ void PdfBase::copyParams (const std::vector<double>& pars) const {
   if (host_callnumber < 1) {
     std::cout << "Copying parameters: " << (long long) cudaArray << " ";
   }
@@ -31,7 +31,7 @@ __host__ void FunctorBase::copyParams (const std::vector<double>& pars) const {
   cudaMemcpyToSymbol(cudaArray, host_params, pars.size()*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
 }
 #else 
-__host__ void FunctorBase::copyParams (const std::vector<double>& pars) const {
+__host__ void PdfBase::copyParams (const std::vector<double>& pars) const {
   // copyParams method performs eponymous action! 
 
   for (unsigned int i = 0; i < pars.size(); ++i) {
@@ -47,7 +47,7 @@ __host__ void FunctorBase::copyParams (const std::vector<double>& pars) const {
 }
 #endif
 
-__host__ void FunctorBase::copyParams () {
+__host__ void PdfBase::copyParams () {
   // Copies values of Variable objects
   parCont pars; 
   getParameters(pars); 
@@ -60,12 +60,12 @@ __host__ void FunctorBase::copyParams () {
   copyParams(values); 
 }
 
-__host__ void FunctorBase::copyNormFactors () const {
+__host__ void PdfBase::copyNormFactors () const {
   cudaMemcpyToSymbol(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
   cudaDeviceSynchronize(); // Ensure normalisation integrals are finished
 }
 
-__host__ void FunctorBase::initialiseIndices (std::vector<unsigned int> pindices) {
+__host__ void PdfBase::initialiseIndices (std::vector<unsigned int> pindices) {
   // Structure of the individual index array: Number of parameters, then the indices
   // requested by the subclass (which will be interpreted by the subclass kernel), 
   // then the number of observables, then the observable indices. Notice that the
@@ -103,7 +103,7 @@ __host__ void FunctorBase::initialiseIndices (std::vector<unsigned int> pindices
   cudaMemcpyToSymbol(paramIndices, host_indices, totalParams*sizeof(unsigned int), 0, cudaMemcpyHostToDevice); 
 }
 
-__host__ void FunctorBase::setData (std::vector<std::map<Variable*, fptype> >& data) {
+__host__ void PdfBase::setData (std::vector<std::map<Variable*, fptype> >& data) {
   // Old method retained for backwards compatibility 
 
   if (cudaDataArray) {
@@ -130,7 +130,7 @@ __host__ void FunctorBase::setData (std::vector<std::map<Variable*, fptype> >& d
   delete[] host_array; 
 }
 
-__host__ void FunctorBase::recursiveSetIndices () {
+__host__ void PdfBase::recursiveSetIndices () {
   for (unsigned int i = 0; i < components.size(); ++i) {
     components[i]->recursiveSetIndices(); 
   }
@@ -145,7 +145,7 @@ __host__ void FunctorBase::recursiveSetIndices () {
   generateNormRange(); 
 }
 
-__host__ void FunctorBase::setIndices () {
+__host__ void PdfBase::setIndices () {
   int counter = 0; 
   for (obsIter v = obsBegin(); v != obsEnd(); ++v) {
     (*v)->index = counter++; 
@@ -161,7 +161,7 @@ __host__ void FunctorBase::setIndices () {
 
 }
 
-__host__ void FunctorBase::setData (UnbinnedDataSet* data) {
+__host__ void PdfBase::setData (UnbinnedDataSet* data) {
   if (cudaDataArray) {
     cudaFree(cudaDataArray);
     cudaDeviceSynchronize();
@@ -191,7 +191,7 @@ __host__ void FunctorBase::setData (UnbinnedDataSet* data) {
   delete[] host_array; 
 }
 
-__host__ void FunctorBase::setData (BinnedDataSet* data) { 
+__host__ void PdfBase::setData (BinnedDataSet* data) { 
   if (cudaDataArray) { 
     cudaFree(cudaDataArray);
     cudaDataArray = 0; 
@@ -222,7 +222,7 @@ __host__ void FunctorBase::setData (BinnedDataSet* data) {
 }
 
 /*
-__host__ void FunctorBase::setBinnedData (std::vector<std::pair<std::map<Variable*, fptype>, fptype> >& data) {
+__host__ void PdfBase::setBinnedData (std::vector<std::pair<std::map<Variable*, fptype>, fptype> >& data) {
   if (cudaDataArray) { 
     cudaFree(cudaDataArray);
     cudaDataArray = 0; 
@@ -261,7 +261,7 @@ __host__ void FunctorBase::setBinnedData (std::vector<std::pair<std::map<Variabl
 }
 */
 
-__host__ void FunctorBase::generateNormRange () {
+__host__ void PdfBase::generateNormRange () {
   if (normRanges) cudaFree(normRanges);
   cudaMalloc((void**) &normRanges, 3*observables.size()*sizeof(fptype));
   
@@ -286,13 +286,13 @@ __host__ void FunctorBase::generateNormRange () {
   //std::cout << "Done with delete\n"; 
 }
 
-void FunctorBase::clearCurrentFit () {
+void PdfBase::clearCurrentFit () {
   totalParams = 0; 
   cudaFree(cudaDataArray);
   cudaDataArray = 0; 
 }
 
-__host__ void FunctorBase::printProfileInfo (bool topLevel) {
+__host__ void PdfBase::printProfileInfo (bool topLevel) {
 #ifdef PROFILING
   if (topLevel) {
     cudaError_t err = cudaMemcpyFromSymbol(host_timeHist, timeHistogram, 10000*sizeof(fptype), 0);

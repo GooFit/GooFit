@@ -1,4 +1,4 @@
-FunctorBase* pdfPointer; 
+PdfBase* pdfPointer; 
 FitManager* currGlue = 0; 
 int numPars = 0; 
 
@@ -13,7 +13,7 @@ std::vector<Variable*> vars;
 
 void specialTddpPrint (double fun); 
 
-FitManager::FitManager (FunctorBase* dat) 
+FitManager::FitManager (PdfBase* dat) 
   : minuit(0)
   , overrideCallLimit(-1)
 {

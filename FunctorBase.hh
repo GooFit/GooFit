@@ -30,10 +30,10 @@ extern int totalConstants;
 #pragma omp threadprivate (host_callnumber)
 #endif
 
-class FunctorBase {
+class PdfBase {
 
 public:
-  FunctorBase (Variable* x, std::string n); 
+  PdfBase (Variable* x, std::string n); 
 
   enum Specials {ForceSeparateNorm = 1, ForceCommonNorm = 2}; 
 
@@ -93,7 +93,7 @@ protected:
   obsCont observables; 
   parCont parameterList; 
   FitControl* fitControl; 
-  std::vector<FunctorBase*> components;
+  std::vector<PdfBase*> components;
   int integrationBins; 
   int specialMask; // For storing information unique to PDFs, eg "Normalise me separately" for TddpThrustFunctor. 
   mutable fptype* cachedParams; 

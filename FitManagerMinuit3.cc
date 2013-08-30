@@ -1,4 +1,4 @@
-FunctorBase* pdfPointer; 
+PdfBase* pdfPointer; 
 int numPars = 0; 
 #ifdef OMP_ON
 #pragma omp threadprivate (pdfPointer)
@@ -8,7 +8,7 @@ std::vector<Variable*> vars[MAX_THREADS];
 std::vector<Variable*> vars; 
 #endif
 
-FitManager::FitManager (FunctorBase* dat) {
+FitManager::FitManager (PdfBase* dat) {
   pdfPointer = dat;
 } 
 

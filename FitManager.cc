@@ -1,4 +1,4 @@
-#include "FunctorBase.hh"
+#include "PdfBase.hh"
 #include "FitManager.hh"
 #include "EngineCore.hh" 
 #include <cstdio> 

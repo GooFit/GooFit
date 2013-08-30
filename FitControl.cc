@@ -1,5 +1,5 @@
 #include "FitControl.hh"
-#include "FunctorBase.hh" 
+#include "PdfBase.hh" 
 
 FitControl::FitControl (bool bin, std::string mn) 
   : binned(bin) 
@@ -10,7 +10,7 @@ FitControl::FitControl (bool bin, std::string mn)
 
 FitControl::~FitControl () {} 
 
-void FitControl::setOwner (FunctorBase* dat) {
+void FitControl::setOwner (PdfBase* dat) {
   assert(!owner); 
   owner = dat;
 } 

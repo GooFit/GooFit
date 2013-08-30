@@ -1,5 +1,5 @@
 #include "GlobalCudaDefines.hh"
-#include "FunctorBase.hh" 
+#include "PdfBase.hh" 
 
 fptype* cudaDataArray;
 fptype host_normalisation[maxParams];
@@ -10,16 +10,16 @@ int totalParams = 0;
 int totalConstants = 1; // First constant is reserved for number of events. 
 
 #ifdef OMP_ON
-typedef std::map<Variable*, std::set<FunctorBase*> > tRegType;
+typedef std::map<Variable*, std::set<PdfBase*> > tRegType;
 tRegType variableRegistry[MAX_THREADS]; 
 #pragma omp threadprivate (cudaDataArray, totalParams, totalConstants)
 #pragma omp threadprivate (host_normalisation, host_params, host_indices)
 #pragma omp threadprivate (host_callnumber)
 #else
-std::map<Variable*, std::set<FunctorBase*> > variableRegistry; 
+std::map<Variable*, std::set<PdfBase*> > variableRegistry; 
 #endif
 
-FunctorBase::FunctorBase (Variable* x, std::string n) 
+PdfBase::PdfBase (Variable* x, std::string n) 
   : name(n)
   , numEvents(0)
   , numEntries(0)
@@ -33,21 +33,21 @@ FunctorBase::FunctorBase (Variable* x, std::string n)
   if (x) registerObservable(x);
 }
 
-__host__ void FunctorBase::checkInitStatus (std::vector<std::string>& unInited) const {
+__host__ void PdfBase::checkInitStatus (std::vector<std::string>& unInited) const {
   if (!properlyInitialised) unInited.push_back(getName());
   for (unsigned int i = 0; i < components.size(); ++i) {
     components[i]->checkInitStatus(unInited); 
   }
 }
 
-__host__ void FunctorBase::recursiveSetNormalisation (fptype norm) const {
+__host__ void PdfBase::recursiveSetNormalisation (fptype norm) const {
   host_normalisation[parameters] = norm;
   for (unsigned int i = 0; i < components.size(); ++i) {
     components[i]->recursiveSetNormalisation(norm); 
   }
 }
 
-__host__ unsigned int FunctorBase::registerParameter (Variable* var) {
+__host__ unsigned int PdfBase::registerParameter (Variable* var) {
   if (!var) {
     std::cout << "Error: Attempt to register null Variable with " 
 	      << getName()
@@ -70,9 +70,9 @@ __host__ unsigned int FunctorBase::registerParameter (Variable* var) {
     while (true) {
       bool canUse = true;
 #ifdef OMP_ON
-      for (std::map<Variable*, std::set<FunctorBase*> >::iterator p = variableRegistry[tid].begin(); p != variableRegistry[tid].end(); ++p) {
+      for (std::map<Variable*, std::set<PdfBase*> >::iterator p = variableRegistry[tid].begin(); p != variableRegistry[tid].end(); ++p) {
 #else
-      for (std::map<Variable*, std::set<FunctorBase*> >::iterator p = variableRegistry.begin(); p != variableRegistry.end(); ++p) {
+      for (std::map<Variable*, std::set<PdfBase*> >::iterator p = variableRegistry.begin(); p != variableRegistry.end(); ++p) {
 #endif
 	if (unusedIndex != (*p).first->index) continue;
 	canUse = false;
@@ -87,7 +87,7 @@ __host__ unsigned int FunctorBase::registerParameter (Variable* var) {
   return (unsigned int) var->getIndex(); 
 }
 
-__host__ void FunctorBase::unregisterParameter (Variable* var) {
+__host__ void PdfBase::unregisterParameter (Variable* var) {
   if (!var) return; 
   parIter pos = std::find(parameterList.begin(), parameterList.end(), var);
   if (pos != parameterList.end()) parameterList.erase(pos);  
@@ -104,7 +104,7 @@ __host__ void FunctorBase::unregisterParameter (Variable* var) {
   }
 }
 
-__host__ void FunctorBase::getParameters (parCont& ret) const { 
+__host__ void PdfBase::getParameters (parCont& ret) const { 
   for (parConstIter p = parameterList.begin(); p != parameterList.end(); ++p) {
     if (std::find(ret.begin(), ret.end(), (*p)) != ret.end()) continue; 
     ret.push_back(*p); 
@@ -114,7 +114,7 @@ __host__ void FunctorBase::getParameters (parCont& ret) const {
   }
 }
 
-__host__ Variable* FunctorBase::getParameterByName (string n) const { 
+__host__ Variable* PdfBase::getParameterByName (string n) const { 
   for (parConstIter p = parameterList.begin(); p != parameterList.end(); ++p) {
     if ((*p)->name == n) return (*p);
   }
@@ -125,7 +125,7 @@ __host__ Variable* FunctorBase::getParameterByName (string n) const {
   return 0; 
 }
 
-__host__ void FunctorBase::getObservables (std::vector<Variable*>& ret) const { 
+__host__ void PdfBase::getObservables (std::vector<Variable*>& ret) const { 
   for (obsConstIter p = obsCBegin(); p != obsCEnd(); ++p) {
     if (std::find(ret.begin(), ret.end(), *p) != ret.end()) continue; 
     ret.push_back(*p); 
@@ -135,25 +135,25 @@ __host__ void FunctorBase::getObservables (std::vector<Variable*>& ret) const {
   }
 }
 
-__host__ unsigned int FunctorBase::registerConstants (unsigned int amount) {
+__host__ unsigned int PdfBase::registerConstants (unsigned int amount) {
   assert(totalConstants + amount < maxParams);
   cIndex = totalConstants;
   totalConstants += amount; 
   return cIndex; 
 }
 
-void FunctorBase::registerObservable (Variable* obs) {
+void PdfBase::registerObservable (Variable* obs) {
   if (!obs) return;
   if (find(observables.begin(), observables.end(), obs) != observables.end()) return; 
   observables.push_back(obs);
 }
 
-__host__ void FunctorBase::setIntegrationFineness (int i) {
+__host__ void PdfBase::setIntegrationFineness (int i) {
   integrationBins = i;
   generateNormRange(); 
 }
 
-__host__ bool FunctorBase::parametersChanged () const {
+__host__ bool PdfBase::parametersChanged () const {
   if (!cachedParams) return true; 
 
   parCont params;
@@ -166,7 +166,7 @@ __host__ bool FunctorBase::parametersChanged () const {
   return false;
 }
 
-__host__ void FunctorBase::storeParameters () const {
+__host__ void PdfBase::storeParameters () const {
   parCont params;
   getParameters(params); 
   if (!cachedParams) cachedParams = new fptype[params.size()]; 

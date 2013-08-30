@@ -6,7 +6,7 @@
 #include "Variable.hh" 
 #include <vector> 
 
-class FunctorBase; 
+class PdfBase; 
 
 class FitControl {
 public:
@@ -17,8 +17,8 @@ public:
   inline bool binErrors () const {return errorsOnBins;} 
   inline bool metricIsPdf () const {return !errorsOnBins;} 
   inline std::string getMetric () const {return metricName;} 
-  inline FunctorBase* getOwner () const {return owner;} 
-  void setOwner (FunctorBase* dat);
+  inline PdfBase* getOwner () const {return owner;} 
+  void setOwner (PdfBase* dat);
 
 protected: 
   bool errorsOnBins; 
@@ -26,7 +26,7 @@ protected:
 private:
   bool binned; 
   std::string metricName; 
-  FunctorBase* owner; 
+  PdfBase* owner; 
 }; 
 
 class UnbinnedNllFit : public FitControl {

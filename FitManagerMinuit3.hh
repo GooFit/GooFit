@@ -10,10 +10,10 @@ extern int numPars;
 #endif
 void FitFun (int &npar, double *gin, double &fun, double *fp, int iflag); 
 
-class PdfFunctor {
-  friend class PdfFunctor; 
+class FitManager {
+  friend class FitManager; 
 public:
-  PdfFunctor (FunctorBase* dat); 
+  FitManager (FunctorBase* dat); 
   void fit (); 
   void getMinuitValues () const;
 

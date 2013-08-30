@@ -11,10 +11,10 @@ extern int numPars;
 
 void FitFun(int &npar, double *gin, double &fun, double *fp, int iflag); 
 
-class PdfFunctor { 
+class FitManager { 
 public:
-  PdfFunctor (FunctorBase* dat);
-  ~PdfFunctor ();
+  FitManager (FunctorBase* dat);
+  ~FitManager ();
   void setMaxCalls (double mxc) {overrideCallLimit = mxc;}
   void setupMinuit ();
   void runMigrad (); 

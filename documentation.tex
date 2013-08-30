@@ -170,7 +170,7 @@ int main (int argc, char** argv) {
 
   // A class that talks to MINUIT and GooFit. It needs
   // to know what PDF it should set up in MINUIT. 
-  PdfFunctor fitter(&gauss); 
+  FitManager fitter(&gauss); 
 
   // The actual fit. 
   fitter.fit(); 
@@ -512,7 +512,7 @@ Data transfer and fit invocation.
 
 \begin{verbatim}
   gauss.setData(&data);
-  PdfFunctor fitter(&gauss); 
+  FitManager fitter(&gauss); 
   fitter.fit(); 
 \end{verbatim}
 \end{listing} 
@@ -566,7 +566,7 @@ of events or a list of bins.
 \subsection{MINUIT setup} 
 
 Having copied the data to the GPU, the next task is to create the MINUIT object
-that will do the actual fit; this is done by creating a \texttt{PdfFunctor} object,
+that will do the actual fit; this is done by creating a \texttt{FitManager} object,
 with the top-level PDF as its argument, and calling its \texttt{fit} method. 
 The \texttt{fit} method does two things: First it calls the \texttt{getParameters}
 method of the supplied PDF, which recursively gets the registered parameters of
@@ -585,7 +585,7 @@ classes instead of lines of code; and what seems to be intended as a common inte
 for a large number of possible fitting backends, which falls a little flat since it
 has only the MINUIT backend to talk to. You pays your money and takes your choice.}. 
 One can switch between these by setting the constant 
-\texttt{MINUIT\_VERSION} in PdfFunctor.hh to, respectively, 1, 2, and 3. The interfaces differ,
+\texttt{MINUIT\_VERSION} in FitManager.hh to, respectively, 1, 2, and 3. The interfaces differ,
 but the essential procedure is the one described above: Define parameters, set
 function-to-minimise, run MIGRAD. (NB: As of v0.2, GooFit has not recently been
 tested with \texttt{MINUIT\_VERSION} set to 2 or 3.) In the case of \texttt{TMinuit},
@@ -1255,7 +1255,7 @@ anything else is an error. There is also a special-case constructor taking a sin
 weight and two components, to save creating the \texttt{vector}s in this common case.
 
 Note that this PDF overrides the \texttt{sumOfNll} method; if an extended \texttt{AddThrustFunctor}
-is used as a top-level PDF (that is, sent to \texttt{PdfFunctor} for fitting), an additional
+is used as a top-level PDF (that is, sent to \texttt{FitManager} for fitting), an additional
 term for the number of events will be added to the NLL.
 
 Also note that if the \texttt{AddThrustFunctor}'s options mask (set by calling

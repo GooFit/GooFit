@@ -1,5 +1,5 @@
 #include "FunctorBase.hh"
-#include "PdfFunctor.hh"
+#include "FitManager.hh"
 #include "EngineCore.hh" 
 #include <cstdio> 
 #include <cassert> 
@@ -15,9 +15,9 @@ using namespace std;
 #endif
 
 #if MINUIT_VERSION == 1
-#include "PdfFunctorMinuit1.cc"
+#include "FitManagerMinuit1.cc"
 #elif MINUIT_VERSION == 2
-#include "PdfFunctorMinuit2.cc"
+#include "FitManagerMinuit2.cc"
 #else 
-#include "PdfFunctorMinuit3.cc"
+#include "FitManagerMinuit3.cc"
 #endif 

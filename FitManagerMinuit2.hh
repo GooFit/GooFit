@@ -11,10 +11,10 @@
 #include "Minuit2/MnPlot.h"
 #include "Minuit2/MinosError.h"
 #include "Minuit2/ContoursError.h"
-class PdfFunctor : public ROOT::Minuit2::FCNBase {
-  friend class PdfFunctor; 
+class FitManager : public ROOT::Minuit2::FCNBase {
+  friend class FitManager; 
 public:
-  PdfFunctor (FunctorBase* dat) {pdfPointer = dat;} 
+  FitManager (FunctorBase* dat) {pdfPointer = dat;} 
   virtual double Up() const {return 1.0;}
   double operator () (const std::vector<double>& pars) const; 
   ROOT::Minuit2::FunctionMinimum* fit (); 

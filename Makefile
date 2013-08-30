@@ -40,7 +40,7 @@ HEADERLIST = $(patsubst %.cu,%.hh,$(FUNCTORLIST))
 WRKFUNCTORLIST = $(patsubst $(SRCDIR)/%.cu,wrkdir/%.cu,$(FUNCTORLIST))
 #NB, the above are used in the SRCDIR Makefile.
 
-THRUSTO		= wrkdir/Variable.o wrkdir/PdfFunctor.o wrkdir/EngineCoreCUDA.o wrkdir/Faddeeva.o wrkdir/FitControl.o wrkdir/FunctorBase.o wrkdir/DataSet.o wrkdir/BinnedDataSet.o wrkdir/UnbinnedDataSet.o wrkdir/FunctorWriter.o 
+THRUSTO		= wrkdir/Variable.o wrkdir/FitManager.o wrkdir/EngineCoreCUDA.o wrkdir/Faddeeva.o wrkdir/FitControl.o wrkdir/FunctorBase.o wrkdir/DataSet.o wrkdir/BinnedDataSet.o wrkdir/UnbinnedDataSet.o wrkdir/FunctorWriter.o 
 ROOTRIPDIR	= $(PWD)/rootstuff
 ROOTRIPOBJS	= $(ROOTRIPDIR)/TMinuit.o $(ROOTRIPDIR)/TRandom.o $(ROOTRIPDIR)/TRandom3.o 
 ROOTUTILLIB	= $(ROOTRIPDIR)/libRootUtils.so 
@@ -70,7 +70,7 @@ $(ROOTUTILLIB):	$(ROOTRIPOBJS)
 
 include $(SRCDIR)/Makefile 
 
-PdfFunctor.o:		PdfFunctor.cc PdfFunctor.hh wrkdir/ThrustPdfFunctorCUDA.o Variable.o 
+FitManager.o:		FitManager.cc FitManager.hh wrkdir/ThrustFitManagerCUDA.o Variable.o 
 			$(CXX) $(DEFINEFLAGS) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
 
 wrkdir/EngineCoreCUDA.o:	wrkdir/CUDAglob.cu FunctorBase.cu 

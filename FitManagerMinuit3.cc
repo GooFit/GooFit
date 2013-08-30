@@ -8,11 +8,11 @@ std::vector<Variable*> vars[MAX_THREADS];
 std::vector<Variable*> vars; 
 #endif
 
-PdfFunctor::PdfFunctor (FunctorBase* dat) {
+FitManager::FitManager (FunctorBase* dat) {
   pdfPointer = dat;
 } 
 
-void PdfFunctor::fit () {
+void FitManager::fit () {
   host_callnumber = 0; 
   pdfPointer->getParameters(vars); 
 
@@ -35,7 +35,7 @@ void PdfFunctor::fit () {
   fitter->ExecuteCommand("MIGRAD", 0, 0); 
 }
 
-void PdfFunctor::getMinuitValues () const {
+void FitManager::getMinuitValues () const {
   int counter = 0; 
 #ifdef OMP_ON
   int tid = omp_get_thread_num();

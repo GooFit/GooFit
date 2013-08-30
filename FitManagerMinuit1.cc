@@ -1,5 +1,5 @@
 FunctorBase* pdfPointer; 
-PdfFunctor* currGlue = 0; 
+FitManager* currGlue = 0; 
 int numPars = 0; 
 
 #ifdef OMP_ON
@@ -13,7 +13,7 @@ std::vector<Variable*> vars;
 
 void specialTddpPrint (double fun); 
 
-PdfFunctor::PdfFunctor (FunctorBase* dat) 
+FitManager::FitManager (FunctorBase* dat) 
   : minuit(0)
   , overrideCallLimit(-1)
 {
@@ -21,11 +21,11 @@ PdfFunctor::PdfFunctor (FunctorBase* dat)
   currGlue = this; 
 } 
 
-PdfFunctor::~PdfFunctor () {
+FitManager::~FitManager () {
   if (minuit) delete minuit; 
 }
 
-void PdfFunctor::setupMinuit () {
+void FitManager::setupMinuit () {
 #ifdef OMP_ON
   int tid = omp_get_thread_num(); 
   vars[tid].clear(); 
@@ -63,12 +63,12 @@ void PdfFunctor::setupMinuit () {
   minuit->SetFCN(FitFun); 
 }
 
-void PdfFunctor::fit () {
+void FitManager::fit () {
   setupMinuit();
   runMigrad();
 }
 
-void PdfFunctor::runMigrad () { 
+void FitManager::runMigrad () { 
   assert(minuit);
   host_callnumber = 0;
   if (0 < overrideCallLimit) {
@@ -81,7 +81,7 @@ void PdfFunctor::runMigrad () {
   else minuit->Migrad(); 
 }
 
-void PdfFunctor::getMinuitValues () const {
+void FitManager::getMinuitValues () const {
   int counter = 0; 
 #ifdef OMP_ON
   int tid = omp_get_thread_num();

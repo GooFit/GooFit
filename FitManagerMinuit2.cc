@@ -1,4 +1,4 @@
-ROOT::Minuit2::FunctionMinimum* PdfFunctor::fit () {
+ROOT::Minuit2::FunctionMinimum* FitManager::fit () {
   host_callnumber = 0; 
   params = new ROOT::Minuit2::MnUserParameters();
   vars.clear();
@@ -21,7 +21,7 @@ ROOT::Minuit2::FunctionMinimum* PdfFunctor::fit () {
   return ret; 
 }
 
-double PdfFunctor::operator () (const vector<double>& pars) const {
+double FitManager::operator () (const vector<double>& pars) const {
   vector<double> gooPars; // Translates from Minuit indexing to GooFit indexing
   gooPars.resize(numPars); 
   int counter = 0; 

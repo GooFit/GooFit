@@ -8,10 +8,10 @@
 #define MINUIT_VERSION 1
 
 #if MINUIT_VERSION == 1
-#include "PdfFunctorMinuit1.hh"
+#include "FitManagerMinuit1.hh"
 #elif MINUIT_VERSION == 2
-#include "PdfFunctorMinuit2.hh"
+#include "FitManagerMinuit2.hh"
 #else
-#include "PdfFunctorMinuit3.hh"
+#include "FitManagerMinuit3.hh"
 #endif
 #endif 

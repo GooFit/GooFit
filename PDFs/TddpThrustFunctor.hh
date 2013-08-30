@@ -1,7 +1,7 @@
 #ifndef TDDP_THRUST_FUNCTOR_HH
 #define TDDP_THRUST_FUNCTOR_HH
 
-#include "ThrustPdfFunctor.hh" 
+#include "EngineCore.hh" 
 #include "MixingTimeResolution_Aux.hh" 
 #include "DalitzPlotHelpers.hh" 
 
@@ -11,10 +11,10 @@ typedef thrust::tuple<fptype, fptype, fptype, fptype, fptype, fptype> ThreeCompl
 class SpecialDalitzIntegrator;
 class SpecialWaveCalculator; 
   
-class TddpThrustFunctor : public ThrustPdfFunctor {
+class TddpThrustFunctor : public EngineCore {
 public:
-  TddpThrustFunctor (std::string n, Variable* _dtime, Variable* _sigmat, Variable* m12, Variable* m13, Variable* eventNumber, DecayInfo* decay, MixingTimeResolution* r, ThrustPdfFunctor* eff, Variable* mistag = 0);
-  TddpThrustFunctor (std::string n, Variable* _dtime, Variable* _sigmat, Variable* m12, Variable* m13, Variable* eventNumber, DecayInfo* decay, vector<MixingTimeResolution*>& r, ThrustPdfFunctor* eff, Variable* md0, Variable* mistag = 0);
+  TddpThrustFunctor (std::string n, Variable* _dtime, Variable* _sigmat, Variable* m12, Variable* m13, Variable* eventNumber, DecayInfo* decay, MixingTimeResolution* r, EngineCore* eff, Variable* mistag = 0);
+  TddpThrustFunctor (std::string n, Variable* _dtime, Variable* _sigmat, Variable* m12, Variable* m13, Variable* eventNumber, DecayInfo* decay, vector<MixingTimeResolution*>& r, EngineCore* eff, Variable* md0, Variable* mistag = 0);
   // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the 
   // coherent sum. The caching method requires that it be done this way or the ProdThrustFunctor
   // normalisation will get *really* confused and give wrong answers. 

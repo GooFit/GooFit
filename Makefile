@@ -28,19 +28,19 @@ endif
 CUDALOCATION = /usr/local/cuda/
 CUDAHEADERS = $(CUDALOCATION)/include/
 
-SRCDIR = $(PWD)/FPOINTER
+SRCDIR = $(PWD)/PDFs
 
 INCLUDES += -I$(CUDAHEADERS) -I$(SRCDIR) -I$(PWD) -I$(PWD)/rootstuff 
 LIBS += -L$(CUDALOCATION)/$(CUDALIBDIR) -lcudart -L$(PWD)/rootstuff -lRootUtils 
 
-FUNCTORLIST = $(SRCDIR)/ThrustPdfFunctor.cu 
-FUNCTORLIST += $(wildcard $(SRCDIR)/*ThrustFunctor.cu)
+FUNCTORLIST = $(SRCDIR)/EngineCore.cu 
+FUNCTORLIST += $(wildcard $(SRCDIR)/*Pdf.cu)
 FUNCTORLIST += $(wildcard $(SRCDIR)/*Aux.cu)
 HEADERLIST = $(patsubst %.cu,%.hh,$(FUNCTORLIST))
 WRKFUNCTORLIST = $(patsubst $(SRCDIR)/%.cu,wrkdir/%.cu,$(FUNCTORLIST))
-#NB, the above are used in the FPOINTER Makefile.
+#NB, the above are used in the SRCDIR Makefile.
 
-THRUSTO		= wrkdir/Variable.o wrkdir/PdfFunctor.o wrkdir/ThrustPdfFunctorCUDA.o wrkdir/Faddeeva.o wrkdir/FitControl.o wrkdir/FunctorBase.o wrkdir/DataSet.o wrkdir/BinnedDataSet.o wrkdir/UnbinnedDataSet.o wrkdir/FunctorWriter.o 
+THRUSTO		= wrkdir/Variable.o wrkdir/PdfFunctor.o wrkdir/EngineCoreCUDA.o wrkdir/Faddeeva.o wrkdir/FitControl.o wrkdir/FunctorBase.o wrkdir/DataSet.o wrkdir/BinnedDataSet.o wrkdir/UnbinnedDataSet.o wrkdir/FunctorWriter.o 
 ROOTRIPDIR	= $(PWD)/rootstuff
 ROOTRIPOBJS	= $(ROOTRIPDIR)/TMinuit.o $(ROOTRIPDIR)/TRandom.o $(ROOTRIPDIR)/TRandom3.o 
 ROOTUTILLIB	= $(ROOTRIPDIR)/libRootUtils.so 
@@ -73,7 +73,7 @@ include $(SRCDIR)/Makefile
 PdfFunctor.o:		PdfFunctor.cc PdfFunctor.hh wrkdir/ThrustPdfFunctorCUDA.o Variable.o 
 			$(CXX) $(DEFINEFLAGS) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
 
-wrkdir/ThrustPdfFunctorCUDA.o:	wrkdir/CUDAglob.cu FunctorBase.cu 
+wrkdir/EngineCoreCUDA.o:	wrkdir/CUDAglob.cu FunctorBase.cu 
 				nvcc $(CXXFLAGS) $(INCLUDES) -I. $(DEFINEFLAGS) -c $< -o $@ 
 				@echo "$@ done"
 

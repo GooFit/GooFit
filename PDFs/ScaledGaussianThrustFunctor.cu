@@ -19,7 +19,7 @@ __device__ fptype device_ScaledGaussian (fptype* evt, fptype* p, unsigned int* i
 __device__ device_function_ptr ptr_to_ScaledGaussian = device_ScaledGaussian; 
 
 __host__ ScaledGaussianThrustFunctor::ScaledGaussianThrustFunctor (std::string n, Variable* _x, Variable* mean, Variable* sigma, Variable* delta, Variable* epsilon) 
-: ThrustPdfFunctor(_x, n) 
+: EngineCore(_x, n) 
 {
   registerParameter(mean);
   registerParameter(sigma);

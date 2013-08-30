@@ -1,9 +1,9 @@
 #ifndef CORRGAUSSIAN_THRUST_FUNCTOR_HH
 #define CORRGAUSSIAN_THRUST_FUNCTOR_HH
 
-#include "ThrustPdfFunctor.hh" 
+#include "EngineCore.hh" 
 
-class CorrGaussianThrustFunctor : public ThrustPdfFunctor {
+class CorrGaussianThrustFunctor : public EngineCore {
 public:
   CorrGaussianThrustFunctor (std::string n, Variable* _x, Variable* _y, Variable* mean1, Variable* sigma1, Variable* mean2, Variable* sigma2, Variable* correlation); 
 

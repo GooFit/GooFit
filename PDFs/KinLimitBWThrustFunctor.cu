@@ -58,7 +58,7 @@ __device__ fptype device_KinLimitBW (fptype* evt, fptype* p, unsigned int* indic
 __device__ device_function_ptr ptr_to_KinLimitBW = device_KinLimitBW; 
 
 __host__ KinLimitBWThrustFunctor::KinLimitBWThrustFunctor (std::string n, Variable* _x, Variable* mean, Variable* width) 
-: ThrustPdfFunctor(_x, n) 
+: EngineCore(_x, n) 
 {
   registerParameter(mean);
   registerParameter(width);

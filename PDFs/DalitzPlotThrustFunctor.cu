@@ -91,8 +91,8 @@ __host__ DalitzPlotThrustFunctor::DalitzPlotThrustFunctor (std::string n,
 							   Variable* m13, 
 							   Variable* eventNumber, 
 							   DecayInfo* decay, 
-							   ThrustPdfFunctor* efficiency)
-  : ThrustPdfFunctor(0, n) 
+							   EngineCore* efficiency)
+  : EngineCore(0, n) 
   , decayInfo(decay)
   , _m12(m12)
   , _m13(m13)

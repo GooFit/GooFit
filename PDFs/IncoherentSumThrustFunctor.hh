@@ -1,7 +1,7 @@
 #ifndef INCOHERENT_SUM_THRUST_FUNCTOR_HH
 #define INCOHERENT_SUM_THRUST_FUNCTOR_HH
 
-#include "ThrustPdfFunctor.hh" 
+#include "EngineCore.hh" 
 #include "TddpThrustFunctor.hh"   
 #include "devcomplex.hh"
 
@@ -16,9 +16,9 @@
 class SpecialIncoherentIntegrator;
 class SpecialIncoherentResonanceCalculator; 
 
-class IncoherentSumThrustFunctor : public ThrustPdfFunctor {
+class IncoherentSumThrustFunctor : public EngineCore {
 public:
-  IncoherentSumThrustFunctor (std::string n, Variable* m12, Variable* m13, Variable* eventNumber, DecayInfo* decay, ThrustPdfFunctor* eff); 
+  IncoherentSumThrustFunctor (std::string n, Variable* m12, Variable* m13, Variable* eventNumber, DecayInfo* decay, EngineCore* eff); 
   // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the 
   // incoherent sum. The caching method requires that it be done this way or the ProdThrustFunctor
   // normalisation will get *really* confused and give wrong answers. 

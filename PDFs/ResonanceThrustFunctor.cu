@@ -311,7 +311,7 @@ ResonanceThrustFunctor::ResonanceThrustFunctor (string name,
 						Variable* width, 
 						unsigned int sp, 
 						unsigned int cyc) 
-  : ThrustPdfFunctor(0, name)
+  : EngineCore(0, name)
   , amp_real(ar)
   , amp_imag(ai)
 {
@@ -338,7 +338,7 @@ ResonanceThrustFunctor::ResonanceThrustFunctor (string name,
 						Variable* mass, 
 						Variable* width, 
 						unsigned int cyc) 
-  : ThrustPdfFunctor(0, name)
+  : EngineCore(0, name)
   , amp_real(ar)
   , amp_imag(ai)
 {
@@ -362,7 +362,7 @@ ResonanceThrustFunctor::ResonanceThrustFunctor (string name,
                                                 unsigned int sp,
                                                 Variable* width,
                                                 unsigned int cyc)
-  : ThrustPdfFunctor(0, name)
+  : EngineCore(0, name)
   , amp_real(ar)
   , amp_imag(ai)
 {
@@ -382,7 +382,7 @@ ResonanceThrustFunctor::ResonanceThrustFunctor (string name,
 ResonanceThrustFunctor::ResonanceThrustFunctor (string name, 
 						Variable* ar, 
 						Variable* ai) 
-  : ThrustPdfFunctor(0, name)
+  : EngineCore(0, name)
   , amp_real(ar)
   , amp_imag(ai)
 {
@@ -400,7 +400,7 @@ ResonanceThrustFunctor::ResonanceThrustFunctor (string name,
 						Variable* mean, 
 						Variable* sigma,
 						unsigned int cyc) 
-  : ThrustPdfFunctor(0, name)
+  : EngineCore(0, name)
   , amp_real(ar)
   , amp_imag(ai)
 {

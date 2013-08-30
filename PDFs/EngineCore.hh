@@ -25,10 +25,10 @@ extern void* host_fcn_ptr;
 
 class MetricTaker; 
 
-class ThrustPdfFunctor : public FunctorBase { 
+class EngineCore : public FunctorBase { 
 public:
 
-  ThrustPdfFunctor (Variable* x, std::string n);
+  EngineCore (Variable* x, std::string n);
   __host__ virtual double calculateNLL () const;
   __host__ void evaluateAtPoints (std::vector<fptype>& points) const; 
   __host__ void evaluateAtPoints (Variable* var, std::vector<fptype>& res); 

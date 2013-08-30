@@ -1,12 +1,12 @@
 #ifndef EVENTWEIGHTEDADD_THRUST_FUNCTOR_HH
 #define EVENTWEIGHTEDADD_THRUST_FUNCTOR_HH
 
-#include "ThrustPdfFunctor.hh" 
+#include "EngineCore.hh" 
 
 // This class is just like AddThrustFunctor except that the
 // event weights are properties of each event, not variables
 // in the fit. 
-class EventWeightedAddThrustFunctor : public ThrustPdfFunctor {
+class EventWeightedAddThrustFunctor : public EngineCore {
 public:
 
   EventWeightedAddThrustFunctor (std::string n, std::vector<Variable*> weights, std::vector<FunctorBase*> comps); 

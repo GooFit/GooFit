@@ -271,8 +271,8 @@ __device__ fptype device_Tddp (fptype* evt, fptype* p, unsigned int* indices) {
 
 __device__ device_function_ptr ptr_to_Tddp = device_Tddp; 
 
-__host__ TddpThrustFunctor::TddpThrustFunctor (std::string n, Variable* _dtime, Variable* _sigmat, Variable* m12, Variable* m13, Variable* eventNumber, DecayInfo* decay, MixingTimeResolution* r, ThrustPdfFunctor* efficiency, Variable* mistag) 
-  : ThrustPdfFunctor(_dtime, n) 
+__host__ TddpThrustFunctor::TddpThrustFunctor (std::string n, Variable* _dtime, Variable* _sigmat, Variable* m12, Variable* m13, Variable* eventNumber, DecayInfo* decay, MixingTimeResolution* r, EngineCore* efficiency, Variable* mistag) 
+  : EngineCore(_dtime, n) 
   , decayInfo(decay)
   , _m12(m12)
   , _m13(m13)
@@ -362,8 +362,8 @@ __host__ TddpThrustFunctor::TddpThrustFunctor (std::string n, Variable* _dtime, 
   addSpecialMask(FunctorBase::ForceSeparateNorm); 
 }
 
-__host__ TddpThrustFunctor::TddpThrustFunctor (std::string n, Variable* _dtime, Variable* _sigmat, Variable* m12, Variable* m13, Variable* eventNumber, DecayInfo* decay, vector<MixingTimeResolution*>& r, ThrustPdfFunctor* efficiency, Variable* md0, Variable* mistag) 
-  : ThrustPdfFunctor(_dtime, n) 
+__host__ TddpThrustFunctor::TddpThrustFunctor (std::string n, Variable* _dtime, Variable* _sigmat, Variable* m12, Variable* m13, Variable* eventNumber, DecayInfo* decay, vector<MixingTimeResolution*>& r, EngineCore* efficiency, Variable* md0, Variable* mistag) 
+  : EngineCore(_dtime, n) 
   , decayInfo(decay)
   , _m12(m12)
   , _m13(m13)

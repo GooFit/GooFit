@@ -10,7 +10,7 @@ __device__ device_function_ptr ptr_to_Step = device_Step;
 device_function_ptr hptr_to_Step = device_Step; 
 
 __host__ StepThrustFunctor::StepThrustFunctor (std::string n, Variable* _x, Variable* x0)
-  : ThrustPdfFunctor(_x, n) 
+  : EngineCore(_x, n) 
 {
   std::vector<unsigned int> pindices;
   pindices.push_back(registerParameter(x0));

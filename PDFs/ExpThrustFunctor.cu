@@ -51,7 +51,7 @@ __device__ device_function_ptr ptr_to_ExpOffset = device_ExpOffset;
 __device__ device_function_ptr ptr_to_ExpPolyOffset = device_ExpPolyOffset; 
 
 __host__ ExpThrustFunctor::ExpThrustFunctor (std::string n, Variable* _x, Variable* alpha, Variable* offset) 
-  : ThrustPdfFunctor(_x, n) 
+  : EngineCore(_x, n) 
 {
   std::vector<unsigned int> pindices;
   if (offset) {
@@ -68,7 +68,7 @@ __host__ ExpThrustFunctor::ExpThrustFunctor (std::string n, Variable* _x, Variab
 }
 
 __host__ ExpThrustFunctor::ExpThrustFunctor (std::string n, Variable* _x, std::vector<Variable*>& weights, Variable* offset) 
-  : ThrustPdfFunctor(_x, n) 
+  : EngineCore(_x, n) 
 {
   std::vector<unsigned int> pindices;
   if (offset) pindices.push_back(registerParameter(offset)); 

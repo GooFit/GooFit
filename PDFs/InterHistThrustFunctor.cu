@@ -116,7 +116,7 @@ __host__ InterHistThrustFunctor::InterHistThrustFunctor (std::string n,
 							 BinnedDataSet* x, 
 							 std::vector<Variable*> params, 
 							 std::vector<Variable*> obses)
-  : ThrustPdfFunctor(0, n) 
+  : EngineCore(0, n) 
   , numVars(x->numVariables())
 {
   int numConstants = 2*numVars;

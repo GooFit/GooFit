@@ -1,9 +1,9 @@
 #ifndef ADD_THRUST_FUNCTOR_HH
 #define ADD_THRUST_FUNCTOR_HH
 
-#include "ThrustPdfFunctor.hh" 
+#include "EngineCore.hh" 
 
-class AddThrustFunctor : public ThrustPdfFunctor {
+class AddThrustFunctor : public EngineCore {
 public:
 
   AddThrustFunctor (std::string n, std::vector<Variable*> weights, std::vector<FunctorBase*> comps); 

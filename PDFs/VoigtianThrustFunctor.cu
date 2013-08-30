@@ -322,7 +322,7 @@ __device__ fptype device_Voigtian (fptype* evt, fptype* p, unsigned int* indices
 __device__ device_function_ptr ptr_to_Voigtian = device_Voigtian; 
 
 __host__ VoigtianThrustFunctor::VoigtianThrustFunctor (std::string n, Variable* _x, Variable* m, Variable* s, Variable* w)
-: ThrustPdfFunctor(_x, n)
+: EngineCore(_x, n)
 {
   std::vector<unsigned int> pindices;
   pindices.push_back(registerParameter(m));

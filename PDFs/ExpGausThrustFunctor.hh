@@ -1,9 +1,9 @@
 #ifndef EXPGAUS_THRUST_FUNCTOR_HH
 #define EXPGAUS_THRUST_FUNCTOR_HH
 
-#include "ThrustPdfFunctor.hh" 
+#include "EngineCore.hh" 
 
-class ExpGausThrustFunctor : public ThrustPdfFunctor {
+class ExpGausThrustFunctor : public EngineCore {
 public:
   ExpGausThrustFunctor (std::string n, Variable* _x, Variable* m, Variable* s, Variable* t); 
 

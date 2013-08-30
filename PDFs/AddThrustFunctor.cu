@@ -62,7 +62,7 @@ __device__ device_function_ptr ptr_to_AddPdfs = device_AddPdfs;
 __device__ device_function_ptr ptr_to_AddPdfsExt = device_AddPdfsExt; 
 
 AddThrustFunctor::AddThrustFunctor (std::string n, std::vector<Variable*> weights, std::vector<FunctorBase*> comps) 
-  : ThrustPdfFunctor(0, n) 
+  : EngineCore(0, n) 
   , extended(true)
 {
 
@@ -100,7 +100,7 @@ AddThrustFunctor::AddThrustFunctor (std::string n, std::vector<Variable*> weight
 
 
 AddThrustFunctor::AddThrustFunctor (std::string n, Variable* frac1, FunctorBase* func1, FunctorBase* func2) 
-  : ThrustPdfFunctor(0, n) 
+  : EngineCore(0, n) 
   , extended(false)
 {
   // Special-case constructor for common case of adding two functions.

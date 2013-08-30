@@ -38,8 +38,8 @@ __device__ fptype device_incoherent (fptype* evt, fptype* p, unsigned int* indic
 
 __device__ device_function_ptr ptr_to_incoherent = device_incoherent; 
 
-__host__ IncoherentSumThrustFunctor::IncoherentSumThrustFunctor (std::string n, Variable* m12, Variable* m13, Variable* eventNumber, DecayInfo* decay, ThrustPdfFunctor* eff) 
-  : ThrustPdfFunctor(0, n) 
+__host__ IncoherentSumThrustFunctor::IncoherentSumThrustFunctor (std::string n, Variable* m12, Variable* m13, Variable* eventNumber, DecayInfo* decay, EngineCore* eff) 
+  : EngineCore(0, n) 
   , decayInfo(decay)
   , _m12(m12)
   , _m13(m13)

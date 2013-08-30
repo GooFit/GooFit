@@ -1,9 +1,9 @@
 #ifndef NOVOSIBIRSK_THRUST_FUNCTOR_HH
 #define NOVOSIBIRSK_THRUST_FUNCTOR_HH
 
-#include "ThrustPdfFunctor.hh" 
+#include "EngineCore.hh" 
 
-class NovosibirskThrustFunctor : public ThrustPdfFunctor {
+class NovosibirskThrustFunctor : public EngineCore {
 public:
   NovosibirskThrustFunctor (std::string n, Variable* _x, Variable* m, Variable* s, Variable* t); 
 

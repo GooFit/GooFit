@@ -24,7 +24,7 @@ __device__ device_function_ptr ptr_to_BinTransform = device_BinTransform;
 
 // Notice that bin sizes and limits can be different, for this purpose, than what's implied by the Variable members. 
 __host__ BinTransformThrustFunctor::BinTransformThrustFunctor (std::string n, vector<Variable*> obses, vector<fptype> limits, vector<fptype> binSizes, vector<int> numBins) 
-  : ThrustPdfFunctor(0, n) 
+  : EngineCore(0, n) 
 {
 
   cIndex = registerConstants(2*obses.size());

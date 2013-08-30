@@ -1,9 +1,9 @@
 #ifndef KINLIMITBW_THRUST_FUNCTOR_HH
 #define KINLIMITBW_THRUST_FUNCTOR_HH
 
-#include "ThrustPdfFunctor.hh" 
+#include "EngineCore.hh" 
 
-class KinLimitBWThrustFunctor : public ThrustPdfFunctor {
+class KinLimitBWThrustFunctor : public EngineCore {
 
 public:
   KinLimitBWThrustFunctor (std::string n, Variable* _x, Variable* m, Variable* s); 

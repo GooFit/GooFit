@@ -24,7 +24,7 @@ __device__ fptype device_JohnsonSU (fptype* evt, fptype* p, unsigned int* indice
 __device__ device_function_ptr ptr_to_JohnsonSU = device_JohnsonSU; 
 
 __host__ JohnsonSUThrustFunctor::JohnsonSUThrustFunctor (std::string n, Variable* _x, Variable* mean, Variable* sigma, Variable* gamma, Variable* delta) 
-  : ThrustPdfFunctor(_x, n) 
+  : EngineCore(_x, n) 
 {
   std::vector<unsigned int> pindices;
   pindices.push_back(registerParameter(mean));

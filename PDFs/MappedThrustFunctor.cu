@@ -23,8 +23,8 @@ __device__ fptype device_Mapped (fptype* evt, fptype* p, unsigned int* indices) 
 
 __device__ device_function_ptr ptr_to_Mapped = device_Mapped; 
 
-__host__ MappedThrustFunctor::MappedThrustFunctor (std::string n, ThrustPdfFunctor* m, vector<ThrustPdfFunctor*>& t)
-  : ThrustPdfFunctor(0, n) 
+__host__ MappedThrustFunctor::MappedThrustFunctor (std::string n, EngineCore* m, vector<EngineCore*>& t)
+  : EngineCore(0, n) 
 {
   components.push_back(m); 
   std::vector<unsigned int> pindices;
@@ -32,7 +32,7 @@ __host__ MappedThrustFunctor::MappedThrustFunctor (std::string n, ThrustPdfFunct
   pindices.push_back(m->getParameterIndex()); 
 
   std::set<int> functionIndicesUsed;
-  for (vector<ThrustPdfFunctor*>::iterator f = t.begin(); f != t.end(); ++f) {
+  for (vector<EngineCore*>::iterator f = t.begin(); f != t.end(); ++f) {
     components.push_back(*f); 
     pindices.push_back((*f)->getFunctionIndex()); 
     pindices.push_back((*f)->getParameterIndex()); 

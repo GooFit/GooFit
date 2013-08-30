@@ -1,9 +1,9 @@
 #ifndef BW_THRUST_FUNCTOR_HH
 #define BW_THRUST_FUNCTOR_HH
 
-#include "ThrustPdfFunctor.hh" 
+#include "EngineCore.hh" 
 
-class BWThrustFunctor : public ThrustPdfFunctor {
+class BWThrustFunctor : public EngineCore {
 
 public:
   BWThrustFunctor (std::string n, Variable* _x, Variable* m, Variable* s); 

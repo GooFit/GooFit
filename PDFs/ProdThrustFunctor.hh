@@ -1,9 +1,9 @@
 #ifndef PROD_THRUST_FUNCTOR_HH
 #define PROD_THRUST_FUNCTOR_HH
 
-#include "ThrustPdfFunctor.hh" 
+#include "EngineCore.hh" 
 
-class ProdThrustFunctor : public ThrustPdfFunctor {
+class ProdThrustFunctor : public EngineCore {
 public:
 
   ProdThrustFunctor (std::string n, std::vector<FunctorBase*> comps); 

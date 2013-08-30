@@ -1,9 +1,9 @@
 #ifndef VOIGTIAN_THRUST_FUNCTOR_HH
 #define VOIGTIAN_THRUST_FUNCTOR_HH
 
-#include "ThrustPdfFunctor.hh" 
+#include "EngineCore.hh" 
 
-class VoigtianThrustFunctor : public ThrustPdfFunctor {
+class VoigtianThrustFunctor : public EngineCore {
 public:
   VoigtianThrustFunctor (std::string n, Variable* _x, Variable* m, Variable* s, Variable* w); 
 

@@ -114,9 +114,9 @@ __device__ device_function_ptr ptr_to_ConvolveSharedPdfs = device_ConvolveShared
 
 ConvolutionThrustFunctor::ConvolutionThrustFunctor (std::string n,
 						    Variable* x, 
-						    ThrustPdfFunctor* m, 
-						    ThrustPdfFunctor* r) 
-  : ThrustPdfFunctor(x, n)
+						    EngineCore* m, 
+						    EngineCore* r) 
+  : EngineCore(x, n)
   , model(m)
   , resolution(r)
   , host_iConsts(0)
@@ -146,10 +146,10 @@ ConvolutionThrustFunctor::ConvolutionThrustFunctor (std::string n,
 
 ConvolutionThrustFunctor::ConvolutionThrustFunctor (std::string n,
 						    Variable* x, 
-						    ThrustPdfFunctor* m, 
-						    ThrustPdfFunctor* r,
+						    EngineCore* m, 
+						    EngineCore* r,
 						    unsigned int numOthers) 
-  : ThrustPdfFunctor(x, n)
+  : EngineCore(x, n)
   , model(m)
   , resolution(r)
   , host_iConsts(0)
@@ -310,7 +310,7 @@ __host__ fptype ConvolutionThrustFunctor::normalise () const {
   //cudaDeviceSynchronize(); 
 
   // Then return usual integral
-  fptype ret = ThrustPdfFunctor::normalise();
+  fptype ret = EngineCore::normalise();
   return ret; 
 }
 

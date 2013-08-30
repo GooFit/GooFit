@@ -65,7 +65,7 @@ __device__ device_function_ptr ptr_to_VerySpecialEpisodeTrigThresholdLower = dev
 
 
 __host__ TrigThresholdThrustFunctor::TrigThresholdThrustFunctor (std::string n, Variable* _x, Variable* thresh, Variable* trigConst, Variable* linConst, bool upper) 
-  : ThrustPdfFunctor(_x, n) 
+  : EngineCore(_x, n) 
 {
   std::vector<unsigned int> pindices;
   pindices.push_back(registerParameter(thresh));
@@ -78,7 +78,7 @@ __host__ TrigThresholdThrustFunctor::TrigThresholdThrustFunctor (std::string n, 
 }
 
   __host__ TrigThresholdThrustFunctor::TrigThresholdThrustFunctor (std::string n, Variable* _x, Variable* _y, Variable* thresh, Variable* trigConst, Variable* linConst, Variable* massConstant, bool upper) 
-  : ThrustPdfFunctor(0, n) 
+  : EngineCore(0, n) 
 {
   registerObservable(_x);
   registerObservable(_y);

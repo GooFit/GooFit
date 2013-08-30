@@ -1,10 +1,10 @@
 #ifndef INTERHIST_THRUST_FUNCTOR_HH
 #define INTERHIST_THRUST_FUNCTOR_HH
 
-#include "ThrustPdfFunctor.hh" 
+#include "EngineCore.hh" 
 #include "BinnedDataSet.hh" 
 
-class InterHistThrustFunctor : public ThrustPdfFunctor {
+class InterHistThrustFunctor : public EngineCore {
 public:
   InterHistThrustFunctor (std::string n, 
 			  BinnedDataSet* x, 

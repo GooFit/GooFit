@@ -1,10 +1,10 @@
 #ifndef SMOOTHHISTOGRAM_THRUST_FUNCTOR_HH
 #define SMOOTHHISTOGRAM_THRUST_FUNCTOR_HH
 
-#include "ThrustPdfFunctor.hh" 
+#include "EngineCore.hh" 
 #include "BinnedDataSet.hh" 
 
-class SmoothHistogramThrustFunctor : public ThrustPdfFunctor {
+class SmoothHistogramThrustFunctor : public EngineCore {
 public:
   SmoothHistogramThrustFunctor (std::string n, BinnedDataSet* x, Variable* smoothing); 
   __host__ virtual fptype normalise () const;

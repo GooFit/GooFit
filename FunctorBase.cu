@@ -4,7 +4,7 @@
 // it is common across all implementations. But it calls on device-side
 // functions, and due to the nvcc translation-unit limitations, it cannot
 // sit in its own object file; it must go in the CUDAglob.cu. So it's
-// off on its own in this inline-cuda file, which ThrustPdfFunctor.cu 
+// off on its own in this inline-cuda file, which EngineCore.cu 
 // should include. 
 
 #ifdef CUDAPRINT

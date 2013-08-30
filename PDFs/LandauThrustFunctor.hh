@@ -1,9 +1,9 @@
 #ifndef LANDAU_THRUST_FUNCTOR_HH
 #define LANDAU_THRUST_FUNCTOR_HH
 
-#include "ThrustPdfFunctor.hh" 
+#include "EngineCore.hh" 
 
-class LandauThrustFunctor : public ThrustPdfFunctor {
+class LandauThrustFunctor : public EngineCore {
 public:
   LandauThrustFunctor (std::string n, Variable* _x, Variable* mpv, Variable* sigma); 
 

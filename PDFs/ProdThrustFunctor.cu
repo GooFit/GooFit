@@ -35,7 +35,7 @@ __device__ fptype device_ProdPdfs (fptype* evt, fptype* p, unsigned int* indices
 __device__ device_function_ptr ptr_to_ProdPdfs = device_ProdPdfs; 
 
 ProdThrustFunctor::ProdThrustFunctor (std::string n, std::vector<FunctorBase*> comps) 
-  : ThrustPdfFunctor(0, n) 
+  : EngineCore(0, n) 
   , varOverlaps(false) 
 {
   std::vector<unsigned int> pindices;
@@ -85,7 +85,7 @@ __host__ fptype ProdThrustFunctor::normalise () const {
     
     // Normalise numerically.
     //std::cout << "Numerical normalisation of " << getName() << " due to varOverlaps.\n"; 
-    fptype ret = ThrustPdfFunctor::normalise();
+    fptype ret = EngineCore::normalise();
     //if (cpuDebug & 1) 
     //std::cout << "ProdThrustFunctor " << getName() << " has normalisation " << ret << " " << host_callnumber << std::endl; 
     return ret;

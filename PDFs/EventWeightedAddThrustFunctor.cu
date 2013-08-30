@@ -54,7 +54,7 @@ __device__ device_function_ptr ptr_to_EventWeightedAddPdfs = device_EventWeighte
 __device__ device_function_ptr ptr_to_EventWeightedAddPdfsExt = device_EventWeightedAddPdfsExt; 
 
 EventWeightedAddThrustFunctor::EventWeightedAddThrustFunctor (std::string n, std::vector<Variable*> weights, std::vector<FunctorBase*> comps) 
-  : ThrustPdfFunctor(0, n) 
+  : EngineCore(0, n) 
 {
   assert((weights.size() == comps.size()) || (weights.size() + 1 == comps.size())); 
 

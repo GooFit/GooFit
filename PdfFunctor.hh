@@ -2,7 +2,7 @@
 #define PDFFUNCTOR_HH
 
 #include "GlobalCudaDefines.hh" 
-#include "ThrustPdfFunctor.hh"
+#include "EngineCore.hh"
 
 // Glue class that talks to MINUIT
 #define MINUIT_VERSION 1

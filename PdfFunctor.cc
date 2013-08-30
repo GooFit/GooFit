@@ -1,6 +1,6 @@
 #include "FunctorBase.hh"
 #include "PdfFunctor.hh"
-#include "ThrustPdfFunctor.hh" 
+#include "EngineCore.hh" 
 #include <cstdio> 
 #include <cassert> 
 #include <limits> 

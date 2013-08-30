@@ -44,7 +44,7 @@ __device__ device_function_ptr ptr_to_Argus_Upper = device_Argus_Upper;
 __device__ device_function_ptr ptr_to_Argus_Lower = device_Argus_Lower; 
 
 __host__ ArgusThrustFunctor::ArgusThrustFunctor (std::string n, Variable* _x, Variable* m0, Variable* slope, bool upper, Variable* power) 
-: ThrustPdfFunctor(_x, n) 
+: EngineCore(_x, n) 
 {
   registerParameter(m0);
   registerParameter(slope);

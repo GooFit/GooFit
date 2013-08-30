@@ -1,9 +1,9 @@
 #ifndef EXP_THRUST_FUNCTOR_HH
 #define EXP_THRUST_FUNCTOR_HH
 
-#include "ThrustPdfFunctor.hh" 
+#include "EngineCore.hh" 
 
-class ExpThrustFunctor : public ThrustPdfFunctor {
+class ExpThrustFunctor : public EngineCore {
 public:
   ExpThrustFunctor (std::string n, Variable* _x, Variable* alpha, Variable* offset = 0); 
   ExpThrustFunctor (std::string n, Variable* _x, std::vector<Variable*>& weights, Variable* offset = 0); 

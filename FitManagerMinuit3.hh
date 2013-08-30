@@ -1,5 +1,5 @@
-#ifndef PDFFUNCTOR_MINUIT3_HH
-#define PDFFUNCTOR_MINUIT3_HH
+#ifndef FITMANAGER_MINUIT3_HH
+#define FITMANAGER_MINUIT3_HH
 
 #include "TVirtualFitter.h" 
 extern PdfBase* pdfPointer; 

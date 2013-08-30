@@ -114,7 +114,7 @@ ThreeGaussResolution::ThreeGaussResolution (Variable* cf, Variable* tf, Variable
 }
 ThreeGaussResolution::~ThreeGaussResolution () {} 
 
-void ThreeGaussResolution::createParameters (std::vector<unsigned int>& pindices, FunctorBase* dis) {
+void ThreeGaussResolution::createParameters (std::vector<unsigned int>& pindices, PdfBase* dis) {
   pindices.push_back(8); 
   pindices.push_back(dis->registerParameter(coreFraction));
   pindices.push_back(dis->registerParameter(tailFraction));

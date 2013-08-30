@@ -1,5 +1,5 @@
-#ifndef PDFFUNCTOR_HH
-#define PDFFUNCTOR_HH
+#ifndef FITMANAGER_HH
+#define FITMANAGER_HH
 
 #include "GlobalCudaDefines.hh" 
 #include "EngineCore.hh"

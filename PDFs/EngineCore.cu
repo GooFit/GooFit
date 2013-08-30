@@ -6,7 +6,7 @@
 
 // These variables are either function-pointer related (thus specific to this implementation)
 // or constrained to be in the CUDAglob translation unit by nvcc limitations; otherwise they 
-// would be in FunctorBase. 
+// would be in PdfBase. 
 
 // Device-side, translation-unit constrained. 
 __constant__ fptype cudaArray[maxParams];           // Holds device-side fit parameters. 
@@ -62,17 +62,17 @@ void printMemoryStatus (std::string file, int line) {
 
 #include <execinfo.h>
 void* stackarray[10];
-void abortWithCudaPrintFlush (std::string file, int line, std::string reason, const FunctorBase* pdf = 0) {
+void abortWithCudaPrintFlush (std::string file, int line, std::string reason, const PdfBase* pdf = 0) {
 #ifdef CUDAPRINT
   cudaPrintfDisplay(stdout, true);
   cudaPrintfEnd();
 #endif
   std::cout << "Abort called from " << file << " line " << line << " due to " << reason << std::endl; 
   if (pdf) {
-    FunctorBase::parCont pars;
+    PdfBase::parCont pars;
     pdf->getParameters(pars);
     std::cout << "Parameters of " << pdf->getName() << " : \n";
-    for (FunctorBase::parIter v = pars.begin(); v != pars.end(); ++v) {
+    for (PdfBase::parIter v = pars.begin(); v != pars.end(); ++v) {
       if (0 > (*v)->index) continue; 
       std::cout << "  " << (*v)->name << " (" << (*v)->index << ") :\t" << host_params[(*v)->index] << std::endl;
     }
@@ -174,7 +174,7 @@ void* getMetricPointer (std::string name) {
 
 
 EngineCore::EngineCore (Variable* x, std::string n) 
-  : FunctorBase(x, n)
+  : PdfBase(x, n)
   , logger(0)
 {
   //std::cout << "Created " << n << std::endl; 
@@ -217,8 +217,8 @@ __host__ int EngineCore::findFunctionIdx (void* dev_functionPtr) {
 __host__ void EngineCore::initialise (std::vector<unsigned int> pindices, void* dev_functionPtr) {
   if (!fitControl) setFitControl(new UnbinnedNllFit()); 
 
-  // MetricTaker must be created after FunctorBase initialisation is done.
-  FunctorBase::initialiseIndices(pindices); 
+  // MetricTaker must be created after PdfBase initialisation is done.
+  PdfBase::initialiseIndices(pindices); 
 
   functionIdx = findFunctionIdx(dev_functionPtr); 
   setMetrics(); 
@@ -416,9 +416,9 @@ __host__ void EngineCore::scan (Variable* var, std::vector<fptype>& values) {
 }
 
 __host__ void EngineCore::setParameterConstantness (bool constant) {
-  FunctorBase::parCont pars; 
+  PdfBase::parCont pars; 
   getParameters(pars); 
-  for (FunctorBase::parIter p = pars.begin(); p != pars.end(); ++p) {
+  for (PdfBase::parIter p = pars.begin(); p != pars.end(); ++p) {
     (*p)->fixed = constant; 
   }
 }
@@ -678,7 +678,7 @@ __host__ void EngineCore::transformGrid (fptype* host_output) {
   for (unsigned int i = 0; i < totalBins; ++i) host_output[i] = h_vec[i]; 
 }
 
-MetricTaker::MetricTaker (FunctorBase* dat, void* dev_functionPtr) 
+MetricTaker::MetricTaker (PdfBase* dat, void* dev_functionPtr) 
   : metricIndex(0)
   , functionIdx(dat->getFunctionIndex())
   , parameters(dat->getParameterIndex())
@@ -733,4 +733,4 @@ __host__ void EngineCore::setFitControl (FitControl* const fc, bool takeOwnerShi
   setMetrics();
 }
 
-#include "FunctorBase.cu" 
+#include "PdfBase.cu" 

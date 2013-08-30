@@ -1,5 +1,5 @@
-#ifndef PDFFUNCTOR_MINUIT2_HH
-#define PDFFUNCTOR_MINUIT2_HH
+#ifndef FITMANAGER_MINUIT2_HH
+#define FITMANAGER_MINUIT2_HH
 
 #include "Minuit2/FCNBase.h"
 #include "Minuit2/FunctionMinimum.h"

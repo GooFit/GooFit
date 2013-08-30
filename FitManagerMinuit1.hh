@@ -1,5 +1,5 @@
-#ifndef PDFBUILDER_MINUIT1_HH
-#define PDFBUILDER_MINUIT1_HH
+#ifndef FITMANAGER_MINUIT1_HH
+#define FITMANAGER_MINUIT1_HH
 
 #include "TMinuit.hh" 
 extern PdfBase* pdfPointer; 

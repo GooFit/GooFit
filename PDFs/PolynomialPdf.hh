@@ -1,9 +1,9 @@
 #ifndef POLYNOMIAL_PDF_HH
 #define POLYNOMIAL_PDF_HH
 
-#include "EngineCore.hh" 
+#include "GooPdf.hh" 
 
-class PolynomialPdf : public EngineCore {
+class PolynomialPdf : public GooPdf {
 public:
   PolynomialPdf (std::string n, Variable* _x, std::vector<Variable*> weights, Variable* x0 = 0, unsigned int lowestDegree = 0); 
   PolynomialPdf (string n, vector<Variable*> obses, vector<Variable*> coeffs, vector<Variable*> offsets, unsigned int maxDegree); 

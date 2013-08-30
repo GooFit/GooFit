@@ -1,16 +1,16 @@
 #ifndef RESONANCE_PDF_HH
 #define RESONANCE_PDF_HH
 
-#include "EngineCore.hh" 
+#include "GooPdf.hh" 
 #include "devcomplex.hh" 
 typedef devcomplex<fptype> (*resonance_function_ptr) (fptype, fptype, fptype, unsigned int*); 
 
-class ResonancePdf : public EngineCore {
+class ResonancePdf : public GooPdf {
   // Service class intended to hold parametrisations of
   // resonances on Dalitz plots. Don't try to use this
   // as a standalone PDF! It should only be used as a
   // component in one of the friend classes. It extends
-  // EngineCore so as to take advantage of the 
+  // GooPdf so as to take advantage of the 
   // infrastructure, but will crash if used on its own. 
 
   friend class TddpPdf;

@@ -8,4 +8,5 @@ wrkdir/%.cu:		$(SRCDIR)/%.cu $(SRCDIR)/%.hh
 
 wrkdir/CUDAglob.cu:	$(WRKFUNCTORLIST) $(HEADERLIST) 
 			@rm -f $@
+			@echo "cat $(WRKFUNCTORLIST) > $@"
 			@cat $(WRKFUNCTORLIST) > $@ 

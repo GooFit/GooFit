@@ -1,6 +1,6 @@
 #include "PdfBase.hh"
 #include "FitManager.hh"
-#include "EngineCore.hh" 
+#include "GooPdf.hh" 
 #include <cstdio> 
 #include <cassert> 
 #include <limits> 

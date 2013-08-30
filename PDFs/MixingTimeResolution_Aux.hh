@@ -1,7 +1,7 @@
 #ifndef MIXING_TIME_RESOLUTION_HH
 #define MIXING_TIME_RESOLUTION_HH
 #include "GlobalCudaDefines.hh" 
-#include "EngineCore.hh" 
+#include "GooPdf.hh" 
 
 typedef fptype (*device_resfunction_ptr) (fptype, fptype, fptype, fptype, fptype, fptype, fptype, fptype, fptype, fptype*, unsigned int*); 
 

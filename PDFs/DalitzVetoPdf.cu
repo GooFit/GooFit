@@ -30,7 +30,7 @@ __device__ fptype device_DalitzVeto (fptype* evt, fptype* p, unsigned int* indic
 __device__ device_function_ptr ptr_to_DalitzVeto = device_DalitzVeto;
 
 __host__ DalitzVetoPdf::DalitzVetoPdf (std::string n, Variable* _x, Variable* _y, Variable* motherM, Variable* d1m, Variable* d2m, Variable* d3m, vector<VetoInfo*> vetos) 
-  : EngineCore(0, n) 
+  : GooPdf(0, n) 
 {
   registerObservable(_x);
   registerObservable(_y);

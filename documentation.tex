@@ -224,7 +224,7 @@ To get a binned fit, you should create a \texttt{BinnedDataSet} instead of the
 \texttt{UnbinnedDataSet}; the procedure is otherwise the same. Notice that
 the \texttt{BinnedDataSet} will use the number of bins that its constituent
 \texttt{Variable}s have at the moment of its creation. Supplying a \texttt{BinnedDataSet}
-%to a EngineCore (which is the base class of all the \texttt{FooPdf}
+%to a GooPdf (which is the base class of all the \texttt{FooPdf}
 to a \texttt{Thrust\-Pdf\-Functor} (which is the base class of all the \texttt{FooPdf}
 classes such as \texttt{GaussianPdf}) will, by default, make it
 do a binned negative-log-likelihood fit, in which the goodness-of-fit criterion
@@ -312,7 +312,7 @@ and its index in that array is the PDF's internal representation of ``my evaluat
 function''. 
 
 Finally, the new PDF needs a bog-standard C++ class definition, extending
-the \texttt{EngineCore} superclass, which will allow it to be instantiated
+the \texttt{GooPdf} superclass, which will allow it to be instantiated
 and passed around in user-level code. Section \ref{subsec:indexarray} discusses
 what should happen in the constructor; otherwise the class may have any supporting
 paraphernalia that are necessary or useful to its evaluation - caches, 
@@ -351,7 +351,7 @@ GaussianPdf::GaussianPdf (std::string n,
                                               Variable* _x, 
                                               Variable* mean, 
                                               Variable* sigma) 
-  : EngineCore(_x, n) 
+  : GooPdf(_x, n) 
 {
   std::vector<unsigned int> pindices;
   pindices.push_back(registerParameter(mean));
@@ -364,7 +364,7 @@ GaussianPdf::GaussianPdf (std::string n,
 \end{verbatim}
 This is almost the simplest possible PDF: Two parameters, one observable, 
 no messing about! Notice that the call to \verb|registerObservable| is done
-in the parent \verb|EngineCore| constructor - this saves some boilerplate
+in the parent \verb|GooPdf| constructor - this saves some boilerplate
 in the constructors of one-observable PDFs. For the second and subsequent
 observables the calls should be done manually. The device-side index array
 for the Gaussian, assuming it is the only PDF in the system, looks like this:
@@ -454,7 +454,7 @@ __host__ GaussianPdf::GaussianPdf (std::string n,
                                                        Variable* _x, 
                                                        Variable* mean, 
                                                        Variable* sigma) 
-  : EngineCore(_x, n) 
+  : GooPdf(_x, n) 
 {
   std::vector<unsigned int> pindices;
   pindices.push_back(registerParameter(mean));
@@ -604,7 +604,7 @@ is a black box, for some time; it returns to GooFit by calling the \texttt{FitFu
 method with a list of parameters for which MINUIT would like us to evaluate the NLL. 
 \texttt{FitFun} translates MINUIT indices into GooFit indices, and calls \texttt{copyParams}, 
 which eponymously copies the parameter array to \texttt{cudaArray} on the GPU. 
-\texttt{FitFun} then returns the value from \texttt{EngineCore::calculateNLL}
+\texttt{FitFun} then returns the value from \texttt{GooPdf::calculateNLL}
 to MINUIT, which absorbs the number into its inner workings and eventually comes
 back with another set of parameters to be evaluated. Control continues to pass back
 and forth in this way until MINUIT converges or gives up, or until GooFit crashes. 
@@ -674,7 +674,7 @@ part numerically. This points to a more general rule, that once a PDF depends on
 or four observables, the relatively primitive numerical integration outlined above may
 become unmanageable because of the number of points it creates. Finally, note that PDFs
 may, without overriding \texttt{normalise}, advertise an analytical integral by overriding
-\texttt{EngineCore}'s \texttt{hasAnalyticIntegral} method to return \texttt{true}, 
+\texttt{GooPdf}'s \texttt{hasAnalyticIntegral} method to return \texttt{true}, 
 and then implementing an \texttt{integrate} method to be evaluated on the CPU. 
 
 The \texttt{logger} object will appear again in the actual PDF evaluation,

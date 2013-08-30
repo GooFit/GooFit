@@ -1,5 +1,5 @@
 #include "../GlobalCudaDefines.hh"
-#include "EngineCore.hh" 
+#include "GooPdf.hh" 
 #include "thrust/sequence.h" 
 #include "thrust/iterator/constant_iterator.h" 
 #include <fstream> 
@@ -173,14 +173,14 @@ void* getMetricPointer (std::string name) {
 }
 
 
-EngineCore::EngineCore (Variable* x, std::string n) 
+GooPdf::GooPdf (Variable* x, std::string n) 
   : PdfBase(x, n)
   , logger(0)
 {
   //std::cout << "Created " << n << std::endl; 
 }
 
-__host__ int EngineCore::findFunctionIdx (void* dev_functionPtr) {
+__host__ int GooPdf::findFunctionIdx (void* dev_functionPtr) {
   // Code specific to function-pointer implementation 
 #ifdef OMP_ON
   int tid = omp_get_thread_num();
@@ -214,7 +214,7 @@ __host__ int EngineCore::findFunctionIdx (void* dev_functionPtr) {
   return fIdx; 
 }
 
-__host__ void EngineCore::initialise (std::vector<unsigned int> pindices, void* dev_functionPtr) {
+__host__ void GooPdf::initialise (std::vector<unsigned int> pindices, void* dev_functionPtr) {
   if (!fitControl) setFitControl(new UnbinnedNllFit()); 
 
   // MetricTaker must be created after PdfBase initialisation is done.
@@ -224,18 +224,18 @@ __host__ void EngineCore::initialise (std::vector<unsigned int> pindices, void* 
   setMetrics(); 
 }
 
-__host__ void EngineCore::setDebugMask (int mask, bool setSpecific) const {
+__host__ void GooPdf::setDebugMask (int mask, bool setSpecific) const {
   cpuDebug = mask; 
   cudaMemcpyToSymbol(gpuDebug, &cpuDebug, sizeof(int), 0, cudaMemcpyHostToDevice);
   if (setSpecific) cudaMemcpyToSymbol(debugParamIndex, &parameters, sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
 } 
 
-__host__ void EngineCore::setMetrics () {
+__host__ void GooPdf::setMetrics () {
   if (logger) delete logger;
   logger = new MetricTaker(this, getMetricPointer(fitControl->getMetric()));  
 }
 
-__host__ double EngineCore::sumOfNll (int numVars) const {
+__host__ double GooPdf::sumOfNll (int numVars) const {
   static thrust::plus<double> cudaPlus;
   thrust::constant_iterator<int> eventSize(numVars); 
   thrust::constant_iterator<fptype*> arrayAddress(cudaDataArray); 
@@ -280,7 +280,7 @@ __host__ double EngineCore::sumOfNll (int numVars) const {
 #endif
 }
 
-__host__ double EngineCore::calculateNLL () const {
+__host__ double GooPdf::calculateNLL () const {
   //if (cpuDebug & 1) std::cout << getName() << " entering calculateNLL (" << host_callnumber << ")" << std::endl; 
 
   //cudaMemcpyToSymbol(callnumber, &host_callnumber, sizeof(int)); 
@@ -319,7 +319,7 @@ __host__ double EngineCore::calculateNLL () const {
   return 2*ret; 
 }
 
-__host__ void EngineCore::evaluateAtPoints (Variable* var, std::vector<fptype>& res) {
+__host__ void GooPdf::evaluateAtPoints (Variable* var, std::vector<fptype>& res) {
   // NB: This does not project correctly in multidimensional datasets, because all observables
   // other than 'var' will have, for every event, whatever value they happened to get set to last
   // time they were set. This is likely to be the value from the last event in whatever dataset
@@ -376,7 +376,7 @@ __host__ void EngineCore::evaluateAtPoints (Variable* var, std::vector<fptype>& 
   }
 }
 
-__host__ void EngineCore::evaluateAtPoints (std::vector<fptype>& points) const {
+__host__ void GooPdf::evaluateAtPoints (std::vector<fptype>& points) const {
   /*
   std::set<Variable*> vars;
   getParameters(vars);
@@ -402,7 +402,7 @@ __host__ void EngineCore::evaluateAtPoints (std::vector<fptype>& points) const {
   */
 }
 
-__host__ void EngineCore::scan (Variable* var, std::vector<fptype>& values) {
+__host__ void GooPdf::scan (Variable* var, std::vector<fptype>& values) {
   fptype step = var->upperlimit;
   step -= var->lowerlimit;
   step /= var->numbins;
@@ -415,7 +415,7 @@ __host__ void EngineCore::scan (Variable* var, std::vector<fptype>& values) {
   }
 }
 
-__host__ void EngineCore::setParameterConstantness (bool constant) {
+__host__ void GooPdf::setParameterConstantness (bool constant) {
   PdfBase::parCont pars; 
   getParameters(pars); 
   for (PdfBase::parIter p = pars.begin(); p != pars.end(); ++p) {
@@ -423,7 +423,7 @@ __host__ void EngineCore::setParameterConstantness (bool constant) {
   }
 }
 
-__host__ fptype EngineCore::getValue () {
+__host__ fptype GooPdf::getValue () {
   // Returns the value of the PDF at a single point. 
   // Execute redundantly in all threads for OpenMP multiGPU case
   copyParams(); 
@@ -447,7 +447,7 @@ __host__ fptype EngineCore::getValue () {
   return results[0];
 }
 
-__host__ fptype EngineCore::normalise () const {
+__host__ fptype GooPdf::normalise () const {
   //if (cpuDebug & 1) std::cout << "Normalising " << getName() << " " << hasAnalyticIntegral() << " " << normRanges << std::endl;
 
   if (!fitControl->metricIsPdf()) {
@@ -614,7 +614,7 @@ __device__ fptype MetricTaker::operator () (thrust::tuple<int, int, fptype*> t) 
   return ret; 
 }
 
-__host__ void EngineCore::getCompProbsAtDataPoints (std::vector<std::vector<fptype> >& values) {
+__host__ void GooPdf::getCompProbsAtDataPoints (std::vector<std::vector<fptype> >& values) {
   copyParams(); 
   double overall = normalise();
   cudaMemcpyToSymbol(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
@@ -655,7 +655,7 @@ __host__ void EngineCore::getCompProbsAtDataPoints (std::vector<std::vector<fpty
 }
 
 // still need to add OpenMP/multi-GPU code here
-__host__ void EngineCore::transformGrid (fptype* host_output) { 
+__host__ void GooPdf::transformGrid (fptype* host_output) { 
   generateNormRange(); 
   //normalise(); 
   int totalBins = 1; 
@@ -718,7 +718,7 @@ MetricTaker::MetricTaker (int fIdx, int pIdx)
   // This constructor should only be used for binned evaluation, ie for integrals. 
 }
 
-__host__ void EngineCore::setFitControl (FitControl* const fc, bool takeOwnerShip) {
+__host__ void GooPdf::setFitControl (FitControl* const fc, bool takeOwnerShip) {
   for (unsigned int i = 0; i < components.size(); ++i) {
     components[i]->setFitControl(fc, false); 
   }

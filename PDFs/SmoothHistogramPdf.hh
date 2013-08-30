@@ -1,10 +1,10 @@
 #ifndef SMOOTHHISTOGRAM_PDF_HH
 #define SMOOTHHISTOGRAM_PDF_HH
 
-#include "EngineCore.hh" 
+#include "GooPdf.hh" 
 #include "BinnedDataSet.hh" 
 
-class SmoothHistogramPdf : public EngineCore {
+class SmoothHistogramPdf : public GooPdf {
 public:
   SmoothHistogramPdf (std::string n, BinnedDataSet* x, Variable* smoothing); 
   __host__ virtual fptype normalise () const;

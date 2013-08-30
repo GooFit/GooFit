@@ -91,8 +91,8 @@ __host__ DalitzPlotPdf::DalitzPlotPdf (std::string n,
 							   Variable* m13, 
 							   Variable* eventNumber, 
 							   DecayInfo* decay, 
-							   EngineCore* efficiency)
-  : EngineCore(0, n) 
+							   GooPdf* efficiency)
+  : GooPdf(0, n) 
   , decayInfo(decay)
   , _m12(m12)
   , _m13(m13)

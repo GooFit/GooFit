@@ -1,9 +1,9 @@
 #ifndef KINLIMITBW_PDF_HH
 #define KINLIMITBW_PDF_HH
 
-#include "EngineCore.hh" 
+#include "GooPdf.hh" 
 
-class KinLimitBWPdf : public EngineCore {
+class KinLimitBWPdf : public GooPdf {
 
 public:
   KinLimitBWPdf (std::string n, Variable* _x, Variable* m, Variable* s); 

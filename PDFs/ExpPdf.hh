@@ -1,9 +1,9 @@
 #ifndef EXP_PDF_HH
 #define EXP_PDF_HH
 
-#include "EngineCore.hh" 
+#include "GooPdf.hh" 
 
-class ExpPdf : public EngineCore {
+class ExpPdf : public GooPdf {
 public:
   ExpPdf (std::string n, Variable* _x, Variable* alpha, Variable* offset = 0); 
   ExpPdf (std::string n, Variable* _x, std::vector<Variable*>& weights, Variable* offset = 0); 

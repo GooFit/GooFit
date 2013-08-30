@@ -271,8 +271,8 @@ __device__ fptype device_Tddp (fptype* evt, fptype* p, unsigned int* indices) {
 
 __device__ device_function_ptr ptr_to_Tddp = device_Tddp; 
 
-__host__ TddpPdf::TddpPdf (std::string n, Variable* _dtime, Variable* _sigmat, Variable* m12, Variable* m13, Variable* eventNumber, DecayInfo* decay, MixingTimeResolution* r, EngineCore* efficiency, Variable* mistag) 
-  : EngineCore(_dtime, n) 
+__host__ TddpPdf::TddpPdf (std::string n, Variable* _dtime, Variable* _sigmat, Variable* m12, Variable* m13, Variable* eventNumber, DecayInfo* decay, MixingTimeResolution* r, GooPdf* efficiency, Variable* mistag) 
+  : GooPdf(_dtime, n) 
   , decayInfo(decay)
   , _m12(m12)
   , _m13(m13)
@@ -362,8 +362,8 @@ __host__ TddpPdf::TddpPdf (std::string n, Variable* _dtime, Variable* _sigmat, V
   addSpecialMask(PdfBase::ForceSeparateNorm); 
 }
 
-__host__ TddpPdf::TddpPdf (std::string n, Variable* _dtime, Variable* _sigmat, Variable* m12, Variable* m13, Variable* eventNumber, DecayInfo* decay, vector<MixingTimeResolution*>& r, EngineCore* efficiency, Variable* md0, Variable* mistag) 
-  : EngineCore(_dtime, n) 
+__host__ TddpPdf::TddpPdf (std::string n, Variable* _dtime, Variable* _sigmat, Variable* m12, Variable* m13, Variable* eventNumber, DecayInfo* decay, vector<MixingTimeResolution*>& r, GooPdf* efficiency, Variable* md0, Variable* mistag) 
+  : GooPdf(_dtime, n) 
   , decayInfo(decay)
   , _m12(m12)
   , _m13(m13)

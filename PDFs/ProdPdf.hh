@@ -1,9 +1,9 @@
 #ifndef PROD_PDF_HH
 #define PROD_PDF_HH
 
-#include "EngineCore.hh" 
+#include "GooPdf.hh" 
 
-class ProdPdf : public EngineCore {
+class ProdPdf : public GooPdf {
 public:
 
   ProdPdf (std::string n, std::vector<PdfBase*> comps); 

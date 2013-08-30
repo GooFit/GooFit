@@ -34,7 +34,7 @@ __device__ fptype device_Novosibirsk (fptype* evt, fptype* p, unsigned int* indi
 __device__ device_function_ptr ptr_to_Novosibirsk = device_Novosibirsk; 
 
 __host__ NovosibirskPdf::NovosibirskPdf (std::string n, Variable* _x, Variable* mean, Variable* sigma, Variable* tail) 
-  : EngineCore(_x, n) 
+  : GooPdf(_x, n) 
 {
   std::vector<unsigned int> pindices;
   pindices.push_back(registerParameter(mean));

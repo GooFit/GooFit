@@ -33,14 +33,15 @@ SRCDIR = $(PWD)/PDFs
 INCLUDES += -I$(CUDAHEADERS) -I$(SRCDIR) -I$(PWD) -I$(PWD)/rootstuff 
 LIBS += -L$(CUDALOCATION)/$(CUDALIBDIR) -lcudart -L$(PWD)/rootstuff -lRootUtils 
 
-FUNCTORLIST = $(SRCDIR)/EngineCore.cu 
-FUNCTORLIST += $(wildcard $(SRCDIR)/*Pdf.cu)
-FUNCTORLIST += $(wildcard $(SRCDIR)/*Aux.cu)
-HEADERLIST = $(patsubst %.cu,%.hh,$(FUNCTORLIST))
+# GooPdf must be first in CUDAglob, as it defines global variables.
+FUNCTORLIST    = $(SRCDIR)/GooPdf.cu 
+FUNCTORLIST    += $(filter-out $(SRCDIR)/GooPdf.cu, $(wildcard $(SRCDIR)/*Pdf.cu))
+FUNCTORLIST   += $(wildcard $(SRCDIR)/*Aux.cu)
+HEADERLIST     = $(patsubst %.cu,%.hh,$(SRCFILES))
 WRKFUNCTORLIST = $(patsubst $(SRCDIR)/%.cu,wrkdir/%.cu,$(FUNCTORLIST))
 #NB, the above are used in the SRCDIR Makefile.
 
-THRUSTO		= wrkdir/Variable.o wrkdir/FitManager.o wrkdir/EngineCoreCUDA.o wrkdir/Faddeeva.o wrkdir/FitControl.o wrkdir/PdfBase.o wrkdir/DataSet.o wrkdir/BinnedDataSet.o wrkdir/UnbinnedDataSet.o wrkdir/FunctorWriter.o 
+THRUSTO		= wrkdir/Variable.o wrkdir/FitManager.o wrkdir/GooPdfCUDA.o wrkdir/Faddeeva.o wrkdir/FitControl.o wrkdir/PdfBase.o wrkdir/DataSet.o wrkdir/BinnedDataSet.o wrkdir/UnbinnedDataSet.o wrkdir/FunctorWriter.o 
 ROOTRIPDIR	= $(PWD)/rootstuff
 ROOTRIPOBJS	= $(ROOTRIPDIR)/TMinuit.o $(ROOTRIPDIR)/TRandom.o $(ROOTRIPDIR)/TRandom3.o 
 ROOTUTILLIB	= $(ROOTRIPDIR)/libRootUtils.so 
@@ -73,9 +74,9 @@ include $(SRCDIR)/Makefile
 FitManager.o:		FitManager.cc FitManager.hh wrkdir/ThrustFitManagerCUDA.o Variable.o 
 			$(CXX) $(DEFINEFLAGS) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
 
-wrkdir/EngineCoreCUDA.o:	wrkdir/CUDAglob.cu PdfBase.cu 
-				nvcc $(CXXFLAGS) $(INCLUDES) -I. $(DEFINEFLAGS) -c $< -o $@ 
-				@echo "$@ done"
+wrkdir/GooPdfCUDA.o:	wrkdir/CUDAglob.cu PdfBase.cu 
+			nvcc $(CXXFLAGS) $(INCLUDES) -I. $(DEFINEFLAGS) -c $< -o $@ 
+			@echo "$@ done"
 
 clean:
 		@rm -f *.o wrkdir/*

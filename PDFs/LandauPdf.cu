@@ -78,7 +78,7 @@ __device__ fptype device_Landau (fptype* evt, fptype* p, unsigned int* indices) 
 __device__ device_function_ptr ptr_to_Landau = device_Landau; 
 
 __host__ LandauPdf::LandauPdf (std::string n, Variable* _x, Variable* mpv, Variable* sigma) 
-  : EngineCore(_x, n) 
+  : GooPdf(_x, n) 
 {
   std::vector<unsigned int> pindices;
   pindices.push_back(registerParameter(mpv));

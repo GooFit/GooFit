@@ -1,9 +1,9 @@
 #ifndef VOIGTIAN_PDF_HH
 #define VOIGTIAN_PDF_HH
 
-#include "EngineCore.hh" 
+#include "GooPdf.hh" 
 
-class VoigtianPdf : public EngineCore {
+class VoigtianPdf : public GooPdf {
 public:
   VoigtianPdf (std::string n, Variable* _x, Variable* m, Variable* s, Variable* w); 
 

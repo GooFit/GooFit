@@ -1,7 +1,7 @@
 #ifndef INCOHERENT_SUM_PDF_HH
 #define INCOHERENT_SUM_PDF_HH
 
-#include "EngineCore.hh" 
+#include "GooPdf.hh" 
 #include "TddpPdf.hh"   
 #include "devcomplex.hh"
 
@@ -16,9 +16,9 @@
 class SpecialIncoherentIntegrator;
 class SpecialIncoherentResonanceCalculator; 
 
-class IncoherentSumPdf : public EngineCore {
+class IncoherentSumPdf : public GooPdf {
 public:
-  IncoherentSumPdf (std::string n, Variable* m12, Variable* m13, Variable* eventNumber, DecayInfo* decay, EngineCore* eff); 
+  IncoherentSumPdf (std::string n, Variable* m12, Variable* m13, Variable* eventNumber, DecayInfo* decay, GooPdf* eff); 
   // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the 
   // incoherent sum. The caching method requires that it be done this way or the ProdPdf
   // normalisation will get *really* confused and give wrong answers. 

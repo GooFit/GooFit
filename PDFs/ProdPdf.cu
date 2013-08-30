@@ -35,7 +35,7 @@ __device__ fptype device_ProdPdfs (fptype* evt, fptype* p, unsigned int* indices
 __device__ device_function_ptr ptr_to_ProdPdfs = device_ProdPdfs; 
 
 ProdPdf::ProdPdf (std::string n, std::vector<PdfBase*> comps) 
-  : EngineCore(0, n) 
+  : GooPdf(0, n) 
   , varOverlaps(false) 
 {
   std::vector<unsigned int> pindices;
@@ -85,7 +85,7 @@ __host__ fptype ProdPdf::normalise () const {
     
     // Normalise numerically.
     //std::cout << "Numerical normalisation of " << getName() << " due to varOverlaps.\n"; 
-    fptype ret = EngineCore::normalise();
+    fptype ret = GooPdf::normalise();
     //if (cpuDebug & 1) 
     //std::cout << "ProdPdf " << getName() << " has normalisation " << ret << " " << host_callnumber << std::endl; 
     return ret;

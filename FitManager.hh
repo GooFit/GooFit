@@ -2,7 +2,7 @@
 #define FITMANAGER_HH
 
 #include "GlobalCudaDefines.hh" 
-#include "EngineCore.hh"
+#include "GooPdf.hh"
 
 // Glue class that talks to MINUIT
 #define MINUIT_VERSION 1

@@ -1,9 +1,9 @@
 #ifndef BIFURGAUSSIAN_PDF_HH
 #define BIFURGAUSSIAN_PDF_HH
 
-#include "EngineCore.hh"
+#include "GooPdf.hh"
 
-class BifurGaussPdf : public EngineCore {
+class BifurGaussPdf : public GooPdf {
   public:
     BifurGaussPdf (std::string n, Variable *_x, Variable* m, Variable* sL, Variable* sR);
     __host__ fptype integrate(fptype lo, fptype hi) const;

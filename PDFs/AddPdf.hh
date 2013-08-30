@@ -1,9 +1,9 @@
 #ifndef ADD_PDF_HH
 #define ADD_PDF_HH
 
-#include "EngineCore.hh" 
+#include "GooPdf.hh" 
 
-class AddPdf : public EngineCore {
+class AddPdf : public GooPdf {
 public:
 
   AddPdf (std::string n, std::vector<Variable*> weights, std::vector<PdfBase*> comps); 

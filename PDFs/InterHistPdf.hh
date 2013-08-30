@@ -1,10 +1,10 @@
 #ifndef INTERHIST_PDF_HH
 #define INTERHIST_PDF_HH
 
-#include "EngineCore.hh" 
+#include "GooPdf.hh" 
 #include "BinnedDataSet.hh" 
 
-class InterHistPdf : public EngineCore {
+class InterHistPdf : public GooPdf {
 public:
   InterHistPdf (std::string n, 
 			  BinnedDataSet* x, 

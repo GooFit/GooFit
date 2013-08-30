@@ -1,9 +1,9 @@
 #ifndef SCALEDGAUSSIAN_PDF_HH
 #define SCALEDGAUSSIAN_PDF_HH
 
-#include "EngineCore.hh" 
+#include "GooPdf.hh" 
 
-class ScaledGaussianPdf : public EngineCore {
+class ScaledGaussianPdf : public GooPdf {
 public:
   ScaledGaussianPdf (std::string n, Variable* _x, Variable* m, Variable* s, Variable* d, Variable* e); 
   __host__ virtual bool hasAnalyticIntegral () const {return false;} 

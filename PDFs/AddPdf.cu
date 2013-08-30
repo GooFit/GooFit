@@ -62,7 +62,7 @@ __device__ device_function_ptr ptr_to_AddPdfs = device_AddPdfs;
 __device__ device_function_ptr ptr_to_AddPdfsExt = device_AddPdfsExt; 
 
 AddPdf::AddPdf (std::string n, std::vector<Variable*> weights, std::vector<PdfBase*> comps) 
-  : EngineCore(0, n) 
+  : GooPdf(0, n) 
   , extended(true)
 {
 
@@ -100,7 +100,7 @@ AddPdf::AddPdf (std::string n, std::vector<Variable*> weights, std::vector<PdfBa
 
 
 AddPdf::AddPdf (std::string n, Variable* frac1, PdfBase* func1, PdfBase* func2) 
-  : EngineCore(0, n) 
+  : GooPdf(0, n) 
   , extended(false)
 {
   // Special-case constructor for common case of adding two functions.

@@ -311,7 +311,7 @@ ResonancePdf::ResonancePdf (string name,
 						Variable* width, 
 						unsigned int sp, 
 						unsigned int cyc) 
-  : EngineCore(0, name)
+  : GooPdf(0, name)
   , amp_real(ar)
   , amp_imag(ai)
 {
@@ -338,7 +338,7 @@ ResonancePdf::ResonancePdf (string name,
 						Variable* mass, 
 						Variable* width, 
 						unsigned int cyc) 
-  : EngineCore(0, name)
+  : GooPdf(0, name)
   , amp_real(ar)
   , amp_imag(ai)
 {
@@ -362,7 +362,7 @@ ResonancePdf::ResonancePdf (string name,
                                                 unsigned int sp,
                                                 Variable* width,
                                                 unsigned int cyc)
-  : EngineCore(0, name)
+  : GooPdf(0, name)
   , amp_real(ar)
   , amp_imag(ai)
 {
@@ -382,7 +382,7 @@ ResonancePdf::ResonancePdf (string name,
 ResonancePdf::ResonancePdf (string name, 
 						Variable* ar, 
 						Variable* ai) 
-  : EngineCore(0, name)
+  : GooPdf(0, name)
   , amp_real(ar)
   , amp_imag(ai)
 {
@@ -400,7 +400,7 @@ ResonancePdf::ResonancePdf (string name,
 						Variable* mean, 
 						Variable* sigma,
 						unsigned int cyc) 
-  : EngineCore(0, name)
+  : GooPdf(0, name)
   , amp_real(ar)
   , amp_imag(ai)
 {

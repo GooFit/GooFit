@@ -114,9 +114,9 @@ __device__ device_function_ptr ptr_to_ConvolveSharedPdfs = device_ConvolveShared
 
 ConvolutionPdf::ConvolutionPdf (std::string n,
 						    Variable* x, 
-						    EngineCore* m, 
-						    EngineCore* r) 
-  : EngineCore(x, n)
+						    GooPdf* m, 
+						    GooPdf* r) 
+  : GooPdf(x, n)
   , model(m)
   , resolution(r)
   , host_iConsts(0)
@@ -146,10 +146,10 @@ ConvolutionPdf::ConvolutionPdf (std::string n,
 
 ConvolutionPdf::ConvolutionPdf (std::string n,
 						    Variable* x, 
-						    EngineCore* m, 
-						    EngineCore* r,
+						    GooPdf* m, 
+						    GooPdf* r,
 						    unsigned int numOthers) 
-  : EngineCore(x, n)
+  : GooPdf(x, n)
   , model(m)
   , resolution(r)
   , host_iConsts(0)
@@ -310,7 +310,7 @@ __host__ fptype ConvolutionPdf::normalise () const {
   //cudaDeviceSynchronize(); 
 
   // Then return usual integral
-  fptype ret = EngineCore::normalise();
+  fptype ret = GooPdf::normalise();
   return ret; 
 }
 

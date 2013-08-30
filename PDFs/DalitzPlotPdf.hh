@@ -1,16 +1,16 @@
 #ifndef DALITZPLOT_PDF_HH
 #define DALITZPLOT_PDF_HH
 
-#include "EngineCore.hh" 
+#include "GooPdf.hh" 
 #include "DalitzPlotHelpers.hh" 
 #include "devcomplex.hh"
 
 class SpecialResonanceIntegrator;
 class SpecialResonanceCalculator; 
   
-class DalitzPlotPdf : public EngineCore {
+class DalitzPlotPdf : public GooPdf {
 public:
-  DalitzPlotPdf (std::string n, Variable* m12, Variable* m13, Variable* eventNumber, DecayInfo* decay, EngineCore* eff);
+  DalitzPlotPdf (std::string n, Variable* m12, Variable* m13, Variable* eventNumber, DecayInfo* decay, GooPdf* eff);
   // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the 
   // coherent sum. The caching method requires that it be done this way or the ProdPdf
   // normalisation will get *really* confused and give wrong answers. 

@@ -114,6 +114,17 @@ __host__ void FunctorBase::getParameters (parCont& ret) const {
   }
 }
 
+__host__ Variable* FunctorBase::getParameterByName (string n) const { 
+  for (parConstIter p = parameterList.begin(); p != parameterList.end(); ++p) {
+    if ((*p)->name == n) return (*p);
+  }
+  for (unsigned int i = 0; i < components.size(); ++i) {
+    Variable* cand = components[i]->getParameterByName(n); 
+    if (cand) return cand; 
+  }
+  return 0; 
+}
+
 __host__ void FunctorBase::getObservables (std::vector<Variable*>& ret) const { 
   for (obsConstIter p = obsCBegin(); p != obsCEnd(); ++p) {
     if (std::find(ret.begin(), ret.end(), *p) != ret.end()) continue; 

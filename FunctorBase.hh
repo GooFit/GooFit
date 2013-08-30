@@ -56,6 +56,7 @@ public:
   __host__ std::string getName () const {return name;} 
   __host__ virtual void getObservables (obsCont& ret) const; 
   __host__ virtual void getParameters (parCont& ret) const;
+  __host__ Variable* getParameterByName (string n) const; 
   __host__ int getSpecialMask () const {return specialMask;}
   __host__ void setData (BinnedDataSet* data);
   __host__ void setData (UnbinnedDataSet* data);

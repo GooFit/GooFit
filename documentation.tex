@@ -97,6 +97,8 @@ export CUDALOCATION=/usr/local/cuda/
 gmake
 ./dalitz dalitz_toyMC_000.txt
 \end{verbatim}
+\end{itemize}
+
 Quick troubleshooting: If your shell doesn't like \texttt{export},
 try instead \verb|setenv CUDALOCATION /usr/local/cuda/|. Check
 that \verb|/usr/local/cuda/| exists and contains, eg, \verb|bin/nvcc| - 
@@ -113,7 +115,6 @@ reads the data, sends it to the GPU, and fits the PDF to the data
 The expected output is a MINUIT fit log showing that the fit
 converged, with such-and-such values for the real and imaginary
 parts of the resonance coefficients. 
-\end{itemize}
 
 \section{User-level code}
 \label{sec:usercode}
@@ -186,12 +187,12 @@ are doing and exactly how you are getting around it.
 
 \subsection{Data sets}
 
-To create a data set with several dimensions, supply a vector
+To create a data set with several dimensions, supply a \texttt{vector}
 of \texttt{Variables}:
 \begin{verbatim}
 vector<Variable*> vars;
-Variable* xvar = new Variable("xvar", -10, 10)
-Variable* yvar = new Variable("yvar", -10, 10)
+Variable* xvar = new Variable("xvar", -10, 10);
+Variable* yvar = new Variable("yvar", -10, 10);
 vars.push_back(xvar);
 vars.push_back(yvar);
 UnbinnedDataSet data(vars);
@@ -225,7 +226,7 @@ To get a binned fit, you should create a \texttt{BinnedDataSet} instead of the
 the \texttt{BinnedDataSet} will use the number of bins that its constituent
 \texttt{Variable}s have at the moment of its creation. Supplying a \texttt{BinnedDataSet}
 %to a GooPdf (which is the base class of all the \texttt{FooPdf}
-to a \texttt{Thrust\-Pdf\-Functor} (which is the base class of all the \texttt{FooPdf}
+to a \texttt{GooPdf} (which is the base class of all the \texttt{FooPdf}
 classes such as \texttt{GaussianPdf}) will, by default, make it
 do a binned negative-log-likelihood fit, in which the goodness-of-fit criterion
 is the sum of the logarithms of the Poisson probability of each bin:
@@ -243,7 +244,7 @@ by the \texttt{BinnedDataSet}. To do such a fit, in addition to
 supplying the \texttt{BinnedDataSet} (and providing the errors
 through the \texttt{setBinError} method in the case of the bin error fit),
 you should create a suitable \texttt{FitControl} object and send
-it to the \texttt{PdfPdf}:
+it to the top-level \texttt{GooPdf}:
 \begin{verbatim}
 decayTime = new Variable("decayTime", 100, 0, 10); 
 BinnedDataSet* ratioData = new BinnedDataSet(decayTime); 
@@ -287,7 +288,7 @@ __device__ fptype device_Gaussian (fptype* evt,
 \end{verbatim}
 \end{listing}
 
-Notice that this is a standalone function, not part of any class - \texttt{nvcc}
+Notice that this is a standalone function, not part of any class; \texttt{nvcc}
 does not play entirely nicely with device-side polymorphism, which is why we organise the
 code using a table of function pointers - a poor man's implementation of the
 virtual-function lookups built into C++. Second, we need a pointer to the 
@@ -296,7 +297,7 @@ evaluation function:
 __device__ device_function_ptr ptr_to_Gaussian = device_Gaussian; 
 \end{verbatim}
 where \texttt{device\_function\_ptr} is defined (using \texttt{typedef}) as a pointer
-a function with the signature shown in listing \ref{listing:fsign}:
+to a function with the signature shown in listing \ref{listing:fsign}:
 \begin{verbatim}
 typedef fptype (*device_function_ptr) (fptype*, 
                                        fptype*, 
@@ -348,9 +349,9 @@ in the order they were registered.
 An example may be useful at this point. Consider the simple Gaussian PDF constructor:
 \begin{verbatim}
 GaussianPdf::GaussianPdf (std::string n, 
-                                              Variable* _x, 
-                                              Variable* mean, 
-                                              Variable* sigma) 
+                          Variable* _x, 
+                          Variable* mean, 
+                          Variable* sigma) 
   : GooPdf(_x, n) 
 {
   std::vector<unsigned int> pindices;
@@ -451,9 +452,9 @@ array. For example, suppose I want to store $\sqrt{2\pi}$ as a constant
 for use in the Gaussian. Then I would modify the constructor thus:
 \begin{verbatim}
 __host__ GaussianPdf::GaussianPdf (std::string n, 
-                                                       Variable* _x, 
-                                                       Variable* mean, 
-                                                       Variable* sigma) 
+                                   Variable* _x, 
+                                   Variable* mean, 
+                                   Variable* sigma) 
   : GooPdf(_x, n) 
 {
   std::vector<unsigned int> pindices;
@@ -850,8 +851,8 @@ Suppose the fit is the default NLL: Then all the operator needs to do at this
 point is take the logarithm of what the PDF returned, multiply by -2, and be
 on its way. But if it is a chi-square fit, then it must calculate the expected
 number of hits in the bin, which depends on the PDF value, the bin volume,
-and the total number of events\footnote{This is why \texttt{functorConstants[0]} is reserved for that value!}
-, subtract the observed number, square, and divide by the observed
+and the total number of events\footnote{This is why \texttt{functorConstants[0]} is reserved for that value!},
+subtract the observed number, square, and divide by the observed
 number. Hence there is a second function-pointer lookup, but now the \verb|void*|
 stored in \verb|device_function_table| is to be interpreted as a different kind
 of function - a ``take the metric'' function rather than a ``calculate the PDF''
@@ -995,8 +996,8 @@ if not given, a default parameter with value 0.5 is created.
 varies depending on which side of the mean you are on: 
 \begin{eqnarray}
 P(x;m,\sigma_L,\sigma_R) &=& \left\{ \begin{matrix}
-e^{-\frac{(x-m)^2}{2\sigma_l^2}} & x \le m \\
-e^{-\frac{(x-m)^2}{2\sigma_r^2}} & x > m. \\
+e^{-\frac{(x-m)^2}{2\sigma_L^2}} & x \le m \\
+e^{-\frac{(x-m)^2}{2\sigma_R^2}} & x > m. \\
 \end{matrix}
 \right. 
 \end{eqnarray}
@@ -1154,7 +1155,7 @@ P(\vec x; \vec a, \vec x_0, N) &=&
 \end{eqnarray}
 where $N$ is the highest degree of the polynomial and $n$ is the number of dimensions.
 The constructor takes a \texttt{vector} of observables, denoted $\vec x$ above;
-a \texttt{vector} of coefficients, $\vec a$, a vector of optional offsets $\vec x_0$
+a \texttt{vector} of coefficients, $\vec a$, a \texttt{vector} of optional offsets $\vec x_0$
 (if not specified, these default to zero), and the maximum degree $N$. 
 The coefficients are in the order 
 $a_{p_0p_0\ldots p_0}, a_{p_1p_0\ldots p_0}, \ldots a_{p_Np_0\ldots p_0}, a_{p_0p_1\ldots p_0}, a_{p_1p_1\ldots p_0}, 

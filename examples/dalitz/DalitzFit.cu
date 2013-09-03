@@ -17,14 +17,14 @@
 
 // GooFit stuff
 #include "Variable.hh" 
-#include "PolynomialThrustFunctor.hh" 
-#include "DalitzPlotThrustFunctor.hh" 
-#include "DalitzVetoThrustFunctor.hh" 
-#include "ResonanceThrustFunctor.hh" 
-#include "AddThrustFunctor.hh"
-#include "ProdThrustFunctor.hh"
-#include "ThrustPdfFunctor.hh" 
-#include "PdfFunctor.hh" 
+#include "PolynomialPdf.hh" 
+#include "DalitzPlotPdf.hh" 
+#include "DalitzVetoPdf.hh" 
+#include "ResonancePdf.hh" 
+#include "AddPdf.hh"
+#include "ProdPdf.hh"
+#include "GooPdf.hh" 
+#include "FitManager.hh" 
 #include "UnbinnedDataSet.hh"
 
 using namespace std;
@@ -57,7 +57,7 @@ Variable* massSum = new Variable("massSum", _mD0*_mD0 + 2*piPlusMass*piPlusMass 
 Variable* constantOne = new Variable("constantOne", 1); 
 Variable* constantZero = new Variable("constantZero", 0); 
 
-ThrustPdfFunctor* kzero_veto = 0; 
+GooPdf* kzero_veto = 0; 
 
 fptype cpuGetM23 (fptype massPZ, fptype massPM) {
   return (_mD02 + piZeroMass*piZeroMass + piPlusMass*piPlusMass + piPlusMass*piPlusMass - massPZ - massPM); 
@@ -127,7 +127,7 @@ void getToyData (std::string toyFileName) {
   foodal->SaveAs("datatzplot.png"); 
 }
 
-ThrustPdfFunctor* makeKzeroVeto () {
+GooPdf* makeKzeroVeto () {
   if (kzero_veto) return kzero_veto; 
 
   VetoInfo* kVetoInfo = new VetoInfo();
@@ -135,11 +135,11 @@ ThrustPdfFunctor* makeKzeroVeto () {
   kVetoInfo->minimum = new Variable("veto_min", 0.475*0.475);
   kVetoInfo->maximum = new Variable("veto_max", 0.505*0.505);
   vector<VetoInfo*> vetos; vetos.push_back(kVetoInfo); 
-  kzero_veto = new DalitzVetoThrustFunctor("kzero_veto", m12, m13, motherM, neutrlM, chargeM, chargeM, vetos); 
+  kzero_veto = new DalitzVetoPdf("kzero_veto", m12, m13, motherM, neutrlM, chargeM, chargeM, vetos); 
   return kzero_veto;
 }
 
-DalitzPlotThrustFunctor* makeSignalPdf (ThrustPdfFunctor* eff = 0) {
+DalitzPlotPdf* makeSignalPdf (GooPdf* eff = 0) {
   DecayInfo* dtop0pp = new DecayInfo();
   dtop0pp->motherMass  = _mD0; 
   dtop0pp->daug1Mass  = piZeroMass;
@@ -147,7 +147,7 @@ DalitzPlotThrustFunctor* makeSignalPdf (ThrustPdfFunctor* eff = 0) {
   dtop0pp->daug3Mass  = piPlusMass;
   dtop0pp->meson_radius  = 1.5; 
  
-  ResonanceThrustFunctor* rhop  = new ResonanceThrustFunctor("rhop",
+  ResonancePdf* rhop  = new ResonancePdf("rhop",
 							     new Variable("rhop_amp_real", 1),
 							     new Variable("rhop_amp_imag", 0),
 							     fixedRhoMass,
@@ -158,7 +158,7 @@ DalitzPlotThrustFunctor* makeSignalPdf (ThrustPdfFunctor* eff = 0) {
 
   bool fixAmps = false;
 
-  ResonanceThrustFunctor* rhom  = new ResonanceThrustFunctor("rhom", 
+  ResonancePdf* rhom  = new ResonancePdf("rhom", 
 							     fixAmps ? new Variable("rhom_amp_real", 0.714) : 
 							     new Variable("rhom_amp_real",  0.714, 0.001, 0, 0),
 							     fixAmps ? new Variable("rhom_amp_imag", -0.025) :
@@ -168,7 +168,7 @@ DalitzPlotThrustFunctor* makeSignalPdf (ThrustPdfFunctor* eff = 0) {
 							     1,
 							     PAIR_13);
 
-  ResonanceThrustFunctor* rho0  = new ResonanceThrustFunctor("rho0", 
+  ResonancePdf* rho0  = new ResonancePdf("rho0", 
 							     fixAmps ? new Variable("rho0_amp_real", 0.565) : 
 							     new Variable("rho0_amp_real", 0.565, 0.001, 0, 0),
 							     fixAmps ? new Variable("rho0_amp_imag", 0.164) :
@@ -181,7 +181,7 @@ DalitzPlotThrustFunctor* makeSignalPdf (ThrustPdfFunctor* eff = 0) {
   Variable* sharedMass = new Variable("rhop_1450_mass", 1.465, 0.01, 1.0, 2.0);
   Variable* shareWidth = new Variable("rhop_1450_width", 0.400, 0.01, 0.01, 5.0); 
 
-  ResonanceThrustFunctor* rhop_1450  = new ResonanceThrustFunctor("rhop_1450", 
+  ResonancePdf* rhop_1450  = new ResonancePdf("rhop_1450", 
 								  fixAmps ? new Variable("rhop_1450_amp_real", -0.174) : 
 								  new Variable("rhop_1450_amp_real", -0.174, 0.001, 0, 0),
 								  fixAmps ? new Variable("rhop_1450_amp_imag", -0.117) :
@@ -191,7 +191,7 @@ DalitzPlotThrustFunctor* makeSignalPdf (ThrustPdfFunctor* eff = 0) {
 								  1,
 								  PAIR_12);
 
-  ResonanceThrustFunctor* rho0_1450  = new ResonanceThrustFunctor("rho0_1450", 
+  ResonancePdf* rho0_1450  = new ResonancePdf("rho0_1450", 
 								  fixAmps ? new Variable("rho0_1450_amp_real", 0.325) : 
 								  new Variable("rho0_1450_amp_real", 0.325, 0.001, 0, 0),
 								  fixAmps ? new Variable("rho0_1450_amp_imag", 0.057) : 
@@ -201,7 +201,7 @@ DalitzPlotThrustFunctor* makeSignalPdf (ThrustPdfFunctor* eff = 0) {
 								  1,
 								  PAIR_23);
 
-  ResonanceThrustFunctor* rhom_1450  = new ResonanceThrustFunctor("rhom_1450", 
+  ResonancePdf* rhom_1450  = new ResonancePdf("rhom_1450", 
 								  fixAmps ? new Variable("rhom_1450_amp_real", 0.788) : 
 								  new Variable("rhom_1450_amp_real", 0.788, 0.001, 0, 0),
 								  fixAmps ? new Variable("rhom_1450_amp_imag", 0.226) : 
@@ -215,7 +215,7 @@ DalitzPlotThrustFunctor* makeSignalPdf (ThrustPdfFunctor* eff = 0) {
   shareWidth = new Variable("rhop_1700_width", 0.250, 0.01, 0.1, 1.0); 
 
   
-  ResonanceThrustFunctor* rhop_1700  = new ResonanceThrustFunctor("rhop_1700", 
+  ResonancePdf* rhop_1700  = new ResonancePdf("rhop_1700", 
 								  fixAmps ? new Variable("rhop_1700_amp_real", 2.151) : 
 								  new Variable("rhop_1700_amp_real",  2.151, 0.001, 0, 0),
 								  fixAmps ? new Variable("rhop_1700_amp_imag", -0.658) : 
@@ -225,7 +225,7 @@ DalitzPlotThrustFunctor* makeSignalPdf (ThrustPdfFunctor* eff = 0) {
 								  1,
 								  PAIR_12);
   
-  ResonanceThrustFunctor* rho0_1700  = new ResonanceThrustFunctor("rho0_1700", 
+  ResonancePdf* rho0_1700  = new ResonancePdf("rho0_1700", 
 								  fixAmps ? new Variable("rho0_1700_amp_real",  2.400) : 
 								  new Variable("rho0_1700_amp_real",  2.400, 0.001, 0, 0),
 								  fixAmps ? new Variable("rho0_1700_amp_imag", -0.734) : 
@@ -235,7 +235,7 @@ DalitzPlotThrustFunctor* makeSignalPdf (ThrustPdfFunctor* eff = 0) {
 								  1,
 								  PAIR_23);
   
-  ResonanceThrustFunctor* rhom_1700  = new ResonanceThrustFunctor("rhom_1700", 
+  ResonancePdf* rhom_1700  = new ResonancePdf("rhom_1700", 
 								  fixAmps ? new Variable("rhom_1700_amp_real",  1.286) : 
 								  new Variable("rhom_1700_amp_real",  1.286, 0.001, 0, 0),
 								  fixAmps ? new Variable("rhom_1700_amp_imag", -1.532) : 
@@ -245,7 +245,7 @@ DalitzPlotThrustFunctor* makeSignalPdf (ThrustPdfFunctor* eff = 0) {
 								  1,
 								  PAIR_13);
   
-  ResonanceThrustFunctor* f0_980  = new ResonanceThrustFunctor("f0_980", 
+  ResonancePdf* f0_980  = new ResonancePdf("f0_980", 
 							       fixAmps ? new Variable("f0_980_amp_real",  0.008 * (-_mD02)) : 
 							       new Variable("f0_980_amp_real",  0.008 * (-_mD02), 0.001, 0, 0),
 							       fixAmps ? new Variable("f0_980_amp_imag", -0.013 * (-_mD02)) : 
@@ -255,7 +255,7 @@ DalitzPlotThrustFunctor* makeSignalPdf (ThrustPdfFunctor* eff = 0) {
 							       0,
 							       PAIR_23);
   
-  ResonanceThrustFunctor* f0_1370  = new ResonanceThrustFunctor("f0_1370", 
+  ResonancePdf* f0_1370  = new ResonancePdf("f0_1370", 
 								fixAmps ? new Variable("f0_1370_amp_real", -0.058 * (-_mD02)) : 
 								new Variable("f0_1370_amp_real", -0.058 * (-_mD02), 0.001, 0, 0),
 								fixAmps ? new Variable("f0_1370_amp_imag",  0.026 * (-_mD02)) : 
@@ -265,7 +265,7 @@ DalitzPlotThrustFunctor* makeSignalPdf (ThrustPdfFunctor* eff = 0) {
 								0,
 								PAIR_23);
   
-  ResonanceThrustFunctor* f0_1500  = new ResonanceThrustFunctor("f0_1500", 
+  ResonancePdf* f0_1500  = new ResonancePdf("f0_1500", 
 								fixAmps ? new Variable("f0_1500_amp_real", 0.057 * (-_mD02)) : 
 								new Variable("f0_1500_amp_real", 0.057 * (-_mD02), 0.001, 0, 0),
 								fixAmps ? new Variable("f0_1500_amp_imag", 0.012 * (-_mD02)) : 
@@ -275,7 +275,7 @@ DalitzPlotThrustFunctor* makeSignalPdf (ThrustPdfFunctor* eff = 0) {
 								0,
 								PAIR_23);
   
-  ResonanceThrustFunctor* f0_1710  = new ResonanceThrustFunctor("f0_1710", 
+  ResonancePdf* f0_1710  = new ResonancePdf("f0_1710", 
 								fixAmps ? new Variable("f0_1710_amp_real", 0.070 * (-_mD02)) : 
 								new Variable("f0_1710_amp_real", 0.070 * (-_mD02), 0.001, 0, 0),
 								fixAmps ? new Variable("f0_1710_amp_imag", 0.087 * (-_mD02)) : 
@@ -285,7 +285,7 @@ DalitzPlotThrustFunctor* makeSignalPdf (ThrustPdfFunctor* eff = 0) {
 								0,
 								PAIR_23);
   
-  ResonanceThrustFunctor* f2_1270  = new ResonanceThrustFunctor("f2_1270", 
+  ResonancePdf* f2_1270  = new ResonancePdf("f2_1270", 
 								fixAmps ? new Variable("f2_1270_amp_real", -1.027 * (-_mD02inv)) : 
 								new Variable("f2_1270_amp_real", -1.027 * (-_mD02inv), 0.001, 0, 0),
 								fixAmps ? new Variable("f2_1270_amp_imag", -0.162 * (-_mD02inv)) : 
@@ -295,7 +295,7 @@ DalitzPlotThrustFunctor* makeSignalPdf (ThrustPdfFunctor* eff = 0) {
 								2,
 								PAIR_23);
   
-  ResonanceThrustFunctor* f0_600  = new ResonanceThrustFunctor("f0_600", 
+  ResonancePdf* f0_600  = new ResonancePdf("f0_600", 
 							       fixAmps ? new Variable("f0_600_amp_real", 0.068 * (-_mD02)) : 
 							       new Variable("f0_600_amp_real", 0.068 * (-_mD02), 0.001, 0, 0),
 							       fixAmps ? new Variable("f0_600_amp_imag", 0.010 * (-_mD02)) : 
@@ -305,7 +305,7 @@ DalitzPlotThrustFunctor* makeSignalPdf (ThrustPdfFunctor* eff = 0) {
 							       0,
 							       PAIR_23);
   
-  ResonanceThrustFunctor* nonr  = new ResonanceThrustFunctor("nonr",
+  ResonancePdf* nonr  = new ResonancePdf("nonr",
 							     fixAmps ? new Variable("nonr_amp_real", 0.5595 * (-1)) : 
 							     new Variable("nonr_amp_real", 0.5595 * (-1),   0.001, 0, 0),
 							     fixAmps ? new Variable("nonr_amp_imag", -0.108761 * (-1)) : 
@@ -329,7 +329,7 @@ DalitzPlotThrustFunctor* makeSignalPdf (ThrustPdfFunctor* eff = 0) {
   dtop0pp->resonances.push_back(f0_600); 
 
   if (!fitMasses) {
-    for (vector<ResonanceThrustFunctor*>::iterator res = dtop0pp->resonances.begin(); res != dtop0pp->resonances.end(); ++res) {
+    for (vector<ResonancePdf*>::iterator res = dtop0pp->resonances.begin(); res != dtop0pp->resonances.end(); ++res) {
       (*res)->setParameterConstantness(true); 
     }
   }
@@ -345,10 +345,10 @@ DalitzPlotThrustFunctor* makeSignalPdf (ThrustPdfFunctor* eff = 0) {
     offsets.push_back(constantZero);
     offsets.push_back(constantZero);
     coefficients.push_back(constantOne); 
-    eff = new PolynomialThrustFunctor("constantEff", observables, coefficients, offsets, 0);
+    eff = new PolynomialPdf("constantEff", observables, coefficients, offsets, 0);
   }
 
-  return new DalitzPlotThrustFunctor("signalPDF", m12, m13, eventNumber, dtop0pp, eff);
+  return new DalitzPlotPdf("signalPDF", m12, m13, eventNumber, dtop0pp, eff);
 }
 
 void runToyFit (std::string toyFileName) {
@@ -359,7 +359,7 @@ void runToyFit (std::string toyFileName) {
   eventNumber = new Variable("eventNumber", 0, INT_MAX);
   getToyData(toyFileName);
 
-  // EXERCISE 1 (real part): Create a PolynomialThrustFunctor which models
+  // EXERCISE 1 (real part): Create a PolynomialPdf which models
   // the efficiency you imposed in the preliminary, and use it in constructing
   // the signal PDF. 
 
@@ -368,10 +368,10 @@ void runToyFit (std::string toyFileName) {
   // EXERCISE 3: Make the efficiency a product of the two functions
   // from the previous exercises.
 
-  DalitzPlotThrustFunctor* signal = makeSignalPdf(); 
+  DalitzPlotPdf* signal = makeSignalPdf(); 
   signal->setData(data); 
   signal->setDataSize(data->getNumEvents()); 
-  PdfFunctor datapdf(signal); 
+  FitManager datapdf(signal); 
   
   gettimeofday(&startTime, NULL);
   startCPU = times(&startProc);

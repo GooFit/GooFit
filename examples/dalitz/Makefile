@@ -7,7 +7,7 @@ CXXFLAGS     = -O3 -arch=sm_20
 CUDAHEADERS = $(CUDALOCATION)/include/
 
 GOOFITDIR = ${PWD}/../../
-SRCDIR = $(GOOFITDIR)/FPOINTER
+SRCDIR = $(GOOFITDIR)/PDFs
 WRKDIR = $(GOOFITDIR)/wrkdir/
 
 INCLUDES += -I$(CUDAHEADERS) -I$(SRCDIR) -I$(GOOFITDIR) -I$(GOOFITDIR)/rootstuff 
@@ -18,7 +18,7 @@ LIBS += -L$(CUDALOCATION)/lib64 -lcudart -L$(GOOFITDIR)/rootstuff -lRootUtils
 ROOT_INCLUDES = -I$(ROOTSYS)/include/
 ROOT_LIBS     = -L$(ROOTSYS)/lib/ -lCore -lCint -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lMatrix -lPhysics -lMathCore -pthread -lThread -lMinuit -rdynamic -lFoam 
 
-THRUSTO		= $(WRKDIR)/Variable.o $(WRKDIR)/PdfFunctor.o $(WRKDIR)/ThrustPdfFunctorCUDA.o $(WRKDIR)/Faddeeva.o $(WRKDIR)/FitControl.o $(WRKDIR)/FunctorBase.o $(WRKDIR)/DataSet.o $(WRKDIR)/BinnedDataSet.o $(WRKDIR)/UnbinnedDataSet.o $(WRKDIR)/FunctorWriter.o 
+THRUSTO		= $(WRKDIR)/Variable.o $(WRKDIR)/FitManager.o $(WRKDIR)/GooPdfCUDA.o $(WRKDIR)/Faddeeva.o $(WRKDIR)/FitControl.o $(WRKDIR)/PdfBase.o $(WRKDIR)/DataSet.o $(WRKDIR)/BinnedDataSet.o $(WRKDIR)/UnbinnedDataSet.o $(WRKDIR)/FunctorWriter.o 
 ROOTRIPDIR	= $(GOOFITDIR)/rootstuff
 ROOTUTILLIB	= $(ROOTRIPDIR)/libRootUtils.so 
 

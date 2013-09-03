@@ -1,9 +1,9 @@
 #include "Variable.hh" 
-#include "PdfFunctor.hh"
+#include "FitManager.hh"
 #include "UnbinnedDataSet.hh" 
-#include "LandauThrustFunctor.hh" 
-#include "NovosibirskThrustFunctor.hh"
-#include "BifurGaussThrustFunctor.hh" 
+#include "LandauPdf.hh" 
+#include "NovosibirskPdf.hh"
+#include "BifurGaussPdf.hh" 
 
 #include "TRandom.hh" 
 #include "TH1F.h"
@@ -44,9 +44,9 @@ double novosib (double x, double peak, double width, double tail) {
 
 TCanvas* foo = 0;
 
-void fitAndPlot (ThrustPdfFunctor* total, UnbinnedDataSet* data, TH1F& dataHist, Variable* xvar, const char* fname) {
+void fitAndPlot (GooPdf* total, UnbinnedDataSet* data, TH1F& dataHist, Variable* xvar, const char* fname) {
   total->setData(data);
-  PdfFunctor fitter(total);
+  FitManager fitter(total);
   fitter.fit(); 
   fitter.getMinuitValues(); 
 
@@ -170,20 +170,20 @@ int main (int argc, char** argv) {
 
   Variable* mpv            = new Variable("mpv", 40, 0, 150);
   Variable* sigma          = new Variable("sigma", 5, 0, 30);
-  ThrustPdfFunctor* landau = new LandauThrustFunctor("landau", xvar, mpv, sigma); 
+  GooPdf* landau = new LandauPdf("landau", xvar, mpv, sigma); 
   fitAndPlot(landau, &landdata, landHist, xvar, "landau.eps"); 
 
   
   Variable* nmean = new Variable("nmean", 0.4, -10.0, 10.0);
   Variable* nsigm = new Variable("nsigm", 0.6, 0.0, 1.0);
   Variable* ntail = new Variable("ntail", 1.1, 0.1, 0.0, 3.0);
-  ThrustPdfFunctor* novo = new NovosibirskThrustFunctor("novo", xvar, nmean, nsigm, ntail);
+  GooPdf* novo = new NovosibirskPdf("novo", xvar, nmean, nsigm, ntail);
   fitAndPlot(novo, &novodata, novoHist, xvar, "novo.eps"); 
 
   Variable* gmean = new Variable("gmean", 3.0, 1, -15, 15); 
   Variable* lsigm = new Variable("lsigm", 10, 1, 10, 20); 
   Variable* rsigm = new Variable("rsigm", 20, 1, 10, 40); 
-  ThrustPdfFunctor* bifur = new BifurGaussThrustFunctor("bifur", xvar, gmean, lsigm, rsigm); 
+  GooPdf* bifur = new BifurGaussPdf("bifur", xvar, gmean, lsigm, rsigm); 
   fitAndPlot(bifur, &bifgdata, bifgHist, xvar, "bifur.eps"); 
    
   return 0;

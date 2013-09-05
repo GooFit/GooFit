@@ -1,9 +1,15 @@
 *.so
 .project
-examples/simpleFitExample
+examples/simpleFit/simpleFitExample
+examples/dalitz/dalitz
 wrkdir 
 *.o
 *.png
 *.eps
 html/
-
+*.aux
+*.haux
+*.htoc
+*.log
+*.out
+*.toc

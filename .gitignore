@@ -3,6 +3,7 @@
 examples/simpleFit/simpleFitExample
 examples/dalitz/dalitz
 examples/exponential/exponential 
+examples/product/product
 wrkdir 
 *.o
 *.png

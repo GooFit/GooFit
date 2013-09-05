@@ -2,6 +2,7 @@
 .project
 examples/simpleFit/simpleFitExample
 examples/dalitz/dalitz
+examples/exponential/exponential 
 wrkdir 
 *.o
 *.png

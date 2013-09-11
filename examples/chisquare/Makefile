@@ -17,7 +17,9 @@ else
 LDFLAGS += -rdynamic 
 endif
 
+ifeq ($(CUDALOCATION), )
 CUDALOCATION = /usr/local/cuda/
+endif
 CUDAHEADERS = $(CUDALOCATION)/include/
 GOOFITDIR = $(PWD)/../../
 

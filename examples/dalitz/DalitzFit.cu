@@ -64,7 +64,7 @@ fptype cpuGetM23 (fptype massPZ, fptype massPM) {
 }
 
 void getToyData (std::string toyFileName) {
-  TH2F datatzplot("datatzplot", "", m12->numbins, m12->lowerlimit, m12->upperlimit, m13->numbins, m13->lowerlimit, m13->upperlimit); 
+  TH2F dalitzplot("dalitzplot", "", m12->numbins, m12->lowerlimit, m12->upperlimit, m13->numbins, m13->lowerlimit, m13->upperlimit); 
   std::vector<Variable*> vars;
   vars.push_back(m12);
   vars.push_back(m13);
@@ -119,12 +119,12 @@ void getToyData (std::string toyFileName) {
     eventNumber->value = data->getNumEvents(); 
     data->addEvent(); 
 
-    datatzplot.Fill(m12->value, m13->value); 
+    dalitzplot.Fill(m12->value, m13->value); 
   }
 
-  datatzplot.SetStats(false); 
-  datatzplot.Draw("colz");
-  foodal->SaveAs("datatzplot.png"); 
+  dalitzplot.SetStats(false); 
+  dalitzplot.Draw("colz");
+  foodal->SaveAs("dalitzplot.png"); 
 }
 
 GooPdf* makeKzeroVeto () {

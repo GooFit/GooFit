@@ -1,6 +1,6 @@
 #include "PolynomialPdf.hh"
 
-__device__ fptype device_Polynomial (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_Polynomial (fptype* evt, fptype* p, unsigned int* indices) {
   // Structure is nP lowestdegree c1 c2 c3 nO o1
 
   int numParams = indices[0]+1; 
@@ -15,7 +15,7 @@ __device__ fptype device_Polynomial (fptype* evt, fptype* p, unsigned int* indic
   return ret; 
 }
 
-__device__ fptype device_OffsetPolynomial (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_OffsetPolynomial (fptype* evt, fptype* p, unsigned int* indices) {
   int numParams = indices[0]; 
   int lowestDegree = indices[1]; 
 
@@ -29,7 +29,7 @@ __device__ fptype device_OffsetPolynomial (fptype* evt, fptype* p, unsigned int*
   return ret; 
 }
 
-__device__ fptype device_MultiPolynomial (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_MultiPolynomial (fptype* evt, fptype* p, unsigned int* indices) {
   // Structure is nP, maxDegree, offset1, offset2, ..., coeff1, coeff2, ..., nO, o1, o2, ... 
 
   int numObservables = indices[indices[0] + 1]; 

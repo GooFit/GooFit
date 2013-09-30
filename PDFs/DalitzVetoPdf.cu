@@ -1,7 +1,7 @@
 #include "DalitzVetoPdf.hh"
 #include "DalitzPlotHelpers.hh" 
 
-__device__ fptype device_DalitzVeto (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_DalitzVeto (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x         = evt[indices[2 + indices[0] + 0]]; 
   fptype y         = evt[indices[2 + indices[0] + 1]]; 
 

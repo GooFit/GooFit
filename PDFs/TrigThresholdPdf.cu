@@ -5,7 +5,7 @@ __device__ fptype threshCalc (fptype distance, fptype linConst) {
   return ret; 
 }
 
-__device__ fptype device_TrigThresholdUpper (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_TrigThresholdUpper (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x         = evt[indices[2 + indices[0]]]; 
   fptype thresh    = p[indices[1]];
   fptype trigConst = p[indices[2]];
@@ -15,7 +15,7 @@ __device__ fptype device_TrigThresholdUpper (fptype* evt, fptype* p, unsigned in
   return threshCalc(trigConst, linConst);
 }
 
-__device__ fptype device_TrigThresholdLower (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_TrigThresholdLower (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x         = evt[indices[2 + indices[0]]]; 
   fptype thresh    = p[indices[1]];
   fptype trigConst = p[indices[2]];
@@ -25,7 +25,7 @@ __device__ fptype device_TrigThresholdLower (fptype* evt, fptype* p, unsigned in
   return threshCalc(trigConst, linConst);
 }
 
-__device__ fptype device_VerySpecialEpisodeTrigThresholdUpper (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_VerySpecialEpisodeTrigThresholdUpper (fptype* evt, fptype* p, unsigned int* indices) {
   // Annoying special case for use with Mikhail's efficiency function across the Dalitz plot 
 
   fptype x         = evt[indices[2 + indices[0] + 0]]; 
@@ -40,7 +40,7 @@ __device__ fptype device_VerySpecialEpisodeTrigThresholdUpper (fptype* evt, fpty
   return threshCalc(trigConst, linConst);
 }
 
-__device__ fptype device_VerySpecialEpisodeTrigThresholdLower (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_VerySpecialEpisodeTrigThresholdLower (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x         = evt[indices[2 + indices[0] + 0]]; 
   fptype y         = evt[indices[2 + indices[0] + 1]]; 
 

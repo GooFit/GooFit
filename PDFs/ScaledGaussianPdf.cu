@@ -1,7 +1,7 @@
 #include "ScaledGaussianPdf.hh"
 //#include <limits>
 
-__device__ fptype device_ScaledGaussian (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_ScaledGaussian (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x = evt[0]; 
   fptype mean = p[indices[1]] + p[indices[3]];
   fptype sigma = p[indices[2]] * (1 + p[indices[4]]);

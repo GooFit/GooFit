@@ -1,6 +1,6 @@
 #include "CrystalBallPdf.hh"
 
-__device__ fptype device_CrystalBall (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_CrystalBall (fptype* evt, fptype* p, unsigned int* indices) {
   // Left-hand tail if alpha is less than 0, 
   // right-hand tail if greater, pure Gaussian if 0. 
   //return 1; 

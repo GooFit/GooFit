@@ -1,6 +1,6 @@
 #include "CompositePdf.hh"
 
-__device__ fptype device_Composite (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_Composite (fptype* evt, fptype* p, unsigned int* indices) {
   unsigned int coreFcnIndex  = indices[1];
   unsigned int coreParIndex  = indices[2];
   unsigned int shellFcnIndex = indices[3];

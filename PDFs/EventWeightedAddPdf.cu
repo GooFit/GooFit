@@ -1,6 +1,6 @@
 #include "EventWeightedAddPdf.hh"
 
-__device__ fptype device_EventWeightedAddPdfs (fptype* evt, fptype* p, unsigned int* indices) { 
+EXEC_TARGET fptype device_EventWeightedAddPdfs (fptype* evt, fptype* p, unsigned int* indices) { 
   int numParameters = indices[0]; 
   fptype ret = 0;
   fptype totalWeight = 0; 
@@ -21,7 +21,7 @@ __device__ fptype device_EventWeightedAddPdfs (fptype* evt, fptype* p, unsigned 
   return ret; 
 }
 
-__device__ fptype device_EventWeightedAddPdfsExt (fptype* evt, fptype* p, unsigned int* indices) { 
+EXEC_TARGET fptype device_EventWeightedAddPdfsExt (fptype* evt, fptype* p, unsigned int* indices) { 
   // numParameters does not count itself. So the array structure for two functions is
   // nP | F P | F P | nO | o1 o2
   // in which nP = 4, nO = 2. 

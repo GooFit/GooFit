@@ -1,6 +1,6 @@
 #include "ExpPdf.hh"
 
-__device__ fptype device_Exp (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_Exp (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x = evt[indices[2 + indices[0]]]; 
   fptype alpha = p[indices[1]];
 
@@ -8,7 +8,7 @@ __device__ fptype device_Exp (fptype* evt, fptype* p, unsigned int* indices) {
   return ret; 
 }
 
-__device__ fptype device_ExpOffset (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_ExpOffset (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x = evt[indices[2 + indices[0]]]; 
   x -= p[indices[1]]; 
   fptype alpha = p[indices[2]];
@@ -20,7 +20,7 @@ __device__ fptype device_ExpOffset (fptype* evt, fptype* p, unsigned int* indice
   return ret; 
 }
 
-__device__ fptype device_ExpPoly (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_ExpPoly (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x = evt[indices[2 + indices[0]]]; 
   
   fptype exparg = 0; 
@@ -32,7 +32,7 @@ __device__ fptype device_ExpPoly (fptype* evt, fptype* p, unsigned int* indices)
   return ret; 
 }
 
-__device__ fptype device_ExpPolyOffset (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_ExpPolyOffset (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x = evt[indices[2 + indices[0]]]; 
   x -= p[indices[1]]; 
   

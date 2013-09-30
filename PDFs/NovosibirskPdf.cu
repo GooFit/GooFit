@@ -1,6 +1,6 @@
 #include "NovosibirskPdf.hh"
 
-__device__ fptype device_Novosibirsk (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_Novosibirsk (fptype* evt, fptype* p, unsigned int* indices) {
   fptype _Mean  = p[indices[1]];
   fptype _Sigma = p[indices[2]];
   fptype _Tail  = p[indices[3]];

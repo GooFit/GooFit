@@ -2,7 +2,7 @@
 
 const fptype SQRT2PI = 2.506628; 
 
-__device__ fptype device_JohnsonSU (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_JohnsonSU (fptype* evt, fptype* p, unsigned int* indices) {
   fptype _Jm = p[indices[1]];
   fptype _Js = p[indices[2]];
   fptype _Jg = p[indices[3]];

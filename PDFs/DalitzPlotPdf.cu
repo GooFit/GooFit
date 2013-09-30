@@ -47,7 +47,7 @@ __device__ devcomplex<fptype> device_DalitzPlot_calcIntegrals (fptype m12, fptyp
   return ret; 
 }
 
-__device__ fptype device_DalitzPlot (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_DalitzPlot (fptype* evt, fptype* p, unsigned int* indices) {
   fptype motherMass = functorConstants[indices[1] + 0]; 
   fptype daug1Mass  = functorConstants[indices[1] + 1]; 
   fptype daug2Mass  = functorConstants[indices[1] + 2]; 

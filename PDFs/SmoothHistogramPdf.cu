@@ -10,7 +10,7 @@ __device__ int dev_powi (int base, int exp) {
   return ret; 
 }
 
-__device__ fptype device_EvalHistogram (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_EvalHistogram (fptype* evt, fptype* p, unsigned int* indices) {
   // Structure is
   // nP smoothingIndex totalHistograms (limit1 step1 bins1) (limit2 step2 bins2) nO o1 o2
   // where limit and step are indices into functorConstants. 

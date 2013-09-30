@@ -24,7 +24,7 @@ __constant__ fptype q6[5] = {1.0         , 651.4101098,  56974.73333,    165917.
 __constant__ fptype a1[3] = {0.04166666667,-0.01996527778, 0.02709538966};
 __constant__ fptype a2[2] = {-1.845568670,-4.284640743};
 
-__device__ fptype device_Landau (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_Landau (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x     = evt[indices[2 + indices[0]]]; 
   fptype mpv   = p[indices[1]];
   fptype sigma = p[indices[2]];

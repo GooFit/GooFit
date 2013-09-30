@@ -14,7 +14,7 @@ __device__ fptype bwFactor (fptype momentum) {
   return 1/SQRT(1.0 + 2.56 * momentum*momentum);
 }
 
-__device__ fptype device_KinLimitBW (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_KinLimitBW (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x = evt[indices[2 + indices[0]]]; 
   fptype mean  = p[indices[1]];
   fptype width = p[indices[2]];

@@ -1,6 +1,6 @@
 #include "AddPdf.hh"
 
-__device__ fptype device_AddPdfs (fptype* evt, fptype* p, unsigned int* indices) { 
+EXEC_TARGET fptype device_AddPdfs (fptype* evt, fptype* p, unsigned int* indices) { 
   int numParameters = indices[0]; 
   fptype ret = 0;
   fptype totalWeight = 0; 
@@ -31,7 +31,7 @@ __device__ fptype device_AddPdfs (fptype* evt, fptype* p, unsigned int* indices)
   return ret; 
 }
 
-__device__ fptype device_AddPdfsExt (fptype* evt, fptype* p, unsigned int* indices) { 
+EXEC_TARGET fptype device_AddPdfsExt (fptype* evt, fptype* p, unsigned int* indices) { 
   // numParameters does not count itself. So the array structure for two functions is
   // nP | F P w | F P w
   // in which nP = 6. 

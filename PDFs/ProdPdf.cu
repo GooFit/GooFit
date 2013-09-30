@@ -1,6 +1,6 @@
 #include "ProdPdf.hh"
 
-__device__ fptype device_ProdPdfs (fptype* evt, fptype* p, unsigned int* indices) { 
+EXEC_TARGET fptype device_ProdPdfs (fptype* evt, fptype* p, unsigned int* indices) { 
   // Index structure is nP | F1 P1 | F2 P2 | ...
   // where nP is number of parameters, Fs are function indices, and Ps are parameter indices
 

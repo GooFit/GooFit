@@ -1,6 +1,6 @@
 #include "ArgusPdf.hh"
 
-__device__ fptype device_Argus_Upper (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_Argus_Upper (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x = evt[indices[2 + indices[0]]]; 
   fptype m0 = p[indices[1]];
 
@@ -14,7 +14,7 @@ __device__ fptype device_Argus_Upper (fptype* evt, fptype* p, unsigned int* indi
   return x * POW(t, power) * EXP(slope * t);
 }
 
-__device__ fptype device_Argus_Lower (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_Argus_Lower (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x = evt[indices[2 + indices[0]]]; 
   fptype m0 = p[indices[1]];
 

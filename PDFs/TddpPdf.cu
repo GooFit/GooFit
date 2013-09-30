@@ -83,7 +83,7 @@ __device__ ThreeComplex device_Tddp_calcIntegrals (fptype m12, fptype m13, int r
   return ret; 
 }
 
-__device__ fptype device_Tddp (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_Tddp (fptype* evt, fptype* p, unsigned int* indices) {
   fptype motherMass = functorConstants[indices[1] + 0]; 
   fptype daug1Mass  = functorConstants[indices[1] + 1]; 
   fptype daug2Mass  = functorConstants[indices[1] + 2]; 

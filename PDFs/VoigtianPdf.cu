@@ -276,7 +276,7 @@ __device__ devcomplex<fptype> device_Faddeeva_2 (const devcomplex<fptype>& z) {
 }
 #endif 
 
-__device__ fptype device_Voigtian (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_Voigtian (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x = evt[0]; 
   fptype m = p[indices[1]];
   fptype w = p[indices[2]];

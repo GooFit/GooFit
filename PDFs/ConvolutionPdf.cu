@@ -19,7 +19,7 @@ __constant__ fptype* dev_resWorkSpace[100];
 // It is equal to the maximum possible value of x0, ie maxX, in bins. 
 __constant__ int modelOffset[100]; 
 
-__device__ fptype device_ConvolvePdfs (fptype* evt, fptype* p, unsigned int* indices) { 
+EXEC_TARGET fptype device_ConvolvePdfs (fptype* evt, fptype* p, unsigned int* indices) { 
   fptype ret     = 0; 
   fptype loBound = functorConstants[indices[5]+0];
   fptype hiBound = functorConstants[indices[5]+1];
@@ -46,7 +46,7 @@ __device__ fptype device_ConvolvePdfs (fptype* evt, fptype* p, unsigned int* ind
   return ret; 
 }
 
-__device__ fptype device_ConvolveSharedPdfs (fptype* evt, fptype* p, unsigned int* indices) { 
+EXEC_TARGET fptype device_ConvolveSharedPdfs (fptype* evt, fptype* p, unsigned int* indices) { 
   fptype ret     = 0; 
   fptype loBound = functorConstants[indices[5]+0];
   fptype hiBound = functorConstants[indices[5]+1];

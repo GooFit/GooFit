@@ -1,6 +1,6 @@
 #include "BinTransformPdf.hh"
 
-__device__ fptype device_BinTransform (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_BinTransform (fptype* evt, fptype* p, unsigned int* indices) {
   // Index structure: nP lim1 bin1 lim2 bin2 ... nO o1 o2 
   int numObservables = indices[1 + indices[0]];
   int ret = 0;

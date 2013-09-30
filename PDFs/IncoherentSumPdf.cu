@@ -12,7 +12,7 @@ __device__ inline int parIndexFromResIndex_incoherent (int resIndex) {
   return resonanceOffset_incoherent + resIndex*resonanceSize; 
 }
 
-__device__ fptype device_incoherent (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_incoherent (fptype* evt, fptype* p, unsigned int* indices) {
   // Calculates the incoherent sum over the resonances. 
   int evtNum = (int) FLOOR(0.5 + evt[indices[4 + indices[0]]]); 
 

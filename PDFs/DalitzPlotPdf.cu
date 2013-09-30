@@ -11,13 +11,13 @@ const int resonanceOffset_DP = 4; // Offset of the first resonance into the para
 // waves are recalculated when the corresponding resonance mass or width 
 // changes. Note that in a multithread environment each thread needs its
 // own cache, hence the '10'. Ten threads should be enough for anyone! 
-__device__ devcomplex<fptype>* cResonances[10]; 
+MEM_DEVICE devcomplex<fptype>* cResonances[10]; 
 
-__device__ inline int parIndexFromResIndex_DP (int resIndex) {
+EXEC_TARGET inline int parIndexFromResIndex_DP (int resIndex) {
   return resonanceOffset_DP + resIndex*resonanceSize; 
 }
 
-__device__ devcomplex<fptype> device_DalitzPlot_calcIntegrals (fptype m12, fptype m13, int res_i, int res_j, fptype* p, unsigned int* indices) {
+EXEC_TARGET devcomplex<fptype> device_DalitzPlot_calcIntegrals (fptype m12, fptype m13, int res_i, int res_j, fptype* p, unsigned int* indices) {
   // Calculates BW_i(m12, m13) * BW_j^*(m12, m13). 
   // This calculation is in a separate function so
   // it can be cached. Note that this function expects
@@ -273,7 +273,7 @@ SpecialResonanceIntegrator::SpecialResonanceIntegrator (int pIdx, unsigned int r
   , parameters(pIdx) 
 {}
 
-__device__ devcomplex<fptype> SpecialResonanceIntegrator::operator () (thrust::tuple<int, fptype*> t) const {
+EXEC_TARGET devcomplex<fptype> SpecialResonanceIntegrator::operator () (thrust::tuple<int, fptype*> t) const {
   // Bin index, base address [lower, upper, numbins] 
   // Notice that this is basically MetricTaker::operator (binned) with the special-case knowledge
   // that event size is two, and that the function to call is dev_DalitzPlot_calcIntegrals.
@@ -320,7 +320,7 @@ SpecialResonanceCalculator::SpecialResonanceCalculator (int pIdx, unsigned int r
   , parameters(pIdx)
 {}
 
-__device__ devcomplex<fptype> SpecialResonanceCalculator::operator () (thrust::tuple<int, fptype*, int> t) const {
+EXEC_TARGET devcomplex<fptype> SpecialResonanceCalculator::operator () (thrust::tuple<int, fptype*, int> t) const {
   // Calculates the BW values for a specific resonance. 
   devcomplex<fptype> ret;
   int evtNum = thrust::get<0>(t); 

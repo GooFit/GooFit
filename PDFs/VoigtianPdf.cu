@@ -34,7 +34,7 @@ __constant__ fptype e2[12] = { 0.7551038420890235,    0.3251072991205958,
 			       1.313835773243312e-10, 6.319285885175346e-13,
 			       1.733038792213266e-15, 2.709954036083074e-18 };
 
-__device__ devcomplex<fptype> device_Faddeeva_2 (const devcomplex<fptype>& z) {
+EXEC_TARGET devcomplex<fptype> device_Faddeeva_2 (const devcomplex<fptype>& z) {
   fptype *n,*e,t,u,r,s,d,f,g,h;
   devcomplex<fptype> c,d2,v;
   int i;
@@ -59,16 +59,8 @@ __device__ devcomplex<fptype> device_Faddeeva_2 (const devcomplex<fptype>& z) {
   e = e1;
   r = M_1_PI * 0.5;
   
-#ifdef FADEBUG
-  cuPrintf("Start %f %f\n", z.real, z.imag); 
-#endif 
-  
   // if z is too close to a pole select table 2 
   if (FABS(z.imag) < 0.01 && FABS(z.real) < 6.01) {
-#ifdef FADEBUG
-    cuPrintf("Table 2\n");
-#endif 
-    
     // h = modf(2*FABS(z.real),&g);
     // Equivalent to above. Do this way because nvcc only knows about double version of modf. 
     h = FABS(z.real)*2;
@@ -85,10 +77,6 @@ __device__ devcomplex<fptype> device_Faddeeva_2 (const devcomplex<fptype>& z) {
   d = (z.imag - z.real) * (z.imag + z.real);
   f = 4 * z.real * z.real * z.imag * z.imag;
   
-#ifdef FADEBUG
-  cuPrintf("check 1, %f %f %f %f\n", d, f, n[0], e[0]);
-#endif 
-  
   g = h = 0.0;
   for (i = 0; i < 12; i++) {
     t = d + n[i];
@@ -98,17 +86,8 @@ __device__ devcomplex<fptype> device_Faddeeva_2 (const devcomplex<fptype>& z) {
   }
   u = 1 / s;
   
-#ifdef FADEBUG
-  cuPrintf("check 2, %f %f %f %f %f\n", r, u, g, h, s);
-#endif 
-  
   c = r * devcomplex<fptype>(z.imag * (u + 2.0 * g),
 			     z.real * (u + 2.0 * h) );
-  
-#ifdef FADEBUG
-  cuPrintf("check 3, c is %f %f\n", c.real, c.imag); 
-#endif 
-  
   
   if (z.imag < M_2PI) {
     s = 2.0 / r;
@@ -123,14 +102,11 @@ __device__ devcomplex<fptype> device_Faddeeva_2 (const devcomplex<fptype>& z) {
     t = SIN(u);
     c += g * devcomplex<fptype>( (h * f - t * s), -(h * s + t * f));
   }
-#ifdef FADEBUG
-  cuPrintf("Returning %f %f\n", c.real, c.imag); 
-#endif 
   return c;
 }
 
 #else   
-__device__ devcomplex<fptype> device_Faddeeva_2 (const devcomplex<fptype>& z) {
+EXEC_TARGET devcomplex<fptype> device_Faddeeva_2 (const devcomplex<fptype>& z) {
   fptype u,s,d,f,g,h;
   devcomplex<fptype> c,d2,v;
 
@@ -310,9 +286,6 @@ EXEC_TARGET fptype device_Voigtian (fptype* evt, fptype* p, unsigned int* indice
   fptype a = 0.5*c*w;
   fptype u = c*arg;
   devcomplex<fptype> z(u,a) ;
-#ifdef FADEBUG
-  cuPrintf("Calling Faddeeva %f %f %f %f %f %f %f\n", x, m, s, w, c, a, u); 
-#endif 
   devcomplex<fptype> v = device_Faddeeva_2(z);
   
 #define rsqrtPi 0.5641895835477563

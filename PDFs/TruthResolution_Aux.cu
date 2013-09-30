@@ -1,6 +1,6 @@
 #include "TruthResolution_Aux.hh" 
 
-__device__ fptype device_truth_resolution (fptype coshterm, fptype costerm, fptype sinhterm, fptype sinterm, 
+EXEC_TARGET fptype device_truth_resolution (fptype coshterm, fptype costerm, fptype sinhterm, fptype sinterm, 
 					   fptype tau, fptype dtime, fptype xmixing, fptype ymixing, fptype /*sigma*/, 
 					   fptype* /*p*/, unsigned int* /*indices*/) { 
   fptype ret = 0;

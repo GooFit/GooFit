@@ -4,7 +4,7 @@ const fptype R1o6      = 1.0 / 6.0;
 #define SQRTPIo2 (1.0/M_2_SQRTPI)
 #define SQRT1o2PI (SQRT(0.5*M_1_PI))
 
-__device__ void gaussian (fptype& _P1, fptype& _P2, fptype& _P3, fptype& _P4,
+EXEC_TARGET void gaussian (fptype& _P1, fptype& _P2, fptype& _P3, fptype& _P4,
 			  fptype _tau, fptype adjTime, fptype xmixing, fptype ymixing, fptype adjSigma) {
 
   fptype _1oSqrtA  = adjSigma*M_SQRT2; 
@@ -49,7 +49,7 @@ __device__ void gaussian (fptype& _P1, fptype& _P2, fptype& _P3, fptype& _P4,
   _P3   = _NormG * 0.5 * (_Ipy - _Imy);
 }
 
-__device__ fptype device_threegauss_resolution (fptype coshterm, fptype costerm, fptype sinhterm, fptype sinterm, 
+EXEC_TARGET fptype device_threegauss_resolution (fptype coshterm, fptype costerm, fptype sinhterm, fptype sinterm, 
 						fptype tau, fptype dtime, fptype xmixing, fptype ymixing, fptype sigma,
 						fptype* p, unsigned int* indices) { 
 

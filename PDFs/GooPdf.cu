@@ -18,17 +18,17 @@ __constant__ fptype normalisationFactors[maxParams];
 __constant__ int callnumber; 
 __constant__ int gpuDebug; 
 __constant__ unsigned int debugParamIndex;
-__device__ int internalDebug1 = -1; 
-__device__ int internalDebug2 = -1; 
-__device__ int internalDebug3 = -1; 
+MEM_DEVICE int internalDebug1 = -1; 
+MEM_DEVICE int internalDebug2 = -1; 
+MEM_DEVICE int internalDebug3 = -1; 
 int cpuDebug = 0; 
 #ifdef PROFILING
-__device__ fptype timeHistogram[10000]; 
+MEM_DEVICE fptype timeHistogram[10000]; 
 fptype host_timeHist[10000];
 #endif 
 
 // Function-pointer related. 
-__device__ void* device_function_table[200]; // Not clear why this cannot be __constant__, but it causes crashes to declare it so. 
+MEM_DEVICE void* device_function_table[200]; // Not clear why this cannot be __constant__, but it causes crashes to declare it so. 
 void* host_function_table[200];
 unsigned int num_device_functions = 0; 
 #ifdef OMP_ON
@@ -100,24 +100,24 @@ void __cudaSafeCall (cudaError err, const char* file, int line) {
   }
 }
 
-__device__ fptype calculateEval (fptype rawPdf, fptype* evtVal, unsigned int par) {
+EXEC_TARGET fptype calculateEval (fptype rawPdf, fptype* evtVal, unsigned int par) {
   // Just return the raw PDF value, for use in (eg) normalisation. 
   return rawPdf; 
 }
 
-__device__ fptype calculateNLL (fptype rawPdf, fptype* evtVal, unsigned int par) {
+EXEC_TARGET fptype calculateNLL (fptype rawPdf, fptype* evtVal, unsigned int par) {
   //if ((10 > callnumber) && (threadIdx.x < 10) && (blockIdx.x == 0)) cuPrintf("calculateNll %i %f %f %f\n", callnumber, rawPdf, normalisationFactors[par], rawPdf*normalisationFactors[par]);
   //if (threadIdx.x < 50) printf("Thread %i %f %f\n", threadIdx.x, rawPdf, normalisationFactors[par]); 
   rawPdf *= normalisationFactors[par];
   return rawPdf > 0 ? -LOG(rawPdf) : 0; 
 }
 
-__device__ fptype calculateProb (fptype rawPdf, fptype* evtVal, unsigned int par) {
+EXEC_TARGET fptype calculateProb (fptype rawPdf, fptype* evtVal, unsigned int par) {
   // Return probability, ie normalised PDF value.
   return rawPdf * normalisationFactors[par];
 }
 
-__device__ fptype calculateBinAvg (fptype rawPdf, fptype* evtVal, unsigned int par) {
+EXEC_TARGET fptype calculateBinAvg (fptype rawPdf, fptype* evtVal, unsigned int par) {
   rawPdf *= normalisationFactors[par];
   rawPdf *= evtVal[1]; // Bin volume 
   // Log-likelihood of numEvents with expectation of exp is (-exp + numEvents*ln(exp) - ln(numEvents!)). 
@@ -129,7 +129,7 @@ __device__ fptype calculateBinAvg (fptype rawPdf, fptype* evtVal, unsigned int p
   return 0; 
 }
 
-__device__ fptype calculateBinWithError (fptype rawPdf, fptype* evtVal, unsigned int par) {
+EXEC_TARGET fptype calculateBinWithError (fptype rawPdf, fptype* evtVal, unsigned int par) {
   // In this case interpret the rawPdf as just a number, not a number of events. 
   // Do not divide by integral over phase space, do not multiply by bin volume, 
   // and do not collect 200 dollars. evtVal should have the structure (bin entry, bin error). 
@@ -140,7 +140,7 @@ __device__ fptype calculateBinWithError (fptype rawPdf, fptype* evtVal, unsigned
   return rawPdf; 
 }
 
-__device__ fptype calculateChisq (fptype rawPdf, fptype* evtVal, unsigned int par) {
+EXEC_TARGET fptype calculateChisq (fptype rawPdf, fptype* evtVal, unsigned int par) {
   rawPdf *= normalisationFactors[par];
   rawPdf *= evtVal[1]; // Bin volume 
 
@@ -539,7 +539,7 @@ __host__ fptype GooPdf::normalise () const {
 
 #ifdef PROFILING
 __constant__ fptype conversion = (1.0 / CLOCKS_PER_SEC); 
-__device__ fptype callFunction (fptype* eventAddress, unsigned int functionIdx, unsigned int paramIdx) {
+EXEC_TARGET fptype callFunction (fptype* eventAddress, unsigned int functionIdx, unsigned int paramIdx) {
   clock_t start = clock();
   fptype ret = (*(reinterpret_cast<device_function_ptr>(device_function_table[functionIdx])))(eventAddress, cudaArray, paramIndices + paramIdx);
   clock_t stop = clock(); 
@@ -551,7 +551,7 @@ __device__ fptype callFunction (fptype* eventAddress, unsigned int functionIdx, 
   return ret; 
 }
 #else 
-__device__ fptype callFunction (fptype* eventAddress, unsigned int functionIdx, unsigned int paramIdx) {
+EXEC_TARGET fptype callFunction (fptype* eventAddress, unsigned int functionIdx, unsigned int paramIdx) {
   return (*(reinterpret_cast<device_function_ptr>(device_function_table[functionIdx])))(eventAddress, cudaArray, paramIndices + paramIdx);
 }
 #endif 
@@ -561,7 +561,7 @@ __device__ fptype callFunction (fptype* eventAddress, unsigned int functionIdx, 
 
 // Main operator: Calls the PDF to get a predicted value, then the metric 
 // to get the goodness-of-prediction number which is returned to MINUIT. 
-__device__ fptype MetricTaker::operator () (thrust::tuple<int, fptype*, int> t) const {
+EXEC_TARGET fptype MetricTaker::operator () (thrust::tuple<int, fptype*, int> t) const {
   // Calculate event offset for this thread. 
   int eventIndex = thrust::get<0>(t);
   int eventSize  = thrust::get<2>(t);
@@ -581,7 +581,7 @@ __device__ fptype MetricTaker::operator () (thrust::tuple<int, fptype*, int> t) 
 // Operator for binned evaluation, no metric. 
 // Used in normalisation. 
 #define MAX_NUM_OBSERVABLES 5
-__device__ fptype MetricTaker::operator () (thrust::tuple<int, int, fptype*> t) const {
+EXEC_TARGET fptype MetricTaker::operator () (thrust::tuple<int, int, fptype*> t) const {
   // Bin index, event size, base address [lower, upper, numbins] 
  
   int evtSize = thrust::get<1>(t);

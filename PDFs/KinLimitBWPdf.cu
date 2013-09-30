@@ -1,6 +1,6 @@
 #include "KinLimitBWPdf.hh"
 
-__device__ fptype getMomentum (fptype mass, fptype pimass, fptype d0mass) {
+EXEC_TARGET fptype getMomentum (fptype mass, fptype pimass, fptype d0mass) {
   if (mass <= 0) return 0; 
   double lambda = mass*mass - pimass*pimass - d0mass*d0mass;
   lambda *= lambda;
@@ -9,7 +9,7 @@ __device__ fptype getMomentum (fptype mass, fptype pimass, fptype d0mass) {
   return SQRT(0.5*lambda/mass); 
 }
 
-__device__ fptype bwFactor (fptype momentum) {
+EXEC_TARGET fptype bwFactor (fptype momentum) {
   // 2.56 = 1.6^2, comes from radius for spin-1 particle
   return 1/SQRT(1.0 + 2.56 * momentum*momentum);
 }

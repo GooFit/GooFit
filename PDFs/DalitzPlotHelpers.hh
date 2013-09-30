@@ -3,9 +3,9 @@
 
 #include "ResonancePdf.hh"
 
-__device__ bool inDalitz (fptype m12, fptype m13, fptype bigM, fptype dm1, fptype dm2, fptype dm3); 
-__device__ devcomplex<fptype> getResonanceAmplitude (fptype m12, fptype m13, fptype m23, 
-						     unsigned int functionIdx, unsigned int pIndex); 
+EXEC_TARGET bool inDalitz (fptype m12, fptype m13, fptype bigM, fptype dm1, fptype dm2, fptype dm3); 
+EXEC_TARGET devcomplex<fptype> getResonanceAmplitude (fptype m12, fptype m13, fptype m23, 
+						      unsigned int functionIdx, unsigned int pIndex); 
 
 enum DaughterPair {PAIR_12 = 0, PAIR_13, PAIR_23}; 
 

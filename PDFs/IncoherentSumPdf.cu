@@ -6,9 +6,9 @@ const int resonanceOffset_incoherent = 4; // Offset of the first resonance into 
 // Notice that this is different from the TddpPdf case because there's no time information. 
 // In particular the offset consists of nP, constant index, number of resonances, and cache index. 
 
-__device__ devcomplex<fptype>* cResonanceValues[10]; 
+MEM_DEVICE devcomplex<fptype>* cResonanceValues[10]; 
 
-__device__ inline int parIndexFromResIndex_incoherent (int resIndex) {
+EXEC_TARGET inline int parIndexFromResIndex_incoherent (int resIndex) {
   return resonanceOffset_incoherent + resIndex*resonanceSize; 
 }
 
@@ -217,7 +217,7 @@ SpecialIncoherentIntegrator::SpecialIncoherentIntegrator (int pIdx, unsigned int
   , parameters(pIdx) 
 {}
 
-__device__ fptype SpecialIncoherentIntegrator::operator () (thrust::tuple<int, fptype*> t) const {
+EXEC_TARGET fptype SpecialIncoherentIntegrator::operator () (thrust::tuple<int, fptype*> t) const {
   // Returns integral of specific BW over Dalitz plot, to be cached and
   // multiplied by rapidly-changing amplitude. 
 
@@ -273,7 +273,7 @@ SpecialIncoherentResonanceCalculator::SpecialIncoherentResonanceCalculator (int 
   , parameters(pIdx)
 {}
 
-__device__ devcomplex<fptype> SpecialIncoherentResonanceCalculator::operator () (thrust::tuple<int, fptype*, int> t) const {
+EXEC_TARGET devcomplex<fptype> SpecialIncoherentResonanceCalculator::operator () (thrust::tuple<int, fptype*, int> t) const {
   // Returns the BW, or other resonance function, for a specific resonance.
   // Is special because the value is expected to change slowly, so it's
   // useful to cache the result. 

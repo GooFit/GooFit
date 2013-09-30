@@ -1,6 +1,6 @@
 #include "TrigThresholdPdf.hh"
 
-__device__ fptype threshCalc (fptype distance, fptype linConst) {
+EXEC_TARGET fptype threshCalc (fptype distance, fptype linConst) {
   fptype ret = (distance > fptype(0.5) ? fptype(1) : (linConst + (1 - linConst) * SIN(distance * fptype(3.14159265)))); 
   return ret; 
 }

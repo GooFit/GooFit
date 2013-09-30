@@ -15,7 +15,7 @@
 
 #include "PdfBase.hh" 
 
-__device__ int dev_powi (int base, int exp); // Implemented in SmoothHistogramPdf.
+EXEC_TARGET int dev_powi (int base, int exp); // Implemented in SmoothHistogramPdf.
 
 #define CALLS_TO_PRINT 10 
 typedef fptype (*device_function_ptr) (fptype*, fptype*, unsigned int*);            // Pass event, parameters, index into parameters. 
@@ -59,8 +59,8 @@ public:
 
   MetricTaker (PdfBase* dat, void* dev_functionPtr); 
   MetricTaker (int fIdx, int pIdx);
-  __device__ fptype operator () (thrust::tuple<int, fptype*, int> t) const;           // Event number, dev_event_array (pass this way for nvcc reasons), event size 
-  __device__ fptype operator () (thrust::tuple<int, int, fptype*> t) const;           // Event number, event size, normalisation ranges (for binned stuff, eg integration)
+  EXEC_TARGET fptype operator () (thrust::tuple<int, fptype*, int> t) const;           // Event number, dev_event_array (pass this way for nvcc reasons), event size 
+  EXEC_TARGET fptype operator () (thrust::tuple<int, int, fptype*> t) const;           // Event number, event size, normalisation ranges (for binned stuff, eg integration)
 
 private:
 

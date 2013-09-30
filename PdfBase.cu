@@ -106,9 +106,9 @@ __host__ void PdfBase::initialiseIndices (std::vector<unsigned int> pindices) {
 __host__ void PdfBase::setData (std::vector<std::map<Variable*, fptype> >& data) {
   // Old method retained for backwards compatibility 
 
-  if (cudaDataArray) {
-    cudaFree(cudaDataArray);
-    cudaDataArray = 0; 
+  if (dev_event_array) {
+    cudaFree(dev_event_array);
+    dev_event_array = 0; 
   }
 
   setIndices();
@@ -124,8 +124,8 @@ __host__ void PdfBase::setData (std::vector<std::map<Variable*, fptype> >& data)
     }
   }
 
-  cudaMalloc((void**) &cudaDataArray, dimensions*numEntries*sizeof(fptype)); 
-  cudaMemcpy(cudaDataArray, host_array, dimensions*numEntries*sizeof(fptype), cudaMemcpyHostToDevice);
+  cudaMalloc((void**) &dev_event_array, dimensions*numEntries*sizeof(fptype)); 
+  cudaMemcpy(dev_event_array, host_array, dimensions*numEntries*sizeof(fptype), cudaMemcpyHostToDevice);
   cudaMemcpyToSymbol(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice); 
   delete[] host_array; 
 }
@@ -162,10 +162,10 @@ __host__ void PdfBase::setIndices () {
 }
 
 __host__ void PdfBase::setData (UnbinnedDataSet* data) {
-  if (cudaDataArray) {
-    cudaFree(cudaDataArray);
+  if (dev_event_array) {
+    cudaFree(dev_event_array);
     cudaDeviceSynchronize();
-    cudaDataArray = 0; 
+    dev_event_array = 0; 
   }
 
   setIndices();
@@ -183,18 +183,18 @@ __host__ void PdfBase::setData (UnbinnedDataSet* data) {
   }
 
   //std::cout << "Trying to allocate " << (numEntries*dimensions*sizeof(fptype)) << " = " << numEntries << " * " << dimensions << " * " << sizeof(fptype) << " bytes.\n"; 
-  cudaMalloc((void**) &cudaDataArray, dimensions*numEntries*sizeof(fptype)); 
+  cudaMalloc((void**) &dev_event_array, dimensions*numEntries*sizeof(fptype)); 
   //cudaDeviceSynchronize();
-  //std::cout << "Allocated to " << cudaDataArray << std::endl; 
-  cudaMemcpy(cudaDataArray, host_array, dimensions*numEntries*sizeof(fptype), cudaMemcpyHostToDevice);
+  //std::cout << "Allocated to " << dev_event_array << std::endl; 
+  cudaMemcpy(dev_event_array, host_array, dimensions*numEntries*sizeof(fptype), cudaMemcpyHostToDevice);
   cudaMemcpyToSymbol(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice); 
   delete[] host_array; 
 }
 
 __host__ void PdfBase::setData (BinnedDataSet* data) { 
-  if (cudaDataArray) { 
-    cudaFree(cudaDataArray);
-    cudaDataArray = 0; 
+  if (dev_event_array) { 
+    cudaFree(dev_event_array);
+    dev_event_array = 0; 
   }
 
   setIndices();
@@ -215,17 +215,17 @@ __host__ void PdfBase::setData (BinnedDataSet* data) {
     numEvents += data->getBinContent(i);
   }
 
-  cudaMalloc(&cudaDataArray, dimensions*numEntries*sizeof(fptype)); 
-  cudaMemcpy(cudaDataArray, host_array, dimensions*numEntries*sizeof(fptype), cudaMemcpyHostToDevice);
+  cudaMalloc(&dev_event_array, dimensions*numEntries*sizeof(fptype)); 
+  cudaMemcpy(dev_event_array, host_array, dimensions*numEntries*sizeof(fptype), cudaMemcpyHostToDevice);
   cudaMemcpyToSymbol(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice); 
   delete[] host_array; 
 }
 
 /*
 __host__ void PdfBase::setBinnedData (std::vector<std::pair<std::map<Variable*, fptype>, fptype> >& data) {
-  if (cudaDataArray) { 
-    cudaFree(cudaDataArray);
-    cudaDataArray = 0; 
+  if (dev_event_array) { 
+    cudaFree(dev_event_array);
+    dev_event_array = 0; 
   }
 
   numEvents = 0; 
@@ -250,8 +250,8 @@ __host__ void PdfBase::setBinnedData (std::vector<std::pair<std::map<Variable*, 
     numEvents += data[i].second; 
   }
 
-  cudaMalloc(&cudaDataArray, dimensions*numEntries*sizeof(fptype)); 
-  cudaMemcpy(cudaDataArray, host_array, dimensions*numEntries*sizeof(fptype), cudaMemcpyHostToDevice);
+  cudaMalloc(&dev_event_array, dimensions*numEntries*sizeof(fptype)); 
+  cudaMemcpy(dev_event_array, host_array, dimensions*numEntries*sizeof(fptype), cudaMemcpyHostToDevice);
   cudaMemcpyToSymbol(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice); 
   delete[] host_array; 
 
@@ -288,8 +288,8 @@ __host__ void PdfBase::generateNormRange () {
 
 void PdfBase::clearCurrentFit () {
   totalParams = 0; 
-  cudaFree(cudaDataArray);
-  cudaDataArray = 0; 
+  cudaFree(dev_event_array);
+  dev_event_array = 0; 
 }
 
 __host__ void PdfBase::printProfileInfo (bool topLevel) {

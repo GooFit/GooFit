@@ -162,7 +162,7 @@ __host__ fptype AddPdf::normalise () const {
 __host__ double AddPdf::sumOfNll (int numVars) const {
   static thrust::plus<double> cudaPlus;
   thrust::constant_iterator<int> eventSize(numVars); 
-  thrust::constant_iterator<fptype*> arrayAddress(cudaDataArray); 
+  thrust::constant_iterator<fptype*> arrayAddress(dev_event_array); 
   double dummy = 0;
   thrust::counting_iterator<int> eventIndex(0); 
   double ret = thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)), 

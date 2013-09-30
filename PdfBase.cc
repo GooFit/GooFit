@@ -1,7 +1,7 @@
 #include "GlobalCudaDefines.hh"
 #include "PdfBase.hh" 
 
-fptype* cudaDataArray;
+fptype* dev_event_array;
 fptype host_normalisation[maxParams];
 fptype host_params[maxParams];
 unsigned int host_indices[maxParams]; 
@@ -12,7 +12,7 @@ int totalConstants = 1; // First constant is reserved for number of events.
 #ifdef OMP_ON
 typedef std::map<Variable*, std::set<PdfBase*> > tRegType;
 tRegType variableRegistry[MAX_THREADS]; 
-#pragma omp threadprivate (cudaDataArray, totalParams, totalConstants)
+#pragma omp threadprivate (dev_event_array, totalParams, totalConstants)
 #pragma omp threadprivate (host_normalisation, host_params, host_indices)
 #pragma omp threadprivate (host_callnumber)
 #else

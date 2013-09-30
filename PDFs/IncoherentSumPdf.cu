@@ -171,7 +171,7 @@ __host__ fptype IncoherentSumPdf::normalise () const {
   // NB, SpecialIncoherentResonanceCalculator assumes that fit is unbinned! 
   // And it needs to know the total event size, not just observables
   // for this particular PDF component. 
-  thrust::constant_iterator<fptype*> dataArray(cudaDataArray); 
+  thrust::constant_iterator<fptype*> dataArray(dev_event_array); 
   thrust::constant_iterator<int> eventSize(totalEventSize);
   thrust::counting_iterator<int> eventIndex(0); 
 

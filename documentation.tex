@@ -540,8 +540,8 @@ for (int i = 0; i < numEntries; ++i) {
   }
 }
 
-cudaMalloc((void**) &cudaDataArray, dimensions*numEntries*sizeof(fptype)); 
-cudaMemcpy(cudaDataArray, host_array, dimensions*numEntries*sizeof(fptype), cudaMemcpyHostToDevice);
+cudaMalloc((void**) &dev_event_array, dimensions*numEntries*sizeof(fptype)); 
+cudaMemcpy(dev_event_array, host_array, dimensions*numEntries*sizeof(fptype), cudaMemcpyHostToDevice);
 cudaMemcpyToSymbol(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice); 
 delete[] host_array; 
 \end{verbatim}
@@ -561,7 +561,7 @@ If \texttt{setData}
 is called with an \texttt{BinnedDataSet} object, the procedure is similar
 except that each `event' consists of the coordinates of the bin center, the
 number of events in the bin, and either the bin error or the bin size. We will
-see later how the engine uses the \texttt{cudaDataArray} either as a list
+see later how the engine uses the \texttt{dev_event_array} either as a list
 of events or a list of bins. 
 
 \subsection{MINUIT setup} 

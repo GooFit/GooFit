@@ -18,14 +18,14 @@ typedef thrust::tuple<IndexIterator, DataIterator, SizeIterator> EventTuple;
 typedef thrust::zip_iterator<EventTuple> EventIterator; 
 
 const int maxParams = 2000; 
-extern fptype* cudaDataArray;
+extern fptype* dev_event_array;
 extern fptype host_normalisation[maxParams];
 extern fptype host_params[maxParams];
 extern unsigned int host_indices[maxParams]; 
 extern int totalParams; 
 extern int totalConstants;
 #ifdef OMP_ON
-#pragma omp threadprivate (cudaDataArray, totalParams, totalConstants)
+#pragma omp threadprivate (dev_event_array, totalParams, totalConstants)
 #pragma omp threadprivate (host_normalisation, host_params, host_indices)
 #pragma omp threadprivate (host_callnumber)
 #endif

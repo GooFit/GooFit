@@ -238,7 +238,7 @@ __host__ void GooPdf::setMetrics () {
 __host__ double GooPdf::sumOfNll (int numVars) const {
   static thrust::plus<double> cudaPlus;
   thrust::constant_iterator<int> eventSize(numVars); 
-  thrust::constant_iterator<fptype*> arrayAddress(cudaDataArray); 
+  thrust::constant_iterator<fptype*> arrayAddress(dev_event_array); 
   double dummy = 0;
 
   //if (host_callnumber >= 2) abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " debug abort", this); 
@@ -340,7 +340,7 @@ __host__ void GooPdf::evaluateAtPoints (Variable* var, std::vector<fptype>& res)
  
   thrust::counting_iterator<int> eventIndex(0); 
   thrust::constant_iterator<int> eventSize(observables.size()); 
-  thrust::constant_iterator<fptype*> arrayAddress(cudaDataArray); 
+  thrust::constant_iterator<fptype*> arrayAddress(dev_event_array); 
   thrust::device_vector<fptype> results(var->numbins); 
 
   MetricTaker evalor(this, getMetricPointer("ptr_to_Eval")); 
@@ -436,7 +436,7 @@ __host__ fptype GooPdf::getValue () {
 
   thrust::counting_iterator<int> eventIndex(0); 
   thrust::constant_iterator<int> eventSize(observables.size()); 
-  thrust::constant_iterator<fptype*> arrayAddress(cudaDataArray); 
+  thrust::constant_iterator<fptype*> arrayAddress(dev_event_array); 
   thrust::device_vector<fptype> results(1); 
   
   MetricTaker evalor(this, getMetricPointer("ptr_to_Eval"));
@@ -626,7 +626,7 @@ __host__ void GooPdf::getCompProbsAtDataPoints (std::vector<std::vector<fptype> 
   }
   thrust::device_vector<fptype> results(numEntries); 
   thrust::constant_iterator<int> eventSize(numVars); 
-  thrust::constant_iterator<fptype*> arrayAddress(cudaDataArray); 
+  thrust::constant_iterator<fptype*> arrayAddress(dev_event_array); 
   thrust::counting_iterator<int> eventIndex(0); 
   MetricTaker evalor(this, getMetricPointer("ptr_to_Prob")); 
   thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),

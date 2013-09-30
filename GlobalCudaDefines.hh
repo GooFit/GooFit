@@ -12,6 +12,22 @@ using namespace std;
 #pragma omp threadprivate (host_callnumber)
 #endif
 
+#if THRUST_DEVICE_BACKEND==THRUST_DEVICE_BACKEND_OMP
+// OMP target - all 'device' memory is actually on host. 
+#define MEM_DEVICE
+#define MEM_SHARED
+#define EXEC_TARGET __host__
+#define MEMCPY(target, source, amount, dummy) memcpy(target, source, amount)
+#else
+// CUDA target - defaults
+#define MEM_DEVICE __device__
+#define MEM_SHARED __shared__
+#define EXEC_TARGET __device__
+#define MEMCPY(target, source, amount, direction) cudaMemcpy(target, source, amount, direction)
+#endif
+
+
+
 #define DOUBLES 1
 
 void abortWithCudaPrintFlush (std::string file, int line); 

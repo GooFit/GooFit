@@ -561,7 +561,7 @@ If \texttt{setData}
 is called with an \texttt{BinnedDataSet} object, the procedure is similar
 except that each `event' consists of the coordinates of the bin center, the
 number of events in the bin, and either the bin error or the bin size. We will
-see later how the engine uses the \texttt{dev_event_array} either as a list
+see later how the engine uses the \texttt{dev\_event\_array} either as a list
 of events or a list of bins. 
 
 \subsection{MINUIT setup} 
@@ -720,7 +720,7 @@ in each observable, of the global bin:
 Bin-center calculation.
 
 \begin{verbatim}
-__shared__ fptype binCenters[1024*MAX_NUM_OBSERVABLES];
+MEM_SHARED fptype binCenters[1024*MAX_NUM_OBSERVABLES];
 
 // To convert global bin number to (x,y,z...) coordinates: 
 // For each dimension, take the mod with the number of bins 
@@ -747,7 +747,8 @@ for (int i = 0; i < evtSize; ++i) {
 \end{listing}
 in the straightforward way, and stores the bin centers in a \emph{fake event}.
 Since events are just lists of observables, all that's necessary is to keep track
-of which part of the \verb|__shared__| \texttt{binCenters} array is owned by this
+of which part of the \verb|MEM_SHARED|\footnote{That is, \texttt|\_\_shared\_\_| for the default CUDA target.} 
+\texttt{binCenters} array is owned by this
 thread, look up the index-within-events of each observable, and set the entries
 of the locally-owned part of \texttt{binCenters} accordingly. This fake event is then
 sent to the PDF for evaluation:

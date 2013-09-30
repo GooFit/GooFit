@@ -62,7 +62,7 @@ __device__ fptype device_ConvolveSharedPdfs (fptype* evt, fptype* p, unsigned in
   int offsetInBins = (int) FLOOR(x0 / step - lowerBoundOffset); 
 
   // Brute-force calculate integral M(x) * R(x - x0) dx
-  __shared__ fptype modelCache[CONVOLUTION_CACHE_SIZE]; 
+  MEM_SHARED fptype modelCache[CONVOLUTION_CACHE_SIZE]; 
   // Don't try to shared-load more items than we have threads. 
   int numToLoad = min(CONVOLUTION_CACHE_SIZE / numOthers, blockDim.x);
 

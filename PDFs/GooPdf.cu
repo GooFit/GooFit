@@ -589,7 +589,7 @@ __device__ fptype MetricTaker::operator () (thrust::tuple<int, int, fptype*> t) 
   
   // Do not understand why this cannot be declared __shared__. Dynamically allocating shared memory is apparently complicated. 
   //fptype* binCenters = (fptype*) malloc(evtSize * sizeof(fptype));
-  __shared__ fptype binCenters[1024*MAX_NUM_OBSERVABLES];
+  MEM_SHARED fptype binCenters[1024*MAX_NUM_OBSERVABLES];
 
   // To convert global bin number to (x,y,z...) coordinates: For each dimension, take the mod 
   // with the number of bins in that dimension. Then divide by the number of bins, in effect

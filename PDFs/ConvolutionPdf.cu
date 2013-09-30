@@ -12,12 +12,12 @@ int totalConvolutions = 0;
 // goes wrong. So... 512 should be enough for anyone, right? 
 
 // Need multiple working spaces for the case of several convolutions in one PDF. 
-__constant__ fptype* dev_modWorkSpace[100];
-__constant__ fptype* dev_resWorkSpace[100]; 
+MEM_CONSTANT fptype* dev_modWorkSpace[100];
+MEM_CONSTANT fptype* dev_resWorkSpace[100]; 
 
 // Number which transforms model range (x1, x2) into resolution range (x1 - maxX, x2 - minX).
 // It is equal to the maximum possible value of x0, ie maxX, in bins. 
-__constant__ int modelOffset[100]; 
+MEM_CONSTANT int modelOffset[100]; 
 
 EXEC_TARGET fptype device_ConvolvePdfs (fptype* evt, fptype* p, unsigned int* indices) { 
   fptype ret     = 0; 

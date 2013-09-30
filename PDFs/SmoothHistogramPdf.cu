@@ -1,7 +1,7 @@
 #include "SmoothHistogramPdf.hh"
 
-__constant__ fptype* dev_base_histograms[100]; // Multiple histograms for the case of multiple PDFs
-__constant__ fptype* dev_smoothed_histograms[100]; 
+MEM_CONSTANT fptype* dev_base_histograms[100]; // Multiple histograms for the case of multiple PDFs
+MEM_CONSTANT fptype* dev_smoothed_histograms[100]; 
 unsigned int SmoothHistogramPdf::totalHistograms = 0; 
 
 EXEC_TARGET int dev_powi (int base, int exp) {

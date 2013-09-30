@@ -17,12 +17,14 @@ using namespace std;
 // OMP target - all 'device' memory is actually on host. 
 #define MEM_DEVICE
 #define MEM_SHARED
+#define MEM_CONSTANT 
 #define EXEC_TARGET __host__
 #define MEMCPY(target, source, amount, dummy) memcpy(target, source, amount)
 #else
 // CUDA target - defaults
 #define MEM_DEVICE __device__
 #define MEM_SHARED __shared__
+#define MEM_CONSTANT __constant__ 
 #define EXEC_TARGET __device__
 #define MEMCPY(target, source, amount, direction) cudaMemcpy(target, source, amount, direction)
 #endif

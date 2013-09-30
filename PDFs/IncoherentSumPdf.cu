@@ -137,7 +137,7 @@ __host__ fptype IncoherentSumPdf::normalise () const {
 
   int totalBins = _m12->numbins * _m13->numbins;
   if (!dalitzNormRange) {
-    cudaMalloc((void**) &dalitzNormRange, 6*sizeof(fptype));
+    gooMalloc((void**) &dalitzNormRange, 6*sizeof(fptype));
   
     fptype* host_norms = new fptype[6];
     host_norms[0] = _m12->lowerlimit;

@@ -198,7 +198,7 @@ ConvolutionPdf::ConvolutionPdf (std::string n,
 __host__ void ConvolutionPdf::setIntegrationConstants (fptype lo, fptype hi, fptype step) {
   if (!host_iConsts) {
     host_iConsts = new fptype[6]; 
-    cudaMalloc((void**) &dev_iConsts, 6*sizeof(fptype)); 
+    gooMalloc((void**) &dev_iConsts, 6*sizeof(fptype)); 
   }
   host_iConsts[0] = lo;
   host_iConsts[1] = hi;

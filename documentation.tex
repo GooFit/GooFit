@@ -540,7 +540,7 @@ for (int i = 0; i < numEntries; ++i) {
   }
 }
 
-cudaMalloc((void**) &dev_event_array, dimensions*numEntries*sizeof(fptype)); 
+gooMalloc((void**) &dev_event_array, dimensions*numEntries*sizeof(fptype)); 
 cudaMemcpy(dev_event_array, host_array, dimensions*numEntries*sizeof(fptype), cudaMemcpyHostToDevice);
 MEMCPY_TO_SYMBOL(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice); 
 delete[] host_array; 

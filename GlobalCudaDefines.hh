@@ -13,6 +13,9 @@ using namespace std;
 #pragma omp threadprivate (host_callnumber)
 #endif
 
+cudaError_t gooMalloc (void** target, size_t bytes); 
+cudaError_t gooFree (void* ptr); 
+
 #if THRUST_DEVICE_BACKEND==THRUST_DEVICE_BACKEND_OMP
 // OMP target - all 'device' memory is actually on host. 
 #define MEM_DEVICE

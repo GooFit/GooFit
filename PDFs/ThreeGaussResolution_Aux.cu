@@ -96,7 +96,7 @@ __device__ fptype device_threegauss_resolution (fptype coshterm, fptype costerm,
   return ret; 
 }
 
-__device__ device_resfunction_ptr ptr_to_threegauss = device_threegauss_resolution; 
+MEM_DEVICE device_resfunction_ptr ptr_to_threegauss = device_threegauss_resolution; 
 
 ThreeGaussResolution::ThreeGaussResolution (Variable* cf, Variable* tf, Variable* cb, Variable* cs, Variable* tb, Variable* ts, Variable* ob, Variable* os) 
   : MixingTimeResolution()

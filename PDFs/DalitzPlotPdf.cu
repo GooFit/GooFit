@@ -84,7 +84,7 @@ __device__ fptype device_DalitzPlot (fptype* evt, fptype* p, unsigned int* indic
   return ret; 
 }
 
-__device__ device_function_ptr ptr_to_DalitzPlot = device_DalitzPlot; 
+MEM_DEVICE device_function_ptr ptr_to_DalitzPlot = device_DalitzPlot; 
 
 __host__ DalitzPlotPdf::DalitzPlotPdf (std::string n, 
 							   Variable* m12, 

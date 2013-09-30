@@ -88,9 +88,9 @@ __device__ fptype device_MultiPolynomial (fptype* evt, fptype* p, unsigned int* 
 }
 
 
-__device__ device_function_ptr ptr_to_Polynomial = device_Polynomial; 
-__device__ device_function_ptr ptr_to_OffsetPolynomial = device_OffsetPolynomial; 
-__device__ device_function_ptr ptr_to_MultiPolynomial = device_MultiPolynomial; 
+MEM_DEVICE device_function_ptr ptr_to_Polynomial = device_Polynomial; 
+MEM_DEVICE device_function_ptr ptr_to_OffsetPolynomial = device_OffsetPolynomial; 
+MEM_DEVICE device_function_ptr ptr_to_MultiPolynomial = device_MultiPolynomial; 
 
 // Constructor for single-variate polynomial, with optional zero point. 
 __host__ PolynomialPdf::PolynomialPdf (string n, Variable* _x, vector<Variable*> weights, Variable* x0, unsigned int lowestDegree) 

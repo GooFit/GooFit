@@ -6,7 +6,7 @@ __device__ fptype device_Step (fptype* evt, fptype* p, unsigned int* indices) {
   return (x > x0 ? 1 : 0);
 }
 
-__device__ device_function_ptr ptr_to_Step = device_Step; 
+MEM_DEVICE device_function_ptr ptr_to_Step = device_Step; 
 device_function_ptr hptr_to_Step = device_Step; 
 
 __host__ StepPdf::StepPdf (std::string n, Variable* _x, Variable* x0)

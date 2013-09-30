@@ -40,8 +40,8 @@ __device__ fptype device_Argus_Lower (fptype* evt, fptype* p, unsigned int* indi
   
 }
 
-__device__ device_function_ptr ptr_to_Argus_Upper = device_Argus_Upper; 
-__device__ device_function_ptr ptr_to_Argus_Lower = device_Argus_Lower; 
+MEM_DEVICE device_function_ptr ptr_to_Argus_Upper = device_Argus_Upper; 
+MEM_DEVICE device_function_ptr ptr_to_Argus_Lower = device_Argus_Lower; 
 
 __host__ ArgusPdf::ArgusPdf (std::string n, Variable* _x, Variable* m0, Variable* slope, bool upper, Variable* power) 
 : GooPdf(_x, n) 

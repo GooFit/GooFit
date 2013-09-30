@@ -21,7 +21,7 @@ __device__ fptype device_JohnsonSU (fptype* evt, fptype* p, unsigned int* indice
   return _Jd / (_Js * SQRT2PI * sqrt_arg) * EXP(-0.5 * gaus_arg * gaus_arg );
 }
 
-__device__ device_function_ptr ptr_to_JohnsonSU = device_JohnsonSU; 
+MEM_DEVICE device_function_ptr ptr_to_JohnsonSU = device_JohnsonSU; 
 
 __host__ JohnsonSUPdf::JohnsonSUPdf (std::string n, Variable* _x, Variable* mean, Variable* sigma, Variable* gamma, Variable* delta) 
   : GooPdf(_x, n) 

@@ -75,7 +75,7 @@ __device__ fptype device_Landau (fptype* evt, fptype* p, unsigned int* indices) 
   return denlan/sigma;
 }
 
-__device__ device_function_ptr ptr_to_Landau = device_Landau; 
+MEM_DEVICE device_function_ptr ptr_to_Landau = device_Landau; 
 
 __host__ LandauPdf::LandauPdf (std::string n, Variable* _x, Variable* mpv, Variable* sigma) 
   : GooPdf(_x, n) 

@@ -16,7 +16,7 @@ __device__ fptype device_Gaussian (fptype* evt, fptype* p, unsigned int* indices
   return ret; 
 }
 
-__device__ device_function_ptr ptr_to_Gaussian = device_Gaussian; 
+MEM_DEVICE device_function_ptr ptr_to_Gaussian = device_Gaussian; 
 
 __host__ GaussianPdf::GaussianPdf (std::string n, Variable* _x, Variable* mean, Variable* sigma) 
   : GooPdf(_x, n) 

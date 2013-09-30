@@ -16,7 +16,7 @@ __device__ fptype device_ScaledGaussian (fptype* evt, fptype* p, unsigned int* i
   return ret;
 }
 
-__device__ device_function_ptr ptr_to_ScaledGaussian = device_ScaledGaussian; 
+MEM_DEVICE device_function_ptr ptr_to_ScaledGaussian = device_ScaledGaussian; 
 
 __host__ ScaledGaussianPdf::ScaledGaussianPdf (std::string n, Variable* _x, Variable* mean, Variable* sigma, Variable* delta, Variable* epsilon) 
 : GooPdf(_x, n) 

@@ -16,7 +16,7 @@ __device__ fptype device_ExpGaus (fptype* evt, fptype* p, unsigned int* indices)
   return ret; 
 }
 
-__device__ device_function_ptr ptr_to_ExpGaus = device_ExpGaus; 
+MEM_DEVICE device_function_ptr ptr_to_ExpGaus = device_ExpGaus; 
 
 ExpGausPdf::ExpGausPdf (std::string n, Variable* _x, Variable* mean, Variable* sigma, Variable* tau) 
   : GooPdf(_x, n)

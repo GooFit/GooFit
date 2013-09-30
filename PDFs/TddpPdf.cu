@@ -269,7 +269,7 @@ __device__ fptype device_Tddp (fptype* evt, fptype* p, unsigned int* indices) {
   return ret; 
 }
 
-__device__ device_function_ptr ptr_to_Tddp = device_Tddp; 
+MEM_DEVICE device_function_ptr ptr_to_Tddp = device_Tddp; 
 
 __host__ TddpPdf::TddpPdf (std::string n, Variable* _dtime, Variable* _sigmat, Variable* m12, Variable* m13, Variable* eventNumber, DecayInfo* decay, MixingTimeResolution* r, GooPdf* efficiency, Variable* mistag) 
   : GooPdf(_dtime, n) 

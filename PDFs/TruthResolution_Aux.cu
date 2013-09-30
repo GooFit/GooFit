@@ -15,7 +15,7 @@ __device__ fptype device_truth_resolution (fptype coshterm, fptype costerm, fpty
   return ret; 
 }
 
-__device__ device_resfunction_ptr ptr_to_truth = device_truth_resolution; 
+MEM_DEVICE device_resfunction_ptr ptr_to_truth = device_truth_resolution; 
 
 TruthResolution::TruthResolution () 
   : MixingTimeResolution()

@@ -9,7 +9,7 @@ __device__ fptype device_BW (fptype* evt, fptype* p, unsigned int* indices) {
   return ret; 
 }
 
-__device__ device_function_ptr ptr_to_BW = device_BW; 
+MEM_DEVICE device_function_ptr ptr_to_BW = device_BW; 
 
 __host__ BWPdf::BWPdf (std::string n, Variable* _x, Variable* mean, Variable* width) 
   : GooPdf(_x, n) 

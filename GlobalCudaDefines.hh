@@ -1,6 +1,7 @@
 #ifndef __GLOBAL_CUDA_HH__
 #define __GLOBAL_CUDA_HH__
 
+#include <thrust/functional.h>
 extern int host_callnumber; 
 #include <cmath> 
 #include <string> 

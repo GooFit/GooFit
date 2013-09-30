@@ -55,7 +55,7 @@ __device__ fptype device_KinLimitBW (fptype* evt, fptype* p, unsigned int* indic
   return ret; 
 }
 
-__device__ device_function_ptr ptr_to_KinLimitBW = device_KinLimitBW; 
+MEM_DEVICE device_function_ptr ptr_to_KinLimitBW = device_KinLimitBW; 
 
 __host__ KinLimitBWPdf::KinLimitBWPdf (std::string n, Variable* _x, Variable* mean, Variable* width) 
 : GooPdf(_x, n) 

@@ -27,7 +27,7 @@ __device__ fptype device_DalitzVeto (fptype* evt, fptype* p, unsigned int* indic
   return ret; 
 }
 
-__device__ device_function_ptr ptr_to_DalitzVeto = device_DalitzVeto;
+MEM_DEVICE device_function_ptr ptr_to_DalitzVeto = device_DalitzVeto;
 
 __host__ DalitzVetoPdf::DalitzVetoPdf (std::string n, Variable* _x, Variable* _y, Variable* motherM, Variable* d1m, Variable* d2m, Variable* d3m, vector<VetoInfo*> vetos) 
   : GooPdf(0, n) 

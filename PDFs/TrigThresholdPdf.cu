@@ -58,10 +58,10 @@ __device__ fptype device_VerySpecialEpisodeTrigThresholdLower (fptype* evt, fpty
   return ret;
 }
 
-__device__ device_function_ptr ptr_to_TrigThresholdUpper = device_TrigThresholdUpper; 
-__device__ device_function_ptr ptr_to_TrigThresholdLower = device_TrigThresholdLower; 
-__device__ device_function_ptr ptr_to_VerySpecialEpisodeTrigThresholdUpper = device_VerySpecialEpisodeTrigThresholdUpper; 
-__device__ device_function_ptr ptr_to_VerySpecialEpisodeTrigThresholdLower = device_VerySpecialEpisodeTrigThresholdLower; 
+MEM_DEVICE device_function_ptr ptr_to_TrigThresholdUpper = device_TrigThresholdUpper; 
+MEM_DEVICE device_function_ptr ptr_to_TrigThresholdLower = device_TrigThresholdLower; 
+MEM_DEVICE device_function_ptr ptr_to_VerySpecialEpisodeTrigThresholdUpper = device_VerySpecialEpisodeTrigThresholdUpper; 
+MEM_DEVICE device_function_ptr ptr_to_VerySpecialEpisodeTrigThresholdLower = device_VerySpecialEpisodeTrigThresholdLower; 
 
 
 __host__ TrigThresholdPdf::TrigThresholdPdf (std::string n, Variable* _x, Variable* thresh, Variable* trigConst, Variable* linConst, bool upper) 

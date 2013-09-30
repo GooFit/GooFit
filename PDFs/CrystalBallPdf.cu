@@ -31,7 +31,7 @@ __device__ fptype device_CrystalBall (fptype* evt, fptype* p, unsigned int* indi
   
 }
 
-__device__ device_function_ptr ptr_to_CrystalBall = device_CrystalBall; 
+MEM_DEVICE device_function_ptr ptr_to_CrystalBall = device_CrystalBall; 
 
 __host__ CrystalBallPdf::CrystalBallPdf (std::string n, Variable* _x, Variable* mean, Variable* sigma, Variable* alpha, Variable* power) 
   : GooPdf(_x, n) 

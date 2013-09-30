@@ -147,12 +147,12 @@ __device__ fptype calculateChisq (fptype rawPdf, fptype* evtVal, unsigned int pa
   return pow(rawPdf * functorConstants[0] - evtVal[0], 2) / (evtVal[0] > 1 ? evtVal[0] : 1); 
 }
 
-__device__ device_metric_ptr ptr_to_Eval         = calculateEval; 
-__device__ device_metric_ptr ptr_to_NLL          = calculateNLL;  
-__device__ device_metric_ptr ptr_to_Prob         = calculateProb; 
-__device__ device_metric_ptr ptr_to_BinAvg       = calculateBinAvg;  
-__device__ device_metric_ptr ptr_to_BinWithError = calculateBinWithError;
-__device__ device_metric_ptr ptr_to_Chisq        = calculateChisq; 
+MEM_DEVICE device_metric_ptr ptr_to_Eval         = calculateEval; 
+MEM_DEVICE device_metric_ptr ptr_to_NLL          = calculateNLL;  
+MEM_DEVICE device_metric_ptr ptr_to_Prob         = calculateProb; 
+MEM_DEVICE device_metric_ptr ptr_to_BinAvg       = calculateBinAvg;  
+MEM_DEVICE device_metric_ptr ptr_to_BinWithError = calculateBinWithError;
+MEM_DEVICE device_metric_ptr ptr_to_Chisq        = calculateChisq; 
 
 void* host_fcn_ptr = 0;
 

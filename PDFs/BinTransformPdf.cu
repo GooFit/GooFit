@@ -40,10 +40,10 @@ __host__ BinTransformPdf::BinTransformPdf (std::string n, vector<Variable*> obse
     host_constants[2*i+1] = binSizes[i]; 
   }
 
-  cudaMemcpyToSymbol(functorConstants, host_constants, 2*obses.size()*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(functorConstants, host_constants, 2*obses.size()*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice); 
   delete[] host_constants; 
 
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_BinTransform, sizeof(void*));
+  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_BinTransform, sizeof(void*), 0, cudaMemcpyDeviceToHost);
   initialise(pindices); 
 }
 

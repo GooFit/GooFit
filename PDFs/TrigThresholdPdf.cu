@@ -72,8 +72,8 @@ __host__ TrigThresholdPdf::TrigThresholdPdf (std::string n, Variable* _x, Variab
   pindices.push_back(registerParameter(trigConst));
   pindices.push_back(registerParameter(linConst)); 
 
-  if (upper) cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_TrigThresholdUpper, sizeof(void*));
-  else cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_TrigThresholdLower, sizeof(void*));
+  if (upper) MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_TrigThresholdUpper, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+  else MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_TrigThresholdLower, sizeof(void*), 0, cudaMemcpyDeviceToHost);
   initialise(pindices); 
 }
 
@@ -89,7 +89,7 @@ __host__ TrigThresholdPdf::TrigThresholdPdf (std::string n, Variable* _x, Variab
   pindices.push_back(registerParameter(linConst)); 
   pindices.push_back(registerParameter(massConstant)); 
 
-  if (upper) cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_VerySpecialEpisodeTrigThresholdUpper, sizeof(void*));
-  else cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_VerySpecialEpisodeTrigThresholdLower, sizeof(void*));
+  if (upper) MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_VerySpecialEpisodeTrigThresholdUpper, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+  else MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_VerySpecialEpisodeTrigThresholdLower, sizeof(void*), 0, cudaMemcpyDeviceToHost);
   initialise(pindices); 
 }

@@ -36,7 +36,7 @@ __host__ CorrGaussianPdf::CorrGaussianPdf (std::string n, Variable* _x, Variable
   pindices.push_back(registerParameter(sigma2));
   pindices.push_back(registerParameter(correlation));
 
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_CorrGaussian, sizeof(void*));
+  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_CorrGaussian, sizeof(void*), 0, cudaMemcpyDeviceToHost);
   initialise(pindices); 
 }
 

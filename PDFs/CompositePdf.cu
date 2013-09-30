@@ -43,7 +43,7 @@ __host__ CompositePdf::CompositePdf (std::string n, PdfBase* core, PdfBase* shel
   components.push_back(core);
   components.push_back(shell);
 
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_Composite, sizeof(void*));
+  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_Composite, sizeof(void*), 0, cudaMemcpyDeviceToHost);
   initialise(pindices); 
 }
 

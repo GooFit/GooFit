@@ -19,14 +19,16 @@ using namespace std;
 #define MEM_SHARED
 #define MEM_CONSTANT 
 #define EXEC_TARGET __host__
-#define MEMCPY(target, source, amount, dummy) memcpy(target, source, amount)
+#define MEMCPY(target, source, count, dummy) memcpy(target, source, count)
 #else
 // CUDA target - defaults
 #define MEM_DEVICE __device__
 #define MEM_SHARED __shared__
 #define MEM_CONSTANT __constant__ 
 #define EXEC_TARGET __device__
-#define MEMCPY(target, source, amount, direction) cudaMemcpy(target, source, amount, direction)
+#define MEMCPY(target, source, count, direction) cudaMemcpy(target, source, count, direction) 
+#define MEMCPY_TO_SYMBOL(target, source, count, offset, direction) cudaMemcpyToSymbol(target, source, count, offset, direction)
+#define MEMCPY_FROM_SYMBOL(target, source, count, offset, direction) cudaMemcpyFromSymbol(target, source, count, offset, direction)
 #endif
 
 

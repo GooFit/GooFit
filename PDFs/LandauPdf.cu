@@ -83,7 +83,7 @@ __host__ LandauPdf::LandauPdf (std::string n, Variable* _x, Variable* mpv, Varia
   std::vector<unsigned int> pindices;
   pindices.push_back(registerParameter(mpv));
   pindices.push_back(registerParameter(sigma));
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_Landau, sizeof(void*));
+  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_Landau, sizeof(void*), 0, cudaMemcpyDeviceToHost);
   initialise(pindices); 
 }
 

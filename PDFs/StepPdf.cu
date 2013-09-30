@@ -14,7 +14,7 @@ __host__ StepPdf::StepPdf (std::string n, Variable* _x, Variable* x0)
 {
   std::vector<unsigned int> pindices;
   pindices.push_back(registerParameter(x0));
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_Step, sizeof(void*));
+  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_Step, sizeof(void*), 0, cudaMemcpyDeviceToHost);
   initialise(pindices); 
 }
 

@@ -28,7 +28,7 @@ __host__ void PdfBase::copyParams (const std::vector<double>& pars) const {
   if (host_callnumber < 1) {
     std::cout << std::endl; 
   }
-  cudaMemcpyToSymbol(cudaArray, host_params, pars.size()*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(cudaArray, host_params, pars.size()*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
 }
 #else 
 __host__ void PdfBase::copyParams (const std::vector<double>& pars) const {
@@ -43,7 +43,7 @@ __host__ void PdfBase::copyParams (const std::vector<double>& pars) const {
     }
   }
 
-  cudaMemcpyToSymbol(cudaArray, host_params, pars.size()*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(cudaArray, host_params, pars.size()*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
 }
 #endif
 
@@ -61,7 +61,7 @@ __host__ void PdfBase::copyParams () {
 }
 
 __host__ void PdfBase::copyNormFactors () const {
-  cudaMemcpyToSymbol(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
   cudaDeviceSynchronize(); // Ensure normalisation integrals are finished
 }
 
@@ -100,7 +100,7 @@ __host__ void PdfBase::initialiseIndices (std::vector<unsigned int> pindices) {
 	    << paramIndices << " "
 	    << std::endl; 
   */
-  cudaMemcpyToSymbol(paramIndices, host_indices, totalParams*sizeof(unsigned int), 0, cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(paramIndices, host_indices, totalParams*sizeof(unsigned int), 0, cudaMemcpyHostToDevice); 
 }
 
 __host__ void PdfBase::setData (std::vector<std::map<Variable*, fptype> >& data) {
@@ -125,8 +125,8 @@ __host__ void PdfBase::setData (std::vector<std::map<Variable*, fptype> >& data)
   }
 
   cudaMalloc((void**) &dev_event_array, dimensions*numEntries*sizeof(fptype)); 
-  cudaMemcpy(dev_event_array, host_array, dimensions*numEntries*sizeof(fptype), cudaMemcpyHostToDevice);
-  cudaMemcpyToSymbol(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice); 
+  MEMCPY(dev_event_array, host_array, dimensions*numEntries*sizeof(fptype), cudaMemcpyHostToDevice);
+  MEMCPY_TO_SYMBOL(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice); 
   delete[] host_array; 
 }
 
@@ -151,7 +151,7 @@ __host__ void PdfBase::setIndices () {
     (*v)->index = counter++; 
   }
   recursiveSetIndices(); 
-  cudaMemcpyToSymbol(paramIndices, host_indices, totalParams*sizeof(unsigned int), 0, cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(paramIndices, host_indices, totalParams*sizeof(unsigned int), 0, cudaMemcpyHostToDevice); 
 
   //std::cout << "host_indices after " << getName() << " observable setIndices : ";
   //for (int i = 0; i < totalParams; ++i) {
@@ -186,8 +186,8 @@ __host__ void PdfBase::setData (UnbinnedDataSet* data) {
   cudaMalloc((void**) &dev_event_array, dimensions*numEntries*sizeof(fptype)); 
   //cudaDeviceSynchronize();
   //std::cout << "Allocated to " << dev_event_array << std::endl; 
-  cudaMemcpy(dev_event_array, host_array, dimensions*numEntries*sizeof(fptype), cudaMemcpyHostToDevice);
-  cudaMemcpyToSymbol(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice); 
+  MEMCPY(dev_event_array, host_array, dimensions*numEntries*sizeof(fptype), cudaMemcpyHostToDevice);
+  MEMCPY_TO_SYMBOL(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice); 
   delete[] host_array; 
 }
 
@@ -216,50 +216,10 @@ __host__ void PdfBase::setData (BinnedDataSet* data) {
   }
 
   cudaMalloc(&dev_event_array, dimensions*numEntries*sizeof(fptype)); 
-  cudaMemcpy(dev_event_array, host_array, dimensions*numEntries*sizeof(fptype), cudaMemcpyHostToDevice);
-  cudaMemcpyToSymbol(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice); 
+  MEMCPY(dev_event_array, host_array, dimensions*numEntries*sizeof(fptype), cudaMemcpyHostToDevice);
+  MEMCPY_TO_SYMBOL(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice); 
   delete[] host_array; 
 }
-
-/*
-__host__ void PdfBase::setBinnedData (std::vector<std::pair<std::map<Variable*, fptype>, fptype> >& data) {
-  if (dev_event_array) { 
-    cudaFree(dev_event_array);
-    dev_event_array = 0; 
-  }
-
-  numEvents = 0; 
-  numEntries = data.size(); 
-  int dimensions = 2 + observables.size(); // Bin center (x,y, ...), bin value, and bin volume. 
-
-  fptype* host_array = new fptype[numEntries*dimensions]; 
-  int count = 0; 
-
-
-  for (unsigned int i = 0; i < numEntries; ++i) {
-    fptype binVolume = 1; 
-    for (obsIter v = obsBegin(); v != obsEnd(); ++v) {
-      binVolume *= ((*v)->upperlimit - (*v)->lowerlimit) / (*v)->numbins; 
-      //      assert(data[i].first.find(*v) != data[i].first.end()); 
-      host_array[count++] = data[i].first[*v]; 
-      //host_array[count++] = (*v)->lowerlimit + (i + 0.5) * (((*v)->upperlimit - (*v)->lowerlimit) / (*v)->numbins);
-    }
-
-    host_array[count++] = data[i].second; 
-    host_array[count++] = binVolume; 
-    numEvents += data[i].second; 
-  }
-
-  cudaMalloc(&dev_event_array, dimensions*numEntries*sizeof(fptype)); 
-  cudaMemcpy(dev_event_array, host_array, dimensions*numEntries*sizeof(fptype), cudaMemcpyHostToDevice);
-  cudaMemcpyToSymbol(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice); 
-  delete[] host_array; 
-
-  std::cout << "Line " << __LINE__ << "\n";
-  
-  if (!fitControl->binnedFit()) setFitControl(new BinnedNllFit()); 
-}
-*/
 
 __host__ void PdfBase::generateNormRange () {
   if (normRanges) cudaFree(normRanges);
@@ -280,7 +240,7 @@ __host__ void PdfBase::generateNormRange () {
     //std::cout << "Norm range " << getName() << ": " << (*v)->name << " " << (*v)->index << " " << host_norms[3*(*v)->index+0] << " " << host_norms[3*(*v)->index+1] << " " << host_norms[3*(*v)->index+2] << std::endl; 
   }
 
-  cudaMemcpy(normRanges, host_norms, 3*observables.size()*sizeof(fptype), cudaMemcpyHostToDevice);
+  MEMCPY(normRanges, host_norms, 3*observables.size()*sizeof(fptype), cudaMemcpyHostToDevice);
   //std::cout << "Done with copy\n";
   delete[] host_norms; 
   //std::cout << "Done with delete\n"; 
@@ -295,7 +255,7 @@ void PdfBase::clearCurrentFit () {
 __host__ void PdfBase::printProfileInfo (bool topLevel) {
 #ifdef PROFILING
   if (topLevel) {
-    cudaError_t err = cudaMemcpyFromSymbol(host_timeHist, timeHistogram, 10000*sizeof(fptype), 0);
+    cudaError_t err = MEMCPY_FROM_SYMBOL(host_timeHist, timeHistogram, 10000*sizeof(fptype), 0);
     if (cudaSuccess != err) {
       std::cout << "Error on copying timeHistogram: " << cudaGetErrorString(err) << std::endl;
       return;

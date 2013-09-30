@@ -157,7 +157,7 @@ MEM_DEVICE device_metric_ptr ptr_to_Chisq        = calculateChisq;
 void* host_fcn_ptr = 0;
 
 void* getMetricPointer (std::string name) {
-#define CHOOSE_PTR(ptrname) if (name == #ptrname) cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptrname, sizeof(void*))
+#define CHOOSE_PTR(ptrname) if (name == #ptrname) MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptrname, sizeof(void*), 0, cudaMemcpyDeviceToHost)
   host_fcn_ptr = 0; 
   CHOOSE_PTR(ptr_to_Eval); 
   CHOOSE_PTR(ptr_to_NLL); 

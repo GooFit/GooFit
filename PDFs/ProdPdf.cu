@@ -71,7 +71,7 @@ ProdPdf::ProdPdf (std::string n, std::vector<PdfBase*> comps)
     }
   }
 
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_ProdPdfs, sizeof(void*));
+  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_ProdPdfs, sizeof(void*), 0, cudaMemcpyDeviceToHost);
   initialise(pindices); 
 } 
 

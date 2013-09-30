@@ -57,12 +57,12 @@ __host__ ExpPdf::ExpPdf (std::string n, Variable* _x, Variable* alpha, Variable*
   if (offset) {
     pindices.push_back(registerParameter(offset));
     pindices.push_back(registerParameter(alpha));
-    cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_ExpOffset, sizeof(void*));
+    MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_ExpOffset, sizeof(void*), 0, cudaMemcpyDeviceToHost);
     initialise(pindices); 
   }
   else {
     pindices.push_back(registerParameter(alpha));
-    cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_Exp, sizeof(void*));
+    MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_Exp, sizeof(void*), 0, cudaMemcpyDeviceToHost);
     initialise(pindices); 
   }
 }
@@ -76,8 +76,8 @@ __host__ ExpPdf::ExpPdf (std::string n, Variable* _x, std::vector<Variable*>& we
   for (std::vector<Variable*>::iterator w = weights.begin(); w != weights.end(); ++w) {
     pindices.push_back(registerParameter(*w)); 
   }
-  if (offset) cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_ExpPolyOffset, sizeof(void*));
-  else cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_ExpPoly, sizeof(void*));
+  if (offset) MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_ExpPolyOffset, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+  else MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_ExpPoly, sizeof(void*), 0, cudaMemcpyDeviceToHost);
   initialise(pindices); 
 }
 

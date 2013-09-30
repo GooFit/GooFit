@@ -42,7 +42,7 @@ __host__ CrystalBallPdf::CrystalBallPdf (std::string n, Variable* _x, Variable* 
   pindices.push_back(registerParameter(alpha));
   if (!power) power = new Variable(n + "_n", 2); 
   pindices.push_back(registerParameter(power));
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_CrystalBall, sizeof(void*));
+  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_CrystalBall, sizeof(void*), 0, cudaMemcpyDeviceToHost);
   initialise(pindices); 
 }
 

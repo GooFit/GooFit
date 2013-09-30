@@ -139,7 +139,7 @@ ConvolutionPdf::ConvolutionPdf (std::string n,
   paramIndices.push_back(registerConstants(3));
   paramIndices.push_back(workSpaceIndex = totalConvolutions++); 
   
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_ConvolvePdfs, sizeof(void*));
+  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_ConvolvePdfs, sizeof(void*), 0, cudaMemcpyDeviceToHost);
   initialise(paramIndices);
   setIntegrationConstants(-10, 10, 0.01);
 } 
@@ -190,7 +190,7 @@ ConvolutionPdf::ConvolutionPdf (std::string n,
 
   assert(numOthers <= CONVOLUTION_CACHE_SIZE); 
   
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_ConvolveSharedPdfs, sizeof(void*));
+  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_ConvolveSharedPdfs, sizeof(void*), 0, cudaMemcpyDeviceToHost);
   initialise(paramIndices);
   setIntegrationConstants(-10, 10, 0.01);
 } 
@@ -203,7 +203,7 @@ __host__ void ConvolutionPdf::setIntegrationConstants (fptype lo, fptype hi, fpt
   host_iConsts[0] = lo;
   host_iConsts[1] = hi;
   host_iConsts[2] = step;
-  cudaMemcpyToSymbol(functorConstants, host_iConsts, 3*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(functorConstants, host_iConsts, 3*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice); 
   if (modelWorkSpace) {
     delete modelWorkSpace;
     delete resolWorkSpace;
@@ -227,17 +227,17 @@ __host__ void ConvolutionPdf::setIntegrationConstants (fptype lo, fptype hi, fpt
 
   numbins = (int) floor((host_iConsts[4] - host_iConsts[3]) / step + 0.5); 
   host_iConsts[5] = numbins; 
-  cudaMemcpy(dev_iConsts, host_iConsts, 6*sizeof(fptype), cudaMemcpyHostToDevice); 
+  MEMCPY(dev_iConsts, host_iConsts, 6*sizeof(fptype), cudaMemcpyHostToDevice); 
   resolWorkSpace = new thrust::device_vector<fptype>(numbins);
 
   int offset = dependent->upperlimit / step; 
-  cudaMemcpyToSymbol(modelOffset, &offset, sizeof(int), workSpaceIndex*sizeof(int), cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(modelOffset, &offset, sizeof(int), workSpaceIndex*sizeof(int), cudaMemcpyHostToDevice); 
 
   fptype* dev_address[1];
   dev_address[0] = (&((*modelWorkSpace)[0])).get();
-  cudaMemcpyToSymbol(dev_modWorkSpace, dev_address, sizeof(fptype*), workSpaceIndex*sizeof(fptype*), cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(dev_modWorkSpace, dev_address, sizeof(fptype*), workSpaceIndex*sizeof(fptype*), cudaMemcpyHostToDevice); 
   dev_address[0] = (&((*resolWorkSpace)[0])).get();
-  cudaMemcpyToSymbol(dev_resWorkSpace, dev_address, sizeof(fptype*), workSpaceIndex*sizeof(fptype*), cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(dev_resWorkSpace, dev_address, sizeof(fptype*), workSpaceIndex*sizeof(fptype*), cudaMemcpyHostToDevice); 
 }
 
 __host__ void ConvolutionPdf::registerOthers (std::vector<ConvolutionPdf*> others) {
@@ -269,7 +269,7 @@ __host__ fptype ConvolutionPdf::normalise () const {
 
   // First set normalisation factors to one so we can evaluate convolution without getting zeroes
   recursiveSetNormalisation(fptype(1.0)); 
-  cudaMemcpyToSymbol(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
 
   // Next recalculate functions at each point, in preparation for convolution integral
   thrust::constant_iterator<fptype*> arrayAddress(dev_iConsts); 

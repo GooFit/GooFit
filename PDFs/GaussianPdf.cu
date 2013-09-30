@@ -24,7 +24,7 @@ __host__ GaussianPdf::GaussianPdf (std::string n, Variable* _x, Variable* mean, 
   std::vector<unsigned int> pindices;
   pindices.push_back(registerParameter(mean));
   pindices.push_back(registerParameter(sigma));
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_Gaussian, sizeof(void*));
+  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_Gaussian, sizeof(void*), 0, cudaMemcpyDeviceToHost);
   initialise(pindices); 
 }
 

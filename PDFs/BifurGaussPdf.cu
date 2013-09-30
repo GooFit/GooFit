@@ -23,7 +23,7 @@ __host__ BifurGaussPdf::BifurGaussPdf (std::string n, Variable* _x, Variable *me
   pindices.push_back(registerParameter(mean));
   pindices.push_back(registerParameter(sigmaL));
   pindices.push_back(registerParameter(sigmaR));
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_BifurGauss, sizeof(void**));
+  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_BifurGauss, sizeof(void**), 0, cudaMemcpyDeviceToHost);
   initialise(pindices);
 }
 

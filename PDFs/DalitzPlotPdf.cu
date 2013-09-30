@@ -118,7 +118,7 @@ __host__ DalitzPlotPdf::DalitzPlotPdf (std::string n,
   decayConstants[2] = decayInfo->daug2Mass;
   decayConstants[3] = decayInfo->daug3Mass;
   decayConstants[4] = decayInfo->meson_radius;
-  cudaMemcpyToSymbol(functorConstants, decayConstants, 5*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice);  
+  MEMCPY_TO_SYMBOL(functorConstants, decayConstants, 5*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice);  
   
   pindices.push_back(decayInfo->resonances.size()); 
   static int cacheCount = 0; 
@@ -138,7 +138,7 @@ __host__ DalitzPlotPdf::DalitzPlotPdf (std::string n,
   pindices.push_back(efficiency->getParameterIndex());
   components.push_back(efficiency); 
 
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_DalitzPlot, sizeof(void*));
+  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_DalitzPlot, sizeof(void*), 0, cudaMemcpyDeviceToHost);
   initialise(pindices);
 
   redoIntegral = new bool[decayInfo->resonances.size()];
@@ -175,7 +175,7 @@ __host__ void DalitzPlotPdf::setDataSize (unsigned int dataSize, unsigned int ev
   numEntries = dataSize; 
   cachedWaves = new thrust::device_vector<devcomplex<fptype> >(dataSize*decayInfo->resonances.size());
   void* dummy = thrust::raw_pointer_cast(cachedWaves->data()); 
-  cudaMemcpyToSymbol(cResonances, &dummy, sizeof(devcomplex<fptype>*), cacheToUse*sizeof(devcomplex<fptype>*)); 
+  MEMCPY_TO_SYMBOL(cResonances, &dummy, sizeof(devcomplex<fptype>*), cacheToUse*sizeof(devcomplex<fptype>*), cudaMemcpyHostToDevice); 
   setForceIntegrals(); 
 }
 
@@ -184,7 +184,7 @@ __host__ fptype DalitzPlotPdf::normalise () const {
   // so set normalisation factor to 1 so it doesn't get multiplied by zero. 
   // Copy at this time to ensure that the SpecialResonanceCalculators, which need the efficiency, 
   // don't get zeroes through multiplying by the normFactor. 
-  cudaMemcpyToSymbol(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
 
   int totalBins = _m12->numbins * _m13->numbins;
   if (!dalitzNormRange) {
@@ -197,7 +197,7 @@ __host__ fptype DalitzPlotPdf::normalise () const {
     host_norms[3] = _m13->lowerlimit;
     host_norms[4] = _m13->upperlimit;
     host_norms[5] = _m13->numbins;
-    cudaMemcpy(dalitzNormRange, host_norms, 6*sizeof(fptype), cudaMemcpyHostToDevice);
+    MEMCPY(dalitzNormRange, host_norms, 6*sizeof(fptype), cudaMemcpyHostToDevice);
     delete[] host_norms; 
   }
 

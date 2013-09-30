@@ -109,7 +109,7 @@ ThreeGaussResolution::ThreeGaussResolution (Variable* cf, Variable* tf, Variable
   , outBias(ob)
   , outScaleFactor(os)
 {
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_threegauss, sizeof(void*));
+  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_threegauss, sizeof(void*), 0, cudaMemcpyDeviceToHost);
   initIndex(); 
 }
 ThreeGaussResolution::~ThreeGaussResolution () {} 

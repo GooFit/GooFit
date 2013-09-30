@@ -86,7 +86,7 @@ __host__ IncoherentSumPdf::IncoherentSumPdf (std::string n, Variable* m12, Varia
   pindices.push_back(efficiency->getParameterIndex());
   components.push_back(efficiency); 
 
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_incoherent, sizeof(void*));
+  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_incoherent, sizeof(void*), 0, cudaMemcpyDeviceToHost);
   initialise(pindices); 
 
   redoIntegral = new bool[decayInfo->resonances.size()];
@@ -146,7 +146,7 @@ __host__ fptype IncoherentSumPdf::normalise () const {
     host_norms[3] = _m13->lowerlimit;
     host_norms[4] = _m13->upperlimit;
     host_norms[5] = _m13->numbins;
-    cudaMemcpy(dalitzNormRange, host_norms, 6*sizeof(fptype), cudaMemcpyHostToDevice);
+    MEMCPY(dalitzNormRange, host_norms, 6*sizeof(fptype), cudaMemcpyHostToDevice);
     delete[] host_norms; 
   }
 

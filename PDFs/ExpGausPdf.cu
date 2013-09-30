@@ -25,7 +25,7 @@ ExpGausPdf::ExpGausPdf (std::string n, Variable* _x, Variable* mean, Variable* s
   pindices.push_back(registerParameter(mean));
   pindices.push_back(registerParameter(sigma));
   pindices.push_back(registerParameter(tau));
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_ExpGaus, sizeof(void*));
+  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_ExpGaus, sizeof(void*), 0, cudaMemcpyDeviceToHost);
   initialise(pindices); 
 }
 

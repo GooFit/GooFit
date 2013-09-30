@@ -31,7 +31,7 @@ __host__ JohnsonSUPdf::JohnsonSUPdf (std::string n, Variable* _x, Variable* mean
   pindices.push_back(registerParameter(sigma));
   pindices.push_back(registerParameter(gamma));
   pindices.push_back(registerParameter(delta));
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_JohnsonSU, sizeof(void*));
+  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_JohnsonSU, sizeof(void*), 0, cudaMemcpyDeviceToHost);
   initialise(pindices); 
 }
 

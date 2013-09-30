@@ -118,7 +118,7 @@ __host__ SmoothHistogramPdf::SmoothHistogramPdf (std::string n, BinnedDataSet* h
     pindices.push_back(cIndex + 2*varIndex + 1);
     pindices.push_back((*var)->numbins);
 
-    host_constants[2*varIndex + 0] = (*var)->lowerlimit; // NB, do not put cIndex here, it is accounted for by the offset in cudaMemcpyToSymbol below. 
+    host_constants[2*varIndex + 0] = (*var)->lowerlimit; // NB, do not put cIndex here, it is accounted for by the offset in MEMCPY_TO_SYMBOL below. 
     host_constants[2*varIndex + 1] = ((*var)->upperlimit - (*var)->lowerlimit) / (*var)->numbins; 
     varIndex++; 
   }
@@ -130,11 +130,11 @@ __host__ SmoothHistogramPdf::SmoothHistogramPdf (std::string n, BinnedDataSet* h
     host_histogram.push_back(curr);
     totalEvents += curr; 
   }
-  cudaMemcpyToSymbol(functorConstants, host_constants, numConstants*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(functorConstants, host_constants, numConstants*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice); 
   if (totalEvents > 0) copyHistogramToDevice(host_histogram);
   else std::cout << "Warning: Empty histogram supplied to " << getName() << " not copied to device. Expect copyHistogramToDevice call later.\n"; 
 
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_EvalHistogram, sizeof(void*));
+  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_EvalHistogram, sizeof(void*), 0, cudaMemcpyDeviceToHost);
   initialise(pindices); 
 }
 
@@ -143,9 +143,9 @@ __host__ void SmoothHistogramPdf::copyHistogramToDevice (thrust::host_vector<fpt
   dev_smoothed_histogram = new thrust::device_vector<fptype>(host_histogram);  
   static fptype* dev_address[1];
   dev_address[0] = (&((*dev_base_histogram)[0])).get();
-  cudaMemcpyToSymbol(dev_base_histograms, dev_address, sizeof(fptype*), totalHistograms*sizeof(fptype*), cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(dev_base_histograms, dev_address, sizeof(fptype*), totalHistograms*sizeof(fptype*), cudaMemcpyHostToDevice); 
   dev_address[0] = (&((*dev_smoothed_histogram)[0])).get();
-  cudaMemcpyToSymbol(dev_smoothed_histograms, dev_address, sizeof(fptype*), totalHistograms*sizeof(fptype*), cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(dev_smoothed_histograms, dev_address, sizeof(fptype*), totalHistograms*sizeof(fptype*), cudaMemcpyHostToDevice); 
 
   totalHistograms++; 
 

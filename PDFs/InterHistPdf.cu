@@ -142,7 +142,7 @@ __host__ InterHistPdf::InterHistPdf (std::string n,
     pindices.push_back(cIndex + 2*varIndex + 1);
     pindices.push_back((*var)->numbins);
 
-    // NB, do not put cIndex here, it is accounted for by the offset in cudaMemcpyToSymbol below. 
+    // NB, do not put cIndex here, it is accounted for by the offset in MEMCPY_TO_SYMBOL below. 
     host_constants[2*varIndex + 0] = (*var)->lowerlimit; 
     host_constants[2*varIndex + 1] = ((*var)->upperlimit - (*var)->lowerlimit) / (*var)->numbins; 
     varIndex++; 
@@ -155,13 +155,13 @@ __host__ InterHistPdf::InterHistPdf (std::string n,
     host_histogram.push_back(curr);
     totalEvents += curr; 
   }
-  cudaMemcpyToSymbol(functorConstants, host_constants, numConstants*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(functorConstants, host_constants, numConstants*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice); 
 
   dev_base_histogram = new thrust::device_vector<fptype>(host_histogram);  
   static fptype* dev_address[1];
   dev_address[0] = (&((*dev_base_histogram)[0])).get();
-  cudaMemcpyToSymbol(dev_base_interhists, dev_address, sizeof(fptype*), totalHistograms*sizeof(fptype*), cudaMemcpyHostToDevice); 
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_InterHistogram, sizeof(void*));
+  MEMCPY_TO_SYMBOL(dev_base_interhists, dev_address, sizeof(fptype*), totalHistograms*sizeof(fptype*), cudaMemcpyHostToDevice); 
+  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_InterHistogram, sizeof(void*), 0, cudaMemcpyDeviceToHost);
   initialise(pindices); 
 
   totalHistograms++; 

@@ -53,9 +53,9 @@ std::map<void*, int> functionAddressToDeviceIndexMap;
 void printMemoryStatus (std::string file, int line) {
   size_t memfree = 0;
   size_t memtotal = 0; 
-  cudaDeviceSynchronize(); 
+  SYNCH(); 
   cudaMemGetInfo(&memfree, &memtotal); 
-  cudaDeviceSynchronize(); 
+  SYNCH(); 
   std::cout << "Memory status " << file << " " << line << " Free " << memfree << " Total " << memtotal << " Used " << (memtotal - memfree) << std::endl;
 }
 
@@ -302,7 +302,7 @@ __host__ double GooPdf::calculateNLL () const {
     abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " non-positive normalisation", this);
 
   cudaMemcpyToSymbol(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
-  cudaDeviceSynchronize(); // Ensure normalisation integrals are finished
+  SYNCH(); // Ensure normalisation integrals are finished
 
   int numVars = observables.size(); 
   if (fitControl->binnedFit()) {

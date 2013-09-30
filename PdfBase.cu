@@ -62,7 +62,7 @@ __host__ void PdfBase::copyParams () {
 
 __host__ void PdfBase::copyNormFactors () const {
   MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
-  cudaDeviceSynchronize(); // Ensure normalisation integrals are finished
+  SYNCH(); // Ensure normalisation integrals are finished
 }
 
 __host__ void PdfBase::initialiseIndices (std::vector<unsigned int> pindices) {
@@ -164,7 +164,7 @@ __host__ void PdfBase::setIndices () {
 __host__ void PdfBase::setData (UnbinnedDataSet* data) {
   if (dev_event_array) {
     gooFree(dev_event_array);
-    cudaDeviceSynchronize();
+    SYNCH();
     dev_event_array = 0; 
   }
 

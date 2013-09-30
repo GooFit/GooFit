@@ -283,7 +283,7 @@ __host__ fptype ConvolutionPdf::normalise () const {
 		      thrust::make_zip_iterator(thrust::make_tuple(binIndex + modelWorkSpace->size(), eventSize, arrayAddress)),
 		      modelWorkSpace->begin(), 
 		      modalor);
-    cudaDeviceSynchronize(); 
+    SYNCH(); 
     model->storeParameters();
     /*
     if ((cpuDebug & 1) && (5 == workSpaceIndex)) {
@@ -307,7 +307,7 @@ __host__ fptype ConvolutionPdf::normalise () const {
     resolution->storeParameters(); 
   }
 
-  //cudaDeviceSynchronize(); 
+  //SYNCH(); 
 
   // Then return usual integral
   fptype ret = GooPdf::normalise();

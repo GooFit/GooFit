@@ -23,12 +23,17 @@ cudaError_t gooFree (void* ptr);
 #define MEM_CONSTANT 
 #define EXEC_TARGET __host__
 #define MEMCPY(target, source, count, dummy) memcpy(target, source, count)
+#define MEMCPY_TO_SYMBOL(target, source, count, offset, direction) memcpy(target, source, count)
+#define MEMCPY_FROM_SYMBOL(target, source, count, offset, direction) memcpy(target, source, count)
+#define SYNCH dummySynch
+void dummySynch () {}
 #else
 // CUDA target - defaults
 #define MEM_DEVICE __device__
 #define MEM_SHARED __shared__
 #define MEM_CONSTANT __constant__ 
 #define EXEC_TARGET __device__
+#define SYNCH cudaDeviceSynchronize 
 #define MEMCPY(target, source, count, direction) cudaMemcpy(target, source, count, direction) 
 #define MEMCPY_TO_SYMBOL(target, source, count, offset, direction) cudaMemcpyToSymbol(target, source, count, offset, direction)
 #define MEMCPY_FROM_SYMBOL(target, source, count, offset, direction) cudaMemcpyFromSymbol(target, source, count, offset, direction)

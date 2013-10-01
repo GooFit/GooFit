@@ -259,7 +259,7 @@ EXEC_TARGET fptype device_Voigtian (fptype* evt, fptype* p, unsigned int* indice
   fptype s = p[indices[3]];
 
 #ifdef CUDAPRINT
-  //if ((0 == THREADIDX) && (0 == blockIdx.x))
+  //if ((0 == THREADIDX) && (0 == BLOCKIDX))
   //cuPrintf("Values %f %i %i %i %f %f %f %i %i\n", x, indices[1], indices[2], indices[3], m, w, s, indices, callnumber); 
   if (callnumber < 1) cuPrintf("Voigtian Values %f %i %i %i %f %f %f %i\n", x, indices[1], indices[2], indices[3], m, w, s, callnumber); 
 

@@ -23,14 +23,14 @@ EXEC_TARGET fptype device_EvalHistogram (fptype* evt, fptype* p, unsigned int* i
   for (int i = 0; i < numVars; ++i) { 
     int varIndex = indices[indices[0] + 2 + i]; 
     int lowerBoundIdx   = 3*(i+1);
-    //if (gpuDebug & 1) printf("[%i, %i] Smoothed: %i %i %i\n", blockIdx.x, THREADIDX, i, varIndex, indices[varIndex]); 
+    //if (gpuDebug & 1) printf("[%i, %i] Smoothed: %i %i %i\n", BLOCKIDX, THREADIDX, i, varIndex, indices[varIndex]); 
     fptype currVariable = evt[varIndex];
     fptype lowerBound   = functorConstants[indices[lowerBoundIdx + 0]];
     fptype step         = functorConstants[indices[lowerBoundIdx + 1]];
 
     currVariable -= lowerBound;
     currVariable /= step; 
-    //if (gpuDebug & 1) printf("[%i, %i] Smoothed: %i %i %f %f %f %f\n", blockIdx.x, THREADIDX, i, varIndex, currVariable, lowerBound, step, evt[varIndex]); 
+    //if (gpuDebug & 1) printf("[%i, %i] Smoothed: %i %i %f %f %f %f\n", BLOCKIDX, THREADIDX, i, varIndex, currVariable, lowerBound, step, evt[varIndex]); 
 
     int localBinNumber  = (int) FLOOR(currVariable); 
     globalBinNumber    += previous * localBinNumber; 

@@ -14,7 +14,7 @@ EXEC_TARGET fptype device_JohnsonSU (fptype* evt, fptype* p, unsigned int* indic
   fptype sqrt_arg = SQRT(1+px2); 
   fptype inv_sinh = LOG(px + sqrt_arg); 
   fptype gaus_arg = _Jg + _Jd * inv_sinh; 
-  //if ((gpuDebug & 1) && (0 == blockIdx.x) && (0 == THREADIDX))
+  //if ((gpuDebug & 1) && (0 == BLOCKIDX) && (0 == THREADIDX))
   //if (gpuDebug & 1)
     //printf("Johnson SU: %f %f %f %f | %f %f %i\n", _Jm, _Js, _Jg, _Jd, x, _Jd / (_Js * SQRT2PI * sqrt_arg) * EXP(-0.5 * gaus_arg * gaus_arg), indices[2 + indices[0]]); 
     //printf("Johnson SU: %f %f %f %f | %f %f %f %f\n", _Jm, _Js, _Jg, _Jd, x, _Jd / (_Js * SQRT2PI * sqrt_arg) * EXP(-0.5 * gaus_arg * gaus_arg), cudaArray[indices[1]], cudaArray[indices[2]]);

@@ -160,7 +160,7 @@ EXEC_TARGET fptype device_Tddp (fptype* evt, fptype* p, unsigned int* indices) {
   fptype _time    = evt[indices[2 + indices[0]]];
   fptype _sigma   = evt[indices[3 + indices[0]]];
 
-  //if ((gpuDebug & 1) && (0 == blockIdx.x) && (0 == THREADIDX)) 
+  //if ((gpuDebug & 1) && (0 == BLOCKIDX) && (0 == THREADIDX)) 
   //if (0 == evtNum) printf("TDDP: (%f, %f) (%f, %f)\n", sumWavesA.real, sumWavesA.imag, sumWavesB.real, sumWavesB.imag);
   //printf("TDDP: %f %f %f %f | %f %f %i\n", m12, m13, _time, _sigma, _xmixing, _tau, evtNum); 
 
@@ -178,7 +178,7 @@ EXEC_TARGET fptype device_Tddp (fptype* evt, fptype* p, unsigned int* indices) {
   fptype term1 = norm2(sumWavesA) + norm2(sumWavesB);
   fptype term2 = norm2(sumWavesA) - norm2(sumWavesB);
   sumWavesA *= conj(sumWavesB); 
-  //printf("(%i, %i) TDDP: %f %f %f %f %f %f %f\n", blockIdx.x, THREADIDX, term1, term2, sumWavesA.real, sumWavesA.imag, m12, m13, _tau);
+  //printf("(%i, %i) TDDP: %f %f %f %f %f %f %f\n", BLOCKIDX, THREADIDX, term1, term2, sumWavesA.real, sumWavesA.imag, m12, m13, _tau);
 
   // Cannot use callFunction on resolution function. 
   int effFunctionIdx = parIndexFromResIndex(numResonances); 
@@ -247,7 +247,7 @@ EXEC_TARGET fptype device_Tddp (fptype* evt, fptype* p, unsigned int* indices) {
   //if (evtNum < 50) {
   //if ((gpuDebug & 1) && (0 == THREADIDX)) {
   //if ((gpuDebug & 1) && (180 == evtNum)) {
-  //if ((0 == THREADIDX) && (0 == blockIdx.x) && (gpuDebug & 1)) {
+  //if ((0 == THREADIDX) && (0 == BLOCKIDX) && (gpuDebug & 1)) {
   //sumRateAA *= eff;
   //sumRateAB *= eff;
   //sumRateBB *= eff;
@@ -260,11 +260,11 @@ EXEC_TARGET fptype device_Tddp (fptype* evt, fptype* p, unsigned int* indices) {
   //cudaArray[indices[effFunctionIdx+1]+7], cudaArray[indices[effFunctionIdx+1]+8]); 
   //}
 
-  //printf("(%i, %i) TDDP: %f %f %f %f %f %i %f\n", blockIdx.x, THREADIDX, _time, _sigma, m12, m13, term1, evtNum, ret);
+  //printf("(%i, %i) TDDP: %f %f %f %f %f %i %f\n", BLOCKIDX, THREADIDX, _time, _sigma, m12, m13, term1, evtNum, ret);
   //if ((gpuDebug & 1) && (isnan(ret)))
-  //printf("(%i, %i) TDDP: %f %f %f %f %i %i %f\n", blockIdx.x, THREADIDX, _time, _sigma, m12, m13, evtNum, indices[6 + indices[0]], evt[indices[6 + indices[0]]]);
+  //printf("(%i, %i) TDDP: %f %f %f %f %i %i %f\n", BLOCKIDX, THREADIDX, _time, _sigma, m12, m13, evtNum, indices[6 + indices[0]], evt[indices[6 + indices[0]]]);
   //if ((gpuDebug & 1) && (isnan(ret)))
-  //printf("(%i, %i) TDDP: %f %f %f %f %f %f %f\n", blockIdx.x, THREADIDX, term1, term2, sumWavesA.real, sumWavesA.imag, _xmixing, _ymixing, _tau);
+  //printf("(%i, %i) TDDP: %f %f %f %f %f %f %f\n", BLOCKIDX, THREADIDX, term1, term2, sumWavesA.real, sumWavesA.imag, _xmixing, _ymixing, _tau);
 
   return ret; 
 }
@@ -670,7 +670,7 @@ EXEC_TARGET ThreeComplex SpecialDalitzIntegrator::operator () (thrust::tuple<int
   fakeEvt[indices[indices[0] + 2 + 3]] = binCenterM13;
   unsigned int numResonances = indices[6]; 
   int effFunctionIdx = parIndexFromResIndex(numResonances); 
-  //if (thrust::get<0>(t) == 19840) {internalDebug1 = blockIdx.x; internalDebug2 = THREADIDX;}
+  //if (thrust::get<0>(t) == 19840) {internalDebug1 = BLOCKIDX; internalDebug2 = THREADIDX;}
   //fptype eff = (*(reinterpret_cast<device_function_ptr>(device_function_table[indices[effFunctionIdx]])))(fakeEvt, cudaArray, paramIndices + indices[effFunctionIdx + 1]);
   fptype eff = callFunction(fakeEvt, indices[effFunctionIdx], indices[effFunctionIdx + 1]); 
   //if (thrust::get<0>(t) == 19840) {

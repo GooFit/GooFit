@@ -7,9 +7,9 @@ EXEC_TARGET fptype device_Gaussian (fptype* evt, fptype* p, unsigned int* indice
 
   fptype ret = EXP(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
 
-  //if ((0 == THREADIDX) && (0 == blockIdx.x)) cuPrintf("Gaussian Values %f %i %i %f %f %i\n", x, indices[1], indices[2], mean, sigma, callnumber); 
+  //if ((0 == THREADIDX) && (0 == BLOCKIDX)) cuPrintf("Gaussian Values %f %i %i %f %f %i\n", x, indices[1], indices[2], mean, sigma, callnumber); 
   //cuPrintf("device_Gaussian %f %i %i %f %f %i %p %f\n", x, indices[1], indices[2], mean, sigma, callnumber, indices, ret); 
-  //if ((0 == THREADIDX) && (0 == blockIdx.x))
+  //if ((0 == THREADIDX) && (0 == BLOCKIDX))
   //printf("device_Gaussian %f %f %f %i %f\n", x, mean, sigma, callnumber, ret);     
 
 

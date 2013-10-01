@@ -97,7 +97,7 @@ EXEC_TARGET fptype calculateEval (fptype rawPdf, fptype* evtVal, unsigned int pa
 }
 
 EXEC_TARGET fptype calculateNLL (fptype rawPdf, fptype* evtVal, unsigned int par) {
-  //if ((10 > callnumber) && (THREADIDX < 10) && (blockIdx.x == 0)) cuPrintf("calculateNll %i %f %f %f\n", callnumber, rawPdf, normalisationFactors[par], rawPdf*normalisationFactors[par]);
+  //if ((10 > callnumber) && (THREADIDX < 10) && (BLOCKIDX == 0)) cuPrintf("calculateNll %i %f %f %f\n", callnumber, rawPdf, normalisationFactors[par], rawPdf*normalisationFactors[par]);
   //if (THREADIDX < 50) printf("Thread %i %f %f\n", THREADIDX, rawPdf, normalisationFactors[par]); 
   rawPdf *= normalisationFactors[par];
   return rawPdf > 0 ? -LOG(rawPdf) : 0; 
@@ -124,7 +124,7 @@ EXEC_TARGET fptype calculateBinWithError (fptype rawPdf, fptype* evtVal, unsigne
   // In this case interpret the rawPdf as just a number, not a number of events. 
   // Do not divide by integral over phase space, do not multiply by bin volume, 
   // and do not collect 200 dollars. evtVal should have the structure (bin entry, bin error). 
-  //printf("[%i, %i] ((%f - %f) / %f)^2 = %f\n", blockIdx.x, THREADIDX, rawPdf, evtVal[0], evtVal[1], POW((rawPdf - evtVal[0]) / evtVal[1], 2)); 
+  //printf("[%i, %i] ((%f - %f) / %f)^2 = %f\n", BLOCKIDX, THREADIDX, rawPdf, evtVal[0], evtVal[1], POW((rawPdf - evtVal[0]) / evtVal[1], 2)); 
   rawPdf -= evtVal[0]; // Subtract observed value.
   rawPdf /= evtVal[1]; // Divide by error.
   rawPdf *= rawPdf; 
@@ -538,7 +538,7 @@ EXEC_TARGET fptype callFunction (fptype* eventAddress, unsigned int functionIdx,
   clock_t start = clock();
   fptype ret = (*(reinterpret_cast<device_function_ptr>(device_function_table[functionIdx])))(eventAddress, cudaArray, paramIndices + paramIdx);
   clock_t stop = clock(); 
-  if ((0 == THREADIDX + blockIdx.x) && (stop > start)) {
+  if ((0 == THREADIDX + BLOCKIDX) && (stop > start)) {
     // Avoid issue when stop overflows and start doesn't. 
     timeHistogram[functionIdx*100 + paramIdx] += ((stop - start) * conversion); 
     //printf("Clock: %li %li %li | %u %f\n", (long) start, (long) stop, (long) (stop - start), functionIdx, timeHistogram[functionIdx]); 

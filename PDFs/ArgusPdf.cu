@@ -30,10 +30,10 @@ EXEC_TARGET fptype device_Argus_Lower (fptype* evt, fptype* p, unsigned int* ind
   fptype slope = p[indices[2]];
   fptype power = p[indices[3]]; 
   fptype ret = x * POW(t, power) * EXP(slope * t);
-  //if ((0 == THREADIDX) && (0 == blockIdx.x) && (callnumber < 1)) cuPrintf("device_Argus_Lower %i %i %f %f %f %f %f\n", indices[1], indices[2], x, m0, slope, t, ret); 
+  //if ((0 == THREADIDX) && (0 == BLOCKIDX) && (callnumber < 1)) cuPrintf("device_Argus_Lower %i %i %f %f %f %f %f\n", indices[1], indices[2], x, m0, slope, t, ret); 
   //if (isnan(ret)) printf("NaN Argus: %f %f %f %f %f %f %f\n", x, m0, t, slope, power, POW(t, power), EXP(slope*t));
-  //if ((0 == THREADIDX) && (0 == blockIdx.x) && (gpuDebug & 1))
-  //printf("(%i, %i) device_Argus_Lower %f %f %f %f %f\n", blockIdx.x, THREADIDX, x, m0, slope, t, x * POW(t, power) * EXP(slope * t)); 
+  //if ((0 == THREADIDX) && (0 == BLOCKIDX) && (gpuDebug & 1))
+  //printf("(%i, %i) device_Argus_Lower %f %f %f %f %f\n", BLOCKIDX, THREADIDX, x, m0, slope, t, x * POW(t, power) * EXP(slope * t)); 
   
   
   return ret;

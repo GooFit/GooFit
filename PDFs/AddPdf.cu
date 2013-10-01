@@ -10,7 +10,7 @@ EXEC_TARGET fptype device_AddPdfs (fptype* evt, fptype* p, unsigned int* indices
     fptype weight = p[indices[i+2]];
     ret += weight * curr * normalisationFactors[indices[i+1]]; 
 
-    //if ((gpuDebug & 1) && (0 == THREADIDX) && (0 == blockIdx.x)) 
+    //if ((gpuDebug & 1) && (0 == THREADIDX) && (0 == BLOCKIDX)) 
     //if ((1 > (int) floor(0.5 + evt[8])) && (gpuDebug & 1) && (paramIndices + debugParamIndex == indices))
     //printf("Add comp %i: %f * %f * %f = %f (%f)\n", i, weight, curr, normalisationFactors[indices[i+1]], weight*curr*normalisationFactors[indices[i+1]], ret); 
 
@@ -24,7 +24,7 @@ EXEC_TARGET fptype device_AddPdfs (fptype* evt, fptype* p, unsigned int* indices
 
   //if ((THREADIDX < 50) && (isnan(ret))) printf("NaN final component %f %f\n", last, totalWeight); 
 
-  //if ((gpuDebug & 1) && (0 == THREADIDX) && (0 == blockIdx.x)) 
+  //if ((gpuDebug & 1) && (0 == THREADIDX) && (0 == BLOCKIDX)) 
   //if ((1 > (int) floor(0.5 + evt[8])) && (gpuDebug & 1) && (paramIndices + debugParamIndex == indices))
   //printf("Add final: %f * %f * %f = %f (%f)\n", (1 - totalWeight), last, normalisationFactors[indices[numParameters]], (1 - totalWeight) *last* normalisationFactors[indices[numParameters]], ret); 
   
@@ -46,13 +46,13 @@ EXEC_TARGET fptype device_AddPdfsExt (fptype* evt, fptype* p, unsigned int* indi
     ret += weight * curr * normalisationFactors[indices[i+1]]; 
 
     totalWeight += weight; 
-    //if ((gpuDebug & 1) && (THREADIDX == 0) && (0 == blockIdx.x)) 
+    //if ((gpuDebug & 1) && (THREADIDX == 0) && (0 == BLOCKIDX)) 
     //if ((1 > (int) floor(0.5 + evt[8])) && (gpuDebug & 1) && (paramIndices + debugParamIndex == indices))
     //printf("AddExt: %i %E %f %f %f %f %f %f\n", i, curr, weight, ret, totalWeight, normalisationFactors[indices[i+1]], evt[0], evt[8]);
   }
   ret /= totalWeight; 
   //if ((1 > (int) floor(0.5 + evt[8])) && (gpuDebug & 1) && (paramIndices + debugParamIndex == indices))
-  //if ((gpuDebug & 1) && (THREADIDX == 0) && (0 == blockIdx.x)) 
+  //if ((gpuDebug & 1) && (THREADIDX == 0) && (0 == BLOCKIDX)) 
   //printf("AddExt result: %f\n", ret); 
   
   return ret; 

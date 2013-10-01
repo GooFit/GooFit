@@ -36,7 +36,7 @@ EXEC_TARGET fptype device_KinLimitBW (fptype* evt, fptype* p, unsigned int* indi
   fptype ret = (phspfactor * mean*width*width)/(phspMassSq + mean*phspGammaSq); 
 #ifdef CUDAPRINT
   /*
-  if (((0 == THREADIDX) && (0 == blockIdx.x) && (callnumber < 10)) || (isnan(ret))) 
+  if (((0 == THREADIDX) && (0 == BLOCKIDX) && (callnumber < 10)) || (isnan(ret))) 
       cuPrintf("KinLimitBW %f %f %f %f %f %f %f %f %f %f\n",
 	       p[indices[1]], 
 	       width,
@@ -51,7 +51,7 @@ EXEC_TARGET fptype device_KinLimitBW (fptype* evt, fptype* p, unsigned int* indi
   */								     
 #endif
 
-  //  if (gpuDebug & 1) printf("[%i, %i] KinLimitBW: %f %f %f %f %f\n", blockIdx.x, THREADIDX, x, mean, width, d0mass, pimass, ret);
+  //  if (gpuDebug & 1) printf("[%i, %i] KinLimitBW: %f %f %f %f %f\n", BLOCKIDX, THREADIDX, x, mean, width, d0mass, pimass, ret);
   return ret; 
 }
 

@@ -5,7 +5,7 @@ EXEC_TARGET fptype device_BinTransform (fptype* evt, fptype* p, unsigned int* in
   int numObservables = indices[1 + indices[0]];
   int ret = 0;
   int previousSize = 1; 
-  //printf("[%i, %i] Bin Transform: %i %i %f %f\n", threadIdx.x, blockIdx.x, numObservables, previousSize, evt[0], evt[1]); 
+  //printf("[%i, %i] Bin Transform: %i %i %f %f\n", THREADIDX, blockIdx.x, numObservables, previousSize, evt[0], evt[1]); 
   for (int i = 0; i < numObservables; ++i) {
     fptype obsValue   = evt[indices[2 + indices[0] + i]];
     fptype lowerLimit = functorConstants[indices[i*3+1]];

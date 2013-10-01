@@ -49,10 +49,10 @@ EXEC_TARGET fptype device_MultiPolynomial (fptype* evt, fptype* p, unsigned int*
     fptype currTerm = 1; 
     int currIndex = i; 
     int sumOfIndices = 0; 
-    //if ((gpuDebug & 1) && (threadIdx.x == 50) && (blockIdx.x == 3))
-    //if ((blockIdx.x == internalDebug1) && (threadIdx.x == internalDebug2)) 
+    //if ((gpuDebug & 1) && (THREADIDX == 50) && (blockIdx.x == 3))
+    //if ((blockIdx.x == internalDebug1) && (THREADIDX == internalDebug2)) 
     //if ((1 > (int) floor(0.5 + evt[8])) && (gpuDebug & 1) && (paramIndices + debugParamIndex == indices))
-    //printf("[%i, %i] Start box %i %f %f:\n", blockIdx.x, threadIdx.x, i, ret, evt[8]);
+    //printf("[%i, %i] Start box %i %f %f:\n", blockIdx.x, THREADIDX, i, ret, evt[8]);
     for (int j = 0; j < numObservables; ++j) {
       fptype x = evt[indices[2 + indices[0] + j]]; // x, y, z...    
       fptype offset = p[indices[2 + j]]; // x0, y0, z0... 
@@ -61,19 +61,19 @@ EXEC_TARGET fptype device_MultiPolynomial (fptype* evt, fptype* p, unsigned int*
       currIndex /= maxDegree; 
       currTerm *= POW(x, currPower);
       sumOfIndices += currPower; 
-      //if ((gpuDebug & 1) && (threadIdx.x == 50) && (blockIdx.x == 3))
-      //if ((blockIdx.x == internalDebug1) && (threadIdx.x == internalDebug2)) 
+      //if ((gpuDebug & 1) && (THREADIDX == 50) && (blockIdx.x == 3))
+      //if ((blockIdx.x == internalDebug1) && (THREADIDX == internalDebug2)) 
       //if ((1 > (int) floor(0.5 + evt[8])) && (gpuDebug & 1) && (paramIndices + debugParamIndex == indices))
       //printf("  [%f -> %f^%i = %f] (%i %i) \n", evt[indices[2 + indices[0] + j]], x, currPower, POW(x, currPower), sumOfIndices, indices[2 + indices[0] + j]); 
     }
-    //if ((gpuDebug & 1) && (threadIdx.x == 50) && (blockIdx.x == 3))
-    //if ((blockIdx.x == internalDebug1) && (threadIdx.x == internalDebug2)) 
+    //if ((gpuDebug & 1) && (THREADIDX == 50) && (blockIdx.x == 3))
+    //if ((blockIdx.x == internalDebug1) && (THREADIDX == internalDebug2)) 
     //printf(") End box %i\n", i);
     // All threads should hit this at the same time and with the same result. No branching. 
     if (sumOfIndices >= maxDegree) continue; 
     fptype coefficient = p[indices[coeffNumber++]]; // Coefficient from MINUIT
-    //if ((gpuDebug & 1) && (threadIdx.x == 50) && (blockIdx.x == 3))
-    //if ((blockIdx.x == internalDebug1) && (threadIdx.x == internalDebug2)) 
+    //if ((gpuDebug & 1) && (THREADIDX == 50) && (blockIdx.x == 3))
+    //if ((blockIdx.x == internalDebug1) && (THREADIDX == internalDebug2)) 
     //if ((1 > (int) floor(0.5 + evt[8])) && (gpuDebug & 1) && (paramIndices + debugParamIndex == indices))
     //printf("Box %i contributes %f * %f = %f -> %f\n", i, currTerm, p[indices[coeffNumber - 1]], coefficient*currTerm, (ret + coefficient*currTerm)); 
     currTerm *= coefficient;

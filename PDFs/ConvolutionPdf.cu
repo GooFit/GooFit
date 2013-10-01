@@ -64,7 +64,7 @@ EXEC_TARGET fptype device_ConvolveSharedPdfs (fptype* evt, fptype* p, unsigned i
   // Brute-force calculate integral M(x) * R(x - x0) dx
   MEM_SHARED fptype modelCache[CONVOLUTION_CACHE_SIZE]; 
   // Don't try to shared-load more items than we have threads. 
-  int numToLoad = min(CONVOLUTION_CACHE_SIZE / numOthers, blockDim.x);
+  int numToLoad = min(CONVOLUTION_CACHE_SIZE / numOthers, BLOCKDIM);
 
   for (int i = 0; i < numbins; i += numToLoad) {
     // This code avoids this problem: If event 0 is in workspace 0, and 
@@ -74,10 +74,10 @@ EXEC_TARGET fptype device_ConvolveSharedPdfs (fptype* evt, fptype* p, unsigned i
     // be filled, because the threads can be all over the place in terms 
     // of their workspace. 
 
-    if (threadIdx.x < numToLoad) { 
+    if (THREADIDX < numToLoad) { 
       for (unsigned int w = 0; w < numOthers; ++w) {
 	unsigned int wIndex = indices[8 + w]; 
-	modelCache[w*numToLoad + threadIdx.x] = (i + threadIdx.x < numbins) ? dev_modWorkSpace[wIndex][i + threadIdx.x] : 0; 
+	modelCache[w*numToLoad + THREADIDX] = (i + THREADIDX < numbins) ? dev_modWorkSpace[wIndex][i + THREADIDX] : 0; 
       }
     }
 
@@ -87,7 +87,7 @@ EXEC_TARGET fptype device_ConvolveSharedPdfs (fptype* evt, fptype* p, unsigned i
     // It's unfortunately up to the user to ensure that every
     // event will hit this point, by making sure that if *any*
     // event has a convolution, *all* events do. 
-    __syncthreads(); 
+    THREAD_SYNCH 
       
     for (int j = 0; j < numToLoad; ++j) {
       if (i + j >= numbins) break; 
@@ -100,7 +100,7 @@ EXEC_TARGET fptype device_ConvolveSharedPdfs (fptype* evt, fptype* p, unsigned i
     // and fill up their parts of modelCache with the *next* set of numbers,
     // which means that the warps still working on the sum get the wrong
     // numbers! 
-    __syncthreads(); 
+    THREAD_SYNCH 
   }
 
   ret *= normalisationFactors[indices[2]]; 

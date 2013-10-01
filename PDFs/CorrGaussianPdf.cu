@@ -14,8 +14,8 @@ EXEC_TARGET fptype device_CorrGaussian (fptype* evt, fptype* p, unsigned int* in
   fptype y_dist = (y - mean2) * (sigma2 == 0 ? 0 : (1.0 / sigma2)); 
   fptype ret = EXP(-0.5*(x_dist * x_dist + y_dist * y_dist)); 
 
-  //if ((gpuDebug & 1) && (threadIdx.x == 60)) printf("CorrGauss: %f %f %f %f %f %f %f %f %f %.12f\n", x, y, mean1, sigma1, mean2, sigma2, corr, x_dist, y_dist, ret);
-  //if ((gpuDebug & 1) && (threadIdx.x == 60)) printf("[%i, %i] [%i, %i] CorrGauss: %f %f %f\n", blockIdx.x, threadIdx.x, gridDim.x, blockDim.x, x, y, ret);
+  //if ((gpuDebug & 1) && (THREADIDX == 60)) printf("CorrGauss: %f %f %f %f %f %f %f %f %f %.12f\n", x, y, mean1, sigma1, mean2, sigma2, corr, x_dist, y_dist, ret);
+  //if ((gpuDebug & 1) && (THREADIDX == 60)) printf("[%i, %i] [%i, %i] CorrGauss: %f %f %f\n", blockIdx.x, THREADIDX, gridDim.x, BLOCKDIM, x, y, ret);
   //printf("CorrGauss: %i %i %i %f %f %f %f\n", indices[2 + indices[0]], indices[3 + indices[0]], indices[0], x, y, mean1, mean2);
 
   return ret; 

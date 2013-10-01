@@ -65,7 +65,7 @@ __host__ IncoherentSumPdf::IncoherentSumPdf (std::string n, Variable* m12, Varia
   decayConstants[2] = decayInfo->daug2Mass;
   decayConstants[3] = decayInfo->daug3Mass;
   decayConstants[4] = decayInfo->meson_radius;
-  cudaMemcpyToSymbol(functorConstants, decayConstants, 5*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice);  
+  MEMCPY_TO_SYMBOL(functorConstants, decayConstants, 5*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice);  
 
   pindices.push_back(decayInfo->resonances.size()); 
   static int cacheCount = 0; 
@@ -122,9 +122,9 @@ __host__ void IncoherentSumPdf::setDataSize (unsigned int dataSize, unsigned int
   }
 
   numEntries = dataSize; 
-  cachedResonances = new thrust::device_vector<devcomplex<fptype> >(dataSize*decayInfo->resonances.size());
+  cachedResonances = new DEVICE_VECTOR<devcomplex<fptype> >(dataSize*decayInfo->resonances.size());
   void* dummy = thrust::raw_pointer_cast(cachedResonances->data()); 
-  cudaMemcpyToSymbol(cResonanceValues, &dummy, sizeof(devcomplex<fptype>*), cacheToUse*sizeof(devcomplex<fptype>*)); 
+  MEMCPY_TO_SYMBOL(cResonanceValues, &dummy, sizeof(devcomplex<fptype>*), cacheToUse*sizeof(devcomplex<fptype>*), cudaMemcpyHostToDevice); 
   setForceIntegrals(); 
 }
 
@@ -133,7 +133,7 @@ __host__ fptype IncoherentSumPdf::normalise () const {
   // so set normalisation factor to 1 so it doesn't get multiplied by zero. 
   // Copy at this time to ensure that the SpecialCalculators, which need the efficiency, 
   // don't get zeroes through multiplying by the normFactor. 
-  cudaMemcpyToSymbol(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
 
   int totalBins = _m12->numbins * _m13->numbins;
   if (!dalitzNormRange) {
@@ -179,9 +179,9 @@ __host__ fptype IncoherentSumPdf::normalise () const {
     if (redoIntegral[i]) {      
       thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
 			thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
-			strided_range<thrust::device_vector<devcomplex<fptype> >::iterator>(cachedResonances->begin() + i, 
-											    cachedResonances->end(), 
-											    decayInfo->resonances.size()).begin(), 
+			strided_range<DEVICE_VECTOR<devcomplex<fptype> >::iterator>(cachedResonances->begin() + i, 
+										    cachedResonances->end(), 
+										    decayInfo->resonances.size()).begin(), 
 			*(calculators[i]));
 
       fptype dummy = 0;

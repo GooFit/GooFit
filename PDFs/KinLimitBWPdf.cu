@@ -36,7 +36,7 @@ EXEC_TARGET fptype device_KinLimitBW (fptype* evt, fptype* p, unsigned int* indi
   fptype ret = (phspfactor * mean*width*width)/(phspMassSq + mean*phspGammaSq); 
 #ifdef CUDAPRINT
   /*
-  if (((0 == threadIdx.x) && (0 == blockIdx.x) && (callnumber < 10)) || (isnan(ret))) 
+  if (((0 == THREADIDX) && (0 == blockIdx.x) && (callnumber < 10)) || (isnan(ret))) 
       cuPrintf("KinLimitBW %f %f %f %f %f %f %f %f %f %f\n",
 	       p[indices[1]], 
 	       width,
@@ -51,7 +51,7 @@ EXEC_TARGET fptype device_KinLimitBW (fptype* evt, fptype* p, unsigned int* indi
   */								     
 #endif
 
-  //  if (gpuDebug & 1) printf("[%i, %i] KinLimitBW: %f %f %f %f %f\n", blockIdx.x, threadIdx.x, x, mean, width, d0mass, pimass, ret);
+  //  if (gpuDebug & 1) printf("[%i, %i] KinLimitBW: %f %f %f %f %f\n", blockIdx.x, THREADIDX, x, mean, width, d0mass, pimass, ret);
   return ret; 
 }
 
@@ -76,5 +76,5 @@ __host__ void KinLimitBWPdf::setMasses (fptype bigM, fptype smallM) {
   fptype constants[2];
   constants[0] = bigM;
   constants[1] = smallM;
-  cudaMemcpyToSymbol(functorConstants, constants, 2*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(functorConstants, constants, 2*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice); 
 }

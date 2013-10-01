@@ -22,7 +22,7 @@ EXEC_TARGET fptype device_Composite (fptype* evt, fptype* p, unsigned int* indic
   //fptype ret = (*(reinterpret_cast<device_function_ptr>(device_function_table[shellFcnIndex])))(fakeEvt, cudaArray, shellParams); 
   fptype ret = callFunction(fakeEvt, shellFcnIndex, shellParIndex); 
 
-  //if (0 == threadIdx.x) 
+  //if (0 == THREADIDX) 
   //printf("Composite: %f %f %f %f %f %f\n", evt[4], evt[5], evt[6], evt[7], coreValue, ret); 
 
   return ret; 

@@ -25,6 +25,10 @@ ifneq ($(PROFILE),)
 DEFINEFLAGS += -DPROFILING=yes
 endif 
 
+ifneq ($(TARGET_OMP),)
+DEFINEFLAGS += -Xcompiler -fopenmp -DTHRUST_DEVICE_BACKEND=THRUST_DEVICE_BACKEND_OMP -lgomp
+endif 
+
 CUDALOCATION = /usr/local/cuda/
 CUDAHEADERS = $(CUDALOCATION)/include/
 

@@ -26,7 +26,7 @@ EXEC_TARGET fptype device_CrystalBall (fptype* evt, fptype* p, unsigned int* ind
     d = (d != 0) ? n_over_alpha / d : 0; 
     ret = a*POW(d, power); 
   } 
-  //if ((0 == threadIdx.x) && (0 == blockIdx.x)) printf("device_CB: %f %f %f %f %f %f\n", x, mean, sigma, alpha, power, ret); 
+  //if ((0 == THREADIDX) && (0 == blockIdx.x)) printf("device_CB: %f %f %f %f %f %f\n", x, mean, sigma, alpha, power, ret); 
   return ret; 
   
 }

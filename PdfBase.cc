@@ -176,3 +176,5 @@ __host__ void PdfBase::storeParameters () const {
     cachedParams[counter++] = host_params[(*v)->index];
   }
 }
+ 
+void dummySynch () {}

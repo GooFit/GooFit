@@ -8,10 +8,10 @@ EXEC_TARGET fptype device_ScaledGaussian (fptype* evt, fptype* p, unsigned int* 
   fptype ret = EXP(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
 
 #ifdef CUDAPRINT
-  //if ((0 == threadIdx.x) && (0 == blockIdx.x) && (callnumber < 10)) 
+  //if ((0 == THREADIDX) && (0 == blockIdx.x) && (callnumber < 10)) 
     //cuPrintf("device_ScaledGaussian %f %i %i %f %f %i %p %f\n", x, indices[1], indices[2], mean, sigma, callnumber, indices, ret); 
 #endif 
-  //if ((gpuDebug & 1) && (0 == callnumber) && (threadIdx.x == 6) && (0 == blockIdx.x)) printf("[%i, %i] Scaled Gaussian: %f %f %f %f\n", blockIdx.x, threadIdx.x, x, mean, sigma, ret);
+  //if ((gpuDebug & 1) && (0 == callnumber) && (THREADIDX == 6) && (0 == blockIdx.x)) printf("[%i, %i] Scaled Gaussian: %f %f %f %f\n", blockIdx.x, THREADIDX, x, mean, sigma, ret);
 
   return ret;
 }

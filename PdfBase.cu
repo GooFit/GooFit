@@ -263,21 +263,21 @@ __host__ void PdfBase::printProfileInfo (bool topLevel) {
 
 
 
-cudaError_t gooMalloc (void** target, size_t bytes) {
+gooError gooMalloc (void** target, size_t bytes) {
 #if THRUST_DEVICE_BACKEND==THRUST_DEVICE_BACKEND_OMP
   target[0] = malloc(bytes);
-  if (target[0]) return cudaSuccess;
-  else return cudaErrorMemoryAllocation; 
+  if (target[0]) return gooSuccess;
+  else return gooErrorMemoryAllocation; 
 #else
-  return cudaMalloc(target, bytes); 
+  return (gooError) cudaMalloc(target, bytes); 
 #endif
 }
 
-cudaError_t gooFree (void* ptr) {
+gooError gooFree (void* ptr) {
 #if THRUST_DEVICE_BACKEND==THRUST_DEVICE_BACKEND_OMP
   free(ptr);
-  return cudaSuccess;
+  return gooSuccess;
 #else
-  return cudaFree(ptr); 
+  return (gooError) cudaFree(ptr); 
 #endif
 }

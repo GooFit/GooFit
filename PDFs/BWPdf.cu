@@ -17,6 +17,6 @@ __host__ BWPdf::BWPdf (std::string n, Variable* _x, Variable* mean, Variable* wi
   std::vector<unsigned int> pindices;
   pindices.push_back(registerParameter(mean));
   pindices.push_back(registerParameter(width));
-  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_BW, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+  GET_FUNCTION_ADDR(ptr_to_BW);
   initialise(pindices);
 }

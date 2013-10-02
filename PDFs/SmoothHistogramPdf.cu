@@ -134,7 +134,7 @@ __host__ SmoothHistogramPdf::SmoothHistogramPdf (std::string n, BinnedDataSet* h
   if (totalEvents > 0) copyHistogramToDevice(host_histogram);
   else std::cout << "Warning: Empty histogram supplied to " << getName() << " not copied to device. Expect copyHistogramToDevice call later.\n"; 
 
-  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_EvalHistogram, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+  GET_FUNCTION_ADDR(ptr_to_EvalHistogram);
   initialise(pindices); 
 }
 

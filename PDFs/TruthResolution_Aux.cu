@@ -20,7 +20,7 @@ MEM_DEVICE device_resfunction_ptr ptr_to_truth = device_truth_resolution;
 TruthResolution::TruthResolution () 
   : MixingTimeResolution()
 {
-  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_truth, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+  GET_FUNCTION_ADDR(ptr_to_truth);
   initIndex(); 
 }
 TruthResolution::~TruthResolution () {} 

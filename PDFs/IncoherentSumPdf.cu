@@ -86,7 +86,7 @@ __host__ IncoherentSumPdf::IncoherentSumPdf (std::string n, Variable* m12, Varia
   pindices.push_back(efficiency->getParameterIndex());
   components.push_back(efficiency); 
 
-  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_incoherent, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+  GET_FUNCTION_ADDR(ptr_to_incoherent);
   initialise(pindices); 
 
   redoIntegral = new bool[decayInfo->resonances.size()];

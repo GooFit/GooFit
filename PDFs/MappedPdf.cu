@@ -45,7 +45,7 @@ __host__ MappedPdf::MappedPdf (std::string n, GooPdf* m, vector<GooPdf*>& t)
   }
 
   getObservables(observables); 
-  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_Mapped, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+  GET_FUNCTION_ADDR(ptr_to_Mapped);
   initialise(pindices); 
 }
 

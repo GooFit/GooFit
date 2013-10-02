@@ -43,7 +43,7 @@ __host__ BinTransformPdf::BinTransformPdf (std::string n, vector<Variable*> obse
   MEMCPY_TO_SYMBOL(functorConstants, host_constants, 2*obses.size()*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice); 
   delete[] host_constants; 
 
-  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_BinTransform, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+  GET_FUNCTION_ADDR(ptr_to_BinTransform);
   initialise(pindices); 
 }
 

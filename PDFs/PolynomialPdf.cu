@@ -105,10 +105,10 @@ __host__ PolynomialPdf::PolynomialPdf (string n, Variable* _x, vector<Variable*>
   } 
   if (x0) {
     pindices.push_back(registerParameter(x0));
-    MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_OffsetPolynomial, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+    GET_FUNCTION_ADDR(ptr_to_OffsetPolynomial);
   }
   else {
-    MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_Polynomial, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+    GET_FUNCTION_ADDR(ptr_to_Polynomial);
   }
   initialise(pindices); 
 }
@@ -157,7 +157,7 @@ __host__ PolynomialPdf::PolynomialPdf (string n, vector<Variable*> obses, vector
     pindices.push_back(registerParameter(*c));
   }
 
-  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_MultiPolynomial, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+  GET_FUNCTION_ADDR(ptr_to_MultiPolynomial);
   initialise(pindices); 
 }
 

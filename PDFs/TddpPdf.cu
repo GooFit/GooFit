@@ -335,7 +335,7 @@ __host__ TddpPdf::TddpPdf (std::string n, Variable* _dtime, Variable* _sigmat, V
   components.push_back(efficiency); 
 
   resolution->createParameters(pindices, this); 
-  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_Tddp, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+  GET_FUNCTION_ADDR(ptr_to_Tddp);
   initialise(pindices);
 
   redoIntegral = new bool[decayInfo->resonances.size()];
@@ -434,7 +434,7 @@ __host__ TddpPdf::TddpPdf (std::string n, Variable* _dtime, Variable* _sigmat, V
     r[i]->createParameters(pindices, this); 
   }
 
-  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_Tddp, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+  GET_FUNCTION_ADDR(ptr_to_Tddp);
   initialise(pindices);
 
   redoIntegral = new bool[decayInfo->resonances.size()];

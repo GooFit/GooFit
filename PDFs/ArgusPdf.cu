@@ -55,8 +55,8 @@ __host__ ArgusPdf::ArgusPdf (std::string n, Variable* _x, Variable* m0, Variable
   pindices.push_back(m0->getIndex());
   pindices.push_back(slope->getIndex());
   pindices.push_back(power->getIndex());
-  if (upper) MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_Argus_Upper, sizeof(void*), 0, cudaMemcpyDeviceToHost);
-  else MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_Argus_Lower, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+  if (upper) GET_FUNCTION_ADDR(ptr_to_Argus_Upper);
+  else GET_FUNCTION_ADDR(ptr_to_Argus_Lower);
   initialise(pindices); 
 }
 

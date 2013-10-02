@@ -301,7 +301,7 @@ __host__ VoigtianPdf::VoigtianPdf (std::string n, Variable* _x, Variable* m, Var
   pindices.push_back(registerParameter(m));
   pindices.push_back(registerParameter(s));
   pindices.push_back(registerParameter(w));
-  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_Voigtian, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+  GET_FUNCTION_ADDR(ptr_to_Voigtian);
   initialise(pindices); 
 }
 

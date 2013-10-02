@@ -48,6 +48,6 @@ __host__ DalitzVetoPdf::DalitzVetoPdf (std::string n, Variable* _x, Variable* _y
     pindices.push_back(registerParameter((*v)->maximum));
   }
 
-  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_DalitzVeto, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+  GET_FUNCTION_ADDR(ptr_to_DalitzVeto);
   initialise(pindices); 
 }

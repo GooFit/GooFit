@@ -92,8 +92,8 @@ AddPdf::AddPdf (std::string n, std::vector<Variable*> weights, std::vector<PdfBa
   }
 
 
-  if (extended) MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_AddPdfsExt, sizeof(void*), 0, cudaMemcpyDeviceToHost);
-  else MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_AddPdfs, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+  if (extended) GET_FUNCTION_ADDR(ptr_to_AddPdfsExt);
+  else GET_FUNCTION_ADDR(ptr_to_AddPdfs);
 
   initialise(pindices); 
 } 
@@ -116,7 +116,7 @@ AddPdf::AddPdf (std::string n, Variable* frac1, PdfBase* func1, PdfBase* func2)
   pindices.push_back(func2->getFunctionIndex());
   pindices.push_back(func2->getParameterIndex());
     
-  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_AddPdfs, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+  GET_FUNCTION_ADDR(ptr_to_AddPdfs);
 
   initialise(pindices); 
 } 

@@ -14,9 +14,6 @@ EXEC_TARGET fptype device_ExpOffset (fptype* evt, fptype* p, unsigned int* indic
   fptype alpha = p[indices[2]];
 
   fptype ret = EXP(alpha*x); 
-
-  //if (isinf(ret))
-  //printf("Exponential overflow %f %f %f \n", x, alpha, x + p[indices[1]]);
   return ret; 
 }
 
@@ -57,12 +54,13 @@ __host__ ExpPdf::ExpPdf (std::string n, Variable* _x, Variable* alpha, Variable*
   if (offset) {
     pindices.push_back(registerParameter(offset));
     pindices.push_back(registerParameter(alpha));
-    MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_ExpOffset, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+    GET_FUNCTION_ADDR(ptr_to_ExpOffset);
     initialise(pindices); 
   }
   else {
     pindices.push_back(registerParameter(alpha));
-    MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_Exp, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+    GET_FUNCTION_ADDR(ptr_to_Exp);
+    //host_fcn_ptr = (void*) ptr_to_Exp; 
     initialise(pindices); 
   }
 }
@@ -76,8 +74,8 @@ __host__ ExpPdf::ExpPdf (std::string n, Variable* _x, std::vector<Variable*>& we
   for (std::vector<Variable*>::iterator w = weights.begin(); w != weights.end(); ++w) {
     pindices.push_back(registerParameter(*w)); 
   }
-  if (offset) MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_ExpPolyOffset, sizeof(void*), 0, cudaMemcpyDeviceToHost);
-  else MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_ExpPoly, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+  if (offset) GET_FUNCTION_ADDR(ptr_to_ExpPolyOffset);
+  else GET_FUNCTION_ADDR(ptr_to_ExpPoly);
   initialise(pindices); 
 }
 

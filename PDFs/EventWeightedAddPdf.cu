@@ -87,8 +87,8 @@ EventWeightedAddPdf::EventWeightedAddPdf (std::string n, std::vector<Variable*> 
   // This must occur after registering weights, or the indices will be off - the device functions assume that the weights are first. 
   getObservables(observables); 
 
-  if (extended) MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_EventWeightedAddPdfsExt, sizeof(void*), 0, cudaMemcpyDeviceToHost);
-  else MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_EventWeightedAddPdfs, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+  if (extended) GET_FUNCTION_ADDR(ptr_to_EventWeightedAddPdfsExt);
+  else GET_FUNCTION_ADDR(ptr_to_EventWeightedAddPdfs);
   initialise(pindices);
 } 
 

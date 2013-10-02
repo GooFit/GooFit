@@ -31,7 +31,7 @@ __host__ ScaledGaussianPdf::ScaledGaussianPdf (std::string n, Variable* _x, Vari
   pindices.push_back(sigma->getIndex());
   pindices.push_back(delta->getIndex());
   pindices.push_back(epsilon->getIndex());
-  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_ScaledGaussian, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+  GET_FUNCTION_ADDR(ptr_to_ScaledGaussian);
   initialise(pindices); 
 }
 

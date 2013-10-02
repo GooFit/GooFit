@@ -24,6 +24,7 @@ extern int host_callnumber;
 #define MEMCPY(target, source, count, dummy) memcpy(target, source, count)
 #define MEMCPY_TO_SYMBOL(target, source, count, offset, direction) memcpy(target, source, count)
 #define MEMCPY_FROM_SYMBOL(target, source, count, offset, direction) memcpy(target, (void*) source, count)
+#define GET_FUNCTION_ADDR(fname) host_fcn_ptr = (void*) fname
 #define SYNCH dummySynch
 #define THREADIDX (omp_get_thread_num())
 #define BLOCKDIM (omp_get_num_threads())
@@ -43,6 +44,7 @@ enum gooError {gooSuccess = 0, gooErrorMemoryAllocation};
 #define DEVICE_VECTOR thrust::device_vector
 #define MEMCPY(target, source, count, direction) cudaMemcpy(target, source, count, direction) 
 #define MEMCPY_TO_SYMBOL(target, source, count, offset, direction) cudaMemcpyToSymbol(target, source, count, offset, direction)
+#define GET_FUNCTION_ADDR(fname) cudaMemcpyFromSymbol((void**) &host_fcn_ptr, fname, sizeof(void*))
 #define MEMCPY_FROM_SYMBOL(target, source, count, offset, direction) cudaMemcpyFromSymbol(target, source, count, offset, direction)
 // For CUDA case, just use existing errors, renamed
 #include <driver_types.h>      // Needed for cudaError_t

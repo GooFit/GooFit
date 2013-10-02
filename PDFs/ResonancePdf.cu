@@ -327,7 +327,7 @@ ResonancePdf::ResonancePdf (string name,
   pindices.push_back(sp);
   pindices.push_back(cyc); 
 
-  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_RBW, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+  GET_FUNCTION_ADDR(ptr_to_RBW);
   initialise(pindices); 
 }
 
@@ -350,7 +350,7 @@ ResonancePdf::ResonancePdf (string name,
   pindices.push_back(sp);
   pindices.push_back(cyc); 
 
-  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_GOUSAK, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+  GET_FUNCTION_ADDR(ptr_to_GOUSAK);
   initialise(pindices); 
 } 
  
@@ -374,7 +374,7 @@ ResonancePdf::ResonancePdf (string name,
   pindices.push_back(sp);
   pindices.push_back(cyc);
 
-  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_LASS, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+  GET_FUNCTION_ADDR(ptr_to_LASS);
   initialise(pindices);
 }
 
@@ -390,7 +390,7 @@ ResonancePdf::ResonancePdf (string name,
   pindices.push_back(0); 
   // Dummy index for constants - won't use it, but calling 
   // functions can't know that and will call setConstantIndex anyway. 
-  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_NONRES, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+  GET_FUNCTION_ADDR(ptr_to_NONRES);
   initialise(pindices); 
 }
 
@@ -412,7 +412,7 @@ ResonancePdf::ResonancePdf (string name,
   pindices.push_back(registerParameter(sigma)); 
   pindices.push_back(cyc); 
 
-  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_GAUSSIAN, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+  GET_FUNCTION_ADDR(ptr_to_GAUSSIAN);
   initialise(pindices); 
 
 }

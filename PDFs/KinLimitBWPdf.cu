@@ -68,7 +68,7 @@ __host__ KinLimitBWPdf::KinLimitBWPdf (std::string n, Variable* _x, Variable* me
   pindices.push_back(width->getIndex());
   pindices.push_back(registerConstants(2));
   setMasses(1.8645, 0.13957); 
-  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_KinLimitBW, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+  GET_FUNCTION_ADDR(ptr_to_KinLimitBW);
   initialise(pindices);
 }
 

@@ -40,7 +40,7 @@ __host__ NovosibirskPdf::NovosibirskPdf (std::string n, Variable* _x, Variable* 
   pindices.push_back(registerParameter(mean));
   pindices.push_back(registerParameter(sigma));
   pindices.push_back(registerParameter(tail));
-  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_Novosibirsk, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+  GET_FUNCTION_ADDR(ptr_to_Novosibirsk);
   initialise(pindices); 
 }
 

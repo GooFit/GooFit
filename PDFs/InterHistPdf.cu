@@ -161,7 +161,7 @@ __host__ InterHistPdf::InterHistPdf (std::string n,
   static fptype* dev_address[1];
   dev_address[0] = (&((*dev_base_histogram)[0])).get();
   MEMCPY_TO_SYMBOL(dev_base_interhists, dev_address, sizeof(fptype*), totalHistograms*sizeof(fptype*), cudaMemcpyHostToDevice); 
-  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_InterHistogram, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+  GET_FUNCTION_ADDR(ptr_to_InterHistogram);
   initialise(pindices); 
 
   totalHistograms++; 

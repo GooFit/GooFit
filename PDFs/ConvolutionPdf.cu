@@ -139,7 +139,7 @@ ConvolutionPdf::ConvolutionPdf (std::string n,
   paramIndices.push_back(registerConstants(3));
   paramIndices.push_back(workSpaceIndex = totalConvolutions++); 
   
-  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_ConvolvePdfs, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+  GET_FUNCTION_ADDR(ptr_to_ConvolvePdfs);
   initialise(paramIndices);
   setIntegrationConstants(-10, 10, 0.01);
 } 
@@ -190,7 +190,7 @@ ConvolutionPdf::ConvolutionPdf (std::string n,
 
   assert(numOthers <= CONVOLUTION_CACHE_SIZE); 
   
-  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_ConvolveSharedPdfs, sizeof(void*), 0, cudaMemcpyDeviceToHost);
+  GET_FUNCTION_ADDR(ptr_to_ConvolveSharedPdfs);
   initialise(paramIndices);
   setIntegrationConstants(-10, 10, 0.01);
 } 

@@ -79,7 +79,7 @@ EXEC_TARGET fptype device_DalitzPlot (fptype* evt, fptype* p, unsigned int* indi
   fptype eff = callFunction(evt, indices[effFunctionIdx], indices[effFunctionIdx + 1]); 
   ret *= eff;
 
-  //if (0 == ret) printf("DalitzPlot evt %i zero.\n", evtNum); 
+  //printf("DalitzPlot evt %i zero: %i %i %f (%f, %f).\n", evtNum, numResonances, effFunctionIdx, eff, totalAmp.real, totalAmp.imag); 
 
   return ret; 
 }
@@ -119,7 +119,7 @@ __host__ DalitzPlotPdf::DalitzPlotPdf (std::string n,
   decayConstants[3] = decayInfo->daug3Mass;
   decayConstants[4] = decayInfo->meson_radius;
   MEMCPY_TO_SYMBOL(functorConstants, decayConstants, 5*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice);  
-  
+
   pindices.push_back(decayInfo->resonances.size()); 
   static int cacheCount = 0; 
   cacheToUse = cacheCount++; 
@@ -173,7 +173,7 @@ __host__ void DalitzPlotPdf::setDataSize (unsigned int dataSize, unsigned int ev
   if (cachedWaves) delete cachedWaves;
 
   numEntries = dataSize; 
-  cachedWaves = new thrust::device_vector<devcomplex<fptype> >(dataSize*decayInfo->resonances.size());
+  cachedWaves = new DEVICE_VECTOR<devcomplex<fptype> >(dataSize*decayInfo->resonances.size());
   void* dummy = thrust::raw_pointer_cast(cachedWaves->data()); 
   MEMCPY_TO_SYMBOL(cResonances, &dummy, sizeof(devcomplex<fptype>*), cacheToUse*sizeof(devcomplex<fptype>*), cudaMemcpyHostToDevice); 
   setForceIntegrals(); 
@@ -224,9 +224,9 @@ __host__ fptype DalitzPlotPdf::normalise () const {
     if (redoIntegral[i]) {
       thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
 			thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
-			strided_range<thrust::device_vector<devcomplex<fptype> >::iterator>(cachedWaves->begin() + i, 
-											    cachedWaves->end(), 
-											    decayInfo->resonances.size()).begin(), 
+			strided_range<DEVICE_VECTOR<devcomplex<fptype> >::iterator>(cachedWaves->begin() + i, 
+										    cachedWaves->end(), 
+										    decayInfo->resonances.size()).begin(), 
 			*(calculators[i]));
     }
     

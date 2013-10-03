@@ -21,9 +21,12 @@ extern int host_callnumber;
 #define EXEC_TARGET __host__
 #define THREAD_SYNCH #pragma omp barrier
 #define DEVICE_VECTOR thrust::host_vector
-#define MEMCPY(target, source, count, dummy) memcpy(target, source, count)
-#define MEMCPY_TO_SYMBOL(target, source, count, offset, direction) memcpy(target, source, count)
-#define MEMCPY_FROM_SYMBOL(target, source, count, offset, direction) memcpy(target, (void*) source, count)
+// Use char* here because I need +1 to mean "offset by one byte", not "by one sizeof(whatever)".
+// Can't use void* because then the compiler doesn't know how to do pointer arithmetic. 
+// This will fail if sizeof(char) is more than 1. But that should never happen, right? 
+#define MEMCPY(target, source, count, direction) memcpy((char*) target, source, count)
+#define MEMCPY_TO_SYMBOL(target, source, count, offset, direction) memcpy(((char*) target)+offset, source, count)
+#define MEMCPY_FROM_SYMBOL(target, source, count, offset, direction) memcpy((char*) target, ((char*) source)+offset, count)
 #define GET_FUNCTION_ADDR(fname) host_fcn_ptr = (void*) fname
 #define SYNCH dummySynch
 #define THREADIDX (omp_get_thread_num())

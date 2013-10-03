@@ -1,6 +1,6 @@
 #include "PolynomialPdf.hh"
 
-__device__ fptype device_Polynomial (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_Polynomial (fptype* evt, fptype* p, unsigned int* indices) {
   // Structure is nP lowestdegree c1 c2 c3 nO o1
 
   int numParams = indices[0]+1; 
@@ -15,7 +15,7 @@ __device__ fptype device_Polynomial (fptype* evt, fptype* p, unsigned int* indic
   return ret; 
 }
 
-__device__ fptype device_OffsetPolynomial (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_OffsetPolynomial (fptype* evt, fptype* p, unsigned int* indices) {
   int numParams = indices[0]; 
   int lowestDegree = indices[1]; 
 
@@ -29,7 +29,7 @@ __device__ fptype device_OffsetPolynomial (fptype* evt, fptype* p, unsigned int*
   return ret; 
 }
 
-__device__ fptype device_MultiPolynomial (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_MultiPolynomial (fptype* evt, fptype* p, unsigned int* indices) {
   // Structure is nP, maxDegree, offset1, offset2, ..., coeff1, coeff2, ..., nO, o1, o2, ... 
 
   int numObservables = indices[indices[0] + 1]; 
@@ -49,10 +49,10 @@ __device__ fptype device_MultiPolynomial (fptype* evt, fptype* p, unsigned int* 
     fptype currTerm = 1; 
     int currIndex = i; 
     int sumOfIndices = 0; 
-    //if ((gpuDebug & 1) && (threadIdx.x == 50) && (blockIdx.x == 3))
-    //if ((blockIdx.x == internalDebug1) && (threadIdx.x == internalDebug2)) 
+    //if ((gpuDebug & 1) && (THREADIDX == 50) && (BLOCKIDX == 3))
+    //if ((BLOCKIDX == internalDebug1) && (THREADIDX == internalDebug2)) 
     //if ((1 > (int) floor(0.5 + evt[8])) && (gpuDebug & 1) && (paramIndices + debugParamIndex == indices))
-    //printf("[%i, %i] Start box %i %f %f:\n", blockIdx.x, threadIdx.x, i, ret, evt[8]);
+    //printf("[%i, %i] Start box %i %f %f:\n", BLOCKIDX, THREADIDX, i, ret, evt[8]);
     for (int j = 0; j < numObservables; ++j) {
       fptype x = evt[indices[2 + indices[0] + j]]; // x, y, z...    
       fptype offset = p[indices[2 + j]]; // x0, y0, z0... 
@@ -61,19 +61,19 @@ __device__ fptype device_MultiPolynomial (fptype* evt, fptype* p, unsigned int* 
       currIndex /= maxDegree; 
       currTerm *= POW(x, currPower);
       sumOfIndices += currPower; 
-      //if ((gpuDebug & 1) && (threadIdx.x == 50) && (blockIdx.x == 3))
-      //if ((blockIdx.x == internalDebug1) && (threadIdx.x == internalDebug2)) 
+      //if ((gpuDebug & 1) && (THREADIDX == 50) && (BLOCKIDX == 3))
+      //if ((BLOCKIDX == internalDebug1) && (THREADIDX == internalDebug2)) 
       //if ((1 > (int) floor(0.5 + evt[8])) && (gpuDebug & 1) && (paramIndices + debugParamIndex == indices))
       //printf("  [%f -> %f^%i = %f] (%i %i) \n", evt[indices[2 + indices[0] + j]], x, currPower, POW(x, currPower), sumOfIndices, indices[2 + indices[0] + j]); 
     }
-    //if ((gpuDebug & 1) && (threadIdx.x == 50) && (blockIdx.x == 3))
-    //if ((blockIdx.x == internalDebug1) && (threadIdx.x == internalDebug2)) 
+    //if ((gpuDebug & 1) && (THREADIDX == 50) && (BLOCKIDX == 3))
+    //if ((BLOCKIDX == internalDebug1) && (THREADIDX == internalDebug2)) 
     //printf(") End box %i\n", i);
     // All threads should hit this at the same time and with the same result. No branching. 
     if (sumOfIndices >= maxDegree) continue; 
     fptype coefficient = p[indices[coeffNumber++]]; // Coefficient from MINUIT
-    //if ((gpuDebug & 1) && (threadIdx.x == 50) && (blockIdx.x == 3))
-    //if ((blockIdx.x == internalDebug1) && (threadIdx.x == internalDebug2)) 
+    //if ((gpuDebug & 1) && (THREADIDX == 50) && (BLOCKIDX == 3))
+    //if ((BLOCKIDX == internalDebug1) && (THREADIDX == internalDebug2)) 
     //if ((1 > (int) floor(0.5 + evt[8])) && (gpuDebug & 1) && (paramIndices + debugParamIndex == indices))
     //printf("Box %i contributes %f * %f = %f -> %f\n", i, currTerm, p[indices[coeffNumber - 1]], coefficient*currTerm, (ret + coefficient*currTerm)); 
     currTerm *= coefficient;
@@ -88,9 +88,9 @@ __device__ fptype device_MultiPolynomial (fptype* evt, fptype* p, unsigned int* 
 }
 
 
-__device__ device_function_ptr ptr_to_Polynomial = device_Polynomial; 
-__device__ device_function_ptr ptr_to_OffsetPolynomial = device_OffsetPolynomial; 
-__device__ device_function_ptr ptr_to_MultiPolynomial = device_MultiPolynomial; 
+MEM_DEVICE device_function_ptr ptr_to_Polynomial = device_Polynomial; 
+MEM_DEVICE device_function_ptr ptr_to_OffsetPolynomial = device_OffsetPolynomial; 
+MEM_DEVICE device_function_ptr ptr_to_MultiPolynomial = device_MultiPolynomial; 
 
 // Constructor for single-variate polynomial, with optional zero point. 
 __host__ PolynomialPdf::PolynomialPdf (string n, Variable* _x, vector<Variable*> weights, Variable* x0, unsigned int lowestDegree) 
@@ -105,10 +105,10 @@ __host__ PolynomialPdf::PolynomialPdf (string n, Variable* _x, vector<Variable*>
   } 
   if (x0) {
     pindices.push_back(registerParameter(x0));
-    cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_OffsetPolynomial, sizeof(void*));
+    GET_FUNCTION_ADDR(ptr_to_OffsetPolynomial);
   }
   else {
-    cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_Polynomial, sizeof(void*));
+    GET_FUNCTION_ADDR(ptr_to_Polynomial);
   }
   initialise(pindices); 
 }
@@ -157,7 +157,7 @@ __host__ PolynomialPdf::PolynomialPdf (string n, vector<Variable*> obses, vector
     pindices.push_back(registerParameter(*c));
   }
 
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_MultiPolynomial, sizeof(void*));
+  GET_FUNCTION_ADDR(ptr_to_MultiPolynomial);
   initialise(pindices); 
 }
 

@@ -1,6 +1,6 @@
 #include "ExpPdf.hh"
 
-__device__ fptype device_Exp (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_Exp (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x = evt[indices[2 + indices[0]]]; 
   fptype alpha = p[indices[1]];
 
@@ -8,19 +8,16 @@ __device__ fptype device_Exp (fptype* evt, fptype* p, unsigned int* indices) {
   return ret; 
 }
 
-__device__ fptype device_ExpOffset (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_ExpOffset (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x = evt[indices[2 + indices[0]]]; 
   x -= p[indices[1]]; 
   fptype alpha = p[indices[2]];
 
   fptype ret = EXP(alpha*x); 
-
-  //if (isinf(ret))
-  //printf("Exponential overflow %f %f %f \n", x, alpha, x + p[indices[1]]);
   return ret; 
 }
 
-__device__ fptype device_ExpPoly (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_ExpPoly (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x = evt[indices[2 + indices[0]]]; 
   
   fptype exparg = 0; 
@@ -32,7 +29,7 @@ __device__ fptype device_ExpPoly (fptype* evt, fptype* p, unsigned int* indices)
   return ret; 
 }
 
-__device__ fptype device_ExpPolyOffset (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_ExpPolyOffset (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x = evt[indices[2 + indices[0]]]; 
   x -= p[indices[1]]; 
   
@@ -45,10 +42,10 @@ __device__ fptype device_ExpPolyOffset (fptype* evt, fptype* p, unsigned int* in
   return ret; 
 }
 
-__device__ device_function_ptr ptr_to_Exp = device_Exp; 
-__device__ device_function_ptr ptr_to_ExpPoly = device_ExpPoly; 
-__device__ device_function_ptr ptr_to_ExpOffset = device_ExpOffset; 
-__device__ device_function_ptr ptr_to_ExpPolyOffset = device_ExpPolyOffset; 
+MEM_DEVICE device_function_ptr ptr_to_Exp = device_Exp; 
+MEM_DEVICE device_function_ptr ptr_to_ExpPoly = device_ExpPoly; 
+MEM_DEVICE device_function_ptr ptr_to_ExpOffset = device_ExpOffset; 
+MEM_DEVICE device_function_ptr ptr_to_ExpPolyOffset = device_ExpPolyOffset; 
 
 __host__ ExpPdf::ExpPdf (std::string n, Variable* _x, Variable* alpha, Variable* offset) 
   : GooPdf(_x, n) 
@@ -57,12 +54,13 @@ __host__ ExpPdf::ExpPdf (std::string n, Variable* _x, Variable* alpha, Variable*
   if (offset) {
     pindices.push_back(registerParameter(offset));
     pindices.push_back(registerParameter(alpha));
-    cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_ExpOffset, sizeof(void*));
+    GET_FUNCTION_ADDR(ptr_to_ExpOffset);
     initialise(pindices); 
   }
   else {
     pindices.push_back(registerParameter(alpha));
-    cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_Exp, sizeof(void*));
+    GET_FUNCTION_ADDR(ptr_to_Exp);
+    //host_fcn_ptr = (void*) ptr_to_Exp; 
     initialise(pindices); 
   }
 }
@@ -76,8 +74,8 @@ __host__ ExpPdf::ExpPdf (std::string n, Variable* _x, std::vector<Variable*>& we
   for (std::vector<Variable*>::iterator w = weights.begin(); w != weights.end(); ++w) {
     pindices.push_back(registerParameter(*w)); 
   }
-  if (offset) cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_ExpPolyOffset, sizeof(void*));
-  else cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_ExpPoly, sizeof(void*));
+  if (offset) GET_FUNCTION_ADDR(ptr_to_ExpPolyOffset);
+  else GET_FUNCTION_ADDR(ptr_to_ExpPoly);
   initialise(pindices); 
 }
 

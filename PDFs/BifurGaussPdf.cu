@@ -1,6 +1,6 @@
 #include "BifurGaussPdf.hh"
 
-__device__ fptype device_BifurGauss (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_BifurGauss (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x = evt[indices[2 + indices[0]]]; // why does indices recall itself?
   fptype mean = p[indices[1]];
   fptype sigmaLeft = p[indices[2]];
@@ -14,7 +14,7 @@ __device__ fptype device_BifurGauss (fptype* evt, fptype* p, unsigned int* indic
   return ret;
 } 
 
-__device__ device_function_ptr ptr_to_BifurGauss = device_BifurGauss;
+MEM_DEVICE device_function_ptr ptr_to_BifurGauss = device_BifurGauss;
 
 __host__ BifurGaussPdf::BifurGaussPdf (std::string n, Variable* _x, Variable *mean, Variable* sigmaL, Variable* sigmaR)
   : GooPdf(_x, n)
@@ -23,7 +23,7 @@ __host__ BifurGaussPdf::BifurGaussPdf (std::string n, Variable* _x, Variable *me
   pindices.push_back(registerParameter(mean));
   pindices.push_back(registerParameter(sigmaL));
   pindices.push_back(registerParameter(sigmaR));
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_BifurGauss, sizeof(void**));
+  GET_FUNCTION_ADDR(ptr_to_BifurGauss);
   initialise(pindices);
 }
 

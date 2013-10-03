@@ -8,16 +8,7 @@ unsigned int host_indices[maxParams];
 int host_callnumber = 0; 
 int totalParams = 0; 
 int totalConstants = 1; // First constant is reserved for number of events. 
-
-#ifdef OMP_ON
-typedef std::map<Variable*, std::set<PdfBase*> > tRegType;
-tRegType variableRegistry[MAX_THREADS]; 
-#pragma omp threadprivate (dev_event_array, totalParams, totalConstants)
-#pragma omp threadprivate (host_normalisation, host_params, host_indices)
-#pragma omp threadprivate (host_callnumber)
-#else
-std::map<Variable*, std::set<PdfBase*> > variableRegistry; 
-#endif
+map<Variable*, std::set<PdfBase*> > variableRegistry; 
 
 PdfBase::PdfBase (Variable* x, std::string n) 
   : name(n)
@@ -59,21 +50,12 @@ __host__ unsigned int PdfBase::registerParameter (Variable* var) {
   if (std::find(parameterList.begin(), parameterList.end(), var) != parameterList.end()) return (unsigned int) var->getIndex(); 
   
   parameterList.push_back(var); 
-#ifdef OMP_ON
-  int tid = omp_get_thread_num();
-  variableRegistry[tid][var].insert(this); 
-#else
   variableRegistry[var].insert(this); 
-#endif
   if (0 > var->getIndex()) {
     unsigned int unusedIndex = 0;
     while (true) {
       bool canUse = true;
-#ifdef OMP_ON
-      for (std::map<Variable*, std::set<PdfBase*> >::iterator p = variableRegistry[tid].begin(); p != variableRegistry[tid].end(); ++p) {
-#else
       for (std::map<Variable*, std::set<PdfBase*> >::iterator p = variableRegistry.begin(); p != variableRegistry.end(); ++p) {
-#endif
 	if (unusedIndex != (*p).first->index) continue;
 	canUse = false;
 	break; 
@@ -91,14 +73,8 @@ __host__ void PdfBase::unregisterParameter (Variable* var) {
   if (!var) return; 
   parIter pos = std::find(parameterList.begin(), parameterList.end(), var);
   if (pos != parameterList.end()) parameterList.erase(pos);  
-#ifdef OMP_ON
-  int tid = omp_get_thread_num();
-  variableRegistry[tid][var].erase(this);
-  if (0 == variableRegistry[tid][var].size()) var->index = -1; 
-#else
   variableRegistry[var].erase(this);
   if (0 == variableRegistry[var].size()) var->index = -1; 
-#endif
   for (unsigned int i = 0; i < components.size(); ++i) {
     components[i]->unregisterParameter(var); 
   }
@@ -176,3 +152,5 @@ __host__ void PdfBase::storeParameters () const {
     cachedParams[counter++] = host_params[(*v)->index];
   }
 }
+ 
+void dummySynch () {}

@@ -1,11 +1,11 @@
 #include "BinTransformPdf.hh"
 
-__device__ fptype device_BinTransform (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_BinTransform (fptype* evt, fptype* p, unsigned int* indices) {
   // Index structure: nP lim1 bin1 lim2 bin2 ... nO o1 o2 
   int numObservables = indices[1 + indices[0]];
   int ret = 0;
   int previousSize = 1; 
-  //printf("[%i, %i] Bin Transform: %i %i %f %f\n", threadIdx.x, blockIdx.x, numObservables, previousSize, evt[0], evt[1]); 
+  //printf("[%i, %i] Bin Transform: %i %i %f %f\n", THREADIDX, BLOCKIDX, numObservables, previousSize, evt[0], evt[1]); 
   for (int i = 0; i < numObservables; ++i) {
     fptype obsValue   = evt[indices[2 + indices[0] + i]];
     fptype lowerLimit = functorConstants[indices[i*3+1]];
@@ -20,7 +20,7 @@ __device__ fptype device_BinTransform (fptype* evt, fptype* p, unsigned int* ind
   return fptype(ret); 
 }
 
-__device__ device_function_ptr ptr_to_BinTransform = device_BinTransform; 
+MEM_DEVICE device_function_ptr ptr_to_BinTransform = device_BinTransform; 
 
 // Notice that bin sizes and limits can be different, for this purpose, than what's implied by the Variable members. 
 __host__ BinTransformPdf::BinTransformPdf (std::string n, vector<Variable*> obses, vector<fptype> limits, vector<fptype> binSizes, vector<int> numBins) 
@@ -40,10 +40,10 @@ __host__ BinTransformPdf::BinTransformPdf (std::string n, vector<Variable*> obse
     host_constants[2*i+1] = binSizes[i]; 
   }
 
-  cudaMemcpyToSymbol(functorConstants, host_constants, 2*obses.size()*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(functorConstants, host_constants, 2*obses.size()*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice); 
   delete[] host_constants; 
 
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_BinTransform, sizeof(void*));
+  GET_FUNCTION_ADDR(ptr_to_BinTransform);
   initialise(pindices); 
 }
 

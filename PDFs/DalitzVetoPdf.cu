@@ -1,7 +1,7 @@
 #include "DalitzVetoPdf.hh"
 #include "DalitzPlotHelpers.hh" 
 
-__device__ fptype device_DalitzVeto (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_DalitzVeto (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x         = evt[indices[2 + indices[0] + 0]]; 
   fptype y         = evt[indices[2 + indices[0] + 1]]; 
 
@@ -27,7 +27,7 @@ __device__ fptype device_DalitzVeto (fptype* evt, fptype* p, unsigned int* indic
   return ret; 
 }
 
-__device__ device_function_ptr ptr_to_DalitzVeto = device_DalitzVeto;
+MEM_DEVICE device_function_ptr ptr_to_DalitzVeto = device_DalitzVeto;
 
 __host__ DalitzVetoPdf::DalitzVetoPdf (std::string n, Variable* _x, Variable* _y, Variable* motherM, Variable* d1m, Variable* d2m, Variable* d3m, vector<VetoInfo*> vetos) 
   : GooPdf(0, n) 
@@ -48,6 +48,6 @@ __host__ DalitzVetoPdf::DalitzVetoPdf (std::string n, Variable* _x, Variable* _y
     pindices.push_back(registerParameter((*v)->maximum));
   }
 
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_DalitzVeto, sizeof(void*));
+  GET_FUNCTION_ADDR(ptr_to_DalitzVeto);
   initialise(pindices); 
 }

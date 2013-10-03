@@ -1,6 +1,6 @@
 #include "NovosibirskPdf.hh"
 
-__device__ fptype device_Novosibirsk (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_Novosibirsk (fptype* evt, fptype* p, unsigned int* indices) {
   fptype _Mean  = p[indices[1]];
   fptype _Sigma = p[indices[2]];
   fptype _Tail  = p[indices[3]];
@@ -31,7 +31,7 @@ __device__ fptype device_Novosibirsk (fptype* evt, fptype* p, unsigned int* indi
   return EXP(-qc);
 }
 
-__device__ device_function_ptr ptr_to_Novosibirsk = device_Novosibirsk; 
+MEM_DEVICE device_function_ptr ptr_to_Novosibirsk = device_Novosibirsk; 
 
 __host__ NovosibirskPdf::NovosibirskPdf (std::string n, Variable* _x, Variable* mean, Variable* sigma, Variable* tail) 
   : GooPdf(_x, n) 
@@ -40,7 +40,7 @@ __host__ NovosibirskPdf::NovosibirskPdf (std::string n, Variable* _x, Variable* 
   pindices.push_back(registerParameter(mean));
   pindices.push_back(registerParameter(sigma));
   pindices.push_back(registerParameter(tail));
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_Novosibirsk, sizeof(void*));
+  GET_FUNCTION_ADDR(ptr_to_Novosibirsk);
   initialise(pindices); 
 }
 

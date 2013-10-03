@@ -20,6 +20,12 @@ endif
 ifeq ($(CUDALOCATION), )
 CUDALOCATION = /usr/local/cuda/
 endif
+
+ifneq ($(TARGET_OMP),)
+CXXFLAGS    += -Xcompiler -fopenmp -DTHRUST_DEVICE_BACKEND=THRUST_DEVICE_BACKEND_OMP -lgomp
+LDFLAGS     += -fopenmp -DTHRUST_DEVICE_BACKEND=THRUST_DEVICE_BACKEND_OMP -lgomp
+endif 
+
 CUDAHEADERS = $(CUDALOCATION)/include/
 GOOFITDIR = $(PWD)/../../
 
@@ -45,7 +51,7 @@ all:	$(PROGRAMS)
 	$(CXX) $(INCLUDES) $(ROOT_INCLUDES) $(DEFINEFLAGS) $(CXXFLAGS) -c -o $@ $<
 
 exponential:	exponential.o 
-		$(LD) $(LDFLAGS) $^ $(THRUSTO) $(LIBS) $(ROOT_LIBS) $(OutPutOpt) $@
+		$(LD) $(LDFLAGS) $^ $(THRUSTO) $(LIBS) $(ROOT_LIBS) $(DEFINEFLAGS) $(OutPutOpt) $@
 		@echo "$@ done"
 
 clean:

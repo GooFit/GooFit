@@ -1,11 +1,11 @@
 #include "TrigThresholdPdf.hh"
 
-__device__ fptype threshCalc (fptype distance, fptype linConst) {
+EXEC_TARGET fptype threshCalc (fptype distance, fptype linConst) {
   fptype ret = (distance > fptype(0.5) ? fptype(1) : (linConst + (1 - linConst) * SIN(distance * fptype(3.14159265)))); 
   return ret; 
 }
 
-__device__ fptype device_TrigThresholdUpper (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_TrigThresholdUpper (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x         = evt[indices[2 + indices[0]]]; 
   fptype thresh    = p[indices[1]];
   fptype trigConst = p[indices[2]];
@@ -15,7 +15,7 @@ __device__ fptype device_TrigThresholdUpper (fptype* evt, fptype* p, unsigned in
   return threshCalc(trigConst, linConst);
 }
 
-__device__ fptype device_TrigThresholdLower (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_TrigThresholdLower (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x         = evt[indices[2 + indices[0]]]; 
   fptype thresh    = p[indices[1]];
   fptype trigConst = p[indices[2]];
@@ -25,7 +25,7 @@ __device__ fptype device_TrigThresholdLower (fptype* evt, fptype* p, unsigned in
   return threshCalc(trigConst, linConst);
 }
 
-__device__ fptype device_VerySpecialEpisodeTrigThresholdUpper (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_VerySpecialEpisodeTrigThresholdUpper (fptype* evt, fptype* p, unsigned int* indices) {
   // Annoying special case for use with Mikhail's efficiency function across the Dalitz plot 
 
   fptype x         = evt[indices[2 + indices[0] + 0]]; 
@@ -40,7 +40,7 @@ __device__ fptype device_VerySpecialEpisodeTrigThresholdUpper (fptype* evt, fpty
   return threshCalc(trigConst, linConst);
 }
 
-__device__ fptype device_VerySpecialEpisodeTrigThresholdLower (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_VerySpecialEpisodeTrigThresholdLower (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x         = evt[indices[2 + indices[0] + 0]]; 
   fptype y         = evt[indices[2 + indices[0] + 1]]; 
 
@@ -58,10 +58,10 @@ __device__ fptype device_VerySpecialEpisodeTrigThresholdLower (fptype* evt, fpty
   return ret;
 }
 
-__device__ device_function_ptr ptr_to_TrigThresholdUpper = device_TrigThresholdUpper; 
-__device__ device_function_ptr ptr_to_TrigThresholdLower = device_TrigThresholdLower; 
-__device__ device_function_ptr ptr_to_VerySpecialEpisodeTrigThresholdUpper = device_VerySpecialEpisodeTrigThresholdUpper; 
-__device__ device_function_ptr ptr_to_VerySpecialEpisodeTrigThresholdLower = device_VerySpecialEpisodeTrigThresholdLower; 
+MEM_DEVICE device_function_ptr ptr_to_TrigThresholdUpper = device_TrigThresholdUpper; 
+MEM_DEVICE device_function_ptr ptr_to_TrigThresholdLower = device_TrigThresholdLower; 
+MEM_DEVICE device_function_ptr ptr_to_VerySpecialEpisodeTrigThresholdUpper = device_VerySpecialEpisodeTrigThresholdUpper; 
+MEM_DEVICE device_function_ptr ptr_to_VerySpecialEpisodeTrigThresholdLower = device_VerySpecialEpisodeTrigThresholdLower; 
 
 
 __host__ TrigThresholdPdf::TrigThresholdPdf (std::string n, Variable* _x, Variable* thresh, Variable* trigConst, Variable* linConst, bool upper) 
@@ -72,8 +72,8 @@ __host__ TrigThresholdPdf::TrigThresholdPdf (std::string n, Variable* _x, Variab
   pindices.push_back(registerParameter(trigConst));
   pindices.push_back(registerParameter(linConst)); 
 
-  if (upper) cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_TrigThresholdUpper, sizeof(void*));
-  else cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_TrigThresholdLower, sizeof(void*));
+  if (upper) GET_FUNCTION_ADDR(ptr_to_TrigThresholdUpper);
+  else GET_FUNCTION_ADDR(ptr_to_TrigThresholdLower);
   initialise(pindices); 
 }
 
@@ -89,7 +89,7 @@ __host__ TrigThresholdPdf::TrigThresholdPdf (std::string n, Variable* _x, Variab
   pindices.push_back(registerParameter(linConst)); 
   pindices.push_back(registerParameter(massConstant)); 
 
-  if (upper) cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_VerySpecialEpisodeTrigThresholdUpper, sizeof(void*));
-  else cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_VerySpecialEpisodeTrigThresholdLower, sizeof(void*));
+  if (upper) GET_FUNCTION_ADDR(ptr_to_VerySpecialEpisodeTrigThresholdUpper);
+  else GET_FUNCTION_ADDR(ptr_to_VerySpecialEpisodeTrigThresholdLower);
   initialise(pindices); 
 }

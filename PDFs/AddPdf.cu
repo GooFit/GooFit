@@ -1,6 +1,6 @@
 #include "AddPdf.hh"
 
-__device__ fptype device_AddPdfs (fptype* evt, fptype* p, unsigned int* indices) { 
+EXEC_TARGET fptype device_AddPdfs (fptype* evt, fptype* p, unsigned int* indices) { 
   int numParameters = indices[0]; 
   fptype ret = 0;
   fptype totalWeight = 0; 
@@ -10,7 +10,7 @@ __device__ fptype device_AddPdfs (fptype* evt, fptype* p, unsigned int* indices)
     fptype weight = p[indices[i+2]];
     ret += weight * curr * normalisationFactors[indices[i+1]]; 
 
-    //if ((gpuDebug & 1) && (0 == threadIdx.x) && (0 == blockIdx.x)) 
+    //if ((gpuDebug & 1) && (0 == THREADIDX) && (0 == BLOCKIDX)) 
     //if ((1 > (int) floor(0.5 + evt[8])) && (gpuDebug & 1) && (paramIndices + debugParamIndex == indices))
     //printf("Add comp %i: %f * %f * %f = %f (%f)\n", i, weight, curr, normalisationFactors[indices[i+1]], weight*curr*normalisationFactors[indices[i+1]], ret); 
 
@@ -22,16 +22,16 @@ __device__ fptype device_AddPdfs (fptype* evt, fptype* p, unsigned int* indices)
   fptype last = callFunction(evt, indices[numParameters - 1], indices[numParameters]);
   ret += (1 - totalWeight) * last * normalisationFactors[indices[numParameters]]; 
 
-  //if ((threadIdx.x < 50) && (isnan(ret))) printf("NaN final component %f %f\n", last, totalWeight); 
+  //if ((THREADIDX < 50) && (isnan(ret))) printf("NaN final component %f %f\n", last, totalWeight); 
 
-  //if ((gpuDebug & 1) && (0 == threadIdx.x) && (0 == blockIdx.x)) 
+  //if ((gpuDebug & 1) && (0 == THREADIDX) && (0 == BLOCKIDX)) 
   //if ((1 > (int) floor(0.5 + evt[8])) && (gpuDebug & 1) && (paramIndices + debugParamIndex == indices))
   //printf("Add final: %f * %f * %f = %f (%f)\n", (1 - totalWeight), last, normalisationFactors[indices[numParameters]], (1 - totalWeight) *last* normalisationFactors[indices[numParameters]], ret); 
   
   return ret; 
 }
 
-__device__ fptype device_AddPdfsExt (fptype* evt, fptype* p, unsigned int* indices) { 
+EXEC_TARGET fptype device_AddPdfsExt (fptype* evt, fptype* p, unsigned int* indices) { 
   // numParameters does not count itself. So the array structure for two functions is
   // nP | F P w | F P w
   // in which nP = 6. 
@@ -46,20 +46,20 @@ __device__ fptype device_AddPdfsExt (fptype* evt, fptype* p, unsigned int* indic
     ret += weight * curr * normalisationFactors[indices[i+1]]; 
 
     totalWeight += weight; 
-    //if ((gpuDebug & 1) && (threadIdx.x == 0) && (0 == blockIdx.x)) 
+    //if ((gpuDebug & 1) && (THREADIDX == 0) && (0 == BLOCKIDX)) 
     //if ((1 > (int) floor(0.5 + evt[8])) && (gpuDebug & 1) && (paramIndices + debugParamIndex == indices))
     //printf("AddExt: %i %E %f %f %f %f %f %f\n", i, curr, weight, ret, totalWeight, normalisationFactors[indices[i+1]], evt[0], evt[8]);
   }
   ret /= totalWeight; 
   //if ((1 > (int) floor(0.5 + evt[8])) && (gpuDebug & 1) && (paramIndices + debugParamIndex == indices))
-  //if ((gpuDebug & 1) && (threadIdx.x == 0) && (0 == blockIdx.x)) 
+  //if ((gpuDebug & 1) && (THREADIDX == 0) && (0 == BLOCKIDX)) 
   //printf("AddExt result: %f\n", ret); 
   
   return ret; 
 }
 
-__device__ device_function_ptr ptr_to_AddPdfs = device_AddPdfs; 
-__device__ device_function_ptr ptr_to_AddPdfsExt = device_AddPdfsExt; 
+MEM_DEVICE device_function_ptr ptr_to_AddPdfs = device_AddPdfs; 
+MEM_DEVICE device_function_ptr ptr_to_AddPdfsExt = device_AddPdfsExt; 
 
 AddPdf::AddPdf (std::string n, std::vector<Variable*> weights, std::vector<PdfBase*> comps) 
   : GooPdf(0, n) 
@@ -92,8 +92,8 @@ AddPdf::AddPdf (std::string n, std::vector<Variable*> weights, std::vector<PdfBa
   }
 
 
-  if (extended) cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_AddPdfsExt, sizeof(void*));
-  else cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_AddPdfs, sizeof(void*));
+  if (extended) GET_FUNCTION_ADDR(ptr_to_AddPdfsExt);
+  else GET_FUNCTION_ADDR(ptr_to_AddPdfs);
 
   initialise(pindices); 
 } 
@@ -116,7 +116,7 @@ AddPdf::AddPdf (std::string n, Variable* frac1, PdfBase* func1, PdfBase* func2)
   pindices.push_back(func2->getFunctionIndex());
   pindices.push_back(func2->getParameterIndex());
     
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_AddPdfs, sizeof(void*));
+  GET_FUNCTION_ADDR(ptr_to_AddPdfs);
 
   initialise(pindices); 
 } 

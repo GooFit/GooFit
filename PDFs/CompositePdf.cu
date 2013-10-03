@@ -1,6 +1,6 @@
 #include "CompositePdf.hh"
 
-__device__ fptype device_Composite (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_Composite (fptype* evt, fptype* p, unsigned int* indices) {
   unsigned int coreFcnIndex  = indices[1];
   unsigned int coreParIndex  = indices[2];
   unsigned int shellFcnIndex = indices[3];
@@ -22,13 +22,13 @@ __device__ fptype device_Composite (fptype* evt, fptype* p, unsigned int* indice
   //fptype ret = (*(reinterpret_cast<device_function_ptr>(device_function_table[shellFcnIndex])))(fakeEvt, cudaArray, shellParams); 
   fptype ret = callFunction(fakeEvt, shellFcnIndex, shellParIndex); 
 
-  //if (0 == threadIdx.x) 
+  //if (0 == THREADIDX) 
   //printf("Composite: %f %f %f %f %f %f\n", evt[4], evt[5], evt[6], evt[7], coreValue, ret); 
 
   return ret; 
 }
 
-__device__ device_function_ptr ptr_to_Composite = device_Composite; 
+MEM_DEVICE device_function_ptr ptr_to_Composite = device_Composite; 
 
 __host__ CompositePdf::CompositePdf (std::string n, PdfBase* core, PdfBase* shell) 
   : GooPdf(0, n) 
@@ -43,7 +43,7 @@ __host__ CompositePdf::CompositePdf (std::string n, PdfBase* core, PdfBase* shel
   components.push_back(core);
   components.push_back(shell);
 
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_Composite, sizeof(void*));
+  GET_FUNCTION_ADDR(ptr_to_Composite);
   initialise(pindices); 
 }
 

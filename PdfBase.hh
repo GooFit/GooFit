@@ -8,7 +8,7 @@
 #include "BinnedDataSet.hh" 
 #include "UnbinnedDataSet.hh" 
 
-#include "thrust/iterator/constant_iterator.h" 
+#include <thrust/iterator/constant_iterator.h> 
 #include <thrust/device_vector.h>
 
 typedef thrust::counting_iterator<int> IndexIterator;

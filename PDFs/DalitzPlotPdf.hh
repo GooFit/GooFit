@@ -29,7 +29,7 @@ private:
 
   // Following variables are useful if masses and widths, involved in difficult BW calculation, 
   // change infrequently while amplitudes, only used in adding BW results together, change rapidly.
-  thrust::device_vector<devcomplex<fptype> >* cachedWaves; // Caches the BW values for each event.
+  DEVICE_VECTOR<devcomplex<fptype> >* cachedWaves; // Caches the BW values for each event.
   devcomplex<fptype>*** integrals; // Caches the integrals of the BW waves for each combination of resonances. 
 
   bool* redoIntegral;
@@ -46,7 +46,7 @@ class SpecialResonanceIntegrator : public thrust::unary_function<thrust::tuple<i
 public:
   // Class used to calculate integrals of terms BW_i * BW_j^*. 
   SpecialResonanceIntegrator (int pIdx, unsigned int ri, unsigned int rj);
-  __device__ devcomplex<fptype> operator () (thrust::tuple<int, fptype*> t) const;
+  EXEC_TARGET devcomplex<fptype> operator () (thrust::tuple<int, fptype*> t) const;
 private:
 
   unsigned int resonance_i;
@@ -58,7 +58,7 @@ class SpecialResonanceCalculator : public thrust::unary_function<thrust::tuple<i
 public:
   // Used to create the cached BW values. 
   SpecialResonanceCalculator (int pIdx, unsigned int res_idx); 
-  __device__ devcomplex<fptype> operator () (thrust::tuple<int, fptype*, int> t) const;
+  EXEC_TARGET devcomplex<fptype> operator () (thrust::tuple<int, fptype*, int> t) const;
 
 private:
 

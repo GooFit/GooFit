@@ -1,6 +1,6 @@
 #include "InterHistPdf.hh"
 
-__constant__ fptype* dev_base_interhists[100]; // Multiple histograms for the case of multiple PDFs
+MEM_CONSTANT fptype* dev_base_interhists[100]; // Multiple histograms for the case of multiple PDFs
 #define OBS_CODE 4242424242
 // This number is presumably so high that it will never collide
 // with an actual parameter index. It indicates that this dimension
@@ -8,7 +8,7 @@ __constant__ fptype* dev_base_interhists[100]; // Multiple histograms for the ca
 
 // dev_powi is implemented in SmoothHistogramPdf.cu. 
 
-__device__ fptype device_InterHistogram (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_InterHistogram (fptype* evt, fptype* p, unsigned int* indices) {
   // Structure is
   // nP totalHistograms (idx1 limit1 step1 bins1) (idx2 limit2 step2 bins2) nO o1 o2
   // where limit and step are indices into functorConstants. 
@@ -48,7 +48,7 @@ __device__ fptype device_InterHistogram (fptype* evt, fptype* p, unsigned int* i
     globalBin      += previous * localBin; 
     previous       *= indices[lowerBoundIdx + 2];
 
-    if (0 == threadIdx.x + blockIdx.x)
+    if (0 == THREADIDX + BLOCKIDX)
       printf("Variable %i: %f %f %i\n", i, currVariable, currVariable*step + lowerBound, localBin);
   }
 
@@ -89,7 +89,7 @@ __device__ fptype device_InterHistogram (fptype* evt, fptype* p, unsigned int* i
       fptype currDist = binDistances[v];
       currDist -= offset; 
       currentWeight += currDist*currDist;
-      if (0 == threadIdx.x + blockIdx.x)
+      if (0 == THREADIDX + BLOCKIDX)
 	printf("%i, %i: %f %f %f %i %s\n", i, v, currDist, binDistances[v], currentWeight, offset, offSomeAxis ? "off" : "on"); 
     }
 
@@ -99,18 +99,18 @@ __device__ fptype device_InterHistogram (fptype* evt, fptype* p, unsigned int* i
     ret += currentWeight * currentEntry;
     totalWeight += currentWeight;
 
-    if (0 == threadIdx.x + blockIdx.x) 
+    if (0 == THREADIDX + BLOCKIDX) 
       printf("Adding bin content %i %f with weight %f for total %f.\n", currBin, currentEntry, currentWeight, ret);
   }
 
-  if (0 == threadIdx.x + blockIdx.x)
+  if (0 == THREADIDX + BLOCKIDX)
     printf("%f %f %f %i %f\n", ret, totalWeight, evt[0], indices[6], p[indices[6]]);
 
   ret /= totalWeight;
   return ret; 
 }
 
-__device__ device_function_ptr ptr_to_InterHistogram = device_InterHistogram; 
+MEM_DEVICE device_function_ptr ptr_to_InterHistogram = device_InterHistogram; 
 
 __host__ InterHistPdf::InterHistPdf (std::string n, 
 							 BinnedDataSet* x, 
@@ -142,7 +142,7 @@ __host__ InterHistPdf::InterHistPdf (std::string n,
     pindices.push_back(cIndex + 2*varIndex + 1);
     pindices.push_back((*var)->numbins);
 
-    // NB, do not put cIndex here, it is accounted for by the offset in cudaMemcpyToSymbol below. 
+    // NB, do not put cIndex here, it is accounted for by the offset in MEMCPY_TO_SYMBOL below. 
     host_constants[2*varIndex + 0] = (*var)->lowerlimit; 
     host_constants[2*varIndex + 1] = ((*var)->upperlimit - (*var)->lowerlimit) / (*var)->numbins; 
     varIndex++; 
@@ -155,13 +155,13 @@ __host__ InterHistPdf::InterHistPdf (std::string n,
     host_histogram.push_back(curr);
     totalEvents += curr; 
   }
-  cudaMemcpyToSymbol(functorConstants, host_constants, numConstants*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(functorConstants, host_constants, numConstants*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice); 
 
   dev_base_histogram = new thrust::device_vector<fptype>(host_histogram);  
   static fptype* dev_address[1];
   dev_address[0] = (&((*dev_base_histogram)[0])).get();
-  cudaMemcpyToSymbol(dev_base_interhists, dev_address, sizeof(fptype*), totalHistograms*sizeof(fptype*), cudaMemcpyHostToDevice); 
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_InterHistogram, sizeof(void*));
+  MEMCPY_TO_SYMBOL(dev_base_interhists, dev_address, sizeof(fptype*), totalHistograms*sizeof(fptype*), cudaMemcpyHostToDevice); 
+  GET_FUNCTION_ADDR(ptr_to_InterHistogram);
   initialise(pindices); 
 
   totalHistograms++; 

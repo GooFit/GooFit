@@ -11,13 +11,13 @@ const int resonanceOffset_DP = 4; // Offset of the first resonance into the para
 // waves are recalculated when the corresponding resonance mass or width 
 // changes. Note that in a multithread environment each thread needs its
 // own cache, hence the '10'. Ten threads should be enough for anyone! 
-__device__ devcomplex<fptype>* cResonances[10]; 
+MEM_DEVICE devcomplex<fptype>* cResonances[10]; 
 
-__device__ inline int parIndexFromResIndex_DP (int resIndex) {
+EXEC_TARGET inline int parIndexFromResIndex_DP (int resIndex) {
   return resonanceOffset_DP + resIndex*resonanceSize; 
 }
 
-__device__ devcomplex<fptype> device_DalitzPlot_calcIntegrals (fptype m12, fptype m13, int res_i, int res_j, fptype* p, unsigned int* indices) {
+EXEC_TARGET devcomplex<fptype> device_DalitzPlot_calcIntegrals (fptype m12, fptype m13, int res_i, int res_j, fptype* p, unsigned int* indices) {
   // Calculates BW_i(m12, m13) * BW_j^*(m12, m13). 
   // This calculation is in a separate function so
   // it can be cached. Note that this function expects
@@ -47,7 +47,7 @@ __device__ devcomplex<fptype> device_DalitzPlot_calcIntegrals (fptype m12, fptyp
   return ret; 
 }
 
-__device__ fptype device_DalitzPlot (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_DalitzPlot (fptype* evt, fptype* p, unsigned int* indices) {
   fptype motherMass = functorConstants[indices[1] + 0]; 
   fptype daug1Mass  = functorConstants[indices[1] + 1]; 
   fptype daug2Mass  = functorConstants[indices[1] + 2]; 
@@ -79,12 +79,12 @@ __device__ fptype device_DalitzPlot (fptype* evt, fptype* p, unsigned int* indic
   fptype eff = callFunction(evt, indices[effFunctionIdx], indices[effFunctionIdx + 1]); 
   ret *= eff;
 
-  //if (0 == ret) printf("DalitzPlot evt %i zero.\n", evtNum); 
+  //printf("DalitzPlot evt %i zero: %i %i %f (%f, %f).\n", evtNum, numResonances, effFunctionIdx, eff, totalAmp.real, totalAmp.imag); 
 
   return ret; 
 }
 
-__device__ device_function_ptr ptr_to_DalitzPlot = device_DalitzPlot; 
+MEM_DEVICE device_function_ptr ptr_to_DalitzPlot = device_DalitzPlot; 
 
 __host__ DalitzPlotPdf::DalitzPlotPdf (std::string n, 
 							   Variable* m12, 
@@ -118,8 +118,8 @@ __host__ DalitzPlotPdf::DalitzPlotPdf (std::string n,
   decayConstants[2] = decayInfo->daug2Mass;
   decayConstants[3] = decayInfo->daug3Mass;
   decayConstants[4] = decayInfo->meson_radius;
-  cudaMemcpyToSymbol(functorConstants, decayConstants, 5*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice);  
-  
+  MEMCPY_TO_SYMBOL(functorConstants, decayConstants, 5*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice);  
+
   pindices.push_back(decayInfo->resonances.size()); 
   static int cacheCount = 0; 
   cacheToUse = cacheCount++; 
@@ -138,7 +138,7 @@ __host__ DalitzPlotPdf::DalitzPlotPdf (std::string n,
   pindices.push_back(efficiency->getParameterIndex());
   components.push_back(efficiency); 
 
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_DalitzPlot, sizeof(void*));
+  GET_FUNCTION_ADDR(ptr_to_DalitzPlot);
   initialise(pindices);
 
   redoIntegral = new bool[decayInfo->resonances.size()];
@@ -173,9 +173,9 @@ __host__ void DalitzPlotPdf::setDataSize (unsigned int dataSize, unsigned int ev
   if (cachedWaves) delete cachedWaves;
 
   numEntries = dataSize; 
-  cachedWaves = new thrust::device_vector<devcomplex<fptype> >(dataSize*decayInfo->resonances.size());
+  cachedWaves = new DEVICE_VECTOR<devcomplex<fptype> >(dataSize*decayInfo->resonances.size());
   void* dummy = thrust::raw_pointer_cast(cachedWaves->data()); 
-  cudaMemcpyToSymbol(cResonances, &dummy, sizeof(devcomplex<fptype>*), cacheToUse*sizeof(devcomplex<fptype>*)); 
+  MEMCPY_TO_SYMBOL(cResonances, &dummy, sizeof(devcomplex<fptype>*), cacheToUse*sizeof(devcomplex<fptype>*), cudaMemcpyHostToDevice); 
   setForceIntegrals(); 
 }
 
@@ -184,11 +184,11 @@ __host__ fptype DalitzPlotPdf::normalise () const {
   // so set normalisation factor to 1 so it doesn't get multiplied by zero. 
   // Copy at this time to ensure that the SpecialResonanceCalculators, which need the efficiency, 
   // don't get zeroes through multiplying by the normFactor. 
-  cudaMemcpyToSymbol(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
 
   int totalBins = _m12->numbins * _m13->numbins;
   if (!dalitzNormRange) {
-    cudaMalloc((void**) &dalitzNormRange, 6*sizeof(fptype));
+    gooMalloc((void**) &dalitzNormRange, 6*sizeof(fptype));
   
     fptype* host_norms = new fptype[6];
     host_norms[0] = _m12->lowerlimit;
@@ -197,7 +197,7 @@ __host__ fptype DalitzPlotPdf::normalise () const {
     host_norms[3] = _m13->lowerlimit;
     host_norms[4] = _m13->upperlimit;
     host_norms[5] = _m13->numbins;
-    cudaMemcpy(dalitzNormRange, host_norms, 6*sizeof(fptype), cudaMemcpyHostToDevice);
+    MEMCPY(dalitzNormRange, host_norms, 6*sizeof(fptype), cudaMemcpyHostToDevice);
     delete[] host_norms; 
   }
 
@@ -224,9 +224,9 @@ __host__ fptype DalitzPlotPdf::normalise () const {
     if (redoIntegral[i]) {
       thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
 			thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
-			strided_range<thrust::device_vector<devcomplex<fptype> >::iterator>(cachedWaves->begin() + i, 
-											    cachedWaves->end(), 
-											    decayInfo->resonances.size()).begin(), 
+			strided_range<DEVICE_VECTOR<devcomplex<fptype> >::iterator>(cachedWaves->begin() + i, 
+										    cachedWaves->end(), 
+										    decayInfo->resonances.size()).begin(), 
 			*(calculators[i]));
     }
     
@@ -273,7 +273,7 @@ SpecialResonanceIntegrator::SpecialResonanceIntegrator (int pIdx, unsigned int r
   , parameters(pIdx) 
 {}
 
-__device__ devcomplex<fptype> SpecialResonanceIntegrator::operator () (thrust::tuple<int, fptype*> t) const {
+EXEC_TARGET devcomplex<fptype> SpecialResonanceIntegrator::operator () (thrust::tuple<int, fptype*> t) const {
   // Bin index, base address [lower, upper, numbins] 
   // Notice that this is basically MetricTaker::operator (binned) with the special-case knowledge
   // that event size is two, and that the function to call is dev_DalitzPlot_calcIntegrals.
@@ -320,7 +320,7 @@ SpecialResonanceCalculator::SpecialResonanceCalculator (int pIdx, unsigned int r
   , parameters(pIdx)
 {}
 
-__device__ devcomplex<fptype> SpecialResonanceCalculator::operator () (thrust::tuple<int, fptype*, int> t) const {
+EXEC_TARGET devcomplex<fptype> SpecialResonanceCalculator::operator () (thrust::tuple<int, fptype*, int> t) const {
   // Calculates the BW values for a specific resonance. 
   devcomplex<fptype> ret;
   int evtNum = thrust::get<0>(t); 

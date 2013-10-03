@@ -1,6 +1,6 @@
 #include "CrystalBallPdf.hh"
 
-__device__ fptype device_CrystalBall (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_CrystalBall (fptype* evt, fptype* p, unsigned int* indices) {
   // Left-hand tail if alpha is less than 0, 
   // right-hand tail if greater, pure Gaussian if 0. 
   //return 1; 
@@ -26,12 +26,12 @@ __device__ fptype device_CrystalBall (fptype* evt, fptype* p, unsigned int* indi
     d = (d != 0) ? n_over_alpha / d : 0; 
     ret = a*POW(d, power); 
   } 
-  //if ((0 == threadIdx.x) && (0 == blockIdx.x)) printf("device_CB: %f %f %f %f %f %f\n", x, mean, sigma, alpha, power, ret); 
+  //if ((0 == THREADIDX) && (0 == BLOCKIDX)) printf("device_CB: %f %f %f %f %f %f\n", x, mean, sigma, alpha, power, ret); 
   return ret; 
   
 }
 
-__device__ device_function_ptr ptr_to_CrystalBall = device_CrystalBall; 
+MEM_DEVICE device_function_ptr ptr_to_CrystalBall = device_CrystalBall; 
 
 __host__ CrystalBallPdf::CrystalBallPdf (std::string n, Variable* _x, Variable* mean, Variable* sigma, Variable* alpha, Variable* power) 
   : GooPdf(_x, n) 
@@ -42,7 +42,7 @@ __host__ CrystalBallPdf::CrystalBallPdf (std::string n, Variable* _x, Variable* 
   pindices.push_back(registerParameter(alpha));
   if (!power) power = new Variable(n + "_n", 2); 
   pindices.push_back(registerParameter(power));
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_CrystalBall, sizeof(void*));
+  GET_FUNCTION_ADDR(ptr_to_CrystalBall);
   initialise(pindices); 
 }
 

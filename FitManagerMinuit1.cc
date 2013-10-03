@@ -1,15 +1,7 @@
 PdfBase* pdfPointer; 
 FitManager* currGlue = 0; 
 int numPars = 0; 
-
-#ifdef OMP_ON
-#pragma omp threadprivate (pdfPointer)
-#pragma omp threadprivate (currGlue)
-#pragma omp threadprivate (numPars)
-std::vector<Variable*> vars[MAX_THREADS]; 
-#else
-std::vector<Variable*> vars; 
-#endif
+vector<Variable*> vars; 
 
 void specialTddpPrint (double fun); 
 
@@ -26,23 +18,6 @@ FitManager::~FitManager () {
 }
 
 void FitManager::setupMinuit () {
-#ifdef OMP_ON
-  int tid = omp_get_thread_num(); 
-  vars[tid].clear(); 
-  pdfPointer->getParameters(vars[tid]); 
-
-  numPars = vars[tid].size();
-  if (minuit) delete minuit;
-  minuit = new TMinuit(numPars); 
-  int maxIndex = 0; 
-  int counter = 0; 
-  for (std::vector<Variable*>::iterator i = vars[tid].begin(); i != vars[tid].end(); ++i) {
-    minuit->DefineParameter(counter, (*i)->name.c_str(), (*i)->value, (*i)->error, (*i)->lowerlimit, (*i)->upperlimit); 
-    if ((*i)->fixed) minuit->FixParameter(counter);
-    counter++; 
-    if (maxIndex < (*i)->getIndex()) maxIndex = (*i)->getIndex();
-  }
-#else
   vars.clear(); 
   pdfPointer->getParameters(vars); 
 
@@ -57,7 +32,7 @@ void FitManager::setupMinuit () {
     counter++; 
     if (maxIndex < (*i)->getIndex()) maxIndex = (*i)->getIndex();
   }
-#endif
+
   numPars = maxIndex+1; 
   pdfPointer->copyParams();   
   minuit->SetFCN(FitFun); 
@@ -83,16 +58,9 @@ void FitManager::runMigrad () {
 
 void FitManager::getMinuitValues () const {
   int counter = 0; 
-#ifdef OMP_ON
-  int tid = omp_get_thread_num();
-  for (std::vector<Variable*>::iterator i = vars[tid].begin(); i != vars[tid].end(); ++i) {
-    minuit->GetParameter(counter++, (*i)->value, (*i)->error);
-  }
-#else
   for (std::vector<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
     minuit->GetParameter(counter++, (*i)->value, (*i)->error);
   }
-#endif
 }
 
 void FitFun(int &npar, double *gin, double &fun, double *fp, int iflag) {
@@ -100,17 +68,10 @@ void FitFun(int &npar, double *gin, double &fun, double *fp, int iflag) {
   // Notice that npar is number of variable parameters, not total. 
   pars.resize(numPars); 
   int counter = 0; 
-#ifdef OMP_ON
-  int tid = omp_get_thread_num();
-  for (std::vector<Variable*>::iterator i = vars[tid].begin(); i != vars[tid].end(); ++i) {
-    pars[(*i)->getIndex()] = fp[counter++] + (*i)->blind; // Minuit has the blinded value, give evaluation the true one. 
-  }
-#else
   for (std::vector<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
     if (isnan(fp[counter])) cout << "Variable " << (*i)->name << " " << (*i)->index << " is NaN\n"; 
     pars[(*i)->getIndex()] = fp[counter++] + (*i)->blind; 
   }
-#endif // OMP_ON
   
   pdfPointer->copyParams(pars); 
   fun = pdfPointer->calculateNLL(); 

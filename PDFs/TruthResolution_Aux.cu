@@ -1,6 +1,6 @@
 #include "TruthResolution_Aux.hh" 
 
-__device__ fptype device_truth_resolution (fptype coshterm, fptype costerm, fptype sinhterm, fptype sinterm, 
+EXEC_TARGET fptype device_truth_resolution (fptype coshterm, fptype costerm, fptype sinhterm, fptype sinterm, 
 					   fptype tau, fptype dtime, fptype xmixing, fptype ymixing, fptype /*sigma*/, 
 					   fptype* /*p*/, unsigned int* /*indices*/) { 
   fptype ret = 0;
@@ -15,12 +15,12 @@ __device__ fptype device_truth_resolution (fptype coshterm, fptype costerm, fpty
   return ret; 
 }
 
-__device__ device_resfunction_ptr ptr_to_truth = device_truth_resolution; 
+MEM_DEVICE device_resfunction_ptr ptr_to_truth = device_truth_resolution; 
 
 TruthResolution::TruthResolution () 
   : MixingTimeResolution()
 {
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_truth, sizeof(void*));
+  GET_FUNCTION_ADDR(ptr_to_truth);
   initIndex(); 
 }
 TruthResolution::~TruthResolution () {} 

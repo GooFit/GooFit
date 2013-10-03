@@ -1,16 +1,16 @@
 #include "SmoothHistogramPdf.hh"
 
-__constant__ fptype* dev_base_histograms[100]; // Multiple histograms for the case of multiple PDFs
-__constant__ fptype* dev_smoothed_histograms[100]; 
+MEM_CONSTANT fptype* dev_base_histograms[100]; // Multiple histograms for the case of multiple PDFs
+MEM_CONSTANT fptype* dev_smoothed_histograms[100]; 
 unsigned int SmoothHistogramPdf::totalHistograms = 0; 
 
-__device__ int dev_powi (int base, int exp) {
+EXEC_TARGET int dev_powi (int base, int exp) {
   int ret = 1; 
   for (int i = 0; i < exp; ++i) ret *= base;
   return ret; 
 }
 
-__device__ fptype device_EvalHistogram (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_EvalHistogram (fptype* evt, fptype* p, unsigned int* indices) {
   // Structure is
   // nP smoothingIndex totalHistograms (limit1 step1 bins1) (limit2 step2 bins2) nO o1 o2
   // where limit and step are indices into functorConstants. 
@@ -23,14 +23,14 @@ __device__ fptype device_EvalHistogram (fptype* evt, fptype* p, unsigned int* in
   for (int i = 0; i < numVars; ++i) { 
     int varIndex = indices[indices[0] + 2 + i]; 
     int lowerBoundIdx   = 3*(i+1);
-    //if (gpuDebug & 1) printf("[%i, %i] Smoothed: %i %i %i\n", blockIdx.x, threadIdx.x, i, varIndex, indices[varIndex]); 
+    //if (gpuDebug & 1) printf("[%i, %i] Smoothed: %i %i %i\n", BLOCKIDX, THREADIDX, i, varIndex, indices[varIndex]); 
     fptype currVariable = evt[varIndex];
     fptype lowerBound   = functorConstants[indices[lowerBoundIdx + 0]];
     fptype step         = functorConstants[indices[lowerBoundIdx + 1]];
 
     currVariable -= lowerBound;
     currVariable /= step; 
-    //if (gpuDebug & 1) printf("[%i, %i] Smoothed: %i %i %f %f %f %f\n", blockIdx.x, threadIdx.x, i, varIndex, currVariable, lowerBound, step, evt[varIndex]); 
+    //if (gpuDebug & 1) printf("[%i, %i] Smoothed: %i %i %f %f %f %f\n", BLOCKIDX, THREADIDX, i, varIndex, currVariable, lowerBound, step, evt[varIndex]); 
 
     int localBinNumber  = (int) FLOOR(currVariable); 
     globalBinNumber    += previous * localBinNumber; 
@@ -49,7 +49,7 @@ __device__ fptype device_EvalHistogram (fptype* evt, fptype* p, unsigned int* in
 struct Smoother { 
   int parameters;
 
-  __device__ fptype operator () (int globalBin) {
+  EXEC_TARGET fptype operator () (int globalBin) {
     unsigned int* indices = paramIndices + parameters; 
     int numVars = indices[indices[0] + 1]; 
     fptype smoothing = cudaArray[indices[1]];
@@ -95,7 +95,7 @@ struct Smoother {
   }
 };
 
-__device__ device_function_ptr ptr_to_EvalHistogram = device_EvalHistogram; 
+MEM_DEVICE device_function_ptr ptr_to_EvalHistogram = device_EvalHistogram; 
 
 __host__ SmoothHistogramPdf::SmoothHistogramPdf (std::string n, BinnedDataSet* hist, Variable* smoothing) 
   : GooPdf(0, n) 
@@ -118,7 +118,7 @@ __host__ SmoothHistogramPdf::SmoothHistogramPdf (std::string n, BinnedDataSet* h
     pindices.push_back(cIndex + 2*varIndex + 1);
     pindices.push_back((*var)->numbins);
 
-    host_constants[2*varIndex + 0] = (*var)->lowerlimit; // NB, do not put cIndex here, it is accounted for by the offset in cudaMemcpyToSymbol below. 
+    host_constants[2*varIndex + 0] = (*var)->lowerlimit; // NB, do not put cIndex here, it is accounted for by the offset in MEMCPY_TO_SYMBOL below. 
     host_constants[2*varIndex + 1] = ((*var)->upperlimit - (*var)->lowerlimit) / (*var)->numbins; 
     varIndex++; 
   }
@@ -130,22 +130,35 @@ __host__ SmoothHistogramPdf::SmoothHistogramPdf (std::string n, BinnedDataSet* h
     host_histogram.push_back(curr);
     totalEvents += curr; 
   }
-  cudaMemcpyToSymbol(functorConstants, host_constants, numConstants*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(functorConstants, host_constants, numConstants*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice); 
   if (totalEvents > 0) copyHistogramToDevice(host_histogram);
   else std::cout << "Warning: Empty histogram supplied to " << getName() << " not copied to device. Expect copyHistogramToDevice call later.\n"; 
 
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_EvalHistogram, sizeof(void*));
+  GET_FUNCTION_ADDR(ptr_to_EvalHistogram);
   initialise(pindices); 
 }
 
+fptype* pointerToFirst (thrust::device_vector<fptype>* hist) {
+  return (&((*hist)[0])).get();
+}
+
+fptype* pointerToFirst (thrust::host_vector<fptype>* hist) {
+  // (*hist) is the host_vector.
+  // (*hist)[0] is a 'reference' - Thrust class, not ordinary C++ reference - 
+  // to the first element of the vector. 
+  // &((*hist)[0]) is a 'Pointer', as defined by the host_vector, to the location
+  // of the 'reference'. Fortunately this is by default fptype*! 
+  return &((*hist)[0]);
+}
+
 __host__ void SmoothHistogramPdf::copyHistogramToDevice (thrust::host_vector<fptype>& host_histogram) {
-  dev_base_histogram = new thrust::device_vector<fptype>(host_histogram);  
-  dev_smoothed_histogram = new thrust::device_vector<fptype>(host_histogram);  
+  dev_base_histogram = new DEVICE_VECTOR<fptype>(host_histogram);  
+  dev_smoothed_histogram = new DEVICE_VECTOR<fptype>(host_histogram);  
   static fptype* dev_address[1];
-  dev_address[0] = (&((*dev_base_histogram)[0])).get();
-  cudaMemcpyToSymbol(dev_base_histograms, dev_address, sizeof(fptype*), totalHistograms*sizeof(fptype*), cudaMemcpyHostToDevice); 
-  dev_address[0] = (&((*dev_smoothed_histogram)[0])).get();
-  cudaMemcpyToSymbol(dev_smoothed_histograms, dev_address, sizeof(fptype*), totalHistograms*sizeof(fptype*), cudaMemcpyHostToDevice); 
+  dev_address[0] = pointerToFirst(dev_base_histogram);
+  MEMCPY_TO_SYMBOL(dev_base_histograms, dev_address, sizeof(fptype*), totalHistograms*sizeof(fptype*), cudaMemcpyHostToDevice); 
+  dev_address[0] = pointerToFirst(dev_smoothed_histogram);
+  MEMCPY_TO_SYMBOL(dev_smoothed_histograms, dev_address, sizeof(fptype*), totalHistograms*sizeof(fptype*), cudaMemcpyHostToDevice); 
 
   totalHistograms++; 
 

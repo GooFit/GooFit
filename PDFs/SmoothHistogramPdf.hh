@@ -12,8 +12,8 @@ public:
   __host__ void copyHistogramToDevice (thrust::host_vector<fptype>& host_histogram);
 
 private:
-  thrust::device_vector<fptype>* dev_base_histogram; 
-  thrust::device_vector<fptype>* dev_smoothed_histogram; 
+  DEVICE_VECTOR<fptype>* dev_base_histogram; 
+  DEVICE_VECTOR<fptype>* dev_smoothed_histogram; 
   fptype totalEvents; 
   fptype* host_constants;
 

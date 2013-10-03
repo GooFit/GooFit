@@ -1,9 +1,5 @@
 #include "ConvolutionPdf.hh"
-
 int totalConvolutions = 0; 
-#ifdef OMP_ON
-#pragma omp threadprivate(totalConvolutions)
-#endif
 
 #define CONVOLUTION_CACHE_SIZE 512
 // I would really like this to be 1024, which is the maximum number of threads
@@ -12,14 +8,14 @@ int totalConvolutions = 0;
 // goes wrong. So... 512 should be enough for anyone, right? 
 
 // Need multiple working spaces for the case of several convolutions in one PDF. 
-__constant__ fptype* dev_modWorkSpace[100];
-__constant__ fptype* dev_resWorkSpace[100]; 
+MEM_CONSTANT fptype* dev_modWorkSpace[100];
+MEM_CONSTANT fptype* dev_resWorkSpace[100]; 
 
 // Number which transforms model range (x1, x2) into resolution range (x1 - maxX, x2 - minX).
 // It is equal to the maximum possible value of x0, ie maxX, in bins. 
-__constant__ int modelOffset[100]; 
+MEM_CONSTANT int modelOffset[100]; 
 
-__device__ fptype device_ConvolvePdfs (fptype* evt, fptype* p, unsigned int* indices) { 
+EXEC_TARGET fptype device_ConvolvePdfs (fptype* evt, fptype* p, unsigned int* indices) { 
   fptype ret     = 0; 
   fptype loBound = functorConstants[indices[5]+0];
   fptype hiBound = functorConstants[indices[5]+1];
@@ -46,7 +42,7 @@ __device__ fptype device_ConvolvePdfs (fptype* evt, fptype* p, unsigned int* ind
   return ret; 
 }
 
-__device__ fptype device_ConvolveSharedPdfs (fptype* evt, fptype* p, unsigned int* indices) { 
+EXEC_TARGET fptype device_ConvolveSharedPdfs (fptype* evt, fptype* p, unsigned int* indices) { 
   fptype ret     = 0; 
   fptype loBound = functorConstants[indices[5]+0];
   fptype hiBound = functorConstants[indices[5]+1];
@@ -62,9 +58,9 @@ __device__ fptype device_ConvolveSharedPdfs (fptype* evt, fptype* p, unsigned in
   int offsetInBins = (int) FLOOR(x0 / step - lowerBoundOffset); 
 
   // Brute-force calculate integral M(x) * R(x - x0) dx
-  __shared__ fptype modelCache[CONVOLUTION_CACHE_SIZE]; 
+  MEM_SHARED fptype modelCache[CONVOLUTION_CACHE_SIZE]; 
   // Don't try to shared-load more items than we have threads. 
-  int numToLoad = min(CONVOLUTION_CACHE_SIZE / numOthers, blockDim.x);
+  int numToLoad = min(CONVOLUTION_CACHE_SIZE / numOthers, BLOCKDIM);
 
   for (int i = 0; i < numbins; i += numToLoad) {
     // This code avoids this problem: If event 0 is in workspace 0, and 
@@ -74,10 +70,10 @@ __device__ fptype device_ConvolveSharedPdfs (fptype* evt, fptype* p, unsigned in
     // be filled, because the threads can be all over the place in terms 
     // of their workspace. 
 
-    if (threadIdx.x < numToLoad) { 
+    if (THREADIDX < numToLoad) { 
       for (unsigned int w = 0; w < numOthers; ++w) {
 	unsigned int wIndex = indices[8 + w]; 
-	modelCache[w*numToLoad + threadIdx.x] = (i + threadIdx.x < numbins) ? dev_modWorkSpace[wIndex][i + threadIdx.x] : 0; 
+	modelCache[w*numToLoad + THREADIDX] = (i + THREADIDX < numbins) ? dev_modWorkSpace[wIndex][i + THREADIDX] : 0; 
       }
     }
 
@@ -87,7 +83,7 @@ __device__ fptype device_ConvolveSharedPdfs (fptype* evt, fptype* p, unsigned in
     // It's unfortunately up to the user to ensure that every
     // event will hit this point, by making sure that if *any*
     // event has a convolution, *all* events do. 
-    __syncthreads(); 
+    THREAD_SYNCH 
       
     for (int j = 0; j < numToLoad; ++j) {
       if (i + j >= numbins) break; 
@@ -100,7 +96,7 @@ __device__ fptype device_ConvolveSharedPdfs (fptype* evt, fptype* p, unsigned in
     // and fill up their parts of modelCache with the *next* set of numbers,
     // which means that the warps still working on the sum get the wrong
     // numbers! 
-    __syncthreads(); 
+    THREAD_SYNCH 
   }
 
   ret *= normalisationFactors[indices[2]]; 
@@ -109,8 +105,8 @@ __device__ fptype device_ConvolveSharedPdfs (fptype* evt, fptype* p, unsigned in
   return ret; 
 }
 
-__device__ device_function_ptr ptr_to_ConvolvePdfs = device_ConvolvePdfs; 
-__device__ device_function_ptr ptr_to_ConvolveSharedPdfs = device_ConvolveSharedPdfs; 
+MEM_DEVICE device_function_ptr ptr_to_ConvolvePdfs = device_ConvolvePdfs; 
+MEM_DEVICE device_function_ptr ptr_to_ConvolveSharedPdfs = device_ConvolveSharedPdfs; 
 
 ConvolutionPdf::ConvolutionPdf (std::string n,
 						    Variable* x, 
@@ -139,7 +135,7 @@ ConvolutionPdf::ConvolutionPdf (std::string n,
   paramIndices.push_back(registerConstants(3));
   paramIndices.push_back(workSpaceIndex = totalConvolutions++); 
   
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_ConvolvePdfs, sizeof(void*));
+  GET_FUNCTION_ADDR(ptr_to_ConvolvePdfs);
   initialise(paramIndices);
   setIntegrationConstants(-10, 10, 0.01);
 } 
@@ -190,7 +186,7 @@ ConvolutionPdf::ConvolutionPdf (std::string n,
 
   assert(numOthers <= CONVOLUTION_CACHE_SIZE); 
   
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_ConvolveSharedPdfs, sizeof(void*));
+  GET_FUNCTION_ADDR(ptr_to_ConvolveSharedPdfs);
   initialise(paramIndices);
   setIntegrationConstants(-10, 10, 0.01);
 } 
@@ -198,12 +194,12 @@ ConvolutionPdf::ConvolutionPdf (std::string n,
 __host__ void ConvolutionPdf::setIntegrationConstants (fptype lo, fptype hi, fptype step) {
   if (!host_iConsts) {
     host_iConsts = new fptype[6]; 
-    cudaMalloc((void**) &dev_iConsts, 6*sizeof(fptype)); 
+    gooMalloc((void**) &dev_iConsts, 6*sizeof(fptype)); 
   }
   host_iConsts[0] = lo;
   host_iConsts[1] = hi;
   host_iConsts[2] = step;
-  cudaMemcpyToSymbol(functorConstants, host_iConsts, 3*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(functorConstants, host_iConsts, 3*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice); 
   if (modelWorkSpace) {
     delete modelWorkSpace;
     delete resolWorkSpace;
@@ -227,17 +223,17 @@ __host__ void ConvolutionPdf::setIntegrationConstants (fptype lo, fptype hi, fpt
 
   numbins = (int) floor((host_iConsts[4] - host_iConsts[3]) / step + 0.5); 
   host_iConsts[5] = numbins; 
-  cudaMemcpy(dev_iConsts, host_iConsts, 6*sizeof(fptype), cudaMemcpyHostToDevice); 
+  MEMCPY(dev_iConsts, host_iConsts, 6*sizeof(fptype), cudaMemcpyHostToDevice); 
   resolWorkSpace = new thrust::device_vector<fptype>(numbins);
 
   int offset = dependent->upperlimit / step; 
-  cudaMemcpyToSymbol(modelOffset, &offset, sizeof(int), workSpaceIndex*sizeof(int), cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(modelOffset, &offset, sizeof(int), workSpaceIndex*sizeof(int), cudaMemcpyHostToDevice); 
 
   fptype* dev_address[1];
   dev_address[0] = (&((*modelWorkSpace)[0])).get();
-  cudaMemcpyToSymbol(dev_modWorkSpace, dev_address, sizeof(fptype*), workSpaceIndex*sizeof(fptype*), cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(dev_modWorkSpace, dev_address, sizeof(fptype*), workSpaceIndex*sizeof(fptype*), cudaMemcpyHostToDevice); 
   dev_address[0] = (&((*resolWorkSpace)[0])).get();
-  cudaMemcpyToSymbol(dev_resWorkSpace, dev_address, sizeof(fptype*), workSpaceIndex*sizeof(fptype*), cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(dev_resWorkSpace, dev_address, sizeof(fptype*), workSpaceIndex*sizeof(fptype*), cudaMemcpyHostToDevice); 
 }
 
 __host__ void ConvolutionPdf::registerOthers (std::vector<ConvolutionPdf*> others) {
@@ -269,7 +265,7 @@ __host__ fptype ConvolutionPdf::normalise () const {
 
   // First set normalisation factors to one so we can evaluate convolution without getting zeroes
   recursiveSetNormalisation(fptype(1.0)); 
-  cudaMemcpyToSymbol(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
 
   // Next recalculate functions at each point, in preparation for convolution integral
   thrust::constant_iterator<fptype*> arrayAddress(dev_iConsts); 
@@ -283,7 +279,7 @@ __host__ fptype ConvolutionPdf::normalise () const {
 		      thrust::make_zip_iterator(thrust::make_tuple(binIndex + modelWorkSpace->size(), eventSize, arrayAddress)),
 		      modelWorkSpace->begin(), 
 		      modalor);
-    cudaDeviceSynchronize(); 
+    SYNCH(); 
     model->storeParameters();
     /*
     if ((cpuDebug & 1) && (5 == workSpaceIndex)) {
@@ -307,7 +303,7 @@ __host__ fptype ConvolutionPdf::normalise () const {
     resolution->storeParameters(); 
   }
 
-  //cudaDeviceSynchronize(); 
+  //SYNCH(); 
 
   // Then return usual integral
   fptype ret = GooPdf::normalise();

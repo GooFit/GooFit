@@ -76,7 +76,7 @@ class SpecialDalitzIntegrator : public thrust::unary_function<thrust::tuple<int,
 public:
 
   SpecialDalitzIntegrator (int pIdx, unsigned int ri, unsigned int rj);
-  __device__ ThreeComplex operator () (thrust::tuple<int, fptype*> t) const;
+  EXEC_TARGET ThreeComplex operator () (thrust::tuple<int, fptype*> t) const;
 private:
 
   unsigned int resonance_i;
@@ -104,7 +104,7 @@ class SpecialWaveCalculator : public thrust::unary_function<thrust::tuple<int, f
 public:
 
   SpecialWaveCalculator (int pIdx, unsigned int res_idx); 
-  __device__ WaveHolder operator () (thrust::tuple<int, fptype*, int> t) const;
+  EXEC_TARGET WaveHolder operator () (thrust::tuple<int, fptype*, int> t) const;
 
 private:
 

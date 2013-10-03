@@ -6,13 +6,13 @@ const int resonanceOffset_incoherent = 4; // Offset of the first resonance into 
 // Notice that this is different from the TddpPdf case because there's no time information. 
 // In particular the offset consists of nP, constant index, number of resonances, and cache index. 
 
-__device__ devcomplex<fptype>* cResonanceValues[10]; 
+MEM_DEVICE devcomplex<fptype>* cResonanceValues[10]; 
 
-__device__ inline int parIndexFromResIndex_incoherent (int resIndex) {
+EXEC_TARGET inline int parIndexFromResIndex_incoherent (int resIndex) {
   return resonanceOffset_incoherent + resIndex*resonanceSize; 
 }
 
-__device__ fptype device_incoherent (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_incoherent (fptype* evt, fptype* p, unsigned int* indices) {
   // Calculates the incoherent sum over the resonances. 
   int evtNum = (int) FLOOR(0.5 + evt[indices[4 + indices[0]]]); 
 
@@ -36,7 +36,7 @@ __device__ fptype device_incoherent (fptype* evt, fptype* p, unsigned int* indic
   return ret; 
 }
 
-__device__ device_function_ptr ptr_to_incoherent = device_incoherent; 
+MEM_DEVICE device_function_ptr ptr_to_incoherent = device_incoherent; 
 
 __host__ IncoherentSumPdf::IncoherentSumPdf (std::string n, Variable* m12, Variable* m13, Variable* eventNumber, DecayInfo* decay, GooPdf* eff) 
   : GooPdf(0, n) 
@@ -65,7 +65,7 @@ __host__ IncoherentSumPdf::IncoherentSumPdf (std::string n, Variable* m12, Varia
   decayConstants[2] = decayInfo->daug2Mass;
   decayConstants[3] = decayInfo->daug3Mass;
   decayConstants[4] = decayInfo->meson_radius;
-  cudaMemcpyToSymbol(functorConstants, decayConstants, 5*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice);  
+  MEMCPY_TO_SYMBOL(functorConstants, decayConstants, 5*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice);  
 
   pindices.push_back(decayInfo->resonances.size()); 
   static int cacheCount = 0; 
@@ -86,7 +86,7 @@ __host__ IncoherentSumPdf::IncoherentSumPdf (std::string n, Variable* m12, Varia
   pindices.push_back(efficiency->getParameterIndex());
   components.push_back(efficiency); 
 
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_incoherent, sizeof(void*));
+  GET_FUNCTION_ADDR(ptr_to_incoherent);
   initialise(pindices); 
 
   redoIntegral = new bool[decayInfo->resonances.size()];
@@ -122,9 +122,9 @@ __host__ void IncoherentSumPdf::setDataSize (unsigned int dataSize, unsigned int
   }
 
   numEntries = dataSize; 
-  cachedResonances = new thrust::device_vector<devcomplex<fptype> >(dataSize*decayInfo->resonances.size());
+  cachedResonances = new DEVICE_VECTOR<devcomplex<fptype> >(dataSize*decayInfo->resonances.size());
   void* dummy = thrust::raw_pointer_cast(cachedResonances->data()); 
-  cudaMemcpyToSymbol(cResonanceValues, &dummy, sizeof(devcomplex<fptype>*), cacheToUse*sizeof(devcomplex<fptype>*)); 
+  MEMCPY_TO_SYMBOL(cResonanceValues, &dummy, sizeof(devcomplex<fptype>*), cacheToUse*sizeof(devcomplex<fptype>*), cudaMemcpyHostToDevice); 
   setForceIntegrals(); 
 }
 
@@ -133,11 +133,11 @@ __host__ fptype IncoherentSumPdf::normalise () const {
   // so set normalisation factor to 1 so it doesn't get multiplied by zero. 
   // Copy at this time to ensure that the SpecialCalculators, which need the efficiency, 
   // don't get zeroes through multiplying by the normFactor. 
-  cudaMemcpyToSymbol(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
 
   int totalBins = _m12->numbins * _m13->numbins;
   if (!dalitzNormRange) {
-    cudaMalloc((void**) &dalitzNormRange, 6*sizeof(fptype));
+    gooMalloc((void**) &dalitzNormRange, 6*sizeof(fptype));
   
     fptype* host_norms = new fptype[6];
     host_norms[0] = _m12->lowerlimit;
@@ -146,7 +146,7 @@ __host__ fptype IncoherentSumPdf::normalise () const {
     host_norms[3] = _m13->lowerlimit;
     host_norms[4] = _m13->upperlimit;
     host_norms[5] = _m13->numbins;
-    cudaMemcpy(dalitzNormRange, host_norms, 6*sizeof(fptype), cudaMemcpyHostToDevice);
+    MEMCPY(dalitzNormRange, host_norms, 6*sizeof(fptype), cudaMemcpyHostToDevice);
     delete[] host_norms; 
   }
 
@@ -179,9 +179,9 @@ __host__ fptype IncoherentSumPdf::normalise () const {
     if (redoIntegral[i]) {      
       thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
 			thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
-			strided_range<thrust::device_vector<devcomplex<fptype> >::iterator>(cachedResonances->begin() + i, 
-											    cachedResonances->end(), 
-											    decayInfo->resonances.size()).begin(), 
+			strided_range<DEVICE_VECTOR<devcomplex<fptype> >::iterator>(cachedResonances->begin() + i, 
+										    cachedResonances->end(), 
+										    decayInfo->resonances.size()).begin(), 
 			*(calculators[i]));
 
       fptype dummy = 0;
@@ -217,7 +217,7 @@ SpecialIncoherentIntegrator::SpecialIncoherentIntegrator (int pIdx, unsigned int
   , parameters(pIdx) 
 {}
 
-__device__ fptype SpecialIncoherentIntegrator::operator () (thrust::tuple<int, fptype*> t) const {
+EXEC_TARGET fptype SpecialIncoherentIntegrator::operator () (thrust::tuple<int, fptype*> t) const {
   // Returns integral of specific BW over Dalitz plot, to be cached and
   // multiplied by rapidly-changing amplitude. 
 
@@ -273,7 +273,7 @@ SpecialIncoherentResonanceCalculator::SpecialIncoherentResonanceCalculator (int 
   , parameters(pIdx)
 {}
 
-__device__ devcomplex<fptype> SpecialIncoherentResonanceCalculator::operator () (thrust::tuple<int, fptype*, int> t) const {
+EXEC_TARGET devcomplex<fptype> SpecialIncoherentResonanceCalculator::operator () (thrust::tuple<int, fptype*, int> t) const {
   // Returns the BW, or other resonance function, for a specific resonance.
   // Is special because the value is expected to change slowly, so it's
   // useful to cache the result. 

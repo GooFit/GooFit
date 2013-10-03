@@ -1,12 +1,6 @@
 PdfBase* pdfPointer; 
 int numPars = 0; 
-#ifdef OMP_ON
-#pragma omp threadprivate (pdfPointer)
-#pragma omp threadprivate (numPars)
-std::vector<Variable*> vars[MAX_THREADS]; 
-#else
-std::vector<Variable*> vars; 
-#endif
+vector<Variable*> vars; 
 
 FitManager::FitManager (PdfBase* dat) {
   pdfPointer = dat;
@@ -37,20 +31,11 @@ void FitManager::fit () {
 
 void FitManager::getMinuitValues () const {
   int counter = 0; 
-#ifdef OMP_ON
-  int tid = omp_get_thread_num();
-  for (std::vector<Variable*>::iterator i = vars[tid].begin(); i != vars[tid].end(); ++i) {
-    (*i)->value = fitter->GetParameter(counter);
-    (*i)->error = fitter->GetParError(counter);
-    counter++;
-  }
-#else
   for (std::vector<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
     (*i)->value = fitter->GetParameter(counter);
     (*i)->error = fitter->GetParError(counter);
     counter++;
   }
-#endif
 }
 
 void FitFun (int &npar, double *gin, double &fun, double *fp, int iflag) { // MINUIT 3 version 

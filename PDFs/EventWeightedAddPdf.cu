@@ -1,6 +1,6 @@
 #include "EventWeightedAddPdf.hh"
 
-__device__ fptype device_EventWeightedAddPdfs (fptype* evt, fptype* p, unsigned int* indices) { 
+EXEC_TARGET fptype device_EventWeightedAddPdfs (fptype* evt, fptype* p, unsigned int* indices) { 
   int numParameters = indices[0]; 
   fptype ret = 0;
   fptype totalWeight = 0; 
@@ -21,7 +21,7 @@ __device__ fptype device_EventWeightedAddPdfs (fptype* evt, fptype* p, unsigned 
   return ret; 
 }
 
-__device__ fptype device_EventWeightedAddPdfsExt (fptype* evt, fptype* p, unsigned int* indices) { 
+EXEC_TARGET fptype device_EventWeightedAddPdfsExt (fptype* evt, fptype* p, unsigned int* indices) { 
   // numParameters does not count itself. So the array structure for two functions is
   // nP | F P | F P | nO | o1 o2
   // in which nP = 4, nO = 2. 
@@ -31,14 +31,14 @@ __device__ fptype device_EventWeightedAddPdfsExt (fptype* evt, fptype* p, unsign
   fptype totalWeight = 0; 
   for (int i = 0; i < numParameters/2; ++i) {
     fptype curr = callFunction(evt, indices[2*i + 1], indices[2*(i+1)]); 
-    //if ((0 == blockIdx.x) && (threadIdx.x < 5) && (isnan(curr))) printf("NaN component %i %i\n", i, threadIdx.x); 
+    //if ((0 == BLOCKIDX) && (THREADIDX < 5) && (isnan(curr))) printf("NaN component %i %i\n", i, THREADIDX); 
     fptype weight = evt[indices[2 + numParameters + i]];
     ret += weight * curr * normalisationFactors[indices[2*(i+1)]]; 
     totalWeight += weight; 
 
-    //if ((gpuDebug & 1) && (0 == threadIdx.x))
+    //if ((gpuDebug & 1) && (0 == THREADIDX))
     //if ((gpuDebug & 1) && (1 > evt[8]))
-    //if ((gpuDebug & 1) && (0 == threadIdx.x) && (0 == blockIdx.x))
+    //if ((gpuDebug & 1) && (0 == THREADIDX) && (0 == BLOCKIDX))
     //printf("EventWeightedExt: %i %f %f | %f %f %f %f %f %f %f\n", i, curr, weight, evt[0], evt[1], evt[2], evt[3], evt[4], evt[5], evt[6]);
     //printf("EventWeightedExt: %i %f %f | %f %f \n", i, curr, weight, normalisationFactors[indices[2*(i+1)]], curr * normalisationFactors[indices[2*(i+1)]]);
     //printf("EventWeightedExt: %i : %i %.10f %.10f %.10f %f %f %f\n", (int) floor(0.5 + evt[8]), i, curr, weight, ret, normalisationFactors[indices[2*(i+1)]], evt[6], evt[7]);
@@ -50,8 +50,8 @@ __device__ fptype device_EventWeightedAddPdfsExt (fptype* evt, fptype* p, unsign
   return ret; 
 }
 
-__device__ device_function_ptr ptr_to_EventWeightedAddPdfs = device_EventWeightedAddPdfs; 
-__device__ device_function_ptr ptr_to_EventWeightedAddPdfsExt = device_EventWeightedAddPdfsExt; 
+MEM_DEVICE device_function_ptr ptr_to_EventWeightedAddPdfs = device_EventWeightedAddPdfs; 
+MEM_DEVICE device_function_ptr ptr_to_EventWeightedAddPdfsExt = device_EventWeightedAddPdfsExt; 
 
 EventWeightedAddPdf::EventWeightedAddPdf (std::string n, std::vector<Variable*> weights, std::vector<PdfBase*> comps) 
   : GooPdf(0, n) 
@@ -87,8 +87,8 @@ EventWeightedAddPdf::EventWeightedAddPdf (std::string n, std::vector<Variable*> 
   // This must occur after registering weights, or the indices will be off - the device functions assume that the weights are first. 
   getObservables(observables); 
 
-  if (extended) cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_EventWeightedAddPdfsExt, sizeof(void*));
-  else cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_EventWeightedAddPdfs, sizeof(void*));
+  if (extended) GET_FUNCTION_ADDR(ptr_to_EventWeightedAddPdfsExt);
+  else GET_FUNCTION_ADDR(ptr_to_EventWeightedAddPdfs);
   initialise(pindices);
 } 
 

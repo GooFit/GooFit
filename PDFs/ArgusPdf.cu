@@ -1,6 +1,6 @@
 #include "ArgusPdf.hh"
 
-__device__ fptype device_Argus_Upper (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_Argus_Upper (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x = evt[indices[2 + indices[0]]]; 
   fptype m0 = p[indices[1]];
 
@@ -14,7 +14,7 @@ __device__ fptype device_Argus_Upper (fptype* evt, fptype* p, unsigned int* indi
   return x * POW(t, power) * EXP(slope * t);
 }
 
-__device__ fptype device_Argus_Lower (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_Argus_Lower (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x = evt[indices[2 + indices[0]]]; 
   fptype m0 = p[indices[1]];
 
@@ -30,18 +30,18 @@ __device__ fptype device_Argus_Lower (fptype* evt, fptype* p, unsigned int* indi
   fptype slope = p[indices[2]];
   fptype power = p[indices[3]]; 
   fptype ret = x * POW(t, power) * EXP(slope * t);
-  //if ((0 == threadIdx.x) && (0 == blockIdx.x) && (callnumber < 1)) cuPrintf("device_Argus_Lower %i %i %f %f %f %f %f\n", indices[1], indices[2], x, m0, slope, t, ret); 
+  //if ((0 == THREADIDX) && (0 == BLOCKIDX) && (callnumber < 1)) cuPrintf("device_Argus_Lower %i %i %f %f %f %f %f\n", indices[1], indices[2], x, m0, slope, t, ret); 
   //if (isnan(ret)) printf("NaN Argus: %f %f %f %f %f %f %f\n", x, m0, t, slope, power, POW(t, power), EXP(slope*t));
-  //if ((0 == threadIdx.x) && (0 == blockIdx.x) && (gpuDebug & 1))
-  //printf("(%i, %i) device_Argus_Lower %f %f %f %f %f\n", blockIdx.x, threadIdx.x, x, m0, slope, t, x * POW(t, power) * EXP(slope * t)); 
+  //if ((0 == THREADIDX) && (0 == BLOCKIDX) && (gpuDebug & 1))
+  //printf("(%i, %i) device_Argus_Lower %f %f %f %f %f\n", BLOCKIDX, THREADIDX, x, m0, slope, t, x * POW(t, power) * EXP(slope * t)); 
   
   
   return ret;
   
 }
 
-__device__ device_function_ptr ptr_to_Argus_Upper = device_Argus_Upper; 
-__device__ device_function_ptr ptr_to_Argus_Lower = device_Argus_Lower; 
+MEM_DEVICE device_function_ptr ptr_to_Argus_Upper = device_Argus_Upper; 
+MEM_DEVICE device_function_ptr ptr_to_Argus_Lower = device_Argus_Lower; 
 
 __host__ ArgusPdf::ArgusPdf (std::string n, Variable* _x, Variable* m0, Variable* slope, bool upper, Variable* power) 
 : GooPdf(_x, n) 
@@ -55,8 +55,8 @@ __host__ ArgusPdf::ArgusPdf (std::string n, Variable* _x, Variable* m0, Variable
   pindices.push_back(m0->getIndex());
   pindices.push_back(slope->getIndex());
   pindices.push_back(power->getIndex());
-  if (upper) cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_Argus_Upper, sizeof(void*));
-  else cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_Argus_Lower, sizeof(void*));
+  if (upper) GET_FUNCTION_ADDR(ptr_to_Argus_Upper);
+  else GET_FUNCTION_ADDR(ptr_to_Argus_Lower);
   initialise(pindices); 
 }
 

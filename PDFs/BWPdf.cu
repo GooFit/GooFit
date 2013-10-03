@@ -1,6 +1,6 @@
 #include "BWPdf.hh"
 
-__device__ fptype device_BW (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_BW (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x = evt[indices[2 + indices[0]]];
   fptype mean  = p[indices[1]];
   fptype gamma = p[indices[2]];
@@ -9,7 +9,7 @@ __device__ fptype device_BW (fptype* evt, fptype* p, unsigned int* indices) {
   return ret; 
 }
 
-__device__ device_function_ptr ptr_to_BW = device_BW; 
+MEM_DEVICE device_function_ptr ptr_to_BW = device_BW; 
 
 __host__ BWPdf::BWPdf (std::string n, Variable* _x, Variable* mean, Variable* width) 
   : GooPdf(_x, n) 
@@ -17,6 +17,6 @@ __host__ BWPdf::BWPdf (std::string n, Variable* _x, Variable* mean, Variable* wi
   std::vector<unsigned int> pindices;
   pindices.push_back(registerParameter(mean));
   pindices.push_back(registerParameter(width));
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_BW, sizeof(void*));
+  GET_FUNCTION_ADDR(ptr_to_BW);
   initialise(pindices);
 }

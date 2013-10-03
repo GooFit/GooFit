@@ -1,6 +1,6 @@
 #include "MappedPdf.hh"
 
-__device__ fptype device_Mapped (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_Mapped (fptype* evt, fptype* p, unsigned int* indices) {
   // Structure : nP mapFunctionIndex mapParamIndex functionIndex1 parameterIndex1 functionIndex2 parameterIndex2 ... 
 
   // Find mapping between event variables and function to evaluate
@@ -16,12 +16,12 @@ __device__ fptype device_Mapped (fptype* evt, fptype* p, unsigned int* indices) 
   fptype ret = callFunction(evt, indices[targetFunction], indices[targetFunction + 1]); 
   ret *= normalisationFactors[indices[targetFunction + 1]]; 
   //if (gpuDebug & 1) 
-  //if ((gpuDebug & 1) && (0 == blockIdx.x) && (0 == threadIdx.x))
-    //printf("[%i, %i] Mapped: %i (%f %f %f %f) %f\n", blockIdx.x, threadIdx.x, targetFunction, evt[0], evt[1], evt[2], evt[3], ret); 
+  //if ((gpuDebug & 1) && (0 == BLOCKIDX) && (0 == THREADIDX))
+    //printf("[%i, %i] Mapped: %i (%f %f %f %f) %f\n", BLOCKIDX, THREADIDX, targetFunction, evt[0], evt[1], evt[2], evt[3], ret); 
   return ret;
 }
 
-__device__ device_function_ptr ptr_to_Mapped = device_Mapped; 
+MEM_DEVICE device_function_ptr ptr_to_Mapped = device_Mapped; 
 
 __host__ MappedPdf::MappedPdf (std::string n, GooPdf* m, vector<GooPdf*>& t)
   : GooPdf(0, n) 
@@ -45,7 +45,7 @@ __host__ MappedPdf::MappedPdf (std::string n, GooPdf* m, vector<GooPdf*>& t)
   }
 
   getObservables(observables); 
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_Mapped, sizeof(void*));
+  GET_FUNCTION_ADDR(ptr_to_Mapped);
   initialise(pindices); 
 }
 

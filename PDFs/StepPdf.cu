@@ -1,12 +1,12 @@
 #include "StepPdf.hh"
 
-__device__ fptype device_Step (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_Step (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x = evt[indices[2 + indices[0]]]; 
   fptype x0 = p[indices[1]];
   return (x > x0 ? 1 : 0);
 }
 
-__device__ device_function_ptr ptr_to_Step = device_Step; 
+MEM_DEVICE device_function_ptr ptr_to_Step = device_Step; 
 device_function_ptr hptr_to_Step = device_Step; 
 
 __host__ StepPdf::StepPdf (std::string n, Variable* _x, Variable* x0)
@@ -14,7 +14,7 @@ __host__ StepPdf::StepPdf (std::string n, Variable* _x, Variable* x0)
 {
   std::vector<unsigned int> pindices;
   pindices.push_back(registerParameter(x0));
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_Step, sizeof(void*));
+  GET_FUNCTION_ADDR(ptr_to_Step);
   initialise(pindices); 
 }
 

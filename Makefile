@@ -25,12 +25,16 @@ ifneq ($(PROFILE),)
 DEFINEFLAGS += -DPROFILING=yes
 endif 
 
+ifneq ($(TARGET_OMP),)
+DEFINEFLAGS += -Xcompiler -fno-inline -Xcompiler -fopenmp -DTHRUST_DEVICE_BACKEND=THRUST_DEVICE_BACKEND_OMP -lgomp
+endif 
+
 CUDALOCATION = /usr/local/cuda/
 CUDAHEADERS = $(CUDALOCATION)/include/
 
 SRCDIR = $(PWD)/PDFs
 
-INCLUDES += -I$(CUDAHEADERS) -I$(SRCDIR) -I$(PWD) -I$(PWD)/rootstuff 
+INCLUDES += -I$(SRCDIR) -I$(PWD) -I$(CUDAHEADERS) -I$(PWD)/rootstuff 
 LIBS += -L$(CUDALOCATION)/$(CUDALIBDIR) -lcudart -L$(PWD)/rootstuff -lRootUtils 
 
 # GooPdf must be first in CUDAglob, as it defines global variables.

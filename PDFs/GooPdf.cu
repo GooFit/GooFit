@@ -9,53 +9,37 @@
 // would be in PdfBase. 
 
 // Device-side, translation-unit constrained. 
-__constant__ fptype cudaArray[maxParams];           // Holds device-side fit parameters. 
-__constant__ unsigned int paramIndices[maxParams];  // Holds functor-specific indices into cudaArray. Also overloaded to hold integer constants (ie parameters that cannot vary.) 
-__constant__ fptype functorConstants[maxParams];    // Holds non-integer constants. Notice that first entry is number of events. 
-__constant__ fptype normalisationFactors[maxParams]; 
+MEM_CONSTANT fptype cudaArray[maxParams];           // Holds device-side fit parameters. 
+MEM_CONSTANT unsigned int paramIndices[maxParams];  // Holds functor-specific indices into cudaArray. Also overloaded to hold integer constants (ie parameters that cannot vary.) 
+MEM_CONSTANT fptype functorConstants[maxParams];    // Holds non-integer constants. Notice that first entry is number of events. 
+MEM_CONSTANT fptype normalisationFactors[maxParams]; 
 
 // For debugging 
-__constant__ int callnumber; 
-__constant__ int gpuDebug; 
-__constant__ unsigned int debugParamIndex;
-__device__ int internalDebug1 = -1; 
-__device__ int internalDebug2 = -1; 
-__device__ int internalDebug3 = -1; 
+MEM_CONSTANT int callnumber; 
+MEM_CONSTANT int gpuDebug; 
+MEM_CONSTANT unsigned int debugParamIndex;
+MEM_DEVICE int internalDebug1 = -1; 
+MEM_DEVICE int internalDebug2 = -1; 
+MEM_DEVICE int internalDebug3 = -1; 
 int cpuDebug = 0; 
 #ifdef PROFILING
-__device__ fptype timeHistogram[10000]; 
+MEM_DEVICE fptype timeHistogram[10000]; 
 fptype host_timeHist[10000];
 #endif 
 
 // Function-pointer related. 
-__device__ void* device_function_table[200]; // Not clear why this cannot be __constant__, but it causes crashes to declare it so. 
+MEM_DEVICE void* device_function_table[200]; // Not clear why this cannot be MEM_CONSTANT, but it causes crashes to declare it so. 
 void* host_function_table[200];
 unsigned int num_device_functions = 0; 
-#ifdef OMP_ON
-// Make functionAddressToDevideIndexMap and array of maps indexed by thread id since 
-// I get the following compiler error if I try to make it threadprivate.
-// "functionAddressToDeviceIndexMap’ declared ‘threadprivate’ after first use"
-typedef std::map<void*, int> tMapType;
-tMapType functionAddressToDeviceIndexMap[MAX_THREADS]; 
-#pragma omp threadprivate(host_function_table, num_device_functions)
-fptype gSum;
-fptype sums[MAX_THREADS];
-double gLognorm;
-double lognorms[MAX_THREADS];
-#else
-std::map<void*, int> functionAddressToDeviceIndexMap; 
-#endif
-
-
-#define cutilSafeCall(err) __cudaSafeCall(err, __FILE__, __LINE__)
+map<void*, int> functionAddressToDeviceIndexMap; 
 
 // For use in debugging memory issues
 void printMemoryStatus (std::string file, int line) {
   size_t memfree = 0;
   size_t memtotal = 0; 
-  cudaDeviceSynchronize(); 
+  SYNCH(); 
   cudaMemGetInfo(&memfree, &memtotal); 
-  cudaDeviceSynchronize(); 
+  SYNCH(); 
   std::cout << "Memory status " << file << " " << line << " Free " << memfree << " Total " << memtotal << " Used " << (memtotal - memfree) << std::endl;
 }
 
@@ -93,31 +77,24 @@ void abortWithCudaPrintFlush (std::string file, int line, std::string reason, co
   exit(1); 
 }
 
-void __cudaSafeCall (cudaError err, const char* file, int line) {
-  if (cudaSuccess != err) {
-    std::cout << "Error code " << err << " (" << cudaGetErrorString(err) << ") at " << file << ", " << line << std::endl;
-    exit(1); 
-  }
-}
-
-__device__ fptype calculateEval (fptype rawPdf, fptype* evtVal, unsigned int par) {
+EXEC_TARGET fptype calculateEval (fptype rawPdf, fptype* evtVal, unsigned int par) {
   // Just return the raw PDF value, for use in (eg) normalisation. 
   return rawPdf; 
 }
 
-__device__ fptype calculateNLL (fptype rawPdf, fptype* evtVal, unsigned int par) {
-  //if ((10 > callnumber) && (threadIdx.x < 10) && (blockIdx.x == 0)) cuPrintf("calculateNll %i %f %f %f\n", callnumber, rawPdf, normalisationFactors[par], rawPdf*normalisationFactors[par]);
-  //if (threadIdx.x < 50) printf("Thread %i %f %f\n", threadIdx.x, rawPdf, normalisationFactors[par]); 
+EXEC_TARGET fptype calculateNLL (fptype rawPdf, fptype* evtVal, unsigned int par) {
+  //if ((10 > callnumber) && (THREADIDX < 10) && (BLOCKIDX == 0)) cuPrintf("calculateNll %i %f %f %f\n", callnumber, rawPdf, normalisationFactors[par], rawPdf*normalisationFactors[par]);
+  //if (THREADIDX < 50) printf("Thread %i %f %f\n", THREADIDX, rawPdf, normalisationFactors[par]); 
   rawPdf *= normalisationFactors[par];
   return rawPdf > 0 ? -LOG(rawPdf) : 0; 
 }
 
-__device__ fptype calculateProb (fptype rawPdf, fptype* evtVal, unsigned int par) {
+EXEC_TARGET fptype calculateProb (fptype rawPdf, fptype* evtVal, unsigned int par) {
   // Return probability, ie normalised PDF value.
   return rawPdf * normalisationFactors[par];
 }
 
-__device__ fptype calculateBinAvg (fptype rawPdf, fptype* evtVal, unsigned int par) {
+EXEC_TARGET fptype calculateBinAvg (fptype rawPdf, fptype* evtVal, unsigned int par) {
   rawPdf *= normalisationFactors[par];
   rawPdf *= evtVal[1]; // Bin volume 
   // Log-likelihood of numEvents with expectation of exp is (-exp + numEvents*ln(exp) - ln(numEvents!)). 
@@ -129,35 +106,35 @@ __device__ fptype calculateBinAvg (fptype rawPdf, fptype* evtVal, unsigned int p
   return 0; 
 }
 
-__device__ fptype calculateBinWithError (fptype rawPdf, fptype* evtVal, unsigned int par) {
+EXEC_TARGET fptype calculateBinWithError (fptype rawPdf, fptype* evtVal, unsigned int par) {
   // In this case interpret the rawPdf as just a number, not a number of events. 
   // Do not divide by integral over phase space, do not multiply by bin volume, 
   // and do not collect 200 dollars. evtVal should have the structure (bin entry, bin error). 
-  //printf("[%i, %i] ((%f - %f) / %f)^2 = %f\n", blockIdx.x, threadIdx.x, rawPdf, evtVal[0], evtVal[1], POW((rawPdf - evtVal[0]) / evtVal[1], 2)); 
+  //printf("[%i, %i] ((%f - %f) / %f)^2 = %f\n", BLOCKIDX, THREADIDX, rawPdf, evtVal[0], evtVal[1], POW((rawPdf - evtVal[0]) / evtVal[1], 2)); 
   rawPdf -= evtVal[0]; // Subtract observed value.
   rawPdf /= evtVal[1]; // Divide by error.
   rawPdf *= rawPdf; 
   return rawPdf; 
 }
 
-__device__ fptype calculateChisq (fptype rawPdf, fptype* evtVal, unsigned int par) {
+EXEC_TARGET fptype calculateChisq (fptype rawPdf, fptype* evtVal, unsigned int par) {
   rawPdf *= normalisationFactors[par];
   rawPdf *= evtVal[1]; // Bin volume 
 
   return pow(rawPdf * functorConstants[0] - evtVal[0], 2) / (evtVal[0] > 1 ? evtVal[0] : 1); 
 }
 
-__device__ device_metric_ptr ptr_to_Eval         = calculateEval; 
-__device__ device_metric_ptr ptr_to_NLL          = calculateNLL;  
-__device__ device_metric_ptr ptr_to_Prob         = calculateProb; 
-__device__ device_metric_ptr ptr_to_BinAvg       = calculateBinAvg;  
-__device__ device_metric_ptr ptr_to_BinWithError = calculateBinWithError;
-__device__ device_metric_ptr ptr_to_Chisq        = calculateChisq; 
+MEM_DEVICE device_metric_ptr ptr_to_Eval         = calculateEval; 
+MEM_DEVICE device_metric_ptr ptr_to_NLL          = calculateNLL;  
+MEM_DEVICE device_metric_ptr ptr_to_Prob         = calculateProb; 
+MEM_DEVICE device_metric_ptr ptr_to_BinAvg       = calculateBinAvg;  
+MEM_DEVICE device_metric_ptr ptr_to_BinWithError = calculateBinWithError;
+MEM_DEVICE device_metric_ptr ptr_to_Chisq        = calculateChisq; 
 
 void* host_fcn_ptr = 0;
 
 void* getMetricPointer (std::string name) {
-#define CHOOSE_PTR(ptrname) if (name == #ptrname) cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptrname, sizeof(void*))
+  #define CHOOSE_PTR(ptrname) if (name == #ptrname) GET_FUNCTION_ADDR(ptrname);
   host_fcn_ptr = 0; 
   CHOOSE_PTR(ptr_to_Eval); 
   CHOOSE_PTR(ptr_to_NLL); 
@@ -182,33 +159,20 @@ GooPdf::GooPdf (Variable* x, std::string n)
 
 __host__ int GooPdf::findFunctionIdx (void* dev_functionPtr) {
   // Code specific to function-pointer implementation 
-#ifdef OMP_ON
-  int tid = omp_get_thread_num();
-  std::map<void*, int>::iterator localPos = functionAddressToDeviceIndexMap[tid].find(dev_functionPtr); // Use find instead of [] to avoid returning 0 if the index doesn't exist.
-  if (localPos != functionAddressToDeviceIndexMap[tid].end()) {
-    return (*localPos).second; 
-  }
-#else
-  std::map<void*, int>::iterator localPos = functionAddressToDeviceIndexMap.find(dev_functionPtr); 
+  map<void*, int>::iterator localPos = functionAddressToDeviceIndexMap.find(dev_functionPtr); 
   if (localPos != functionAddressToDeviceIndexMap.end()) {
     return (*localPos).second; 
   }
-#endif
 
   int fIdx = num_device_functions;   
   host_function_table[num_device_functions] = dev_functionPtr;
-#ifdef OMP_ON 
-  functionAddressToDeviceIndexMap[tid][dev_functionPtr] = num_device_functions; 
-#else
   functionAddressToDeviceIndexMap[dev_functionPtr] = num_device_functions; 
-#endif
   num_device_functions++; 
-  cutilSafeCall(cudaMemcpyToSymbol(device_function_table, host_function_table, num_device_functions*sizeof(void*))); 
+  MEMCPY_TO_SYMBOL(device_function_table, host_function_table, num_device_functions*sizeof(void*), 0, cudaMemcpyHostToDevice); 
 
 #ifdef PROFILING
   host_timeHist[fIdx] = 0; 
-  cudaError_t err = cudaMemcpyToSymbol(timeHistogram, host_timeHist, 10000*sizeof(fptype), 0);
-  if (cudaSuccess != err) std::cout << "Error copying time histogram: " << cudaGetErrorString(err) << std::endl; 
+  MEMCPY_TO_SYMBOL(timeHistogram, host_timeHist, 10000*sizeof(fptype), 0);
 #endif 
 
   return fIdx; 
@@ -226,8 +190,13 @@ __host__ void GooPdf::initialise (std::vector<unsigned int> pindices, void* dev_
 
 __host__ void GooPdf::setDebugMask (int mask, bool setSpecific) const {
   cpuDebug = mask; 
-  cudaMemcpyToSymbol(gpuDebug, &cpuDebug, sizeof(int), 0, cudaMemcpyHostToDevice);
-  if (setSpecific) cudaMemcpyToSymbol(debugParamIndex, &parameters, sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
+#if THRUST_DEVICE_BACKEND==THRUST_DEVICE_BACKEND_OMP
+  gpuDebug = cpuDebug;
+  if (setSpecific) debugParamIndex = parameters; 
+#else
+  MEMCPY_TO_SYMBOL(gpuDebug, &cpuDebug, sizeof(int), 0, cudaMemcpyHostToDevice);
+  if (setSpecific) MEMCPY_TO_SYMBOL(debugParamIndex, &parameters, sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
+#endif
 } 
 
 __host__ void GooPdf::setMetrics () {
@@ -242,48 +211,16 @@ __host__ double GooPdf::sumOfNll (int numVars) const {
   double dummy = 0;
 
   //if (host_callnumber >= 2) abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " debug abort", this); 
-
-#ifdef OMP_ON
-  unsigned int thFirstEntry, thLastEntry;
-  int tid, nthreads;
-  int j;
-
-  tid = omp_get_thread_num();
-  nthreads = omp_get_num_threads();
-
-  thFirstEntry = tid*(numEntries)/nthreads;
-  thLastEntry = (tid+1)*(numEntries)/nthreads;
-
-//  std::cout << tid << ": " << numEntries << " " << thFirstEntry << " " << thLastEntry << std::endl;
-//  std::cout << "Extended term: " << numVars << " " << numEntries << " " << numEvents << std::endl;
-    thrust::counting_iterator<int> eventIndex(0); 
-    lognorms[tid] = thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(eventIndex + thFirstEntry, arrayAddress, eventSize)),
-					thrust::make_zip_iterator(thrust::make_tuple(eventIndex + thLastEntry, arrayAddress, eventSize)),
-					*logger, dummy, cudaPlus); 
-  #pragma omp barrier
-  if (tid == 0) 
-  {
-    gLognorm = 0;
-    for (j = 0; j < nthreads; j++) gLognorm += lognorms[j];
-    //std::cout << tid << ": gLognorm " << gLognorm << std::endl;
-  }
-  #pragma omp barrier
-
-
-  return  gLognorm;
-
-#else
   thrust::counting_iterator<int> eventIndex(0); 
   return thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
 				  thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
 				  *logger, dummy, cudaPlus);   
-#endif
 }
 
 __host__ double GooPdf::calculateNLL () const {
   //if (cpuDebug & 1) std::cout << getName() << " entering calculateNLL (" << host_callnumber << ")" << std::endl; 
 
-  //cudaMemcpyToSymbol(callnumber, &host_callnumber, sizeof(int)); 
+  //MEMCPY_TO_SYMBOL(callnumber, &host_callnumber, sizeof(int)); 
   //int oldMask = cpuDebug; 
   //if (0 == host_callnumber) setDebugMask(0, false); 
   //std::cout << "Start norm " << getName() << std::endl;
@@ -301,8 +238,8 @@ __host__ double GooPdf::calculateNLL () const {
   if (host_normalisation[parameters] <= 0) 
     abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " non-positive normalisation", this);
 
-  cudaMemcpyToSymbol(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
-  cudaDeviceSynchronize(); // Ensure normalisation integrals are finished
+  MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
+  SYNCH(); // Ensure normalisation integrals are finished
 
   int numVars = observables.size(); 
   if (fitControl->binnedFit()) {
@@ -328,7 +265,7 @@ __host__ void GooPdf::evaluateAtPoints (Variable* var, std::vector<fptype>& res)
 
   copyParams(); 
   normalise(); 
-  cudaMemcpyToSymbol(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
   UnbinnedDataSet tempdata(observables);
 
   double step = (var->upperlimit - var->lowerlimit) / var->numbins; 
@@ -344,29 +281,10 @@ __host__ void GooPdf::evaluateAtPoints (Variable* var, std::vector<fptype>& res)
   thrust::device_vector<fptype> results(var->numbins); 
 
   MetricTaker evalor(this, getMetricPointer("ptr_to_Eval")); 
-
-#ifdef OMP_ON
-  unsigned int thFirstEntry, thLastEntry;
-  int tid, nthreads;
-
-  tid = omp_get_thread_num();
-  nthreads = omp_get_num_threads();
-
-// use var->numbins or numEntries here?
-  thFirstEntry = tid*(var->numbins)/nthreads;
-  thLastEntry = (tid+1)*(var->numbins)/nthreads;
-
-  thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex+thFirstEntry, arrayAddress, eventSize)),
-		    thrust::make_zip_iterator(thrust::make_tuple(eventIndex + thLastEntry, arrayAddress, eventSize)),
-		    results.begin()+thFirstEntry,
-		    evalor); 
-  #pragma omp barrier
-#else
   thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
 		    thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
 		    results.begin(),
 		    evalor); 
-#endif
 
   thrust::host_vector<fptype> h_results = results; 
   res.clear();
@@ -395,7 +313,7 @@ __host__ void GooPdf::evaluateAtPoints (std::vector<fptype>& points) const {
 
   thrust::device_vector<fptype> d_vec = points; 
   normalise(); 
-  cudaMemcpyToSymbol(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
   thrust::transform(d_vec.begin(), d_vec.end(), d_vec.begin(), *evalor);
   thrust::host_vector<fptype> h_vec = d_vec;
   for (unsigned int i = 0; i < points.size(); ++i) points[i] = h_vec[i]; 
@@ -428,7 +346,7 @@ __host__ fptype GooPdf::getValue () {
   // Execute redundantly in all threads for OpenMP multiGPU case
   copyParams(); 
   normalise(); 
-  cudaMemcpyToSymbol(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
 
   UnbinnedDataSet point(observables); 
   point.addEvent(); 
@@ -479,43 +397,6 @@ __host__ fptype GooPdf::normalise () const {
   thrust::constant_iterator<fptype*> arrayAddress(normRanges); 
   thrust::constant_iterator<int> eventSize(observables.size());
   thrust::counting_iterator<int> binIndex(0); 
-#ifdef OMP_ON
-  unsigned int thFirstBin, thLastBin;
-  int tid, nthreads;
-  int j;
-
-  tid = omp_get_thread_num();
-  nthreads = omp_get_num_threads();
-
-  thFirstBin = tid*(totalBins)/nthreads;
-  thLastBin = (tid+1)*(totalBins)/nthreads;
- 
-  //std::cout << "totalBins = " << totalBins << " thFirstBin = " << thFirstBin << " thLastBin = " << thLastBin << std::endl;
-
-  sums[tid] = thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(binIndex + thFirstBin, eventSize, arrayAddress)),
-					thrust::make_zip_iterator(thrust::make_tuple(binIndex + thLastBin, eventSize, arrayAddress)),
-					*logger, dummy, cudaPlus); 
-  cudaThreadSynchronize(); // Ensure logger is done
-
-  #pragma omp barrier
-  if (tid == 0)
-  {
-    gSum = 0;
-    for (j=0; j<nthreads; j++) gSum += sums[j];
-  }
-    
-  #pragma omp barrier
-  //std::cout << tid << ": gSum = " << gSum << std::endl;
-
-  if (isnan(gSum)) {
-    abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " NaN in normalisation", this); 
-  }
-  else if (0 == gSum) { 
-    abortWithCudaPrintFlush(__FILE__, __LINE__, "Zero in normalisation", this); 
-  }
- 
-  ret *= gSum;
-#else
   fptype sum = thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(binIndex, eventSize, arrayAddress)),
 					thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, eventSize, arrayAddress)),
 					*logger, dummy, cudaPlus); 
@@ -527,10 +408,8 @@ __host__ fptype GooPdf::normalise () const {
     abortWithCudaPrintFlush(__FILE__, __LINE__, "Non-positive normalisation", this); 
   }
 
-  //if (cpuDebug & 1) std::cout << getName() << " integral is " << ret << " " << sum << " " << (ret*sum) << " " << (1.0/(ret*sum)) << std::endl; 
-
   ret *= sum;
-#endif
+
 
   if (0 == ret) abortWithCudaPrintFlush(__FILE__, __LINE__, "Zero integral"); 
   host_normalisation[parameters] = 1.0/ret;
@@ -538,12 +417,12 @@ __host__ fptype GooPdf::normalise () const {
 }
 
 #ifdef PROFILING
-__constant__ fptype conversion = (1.0 / CLOCKS_PER_SEC); 
-__device__ fptype callFunction (fptype* eventAddress, unsigned int functionIdx, unsigned int paramIdx) {
+MEM_CONSTANT fptype conversion = (1.0 / CLOCKS_PER_SEC); 
+EXEC_TARGET fptype callFunction (fptype* eventAddress, unsigned int functionIdx, unsigned int paramIdx) {
   clock_t start = clock();
   fptype ret = (*(reinterpret_cast<device_function_ptr>(device_function_table[functionIdx])))(eventAddress, cudaArray, paramIndices + paramIdx);
   clock_t stop = clock(); 
-  if ((0 == threadIdx.x + blockIdx.x) && (stop > start)) {
+  if ((0 == THREADIDX + BLOCKIDX) && (stop > start)) {
     // Avoid issue when stop overflows and start doesn't. 
     timeHistogram[functionIdx*100 + paramIdx] += ((stop - start) * conversion); 
     //printf("Clock: %li %li %li | %u %f\n", (long) start, (long) stop, (long) (stop - start), functionIdx, timeHistogram[functionIdx]); 
@@ -551,7 +430,7 @@ __device__ fptype callFunction (fptype* eventAddress, unsigned int functionIdx, 
   return ret; 
 }
 #else 
-__device__ fptype callFunction (fptype* eventAddress, unsigned int functionIdx, unsigned int paramIdx) {
+EXEC_TARGET fptype callFunction (fptype* eventAddress, unsigned int functionIdx, unsigned int paramIdx) {
   return (*(reinterpret_cast<device_function_ptr>(device_function_table[functionIdx])))(eventAddress, cudaArray, paramIndices + paramIdx);
 }
 #endif 
@@ -561,7 +440,7 @@ __device__ fptype callFunction (fptype* eventAddress, unsigned int functionIdx, 
 
 // Main operator: Calls the PDF to get a predicted value, then the metric 
 // to get the goodness-of-prediction number which is returned to MINUIT. 
-__device__ fptype MetricTaker::operator () (thrust::tuple<int, fptype*, int> t) const {
+EXEC_TARGET fptype MetricTaker::operator () (thrust::tuple<int, fptype*, int> t) const {
   // Calculate event offset for this thread. 
   int eventIndex = thrust::get<0>(t);
   int eventSize  = thrust::get<2>(t);
@@ -581,7 +460,7 @@ __device__ fptype MetricTaker::operator () (thrust::tuple<int, fptype*, int> t) 
 // Operator for binned evaluation, no metric. 
 // Used in normalisation. 
 #define MAX_NUM_OBSERVABLES 5
-__device__ fptype MetricTaker::operator () (thrust::tuple<int, int, fptype*> t) const {
+EXEC_TARGET fptype MetricTaker::operator () (thrust::tuple<int, int, fptype*> t) const {
   // Bin index, event size, base address [lower, upper, numbins] 
  
   int evtSize = thrust::get<1>(t);
@@ -589,7 +468,7 @@ __device__ fptype MetricTaker::operator () (thrust::tuple<int, int, fptype*> t) 
   
   // Do not understand why this cannot be declared __shared__. Dynamically allocating shared memory is apparently complicated. 
   //fptype* binCenters = (fptype*) malloc(evtSize * sizeof(fptype));
-  __shared__ fptype binCenters[1024*MAX_NUM_OBSERVABLES];
+  MEM_SHARED fptype binCenters[1024*MAX_NUM_OBSERVABLES];
 
   // To convert global bin number to (x,y,z...) coordinates: For each dimension, take the mod 
   // with the number of bins in that dimension. Then divide by the number of bins, in effect
@@ -605,19 +484,19 @@ __device__ fptype MetricTaker::operator () (thrust::tuple<int, int, fptype*> t) 
     x /= numBins;
     x *= (localBin + 0.5); 
     x += lowerBound;
-    binCenters[indices[indices[0] + 2 + i]+threadIdx.x*MAX_NUM_OBSERVABLES] = x; 
+    binCenters[indices[indices[0] + 2 + i]+THREADIDX*MAX_NUM_OBSERVABLES] = x; 
     binNumber /= numBins;
   }
 
   // Causes stack size to be statically undeterminable.
-  fptype ret = callFunction(binCenters+threadIdx.x*MAX_NUM_OBSERVABLES, functionIdx, parameters); 
+  fptype ret = callFunction(binCenters+THREADIDX*MAX_NUM_OBSERVABLES, functionIdx, parameters); 
   return ret; 
 }
 
 __host__ void GooPdf::getCompProbsAtDataPoints (std::vector<std::vector<fptype> >& values) {
   copyParams(); 
   double overall = normalise();
-  cudaMemcpyToSymbol(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
 
   int numVars = observables.size(); 
   if (fitControl->binnedFit()) {
@@ -685,28 +564,16 @@ MetricTaker::MetricTaker (PdfBase* dat, void* dev_functionPtr)
 {
   //std::cout << "MetricTaker constructor with " << functionIdx << std::endl; 
 
-#ifdef OMP_ON
-  int tid = omp_get_thread_num();
-  std::map<void*, int>::iterator localPos = functionAddressToDeviceIndexMap[tid].find(dev_functionPtr); // Use find instead of [] to avoid returning 0 if the index doesn't exist.
-  if (localPos != functionAddressToDeviceIndexMap[tid].end()) {
-    metricIndex = (*localPos).second; 
-  }
-#else
-  std::map<void*, int>::iterator localPos = functionAddressToDeviceIndexMap.find(dev_functionPtr); 
+  map<void*, int>::iterator localPos = functionAddressToDeviceIndexMap.find(dev_functionPtr); 
   if (localPos != functionAddressToDeviceIndexMap.end()) {
     metricIndex = (*localPos).second; 
   }
-#endif
   else {
     metricIndex = num_device_functions; 
     host_function_table[num_device_functions] = dev_functionPtr;
-#ifdef OMP_ON
-    functionAddressToDeviceIndexMap[tid][dev_functionPtr] = num_device_functions; 
-#else
     functionAddressToDeviceIndexMap[dev_functionPtr] = num_device_functions; 
-#endif
     num_device_functions++; 
-    cutilSafeCall(cudaMemcpyToSymbol(device_function_table, host_function_table, num_device_functions*sizeof(void*))); 
+    MEMCPY_TO_SYMBOL(device_function_table, host_function_table, num_device_functions*sizeof(void*), 0, cudaMemcpyHostToDevice); 
   }
 }
 

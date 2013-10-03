@@ -1,22 +1,22 @@
 #include "GaussianPdf.hh"
 
-__device__ fptype device_Gaussian (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_Gaussian (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x = evt[indices[2 + indices[0]]]; 
   fptype mean = p[indices[1]];
   fptype sigma = p[indices[2]];
 
   fptype ret = EXP(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
 
-  //if ((0 == threadIdx.x) && (0 == blockIdx.x)) cuPrintf("Gaussian Values %f %i %i %f %f %i\n", x, indices[1], indices[2], mean, sigma, callnumber); 
+  //if ((0 == THREADIDX) && (0 == BLOCKIDX)) cuPrintf("Gaussian Values %f %i %i %f %f %i\n", x, indices[1], indices[2], mean, sigma, callnumber); 
   //cuPrintf("device_Gaussian %f %i %i %f %f %i %p %f\n", x, indices[1], indices[2], mean, sigma, callnumber, indices, ret); 
-  //if ((0 == threadIdx.x) && (0 == blockIdx.x))
+  //if ((0 == THREADIDX) && (0 == BLOCKIDX))
   //printf("device_Gaussian %f %f %f %i %f\n", x, mean, sigma, callnumber, ret);     
 
 
   return ret; 
 }
 
-__device__ device_function_ptr ptr_to_Gaussian = device_Gaussian; 
+MEM_DEVICE device_function_ptr ptr_to_Gaussian = device_Gaussian; 
 
 __host__ GaussianPdf::GaussianPdf (std::string n, Variable* _x, Variable* mean, Variable* sigma) 
   : GooPdf(_x, n) 
@@ -24,7 +24,7 @@ __host__ GaussianPdf::GaussianPdf (std::string n, Variable* _x, Variable* mean, 
   std::vector<unsigned int> pindices;
   pindices.push_back(registerParameter(mean));
   pindices.push_back(registerParameter(sigma));
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_Gaussian, sizeof(void*));
+  GET_FUNCTION_ADDR(ptr_to_Gaussian);
   initialise(pindices); 
 }
 

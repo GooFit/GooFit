@@ -13,9 +13,9 @@ const unsigned int SPECIAL_RESOLUTION_FLAG = 999999999;
 // waves are recalculated when the corresponding resonance mass or width 
 // changes. Note that in a multithread environment each thread needs its
 // own cache, hence the '10'. Ten threads should be enough for anyone! 
-__device__ WaveHolder* cWaves[10]; 
+MEM_DEVICE WaveHolder* cWaves[10]; 
 
-__device__ bool inDalitz (fptype m12, fptype m13, fptype bigM, fptype dm1, fptype dm2, fptype dm3) {
+EXEC_TARGET bool inDalitz (fptype m12, fptype m13, fptype bigM, fptype dm1, fptype dm2, fptype dm3) {
   if (m12 < POW(dm1 + dm2, 2)) return false; // This m12 cannot exist, it's less than the square of the (1,2) particle mass.
   if (m12 > POW(bigM - dm3, 2)) return false;   // This doesn't work either, there's no room for an at-rest 3 daughter. 
   
@@ -32,17 +32,17 @@ __device__ bool inDalitz (fptype m12, fptype m13, fptype bigM, fptype dm1, fptyp
   return true; 
 }
 
-__device__ inline int parIndexFromResIndex (int resIndex) {
+EXEC_TARGET inline int parIndexFromResIndex (int resIndex) {
   return resonanceOffset + resIndex*resonanceSize; 
 }
 
-__device__ devcomplex<fptype> getResonanceAmplitude (fptype m12, fptype m13, fptype m23, 
+EXEC_TARGET devcomplex<fptype> getResonanceAmplitude (fptype m12, fptype m13, fptype m23, 
 						     unsigned int functionIdx, unsigned int pIndex) {
   resonance_function_ptr func = reinterpret_cast<resonance_function_ptr>(device_function_table[functionIdx]);
   return (*func)(m12, m13, m23, paramIndices + pIndex); 
 }
 
-__device__ ThreeComplex device_Tddp_calcIntegrals (fptype m12, fptype m13, int res_i, int res_j, fptype* p, unsigned int* indices) {
+EXEC_TARGET ThreeComplex device_Tddp_calcIntegrals (fptype m12, fptype m13, int res_i, int res_j, fptype* p, unsigned int* indices) {
   // For calculating Dalitz-plot integrals. What's needed is the products 
   // AiAj*, AiBj*, and BiBj*, where 
   // Ai = BW_i(x, y) + BW_i(y, x)
@@ -83,7 +83,7 @@ __device__ ThreeComplex device_Tddp_calcIntegrals (fptype m12, fptype m13, int r
   return ret; 
 }
 
-__device__ fptype device_Tddp (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_Tddp (fptype* evt, fptype* p, unsigned int* indices) {
   fptype motherMass = functorConstants[indices[1] + 0]; 
   fptype daug1Mass  = functorConstants[indices[1] + 1]; 
   fptype daug2Mass  = functorConstants[indices[1] + 2]; 
@@ -160,7 +160,7 @@ __device__ fptype device_Tddp (fptype* evt, fptype* p, unsigned int* indices) {
   fptype _time    = evt[indices[2 + indices[0]]];
   fptype _sigma   = evt[indices[3 + indices[0]]];
 
-  //if ((gpuDebug & 1) && (0 == blockIdx.x) && (0 == threadIdx.x)) 
+  //if ((gpuDebug & 1) && (0 == BLOCKIDX) && (0 == THREADIDX)) 
   //if (0 == evtNum) printf("TDDP: (%f, %f) (%f, %f)\n", sumWavesA.real, sumWavesA.imag, sumWavesB.real, sumWavesB.imag);
   //printf("TDDP: %f %f %f %f | %f %f %i\n", m12, m13, _time, _sigma, _xmixing, _tau, evtNum); 
 
@@ -178,7 +178,7 @@ __device__ fptype device_Tddp (fptype* evt, fptype* p, unsigned int* indices) {
   fptype term1 = norm2(sumWavesA) + norm2(sumWavesB);
   fptype term2 = norm2(sumWavesA) - norm2(sumWavesB);
   sumWavesA *= conj(sumWavesB); 
-  //printf("(%i, %i) TDDP: %f %f %f %f %f %f %f\n", blockIdx.x, threadIdx.x, term1, term2, sumWavesA.real, sumWavesA.imag, m12, m13, _tau);
+  //printf("(%i, %i) TDDP: %f %f %f %f %f %f %f\n", BLOCKIDX, THREADIDX, term1, term2, sumWavesA.real, sumWavesA.imag, m12, m13, _tau);
 
   // Cannot use callFunction on resolution function. 
   int effFunctionIdx = parIndexFromResIndex(numResonances); 
@@ -245,9 +245,9 @@ __device__ fptype device_Tddp (fptype* evt, fptype* p, unsigned int* indices) {
 
 
   //if (evtNum < 50) {
-  //if ((gpuDebug & 1) && (0 == threadIdx.x)) {
+  //if ((gpuDebug & 1) && (0 == THREADIDX)) {
   //if ((gpuDebug & 1) && (180 == evtNum)) {
-  //if ((0 == threadIdx.x) && (0 == blockIdx.x) && (gpuDebug & 1)) {
+  //if ((0 == THREADIDX) && (0 == BLOCKIDX) && (gpuDebug & 1)) {
   //sumRateAA *= eff;
   //sumRateAB *= eff;
   //sumRateBB *= eff;
@@ -260,16 +260,16 @@ __device__ fptype device_Tddp (fptype* evt, fptype* p, unsigned int* indices) {
   //cudaArray[indices[effFunctionIdx+1]+7], cudaArray[indices[effFunctionIdx+1]+8]); 
   //}
 
-  //printf("(%i, %i) TDDP: %f %f %f %f %f %i %f\n", blockIdx.x, threadIdx.x, _time, _sigma, m12, m13, term1, evtNum, ret);
+  //printf("(%i, %i) TDDP: %f %f %f %f %f %i %f\n", BLOCKIDX, THREADIDX, _time, _sigma, m12, m13, term1, evtNum, ret);
   //if ((gpuDebug & 1) && (isnan(ret)))
-  //printf("(%i, %i) TDDP: %f %f %f %f %i %i %f\n", blockIdx.x, threadIdx.x, _time, _sigma, m12, m13, evtNum, indices[6 + indices[0]], evt[indices[6 + indices[0]]]);
+  //printf("(%i, %i) TDDP: %f %f %f %f %i %i %f\n", BLOCKIDX, THREADIDX, _time, _sigma, m12, m13, evtNum, indices[6 + indices[0]], evt[indices[6 + indices[0]]]);
   //if ((gpuDebug & 1) && (isnan(ret)))
-  //printf("(%i, %i) TDDP: %f %f %f %f %f %f %f\n", blockIdx.x, threadIdx.x, term1, term2, sumWavesA.real, sumWavesA.imag, _xmixing, _ymixing, _tau);
+  //printf("(%i, %i) TDDP: %f %f %f %f %f %f %f\n", BLOCKIDX, THREADIDX, term1, term2, sumWavesA.real, sumWavesA.imag, _xmixing, _ymixing, _tau);
 
   return ret; 
 }
 
-__device__ device_function_ptr ptr_to_Tddp = device_Tddp; 
+MEM_DEVICE device_function_ptr ptr_to_Tddp = device_Tddp; 
 
 __host__ TddpPdf::TddpPdf (std::string n, Variable* _dtime, Variable* _sigmat, Variable* m12, Variable* m13, Variable* eventNumber, DecayInfo* decay, MixingTimeResolution* r, GooPdf* efficiency, Variable* mistag) 
   : GooPdf(_dtime, n) 
@@ -308,7 +308,7 @@ __host__ TddpPdf::TddpPdf (std::string n, Variable* _dtime, Variable* _sigmat, V
   decayConstants[2] = decayInfo->daug2Mass;
   decayConstants[3] = decayInfo->daug3Mass;
   decayConstants[4] = decayInfo->meson_radius;
-  cudaMemcpyToSymbol(functorConstants, decayConstants, 6*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice);  
+  MEMCPY_TO_SYMBOL(functorConstants, decayConstants, 6*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice);  
   
   pindices.push_back(registerParameter(decayInfo->_tau));
   pindices.push_back(registerParameter(decayInfo->_xmixing));
@@ -335,7 +335,7 @@ __host__ TddpPdf::TddpPdf (std::string n, Variable* _dtime, Variable* _sigmat, V
   components.push_back(efficiency); 
 
   resolution->createParameters(pindices, this); 
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_Tddp, sizeof(void*));
+  GET_FUNCTION_ADDR(ptr_to_Tddp);
   initialise(pindices);
 
   redoIntegral = new bool[decayInfo->resonances.size()];
@@ -402,7 +402,7 @@ __host__ TddpPdf::TddpPdf (std::string n, Variable* _dtime, Variable* _sigmat, V
   decayConstants[2] = decayInfo->daug2Mass;
   decayConstants[3] = decayInfo->daug3Mass;
   decayConstants[4] = decayInfo->meson_radius;
-  cudaMemcpyToSymbol(functorConstants, decayConstants, 8*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice);  
+  MEMCPY_TO_SYMBOL(functorConstants, decayConstants, 8*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice);  
   
   pindices.push_back(registerParameter(decayInfo->_tau));
   pindices.push_back(registerParameter(decayInfo->_xmixing));
@@ -434,7 +434,7 @@ __host__ TddpPdf::TddpPdf (std::string n, Variable* _dtime, Variable* _sigmat, V
     r[i]->createParameters(pindices, this); 
   }
 
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_Tddp, sizeof(void*));
+  GET_FUNCTION_ADDR(ptr_to_Tddp);
   initialise(pindices);
 
   redoIntegral = new bool[decayInfo->resonances.size()];
@@ -473,7 +473,7 @@ __host__ void TddpPdf::setDataSize (unsigned int dataSize, unsigned int evtSize)
   numEntries = dataSize; 
   cachedWaves = new thrust::device_vector<WaveHolder>(dataSize*decayInfo->resonances.size());
   void* dummy = thrust::raw_pointer_cast(cachedWaves->data()); 
-  cudaMemcpyToSymbol(cWaves, &dummy, sizeof(WaveHolder*), cacheToUse*sizeof(WaveHolder*)); 
+  MEMCPY_TO_SYMBOL(cWaves, &dummy, sizeof(WaveHolder*), cacheToUse*sizeof(WaveHolder*), cudaMemcpyHostToDevice); 
   setForceIntegrals(); 
 }
 
@@ -482,12 +482,12 @@ __host__ fptype TddpPdf::normalise () const {
   // so set normalisation factor to 1 so it doesn't get multiplied by zero. 
   // Copy at this time to ensure that the SpecialWaveCalculators, which need the efficiency, 
   // don't get zeroes through multiplying by the normFactor. 
-  cudaMemcpyToSymbol(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
   //std::cout << "TDDP normalisation " << getName() << std::endl;
 
   int totalBins = _m12->numbins * _m13->numbins;
   if (!dalitzNormRange) {
-    cudaMalloc((void**) &dalitzNormRange, 6*sizeof(fptype));
+    gooMalloc((void**) &dalitzNormRange, 6*sizeof(fptype));
   
     fptype* host_norms = new fptype[6];
     host_norms[0] = _m12->lowerlimit;
@@ -496,7 +496,7 @@ __host__ fptype TddpPdf::normalise () const {
     host_norms[3] = _m13->lowerlimit;
     host_norms[4] = _m13->upperlimit;
     host_norms[5] = _m13->numbins;
-    cudaMemcpy(dalitzNormRange, host_norms, 6*sizeof(fptype), cudaMemcpyHostToDevice);
+    MEMCPY(dalitzNormRange, host_norms, 6*sizeof(fptype), cudaMemcpyHostToDevice);
     delete[] host_norms; 
   }
 
@@ -637,7 +637,7 @@ SpecialDalitzIntegrator::SpecialDalitzIntegrator (int pIdx, unsigned int ri, uns
   , parameters(pIdx) 
 {}
 
-__device__ ThreeComplex SpecialDalitzIntegrator::operator () (thrust::tuple<int, fptype*> t) const {
+EXEC_TARGET ThreeComplex SpecialDalitzIntegrator::operator () (thrust::tuple<int, fptype*> t) const {
   // Bin index, base address [lower, upper, numbins] 
   // Notice that this is basically MetricTaker::operator (binned) with the special-case knowledge
   // that event size is two, and that the function to call is dev_Tddp_calcIntegrals.
@@ -661,7 +661,7 @@ __device__ ThreeComplex SpecialDalitzIntegrator::operator () (thrust::tuple<int,
   binCenterM13        *= (globalBinNumber + 0.5); 
   binCenterM13        += lowerBoundM13; 
 
-  //if (0 == threadIdx.x) cuPrintf("%i %i %i %f %f operator\n", thrust::get<0>(t), thrust::get<0>(t) % numBinsM12, globalBinNumber, binCenterM12, binCenterM13);
+  //if (0 == THREADIDX) cuPrintf("%i %i %i %f %f operator\n", thrust::get<0>(t), thrust::get<0>(t) % numBinsM12, globalBinNumber, binCenterM12, binCenterM13);
   unsigned int* indices = paramIndices + parameters;   
   ThreeComplex ret = device_Tddp_calcIntegrals(binCenterM12, binCenterM13, resonance_i, resonance_j, cudaArray, indices); 
 
@@ -670,7 +670,7 @@ __device__ ThreeComplex SpecialDalitzIntegrator::operator () (thrust::tuple<int,
   fakeEvt[indices[indices[0] + 2 + 3]] = binCenterM13;
   unsigned int numResonances = indices[6]; 
   int effFunctionIdx = parIndexFromResIndex(numResonances); 
-  //if (thrust::get<0>(t) == 19840) {internalDebug1 = blockIdx.x; internalDebug2 = threadIdx.x;}
+  //if (thrust::get<0>(t) == 19840) {internalDebug1 = BLOCKIDX; internalDebug2 = THREADIDX;}
   //fptype eff = (*(reinterpret_cast<device_function_ptr>(device_function_table[indices[effFunctionIdx]])))(fakeEvt, cudaArray, paramIndices + indices[effFunctionIdx + 1]);
   fptype eff = callFunction(fakeEvt, indices[effFunctionIdx], indices[effFunctionIdx + 1]); 
   //if (thrust::get<0>(t) == 19840) {
@@ -698,7 +698,7 @@ SpecialWaveCalculator::SpecialWaveCalculator (int pIdx, unsigned int res_idx)
   , parameters(pIdx)
 {}
 
-__device__ WaveHolder SpecialWaveCalculator::operator () (thrust::tuple<int, fptype*, int> t) const {
+EXEC_TARGET WaveHolder SpecialWaveCalculator::operator () (thrust::tuple<int, fptype*, int> t) const {
   // Calculates the BW values for a specific resonance. 
   // The 'A' wave stores the value at each point, the 'B' 
   // at the opposite (reversed) point. 

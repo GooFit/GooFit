@@ -1,6 +1,6 @@
 #include "CorrGaussianPdf.hh"
 
-__device__ fptype device_CorrGaussian (fptype* evt, fptype* p, unsigned int* indices) {
+EXEC_TARGET fptype device_CorrGaussian (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x = evt[indices[2 + indices[0]]]; 
   fptype y = evt[indices[3 + indices[0]]]; 
   fptype mean1  = p[indices[1]];
@@ -14,14 +14,14 @@ __device__ fptype device_CorrGaussian (fptype* evt, fptype* p, unsigned int* ind
   fptype y_dist = (y - mean2) * (sigma2 == 0 ? 0 : (1.0 / sigma2)); 
   fptype ret = EXP(-0.5*(x_dist * x_dist + y_dist * y_dist)); 
 
-  //if ((gpuDebug & 1) && (threadIdx.x == 60)) printf("CorrGauss: %f %f %f %f %f %f %f %f %f %.12f\n", x, y, mean1, sigma1, mean2, sigma2, corr, x_dist, y_dist, ret);
-  //if ((gpuDebug & 1) && (threadIdx.x == 60)) printf("[%i, %i] [%i, %i] CorrGauss: %f %f %f\n", blockIdx.x, threadIdx.x, gridDim.x, blockDim.x, x, y, ret);
+  //if ((gpuDebug & 1) && (THREADIDX == 60)) printf("CorrGauss: %f %f %f %f %f %f %f %f %f %.12f\n", x, y, mean1, sigma1, mean2, sigma2, corr, x_dist, y_dist, ret);
+  //if ((gpuDebug & 1) && (THREADIDX == 60)) printf("[%i, %i] [%i, %i] CorrGauss: %f %f %f\n", BLOCKIDX, THREADIDX, gridDim.x, BLOCKDIM, x, y, ret);
   //printf("CorrGauss: %i %i %i %f %f %f %f\n", indices[2 + indices[0]], indices[3 + indices[0]], indices[0], x, y, mean1, mean2);
 
   return ret; 
 }
 
-__device__ device_function_ptr ptr_to_CorrGaussian = device_CorrGaussian; 
+MEM_DEVICE device_function_ptr ptr_to_CorrGaussian = device_CorrGaussian; 
 
 __host__ CorrGaussianPdf::CorrGaussianPdf (std::string n, Variable* _x, Variable* _y, Variable* mean1, Variable* sigma1, Variable* mean2, Variable* sigma2, Variable* correlation) 
 : GooPdf(_x, n) 
@@ -36,7 +36,7 @@ __host__ CorrGaussianPdf::CorrGaussianPdf (std::string n, Variable* _x, Variable
   pindices.push_back(registerParameter(sigma2));
   pindices.push_back(registerParameter(correlation));
 
-  cudaMemcpyFromSymbol((void**) &host_fcn_ptr, ptr_to_CorrGaussian, sizeof(void*));
+  GET_FUNCTION_ADDR(ptr_to_CorrGaussian);
   initialise(pindices); 
 }
 

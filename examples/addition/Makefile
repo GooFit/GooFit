@@ -17,6 +17,11 @@ else
 LDFLAGS += -rdynamic 
 endif
 
+ifneq ($(TARGET_OMP),)
+CXXFLAGS    += -Xcompiler -fopenmp -DTHRUST_DEVICE_BACKEND=THRUST_DEVICE_BACKEND_OMP -lgomp
+LDFLAGS     += -fopenmp -DTHRUST_DEVICE_BACKEND=THRUST_DEVICE_BACKEND_OMP -lgomp
+endif 
+
 ifeq ($(CUDALOCATION), )
 CUDALOCATION = /usr/local/cuda/
 endif

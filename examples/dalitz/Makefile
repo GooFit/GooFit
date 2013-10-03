@@ -13,6 +13,11 @@ GOOFITDIR = ${PWD}/../../
 SRCDIR = $(GOOFITDIR)/PDFs
 WRKDIR = $(GOOFITDIR)/wrkdir/
 
+ifneq ($(TARGET_OMP),)
+CXXFLAGS    += -Xcompiler -fopenmp -DTHRUST_DEVICE_BACKEND=THRUST_DEVICE_BACKEND_OMP -lgomp
+LDFLAGS     += -fopenmp -DTHRUST_DEVICE_BACKEND=THRUST_DEVICE_BACKEND_OMP -lgomp
+endif 
+
 INCLUDES += -I$(CUDAHEADERS) -I$(SRCDIR) -I$(GOOFITDIR) -I$(GOOFITDIR)/rootstuff 
 LIBS += -L$(CUDALOCATION)/lib64 -lcudart -L$(GOOFITDIR)/rootstuff -lRootUtils 
 

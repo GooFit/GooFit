@@ -1,9 +1,5 @@
 #include "ConvolutionPdf.hh"
-
 int totalConvolutions = 0; 
-#ifdef OMP_ON
-#pragma omp threadprivate(totalConvolutions)
-#endif
 
 #define CONVOLUTION_CACHE_SIZE 512
 // I would really like this to be 1024, which is the maximum number of threads

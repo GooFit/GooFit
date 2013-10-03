@@ -31,21 +31,7 @@ fptype host_timeHist[10000];
 MEM_DEVICE void* device_function_table[200]; // Not clear why this cannot be MEM_CONSTANT, but it causes crashes to declare it so. 
 void* host_function_table[200];
 unsigned int num_device_functions = 0; 
-#ifdef OMP_ON
-// Make functionAddressToDevideIndexMap and array of maps indexed by thread id since 
-// I get the following compiler error if I try to make it threadprivate.
-// "functionAddressToDeviceIndexMap’ declared ‘threadprivate’ after first use"
-typedef std::map<void*, int> tMapType;
-tMapType functionAddressToDeviceIndexMap[MAX_THREADS]; 
-#pragma omp threadprivate(host_function_table, num_device_functions)
-fptype gSum;
-fptype sums[MAX_THREADS];
-double gLognorm;
-double lognorms[MAX_THREADS];
-#else
-std::map<void*, int> functionAddressToDeviceIndexMap; 
-#endif
-
+map<void*, int> functionAddressToDeviceIndexMap; 
 
 // For use in debugging memory issues
 void printMemoryStatus (std::string file, int line) {
@@ -173,26 +159,14 @@ GooPdf::GooPdf (Variable* x, std::string n)
 
 __host__ int GooPdf::findFunctionIdx (void* dev_functionPtr) {
   // Code specific to function-pointer implementation 
-#ifdef OMP_ON
-  int tid = omp_get_thread_num();
-  std::map<void*, int>::iterator localPos = functionAddressToDeviceIndexMap[tid].find(dev_functionPtr); // Use find instead of [] to avoid returning 0 if the index doesn't exist.
-  if (localPos != functionAddressToDeviceIndexMap[tid].end()) {
-    return (*localPos).second; 
-  }
-#else
-  std::map<void*, int>::iterator localPos = functionAddressToDeviceIndexMap.find(dev_functionPtr); 
+  map<void*, int>::iterator localPos = functionAddressToDeviceIndexMap.find(dev_functionPtr); 
   if (localPos != functionAddressToDeviceIndexMap.end()) {
     return (*localPos).second; 
   }
-#endif
 
   int fIdx = num_device_functions;   
   host_function_table[num_device_functions] = dev_functionPtr;
-#ifdef OMP_ON 
-  functionAddressToDeviceIndexMap[tid][dev_functionPtr] = num_device_functions; 
-#else
   functionAddressToDeviceIndexMap[dev_functionPtr] = num_device_functions; 
-#endif
   num_device_functions++; 
   MEMCPY_TO_SYMBOL(device_function_table, host_function_table, num_device_functions*sizeof(void*), 0, cudaMemcpyHostToDevice); 
 
@@ -237,42 +211,10 @@ __host__ double GooPdf::sumOfNll (int numVars) const {
   double dummy = 0;
 
   //if (host_callnumber >= 2) abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " debug abort", this); 
-
-#ifdef OMP_ON
-  unsigned int thFirstEntry, thLastEntry;
-  int tid, nthreads;
-  int j;
-
-  tid = omp_get_thread_num();
-  nthreads = omp_get_num_threads();
-
-  thFirstEntry = tid*(numEntries)/nthreads;
-  thLastEntry = (tid+1)*(numEntries)/nthreads;
-
-//  std::cout << tid << ": " << numEntries << " " << thFirstEntry << " " << thLastEntry << std::endl;
-//  std::cout << "Extended term: " << numVars << " " << numEntries << " " << numEvents << std::endl;
-    thrust::counting_iterator<int> eventIndex(0); 
-    lognorms[tid] = thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(eventIndex + thFirstEntry, arrayAddress, eventSize)),
-					thrust::make_zip_iterator(thrust::make_tuple(eventIndex + thLastEntry, arrayAddress, eventSize)),
-					*logger, dummy, cudaPlus); 
-  #pragma omp barrier
-  if (tid == 0) 
-  {
-    gLognorm = 0;
-    for (j = 0; j < nthreads; j++) gLognorm += lognorms[j];
-    //std::cout << tid << ": gLognorm " << gLognorm << std::endl;
-  }
-  #pragma omp barrier
-
-
-  return  gLognorm;
-
-#else
   thrust::counting_iterator<int> eventIndex(0); 
   return thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
 				  thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
 				  *logger, dummy, cudaPlus);   
-#endif
 }
 
 __host__ double GooPdf::calculateNLL () const {
@@ -339,29 +281,10 @@ __host__ void GooPdf::evaluateAtPoints (Variable* var, std::vector<fptype>& res)
   thrust::device_vector<fptype> results(var->numbins); 
 
   MetricTaker evalor(this, getMetricPointer("ptr_to_Eval")); 
-
-#ifdef OMP_ON
-  unsigned int thFirstEntry, thLastEntry;
-  int tid, nthreads;
-
-  tid = omp_get_thread_num();
-  nthreads = omp_get_num_threads();
-
-// use var->numbins or numEntries here?
-  thFirstEntry = tid*(var->numbins)/nthreads;
-  thLastEntry = (tid+1)*(var->numbins)/nthreads;
-
-  thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex+thFirstEntry, arrayAddress, eventSize)),
-		    thrust::make_zip_iterator(thrust::make_tuple(eventIndex + thLastEntry, arrayAddress, eventSize)),
-		    results.begin()+thFirstEntry,
-		    evalor); 
-  #pragma omp barrier
-#else
   thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
 		    thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
 		    results.begin(),
 		    evalor); 
-#endif
 
   thrust::host_vector<fptype> h_results = results; 
   res.clear();
@@ -474,43 +397,6 @@ __host__ fptype GooPdf::normalise () const {
   thrust::constant_iterator<fptype*> arrayAddress(normRanges); 
   thrust::constant_iterator<int> eventSize(observables.size());
   thrust::counting_iterator<int> binIndex(0); 
-#ifdef OMP_ON
-  unsigned int thFirstBin, thLastBin;
-  int tid, nthreads;
-  int j;
-
-  tid = omp_get_thread_num();
-  nthreads = omp_get_num_threads();
-
-  thFirstBin = tid*(totalBins)/nthreads;
-  thLastBin = (tid+1)*(totalBins)/nthreads;
- 
-  //std::cout << "totalBins = " << totalBins << " thFirstBin = " << thFirstBin << " thLastBin = " << thLastBin << std::endl;
-
-  sums[tid] = thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(binIndex + thFirstBin, eventSize, arrayAddress)),
-					thrust::make_zip_iterator(thrust::make_tuple(binIndex + thLastBin, eventSize, arrayAddress)),
-					*logger, dummy, cudaPlus); 
-  cudaThreadSynchronize(); // Ensure logger is done
-
-  #pragma omp barrier
-  if (tid == 0)
-  {
-    gSum = 0;
-    for (j=0; j<nthreads; j++) gSum += sums[j];
-  }
-    
-  #pragma omp barrier
-  //std::cout << tid << ": gSum = " << gSum << std::endl;
-
-  if (isnan(gSum)) {
-    abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " NaN in normalisation", this); 
-  }
-  else if (0 == gSum) { 
-    abortWithCudaPrintFlush(__FILE__, __LINE__, "Zero in normalisation", this); 
-  }
- 
-  ret *= gSum;
-#else
   fptype sum = thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(binIndex, eventSize, arrayAddress)),
 					thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, eventSize, arrayAddress)),
 					*logger, dummy, cudaPlus); 
@@ -522,10 +408,8 @@ __host__ fptype GooPdf::normalise () const {
     abortWithCudaPrintFlush(__FILE__, __LINE__, "Non-positive normalisation", this); 
   }
 
-  //if (cpuDebug & 1) std::cout << getName() << " integral is " << ret << " " << sum << " " << (ret*sum) << " " << (1.0/(ret*sum)) << std::endl; 
-
   ret *= sum;
-#endif
+
 
   if (0 == ret) abortWithCudaPrintFlush(__FILE__, __LINE__, "Zero integral"); 
   host_normalisation[parameters] = 1.0/ret;
@@ -680,26 +564,14 @@ MetricTaker::MetricTaker (PdfBase* dat, void* dev_functionPtr)
 {
   //std::cout << "MetricTaker constructor with " << functionIdx << std::endl; 
 
-#ifdef OMP_ON
-  int tid = omp_get_thread_num();
-  std::map<void*, int>::iterator localPos = functionAddressToDeviceIndexMap[tid].find(dev_functionPtr); // Use find instead of [] to avoid returning 0 if the index doesn't exist.
-  if (localPos != functionAddressToDeviceIndexMap[tid].end()) {
-    metricIndex = (*localPos).second; 
-  }
-#else
-  std::map<void*, int>::iterator localPos = functionAddressToDeviceIndexMap.find(dev_functionPtr); 
+  map<void*, int>::iterator localPos = functionAddressToDeviceIndexMap.find(dev_functionPtr); 
   if (localPos != functionAddressToDeviceIndexMap.end()) {
     metricIndex = (*localPos).second; 
   }
-#endif
   else {
     metricIndex = num_device_functions; 
     host_function_table[num_device_functions] = dev_functionPtr;
-#ifdef OMP_ON
-    functionAddressToDeviceIndexMap[tid][dev_functionPtr] = num_device_functions; 
-#else
     functionAddressToDeviceIndexMap[dev_functionPtr] = num_device_functions; 
-#endif
     num_device_functions++; 
     MEMCPY_TO_SYMBOL(device_function_table, host_function_table, num_device_functions*sizeof(void*), 0, cudaMemcpyHostToDevice); 
   }

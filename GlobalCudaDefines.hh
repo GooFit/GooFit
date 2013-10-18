@@ -13,7 +13,8 @@ extern int host_callnumber;
 #pragma omp threadprivate (host_callnumber)
 #endif
 
-#if THRUST_DEVICE_BACKEND==THRUST_DEVICE_BACKEND_OMP
+// Thrust 1.7 will make the use of THRUST_DEVICE_BACKEND an error
+#if THRUST_DEVICE_BACKEND==THRUST_DEVICE_BACKEND_OMP || THRUST_DEVICE_SYSTEM==THRUST_DEVICE_BACKEND_OMP
 // OMP target - all 'device' memory is actually on host. 
 #define MEM_DEVICE
 #define MEM_SHARED

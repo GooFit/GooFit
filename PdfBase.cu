@@ -264,7 +264,8 @@ __host__ void PdfBase::printProfileInfo (bool topLevel) {
 
 
 gooError gooMalloc (void** target, size_t bytes) {
-#if THRUST_DEVICE_BACKEND==THRUST_DEVICE_BACKEND_OMP
+// Thrust 1.7 will make the use of THRUST_DEVICE_BACKEND an error
+#if THRUST_DEVICE_BACKEND==THRUST_DEVICE_BACKEND_OMP || THRUST_DEVICE_SYSTEM==THRUST_DEVICE_BACKEND_OMP
   target[0] = malloc(bytes);
   if (target[0]) return gooSuccess;
   else return gooErrorMemoryAllocation; 
@@ -274,7 +275,8 @@ gooError gooMalloc (void** target, size_t bytes) {
 }
 
 gooError gooFree (void* ptr) {
-#if THRUST_DEVICE_BACKEND==THRUST_DEVICE_BACKEND_OMP
+// Thrust 1.7 will make the use of THRUST_DEVICE_BACKEND an error
+#if THRUST_DEVICE_BACKEND==THRUST_DEVICE_BACKEND_OMP || THRUST_DEVICE_SYSTEM==THRUST_DEVICE_BACKEND_OMP
   free(ptr);
   return gooSuccess;
 #else

@@ -19,7 +19,7 @@ extern int host_callnumber;
 #define MEM_SHARED
 #define MEM_CONSTANT 
 #define EXEC_TARGET __host__
-#define THREAD_SYNCH #pragma omp barrier
+#define THREAD_SYNCH _Pragma("omp barrier") // valid in C99 and C++11, but probably not C++93
 #define DEVICE_VECTOR thrust::host_vector
 // Use char* here because I need +1 to mean "offset by one byte", not "by one sizeof(whatever)".
 // Can't use void* because then the compiler doesn't know how to do pointer arithmetic. 

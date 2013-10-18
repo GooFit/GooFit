@@ -21,15 +21,24 @@ ifeq ($(CUDALOCATION), )
 CUDALOCATION = /usr/local/cuda/
 endif
 CUDAHEADERS = $(CUDALOCATION)/include/
+PWD = $(shell /bin/pwd)
 GOOFITDIR = $(PWD)/../../
 
 INCLUDES += -I$(CUDAHEADERS) -I$(GOOFITDIR) -I$(GOOFITDIR)/rootstuff -I$(GOOFITDIR)/PDFs/ 
-LIBS += -L$(CUDALOCATION)/$(CUDALIBDIR) -lcudart -L$(GOOFITDIR)/rootstuff -lRootUtils 
+LIBS += -L$(GOOFITDIR)/rootstuff -lRootUtils 
+ifeq ($(TARGET_OMP),)
+   LIBS += -L$(CUDALOCATION)/$(CUDALIBDIR) -lcudart
+else
+   LIBS += -fopenmp
+endif
 
 # These are for user-level programs that want access to the ROOT plotting stuff, 
 # not just the fitting stuff included in the GooFit-local ripped library. 
-ROOT_INCLUDES = -I$(ROOTSYS)/include/
-ROOT_LIBS     = -L$(ROOTSYS)/lib/ -lCore -lCint -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lMatrix -lPhysics -lMathCore -pthread -lThread -lMinuit2 -lMinuit -lFoam 
+ifneq ($(ROOTSYS), )
+   CXXFLAGS += -DHAVE_ROOT=1
+   ROOT_INCLUDES = -I$(ROOTSYS)/include/
+   ROOT_LIBS     = -L$(ROOTSYS)/lib/ -lCore -lCint -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lMatrix -lPhysics -lMathCore -pthread -lThread -lMinuit2 -lMinuit -lFoam
+endif
 WRKDIR = $(GOOFITDIR)/wrkdir/
 
 ifneq ($(TARGET_OMP),)

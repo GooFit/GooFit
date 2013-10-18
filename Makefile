@@ -29,9 +29,12 @@ ifneq ($(TARGET_OMP),)
 DEFINEFLAGS += -Xcompiler -fno-inline -Xcompiler -fopenmp  -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_BACKEND_OMP -lgomp
 endif 
 
+ifeq ($(CUDALOCATION), )
 CUDALOCATION = /usr/local/cuda/
+endif
 CUDAHEADERS = $(CUDALOCATION)/include/
 
+PWD = $(shell /bin/pwd)
 SRCDIR = $(PWD)/PDFs
 
 INCLUDES += -I$(SRCDIR) -I$(PWD) -I$(CUDAHEADERS) -I$(PWD)/rootstuff 

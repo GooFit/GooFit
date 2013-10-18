@@ -79,7 +79,7 @@ FitManager.o:		FitManager.cc FitManager.hh wrkdir/ThrustFitManagerCUDA.o Variabl
 			$(CXX) $(DEFINEFLAGS) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
 
 wrkdir/GooPdfCUDA.o:	wrkdir/CUDAglob.cu PdfBase.cu 
-			nvcc $(CXXFLAGS) $(INCLUDES) -I. $(DEFINEFLAGS) -c $< -o $@ 
+			$(CXX) $(CXXFLAGS) $(INCLUDES) -I. $(DEFINEFLAGS) -c $< -o $@ 
 			@echo "$@ done"
 
 clean:

@@ -12,7 +12,6 @@
 
 TCanvas foo;
 timeval startTime, stopTime, totalTime;
-clock_t startCPU, stopCPU; 
 
 #include <vector>
 #include <iostream>
@@ -70,7 +69,7 @@ void generateEvents (vector<int>& rsEvtVec, vector<int>& wsEvtVec,
   }
 }
 
-void fitRatio (vector<int>& rsEvts, vector<int> wsEvts, std::string plotName = "") {
+void fitRatio (vector<int>& rsEvts, vector<int>& wsEvts, std::string plotName = "") {
   TH1D* ratioHist = new TH1D("ratioHist", "", decayTime->numbins, decayTime->lowerlimit, decayTime->upperlimit); 
 
   BinnedDataSet* ratioData = new BinnedDataSet(decayTime); 
@@ -169,28 +168,62 @@ double d0bar_con_err = 0;
 double d0bar_lin_err = 0; 
 double d0bar_qua_err = 0;
 
+vector<double> ratios;
+vector<double> errors; 
+
 void cpvFitFcn (int &npar, double *gin, double &fun, double *fp, int iflag) {
-  double rsubd  = fp[0];
-  double yprime = fp[1];
-  double xprisq = fp[2];
-  double poverq = fp[3];
-  double qoverp = (1.0 / poverq); 
+  double conCoef = fp[0];
+  double linCoef = fp[1];
+  double squCoef = fp[2];
 
   double chisq = 0; 
-  chisq += pow((rsubd - dzero_con) / dzero_con_err, 2);
-  chisq += pow((sqrt(rsubd)*yprime*poverq - dzero_lin) / dzero_lin_err, 2);
-  chisq += pow((0.25*poverq*(xprisq + yprime*yprime) - dzero_qua) / dzero_qua_err, 2);
-
-  chisq += pow((rsubd - d0bar_con) / d0bar_con_err, 2);
-  chisq += pow((sqrt(rsubd)*yprime*qoverp - d0bar_lin) / d0bar_lin_err, 2);
-  chisq += pow((0.25*qoverp*(xprisq + yprime*yprime) - d0bar_qua) / d0bar_qua_err, 2);
+  double step = (decayTime->upperlimit - decayTime->lowerlimit) / decayTime->numbins;
+  for (unsigned int i = 0; i < ratios.size(); ++i) {
+    double currDTime = decayTime->lowerlimit + (i+0.5)*step; 
+    double pdfval = conCoef + linCoef*currDTime + squCoef*currDTime*currDTime;
+    chisq += pow((pdfval - ratios[i]) / errors[i], 2); 
+  }
 
   fun = chisq; 
 }
 
+void fitRatioCPU (vector<int>& rsEvts, vector<int>& wsEvts) {
+  TH1D* ratioHist = new TH1D("ratioHist", "", decayTime->numbins, decayTime->lowerlimit, decayTime->upperlimit); 
+
+  ratios.resize(wsEvts.size()); 
+  errors.resize(wsEvts.size()); 
+  for (unsigned int i = 0; i < wsEvts.size(); ++i) {
+    double ratio = wsEvts[i];
+    if (0 == rsEvts[i]) rsEvts[i] = 1; // Cheating to avoid div by zero. 
+    ratio /= rsEvts[i]; 
+
+    if (0 == wsEvts[i]) wsEvts[i] = 1; // Avoid zero errors 
+    double error = wsEvts[i] / pow(rsEvts[i], 2);
+    error       += pow(wsEvts[i], 2) / pow(rsEvts[i], 3);
+    error        = sqrt(error); 
+
+    ratios[i] = ratio;
+    errors[i] = error;
+    ratioHist->SetBinContent(i+1, ratio); 
+    ratioHist->SetBinError(i+1, error); 
+  }
+
+  TMinuit* minuit = new TMinuit(3);
+  minuit->DefineParameter(0, "constaCoef", 0.03, 0.01, -1, 1);
+  minuit->DefineParameter(1, "linearCoef", 0, 0.01, -1, 1);
+  minuit->DefineParameter(2, "secondCoef", 0, 0.01, -1, 1);
+  minuit->SetFCN(cpvFitFcn); 
+  
+  gettimeofday(&startTime, NULL);
+  minuit->Migrad(); 
+  gettimeofday(&stopTime, NULL);
+}
+
+
 int main (int argc, char** argv) {
   // Time is in units of lifetime
   decayTime = new Variable("decayTime", 100, 0, 10); 
+  decayTime->numbins = atoi(argv[1]); 
   double rSubD = 0.03;
   double rBarD = 0.03; 
   double delta = 0;
@@ -216,22 +249,27 @@ int main (int argc, char** argv) {
   generateEvents(dZeroEvtsRS, dZeroEvtsWS, decayTime, rSubD, dZeroLinearCoef, dZeroSecondCoef, eventsToGenerate);
   generateEvents(d0barEvtsRS, d0barEvtsWS, decayTime, rBarD, d0barLinearCoef, d0barSecondCoef, eventsToGenerate);
 
+  double gpuTime = 0;
+  double cpuTime = 0; 
+
   fitRatio(dZeroEvtsRS, dZeroEvtsWS, "dzeroEvtRatio.png");
-  dzero_con = constaCoef->value; dzero_con_err = constaCoef->error; 
-  dzero_lin = linearCoef->value; dzero_lin_err = linearCoef->error; 
-  dzero_qua = secondCoef->value; dzero_qua_err = secondCoef->error; 
+  timersub(&stopTime, &startTime, &totalTime);
+  gpuTime += totalTime.tv_sec + totalTime.tv_usec/1000000.0;
   fitRatio(d0barEvtsRS, d0barEvtsWS, "dzbarEvtRatio.png");
-  d0bar_con = constaCoef->value; d0bar_con_err = constaCoef->error; 
-  d0bar_lin = linearCoef->value; d0bar_lin_err = linearCoef->error; 
-  d0bar_qua = secondCoef->value; d0bar_qua_err = secondCoef->error; 
-  /*
-  TMinuit cpvFitter(4); 
-  cpvFitter.DefineParameter(0, "rsubd",  0.03, 0.003,  0.02, 0.04);
-  cpvFitter.DefineParameter(1, "yprime", 0.00, 0.001, -0.05, 0.05); 
-  cpvFitter.DefineParameter(2, "xprisq", 0.00, 0.001, -0.05, 0.05); 
-  cpvFitter.DefineParameter(3, "poverq", 1.00, 0.010,  0.10, 2.00); 
-  cpvFitter.SetFCN(cpvFitFcn); 
-  cpvFitter.Migrad(); 
-  */ 
+  timersub(&stopTime, &startTime, &totalTime);
+  gpuTime += totalTime.tv_sec + totalTime.tv_usec/1000000.0;
+
+
+  fitRatioCPU(dZeroEvtsRS, dZeroEvtsWS);
+  timersub(&stopTime, &startTime, &totalTime);
+  cpuTime += totalTime.tv_sec + totalTime.tv_usec/1000000.0;
+  fitRatioCPU(d0barEvtsRS, d0barEvtsWS);
+  timersub(&stopTime, &startTime, &totalTime);
+  cpuTime += totalTime.tv_sec + totalTime.tv_usec/1000000.0;
+
+  std::cout << "GPU time [seconds] : " << gpuTime 
+	    << "\nCPU time [seconds] : " << cpuTime 
+	    << std::endl;
+
   return 0;
 }

@@ -77,7 +77,7 @@ void fitAndPlot (GooPdf* total, UnbinnedDataSet* data, TH1F& dataHist, Variable*
     val *= data->getNumEvents(); 
     pdfHist.SetBinContent(i+1, val); 
   }
-  foo->SetLogy(true); 
+  //foo->SetLogy(true); 
   dataHist.SetMarkerStyle(8);
   dataHist.SetMarkerSize(0.5);
   dataHist.Draw("p"); 
@@ -171,20 +171,20 @@ int main (int argc, char** argv) {
   Variable* mpv            = new Variable("mpv", 40, 0, 150);
   Variable* sigma          = new Variable("sigma", 5, 0, 30);
   GooPdf* landau = new LandauPdf("landau", xvar, mpv, sigma); 
-  fitAndPlot(landau, &landdata, landHist, xvar, "landau.eps"); 
+  fitAndPlot(landau, &landdata, landHist, xvar, "landau.png"); 
 
   
   Variable* nmean = new Variable("nmean", 0.4, -10.0, 10.0);
   Variable* nsigm = new Variable("nsigm", 0.6, 0.0, 1.0);
   Variable* ntail = new Variable("ntail", 1.1, 0.1, 0.0, 3.0);
   GooPdf* novo = new NovosibirskPdf("novo", xvar, nmean, nsigm, ntail);
-  fitAndPlot(novo, &novodata, novoHist, xvar, "novo.eps"); 
+  fitAndPlot(novo, &novodata, novoHist, xvar, "novo.png"); 
 
   Variable* gmean = new Variable("gmean", 3.0, 1, -15, 15); 
   Variable* lsigm = new Variable("lsigm", 10, 1, 10, 20); 
   Variable* rsigm = new Variable("rsigm", 20, 1, 10, 40); 
   GooPdf* bifur = new BifurGaussPdf("bifur", xvar, gmean, lsigm, rsigm); 
-  fitAndPlot(bifur, &bifgdata, bifgHist, xvar, "bifur.eps"); 
+  fitAndPlot(bifur, &bifgdata, bifgHist, xvar, "bifur.png"); 
    
   return 0;
 }

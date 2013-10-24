@@ -14,7 +14,12 @@ extern int host_callnumber;
 #endif
 
 // Thrust 1.7 will make the use of THRUST_DEVICE_BACKEND an error
-#if THRUST_DEVICE_BACKEND==THRUST_DEVICE_BACKEND_OMP || THRUST_DEVICE_SYSTEM==THRUST_DEVICE_BACKEND_OMP
+#if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_BACKEND_OMP
+#if THRUST_VERSION < 100699
+// Ensure backwards compatibility with Thrust 1.5
+#undef THRUST_DEVICE_BACKEND
+#define THRUST_DEVICE_BACKEND THRUST_DEVICE_BACKEND_OMP
+#endif 
 // OMP target - all 'device' memory is actually on host. 
 #define MEM_DEVICE
 #define MEM_SHARED

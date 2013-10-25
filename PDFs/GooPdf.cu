@@ -38,7 +38,11 @@ void printMemoryStatus (std::string file, int line) {
   size_t memfree = 0;
   size_t memtotal = 0; 
   SYNCH(); 
+// Thrust 1.7 will make the use of THRUST_DEVICE_BACKEND an error
+#if THRUST_DEVICE_BACKEND==THRUST_DEVICE_BACKEND_OMP || THRUST_DEVICE_SYSTEM==THRUST_DEVICE_BACKEND_OMP
+#else
   cudaMemGetInfo(&memfree, &memtotal); 
+#endif
   SYNCH(); 
   std::cout << "Memory status " << file << " " << line << " Free " << memfree << " Total " << memtotal << " Used " << (memtotal - memfree) << std::endl;
 }

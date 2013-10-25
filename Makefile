@@ -3,7 +3,7 @@ CXX=nvcc
 LD=g++  
 OutPutOpt = -o
 
-CXXFLAGS     = -O3 -arch=sm_20 
+CXXFLAGS     = -O3
 DEFINEFLAGS=-DDUMMY=dummy 
 CUDALIBDIR=lib64
 
@@ -25,8 +25,10 @@ ifneq ($(PROFILE),)
 DEFINEFLAGS += -DPROFILING=yes
 endif 
 
-ifneq ($(TARGET_OMP),)
-DEFINEFLAGS += -Xcompiler -fno-inline -Xcompiler -fopenmp  -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_BACKEND_OMP
+ifeq ($(TARGET_OMP),)
+CXXFLAGS += -arch=sm_20
+else
+DEFINEFLAGS += -fno-inline -fopenmp -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_BACKEND_OMP
 LIBS += -lgomp
 endif 
 

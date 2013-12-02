@@ -60,7 +60,7 @@ EXEC_TARGET fptype device_ConvolveSharedPdfs (fptype* evt, fptype* p, unsigned i
   // Brute-force calculate integral M(x) * R(x - x0) dx
   MEM_SHARED fptype modelCache[CONVOLUTION_CACHE_SIZE]; 
   // Don't try to shared-load more items than we have threads. 
-  int numToLoad = min(CONVOLUTION_CACHE_SIZE / numOthers, (int) BLOCKDIM);
+  int numToLoad = min(CONVOLUTION_CACHE_SIZE / numOthers, static_cast<unsigned int>(BLOCKDIM));
 
   for (int i = 0; i < numbins; i += numToLoad) {
     // This code avoids this problem: If event 0 is in workspace 0, and 

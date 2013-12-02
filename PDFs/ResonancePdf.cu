@@ -49,12 +49,12 @@ EXEC_TARGET fptype spinFactor (unsigned int spin, fptype motherMass, fptype daug
 
   // Copied from EvtDalitzReso, with assumption that pairAng convention matches pipipi0 from EvtD0mixDalitz.
   // Again, all threads should get the same branch. 
-  fptype _mA = (PAIR_12 == cyclic_index ? daug1Mass : (PAIR_13 == cyclic_index ? daug3Mass : daug2Mass));
-  fptype _mB = (PAIR_12 == cyclic_index ? daug2Mass : (PAIR_13 == cyclic_index ? daug1Mass : daug3Mass));
-  fptype _mC = (PAIR_12 == cyclic_index ? daug3Mass : (PAIR_13 == cyclic_index ? daug2Mass : daug1Mass));
-  fptype _mAC = (PAIR_12 == cyclic_index ? m13 : (PAIR_13 == cyclic_index ? m23 : m12)); 
-  fptype _mBC = (PAIR_12 == cyclic_index ? m23 : (PAIR_13 == cyclic_index ? m12 : m13)); 
-  fptype _mAB = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23)); 
+  fptype _mA  = (PAIR_12 == cyclic_index ? daug1Mass : (PAIR_13 == cyclic_index ? daug3Mass : daug2Mass));
+  fptype _mB  = (PAIR_12 == cyclic_index ? daug2Mass : (PAIR_13 == cyclic_index ? daug1Mass : daug3Mass));
+  fptype _mC  = (PAIR_12 == cyclic_index ? daug3Mass : (PAIR_13 == cyclic_index ? daug2Mass : daug1Mass));
+  fptype _mAC = (PAIR_12 == cyclic_index ? m13       : (PAIR_13 == cyclic_index ? m23       : m12)); 
+  fptype _mBC = (PAIR_12 == cyclic_index ? m23       : (PAIR_13 == cyclic_index ? m12       : m13)); 
+  fptype _mAB = (PAIR_12 == cyclic_index ? m12       : (PAIR_13 == cyclic_index ? m13       : m23)); 
 
   fptype massFactor = 1.0/_mAB;
   fptype sFactor = -1; 

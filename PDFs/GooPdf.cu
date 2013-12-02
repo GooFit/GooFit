@@ -162,13 +162,15 @@ GooPdf::GooPdf (Variable* x, std::string n)
 }
 
 __host__ int GooPdf::findFunctionIdx (void* dev_functionPtr) {
-  // Code specific to function-pointer implementation 
+  // Check if we already know this function
   map<void*, int>::iterator localPos = functionAddressToDeviceIndexMap.find(dev_functionPtr); 
   if (localPos != functionAddressToDeviceIndexMap.end()) {
     return (*localPos).second; 
   }
 
+  // Assign function handle
   int fIdx = num_device_functions;   
+  // Put into table 
   host_function_table[num_device_functions] = dev_functionPtr;
   functionAddressToDeviceIndexMap[dev_functionPtr] = num_device_functions; 
   num_device_functions++; 

@@ -43,6 +43,15 @@ template <typename T> struct devcomplex {
     return *this;
   }
 
+  EXEC_TARGET devcomplex<T>& operator/= (const devcomplex<T>& other) {
+    T nreal = real * other.real + imag * other.imag;
+    T nimag = imag * other.real - real * other.imag;
+    real = nreal;
+    imag = nimag;
+    (*this) /= other.abs2();
+    return *this;
+  }
+
   EXEC_TARGET devcomplex<T>& multiply (const T other_real, const T other_imag) {
     T nreal = real * other_real - imag * other_imag;
     T nimag = real * other_imag + imag * other_real; 

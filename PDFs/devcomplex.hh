@@ -60,7 +60,7 @@ template <typename T> struct devcomplex {
     return *this; 
   }
 
-  EXEC_TARGET T abs2 () {return real*real + imag*imag;} 
+  EXEC_TARGET T abs2 () const {return real*real + imag*imag;} 
 };
 
 template <typename T> EXEC_TARGET devcomplex<T> operator+ (const devcomplex<T>& one, const devcomplex<T>& other) {

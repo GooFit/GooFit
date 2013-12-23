@@ -89,6 +89,10 @@ template <typename T> EXEC_TARGET devcomplex<T> operator* (const devcomplex<T>& 
   return devcomplex<T>(one.real*other, one.imag*other); 
 }
 
+template <typename T> EXEC_TARGET devcomplex<T> operator* (const int& other, const devcomplex<T>& one) {
+  return devcomplex<T>(one.real*other, one.imag*other); 
+}
+
 template<typename T> EXEC_TARGET devcomplex<T> operator/ (const T& a, const devcomplex<T>& b) {
   T inverse(1);
   inverse /= (b.real*b.real + b.imag*b.imag);
@@ -97,6 +101,10 @@ template<typename T> EXEC_TARGET devcomplex<T> operator/ (const T& a, const devc
 
 template<typename T> EXEC_TARGET devcomplex<T> operator* (T a, const devcomplex<T>& b) {
   return devcomplex<T>(a*b.real, a*b.imag); 
+}
+
+template<typename T> EXEC_TARGET devcomplex<T> operator* (const devcomplex<T>& one, const T& other) {
+  return devcomplex<T>(one.real*other, one.imag*other); 
 }
 
 template <typename T> EXEC_TARGET T norm (const devcomplex<T>& z) {

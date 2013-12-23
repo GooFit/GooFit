@@ -3,7 +3,7 @@ CXX=nvcc
 LD=g++  
 OutPutOpt = -o
 
-CXXFLAGS     = -O3 -arch=sm_20 
+CXXFLAGS     = -O3
 DEFINEFLAGS=-DDUMMY=dummy 
 CUDALIBDIR=lib64
 
@@ -25,13 +25,19 @@ ifneq ($(PROFILE),)
 DEFINEFLAGS += -DPROFILING=yes
 endif 
 
-ifneq ($(TARGET_OMP),)
-DEFINEFLAGS += -Xcompiler -fno-inline -Xcompiler -fopenmp -DTHRUST_DEVICE_BACKEND=THRUST_DEVICE_BACKEND_OMP -lgomp
+ifeq ($(TARGET_OMP),)
+CXXFLAGS += -arch=sm_20
+else
+DEFINEFLAGS += -fno-inline -fopenmp -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_BACKEND_OMP
+LIBS += -lgomp
 endif 
 
+ifeq ($(CUDALOCATION), )
 CUDALOCATION = /usr/local/cuda/
+endif
 CUDAHEADERS = $(CUDALOCATION)/include/
 
+PWD = $(shell /bin/pwd)
 SRCDIR = $(PWD)/PDFs
 
 INCLUDES += -I$(SRCDIR) -I$(PWD) -I$(CUDAHEADERS) -I$(PWD)/rootstuff 
@@ -79,7 +85,7 @@ FitManager.o:		FitManager.cc FitManager.hh wrkdir/ThrustFitManagerCUDA.o Variabl
 			$(CXX) $(DEFINEFLAGS) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
 
 wrkdir/GooPdfCUDA.o:	wrkdir/CUDAglob.cu PdfBase.cu 
-			nvcc $(CXXFLAGS) $(INCLUDES) -I. $(DEFINEFLAGS) -c $< -o $@ 
+			$(CXX) $(CXXFLAGS) $(INCLUDES) -I. $(DEFINEFLAGS) -c $< -o $@ 
 			@echo "$@ done"
 
 clean:

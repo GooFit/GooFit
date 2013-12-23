@@ -13,13 +13,19 @@ extern int host_callnumber;
 #pragma omp threadprivate (host_callnumber)
 #endif
 
-#if THRUST_DEVICE_BACKEND==THRUST_DEVICE_BACKEND_OMP
+// Thrust 1.7 will make the use of THRUST_DEVICE_BACKEND an error
+#if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_BACKEND_OMP
+#if THRUST_VERSION < 100699
+// Ensure backwards compatibility with Thrust 1.5
+#undef THRUST_DEVICE_BACKEND
+#define THRUST_DEVICE_BACKEND THRUST_DEVICE_BACKEND_OMP
+#endif 
 // OMP target - all 'device' memory is actually on host. 
 #define MEM_DEVICE
 #define MEM_SHARED
 #define MEM_CONSTANT 
 #define EXEC_TARGET __host__
-#define THREAD_SYNCH #pragma omp barrier
+#define THREAD_SYNCH _Pragma("omp barrier") // valid in C99 and C++11, but probably not C++93
 #define DEVICE_VECTOR thrust::host_vector
 // Use char* here because I need +1 to mean "offset by one byte", not "by one sizeof(whatever)".
 // Can't use void* because then the compiler doesn't know how to do pointer arithmetic. 

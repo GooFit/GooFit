@@ -5,8 +5,8 @@ template <typename T> struct devcomplex {
   T real;
   T imag; 
 
-  EXEC_TARGET devcomplex<T> () : real(0), imag(0) {} 
-  EXEC_TARGET devcomplex<T> (T r, T i) : real(r), imag(i) {}
+  EXEC_TARGET __host__ devcomplex<T> () : real(0), imag(0) {} 
+  EXEC_TARGET __host__ devcomplex<T> (T r, T i) : real(r), imag(i) {}
 
   EXEC_TARGET devcomplex<T>& operator= (T other) {
     real = other;

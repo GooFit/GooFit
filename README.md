@@ -5,7 +5,7 @@ GooFit using OpenMP.
 Requirements
 
 * If using CUDA:
- * CUDA 4.2 or 5.0
+ * CUDA 4.2 or 5.x
  * An nVidia GPU supporting compute capability at least 2.0
 * If building for OpenMP:
  * a compiler supporting OpenMP

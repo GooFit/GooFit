@@ -183,7 +183,7 @@ void printTime (const char* point) {
 }
 
 void printMemoryStatus (std::string file, int line); 
-void loadDataFile (char* fname, UnbinnedDataSet** setToFill = 0, int effSkip = 3); 
+void loadDataFile (char const * fname, UnbinnedDataSet** setToFill = 0, int effSkip = 3); 
 GooPdf* runBackgroundDalitzFit (int bkgType, bool plots = false); 
 
 void normalise (TH1F* dat) {
@@ -751,7 +751,7 @@ void runToyFit (char* fname) {
 
 }
 
-void loadDataFile (char* fname, UnbinnedDataSet** setToFill, int effSkip) {
+void loadDataFile (char const * fname, UnbinnedDataSet** setToFill, int effSkip) {
   if (!setToFill) setToFill = &data; 
 
   std::vector<Variable*> vars;

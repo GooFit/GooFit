@@ -7,12 +7,6 @@
 using namespace std; 
 extern int host_callnumber; 
 
-#ifdef OMP_ON
-#include "omp.h"
-#define MAX_THREADS 8
-#pragma omp threadprivate (host_callnumber)
-#endif
-
 // Thrust 1.7 will make the use of THRUST_DEVICE_BACKEND an error
 #if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_BACKEND_OMP
 #if THRUST_VERSION < 100699

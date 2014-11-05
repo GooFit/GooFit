@@ -16,10 +16,12 @@ WRKDIR = $(GOOFITDIR)/wrkdir/
 ifneq ($(TARGET_OMP),)
 CXXFLAGS    += -fopenmp -DTHRUST_DEVICE_BACKEND=THRUST_DEVICE_BACKEND_OMP -lgomp
 LDFLAGS     += -fopenmp -DTHRUST_DEVICE_BACKEND=THRUST_DEVICE_BACKEND_OMP -lgomp
+else
+LIBS        += -L$(CUDALOCATION)/lib64 -lcudart
 endif 
 
 INCLUDES += -I$(CUDAHEADERS) -I$(SRCDIR) -I$(GOOFITDIR) -I$(GOOFITDIR)/rootstuff 
-LIBS += -L$(CUDALOCATION)/lib64 -lcudart -L$(GOOFITDIR)/rootstuff -lRootUtils 
+LIBS += -L$(GOOFITDIR)/rootstuff -lRootUtils
 
 # These are for user-level programs that want access to the ROOT plotting stuff, 
 # not just the fitting stuff included in the GooFit-local ripped library. 

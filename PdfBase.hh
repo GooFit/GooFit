@@ -25,11 +25,6 @@ extern fptype host_params[maxParams];
 extern unsigned int host_indices[maxParams]; 
 extern int totalParams; 
 extern int totalConstants;
-#ifdef OMP_ON
-#pragma omp threadprivate (dev_event_array, totalParams, totalConstants)
-#pragma omp threadprivate (host_normalisation, host_params, host_indices)
-#pragma omp threadprivate (host_callnumber)
-#endif
 
 class PdfBase {
 

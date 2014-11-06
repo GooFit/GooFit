@@ -11,11 +11,9 @@ endif
 
 CXXFLAGS += -O3
 DEFINEFLAGS = -DDUMMY=dummy 
-CUDALIBDIR = lib64
 
 UNAME=$(shell uname)
 ifeq ($(UNAME), Darwin)
-CUDALIBDIR=lib
 CXXFLAGS+=-m64
 endif
 

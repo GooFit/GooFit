@@ -1,7 +1,16 @@
-CXX=g++ 
-LD=g++  
+ifeq ($(TARGET_MIC),)
+CXX=g++
+LD=g++
+else
+# Intel Xeon Phi/MIC requires using Intel C++ Compiler (ICC)
+CXX=icpc
+LD=icpc
+CXXFLAGS=-mmic -x c++
+LDFLAGS=-mmic
+endif
 
-CXXFLAGS     = -O2 -fPIC -pthread -g
+CXXFLAGS     += -O2 -fPIC -pthread -g
+LDFLAGS      += -fPIC -pthread -g
 
 UNAME=$(shell uname)
 ifeq ($(UNAME), Darwin)
@@ -18,7 +27,7 @@ all:	libRootUtils.so
 	$(CXX) -I. $(CXXFLAGS) -c -o $@ $<
 
 libRootUtils.so:	$(OBJECTS)
-			$(LD) -shared $(CXXFLAGS) -o $@ $^ 
+			$(LD) $(LDFLAGS) -shared -o $@ $^ 
 
 clean:
 		@rm -f *.o *.so 

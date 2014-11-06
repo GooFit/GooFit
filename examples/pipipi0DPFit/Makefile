@@ -1,9 +1,16 @@
 #------------------------------------------------------------------------------
+ifeq ($(TARGET_MIC),)
 CXX=nvcc
 LD=g++  
-OutPutOpt = -o
+else
+# Intel Xeon Phi/MIC requires using Intel C++ Compiler (ICC)
+CXX=icpc
+LD=icpc
+CXXFLAGS=-mmic -x c++
+LDFLAGS=-mmic
+endif
 
-CXXFLAGS     = -O3 -arch=sm_20 
+CXXFLAGS     += -O3
 ifeq ($(CUDALOCATION), )
 CUDALOCATION = /usr/local/cuda/
 endif
@@ -13,11 +20,23 @@ GOOFITDIR = ${PWD}/../../
 SRCDIR = $(GOOFITDIR)/PDFs
 WRKDIR = $(GOOFITDIR)/wrkdir/
 
-ifneq ($(TARGET_OMP),)
-CXXFLAGS    += -fopenmp -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_BACKEND_OMP -lgomp
-LDFLAGS     += -fopenmp -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_BACKEND_OMP -lgomp
-else
+ifeq ($(TARGET_OMP),)
+# nvcc (CUDA)
+CXXFLAGS    += -arch=sm_20
 LIBS        += -L$(CUDALOCATION)/lib64 -lcudart
+else
+# OpenMP common flags
+CXXFLAGS    += -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_BACKEND_OMP
+LDFLAGS     += -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_BACKEND_OMP
+ifeq ($(TARGET_MIC),)
+# GCC/Clang
+CXFFLAGS += -fopenmp
+LDFLAGS += -fopenmp -lgomp
+else
+# Intel C++ Compiler (ICC)
+CXXFLAGS += -openmp
+LDFLAGS += -openmp
+endif
 endif 
 
 INCLUDES += -I$(CUDAHEADERS) -I$(SRCDIR) -I$(GOOFITDIR) -I$(GOOFITDIR)/rootstuff 
@@ -40,7 +59,7 @@ all:	mixfit
 	$(CXX) $(INCLUDES) $(ROOT_INCLUDES) $(DEFINEFLAGS) $(CXXFLAGS) -c -o $@ $<
 
 mixfit:		MixFit.o $(THRUSTO) $(ROOTUTILLIB) 
-		$(LD) $(LDFLAGS) $^ $(LIBS) $(ROOT_LIBS) $(OutPutOpt) $@
+		$(LD) $(LDFLAGS) $^ $(LIBS) $(ROOT_LIBS) -o $@
 		@echo "$@ done"
 
 clean:

@@ -11,6 +11,13 @@ LDFLAGS=-mmic
 endif
 
 CXXFLAGS     += -O3
+CUDALIBDIR    = lib64
+
+# ARMv7 32-bit (Nvidia Jetson TK1)
+ifeq ($(shell uname -m),armv7l)
+CUDALIBDIR    = lib
+endif
+
 ifeq ($(CUDALOCATION), )
 CUDALOCATION = /usr/local/cuda/
 endif
@@ -23,7 +30,7 @@ WRKDIR = $(GOOFITDIR)/wrkdir/
 ifeq ($(TARGET_OMP),)
 # nvcc (CUDA)
 CXXFLAGS    += -arch=sm_20
-LIBS        += -L$(CUDALOCATION)/lib64 -lcudart
+LIBS        += -L$(CUDALOCATION)/$(CUDALIBDIR) -lcudart
 else
 # OpenMP common flags
 CXXFLAGS    += -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_BACKEND_OMP

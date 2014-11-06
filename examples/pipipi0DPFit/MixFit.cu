@@ -4032,8 +4032,9 @@ int main (int argc, char** argv) {
   //foodal->SetTopMargin(0.13);
   //foodal->SetLeftMargin(0.13);
 
-
+#if (THRUST_DEVICE_BACKEND == THRUST_DEVICE_BACKEND_CUDA) || (THRUST_DEVICE_SYSTEM == THRUST_DEVICE_BACKEND_CUDA)
   cudaSetDevice(0);
+#endif // (THRUST_DEVICE_BACKEND == THRUST_DEVICE_BACKEND_CUDA) || (THRUST_DEVICE_SYSTEM == THRUST_DEVICE_BACKEND_CUDA)
 
   int fitToRun = atoi(argv[1]);
   int genResolutions = 0;

@@ -3379,7 +3379,7 @@ void runCanonicalFit (char* fname, bool noPlots = true) {
 #endif 
 
   datapdf.getMinuitValues();
-  printf("Fit results:\ntau    : (%.3f $\\pm$ %.3f) fs\nxmixing: (%.3f $\\pm$ %.3f)%\nymixing: (%.3f $\\pm$ %.3f)%\n",
+  printf("Fit results:\ntau    : (%.3f $\\pm$ %.3f) fs\nxmixing: (%.3f $\\pm$ %.3f)\nymixing: (%.3f $\\pm$ %.3f)\n",
 	 1000*ptr_to_dtau->value, 1000*ptr_to_dtau->error,
 	 100*ptr_to_xmix->value, 100*ptr_to_xmix->error,
 	 100*ptr_to_ymix->value, 100*ptr_to_ymix->error);

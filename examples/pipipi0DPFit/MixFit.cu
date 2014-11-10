@@ -3379,7 +3379,7 @@ void runCanonicalFit (char* fname, bool noPlots = true) {
 #endif 
 
   datapdf.getMinuitValues();
-  printf("Fit results:\ntau    : (%.3f $\\pm$ %.3f) fs\nxmixing: (%.3f $\\pm$ %.3f)%\nymixing: (%.3f $\\pm$ %.3f)%\n",
+  printf("Fit results:\ntau    : (%.3f $\\pm$ %.3f) fs\nxmixing: (%.3f $\\pm$ %.3f)\nymixing: (%.3f $\\pm$ %.3f)\n",
 	 1000*ptr_to_dtau->value, 1000*ptr_to_dtau->error,
 	 100*ptr_to_xmix->value, 100*ptr_to_xmix->error,
 	 100*ptr_to_ymix->value, 100*ptr_to_ymix->error);
@@ -4032,8 +4032,9 @@ int main (int argc, char** argv) {
   //foodal->SetTopMargin(0.13);
   //foodal->SetLeftMargin(0.13);
 
-
+#if (THRUST_DEVICE_BACKEND == THRUST_DEVICE_BACKEND_CUDA) || (THRUST_DEVICE_SYSTEM == THRUST_DEVICE_BACKEND_CUDA)
   cudaSetDevice(0);
+#endif // (THRUST_DEVICE_BACKEND == THRUST_DEVICE_BACKEND_CUDA) || (THRUST_DEVICE_SYSTEM == THRUST_DEVICE_BACKEND_CUDA)
 
   int fitToRun = atoi(argv[1]);
   int genResolutions = 0;

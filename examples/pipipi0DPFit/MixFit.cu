@@ -11,6 +11,7 @@
 #include "TLine.h" 
 
 // System stuff
+#include <climits>
 #include <fstream> 
 #include <sys/time.h>
 #include <sys/times.h>

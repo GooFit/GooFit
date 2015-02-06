@@ -11,7 +11,6 @@
 #include "TLine.h" 
 
 // System stuff
-#include <climits>
 #include <fstream> 
 #include <sys/time.h>
 #include <sys/times.h>
@@ -156,11 +155,40 @@ GooPdf* bkg4_jsugg = 0;
 Variable* massSum = new Variable("massSum", _mD0*_mD0 + 2*piPlusMass*piPlusMass + piZeroMass*piZeroMass); // = 3.53481 
 GooPdf* kzero_veto = 0; 
 
+bool  doToyStudy = false;
+float md0_toy_width = 0.0075;
+float md0_toy_mean = 1.8654;
+const float toySigFraction = 0.6;
+const float toyBkgTimeMean = 0.0;
+const float toyBkgTimeRMS = 0.7;
 std::string toyFileName; 
 char strbuffer[1000]; 
 
 SmoothHistogramPdf* makeBackgroundHistogram (int bkgnum, string overridename = ""); 
+void makeToyDalitzPlots (GooPdf* overallSignal, string plotdir = "./plots_from_toy_mixfit/") ;
 void getBackgroundFile (int bkgType); 
+
+double intGaus = -1;
+double calcGauInteg(double x1, double x2){
+    if (x1 > x2) { double swp = x2; x2 = x1; x1 = swp; }
+    double sum1 = x1, sum2 = x2;
+    double value1 = x1, value2 = x2;
+    for (int i=1;i<100;i++){
+        value1 = value1*x1*x1/(2*i+1);
+        sum1 += value1;
+        value2 = value2*x2*x2/(2*i+1);
+        sum2 += value2;
+    }
+    return sum2*exp(-(x2*x2)/2) - sum1*exp(-(x1*x1)/2);
+}
+
+double calcToyWeight(double sigratio, double m){
+    if (intGaus < 0) intGaus = calcGauInteg(0.0075*md0_lower_window/md0_toy_width, 0.0075*md0_upper_window/md0_toy_width);
+    double t = (m-md0_toy_mean)/md0_toy_width;
+    double fsig = sigratio*exp(-t*t/2.)/intGaus;
+    double fbkg =  (1-sigratio)/((md0_upper_window-md0_lower_window)*0.0075/md0_toy_width);
+    return fsig/(fsig+fbkg);
+}
 
 void printTime (const char* point) {
   static timeval prev;
@@ -183,7 +211,7 @@ void printTime (const char* point) {
 }
 
 void printMemoryStatus (std::string file, int line); 
-void loadDataFile (char const * fname, UnbinnedDataSet** setToFill = 0, int effSkip = 3); 
+void loadDataFile (char* fname, UnbinnedDataSet** setToFill = 0, int effSkip = 3); 
 GooPdf* runBackgroundDalitzFit (int bkgType, bool plots = false); 
 
 void normalise (TH1F* dat) {
@@ -194,6 +222,7 @@ void normalise (TH1F* dat) {
   integral = 1.0 / integral;
   for (int i = 1; i <= dat->GetNbinsX(); ++i) {
     dat->SetBinContent(i, integral*dat->GetBinContent(i)); 
+    dat->SetBinError(i, integral*dat->GetBinError(i)); 
   }
 }
 
@@ -285,21 +314,21 @@ bool readWrapper(std::ifstream& reader, std::string fname = strbuffer) {
   return true;
 }
 
-void getToyData () {
-  TH2F datatzplot("datatzplot", "", m12->numbins, m12->lowerlimit, m12->upperlimit, m13->numbins, m13->lowerlimit, m13->upperlimit); 
-  dataTimePlot = new TH1F("dataTimePlot", "", dtime->numbins+1, dtime->lowerlimit-0.01, dtime->upperlimit); 
-  dataTimePlot->SetStats(false); 
+void getToyData (float sigweight = 0.9) {
+  if (!data){
   std::vector<Variable*> vars;
   vars.push_back(m12);
   vars.push_back(m13);
   vars.push_back(dtime);
   vars.push_back(sigma); 
   vars.push_back(eventNumber); 
-  data = new UnbinnedDataSet(vars); 
-
+  vars.push_back(wSig0);
+//  vars.push_back(wBkg1);
+//  vars.push_back(wBkg2);
+  data = new UnbinnedDataSet(vars); }
 
   std::ifstream reader;
-  readWrapper(reader,toyFileName); 
+  readWrapper(reader, toyFileName); 
   std::string buffer;
   while (!reader.eof()) {
     reader >> buffer;
@@ -307,9 +336,12 @@ void getToyData () {
     std::cout << buffer; 
   }
 
-  TRandom3 donram(42); 
+  TRandom3 donram(0); 
 
+  int nsig = 0;
+  double sigprob = 0;
   double dummy = 0; 
+  double md0 = md0_toy_mean;
   while (!reader.eof()) {
     reader >> dummy;
     reader >> dummy;      // m23, m(pi+ pi-), called m12 in processToyRoot convention. 
@@ -339,17 +371,20 @@ void getToyData () {
     //if (dtime->value < dtime->lowerlimit) continue;
     //if (dtime->value > dtime->upperlimit) continue; 
 
-    double resolution = donram.Uniform(); 
-    if (resolution < 0.9) resolution = donram.Gaus(0.1*sigma->value, 0.96*sigma->value); 
-    else if (resolution < 0.99) resolution = donram.Gaus(0, 1.63*sigma->value); 
-    else resolution = donram.Gaus(0, 5*sigma->value); 
-    dtime->value += resolution; 
+    double prob = donram.Uniform(); 
+    double resolution = donram.Gaus(0, 1);
+    dtime->value += resolution*sigma->value; 
 
     eventNumber->value = data->getNumEvents(); 
+    do{
+        md0 = donram.Gaus(md0_toy_mean, md0_toy_width);
+    }while(md0 <= 1.8654 + 0.0075*md0_lower_window||md0 >= 1.8654 + 0.0075*md0_upper_window);
+//    wSig0->value = sigweight;
+    wSig0->value = calcToyWeight(sigweight, md0);
+    sigprob += wSig0->value;
     data->addEvent(); 
+    nsig ++;
 
-    datatzplot.Fill(m12->value, m13->value); 
-    dataTimePlot->Fill(dtime->value); 
     
     if (data->getNumEvents() < 10) {
       std::cout << data->getNumEvents() << " : " 
@@ -361,15 +396,28 @@ void getToyData () {
     }
     //else break;
   }
+  for (int ib = 0; ib < nsig*(1-sigweight)/sigweight; ib++){
+    do{
+    m12->value = donram.Uniform()*(m12->upperlimit - m12->lowerlimit)+m12->lowerlimit;
+    m13->value = donram.Uniform()*(m13->upperlimit - m13->lowerlimit)+m13->lowerlimit;
+    }while(!cpuDalitz(m12->value, m13->value, _mD0, piZeroMass, piPlusMass, piPlusMass));
+    do{
+        dtime->value = donram.Gaus(toyBkgTimeMean, toyBkgTimeRMS);
+    }while(!(dtime->value > dtime->lowerlimit&&dtime->value < dtime->upperlimit));
+    eventNumber->value = data->getNumEvents(); 
+    md0 = donram.Uniform(1.8654 + 0.0075*md0_lower_window, 1.8654 + 0.0075*md0_upper_window);
+//    wSig0->value = sigweight;
+    wSig0->value = calcToyWeight(sigweight, md0);
+    sigprob += wSig0->value;
+    data->addEvent(); 
+  }
+  reader.close();
 
-  datatzplot.SetStats(false); 
-  datatzplot.Draw("colz");
-  foo->SaveAs("datatzplot.png"); 
 }
 
 GooPdf* makeEfficiencyPdf () {
-  //Variable* effSmoothing = new Variable("effSmoothing", 1.0, 0.1, 0, 1.25); 
-  Variable* effSmoothing = new Variable("effSmoothing", 0); 
+  Variable* effSmoothing = new Variable("effSmoothing", 1.0, 0.1, 0, 1.25); 
+  //Variable* effSmoothing = new Variable("effSmoothing", 0); 
   SmoothHistogramPdf* ret = new SmoothHistogramPdf("efficiency", binEffData, effSmoothing); 
   return ret; 
 }
@@ -687,7 +735,8 @@ TddpPdf* makeSignalPdf (MixingTimeResolution* resolution = 0, GooPdf* eff = 0) {
 	sprintf(strbuffer, "coreFrac_%i", i);
 	Variable* coreFrac = new Variable(strbuffer, 0.90, 0.001, 0.55, 0.999);
 	sprintf(strbuffer, "coreBias_%i", i);
-	Variable* coreBias = new Variable(strbuffer, 0.1, 0.001, -0.20, 0.30); 
+//	Variable* coreBias = new Variable(strbuffer, 0.1, 0.001, -0.20, 0.30); 
+	Variable* coreBias = new Variable(strbuffer, -0.1, 0.001, -0.20, 0.30); 
 	sprintf(strbuffer, "coreScaleFactor_%i", i);
 	Variable* coreScaleFactor = new Variable(strbuffer, 0.96, 0.001, 0.20, 1.50); 
 	sprintf(strbuffer, "tailScaleFactor_%i", i);
@@ -699,7 +748,7 @@ TddpPdf* makeSignalPdf (MixingTimeResolution* resolution = 0, GooPdf* eff = 0) {
     else {
       Variable* coreFrac = new Variable("coreFrac", 0.90, 0.001, 0.35, 0.999);
       //Variable* tailFrac = new Variable("tailFrac", 0.90, 0.001, 0.80, 1.00); 
-      Variable* coreBias = new Variable("coreBias", 0.1, 0.001, -0.20, 0.30); 
+      Variable* coreBias = new Variable("coreBias", 0.0, 0.001, -0.20, 0.30); 
       Variable* coreScaleFactor = new Variable("coreScaleFactor", 0.96, 0.001, 0.20, 1.50); 
       //Variable* tailBias = new Variable("tailBias", 0); 
       Variable* tailScaleFactor = new Variable("tailScaleFactor", 1.63, 0.001, 0.90, 6.00); 
@@ -707,7 +756,13 @@ TddpPdf* makeSignalPdf (MixingTimeResolution* resolution = 0, GooPdf* eff = 0) {
       //Variable* outlScaleFactor = new Variable("outlScaleFactor", 5.0, 0.01, 0.1, 10.0); 
       //resolution = new ThreeGaussResolution(coreFrac, tailFrac, coreBias, coreScaleFactor, tailBias, tailScaleFactor, outlBias, outlScaleFactor); 
       
-      resolution = new ThreeGaussResolution(coreFrac, constantOne, coreBias, coreScaleFactor, constantZero, tailScaleFactor, constantZero, constantOne); 
+//      resolution = new ThreeGaussResolution(coreFrac, constantOne, coreBias, coreScaleFactor, constantZero, tailScaleFactor, constantZero, constantOne); 
+//      resolution = new ThreeGaussResolution(coreFrac, constantOne, constantZero, coreScaleFactor, constantZero, tailScaleFactor, constantZero, constantOne); 
+      if (!doToyStudy) resolution = new ThreeGaussResolution(coreFrac, constantOne, coreBias, coreScaleFactor, coreBias, tailScaleFactor, constantZero, constantOne); 
+      else{
+          coreBias->value = 0; coreScaleFactor->value = 1; coreScaleFactor->fixed = false;
+          resolution = new ThreeGaussResolution(constantOne, constantOne, coreBias, coreScaleFactor, constantZero, constantOne, constantZero, constantOne); 
+      }
     }
   }
 
@@ -718,9 +773,37 @@ TddpPdf* makeSignalPdf (MixingTimeResolution* resolution = 0, GooPdf* eff = 0) {
   return mixPdf; 
 }
 
-void runToyFit (char* fname) {
-  dtime = new Variable("dtime", -4, 6);
-  dtime->numbins = 200; 
+GooPdf* makeFlatBkgDalitzPdf(bool fixem = true) {
+    vector<Variable*> offsets;
+    vector<Variable*> observables;
+    vector<Variable*> coefficients; 
+    offsets.push_back(constantZero);
+    offsets.push_back(constantZero);
+    observables.push_back(m12);
+    observables.push_back(m13); 
+    coefficients.push_back(constantOne); 
+
+    PolynomialPdf* poly = new PolynomialPdf("flatbkgPdf", observables, coefficients, offsets,0);
+    Variable* g_mean = new Variable("g_mean", toyBkgTimeMean, 0.01, -0.2,0.5);
+    Variable* g_sigma = new Variable("g_sigma", toyBkgTimeRMS, 0.01, 0.15, 1.5);
+    GooPdf* gt = new GaussianPdf("flatbkg_timepdf", dtime, g_mean, g_sigma);
+    comps.clear();
+    comps.push_back(poly); 
+    comps.push_back(gt);
+    GooPdf* ret = new ProdPdf("flatbkg_total", comps); 
+    if (fixem) ret->setParameterConstantness(true);
+
+  return ret;
+}
+
+
+void runToyFit (int ifile, int nfile, bool noPlots = true) {
+  if (!nfile || ifile<0|| ifile >=100) return ;
+  doToyStudy = true;
+//  dtime = new Variable("dtime", lowerTime, upperTime);
+  dtime = new Variable("dtime", -3, 5);
+  dtime->numbins = (int) floor((upperTime - lowerTime) / 0.05 + 0.5); 
+  //dtime->numbins = 200; 
   //sigma = new Variable("sigma", 0, 0.8); 
   sigma = new Variable("sigma", 0.099, 0.101); 
   sigma->numbins = 1; // Cheating way to avoid Punzi effect for toy MC. The normalisation integral is now a delta function! 
@@ -729,19 +812,44 @@ void runToyFit (char* fname) {
   m13   = new Variable("m13",   0, 3); 
   m13->numbins = 240;
   eventNumber = new Variable("eventNumber", 0, INT_MAX);
+  wSig0 = new Variable("wSig0", 0, 1);
 
-  toyFileName = "dataFiles/toyPipipi0/dalitz_toyMC_";
-  toyFileName += fname;
-  toyFileName += ".txt"; 
+  for (int i =0 ;i<nfile;i++){
+//      sprintf(strbuffer, "dataFiles/toyPipipi0/dalitz_toyMC_%03d.txt", (i+ifile)%100);
+      sprintf(strbuffer, "dataFiles/toyPipipi0/dalitz_toyMC_%03d.txt", ifile);
+      toyFileName = strbuffer;
+      getToyData(toySigFraction);
+  }
 
-  getToyData();
 
   //TruthResolution* dat = new TruthResolution();
   //TddpPdf* mixPdf = makeSignalPdf(dat); 
-  TddpPdf* mixPdf = makeSignalPdf(); 
+  signalDalitz = makeSignalPdf(); 
+  signalDalitz->setDataSize(data->getNumEvents(),6); // Default 5 is fine for toys 
+  sig0_jsugg = new ExpPdf("sig0_jsugg", sigma, constantZero);
+//  sig0_jsugg = makeBkg_sigma_strips(0);
+  sig0_jsugg->addSpecialMask(PdfBase::ForceSeparateNorm); 
+  sig0_jsugg->setParameterConstantness(true); 
+  comps.clear(); 
+  comps.push_back(signalDalitz);
+//  comps.push_back(sig0_jsugg); 
+  std::cout << "Creating overall PDF\n"; 
+  ProdPdf* overallSignal = new ProdPdf("overallSignal", comps);
+  GooPdf* bkgPdf = makeFlatBkgDalitzPdf();
+  bkgPdf->setParameterConstantness(true);
+
+  std::vector<Variable*> evtWeights;
+  evtWeights.push_back(wSig0);
+//  evtWeights.push_back(wBkg2);
+  std::vector<PdfBase*> components;
+  components.push_back(signalDalitz); 
+  components.push_back(bkgPdf); 
+  EventWeightedAddPdf* mixPdf = new EventWeightedAddPdf("total", evtWeights, components);
+//  GooPdf* mixPdf = overallSignal;
+
   mixPdf->setData(data); 
-  mixPdf->setDataSize(data->getNumEvents()); // Default 5 is fine for toys 
   FitManager datapdf(mixPdf); 
+  datapdf.setMaxCalls(64000); 
   
   gettimeofday(&startTime, NULL);
   startCPU = times(&startProc);
@@ -749,9 +857,18 @@ void runToyFit (char* fname) {
   stopCPU = times(&stopProc);
   gettimeofday(&stopTime, NULL);
 
+  datapdf.getMinuitValues();
+  printf("Fit results:\ntau    : (%.3f $\\pm$ %.3f) fs\nxmixing: (%.3f $\\pm$ %.3f)%\nymixing: (%.3f $\\pm$ %.3f)%\n",
+          1000*ptr_to_dtau->value, 1000*ptr_to_dtau->error,
+	 100*ptr_to_xmix->value, 100*ptr_to_xmix->error,
+	 100*ptr_to_ymix->value, 100*ptr_to_ymix->error);
+
+  if (noPlots) return; 
+  makeToyDalitzPlots(mixPdf);   
+//  makeToyDalitzPlots(signalDalitz);   
 }
 
-void loadDataFile (char const * fname, UnbinnedDataSet** setToFill, int effSkip) {
+void loadDataFile (char* fname, UnbinnedDataSet** setToFill, int effSkip) {
   if (!setToFill) setToFill = &data; 
 
   std::vector<Variable*> vars;
@@ -1445,6 +1562,103 @@ ChisqInfo* getAdaptiveChisquare (TH2F* datPlot, TH2F* pdfPlot) {
 
   return ret;
 }
+
+void makeToyDalitzPlots (GooPdf* overallSignal, string plotdir ) {
+  foo->cd(); 
+
+  TH1F dtime_dat_hist("dtime_dat_hist", "", dtime->numbins, dtime->lowerlimit, dtime->upperlimit);
+  dtime_dat_hist.SetStats(false); 
+  dtime_dat_hist.SetMarkerStyle(8); 
+  dtime_dat_hist.SetMarkerSize(1.2);
+  dtime_dat_hist.GetXaxis()->SetTitle("Decay time [ps]");
+  dtime_dat_hist.GetYaxis()->SetTitle("Events / 50 fs"); 
+  TH1F dtime_pdf_hist("dtime_pdf_hist", "", dtime->numbins, dtime->lowerlimit, dtime->upperlimit);
+  dtime_pdf_hist.SetStats(false); 
+  dtime_pdf_hist.SetLineColor(kBlue); 
+  dtime_pdf_hist.SetLineWidth(3); 
+  TH1F dtime_sig_hist("dtime_sig_hist", "", dtime->numbins, dtime->lowerlimit, dtime->upperlimit);
+  dtime_sig_hist.SetStats(false); 
+  dtime_sig_hist.SetLineColor(kRed); 
+  dtime_sig_hist.SetLineWidth(3); 
+  TH1F dtime_bg_hist("dtime_bg_hist", "", dtime->numbins, dtime->lowerlimit, dtime->upperlimit);
+  dtime_bg_hist.SetStats(false); 
+  dtime_bg_hist.SetLineColor(kMagenta); 
+  dtime_bg_hist.SetLineWidth(3); 
+
+
+  double totalPdf = 0; 
+  double totalPdf_sig = 0; 
+  double totalPdf_bg = 0; 
+  double totalDat = 0; 
+  double totalSigProb = 0;
+  double totalBGProb = 0;
+
+  for (unsigned int evt = 0; evt < data->getNumEvents(); ++evt) {
+    double currTime = data->getValue(dtime, evt);
+    dtime_dat_hist.Fill(currTime); 
+    totalSigProb += data->getValue(wSig0, evt);
+    totalBGProb += 1-data->getValue(wSig0, evt);
+    totalDat++; 
+  }
+  std::cout << "totalData = " << totalDat << ", totalSigProb = " << totalSigProb << std::endl;
+  std::vector<Variable*> vars;
+  vars.push_back(m12);
+  vars.push_back(m13);
+  vars.push_back(dtime);
+  vars.push_back(sigma); 
+  vars.push_back(eventNumber); 
+  vars.push_back(wSig0); 
+  UnbinnedDataSet currData(vars); 
+  sigma->value = 0.1;   
+  wSig0->value = totalSigProb / totalDat;
+  int evtCounter = 0; 
+
+  for (int i = 0; i < m12->numbins; ++i) {
+      m12->value = m12->lowerlimit + (m12->upperlimit - m12->lowerlimit)*(i + 0.5) / m12->numbins; 
+      for (int j = 0; j < m13->numbins; ++j) {
+          m13->value = m13->lowerlimit + (m13->upperlimit - m13->lowerlimit)*(j + 0.5) / m13->numbins; 
+          if (!cpuDalitz(m12->value, m13->value, _mD0, piZeroMass, piPlusMass, piPlusMass)) continue;
+          for (int l = 0; l < dtime->numbins; ++l) {
+              dtime->value = dtime->lowerlimit + (dtime->upperlimit - dtime->lowerlimit)*(l + 0.5) / dtime->numbins; 
+              eventNumber->value = evtCounter; 
+              evtCounter++;
+              currData.addEvent(); 
+          }
+      }
+  }
+
+  overallSignal->setData(&currData);
+  signalDalitz->setDataSize(currData.getNumEvents(),6);
+  std::vector<std::vector<double> > pdfValues;
+  overallSignal->getCompProbsAtDataPoints(pdfValues);
+  for (unsigned int j = 0; j < pdfValues[0].size(); ++j) {
+      double currTime = currData.getValue(dtime, j);
+      dtime_sig_hist.Fill(currTime, pdfValues[1][j]);
+      dtime_bg_hist .Fill(currTime, pdfValues[2][j]);
+      totalPdf     += pdfValues[0][j]; 
+      totalPdf_sig += pdfValues[1][j];
+      totalPdf_bg  += pdfValues[2][j];
+  }    
+  for (int i = 1; i <= dtime->numbins; ++i) {
+      dtime_sig_hist.SetBinContent(i, dtime_sig_hist.GetBinContent(i)*totalSigProb/totalPdf_sig);
+      dtime_bg_hist.SetBinContent(i, dtime_bg_hist.GetBinContent(i)*totalBGProb/totalPdf_bg);
+      dtime_pdf_hist.SetBinContent(i, dtime_sig_hist.GetBinContent(i) + dtime_bg_hist.GetBinContent(i));
+  }
+
+  foo->cd(); 
+  dtime_dat_hist.Draw("p"); 
+  dtime_pdf_hist.Draw("lsame"); 
+  dtime_bg_hist.SetLineStyle(2);
+  dtime_bg_hist.Draw("lsame");
+  dtime_sig_hist.SetLineStyle(3);
+  dtime_sig_hist.Draw("lsame");
+
+  foo->SaveAs((plotdir + "/dtime_fit.png").c_str()); 
+  foo->SetLogy(true);
+  foo->SaveAs((plotdir + "/dtime_fit_log.png").c_str()); 
+  foo->SetLogy(false);
+}
+
 
 void makeDalitzPlots (GooPdf* overallSignal, string plotdir = "./plots_from_mixfit/") {
   foo->cd(); 
@@ -3379,7 +3593,7 @@ void runCanonicalFit (char* fname, bool noPlots = true) {
 #endif 
 
   datapdf.getMinuitValues();
-  printf("Fit results:\ntau    : (%.3f $\\pm$ %.3f) fs\nxmixing: (%.3f $\\pm$ %.3f)\nymixing: (%.3f $\\pm$ %.3f)\n",
+  printf("Fit results:\ntau    : (%.3f $\\pm$ %.3f) fs\nxmixing: (%.3f $\\pm$ %.3f)%\nymixing: (%.3f $\\pm$ %.3f)%\n",
 	 1000*ptr_to_dtau->value, 1000*ptr_to_dtau->error,
 	 100*ptr_to_xmix->value, 100*ptr_to_xmix->error,
 	 100*ptr_to_ymix->value, 100*ptr_to_ymix->error);
@@ -3818,9 +4032,14 @@ void makeTimePlots (char* fname) {
   std::cout << "Loading MC data from " << fname << std::endl;
   loadDataFile(fname);   
 
+  TH1F timeMean("timeMean", "", 6, massd0->lowerlimit, massd0->upperlimit);
+  timeMean.SetStats(false);
+  timeMean.SetLineWidth(3);
+  timeMean.SetXTitle("#pi#pi#pi^{0} mass [GeV]");
+  timeMean.SetYTitle("Mean of decay time [ps]");
   TH2F timeVsMass("timeVsMass", "", massd0->numbins, massd0->lowerlimit, massd0->upperlimit, dtime->numbins, dtime->lowerlimit, dtime->upperlimit);
   timeVsMass.SetStats(false); 
-  timeVsMass.GetXaxis()->SetTitle("#pi#pi#pi mass [GeV]"); 
+  timeVsMass.GetXaxis()->SetTitle("#pi#pi#pi^{0} mass [GeV]"); 
   timeVsMass.GetYaxis()->SetTitle("Decay time [ps]"); 
 
   int colors[6] = {kViolet + 1, kBlue, kCyan, kGreen, kYellow, kRed}; 
@@ -3830,6 +4049,8 @@ void makeTimePlots (char* fname) {
     sprintf(strbuffer, "timePlot_%i.png", i); 
     timePlots[i] = new TH1F(strbuffer, "", dtime->numbins, dtime->lowerlimit, dtime->upperlimit);
     timePlots[i]->SetStats(false); 
+    timePlots[i]->SetXTitle("Decay time [ps]"); 
+    timePlots[i]->SetYTitle("Ratio"); 
     timePlots[i]->SetLineWidth(3); 
     timePlots[i]->SetLineColor(colors[i]); 
     if (i == 5) continue;
@@ -3857,12 +4078,17 @@ void makeTimePlots (char* fname) {
 
   foo->cd(); 
   normalise(timePlots[3]);
-  timePlots[3]->Draw(""); 
+  timePlots[3]->SetMinimum(0); 
+  timePlots[3]->Draw("hist"); 
   for (int i = 0; i < 6; ++i) {
     normalise(timePlots[i]); 
-    timePlots[i]->Draw("same"); 
+    timePlots[i]->Draw("histsame"); 
+    timeMean.SetBinContent(i+1, timePlots[i]->GetMean());
+    timeMean.SetBinError(i+1, timePlots[i]->GetMeanError());
   }
   foo->SaveAs("timePlots.png"); 
+  timeMean.Draw("e");
+  foo->SaveAs("timeMeanPlot.png"); 
 
   //normalise(massPlots[2]);
   massPlots[2]->GetYaxis()->SetRangeUser(0, massPlots[2]->GetMaximum()*1.1); 
@@ -3888,7 +4114,7 @@ void makeTimePlots (char* fname) {
 			 dtime->lowerlimit + (i+1)*(dtime->upperlimit - dtime->lowerlimit)/5);
     currLine->SetLineWidth(12); 
     currLine->SetLineColor(colors[i]); 
-    currLine->Draw(); 
+//    currLine->Draw(); 
   }
   foo->SaveAs("timeVsMass.png"); 
 }
@@ -4032,16 +4258,16 @@ int main (int argc, char** argv) {
   //foodal->SetTopMargin(0.13);
   //foodal->SetLeftMargin(0.13);
 
-#if (THRUST_DEVICE_BACKEND == THRUST_DEVICE_BACKEND_CUDA) || (THRUST_DEVICE_SYSTEM == THRUST_DEVICE_BACKEND_CUDA)
+
   cudaSetDevice(0);
-#endif // (THRUST_DEVICE_BACKEND == THRUST_DEVICE_BACKEND_CUDA) || (THRUST_DEVICE_SYSTEM == THRUST_DEVICE_BACKEND_CUDA)
 
   int fitToRun = atoi(argv[1]);
   int genResolutions = 0;
   double dplotres = 0; 
 
   switch (fitToRun) {
-  case 0: runToyFit(argv[2]); break;
+  case 0: if (argc>4) makePlots = atoi(argv[4]);
+              runToyFit(atoi(argv[2]), atoi(argv[3]), !makePlots); break;
   case 1: runTruthMCFit(argv[2], false); break; 
   case 2: 
     m23Slices = atoi(argv[3]); 

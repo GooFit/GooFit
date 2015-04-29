@@ -1,0 +1,9 @@
+This example is to run a fit based on convolved PDFs. The test sample under the dataFiles directory contains reconstructed mass information and is from MC simulation.
+You need to make the current project with 
+
+$ gmake zach
+
+to get the executable file "zach". In the file "Makefile", please make sure that the environment variable CUDALOCATION points to your CUDA install and GOOFITDIR points to the base GooFit directory.
+Also make sure that the directory ${GooFitPATH}/rootstuff is included in $LD_LIBRARY_PATH, so that the library libRootUtils.so can be properly loaded before running any fit.
+
+For the executable "zach", it usually takes one number 0, 1, or 2 as its command-line argument. The speedup performance is somewhat of an disappointment for the moment compared to the pipipi0DPFit example.

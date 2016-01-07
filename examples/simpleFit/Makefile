@@ -3,7 +3,7 @@ CXX=nvcc
 LD=g++  
 OutPutOpt = -o
 
-CXXFLAGS     = -O3 -arch=sm_20 -g 
+CXXFLAGS     = -O3 -arch=sm_20 -g -std=c++11
 CUDALIBDIR=lib64
 
 UNAME=$(shell uname)
@@ -36,8 +36,8 @@ endif
 # not just the fitting stuff included in the GooFit-local ripped library. 
 ifneq ($(ROOTSYS), )
    CXXFLAGS += -DHAVE_ROOT=1
-   ROOT_INCLUDES = -I$(ROOTSYS)/include/
-   ROOT_LIBS     = -L$(ROOTSYS)/lib/ -lCore -lCint -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lMatrix -lPhysics -lMathCore -pthread -lThread -lMinuit2 -lMinuit -lFoam
+   ROOT_INCLUDES = -I$(shell root-config --incdir)
+   ROOT_LIBS     = $(shell root-config --libs)
 endif
 WRKDIR = $(GOOFITDIR)/wrkdir/
 

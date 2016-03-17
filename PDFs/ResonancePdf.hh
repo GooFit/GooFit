@@ -5,6 +5,12 @@
 #include "devcomplex.hh" 
 typedef devcomplex<fptype> (*resonance_function_ptr) (fptype, fptype, fptype, unsigned int*); 
 
+EXEC_TARGET fptype twoBodyCMmom (double rMassSq, fptype d1m, fptype d2m);
+
+EXEC_TARGET fptype dampingFactorSquare (fptype cmmom, int spin, fptype mRadius);
+
+EXEC_TARGET fptype spinFactor (unsigned int spin, fptype motherMass, fptype daug1Mass, fptype daug2Mass, fptype daug3Mass, fptype m12, fptype m13, fptype m23, unsigned int cyclic_index);
+
 class ResonancePdf : public GooPdf {
   // Service class intended to hold parametrisations of
   // resonances on Dalitz plots. Don't try to use this

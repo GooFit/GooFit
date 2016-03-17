@@ -107,7 +107,7 @@ EXEC_TARGET devcomplex<fptype> plainBW (fptype m12, fptype m13, fptype m23, unsi
   ret *= SQRT(frFactor); 
   fptype spinF = spinFactor(spin, motherMass, daug1Mass, daug2Mass, daug3Mass, m12, m13, m23, cyclic_index); 
   ret *= spinF; 
-
+  printf("%f, %f, %f, %f\n",ret.real, ret.imag, m12, m13);
   return ret; 
 }
 

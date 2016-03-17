@@ -69,7 +69,7 @@ EXEC_TARGET fptype device_DalitzPlot (fptype* evt, fptype* p, unsigned int* indi
     fptype amp_imag = p[indices[paramIndex+1]];
 
     devcomplex<fptype> matrixelement((cResonances[cacheToUse][evtNum*numResonances + i]).real,
-				     (cResonances[cacheToUse][evtNum*numResonances + i]).imag); 
+             (cResonances[cacheToUse][evtNum*numResonances + i]).imag); 
     matrixelement.multiply(amp_real, amp_imag); 
     totalAmp += matrixelement; 
   } 
@@ -87,11 +87,11 @@ EXEC_TARGET fptype device_DalitzPlot (fptype* evt, fptype* p, unsigned int* indi
 MEM_DEVICE device_function_ptr ptr_to_DalitzPlot = device_DalitzPlot; 
 
 __host__ DalitzPlotPdf::DalitzPlotPdf (std::string n, 
-							   Variable* m12, 
-							   Variable* m13, 
-							   Variable* eventNumber, 
-							   DecayInfo* decay, 
-							   GooPdf* efficiency)
+                 Variable* m12, 
+                 Variable* m13, 
+                 Variable* eventNumber, 
+                 DecayInfo* decay, 
+                 GooPdf* efficiency)
   : GooPdf(0, n) 
   , decayInfo(decay)
   , _m12(m12)
@@ -223,11 +223,11 @@ __host__ fptype DalitzPlotPdf::normalise () const {
   for (int i = 0; i < decayInfo->resonances.size(); ++i) {
     if (redoIntegral[i]) {
       thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
-			thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
-			strided_range<DEVICE_VECTOR<devcomplex<fptype> >::iterator>(cachedWaves->begin() + i, 
-										    cachedWaves->end(), 
-										    decayInfo->resonances.size()).begin(), 
-			*(calculators[i]));
+      thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
+      strided_range<DEVICE_VECTOR<devcomplex<fptype> >::iterator>(cachedWaves->begin() + i, 
+                        cachedWaves->end(), 
+                        decayInfo->resonances.size()).begin(), 
+      *(calculators[i]));
     }
     
     // Possibly this can be done more efficiently by exploiting symmetry? 
@@ -236,10 +236,10 @@ __host__ fptype DalitzPlotPdf::normalise () const {
       devcomplex<fptype> dummy(0, 0);
       thrust::plus<devcomplex<fptype> > complexSum; 
       (*(integrals[i][j])) = thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(binIndex, arrayAddress)),
-						      thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, arrayAddress)),
-						      *(integrators[i][j]), 
-						      dummy, 
-						      complexSum); 
+                  thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, arrayAddress)),
+                  *(integrators[i][j]), 
+                  dummy, 
+                  complexSum); 
     }
   }      
 
@@ -252,7 +252,7 @@ __host__ fptype DalitzPlotPdf::normalise () const {
       int param_j = parameters + resonanceOffset_DP + resonanceSize*j; 
       complex<fptype> amplitude_j(host_params[host_indices[param_j]], -host_params[host_indices[param_j + 1]]); 
       // Notice complex conjugation
-
+      printf("%f %f %f %f %f %f\n", amplitude_i.real(), amplitude_i.imag(), amplitude_j.real(), amplitude_j.imag(), (*(integrals[i][j])).real, (*(integrals[i][j])).imag );
       sumIntegral += (amplitude_i * amplitude_j * complex<fptype>((*(integrals[i][j])).real, (*(integrals[i][j])).imag)); 
     }
   }
@@ -264,6 +264,7 @@ __host__ fptype DalitzPlotPdf::normalise () const {
   ret *= binSizeFactor;
 
   host_normalisation[parameters] = 1.0/ret;
+  printf("%f %f\n", ret, binSizeFactor);
   return (fptype) ret; 
 }
 
@@ -312,6 +313,7 @@ EXEC_TARGET devcomplex<fptype> SpecialResonanceIntegrator::operator () (thrust::
   // go into the integrals. They've been squared already,
   // as it were. 
   ret *= eff;
+  printf("ret %f %f %f %f %f\n",binCenterM12, binCenterM13, ret.real, ret.imag, eff );
   return ret; 
 }
 
@@ -346,4 +348,3 @@ EXEC_TARGET devcomplex<fptype> SpecialResonanceCalculator::operator () (thrust::
   //printf("Amplitude %f %f %f (%f, %f)\n ", m12, m13, m23, ret.real, ret.imag); 
   return ret;
 }
-

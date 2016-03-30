@@ -6,6 +6,33 @@
 #include "ResonancePdf.hh"
 
 //typedef devcomplex<fptype> (*resonance_function_ptr) (fptype, fptype, fptype, unsigned int*); 
+typedef fptype (*spin_function_ptr) (fptype*, unsigned int*); 
+EXEC_TARGET void get4Vecs (fptype* Vecs, const unsigned int& constants, const fptype& m12, const fptype& m34, const fptype& cos12, const fptype& cos34, const fptype& phi);
+EXEC_TARGET fptype getmass(const unsigned int& pair, fptype& d1, fptype& d2, const fptype* vecs, const fptype& m1, const fptype& m2, const fptype& m3, const fptype& m4);
+
+class __align__(16) gpuLVec
+{
+  private:
+    fptype X;
+    fptype Y;
+    fptype Z;
+    fptype E;
+  public:
+    EXEC_TARGET gpuLVec(fptype x, fptype y, fptype z, fptype e);
+    EXEC_TARGET fptype getX() const {return X;}
+    EXEC_TARGET fptype getY() const {return Y;}
+    EXEC_TARGET fptype getZ() const {return Z;}
+    EXEC_TARGET fptype getE() const {return E;}
+    EXEC_TARGET fptype Dot(const gpuLVec& rhs) const;
+    EXEC_TARGET gpuLVec& operator+=(const gpuLVec& rhs);
+    EXEC_TARGET gpuLVec& operator-=(const gpuLVec& rhs);
+};
+
+EXEC_TARGET gpuLVec operator+(gpuLVec lhs, const gpuLVec& rhs);
+EXEC_TARGET gpuLVec operator-(gpuLVec lhs, const gpuLVec& rhs);
+
+
+EXEC_TARGET fptype LeviCevita(const gpuLVec& p1, const gpuLVec& p2, const gpuLVec& p3, const gpuLVec& p4);
 class SpinFactor;
 
 class Lineshape : public GooPdf {
@@ -20,18 +47,16 @@ class Lineshape : public GooPdf {
 public:
   // Constructor for regular BW 
   Lineshape (string name,
-        unsigned int mother_pdg, 
 			  Variable* mass, 
 			  Variable* width, 
-			  unsigned int sp, 
+			  unsigned int L, 
 			  unsigned int cyc); 
 
   // Nonresonant constructor
-  Lineshape (string name, unsigned int mother_pdg);  
+  Lineshape (string name);  
+  void setConstantIndex (unsigned int idx) {host_indices[parameters + 1] = idx;}
 
 private:
-  void setConstantIndex (unsigned int idx) {host_indices[parameters + 1] = idx;}
-  void setMotherIndex (unsigned int idx) {host_indices[parameters + 2] = idx;}
   unsigned int _mother_pdg;
   /*
   Variable* mass;
@@ -63,9 +88,9 @@ class SpinFactor : public GooPdf {
 
 public:
   SpinFactor(std::string name, unsigned int kind, unsigned int P0, unsigned int P1, unsigned int P2, unsigned int P3);
+  void setConstantIndex (unsigned int idx) {host_indices[parameters + 1] = idx;}
   
 private:
-  void setConstantIndex (unsigned int idx) {host_indices[parameters + 1] = idx;}
   unsigned int kind;
 };
 

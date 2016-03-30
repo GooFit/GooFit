@@ -4,6 +4,7 @@ examples/simpleFit/simpleFitExample
 examples/dalitz/dalitz
 examples/exponential/exponential 
 examples/product/product
+**/testing/
 wrkdir/
 *.o
 *.png
@@ -15,3 +16,4 @@ html/
 *.log
 *.out
 *.toc
+*.root

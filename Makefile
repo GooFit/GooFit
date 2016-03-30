@@ -9,7 +9,7 @@ LD=icpc
 CXXFLAGS=-mmic -x c++
 endif
 
-CXXFLAGS += -O3 -DTHRUST_DEBUG -g
+CXXFLAGS += -O3  
 #-O3-g -DTHRUST_DEBUG
 DEFINEFLAGS = -DDUMMY=dummy 
 
@@ -29,16 +29,16 @@ endif
 ifneq ($(PROFILE),)
 DEFINEFLAGS += -DPROFILING=yes
 endif 
-
+#TARGET_OMP = 1
 ifeq ($(TARGET_OMP),)
 # nvcc (CUDA)
 CXXFLAGS += -arch=sm_20
 else
 # OpenMP common flags
-DEFINEFLAGS += -fno-inline -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_BACKEND_OMP
+DEFINEFLAGS += -Xcompiler -fno-inline -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_BACKEND_OMP
 ifeq ($(TARGET_MIC),)
 # GCC/Clang
-DEFINEFLAGS += -fopenmp
+DEFINEFLAGS += -Xcompiler -fopenmp
 else
 # Intel C++ Compiler (ICC)
 DEFINEFLAGS += -openmp
@@ -53,7 +53,7 @@ CUDAHEADERS = $(CUDALOCATION)/include/
 PWD = $(shell /bin/pwd)
 SRCDIR = $(PWD)/PDFs
 
-INCLUDES += -I$(SRCDIR) -I$(PWD) -I$(CUDAHEADERS) -I$(PWD)/rootstuff 
+INCLUDES += -I$(SRCDIR) -I$(PWD) -I$(CUDAHEADERS) -I$(PWD)/rootstuff
 
 # GooPdf must be first in CUDAglob, as it defines global variables.
 FUNCTORLIST    = $(SRCDIR)/GooPdf.cu 

@@ -50,7 +50,8 @@ public:
 			  Variable* mass, 
 			  Variable* width, 
 			  unsigned int L, 
-			  unsigned int cyc); 
+			  unsigned int cyc,
+        bool useMINTBW); 
 
   // Nonresonant constructor
   Lineshape (string name);  

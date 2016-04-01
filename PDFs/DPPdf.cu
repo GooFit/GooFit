@@ -275,9 +275,9 @@ __host__ fptype DPPdf::normalise () const {
                           *(sfcalculators[i]));
     
 
-    thrust::for_each(thrust::make_zip_iterator(thrust::make_tuple(binIndex, normaddress)),
-            thrust::make_zip_iterator(thrust::make_tuple(binIndex + MCevents, normaddress)),
-            NormSpinCalculator(parameters, i));
+    // thrust::for_each(thrust::make_zip_iterator(thrust::make_tuple(binIndex, normaddress)),
+    //         thrust::make_zip_iterator(thrust::make_tuple(binIndex + MCevents, normaddress)),
+    //         NormSpinCalculator(parameters, i));
 
     }
      SpinsCalculated = true;
@@ -313,26 +313,26 @@ __host__ fptype DPPdf::normalise () const {
     }
     
 
-  for (int i = 0; i < components.size() -1 ; ++i) {
-      if(!redoIntegral[i]) continue;
-      thrust::for_each(thrust::make_zip_iterator(thrust::make_tuple(binIndex, normaddress)),
-              thrust::make_zip_iterator(thrust::make_tuple(binIndex + MCevents, normaddress)),
-              NormLSCalculator(parameters, i));
-    }
+  // for (int i = 0; i < components.size() -1 ; ++i) {
+  //     if(!redoIntegral[i]) continue;
+  //     thrust::for_each(thrust::make_zip_iterator(thrust::make_tuple(binIndex, normaddress)),
+  //             thrust::make_zip_iterator(thrust::make_tuple(binIndex + MCevents, normaddress)),
+  //             NormLSCalculator(parameters, i));
+  //   }
 
-  fptype sumIntegral = 0;
-  for(unsigned int i = 0; i<AmpCalcs.size(); ++i){
-  sumIntegral += thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(binIndex, normaddress)),
-          thrust::make_zip_iterator(thrust::make_tuple(binIndex + MCevents, normaddress)),
-          NormIntegrator(ampidxstart[i], parameters, i),
-          0.,
-          thrust::plus<fptype>());
-  }
+  // fptype sumIntegral = 0;
+  // for(unsigned int i = 0; i<AmpCalcs.size(); ++i){
+  // sumIntegral += thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(binIndex, normaddress)),
+  //         thrust::make_zip_iterator(thrust::make_tuple(binIndex + MCevents, normaddress)),
+  //         NormIntegrator(ampidxstart[i], parameters, i),
+  //         0.,
+  //         thrust::plus<fptype>());
+  // }
 
-  sumIntegral/=MCevents;
-  host_normalisation[parameters] = 1.0/sumIntegral;
+  // sumIntegral/=MCevents;
+  // host_normalisation[parameters] = 1.0/sumIntegral;
   // printf("end of normalise %f\n", sumIntegral);
-  return sumIntegral;   
+  return 1.0;//sumIntegral;   
 }
 
 SFCalculator::SFCalculator (int pIdx, unsigned int sf_idx) 

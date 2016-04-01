@@ -77,7 +77,7 @@ EXEC_TARGET fptype S_VV_PPPP_S (fptype* Vecs, unsigned int* indices) {
                    - qV1.Dot(pV2) * pV2.Dot(qV2) / (MV2*MV2)
                    + qV1.Dot(pV1) * pV1.Dot(pV2) * pV2.Dot(qV2) 
                    / (MV1*MV1 * MV2*MV2));
-
+  printf("s1 %.5g\n",returnVal);
   return returnVal;
 }
 
@@ -150,11 +150,14 @@ EXEC_TARGET fptype S_AP1_AtoVP2_VtoP3P4 (fptype* Vecs, unsigned int* indices) {
   
   fptype MA = SQRT(pA.Dot(pA));
   fptype MV = SQRT(pV.Dot(pV));
-  return  P1.Dot(qV)
+  fptype returnVal =  P1.Dot(qV)
       -   p0.Dot(pA) * pA.Dot(qV) / (MA*MA)
       -   p0.Dot(pV) * pV.Dot(qV) / (MV*MV)
       +   p0.Dot(pA) * pA.Dot(pV) * pV.Dot(qV) / (MA*MA * MV*MV);
+  printf("spin %.7g\n",returnVal );
+  return returnVal;
 }
+
 
 
 EXEC_TARGET devcomplex<fptype> BW_DP (fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
@@ -184,6 +187,56 @@ EXEC_TARGET devcomplex<fptype> BW_DP (fptype Mpair, fptype m1, fptype m2, unsign
   ret *= SQRT(frFactor); 
   return ret; 
 }
+
+EXEC_TARGET devcomplex<fptype> BW_MINT (fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
+  // fptype meson_radius           = functorConstants[indices[1]+0];
+  fptype meson_radius           = 1.5;
+  fptype resmass                = cudaArray[indices[2]];
+  fptype reswidth               = cudaArray[indices[3]];
+  unsigned int orbital          = indices[4];
+
+
+  const unsigned int to2Lplus1    = 2 * orbital + 1;
+  // const unsigned int to2Lplus1    = 3;
+
+  fptype mass = resmass;
+  fptype width = reswidth;
+  fptype mumsRecoMass2 = Mpair*Mpair;
+  
+
+  fptype mpsq = (m1+m2)*(m1+m2);
+  fptype mmsq = (m1-m2)*(m1-m2);
+  fptype num  = (mumsRecoMass2 - mpsq)*(mumsRecoMass2 - mmsq);
+  fptype num2  = (mass*mass - mpsq)*(mass*mass - mmsq);
+  fptype pABSq = num/(4*mumsRecoMass2);
+  fptype prSqForGofM = num2/(4*mass*mass);
+  fptype pratio = SQRT(pABSq/prSqForGofM);
+
+  fptype pratio_to_2Jplus1 = 1;
+
+  #pragma unroll
+  for(int i=0; i < to2Lplus1; i++){
+    pratio_to_2Jplus1 *= pratio;
+  }    
+
+  fptype mratio = mass/Mpair;
+
+  fptype thisFR = SQRT((1+meson_radius*meson_radius*prSqForGofM) / (1+meson_radius*meson_radius*pABSq));
+
+  fptype GofM = width * pratio_to_2Jplus1 *mratio * thisFR * thisFR;
+
+  fptype gamma = SQRT(mass*mass*(mass*mass + width*width));
+  fptype k     = mass*width*gamma/SQRT(mass*mass+gamma);
+
+  devcomplex<fptype> BW(mass*mass - mumsRecoMass2, mass*GofM);
+  fptype den = (mass*mass - mumsRecoMass2) * (mass*mass - mumsRecoMass2) + mass * GofM * mass * GofM;
+
+  devcomplex<fptype> ret = SQRT(k)/den * BW;
+
+  printf("%.7g, %.7g, %.7g, %i, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g\n", m1, m2, Mpair, to2Lplus1, GofM, pratio_to_2Jplus1, mratio, gamma, k , pABSq, prSqForGofM, ret.imag, ret.real );
+  return  ret ; 
+}
+
 
 EXEC_TARGET devcomplex<fptype> bugg_rho2(const fptype& s, const fptype m){
   fptype rho_squared = 1. - 4. * m*m /s;
@@ -319,6 +372,7 @@ EXEC_TARGET devcomplex<fptype> nonres_DP (fptype m12, fptype m1, fptype m2, unsi
 }
 
 MEM_DEVICE resonance_function_ptr ptr_to_BW_DP = BW_DP;
+MEM_DEVICE resonance_function_ptr ptr_to_BW_MINT = BW_MINT;
 MEM_DEVICE resonance_function_ptr ptr_to_lass_DP = lass_DP;
 MEM_DEVICE resonance_function_ptr ptr_to_NONRES_DP = nonres_DP;
 MEM_DEVICE spin_function_ptr ptr_to_S_VV_PPPP_S = S_VV_PPPP_S;
@@ -332,7 +386,8 @@ Lineshape::Lineshape (string name,
 						Variable* mass, 
 						Variable* width, 
 						unsigned int L, 
-						unsigned int cyc) 
+						unsigned int cyc,
+            bool useMINTBW = false) 
   : GooPdf(0, name)
 {
   vector<unsigned int> pindices; 
@@ -346,7 +401,8 @@ Lineshape::Lineshape (string name,
   pindices.push_back(L);
   pindices.push_back(cyc); 
 
-  GET_FUNCTION_ADDR(ptr_to_BW_DP);
+  if(useMINTBW) GET_FUNCTION_ADDR(ptr_to_BW_MINT);
+  else GET_FUNCTION_ADDR(ptr_to_BW_DP);
   initialise(pindices); 
 }
 

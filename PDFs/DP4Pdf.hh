@@ -1,5 +1,5 @@
-#ifndef D_P_PDF_HH
-#define D_P_PDF_HH
+#ifndef D_P4_PDF_HH
+#define D_P4_PDF_HH
 
 #include "GooPdf.hh" 
 #include "DalitzPlotHelpers.hh" 
@@ -9,10 +9,11 @@
 class LSCalculator; 
 class AmpCalc;
 class SFCalculator;
+class NormIntegrator;
 
 class DPPdf : public GooPdf {
 public:
-  DPPdf (std::string n, std::vector<Variable*> observables, Variable* eventNumber, DecayInfo_DP* decay, GooPdf* eff);
+  DPPdf (std::string n, std::vector<Variable*> observables, DecayInfo_DP* decay, GooPdf* eff);
   // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the 
   // coherent sum. The caching method requires that it be done this way or the ProdPdf
   // normalisation will get *really* confused and give wrong answers. 
@@ -28,24 +29,24 @@ private:
 
   std::map<std::string, std::pair<std::vector<unsigned int>, std::vector<unsigned int> > > AmpMap;
   std::map<std::string, unsigned int> compMap;
-  std::map<unsigned int, unsigned int> massmap;
+  // std::map<unsigned int, unsigned int> massmap;
   std::map<std::string, unsigned int> SpinMap;
   std::vector<SpinFactor*> SpinFactors;
   std::vector<AmpCalc*> AmpCalcs;
+  std::vector<NormIntegrator*> integrators;
+  std::vector<SFCalculator*> sfcalculators;
+  std::vector<LSCalculator*> lscalculators;
 
 
   DecayInfo_DP* decayInfo; 
   std::vector<Variable*> _observables; 
-  fptype* dalitzNormRange; 
   fptype* devNormArray;
   fptype* hostphsp;
   int MCevents;
-  std::vector<unsigned int> ampidxstart;
   // Following variables are useful if masses and widths, involved in difficult BW calculation, 
   // change infrequently while amplitudes, only used in adding BW results together, change rapidly.
   DEVICE_VECTOR<devcomplex<fptype> >* cachedResSF; // Caches the BW values and Spins for each event.
   DEVICE_VECTOR<devcomplex<fptype> >* cachedAMPs; // cache Amplitude values for each event.
-  devcomplex<fptype>*** integrals; // Caches the integrals of the BW waves for each combination of resonances. 
 
   mutable bool SpinsCalculated;
   bool* redoIntegral;
@@ -54,9 +55,6 @@ private:
   fptype* cachedWidths;
   int totalEventSize; 
   int cacheToUse; 
-  SFCalculator** sfcalculators;
-  LSCalculator** lscalculators;
-  // SpecialIntegrator*** integrators;
 };
 
 
@@ -111,22 +109,21 @@ private:
 
 class AmpCalc : public thrust::unary_function<unsigned int, devcomplex<fptype> >{
   public:
-    AmpCalc(unsigned int AmpIdx, unsigned int pIdx, unsigned int CoeffIdx);
+    AmpCalc(unsigned int AmpIdx, unsigned int pIdx, unsigned int nPerm);
     // void setpIdx(unsigned int pIdx){_parameters = pIdx;}
     EXEC_TARGET devcomplex<fptype> operator() (thrust::tuple<int, fptype*, int> t) const;
   private:
-    unsigned int _coeffIdx;
+    unsigned int _nPerm;
     unsigned int _AmpIdx;
     unsigned int _parameters;
  };
 
  class NormIntegrator : public thrust::unary_function<thrust::tuple<int, fptype*>, fptype >{
   public:
-    NormIntegrator(unsigned int AmpIdx, unsigned int pIdx, unsigned int CoeffIdx);
+    NormIntegrator(unsigned int pIdx, unsigned int nPerm);
     EXEC_TARGET fptype operator() (thrust::tuple<int, fptype*> t) const;
   private:
-    unsigned int _coeffIdx;
-    unsigned int _AmpIdx;
+    unsigned int _nPerm;
     unsigned int _parameters;
  };
 

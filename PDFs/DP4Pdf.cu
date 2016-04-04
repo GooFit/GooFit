@@ -1,4 +1,4 @@
-#include "DPPdf.hh"
+#include "DP4Pdf.hh"
 #include <complex>
 using std::complex; 
 
@@ -35,12 +35,10 @@ EXEC_TARGET fptype device_DP (fptype* evt, fptype* p, unsigned int* indices) {
     matrixelement.multiply(amp_real, amp_imag); 
     totalAmp += matrixelement;
   } 
-   
   fptype ret = norm2(totalAmp); 
   int effFunctionIdx = 6 + 2*indices[3] + 2*indices[4] + 2*indices[5]; 
   fptype eff = callFunction(evt, indices[effFunctionIdx], indices[effFunctionIdx + 1]); 
   ret *= eff;
-  // if(evtNum==543) printf("dpp %g\n",ret );
 
   // printf("test\n");
   return ret; 
@@ -49,43 +47,35 @@ EXEC_TARGET fptype device_DP (fptype* evt, fptype* p, unsigned int* indices) {
 MEM_DEVICE device_function_ptr ptr_to_DP = device_DP; 
 
 __host__ DPPdf::DPPdf (std::string n, 
-							   std::vector<Variable*> observables,
-							   Variable* eventNumber, 
-							   DecayInfo_DP* decay, 
-							   GooPdf* efficiency)
+                 std::vector<Variable*> observables,
+                 // Variable* eventNumber, 
+                 DecayInfo_DP* decay, 
+                 GooPdf* efficiency)
   : GooPdf(0, n) 
   , decayInfo(decay)
   , _observables(observables)
-  , dalitzNormRange(0)
   , cachedAMPs(0)
   , cachedResSF(0) 
-  , integrals(0)
   , forceRedoIntegrals(true)
   , totalEventSize(1 + observables.size()) // number of observables plus eventnumber
   , cacheToUse(0) 
-  // , integrators(0)
-  , lscalculators(0) 
-  , sfcalculators(0) 
   , SpinsCalculated(false)
   , devNormArray(0)
 {
   for (std::vector<Variable*>::iterator obsIT = observables.begin(); obsIT != observables.end(); ++obsIT) {
     registerObservable(*obsIT);
   }
-  registerObservable(eventNumber); 
+  // registerObservable(eventNumber); 
 
-  fptype decayConstants[1 + decayInfo->particle_masses.size()];
-  int a = 0;
-  decayConstants[a] = decayInfo->meson_radius;
-  for(std::map<unsigned int, fptype>::iterator pmIT = decayInfo->particle_masses.begin(); pmIT != decayInfo->particle_masses.end(); ++pmIT) {
-    massmap[pmIT->first] = a + 1;
-    decayConstants[a + 1] = pmIT->second;
-    a++;
+  std::vector<fptype>decayConstants;
+  decayConstants.push_back(decayInfo->meson_radius);
+  for(std::vector<fptype>::iterator pmIT = decayInfo->particle_masses.begin(); pmIT != decayInfo->particle_masses.end(); ++pmIT) {
+    decayConstants.push_back(*pmIT);
   }
   
   std::vector<unsigned int> pindices;
-  pindices.push_back(registerConstants(a)); 
-  MEMCPY_TO_SYMBOL(functorConstants, decayConstants, (a+1)*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice);  
+  pindices.push_back(registerConstants(decayConstants.size())); 
+  MEMCPY_TO_SYMBOL(functorConstants, &decayConstants[0], decayConstants.size()*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice);  
   static int cacheCount = 0; 
   cacheToUse = cacheCount++; 
   pindices.push_back(cacheToUse); 
@@ -95,7 +85,9 @@ __host__ DPPdf::DPPdf (std::string n,
 
 
   std::vector<unsigned int> ampidx;
-  // std::vector<unsigned int> ampidxstart;
+  std::vector<unsigned int> nPermVec;
+  std::vector<unsigned int> ampidxstart;
+
   for(int i=0; i<decayInfo->amplitudes.size(); i++){
     AmpMap[decayInfo->amplitudes[i]->_uniqueDecayStr] =  std::make_pair(std::vector<unsigned int>(0), std::vector<unsigned int>(0));
     for(std::map<std::string, Lineshape*>::iterator LSIT = decayInfo->amplitudes[i]->_LS.begin(); LSIT != decayInfo->amplitudes[i]->_LS.end(); ++LSIT) {
@@ -116,7 +108,7 @@ __host__ DPPdf::DPPdf (std::string n,
         AmpMap[decayInfo->amplitudes[i]->_uniqueDecayStr].second.push_back(SpinMap.find(SFIT->first)->second);
       }
     }
-
+    nPermVec.push_back(decayInfo->amplitudes[i]->_nPerm);
     pindices.push_back(registerParameter(decayInfo->amplitudes[i]->_ar));
     pindices.push_back(registerParameter(decayInfo->amplitudes[i]->_ai));
     
@@ -129,8 +121,8 @@ __host__ DPPdf::DPPdf (std::string n,
     ampidx.insert(ampidx.end(), ls.begin(), ls.end());
     ampidx.insert(ampidx.end(), sf.begin(), sf.end());
   }
-
-  MEMCPY_TO_SYMBOL(AmpIndices, &(ampidx[0]), ampidx.size()*sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
+  MEMCPY_TO_SYMBOL(AmpIndices, &(ampidxstart[0]), ampidxstart.size()*sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
+  MEMCPY_TO_SYMBOL(AmpIndices, &(ampidx[0]), ampidx.size()*sizeof(unsigned int), ampidxstart.size()*sizeof(unsigned int), cudaMemcpyHostToDevice);
   
   pindices[2] = components.size(); 
   pindices[3] = SpinFactors.size();
@@ -161,32 +153,25 @@ __host__ DPPdf::DPPdf (std::string n,
   redoIntegral = new bool[components.size() - 1];
   cachedMasses = new fptype[components.size() - 1];
   cachedWidths = new fptype[components.size() - 1];
-  integrals    = new devcomplex<fptype>**[AmpMap.size()];
-  // integrators  = new SpecialIntegrator**[AmpMap.size()];
-  lscalculators  = new LSCalculator*[components.size() - 1];
-  sfcalculators  = new SFCalculator*[SpinFactors.size()];
+  // lscalculators  = new LSCalculator*[components.size() - 1];
+  // sfcalculators  = new SFCalculator*[SpinFactors.size()];
 
   for (int i = 0; i < components.size() - 1; ++i) {
     redoIntegral[i] = true;
     cachedMasses[i] = -1;
     cachedWidths[i] = -1; 
-    lscalculators[i]  = new LSCalculator(parameters, i); 
+    lscalculators.push_back(new LSCalculator(parameters, i)); 
     
   }
 
   for (int i = 0; i < SpinFactors.size(); ++i) {
-    sfcalculators[i]  = new SFCalculator(parameters, i); 
+    sfcalculators.push_back(new SFCalculator(parameters, i)); 
     
   }
   for (int i = 0; i < AmpMap.size(); ++i)
   {
-    // integrators[i]  = new SpecialIntegrator*[AmpMap.size()];
-    integrals[i]    = new devcomplex<fptype>*[AmpMap.size()];
-    AmpCalcs.push_back(new AmpCalc(ampidxstart[i], parameters, i));
-    for (int j = 0; j < AmpMap.size(); ++j) {
-      integrals[i][j]   = new devcomplex<fptype>(0, 0); 
-      // integrators[i][j] = new SpecialIntegrator(parameters, i, j, ampidxstart[i], ampidxstart[j]); 
-    }
+    integrators.push_back(new NormIntegrator(parameters, nPermVec[i]));
+    AmpCalcs.push_back(new AmpCalc(ampidxstart[i], parameters, nPermVec[i]));
   }
 
   //printf("%i\n", parameters );
@@ -223,8 +208,8 @@ __host__ fptype DPPdf::normalise () const {
   
 
   if (!devNormArray) {
-    fptype* host_norm_array = new fptype[MCevents * (6 + 2*(components.size() - 1)  + SpinFactors.size() )];
-    unsigned int offset = 6 + 2*(components.size() - 1)  + SpinFactors.size() ;
+    fptype* host_norm_array = new fptype[MCevents * (5 + 2*(components.size() - 1)  + SpinFactors.size() )];
+    unsigned int offset = 5 + 2*(components.size() - 1)  + SpinFactors.size() ;
     // printf("devarray %i, %i\n",MCevents, offset );
     for (unsigned int i = 0; i < MCevents; ++i)
     {
@@ -240,7 +225,7 @@ __host__ fptype DPPdf::normalise () const {
 
     gooMalloc((void**) &devNormArray,( MCevents*offset*sizeof(fptype)) );
     MEMCPY(devNormArray, host_norm_array, (MCevents*offset*sizeof(fptype)), cudaMemcpyHostToDevice);
-    // delete[] host_norm_array; 
+    delete[] host_norm_array; 
     delete[] hostphsp;
   }
 
@@ -253,13 +238,8 @@ __host__ fptype DPPdf::normalise () const {
   }
   forceRedoIntegrals = false; 
 
-  // Only do this bit if masses or widths have changed.  
   thrust::constant_iterator<fptype*> normaddress(devNormArray); 
   thrust::counting_iterator<int> binIndex(0); 
-
-  // NB, SpecialResonanceCalculator assumes that fit is unbinned! 
-  // And it needs to know the total event size, not just observables
-  // for this particular PDF component. 
   thrust::constant_iterator<fptype*> dataArray(dev_event_array); 
   thrust::constant_iterator<int> eventSize(totalEventSize);
   thrust::counting_iterator<int> eventIndex(0); 
@@ -275,9 +255,9 @@ __host__ fptype DPPdf::normalise () const {
                           *(sfcalculators[i]));
     
 
-    // thrust::for_each(thrust::make_zip_iterator(thrust::make_tuple(binIndex, normaddress)),
-    //         thrust::make_zip_iterator(thrust::make_tuple(binIndex + MCevents, normaddress)),
-    //         NormSpinCalculator(parameters, i));
+    thrust::for_each(thrust::make_zip_iterator(thrust::make_tuple(binIndex, normaddress)),
+            thrust::make_zip_iterator(thrust::make_tuple(binIndex + MCevents, normaddress)),
+            NormSpinCalculator(parameters, i));
 
     }
      SpinsCalculated = true;
@@ -313,26 +293,26 @@ __host__ fptype DPPdf::normalise () const {
     }
     
 
-  // for (int i = 0; i < components.size() -1 ; ++i) {
-  //     if(!redoIntegral[i]) continue;
-  //     thrust::for_each(thrust::make_zip_iterator(thrust::make_tuple(binIndex, normaddress)),
-  //             thrust::make_zip_iterator(thrust::make_tuple(binIndex + MCevents, normaddress)),
-  //             NormLSCalculator(parameters, i));
-  //   }
+  for (int i = 0; i < components.size() -1 ; ++i) {
+      if(!redoIntegral[i]) continue;
+      thrust::for_each(thrust::make_zip_iterator(thrust::make_tuple(binIndex, normaddress)),
+              thrust::make_zip_iterator(thrust::make_tuple(binIndex + MCevents, normaddress)),
+              NormLSCalculator(parameters, i));
+    }
 
-  // fptype sumIntegral = 0;
-  // for(unsigned int i = 0; i<AmpCalcs.size(); ++i){
-  // sumIntegral += thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(binIndex, normaddress)),
-  //         thrust::make_zip_iterator(thrust::make_tuple(binIndex + MCevents, normaddress)),
-  //         NormIntegrator(ampidxstart[i], parameters, i),
-  //         0.,
-  //         thrust::plus<fptype>());
-  // }
+  fptype sumIntegral = 0;
+  for(unsigned int i = 0; i<AmpCalcs.size(); ++i){
+  sumIntegral += thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(binIndex, normaddress)),
+          thrust::make_zip_iterator(thrust::make_tuple(binIndex + MCevents, normaddress)),
+          *(integrators[i]),
+          0.,
+          thrust::plus<fptype>());
+  }
 
-  // sumIntegral/=MCevents;
-  // host_normalisation[parameters] = 1.0/sumIntegral;
+  sumIntegral/=MCevents;
+  host_normalisation[parameters] = 1.0/sumIntegral;
   // printf("end of normalise %f\n", sumIntegral);
-  return 1.0;//sumIntegral;   
+  return sumIntegral;   
 }
 
 SFCalculator::SFCalculator (int pIdx, unsigned int sf_idx) 
@@ -382,7 +362,7 @@ EXEC_TARGET fptype NormSpinCalculator::operator () (thrust::tuple<int, fptype*> 
   unsigned int numSF    = indices[4];
   unsigned int numAmps  = indices[5];
   int parameter_i = 6 + (2 * numAmps) + (numLS * 2) + (_spinfactor_i * 2) ; // Find position of this resonance relative to DALITZPLOT start 
-  unsigned int offset = 6 + 2 * numLS + numSF;
+  unsigned int offset = 5 + 2 * numLS + numSF;
   unsigned int functn_i = indices[parameter_i];
   unsigned int params_i = indices[parameter_i+1];
   
@@ -397,7 +377,6 @@ EXEC_TARGET fptype NormSpinCalculator::operator () (thrust::tuple<int, fptype*> 
   fptype vecs[16];
   get4Vecs(vecs, indices[1], m12, m34, cos12, cos34, phi); 
 
-// if (evtNum>540){  printf("%f, %f, %f, %f, %f \n",m12, m34, cos12, cos34, phi );
 //   printf("vec%i %f, %f, %f, %f\n",0, vecs[0], vecs[1], vecs[2], vecs[3]);
 //   printf("vec%i %f, %f, %f, %f\n",1, vecs[4], vecs[5], vecs[6], vecs[7]);
 //   printf("vec%i %f, %f, %f, %f\n",2, vecs[8], vecs[9], vecs[10], vecs[11]);
@@ -405,10 +384,9 @@ EXEC_TARGET fptype NormSpinCalculator::operator () (thrust::tuple<int, fptype*> 
 // }
   spin_function_ptr func = reinterpret_cast<spin_function_ptr>(device_function_table[functn_i]);
   fptype sf = (*func)(vecs, paramIndices+params_i);
-  fptype* spinfactor = evt + 6 + 2*numLS + _spinfactor_i;
+  fptype* spinfactor = evt + 5 + 2*numLS + _spinfactor_i;
   spinfactor[0] = sf;
   // printf("%f\n",sf );
-  // if(evtNum==543) printf("sf%g\n",sf );
 
   THREAD_SYNCH
   return sf;
@@ -480,7 +458,7 @@ EXEC_TARGET int NormLSCalculator::operator () (thrust::tuple<int, fptype*> t) co
   unsigned int numSF    = indices[4];
   unsigned int numAmps  = indices[5];
   int parameter_i = 6 + (2 * numAmps) + (_resonance_i * 2); // Find position of this resonance relative to DALITZPLOT start 
-  unsigned int offset = 6 + 2 * numLS + numSF;
+  unsigned int offset = 5 + 2 * numLS + numSF;
   unsigned int functn_i = indices[parameter_i];
   unsigned int params_i = indices[parameter_i+1];
   unsigned int pair = (paramIndices+params_i)[5];
@@ -488,7 +466,6 @@ EXEC_TARGET int NormLSCalculator::operator () (thrust::tuple<int, fptype*> t) co
   int evtNum = thrust::get<0>(t); 
   fptype* evt = thrust::get<1>(t) + (evtNum * offset); 
 
-  // if(evtNum==543) printf("%g, %g, %g, %g, %g, %g\n",evt[0], evt[1],evt[2],evt[3],evt[4],evt[5] );
   fptype m1  = functorConstants[indices[1] + 2]; 
   fptype m2  = functorConstants[indices[1] + 3]; 
   fptype m3  = functorConstants[indices[1] + 4];  
@@ -516,9 +493,8 @@ EXEC_TARGET int NormLSCalculator::operator () (thrust::tuple<int, fptype*> t) co
   // printf("%f, %f, %f, %f, %f \n",m12, m34, cos12, cos34, phi );
   // printf("%i, %i, %i, %i, %i \n",numLS, numSF, numAmps, offset, evtNum );
   // printf("NLS %f, %f\n",ret.real, ret.imag);
-  evt[6 + _resonance_i * 2] = ret.real;
-  evt[7 + _resonance_i * 2] = ret.imag;
-  // if(evtNum==543) printf("ls%g, %g\n",ret.real, ret.imag );
+  evt[5 + _resonance_i * 2] = ret.real;
+  evt[6 + _resonance_i * 2] = ret.imag;
 
   //if (!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass)) return ret;
   //printf("m12 %f \n", m12); // %f %f %f (%f, %f)\n ", m12, m13, m23, ret.real, ret.imag); 
@@ -527,80 +503,90 @@ EXEC_TARGET int NormLSCalculator::operator () (thrust::tuple<int, fptype*> t) co
   return 0;
 }
 
-AmpCalc::AmpCalc(unsigned int AmpIdx, unsigned int pIdx, unsigned int coeffIdx)
-  : _coeffIdx(coeffIdx)
+AmpCalc::AmpCalc(unsigned int AmpIdx, unsigned int pIdx, unsigned int nPerm)
+  : _nPerm(nPerm)
   , _AmpIdx(AmpIdx)
   , _parameters(pIdx)
   {}
 
 
 EXEC_TARGET devcomplex<fptype> AmpCalc::operator() (thrust::tuple<int, fptype*, int> t) const {
-  devcomplex<fptype> ret(1,0);
   unsigned int * indices = paramIndices + _parameters;
   unsigned int cacheToUse = indices[2];
   unsigned int totalLS = indices[3];
   unsigned int totalSF = indices[4];
+  unsigned int totalAMP = indices[5];
   unsigned int offset = totalLS + totalSF;
-  unsigned int numLS = AmpIndices[_AmpIdx];
-  unsigned int numSF =AmpIndices[_AmpIdx + 1];
+  unsigned int numLS = AmpIndices[totalAMP + _AmpIdx];
+  unsigned int numSF = AmpIndices[totalAMP + _AmpIdx + 1];
   unsigned int evtNum = thrust::get<0>(t);
 
-  for (int i = 0; i < (numLS + numSF); ++i)
-  {
-    unsigned int a = (i<numLS ? 0 : totalLS);
-    // fptype amp_real = cudaArray[indices[2*_coeffIdx + 6]];
-    // fptype amp_imag = cudaArray[indices[2*_coeffIdx + 7]];
+  devcomplex<fptype> returnVal(0,0);
+  unsigned int SF_step = numSF/_nPerm;
+  unsigned int LS_step = numLS/_nPerm;
 
-    devcomplex<fptype> matrixelement((cResSF[cacheToUse][evtNum*offset + a + AmpIndices[_AmpIdx + 2 + i]]).real,
-             (cResSF[cacheToUse][evtNum*offset + a + AmpIndices[_AmpIdx + 2 + i]]).imag); 
-    // matrixelement.multiply(amp_real, amp_imag); 
-    // printf("inside amp %i %f, %f\n", _coeffIdx,(cResSF[cacheToUse][evtNum*offset + a + AmpIndices[_AmpIdx + 2 + i]]).real,  (cResSF[cacheToUse][evtNum*offset + a + AmpIndices[_AmpIdx + 2 + i]]).imag  );
-    ret *= matrixelement; 
+  for (int i = 0; i < _nPerm; ++i)
+  {
+    devcomplex<fptype> ret(1,0);
+    for (int j = i*LS_step; j < (i+1)*LS_step; ++j){
+      ret *= (cResSF[cacheToUse][evtNum*offset + AmpIndices[totalAMP + _AmpIdx + 2 + j]]);
+    }
+    for (int j = i*SF_step; j < (i+1)*SF_step; ++j){
+      ret *= (cResSF[cacheToUse][evtNum*offset + totalLS + AmpIndices[totalAMP + _AmpIdx + 2 + numLS + j]].real);
+    }
+    returnVal += ret;
   }
-  //printf("test %i, %i, %i, %i, %i, %i, %i, \n", cacheToUse, totalLS, totalSF, offset, numLS, numSF, evtNum);
-  // printf("AMPCalc: %f i%f\n", ret.real, ret.imag );
-  return ret;
+ 
+  return (1/SQRT((fptype)(_nPerm))) * returnVal;
 }
 
-
-NormIntegrator::NormIntegrator(unsigned int AmpIdx, unsigned int pIdx, unsigned int coeffIdx)
-  : _coeffIdx(coeffIdx)
-  , _AmpIdx(AmpIdx)
-  , _parameters(pIdx)
+NormIntegrator::NormIntegrator(unsigned int pIdx, unsigned int nPerm)
+  : _parameters(pIdx)
+  , _nPerm(nPerm)
   {}
 
 
 EXEC_TARGET fptype NormIntegrator::operator() (thrust::tuple<int, fptype*> t) const {
-  devcomplex<fptype> ret(1,0);
   unsigned int * indices = paramIndices + _parameters;
   unsigned int totalLS = indices[3];
   unsigned int totalSF = indices[4];
-  unsigned int offset = 6 + 2 * totalLS + totalSF;
-  unsigned int numLS = AmpIndices[_AmpIdx];
-  unsigned int numSF = AmpIndices[_AmpIdx + 1];
+  unsigned int totalAMP = indices[5];
+  unsigned int offset = 5 + 2 * totalLS + totalSF;
 
   unsigned int evtNum = thrust::get<0>(t); 
   fptype* evt = thrust::get<1>(t) + (evtNum * offset); 
 
-  for (int i = 0; i < numLS; ++i)
-  {
-    devcomplex<fptype> matrixelement(evt[6 + 2*i],evt[6 + 2*i + 1]); 
-    ret *= matrixelement; 
-  }
-  for (int i = 0; i < numSF; ++i)
-  {
-    devcomplex<fptype> matrixelement(evt[6 + 2*numLS + i],0); 
-    ret *= matrixelement; 
-  }
-  // fptype weight = _coeffIdx<1 ? evt[5] : 1.0;
-  fptype amp_real = cudaArray[indices[2*_coeffIdx + 6]];
-  fptype amp_imag = cudaArray[indices[2*_coeffIdx + 7]];
-  // printf("NI %f, %f, %f, %f, %f\n",ret.real, ret.imag, amp_real, amp_imag, weight);
-  ret.multiply(amp_real, amp_imag); 
-  // ret.multiply(weight,0);
-  // if(evtNum==543) printf("ni%g, %g\n",ret.real, ret.imag );
+  devcomplex<fptype> returnVal(0,0);
 
-  return norm2(ret);
+  for (int amp = 0; amp < totalAMP; ++amp)
+  {
+    unsigned int ampidx =  AmpIndices[amp];
+    unsigned int numLS = AmpIndices[totalAMP + ampidx];
+    unsigned int numSF = AmpIndices[totalAMP + ampidx + 1];
+    unsigned int SF_step = numSF/_nPerm;
+    unsigned int LS_step = numLS/_nPerm;
+    devcomplex<fptype> ret2(0,0);
+
+    for (int j = 0; j < _nPerm; ++j){  
+      devcomplex<fptype> ret(1,0);
+      for (int i = j*LS_step; i < (j+1)*LS_step; ++i){
+        devcomplex<fptype> matrixelement(evt[5 + 2 * AmpIndices[totalAMP + ampidx + 2 + i]],evt[5 + 2 * AmpIndices[totalAMP + ampidx + 2 + i] + 1]); 
+        ret *= matrixelement; 
+      }
+      for (int i = j*SF_step; i < (j+1)*SF_step; ++i){
+        devcomplex<fptype> matrixelement(evt[5 + 2 * totalLS + AmpIndices[totalAMP + ampidx + 2 + numLS + i]],0); 
+        ret *= matrixelement; 
+      }
+      ret2 += ret;
+    }
+
+    ret2 *= (1/SQRT((fptype)(_nPerm)));
+    fptype amp_real = cudaArray[indices[2*amp + 5]];
+    fptype amp_imag = cudaArray[indices[2*amp + 6]];
+    ret2.multiply(amp_real, amp_imag); 
+    returnVal += ret2;
+  }
+  return norm2(returnVal);
 }
 
 

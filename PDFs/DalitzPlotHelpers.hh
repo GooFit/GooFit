@@ -35,7 +35,7 @@ struct DecayInfo {
 };
 
 struct DecayInfo_DP {
-  std::map<unsigned int, fptype> particle_masses ;
+  std::vector<fptype> particle_masses ;
   fptype meson_radius;
   std::vector<Amplitude*> amplitudes; 
 };

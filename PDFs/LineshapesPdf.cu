@@ -77,7 +77,7 @@ EXEC_TARGET fptype S_VV_PPPP_S (fptype* Vecs, unsigned int* indices) {
                    - qV1.Dot(pV2) * pV2.Dot(qV2) / (MV2*MV2)
                    + qV1.Dot(pV1) * pV1.Dot(pV2) * pV2.Dot(qV2) 
                    / (MV1*MV1 * MV2*MV2));
-  printf("s1 %.5g\n",returnVal);
+  // printf("s1 %.5g\n",returnVal);
   return returnVal;
 }
 
@@ -154,7 +154,7 @@ EXEC_TARGET fptype S_AP1_AtoVP2_VtoP3P4 (fptype* Vecs, unsigned int* indices) {
       -   p0.Dot(pA) * pA.Dot(qV) / (MA*MA)
       -   p0.Dot(pV) * pV.Dot(qV) / (MV*MV)
       +   p0.Dot(pA) * pA.Dot(pV) * pV.Dot(qV) / (MA*MA * MV*MV);
-  printf("spin %.7g\n",returnVal );
+  // printf("spin %.7g\n",returnVal );
   return returnVal;
 }
 
@@ -197,7 +197,6 @@ EXEC_TARGET devcomplex<fptype> BW_MINT (fptype Mpair, fptype m1, fptype m2, unsi
 
 
   const unsigned int to2Lplus1    = 2 * orbital + 1;
-  // const unsigned int to2Lplus1    = 3;
 
   fptype mass = resmass;
   fptype width = reswidth;
@@ -233,7 +232,7 @@ EXEC_TARGET devcomplex<fptype> BW_MINT (fptype Mpair, fptype m1, fptype m2, unsi
 
   devcomplex<fptype> ret = SQRT(k)/den * BW;
 
-  printf("%.7g, %.7g, %.7g, %i, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g\n", m1, m2, Mpair, to2Lplus1, GofM, pratio_to_2Jplus1, mratio, gamma, k , pABSq, prSqForGofM, ret.imag, ret.real );
+  // printf("%.7g, %.7g, %.7g, %i, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g\n", m1, m2, Mpair, to2Lplus1, GofM, pratio_to_2Jplus1, mratio, gamma, k , pABSq, prSqForGofM, ret.imag, ret.real );
   return  ret ; 
 }
 
@@ -257,6 +256,7 @@ EXEC_TARGET fptype bugg_Gamma_4pi(const fptype& s, const fptype mpi, const fptyp
   return returnVal;
 }
 
+// this lineshape is not tested yet!
 EXEC_TARGET devcomplex<fptype> bugg_DP (fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
   fptype meson_radius           = functorConstants[indices[1]+4];
   fptype resmass                = cudaArray[indices[2]];
@@ -308,7 +308,7 @@ EXEC_TARGET devcomplex<fptype> bugg_DP (fptype Mpair, fptype m1, fptype m2, unsi
 
 
 
-
+// this lineshape is not tested yet!
 EXEC_TARGET devcomplex<fptype> lass_DP (fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
   fptype meson_radius           = functorConstants[indices[1]+4];
   fptype resmass                = cudaArray[indices[2]];
@@ -419,12 +419,13 @@ Lineshape::Lineshape (string name)
   initialise(pindices); 
 }
 
-Amplitude::Amplitude(std::string uniqueDecayStr, Variable* ar, Variable* ai, std::map<std::string, Lineshape*> LS, std::map<std::string, SpinFactor*> SF )
+Amplitude::Amplitude(std::string uniqueDecayStr, Variable* ar, Variable* ai, std::map<std::string, Lineshape*> LS, std::map<std::string, SpinFactor*> SF, unsigned int nPerm)
   : _uniqueDecayStr(uniqueDecayStr),
     _ar(ar),
     _ai(ai),
     _LS(LS),
-    _SF(SF)
+    _SF(SF),
+    _nPerm(nPerm)
 {}
 
 

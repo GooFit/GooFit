@@ -73,7 +73,7 @@ class Amplitude {
   friend class DPPdf;
 
 public:
-  Amplitude(std::string uniqueDecayStr, Variable* ar, Variable* ai, std::map<std::string, Lineshape*> LS, std::map<std::string, SpinFactor*> SF);
+  Amplitude(std::string uniqueDecayStr, Variable* ar, Variable* ai, std::map<std::string, Lineshape*> LS, std::map<std::string, SpinFactor*> SF, unsigned int nPerm = 1);
   
 private:
   std::string _uniqueDecayStr;
@@ -81,6 +81,7 @@ private:
   Variable* _ai;
   std::map<std::string, SpinFactor*> _SF;
   std::map<std::string, Lineshape*> _LS;
+  unsigned int _nPerm;
 };
 
 

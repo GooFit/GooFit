@@ -65,7 +65,7 @@ int main (int argc, char** argv) {
 
   bool useMINT = true;
 
-  //Map of spinfactors, here we have to because of the bose symmetriazation of the two pi+
+  //Map of spinfactors, here we have two because of the bose symmetrization of the two pi+
   std::map<std::string, SpinFactor*> SF;
   SF["SVVS"] = new SpinFactor("SVVS", 0, 0, 1, 2, 3);
   SF["BSSVVS"] = new SpinFactor("SVVS", 0, 1, 3, 2, 0);
@@ -77,7 +77,7 @@ int main (int argc, char** argv) {
   LS["BSrho(770)"]= new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, useMINT);
   LS["BSK*(892)bar"]= new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_13, useMINT);
 
-  // the very last parameter means that we have two permutations. so the firs half of the Lineshapes 
+  // the very last parameter means that we have two permutations. so the first half of the Lineshapes 
   // and the first half of the spinfactors are amplitude 1, rest is amplitude 2
   // This means that it is important for symmetrized amplitueds that the spinfactors and lineshapes are in the "right" order
   Amplitude* Bose_symmetrized_AMP = new Amplitude( "K*(892)rho(770)", new Variable("amp_real1", -0.115177 , 0.1, 0, 0), new Variable("amp_imag1", 0.153976, 0.1, 0, 0), LS, SF, 2);

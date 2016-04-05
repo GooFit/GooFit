@@ -118,6 +118,7 @@ __host__ DPPdf::DPPdf (std::string n,
     std::vector<unsigned int> sf = AmpMap[decayInfo->amplitudes[i]->_uniqueDecayStr].second;
     ampidx.push_back(ls.size());
     ampidx.push_back(sf.size());
+    ampidx.push_back(decayInfo->amplitudes[i]->_nPerm);
     ampidx.insert(ampidx.end(), ls.begin(), ls.end());
     ampidx.insert(ampidx.end(), sf.begin(), sf.end());
   }
@@ -150,6 +151,7 @@ __host__ DPPdf::DPPdf (std::string n,
   GET_FUNCTION_ADDR(ptr_to_DP);
   initialise(pindices);
 
+  Integrator =  new NormIntegrator(parameters);
   redoIntegral = new bool[components.size() - 1];
   cachedMasses = new fptype[components.size() - 1];
   cachedWidths = new fptype[components.size() - 1];
@@ -170,7 +172,6 @@ __host__ DPPdf::DPPdf (std::string n,
   }
   for (int i = 0; i < AmpMap.size(); ++i)
   {
-    integrators.push_back(new NormIntegrator(parameters, nPermVec[i]));
     AmpCalcs.push_back(new AmpCalc(ampidxstart[i], parameters, nPermVec[i]));
   }
 
@@ -301,13 +302,11 @@ __host__ fptype DPPdf::normalise () const {
     }
 
   fptype sumIntegral = 0;
-  for(unsigned int i = 0; i<AmpCalcs.size(); ++i){
   sumIntegral += thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(binIndex, normaddress)),
           thrust::make_zip_iterator(thrust::make_tuple(binIndex + MCevents, normaddress)),
-          *(integrators[i]),
+          *Integrator,
           0.,
           thrust::plus<fptype>());
-  }
 
   sumIntegral/=MCevents;
   host_normalisation[parameters] = 1.0/sumIntegral;
@@ -529,10 +528,10 @@ EXEC_TARGET devcomplex<fptype> AmpCalc::operator() (thrust::tuple<int, fptype*, 
   {
     devcomplex<fptype> ret(1,0);
     for (int j = i*LS_step; j < (i+1)*LS_step; ++j){
-      ret *= (cResSF[cacheToUse][evtNum*offset + AmpIndices[totalAMP + _AmpIdx + 2 + j]]);
+      ret *= (cResSF[cacheToUse][evtNum*offset + AmpIndices[totalAMP + _AmpIdx + 3 + j]]);
     }
     for (int j = i*SF_step; j < (i+1)*SF_step; ++j){
-      ret *= (cResSF[cacheToUse][evtNum*offset + totalLS + AmpIndices[totalAMP + _AmpIdx + 2 + numLS + j]].real);
+      ret *= (cResSF[cacheToUse][evtNum*offset + totalLS + AmpIndices[totalAMP + _AmpIdx + 3 + numLS + j]].real);
     }
     returnVal += ret;
   }
@@ -540,9 +539,8 @@ EXEC_TARGET devcomplex<fptype> AmpCalc::operator() (thrust::tuple<int, fptype*, 
   return (1/SQRT((fptype)(_nPerm))) * returnVal;
 }
 
-NormIntegrator::NormIntegrator(unsigned int pIdx, unsigned int nPerm)
+NormIntegrator::NormIntegrator(unsigned int pIdx)
   : _parameters(pIdx)
-  , _nPerm(nPerm)
   {}
 
 
@@ -563,24 +561,25 @@ EXEC_TARGET fptype NormIntegrator::operator() (thrust::tuple<int, fptype*> t) co
     unsigned int ampidx =  AmpIndices[amp];
     unsigned int numLS = AmpIndices[totalAMP + ampidx];
     unsigned int numSF = AmpIndices[totalAMP + ampidx + 1];
-    unsigned int SF_step = numSF/_nPerm;
-    unsigned int LS_step = numLS/_nPerm;
+    unsigned int nPerm = AmpIndices[totalAMP + ampidx + 2];
+    unsigned int SF_step = numSF/nPerm;
+    unsigned int LS_step = numLS/nPerm;
     devcomplex<fptype> ret2(0,0);
 
-    for (int j = 0; j < _nPerm; ++j){  
+    for (int j = 0; j < nPerm; ++j){  
       devcomplex<fptype> ret(1,0);
       for (int i = j*LS_step; i < (j+1)*LS_step; ++i){
-        devcomplex<fptype> matrixelement(evt[5 + 2 * AmpIndices[totalAMP + ampidx + 2 + i]],evt[5 + 2 * AmpIndices[totalAMP + ampidx + 2 + i] + 1]); 
+        devcomplex<fptype> matrixelement(evt[5 + 2 * AmpIndices[totalAMP + ampidx + 3 + i]],evt[5 + 2 * AmpIndices[totalAMP + ampidx + 3 + i] + 1]); 
         ret *= matrixelement; 
       }
       for (int i = j*SF_step; i < (j+1)*SF_step; ++i){
-        devcomplex<fptype> matrixelement(evt[5 + 2 * totalLS + AmpIndices[totalAMP + ampidx + 2 + numLS + i]],0); 
+        devcomplex<fptype> matrixelement(evt[5 + 2 * totalLS + AmpIndices[totalAMP + ampidx + 3 + numLS + i]],0); 
         ret *= matrixelement; 
       }
       ret2 += ret;
     }
 
-    ret2 *= (1/SQRT((fptype)(_nPerm)));
+    ret2 *= (1/SQRT((fptype)(nPerm)));
     fptype amp_real = cudaArray[indices[2*amp + 5]];
     fptype amp_imag = cudaArray[indices[2*amp + 6]];
     ret2.multiply(amp_real, amp_imag); 

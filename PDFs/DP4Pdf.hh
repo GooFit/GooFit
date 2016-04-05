@@ -33,7 +33,7 @@ private:
   std::map<std::string, unsigned int> SpinMap;
   std::vector<SpinFactor*> SpinFactors;
   std::vector<AmpCalc*> AmpCalcs;
-  std::vector<NormIntegrator*> integrators;
+  NormIntegrator* Integrator;
   std::vector<SFCalculator*> sfcalculators;
   std::vector<LSCalculator*> lscalculators;
 
@@ -120,10 +120,9 @@ class AmpCalc : public thrust::unary_function<unsigned int, devcomplex<fptype> >
 
  class NormIntegrator : public thrust::unary_function<thrust::tuple<int, fptype*>, fptype >{
   public:
-    NormIntegrator(unsigned int pIdx, unsigned int nPerm);
+    NormIntegrator(unsigned int pIdx);
     EXEC_TARGET fptype operator() (thrust::tuple<int, fptype*> t) const;
   private:
-    unsigned int _nPerm;
     unsigned int _parameters;
  };
 

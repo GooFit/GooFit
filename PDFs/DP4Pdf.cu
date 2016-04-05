@@ -32,7 +32,8 @@ EXEC_TARGET fptype device_DP (fptype* evt, fptype* p, unsigned int* indices) {
     devcomplex<fptype> matrixelement((Amps_DP[cacheToUse][evtNum*numAmps + i]).real,
              (Amps_DP[cacheToUse][evtNum*numAmps + i]).imag); 
     // printf("ddp %f, %f, %f, %f,\n",amp_real, amp_imag, matrixelement.real, matrixelement.imag );
-    matrixelement.multiply(amp_real, amp_imag); 
+    matrixelement.multiply(amp_real, amp_imag);
+
     totalAmp += matrixelement;
   } 
   fptype ret = norm2(totalAmp); 
@@ -220,7 +221,6 @@ __host__ fptype DPPdf::normalise () const {
       host_norm_array[i*offset + 2] = hostphsp[2 + i*5];
       host_norm_array[i*offset + 3] = hostphsp[3 + i*5];
       host_norm_array[i*offset + 4] = hostphsp[4 + i*5];
-      //host_norm_array[i*offset + 5] = hostphsp[5 + i*6];
     }
     // printf("%4g, %4g, %4g, %4g, %4g, %4g\n", host_norm_array[offset*(MCevents-1)], host_norm_array[offset*(MCevents-1)+1], host_norm_array[offset*(MCevents-1)+2], host_norm_array[offset*(MCevents-1)+3], host_norm_array[offset*(MCevents-1)+4], host_norm_array[offset*(MCevents-1)+5] );
 
@@ -435,11 +435,14 @@ EXEC_TARGET devcomplex<fptype> LSCalculator::operator () (thrust::tuple<int, fpt
     fptype d1,d2;  
     fptype mres = getmass(pair, d1 , d2, vecs, m1, m2, m3, m4);
     ret = getResonanceAmplitude(mres, d1, d2, functn_i, params_i);
+    // printf("LS %i: mass:%f, %f i%f\n",_resonance_i, mres, ret.real, ret.imag );
+
   }
 
   //if (!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass)) return ret;
   //printf("m12 %f \n", m12); // %f %f %f (%f, %f)\n ", m12, m13, m23, ret.real, ret.imag); 
   //printf("#Parameters %i, #LS %i, #SF %i, #AMP %i \n", indices[0], indices[3], indices[4], indices[5]);
+  
   return ret;
 }
 
@@ -491,7 +494,7 @@ EXEC_TARGET int NormLSCalculator::operator () (thrust::tuple<int, fptype*> t) co
   }
   // printf("%f, %f, %f, %f, %f \n",m12, m34, cos12, cos34, phi );
   // printf("%i, %i, %i, %i, %i \n",numLS, numSF, numAmps, offset, evtNum );
-  // printf("NLS %f, %f\n",ret.real, ret.imag);
+  // printf("NLS %i, %f, %f\n",_resonance_i,ret.real, ret.imag);
   evt[5 + _resonance_i * 2] = ret.real;
   evt[6 + _resonance_i * 2] = ret.imag;
 
@@ -555,7 +558,6 @@ EXEC_TARGET fptype NormIntegrator::operator() (thrust::tuple<int, fptype*> t) co
   fptype* evt = thrust::get<1>(t) + (evtNum * offset); 
 
   devcomplex<fptype> returnVal(0,0);
-
   for (int amp = 0; amp < totalAMP; ++amp)
   {
     unsigned int ampidx =  AmpIndices[amp];
@@ -565,12 +567,15 @@ EXEC_TARGET fptype NormIntegrator::operator() (thrust::tuple<int, fptype*> t) co
     unsigned int SF_step = numSF/nPerm;
     unsigned int LS_step = numLS/nPerm;
     devcomplex<fptype> ret2(0,0);
+    // printf("%i, %i, %i, %i, %i, %i, %i, %i, %i, %f\n",ampidx, amp, numLS, numSF, nPerm,AmpIndices[totalAMP + ampidx + 3 + 0], AmpIndices[totalAMP + ampidx + 3 + 1], AmpIndices[totalAMP + ampidx + 3 + 2], AmpIndices[totalAMP + ampidx + 3 + 3], (1/SQRT((fptype)(nPerm))) );
 
     for (int j = 0; j < nPerm; ++j){  
       devcomplex<fptype> ret(1,0);
       for (int i = j*LS_step; i < (j+1)*LS_step; ++i){
         devcomplex<fptype> matrixelement(evt[5 + 2 * AmpIndices[totalAMP + ampidx + 3 + i]],evt[5 + 2 * AmpIndices[totalAMP + ampidx + 3 + i] + 1]); 
         ret *= matrixelement; 
+        // printf("Norm BW %i, %f, %f\n",(5 + 2 * AmpIndices[totalAMP + ampidx + 3 + i]), matrixelement.real, matrixelement.imag);
+
       }
       for (int i = j*SF_step; i < (j+1)*SF_step; ++i){
         devcomplex<fptype> matrixelement(evt[5 + 2 * totalLS + AmpIndices[totalAMP + ampidx + 3 + numLS + i]],0); 
@@ -580,11 +585,14 @@ EXEC_TARGET fptype NormIntegrator::operator() (thrust::tuple<int, fptype*> t) co
     }
 
     ret2 *= (1/SQRT((fptype)(nPerm)));
-    fptype amp_real = cudaArray[indices[2*amp + 5]];
-    fptype amp_imag = cudaArray[indices[2*amp + 6]];
+    fptype amp_real = cudaArray[indices[2*amp + 6]];
+    fptype amp_imag = cudaArray[indices[2*amp + 7]];
+    // printf("%f, %f\n",amp_real, amp_imag );
+
     ret2.multiply(amp_real, amp_imag); 
     returnVal += ret2;
   }
+  
   return norm2(returnVal);
 }
 

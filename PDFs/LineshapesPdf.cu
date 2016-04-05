@@ -257,7 +257,7 @@ EXEC_TARGET fptype bugg_Gamma_4pi(const fptype& s, const fptype mpi, const fptyp
 }
 
 // this lineshape is not tested yet!
-EXEC_TARGET devcomplex<fptype> bugg_DP (fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
+EXEC_TARGET devcomplex<fptype> bugg_MINT (fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
   fptype meson_radius           = functorConstants[indices[1]+4];
   fptype resmass                = cudaArray[indices[2]];
   // fptype reswidth               = cudaArray[indices[3]];

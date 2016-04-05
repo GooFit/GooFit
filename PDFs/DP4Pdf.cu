@@ -1,11 +1,24 @@
+/*
+04/05/2016
+DISCLAIMER:
+
+This code is not sufficently tested yet and still under heavy development!
+
+TODO: 
+- Test lineshapes, only done for BW_DP and BW_MINT so far
+- Check and implement more SF
+- Is the normalisation really correct?
+- Currently no check if the event is even allowed in phasespace is done. This should preferably be done outside of this class.
+
+- Some things could be implemented differently maybe, performance should be compared for both cases. 
+  -For example the way Spinfactors are stored in the same array as the Lineshape values for access of nearby memory.
+   Is this really worth the memory we lose by using a complex to store the SF?
+*/
+
 #include "DP4Pdf.hh"
 #include <complex>
 using std::complex; 
 
-//const int resonanceOffset_DP = 4; // Offset of the first resonance into the parameter index array 
-// Offset is number of parameters, constant index, number of resonances (not calculable 
-// from nP because we don't know what the efficiency might need), and cache index. Efficiency 
-// parameters are after the resonance information. 
 
 // The function of this array is to hold all the cached waves; specific 
 // waves are recalculated when the corresponding resonance mass or width 
@@ -13,9 +26,16 @@ using std::complex;
 // own cache, hence the '10'. Ten threads should be enough for anyone! 
 MEM_DEVICE devcomplex<fptype>* cResSF[10]; 
 MEM_DEVICE devcomplex<fptype>* Amps_DP[10]; 
+/*
+Constant memory array to hold specific info for amplitude calculation.
+First entries are the starting points in array, necessary, because number of Lineshapes(LS) or Spinfactors(SF) can vary
+|start of each Amplitude| #Linshapes | #Spinfactors | LS-indices | SF-indices|
+| 1 entry per Amplitude | 1 per Amp  | 1 per Amp    | #LS in Amp| #SF in Amp|
+*/
 MEM_CONSTANT unsigned int AmpIndices[100];
 
 
+// This function gets called by the GooFit framework to get the value of the PDF. 
 EXEC_TARGET fptype device_DP (fptype* evt, fptype* p, unsigned int* indices) {
   //printf("DalitzPlot evt %i zero: %i %i %f (%f, %f).\n", evtNum, numResonances, effFunctionIdx, eff, totalAmp.real, totalAmp.imag); 
 
@@ -85,6 +105,8 @@ __host__ DPPdf::DPPdf (std::string n,
   pindices.push_back(0); //#AMP 
 
 
+  // This is the start of reading in the amplitudes and adding the lineshapes and Spinfactors to this PDF
+  // This is done in this way so we don't have multiple copies of one lineshape in one pdf.
   std::vector<unsigned int> ampidx;
   std::vector<unsigned int> nPermVec;
   std::vector<unsigned int> ampidxstart;
@@ -181,6 +203,10 @@ __host__ DPPdf::DPPdf (std::string n,
   addSpecialMask(PdfBase::ForceSeparateNorm); 
 }
 
+
+// makes the arrays to chache the lineshape values and spinfactors in CachedResSF and the values of the amplitudes in cachedAMPs
+// I made the choice to have spinfactors necxt to the values of the lineshape in memory. I waste memory by doing this because a spinfactor is saved as complex
+// It would be nice to test if this is better than having the spinfactors stored seperately.
 __host__ void DPPdf::setDataSize (unsigned int dataSize, unsigned int evtSize) {
   // Default 3 is m12, m13, evtNum for DP 2dim, 4-body decay has 5 independent vars plus evtNum = 6
   totalEventSize = evtSize;
@@ -201,6 +227,7 @@ __host__ void DPPdf::setDataSize (unsigned int dataSize, unsigned int evtSize) {
   setForceIntegrals(); 
 }
 
+// this is where the actual magic happens. This function does all the calculations!
 __host__ fptype DPPdf::normalise () const {
   recursiveSetNormalisation(1); // Not going to normalise efficiency, 
   // so set normalisation factor to 1 so it doesn't get multiplied by zero. 
@@ -208,7 +235,8 @@ __host__ fptype DPPdf::normalise () const {
   // don't get zeroes through multiplying by the normFactor. 
   MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
   
-
+  // Create the array with the phasespace events for normalisation and copy them on the GPU
+  // it has room for the 5 variables plus 2 slots for real and imag value of every lineshape value plus one for every real value of the spinfactors
   if (!devNormArray) {
     fptype* host_norm_array = new fptype[MCevents * (5 + 2*(components.size() - 1)  + SpinFactors.size() )];
     unsigned int offset = 5 + 2*(components.size() - 1)  + SpinFactors.size() ;
@@ -230,7 +258,8 @@ __host__ fptype DPPdf::normalise () const {
     delete[] hostphsp;
   }
 
-
+//check if MINUIT changed any parameters and if so remember that so we know
+// we need to recalculate that lineshape and every amp, that uses that lineshape
   for (unsigned int i = 0; i < components.size() - 1; ++i) {
       redoIntegral[i] = forceRedoIntegrals; 
       if (!(components[i]->parametersChanged())) continue;
@@ -239,12 +268,16 @@ __host__ fptype DPPdf::normalise () const {
   }
   forceRedoIntegrals = false; 
 
+  //just some thrust iterators for the calculation. 
   thrust::constant_iterator<fptype*> normaddress(devNormArray); 
   thrust::counting_iterator<int> binIndex(0); 
   thrust::constant_iterator<fptype*> dataArray(dev_event_array); 
   thrust::constant_iterator<int> eventSize(totalEventSize);
   thrust::counting_iterator<int> eventIndex(0); 
 
+  //Calculate spinfactors only once for normalisation events and real events
+  //strided_range is a template implemented in DalitsPlotHelpers.hh
+  //it basically goes through the array by increasing the pointer by a certain amount instead of just one step.
   if(!SpinsCalculated){
     for (int i = 0; i < SpinFactors.size() ; ++i) {
       unsigned int offset = components.size() -1;
@@ -264,6 +297,7 @@ __host__ fptype DPPdf::normalise () const {
      SpinsCalculated = true;
   }
 
+  //this calculates the values of the lineshapes and stores them in the array. It is recalculated every time parameters change.
   for (int i = 0; i < components.size() -1 ; ++i) {
     if (redoIntegral[i]) {
       thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
@@ -275,6 +309,7 @@ __host__ fptype DPPdf::normalise () const {
     }
   }
 
+  // this is a little messy but it basically checks if the amplitude includes one of the recalculated lineshapes and if so recalculates that amplitude
   std::map<std::string, std::pair<std::vector<unsigned int>, std::vector<unsigned int> > >::const_iterator AmpMapIt = AmpMap.begin();
   for (int i = 0; i < AmpCalcs.size(); ++i) {
     std::vector<unsigned int> redoidx((*AmpMapIt).second.first);
@@ -293,7 +328,7 @@ __host__ fptype DPPdf::normalise () const {
       }
     }
     
-
+  // lineshape value calculation for the normalisation, also recalculated every time parameter change
   for (int i = 0; i < components.size() -1 ; ++i) {
       if(!redoIntegral[i]) continue;
       thrust::for_each(thrust::make_zip_iterator(thrust::make_tuple(binIndex, normaddress)),
@@ -301,6 +336,7 @@ __host__ fptype DPPdf::normalise () const {
               NormLSCalculator(parameters, i));
     }
 
+  //this does the rest of the integration with the cached lineshape and spinfactor values for the normalization events  
   fptype sumIntegral = 0;
   sumIntegral += thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(binIndex, normaddress)),
           thrust::make_zip_iterator(thrust::make_tuple(binIndex + MCevents, normaddress)),
@@ -308,6 +344,7 @@ __host__ fptype DPPdf::normalise () const {
           0.,
           thrust::plus<fptype>());
 
+  //MCevents is the number of normalisation events.
   sumIntegral/=MCevents;
   host_normalisation[parameters] = 1.0/sumIntegral;
   // printf("end of normalise %f\n", sumIntegral);
@@ -587,7 +624,7 @@ EXEC_TARGET fptype NormIntegrator::operator() (thrust::tuple<int, fptype*> t) co
     ret2 *= (1/SQRT((fptype)(nPerm)));
     fptype amp_real = cudaArray[indices[2*amp + 6]];
     fptype amp_imag = cudaArray[indices[2*amp + 7]];
-    // printf("%f, %f\n",amp_real, amp_imag );
+    // if (evtNum==0) printf("%f, %f\n",amp_real, amp_imag );
 
     ret2.multiply(amp_real, amp_imag); 
     returnVal += ret2;

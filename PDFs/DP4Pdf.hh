@@ -1,3 +1,11 @@
+/*
+04/05/2016
+DISCLAIMER:
+
+This code is not sufficently tested yet and still under heavy development!
+See *.cu file for more details
+*/
+
 #ifndef D_P4_PDF_HH
 #define D_P4_PDF_HH
 

@@ -1,3 +1,18 @@
+/*
+04/05/2016
+DISCLAIMER:
+
+This code is not sufficently tested yet and still under heavy development!
+
+TODO:
+- reorganize this file into multiple files so lineshapes and spinfactors are seperated. Also all helper functions should go into seperate file.
+
+This file includes some lineshapes and spinfactors.
+Also right now it is the home to some helper functions needed and an implementation of a simple 4-vec class that works on the GPU
+*/
+
+
+
 #include "LineshapesPdf.hh" 
 
 

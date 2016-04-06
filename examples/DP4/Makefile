@@ -49,9 +49,13 @@ DP4:		DP4.o $(THRUSTO) $(ROOTUTILLIB)
 		$(LD) $(LDFLAGS) $^ $(LIBS) $(ROOT_LIBS) $(OutPutOpt) $@
 		@echo "$@ done"
 
-plots: DP4 mcevents
-	./mcevents
-	./DP4 > DP4.txt
+phspMC.root: mcevents
+			./mcevents
+
+DP4.txt: DP4 phspMC.root
+		./DP4 > DP4.txt
+
+plots: DP4.txt
 	chmod 775 plot.py
 	./plot.py
 clean:

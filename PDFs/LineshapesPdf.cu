@@ -228,7 +228,6 @@ EXEC_TARGET devcomplex<fptype> BW_MINT (fptype Mpair, fptype m1, fptype m2, unsi
 
   fptype pratio_to_2Jplus1 = 1;
 
-  #pragma unroll
   for(int i=0; i < to2Lplus1; i++){
     pratio_to_2Jplus1 *= pratio;
   }    

@@ -66,28 +66,61 @@ int main (int argc, char** argv) {
   bool useMINT = true;
 
   //Map of spinfactors, here we have two because of the bose symmetrization of the two pi+
-  std::map<std::string, SpinFactor*> SF;
-  SF["SVVS"] = new SpinFactor("SVVS", 0, 0, 1, 2, 3);
-  SF["BSSVVS"] = new SpinFactor("SVVS", 0, 1, 3, 2, 0);
+  std::map<std::string, SpinFactor*> SFKRS;
+  SFKRS["SVVS"] = new SpinFactor("spin0", 0, 0, 1, 2, 3);
+  SFKRS["BSSVVS"] = new SpinFactor("spin0", 0, 1, 3, 2, 0);
+
+  std::map<std::string, SpinFactor*> SFKRP;
+  SFKRP["SVVP"] = new SpinFactor("spin0", 1, 0, 1, 2, 3);
+  SFKRP["BSSVVP"] = new SpinFactor("spin0", 1, 1, 3, 2, 0);
+
+  std::map<std::string, SpinFactor*> SFKRD;
+  SFKRD["SVVD"] = new SpinFactor("spin0", 2, 0, 1, 2, 3);
+  SFKRD["BSSVVD"] = new SpinFactor("spin0", 2, 1, 3, 2, 0);
 
   //Map of lineshapes, also for both pi+ configurations
-  std::map<std::string, Lineshape*> LS;
-  LS["rho(770)"]= new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, useMINT);
-  LS["K*(892)bar"]= new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_34, useMINT);
-  LS["BSrho(770)"]= new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, useMINT);
-  LS["BSK*(892)bar"]= new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_13, useMINT);
+  std::map<std::string, Lineshape*> LSKRS;
+  LSKRS["rho(770)"]= new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, useMINT);
+  LSKRS["K*(892)bar"]= new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_34, useMINT);
+  LSKRS["BSrho(770)"]= new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, useMINT);
+  LSKRS["BSK*(892)bar"]= new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_13, useMINT);
+
+  std::map<std::string, Lineshape*> LSKRP;
+  LSKRP["rho(770)"]= new Lineshape("rho(770)P", RhoMass, RhoWidth, 1, M_12, useMINT);
+  LSKRP["K*(892)bar"]= new Lineshape("K*(892)barP", KstarM, KstarW, 1, M_34, useMINT);
+  LSKRP["BSrho(770)"]= new Lineshape("rho(770)P", RhoMass, RhoWidth, 1, M_24, useMINT);
+  LSKRP["BSK*(892)bar"]= new Lineshape("K*(892)barP", KstarM, KstarW, 1, M_13, useMINT);
+
+  std::map<std::string, Lineshape*> LSKRD;
+  LSKRD["rho(770)"]= new Lineshape("rho(770)D", RhoMass, RhoWidth, 1, M_12, useMINT);
+  LSKRD["K*(892)bar"]= new Lineshape("K*(892)barD", KstarM, KstarW, 1, M_34, useMINT);
+  LSKRD["BSrho(770)"]= new Lineshape("rho(770)D", RhoMass, RhoWidth, 1, M_24, useMINT);
+  LSKRD["BSK*(892)bar"]= new Lineshape("K*(892)barD", KstarM, KstarW, 1, M_13, useMINT);
 
   // the very last parameter means that we have two permutations. so the first half of the Lineshapes 
   // and the first half of the spinfactors are amplitude 1, rest is amplitude 2
   // This means that it is important for symmetrized amplitueds that the spinfactors and lineshapes are in the "right" order
-  Amplitude* Bose_symmetrized_AMP = new Amplitude( "K*(892)rho(770)", new Variable("amp_real1", -0.115177 , 0.1, 0, 0), new Variable("amp_imag1", 0.153976, 0.1, 0, 0), LS, SF, 2);
+  Amplitude* Bose_symmetrized_AMP_S = new Amplitude( "K*(892)rho(770)_S", new Variable("amp_real1", -0.115177), new Variable("amp_imag1", 0.153976), LSKRS, SFKRS, 2);
+  Amplitude* Bose_symmetrized_AMP_P = new Amplitude( "K*(892)rho(770)_P", new Variable("amp_real2", -0.0298697), new Variable("amp_imag2", -0.0722874), LSKRP, SFKRP, 2);
+  Amplitude* Bose_symmetrized_AMP_D = new Amplitude( "K*(892)rho(770)_D", new Variable("amp_real3", -0.452212), new Variable("amp_imag3", 0.426521), LSKRD, SFKRD, 2);
 
 
-  for (std::map<std::string, Lineshape*>::iterator res = LS.begin(); res != LS.end(); ++res) {
+  for (std::map<std::string, Lineshape*>::iterator res = LSKRS.begin(); res != LSKRS.end(); ++res) {
     (*res).second->setParameterConstantness(true); 
   }
 
-  DK3P_DI->amplitudes.push_back(Bose_symmetrized_AMP);
+  for (std::map<std::string, Lineshape*>::iterator res = LSKRP.begin(); res != LSKRP.end(); ++res) {
+    (*res).second->setParameterConstantness(true); 
+  }
+
+  for (std::map<std::string, Lineshape*>::iterator res = LSKRD.begin(); res != LSKRD.end(); ++res) {
+    (*res).second->setParameterConstantness(true); 
+  }
+
+
+  DK3P_DI->amplitudes.push_back(Bose_symmetrized_AMP_S);
+  DK3P_DI->amplitudes.push_back(Bose_symmetrized_AMP_P);
+  DK3P_DI->amplitudes.push_back(Bose_symmetrized_AMP_D);
 
 
   m12 = new Variable("m12", 0, 3);

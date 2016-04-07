@@ -198,7 +198,7 @@ __host__ DPPdf::DPPdf (std::string n,
     AmpCalcs.push_back(new AmpCalc(ampidxstart[i], parameters, nPermVec[i]));
   }
 
-  //printf("%i\n", parameters );
+  // printf("#Amp's %i, #LS %i, #SF %i \n", AmpMap.size(), components.size()-1, SpinFactors.size() );
 
   addSpecialMask(PdfBase::ForceSeparateNorm); 
 }
@@ -382,7 +382,7 @@ EXEC_TARGET devcomplex<fptype> SFCalculator::operator () (thrust::tuple<int, fpt
 
   spin_function_ptr func = reinterpret_cast<spin_function_ptr>(device_function_table[functn_i]);
   fptype sf = (*func)(vecs, paramIndices+params_i);
-  // printf("SpinFactors: %f\n", sf );
+  // printf("SpinFactors %i : %f\n",evtNum, sf );
   return devcomplex<fptype>(sf, 0);
 }
 
@@ -413,16 +413,16 @@ EXEC_TARGET fptype NormSpinCalculator::operator () (thrust::tuple<int, fptype*> 
   fptype vecs[16];
   get4Vecs(vecs, indices[1], m12, m34, cos12, cos34, phi); 
 
-//   printf("vec%i %f, %f, %f, %f\n",0, vecs[0], vecs[1], vecs[2], vecs[3]);
-//   printf("vec%i %f, %f, %f, %f\n",1, vecs[4], vecs[5], vecs[6], vecs[7]);
-//   printf("vec%i %f, %f, %f, %f\n",2, vecs[8], vecs[9], vecs[10], vecs[11]);
-//   printf("vec%i %f, %f, %f, %f\n",3, vecs[12], vecs[13], vecs[14], vecs[15]);
-// }
+//   printf("evt %i vec%i %.5g, %.5g, %.5g, %.5g\n", evtNum,0, vecs[0], vecs[1], vecs[2], vecs[3]);
+//   printf("evt %i vec%i %.5g, %.5g, %.5g, %.5g\n", evtNum,1, vecs[4], vecs[5], vecs[6], vecs[7]);
+//   printf("evt %i vec%i %.5g, %.5g, %.5g, %.5g\n", evtNum,2, vecs[8], vecs[9], vecs[10], vecs[11]);
+//   printf("evt %i vec%i %.5g, %.5g, %.5g, %.5g\n", evtNum,3, vecs[12], vecs[13], vecs[14], vecs[15]);
+// // }
   spin_function_ptr func = reinterpret_cast<spin_function_ptr>(device_function_table[functn_i]);
   fptype sf = (*func)(vecs, paramIndices+params_i);
   fptype* spinfactor = evt + 5 + 2*numLS + _spinfactor_i;
   spinfactor[0] = sf;
-  // printf("%f\n",sf );
+  // printf("evtNum %i, %.5g\n",sf );
 
   THREAD_SYNCH
   return sf;
@@ -479,6 +479,8 @@ EXEC_TARGET devcomplex<fptype> LSCalculator::operator () (thrust::tuple<int, fpt
   //if (!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass)) return ret;
   //printf("m12 %f \n", m12); // %f %f %f (%f, %f)\n ", m12, m13, m23, ret.real, ret.imag); 
   //printf("#Parameters %i, #LS %i, #SF %i, #AMP %i \n", indices[0], indices[3], indices[4], indices[5]);
+
+  // printf("%i BW_%i : %f %f\n",evtNum, _resonance_i, ret.real, ret.imag); 
   
   return ret;
 }

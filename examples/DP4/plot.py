@@ -1,9 +1,10 @@
 #!/usr/bin/python
 import matplotlib
+matplotlib.use('Agg')
 import numpy as np
 import matplotlib.pyplot as plt
 
-m = np.genfromtxt('MINT_Krho_S_wave.txt', skip_header=1,delimiter=',')
+m = np.genfromtxt('MINT_Krho_SPD_wave.txt', skip_header=1,delimiter=',')
 m1 = np.genfromtxt('DP4.txt', skip_header=1, skip_footer=5e5)
 f1 = np.genfromtxt("DP4.txt", skip_header=500001)
 
@@ -19,7 +20,7 @@ c12_1 = m1[:,2]
 c34_1 = m1[:,3]
 phi_1 = m1[:,4]
 
-weights = .5e-5 * np.ones_like(m12)
+weights = 1.0/len(m12) * np.ones_like(m12)
 
 plt.figure(figsize=(12,6))
 plt.hist(m12,100, weights=weights,alpha=0.5,label='MINT')

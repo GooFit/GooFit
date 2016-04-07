@@ -59,4 +59,4 @@ plots: DP4.txt
 	chmod 775 plot.py
 	./plot.py
 clean:
-		@rm -f *.o DP4 DP4.o DP4.txt *.png mcevents
+		@rm -f *.o DP4 DP4.o DP4.txt *.png mcevents phspMC.root

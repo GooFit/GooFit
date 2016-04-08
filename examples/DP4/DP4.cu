@@ -68,15 +68,15 @@ int main (int argc, char** argv) {
   //Map of spinfactors, here we have two because of the bose symmetrization of the two pi+
   std::map<std::string, SpinFactor*> SFKRS;
   SFKRS["SVVS"] = new SpinFactor("spin0", 0, 0, 1, 2, 3);
-  SFKRS["BSSVVS"] = new SpinFactor("spin0", 0, 1, 3, 2, 0);
+  SFKRS["BSSVVS"] = new SpinFactor("spin0", 0, 3, 1, 2, 0);
 
   std::map<std::string, SpinFactor*> SFKRP;
   SFKRP["SVVP"] = new SpinFactor("spin0", 1, 0, 1, 2, 3);
-  SFKRP["BSSVVP"] = new SpinFactor("spin0", 1, 1, 3, 2, 0);
+  SFKRP["BSSVVP"] = new SpinFactor("spin0", 1, 3, 1, 2, 0);
 
   std::map<std::string, SpinFactor*> SFKRD;
   SFKRD["SVVD"] = new SpinFactor("spin0", 2, 0, 1, 2, 3);
-  SFKRD["BSSVVD"] = new SpinFactor("spin0", 2, 1, 3, 2, 0);
+  SFKRD["BSSVVD"] = new SpinFactor("spin0", 2, 3, 1, 2, 0);
 
   //Map of lineshapes, also for both pi+ configurations
   std::map<std::string, Lineshape*> LSKRS;

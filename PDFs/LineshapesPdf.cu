@@ -79,6 +79,11 @@ EXEC_TARGET fptype S_VV_PPPP_S (fptype* Vecs, unsigned int* indices) {
   gpuLVec P3(Vecs[0 + 4*p3], Vecs[1 + 4*p3], Vecs[2 + 4*p3], Vecs[3 + 4*p3]);
   gpuLVec P4(Vecs[0 + 4*p4], Vecs[1 + 4*p4], Vecs[2 + 4*p4], Vecs[3 + 4*p4]);
 
+  // printf("vec%i %.5g, %.5g, %.5g, %.5g\n",0, P1.getX(), P1.getY(), P1.getZ(),P1.getE());
+  // printf("vec%i %.5g, %.5g, %.5g, %.5g\n",1, P2.getX(), P2.getY(), P2.getZ(),P2.getE());
+  // printf("vec%i %.5g, %.5g, %.5g, %.5g\n",2, P3.getX(), P3.getY(), P3.getZ(),P3.getE());
+  // printf("vec%i %.5g, %.5g, %.5g, %.5g\n",3, P4.getX(), P4.getY(), P4.getZ(),P4.getE());
+
   gpuLVec pV1 = P1 + P2;
   gpuLVec qV1 = P1 - P2;
   gpuLVec pV2 = P3 + P4;
@@ -92,7 +97,7 @@ EXEC_TARGET fptype S_VV_PPPP_S (fptype* Vecs, unsigned int* indices) {
                    - qV1.Dot(pV2) * pV2.Dot(qV2) / (MV2*MV2)
                    + qV1.Dot(pV1) * pV1.Dot(pV2) * pV2.Dot(qV2) 
                    / (MV1*MV1 * MV2*MV2));
-  // printf("s1 %.5g\n",returnVal);
+  // printf("s1 %.5g; %i,%i,%i,%i\n",returnVal, indices[2], indices[3], indices[4], indices[5]);
   return returnVal;
 }
 
@@ -204,8 +209,7 @@ EXEC_TARGET devcomplex<fptype> BW_DP (fptype Mpair, fptype m1, fptype m2, unsign
 }
 
 EXEC_TARGET devcomplex<fptype> BW_MINT (fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
-  // fptype meson_radius           = functorConstants[indices[1]+0];
-  fptype meson_radius           = 1.5;
+  fptype meson_radius           = functorConstants[indices[1]+0];
   fptype resmass                = cudaArray[indices[2]];
   fptype reswidth               = cudaArray[indices[3]];
   unsigned int orbital          = indices[4];
@@ -244,12 +248,11 @@ EXEC_TARGET devcomplex<fptype> BW_MINT (fptype Mpair, fptype m1, fptype m2, unsi
   devcomplex<fptype> BW(mass*mass - mumsRecoMass2, mass*GofM);
   fptype den = (mass*mass - mumsRecoMass2) * (mass*mass - mumsRecoMass2) + mass * GofM * mass * GofM;
 
-  devcomplex<fptype> ret = SQRT(k)/den * BW;
+  devcomplex<fptype> ret = (SQRT(k) * thisFR)/den * BW;
 
-  // printf("%.7g, %.7g, %.7g, %i, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g\n", m1, m2, Mpair, to2Lplus1, GofM, pratio_to_2Jplus1, mratio, gamma, k , pABSq, prSqForGofM, ret.imag, ret.real );
+  // printf("%.7g, %.7g, %.7g, %i, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g\n", m1, m2, Mpair, to2Lplus1, GofM, pratio_to_2Jplus1, mratio, k , meson_radius, prSqForGofM, thisFR, ret.real, ret.imag );
   return  ret ; 
 }
-
 
 EXEC_TARGET devcomplex<fptype> bugg_rho2(const fptype& s, const fptype m){
   fptype rho_squared = 1. - 4. * m*m /s;

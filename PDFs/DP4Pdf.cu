@@ -61,7 +61,7 @@ EXEC_TARGET fptype device_DP (fptype* evt, fptype* p, unsigned int* indices) {
   fptype eff = callFunction(evt, indices[effFunctionIdx], indices[effFunctionIdx + 1]); 
   ret *= eff;
 
-  // printf("test\n");
+  // printf("result %.7g\n", ret);
   return ret; 
 }
 
@@ -382,7 +382,7 @@ EXEC_TARGET devcomplex<fptype> SFCalculator::operator () (thrust::tuple<int, fpt
 
   spin_function_ptr func = reinterpret_cast<spin_function_ptr>(device_function_table[functn_i]);
   fptype sf = (*func)(vecs, paramIndices+params_i);
-  // printf("SpinFactors %i : %f\n",evtNum, sf );
+  // printf("SpinFactors %i : %.7g\n",evtNum, sf );
   return devcomplex<fptype>(sf, 0);
 }
 
@@ -422,7 +422,7 @@ EXEC_TARGET fptype NormSpinCalculator::operator () (thrust::tuple<int, fptype*> 
   fptype sf = (*func)(vecs, paramIndices+params_i);
   fptype* spinfactor = evt + 5 + 2*numLS + _spinfactor_i;
   spinfactor[0] = sf;
-  // printf("evtNum %i, %.5g\n",sf );
+  // printf("evtNum %i, %.5g\n",evtNum, sf );
 
   THREAD_SYNCH
   return sf;
@@ -458,7 +458,6 @@ EXEC_TARGET devcomplex<fptype> LSCalculator::operator () (thrust::tuple<int, fpt
   fptype cos12 = evt[indices[4 + indices[0]]];
   fptype cos34 = evt[indices[5 + indices[0]]];
   fptype phi = evt[indices[6 + indices[0]]];
-
   if (pair < 2){
     fptype mres = pair==0 ? m12 : m34;
     fptype d1 = pair==0 ? m1 : m3;
@@ -480,7 +479,7 @@ EXEC_TARGET devcomplex<fptype> LSCalculator::operator () (thrust::tuple<int, fpt
   //printf("m12 %f \n", m12); // %f %f %f (%f, %f)\n ", m12, m13, m23, ret.real, ret.imag); 
   //printf("#Parameters %i, #LS %i, #SF %i, #AMP %i \n", indices[0], indices[3], indices[4], indices[5]);
 
-  // printf("%i BW_%i : %f %f\n",evtNum, _resonance_i, ret.real, ret.imag); 
+  // printf("%i mass: %.5g, BW_%i : %f %f\n",evtNum, massstore, _resonance_i, ret.real, ret.imag); 
   
   return ret;
 }
@@ -572,9 +571,12 @@ EXEC_TARGET devcomplex<fptype> AmpCalc::operator() (thrust::tuple<int, fptype*, 
     for (int j = i*LS_step; j < (i+1)*LS_step; ++j){
       ret *= (cResSF[cacheToUse][evtNum*offset + AmpIndices[totalAMP + _AmpIdx + 3 + j]]);
     }
+    // printf("Lineshape Product = (%.7g, %.7g)\n", ret.real, ret.imag);
     for (int j = i*SF_step; j < (i+1)*SF_step; ++j){
       ret *= (cResSF[cacheToUse][evtNum*offset + totalLS + AmpIndices[totalAMP + _AmpIdx + 3 + numLS + j]].real);
     }
+    // printf("Lineshape Product * SF = (%.7g, %.7g)\n", ret.real, ret.imag);
+
     returnVal += ret;
   }
  

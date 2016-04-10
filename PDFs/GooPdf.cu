@@ -405,7 +405,7 @@ __host__ fptype GooPdf::normalise () const {
 					thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, eventSize, arrayAddress)),
 					*logger, dummy, cudaPlus); 
  
-  if (isnan(sum)) {
+  if (std::isnan(sum)) {
     abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " NaN in normalisation", this); 
   }
   else if (0 >= sum) { 

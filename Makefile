@@ -9,7 +9,7 @@ LD=icpc
 CXXFLAGS=-mmic -x c++
 endif
 
-CXXFLAGS += -O3  
+CXXFLAGS += -O3 -std=c++11
 #-O3-g -DTHRUST_DEBUG
 DEFINEFLAGS = -DDUMMY=dummy 
 

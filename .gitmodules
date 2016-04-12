@@ -1,0 +1,3 @@
+[submodule "MCBooster"]
+	path = MCBooster
+	url = git@github.com:MultithreadCorner/MCBooster.git

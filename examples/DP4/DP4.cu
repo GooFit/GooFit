@@ -9,17 +9,8 @@
 #include "DP4Pdf.hh"
 using namespace std;
 
-
-UnbinnedDataSet* data = 0; 
-Variable* m12 = 0;
-Variable* m13 = 0;
-Variable* eventNumber = 0; 
-
 const fptype _mD0 = 1.8645; 
-const fptype _mD02 = _mD0 *_mD0;
-const fptype _mD02inv = 1./_mD02; 
 const fptype piPlusMass = 0.13957018;
-const fptype piZeroMass = 0.1349766;
 const fptype KmMass = .493677;
 // Constants used in more than one PDF component. 
 
@@ -60,41 +51,41 @@ int main (int argc, char** argv) {
 
   Variable* RhoMass  = new Variable("rho_mass", 0.77526, 0.01, 0.7, 0.8);
   Variable* RhoWidth = new Variable("rho_width", 0.1478, 0.01, 0.1, 0.2); 
-  Variable* KstarM  = new Variable("KstarM", 0.89581, 0.01, 0.9, 0.1);
-  Variable* KstarW  = new Variable("KstarW", 0.0474, 0.01, 0.1, 0.2); 
+  Variable* KstarM   = new Variable("KstarM", 0.89581, 0.01, 0.9, 0.1);
+  Variable* KstarW   = new Variable("KstarW", 0.0474, 0.01, 0.1, 0.2); 
 
   bool useMINT = true;
 
   //Map of spinfactors, here we have two because of the bose symmetrization of the two pi+
   std::map<std::string, SpinFactor*> SFKRS;
-  SFKRS["SVVS"] = new SpinFactor("spin0", 0, 0, 1, 2, 3);
-  SFKRS["BSSVVS"] = new SpinFactor("spin0", 0, 3, 1, 2, 0);
+  SFKRS["SVVS"]   = new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_S, 0, 1, 2, 3);
+  SFKRS["BSSVVS"] = new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_S, 3, 1, 2, 0);
 
   std::map<std::string, SpinFactor*> SFKRP;
-  SFKRP["SVVP"] = new SpinFactor("spin0", 1, 0, 1, 2, 3);
-  SFKRP["BSSVVP"] = new SpinFactor("spin0", 1, 3, 1, 2, 0);
+  SFKRP["SVVP"]   = new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_P, 0, 1, 2, 3);
+  SFKRP["BSSVVP"] = new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_P, 3, 1, 2, 0);
 
   std::map<std::string, SpinFactor*> SFKRD;
-  SFKRD["SVVD"] = new SpinFactor("spin0", 2, 0, 1, 2, 3);
-  SFKRD["BSSVVD"] = new SpinFactor("spin0", 2, 3, 1, 2, 0);
+  SFKRD["SVVD"]   = new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_D, 0, 1, 2, 3);
+  SFKRD["BSSVVD"] = new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_D, 3, 1, 2, 0);
 
   //Map of lineshapes, also for both pi+ configurations
   std::map<std::string, Lineshape*> LSKRS;
-  LSKRS["rho(770)"]= new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, useMINT);
-  LSKRS["K*(892)bar"]= new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_34, useMINT);
-  LSKRS["BSrho(770)"]= new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, useMINT);
+  LSKRS["rho(770)"]    = new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, useMINT);
+  LSKRS["K*(892)bar"]  = new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_34, useMINT);
+  LSKRS["BSrho(770)"]  = new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, useMINT);
   LSKRS["BSK*(892)bar"]= new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_13, useMINT);
 
   std::map<std::string, Lineshape*> LSKRP;
-  LSKRP["rho(770)"]= new Lineshape("rho(770)P", RhoMass, RhoWidth, 1, M_12, useMINT);
-  LSKRP["K*(892)bar"]= new Lineshape("K*(892)barP", KstarM, KstarW, 1, M_34, useMINT);
-  LSKRP["BSrho(770)"]= new Lineshape("rho(770)P", RhoMass, RhoWidth, 1, M_24, useMINT);
+  LSKRP["rho(770)"]    = new Lineshape("rho(770)P", RhoMass, RhoWidth, 1, M_12, useMINT);
+  LSKRP["K*(892)bar"]  = new Lineshape("K*(892)barP", KstarM, KstarW, 1, M_34, useMINT);
+  LSKRP["BSrho(770)"]  = new Lineshape("rho(770)P", RhoMass, RhoWidth, 1, M_24, useMINT);
   LSKRP["BSK*(892)bar"]= new Lineshape("K*(892)barP", KstarM, KstarW, 1, M_13, useMINT);
 
   std::map<std::string, Lineshape*> LSKRD;
-  LSKRD["rho(770)"]= new Lineshape("rho(770)D", RhoMass, RhoWidth, 1, M_12, useMINT);
-  LSKRD["K*(892)bar"]= new Lineshape("K*(892)barD", KstarM, KstarW, 1, M_34, useMINT);
-  LSKRD["BSrho(770)"]= new Lineshape("rho(770)D", RhoMass, RhoWidth, 1, M_24, useMINT);
+  LSKRD["rho(770)"]    = new Lineshape("rho(770)D", RhoMass, RhoWidth, 1, M_12, useMINT);
+  LSKRD["K*(892)bar"]  = new Lineshape("K*(892)barD", KstarM, KstarW, 1, M_34, useMINT);
+  LSKRD["BSrho(770)"]  = new Lineshape("rho(770)D", RhoMass, RhoWidth, 1, M_24, useMINT);
   LSKRD["BSK*(892)bar"]= new Lineshape("K*(892)barD", KstarM, KstarW, 1, M_13, useMINT);
 
   // the very last parameter means that we have two permutations. so the first half of the Lineshapes 
@@ -122,8 +113,7 @@ int main (int argc, char** argv) {
   DK3P_DI->amplitudes.push_back(Bose_symmetrized_AMP_P);
   DK3P_DI->amplitudes.push_back(Bose_symmetrized_AMP_D);
 
-
-  m12 = new Variable("m12", 0, 3);
+  Variable* m12 = new Variable("m12", 0, 3);
   Variable* m34 = new Variable("m34", 0, 3); 
   Variable* cos12 = new Variable("cos12", -1, 1);
   Variable* cos34 = new Variable("m12", -1, 1);
@@ -136,7 +126,7 @@ int main (int argc, char** argv) {
 
   Variable* constantOne = new Variable("constantOne", 1); 
   Variable* constantZero = new Variable("constantZero", 0);
-  eventNumber = new Variable("eventNumber", 0, INT_MAX);
+  Variable* eventNumber = new Variable("eventNumber", 0, INT_MAX);
 
   vector<Variable*> observables;
   vector<Variable*> coefficients; 

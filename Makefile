@@ -58,6 +58,7 @@ INCLUDES += -I$(SRCDIR) -I$(PWD) -I$(CUDAHEADERS) -I$(PWD)/rootstuff
 # GooPdf must be first in CUDAglob, as it defines global variables.
 FUNCTORLIST    = $(SRCDIR)/GooPdf.cu 
 FUNCTORLIST    += $(filter-out $(SRCDIR)/GooPdf.cu, $(wildcard $(SRCDIR)/*Pdf.cu))
+FUNCTORLIST	   += $(SRCDIR)/DalitzPlotHelpers.cu $(SRCDIR)/SpinFactors.cu
 FUNCTORLIST   += $(wildcard $(SRCDIR)/*Aux.cu)
 HEADERLIST     = $(patsubst %.cu,%.hh,$(SRCFILES))
 WRKFUNCTORLIST = $(patsubst $(SRCDIR)/%.cu,wrkdir/%.cu,$(FUNCTORLIST))

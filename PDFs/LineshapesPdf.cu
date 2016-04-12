@@ -1,5 +1,5 @@
 /*
-04/05/2016
+04/05/2016 Christoph Hasse
 DISCLAIMER:
 
 This code is not sufficently tested yet and still under heavy development!
@@ -11,174 +11,7 @@ This file includes some lineshapes and spinfactors.
 Also right now it is the home to some helper functions needed and an implementation of a simple 4-vec class that works on the GPU
 */
 
-
-
 #include "LineshapesPdf.hh" 
-
-
-
-EXEC_TARGET fptype Mass(const fptype* P0){
-  return SQRT(-P0[0]*P0[0] - P0[1]*P0[1] - P0[2]*P0[2] + P0[3]*P0[3]);
-}
-EXEC_TARGET fptype Mass(const fptype* P0, const fptype* P1){
-  return SQRT( -((P0[0]+P1[0]) * (P0[0]+P1[0])) - ((P0[1]+P1[1]) * (P0[1]+P1[1])) - ((P0[2]+P1[2]) * (P0[2]+P1[2])) + ((P0[3]+P1[3]) * (P0[3]+P1[3])) );
-}
-EXEC_TARGET fptype Mass(const fptype* P0, const fptype* P1, const fptype* P2){
-  return SQRT( -((P0[0]+P1[0]+P2[0]) * (P0[0]+P1[0]+P2[0])) - ((P0[1]+P1[1]+P2[1]) * (P0[1]+P1[1]+P2[1])) - ((P0[2]+P1[2]+P2[2]) * (P0[2]+P1[2]+P2[2])) + ((P0[3]+P1[3]+P2[3]) * (P0[3]+P1[3]+P2[3])) );
-}
-EXEC_TARGET fptype VecDot(const fptype* P0, const fptype* P1){
-  return ( P0[0]*P1[0]  + P0[1]+P1[1] + P0[2]+P1[2] + P0[3]+P1[3] );
-}
-
-
-EXEC_TARGET gpuLVec::gpuLVec(fptype x, fptype y, fptype z, fptype e)  :  X(x), Y(y), Z(z), E(e){};
-EXEC_TARGET fptype gpuLVec::Dot(const gpuLVec& rhs) const { return E*rhs.E - X*rhs.X - Y*rhs.Y - Z*rhs.Z ;}
-EXEC_TARGET gpuLVec& gpuLVec::operator+=(const gpuLVec& rhs){
-  X+=rhs.X;
-  Y+=rhs.Y;
-  Z+=rhs.Z;
-  E+=rhs.E;
-  return *this;
-}                          
-EXEC_TARGET gpuLVec& gpuLVec::operator-=(const gpuLVec& rhs){
-  X-=rhs.X;
-  Y-=rhs.Y;
-  Z-=rhs.Z;
-  E-=rhs.E;
-  return *this;
-}    
-EXEC_TARGET gpuLVec operator+(gpuLVec lhs, const gpuLVec& rhs){return lhs+=rhs;}
-EXEC_TARGET gpuLVec operator-(gpuLVec lhs, const gpuLVec& rhs){return lhs-=rhs;}
-
-
-EXEC_TARGET fptype LeviCevita(const gpuLVec& p1, const gpuLVec& p2, const gpuLVec& p3, const gpuLVec& p4){
-  // this calculates the determinant of the 4x4 matrix build out of p1,p2,p3,p4
-  return
-     p1.getZ() * p2.getY() * p3.getX() * p4.getE() - p1.getY() * p2.getZ() * p3.getX() * p4.getE() -
-     p1.getZ() * p2.getX() * p3.getY() * p4.getE() + p1.getX() * p2.getZ() * p3.getY() * p4.getE() +
-     p1.getY() * p2.getX() * p3.getZ() * p4.getE() - p1.getX() * p2.getY() * p3.getZ() * p4.getE() -
-     p1.getZ() * p2.getY() * p3.getE() * p4.getX() + p1.getY() * p2.getZ() * p3.getE() * p4.getX() +
-     p1.getZ() * p2.getE() * p3.getY() * p4.getX() - p1.getE() * p2.getZ() * p3.getY() * p4.getX() -
-     p1.getY() * p2.getE() * p3.getZ() * p4.getX() + p1.getE() * p2.getY() * p3.getZ() * p4.getX() +
-     p1.getZ() * p2.getX() * p3.getE() * p4.getY() - p1.getX() * p2.getZ() * p3.getE() * p4.getY() -
-     p1.getZ() * p2.getE() * p3.getX() * p4.getY() + p1.getE() * p2.getZ() * p3.getX() * p4.getY() +
-     p1.getX() * p2.getE() * p3.getZ() * p4.getY() - p1.getE() * p2.getX() * p3.getZ() * p4.getY() -
-     p1.getY() * p2.getX() * p3.getE() * p4.getZ() + p1.getX() * p2.getY() * p3.getE() * p4.getZ() +
-     p1.getY() * p2.getE() * p3.getX() * p4.getZ() - p1.getE() * p2.getY() * p3.getX() * p4.getZ() -
-     p1.getX() * p2.getE() * p3.getY() * p4.getZ() + p1.getE() * p2.getX() * p3.getY() * p4.getZ();
-}
-
-
-EXEC_TARGET fptype S_VV_PPPP_S (fptype* Vecs, unsigned int* indices) {
-  unsigned int p1          = indices[2];
-  unsigned int p2          = indices[3];
-  unsigned int p3          = indices[4];
-  unsigned int p4          = indices[5];
-  gpuLVec P1(Vecs[0 + 4*p1], Vecs[1 + 4*p1], Vecs[2 + 4*p1], Vecs[3 + 4*p1]);
-  gpuLVec P2(Vecs[0 + 4*p2], Vecs[1 + 4*p2], Vecs[2 + 4*p2], Vecs[3 + 4*p2]);
-  gpuLVec P3(Vecs[0 + 4*p3], Vecs[1 + 4*p3], Vecs[2 + 4*p3], Vecs[3 + 4*p3]);
-  gpuLVec P4(Vecs[0 + 4*p4], Vecs[1 + 4*p4], Vecs[2 + 4*p4], Vecs[3 + 4*p4]);
-
-  // printf("vec%i %.5g, %.5g, %.5g, %.5g\n",0, P1.getX(), P1.getY(), P1.getZ(),P1.getE());
-  // printf("vec%i %.5g, %.5g, %.5g, %.5g\n",1, P2.getX(), P2.getY(), P2.getZ(),P2.getE());
-  // printf("vec%i %.5g, %.5g, %.5g, %.5g\n",2, P3.getX(), P3.getY(), P3.getZ(),P3.getE());
-  // printf("vec%i %.5g, %.5g, %.5g, %.5g\n",3, P4.getX(), P4.getY(), P4.getZ(),P4.getE());
-
-  gpuLVec pV1 = P1 + P2;
-  gpuLVec qV1 = P1 - P2;
-  gpuLVec pV2 = P3 + P4;
-  gpuLVec qV2 = P3 - P4;
-  
-  fptype MV1 = SQRT(pV1.Dot(pV1));
-  fptype MV2 = SQRT(pV2.Dot(pV2));
-
-  fptype returnVal = (qV1.Dot(qV2) 
-                   - qV1.Dot(pV1) * pV1.Dot(qV2) / (MV1*MV1)
-                   - qV1.Dot(pV2) * pV2.Dot(qV2) / (MV2*MV2)
-                   + qV1.Dot(pV1) * pV1.Dot(pV2) * pV2.Dot(qV2) 
-                   / (MV1*MV1 * MV2*MV2));
-  // printf("s1 %.5g; %i,%i,%i,%i\n",returnVal, indices[2], indices[3], indices[4], indices[5]);
-  return returnVal;
-}
-
-EXEC_TARGET fptype S_VV_PPPP_P (fptype* Vecs, unsigned int* indices) {
-  unsigned int p1          = indices[2];
-  unsigned int p2          = indices[3];
-  unsigned int p3          = indices[4];
-  unsigned int p4          = indices[5];
-  gpuLVec P1(Vecs[0 + 4*p1], Vecs[1 + 4*p1], Vecs[2 + 4*p1], Vecs[3 + 4*p1]);
-  gpuLVec P2(Vecs[0 + 4*p2], Vecs[1 + 4*p2], Vecs[2 + 4*p2], Vecs[3 + 4*p2]);
-  gpuLVec P3(Vecs[0 + 4*p3], Vecs[1 + 4*p3], Vecs[2 + 4*p3], Vecs[3 + 4*p3]);
-  gpuLVec P4(Vecs[0 + 4*p4], Vecs[1 + 4*p4], Vecs[2 + 4*p4], Vecs[3 + 4*p4]);
-
-  gpuLVec pV1 = P1 + P2;
-  gpuLVec qV1 = P1 - P2;
-  gpuLVec pV2 = P3 + P4;
-  gpuLVec qV2 = P3 - P4;
-  
-  gpuLVec pD = pV1 + pV2;
-  gpuLVec qD = pV1 - pV2;
-
-  return LeviCevita(pD, qD, qV1, qV2);
-}
-
-EXEC_TARGET fptype S_VV_PPPP_D (fptype* Vecs, unsigned int* indices) {
-  unsigned int p1          = indices[2];
-  unsigned int p2          = indices[3];
-  unsigned int p3          = indices[4];
-  unsigned int p4          = indices[5];
-  gpuLVec P1(Vecs[0 + 4*p1], Vecs[1 + 4*p1], Vecs[2 + 4*p1], Vecs[3 + 4*p1]);
-  gpuLVec P2(Vecs[0 + 4*p2], Vecs[1 + 4*p2], Vecs[2 + 4*p2], Vecs[3 + 4*p2]);
-  gpuLVec P3(Vecs[0 + 4*p3], Vecs[1 + 4*p3], Vecs[2 + 4*p3], Vecs[3 + 4*p3]);
-  gpuLVec P4(Vecs[0 + 4*p4], Vecs[1 + 4*p4], Vecs[2 + 4*p4], Vecs[3 + 4*p4]);
-
-  gpuLVec pV1 = P1 + P2;
-  gpuLVec qV1 = P1 - P2;
-  gpuLVec pV2 = P3 + P4;
-  gpuLVec qV2 = P3 - P4;
-  
-  // printf("%f, %f, %f, %f\n",P1.getX(), P1.getY(), P1.getZ(), P1.getE() );
-  // printf("%f, %f, %f, %f\n",P2.getX(), P2.getY(), P2.getZ(), P2.getE() );
-  // printf("%f, %f, %f, %f\n",P3.getX(), P3.getY(), P3.getZ(), P3.getE() );
-  // printf("%f, %f, %f, %f\n",P4.getX(), P4.getY(), P4.getZ(), P4.getE() );
-
-  fptype MV1 = SQRT(pV1.Dot(pV1));
-  fptype MV2 = SQRT(pV2.Dot(pV2));
-  fptype returnVal = (  qV1.Dot(pV2) - qV1.Dot(pV1) * pV1.Dot(pV2)/(MV1*MV1)
-                     )*( 
-                     qV2.Dot(pV1) - qV2.Dot(pV2) * pV2.Dot(pV1)/(MV2*MV2)
-                     );
-  return returnVal;
-}
-
-EXEC_TARGET fptype S_AP1_AtoVP2_VtoP3P4 (fptype* Vecs, unsigned int* indices) {
-  unsigned int p1          = indices[2];
-  unsigned int p2          = indices[3];
-  unsigned int p3          = indices[4];
-  unsigned int p4          = indices[5];
-  gpuLVec P1(Vecs[0 + 4*p1], Vecs[1 + 4*p1], Vecs[2 + 4*p1], Vecs[3 + 4*p1]);
-  gpuLVec P2(Vecs[0 + 4*p2], Vecs[1 + 4*p2], Vecs[2 + 4*p2], Vecs[3 + 4*p2]);
-  gpuLVec P3(Vecs[0 + 4*p3], Vecs[1 + 4*p3], Vecs[2 + 4*p3], Vecs[3 + 4*p3]);
-  gpuLVec P4(Vecs[0 + 4*p4], Vecs[1 + 4*p4], Vecs[2 + 4*p4], Vecs[3 + 4*p4]);
-
-  gpuLVec pV = P3 + P4;
-  gpuLVec qV = P3 - P4;
-  gpuLVec pA = P2 + pV;
-  gpuLVec p0 = P1;  
-  gpuLVec pD = P1 + pA;
-  gpuLVec qD = pA - P1;
-  
-  fptype MA = SQRT(pA.Dot(pA));
-  fptype MV = SQRT(pV.Dot(pV));
-  fptype returnVal =  P1.Dot(qV)
-      -   p0.Dot(pA) * pA.Dot(qV) / (MA*MA)
-      -   p0.Dot(pV) * pV.Dot(qV) / (MV*MV)
-      +   p0.Dot(pA) * pA.Dot(pV) * pV.Dot(qV) / (MA*MA * MV*MV);
-  // printf("spin %.7g\n",returnVal );
-  return returnVal;
-}
-
-
 
 EXEC_TARGET devcomplex<fptype> BW_DP (fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
   fptype meson_radius           = functorConstants[indices[1]+0];
@@ -208,6 +41,7 @@ EXEC_TARGET devcomplex<fptype> BW_DP (fptype Mpair, fptype m1, fptype m2, unsign
   return ret; 
 }
 
+//This function is modeled after BW_BW::getVal() in BW_BW.cpp from the MINT package written by Jonas Rademacker. 
 EXEC_TARGET devcomplex<fptype> BW_MINT (fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
   fptype meson_radius           = functorConstants[indices[1]+0];
   fptype resmass                = cudaArray[indices[2]];
@@ -227,7 +61,7 @@ EXEC_TARGET devcomplex<fptype> BW_MINT (fptype Mpair, fptype m1, fptype m2, unsi
   fptype num  = (mumsRecoMass2 - mpsq)*(mumsRecoMass2 - mmsq);
   fptype num2  = (mass*mass - mpsq)*(mass*mass - mmsq);
   fptype pABSq = num/(4*mumsRecoMass2);
-  fptype prSqForGofM = num2/(4*mass*mass);
+  fptype prSqForGofM = FABS(num2/(4*mass*mass));
   fptype pratio = SQRT(pABSq/prSqForGofM);
 
   fptype pratio_to_2Jplus1 = 1;
@@ -250,6 +84,7 @@ EXEC_TARGET devcomplex<fptype> BW_MINT (fptype Mpair, fptype m1, fptype m2, unsi
 
   devcomplex<fptype> ret = (SQRT(k) * thisFR)/den * BW;
 
+  // printf("%.7g, %.7g, %.7g, %i, %.7g, %.7g\n", meson_radius, resmass, reswidth, orbital, pABSq, prSqForGofM);
   // printf("%.7g, %.7g, %.7g, %i, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g\n", m1, m2, Mpair, to2Lplus1, GofM, pratio_to_2Jplus1, mratio, k , meson_radius, prSqForGofM, thisFR, ret.real, ret.imag );
   return  ret ; 
 }
@@ -392,12 +227,6 @@ MEM_DEVICE resonance_function_ptr ptr_to_BW_DP = BW_DP;
 MEM_DEVICE resonance_function_ptr ptr_to_BW_MINT = BW_MINT;
 MEM_DEVICE resonance_function_ptr ptr_to_lass_DP = lass_DP;
 MEM_DEVICE resonance_function_ptr ptr_to_NONRES_DP = nonres_DP;
-MEM_DEVICE spin_function_ptr ptr_to_S_VV_PPPP_S = S_VV_PPPP_S;
-MEM_DEVICE spin_function_ptr ptr_to_S_VV_PPPP_P = S_VV_PPPP_P;
-MEM_DEVICE spin_function_ptr ptr_to_S_VV_PPPP_D = S_VV_PPPP_D;
-MEM_DEVICE spin_function_ptr ptr_to_S_AP1_AtoVP2_VtoP3P4 = S_AP1_AtoVP2_VtoP3P4
-;
-
 
 Lineshape::Lineshape (string name,
 						Variable* mass, 
@@ -446,225 +275,4 @@ Amplitude::Amplitude(std::string uniqueDecayStr, Variable* ar, Variable* ai, std
 {}
 
 
-
-SpinFactor::SpinFactor (std::string name, unsigned int kind, unsigned int P0, unsigned int P1, unsigned int P2, unsigned int P3)
- : GooPdf(0,name){
-  vector<unsigned int> pindices; 
-  pindices.push_back(0); //dummy for index to constants.
-  pindices.push_back(P0);
-  pindices.push_back(P1);
-  pindices.push_back(P2);
-  pindices.push_back(P3);
-  switch(kind){
-    case 0:
-      GET_FUNCTION_ADDR(ptr_to_S_VV_PPPP_S);
-      break;
-    case 1:
-      GET_FUNCTION_ADDR(ptr_to_S_VV_PPPP_P);
-      break;
-    case 2:
-      GET_FUNCTION_ADDR(ptr_to_S_VV_PPPP_D);
-      break;
-    case 3:
-      GET_FUNCTION_ADDR(ptr_to_S_AP1_AtoVP2_VtoP3P4);
-      break;
-    
-    default:
-      std::cout << "No Spinfunction implemented for that kind." << std::endl;
-      exit(0);
-      break;
-  }
-  
-  initialise(pindices);
-}
-
-
-EXEC_TARGET void get4Vecs (fptype* Vecs, const unsigned int& constants, const fptype& m12, const fptype& m34, const fptype& cos12, const fptype& cos34, const fptype& phi){
-  fptype M = functorConstants[constants + 1]; 
-  fptype m1  = functorConstants[constants + 2]; 
-  fptype m2  = functorConstants[constants + 3]; 
-  fptype m3  = functorConstants[constants + 4]; 
-  fptype m4  = functorConstants[constants + 5]; 
-  // printf("g4v %f, %f, %f, %f, %f\n",M, m1, m2, m3, m4 );
-  fptype E1 = (m12*m12 + m1*m1 - m2*m2) / (2 * m12) ; 
-  fptype E2 = (m12*m12 - m1*m1 + m2*m2) / (2 * m12) ; 
-  fptype E3 = (m34*m34 + m3*m3 - m4*m4) / (2 * m34) ; 
-  fptype E4 = (m34*m34 - m3*m3 + m4*m4) / (2 * m34) ; 
-  fptype p1 = SQRT(E1*E1 - m1*m1);
-  fptype p3 = SQRT(E3*E3 - m3*m3); 
-  fptype sin12 = SQRT(1-cos12*cos12);
-  fptype sin34 = SQRT(1-cos34*cos34);
-  fptype ED1 = ( M*M + m12*m12 - m34*m34) / (2*m12);
-  fptype PD1 = SQRT(ED1*ED1 - M*M);
-  fptype beta1 = PD1 / ED1;
-  fptype gamma1 = 1.0/SQRT(1-beta1*beta1);
-  fptype ED2 = ( M*M - m12*m12 + m34*m34) / (2*m34);
-  fptype PD2 = SQRT(ED2*ED2 - M*M);
-  fptype beta2 = -PD2 / ED2;
-  fptype gamma2 = 1.0/SQRT(1-beta2*beta2);
-  // printf("g4v %f, %f, %f, %f, %f\n",E1, m1, E2, p1, p3 );
-
-  //set X-component
-  Vecs[0] = cos12*p1;
-  Vecs[4] = -cos12*p1;
-  Vecs[8] = -cos34*p3;
-  Vecs[12] = cos34*p3;
- 
-  //set Y-component
-  Vecs[1] = sin12*p1;
-  Vecs[5] = -sin12*p1;
-  Vecs[9] = -sin34*p3;
-  Vecs[13] = sin34*p3;
-
-  //set Y-component
-  Vecs[2]  = 0;
-  Vecs[6]  = 0;
-  Vecs[10] = 0;
-  Vecs[14] = 0;
-
-  //set E-component
-  Vecs[3]  = E1;
-  Vecs[7]  = E2;
-  Vecs[11] = E3;
-  Vecs[15] = E4;
-
-  fptype tmpE = Vecs[3];
-  fptype tmpX = Vecs[0];
-  Vecs[3] = gamma1*( tmpE + beta1*tmpX );
-  Vecs[0] = gamma1*( tmpX + beta1*tmpE );
-
-  tmpE = Vecs[7];
-   tmpX = Vecs[4];
-  Vecs[7] = gamma1*( tmpE + beta1*tmpX );
-  Vecs[4] = gamma1*( tmpX + beta1*tmpE );
-
-  tmpE = Vecs[11];
-  tmpX = Vecs[8];
-  Vecs[11] = gamma2*( tmpE + beta2*tmpX );
-  Vecs[8] = gamma2*( tmpX + beta2*tmpE );
-
-  tmpE = Vecs[15];
-  tmpX = Vecs[12];
-  Vecs[15] = gamma2*( tmpE + beta2*tmpX );
-  Vecs[12] = gamma2*( tmpX + beta2*tmpE );
-
-  // rotation around X-axis of the first two vectors.
-  fptype cosphi = cos(phi);
-  fptype sinphi = sin(phi);
-
-  // note that Z-component is zero thus rotation is as easy as this:
-  Vecs[2] = sinphi*Vecs[1]; 
-  Vecs[1] = cosphi*Vecs[1];
-
-  Vecs[6] = sinphi*Vecs[5]; 
-  Vecs[5] = cosphi*Vecs[5];
-  
-} 
-
-EXEC_TARGET fptype getmass(const unsigned int& pair, fptype& d1, fptype& d2, const fptype* vecs, const fptype& m1, const fptype& m2, const fptype& m3, const fptype& m4){
-    const fptype* P1 = vecs;
-    const fptype* P2 = (vecs+4);
-    const fptype* P3 = (vecs+8);
-    const fptype* P4 = (vecs+12);
-    fptype mpair;
-  switch(pair){
-
-    case 2:
-      d1 = m1;
-      d2 = m3;
-      mpair = Mass(P1,P3);
-    break;
-
-    case 3:
-      d1 = m1;
-      d2 = m4;
-      mpair = Mass(P1,P4);
-    break;
-
-    case 4:
-      d1 = m2;
-      d2 = m3;
-      mpair = Mass(P3,P3);
-    break;
-    
-    case 5:
-      d1 = m2;
-      d2 = m4;
-      mpair = Mass(P2,P4);
-    break;
-
-    case 6:
-      d1 = Mass(P1,P2);
-      d2 = m3;
-      mpair = Mass(P1,P2,P3);
-    break;
-
-    case 7:
-      d1 = Mass(P1,P3);
-      d2 = m2;
-      mpair = Mass(P1,P2,P3);
-    break;
-
-    case 8:
-      d1 = Mass(P2,P3);
-      d2 = m1;
-      mpair = Mass(P1,P2,P3);
-    break;
-
-    case 9:
-      d1 = Mass(P1,P2);
-      d2 = m4;
-      mpair = Mass(P1,P2,P4);
-    break;
-
-    case 10:
-      d1 = Mass(P1,P4);
-      d2 = m2;
-      mpair = Mass(P1,P2,P4);
-    break;
-
-    case 11:
-      d1 = Mass(P2,P4);
-      d2 = m1;
-      mpair = Mass(P1,P2,P4);
-    break;
-
-    case 12:
-      d1 = Mass(P1,P3);
-      d2 = m4;
-      mpair = Mass(P1,P3,P4);
-    break;
-
-    case 13:
-      d1 = Mass(P1,P4);
-      d2 = m3;
-      mpair = Mass(P1,P3,P4);
-    break;
-
-    case 14:
-      d1 = Mass(P3,P4);
-      d2 = m1;
-      mpair = Mass(P1,P3,P4);
-    break;
-
-    case 15:
-      d1 = Mass(P2,P3);
-      d2 = m4;
-      mpair = Mass(P2,P3,P4);
-    break;
-
-    case 16:
-      d1 = Mass(P2,P4);
-      d2 = m3;
-      mpair = Mass(P2,P3,P4);
-    break;
-
-    case 17:
-      d1 = Mass(P3,P4);
-      d2 = m2;
-      mpair = Mass(P2,P3,P4);
-    break;
-  }
-  return mpair;
-}
 

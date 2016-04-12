@@ -1,5 +1,5 @@
 /*
-04/05/2016
+04/05/2016 Christoph Hasse
 DISCLAIMER:
 
 This code is not sufficently tested yet and still under heavy development!
@@ -12,6 +12,7 @@ See *.cu file for more details
 #include "GooPdf.hh" 
 #include "DalitzPlotHelpers.hh" 
 #include "devcomplex.hh"
+#include "SpinFactors.hh"
 
 // class SpecialIntegrator;
 class LSCalculator; 

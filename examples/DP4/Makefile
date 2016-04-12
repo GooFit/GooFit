@@ -3,7 +3,7 @@ CXX=nvcc
 LD=g++  
 OutPutOpt = -o
 
-CXXFLAGS     = -w -arch=sm_20 -std=c++11
+CXXFLAGS     = -w -arch=sm_20 -std=c++11 -Xcompiler -Wall
 #-O3
 ifeq ($(CUDALOCATION), )
 CUDALOCATION = /usr/local/cuda/

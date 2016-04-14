@@ -14,7 +14,7 @@ See *.cu file for more details
 
 // this is here right now because I get a compile error otherwise. I do not understand why that happens though.
 // need to investigate this further as soon as I find the time.
-class __align__(16) gpuLVec;
+class ALIGN(16) gpuLVec;
 
 typedef fptype (*spin_function_ptr) (fptype*, unsigned int*); 
 EXEC_TARGET fptype LeviCevita(const gpuLVec& p1, const gpuLVec& p2, const gpuLVec& p3, const gpuLVec& p4);

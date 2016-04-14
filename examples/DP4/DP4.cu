@@ -15,8 +15,6 @@ const fptype KmMass = .493677;
 // Constants used in more than one PDF component. 
 
 int main (int argc, char** argv) {
-  cudaSetDevice(0);
-
 
   unsigned int maxevents = 4e6;
   fptype* hostnorm = new fptype[5*maxevents];
@@ -126,7 +124,7 @@ int main (int argc, char** argv) {
 
   Variable* constantOne = new Variable("constantOne", 1); 
   Variable* constantZero = new Variable("constantZero", 0);
-  Variable* eventNumber = new Variable("eventNumber", 0, INT_MAX);
+  Variable* eventNumber = new Variable("eventNumber", 0, 99e9);
 
   vector<Variable*> observables;
   vector<Variable*> coefficients; 

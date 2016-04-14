@@ -35,10 +35,10 @@ ifeq ($(TARGET_OMP),)
 CXXFLAGS += -arch=sm_20
 else
 # OpenMP common flags
-DEFINEFLAGS += -Xcompiler -fno-inline -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_BACKEND_OMP
+DEFINEFLAGS += -fno-inline -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_BACKEND_OMP
 ifeq ($(TARGET_MIC),)
 # GCC/Clang
-DEFINEFLAGS += -Xcompiler -fopenmp
+DEFINEFLAGS += -fopenmp
 else
 # Intel C++ Compiler (ICC)
 DEFINEFLAGS += -openmp

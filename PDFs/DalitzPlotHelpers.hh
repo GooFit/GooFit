@@ -18,7 +18,7 @@ EXEC_TARGET devcomplex<fptype> getResonanceAmplitude (fptype m12, fptype m13, fp
 EXEC_TARGET void get4Vecs (fptype* Vecs, const unsigned int& constants, const fptype& m12, const fptype& m34, const fptype& cos12, const fptype& cos34, const fptype& phi);
 EXEC_TARGET fptype getmass(const unsigned int& pair, fptype& d1, fptype& d2, const fptype* vecs, const fptype& m1, const fptype& m2, const fptype& m3, const fptype& m4);
 
-class __align__(16) gpuLVec
+class ALIGN(16) gpuLVec
 {
   private:
     fptype X;

@@ -15,6 +15,7 @@ extern int host_callnumber;
 #define THRUST_DEVICE_BACKEND THRUST_DEVICE_BACKEND_OMP
 #endif 
 // OMP target - all 'device' memory is actually on host. 
+#define ALIGN(n)
 #define MEM_DEVICE
 #define MEM_SHARED
 #define MEM_CONSTANT 
@@ -38,6 +39,7 @@ void dummySynch ();
 enum gooError {gooSuccess = 0, gooErrorMemoryAllocation};
 #else
 // CUDA target - defaults
+#define ALIGN(n) __align__(n)
 #define MEM_DEVICE __device__
 #define MEM_SHARED __shared__
 #define MEM_CONSTANT __constant__ 

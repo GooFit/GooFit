@@ -53,7 +53,7 @@ CUDAHEADERS = $(CUDALOCATION)/include/
 PWD = $(shell /bin/pwd)
 SRCDIR = $(PWD)/PDFs
 
-INCLUDES += -I$(SRCDIR) -I$(PWD) -I$(CUDAHEADERS) -I$(PWD)/rootstuff
+INCLUDES += -I$(SRCDIR) -I$(PWD) -I$(CUDAHEADERS) -I$(PWD)/rootstuff -I$(PWD)/MCBooster
 
 # GooPdf must be first in CUDAglob, as it defines global variables.
 FUNCTORLIST    = $(SRCDIR)/GooPdf.cu 

@@ -1,6 +1,8 @@
+//ROOT
 #include <TFile.h>
 #include <TTreeReader.h>
 #include <TTreeReaderValue.h>
+
 // GooFit stuff
 #include "Variable.hh" 
 #include "PolynomialPdf.hh" 
@@ -16,7 +18,7 @@ const fptype KmMass = .493677;
 
 int main (int argc, char** argv) {
 
-  unsigned int maxevents = 4e6;
+  unsigned int maxevents = 5;
   fptype* hostnorm = new fptype[5*maxevents];
   TFile* f1 = TFile::Open("phspMC.root");
   TTreeReader reader1("t1", f1);
@@ -141,7 +143,7 @@ int main (int argc, char** argv) {
   coefficients.push_back(constantOne); 
 
   PolynomialPdf* eff = new PolynomialPdf("constantEff", observables, coefficients, offsets, 0);
-  DPPdf* dp = new DPPdf("test", observables, DK3P_DI, eff);
+  DPPdf* dp = new DPPdf("test", observables, DK3P_DI, eff,25e5);
 
   std::vector<Variable*> vars;
   Variable* constant = new Variable("constant", 0.1); 
@@ -161,7 +163,7 @@ int main (int argc, char** argv) {
   int evtCounter = 0; 
 
 //use 5e5 phasespace from the normalisation set as events
-for (int i = 0; i < 5e5; ++i)
+for (int i = 0; i < 5; ++i)
 { 
   m12->value = hostnorm[i*5]  ;
   m34->value = hostnorm[1+i*5];
@@ -170,11 +172,11 @@ for (int i = 0; i < 5e5; ++i)
   phi->value = hostnorm[4+i*5];
   eventNumber->value = evtCounter++; 
   currData.addEvent();
-  printf("%.5g %.5g %.5g %.5g %.5g\n",hostnorm[i*5], hostnorm[1+i*5], hostnorm[2+i*5], hostnorm[3+i*5], hostnorm[4+i*5] );
+  // printf("%.5g %.5g %.5g %.5g %.5g\n",hostnorm[i*5], hostnorm[1+i*5], hostnorm[2+i*5], hostnorm[3+i*5], hostnorm[4+i*5] );
 }
 
   //set phasespace Events for integration
-  dp->setphsp(hostnorm, MCevents);
+  // dp->setphsp(hostnorm, MCevents);
 
   signal->setData(&currData);
   dp->setDataSize(currData.getNumEvents(), 6); 
@@ -184,10 +186,10 @@ for (int i = 0; i < 5e5; ++i)
   
   std::vector<std::vector<double> > pdfValues;
   signal->getCompProbsAtDataPoints(pdfValues);
-  for (int i = 0; i < pdfValues[0].size(); ++i)
-  {
-    printf("%.10g\n", pdfValues[0][i]);
-  }
+  // for (int i = 0; i < 5e5; ++i)
+  // {
+  //   printf("%.10g\n", pdfValues[0][i]);
+  // }
 
 
   return 0; 

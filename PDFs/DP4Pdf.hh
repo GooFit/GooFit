@@ -13,8 +13,8 @@ See *.cu file for more details
 #include "DalitzPlotHelpers.hh" 
 #include "devcomplex.hh"
 #include "SpinFactors.hh"
+#include <mcbooster/GContainers.h>
 
-// class SpecialIntegrator;
 class LSCalculator; 
 class AmpCalc;
 class SFCalculator;
@@ -22,7 +22,7 @@ class NormIntegrator;
 
 class DPPdf : public GooPdf {
 public:
-  DPPdf (std::string n, std::vector<Variable*> observables, DecayInfo_DP* decay, GooPdf* eff);
+  DPPdf (std::string n, std::vector<Variable*> observables, DecayInfo_DP* decay, GooPdf* eff, unsigned int MCeventsNorm = 5e6);
   // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the 
   // coherent sum. The caching method requires that it be done this way or the ProdPdf
   // normalisation will get *really* confused and give wrong answers. 
@@ -45,6 +45,17 @@ private:
   NormIntegrator* Integrator;
   std::vector<SFCalculator*> sfcalculators;
   std::vector<LSCalculator*> lscalculators;
+
+  // store normalization events
+  MCBooster::RealVector_d norm_M12;
+  MCBooster::RealVector_d norm_M34;
+  MCBooster::RealVector_d norm_CosTheta12;
+  MCBooster::RealVector_d norm_CosTheta34;
+  MCBooster::RealVector_d norm_phi;
+
+  //store spin and lineshape values for normalization
+  mutable MCBooster::RealVector_d norm_SF;
+  mutable MCBooster::mc_device_vector<devcomplex<fptype> > norm_LS;
 
 
   DecayInfo_DP* decayInfo; 
@@ -79,11 +90,11 @@ private:
   unsigned int _parameters;
 }; 
 
-class NormSpinCalculator : public thrust::unary_function<thrust::tuple<int, fptype*>, fptype> {
+class NormSpinCalculator : public thrust::unary_function<thrust::tuple<fptype, fptype, fptype, fptype, fptype>, fptype> {
 public:
   // Used to create the cached BW values. 
   NormSpinCalculator (int pIdx, unsigned int sf_idx); 
-  EXEC_TARGET fptype operator () (thrust::tuple<int, fptype*> t) const;
+  EXEC_TARGET fptype operator () (thrust::tuple<fptype, fptype, fptype, fptype, fptype> t) const;
 
 private:
 
@@ -104,11 +115,11 @@ private:
   unsigned int _parameters;
 }; 
 
-class NormLSCalculator : public thrust::unary_function<thrust::tuple<int, fptype*>, int > {
+class NormLSCalculator : public thrust::unary_function<thrust::tuple<MCBooster::GReal_t, MCBooster::GReal_t, MCBooster::GReal_t, MCBooster::GReal_t, MCBooster::GReal_t>, devcomplex<fptype> > {
 public:
   // Used to create the cached BW values. 
   NormLSCalculator (int pIdx, unsigned int res_idx); 
-  EXEC_TARGET int operator () (thrust::tuple<int, fptype*> t) const;
+  EXEC_TARGET devcomplex<fptype> operator () (thrust::tuple<MCBooster::GReal_t, MCBooster::GReal_t, MCBooster::GReal_t, MCBooster::GReal_t, MCBooster::GReal_t> t) const;
 
 private:
 
@@ -127,10 +138,10 @@ class AmpCalc : public thrust::unary_function<unsigned int, devcomplex<fptype> >
     unsigned int _parameters;
  };
 
- class NormIntegrator : public thrust::unary_function<thrust::tuple<int, fptype*>, fptype >{
+ class NormIntegrator : public thrust::unary_function<thrust::tuple<int, fptype*, devcomplex<fptype>*>, fptype >{
   public:
     NormIntegrator(unsigned int pIdx);
-    EXEC_TARGET fptype operator() (thrust::tuple<int, fptype*> t) const;
+    EXEC_TARGET fptype operator() (thrust::tuple<int, fptype*, devcomplex<fptype>*> t) const;
   private:
     unsigned int _parameters;
  };

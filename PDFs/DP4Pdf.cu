@@ -21,9 +21,6 @@ TODO:
 #include <mcbooster/EvaluateArray.h>
 #include <mcbooster/GFunctional.h>
 #include "DP4Pdf.hh"
-#include <complex>
-
-using std::complex; 
 
 namespace eval{
 using namespace MCBooster;

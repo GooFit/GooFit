@@ -30,7 +30,6 @@ public:
   __host__ virtual fptype normalise () const;
   __host__ void setDataSize (unsigned int dataSize, unsigned int evtSize = 6); 
   __host__ void setForceIntegrals (bool f = true) {forceRedoIntegrals = f;}  
-  __host__ void setphsp(fptype* data, int size){hostphsp = data; MCevents = size;}
   __host__ int getMCevents(){return MCevents;}
 protected:
 
@@ -60,7 +59,6 @@ private:
 
   DecayInfo_DP* decayInfo; 
   std::vector<Variable*> _observables; 
-  fptype* devNormArray;
   fptype* hostphsp;
   int MCevents;
   // Following variables are useful if masses and widths, involved in difficult BW calculation, 
@@ -138,10 +136,10 @@ class AmpCalc : public thrust::unary_function<unsigned int, devcomplex<fptype> >
     unsigned int _parameters;
  };
 
- class NormIntegrator : public thrust::unary_function<thrust::tuple<int, fptype*, devcomplex<fptype>*>, fptype >{
+ class NormIntegrator : public thrust::unary_function<thrust::tuple<int, int, fptype*, devcomplex<fptype>*>, fptype >{
   public:
     NormIntegrator(unsigned int pIdx);
-    EXEC_TARGET fptype operator() (thrust::tuple<int, fptype*, devcomplex<fptype>*> t) const;
+    EXEC_TARGET fptype operator() (thrust::tuple<int, int, fptype*, devcomplex<fptype>*> t) const;
   private:
     unsigned int _parameters;
  };

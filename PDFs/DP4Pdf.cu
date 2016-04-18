@@ -7,11 +7,10 @@ This code is not sufficently tested yet and still under heavy development!
 TODO: 
 - Test lineshapes, only done for BW_DP and BW_MINT so far
 - Check and implement more SF
-- Is the normalisation really correct?
 - Currently no check if the event is even allowed in phasespace is done. This should preferably be done outside of this class.
 
 - Some things could be implemented differently maybe, performance should be compared for both cases. 
-  -For example the way Spinfactors are stored in the same array as the Lineshape values for access of nearby memory.
+  -For example the way Spinfactors are stored in the same array as the Lineshape values.
    Is this really worth the memory we lose by using a complex to store the SF?
 */
 #include <mcbooster/GTypes.h>
@@ -118,7 +117,6 @@ struct evalclass: public IFunctionArray
     Vector4R pK   = *particles[2];
     Vector4R ppip2  = *particles[3];
 
-    //K* helicity angle
     Vector4R pM = ppip + ppim + pK + ppip2;
     Vector4R ppipi = ppip + ppim;
     Vector4R pKpi = pK + ppip2;
@@ -129,15 +127,6 @@ struct evalclass: public IFunctionArray
     variables[2] = cosHELANG(pM, ppipi, ppip);
     variables[3] = cosHELANG(pM, pKpi, pK);
     variables[4] = phi(pM, ppip, ppim, pK, ppip2);
-
-
-    // variables[0] =2.230;
-    // variables[1] =2.231;
-    // variables[2] =2.232;
-    // variables[3] =2.233;
-    // variables[4] =2.234;
-
-
   }
 
 };
@@ -204,7 +193,6 @@ __host__ DPPdf::DPPdf (std::string n,
   , totalEventSize(1 + observables.size()) // number of observables plus eventnumber
   , cacheToUse(0) 
   , SpinsCalculated(false)
-  , devNormArray(0)
 {
   for (std::vector<Variable*>::iterator obsIT = observables.begin(); obsIT != observables.end(); ++obsIT) {
     registerObservable(*obsIT);
@@ -355,26 +343,12 @@ __host__ DPPdf::DPPdf (std::string n,
   pset[1] = &d2;
   pset[2] = &d3;
   pset[3] = &d4;
-  
 
   norm_M12        = RealVector_d(nAcc);
   norm_M34        = RealVector_d(nAcc);
   norm_CosTheta12 = RealVector_d(nAcc);
   norm_CosTheta34 = RealVector_d(nAcc);
   norm_phi        = RealVector_d(nAcc);
-
-  // RealVector_h norm_M12_h        = RealVector_h(nAcc);
-  // RealVector_h norm_M34_h        = RealVector_h(nAcc);
-  // RealVector_h norm_CosTheta12_h = RealVector_h(nAcc);
-  // RealVector_h norm_CosTheta34_h = RealVector_h(nAcc);
-  // RealVector_h norm_phi_h        = RealVector_h(nAcc);
-
-  // VariableSet_h VarSet_h(5);
-  // VarSet_h[0] = &norm_M12_h,
-  // VarSet_h[1] = &norm_M34_h;
-  // VarSet_h[2] = &norm_CosTheta12_h;
-  // VarSet_h[3] = &norm_CosTheta34_h;
-  // VarSet_h[4] = &norm_phi_h;
 
   VariableSet_d VarSet(5);
   VarSet[0] = &norm_M12,
@@ -384,26 +358,7 @@ __host__ DPPdf::DPPdf (std::string n,
   VarSet[4] = &norm_phi;
 
   eval::evalclass eval = eval::evalclass();
-  // printf("eval\n");
   EvaluateArray<eval::evalclass>(eval, pset, VarSet);
-  // EvaluateArray<eval::evalclass>(eval, pset, VarSet_h);
-
-  // for(GInt_t event=0; event<nAcc; event++ )
-  // {
-
-  // std::cout
-  // <<" " <<  norm_M12_h[event]
-  // <<" " <<  norm_M34_h[event]
-  // <<" " <<  norm_CosTheta12_h[event]
-  // <<" " <<  norm_CosTheta34_h[event]
-  // <<" " <<  norm_phi_h[event]
-  // << std::endl;
-  // }
-
-  // printf("m12 %.5g\n",(double)norm_M12[0]);
-  // printf("m12 %.5g\n",(double)norm_M12[nAcc-1]);
-  // printf("succes\n" );
-
 
   norm_SF = RealVector_d(nAcc * SpinFactors.size()); 
   norm_LS = MCBooster::mc_device_vector<devcomplex<fptype> >(nAcc * (components.size() - 1)); 
@@ -445,30 +400,6 @@ __host__ fptype DPPdf::normalise () const {
   // don't get zeroes through multiplying by the normFactor. 
   MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
   
-  // Create the array with the phasespace events for normalisation and copy them on the GPU
-  // it has room for the 5 variables plus 2 slots for real and imag value of every lineshape value plus one for every real value of the spinfactors
-  // if (!devNormArray) {
-  //   printf("inside devNormArray creation\n");
-  //   fptype* host_norm_array = new fptype[MCevents * (5 + 2*(components.size() - 1)  + SpinFactors.size() )];
-  //   unsigned int offset = 5 + 2*(components.size() - 1)  + SpinFactors.size() ;
-  //   // printf("devarray %i, %i\n",MCevents, offset );
-  //   for (unsigned int i = 0; i < MCevents; ++i)
-  //   {
-  //     //m12 m34 cos12 cos34 phi weight
-  //     host_norm_array[i*offset + 0] = hostphsp[i*5];    
-  //     host_norm_array[i*offset + 1] = hostphsp[1+ i*5];
-  //     host_norm_array[i*offset + 2] = hostphsp[2 + i*5];
-  //     host_norm_array[i*offset + 3] = hostphsp[3 + i*5];
-  //     host_norm_array[i*offset + 4] = hostphsp[4 + i*5];
-  //   }
-  //   // printf("%4g, %4g, %4g, %4g, %4g, %4g\n", host_norm_array[offset*(MCevents-1)], host_norm_array[offset*(MCevents-1)+1], host_norm_array[offset*(MCevents-1)+2], host_norm_array[offset*(MCevents-1)+3], host_norm_array[offset*(MCevents-1)+4], host_norm_array[offset*(MCevents-1)+5] );
-
-  //   gooMalloc((void**) &devNormArray,( MCevents*offset*sizeof(fptype)) );
-  //   MEMCPY(devNormArray, host_norm_array, (MCevents*offset*sizeof(fptype)), cudaMemcpyHostToDevice);
-  //   delete[] host_norm_array; 
-  //   delete[] hostphsp;
-  // }
-
 //check if MINUIT changed any parameters and if so remember that so we know
 // we need to recalculate that lineshape and every amp, that uses that lineshape
   for (unsigned int i = 0; i < components.size() - 1; ++i) {
@@ -480,16 +411,9 @@ __host__ fptype DPPdf::normalise () const {
   forceRedoIntegrals = false; 
 
   //just some thrust iterators for the calculation. 
-  // thrust::constant_iterator<fptype*> normaddress(devNormArray); 
-  thrust::counting_iterator<int> binIndex(0); 
   thrust::constant_iterator<fptype*> dataArray(dev_event_array); 
   thrust::constant_iterator<int> eventSize(totalEventSize);
   thrust::counting_iterator<int> eventIndex(0); 
-
-  printf("m12 %.5g\n",(double)norm_M12[0]);
-  printf("m12 %.5g\n",(double)norm_M12[MCevents-1]);
-  printf("Spin size %i\n",(int)norm_SF.size());
-  printf("LS size %i\n",(int)norm_LS.size());
 
   //Calculate spinfactors only once for normalisation events and real events
   //strided_range is a template implemented in DalitsPlotHelpers.hh
@@ -504,12 +428,6 @@ __host__ fptype DPPdf::normalise () const {
                           (components.size() + SpinFactors.size() - 1)).begin(),
                           *(sfcalculators[i]));
     
-    // thrust::for_each(thrust::make_zip_iterator(thrust::make_tuple(binIndex, normaddress)),
-    //         thrust::make_zip_iterator(thrust::make_tuple(binIndex + MCevents, normaddress)),
-    //         NormSpinCalculator(parameters, i));
-      // thrust::for_each(thrust::make_zip_iterator(thrust::make_tuple(norm_M12.begin(), norm_M34.begin(), norm_CosTheta12.begin(), norm_CosTheta34.begin(), norm_phi.begin()))
-      //                   , thrust::make_zip_iterator(thrust::make_tuple(norm_M12.end(), norm_M34.end(), norm_CosTheta12.end(), norm_CosTheta34.end(), norm_phi.end()))
-      //                   , NormSpinCalculator(parameters, i));
       thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(norm_M12.begin(), norm_M34.begin(), norm_CosTheta12.begin(), norm_CosTheta34.begin(), norm_phi.begin()))
                         ,thrust::make_zip_iterator(thrust::make_tuple(norm_M12.end(), norm_M34.end(), norm_CosTheta12.end(), norm_CosTheta34.end(), norm_phi.end()))
                         ,(norm_SF.begin() + (i * MCevents)) 
@@ -517,8 +435,7 @@ __host__ fptype DPPdf::normalise () const {
     }
      SpinsCalculated = true;
   }
-  printf("Spin 0 %.5g\n",(double)norm_SF[0]);
-  printf("Spins done\n");
+
   //this calculates the values of the lineshapes and stores them in the array. It is recalculated every time parameters change.
   for (int i = 0; i < components.size() -1 ; ++i) {
     if (redoIntegral[i]) {
@@ -553,10 +470,6 @@ __host__ fptype DPPdf::normalise () const {
   // lineshape value calculation for the normalisation, also recalculated every time parameter change
   for (int i = 0; i < components.size() -1 ; ++i) {
       if(!redoIntegral[i]) continue;
-      // thrust::for_each(thrust::make_zip_iterator(thrust::make_tuple(binIndex, normaddress)),
-      //         thrust::make_zip_iterator(thrust::make_tuple(binIndex + MCevents, normaddress)),
-      //         NormLSCalculator(parameters, i));
-
     thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(norm_M12.begin(), norm_M34.begin(), norm_CosTheta12.begin(), norm_CosTheta34.begin(), norm_phi.begin()))
                       ,thrust::make_zip_iterator(thrust::make_tuple(norm_M12.end(), norm_M34.end(), norm_CosTheta12.end(), norm_CosTheta34.end(), norm_phi.end()))
                       ,(norm_LS.begin() + (i * MCevents)) 
@@ -566,11 +479,12 @@ __host__ fptype DPPdf::normalise () const {
 
   thrust::constant_iterator<fptype*> normSFaddress(thrust::raw_pointer_cast(norm_SF.data()));
   thrust::constant_iterator<devcomplex<fptype>* > normLSaddress(thrust::raw_pointer_cast(norm_LS.data()));
+  thrust::constant_iterator<int> NumNormEvents(MCevents);
 
   //this does the rest of the integration with the cached lineshape and spinfactor values for the normalization events  
   fptype sumIntegral = 0;
-  sumIntegral += thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(binIndex, normSFaddress, normLSaddress)),
-          thrust::make_zip_iterator(thrust::make_tuple(binIndex + MCevents, normSFaddress, normLSaddress)),
+  sumIntegral += thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, NumNormEvents, normSFaddress, normLSaddress)),
+          thrust::make_zip_iterator(thrust::make_tuple(eventIndex + MCevents, NumNormEvents, normSFaddress, normLSaddress)),
           *Integrator,
           0.,
           thrust::plus<fptype>());
@@ -578,7 +492,7 @@ __host__ fptype DPPdf::normalise () const {
   //MCevents is the number of normalisation events.
   sumIntegral/=MCevents;
   host_normalisation[parameters] = 1.0/sumIntegral;
-  printf("end of normalise %f\n", sumIntegral);
+  // printf("end of normalise %f\n", sumIntegral);
   return sumIntegral;   
 }
 
@@ -626,20 +540,11 @@ EXEC_TARGET fptype NormSpinCalculator::operator () (thrust::tuple<MCBooster::GRe
 
   unsigned int* indices = paramIndices + _parameters;   // Jump to DALITZPLOT position within parameters array
   unsigned int numLS    = indices[3];
-  unsigned int numSF    = indices[4];
   unsigned int numAmps  = indices[5];
   int parameter_i = 6 + (2 * numAmps) + (numLS * 2) + (_spinfactor_i * 2) ; // Find position of this resonance relative to DALITZPLOT start 
-  // unsigned int offset = 5 + 2 * numLS + numSF;
   unsigned int functn_i = indices[parameter_i];
   unsigned int params_i = indices[parameter_i+1];
-  
-  // int evtNum = thrust::get<0>(t); 
-  // fptype* evt = thrust::get<1>(t) + (evtNum * offset); 
-  // fptype m12    = evt[0]; 
-  // fptype m34    = evt[1];
-  // fptype cos12  = evt[2];
-  // fptype cos34  = evt[3];
-  // fptype phi    = evt[4];
+
   fptype m12    = (thrust::get<0>(t)); 
   fptype m34    = (thrust::get<1>(t));
   fptype cos12  = (thrust::get<2>(t));
@@ -656,8 +561,6 @@ EXEC_TARGET fptype NormSpinCalculator::operator () (thrust::tuple<MCBooster::GRe
 // // }
   spin_function_ptr func = reinterpret_cast<spin_function_ptr>(device_function_table[functn_i]);
   fptype sf = (*func)(vecs, paramIndices+params_i);
-  // fptype* spinfactor = evt + 5 + 2*numLS + _spinfactor_i;
-  // spinfactor[0] = sf;
 
   // printf("NormSF evt:%.5g, %.5g, %.5g, %.5g, %.5g\n", m12, m34, cos12, cos34, phi);
   // printf("NormSF %i, %.5g\n",_spinfactor_i, sf );
@@ -715,7 +618,6 @@ EXEC_TARGET devcomplex<fptype> LSCalculator::operator () (thrust::tuple<int, fpt
   //if (!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass)) return ret;
   //printf("m12 %f \n", m12); // %f %f %f (%f, %f)\n ", m12, m13, m23, ret.real, ret.imag); 
   //printf("#Parameters %i, #LS %i, #SF %i, #AMP %i \n", indices[0], indices[3], indices[4], indices[5]);
-
   // printf("%i mass: %.5g, BW_%i : %f %f\n",evtNum, massstore, _resonance_i, ret.real, ret.imag); 
   
   return ret;
@@ -731,28 +633,16 @@ EXEC_TARGET devcomplex<fptype> NormLSCalculator::operator () (thrust::tuple<MCBo
   devcomplex<fptype> ret;
   
   unsigned int* indices = paramIndices + _parameters;   // Jump to DALITZPLOT position within parameters array
-  unsigned int numLS    = indices[3];
-  unsigned int numSF    = indices[4];
   unsigned int numAmps  = indices[5];
   int parameter_i = 6 + (2 * numAmps) + (_resonance_i * 2); // Find position of this resonance relative to DALITZPLOT start 
-  // unsigned int offset = 5 + 2 * numLS + numSF;
   unsigned int functn_i = indices[parameter_i];
   unsigned int params_i = indices[parameter_i+1];
   unsigned int pair = (paramIndices+params_i)[5];
   
-  // int evtNum = thrust::get<0>(t); 
-  // fptype* evt = thrust::get<1>(t) + (evtNum * offset); 
-
   fptype m1  = functorConstants[indices[1] + 2]; 
   fptype m2  = functorConstants[indices[1] + 3]; 
   fptype m3  = functorConstants[indices[1] + 4];  
   fptype m4  = functorConstants[indices[1] + 5];
-  
-  // fptype m12 = evt[0]; 
-  // fptype m34 = evt[1];
-  // fptype cos12 = evt[2];
-  // fptype cos34 = evt[3];
-  // fptype phi = evt[4];
 
   fptype m12    = (thrust::get<0>(t)); 
   fptype m34    = (thrust::get<1>(t));
@@ -777,10 +667,7 @@ EXEC_TARGET devcomplex<fptype> NormLSCalculator::operator () (thrust::tuple<MCBo
   // printf("NormLS %f, %f, %f, %f, %f \n",m12, m34, cos12, cos34, phi );
   // printf("%i, %i, %i, %i, %i \n",numLS, numSF, numAmps, offset, evtNum );
   // printf("NLS %i, %f, %f\n",_resonance_i,ret.real, ret.imag);
-  // evt[5 + _resonance_i * 2] = ret.real;
-  // evt[6 + _resonance_i * 2] = ret.imag;
 
-  //if (!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass)) return ret;
   //printf("m12 %f \n", m12); // %f %f %f (%f, %f)\n ", m12, m13, m23, ret.real, ret.imag); 
   //printf("#Parameters %i, #LS %i, #SF %i, #AMP %i \n", indices[0], indices[3], indices[4], indices[5]);
   THREAD_SYNCH
@@ -832,16 +719,14 @@ NormIntegrator::NormIntegrator(unsigned int pIdx)
   {}
 
 
-EXEC_TARGET fptype NormIntegrator::operator() (thrust::tuple<int, fptype*, devcomplex<fptype>*> t) const {
+EXEC_TARGET fptype NormIntegrator::operator() (thrust::tuple<int, int, fptype*, devcomplex<fptype>*> t) const {
   unsigned int * indices = paramIndices + _parameters;
-  unsigned int totalLS = indices[3];
-  unsigned int totalSF = indices[4];
   unsigned int totalAMP = indices[5];
-  // unsigned int offset = 5 + 2 * totalLS + totalSF;
 
   unsigned int evtNum = thrust::get<0>(t); 
-  fptype* SFnorm = thrust::get<1>(t) + (evtNum * totalSF); 
-  devcomplex<fptype>* LSnorm = thrust::get<2>(t) + (evtNum * totalLS); 
+  unsigned int MCevents = thrust::get<1>(t); 
+  fptype* SFnorm = thrust::get<2>(t) + evtNum; 
+  devcomplex<fptype>* LSnorm = thrust::get<3>(t) + evtNum; 
 
   devcomplex<fptype> returnVal(0,0);
   for (int amp = 0; amp < totalAMP; ++amp)
@@ -858,28 +743,25 @@ EXEC_TARGET fptype NormIntegrator::operator() (thrust::tuple<int, fptype*, devco
     for (int j = 0; j < nPerm; ++j){  
       devcomplex<fptype> ret(1,0);
       for (int i = j*LS_step; i < (j+1)*LS_step; ++i){
-        // devcomplex<fptype> matrixelement(evt[5 + 2 * AmpIndices[totalAMP + ampidx + 3 + i]],evt[5 + 2 * AmpIndices[totalAMP + ampidx + 3 + i] + 1]); 
-        devcomplex<fptype> matrixelement(LSnorm[AmpIndices[totalAMP + ampidx + 3 + i]]); 
-        
-        // printf("Norm BW %i, %f, %f\n",AmpIndices[totalAMP + ampidx + 3 + i] , matrixelement.real, matrixelement.imag);
+        devcomplex<fptype> matrixelement(LSnorm[AmpIndices[totalAMP + ampidx + 3 + i] * MCevents]); 
+        // printf("Norm BW %i, %.5g, %.5g\n",AmpIndices[totalAMP + ampidx + 3 + i] , matrixelement.real, matrixelement.imag);
         ret *= matrixelement; 
 
       }
       for (int i = j*SF_step; i < (j+1)*SF_step; ++i){
-        fptype matrixelement = (SFnorm[AmpIndices[totalAMP + ampidx + 3 + numLS + i]]); 
+        fptype matrixelement = (SFnorm[AmpIndices[totalAMP + ampidx + 3 + numLS + i] * MCevents]); 
+        // printf("Norm SF %i, %.5g\n",AmpIndices[totalAMP + ampidx + 3 + i] , matrixelement);
         ret *= matrixelement; 
-        // printf("Norm SF %i, %f\n",AmpIndices[totalAMP + ampidx + 3 + i] , matrixelement);
 
       }
       ret2 += ret;
     }
 
-    ret2 *= (1/SQRT((fptype)(nPerm)));
     fptype amp_real = cudaArray[indices[2*amp + 6]];
     fptype amp_imag = cudaArray[indices[2*amp + 7]];
-    // if (evtNum==0) printf("%f, %f\n",amp_real, amp_imag );
-
+    ret2 *= (1/SQRT((fptype)(nPerm)));
     ret2.multiply(amp_real, amp_imag); 
+    // printf("Result Amplitude %i, %.5g, %.5g\n",amp, ret2.real, ret2.imag);
     returnVal += ret2;
   }
   

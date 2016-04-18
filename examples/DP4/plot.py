@@ -5,8 +5,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 m = np.genfromtxt('MINT_Krho_SPD_wave.txt', skip_header=1,delimiter=',')
-m1 = np.genfromtxt('DP4.txt', skip_header=1, skip_footer=5e5)
-f1 = np.genfromtxt("DP4.txt", skip_header=500001)
+m1 = np.genfromtxt('DP4.txt', skip_header=0, skip_footer=500002)
+f1 = np.genfromtxt("DP4.txt", skip_header=500002)
 
 m12 = m[:,0]
 m34 = m[:,1]

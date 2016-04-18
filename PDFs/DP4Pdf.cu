@@ -80,7 +80,7 @@ struct evalclass: public IFunctionArray
     // printf("x:%.5g, y%.5g phi %.5g\n", x, y, phi );
 
     if (phi < 0.0)
-      phi += 2.0*CUDART_PI_HI;
+      phi += 2.0 * CONST_PI;
 
     Vector4R d1n = p4_d1/p4_d1.d3mag();
     Vector4R d2n = p4_d2/p4_d2.d3mag();

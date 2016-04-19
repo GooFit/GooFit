@@ -11,9 +11,9 @@ See *.cu file for more details
 
 #include "GooPdf.hh" 
 #include "DalitzPlotHelpers.hh" 
-#include "devcomplex.hh"
 #include "SpinFactors.hh"
 #include <mcbooster/GContainers.h>
+#include <tuple>
 
 class LSCalculator; 
 class AmpCalc;
@@ -31,6 +31,8 @@ public:
   __host__ void setDataSize (unsigned int dataSize, unsigned int evtSize = 6); 
   __host__ void setForceIntegrals (bool f = true) {forceRedoIntegrals = f;}  
   __host__ int getMCevents(){return MCevents;}
+  __host__ std::tuple<MCBooster::ParticlesSet_h, MCBooster::VariableSet_h, MCBooster::RealVector_h,  MCBooster::RealVector_h> GenerateSig (unsigned int numEvents);
+
 protected:
 
 private:
@@ -143,6 +145,7 @@ class AmpCalc : public thrust::unary_function<unsigned int, devcomplex<fptype> >
   private:
     unsigned int _parameters;
  };
+
 
 #endif
 

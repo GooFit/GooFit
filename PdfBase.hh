@@ -79,7 +79,7 @@ public:
 
   __host__ void checkInitStatus (std::vector<std::string>& unInited) const; 
   void clearCurrentFit (); 
-
+  __host__ void SigGenSetIndices(){setIndices();}
 protected:
   fptype numEvents;         // Non-integer to allow weighted events
   unsigned int numEntries;  // Eg number of bins - not always the same as number of events, although it can be. 

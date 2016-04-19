@@ -21,113 +21,9 @@ TODO:
 #include <mcbooster/EvaluateArray.h>
 #include <mcbooster/GFunctional.h>
 #include "DP4Pdf.hh"
-
-namespace eval{
-using namespace MCBooster;
-struct evalclass: public IFunctionArray
-{
-  evalclass()
-  {
-    dim = 4;
-  }
-
-  __host__   __device__ GReal_t cosHELANG(const Vector4R p, const Vector4R q,
-      const Vector4R d)
-  {
-    GReal_t pd = p * d;
-    GReal_t pq = p * q;
-    GReal_t qd = q * d;
-    GReal_t mp2 = p.mass2();
-    GReal_t mq2 = q.mass2();
-    GReal_t md2 = d.mass2();
-
-    return (pd * mq2 - pq * qd)
-        / sqrt((pq * pq - mq2 * mp2) * (qd * qd - mq2 * md2));
-
-  }
-
-  __host__   __device__ GReal_t phi(const Vector4R& p4_p,
-      const Vector4R& p4_d1, const Vector4R& p4_d2, const Vector4R& p4_h1,
-      const Vector4R& p4_h2)
-  {
-
-    Vector4R p4_d1p, p4_h1p, p4_h2p, p4_d2p;
-
-    Vector4R d1_perp, d1_prime, h1_perp;
-    Vector4R D;
-
-    D = p4_d1 + p4_d2;
-    Vector4R D2 = p4_h1 + p4_h2;
-
-    d1_perp = p4_d1 - (D.dot(p4_d1) / D.dot(D)) * D;
-    h1_perp = p4_h1 - (D2.dot(p4_h1) / D2.dot(D2)) * D2;
-
-    // orthogonal to both D and d1_perp
-
-    d1_prime = D.cross(d1_perp);
-
-    d1_perp = d1_perp / d1_perp.d3mag();
-    d1_prime = d1_prime / d1_prime.d3mag();
-
-    GReal_t x, y;
-
-    x = d1_perp.dot(h1_perp);
-    y = d1_prime.dot(h1_perp);
-    GReal_t phi = atan2(y, x);
-    // printf("x:%.5g, y%.5g phi %.5g\n", x, y, phi );
-
-    if (phi < 0.0)
-      phi += 2.0 * CONST_PI;
-
-    Vector4R d1n = p4_d1/p4_d1.d3mag();
-    Vector4R d2n = p4_d2/p4_d2.d3mag();
-    Vector4R h1n = p4_h1/p4_h1.d3mag();
-    Vector4R h2n = p4_h2/p4_h2.d3mag();
-    Vector4R h12n = (p4_h1+p4_h2);
-    h12n*=1.0/h12n.d3mag();
+#include "EvalVar.hh"
 
 
-    Vector4R n1 = d1n.cross(d2n);
-    Vector4R n2 = h1n.cross(h2n);
-    n1 *= 1.0/n1.d3mag();
-    n2 *= 1.0/n2.d3mag();
-    Vector4R n3 = n1.cross(n2);
-
-    GReal_t cp = (n1.dot(n2));
-    GReal_t sp = (n3.dot(h12n));
-
-    GReal_t phi2 = acos(cp);    
-    if (sp <0) phi2 *= -1;
-    // printf("cp %.5g, sp %.5g, phi2 %.5g\n",cp, sp, phi2 );
-
-
-
-    return phi2;
-
-  }
-
-  __host__ __device__
-  void operator()(const GInt_t n, Vector4R** particles, GReal_t* variables)
-  {
-    Vector4R ppip = *particles[0];
-    Vector4R ppim    = *particles[1];
-    Vector4R pK   = *particles[2];
-    Vector4R ppip2  = *particles[3];
-
-    Vector4R pM = ppip + ppim + pK + ppip2;
-    Vector4R ppipi = ppip + ppim;
-    Vector4R pKpi = pK + ppip2;
-
-
-    variables[0] = ppipi.mass();
-    variables[1] = pKpi.mass();
-    variables[2] = cosHELANG(pM, ppipi, ppip);
-    variables[3] = cosHELANG(pM, pKpi, pK);
-    variables[4] = phi(pM, ppip, ppim, pK, ppip2);
-  }
-
-};
-}
 // The function of this array is to hold all the cached waves; specific 
 // waves are recalculated when the corresponding resonance mass or width 
 // changes. Note that in a multithread environment each thread needs its
@@ -177,17 +73,16 @@ MEM_DEVICE device_function_ptr ptr_to_DP = device_DP;
 
 __host__ DPPdf::DPPdf (std::string n, 
                  std::vector<Variable*> observables,
-                 // Variable* eventNumber, 
                  DecayInfo_DP* decay, 
                  GooPdf* efficiency,
                  unsigned int MCeventsNorm)
-  : GooPdf(0, n) 
+  : GooPdf(0,n) 
   , decayInfo(decay)
   , _observables(observables)
   , cachedAMPs(0)
   , cachedResSF(0) 
   , forceRedoIntegrals(true)
-  , totalEventSize(1 + observables.size()) // number of observables plus eventnumber
+  , totalEventSize(observables.size()) // number of observables plus eventnumber
   , cacheToUse(0) 
   , SpinsCalculated(false)
 {
@@ -308,16 +203,14 @@ __host__ DPPdf::DPPdf (std::string n,
 
   // printf("#Amp's %i, #LS %i, #SF %i \n", AmpMap.size(), components.size()-1, SpinFactors.size() );
 
-{
-  // scope with mcbooster namespace for easier readability;
-  using namespace MCBooster;
-  std::vector<GReal_t> masses(decayInfo->particle_masses.begin()+1,decayInfo->particle_masses.end());
-  PhaseSpace phsp(decayInfo->particle_masses[0], masses, MCeventsNorm);
-  phsp.Generate(Vector4R(decayInfo->particle_masses[0], 0.0, 0.0, 0.0));
+
+  std::vector<MCBooster::GReal_t> masses(decayInfo->particle_masses.begin()+1,decayInfo->particle_masses.end());
+  MCBooster::PhaseSpace phsp(decayInfo->particle_masses[0], masses, MCeventsNorm);
+  phsp.Generate(MCBooster::Vector4R(decayInfo->particle_masses[0], 0.0, 0.0, 0.0));
   phsp.Unweight();
 
   auto nAcc = phsp.GetNAccepted();
-  BoolVector_d flags = phsp.GetAccRejFlags();
+  MCBooster::BoolVector_d flags = phsp.GetAccRejFlags();
   auto d1 = phsp.GetDaughters(0);
   auto d2 = phsp.GetDaughters(1);
   auto d3 = phsp.GetDaughters(2);
@@ -335,32 +228,32 @@ __host__ DPPdf::DPPdf (std::string n,
   d3.shrink_to_fit();
   d4.shrink_to_fit();
 
-  ParticlesSet_d pset(4);
+  MCBooster::ParticlesSet_d pset(4);
   pset[0] = &d1;
   pset[1] = &d2;
   pset[2] = &d3;
   pset[3] = &d4;
 
-  norm_M12        = RealVector_d(nAcc);
-  norm_M34        = RealVector_d(nAcc);
-  norm_CosTheta12 = RealVector_d(nAcc);
-  norm_CosTheta34 = RealVector_d(nAcc);
-  norm_phi        = RealVector_d(nAcc);
+  norm_M12        = MCBooster::RealVector_d(nAcc);
+  norm_M34        = MCBooster::RealVector_d(nAcc);
+  norm_CosTheta12 = MCBooster::RealVector_d(nAcc);
+  norm_CosTheta34 = MCBooster::RealVector_d(nAcc);
+  norm_phi        = MCBooster::RealVector_d(nAcc);
 
-  VariableSet_d VarSet(5);
+  MCBooster::VariableSet_d VarSet(5);
   VarSet[0] = &norm_M12,
   VarSet[1] = &norm_M34;
   VarSet[2] = &norm_CosTheta12;
   VarSet[3] = &norm_CosTheta34;
   VarSet[4] = &norm_phi;
 
-  eval::evalclass eval = eval::evalclass();
-  EvaluateArray<eval::evalclass>(eval, pset, VarSet);
+  Dim5 eval = Dim5();
+  MCBooster::EvaluateArray<Dim5>(eval, pset, VarSet);
 
-  norm_SF = RealVector_d(nAcc * SpinFactors.size()); 
+  norm_SF = MCBooster::RealVector_d(nAcc * SpinFactors.size()); 
   norm_LS = MCBooster::mc_device_vector<devcomplex<fptype> >(nAcc * (components.size() - 1)); 
   MCevents = nAcc;
-}
+
 
   addSpecialMask(PdfBase::ForceSeparateNorm); 
 }
@@ -493,6 +386,118 @@ __host__ fptype DPPdf::normalise () const {
   return sumIntegral;   
 }
 
+__host__ std::tuple<MCBooster::ParticlesSet_h, MCBooster::VariableSet_h, MCBooster::RealVector_h, MCBooster::RealVector_h> DPPdf::GenerateSig (unsigned int numEvents) {
+
+  std::vector<MCBooster::GReal_t> masses(decayInfo->particle_masses.begin()+1,decayInfo->particle_masses.end());
+  MCBooster::PhaseSpace phsp(decayInfo->particle_masses[0], masses, numEvents);
+  phsp.Generate(MCBooster::Vector4R(decayInfo->particle_masses[0], 0.0, 0.0, 0.0));
+
+  auto d1 = phsp.GetDaughters(0);
+  auto d2 = phsp.GetDaughters(1);
+  auto d3 = phsp.GetDaughters(2);
+  auto d4 = phsp.GetDaughters(3);
+
+  MCBooster::ParticlesSet_d pset(4);
+  pset[0] = &d1;
+  pset[1] = &d2;
+  pset[2] = &d3;
+  pset[3] = &d4;
+
+  auto SigGen_M12_d        = MCBooster::RealVector_d(numEvents);
+  auto SigGen_M34_d        = MCBooster::RealVector_d(numEvents);
+  auto SigGen_CosTheta12_d = MCBooster::RealVector_d(numEvents);
+  auto SigGen_CosTheta34_d = MCBooster::RealVector_d(numEvents);
+  auto SigGen_phi_d        = MCBooster::RealVector_d(numEvents);
+
+  MCBooster::VariableSet_d VarSet_d(5);
+  VarSet_d[0] = &SigGen_M12_d,
+  VarSet_d[1] = &SigGen_M34_d;
+  VarSet_d[2] = &SigGen_CosTheta12_d;
+  VarSet_d[3] = &SigGen_CosTheta34_d;
+  VarSet_d[4] = &SigGen_phi_d;
+
+  Dim5 eval = Dim5();
+  MCBooster::EvaluateArray<Dim5>(eval, pset, VarSet_d);
+  
+  auto h1 = new MCBooster::Particles_h(d1);
+  auto h2 = new MCBooster::Particles_h(d2);
+  auto h3 = new MCBooster::Particles_h(d3);
+  auto h4 = new MCBooster::Particles_h(d4);
+  
+  MCBooster::ParticlesSet_h ParSet(4);
+  ParSet[0] = h1;
+  ParSet[1] = h2;
+  ParSet[2] = h3;
+  ParSet[3] = h4;
+
+  auto SigGen_M12_h        = new MCBooster::RealVector_h(SigGen_M12_d);
+  auto SigGen_M34_h        = new MCBooster::RealVector_h(SigGen_M34_d);
+  auto SigGen_CosTheta12_h = new MCBooster::RealVector_h(SigGen_CosTheta12_d);
+  auto SigGen_CosTheta34_h = new MCBooster::RealVector_h(SigGen_CosTheta34_d);
+  auto SigGen_phi_h        = new MCBooster::RealVector_h(SigGen_phi_d);
+
+  MCBooster::VariableSet_h VarSet(5);
+  VarSet[0] = SigGen_M12_h,
+  VarSet[1] = SigGen_M34_h;
+  VarSet[2] = SigGen_CosTheta12_h;
+  VarSet[3] = SigGen_CosTheta34_h;
+  VarSet[4] = SigGen_phi_h;
+
+  auto weights = MCBooster::RealVector_d(phsp.GetWeights());
+  phsp.~PhaseSpace();
+
+  auto DS = new MCBooster::RealVector_d(6*numEvents);
+  thrust::counting_iterator<int> eventNumber(0);
+
+  #pragma unroll
+  for (int i = 0; i < 5; ++i)
+  {
+    MCBooster::strided_range<MCBooster::RealVector_d::iterator> sr(DS->begin() + i, DS->end(), 6);
+    thrust::copy(VarSet_d[i]->begin(), VarSet_d[i]->end(), sr.begin());
+  }
+
+  MCBooster::strided_range<MCBooster::RealVector_d::iterator> sr(DS->begin() + 5, DS->end(), 6);
+  thrust::copy(eventNumber, eventNumber+numEvents, sr.begin());
+
+  dev_event_array = thrust::raw_pointer_cast(DS->data());
+  setDataSize(numEvents, 6);
+
+  SigGenSetIndices();
+  copyParams(); 
+  normalise();
+  MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
+
+  thrust::device_vector<fptype> results(numEvents); 
+  thrust::constant_iterator<int> eventSize(6); 
+  thrust::constant_iterator<fptype*> arrayAddress(dev_event_array); 
+  thrust::counting_iterator<int> eventIndex(0);
+
+  MetricTaker evalor(this, getMetricPointer("ptr_to_Prob")); 
+  thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
+        thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEvents, arrayAddress, eventSize)),
+        results.begin(), 
+        evalor); 
+  SYNCH();
+  gooFree(dev_event_array);
+
+  thrust::transform(results.begin(), results.end(), weights.begin(), weights.begin(),
+                     thrust::multiplies<MCBooster::GReal_t>());
+  MCBooster::BoolVector_d flags(numEvents);
+
+  thrust::counting_iterator<MCBooster::GLong_t> first(0);
+  thrust::counting_iterator<MCBooster::GLong_t> last = first + numEvents;
+
+  auto max = thrust::max_element(weights.begin(),weights.end());
+  thrust::transform(first, last, weights.begin(),flags.begin(), MCBooster::FlagAcceptReject((fptype)*max));
+
+  auto weights_h = MCBooster::RealVector_h(weights);
+  auto results_h = MCBooster::RealVector_h(results);
+  auto flags_h = MCBooster::BoolVector_h(flags);
+
+  return std::make_tuple(ParSet, VarSet, weights_h, flags_h);
+}
+
+
 SFCalculator::SFCalculator (int pIdx, unsigned int sf_idx) 
   : _spinfactor_i(sf_idx)
   , _parameters(pIdx)
@@ -516,7 +521,7 @@ EXEC_TARGET devcomplex<fptype> SFCalculator::operator () (thrust::tuple<int, fpt
 
   fptype vecs[16];
   get4Vecs(vecs, indices[1], m12, m34, cos12, cos34, phi); 
-  // printf("%f, %f, %f, %f, %f \n",m12, m34, cos12, cos34, phi );
+  // printf("%i, %i, %f, %f, %f, %f, %f \n",evtNum, thrust::get<2>(t), m12, m34, cos12, cos34, phi );
   // printf("vec%i %f, %f, %f, %f\n",0, vecs[0], vecs[1], vecs[2], vecs[3]);
   // printf("vec%i %f, %f, %f, %f\n",1, vecs[4], vecs[5], vecs[6], vecs[7]);
   // printf("vec%i %f, %f, %f, %f\n",2, vecs[8], vecs[9], vecs[10], vecs[11]);

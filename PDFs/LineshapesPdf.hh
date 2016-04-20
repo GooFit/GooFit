@@ -14,6 +14,8 @@ See *.cu file for more details
 #include "ResonancePdf.hh"
 #include "SpinFactors.hh"
 
+enum class LS {BW, BW_MINT, Lass, Bugg, GouSak, SBW};
+
 class Lineshape : public GooPdf {
   // Service class intended to hold parametrisations of
   // resonances on Dalitz plots. Don't try to use this
@@ -24,28 +26,16 @@ class Lineshape : public GooPdf {
 
   friend class DPPdf; 
 public:
-  // Constructor for regular BW 
   Lineshape (string name,
 			  Variable* mass, 
 			  Variable* width, 
 			  unsigned int L, 
-			  unsigned int cyc,
-        bool useMINTBW); 
+			  unsigned int Mpair,
+        LS kind = LS::BW); 
 
-  // Nonresonant constructor
-  Lineshape (string name);  
+  Lineshape (string name);
+   
   void setConstantIndex (unsigned int idx) {host_indices[parameters + 1] = idx;}
-
-private:
-  /*
-  unsigned int _mother_pdg;
-  Variable* mass;
-  Variable* width;
-  unsigned int spin;
-  unsigned int cyclic_index;
-  unsigned int eval_type;
-  unsigned int resonance_type; 
-  */ 
 };
 
 class Amplitude {

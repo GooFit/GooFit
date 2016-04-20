@@ -108,6 +108,7 @@ EXEC_TARGET fptype bugg_Gamma_4pi(const fptype& s, const fptype mpi, const fptyp
   return returnVal;
 }
 
+//This function is an adaptation from the bugg lineshape implemented in the MINT package written by Jonas Rademacker. 
 // this lineshape is not tested yet!
 EXEC_TARGET devcomplex<fptype> bugg_MINT (fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
   fptype meson_radius           = functorConstants[indices[1]+4];
@@ -226,14 +227,15 @@ EXEC_TARGET devcomplex<fptype> nonres_DP (fptype m12, fptype m1, fptype m2, unsi
 MEM_DEVICE resonance_function_ptr ptr_to_BW_DP = BW_DP;
 MEM_DEVICE resonance_function_ptr ptr_to_BW_MINT = BW_MINT;
 MEM_DEVICE resonance_function_ptr ptr_to_lass_DP = lass_DP;
+MEM_DEVICE resonance_function_ptr ptr_to_bugg_MINT = bugg_MINT;
 MEM_DEVICE resonance_function_ptr ptr_to_NONRES_DP = nonres_DP;
 
 Lineshape::Lineshape (string name,
 						Variable* mass, 
 						Variable* width, 
 						unsigned int L, 
-						unsigned int cyc,
-            bool useMINTBW = false) 
+						unsigned int Mpair,
+            LS kind) 
   : GooPdf(0, name)
 {
   vector<unsigned int> pindices; 
@@ -245,10 +247,31 @@ Lineshape::Lineshape (string name,
   pindices.push_back(registerParameter(mass));
   pindices.push_back(registerParameter(width)); 
   pindices.push_back(L);
-  pindices.push_back(cyc); 
+  pindices.push_back(Mpair); 
 
-  if(useMINTBW) GET_FUNCTION_ADDR(ptr_to_BW_MINT);
-  else GET_FUNCTION_ADDR(ptr_to_BW_DP);
+  switch(kind){
+    
+    case LS::BW:
+      GET_FUNCTION_ADDR(ptr_to_BW_DP);
+      break;
+    
+    case LS::BW_MINT:
+      GET_FUNCTION_ADDR(ptr_to_BW_MINT);
+      break;
+
+    case LS::Lass:
+      GET_FUNCTION_ADDR(ptr_to_lass_DP);
+      break;
+
+    case LS::Bugg:
+    GET_FUNCTION_ADDR(ptr_to_bugg_MINT);
+    break;
+
+    default:
+    fprintf(stderr,"It seems that the requested lineshape is not implemented yet. Check LineshapesPdf.cu");
+    exit(0);
+  }
+
   initialise(pindices); 
 }
 

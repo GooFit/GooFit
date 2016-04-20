@@ -44,8 +44,8 @@ EXEC_TARGET gpuLVec operator*(gpuLVec lhs, fptype rhs);
 EXEC_TARGET gpuLVec operator*(fptype lhs, gpuLVec rhs);
 
 // in case of 3 particles the first two are the resonance.
-enum DP4Pair {M_12 = 0, M_34, M_13, M_14, M_23, M_24, M_123, M_132, M_231, M_124, M_142, M_241, M_134, M_143, M_341, M_234, M_243, M_342}; 
-enum DaughterPair {PAIR_12 = 0, PAIR_13, PAIR_23}; 
+enum DP4Pair {M_12 = 0, M_34, M_13, M_14, M_23, M_24, M_12_3, M_13_2, M_23_1, M_12_4, M_14_2, M_24_1, M_13_4, M_14_3, M_34_1, M_23_4, M_24_3, M_34_2}; 
+enum DaughterPair {PAIR_12 = 0, PAIR_13, PAIR_23};
 
 const int resonanceSize = 4;   // Number of parameters to describe one resonance.
 // Why not make this a static const member of ResonancePdf? Because the 'static'

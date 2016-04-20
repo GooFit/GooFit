@@ -33,8 +33,6 @@ int main (int argc, char** argv) {
   Variable* KstarM   = new Variable("KstarM", 0.89581, 0.01, 0.9, 0.1);
   Variable* KstarW   = new Variable("KstarW", 0.0474, 0.01, 0.1, 0.2); 
 
-  bool useMINT = true;
-
   //Map of spinfactors, here we have two because of the bose symmetrization of the two pi+
   std::map<std::string, SpinFactor*> SFKRS;
   SFKRS["SVVS"]   = new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_S, 0, 1, 2, 3);
@@ -50,22 +48,22 @@ int main (int argc, char** argv) {
 
   //Map of lineshapes, also for both pi+ configurations
   std::map<std::string, Lineshape*> LSKRS;
-  LSKRS["rho(770)"]    = new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, useMINT);
-  LSKRS["K*(892)bar"]  = new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_34, useMINT);
-  LSKRS["BSrho(770)"]  = new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, useMINT);
-  LSKRS["BSK*(892)bar"]= new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_13, useMINT);
+  LSKRS["rho(770)"]    = new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS::BW_MINT);
+  LSKRS["K*(892)bar"]  = new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_34, LS::BW_MINT);
+  LSKRS["BSrho(770)"]  = new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS::BW_MINT);
+  LSKRS["BSK*(892)bar"]= new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_13, LS::BW_MINT);
 
   std::map<std::string, Lineshape*> LSKRP;
-  LSKRP["rho(770)"]    = new Lineshape("rho(770)P", RhoMass, RhoWidth, 1, M_12, useMINT);
-  LSKRP["K*(892)bar"]  = new Lineshape("K*(892)barP", KstarM, KstarW, 1, M_34, useMINT);
-  LSKRP["BSrho(770)"]  = new Lineshape("rho(770)P", RhoMass, RhoWidth, 1, M_24, useMINT);
-  LSKRP["BSK*(892)bar"]= new Lineshape("K*(892)barP", KstarM, KstarW, 1, M_13, useMINT);
+  LSKRP["rho(770)"]    = new Lineshape("rho(770)P", RhoMass, RhoWidth, 1, M_12, LS::BW_MINT);
+  LSKRP["K*(892)bar"]  = new Lineshape("K*(892)barP", KstarM, KstarW, 1, M_34, LS::BW_MINT);
+  LSKRP["BSrho(770)"]  = new Lineshape("rho(770)P", RhoMass, RhoWidth, 1, M_24, LS::BW_MINT);
+  LSKRP["BSK*(892)bar"]= new Lineshape("K*(892)barP", KstarM, KstarW, 1, M_13, LS::BW_MINT);
 
   std::map<std::string, Lineshape*> LSKRD;
-  LSKRD["rho(770)"]    = new Lineshape("rho(770)D", RhoMass, RhoWidth, 1, M_12, useMINT);
-  LSKRD["K*(892)bar"]  = new Lineshape("K*(892)barD", KstarM, KstarW, 1, M_34, useMINT);
-  LSKRD["BSrho(770)"]  = new Lineshape("rho(770)D", RhoMass, RhoWidth, 1, M_24, useMINT);
-  LSKRD["BSK*(892)bar"]= new Lineshape("K*(892)barD", KstarM, KstarW, 1, M_13, useMINT);
+  LSKRD["rho(770)"]    = new Lineshape("rho(770)D", RhoMass, RhoWidth, 1, M_12, LS::BW_MINT);
+  LSKRD["K*(892)bar"]  = new Lineshape("K*(892)barD", KstarM, KstarW, 1, M_34, LS::BW_MINT);
+  LSKRD["BSrho(770)"]  = new Lineshape("rho(770)D", RhoMass, RhoWidth, 1, M_24, LS::BW_MINT);
+  LSKRD["BSK*(892)bar"]= new Lineshape("K*(892)barD", KstarM, KstarW, 1, M_13, LS::BW_MINT);
 
   // the very last parameter means that we have two permutations. so the first half of the Lineshapes 
   // and the first half of the spinfactors are amplitude 1, rest is amplitude 2

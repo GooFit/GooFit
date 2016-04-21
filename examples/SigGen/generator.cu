@@ -10,13 +10,14 @@
 #include "UnbinnedDataSet.hh"
 #include "DP4Pdf.hh"
 
+#include <thrust/count.h>
 
 using namespace std;
 
+// Constants used in more than one PDF component. 
 const fptype _mD0 = 1.8645; 
 const fptype piPlusMass = 0.13957018;
 const fptype KmMass = .493677;
-// Constants used in more than one PDF component. 
 
 int main (int argc, char** argv) {
 
@@ -110,8 +111,7 @@ int main (int argc, char** argv) {
   auto variables = std::get<1>(tuple);
   auto weights = std::get<2>(tuple);
   auto flags = std::get<3>(tuple);
-
-  int accepted = thrust::reduce(flags.begin(),flags.end());
+  int accepted = thrust::count_if(flags.begin(), flags.end(), thrust::identity<bool>());
   fprintf(stderr,"Using accept-reject method would leave you with %i out of %i events\n", accepted, numEvents);
 
   for (int i = 0; i < weights.size(); ++i)

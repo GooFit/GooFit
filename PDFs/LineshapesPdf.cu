@@ -13,27 +13,52 @@ Also right now it is the home to some helper functions needed and an implementat
 
 #include "LineshapesPdf.hh" 
 
+EXEC_TARGET fptype BL_PRIME (fptype z2, fptype z02, int L) {
+  if (1 == L) return(1+z02)/(1+z2);
+  else if (2 == L) return ( z02*z02 + 3*z02 + 9 ) / ( z2*z2 + 3*z2 + 9 )  ;
+  else{
+    printf("ERROR! Oribtal > 2 not supported!\n");
+    return 0;
+  }
+  // Spin 3 and up not accounted for. 
+}
+
+EXEC_TARGET fptype BL(fptype z2, int L) {
+  if( 1==L) return 2*z2/(1+z2);
+  else if( 1==L) return (13*z2*z2 )/ ( z2*z2 + 3*z2 + 9 )  ;
+  else{
+    printf("ERROR! Oribtal > 2 not supported!\n");
+    return 0;
+  }
+  // Spin 3 and up not accounted for. 
+}
+
 EXEC_TARGET devcomplex<fptype> BW_DP (fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
   fptype meson_radius           = functorConstants[indices[1]+0];
   fptype resmass                = cudaArray[indices[2]];
   fptype reswidth               = cudaArray[indices[3]];
   unsigned int orbital          = indices[4];
+  unsigned int FF               = indices[6];
 
   fptype frFactor = 1;
 
   fptype rMass2 = Mpair * Mpair;
   resmass *= resmass; 
   // Calculate momentum of the two daughters in the resonance rest frame 
-  fptype measureDaughterMoms = twoBodyCMmom(rMass2, m1, m2);
-  fptype nominalDaughterMoms = twoBodyCMmom(resmass, m1, m2);
+  fptype q = twoBodyCMmom(rMass2, m1, m2);
+  fptype q0 = twoBodyCMmom(resmass, m1, m2);
 
-  if (0 != orbital) {
-    frFactor =  dampingFactorSquare(nominalDaughterMoms, orbital, meson_radius);
-    frFactor /= dampingFactorSquare(measureDaughterMoms, orbital, meson_radius); 
+  fptype r2 = meson_radius*meson_radius;
+  fptype q2 = q*q;
+
+  if (0 != orbital and 0 != FF) {
+    frFactor =  (FF==1? BL(q2*r2, orbital) : BL_PRIME(q2*r2, q0*q0*r2, orbital));
   }  
+  
+  fptype FF_Gamma = (2==FF ? frFactor : BL_PRIME(q2*r2, q0*q0*r2, orbital));
   // RBW evaluation
   fptype A = (resmass - rMass2); 
-  fptype B = resmass*reswidth * POW(measureDaughterMoms / nominalDaughterMoms, 2.0*orbital + 1) * frFactor / SQRT(rMass2);
+  fptype B = resmass*reswidth * POW(q / q0, 2.0*orbital + 1) * frFactor / SQRT(rMass2);
   fptype C = 1.0 / (A*A + B*B); 
   devcomplex<fptype> ret(A*C, B*C); // Dropping F_D=1
 
@@ -47,7 +72,7 @@ EXEC_TARGET devcomplex<fptype> BW_MINT (fptype Mpair, fptype m1, fptype m2, unsi
   fptype resmass                = cudaArray[indices[2]];
   fptype reswidth               = cudaArray[indices[3]];
   unsigned int orbital          = indices[4];
-
+  unsigned int FF               = indices[6];
 
   const unsigned int to2Lplus1    = 2 * orbital + 1;
 
@@ -71,8 +96,12 @@ EXEC_TARGET devcomplex<fptype> BW_MINT (fptype Mpair, fptype m1, fptype m2, unsi
   }    
 
   fptype mratio = mass/Mpair;
-
-  fptype thisFR = SQRT((1+meson_radius*meson_radius*prSqForGofM) / (1+meson_radius*meson_radius*pABSq));
+  fptype r2 = meson_radius*meson_radius;
+  fptype thisFR = BL_PRIME(pABSq*r2, prSqForGofM*r2, orbital);
+  fptype frFactor = 1;
+  if (0 != orbital and 0 != FF) {
+    frFactor =  (FF==1? BL(pABSq*r2, orbital) : BL_PRIME(pABSq*r2, prSqForGofM*r2, orbital));
+  } 
 
   fptype GofM = width * pratio_to_2Jplus1 *mratio * thisFR * thisFR;
 
@@ -82,7 +111,7 @@ EXEC_TARGET devcomplex<fptype> BW_MINT (fptype Mpair, fptype m1, fptype m2, unsi
   devcomplex<fptype> BW(mass*mass - mumsRecoMass2, mass*GofM);
   fptype den = (mass*mass - mumsRecoMass2) * (mass*mass - mumsRecoMass2) + mass * GofM * mass * GofM;
 
-  devcomplex<fptype> ret = (SQRT(k) * thisFR)/den * BW;
+  devcomplex<fptype> ret = (SQRT(k) * frFactor)/den * BW;
 
   // printf("%.7g, %.7g, %.7g, %i, %.7g, %.7g\n", meson_radius, resmass, reswidth, orbital, pABSq, prSqForGofM);
   // printf("%.7g, %.7g, %.7g, %i, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g\n", m1, m2, Mpair, to2Lplus1, GofM, pratio_to_2Jplus1, mratio, k , meson_radius, prSqForGofM, thisFR, ret.real, ret.imag );
@@ -234,8 +263,9 @@ Lineshape::Lineshape (string name,
 						Variable* mass, 
 						Variable* width, 
 						unsigned int L, 
-						unsigned int Mpair,
-            LS kind) 
+						unsigned int Pair,
+            LS kind, 
+            FF FormFac)
   : GooPdf(0, name)
 {
   vector<unsigned int> pindices; 
@@ -247,7 +277,8 @@ Lineshape::Lineshape (string name,
   pindices.push_back(registerParameter(mass));
   pindices.push_back(registerParameter(width)); 
   pindices.push_back(L);
-  pindices.push_back(Mpair); 
+  pindices.push_back(Pair); 
+  pindices.push_back(enum_to_underlying(FormFac)); 
 
   switch(kind){
     

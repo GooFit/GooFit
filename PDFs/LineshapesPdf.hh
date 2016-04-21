@@ -15,6 +15,8 @@ See *.cu file for more details
 #include "SpinFactors.hh"
 
 enum class LS {BW, BW_MINT, Lass, Bugg, GouSak, SBW};
+//PDG notation for FF
+enum class FF : unsigned int {One = 0, BL, BL_Prime};
 
 class Lineshape : public GooPdf {
   // Service class intended to hold parametrisations of
@@ -31,7 +33,8 @@ public:
 			  Variable* width, 
 			  unsigned int L, 
 			  unsigned int Mpair,
-        LS kind = LS::BW); 
+        LS kind = LS::BW,
+        FF FormFac = FF::BL_Prime); 
 
   Lineshape (string name);
    

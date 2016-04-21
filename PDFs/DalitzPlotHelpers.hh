@@ -13,6 +13,11 @@ See *.cu file for more details
 #include "ResonancePdf.hh"
 #include "LineshapesPdf.hh"
 
+template <typename E>
+constexpr typename std::underlying_type<E>::type enum_to_underlying(E e) {
+    return static_cast<typename std::underlying_type<E>::type>(e);
+}
+
 EXEC_TARGET bool inDalitz (fptype m12, fptype m13, fptype bigM, fptype dm1, fptype dm2, fptype dm3); 
 EXEC_TARGET devcomplex<fptype> getResonanceAmplitude (fptype m12, fptype m13, fptype m23, unsigned int functionIdx, unsigned int pIndex); 
 EXEC_TARGET void get4Vecs (fptype* Vecs, const unsigned int& constants, const fptype& m12, const fptype& m34, const fptype& cos12, const fptype& cos34, const fptype& phi);

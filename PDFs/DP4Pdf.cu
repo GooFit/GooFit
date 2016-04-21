@@ -491,7 +491,7 @@ __host__ std::tuple<MCBooster::ParticlesSet_h, MCBooster::VariableSet_h, MCBoost
   auto weights_h = MCBooster::RealVector_h(weights);
   auto results_h = MCBooster::RealVector_h(results);
   auto flags_h = MCBooster::BoolVector_h(flags);
-
+  SYNCH();
   return std::make_tuple(ParSet, VarSet, weights_h, flags_h);
 }
 

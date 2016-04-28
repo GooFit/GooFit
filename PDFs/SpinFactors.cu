@@ -6,6 +6,9 @@ DISCLAIMER:
 This code is not sufficently tested yet and still under heavy development!
 */
 #include "SpinFactors.hh"
+#include "SpinHelper.hh"
+
+#define ZEMACH 1
 
 EXEC_TARGET fptype DtoV1V2_V1toP1P2_V2toP3P4_S (fptype* Vecs, unsigned int* indices) {
   unsigned int p1          = indices[2];
@@ -57,6 +60,17 @@ EXEC_TARGET fptype DtoV1V2_V1toP1P2_V2toP3P4_P (fptype* Vecs, unsigned int* indi
   gpuLVec pD = pV1 + pV2;
   gpuLVec qD = pV1 - pV2;
 
+  if (ZEMACH) {
+    fptype MV1 = SQRT(pV1.Dot(pV1));
+    fptype MV2 = SQRT(pV2.Dot(pV2));
+    
+    ZTspin1 LD(qD,pD,pD.M());
+    ZTspin1 LV1(qV1,pV1,MV1);
+    ZTspin1 LV2(qV2,pV2,MV2);
+    
+    return LeviCivita(pD,LD,LV1).Dot(LV2);
+  }  
+
   return LeviCevita(pD, qD, qV1, qV2);
 }
 
@@ -74,6 +88,19 @@ EXEC_TARGET fptype DtoV1V2_V1toP1P2_V2toP3P4_D (fptype* Vecs, unsigned int* indi
   gpuLVec qV1 = P1 - P2;
   gpuLVec pV2 = P3 + P4;
   gpuLVec qV2 = P3 - P4;
+
+
+  if (ZEMACH) {
+    gpuLVec pD = pV1 + pV2;
+    gpuLVec qD = pV1 - pV2;
+    double mD = pD.M();
+    
+    ZTspin1 tV1(qV1, pV1, pV1.M());
+    ZTspin1 tV2(qV2, pV2, pV2.M());
+    ZTspin2 tD(qD, pD, mD);
+    
+    return tV1.Contract(tD.Contract(tV2));
+  } 
   
   // printf("%f, %f, %f, %f\n",P1.getX(), P1.getY(), P1.getZ(), P1.getE() );
   // printf("%f, %f, %f, %f\n",P2.getX(), P2.getY(), P2.getZ(), P2.getE() );
@@ -103,11 +130,28 @@ EXEC_TARGET fptype DtoV1P1_V1toV2P2_V2toP3P4 (fptype* Vecs, unsigned int* indice
   gpuLVec pV2 = P3 + P4;
   gpuLVec qV1 = (P3 + P4) - P2;
   gpuLVec qV2 = P3 - P4;
+
+  if (ZEMACH) {
+    double MV1 = pV1.M();
+    double MV2 = pV2.M();
+    
+    gpuLVec pD = pV1 + P1;
+    gpuLVec qD = pV1 - P1;
+    
+    ZTspin1 LD(qD,pD,pD.M());
+    ZTspin1 LV1(qV1,pV1,MV1);
+    ZTspin1 LV2(qV2,pV2,MV2);
+    SpinSumV PV1(pV1,MV1);
+    
+    gpuLVec tmp = PV1.Dot(LD);
+
+    return LeviCivita(pV1,LV1,LV2).Dot(tmp);
+  }   
   
-  printf("%f, %f, %f, %f\n",P1.getX(), P1.getY(), P1.getZ(), P1.getE() );
-  printf("%f, %f, %f, %f\n",P2.getX(), P2.getY(), P2.getZ(), P2.getE() );
-  printf("%f, %f, %f, %f\n",P3.getX(), P3.getY(), P3.getZ(), P3.getE() );
-  printf("%f, %f, %f, %f\n",P4.getX(), P4.getY(), P4.getZ(), P4.getE() );
+  // printf("%f, %f, %f, %f\n",P1.getX(), P1.getY(), P1.getZ(), P1.getE() );
+  // printf("%f, %f, %f, %f\n",P2.getX(), P2.getY(), P2.getZ(), P2.getE() );
+  // printf("%f, %f, %f, %f\n",P3.getX(), P3.getY(), P3.getZ(), P3.getE() );
+  // printf("%f, %f, %f, %f\n",P4.getX(), P4.getY(), P4.getZ(), P4.getE() );
 
   fptype returnVal = LeviCevita(pV1, qV1, P1, qV2);
   return returnVal;
@@ -127,6 +171,15 @@ EXEC_TARGET fptype DtoVS_VtoP1P2_StoP3P4 (fptype* Vecs, unsigned int* indices) {
   gpuLVec pV =  P1 + P2;
   gpuLVec qV =  P1 + P2;
   
+
+  if(ZEMACH){
+      gpuLVec pD= pV + pS;
+      gpuLVec qD= pV - pS;
+      ZTspin1 LD(qD,pD,pD.M());
+      ZTspin1 LV(qV,pV,pV.M());
+      return (LD.Dot(LV));
+  }
+
   // printf("%f, %f, %f, %f\n",P1.getX(), P1.getY(), P1.getZ(), P1.getE() );
   // printf("%f, %f, %f, %f\n",P2.getX(), P2.getY(), P2.getZ(), P2.getE() );
   // printf("%f, %f, %f, %f\n",P3.getX(), P3.getY(), P3.getZ(), P3.getE() );
@@ -154,14 +207,18 @@ EXEC_TARGET fptype DtoAP1_AtoSP2_StoP3P4 (fptype* Vecs, unsigned int* indices) {
   gpuLVec pD =  pA + P1;
   gpuLVec qD =  pA - P1;
 
-  
-  // printf("%f, %f, %f, %f\n",P1.getX(), P1.getY(), P1.getZ(), P1.getE() );
-  // printf("%f, %f, %f, %f\n",P2.getX(), P2.getY(), P2.getZ(), P2.getE() );
-  // printf("%f, %f, %f, %f\n",P3.getX(), P3.getY(), P3.getZ(), P3.getE() );
-  // printf("%f, %f, %f, %f\n",P4.getX(), P4.getY(), P4.getZ(), P4.getE() );
+  // printf("%f, %f, %f, %f\n",P1.GetX(), P1.GetY(), P1.GetZ(), P1.GetE() );
+  // printf("%f, %f, %f, %f\n",P2.GetX(), P2.GetY(), P2.GetZ(), P2.GetE() );
+  // printf("%f, %f, %f, %f\n",P3.GetX(), P3.GetY(), P3.GetZ(), P3.GetE() );
+  // printf("%f, %f, %f, %f\n",P4.GetX(), P4.GetY(), P4.GetZ(), P4.GetE() );
+
+  if(ZEMACH){
+    ZTspin1 LD(qD,pD,pD.M());
+    ZTspin1 LA(qA,pA,pA.M());
+    return (LD.Dot(LA));
+  } 
 
   fptype MA = SQRT(pA.Dot(pA));
-
   fptype returnVal = (P1.Dot(qA) - P1.Dot(pA) * pA.Dot(qA) / (MA*MA));
   return returnVal;
 }
@@ -183,6 +240,15 @@ EXEC_TARGET fptype DtoAP1_AtoVP2_VtoP3P4 (fptype* Vecs, unsigned int* indices) {
   gpuLVec pD = P1 + pA;
   gpuLVec qD = pA - P1;
   
+  if(ZEMACH){  
+      ZTspin1 LB(qD,pD,pD.M());
+      ZTspin1 LV(qV,pV,pV.M());
+      SpinSumV PA(pA,pA.M());  
+      
+      gpuLVec tmp= PA.Dot(LV);
+      return (LB.Dot(tmp));
+  }
+
   fptype MA = SQRT(pA.Dot(pA));
   fptype MV = SQRT(pV.Dot(pV));
   fptype returnVal =  P1.Dot(qV)
@@ -209,6 +275,15 @@ EXEC_TARGET fptype DtoAP1_AtoVP2Dwave_VtoP3P4 (fptype* Vecs, unsigned int* indic
   gpuLVec qA = P2 - pV;
   gpuLVec pD = P1 + pA;
   gpuLVec qD = pA - P1;
+
+  if(ZEMACH){  
+    ZTspin1 LD(qD,pD,pD.M());
+    ZTspin1 LV(qV,pV,pV.M());
+    ZTspin2 LA(qA,pA,pA.M()); 
+    gpuLVec tmp= LA.Contract(LV);
+
+    return (LD.Dot(tmp));
+   }  
   
   fptype MA = SQRT(pA.Dot(pA));
   fptype MV = SQRT(pV.Dot(pV));
@@ -274,22 +349,5 @@ SpinFactor::SpinFactor (std::string name, SF_4Body SF, unsigned int P0, unsigned
   }
   
   initialise(pindices);
-}
-  
-EXEC_TARGET fptype LeviCevita(const gpuLVec& p1, const gpuLVec& p2, const gpuLVec& p3, const gpuLVec& p4){
-  // this calculates the determinant of the 4x4 matrix build out of p1,p2,p3,p4
-  return
-     p1.getZ() * p2.getY() * p3.getX() * p4.getE() - p1.getY() * p2.getZ() * p3.getX() * p4.getE() -
-     p1.getZ() * p2.getX() * p3.getY() * p4.getE() + p1.getX() * p2.getZ() * p3.getY() * p4.getE() +
-     p1.getY() * p2.getX() * p3.getZ() * p4.getE() - p1.getX() * p2.getY() * p3.getZ() * p4.getE() -
-     p1.getZ() * p2.getY() * p3.getE() * p4.getX() + p1.getY() * p2.getZ() * p3.getE() * p4.getX() +
-     p1.getZ() * p2.getE() * p3.getY() * p4.getX() - p1.getE() * p2.getZ() * p3.getY() * p4.getX() -
-     p1.getY() * p2.getE() * p3.getZ() * p4.getX() + p1.getE() * p2.getY() * p3.getZ() * p4.getX() +
-     p1.getZ() * p2.getX() * p3.getE() * p4.getY() - p1.getX() * p2.getZ() * p3.getE() * p4.getY() -
-     p1.getZ() * p2.getE() * p3.getX() * p4.getY() + p1.getE() * p2.getZ() * p3.getX() * p4.getY() +
-     p1.getX() * p2.getE() * p3.getZ() * p4.getY() - p1.getE() * p2.getX() * p3.getZ() * p4.getY() -
-     p1.getY() * p2.getX() * p3.getE() * p4.getZ() + p1.getX() * p2.getY() * p3.getE() * p4.getZ() +
-     p1.getY() * p2.getE() * p3.getX() * p4.getZ() - p1.getE() * p2.getY() * p3.getX() * p4.getZ() -
-     p1.getX() * p2.getE() * p3.getY() * p4.getZ() + p1.getE() * p2.getX() * p3.getY() * p4.getZ();
 }
 

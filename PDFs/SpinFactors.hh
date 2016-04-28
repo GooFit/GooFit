@@ -12,12 +12,7 @@ See *.cu file for more details
 #include "DalitzPlotHelpers.hh"
 #include "LineshapesPdf.hh"
 
-// this is here right now because I get a compile error otherwise. I do not understand why that happens though.
-// need to investigate this further as soon as I find the time.
-class ALIGN(16) gpuLVec;
-
 typedef fptype (*spin_function_ptr) (fptype*, unsigned int*); 
-EXEC_TARGET fptype LeviCevita(const gpuLVec& p1, const gpuLVec& p2, const gpuLVec& p3, const gpuLVec& p4);
 
 enum class SF_4Body{
   DtoV1V2_V1toP1P2_V2toP3P4_S,

@@ -4,17 +4,17 @@ DISCLAIMER:
 
 This code is not sufficently tested yet and still under heavy development!
 
-TODO:
-- reorganize this file into multiple files so lineshapes and spinfactors are seperated. Also all helper functions should go into seperate file.
-
 This file includes some lineshapes and spinfactors.
 Also right now it is the home to some helper functions needed and an implementation of a simple 4-vec class that works on the GPU
 */
 
 #include "LineshapesPdf.hh" 
 
+
+// Form factors as in pdg http://pdg.lbl.gov/2012/reviews/rpp2012-rev-dalitz-analysis-formalism.pdf
 EXEC_TARGET fptype BL_PRIME (fptype z2, fptype z02, int L) {
-  if (1 == L) return(1+z02)/(1+z2);
+  if(0 ==L) return 1.0;
+  else if (1 == L) return(1+z02)/(1+z2);
   else if (2 == L) return ( z02*z02 + 3*z02 + 9 ) / ( z2*z2 + 3*z2 + 9 )  ;
   else{
     printf("ERROR! Oribtal > 2 not supported!\n");
@@ -24,8 +24,9 @@ EXEC_TARGET fptype BL_PRIME (fptype z2, fptype z02, int L) {
 }
 
 EXEC_TARGET fptype BL(fptype z2, int L) {
-  if( 1==L) return 2*z2/(1+z2);
-  else if( 1==L) return (13*z2*z2 )/ ( z2*z2 + 3*z2 + 9 )  ;
+  if(0 ==L) return 1.0;
+  else if( 1==L) return 2*z2/(1+z2);
+  else if( 2==L) return (13*z2*z2 )/ ( z2*z2 + 3*z2 + 9 )  ;
   else{
     printf("ERROR! Oribtal > 2 not supported!\n");
     return 0;
@@ -33,41 +34,8 @@ EXEC_TARGET fptype BL(fptype z2, int L) {
   // Spin 3 and up not accounted for. 
 }
 
-EXEC_TARGET devcomplex<fptype> BW_DP (fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
-  fptype meson_radius           = functorConstants[indices[1]+0];
-  fptype resmass                = cudaArray[indices[2]];
-  fptype reswidth               = cudaArray[indices[3]];
-  unsigned int orbital          = indices[4];
-  unsigned int FF               = indices[6];
-
-  fptype frFactor = 1;
-
-  fptype rMass2 = Mpair * Mpair;
-  resmass *= resmass; 
-  // Calculate momentum of the two daughters in the resonance rest frame 
-  fptype q = twoBodyCMmom(rMass2, m1, m2);
-  fptype q0 = twoBodyCMmom(resmass, m1, m2);
-
-  fptype r2 = meson_radius*meson_radius;
-  fptype q2 = q*q;
-
-  if (0 != orbital and 0 != FF) {
-    frFactor =  (FF==1? BL(q2*r2, orbital) : BL_PRIME(q2*r2, q0*q0*r2, orbital));
-  }  
-  
-  fptype FF_Gamma = (2==FF ? frFactor : BL_PRIME(q2*r2, q0*q0*r2, orbital));
-  // RBW evaluation
-  fptype A = (resmass - rMass2); 
-  fptype B = resmass*reswidth * POW(q / q0, 2.0*orbital + 1) * frFactor / SQRT(rMass2);
-  fptype C = 1.0 / (A*A + B*B); 
-  devcomplex<fptype> ret(A*C, B*C); // Dropping F_D=1
-
-  ret *= SQRT(frFactor); 
-  return ret; 
-}
-
 //This function is modeled after BW_BW::getVal() in BW_BW.cpp from the MINT package written by Jonas Rademacker. 
-EXEC_TARGET devcomplex<fptype> BW_MINT (fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
+EXEC_TARGET devcomplex<fptype> BW (fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
   fptype meson_radius           = functorConstants[indices[1]+0];
   fptype resmass                = cudaArray[indices[2]];
   fptype reswidth               = cudaArray[indices[3]];
@@ -86,7 +54,10 @@ EXEC_TARGET devcomplex<fptype> BW_MINT (fptype Mpair, fptype m1, fptype m2, unsi
   fptype num  = (mumsRecoMass2 - mpsq)*(mumsRecoMass2 - mmsq);
   fptype num2  = (mass*mass - mpsq)*(mass*mass - mmsq);
   fptype pABSq = num/(4*mumsRecoMass2);
-  fptype prSqForGofM = FABS(num2/(4*mass*mass));
+  fptype prSqForGofM = num2/(4*mass*mass);
+  fptype prSq2 = prSqForGofM < 0 ? 0 : prSqForGofM;
+  prSqForGofM = FABS(prSqForGofM);
+
   fptype pratio = SQRT(pABSq/prSqForGofM);
 
   fptype pratio_to_2Jplus1 = 1;
@@ -100,10 +71,10 @@ EXEC_TARGET devcomplex<fptype> BW_MINT (fptype Mpair, fptype m1, fptype m2, unsi
   fptype thisFR = BL_PRIME(pABSq*r2, prSqForGofM*r2, orbital);
   fptype frFactor = 1;
   if (0 != orbital and 0 != FF) {
-    frFactor =  (FF==1? BL(pABSq*r2, orbital) : BL_PRIME(pABSq*r2, prSqForGofM*r2, orbital));
+    frFactor =  (FF==1? BL(pABSq*r2, orbital) : BL_PRIME(pABSq*r2, prSq2*r2, orbital));
   } 
 
-  fptype GofM = width * pratio_to_2Jplus1 *mratio * thisFR * thisFR;
+  fptype GofM = width * pratio_to_2Jplus1 *mratio * thisFR;
 
   fptype gamma = SQRT(mass*mass*(mass*mass + width*width));
   fptype k     = mass*width*gamma/SQRT(mass*mass+gamma);
@@ -111,10 +82,52 @@ EXEC_TARGET devcomplex<fptype> BW_MINT (fptype Mpair, fptype m1, fptype m2, unsi
   devcomplex<fptype> BW(mass*mass - mumsRecoMass2, mass*GofM);
   fptype den = (mass*mass - mumsRecoMass2) * (mass*mass - mumsRecoMass2) + mass * GofM * mass * GofM;
 
-  devcomplex<fptype> ret = (SQRT(k) * frFactor)/den * BW;
+  devcomplex<fptype> ret = (SQRT(k * frFactor))/den * BW;
+  // printf("m1, m2, Mpair, to2Lplus1, GofM, thisFR, pratio, mratio, pABSq , prSqForGofM, FF, ret.real, ret.imag\n");
+  // printf("BW %.7g, %.7g, %.7g, %i, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g\n", m1, m2, Mpair, to2Lplus1, GofM, thisFR, pratio, mratio, pABSq, prSqForGofM, frFactor, ret.real, ret.imag );
+  return  ret ; 
+}
 
-  // printf("%.7g, %.7g, %.7g, %i, %.7g, %.7g\n", meson_radius, resmass, reswidth, orbital, pABSq, prSqForGofM);
-  // printf("%.7g, %.7g, %.7g, %i, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g\n", m1, m2, Mpair, to2Lplus1, GofM, pratio_to_2Jplus1, mratio, k , meson_radius, prSqForGofM, thisFR, ret.real, ret.imag );
+//This function is modeled after SBW from the MINT package written by Jonas Rademacker. 
+EXEC_TARGET devcomplex<fptype> SBW (fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
+  fptype meson_radius           = functorConstants[indices[1]+0];
+  fptype resmass                = cudaArray[indices[2]];
+  fptype reswidth               = cudaArray[indices[3]];
+  unsigned int orbital          = indices[4];
+  unsigned int FF               = indices[6];
+
+  fptype mass = resmass;
+  fptype width = reswidth;
+  fptype mumsRecoMass2 = Mpair*Mpair;
+  
+
+  fptype mpsq = (m1+m2)*(m1+m2);
+  fptype mmsq = (m1-m2)*(m1-m2);
+  fptype num  = (mumsRecoMass2 - mpsq)*(mumsRecoMass2 - mmsq);
+  fptype num2  = (mass*mass - mpsq)*(mass*mass - mmsq);
+  fptype pABSq = num/(4*mumsRecoMass2);
+  fptype prSq = num2/(4*mass*mass);
+  fptype prSq2 = prSq < 0 ? 0 : prSq;
+  prSq = FABS(prSq);
+
+  fptype r2 = meson_radius*meson_radius;
+  fptype frFactor = 1;
+  if (0 != orbital and 0 != FF) {
+    frFactor =  (FF==1? BL(pABSq*r2, orbital) : BL_PRIME(pABSq*r2, prSq2*r2, orbital));
+  } 
+
+  fptype GofM = width;
+
+  fptype gamma = SQRT(mass*mass*(mass*mass + width*width));
+  fptype k     = mass*width*gamma/SQRT(mass*mass+gamma);
+
+  devcomplex<fptype> BW(mass*mass - mumsRecoMass2, mass*GofM);
+  fptype den = (mass*mass - mumsRecoMass2) * (mass*mass - mumsRecoMass2) + mass * GofM * mass * GofM;
+
+  devcomplex<fptype> ret = (SQRT(k * frFactor))/den * BW;
+
+  // printf("m1, m2, Mpair, GofM, pABSq , prSq, FF, ret.real, ret.imag\n");
+  // printf("SBW %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g\n", m1, m2, Mpair, GofM, pABSq, prSq, frFactor, ret.real, ret.imag );
   return  ret ; 
 }
 
@@ -140,11 +153,7 @@ EXEC_TARGET fptype bugg_Gamma_4pi(const fptype& s, const fptype mpi, const fptyp
 //This function is an adaptation from the bugg lineshape implemented in the MINT package written by Jonas Rademacker. 
 // this lineshape is not tested yet!
 EXEC_TARGET devcomplex<fptype> bugg_MINT (fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
-  fptype meson_radius           = functorConstants[indices[1]+4];
   fptype resmass                = cudaArray[indices[2]];
-  // fptype reswidth               = cudaArray[indices[3]];
-  unsigned int spin             = indices[4];
-  fptype frFactor               = 1;
   fptype s                      = Mpair*Mpair;
   resmass                      *= resmass;
   // Calculate momentum of the two daughters in the resonance rest frame; note symmetry under interchange (dm1 <-> dm2).
@@ -152,10 +161,6 @@ EXEC_TARGET devcomplex<fptype> bugg_MINT (fptype Mpair, fptype m1, fptype m2, un
   fptype measureDaughterMoms = twoBodyCMmom(s, m1, m2);
   fptype nominalDaughterMoms = twoBodyCMmom(resmass, m1, m2);
 
-  if (0 != spin) {
-    frFactor =  dampingFactorSquare(nominalDaughterMoms, spin, meson_radius);
-    frFactor /= dampingFactorSquare(measureDaughterMoms, spin, meson_radius);
-  }
   fptype M            = 0.935;
   fptype b1           = 1.302;
   fptype b2           = 0.340;
@@ -184,68 +189,83 @@ EXEC_TARGET devcomplex<fptype> bugg_MINT (fptype Mpair, fptype m1, fptype m2, un
   
   devcomplex<fptype> num = M * gamma_2pi;
   devcomplex<fptype> den = devcomplex<fptype>(M*M - s - g1sq * (s-sA*mPiPlus*mPiPlus) / (M*M-sA*mPiPlus*mPiPlus) * z,0) - devcomplex<fptype>(0,1) * M * Gamma_tot;
-
-  return num/den;
+  devcomplex<fptype> returnVal = num/den;
+  // printf("%.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g \n",gamma_2pi.real, gamma_2pi.imag, gamma_2K.real, gamma_2K.imag, gamma_2eta.real, gamma_2eta.imag, gamma_4pi.real, gamma_4pi.imag);
+  // printf("%.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g \n",s, Gamma_tot.real, Gamma_tot.imag, num.real, num.imag, den.real, den.imag, returnVal.real, returnVal.imag);
+  
+  return returnVal;
 }
 
-
-
-// this lineshape is not tested yet!
-EXEC_TARGET devcomplex<fptype> lass_DP (fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
+EXEC_TARGET devcomplex<fptype> lass_MINT (fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
   fptype meson_radius           = functorConstants[indices[1]+4];
   fptype resmass                = cudaArray[indices[2]];
   fptype reswidth               = cudaArray[indices[3]];
   unsigned int orbital             = indices[4];
   fptype frFactor               = 1;
   fptype rMass2                 = Mpair*Mpair;
-  resmass                      *= resmass;
-  // Calculate momentum of the two daughters in the resonance rest frame; note symmetry under interchange (dm1 <-> dm2).
   
-  fptype measureDaughterMoms = twoBodyCMmom(rMass2, m1, m2);
-  fptype nominalDaughterMoms = twoBodyCMmom(resmass, m1, m2);
+  fptype a = 2.07;
+  fptype r = 3.32;
+  fptype phi = 0.0;
+  fptype cutCoff = 1.8;
 
-  if (0 != orbital) {
-    frFactor =  dampingFactorSquare(nominalDaughterMoms, orbital, meson_radius);
-    frFactor /= dampingFactorSquare(measureDaughterMoms, orbital, meson_radius);
-  }
+  fptype mpsq = (m1+m2)*(m1+m2);
+  fptype mmsq = (m1-m2)*(m1-m2);
+  fptype num  = (rMass2 - mpsq)*(rMass2 - mmsq);
+  fptype num2  = (resmass*resmass - mpsq)*(resmass*resmass - mmsq);
+  fptype pABSq = num/(4*rMass2);
+  fptype prSq = FABS(num2/(4*resmass*resmass));
 
-  //Implement LASS:
-  /*
-  fptype s = kinematics(m12, m13, _trackinfo[i]);
-  fptype q = twoBodyCMmom(s, _trackinfo[i]);
-  fptype m0  = _massRes[i]->getValFast();
-  fptype _g0 = _gammaRes[i]->getValFast();
-  int spin   = _spinRes[i];
-  fptype g = runningWidthFast(s, m0, _g0, spin, _trackinfo[i], FrEval(s, m0, _trackinfo[i], spin));
-  */
+  fptype y = 2.0 * a*SQRT(pABSq);
+  fptype x = 2.0 + a * r * pABSq;
+  fptype cotDeltaBg = x / y;
+  devcomplex<fptype> phaseshift((cotDeltaBg*cotDeltaBg-1)/(1+cotDeltaBg*cotDeltaBg), 2*cotDeltaBg / ( 1 + cotDeltaBg*cotDeltaBg));
+  devcomplex<fptype> den(SQRT(pABSq)*cotDeltaBg, (-1.)*SQRT(pABSq));
+  fptype SF = Mpair * SQRT(prSq) / ( resmass * resmass*reswidth );
+  devcomplex<fptype> BG = SF / den ;
+  devcomplex<fptype> returnVal = BG + phaseshift * BW(Mpair, m1, m2, indices);
+  // printf("%.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g \n",phaseshift.real, phaseshift.imag, den.real, den.imag, BG.real, BG.imag,  returnVal.real, returnVal.imag);
+  return returnVal;
+}
 
-  fptype q = measureDaughterMoms;
-  fptype g = reswidth * POW(measureDaughterMoms / nominalDaughterMoms, 2.0*orbital + 1) * frFactor / SQRT(rMass2);
+EXEC_TARGET devcomplex<fptype> aSqrtTerm(const fptype& m0, const fptype& m){
+  fptype a2 = 1 - (2*m0/m)*(2*m0/m);
+  devcomplex<fptype> returnVal = a2>0 ? devcomplex<fptype>(SQRT(a2),0) : devcomplex<fptype>(0, SQRT(-a2));
+  return returnVal;
+}
 
-  fptype _a    = 0.22357;
-  fptype _r    = -15.042;
-  fptype _R    = 1; // ?
-  fptype _phiR = 1.10644;
-  fptype _B    = 0.614463;
-  fptype _phiB = -0.0981907;
+EXEC_TARGET devcomplex<fptype> Flatte_MINT (fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
+  fptype meson_radius           = functorConstants[indices[1]+4];
+  fptype resmass                = cudaArray[indices[2]];
+  fptype reswidth               = cudaArray[indices[3]];
+  unsigned int orbital             = indices[4];
+  fptype frFactor               = 1;
+  fptype rMass2                 = Mpair*Mpair;
+  
+  // As far as I understand, this is only valid for the f980
+  fptype gPi          = .165;
+  fptype gK_by_gPi    = 4.21;
+  fptype gK           = gPi * gK_by_gPi;
+  fptype mPi0         = .1349766;
+  fptype mPiPlus      = .13957018;
+  fptype mKPlus       = .493677;
+  fptype mK0          = .497648;
 
-  // background phase motion
-  fptype cot_deltaB = (1.0 / (_a*q)) + 0.5*_r*q;
-  fptype qcot_deltaB = (1.0 / _a) + 0.5*_r*q*q;
+  fptype mpsq = (m1+m2)*(m1+m2);
+  fptype mmsq = (m1-m2)*(m1-m2);
+  fptype num  = (rMass2 - mpsq)*(rMass2 - mmsq);
+  fptype num2  = (resmass*resmass - mpsq)*(resmass*resmass - mmsq);
+  fptype pABSq = num/(4*rMass2);
+  fptype prSq = FABS(num2/(4*resmass*resmass));
 
-  // calculate resonant part
-  devcomplex<fptype> expi2deltaB = devcomplex<fptype>(qcot_deltaB,q)/devcomplex<fptype>(qcot_deltaB,-q);
-  devcomplex<fptype>  resT = devcomplex<fptype>(cos(_phiR+2*_phiB),sin(_phiR+2*_phiB))*_R;
+  devcomplex<fptype> Gpipi = (1./3.) * aSqrtTerm(mPi0, Mpair) + (2./3.) * aSqrtTerm(mPiPlus, Mpair);
+  devcomplex<fptype> GKK = (1./2.) * aSqrtTerm(mK0, Mpair) + (1./2.) * aSqrtTerm(mKPlus, Mpair);
+  devcomplex<fptype> FlatteWidth = gPi * Gpipi + gK * GKK;
+  // printf("%.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g \n",Gpipi.real, Gpipi.imag, GKK.real, GKK.imag, FlatteWidth.real, FlatteWidth.imag, Mpair, pABSq);
 
-  devcomplex<fptype> prop = devcomplex<fptype>(1, 0)/devcomplex<fptype>(resmass-rMass2, SQRT(resmass)*g);
-  // resT *= prop*m0*_g0*m0/twoBodyCMmom(m0*m0, _trackinfo[i])*expi2deltaB;
-  resT *= prop*(resmass*reswidth/nominalDaughterMoms)*expi2deltaB;
-
-  // calculate bkg part
-  resT += devcomplex<fptype>(cos(_phiB),sin(_phiB))*_B*(cos(_phiB)+cot_deltaB*sin(_phiB))*SQRT(rMass2)/devcomplex<fptype>(qcot_deltaB,-q);
-
-  resT *= SQRT(frFactor);
-  return resT;
+  frFactor = BL(pABSq*meson_radius*meson_radius, orbital);
+  devcomplex<fptype> BW = SQRT(frFactor) / devcomplex<fptype>(resmass*resmass - rMass2,0) - devcomplex<fptype>(0,1) * resmass * FlatteWidth;
+  return BW;
 }
 
 
@@ -253,11 +273,12 @@ EXEC_TARGET devcomplex<fptype> nonres_DP (fptype m12, fptype m1, fptype m2, unsi
   return devcomplex<fptype>(1, 0); 
 }
 
-MEM_DEVICE resonance_function_ptr ptr_to_BW_DP = BW_DP;
-MEM_DEVICE resonance_function_ptr ptr_to_BW_MINT = BW_MINT;
-MEM_DEVICE resonance_function_ptr ptr_to_lass_DP = lass_DP;
+MEM_DEVICE resonance_function_ptr ptr_to_BW_DP4 = BW;
+MEM_DEVICE resonance_function_ptr ptr_to_lass = lass_MINT;
 MEM_DEVICE resonance_function_ptr ptr_to_bugg_MINT = bugg_MINT;
+MEM_DEVICE resonance_function_ptr ptr_to_SBW = SBW;
 MEM_DEVICE resonance_function_ptr ptr_to_NONRES_DP = nonres_DP;
+MEM_DEVICE resonance_function_ptr ptr_to_Flatte = Flatte_MINT;
 
 Lineshape::Lineshape (string name,
 						Variable* mass, 
@@ -283,21 +304,25 @@ Lineshape::Lineshape (string name,
   switch(kind){
     
     case LS::BW:
-      GET_FUNCTION_ADDR(ptr_to_BW_DP);
+      GET_FUNCTION_ADDR(ptr_to_BW_DP4);
       break;
     
-    case LS::BW_MINT:
-      GET_FUNCTION_ADDR(ptr_to_BW_MINT);
-      break;
-
     case LS::Lass:
-      GET_FUNCTION_ADDR(ptr_to_lass_DP);
+      GET_FUNCTION_ADDR(ptr_to_lass);
       break;
 
     case LS::Bugg:
-    GET_FUNCTION_ADDR(ptr_to_bugg_MINT);
-    break;
+      GET_FUNCTION_ADDR(ptr_to_bugg_MINT);
+      break;
 
+    case LS::SBW:
+      GET_FUNCTION_ADDR(ptr_to_SBW);
+      break;
+
+    case LS::Flatte:
+      GET_FUNCTION_ADDR(ptr_to_Flatte);
+      break;
+    
     default:
     fprintf(stderr,"It seems that the requested lineshape is not implemented yet. Check LineshapesPdf.cu");
     exit(0);

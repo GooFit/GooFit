@@ -21,35 +21,6 @@ EXEC_TARGET fptype VecDot(const fptype* P0, const fptype* P1){
   return ( P0[0]*P1[0]  + P0[1]+P1[1] + P0[2]+P1[2] + P0[3]+P1[3] );
 }
 
-
-EXEC_TARGET gpuLVec::gpuLVec(fptype x, fptype y, fptype z, fptype e)  :  X(x), Y(y), Z(z), E(e){};
-EXEC_TARGET fptype gpuLVec::Dot(const gpuLVec& rhs) const { return E*rhs.E - X*rhs.X - Y*rhs.Y - Z*rhs.Z ;}
-EXEC_TARGET gpuLVec& gpuLVec::operator+=(const gpuLVec& rhs){
-  X+=rhs.X;
-  Y+=rhs.Y;
-  Z+=rhs.Z;
-  E+=rhs.E;
-  return *this;
-}                          
-EXEC_TARGET gpuLVec& gpuLVec::operator-=(const gpuLVec& rhs){
-  X-=rhs.X;
-  Y-=rhs.Y;
-  Z-=rhs.Z;
-  E-=rhs.E;
-  return *this;
-}    
-EXEC_TARGET gpuLVec& gpuLVec::operator*=(const fptype rhs){
-  X*=rhs;
-  Y*=rhs;
-  Z*=rhs;
-  E*=rhs;
-  return *this;
-}
-EXEC_TARGET gpuLVec operator+(gpuLVec lhs, const gpuLVec& rhs){return lhs+=rhs;}
-EXEC_TARGET gpuLVec operator-(gpuLVec lhs, const gpuLVec& rhs){return lhs-=rhs;}
-EXEC_TARGET gpuLVec operator*(gpuLVec lhs, fptype rhs){return lhs*=rhs;}
-EXEC_TARGET gpuLVec operator*(fptype lhs, gpuLVec rhs){return rhs*=lhs;}
-
 EXEC_TARGET void get4Vecs (fptype* Vecs, const unsigned int& constants, const fptype& m12, const fptype& m34, const fptype& cos12, const fptype& cos34, const fptype& phi){
   fptype M = functorConstants[constants + 1]; 
   fptype m1  = functorConstants[constants + 2]; 

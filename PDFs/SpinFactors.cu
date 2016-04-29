@@ -309,7 +309,7 @@ MEM_DEVICE spin_function_ptr ptr_to_DtoAP1_AtoVP2Dwave_VtoP3P4  = DtoAP1_AtoVP2D
 
 
 SpinFactor::SpinFactor (std::string name, SF_4Body SF, unsigned int P0, unsigned int P1, unsigned int P2, unsigned int P3)
- : GooPdf(0,name){
+ : GooPdf(0,name), _SF(SF), _P0(P0), _P1(P1), _P2(P2), _P3(P3){
   vector<unsigned int> pindices; 
   pindices.push_back(0); //dummy for index to constants.
   pindices.push_back(P0);

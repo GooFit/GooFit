@@ -116,29 +116,31 @@ __host__ DPPdf::DPPdf (std::string n,
 
   for(int i=0; i<decayInfo->amplitudes.size(); i++){
     AmpMap[decayInfo->amplitudes[i]->_uniqueDecayStr] =  std::make_pair(std::vector<unsigned int>(0), std::vector<unsigned int>(0));
-    for(std::map<std::string, Lineshape*>::iterator LSIT = decayInfo->amplitudes[i]->_LS.begin(); LSIT != decayInfo->amplitudes[i]->_LS.end(); ++LSIT) {
-      if(compMap.find(LSIT->first) != compMap.end()){
-        AmpMap[decayInfo->amplitudes[i]->_uniqueDecayStr].first.push_back(compMap.find(LSIT->first)->second);
+
+    auto LSvec = decayInfo->amplitudes[i]->_LS;
+    for(auto LSIT = LSvec.begin(); LSIT != LSvec.end(); ++LSIT) {
+      auto found = std::find_if(components.begin(), components.end(), [LSIT](const PdfBase* L){return (**LSIT)== *(dynamic_cast<const Lineshape*>(L));});
+      if( found != components.end()){
+        AmpMap[decayInfo->amplitudes[i]->_uniqueDecayStr].first.push_back(std::distance(components.begin(), found));
       }else{
-        components.push_back(LSIT->second);
-        compMap[LSIT->first] = components.size() - 1; 
-        AmpMap[decayInfo->amplitudes[i]->_uniqueDecayStr].first.push_back(compMap.find(LSIT->first)->second);
+        components.push_back(*LSIT);
+        AmpMap[decayInfo->amplitudes[i]->_uniqueDecayStr].first.push_back(components.size() - 1);
       }
     }
-    for(std::map<std::string, SpinFactor*>::iterator SFIT = decayInfo->amplitudes[i]->_SF.begin(); SFIT != decayInfo->amplitudes[i]->_SF.end(); ++SFIT) {
-      if(SpinMap.find(SFIT->first) != SpinMap.end()){
-        AmpMap[decayInfo->amplitudes[i]->_uniqueDecayStr].second.push_back(SpinMap.find(SFIT->first)->second);
+    auto SFvec = decayInfo->amplitudes[i]->_SF;
+    for(auto SFIT = SFvec.begin(); SFIT != SFvec.end(); ++SFIT) {
+      auto found = std::find_if(SpinFactors.begin(), SpinFactors.end(), [SFIT](const SpinFactor* S){return (**SFIT) == (*S);});
+      if(found != SpinFactors.end()){
+        AmpMap[decayInfo->amplitudes[i]->_uniqueDecayStr].second.push_back(std::distance(SpinFactors.begin(), found));
       }else{
-        SpinFactors.push_back(SFIT->second);
-        SpinMap[SFIT->first] = SpinFactors.size() - 1; 
-        AmpMap[decayInfo->amplitudes[i]->_uniqueDecayStr].second.push_back(SpinMap.find(SFIT->first)->second);
+        SpinFactors.push_back(*SFIT);
+        AmpMap[decayInfo->amplitudes[i]->_uniqueDecayStr].second.push_back(SpinFactors.size() - 1);
       }
     }
     nPermVec.push_back(decayInfo->amplitudes[i]->_nPerm);
     pindices.push_back(registerParameter(decayInfo->amplitudes[i]->_ar));
     pindices.push_back(registerParameter(decayInfo->amplitudes[i]->_ai));
     
-    // AmpCalcs.push_back(new AmpCalc(ampidx.size(), i));
     ampidxstart.push_back(ampidx.size());
     std::vector<unsigned int> ls = AmpMap[decayInfo->amplitudes[i]->_uniqueDecayStr].first;
     std::vector<unsigned int> sf = AmpMap[decayInfo->amplitudes[i]->_uniqueDecayStr].second;
@@ -181,8 +183,6 @@ __host__ DPPdf::DPPdf (std::string n,
   redoIntegral = new bool[components.size() - 1];
   cachedMasses = new fptype[components.size() - 1];
   cachedWidths = new fptype[components.size() - 1];
-  // lscalculators  = new LSCalculator*[components.size() - 1];
-  // sfcalculators  = new SFCalculator*[SpinFactors.size()];
 
   for (int i = 0; i < components.size() - 1; ++i) {
     redoIntegral[i] = true;
@@ -201,8 +201,7 @@ __host__ DPPdf::DPPdf (std::string n,
     AmpCalcs.push_back(new AmpCalc(ampidxstart[i], parameters, nPermVec[i]));
   }
 
-  // printf("#Amp's %i, #LS %i, #SF %i \n", AmpMap.size(), components.size()-1, SpinFactors.size() );
-
+  // fprintf(stderr,"#Amp's %i, #LS %i, #SF %i \n", AmpMap.size(), components.size()-1, SpinFactors.size() );
 
   std::vector<MCBooster::GReal_t> masses(decayInfo->particle_masses.begin()+1,decayInfo->particle_masses.end());
   MCBooster::PhaseSpace phsp(decayInfo->particle_masses[0], masses, MCeventsNorm);

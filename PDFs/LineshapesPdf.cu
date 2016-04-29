@@ -284,10 +284,10 @@ Lineshape::Lineshape (string name,
 						Variable* mass, 
 						Variable* width, 
 						unsigned int L, 
-						unsigned int Pair,
+						unsigned int Mpair,
             LS kind, 
             FF FormFac)
-  : GooPdf(0, name)
+  : GooPdf(0, name), _mass(mass), _width(width), _L(L), _Mpair(Mpair), _kind(kind), _FormFac(FormFac)
 {
   vector<unsigned int> pindices; 
   pindices.push_back(0); 
@@ -298,7 +298,7 @@ Lineshape::Lineshape (string name,
   pindices.push_back(registerParameter(mass));
   pindices.push_back(registerParameter(width)); 
   pindices.push_back(L);
-  pindices.push_back(Pair); 
+  pindices.push_back(Mpair); 
   pindices.push_back(enum_to_underlying(FormFac)); 
 
   switch(kind){
@@ -344,7 +344,7 @@ Lineshape::Lineshape (string name)
   initialise(pindices); 
 }
 
-Amplitude::Amplitude(std::string uniqueDecayStr, Variable* ar, Variable* ai, std::map<std::string, Lineshape*> LS, std::map<std::string, SpinFactor*> SF, unsigned int nPerm)
+Amplitude::Amplitude(std::string uniqueDecayStr, Variable* ar, Variable* ai, std::vector<Lineshape*> LS, std::vector<SpinFactor*> SF, unsigned int nPerm)
   : _uniqueDecayStr(uniqueDecayStr),
     _ar(ar),
     _ai(ai),

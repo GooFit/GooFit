@@ -169,7 +169,7 @@ EXEC_TARGET fptype DtoVS_VtoP1P2_StoP3P4 (fptype* Vecs, unsigned int* indices) {
 
   gpuLVec pS =  P3 + P4;
   gpuLVec pV =  P1 + P2;
-  gpuLVec qV =  P1 + P2;
+  gpuLVec qV =  P1 - P2;
   
 
   if(ZEMACH){

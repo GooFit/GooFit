@@ -34,37 +34,37 @@ int main (int argc, char** argv) {
   Variable* KstarM   = new Variable("KstarM", 0.89581, 0.01, 0.9, 0.1);
   Variable* KstarW   = new Variable("KstarW", 0.0474, 0.01, 0.1, 0.2); 
 
-  //Map of spinfactors, here we have two because of the bose symmetrization of the two pi+
-  std::map<std::string, SpinFactor*> SFKRS;
-  SFKRS["SVVS"]   = new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_S, 0, 1, 2, 3);
-  SFKRS["BSSVVS"] = new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_S, 3, 1, 2, 0);
+  //Spin factors: we have two due to the bose symmetrization of the two pi+
+  std::vector<SpinFactor*> SFKRS;
+  SFKRS.push_back( new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_S, 0, 1, 2, 3) );
+  SFKRS.push_back( new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_S, 3, 1, 2, 0) );
 
-  std::map<std::string, SpinFactor*> SFKRP;
-  SFKRP["SVVP"]   = new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_P, 0, 1, 2, 3);
-  SFKRP["BSSVVP"] = new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_P, 3, 1, 2, 0);
+  std::vector<SpinFactor*> SFKRP;
+  SFKRP.push_back( new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_P, 0, 1, 2, 3) );
+  SFKRP.push_back( new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_P, 3, 1, 2, 0) );
 
-  std::map<std::string, SpinFactor*> SFKRD;
-  SFKRD["SVVD"]   = new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_D, 0, 1, 2, 3);
-  SFKRD["BSSVVD"] = new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_D, 3, 1, 2, 0);
+  std::vector<SpinFactor*> SFKRD;
+  SFKRD.push_back( new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_D, 0, 1, 2, 3) );
+  SFKRD.push_back( new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_D, 3, 1, 2, 0) );
 
-  //Map of lineshapes, also for both pi+ configurations
-  std::map<std::string, Lineshape*> LSKRS;
-  LSKRS["rho(770)"]    = new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS::BW);
-  LSKRS["K*(892)bar"]  = new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_34, LS::BW);
-  LSKRS["BSrho(770)"]  = new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS::BW);
-  LSKRS["BSK*(892)bar"]= new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_13, LS::BW);
+  //Lineshapes, also for both pi+ configurations
+  std::vector<Lineshape*> LSKRS;
+  LSKRS.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS::BW) );
+  LSKRS.push_back( new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_34, LS::BW) );
+  LSKRS.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS::BW) );
+  LSKRS.push_back( new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_13, LS::BW) );
 
-  std::map<std::string, Lineshape*> LSKRP;
-  LSKRP["rho(770)"]    = new Lineshape("rho(770)P", RhoMass, RhoWidth, 1, M_12, LS::BW);
-  LSKRP["K*(892)bar"]  = new Lineshape("K*(892)barP", KstarM, KstarW, 1, M_34, LS::BW);
-  LSKRP["BSrho(770)"]  = new Lineshape("rho(770)P", RhoMass, RhoWidth, 1, M_24, LS::BW);
-  LSKRP["BSK*(892)bar"]= new Lineshape("K*(892)barP", KstarM, KstarW, 1, M_13, LS::BW);
+  std::vector<Lineshape*> LSKRP;
+  LSKRP.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS::BW) );
+  LSKRP.push_back( new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_34, LS::BW) );
+  LSKRP.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS::BW) );
+  LSKRP.push_back( new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_13, LS::BW) );
 
-  std::map<std::string, Lineshape*> LSKRD;
-  LSKRD["rho(770)"]    = new Lineshape("rho(770)D", RhoMass, RhoWidth, 1, M_12, LS::BW);
-  LSKRD["K*(892)bar"]  = new Lineshape("K*(892)barD", KstarM, KstarW, 1, M_34, LS::BW);
-  LSKRD["BSrho(770)"]  = new Lineshape("rho(770)D", RhoMass, RhoWidth, 1, M_24, LS::BW);
-  LSKRD["BSK*(892)bar"]= new Lineshape("K*(892)barD", KstarM, KstarW, 1, M_13, LS::BW);
+  std::vector<Lineshape*> LSKRD;
+  LSKRD.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS::BW) );
+  LSKRD.push_back( new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_34, LS::BW) );
+  LSKRD.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS::BW) );
+  LSKRD.push_back( new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_13, LS::BW) );
 
   // the very last parameter means that we have two permutations. so the first half of the Lineshapes 
   // and the first half of the spinfactors are amplitude 1, rest is amplitude 2

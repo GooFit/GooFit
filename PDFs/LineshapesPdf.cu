@@ -153,13 +153,7 @@ EXEC_TARGET fptype bugg_Gamma_4pi(const fptype& s, const fptype mpi, const fptyp
 //This function is an adaptation from the bugg lineshape implemented in the MINT package written by Jonas Rademacker. 
 // this lineshape is not tested yet!
 EXEC_TARGET devcomplex<fptype> bugg_MINT (fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
-  fptype resmass                = cudaArray[indices[2]];
   fptype s                      = Mpair*Mpair;
-  resmass                      *= resmass;
-  // Calculate momentum of the two daughters in the resonance rest frame; note symmetry under interchange (dm1 <-> dm2).
-  
-  fptype measureDaughterMoms = twoBodyCMmom(s, m1, m2);
-  fptype nominalDaughterMoms = twoBodyCMmom(resmass, m1, m2);
 
   fptype M            = 0.935;
   fptype b1           = 1.302;
@@ -187,11 +181,11 @@ EXEC_TARGET devcomplex<fptype> bugg_MINT (fptype Mpair, fptype m1, fptype m2, un
   
   devcomplex<fptype> Gamma_tot = gamma_2pi + gamma_2K + gamma_2eta + gamma_4pi;
   
-  devcomplex<fptype> num = M * gamma_2pi;
-  devcomplex<fptype> den = devcomplex<fptype>(M*M - s - g1sq * (s-sA*mPiPlus*mPiPlus) / (M*M-sA*mPiPlus*mPiPlus) * z,0) - devcomplex<fptype>(0,1) * M * Gamma_tot;
-  devcomplex<fptype> returnVal = num/den;
-  // printf("%.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g \n",gamma_2pi.real, gamma_2pi.imag, gamma_2K.real, gamma_2K.imag, gamma_2eta.real, gamma_2eta.imag, gamma_4pi.real, gamma_4pi.imag);
-  // printf("%.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g \n",s, Gamma_tot.real, Gamma_tot.imag, num.real, num.imag, den.real, den.imag, returnVal.real, returnVal.imag);
+  // devcomplex<fptype> num = M * gamma_2pi; //only for elastic scattering, not production 
+  devcomplex<fptype> den = devcomplex<fptype>(M*M - s - M * g1sq * (s-sA*mPiPlus*mPiPlus) / (M*M-sA*mPiPlus*mPiPlus) * z,0) - devcomplex<fptype>(0,1) * M * Gamma_tot;
+  devcomplex<fptype> returnVal = 1.0/den;
+  // printf("Bugg %.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g \n",gamma_2pi.real, gamma_2pi.imag, gamma_2K.real, gamma_2K.imag, gamma_2eta.real, gamma_2eta.imag, gamma_4pi.real, gamma_4pi.imag);
+  // printf("Bugg %.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g \n",Mpair, Gamma_tot.real, Gamma_tot.imag, g1sq, z, den.real, den.imag, returnVal.real, returnVal.imag);
   
   return returnVal;
 }

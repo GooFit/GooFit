@@ -709,8 +709,10 @@ EXEC_TARGET devcomplex<fptype> AmpCalc::operator() (thrust::tuple<int, fptype*, 
 
     returnVal += ret;
   }
- 
-  return (1/SQRT((fptype)(_nPerm))) * returnVal;
+
+  returnVal *= (1/SQRT((fptype)(_nPerm)));
+  // printf("Amplitude Value = (%.7g, %.7g)\n", returnVal.real, returnVal.imag);
+  return  returnVal;
 }
 
 NormIntegrator::NormIntegrator(unsigned int pIdx)

@@ -4,7 +4,7 @@ matplotlib.use('Agg')
 import numpy as np
 import matplotlib.pyplot as plt
 
-m = np.genfromtxt('../DP4/MINT_Krho_SPD_wave.txt', skip_header=1,delimiter=',')
+m = np.genfromtxt('../DP4/ToyMC.txt', skip_header=1)
 sig = np.genfromtxt("SigGen.txt", skip_header=1)
 
 m12 = m[:,0]

@@ -187,7 +187,9 @@ EXEC_TARGET devcomplex<fptype> bugg_MINT (fptype Mpair, fptype m1, fptype m2, un
   // printf("Bugg %.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g \n",gamma_2pi.real, gamma_2pi.imag, gamma_2K.real, gamma_2K.imag, gamma_2eta.real, gamma_2eta.imag, gamma_4pi.real, gamma_4pi.imag);
   // printf("Bugg %.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g \n",Mpair, Gamma_tot.real, Gamma_tot.imag, g1sq, z, den.real, den.imag, returnVal.real, returnVal.imag);
   
-  return returnVal;
+  //the factor sqrt(1000) gives the correct result in comparison with mint2, I think its because BW/SBW 
+  // have a factor of sqrt(k) which these lineshapes dont have. For now this stays because it works. further investigation needed.
+  return returnVal*SQRT(1000.0);
 }
 
 EXEC_TARGET devcomplex<fptype> lass_MINT (fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
@@ -219,7 +221,10 @@ EXEC_TARGET devcomplex<fptype> lass_MINT (fptype Mpair, fptype m1, fptype m2, un
   devcomplex<fptype> BG = SF / den ;
   devcomplex<fptype> returnVal = BG + phaseshift * BW(Mpair, m1, m2, indices);
   // printf("%.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g \n",phaseshift.real, phaseshift.imag, den.real, den.imag, BG.real, BG.imag,  returnVal.real, returnVal.imag);
-  return returnVal;
+  
+  //the factor sqrt(1000) gives the correct result in comparison with mint2, I think its because BW/SBW 
+  // have a factor of sqrt(k) which these lineshapes dont have. For now this stays because it works. further investigation needed.
+  return returnVal*SQRT(1000.0);
 }
 
 EXEC_TARGET devcomplex<fptype> aSqrtTerm(const fptype& m0, const fptype& m){

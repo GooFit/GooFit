@@ -35,7 +35,7 @@ ROOTUTILLIB	= $(ROOTRIPDIR)/libRootUtils.so
 
 .SUFFIXES: 
 
-all:	plots
+all:	DP4
 
 %.o:	%.cu
 	$(CXX) $(INCLUDES) $(ROOT_INCLUDES) $(DEFINEFLAGS) $(CXXFLAGS) -c -o $@ $<
@@ -43,22 +43,9 @@ all:	plots
 %.o:	%.cpp
 	g++ $(ROOT_INCLUDES) -w -g -std=c++11 -c -o $@ $<
 
-mcevents:		mcevents.o 
-		$(LD) $^ $(ROOT_LIBS) $(OutPutOpt) $@
-
-		@echo "$@ done"
 DP4:		DP4.o $(THRUSTO) $(ROOTUTILLIB) 
 		$(LD) $(LDFLAGS) $^ $(LIBS) $(ROOT_LIBS) $(OutPutOpt) $@
 		@echo "$@ done"
 
-phspMC.root: mcevents
-			./mcevents
-
-DP4.txt: DP4 phspMC.root
-		./DP4 > DP4.txt
-
-plots: DP4.txt
-	chmod 775 plot.py
-	./plot.py
 clean:
-		@rm -f *.o DP4 DP4.o DP4.txt *.png mcevents phspMC.root
+		@rm -f *.o DP4

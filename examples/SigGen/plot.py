@@ -26,7 +26,7 @@ bins=np.histogram(np.hstack((m12,m12_1)), bins=100)[1]
 plt.figure(figsize=(12,6))
 plt.hist(m12,bins, weights=weights,alpha=0.5,label='MINT')
 plt.hist(m12_1,bins, weights=w_1/np.sum(w_1),alpha=0.5, label='GooFit')
-plt.title(r'$(K^*\rho^0)_{SPD}\ m(\pi^+\pi^-)$', fontsize=20)
+plt.title(r'$m(\pi^+\pi^-)$', fontsize=20)
 plt.legend()
 plt.savefig("SigGen_m12.png")
 
@@ -34,7 +34,7 @@ bins=np.histogram(np.hstack((m34,m34_1)), bins=100)[1]
 plt.figure(figsize=(12,6))
 plt.hist(m34,bins, weights=weights,alpha=0.5,label='MINT')
 plt.hist(m34_1,bins, weights=w_1/np.sum(w_1),alpha=0.5, label='GooFit')
-plt.title(r'$(K^*\rho^0)_{SPD}\ K^-\pi^-$', fontsize=20)
+plt.title(r'$K^-\pi^-$', fontsize=20)
 plt.legend()
 plt.savefig("SigGen_m34.png")
 
@@ -42,7 +42,7 @@ bins=np.histogram(np.hstack((phi,phi_1)), bins=100)[1]
 plt.figure(figsize=(12,6))
 plt.hist(phi,bins, weights=weights,alpha=0.5,label='MINT')
 plt.hist(phi_1,bins, weights=w_1/np.sum(w_1),alpha=0.5, label='GooFit')
-plt.title(r'$(K^*\rho^0)_{SPD} \ \phi$', fontsize=20)
+plt.title(r'$\phi$', fontsize=20)
 plt.legend()
 plt.savefig("SigGen_phi.png")
 
@@ -50,7 +50,7 @@ bins=np.histogram(np.hstack((c12,c12_1)), bins=100)[1]
 plt.figure(figsize=(12,6))
 plt.hist(c12,bins, weights=weights,alpha=0.5,label='MINT')
 plt.hist(c12_1,bins, weights=w_1/np.sum(w_1),alpha=0.5, label='GooFit')
-plt.title(r'$(K^*\rho^0)_{SPD} \ \cos(\theta_{12})$', fontsize=20)
+plt.title(r'$\cos(\theta_{12})$', fontsize=20)
 plt.legend()
 plt.savefig("SigGen_c12.png")
 
@@ -58,6 +58,6 @@ bins=np.histogram(np.hstack((c34,c34_1)), bins=100)[1]
 plt.figure(figsize=(12,6))
 plt.hist(c34,bins, weights=weights,alpha=0.5,label='MINT')
 plt.hist(c34_1,bins, weights=w_1/np.sum(w_1),alpha=0.5, label='GooFit')
-plt.title(r'$(K^*\rho^0)_{SPD} \ \cos(\theta_{34})$', fontsize=20)
+plt.title(r'$\cos(\theta_{34})$', fontsize=20)
 plt.legend()
 plt.savefig("SigGen_c34.png")

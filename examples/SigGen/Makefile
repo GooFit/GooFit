@@ -51,5 +51,5 @@ plots: SigGen.txt
 	chmod 775 plot.py
 	./plot.py
 clean:
-		@rm -f *.o generator generator.o SigGen.txt *.png
+		@rm -f *.o generator generator.o SigGen.txt *.png *.root
 		

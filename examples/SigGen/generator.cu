@@ -1,7 +1,6 @@
 //ROOT
 #include <TFile.h>
-#include <TTreeReader.h>
-#include <TTreeReaderValue.h>
+#include <TTree.h>
 
 // GooFit stuff
 #include "Variable.hh" 
@@ -182,10 +181,30 @@ int main (int argc, char** argv) {
   int accepted = thrust::count_if(flags.begin(), flags.end(), thrust::identity<bool>());
   fprintf(stderr,"Using accept-reject method would leave you with %i out of %i events\n", accepted, numEvents);
 
+  TFile *file = new TFile( "SigGen.root" , "RECREATE");
+  TTree *tree = new TTree("events", "events");
+
+  double tm12,tm34,tc12,tc34,tphi;
+  tree->Branch("m12",  &tm12, "m12/D");
+  tree->Branch("m34",  &tm34, "m34/D");
+  tree->Branch("c12",  &tc12, "c12/D");
+  tree->Branch("c34",  &tc34, "c34/D");
+  tree->Branch("phi",  &tphi, "phi/D");
+
   for (int i = 0; i < weights.size(); ++i)
   {
     printf("%.5g %.5g %.5g %.5g %.5g %.5g %.5g\n", (*(variables[0]))[i], (*(variables[1]))[i], (*(variables[2]))[i], (*(variables[3]))[i], (*(variables[4]))[i], weights[i], flags[i]);
+    if (flags[i] == 1){
+      tm12 = (*(variables[0]))[i];
+      tm34 = (*(variables[1]))[i];
+      tc12 = (*(variables[2]))[i];
+      tc34 = (*(variables[3]))[i];
+      tphi = (*(variables[4]))[i];
+      tree->Fill();
+    }
   }
 
+  tree->Write();
+  file->Close();
   return 0; 
 }

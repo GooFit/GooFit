@@ -252,7 +252,7 @@ __host__ fptype DalitzPlotPdf::normalise () const {
       int param_j = parameters + resonanceOffset_DP + resonanceSize*j; 
       complex<fptype> amplitude_j(host_params[host_indices[param_j]], -host_params[host_indices[param_j + 1]]); 
       // Notice complex conjugation
-      printf("%f %f %f %f %f %f\n", amplitude_i.real(), amplitude_i.imag(), amplitude_j.real(), amplitude_j.imag(), (*(integrals[i][j])).real, (*(integrals[i][j])).imag );
+      // printf("%f %f %f %f %f %f\n", amplitude_i.real(), amplitude_i.imag(), amplitude_j.real(), amplitude_j.imag(), (*(integrals[i][j])).real, (*(integrals[i][j])).imag );
       sumIntegral += (amplitude_i * amplitude_j * complex<fptype>((*(integrals[i][j])).real, (*(integrals[i][j])).imag)); 
     }
   }
@@ -264,7 +264,7 @@ __host__ fptype DalitzPlotPdf::normalise () const {
   ret *= binSizeFactor;
 
   host_normalisation[parameters] = 1.0/ret;
-  printf("%f %f\n", ret, binSizeFactor);
+  // printf("%f %f\n", ret, binSizeFactor);
   return (fptype) ret; 
 }
 
@@ -313,7 +313,7 @@ EXEC_TARGET devcomplex<fptype> SpecialResonanceIntegrator::operator () (thrust::
   // go into the integrals. They've been squared already,
   // as it were. 
   ret *= eff;
-  printf("ret %f %f %f %f %f\n",binCenterM12, binCenterM13, ret.real, ret.imag, eff );
+  // printf("ret %f %f %f %f %f\n",binCenterM12, binCenterM13, ret.real, ret.imag, eff );
   return ret; 
 }
 

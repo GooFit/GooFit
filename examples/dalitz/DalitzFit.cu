@@ -397,7 +397,7 @@ int main (int argc, char** argv) {
   foodal = new TCanvas(); 
   foodal->Size(10, 10);
 
-  cudaSetDevice(0);
+  // cudaSetDevice(0);
   runToyFit(argv[1]);
 
   // Print total minimization time

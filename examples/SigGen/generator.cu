@@ -172,7 +172,7 @@ int main (int argc, char** argv) {
   DPPdf* dp = new DPPdf("test", observables, DK3P_DI, eff,5e5);
 
 
-  int numEvents = 1e6;
+  int numEvents = 4e6;
   auto tuple = dp->GenerateSig(numEvents);
   
   auto variables = std::get<1>(tuple);
@@ -193,8 +193,8 @@ int main (int argc, char** argv) {
 
   for (int i = 0; i < weights.size(); ++i)
   {
-    printf("%.5g %.5g %.5g %.5g %.5g %.5g %.5g\n", (*(variables[0]))[i], (*(variables[1]))[i], (*(variables[2]))[i], (*(variables[3]))[i], (*(variables[4]))[i], weights[i], flags[i]);
     if (flags[i] == 1){
+      printf("%.5g %.5g %.5g %.5g %.5g %.5g %.5g\n", (*(variables[0]))[i], (*(variables[1]))[i], (*(variables[2]))[i], (*(variables[3]))[i], (*(variables[4]))[i], weights[i], flags[i]);
       tm12 = (*(variables[0]))[i];
       tm34 = (*(variables[1]))[i];
       tc12 = (*(variables[2]))[i];

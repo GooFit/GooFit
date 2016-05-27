@@ -38,7 +38,7 @@
 #include <mcbooster/GTypes.h>
 #include <mcbooster/functors/Calculate.h>
 
-namespace MCBooster
+namespace mcbooster
 {
 
 /** Template functor for calculate an array of variables over a given set of particles.
@@ -280,7 +280,7 @@ void EvaluateArray(const CUSTOMFUNC funcObj, ParticlesSet_d &pset,
 
 	}
 
-#if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_BACKEND_OMP || THRUST_DEVICE_SYSTEM==THRUST_DEVICE_BACKEND_TBB
+#if MCBOOSTER_BACKEND!=CUDA
 
 #pragma omp parallel num_threads(  arrayWidth )
 	{
@@ -319,13 +319,13 @@ void EvaluateArray(const CUSTOMFUNC funcObj, ParticlesSet_d &pset,
 	return;
 }
 
-#if !(THRUST_DEVICE_SYSTEM==THRUST_DEVICE_BACKEND_OMP || THRUST_DEVICE_SYSTEM==THRUST_DEVICE_BACKEND_TBB)
+#if MCBOOSTER_BACKEND==CUDA
 
 /** Template functor for calculate an array of variables over a given set of particles.
  * Template functor for evaluate an arbitrary function object over the a set of particles stored
  * in the device. The function is supposed to evaluate at once many variables and the results are returned to the
  * __device__ via a given VariableSet_h. Datasets with up to nine particles  can be handled. __This function is available
- * only for CUDA backends.__
+ * only for CUDA SYSTEMs.__
  */
 
 template<typename CUSTOMFUNC>
@@ -560,8 +560,8 @@ void EvaluateArray(const CUSTOMFUNC funcObj, ParticlesSet_d &pset,
 				Calculate3<CUSTOMFUNC>(funcObj));
 
 	}
-
-#if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_BACKEND_OMP || THRUST_DEVICE_SYSTEM==THRUST_DEVICE_BACKEND_TBB
+/*
+//#if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_OMP || THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_TBB
 
 #pragma omp parallel num_threads(  arrayWidth )
 	{
@@ -571,7 +571,8 @@ void EvaluateArray(const CUSTOMFUNC funcObj, ParticlesSet_d &pset,
 		thrust::copy(it_array.begin(),it_array.end(),
 				varset[omp_get_thread_num()]->begin());
 	}
-#else
+
+#else*/
 	cudaStream_t s[arrayWidth];
 
 	for (GInt_t d = 0; d < arrayWidth; d++)
@@ -596,7 +597,7 @@ void EvaluateArray(const CUSTOMFUNC funcObj, ParticlesSet_d &pset,
 	for (GInt_t d = 0; d < arrayWidth; d++)
 		delete it[d];
 
-#endif
+//#endif*/
 	return;
 }
 #endif

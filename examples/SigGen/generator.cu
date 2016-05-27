@@ -172,7 +172,7 @@ int main (int argc, char** argv) {
   DPPdf* dp = new DPPdf("test", observables, DK3P_DI, eff,5e5);
 
 
-  int numEvents = 4e6;
+  int numEvents = 4e5;
   auto tuple = dp->GenerateSig(numEvents);
   
   auto variables = std::get<1>(tuple);

@@ -33,23 +33,15 @@
 #include <iostream>
 #include <cmath>
 #include "mcbooster/Vector3R.h"
-/*
-#ifndef __host__
-#define __host__
-#endif // __host__
 
-#ifndef __device__
-#define __device__
-#endif // __device_
-*/
 using std::ostream;
 
-class MCBooster::Vector3R;
 
-namespace MCBooster
+
+namespace mcbooster
 {
 
-
+class Vector3R;
 
 class Vector4R
 {

@@ -39,7 +39,7 @@
 #include <mcbooster/GTypes.h>
 #include <mcbooster/functors/Calculate.h>
 
-namespace MCBooster
+namespace mcbooster
 {
 /** Template functor for evaluate an arbitrary function object.
  * Template functor for evaluate an arbitrary function object over the a set of particles stored

@@ -67,11 +67,13 @@
 #include <thrust/sort.h>
 #include <thrust/iterator/counting_iterator.h>
 
-#if !(THRUST_DEVICE_SYSTEM==THRUST_DEVICE_BACKEND_OMP || THRUST_DEVICE_SYSTEM==THRUST_DEVICE_BACKEND_TBB)
+#if MCBOOSTER_BACKEND==CUDA
 #include <thrust/system/cuda/execution_policy.h>
-#endif
-
+#elif MCBOOSTER_BACKEND==OPENMP
 #include <thrust/system/omp/execution_policy.h>
+#elif MCBOOSTER_BACKEND==TBB
+#include <thrust/system/tbb/execution_policy.h>
+#endif
 
 #define TIMER CLOCK_REALTIME
 
@@ -85,7 +87,7 @@
 
 using namespace std;
 
-namespace MCBooster {
+namespace mcbooster {
 /*!
  * Function to calculate time intervals in seconds.
  */
@@ -233,8 +235,8 @@ public:
 		fAccRejFlags.shrink_to_fit();
 	}
 
-	void Generate(Particles_d fMothers);
-	void Generate(const Vector4R fMother);
+	inline  void Generate(Particles_d fMothers);
+	inline  void Generate(const Vector4R fMother);
 
 	/**
 	 * Get the daughter with index 'i' in the mass array. It return a device vector of particles by reference.
@@ -259,7 +261,7 @@ public:
 
 	inline GLong_t GetNAccepted() const {
 			return fNAccepted;
-	}
+		}
 
 	inline BoolVector_d GetAccRejFlags() const {
 			return fAccRejFlags;
@@ -313,11 +315,11 @@ public:
 	 * Export the events and all related information to host.
 	 */
 	void Export(Events *_Events);
-	void ExportUnweighted(Events *_Events);
+	inline  void ExportUnweighted(Events *_Events);
 	/**
 	 * Flag the accepted and rejected events
 	 */
-	GULong_t Unweight();
+	inline  GULong_t Unweight();
 
 	//
 public:
@@ -338,7 +340,7 @@ public:
 	/**
 	 * PDK function
 	 */
-	GReal_t PDK(const GReal_t a, const GReal_t b, const GReal_t c) const {
+	inline  GReal_t PDK(const GReal_t a, const GReal_t b, const GReal_t c) const {
 		//the PDK function
 		GReal_t x = (a - b - c) * (a + b + c) * (a - b + c) * (a + b - c);
 		x = sqrt(x) / (2 * a);
@@ -408,8 +410,7 @@ void PhaseSpace::ExportUnweighted(Events *_Events) {
 
 	_Events->fMaxWeight = fMaxWeight;
 
-#if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_BACKEND_OMP || THRUST_DEVICE_SYSTEM==THRUST_DEVICE_BACKEND_TBB
-
+#if MCBOOSTER_BACKEND!=CUDA
 #pragma omp parallel num_threads( fNDaughters + 1 )
 	{
 
@@ -481,7 +482,7 @@ void PhaseSpace::Export(Events *_Events) {
 	 */
 	_Events->fMaxWeight = fMaxWeight;
 
-#if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_BACKEND_OMP || THRUST_DEVICE_SYSTEM==THRUST_DEVICE_BACKEND_TBB
+#if MCBOOSTER_BACKEND!=CUDA
 
 #pragma omp parallel num_threads( fNDaughters + 1 )
 	{
@@ -548,7 +549,7 @@ void PhaseSpace::Generate(const Vector4R fMother) {
 	 * in any system of reference. The daughters will be generated in this system.
 	 */
 
-#if !(THRUST_DEVICE_SYSTEM==THRUST_DEVICE_BACKEND_OMP || THRUST_DEVICE_SYSTEM==THRUST_DEVICE_BACKEND_TBB)
+#if MCBOOSTER_BACKEND==CUDA
 	cudaDeviceSetCacheConfig(cudaFuncCachePreferL1);
 #endif
 	/* random number generation */
@@ -675,7 +676,7 @@ void PhaseSpace::Generate(Particles_d fMothers) {
 	 * Run the generator and calculate the maximum weight. It takes as input the device vector with the four-vectors of the mother particle
 	 * in any system of reference. The daughters will be generated in this system.
 	 */
-#if !(THRUST_DEVICE_SYSTEM==THRUST_DEVICE_BACKEND_OMP || THRUST_DEVICE_SYSTEM==THRUST_DEVICE_BACKEND_TBB)
+#if MCBOOSTER_BACKEND==CUDA
 	cudaDeviceSetCacheConfig(cudaFuncCachePreferL1);
 #endif
 

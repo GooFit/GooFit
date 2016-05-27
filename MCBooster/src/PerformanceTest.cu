@@ -59,7 +59,7 @@
 
 using namespace std;
 
-using namespace MCBooster;
+using namespace mcbooster;
 
 void RunMCGen (GInt_t nfinal, GInt_t nevents,  Double_t *time )
 {
@@ -219,7 +219,8 @@ GInt_t main(int argv, char** argc)
 	Evt_Time1->SetMarkerColor(4);
 	Evt_Time1->SetMarkerSize(1.0);
 	Evt_Time1->SetMarkerStyle(21);
-	Evt_Time1->SetTitle("Events generation time");
+	Evt_Time1->SetMinimum(0.0);
+	Evt_Time1->SetTitle("Sample generation time");
 	Evt_Time1->GetXaxis()->SetTitle("Number of events");
 	Evt_Time1->GetYaxis()->SetTitle("Time (s)");
 	Evt_Time1->GetYaxis()->SetTitleOffset(1.4);
@@ -280,7 +281,8 @@ GInt_t main(int argv, char** argc)
 	Evt_Time2->SetMarkerColor(4);
 	Evt_Time2->SetMarkerSize(1.0);
 	Evt_Time2->SetMarkerStyle(21);
-	Evt_Time2->SetTitle("Events generation time");
+	Evt_Time2->SetMinimum(0.0);
+	Evt_Time2->SetTitle("Sample generation time");
 	Evt_Time2->GetXaxis()->SetTitle("Number of particles");
 	Evt_Time2->GetYaxis()->SetTitle("Time (s)");
 	Evt_Time2->GetYaxis()->SetTitleOffset(1.4);

@@ -203,13 +203,13 @@ __host__ DPPdf::DPPdf (std::string n,
 
   // fprintf(stderr,"#Amp's %i, #LS %i, #SF %i \n", AmpMap.size(), components.size()-1, SpinFactors.size() );
 
-  std::vector<MCBooster::GReal_t> masses(decayInfo->particle_masses.begin()+1,decayInfo->particle_masses.end());
-  MCBooster::PhaseSpace phsp(decayInfo->particle_masses[0], masses, MCeventsNorm);
-  phsp.Generate(MCBooster::Vector4R(decayInfo->particle_masses[0], 0.0, 0.0, 0.0));
+  std::vector<mcbooster::GReal_t> masses(decayInfo->particle_masses.begin()+1,decayInfo->particle_masses.end());
+  mcbooster::PhaseSpace phsp(decayInfo->particle_masses[0], masses, MCeventsNorm);
+  phsp.Generate(mcbooster::Vector4R(decayInfo->particle_masses[0], 0.0, 0.0, 0.0));
   phsp.Unweight();
 
   auto nAcc = phsp.GetNAccepted();
-  MCBooster::BoolVector_d flags = phsp.GetAccRejFlags();
+  mcbooster::BoolVector_d flags = phsp.GetAccRejFlags();
   auto d1 = phsp.GetDaughters(0);
   auto d2 = phsp.GetDaughters(1);
   auto d3 = phsp.GetDaughters(2);
@@ -225,19 +225,19 @@ __host__ DPPdf::DPPdf (std::string n,
   d3.shrink_to_fit();
   d4.shrink_to_fit();
 
-  MCBooster::ParticlesSet_d pset(4);
+  mcbooster::ParticlesSet_d pset(4);
   pset[0] = &d1;
   pset[1] = &d2;
   pset[2] = &d3;
   pset[3] = &d4;
 
-  norm_M12        = MCBooster::RealVector_d(nAcc);
-  norm_M34        = MCBooster::RealVector_d(nAcc);
-  norm_CosTheta12 = MCBooster::RealVector_d(nAcc);
-  norm_CosTheta34 = MCBooster::RealVector_d(nAcc);
-  norm_phi        = MCBooster::RealVector_d(nAcc);
+  norm_M12        = mcbooster::RealVector_d(nAcc);
+  norm_M34        = mcbooster::RealVector_d(nAcc);
+  norm_CosTheta12 = mcbooster::RealVector_d(nAcc);
+  norm_CosTheta34 = mcbooster::RealVector_d(nAcc);
+  norm_phi        = mcbooster::RealVector_d(nAcc);
 
-  MCBooster::VariableSet_d VarSet(5);
+  mcbooster::VariableSet_d VarSet(5);
   VarSet[0] = &norm_M12,
   VarSet[1] = &norm_M34;
   VarSet[2] = &norm_CosTheta12;
@@ -245,10 +245,10 @@ __host__ DPPdf::DPPdf (std::string n,
   VarSet[4] = &norm_phi;
 
   Dim5 eval = Dim5();
-  MCBooster::EvaluateArray<Dim5>(eval, pset, VarSet);
+  mcbooster::EvaluateArray<Dim5>(eval, pset, VarSet);
 
-  norm_SF = MCBooster::RealVector_d(nAcc * SpinFactors.size()); 
-  norm_LS = MCBooster::mc_device_vector<devcomplex<fptype> >(nAcc * (components.size() - 1)); 
+  norm_SF = mcbooster::RealVector_d(nAcc * SpinFactors.size()); 
+  norm_LS = mcbooster::mc_device_vector<devcomplex<fptype> >(nAcc * (components.size() - 1)); 
   MCevents = nAcc;
 
 
@@ -281,6 +281,7 @@ __host__ void DPPdf::setDataSize (unsigned int dataSize, unsigned int evtSize) {
 
 // this is where the actual magic happens. This function does all the calculations!
 __host__ fptype DPPdf::normalise () const {
+  // fprintf(stderr, "start normalise\n");
   recursiveSetNormalisation(1); // Not going to normalise efficiency, 
   // so set normalisation factor to 1 so it doesn't get multiplied by zero. 
   // Copy at this time to ensure that the SpecialResonanceCalculators, which need the efficiency, 
@@ -314,15 +315,16 @@ __host__ fptype DPPdf::normalise () const {
                           cachedResSF->end(), 
                           (components.size() + SpinFactors.size() - 1)).begin(),
                           *(sfcalculators[i]));
-    
-      thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(norm_M12.begin(), norm_M34.begin(), norm_CosTheta12.begin(), norm_CosTheta34.begin(), norm_phi.begin()))
-                        ,thrust::make_zip_iterator(thrust::make_tuple(norm_M12.end(), norm_M34.end(), norm_CosTheta12.end(), norm_CosTheta34.end(), norm_phi.end()))
-                        ,(norm_SF.begin() + (i * MCevents)) 
-                        ,NormSpinCalculator(parameters, i));
+
+    thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(norm_M12.begin(), norm_M34.begin(), norm_CosTheta12.begin(), norm_CosTheta34.begin(), norm_phi.begin()))
+                      ,thrust::make_zip_iterator(thrust::make_tuple(norm_M12.end(), norm_M34.end(), norm_CosTheta12.end(), norm_CosTheta34.end(), norm_phi.end()))
+                      ,(norm_SF.begin() + (i * MCevents)) 
+                      ,NormSpinCalculator(parameters, i));
     }
+
      SpinsCalculated = true;
   }
-
+  
   //this calculates the values of the lineshapes and stores them in the array. It is recalculated every time parameters change.
   for (int i = 0; i < components.size() -1 ; ++i) {
     if (redoIntegral[i]) {
@@ -383,30 +385,30 @@ __host__ fptype DPPdf::normalise () const {
   return sumIntegral;   
 }
 
-__host__ std::tuple<MCBooster::ParticlesSet_h, MCBooster::VariableSet_h, MCBooster::RealVector_h, MCBooster::RealVector_h> DPPdf::GenerateSig (unsigned int numEvents) {
+__host__ std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h> DPPdf::GenerateSig (unsigned int numEvents) {
 
-  std::vector<MCBooster::GReal_t> masses(decayInfo->particle_masses.begin()+1,decayInfo->particle_masses.end());
-  MCBooster::PhaseSpace phsp(decayInfo->particle_masses[0], masses, numEvents);
-  phsp.Generate(MCBooster::Vector4R(decayInfo->particle_masses[0], 0.0, 0.0, 0.0));
+  std::vector<mcbooster::GReal_t> masses(decayInfo->particle_masses.begin()+1,decayInfo->particle_masses.end());
+  mcbooster::PhaseSpace phsp(decayInfo->particle_masses[0], masses, numEvents);
+  phsp.Generate(mcbooster::Vector4R(decayInfo->particle_masses[0], 0.0, 0.0, 0.0));
 
   auto d1 = phsp.GetDaughters(0);
   auto d2 = phsp.GetDaughters(1);
   auto d3 = phsp.GetDaughters(2);
   auto d4 = phsp.GetDaughters(3);
 
-  MCBooster::ParticlesSet_d pset(4);
+  mcbooster::ParticlesSet_d pset(4);
   pset[0] = &d1;
   pset[1] = &d2;
   pset[2] = &d3;
   pset[3] = &d4;
 
-  auto SigGen_M12_d        = MCBooster::RealVector_d(numEvents);
-  auto SigGen_M34_d        = MCBooster::RealVector_d(numEvents);
-  auto SigGen_CosTheta12_d = MCBooster::RealVector_d(numEvents);
-  auto SigGen_CosTheta34_d = MCBooster::RealVector_d(numEvents);
-  auto SigGen_phi_d        = MCBooster::RealVector_d(numEvents);
+  auto SigGen_M12_d        = mcbooster::RealVector_d(numEvents);
+  auto SigGen_M34_d        = mcbooster::RealVector_d(numEvents);
+  auto SigGen_CosTheta12_d = mcbooster::RealVector_d(numEvents);
+  auto SigGen_CosTheta34_d = mcbooster::RealVector_d(numEvents);
+  auto SigGen_phi_d        = mcbooster::RealVector_d(numEvents);
 
-  MCBooster::VariableSet_d VarSet_d(5);
+  mcbooster::VariableSet_d VarSet_d(5);
   VarSet_d[0] = &SigGen_M12_d,
   VarSet_d[1] = &SigGen_M34_d;
   VarSet_d[2] = &SigGen_CosTheta12_d;
@@ -414,46 +416,43 @@ __host__ std::tuple<MCBooster::ParticlesSet_h, MCBooster::VariableSet_h, MCBoost
   VarSet_d[4] = &SigGen_phi_d;
 
   Dim5 eval = Dim5();
-  MCBooster::EvaluateArray<Dim5>(eval, pset, VarSet_d);
+  mcbooster::EvaluateArray<Dim5>(eval, pset, VarSet_d);
   
-  auto h1 = new MCBooster::Particles_h(d1);
-  auto h2 = new MCBooster::Particles_h(d2);
-  auto h3 = new MCBooster::Particles_h(d3);
-  auto h4 = new MCBooster::Particles_h(d4);
+  auto h1 = new mcbooster::Particles_h(d1);
+  auto h2 = new mcbooster::Particles_h(d2);
+  auto h3 = new mcbooster::Particles_h(d3);
+  auto h4 = new mcbooster::Particles_h(d4);
   
-  MCBooster::ParticlesSet_h ParSet(4);
+  mcbooster::ParticlesSet_h ParSet(4);
   ParSet[0] = h1;
   ParSet[1] = h2;
   ParSet[2] = h3;
   ParSet[3] = h4;
 
-  auto SigGen_M12_h        = new MCBooster::RealVector_h(SigGen_M12_d);
-  auto SigGen_M34_h        = new MCBooster::RealVector_h(SigGen_M34_d);
-  auto SigGen_CosTheta12_h = new MCBooster::RealVector_h(SigGen_CosTheta12_d);
-  auto SigGen_CosTheta34_h = new MCBooster::RealVector_h(SigGen_CosTheta34_d);
-  auto SigGen_phi_h        = new MCBooster::RealVector_h(SigGen_phi_d);
+  auto SigGen_M12_h        = new mcbooster::RealVector_h(SigGen_M12_d);
+  auto SigGen_M34_h        = new mcbooster::RealVector_h(SigGen_M34_d);
+  auto SigGen_CosTheta12_h = new mcbooster::RealVector_h(SigGen_CosTheta12_d);
+  auto SigGen_CosTheta34_h = new mcbooster::RealVector_h(SigGen_CosTheta34_d);
+  auto SigGen_phi_h        = new mcbooster::RealVector_h(SigGen_phi_d);
 
-  MCBooster::VariableSet_h VarSet(5);
-  VarSet[0] = SigGen_M12_h,
-  VarSet[1] = SigGen_M34_h;
-  VarSet[2] = SigGen_CosTheta12_h;
-  VarSet[3] = SigGen_CosTheta34_h;
-  VarSet[4] = SigGen_phi_h;
+  mcbooster::VariableSet_h VarSet(5); VarSet[0] = SigGen_M12_h, VarSet[1] =
+  SigGen_M34_h; VarSet[2] = SigGen_CosTheta12_h; VarSet[3] =
+  SigGen_CosTheta34_h; VarSet[4] = SigGen_phi_h;
 
-  auto weights = MCBooster::RealVector_d(phsp.GetWeights());
+  auto weights = mcbooster::RealVector_d(phsp.GetWeights());
   phsp.~PhaseSpace();
 
-  auto DS = new MCBooster::RealVector_d(6*numEvents);
+  auto DS = new mcbooster::RealVector_d(6*numEvents);
   thrust::counting_iterator<int> eventNumber(0);
 
   #pragma unroll
   for (int i = 0; i < 5; ++i)
   {
-    MCBooster::strided_range<MCBooster::RealVector_d::iterator> sr(DS->begin() + i, DS->end(), 6);
+    mcbooster::strided_range<mcbooster::RealVector_d::iterator> sr(DS->begin() + i, DS->end(), 6);
     thrust::copy(VarSet_d[i]->begin(), VarSet_d[i]->end(), sr.begin());
   }
 
-  MCBooster::strided_range<MCBooster::RealVector_d::iterator> sr(DS->begin() + 5, DS->end(), 6);
+  mcbooster::strided_range<mcbooster::RealVector_d::iterator> sr(DS->begin() + 5, DS->end(), 6);
   thrust::copy(eventNumber, eventNumber+numEvents, sr.begin());
 
   dev_event_array = thrust::raw_pointer_cast(DS->data());
@@ -478,18 +477,18 @@ __host__ std::tuple<MCBooster::ParticlesSet_h, MCBooster::VariableSet_h, MCBoost
   gooFree(dev_event_array);
 
   thrust::transform(results.begin(), results.end(), weights.begin(), weights.begin(),
-                     thrust::multiplies<MCBooster::GReal_t>());
-  MCBooster::BoolVector_d flags(numEvents);
+                     thrust::multiplies<mcbooster::GReal_t>());
+  mcbooster::BoolVector_d flags(numEvents);
 
-  thrust::counting_iterator<MCBooster::GLong_t> first(0);
-  thrust::counting_iterator<MCBooster::GLong_t> last = first + numEvents;
+  thrust::counting_iterator<mcbooster::GLong_t> first(0);
+  thrust::counting_iterator<mcbooster::GLong_t> last = first + numEvents;
 
   auto max = thrust::max_element(weights.begin(),weights.end());
-  thrust::transform(first, last, weights.begin(),flags.begin(), MCBooster::FlagAcceptReject((fptype)*max));
+  thrust::transform(first, last, weights.begin(),flags.begin(), mcbooster::FlagAcceptReject((fptype)*max));
 
-  auto weights_h = MCBooster::RealVector_h(weights);
-  auto results_h = MCBooster::RealVector_h(results);
-  auto flags_h = MCBooster::BoolVector_h(flags);
+  auto weights_h = mcbooster::RealVector_h(weights);
+  auto results_h = mcbooster::RealVector_h(results);
+  auto flags_h = mcbooster::BoolVector_h(flags);
   SYNCH();
   return std::make_tuple(ParSet, VarSet, weights_h, flags_h);
 }
@@ -535,7 +534,7 @@ NormSpinCalculator::NormSpinCalculator (int pIdx, unsigned int sf_idx)
   , _parameters(pIdx)
 {}
 
-EXEC_TARGET fptype NormSpinCalculator::operator () (thrust::tuple<MCBooster::GReal_t, MCBooster::GReal_t, MCBooster::GReal_t, MCBooster::GReal_t, MCBooster::GReal_t> t) const {
+EXEC_TARGET fptype NormSpinCalculator::operator () (thrust::tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t) const {
 
   unsigned int* indices = paramIndices + _parameters;   // Jump to DALITZPLOT position within parameters array
   unsigned int numLS    = indices[3];
@@ -563,7 +562,7 @@ EXEC_TARGET fptype NormSpinCalculator::operator () (thrust::tuple<MCBooster::GRe
 
   // printf("NormSF evt:%.5g, %.5g, %.5g, %.5g, %.5g\n", m12, m34, cos12, cos34, phi);
   // printf("NormSF %i, %.5g\n",_spinfactor_i, sf );
-  THREAD_SYNCH
+  // THREAD_SYNCH
   return sf;
 }
 
@@ -627,7 +626,7 @@ NormLSCalculator::NormLSCalculator (int pIdx, unsigned int res_idx)
   , _parameters(pIdx)
 {}
 
-EXEC_TARGET devcomplex<fptype> NormLSCalculator::operator () (thrust::tuple<MCBooster::GReal_t, MCBooster::GReal_t, MCBooster::GReal_t, MCBooster::GReal_t, MCBooster::GReal_t> t) const {
+EXEC_TARGET devcomplex<fptype> NormLSCalculator::operator () (thrust::tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t) const {
   // Calculates the BW values for a specific resonance. 
   devcomplex<fptype> ret;
   
@@ -669,7 +668,7 @@ EXEC_TARGET devcomplex<fptype> NormLSCalculator::operator () (thrust::tuple<MCBo
 
   //printf("m12 %f \n", m12); // %f %f %f (%f, %f)\n ", m12, m13, m23, ret.real, ret.imag); 
   //printf("#Parameters %i, #LS %i, #SF %i, #AMP %i \n", indices[0], indices[3], indices[4], indices[5]);
-  THREAD_SYNCH
+  // THREAD_SYNCH
   return ret;
 }
 

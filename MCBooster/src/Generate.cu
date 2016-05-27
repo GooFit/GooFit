@@ -53,7 +53,7 @@
 
 using namespace std;
 
-using namespace MCBooster;
+using namespace mcbooster;
 
 
 
@@ -64,7 +64,7 @@ struct Dataset: public IFunctionArray
 		dim = 4;
 	}
 
-	__host__   __device__ GReal_t cosHELANG(const Vector4R p, const Vector4R q,
+	__host__   __device__   inline  GReal_t cosHELANG(const Vector4R p, const Vector4R q,
 			const Vector4R d)
 	{
 		GReal_t pd = p * d;
@@ -79,7 +79,7 @@ struct Dataset: public IFunctionArray
 
 	}
 
-	__host__   __device__ GReal_t deltaAngle(const Vector4R& p4_p,
+	__host__   __device__   inline GReal_t deltaAngle(const Vector4R& p4_p,
 			const Vector4R& p4_d1, const Vector4R& p4_d2, const Vector4R& p4_h1,
 			const Vector4R& p4_h2)
 	{
@@ -116,7 +116,7 @@ struct Dataset: public IFunctionArray
 	}
 
 	__host__ __device__
-	void operator()(const GInt_t n, Vector4R** particles, GReal_t* variables)
+	  inline void operator()(const GInt_t n, Vector4R** particles, GReal_t* variables)
 	{
 		Vector4R pJpsi = *particles[0];
 		Vector4R pK    = *particles[1];
@@ -196,10 +196,11 @@ GInt_t main(void)
 
 	phsp.Unweight();
 
-	GReal_t cpu_time_used;
+	GReal_t cpu_time_used= phsp.GetEvtTime();
+	/*
 	cpu_time_used = ((GReal_t) (time_diff(time1, time2).tv_sec
 			+ time_diff(time1, time2).tv_nsec * 1.0e-9));
-
+    */
 	cout << "|\t Generate time [B0]:\t " << cpu_time_used << " s" << endl;
 
 	clock_gettime(CLOCK_REALTIME, &time1);
@@ -294,9 +295,10 @@ GInt_t main(void)
 
 	phspJpsi.Unweight();
 
-	GReal_t cpu_time_usedJpsi;
+	GReal_t cpu_time_usedJpsi = phspJpsi.GetEvtTime();
+	/*
 	cpu_time_usedJpsi = ((GReal_t) (time_diff(time1, time2).tv_sec
-			+ time_diff(time1, time2).tv_nsec * 1.0e-9));
+			+ time_diff(time1, time2).tv_nsec * 1.0e-9));*/
 
 	cout << "|\t Generate time [J/psi]:\t " << cpu_time_usedJpsi << " s"
 			<< endl;

@@ -32,6 +32,7 @@
 #include <string>
 #include <sstream>
 #include <map>
+#include <vector>
 //command line
 #include <tclap/CmdLine.h>
 //this lib
@@ -58,7 +59,7 @@
 
 using namespace std;
 
-using namespace MCBooster;
+using namespace mcbooster;
 
 GInt_t factorial(GInt_t n)
 {
@@ -287,23 +288,17 @@ h2->Sumw2();
 	TGenPhaseSpace phsp_root;
 	TLorentzVector mother_root(0.0, 0.0, 0.0, mother_mass);
 	phsp_root.SetDecay(mother_root, masses.size(), masses.data());
-
+	std::vector<std::vector<TLorentzVector>> particles_root(masses.size(), std::vector<TLorentzVector>(nevents));
+	std::vector<Double_t> weigts_root(nevents);
 	clock_gettime(CLOCK_REALTIME, &time1);
 	for(GInt_t event=0; event<nevents; event++ )
 		{
-		Double_t weight = phsp_root.Generate();
+		weigts_root[event]= phsp_root.Generate();
 		for(GInt_t i=0; i<masses.size(); i++)
 				{
-					for(GInt_t j=0; j<masses.size(); j++)
-					{
-						if(j>=i) continue;
+					TLorentzVector pr =	*phsp_root.GetDecay(i);
+					particles_root[i][event] = pr;
 
-						GInt_t index =  i+j*masses.size();
-
-						TLorentzVector pr= 	*phsp_root.GetDecay(i) + *phsp_root.GetDecay(j);
-						H1D_ROOT[index]->Fill( pr.M(), weight  );
-
-					}
 				}
 
 
@@ -315,8 +310,30 @@ h2->Sumw2();
 
 	cout << "-----------------------------------------------------"<< endl;
 	cout << "----------------------- Timing ----------------------"<< endl;
-
 	cout << "Event generation in ROOT: " << root_time_used << endl;
+	cout << "-----------------------------------------------------"<< endl;
+	cout << "----------------------- Timing ----------------------"<< endl;
+
+	for(GInt_t event=0; event<nevents; event++ )
+			{
+
+			for(GInt_t i=0; i<masses.size(); i++)
+					{
+						for(GInt_t j=0; j<masses.size(); j++)
+						{
+							if(j>=i) continue;
+
+							GInt_t index =  i+j*masses.size();
+
+							TLorentzVector pr= particles_root[i][event] +particles_root[j][event]	;
+							H1D_ROOT[index]->Fill( pr.M(), weigts_root[event]  );
+
+						}
+					}
+
+
+
+			}
 
 	TLegend *leg;
 

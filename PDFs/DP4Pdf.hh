@@ -14,7 +14,7 @@ See *.cu file for more details
 #include "SpinFactors.hh"
 #include <mcbooster/GContainers.h>
 #include <tuple>
-
+#include <thrust/remove.h>
 class LSCalculator; 
 class AmpCalc;
 class SFCalculator;
@@ -31,7 +31,7 @@ public:
   __host__ void setDataSize (unsigned int dataSize, unsigned int evtSize = 6); 
   __host__ void setForceIntegrals (bool f = true) {forceRedoIntegrals = f;}  
   __host__ int getMCevents(){return MCevents;}
-  __host__ std::tuple<MCBooster::ParticlesSet_h, MCBooster::VariableSet_h, MCBooster::RealVector_h,  MCBooster::RealVector_h> GenerateSig (unsigned int numEvents);
+  __host__ std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h,  mcbooster::RealVector_h> GenerateSig (unsigned int numEvents);
 
 protected:
 
@@ -48,15 +48,15 @@ private:
   std::vector<LSCalculator*> lscalculators;
 
   // store normalization events
-  MCBooster::RealVector_d norm_M12;
-  MCBooster::RealVector_d norm_M34;
-  MCBooster::RealVector_d norm_CosTheta12;
-  MCBooster::RealVector_d norm_CosTheta34;
-  MCBooster::RealVector_d norm_phi;
+  mcbooster::RealVector_d norm_M12;
+  mcbooster::RealVector_d norm_M34;
+  mcbooster::RealVector_d norm_CosTheta12;
+  mcbooster::RealVector_d norm_CosTheta34;
+  mcbooster::RealVector_d norm_phi;
 
   //store spin and lineshape values for normalization
-  mutable MCBooster::RealVector_d norm_SF;
-  mutable MCBooster::mc_device_vector<devcomplex<fptype> > norm_LS;
+  mutable mcbooster::RealVector_d norm_SF;
+  mutable mcbooster::mc_device_vector<devcomplex<fptype> > norm_LS;
 
 
   DecayInfo_DP* decayInfo; 
@@ -115,11 +115,11 @@ private:
   unsigned int _parameters;
 }; 
 
-class NormLSCalculator : public thrust::unary_function<thrust::tuple<MCBooster::GReal_t, MCBooster::GReal_t, MCBooster::GReal_t, MCBooster::GReal_t, MCBooster::GReal_t>, devcomplex<fptype> > {
+class NormLSCalculator : public thrust::unary_function<thrust::tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t>, devcomplex<fptype> > {
 public:
   // Used to create the cached BW values. 
   NormLSCalculator (int pIdx, unsigned int res_idx); 
-  EXEC_TARGET devcomplex<fptype> operator () (thrust::tuple<MCBooster::GReal_t, MCBooster::GReal_t, MCBooster::GReal_t, MCBooster::GReal_t, MCBooster::GReal_t> t) const;
+  EXEC_TARGET devcomplex<fptype> operator () (thrust::tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t) const;
 
 private:
 

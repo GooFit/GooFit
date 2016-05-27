@@ -26,7 +26,7 @@
 #ifndef GTYPES_H_
 #define GTYPES_H_
 
-namespace MCBooster
+namespace mcbooster
 {
 //---- types -------------------------------------------------------------------
 

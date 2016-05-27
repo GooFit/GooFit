@@ -33,7 +33,7 @@
 #include <mcbooster/GContainers.h>
 #include <mcbooster/GTypes.h>
 
-namespace MCBooster
+namespace mcbooster
 {
 
 template<typename FUNCTION, typename RESULT>
@@ -57,7 +57,7 @@ struct Calculate
 	}
 
 
-	__host__      __device__ RESULT operator()(GT2 &particles)
+	__host__      __device__  inline  RESULT operator()(GT2 &particles)
 	{
 
 		Vector4R* _Particles[2];
@@ -68,7 +68,7 @@ struct Calculate
 		return Function(2, _Particles);
 	}
 
-	__host__      __device__ RESULT operator()(GT3 &particles)
+	__host__      __device__   inline  RESULT operator()(GT3 &particles)
 	{
 
 		Vector4R* _Particles[3];
@@ -80,7 +80,7 @@ struct Calculate
 		return Function(3, _Particles);
 	}
 
-	__host__         __device__ RESULT operator()(GT4 &particles)
+	__host__         __device__   inline  RESULT operator()(GT4 &particles)
 	{
 
 		Vector4R* _Particles[4];
@@ -94,7 +94,7 @@ struct Calculate
 
 	}
 
-	__host__         __device__ RESULT operator()(GT5 &particles)
+	__host__         __device__   inline  RESULT operator()(GT5 &particles)
 	{
 
 		Vector4R* _Particles[5];
@@ -108,7 +108,7 @@ struct Calculate
 		return Function(5, _Particles);
 	}
 
-	__host__         __device__ RESULT operator()(GT6 &particles)
+	__host__         __device__   inline  RESULT operator()(GT6 &particles)
 	{
 
 		Vector4R* _Particles[6];
@@ -123,7 +123,7 @@ struct Calculate
 		return Function(6, _Particles);
 	}
 
-	__host__         __device__ RESULT operator()(GT7 &particles)
+	__host__         __device__   inline  RESULT operator()(GT7 &particles)
 	{
 
 		Vector4R* _Particles[7];
@@ -139,7 +139,7 @@ struct Calculate
 		return Function(7, _Particles);
 	}
 
-	__host__         __device__ RESULT operator()(GT8 &particles)
+	__host__         __device__   inline  RESULT operator()(GT8 &particles)
 	{
 
 		Vector4R* _Particles[8];
@@ -157,7 +157,7 @@ struct Calculate
 
 	}
 
-	__host__         __device__ RESULT operator()(GT9 &particles)
+	__host__         __device__   inline  RESULT operator()(GT9 &particles)
 	{
 
 		Vector4R* _Particles[9];
@@ -175,7 +175,7 @@ struct Calculate
 		return Function(9, _Particles);
 	}
 
-	__host__         __device__ RESULT operator()(GT10 &particles)
+	__host__         __device__   inline  RESULT operator()(GT10 &particles)
 	{
 
 		Vector4R* _Particles[10];
@@ -216,7 +216,7 @@ struct Calculate2
 	}
 
 
-	__host__ __device__ void operator()(GT2 particles)
+	__host__ __device__  inline   void operator()(GT2 particles)
 	{
 
 		Vector4R* _Particles[2];
@@ -227,7 +227,7 @@ struct Calculate2
 		Function(2, _Particles);
 	}
 
-	__host__ __device__ void operator()(GT3 particles)
+	__host__ __device__   inline  void operator()(GT3 particles)
 	{
 
 		Vector4R* _Particles[3];
@@ -239,7 +239,7 @@ struct Calculate2
 		Function(3, _Particles);
 	}
 
-	__host__ __device__ void operator()(GT4 particles)
+	__host__ __device__  inline   void operator()(GT4 particles)
 	{
 
 		Vector4R* _Particles[4];
@@ -253,7 +253,7 @@ struct Calculate2
 
 	}
 
-	__host__ __device__ void operator()(GT5 particles)
+	__host__ __device__   inline  void operator()(GT5 particles)
 	{
 
 		Vector4R* _Particles[5];
@@ -267,7 +267,7 @@ struct Calculate2
 		Function(5, _Particles);
 	}
 
-	__host__ __device__ void operator()(GT6 particles)
+	__host__ __device__   inline  void operator()(GT6 particles)
 	{
 
 		Vector4R* _Particles[6];
@@ -282,7 +282,7 @@ struct Calculate2
 		Function(6, _Particles);
 	}
 
-	__host__ __device__ void operator()(GT7 particles)
+	__host__ __device__   inline  void operator()(GT7 particles)
 	{
 
 		Vector4R* _Particles[7];
@@ -298,7 +298,7 @@ struct Calculate2
 		Function(7, _Particles);
 	}
 
-	__host__ __device__ void operator()(GT8 particles)
+	__host__ __device__   inline  void operator()(GT8 particles)
 	{
 
 		Vector4R* _Particles[8];
@@ -316,7 +316,7 @@ struct Calculate2
 
 	}
 
-	__host__ __device__ void operator()(GT9 particles)
+	__host__ __device__   inline  void operator()(GT9 particles)
 	{
 
 		Vector4R* _Particles[9];
@@ -334,7 +334,7 @@ struct Calculate2
 		Function(9, _Particles);
 	}
 
-	__host__ __device__ void operator()(GT10 particles)
+	__host__ __device__   inline  void operator()(GT10 particles)
 	{
 
 		Vector4R* _Particles[10];
@@ -375,7 +375,7 @@ struct Calculate3
 	}
 
 
-	__host__ __device__ void operator()(GTR3 tuples)
+	__host__ __device__   inline  void operator()(GTR3 tuples)
 	{
 
 		GReal_t* _real;
@@ -388,7 +388,7 @@ struct Calculate3
 		Function(2, _Particles, _real);
 	}
 
-	__host__ __device__ void operator()(GTR4 tuples)
+	__host__ __device__   inline  void operator()(GTR4 tuples)
 	{
 
 		GReal_t* _real;
@@ -404,7 +404,7 @@ struct Calculate3
 
 	}
 
-	__host__ __device__ void operator()(GTR5 tuples)
+	__host__ __device__   inline  void operator()(GTR5 tuples)
 	{
 
 		GReal_t* _real;
@@ -420,7 +420,7 @@ struct Calculate3
 		Function(4, _Particles, _real);
 	}
 
-	__host__ __device__ void operator()(GTR6 tuples)
+	__host__ __device__  inline   void operator()(GTR6 tuples)
 	{
 
 		GReal_t* _real;
@@ -437,7 +437,7 @@ struct Calculate3
 		Function(5, _Particles, _real);
 	}
 
-	__host__ __device__ void operator()(GTR7 tuples)
+	__host__ __device__   inline  void operator()(GTR7 tuples)
 	{
 
 		GReal_t* _real;
@@ -455,7 +455,7 @@ struct Calculate3
 		Function(6, _Particles, _real);
 	}
 
-	__host__ __device__ void operator()(GTR8 tuples)
+	__host__ __device__   inline  void operator()(GTR8 tuples)
 	{
 
 		GReal_t* _real;
@@ -475,7 +475,7 @@ struct Calculate3
 
 	}
 
-	__host__ __device__ void operator()(GTR9 tuples)
+	__host__ __device__  inline   void operator()(GTR9 tuples)
 	{
 
 		GReal_t* _real;
@@ -495,7 +495,7 @@ struct Calculate3
 		Function(8, _Particles, _real);
 	}
 
-	__host__ __device__ void operator()(GTR10 tuples)
+	__host__ __device__   inline  void operator()(GTR10 tuples)
 	{
 
 		GReal_t* _real;

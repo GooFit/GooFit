@@ -59,7 +59,7 @@
 
 using namespace std;
 
-using namespace MCBooster;
+using namespace mcbooster;
 
 void RunMCGen (GInt_t nfinal, GInt_t nevents,  Double_t *time )
 {

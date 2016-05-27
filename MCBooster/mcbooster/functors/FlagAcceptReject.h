@@ -36,7 +36,7 @@
 #include <thrust/random.h>
 #include <mcbooster/GTypes.h>
 
-namespace MCBooster
+namespace mcbooster
 {
 /**\struct FlagAcceptReject
  * Flags generated events as accepted (1) or rejected (0).
@@ -56,7 +56,7 @@ struct FlagAcceptReject
 	/**
 	 * hash function. Generate hashs to be used in random number generation initialization
 	 */
-	__host__      __device__ GUInt_t hash(GUInt_t a)
+	__host__      __device__  inline   GUInt_t hash(GUInt_t a)
 	{
 		a = (a + 0x7ed55d16) + (a << 12);
 		a = (a ^ 0xc761c23c) ^ (a >> 19);
@@ -70,7 +70,7 @@ struct FlagAcceptReject
 	 * operator(). Takes the events index and weight and so flag it as accepted and rejected
 	 *
 	 */
-	__host__ __device__ GBool_t operator ()(GLong_t idx, GReal_t weight)
+	__host__ __device__   inline  GBool_t operator ()(GLong_t idx, GReal_t weight)
 	{
 		GUInt_t seed = hash(idx+68464654684);
 		thrust::default_random_engine randEng(seed);

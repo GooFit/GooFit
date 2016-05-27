@@ -36,17 +36,17 @@
 #include <math.h>
 
 using std::ostream;
-namespace MCBooster
+namespace mcbooster
 {
 class Vector3R
 {
 
-	__host__      __device__      friend Vector3R rotateEuler(const Vector3R& v,
+	__host__      __device__     inline     friend Vector3R rotateEuler(const Vector3R& v,
 			GReal_t phi, GReal_t theta, GReal_t ksi);
 
-	__host__      __device__      inline friend Vector3R operator*(GReal_t c,
+	__host__      __device__     inline friend Vector3R operator*(GReal_t c,
 			const Vector3R& v2);
-	__host__      __device__      inline friend GReal_t operator*(const Vector3R& v1,
+	__host__      __device__     inline friend GReal_t operator*(const Vector3R& v1,
 			const Vector3R& v2);
 	__host__      __device__      inline friend Vector3R operator+(const Vector3R& v1,
 			const Vector3R& v2);
@@ -56,7 +56,7 @@ class Vector3R
 			GReal_t c);
 	__host__      __device__      inline friend Vector3R operator/(const Vector3R& v1,
 			GReal_t c);
-	__host__      __device__      friend Vector3R cross(const Vector3R& v1,
+	__host__      __device__      inline friend Vector3R cross(const Vector3R& v1,
 			const Vector3R& v2);
 
 public:

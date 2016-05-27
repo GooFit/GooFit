@@ -34,7 +34,7 @@
 #include <mcbooster/Vector3R.h>
 #include <mcbooster/Vector4R.h>
 
-namespace MCBooster
+namespace mcbooster
 {
 /** \struct  IFunction
  *  IFunction is the base class for arbitrary functions return any type suported by the framwork.

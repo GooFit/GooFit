@@ -51,7 +51,7 @@
 
 using namespace std;
 
-using namespace MCBooster;
+using namespace mcbooster;
 
 
 void splitString(const std::string &s, const char delim, std::vector<std::string> &elems)

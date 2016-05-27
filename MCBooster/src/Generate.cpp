@@ -31,7 +31,7 @@
 #include <time.h>
 #include <string>
 #include <map>
-
+#include <omp.h>
 #include <math.h>
 
 #define CUDA_API_PER_THREAD_DEFAULT_STREAM
@@ -53,7 +53,7 @@
 
 using namespace std;
 
-using namespace MCBooster;
+using namespace mcbooster;
 
 
 
@@ -64,7 +64,7 @@ struct Dataset: public IFunctionArray
 		dim = 4;
 	}
 
-	__host__   __device__ GReal_t cosHELANG(const Vector4R p, const Vector4R q,
+	__host__   __device__   inline   GReal_t cosHELANG(const Vector4R p, const Vector4R q,
 			const Vector4R d)
 	{
 		GReal_t pd = p * d;
@@ -79,7 +79,7 @@ struct Dataset: public IFunctionArray
 
 	}
 
-	__host__   __device__ GReal_t deltaAngle(const Vector4R& p4_p,
+	__host__   __device__   inline  GReal_t deltaAngle(const Vector4R& p4_p,
 			const Vector4R& p4_d1, const Vector4R& p4_d2, const Vector4R& p4_h1,
 			const Vector4R& p4_h2)
 	{
@@ -116,7 +116,7 @@ struct Dataset: public IFunctionArray
 	}
 
 	__host__ __device__
-	void operator()(const GInt_t n, Vector4R** particles, GReal_t* variables)
+	  inline  void operator()(const GInt_t n, Vector4R** particles, GReal_t* variables)
 	{
 		Vector4R pJpsi = *particles[0];
 		Vector4R pK    = *particles[1];
@@ -188,15 +188,14 @@ GInt_t main(void)
 			<< endl;
 
 	clock_gettime(CLOCK_REALTIME, &time1);
-
 	/// Generate events B0-> K pi J/psi
 	phsp.Generate(Vector4R(5.2795, 0.0, 0.0, 0.0));
-
 	clock_gettime(CLOCK_REALTIME, &time2);
+	GReal_t cpu_time_used = phsp.GetEvtTime();
 
-	GReal_t cpu_time_used;
+    /*
 	cpu_time_used = ((GReal_t) (time_diff(time1, time2).tv_sec
-			+ time_diff(time1, time2).tv_nsec * 1.0e-9));
+			+ time_diff(time1, time2).tv_nsec * 1.0e-9));*/
 
 	cout << "|\t Generate time [B0]:\t " << cpu_time_used << " s" << endl;
 
@@ -210,13 +209,15 @@ GInt_t main(void)
 
 		for (GInt_t daughter = 0; daughter < 3; daughter++)
 		{
+			Vector4R v= phsp.GetDaughters(daughter)[event];
+
 			cout << " \t| " << namesB0[daughter] << " : mass "
-					<< phsp.GetDaughters(daughter)[event].mass()
+					<< v.mass()
 					<< " 4-momentum ( "
-					<< phsp.GetDaughters(daughter)[event].get(0) << ", "
-					<< phsp.GetDaughters(daughter)[event].get(1) << ", "
-					<< phsp.GetDaughters(daughter)[event].get(2) << ", "
-					<< phsp.GetDaughters(daughter)[event].get(3) << ")  "
+					<< v.get(0) << ", "
+					<< v.get(1) << ", "
+					<< v.get(2) << ", "
+					<< v.get(3) << ")  "
 					<< endl;
 
 		}
@@ -257,9 +258,10 @@ GInt_t main(void)
 	phspJpsi.Generate(phsp.GetDaughters(0));
 	clock_gettime(CLOCK_REALTIME, &time2);
 
-	GReal_t cpu_time_usedJpsi;
+	GReal_t cpu_time_usedJpsi = phspJpsi.GetEvtTime();
+	/*
 	cpu_time_usedJpsi = ((GReal_t) (time_diff(time1, time2).tv_sec
-			+ time_diff(time1, time2).tv_nsec * 1.0e-9));
+			+ time_diff(time1, time2).tv_nsec * 1.0e-9));*/
 
 	cout << "|\t Generate time [J/psi]:\t " << cpu_time_usedJpsi << " s"
 			<< endl;
@@ -273,13 +275,14 @@ GInt_t main(void)
 
 		for (GInt_t daughter = 0; daughter < 2; daughter++)
 		{
+			Vector4R v= phspJpsi.GetDaughters(daughter)[event];
 			cout << " \t| " << namesJpsi[daughter] << " : mass "
-					<< phspJpsi.GetDaughters(daughter)[event].mass()
+					<< v.mass()
 					<< " 4-momentum ( "
-					<< phspJpsi.GetDaughters(daughter)[event].get(0) << ", "
-					<< phspJpsi.GetDaughters(daughter)[event].get(1) << ", "
-					<< phspJpsi.GetDaughters(daughter)[event].get(2) << ", "
-					<< phspJpsi.GetDaughters(daughter)[event].get(3) << ")  "
+					<< v.get(0) << ", "
+					<< v.get(1) << ", "
+					<< v.get(2) << ", "
+					<< v.get(3) << ")  "
 					<< endl;
 
 		}

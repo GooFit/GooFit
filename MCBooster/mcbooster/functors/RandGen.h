@@ -32,7 +32,7 @@
 #include <mcbooster/GContainers.h>
 
 
-namespace MCBooster
+namespace mcbooster
 {
 /**\struct RandGen
  * Fill a given vector with random numbers between 0 and 1.
@@ -53,7 +53,7 @@ struct RandGen
 	/**
 	 * hash function. Generate hashs to be used in random number generation initialization
 	 */
-	__host__      __device__ GUInt_t hash(GUInt_t a)
+	__host__      __device__   inline  GUInt_t hash(GUInt_t a)
 	{
 		a = (a + 0x7ed55d16) + (a << 12);
 		a = (a ^ 0xc761c23c) ^ (a >> 19);
@@ -67,7 +67,7 @@ struct RandGen
 	/**
 	 * operator(). Calculate and set random numbers. It takes the index of the event.
 	 */
-	__host__ __device__ void operator ()(GLong_t idx)
+	__host__ __device__   inline  void operator ()(GLong_t idx)
 	{
 		GUInt_t seed = hash(idx);
      	thrust::random::default_random_engine randEng(seed);
@@ -91,7 +91,7 @@ struct RandGen2
 	/**
 	 * operator(). Calculate and set random numbers. It takes the index of the event.
 	 */
-	__host__ __device__ GReal_t operator ()(GInt_t idx)
+	__host__ __device__   inline  GReal_t operator ()(GInt_t idx)
 	{
 
 		thrust::random::default_random_engine randEng;

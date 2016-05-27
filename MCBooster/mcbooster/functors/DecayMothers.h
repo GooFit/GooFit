@@ -38,7 +38,7 @@
 
 using namespace std;
 
-namespace MCBooster
+namespace mcbooster
 {
 
 struct DecayMothers
@@ -56,7 +56,7 @@ struct DecayMothers
 	{
 	}
 
-	__host__      __device__ GReal_t pdk(const GReal_t a, const GReal_t b,
+	__host__      __device__   inline  GReal_t pdk(const GReal_t a, const GReal_t b,
 			const GReal_t c) const
 	{
 		//the PDK function
@@ -65,7 +65,7 @@ struct DecayMothers
 		return x;
 	}
 
-	__host__ __device__ void bbsort(GReal_t *array, GInt_t n)
+	__host__ __device__   inline  void bbsort(GReal_t *array, GInt_t n)
 	{
 		// Improved bubble sort
 		for (GInt_t c = 0; c < n; c++)
@@ -88,7 +88,7 @@ struct DecayMothers
 
 	}
 
-	__host__      __device__ GUInt_t hash(GUInt_t a)
+	__host__      __device__   inline  GUInt_t hash(GUInt_t a)
 			{
 				a = (a + 0x7ed55d16) + (a << 12);
 				a = (a ^ 0xc761c23c) ^ (a >> 19);
@@ -99,7 +99,7 @@ struct DecayMothers
 				return a;
 			}
 
-	__host__      __device__ GReal_t process(const GInt_t evt, Vector4R** particles)
+	__host__      __device__   inline  GReal_t process(const GInt_t evt, Vector4R** particles)
 	{
 
 
@@ -247,14 +247,14 @@ struct DecayMothers
 
 	}
 
-	__host__      __device__ GReal_t operator()(const GInt_t evt, GT2 &particles)
+	__host__      __device__   inline  GReal_t operator()(const GInt_t evt, GT2 &particles)
 	{
 		//do nothing, will never be called
 		return 0.0;
 
 	}
 
-	__host__      __device__ GReal_t operator()(const GInt_t evt, GT3& particles)
+	__host__      __device__  inline   GReal_t operator()(const GInt_t evt, GT3& particles)
 	{
 		Vector4R* _Particles[3];
 
@@ -266,7 +266,7 @@ struct DecayMothers
 
 	}
 
-	__host__      __device__ GReal_t operator()(const GInt_t evt, GT4& particles)
+	__host__      __device__  inline   GReal_t operator()(const GInt_t evt, GT4& particles)
 	{
 
 		Vector4R* _Particles[4];
@@ -280,7 +280,7 @@ struct DecayMothers
 
 	}
 
-	__host__      __device__ GReal_t operator()(const GInt_t evt, GT5& particles)
+	__host__      __device__   inline  GReal_t operator()(const GInt_t evt, GT5& particles)
 	{
 		Vector4R* _Particles[5];
 
@@ -294,7 +294,7 @@ struct DecayMothers
 
 	}
 
-	__host__      __device__ GReal_t operator()(const GInt_t evt, GT6& particles)
+	__host__      __device__  inline   GReal_t operator()(const GInt_t evt, GT6& particles)
 	{
 		Vector4R* _Particles[6];
 
@@ -309,7 +309,7 @@ struct DecayMothers
 
 	}
 
-	__host__      __device__ GReal_t operator()(const GInt_t evt, GT7& particles)
+	__host__      __device__   inline  GReal_t operator()(const GInt_t evt, GT7& particles)
 	{
 		Vector4R* _Particles[7];
 
@@ -325,7 +325,7 @@ struct DecayMothers
 
 	}
 
-	__host__      __device__ GReal_t operator()(const GInt_t evt, GT8& particles)
+	__host__      __device__   inline  GReal_t operator()(const GInt_t evt, GT8& particles)
 	{
 		Vector4R* _Particles[8];
 
@@ -342,7 +342,7 @@ struct DecayMothers
 
 	}
 
-	__host__      __device__ GReal_t operator()(const GInt_t evt, GT9& particles)
+	__host__      __device__   inline  GReal_t operator()(const GInt_t evt, GT9& particles)
 	{
 		Vector4R* _Particles[9];
 
@@ -360,7 +360,7 @@ struct DecayMothers
 
 	}
 
-	__host__      __device__ GReal_t operator()(const GInt_t evt, GT10& particles)
+	__host__      __device__   inline  GReal_t operator()(const GInt_t evt, GT10& particles)
 	{
 		Vector4R* _Particles[10];
 

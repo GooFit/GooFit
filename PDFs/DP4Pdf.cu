@@ -296,6 +296,7 @@ __host__ fptype DPPdf::normalise () const {
       redoIntegral[i] = true; 
       components[i]->storeParameters();
   }
+  SpinsCalculated = !forceRedoIntegrals;
   forceRedoIntegrals = false; 
 
   //just some thrust iterators for the calculation. 
@@ -461,6 +462,7 @@ __host__ std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcboost
   SigGenSetIndices();
   copyParams(); 
   normalise();
+  setForceIntegrals();
   MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice); 
 
   thrust::device_vector<fptype> results(numEvents); 

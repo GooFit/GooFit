@@ -107,21 +107,21 @@ int main (int argc, char** argv) {
 
   std::vector<Lineshape*> LSK1R;
   LSK1R.push_back( new Lineshape("K(1)(1270)bar", K1M, K1W, 0, M_12_3 , LS::SBW) );
-  LSK1R.push_back( new Lineshape("rho(770)P", RhoMass, RhoWidth, 1, M_12, LS::BW) );
+  LSK1R.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS::BW) );
   LSK1R.push_back( new Lineshape("K(1)(1270)bar", K1M, K1W, 0, M_24_3 , LS::SBW) );
-  LSK1R.push_back( new Lineshape("rho(770)P", RhoMass, RhoWidth, 1, M_24, LS::BW) );
+  LSK1R.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS::BW) );
 
   std::vector<Lineshape*> LSA1R;
   LSA1R.push_back( new Lineshape("a(1)(1260)+", a1M, a1W, 0, M_12_4, LS::SBW) );
-  LSA1R.push_back( new Lineshape("rho(770)P", RhoMass, RhoWidth, 1, M_12, LS::BW) );
+  LSA1R.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS::BW) );
   LSA1R.push_back( new Lineshape("a(1)(1260)+", a1M, a1W, 0, M_24_1, LS::SBW) );
-  LSA1R.push_back( new Lineshape("rho(770)P", RhoMass, RhoWidth, 1, M_24, LS::BW) );
+  LSA1R.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS::BW) );
 
   std::vector<Lineshape*> LSA1RD;
   LSA1RD.push_back( new Lineshape("a(1)(1260)+", a1M, a1W, 2, M_12_4, LS::SBW) );
-  LSA1RD.push_back( new Lineshape("rho(770)P", RhoMass, RhoWidth, 1, M_12, LS::BW) );
+  LSA1RD.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS::BW) );
   LSA1RD.push_back( new Lineshape("a(1)(1260)+", a1M, a1W, 2, M_24_1, LS::SBW) );
-  LSA1RD.push_back( new Lineshape("rho(770)P", RhoMass, RhoWidth, 1, M_24, LS::BW) );
+  LSA1RD.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS::BW) );
 
 
   // the very last parameter means that we have two permutations. so the first half of the Lineshapes 
@@ -136,14 +136,14 @@ int main (int argc, char** argv) {
   Amplitude* Bose_symmetrized_A1R   = new Amplitude( "LSA1R", new Variable("amp_real3", 1.0), new Variable("amp_imag3", 0.0), LSA1R, SFA1R, 2);
   Amplitude* Bose_symmetrized_A1RD  = new Amplitude( "LSA1RD", new Variable("amp_real3", -0.94921), new Variable("amp_imag3",  -1.73407), LSA1RD, SFA1RD, 2);
 
-  DK3P_DI->amplitudes.push_back(Bose_symmetrized_KF);
+  // DK3P_DI->amplitudes.push_back(Bose_symmetrized_KF);
   DK3P_DI->amplitudes.push_back(Bose_symmetrized_AMP_S);
   DK3P_DI->amplitudes.push_back(Bose_symmetrized_AMP_P);
   DK3P_DI->amplitudes.push_back(Bose_symmetrized_AMP_D);
-  DK3P_DI->amplitudes.push_back(Bose_symmetrized_KK);
-  DK3P_DI->amplitudes.push_back(Bose_symmetrized_K1R);
-  DK3P_DI->amplitudes.push_back(Bose_symmetrized_A1R );
-  DK3P_DI->amplitudes.push_back(Bose_symmetrized_A1RD);
+  // DK3P_DI->amplitudes.push_back(Bose_symmetrized_KK);
+  // DK3P_DI->amplitudes.push_back(Bose_symmetrized_K1R);
+  // DK3P_DI->amplitudes.push_back(Bose_symmetrized_A1R );
+  // DK3P_DI->amplitudes.push_back(Bose_symmetrized_A1RD);
 
   Variable* m12 = new Variable("m12", 0, 3);
   Variable* m34 = new Variable("m34", 0, 3); 
@@ -169,10 +169,10 @@ int main (int argc, char** argv) {
   coefficients.push_back(constantOne); 
 
   PolynomialPdf* eff = new PolynomialPdf("constantEff", observables, coefficients, offsets, 0);
-  DPPdf* dp = new DPPdf("test", observables, DK3P_DI, eff,5e5);
+  DPPdf* dp = new DPPdf("test", observables, DK3P_DI, eff,6e6);
 
 
-  int numEvents = 4e5;
+  int numEvents = 4;
   auto tuple = dp->GenerateSig(numEvents);
   
   auto variables = std::get<1>(tuple);
@@ -194,7 +194,7 @@ int main (int argc, char** argv) {
   for (int i = 0; i < weights.size(); ++i)
   {
     if (flags[i] == 1){
-      printf("%.5g %.5g %.5g %.5g %.5g %.5g %.5g\n", (*(variables[0]))[i], (*(variables[1]))[i], (*(variables[2]))[i], (*(variables[3]))[i], (*(variables[4]))[i], weights[i], flags[i]);
+      // printf("%.5g %.5g %.5g %.5g %.5g %.5g %.5g\n", (*(variables[0]))[i], (*(variables[1]))[i], (*(variables[2]))[i], (*(variables[3]))[i], (*(variables[4]))[i], weights[i], flags[i]);
       tm12 = (*(variables[0]))[i];
       tm34 = (*(variables[1]))[i];
       tc12 = (*(variables[2]))[i];

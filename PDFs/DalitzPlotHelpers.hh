@@ -48,7 +48,13 @@ struct DecayInfo {
 struct DecayInfo_DP {
   std::vector<fptype> particle_masses ;
   fptype meson_radius;
-  std::vector<Amplitude*> amplitudes; 
+
+  std::vector<Amplitude*> amplitudes;
+  std::vector<Amplitude*> amplitudes_B;
+
+  Variable* _tau; 
+  Variable* _xmixing;
+  Variable* _ymixing;
 };
 
 // Copied from strided_range thrust example by Nathan Bell.

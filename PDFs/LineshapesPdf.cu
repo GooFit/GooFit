@@ -84,6 +84,7 @@ EXEC_TARGET devcomplex<fptype> BW (fptype Mpair, fptype m1, fptype m2, unsigned 
 
   devcomplex<fptype> ret = (SQRT(k * frFactor))/den * BW;
   // printf("m1, m2, Mpair, to2Lplus1, GofM, thisFR, pratio, mratio, pABSq , prSqForGofM, FF, ret.real, ret.imag\n");
+  // printf("BW %.7g, %.7g, %.7g, %i, %i, %i, %i\n",meson_radius, resmass, reswidth, orbital, FF, indices[2], indices[3]);
   // printf("BW %.7g, %.7g, %.7g, %i, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g\n", m1, m2, Mpair, to2Lplus1, GofM, thisFR, pratio, mratio, pABSq, prSqForGofM, frFactor, ret.real, ret.imag );
   return  ret ; 
 }
@@ -351,6 +352,15 @@ Amplitude::Amplitude(std::string uniqueDecayStr, Variable* ar, Variable* ai, std
     _SF(SF),
     _nPerm(nPerm)
 {}
+
+bool Amplitude::operator==(const Amplitude& A) const{
+  return _uniqueDecayStr==A._uniqueDecayStr 
+                and _ar == A._ar 
+                and _ai == A._ai 
+                and _LS == A._LS 
+                and _SF == A._SF 
+                and _nPerm == A._nPerm;
+}
 
 
 

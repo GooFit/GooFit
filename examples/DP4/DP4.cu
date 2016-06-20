@@ -129,21 +129,21 @@ int main (int argc, char** argv) {
 
   std::vector<Lineshape*> LSK1R;
   LSK1R.push_back( new Lineshape("K(1)(1270)bar", K1M, K1W, 0, M_12_3 , LS::SBW) );
-  LSK1R.push_back( new Lineshape("rho(770)P", RhoMass, RhoWidth, 1, M_12, LS::BW) );
+  LSK1R.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS::BW) );
   LSK1R.push_back( new Lineshape("K(1)(1270)bar", K1M, K1W, 0, M_24_3 , LS::SBW) );
-  LSK1R.push_back( new Lineshape("rho(770)P", RhoMass, RhoWidth, 1, M_24, LS::BW) );
+  LSK1R.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS::BW) );
 
   std::vector<Lineshape*> LSA1R;
   LSA1R.push_back( new Lineshape("a(1)(1260)+", a1M, a1W, 0, M_12_4, LS::SBW) );
-  LSA1R.push_back( new Lineshape("rho(770)P", RhoMass, RhoWidth, 1, M_12, LS::BW) );
+  LSA1R.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS::BW) );
   LSA1R.push_back( new Lineshape("a(1)(1260)+", a1M, a1W, 0, M_24_1, LS::SBW) );
-  LSA1R.push_back( new Lineshape("rho(770)P", RhoMass, RhoWidth, 1, M_24, LS::BW) );
+  LSA1R.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS::BW) );
 
   std::vector<Lineshape*> LSA1RD;
   LSA1RD.push_back( new Lineshape("a(1)(1260)+", a1M, a1W, 2, M_12_4, LS::SBW) );
-  LSA1RD.push_back( new Lineshape("rho(770)P", RhoMass, RhoWidth, 1, M_12, LS::BW) );
+  LSA1RD.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS::BW) );
   LSA1RD.push_back( new Lineshape("a(1)(1260)+", a1M, a1W, 2, M_24_1, LS::SBW) );
-  LSA1RD.push_back( new Lineshape("rho(770)P", RhoMass, RhoWidth, 1, M_24, LS::BW) );
+  LSA1RD.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS::BW) );
 
 
   // the very last parameter means that we have two permutations. so the first half of the Lineshapes 

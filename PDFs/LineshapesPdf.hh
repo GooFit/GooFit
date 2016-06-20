@@ -20,6 +20,7 @@ enum class FF : unsigned int {One = 0, BL, BL_Prime};
 
 class Lineshape : public GooPdf {
   friend class DPPdf; 
+  friend class TDDP4; 
   // Service class intended to hold parametrisations of
   // resonances on Dalitz plots. Don't try to use this
   // as a standalone PDF! It should only be used as a
@@ -50,10 +51,12 @@ public:
 
 class Amplitude {
   friend class DPPdf;
+  friend class TDDP4; 
+
 
 public:
   Amplitude(std::string uniqueDecayStr, Variable* ar, Variable* ai, std::vector<Lineshape*> LS, std::vector<SpinFactor*> SF, unsigned int nPerm = 1);
-  // bool operator==(const Amplitude& A){return ( A._uniqueDecayStr == _uniqueDecayStr ); }
+  bool operator==(const Amplitude& A) const;
 private:
   std::string _uniqueDecayStr;
   Variable* _ar;

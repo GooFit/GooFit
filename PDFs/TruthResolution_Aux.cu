@@ -53,3 +53,4 @@ fptype TruthResolution::normalisation (fptype di1, fptype di2, fptype di3, fptyp
 
   return ret; 
 }
+

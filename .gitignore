@@ -4,7 +4,6 @@ examples/simpleFit/simpleFitExample
 examples/dalitz/dalitz
 examples/exponential/exponential 
 examples/product/product
-examples/TDDP4
 thrust/*
 **/testing/
 wrkdir/

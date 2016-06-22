@@ -197,18 +197,10 @@ int main (int argc, char** argv) {
 
   TruthResolution* dat = new TruthResolution();
   PolynomialPdf* eff = new PolynomialPdf("constantEff", observables, coefficients, offsets, 0);
-  TDDP4* dp = new TDDP4("test", observables, DK3P_DI, dat, eff, 0, 1e5);
+  TDDP4* dp = new TDDP4("test", observables, DK3P_DI, dat, eff, 0, 1);
+  dp->setGenDecayTimeLimit(4,6);
 
-  int numEvents = 5e5;
-  auto tuple = dp->GenerateSig(numEvents);
-  
-  auto variables = std::get<1>(tuple);
-  auto weights = std::get<2>(tuple);
-  auto flags = std::get<3>(tuple);
-  int accepted = thrust::count_if(flags.begin(), flags.end(), thrust::identity<bool>());
-  fprintf(stderr,"Using accept-reject method would leave you with %i out of %i events\n", accepted, numEvents);
-
-  TFile *file = new TFile( "SigGen.root" , "RECREATE");
+  TFile *file = new TFile( "SigGen2.root" , "RECREATE");
   TTree *tree = new TTree("events", "events");
 
   double tm12,tm34,tc12,tc34,tphi,tdtime;
@@ -219,20 +211,44 @@ int main (int argc, char** argv) {
   tree->Branch("phi",  &tphi, "phi/D");
   tree->Branch("dtime",  &tdtime, "dtime/D");
 
-  for (int i = 0; i < weights.size(); ++i)
+for (int k = 0; k < 10; ++k)
   {
-    if (flags[i] == 1){
-      // printf("%.5g %.5g %.5g %.5g %.5g %.5g %.5g\n", (*(variables[0]))[i], (*(variables[1]))[i], (*(variables[2]))[i], (*(variables[3]))[i], (*(variables[4]))[i], weights[i], flags[i]);
-      tm12 = (*(variables[0]))[i];
-      tm34 = (*(variables[1]))[i];
-      tc12 = (*(variables[2]))[i];
-      tc34 = (*(variables[3]))[i];
-      tphi = (*(variables[4]))[i];
-      tdtime = (*(variables[5]))[i];
-      tree->Fill();
-    }
-  }
+    int numEvents = .8e6;
+    dp->setGenerationOffset(k*numEvents);
+    auto tuple = dp->GenerateSig(numEvents);
+    
+    auto particles = std::get<0>(tuple);
+    auto variables = std::get<1>(tuple);
+    auto weights = std::get<2>(tuple);
+    auto flags = std::get<3>(tuple);
+    int accepted = thrust::count_if(flags.begin(), flags.end(), thrust::identity<bool>());
+    fprintf(stderr,"Run # %i: Using accept-reject method would leave you with %i out of %i events\n",k, accepted, numEvents);
 
+    for (int i = 0; i < weights.size(); ++i)
+    {
+      if (flags[i] == 1){
+        // printf("%.5g %.5g %.5g %.5g %.5g %.5g %.5g\n", (*(variables[0]))[i], (*(variables[1]))[i], (*(variables[2]))[i], (*(variables[3]))[i], (*(variables[4]))[i], weights[i], flags[i]);
+        tm12 = (*(variables[0]))[i];
+        tm34 = (*(variables[1]))[i];
+        tc12 = (*(variables[2]))[i];
+        tc34 = (*(variables[3]))[i];
+        tphi = (*(variables[4]))[i];
+        tdtime = (*(variables[5]))[i];
+        tree->Fill();
+      }
+    }
+    delete variables[0];
+    delete variables[1];
+    delete variables[2];
+    delete variables[3];
+    delete variables[4];
+    delete variables[5];
+
+    delete particles[0];
+    delete particles[1];
+    delete particles[2];
+    delete particles[3];
+  }
   tree->Write();
   file->Close();
   return 0; 

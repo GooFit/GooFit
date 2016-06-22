@@ -147,7 +147,7 @@ struct DecayMother
 	__host__      __device__   inline  GReal_t process(const GInt_t evt, Vector4R** daugters)
 	{
 
-		thrust::random::default_random_engine randEng( hash(evt)*fSeed);
+		thrust::random::default_random_engine randEng( hash(evt+fSeed));
 		thrust::uniform_real_distribution<GReal_t> uniDist(0.0, 1.0);
 
 		GReal_t rno[kMAXP];

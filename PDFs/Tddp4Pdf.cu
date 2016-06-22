@@ -136,6 +136,9 @@ __host__ TDDP4::TDDP4 (std::string n,
   , cacheToUse(0) 
   , SpinsCalculated(false)
   , resolution(Tres)
+  , generation_offset(0)
+  , genlow(0)
+  , genhigh(1)
 {
   // should include m12, m34, cos12, cos34, phi, eventnumber, dtime, sigmat. In this order!
   for (std::vector<Variable*>::iterator obsIT = observables.begin(); obsIT != observables.end(); ++obsIT) {
@@ -346,7 +349,7 @@ __host__ TDDP4::TDDP4 (std::string n,
   fprintf(stderr,"#Amp's %i, #LS %i, #SF %i \n", AmpMap.size(), components.size()-1, SpinFactors.size() );
 
   std::vector<mcbooster::GReal_t> masses(decayInfo->particle_masses.begin()+1,decayInfo->particle_masses.end());
-  mcbooster::PhaseSpace phsp(decayInfo->particle_masses[0], masses, MCeventsNorm);
+  mcbooster::PhaseSpace phsp(decayInfo->particle_masses[0], masses, MCeventsNorm, generation_offset);
   phsp.Generate(mcbooster::Vector4R(decayInfo->particle_masses[0], 0.0, 0.0, 0.0));
   phsp.Unweight();
 
@@ -544,7 +547,7 @@ __host__ fptype TDDP4::normalise () const {
 __host__ std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h> TDDP4::GenerateSig (unsigned int numEvents) {
 
   std::vector<mcbooster::GReal_t> masses(decayInfo->particle_masses.begin()+1,decayInfo->particle_masses.end());
-  mcbooster::PhaseSpace phsp(decayInfo->particle_masses[0], masses, numEvents);
+  mcbooster::PhaseSpace phsp(decayInfo->particle_masses[0], masses, numEvents, generation_offset);
   phsp.Generate(mcbooster::Vector4R(decayInfo->particle_masses[0], 0.0, 0.0, 0.0));
 
   auto d1 = phsp.GetDaughters(0);
@@ -637,15 +640,10 @@ __host__ std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcboost
   thrust::constant_iterator<fptype*> weightAddress(thrust::raw_pointer_cast(weights.data())); 
   thrust::constant_iterator<fptype*> dtimeAddress(thrust::raw_pointer_cast(dtime_d.data())); 
 
-  // thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
-  // thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEvents , arrayAddress, eventSize)),
-  // mcbooster::strided_range<mcbooster::RealVector_d::iterator>(DS->begin() + 6, DS->end(), 8).begin(), 
-  // CalcAverageTau(parameters, resolution->getCalcTauIdx()));
-
   thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, weightAddress, dtimeAddress)),
                     thrust::make_zip_iterator(thrust::make_tuple(eventIndex+numEvents, weightAddress, dtimeAddress)),
                     mcbooster::strided_range<mcbooster::RealVector_d::iterator>(DS->begin() + 6, DS->end(), 8).begin(), 
-                    CalcAverageTau(parameters, resolution->getCalcTauIdx()));
+                    CalcAverageTau(genlow, genhigh, parameters, resolution->getCalcTauIdx()));
 
 
   MetricTaker evalor(this, getMetricPointer("ptr_to_Prob")); 
@@ -654,7 +652,22 @@ __host__ std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcboost
         results.begin(), 
         evalor); 
   SYNCH();
+
+  size_t free_byte ;
+  size_t total_byte ;
+  cudaMemGetInfo( &free_byte, &total_byte ) ;
+  double free_db = (double)free_byte ;
+  double total_db = (double)total_byte ;
+  printf("%f / %f bytes free\n", free_db, total_db);
+
   gooFree(dev_event_array);
+
+  cudaMemGetInfo( &free_byte, &total_byte ) ;
+  free_db = (double)free_byte ;
+  total_db = (double)total_byte ;
+  printf("%f / %f bytes free\n", free_db, total_db);
+  
+
 
   thrust::transform(results.begin(), results.end(), weights.begin(), weights.begin(),
                      thrust::multiplies<mcbooster::GReal_t>());
@@ -986,9 +999,11 @@ EXEC_TARGET thrust::tuple<fptype,fptype,fptype,fptype> NormIntegrator_TD::operat
   return thrust::tuple<fptype,fptype,fptype,fptype>(norm2(AmpA), norm2(AmpB), AmpAB.real, AmpAB.imag);
 }
 
-CalcAverageTau::CalcAverageTau(unsigned int pIdx, unsigned int resCalcTauFcnIdx)
+CalcAverageTau::CalcAverageTau(double low, double high, unsigned int pIdx, unsigned int resCalcTauFcnIdx)
   :_parameters(pIdx)
   , _resCalcTauFcnIdx(resCalcTauFcnIdx)
+  , _genlow(low)
+  , _genhigh(high)
   {}
 
 
@@ -1063,7 +1078,7 @@ EXEC_TARGET fptype CalcAverageTau::operator() (thrust::tuple<int, fptype*,fptype
   evtNum = (evtNum ^ 0xb55a4f09) ^ (evtNum >> 16);
 
   thrust::random::default_random_engine rand(evtNum);
-  thrust::uniform_real_distribution<fptype> uniform(0.0, 1.0);
+  thrust::uniform_real_distribution<fptype> uniform(_genlow, _genhigh);
   fptype decaytime = average_tau * -LOG(uniform(rand)) ;
   *dtime = decaytime;
   return decaytime;

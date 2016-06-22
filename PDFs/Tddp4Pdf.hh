@@ -31,6 +31,8 @@ public:
   __host__ void setDataSize (unsigned int dataSize, unsigned int evtSize = 8); 
   __host__ void setForceIntegrals (bool f = true) {forceRedoIntegrals = f;}  
   __host__ int getMCevents(){return MCevents;}
+  __host__ void setGenerationOffset(int off){generation_offset = off;}
+  __host__ void setGenDecayTimeLimit(double low, double high){genlow = exp(-high); genhigh = exp(-low);}
   __host__ std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h,  mcbooster::RealVector_h> GenerateSig (unsigned int numEvents);
 
 protected:
@@ -74,6 +76,9 @@ private:
   fptype* cachedWidths;
   int totalEventSize; 
   int cacheToUse; 
+  int generation_offset;
+  double genlow;
+  double genhigh;
 };
 
 class SFCalculator_TD : public thrust::unary_function<thrust::tuple<int, fptype*, int>, devcomplex<fptype> > {
@@ -160,9 +165,11 @@ class NormIntegrator_TD : public thrust::unary_function<thrust::tuple<int, int, 
 
 class CalcAverageTau : public thrust::unary_function<thrust::tuple<int, fptype*, fptype*>, fptype>{
   public:
-    CalcAverageTau(unsigned int pIdx, unsigned int resCalcTauFcnIdx);
+    CalcAverageTau(double low, double high, unsigned int pIdx, unsigned int resCalcTauFcnIdx);
     EXEC_TARGET fptype operator() (thrust::tuple<int, fptype*, fptype*> t) const;
   private:
+    double _genlow;
+    double _genhigh;
     unsigned int _parameters;
     unsigned int _resCalcTauFcnIdx;
  };

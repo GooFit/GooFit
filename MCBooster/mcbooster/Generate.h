@@ -175,7 +175,7 @@ public:
 	 */
 	PhaseSpace(GReal_t _MotherMass, vector<GReal_t> _Masses, GLong_t _NEvents) :
 			fNDaughters(_Masses.size()), fNEvents(_NEvents),
-			fSeed(1),
+			fSeed(0),
 			fMaxWeight(0.0),
 			RND_Time(0.0), EVT_Time(0.0), EXP_Time(0.0), fNAccepted(0)
         {
@@ -207,6 +207,8 @@ public:
 
 	}    //decay
 
+
+	PhaseSpace(GReal_t _MotherMass, vector<GReal_t> _Masses, GLong_t _NEvents, GLong_t _EvtNumOffset) : PhaseSpace(_MotherMass, _Masses, _NEvents){fSeed = _EvtNumOffset;}
 	/**
 	 * PhaseSpace() dtor. The destructor explicitly frees all the resources owned by the class.
 	 */
@@ -382,7 +384,7 @@ GULong_t PhaseSpace::Unweight()
 	{
 
 	// create iterators
-	thrust::counting_iterator<GLong_t> first(0);
+	thrust::counting_iterator<GLong_t> first(fSeed);
 	thrust::counting_iterator<GLong_t> last = first + fNEvents;
 
 

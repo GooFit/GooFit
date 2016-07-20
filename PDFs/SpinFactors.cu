@@ -10,6 +10,38 @@ This code is not sufficently tested yet and still under heavy development!
 
 #define ZEMACH 1
 
+EXEC_TARGET fptype DtoPP1_PtoSP2_StoP3P4 (fptype* Vecs, unsigned int* indices) {
+  return 1.0;
+}
+
+EXEC_TARGET fptype DtoPP1_PtoVP2_VtoP3P4 (fptype* Vecs, unsigned int* indices) {
+  unsigned int p1          = indices[2];
+  unsigned int p2          = indices[3];
+  unsigned int p3          = indices[4];
+  unsigned int p4          = indices[5];
+  gpuLVec P1(Vecs[0 + 4*p1], Vecs[1 + 4*p1], Vecs[2 + 4*p1], Vecs[3 + 4*p1]);
+  gpuLVec P2(Vecs[0 + 4*p2], Vecs[1 + 4*p2], Vecs[2 + 4*p2], Vecs[3 + 4*p2]);
+  gpuLVec P3(Vecs[0 + 4*p3], Vecs[1 + 4*p3], Vecs[2 + 4*p3], Vecs[3 + 4*p3]);
+  gpuLVec P4(Vecs[0 + 4*p4], Vecs[1 + 4*p4], Vecs[2 + 4*p4], Vecs[3 + 4*p4]);
+
+  gpuLVec pV = P3 + P4;
+  gpuLVec qV = P3 - P4;
+  
+  if (ZEMACH) {
+    gpuLVec pP = pV + P2;
+    gpuLVec qP = pV - P2;
+
+    ZTspin1 LP(qP,pP,pP.M());
+    ZTspin1 LV(qV,pV,pV.M());
+    
+    return LP.Dot(LV);
+  }  
+
+  return (P2.Dot(qV) - P2.Dot(pV) * pV.Dot(qV))/(pV.M() * pV.M());
+}
+
+
+
 EXEC_TARGET fptype DtoV1V2_V1toP1P2_V2toP3P4_S (fptype* Vecs, unsigned int* indices) {
   unsigned int p1          = indices[2];
   unsigned int p2          = indices[3];
@@ -71,7 +103,7 @@ EXEC_TARGET fptype DtoV1V2_V1toP1P2_V2toP3P4_P (fptype* Vecs, unsigned int* indi
     return LeviCivita(pD,LD,LV1).Dot(LV2);
   }  
 
-  return LeviCevita(pD, qD, qV1, qV2);
+  return LeviCivita(pD, qD, qV1, qV2);
 }
 
 EXEC_TARGET fptype DtoV1V2_V1toP1P2_V2toP3P4_D (fptype* Vecs, unsigned int* indices) {
@@ -153,7 +185,7 @@ EXEC_TARGET fptype DtoV1P1_V1toV2P2_V2toP3P4 (fptype* Vecs, unsigned int* indice
   // printf("%f, %f, %f, %f\n",P3.getX(), P3.getY(), P3.getZ(), P3.getE() );
   // printf("%f, %f, %f, %f\n",P4.getX(), P4.getY(), P4.getZ(), P4.getE() );
 
-  fptype returnVal = LeviCevita(pV1, qV1, P1, qV2);
+  fptype returnVal = LeviCivita(pV1, qV1, P1, qV2);
   return returnVal;
 }
 
@@ -289,6 +321,48 @@ EXEC_TARGET fptype DtoAP1_AtoVP2Dwave_VtoP3P4 (fptype* Vecs, unsigned int* indic
   fptype MV = SQRT(pV.Dot(pV));
 
   fptype returnVal = P1.Dot((qA - qA.Dot(pA)*pA * (1./(MA*MA)))) * (qV - qV.Dot(pV)*pV * (1./(MV*MV))).Dot(pA);
+
+  // printf("spin %.7g\n",returnVal );
+  return returnVal;
+}
+
+
+
+
+EXEC_TARGET fptype DtoTP1_TtoVP2_VtoP3P4 (fptype* Vecs, unsigned int* indices) {
+  unsigned int p1          = indices[2];
+  unsigned int p2          = indices[3];
+  unsigned int p3          = indices[4];
+  unsigned int p4          = indices[5];
+  gpuLVec P1(Vecs[0 + 4*p1], Vecs[1 + 4*p1], Vecs[2 + 4*p1], Vecs[3 + 4*p1]);
+  gpuLVec P2(Vecs[0 + 4*p2], Vecs[1 + 4*p2], Vecs[2 + 4*p2], Vecs[3 + 4*p2]);
+  gpuLVec P3(Vecs[0 + 4*p3], Vecs[1 + 4*p3], Vecs[2 + 4*p3], Vecs[3 + 4*p3]);
+  gpuLVec P4(Vecs[0 + 4*p4], Vecs[1 + 4*p4], Vecs[2 + 4*p4], Vecs[3 + 4*p4]);
+
+  gpuLVec pV = P3 + P4;
+  gpuLVec qV = P3 - P4;
+  gpuLVec pT = P2 + pV;
+  gpuLVec qT = pV - P2;
+  gpuLVec pD = P1 + pT;
+  gpuLVec qD = pT - P1;
+
+  ZTspin2 t2T(qT,pT,pT.M());
+  ZTspin1 tV(qV,pV,pV.M()); 
+
+  gpuLVec DT(t2T.Contract(qD));
+
+  if(ZEMACH){  
+    ZTspin1 tD(qD,pD,pD.M());
+    ZTspin1 t1T(qT,pT,pT.M());
+
+    SpinSumV P1T(pT,pT.M());
+    SpinSumT P2T(pT,pT.M());
+
+    gpuLVec tmp= LeviCivita(t1T, pT, P1T.Dot(tV));
+    return P2T.Sandwich(tD,tD,tmp,t1T) + 1./3. * tD.Dot(tD) / (pT.Dot(pT)) * P2T.Sandwich(pD,pD,tmp,t1T);
+   }  
+
+  fptype returnVal = LeviCivita(pD, qD, DT, tV);
 
   // printf("spin %.7g\n",returnVal );
   return returnVal;

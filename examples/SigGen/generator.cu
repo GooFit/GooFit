@@ -136,14 +136,14 @@ int main (int argc, char** argv) {
   Amplitude* Bose_symmetrized_A1R   = new Amplitude( "LSA1R", new Variable("amp_real3", 1.0), new Variable("amp_imag3", 0.0), LSA1R, SFA1R, 2);
   Amplitude* Bose_symmetrized_A1RD  = new Amplitude( "LSA1RD", new Variable("amp_real3", -0.94921), new Variable("amp_imag3",  -1.73407), LSA1RD, SFA1RD, 2);
 
-  // DK3P_DI->amplitudes.push_back(Bose_symmetrized_KF);
+  DK3P_DI->amplitudes.push_back(Bose_symmetrized_KF);
   DK3P_DI->amplitudes.push_back(Bose_symmetrized_AMP_S);
   DK3P_DI->amplitudes.push_back(Bose_symmetrized_AMP_P);
   DK3P_DI->amplitudes.push_back(Bose_symmetrized_AMP_D);
-  // DK3P_DI->amplitudes.push_back(Bose_symmetrized_KK);
-  // DK3P_DI->amplitudes.push_back(Bose_symmetrized_K1R);
-  // DK3P_DI->amplitudes.push_back(Bose_symmetrized_A1R );
-  // DK3P_DI->amplitudes.push_back(Bose_symmetrized_A1RD);
+  DK3P_DI->amplitudes.push_back(Bose_symmetrized_KK);
+  DK3P_DI->amplitudes.push_back(Bose_symmetrized_K1R);
+  DK3P_DI->amplitudes.push_back(Bose_symmetrized_A1R );
+  DK3P_DI->amplitudes.push_back(Bose_symmetrized_A1RD);
 
   Variable* m12 = new Variable("m12", 0, 3);
   Variable* m34 = new Variable("m34", 0, 3); 
@@ -169,17 +169,8 @@ int main (int argc, char** argv) {
   coefficients.push_back(constantOne); 
 
   PolynomialPdf* eff = new PolynomialPdf("constantEff", observables, coefficients, offsets, 0);
-  DPPdf* dp = new DPPdf("test", observables, DK3P_DI, eff,6e6);
+  DPPdf* dp = new DPPdf("test", observables, DK3P_DI, eff,5);
 
-
-  int numEvents = 4;
-  auto tuple = dp->GenerateSig(numEvents);
-  
-  auto variables = std::get<1>(tuple);
-  auto weights = std::get<2>(tuple);
-  auto flags = std::get<3>(tuple);
-  int accepted = thrust::count_if(flags.begin(), flags.end(), thrust::identity<bool>());
-  fprintf(stderr,"Using accept-reject method would leave you with %i out of %i events\n", accepted, numEvents);
 
   TFile *file = new TFile( "SigGen.root" , "RECREATE");
   TTree *tree = new TTree("events", "events");
@@ -191,19 +182,42 @@ int main (int argc, char** argv) {
   tree->Branch("c34",  &tc34, "c34/D");
   tree->Branch("phi",  &tphi, "phi/D");
 
-  for (int i = 0; i < weights.size(); ++i)
+  for (int k = 0; k < 4; ++k)
   {
-    if (flags[i] == 1){
-      // printf("%.5g %.5g %.5g %.5g %.5g %.5g %.5g\n", (*(variables[0]))[i], (*(variables[1]))[i], (*(variables[2]))[i], (*(variables[3]))[i], (*(variables[4]))[i], weights[i], flags[i]);
-      tm12 = (*(variables[0]))[i];
-      tm34 = (*(variables[1]))[i];
-      tc12 = (*(variables[2]))[i];
-      tc34 = (*(variables[3]))[i];
-      tphi = (*(variables[4]))[i];
-      tree->Fill();
-    }
-  }
+    int numEvents = 1e6;
+    dp->setGenerationOffset(k*numEvents);
+    auto tuple = dp->GenerateSig(numEvents);
 
+    auto particles = std::get<0>(tuple);
+    auto variables = std::get<1>(tuple);
+    auto weights = std::get<2>(tuple);
+    auto flags = std::get<3>(tuple);
+    int accepted = thrust::count_if(flags.begin(), flags.end(), thrust::identity<bool>());
+    fprintf(stderr,"Using accept-reject method would leave you with %i out of %i events\n", accepted, numEvents);
+
+    for (int i = 0; i < weights.size(); ++i)
+    {
+      if (flags[i] == 1){
+        printf("%.5g %.5g %.5g %.5g %.5g %.5g %.5g\n", (*(variables[0]))[i], (*(variables[1]))[i], (*(variables[2]))[i], (*(variables[3]))[i], (*(variables[4]))[i], weights[i], flags[i]);
+        tm12 = (*(variables[0]))[i];
+        tm34 = (*(variables[1]))[i];
+        tc12 = (*(variables[2]))[i];
+        tc34 = (*(variables[3]))[i];
+        tphi = (*(variables[4]))[i];
+        tree->Fill();
+      }
+    }
+    delete variables[0];
+    delete variables[1];
+    delete variables[2];
+    delete variables[3];
+    delete variables[4];
+
+    delete particles[0];
+    delete particles[1];
+    delete particles[2];
+    delete particles[3];
+  }
   tree->Write();
   file->Close();
   return 0; 

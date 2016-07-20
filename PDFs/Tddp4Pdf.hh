@@ -15,6 +15,7 @@ See *.cu file for more details
 #include <mcbooster/GContainers.h>
 #include <tuple>
 #include <thrust/remove.h>
+#include "MixingTimeResolution_Aux.hh" 
 class LSCalculator_TD; 
 class AmpCalc_TD;
 class SFCalculator_TD;

@@ -31,6 +31,7 @@ public:
   __host__ void setDataSize (unsigned int dataSize, unsigned int evtSize = 6); 
   __host__ void setForceIntegrals (bool f = true) {forceRedoIntegrals = f;}  
   __host__ int getMCevents(){return MCevents;}
+  __host__ void setGenerationOffset(int off){generation_offset = off;}
   __host__ std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h,  mcbooster::RealVector_h> GenerateSig (unsigned int numEvents);
 
 protected:
@@ -75,6 +76,7 @@ private:
   fptype* cachedWidths;
   int totalEventSize; 
   int cacheToUse; 
+  int generation_offset;
 };
 
 

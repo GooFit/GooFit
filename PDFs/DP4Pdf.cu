@@ -85,6 +85,7 @@ __host__ DPPdf::DPPdf (std::string n,
   , totalEventSize(observables.size()) // number of observables plus eventnumber
   , cacheToUse(0) 
   , SpinsCalculated(false)
+  , generation_offset(0)
 {
   for (std::vector<Variable*>::iterator obsIT = observables.begin(); obsIT != observables.end(); ++obsIT) {
     registerObservable(*obsIT);
@@ -382,14 +383,14 @@ __host__ fptype DPPdf::normalise () const {
   //MCevents is the number of normalisation events.
   sumIntegral/=MCevents;
   host_normalisation[parameters] = 1.0/sumIntegral;
-  printf("end of normalise %f\n", sumIntegral);
+  // printf("end of normalise %f\n", sumIntegral);
   return sumIntegral;   
 }
 
 __host__ std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h> DPPdf::GenerateSig (unsigned int numEvents) {
 
   std::vector<mcbooster::GReal_t> masses(decayInfo->particle_masses.begin()+1,decayInfo->particle_masses.end());
-  mcbooster::PhaseSpace phsp(decayInfo->particle_masses[0], masses, numEvents);
+  mcbooster::PhaseSpace phsp(decayInfo->particle_masses[0], masses, numEvents, generation_offset);
   phsp.Generate(mcbooster::Vector4R(decayInfo->particle_masses[0], 0.0, 0.0, 0.0));
 
   auto d1 = phsp.GetDaughters(0);
@@ -527,7 +528,7 @@ EXEC_TARGET devcomplex<fptype> SFCalculator::operator () (thrust::tuple<int, fpt
 
   spin_function_ptr func = reinterpret_cast<spin_function_ptr>(device_function_table[functn_i]);
   fptype sf = (*func)(vecs, paramIndices+params_i);
-  printf("SpinFactors %i : %.7g\n",evtNum, sf );
+  // printf("SpinFactors %i : %.7g\n",evtNum, sf );
   return devcomplex<fptype>(sf, 0);
 }
 

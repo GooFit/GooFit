@@ -138,30 +138,32 @@ int main (int argc, char** argv) {
   Amplitude* Bose_symmetrized_A1R   = new Amplitude( "LSA1R", new Variable("amp_real3",  -0.153), new Variable("amp_imag3", -0.254), LSA1R, SFA1R, 2);
   Amplitude* Bose_symmetrized_A1RD  = new Amplitude( "LSA1RD", new Variable("amp_real3", 0.131), new Variable("amp_imag3",  0.782), LSA1RD, SFA1RD, 2);
 
-  Amplitude* Bose_symmetrized_AMP_S_B = new Amplitude( "B_K*(892)rho(770)_S", new Variable("amp_real1", 1.0), new Variable("amp_imag1", 0), LSKRS, SFKRS, 2);
-  Amplitude* Bose_symmetrized_AMP_P_B = new Amplitude( "B_K*(892)rho(770)_P", new Variable("amp_real2", -0.145), new Variable("amp_imag2", 0.86), LSKRP, SFKRP, 2);
-  Amplitude* Bose_symmetrized_AMP_D_B = new Amplitude( "B_K*(892)rho(770)_D", new Variable("amp_real3", 24.343), new Variable("amp_imag3", 5.329), LSKRD, SFKRD, 2);
-  // Amplitude* Bose_symmetrized_KF_B    = new Amplitude( "B_KF", new Variable("amp_real3", 0.10787), new Variable("amp_imag3",  -0.0132525), LSKF, SFKF, 2);
-  Amplitude* Bose_symmetrized_KK_B    = new Amplitude( "B_LSKK", new Variable("amp_real3", -0.054), new Variable("amp_imag3",  0.028), LSKK, SFKK, 2);
-  Amplitude* Bose_symmetrized_K1R_B   = new Amplitude( "B_LSK1R", new Variable("amp_real3",  0.162), new Variable("amp_imag3",   0.289), LSK1R, SFK1R, 2);
-  // Amplitude* Bose_symmetrized_A1R_B   = new Amplitude( "B_LSA1R", new Variable("amp_real3", 1.0), new Variable("amp_imag3", 0.0), LSA1R, SFA1R, 2);
-  // Amplitude* Bose_symmetrized_A1RD_B  = new Amplitude( "B_LSA1RD", new Variable("amp_real3", -0.04921), new Variable("amp_imag3",  1.73407), LSA1RD, SFA1RD, 2);
+
+  double WS_surpression = SQRT(1.0/300.0);
+  Amplitude* Bose_symmetrized_AMP_S_B = new Amplitude( "B_K*(892)rho(770)_S", new Variable("amp_real1", 1.0*WS_surpression), new Variable("amp_imag1", 0), LSKRS, SFKRS, 2);
+  Amplitude* Bose_symmetrized_AMP_P_B = new Amplitude( "B_K*(892)rho(770)_P", new Variable("amp_real2", -0.145*WS_surpression), new Variable("amp_imag2", 0.86*WS_surpression), LSKRP, SFKRP, 2);
+  Amplitude* Bose_symmetrized_AMP_D_B = new Amplitude( "B_K*(892)rho(770)_D", new Variable("amp_real3", 24.343*WS_surpression*WS_surpression), new Variable("amp_imag3", 5.329*WS_surpression), LSKRD, SFKRD, 2);
+  // Amplitude* Bose_symmetrized_KF_B    = new Amplitude( "B_KF", new Variable("amp_real3", 0.10787*WS_surpression), new Variable("amp_imag3",  -0.0132525*WS_surpression), LSKF, SFKF, 2);
+  Amplitude* Bose_symmetrized_KK_B    = new Amplitude( "B_LSKK", new Variable("amp_real3", -0.054*WS_surpression), new Variable("amp_imag3",  0.028*WS_surpression), LSKK, SFKK, 2);
+  Amplitude* Bose_symmetrized_K1R_B   = new Amplitude( "B_LSK1R", new Variable("amp_real3",  0.162*WS_surpression), new Variable("amp_imag3",   0.289*WS_surpression), LSK1R, SFK1R, 2);
+  // Amplitude* Bose_symmetrized_A1R_B   = new Amplitude( "B_LSA1R", new Variable("amp_real3", 1.0*WS_surpression), new Variable("amp_imag3", 0.0*WS_surpression), LSA1R, SFA1R, 2);
+  // Amplitude* Bose_symmetrized_A1RD_B  = new Amplitude( "B_LSA1RD", new Variable("amp_real3", -0.04921*WS_surpression), new Variable("amp_imag3",  1.73407*WS_surpression), LSA1RD, SFA1RD, 2);
 
 
-  DK3P_DI->amplitudes.push_back(Bose_symmetrized_KF);
-  DK3P_DI->amplitudes.push_back(Bose_symmetrized_AMP_S);
-  DK3P_DI->amplitudes.push_back(Bose_symmetrized_AMP_P);
-  DK3P_DI->amplitudes.push_back(Bose_symmetrized_AMP_D);
-  DK3P_DI->amplitudes.push_back(Bose_symmetrized_KK);
-  DK3P_DI->amplitudes.push_back(Bose_symmetrized_K1R);
-  DK3P_DI->amplitudes.push_back(Bose_symmetrized_A1R);
-  DK3P_DI->amplitudes.push_back(Bose_symmetrized_A1RD);
+  DK3P_DI->amplitudes_B.push_back(Bose_symmetrized_KF);
+  DK3P_DI->amplitudes_B.push_back(Bose_symmetrized_AMP_S);
+  DK3P_DI->amplitudes_B.push_back(Bose_symmetrized_AMP_P);
+  DK3P_DI->amplitudes_B.push_back(Bose_symmetrized_AMP_D);
+  DK3P_DI->amplitudes_B.push_back(Bose_symmetrized_KK);
+  DK3P_DI->amplitudes_B.push_back(Bose_symmetrized_K1R);
+  DK3P_DI->amplitudes_B.push_back(Bose_symmetrized_A1R);
+  DK3P_DI->amplitudes_B.push_back(Bose_symmetrized_A1RD);
 
-  DK3P_DI->amplitudes_B.push_back(Bose_symmetrized_AMP_S_B);
-  DK3P_DI->amplitudes_B.push_back(Bose_symmetrized_AMP_P_B);
-  DK3P_DI->amplitudes_B.push_back(Bose_symmetrized_AMP_D_B);
-  DK3P_DI->amplitudes_B.push_back(Bose_symmetrized_KK_B);
-  DK3P_DI->amplitudes_B.push_back(Bose_symmetrized_K1R_B);
+  DK3P_DI->amplitudes.push_back(Bose_symmetrized_AMP_S_B);
+  DK3P_DI->amplitudes.push_back(Bose_symmetrized_AMP_P_B);
+  DK3P_DI->amplitudes.push_back(Bose_symmetrized_AMP_D_B);
+  DK3P_DI->amplitudes.push_back(Bose_symmetrized_KK_B);
+  DK3P_DI->amplitudes.push_back(Bose_symmetrized_K1R_B);
 
   DK3P_DI->_tau = new Variable("tau", 0.4101, 0.001, 0.300, 0.500);
   DK3P_DI->_xmixing = new Variable("xmixing", 0.005, 0.001, 0, 0);
@@ -198,20 +200,50 @@ int main (int argc, char** argv) {
   TruthResolution* dat = new TruthResolution();
   PolynomialPdf* eff = new PolynomialPdf("constantEff", observables, coefficients, offsets, 0);
   TDDP4* dp = new TDDP4("test", observables, DK3P_DI, dat, eff, 0, 1);
-  dp->setGenDecayTimeLimit(4,6);
+  dp->setGenDecayTimeLimit(10,15);
 
-  TFile *file = new TFile( "SigGen2.root" , "RECREATE");
+  TFile *file = new TFile( "test_10_15.root" , "RECREATE");
   TTree *tree = new TTree("events", "events");
 
-  double tm12,tm34,tc12,tc34,tphi,tdtime;
-  tree->Branch("m12",  &tm12, "m12/D");
-  tree->Branch("m34",  &tm34, "m34/D");
-  tree->Branch("c12",  &tc12, "c12/D");
-  tree->Branch("c34",  &tc34, "c34/D");
-  tree->Branch("phi",  &tphi, "phi/D");
-  tree->Branch("dtime",  &tdtime, "dtime/D");
+  double tm12,tm34,tc12,tc34,tphi,tdtime,D0_E,D0_Px,D0_Py,D0_Pz,Kplus_E,Kplus_Px,Kplus_Py,Kplus_Pz,Piminus1_E,Piminus1_Px,Piminus1_Py,Piminus1_Pz,Piminus2_E,Piminus2_Px,Piminus2_Py,Piminus2_Pz,Piplus_E,Piplus_Px,Piplus_Py,Piplus_Pz;
+  int D0_pdg,Kplus_pdg,Piminus1_pdg,Piminus2_pdg,Piplus_pdg;
 
-for (int k = 0; k < 10; ++k)
+  tree->Branch("m12",          &tm12,         "m12/D");
+  tree->Branch("m34",          &tm34,         "m34/D");
+  tree->Branch("c12",          &tc12,         "c12/D");
+  tree->Branch("c34",          &tc34,         "c34/D");
+  tree->Branch("phi",          &tphi,         "phi/D");
+  tree->Branch("dtime",        &tdtime,       "dtime/D");
+  tree->Branch("D0_E",         &D0_E,         "D0_E/D");
+  tree->Branch("D0_Px",        &D0_Px,        "D0_Px/D");
+  tree->Branch("D0_Py",        &D0_Py,        "D0_Py/D");
+  tree->Branch("D0_Pz",        &D0_Pz,        "D0_Pz/D");
+  tree->Branch("D0_pdg",       &D0_pdg,       "D0_pdg/I");
+  tree->Branch("Kplus_E",      &Kplus_E,      "Kplus_E/D");
+  tree->Branch("Kplus_Px",     &Kplus_Px,     "Kplus_Px/D");
+  tree->Branch("Kplus_Py",     &Kplus_Py,     "Kplus_Py/D");
+  tree->Branch("Kplus_Pz",     &Kplus_Pz,     "Kplus_Pz/D");
+  tree->Branch("Kplus_pdg",    &Kplus_pdg,    "Kplus_pdg/I");
+  tree->Branch("Piminus1_E",   &Piminus1_E,   "Piminus1_E/D");
+  tree->Branch("Piminus1_Px",  &Piminus1_Px,  "Piminus1_Px/D");
+  tree->Branch("Piminus1_Py",  &Piminus1_Py,  "Piminus1_Py/D");
+  tree->Branch("Piminus1_Pz",  &Piminus1_Pz,  "Piminus1_Pz/D");
+  tree->Branch("Piminus1_pdg", &Piminus1_pdg, "Piminus1_pdg/I");
+  tree->Branch("Piminus2_E",   &Piminus2_E,   "Piminus2_E/D");
+  tree->Branch("Piminus2_Px",  &Piminus2_Px,  "Piminus2_Px/D");
+  tree->Branch("Piminus2_Py",  &Piminus2_Py,  "Piminus2_Py/D");
+  tree->Branch("Piminus2_Pz",  &Piminus2_Pz,  "Piminus2_Pz/D");
+  tree->Branch("Piminus2_pdg", &Piminus2_pdg, "Piminus2_pdg/I");
+  tree->Branch("Piplus_E",     &Piplus_E,     "Piplus_E/D");
+  tree->Branch("Piplus_Px",    &Piplus_Px,    "Piplus_Px/D");
+  tree->Branch("Piplus_Py",    &Piplus_Py,    "Piplus_Py/D");
+  tree->Branch("Piplus_Pz",    &Piplus_Pz,    "Piplus_Pz/D");
+  tree->Branch("Piplus_pdg",   &Piplus_pdg,   "Piplus_pdg/I");
+
+
+
+
+for (int k = 0; k < 100; ++k)
   {
     int numEvents = .8e6;
     dp->setGenerationOffset(k*numEvents);
@@ -234,6 +266,33 @@ for (int k = 0; k < 10; ++k)
         tc34 = (*(variables[3]))[i];
         tphi = (*(variables[4]))[i];
         tdtime = (*(variables[5]))[i];
+        D0_E         = 1864;
+        D0_Px        = 0.0;
+        D0_Py        = 0.0;
+        D0_Pz        = 0.0;
+        D0_pdg       = 421;
+        Kplus_E      = 1000 * (*(particles[2]))[i].get(0);
+        Kplus_Px     = 1000 * (*(particles[2]))[i].get(1);
+        Kplus_Py     = 1000 * (*(particles[2]))[i].get(2);
+        Kplus_Pz     = 1000 * (*(particles[2]))[i].get(3);
+        Kplus_pdg    = -321;
+        Piminus1_E   = 1000 * (*(particles[3]))[i].get(0);
+        Piminus1_Px  = 1000 * (*(particles[3]))[i].get(1);
+        Piminus1_Py  = 1000 * (*(particles[3]))[i].get(2);
+        Piminus1_Pz  = 1000 * (*(particles[3]))[i].get(3);
+        Piminus1_pdg = 211;
+        Piminus2_E   = 1000 * (*(particles[0]))[i].get(0);
+        Piminus2_Px  = 1000 * (*(particles[0]))[i].get(1);
+        Piminus2_Py  = 1000 * (*(particles[0]))[i].get(2);
+        Piminus2_Pz  = 1000 * (*(particles[0]))[i].get(3);
+        Piminus2_pdg = 211;
+        Piplus_E     = 1000 * (*(particles[1]))[i].get(0);
+        Piplus_Px    = 1000 * (*(particles[1]))[i].get(1);
+        Piplus_Py    = 1000 * (*(particles[1]))[i].get(2);
+        Piplus_Pz    = 1000 * (*(particles[1]))[i].get(3);
+        Piplus_pdg   = -211;
+
+
         tree->Fill();
       }
     }

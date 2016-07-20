@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 m = np.genfromtxt('../DP4/ToyMC.txt', skip_header=1)
-sig = np.genfromtxt("SigGen.txt", skip_header=1)
+sig = np.genfromtxt("SigGen.txt", skip_header=2)
 
 m12 = m[:,0]
 m34 = m[:,1]

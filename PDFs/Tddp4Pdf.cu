@@ -655,17 +655,17 @@ __host__ std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcboost
 
   size_t free_byte ;
   size_t total_byte ;
-  cudaMemGetInfo( &free_byte, &total_byte ) ;
-  double free_db = (double)free_byte ;
-  double total_db = (double)total_byte ;
-  printf("%f / %f bytes free\n", free_db, total_db);
+  // cudaMemGetInfo( &free_byte, &total_byte ) ;
+  // double free_db = (double)free_byte ;
+  // double total_db = (double)total_byte ;
+  // printf("%f / %f bytes free\n", free_db, total_db);
 
   gooFree(dev_event_array);
 
-  cudaMemGetInfo( &free_byte, &total_byte ) ;
-  free_db = (double)free_byte ;
-  total_db = (double)total_byte ;
-  printf("%f / %f bytes free\n", free_db, total_db);
+  // cudaMemGetInfo( &free_byte, &total_byte ) ;
+  // free_db = (double)free_byte ;
+  // total_db = (double)total_byte ;
+  // printf("%f / %f bytes free\n", free_db, total_db);
   
 
 
@@ -1083,3 +1083,4 @@ EXEC_TARGET fptype CalcAverageTau::operator() (thrust::tuple<int, fptype*,fptype
   *dtime = decaytime;
   return decaytime;
 }
+

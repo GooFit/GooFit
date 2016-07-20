@@ -96,6 +96,27 @@ class SpinSumV{ // spin sum for Vector->PP
   
 };
 
+class SpinSumT{
+ protected:
+  SpinSumV _sv;
+ public:
+  EXEC_TARGET SpinSumT(const gpuLVec& p, fptype mR)
+    : _sv(p, mR)
+    {}
+  EXEC_TARGET fptype Sandwich(  const gpuLVec& lm
+        , const gpuLVec& ln
+        , const gpuLVec& ra
+        , const gpuLVec& rb
+        ){
+    
+    fptype manb = _sv.Sandwich(lm, ra) * _sv.Sandwich(ln, rb);
+    fptype mbna = _sv.Sandwich(lm, rb) * _sv.Sandwich(ln, ra);
+    fptype mnab = _sv.Sandwich(lm, ln) * _sv.Sandwich(ra, rb);
+
+    return (1./2.)*(manb + mbna) - (1./3.)*mnab;
+  }
+};
+
 
 class LorentzMatrix{
  protected:
@@ -381,7 +402,7 @@ class ZTspin2 : public SymmLorentzMatrix{
    
 };
 
-EXEC_TARGET fptype LeviCevita(const gpuLVec& p1, const gpuLVec& p2, const gpuLVec& p3, const gpuLVec& p4){
+EXEC_TARGET fptype LeviCivita(const gpuLVec& p1, const gpuLVec& p2, const gpuLVec& p3, const gpuLVec& p4){
   // this calculates the determinant of the 4x4 matrix build out of p1,p2,p3,p4
   return
      p1.GetZ() * p2.GetY() * p3.GetX() * p4.GetE() - p1.GetY() * p2.GetZ() * p3.GetX() * p4.GetE() -

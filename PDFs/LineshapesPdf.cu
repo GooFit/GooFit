@@ -227,50 +227,8 @@ EXEC_TARGET devcomplex<fptype> lass_MINT (fptype Mpair, fptype m1, fptype m2, un
   return returnVal;
 }
 
-//Lass lineshape as implemented in MINT3 by Tim Evans. Not quite sure why this is different than the Mint2 version.
-EXEC_TARGET devcomplex<fptype> lass_MINT3 (fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
-  fptype meson_radius           = functorConstants[indices[1]+4];
-  fptype resmass                = cudaArray[indices[2]];
-  fptype reswidth               = cudaArray[indices[3]];
-  unsigned int orbital             = indices[4];
-  fptype frFactor               = 1;
-  fptype rMass2                 = Mpair*Mpair;
-  
-  fptype a = 2.07;
-  fptype r = 3.32;
-
-  fptype mpsq = (m1+m2)*(m1+m2);
-  fptype mmsq = (m1-m2)*(m1-m2);
-  fptype num  = (rMass2 - mpsq)*(rMass2 - mmsq);
-  fptype num2  = (resmass*resmass - mpsq)*(resmass*resmass - mmsq);
-  fptype pABSq = num/(4*rMass2);
-  fptype prSq = FABS(num2/(4*resmass*resmass));
-
-  fptype pratio = SQRT(pABSq/prSq);
-
-  fptype pratio_to_2Jplus1 = 1;
-
-  for(int i=0; i < 2*orbital+1; i++){
-    pratio_to_2Jplus1 *= pratio;
-  }
-
-  fptype mratio = resmass/Mpair;
-  fptype r2 = meson_radius*meson_radius;
-  fptype thisFR = BL_PRIME(pABSq*r2, prSq*r2, orbital);
-  fptype GofM = reswidth * pratio_to_2Jplus1 *mratio * thisFR;
-
-
-  fptype y = 2.0 * a*SQRT(pABSq);
-  fptype x = 2.0 + a * r * pABSq;
-  fptype phase = atan(y/x) +  atan(resmass*GofM/(resmass*resmass - rMass2)) ;
-  fptype rho = 1.0 / SQRT(pABSq/rMass2);
-  devcomplex<fptype> returnVal = SIN(phase) * devcomplex<fptype>(COS(phase),SIN(phase)) * rho;
-  // printf("Lass: %.5g %.5g %.5g\n",returnVal.real, returnVal.imag, GofM);
-
-  return returnVal;
-}
-
-//generalized lass lineshape as implemented in MINT3 by Tim Evans. if F=R=1 and phiF=PhiR=0 this is equal to lass_Mint3.
+//generalized lass lineshape as implemented in MINT3 by Tim Evans. if F=R=1 and phiF=PhiR=0 this is equal to normal lass as implemented in Mint3.
+//The difference between this and lass mint3 is not quite clear to me. need to get back to this later.
 EXEC_TARGET devcomplex<fptype> glass_MINT3 (fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
   fptype meson_radius           = functorConstants[indices[1]+4];
   fptype resmass                = cudaArray[indices[2]];
@@ -364,13 +322,26 @@ EXEC_TARGET devcomplex<fptype> Flatte_MINT (fptype Mpair, fptype m1, fptype m2, 
 }
 
 
-EXEC_TARGET devcomplex<fptype> nonres_DP (fptype m12, fptype m1, fptype m2, unsigned int* indices) {
-  return devcomplex<fptype>(1, 0); 
+EXEC_TARGET devcomplex<fptype> nonres_DP (fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
+  fptype meson_radius           = functorConstants[indices[1]+0];
+  fptype resmass                = cudaArray[indices[2]];
+  fptype reswidth               = cudaArray[indices[3]];
+  unsigned int orbital          = indices[4];
+
+  fptype mass = resmass;
+  fptype mumsRecoMass2 = Mpair*Mpair;
+  
+
+  fptype mpsq = (m1+m2)*(m1+m2);
+  fptype mmsq = (m1-m2)*(m1-m2);
+  fptype num  = (mumsRecoMass2 - mpsq)*(mumsRecoMass2 - mmsq);
+  fptype pABSq = num/(4*mumsRecoMass2);
+  
+  return devcomplex<fptype>(1, 0)*BL(pABSq*meson_radius*meson_radius, orbital); 
 }
 
 MEM_DEVICE resonance_function_ptr ptr_to_BW_DP4 = BW;
 MEM_DEVICE resonance_function_ptr ptr_to_lass = lass_MINT;
-MEM_DEVICE resonance_function_ptr ptr_to_lass3 = lass_MINT3;
 MEM_DEVICE resonance_function_ptr ptr_to_glass3 = glass_MINT3;
 MEM_DEVICE resonance_function_ptr ptr_to_bugg_MINT = bugg_MINT;
 MEM_DEVICE resonance_function_ptr ptr_to_SBW = SBW;
@@ -406,6 +377,14 @@ Lineshape::Lineshape (string name,
     
     case LS::Lass:
       GET_FUNCTION_ADDR(ptr_to_lass);
+      break;
+
+    case LS::Lass_M3:
+      GET_FUNCTION_ADDR(ptr_to_glass3);
+      break;
+
+    case LS::nonRes:
+      GET_FUNCTION_ADDR(ptr_to_NONRES_DP);
       break;
 
     case LS::Bugg:

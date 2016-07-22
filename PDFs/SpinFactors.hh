@@ -15,6 +15,8 @@ See *.cu file for more details
 typedef fptype (*spin_function_ptr) (fptype*, unsigned int*); 
 
 enum class SF_4Body{
+  DtoPP1_PtoSP2_StoP3P4,
+  DtoPP1_PtoVP2_VtoP3P4,
   DtoV1V2_V1toP1P2_V2toP3P4_S,
   DtoV1V2_V1toP1P2_V2toP3P4_P,
   DtoV1V2_V1toP1P2_V2toP3P4_D,
@@ -22,7 +24,8 @@ enum class SF_4Body{
   DtoAP1_AtoVP2Dwave_VtoP3P4,
   DtoVS_VtoP1P2_StoP3P4,
   DtoV1P1_V1toV2P2_V2toP3P4,
-  DtoAP1_AtoSP2_StoP3P4
+  DtoAP1_AtoSP2_StoP3P4,
+  DtoTP1_TtoVP2_VtoP3P4
 };
 
 class SpinFactor : public GooPdf {

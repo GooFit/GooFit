@@ -14,7 +14,7 @@ See *.cu file for more details
 #include "ResonancePdf.hh"
 #include "SpinFactors.hh"
 
-enum class LS {BW, Lass, Bugg, Flatte, SBW};
+enum class LS {BW, Lass, Lass_M3, nonRes, Bugg, Flatte, SBW};
 //PDG notation for FF
 enum class FF : unsigned int {One = 0, BL, BL_Prime};
 

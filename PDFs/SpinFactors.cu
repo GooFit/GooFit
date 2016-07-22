@@ -368,8 +368,8 @@ EXEC_TARGET fptype DtoTP1_TtoVP2_VtoP3P4 (fptype* Vecs, unsigned int* indices) {
   return returnVal;
 }
 
-
-
+MEM_DEVICE spin_function_ptr ptr_to_DtoPP1_PtoSP2_StoP3P4       = DtoPP1_PtoSP2_StoP3P4;
+MEM_DEVICE spin_function_ptr ptr_to_DtoPP1_PtoVP2_VtoP3P4       = DtoPP1_PtoVP2_VtoP3P4;
 MEM_DEVICE spin_function_ptr ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_S = DtoV1V2_V1toP1P2_V2toP3P4_S;
 MEM_DEVICE spin_function_ptr ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_P = DtoV1V2_V1toP1P2_V2toP3P4_P;
 MEM_DEVICE spin_function_ptr ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_D = DtoV1V2_V1toP1P2_V2toP3P4_D;
@@ -378,7 +378,7 @@ MEM_DEVICE spin_function_ptr ptr_to_DtoV1P1_V1toV2P2_V2toP3P4   = DtoV1P1_V1toV2
 MEM_DEVICE spin_function_ptr ptr_to_DtoAP1_AtoSP2_StoP3P4       = DtoAP1_AtoSP2_StoP3P4;
 MEM_DEVICE spin_function_ptr ptr_to_DtoAP1_AtoVP2_VtoP3P4       = DtoAP1_AtoVP2_VtoP3P4;
 MEM_DEVICE spin_function_ptr ptr_to_DtoAP1_AtoVP2Dwave_VtoP3P4  = DtoAP1_AtoVP2Dwave_VtoP3P4;
-
+MEM_DEVICE spin_function_ptr ptr_to_DtoTP1_TtoVP2_VtoP3P4       = DtoTP1_TtoVP2_VtoP3P4;
 
 
 
@@ -391,6 +391,12 @@ SpinFactor::SpinFactor (std::string name, SF_4Body SF, unsigned int P0, unsigned
   pindices.push_back(P2);
   pindices.push_back(P3);
   switch(SF){
+    case SF_4Body::DtoPP1_PtoSP2_StoP3P4:
+      GET_FUNCTION_ADDR(ptr_to_DtoPP1_PtoSP2_StoP3P4);
+      break;
+    case SF_4Body::DtoPP1_PtoVP2_VtoP3P4:
+      GET_FUNCTION_ADDR(ptr_to_DtoPP1_PtoVP2_VtoP3P4);
+      break;
     case SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_S:
       GET_FUNCTION_ADDR(ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_S);
       break;
@@ -414,6 +420,9 @@ SpinFactor::SpinFactor (std::string name, SF_4Body SF, unsigned int P0, unsigned
       break;    
     case SF_4Body::DtoAP1_AtoSP2_StoP3P4:
       GET_FUNCTION_ADDR(ptr_to_DtoAP1_AtoSP2_StoP3P4);
+      break;
+    case SF_4Body::DtoTP1_TtoVP2_VtoP3P4:
+      GET_FUNCTION_ADDR(ptr_to_DtoTP1_TtoVP2_VtoP3P4);
       break;
         
     default:

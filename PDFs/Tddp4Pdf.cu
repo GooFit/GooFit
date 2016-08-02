@@ -426,7 +426,7 @@ __host__ void TDDP4::setDataSize (unsigned int dataSize, unsigned int evtSize) {
 
 // this is where the actual magic happens. This function does all the calculations!
 __host__ fptype TDDP4::normalise () const {
-  fprintf(stderr, "start normalise\n");
+  // fprintf(stderr, "start normalise\n");
   recursiveSetNormalisation(1); // Not going to normalise efficiency, 
   // so set normalisation factor to 1 so it doesn't get multiplied by zero. 
   // Copy at this time to ensure that the SpecialResonanceCalculators, which need the efficiency, 
@@ -530,7 +530,7 @@ __host__ fptype TDDP4::normalise () const {
           dummy,
           MyFourDoubleTupleAdditionFunctor);
 
-  printf("normalise A2/#evts , B2/#evts: %.5g, %.5g\n",thrust::get<0>(sumIntegral)/MCevents, thrust::get<1>(sumIntegral)/MCevents);
+  // printf("normalise A2/#evts , B2/#evts: %.5g, %.5g\n",thrust::get<0>(sumIntegral)/MCevents, thrust::get<1>(sumIntegral)/MCevents);
   fptype tau     = host_params[host_indices[parameters + 7]];
   fptype xmixing = host_params[host_indices[parameters + 8]];
   fptype ymixing = host_params[host_indices[parameters + 9]];
@@ -540,7 +540,7 @@ __host__ fptype TDDP4::normalise () const {
   //MCevents is the number of normalisation events.
   ret/=MCevents;
   host_normalisation[parameters] = 1.0/ret;
-  printf("end of normalise %f\n", ret);
+  // printf("end of normalise %f\n", ret);
   return ret;   
 }
 

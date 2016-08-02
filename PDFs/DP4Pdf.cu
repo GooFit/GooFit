@@ -612,7 +612,7 @@ EXEC_TARGET devcomplex<fptype> LSCalculator::operator () (thrust::tuple<int, fpt
     fptype d1,d2;  
     fptype mres = getmass(pair, d1 , d2, vecs, m1, m2, m3, m4);
     ret = getResonanceAmplitude(mres, d1, d2, functn_i, params_i);
-    // printf("LS %i: mass:%f, %f i%f\n",_resonance_i, mres, ret.real, ret.imag );
+    // printf("LS_m_calc %i: mass:%f, %f i%f\n",_resonance_i, mres, ret.real, ret.imag );
 
   }
 
@@ -700,12 +700,19 @@ EXEC_TARGET devcomplex<fptype> AmpCalc::operator() (thrust::tuple<int, fptype*, 
   for (int i = 0; i < _nPerm; ++i)
   {
     devcomplex<fptype> ret(1,0);
+    devcomplex<fptype> tmp(1,0);
+
     for (int j = i*LS_step; j < (i+1)*LS_step; ++j){
-      ret *= (cResSF[cacheToUse][evtNum*offset + AmpIndices[totalAMP + _AmpIdx + 3 + j]]);
+      tmp = (cResSF[cacheToUse][evtNum*offset + AmpIndices[totalAMP + _AmpIdx + 3 + j]]);
+      ret *= tmp;
+      // printf("Lineshape = (%.7g, %.7g)\n", tmp.real, tmp.imag);
     }
     // printf("Lineshape Product = (%.7g, %.7g)\n", ret.real, ret.imag);
     for (int j = i*SF_step; j < (i+1)*SF_step; ++j){
-      ret *= (cResSF[cacheToUse][evtNum*offset + totalLS + AmpIndices[totalAMP + _AmpIdx + 3 + numLS + j]].real);
+      tmp = (cResSF[cacheToUse][evtNum*offset + totalLS + AmpIndices[totalAMP + _AmpIdx + 3 + numLS + j]].real);
+      ret *= tmp;
+      // printf("SF = (%.7g, %.7g)\n", tmp.real, tmp.imag);
+
     }
     // printf("Lineshape Product * SF = (%.7g, %.7g)\n", ret.real, ret.imag);
 

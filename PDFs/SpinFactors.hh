@@ -25,7 +25,12 @@ enum class SF_4Body{
   DtoVS_VtoP1P2_StoP3P4,
   DtoV1P1_V1toV2P2_V2toP3P4,
   DtoAP1_AtoSP2_StoP3P4,
-  DtoTP1_TtoVP2_VtoP3P4
+  DtoTP1_TtoVP2_VtoP3P4,
+  FF_12_34_L1,
+  FF_12_34_L2,
+  FF_123_4_L1,
+  FF_123_4_L2,
+  ONE
 };
 
 class SpinFactor : public GooPdf {

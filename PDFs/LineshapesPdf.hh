@@ -14,9 +14,9 @@ See *.cu file for more details
 #include "ResonancePdf.hh"
 #include "SpinFactors.hh"
 
-enum class LS {BW, Lass, Lass_M3, nonRes, Bugg, Flatte, SBW};
+enum class LS {ONE, BW, Lass, Lass_M3, nonRes, Bugg, Bugg3, Flatte, SBW};
 //PDG notation for FF
-enum class FF : unsigned int {One = 0, BL, BL_Prime};
+enum class FF : unsigned int {One = 0, BL, BL_Prime, BL2};
 
 class Lineshape : public GooPdf {
   friend class DPPdf; 
@@ -40,7 +40,8 @@ public:
         unsigned int L, 
         unsigned int Mpair,
         LS kind = LS::BW,
-        FF FormFac = FF::BL_Prime); 
+        FF FormFac = FF::BL_Prime,
+        fptype radius = 1.5); 
 
   bool operator==(const Lineshape& L) const {return ( L.getName() == getName() and L._mass->value == _mass->value and L._width->value == _width->value
                                                       and L._L == _L and L._Mpair == _Mpair and L._kind == _kind and L._FormFac == _FormFac); }

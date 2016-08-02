@@ -14,6 +14,100 @@ EXEC_TARGET fptype DtoPP1_PtoSP2_StoP3P4 (fptype* Vecs, unsigned int* indices) {
   return 1.0;
 }
 
+EXEC_TARGET fptype ONE (fptype* Vecs, unsigned int* indices) {
+  return 1.0;
+}
+
+EXEC_TARGET fptype FF_12_34_L1 (fptype* Vecs, unsigned int* indices) {
+  fptype mother_radius           = functorConstants[indices[1]];
+  unsigned int p1          = indices[2];
+  unsigned int p2          = indices[3];
+  unsigned int p3          = indices[4];
+  unsigned int p4          = indices[5];
+  gpuLVec P1(Vecs[0 + 4*p1], Vecs[1 + 4*p1], Vecs[2 + 4*p1], Vecs[3 + 4*p1]);
+  gpuLVec P2(Vecs[0 + 4*p2], Vecs[1 + 4*p2], Vecs[2 + 4*p2], Vecs[3 + 4*p2]);
+  gpuLVec P3(Vecs[0 + 4*p3], Vecs[1 + 4*p3], Vecs[2 + 4*p3], Vecs[3 + 4*p3]);
+  gpuLVec P4(Vecs[0 + 4*p4], Vecs[1 + 4*p4], Vecs[2 + 4*p4], Vecs[3 + 4*p4]);
+
+
+  fptype m1 = (P1+P2).Mag2();
+  fptype m2 = (P3+P4).Mag2();
+  fptype s = (P1+P2+P3+P4).Mag2();
+  fptype q2 = s/4. -( m1 + m2)/2. + ( m1 - m2)*( m1 - m2)/(4*s);
+  fptype z2 = q2 *  mother_radius*mother_radius;
+  fptype ff =  1.0/(1+z2);
+  // printf("%.5g, %.5g, %.5g, %.5g\n",s,m1,m2,SQRT(ff) );
+  return SQRT(ff);
+}
+
+EXEC_TARGET fptype FF_12_34_L2 (fptype* Vecs, unsigned int* indices) {
+  fptype mother_radius           = functorConstants[indices[1]];
+  unsigned int p1          = indices[2];
+  unsigned int p2          = indices[3];
+  unsigned int p3          = indices[4];
+  unsigned int p4          = indices[5];
+  gpuLVec P1(Vecs[0 + 4*p1], Vecs[1 + 4*p1], Vecs[2 + 4*p1], Vecs[3 + 4*p1]);
+  gpuLVec P2(Vecs[0 + 4*p2], Vecs[1 + 4*p2], Vecs[2 + 4*p2], Vecs[3 + 4*p2]);
+  gpuLVec P3(Vecs[0 + 4*p3], Vecs[1 + 4*p3], Vecs[2 + 4*p3], Vecs[3 + 4*p3]);
+  gpuLVec P4(Vecs[0 + 4*p4], Vecs[1 + 4*p4], Vecs[2 + 4*p4], Vecs[3 + 4*p4]);
+
+
+  fptype m1 = (P1+P2).Mag2();
+  fptype m2 = (P3+P4).Mag2();
+  fptype s = (P1+P2+P3+P4).Mag2();
+  fptype q2 = s/4. -( m1 + m2)/2. + ( m1 - m2)*( m1 - m2)/(4*s);
+  fptype z2 = q2 *  mother_radius*mother_radius;
+  fptype ff =  1.0/ ( z2*z2 + 3*z2 + 9 );
+
+  return SQRT(ff);
+}
+
+EXEC_TARGET fptype FF_123_4_L1 (fptype* Vecs, unsigned int* indices) {
+  fptype mother_radius           = functorConstants[indices[1]];
+  unsigned int p1          = indices[2];
+  unsigned int p2          = indices[3];
+  unsigned int p3          = indices[4];
+  unsigned int p4          = indices[5];
+  gpuLVec P1(Vecs[0 + 4*p1], Vecs[1 + 4*p1], Vecs[2 + 4*p1], Vecs[3 + 4*p1]);
+  gpuLVec P2(Vecs[0 + 4*p2], Vecs[1 + 4*p2], Vecs[2 + 4*p2], Vecs[3 + 4*p2]);
+  gpuLVec P3(Vecs[0 + 4*p3], Vecs[1 + 4*p3], Vecs[2 + 4*p3], Vecs[3 + 4*p3]);
+  gpuLVec P4(Vecs[0 + 4*p4], Vecs[1 + 4*p4], Vecs[2 + 4*p4], Vecs[3 + 4*p4]);
+
+
+  fptype m1 = (P1+P2+P3).Mag2();
+  fptype m2 = P4.Mag2();
+  fptype s = (P1+P2+P3+P4).Mag2();
+  fptype q2 = s/4. -( m1 + m2)/2. + ( m1 - m2)*( m1 - m2)/(4*s);
+  fptype z2 = q2 *  mother_radius*mother_radius;
+  fptype ff =  1.0/(1+z2);
+
+  return SQRT(ff);
+}
+
+EXEC_TARGET fptype FF_123_4_L2 (fptype* Vecs, unsigned int* indices) {
+  fptype mother_radius           = functorConstants[indices[1]];
+  unsigned int p1          = indices[2];
+  unsigned int p2          = indices[3];
+  unsigned int p3          = indices[4];
+  unsigned int p4          = indices[5];
+  gpuLVec P1(Vecs[0 + 4*p1], Vecs[1 + 4*p1], Vecs[2 + 4*p1], Vecs[3 + 4*p1]);
+  gpuLVec P2(Vecs[0 + 4*p2], Vecs[1 + 4*p2], Vecs[2 + 4*p2], Vecs[3 + 4*p2]);
+  gpuLVec P3(Vecs[0 + 4*p3], Vecs[1 + 4*p3], Vecs[2 + 4*p3], Vecs[3 + 4*p3]);
+  gpuLVec P4(Vecs[0 + 4*p4], Vecs[1 + 4*p4], Vecs[2 + 4*p4], Vecs[3 + 4*p4]);
+
+
+  fptype m1 = (P1+P2+P3).Mag2();
+  fptype m2 = P4.Mag2();
+  fptype s = (P1+P2+P3+P4).Mag2();
+  fptype q2 = s/4. -( m1 + m2)/2. + ( m1 - m2)*( m1 - m2)/(4*s);
+  fptype z2 = q2 *  mother_radius*mother_radius;
+  fptype ff =  1.0/ ( z2*z2 + 3*z2 + 9 );
+
+  return SQRT(ff);
+}
+
+
+
 EXEC_TARGET fptype DtoPP1_PtoVP2_VtoP3P4 (fptype* Vecs, unsigned int* indices) {
   unsigned int p1          = indices[2];
   unsigned int p2          = indices[3];
@@ -85,9 +179,9 @@ EXEC_TARGET fptype DtoV1V2_V1toP1P2_V2toP3P4_P (fptype* Vecs, unsigned int* indi
   gpuLVec P4(Vecs[0 + 4*p4], Vecs[1 + 4*p4], Vecs[2 + 4*p4], Vecs[3 + 4*p4]);
 
   gpuLVec pV1 = P1 + P2;
-  gpuLVec qV1 = P1 - P2;
+  gpuLVec qV1 = P2 - P1;
   gpuLVec pV2 = P3 + P4;
-  gpuLVec qV2 = P3 - P4;
+  gpuLVec qV2 = P4 - P3;
   
   gpuLVec pD = pV1 + pV2;
   gpuLVec qD = pV1 - pV2;
@@ -100,7 +194,7 @@ EXEC_TARGET fptype DtoV1V2_V1toP1P2_V2toP3P4_P (fptype* Vecs, unsigned int* indi
     ZTspin1 LV1(qV1,pV1,MV1);
     ZTspin1 LV2(qV2,pV2,MV2);
     
-    return LeviCivita(pD,LD,LV1).Dot(LV2);
+    return -LeviCivita(pD,LD,LV1).Dot(LV2); // minus gives the same result as MINT3
   }  
 
   return LeviCivita(pD, qD, qV1, qV2);
@@ -130,14 +224,15 @@ EXEC_TARGET fptype DtoV1V2_V1toP1P2_V2toP3P4_D (fptype* Vecs, unsigned int* indi
     ZTspin1 tV1(qV1, pV1, pV1.M());
     ZTspin1 tV2(qV2, pV2, pV2.M());
     ZTspin2 tD(qD, pD, mD);
-    
-    return tV1.Contract(tD.Contract(tV2));
+    double returnVal = tV1.Contract(tD.Contract(tV2)); 
+    // printf("%f, %f, %f, %f,",P1.GetX(), P1.GetY(), P1.GetZ(), P1.GetE() );
+    // printf("%f, %f, %f, %f,",P2.GetX(), P2.GetY(), P2.GetZ(), P2.GetE() );
+    // printf("%f, %f, %f, %f,",P3.GetX(), P3.GetY(), P3.GetZ(), P3.GetE() );
+    // printf("%f, %f, %f, %f,",P4.GetX(), P4.GetY(), P4.GetZ(), P4.GetE() );
+    // printf("%f\n",returnVal );
+    return returnVal;
   } 
   
-  // printf("%f, %f, %f, %f\n",P1.getX(), P1.getY(), P1.getZ(), P1.getE() );
-  // printf("%f, %f, %f, %f\n",P2.getX(), P2.getY(), P2.getZ(), P2.getE() );
-  // printf("%f, %f, %f, %f\n",P3.getX(), P3.getY(), P3.getZ(), P3.getE() );
-  // printf("%f, %f, %f, %f\n",P4.getX(), P4.getY(), P4.getZ(), P4.getE() );
 
   fptype MV1 = SQRT(pV1.Dot(pV1));
   fptype MV2 = SQRT(pV2.Dot(pV2));
@@ -145,6 +240,7 @@ EXEC_TARGET fptype DtoV1V2_V1toP1P2_V2toP3P4_D (fptype* Vecs, unsigned int* indi
                      )*( 
                      qV2.Dot(pV1) - qV2.Dot(pV2) * pV2.Dot(pV1)/(MV2*MV2)
                      );
+                     
   return returnVal;
 }
 
@@ -278,7 +374,7 @@ EXEC_TARGET fptype DtoAP1_AtoVP2_VtoP3P4 (fptype* Vecs, unsigned int* indices) {
       SpinSumV PA(pA,pA.M());  
       
       gpuLVec tmp= PA.Dot(LV);
-      return (LB.Dot(tmp));
+      return - (LB.Dot(tmp)); // minus to be equal to MINT3
   }
 
   fptype MA = SQRT(pA.Dot(pA));
@@ -382,6 +478,14 @@ MEM_DEVICE spin_function_ptr ptr_to_DtoTP1_TtoVP2_VtoP3P4       = DtoTP1_TtoVP2_
 
 
 
+MEM_DEVICE spin_function_ptr ptr_to_FF_12_34_L1       = FF_12_34_L1;
+MEM_DEVICE spin_function_ptr ptr_to_FF_12_34_L2       = FF_12_34_L2;
+MEM_DEVICE spin_function_ptr ptr_to_FF_123_4_L1       = FF_123_4_L1;
+MEM_DEVICE spin_function_ptr ptr_to_FF_123_4_L2       = FF_123_4_L2;
+MEM_DEVICE spin_function_ptr ptr_to_ONE               = ONE;
+
+
+
 SpinFactor::SpinFactor (std::string name, SF_4Body SF, unsigned int P0, unsigned int P1, unsigned int P2, unsigned int P3)
  : GooPdf(0,name), _SF(SF), _P0(P0), _P1(P1), _P2(P2), _P3(P3){
   vector<unsigned int> pindices; 
@@ -425,6 +529,21 @@ SpinFactor::SpinFactor (std::string name, SF_4Body SF, unsigned int P0, unsigned
       GET_FUNCTION_ADDR(ptr_to_DtoTP1_TtoVP2_VtoP3P4);
       break;
         
+    case SF_4Body::FF_12_34_L1:
+      GET_FUNCTION_ADDR(ptr_to_FF_12_34_L1);
+      break;        
+    case SF_4Body::FF_12_34_L2:
+      GET_FUNCTION_ADDR(ptr_to_FF_12_34_L2);
+      break;        
+    case SF_4Body::FF_123_4_L1:
+      GET_FUNCTION_ADDR(ptr_to_FF_123_4_L1);
+      break;        
+    case SF_4Body::FF_123_4_L2:
+      GET_FUNCTION_ADDR(ptr_to_FF_123_4_L2);
+      break;        
+    case SF_4Body::ONE:
+      GET_FUNCTION_ADDR(ptr_to_ONE);
+      break;        
     default:
       std::cout << "No Spinfunction implemented for that kind." << std::endl;
       exit(0);

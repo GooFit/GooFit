@@ -24,6 +24,32 @@ TODO:
 #include "EvalVar.hh"
 
 
+struct genUni
+{
+    fptype a, b;
+
+    __host__ __device__
+    genUni(fptype _a, fptype _b) : a(_a), b(_b) {};
+
+    __host__ __device__
+        fptype operator()(unsigned int n) const
+        {
+            n = (n + 0x7ed55d16) + (n << 12);
+            n = (n ^ 0xc761c23c) ^ (n >> 19);
+            n = (n + 0x165667b1) + (n << 5);
+            n = (n + 0xd3a2646c) ^ (n << 9);
+            n = (n + 0xfd7046c5) + (n << 3);
+            n = (n ^ 0xb55a4f09) ^ (n >> 16);
+
+            thrust::random::default_random_engine rand(n);
+            thrust::uniform_real_distribution<fptype> dist(a, b);
+            fptype test=dist(rand);
+            return test;
+        }
+};
+
+
+
 // The function of this array is to hold all the cached waves; specific 
 // waves are recalculated when the corresponding resonance mass or width 
 // changes. Note that in a multithread environment each thread needs its
@@ -60,28 +86,28 @@ EXEC_TARGET fptype device_TDDP4 (fptype* evt, fptype* p, unsigned int* indices) 
     // printf("flag:%i\n",flag);
     switch(flag) {
       case 0: 
-        amp_real_A = p[indices[11 + 2*(i+k)]];
-        amp_imag_A = p[indices[12 + 2*(i+k)]];
+        amp_real_A = p[indices[12 + 2*(i+k)]];
+        amp_imag_A = p[indices[13 + 2*(i+k)]];
         temp = Amps_TD[cacheToUse][evtNum*numAmps + i];
         AmpA += (temp.multiply(amp_real_A, amp_imag_A));
         // printf("DEV0: %.5g, %.5g, %.5g +i %.5g \n", amp_real_A, amp_imag_A, Amps_TD[cacheToUse][evtNum*numAmps + i].real, Amps_TD[cacheToUse][evtNum*numAmps + i].imag);
         break;
       case 1:
-        amp_real_B = p[indices[11 + 2*(i+k)]];
-        amp_imag_B = p[indices[12 + 2*(i+k)]];
+        amp_real_B = p[indices[12 + 2*(i+k)]];
+        amp_imag_B = p[indices[13 + 2*(i+k)]];
         temp = Amps_TD[cacheToUse][evtNum*numAmps + i];
         AmpB += (temp.multiply(amp_real_B, amp_imag_B));
         // printf("DEV1: %.5g, %.5g, %.5g +i %.5g \n", amp_real_B, amp_imag_B, Amps_TD[cacheToUse][evtNum*numAmps + i].real, Amps_TD[cacheToUse][evtNum*numAmps + i].imag);
         break;
       case 2:
-        amp_real_A = p[indices[11 + 2*(i+k)]];
-        amp_imag_A = p[indices[12 + 2*(i+k)]];
+        amp_real_A = p[indices[12 + 2*(i+k)]];
+        amp_imag_A = p[indices[13 + 2*(i+k)]];
         temp = Amps_TD[cacheToUse][evtNum*numAmps + i];
         AmpA += (temp.multiply(amp_real_A, amp_imag_A));
         // printf("DEV2.1: %.5g, %.5g, %.5g +i %.5g \n", amp_real_A, amp_imag_A, Amps_TD[cacheToUse][evtNum*numAmps + i].real, Amps_TD[cacheToUse][evtNum*numAmps + i].imag);
         ++k;
-        amp_real_B = p[indices[11 + 2*(i+k)]];
-        amp_imag_B = p[indices[12 + 2*(i+k)]];
+        amp_real_B = p[indices[12 + 2*(i+k)]];
+        amp_imag_B = p[indices[13 + 2*(i+k)]];
         temp = Amps_TD[cacheToUse][evtNum*numAmps + i];
         AmpB += (temp.multiply(amp_real_B, amp_imag_B));
         // printf("DEV2.2: %.5g, %.5g, %.5g +i %.5g \n", amp_real_B, amp_imag_B, Amps_TD[cacheToUse][evtNum*numAmps + i].real, Amps_TD[cacheToUse][evtNum*numAmps + i].imag);
@@ -92,18 +118,20 @@ EXEC_TARGET fptype device_TDDP4 (fptype* evt, fptype* p, unsigned int* indices) 
   fptype _tau     = p[indices[7]];
   fptype _xmixing = p[indices[8]];
   fptype _ymixing = p[indices[9]];
-  
+  fptype _SqWStoRSrate = p[indices[10]];
   fptype _time    = evt[indices[8 + indices[0]]];
   fptype _sigma   = evt[indices[9 + indices[0]]];
 
+  AmpA *= _SqWStoRSrate;
   // printf("read avg tau: %.5g \n", _time);
 
   fptype term1    = norm2(AmpA) + norm2(AmpB);
   fptype term2    = norm2(AmpA) - norm2(AmpB);
   devcomplex<fptype> term3    = AmpA * conj(AmpB);
+  // printf("dev %.7g %.7g %.7g %.7g\n", norm2(AmpA), norm2(AmpB), term3.real, term3.imag);
 
-  int effFunctionIdx = 11 + 2*indices[3] + 2*indices[4] + 2*indices[6]; 
-  int resfctidx = indices[10];
+  int effFunctionIdx = 12 + 2*indices[3] + 2*indices[4] + 2*indices[6]; 
+  int resfctidx = indices[11];
   int resfctpar = effFunctionIdx + 2;
 
 
@@ -138,7 +166,7 @@ __host__ TDDP4::TDDP4 (std::string n,
   , resolution(Tres)
   , generation_offset(0)
   , genlow(0)
-  , genhigh(1)
+  , genhigh(5)
 {
   // should include m12, m34, cos12, cos34, phi, eventnumber, dtime, sigmat. In this order!
   for (std::vector<Variable*>::iterator obsIT = observables.begin(); obsIT != observables.end(); ++obsIT) {
@@ -169,6 +197,7 @@ __host__ TDDP4::TDDP4 (std::string n,
   pindices.push_back(registerParameter(decayInfo->_tau));
   pindices.push_back(registerParameter(decayInfo->_xmixing));
   pindices.push_back(registerParameter(decayInfo->_ymixing));
+  pindices.push_back(registerParameter(decayInfo->_SqWStoRSrate));
   assert(resolution->getDeviceFunction() >= 0); 
   pindices.push_back((unsigned int) resolution->getDeviceFunction()); 
 
@@ -566,13 +595,14 @@ __host__ std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcboost
   auto SigGen_CosTheta12_d = mcbooster::RealVector_d(numEvents);
   auto SigGen_CosTheta34_d = mcbooster::RealVector_d(numEvents);
   auto SigGen_phi_d        = mcbooster::RealVector_d(numEvents);
-  auto dtime_d               = mcbooster::RealVector_d(numEvents);
+  auto dtime_d             = mcbooster::RealVector_d(numEvents);
 
- // auto SigGen_M12_d        =  norm_M12       ;
- // auto SigGen_M34_d        =  norm_M34       ;
- // auto SigGen_CosTheta12_d =  norm_CosTheta12;
- // auto SigGen_CosTheta34_d =  norm_CosTheta34;
- // auto SigGen_phi_d        =  norm_phi       ;
+  thrust::counting_iterator<unsigned int> index_sequence_begin(0);
+  thrust::transform(index_sequence_begin,
+            index_sequence_begin + numEvents,
+            dtime_d.begin(),
+            genUni(genlow, genhigh));
+
 
   mcbooster::VariableSet_d VarSet_d(5);
   VarSet_d[0] = &SigGen_M12_d,
@@ -600,6 +630,7 @@ __host__ std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcboost
   auto SigGen_CosTheta12_h = new mcbooster::RealVector_h(SigGen_CosTheta12_d);
   auto SigGen_CosTheta34_h = new mcbooster::RealVector_h(SigGen_CosTheta34_d);
   auto SigGen_phi_h        = new mcbooster::RealVector_h(SigGen_phi_d);
+  auto dtime_h             = new mcbooster::RealVector_h(dtime_d);
 
   mcbooster::VariableSet_h VarSet(6); 
   VarSet[0] = SigGen_M12_h; 
@@ -607,6 +638,7 @@ __host__ std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcboost
   VarSet[2] = SigGen_CosTheta12_h; 
   VarSet[3] = SigGen_CosTheta34_h; 
   VarSet[4] = SigGen_phi_h;
+  VarSet[5] = dtime_h;
 
   auto weights = mcbooster::RealVector_d(phsp.GetWeights());
   phsp.~PhaseSpace();
@@ -622,6 +654,9 @@ __host__ std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcboost
   }
   mcbooster::strided_range<mcbooster::RealVector_d::iterator> sr(DS->begin() + 5, DS->end(), 8);
   thrust::copy(eventNumber, eventNumber+numEvents, sr.begin());
+
+  mcbooster::strided_range<mcbooster::RealVector_d::iterator> sr2(DS->begin() + 6, DS->end(), 8);
+  thrust::copy(dtime_d.begin(), dtime_d.end(), sr2.begin());
 
   dev_event_array = thrust::raw_pointer_cast(DS->data());
   setDataSize(numEvents, 8);
@@ -640,12 +675,6 @@ __host__ std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcboost
   thrust::constant_iterator<fptype*> weightAddress(thrust::raw_pointer_cast(weights.data())); 
   thrust::constant_iterator<fptype*> dtimeAddress(thrust::raw_pointer_cast(dtime_d.data())); 
 
-  thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, weightAddress, dtimeAddress)),
-                    thrust::make_zip_iterator(thrust::make_tuple(eventIndex+numEvents, weightAddress, dtimeAddress)),
-                    mcbooster::strided_range<mcbooster::RealVector_d::iterator>(DS->begin() + 6, DS->end(), 8).begin(), 
-                    CalcAverageTau(genlow, genhigh, parameters, resolution->getCalcTauIdx()));
-
-
   MetricTaker evalor(this, getMetricPointer("ptr_to_Prob")); 
   thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
         thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEvents, arrayAddress, eventSize)),
@@ -653,21 +682,7 @@ __host__ std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcboost
         evalor); 
   SYNCH();
 
-  size_t free_byte ;
-  size_t total_byte ;
-  // cudaMemGetInfo( &free_byte, &total_byte ) ;
-  // double free_db = (double)free_byte ;
-  // double total_db = (double)total_byte ;
-  // printf("%f / %f bytes free\n", free_db, total_db);
-
   gooFree(dev_event_array);
-
-  // cudaMemGetInfo( &free_byte, &total_byte ) ;
-  // free_db = (double)free_byte ;
-  // total_db = (double)total_byte ;
-  // printf("%f / %f bytes free\n", free_db, total_db);
-  
-
 
   thrust::transform(results.begin(), results.end(), weights.begin(), weights.begin(),
                      thrust::multiplies<mcbooster::GReal_t>());
@@ -684,9 +699,6 @@ __host__ std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcboost
   auto flags_h = mcbooster::BoolVector_h(flags);
   SYNCH();
 
-  auto dtime_h        = new mcbooster::RealVector_h(dtime_d);
-  VarSet[5] = dtime_h;
-
   return std::make_tuple(ParSet, VarSet, weights_h, flags_h);
 }
 
@@ -701,7 +713,7 @@ EXEC_TARGET devcomplex<fptype> SFCalculator_TD::operator () (thrust::tuple<int, 
   fptype* evt = thrust::get<1>(t) + (evtNum * thrust::get<2>(t)); 
 
   unsigned int* indices = paramIndices + _parameters;   // Jump to DALITZPLOT position within parameters array
-  int parameter_i = 11 + (2 * indices[6]) + (indices[3] * 2) + (_spinfactor_i * 2) ; // Find position of this resonance relative to DALITZPLOT start 
+  int parameter_i = 12 + (2 * indices[6]) + (indices[3] * 2) + (_spinfactor_i * 2) ; // Find position of this resonance relative to DALITZPLOT start 
   unsigned int functn_i = indices[parameter_i];
   unsigned int params_i = indices[parameter_i+1];
   
@@ -733,7 +745,7 @@ NormSpinCalculator_TD::NormSpinCalculator_TD (int pIdx, unsigned int sf_idx)
 EXEC_TARGET fptype NormSpinCalculator_TD::operator () (thrust::tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t) const {
 
   unsigned int* indices = paramIndices + _parameters;   // Jump to DALITZPLOT position within parameters array
-  int parameter_i = 11 + (2 * indices[6]) + (indices[3] * 2) + (_spinfactor_i * 2) ; // Find position of this resonance relative to DALITZPLOT start 
+  int parameter_i = 12 + (2 * indices[6]) + (indices[3] * 2) + (_spinfactor_i * 2) ; // Find position of this resonance relative to DALITZPLOT start 
   unsigned int functn_i = indices[parameter_i];
   unsigned int params_i = indices[parameter_i+1];
 
@@ -775,7 +787,7 @@ EXEC_TARGET devcomplex<fptype> LSCalculator_TD::operator () (thrust::tuple<int, 
   fptype* evt = thrust::get<1>(t) + (evtNum * thrust::get<2>(t)); 
 
   unsigned int* indices = paramIndices + _parameters;   // Jump to DALITZPLOT position within parameters array
-  int parameter_i = 11 + (2 * indices[6]) + (_resonance_i * 2) ; // Find position of this resonance relative to DALITZPLOT start 
+  int parameter_i = 12 + (2 * indices[6]) + (_resonance_i * 2) ; // Find position of this resonance relative to DALITZPLOT start 
   unsigned int functn_i = indices[parameter_i];
   unsigned int params_i = indices[parameter_i+1];
   unsigned int pair = (paramIndices+params_i)[5];
@@ -827,8 +839,7 @@ EXEC_TARGET devcomplex<fptype> NormLSCalculator_TD::operator () (thrust::tuple<m
   devcomplex<fptype> ret;
   
   unsigned int* indices = paramIndices + _parameters;   // Jump to DALITZPLOT position within parameters array
-  unsigned int numAmps  = indices[5];
-  int parameter_i = 11 + (2 * indices[6]) + (_resonance_i * 2); // Find position of this resonance relative to DALITZPLOT start 
+  int parameter_i = 12 + (2 * indices[6]) + (_resonance_i * 2); // Find position of this resonance relative to DALITZPLOT start 
   unsigned int functn_i = indices[parameter_i];
   unsigned int params_i = indices[parameter_i+1];
   unsigned int pair = (paramIndices+params_i)[5];
@@ -969,118 +980,35 @@ EXEC_TARGET thrust::tuple<fptype,fptype,fptype,fptype> NormIntegrator_TD::operat
 
     switch(flag) {
       case 0: 
-        amp_real_A = cudaArray[indices[11 + 2*(amp+k)]];
-        amp_imag_A = cudaArray[indices[12 + 2*(amp+k)]];
+        amp_real_A = cudaArray[indices[12 + 2*(amp+k)]];
+        amp_imag_A = cudaArray[indices[13 + 2*(amp+k)]];
         // printf("DEV0: %.5g, %.5g, %.5g +i %.5g \n", amp_real_A, amp_imag_A, ret2.real, ret2.imag);
         AmpA += ((ret2).multiply(amp_real_A, amp_imag_A));
         break;
       case 1:
-        amp_real_B = cudaArray[indices[11 + 2*(amp+k)]];
-        amp_imag_B = cudaArray[indices[12 + 2*(amp+k)]];
+        amp_real_B = cudaArray[indices[12 + 2*(amp+k)]];
+        amp_imag_B = cudaArray[indices[13 + 2*(amp+k)]];
         // printf("DEV1: %.5g, %.5g, %.5g +i %.5g \n", amp_real_B, amp_imag_B, ret2.real, ret2.imag);
         AmpB += ((ret2).multiply(amp_real_B, amp_imag_B));
         break;
       case 2:
-        amp_real_A = cudaArray[indices[11 + 2*(amp+k)]];
-        amp_imag_A = cudaArray[indices[12 + 2*(amp+k)]];
+        amp_real_A = cudaArray[indices[12 + 2*(amp+k)]];
+        amp_imag_A = cudaArray[indices[13 + 2*(amp+k)]];
         // printf("DEV2.1: %.5g, %.5g, %.5g +i %.5g \n", amp_real_A, amp_imag_A, ret2.real, ret2.imag);
         AmpA += ((ret2).multiply(amp_real_A, amp_imag_A));
         ++k;
-        amp_real_B = cudaArray[indices[11 + 2*(amp+k)]];
-        amp_imag_B = cudaArray[indices[12 + 2*(amp+k)]];
+        amp_real_B = cudaArray[indices[12 + 2*(amp+k)]];
+        amp_imag_B = cudaArray[indices[13 + 2*(amp+k)]];
         // printf("DEV2.2: %.5g, %.5g, %.5g +i %.5g \n", amp_real_B, amp_imag_B, ret2.real, ret2.imag);
         AmpB += ((ret2).multiply(amp_real_B, amp_imag_B));
         break;
     }
   }
 
+  fptype _SqWStoRSrate = cudaArray[indices[10]];
+  AmpA *= _SqWStoRSrate;
+
   auto AmpAB = AmpA*conj(AmpB);
   // printf("%.5g %.5g %.5g %.5g\n", norm2(AmpA), norm2(AmpB), AmpAB.real, AmpAB.imag);
   return thrust::tuple<fptype,fptype,fptype,fptype>(norm2(AmpA), norm2(AmpB), AmpAB.real, AmpAB.imag);
 }
-
-CalcAverageTau::CalcAverageTau(double low, double high, unsigned int pIdx, unsigned int resCalcTauFcnIdx)
-  :_parameters(pIdx)
-  , _resCalcTauFcnIdx(resCalcTauFcnIdx)
-  , _genlow(low)
-  , _genhigh(high)
-  {}
-
-
-EXEC_TARGET fptype CalcAverageTau::operator() (thrust::tuple<int, fptype*,fptype*> t) const {
-
-  int evtNum = thrust::get<0>(t); 
-  fptype* weight = thrust::get<1>(t) + evtNum; 
-  fptype* dtime = thrust::get<2>(t) + evtNum; 
-
-  unsigned int* indices = paramIndices + _parameters;   // Jump to DALITZPLOT position within parameters array
-  unsigned int cacheToUse    = indices[2]; 
-  unsigned int numAmps       = indices[5]; 
-
-  devcomplex<fptype> AmpA(0, 0);
-  devcomplex<fptype> AmpB(0, 0);
-  fptype amp_real_A, amp_imag_A, amp_real_B, amp_imag_B;
-
-  int k = 0;
-  for (int i = 0; i < numAmps; ++i) {
-    unsigned int start = AmpIndices[i];
-    unsigned int flag = AmpIndices[start + 3 + numAmps];
-    devcomplex<fptype> temp;
-    // printf("flag:%i\n",flag);
-    switch(flag) {
-      case 0: 
-        amp_real_A = cudaArray[indices[11 + 2*(i+k)]];
-        amp_imag_A = cudaArray[indices[12 + 2*(i+k)]];
-        temp = Amps_TD[cacheToUse][evtNum*numAmps + i];
-        AmpA += (temp.multiply(amp_real_A, amp_imag_A));
-        // printf("DEV0: %.5g, %.5g, %.5g +i %.5g \n", amp_real_A, amp_imag_A, Amps_TD[cacheToUse][evtNum*numAmps + i].real, Amps_TD[cacheToUse][evtNum*numAmps + i].imag);
-        break;
-      case 1:
-        amp_real_B = cudaArray[indices[11 + 2*(i+k)]];
-        amp_imag_B = cudaArray[indices[12 + 2*(i+k)]];
-        temp = Amps_TD[cacheToUse][evtNum*numAmps + i];
-        AmpB += (temp.multiply(amp_real_B, amp_imag_B));
-        // printf("DEV1: %.5g, %.5g, %.5g +i %.5g \n", amp_real_B, amp_imag_B, Amps_TD[cacheToUse][evtNum*numAmps + i].real, Amps_TD[cacheToUse][evtNum*numAmps + i].imag);
-        break;
-      case 2:
-        amp_real_A = cudaArray[indices[11 + 2*(i+k)]];
-        amp_imag_A = cudaArray[indices[12 + 2*(i+k)]];
-        temp = Amps_TD[cacheToUse][evtNum*numAmps + i];
-        AmpA += (temp.multiply(amp_real_A, amp_imag_A));
-        // printf("DEV2.1: %.5g, %.5g, %.5g +i %.5g \n", amp_real_A, amp_imag_A, Amps_TD[cacheToUse][evtNum*numAmps + i].real, Amps_TD[cacheToUse][evtNum*numAmps + i].imag);
-        ++k;
-        amp_real_B = cudaArray[indices[11 + 2*(i+k)]];
-        amp_imag_B = cudaArray[indices[12 + 2*(i+k)]];
-        temp = Amps_TD[cacheToUse][evtNum*numAmps + i];
-        AmpB += (temp.multiply(amp_real_B, amp_imag_B));
-        // printf("DEV2.2: %.5g, %.5g, %.5g +i %.5g \n", amp_real_B, amp_imag_B, Amps_TD[cacheToUse][evtNum*numAmps + i].real, Amps_TD[cacheToUse][evtNum*numAmps + i].imag);
-        break;
-    }
-  }
-
-  fptype _tau     = cudaArray[indices[7]];
-  fptype _xmixing = cudaArray[indices[8]];
-  fptype _ymixing = cudaArray[indices[9]];
-
-  devcomplex<fptype> AB    = AmpA * conj(AmpB);
-
-
-  // call average tau function. 
-  device_calc_tau_fcn_ptr func = reinterpret_cast<device_calc_tau_fcn_ptr>(device_function_table[_resCalcTauFcnIdx]);
-  fptype average_tau = (*func)(norm2(AmpA), norm2(AmpB), AB.real, AB.imag, _xmixing, _ymixing, _tau);
-  *weight *= average_tau;
-
-  evtNum = (evtNum + 0x7ed55d16) + (evtNum << 12);
-  evtNum = (evtNum ^ 0xc761c23c) ^ (evtNum >> 19);
-  evtNum = (evtNum + 0x165667b1) + (evtNum << 5);
-  evtNum = (evtNum + 0xd3a2646c) ^ (evtNum << 9);
-  evtNum = (evtNum + 0xfd7046c5) + (evtNum << 3);
-  evtNum = (evtNum ^ 0xb55a4f09) ^ (evtNum >> 16);
-
-  thrust::random::default_random_engine rand(evtNum);
-  thrust::uniform_real_distribution<fptype> uniform(_genlow, _genhigh);
-  fptype decaytime = average_tau * -LOG(uniform(rand)) ;
-  *dtime = decaytime;
-  return decaytime;
-}
-

@@ -55,6 +55,7 @@ struct DecayInfo_DP {
   Variable* _tau; 
   Variable* _xmixing;
   Variable* _ymixing;
+  Variable* _SqWStoRSrate;
 };
 
 // Copied from strided_range thrust example by Nathan Bell.

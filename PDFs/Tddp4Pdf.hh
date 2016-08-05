@@ -33,7 +33,8 @@ public:
   __host__ void setForceIntegrals (bool f = true) {forceRedoIntegrals = f;}  
   __host__ int getMCevents(){return MCevents;}
   __host__ void setGenerationOffset(int off){generation_offset = off;}
-  __host__ void setGenDecayTimeLimit(double low, double high){genlow = exp(-high); genhigh = exp(-low);}
+  // __host__ void setGenDecayTimeLimit(double low, double high){genlow = exp(-high); genhigh = exp(-low);}
+  __host__ void setGenDecayTimeLimit(double low, double high){genlow = low; genhigh = high;}
   __host__ std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h,  mcbooster::RealVector_h> GenerateSig (unsigned int numEvents);
 
 protected:
@@ -163,18 +164,6 @@ class NormIntegrator_TD : public thrust::unary_function<thrust::tuple<int, int, 
       thrust::get<3>(one) + thrust::get<3>(two));
    }
  };
-
-class CalcAverageTau : public thrust::unary_function<thrust::tuple<int, fptype*, fptype*>, fptype>{
-  public:
-    CalcAverageTau(double low, double high, unsigned int pIdx, unsigned int resCalcTauFcnIdx);
-    EXEC_TARGET fptype operator() (thrust::tuple<int, fptype*, fptype*> t) const;
-  private:
-    double _genlow;
-    double _genhigh;
-    unsigned int _parameters;
-    unsigned int _resCalcTauFcnIdx;
- };
-
 
 #endif
 

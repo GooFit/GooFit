@@ -254,13 +254,10 @@ EXEC_TARGET devcomplex<fptype> bugg_MINT3 (fptype Mpair, fptype m1, fptype m2, u
 EXEC_TARGET devcomplex<fptype> lass_MINT (fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
   fptype resmass                = cudaArray[indices[2]];
   fptype reswidth               = cudaArray[indices[3]];
-  fptype frFactor               = 1;
   fptype rMass2                 = Mpair*Mpair;
   
   fptype a = 2.07;
   fptype r = 3.32;
-  fptype phi = 0.0;
-  fptype cutCoff = 1.8;
 
   fptype mpsq = (m1+m2)*(m1+m2);
   fptype mmsq = (m1-m2)*(m1-m2);
@@ -378,10 +375,8 @@ EXEC_TARGET devcomplex<fptype> Flatte_MINT (fptype Mpair, fptype m1, fptype m2, 
 
 EXEC_TARGET devcomplex<fptype> nonres_DP (fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
   fptype meson_radius           = functorConstants[indices[7]];
-  fptype resmass                = cudaArray[indices[2]];
   unsigned int orbital          = indices[4];
 
-  fptype mass = resmass;
   fptype mumsRecoMass2 = Mpair*Mpair;
   
 

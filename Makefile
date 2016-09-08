@@ -53,7 +53,7 @@ CUDAHEADERS = $(CUDALOCATION)/include/
 PWD = $(shell /bin/pwd)
 SRCDIR = $(PWD)/PDFs
 
-INCLUDES += -I$(SRCDIR) -I$(PWD) -I$(CUDAHEADERS) -I$(PWD)/rootstuff -I$(PWD)/MCBooster
+INCLUDES += -I$(SRCDIR) -I$(PWD) -I$(CUDAHEADERS) -I$(PWD)/rootstuff -I$(PWD)/MCBooster -I$(ROOTSYS)/include/
 
 # GooPdf must be first in CUDAglob, as it defines global variables.
 FUNCTORLIST    = $(SRCDIR)/GooPdf.cu 
@@ -68,7 +68,8 @@ THRUSTO		= wrkdir/Variable.o wrkdir/FitManager.o wrkdir/GooPdfCUDA.o wrkdir/Fadd
 ROOTRIPDIR	= $(PWD)/rootstuff
 ROOTRIPOBJS	= $(ROOTRIPDIR)/TMinuit.o $(ROOTRIPDIR)/TRandom.o $(ROOTRIPDIR)/TRandom3.o 
 ROOTUTILLIB	= $(ROOTRIPDIR)/libRootUtils.so 
-
+ROOT_INCLUDES = -I$(ROOTSYS)/include/
+ROOT_LIBS     = -L$(ROOTSYS)/lib/ -lCore -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lMatrix -lPhysics -lMathCore -pthread -lThread -lMinuit -rdynamic -lFoam -lTreePlayer
 .SUFFIXES: 
 .PHONY:		goofit clean 
 

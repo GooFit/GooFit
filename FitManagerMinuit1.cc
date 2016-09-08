@@ -8,6 +8,9 @@ void specialTddpPrint (double fun);
 FitManager::FitManager (PdfBase* dat) 
   : minuit(0)
   , overrideCallLimit(-1)
+  , _useHesse(true)
+  , _useMinos(false)
+  , _useImprove(false)
 {
   pdfPointer = dat;
   currGlue = this; 
@@ -52,6 +55,9 @@ void FitManager::runMigrad () {
     plist[0] = overrideCallLimit;
     int err = 0; 
     minuit->mnexcm("MIGRAD", plist, 1, err);
+    if(_useHesse) minuit->mnexcm("HESSE", plist, 1, err);
+    if(_useMinos) minuit->mnexcm("MINOS", plist, 1, err);
+    if(_useImprove) minuit->mnexcm("IMPROVE", plist, 1, err);
   }
   else minuit->Migrad(); 
 }
@@ -61,6 +67,13 @@ void FitManager::getMinuitValues () const {
   for (std::vector<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
     minuit->GetParameter(counter++, (*i)->value, (*i)->error);
   }
+}
+
+void FitManager::getMinuitStatus(double& fmin, double& fedm, double& errdef, int& npari, int& nparx, int& istat) const
+{
+  minuit->mnstat(fmin, fedm, errdef, npari, nparx, istat);
+  std::cout << "mnstat(fmin = " << fmin << ", fedm = " << fedm << ", errdef = " << errdef
+    << ", npari = " << npari << ", nparx = " << nparx << ", istat = " << istat << ")" << std::endl;
 }
 
 void FitFun(int &npar, double *gin, double &fun, double *fp, int iflag) {

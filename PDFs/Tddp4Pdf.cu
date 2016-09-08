@@ -26,25 +26,30 @@ TODO:
 
 struct genUni
 {
-    fptype a, b;
+    fptype low, high;
+    unsigned int offset;
 
     __host__ __device__
-    genUni(fptype _a, fptype _b) : a(_a), b(_b) {};
+    genUni(fptype a, fptype b, unsigned int c) : low(a), high(b), offset(c) {};
+    // genUni(fptype a, fptype b) : low(a), high(b) {};
 
     __host__ __device__
-        fptype operator()(unsigned int n) const
+        fptype operator()(unsigned int x) const
         {
-            n = (n + 0x7ed55d16) + (n << 12);
-            n = (n ^ 0xc761c23c) ^ (n >> 19);
-            n = (n + 0x165667b1) + (n << 5);
-            n = (n + 0xd3a2646c) ^ (n << 9);
-            n = (n + 0xfd7046c5) + (n << 3);
-            n = (n ^ 0xb55a4f09) ^ (n >> 16);
 
-            thrust::random::default_random_engine rand(n);
-            thrust::uniform_real_distribution<fptype> dist(a, b);
-            fptype test=dist(rand);
-            return test;
+            // unsigned int n = x + 47584732571;
+            // n = (n + 0x7ed55d16) + (n << 12);
+            // n = (n ^ 0xc761c23c) ^ (n >> 19);
+            // n = (n + 0x165667b1) + (n << 5);
+            // n = (n + 0xd3a2646c) ^ (n << 9);
+            // n = (n + 0xfd7046c5) + (n << 3);
+            // n = (n ^ 0xb55a4f09) ^ (n >> 16);
+            thrust::random::default_random_engine rand(1431655765);
+            thrust::uniform_real_distribution<fptype> dist(low,high);
+            rand.discard(x+offset);
+            fptype result = dist(rand);
+            // printf("inside gen %u %u %u %.5g\n",x, offset, n, result );
+            return result;
         }
 };
 
@@ -123,12 +128,12 @@ EXEC_TARGET fptype device_TDDP4 (fptype* evt, fptype* p, unsigned int* indices) 
   fptype _sigma   = evt[indices[9 + indices[0]]];
 
   AmpA *= _SqWStoRSrate;
-  // printf("read avg tau: %.5g \n", _time);
+  // printf("%i read time: %.5g x: %.5g y: %.5g \n",evtNum, _time, _xmixing, _ymixing);
 
   fptype term1    = norm2(AmpA) + norm2(AmpB);
   fptype term2    = norm2(AmpA) - norm2(AmpB);
   devcomplex<fptype> term3    = AmpA * conj(AmpB);
-  // printf("dev %.7g %.7g %.7g %.7g\n", norm2(AmpA), norm2(AmpB), term3.real, term3.imag);
+  // printf("%i dev %.7g %.7g %.7g %.7g\n", evtNum, norm2(AmpA), norm2(AmpB), term3.real, term3.imag);
 
   int effFunctionIdx = 12 + 2*indices[3] + 2*indices[4] + 2*indices[6]; 
   int resfctidx = indices[11];
@@ -138,10 +143,10 @@ EXEC_TARGET fptype device_TDDP4 (fptype* evt, fptype* p, unsigned int* indices) 
   fptype ret = (*(reinterpret_cast<device_resfunction_ptr>(device_function_table[resfctidx])))(term1, term2, term3.real, term3.imag,
                            _tau, _time, _xmixing, _ymixing, _sigma, 
                            p, indices + resfctpar); 
-  // fptype eff = callFunction(evt, indices[effFunctionIdx], indices[effFunctionIdx + 1]); 
-  // ret *= eff;
+  fptype eff = callFunction(evt, indices[effFunctionIdx], indices[effFunctionIdx + 1]); 
+  // printf("%i result %.7g, eff %.7g\n",evtNum, ret, eff);
+  ret *= eff;
 
-  // printf("result %.7g\n", ret);
   return ret; 
 }
 
@@ -217,18 +222,18 @@ __host__ TDDP4::TDDP4 (std::string n,
 
     AmpMap[AmpsA[i]->_uniqueDecayStr] =  std::make_pair(std::vector<unsigned int>(0), std::vector<unsigned int>(0));
     
-    printf("Adding Amplitde A:%s\n",AmpsA[i]->_uniqueDecayStr.c_str());
+    // printf("Adding Amplitde A:%s\n",AmpsA[i]->_uniqueDecayStr.c_str());
 
     auto LSvec = AmpsA[i]->_LS;
     for(auto LSIT = LSvec.begin(); LSIT != LSvec.end(); ++LSIT) {
       auto found = std::find_if(components.begin(), components.end(), [LSIT](const PdfBase* L){return (**LSIT)== *(dynamic_cast<const Lineshape*>(L));});
       if( found != components.end()){
         AmpMap[AmpsA[i]->_uniqueDecayStr].first.push_back(std::distance(components.begin(), found));
-        printf("LS %s found at %i\n",(*found)->getName().c_str(),std::distance(components.begin(), found));
+        // printf("LS %s found at %i\n",(*found)->getName().c_str(),std::distance(components.begin(), found));
       }else{
         components.push_back(*LSIT);
         AmpMap[AmpsA[i]->_uniqueDecayStr].first.push_back(components.size() - 1);
-        printf("Adding LS %s\n",(*LSIT)->getName().c_str());
+        // printf("Adding LS %s\n",(*LSIT)->getName().c_str());
 
       }
     }
@@ -237,11 +242,11 @@ __host__ TDDP4::TDDP4 (std::string n,
       auto found = std::find_if(SpinFactors.begin(), SpinFactors.end(), [SFIT](const SpinFactor* S){return (**SFIT) == (*S);});
       if(found != SpinFactors.end()){
         AmpMap[AmpsA[i]->_uniqueDecayStr].second.push_back(std::distance(SpinFactors.begin(), found));
-        printf("SF %s found at %i\n",(*found)->getName().c_str(), std::distance(SpinFactors.begin(), found));
+        // printf("SF %s found at %i\n",(*found)->getName().c_str(), std::distance(SpinFactors.begin(), found));
       }else{
         SpinFactors.push_back(*SFIT);
         AmpMap[AmpsA[i]->_uniqueDecayStr].second.push_back(SpinFactors.size() - 1);
-        printf("Adding SF %s\n",(*SFIT)->getName().c_str());
+        // printf("Adding SF %s\n",(*SFIT)->getName().c_str());
 
       }
     }
@@ -255,7 +260,7 @@ __host__ TDDP4::TDDP4 (std::string n,
     unsigned int flag = 0;
     auto inB = std::find_if(AmpsB.begin(), AmpsB.end(), [AmpsA,i](const Amplitude* A){return *(AmpsA[i]) == (*A);} );
     if (inB != AmpsB.end()){
-      printf("Found in AmpsB as well: %s\n", (*inB)->_uniqueDecayStr.c_str());
+      // printf("Found in AmpsB as well: %s\n", (*inB)->_uniqueDecayStr.c_str());
       flag = 2;
       pindices.push_back(registerParameter((*inB)->_ar));
       pindices.push_back(registerParameter((*inB)->_ai));
@@ -281,18 +286,18 @@ __host__ TDDP4::TDDP4 (std::string n,
     if (inB != AmpBuffer.end()) continue;
 
     AmpMap[AmpsB[i]->_uniqueDecayStr] =  std::make_pair(std::vector<unsigned int>(0), std::vector<unsigned int>(0));
-    printf("Adding Amplitude B %s\n",AmpsB[i]->_uniqueDecayStr.c_str());
+    // fprintf("Adding Amplitude B %s\n",AmpsB[i]->_uniqueDecayStr.c_str());
 
     auto LSvec = AmpsB[i]->_LS;
     for(auto LSIT = LSvec.begin(); LSIT != LSvec.end(); ++LSIT) {
       auto found = std::find_if(components.begin(), components.end(), [LSIT](const PdfBase* L){return (**LSIT)== *(dynamic_cast<const Lineshape*>(L));});
       if( found != components.end()){
         AmpMap[AmpsB[i]->_uniqueDecayStr].first.push_back(std::distance(components.begin(), found));
-        printf("LS %s found at %i\n",(*found)->getName().c_str(), std::distance(components.begin(), found));
+        // fprintf("LS %s found at %i\n",(*found)->getName().c_str(), std::distance(components.begin(), found));
       }else{
         components.push_back(*LSIT);
         AmpMap[AmpsB[i]->_uniqueDecayStr].first.push_back(components.size() - 1);
-        printf("Adding LS %s\n",(*LSIT)->getName().c_str());
+        // fprintf("Adding LS %s\n",(*LSIT)->getName().c_str());
       }
     }
     auto SFvec = AmpsB[i]->_SF;
@@ -300,11 +305,11 @@ __host__ TDDP4::TDDP4 (std::string n,
       auto found = std::find_if(SpinFactors.begin(), SpinFactors.end(), [SFIT](const SpinFactor* S){return (**SFIT) == (*S);});
       if(found != SpinFactors.end()){
         AmpMap[AmpsB[i]->_uniqueDecayStr].second.push_back(std::distance(SpinFactors.begin(), found));
-        printf("SF %s found at %i\n",(*found)->getName().c_str(), std::distance(SpinFactors.begin(), found));
+        // fprintf("SF %s found at %i\n",(*found)->getName().c_str(), std::distance(SpinFactors.begin(), found));
       }else{
         SpinFactors.push_back(*SFIT);
         AmpMap[AmpsB[i]->_uniqueDecayStr].second.push_back(SpinFactors.size() - 1);
-        printf("Adding SF %s\n",(*SFIT)->getName().c_str());
+        // fprintf("Adding SF %s\n",(*SFIT)->getName().c_str());
       }
     }
     nPermVec.push_back(AmpsB[i]->_nPerm);
@@ -375,7 +380,7 @@ __host__ TDDP4::TDDP4 (std::string n,
     AmpCalcs.push_back(new AmpCalc_TD(ampidxstart[i], parameters, nPermVec[i]));
   }
 
-  fprintf(stderr,"#Amp's %i, #LS %i, #SF %i \n", AmpMap.size(), components.size()-1, SpinFactors.size() );
+  // fprintf(stderr,"#Amp's %i, #LS %i, #SF %i \n", AmpMap.size(), components.size()-1, SpinFactors.size() );
 
   std::vector<mcbooster::GReal_t> masses(decayInfo->particle_masses.begin()+1,decayInfo->particle_masses.end());
   mcbooster::PhaseSpace phsp(decayInfo->particle_masses[0], masses, MCeventsNorm, generation_offset);
@@ -393,7 +398,7 @@ __host__ TDDP4::TDDP4 (std::string n,
   auto zip_end = zip_begin + d1.size();
   auto new_end = thrust::remove_if(zip_begin, zip_end, flags.begin(), thrust::logical_not<bool>());
 
-  printf("After accept-reject we will keep %.i Events for normalization.\n", (int)nAcc);
+  // fprintf("After accept-reject we will keep %.i Events for normalization.\n", (int)nAcc);
   d1.shrink_to_fit();
   d2.shrink_to_fit();
   d3.shrink_to_fit();
@@ -601,7 +606,7 @@ __host__ std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcboost
   thrust::transform(index_sequence_begin,
             index_sequence_begin + numEvents,
             dtime_d.begin(),
-            genUni(genlow, genhigh));
+            genUni(genlow, genhigh, generation_offset));
 
 
   mcbooster::VariableSet_d VarSet_d(5);
@@ -692,7 +697,14 @@ __host__ std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcboost
   thrust::counting_iterator<mcbooster::GLong_t> last = first + numEvents;
 
   auto max = thrust::max_element(weights.begin(),weights.end());
-  thrust::transform(first, last, weights.begin(),flags.begin(), mcbooster::FlagAcceptReject((fptype)*max));
+  fptype wmax = (fptype)*max;
+  thrust::transform(first, last, weights.begin(),flags.begin(), mcbooster::FlagAcceptReject(wmax,generation_offset));
+
+  //   printf("Offset: %i und wmax:%.5g\n",generation_offset, wmax );
+  // for (int i = 0; i < dtime_d.size(); ++i)
+  // {
+  // printf("%i, %s, %.5g, %.5g, %.5g, %.5g, %.5g, %.5g, %.5g\n",i, (bool)flags[i] ? "true" : "false", (double)weights[i],  (double)dtime_d[i], (double)SigGen_M12_d[i], (double)SigGen_M34_d[i], (double)SigGen_CosTheta12_d[i], (double)SigGen_CosTheta34_d[i], (double)SigGen_phi_d[i]);
+  // }
 
   auto weights_h = mcbooster::RealVector_h(weights);
   auto results_h = mcbooster::RealVector_h(results);
@@ -819,7 +831,7 @@ EXEC_TARGET devcomplex<fptype> LSCalculator_TD::operator () (thrust::tuple<int, 
 
   }
 
-  // printf("LS %f, %f, %f, %f, %f \n",m12, m34, cos12, cos34, phi );
+  // printf("LS %i: %.7g, %.7g, %.7g, %.7g, %.7g \n",evtNum, m12, m34, cos12, cos34, phi );
 
   //if (!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass)) return ret;
   //printf("m12 %f \n", m12); // %f %f %f (%f, %f)\n ", m12, m13, m23, ret.real, ret.imag); 

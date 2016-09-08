@@ -353,7 +353,7 @@ private:
 
 	GLong_t fNEvents; ///< Number of events.
 	GInt_t fNDaughters;///< Number of daughters.
-	GInt_t fSeed;///< seed.
+	GUInt_t fSeed;///< seed.
 	GLong_t fNAccepted;
 	GReal_t RND_Time;///< Random number generation time interval seconds.
 	GReal_t EVT_Time;///< Event generation time interval in seconds.
@@ -384,12 +384,12 @@ GULong_t PhaseSpace::Unweight()
 	{
 
 	// create iterators
-	thrust::counting_iterator<GLong_t> first(fSeed);
+	thrust::counting_iterator<GLong_t> first(0);
 	thrust::counting_iterator<GLong_t> last = first + fNEvents;
 
-
+	
 	thrust::transform(first, last, fWeights.begin(),
-			fAccRejFlags.begin(), FlagAcceptReject(fMaxWeight));
+			fAccRejFlags.begin(), FlagAcceptReject(fMaxWeight, fSeed));
 
 	count = thrust::count(fAccRejFlags.begin(), fAccRejFlags.end(),
 			kTrue);
@@ -678,6 +678,7 @@ void PhaseSpace::Generate(Particles_d fMothers) {
 	 * Run the generator and calculate the maximum weight. It takes as input the device vector with the four-vectors of the mother particle
 	 * in any system of reference. The daughters will be generated in this system.
 	 */
+
 #if MCBOOSTER_BACKEND==CUDA
 	cudaDeviceSetCacheConfig(cudaFuncCachePreferL1);
 #endif

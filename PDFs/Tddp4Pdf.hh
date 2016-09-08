@@ -78,7 +78,7 @@ private:
   fptype* cachedWidths;
   int totalEventSize; 
   int cacheToUse; 
-  int generation_offset;
+  unsigned int generation_offset;
   double genlow;
   double genhigh;
 };

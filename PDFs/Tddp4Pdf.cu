@@ -48,7 +48,7 @@ struct genUni
             thrust::uniform_real_distribution<fptype> dist(low,high);
             rand.discard(x+offset);
             fptype result = dist(rand);
-            // printf("inside gen %u %u %u %.5g\n",x, offset, n, result );
+            // printf("inside gen %u %u %.5g\n",x, offset, result );
             return result;
         }
 };
@@ -169,7 +169,7 @@ __host__ TDDP4::TDDP4 (std::string n,
   , cacheToUse(0) 
   , SpinsCalculated(false)
   , resolution(Tres)
-  , generation_offset(0)
+  , generation_offset(1)
   , genlow(0)
   , genhigh(5)
 {

@@ -51,7 +51,7 @@ struct FlagAcceptReject
 	 * with which event weights will be compared.
 	 */
 	FlagAcceptReject(const GReal_t _wmax) :
-		wmax(_wmax)
+		wmax(_wmax), seed(0)
 	{	}
 	FlagAcceptReject(const GReal_t _wmax, GUInt_t _seed) :  //Modification for GooFit
 		wmax(_wmax), seed(_seed)

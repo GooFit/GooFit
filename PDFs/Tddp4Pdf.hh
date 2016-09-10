@@ -70,7 +70,7 @@ private:
   // change infrequently while amplitudes, only used in adding BW results together, change rapidly.
   DEVICE_VECTOR<devcomplex<fptype> >* cachedResSF; // Caches the BW values and Spins for each event.
   DEVICE_VECTOR<devcomplex<fptype> >* cachedAMPs; // cache Amplitude values for each event.
-
+  mutable bool generation_no_norm;
   mutable bool SpinsCalculated;
   bool* redoIntegral;
   mutable bool forceRedoIntegrals; 

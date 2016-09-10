@@ -170,9 +170,10 @@ __host__ TDDP4::TDDP4 (std::string n,
   , cacheToUse(0) 
   , SpinsCalculated(false)
   , resolution(Tres)
-  , generation_offset(1234)
+  , generation_offset(25031992)
   , genlow(0)
   , genhigh(5)
+  ,generation_no_norm(false)
 {
   // should include m12, m34, cos12, cos34, phi, eventnumber, dtime, sigmat. In this order!
   for (std::vector<Variable*>::iterator obsIT = observables.begin(); obsIT != observables.end(); ++obsIT) {
@@ -496,11 +497,12 @@ __host__ fptype TDDP4::normalise () const {
                           cachedResSF->end(), 
                           (components.size() + SpinFactors.size() - 1)).begin(),
                           *(sfcalculators[i]));
-
-    thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(norm_M12.begin(), norm_M34.begin(), norm_CosTheta12.begin(), norm_CosTheta34.begin(), norm_phi.begin()))
-                      ,thrust::make_zip_iterator(thrust::make_tuple(norm_M12.end(), norm_M34.end(), norm_CosTheta12.end(), norm_CosTheta34.end(), norm_phi.end()))
-                      ,(norm_SF.begin() + (i * MCevents)) 
-                      ,NormSpinCalculator_TD(parameters, i));
+      if(!generation_no_norm){
+        thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(norm_M12.begin(), norm_M34.begin(), norm_CosTheta12.begin(), norm_CosTheta34.begin(), norm_phi.begin()))
+                          ,thrust::make_zip_iterator(thrust::make_tuple(norm_M12.end(), norm_M34.end(), norm_CosTheta12.end(), norm_CosTheta34.end(), norm_phi.end()))
+                          ,(norm_SF.begin() + (i * MCevents)) 
+                          ,NormSpinCalculator_TD(parameters, i));
+       }
     }
 
      SpinsCalculated = true;
@@ -541,46 +543,48 @@ __host__ fptype TDDP4::normalise () const {
     // fprintf(stderr, "normalise after Amps\n");
     
   // lineshape value calculation for the normalisation, also recalculated every time parameter change
-  for (int i = 0; i < components.size() -1 ; ++i) {
-      if(!redoIntegral[i]) continue;
-    thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(norm_M12.begin(), norm_M34.begin(), norm_CosTheta12.begin(), norm_CosTheta34.begin(), norm_phi.begin()))
-                      ,thrust::make_zip_iterator(thrust::make_tuple(norm_M12.end(), norm_M34.end(), norm_CosTheta12.end(), norm_CosTheta34.end(), norm_phi.end()))
-                      ,(norm_LS.begin() + (i * MCevents)) 
-                      ,NormLSCalculator_TD(parameters, i));  
-    }
-
+  if(!generation_no_norm){
+    for (int i = 0; i < components.size() -1 ; ++i) {
+        if(!redoIntegral[i]) continue;
+      thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(norm_M12.begin(), norm_M34.begin(), norm_CosTheta12.begin(), norm_CosTheta34.begin(), norm_phi.begin()))
+                        ,thrust::make_zip_iterator(thrust::make_tuple(norm_M12.end(), norm_M34.end(), norm_CosTheta12.end(), norm_CosTheta34.end(), norm_phi.end()))
+                        ,(norm_LS.begin() + (i * MCevents)) 
+                        ,NormLSCalculator_TD(parameters, i));  
+      }
+  }
 
   thrust::constant_iterator<fptype*> normSFaddress(thrust::raw_pointer_cast(norm_SF.data()));
   thrust::constant_iterator<devcomplex<fptype>* > normLSaddress(thrust::raw_pointer_cast(norm_LS.data()));
   thrust::constant_iterator<int> NumNormEvents(MCevents);
 
   //this does the rest of the integration with the cached lineshape and spinfactor values for the normalization events  
-  
-  thrust::tuple<fptype,fptype,fptype,fptype> dummy(0, 0, 0, 0);
-  FourDblTupleAdd MyFourDoubleTupleAdditionFunctor;
-  thrust::tuple<fptype,fptype,fptype,fptype> sumIntegral;
-  sumIntegral = thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, NumNormEvents, normSFaddress, normLSaddress)),
-          thrust::make_zip_iterator(thrust::make_tuple(eventIndex + MCevents, NumNormEvents, normSFaddress, normLSaddress)),
-          *Integrator,
-          dummy,
-          MyFourDoubleTupleAdditionFunctor);
+  auto ret = 1.0;
+  if(!generation_no_norm){
+    thrust::tuple<fptype,fptype,fptype,fptype> dummy(0, 0, 0, 0);
+    FourDblTupleAdd MyFourDoubleTupleAdditionFunctor;
+    thrust::tuple<fptype,fptype,fptype,fptype> sumIntegral;
+    sumIntegral = thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, NumNormEvents, normSFaddress, normLSaddress)),
+            thrust::make_zip_iterator(thrust::make_tuple(eventIndex + MCevents, NumNormEvents, normSFaddress, normLSaddress)),
+            *Integrator,
+            dummy,
+            MyFourDoubleTupleAdditionFunctor);
 
-  // printf("normalise A2/#evts , B2/#evts: %.5g, %.5g\n",thrust::get<0>(sumIntegral)/MCevents, thrust::get<1>(sumIntegral)/MCevents);
-  fptype tau     = host_params[host_indices[parameters + 7]];
-  fptype xmixing = host_params[host_indices[parameters + 8]];
-  fptype ymixing = host_params[host_indices[parameters + 9]];
+    // printf("normalise A2/#evts , B2/#evts: %.5g, %.5g\n",thrust::get<0>(sumIntegral)/MCevents, thrust::get<1>(sumIntegral)/MCevents);
+    fptype tau     = host_params[host_indices[parameters + 7]];
+    fptype xmixing = host_params[host_indices[parameters + 8]];
+    fptype ymixing = host_params[host_indices[parameters + 9]];
 
-  auto ret = resolution->normalisation(thrust::get<0>(sumIntegral), thrust::get<1>(sumIntegral), thrust::get<2>(sumIntegral), thrust::get<3>(sumIntegral), tau, xmixing, ymixing); 
+    ret = resolution->normalisation(thrust::get<0>(sumIntegral), thrust::get<1>(sumIntegral), thrust::get<2>(sumIntegral), thrust::get<3>(sumIntegral), tau, xmixing, ymixing); 
 
-  //MCevents is the number of normalisation events.
-  ret/=MCevents;
+    //MCevents is the number of normalisation events.
+    ret/=MCevents;
+  }
   host_normalisation[parameters] = 1.0/ret;
   // printf("end of normalise %f\n", ret);
   return ret;   
 }
 
 __host__ std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h> TDDP4::GenerateSig (unsigned int numEvents) {
-
   std::vector<mcbooster::GReal_t> masses(decayInfo->particle_masses.begin()+1,decayInfo->particle_masses.end());
   mcbooster::PhaseSpace phsp(decayInfo->particle_masses[0], masses, numEvents, generation_offset);
   phsp.Generate(mcbooster::Vector4R(decayInfo->particle_masses[0], 0.0, 0.0, 0.0));
@@ -668,6 +672,7 @@ __host__ std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcboost
   setDataSize(numEvents, 8);
 
 
+  generation_no_norm=true; // we need no normalization for generation, but we do need to make sure that norm = 1; 
   SigGenSetIndices();
   copyParams(); 
   normalise();

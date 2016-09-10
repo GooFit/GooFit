@@ -44,7 +44,8 @@ struct genUni
             // n = (n + 0xd3a2646c) ^ (n << 9);
             // n = (n + 0xfd7046c5) + (n << 3);
             // n = (n ^ 0xb55a4f09) ^ (n >> 16);
-            thrust::random::default_random_engine rand(1431655765);
+            // thrust::random::default_random_engine rand(1431655765);
+            thrust::random::minstd_rand0 rand(1431655765);
             thrust::uniform_real_distribution<fptype> dist(low,high);
             rand.discard(x+offset);
             fptype result = dist(rand);
@@ -169,7 +170,7 @@ __host__ TDDP4::TDDP4 (std::string n,
   , cacheToUse(0) 
   , SpinsCalculated(false)
   , resolution(Tres)
-  , generation_offset(1)
+  , generation_offset(1234)
   , genlow(0)
   , genhigh(5)
 {

@@ -33,6 +33,8 @@ class Lineshape : public GooPdf {
   unsigned int _Mpair;
   LS _kind;
   FF _FormFac;
+  fptype _radius;
+  std::vector<Variable*> _AdditionalVars;
 public:
   Lineshape (string name,
         Variable* mass, 
@@ -41,9 +43,17 @@ public:
         unsigned int Mpair,
         LS kind = LS::BW,
         FF FormFac = FF::BL_Prime,
-        fptype radius = 1.5); 
+        fptype radius = 1.5,
+        std::vector<Variable*> AdditionalVars = std::vector<Variable*>()); 
 
-  bool operator==(const Lineshape& L) const {return ( L.getName() == getName() and L._mass->value == _mass->value and L._width->value == _width->value
+  bool operator==(const Lineshape& L) const {
+    if (_AdditionalVars.size() != L._AdditionalVars.size() ) return false;
+    bool addvar = true;
+    for (int i = 0; i < _AdditionalVars.size(); ++i)
+    {
+      addvar = addvar and (L._AdditionalVars[i]->value ==  _AdditionalVars[i]->value);
+    }
+    return addvar and ( L.getName() == getName() and L._mass->value == _mass->value and L._width->value == _width->value
                                                       and L._L == _L and L._Mpair == _Mpair and L._kind == _kind and L._FormFac == _FormFac); }
   Lineshape (string name);
    

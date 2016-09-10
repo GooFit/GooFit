@@ -173,7 +173,7 @@ EXEC_TARGET fptype bugg_Gamma_4pi(const fptype& s, const fptype mpi, const fptyp
 EXEC_TARGET devcomplex<fptype> bugg_MINT (fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
   fptype s                      = Mpair*Mpair;
 
-  fptype M            = 0.935;
+  fptype M            = 0.953;
   fptype b1           = 1.302;
   fptype b2           = 0.340;
   fptype A            = 2.426;
@@ -211,7 +211,7 @@ EXEC_TARGET devcomplex<fptype> bugg_MINT (fptype Mpair, fptype m1, fptype m2, un
 
 EXEC_TARGET devcomplex<fptype> bugg_MINT3 (fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
   fptype s                      = Mpair*Mpair;
-  fptype M            = 0.935;
+  fptype M            = 0.953;
   fptype b1           = 1.302;
   fptype b2           = 0.340;
   fptype A            = 2.426;
@@ -221,7 +221,7 @@ EXEC_TARGET devcomplex<fptype> bugg_MINT3 (fptype Mpair, fptype m1, fptype m2, u
   fptype alpha        = 1.3;
   fptype s0_4pi       = 7.082/2.845;
   fptype lambda_4pi   = 2.845;
-  fptype mPiPlus      = .139570;
+  fptype mPiPlus      = .13957018;
   fptype mKPlus       = .493677;
   fptype mEta         = .547862;
   fptype sA           = 0.41*mPiPlus*mPiPlus;
@@ -280,8 +280,8 @@ EXEC_TARGET devcomplex<fptype> lass_MINT (fptype Mpair, fptype m1, fptype m2, un
   return returnVal;
 }
 
-//generalized lass lineshape as implemented in MINT3 by Tim Evans. if F=R=1 and phiF=PhiR=0 this is equal to normal lass as implemented in Mint3.
-//The difference between this and lass mint3 is not quite clear to me. need to get back to this later.
+//generalized lass lineshape as implemented in MINT3 by Tim Evans. if F=R=1 and phiF=phiR=0 this is equal to normal lass as implemented in Mint3.
+//The difference between this and lass mint is not quite clear to me. need to get back to this later.
 EXEC_TARGET devcomplex<fptype> glass_MINT3 (fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
   fptype meson_radius           = functorConstants[indices[7]];
   fptype resmass                = cudaArray[indices[2]];
@@ -289,12 +289,20 @@ EXEC_TARGET devcomplex<fptype> glass_MINT3 (fptype Mpair, fptype m1, fptype m2, 
   unsigned int orbital          = indices[4];
   fptype rMass2                 = Mpair*Mpair;
   
-  fptype a = 2.07;
-  fptype r = 3.32;
-  fptype F = 1.0;
-  fptype R = 1.0;
-  fptype phiF = 0.0;
-  fptype phiR = 0.0;
+  // fptype a = 2.07;
+  // fptype r = 3.32;
+  // fptype phiF = 0.0;
+  // fptype phiR = 0.0;
+  // fptype F = 1.0;
+  fptype a =    cudaArray[indices[8]];
+  fptype r =    cudaArray[indices[9]];
+  fptype phiF = cudaArray[indices[10]];
+  fptype phiR = cudaArray[indices[11]];
+  fptype F =    cudaArray[indices[12]];
+
+  fptype R =    1.0;
+  // printf("GLass: %.5g %.5g %.5g %.5g %.5g %.5g\n",a, r, phiF, phiR, F, R);
+  // printf("GLass2: %.5g %.5g %.5g %u \n",meson_radius, resmass, reswidth, orbital);
 
   fptype mpsq = (m1+m2)*(m1+m2);
   fptype mmsq = (m1-m2)*(m1-m2);
@@ -325,8 +333,9 @@ EXEC_TARGET devcomplex<fptype> glass_MINT3 (fptype Mpair, fptype m1, fptype m2, 
   devcomplex<fptype> returnVal = (F * SIN(scattphase) * devcomplex<fptype>(COS(scattphase),SIN(scattphase)) 
                                + R * SIN(resphase) * devcomplex<fptype>(COS(resphase + 2 * scattphase),SIN(resphase + 2 * scattphase)))
                                * rho;
+  // printf("GLass3: %.5g %.5g %.5g %.5g %.5g %.5g\n",rMass2, pABSq, rho, GofM, scattphase, resphase);
 
-  // printf("GLass: %.5g %.5g %.5g\n",returnVal.real, returnVal.imag, GofM);
+  // printf("GLass4: %.5g %.5g\n",returnVal.real, returnVal.imag);
   return returnVal;
 }
 
@@ -367,7 +376,7 @@ EXEC_TARGET devcomplex<fptype> Flatte_MINT (fptype Mpair, fptype m1, fptype m2, 
   devcomplex<fptype> FlatteWidth = gPi * Gpipi + gK * GKK;
   // printf("%.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g \n",Gpipi.real, Gpipi.imag, GKK.real, GKK.imag, FlatteWidth.real, FlatteWidth.imag, Mpair, pABSq);
 
-  frFactor = BL(pABSq*meson_radius*meson_radius, orbital);
+  frFactor = BL2(pABSq*meson_radius*meson_radius, orbital);
   devcomplex<fptype> BW = SQRT(frFactor) / devcomplex<fptype>(resmass*resmass - rMass2,0) - devcomplex<fptype>(0,1) * resmass * FlatteWidth;
   return BW;
 }
@@ -384,8 +393,9 @@ EXEC_TARGET devcomplex<fptype> nonres_DP (fptype Mpair, fptype m1, fptype m2, un
   fptype mmsq = (m1-m2)*(m1-m2);
   fptype num  = (mumsRecoMass2 - mpsq)*(mumsRecoMass2 - mmsq);
   fptype pABSq = num/(4*mumsRecoMass2);
-  
-  return devcomplex<fptype>(1, 0)*BL(pABSq*meson_radius*meson_radius, orbital); 
+  fptype formfactor = SQRT(BL2(pABSq*meson_radius*meson_radius, orbital));
+  // printf("NonRes q2:%.7g FF:%.7g, s %.7g m1 %.7g m2 %.7g r %.7g L %u \n",pABSq, formfactor, mumsRecoMass2, m1,m2,meson_radius, orbital );
+  return devcomplex<fptype>(1, 0)*formfactor; 
 }
 
 MEM_DEVICE resonance_function_ptr ptr_to_LS_ONE = LS_ONE;
@@ -405,7 +415,8 @@ Lineshape::Lineshape (string name,
 						unsigned int Mpair,
             LS kind, 
             FF FormFac,
-            fptype radius)
+            fptype radius,
+            std::vector<Variable*> AdditionalVars)
   : GooPdf(0, name), _mass(mass), _width(width), _L(L), _Mpair(Mpair), _kind(kind), _FormFac(FormFac)
 {
   vector<unsigned int> pindices; 
@@ -436,6 +447,14 @@ Lineshape::Lineshape (string name,
       break;
 
     case LS::Lass_M3:
+      if (5 != AdditionalVars.size()){
+        fprintf(stderr,"It seems you forgot to provide the vector with the five necessary variables for GLASS, a, r, phiF, phiR and F (in that order)");
+        exit(0);
+      }
+      for (int i = 0; i < 5; ++i)
+      {
+        pindices.push_back(registerParameter(AdditionalVars[i]));
+      }
       GET_FUNCTION_ADDR(ptr_to_glass3);
       break;
 

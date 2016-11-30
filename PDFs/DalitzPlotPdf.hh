@@ -29,7 +29,7 @@ private:
 
   // Following variables are useful if masses and widths, involved in difficult BW calculation, 
   // change infrequently while amplitudes, only used in adding BW results together, change rapidly.
-  DEVICE_VECTOR<devcomplex<fptype> >* cachedWaves; // Caches the BW values for each event.
+  DEVICE_VECTOR<devcomplex<fptype> >* cachedWaves[16]; // Caches the BW values for each event.
   devcomplex<fptype>*** integrals; // Caches the integrals of the BW waves for each combination of resonances. 
 
   bool* redoIntegral;

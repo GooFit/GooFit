@@ -30,9 +30,16 @@ EXEC_TARGET fptype device_ConvolvePdfs (fptype* evt, fptype* p, unsigned int* in
   int offsetInBins = (int) FLOOR(x0 / step - lowerBoundOffset); 
 
   // Brute-force calculate integral M(x) * R(x - x0) dx
+  int offset = modelOffset[workSpaceIndex];
   for (int i = 0; i < numbins; ++i) {
+#ifdef TARGET_SM35
+    fptype model = __ldg(&dev_modWorkSpace[workSpaceIndex][i]); 
+    fptype resol = __ldg(&dev_resWorkSpace[workSpaceIndex][i + offset - offsetInBins]); 
+#else
     fptype model = dev_modWorkSpace[workSpaceIndex][i]; 
-    fptype resol = dev_resWorkSpace[workSpaceIndex][i + modelOffset[workSpaceIndex] - offsetInBins]; 
+    fptype resol = dev_resWorkSpace[workSpaceIndex][i + offset - offsetInBins]; 
+#endif
+
     ret += model*resol;
   }
 

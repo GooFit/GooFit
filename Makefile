@@ -31,7 +31,8 @@ endif
 
 ifeq ($(TARGET_OMP),)
 # nvcc (CUDA)
-CXXFLAGS += -arch=sm_20
+CXXFLAGS += -DTARGET_SM35 -arch=sm_35
+#CXXFLAGS += -arch=sm_20
 else
 # OpenMP common flags
 DEFINEFLAGS += -fno-inline -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_BACKEND_OMP

@@ -11,7 +11,7 @@ const int resonanceOffset_DP = 4; // Offset of the first resonance into the para
 // waves are recalculated when the corresponding resonance mass or width 
 // changes. Note that in a multithread environment each thread needs its
 // own cache, hence the '10'. Ten threads should be enough for anyone! 
-MEM_DEVICE devcomplex<fptype>* cResonances[10]; 
+MEM_DEVICE devcomplex<fptype>* cResonances[16]; 
 
 EXEC_TARGET inline int parIndexFromResIndex_DP (int resIndex) {
   return resonanceOffset_DP + resIndex*resonanceSize; 
@@ -53,8 +53,13 @@ EXEC_TARGET fptype device_DalitzPlot (fptype* evt, fptype* p, unsigned int* indi
   fptype daug2Mass  = functorConstants[indices[1] + 2]; 
   fptype daug3Mass  = functorConstants[indices[1] + 3]; 
 
+#ifdef TARGET_SM35
+  fptype m12 = __ldg(&evt[indices[2 + indices[0]]]); 
+  fptype m13 = __ldg(&evt[indices[3 + indices[0]]]);
+#else
   fptype m12 = evt[indices[2 + indices[0]]]; 
   fptype m13 = evt[indices[3 + indices[0]]];
+#endif
 
   if (!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass)) return 0; 
   int evtNum = (int) FLOOR(0.5 + evt[indices[4 + indices[0]]]); 
@@ -67,9 +72,17 @@ EXEC_TARGET fptype device_DalitzPlot (fptype* evt, fptype* p, unsigned int* indi
     int paramIndex  = parIndexFromResIndex_DP(i);
     fptype amp_real = p[indices[paramIndex+0]];
     fptype amp_imag = p[indices[paramIndex+1]];
+	
+#ifdef TARGET_SM35
+    fptype me_real = __ldg(&cResonances[i][evtNum].real);
+	fptype me_imag = __ldg(&cResonances[i][evtNum].imag);
+#else
+#endif
 
-    devcomplex<fptype> matrixelement((cResonances[cacheToUse][evtNum*numResonances + i]).real,
-				     (cResonances[cacheToUse][evtNum*numResonances + i]).imag); 
+    //devcomplex<fptype> matrixelement((cResonances[cacheToUse][evtNum*numResonances + i]).real,
+	//			     (cResonances[cacheToUse][evtNum*numResonances + i]).imag); 
+	
+	devcomplex<fptype> matrixelement(me_real, me_imag);
     matrixelement.multiply(amp_real, amp_imag); 
     totalAmp += matrixelement; 
   } 
@@ -97,7 +110,7 @@ __host__ DalitzPlotPdf::DalitzPlotPdf (std::string n,
   , _m12(m12)
   , _m13(m13)
   , dalitzNormRange(0)
-  , cachedWaves(0) 
+//  , cachedWaves(0) 
   , integrals(0)
   , forceRedoIntegrals(true)
   , totalEventSize(3) // Default 3 = m12, m13, evtNum 
@@ -110,6 +123,9 @@ __host__ DalitzPlotPdf::DalitzPlotPdf (std::string n,
   registerObservable(eventNumber); 
 
   fptype decayConstants[5];
+  
+  for (int i = 0; i < 16; i++)
+    cachedWaves[i] = 0;
   
   std::vector<unsigned int> pindices;
   pindices.push_back(registerConstants(5)); 
@@ -170,12 +186,21 @@ __host__ void DalitzPlotPdf::setDataSize (unsigned int dataSize, unsigned int ev
   totalEventSize = evtSize;
   assert(totalEventSize >= 3); 
 
-  if (cachedWaves) delete cachedWaves;
+  //if (cachedWaves) delete cachedWaves;
+  if (cachedWaves[0])
+  {
+    for (int i = 0; i < 16; i++)
+	  delete cachedWaves[i];
+  }
 
   numEntries = dataSize; 
-  cachedWaves = new DEVICE_VECTOR<devcomplex<fptype> >(dataSize*decayInfo->resonances.size());
-  void* dummy = thrust::raw_pointer_cast(cachedWaves->data()); 
-  MEMCPY_TO_SYMBOL(cResonances, &dummy, sizeof(devcomplex<fptype>*), cacheToUse*sizeof(devcomplex<fptype>*), cudaMemcpyHostToDevice); 
+  
+  for (int i = 0; i < 16; i++)
+  {
+    cachedWaves[i] = new DEVICE_VECTOR<devcomplex<fptype> >(dataSize);
+    void* dummy = thrust::raw_pointer_cast(cachedWaves[i]->data()); 
+    MEMCPY_TO_SYMBOL(cResonances, &dummy, sizeof(devcomplex<fptype>*), i*sizeof(devcomplex<fptype>*), cudaMemcpyHostToDevice); 
+  }
   setForceIntegrals(); 
 }
 
@@ -224,9 +249,9 @@ __host__ fptype DalitzPlotPdf::normalise () const {
     if (redoIntegral[i]) {
       thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
 			thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
-			strided_range<DEVICE_VECTOR<devcomplex<fptype> >::iterator>(cachedWaves->begin() + i, 
-										    cachedWaves->end(), 
-										    decayInfo->resonances.size()).begin(), 
+			strided_range<DEVICE_VECTOR<devcomplex<fptype> >::iterator>(cachedWaves[i]->begin(), 
+										    cachedWaves[i]->end(), 
+										    1).begin(), 
 			*(calculators[i]));
     }
     

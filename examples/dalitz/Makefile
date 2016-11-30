@@ -3,7 +3,8 @@ CXX=nvcc
 LD=g++  
 OutPutOpt = -o
 
-CXXFLAGS     = -O3 -arch=sm_20 
+CXXFLAGS     = -O3 -DTARGET_SM35 -arch=sm_35 
+#CXXFLAGS     = -O3 -arch=sm_20 
 ifeq ($(CUDALOCATION), )
 CUDALOCATION = /usr/local/cuda/
 endif

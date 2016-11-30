@@ -15,7 +15,7 @@ const unsigned int SPECIAL_RESOLUTION_FLAG = 999999999;
 // own cache, hence the '10'. Ten threads should be enough for anyone! 
 
 //NOTE: only one set of wave holders is supported currently!
-MEM_DEVICE WaveHolder* cWaves[16]; 
+MEM_DEVICE WaveHolder_s* cWaves[16]; 
 
 EXEC_TARGET bool inDalitz (fptype m12, fptype m13, fptype bigM, fptype dm1, fptype dm2, fptype dm3) {
   if (m12 < POW(dm1 + dm2, 2)) return false; // This m12 cannot exist, it's less than the square of the (1,2) particle mass.
@@ -116,11 +116,17 @@ EXEC_TARGET fptype device_Tddp (fptype* evt, fptype* p, unsigned int* indices) {
     fptype amp_real = p[indices[paramIndex+0]];
     fptype amp_imag = p[indices[paramIndex+1]];
 	
-	#ifdef TARGET_SM35
+#ifdef TARGET_SM35
 	fptype ai_real = __ldg(&cWaves[i][evtNum].ai_real);
 	fptype ai_imag = __ldg(&cWaves[i][evtNum].ai_imag);
 	fptype bi_real = __ldg(&cWaves[i][evtNum].bi_real);
 	fptype bi_imag = __ldg(&cWaves[i][evtNum].bi_imag);
+#else
+	fptype ai_real = cWaves[i][evtNum].ai_real;
+	fptype ai_imag = cWaves[i][evtNum].ai_imag;
+	fptype bi_real = cWaves[i][evtNum].bi_real;
+	fptype bi_imag = cWaves[i][evtNum].bi_imag;
+#endif
 
     //devcomplex<fptype> matrixelement(thrust::get<0>(cWaves[cacheToUse][evtNum*numResonances + i]),
 	//			     thrust::get<1>(cWaves[cacheToUse][evtNum*numResonances + i])); 
@@ -165,7 +171,7 @@ EXEC_TARGET fptype device_Tddp (fptype* evt, fptype* p, unsigned int* indices) {
 
     //matrixelement = devcomplex<fptype>(thrust::get<2>(cWaves[cacheToUse][evtNum*numResonances + i]),
 	//			       thrust::get<3>(cWaves[cacheToUse][evtNum*numResonances + i])); 
-	matrixelement = devcomplex<fptype> (bi_real, bi_imag);
+    matrixelement = devcomplex<fptype> (bi_real, bi_imag);
     matrixelement.multiply(amp_real, amp_imag); 
     sumWavesB += matrixelement; 
   } 
@@ -507,9 +513,9 @@ __host__ void TddpPdf::setDataSize (unsigned int dataSize, unsigned int evtSize)
   numEntries = dataSize; 
   for (int i = 0; i < 16; i++)
   {
-    cachedWaves[i] = new thrust::device_vector<WaveHolder>(dataSize);
+    cachedWaves[i] = new thrust::device_vector<WaveHolder_s>(dataSize);
     void* dummy = thrust::raw_pointer_cast(cachedWaves[i]->data()); 
-    MEMCPY_TO_SYMBOL(cWaves, &dummy, sizeof(WaveHolder*), i*sizeof(WaveHolder*), cudaMemcpyHostToDevice); 
+    MEMCPY_TO_SYMBOL(cWaves, &dummy, sizeof(WaveHolder_s*), i*sizeof(WaveHolder_s*), cudaMemcpyHostToDevice); 
   }
   setForceIntegrals(); 
 }
@@ -564,7 +570,7 @@ __host__ fptype TddpPdf::normalise () const {
       
       thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
 			thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
-			strided_range<thrust::device_vector<WaveHolder>::iterator>(cachedWaves[i]->begin(), cachedWaves[i]->end(), 1).begin(), 
+			strided_range<thrust::device_vector<WaveHolder_s>::iterator>(cachedWaves[i]->begin(), cachedWaves[i]->end(), 1).begin(), 
 			*(calculators[i]));
       //std::cout << "Integral for resonance " << i << " " << numEntries << " " << totalEventSize << std::endl; 
     }
@@ -735,12 +741,12 @@ SpecialWaveCalculator::SpecialWaveCalculator (int pIdx, unsigned int res_idx)
   , parameters(pIdx)
 {}
 
-EXEC_TARGET WaveHolder SpecialWaveCalculator::operator () (thrust::tuple<int, fptype*, int> t) const {
+EXEC_TARGET WaveHolder_s SpecialWaveCalculator::operator () (thrust::tuple<int, fptype*, int> t) const {
   // Calculates the BW values for a specific resonance. 
   // The 'A' wave stores the value at each point, the 'B' 
   // at the opposite (reversed) point. 
 
-  WaveHolder ret;
+  WaveHolder_s ret;
   ret.ai_real = 0.0;
   ret.ai_imag = 0.0;
   ret.bi_real = 0.0;

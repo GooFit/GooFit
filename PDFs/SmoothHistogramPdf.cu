@@ -38,7 +38,7 @@ EXEC_TARGET fptype device_EvalHistogram (fptype* evt, fptype* p, unsigned int* i
   }
 
   fptype* myHistogram = dev_smoothed_histograms[myHistogramIndex];
-  fptype ret = myHistogram[globalBinNumber];
+  fptype ret = RO_CACHE(myHistogram[globalBinNumber]);
 
   //if ((gpuDebug & 1) && (evt[8] < 0.5) && (paramIndices + debugParamIndex == indices)) printf("Smoothed: %f %f %f %i %f\n", evt[6], evt[7], myHistogram[globalBinNumber], globalBinNumber, dev_base_histograms[myHistogramIndex][globalBinNumber]);
   //if (gpuDebug & 1) printf("Smoothed: %f %f %f %i %f\n", evt[0], evt[1], myHistogram[globalBinNumber], globalBinNumber, dev_base_histograms[myHistogramIndex][globalBinNumber]);

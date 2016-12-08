@@ -53,13 +53,8 @@ EXEC_TARGET fptype device_DalitzPlot (fptype* evt, fptype* p, unsigned int* indi
   fptype daug2Mass  = functorConstants[indices[1] + 2]; 
   fptype daug3Mass  = functorConstants[indices[1] + 3]; 
 
-#ifdef TARGET_SM35
-  fptype m12 = __ldg(&evt[indices[2 + indices[0]]]); 
-  fptype m13 = __ldg(&evt[indices[3 + indices[0]]]);
-#else
-  fptype m12 = evt[indices[2 + indices[0]]]; 
-  fptype m13 = evt[indices[3 + indices[0]]];
-#endif
+  fptype m12 = RO_CACHE(evt[indices[2 + indices[0]]]); 
+  fptype m13 = RO_CACHE(evt[indices[3 + indices[0]]]);
 
   if (!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass)) return 0; 
   int evtNum = (int) FLOOR(0.5 + evt[indices[4 + indices[0]]]); 
@@ -73,11 +68,8 @@ EXEC_TARGET fptype device_DalitzPlot (fptype* evt, fptype* p, unsigned int* indi
     fptype amp_real = p[indices[paramIndex+0]];
     fptype amp_imag = p[indices[paramIndex+1]];
 	
-#ifdef TARGET_SM35
-    fptype me_real = __ldg(&cResonances[i][evtNum].real);
-	fptype me_imag = __ldg(&cResonances[i][evtNum].imag);
-#else
-#endif
+    fptype me_real = RO_CACHE(cResonances[i][evtNum].real);
+	fptype me_imag = RO_CACHE(cResonances[i][evtNum].imag);
 
     //devcomplex<fptype> matrixelement((cResonances[cacheToUse][evtNum*numResonances + i]).real,
 	//			     (cResonances[cacheToUse][evtNum*numResonances + i]).imag); 

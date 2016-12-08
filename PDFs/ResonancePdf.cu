@@ -4,24 +4,27 @@ EXEC_TARGET fptype twoBodyCMmom (double rMassSq, fptype d1m, fptype d2m) {
   // For A -> B + C, calculate momentum of B and C in rest frame of A. 
   // PDG 38.16.
 
-  fptype kin1 = 1 - POW(d1m+d2m, 2) / rMassSq;
+  fptype sqMassSq = SQRT(rMassSq);
+  fptype kin1 = 1.0 - POW(d1m+d2m, 2) / sqMassSq;
   if (kin1 >= 0) kin1 = SQRT(kin1);
-  else kin1 = 1;
-  fptype kin2 = 1 - POW(d1m-d2m, 2) / rMassSq;
+  else kin1 = 1.0;
+  fptype kin2 = 1.0 - POW(d1m-d2m, 2) / sqMassSq;
   if (kin2 >= 0) kin2 = SQRT(kin2);
-  else kin2 = 1; 
+  else kin2 = 1.0; 
 
-  return 0.5*SQRT(rMassSq)*kin1*kin2; 
+  return 0.5*sqMassSq*kin1*kin2; 
 }
 
 
 EXEC_TARGET fptype dampingFactorSquare (fptype cmmom, int spin, fptype mRadius) {
   fptype square = mRadius*mRadius*cmmom*cmmom;
   fptype dfsq = 1 + square; // This accounts for spin 1
-  if (2 == spin) dfsq += 8 + 2*square + square*square; // Coefficients are 9, 3, 1.   
+  //if (2 == spin) dfsq += 8 + 2*square + square*square; // Coefficients are 9, 3, 1.   
+  fptype dfsqres = dfsq + 8 + 2*square + square*square;
 
   // Spin 3 and up not accounted for. 
-  return dfsq; 
+  //return dfsq; 
+  return (spin == 2) ? dfsqres : dfsq;
 }
 
 EXEC_TARGET fptype spinFactor (unsigned int spin, fptype motherMass, fptype daug1Mass, fptype daug2Mass, fptype daug3Mass, fptype m12, fptype m13, fptype m23, unsigned int cyclic_index) {
@@ -76,8 +79,8 @@ EXEC_TARGET devcomplex<fptype> plainBW (fptype m12, fptype m13, fptype m23, unsi
   fptype daug3Mass              = functorConstants[indices[1]+3];
   fptype meson_radius           = functorConstants[indices[1]+4];
 
-  fptype resmass                = cudaArray[indices[2]];
-  fptype reswidth               = cudaArray[indices[3]];
+  fptype resmass                = RO_CACHE(cudaArray[indices[2]]);
+  fptype reswidth               = RO_CACHE(cudaArray[indices[3]]);
   unsigned int spin             = indices[4];
   unsigned int cyclic_index     = indices[5]; 
 
@@ -113,8 +116,8 @@ EXEC_TARGET devcomplex<fptype> plainBW (fptype m12, fptype m13, fptype m23, unsi
 
 EXEC_TARGET devcomplex<fptype> gaussian (fptype m12, fptype m13, fptype m23, unsigned int* indices) {
   // indices[1] is unused constant index, for consistency with other function types. 
-  fptype resmass                = cudaArray[indices[2]];
-  fptype reswidth               = cudaArray[indices[3]];
+  fptype resmass                = RO_CACHE(cudaArray[indices[2]]);
+  fptype reswidth               = RO_CACHE(cudaArray[indices[3]]);
   unsigned int cyclic_index     = indices[4]; 
 
   // Notice sqrt - this function uses mass, not mass-squared like the other resonance types. 
@@ -183,8 +186,8 @@ EXEC_TARGET devcomplex<fptype> gouSak (fptype m12, fptype m13, fptype m23, unsig
   fptype daug3Mass              = functorConstants[indices[1]+3];
   fptype meson_radius           = functorConstants[indices[1]+4];
 
-  fptype resmass                = cudaArray[indices[2]];
-  fptype reswidth               = cudaArray[indices[3]];
+  fptype resmass                = RO_CACHE(cudaArray[indices[2]]);
+  fptype reswidth               = RO_CACHE(cudaArray[indices[3]]);
   unsigned int spin             = indices[4];
   unsigned int cyclic_index     = indices[5]; 
 
@@ -223,8 +226,8 @@ EXEC_TARGET devcomplex<fptype> lass (fptype m12, fptype m13, fptype m23, unsigne
   fptype daug3Mass              = functorConstants[indices[1]+3];
   fptype meson_radius           = functorConstants[indices[1]+4];
 
-  fptype resmass                = cudaArray[indices[2]];
-  fptype reswidth               = cudaArray[indices[3]];
+  fptype resmass                = RO_CACHE(cudaArray[indices[2]]);
+  fptype reswidth               = RO_CACHE(cudaArray[indices[3]]);
   unsigned int spin             = indices[4];
   unsigned int cyclic_index     = indices[5];
 

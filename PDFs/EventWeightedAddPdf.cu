@@ -32,7 +32,7 @@ EXEC_TARGET fptype device_EventWeightedAddPdfsExt (fptype* evt, fptype* p, unsig
   for (int i = 0; i < numParameters/2; ++i) {
     fptype curr = callFunction(evt, indices[2*i + 1], indices[2*(i+1)]); 
     //if ((0 == BLOCKIDX) && (THREADIDX < 5) && (isnan(curr))) printf("NaN component %i %i\n", i, THREADIDX); 
-    fptype weight = evt[indices[2 + numParameters + i]];
+    fptype weight = RO_CACHE(evt[indices[2 + numParameters + i]]);
     ret += weight * curr * normalisationFactors[indices[2*(i+1)]]; 
     totalWeight += weight; 
 

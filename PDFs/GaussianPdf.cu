@@ -1,9 +1,9 @@
 #include "GaussianPdf.hh"
 
 EXEC_TARGET fptype device_Gaussian (fptype* evt, fptype* p, unsigned int* indices) {
-  fptype x = evt[indices[2 + indices[0]]]; 
-  fptype mean = p[indices[1]];
-  fptype sigma = p[indices[2]];
+  fptype x = evt[RO_CACHE(indices[2 + RO_CACHE(indices[0])])]; 
+  fptype mean = RO_CACHE(p[RO_CACHE(indices[1])]);
+  fptype sigma = RO_CACHE(p[RO_CACHE(indices[2])]);
 
   fptype ret = EXP(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
 

@@ -17,9 +17,9 @@ MEM_CONSTANT int modelOffset[100];
 
 EXEC_TARGET fptype device_ConvolvePdfs (fptype* evt, fptype* p, unsigned int* indices) { 
   fptype ret     = 0; 
-  fptype loBound = functorConstants[indices[5]+0];
-  fptype hiBound = functorConstants[indices[5]+1];
-  fptype step    = functorConstants[indices[5]+2];
+  fptype loBound = RO_CACHE(functorConstants[RO_CACHE(indices[5])+0]);
+  fptype hiBound = RO_CACHE(functorConstants[RO_CACHE(indices[5])+1]);
+  fptype step    = RO_CACHE(functorConstants[RO_CACHE(indices[5])+2]);
   fptype x0      = evt[indices[2 + indices[0]]]; 
   int workSpaceIndex = indices[6]; 
 
@@ -30,7 +30,7 @@ EXEC_TARGET fptype device_ConvolvePdfs (fptype* evt, fptype* p, unsigned int* in
   int offsetInBins = (int) FLOOR(x0 / step - lowerBoundOffset); 
 
   // Brute-force calculate integral M(x) * R(x - x0) dx
-  int offset = modelOffset[workSpaceIndex];
+  int offset = RO_CACHE(modelOffset[workSpaceIndex]);
   for (int i = 0; i < numbins; ++i) {
     fptype model = RO_CACHE(dev_modWorkSpace[workSpaceIndex][i]); 
     fptype resol = RO_CACHE(dev_resWorkSpace[workSpaceIndex][i + offset - offsetInBins]); 
@@ -38,8 +38,8 @@ EXEC_TARGET fptype device_ConvolvePdfs (fptype* evt, fptype* p, unsigned int* in
     ret += model*resol;
   }
 
-  ret *= normalisationFactors[indices[2]]; 
-  ret *= normalisationFactors[indices[4]]; 
+  ret *= normalisationFactors[RO_CACHE(indices[2])]; 
+  ret *= normalisationFactors[RO_CACHE(indices[4])]; 
 
   return ret; 
 }

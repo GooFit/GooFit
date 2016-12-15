@@ -10,7 +10,7 @@ CXXFLAGS=-mmic -x c++
 LDFLAGS=-mmic
 endif
 
-CXXFLAGS     += -O3
+CXXFLAGS     += -O3 -std=c++11
 CUDALIBDIR    = lib64
 
 # ARMv7 32-bit (Nvidia Jetson TK1)

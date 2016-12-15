@@ -3,7 +3,7 @@ CXX=nvcc
 LD=g++  
 OutPutOpt = -o
 
-CXXFLAGS     = -O3 -arch=sm_20 -g 
+CXXFLAGS     = -O3 -arch=sm_20 -g -std=c++11
 CUDALIBDIR=lib64
 
 UNAME=$(shell uname)
@@ -34,7 +34,7 @@ LIBS += -L$(CUDALOCATION)/$(CUDALIBDIR) -lcudart -L$(GOOFITDIR)/rootstuff -lRoot
 # These are for user-level programs that want access to the ROOT plotting stuff, 
 # not just the fitting stuff included in the GooFit-local ripped library. 
 ROOT_INCLUDES = -I$(ROOTSYS)/include/
-ROOT_LIBS     = -L$(ROOTSYS)/lib/ -lCore -lCint -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lMatrix -lPhysics -lMathCore -pthread -lThread -lMinuit2 -lMinuit -lFoam 
+ROOT_LIBS     = -L$(ROOTSYS)/lib/ -lCore -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lMatrix -lPhysics -lMathCore -pthread -lThread -lMinuit2 -lMinuit -lFoam 
 WRKDIR = $(GOOFITDIR)/wrkdir/
 
 THRUSTO		= $(WRKDIR)/Variable.o $(WRKDIR)/FitManager.o $(WRKDIR)/GooPdfCUDA.o $(WRKDIR)/Faddeeva.o $(WRKDIR)/FitControl.o $(WRKDIR)/PdfBase.o $(WRKDIR)/DataSet.o $(WRKDIR)/BinnedDataSet.o $(WRKDIR)/UnbinnedDataSet.o $(WRKDIR)/FunctorWriter.o 

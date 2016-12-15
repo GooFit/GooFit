@@ -10,7 +10,6 @@ See *.cu file for more details
 #define SPIN_FACTORS_HH
 
 #include "DalitzPlotHelpers.hh"
-#include "LineshapesPdf.hh"
 
 typedef fptype (*spin_function_ptr) (fptype*, unsigned int*); 
 

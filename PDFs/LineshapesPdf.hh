@@ -12,7 +12,8 @@ See *.cu file for more details
 #include "GooPdf.hh" 
 #include "devcomplex.hh" 
 #include "ResonancePdf.hh"
-#include "SpinFactors.hh"
+
+class SpinFactor;
 
 enum class LS {ONE, BW, Lass, Lass_M3, nonRes, Bugg, Bugg3, Flatte, SBW};
 //PDG notation for FF

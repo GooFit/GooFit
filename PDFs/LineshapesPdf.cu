@@ -9,6 +9,7 @@ Also right now it is the home to some helper functions needed and an implementat
 */
 
 #include "LineshapesPdf.hh" 
+#include "SpinFactors.hh"
 
 
 // Form factors as in pdg http://pdg.lbl.gov/2012/reviews/rpp2012-rev-dalitz-analysis-formalism.pdf

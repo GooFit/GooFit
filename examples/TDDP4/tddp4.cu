@@ -78,52 +78,23 @@ int main (int argc, char** argv) {
 
   //Lineshapes, also for both pi+ configurations
   std::vector<Lineshape*> LSKRS;
-  LSKRS.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS::BW) );
-  LSKRS.push_back( new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_34, LS::BW) );
-  LSKRS.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS::BW) );
-  LSKRS.push_back( new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_13, LS::BW) );
+  LSKRS.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS::BW, FF::BL2) );
+  LSKRS.push_back( new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_34, LS::BW, FF::BL2) );
+  LSKRS.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS::BW, FF::BL2) );
+  LSKRS.push_back( new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_13, LS::BW, FF::BL2) );
 
   std::vector<Lineshape*> LSKRP;
-  LSKRP.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS::BW) );
-  LSKRP.push_back( new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_34, LS::BW) );
-  LSKRP.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS::BW) );
-  LSKRP.push_back( new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_13, LS::BW) );
+  LSKRP.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS::BW, FF::BL2) );
+  LSKRP.push_back( new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_34, LS::BW, FF::BL2) );
+  LSKRP.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS::BW, FF::BL2) );
+  LSKRP.push_back( new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_13, LS::BW, FF::BL2) );
 
   std::vector<Lineshape*> LSKRD;
-  LSKRD.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS::BW) );
-  LSKRD.push_back( new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_34, LS::BW) );
-  LSKRD.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS::BW) );
-  LSKRD.push_back( new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_13, LS::BW) );
+  LSKRD.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS::BW, FF::BL2) );
+  LSKRD.push_back( new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_34, LS::BW, FF::BL2) );
+  LSKRD.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS::BW, FF::BL2) );
+  LSKRD.push_back( new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_13, LS::BW, FF::BL2) );
 
-  std::vector<Lineshape*> LSKF;
-  LSKF.push_back( new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_34, LS::BW) );
-  LSKF.push_back( new Lineshape("f600", f600M, f600W, 0, M_12, LS::Bugg) );
-  LSKF.push_back( new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_13, LS::BW) );
-  LSKF.push_back( new Lineshape("f600", f600M, f600W, 0, M_24, LS::Bugg) );
-
-  std::vector<Lineshape*> LSKK;
-  LSKK.push_back( new Lineshape("K(1)(1270)bar", K1M, K1W, 1, M_34_2 , LS::SBW) );
-  LSKK.push_back( new Lineshape("K(0)*(1430)bar", K1430M, K1430W, 0, M_34 , LS::Lass) );
-  LSKK.push_back( new Lineshape("K(1)(1270)bar2", K1M, K1W, 1, M_13_2 , LS::SBW) );
-  LSKK.push_back( new Lineshape("K(0)*(1430)bar2", K1430M, K1430W, 0, M_13 , LS::Lass) );
-
-  std::vector<Lineshape*> LSK1R;
-  LSK1R.push_back( new Lineshape("K(1)(1270)bar", K1M, K1W, 0, M_12_3 , LS::SBW) );
-  LSK1R.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS::BW) );
-  LSK1R.push_back( new Lineshape("K(1)(1270)bar", K1M, K1W, 0, M_24_3 , LS::SBW) );
-  LSK1R.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS::BW) );
-
-  std::vector<Lineshape*> LSA1R;
-  LSA1R.push_back( new Lineshape("a(1)(1260)+", a1M, a1W, 0, M_12_4, LS::SBW) );
-  LSA1R.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS::BW) );
-  LSA1R.push_back( new Lineshape("a(1)(1260)+", a1M, a1W, 0, M_24_1, LS::SBW) );
-  LSA1R.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS::BW) );
-
-  std::vector<Lineshape*> LSA1RD;
-  LSA1RD.push_back( new Lineshape("a(1)(1260)+", a1M, a1W, 2, M_12_4, LS::SBW) );
-  LSA1RD.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS::BW) );
-  LSA1RD.push_back( new Lineshape("a(1)(1260)+", a1M, a1W, 2, M_24_1, LS::SBW) );
-  LSA1RD.push_back( new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS::BW) );
 
 
   // the very last parameter means that we have two permutations. so the first half of the Lineshapes 
@@ -132,43 +103,24 @@ int main (int argc, char** argv) {
   Amplitude* Bose_symmetrized_AMP_S = new Amplitude( "K*(892)rho(770)_S", new Variable("amp_real1", 1.0), new Variable("amp_imag1", 0.0), LSKRS, SFKRS, 2);
   Amplitude* Bose_symmetrized_AMP_P = new Amplitude( "K*(892)rho(770)_P", new Variable("amp_real2", 0.526), new Variable("amp_imag2", -0.626), LSKRP, SFKRP, 2);
   Amplitude* Bose_symmetrized_AMP_D = new Amplitude( "K*(892)rho(770)_D", new Variable("amp_real3",  26.537), new Variable("amp_imag3",12.284), LSKRD, SFKRD, 2);
-  Amplitude* Bose_symmetrized_KF    = new Amplitude( "KF", new Variable("amp_real3", -0.046), new Variable("amp_imag3",  -0.036), LSKF, SFKF, 2);
-  Amplitude* Bose_symmetrized_KK    = new Amplitude( "LSKK", new Variable("amp_real3", -0.039), new Variable("amp_imag3",  -0.006), LSKK, SFKK, 2);
-  Amplitude* Bose_symmetrized_K1R   = new Amplitude( "LSK1R", new Variable("amp_real3", -0.123), new Variable("amp_imag3",   0.192), LSK1R, SFK1R, 2);
-  Amplitude* Bose_symmetrized_A1R   = new Amplitude( "LSA1R", new Variable("amp_real3",  -0.153), new Variable("amp_imag3", -0.254), LSA1R, SFA1R, 2);
-  Amplitude* Bose_symmetrized_A1RD  = new Amplitude( "LSA1RD", new Variable("amp_real3", 0.131), new Variable("amp_imag3",  0.782), LSA1RD, SFA1RD, 2);
+
+  Amplitude* Bose_symmetrized_AMP_S_B = new Amplitude( "B_K*(892)rho(770)_S", new Variable("amp_real1", 1.0), new Variable("amp_imag1", 0), LSKRS, SFKRS, 2);
+  Amplitude* Bose_symmetrized_AMP_P_B = new Amplitude( "B_K*(892)rho(770)_P", new Variable("amp_real2", -0.145), new Variable("amp_imag2", 0.86), LSKRP, SFKRP, 2);
+  Amplitude* Bose_symmetrized_AMP_D_B = new Amplitude( "B_K*(892)rho(770)_D", new Variable("amp_real3", 24.343), new Variable("amp_imag3", 5.329), LSKRD, SFKRD, 2);
 
 
-  double WS_surpression = SQRT(1.0/300.0);
-  Amplitude* Bose_symmetrized_AMP_S_B = new Amplitude( "B_K*(892)rho(770)_S", new Variable("amp_real1", 1.0*WS_surpression), new Variable("amp_imag1", 0), LSKRS, SFKRS, 2);
-  Amplitude* Bose_symmetrized_AMP_P_B = new Amplitude( "B_K*(892)rho(770)_P", new Variable("amp_real2", -0.145*WS_surpression), new Variable("amp_imag2", 0.86*WS_surpression), LSKRP, SFKRP, 2);
-  Amplitude* Bose_symmetrized_AMP_D_B = new Amplitude( "B_K*(892)rho(770)_D", new Variable("amp_real3", 24.343*WS_surpression*WS_surpression), new Variable("amp_imag3", 5.329*WS_surpression), LSKRD, SFKRD, 2);
-  // Amplitude* Bose_symmetrized_KF_B    = new Amplitude( "B_KF", new Variable("amp_real3", 0.10787*WS_surpression), new Variable("amp_imag3",  -0.0132525*WS_surpression), LSKF, SFKF, 2);
-  Amplitude* Bose_symmetrized_KK_B    = new Amplitude( "B_LSKK", new Variable("amp_real3", -0.054*WS_surpression), new Variable("amp_imag3",  0.028*WS_surpression), LSKK, SFKK, 2);
-  Amplitude* Bose_symmetrized_K1R_B   = new Amplitude( "B_LSK1R", new Variable("amp_real3",  0.162*WS_surpression), new Variable("amp_imag3",   0.289*WS_surpression), LSK1R, SFK1R, 2);
-  // Amplitude* Bose_symmetrized_A1R_B   = new Amplitude( "B_LSA1R", new Variable("amp_real3", 1.0*WS_surpression), new Variable("amp_imag3", 0.0*WS_surpression), LSA1R, SFA1R, 2);
-  // Amplitude* Bose_symmetrized_A1RD_B  = new Amplitude( "B_LSA1RD", new Variable("amp_real3", -0.04921*WS_surpression), new Variable("amp_imag3",  1.73407*WS_surpression), LSA1RD, SFA1RD, 2);
-
-
-  DK3P_DI->amplitudes_B.push_back(Bose_symmetrized_KF);
   DK3P_DI->amplitudes_B.push_back(Bose_symmetrized_AMP_S);
   DK3P_DI->amplitudes_B.push_back(Bose_symmetrized_AMP_P);
   DK3P_DI->amplitudes_B.push_back(Bose_symmetrized_AMP_D);
-  DK3P_DI->amplitudes_B.push_back(Bose_symmetrized_KK);
-  DK3P_DI->amplitudes_B.push_back(Bose_symmetrized_K1R);
-  DK3P_DI->amplitudes_B.push_back(Bose_symmetrized_A1R);
-  DK3P_DI->amplitudes_B.push_back(Bose_symmetrized_A1RD);
 
   DK3P_DI->amplitudes.push_back(Bose_symmetrized_AMP_S_B);
   DK3P_DI->amplitudes.push_back(Bose_symmetrized_AMP_P_B);
   DK3P_DI->amplitudes.push_back(Bose_symmetrized_AMP_D_B);
-  DK3P_DI->amplitudes.push_back(Bose_symmetrized_KK_B);
-  DK3P_DI->amplitudes.push_back(Bose_symmetrized_K1R_B);
 
   DK3P_DI->_tau = new Variable("tau", 0.4101, 0.001, 0.300, 0.500);
   DK3P_DI->_xmixing = new Variable("xmixing", 0.005, 0.001, 0, 0);
   DK3P_DI->_ymixing = new Variable("ymixing", 0.01, 0.001, 0, 0);
-
+  DK3P_DI->_SqWStoRSrate = new Variable("SqWStoRSrate", 1.0/SQRT(300.0));  
 
   Variable* m12 = new Variable("m12", 0, 3);
   Variable* m34 = new Variable("m34", 0, 3); 

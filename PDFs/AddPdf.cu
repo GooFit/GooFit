@@ -1,14 +1,14 @@
 #include "AddPdf.hh"
 
 EXEC_TARGET fptype device_AddPdfs (fptype* evt, fptype* p, unsigned int* indices) { 
-  int numParameters = indices[0]; 
+  int numParameters = RO_CACHE(indices[0]); 
   fptype ret = 0;
   fptype totalWeight = 0; 
   for (int i = 1; i < numParameters-3; i += 3) {
-    totalWeight += p[indices[i+2]];
-    fptype curr = callFunction(evt, indices[i], indices[i+1]); 
-    fptype weight = p[indices[i+2]];
-    ret += weight * curr * normalisationFactors[indices[i+1]]; 
+    totalWeight += RO_CACHE(p[RO_CACHE(indices[i+2])]);
+    fptype curr = callFunction(evt, RO_CACHE(indices[i]), RO_CACHE(indices[i+1])); 
+    fptype weight = RO_CACHE(p[RO_CACHE(indices[i+2])]);
+    ret += weight * curr * normalisationFactors[RO_CACHE(indices[i+1])]; 
 
     //if ((gpuDebug & 1) && (0 == THREADIDX) && (0 == BLOCKIDX)) 
     //if ((1 > (int) floor(0.5 + evt[8])) && (gpuDebug & 1) && (paramIndices + debugParamIndex == indices))
@@ -19,8 +19,8 @@ EXEC_TARGET fptype device_AddPdfs (fptype* evt, fptype* p, unsigned int* indices
   // nP | F P w | F P
   // in which nP = 5. Therefore the parameter index for the last function pointer is nP, and the function index is nP-1. 
   //fptype last = (*(reinterpret_cast<device_function_ptr>(device_function_table[indices[numParameters-1]])))(evt, p, paramIndices + indices[numParameters]);
-  fptype last = callFunction(evt, indices[numParameters - 1], indices[numParameters]);
-  ret += (1 - totalWeight) * last * normalisationFactors[indices[numParameters]]; 
+  fptype last = callFunction(evt, RO_CACHE(indices[numParameters - 1]), RO_CACHE(indices[numParameters]));
+  ret += (1 - totalWeight) * last * normalisationFactors[RO_CACHE(indices[numParameters])]; 
 
   //if ((THREADIDX < 50) && (isnan(ret))) printf("NaN final component %f %f\n", last, totalWeight); 
 
@@ -36,14 +36,14 @@ EXEC_TARGET fptype device_AddPdfsExt (fptype* evt, fptype* p, unsigned int* indi
   // nP | F P w | F P w
   // in which nP = 6. 
 
-  int numParameters = indices[0]; 
+  int numParameters = RO_CACHE(indices[0]); 
   fptype ret = 0;
   fptype totalWeight = 0; 
   for (int i = 1; i < numParameters; i += 3) {    
     //fptype curr = (*(reinterpret_cast<device_function_ptr>(device_function_table[indices[i]])))(evt, p, paramIndices + indices[i+1]);
-    fptype curr = callFunction(evt, indices[i], indices[i+1]); 
-    fptype weight = p[indices[i+2]];
-    ret += weight * curr * normalisationFactors[indices[i+1]]; 
+    fptype curr = callFunction(evt, RO_CACHE(indices[i]), RO_CACHE(indices[i+1])); 
+    fptype weight = RO_CACHE(p[RO_CACHE(indices[i+2])]);
+    ret += weight * curr * normalisationFactors[RO_CACHE(indices[i+1])]; 
 
     totalWeight += weight; 
     //if ((gpuDebug & 1) && (THREADIDX == 0) && (0 == BLOCKIDX)) 

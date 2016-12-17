@@ -5,6 +5,16 @@
 #include "MixingTimeResolution_Aux.hh" 
 #include "DalitzPlotHelpers.hh" 
 
+//thrust::tuple can't go down the read-only cache pipeline, so we are creating a structure for this.
+typedef struct
+{
+  //note: combining these into a single transaction (double2) should improve memory performance
+  fptype ai_real;
+  fptype ai_imag;
+  fptype bi_real;
+  fptype bi_imag;
+} WaveHolder_s;
+
 typedef thrust::tuple<fptype, fptype, fptype, fptype> WaveHolder; 
 typedef thrust::tuple<fptype, fptype, fptype, fptype, fptype, fptype> ThreeComplex;
 
@@ -58,7 +68,7 @@ private:
 
   // Following variables are useful if masses and widths, involved in difficult BW calculation, 
   // change infrequently while amplitudes, only used in adding BW results together, change rapidly.
-  thrust::device_vector<WaveHolder>* cachedWaves; // Caches the BW values for each event.
+  thrust::device_vector<WaveHolder_s>* cachedWaves[16]; // Caches the BW values for each event.
   ThreeComplex*** integrals; // Caches the integrals of the BW waves for each combination of resonances. 
 
   bool* redoIntegral;
@@ -100,11 +110,11 @@ public:
   }
 };
 
-class SpecialWaveCalculator : public thrust::unary_function<thrust::tuple<int, fptype*, int>, WaveHolder > {
+class SpecialWaveCalculator : public thrust::unary_function<thrust::tuple<int, fptype*, int>, WaveHolder_s > {
 public:
 
   SpecialWaveCalculator (int pIdx, unsigned int res_idx); 
-  EXEC_TARGET WaveHolder operator () (thrust::tuple<int, fptype*, int> t) const;
+  EXEC_TARGET WaveHolder_s operator () (thrust::tuple<int, fptype*, int> t) const;
 
 private:
 

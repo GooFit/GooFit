@@ -3,27 +3,27 @@
 EXEC_TARGET fptype device_Polynomial (fptype* evt, fptype* p, unsigned int* indices) {
   // Structure is nP lowestdegree c1 c2 c3 nO o1
 
-  int numParams = indices[0]+1; 
-  int lowestDegree = indices[1]; 
+  int numParams = RO_CACHE(indices[0])+1; 
+  int lowestDegree = RO_CACHE(indices[1]); 
 
-  fptype x = evt[indices[2 + indices[0]]]; 
+  fptype x = evt[RO_CACHE(indices[2 + RO_CACHE(indices[0])])]; 
   fptype ret = 0; 
   for (int i = 2; i < numParams; ++i) {
-    ret += p[indices[i]] * POW(x, lowestDegree + i - 2); 
+    ret += RO_CACHE(p[RO_CACHE(indices[i])]) * POW(x, lowestDegree + i - 2); 
   }
 
   return ret; 
 }
 
 EXEC_TARGET fptype device_OffsetPolynomial (fptype* evt, fptype* p, unsigned int* indices) {
-  int numParams = indices[0]; 
-  int lowestDegree = indices[1]; 
+  int numParams = RO_CACHE(indices[0]); 
+  int lowestDegree = RO_CACHE(indices[1]); 
 
-  fptype x = evt[indices[2 + numParams]]; 
-  x -= p[indices[numParams]]; 
+  fptype x = evt[RO_CACHE(indices[2 + numParams])]; 
+  x -= RO_CACHE(p[RO_CACHE(indices[numParams])]); 
   fptype ret = 0; 
   for (int i = 2; i < numParams; ++i) {
-    ret += p[indices[i]] * POW(x, lowestDegree + i - 2); 
+    ret += RO_CACHE(p[RO_CACHE(indices[i])]) * POW(x, lowestDegree + i - 2); 
   }
 
   return ret; 
@@ -32,8 +32,8 @@ EXEC_TARGET fptype device_OffsetPolynomial (fptype* evt, fptype* p, unsigned int
 EXEC_TARGET fptype device_MultiPolynomial (fptype* evt, fptype* p, unsigned int* indices) {
   // Structure is nP, maxDegree, offset1, offset2, ..., coeff1, coeff2, ..., nO, o1, o2, ... 
 
-  int numObservables = indices[indices[0] + 1]; 
-  int maxDegree = indices[1] + 1; 
+  int numObservables = RO_CACHE(indices[RO_CACHE(indices[0]) + 1]); 
+  int maxDegree = RO_CACHE(indices[1]) + 1; 
   // Only appears in construction (maxDegree + 1) or (x > maxDegree), so
   // may as well add the one and use >= instead. 
 
@@ -44,7 +44,7 @@ EXEC_TARGET fptype device_MultiPolynomial (fptype* evt, fptype* p, unsigned int*
   for (int i = 0; i < numObservables; ++i) numBoxes *= maxDegree; 
 
   int coeffNumber = 2 + numObservables; // Index of first coefficient is 2 + nO, not 1 + nO, due to maxDegree. (nO comes from offsets.) 
-  fptype ret = p[indices[coeffNumber++]]; // Coefficient of constant term. 
+  fptype ret = RO_CACHE(p[RO_CACHE(indices[coeffNumber++])]); // Coefficient of constant term. 
   for (int i = 1; i < numBoxes; ++i) { // Notice skip of inmost 'box' in the pyramid, corresponding to all powers zero, already accounted for. 
     fptype currTerm = 1; 
     int currIndex = i; 
@@ -54,8 +54,8 @@ EXEC_TARGET fptype device_MultiPolynomial (fptype* evt, fptype* p, unsigned int*
     //if ((1 > (int) floor(0.5 + evt[8])) && (gpuDebug & 1) && (paramIndices + debugParamIndex == indices))
     //printf("[%i, %i] Start box %i %f %f:\n", BLOCKIDX, THREADIDX, i, ret, evt[8]);
     for (int j = 0; j < numObservables; ++j) {
-      fptype x = evt[indices[2 + indices[0] + j]]; // x, y, z...    
-      fptype offset = p[indices[2 + j]]; // x0, y0, z0... 
+      fptype x = RO_CACHE(evt[RO_CACHE(indices[2 + RO_CACHE(indices[0]) + j])]); // x, y, z...    
+      fptype offset = RO_CACHE(p[RO_CACHE(indices[2 + j])]); // x0, y0, z0... 
       x -= offset; 
       int currPower = currIndex % maxDegree; 
       currIndex /= maxDegree; 
@@ -71,7 +71,7 @@ EXEC_TARGET fptype device_MultiPolynomial (fptype* evt, fptype* p, unsigned int*
     //printf(") End box %i\n", i);
     // All threads should hit this at the same time and with the same result. No branching. 
     if (sumOfIndices >= maxDegree) continue; 
-    fptype coefficient = p[indices[coeffNumber++]]; // Coefficient from MINUIT
+    fptype coefficient = RO_CACHE(p[RO_CACHE(indices[coeffNumber++])]); // Coefficient from MINUIT
     //if ((gpuDebug & 1) && (THREADIDX == 50) && (BLOCKIDX == 3))
     //if ((BLOCKIDX == internalDebug1) && (THREADIDX == internalDebug2)) 
     //if ((1 > (int) floor(0.5 + evt[8])) && (gpuDebug & 1) && (paramIndices + debugParamIndex == indices))

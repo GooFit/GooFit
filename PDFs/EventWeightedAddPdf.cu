@@ -1,22 +1,22 @@
 #include "EventWeightedAddPdf.hh"
 
 EXEC_TARGET fptype device_EventWeightedAddPdfs (fptype* evt, fptype* p, unsigned int* indices) { 
-  int numParameters = indices[0]; 
+  int numParameters = RO_CACHE(indices[0]); 
   fptype ret = 0;
   fptype totalWeight = 0; 
 
   for (int i = 0; i < numParameters/2 - 1; ++i) {
-    fptype weight = evt[indices[2 + numParameters + i]];
+    fptype weight = RO_CACHE(evt[RO_CACHE(indices[2 + numParameters + i])]);
     totalWeight += weight;
-    fptype curr = callFunction(evt, indices[2*i + 1], indices[2*(i+1)]); 
-    ret += weight * curr * normalisationFactors[indices[2*(i+1)]]; 
+    fptype curr = callFunction(evt, RO_CACHE(indices[2*i + 1]), RO_CACHE(indices[2*(i+1)])); 
+    ret += weight * curr * normalisationFactors[RO_CACHE(indices[2*(i+1)])]; 
   }
   // numParameters does not count itself. So the array structure for two functions is
   // nP | F P | F P | nO | o1 
   // in which nP = 4. and nO = 1. Therefore the parameter index for the last function pointer is nP, and the function index is nP-1. 
   //fptype last = (*(reinterpret_cast<device_function_ptr>(device_function_table[indices[numParameters-1]])))(evt, p, paramIndices + indices[numParameters]);
-  fptype last = callFunction(evt, indices[numParameters-1], indices[numParameters]); 
-  ret += (1 - totalWeight) * last * normalisationFactors[indices[numParameters]]; 
+  fptype last = callFunction(evt, RO_CACHE(indices[numParameters-1]), RO_CACHE(indices[numParameters])); 
+  ret += (1 - totalWeight) * last * normalisationFactors[RO_CACHE(indices[numParameters])]; 
   
   return ret; 
 }
@@ -26,14 +26,14 @@ EXEC_TARGET fptype device_EventWeightedAddPdfsExt (fptype* evt, fptype* p, unsig
   // nP | F P | F P | nO | o1 o2
   // in which nP = 4, nO = 2. 
 
-  int numParameters = indices[0]; 
+  int numParameters = RO_CACHE(indices[0]); 
   fptype ret = 0;
   fptype totalWeight = 0; 
   for (int i = 0; i < numParameters/2; ++i) {
-    fptype curr = callFunction(evt, indices[2*i + 1], indices[2*(i+1)]); 
+    fptype curr = callFunction(evt, RO_CACHE(indices[2*i + 1]), RO_CACHE(indices[2*(i+1)])); 
     //if ((0 == BLOCKIDX) && (THREADIDX < 5) && (isnan(curr))) printf("NaN component %i %i\n", i, THREADIDX); 
-    fptype weight = evt[indices[2 + numParameters + i]];
-    ret += weight * curr * normalisationFactors[indices[2*(i+1)]]; 
+    fptype weight = RO_CACHE(evt[RO_CACHE(indices[2 + numParameters + i])]);
+    ret += weight * curr * normalisationFactors[RO_CACHE(indices[2*(i+1)])]; 
     totalWeight += weight; 
 
     //if ((gpuDebug & 1) && (0 == THREADIDX))

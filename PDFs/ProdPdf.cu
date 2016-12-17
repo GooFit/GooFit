@@ -4,12 +4,12 @@ EXEC_TARGET fptype device_ProdPdfs (fptype* evt, fptype* p, unsigned int* indice
   // Index structure is nP | F1 P1 | F2 P2 | ...
   // where nP is number of parameters, Fs are function indices, and Ps are parameter indices
 
-  int numParams = indices[0]; 
+  int numParams = RO_CACHE(indices[0]); 
   fptype ret = 1;
 
   for (int i = 1; i < numParams; i += 2) {
-    int fcnIdx = indices[i + 0]; 
-    int parIdx = indices[i + 1]; 
+    int fcnIdx = RO_CACHE(indices[i + 0]); 
+    int parIdx = RO_CACHE(indices[i + 1]); 
 
     //fptype curr = (*(reinterpret_cast<device_function_ptr>(device_function_table[fcnIdx])))(evt, p, paramIndices + parIdx);
     fptype curr = callFunction(evt, fcnIdx, parIdx); 

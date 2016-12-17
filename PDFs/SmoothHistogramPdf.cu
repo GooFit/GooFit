@@ -15,18 +15,18 @@ EXEC_TARGET fptype device_EvalHistogram (fptype* evt, fptype* p, unsigned int* i
   // nP smoothingIndex totalHistograms (limit1 step1 bins1) (limit2 step2 bins2) nO o1 o2
   // where limit and step are indices into functorConstants. 
 
-  int numVars = indices[indices[0] + 1]; 
+  int numVars = RO_CACHE(indices[RO_CACHE(indices[0]) + 1]); 
   int globalBinNumber = 0; 
   int previous = 1; 
-  int myHistogramIndex = indices[2]; // 1 only used for smoothing
+  int myHistogramIndex = RO_CACHE(indices[2]); // 1 only used for smoothing
 
   for (int i = 0; i < numVars; ++i) { 
-    int varIndex = indices[indices[0] + 2 + i]; 
+    int varIndex = RO_CACHE(indices[RO_CACHE(indices[0]) + 2 + i]); 
     int lowerBoundIdx   = 3*(i+1);
     //if (gpuDebug & 1) printf("[%i, %i] Smoothed: %i %i %i\n", BLOCKIDX, THREADIDX, i, varIndex, indices[varIndex]); 
     fptype currVariable = evt[varIndex];
-    fptype lowerBound   = functorConstants[indices[lowerBoundIdx + 0]];
-    fptype step         = functorConstants[indices[lowerBoundIdx + 1]];
+    fptype lowerBound   = RO_CACHE(functorConstants[RO_CACHE(indices[lowerBoundIdx + 0])]);
+    fptype step         = RO_CACHE(functorConstants[RO_CACHE(indices[lowerBoundIdx + 1])]);
 
     currVariable -= lowerBound;
     currVariable /= step; 
@@ -38,7 +38,7 @@ EXEC_TARGET fptype device_EvalHistogram (fptype* evt, fptype* p, unsigned int* i
   }
 
   fptype* myHistogram = dev_smoothed_histograms[myHistogramIndex];
-  fptype ret = myHistogram[globalBinNumber];
+  fptype ret = RO_CACHE(myHistogram[globalBinNumber]);
 
   //if ((gpuDebug & 1) && (evt[8] < 0.5) && (paramIndices + debugParamIndex == indices)) printf("Smoothed: %f %f %f %i %f\n", evt[6], evt[7], myHistogram[globalBinNumber], globalBinNumber, dev_base_histograms[myHistogramIndex][globalBinNumber]);
   //if (gpuDebug & 1) printf("Smoothed: %f %f %f %i %f\n", evt[0], evt[1], myHistogram[globalBinNumber], globalBinNumber, dev_base_histograms[myHistogramIndex][globalBinNumber]);
@@ -51,9 +51,9 @@ struct Smoother {
 
   EXEC_TARGET fptype operator () (int globalBin) {
     unsigned int* indices = paramIndices + parameters; 
-    int numVars = indices[indices[0] + 1]; 
-    fptype smoothing = cudaArray[indices[1]];
-    int histIndex = indices[2]; 
+    int numVars = RO_CACHE(indices[RO_CACHE(indices[0]) + 1]); 
+    fptype smoothing = RO_CACHE(cudaArray[RO_CACHE(indices[1])]);
+    int histIndex = RO_CACHE(indices[2]); 
     fptype* myHistogram = dev_base_histograms[histIndex];
     fptype centralValue = myHistogram[globalBin]; 
 
@@ -68,7 +68,7 @@ struct Smoother {
       for (int v = 0; v < numVars; ++v) {
 	//int lowerBoundIdx   = 3*(i+1);
 	//int localNumBins = indices[6 + v*4];
-	int localNumBins = indices[3*(v+1) + 2];
+	int localNumBins = RO_CACHE(indices[3*(v+1) + 2]);
 	int offset = ((i / dev_powi(3, v)) % 3) - 1; 
 	
 	currBin += offset * localPrevious; 

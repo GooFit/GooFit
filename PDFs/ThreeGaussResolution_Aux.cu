@@ -54,16 +54,16 @@ EXEC_TARGET fptype device_threegauss_resolution (fptype coshterm, fptype costerm
 						fptype* p, unsigned int* indices) { 
 
 
-  fptype coreFraction    = p[indices[1]];
+  fptype coreFraction    = RO_CACHE(p[RO_CACHE(indices[1])]);
   //fptype tailFraction    = p[indices[2]];
-  fptype tailFraction    = (1 - coreFraction)*p[indices[2]];
+  fptype tailFraction    = (1 - coreFraction)*RO_CACHE(p[RO_CACHE(indices[2])]);
   fptype outlFraction    = 1 - coreFraction - tailFraction; 
-  fptype coreBias        = p[indices[3]];
-  fptype coreScaleFactor = p[indices[4]];
-  fptype tailBias        = p[indices[5]];
-  fptype tailScaleFactor = p[indices[6]];
-  fptype outlBias        = p[indices[7]];
-  fptype outlScaleFactor = p[indices[8]];
+  fptype coreBias        = RO_CACHE(p[RO_CACHE(indices[3])]);
+  fptype coreScaleFactor = RO_CACHE(p[RO_CACHE(indices[4])]);
+  fptype tailBias        = RO_CACHE(p[RO_CACHE(indices[5])]);
+  fptype tailScaleFactor = RO_CACHE(p[RO_CACHE(indices[6])]);
+  fptype outlBias        = RO_CACHE(p[RO_CACHE(indices[7])]);
+  fptype outlScaleFactor = RO_CACHE(p[RO_CACHE(indices[8])]);
 
   fptype cp1 = 0;
   fptype cp2 = 0;

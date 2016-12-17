@@ -1,10 +1,10 @@
 #include "ExpGausPdf.hh"
 
 EXEC_TARGET fptype device_ExpGaus (fptype* evt, fptype* p, unsigned int* indices) {
-  fptype x     = evt[indices[2 + indices[0]]]; 
-  fptype mean  = p[indices[1]];
-  fptype sigma = p[indices[2]];
-  fptype alpha = p[indices[3]];
+  fptype x     = evt[RO_CACHE(indices[2 + RO_CACHE(indices[0])])]; 
+  fptype mean  = RO_CACHE(p[RO_CACHE(indices[1])]);
+  fptype sigma = RO_CACHE(p[RO_CACHE(indices[2])]);
+  fptype alpha = RO_CACHE(p[RO_CACHE(indices[3])]);
 
   fptype ret = 0.5*alpha; 
   fptype exparg = ret * (2*mean + alpha*sigma*sigma - 2*x);

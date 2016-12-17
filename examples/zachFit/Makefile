@@ -29,7 +29,8 @@ WRKDIR = $(GOOFITDIR)/wrkdir/
 
 ifeq ($(TARGET_OMP),)
 # nvcc (CUDA)
-CXXFLAGS    += -arch=sm_20
+CXXFLAGS    += -DTARGET_SM35 -arch=sm_35
+#CXXFLAGS    += -arch=sm_20
 LIBS        += -L$(CUDALOCATION)/$(CUDALIBDIR) -lcudart
 else
 # OpenMP common flags

@@ -4,17 +4,17 @@ EXEC_TARGET fptype device_Mapped (fptype* evt, fptype* p, unsigned int* indices)
   // Structure : nP mapFunctionIndex mapParamIndex functionIndex1 parameterIndex1 functionIndex2 parameterIndex2 ... 
 
   // Find mapping between event variables and function to evaluate
-  unsigned int mapFunction = indices[1];
+  unsigned int mapFunction = RO_CACHE(indices[1]);
   // This is an index into the MappedPdf's list of functions
   //int targetFunction = (int) FLOOR(0.5 + (*(reinterpret_cast<device_function_ptr>(device_function_table[mapFunction])))(evt, p, paramIndices + indices[2]));
-  int targetFunction = (int) FLOOR(0.5 + callFunction(evt, mapFunction, indices[2]));
+  int targetFunction = (int) FLOOR(0.5 + callFunction(evt, mapFunction, RO_CACHE(indices[2])));
   
   targetFunction *= 2; // Because there are two pieces of information about each function
   targetFunction += 3; // Because first function information begins at index 3
 
   //fptype ret = (*(reinterpret_cast<device_function_ptr>(device_function_table[indices[targetFunction]])))(evt, p, paramIndices + indices[targetFunction + 1]); 
-  fptype ret = callFunction(evt, indices[targetFunction], indices[targetFunction + 1]); 
-  ret *= normalisationFactors[indices[targetFunction + 1]]; 
+  fptype ret = callFunction(evt, RO_CACHE(indices[targetFunction]), RO_CACHE(indices[targetFunction + 1])); 
+  ret *= normalisationFactors[RO_CACHE(indices[targetFunction + 1])]; 
   //if (gpuDebug & 1) 
   //if ((gpuDebug & 1) && (0 == BLOCKIDX) && (0 == THREADIDX))
     //printf("[%i, %i] Mapped: %i (%f %f %f %f) %f\n", BLOCKIDX, THREADIDX, targetFunction, evt[0], evt[1], evt[2], evt[3], ret); 

@@ -1,10 +1,10 @@
 #include "CompositePdf.hh"
 
 EXEC_TARGET fptype device_Composite (fptype* evt, fptype* p, unsigned int* indices) {
-  unsigned int coreFcnIndex  = indices[1];
-  unsigned int coreParIndex  = indices[2];
-  unsigned int shellFcnIndex = indices[3];
-  unsigned int shellParIndex = indices[4];
+  unsigned int coreFcnIndex  = RO_CACHE(indices[1]);
+  unsigned int coreParIndex  = RO_CACHE(indices[2]);
+  unsigned int shellFcnIndex = RO_CACHE(indices[3]);
+  unsigned int shellParIndex = RO_CACHE(indices[4]);
 
   // NB, not normalising core function, it is not being used as a PDF. 
   //fptype coreValue = (*(reinterpret_cast<device_function_ptr>(device_function_table[coreFcnIndex])))(evt, cudaArray, paramIndices+coreParIndex);

@@ -11,7 +11,9 @@ const int resonanceOffset_DP = 4; // Offset of the first resonance into the para
 // waves are recalculated when the corresponding resonance mass or width 
 // changes. Note that in a multithread environment each thread needs its
 // own cache, hence the '10'. Ten threads should be enough for anyone! 
-MEM_DEVICE devcomplex<fptype>* cResonances[10]; 
+
+//NOTE: This is does not support ten instances (ten threads) of resoncances now, only one set of resonances.
+MEM_DEVICE devcomplex<fptype>* cResonances[16]; 
 
 EXEC_TARGET inline int parIndexFromResIndex_DP (int resIndex) {
   return resonanceOffset_DP + resIndex*resonanceSize; 
@@ -25,58 +27,68 @@ EXEC_TARGET devcomplex<fptype> device_DalitzPlot_calcIntegrals (fptype m12, fpty
   // observed points, that's why it doesn't use 
   // cResonances. No need to cache the values at individual
   // grid points - we only care about totals. 
-  fptype motherMass = functorConstants[indices[1] + 0]; 
-  fptype daug1Mass  = functorConstants[indices[1] + 1]; 
-  fptype daug2Mass  = functorConstants[indices[1] + 2]; 
-  fptype daug3Mass  = functorConstants[indices[1] + 3];  
+  fptype motherMass = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 0]); 
+  fptype daug1Mass  = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 1]); 
+  fptype daug2Mass  = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 2]); 
+  fptype daug3Mass  = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 3]);  
 
   devcomplex<fptype> ret; 
   if (!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass)) return ret;
   fptype m23 = motherMass*motherMass + daug1Mass*daug1Mass + daug2Mass*daug2Mass + daug3Mass*daug3Mass - m12 - m13; 
 
   int parameter_i = parIndexFromResIndex_DP(res_i);
-  unsigned int functn_i = indices[parameter_i+2];
-  unsigned int params_i = indices[parameter_i+3];
+  unsigned int functn_i = RO_CACHE(indices[parameter_i+2]);
+  unsigned int params_i = RO_CACHE(indices[parameter_i+3]);
   ret = getResonanceAmplitude(m12, m13, m23, functn_i, params_i);
 
   int parameter_j = parIndexFromResIndex_DP(res_j);
-  unsigned int functn_j = indices[parameter_j+2];
-  unsigned int params_j = indices[parameter_j+3];
+  unsigned int functn_j = RO_CACHE(indices[parameter_j+2]);
+  unsigned int params_j = RO_CACHE(indices[parameter_j+3]);
   ret *= conj(getResonanceAmplitude(m12, m13, m23, functn_j, params_j));
 
   return ret; 
 }
 
 EXEC_TARGET fptype device_DalitzPlot (fptype* evt, fptype* p, unsigned int* indices) {
-  fptype motherMass = functorConstants[indices[1] + 0]; 
-  fptype daug1Mass  = functorConstants[indices[1] + 1]; 
-  fptype daug2Mass  = functorConstants[indices[1] + 2]; 
-  fptype daug3Mass  = functorConstants[indices[1] + 3]; 
+  fptype motherMass = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 0]); 
+  fptype daug1Mass  = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 1]); 
+  fptype daug2Mass  = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 2]); 
+  fptype daug3Mass  = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 3]); 
 
-  fptype m12 = evt[indices[2 + indices[0]]]; 
-  fptype m13 = evt[indices[3 + indices[0]]];
+  fptype m12 = RO_CACHE(evt[RO_CACHE(indices[2 + RO_CACHE(indices[0])])]);
+  fptype m13 = RO_CACHE(evt[RO_CACHE(indices[3 + RO_CACHE(indices[0])])]);
 
   if (!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass)) return 0; 
-  int evtNum = (int) FLOOR(0.5 + evt[indices[4 + indices[0]]]); 
+
+  fptype evtIndex = RO_CACHE(evt[RO_CACHE(indices[4 + RO_CACHE(indices[0])])]);
+
+  int evtNum = (int) FLOOR(0.5 + evtIndex); 
 
   devcomplex<fptype> totalAmp(0, 0);
-  unsigned int numResonances = indices[2]; 
-  unsigned int cacheToUse    = indices[3]; 
+  unsigned int numResonances = RO_CACHE(indices[2]); 
+  unsigned int cacheToUse    = RO_CACHE(indices[3]); 
 
   for (int i = 0; i < numResonances; ++i) {
     int paramIndex  = parIndexFromResIndex_DP(i);
-    fptype amp_real = p[indices[paramIndex+0]];
-    fptype amp_imag = p[indices[paramIndex+1]];
+    fptype amp_real = RO_CACHE(p[RO_CACHE(indices[paramIndex+0])]);
+    fptype amp_imag = RO_CACHE(p[RO_CACHE(indices[paramIndex+1])]);
 
-    devcomplex<fptype> matrixelement((cResonances[cacheToUse][evtNum*numResonances + i]).real,
-             (cResonances[cacheToUse][evtNum*numResonances + i]).imag); 
+    //potential performance improvement by 
+    //double2 me = RO_CACHE(reinterpret_cast<double2*> (cResonances[i][evtNum]));
+    fptype me_real = RO_CACHE(cResonances[i][evtNum].real);
+    fptype me_imag = RO_CACHE(cResonances[i][evtNum].imag);
+
+    //devcomplex<fptype> matrixelement((cResonances[cacheToUse][evtNum*numResonances + i]).real,
+    //				     (cResonances[cacheToUse][evtNum*numResonances + i]).imag); 
+    //devcomplex<fptype> matrixelement (me[0], me[1]);
+    devcomplex<fptype> matrixelement (me_real, me_imag);
     matrixelement.multiply(amp_real, amp_imag); 
     totalAmp += matrixelement; 
   } 
    
   fptype ret = norm2(totalAmp); 
   int effFunctionIdx = parIndexFromResIndex_DP(numResonances); 
-  fptype eff = callFunction(evt, indices[effFunctionIdx], indices[effFunctionIdx + 1]); 
+  fptype eff = callFunction(evt, RO_CACHE(indices[effFunctionIdx]), RO_CACHE(indices[effFunctionIdx + 1])); 
   ret *= eff;
 
   //printf("DalitzPlot evt %i zero: %i %i %f (%f, %f).\n", evtNum, numResonances, effFunctionIdx, eff, totalAmp.real, totalAmp.imag); 
@@ -87,17 +99,17 @@ EXEC_TARGET fptype device_DalitzPlot (fptype* evt, fptype* p, unsigned int* indi
 MEM_DEVICE device_function_ptr ptr_to_DalitzPlot = device_DalitzPlot; 
 
 __host__ DalitzPlotPdf::DalitzPlotPdf (std::string n, 
-                 Variable* m12, 
-                 Variable* m13, 
-                 Variable* eventNumber, 
-                 DecayInfo* decay, 
-                 GooPdf* efficiency)
+							   Variable* m12, 
+							   Variable* m13, 
+							   Variable* eventNumber, 
+							   DecayInfo* decay, 
+							   GooPdf* efficiency)
   : GooPdf(0, n) 
   , decayInfo(decay)
   , _m12(m12)
   , _m13(m13)
   , dalitzNormRange(0)
-  , cachedWaves(0) 
+  //, cachedWaves(0) 
   , integrals(0)
   , forceRedoIntegrals(true)
   , totalEventSize(3) // Default 3 = m12, m13, evtNum 
@@ -110,6 +122,9 @@ __host__ DalitzPlotPdf::DalitzPlotPdf (std::string n,
   registerObservable(eventNumber); 
 
   fptype decayConstants[5];
+
+  for (int i = 0; i < 16; i++)
+    cachedWaves[i] = 0;
   
   std::vector<unsigned int> pindices;
   pindices.push_back(registerConstants(5)); 
@@ -170,12 +185,21 @@ __host__ void DalitzPlotPdf::setDataSize (unsigned int dataSize, unsigned int ev
   totalEventSize = evtSize;
   assert(totalEventSize >= 3); 
 
-  if (cachedWaves) delete cachedWaves;
+  //if (cachedWaves) delete cachedWaves;
+  if (cachedWaves[0])
+  {
+    for (int i = 0; i < 16; i++)
+	  delete cachedWaves[i];
+  }
 
   numEntries = dataSize; 
-  cachedWaves = new DEVICE_VECTOR<devcomplex<fptype> >(dataSize*decayInfo->resonances.size());
-  void* dummy = thrust::raw_pointer_cast(cachedWaves->data()); 
-  MEMCPY_TO_SYMBOL(cResonances, &dummy, sizeof(devcomplex<fptype>*), cacheToUse*sizeof(devcomplex<fptype>*), cudaMemcpyHostToDevice); 
+  
+  for (int i = 0; i < 16; i++)
+  {
+    cachedWaves[i] = new DEVICE_VECTOR<devcomplex<fptype> >(dataSize);
+    void* dummy = thrust::raw_pointer_cast(cachedWaves[i]->data()); 
+    MEMCPY_TO_SYMBOL(cResonances, &dummy, sizeof(devcomplex<fptype>*), i*sizeof(devcomplex<fptype>*), cudaMemcpyHostToDevice); 
+  }
   setForceIntegrals(); 
 }
 
@@ -223,11 +247,11 @@ __host__ fptype DalitzPlotPdf::normalise () const {
   for (int i = 0; i < decayInfo->resonances.size(); ++i) {
     if (redoIntegral[i]) {
       thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
-      thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
-      strided_range<DEVICE_VECTOR<devcomplex<fptype> >::iterator>(cachedWaves->begin() + i, 
-                        cachedWaves->end(), 
-                        decayInfo->resonances.size()).begin(), 
-      *(calculators[i]));
+			thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
+			strided_range<DEVICE_VECTOR<devcomplex<fptype> >::iterator>(cachedWaves[i]->begin(), 
+										    cachedWaves[i]->end(), 
+										    1).begin(), 
+			*(calculators[i]));
     }
     
     // Possibly this can be done more efficiently by exploiting symmetry? 
@@ -236,10 +260,10 @@ __host__ fptype DalitzPlotPdf::normalise () const {
       devcomplex<fptype> dummy(0, 0);
       thrust::plus<devcomplex<fptype> > complexSum; 
       (*(integrals[i][j])) = thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(binIndex, arrayAddress)),
-                  thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, arrayAddress)),
-                  *(integrators[i][j]), 
-                  dummy, 
-                  complexSum); 
+						      thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, arrayAddress)),
+						      *(integrators[i][j]), 
+						      dummy, 
+						      complexSum); 
     }
   }      
 
@@ -348,3 +372,4 @@ EXEC_TARGET devcomplex<fptype> SpecialResonanceCalculator::operator () (thrust::
   //printf("Amplitude %f %f %f (%f, %f)\n ", m12, m13, m23, ret.real, ret.imag); 
   return ret;
 }
+

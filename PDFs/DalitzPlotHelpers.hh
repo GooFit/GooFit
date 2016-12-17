@@ -13,12 +13,17 @@ See *.cu file for more details
 #include "ResonancePdf.hh"
 #include "LineshapesPdf.hh"
 
-template <typename E>
+
 constexpr typename std::underlying_type<E>::type enum_to_underlying(E e) {
     return static_cast<typename std::underlying_type<E>::type>(e);
 }
 
-EXEC_TARGET bool inDalitz (fptype m12, fptype m13, fptype bigM, fptype dm1, fptype dm2, fptype dm3); 
+EXEC_TARGET bool inDalitz (const fptype &m12,
+                           const fptype &m13,
+                           const fptype &bigM,
+                           const fptype &dm1,
+                           const fptype &dm2,
+                           const fptype &dm3); 
 EXEC_TARGET devcomplex<fptype> getResonanceAmplitude (fptype m12, fptype m13, fptype m23, unsigned int functionIdx, unsigned int pIndex); 
 EXEC_TARGET void get4Vecs (fptype* Vecs, const unsigned int& constants, const fptype& m12, const fptype& m34, const fptype& cos12, const fptype& cos34, const fptype& phi);
 EXEC_TARGET fptype getmass(const unsigned int& pair, fptype& d1, fptype& d2, const fptype* vecs, const fptype& m1, const fptype& m2, const fptype& m3, const fptype& m4);
@@ -99,6 +104,5 @@ protected:
   Iterator last;
   difference_type stride;
 };
-
 
 #endif

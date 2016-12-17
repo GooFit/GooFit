@@ -3,7 +3,7 @@ CXX=nvcc
 LD=g++  
 OutPutOpt = -o
 
-CXXFLAGS     = -O3 -arch=sm_20 -std=c++11
+CXXFLAGS     = -O3 -DTARGET_SM35 -arch=sm_35  -std=c++11
 ifeq ($(CUDALOCATION), )
 CUDALOCATION = /usr/local/cuda/
 endif
@@ -14,14 +14,15 @@ SRCDIR = $(GOOFITDIR)/PDFs
 WRKDIR = $(GOOFITDIR)/wrkdir/
 
 ifneq ($(TARGET_OMP),)
-CXXFLAGS    += -fopenmp -DTHRUST_DEVICE_BACKEND=THRUST_DEVICE_BACKEND_OMP -lgomp
+CXXFLAGS    += -Xcompiler -fopenmp -DTHRUST_DEVICE_BACKEND=THRUST_DEVICE_BACKEND_OMP -lgomp
 LDFLAGS     += -fopenmp -DTHRUST_DEVICE_BACKEND=THRUST_DEVICE_BACKEND_OMP -lgomp
 else
 LIBS 		+= -L$(CUDALOCATION)/lib64 -lcudart
 endif 
 
 INCLUDES += -I$(CUDAHEADERS) -I$(SRCDIR) -I$(GOOFITDIR) -I$(GOOFITDIR)/rootstuff -I$(GOOFITDIR)/MCBooster
-LIBS += -L$(GOOFITDIR)/rootstuff -lRootUtils 
+LIBS += -L$(CUDALOCATION)/lib64 -lcudart -L$(GOOFITDIR)/rootstuff -lRootUtils 
+
 # These are for user-level programs that want access to the ROOT plotting stuff, 
 # not just the fitting stuff included in the GooFit-local ripped library. 
 ROOT_INCLUDES = -I$(ROOTSYS)/include/

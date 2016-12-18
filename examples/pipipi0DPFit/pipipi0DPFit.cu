@@ -212,7 +212,7 @@ void printTime (const char* point) {
 }
 
 void printMemoryStatus (std::string file, int line); 
-void loadDataFile (char* fname, UnbinnedDataSet** setToFill = 0, int effSkip = 3); 
+void loadDataFile (std::string fname, UnbinnedDataSet** setToFill = 0, int effSkip = 3); 
 GooPdf* runBackgroundDalitzFit (int bkgType, bool plots = false); 
 
 void normalise (TH1F* dat) {
@@ -869,7 +869,8 @@ void runToyFit (int ifile, int nfile, bool noPlots = true) {
 //  makeToyDalitzPlots(signalDalitz);   
 }
 
-void loadDataFile (char* fname, UnbinnedDataSet** setToFill, int effSkip) {
+void loadDataFile (std::string fname, UnbinnedDataSet** setToFill, int effSkip) {
+   
   if (!setToFill) setToFill = &data; 
 
   std::vector<Variable*> vars;
@@ -887,7 +888,7 @@ void loadDataFile (char* fname, UnbinnedDataSet** setToFill, int effSkip) {
 
   (*setToFill) = new UnbinnedDataSet(vars); 
   std::ifstream reader;
-  readWrapper(reader,fname); 
+  readWrapper(reader,fname.c_str()); 
   std::string buffer;
   while (!reader.eof()) {
     reader >> buffer;
@@ -1890,13 +1891,13 @@ void makeDalitzPlots (GooPdf* overallSignal, string plotdir = "./plots_from_mixf
 	num_sigma_pdf[currM23Bin] += pdfValues[0][j]; 
 
 	totalPdf += pdfValues[0][j]; 
-	if (isnan(pdfValues[0][j])) {
+	if (std::isnan(pdfValues[0][j])) {
 	  std::cout << "Major problem: " 
 		    << k << " " << j 
 		    << std::endl;
 	  assert(false);
 	}
-	if (isinf(pdfValues[0][j])) {
+	if (std::isinf(pdfValues[0][j])) {
 	  std::cout << "Infinity " << k << " " << j << std::endl;
 	  assert(false); 
 	}
@@ -2348,7 +2349,7 @@ GooPdf* makeOverallSignal () {
   return overallSignal; 
 }
 
-void runTruthMCFit (char* fname, bool noPlots = true) {
+void runTruthMCFit (std::string fname, bool noPlots = true) {
   makeFullFitVariables(); 
 
   std::cout << "Loading MC data from " << fname << std::endl;
@@ -2378,7 +2379,7 @@ void runTruthMCFit (char* fname, bool noPlots = true) {
   makeDalitzPlots(overallSignal, "./plots_from_mixfit/fullMCfit/");   
 }
 
-void runGeneratedMCFit (char* fname, int genResolutions, double dplotres) { 
+void runGeneratedMCFit (std::string fname, int genResolutions, double dplotres) { 
   makeFullFitVariables(); 
   std::cout << "Loading (generated) MC data from " << fname << std::endl;
   dtime->upperlimit = 6;
@@ -2555,25 +2556,24 @@ void runGeneratedMCFit (char* fname, int genResolutions, double dplotres) {
 	    << "ymixing: (" << 100*ptr_to_ymix->value << " $\\pm$ " << 100*ptr_to_ymix->error << ")%\n";
 
   // All this relies on exact formatting of the input data files; it's fragile. 
-  string filename(fname);
   double inputx = 1;
   double inputy = 1;
-  std::string::size_type pos = filename.find("mm");
+  std::string::size_type pos = fname.find("mm");
   if (pos != std::string::npos) inputx = inputy = -1;
   else {
-    pos = filename.find("mp");
+    pos = fname.find("mp");
     if (pos != std::string::npos) inputx = -1;
     else {
-      pos = filename.find("pm");
+      pos = fname.find("pm");
       if (pos != std::string::npos) inputy = -1;
       else {
-	pos = filename.find("pp");
+	pos = fname.find("pp");
 	assert(pos != std::string::npos); 
       }
     }
   }
 
-  string ident = filename.substr(pos, 4);
+  string ident = fname.substr(pos, 4);
   sprintf(strbuffer, "result_%s_%f", ident.c_str(), dplotres);
   ofstream writer;
   writer.open(strbuffer);
@@ -3491,7 +3491,7 @@ GooPdf* makeBkg4DalitzPdf (bool fixem = true) {
 }
 
 
-void runCanonicalFit (char* fname, bool noPlots = true) {
+void runCanonicalFit (std::string fname, bool noPlots = true) {
   makeFullFitVariables(); 
   if (mdslices > 1) massd0 = new Variable("massd0", 1.8654 + 0.0075*md0_lower_window + md0offset, 1.8654 + 0.0075*md0_upper_window + md0offset);
   std::cout << "Loading events from " << fname << std::endl;
@@ -3866,7 +3866,7 @@ void runEfficiencyFit (int which) {
     dalitz_pdf_hist.Fill(currVal, currVal2, pdfValues[0][j]);
 
     totalPdf += pdfValues[0][j]; 
-    if (isnan(pdfValues[0][j])) {
+    if (std::isnan(pdfValues[0][j])) {
       std::cout << "Major problem: " 
 		<< currVal << " "
 		<< currVal2 << " "
@@ -3874,7 +3874,7 @@ void runEfficiencyFit (int which) {
 		<< std::endl;
       assert(false);
     }
-    if (isinf(pdfValues[0][j])) {
+    if (std::isinf(pdfValues[0][j])) {
       std::cout << "Infinity " << j << std::endl;
       assert(false); 
     }
@@ -4026,7 +4026,7 @@ void getBackgroundFile (int bkgType) {
 }
 
 
-void makeTimePlots (char* fname) {
+void makeTimePlots (std::string fname) {
   makeFullFitVariables(); 
   massd0 = new Variable("massd0", 1.8654 + 0.0075*md0_lower_window, 1.8654 + 0.0075*md0_upper_window);
   massd0->numbins = 180; 

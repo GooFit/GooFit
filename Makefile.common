@@ -1,0 +1,74 @@
+# This makefile should be included at the top of any makefile for GooFit
+
+.SUFFIXES: 
+
+ifeq ($(TARGET_MIC),)
+CXX=nvcc
+LD=g++
+
+else
+# Intel Xeon Phi/MIC requires using Intel C++ Compiler (ICC)
+CXX=icpc
+LD=icpc
+CXXFLAGS=-mmic -x c++
+endif
+
+CXXFLAGS += -std=c++11 -O3
+
+UNAME=$(shell uname)
+ifeq ($(UNAME), Darwin)
+CXXFLAGS+=-m64
+endif
+
+ifneq ($(CUDAPRINT),)
+CXXFLAGS += -DCUDAPRINT=yes
+endif 
+
+ifneq ($(PRINTCALLS),)
+CXXFLAGS += -DPRINTCALLS=yes
+endif 
+
+ifneq ($(PROFILE),)
+CXXFLAGS += -DPROFILING=yes
+endif 
+
+ifeq ($(TARGET_OMP),)
+# nvcc (CUDA)
+CXXFLAGS += -DTARGET_SM35 -arch=sm_35 -DMCBOOSTER_BACKEND=CUDA
+CXXFLAGS += -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA -DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP
+else
+# OpenMP common flags
+CXXFLAGS += -fno-inline -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_OMP -DMCBOOSTER_BACKEND=OMP -DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_OMP 
+ifeq ($(TARGET_MIC),)
+# GCC/Clang
+CXXFLAGS += -fopenmp
+LDFLAGS = -fopenmp
+else
+# Intel C++ Compiler (ICC)
+CXXFLAGS += -openmp
+endif
+endif 
+
+ifeq ($(CUDALOCATION), )
+CUDALOCATION = /usr/local/cuda/
+endif
+CUDAHEADERS = $(CUDALOCATION)/include/
+
+LDFLAGS += -L$(CUDALOCATION)/lib64 -lcudart
+
+ifeq ($(GOOFITDIR), )
+echo "Warning: GOOFITDIR should be set!!! Using cwd"
+GOOFITDIR = $(shell /bin/pwd)
+endif
+SRCDIR = $(GOOFITDIR)/PDFs
+
+ROOT_INCLUDES = -I$(ROOTSYS)/include/
+INCLUDES += -I$(SRCDIR) -I$(GOOFITDIR) -I$(CUDAHEADERS) -I$(GOOFITDIR)/rootstuff -I$(GOOFITDIR)/MCBooster $(ROOT_INCLUDES)
+
+ROOT_LIBS     =  $(shell root-config --libs) -lMinuit
+ROOTRIPDIR	= $(GOOFITDIR)/rootstuff
+ROOTUTILLIB	= $(ROOTRIPDIR)/libRootUtils.so 
+WRKDIR = $(GOOFITDIR)/wrkdir/
+GOOFITLIBS += -L$(GOOFITDIR)/rootstuff -lRootUtils 
+
+THRUSTO		= ${WRKDIR}/Variable.o ${WRKDIR}/FitManager.o ${WRKDIR}/GooPdfCUDA.o ${WRKDIR}/Faddeeva.o ${WRKDIR}/FitControl.o ${WRKDIR}/PdfBase.o ${WRKDIR}/DataSet.o ${WRKDIR}/BinnedDataSet.o ${WRKDIR}/UnbinnedDataSet.o ${WRKDIR}/FunctorWriter.o 

@@ -1,4 +1,4 @@
-.PHONY:		goofit clean 
+.PHONY:		goofit clean examples
 
 GOOFITDIR = $(shell /bin/pwd)
 include Makefile.common
@@ -42,6 +42,9 @@ FitManager.o:		FitManager.cc FitManager.hh wrkdir/ThrustFitManagerCUDA.o Variabl
 wrkdir/GooPdfCUDA.o:	wrkdir/CUDAglob.cu PdfBase.cu 
 			$(CXX) $(CXXFLAGS) $(INCLUDES) -I. -c $< -o $@ 
 			@echo "$@ done"
+
+examples:
+	cd examples && $(MAKE)
 
 clean:
 		@rm -f *.o wrkdir/*

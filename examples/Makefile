@@ -2,6 +2,7 @@
 
 all: 2d_plot/2d_plot addition/addition chisquare/chisquare convolution/convolution dalitz/dalitz DP4/DP4 exponential/exponential pipipi0DPFit/pipipi0DPFit product/product SigGen/SigGen simpleFit/simpleFit TDDP4/TDDP4 zachFit/zachFit
 
+
 2d_plot/2d_plot:
 	cd 2d_plot && $(MAKE)
 

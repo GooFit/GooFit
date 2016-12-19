@@ -1,3 +1,5 @@
+#include "GlobalCudaDefines.hh"
+
 #include "GooPdf.cu"
 #include "CrystalBallPdf.cu"
 #include "BifurGaussPdf.cu"

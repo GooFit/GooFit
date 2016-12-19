@@ -142,16 +142,21 @@ void CudaMinimise (int dev, int fitType) {
   threadCount = omp_get_num_threads();
   }
 
+#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
   cudaGetDeviceCount(&deviceCount);   
   if (threadCount > deviceCount) {
     omp_set_num_threads(deviceCount); 
   }
+#endif
+#endif
 
 #pragma omp parallel
   {
     int tid;
+#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
     cudaDeviceProp deviceProp;
     tid = omp_get_thread_num();
+#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
     cudaGetDeviceProperties(&deviceProp, tid);
     printf("Device %d has compute capability %d.%d.\n",
        tid, deviceProp.major, deviceProp.minor);
@@ -160,8 +165,11 @@ void CudaMinimise (int dev, int fitType) {
        exit(EXIT_FAILURE);
     }
     cudaSetDevice(tid);
+#endif
 #else
+#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
   cudaSetDevice(dev);
+#endif
 #endif
 
 #ifdef OMP_ON

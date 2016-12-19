@@ -7,13 +7,7 @@
 using namespace std; 
 extern int host_callnumber; 
 
-// Thrust 1.7 will make the use of THRUST_DEVICE_BACKEND an error
-#if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_BACKEND_OMP
-#if THRUST_VERSION < 100699
-// Ensure backwards compatibility with Thrust 1.5
-#undef THRUST_DEVICE_BACKEND
-#define THRUST_DEVICE_BACKEND THRUST_DEVICE_BACKEND_OMP
-#endif 
+#if THRUST_DEVICE_SYSTEM!=THRUST_DEVICE_SYSTEM_CUDA
 // OMP target - all 'device' memory is actually on host. 
 #define ALIGN(n)
 #define MEM_DEVICE
@@ -38,6 +32,7 @@ void dummySynch ();
 // Create my own error type to avoid __host__ redefinition
 // conflict in Thrust from including driver_types.h
 enum gooError {gooSuccess = 0, gooErrorMemoryAllocation};
+#define RO_CACHE(x) x
 #else
 // CUDA target - defaults
 #define ALIGN(n) __align__(n)

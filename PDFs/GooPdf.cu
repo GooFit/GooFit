@@ -38,9 +38,8 @@ void printMemoryStatus (std::string file, int line) {
   size_t memfree = 0;
   size_t memtotal = 0; 
   SYNCH(); 
-// Thrust 1.7 will make the use of THRUST_DEVICE_BACKEND an error
-#if THRUST_DEVICE_BACKEND==THRUST_DEVICE_BACKEND_OMP || THRUST_DEVICE_SYSTEM==THRUST_DEVICE_BACKEND_OMP
-#else
+
+#if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_CUDA
   cudaMemGetInfo(&memfree, &memtotal); 
 #endif
   SYNCH(); 
@@ -194,7 +193,7 @@ __host__ void GooPdf::initialise (std::vector<unsigned int> pindices, void* dev_
 
 __host__ void GooPdf::setDebugMask (int mask, bool setSpecific) const {
   cpuDebug = mask; 
-#if THRUST_DEVICE_BACKEND==THRUST_DEVICE_BACKEND_OMP
+#if THRUST_DEVICE_SYSTEM!=THRUST_DEVICE_SYSTEM_CUDA
   gpuDebug = cpuDebug;
   if (setSpecific) debugParamIndex = parameters; 
 #else

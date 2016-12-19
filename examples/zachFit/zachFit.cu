@@ -30,6 +30,11 @@
 #include "AddPdf.hh"
 #include "FitManager.hh" 
 
+#define OMP_ON 1
+#ifdef OMP_ON
+#include "omp.h"
+#endif
+
 #ifdef CUDAPRINT
 #include "cuPrintf.cuh" 
 #endif 
@@ -468,6 +473,8 @@ int main (int argc, char** argv) {
   data_hist->SetMarkerStyle(8);
   data_hist->SetMarkerSize(0.6); 
   data_hist->Draw("p"); 
+  foo->Draw();
+  foo->SaveAs("zachDraw.png");
 
 
   // Print total minimization time

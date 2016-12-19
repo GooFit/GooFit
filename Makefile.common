@@ -35,19 +35,22 @@ endif
 ifeq ($(TARGET_OMP),)
 # nvcc (CUDA)
 CXXFLAGS += -DTARGET_SM35 -arch=sm_35 -DMCBOOSTER_BACKEND=CUDA
-CXXFLAGS += -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA -DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP
+CXXFLAGS += -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA -DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_OMP
+CXXFLAGS += -Xcompiler -fopenmp
+LDFLAGS += -lgomp
 else
 # OpenMP common flags
 CXXFLAGS += -fno-inline -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_OMP -DMCBOOSTER_BACKEND=OMP -DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_OMP 
+
 ifeq ($(TARGET_MIC),)
 # GCC/Clang
 CXXFLAGS += -fopenmp
-LDFLAGS = -fopenmp
+LDFLAGS += -fopenmp
 else
 # Intel C++ Compiler (ICC)
 CXXFLAGS += -openmp
-endif
 endif 
+endif
 
 ifeq ($(CUDALOCATION), )
 CUDALOCATION = /usr/local/cuda/
@@ -68,7 +71,8 @@ INCLUDES += -I$(SRCDIR) -I$(GOOFITDIR) -I$(CUDAHEADERS) -I$(GOOFITDIR)/rootstuff
 ROOT_LIBS     =  $(shell root-config --libs) -lMinuit
 ROOTRIPDIR	= $(GOOFITDIR)/rootstuff
 ROOTUTILLIB	= $(ROOTRIPDIR)/libRootUtils.so 
-WRKDIR = $(GOOFITDIR)/wrkdir/
+WRKDIR = $(GOOFITDIR)/wrkdir
 GOOFITLIBS += -L$(GOOFITDIR)/rootstuff -lRootUtils 
 
-THRUSTO		= ${WRKDIR}/Variable.o ${WRKDIR}/FitManager.o ${WRKDIR}/GooPdfCUDA.o ${WRKDIR}/Faddeeva.o ${WRKDIR}/FitControl.o ${WRKDIR}/PdfBase.o ${WRKDIR}/DataSet.o ${WRKDIR}/BinnedDataSet.o ${WRKDIR}/UnbinnedDataSet.o ${WRKDIR}/FunctorWriter.o 
+THRUSTO		= $(WRKDIR)/Variable.o $(WRKDIR)/FitManager.o $(WRKDIR)/GooPdfCUDA.o $(WRKDIR)/Faddeeva.o $(WRKDIR)/FitControl.o $(WRKDIR)/PdfBase.o $(WRKDIR)/DataSet.o $(WRKDIR)/BinnedDataSet.o $(WRKDIR)/UnbinnedDataSet.o $(WRKDIR)/FunctorWriter.o 
+THRUSTO_B		= wrkdir/Variable.o wrkdir/FitManager.o wrkdir/GooPdfCUDA.o wrkdir/Faddeeva.o wrkdir/FitControl.o wrkdir/PdfBase.o wrkdir/DataSet.o wrkdir/BinnedDataSet.o wrkdir/UnbinnedDataSet.o wrkdir/FunctorWriter.o 

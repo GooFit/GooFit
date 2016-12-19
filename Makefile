@@ -14,7 +14,7 @@ WRKFUNCTORLIST = $(patsubst $(SRCDIR)/%.cu,wrkdir/%.cu,$(FUNCTORLIST))
 
 ROOTRIPOBJS	= $(ROOTRIPDIR)/TMinuit.o $(ROOTRIPDIR)/TRandom.o $(ROOTRIPDIR)/TRandom3.o 
 
-goofit:		$(THRUSTO) $(ROOTUTILLIB) 
+goofit:		$(THRUSTO_B) $(ROOTUTILLIB) 
 		@echo "Built GooFit objects" 
 
 # One rule for GooFit objects.

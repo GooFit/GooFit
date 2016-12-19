@@ -2,8 +2,13 @@
 
 .SUFFIXES: 
 
-ifeq ($(TARGET_MIC),)
+ifeq ($(TARGET_OMP),)
 CXX=nvcc
+LD=g++
+else
+ifeq ($(TARGET_MIC),)
+CXX=g++
+CXXFLAGS=-x c++
 LD=g++
 
 else
@@ -11,6 +16,7 @@ else
 CXX=icpc
 LD=icpc
 CXXFLAGS=-mmic -x c++
+endif
 endif
 
 CXXFLAGS += -std=c++11 -O3
@@ -52,21 +58,32 @@ CXXFLAGS += -openmp
 endif 
 endif
 
-ifeq ($(CUDALOCATION), )
-CUDALOCATION = /usr/local/cuda/
-endif
-CUDAHEADERS = $(CUDALOCATION)/include/
-
-LDFLAGS += -L$(CUDALOCATION)/lib64 -lcudart
-
 ifeq ($(GOOFITDIR), )
 echo "Warning: GOOFITDIR should be set!!! Using cwd"
 GOOFITDIR = $(shell /bin/pwd)
 endif
 SRCDIR = $(GOOFITDIR)/PDFs
 
-ROOT_INCLUDES = -I$(ROOTSYS)/include/
-INCLUDES += -I$(SRCDIR) -I$(GOOFITDIR) -I$(CUDAHEADERS) -I$(GOOFITDIR)/rootstuff -I$(GOOFITDIR)/MCBooster $(ROOT_INCLUDES)
+
+ifeq ($(TARGET_OMP), )
+ifeq ($(CUDALOCATION), )
+CUDALOCATION = /usr/local/cuda
+endif
+CUDAHEADERS = $(CUDALOCATION)/include
+LDFLAGS += -L$(CUDALOCATION)/lib64 -lcudart
+INCLUDES += -I$(CUDAHEADERS)
+else
+ifeq ($(THRUSTLOCATION), )
+THRUSTLOCATION = $(GOOFITDIR)/../thrust
+endif
+THRUSTHEADERS = $(THRUSTLOCATION)
+CUDAHEADERS = $(GOOFITDIR)/fakecuda/include
+INCLUDES += -I$(CUDAHEADERS) -I$(THRUSTHEADERS)
+endif
+
+
+ROOT_INCLUDES = -I$(ROOTSYS)/include
+INCLUDES += -I$(SRCDIR) -I$(GOOFITDIR) -I$(GOOFITDIR)/rootstuff -I$(GOOFITDIR)/MCBooster $(ROOT_INCLUDES)
 
 ROOT_LIBS     =  $(shell root-config --libs) -lMinuit
 ROOTRIPDIR	= $(GOOFITDIR)/rootstuff

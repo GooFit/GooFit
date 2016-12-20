@@ -157,9 +157,9 @@ void CudaMinimise (int dev, int fitType) {
 //#endif
 
 //#pragma omp parallel
+#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
   for (int i = 0; i < deviceCount; i++)
   {
-//#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
     cudaDeviceProp deviceProp;
 //    tid = omp_get_thread_num();
 //#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
@@ -174,7 +174,7 @@ void CudaMinimise (int dev, int fitType) {
 
   //We are setting to the 0-device regardless
   cudaSetDevice(0);
-//#endif
+#endif
 //#else
 //#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
 //  cudaSetDevice(dev);

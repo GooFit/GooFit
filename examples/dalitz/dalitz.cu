@@ -398,7 +398,8 @@ int main (int argc, char** argv) {
   foodal->Size(10, 10);
 
   // cudaSetDevice(0);
-  runToyFit(argv[1]);
+  std::string filename = argc>1 ? argv[1] : "dalitz_toyMC_000.txt";
+  runToyFit(filename);
 
   // Print total minimization time
   double myCPU = stopCPU - startCPU;

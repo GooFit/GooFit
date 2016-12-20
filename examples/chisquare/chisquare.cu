@@ -223,7 +223,8 @@ void fitRatioCPU (vector<int>& rsEvts, vector<int>& wsEvts) {
 int main (int argc, char** argv) {
   // Time is in units of lifetime
   decayTime = new Variable("decayTime", 100, 0, 10); 
-  decayTime->numbins = atoi(argv[1]); 
+  int numbins = argc > 1 ? atoi(argv[1]) : 100;
+  decayTime->numbins = numbins; 
   double rSubD = 0.03;
   double rBarD = 0.03; 
   double delta = 0;

@@ -4264,6 +4264,11 @@ int main (int argc, char** argv) {
   cudaSetDevice(0);
 #endif
 
+  if(argc<=1) {
+      std::cerr << "Error: read the readme" << std::endl;
+      return 7;
+  }
+
   int fitToRun = atoi(argv[1]);
   int genResolutions = 0;
   double dplotres = 0; 

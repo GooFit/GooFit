@@ -45,10 +45,11 @@ def make_results():
         test('TDDP4'),
         test('product'),
         test('simpleFit'),
-        #test('zachFit', 0),
         test('chisquare'),
             ]
 
+    if (LOCAL_DIR / 'zachFit/dataFiles/zach/dstwidth_kpi_data.dat').exists():
+        results.append(test('zachFit', 0))
     if (LOCAL_DIR / 'pipipi0DPFit/dataFiles/toyPipipi0/dalitz_toyMC_000.txt').exists():
         results.append(test('pipipi0DPFit', 0, 0, 1))
     return results

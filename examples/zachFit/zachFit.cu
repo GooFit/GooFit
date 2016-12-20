@@ -7,6 +7,7 @@
 
 // System stuff
 #include <fstream> 
+#include <exception>
 #include <sys/time.h>
 #include <sys/times.h>
 
@@ -109,7 +110,12 @@ void getMCData () {
 
 void getData () {
   std::ifstream datareader;
-  datareader.open("dataFiles/zach/dstwidth_kpi_data.dat"); 
+  std::string filename = "dataFiles/zach/dstwidth_kpi_data.dat";
+  if(!((bool) std::ifstream(filename))) {
+      std::cerr << "The file " << filename << " does not exist! Exiting" << std::endl;
+      throw std::runtime_error("Missing data file");
+  }
+  datareader.open(filename);
  
   binnedData = new BinnedDataSet(dm); 
   delete data;
@@ -476,7 +482,12 @@ int main (int argc, char** argv) {
      return -1;
   }
   if (argc == 3) gpuDev = atoi(argv[2]);
-  CudaMinimise(gpuDev, atoi(argv[1]));  // atoi = string to integer conversion
+  try {
+      CudaMinimise(gpuDev, atoi(argv[1]));  // atoi = string to integer conversion
+  } catch( const std::exception & ex) {
+      std::cerr << ex.what() << std::endl;
+      return 6;
+  }
   //RooFitMinimise(atoi(argv[3])); 
 
   data_hist->SetStats(false); 

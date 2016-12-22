@@ -3,8 +3,8 @@
 GOOFITDIR = $(shell /bin/pwd)
 include Makefile.common
 
-FUNCTORLIST   = $(wildcard $(SRCDIR)/*.cu)
-FUNCTORLIST   += $(wildcard $(SRCDIR)/*.hh)
+FUNCTORLIST   = $(wildcard src/PDFs/*.cu)
+FUNCTORLIST   += $(wildcard include/goofit/PDFs/*.hh)
 
 # Handy print for makefile variables (debugging)
 print-%  : ; @echo $* = $($*)
@@ -36,7 +36,7 @@ FitManager.o:		FitManager.cc FitManager.hh wrkdir/ThrustFitManagerCUDA.o Variabl
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
 
 wrkdir/AllPdfs.o:	$(FUNCTORLIST)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -I. -c PDFs/AllPdfs.cu -o $@ 
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -I$(SRCDIR)/PDFs  -c src/PDFs/AllPdfs.cu -o $@ 
 	@echo "$@ done"
 
 examples:

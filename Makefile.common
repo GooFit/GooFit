@@ -62,7 +62,7 @@ ifeq ($(GOOFITDIR), )
 echo "Warning: GOOFITDIR should be set!!! Using cwd"
 GOOFITDIR = $(shell /bin/pwd)
 endif
-SRCDIR = $(GOOFITDIR)/PDFs
+SRCDIR = $(GOOFITDIR)/src
 
 
 ifeq ($(TARGET_OMP), )
@@ -83,7 +83,7 @@ endif
 
 
 ROOT_INCLUDES = -I$(ROOTSYS)/include
-INCLUDES += -I$(SRCDIR) -I$(GOOFITDIR)/include/goofit -I$(GOOFITDIR)/rootstuff -I$(GOOFITDIR)/MCBooster $(ROOT_INCLUDES)
+INCLUDES += -I$(GOOFITDIR)/include/goofit/PDFs -I$(GOOFITDIR)/include/goofit -I$(GOOFITDIR)/rootstuff -I$(GOOFITDIR)/MCBooster $(ROOT_INCLUDES)
 
 ROOT_LIBS     =  $(shell root-config --libs) -lMinuit
 ROOTRIPDIR	= $(GOOFITDIR)/rootstuff

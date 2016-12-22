@@ -1,4 +1,4 @@
-#include "ArgusPdf.hh"
+#include "goofit/PDFs/ArgusPdf.h"
 
 EXEC_TARGET fptype device_Argus_Upper (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x = evt[indices[2 + indices[0]]]; 

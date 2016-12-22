@@ -1,4 +1,4 @@
-#include "MappedPdf.hh"
+#include "goofit/PDFs/MappedPdf.h"
 
 EXEC_TARGET fptype device_Mapped (fptype* evt, fptype* p, unsigned int* indices) {
   // Structure : nP mapFunctionIndex mapParamIndex functionIndex1 parameterIndex1 functionIndex2 parameterIndex2 ... 

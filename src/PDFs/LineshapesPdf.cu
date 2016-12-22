@@ -8,8 +8,8 @@ This file includes some lineshapes and spinfactors.
 Also right now it is the home to some helper functions needed and an implementation of a simple 4-vec class that works on the GPU
 */
 
-#include "LineshapesPdf.hh" 
-#include "SpinFactors.hh"
+#include "goofit/PDFs/LineshapesPdf.h" 
+#include "goofit/PDFs/SpinFactors.h"
 
 
 // Form factors as in pdg http://pdg.lbl.gov/2012/reviews/rpp2012-rev-dalitz-analysis-formalism.pdf

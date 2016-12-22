@@ -1,4 +1,4 @@
-#include "NovosibirskPdf.hh"
+#include "goofit/PDFs/NovosibirskPdf.h"
 
 EXEC_TARGET fptype device_Novosibirsk (fptype* evt, fptype* p, unsigned int* indices) {
   fptype _Mean  = p[indices[1]];

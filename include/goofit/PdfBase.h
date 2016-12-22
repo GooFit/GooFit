@@ -1,12 +1,12 @@
 #ifndef PDF_BASE_HH
 #define PDF_BASE_HH
 
-#include "Variable.hh" 
-#include "GlobalCudaDefines.hh" 
-#include "FitControl.hh" 
+#include "goofit/Variable.h" 
+#include "goofit/GlobalCudaDefines.h" 
+#include "goofit/FitControl.h" 
 #include <set> 
-#include "BinnedDataSet.hh" 
-#include "UnbinnedDataSet.hh" 
+#include "goofit/BinnedDataSet.h" 
+#include "goofit/UnbinnedDataSet.h" 
 
 #include <thrust/iterator/constant_iterator.h> 
 #include <thrust/device_vector.h>

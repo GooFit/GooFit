@@ -1,4 +1,4 @@
-#include "ThreeGaussResolution_Aux.hh" 
+#include "goofit/PDFs/ThreeGaussResolution_Aux.h" 
 #include <math.h> 
 const fptype R1o6      = 1.0 / 6.0; 
 #define SQRTPIo2 (1.0/M_2_SQRTPI)

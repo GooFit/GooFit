@@ -1,5 +1,5 @@
-#include "GlobalCudaDefines.hh"
-#include "PdfBase.hh" 
+#include "goofit/GlobalCudaDefines.h"
+#include "goofit/PdfBase.h" 
 
 fptype* dev_event_array;
 fptype host_normalisation[maxParams];

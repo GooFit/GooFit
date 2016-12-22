@@ -1,12 +1,12 @@
-#include "PdfBase.hh"
-#include "FitManager.hh"
-#include "GooPdf.hh" 
+#include "goofit/PdfBase.h"
+#include "goofit/FitManager.h"
+#include "goofit/PDFs/GooPdf.h" 
 #include <cstdio> 
 #include <cassert> 
 #include <limits> 
 #include <typeinfo> 
 #include <set>
-#include "Variable.hh" 
+#include "goofit/Variable.h" 
 
 using namespace std; 
 

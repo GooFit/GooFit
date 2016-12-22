@@ -1,7 +1,7 @@
 #ifndef UNBINNED_DATASET_HH
 #define UNBINNED_DATASET_HH
 
-#include "DataSet.hh" 
+#include "goofit/DataSet.h" 
 
 class UnbinnedDataSet : public DataSet {
   // Class for unbinned datasets. 

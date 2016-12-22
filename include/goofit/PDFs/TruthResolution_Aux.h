@@ -1,7 +1,7 @@
 #ifndef TRUTH_RESOLUTION_HH
 #define TRUTH_RESOLUTION_HH
 
-#include "MixingTimeResolution_Aux.hh"
+#include "goofit/PDFs/MixingTimeResolution_Aux.h"
 
 class TruthResolution : public MixingTimeResolution {
 public: 

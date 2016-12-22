@@ -1,7 +1,7 @@
 #ifndef THREEGAUSS_RESOLUTION_HH
 #define THREEGAUSS_RESOLUTION_HH
 
-#include "MixingTimeResolution_Aux.hh"
+#include "goofit/PDFs/MixingTimeResolution_Aux.h"
 
 class ThreeGaussResolution : public MixingTimeResolution {
 public: 

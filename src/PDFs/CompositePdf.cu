@@ -1,4 +1,4 @@
-#include "CompositePdf.hh"
+#include "goofit/PDFs/CompositePdf.h"
 
 EXEC_TARGET fptype device_Composite (fptype* evt, fptype* p, unsigned int* indices) {
   unsigned int coreFcnIndex  = RO_CACHE(indices[1]);

@@ -9,13 +9,13 @@ See *.cu file for more details
 #ifndef TDDP4_PDF_HH
 #define TDDP4_PDF_HH
 
-#include "GooPdf.hh" 
-#include "DalitzPlotHelpers.hh" 
-#include "SpinFactors.hh"
+#include "goofit/PDFs/GooPdf.h" 
+#include "goofit/PDFs/DalitzPlotHelpers.h" 
+#include "goofit/PDFs/SpinFactors.h"
 #include <mcbooster/GContainers.h>
 #include <tuple>
 #include <thrust/remove.h>
-#include "MixingTimeResolution_Aux.hh" 
+#include "goofit/PDFs/MixingTimeResolution_Aux.h" 
 class LSCalculator_TD; 
 class AmpCalc_TD;
 class SFCalculator_TD;

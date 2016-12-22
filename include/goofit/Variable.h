@@ -5,7 +5,7 @@
 #include <map> 
 #include <iostream> 
 #include <cassert> 
-#include "GlobalCudaDefines.hh"
+#include "goofit/GlobalCudaDefines.h"
 
 struct Indexable {
   Indexable (std::string n, fptype val = 0) : name(n), value(val), index(-1) {}

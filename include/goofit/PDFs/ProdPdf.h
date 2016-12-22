@@ -1,7 +1,7 @@
 #ifndef PROD_PDF_HH
 #define PROD_PDF_HH
 
-#include "GooPdf.hh" 
+#include "goofit/PDFs/GooPdf.h" 
 
 class ProdPdf : public GooPdf {
 public:

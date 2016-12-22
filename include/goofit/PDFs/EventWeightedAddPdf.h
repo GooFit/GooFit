@@ -1,7 +1,7 @@
 #ifndef EVENTWEIGHTEDADD_PDF_HH
 #define EVENTWEIGHTEDADD_PDF_HH
 
-#include "GooPdf.hh" 
+#include "goofit/PDFs/GooPdf.h" 
 
 // This class is just like AddPdf except that the
 // event weights are properties of each event, not variables

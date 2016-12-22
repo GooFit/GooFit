@@ -6,7 +6,7 @@ This code is not sufficently tested yet and still under heavy development!
 Helper functions
 */
 
-#include "DalitzPlotHelpers.hh"
+#include "goofit/PDFs/DalitzPlotHelpers.h"
 
 EXEC_TARGET fptype Mass(const fptype* P0){
   return SQRT(-P0[0]*P0[0] - P0[1]*P0[1] - P0[2]*P0[2] + P0[3]*P0[3]);

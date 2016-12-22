@@ -1,7 +1,7 @@
 #ifndef POLYNOMIAL_PDF_HH
 #define POLYNOMIAL_PDF_HH
 
-#include "GooPdf.hh" 
+#include "goofit/PDFs/GooPdf.h" 
 
 class PolynomialPdf : public GooPdf {
 public:

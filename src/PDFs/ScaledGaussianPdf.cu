@@ -1,4 +1,4 @@
-#include "ScaledGaussianPdf.hh"
+#include "goofit/PDFs/ScaledGaussianPdf.h"
 //#include <limits>
 
 EXEC_TARGET fptype device_ScaledGaussian (fptype* evt, fptype* p, unsigned int* indices) {

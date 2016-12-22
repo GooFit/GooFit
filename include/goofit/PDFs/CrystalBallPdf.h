@@ -1,7 +1,7 @@
 #ifndef CRYSTALBALL_PDF_HH
 #define CRYSTALBALL_PDF_HH
 
-#include "GooPdf.hh" 
+#include "goofit/PDFs/GooPdf.h" 
 
 class CrystalBallPdf : public GooPdf {
 public:

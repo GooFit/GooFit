@@ -1,7 +1,7 @@
-#include "Variable.hh" 
-#include "FitManager.hh"
-#include "UnbinnedDataSet.hh" 
-#include "ExpPdf.hh" 
+#include "goofit/Variable.h" 
+#include "goofit/FitManager.h"
+#include "goofit/UnbinnedDataSet.h" 
+#include "goofit/PDFs/ExpPdf.h" 
 #include <iostream>
 
 using namespace std; 

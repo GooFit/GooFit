@@ -1,7 +1,7 @@
 #ifndef ARGUS_PDF_HH
 #define ARGUS_PDF_HH
 
-#include "GooPdf.hh" 
+#include "goofit/PDFs/GooPdf.h" 
 
 class ArgusPdf : public GooPdf {
 public:

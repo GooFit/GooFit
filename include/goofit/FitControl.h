@@ -2,8 +2,8 @@
 #define FITCONTROL_HH
 
 #include <string> 
-#include "GlobalCudaDefines.hh" 
-#include "Variable.hh" 
+#include "goofit/GlobalCudaDefines.h" 
+#include "goofit/Variable.h" 
 #include <vector> 
 
 class PdfBase; 

@@ -24,7 +24,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 #ifndef ROOT_TRandom
-#include "TRandom.hh"
+#include "goofit/rootstuff/TRandom.h"
 #endif
 
 class TRandom3 : public TRandom {

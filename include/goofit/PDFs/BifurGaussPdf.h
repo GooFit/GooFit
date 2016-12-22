@@ -1,7 +1,7 @@
 #ifndef BIFURGAUSSIAN_PDF_HH
 #define BIFURGAUSSIAN_PDF_HH
 
-#include "GooPdf.hh"
+#include "goofit/PDFs/GooPdf.h"
 
 class BifurGaussPdf : public GooPdf {
   public:

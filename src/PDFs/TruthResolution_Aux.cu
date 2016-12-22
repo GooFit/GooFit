@@ -1,4 +1,4 @@
-#include "TruthResolution_Aux.hh" 
+#include "goofit/PDFs/TruthResolution_Aux.h" 
 
 EXEC_TARGET fptype device_truth_resolution (fptype coshterm, fptype costerm, fptype sinhterm, fptype sinterm, 
 					   fptype tau, fptype dtime, fptype xmixing, fptype ymixing, fptype /*sigma*/, 

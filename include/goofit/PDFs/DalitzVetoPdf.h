@@ -1,8 +1,8 @@
 #ifndef DALITZVETO_PDF_HH
 #define DALITZVETO_PDF_HH
 
-#include "GooPdf.hh" 
-#include "TddpPdf.hh"
+#include "goofit/PDFs/GooPdf.h" 
+#include "goofit/PDFs/TddpPdf.h"
 
 struct VetoInfo {
   DaughterPair cyclic_index; 

@@ -1,4 +1,4 @@
-#include "BinTransformPdf.hh"
+#include "goofit/PDFs/BinTransformPdf.h"
 
 EXEC_TARGET fptype device_BinTransform (fptype* evt, fptype* p, unsigned int* indices) {
   // Index structure: nP lim1 bin1 lim2 bin2 ... nO o1 o2 

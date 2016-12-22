@@ -9,9 +9,9 @@ See *.cu file for more details
 #ifndef D_P4_PDF_HH
 #define D_P4_PDF_HH
 
-#include "GooPdf.hh" 
-#include "DalitzPlotHelpers.hh" 
-#include "SpinFactors.hh"
+#include "goofit/PDFs/GooPdf.h" 
+#include "goofit/PDFs/DalitzPlotHelpers.h" 
+#include "goofit/PDFs/SpinFactors.h"
 #include <mcbooster/GContainers.h>
 #include <tuple>
 #include <thrust/remove.h>

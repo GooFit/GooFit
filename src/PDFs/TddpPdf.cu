@@ -1,4 +1,4 @@
-#include "TddpPdf.hh"
+#include "goofit/PDFs/TddpPdf.h"
 #include <complex>
 using std::complex; 
 

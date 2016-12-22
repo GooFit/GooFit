@@ -1,4 +1,4 @@
-#include "DataSet.hh" 
+#include "goofit/DataSet.h" 
 #include <cstdlib> 
 #include <climits> 
 

@@ -9,7 +9,7 @@ See *.cu file for more details
 #ifndef SPIN_FACTORS_HH
 #define SPIN_FACTORS_HH
 
-#include "DalitzPlotHelpers.hh"
+#include "goofit/PDFs/DalitzPlotHelpers.h"
 
 typedef fptype (*spin_function_ptr) (fptype*, unsigned int*); 
 

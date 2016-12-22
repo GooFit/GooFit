@@ -1,12 +1,12 @@
 #include <fstream>
 
 // GooFit stuff
-#include "FitManager.hh"
-#include "Variable.hh" 
-#include "PolynomialPdf.hh" 
-#include "AddPdf.hh"
-#include "UnbinnedDataSet.hh"
-#include "DP4Pdf.hh"
+#include "goofit/FitManager.h"
+#include "goofit/Variable.h" 
+#include "goofit/PDFs/PolynomialPdf.h" 
+#include "goofit/PDFs/AddPdf.h"
+#include "goofit/UnbinnedDataSet.h"
+#include "goofit/PDFs/DP4Pdf.h"
 using namespace std;
 
 const fptype _mD0 = 1.8645; 

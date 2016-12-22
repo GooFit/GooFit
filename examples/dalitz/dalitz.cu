@@ -1,11 +1,11 @@
 // ROOT stuff
-#include "TRandom.hh"
+#include "goofit/rootstuff/TRandom.h"
 #include "TCanvas.h" 
 #include "TFile.h" 
 #include "TH1F.h" 
 #include "TH2F.h" 
 #include "TStyle.h" 
-#include "TRandom3.hh" 
+#include "goofit/rootstuff/TRandom3.h" 
 #include "TLegend.h" 
 #include "TText.h" 
 #include "TLine.h" 
@@ -16,16 +16,16 @@
 #include <sys/times.h>
 
 // GooFit stuff
-#include "Variable.hh" 
-#include "PolynomialPdf.hh" 
-#include "DalitzPlotPdf.hh" 
-#include "DalitzVetoPdf.hh" 
-#include "ResonancePdf.hh" 
-#include "AddPdf.hh"
-#include "ProdPdf.hh"
-#include "GooPdf.hh" 
-#include "FitManager.hh" 
-#include "UnbinnedDataSet.hh"
+#include "goofit/Variable.h" 
+#include "goofit/PDFs/PolynomialPdf.h" 
+#include "goofit/PDFs/DalitzPlotPdf.h" 
+#include "goofit/PDFs/DalitzVetoPdf.h" 
+#include "goofit/PDFs/ResonancePdf.h" 
+#include "goofit/PDFs/AddPdf.h"
+#include "goofit/PDFs/ProdPdf.h"
+#include "goofit/PDFs/GooPdf.h" 
+#include "goofit/FitManager.h" 
+#include "goofit/UnbinnedDataSet.h"
 
 using namespace std;
 

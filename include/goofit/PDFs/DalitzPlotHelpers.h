@@ -9,9 +9,9 @@ See *.cu file for more details
 #ifndef DALITZ_PLOT_HELPERS_HH
 #define DALITZ_PLOT_HELPERS_HH
 
-#include "GooPdf.hh" 
-#include "ResonancePdf.hh"
-#include "LineshapesPdf.hh"
+#include "goofit/PDFs/GooPdf.h" 
+#include "goofit/PDFs/ResonancePdf.h"
+#include "goofit/PDFs/LineshapesPdf.h"
 
 template<typename E>
 constexpr typename std::underlying_type<E>::type enum_to_underlying(E e) {

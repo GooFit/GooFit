@@ -1,8 +1,8 @@
 #ifndef DATASET_HH
 #define DATASET_HH
 
-#include "Variable.hh"
-#include "GlobalCudaDefines.hh"
+#include "goofit/Variable.h"
+#include "goofit/GlobalCudaDefines.h"
 #include <vector> 
 #include <set> 
 #include <string> 

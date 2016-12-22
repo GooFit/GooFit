@@ -1,5 +1,5 @@
-#include "DalitzVetoPdf.hh"
-#include "DalitzPlotHelpers.hh" 
+#include "goofit/PDFs/DalitzVetoPdf.h"
+#include "goofit/PDFs/DalitzPlotHelpers.h" 
 
 EXEC_TARGET fptype device_DalitzVeto (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x         = evt[RO_CACHE(indices[2 + RO_CACHE(indices[0]) + 0])]; 

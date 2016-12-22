@@ -1,4 +1,4 @@
-#include "SmoothHistogramPdf.hh"
+#include "goofit/PDFs/SmoothHistogramPdf.h"
 
 MEM_CONSTANT fptype* dev_base_histograms[100]; // Multiple histograms for the case of multiple PDFs
 MEM_CONSTANT fptype* dev_smoothed_histograms[100]; 

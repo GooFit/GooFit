@@ -3,11 +3,11 @@
 #include <TTree.h>
 
 // GooFit stuff
-#include "Variable.hh" 
-#include "PolynomialPdf.hh" 
-#include "AddPdf.hh"
-#include "UnbinnedDataSet.hh"
-#include "DP4Pdf.hh"
+#include "goofit/Variable.h" 
+#include "goofit/PDFs/PolynomialPdf.h" 
+#include "goofit/PDFs/AddPdf.h"
+#include "goofit/UnbinnedDataSet.h"
+#include "goofit/PDFs/DP4Pdf.h"
 
 #include <thrust/count.h>
 

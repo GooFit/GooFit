@@ -4,7 +4,7 @@
 class PdfBase; 
 
 #include <thrust/host_vector.h>
-#include "GlobalCudaDefines.hh" // Need this for 'fptype' 
+#include "goofit/GlobalCudaDefines.h" // Need this for 'fptype' 
 
 void writeToFile (PdfBase* pdf, const char* fname);
 void readFromFile (PdfBase* pdf, const char* fname);

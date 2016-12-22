@@ -1,9 +1,9 @@
 #ifndef INCOHERENT_SUM_PDF_HH
 #define INCOHERENT_SUM_PDF_HH
 
-#include "GooPdf.hh" 
-#include "TddpPdf.hh"   
-#include "devcomplex.hh"
+#include "goofit/PDFs/GooPdf.h" 
+#include "goofit/PDFs/TddpPdf.h"   
+#include "goofit/PDFs/devcomplex.h"
 
 // Very similar class to TddpPdf, but without time dependence 
 // (so no time resolution or mixing) and ignoring interference between

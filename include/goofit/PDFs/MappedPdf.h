@@ -1,7 +1,7 @@
 #ifndef MAPPED_PDF_HH
 #define MAPPED_PDF_HH
 
-#include "GooPdf.hh" 
+#include "goofit/PDFs/GooPdf.h" 
 
 class MappedPdf : public GooPdf {
 public:

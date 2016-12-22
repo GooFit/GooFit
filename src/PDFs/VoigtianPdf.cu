@@ -1,7 +1,7 @@
-#include "VoigtianPdf.hh"
+#include "goofit/PDFs/VoigtianPdf.h"
 #include <limits>
-#include "Faddeeva.hh"
-#include "devcomplex.hh" 
+#include "goofit/Faddeeva.h"
+#include "goofit/PDFs/devcomplex.h" 
 
 #define M_2PI 6.28318530717958
 //#define ROOT2 1.41421356 

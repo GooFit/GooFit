@@ -1,4 +1,4 @@
-#include "Faddeeva.hh" 
+#include "goofit/Faddeeva.h" 
 #include <complex> 
 #include <cassert> 
 #include <math.h> 

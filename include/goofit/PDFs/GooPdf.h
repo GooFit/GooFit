@@ -13,7 +13,7 @@
 #include <cassert> 
 #include <set> 
 
-#include "PdfBase.hh" 
+#include "goofit/PdfBase.h" 
 
 EXEC_TARGET int dev_powi (int base, int exp); // Implemented in SmoothHistogramPdf.
 

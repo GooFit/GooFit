@@ -1,8 +1,8 @@
 #ifndef INTERHIST_PDF_HH
 #define INTERHIST_PDF_HH
 
-#include "GooPdf.hh" 
-#include "BinnedDataSet.hh" 
+#include "goofit/PDFs/GooPdf.h" 
+#include "goofit/BinnedDataSet.h" 
 
 class InterHistPdf : public GooPdf {
 public:

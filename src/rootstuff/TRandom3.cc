@@ -44,7 +44,7 @@
 /* with an appropriate reference to your work.                     */
 /////////////////////////////////////////////////////////////////////
 
-#include "TRandom3.hh"
+#include "goofit/rootstuff/TRandom3.h"
 
 TRandom* TRandom::gRandom = new TRandom3();
 

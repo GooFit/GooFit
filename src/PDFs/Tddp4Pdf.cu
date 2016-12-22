@@ -20,8 +20,8 @@ TODO:
 #include <mcbooster/Evaluate.h>
 #include <mcbooster/EvaluateArray.h>
 #include <mcbooster/GFunctional.h>
-#include "Tddp4Pdf.hh"
-#include "EvalVar.hh"
+#include "goofit/PDFs/Tddp4Pdf.h"
+#include "goofit/PDFs/EvalVar.h"
 
 
 struct genUni

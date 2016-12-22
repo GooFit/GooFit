@@ -1,7 +1,7 @@
 #ifndef MIXING_TIME_RESOLUTION_HH
 #define MIXING_TIME_RESOLUTION_HH
-#include "GlobalCudaDefines.hh" 
-#include "GooPdf.hh" 
+#include "goofit/GlobalCudaDefines.h" 
+#include "goofit/PDFs/GooPdf.h" 
 
 typedef fptype (*device_resfunction_ptr) (fptype, fptype, fptype, fptype, fptype, fptype, fptype, fptype, fptype, fptype*, unsigned int*); 
 typedef fptype (*device_calc_tau_fcn_ptr) (fptype, fptype, fptype, fptype, fptype, fptype, fptype); 

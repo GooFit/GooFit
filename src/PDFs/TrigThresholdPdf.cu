@@ -1,4 +1,4 @@
-#include "TrigThresholdPdf.hh"
+#include "goofit/PDFs/TrigThresholdPdf.h"
 
 EXEC_TARGET fptype threshCalc (fptype distance, fptype linConst) {
   fptype ret = (distance > fptype(0.5) ? fptype(1) : (linConst + (1 - linConst) * SIN(distance * fptype(3.14159265)))); 

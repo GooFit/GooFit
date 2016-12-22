@@ -1,7 +1,7 @@
 #ifndef TRIGTHRESHOLD_PDF_HH
 #define TRIGTHRESHOLD_PDF_HH
 
-#include "GooPdf.hh" 
+#include "goofit/PDFs/GooPdf.h" 
 
 class TrigThresholdPdf : public GooPdf {
 public:

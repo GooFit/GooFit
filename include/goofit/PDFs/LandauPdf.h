@@ -1,7 +1,7 @@
 #ifndef LANDAU_PDF_HH
 #define LANDAU_PDF_HH
 
-#include "GooPdf.hh" 
+#include "goofit/PDFs/GooPdf.h" 
 
 class LandauPdf : public GooPdf {
 public:

@@ -1,7 +1,7 @@
 #ifndef GAUSSIAN_PDF_HH
 #define GAUSSIAN_PDF_HH
 
-#include "GooPdf.hh" 
+#include "goofit/PDFs/GooPdf.h" 
 
 class GaussianPdf : public GooPdf {
 public:

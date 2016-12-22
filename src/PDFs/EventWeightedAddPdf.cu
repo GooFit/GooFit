@@ -1,4 +1,4 @@
-#include "EventWeightedAddPdf.hh"
+#include "goofit/PDFs/EventWeightedAddPdf.h"
 
 EXEC_TARGET fptype device_EventWeightedAddPdfs (fptype* evt, fptype* p, unsigned int* indices) { 
   int numParameters = RO_CACHE(indices[0]); 

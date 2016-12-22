@@ -1,7 +1,7 @@
 #ifndef EXPGAUS_PDF_HH
 #define EXPGAUS_PDF_HH
 
-#include "GooPdf.hh" 
+#include "goofit/PDFs/GooPdf.h" 
 
 class ExpGausPdf : public GooPdf {
 public:

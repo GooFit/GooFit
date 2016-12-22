@@ -1,17 +1,17 @@
 #ifndef FITMANAGER_HH
 #define FITMANAGER_HH
 
-#include "GlobalCudaDefines.hh" 
-#include "GooPdf.hh"
+#include "goofit/GlobalCudaDefines.h" 
+#include "goofit/PDFs/GooPdf.h"
 
 // Glue class that talks to MINUIT
 #define MINUIT_VERSION 1
 
 #if MINUIT_VERSION == 1
-#include "FitManagerMinuit1.hh"
+#include "goofit/FitManagerMinuit1.h"
 #elif MINUIT_VERSION == 2
-#include "FitManagerMinuit2.hh"
+#include "goofit/FitManagerMinuit2.h"
 #else
-#include "FitManagerMinuit3.hh"
+#include "goofit/FitManagerMinuit3.h"
 #endif
 #endif 

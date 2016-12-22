@@ -1,4 +1,4 @@
-#include "ProdPdf.hh"
+#include "goofit/PDFs/ProdPdf.h"
 
 EXEC_TARGET fptype device_ProdPdfs (fptype* evt, fptype* p, unsigned int* indices) { 
   // Index structure is nP | F1 P1 | F2 P2 | ...

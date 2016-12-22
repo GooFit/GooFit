@@ -1,7 +1,7 @@
 #ifndef STEP_PDF_HH
 #define STEP_PDF_HH
 
-#include "GooPdf.hh" 
+#include "goofit/PDFs/GooPdf.h" 
 
 class StepPdf : public GooPdf {
 public:

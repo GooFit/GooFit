@@ -1,4 +1,4 @@
-#include "BinnedDataSet.hh"
+#include "goofit/BinnedDataSet.h"
 
 // Special constructor for one variable
 BinnedDataSet::BinnedDataSet (Variable* var, string n) 

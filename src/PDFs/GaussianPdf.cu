@@ -1,4 +1,4 @@
-#include "GaussianPdf.hh"
+#include "goofit/PDFs/GaussianPdf.h"
 
 EXEC_TARGET fptype device_Gaussian (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x = evt[RO_CACHE(indices[2 + RO_CACHE(indices[0])])]; 

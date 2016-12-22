@@ -1,4 +1,4 @@
-#include "ExpPdf.hh"
+#include "goofit/PDFs/ExpPdf.h"
 
 EXEC_TARGET fptype device_Exp (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x = evt[indices[2 + indices[0]]]; 

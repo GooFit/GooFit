@@ -20,8 +20,8 @@ TODO:
 #include <mcbooster/Evaluate.h>
 #include <mcbooster/EvaluateArray.h>
 #include <mcbooster/GFunctional.h>
-#include "DP4Pdf.hh"
-#include "EvalVar.hh"
+#include "goofit/PDFs/DP4Pdf.h"
+#include "goofit/PDFs/EvalVar.h"
 
 
 // The function of this array is to hold all the cached waves; specific 

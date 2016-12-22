@@ -315,7 +315,7 @@ into account the non-linearities much more precisely.
 #include <stdio.h>
 #include <cstring> 
 #include <cmath> 
-#include "TMinuit.hh"
+#include "goofit/rootstuff/TMinuit.h"
 
 
 TMinuit* TMinuit::gMinuit = 0;

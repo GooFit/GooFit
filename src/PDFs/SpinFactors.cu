@@ -5,8 +5,8 @@ The Spinfactors are an adaptation from the MINT implementation, by Jonas Rademac
 DISCLAIMER:
 This code is not sufficently tested yet and still under heavy development!
 */
-#include "SpinFactors.hh"
-#include "SpinHelper.hh"
+#include "goofit/PDFs/SpinFactors.h"
+#include "goofit/PDFs/SpinHelper.h"
 
 #define ZEMACH 1
 

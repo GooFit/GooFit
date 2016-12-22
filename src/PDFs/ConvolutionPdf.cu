@@ -1,4 +1,4 @@
-#include "ConvolutionPdf.hh"
+#include "goofit/PDFs/ConvolutionPdf.h"
 int totalConvolutions = 0; 
 
 #define CONVOLUTION_CACHE_SIZE 512

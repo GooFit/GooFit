@@ -1,7 +1,7 @@
 #ifndef BINTRANSFORM_PDF_HH
 #define BINTRANSFORM_PDF_HH
 
-#include "GooPdf.hh" 
+#include "goofit/PDFs/GooPdf.h" 
 
 // Transforms ND coordinates into a single bin number. 
 class BinTransformPdf : public GooPdf {

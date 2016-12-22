@@ -1,4 +1,4 @@
-#include "BifurGaussPdf.hh"
+#include "goofit/PDFs/BifurGaussPdf.h"
 
 EXEC_TARGET fptype device_BifurGauss (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x = evt[indices[2 + indices[0]]]; // why does indices recall itself?

@@ -1,4 +1,4 @@
-#include "BWPdf.hh"
+#include "goofit/PDFs/BWPdf.h"
 
 EXEC_TARGET fptype device_BW (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x = evt[indices[2 + indices[0]]];

@@ -1,8 +1,8 @@
 #ifndef RESONANCE_PDF_HH
 #define RESONANCE_PDF_HH
 
-#include "GooPdf.hh" 
-#include "devcomplex.hh" 
+#include "goofit/PDFs/GooPdf.h" 
+#include "goofit/PDFs/devcomplex.h" 
 typedef devcomplex<fptype> (*resonance_function_ptr) (fptype, fptype, fptype, unsigned int*); 
 
 EXEC_TARGET fptype twoBodyCMmom (double rMassSq, fptype d1m, fptype d2m);

@@ -1,7 +1,7 @@
-#include "FunctorWriter.hh"
+#include "goofit/FunctorWriter.h"
 #include <fstream> 
 #include <map>
-#include "PdfBase.hh" 
+#include "goofit/PdfBase.h" 
 
 void writeToFile (PdfBase* pdf, const char* fname) {
   PdfBase::parCont params;

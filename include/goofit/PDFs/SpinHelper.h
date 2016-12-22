@@ -9,7 +9,7 @@ This code is not sufficently tested yet and still under heavy development!
 #ifndef SPIN_HELPER_HH
 #define SPIN_HELPER_HH
 
-#include "DalitzPlotHelpers.hh"
+#include "goofit/PDFs/DalitzPlotHelpers.h"
 
 class ALIGN(16) gpuLVec
 {

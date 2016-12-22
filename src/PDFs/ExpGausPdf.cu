@@ -1,4 +1,4 @@
-#include "ExpGausPdf.hh"
+#include "goofit/PDFs/ExpGausPdf.h"
 
 EXEC_TARGET fptype device_ExpGaus (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x     = evt[RO_CACHE(indices[2 + RO_CACHE(indices[0])])]; 

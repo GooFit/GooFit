@@ -1,4 +1,4 @@
-#include "StepPdf.hh"
+#include "goofit/PDFs/StepPdf.h"
 
 EXEC_TARGET fptype device_Step (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x = evt[indices[2 + indices[0]]]; 

@@ -1,12 +1,12 @@
-#include "FitManager.hh"
-#include "UnbinnedDataSet.hh" 
-#include "LandauPdf.hh" 
-#include "NovosibirskPdf.hh"
-#include "BifurGaussPdf.hh" 
+#include "goofit/FitManager.h"
+#include "goofit/UnbinnedDataSet.h" 
+#include "goofit/PDFs/LandauPdf.h" 
+#include "goofit/PDFs/NovosibirskPdf.h"
+#include "goofit/PDFs/BifurGaussPdf.h" 
 
-#include "TRandom.hh" 
+#include "goofit/rootstuff/TRandom.h" 
 #if HAVE_ROOT
-#  include "Variable.hh"
+#  include "goofit/Variable.h"
 #  include "TH1F.h"
 //#  include "TH2F.h"			// unused?
 #  include "TStyle.h"

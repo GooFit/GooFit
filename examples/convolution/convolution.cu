@@ -1,11 +1,11 @@
-#include "Variable.hh" 
-#include "FitManager.hh"
-#include "UnbinnedDataSet.hh" 
-#include "BWPdf.hh" 
-#include "GaussianPdf.hh" 
-#include "ConvolutionPdf.hh" 
+#include "goofit/Variable.h" 
+#include "goofit/FitManager.h"
+#include "goofit/UnbinnedDataSet.h" 
+#include "goofit/PDFs/BWPdf.h" 
+#include "goofit/PDFs/GaussianPdf.h" 
+#include "goofit/PDFs/ConvolutionPdf.h" 
 #include <iostream>
-#include "TRandom.hh" 
+#include "goofit/rootstuff/TRandom.h" 
 
 using namespace std; 
 

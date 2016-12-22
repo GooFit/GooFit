@@ -1,4 +1,4 @@
-#include "KinLimitBWPdf.hh"
+#include "goofit/PDFs/KinLimitBWPdf.h"
 
 EXEC_TARGET fptype getMomentum (const fptype &mass, const fptype &pimass, const fptype &d0mass) {
   if (mass <= 0) return 0; 

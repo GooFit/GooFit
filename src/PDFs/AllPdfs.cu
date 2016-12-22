@@ -1,4 +1,4 @@
-#include "GlobalCudaDefines.hh"
+#include "goofit/GlobalCudaDefines.h"
 
 #include "GooPdf.cu"
 #include "CrystalBallPdf.cu"

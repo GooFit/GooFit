@@ -123,8 +123,8 @@
 //
 //////////////////////////////////////////////////////////////////////////
 
-#include "TRandom.hh"
-#include "TRandom3.hh"
+#include "goofit/rootstuff/TRandom.h"
+#include "goofit/rootstuff/TRandom3.h"
 #include <time.h>
 #include <cmath> 
 

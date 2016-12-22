@@ -1,5 +1,5 @@
-#include "GlobalCudaDefines.hh"
-#include "GooPdf.hh" 
+#include "goofit/GlobalCudaDefines.h"
+#include "goofit/PDFs/GooPdf.h" 
 #include "thrust/sequence.h" 
 #include "thrust/iterator/constant_iterator.h" 
 #include <fstream> 

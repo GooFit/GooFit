@@ -1,4 +1,4 @@
-#include "JohnsonSUPdf.hh"
+#include "goofit/PDFs/JohnsonSUPdf.h"
 
 const fptype SQRT2PI = 2.506628; 
 

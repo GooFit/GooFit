@@ -1,9 +1,9 @@
 #ifndef DALITZPLOT_PDF_HH
 #define DALITZPLOT_PDF_HH
 
-#include "GooPdf.hh" 
-#include "DalitzPlotHelpers.hh" 
-#include "devcomplex.hh"
+#include "goofit/PDFs/GooPdf.h" 
+#include "goofit/PDFs/DalitzPlotHelpers.h" 
+#include "goofit/PDFs/devcomplex.h"
 
 class SpecialResonanceIntegrator;
 class SpecialResonanceCalculator; 

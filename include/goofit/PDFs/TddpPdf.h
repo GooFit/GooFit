@@ -1,9 +1,9 @@
 #ifndef TDDP_PDF_HH
 #define TDDP_PDF_HH
 
-#include "GooPdf.hh" 
-#include "MixingTimeResolution_Aux.hh" 
-#include "DalitzPlotHelpers.hh" 
+#include "goofit/PDFs/GooPdf.h" 
+#include "goofit/PDFs/MixingTimeResolution_Aux.h" 
+#include "goofit/PDFs/DalitzPlotHelpers.h" 
 
 //thrust::tuple can't go down the read-only cache pipeline, so we are creating a structure for this.
 typedef struct

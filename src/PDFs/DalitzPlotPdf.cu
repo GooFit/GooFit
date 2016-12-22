@@ -1,4 +1,4 @@
-#include "DalitzPlotPdf.hh"
+#include "goofit/PDFs/DalitzPlotPdf.h"
 #include <complex>
 using std::complex; 
 

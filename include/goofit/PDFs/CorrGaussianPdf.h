@@ -1,7 +1,7 @@
 #ifndef CORRGAUSSIAN_PDF_HH
 #define CORRGAUSSIAN_PDF_HH
 
-#include "GooPdf.hh" 
+#include "goofit/PDFs/GooPdf.h" 
 
 class CorrGaussianPdf : public GooPdf {
 public:

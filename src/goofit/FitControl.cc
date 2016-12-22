@@ -1,5 +1,5 @@
-#include "FitControl.hh"
-#include "PdfBase.hh" 
+#include "goofit/FitControl.h"
+#include "goofit/PdfBase.h" 
 
 FitControl::FitControl (bool bin, std::string mn) 
   : binned(bin) 

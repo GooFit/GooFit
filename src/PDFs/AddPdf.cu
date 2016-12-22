@@ -1,4 +1,4 @@
-#include "AddPdf.hh"
+#include "goofit/PDFs/AddPdf.h"
 
 EXEC_TARGET fptype device_AddPdfs (fptype* evt, fptype* p, unsigned int* indices) { 
   int numParameters = RO_CACHE(indices[0]); 

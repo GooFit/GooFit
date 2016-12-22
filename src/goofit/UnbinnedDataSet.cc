@@ -1,4 +1,4 @@
-#include "UnbinnedDataSet.hh"
+#include "goofit/UnbinnedDataSet.h"
 
 // Special constructor for one variable
 UnbinnedDataSet::UnbinnedDataSet (Variable* var, string n)

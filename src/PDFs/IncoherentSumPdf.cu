@@ -1,6 +1,6 @@
-#include "IncoherentSumPdf.hh"
-#include "devcomplex.hh" 
-#include "ResonancePdf.hh"
+#include "goofit/PDFs/IncoherentSumPdf.h"
+#include "goofit/PDFs/devcomplex.h" 
+#include "goofit/PDFs/ResonancePdf.h"
 
 const int resonanceOffset_incoherent = 4; // Offset of the first resonance into the parameter index array. 
 // Notice that this is different from the TddpPdf case because there's no time information. 

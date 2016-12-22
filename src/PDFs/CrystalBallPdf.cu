@@ -1,4 +1,4 @@
-#include "CrystalBallPdf.hh"
+#include "goofit/PDFs/CrystalBallPdf.h"
 
 EXEC_TARGET fptype device_CrystalBall (fptype* evt, fptype* p, unsigned int* indices) {
   // Left-hand tail if alpha is less than 0, 

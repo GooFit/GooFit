@@ -23,7 +23,7 @@ OBJECTS		= TMinuit.o TRandom.o TRandom3.o
 
 all:	wrkdir/libRootUtils.so 
 
-wrkdir/%.o:	src/rootstuff/%.cc include/goofit/rootstuff/%.hh 
+wrkdir/%.o:	src/rootstuff/%.cc include/goofit/rootstuff/%.h 
 	$(CXX) -Iinclude/goofit/rootstuff $(CXXFLAGS) -c -o $@ $<
 
 wrkdir/libRootUtils.so:	$(OBJECTS:%=wrkdir/%)

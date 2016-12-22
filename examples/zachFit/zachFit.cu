@@ -22,14 +22,14 @@
 #include "RooNLLVar.h" 
 
 // GooFit stuff
-#include "Variable.hh" 
-#include "KinLimitBWPdf.hh" 
-#include "ConvolutionPdf.hh"
-#include "GaussianPdf.hh"
-#include "ScaledGaussianPdf.hh"
-#include "ArgusPdf.hh"
-#include "AddPdf.hh"
-#include "FitManager.hh" 
+#include "goofit/Variable.h" 
+#include "goofit/PDFs/KinLimitBWPdf.h" 
+#include "goofit/PDFs/ConvolutionPdf.h"
+#include "goofit/PDFs/GaussianPdf.h"
+#include "goofit/PDFs/ScaledGaussianPdf.h"
+#include "goofit/PDFs/ArgusPdf.h"
+#include "goofit/PDFs/AddPdf.h"
+#include "goofit/FitManager.h" 
 
 //#define OMP_ON 1
 //#ifdef OMP_ON

@@ -1,7 +1,7 @@
 #ifndef ADD_PDF_HH
 #define ADD_PDF_HH
 
-#include "GooPdf.hh" 
+#include "goofit/PDFs/GooPdf.h" 
 
 class AddPdf : public GooPdf {
 public:

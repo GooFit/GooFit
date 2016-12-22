@@ -1,7 +1,7 @@
 #ifndef BINNED_DATASET_HH
 #define BINNED_DATASET_HH
 
-#include "DataSet.hh" 
+#include "goofit/DataSet.h" 
 
 class BinnedDataSet : public DataSet {
   // Class for rectangularly binned datasets - every bin the same size. 

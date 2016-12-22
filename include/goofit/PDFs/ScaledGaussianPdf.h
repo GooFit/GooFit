@@ -1,7 +1,7 @@
 #ifndef SCALEDGAUSSIAN_PDF_HH
 #define SCALEDGAUSSIAN_PDF_HH
 
-#include "GooPdf.hh" 
+#include "goofit/PDFs/GooPdf.h" 
 
 class ScaledGaussianPdf : public GooPdf {
 public:

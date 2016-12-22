@@ -1,4 +1,4 @@
-#include "LandauPdf.hh"
+#include "goofit/PDFs/LandauPdf.h"
 
 // LANDAU pdf : algorithm from CERNLIB G110 denlan
 // same algorithm is used in GSL 

@@ -9,7 +9,7 @@ See *.cu file for more details
 #ifndef EVAL_VAR_HH
 #define EVAL_VAR_HH
 
-#include "DalitzPlotHelpers.hh" 
+#include "goofit/PDFs/DalitzPlotHelpers.h" 
 #include <mcbooster/GTypes.h>
 #include <mcbooster/Vector4R.h>
 #include <mcbooster/GContainers.h>

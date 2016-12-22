@@ -1,4 +1,4 @@
-#include "CorrGaussianPdf.hh"
+#include "goofit/PDFs/CorrGaussianPdf.h"
 
 EXEC_TARGET fptype device_CorrGaussian (fptype* evt, fptype* p, unsigned int* indices) {
   fptype x = evt[indices[2 + indices[0]]]; 

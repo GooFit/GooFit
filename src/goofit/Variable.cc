@@ -1,4 +1,4 @@
-#include "Variable.hh"
+#include "goofit/Variable.h"
 #include <cmath> 
 
 Variable::Variable (std::string n) 

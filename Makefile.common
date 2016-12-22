@@ -83,7 +83,7 @@ endif
 
 
 ROOT_INCLUDES = -I$(ROOTSYS)/include
-INCLUDES += -I$(SRCDIR) -I$(GOOFITDIR) -I$(GOOFITDIR)/rootstuff -I$(GOOFITDIR)/MCBooster $(ROOT_INCLUDES)
+INCLUDES += -I$(SRCDIR) -I$(GOOFITDIR)/include/goofit -I$(GOOFITDIR)/rootstuff -I$(GOOFITDIR)/MCBooster $(ROOT_INCLUDES)
 
 ROOT_LIBS     =  $(shell root-config --libs) -lMinuit
 ROOTRIPDIR	= $(GOOFITDIR)/rootstuff

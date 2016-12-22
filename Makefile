@@ -15,7 +15,7 @@ goofit:		$(THRUSTO_B) $(ROOTUTILLIB)
 	@echo "Built GooFit objects" 
 
 # One rule for GooFit objects.
-wrkdir/%.o:	%.cc %.hh 
+wrkdir/%.o:	src/goofit/%.cc include/goofit/%.hh 
 	@mkdir -p wrkdir
 	$(CXX) $(INCLUDES) $(CXXFLAGS) -c -o $@ $<
 

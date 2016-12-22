@@ -1,4 +1,4 @@
-#include "../GlobalCudaDefines.hh"
+#include "GlobalCudaDefines.hh"
 #include "GooPdf.hh" 
 #include "thrust/sequence.h" 
 #include "thrust/iterator/constant_iterator.h" 

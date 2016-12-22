@@ -1,11 +1,11 @@
 // ROOT stuff
-#include "goofit/rootstuff/TRandom.h"
+#include "TRandom.h"
 #include "TCanvas.h" 
 #include "TFile.h" 
 #include "TH1F.h" 
 #include "TH2F.h" 
 #include "TStyle.h" 
-#include "goofit/rootstuff/TRandom3.h" 
+#include "TRandom3.h" 
 #include "TLegend.h" 
 #include "TText.h" 
 #include "TLine.h" 

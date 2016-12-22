@@ -5,7 +5,7 @@
 #include "goofit/FitManager.h" 
 #include "goofit/UnbinnedDataSet.h" 
 
-#include "goofit/rootstuff/TRandom.h" 
+#include "TRandom.h" 
 #include "TH1F.h"
 #include "TH2F.h"
 #include "TStyle.h" 

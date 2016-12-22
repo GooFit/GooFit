@@ -5,7 +5,8 @@
 #include "goofit/PDFs/GaussianPdf.h" 
 #include "goofit/PDFs/ConvolutionPdf.h" 
 #include <iostream>
-#include "goofit/rootstuff/TRandom.h" 
+
+#include "TRandom.h" 
 
 using namespace std; 
 

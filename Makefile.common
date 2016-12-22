@@ -90,6 +90,6 @@ WRKDIR = $(GOOFITDIR)/wrkdir
 ROOTUTILLIB	= $(WRKDIR)/libRootUtils.so 
 GOOFITLIBS += -L$(GOOFITDIR)/rootstuff -lRootUtils 
 
-GOOFIT_LIBLIST = Variable FitManager AllPdfs Faddeeva Fitntl PdfBase DataSet BinnedDataSet UnbinnedDataSet FuncrWriter 
+GOOFIT_LIBLIST = Variable FitManager AllPdfs Faddeeva FitControl PdfBase DataSet BinnedDataSet UnbinnedDataSet FunctorWriter 
 THRUSTO		= $(GOOFIT_LIBLIST:%=$(WRKDIR)/%.o)
 THRUSTO_B	= $(GOOFIT_LIBLIST:%=wrkdir/%.o)

@@ -4,15 +4,16 @@
 #include "goofit/PDFs/NovosibirskPdf.h"
 #include "goofit/PDFs/BifurGaussPdf.h" 
 
-#include "goofit/rootstuff/TRandom.h" 
 #if HAVE_ROOT
-#  include "goofit/Variable.h"
-#  include "TH1F.h"
+#include "goofit/Variable.h"
+#include "TH1F.h"
 //#  include "TH2F.h"			// unused?
-#  include "TStyle.h"
-#  include "TCanvas.h"
+#include "TStyle.h"
+#include "TCanvas.h"
+#include "TRandom.h" 
 #else
-#  include "fakeTH1F.h"
+#include "goofit/rootstuff/TRandom.h" 
+#include "goofit/rootstuff/fakeTH1F.h"
 #endif
 
 #include <sys/time.h>

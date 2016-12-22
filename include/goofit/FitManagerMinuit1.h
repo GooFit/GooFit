@@ -1,7 +1,8 @@
 #ifndef FITMANAGER_MINUIT1_HH
 #define FITMANAGER_MINUIT1_HH
 
-#include "goofit/rootstuff/TMinuit.h" 
+#include "TMinuit.h" 
+
 extern PdfBase* pdfPointer; 
 extern int numPars; 
 

@@ -83,12 +83,11 @@ endif
 
 
 ROOT_INCLUDES = -I$(ROOTSYS)/include
-INCLUDES += -I$(GOOFITDIR)/include/goofit/PDFs -I$(GOOFITDIR)/include/goofit -I$(GOOFITDIR)/rootstuff -I$(GOOFITDIR)/MCBooster $(ROOT_INCLUDES)
+INCLUDES += -I$(GOOFITDIR)/include/goofit/PDFs -I$(GOOFITDIR)/include/goofit -I$(GOOFITDIR)/include/goofit/rootstuff -I$(GOOFITDIR)/MCBooster $(ROOT_INCLUDES)
 
 ROOT_LIBS     =  $(shell root-config --libs) -lMinuit
-ROOTRIPDIR	= $(GOOFITDIR)/rootstuff
-ROOTUTILLIB	= $(ROOTRIPDIR)/libRootUtils.so 
 WRKDIR = $(GOOFITDIR)/wrkdir
+ROOTUTILLIB	= $(WRKDIR)/libRootUtils.so 
 GOOFITLIBS += -L$(GOOFITDIR)/rootstuff -lRootUtils 
 
 THRUSTO		= $(WRKDIR)/Variable.o $(WRKDIR)/FitManager.o $(WRKDIR)/AllPdfs.o $(WRKDIR)/Faddeeva.o $(WRKDIR)/FitControl.o $(WRKDIR)/PdfBase.o $(WRKDIR)/DataSet.o $(WRKDIR)/BinnedDataSet.o $(WRKDIR)/UnbinnedDataSet.o $(WRKDIR)/FunctorWriter.o 

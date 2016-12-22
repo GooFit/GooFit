@@ -21,14 +21,14 @@ OBJECTS		= TMinuit.o TRandom.o TRandom3.o
 
 .SUFFIXES: 
 
-all:	libRootUtils.so 
+all:	wrkdir/libRootUtils.so 
 
-%.o:	%.cc %.hh 
-	$(CXX) -I. $(CXXFLAGS) -c -o $@ $<
+wrkdir/%.o:	src/rootstuff/%.cc include/goofit/rootstuff/%.hh 
+	$(CXX) -Iinclude/goofit/rootstuff $(CXXFLAGS) -c -o $@ $<
 
-libRootUtils.so:	$(OBJECTS)
-			$(LD) $(LDFLAGS) -shared -o $@ $^ 
+wrkdir/libRootUtils.so:	$(OBJECTS:%=wrkdir/%)
+	$(LD) $(LDFLAGS) -shared -o $@ $^ 
 
 clean:
-		@rm -f *.o *.so 
+	@rm -f *.o *.so 
 

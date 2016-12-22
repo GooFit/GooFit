@@ -9,9 +9,9 @@ FUNCTORLIST   += $(wildcard include/goofit/PDFs/*.hh)
 # Handy print for makefile variables (debugging)
 print-%  : ; @echo $* = $($*)
 
-ROOTRIPOBJS	= $(ROOTRIPDIR)/TMinuit.o $(ROOTRIPDIR)/TRandom.o $(ROOTRIPDIR)/TRandom3.o 
+ROOTRIPOBJS	= wrkdir/TMinuit.o wrkdir/TRandom.o wrkdir/TRandom3.o 
 
-goofit:		$(THRUSTO_B) $(ROOTUTILLIB) 
+goofit:		$(THRUSTO_B) wrkdir/libRootUtils.so
 	@echo "Built GooFit objects" 
 
 # One rule for GooFit objects.
@@ -29,8 +29,8 @@ $(ROOTRIPDIR)/%.o:	$(ROOTRIPDIR)/%.cc
 	rm -f $@ 
 	@echo "Postponing $@ for separate Makefile" 
 
-$(ROOTUTILLIB):	$(ROOTRIPOBJS)
-	@cd rootstuff && $(MAKE) 
+wrkdir/libRootUtils.so:
+	$(MAKE) -f Makefile.rootstuff 
 
 FitManager.o:		FitManager.cc FitManager.hh wrkdir/ThrustFitManagerCUDA.o Variable.o 
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
@@ -43,6 +43,5 @@ examples:
 	cd examples && $(MAKE)
 
 clean:
-	@rm -f *.o wrkdir/*
-	cd rootstuff; $(MAKE) clean 
+	@rm -f  wrkdir/*
 

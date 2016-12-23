@@ -1,0 +1,1 @@
+goofit_add_executable(convolution convolution.cu)

@@ -6,13 +6,16 @@ include Makefile.common
 FUNCTORLIST   = $(wildcard src/PDFs/*.cu)
 FUNCTORLIST   += $(wildcard include/goofit/PDFs/*.h)
 
-# Handy print for makefile variables (debugging)
-print-%  : ; @echo $* = $($*)
+warning:
+	@echo "Depreciated: please use the CMake build. A makefile build is still available with make all or make goofit."
 
-ROOTRIPOBJS	= wrkdir/TMinuit.o wrkdir/TRandom.o wrkdir/TRandom3.o 
+all: goofit examples
 
 goofit: $(THRUSTO_B) wrkdir/libRootUtils.so
 	@echo "Built GooFit objects" 
+
+# Handy print for makefile variables (debugging)
+print-%  : ; @echo $* = $($*)
 
 # One rule for GooFit objects.
 wrkdir/%.o:	src/goofit/%.cc include/goofit/%.h 
@@ -44,4 +47,5 @@ examples:
 
 clean:
 	@rm -f  wrkdir/*
+	cd examples && $(MAKE) clean
 

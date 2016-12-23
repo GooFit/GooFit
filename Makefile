@@ -8,6 +8,11 @@ FUNCTORLIST   += $(wildcard include/goofit/PDFs/*.h)
 
 warning:
 	@echo "Depreciated: please use the CMake build. A makefile build is still available with make all or make goofit."
+	@echo "The standard procedure:"
+	@echo "  mkdir build"
+	@echo "  cd build"
+	@echo "  cmake .."
+	@echo "  make"
 
 all: goofit examples
 

@@ -41,7 +41,9 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
     
     include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindCudaArch.cmake)
     select_nvcc_arch_flags(NVCC_FLAGS_EXTRA)
+    message(STATUS ${NVCC_FLAGS_EXTRA})
     list(APPEND CUDA_NVCC_FLAGS ${NVCC_FLAGS_EXTRA})
+    add_definitions("-DTARGET_SM35")
 else()
     include_directories(${PROJECT_SOURCE_DIR}/include/goofit/fakecuda)
     find_package(Thrust REQUIRED)
@@ -98,7 +100,6 @@ function(goofit_add_executable NAMEEXE)
     target_compile_options(${NAMEEXE} PUBLIC -x c++)
 endfunction()
 
-add_definitions("-DTARGET_SM35")
 include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/MCBooster)
 

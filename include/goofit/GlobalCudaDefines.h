@@ -48,7 +48,7 @@ enum gooError {gooSuccess = 0, gooErrorMemoryAllocation};
 #ifdef TARGET_SM35
 #define RO_CACHE(x) __ldg(&x)
 #else
-#define RO_CACHE(x)
+#define RO_CACHE(x) x
 #endif
 #define GET_FUNCTION_ADDR(fname) cudaMemcpyFromSymbol((void**) &host_fcn_ptr, fname, sizeof(void*))
 #define MEMCPY_FROM_SYMBOL(target, source, count, offset, direction) cudaMemcpyFromSymbol(target, source, count, offset, direction)

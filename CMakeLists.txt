@@ -39,10 +39,11 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
     set(CUDA_NVCC_FLAGS; ${CUDA_NVCC_FLAGS}; -std=c++11; ${CMAKE_CXX_FLAGS})
     set(CUDA_SEPARABLE_COMPILATION OFF)
     
-    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindCudaArch.cmake)
-    select_nvcc_arch_flags(NVCC_FLAGS_EXTRA)
-    message(STATUS ${NVCC_FLAGS_EXTRA})
-    list(APPEND CUDA_NVCC_FLAGS ${NVCC_FLAGS_EXTRA})
+    #include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindCudaArch.cmake)
+    #select_nvcc_arch_flags(NVCC_FLAGS_EXTRA)
+    #message(STATUS ${NVCC_FLAGS_EXTRA})
+    #list(APPEND CUDA_NVCC_FLAGS ${NVCC_FLAGS_EXTRA})
+    set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -arch=sm_35")
     add_definitions("-DTARGET_SM35")
 else()
     include_directories(${PROJECT_SOURCE_DIR}/include/goofit/fakecuda)
@@ -64,6 +65,7 @@ endif()
 
 
 find_package(ROOT 6.08 REQUIRED COMPONENTS Minuit)
+include_directories(include/goofit/rootstuff)
 include_directories("${ROOT_INCLUDE_DIRS}")
 link_libraries(${ROOT_LIBRARIES})
 

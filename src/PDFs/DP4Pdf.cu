@@ -86,6 +86,7 @@ __host__ DPPdf::DPPdf (std::string n,
   , cacheToUse(0) 
   , SpinsCalculated(false)
   , generation_offset(0)
+  ,generation_no_norm(false)
 {
   for (std::vector<Variable*>::iterator obsIT = observables.begin(); obsIT != observables.end(); ++obsIT) {
     registerObservable(*obsIT);
@@ -317,11 +318,12 @@ __host__ fptype DPPdf::normalise () const {
                           cachedResSF->end(), 
                           (components.size() + SpinFactors.size() - 1)).begin(),
                           *(sfcalculators[i]));
-
-    thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(norm_M12.begin(), norm_M34.begin(), norm_CosTheta12.begin(), norm_CosTheta34.begin(), norm_phi.begin()))
+      if(!generation_no_norm){
+        thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(norm_M12.begin(), norm_M34.begin(), norm_CosTheta12.begin(), norm_CosTheta34.begin(), norm_phi.begin()))
                       ,thrust::make_zip_iterator(thrust::make_tuple(norm_M12.end(), norm_M34.end(), norm_CosTheta12.end(), norm_CosTheta34.end(), norm_phi.end()))
                       ,(norm_SF.begin() + (i * MCevents)) 
                       ,NormSpinCalculator(parameters, i));
+      }
     }
 
      SpinsCalculated = true;
@@ -359,32 +361,36 @@ __host__ fptype DPPdf::normalise () const {
     }
     
   // lineshape value calculation for the normalisation, also recalculated every time parameter change
-  for (int i = 0; i < components.size() -1 ; ++i) {
-      if(!redoIntegral[i]) continue;
-    thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(norm_M12.begin(), norm_M34.begin(), norm_CosTheta12.begin(), norm_CosTheta34.begin(), norm_phi.begin()))
-                      ,thrust::make_zip_iterator(thrust::make_tuple(norm_M12.end(), norm_M34.end(), norm_CosTheta12.end(), norm_CosTheta34.end(), norm_phi.end()))
-                      ,(norm_LS.begin() + (i * MCevents)) 
-                      ,NormLSCalculator(parameters, i));  
-    }
-
+  if(!generation_no_norm){
+    for (int i = 0; i < components.size() -1 ; ++i) {
+        if(!redoIntegral[i]) continue;
+      thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(norm_M12.begin(), norm_M34.begin(), norm_CosTheta12.begin(), norm_CosTheta34.begin(), norm_phi.begin()))
+                        ,thrust::make_zip_iterator(thrust::make_tuple(norm_M12.end(), norm_M34.end(), norm_CosTheta12.end(), norm_CosTheta34.end(), norm_phi.end()))
+                        ,(norm_LS.begin() + (i * MCevents)) 
+                        ,NormLSCalculator(parameters, i));  
+      }
+  }
 
   thrust::constant_iterator<fptype*> normSFaddress(thrust::raw_pointer_cast(norm_SF.data()));
   thrust::constant_iterator<devcomplex<fptype>* > normLSaddress(thrust::raw_pointer_cast(norm_LS.data()));
   thrust::constant_iterator<int> NumNormEvents(MCevents);
 
   //this does the rest of the integration with the cached lineshape and spinfactor values for the normalization events  
-  fptype sumIntegral = 0;
-  sumIntegral += thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, NumNormEvents, normSFaddress, normLSaddress)),
-          thrust::make_zip_iterator(thrust::make_tuple(eventIndex + MCevents, NumNormEvents, normSFaddress, normLSaddress)),
-          *Integrator,
-          0.,
-          thrust::plus<fptype>());
-
-  //MCevents is the number of normalisation events.
-  sumIntegral/=MCevents;
-  host_normalisation[parameters] = 1.0/sumIntegral;
-  // printf("end of normalise %f\n", sumIntegral);
-  return sumIntegral;   
+  fptype ret = 1.0;
+  if(!generation_no_norm){
+    fptype sumIntegral = 0;
+    sumIntegral += thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, NumNormEvents, normSFaddress, normLSaddress)),
+            thrust::make_zip_iterator(thrust::make_tuple(eventIndex + MCevents, NumNormEvents, normSFaddress, normLSaddress)),
+            *Integrator,
+            0.,
+            thrust::plus<fptype>());
+    //MCevents is the number of normalisation events.
+    sumIntegral/=MCevents;
+    ret = sumIntegral;
+  }
+  host_normalisation[parameters] = 1.0/ret;
+  // printf("end of normalise %f\n", ret);
+  return ret;   
 }
 
 __host__ std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h> DPPdf::GenerateSig (unsigned int numEvents) {
@@ -460,6 +466,7 @@ __host__ std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcboost
   dev_event_array = thrust::raw_pointer_cast(DS->data());
   setDataSize(numEvents, 6);
 
+  generation_no_norm=true; // we need no normalization for generation, but we do need to make sure that norm = 1; 
   SigGenSetIndices();
   copyParams(); 
   normalise();

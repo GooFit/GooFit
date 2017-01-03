@@ -126,7 +126,7 @@ EXEC_TARGET fptype getmass(const unsigned int& pair, fptype& d1, fptype& d2, con
     case 4:
       d1 = m2;
       d2 = m3;
-      mpair = Mass(P3,P3);
+      mpair = Mass(P2,P3);
     break;
     
     case 5:

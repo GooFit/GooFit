@@ -1,1 +1,2 @@
 goofit_add_executable(pipipi0DPFit pipipi0DPFit.cu)
+goofit_add_link(dataFiles)

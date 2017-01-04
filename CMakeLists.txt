@@ -102,6 +102,21 @@ function(goofit_add_executable NAMEEXE)
     target_compile_options(${NAMEEXE} PUBLIC -x c++)
 endfunction()
 
+function(goofit_add_link NAMELINK)
+    add_custom_command(
+        OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
+        COMMAND ${CMAKE_COMMAND} -E create_symlink
+        "${CMAKE_CURRENT_SOURCE_DIR}/${NAMELINK}"
+        "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
+        )
+
+    get_filename_component(a_dir ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+
+    add_custom_target(
+        "${a_dir}_${NAMELINK}" ALL DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
+        )
+endfunction()
+
 include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/MCBooster)
 

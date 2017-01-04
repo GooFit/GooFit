@@ -73,6 +73,8 @@ void getToyData (std::string toyFileName) {
 
   std::ifstream reader;
   reader.open(toyFileName.c_str()); 
+  if(!reader)
+      throw std::runtime_error("Error: Input file does not exist.");
   std::string buffer;
   while (!reader.eof()) {
     reader >> buffer;
@@ -399,7 +401,12 @@ int main (int argc, char** argv) {
 
   // cudaSetDevice(0);
   std::string filename = argc>1 ? argv[1] : "dalitz_toyMC_000.txt";
-  runToyFit(filename);
+  try {
+      runToyFit(filename);
+  } catch(const std::runtime_error &e) {
+      std::cerr << e.what() << std::endl;
+      return 7;
+  }
 
   // Print total minimization time
   double myCPU = stopCPU - startCPU;

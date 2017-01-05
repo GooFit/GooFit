@@ -37,8 +37,8 @@ include_directories(${THRUST_INCLUDE_DIR})
 
 # get ROOT
 find_package(ROOT REQUIRED)
-include_directories(${ROOT_INCLUDE_DIR})
-link_directories(${ROOT_LIBRARY_DIR})
+#include_directories(${ROOT_INCLUDE_DIR})
+#link_directories(${ROOT_LIBRARY_DIR})
 
 #cuda
 find_package(CUDA 6.5) 

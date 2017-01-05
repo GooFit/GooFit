@@ -48,7 +48,7 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
 else()
     include_directories(${PROJECT_SOURCE_DIR}/include/goofit/fakecuda)
     find_package(Thrust REQUIRED)
-    include_directories("${THRUST_INCLUDE_DIRS}")
+    include_directories(SYSTEM "${THRUST_INCLUDE_DIRS}")
 endif()
 
 if(GOOFIT_DEVICE STREQUAL OMP OR GOOFIT_HOST STREQUAL OMP)
@@ -60,15 +60,18 @@ endif()
 
 if(GOOFIT_DEVICE STREQUAL TBB OR GOOFIT_HOST STREQUAL TBB)
 find_package(TBB REQUIRED)
-include_directories("${TBB_INCLUDE_DIRS}")
+include_directories(SYSTEM "${TBB_INCLUDE_DIRS}")
 endif()
 
 
+# The target is setup to avoid clashes with fakeroot
+# Include directories are not picked up by FindCUDA
 find_package(ROOT 6.08 REQUIRED COMPONENTS Minuit)
-include_directories(include/goofit/rootstuff)
-include_directories("${ROOT_INCLUDE_DIRS}")
-link_libraries(${ROOT_LIBRARIES})
-
+include_directories(BEFORE include/goofit/rootstuff)
+include_directories(AFTER SYSTEM "${ROOT_INCLUDE_DIRS}")
+add_library(Root INTERFACE)
+target_link_libraries(Root INTERFACE ${ROOT_LIBRARIES})
+# Note: it is very important that the includes and links for root are after fakeroot!
 
 #if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 #    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
@@ -123,8 +126,9 @@ include_directories(${PROJECT_SOURCE_DIR}/MCBooster)
 add_subdirectory(src)
 
 add_library(goofit_lib INTERFACE)
-target_link_libraries(goofit_lib INTERFACE goofit_base PDFs rootstuff)
+target_link_libraries(goofit_lib INTERFACE goofit_base PDFs rootstuff Root)
 
 add_subdirectory(examples)
 
 export(PACKAGE GooFit)
+

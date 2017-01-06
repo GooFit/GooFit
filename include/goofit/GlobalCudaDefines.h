@@ -24,8 +24,6 @@ extern int host_callnumber;
 #define MEMCPY_FROM_SYMBOL(target, source, count, offset, direction) memcpy((char*) target, ((char*) source)+offset, count)
 #define GET_FUNCTION_ADDR(fname) host_fcn_ptr = (void*) fname
 #define SYNCH dummySynch
-#define THREADIDX (omp_get_thread_num())
-#define BLOCKDIM (omp_get_num_threads())
 #define BLOCKIDX (1)
 void dummySynch (); 
 #define CONST_PI M_PI
@@ -33,7 +31,20 @@ void dummySynch ();
 // conflict in Thrust from including driver_types.h
 enum gooError {gooSuccess = 0, gooErrorMemoryAllocation};
 #define RO_CACHE(x) x
-#else
+#endif
+
+#if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_OMP
+
+#define THREADIDX (omp_get_thread_num())
+#define BLOCKDIM (omp_get_num_threads())
+
+#elif THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_TBB
+
+#define THREADIDX (1)
+#define BLOCKDIM (1)
+
+#elif THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_CUDA
+
 // CUDA target - defaults
 #define ALIGN(n) __align__(n)
 #define MEM_DEVICE __device__
@@ -60,6 +71,11 @@ enum gooError {gooSuccess = cudaSuccess,
 #define BLOCKDIM (blockDim.x)
 #define BLOCKIDX (blockIdx.x)
 #define CONST_PI CUDART_PI
+
+#else
+
+#define THREADIDX (1)
+#define BLOCKDIM (1)
 #endif
 
 gooError gooMalloc (void** target, size_t bytes); 

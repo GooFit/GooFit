@@ -1,4 +1,4 @@
-/*
+o*
  * DecayMothers.cuh
  *
  * Copyright 2016 Antonio Augusto Alves Junior
@@ -110,7 +110,7 @@ struct DecayMothers
 
 		fTeCmTm = particles[0]->mass(); // total energy in C.M. minus the sum of the masses
 
-		#pragma unroll 9
+		#pragma unroll (9)
 		for (size_t n = 0; n < fNDaughters; n++)
 		{
 			fTeCmTm -= fMasses[n];
@@ -120,7 +120,7 @@ struct DecayMothers
 		GReal_t emmin = 0.0;
 		GReal_t wtmax = 1.0;
 
-		#pragma unroll 9
+		#pragma unroll (9)
 		for (size_t n = 1; n < fNDaughters; n++)
 		{
 			emmin += fMasses[n - 1];
@@ -149,7 +149,7 @@ struct DecayMothers
 
 		if (fNDaughters > 2)
 		{
-			#pragma unroll 9
+			#pragma unroll (9)
 			for (size_t n = 1; n < fNDaughters - 1; n++)
 				rno[n] = uniDist(randEng) ;
 			bbsort(&rno[1], fNDaughters - 2);
@@ -159,7 +159,7 @@ struct DecayMothers
 
 		GReal_t invMas[kMAXP], sum = 0.0;
 
-		#pragma unroll 9
+		#pragma unroll (9)
 		for (size_t n = 0; n < fNDaughters; n++)
 		{
 			sum += fMasses[n];
@@ -174,7 +174,7 @@ struct DecayMothers
 
 		GReal_t pd[kMAXP];
 
-		#pragma unroll 9
+		#pragma unroll (9)
 		for (size_t n = 0; n < fNDaughters - 1; n++)
 		{
 			pd[n] = pdk(invMas[n + 1], invMas[n], fMasses[n + 1]);
@@ -188,7 +188,7 @@ struct DecayMothers
 		particles[1]->set(sqrt(pd[0] * pd[0] + fMasses[0] * fMasses[0]), 0.0,
 				pd[0], 0.0);
 
-		#pragma unroll 9
+		#pragma unroll (9)
 		for (size_t i = 1; i < fNDaughters; i++)
 		{
 
@@ -231,7 +231,7 @@ struct DecayMothers
 		//
 		//---> final boost of all particles to the mother's frame
 		//
-		#pragma unroll 9
+		#pragma unroll (9)
 		for (size_t n = 0; n < fNDaughters; n++)
 		{
 

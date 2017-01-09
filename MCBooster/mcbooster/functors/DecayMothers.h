@@ -1,4 +1,4 @@
-o*
+/*
  * DecayMothers.cuh
  *
  * Copyright 2016 Antonio Augusto Alves Junior

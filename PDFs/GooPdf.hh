@@ -1,5 +1,6 @@
 #ifndef THRUST_PDF_FUNCTOR_HH
 #define THRUST_PDF_FUNCTOR_HH
+#include "ThrustOverride.h"
 #include <stdlib.h>
 #include <math.h>
 #include <thrust/device_vector.h>

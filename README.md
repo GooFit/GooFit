@@ -56,21 +56,21 @@ A few standard cmake tricks:
 
 
 
-## Classic Makefile system (depreciated)
-
-* You should set `CUDALOCATION` for your system
-
-* You should have run source thisroot.sh to setup ROOT paths and other environment variables
-
-* Set `TARGET_OMP=1` if you want to use OMP
-  * Checkout a copy of CUDA's thrust next to the goofit repository (there's nothing to compile)
-  * If you already have thrust in a different location, set `THRUSTLOCATION`
-
-```
-make all TARGET_OMP=1
-```
-
-Following the fairly standard makefile convention, all programs are built in-place instead of in a build directory.
+> ### Classic Makefile system (depreciated)
+>   
+> * You should set `CUDALOCATION` for your system
+> 
+> * You should have run source thisroot.sh to setup ROOT paths and other environment variables
+> 
+> * Set `TARGET_OMP=1` if you want to use OMP
+>   * Checkout a copy of CUDA's thrust next to the goofit repository (there's nothing to compile)
+>   * If you already have thrust in a different location, set `THRUSTLOCATION`
+> 
+> ```
+> make all TARGET_OMP=1
+> ```
+> 
+> Following the fairly standard makefile convention, all programs are built in-place instead of in a build directory.
 
 ## Running the Examples
 
@@ -95,7 +95,7 @@ goofit_add_link(SomeNeededDataFile.txt)
 
 The first line adds your `.cu` file with goofit code as an executible, and the second one sets up a symbolic link to the data file (or any file) in the build directory to the source directory. To get the example to build when you build goofit, add the name of your directory to `examples/CMakeLists.txt`.
 
-> ## Note:
+> ### Note:
 > If you want to extend the Makefile system instead, copy a Makefile from a different directory, changing the relevent project name (only one program per directory supported), and make a new target in `examples/Makefile`. 
 
 ## Acknowledgement

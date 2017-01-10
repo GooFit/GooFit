@@ -70,6 +70,8 @@ A few standard cmake tricks:
 make all TARGET_OMP=1
 ```
 
+Following the fairly standard makefile convention, all programs are built in-place instead of in a build directory.
+
 ## Running the Examples
 
 * To run all the examples, with timing information, use:
@@ -80,6 +82,21 @@ make all TARGET_OMP=1
 (This requires the Plumbum library, install with `pip install plumbum`, `pip install --user plumbum`, or `conda -c conda-forge plumbum`)
 
 If you want to run an individual example, those are in subdirectories in examples (built products are in your build directory, the source is in `goofit/examples`).
+
+
+## Adding a new example:
+
+The examples are designed to be easy to add to. Make a new directory, then add a new CMakeLists.txt in your directory with one or more of the following two lines:
+
+```
+goofit_add_executible(MyNewExample MyNewExample.cu)
+goofit_add_link(SomeNeededDataFile.txt)
+```
+
+The first line adds your `.cu` file with goofit code as an executible, and the second one sets up a symbolic link to the data file (or any file) in the build directory to the source directory. To get the example to build when you build goofit, add the name of your directory to `examples/CMakeLists.txt`.
+
+> ## Note:
+> If you want to extend the Makefile system instead, copy a Makefile from a different directory, changing the relevent project name (only one program per directory supported), and make a new target in `examples/Makefile`. 
 
 ## Acknowledgement
 

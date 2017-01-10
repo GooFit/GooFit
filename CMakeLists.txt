@@ -13,6 +13,7 @@ endif()
 
 set(DEVICE_LISTING CUDA OMP TBB CPP)
 set(HOST_LISTING OMP TBB CPP)
+mark_as_advanced(DEVICE_LISTING HOST_LISTING)
 
 set(GOOFIT_DEVICE CUDA CACHE STRING "The compute device, options are ${DEVICE_LISTING}")
 set(GOOFIT_HOST OMP CACHE STRING "The compute device, options are ${HOST_LISTING}")
@@ -33,18 +34,29 @@ add_definitions("-DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_${GOOFIT_HOST}")
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 
+set(ARCH_SETTINGS 20 21 30 32 35 37 50 52 53 60 61 62 70 71)
+set(GOOFIT_ARCH sm_35 CACHE STRING "The compute architecture, valid settings are ${ARCH_SETTINGS}")
+mark_as_advanced(ARCH_SETTINGS)
+if(NOT ${GOOFIT_ARCH} IN_LIST ARCH_SETTINGS)
+    message(FATAL_ERROR "You must select a device from ${ARCH_LISTING}, not ${GOOFIT_ARCH}")
+endif()
+
+
 if(GOOFIT_DEVICE STREQUAL CUDA)
     find_package(CUDA 6.0 REQUIRED)
 
     set(CUDA_NVCC_FLAGS; ${CUDA_NVCC_FLAGS}; -std=c++11; ${CMAKE_CXX_FLAGS})
     set(CUDA_SEPARABLE_COMPILATION OFF)
-    
+   
+    # Auto compute architecture
     #include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindCudaArch.cmake)
     #select_nvcc_arch_flags(NVCC_FLAGS_EXTRA)
     #message(STATUS ${NVCC_FLAGS_EXTRA})
     #list(APPEND CUDA_NVCC_FLAGS ${NVCC_FLAGS_EXTRA})
-    set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -arch=sm_35")
-    add_definitions("-DTARGET_SM35")
+    set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -arch=sm_${GOOFIT_ARCH}")
+    if(NOT ${GOOFIT_ARCH} LESS 35)
+        add_definitions("-DTARGET_SM35")
+    endif()
 else()
     include_directories(${PROJECT_SOURCE_DIR}/include/goofit/fakecuda)
     find_package(Thrust REQUIRED)

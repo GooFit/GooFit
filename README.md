@@ -9,7 +9,7 @@ GooFit using OpenMP.
  * CUDA 7.5 and 8.0 tested, older versions should work for now
  * An nVidia GPU supporting compute capability at least 2.0 (3.5 recommended)
 * If using OpenMP:
- * A compiler supporting OpenMP (GCC4.8+ and Intel 17 tested)
+ * A compiler supporting OpenMP and C++11 (GCC 4.8+ and Intel 17 tested)
 
 ## Getting the files
 
@@ -42,6 +42,9 @@ cmake .. -DGOOFIT_DEVICE=CUDA -DGOOFIT_HOST=OMP
 
 Valid options are `CUDA` (device only), `OMP`, `CPP`, and `TBB` (unavailable currently).
 
+Other custom options supported: `-DGOOFIT_ARCH=35` (any valid number from 20 to 62): sets the compute architecture.
+
+
 A few standard cmake tricks:
 
 * Use `VERBOSE=1` to see the commands used to build the files
@@ -55,12 +58,11 @@ A few standard cmake tricks:
 * CMake reruns when needed when you `make`
 
 
-
-> ### Classic Makefile system (depreciated)
+> ## Classic Makefile system (depreciated)
 >   
 > * You should set `CUDALOCATION` for your system
 > 
-> * You should have run source thisroot.sh to setup ROOT paths and other environment variables
+> * You should have run source `thisroot.sh` to setup ROOT paths and other environment variables
 > 
 > * Set `TARGET_OMP=1` if you want to use OMP
 >   * Checkout a copy of CUDA's thrust next to the goofit repository (there's nothing to compile)
@@ -76,10 +78,10 @@ A few standard cmake tricks:
 
 * To run all the examples, with timing information, use:
 ```
-./examples/int_testing.py
+./examples/RunAll.py
 ```
 
-(This requires the Plumbum library, install with `pip install plumbum`, `pip install --user plumbum`, or `conda -c conda-forge plumbum`)
+(This requires the [Plumbum](https://plumbum.readthedocs.io/en/latest/) library, install with `pip install plumbum`, `pip install --user plumbum`, or `conda -c conda-forge plumbum`.)
 
 If you want to run an individual example, those are in subdirectories in examples (built products are in your build directory, the source is in `goofit/examples`).
 
@@ -95,8 +97,12 @@ goofit_add_link(SomeNeededDataFile.txt)
 
 The first line adds your `.cu` file with goofit code as an executible, and the second one sets up a symbolic link to the data file (or any file) in the build directory to the source directory. To get the example to build when you build goofit, add the name of your directory to `examples/CMakeLists.txt`.
 
-> ### Note:
 > If you want to extend the Makefile system instead, copy a Makefile from a different directory, changing the relevent project name (only one program per directory supported), and make a new target in `examples/Makefile`. 
+
+## Converting from older GooFit code
+ 
+The build system underwent a major upgrade in the move to CMake. The folders that were introduced to keep the includes structured require modifications of source code, converting lines like `#include "Variable.hh" to `#include "goofit/Variable.h`. This modification can be done for you by running the provided script, `scripts/ModernizeGooFit.py` on your source files (requires Python and Plumbum). You should remove your old Makefiles and use the new `CMakeFiles.txt` files provided in examples - this should require
+writing about two lines of code instead of the 50 or so previously needed.
 
 ## Acknowledgement
 

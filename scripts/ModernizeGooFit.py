@@ -59,7 +59,7 @@ def fix_files(src):
 
 
 
-class ConvertFiles(cli.Application):
+class ModernizeGooFit(cli.Application):
 
     @cli.positional(cli.ExistingFile)
     def main(self, *src):
@@ -67,5 +67,5 @@ class ConvertFiles(cli.Application):
 
 
 if __name__ == '__main__':
-    ConvertFiles()
+    ModernizeGooFit()
 

@@ -12,4 +12,4 @@ add_subdirectory(simpleFit)
 add_subdirectory(TDDP4)
 add_subdirectory(zachFit)
 
-goofit_add_link(int_testing.py)
+goofit_add_link(RunAll.py)

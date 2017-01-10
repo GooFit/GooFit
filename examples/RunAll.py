@@ -4,7 +4,11 @@
 # It requires plumbum (pip install plumbum or conda install -c conda-forge plumbum)
 
 from __future__ import print_function
-from plumbum import local, cli, TEE, colors
+try:
+    from plumbum import local, cli, TEE, colors
+except ImportError:
+    print("This file uses the plumbum library. Install with pip or conda (user directory or virtual environment OK).")
+    raise
 import time
 
 # Simple timer
@@ -55,7 +59,7 @@ def make_results():
     return results
 
 
-class TestAll(cli.Application):
+class RunAll(cli.Application):
 
     @cli.positional(int)
     def main(self, threads=None):
@@ -80,4 +84,4 @@ class TestAll(cli.Application):
             colors.info.print("OMP Threads:", threads)
 
 if __name__ == '__main__':
-    TestAll()
+    RunAll()

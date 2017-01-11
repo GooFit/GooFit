@@ -101,7 +101,7 @@ The first line adds your `.cu` file with goofit code as an executible, and the s
 
 ## Adding a new project
   
-If you'd like to make a seperate goofit project, you can do so. Simply checkout your project inside goofit, with the name `work` or `goofit`+something. CMake will automatically pick up those directories and build them, and GooFit's git will ignore them. Otherwise, they act just like the example directory.
+If you'd like to make a seperate goofit project, you can do so. Simply checkout your project inside goofit, with the name `work` or `goofit`+something. CMake will automatically pick up those directories and build them, and GooFit's git will ignore them. Otherwise, they act just like the example directory. If you add a new directory, you will need to explicitly rerun cmake, as that cannot be picked up by the makefile.
 
 ## Converting from older GooFit code
  

@@ -38,9 +38,13 @@ ifneq ($(PROFILE),)
 CXXFLAGS += -DPROFILING=yes
 endif 
 
+# /usr/local/cuda-8.0/bin/nvcc -M -D__CUDACC__ /home/schreihf/git/fitting/goofit/src/PDFs/AllPdfs.cu -o /home/schreihf/git/fitting/goofit/build-cuda/src/PDFs/CMakeFiles/PDFs.dir//PDFs_generated_AllPdfs.cu.o.NVCC-depend -m64 -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA -DMCBOOSTER_BACKEND=CUDA -DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_OMP -Xcompiler ,\"-fopenmp\",\"-O2\",\"-DNDEBUG\" -std=c++11 -gencode arch=compute_61,code=sm_61 -DNVCC -I/usr/local/cuda-8.0/include
+# -I/home/schreihf/git/fitting/goofit/include/goofit/rootstuff -I/opt/root-6.08.02/include -I/home/schreihf/git/fitting/goofit/include -I/home/schreihf/git/fitting/goofit/MCBooster -I/home/schreihf/git/fitting/goofit/src/PDFs -I/usr/local/cuda-8.0/include
+#
+
 ifeq ($(TARGET_OMP),)
 # nvcc (CUDA)
-CXXFLAGS += -DTARGET_SM35 -arch=sm_35 -DMCBOOSTER_BACKEND=CUDA
+CXXFLAGS += -DTARGET_SM35 -gencode arch=compute_35,code=sm_35 -DMCBOOSTER_BACKEND=CUDA
 CXXFLAGS += -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA -DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_OMP
 CXXFLAGS += -Xcompiler -fopenmp
 LDFLAGS += -lgomp

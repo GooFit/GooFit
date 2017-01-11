@@ -20,3 +20,5 @@ html/
 *.out
 *.toc
 *.root
+/work/*
+/goofit*

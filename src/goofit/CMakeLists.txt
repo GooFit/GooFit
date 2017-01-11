@@ -46,5 +46,4 @@ set(lib_list
 
 add_library(goofit_base INTERFACE)
 target_link_libraries(goofit_base INTERFACE ${lib_list})
-
-export(TARGETS goofit_base ${lib_list} FILE ${PROJECT_BINARY_DIR}/GooFitConfig.cmake)
+install(TARGETS goofit_base ${lib_list} EXPORT GooFitTargets DESTINATION lib)

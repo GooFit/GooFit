@@ -142,5 +142,15 @@ target_link_libraries(goofit_lib INTERFACE goofit_base PDFs rootstuff Root)
 
 add_subdirectory(examples)
 
+if(EXISTS work)
+    add_subdirectory(work)
+endif()
+
+file(GLOB list_of_packages RELATIVE ${PROJECT_SOURCE_DIR} goofit*)
+foreach(d ${list_of_packages})
+    add_subdirectory(${d})
+endforeach()
+
+export(EXPORT GooFitTargets FILE GooFitConfig.cmake)
 export(PACKAGE GooFit)
 

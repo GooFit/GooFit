@@ -7,4 +7,4 @@ set(SRC
 
 add_library(rootstuff STATIC ${SRC})
 target_include_directories(rootstuff PUBLIC ${PROJECT_SOURCE_DIR}/include/goofit/rootstuff)
-export(TARGETS rootstuff APPEND FILE ${PROJECT_BINARY_DIR}/GooFitConfig.cmake)
+install(TARGETS rootstuff EXPORT GooFitTargets DESTINATION lib)

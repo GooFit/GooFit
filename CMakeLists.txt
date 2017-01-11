@@ -34,11 +34,11 @@ add_definitions("-DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_${GOOFIT_HOST}")
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 
-set(ARCH_SETTINGS 20 21 30 32 35 37 50 52 53 60 61 62 70 71)
-set(GOOFIT_ARCH sm_35 CACHE STRING "The compute architecture, valid settings are ${ARCH_SETTINGS}")
+set(ARCH_SETTINGS 20 21 30 32 35 37 50 52 53 60 61 62)
+set(GOOFIT_ARCH 35 CACHE STRING "The compute architecture, valid settings are ${ARCH_SETTINGS}")
 mark_as_advanced(ARCH_SETTINGS)
 if(NOT ${GOOFIT_ARCH} IN_LIST ARCH_SETTINGS)
-    message(FATAL_ERROR "You must select a device from ${ARCH_LISTING}, not ${GOOFIT_ARCH}")
+    message(FATAL_ERROR "You must select a device from ${ARCH_SETTINGS}, not ${GOOFIT_ARCH}")
 endif()
 
 

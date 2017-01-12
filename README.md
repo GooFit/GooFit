@@ -42,7 +42,11 @@ cmake .. -DGOOFIT_DEVICE=CUDA -DGOOFIT_HOST=OMP
 
 Valid options are `CUDA` (device only), `OMP`, `CPP`, and `TBB` (unavailable currently).
 
-Other custom options supported: `-DGOOFIT_ARCH=35` (any valid number from 20 to 62): sets the compute architecture.
+Other custom options supported along with the defaults:
+
+* `-DGOOFIT_ARCH=35` (any valid number from 20 to 62): sets the compute architecture.
+* `-DGOOFIT_EXAMPLES=ON`: Build the examples
+* `-DGOOFIT_PACKAGES=ON`: Build any packages found with the name `goofit*`
 
 
 A few standard cmake tricks:
@@ -91,22 +95,22 @@ If you want to run an individual example, those are in subdirectories in example
 The examples are designed to be easy to add to. Make a new directory, then add a new CMakeLists.txt in your directory with one or more of the following two lines:
 
 ```
+goofit_add_directory()
 goofit_add_executible(MyNewExample MyNewExample.cu)
-goofit_add_link(SomeNeededDataFile.txt)
 ```
 
-The first line adds your `.cu` file with goofit code as an executible, and the second one sets up a symbolic link to the data file (or any file) in the build directory to the source directory. To get the example to build when you build goofit, add the name of your directory to `examples/CMakeLists.txt`.
+The first line adds your `.cu` file with goofit code as an executible, and the second one sets up a symbolic links to the source and datafiles in the build directory to the source directory. If you perfer to only have some files symbolically linked, use `goofit_add_link(filename.ext)` explicitly for each file. To get the example to build when you build goofit, add the name of your directory to `examples/CMakeLists.txt`.
 
 > If you want to extend the Makefile system instead, copy a Makefile from a different directory, changing the relevent project name (only one program per directory supported), and make a new target in `examples/Makefile`. 
 
 ## Adding a new project
   
-If you'd like to make a seperate goofit project, you can do so. Simply checkout your project inside goofit, with the name `work` or `goofit`+something. CMake will automatically pick up those directories and build them, and GooFit's git will ignore them. Otherwise, they act just like the example directory. If you add a new directory, you will need to explicitly rerun cmake, as that cannot be picked up by the makefile.
+If you'd like to make a seperate goofit project, you can do so. Simply checkout your project inside goofit, with the name `work` or `goofit`+something. CMake will automatically pick up those directories and build them, and GooFit's git will ignore them. Otherwise, they act just like the example directory. If you add a new directory, you will need to explicitly rerun cmake, as that cannot be picked up by the makefile. The automatic search can be turned off with the `GOOFIT_PROJECTS` option.
 
 ## Converting from older GooFit code
  
 The build system underwent a major upgrade in the move to CMake. The folders that were introduced to keep the includes structured require modifications of source code, converting lines like `#include "Variable.hh"` to `#include "goofit/Variable.h`. This modification can be done for you by running the provided script, `scripts/ModernizeGooFit.py` on your source files (requires Python and Plumbum). You should remove your old Makefiles and use the new `CMakeFiles.txt` files provided in examples - this should require
-writing about two lines of code instead of the 50 or so previously needed.
+writing two lines of code instead of the 50 or so previously needed.
 
 ## Acknowledgement
 

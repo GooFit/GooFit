@@ -91,6 +91,7 @@ target_link_libraries(Root INTERFACE ${ROOT_LIBRARIES})
 #    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -xHost -march=native")
 #endif()
  
+
 function(goofit_add_library GNAME)
     if(GOOFIT_DEVICE STREQUAL CUDA)
         cuda_add_library(${GNAME} STATIC ${ARGN})
@@ -118,18 +119,31 @@ function(goofit_add_executable NAMEEXE)
 endfunction()
 
 function(goofit_add_link NAMELINK)
-    add_custom_command(
-        OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
-        COMMAND ${CMAKE_COMMAND} -E create_symlink
-        "${CMAKE_CURRENT_SOURCE_DIR}/${NAMELINK}"
-        "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
-        )
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${NAMELINK}")
+        add_custom_command(
+            OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
+            COMMAND ${CMAKE_COMMAND} -E create_symlink
+            "${CMAKE_CURRENT_SOURCE_DIR}/${NAMELINK}"
+            "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
+            )
 
-    get_filename_component(a_dir ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+        get_filename_component(a_dir ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 
-    add_custom_target(
-        "${a_dir}_${NAMELINK}" ALL DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
-        )
+        add_custom_target(
+            "${a_dir}_${NAMELINK}" ALL DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
+            )
+    endif()
+endfunction()
+
+
+function(goofit_add_directory)
+    file(GLOB directory_listing RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *)
+    set(skip_files CMakeLists.txt Makefile makefile .gitignore)
+    foreach(f ${directory_listing})
+        if(NOT ${f} IN_LIST skip_files)
+            goofit_add_link(${f})
+        endif()
+    endforeach()
 endfunction()
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
@@ -140,7 +154,10 @@ add_subdirectory(src)
 add_library(goofit_lib INTERFACE)
 target_link_libraries(goofit_lib INTERFACE goofit_base PDFs rootstuff Root)
 
-add_subdirectory(examples)
+option(GOOFIT_EXAMPLES ON)
+if(GOOFIT_EXAMPLES)
+    add_subdirectory(examples)
+endif()
 
 if(EXISTS work)
     add_subdirectory(work)

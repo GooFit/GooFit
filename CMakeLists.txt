@@ -138,7 +138,7 @@ endfunction()
 
 function(goofit_add_directory)
     file(GLOB directory_listing RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *)
-    set(skip_files CMakeLists.txt Makefile makefile .gitignore)
+    set(skip_files CMakeLists.txt Makefile makefile .gitignore .git)
     foreach(f ${directory_listing})
         if(NOT ${f} IN_LIST skip_files)
             goofit_add_link(${f})

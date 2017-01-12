@@ -11,6 +11,12 @@ if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
     message(FATAL_ERROR "You cannot build in the source directory. Please make a build subdirectory.")
 endif()
 
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING
+        "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel."
+        FORCE)
+endif()
+
 set(DEVICE_LISTING CUDA OMP TBB CPP)
 set(HOST_LISTING OMP TBB CPP)
 mark_as_advanced(DEVICE_LISTING HOST_LISTING)
@@ -25,6 +31,9 @@ endif()
 if(NOT ${GOOFIT_HOST} IN_LIST HOST_LISTING)
     message(FATAL_ERROR "You must select a host from ${HOST_LISTING}, not ${HOST_DEVICE}")
 endif()
+
+
+option(GOOFIT_SEPARATE_COMP "Enable separate compilation of PDFs (DEBUGGING ONLY)" OFF)
 
 add_definitions("-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_${GOOFIT_DEVICE}")
 add_definitions("-DMCBOOSTER_BACKEND=${GOOFIT_DEVICE}")

@@ -184,4 +184,4 @@ function(REFLEX_GENERATE_DICTIONARY dictionary)
                      DEPENDS ${headerfiles} ${selectionfile})
 endfunction()
 
-
+mark_as_advanced(ROOTCINT_EXECUTABLE GENREFLEX_EXECUTABLE) 

@@ -23,6 +23,8 @@ typedef fptype (*device_metric_ptr) (fptype, fptype*, unsigned int);
 
 extern void* host_fcn_ptr;
 
+EXEC_TARGET fptype callFunction (fptype* eventAddress, unsigned int functionIdx, unsigned int paramIdx);
+
 class MetricTaker; 
 
 class GooPdf : public PdfBase { 

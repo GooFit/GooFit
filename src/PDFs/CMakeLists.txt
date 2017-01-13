@@ -2,6 +2,8 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/src/PDFs
     )
 
+get_property(goo_extra GLOBAL PROPERTY GOOFIT_EXTRA_PDFS)
+
 if(GOOFIT_SEPARATE_COMP)
     goofit_add_library(PDFs
         GooPdf.cu
@@ -44,8 +46,11 @@ if(GOOFIT_SEPARATE_COMP)
         MixingTimeResolution_Aux.cu
         TruthResolution_Aux.cu
         ThreeGaussResolution_Aux.cu
-    )
+        ${goo_extra})
 else()
+    if(goo_extra)
+        message(FATAL_ERROR "You must use separable compilation (GOOFIT_SEPARATE_COMP=ON) to add PDFs!)")
+    endif()
     goofit_add_library(PDFs AllPdfs.cu)
 endif()
 

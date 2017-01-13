@@ -167,10 +167,20 @@ function(goofit_add_directory)
     endforeach()
 endfunction()
 
+
+# Adding global property to collect extra info for compilation
+set_property(GLOBAL PROPERTY GOOFIT_EXTRA_PDFS "")
+macro(goofit_add_pdf)
+    foreach(N ${ARGN})
+        get_filename_component(N ${N} ABSOLUTE)
+        message(STATUS ${N})
+        get_property(goo_extra GLOBAL PROPERTY GOOFIT_EXTRA_PDFS)
+        set_property(GLOBAL PROPERTY GOOFIT_EXTRA_PDFS ${goo_extra} ${N})
+    endforeach()
+endmacro()
+
 include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/MCBooster)
-
-add_subdirectory(src)
 
 add_library(goofit_lib INTERFACE)
 target_link_libraries(goofit_lib INTERFACE goofit_base PDFs rootstuff Root)
@@ -191,6 +201,8 @@ if(GOOFIT_PROJECTS)
         add_subdirectory(${d})
     endforeach()
 endif()
+
+add_subdirectory(src)
 
 export(EXPORT GooFitTargets FILE GooFitConfig.cmake)
 export(PACKAGE GooFit)

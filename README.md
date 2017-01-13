@@ -44,9 +44,10 @@ Valid options are `CUDA` (device only), `OMP`, `CPP`, and `TBB` (unavailable cur
 
 Other custom options supported along with the defaults:
 
-* `-DGOOFIT_ARCH=35` (any valid number from 20 to 62): sets the compute architecture.
+* `-DGOOFIT_ARCH=Auto` (Auto, Common, All, valid number(s) or name(s)): sets the compute architecture. See [CUDA_SELECT_NVCC_ARCH_FLAGS](https://cmake.org/cmake/help/v3.7/module/FindCUDA.html).
 * `-DGOOFIT_EXAMPLES=ON`: Build the examples
 * `-DGOOFIT_PACKAGES=ON`: Build any packages found with the name `goofit*`
+* `-GOOFIT_SEPARATE_COMP=OFF`: Enable separable compilation of PDFs
 
 
 A few standard cmake tricks:
@@ -54,12 +55,14 @@ A few standard cmake tricks:
 * Use `VERBOSE=1` to see the commands used to build the files
 * Use `-L` to list the CMake options
 * Use `ccmake` if available to see a curses (terminal) gui, or `cmake-gui` for a completely graphical interface
-* Use `-G` and the name of a generator to use something other than `make`, like `Xcode` or `ninja`
+* Use `-G` and the name of a generator to use something other than `make`, like `Xcode` or `Ninja`
 * Open the `CMakeLists.txt` with QtCreator to generate for that IDE
 * Set the release type with `-DCMAKE_BUILD_TYPE=Release`, `RelWithDebInfo`, `Debug`, etc.
 * Set up multiple build directories, like `build-omp`
 * CMake remembers your `-D` option selections in your build directory so you don't have to specify them again
 * CMake reruns when needed when you `make`
+* Use `-j12` to build with 12 cores (for example)
+* Use `cmake --build .` to build without refering to your specific build tool, like `make`
 
 
 > ## Classic Makefile system (depreciated)

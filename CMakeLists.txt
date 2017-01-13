@@ -102,21 +102,18 @@ endif()
 # The target is setup to avoid clashes with fakeroot
 # Include directories are not picked up by FindCUDA
 find_package(ROOT 6.08 REQUIRED COMPONENTS Minuit)
-include_directories(BEFORE include/goofit/rootstuff)
-include_directories(AFTER SYSTEM "${ROOT_INCLUDE_DIRS}")
 add_library(Root INTERFACE)
+include_directories(BEFORE "include/goofit/rootstuff")
+include_directories(AFTER SYSTEM "${ROOT_INCLUDE_DIRS}")
 target_link_libraries(Root INTERFACE ${ROOT_LIBRARIES})
 # Note: it is very important that the includes and links for root are after fakeroot!
-
-#if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
-#elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
-#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -xHost -march=native")
-#endif()
  
 
 function(goofit_add_library GNAME)
     if(GOOFIT_DEVICE STREQUAL CUDA)
+        foreach(N ${ARGN})
+            SET_SOURCE_FILES_PROPERTIES(${N} PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
+        endforeach()
         cuda_add_library(${GNAME} STATIC ${ARGN})
     else()
         foreach(N ${ARGN})
@@ -124,6 +121,7 @@ function(goofit_add_library GNAME)
         endforeach()
         add_library(${GNAME} STATIC ${ARGN})
         target_compile_options(${GNAME} PUBLIC -x c++)
+
     endif()
 endfunction()
 

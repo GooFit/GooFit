@@ -17,11 +17,11 @@ if(NOT CMAKE_BUILD_TYPE)
         FORCE)
 endif()
 
-set(DEVICE_LISTING CUDA OMP TBB CPP)
+set(DEVICE_LISTING CUDA OMP TBB CPP Auto)
 set(HOST_LISTING OMP TBB CPP)
 mark_as_advanced(DEVICE_LISTING HOST_LISTING)
 
-set(GOOFIT_DEVICE CUDA CACHE STRING "The compute device, options are ${DEVICE_LISTING}")
+set(GOOFIT_DEVICE Auto CACHE STRING "The compute device, options are ${DEVICE_LISTING}")
 set(GOOFIT_HOST OMP CACHE STRING "The compute device, options are ${HOST_LISTING}")
 
 # Requires CMake 3.3 or greater
@@ -32,6 +32,15 @@ if(NOT ${GOOFIT_HOST} IN_LIST HOST_LISTING)
     message(FATAL_ERROR "You must select a host from ${HOST_LISTING}, not ${HOST_DEVICE}")
 endif()
 
+if(GOOFIT_DEVICE STREQUAL Auto)
+    find_package(CUDA 6.0)
+    if(CUDA_FOUND)
+        set(GOOFIT_DEVICE CUDA)
+    else()
+        set(GOOFIT_DEVICE OMP)
+    endif()
+    message(STATUS "Auto device selection: ${GOOFIT_DEVICE}")
+endif()
 
 option(GOOFIT_SEPARATE_COMP "Enable separate compilation of PDFs" OFF)
 if(GOOFIT_SEPARATE_COMP)

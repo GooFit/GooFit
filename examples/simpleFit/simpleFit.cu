@@ -4,17 +4,11 @@
 #include "goofit/PDFs/NovosibirskPdf.h"
 #include "goofit/PDFs/BifurGaussPdf.h"
 
-#if HAVE_ROOT
 #include "goofit/Variable.h"
 #include "TH1F.h"
-//#  include "TH2F.h"			// unused?
 #include "TStyle.h"
 #include "TCanvas.h"
 #include "TRandom.h"
-#else
-#include "goofit/rootstuff/TRandom.h"
-#include "goofit/rootstuff/fakeTH1F.h"
-#endif
 
 #include <sys/time.h>
 #include <sys/times.h>
@@ -47,9 +41,7 @@ double novosib(double x, double peak, double width, double tail) {
     return exp(-qc);
 }
 
-#if HAVE_ROOT
 TCanvas* foo = 0;
-#endif
 
 void fitAndPlot(GooPdf* total, UnbinnedDataSet* data, TH1F& dataHist, Variable* xvar, const char* fname) {
     total->setData(data);
@@ -87,7 +79,6 @@ void fitAndPlot(GooPdf* total, UnbinnedDataSet* data, TH1F& dataHist, Variable* 
         pdfHist.SetBinContent(i+1, val);
     }
 
-#if HAVE_ROOT
     //foo->SetLogy(true);
     dataHist.SetMarkerStyle(8);
     dataHist.SetMarkerSize(0.5);
@@ -96,24 +87,9 @@ void fitAndPlot(GooPdf* total, UnbinnedDataSet* data, TH1F& dataHist, Variable* 
     pdfHist.SetLineWidth(3);
     pdfHist.Draw("lsame");
     foo->SaveAs(fname);
-#elif 1
-
-    if(dataHist.GetNumbins() == pdfHist.GetNumbins()) {
-        for(int i = 0; i < dataHist.GetNumbins(); ++i) {
-            std::cout << dataHist.GetBinCenter(i+1) << " "
-                      << dataHist.GetBinContent(i+1) << " "
-                      << pdfHist.GetBinContent(i+1)
-                      << std::endl;
-        }
-    } else {
-        std::cerr << "I don't understand dataHist/pdfHist" << std::endl;
-    }
-
-#endif
 }
 
 int main(int argc, char** argv) {
-#if HAVE_ROOT
     gStyle->SetCanvasBorderMode(0);
     gStyle->SetCanvasColor(10);
     gStyle->SetFrameFillColor(10);
@@ -126,7 +102,6 @@ int main(int argc, char** argv) {
     gStyle->SetLineWidth(1);
     gStyle->SetLineColor(1);
     gStyle->SetPalette(1, 0);
-#endif
 
     // Independent variable.
     Variable* xvar = new Variable("xvar", -100, 100);
@@ -206,9 +181,7 @@ int main(int argc, char** argv) {
         novoHist.Fill(xvar->value);
     }
 
-#if HAVE_ROOT
     foo = new TCanvas();
-#endif
 
     Variable* mpv            = new Variable("mpv", 40, 0, 150);
     Variable* sigma          = new Variable("sigma", 5, 0, 30);

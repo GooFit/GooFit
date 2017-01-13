@@ -7,12 +7,23 @@ FUNCTORLIST   = $(wildcard src/PDFs/*.cu)
 FUNCTORLIST   += $(wildcard include/goofit/PDFs/*.h)
 
 warning:
-	@echo "Depreciated: please use the CMake build. A makefile build is still available with make all or make goofit."
+	@echo "Depreciated: please use the CMake build. A classic makefile build is still available with make all or make goofit."
 	@echo "The standard procedure:"
 	@echo "  mkdir build"
 	@echo "  cd build"
 	@echo "  cmake .."
 	@echo "  make"
+	@echo ""
+	@echo "Remember: you can make multiple build directories to have different options, like build-cuda and build-omp." 
+	@echo "You can use 'make omp cuda' to setup or rebuild the build-cuda and build-omp directories."
+
+omp:
+	@mkdir -p build-omp
+	cd build-omp && cmake .. -DGOOFIT_DEVICE=OMP && $(MAKE) --no-print-directory
+
+cuda:
+	@mkdir -p build-cuda
+	cd build-cuda && cmake .. -DGOOFIT_DEVICE=CUDA && $(MAKE) --no-print-directory
 
 all: goofit examples
 

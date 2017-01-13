@@ -1,6 +1,6 @@
 // This file is derived from TRandom3.cxx in ROOT version 5.30/06.
 // It is distributed under the GNU LGPL. The original copyright notice
-// is reproduced in full below. 
+// is reproduced in full below.
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -49,11 +49,11 @@
 TRandom* TRandom::gRandom = new TRandom3();
 
 //______________________________________________________________________________
-TRandom3::TRandom3 (unsigned int seed) {
+TRandom3::TRandom3(unsigned int seed) {
 //*-*-*-*-*-*-*-*-*-*-*default constructor*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 // If seed is 0, the seed is automatically computed via a TUUID object.
 // In this case the seed is guaranteed to be unique in space and time.
-   SetSeed(seed);
+    SetSeed(seed);
 }
 
 //______________________________________________________________________________
@@ -63,118 +63,120 @@ TRandom3::~TRandom3() {
 }
 
 //______________________________________________________________________________
-double TRandom3::Rndm (int) {
+double TRandom3::Rndm(int) {
 //  Machine independent random number generator.
 //  Produces uniformly-distributed floating points in ]0,1]
 //  Method: Mersenne Twistor
 
-   unsigned int y;
+    unsigned int y;
 
-   const int  kM = 397;
-   const int  kN = 624;
-   const unsigned int kTemperingMaskB =  0x9d2c5680;
-   const unsigned int kTemperingMaskC =  0xefc60000;
-   const unsigned int kUpperMask =       0x80000000;
-   const unsigned int kLowerMask =       0x7fffffff;
-   const unsigned int kMatrixA =         0x9908b0df;
+    const int  kM = 397;
+    const int  kN = 624;
+    const unsigned int kTemperingMaskB =  0x9d2c5680;
+    const unsigned int kTemperingMaskC =  0xefc60000;
+    const unsigned int kUpperMask =       0x80000000;
+    const unsigned int kLowerMask =       0x7fffffff;
+    const unsigned int kMatrixA =         0x9908b0df;
 
-   if (fCount624 >= kN) {
-      register int i;
+    if(fCount624 >= kN) {
+        register int i;
 
-      for (i=0; i < kN-kM; i++) {
-         y = (fMt[i] & kUpperMask) | (fMt[i+1] & kLowerMask);
-         fMt[i] = fMt[i+kM] ^ (y >> 1) ^ ((y & 0x1) ? kMatrixA : 0x0);
-      }
-
-      for (   ; i < kN-1    ; i++) {
-         y = (fMt[i] & kUpperMask) | (fMt[i+1] & kLowerMask);
-         fMt[i] = fMt[i+kM-kN] ^ (y >> 1) ^ ((y & 0x1) ? kMatrixA : 0x0);
-      }
-
-      y = (fMt[kN-1] & kUpperMask) | (fMt[0] & kLowerMask);
-      fMt[kN-1] = fMt[kM-1] ^ (y >> 1) ^ ((y & 0x1) ? kMatrixA : 0x0);
-      fCount624 = 0;
-   }
-
-   y = fMt[fCount624++];
-   y ^=  (y >> 11);
-   y ^= ((y << 7 ) & kTemperingMaskB );
-   y ^= ((y << 15) & kTemperingMaskC );
-   y ^=  (y >> 18);
-
-   if (y) return ( (double) y * 2.3283064365386963e-10); // * Power(2,-32)
-   return Rndm();
-}
-
-//______________________________________________________________________________
-void TRandom3::RndmArray(int n, float *array)
-{
-  // Return an array of n random numbers uniformly distributed in ]0,1]
-
-  for(int i=0; i<n; i++) array[i]=(float)Rndm();
-}
-
-//______________________________________________________________________________
-void TRandom3::RndmArray(int n, double *array)
-{
-  // Return an array of n random numbers uniformly distributed in ]0,1]
-
-   int k = 0;
-
-   unsigned int y;
-
-   const int  kM = 397;
-   const int  kN = 624;
-   const unsigned int kTemperingMaskB =  0x9d2c5680;
-   const unsigned int kTemperingMaskC =  0xefc60000;
-   const unsigned int kUpperMask =       0x80000000;
-   const unsigned int kLowerMask =       0x7fffffff;
-   const unsigned int kMatrixA =         0x9908b0df;
-
-   while (k < n) {
-      if (fCount624 >= kN) {
-         register int i;
-
-         for (i=0; i < kN-kM; i++) {
+        for(i=0; i < kN-kM; i++) {
             y = (fMt[i] & kUpperMask) | (fMt[i+1] & kLowerMask);
             fMt[i] = fMt[i+kM] ^ (y >> 1) ^ ((y & 0x1) ? kMatrixA : 0x0);
-         }
+        }
 
-         for (   ; i < kN-1    ; i++) {
+        for(; i < kN-1    ; i++) {
             y = (fMt[i] & kUpperMask) | (fMt[i+1] & kLowerMask);
             fMt[i] = fMt[i+kM-kN] ^ (y >> 1) ^ ((y & 0x1) ? kMatrixA : 0x0);
-         }
+        }
 
-         y = (fMt[kN-1] & kUpperMask) | (fMt[0] & kLowerMask);
-         fMt[kN-1] = fMt[kM-1] ^ (y >> 1) ^ ((y & 0x1) ? kMatrixA : 0x0);
-         fCount624 = 0;
-      }
+        y = (fMt[kN-1] & kUpperMask) | (fMt[0] & kLowerMask);
+        fMt[kN-1] = fMt[kM-1] ^ (y >> 1) ^ ((y & 0x1) ? kMatrixA : 0x0);
+        fCount624 = 0;
+    }
 
-      y = fMt[fCount624++];
-      y ^=  (y >> 11);
-      y ^= ((y << 7 ) & kTemperingMaskB );
-      y ^= ((y << 15) & kTemperingMaskC );
-      y ^=  (y >> 18);
+    y = fMt[fCount624++];
+    y ^= (y >> 11);
+    y ^= ((y << 7) & kTemperingMaskB);
+    y ^= ((y << 15) & kTemperingMaskC);
+    y ^= (y >> 18);
 
-      if (y) {
-         array[k] = double( y * 2.3283064365386963e-10); // * Power(2,-32)
-         k++;
-      }
-   }
+    if(y)
+        return ((double) y * 2.3283064365386963e-10);  // * Power(2,-32)
+
+    return Rndm();
+}
+
+//______________________________________________________________________________
+void TRandom3::RndmArray(int n, float* array) {
+    // Return an array of n random numbers uniformly distributed in ]0,1]
+
+    for(int i=0; i<n; i++)
+        array[i]=(float)Rndm();
+}
+
+//______________________________________________________________________________
+void TRandom3::RndmArray(int n, double* array) {
+    // Return an array of n random numbers uniformly distributed in ]0,1]
+
+    int k = 0;
+
+    unsigned int y;
+
+    const int  kM = 397;
+    const int  kN = 624;
+    const unsigned int kTemperingMaskB =  0x9d2c5680;
+    const unsigned int kTemperingMaskC =  0xefc60000;
+    const unsigned int kUpperMask =       0x80000000;
+    const unsigned int kLowerMask =       0x7fffffff;
+    const unsigned int kMatrixA =         0x9908b0df;
+
+    while(k < n) {
+        if(fCount624 >= kN) {
+            register int i;
+
+            for(i=0; i < kN-kM; i++) {
+                y = (fMt[i] & kUpperMask) | (fMt[i+1] & kLowerMask);
+                fMt[i] = fMt[i+kM] ^ (y >> 1) ^ ((y & 0x1) ? kMatrixA : 0x0);
+            }
+
+            for(; i < kN-1    ; i++) {
+                y = (fMt[i] & kUpperMask) | (fMt[i+1] & kLowerMask);
+                fMt[i] = fMt[i+kM-kN] ^ (y >> 1) ^ ((y & 0x1) ? kMatrixA : 0x0);
+            }
+
+            y = (fMt[kN-1] & kUpperMask) | (fMt[0] & kLowerMask);
+            fMt[kN-1] = fMt[kM-1] ^ (y >> 1) ^ ((y & 0x1) ? kMatrixA : 0x0);
+            fCount624 = 0;
+        }
+
+        y = fMt[fCount624++];
+        y ^= (y >> 11);
+        y ^= ((y << 7) & kTemperingMaskB);
+        y ^= ((y << 15) & kTemperingMaskC);
+        y ^= (y >> 18);
+
+        if(y) {
+            array[k] = double(y * 2.3283064365386963e-10);  // * Power(2,-32)
+            k++;
+        }
+    }
 }
 
 //______________________________________________________________________________
 void TRandom3::SetSeed(unsigned int seed) {
-  //  Set the random generator sequence
-  
-  TRandom::SetSeed(seed);
-  fCount624 = 624;
-  int i,j;
-  
-  fMt[0] = fSeed;
-  j = 1;
-  // use multipliers from  Knuth's "Art of Computer Programming" Vol. 2, 3rd Ed. p.106
-  for(i=j; i<624; i++) {
-    fMt[i] = (1812433253 * ( fMt[i-1]  ^ ( fMt[i-1] >> 30)) + i);
-  }
+    //  Set the random generator sequence
+
+    TRandom::SetSeed(seed);
+    fCount624 = 624;
+    int i, j;
+
+    fMt[0] = fSeed;
+    j = 1;
+
+    // use multipliers from  Knuth's "Art of Computer Programming" Vol. 2, 3rd Ed. p.106
+    for(i=j; i<624; i++) {
+        fMt[i] = (1812433253 * (fMt[i-1]  ^ (fMt[i-1] >> 30)) + i);
+    }
 }

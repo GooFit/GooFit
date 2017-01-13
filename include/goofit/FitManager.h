@@ -1,7 +1,7 @@
 #ifndef FITMANAGER_HH
 #define FITMANAGER_HH
 
-#include "goofit/GlobalCudaDefines.h" 
+#include "goofit/GlobalCudaDefines.h"
 #include "goofit/PDFs/GooPdf.h"
 
 // Glue class that talks to MINUIT
@@ -14,4 +14,4 @@
 #else
 #include "goofit/FitManagerMinuit3.h"
 #endif
-#endif 
+#endif

@@ -30,18 +30,20 @@
 class TRandom3 : public TRandom {
 
 private:
-   unsigned int   fMt[624];
-   int    fCount624;
+    unsigned int   fMt[624];
+    int    fCount624;
 
 public:
-   TRandom3 (unsigned int seed=4357);
-   virtual ~TRandom3();
-   // get the current seed (only first element of the seed table)
-   virtual  unsigned int GetSeed () const { return fMt[0];}
-   virtual  double       Rndm (int i=0);
-   virtual  void         RndmArray (int n, float *array);
-   virtual  void         RndmArray (int n, double *array);
-   virtual  void         SetSeed (unsigned int seed=0);
+    TRandom3(unsigned int seed=4357);
+    virtual ~TRandom3();
+    // get the current seed (only first element of the seed table)
+    virtual  unsigned int GetSeed() const {
+        return fMt[0];
+    }
+    virtual  double       Rndm(int i=0);
+    virtual  void         RndmArray(int n, float* array);
+    virtual  void         RndmArray(int n, double* array);
+    virtual  void         SetSeed(unsigned int seed=0);
 };
 
 #endif

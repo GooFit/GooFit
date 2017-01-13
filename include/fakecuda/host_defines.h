@@ -66,15 +66,15 @@ struct cudaDeviceProp {
 };
 
 const int cudaErrorApiFailureBase = 0;
-        
-char *cudaGetErrorString(cudaError_t);
+
+char* cudaGetErrorString(cudaError_t);
 
 cudaError_t cudaMalloc(void**, std::size_t);
-cudaError_t cudaGetDeviceProperties(cudaDeviceProp *, std::size_t);
-cudaError_t cudaGetDevice(int *);
+cudaError_t cudaGetDeviceProperties(cudaDeviceProp*, std::size_t);
+cudaError_t cudaGetDevice(int*);
 cudaError_t cudaThreadSynchronize();
-cudaError_t cudaMemcpy(void *, const void *, size_t, enum cudaMemcpyKind);
-cudaError_t cudaFree(void *);
-void cudaMemGetInfo(std::size_t *, std::size_t *);
+cudaError_t cudaMemcpy(void*, const void*, size_t, enum cudaMemcpyKind);
+cudaError_t cudaFree(void*);
+void cudaMemGetInfo(std::size_t*, std::size_t*);
 
 #endif

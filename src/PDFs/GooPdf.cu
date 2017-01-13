@@ -9,14 +9,19 @@
 // would be in PdfBase.
 
 // Device-side, translation-unit constrained.
+
 MEM_CONSTANT fptype cudaArray[maxParams];           // Holds device-side fit parameters.
-MEM_CONSTANT unsigned int
-paramIndices[maxParams];  // Holds functor-specific indices into cudaArray. Also overloaded to hold integer constants (ie parameters that cannot vary.)
-MEM_CONSTANT fptype
-functorConstants[maxParams];    // Holds non-integer constants. Notice that first entry is number of events.
+
+MEM_CONSTANT unsigned int paramIndices[maxParams];  
+  // Holds functor-specific indices into cudaArray. Also overloaded to hold integer constants (ie parameters that cannot vary.)
+
+MEM_CONSTANT fptype functorConstants[maxParams];
+  // Holds non-integer constants. Notice that first entry is number of events.
+
 MEM_CONSTANT fptype normalisationFactors[maxParams];
 
 // For debugging
+
 MEM_CONSTANT int callnumber;
 MEM_CONSTANT int gpuDebug;
 MEM_CONSTANT unsigned int debugParamIndex;
@@ -30,8 +35,9 @@ fptype host_timeHist[10000];
 #endif
 
 // Function-pointer related.
-MEM_DEVICE void*
-device_function_table[200]; // Not clear why this cannot be MEM_CONSTANT, but it causes crashes to declare it so.
+MEM_DEVICE void* device_function_table[200];
+  // Not clear why this cannot be MEM_CONSTANT, but it causes crashes to declare it so.
+
 void* host_function_table[200];
 unsigned int num_device_functions = 0;
 map<void*, int> functionAddressToDeviceIndexMap;

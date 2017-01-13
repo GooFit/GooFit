@@ -16,6 +16,7 @@ See *.cu file for more details
 #include <tuple>
 #include <thrust/remove.h>
 #include "goofit/PDFs/MixingTimeResolution_Aux.h"
+
 class LSCalculator_TD;
 class AmpCalc_TD;
 class SFCalculator_TD;

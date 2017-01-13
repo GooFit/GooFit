@@ -22,6 +22,7 @@ TODO:
 #include <mcbooster/GFunctional.h>
 #include "goofit/PDFs/Tddp4Pdf.h"
 #include "goofit/PDFs/EvalVar.h"
+#include "goofit/PDFs/DP4Pdf.h"
 
 
 struct genUni {

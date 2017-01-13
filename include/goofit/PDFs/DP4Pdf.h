@@ -15,10 +15,18 @@ See *.cu file for more details
 #include <mcbooster/GContainers.h>
 #include <tuple>
 #include <thrust/remove.h>
+
+
+#ifdef SEPARABLE
+extern MEM_CONSTANT unsigned int AmpIndices[500];
+#endif
+
 class LSCalculator;
 class AmpCalc;
 class SFCalculator;
 class NormIntegrator;
+
+
 
 class DPPdf : public GooPdf {
 public:

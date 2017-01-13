@@ -15,9 +15,24 @@
 
 #include "goofit/PdfBase.h"
 
-EXEC_TARGET int dev_powi(int base, int exp);  // Implemented in SmoothHistogramPdf.
-
 #define CALLS_TO_PRINT 10
+
+
+#ifdef SEPARABLE
+extern MEM_CONSTANT fptype cudaArray[maxParams];
+extern MEM_CONSTANT unsigned int paramIndices[maxParams];  
+extern MEM_CONSTANT fptype functorConstants[maxParams];
+extern MEM_CONSTANT fptype normalisationFactors[maxParams];
+
+extern MEM_DEVICE void* device_function_table[200];
+extern void* host_function_table[200];
+extern unsigned int num_device_functions;
+#endif
+
+EXEC_TARGET int dev_powi(int base, int exp);  // Implemented in SmoothHistogramPdf.
+void* getMetricPointer(std::string name);
+
+
 typedef fptype(*device_function_ptr)(fptype*, fptype*,
                                      unsigned int*);              // Pass event, parameters, index into parameters.
 typedef fptype(*device_metric_ptr)(fptype, fptype*, unsigned int);

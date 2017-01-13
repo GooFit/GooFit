@@ -34,6 +34,9 @@ endif()
 
 
 option(GOOFIT_SEPARATE_COMP "Enable separate compilation of PDFs (DEBUGGING ONLY)" OFF)
+if(GOOFIT_SEPARATE_COMP)
+    add_definitions("-DSEPARABLE")
+endif()
 
 add_definitions("-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_${GOOFIT_DEVICE}")
 add_definitions("-DMCBOOSTER_BACKEND=${GOOFIT_DEVICE}")

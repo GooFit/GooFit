@@ -71,7 +71,7 @@ EXEC_TARGET fptype device_DalitzPlot(fptype* evt, fptype* p, unsigned int* indic
 
     devcomplex<fptype> totalAmp(0, 0);
     unsigned int numResonances = RO_CACHE(indices[2]);
-    unsigned int cacheToUse    = RO_CACHE(indices[3]);
+    //unsigned int cacheToUse    = RO_CACHE(indices[3]);
 
     for(int i = 0; i < numResonances; ++i) {
         int paramIndex  = parIndexFromResIndex_DP(i);

@@ -370,7 +370,6 @@ EXEC_TARGET fptype DtoAP1_AtoVP2_VtoP3P4(fptype* Vecs, unsigned int* indices) {
     gpuLVec pV = P3 + P4;
     gpuLVec qV = P3 - P4;
     gpuLVec pA = P2 + pV;
-    gpuLVec p0 = P1;
     gpuLVec pD = P1 + pA;
     gpuLVec qD = pA - P1;
 
@@ -382,6 +381,7 @@ EXEC_TARGET fptype DtoAP1_AtoVP2_VtoP3P4(fptype* Vecs, unsigned int* indices) {
     gpuLVec tmp= PA.Dot(LV);
     return - (LB.Dot(tmp)); // minus to be equal to MINT3
 #else
+    gpuLVec p0 = P1;
 
     fptype MA = SQRT(pA.Dot(pA));
     fptype MV = SQRT(pV.Dot(pV));

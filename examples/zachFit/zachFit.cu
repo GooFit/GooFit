@@ -162,7 +162,7 @@ void CudaMinimise(int dev, int fitType) {
 //#endif
 //#ifdef OMP_ON
     int deviceCount;
-    int threadCount;
+    //int threadCount;
 //#pragma omp parallel
 //  {
 //  threadCount = omp_get_num_threads();

@@ -152,7 +152,7 @@ EXEC_TARGET fptype device_Tddp(fptype* evt, fptype* p, unsigned int* indices) {
     devcomplex<fptype> sumRateBB(0, 0);
 
     unsigned int numResonances = RO_CACHE(indices[6]);
-    unsigned int cacheToUse    = RO_CACHE(indices[7]);
+    //unsigned int cacheToUse    = RO_CACHE(indices[7]);
 
     for(int i = 0; i < numResonances; ++i) {
         int paramIndex  = parIndexFromResIndex(i);

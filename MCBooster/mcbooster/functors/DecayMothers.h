@@ -106,7 +106,7 @@ struct DecayMothers
 		thrust::random::default_random_engine randEng( hash(evt)*fSeed);
 		thrust::uniform_real_distribution<GReal_t> uniDist(0.0, 1.0);
 
-		GReal_t fTeCmTm = 0.0, fWtMax = 0.0;
+		GReal_t fTeCmTm = 0.0;
 
 		fTeCmTm = particles[0]->mass(); // total energy in C.M. minus the sum of the masses
 
@@ -127,22 +127,11 @@ struct DecayMothers
 			emmax += fMasses[n];
 			wtmax *= pdk(emmax, emmin, fMasses[n]);
 		}
-		fWtMax = 1.0 / wtmax;
 		//
 		//---->  get the betas of the decaying particle
 		//
-		GReal_t fBeta[3];
-		fBeta[0]=0, fBeta[1]=0, fBeta[2] = 0.0;
 
 		GReal_t _beta = particles[0]->d3mag() / particles[0]->get(0);
-
-		if (_beta)
-		{
-			GReal_t w = _beta / particles[0]->d3mag();
-			fBeta[0] = particles[0]->get(0) * w;
-			fBeta[1] = particles[0]->get(1) * w;
-			fBeta[2] = particles[0]->get(2) * w;
-		}
 
 		GReal_t rno[kMAXP];
 		rno[0] = 0.0;

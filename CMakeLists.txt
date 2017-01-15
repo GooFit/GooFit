@@ -161,8 +161,8 @@ function(goofit_add_directory)
     file(GLOB directory_listing RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *)
     set(skip_files CMakeLists.txt Makefile makefile .gitignore .git)
 
-    foreach(f ${directory_listing})
-        if(NOT ${f} IN_LIST skip_files)
+    foreach(NAMELINK ${directory_listing})
+        if(NOT ${NAMELINK} IN_LIST skip_files)
             add_custom_command(
                 OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
                 COMMAND ${CMAKE_COMMAND} -E create_symlink
@@ -176,6 +176,7 @@ function(goofit_add_directory)
     endforeach()
 
     get_filename_component(a_dir ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+    message(STATUS ${dir_listing})
     add_custom_target("${a_dir}_directory" ALL DEPENDS ${dir_listing})
 endfunction()
 

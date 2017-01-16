@@ -15,6 +15,9 @@ public:
     void setMaxCalls(double mxc) {
         overrideCallLimit = mxc;
     }
+    void useHesseBefore(bool use=true) {
+        _useHesseBefore = use;
+    }
     void useHesse(bool use=true) {
         _useHesse = use;
     }
@@ -35,6 +38,7 @@ public:
     TMinuit* minuit;
 private:
     double overrideCallLimit;
+    bool _useHesseBefore;
     bool _useHesse;
     bool _useMinos;
     bool _useImprove;

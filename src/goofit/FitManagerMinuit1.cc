@@ -8,6 +8,7 @@ void specialTddpPrint(double fun);
 FitManager::FitManager(PdfBase* dat)
     : minuit(0)
     , overrideCallLimit(-1)
+    , _useHesseBefore(true)
     , _useHesse(true)
     , _useMinos(false)
     , _useImprove(false) {
@@ -64,6 +65,10 @@ void FitManager::runMigrad() {
         double plist[1];
         plist[0] = overrideCallLimit;
         int err = 0;
+
+        if(_useHesseBefore)
+            minuit->mnexcm("HESSE", plist, 1, err);
+
         minuit->mnexcm("MIGRAD", plist, 1, err);
 
         if(_useHesse)

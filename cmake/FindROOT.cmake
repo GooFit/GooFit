@@ -38,8 +38,8 @@ if(ROOT_CONFIG_EXECUTABLE)
         OUTPUT_STRIP_TRAILING_WHITESPACE)
     set(ROOT_LIBRARY_DIRS ${ROOT_LIBRARY_DIR})
 
-    set(core_rootlibs             Core RIO Net Hist Graf Graf3d Gpad Tree Rint Postscript Matrix Physics MathCore Thread MultiProc)
-    set(all_rootlibs ${rootlibs} RooFit RooFitCore Minuit Minuit2 TreePlayer Proof Cling Geom RooStats TMVA MathMore)
+    set(core_rootlibs                 Core RIO Net Hist Graf Graf3d Gpad Tree Rint Postscript Matrix Physics MathCore Thread MultiProc)
+    set(all_rootlibs ${core_rootlibs} RooFit RooFitCore Minuit Minuit2 TreePlayer Proof Cling Geom RooStats TMVA MathMore)
 
     set(ROOT_LIBRARIES)
     foreach(_cpt ${all_rootlibs} ${ROOT_FIND_COMPONENTS})

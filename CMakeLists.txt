@@ -60,6 +60,8 @@ endif()
 
 set(GOOFIT_ARCH Auto CACHE STRING "The GPU Archetecture, can be Auto, All, Common, a number, or a name")
 
+option(GOOFIT_DOWNLOAD_THRUST "Download Thrust if not found (OMP only)" ON)
+
 if(GOOFIT_DEVICE STREQUAL CUDA)
     find_package(CUDA 6.0 REQUIRED)
 
@@ -82,7 +84,25 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
     endif()
 else()
     include_directories(${PROJECT_SOURCE_DIR}/include/goofit/fakecuda)
-    find_package(Thrust REQUIRED)
+    find_package(Thrust QUIET)
+    if(NOT THRUST_FOUND)
+        if(GOOFIT_DOWNLOAD_THRUST)
+                message(STATUS "Thrust not found, downloading to build dir")
+		include(ExternalProject)
+		ExternalProject_Add(
+		    thrust
+		    GIT_REPOSITORY https://github.com/thrust/thrust.git
+		    GIT_TAG 1.8.2      
+		    CONFIGURE_COMMAND ""
+		    BUILD_COMMAND ""
+		    INSTALL_COMMAND ""
+		)
+		ExternalProject_Get_Property(thrust SOURCE_DIR)
+		set(THRUST_INCLUDE_DIRS "${SOURCE_DIR}")
+        else()
+            find_package(Thrust REQUIRED)
+        endif()
+    endif()
     include_directories(SYSTEM "${THRUST_INCLUDE_DIRS}")
 endif()
 
@@ -176,7 +196,6 @@ function(goofit_add_directory)
     endforeach()
 
     get_filename_component(a_dir ${CMAKE_CURRENT_SOURCE_DIR} NAME)
-    message(STATUS ${dir_listing})
     add_custom_target("${a_dir}_directory" ALL DEPENDS ${dir_listing})
 endfunction()
 

@@ -1,22 +1,40 @@
 cmake_minimum_required(VERSION 3.4)
 
+### Require out-of-source builds (needed to keep old build system) ###
+if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
+    message(FATAL_ERROR "You cannot build in the source directory. Please make a build subdirectory.")
+endif()
+
 project(GOOFIT CXX)
 
+### Version number ###
+set(GOOFIT_VERSION_MAJOR 2)
+set(GOOFIT_VERSION_MINOR 0)
+set(GOOFIT_VERSION_PATCH 0)
+set(GOOFIT_VERSION "${GOOFIT_VERSION_MAJOR}.${GOOFIT_VERSION_MINOR}.${GOOFIT_VERSION_PATCH}")
+
+configure_file (
+    "${PROJECT_SOURCE_DIR}/include/goofit/Version.h.in"
+    "${PROJECT_BINARY_DIR}/include/goofit/Version.h"
+)
+
+include_directories("${PROJECT_BINARY_DIR}/include")
+
+
+### C++ settings ###
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
   
-if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
-    message(FATAL_ERROR "You cannot build in the source directory. Please make a build subdirectory.")
-endif()
-
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING
         "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel."
         FORCE)
 endif()
 
+
+### Options ###
 set(DEVICE_LISTING CUDA OMP TBB CPP Auto)
 set(HOST_LISTING OMP TBB CPP)
 mark_as_advanced(DEVICE_LISTING HOST_LISTING)

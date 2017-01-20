@@ -22,3 +22,4 @@ html/
 *.root
 /work/*
 /goofit*
+*/.ipynb_checkpoints/*

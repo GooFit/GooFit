@@ -1,0 +1,62 @@
+language: cpp
+sudo: false
+
+cache:
+  directories:
+    - ${TRAVIS_BUILD_DIR}/deps/cmake
+    - ${TRAVIS_BUILD_DIR}/deps/root
+
+branches:
+  exclude:
+    - gh-pages
+
+env:
+  global:
+  - OMP_NUM_THREADS: 2
+addons:
+  apt:
+    packages:
+    - g++-4.8
+    - gcc-4.8
+    - libx11-dev
+    - libxpm-dev
+    - libxft-dev
+    - libxext-dev
+    sources:
+    - ubuntu-toolchain-r-test
+
+before_install:
+    - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
+    - CMAKE_URL="https://cmake.org/files/v3.7/cmake-3.7.2-Linux-x86_64.tar.gz"
+    - cd "${DEPS_DIR}"
+    - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
+    - | 
+      if [[ ! -f "${DEPS_DIR}/cmake/bin/cmake" ]] ; then
+        echo "Downloading CMake"
+        mkdir -p cmake
+        travis_retry wget --no-check-certificate --quiet -O - "${CMAKE_URL}" | tar --strip-components=1 -xz -C cmake
+      fi
+    
+    - export PATH="${DEPS_DIR}/cmake/bin:${PATH}"
+    - cd "${DEPS_DIR}"
+    - ROOT_URL="https://root.cern.ch/download/root_v6.08.04.Linux-ubuntu14-x86_64-gcc4.8.tar.gz"
+    - | 
+      if [[ ! -f "${DEPS_DIR}/root/bin/root-config" ]] ; then
+        echo "Downloading Root"
+        mkdir -p root
+        travis_retry wget --no-check-certificate --quiet -O - "${ROOT_URL}" | tar --strip-components=1 -xz -C root
+      fi
+
+    - source "${DEPS_DIR}/root/bin/thisroot.sh"
+
+install:
+    - cd "${TRAVIS_BUILD_DIR}"
+    - mkdir build-omp
+    - cd build-omp
+    - cmake .. -DGOOFIT_DEVICE=OMP -DGOOFIT_SEPARATE_COMP=ON
+    - make -j2
+
+before_script: true
+
+script: true
+

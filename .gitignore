@@ -4,6 +4,10 @@ examples/simpleFit/simpleFitExample
 examples/dalitz/dalitz
 examples/exponential/exponential 
 examples/product/product
+examples/Tims_Model
+thrust/*
+**/testing/
+*build*/*
 wrkdir/
 *.o
 *.png
@@ -15,3 +19,7 @@ html/
 *.log
 *.out
 *.toc
+*.root
+/work/*
+/goofit*
+*/.ipynb_checkpoints/*

@@ -1,0 +1,4 @@
+// the configured options
+#define MCBooster_VERSION_MAJOR @MCBooster_VERSION_MAJOR@
+#define MCBooster_VERSION_MINOR @MCBooster_VERSION_MINOR@
+#define MCBooster_VERSION_PATCH @MCBooster_VERSION_PATCH@

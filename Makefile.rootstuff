@@ -1,0 +1,34 @@
+ifeq ($(TARGET_MIC),)
+CXX=g++
+LD=g++
+else
+# Intel Xeon Phi/MIC requires using Intel C++ Compiler (ICC)
+CXX=icpc
+LD=icpc
+CXXFLAGS=-mmic -x c++
+LDFLAGS=-mmic
+endif
+
+CXXFLAGS     += -O2 -fPIC -pthread -g
+LDFLAGS      += -fPIC -pthread -g
+
+UNAME=$(shell uname)
+ifeq ($(UNAME), Darwin)
+CXXFLAGS+=-m64
+endif
+
+OBJECTS		= TMinuit.o TRandom.o TRandom3.o 
+
+.SUFFIXES: 
+
+all:	wrkdir/libRootUtils.so 
+
+wrkdir/%.o:	src/rootstuff/%.cc include/goofit/rootstuff/%.h 
+	$(CXX) -Iinclude $(CXXFLAGS) -c -o $@ $<
+
+wrkdir/libRootUtils.so:	$(OBJECTS:%=wrkdir/%)
+	$(LD) $(LDFLAGS) -shared -o $@ $^ 
+
+clean:
+	@rm -f *.o *.so 
+

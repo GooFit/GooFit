@@ -1,0 +1,17 @@
+.PHONY: all clean
+GOOFITDIR = ${PWD}/../../
+
+include ../../Makefile.common
+
+all:	$(PROGRAM)
+
+%.o:	%.cu
+	$(CXX) $(INCLUDES) $(ROOT_INCLUDES) $(CXXFLAGS) -c -o $@ $<
+
+$(PROGRAM):	$(PROGRAM).o $(THRUSTO) $(ROOTUTILLIB) 
+		$(LD) $(LDFLAGS) $^ $(LIBS) $(ROOT_LIBS) -o $@
+		@echo "$@ done"
+
+clean:
+		@rm -f *.o $(PROGRAM) $(PROGRAM).o *.png *.root
+		

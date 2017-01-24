@@ -181,21 +181,26 @@ function(goofit_add_executable NAMEEXE)
     target_compile_options(${NAMEEXE} PUBLIC -x c++)
 endfunction()
 
-function(goofit_add_link NAMELINK)
-    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${NAMELINK}")
-        add_custom_command(
-            OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
-            COMMAND ${CMAKE_COMMAND} -E create_symlink
-            "${CMAKE_CURRENT_SOURCE_DIR}/${NAMELINK}"
-            "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
-            )
+function(goofit_add_link)
+    foreach(NAMELINK ${ARGN})
 
-        get_filename_component(a_dir ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+        if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${NAMELINK}")
+            add_custom_command(
+                OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
+                COMMAND ${CMAKE_COMMAND} -E create_symlink
+                "${CMAKE_CURRENT_SOURCE_DIR}/${NAMELINK}"
+                "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
+                )
 
-        add_custom_target(
-            "${a_dir}_${NAMELINK}_link" ALL DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
-            )
-    endif()
+            get_filename_component(a_dir ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+
+            add_custom_target(
+                "${a_dir}_${NAMELINK}_link" ALL DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
+                )
+        else()
+            message(STATUS "Warning: ${NAMELINK} does not exist. Not making link. Build then retry?")
+        endif()
+    endforeach()
 endfunction()
 
 

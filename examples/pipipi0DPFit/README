@@ -4,8 +4,11 @@ You need to make the current project by building GooFit with `-DGOOFIT_EXAMPLES=
 Before running a Dalitz plot fit with command "pipipi0DPFit" for the first time, 
 a bunch of ascii files containing data events (beefy ones) or pdf descriptions need to be downloaded from the following URL:
 
-https://dl.dropboxusercontent.com/u/9081146/alltxtfiles4pipipi0DPFit.tgz
+https://github.com/GooFit/GooFit/releases/download/v1.0.0/alltxtfiles4pipipi0DPFit.tgz
 (Size: ~50 MB, ~144 MB after unpacking)
+
+> Note:
+> Previously from https://github.com/GooFit/GooFit/releases/download/v1.0.0/alltxtfiles4pipipi0DPFit.tgz
 
 You then need to unpack the downloaded tar ball file in the current "pipipi0DPFit" directory via:
 

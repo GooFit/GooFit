@@ -1,11 +1,12 @@
 cmake_minimum_required(VERSION 3.4)
+project(GOOFIT CXX)
 
 ### Require out-of-source builds (needed to keep old build system) ###
-if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
-    message(FATAL_ERROR "You cannot build in the source directory. Please make a build subdirectory.")
+file(TO_CMAKE_PATH "${PROJECT_BINARY_DIR}/CMakeLists.txt" LOC_PATH)
+message(STATUS ${LOC_PATH})
+if(EXISTS ${LOC_PATH})
+    message(FATAL_ERROR "You cannot build in the source directory (or any directory with a CMakeLists.txt file). Please make a build subdirectory.")
 endif()
-
-project(GOOFIT CXX)
 
 ### Version number ###
 set(GOOFIT_VERSION_MAJOR 2)

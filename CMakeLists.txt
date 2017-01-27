@@ -254,6 +254,11 @@ endif()
 
 add_subdirectory(src)
 
+option(GOOFIT_TESTS "Build the goofit tests" OFF)
+if(GOOFIT_TESTS)
+    add_subdirectory(tests)
+endif()
+
 export(EXPORT GooFitTargets FILE GooFitConfig.cmake)
 export(PACKAGE GooFit)
 

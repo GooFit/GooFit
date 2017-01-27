@@ -1,20 +1,20 @@
 ifeq ($(TARGET_MIC),)
-CXX=g++
-LD=g++
+GOO_CXX:g=g++
+GOO_LD:g=g++
 else
 # Intel Xeon Phi/MIC requires using Intel C++ Compiler (ICC)
-CXX=icpc
-LD=icpc
-CXXFLAGS=-mmic -x c++
-LDFLAGS=-mmic
+GOO_CXX:g=icpc
+GOO_LD:g=icpc
+GOO_CXXFLAGS:g=-mmic -x c++
+GOO_LDFLAGS:g=-mmic
 endif
 
-CXXFLAGS     += -O2 -fPIC -pthread -g
-LDFLAGS      += -fPIC -pthread -g
+GOO_CXXFLAGS:g     += -O2 -fPIC -pthread -g
+GOO_LDFLAGS:g      += -fPIC -pthread -g
 
 UNAME=$(shell uname)
 ifeq ($(UNAME), Darwin)
-CXXFLAGS+=-m64
+GOO_CXXFLAGS:g+=-m64
 endif
 
 OBJECTS		= TMinuit.o TRandom.o TRandom3.o 
@@ -24,10 +24,10 @@ OBJECTS		= TMinuit.o TRandom.o TRandom3.o
 all:	wrkdir/libRootUtils.so 
 
 wrkdir/%.o:	src/rootstuff/%.cc include/goofit/rootstuff/%.h 
-	$(CXX) -Iinclude $(CXXFLAGS) -c -o $@ $<
+	$(GOO_CXX:g) -Iinclude $(GOO_CXXFLAGS:g) -c -o $@ $<
 
 wrkdir/libRootUtils.so:	$(OBJECTS:%=wrkdir/%)
-	$(LD) $(LDFLAGS) -shared -o $@ $^ 
+	$(GOO_LD:g) $(GOO_LDFLAGS:g) -shared -o $@ $^ 
 
 clean:
 	@rm -f *.o *.so 

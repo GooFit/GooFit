@@ -107,17 +107,7 @@ else()
     if(NOT THRUST_FOUND)
         if(GOOFIT_DOWNLOAD_THRUST)
                 message(STATUS "Thrust not found, downloading to build dir")
-		include(ExternalProject)
-		ExternalProject_Add(
-		    thrust
-		    GIT_REPOSITORY https://github.com/thrust/thrust.git
-		    GIT_TAG 1.8.2      
-		    CONFIGURE_COMMAND ""
-		    BUILD_COMMAND ""
-		    INSTALL_COMMAND ""
-		)
-		ExternalProject_Get_Property(thrust SOURCE_DIR)
-		set(THRUST_INCLUDE_DIRS "${SOURCE_DIR}")
+        include(AddThrust)
         set(GOOFIT_GOT_THRUST TRUE)
         else()
             find_package(Thrust REQUIRED)

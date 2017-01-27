@@ -21,7 +21,7 @@ A new feature of the CMake build system is GooFit Packages, which are complete p
   * Auto linking for build directory
 * Fixes for building examples, nicer warnings with incorrect command line parameters.
 * Examples have a script that run all of them with timing info
-* Travis builds
+* Travis builds [PR 32](https://github.com/GooFit/GooFit/pull/32)
 * Improved documentation
 * Added (this) changelog
 

@@ -10,6 +10,9 @@ doing maximum-likelihood fits with a comfortable syntax.
 It is also possible to build
 GooFit using OpenMP.
 
+* [Changelog](https://github.com/GooFit/GooFit/blob/master/CHANGELOG.md)
+* [Contributing](https://github.com/GooFit/GooFit/blob/master/HOWTO_Contribute.md)
+
 ## Requirements
 
 * If using CUDA:

@@ -1,5 +1,9 @@
 
+**Build status**:
+[master](https://github.com/GooFit/GooFit/tree/master):
 ![Build status on Travis](https://travis-ci.org/GooFit/GooFit.svg?branch=master)
+[dev](https://github.com/GooFit/GooFit/tree/dev):
+![Build status on Travis](https://travis-ci.org/GooFit/GooFit.svg?branch=dev)
 
 GooFit is a massively-parallel framework, written in CUDA, for
 doing maximum-likelihood fits with a comfortable syntax.
@@ -50,7 +54,8 @@ Other custom options supported along with the defaults:
 * `-DGOOFIT_ARCH=Auto` (Auto, Common, All, valid number(s) or name(s)): sets the compute architecture. See [CUDA_SELECT_NVCC_ARCH_FLAGS](https://cmake.org/cmake/help/v3.7/module/FindCUDA.html).
 * `-DGOOFIT_EXAMPLES=ON`: Build the examples
 * `-DGOOFIT_PACKAGES=ON`: Build any packages found with the name `goofit*`
-* `-GOOFIT_SEPARATE_COMP=OFF`: Enable separable compilation of PDFs
+* `-DGOOFIT_SEPARATE_COMP=OFF`: Enable separable compilation of PDFs
+* `-DGOOFIT_TESTS=OFF`: Build the goofit tests
 
 
 A few standard cmake tricks:

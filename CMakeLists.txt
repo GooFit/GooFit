@@ -256,6 +256,7 @@ add_subdirectory(src)
 
 option(GOOFIT_TESTS "Build the goofit tests" OFF)
 if(GOOFIT_TESTS)
+    enable_testing()
     add_subdirectory(tests)
 endif()
 

@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+set -evx
+env | sort
+
+mkdir build || true
+cd build
+cmake -DGOOFIT_DEVICE=OMP -DGOOFIT_SEPARABLE_COMP=ON -DGOOFIT_TESTS=ON
+make
+CTEST_OUTPUT_ON_FAILURE=1 make test

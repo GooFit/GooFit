@@ -36,12 +36,12 @@ print-%  : ; @echo $* = $($*)
 # One rule for GooFit objects.
 wrkdir/%.o:	src/goofit/%.cc include/goofit/%.h 
 	@mkdir -p wrkdir
-	$(CXX) $(INCLUDES) $(CXXFLAGS) -c -o $@ $<
+	$(GOO_CXX:g) $(INCLUDES) $(GOO_CXXFLAGS:g) -c -o $@ $<
 
 
 # A different rule for user-level objects. Notice ROOT_INCLUDES. 
 %.o:	%.cu
-	$(CXX) $(INCLUDES) $(ROOT_INCLUDES)  $(CXXFLAGS) -c -o $@ $<
+	$(GOO_CXX:g) $(INCLUDES) $(ROOT_INCLUDES)  $(GOO_CXXFLAGS:g) -c -o $@ $<
 
 # Still a third rule for the ROOT objects - these have their own Makefile. 
 $(ROOTRIPDIR)/%.o:	$(ROOTRIPDIR)/%.cc 
@@ -52,10 +52,10 @@ wrkdir/libRootUtils.so:
 	$(MAKE) -f Makefile.rootstuff 
 
 FitManager.o:		FitManager.cc FitManager.h wrkdir/ThrustFitManagerCUDA.o Variable.o 
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
+	$(GOO_CXX:g) $(GOO_CXXFLAGS:g) $(INCLUDES) -c -o $@ $<
 
 wrkdir/AllPdfs.o:	$(FUNCTORLIST)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -I$(SRCDIR)/PDFs  -c src/PDFs/AllPdfs.cu -o $@ 
+	$(GOO_CXX:g) $(GOO_CXXFLAGS:g) $(INCLUDES) -I$(SRCDIR)/PDFs  -c src/PDFs/AllPdfs.cu -o $@ 
 	@echo "$@ done"
 
 examples:

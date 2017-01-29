@@ -1,11 +1,12 @@
 cmake_minimum_required(VERSION 3.4)
+project(GOOFIT CXX)
 
 ### Require out-of-source builds (needed to keep old build system) ###
-if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
-    message(FATAL_ERROR "You cannot build in the source directory. Please make a build subdirectory.")
+file(TO_CMAKE_PATH "${PROJECT_BINARY_DIR}/CMakeLists.txt" LOC_PATH)
+message(STATUS ${LOC_PATH})
+if(EXISTS ${LOC_PATH})
+    message(FATAL_ERROR "You cannot build in the source directory (or any directory with a CMakeLists.txt file). Please make a build subdirectory.")
 endif()
-
-project(GOOFIT CXX)
 
 ### Version number ###
 set(GOOFIT_VERSION_MAJOR 2)
@@ -105,18 +106,8 @@ else()
     find_package(Thrust QUIET)
     if(NOT THRUST_FOUND)
         if(GOOFIT_DOWNLOAD_THRUST)
-                message(STATUS "Thrust not found, downloading to build dir")
-		include(ExternalProject)
-		ExternalProject_Add(
-		    thrust
-		    GIT_REPOSITORY https://github.com/thrust/thrust.git
-		    GIT_TAG 1.8.2      
-		    CONFIGURE_COMMAND ""
-		    BUILD_COMMAND ""
-		    INSTALL_COMMAND ""
-		)
-		ExternalProject_Get_Property(thrust SOURCE_DIR)
-		set(THRUST_INCLUDE_DIRS "${SOURCE_DIR}")
+            message(STATUS "Thrust not found, downloading to build dir")
+            include(AddThrust)
         else()
             find_package(Thrust REQUIRED)
         endif()
@@ -139,7 +130,7 @@ endif()
 
 # The target is setup to avoid clashes with fakeroot
 # Include directories are not picked up by FindCUDA
-find_package(ROOT 6.08 REQUIRED COMPONENTS Minuit)
+find_package(ROOT 6 REQUIRED COMPONENTS Minuit)
 add_library(Root INTERFACE)
 include_directories(BEFORE "include/goofit/rootstuff")
 include_directories(AFTER SYSTEM "${ROOT_INCLUDE_DIRS}")
@@ -159,7 +150,6 @@ function(goofit_add_library GNAME)
         endforeach()
         add_library(${GNAME} STATIC ${ARGN})
         target_compile_options(${GNAME} PUBLIC -x c++)
-
     endif()
 endfunction()
 
@@ -177,21 +167,26 @@ function(goofit_add_executable NAMEEXE)
     target_compile_options(${NAMEEXE} PUBLIC -x c++)
 endfunction()
 
-function(goofit_add_link NAMELINK)
-    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${NAMELINK}")
-        add_custom_command(
-            OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
-            COMMAND ${CMAKE_COMMAND} -E create_symlink
-            "${CMAKE_CURRENT_SOURCE_DIR}/${NAMELINK}"
-            "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
-            )
+function(goofit_add_link)
+    foreach(NAMELINK ${ARGN})
 
-        get_filename_component(a_dir ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+        if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${NAMELINK}")
+            add_custom_command(
+                OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
+                COMMAND ${CMAKE_COMMAND} -E create_symlink
+                "${CMAKE_CURRENT_SOURCE_DIR}/${NAMELINK}"
+                "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
+                )
 
-        add_custom_target(
-            "${a_dir}_${NAMELINK}_link" ALL DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
-            )
-    endif()
+            get_filename_component(a_dir ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+
+            add_custom_target(
+                "${a_dir}_${NAMELINK}_link" ALL DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
+                )
+        else()
+            message(STATUS "Warning: ${NAMELINK} does not exist. Not making link. Build then retry?")
+        endif()
+    endforeach()
 endfunction()
 
 
@@ -253,6 +248,12 @@ if(GOOFIT_PROJECTS)
 endif()
 
 add_subdirectory(src)
+
+option(GOOFIT_TESTS "Build the goofit tests" OFF)
+if(GOOFIT_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
 
 export(EXPORT GooFitTargets FILE GooFitConfig.cmake)
 export(PACKAGE GooFit)

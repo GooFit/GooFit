@@ -7,8 +7,8 @@
 class App : public CLI::App {
 
 public:
+    using CLI::App::App;
 
-    
     void parse(int argc, char** argv) {
         #ifdef GOOFIT_OMP
         MPI_Init(&argc, &argv);

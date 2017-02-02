@@ -14,6 +14,7 @@
 #include <set>
 
 #include "goofit/PdfBase.h"
+#include "goofit/ThrustOverride.h"
 
 #define CALLS_TO_PRINT 10
 

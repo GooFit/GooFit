@@ -8,6 +8,9 @@ if(EXISTS ${LOC_PATH})
     message(FATAL_ERROR "You cannot build in the source directory (or any directory with a CMakeLists.txt file). Please make a build subdirectory.")
 endif()
 
+set(OR_GROUPSIZE 128)
+set(OR_GRAINSIZE 7)
+
 ### Version number ###
 set(GOOFIT_VERSION_MAJOR 2)
 set(GOOFIT_VERSION_MINOR 0)

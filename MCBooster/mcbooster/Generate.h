@@ -91,7 +91,7 @@ namespace mcbooster {
 /*!
  * Function to calculate time intervals in seconds.
  */
-timespec time_diff(timespec start, timespec end) {
+inline timespec time_diff(timespec start, timespec end) {
 	timespec temp;
 	if ((end.tv_nsec - start.tv_nsec) < 0) {
 		temp.tv_sec = end.tv_sec - start.tv_sec - 1;
@@ -368,7 +368,7 @@ private:
 
 };
 
-GULong_t PhaseSpace::Unweight()
+inline GULong_t PhaseSpace::Unweight()
 {
 	/**
 	 * Flag the accepted and rejected events
@@ -402,7 +402,7 @@ GULong_t PhaseSpace::Unweight()
 
 
 
-void PhaseSpace::ExportUnweighted(Events *_Events) {
+inline void PhaseSpace::ExportUnweighted(Events *_Events) {
 	/**
 	 * Export the events and all related information to an Events object properly initialized.
 	 */
@@ -478,7 +478,7 @@ void PhaseSpace::ExportUnweighted(Events *_Events) {
 
 }
 
-void PhaseSpace::Export(Events *_Events) {
+inline void PhaseSpace::Export(Events *_Events) {
 	/**
 	 * Export the events and all related information to an Events object properly initialized.
 	 */
@@ -545,7 +545,7 @@ void PhaseSpace::Export(Events *_Events) {
 
 }
 
-void PhaseSpace::Generate(const Vector4R fMother) {
+inline void PhaseSpace::Generate(const Vector4R fMother) {
 	/**
 	 * Run the generator and calculate the maximum weight. It takes as input the fourvector of the mother particle
 	 * in any system of reference. The daughters will be generated in this system.
@@ -673,7 +673,7 @@ void PhaseSpace::Generate(const Vector4R fMother) {
 
 }
 
-void PhaseSpace::Generate(Particles_d fMothers) {
+inline void PhaseSpace::Generate(Particles_d fMothers) {
 	/**
 	 * Run the generator and calculate the maximum weight. It takes as input the device vector with the four-vectors of the mother particle
 	 * in any system of reference. The daughters will be generated in this system.

@@ -106,11 +106,11 @@ struct DecayMothers
 		thrust::random::default_random_engine randEng( hash(evt)*fSeed);
 		thrust::uniform_real_distribution<GReal_t> uniDist(0.0, 1.0);
 
-		GReal_t fTeCmTm = 0.0, fWtMax = 0.0;
+		GReal_t fTeCmTm = 0.0;
 
 		fTeCmTm = particles[0]->mass(); // total energy in C.M. minus the sum of the masses
 
-		#pragma unroll 9
+		#pragma unroll (9)
 		for (size_t n = 0; n < fNDaughters; n++)
 		{
 			fTeCmTm -= fMasses[n];
@@ -120,36 +120,25 @@ struct DecayMothers
 		GReal_t emmin = 0.0;
 		GReal_t wtmax = 1.0;
 
-		#pragma unroll 9
+		#pragma unroll (9)
 		for (size_t n = 1; n < fNDaughters; n++)
 		{
 			emmin += fMasses[n - 1];
 			emmax += fMasses[n];
 			wtmax *= pdk(emmax, emmin, fMasses[n]);
 		}
-		fWtMax = 1.0 / wtmax;
 		//
 		//---->  get the betas of the decaying particle
 		//
-		GReal_t fBeta[3];
-		fBeta[0]=0, fBeta[1]=0, fBeta[2] = 0.0;
 
 		GReal_t _beta = particles[0]->d3mag() / particles[0]->get(0);
-
-		if (_beta)
-		{
-			GReal_t w = _beta / particles[0]->d3mag();
-			fBeta[0] = particles[0]->get(0) * w;
-			fBeta[1] = particles[0]->get(1) * w;
-			fBeta[2] = particles[0]->get(2) * w;
-		}
 
 		GReal_t rno[kMAXP];
 		rno[0] = 0.0;
 
 		if (fNDaughters > 2)
 		{
-			#pragma unroll 9
+			#pragma unroll (9)
 			for (size_t n = 1; n < fNDaughters - 1; n++)
 				rno[n] = uniDist(randEng) ;
 			bbsort(&rno[1], fNDaughters - 2);
@@ -159,7 +148,7 @@ struct DecayMothers
 
 		GReal_t invMas[kMAXP], sum = 0.0;
 
-		#pragma unroll 9
+		#pragma unroll (9)
 		for (size_t n = 0; n < fNDaughters; n++)
 		{
 			sum += fMasses[n];
@@ -174,7 +163,7 @@ struct DecayMothers
 
 		GReal_t pd[kMAXP];
 
-		#pragma unroll 9
+		#pragma unroll (9)
 		for (size_t n = 0; n < fNDaughters - 1; n++)
 		{
 			pd[n] = pdk(invMas[n + 1], invMas[n], fMasses[n + 1]);
@@ -188,7 +177,7 @@ struct DecayMothers
 		particles[1]->set(sqrt(pd[0] * pd[0] + fMasses[0] * fMasses[0]), 0.0,
 				pd[0], 0.0);
 
-		#pragma unroll 9
+		#pragma unroll (9)
 		for (size_t i = 1; i < fNDaughters; i++)
 		{
 
@@ -231,7 +220,7 @@ struct DecayMothers
 		//
 		//---> final boost of all particles to the mother's frame
 		//
-		#pragma unroll 9
+		#pragma unroll (9)
 		for (size_t n = 0; n < fNDaughters; n++)
 		{
 

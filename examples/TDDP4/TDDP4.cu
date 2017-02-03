@@ -26,12 +26,16 @@ int main(int argc, char** argv) {
     GooFit::Application app("Time dependent Dalitz plot, 4 particles");
     
     TString output = "test_10_15.output";
-    app.add_option("-o,--output", output, "File to output", CLI::DEFAULT);
+    app.add_option("-o,--output", output, "File to output", GooFit::DEFAULT);
     
     int trials = 100;
-    app.add_option("-t,--trials", trials, "Number of trials", CLI::DEFAULT);
+    app.add_option("-t,--trials", trials, "Number of trials", GooFit::DEFAULT);
 
-    app.run(argc, argv);
+    try {
+        app.run(argc, argv);
+    } catch (const GooFit::Error &e) {
+        return app.exit(e);
+    }
 
 
     DecayInfo_DP* DK3P_DI = new DecayInfo_DP();

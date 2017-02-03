@@ -6,6 +6,8 @@
 
 namespace GooFit {
 
+using namespace CLI;
+
 class Application : public CLI::App {
 
 public:

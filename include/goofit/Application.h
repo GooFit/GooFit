@@ -4,7 +4,9 @@
 #include <omp.h>
 #endif
 
-class App : public CLI::App {
+namespace GooFit {
+
+class Application : public CLI::App {
 
 public:
     using CLI::App::App;
@@ -17,12 +19,12 @@ public:
         CLI::App::parse(argc, argv);
     }
 
-    ~App() {
+    ~Application() {
         #ifdef GOOFIT_OMP
         MPI_Finalize();
         #endif
 
     }
+};
+
 }
-
-

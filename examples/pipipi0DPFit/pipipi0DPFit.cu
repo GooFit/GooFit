@@ -4812,7 +4812,7 @@ int main(int argc, char** argv) {
             });
 
 
-    auto truth_fit = app.add_subcommand("truth_fit");
+    auto truth_fit = app.add_subcommand("truth", "Truth Monte Carlo fit");
     truth_fit->add_option("-d,--data,data", data,
             "Data to use", GooFit::Required, GooFit::ExistingFile);
     truth_fit->set_callback([&data](){
@@ -4820,7 +4820,7 @@ int main(int argc, char** argv) {
             });
 
 
-    auto sigma_fit = app.add_subcommand("sigma_fit");
+    auto sigma_fit = app.add_subcommand("sigma", "Run sigma fit");
     sigma_fit->add_option("-d,--data,data", data,
             "Data to use", GooFit::Required, GooFit::ExistingFile);
     sigma_fit->add_option("-s,--slices,slices", m23Slices,
@@ -4829,14 +4829,14 @@ int main(int argc, char** argv) {
             runSigmaFit(data.c_str());
             });
 
-    auto efficiency_fit = app.add_subcommand("efficiency_fit");
+    auto efficiency_fit = app.add_subcommand("efficiency", "Run efficiency fit");
     efficiency_fit->add_option("-s,--sample,sample", sample,
             "Sample number to use", GooFit::Default);
     efficiency_fit->set_callback([&](){
             runEfficiencyFit(sample);
             });
 
-    auto cannonical_fit = app.add_subcommand("cannonical_fit");
+    auto cannonical_fit = app.add_subcommand("cannonical", "Run the cannonical fit");
     cannonical_fit->add_option("-d,--data,data", data,
             "Data to use", GooFit::Required, GooFit::ExistingFile);
     parseArg(cannonical_fit);
@@ -4845,7 +4845,7 @@ int main(int argc, char** argv) {
             runCanonicalFit(data, !makePlots);
             });
 
-    auto background_dalitz_fit = app.add_subcommand("background_dalitz_fit");
+    auto background_dalitz_fit = app.add_subcommand("background_dalitz", "Run the background Dalitz fit");
     background_dalitz_fit->add_option("-s,--sample,sample", sample,
             "Sample number to use", GooFit::Default);
     parseArg(background_dalitz_fit);
@@ -4854,21 +4854,21 @@ int main(int argc, char** argv) {
             runBackgroundDalitzFit(sample, true);
             });
 
-    auto background_sigma_fit = app.add_subcommand("background_sigma_fit");
+    auto background_sigma_fit = app.add_subcommand("background_sigma", "Run background sigma fit");
     background_sigma_fit->add_option("-s,--sample,sample", sample,
             "Sample number to use", GooFit::Default);
     background_sigma_fit->set_callback([&](){
             runBackgroundSigmaFit(sample);
             });
 
-    auto write_background_histograms = app.add_subcommand("write_background_histograms");
+    auto write_background_histograms = app.add_subcommand("background_histograms", "Write background histograms");
     write_background_histograms->add_option("-s,--sample,sample", sample,
             "Sample number to use", GooFit::Default);
     write_background_histograms->set_callback([&](){
             writeBackgroundHistograms(sample);
             });
 
-    auto run_gen_mc_fit = app.add_subcommand("run_gen_mc_fit");
+    auto run_gen_mc_fit = app.add_subcommand("run_gen_mc", "Run generated Monte Carlo fit");
     run_gen_mc_fit->add_option("-d,--data,data", data,
             "Data to use", GooFit::Required, GooFit::ExistingFile);
     run_gen_mc_fit->add_option("-g,--genres,gen-resolutions", genResolutions, "", GooFit::Required);
@@ -4879,7 +4879,7 @@ int main(int argc, char** argv) {
             runGeneratedMCFit(data, genResolutions, dplotres);
             });
 
-    auto make_time_plots = app.add_subcommand("make_time_plots");
+    auto make_time_plots = app.add_subcommand("make_time_plots", "Make time plots");
     make_time_plots->add_option("-d,--data,data", data,
             "Data to use", GooFit::Required, GooFit::ExistingFile);
     make_time_plots->set_callback([&](){

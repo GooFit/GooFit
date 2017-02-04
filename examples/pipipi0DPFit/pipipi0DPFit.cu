@@ -4808,7 +4808,7 @@ int main(int argc, char** argv) {
     toy->add_flag("-p,--plot", plots,
             "Also make plots");
     toy->set_callback([&sample, &load, &plots](){
-            runToyFit(sample, load, plots > 0);
+            runToyFit(sample, load, !plots > 0);
             });
 
 

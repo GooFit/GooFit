@@ -3,6 +3,7 @@
 from __future__ import print_function, division
 
 from plumbum import local, cli, FG
+from plumbum.cmd import curl
 
 FILES = [
     'https://raw.githubusercontent.com/henryiii/CLI11/master/include/CLI.hpp',
@@ -11,14 +12,8 @@ FILES = [
 DIR = local.path(__file__).dirname
 
 def download_file(path):
-    try:
-        from plumbum.cmd import wget
-        wget[path] & FG
-
-    except ImportError:
-        from plumbum.cmd import curl
-        name = path.split('/')[-1]
-        (curl[path] > name) & FG
+    name = path.split('/')[-1]
+    (curl[path] > name) & FG
 
 class UpdateCLI(cli.Application):
     def main(self):

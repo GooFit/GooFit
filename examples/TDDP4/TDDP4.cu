@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
     
     TString output = "test_10_15.output";
     app.add_option("-o,--output,output", output,
-            "File to output", GooFit::Default, GooFit::NonexistantPath);
+            "File to output", GooFit::Default, GooFit::NonexistentPath);
     
     int trials = 100;
     app.add_option("-t,--trials,output", trials,

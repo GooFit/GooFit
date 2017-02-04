@@ -1,12 +1,13 @@
 #include "goofit/detail/CLI.hpp"
 #include "goofit/Version.h"
+#include "thrust/detail/config/device_system.h"
 
 #ifdef GOOFIT_MPI
 #include <mpi.h>
 #endif
 
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-
+#include <cuda.h>
 #endif
 
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_OMP
@@ -63,7 +64,7 @@ public:
         set_device();
         #endif
         if(show_threads) {
-            std::cout << "GOOFIT: Version " << GOOFIT_VERSION_MAJOR << "." GOOFIT_VERSION_MINOR << "." GOOFIT_VERSION_PATCH << std::endl;
+            std::cout << "GOOFIT: Version " << GOOFIT_VERSION_MAJOR << "." << GOOFIT_VERSION_MINOR << "." << GOOFIT_VERSION_PATCH << std::endl;
             #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
             cudaDeviceProp devProp;
             cudaGetDeviceProperties(&devProp, gpuDev);
@@ -71,7 +72,7 @@ public:
             std::cout << "CUDA: Total global memory: " <<  devProp.totalGlobalMem / 1.0e9 << "GB" << std::endl;
             std::cout << "CUDA: Multiprocessors: "<< devProp.multiProcessorCount << std::endl;
             std::cout << "CUDA: Total amount of shared memory per block: " << devProp.sharedMemPerBlock << std::endl;
-            std::cout << "CUDA: Total registers per block: ", devProp.regsPerBlock << std::endl;
+            std::cout << "CUDA: Total registers per block: " << devProp.regsPerBlock << std::endl;
             std::cout << "CUDA: Warp size: " << devProp.warpSize << std::endl;
             std::cout << "CUDA: Maximum memory pitch: " << devProp.memPitch << std::endl;
             std::cout << "CUDA: Total amount of constant memory: " << devProp.totalConstMem << std::endl;

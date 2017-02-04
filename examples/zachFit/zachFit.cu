@@ -492,17 +492,15 @@ int main(int argc, char** argv) {
     GooFit::Application app("Zach-Fit example");
     
     int mode;
-    app.add_set("-m,--mode", mode, {0,1,2}, "Program mode: 0-unbinned, 1-binned, 2-binned ChiSq", GooFit::REQUIRED, GooFit::POSITIONAL);
+    app.add_set("-m,--mode,mode", mode, {0,1,2}, "Program mode: 0-unbinned, 1-binned, 2-binned ChiSq", GooFit::Required);
 
-    int gpuDev = 0;
-    app.add_option("--gpu", gpuDev, "GPU device to use", GooFit::DEFAULT, GooFit::POSITIONAL);
 
     try {
         app.run(argc, argv);
     } catch (const GooFit::Error &e) {
         return app.exit(e);
     }
-    int gpuDev = 0;
+    int gpuDev = app.get_gpu();
     gStyle->SetCanvasBorderMode(0);
     gStyle->SetCanvasColor(10);
     gStyle->SetFrameFillColor(10);
@@ -518,9 +516,6 @@ int main(int argc, char** argv) {
     foo = new TCanvas();
 
     data_hist = new TH1F("data_hist", "", 300, 0.1365, 0.1665);
-
-    if(argc == 3)
-        gpuDev = atoi(argv[2]);
 
     try {
         CudaMinimise(gpuDev, mode);

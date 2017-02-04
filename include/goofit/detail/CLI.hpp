@@ -34,11 +34,16 @@ namespace CLI {
 
 struct Error : public std::runtime_error {
     int exit_code;
-    Error(std::string parent, std::string name, int exit_code=255) : runtime_error(parent + ": " + name), exit_code(exit_code) {}
+    bool print_help;
+    Error(std::string parent, std::string name, int exit_code=255, bool print_help=true) : runtime_error(parent + ": " + name), exit_code(exit_code), print_help(print_help) {}
+};
+
+struct Success : public Error {
+    Success() : Error("Success", "Successfully completed, should be caught and quit", 0, false) {}
 };
 
 struct CallForHelp : public Error {
-    CallForHelp() : Error("CallForHelp","This should be caught in your main function, see examples", 0) {}
+    CallForHelp() : Error("CallForHelp", "This should be caught in your main function, see examples", 0) {}
 };
 
 struct BadNameString : public Error {
@@ -96,6 +101,16 @@ struct is_vector {
 
 template<class T, class A>
 struct is_vector<std::vector<T, A> > {
+  static bool const value = true;
+};
+
+template <typename T>
+struct is_bool {
+  static const bool value = false;
+};
+
+template<>
+struct is_bool<bool> {
   static bool const value = true;
 };
 
@@ -163,7 +178,6 @@ namespace detail {
 
     struct Combiner {
         int num;
-        bool positional;
         bool required;
         bool defaulted;
         std::vector<std::function<bool(std::string)>> validators;
@@ -172,7 +186,6 @@ namespace detail {
         Combiner operator | (Combiner b) const {
             Combiner self;
             self.num = std::min(num, b.num) == -1 ? -1 : std::max(num, b.num);
-            self.positional = positional || b.positional;
             self.required = required || b.required;
             self.defaulted = defaulted || b.defaulted;
             self.validators.reserve(validators.size() + b.validators.size());
@@ -192,9 +205,6 @@ namespace detail {
             Combiner self = *this;
             self.validators.push_back(func);
             return self;
-        }
-        Combiner operator, (Combiner b) const {
-            return *this | b;
         }
     };
 
@@ -278,36 +288,39 @@ namespace detail {
     }
 
 
-    inline std::tuple<std::vector<std::string>,std::vector<std::string>> get_names(const std::vector<std::string> &input) {
+    inline std::tuple<std::vector<std::string>,std::vector<std::string>, std::string>
+      get_names(const std::vector<std::string> &input) {
+        
         std::vector<std::string> short_names;
         std::vector<std::string> long_names;
+        std::string pos_name;
 
         for(std::string name : input) {
             if(name.length() == 0)
                 continue;
-            else if(name.length() == 1)
-                if(valid_first_char(name[0]))
-                    short_names.push_back(name);
-                else
-                    throw BadNameString("Invalid one char name: "+name);
-            else if(name.length() == 2 && name[0] == '-' && name[1] != '-') {
-                if(valid_first_char(name[1]))
+            else if(name.length() > 1 && name[0] == '-' && name[1] != '-') {
+                if(name.length()==2 && valid_first_char(name[1]))
                     short_names.push_back(std::string(1,name[1]));
                 else
                     throw BadNameString("Invalid one char name: "+name);
-            } else {
-
-                if(name.substr(0,2) == "--")
-                    name = name.substr(2);
+            } else if(name.length() > 2 && name.substr(0,2) == "--") {
+                name = name.substr(2);
                 if(valid_name_string(name))
                     long_names.push_back(name);
                 else
-                    throw BadNameString("Bad long name"+name);
+                    throw BadNameString("Bad long name: "+name);
+            } else if(name == "-" || name == "--") {
+                throw BadNameString("Must have a name, not just dashes");
+            } else {
+                if(pos_name.length() > 0)
+                    throw BadNameString("Only one positional name allowed, remove: "+name);
+                pos_name = name;
 
             }
         }
           
-        return std::tuple<std::vector<std::string>,std::vector<std::string>>(short_names, long_names);
+        return std::tuple<std::vector<std::string>,std::vector<std::string>, std::string>
+            (short_names, long_names, pos_name);
     }
 
     // Integers
@@ -361,19 +374,18 @@ namespace detail {
 
 // Defines for common Combiners (don't use combiners directly)
 
-const detail::Combiner NOTHING    {0, false,false,false, {}};
-const detail::Combiner REQUIRED   {1, false,true, false, {}};
-const detail::Combiner DEFAULT    {1, false,false,true, {}};
-const detail::Combiner POSITIONAL {1, true, false,false, {}};
-const detail::Combiner ARGS       {-1, false,false,false, {}};
-const detail::Combiner VALIDATORS {1, false, false, false, {}};
+const detail::Combiner Nothing    {0,  false, false, {}};
+const detail::Combiner Required   {1,  true,  false, {}};
+const detail::Combiner Default    {1,  false, true,  {}};
+const detail::Combiner Args       {-1, false, false, {}};
+const detail::Combiner Validators {1,  false, false, {}};
 
 // Warning about using these validators:
 // The files could be added/deleted after the validation. This is not common,
 // but if this is a possibility, check the file you open afterwards
-const detail::Combiner ExistingFile {1, false, false, false, {detail::_ExistingFile}};
-const detail::Combiner ExistingDirectory {1, false, false, false, {detail::_ExistingDirectory}};
-const detail::Combiner NonexistentPath {1, false, false, false, {detail::_NonexistentPath}};
+const detail::Combiner ExistingFile      {1, false, false, {detail::_ExistingFile}};
+const detail::Combiner ExistingDirectory {1, false, false, {detail::_ExistingDirectory}};
+const detail::Combiner NonexistentPath   {1, false, false, {detail::_NonexistentPath}};
 
 typedef std::vector<std::vector<std::string>> results_t;
 typedef std::function<bool(results_t)> callback_t;
@@ -387,6 +399,8 @@ protected:
     // Config
     std::vector<std::string> snames;
     std::vector<std::string> lnames;
+    std::string pname;
+
     detail::Combiner opts;
     std::string discription;
     callback_t callback;
@@ -400,29 +414,65 @@ protected:
 
 
 public:
-    Option(std::string name, std::string discription = "", detail::Combiner opts=NOTHING, std::function<bool(results_t)> callback=[](results_t){return true;}) :
+    Option(std::string name, std::string discription = "", detail::Combiner opts=Nothing, std::function<bool(results_t)> callback=[](results_t){return true;}) :
       opts(opts), discription(discription), callback(callback){
-        std::tie(snames, lnames) = detail::get_names(detail::split_names(name));
+        std::tie(snames, lnames, pname) = detail::get_names(detail::split_names(name));
     }
 
+    /// Clear the parsed results (mostly for testing)
     void clear() {
         results.clear();
     }
 
+    /// True if option is required
     bool required() const {
         return opts.required;
     }
 
+    /// The number of arguments the option expects
     int expected() const {
         return opts.num;
     }
 
+    /// True if the argument can be given directly
     bool positional() const {
-        return opts.positional;
+        return pname.length() > 0;
     }
 
+    /// True if option has at least one non-positional name
+    bool nonpositional() const {
+        return (snames.size() + lnames.size()) > 0;
+    }
+
+    /// True if this should print the default string
     bool defaulted() const {
         return opts.defaulted;
+    }
+
+    /// True if option has discription
+    bool has_discription() const {
+        return discription.length() > 0;
+    }
+
+    /// Get the discription
+    const std::string& get_discription() const {
+        return discription;
+    }
+
+    /// The name and any extras needed for positionals
+    std::string help_positional() const {
+        std::string out = pname;
+        if(expected()<1)
+            out = out + "x" + std::to_string(expected());
+        else if(expected()==-1)
+            out = out + "...";
+        out = required() ? out : "["+out+"]";
+        return out;
+    }
+
+    // Just the pname
+    std::string get_pname() const {
+        return pname;
     }
 
     /// Process the callback
@@ -436,7 +486,7 @@ public:
         return callback(results);
     }
 
-    /// If options share any of the same names, they are equal
+    /// If options share any of the same names, they are equal (not counting positional)
     bool operator== (const Option& other) const {
         for(const std::string &sname : snames)
             for(const std::string &othersname : other.snames)
@@ -449,6 +499,7 @@ public:
         return false;
     }
 
+    /// Gets a , sep list of names. Does not include the positional name.
     std::string get_name() const {
         std::vector<std::string> name_list;
         for(const std::string& sname : snames)
@@ -458,30 +509,40 @@ public:
         return detail::join(name_list);
     }
 
+    /// Check a name. Requires "-" or "--" for short / long, supports positional name
     bool check_name(std::string name) const {
-        for(int i=0; i<2; i++)
-            if(name.length()>2 && name[0] == '-')
-                name = name.substr(1);
 
-        return check_sname(name) || check_lname(name);
+        if(name.length()>2 && name.substr(0,2) == "--")
+            return check_lname(name.substr(2));
+        else if (name.length()>1 && name.substr(0,1) == "-")
+            return check_sname(name.substr(1));
+        else
+            return name == pname;
     }
 
+    /// Requires "-" to be removed from string
     bool check_sname(const std::string& name) const {
         return std::find(std::begin(snames), std::end(snames), name) != std::end(snames);
     }
 
+    /// Requires "--" to be removed from string
     bool check_lname(const std::string& name) const {
         return std::find(std::begin(lnames), std::end(lnames), name) != std::end(lnames);
     }
 
 
+    /// Puts a result at position r
     void add_result(int r, std::string s) {
         results.at(r).push_back(s);
     }
+
+    /// Starts a new results vector (used for r in add_result)
     int get_new() {
         results.emplace_back();
         return results.size() - 1;
     }
+
+    /// Count the total number of times an option was passed
     int count() const {
         int out = 0;
         for(const std::vector<std::string>& v : results)
@@ -489,6 +550,7 @@ public:
         return out;
     }
 
+    /// Diagnostic representation
     std::string string() const {
         std::string val = "Option: " + get_name() + "\n"
              + "  " + discription + "\n"
@@ -502,6 +564,7 @@ public:
         return val;
     }
 
+    /// The first half of the help print, name plus default, etc
     std::string help_name() const {
         std::stringstream out;
         out << "  " << get_name();
@@ -518,10 +581,12 @@ public:
         return out.str();
     }
 
+    /// The length of the name part of the help, for formatting
     int help_len() const {
         return help_name().length();
     }
 
+    /// Make a help string, adjustable len.
     std::string help(int len = 0) const {
         std::stringstream out;
         if(help_len() > len) {
@@ -535,6 +600,7 @@ public:
         return out.str();
     }
 
+    /// Produce a flattened vector of results, vs. a vector of vectors.
     std::vector<std::string> flatten_results() const {
         std::vector<std::string> output;
         for(const std::vector<std::string> result : results)
@@ -558,17 +624,20 @@ protected:
     std::string name;
 public:
     Value(std::string name) : name(name) {}
+
     operator bool() const {return (bool) *value;}
+
+    T& get() const {
+        if(*value)
+            return **value;
+        else
+            throw EmptyError(name);
+    }
     /// Note this does not throw on assignment, though
     /// afterwards it seems to work fine. Best to use
     /// explicit * notation.
     T& operator *() const {
-        if(*value) {
-            return **value;
-        }
-        else {
-            throw EmptyError(name);
-        }
+        return get();
     }
 };
 
@@ -587,9 +656,25 @@ protected:
     std::vector<std::unique_ptr<App>> subcommands;
     bool parsed{false};
     App* subcommand = nullptr;
+    std::string progname = "program";
+
+    std::function<void()> app_callback;
 
 public:
 
+    /// Set a callback for the end of parsing. Due to a bug in c++11,
+    /// it is not possible to overload on std::function (fixed in c++14
+    /// and backported to c++11 on newer compilers). Use capture by reference
+    /// to get a pointer to App if needed.
+    App* set_callback(std::function<void()> callback) {
+        app_callback = callback;
+        return this;
+    }
+
+    void run_callback() {
+        if(app_callback)
+            app_callback();
+    }
 
     /// Reset the parsed data
     void reset() {
@@ -609,7 +694,7 @@ public:
     App(std::string prog_discription="")
         : prog_discription(prog_discription) {
 
-            add_flag("h,help", "Print this help message and exit");
+            add_flag("-h,--help", "Print this help message and exit");
 
     }
 
@@ -627,7 +712,7 @@ public:
      * After start is called, you can use count to see if the value was passed, and
      * the value will be initialized properly. 
      *
-     * Program::REQUIRED, Program::DEFAULT, and Program::POSITIONAL are options, and can be `|`
+     * Program::Required, Program::Default, and the validators are options, and can be `|`
      * together. The positional options take an optional number of arguments.
      *
      * For example,
@@ -636,10 +721,10 @@ public:
      *     program.add_option("filename", filename, "discription of filename");
      */
     Option* add_option(
-            std::string name,           ///< The name, long,short
-            callback_t callback,        ///< The callback
-            std::string discription="", ///< Discription string
-            detail::Combiner opts=VALIDATORS    ///< The options (REQUIRED, DEFAULT, POSITIONAL, ARGS())
+            std::string name,
+            callback_t callback,
+            std::string discription="", 
+            detail::Combiner opts=Validators
             ) {
         Option myopt{name, discription, opts, callback};
         if(std::find(std::begin(options), std::end(options), myopt) == std::end(options))
@@ -653,15 +738,15 @@ public:
     /// Add option for string
     template<typename T, enable_if_t<!is_vector<T>::value, detail::enabler> = detail::dummy>
     Option* add_option(
-            std::string name,           ///< The name, long,short
+            std::string name,
             T &variable,                ///< The variable to set
-            std::string discription="", ///< Discription string
-            detail::Combiner opts=VALIDATORS    ///< The options (REQUIRED, DEFAULT, POSITIONAL, ARGS())
+            std::string discription="",
+            detail::Combiner opts=Validators
             ) {
 
         
         if(opts.num!=1)
-            throw IncorrectConstruction("Must have ARGS(1) or be a vector.");
+            throw IncorrectConstruction("Must have Args(1) or be a vector.");
         CLI::callback_t fun = [&variable](CLI::results_t res){
             if(res.size()!=1) {
                 return false;
@@ -685,14 +770,14 @@ public:
     /// Add option for vector of results
     template<typename T>
     Option* add_option(
-            std::string name,           ///< The name, long,short
-            std::vector<T> &variable,   ///< The variable to set
-            std::string discription="", ///< Discription string
-            detail::Combiner opts=ARGS          ///< The options (REQUIRED, DEFAULT, POSITIONAL, ARGS())
+            std::string name,
+            std::vector<T> &variable,   ///< The variable vector to set
+            std::string discription="",
+            detail::Combiner opts=Args
             ) {
 
         if(opts.num==0)
-            throw IncorrectConstruction("Must have ARGS or be a vector.");
+            throw IncorrectConstruction("Must have Args or be a vector.");
         CLI::callback_t fun = [&variable](CLI::results_t res){
             bool retval = true;
             variable.clear();
@@ -713,24 +798,40 @@ public:
     }
 
 
+    /// Multiple options are supported
+    template<typename T, typename... Args>
+    Option* add_option(
+            std::string name,
+            T &variable,                ///< The variable to set
+            std::string discription,
+            detail::Combiner opts,
+            detail::Combiner opts2,
+            Args... args                 ///< More options
+            ) {
+        return add_option(name, variable, discription, opts|opts2, args...);
+    }
     /// Add option for flag
     Option* add_flag(
-            std::string name,           ///< The name, short,long
-            std::string discription=""  ///< Discription string
+            std::string name,
+            std::string discription=""
             ) {
         CLI::callback_t fun = [](CLI::results_t){
             return true;
         };
         
-        return add_option(name, fun, discription, NOTHING);
+        Option* opt = add_option(name, fun, discription, Nothing);
+        if(opt->positional())
+            throw IncorrectConstruction("Flags cannot be positional");
+        return opt;
     }
 
     /// Add option for flag
-    template<typename T, enable_if_t<std::is_integral<T>::value, detail::enabler> = detail::dummy>
+    template<typename T,
+        enable_if_t<std::is_integral<T>::value && !is_bool<T>::value, detail::enabler> = detail::dummy>
     Option* add_flag(
-            std::string name,           ///< The name, short,long
-                T  &count,              ///< A varaible holding the count
-            std::string discription=""  ///< Discription string
+            std::string name,
+            T &count,                   ///< A varaible holding the count
+            std::string discription=""
             ) {
 
         count = 0;
@@ -739,21 +840,46 @@ public:
             return true;
         };
         
-        return add_option(name, fun, discription, NOTHING);
+        Option* opt = add_option(name, fun, discription, Nothing);
+        if(opt->positional())
+            throw IncorrectConstruction("Flags cannot be positional");
+        return opt;
     }
+
+    /// Bool version only allows the flag once
+    template<typename T,
+        enable_if_t<is_bool<T>::value, detail::enabler> = detail::dummy>
+    Option* add_flag(
+            std::string name,
+            T &count,                   ///< A varaible holding true if passed
+            std::string discription=""
+            ) {
+
+        count = false;
+        CLI::callback_t fun = [&count](CLI::results_t res){
+            count = true;
+            return res.size() == 1;
+        };
+        
+        Option* opt = add_option(name, fun, discription, Nothing);
+        if(opt->positional())
+            throw IncorrectConstruction("Flags cannot be positional");
+        return opt;
+    }
+
 
     /// Add set of options
     template<typename T>
     Option* add_set(
-            std::string name,              ///< The name, short,long
+            std::string name,
             T &member,                     ///< The selected member of the set
-            std::set<T> options, ///< The set of posibilities
-            std::string discription="",    ///< Discription string
-            detail::Combiner opts=VALIDATORS       ///< The options (REQUIRED, DEFAULT, POSITIONAL, ARGS())
+            std::set<T> options,           ///< The set of posibilities
+            std::string discription="",
+            detail::Combiner opts=Validators
             ) {
 
         if(opts.num!=1)
-            throw IncorrectConstruction("Must have ARGS(1).");
+            throw IncorrectConstruction("Must have Args(1).");
 
         CLI::callback_t fun = [&member, options](CLI::results_t res){
             if(res.size()!=1) {
@@ -780,6 +906,18 @@ public:
     }
 
 
+    template<typename T, typename... Args>
+    Option* add_set(
+            std::string name,
+            T &member,
+            std::set<T> options,           ///< The set of posibilities
+            std::string discription,
+            detail::Combiner opts,
+            detail::Combiner opts2,
+            Args... args
+            ) {
+        return add_set(name, member, options, discription, opts|opts2, args...);
+    }
 
 
     //------------ MAKE STYLE ---------//
@@ -788,13 +926,13 @@ public:
     template<typename T = std::string,
         enable_if_t<!is_vector<T>::value, detail::enabler> = detail::dummy>
     Value<T> make_option(
-            std::string name,              ///< The name, short,long
+            std::string name,
             std::string discription="",
-            detail::Combiner opts=VALIDATORS
+            detail::Combiner opts=Validators
             ) {
 
         if(opts.num!=1)
-            throw IncorrectConstruction("Must have ARGS(1).");
+            throw IncorrectConstruction("Must have Args(1).");
 
         Value<T> out(name);
         std::shared_ptr<std::unique_ptr<T>> ptr = out.value;
@@ -813,19 +951,30 @@ public:
         retval->typeval = detail::type_name<T>();
         return out;
     }
+    
+    template<typename T = std::string, typename... Args>
+    Value<T> make_option(
+            std::string name,
+            std::string discription,
+            detail::Combiner opts,
+            detail::Combiner opts2,
+            Args... args
+            ) {
+        return make_option(name, discription, opts|opts2, args...);
+    }
 
     /// Prototype for new output style with default
     template<typename T,
         enable_if_t<!is_vector<T>::value, detail::enabler> = detail::dummy>
     Value<T> make_option(
-            std::string name,              ///< The name, short,long
+            std::string name,
             const T& default_value,
             std::string discription="",
-            detail::Combiner opts=VALIDATORS
+            detail::Combiner opts=Validators
             ) {
 
         if(opts.num!=1)
-            throw IncorrectConstruction("Must have ARGS(1).");
+            throw IncorrectConstruction("Must have Args(1).");
 
         Value<T> out(name);
         std::shared_ptr<std::unique_ptr<T>> ptr = out.value;
@@ -848,18 +997,18 @@ public:
         retval->defaultval = ot.str();
         return out;
     }
-    
+
     /// Prototype for new output style, vector
     template<typename T,
         enable_if_t<is_vector<T>::value, detail::enabler> = detail::dummy>
     Value<T> make_option(
-            std::string name,              ///< The name, short,long
+            std::string name,
             std::string discription="",
-            detail::Combiner opts=VALIDATORS
+            detail::Combiner opts=Args
             ) {
 
         if(opts.num==0)
-            throw IncorrectConstruction("Must have ARGS or be a vector.");
+            throw IncorrectConstruction("Must have Args or be a vector.");
 
         Value<T> out(name);
         std::shared_ptr<std::unique_ptr<T>> ptr = out.value;
@@ -879,10 +1028,22 @@ public:
         return out;
     }
 
+    
+    template<typename T, typename... Args>
+    Value<T> make_option(
+            std::string name,
+            const T& default_value,
+            std::string discription,
+            detail::Combiner opts,
+            detail::Combiner opts2,
+            Args... args
+            ) {
+        return make_option(name, default_value, discription, opts|opts2, args...);
+    }
 
     /// Prototype for new output style: flag
     Value<int> make_flag(
-            std::string name,              ///< The name, short,long
+            std::string name,
             std::string discription=""
             ) {
 
@@ -895,24 +1056,27 @@ public:
             **ptr = (int) res.size();
             return true;
         };
-        add_option(name, fun, discription, NOTHING);
+
+        Option* opt = add_option(name, fun, discription, Nothing);
+        if(opt->positional())
+            throw IncorrectConstruction("Flags cannot be positional");
         return out;
     }
 
     /// Add set of options
     template<typename T>
     Value<T> make_set(
-            std::string name,              ///< The name, short,long
+            std::string name,
             std::set<T> options,           ///< The set of posibilities
-            std::string discription="",    ///< Discription string
-            detail::Combiner opts=VALIDATORS       ///< The options (REQUIRED, DEFAULT, POSITIONAL, ARGS())
+            std::string discription="",
+            detail::Combiner opts=Validators
             ) {
 
         Value<T> out(name);
         std::shared_ptr<std::unique_ptr<T>> ptr = out.value;
 
         if(opts.num!=1)
-            throw IncorrectConstruction("Must have ARGS(1).");
+            throw IncorrectConstruction("Must have Args(1).");
 
         CLI::callback_t fun = [ptr, options](CLI::results_t res){
             if(res.size()!=1) {
@@ -934,10 +1098,25 @@ public:
         return out;
     }
 
+    
+    template<typename T, typename... Args>
+    Value<T> make_set(
+            std::string name,
+            std::set<T> options,
+            std::string discription,
+            detail::Combiner opts,
+            detail::Combiner opts2,
+            Args... args
+            ) {
+        return make_set(name, options, discription, opts|opts2, args...);
+    }
 
+    /// This allows subclasses to inject code before callbacks but after parse
+    virtual void pre_callback() {}
 
     /// Parses the command line - throws errors
     void parse(int argc, char **argv) {
+        progname = argv[0];
         std::vector<std::string> args;
         for(int i=argc-1; i>0; i--)
             args.push_back(argv[i]);
@@ -973,9 +1152,10 @@ public:
             }
         }
 
-        if (count("help") > 0) {
+        if (count("--help") > 0) {
             throw CallForHelp();
         }
+
 
 
         for(Option& opt : options) {
@@ -994,6 +1174,9 @@ public:
         }
         if(positionals.size()>0)
             throw PositionalError("[" + detail::join(positionals) + "]");
+
+        pre_callback();
+        run_callback();
     }
 
     void _parse_subcommand(std::vector<std::string> &args) {
@@ -1124,9 +1307,11 @@ public:
         if(e.exit_code != 0) {
             std::cerr << "ERROR: ";
             std::cerr << e.what() << std::endl;
-            std::cerr << help() << std::endl;
+            if(e.print_help)
+                std::cerr << help();
         } else {
-            std::cout << help() << std::endl;
+            if(e.print_help)
+                std::cout << help();
         }
         return e.exit_code;
     }
@@ -1146,12 +1331,57 @@ public:
         if(name != "")
             out << "Subcommand: " << name << " ";
         out << prog_discription << std::endl;
-        int len = std::accumulate(std::begin(options), std::end(options), 0,
-                [](int val, const Option &opt){
-                    return std::max(opt.help_len()+3, val);});
+        out << "Usage: " << progname;
+        
+        // Check for options
+        bool npos = false;
         for(const Option &opt : options) {
-            out << opt.help(len) << std::endl;
+            if(opt.nonpositional()) {
+                npos = true;
+                break;
+            }
         }
+
+        if(npos)
+            out << " [OPTIONS...]";
+
+        // Positionals
+        bool pos=false;
+        for(const Option &opt : options)
+            if(opt.positional()) {
+                out << " " << opt.help_positional();
+                if(opt.has_discription())
+                    pos=true;
+            }
+
+
+        out << std::endl << std::endl;
+
+        // Positional discriptions
+        if(pos) {
+            out << "Positionals:" << std::endl;
+            for(const Option &opt : options)
+                if(opt.positional() && opt.has_discription()) {
+                    out << std::setw(30) << std::left <<  "  " + opt.get_pname();
+                    out << opt.get_discription() << std::endl;
+                }
+            out << std::endl;
+
+        }
+
+
+        // Options
+        if(npos) {
+            out << "Options:" << std::endl;
+            for(const Option &opt : options) {
+                if(opt.nonpositional()) {
+                    out << opt.help(30) << std::endl;
+                }
+            }
+            out << std::endl;
+        }
+
+        // Subcommands
         if(subcommands.size()> 0) {
             out << "Subcommands:" << std::endl;
             int max = std::accumulate(std::begin(subcommands), std::end(subcommands), 0,

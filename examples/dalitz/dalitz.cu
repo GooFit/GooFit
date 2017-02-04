@@ -398,7 +398,7 @@ int main(int argc, char** argv) {
     GooFit::Application app("Dalitz example");
 
     std::string filename = "dalitz_toyMC_000.txt";
-    app.add_option("-f,--filename", filename, "File to read in", GooFit::ExistingFile, GooFit::POSITIONAL, GooFit::DEFAULT);
+    app.add_option("-f,--filename,filename", filename, "File to read in", GooFit::ExistingFile, GooFit::Default);
 
     try {
         app.run(argc, argv);

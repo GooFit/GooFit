@@ -16,6 +16,7 @@
 #include <sys/times.h>
 
 // GooFit stuff
+#include "goofit/Application.h"
 #include "goofit/Variable.h"
 #include "goofit/PDFs/PolynomialPdf.h"
 #include "goofit/PDFs/DalitzPlotPdf.h"
@@ -393,6 +394,18 @@ void runToyFit(std::string toyFileName) {
 }
 
 int main(int argc, char** argv) {
+
+    GooFit::Application app("Dalitz example");
+
+    std::string filename = "dalitz_toyMC_000.txt";
+    app.add_option("-f,--filename", filename, "File to read in", GooFit::ExistingFile, GooFit::POSITIONAL, GooFit::DEFAULT);
+
+    try {
+        app.run(argc, argv);
+    } catch (const GooFit::Error &e) {
+        return app.exit(e);
+    }
+
     gStyle->SetCanvasBorderMode(0);
     gStyle->SetCanvasColor(10);
     gStyle->SetFrameFillColor(10);
@@ -410,7 +423,6 @@ int main(int argc, char** argv) {
     foodal->Size(10, 10);
 
     // cudaSetDevice(0);
-    std::string filename = argc>1 ? argv[1] : "dalitz_toyMC_000.txt";
 
     try {
         runToyFit(filename);

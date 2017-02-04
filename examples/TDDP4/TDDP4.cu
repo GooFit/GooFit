@@ -3,6 +3,7 @@
 #include <TTree.h>
 
 // GooFit stuff
+#include "goofit/Application.h"
 #include "goofit/Variable.h"
 #include "goofit/PDFs/PolynomialPdf.h"
 #include "goofit/PDFs/AddPdf.h"
@@ -10,7 +11,6 @@
 #include "goofit/PDFs/DP4Pdf.h"
 #include "goofit/PDFs/TruthResolution_Aux.h"
 #include "goofit/PDFs/Tddp4Pdf.h"
-#include "goofit/Application.h"
 #include <thrust/count.h>
 #include <fstream>
 

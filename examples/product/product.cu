@@ -1,3 +1,4 @@
+#include "goofit/Application.h"
 #include "goofit/Variable.h"
 #include "goofit/FitManager.h"
 #include "goofit/UnbinnedDataSet.h"
@@ -8,6 +9,15 @@
 using namespace std;
 
 int main(int argc, char** argv) {
+
+    GooFit::Application app("Product example");
+
+    try {
+        app.run(argc, argv);
+    } catch (const GooFit::Error &e) {
+        return app.exit(e);
+    }
+
     Variable* xvar = new Variable("xvar", 0, log(1+RAND_MAX/2));
     Variable* yvar = new Variable("yvar", 0, log(1+RAND_MAX/2));
 

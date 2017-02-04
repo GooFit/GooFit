@@ -1,3 +1,4 @@
+#include "goofit/Application.h"
 #include "goofit/Variable.h"
 #include "goofit/FitManager.h"
 #include "goofit/UnbinnedDataSet.h"
@@ -18,6 +19,14 @@ double cpu_bw(double x, double x0, double gamma) {
 }
 
 int main(int argc, char** argv) {
+    GooFit::Application app("Convolution example");
+
+    try {
+        app.run(argc, argv);
+    } catch (const GooFit::Error &e) {
+        return app.exit(e);
+    }
+
     // Independent variable.
     Variable* xvar = new Variable("xvar", -10, 10);
 

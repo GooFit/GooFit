@@ -3,6 +3,7 @@
 #include <TTree.h>
 
 // GooFit stuff
+#include "goofit/Application.h"
 #include "goofit/Variable.h"
 #include "goofit/PDFs/PolynomialPdf.h"
 #include "goofit/PDFs/AddPdf.h"
@@ -19,6 +20,13 @@ const fptype piPlusMass = 0.13957018;
 const fptype KmMass = .493677;
 
 int main(int argc, char** argv) {
+    GooFit::Application app("Signal Generator Example");
+
+    try {
+        app.run(argc, argv);
+    } catch (const GooFit::Error &e) {
+        return app.exit(e);
+    }
 
     DecayInfo_DP* DK3P_DI = new DecayInfo_DP();
     DK3P_DI->meson_radius =1.5;

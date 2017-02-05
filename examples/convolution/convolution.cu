@@ -19,10 +19,10 @@ double cpu_bw(double x, double x0, double gamma) {
 }
 
 int main(int argc, char** argv) {
-    GooFit::Application app("Convolution example");
+    GooFit::Application app("Convolution example", argc, argv);
 
     try {
-        app.run(argc, argv);
+        app.run();
     } catch (const GooFit::Error &e) {
         return app.exit(e);
     }

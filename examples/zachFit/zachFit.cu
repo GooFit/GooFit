@@ -489,17 +489,18 @@ void CudaMinimise(int dev, int fitType) {
 }
 
 int main(int argc, char** argv) {
-    GooFit::Application app("Zach-Fit example");
+    GooFit::Application app("Zach-Fit example", argc, argv);
     
     int mode;
     app.add_set("-m,--mode,mode", mode, {0,1,2}, "Program mode: 0-unbinned, 1-binned, 2-binned ChiSq", GooFit::Required);
 
 
     try {
-        app.run(argc, argv);
+        app.run();
     } catch (const GooFit::Error &e) {
         return app.exit(e);
     }
+
     int gpuDev = app.get_gpu();
     gStyle->SetCanvasBorderMode(0);
     gStyle->SetCanvasColor(10);

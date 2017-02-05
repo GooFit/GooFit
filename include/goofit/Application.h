@@ -24,9 +24,16 @@ protected:
     int gpuDev = 0;
     bool show_gpus;
     bool show_threads;
+    int argc;
+    char** argv;
 
 public:
-    Application(std::string discription) : App(discription) {
+    Application(std::string discription,
+            int argc, char** argv) : App(discription), argc(argc), argv(argv) {
+
+        #ifdef GOOFIT_MPI
+        MPI_Init(&argc, &argv);
+        #endif
 
         #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
         add_option("--gpu-dev", gpuDev, "GPU device to use", GooFit::Default);
@@ -35,15 +42,14 @@ public:
         add_flag("--goofit-details", show_threads, "Output system and threading details");
     }
 
+    // Shortcut for the lazy
+    Application(int argc, char** argv) : Application("", argc, argv) {}
+
     int get_gpu() const {return gpuDev;}
 
-    /// Overriding parse
-    void parse(int argc, char** argv) {
-        #ifdef GOOFIT_MPI
-        MPI_Init(&argc, &argv);
-        #endif
-
-        CLI::App::parse(argc, argv);
+    /// simpler run since argc and argv are stored 
+    void run() {
+        run(argc, argv);
     }
 
     /// Gets called in parse

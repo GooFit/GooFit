@@ -17,10 +17,10 @@ const fptype KmMass = .493677;
 
 int main(int argc, char** argv) {
 
-    GooFit::Application app("Dalitz 4 daughter example");
+    GooFit::Application app("Dalitz 4 daughter example", argc, argv);
 
     try {
-        app.run(argc, argv);
+        app.run();
     } catch (const GooFit::Error &e) {
         return app.exit(e);
     }

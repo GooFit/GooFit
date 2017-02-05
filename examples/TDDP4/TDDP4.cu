@@ -23,7 +23,7 @@ const fptype KmMass = .493677;
 
 int main(int argc, char** argv) {
 
-    GooFit::Application app("Time dependent Dalitz plot, 4 particles");
+    GooFit::Application app("Time dependent Dalitz plot, 4 particles", argc, argv);
     
     TString output = "test_10_15.output";
     app.add_option("-o,--output,output", output,
@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
             "Number of trials", GooFit::Default);
 
     try {
-        app.run(argc, argv);
+        app.run();
     } catch (const GooFit::Error &e) {
         return app.exit(e);
     }

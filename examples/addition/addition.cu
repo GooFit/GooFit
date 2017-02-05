@@ -19,10 +19,10 @@
 using namespace std;
 
 int main(int argc, char** argv) {
-    GooFit::Application app("Addition example");
+    GooFit::Application app("Addition example", argc, argv);
 
     try {
-        app.run(argc, argv);
+        app.run();
     } catch (const GooFit::Error &e) {
         return app.exit(e);
     }

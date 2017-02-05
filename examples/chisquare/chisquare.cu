@@ -245,13 +245,13 @@ void fitRatioCPU(vector<int>& rsEvts, vector<int>& wsEvts) {
 
 int main(int argc, char** argv) {
 
-    GooFit::Application app("Chi-square example");
+    GooFit::Application app("Chi-square example", argc, argv);
 
     int numbins = 100;
     app.add_option("-n,--numbins,numbins", numbins, "Number of bins", GooFit::Default);
 
     try {
-        app.run(argc, argv);
+        app.run();
     } catch (const GooFit::Error &e) {
         return app.exit(e);
     }

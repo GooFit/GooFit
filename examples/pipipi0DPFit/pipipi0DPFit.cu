@@ -4791,7 +4791,7 @@ int main(int argc, char** argv) {
 
 
 
-    GooFit::Application app("pipipi0 Dalitz fit example");
+    GooFit::Application app("pipipi0 Dalitz fit example", argc, argv);
 
     std::string data;
     int sample = 0;
@@ -4887,7 +4887,7 @@ int main(int argc, char** argv) {
             });
 
     try {
-        app.run(argc, argv);
+        app.run();
     } catch (const GooFit::Error &e) {
         return app.exit(e);
     }

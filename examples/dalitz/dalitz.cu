@@ -395,13 +395,13 @@ void runToyFit(std::string toyFileName) {
 
 int main(int argc, char** argv) {
 
-    GooFit::Application app("Dalitz example");
+    GooFit::Application app("Dalitz example", argc, argv);
 
     std::string filename = "dalitz_toyMC_000.txt";
     app.add_option("-f,--filename,filename", filename, "File to read in", GooFit::ExistingFile, GooFit::Default);
 
     try {
-        app.run(argc, argv);
+        app.run();
     } catch (const GooFit::Error &e) {
         return app.exit(e);
     }

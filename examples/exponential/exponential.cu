@@ -8,10 +8,10 @@
 using namespace std;
 
 int main(int argc, char** argv) {
-    GooFit::Application app("Exponential example");
+    GooFit::Application app("Exponential example", argc, argv);
 
     try {
-        app.run(argc, argv);
+        app.run();
     } catch (const GooFit::Error &e) {
         return app.exit(e);
     }

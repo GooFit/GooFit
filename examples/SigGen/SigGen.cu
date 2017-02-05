@@ -20,10 +20,10 @@ const fptype piPlusMass = 0.13957018;
 const fptype KmMass = .493677;
 
 int main(int argc, char** argv) {
-    GooFit::Application app("Signal Generator Example");
+    GooFit::Application app("Signal Generator Example", argc, argv);
 
     try {
-        app.run(argc, argv);
+        app.run();
     } catch (const GooFit::Error &e) {
         return app.exit(e);
     }

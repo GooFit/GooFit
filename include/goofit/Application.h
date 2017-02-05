@@ -49,7 +49,7 @@ public:
 
     /// simpler run since argc and argv are stored 
     void run() {
-        run(argc, argv);
+        ClI::APP::run(argc, argv);
     }
 
     /// Gets called in parse

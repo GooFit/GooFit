@@ -49,7 +49,7 @@ public:
 
     /// simpler run since argc and argv are stored 
     void run() {
-        ClI::APP::run(argc, argv);
+        CLI::App::run(argc, argv);
     }
 
     /// Gets called in parse

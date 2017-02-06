@@ -6,7 +6,7 @@ from plumbum import local, cli, FG
 from plumbum.cmd import curl
 
 FILES = [
-    'https://raw.githubusercontent.com/henryiii/CLI11/master/include/CLI.hpp',
+        'https://github.com/henryiii/CLI11/releases/download/v0.1/CLI11.hpp',
 ]
 
 DIR = local.path(__file__).dirname

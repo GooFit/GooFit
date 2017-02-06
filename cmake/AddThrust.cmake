@@ -1,8 +1,4 @@
-# 
-#
-# Downloads GTest and provides a helper macro to add tests. Add make check, as well, which
-# gives output on failed tests without having to set an environment variable.
-#
+# Downloads thrust 
 #
 
 

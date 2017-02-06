@@ -1,4 +1,4 @@
-#include "goofit/detail/CLI.hpp"
+#include "goofit/detail/CLI11.hpp"
 #include "goofit/Version.h"
 #include "thrust/detail/config/device_system.h"
 

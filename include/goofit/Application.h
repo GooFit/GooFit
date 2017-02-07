@@ -35,14 +35,6 @@ public:
         #ifdef GOOFIT_MPI
         MPI_Init(&argc, &argv);
         #endif
-    }
-
-    /// Shortcut for the lazy
-    Application(int argc, char** argv) : Application("", argc, argv) {}
-
-    /// Called by App constructor, prepares special flags
-    virtual void setup() override {
-        CLI::App::setup(); // Help flag
 
         #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
         add_option("--gpu-dev", gpuDev, "GPU device to use", true);
@@ -50,6 +42,9 @@ public:
         #endif
         add_flag("--goofit-details", show_threads, "Output system and threading details");
     }
+
+    /// Shortcut for the lazy
+    Application(int argc, char** argv) : Application("", argc, argv) {}
 
     /// Get the set GPU device
     int get_gpu() const {return gpuDev;}

@@ -248,11 +248,11 @@ int main(int argc, char** argv) {
     GooFit::Application app("Chi-square example", argc, argv);
 
     int numbins = 100;
-    app.add_option("-n,--numbins,numbins", numbins, "Number of bins", GooFit::Default);
+    app.add_option("-n,--numbins,numbins", numbins, "Number of bins", true);
 
     try {
         app.run();
-    } catch (const GooFit::Error &e) {
+    } catch (const GooFit::ParseError &e) {
         return app.exit(e);
     }
 

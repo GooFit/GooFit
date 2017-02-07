@@ -492,12 +492,13 @@ int main(int argc, char** argv) {
     GooFit::Application app("Zach-Fit example", argc, argv);
     
     int mode;
-    app.add_set("-m,--mode,mode", mode, {0,1,2}, "Program mode: 0-unbinned, 1-binned, 2-binned ChiSq", GooFit::Required);
+    app.add_set("-m,--mode,mode", mode, {0,1,2},
+            "Program mode: 0-unbinned, 1-binned, 2-binned ChiSq")->required();
 
 
     try {
         app.run();
-    } catch (const GooFit::Error &e) {
+    } catch (const GooFit::ParseError &e) {
         return app.exit(e);
     }
 

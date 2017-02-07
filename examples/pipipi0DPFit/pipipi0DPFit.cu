@@ -4724,23 +4724,23 @@ void set_bkg_model_from_string() {
 
 void parseArg(GooFit::App *app) {
 
-    app->add_option("--luckyFrac", luckyFrac, "", GooFit::Default);
-    app->add_option("--mesonRad", mesonRad, "", GooFit::Default);
-    app->add_option("--normBins", normBinning, "", GooFit::Default);
-    app->add_option("--blindSeed", blindSeed, "", GooFit::Default);
-    app->add_option("--mdslices", mdslices, "", GooFit::Default);
-    app->add_option("--offset", md0offset, "Offest in GeV", GooFit::Default);
+    app->add_option("--luckyFrac", luckyFrac, "", true);
+    app->add_option("--mesonRad", mesonRad, "", true);
+    app->add_option("--normBins", normBinning, "", true);
+    app->add_option("--blindSeed", blindSeed, "", true);
+    app->add_option("--mdslices", mdslices, "", true);
+    app->add_option("--offset", md0offset, "Offest in GeV", true);
     // Previously in MeV
-    app->add_option("--upper_window", md0_upper_window, "", GooFit::Default);
-    app->add_option("--lower_window", md0_lower_window, "", GooFit::Default);
-    app->add_option("--upper_delta_window", deltam_upper_window, "", GooFit::Default);
-    app->add_option("--lower_delta_window", deltam_lower_window, "", GooFit::Default);
-    app->add_option("--upperTime", upperTime, "", GooFit::Default);
-    app->add_option("--lowerTime", lowerTime, "", GooFit::Default);
-    app->add_option("--maxSigma", maxSigma, "", GooFit::Default);
-    app->add_option("--polyEff", polyEff, "", GooFit::Default);
-    app->add_option("--m23Slices", m23Slices, "", GooFit::Default);
-    app->add_option("--bkgRandSeed", bkgHistRandSeed, "", GooFit::Default);
+    app->add_option("--upper_window", md0_upper_window, "", true);
+    app->add_option("--lower_window", md0_lower_window, "", true);
+    app->add_option("--upper_delta_window", deltam_upper_window, "", true);
+    app->add_option("--lower_delta_window", deltam_lower_window, "", true);
+    app->add_option("--upperTime", upperTime, "", true);
+    app->add_option("--lowerTime", lowerTime, "", true);
+    app->add_option("--maxSigma", maxSigma, "", true);
+    app->add_option("--polyEff", polyEff, "", true);
+    app->add_option("--m23Slices", m23Slices, "", true);
+    app->add_option("--bkgRandSeed", bkgHistRandSeed, "", true);
 
     app->add_flag("--drop-rho_1450", drop_rho_1450);
     app->add_flag("--drop-rho_1700", drop_rho_1700);
@@ -4753,12 +4753,12 @@ void parseArg(GooFit::App *app) {
 
     app->add_flag("--histSigma", useHistogramSigma);
     app->add_flag("--makePlots", makePlots);
-    app->add_set("--mkg2Model", bkg2Model_str, {"histogram", "parameter", "sideband"}, "", GooFit::Default);
+    app->add_set("--mkg2Model", bkg2Model_str, {"histogram", "parameter", "sideband"}, "", true);
     app->add_flag("--bkg3Hist", useBackground3Hist);
     app->add_flag("--bkg4Hist", useBackground4Hist);
-    app->add_option("--bkgHistBins", bkgHistBins, "", GooFit::Default);
-    app->add_option("--varyParameterUp", paramUp, "", GooFit::Default);
-    app->add_option("--varyParameterDn", paramDn, "", GooFit::Default);
+    app->add_option("--bkgHistBins", bkgHistBins, "", true);
+    app->add_option("--varyParameterUp", paramUp, "", true);
+    app->add_option("--varyParameterDn", paramDn, "", true);
     app->add_flag("--mikhail", mikhailSetup);
 
 }
@@ -4802,9 +4802,9 @@ int main(int argc, char** argv) {
     
     auto toy = app.add_subcommand("toy", "Toy MC Performance evaluation");
     toy->add_option("-s,--sample,sample", sample,
-            "Sample number to use", GooFit::Default);
+            "Sample number to use", true);
     toy->add_option("-l,--load,load", load,
-            "Number of times to load",  GooFit::Default);
+            "Number of times to load",  true);
     toy->add_flag("-p,--plot", plots,
             "Also make plots");
     toy->set_callback([&sample, &load, &plots](){
@@ -4814,7 +4814,7 @@ int main(int argc, char** argv) {
 
     auto truth_fit = app.add_subcommand("truth", "Truth Monte Carlo fit");
     truth_fit->add_option("-d,--data,data", data,
-            "Data to use", GooFit::Required, GooFit::ExistingFile);
+            "Data to use")->required()->check(GooFit::ExistingFile);
     truth_fit->set_callback([&data](){
             runTruthMCFit(data, false);
             });
@@ -4822,23 +4822,23 @@ int main(int argc, char** argv) {
 
     auto sigma_fit = app.add_subcommand("sigma", "Run sigma fit");
     sigma_fit->add_option("-d,--data,data", data,
-            "Data to use", GooFit::Required, GooFit::ExistingFile);
+            "Data to use")->required()->check(GooFit::ExistingFile);
     sigma_fit->add_option("-s,--slices,slices", m23Slices,
-            "m23 slices", GooFit::Required);
+            "m23 slices")->required();
     sigma_fit->set_callback([&](){
             runSigmaFit(data.c_str());
             });
 
     auto efficiency_fit = app.add_subcommand("efficiency", "Run efficiency fit");
     efficiency_fit->add_option("-s,--sample,sample", sample,
-            "Sample number to use", GooFit::Default);
+            "Sample number to use", true);
     efficiency_fit->set_callback([&](){
             runEfficiencyFit(sample);
             });
 
     auto cannonical_fit = app.add_subcommand("cannonical", "Run the cannonical fit");
     cannonical_fit->add_option("-d,--data,data", data,
-            "Data to use", GooFit::Required, GooFit::ExistingFile);
+            "Data to use")->required()->check(GooFit::ExistingFile);
     parseArg(cannonical_fit);
     cannonical_fit->set_callback([&](){
             set_bkg_model_from_string();
@@ -4847,7 +4847,7 @@ int main(int argc, char** argv) {
 
     auto background_dalitz_fit = app.add_subcommand("background_dalitz", "Run the background Dalitz fit");
     background_dalitz_fit->add_option("-s,--sample,sample", sample,
-            "Sample number to use", GooFit::Default);
+            "Sample number to use", true);
     parseArg(background_dalitz_fit);
     background_dalitz_fit->set_callback([&](){
             set_bkg_model_from_string();
@@ -4856,22 +4856,22 @@ int main(int argc, char** argv) {
 
     auto background_sigma_fit = app.add_subcommand("background_sigma", "Run background sigma fit");
     background_sigma_fit->add_option("-s,--sample,sample", sample,
-            "Sample number to use", GooFit::Default);
+            "Sample number to use", true);
     background_sigma_fit->set_callback([&](){
             runBackgroundSigmaFit(sample);
             });
 
     auto write_background_histograms = app.add_subcommand("background_histograms", "Write background histograms");
     write_background_histograms->add_option("-s,--sample,sample", sample,
-            "Sample number to use", GooFit::Default);
+            "Sample number to use", true);
     write_background_histograms->set_callback([&](){
             writeBackgroundHistograms(sample);
             });
 
     auto run_gen_mc_fit = app.add_subcommand("run_gen_mc", "Run generated Monte Carlo fit");
     run_gen_mc_fit->add_option("-d,--data,data", data,
-            "Data to use", GooFit::Required, GooFit::ExistingFile);
-    run_gen_mc_fit->add_option("-g,--genres,gen-resolutions", genResolutions, "", GooFit::Required);
+            "Data to use")->required()->check(GooFit::ExistingFile);
+    run_gen_mc_fit->add_option("-g,--genres,gen-resolutions", genResolutions)->required();
     run_gen_mc_fit->add_option("-p,--dplotres,dplotres", dplotres);
     run_gen_mc_fit->set_callback([&](){
             if(! (DplotRes & genResolutions) ) 
@@ -4881,14 +4881,14 @@ int main(int argc, char** argv) {
 
     auto make_time_plots = app.add_subcommand("make_time_plots", "Make time plots");
     make_time_plots->add_option("-d,--data,data", data,
-            "Data to use", GooFit::Required, GooFit::ExistingFile);
+            "Data to use")->required()->check(GooFit::ExistingFile);
     make_time_plots->set_callback([&](){
             makeTimePlots(data);
             });
 
     try {
         app.run();
-    } catch (const GooFit::Error &e) {
+    } catch (const GooFit::ParseError &e) {
         return app.exit(e);
     }
 

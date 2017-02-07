@@ -23,7 +23,7 @@ int main(int argc, char** argv) {
 
     try {
         app.run();
-    } catch (const GooFit::Error &e) {
+    } catch (const GooFit::ParseError &e) {
         return app.exit(e);
     }
 

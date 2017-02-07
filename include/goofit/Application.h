@@ -28,12 +28,21 @@ protected:
     char** argv;
 
 public:
+    /// Make a new Application
     Application(std::string discription,
             int argc, char** argv) : App(discription), argc(argc), argv(argv) {
 
         #ifdef GOOFIT_MPI
         MPI_Init(&argc, &argv);
         #endif
+    }
+
+    /// Shortcut for the lazy
+    Application(int argc, char** argv) : Application("", argc, argv) {}
+
+    /// Called by App constructor, prepares special flags
+    virtual void setup() override {
+        CLI::App::setup() // Help flag
 
         #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
         add_option("--gpu-dev", gpuDev, "GPU device to use", GooFit::Default);
@@ -42,9 +51,7 @@ public:
         add_flag("--goofit-details", show_threads, "Output system and threading details");
     }
 
-    // Shortcut for the lazy
-    Application(int argc, char** argv) : Application("", argc, argv) {}
-
+    /// Get the set GPU device
     int get_gpu() const {return gpuDev;}
 
     /// simpler run since argc and argv are stored 
@@ -101,11 +108,11 @@ public:
         #endif
     }
 
+    /// CLeanup MPI
     ~Application() {
         #ifdef GOOFIT_MPI
         MPI_Finalize();
         #endif
-
     }
 };
 

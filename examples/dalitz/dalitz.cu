@@ -398,11 +398,12 @@ int main(int argc, char** argv) {
     GooFit::Application app("Dalitz example", argc, argv);
 
     std::string filename = "dalitz_toyMC_000.txt";
-    app.add_option("-f,--filename,filename", filename, "File to read in", GooFit::ExistingFile, GooFit::Default);
+    app.add_option("-f,--filename,filename", filename,
+            "File to read in", true)->check(GooFit::ExistingFile);
 
     try {
         app.run();
-    } catch (const GooFit::Error &e) {
+    } catch (const GooFit::ParseError &e) {
         return app.exit(e);
     }
 

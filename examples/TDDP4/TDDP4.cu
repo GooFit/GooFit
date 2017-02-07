@@ -27,15 +27,15 @@ int main(int argc, char** argv) {
     
     TString output = "test_10_15.output";
     app.add_option("-o,--output,output", output,
-            "File to output", GooFit::Default, GooFit::NonexistentPath);
+            "File to output", true)->check(GooFit::NonexistentPath);
     
     int trials = 100;
     app.add_option("-t,--trials,output", trials,
-            "Number of trials", GooFit::Default);
+            "Number of trials", true);
 
     try {
         app.run();
-    } catch (const GooFit::Error &e) {
+    } catch (const GooFit::ParseError &e) {
         return app.exit(e);
     }
 

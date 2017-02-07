@@ -6,14 +6,14 @@ from plumbum import local, cli, FG
 from plumbum.cmd import curl
 
 FILES = [
-        'https://github.com/henryiii/CLI11/releases/download/v0.1/CLI11.hpp',
+        'https://github.com/henryiii/CLI11/releases/download/v0.2/CLI11.hpp',
 ]
 
 DIR = local.path(__file__).dirname
 
 def download_file(path):
     name = path.split('/')[-1]
-    (curl[path] > name) & FG
+    (curl['-L',path] > name) & FG
 
 class UpdateCLI(cli.Application):
     def main(self):

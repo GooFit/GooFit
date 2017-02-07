@@ -38,7 +38,7 @@ public:
 
         #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
         add_option("--gpu-dev", gpuDev, "GPU device to use", true);
-        add_flag("--show-gpus", show_gpus, "Show the availble GPU devices");
+        add_flag("--show-gpus", show_gpus, "Show the available GPU devices and exit");
         #endif
         add_flag("--goofit-details", show_threads, "Output system and threading details");
     }
@@ -47,7 +47,7 @@ public:
     Application(int argc, char** argv) : Application("", argc, argv) {}
 
     /// Get the set GPU device
-    int get_gpu() const {return gpuDev;}
+    int get_device() const {return gpuDev;}
 
     /// simpler run since argc and argv are stored 
     void run() {
@@ -56,24 +56,13 @@ public:
 
     /// Gets called in parse
     virtual void pre_callback() override {
-        #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-        if(show_gpus) {
-            int deviceCount;
-            cudaGetDeviceCount(&deviceCount);
-            for(int i = 0; i < deviceCount; i++) {
-                cudaDeviceProp deviceProp;
-                cudaGetDeviceProperties(&deviceProp, i);
-                std::cout << "CUDA: Device " << i << " has compute capability "
-                          << deviceProp.major << "." << deviceProp.minor
-                          << std::endl;
-            }
-        }
 
         set_device();
-        #endif
+
         if(show_threads) {
             std::cout << "GOOFIT: Version " << GOOFIT_VERSION_MAJOR << "." << GOOFIT_VERSION_MINOR << "." << GOOFIT_VERSION_PATCH << std::endl;
             #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
+            std::cout << "CUDA: Device " << get_device() << std::endl;
             cudaDeviceProp devProp;
             cudaGetDeviceProperties(&devProp, gpuDev);
             std::cout << "CUDA: Compute " << devProp.major << "." << devProp.minor << std::endl;
@@ -90,6 +79,20 @@ public:
             #endif
         }
 
+        #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
+        if(show_gpus) {
+            int deviceCount;
+            cudaGetDeviceCount(&deviceCount);
+            for(int i = 0; i < deviceCount; i++) {
+                cudaDeviceProp deviceProp;
+                cudaGetDeviceProperties(&deviceProp, i);
+                std::cout << "CUDA: Device " << i << " has compute capability "
+                          << deviceProp.major << "." << deviceProp.minor
+                          << std::endl;
+            }
+            throw GooFit::Success();
+        }
+        #endif
     }
 
     /// Call if the application might fork, otherwise automatic

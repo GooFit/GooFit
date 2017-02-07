@@ -157,50 +157,7 @@ void getData() {
     datareader.close();
 }
 
-void CudaMinimise(int dev, int fitType) {
-//#ifdef CUDAPRINT
-//  cudaPrintfInit(10000000);
-//#endif
-//#ifdef OMP_ON
-    int deviceCount;
-    //int threadCount;
-//#pragma omp parallel
-//  {
-//  threadCount = omp_get_num_threads();
-//  }
-
-#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-    cudaGetDeviceCount(&deviceCount);
-    //if (threadCount > deviceCount) {
-    //omp_set_num_threads(deviceCount);
-    //}
-#endif
-//#endif
-
-//#pragma omp parallel
-#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-
-    for(int i = 0; i < deviceCount; i++) {
-        cudaDeviceProp deviceProp;
-//    tid = omp_get_thread_num();
-//#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-        cudaGetDeviceProperties(&deviceProp, i);
-        printf("Device %d has compute capability %d.%d.\n", i, deviceProp.major, deviceProp.minor);
-
-        if(deviceProp.major < 2) {
-            printf("Compute capability of device %d is less than 2.0, terminating ...\n", i);
-            exit(EXIT_FAILURE);
-        }
-    }
-
-    //We are setting to the 0-device regardless
-    cudaSetDevice(0);
-#endif
-//#else
-//#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-//  cudaSetDevice(dev);
-//#endif
-//#endif
+void CudaMinimise(int fitType) {
 
 //#ifdef OMP_ON
 //#pragma omp master
@@ -502,7 +459,6 @@ int main(int argc, char** argv) {
         return app.exit(e);
     }
 
-    int gpuDev = app.get_gpu();
     gStyle->SetCanvasBorderMode(0);
     gStyle->SetCanvasColor(10);
     gStyle->SetFrameFillColor(10);
@@ -520,7 +476,7 @@ int main(int argc, char** argv) {
     data_hist = new TH1F("data_hist", "", 300, 0.1365, 0.1665);
 
     try {
-        CudaMinimise(gpuDev, mode);
+        CudaMinimise(mode);
     } catch(const std::exception& ex) {
         std::cerr << ex.what() << std::endl;
         return 6;

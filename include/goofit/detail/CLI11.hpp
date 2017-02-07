@@ -4,7 +4,7 @@
 // file LICENSE or https://github.com/henryiii/CLI11 for details.
 
 // This file was generated using MakeSingleHeader.py in CLI11/scripts
-// from: v0.2
+// from: v0.2-4-g18478d7
 
 // This has the complete CLI library in one file.
 
@@ -43,12 +43,13 @@ struct Error : public std::runtime_error {
 // Construction errors (not in parsing)
 
 struct ConstructionError : public Error {
-    using Error::Error;
+    // Using Error::Error constructors seem to not work on GCC 4.7
+    ConstructionError(std::string parent, std::string name, int exit_code=255, bool print_help=true) : Error(parent, name, exit_code, print_help) {}
 };
 
 /// Thrown when an option is set to conflicting values (non-vector and multi args, for example)
 struct IncorrectConstruction : public ConstructionError {
-    IncorrectConstruction(std::string name) : ConstructionError("ConstructionError", name, 8) {}
+    IncorrectConstruction(std::string name) : ConstructionError("IncorrectConstruction", name, 8) {}
 };
 
 /// Thrown on construction of a bad name
@@ -65,7 +66,7 @@ struct OptionAlreadyAdded : public ConstructionError {
 
 /// Anything that can error in Parse
 struct ParseError : public Error {
-    using Error::Error;
+    ParseError(std::string parent, std::string name, int exit_code=255, bool print_help=true) : Error(parent, name, exit_code, print_help) {}
 };
 
 // Not really "errors"
@@ -549,7 +550,6 @@ public:
     std::string get_pname() const {
         return pname;
     }
-
     /// Process the callback
     bool run_callback() const {
         if(_validators.size()>0) {
@@ -655,6 +655,21 @@ public:
         }
         return out.str();
     }
+    
+    /// pname with type info
+    std::string help_pname() const {
+        std::stringstream out;
+        out << get_pname();
+        if(typeval != "")
+            out << " " << typeval;
+        if(defaultval != "")
+            out << "=" << defaultval; 
+        if(get_expected() > 1)
+            out << " x " << get_expected();
+        if(get_expected() == -1)
+            out << " ...";
+        return out.str();
+    }
 
     /// Produce a flattened vector of results, vs. a vector of vectors.
     std::vector<std::string> flatten_results() const {
@@ -731,20 +746,17 @@ public:
     }
     
     /// Create a new program. Pass in the same arguments as main(), along with a help string.
-    App(std::string prog_description="")
+    App(std::string prog_description="", bool help=true)
         : prog_description(prog_description) {
 
-        setup();
+        if(help)
+            help_flag = add_flag("-h,--help", "Print this help message and exit");
 
     }
 
-    /// Setup help flag. Virtual to allow customization.
-    virtual void setup() {
-        help_flag = add_flag("-h,--help", "Print this help message and exit");
-    }
-
-    App* add_subcommand(std::string name, std::string description="") {
-        subcommands.emplace_back(new App(description));
+    /// Add a subcommand. Like the constructor, you can override the help message addition by setting help=false
+    App* add_subcommand(std::string name, std::string description="", bool help=true) {
+        subcommands.emplace_back(new App(description, help));
         subcommands.back()->name = name;
         return subcommands.back().get();
     }
@@ -1200,7 +1212,7 @@ public:
             out << "Positionals:" << std::endl;
             for(const Option_p &opt : options)
                 if(opt->get_positional() && opt->has_description())
-                    detail::format_help(out, opt->get_pname(), opt->get_description(), wid);
+                    detail::format_help(out, opt->help_pname(), opt->get_description(), wid);
             out << std::endl;
 
         }

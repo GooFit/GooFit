@@ -42,7 +42,7 @@ public:
 
     /// Called by App constructor, prepares special flags
     virtual void setup() override {
-        CLI::App::setup() // Help flag
+        CLI::App::setup(); // Help flag
 
         #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
         add_option("--gpu-dev", gpuDev, "GPU device to use", GooFit::Default);

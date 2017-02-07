@@ -45,7 +45,7 @@ public:
         CLI::App::setup(); // Help flag
 
         #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-        add_option("--gpu-dev", gpuDev, "GPU device to use", GooFit::Default);
+        add_option("--gpu-dev", gpuDev, "GPU device to use", true);
         add_flag("--show-gpus", show_gpus, "Show the availble GPU devices");
         #endif
         add_flag("--goofit-details", show_threads, "Output system and threading details");

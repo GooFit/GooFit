@@ -4,7 +4,7 @@
 // file LICENSE or https://github.com/henryiii/CLI11 for details.
 
 // This file was generated using MakeSingleHeader.py in CLI11/scripts
-// from: v0.2-4-g18478d7
+// from: v0.2-6-g9b31ef3
 
 // This has the complete CLI library in one file.
 
@@ -577,6 +577,8 @@ public:
     /// Gets a , sep list of names. Does not include the positional name.
     std::string get_name() const {
         std::vector<std::string> name_list;
+        if(pname.length() > 0)
+            name_list.push_back(pname);
         for(const std::string& sname : snames)
             name_list.push_back("-"+sname);
         for(const std::string& lname : lnames)

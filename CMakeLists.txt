@@ -84,6 +84,24 @@ set(GOOFIT_ARCH Auto CACHE STRING "The GPU Archetecture, can be Auto, All, Commo
 
 option(GOOFIT_DOWNLOAD_THRUST "Download Thrust if not found (OMP only)" ON)
 
+
+option(GOOFIT_MPI "Turn on MPI for goofit (not implemented yet)" OFF)
+mark_as_advanced(GOOFIT_MPI)
+
+if(GOOFIT_MPI)
+    find_package(MPI REQUIRED)
+
+    # Added globally
+    add_definitions("${MPI_CXX_COMPILE_FLAGS} -DGOOFIT_MPI")
+    include_directories(${MPI_CXX_INCLUDE_PATH})
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${MPI_CXX_LINK_FLAGS}")
+    link_libraries(${MPI_CXX_LIBRARIES})
+
+    message(STATUS "MPI found. Use the following to run your program")
+    message(STATUS "${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} PROCS ${MPIEXEC_PREFLAGS} EXECUTABLE ${MPIEXEC_POSTFLAGS} ARGS")
+    message(STATUS "where PROCS is the number of processors on which to execute the program, EXECUTABLE is the MPI program, and ARGS are the arguments to pass to the MPI program.")
+endif()
+
 if(GOOFIT_DEVICE STREQUAL CUDA)
     find_package(CUDA 6.0 REQUIRED)
 
@@ -221,7 +239,7 @@ set_property(GLOBAL PROPERTY GOOFIT_EXTRA_PDFS "")
 macro(goofit_add_pdf)
     foreach(N ${ARGN})
         get_filename_component(N ${N} ABSOLUTE)
-        message(STATUS ${N})
+        message(STATUS "Adding PDF: ${N}")
         get_property(goo_extra GLOBAL PROPERTY GOOFIT_EXTRA_PDFS)
         set_property(GLOBAL PROPERTY GOOFIT_EXTRA_PDFS ${goo_extra} ${N})
     endforeach()

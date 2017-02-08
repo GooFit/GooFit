@@ -195,4 +195,12 @@ __host__ void PdfBase::storeParameters() const {
     }
 }
 
+__host__ void PdfBase::setNumPerTask (PdfBase *p, const int &c)
+{
+    if (!p)
+		return;
+
+	m_iEventsPerTask = c;
+}
+
 void dummySynch() {}

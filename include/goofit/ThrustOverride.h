@@ -56,7 +56,6 @@ OutputType reduce (goofit_policy &exec,
                         OutputType init,
                         BinaryFunction binary_op)
 {
-  //printf ("goofit_reduce\n");
   typedef typename thrust::iterator_difference<InputIterator>::type size_type;
 
   const size_type n = last - first;

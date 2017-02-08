@@ -245,10 +245,22 @@ __host__ double GooPdf::sumOfNll(int numVars) const {
 
     //if (host_callnumber >= 2) abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " debug abort", this);
     thrust::counting_iterator<int> eventIndex(0);
-    return thrust::transform_reduce(my_policy,
+
+    double ret;
+#ifdef TARGET_MPI
+    double r = thrust::transform_reduce(my_policy,
                                     thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
                                     thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
                                     *logger, dummy, cudaPlus);
+
+    MPI_Allreduce(&r, &ret, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+#else
+    ret = thrust::transform_reduce(my_policy,
+                                    thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
+                                    thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
+                                    *logger, dummy, cudaPlus);
+#endif
+    return ret;
 }
 
 __host__ double GooPdf::calculateNLL() const {
@@ -321,10 +333,17 @@ __host__ void GooPdf::evaluateAtPoints(Variable* var, std::vector<fptype>& res) 
     thrust::device_vector<fptype> results(var->numbins);
 
     MetricTaker evalor(this, getMetricPointer("ptr_to_Eval"));
+#ifdef TARGET_MPI
+    thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
+                      thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, arrayAddress, eventSize)),
+                      results.begin(),
+                      evalor);
+#else
     thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
                       thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
                       results.begin(),
                       evalor);
+#endif
 
     thrust::host_vector<fptype> h_results = results;
     res.clear();
@@ -401,10 +420,18 @@ __host__ fptype GooPdf::getValue() {
     thrust::device_vector<fptype> results(1);
 
     MetricTaker evalor(this, getMetricPointer("ptr_to_Eval"));
+#ifdef TARGET_MPI
     thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
                       thrust::make_zip_iterator(thrust::make_tuple(eventIndex + 1, arrayAddress, eventSize)),
                       results.begin(),
                       evalor);
+#else
+    thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
+                      thrust::make_zip_iterator(thrust::make_tuple(eventIndex + 1, arrayAddress, eventSize)),
+                      results.begin(),
+                      evalor);
+#endif
+
     return results[0];
 }
 
@@ -446,10 +473,21 @@ __host__ fptype GooPdf::normalise() const {
     thrust::constant_iterator<fptype*> arrayAddress(normRanges);
     thrust::constant_iterator<int> eventSize(observables.size());
     thrust::counting_iterator<int> binIndex(0);
-    fptype sum = thrust::transform_reduce(my_policy,
+
+    fptype sum;
+#ifdef TARGET_MPI
+    fptype s = thrust::transform_reduce(my_policy,
 					  thrust::make_zip_iterator(thrust::make_tuple(binIndex, eventSize, arrayAddress)),
                                           thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, eventSize, arrayAddress)),
                                           *logger, dummy, cudaPlus);
+    
+    MPI_Allreduce (&s, &sum, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+#else
+    sum = thrust::transform_reduce(my_policy,
+					  thrust::make_zip_iterator(thrust::make_tuple(binIndex, eventSize, arrayAddress)),
+                                          thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, eventSize, arrayAddress)),
+                                          *logger, dummy, cudaPlus);
+#endif
 
     if(std::isnan(sum)) {
         abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " NaN in normalisation", this);

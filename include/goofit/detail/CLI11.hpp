@@ -4,7 +4,7 @@
 // file LICENSE or https://github.com/henryiii/CLI11 for details.
 
 // This file was generated using MakeSingleHeader.py in CLI11/scripts
-// from: v0.2-6-g9b31ef3
+// from: v0.2-7-gcf667f2
 
 // This has the complete CLI library in one file.
 
@@ -574,10 +574,10 @@ public:
         return false;
     }
 
-    /// Gets a , sep list of names. Does not include the positional name.
-    std::string get_name() const {
+    /// Gets a , sep list of names. Does not include the positional name if opt_only=true.
+    std::string get_name(bool opt_only=false) const {
         std::vector<std::string> name_list;
-        if(pname.length() > 0)
+        if(!opt_only && pname.length() > 0)
             name_list.push_back(pname);
         for(const std::string& sname : snames)
             name_list.push_back("-"+sname);
@@ -627,24 +627,10 @@ public:
         return out;
     }
 
-    /// Diagnostic representation
-    std::string string() const {
-        std::string val = "Option: " + get_name() + "\n"
-             + "  " + description + "\n"
-             + "  [";
-        for(const auto& item : results) {
-            if(&item!=&results[0])
-                val+="],[";
-            val += detail::join(item);
-        }
-        val += "]";
-        return val;
-    }
-
     /// The first half of the help print, name plus default, etc
     std::string help_name() const {
         std::stringstream out;
-        out << get_name();
+        out << get_name(true);
         if(get_expected() != 0) {
             if(typeval != "")
                 out << " " << typeval;

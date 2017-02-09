@@ -16,7 +16,7 @@
 #include "goofit/PdfBase.h"
 #include "goofit/ThrustOverride.h"
 
-#ifdef TARGET_MPI
+#ifdef GOOFIT_MPI
 #include <mpi.h>
 #endif
 

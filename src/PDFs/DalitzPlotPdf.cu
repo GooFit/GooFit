@@ -202,7 +202,7 @@ __host__ void DalitzPlotPdf::setDataSize(unsigned int dataSize, unsigned int evt
     
     for(int i = 0; i < 16; i++)
     {
-#ifdef TARGET_MPI
+#ifdef GOOFIT_MPI
         cachedWaves[i] = new DEVICE_VECTOR<devcomplex<fptype>>(m_iEventsPerTask);
 #else
         cachedWaves[i] = new DEVICE_VECTOR<devcomplex<fptype>>(dataSize);
@@ -264,7 +264,7 @@ __host__ fptype DalitzPlotPdf::normalise() const {
     for(int i = 0; i < decayInfo->resonances.size(); ++i) {
         if(redoIntegral[i])
         {
-#ifdef TARGET_MPI
+#ifdef GOOFIT_MPI
             thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
                               thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, arrayAddress, eventSize)),
                               strided_range<DEVICE_VECTOR<devcomplex<fptype>>::iterator>(cachedWaves[i]->begin(),

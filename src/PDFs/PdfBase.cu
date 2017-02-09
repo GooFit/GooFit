@@ -189,7 +189,7 @@ __host__ void PdfBase::setData(UnbinnedDataSet* data) {
     numEntries = data->getNumEvents();
     numEvents = numEntries;
 
-#ifdef TARGET_MPI
+#ifdef GOOFIT_MPI
     //This fetches our rank and the total number of processes in the MPI call
     int myId, numProcs;
     MPI_Comm_size(MPI_COMM_WORLD, &numProcs);
@@ -212,7 +212,7 @@ __host__ void PdfBase::setData(UnbinnedDataSet* data) {
 
     fptype* host_array = new fptype[numEntries*dimensions];
 
-#ifdef TARGET_MPI
+#ifdef GOOFIT_MPI
     //This is an array to track if we need to re-index the observable
     int fixme[observables.size ()];
     memset (fixme, 0, sizeof (int)*observables.size ());
@@ -236,7 +236,7 @@ __host__ void PdfBase::setData(UnbinnedDataSet* data) {
         }
     }
 
-#ifdef TARGET_MPI
+#ifdef GOOFIT_MPI
     //We will go through all of the events and re-index if appropriate
     for (int i = 1; i < numProcs; i++)
     {
@@ -251,7 +251,7 @@ __host__ void PdfBase::setData(UnbinnedDataSet* data) {
     }
 #endif
 
-#ifdef TARGET_MPI
+#ifdef GOOFIT_MPI
     int mystart = displacements[myId];
     int myend = counts[myId];
     int mycount = myend - mystart;
@@ -288,7 +288,7 @@ __host__ void PdfBase::setData(BinnedDataSet* data) {
     if(!fitControl->binnedFit())
         setFitControl(new BinnedNllFit());
 
-#ifdef TARGET_MPI
+#ifdef GOOFIT_MPI
     //This fetches our rank and the total number of processes in the MPI call
     int myId, numProcs;
     MPI_Comm_size(MPI_COMM_WORLD, &numProcs);
@@ -311,7 +311,7 @@ __host__ void PdfBase::setData(BinnedDataSet* data) {
 
     fptype* host_array = new fptype[numEntries*dimensions];
 
-#ifdef TARGET_MPI
+#ifdef GOOFIT_MPI
     //This is an array to track if we need to re-index the observable
     int fixme[observables.size ()];
     memset (fixme, 0, sizeof (int)*observables.size ());
@@ -338,7 +338,7 @@ __host__ void PdfBase::setData(BinnedDataSet* data) {
         numEvents += data->getBinContent(i);
     }
 
-#ifdef TARGET_MPI
+#ifdef GOOFIT_MPI
     //We will go through all of the events and re-index if appropriate
     for (int i = 1; i < numProcs; i++)
     {
@@ -353,7 +353,7 @@ __host__ void PdfBase::setData(BinnedDataSet* data) {
     }
 #endif
 
-#ifdef TARGET_MPI
+#ifdef GOOFIT_MPI
     int mystart = displacements[myId];
     int myend = counts[myId];
     int mycount = myend - mystart;

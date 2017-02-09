@@ -247,7 +247,7 @@ __host__ double GooPdf::sumOfNll(int numVars) const {
     thrust::counting_iterator<int> eventIndex(0);
 
     double ret;
-#ifdef TARGET_MPI
+#ifdef GOOFIT_MPI
     double r = thrust::transform_reduce(my_policy,
                                     thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
                                     thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
@@ -333,7 +333,7 @@ __host__ void GooPdf::evaluateAtPoints(Variable* var, std::vector<fptype>& res) 
     thrust::device_vector<fptype> results(var->numbins);
 
     MetricTaker evalor(this, getMetricPointer("ptr_to_Eval"));
-#ifdef TARGET_MPI
+#ifdef GOOFIT_MPI
     thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
                       thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, arrayAddress, eventSize)),
                       results.begin(),
@@ -420,7 +420,7 @@ __host__ fptype GooPdf::getValue() {
     thrust::device_vector<fptype> results(1);
 
     MetricTaker evalor(this, getMetricPointer("ptr_to_Eval"));
-#ifdef TARGET_MPI
+#ifdef GOOFIT_MPI
     thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
                       thrust::make_zip_iterator(thrust::make_tuple(eventIndex + 1, arrayAddress, eventSize)),
                       results.begin(),
@@ -475,7 +475,7 @@ __host__ fptype GooPdf::normalise() const {
     thrust::counting_iterator<int> binIndex(0);
 
     fptype sum;
-#ifdef TARGET_MPI
+#ifdef GOOFIT_MPI
     fptype s = thrust::transform_reduce(my_policy,
 					  thrust::make_zip_iterator(thrust::make_tuple(binIndex, eventSize, arrayAddress)),
                                           thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, eventSize, arrayAddress)),

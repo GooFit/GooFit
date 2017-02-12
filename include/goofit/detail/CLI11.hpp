@@ -4,23 +4,24 @@
 // file LICENSE or https://github.com/henryiii/CLI11 for details.
 
 // This file was generated using MakeSingleHeader.py in CLI11/scripts
-// from: v0.2-7-gcf667f2
+// from: v0.2-19-g7fee3f3
 
 // This has the complete CLI library in one file.
 
 #include <sys/stat.h>
 #include <deque>
 #include <set>
-#include <sys/types.h>
+#include <iostream>
 #include <string>
 #include <tuple>
 #include <locale>
 #include <functional>
 #include <numeric>
 #include <iomanip>
-#include <iostream>
+#include <sys/types.h>
 #include <exception>
 #include <algorithm>
+#include <fstream>
 #include <sstream>
 #include <stdexcept>
 #include <vector>
@@ -81,6 +82,11 @@ struct CallForHelp : public ParseError {
     CallForHelp() : ParseError("CallForHelp", "This should be caught in your main function, see examples", 0) {}
 };
 
+
+/// Thrown when parsing an INI file and it is missing
+struct FileError : public ParseError {
+    FileError (std::string name) : ParseError("FileError", name, 10) {}
+};
 
 /// Thrown when conversion call back fails, such as when an int fails to coerse to a string
 struct ConversionError : public ParseError {
@@ -273,6 +279,33 @@ std::string join(const T& v, std::string delim = ",") {
     return s.str();
 }
 
+// Based on http://stackoverflow.com/questions/25829143/c-trim-whitespace-from-a-string
+
+/// Trim whitespace from left of string
+std::string& ltrim(std::string &str) {
+    auto it2 =  std::find_if( str.begin() , str.end() , [](char ch){ return !std::isspace<char>(ch , std::locale::classic() ) ; } );
+    str.erase( str.begin() , it2);
+    return str;   
+}
+
+/// Trim whitespace from right of string
+std::string& rtrim(std::string &str) {
+    auto it1 =  std::find_if( str.rbegin() , str.rend() , [](char ch){ return !std::isspace<char>(ch , std::locale::classic() ) ; } );
+    str.erase( it1.base() , str.end() );
+    return str;   
+}
+
+/// Trim whitespace from string
+std::string& trim(std::string &str) {
+    return ltrim(rtrim(str));
+}
+
+/// Make a copy of the string and then trim it
+std::string trim_copy(const std::string &str) {
+    std::string s = str;
+    return ltrim(rtrim(s));
+}
+
 /// Print a two part "help" string
 void format_help(std::stringstream &out, std::string name, std::string description, size_t wid) {
     name = "  " + name;
@@ -306,6 +339,49 @@ inline bool valid_name_string(const std::string &str) {
     return true;
 }
 
+
+
+}
+}
+
+// From CLI/Ini.hpp
+
+namespace CLI {
+namespace detail {
+
+
+/// Internal parsing function
+std::vector<std::string> parse_ini(std::istream &input) {
+    std::string line;
+    std::string section = "default";
+
+    std::vector<std::string> output;
+
+    while(getline(input, line)) {
+        detail::trim(line);
+        size_t len = line.length();
+        if(len > 1 && line[0] == '[' && line[len-1] == ']') {
+            section = line.substr(1,len-2);
+            std::transform(std::begin(section), std::end(section), std::begin(section), ::tolower);
+        } else if (len > 0) {
+            if(section == "default")
+                output.push_back("--" + line);
+            else
+                output.push_back("--" + section + "." + line);
+        }
+    }
+    return output;
+}
+
+/// Parse an INI file, throw an error (ParseError:INIParseError or FileError) on failure
+std::vector<std::string> parse_ini(const std::string &name) {
+
+    std::ifstream input{name};
+    if(!input.good())
+        throw FileError(name);
+
+    return parse_ini(input);
+}
 
 
 }
@@ -402,25 +478,47 @@ namespace CLI {
 
 /// Check for an existing file
 bool ExistingFile(std::string filename) {
-//    std::fstream f(name.c_str());
-//    return f.good();
-//    Fastest way according to http://stackoverflow.com/questions/12774207/fastest-way-to-check-if-a-file-exist-using-standard-c-c11-c
     struct stat buffer;   
-    return (stat(filename.c_str(), &buffer) == 0); 
+    bool exist = stat(filename.c_str(), &buffer) == 0; 
+    bool is_dir = buffer.st_mode & S_IFDIR;
+    if(!exist) {
+        std::cerr << "File does not exist: " << filename << std::endl;
+        return false;
+    } else if (is_dir) {
+        std::cerr << "File is actually a directory: " << filename << std::endl;
+        return false;
+    } else {
+        return true;
+    }
 }
 
 /// Check for an existing directory
 bool ExistingDirectory(std::string filename) {
     struct stat buffer;   
-    if(stat(filename.c_str(), &buffer) == 0 && (buffer.st_mode & S_IFDIR) )
+    bool exist = stat(filename.c_str(), &buffer) == 0; 
+    bool is_dir = buffer.st_mode & S_IFDIR;
+    if(!exist) {
+        std::cerr << "Directory does not exist: " << filename << std::endl;
+        return false;
+    } else if (is_dir) {
         return true;
-    return false;
+    } else {
+        std::cerr << "Directory is actually a file: " << filename << std::endl;
+        return true;
+    }
 }
+
 
 /// Check for a non-existing path
 bool NonexistentPath(std::string filename) {
-    struct stat buffer;
-    return stat(filename.c_str(), &buffer) != 0;
+    struct stat buffer;   
+    bool exist = stat(filename.c_str(), &buffer) == 0; 
+    if(!exist) {
+        return true;
+    } else {
+        std::cerr << "Path exists: " << filename << std::endl;
+        return false;
+    }
 }
 
 
@@ -449,7 +547,7 @@ protected:
     // These are for help strings
     std::string defaultval;
     std::string typeval;
-
+    std::string _group {"Options"};
 
     bool _default {false};
     bool _required {false};
@@ -528,6 +626,15 @@ public:
 
         _validators.push_back(validator);
         return this;
+    }
+
+    Option* group(std::string name) {
+        _group = name;
+        return this;
+    }
+
+    const std::string& get_group() const {
+        return _group;
     }
 
     /// Get the description
@@ -697,12 +804,16 @@ protected:
     std::vector<std::string> missing_options;
     std::deque<std::string> positionals;
     std::vector<App_p> subcommands;
-    bool parsed{false};
-    App* subcommand{nullptr};
-    std::string progname{"program"};
+    bool parsed {false};
+    App* subcommand {nullptr};
+    std::string progname {"program"};
     Option* help_flag {nullptr};
 
     std::function<void()> app_callback;
+
+    std::string ini_file;
+    bool ini_required {false};
+    Option* ini_setting {nullptr};
 
 public:
 
@@ -732,6 +843,17 @@ public:
             app->reset();
         }
     }
+
+    /// Get a pointer to the help flag.
+    Option* get_help_ptr() {
+        return help_flag;
+    }
+
+    /// Get a pointer to the config option.
+    Option* get_config_ptr() {
+        return ini_setting;
+    }
+
     
     /// Create a new program. Pass in the same arguments as main(), along with a help string.
     App(std::string prog_description="", bool help=true)
@@ -937,6 +1059,32 @@ public:
     }
 
 
+    /// Add a configuration ini file option
+    Option* add_config(std::string name="--config",
+                 std::string default_filename="",
+                 std::string help="Read an ini file",
+                 bool required=false) {
+
+        // Remove existing config if present
+        if(ini_setting != nullptr)
+            remove_option(ini_setting);
+        ini_file = default_filename;
+        ini_required = required;
+        ini_setting = add_option(name, ini_file, help, default_filename!="");
+        return ini_setting;
+    }
+
+    /// Removes an option from the App. Takes an option pointer. Returns true if found and removed.
+    bool remove_option(Option* opt) {
+        auto iterator = std::find_if(std::begin(options), std::end(options),
+                [opt](const Option_p &v){return v.get() == opt;});
+        if (iterator != std::end(options)) {
+            options.erase(iterator);
+            return true;
+        }
+        return false;
+    }
+
     /// This allows subclasses to inject code before callbacks but after parse
     virtual void pre_callback() {}
 
@@ -950,7 +1098,7 @@ public:
     }
 
     /// The real work is done here. Expects a reversed vector
-    void parse(std::vector<std::string> & args) {
+    void parse(std::vector<std::string> & args, bool first_parse=true) {
         parsed = true;
 
         bool positional_only = false;
@@ -984,21 +1132,36 @@ public:
         }
 
 
-
         for(const Option_p& opt : options) {
             while (opt->get_positional() && opt->count() < opt->get_expected() && positionals.size() > 0) {
                 opt->get_new();
                 opt->add_result(0, positionals.front());
                 positionals.pop_front();
             }
-            if (opt->get_required() && opt->count() < opt->get_expected())
-                throw RequiredError(opt->get_name());
             if (opt->count() > 0) {
                 if(!opt->run_callback())
-                    throw ConversionError(opt->get_name());
+                    throw ConversionError(opt->get_name() + "=" + detail::join(opt->flatten_results()));
             }
-
         }
+
+        if (first_parse && ini_setting != nullptr && ini_file != "") {
+            try {
+                std::vector<std::string> values = detail::parse_ini(ini_file);
+                std::reverse(std::begin(values), std::end(values));
+                
+                values.insert(std::begin(values), std::begin(positionals), std::end(positionals));
+                return parse(values, false);
+            } catch (const FileError &e) {
+                if(ini_required)
+                    throw;
+            }
+        }
+
+        for(const Option_p& opt : options) {
+            if (opt->get_required() && opt->count() < opt->get_expected())
+                throw RequiredError(opt->get_name());
+        }
+
         if(positionals.size()>0)
             throw PositionalError("[" + detail::join(positionals) + "]");
 
@@ -1054,7 +1217,6 @@ public:
             while(args.size()>0 && _recognize(args.back()) == Classifer::NONE) {
                 op->add_result(vnum, args.back());
                 args.pop_back();
-
             }
         } else while(num>0 && args.size() > 0) {
             num--;
@@ -1174,15 +1336,16 @@ public:
         
         // Check for options
         bool npos = false;
+        std::set<std::string> groups;
         for(const Option_p &opt : options) {
             if(opt->nonpositional()) {
                 npos = true;
-                break;
+                groups.insert(opt->get_group());
             }
         }
 
         if(npos)
-            out << " [OPTIONS...]";
+            out << " [OPTIONS]";
 
         // Positionals
         bool pos=false;
@@ -1208,13 +1371,15 @@ public:
 
         // Options
         if(npos) {
-            out << "Options:" << std::endl;
-            for(const Option_p &opt : options) {
-                if(opt->nonpositional())
-                    detail::format_help(out, opt->help_name(), opt->get_description(), wid);
-                
+            for (const std::string& group : groups) {
+                out << group << ":" << std::endl;
+                for(const Option_p &opt : options) {
+                    if(opt->nonpositional() && opt->get_group() == group)
+                        detail::format_help(out, opt->help_name(), opt->get_description(), wid);
+                    
+                }
+                out << std::endl;
             }
-            out << std::endl;
         }
 
         // Subcommands

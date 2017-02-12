@@ -50,6 +50,8 @@ public:
     __host__ virtual double calculateNLL() const;
     __host__ void evaluateAtPoints(std::vector<fptype>& points) const;
     __host__ void evaluateAtPoints(Variable* var, std::vector<fptype>& res);
+
+    /// A normalize function. This fills in the host_normalize 
     __host__ virtual fptype normalise() const;
     __host__ virtual fptype integrate(fptype lo, fptype hi) const {
         return 0;

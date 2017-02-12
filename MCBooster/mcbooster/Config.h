@@ -32,10 +32,6 @@
 #define OMP 2
 #define TBB 3
 
-#ifndef __linux__
-#error "MCBooster: Platform not supported. MCBooster is designed to run only on LIXUX systems."
-#endif
-
 #if (__cplusplus < 201103L)
 #error "This library needs a C++11 compliant compiler"
 #endif

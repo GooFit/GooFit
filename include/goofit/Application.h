@@ -37,10 +37,13 @@ public:
         #endif
 
         #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-        add_option("--gpu-dev", gpuDev, "GPU device to use", true);
-        add_flag("--show-gpus", show_gpus, "Show the available GPU devices and exit");
+        add_option("--gpu-dev", gpuDev, "GPU device to use", true)->group("GooFit");
+        add_flag("--show-gpus", show_gpus, "Show the available GPU devices and exit")->group("GooFit");
         #endif
-        add_flag("--goofit-details", show_threads, "Output system and threading details");
+        add_flag("--goofit-details", show_threads, "Output system and threading details")->group("GooFit");
+
+        add_config("--config", "config.ini", "An ini file with command line options in it");
+        
     }
 
     /// Shortcut for the lazy

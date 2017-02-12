@@ -1,10 +1,10 @@
 #pragma once
 
-// Distributed under the LGPL version 3.0 license.  See accompanying
+// Distributed under the MIT license.  See accompanying
 // file LICENSE or https://github.com/henryiii/CLI11 for details.
 
 // This file was generated using MakeSingleHeader.py in CLI11/scripts
-// from: v0.2-19-g7fee3f3
+// from: v0.3
 
 // This has the complete CLI library in one file.
 
@@ -96,6 +96,16 @@ struct ConversionError : public ParseError {
 /// Thrown when a required option is missing
 struct RequiredError : public ParseError {
     RequiredError(std::string name) : ParseError("RequiredError", name, 5) {}
+};
+
+/// Thrown when a requires option is missing
+struct RequiresError : public ParseError {
+    RequiresError(std::string name, std::string subname) : ParseError("RequiresError", name + " requires " + subname, 13) {}
+};
+
+/// Thrown when a exludes option is present
+struct ExcludesError : public ParseError {
+    ExcludesError(std::string name, std::string subname) : ParseError("ExcludesError", name + " excludes " + subname, 14) {}
 };
 
 /// Thrown when too many positionals are found
@@ -555,6 +565,10 @@ protected:
     bool allow_vector {false};
     std::vector<std::function<bool(std::string)>> _validators;
 
+    std::set<Option*> _requires;
+    std::set<Option*> _excludes;
+    std::string _envname;
+
     // Results
     results_t results;
 
@@ -582,6 +596,12 @@ public:
         return this;
     }
 
+    /// Support Plubmum term
+    Option* mandatory(bool value = true) {
+        return required(value);
+    }
+
+    /// True if this is a required option
     bool get_required() const {
         return _required;
     }
@@ -628,11 +648,13 @@ public:
         return this;
     }
 
+    /// Changes the group membership
     Option* group(std::string name) {
         _group = name;
         return this;
     }
 
+    /// Get the group of this option
     const std::string& get_group() const {
         return _group;
     }
@@ -640,6 +662,42 @@ public:
     /// Get the description
     const std::string& get_description() const {
         return description;
+    }
+
+    /// Sets required options
+    Option* requires(Option* opt) {
+        auto tup = _requires.insert(opt);
+        if(!tup.second)
+            throw OptionAlreadyAdded(get_name() + " requires " + opt->get_name());
+        return this;
+    }
+
+    /// Any number supported
+    template<typename... ARG>
+    Option* requires(Option* opt, Option* opt1, ARG... args) {
+        requires(opt);
+        return requires(opt1, args...);
+    }
+
+    /// Sets excluded options
+    Option* excludes(Option* opt) {
+        auto tup = _excludes.insert(opt);
+        if(!tup.second)
+            throw OptionAlreadyAdded(get_name() + " excludes " + opt->get_name());
+        return this;
+    }
+
+    /// Any number supported
+    template<typename... ARG>
+    Option* excludes(Option* opt, Option* opt1, ARG... args) {
+        excludes(opt);
+        return excludes(opt1, args...);
+    }
+
+    /// Sets environment variable to read if no option given
+    Option* envname(std::string name) {
+        _envname = name;
+        return this;
     }
 
     /// The name and any extras needed for positionals
@@ -657,6 +715,8 @@ public:
     std::string get_pname() const {
         return pname;
     }
+
+
     /// Process the callback
     bool run_callback() const {
         if(_validators.size()>0) {
@@ -737,7 +797,21 @@ public:
     /// The first half of the help print, name plus default, etc
     std::string help_name() const {
         std::stringstream out;
-        out << get_name(true);
+        out << get_name(true) << _help_aftername();
+        return out.str();
+    }
+    
+    /// pname with type info
+    std::string help_pname() const {
+        std::stringstream out;
+        out << get_pname() << _help_aftername();
+        return out.str();
+    }
+
+    /// This is the part after the name is printed but before the description
+    std::string _help_aftername() const {
+        std::stringstream out;
+
         if(get_expected() != 0) {
             if(typeval != "")
                 out << " " << typeval;
@@ -748,22 +822,20 @@ public:
             if(get_expected() == -1)
                 out << " ...";
         }
+        if(_envname != "")
+            out << " (env:" << _envname << ")";
+        if(_requires.size() > 0) {
+            out << " Requires:";
+            for(const Option* opt : _requires)
+                out << " " << opt->get_name();
+        }
+        if(_excludes.size() > 0) {
+            out << " Excludes:";
+            for(const Option* opt : _excludes)
+                out << " " << opt->get_name();
+        }
         return out.str();
-    }
-    
-    /// pname with type info
-    std::string help_pname() const {
-        std::stringstream out;
-        out << get_pname();
-        if(typeval != "")
-            out << " " << typeval;
-        if(defaultval != "")
-            out << "=" << defaultval; 
-        if(get_expected() > 1)
-            out << " x " << get_expected();
-        if(get_expected() == -1)
-            out << " ...";
-        return out.str();
+
     }
 
     /// Produce a flattened vector of results, vs. a vector of vectors.
@@ -814,6 +886,7 @@ protected:
     std::string ini_file;
     bool ini_required {false};
     Option* ini_setting {nullptr};
+    
 
 public:
 
@@ -1138,12 +1211,23 @@ public:
                 opt->add_result(0, positionals.front());
                 positionals.pop_front();
             }
+
+            if (first_parse && opt->count() == 0 && opt->_envname != "") {
+                // Will not interact very well with ini files
+                char *ename = std::getenv(opt->_envname.c_str());
+                if(ename != nullptr) {
+                    opt->get_new();
+                    opt->add_result(0, std::string(ename));
+                }
+            }
+
             if (opt->count() > 0) {
                 if(!opt->run_callback())
                     throw ConversionError(opt->get_name() + "=" + detail::join(opt->flatten_results()));
             }
         }
 
+        // Process an INI file
         if (first_parse && ini_setting != nullptr && ini_file != "") {
             try {
                 std::vector<std::string> values = detail::parse_ini(ini_file);
@@ -1157,9 +1241,20 @@ public:
             }
         }
 
+        // Verify required options 
         for(const Option_p& opt : options) {
-            if (opt->get_required() && opt->count() < opt->get_expected())
+            // Required
+            if (opt->get_required()
+                    && (opt->count() < opt->get_expected() || opt->count() == 0))
                 throw RequiredError(opt->get_name());
+            // Requires
+            for (const Option* opt_req : opt->_requires)
+                if (opt->count() > 0 && opt_req->count() == 0)
+                    throw RequiresError(opt->get_name(), opt_req->get_name());
+            // Excludes
+            for (const Option* opt_ex : opt->_excludes)
+                if (opt->count() > 0 && opt_ex->count() != 0)
+                    throw ExcludesError(opt->get_name(), opt_ex->get_name());
         }
 
         if(positionals.size()>0)

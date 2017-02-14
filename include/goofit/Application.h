@@ -52,9 +52,9 @@ public:
     /// Get the set GPU device
     int get_device() const {return gpuDev;}
 
-    /// simpler run since argc and argv are stored 
+    /// simple run since argc and argv are stored 
     void run() {
-        CLI::App::run(argc, argv);
+        parse(argc, argv);
     }
 
     /// Gets called in parse

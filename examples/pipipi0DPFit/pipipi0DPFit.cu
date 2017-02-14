@@ -4888,6 +4888,8 @@ int main(int argc, char** argv) {
 
     try {
         app.run();
+        if(app.get_subcommand() == nullptr)
+            throw GooFit::CallForHelp();
     } catch (const GooFit::ParseError &e) {
         return app.exit(e);
     }

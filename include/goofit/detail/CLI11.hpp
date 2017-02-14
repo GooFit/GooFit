@@ -4,7 +4,7 @@
 // file LICENSE or https://github.com/henryiii/CLI11 for details.
 
 // This file was generated using MakeSingleHeader.py in CLI11/scripts
-// from: v0.3
+// from: v0.4
 
 // This has the complete CLI library in one file.
 
@@ -91,6 +91,11 @@ struct FileError : public ParseError {
 /// Thrown when conversion call back fails, such as when an int fails to coerse to a string
 struct ConversionError : public ParseError {
     ConversionError(std::string name) : ParseError("ConversionError", name, 2) {}
+};
+
+/// Thrown when validation of results fails
+struct ValidationError : public ParseError {
+    ValidationError(std::string name) : ParseError("ValidationError", name, 2) {}
 };
 
 /// Thrown when a required option is missing
@@ -531,6 +536,21 @@ bool NonexistentPath(std::string filename) {
     }
 }
 
+/// Produce a range validator function
+template<typename T>
+std::function<bool(std::string)> Range(T min, T max) {
+    return [min, max](std::string input){
+        T val;
+        detail::lexical_cast(input, val);
+        return val >= min && val <= max;
+    };
+}
+
+/// Range of one value is 0 to value
+template<typename T>
+std::function<bool(std::string)> Range(T max) {
+    return Range((T) 0, max);
+}
 
 }
 
@@ -718,14 +738,15 @@ public:
 
 
     /// Process the callback
-    bool run_callback() const {
+    void run_callback() const {
+        if(!callback(results))
+            throw ConversionError(get_name() + "=" + detail::join(flatten_results()));
         if(_validators.size()>0) {
             for(const std::string & result : flatten_results())
                 for(const std::function<bool(std::string)> &vali : _validators)
                     if(!vali(result))
-                        return false;
+                        throw ValidationError(get_name() + "=" + result);
         }
-        return callback(results);
     }
 
     /// If options share any of the same names, they are equal (not counting positional)
@@ -889,6 +910,15 @@ protected:
     
 
 public:
+    /// Create a new program. Pass in the same arguments as main(), along with a help string.
+    App(std::string prog_description="", bool help=true)
+        : prog_description(prog_description) {
+
+        if(help)
+            help_flag = add_flag("-h,--help", "Print this help message and exit");
+
+    }
+
 
     /// Set a callback for the end of parsing. Due to a bug in c++11,
     /// it is not possible to overload on std::function (fixed in c++14
@@ -896,11 +926,6 @@ public:
     /// to get a pointer to App if needed.
     void set_callback(std::function<void()> callback) {
         app_callback = callback;
-    }
-
-    void run_callback() {
-        if(app_callback)
-            app_callback();
     }
 
     /// Reset the parsed data
@@ -927,16 +952,16 @@ public:
         return ini_setting;
     }
 
-    
-    /// Create a new program. Pass in the same arguments as main(), along with a help string.
-    App(std::string prog_description="", bool help=true)
-        : prog_description(prog_description) {
-
-        if(help)
-            help_flag = add_flag("-h,--help", "Print this help message and exit");
-
+    /// Produce a string that could be read in as a config of the current values of the App
+    std::string config_to_str() const {
+        std::stringstream out;
+        for(const Option_p &opt : options) {
+            if(opt->lnames.size() > 0 && opt->count() > 0)
+                out << opt->lnames[0] << "=" << detail::join(opt->flatten_results()) << std::endl;
+        }
+        return out.str();
     }
-
+    
     /// Add a subcommand. Like the constructor, you can override the help message addition by setting help=false
     App* add_subcommand(std::string name, std::string description="", bool help=true) {
         subcommands.emplace_back(new App(description, help));
@@ -1162,6 +1187,7 @@ public:
     virtual void pre_callback() {}
 
     /// Parses the command line - throws errors
+    /// This must be called after the options are in but before the rest of the program.
     void parse(int argc, char **argv) {
         progname = argv[0];
         std::vector<std::string> args;
@@ -1171,7 +1197,149 @@ public:
     }
 
     /// The real work is done here. Expects a reversed vector
-    void parse(std::vector<std::string> & args, bool first_parse=true) {
+    void parse(std::vector<std::string> &args) {
+        return _parse(args);
+    }
+
+
+    /// Print a nice error message and return the exit code
+    int exit(const Error& e) const {
+        if(e.exit_code != 0) {
+            std::cerr << "ERROR: ";
+            std::cerr << e.what() << std::endl;
+            if(e.print_help)
+                std::cerr << help();
+        } else {
+            if(e.print_help)
+                std::cout << help();
+        }
+        return e.exit_code;
+    }
+
+    /// Counts the number of times the given option was passed.
+    int count(std::string name) const {
+        for(const Option_p &opt : options) {
+            if(opt->check_name(name)) {
+                return opt->count();
+            }
+        }
+        throw OptionNotFound(name);
+    }
+
+    /// Makes a help message, with a column `wid` for column 1
+    std::string help(size_t wid=30, std::string prev="") const {
+        // Delegate to subcommand if needed
+        if(prev == "")
+            prev = progname;
+        else
+            prev += " " + name;
+
+        if(subcommand != nullptr)
+            return subcommand->help(wid, prev);
+
+        std::stringstream out;
+        out << prog_description << std::endl;
+        out << "Usage: " << prev;
+        
+        // Check for options
+        bool npos = false;
+        std::set<std::string> groups;
+        for(const Option_p &opt : options) {
+            if(opt->nonpositional()) {
+                npos = true;
+                groups.insert(opt->get_group());
+            }
+        }
+
+        if(npos)
+            out << " [OPTIONS]";
+
+        // Positionals
+        bool pos=false;
+        for(const Option_p &opt : options)
+            if(opt->get_positional()) {
+                out << " " << opt->help_positional();
+                if(opt->has_description())
+                    pos=true;
+            }
+
+        if(subcommands.size() > 0)
+            out << " [SUBCOMMANDS]";
+
+        out << std::endl << std::endl;
+
+        // Positional descriptions
+        if(pos) {
+            out << "Positionals:" << std::endl;
+            for(const Option_p &opt : options)
+                if(opt->get_positional() && opt->has_description())
+                    detail::format_help(out, opt->help_pname(), opt->get_description(), wid);
+            out << std::endl;
+
+        }
+
+
+        // Options
+        if(npos) {
+            for (const std::string& group : groups) {
+                out << group << ":" << std::endl;
+                for(const Option_p &opt : options) {
+                    if(opt->nonpositional() && opt->get_group() == group)
+                        detail::format_help(out, opt->help_name(), opt->get_description(), wid);
+                    
+                }
+                out << std::endl;
+            }
+        }
+
+        // Subcommands
+        if(subcommands.size()> 0) {
+            out << "Subcommands:" << std::endl;
+            for(const App_p &com : subcommands)
+                detail::format_help(out, com->get_name(), com->prog_description, wid);
+        }
+        return out.str();
+    }
+    
+    /// Get a subcommand pointer to the currently selected subcommand (after parsing)
+    App* get_subcommand() {
+        return subcommand;
+    }
+    
+    /// Get the name of the current app
+    std::string get_name() const {
+        return name;
+    }
+
+
+protected:
+
+    /// Internal function to run (App) callback
+    void run_callback() {
+        if(app_callback)
+            app_callback();
+    }
+
+    /// Selects a Classifer enum based on the type of the current argument
+    Classifer _recognize(std::string current) const {
+        std::string dummy1, dummy2;
+
+        if(current == "--")
+            return Classifer::POSITIONAL_MARK;
+        for(const App_p &com : subcommands) {
+            if(com->name == current)
+                return Classifer::SUBCOMMAND;
+        }
+        if(detail::split_long(current, dummy1, dummy2))
+            return Classifer::LONG;
+        if(detail::split_short(current, dummy1, dummy2))
+            return Classifer::SHORT;
+        return Classifer::NONE;
+    }
+
+
+    /// Internal parse function
+    void _parse(std::vector<std::string> &args) {
         parsed = true;
 
         bool positional_only = false;
@@ -1205,39 +1373,45 @@ public:
         }
 
 
+        // Collect positionals
         for(const Option_p& opt : options) {
             while (opt->get_positional() && opt->count() < opt->get_expected() && positionals.size() > 0) {
                 opt->get_new();
                 opt->add_result(0, positionals.front());
                 positionals.pop_front();
             }
+        }
 
-            if (first_parse && opt->count() == 0 && opt->_envname != "") {
-                // Will not interact very well with ini files
+        // Process an INI file
+        if (ini_setting != nullptr && ini_file != "") {
+            try {
+                std::vector<std::string> values = detail::parse_ini(ini_file);
+                while(values.size() > 0) {
+                    _parse_long(values, false);
+                }
+                
+            } catch (const FileError &e) {
+                if(ini_required)
+                    throw;
+            }
+        }
+
+        
+        // Get envname options if not yet passed
+        for(const Option_p& opt : options) {
+            if (opt->count() == 0 && opt->_envname != "") {
                 char *ename = std::getenv(opt->_envname.c_str());
                 if(ename != nullptr) {
                     opt->get_new();
                     opt->add_result(0, std::string(ename));
                 }
             }
-
-            if (opt->count() > 0) {
-                if(!opt->run_callback())
-                    throw ConversionError(opt->get_name() + "=" + detail::join(opt->flatten_results()));
-            }
         }
 
-        // Process an INI file
-        if (first_parse && ini_setting != nullptr && ini_file != "") {
-            try {
-                std::vector<std::string> values = detail::parse_ini(ini_file);
-                std::reverse(std::begin(values), std::end(values));
-                
-                values.insert(std::begin(values), std::begin(positionals), std::end(positionals));
-                return parse(values, false);
-            } catch (const FileError &e) {
-                if(ini_required)
-                    throw;
+        // Process callbacks
+        for(const Option_p& opt : options) {
+            if (opt->count() > 0) {
+                opt->run_callback();
             }
         }
 
@@ -1264,6 +1438,7 @@ public:
         run_callback();
     }
 
+
     void _parse_subcommand(std::vector<std::string> &args) {
         for(const App_p &com : subcommands) {
             if(com->name == args.back()){ 
@@ -1276,6 +1451,7 @@ public:
         throw HorribleError("Subcommand");
     }
  
+    /// Parse a short argument, must be at the top of the list
     void _parse_short(std::vector<std::string> &args) {
         std::string current = args.back();
 
@@ -1326,23 +1502,8 @@ public:
         }
     }
 
-    Classifer _recognize(std::string current) const {
-        std::string dummy1, dummy2;
-
-        if(current == "--")
-            return Classifer::POSITIONAL_MARK;
-        for(const App_p &com : subcommands) {
-            if(com->name == current)
-                return Classifer::SUBCOMMAND;
-        }
-        if(detail::split_long(current, dummy1, dummy2))
-            return Classifer::LONG;
-        if(detail::split_short(current, dummy1, dummy2))
-            return Classifer::SHORT;
-        return Classifer::NONE;
-    }
-
-    void _parse_long(std::vector<std::string> &args) {
+    /// Parse a long argument, must be at the top of the list
+    void _parse_long(std::vector<std::string> &args, bool overwrite=true) {
         std::string current = args.back();
 
         std::string name;
@@ -1360,6 +1521,11 @@ public:
 
         // Get a reference to the pointer to make syntax bearable
         Option_p& op = *op_ptr;
+
+
+        // Stop if not overwriting options (for ini parse)
+        if(!overwrite && op->count() > 0)
+            return;
 
         int vnum = op->get_new();
         int num = op->get_expected();
@@ -1385,114 +1551,6 @@ public:
         return;
     }
 
-    /// This must be called after the options are in but before the rest of the program.
-    /** Instead of throwing erros, this gives an error code
-     * if -h or an invalid option is passed. Continue with your program if returns -1 */
-    void run(int argc, char** argv) {
-        parse(argc, argv);
-    }
-
-    int exit(const Error& e) const {
-        if(e.exit_code != 0) {
-            std::cerr << "ERROR: ";
-            std::cerr << e.what() << std::endl;
-            if(e.print_help)
-                std::cerr << help();
-        } else {
-            if(e.print_help)
-                std::cout << help();
-        }
-        return e.exit_code;
-    }
-
-    /// Counts the number of times the given option was passed.
-    int count(std::string name) const {
-        for(const Option_p &opt : options) {
-            if(opt->check_name(name)) {
-                return opt->count();
-            }
-        }
-        throw OptionNotFound(name);
-    }
-
-    std::string help(size_t wid=30, std::string prev="") const {
-        // Delegate to subcommand if needed
-        if(prev == "")
-            prev = progname;
-        else
-            prev += " " + name;
-
-        if(subcommand != nullptr)
-            return subcommand->help(wid, prev);
-
-        std::stringstream out;
-        out << prog_description << std::endl;
-        out << "Usage: " << prev;
-        
-        // Check for options
-        bool npos = false;
-        std::set<std::string> groups;
-        for(const Option_p &opt : options) {
-            if(opt->nonpositional()) {
-                npos = true;
-                groups.insert(opt->get_group());
-            }
-        }
-
-        if(npos)
-            out << " [OPTIONS]";
-
-        // Positionals
-        bool pos=false;
-        for(const Option_p &opt : options)
-            if(opt->get_positional()) {
-                out << " " << opt->help_positional();
-                if(opt->has_description())
-                    pos=true;
-            }
-
-        out << std::endl << std::endl;
-
-        // Positional descriptions
-        if(pos) {
-            out << "Positionals:" << std::endl;
-            for(const Option_p &opt : options)
-                if(opt->get_positional() && opt->has_description())
-                    detail::format_help(out, opt->help_pname(), opt->get_description(), wid);
-            out << std::endl;
-
-        }
-
-
-        // Options
-        if(npos) {
-            for (const std::string& group : groups) {
-                out << group << ":" << std::endl;
-                for(const Option_p &opt : options) {
-                    if(opt->nonpositional() && opt->get_group() == group)
-                        detail::format_help(out, opt->help_name(), opt->get_description(), wid);
-                    
-                }
-                out << std::endl;
-            }
-        }
-
-        // Subcommands
-        if(subcommands.size()> 0) {
-            out << "Subcommands:" << std::endl;
-            for(const App_p &com : subcommands)
-                detail::format_help(out, com->get_name(), com->prog_description, wid);
-        }
-        return out.str();
-    }
-    
-    App* get_subcommand() {
-        return subcommand;
-    }
-    
-    std::string get_name() const {
-        return name;
-    }
 };
 
 

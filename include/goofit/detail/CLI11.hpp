@@ -4,7 +4,7 @@
 // file LICENSE or https://github.com/henryiii/CLI11 for details.
 
 // This file was generated using MakeSingleHeader.py in CLI11/scripts
-// from: v0.4
+// from: v0.4-3-g2b40b8c
 
 // This has the complete CLI library in one file.
 
@@ -899,6 +899,7 @@ protected:
     std::vector<App_p> subcommands;
     bool parsed {false};
     App* subcommand {nullptr};
+    bool required_subcommand = false;
     std::string progname {"program"};
     Option* help_flag {nullptr};
 
@@ -907,7 +908,7 @@ protected:
     std::string ini_file;
     bool ini_required {false};
     Option* ini_setting {nullptr};
-    
+   
 
 public:
     /// Create a new program. Pass in the same arguments as main(), along with a help string.
@@ -956,7 +957,7 @@ public:
     std::string config_to_str() const {
         std::stringstream out;
         for(const Option_p &opt : options) {
-            if(opt->lnames.size() > 0 && opt->count() > 0)
+            if(opt->lnames.size() > 0 && opt->count() > 0 && opt->get_expected() > 0)
                 out << opt->lnames[0] << "=" << detail::join(opt->flatten_results()) << std::endl;
         }
         return out.str();
@@ -968,7 +969,6 @@ public:
         subcommands.back()->name = name;
         return subcommands.back().get();
     }
-
 
     /// Add an option, will automatically understand the type for common types.
     /** To use, create a variable with the expected type, and pass it in after the name.
@@ -1184,6 +1184,7 @@ public:
     }
 
     /// This allows subclasses to inject code before callbacks but after parse
+    /// This does not run if any errors or help is thrown.
     virtual void pre_callback() {}
 
     /// Parses the command line - throws errors
@@ -1263,8 +1264,12 @@ public:
                     pos=true;
             }
 
-        if(subcommands.size() > 0)
-            out << " [SUBCOMMANDS]";
+        if(subcommands.size() > 0) {
+            if(required_subcommand)
+                out << " SUBCOMMAND";
+            else
+                out << " [SUBCOMMAND]";
+        }
 
         out << std::endl << std::endl;
 
@@ -1311,6 +1316,10 @@ public:
         return name;
     }
 
+    /// Require a subcommand to be given (does not affect help call)
+    void require_subcommand(bool value = true) {
+        required_subcommand = value;
+    }
 
 protected:
 
@@ -1430,6 +1439,9 @@ protected:
                 if (opt->count() > 0 && opt_ex->count() != 0)
                     throw ExcludesError(opt->get_name(), opt_ex->get_name());
         }
+
+        if(required_subcommand && subcommand == nullptr)
+            throw RequiredError("Subcommand required");
 
         if(positionals.size()>0)
             throw PositionalError("[" + detail::join(positionals) + "]");

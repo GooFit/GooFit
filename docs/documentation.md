@@ -4,7 +4,8 @@ The GooFit Framework {#mainpage}
 Introduction
 ============
 
-GooFit (\ref footnote1 "1") is a framework for creating arbitrary probability density
+[GooFit](https://github.com/GooFit/GooFit) (\ref footnote1 "1")
+is a framework for creating arbitrary probability density
 functions (PDFs) and evaluating them over large datasets using nVidia
 Graphics Processing Units (GPUs). New PDFs are written partly in
 nVidia’s CUDA programming language and partly in C++; however, no
@@ -58,11 +59,13 @@ With your CUDA environment set up, you can install GooFit thus:
 
         git clone git://github.com/GooFit/GooFit.git
         cd GooFit
+        git checkout v1.0.0
 
 -   If necessary, edit the Makefile so the variable `CUDALOCATION`
     points to your local CUDA install.
 
--   Compile GooFit with `gmake` or `make`. Do not be alarmed by warning
+-   Compile with `gmake`.
+    Do not be alarmed by warning
     messages saying that such-and-such a function’s stack size could not
     be statically determined; this is an unavoidable (so far) side
     effect of the function-pointer implementation discussed in section

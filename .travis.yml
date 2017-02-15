@@ -13,9 +13,18 @@ branches:
 env:
   global:
   - OMP_NUM_THREADS: 2
+  - GH_REPO_NAME: GooFit
+  - DOXYFILE: $TRAVIS_BUILD_DIR/docs/Doxyfile
+  - GH_REPO_REF: github.com/GooFit/GooFit.git
+  - secure: yyNmKB1C1bDyvbI/GWkDoUbBoVI+CIuCgftZ/RKnrynfjOe2uaJSVqo9s1L03Pth0mKsBFRAdq4rzLQ/q9v1FG+zVXwyP+gHqbb5SpvY1rNSjfS0JWjF2ZPNVEZ5ewJiV1adfvqen1ri+KB3CDXXi6BdXvmb0+g6ylnO5JuC3zvs60kXLUpAvRnfVMW8mDllEdVRvEVdjAnstiDd+G5U1WGK60JlBosOuvinkKiqTgcqfKHFojlYfoxTOkCtth4sP8fsxCQRP4kNmS7U9w8prFntWZP7n+kXKWfwLTvKg4RWntMt/f6jkQmMH2nDdvsPXvJzS0khPpQSQCIXIrLIcaHJRRTGv8Fg502RUrysgiOxdrcgRvH9AqFn9e48Sal1tkIHygvld7tifv92XowOsQ4VTiFI5PuZ8Ljr3L+SefwowTRK2R1Iz8flIgXHuWsDYbASi3oLPHMzsTXyLJxyoPKFNaXx2TM9S+73PXQcLUlQSdsvDb5AqqSDd5DUwBDSkixXACI+r33iDs64b8DQj8y7Ko0TTahPdmPjY+J9GPy4tLMeuhzvCy4Nfxiqhrf+wRcdWbKcOZsVDtMJPD4f1o1NZ8M8mRMR3YNU7WDbHAivULei01PZrtn0pPlHS8UO+MeCLB0W5KEQNo3CI0/nyuYwGAyytBwNaNwtaiKgMFY=
 addons:
   apt:
     packages:
+    - doxygen
+    - doxygen-doc
+    - doxygen-latex
+    - doxygen-gui
+    - graphviz
     - g++-4.8
     - gcc-4.8
     - libx11-dev
@@ -53,3 +62,8 @@ script:
     - cd "${TRAVIS_BUILD_DIR}"
     - .ci/travis.sh
 
+
+after_success:
+- echo "${TRAVIS_BRANCH}"
+- echo "${TRAVIS_PULL_REQUEST}"
+- if [[ "${TRAVIS_BRANCH}" == "master" && "${TRAVIS_PULL_REQUEST}" == "false" ]] ; then echo "Updating docs" &&  cd $TRAVIS_BUILD_DIR && .ci/build_docs.sh ; fi

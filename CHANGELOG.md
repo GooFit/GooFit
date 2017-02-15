@@ -22,7 +22,7 @@ A new feature of the CMake build system is GooFit Packages, which are complete p
 * Fixes for building examples, nicer warnings with incorrect command line parameters.
 * Examples have a script that run all of them with timing info
 * Travis builds [PR 32](https://github.com/GooFit/GooFit/pull/32)
-* Improved documentation
+* Improved documentation, automatically builds on changes to master
 * Added (this) changelog
 
 The Makefile system is somewhere between deprecated and obsolete, and will be removed in the next release. It is not possible to do an in-source CMake build while the makefile system is in place, so please use a build directory.

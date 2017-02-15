@@ -1,9 +1,4 @@
-
-**Build status**:
-[master](https://github.com/GooFit/GooFit/tree/master):
 [![Build Status](https://travis-ci.org/GooFit/GooFit.svg?branch=master)](https://travis-ci.org/GooFit/GooFit)
-[dev](https://github.com/GooFit/GooFit/tree/dev):
-[![Build Status](https://travis-ci.org/GooFit/GooFit.svg?branch=dev)](https://travis-ci.org/GooFit/GooFit)
 
 GooFit is a massively-parallel framework, written in CUDA, for
 doing maximum-likelihood fits with a comfortable syntax.
@@ -12,6 +7,7 @@ GooFit using OpenMP.
 
 * [Changelog](https://github.com/GooFit/GooFit/blob/master/CHANGELOG.md)
 * [Contributing](https://github.com/GooFit/GooFit/blob/master/HOWTO_Contribute.md)
+* [API documentation](https://GooFit.github.io/GooFit)
 
 ## Requirements
 

@@ -5,6 +5,7 @@ cache:
   directories:
     - ${TRAVIS_BUILD_DIR}/deps/cmake
     - ${TRAVIS_BUILD_DIR}/deps/root
+    - ${TRAVIS_BUILD_DIR}/deps/doxygen
 
 branches:
   exclude:
@@ -13,9 +14,13 @@ branches:
 env:
   global:
   - OMP_NUM_THREADS: 2
+  - DOXYFILE: $TRAVIS_BUILD_DIR/docs/Doxyfile
+  - secure: "HG55IEO0TcUtuzfD/pfpPB3irKKBAH1wpBc1RxrtaSo08nohuEoc9Jl0z9k6nw7Kxk5AFQRXiFtXyQAzTm7fONjqST92h6zm+PL4QBPVIrlbQovRPI35GgzFLkUPabkEFjn/3Ojoj5NWSQbfu3tEuARu0qU8vn/2N/PM3qIMbGg="
 addons:
   apt:
     packages:
+    - doxygen-latex
+    - graphviz
     - g++-4.8
     - gcc-4.8
     - libx11-dev
@@ -28,28 +33,15 @@ addons:
 install:
     - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
     - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
-    - CMAKE_URL="https://cmake.org/files/v3.7/cmake-3.7.2-Linux-x86_64.tar.gz"
-    - cd "${DEPS_DIR}"
-    - | 
-      if [[ ! -f "${DEPS_DIR}/cmake/bin/cmake" ]] ; then
-        echo "Downloading CMake"
-        mkdir -p cmake
-        travis_retry wget --no-check-certificate --quiet -O - "${CMAKE_URL}" | tar --strip-components=1 -xz -C cmake
-      fi
-    
-    - export PATH="${DEPS_DIR}/cmake/bin:${PATH}"
-    - cd "${DEPS_DIR}"
-    - ROOT_URL="https://root.cern.ch/download/root_v6.08.04.Linux-ubuntu14-x86_64-gcc4.8.tar.gz"
-    - | 
-      if [[ ! -f "${DEPS_DIR}/root/bin/root-config" ]] ; then
-        echo "Downloading Root"
-        mkdir -p root
-        travis_retry wget --no-check-certificate --quiet -O - "${ROOT_URL}" | tar --strip-components=1 -xz -C root
-      fi
-
-    - source "${DEPS_DIR}/root/bin/thisroot.sh"
+    - cd "${TRAVIS_BUILD_DIR}" && . .ci/build_cmake.sh 
+    - cd "${TRAVIS_BUILD_DIR}" && . .ci/build_root.sh 
+    - cd "${TRAVIS_BUILD_DIR}" && . .ci/build_doxygen.sh 
 
 script:
     - cd "${TRAVIS_BUILD_DIR}"
     - .ci/travis.sh
 
+after_success:
+- echo "${TRAVIS_BRANCH}"
+- echo "${TRAVIS_PULL_REQUEST}"
+- if [[ "${TRAVIS_BRANCH}" == "master" && "${TRAVIS_PULL_REQUEST}" == "false" ]] ; then echo "Updating docs" &&  cd "${TRAVIS_BUILD_DIR}" && .ci/build_docs.sh ; fi

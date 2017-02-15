@@ -114,7 +114,7 @@ the user. Thus, to construct a simple Gaussian fit, merely declare three
 an appropriate `UnbinnedDataSet` to fit to:
 
 
-Simple Gaussian fit {#gaussfit} 
+Simple Gaussian fit {#listinggaussfit} 
 -------------------
 
 ```{.cpp}
@@ -272,7 +272,7 @@ amount of boilerplate is necessary to make the PDF actually work. First
 of all, it needs a device-side function with a particular signature:
 
 
-Signature of evaluation functions. {#fsign}
+Signature of evaluation functions. {#listingfsign}
 -------------------------------------------
 
 ```{.cpp}
@@ -519,7 +519,7 @@ through MINUIT and the core GooFit engine. In particular, we will
 consider the example Gaussian fit shown in listing [Gauss fit](@ref listinggaussfit)
 and look at what happens in these innocent-looking lines:
 
-Data transfer and fit invocation {#listingactualfit}
+## Data transfer and fit invocation {#listingactualfit}
 
 ```{.cpp}
 gauss.setData(&data);

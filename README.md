@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/GooFit/GooFit.svg?branch=master)](https://travis-ci.org/GooFit/GooFit)
 [![Gitter](https://badges.gitter.im/GooFit/GooFit.svg)](https://gitter.im/GooFit/Lobby)    
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)   
 
 GooFit is a massively-parallel framework, written in CUDA, for
 doing maximum-likelihood fits with a comfortable syntax.

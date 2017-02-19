@@ -183,7 +183,7 @@ __host__ double AddPdf::sumOfNll(int numVars) const {
 #ifdef GOOFIT_MPI
     double r = thrust::transform_reduce(my_policy, thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress,
                                           eventSize)),
-                                          thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
+                                          thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, arrayAddress, eventSize)),
                                           *logger, dummy, cudaPlus);
 
     MPI_Allreduce(&r, &ret, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);

@@ -17,6 +17,7 @@
 #include <sys/times.h>
 
 // GooFit stuff
+#include "goofit/Application.h"
 #include "goofit/Variable.h"
 #include "goofit/PDFs/TruthResolution_Aux.h"
 #include "goofit/PDFs/ThreeGaussResolution_Aux.h"
@@ -61,7 +62,7 @@ TH2F* underlyingBins = 0;
 
 Variable* m12 = 0;
 Variable* m13 = 0;
-Variable* eventNumber = 0;
+CountingVariable* eventNumber = 0;
 Variable* massd0 = 0;
 Variable* deltam = 0;
 Variable* dtime = 0;
@@ -882,7 +883,7 @@ void runToyFit(int ifile, int nfile, bool noPlots = true) {
     m12->numbins = 240;
     m13   = new Variable("m13",   0, 3);
     m13->numbins = 240;
-    eventNumber = new Variable("eventNumber", 0, INT_MAX);
+    eventNumber = new CountingVariable("eventNumber", 0, INT_MAX);
     wSig0 = new Variable("wSig0", 0, 1);
 
     for(int i =0 ; i<nfile; i++) {
@@ -1139,7 +1140,7 @@ void makeFullFitVariables() {
     m12   = new Variable("m12",   0, 3);
     m13   = new Variable("m13",   0, 3);
     m12->numbins = m13->numbins = normBinning;
-    eventNumber = new Variable("eventNumber", 0, INT_MAX);
+    eventNumber = new CountingVariable("eventNumber", 0, INT_MAX);
     wSig0 = new Variable("wSig0", 0, 1);
     wBkg1 = new Variable("wBkg1", 0, 1);
     wBkg2 = new Variable("wBkg2", 0, 1);
@@ -4810,6 +4811,20 @@ start:
 }
 
 int main(int argc, char** argv) {
+    GooFit::Application app ("pipipi0DPFit description");
+
+    //Need to populate all the possible permutations here!
+    int fitType = 0;
+    app.add_option ("-t,--type", fitType, "Fit Type", CLI::DEFAULT);
+
+    std::string inputFile = "dataFiles/cocktail_pp_0.txt";
+    app.add_option ("-i,--input", inputFile, "Input dataset", CLI::DEFAULT);
+
+    int blindSeed=0;
+    app.add_option ("-b,--blindseed", blindSeed, "Blind Seed", CLI::DEFAULT);
+
+    app.run (argc, argv);
+
     gStyle->SetCanvasBorderMode(0);
     gStyle->SetCanvasColor(10);
     gStyle->SetFrameFillColor(10);
@@ -4839,11 +4854,10 @@ int main(int argc, char** argv) {
         return 7;
     }
 
-    int fitToRun = atoi(argv[1]);
     int genResolutions = 0;
     double dplotres = 0;
 
-    switch(fitToRun) {
+    switch(fitType) {
     case 0:
         if(argc>4)
             makePlots = atoi(argv[4]);
@@ -4866,9 +4880,9 @@ int main(int argc, char** argv) {
 
     case 4:
         for(int i = 3; i < argc; ++i)
-            assert(parseArg(argv[i]));
+            assert(parseArg(inputFile));
 
-        runCanonicalFit(argv[2], !makePlots);
+        runCanonicalFit(inputFile, !makePlots);
         break;
 
     case 5:

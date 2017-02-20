@@ -4792,6 +4792,7 @@ int main(int argc, char** argv) {
 
 
     GooFit::Application app("pipipi0 Dalitz fit example", argc, argv);
+    app.require_subcommand();
 
     std::string data;
     int sample = 0;
@@ -4888,8 +4889,6 @@ int main(int argc, char** argv) {
 
     try {
         app.run();
-        if(app.get_subcommand() == nullptr)
-            throw GooFit::CallForHelp();
     } catch (const GooFit::ParseError &e) {
         return app.exit(e);
     }

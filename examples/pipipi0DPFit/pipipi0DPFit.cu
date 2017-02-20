@@ -4836,11 +4836,11 @@ int main(int argc, char** argv) {
             runEfficiencyFit(sample);
             });
 
-    auto cannonical_fit = app.add_subcommand("cannonical", "Run the cannonical fit");
-    cannonical_fit->add_option("-d,--data,data", data,
+    auto canonical_fit = app.add_subcommand("canonical", "Run the canonical fit");
+    canonical_fit->add_option("-d,--data,data", data,
             "Data to use")->required()->check(GooFit::ExistingFile);
-    parseArg(cannonical_fit);
-    cannonical_fit->set_callback([&](){
+    parseArg(canonical_fit);
+    canonical_fit->set_callback([&](){
             set_bkg_model_from_string();
             runCanonicalFit(data, !makePlots);
             });

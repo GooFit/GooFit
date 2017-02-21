@@ -27,7 +27,8 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-  
+
+
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING
         "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel."
@@ -82,15 +83,15 @@ set(GOOFIT_ARCH Auto CACHE STRING "The GPU Archetecture, can be Auto, All, Commo
 option(GOOFIT_DOWNLOAD_THRUST "Download Thrust if not found (OMP only)" ON)
 
 if(GOOFIT_DEVICE STREQUAL CUDA)
-    find_package(CUDA 6.0 REQUIRED)
+    find_package(CUDA 7.5 REQUIRED)
 
-    set(CUDA_NVCC_FLAGS; ${CUDA_NVCC_FLAGS}; -std=c++11; ${CMAKE_CXX_FLAGS})
+    set(CUDA_NVCC_FLAGS; ${CUDA_NVCC_FLAGS}; -std=c++11; --expt-extended-lambda ${CMAKE_CXX_FLAGS})
     if(GOOFIT_SEPARATE_COMP)
         set(CUDA_SEPARABLE_COMPILATION ON)
     else()
         set(CUDA_SEPARABLE_COMPILATION OFF)
     endif()
-   
+
     cuda_select_nvcc_arch_flags(ARCH_FLAGS ${GOOFIT_ARCH})
     list(APPEND CUDA_NVCC_FLAGS ${ARCH_FLAGS})
     message(STATUS "Compiling for GPU arch: ${ARCH_FLAGS}")
@@ -136,7 +137,7 @@ include_directories(BEFORE "include/goofit/rootstuff")
 include_directories(AFTER SYSTEM "${ROOT_INCLUDE_DIRS}")
 target_link_libraries(Root INTERFACE ${ROOT_LIBRARIES})
 # Note: it is very important that the includes and links for root are after fakeroot!
- 
+
 
 function(goofit_add_library GNAME)
     if(GOOFIT_DEVICE STREQUAL CUDA)

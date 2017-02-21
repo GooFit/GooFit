@@ -24,35 +24,24 @@ TODO:
 #include "goofit/PDFs/EvalVar.h"
 #include "goofit/PDFs/DP4Pdf.h"
 
-
-struct genUni {
-    fptype low, high;
+struct genExp {
+    fptype gamma;
     unsigned int offset;
 
     __host__ __device__
-    genUni(fptype a, fptype b, unsigned int c) : low(a), high(b), offset(c) {};
-    // genUni(fptype a, fptype b) : low(a), high(b) {};
+    genExp(unsigned int c, fptype d) : offset(c), gamma(d) {};
 
     __host__ __device__
     fptype operator()(unsigned int x) const {
 
-        // unsigned int n = x + 47584732571;
-        // n = (n + 0x7ed55d16) + (n << 12);
-        // n = (n ^ 0xc761c23c) ^ (n >> 19);
-        // n = (n + 0x165667b1) + (n << 5);
-        // n = (n + 0xd3a2646c) ^ (n << 9);
-        // n = (n + 0xfd7046c5) + (n << 3);
-        // n = (n ^ 0xb55a4f09) ^ (n >> 16);
-        // thrust::random::default_random_engine rand(1431655765);
-        thrust::random::minstd_rand0 rand(1431655765);
-        thrust::uniform_real_distribution<fptype> dist(low, high);
+        thrust::random::default_random_engine rand(1431655765);
+        thrust::uniform_real_distribution<fptype> dist(0, 1);
+
         rand.discard(x+offset);
-        fptype result = dist(rand);
-        // printf("inside gen %u %u %.5g\n",x, offset, result );
-        return result;
+
+        return - LOG( dist(rand) ) / gamma;
     }
 };
-
 
 
 // The function of this array is to hold all the cached waves; specific
@@ -90,14 +79,14 @@ EXEC_TARGET fptype device_TDDP4(fptype* evt, fptype* p, unsigned int* indices) {
         unsigned int flag = AmpIndices[start + 3 + numAmps];
         devcomplex<fptype> temp;
 
-        // printf("flag:%i\n",flag);
+         /*printf("flag:%i\n",flag);*/
         switch(flag) {
         case 0:
             amp_real_A = p[indices[12 + 2*(i+k)]];
             amp_imag_A = p[indices[13 + 2*(i+k)]];
             temp = Amps_TD[cacheToUse][evtNum*numAmps + i];
             AmpA += (temp.multiply(amp_real_A, amp_imag_A));
-            // printf("DEV0: %.5g, %.5g, %.5g +i %.5g \n", amp_real_A, amp_imag_A, Amps_TD[cacheToUse][evtNum*numAmps + i].real, Amps_TD[cacheToUse][evtNum*numAmps + i].imag);
+             /*printf("DEV0: %.5g, %.5g, %.5g +i %.5g \n", amp_real_A, amp_imag_A, Amps_TD[cacheToUse][evtNum*numAmps + i].real, Amps_TD[cacheToUse][evtNum*numAmps + i].imag);*/
             break;
 
         case 1:
@@ -105,7 +94,7 @@ EXEC_TARGET fptype device_TDDP4(fptype* evt, fptype* p, unsigned int* indices) {
             amp_imag_B = p[indices[13 + 2*(i+k)]];
             temp = Amps_TD[cacheToUse][evtNum*numAmps + i];
             AmpB += (temp.multiply(amp_real_B, amp_imag_B));
-            // printf("DEV1: %.5g, %.5g, %.5g +i %.5g \n", amp_real_B, amp_imag_B, Amps_TD[cacheToUse][evtNum*numAmps + i].real, Amps_TD[cacheToUse][evtNum*numAmps + i].imag);
+             /*printf("DEV1: %.5g, %.5g, %.5g +i %.5g \n", amp_real_B, amp_imag_B, Amps_TD[cacheToUse][evtNum*numAmps + i].real, Amps_TD[cacheToUse][evtNum*numAmps + i].imag);*/
             break;
 
         case 2:
@@ -113,13 +102,13 @@ EXEC_TARGET fptype device_TDDP4(fptype* evt, fptype* p, unsigned int* indices) {
             amp_imag_A = p[indices[13 + 2*(i+k)]];
             temp = Amps_TD[cacheToUse][evtNum*numAmps + i];
             AmpA += (temp.multiply(amp_real_A, amp_imag_A));
-            // printf("DEV2.1: %.5g, %.5g, %.5g +i %.5g \n", amp_real_A, amp_imag_A, Amps_TD[cacheToUse][evtNum*numAmps + i].real, Amps_TD[cacheToUse][evtNum*numAmps + i].imag);
+             /*printf("DEV2.1: %.5g, %.5g, %.5g +i %.5g \n", amp_real_A, amp_imag_A, Amps_TD[cacheToUse][evtNum*numAmps + i].real, Amps_TD[cacheToUse][evtNum*numAmps + i].imag);*/
             ++k;
             amp_real_B = p[indices[12 + 2*(i+k)]];
             amp_imag_B = p[indices[13 + 2*(i+k)]];
             temp = Amps_TD[cacheToUse][evtNum*numAmps + i];
             AmpB += (temp.multiply(amp_real_B, amp_imag_B));
-            // printf("DEV2.2: %.5g, %.5g, %.5g +i %.5g \n", amp_real_B, amp_imag_B, Amps_TD[cacheToUse][evtNum*numAmps + i].real, Amps_TD[cacheToUse][evtNum*numAmps + i].imag);
+             /*printf("DEV2.2: %.5g, %.5g, %.5g +i %.5g \n", amp_real_B, amp_imag_B, Amps_TD[cacheToUse][evtNum*numAmps + i].real, Amps_TD[cacheToUse][evtNum*numAmps + i].imag);*/
             break;
         }
     }
@@ -132,12 +121,14 @@ EXEC_TARGET fptype device_TDDP4(fptype* evt, fptype* p, unsigned int* indices) {
     fptype _sigma   = evt[indices[9 + indices[0]]];
 
     AmpA *= _SqWStoRSrate;
-    // printf("%i read time: %.5g x: %.5g y: %.5g \n",evtNum, _time, _xmixing, _ymixing);
+     /*printf("%i read time: %.5g x: %.5g y: %.5g \n",evtNum, _time, _xmixing, _ymixing);*/
 
     fptype term1    = norm2(AmpA) + norm2(AmpB);
     fptype term2    = norm2(AmpA) - norm2(AmpB);
     devcomplex<fptype> term3    = AmpA * conj(AmpB);
-    // printf("%i dev %.7g %.7g %.7g %.7g\n", evtNum, norm2(AmpA), norm2(AmpB), term3.real, term3.imag);
+    /*printf("%.7g %.7g %.7g %.7g\n", term1, term2, term3.real, term3.imag);*/
+    /*printf("%i Prop %.7g %.7g %.7g %.7g %.7g %.7g %.7g \n", evtNum, term1, term2, term3.real, term3.imag, _time, _ymixing , _tau );*/
+    /*printf("%i Prop2 %.7g %.7g %.7g %.8g \n",evtNum,  norm2(AmpA), norm2(AmpB), term3.real, term3.imag);*/
 
     int effFunctionIdx = 12 + 2*indices[3] + 2*indices[4] + 2*indices[6];
     int resfctidx = indices[11];
@@ -149,9 +140,9 @@ EXEC_TARGET fptype device_TDDP4(fptype* evt, fptype* p, unsigned int* indices) {
                  _tau, _time, _xmixing, _ymixing, _sigma,
                  p, indices + resfctpar);
     fptype eff = callFunction(evt, indices[effFunctionIdx], indices[effFunctionIdx + 1]);
-    // printf("%i result %.7g, eff %.7g\n",evtNum, ret, eff);
+     /*printf("%i result %.7g, eff %.7g\n",evtNum, ret, eff);*/
     ret *= eff;
-
+    /*printf("in prob: %f\n", ret);*/
     return ret;
 }
 
@@ -175,9 +166,8 @@ __host__ TDDP4::TDDP4(std::string n,
     , SpinsCalculated(false)
     , resolution(Tres)
     , generation_offset(25031992)
-    , genlow(0)
-    , genhigh(5)
-    , generation_no_norm(false) {
+    , generation_no_norm(false)
+    , maxWeight(0){
     // should include m12, m34, cos12, cos34, phi, eventnumber, dtime, sigmat. In this order!
     for(std::vector<Variable*>::iterator obsIT = observables.begin(); obsIT != observables.end(); ++obsIT) {
         registerObservable(*obsIT);
@@ -436,11 +426,10 @@ __host__ TDDP4::TDDP4(std::string n,
     auto zip_end = zip_begin + d1.size();
     auto new_end = thrust::remove_if(zip_begin, zip_end, flags.begin(), thrust::logical_not<bool>());
 
-    // fprintf("After accept-reject we will keep %.i Events for normalization.\n", (int)nAcc);
-    d1.shrink_to_fit();
-    d2.shrink_to_fit();
-    d3.shrink_to_fit();
-    d4.shrink_to_fit();
+    d1.erase(thrust::get<0>(new_end.get_iterator_tuple()), d1.end());
+    d2.erase(thrust::get<1>(new_end.get_iterator_tuple()), d2.end());
+    d3.erase(thrust::get<2>(new_end.get_iterator_tuple()), d3.end());
+    d4.erase(thrust::get<3>(new_end.get_iterator_tuple()), d4.end());
 
     mcbooster::ParticlesSet_d pset(4);
     pset[0] = &d1;
@@ -456,7 +445,7 @@ __host__ TDDP4::TDDP4(std::string n,
 
     mcbooster::VariableSet_d VarSet(5);
     VarSet[0] = &norm_M12,
-                VarSet[1] = &norm_M34;
+    VarSet[1] = &norm_M34;
     VarSet[2] = &norm_CosTheta12;
     VarSet[3] = &norm_CosTheta34;
     VarSet[4] = &norm_phi;
@@ -651,14 +640,32 @@ __host__ fptype TDDP4::normalise() const {
 
 __host__ std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h>
 TDDP4::GenerateSig(unsigned int numEvents) {
+
+    copyParams();
+
     std::vector<mcbooster::GReal_t> masses(decayInfo->particle_masses.begin()+1, decayInfo->particle_masses.end());
     mcbooster::PhaseSpace phsp(decayInfo->particle_masses[0], masses, numEvents, generation_offset);
     phsp.Generate(mcbooster::Vector4R(decayInfo->particle_masses[0], 0.0, 0.0, 0.0));
 
+    phsp.Unweight();
+
+    auto nAcc = phsp.GetNAccepted();
+    mcbooster::BoolVector_d flags = phsp.GetAccRejFlags();
     auto d1 = phsp.GetDaughters(0);
     auto d2 = phsp.GetDaughters(1);
     auto d3 = phsp.GetDaughters(2);
     auto d4 = phsp.GetDaughters(3);
+
+    auto zip_begin = thrust::make_zip_iterator(thrust::make_tuple(d1.begin(), d2.begin(), d3.begin(), d4.begin()));
+    auto zip_end = zip_begin + d1.size();
+    auto new_end = thrust::remove_if(zip_begin, zip_end, flags.begin(), thrust::logical_not<bool>());
+
+    flags = mcbooster::BoolVector_d();
+
+    d1.erase(thrust::get<0>(new_end.get_iterator_tuple()), d1.end());
+    d2.erase(thrust::get<1>(new_end.get_iterator_tuple()), d2.end());
+    d3.erase(thrust::get<2>(new_end.get_iterator_tuple()), d3.end());
+    d4.erase(thrust::get<3>(new_end.get_iterator_tuple()), d4.end());
 
     mcbooster::ParticlesSet_d pset(4);
     pset[0] = &d1;
@@ -666,23 +673,29 @@ TDDP4::GenerateSig(unsigned int numEvents) {
     pset[2] = &d3;
     pset[3] = &d4;
 
-    auto SigGen_M12_d        = mcbooster::RealVector_d(numEvents);
-    auto SigGen_M34_d        = mcbooster::RealVector_d(numEvents);
-    auto SigGen_CosTheta12_d = mcbooster::RealVector_d(numEvents);
-    auto SigGen_CosTheta34_d = mcbooster::RealVector_d(numEvents);
-    auto SigGen_phi_d        = mcbooster::RealVector_d(numEvents);
-    auto dtime_d             = mcbooster::RealVector_d(numEvents);
+    auto SigGen_M12_d        = mcbooster::RealVector_d(nAcc);
+    auto SigGen_M34_d        = mcbooster::RealVector_d(nAcc);
+    auto SigGen_CosTheta12_d = mcbooster::RealVector_d(nAcc);
+    auto SigGen_CosTheta34_d = mcbooster::RealVector_d(nAcc);
+    auto SigGen_phi_d        = mcbooster::RealVector_d(nAcc);
+    auto dtime_d             = mcbooster::RealVector_d(nAcc);
 
     thrust::counting_iterator<unsigned int> index_sequence_begin(0);
+
+    fptype tau     = host_params[host_indices[parameters + 7]];
+    fptype ymixing = host_params[host_indices[parameters + 9]];
+    fptype gammamin = 1.0/tau - FABS(ymixing)/tau;
+    /*printf("hostparams: %f, %f", tau, ymixing);*/
+
     thrust::transform(index_sequence_begin,
-                      index_sequence_begin + numEvents,
+                      index_sequence_begin + nAcc,
                       dtime_d.begin(),
-                      genUni(genlow, genhigh, generation_offset));
+                      genExp(generation_offset, gammamin));
 
 
     mcbooster::VariableSet_d VarSet_d(5);
     VarSet_d[0] = &SigGen_M12_d,
-                  VarSet_d[1] = &SigGen_M34_d;
+    VarSet_d[1] = &SigGen_M34_d;
     VarSet_d[2] = &SigGen_CosTheta12_d;
     VarSet_d[3] = &SigGen_CosTheta34_d;
     VarSet_d[4] = &SigGen_phi_d;
@@ -716,10 +729,9 @@ TDDP4::GenerateSig(unsigned int numEvents) {
     VarSet[4] = SigGen_phi_h;
     VarSet[5] = dtime_h;
 
-    auto weights = mcbooster::RealVector_d(phsp.GetWeights());
     phsp.~PhaseSpace();
 
-    auto DS = new mcbooster::RealVector_d(8*numEvents);
+    auto DS = new mcbooster::RealVector_d(8*nAcc);
     thrust::counting_iterator<int> eventNumber(0);
 
 #pragma unroll
@@ -730,58 +742,90 @@ TDDP4::GenerateSig(unsigned int numEvents) {
     }
 
     mcbooster::strided_range<mcbooster::RealVector_d::iterator> sr(DS->begin() + 5, DS->end(), 8);
-    thrust::copy(eventNumber, eventNumber+numEvents, sr.begin());
+    thrust::copy(eventNumber, eventNumber+nAcc, sr.begin());
+
 
     mcbooster::strided_range<mcbooster::RealVector_d::iterator> sr2(DS->begin() + 6, DS->end(), 8);
-    thrust::copy(dtime_d.begin(), dtime_d.end(), sr2.begin());
+    thrust::fill_n(sr2.begin(),  nAcc, 0);
 
     dev_event_array = thrust::raw_pointer_cast(DS->data());
-    setDataSize(numEvents, 8);
+    setDataSize(nAcc, 8);
 
 
     generation_no_norm=true; // we need no normalization for generation, but we do need to make sure that norm = 1;
     SigGenSetIndices();
-    copyParams();
     normalise();
     setForceIntegrals();
     MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
-    thrust::device_vector<fptype> results(numEvents);
+    thrust::device_vector<fptype> weights(nAcc);
     thrust::constant_iterator<int> eventSize(8);
     thrust::constant_iterator<fptype*> arrayAddress(dev_event_array);
     thrust::counting_iterator<int> eventIndex(0);
-    thrust::constant_iterator<fptype*> weightAddress(thrust::raw_pointer_cast(weights.data()));
-    thrust::constant_iterator<fptype*> dtimeAddress(thrust::raw_pointer_cast(dtime_d.data()));
 
     MetricTaker evalor(this, getMetricPointer("ptr_to_Prob"));
     thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
-                      thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEvents, arrayAddress, eventSize)),
-                      results.begin(),
+                      thrust::make_zip_iterator(thrust::make_tuple(eventIndex + nAcc, arrayAddress, eventSize)),
+                      weights.begin(),
                       evalor);
     SYNCH();
 
+    fptype wmax = 1.1 * (fptype) *thrust::max_element(weights.begin(), weights.end());
+
+    if(wmax > maxWeight && maxWeight != 0)
+        printf("WARNING: you just encountered a higher maximum weight than observed in previous iterations.\n"
+               "WARNING: Consider recalculating your AccRej flags and acceping based upon these.\n"
+               "WARNING: previous weight: %.4g, new weight: %.4g\n", maxWeight, wmax);
+
+    maxWeight = wmax > maxWeight ? wmax : maxWeight;
+
+    thrust::copy(dtime_d.begin(), dtime_d.end(), sr2.begin());
+
+    dtime_d = mcbooster::RealVector_d();
+    thrust::device_vector<fptype> results(nAcc);
+
+    thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
+                      thrust::make_zip_iterator(thrust::make_tuple(eventIndex + nAcc, arrayAddress, eventSize)),
+                      results.begin(),
+                      evalor);
+
+    SYNCH();
+
+    thrust::device_vector<fptype> flag2(nAcc);
+    thrust::counting_iterator<mcbooster::GLong_t> first(0);
+    thrust::counting_iterator<mcbooster::GLong_t> last = first + nAcc;
+
+    // we do not want to copy the whole class to the GPU so capturing *this is not a great option
+    // therefor perpare local copies to capture the variables we need
+    unsigned int tmpoff = generation_offset;
+    unsigned int tmpparam = parameters;
+    wmax = maxWeight;
+
+    thrust::transform(thrust::make_zip_iterator( thrust::make_tuple(eventIndex, results.begin(), arrayAddress, eventSize) ),
+                      thrust::make_zip_iterator( thrust::make_tuple(eventIndex + nAcc, results.end(), arrayAddress, eventSize ) ),
+                      flag2.begin(),
+                      [tmpparam, tmpoff, gammamin, wmax] EXEC_TARGET (thrust::tuple<unsigned int, fptype, fptype*, unsigned int> t){
+
+                        int evtNum = thrust::get<0>(t);
+                        fptype* evt = thrust::get<2>(t) + (evtNum * thrust::get<3>(t));
+                        unsigned int* indices = paramIndices + tmpparam;
+                        fptype time    = evt[indices[8 + indices[0]]];
+
+                        thrust::random::minstd_rand0 rand(1431655765);
+                        thrust::uniform_real_distribution<fptype> dist(0,1);
+                        rand.discard( tmpoff + evtNum );
+
+                        return  ( dist(rand) * EXP(-time*gammamin) * wmax) < thrust::get<1>(t);
+                      });
+
+
     gooFree(dev_event_array);
 
-    thrust::transform(results.begin(), results.end(), weights.begin(), weights.begin(),
-                      thrust::multiplies<mcbooster::GReal_t>());
-    mcbooster::BoolVector_d flags(numEvents);
-
-    thrust::counting_iterator<mcbooster::GLong_t> first(0);
-    thrust::counting_iterator<mcbooster::GLong_t> last = first + numEvents;
-
-    auto max = thrust::max_element(weights.begin(), weights.end());
-    fptype wmax = (fptype)*max;
-    thrust::transform(first, last, weights.begin(), flags.begin(), mcbooster::FlagAcceptReject(wmax, generation_offset));
-
-    //   printf("Offset: %i und wmax:%.5g\n",generation_offset, wmax );
-    // for (int i = 0; i < dtime_d.size(); ++i)
-    // {
-    // printf("%i, %s, %.5g, %.5g, %.5g, %.5g, %.5g, %.5g, %.5g\n",i, (bool)flags[i] ? "true" : "false", (double)weights[i],  (double)dtime_d[i], (double)SigGen_M12_d[i], (double)SigGen_M34_d[i], (double)SigGen_CosTheta12_d[i], (double)SigGen_CosTheta34_d[i], (double)SigGen_phi_d[i]);
-    // }
+    /*printf("Offset: %i und wmax:%.5g\n",generation_offset, wmax );*/
 
     auto weights_h = mcbooster::RealVector_h(weights);
     auto results_h = mcbooster::RealVector_h(results);
-    auto flags_h = mcbooster::BoolVector_h(flags);
+    auto flags_h = mcbooster::BoolVector_h(flag2);
     SYNCH();
 
     return std::make_tuple(ParSet, VarSet, weights_h, flags_h);
@@ -1114,3 +1158,4 @@ EXEC_TARGET thrust::tuple<fptype, fptype, fptype, fptype> NormIntegrator_TD::ope
     // printf("%.5g %.5g %.5g %.5g\n", norm2(AmpA), norm2(AmpB), AmpAB.real, AmpAB.imag);
     return thrust::tuple<fptype, fptype, fptype, fptype>(norm2(AmpA), norm2(AmpB), AmpAB.real, AmpAB.imag);
 }
+

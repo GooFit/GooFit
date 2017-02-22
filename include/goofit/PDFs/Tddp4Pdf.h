@@ -46,6 +46,10 @@ public:
         generation_offset = off;
     }
 
+    __host__ void setMaxWeight(fptype wmax) {
+        maxWeight = wmax;
+    }
+
     __host__ std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h,  mcbooster::RealVector_h>
     GenerateSig(unsigned int numEvents);
 

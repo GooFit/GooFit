@@ -21,26 +21,26 @@ using namespace CLI;
 
 class Application : public CLI::App {
 protected:
-    int gpuDev = 0;
-    bool show_gpus;
-    bool show_threads;
-    int argc;
-    char** argv;
+    int gpuDev_ = 0;
+    bool show_gpus_;
+    bool show_threads_;
+    int argc_;
+    char** argv_;
 
 public:
     /// Make a new Application
     Application(std::string discription,
-            int argc, char** argv) : App(discription), argc(argc), argv(argv) {
+            int argc, char** argv) : App(discription), argc_(argc), argv_(argv) {
 
         #ifdef GOOFIT_MPI
-        MPI_Init(&argc, &argv);
+        MPI_Init(&argc_, &argv_);
         #endif
 
         #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-        add_option("--gpu-dev", gpuDev, "GPU device to use", true)->group("GooFit");
-        add_flag("--show-gpus", show_gpus, "Show the available GPU devices and exit")->group("GooFit");
+        add_option("--gpu-dev", gpuDev_, "GPU device to use", true)->group("GooFit");
+        add_flag("--show-gpus", show_gpus_, "Show the available GPU devices and exit")->group("GooFit");
         #endif
-        add_flag("--goofit-details", show_threads, "Output system and threading details")->group("GooFit");
+        add_flag("--goofit-details", show_threads_, "Output system and threading details")->group("GooFit");
 
         add_config("--config", "config.ini", "An ini file with command line options in it");
         
@@ -50,11 +50,11 @@ public:
     Application(int argc, char** argv) : Application("", argc, argv) {}
 
     /// Get the set GPU device
-    int get_device() const {return gpuDev;}
+    int get_device() const {return gpuDev_;}
 
     /// simple run since argc and argv are stored 
     void run() {
-        parse(argc, argv);
+        parse(argc_, argv_);
     }
 
     /// Gets called in parse
@@ -62,12 +62,12 @@ public:
 
         set_device();
 
-        if(show_threads) {
+        if(show_threads_) {
             std::cout << "GOOFIT: Version " << GOOFIT_VERSION_MAJOR << "." << GOOFIT_VERSION_MINOR << "." << GOOFIT_VERSION_PATCH << std::endl;
             #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
             std::cout << "CUDA: Device " << get_device() << std::endl;
             cudaDeviceProp devProp;
-            cudaGetDeviceProperties(&devProp, gpuDev);
+            cudaGetDeviceProperties(&devProp, gpuDev_);
             std::cout << "CUDA: Compute " << devProp.major << "." << devProp.minor << std::endl;
             std::cout << "CUDA: Total global memory: " <<  devProp.totalGlobalMem / 1.0e9 << "GB" << std::endl;
             std::cout << "CUDA: Multiprocessors: "<< devProp.multiProcessorCount << std::endl;
@@ -83,7 +83,7 @@ public:
         }
 
         #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-        if(show_gpus) {
+        if(show_gpus_) {
             int deviceCount;
             cudaGetDeviceCount(&deviceCount);
             for(int i = 0; i < deviceCount; i++) {
@@ -103,8 +103,8 @@ public:
     void set_device() const {
 
         #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-        if(gpuDev != 0) {
-            cudaSetDevice(gpuDev);
+        if(gpuDev_ != 0) {
+            cudaSetDevice(gpuDev_);
         }
         #endif
     }

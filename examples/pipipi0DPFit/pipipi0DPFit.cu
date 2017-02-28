@@ -4845,9 +4845,9 @@ int main(int argc, char** argv) {
     //foodal->SetLeftMargin(0.13);
 
 
-#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-    cudaSetDevice(0);
-#endif
+//#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
+//    cudaSetDevice(0);
+//#endif
 
     if(argc<=1) {
         std::cerr << "Error: read the readme" << std::endl;

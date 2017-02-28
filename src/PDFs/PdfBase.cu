@@ -199,7 +199,7 @@ __host__ void PdfBase::setData(UnbinnedDataSet* data) {
 
     //This will track for a given rank where they will start and how far they will go
     int *counts = new int[numProcs];
-    int *discplacements = new int[numProcs];
+    int *displacements = new int[numProcs];
     
     for (int i = 0; i < numProcs - 1; i++)
         counts[i] = perTask;
@@ -220,7 +220,7 @@ __host__ void PdfBase::setData(UnbinnedDataSet* data) {
     for (int i = 0; i < observables.size (); i++)
     {
         //We are casting the observable to a CountVariable
-        CountVariable *c = dynamic_cast <CountVariable*> (observables[i]);
+        CountingVariable *c = dynamic_cast <CountingVariable*> (observables[i]);
 
         //if it is true re-index
         if (c)
@@ -240,20 +240,18 @@ __host__ void PdfBase::setData(UnbinnedDataSet* data) {
     //We will go through all of the events and re-index if appropriate
     for (int i = 1; i < numProcs; i++)
     {
-        for (int j = 0; j < counts[j]; j++)
+        for (int j = 0; j < counts[i]; j++)
         {
             for (int k = 0; k < dimensions; k++)
             {
                 if (fixme[k] > 0)
-                    host_array[(j + displacement[i])*dimensions + k] = float (j);
+                    host_array[(j + displacements[i])*dimensions + k] = float (j);
             }
         }
     }
-#endif
 
-#ifdef GOOFIT_MPI
     int mystart = displacements[myId];
-    int myend = counts[myId];
+    int myend = mystart + counts[myId];
     int mycount = myend - mystart;
 
     gooMalloc((void**) &dev_event_array, dimensions*mycount*sizeof(fptype));
@@ -298,7 +296,7 @@ __host__ void PdfBase::setData(BinnedDataSet* data) {
 
     //This will track for a given rank where they will start and how far they will go
     int *counts = new int[numProcs];
-    int *discplacements = new int[numProcs];
+    int *displacements = new int[numProcs];
     
     for (int i = 0; i < numProcs - 1; i++)
         counts[i] = perTask;
@@ -319,7 +317,7 @@ __host__ void PdfBase::setData(BinnedDataSet* data) {
     for (int i = 0; i < observables.size (); i++)
     {
         //We are casting the observable to a CountVariable
-        CountVariable *c = dynamic_cast <CountVariable*> (observables[i]);
+        CountingVariable *c = dynamic_cast <CountingVariable*> (observables[i]);
 
         //if it is true re-index
         if (c)
@@ -347,15 +345,13 @@ __host__ void PdfBase::setData(BinnedDataSet* data) {
             for (int k = 0; k < dimensions; k++)
             {
                 if (fixme[k] > 0)
-                    host_array[(j + displacement[i])*dimensions + k] = float (j);
+                    host_array[(j + displacements[i])*dimensions + k] = float (j);
             }
         }
     }
-#endif
 
-#ifdef GOOFIT_MPI
     int mystart = displacements[myId];
-    int myend = counts[myId];
+    int myend = mystart + counts[myId];
     int mycount = myend - mystart;
 
     gooMalloc((void**) &dev_event_array, dimensions*mycount*sizeof(fptype));

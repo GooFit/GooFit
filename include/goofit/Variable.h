@@ -43,7 +43,7 @@ public:
 
 class CountingVariable : public Variable {
 public:
-	CountingVariable(std::string n);
+    CountingVariable(std::string n);
     CountingVariable(std::string n, fptype val);
     CountingVariable(std::string n, fptype dn, fptype up);
     CountingVariable(std::string n, fptype v, fptype dn, fptype up);

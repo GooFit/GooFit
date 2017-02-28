@@ -1,6 +1,7 @@
 #include "goofit/detail/CLI11.hpp"
 #include "goofit/Version.h"
 #include "thrust/detail/config/device_system.h"
+#include "goofit/detail/rang.hpp"
 
 #ifdef GOOFIT_MPI
 #include <mpi.h>
@@ -43,6 +44,9 @@ public:
         add_flag("--goofit-details", show_threads_, "Output system and threading details")->group("GooFit");
 
         add_config("--config", "config.ini", "An ini file with command line options in it");
+
+        // Reset color on exit
+        std::atexit([](){std::cout << rang::style::reset;});
         
     }
 
@@ -96,6 +100,13 @@ public:
             throw GooFit::Success();
         }
         #endif
+    }
+
+    int exit(const CLI::Error &e) {
+        std::cout << (e.exit_code==0 ? rang::fg::blue : rang::fg::red);
+        int rval = CLI::App::exit(e);
+        std::cout << rang::fg::reset;
+        return rval;
     }
 
     /// Call if the application might fork, otherwise automatic

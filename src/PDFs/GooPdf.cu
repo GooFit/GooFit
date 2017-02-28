@@ -248,6 +248,7 @@ __host__ double GooPdf::sumOfNll(int numVars) const {
 
     double ret;
 #ifdef GOOFIT_MPI
+#ifndef GOOFIT_OMP
     double r = thrust::transform_reduce(my_policy,
                                     thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
                                     thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
@@ -255,10 +256,25 @@ __host__ double GooPdf::sumOfNll(int numVars) const {
 
     MPI_Allreduce(&r, &ret, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 #else
+    double r = thrust::transform_reduce(
+                                    thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
+                                    thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
+                                    *logger, dummy, cudaPlus);
+#endif
+
+    MPI_Allreduce(&r, &ret, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+#else
+#ifndef GOOFIT_OMP
     ret = thrust::transform_reduce(my_policy,
                                     thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
                                     thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
                                     *logger, dummy, cudaPlus);
+#else
+    ret = thrust::transform_reduce(
+                                    thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
+                                    thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
+                                    *logger, dummy, cudaPlus);
+#endif
 #endif
     return ret;
 }
@@ -345,6 +361,7 @@ __host__ void GooPdf::evaluateAtPoints(Variable* var, std::vector<fptype>& res) 
                       evalor);
 #endif
 
+    //Note, This is not fully realized with MPI.  We need to copy each 'results' buffer to each other 'MPI_Scatterv', then we can do the rest.
     thrust::host_vector<fptype> h_results = results;
     res.clear();
     res.resize(var->numbins);
@@ -420,17 +437,10 @@ __host__ fptype GooPdf::getValue() {
     thrust::device_vector<fptype> results(1);
 
     MetricTaker evalor(this, getMetricPointer("ptr_to_Eval"));
-#ifdef GOOFIT_MPI
     thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
                       thrust::make_zip_iterator(thrust::make_tuple(eventIndex + 1, arrayAddress, eventSize)),
                       results.begin(),
                       evalor);
-#else
-    thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
-                      thrust::make_zip_iterator(thrust::make_tuple(eventIndex + 1, arrayAddress, eventSize)),
-                      results.begin(),
-                      evalor);
-#endif
 
     return results[0];
 }
@@ -476,17 +486,31 @@ __host__ fptype GooPdf::normalise() const {
 
     fptype sum;
 #ifdef GOOFIT_MPI
+#ifndef GOOFIT_OMP
     fptype s = thrust::transform_reduce(my_policy,
 					  thrust::make_zip_iterator(thrust::make_tuple(binIndex, eventSize, arrayAddress)),
                                           thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, eventSize, arrayAddress)),
                                           *logger, dummy, cudaPlus);
+#else
+    fptype s = thrust::transform_reduce(
+					  thrust::make_zip_iterator(thrust::make_tuple(binIndex, eventSize, arrayAddress)),
+                                          thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, eventSize, arrayAddress)),
+                                          *logger, dummy, cudaPlus);
+#endif
     
     MPI_Allreduce (&s, &sum, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+#else
+#ifndef GOOFIT_OMP
+    sum = thrust::transform_reduce(my_policy,
+					  thrust::make_zip_iterator(thrust::make_tuple(binIndex, eventSize, arrayAddress)),
+                                          thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, eventSize, arrayAddress)),
+                                          *logger, dummy, cudaPlus);
 #else
     sum = thrust::transform_reduce(my_policy,
 					  thrust::make_zip_iterator(thrust::make_tuple(binIndex, eventSize, arrayAddress)),
                                           thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, eventSize, arrayAddress)),
                                           *logger, dummy, cudaPlus);
+#endif
 #endif
 
     if(std::isnan(sum)) {

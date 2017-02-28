@@ -550,8 +550,8 @@ __host__ void TddpPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) 
 
     numEntries = dataSize;
 
-#ifdef GOOFIT_MPI
     //Ideally this would not be required, this would be called AFTER setData which will set m_iEventsPerTask
+#ifdef GOOFIT_MPI
     int myId, numProcs;
     MPI_Comm_size (MPI_COMM_WORLD, &numProcs);
     MPI_Comm_rank (MPI_COMM_WORLD, &myId);

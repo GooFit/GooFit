@@ -22,6 +22,7 @@
 #include "RooNLLVar.h"
 
 // GooFit stuff
+#include "goofit/Application.h"
 #include "goofit/Variable.h"
 #include "goofit/PDFs/KinLimitBWPdf.h"
 #include "goofit/PDFs/ConvolutionPdf.h"
@@ -55,18 +56,11 @@ double pdf_int;
 
 char histName[1000];
 int numHists = 0;
-//#ifdef OMP_ON
-//#pragma omp threadprivate (numHists, histName)
-//#endif
 
 TH1F* plotComponent(GooPdf* toPlot, double normFactor) {
 //  static char name[1000];
 //  static int numHists = 0;
-//#ifdef OMP_ON
-//  sprintf(histName, "%s_hist_%i_%i", toPlot->getName().c_str(), numHists++, omp_get_thread_num());
-//#else
     sprintf(histName, "%s_hist_%i", toPlot->getName().c_str(), numHists++);
-//#endif
     TH1F* ret = new TH1F(histName, "", dm->numbins, dm->lowerlimit, dm->upperlimit);
     std::vector<fptype> binValues;
     toPlot->evaluateAtPoints(dm, binValues);
@@ -156,65 +150,13 @@ void getData() {
     datareader.close();
 }
 
-void CudaMinimise(int dev, int fitType) {
-//#ifdef CUDAPRINT
-//  cudaPrintfInit(10000000);
-//#endif
-//#ifdef OMP_ON
-    int deviceCount;
-    //int threadCount;
-//#pragma omp parallel
-//  {
-//  threadCount = omp_get_num_threads();
-//  }
-
-#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-    cudaGetDeviceCount(&deviceCount);
-    //if (threadCount > deviceCount) {
-    //omp_set_num_threads(deviceCount);
-    //}
-#endif
-//#endif
-
-//#pragma omp parallel
-#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-
-    for(int i = 0; i < deviceCount; i++) {
-        cudaDeviceProp deviceProp;
-//    tid = omp_get_thread_num();
-//#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-        cudaGetDeviceProperties(&deviceProp, i);
-        printf("Device %d has compute capability %d.%d.\n", i, deviceProp.major, deviceProp.minor);
-
-        if(deviceProp.major < 2) {
-            printf("Compute capability of device %d is less than 2.0, terminating ...\n", i);
-            exit(EXIT_FAILURE);
-        }
-    }
-
-    //We are setting to the 0-device regardless
-    cudaSetDevice(0);
-#endif
-//#else
-//#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-//  cudaSetDevice(dev);
-//#endif
-//#endif
-
-//#ifdef OMP_ON
-//#pragma omp master
-//{
-//#endif
+void CudaMinimise(int fitType) {
     dm = new Variable("dm", 0.1395, 0.1665);
     dm->numbins = 2700;
     //dm->numbins = 540;
 
     getMCData();
     std::cout << "Done getting MC\n";
-//#ifdef OMP_ON
-//}
-//#pragma omp barrier
-//#endif
 
     Variable mean1("kpi_mc_mean1", 0.145402, 0.00001, 0.143, 0.148);
     Variable mean2("kpi_mc_mean2", 0.145465, 0.00001, 0.145, 0.1465);
@@ -264,23 +206,12 @@ void CudaMinimise(int dev, int fitType) {
     resolution.setData(data);
     FitManager mcpdf(&resolution);
 
-//#ifdef OMP_ON
-//  #pragma omp master
-//  {
-//  std::cout <<  << "Done with data, starting minimisation" << std::endl;
-//  }
-//#else
     std::cout << "Done with data, starting minimisation" << std::endl;
-//#endif
     // Minimize
     //ROOT::Minuit2::FunctionMinimum* min = mcpdf.fit();
     mcpdf.fit();
 
     mcpdf.getMinuitValues();
-
-//#ifdef OMP_ON
-//#pragma omp barrier
-//#endif
 
     mean1.fixed = true;
     mean2.fixed = true;
@@ -356,15 +287,7 @@ void CudaMinimise(int dev, int fitType) {
     comps.push_back(&bkg);
     comps.push_back(&signal);
 
-//#ifdef OMP_ON
-//#pragma omp master
-//{
-//#endif
     getData();
-//#ifdef OMP_ON
-//}
-//#pragma omp barrier
-//#endif
 
     AddPdf total("total", weights, comps);
 
@@ -379,11 +302,7 @@ void CudaMinimise(int dev, int fitType) {
 
     FitManager datapdf(&total);
 
-//#ifdef OMP_ON
-//  std::cout << tid << ": Starting fit\n";
-//#else
     std::cout << "Starting fit\n";
-//#endif
     gettimeofday(&startTime, NULL);
     startCPU = times(&startProc);
     //ROOT::Minuit2::FunctionMinimum* min2 = datapdf.fit();
@@ -391,9 +310,6 @@ void CudaMinimise(int dev, int fitType) {
     stopCPU = times(&stopProc);
     gettimeofday(&stopTime, NULL);
 
-//#ifdef OMP_ON
-//#pragma omp barrier
-//#endif
     //std::cout << "Minimum: " << *min2 << std::endl;
     /*
       double dat_int = 0;
@@ -430,14 +346,7 @@ void CudaMinimise(int dev, int fitType) {
       }
     */
 
-//#ifdef OMP_ON
-//#pragma omp master
-//{
-//#endif
     dm->value = 0.1568;
-//#ifdef OMP_ON
-//}
-//#endif
     /*
       std::cout << "PDF: "
     	    << (dat_int/totalIntegral) * total.getValue() << " "
@@ -449,10 +358,6 @@ void CudaMinimise(int dev, int fitType) {
     	    << std::endl;
     */
 
-//#ifdef OMP_ON
-//#pragma omp master
-//{
-//#endif
     /*
     data_hist->SetStats(false);
     data_hist->SetMarkerStyle(8);
@@ -479,16 +384,16 @@ void CudaMinimise(int dev, int fitType) {
     foo->SetLogy(true);
     foo->SaveAs("zach_CUDA_fit.png");
     */
-//#ifdef OMP_ON
-//  }  // end master section
-//  #pragma omp barrier
-//}  // end parallel
-//#endif
-
 }
 
 int main(int argc, char** argv) {
-    int gpuDev = 0;
+    GooFit::Application app ("zachFit description");
+
+    int fitType = 0;
+    app.add_option("-t,--type", fitType, "Fit Type", CLI::DEFAULT);
+
+    app.run (argc, argv);
+
     gStyle->SetCanvasBorderMode(0);
     gStyle->SetCanvasColor(10);
     gStyle->SetFrameFillColor(10);
@@ -505,16 +410,8 @@ int main(int argc, char** argv) {
 
     data_hist = new TH1F("data_hist", "", 300, 0.1365, 0.1665);
 
-    if(argc < 2) {
-        printf("Usage: zach <mode> [<device>]  \n \t mode: 0-unbinned, 1-binned, 2-binned ChiSq \n \t device is 0 by default, optionally specify GPU device other than 0\n");
-        return -1;
-    }
-
-    if(argc == 3)
-        gpuDev = atoi(argv[2]);
-
     try {
-        CudaMinimise(gpuDev, atoi(argv[1]));  // atoi = string to integer conversion
+        CudaMinimise(fitType);  // atoi = string to integer conversion
     } catch(const std::exception& ex) {
         std::cerr << ex.what() << std::endl;
         return 6;

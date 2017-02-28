@@ -545,6 +545,8 @@ public:
 
     }
 
+    virtual ~App () { }
+
     App* add_subcommand(std::string name, std::string discription="") {
         subcommands.emplace_back(new App(discription));
         subcommands.back()->name = name;
@@ -841,7 +843,7 @@ public:
 
 
     /// Parses the command line - throws errors
-    void parse(int argc, char **argv) {
+    virtual void parse(int argc, char **argv) {
         std::vector<std::string> args;
         for(int i=argc-1; i>0; i--)
             args.push_back(argv[i]);

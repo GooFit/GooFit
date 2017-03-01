@@ -61,7 +61,7 @@ EXEC_TARGET void get4Vecs(fptype* Vecs, const unsigned int& constants, const fpt
     Vecs[9] = -sin34*p3;
     Vecs[13] = sin34*p3;
 
-    //set Y-component
+    //set Z-component
     Vecs[2]  = 0;
     Vecs[6]  = 0;
     Vecs[10] = 0;

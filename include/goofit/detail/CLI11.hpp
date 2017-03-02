@@ -4,7 +4,7 @@
 // file LICENSE or https://github.com/henryiii/CLI11 for details.
 
 // This file was generated using MakeSingleHeader.py in CLI11/scripts
-// from: v0.5-19-ge870e26
+// from: v0.6
 
 // This has the complete CLI library in one file.
 

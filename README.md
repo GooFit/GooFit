@@ -27,11 +27,7 @@ git clone git://github.com/goofit/goofit.git
 cd goofit
 ```
 
-If you want to live on the bleeding edge, or are interested in contributing to GooFit, checkout the dev branch:
-```
-git checkout dev
-```
-
+You can either checkout a tagged version, or stay on the master for the latest and greatest. There are often development branches available, too.
 
 ## Building 
 

@@ -37,6 +37,9 @@ public:
         MPI_Init(&argc_, &argv_);
         #endif
 
+        // Fallthrough is useful for most models of GooFit subcommands
+        fallthrough();
+
         #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
         add_option("--gpu-dev", gpuDev_, "GPU device to use", true)->group("GooFit");
         add_flag("--show-gpus", show_gpus_, "Show the available GPU devices and exit")->group("GooFit");
@@ -120,7 +123,7 @@ public:
         #endif
     }
 
-    /// CLeanup MPI
+    /// Cleanup MPI
     ~Application() {
         #ifdef GOOFIT_MPI
         MPI_Finalize();

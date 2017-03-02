@@ -1,3 +1,4 @@
+#include "goofit/Application.h"
 #include "goofit/Variable.h"
 #include "goofit/FitManager.h"
 #include "goofit/UnbinnedDataSet.h"
@@ -7,6 +8,14 @@
 using namespace std;
 
 int main(int argc, char** argv) {
+    GooFit::Application app("Exponential example", argc, argv);
+
+    try {
+        app.run();
+    } catch (const GooFit::ParseError &e) {
+        return app.exit(e);
+    }
+
     // Independent variable.
     Variable* xvar = new Variable("xvar", 0, log(1 + RAND_MAX/2));
 

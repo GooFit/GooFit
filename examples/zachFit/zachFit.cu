@@ -22,6 +22,7 @@
 #include "RooNLLVar.h"
 
 // GooFit stuff
+#include "goofit/Application.h"
 #include "goofit/Variable.h"
 #include "goofit/PDFs/KinLimitBWPdf.h"
 #include "goofit/PDFs/ConvolutionPdf.h"
@@ -156,50 +157,7 @@ void getData() {
     datareader.close();
 }
 
-void CudaMinimise(int dev, int fitType) {
-//#ifdef CUDAPRINT
-//  cudaPrintfInit(10000000);
-//#endif
-//#ifdef OMP_ON
-    int deviceCount;
-    //int threadCount;
-//#pragma omp parallel
-//  {
-//  threadCount = omp_get_num_threads();
-//  }
-
-#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-    cudaGetDeviceCount(&deviceCount);
-    //if (threadCount > deviceCount) {
-    //omp_set_num_threads(deviceCount);
-    //}
-#endif
-//#endif
-
-//#pragma omp parallel
-#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-
-    for(int i = 0; i < deviceCount; i++) {
-        cudaDeviceProp deviceProp;
-//    tid = omp_get_thread_num();
-//#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-        cudaGetDeviceProperties(&deviceProp, i);
-        printf("Device %d has compute capability %d.%d.\n", i, deviceProp.major, deviceProp.minor);
-
-        if(deviceProp.major < 2) {
-            printf("Compute capability of device %d is less than 2.0, terminating ...\n", i);
-            exit(EXIT_FAILURE);
-        }
-    }
-
-    //We are setting to the 0-device regardless
-    cudaSetDevice(0);
-#endif
-//#else
-//#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-//  cudaSetDevice(dev);
-//#endif
-//#endif
+void CudaMinimise(int fitType) {
 
 //#ifdef OMP_ON
 //#pragma omp master
@@ -488,7 +446,19 @@ void CudaMinimise(int dev, int fitType) {
 }
 
 int main(int argc, char** argv) {
-    int gpuDev = 0;
+    GooFit::Application app("Zach-Fit example", argc, argv);
+    
+    int mode;
+    app.add_set("-m,--mode,mode", mode, {0,1,2},
+            "Program mode: 0-unbinned, 1-binned, 2-binned ChiSq")->required();
+
+
+    try {
+        app.run();
+    } catch (const GooFit::ParseError &e) {
+        return app.exit(e);
+    }
+
     gStyle->SetCanvasBorderMode(0);
     gStyle->SetCanvasColor(10);
     gStyle->SetFrameFillColor(10);
@@ -505,16 +475,8 @@ int main(int argc, char** argv) {
 
     data_hist = new TH1F("data_hist", "", 300, 0.1365, 0.1665);
 
-    if(argc < 2) {
-        printf("Usage: zach <mode> [<device>]  \n \t mode: 0-unbinned, 1-binned, 2-binned ChiSq \n \t device is 0 by default, optionally specify GPU device other than 0\n");
-        return -1;
-    }
-
-    if(argc == 3)
-        gpuDev = atoi(argv[2]);
-
     try {
-        CudaMinimise(gpuDev, atoi(argv[1]));  // atoi = string to integer conversion
+        CudaMinimise(mode);
     } catch(const std::exception& ex) {
         std::cerr << ex.what() << std::endl;
         return 6;

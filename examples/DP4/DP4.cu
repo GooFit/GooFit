@@ -1,6 +1,7 @@
 #include <fstream>
 
 // GooFit stuff
+#include "goofit/Application.h"
 #include "goofit/FitManager.h"
 #include "goofit/Variable.h"
 #include "goofit/PDFs/PolynomialPdf.h"
@@ -15,6 +16,14 @@ const fptype KmMass = .493677;
 // Constants used in more than one PDF component.
 
 int main(int argc, char** argv) {
+
+    GooFit::Application app("Dalitz 4 daughter example", argc, argv);
+
+    try {
+        app.run();
+    } catch (const GooFit::ParseError &e) {
+        return app.exit(e);
+    }
 
     Variable* m12 = new Variable("m12", 0, 3);
     Variable* m34 = new Variable("m34", 0, 3);

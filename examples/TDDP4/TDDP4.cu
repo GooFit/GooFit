@@ -3,6 +3,7 @@
 #include <TTree.h>
 
 // GooFit stuff
+#include "goofit/Application.h"
 #include "goofit/Variable.h"
 #include "goofit/PDFs/PolynomialPdf.h"
 #include "goofit/PDFs/AddPdf.h"
@@ -21,6 +22,23 @@ const fptype piPlusMass = 0.13957018;
 const fptype KmMass = .493677;
 
 int main(int argc, char** argv) {
+
+    GooFit::Application app("Time dependent Dalitz plot, 4 particles", argc, argv);
+    
+    TString output = "test_10_15.output";
+    app.add_option("-o,--output,output", output,
+            "File to output", true)->check(GooFit::NonexistentPath);
+    
+    int trials = 100;
+    app.add_option("-t,--trials,output", trials,
+            "Number of trials", true);
+
+    try {
+        app.run();
+    } catch (const GooFit::ParseError &e) {
+        return app.exit(e);
+    }
+
 
     DecayInfo_DP* DK3P_DI = new DecayInfo_DP();
     DK3P_DI->meson_radius =1.5;
@@ -160,7 +178,7 @@ int main(int argc, char** argv) {
     TDDP4* dp = new TDDP4("test", observables, DK3P_DI, dat, eff, 0, 1);
     dp->setGenDecayTimeLimit(10, 15);
 
-    TFile* file = new TFile("test_10_15.root", "RECREATE");
+    TFile* file = new TFile(output, "RECREATE");
     TTree* tree = new TTree("events", "events");
 
     double tm12, tm34, tc12, tc34, tphi, tdtime, D0_E, D0_Px, D0_Py, D0_Pz, Kplus_E, Kplus_Px, Kplus_Py, Kplus_Pz,
@@ -200,10 +218,7 @@ int main(int argc, char** argv) {
     tree->Branch("Piplus_Pz",    &Piplus_Pz,    "Piplus_Pz/D");
     tree->Branch("Piplus_pdg",   &Piplus_pdg,   "Piplus_pdg/I");
 
-
-
-
-    for(int k = 0; k < 100; ++k) {
+    for(int k = 0; k < trials; ++k) {
         int numEvents = .8e6;
         dp->setGenerationOffset(k*numEvents);
         auto tuple = dp->GenerateSig(numEvents);

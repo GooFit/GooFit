@@ -34,7 +34,7 @@ def test(filename, *args):
             colors.success.print(filename, 'Successful')
         else:
             colors.fatal.print(filename, 'Failed with status code:', code)
-    return dict(name=filename+' '.join(map(str,args)), code=code, time=t.interval, stdout=stdout, stderr=stderr)
+    return dict(name=filename+' '+' '.join(map(str,args)), code=code, time=t.interval, stdout=stdout, stderr=stderr)
 
 
 def make_results():
@@ -55,7 +55,7 @@ def make_results():
     if (LOCAL_DIR / 'zachFit/dataFiles/zach/dstwidth_kpi_data.dat').exists():
         results.append(test('zachFit', 0))
     if (LOCAL_DIR / 'pipipi0DPFit/dataFiles/toyPipipi0/dalitz_toyMC_000.txt').exists():
-        results.append(test('pipipi0DPFit', 0, 0, 1))
+        results.append(test('pipipi0DPFit', 'toy', 0, 1))
     return results
 
 

@@ -96,7 +96,8 @@ if(GOOFIT_MPI)
     find_package(MPI REQUIRED)
 
     # Added globally
-    add_definitions("${MPI_CXX_COMPILE_FLAGS} -DGOOFIT_MPI")
+    add_definitions("-DGOOFIT_MPI")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${MPI_CXX_COMPILE_FLAGS}")
     include_directories(${MPI_CXX_INCLUDE_PATH})
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${MPI_CXX_LINK_FLAGS}")
     link_libraries(${MPI_CXX_LIBRARIES})

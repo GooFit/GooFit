@@ -61,7 +61,14 @@ if(GOOFIT_DEVICE STREQUAL Auto)
     message(STATUS "Auto device selection: ${GOOFIT_DEVICE}")
 endif()
 
-option(GOOFIT_SEPARATE_COMP "Enable separate compilation of PDFs" OFF)
+# Only default to off for CUDA
+if(GOOFIT_DEVICE STREQUAL CUDA)
+    option(GOOFIT_SEPARATE_COMP "Enable separate compilation of PDFs" OFF)
+else()
+    option(GOOFIT_SEPARATE_COMP "Enable separate compilation of PDFs" ON)
+endif()
+
+
 if(GOOFIT_SEPARATE_COMP)
     add_definitions("-DSEPARABLE")
 endif()

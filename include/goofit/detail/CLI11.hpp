@@ -4,7 +4,7 @@
 // file LICENSE or https://github.com/henryiii/CLI11 for details.
 
 // This file was generated using MakeSingleHeader.py in CLI11/scripts
-// from: v0.5-10-g0ccd814
+// from: v0.5-19-ge870e26
 
 // This has the complete CLI library in one file.
 
@@ -296,6 +296,17 @@ std::string join(const T& v, std::string delim = ",") {
         if(start++ > 0)
             s << delim;
         s << i;
+    }
+    return s.str();
+}
+
+template<typename T>
+std::string rjoin(const T& v, std::string delim = ",") {
+    std::ostringstream s;
+    for(size_t start=0; start<v.size(); start++) {
+        if(start > 0)
+            s << delim;
+        s << v[v.size() - start - 1];
     }
     return s.str();
 }
@@ -611,7 +622,7 @@ std::function<bool(std::string)> Range(T max) {
 
 namespace CLI {
 
-typedef std::vector<std::vector<std::string>> results_t;
+typedef std::vector<std::string> results_t;
 typedef std::function<bool(results_t)> callback_t;
 
 class Option;
@@ -715,16 +726,13 @@ public:
 
     /// Count the total number of times an option was passed
     int count() const {
-        int out = 0;
-        for(const std::vector<std::string>& vec : results_)
-            out += vec.size();
-        return out;
+        return results_.size();
     }
 
     
     /// This class is true if option is passed.
     operator bool() const {
-        return results_.size() > 0;
+        return count() > 0;
     }
 
     /// Clear the parsed results (mostly for testing)
@@ -779,9 +787,19 @@ public:
         return this;
     }
 
-    /// Any number supported
-    template<typename... ARG>
-    Option* requires(Option* opt, Option* opt1, ARG... args) {
+    /// Can find a string if needed
+    template<typename T=App>
+    Option* requires(std::string opt_name) {
+        for(const Option_p& opt : dynamic_cast<T*>(parent_)->options_)
+            if(opt.get() != this && opt->check_name(opt_name))
+                return requires(opt.get());
+        throw IncorrectConstruction("Option " + opt_name + " is not defined");
+
+    }
+
+    /// Any number supported, any mix of string and Opt
+    template<typename A, typename B, typename... ARG>
+    Option* requires(A opt, B opt1, ARG... args) {
         requires(opt);
         return requires(opt1, args...);
     }
@@ -794,9 +812,18 @@ public:
         return this;
     }
 
-    /// Any number supported
-    template<typename... ARG>
-    Option* excludes(Option* opt, Option* opt1, ARG... args) {
+    /// Can find a string if needed
+    template<typename T=App>
+    Option* excludes(std::string opt_name) {
+        for(const Option_p& opt : dynamic_cast<T*>(parent_)->options_)
+            if(opt.get() != this && opt->check_name(opt_name))
+                return excludes(opt.get());
+        throw IncorrectConstruction("Option " + opt_name + " is not defined");
+
+    }
+    /// Any number supported, any mix of string and Opt
+    template<typename A, typename B, typename... ARG>
+    Option* excludes(A opt, B opt1, ARG... args) {
         excludes(opt);
         return excludes(opt1, args...);
     }
@@ -947,9 +974,9 @@ public:
     /// Process the callback
     void run_callback() const {
         if(!callback_(results_))
-            throw ConversionError(get_name() + "=" + detail::join(flatten_results()));
+            throw ConversionError(get_name() + "=" + detail::join(results_));
         if(validators_.size()>0) {
-            for(const std::string & result : flatten_results())
+            for(const std::string & result : results_)
                 for(const std::function<bool(std::string)> &vali : validators_)
                     if(!vali(result))
                         throw ValidationError(get_name() + "=" + result);
@@ -1015,23 +1042,14 @@ public:
 
 
     /// Puts a result at position r
-    void add_result(int r, std::string s) {
-        results_.at(r).push_back(s);
-    }
-
-    /// Starts a new results vector (used for r in add_result)
-    int get_new() {
-        results_.emplace_back();
-        return results_.size() - 1;
+    void add_result(std::string s) {
+        results_.push_back(s);
     }
 
 
-    /// Produce a flattened vector of results, vs. a vector of vectors.
-    std::vector<std::string> flatten_results() const {
-        std::vector<std::string> output;
-        for(const std::vector<std::string> result : results_)
-            output.insert(std::end(output), std::begin(result), std::end(result));
-        return output;
+    /// Get a copy of the results
+    std::vector<std::string> results() const {
+        return results_;
     }
 
     ///@}
@@ -1093,11 +1111,13 @@ protected:
     /// @name Parsing
     ///@{
 
+    typedef std::vector<std::pair<detail::Classifer, std::string>> missing_t;
+
     /// Pair of classifier, string for missing options. (extra detail is removed on returning from parse)
     /// 
     /// This is faster and cleaner than storing just a list of strings and reparsing. This may contain the -- separator.
-    std::vector<std::pair<detail::Classifer, std::string>> missing_;
-    
+    missing_t missing_;
+
     ///@}
     /// @name Subcommands
     ///@{
@@ -1107,6 +1127,9 @@ protected:
 
     /// If true, the program name is not case sensitive
     bool ignore_case_ {false};
+
+    /// Allow subcommand fallthrough, so that parent commands can collect commands after subcommand.
+    bool fallthrough_ {false};
 
     /// A pointer to the parent if this is a subcommand
     App* parent_ {nullptr};
@@ -1132,6 +1155,14 @@ protected:
 
     ///@}
    
+    /// Special private constructor for subcommand
+    App(std::string description_, bool help, detail::enabler dummy_param) 
+        :  description_(description_) {
+
+        if(help)
+            help_ptr_ = add_flag("-h,--help", "Print this help message and exit");
+
+    }
 
 public:
     /// @name Basic
@@ -1139,13 +1170,9 @@ public:
 
     /// Create a new program. Pass in the same arguments as main(), along with a help string.
     App(std::string description_="", bool help=true)
-        : description_(description_) {
-
-        if(help)
-            help_ptr_ = add_flag("-h,--help", "Print this help message and exit");
+        : App(description_, help, detail::dummy) {
 
     }
-
 
     /// Set a callback for the end of parsing.
     /// 
@@ -1159,8 +1186,9 @@ public:
     }
 
     /// Remove the error when extras are left over on the command line.
-    void allow_extras (bool allow=true) {
+    App* allow_extras (bool allow=true) {
         allow_extras_ = allow;
+        return this;
     }
 
     /// Ignore case. Subcommand inherit value.
@@ -1177,10 +1205,17 @@ public:
 
     /// Require a subcommand to be given (does not affect help call)
     /// Does not return a pointer since it is supposed to be called on the main App.
-    void require_subcommand(int value = -1) {
+    App* require_subcommand(int value = -1) {
         require_subcommand_ = value;
+        return this;
     }
 
+    /// Stop subcommand fallthrough, so that parent commands cannot collect commands after subcommand.
+    /// Default from parent, usually set on parent.
+    App* fallthrough(bool value=true) {
+        fallthrough_ = value;
+        return this;
+    }
 
 
     ///@}
@@ -1231,13 +1266,9 @@ public:
 
         
         CLI::callback_t fun = [&variable](CLI::results_t res){
-            if(res.size()!=1) {
+            if(res.size()!=1)
                 return false;
-            }
-            if(res[0].size()!=1) {
-                return false;
-            }
-            return detail::lexical_cast(res[0][0], variable);
+            return detail::lexical_cast(res[0], variable);
         };
 
         Option* opt = add_option(name, fun, description, defaulted);
@@ -1262,11 +1293,10 @@ public:
         CLI::callback_t fun = [&variable](CLI::results_t res){
             bool retval = true;
             variable.clear();
-            for(const auto &a : res)
-                for(const auto &b : a) {
-                    variable.emplace_back();
-                    retval &= detail::lexical_cast(b, variable.back());
-                }
+            for(const auto &a : res) {
+                variable.emplace_back();
+                retval &= detail::lexical_cast(a, variable.back());
+            }
             return variable.size() > 0 && retval;
         };
 
@@ -1295,7 +1325,7 @@ public:
         return opt;
     }
 
-    /// Add option for flag
+    /// Add option for flag integer
     template<typename T,
         enable_if_t<std::is_integral<T>::value && !is_bool<T>::value, detail::enabler> = detail::dummy>
     Option* add_flag(
@@ -1340,7 +1370,7 @@ public:
     }
 
 
-    /// Add set of options_
+    /// Add set of options
     template<typename T>
     Option* add_set(
             std::string name,
@@ -1354,10 +1384,7 @@ public:
             if(res.size()!=1) {
                 return false;
             }
-            if(res[0].size()!=1) {
-                return false;
-            }
-            bool retval = detail::lexical_cast(res[0][0], member);
+            bool retval = detail::lexical_cast(res[0], member);
             if(!retval)
                 return false;
             return std::find(std::begin(options), std::end(options), member) != std::end(options);
@@ -1378,7 +1405,7 @@ public:
     Option* add_set_ignore_case(
             std::string name,
             std::string &member,                      ///< The selected member of the set
-            std::set<std::string> options,           ///< The set of posibilities
+            std::set<std::string> options,            ///< The set of posibilities
             std::string description="",
             bool defaulted=false
             ) {
@@ -1387,10 +1414,7 @@ public:
             if(res.size()!=1) {
                 return false;
             }
-            if(res[0].size()!=1) {
-                return false;
-            }
-            member = detail::to_lower(res.at(0).at(0));
+            member = detail::to_lower(res[0]);
             auto iter = std::find_if(std::begin(options), std::end(options),
                     [&member](std::string val){return detail::to_lower(val) == member;});
             if(iter == std::end(options))
@@ -1443,11 +1467,12 @@ public:
 
     /// Add a subcommand. Like the constructor, you can override the help message addition by setting help=false
     App* add_subcommand(std::string name, std::string description="", bool help=true) {
-        subcommands_.emplace_back(new App(description, help));
+        subcommands_.emplace_back(new App(description, help, detail::dummy));
         subcommands_.back()->name_ = name;
         subcommands_.back()->allow_extras();
         subcommands_.back()->parent_ = this;
         subcommands_.back()->ignore_case_ = ignore_case_;
+        subcommands_.back()->fallthrough_ = fallthrough_;
         for(const auto& subc : subcommands_)
             if(subc.get() != subcommands_.back().get())
                 if(subc->check_name(subcommands_.back()->name_) || subcommands_.back()->check_name(subc->name_)) 
@@ -1461,7 +1486,8 @@ public:
     /// @name Extras for subclassing
     ///@{
 
-    /// This allows subclasses to inject code before callbacks but after parse
+    /// This allows subclasses to inject code before callbacks but after parse.
+    ///
     /// This does not run if any errors or help is thrown.
     virtual void pre_callback() {}
 
@@ -1483,7 +1509,9 @@ public:
     /// The real work is done here. Expects a reversed vector.
     /// Changes the vector to the remaining options.
     std::vector<std::string>& parse(std::vector<std::string> &args) {
-        return _parse(args);
+        _parse(args);
+        run_callback();
+        return args;
     }
 
     /// Print a nice error message and return the exit code
@@ -1558,7 +1586,7 @@ public:
         std::stringstream out;
         for(const Option_p &opt : options_) {
             if(opt->lnames_.size() > 0 && opt->count() > 0 && opt->get_expected() > 0)
-                out << opt->lnames_[0] << "=" << detail::join(opt->flatten_results()) << std::endl;
+                out << opt->lnames_[0] << "=" << detail::join(opt->results()) << std::endl;
         }
         return out.str();
     }
@@ -1685,22 +1713,43 @@ public:
 
 protected:
 
-    /// Internal function to run (App) callback
-    void run_callback() {
-        if(callback_)
-            callback_();
+
+    /// Return missing from the master
+    missing_t* missing() {
+        if(parent_ != nullptr)
+            return parent_->missing();
+        return &missing_;
     }
 
+    /// Internal function to run (App) callback, top down
+    void run_callback() {
+        pre_callback();
+        if(callback_)
+            callback_();
+        for(App* subc : selected_subcommands_) {
+            subc->run_callback();
+        }
+    }
+
+    bool _valid_subcommand(const std::string &current) const {
+        for(const App_p &com : subcommands_)
+            if(com->check_name(current))
+                return true;
+        if(parent_ != nullptr)
+            return parent_->_valid_subcommand(current);
+        else
+            return false;
+    }
+
+
     /// Selects a Classifer enum based on the type of the current argument
-    detail::Classifer _recognize(std::string current) const {
+    detail::Classifer _recognize(const std::string &current) const {
         std::string dummy1, dummy2;
 
         if(current == "--")
             return detail::Classifer::POSITIONAL_MARK;
-        for(const App_p &com : subcommands_) {
-            if(com->check_name(current))
-                return detail::Classifer::SUBCOMMAND;
-        }
+        if(_valid_subcommand(current))
+            return detail::Classifer::SUBCOMMAND;
         if(detail::split_long(current, dummy1, dummy2))
             return detail::Classifer::LONG;
         if(detail::split_short(current, dummy1, dummy2))
@@ -1710,81 +1759,17 @@ protected:
 
 
     /// Internal parse function
-    std::vector<std::string>& _parse(std::vector<std::string> &args) {
+    void _parse(std::vector<std::string> &args) {
         bool positional_only = false;
         
         while(args.size()>0) {
-
-
-            detail::Classifer classifer = positional_only ? detail::Classifer::NONE : _recognize(args.back());
-            switch(classifer) {
-            case detail::Classifer::POSITIONAL_MARK:
-                missing_.emplace_back(classifer, args.back());
-                args.pop_back();
-                positional_only = true;
-                break;
-            case detail::Classifer::SUBCOMMAND:
-                _parse_subcommand(args);
-                break;
-            case detail::Classifer::LONG:
-                // If already parsed a subcommand, don't accept options_
-                if(selected_subcommands_.size() > 0) {
-                    missing_.emplace_back(classifer, args.back());
-                    args.pop_back();
-                } else
-                    _parse_long(args);
-                break;
-            case detail::Classifer::SHORT:
-                // If already parsed a subcommand, don't accept options_
-                if(selected_subcommands_.size() > 0) {
-                    missing_.emplace_back(classifer, args.back());
-                    args.pop_back();
-                } else
-                    _parse_short(args);
-                break;
-            case detail::Classifer::NONE:
-                // Probably a positional or something for a parent (sub)command
-                missing_.emplace_back(classifer, args.back());
-                args.pop_back();
-            }
+            _parse_single(args, positional_only);
         }
 
         if (help_ptr_ != nullptr && help_ptr_->count() > 0) {
             throw CallForHelp();
         }
 
-
-        // Collect positionals
-        
-        // Loop over all positionals
-        for(size_t i=0; i<missing_.size(); i++) {
-
-            // Skip non-positionals (speedup)
-            if(missing_.at(i).first != detail::Classifer::NONE)
-                continue; 
-
-            // Loop over all options
-            for(const Option_p& opt : options_) {
-
-                // Eat options, one by one, until done
-                while (    opt->get_positional()
-                        && opt->count() < opt->get_expected()
-                        && i < missing_.size()
-                        ) {
-
-                    // Skip options, only eat positionals
-                    if(missing_.at(i).first != detail::Classifer::NONE) {
-                        i++;
-                        continue;
-                    }
-
-                    opt->get_new();
-                    opt->add_result(0, missing_.at(i).second);
-                    missing_.erase(missing_.begin() + i); // Remove option that was eaten
-                    // Don't need to remove 1 from i since this while loop keeps reading i
-                }
-            }
-        }
 
         // Process an INI file
         if (config_ptr_ != nullptr && config_name_ != "") {
@@ -1806,8 +1791,7 @@ protected:
             if (opt->count() == 0 && opt->envname_ != "") {
                 char *ename = std::getenv(opt->envname_.c_str());
                 if(ename != nullptr) {
-                    opt->get_new();
-                    opt->add_result(0, std::string(ename));
+                    opt->add_result(std::string(ename));
                 }
             }
         }
@@ -1837,39 +1821,93 @@ protected:
 
         if(require_subcommand_ < 0 && selected_subcommands_.size() == 0)
             throw RequiredError("Subcommand required");
-        else if(require_subcommand_ > 0 && selected_subcommands_.size() != require_subcommand_)
+        else if(require_subcommand_ > 0 && (int) selected_subcommands_.size() != require_subcommand_)
             throw RequiredError(std::to_string(require_subcommand_) + " subcommand(s) required");
 
         // Convert missing (pairs) to extras (string only)
-        args.resize(missing_.size());
-        std::transform(std::begin(missing_), std::end(missing_), std::begin(args),
-                [](const std::pair<detail::Classifer, std::string>& val){return val.second;});
-        std::reverse(std::begin(args), std::end(args));
+        if(parent_ == nullptr) {
+            args.resize(missing()->size());
+            std::transform(std::begin(*missing()), std::end(*missing()), std::begin(args),
+                    [](const std::pair<detail::Classifer, std::string>& val){return val.second;});
+            std::reverse(std::begin(args), std::end(args));
 
-        size_t num_left_over = std::count_if(std::begin(missing_), std::end(missing_),
-                [](std::pair<detail::Classifer, std::string>& val){return val.first != detail::Classifer::POSITIONAL_MARK;});
+            size_t num_left_over = std::count_if(std::begin(*missing()), std::end(*missing()),
+                    [](std::pair<detail::Classifer, std::string>& val){return val.first != detail::Classifer::POSITIONAL_MARK;});
 
-        if(num_left_over>0 && !allow_extras_)
-            throw ExtrasError("[" + detail::join(args, " ") + "]");
-
-        pre_callback();
-        run_callback();
-
-        return args;
+            if(num_left_over>0 && !allow_extras_)
+                throw ExtrasError("[" + detail::rjoin(args, " ") + "]");
+        }
     }
 
+    /// Parse "one" argument (some may eat more than one), delegate to parent if fails, add to missing if missing from master
+    void _parse_single(std::vector<std::string> &args, bool &positional_only) {
+
+        detail::Classifer classifer = positional_only ? detail::Classifer::NONE : _recognize(args.back());
+        switch(classifer) {
+        case detail::Classifer::POSITIONAL_MARK:
+            missing()->emplace_back(classifer, args.back());
+            args.pop_back();
+            positional_only = true;
+            break;
+        case detail::Classifer::SUBCOMMAND:
+            _parse_subcommand(args);
+            break;
+        case detail::Classifer::LONG:
+            // If already parsed a subcommand, don't accept options_
+            _parse_long(args);
+            break;
+        case detail::Classifer::SHORT:
+            // If already parsed a subcommand, don't accept options_
+            _parse_short(args);
+            break;
+        case detail::Classifer::NONE:
+            // Probably a positional or something for a parent (sub)command
+            _parse_positional(args);
+        }
+
+        
+    }
+
+    /// Parse a positional, go up the tree to check
+    void _parse_positional(std::vector<std::string> &args) {
+
+        std::string positional = args.back();
+        for(const Option_p& opt : options_) {
+            // Eat options, one by one, until done
+            if (    opt->get_positional()
+                    && opt->count() < opt->get_expected()
+                    ) {
+
+                opt->add_result(positional);
+                args.pop_back();
+                return;
+            }
+        }
+
+        if(parent_ != nullptr && fallthrough_)
+            return parent_->_parse_positional(args);
+        else {
+            args.pop_back();
+            missing()->emplace_back(detail::Classifer::NONE, positional);
+        }
+    }
 
     /// Parse a subcommand, modify args and continue
+    ///
+    /// Unlike the others, this one will always allow fallthrough
     void _parse_subcommand(std::vector<std::string> &args) {
         for(const App_p &com : subcommands_) {
             if(com->check_name(args.back())){ 
                 args.pop_back();
                 selected_subcommands_.push_back(com.get());
-                com->parse(args);
+                com->_parse(args);
                 return;
             }
         }
-        throw HorribleError("Subcommand");
+        if(parent_ != nullptr)
+            return parent_->_parse_subcommand(args);
+        else
+            throw HorribleError("Subcommand " + args.back() + " missing");
     }
  
     /// Parse a short argument, must be at the top of the list
@@ -1880,41 +1918,51 @@ protected:
         std::string rest;
         if(!detail::split_short(current, name, rest))
             throw HorribleError("Short");
-        args.pop_back();
 
         auto op_ptr = std::find_if(std::begin(options_), std::end(options_), [name](const Option_p &opt){return opt->check_sname(name);});
 
+
+        // Option not found
         if(op_ptr == std::end(options_)) {
-            missing_.emplace_back(detail::Classifer::SHORT, "-" + name);
-            return;
+            // If a subcommand, try the master command
+            if(parent_ != nullptr && fallthrough_)
+                return parent_->_parse_short(args);
+            // Otherwise, add to missing
+            else {
+                args.pop_back();
+                missing()->emplace_back(detail::Classifer::SHORT, current);
+                return;
+            }
         }
+
+        args.pop_back();
+
 
         // Get a reference to the pointer to make syntax bearable
         Option_p& op = *op_ptr;
 
-        int vnum = op->get_new();
         int num = op->get_expected();
        
         if(num == 0)
-            op->add_result(vnum, "");
+            op->add_result("");
         else if(rest!="") {
             if (num > 0)
                 num--;
-            op->add_result(vnum, rest);
+            op->add_result(rest);
             rest = "";
         }
 
 
         if(num == -1) {
             while(args.size()>0 && _recognize(args.back()) == detail::Classifer::NONE) {
-                op->add_result(vnum, args.back());
+                op->add_result(args.back());
                 args.pop_back();
             }
         } else while(num>0 && args.size() > 0) {
             num--;
             std::string current_ = args.back();
             args.pop_back();
-            op->add_result(vnum, current_);
+            op->add_result(current_);
         }
 
         if(rest != "") {
@@ -1931,14 +1979,23 @@ protected:
         std::string value;
         if(!detail::split_long(current, name, value))
             throw HorribleError("Long");
-        args.pop_back();
 
         auto op_ptr = std::find_if(std::begin(options_), std::end(options_), [name](const Option_p &v){return v->check_lname(name);});
 
+        // Option not found
         if(op_ptr == std::end(options_)) {
-            missing_.emplace_back(detail::Classifer::LONG, "--" + name);
-            return;
+            // If a subcommand, try the master command
+            if(parent_ != nullptr && fallthrough_)
+                return parent_->_parse_long(args);
+            // Otherwise, add to missing
+            else {
+                args.pop_back();
+                missing()->emplace_back(detail::Classifer::LONG, current);
+                return;
+            }
         }
+
+        args.pop_back();
 
         // Get a reference to the pointer to make syntax bearable
         Option_p& op = *op_ptr;
@@ -1948,25 +2005,23 @@ protected:
         if(!overwrite && op->count() > 0)
             return;
 
-        int vnum = op->get_new();
         int num = op->get_expected();
         
-
         if(value != "") {
             if(num!=-1) num--;
-            op->add_result(vnum, value);
+            op->add_result(value);
         } else if (num == 0) {
-            op->add_result(vnum, "");
+            op->add_result("");
         }
 
         if(num == -1) {
             while(args.size() > 0 && _recognize(args.back()) == detail::Classifer::NONE) {
-                op->add_result(vnum, args.back());
+                op->add_result(args.back());
                 args.pop_back();
             }
         } else while(num>0 && args.size()>0) {
             num--;
-            op->add_result(vnum,args.back());
+            op->add_result(args.back());
             args.pop_back();
         }
         return;

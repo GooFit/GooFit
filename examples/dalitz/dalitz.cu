@@ -394,12 +394,18 @@ void runToyFit(std::string toyFileName) {
 }
 
 int main(int argc, char** argv) {
-    GooFit::Application app ("dalitz description");
 
-    std::string inputFile = "dalitz_toyMC_000.txt";
-    app.add_option ("-i,--input", inputFile, "File to input", CLI::DEFAULT);
+    GooFit::Application app("Dalitz example", argc, argv);
 
-    app.run (argc, argv);
+    std::string filename = "dalitz_toyMC_000.txt";
+    app.add_option("-f,--filename,filename", filename,
+            "File to read in", true)->check(GooFit::ExistingFile);
+
+    try {
+        app.run();
+    } catch (const GooFit::ParseError &e) {
+        return app.exit(e);
+    }
 
     gStyle->SetCanvasBorderMode(0);
     gStyle->SetCanvasColor(10);
@@ -418,8 +424,6 @@ int main(int argc, char** argv) {
     foodal->Size(10, 10);
 
     // cudaSetDevice(0);
-    //std::string filename = argc>1 ? argv[1] : "dalitz_toyMC_000.txt";
-    std::string filename = inputFile;
 
     try {
         runToyFit(filename);

@@ -4,7 +4,8 @@ The GooFit Framework {#mainpage}
 Introduction
 ============
 
-GooFit (\ref footnote1 "1") is a framework for creating arbitrary probability density
+[GooFit](https://github.com/GooFit/GooFit) (\ref footnote1 "1")
+is a framework for creating arbitrary probability density
 functions (PDFs) and evaluating them over large datasets using nVidia
 Graphics Processing Units (GPUs). New PDFs are written partly in
 nVidia’s CUDA programming language and partly in C++; however, no
@@ -20,17 +21,17 @@ are three kinds of GooFit users:
     of CUDA is required for this level. If your data can be described by
     a combination of not-too-esoteric functions, even if the combination
     is complicated, then user code is sufficient. Section
-    [User code](usercode) gives an example of how to write a simple fit.
+    [User code](@ref usercode) gives an example of how to write a simple fit.
 
 -   Acolytes, or advanced users, who have grasped the art of creating
     new PDF classes. This involves some use of CUDA, but is mainly a
     question of understanding the variable-index organisation that
-    GooFit PDFs use. Section [New PDFs](newpdfs) considers this organisation
+    GooFit PDFs use. Section [New PDFs](@ref newpdfs) considers this organisation
     in some depth.
 
 -   Ascended Masters, or architects, who by extended meditation have
     acquired a full understanding of the core engine of GooFit, and can
-    modify it to their desire (\ref footnote2 "2"). Section [Engine](engine) gives a
+    modify it to their desire (\ref footnote2 "2"). Section [Engine](@ref engine) gives a
     detailed narrative of the progress of a PDF evaluation through the
     engine core, thus elucidating its mysteries. It should only rarely
     be necessary to acquire this level of mastery; in principle only the
@@ -58,15 +59,17 @@ With your CUDA environment set up, you can install GooFit thus:
 
         git clone git://github.com/GooFit/GooFit.git
         cd GooFit
+        git checkout v1.0.0
 
 -   If necessary, edit the Makefile so the variable `CUDALOCATION`
     points to your local CUDA install.
 
--   Compile GooFit with `gmake` or `make`. Do not be alarmed by warning
+-   Compile with `gmake`.
+    Do not be alarmed by warning
     messages saying that such-and-such a function’s stack size could not
     be statically determined; this is an unavoidable (so far) side
     effect of the function-pointer implementation discussed in section
-    [Engine](engine).
+    [Engine](@ref engine).
 
 -   Compile and run the ‘simpleFitExample’ program, which generates
     three distributions, fits them, and plots the results:
@@ -114,7 +117,7 @@ the user. Thus, to construct a simple Gaussian fit, merely declare three
 an appropriate `UnbinnedDataSet` to fit to:
 
 
-Simple Gaussian fit {#gaussfit} 
+Simple Gaussian fit {#listinggaussfit} 
 -------------------
 
 ```{.cpp}
@@ -272,7 +275,7 @@ amount of boilerplate is necessary to make the PDF actually work. First
 of all, it needs a device-side function with a particular signature:
 
 
-Signature of evaluation functions. {#fsign}
+Signature of evaluation functions. {#listingfsign}
 -------------------------------------------
 
 ```{.cpp}
@@ -292,7 +295,7 @@ __device__ device_function_ptr ptr_to_Gaussian = device_Gaussian;
 ```
 
 where `device_function_ptr` is defined (using `typedef`) as a pointer to
-a function with the signature shown in the listing [here](listingfsign):
+a function with the signature shown in the listing [here](@ref listingfsign):
 
 ```{.cpp}
 typedef fptype (*device_function_ptr) (fptype*, 
@@ -306,7 +309,7 @@ evaluation function”.
 
 Finally, the new PDF needs a bog-standard C++ class definition,
 extending the `GooPdf` superclass, which will allow it to be
-instantiated and passed around in user-level code. [The indeces section](subindexarray)
+instantiated and passed around in user-level code. [The indeces section](@ref subindexarray)
 discusses what should happen in the constructor;
 otherwise the class may have any supporting paraphernalia that are
 necessary or useful to its evaluation - caches, lists of components,
@@ -516,10 +519,10 @@ Program flow {#engine}
 
 This section narrates the course of a fit after it is created, passing
 through MINUIT and the core GooFit engine. In particular, we will
-consider the example Gaussian fit shown in listing [Gauss fit](listinggaussfit)
+consider the example Gaussian fit shown in listing [Gauss fit](@ref listinggaussfit)
 and look at what happens in these innocent-looking lines:
 
-Data transfer and fit invocation {#listingactualfit}
+## Data transfer and fit invocation {#listingactualfit}
 
 ```{.cpp}
 gauss.setData(&data);
@@ -633,7 +636,7 @@ of points, returning the sum of all the values multiplied by the grid
 fineness - a primitive algorithm for numerical integration, but one
 which takes advantage of the GPU’s massive parallelisation. The fineness
 of the grid usually depends on the `numbins` member of the observables;
-in the case of the example Gaussian fit in listing [Gauss fit](listinggaussfit),
+in the case of the example Gaussian fit in listing [Gauss fit](@ref listinggaussfit),
 the PDF will be evaluated at 1000 points, evenly spaced between -5 and 5.
 However, this behaviour can be overridden by calling the
 `setIntegrationFineness` method of the PDF object, in which case the
@@ -786,7 +789,7 @@ __device__ fptype callFunction (fptype* eventAddress,
 ```
 
 This, finally, is where the `__device__` function from the PDF
-definitions in section [New PDFs](newpdfs) is called; we have now connected
+definitions in section [New PDFs](@ref newpdfs) is called; we have now connected
 all this engine code with the evaluation code for the Gaussian,
 Breit-Wigner, polynomial, sum of functions, or whatever calculation we
 happen to be doing today.
@@ -946,7 +949,7 @@ events is zero.
 It is worth noting that the PDF evaluation function may itself call
 other functions, either using `callFunction` or manually casting a
 function index into other kinds of functions, as in the metric
-calculation of listing [Main Eval](listingmaineval). For example, in
+calculation of listing [Main Eval](@ref listingmaineval). For example, in
 `DalitzPlotPdf`, each resonance may be parametrised by a relativistic
 Breit-Wigner, a Gaussian, a Flatte function, or more esoteric forms; so
 the main function is supplied with a list of function indices and

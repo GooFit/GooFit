@@ -95,6 +95,7 @@ bool saveEffPlot = true;
 bool useHistogramSigma = false;
 enum Bkg2Model {Histogram, Parameter, Sideband};
 Bkg2Model bkg2Model = Sideband;
+std::string bkg2Model_str = "sideband";
 bool useBackground3Hist = true;
 bool useBackground4Hist = true;
 bool makePlots = false;
@@ -4080,7 +4081,7 @@ void runCanonicalFit(std::string fname, bool noPlots = true) {
     makeDalitzPlots(overallSignal);
 }
 
-void runSigmaFit(char* fname) {
+void runSigmaFit(const char* fname) {
     makeFullFitVariables();
 
     loM23Sigma = new TH1F("loM23Sigma", "", sigma->numbins, sigma->lowerlimit, sigma->upperlimit);
@@ -4705,125 +4706,64 @@ void writeBackgroundHistograms(int bkg) {
 
 }
 
-bool parseArg(string arg) {
-    goto start;
+void set_bkg_model_from_string() {
+    if(bkg2Model_str == "histogram")
+        bkg2Model = Histogram;
+    else if(bkg2Model_str == "parameter")
+        bkg2Model = Parameter;
+    else if(bkg2Model_str == "sideband")
+        bkg2Model = Sideband;
 
-badArg:
-    std::cout << "Could not parse argument " << arg << std::endl;
-    return false;
-
-start:
-    size_t pos = arg.find("=");
-
-    if(pos == string::npos)
-        goto badArg;
-
-    string variable = arg.substr(0, pos);
-    string assigned = arg.substr(pos+1);
-    double number   = atof(assigned.c_str());
-
-    if((0 == variable.size()) || (0 == assigned.size()))
-        goto badArg;
-
-    if(variable == "luckyFrac")
-        luckyFrac = number;
-    else if(variable == "mesonRad")
-        mesonRad = number;
-    else if(variable == "normBins")
-        normBinning = (int) floor(number + 0.5);
-    else if(variable == "blindSeed")
-        blindSeed = (int) floor(number + 0.5);
-    else if(variable == "mdslices")
-        mdslices = (int) floor(number + 0.5);
-    else if(variable == "offset")
-        md0offset = number*0.001; // Command line takes arg in MeV, stored in GeV.
-    else if(variable == "upper_window")
-        md0_upper_window = (int) floor(number + 0.5);
-    else if(variable == "lower_window")
-        md0_lower_window = (int) floor(number + 0.5);
-    else if(variable == "upper_delta_window")
-        deltam_upper_window = number;
-    else if(variable == "lower_delta_window")
-        deltam_lower_window = number;
-    else if(variable == "upperTime")
-        upperTime = number;
-    else if(variable == "lowerTime")
-        lowerTime = number;
-    else if(variable == "maxSigma")
-        maxSigma = number;
-    else if(variable == "polyEff")
-        polyEff = (number > 0.5);
-    else if(variable == "m23Slices")
-        m23Slices = (int) floor(number + 0.5);
-    else if(variable == "bkgRandSeed")
-        bkgHistRandSeed = (int) floor(number + 0.5);
-    else if(variable == "drop") {
-        if(assigned == "rho_1450")
-            drop_rho_1450 = true;
-        else if(assigned == "rho_1700")
-            drop_rho_1700 = true;
-        else if(assigned == "f0_980")
-            drop_f0_980   = true;
-        else if(assigned == "f0_1370")
-            drop_f0_1370  = true;
-        else if(assigned == "f0_1500")
-            drop_f0_1500  = true;
-        else if(assigned == "f0_1710")
-            drop_f0_1710  = true;
-        else if(assigned == "f2_1270")
-            drop_f2_1270  = true;
-        else if(assigned == "f0_600")
-            drop_f0_600   = true;
-        else
-            goto badArg;
-    } else if(variable == "histSigma")
-        useHistogramSigma = (assigned == "yes");
-    else if(variable == "makePlots")
-        makePlots = (assigned == "yes");
-    else if(variable == "bkg2Model")  {
-        if(assigned == "histogram")
-            bkg2Model = Histogram;
-        else if(assigned == "parameter")
-            bkg2Model = Parameter;
-        else if(assigned == "sideband")
-            bkg2Model = Sideband;
-        else
-            goto badArg;
-    } else if(variable == "bkg3Hist")
-        useBackground3Hist = (assigned == "yes");
-    else if(variable == "bkg4Hist")
-        useBackground4Hist = (assigned == "yes");
-    else if(variable == "bkgHistBins")
-        bkgHistBins = (int) floor(number + 0.5);
-    else if(variable == "varyParameterUp")
-        paramUp = assigned;
-    else if(variable == "varyParameterDn")
-        paramDn = assigned;
-    else if((variable == "mikhail") && (assigned == "yes")) {
+    if(mikhailSetup) {
         m23Slices = 1;
         gaussBkgTime = true;
-        mikhailSetup = true;
-    } else
-        goto badArg;
+    }
 
-    std::cout << "Setting " << variable << " to " << assigned << " " << number << std::endl;
-    return true;
+
+}
+
+void parseArg(GooFit::App *app) {
+
+    app->add_option("--luckyFrac", luckyFrac, "", true);
+    app->add_option("--mesonRad", mesonRad, "", true);
+    app->add_option("--normBins", normBinning, "", true);
+    app->add_option("--blindSeed", blindSeed, "", true);
+    app->add_option("--mdslices", mdslices, "", true);
+    app->add_option("--offset", md0offset, "Offest in GeV", true);
+    // Previously in MeV
+    app->add_option("--upper_window", md0_upper_window, "", true);
+    app->add_option("--lower_window", md0_lower_window, "", true);
+    app->add_option("--upper_delta_window", deltam_upper_window, "", true);
+    app->add_option("--lower_delta_window", deltam_lower_window, "", true);
+    app->add_option("--upperTime", upperTime, "", true);
+    app->add_option("--lowerTime", lowerTime, "", true);
+    app->add_option("--maxSigma", maxSigma, "", true);
+    app->add_option("--polyEff", polyEff, "", true);
+    app->add_option("--m23Slices", m23Slices, "", true);
+    app->add_option("--bkgRandSeed", bkgHistRandSeed, "", true);
+
+    app->add_flag("--drop-rho_1450", drop_rho_1450);
+    app->add_flag("--drop-rho_1700", drop_rho_1700);
+    app->add_flag("--drop-f0_980", drop_f0_980);
+    app->add_flag("--drop-f0_1370", drop_f0_1370);
+    app->add_flag("--drop-f0_1500", drop_f0_1500);
+    app->add_flag("--drop-f0_1710", drop_f0_1710);
+    app->add_flag("--drop-f2_1270", drop_f2_1270);
+    app->add_flag("--drop-f0_600", drop_f0_600);
+
+    app->add_flag("--histSigma", useHistogramSigma);
+    app->add_flag("--makePlots", makePlots);
+    app->add_set("--mkg2Model", bkg2Model_str, {"histogram", "parameter", "sideband"}, "", true);
+    app->add_flag("--bkg3Hist", useBackground3Hist);
+    app->add_flag("--bkg4Hist", useBackground4Hist);
+    app->add_option("--bkgHistBins", bkgHistBins, "", true);
+    app->add_option("--varyParameterUp", paramUp, "", true);
+    app->add_option("--varyParameterDn", paramDn, "", true);
+    app->add_flag("--mikhail", mikhailSetup);
+
 }
 
 int main(int argc, char** argv) {
-    GooFit::Application app ("pipipi0DPFit description");
-
-    //Need to populate all the possible permutations here!
-    int fitType = 0;
-    app.add_option ("-t,--type", fitType, "Fit Type", CLI::DEFAULT);
-
-    std::string inputFile = "dataFiles/cocktail_pp_0.txt";
-    app.add_option ("-i,--input", inputFile, "Input dataset", CLI::DEFAULT);
-
-    int blindSeed=0;
-    app.add_option ("-b,--blindseed", blindSeed, "Blind Seed", CLI::DEFAULT);
-
-    app.run (argc, argv);
 
     gStyle->SetCanvasBorderMode(0);
     gStyle->SetCanvasColor(10);
@@ -4849,73 +4789,106 @@ int main(int argc, char** argv) {
 //    cudaSetDevice(0);
 //#endif
 
-    if(argc<=1) {
-        std::cerr << "Error: read the readme" << std::endl;
-        return 7;
-    }
+    GooFit::Application app("pipipi0 Dalitz fit example", argc, argv);
+    app.require_subcommand();
 
+    std::string data;
+    int sample = 0;
+    int load = 1;
+    int plots;
     int genResolutions = 0;
     double dplotres = 0;
+    
+    auto toy = app.add_subcommand("toy", "Toy MC Performance evaluation");
+    toy->add_option("-s,--sample,sample", sample,
+            "Sample number to use", true);
+    toy->add_option("-l,--load,load", load,
+            "Number of times to load",  true);
+    toy->add_flag("-p,--plot", plots,
+            "Also make plots");
+    toy->set_callback([&sample, &load, &plots](){
+            runToyFit(sample, load, !plots > 0);
+            });
 
-    switch(fitType) {
-    case 0:
-        if(argc>4)
-            makePlots = atoi(argv[4]);
 
-        runToyFit(atoi(argv[2]), atoi(argv[3]), !makePlots);
-        break;
+    auto truth_fit = app.add_subcommand("truth", "Truth Monte Carlo fit");
+    truth_fit->add_option("-d,--data,data", data,
+            "Data to use")->required()->check(GooFit::ExistingFile);
+    truth_fit->set_callback([&data](){
+            runTruthMCFit(data, false);
+            });
 
-    case 1:
-        runTruthMCFit(argv[2], false);
-        break;
 
-    case 2:
-        m23Slices = atoi(argv[3]);
-        runSigmaFit(argv[2]);
-        break;
+    auto sigma_fit = app.add_subcommand("sigma", "Run sigma fit");
+    sigma_fit->add_option("-d,--data,data", data,
+            "Data to use")->required()->check(GooFit::ExistingFile);
+    sigma_fit->add_option("-s,--slices,slices", m23Slices,
+            "m23 slices")->required();
+    sigma_fit->set_callback([&](){
+            runSigmaFit(data.c_str());
+            });
 
-    case 3:
-        runEfficiencyFit(atoi(argv[2]));
-        break;
+    auto efficiency_fit = app.add_subcommand("efficiency", "Run efficiency fit");
+    efficiency_fit->add_option("-s,--sample,sample", sample,
+            "Sample number to use", true);
+    efficiency_fit->set_callback([&](){
+            runEfficiencyFit(sample);
+            });
 
-    case 4:
-        for(int i = 3; i < argc; ++i)
-            assert(parseArg(inputFile));
+    auto canonical_fit = app.add_subcommand("canonical", "Run the canonical fit");
+    canonical_fit->add_option("-d,--data,data", data,
+            "Data to use")->required()->check(GooFit::ExistingFile);
+    parseArg(canonical_fit);
+    canonical_fit->set_callback([&](){
+            set_bkg_model_from_string();
+            runCanonicalFit(data, !makePlots);
+            });
 
-        runCanonicalFit(inputFile, !makePlots);
-        break;
+    auto background_dalitz_fit = app.add_subcommand("background_dalitz", "Run the background Dalitz fit");
+    background_dalitz_fit->add_option("-s,--sample,sample", sample,
+            "Sample number to use", true);
+    parseArg(background_dalitz_fit);
+    background_dalitz_fit->set_callback([&](){
+            set_bkg_model_from_string();
+            runBackgroundDalitzFit(sample, true);
+            });
 
-    case 5:
-        for(int i = 3; i < argc; ++i)
-            assert(parseArg(argv[i]));
+    auto background_sigma_fit = app.add_subcommand("background_sigma", "Run background sigma fit");
+    background_sigma_fit->add_option("-s,--sample,sample", sample,
+            "Sample number to use", true);
+    background_sigma_fit->set_callback([&](){
+            runBackgroundSigmaFit(sample);
+            });
 
-        runBackgroundDalitzFit(atoi(argv[2]), true);
-        break;
+    auto write_background_histograms = app.add_subcommand("background_histograms", "Write background histograms");
+    write_background_histograms->add_option("-s,--sample,sample", sample,
+            "Sample number to use", true);
+    write_background_histograms->set_callback([&](){
+            writeBackgroundHistograms(sample);
+            });
 
-    case 6:
-        runBackgroundSigmaFit(atoi(argv[2]));
-        break;
+    auto run_gen_mc_fit = app.add_subcommand("run_gen_mc", "Run generated Monte Carlo fit");
+    run_gen_mc_fit->add_option("-d,--data,data", data,
+            "Data to use")->required()->check(GooFit::ExistingFile);
+    run_gen_mc_fit->add_option("-g,--genres,gen-resolutions", genResolutions)->required();
+    run_gen_mc_fit->add_option("-p,--dplotres,dplotres", dplotres);
+    run_gen_mc_fit->set_callback([&](){
+            if(! (DplotRes & genResolutions) ) 
+            dplotres = 0;
+            runGeneratedMCFit(data, genResolutions, dplotres);
+            });
 
-    case 7:
-        writeBackgroundHistograms(atoi(argv[2]));
-        break;
+    auto make_time_plots = app.add_subcommand("make_time_plots", "Make time plots");
+    make_time_plots->add_option("-d,--data,data", data,
+            "Data to use")->required()->check(GooFit::ExistingFile);
+    make_time_plots->set_callback([&](){
+            makeTimePlots(data);
+            });
 
-    case 8:
-        genResolutions = atoi(argv[3]);
-
-        if(DplotRes & genResolutions)
-            dplotres = atof(argv[4]);
-
-        runGeneratedMCFit(argv[2], genResolutions, dplotres);
-        break;
-
-    case 9:
-        makeTimePlots(argv[2]);
-        break;
-
-    default:
-        break;
-
+    try {
+        app.run();
+    } catch (const GooFit::ParseError &e) {
+        return app.exit(e);
     }
 
 

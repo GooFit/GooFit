@@ -173,7 +173,7 @@ void* getMetricPointer(std::string name) {
 
 GooPdf::GooPdf(Variable* x, std::string n)
     : PdfBase(x, n)
-    , logger(0) {
+    , logger(nullptr) {
     //std::cout << "Created " << n << std::endl;
 }
 

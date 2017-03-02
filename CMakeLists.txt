@@ -64,7 +64,14 @@ if(GOOFIT_DEVICE STREQUAL Auto)
     message(STATUS "Auto device selection: ${GOOFIT_DEVICE}")
 endif()
 
-option(GOOFIT_SEPARATE_COMP "Enable separate compilation of PDFs" OFF)
+# Only default to off for CUDA
+if(GOOFIT_DEVICE STREQUAL CUDA)
+    option(GOOFIT_SEPARATE_COMP "Enable separate compilation of PDFs" OFF)
+else()
+    option(GOOFIT_SEPARATE_COMP "Enable separate compilation of PDFs" ON)
+endif()
+
+
 if(GOOFIT_SEPARATE_COMP)
     add_definitions("-DSEPARABLE")
 endif()
@@ -118,9 +125,9 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
 
     if(ARCH_FLAGS MATCHES "20|21|30|32")
         message(STATUS "Removing GPU Arch 3.5+ features")
-        add_definitions("-DTARGET_SM35")
     else()
         message(STATUS "Activating GPU Arch 3.5+ features")
+        add_definitions("-DTARGET_SM35")
     endif()
 else()
     include_directories(${PROJECT_SOURCE_DIR}/include/goofit/fakecuda)

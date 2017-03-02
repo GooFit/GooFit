@@ -387,12 +387,18 @@ void CudaMinimise(int fitType) {
 }
 
 int main(int argc, char** argv) {
-    GooFit::Application app ("zachFit description");
+    GooFit::Application app("Zach-Fit example", argc, argv);
+    
+    int mode;
+    app.add_set("-m,--mode,mode", mode, {0,1,2},
+            "Program mode: 0-unbinned, 1-binned, 2-binned ChiSq")->required();
 
-    int fitType = 0;
-    app.add_option("-t,--type", fitType, "Fit Type", CLI::DEFAULT);
 
-    app.run (argc, argv);
+    try {
+        app.run();
+    } catch (const GooFit::ParseError &e) {
+        return app.exit(e);
+    }
 
     gStyle->SetCanvasBorderMode(0);
     gStyle->SetCanvasColor(10);
@@ -411,7 +417,7 @@ int main(int argc, char** argv) {
     data_hist = new TH1F("data_hist", "", 300, 0.1365, 0.1665);
 
     try {
-        CudaMinimise(fitType);  // atoi = string to integer conversion
+        CudaMinimise(mode);
     } catch(const std::exception& ex) {
         std::cerr << ex.what() << std::endl;
         return 6;

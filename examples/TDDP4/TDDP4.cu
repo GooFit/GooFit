@@ -3,6 +3,7 @@
 #include <TTree.h>
 
 // GooFit stuff
+#include "goofit/Application.h"
 #include "goofit/Variable.h"
 #include "goofit/PDFs/PolynomialPdf.h"
 #include "goofit/PDFs/AddPdf.h"
@@ -10,7 +11,6 @@
 #include "goofit/PDFs/DP4Pdf.h"
 #include "goofit/PDFs/TruthResolution_Aux.h"
 #include "goofit/PDFs/Tddp4Pdf.h"
-#include "goofit/Application.h"
 #include <thrust/count.h>
 #include <fstream>
 
@@ -23,15 +23,21 @@ const fptype KmMass = .493677;
 
 int main(int argc, char** argv) {
 
-    GooFit::Application app("Time dependent Dalitz plot, 4 particles");
+    GooFit::Application app("Time dependent Dalitz plot, 4 particles", argc, argv);
     
     TString output = "test_10_15.output";
-    app.add_option("-o,--output", output, "File to output", CLI::DEFAULT);
+    app.add_option("-o,--output,output", output,
+            "File to output", true)->check(GooFit::NonexistentPath);
     
     int trials = 100;
-    app.add_option("-t,--trials", trials, "Number of trials", CLI::DEFAULT);
+    app.add_option("-t,--trials,output", trials,
+            "Number of trials", true);
 
-    app.run(argc, argv);
+    try {
+        app.run();
+    } catch (const GooFit::ParseError &e) {
+        return app.exit(e);
+    }
 
 
     DecayInfo_DP* DK3P_DI = new DecayInfo_DP();

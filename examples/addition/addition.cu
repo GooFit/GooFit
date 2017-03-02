@@ -1,3 +1,4 @@
+#include "goofit/Application.h"
 #include "goofit/Variable.h"
 #include "goofit/PDFs/GaussianPdf.h"
 #include "goofit/PDFs/AddPdf.h"
@@ -18,6 +19,14 @@
 using namespace std;
 
 int main(int argc, char** argv) {
+    GooFit::Application app("Addition example", argc, argv);
+
+    try {
+        app.run();
+    } catch (const GooFit::ParseError &e) {
+        return app.exit(e);
+    }
+
     gStyle->SetCanvasBorderMode(0);
     gStyle->SetCanvasColor(10);
     gStyle->SetFrameFillColor(10);

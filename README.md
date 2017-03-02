@@ -119,8 +119,8 @@ If you'd like to make a seperate goofit project, you can do so. Simply checkout 
 
 ## Converting from older GooFit code
  
-The build system underwent a major upgrade in the move to CMake. The folders that were introduced to keep the includes structured require modifications of source code, converting lines like `#include "Variable.hh"` to `#include "goofit/Variable.h"`. This modification can be done for you by running the provided script, `scripts/ModernizeGooFit.py` on your source files (requires Python and Plumbum). You should remove your old Makefiles and use the new `CMakeFiles.txt` files provided in examples - this should require
-writing two lines of code instead of the 50 or so previously needed.
+The build system underwent a major upgrade in the move to CMake. The folders that were introduced to keep the includes structured require modifications of source code, converting lines like `#include "Variable.hh"` to `#include "goofit/Variable.h"`. This modification can be done for you by running the provided script, `scripts/ModernizeGooFit.py` on your source files (requires Python and [Plumbum](https://github.com/tomerfiliba/plumbum)). You should remove your old Makefiles and use the new `CMakeFiles.txt` files provided in examples - this should require
+writing two lines of code instead of the 50 or so previously needed. You shuld also add a GooFit Application to your code. (5 lines)
 
 ## Acknowledgement
 

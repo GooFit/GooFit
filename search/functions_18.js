@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['z',['Z',['../class_lorentz_matrix.html#ae2e2b47a93551698dd14d9d9b5b4bdab',1,'LorentzMatrix::Z() const'],['../class_lorentz_matrix.html#a7b4ac4c551d7babb85525a7df2bb2b8b',1,'LorentzMatrix::Z()']]],
-  ['ztspin1',['ZTspin1',['../class_z_tspin1.html#af9c80aa84391f64c8d6dc85eaa061388',1,'ZTspin1']]],
-  ['ztspin2',['ZTspin2',['../class_z_tspin2.html#aa0a83631677ed70c371cb807b6087355',1,'ZTspin2']]]
+  ['y',['Y',['../class_lorentz_matrix.html#a225289c9bdc096c57e217415c4903ac1',1,'LorentzMatrix::Y() const'],['../class_lorentz_matrix.html#a41fedbf48f7fee6109c548a4c3a68681',1,'LorentzMatrix::Y()']]]
 ];

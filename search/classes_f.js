@@ -1,21 +1,7 @@
 var searchData=
 [
-  ['scaledgaussianpdf',['ScaledGaussianPdf',['../class_scaled_gaussian_pdf.html',1,'']]],
-  ['sfcalculator',['SFCalculator',['../class_s_f_calculator.html',1,'']]],
-  ['sfcalculator_5ftd',['SFCalculator_TD',['../class_s_f_calculator___t_d.html',1,'']]],
-  ['smoothhistogrampdf',['SmoothHistogramPdf',['../class_smooth_histogram_pdf.html',1,'']]],
-  ['specialcomplexsum',['SpecialComplexSum',['../class_special_complex_sum.html',1,'']]],
-  ['specialdalitzintegrator',['SpecialDalitzIntegrator',['../class_special_dalitz_integrator.html',1,'']]],
-  ['specialincoherentintegrator',['SpecialIncoherentIntegrator',['../class_special_incoherent_integrator.html',1,'']]],
-  ['specialincoherentresonancecalculator',['SpecialIncoherentResonanceCalculator',['../class_special_incoherent_resonance_calculator.html',1,'']]],
-  ['specialresonancecalculator',['SpecialResonanceCalculator',['../class_special_resonance_calculator.html',1,'']]],
-  ['specialresonanceintegrator',['SpecialResonanceIntegrator',['../class_special_resonance_integrator.html',1,'']]],
-  ['specialwavecalculator',['SpecialWaveCalculator',['../class_special_wave_calculator.html',1,'']]],
-  ['spinfactor',['SpinFactor',['../class_spin_factor.html',1,'']]],
-  ['spinsumt',['SpinSumT',['../class_spin_sum_t.html',1,'']]],
-  ['spinsumv',['SpinSumV',['../class_spin_sum_v.html',1,'']]],
-  ['steppdf',['StepPdf',['../class_step_pdf.html',1,'']]],
-  ['stride_5ffunctor',['stride_functor',['../structstrided__range_1_1stride__functor.html',1,'strided_range']]],
-  ['strided_5frange',['strided_range',['../classstrided__range.html',1,'']]],
-  ['symmlorentzmatrix',['SymmLorentzMatrix',['../class_symm_lorentz_matrix.html',1,'']]]
+  ['parseerror',['ParseError',['../struct_c_l_i_1_1_parse_error.html',1,'CLI']]],
+  ['pdfbase',['PdfBase',['../class_pdf_base.html',1,'']]],
+  ['polynomialpdf',['PolynomialPdf',['../class_polynomial_pdf.html',1,'']]],
+  ['prodpdf',['ProdPdf',['../class_prod_pdf.html',1,'']]]
 ];

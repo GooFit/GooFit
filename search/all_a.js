@@ -1,14 +1,18 @@
 var searchData=
 [
+  ['ignore_5fcase',['ignore_case',['../class_c_l_i_1_1_option.html#aa8a01bd3a71479b7b57fec05e60cb3dd',1,'CLI::Option::ignore_case()'],['../class_c_l_i_1_1_app.html#abc06fa2dcf43b1eb2da3fc013c5336f4',1,'CLI::App::ignore_case()']]],
+  ['ignore_5fcase_5f',['ignore_case_',['../class_c_l_i_1_1_option.html#ac9bb8576df62a711a9f8ae6f69e24a9e',1,'CLI::Option::ignore_case_()'],['../class_c_l_i_1_1_app.html#ac0ded9f408801bccc14d6390b99c11b5',1,'CLI::App::ignore_case_()']]],
   ['imag',['imag',['../structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd',1,'devcomplex']]],
   ['incoherentsumpdf',['IncoherentSumPdf',['../class_incoherent_sum_pdf.html',1,'IncoherentSumPdf'],['../class_resonance_pdf.html#a5d402d24c67c8237685fa6a4c908901a',1,'ResonancePdf::IncoherentSumPdf()'],['../class_incoherent_sum_pdf.html#ad129f6e67d8786bfd93608582122701b',1,'IncoherentSumPdf::IncoherentSumPdf()']]],
   ['incoherentsumpdf_2ecu',['IncoherentSumPdf.cu',['../_incoherent_sum_pdf_8cu.html',1,'']]],
   ['incoherentsumpdf_2eh',['IncoherentSumPdf.h',['../_incoherent_sum_pdf_8h.html',1,'']]],
+  ['incorrectconstruction',['IncorrectConstruction',['../struct_c_l_i_1_1_incorrect_construction.html',1,'CLI::IncorrectConstruction'],['../struct_c_l_i_1_1_incorrect_construction.html#a5d605f307996db7e763d02a5038377ff',1,'CLI::IncorrectConstruction::IncorrectConstruction()']]],
   ['indalitz',['inDalitz',['../_dalitz_plot_helpers_8h.html#a6fce4517df40bf9a18507b2a631d0c73',1,'DalitzPlotHelpers.h']]],
   ['index',['index',['../struct_indexable.html#a7c1bd84c4bafab7215621e28ea65f242',1,'Indexable']]],
   ['indexable',['Indexable',['../struct_indexable.html',1,'Indexable'],['../struct_indexable.html#aaf40fcbcf877ba654309f61ac98b2e6d',1,'Indexable::Indexable()']]],
   ['indexiterator',['IndexIterator',['../_pdf_base_8h.html#a485075354521f614e0e124e473468f1e',1,'PdfBase.h']]],
   ['indexofvariable',['indexOfVariable',['../class_data_set.html#a3de244bfc001515be083608c5ca80e7e',1,'DataSet']]],
+  ['init',['init',['../namespacerang.html#ad812fcadddedcd2eed7f6e7c0139a2b8',1,'rang']]],
   ['initialise',['initialise',['../class_goo_pdf.html#a0182974de120e4f70ef0f2c16e1be25a',1,'GooPdf']]],
   ['initialiseindices',['initialiseIndices',['../class_pdf_base.html#ab5ca8a46986f884f08e5b14c21c75683',1,'PdfBase']]],
   ['initindex',['initIndex',['../class_mixing_time_resolution.html#a7ce30b228f85ee554170f34fdb5662a3',1,'MixingTimeResolution']]],
@@ -19,5 +23,11 @@ var searchData=
   ['interhistpdf_2ecu',['InterHistPdf.cu',['../_inter_hist_pdf_8cu.html',1,'']]],
   ['interhistpdf_2eh',['InterHistPdf.h',['../_inter_hist_pdf_8h.html',1,'']]],
   ['invrootpi',['invRootPi',['../_global_cuda_defines_8h.html#ad8b702874d038de595e56f4e20de240d',1,'GlobalCudaDefines.h']]],
+  ['is_5fbool',['is_bool',['../struct_c_l_i_1_1is__bool.html',1,'CLI']]],
+  ['is_5fbool_3c_20bool_20_3e',['is_bool&lt; bool &gt;',['../struct_c_l_i_1_1is__bool_3_01bool_01_4.html',1,'CLI']]],
+  ['is_5fvector',['is_vector',['../struct_c_l_i_1_1is__vector.html',1,'CLI']]],
+  ['is_5fvector_3c_20std_3a_3avector_3c_20t_2c_20a_20_3e_20_3e',['is_vector&lt; std::vector&lt; T, A &gt; &gt;',['../struct_c_l_i_1_1is__vector_3_01std_1_1vector_3_01_t_00_01_a_01_4_01_4.html',1,'CLI']]],
+  ['isterminal',['isTerminal',['../namespacerang_1_1rang__implementation.html#afea2c821987843c344a2222a14582dc4',1,'rang::rang_implementation']]],
+  ['italic',['italic',['../namespacerang.html#add4e682fec2856474978ff76efcc8b4ea030c5b6d1e5715105943ac111d9671bf',1,'rang']]],
   ['iterator',['iterator',['../classstrided__range.html#a71b1d68641c8e35d8666cae9e6b1f198',1,'strided_range']]]
 ];

@@ -1,16 +1,15 @@
 var searchData=
 [
-  ['rannor',['Rannor',['../class_t_random.html#a0b9f93e77558fa1d6aa56e7c22814c5e',1,'TRandom::Rannor(float &amp;a, float &amp;b)'],['../class_t_random.html#ab6a0469bcc964a3f037e483729be3c08',1,'TRandom::Rannor(double &amp;a, double &amp;b)']]],
-  ['readfromfile',['readFromFile',['../_functor_writer_8h.html#a66f8c6ed928cfd33ef71a08d16b26821',1,'FunctorWriter.h']]],
-  ['readlistofnumbers',['readListOfNumbers',['../_functor_writer_8h.html#a3753fb3fc8d487d99014ba21137df9ea',1,'FunctorWriter.h']]],
-  ['recursivesetnormalisation',['recursiveSetNormalisation',['../class_pdf_base.html#a582459d1a7258199f9063ee88dceea7d',1,'PdfBase']]],
-  ['registerconstants',['registerConstants',['../class_pdf_base.html#a946cd8a190e00fc2054fefeec59d1225',1,'PdfBase']]],
-  ['registerobservable',['registerObservable',['../class_pdf_base.html#a5e6e3bd872bd5afeb656a26684309cdc',1,'PdfBase']]],
-  ['registerothers',['registerOthers',['../class_convolution_pdf.html#a89f80f9226032bfaa741ba5d2b66a9ab',1,'ConvolutionPdf']]],
-  ['registerparameter',['registerParameter',['../class_pdf_base.html#a9520ede7a636daee2819b661f0db0a37',1,'PdfBase']]],
-  ['release',['Release',['../class_t_minuit.html#a28b5ab2a8238b6593ee90420e4b80caa',1,'TMinuit']]],
-  ['resonancepdf',['ResonancePdf',['../class_resonance_pdf.html#a38eedcaea164148a9f31290b6414b20e',1,'ResonancePdf::ResonancePdf(string name, Variable *ar, Variable *ai, Variable *mass, Variable *width, unsigned int sp, unsigned int cyc)'],['../class_resonance_pdf.html#a6e99643d6819f403dbac79bd1fc04456',1,'ResonancePdf::ResonancePdf(string name, Variable *ar, Variable *ai, unsigned int sp, Variable *mass, Variable *width, unsigned int cyc)'],['../class_resonance_pdf.html#a62e23ff51f75dd9d95bfad1b6d2bde76',1,'ResonancePdf::ResonancePdf(string name, Variable *ar, Variable *ai, Variable *mass, unsigned int sp, Variable *width, unsigned int cyc)'],['../class_resonance_pdf.html#ae3673cb4c7507a951274b83c9c614cf7',1,'ResonancePdf::ResonancePdf(string name, Variable *ar, Variable *ai)'],['../class_resonance_pdf.html#ad7e02abe3e189e03e4d810881734e295',1,'ResonancePdf::ResonancePdf(string name, Variable *ar, Variable *ai, Variable *mean, Variable *sigma, unsigned int cyc)']]],
-  ['rndm',['Rndm',['../class_t_random.html#a3ae8986bfd82db1f038e8d26dfcf3fe4',1,'TRandom::Rndm()'],['../class_t_random3.html#a770bcba262ce0744d353edca032ad974',1,'TRandom3::Rndm()']]],
-  ['rndmarray',['RndmArray',['../class_t_random.html#ace4a82166a58860f8d18933afdda94f5',1,'TRandom::RndmArray(int n, float *array)'],['../class_t_random.html#a6f22eed013d505b9e0a1495fe6e5bdb7',1,'TRandom::RndmArray(int n, double *array)'],['../class_t_random3.html#a6f759750dadf7507ff24f10137862874',1,'TRandom3::RndmArray(int n, float *array)'],['../class_t_random3.html#a71439ddeb7e1a702b04e3aa0da7b0e4b',1,'TRandom3::RndmArray(int n, double *array)']]],
-  ['runmigrad',['runMigrad',['../class_fit_manager.html#af87e01fc63edc4ddb1ec6758e2ccadca',1,'FitManager']]]
+  ['parameterschanged',['parametersChanged',['../class_pdf_base.html#ac450243387d85618dff8a991b0ddc24d',1,'PdfBase']]],
+  ['parse',['parse',['../class_c_l_i_1_1_app.html#ad4c51103392faf91cc34fc642a90a17c',1,'CLI::App::parse(int argc, char **argv)'],['../class_c_l_i_1_1_app.html#a3d142053cce723e210a07edcc3de5332',1,'CLI::App::parse(std::vector&lt; std::string &gt; &amp;args)']]],
+  ['parse_5fini',['parse_ini',['../namespace_c_l_i_1_1detail.html#ac1615537881927733c464a05da8c7a30',1,'CLI::detail::parse_ini(std::istream &amp;input)'],['../namespace_c_l_i_1_1detail.html#a9e264b6aec663d4aaf224e03c5d39dbb',1,'CLI::detail::parse_ini(const std::string &amp;name)']]],
+  ['parseerror',['ParseError',['../struct_c_l_i_1_1_parse_error.html#ad7af7bf698b0fea17454b8cc27df19ab',1,'CLI::ParseError']]],
+  ['pdfbase',['PdfBase',['../class_pdf_base.html#a1620f7f438b6c7c6cc99569321cf947d',1,'PdfBase']]],
+  ['phi',['phi',['../struct_dim5.html#a27eb37c098535b096c2653f08132aadc',1,'Dim5']]],
+  ['poisson',['Poisson',['../class_t_random.html#a51c93a3ff4beda343267c0f02de62dc1',1,'TRandom']]],
+  ['poissond',['PoissonD',['../class_t_random.html#a18d9891dc7065ef380287c6880e4f3b6',1,'TRandom']]],
+  ['polynomialpdf',['PolynomialPdf',['../class_polynomial_pdf.html#ad39556cae0a4e4e668326ba2c5512a64',1,'PolynomialPdf::PolynomialPdf(std::string n, Variable *_x, std::vector&lt; Variable *&gt; weights, Variable *x0=0, unsigned int lowestDegree=0)'],['../class_polynomial_pdf.html#a36723c20c07c9efd415db3e5c763c876',1,'PolynomialPdf::PolynomialPdf(string n, vector&lt; Variable *&gt; obses, vector&lt; Variable *&gt; coeffs, vector&lt; Variable *&gt; offsets, unsigned int maxDegree)']]],
+  ['pre_5fcallback',['pre_callback',['../class_goo_fit_1_1_application.html#ae6c613dddde390eadc320aec4cb06d49',1,'GooFit::Application::pre_callback()'],['../class_c_l_i_1_1_app.html#a5d74be8e210e779874584a3336aaf506',1,'CLI::App::pre_callback()']]],
+  ['printprofileinfo',['printProfileInfo',['../class_pdf_base.html#a2887cc44f42e788e11973661a37af226',1,'PdfBase']]],
+  ['prodpdf',['ProdPdf',['../class_prod_pdf.html#ab4674f098d0633355860190a2c6ed83b',1,'ProdPdf']]]
 ];

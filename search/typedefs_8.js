@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['sizeiterator',['SizeIterator',['../_pdf_base_8h.html#a97a89b07d0a6f4ed6c285119b641991f',1,'PdfBase.h']]],
-  ['spin_5ffunction_5fptr',['spin_function_ptr',['../_spin_factors_8h.html#afa44b76d74482fa6af9a8895c2933e30',1,'SpinFactors.h']]]
+  ['parconstiter',['parConstIter',['../class_pdf_base.html#af4074fb3fa236257a7d3865c8a57439f',1,'PdfBase']]],
+  ['parcont',['parCont',['../class_pdf_base.html#adde4851584b1fffeebd4b0ec2b9ca1c7',1,'PdfBase']]],
+  ['pariter',['parIter',['../class_pdf_base.html#abd15730dc8d50cd36b8dab8322257b4b',1,'PdfBase']]],
+  ['permutationiterator',['PermutationIterator',['../classstrided__range.html#a5fa7e0b118e4c7baf1dd51a4ab8e7aba',1,'strided_range']]]
 ];

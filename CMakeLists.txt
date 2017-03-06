@@ -156,10 +156,7 @@ endif()
 # The target is setup to avoid clashes with fakeroot
 # Include directories are not picked up by FindCUDA
 find_package(ROOT 6 REQUIRED COMPONENTS Minuit)
-add_library(Root INTERFACE)
 include_directories(BEFORE "include/goofit/rootstuff")
-include_directories(AFTER SYSTEM "${ROOT_INCLUDE_DIRS}")
-target_link_libraries(Root INTERFACE ${ROOT_LIBRARIES})
 # Note: it is very important that the includes and links for root are after fakeroot!
  
 
@@ -253,7 +250,7 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/MCBooster)
 
 add_library(goofit_lib INTERFACE)
-target_link_libraries(goofit_lib INTERFACE goofit_base PDFs rootstuff Root)
+target_link_libraries(goofit_lib INTERFACE goofit_base PDFs rootstuff ROOT::ROOT)
 
 option(GOOFIT_EXAMPLES "Build the example programs" ON)
 if(GOOFIT_EXAMPLES)

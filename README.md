@@ -13,8 +13,8 @@ GooFit using OpenMP.
 
 ## Requirements
 
-* A new version of CMake if using the CMake build. At least 3.5, tested with 3.7. CMake is incredibly easy to install.
- * With CMake, thrust is downloaded automatically for OpenMP if not found
+* A new version of CMake if using the CMake build. Like ROOT, the minimum is 3.4, but tested primarily with 3.7. CMake is incredibly easy to install.
+ * With CMake, Thrust is downloaded automatically for OpenMP if not found
  * GoogleTest is downloaded automatically
 * A ROOT 6 build highly recommended.
 * If using CUDA:
@@ -26,7 +26,8 @@ GooFit using OpenMP.
 ## Getting the files
 
 * Clone with git:
-```
+
+```bash
 git clone git://github.com/goofit/goofit.git
 cd goofit
 ```
@@ -36,12 +37,25 @@ You can either checkout a tagged version, or stay on the master for the latest a
 ## Building 
 
 The build system now uses CMake. The procedure is standard for CMake builds:
-```
+
+```bash
 mkdir build
 cd build
 cmake ..
 make
 ```
+
+> If you don't have a modern CMake, you can get a local copy on linux using:
+>
+> ```bash
+> mkdir cmake && wget -qO- "https://cmake.org/files/v3.7/cmake-3.7.2-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C cmake
+> ```
+>
+> Now, just use the local copy instead:
+>
+> ```bash
+> ./cmake/bin/cmake ..
+> ```
 
 If you want to change compiler, set `CC` and `CXX` to appropriate defaults *before* you run cmake either inline or in your environment. If you want to set the host and device backends, you can set those options. The defaults are:
 ```
@@ -117,7 +131,7 @@ If you are building with separable compilation, you can also use `goofit_add_pdf
 
 > If you want to extend the Makefile system instead, copy a Makefile from a different directory, changing the relevent project name (only one program per directory supported), and make a new target in `examples/Makefile`. 
 
-To add packages, use standard CMake tools. For example, to add [Boost](https://cmake.org/cmake/help/v3.7/module/FindBoost.html) 1.49+ filesystem and `TTreeReader` from ROOT:
+To add packages, use standard CMake tools. For example (CMake 3.5), to add [Boost](https://cmake.org/cmake/help/v3.7/module/FindBoost.html) 1.49+ filesystem and `TTreeReader` from ROOT:
 
 ```cmake
 set(Boost_USE_STATIC_LIBS OFF)

@@ -13,7 +13,7 @@ GooFit using OpenMP.
 
 ## Requirements
 
-* A new version of CMake if using the CMake build. At least 3.5, the newer the better. CMake is incredibly easy to install.
+* A new version of CMake if using the CMake build. At least 3.5, tested with 3.7. CMake is incredibly easy to install.
  * With CMake, thrust is downloaded automatically for OpenMP if not found
  * GoogleTest is downloaded automatically
 * A ROOT 6 build highly recommended.

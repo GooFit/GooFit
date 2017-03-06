@@ -9,6 +9,10 @@
 # ROOT_LIBRARY_DIR    PATH to the library directory
 # ROOT_DEFINITIONS    Compiler definitions and flags
 #
+# The modern CMake 3 imported targets are also created:
+# ROOT::ROOT (Most common libraries)
+# ROOT::<name> (The library with name)
+#
 # Updated by K. Smith (ksmith37@nd.edu) to properly handle
 #  dependencies in ROOT_GENERATE_DICTIONARY
 
@@ -38,23 +42,50 @@ if(ROOT_CONFIG_EXECUTABLE)
         OUTPUT_STRIP_TRAILING_WHITESPACE)
     set(ROOT_LIBRARY_DIRS ${ROOT_LIBRARY_DIR})
 
-    set(core_rootlibs                 Core RIO Net Hist Graf Graf3d Gpad Tree Rint Postscript Matrix Physics MathCore Thread MultiProc)
-    set(all_rootlibs ${core_rootlibs} RooFit RooFitCore Minuit Minuit2 TreePlayer Proof Cling Geom RooStats TMVA MathMore)
+    file(GLOB ROOT_LIBFILELIST
+        LIST_DIRECTORIES false
+        RELATIVE "${ROOT_LIBRARY_DIR}"
+        "${ROOT_LIBRARY_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}*${CMAKE_SHARED_LIBRARY_SUFFIX}")
+
+    set(ROOT_ALLLIBS "")
+    foreach(_file ${ROOT_LIBFILELIST})
+        string(REGEX REPLACE "^${CMAKE_SHARED_LIBRARY_PREFIX}" "" _newer ${_file})
+        string(REGEX REPLACE "${CMAKE_SHARED_LIBRARY_SUFFIX}$" "" _newest ${_newer})
+        list(APPEND ROOT_ALLLIBS ${_newest})
+    endforeach()
+
+    set(ROOT_CORELIBS Core RIO Net Hist Graf Graf3d Gpad Tree Rint Postscript Matrix Physics MathCore Thread MultiProc)
+
+    add_library(ROOT::ROOT INTERFACE IMPORTED)
 
     set(ROOT_LIBRARIES)
-    foreach(_cpt ${all_rootlibs} ${ROOT_FIND_COMPONENTS})
+    foreach(_cpt ${ROOT_ALLLIBS})
       find_library(ROOT_${_cpt}_LIBRARY ${_cpt} HINTS ${ROOT_LIBRARY_DIR})
       if(ROOT_${_cpt}_LIBRARY)
         mark_as_advanced(ROOT_${_cpt}_LIBRARY)
+        add_library(ROOT::${_cpt} SHARED IMPORTED)
+        set_target_properties(ROOT::${_cpt} PROPERTIES
+            INTERFACE_INCLUDE_DIRECTORIES "${ROOT_INCLUDE_DIRS}")
+        set_target_properties(ROOT::${_cpt} PROPERTIES
+                    IMPORTED_LINK_INTERFACE_LANGUAGES "CXX"
+                    IMPORTED_LOCATION "${ROOT_${_cpt}_LIBRARY}")
       endif()
     endforeach()
 
-    foreach(_cpt ${core_rootlibs} ${ROOT_FIND_COMPONENTS})
+    set(targetlist)
+    foreach(_cpt ${ROOT_CORELIBS} ${ROOT_FIND_COMPONENTS})
       if(ROOT_${_cpt}_LIBRARY)
         list(APPEND ROOT_LIBRARIES "${ROOT_${_cpt}_LIBRARY}")
         list(REMOVE_ITEM ROOT_FIND_COMPONENTS ${_cpt})
+        list(APPEND targetlist ROOT::${_cpt})
       endif()
     endforeach()
+
+    set_target_properties(ROOT::ROOT PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES "${ROOT_INCLUDE_DIRS}")
+    set_target_properties(ROOT::ROOT PROPERTIES
+        INTERFACE_LINK_LIBRARIES "${targetlist}")
+    unset(targetlist)
 
     list(REMOVE_DUPLICATES ROOT_LIBRARIES)
 

@@ -38,8 +38,20 @@ if(ROOT_CONFIG_EXECUTABLE)
         OUTPUT_STRIP_TRAILING_WHITESPACE)
     set(ROOT_LIBRARY_DIRS ${ROOT_LIBRARY_DIR})
 
+    file(GLOB ROOT_LIBFILELIST
+        LIST_DIRECTORIES false
+        RELATIVE "${ROOT_LIBRARY_DIR}"
+        "${ROOT_LIBRARY_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}*${CMAKE_SHARED_LIBRARY_SUFFIX}")
+
+    set(all_rootlibs "")
+    foreach(_file ${ROOT_LIBFILELIST})
+        string(REGEX REPLACE "^${CMAKE_SHARED_LIBRARY_PREFIX}" "" _newer ${_file})
+        string(REGEX REPLACE "${CMAKE_SHARED_LIBRARY_SUFFIX}$" "" _newest ${_newer})
+        list(APPEND ROOT_LIBNAMELIST ${_newest})
+    endforeach()
+
+
     set(core_rootlibs                 Core RIO Net Hist Graf Graf3d Gpad Tree Rint Postscript Matrix Physics MathCore Thread MultiProc)
-    set(all_rootlibs ${core_rootlibs} RooFit RooFitCore Minuit Minuit2 TreePlayer Proof Cling Geom RooStats TMVA MathMore)
 
     set(ROOT_LIBRARIES)
     foreach(_cpt ${all_rootlibs} ${ROOT_FIND_COMPONENTS})

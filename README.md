@@ -13,6 +13,8 @@ GooFit using OpenMP.
 
 ## Requirements
 
+* A new version of CMake if using the CMake build. At least 3.4, but 3.7 is better.
+* A ROOT 6 build highly recommended
 * If using CUDA:
  * CUDA 7.5 and 8.0 tested, older versions should work for now
  * An nVidia GPU supporting compute capability at least 2.0 (3.5 recommended)
@@ -102,7 +104,7 @@ If you want to run an individual example, those are in subdirectories in example
 
 The examples are designed to be easy to add to. Make a new directory, then add a new CMakeLists.txt in your directory with one or more of the following two lines:
 
-```
+```cmake
 goofit_add_directory()
 goofit_add_executible(MyNewExample MyNewExample.cu)
 ```
@@ -112,6 +114,19 @@ The first line adds your `.cu` file with goofit code as an executible, and the s
 If you are building with separable compilation, you can also use `goofit_add_pdf(mypdf.cu)` to add a PDF. This will also require that you include any directory that you need with `include_directory`, as usual.
 
 > If you want to extend the Makefile system instead, copy a Makefile from a different directory, changing the relevent project name (only one program per directory supported), and make a new target in `examples/Makefile`. 
+
+To add packages, use standard CMake tools. For example, to add [Boost](https://cmake.org/cmake/help/v3.7/module/FindBoost.html) 1.49+ filesystem and `TTreeReader` from ROOT:
+
+```cmake
+set(Boost_USE_STATIC_LIBS OFF)
+set(Boost_USE_MULTITHREADED ON)
+set(Boost_USE_STATIC_RUNTIME OFF)
+find_package(Boost 1.49 REQUIRED COMPONENTS filesystem)
+
+goofit_add_executable(K3Pi K3Pi.cu)
+target_link_libraries(MyNewExample Boost::filesystem ROOT::TreePlayer)
+
+```
 
 ## Adding a new project
   

@@ -36,8 +36,8 @@ endif()
 
 
 ### Options ###
-set(DEVICE_LISTING CUDA OMP TBB CPP Auto)
-set(HOST_LISTING OMP TBB CPP)
+set(DEVICE_LISTING CUDA OMP CPP Auto)
+set(HOST_LISTING OMP CPP)
 mark_as_advanced(DEVICE_LISTING HOST_LISTING)
 
 set(GOOFIT_DEVICE Auto CACHE STRING "The compute device, options are ${DEVICE_LISTING}")

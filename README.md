@@ -13,8 +13,10 @@ GooFit using OpenMP.
 
 ## Requirements
 
-* A new version of CMake if using the CMake build. At least 3.4, but 3.7 is better.
-* A ROOT 6 build highly recommended
+* A new version of CMake if using the CMake build. At least 3.5, the newer the better. CMake is incredibly easy to install.
+ * With CMake, thrust is downloaded automatically for OpenMP if not found
+ * GoogleTest is downloaded automatically
+* A ROOT 6 build highly recommended.
 * If using CUDA:
  * CUDA 7.5 and 8.0 tested, older versions should work for now
  * An nVidia GPU supporting compute capability at least 2.0 (3.5 recommended)
@@ -46,7 +48,7 @@ If you want to change compiler, set `CC` and `CXX` to appropriate defaults *befo
 cmake .. -DGOOFIT_DEVICE=CUDA -DGOOFIT_HOST=OMP
 ```
 
-Valid options are `CUDA` (device only), `OMP`, `CPP`, and `TBB` (unavailable currently).
+Valid options are `CUDA` (device only), `OMP`, and CPP (host only). While the current backend is used, `CPP`, and `TBB` will probably remain unavailable for device calculations. The default is `Auto`, and will select `CUDA` if CUDA is found.
 
 Other custom options supported along with the defaults:
 

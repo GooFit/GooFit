@@ -44,7 +44,6 @@ script:
     - .ci/travis.sh
 
 after_success:
-- cd "${TRAVIS_BUILD_DIR}" && .ci/run_codecov.sh
 - echo "${TRAVIS_BRANCH}"
 - echo "${TRAVIS_PULL_REQUEST}"
 - if [[ "${TRAVIS_BRANCH}" == "master" && "${TRAVIS_PULL_REQUEST}" == "false" ]] ; then echo "Updating docs" &&  cd "${TRAVIS_BUILD_DIR}" && .ci/build_docs.sh ; fi

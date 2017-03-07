@@ -1,3 +1,4 @@
+set -evx
 cd "${DEPS_DIR}"
 mkdir -p extrabin
 cd extrabin

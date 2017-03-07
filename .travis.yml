@@ -14,6 +14,7 @@ branches:
 env:
   global:
   - OMP_NUM_THREADS: 2
+  - COMPILER: 4.8
   - DOXYFILE: $TRAVIS_BUILD_DIR/docs/Doxyfile
   - secure: "HG55IEO0TcUtuzfD/pfpPB3irKKBAH1wpBc1RxrtaSo08nohuEoc9Jl0z9k6nw7Kxk5AFQRXiFtXyQAzTm7fONjqST92h6zm+PL4QBPVIrlbQovRPI35GgzFLkUPabkEFjn/3Ojoj5NWSQbfu3tEuARu0qU8vn/2N/PM3qIMbGg="
 addons:

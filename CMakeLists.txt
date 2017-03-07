@@ -35,6 +35,12 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 
+# Code coverage
+if(CMAKE_BUILD_TYPE STREQUAL Coverage)
+    include(CodeCoverage)
+    setup_target_for_coverage(GooFit_coverage ctest coverage)
+endif()
+
 ### Options ###
 set(DEVICE_LISTING CUDA OMP CPP Auto)
 set(HOST_LISTING OMP CPP)

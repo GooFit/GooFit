@@ -31,17 +31,19 @@ addons:
     - ubuntu-toolchain-r-test
 
 install:
-    - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
     - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
+    - cd "${TRAVIS_BUILD_DIR}" && . .ci/prepare_altern.sh 
     - cd "${TRAVIS_BUILD_DIR}" && . .ci/build_cmake.sh 
     - cd "${TRAVIS_BUILD_DIR}" && . .ci/build_root.sh 
     - cd "${TRAVIS_BUILD_DIR}" && . .ci/build_doxygen.sh 
+    - cd "${TRAVIS_BUILD_DIR}" && . .ci/build_lcov.sh 
 
 script:
     - cd "${TRAVIS_BUILD_DIR}"
     - .ci/travis.sh
 
 after_success:
+- cd "${TRAVIS_BUILD_DIR}" && .ci/run_codecov.sh
 - echo "${TRAVIS_BRANCH}"
 - echo "${TRAVIS_PULL_REQUEST}"
 - if [[ "${TRAVIS_BRANCH}" == "master" && "${TRAVIS_PULL_REQUEST}" == "false" ]] ; then echo "Updating docs" &&  cd "${TRAVIS_BUILD_DIR}" && .ci/build_docs.sh ; fi

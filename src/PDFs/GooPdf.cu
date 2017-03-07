@@ -251,14 +251,14 @@ __host__ double GooPdf::sumOfNll(int numVars) const {
 #ifndef GOOFIT_OMP
     double r = thrust::transform_reduce(my_policy,
                                     thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
-                                    thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
+                                    thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, arrayAddress, eventSize)),
                                     *logger, dummy, cudaPlus);
 
     MPI_Allreduce(&r, &ret, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 #else
     double r = thrust::transform_reduce(
                                     thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
-                                    thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
+                                    thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, arrayAddress, eventSize)),
                                     *logger, dummy, cudaPlus);
 #endif
 
@@ -506,7 +506,7 @@ __host__ fptype GooPdf::normalise() const {
                                           thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, eventSize, arrayAddress)),
                                           *logger, dummy, cudaPlus);
 #else
-    sum = thrust::transform_reduce(my_policy,
+    sum = thrust::transform_reduce(
 					  thrust::make_zip_iterator(thrust::make_tuple(binIndex, eventSize, arrayAddress)),
                                           thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, eventSize, arrayAddress)),
                                           *logger, dummy, cudaPlus);

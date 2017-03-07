@@ -1,0 +1,53 @@
+language: cpp
+sudo: false
+
+cache:
+  directories:
+    - ${TRAVIS_BUILD_DIR}/deps/cmake
+    - ${TRAVIS_BUILD_DIR}/deps/root
+    - ${TRAVIS_BUILD_DIR}/deps/doxygen
+
+branches:
+  exclude:
+    - gh-pages
+
+env:
+  global:
+  - OMP_NUM_THREADS: 2
+  - DOXYFILE: $TRAVIS_BUILD_DIR/docs/Doxyfile
+  - secure: "HG55IEO0TcUtuzfD/pfpPB3irKKBAH1wpBc1RxrtaSo08nohuEoc9Jl0z9k6nw7Kxk5AFQRXiFtXyQAzTm7fONjqST92h6zm+PL4QBPVIrlbQovRPI35GgzFLkUPabkEFjn/3Ojoj5NWSQbfu3tEuARu0qU8vn/2N/PM3qIMbGg="
+addons:
+  apt:
+    packages:
+    - doxygen-latex
+    - graphviz
+    - g++-4.8
+    - gcc-4.8
+    - libx11-dev
+    - libxpm-dev
+    - libxft-dev
+    - libxext-dev
+    sources:
+    - ubuntu-toolchain-r-test
+
+install:
+    - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
+    - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
+    - cd "${TRAVIS_BUILD_DIR}" && . .ci/build_cmake.sh 
+    - cd "${TRAVIS_BUILD_DIR}" && . .ci/build_root.sh 
+    - cd "${TRAVIS_BUILD_DIR}" && . .ci/build_doxygen.sh 
+
+script:
+    - cd "${TRAVIS_BUILD_DIR}"
+    - .ci/travis.sh
+
+after_success:
+- echo "${TRAVIS_BRANCH}"
+- echo "${TRAVIS_PULL_REQUEST}"
+- if [[ "${TRAVIS_BRANCH}" == "master" && "${TRAVIS_PULL_REQUEST}" == "false" ]] ; then echo "Updating docs" &&  cd "${TRAVIS_BUILD_DIR}" && .ci/build_docs.sh ; fi
+
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/3b44155c88d0eb365327
+    on_start: change

@@ -1,0 +1,100 @@
+# This makefile should be included at the top of any makefile for GooFit
+
+.SUFFIXES: 
+
+ifeq ($(TARGET_OMP),)
+GOO_CXX:g=nvcc
+GOO_LD:g=g++
+else
+ifeq ($(TARGET_MIC),)
+GOO_CXX:g=g++
+GOO_CXXFLAGS:g=-x c++
+GOO_LD:g=g++
+
+else
+# Intel Xeon Phi/MIC requires using Intel C++ Compiler (ICC)
+GOO_CXX:g=icpc
+GOO_LD:g=icpc
+GOO_CXXFLAGS:g=-mmic -x c++
+endif
+endif
+
+GOO_CXXFLAGS:g += -std=c++11 -O3
+
+UNAME=$(shell uname)
+ifeq ($(UNAME), Darwin)
+GOO_CXXFLAGS:g+=-m64
+endif
+
+ifneq ($(CUDAPRINT),)
+GOO_CXXFLAGS:g += -DCUDAPRINT=yes
+endif 
+
+ifneq ($(PRINTCALLS),)
+GOO_CXXFLAGS:g += -DPRINTCALLS=yes
+endif 
+
+ifneq ($(PROFILE),)
+GOO_CXXFLAGS:g += -DPROFILING=yes
+endif 
+
+# /usr/local/cuda-8.0/bin/nvcc -M -D__CUDACC__ /home/schreihf/git/fitting/goofit/src/PDFs/AllPdfs.cu -o /home/schreihf/git/fitting/goofit/build-cuda/src/PDFs/CMakeFiles/PDFs.dir//PDFs_generated_AllPdfs.cu.o.NVCC-depend -m64 -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA -DMCBOOSTER_BACKEND=CUDA -DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_OMP -Xcompiler ,\"-fopenmp\",\"-O2\",\"-DNDEBUG\" -std=c++11 -gencode arch=compute_61,code=sm_61 -DNVCC -I/usr/local/cuda-8.0/include
+# -I/home/schreihf/git/fitting/goofit/include/goofit/rootstuff -I/opt/root-6.08.02/include -I/home/schreihf/git/fitting/goofit/include -I/home/schreihf/git/fitting/goofit/MCBooster -I/home/schreihf/git/fitting/goofit/src/PDFs -I/usr/local/cuda-8.0/include
+#
+
+ifeq ($(TARGET_OMP),)
+# nvcc (CUDA)
+GOO_CXXFLAGS:g += -DTARGET_SM35 -gencode arch=compute_35,code=sm_35 -DMCBOOSTER_BACKEND=CUDA
+GOO_CXXFLAGS:g += -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA -DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_OMP
+GOO_CXXFLAGS:g += -Xcompiler -fopenmp
+GOO_LDFLAGS:g += -lgomp
+else
+# OpenMP common flags
+GOO_CXXFLAGS:g += -fno-inline -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_OMP -DMCBOOSTER_BACKEND=OMP -DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_OMP 
+
+ifeq ($(TARGET_MIC),)
+# GCC/Clang
+GOO_CXXFLAGS:g += -fopenmp
+GOO_LDFLAGS:g += -fopenmp
+else
+# Intel C++ Compiler (ICC)
+GOO_CXXFLAGS:g += -openmp
+endif 
+endif
+
+ifeq ($(GOOFITDIR), )
+echo "Warning: GOOFITDIR should be set!!! Using cwd"
+GOOFITDIR = $(shell /bin/pwd)
+endif
+SRCDIR = $(GOOFITDIR)/src
+
+
+ifeq ($(TARGET_OMP), )
+ifeq ($(CUDALOCATION), )
+CUDALOCATION = /usr/local/cuda
+endif
+CUDAHEADERS = $(CUDALOCATION)/include
+GOO_LDFLAGS:g += -L$(CUDALOCATION)/lib64 -lcudart
+INCLUDES += -I$(CUDAHEADERS)
+else
+ifeq ($(THRUSTLOCATION), )
+THRUSTLOCATION = $(GOOFITDIR)/../thrust
+endif
+THRUSTHEADERS = $(THRUSTLOCATION)
+CUDAHEADERS = $(GOOFITDIR)/include/fakecuda
+INCLUDES += -I$(CUDAHEADERS) -I$(THRUSTHEADERS)
+endif
+
+
+ROOT_INCLUDES = -I$(ROOTSYS)/include
+INCLUDES += -I$(GOOFITDIR)/include -I$(GOOFITDIR)/include/goofit/rootstuff -I$(GOOFITDIR)/MCBooster $(ROOT_INCLUDES)
+
+ROOT_LIBS     =  $(shell root-config --libs) -lMinuit
+WRKDIR = $(GOOFITDIR)/wrkdir
+ROOTUTILLIB	= $(WRKDIR)/libRootUtils.so 
+
+GOOFITLIBS += -lRootUtils 
+
+GOOFIT_LIBLIST = Variable FitManager AllPdfs Faddeeva FitControl PdfBase DataSet BinnedDataSet UnbinnedDataSet FunctorWriter 
+THRUSTO		= $(GOOFIT_LIBLIST:%=$(WRKDIR)/%.o)
+THRUSTO_B	= $(GOOFIT_LIBLIST:%=wrkdir/%.o)

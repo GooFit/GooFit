@@ -6,7 +6,7 @@ cd ${TRAVIS_BUILD_DIR}
 mkdir build || true
 cd build
 cmake -DGOOFIT_DEVICE=OMP -DGOOFIT_SEPARATE_COMP=ON -DGOOFIT_TESTS=ON -DCMAKE_BUILD_TYPE=Coverage ..
-cmake --build .
+cmake --build . -- -j2
 cmake --build . --target GooFit_coverage
 
 lcov --directory . --capture --output-file coverage.info # capture coverage info

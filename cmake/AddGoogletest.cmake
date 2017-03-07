@@ -42,7 +42,7 @@ endif()
 
 # Target must already exist
 macro(add_gtest TESTNAME)
-    target_link_libraries(${TESTNAME} PUBLIC gtest gmock gtest_main)
+    target_link_libraries(${TESTNAME} gtest gmock gtest_main)
     add_test(${TESTNAME} ${TESTNAME})
 endmacro()
 

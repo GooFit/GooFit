@@ -15,3 +15,4 @@ fi
 export PATH="${DEPS_DIR}/extrabin":$PATH
 
 cd "${TRAVIS_BUILD_DIR}"
+set +evx

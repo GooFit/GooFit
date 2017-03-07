@@ -11,3 +11,4 @@ fi
 
 export PATH="${DEPS_DIR}/lcov/bin:${PATH}"
 cd "${TRAVIS_BUILD_DIR}"
+set +evx

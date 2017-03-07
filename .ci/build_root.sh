@@ -9,3 +9,4 @@ if [[ ! -f "${DEPS_DIR}/root/bin/root-config" ]] ; then
 fi
 
 source "${DEPS_DIR}/root/bin/thisroot.sh"
+set +evx

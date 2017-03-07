@@ -14,3 +14,4 @@ lcov --remove coverage.info '*/tests/*' '*gtest*' '*gmock*' '/usr/*' --output-fi
 lcov --list coverage.info #debug info
 # Uploading report to CodeCov
 bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
+set +evx

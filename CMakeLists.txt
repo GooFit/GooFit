@@ -8,6 +8,11 @@ if(EXISTS ${LOC_PATH})
     message(FATAL_ERROR "You cannot build in the source directory (or any directory with a CMakeLists.txt file). Please make a build subdirectory.")
 endif()
 
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
+if(CMAKE_VERSION VERSION_LESS 3.7)
+    set(CMAKE_MODULE_PATH  ${PROJECT_SOURCE_DIR}/cmake/support_old_cmake ${CMAKE_MODULE_PATH})
+endif()
+
 ### Version number ###
 set(GOOFIT_VERSION_MAJOR 2)
 set(GOOFIT_VERSION_MINOR 0)
@@ -84,11 +89,6 @@ add_definitions("-DMCBOOSTER_BACKEND=${GOOFIT_DEVICE}")
 add_definitions("-DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_${GOOFIT_HOST}")
 
 # -Wl,--no-undefined,--no-allow-shlib-undefined")
-
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
-if(CMAKE_VERSION VERSION_LESS 3.7)
-    set(CMAKE_MODULE_PATH  ${PROJECT_SOURCE_DIR}/cmake/support_old_cmake ${CMAKE_MODULE_PATH})
-endif()
 
 set(GOOFIT_ARCH Auto CACHE STRING "The GPU Archetecture, can be Auto, All, Common, a number, or a name")
 

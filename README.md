@@ -1,6 +1,7 @@
-[![Build Status](https://travis-ci.org/GooFit/GooFit.svg?branch=master)](https://travis-ci.org/GooFit/GooFit)
-[![Gitter](https://badges.gitter.im/GooFit/GooFit.svg)](https://gitter.im/GooFit/Lobby)
-[![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](./LICENSE)
+[![Build Status][travis-badge]][travis-link]
+[![Code Coverage][codecov-badge]][codecov-link]
+[![Join the chat at https://gitter.im/GooFit/Lobby][gitter-badge]][gitter-link]
+[![License: LGPL v3][license-badge]](./LICENSE)
 
 GooFit is a massively-parallel framework, written in CUDA, for
 doing maximum-likelihood fits with a comfortable syntax.
@@ -158,3 +159,11 @@ writing two lines of code instead of the 50 or so previously needed.
 GooFit's development has been supported by the National Science Foundation under grant number NSF-1005530. 
 Any opinions, findings, and conclusions or recommendations expressed in this material are those of the developers
 and do not necessarily reflect the views of the National Science Foundation.
+
+[travis-badge]:    https://travis-ci.org/GooFit/GooFit.svg?branch=master  
+[travis-link]:     https://travis-ci.org/GooFit/GooFit
+[codecov-badge]:   https://codecov.io/gh/GooFit/GooFit/branch/master/graph/badge.svg
+[codecov-link]:    https://codecov.io/gh/GooFit/GooFit
+[gitter-badge]:    https://badges.gitter.im/GooFit/GooFit.svg
+[gitter-link]:     https://gitter.im/GooFit/Lobby
+[license-badge]:   https://img.shields.io/badge/License-LGPL%20v3-blue.svg

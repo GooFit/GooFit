@@ -7,7 +7,7 @@ mkdir build || true
 cd build
 cmake -DGOOFIT_DEVICE=OMP -DGOOFIT_SEPARATE_COMP=ON -DGOOFIT_TESTS=ON -DCMAKE_BUILD_TYPE=Coverage ..
 cmake --build .
-cmake --build . --target CLI_coverage
+cmake --build . --target GooFit_coverage
 
 lcov --directory . --capture --output-file coverage.info # capture coverage info
 lcov --remove coverage.info '*/tests/*' '*gtest*' '*gmock*' '/usr/*' --output-file coverage.info # filter out system

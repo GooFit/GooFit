@@ -76,7 +76,6 @@ public:
         }
         #endif
         #endif
-        #endif
 
         // Fallthrough is useful for most models of GooFit subcommands
         fallthrough();

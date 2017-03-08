@@ -1,6 +1,8 @@
 #ifndef _ThrustOverride_h_
 #define _ThrustOverride_h_
 
+#ifndef GOOFIT_OMP
+
 #include <thrust/execution_policy.h>
 #include <thrust/detail/config.h>
 #include <thrust/reduce.h>
@@ -14,6 +16,8 @@
 
 #include <thrust/system/cuda/detail/bulk.h>
 
+#include "goofit/ThrustOverrideConfig.h"
+
 #ifndef OR_GROUPSIZE
 #define OR_GROUPSIZE 128
 #endif
@@ -21,8 +25,6 @@
 #ifndef OR_GRAINSIZE
 #define OR_GRAINSIZE 7
 #endif
-
-
 
 //We are defining a new policy.  This will allow us to override the internal thread/block distribution
 struct goofit_policy : thrust::device_execution_policy<goofit_policy> {};
@@ -102,6 +104,8 @@ OutputType reduce (goofit_policy &exec,
 
   return get_value(exec, &partial_sums[0]);
 } // end goofit_reduce()
+
+#endif
 
 #endif
 

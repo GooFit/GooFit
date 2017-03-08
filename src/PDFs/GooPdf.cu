@@ -241,14 +241,13 @@ __host__ double GooPdf::sumOfNll(int numVars) const {
     thrust::constant_iterator<fptype*> arrayAddress(dev_event_array);
     double dummy = 0;
 
-    goofit_policy my_policy;
-
     //if (host_callnumber >= 2) abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " debug abort", this);
     thrust::counting_iterator<int> eventIndex(0);
 
     double ret;
 #ifdef GOOFIT_MPI
 #ifndef GOOFIT_OMP
+    goofit_policy my_policy;
     double r = thrust::transform_reduce(my_policy,
                                     thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
                                     thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, arrayAddress, eventSize)),
@@ -265,6 +264,7 @@ __host__ double GooPdf::sumOfNll(int numVars) const {
     MPI_Allreduce(&r, &ret, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 #else
 #ifndef GOOFIT_OMP
+    goofit_policy my_policy;
     ret = thrust::transform_reduce(my_policy,
                                     thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
                                     thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
@@ -476,8 +476,6 @@ __host__ fptype GooPdf::normalise() const {
 
     ret /= totalBins;
 
-    goofit_policy my_policy;
-
     fptype dummy = 0;
     static thrust::plus<fptype> cudaPlus;
     thrust::constant_iterator<fptype*> arrayAddress(normRanges);
@@ -487,6 +485,7 @@ __host__ fptype GooPdf::normalise() const {
     fptype sum;
 #ifdef GOOFIT_MPI
 #ifndef GOOFIT_OMP
+    goofit_policy my_policy;
     fptype s = thrust::transform_reduce(my_policy,
 					  thrust::make_zip_iterator(thrust::make_tuple(binIndex, eventSize, arrayAddress)),
                                           thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, eventSize, arrayAddress)),
@@ -501,6 +500,7 @@ __host__ fptype GooPdf::normalise() const {
     MPI_Allreduce (&s, &sum, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 #else
 #ifndef GOOFIT_OMP
+    goofit_policy my_policy;
     sum = thrust::transform_reduce(my_policy,
 					  thrust::make_zip_iterator(thrust::make_tuple(binIndex, eventSize, arrayAddress)),
                                           thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, eventSize, arrayAddress)),

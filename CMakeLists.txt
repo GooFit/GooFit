@@ -8,8 +8,13 @@ if(EXISTS ${LOC_PATH})
     message(FATAL_ERROR "You cannot build in the source directory (or any directory with a CMakeLists.txt file). Please make a build subdirectory.")
 endif()
 
-set(OR_GROUPSIZE 128)
-set(OR_GRAINSIZE 7)
+set(GOOFIT_CUDA_OR_GROUPSIZE "128" CACHE STRING "Overrides the default group distribution for Thrust's transform_reduce")
+set(GOOFIT_CUDA_OR_GRAINSIZE "7" CACHE STRING "Overrides the default grain size for Thrust's transform_reduce")
+
+configure_file (
+    "${PROJECT_SOURCE_DIR}/include/goofit/ThrustOverrideConfig.h.in"
+    "${PROJECT_BINARY_DIR}/include/goofit/ThrustOverrideConfig.h"
+)
 
 ### Version number ###
 set(GOOFIT_VERSION_MAJOR 2)
@@ -145,7 +150,7 @@ endif()
 
 if(GOOFIT_DEVICE STREQUAL OMP OR GOOFIT_HOST STREQUAL OMP)
 find_package(OpenMP REQUIRED)
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -DGOOFIT_OMP")
 find_package(Threads REQUIRED)
 link_libraries(Threads::Threads)
 endif()

@@ -14,6 +14,11 @@
 #include <set>
 
 #include "goofit/PdfBase.h"
+#include "goofit/ThrustOverride.h"
+
+#ifdef GOOFIT_MPI
+#include <mpi.h>
+#endif
 
 #define CALLS_TO_PRINT 10
 

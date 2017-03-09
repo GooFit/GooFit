@@ -62,7 +62,7 @@ TH2F* underlyingBins = 0;
 
 Variable* m12 = 0;
 Variable* m13 = 0;
-Variable* eventNumber = 0;
+CountingVariable* eventNumber = 0;
 Variable* massd0 = 0;
 Variable* deltam = 0;
 Variable* dtime = 0;
@@ -884,7 +884,7 @@ void runToyFit(int ifile, int nfile, bool noPlots = true) {
     m12->numbins = 240;
     m13   = new Variable("m13",   0, 3);
     m13->numbins = 240;
-    eventNumber = new Variable("eventNumber", 0, INT_MAX);
+    eventNumber = new CountingVariable("eventNumber", 0, INT_MAX);
     wSig0 = new Variable("wSig0", 0, 1);
 
     for(int i =0 ; i<nfile; i++) {
@@ -1141,7 +1141,7 @@ void makeFullFitVariables() {
     m12   = new Variable("m12",   0, 3);
     m13   = new Variable("m13",   0, 3);
     m12->numbins = m13->numbins = normBinning;
-    eventNumber = new Variable("eventNumber", 0, INT_MAX);
+    eventNumber = new CountingVariable("eventNumber", 0, INT_MAX);
     wSig0 = new Variable("wSig0", 0, 1);
     wBkg1 = new Variable("wBkg1", 0, 1);
     wBkg2 = new Variable("wBkg2", 0, 1);
@@ -4785,11 +4785,9 @@ int main(int argc, char** argv) {
     //foodal->SetLeftMargin(0.13);
 
 
-#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-    cudaSetDevice(0);
-#endif
-
-
+//#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
+//    cudaSetDevice(0);
+//#endif
 
     GooFit::Application app("pipipi0 Dalitz fit example", argc, argv);
     app.require_subcommand();

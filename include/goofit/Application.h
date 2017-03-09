@@ -15,7 +15,6 @@
 #include <omp.h>
 #endif
 
-
 namespace GooFit {
 
 using namespace CLI;
@@ -35,6 +34,47 @@ public:
 
         #ifdef GOOFIT_MPI
         MPI_Init(&argc_, &argv_);
+
+        int myId, numProcs;
+        MPI_Comm_size (MPI_COMM_WORLD, &numProcs);
+        MPI_Comm_rank (MPI_COMM_WORLD, &myId);
+
+        #if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_CUDA
+        int deviceCount;
+        cudaGetDeviceCount (&deviceCount);
+
+        int nodes = atoi (getenv("PBS_NUM_NODES"));
+        if (nodes == 0)
+            nodes = 1;
+
+        int procsPerNode = numProcs/nodes;
+        int localRank = myId % procsPerNode;
+
+        //Note, this will (probably) be overwritten by gpu-set-device calls...
+        if (deviceCount == 1 && localRank > 1)
+        {
+            //Multi-process to one GPU!
+            cudaSetDevice(0);
+        }
+        else if (procsPerNode > 1 && deviceCount > 1)
+        {
+            if (localRank <= deviceCount)
+            {
+                //setting multiple processes to multiple GPU's
+                cudaSetDevice (localRank);
+            }
+            else
+            {
+                //More multiple processes than GPU's, distribute sort of evenly!
+                cudaSetDevice (localRank % deviceCount);
+            }
+        }
+        else
+        {
+            //multiple GPU's, using one process
+            cudaSetDevice(0);
+        }
+        #endif
         #endif
 
         // Fallthrough is useful for most models of GooFit subcommands

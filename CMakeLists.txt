@@ -104,7 +104,7 @@ if(GOOFIT_MPI)
     find_package(MPI REQUIRED)
 
     # Added globally
-    add_definitions("${MPI_CXX_COMPILE_FLAGS} -DGOOFIT_MPI")
+    add_definitions("-DGOOFIT_MPI")
     include_directories(${MPI_CXX_INCLUDE_PATH})
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${MPI_CXX_LINK_FLAGS}")
     link_libraries(${MPI_CXX_LIBRARIES})
@@ -150,7 +150,7 @@ endif()
 
 if(GOOFIT_DEVICE STREQUAL OMP OR GOOFIT_HOST STREQUAL OMP)
 find_package(OpenMP REQUIRED)
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -DGOOFIT_OMP")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 find_package(Threads REQUIRED)
 link_libraries(Threads::Threads)
 endif()

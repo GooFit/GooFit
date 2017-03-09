@@ -1,0 +1,8 @@
+#ifndef _ThrustOverrideConfig_h_
+#define _ThrustOverrideConfig_h_
+
+#define OR_GROUPSIZE @GOOFIT_CUDA_OR_GROUPSIZE@
+#define OR_GRAINSIZE @GOOFIT_CUDA_OR_GRAINSIZE@
+
+#endif
+

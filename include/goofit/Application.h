@@ -39,7 +39,7 @@ public:
         MPI_Comm_size (MPI_COMM_WORLD, &numProcs);
         MPI_Comm_rank (MPI_COMM_WORLD, &myId);
 
-	#ifndef GOOFIT_OMP
+        #if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_CUDA
         int deviceCount;
         cudaGetDeviceCount (&deviceCount);
 

@@ -484,7 +484,7 @@ __host__ fptype GooPdf::normalise() const {
 
     fptype sum;
 #ifdef GOOFIT_MPI
-#ifndef GOOFIT_OMP
+#if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_CUDA
     goofit_policy my_policy;
     fptype s = thrust::transform_reduce(my_policy,
 					  thrust::make_zip_iterator(thrust::make_tuple(binIndex, eventSize, arrayAddress)),
@@ -499,7 +499,7 @@ __host__ fptype GooPdf::normalise() const {
     
     MPI_Allreduce (&s, &sum, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 #else
-#ifndef GOOFIT_OMP
+#if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_CUDA
     goofit_policy my_policy;
     sum = thrust::transform_reduce(my_policy,
 					  thrust::make_zip_iterator(thrust::make_tuple(binIndex, eventSize, arrayAddress)),

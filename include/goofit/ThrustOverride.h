@@ -1,7 +1,7 @@
 #ifndef _ThrustOverride_h_
 #define _ThrustOverride_h_
 
-#ifndef GOOFIT_OMP
+#if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_CUDA
 
 #include <thrust/execution_policy.h>
 #include <thrust/detail/config.h>

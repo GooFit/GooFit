@@ -43,6 +43,8 @@ public:
 
 class CountingVariable : public Variable {
 public:
+    // This is used to track event number for MPI versions.
+    // A cast is done to know whether the values need to be fixed.
     CountingVariable(std::string n);
     CountingVariable(std::string n, fptype val);
     CountingVariable(std::string n, fptype dn, fptype up);

@@ -48,11 +48,16 @@ Valid options are `CUDA` (device only), `OMP`, `CPP`, and `TBB` (unavailable cur
 
 Other custom options supported along with the defaults:
 
-* `-DGOOFIT_ARCH=Auto` (Auto, Common, All, valid number(s) or name(s)): sets the compute architecture. See [CUDA_SELECT_NVCC_ARCH_FLAGS](https://cmake.org/cmake/help/v3.7/module/FindCUDA.html).
+* `-DGOOFIT_ARCH=Auto`: (Auto, Common, All, valid number(s) or name(s)): sets the compute architecture. See [CUDA_SELECT_NVCC_ARCH_FLAGS](https://cmake.org/cmake/help/v3.7/module/FindCUDA.html).
 * `-DGOOFIT_EXAMPLES=ON`: Build the examples
 * `-DGOOFIT_PACKAGES=ON`: Build any packages found with the name `goofit*`
 * `-DGOOFIT_SEPARATE_COMP=OFF`: Enable separable compilation of PDFs
 * `-DGOOFIT_TESTS=OFF`: Build the goofit tests
+
+Advanced Options:
+* `-DGOOFIT_MPI=ON`: (OFF/ON.  With this feature on, GPU devices are selected automatically)
+* `-DGOOFIT_CUDA_OR_GROUPSIZE:INT=128`: This sets the group size that thrust will use for distributing the problem.  This parameter can be thought of as 'Threads per block'.  These will be used after running 'find_optimal.py' to figure out the optimal size.
+* `-DGOOFIT_CUDA_OR_GRAINSIZE:INT=7`: This is the grain size thrust uses for distributing the problem.  This parameter can be thought of as 'Items per thread'.
 
 
 A few standard cmake tricks:
@@ -121,6 +126,19 @@ If you'd like to make a seperate goofit project, you can do so. Simply checkout 
  
 The build system underwent a major upgrade in the move to CMake. The folders that were introduced to keep the includes structured require modifications of source code, converting lines like `#include "Variable.hh"` to `#include "goofit/Variable.h"`. This modification can be done for you by running the provided script, `scripts/ModernizeGooFit.py` on your source files (requires Python and Plumbum). You should remove your old Makefiles and use the new `CMakeFiles.txt` files provided in examples - this should require
 writing two lines of code instead of the 50 or so previously needed.
+
+## Improving Performance with MPI
+
+Using the MPI verion with an appropriate environment setup will allow for multiple GPU's to be used, or allow for multiple nodes.  To use this feature simpley turn the flag on with cmake `-DGOOFIT_MPI=ON`.  This will divide the dataset by the number of processes involved.  For instance, if you have two nodes that will be involved in the calculation, the data will be split in half.  Currently, each node will load the entire buffer from disk, then load partitioned data it will work on.  
+
+A few notes about using the MPI version:
+* You will need to use the `CountingVariable` for any event numbers used or referenced within the code, or anything that counts with the events.
+* Please call setDataSize after setData.  If you do not, setDataSize doesn't have `m_iEventsPerTask`, which will need to be recalculated. 
+
+## Configuring Group Size & Grain Size
+
+This advanced option is for GPU devices only.  What it will do is search the group and grain space in order to find the optimal configuration for the particular PDFs.  This should be run after an example has been developed and tested.  Please look at scripts/find_optimal.py to see how to formulate a particular script.  Depending on the searchable space, this can take hours to days to compute.  
+The script will loop over the space and configure each parameter, then recompile and run the example a number of times.  The average is provided in the spreadsheet, and the fastest version is printed to the user.
 
 ## Acknowledgement
 

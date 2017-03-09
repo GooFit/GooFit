@@ -44,8 +44,8 @@ endif()
 
 
 ### Options ###
-set(DEVICE_LISTING CUDA OMP TBB CPP Auto)
-set(HOST_LISTING OMP TBB CPP)
+set(DEVICE_LISTING CUDA OMP CPP Auto)
+set(HOST_LISTING OMP CPP)
 mark_as_advanced(DEVICE_LISTING HOST_LISTING)
 
 set(GOOFIT_DEVICE Auto CACHE STRING "The compute device, options are ${DEVICE_LISTING}")
@@ -105,6 +105,7 @@ if(GOOFIT_MPI)
 
     # Added globally
     add_definitions("-DGOOFIT_MPI")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${MPI_CXX_COMPILE_FLAGS}")
     include_directories(${MPI_CXX_INCLUDE_PATH})
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${MPI_CXX_LINK_FLAGS}")
     link_libraries(${MPI_CXX_LIBRARIES})
@@ -164,10 +165,7 @@ endif()
 # The target is setup to avoid clashes with fakeroot
 # Include directories are not picked up by FindCUDA
 find_package(ROOT 6 REQUIRED COMPONENTS Minuit)
-add_library(Root INTERFACE)
 include_directories(BEFORE "include/goofit/rootstuff")
-include_directories(AFTER SYSTEM "${ROOT_INCLUDE_DIRS}")
-target_link_libraries(Root INTERFACE ${ROOT_LIBRARIES})
 # Note: it is very important that the includes and links for root are after fakeroot!
  
 
@@ -261,7 +259,7 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/MCBooster)
 
 add_library(goofit_lib INTERFACE)
-target_link_libraries(goofit_lib INTERFACE goofit_base PDFs rootstuff Root)
+target_link_libraries(goofit_lib INTERFACE goofit_base PDFs rootstuff ROOT::ROOT)
 
 option(GOOFIT_EXAMPLES "Build the example programs" ON)
 if(GOOFIT_EXAMPLES)

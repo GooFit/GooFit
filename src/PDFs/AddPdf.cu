@@ -179,7 +179,7 @@ __host__ double AddPdf::sumOfNll(int numVars) const {
 
     double ret;
 #ifdef GOOFIT_MPI
-#ifndef GOOFIT_OMP
+#if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_CUDA
     goofit_policy my_policy;
     double r = thrust::transform_reduce(my_policy, thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress,
                                           eventSize)),
@@ -194,7 +194,7 @@ __host__ double AddPdf::sumOfNll(int numVars) const {
 
     MPI_Allreduce(&r, &ret, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 #else
-#ifndef GOOFIT_OMP
+#if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_CUDA
     goofit_policy my_policy;
     ret = thrust::transform_reduce(my_policy, thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress,
                                           eventSize)),

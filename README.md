@@ -73,7 +73,7 @@ Other custom options supported along with the defaults:
 * `-DGOOFIT_TESTS=OFF`: Build the goofit tests
 
 Advanced Options:
-* `-DGOOFIT_MPI=ON`: (OFF/ON.  With this feature on, GPU devices are selected automatically)
+* `-DGOOFIT_MPI=ON`: (OFF/ON.  With this feature on, GPU devices are selected automatically).  Currently tested only with MVAPICH2/2.2.
 * `-DGOOFIT_CUDA_OR_GROUPSIZE:INT=128`: This sets the group size that thrust will use for distributing the problem.  This parameter can be thought of as 'Threads per block'.  These will be used after running 'find_optimal.py' to figure out the optimal size.
 * `-DGOOFIT_CUDA_OR_GRAINSIZE:INT=7`: This is the grain size thrust uses for distributing the problem.  This parameter can be thought of as 'Items per thread'.
 
@@ -160,16 +160,16 @@ writing two lines of code instead of the 50 or so previously needed.
 
 ## Improving Performance with MPI
 
-Using the MPI verion with an appropriate environment setup will allow for multiple GPU's to be used, or allow for multiple nodes.  To use this feature simpley turn the flag on with cmake `-DGOOFIT_MPI=ON`.  This will divide the dataset by the number of processes involved.  For instance, if you have two nodes that will be involved in the calculation, the data will be split in half.  Currently, each node will load the entire buffer from disk, then load partitioned data it will work on.  
+Using the MPI verion with an appropriate environment setup will allow for multiple GPU's to be used, and/or allow for multiple nodes.  To use this feature simply turn the flag on with cmake `-DGOOFIT_MPI=ON`.  This will divide the dataset by the number of processes involved.  For instance, if you have two nodes that will be involved in the calculation, the data will be split in half.  Currently, each node will load the entire buffer from disk, then load partitioned data it will work on.  It is highly recommended not to use more than one process per node for MPI+OpenMP versions.
 
 A few notes about using the MPI version:
 * You will need to use the `CountingVariable` for any event numbers used or referenced within the code, or anything that counts with the events.
-* Please call setDataSize after setData.  If you do not, setDataSize doesn't have `m_iEventsPerTask`, which will need to be recalculated. 
+* Please call setDataSize after setData.  If you do not, setDataSize doesn't have `m_iEventsPerTask`, which will need to be recalculated.
 
 ## Configuring Group Size & Grain Size
 
-This advanced option is for GPU devices only.  What it will do is search the group and grain space in order to find the optimal configuration for the particular PDFs.  This should be run after an example has been developed and tested.  Please look at scripts/find_optimal.py to see how to formulate a particular script.  Depending on the searchable space, this can take hours to days to compute.  
-The script will loop over the space and configure each parameter, then recompile and run the example a number of times.  The average is provided in the spreadsheet, and the fastest version is printed to the user.
+This advanced option is for GPU devices only. The script 'scripts/find_optimal.py' will search a programmable group and grain space in order to find the optimal configuration for the particular PDFs.  This should be run after an example has been developed and tested.  Please look at scripts/find_optimal.py to see how to formulate a particular script.  Depending on the searchable space, this can take hours to days to compute.  
+The script will loop over the space and configure each parameter, then recompile and run the example a number of times.  A spreadsheet is calculated to help notice patterns, and the fastest version is printed to the user.
 
 ## Acknowledgement
 

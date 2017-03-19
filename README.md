@@ -13,6 +13,10 @@ GooFit using OpenMP.
 
 ## Requirements
 
+* A new version of CMake if using the CMake build. Like ROOT, the minimum is 3.4, but tested primarily with 3.7. CMake is incredibly easy to install.
+ * With CMake, Thrust is downloaded automatically for OpenMP if not found
+ * GoogleTest is downloaded automatically
+* A ROOT 6 build highly recommended.
 * If using CUDA:
  * CUDA 7.5 and 8.0 tested, older versions should work for now
  * An nVidia GPU supporting compute capability at least 2.0 (3.5 recommended)
@@ -22,7 +26,8 @@ GooFit using OpenMP.
 ## Getting the files
 
 * Clone with git:
-```
+
+```bash
 git clone git://github.com/goofit/goofit.git
 cd goofit
 ```
@@ -32,19 +37,32 @@ You can either checkout a tagged version, or stay on the master for the latest a
 ## Building 
 
 The build system now uses CMake. The procedure is standard for CMake builds:
-```
+
+```bash
 mkdir build
 cd build
 cmake ..
 make
 ```
 
+> If you don't have a modern CMake, you can get a local copy on linux using:
+>
+> ```bash
+> mkdir cmake && wget -qO- "https://cmake.org/files/v3.7/cmake-3.7.2-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C cmake
+> ```
+>
+> Now, just use the local copy instead:
+>
+> ```bash
+> ./cmake/bin/cmake ..
+> ```
+
 If you want to change compiler, set `CC` and `CXX` to appropriate defaults *before* you run cmake either inline or in your environment. If you want to set the host and device backends, you can set those options. The defaults are:
 ```
 cmake .. -DGOOFIT_DEVICE=CUDA -DGOOFIT_HOST=OMP
 ```
 
-Valid options are `CUDA` (device only), `OMP`, `CPP`, and `TBB` (unavailable currently).
+Valid options are `CUDA` (device only), `OMP`, and CPP (host only). While the current backend is used, `CPP`, and `TBB` will probably remain unavailable for device calculations. The default is `Auto`, and will select `CUDA` if CUDA is found.
 
 Other custom options supported along with the defaults:
 
@@ -107,7 +125,7 @@ If you want to run an individual example, those are in subdirectories in example
 
 The examples are designed to be easy to add to. Make a new directory, then add a new CMakeLists.txt in your directory with one or more of the following two lines:
 
-```
+```cmake
 goofit_add_directory()
 goofit_add_executible(MyNewExample MyNewExample.cu)
 ```
@@ -117,6 +135,19 @@ The first line adds your `.cu` file with goofit code as an executible, and the s
 If you are building with separable compilation, you can also use `goofit_add_pdf(mypdf.cu)` to add a PDF. This will also require that you include any directory that you need with `include_directory`, as usual.
 
 > If you want to extend the Makefile system instead, copy a Makefile from a different directory, changing the relevent project name (only one program per directory supported), and make a new target in `examples/Makefile`. 
+
+To add packages, use standard CMake tools. For example (CMake 3.5), to add [Boost](https://cmake.org/cmake/help/v3.7/module/FindBoost.html) 1.49+ filesystem and `TTreeReader` from ROOT:
+
+```cmake
+set(Boost_USE_STATIC_LIBS OFF)
+set(Boost_USE_MULTITHREADED ON)
+set(Boost_USE_STATIC_RUNTIME OFF)
+find_package(Boost 1.49 REQUIRED COMPONENTS filesystem)
+
+goofit_add_executable(K3Pi K3Pi.cu)
+target_link_libraries(MyNewExample Boost::filesystem ROOT::TreePlayer)
+
+```
 
 ## Adding a new project
   

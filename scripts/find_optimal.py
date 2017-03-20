@@ -29,22 +29,23 @@ filename = os.environ.get ('PYTHONSTARTUP')
 if filename and os.path.isfile(filename):
 	execfile(filename)
 
-if len (sys.argv) != 5:
-	print "./find_optimal [path] [range start] [range stop] [output]"
+if len (sys.argv) != 6:
+	print "./find_optimal [path] [range start] [range stop] [range increment] [output]"
 	sys.exit (-1)
 
 #this is our goofit directory to find optimal
 path = sys.argv[1]
 begin = int(sys.argv[2])
 end = int(sys.argv[3])
-output = sys.argv[4]
+inc = int(sys.argv[4])
+output = sys.argv[5]
 
 #this a list for our cvs file
 strings = []
 
 #we need to make the first string, which will be the header for the csv file
 header = "block,"
-for y in range (1, 32):
+for y in range (4, 11):
 	header += "grain:{}, total,".format (y)
 
 strings.append (header + "\r\n")
@@ -53,25 +54,33 @@ strings.append (header + "\r\n")
 os.system ("cp -r {} /tmp".format(path))
 
 #remove the path, only grab the very end...
-wrkdir = "/tmp/{}".format("GooFit-SoA/")
+wrkdir = "/tmp/{}".format("GooFit/")
+
+#go to this directory
+os.chdir (wrkdir)
+
+minGrain = 0
+minGroup = 0
+currentMin = 1000000
 
 #loop over the possible range
 for i in range (begin, end):
         s = "{},".format(str(begin))
-	for j in range (1, 32):
-		os.chdir (wrkdir)
+	for j in range (4, 11):
 		#i is our group size
 		#j is our grain size
 
+		os.system ("mkdir build")
+		os.chdir ("build")
+
 		os.system ("make clean")
-		os.system ("make OVERRIDE_GROUPSIZE={} OVERRIDE_GRAINSIZE={}".format(i, j))
+		os.system ("cmake ../ -DGOOFIT_CUDA_OR_GROUPSIZE={} -DGOOFIT_CUDA_OR_GRAINSIZE={}".format(i, j))
+		os.system ("make -j 12")
 
 		os.chdir ("examples/dalitz")
 
-		os.system ("make clean && make OVERRIDE_GROUPSIZE={} OVERRIDE_GRAINSIZE={}".format(i, j))
-
 		before = monotonic_time ()
-		os.system("./dalitz dalitz_toyMC_000.txt > log")
+		os.system("./dalitz > log")
 		after = monotonic_time()
 
 		#we are going to do two things: first parse the log file
@@ -85,7 +94,14 @@ for i in range (begin, end):
 		#Now we are going to take the difference between after and begin
 		elapsed = after - before
 
+		if elapsed < currentMin:
+			minGroup = i
+			minGrain = j
+
 		s += line[18:-10] + "," + str(elapsed) + ","
+
+		os.chdir (wrkdir)
+		os.system ("rm -rf build")
 
 	strings.append (s + "\r\n")
 
@@ -95,5 +111,7 @@ for s in strings:
 	timing.write(s)
 
 timing.close()
+
+print 'Group: ' + minGroup + ' Grain: ' + minGrain + '\n'
 
 print 'Done'

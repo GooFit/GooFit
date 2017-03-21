@@ -52,10 +52,10 @@ make
 > mkdir cmake && wget -qO- "https://cmake.org/files/v3.7/cmake-3.7.2-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C cmake
 > ```
 >
-> Now, just use the local copy instead:
+> Now, before running cmake just use the local copy instead:
 >
 > ```bash
-> ./cmake/bin/cmake ..
+> export PATH=`pwd`/cmake/bin:$PATH
 > ```
 
 If you want to change compiler, set `CC` and `CXX` to appropriate defaults *before* you run cmake either inline or in your environment. If you want to set the host and device backends, you can set those options. The defaults are:

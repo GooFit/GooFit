@@ -106,7 +106,7 @@ public:
     }
 
     int exit(const CLI::Error &e) {
-        std::cout << (e.exit_code==0 ? rang::fg::blue : rang::fg::red);
+        std::cout << (e.get_exit_code()==0 ? rang::fg::blue : rang::fg::red);
         int rval = CLI::App::exit(e);
         std::cout << rang::fg::reset;
         return rval;

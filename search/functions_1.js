@@ -20,7 +20,7 @@ var searchData=
   ['ampcalc',['AmpCalc',['../class_amp_calc.html#af7cbcd85a1cca30309887b28a2274890',1,'AmpCalc']]],
   ['ampcalc_5ftd',['AmpCalc_TD',['../class_amp_calc___t_d.html#a985914b09655b32e8df3144cf77d6cdf',1,'AmpCalc_TD']]],
   ['amplitude',['Amplitude',['../class_amplitude.html#a52d3350f60972b111d356848cb964c1f',1,'Amplitude']]],
-  ['app',['App',['../class_c_l_i_1_1_app.html#a55ce035acbdf843855e7649294d61c0c',1,'CLI::App::App(std::string description_, bool help, detail::enabler dummy_param)'],['../class_c_l_i_1_1_app.html#a3bdc2d44538c2b019205ed71ae33519d',1,'CLI::App::App(std::string description_=&quot;&quot;, bool help=true)']]],
+  ['app',['App',['../class_c_l_i_1_1_app.html#abc5ae1005010f08b10a14a742eefdf42',1,'CLI::App::App(std::string description_, bool help, detail::enabler)'],['../class_c_l_i_1_1_app.html#a3bdc2d44538c2b019205ed71ae33519d',1,'CLI::App::App(std::string description_=&quot;&quot;, bool help=true)']]],
   ['application',['Application',['../class_goo_fit_1_1_application.html#aef51b6419e7dae1667dcbdb9c163a18e',1,'GooFit::Application::Application(std::string discription, int argc, char **argv)'],['../class_goo_fit_1_1_application.html#ac5b20376503ea5481c26718cce1cf0b4',1,'GooFit::Application::Application(int argc, char **argv)']]],
   ['arguspdf',['ArgusPdf',['../class_argus_pdf.html#a4b3fd1ba29bcab42b377db8ac6b2758b',1,'ArgusPdf']]]
 ];

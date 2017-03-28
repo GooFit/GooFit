@@ -30,7 +30,7 @@ var searchData=
   ['meson_5fradius',['meson_radius',['../struct_decay_info.html#abfb45e6b8d2c2977bd9cfca7449c46d1',1,'DecayInfo::meson_radius()'],['../struct_decay_info___d_p.html#a4edb846f4bb40e7058bd20fed9b0caab',1,'DecayInfo_DP::meson_radius()']]],
   ['metricispdf',['metricIsPdf',['../class_fit_control.html#aedab1ae247c7840bf13faeb743f39b0c',1,'FitControl']]],
   ['metrictaker',['MetricTaker',['../class_metric_taker.html',1,'MetricTaker'],['../class_metric_taker.html#acc275ab80a2fc3e368dc364798f192f1',1,'MetricTaker::MetricTaker(PdfBase *dat, void *dev_functionPtr)'],['../class_metric_taker.html#afc52530cf5590b420599c7923a137e6d',1,'MetricTaker::MetricTaker(int fIdx, int pIdx)']]],
-  ['migrad',['migrad',['../class_fit_manager.html#a1c3c5567660de27f3aa68f77ea49870a',1,'FitManager::migrad()'],['../class_t_minuit.html#ac7b43621fbb9033ca6d8bb113c7be6e9',1,'TMinuit::Migrad()']]],
+  ['migrad',['Migrad',['../class_t_minuit.html#ac7b43621fbb9033ca6d8bb113c7be6e9',1,'TMinuit::Migrad()'],['../class_fit_manager.html#a1c3c5567660de27f3aa68f77ea49870a',1,'FitManager::migrad()']]],
   ['minimum',['minimum',['../struct_veto_info.html#af62c27819586a151109923e3f5050e3e',1,'VetoInfo']]],
   ['minuit',['minuit',['../class_fit_manager.html#a2c25b838802e421186a4539834e0ee6f',1,'FitManager']]],
   ['minuit_5fversion',['MINUIT_VERSION',['../_fit_manager_8h.html#aa254c417af5a0ba99aafa78a9ecd274c',1,'FitManager.h']]],

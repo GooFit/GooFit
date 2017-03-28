@@ -4,6 +4,7 @@ var searchData=
   ['valid_5ffirst_5fchar',['valid_first_char',['../namespace_c_l_i_1_1detail.html#a3a05d1129df69e88135e178137b1fd89',1,'CLI::detail']]],
   ['valid_5flater_5fchar',['valid_later_char',['../namespace_c_l_i_1_1detail.html#a841371d5dbb0a52f453de4cc1d00cc51',1,'CLI::detail']]],
   ['valid_5fname_5fstring',['valid_name_string',['../namespace_c_l_i_1_1detail.html#a4274628d24f9e3fbc719284f1db263b8',1,'CLI::detail']]],
+  ['validation',['Validation',['../namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037ea13148717f8faa9037f37d28971dfc219',1,'CLI']]],
   ['validationerror',['ValidationError',['../struct_c_l_i_1_1_validation_error.html',1,'CLI::ValidationError'],['../struct_c_l_i_1_1_validation_error.html#ae1e2233b5668b07af2c96b9ff7d02a5a',1,'CLI::ValidationError::ValidationError()']]],
   ['validators',['Validators',['../group__validator__group.html',1,'']]],
   ['validators_5f',['validators_',['../class_c_l_i_1_1_option.html#aa009885c776e38edc8e65381f92fd711',1,'CLI::Option']]],

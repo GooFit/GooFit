@@ -1,5 +1,7 @@
 var searchData=
 [
+  ['badnamestring',['BadNameString',['../namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037eab319e260db27232cb74e2a23124b7a2c',1,'CLI']]],
+  ['baseclass',['BaseClass',['../namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037ea45b3e4c35409fb597ea598dc4b984b8c',1,'CLI']]],
   ['bl',['BL',['../_lineshapes_pdf_8h.html#ac9ea339e5b9617e72d7a8b4042796027aa6f5350f5a2b25a96d66757f761ce65c',1,'LineshapesPdf.h']]],
   ['bl2',['BL2',['../_lineshapes_pdf_8h.html#ac9ea339e5b9617e72d7a8b4042796027a8c13a541ade512c7fe90516306fc96f4',1,'LineshapesPdf.h']]],
   ['bl_5fprime',['BL_Prime',['../_lineshapes_pdf_8h.html#ac9ea339e5b9617e72d7a8b4042796027ac29d73f0922a78500ae4bf1ba74ef293',1,'LineshapesPdf.h']]],

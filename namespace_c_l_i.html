@@ -68,6 +68,7 @@ $(function() {
 <a href="#namespaces">Namespaces</a> &#124;
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#typedef-members">Typedefs</a> &#124;
+<a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">CLI Namespace Reference</div>  </div>
@@ -105,6 +106,9 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_c_l_i_1_1_extras_error.html">ExtrasError</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Thrown when too many positionals or options are found.  <a href="struct_c_l_i_1_1_extras_error.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_c_l_i_1_1_extras_i_n_i_error.html">ExtrasINIError</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Thrown when extra values are found in an INI file.  <a href="struct_c_l_i_1_1_extras_i_n_i_error.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_c_l_i_1_1_file_error.html">FileError</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Thrown when parsing an INI file and it is missing.  <a href="struct_c_l_i_1_1_file_error.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -113,6 +117,9 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_c_l_i_1_1_incorrect_construction.html">IncorrectConstruction</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Thrown when an option is set to conflicting values (non-vector and multi args, for example)  <a href="struct_c_l_i_1_1_incorrect_construction.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_c_l_i_1_1_invalid_error.html">InvalidError</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Thrown when validation fails before parsing.  <a href="struct_c_l_i_1_1_invalid_error.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_c_l_i_1_1is__bool.html">is_bool</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -160,6 +167,33 @@ Typedefs</h2></td></tr>
 <tr class="memitem:a9453f04d1daf8b12802e5380a50dac8b"><td class="memItemLeft" align="right" valign="top">typedef std::unique_ptr&lt; <a class="el" href="class_c_l_i_1_1_app.html">App</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_c_l_i.html#a9453f04d1daf8b12802e5380a50dac8b">App_p</a></td></tr>
 <tr class="separator:a9453f04d1daf8b12802e5380a50dac8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:a1d8108a219533f0b0361640a017f037e"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037e">ExitCodes</a> { <br />
+&#160;&#160;<a class="el" href="namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037ea505a83f220c02df2f85c3810cd9ceb38">ExitCodes::Success</a> = 0, 
+<a class="el" href="namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037ea903d95792f297008a1fd3fab8df69f79">ExitCodes::IncorrectConstruction</a> =100, 
+<a class="el" href="namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037eab319e260db27232cb74e2a23124b7a2c">ExitCodes::BadNameString</a>, 
+<a class="el" href="namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037eade33f5f54db87abfb2926228f0867038">ExitCodes::OptionAlreadyAdded</a>, 
+<br />
+&#160;&#160;<a class="el" href="namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037ea0b27918290ff5323bea1e3b78a9cf04e">ExitCodes::File</a>, 
+<a class="el" href="namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037ea3bb1503332637805beddb73a2dd1fe1b">ExitCodes::Conversion</a>, 
+<a class="el" href="namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037ea13148717f8faa9037f37d28971dfc219">ExitCodes::Validation</a>, 
+<a class="el" href="namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037eab651efdb98a5d6bd2b3935d0c3f4a5e2">ExitCodes::Required</a>, 
+<br />
+&#160;&#160;<a class="el" href="namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037eabdc6acb4dbd44761e887045a3fa74ad6">ExitCodes::Requires</a>, 
+<a class="el" href="namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037ea9c996acd3d07c857bf343151d04f6c00">ExitCodes::Excludes</a>, 
+<a class="el" href="namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037ea0a3f082873eb454bde444150b70253cc">ExitCodes::Extras</a>, 
+<a class="el" href="namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037eafc325318850beba46a99cec4701838d6">ExitCodes::ExtrasINI</a>, 
+<br />
+&#160;&#160;<a class="el" href="namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037ea4bbb8f967da6d1a610596d7257179c2b">ExitCodes::Invalid</a>, 
+<a class="el" href="namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037ea0dba0fac50f462bd91cd0fda9ad92977">ExitCodes::Horrible</a>, 
+<a class="el" href="namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037eaa40b471f8a3c0ca91e719ea8101aa46d">ExitCodes::OptionNotFound</a>, 
+<a class="el" href="namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037ea45b3e4c35409fb597ea598dc4b984b8c">ExitCodes::BaseClass</a> = 255
+<br />
+ }<tr class="memdesc:a1d8108a219533f0b0361640a017f037e"><td class="mdescLeft">&#160;</td><td class="mdescRight">These codes are part of every error in <a class="el" href="namespace_c_l_i.html">CLI</a>. They can be obtained from e using e.exit_code or as a quick shortcut, int values from e.get_error_code().  <a href="namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037e">More...</a><br /></td></tr>
+</td></tr>
+<tr class="separator:a1d8108a219533f0b0361640a017f037e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:ga3686c9f734556a7708e9450c936c20b2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__validator__group.html#ga3686c9f734556a7708e9450c936c20b2">ExistingFile</a> (std::string filename)</td></tr>
@@ -193,7 +227,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01071">1071</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01273">1273</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -209,7 +243,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l00626">626</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l00788">788</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -227,7 +261,7 @@ template&lt;bool B, class T  = void&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l00151">151</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l00201">201</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -243,7 +277,7 @@ template&lt;bool B, class T  = void&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l00629">629</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l00791">791</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -259,14 +293,59 @@ template&lt;bool B, class T  = void&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l00625">625</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l00787">787</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="a1d8108a219533f0b0361640a017f037e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1d8108a219533f0b0361640a017f037e">&#9670;&nbsp;</a></span>ExitCodes</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037e">CLI::ExitCodes</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>These codes are part of every error in <a class="el" href="namespace_c_l_i.html">CLI</a>. They can be obtained from e using e.exit_code or as a quick shortcut, int values from e.get_error_code(). </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a1d8108a219533f0b0361640a017f037ea505a83f220c02df2f85c3810cd9ceb38"></a>Success&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1d8108a219533f0b0361640a017f037ea903d95792f297008a1fd3fab8df69f79"></a>IncorrectConstruction&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1d8108a219533f0b0361640a017f037eab319e260db27232cb74e2a23124b7a2c"></a>BadNameString&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1d8108a219533f0b0361640a017f037eade33f5f54db87abfb2926228f0867038"></a>OptionAlreadyAdded&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1d8108a219533f0b0361640a017f037ea0b27918290ff5323bea1e3b78a9cf04e"></a>File&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1d8108a219533f0b0361640a017f037ea3bb1503332637805beddb73a2dd1fe1b"></a>Conversion&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1d8108a219533f0b0361640a017f037ea13148717f8faa9037f37d28971dfc219"></a>Validation&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1d8108a219533f0b0361640a017f037eab651efdb98a5d6bd2b3935d0c3f4a5e2"></a>Required&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1d8108a219533f0b0361640a017f037eabdc6acb4dbd44761e887045a3fa74ad6"></a>Requires&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1d8108a219533f0b0361640a017f037ea9c996acd3d07c857bf343151d04f6c00"></a>Excludes&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1d8108a219533f0b0361640a017f037ea0a3f082873eb454bde444150b70253cc"></a>Extras&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1d8108a219533f0b0361640a017f037eafc325318850beba46a99cec4701838d6"></a>ExtrasINI&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1d8108a219533f0b0361640a017f037ea4bbb8f967da6d1a610596d7257179c2b"></a>Invalid&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1d8108a219533f0b0361640a017f037ea0dba0fac50f462bd91cd0fda9ad92977"></a>Horrible&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1d8108a219533f0b0361640a017f037eaa40b471f8a3c0ca91e719ea8101aa46d"></a>OptionNotFound&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1d8108a219533f0b0361640a017f037ea45b3e4c35409fb597ea598dc4b984b8c"></a>BaseClass&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l00036">36</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 8 2017 16:24:23 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 28 2017 19:35:33 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

@@ -164,9 +164,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a00217b703c43b02e8233a9b2e54765d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check with name instead of pointer.  <a href="#a00217b703c43b02e8233a9b2e54765d5">More...</a><br /></td></tr>
 <tr class="separator:a00217b703c43b02e8233a9b2e54765d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">Help</div></td></tr>
-<tr class="memitem:a0ae617260d1ffbd5d588bc6603dcfba4"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_l_i_1_1_app.html#a0ae617260d1ffbd5d588bc6603dcfba4">config_to_str</a> () const</td></tr>
-<tr class="memdesc:a0ae617260d1ffbd5d588bc6603dcfba4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Produce a string that could be read in as a config of the current values of the <a class="el" href="class_c_l_i_1_1_app.html" title="Creates a command line program, with very few defaults. ">App</a>.  <a href="#a0ae617260d1ffbd5d588bc6603dcfba4">More...</a><br /></td></tr>
-<tr class="separator:a0ae617260d1ffbd5d588bc6603dcfba4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a282b98fb4878410e502e6169392ace11"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_l_i_1_1_app.html#a282b98fb4878410e502e6169392ace11">config_to_str</a> (bool default_also=false, std::string prefix=&quot;&quot;) const</td></tr>
+<tr class="memdesc:a282b98fb4878410e502e6169392ace11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Produce a string that could be read in as a config of the current values of the <a class="el" href="class_c_l_i_1_1_app.html" title="Creates a command line program, with very few defaults. ">App</a>. Set default_also to include default arguments. Prefix will add a string to the beginning of each option.  <a href="#a282b98fb4878410e502e6169392ace11">More...</a><br /></td></tr>
+<tr class="separator:a282b98fb4878410e502e6169392ace11"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab85cc077e2dfee3bd94eed8c61e1e2ea"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_l_i_1_1_app.html#ab85cc077e2dfee3bd94eed8c61e1e2ea">help</a> (size_t wid=30, std::string prev=&quot;&quot;) const</td></tr>
 <tr class="memdesc:ab85cc077e2dfee3bd94eed8c61e1e2ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Makes a help message, with a column wid for column 1.  <a href="#ab85cc077e2dfee3bd94eed8c61e1e2ea">More...</a><br /></td></tr>
 <tr class="separator:ab85cc077e2dfee3bd94eed8c61e1e2ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -186,9 +186,11 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:a55ce035acbdf843855e7649294d61c0c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_l_i_1_1_app.html#a55ce035acbdf843855e7649294d61c0c">App</a> (std::string <a class="el" href="class_c_l_i_1_1_app.html#aa6a2e79e0a5990b44bc5d76504437fcd">description_</a>, bool <a class="el" href="class_c_l_i_1_1_app.html#ab85cc077e2dfee3bd94eed8c61e1e2ea">help</a>, <a class="el" href="namespace_c_l_i_1_1detail.html#af27dda5da343e609526e3dacf435b1c6">detail::enabler</a> dummy_param)</td></tr>
-<tr class="memdesc:a55ce035acbdf843855e7649294d61c0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Special private constructor for subcommand.  <a href="#a55ce035acbdf843855e7649294d61c0c">More...</a><br /></td></tr>
-<tr class="separator:a55ce035acbdf843855e7649294d61c0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abc5ae1005010f08b10a14a742eefdf42"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_l_i_1_1_app.html#abc5ae1005010f08b10a14a742eefdf42">App</a> (std::string <a class="el" href="class_c_l_i_1_1_app.html#aa6a2e79e0a5990b44bc5d76504437fcd">description_</a>, bool <a class="el" href="class_c_l_i_1_1_app.html#ab85cc077e2dfee3bd94eed8c61e1e2ea">help</a>, <a class="el" href="namespace_c_l_i_1_1detail.html#af27dda5da343e609526e3dacf435b1c6">detail::enabler</a>)</td></tr>
+<tr class="memdesc:abc5ae1005010f08b10a14a742eefdf42"><td class="mdescLeft">&#160;</td><td class="mdescRight">Special private constructor for subcommand.  <a href="#abc5ae1005010f08b10a14a742eefdf42">More...</a><br /></td></tr>
+<tr class="separator:abc5ae1005010f08b10a14a742eefdf42"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2908ce3eded7e3d6bb2e6fdd2410576"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_l_i_1_1_app.html#ae2908ce3eded7e3d6bb2e6fdd2410576">_validate</a> () const</td></tr>
+<tr class="separator:ae2908ce3eded7e3d6bb2e6fdd2410576"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a733d1dbeb9993811d05780e4288ebb44"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_c_l_i_1_1_app.html#ac986a9b79d649fc18f73055acf6e137f">missing_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_l_i_1_1_app.html#a733d1dbeb9993811d05780e4288ebb44">missing</a> ()</td></tr>
 <tr class="memdesc:a733d1dbeb9993811d05780e4288ebb44"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return missing from the master.  <a href="#a733d1dbeb9993811d05780e4288ebb44">More...</a><br /></td></tr>
 <tr class="separator:a733d1dbeb9993811d05780e4288ebb44"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -203,6 +205,8 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:a241ba75a6c98b36349ae2f71a9137291"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_l_i_1_1_app.html#a241ba75a6c98b36349ae2f71a9137291">_parse</a> (std::vector&lt; std::string &gt; &amp;args)</td></tr>
 <tr class="memdesc:a241ba75a6c98b36349ae2f71a9137291"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal parse function.  <a href="#a241ba75a6c98b36349ae2f71a9137291">More...</a><br /></td></tr>
 <tr class="separator:a241ba75a6c98b36349ae2f71a9137291"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98057e95b09475275df3ee5875058c8d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_l_i_1_1_app.html#a98057e95b09475275df3ee5875058c8d">_parse_ini</a> (std::vector&lt; <a class="el" href="struct_c_l_i_1_1detail_1_1ini__ret__t.html">detail::ini_ret_t</a> &gt; &amp;args)</td></tr>
+<tr class="separator:a98057e95b09475275df3ee5875058c8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c18493ffbb1ada02822ca19b6d5e624"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_l_i_1_1_app.html#a9c18493ffbb1ada02822ca19b6d5e624">_parse_single</a> (std::vector&lt; std::string &gt; &amp;args, bool &amp;positional_only)</td></tr>
 <tr class="memdesc:a9c18493ffbb1ada02822ca19b6d5e624"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parse "one" argument (some may eat more than one), delegate to parent if fails, add to missing if missing from master.  <a href="#a9c18493ffbb1ada02822ca19b6d5e624">More...</a><br /></td></tr>
 <tr class="separator:a9c18493ffbb1ada02822ca19b6d5e624"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -214,9 +218,9 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:ad20d7e3b5292f92e41262e2bd2ff440d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_l_i_1_1_app.html#ad20d7e3b5292f92e41262e2bd2ff440d">_parse_short</a> (std::vector&lt; std::string &gt; &amp;args)</td></tr>
 <tr class="memdesc:ad20d7e3b5292f92e41262e2bd2ff440d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parse a short argument, must be at the top of the list.  <a href="#ad20d7e3b5292f92e41262e2bd2ff440d">More...</a><br /></td></tr>
 <tr class="separator:ad20d7e3b5292f92e41262e2bd2ff440d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa301544c8196914c21020a4bd2eef6e6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_l_i_1_1_app.html#aa301544c8196914c21020a4bd2eef6e6">_parse_long</a> (std::vector&lt; std::string &gt; &amp;args, bool overwrite=true)</td></tr>
-<tr class="memdesc:aa301544c8196914c21020a4bd2eef6e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parse a long argument, must be at the top of the list.  <a href="#aa301544c8196914c21020a4bd2eef6e6">More...</a><br /></td></tr>
-<tr class="separator:aa301544c8196914c21020a4bd2eef6e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad59bd843c6ae11e57a38aa3eaa3a1385"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_l_i_1_1_app.html#ad59bd843c6ae11e57a38aa3eaa3a1385">_parse_long</a> (std::vector&lt; std::string &gt; &amp;args)</td></tr>
+<tr class="memdesc:ad59bd843c6ae11e57a38aa3eaa3a1385"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parse a long argument, must be at the top of the list.  <a href="#ad59bd843c6ae11e57a38aa3eaa3a1385">More...</a><br /></td></tr>
+<tr class="separator:ad59bd843c6ae11e57a38aa3eaa3a1385"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -291,7 +295,7 @@ Parsing</h2></td></tr>
 <div class="textblock"><p>Creates a command line program, with very few defaults. </p>
 <p>To use, create a new <code>Program()</code> instance with <code>argc</code>, <code>argv</code>, and a help description. The templated add_option methods make it easy to prepare options. Remember to call <code>.start</code> before starting your program, so that the options can be evaluated and the help option doesn't accidentally run your program. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01079">1079</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01282">1282</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="ac986a9b79d649fc18f73055acf6e137f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac986a9b79d649fc18f73055acf6e137f">&#9670;&nbsp;</a></span>missing_t</h2>
@@ -313,13 +317,13 @@ Parsing</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01114">1114</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01318">1318</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a55ce035acbdf843855e7649294d61c0c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a55ce035acbdf843855e7649294d61c0c">&#9670;&nbsp;</a></span>App() <span class="overload">[1/2]</span></h2>
+<a id="abc5ae1005010f08b10a14a742eefdf42"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abc5ae1005010f08b10a14a742eefdf42">&#9670;&nbsp;</a></span>App() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -343,7 +347,7 @@ Parsing</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="namespace_c_l_i_1_1detail.html#af27dda5da343e609526e3dacf435b1c6">detail::enabler</a>&#160;</td>
-          <td class="paramname"><em>dummy_param</em>&#160;</td>
+          <td class="paramname">&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -360,7 +364,7 @@ Parsing</h2></td></tr>
 
 <p>Special private constructor for subcommand. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01159">1159</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01364">1364</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -400,7 +404,7 @@ Parsing</h2></td></tr>
 
 <p>Create a new program. Pass in the same arguments as main(), along with a help string. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01172">1172</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01377">1377</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -431,14 +435,46 @@ Parsing</h2></td></tr>
 
 <p>Internal parse function. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01762">1762</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l02004">2004</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l00728">CLI::Option::count()</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00694">CLI::Option::excludes_</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00904">CLI::Option::get_name()</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00417">CLI::detail::parse_ini()</a>, <a class="el" href="namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499a2b1681c49e27b242d19b93c5c3620cb6">CLI::detail::POSITIONAL_MARK</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00691">CLI::Option::requires_</a>, and <a class="el" href="_c_l_i11_8hpp_source.html#l00304">CLI::detail::rjoin()</a>.</p>
+<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l00893">CLI::Option::count()</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00856">CLI::Option::excludes_</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l01071">CLI::Option::get_name()</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00570">CLI::detail::parse_ini()</a>, <a class="el" href="namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499a2b1681c49e27b242d19b93c5c3620cb6">CLI::detail::POSITIONAL_MARK</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00853">CLI::Option::requires_</a>, and <a class="el" href="_c_l_i11_8hpp_source.html#l00364">CLI::detail::rjoin()</a>.</p>
 
 </div>
 </div>
-<a id="aa301544c8196914c21020a4bd2eef6e6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa301544c8196914c21020a4bd2eef6e6">&#9670;&nbsp;</a></span>_parse_long()</h2>
+<a id="a98057e95b09475275df3ee5875058c8d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a98057e95b09475275df3ee5875058c8d">&#9670;&nbsp;</a></span>_parse_ini()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool CLI::App::_parse_ini </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; <a class="el" href="struct_c_l_i_1_1detail_1_1ini__ret__t.html">detail::ini_ret_t</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>args</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Parse one ini param, return false if not found in any subcommand, remove if it is</p>
+<p>If this has more than one dot.separated.name, go into the subcommand matching it Returns true if it managed to find the option, if false you'll need to remove the arg manully. </p>
+
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l02089">2089</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+
+<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l00542">CLI::detail::ini_ret_t::fullname</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00545">CLI::detail::ini_ret_t::inputs</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00548">CLI::detail::ini_ret_t::level</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00563">CLI::detail::ini_ret_t::name()</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00554">CLI::detail::ini_ret_t::parent()</a>, and <a class="el" href="_c_l_i11_8hpp_source.html#l00461">CLI::detail::to_lower()</a>.</p>
+
+</div>
+</div>
+<a id="ad59bd843c6ae11e57a38aa3eaa3a1385"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad59bd843c6ae11e57a38aa3eaa3a1385">&#9670;&nbsp;</a></span>_parse_long()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -450,18 +486,8 @@ Parsing</h2></td></tr>
           <td class="memname">void CLI::App::_parse_long </td>
           <td>(</td>
           <td class="paramtype">std::vector&lt; std::string &gt; &amp;&#160;</td>
-          <td class="paramname"><em>args</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"><em>args</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>overwrite</em> = <code>true</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -473,11 +499,11 @@ Parsing</h2></td></tr>
 
 <p>Parse a long argument, must be at the top of the list. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01975">1975</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l02277">2277</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l01975">_parse_long()</a>, <a class="el" href="namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499ac1fabfea54ec6011e694f211f3ffebf3">CLI::detail::LONG</a>, <a class="el" href="namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499ab50339a10e1de285ac99d4c3990b8693">CLI::detail::NONE</a>, and <a class="el" href="_c_l_i11_8hpp_source.html#l00477">CLI::detail::split_long()</a>.</p>
+<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l02277">_parse_long()</a>, <a class="el" href="namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499ac1fabfea54ec6011e694f211f3ffebf3">CLI::detail::LONG</a>, <a class="el" href="namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499ab50339a10e1de285ac99d4c3990b8693">CLI::detail::NONE</a>, and <a class="el" href="_c_l_i11_8hpp_source.html#l00639">CLI::detail::split_long()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_c_l_i11_8hpp_source.html#l01975">_parse_long()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_c_l_i11_8hpp_source.html#l02277">_parse_long()</a>.</p>
 
 </div>
 </div>
@@ -507,11 +533,11 @@ Parsing</h2></td></tr>
 
 <p>Parse a positional, go up the tree to check. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01872">1872</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l02173">2173</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l01872">_parse_positional()</a>, and <a class="el" href="namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499ab50339a10e1de285ac99d4c3990b8693">CLI::detail::NONE</a>.</p>
+<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l02173">_parse_positional()</a>, and <a class="el" href="namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499ab50339a10e1de285ac99d4c3990b8693">CLI::detail::NONE</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_c_l_i11_8hpp_source.html#l01872">_parse_positional()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_c_l_i11_8hpp_source.html#l02173">_parse_positional()</a>.</p>
 
 </div>
 </div>
@@ -541,11 +567,11 @@ Parsing</h2></td></tr>
 
 <p>Parse a short argument, must be at the top of the list. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01914">1914</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l02216">2216</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l01914">_parse_short()</a>, <a class="el" href="namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499ab50339a10e1de285ac99d4c3990b8693">CLI::detail::NONE</a>, <a class="el" href="namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499aa35c2b02966b1563e5bf7b81b8b0cf77">CLI::detail::SHORT</a>, and <a class="el" href="_c_l_i11_8hpp_source.html#l00467">CLI::detail::split_short()</a>.</p>
+<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l02216">_parse_short()</a>, <a class="el" href="namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499ab50339a10e1de285ac99d4c3990b8693">CLI::detail::NONE</a>, <a class="el" href="namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499aa35c2b02966b1563e5bf7b81b8b0cf77">CLI::detail::SHORT</a>, and <a class="el" href="_c_l_i11_8hpp_source.html#l00629">CLI::detail::split_short()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_c_l_i11_8hpp_source.html#l01914">_parse_short()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_c_l_i11_8hpp_source.html#l02216">_parse_short()</a>.</p>
 
 </div>
 </div>
@@ -585,7 +611,7 @@ Parsing</h2></td></tr>
 
 <p>Parse "one" argument (some may eat more than one), delegate to parent if fails, add to missing if missing from master. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01843">1843</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l02144">2144</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499ac1fabfea54ec6011e694f211f3ffebf3">CLI::detail::LONG</a>, <a class="el" href="namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499ab50339a10e1de285ac99d4c3990b8693">CLI::detail::NONE</a>, <a class="el" href="namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499a2b1681c49e27b242d19b93c5c3620cb6">CLI::detail::POSITIONAL_MARK</a>, <a class="el" href="namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499aa35c2b02966b1563e5bf7b81b8b0cf77">CLI::detail::SHORT</a>, and <a class="el" href="namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499ac4fb22412f02354dbe5574e37caf50a7">CLI::detail::SUBCOMMAND</a>.</p>
 
@@ -617,11 +643,11 @@ Parsing</h2></td></tr>
 <p>Parse a subcommand, modify args and continue</p>
 <p>Unlike the others, this one will always allow fallthrough </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01898">1898</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l02200">2200</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l01898">_parse_subcommand()</a>.</p>
+<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l02200">_parse_subcommand()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_c_l_i11_8hpp_source.html#l01898">_parse_subcommand()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_c_l_i11_8hpp_source.html#l02200">_parse_subcommand()</a>.</p>
 
 </div>
 </div>
@@ -651,9 +677,9 @@ Parsing</h2></td></tr>
 
 <p>Selects a Classifer enum based on the type of the current argument. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01746">1746</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01988">1988</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499ac1fabfea54ec6011e694f211f3ffebf3">CLI::detail::LONG</a>, <a class="el" href="namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499ab50339a10e1de285ac99d4c3990b8693">CLI::detail::NONE</a>, <a class="el" href="namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499a2b1681c49e27b242d19b93c5c3620cb6">CLI::detail::POSITIONAL_MARK</a>, <a class="el" href="namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499aa35c2b02966b1563e5bf7b81b8b0cf77">CLI::detail::SHORT</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00477">CLI::detail::split_long()</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00467">CLI::detail::split_short()</a>, and <a class="el" href="namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499ac4fb22412f02354dbe5574e37caf50a7">CLI::detail::SUBCOMMAND</a>.</p>
+<p class="reference">References <a class="el" href="namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499ac1fabfea54ec6011e694f211f3ffebf3">CLI::detail::LONG</a>, <a class="el" href="namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499ab50339a10e1de285ac99d4c3990b8693">CLI::detail::NONE</a>, <a class="el" href="namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499a2b1681c49e27b242d19b93c5c3620cb6">CLI::detail::POSITIONAL_MARK</a>, <a class="el" href="namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499aa35c2b02966b1563e5bf7b81b8b0cf77">CLI::detail::SHORT</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00639">CLI::detail::split_long()</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00629">CLI::detail::split_short()</a>, and <a class="el" href="namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499ac4fb22412f02354dbe5574e37caf50a7">CLI::detail::SUBCOMMAND</a>.</p>
 
 </div>
 </div>
@@ -681,11 +707,40 @@ Parsing</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01734">1734</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01976">1976</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l01734">_valid_subcommand()</a>.</p>
+<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l01976">_valid_subcommand()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_c_l_i11_8hpp_source.html#l01734">_valid_subcommand()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_c_l_i11_8hpp_source.html#l01976">_valid_subcommand()</a>.</p>
+
+</div>
+</div>
+<a id="ae2908ce3eded7e3d6bb2e6fdd2410576"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae2908ce3eded7e3d6bb2e6fdd2410576">&#9670;&nbsp;</a></span>_validate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CLI::App::_validate </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Check the options to make sure there are no conficts.</p>
+<p>Currenly checks to see if mutiple positionals exist with -1 args </p>
+
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01949">1949</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -737,7 +792,7 @@ Parsing</h2></td></tr>
 
 <p>Add a configuration ini file option. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01439">1439</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01644">1644</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -777,9 +832,9 @@ Parsing</h2></td></tr>
 
 <p>Add option for flag. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01313">1313</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01516">1516</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l00185">CLI::detail::dummy</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00679">CLI::Option::expected_</a>, and <a class="el" href="_c_l_i11_8hpp_source.html#l00870">CLI::Option::get_positional()</a>.</p>
+<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l00235">CLI::detail::dummy</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l01037">CLI::Option::get_positional()</a>, <a class="el" href="namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037ea903d95792f297008a1fd3fab8df69f79">CLI::IncorrectConstruction</a>, and <a class="el" href="_c_l_i11_8hpp_source.html#l01234">CLI::Option::set_custom_option()</a>.</p>
 
 </div>
 </div>
@@ -833,9 +888,9 @@ template&lt;typename T , enable_if_t&lt; std::is_integral&lt; T &gt;::value &amp
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01331">1331</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01534">1534</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l00185">CLI::detail::dummy</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00679">CLI::Option::expected_</a>, and <a class="el" href="_c_l_i11_8hpp_source.html#l00870">CLI::Option::get_positional()</a>.</p>
+<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l00235">CLI::detail::dummy</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l01037">CLI::Option::get_positional()</a>, <a class="el" href="namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037ea903d95792f297008a1fd3fab8df69f79">CLI::IncorrectConstruction</a>, and <a class="el" href="_c_l_i11_8hpp_source.html#l01234">CLI::Option::set_custom_option()</a>.</p>
 
 </div>
 </div>
@@ -889,9 +944,9 @@ template&lt;typename T , enable_if_t&lt; is_bool&lt; T &gt;::value, detail::enab
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01353">1353</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01556">1556</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l00679">CLI::Option::expected_</a>, and <a class="el" href="_c_l_i11_8hpp_source.html#l00870">CLI::Option::get_positional()</a>.</p>
+<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l01037">CLI::Option::get_positional()</a>, <a class="el" href="namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037ea903d95792f297008a1fd3fab8df69f79">CLI::IncorrectConstruction</a>, and <a class="el" href="_c_l_i11_8hpp_source.html#l01234">CLI::Option::set_custom_option()</a>.</p>
 
 </div>
 </div>
@@ -943,11 +998,11 @@ template&lt;typename T , enable_if_t&lt; is_bool&lt; T &gt;::value, detail::enab
 <p>Add an option, will automatically understand the type for common types.</p>
 <p>To use, create a variable with the expected type, and pass it in after the name. After start is called, you can use count to see if the value was passed, and the value will be initialized properly. Numbers, vectors, and strings are supported.</p>
 <p>-&gt;required(), -&gt;default, and the validators are options, The positional options take an optional number of arguments.</p>
-<p>For example, </p><pre class="fragment">std::string filename
+<p>For example, </p><pre class="fragment">std::string filename;
 program.add_option("filename", filename, "description of filename");</pre> 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01239">1239</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01444">1444</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l00185">CLI::detail::dummy</a>.</p>
+<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l00235">CLI::detail::dummy</a>, and <a class="el" href="namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037eade33f5f54db87abfb2926228f0867038">CLI::OptionAlreadyAdded</a>.</p>
 
 </div>
 </div>
@@ -1007,9 +1062,9 @@ template&lt;typename T , enable_if_t&lt;!is_vector&lt; T &gt;::value, detail::en
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01260">1260</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01465">1465</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l00660">CLI::Option::defaultval_</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00236">CLI::detail::lexical_cast()</a>, and <a class="el" href="_c_l_i11_8hpp_source.html#l00663">CLI::Option::typeval_</a>.</p>
+<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l00286">CLI::detail::lexical_cast()</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l01234">CLI::Option::set_custom_option()</a>, and <a class="el" href="_c_l_i11_8hpp_source.html#l01241">CLI::Option::set_default_val()</a>.</p>
 
 </div>
 </div>
@@ -1069,9 +1124,9 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01286">1286</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01491">1491</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l00682">CLI::Option::allow_vector_</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00739">CLI::Option::clear()</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00660">CLI::Option::defaultval_</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00679">CLI::Option::expected_</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00292">CLI::detail::join()</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00236">CLI::detail::lexical_cast()</a>, and <a class="el" href="_c_l_i11_8hpp_source.html#l00663">CLI::Option::typeval_</a>.</p>
+<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l00904">CLI::Option::clear()</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00351">CLI::detail::join()</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00286">CLI::detail::lexical_cast()</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l01234">CLI::Option::set_custom_option()</a>, and <a class="el" href="_c_l_i11_8hpp_source.html#l01241">CLI::Option::set_default_val()</a>.</p>
 
 </div>
 </div>
@@ -1138,9 +1193,9 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01375">1375</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01578">1578</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l00660">CLI::Option::defaultval_</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00292">CLI::detail::join()</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00236">CLI::detail::lexical_cast()</a>, and <a class="el" href="_c_l_i11_8hpp_source.html#l00663">CLI::Option::typeval_</a>.</p>
+<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l00351">CLI::detail::join()</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00286">CLI::detail::lexical_cast()</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l01234">CLI::Option::set_custom_option()</a>, and <a class="el" href="_c_l_i11_8hpp_source.html#l01241">CLI::Option::set_default_val()</a>.</p>
 
 </div>
 </div>
@@ -1205,9 +1260,9 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01405">1405</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01609">1609</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l00660">CLI::Option::defaultval_</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00292">CLI::detail::join()</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00401">CLI::detail::to_lower()</a>, and <a class="el" href="_c_l_i11_8hpp_source.html#l00663">CLI::Option::typeval_</a>.</p>
+<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l00351">CLI::detail::join()</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l01234">CLI::Option::set_custom_option()</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l01241">CLI::Option::set_default_val()</a>, and <a class="el" href="_c_l_i11_8hpp_source.html#l00461">CLI::detail::to_lower()</a>.</p>
 
 </div>
 </div>
@@ -1253,9 +1308,9 @@ template&lt;typename T &gt; </div>
 
 <p>Add a subcommand. Like the constructor, you can override the help message addition by setting help=false. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01469">1469</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01674">1674</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l00185">CLI::detail::dummy</a>, and <a class="el" href="_c_l_i11_8hpp_source.html#l01089">name_</a>.</p>
+<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l00235">CLI::detail::dummy</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l01293">name_</a>, and <a class="el" href="namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037eade33f5f54db87abfb2926228f0867038">CLI::OptionAlreadyAdded</a>.</p>
 
 </div>
 </div>
@@ -1285,7 +1340,7 @@ template&lt;typename T &gt; </div>
 
 <p>Remove the error when extras are left over on the command line. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01189">1189</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01394">1394</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -1315,14 +1370,14 @@ template&lt;typename T &gt; </div>
 
 <p>Check the name, case insensitive if set. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01701">1701</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01931">1931</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l00401">CLI::detail::to_lower()</a>.</p>
+<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l00461">CLI::detail::to_lower()</a>.</p>
 
 </div>
 </div>
-<a id="a0ae617260d1ffbd5d588bc6603dcfba4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0ae617260d1ffbd5d588bc6603dcfba4">&#9670;&nbsp;</a></span>config_to_str()</h2>
+<a id="a282b98fb4878410e502e6169392ace11"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a282b98fb4878410e502e6169392ace11">&#9670;&nbsp;</a></span>config_to_str()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1333,8 +1388,19 @@ template&lt;typename T &gt; </div>
         <tr>
           <td class="memname">std::string CLI::App::config_to_str </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>default_also</em> = <code>false</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>prefix</em> = <code>&quot;&quot;</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
         </tr>
       </table>
   </td>
@@ -1344,11 +1410,11 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Produce a string that could be read in as a config of the current values of the <a class="el" href="class_c_l_i_1_1_app.html" title="Creates a command line program, with very few defaults. ">App</a>. </p>
+<p>Produce a string that could be read in as a config of the current values of the <a class="el" href="class_c_l_i_1_1_app.html" title="Creates a command line program, with very few defaults. ">App</a>. Set default_also to include default arguments. Prefix will add a string to the beginning of each option. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01585">1585</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01791">1791</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l00292">CLI::detail::join()</a>.</p>
+<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l00521">CLI::detail::inijoin()</a>.</p>
 
 </div>
 </div>
@@ -1378,7 +1444,9 @@ template&lt;typename T &gt; </div>
 
 <p>Counts the number of times the given option was passed. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01550">1550</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01756">1756</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+
+<p class="reference">References <a class="el" href="namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037eaa40b471f8a3c0ca91e719ea8101aa46d">CLI::OptionNotFound</a>.</p>
 
 </div>
 </div>
@@ -1408,9 +1476,9 @@ template&lt;typename T &gt; </div>
 
 <p>Print a nice error message and return the exit code. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01518">1518</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01724">1724</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l00045">CLI::Error::exit_code</a>, and <a class="el" href="_c_l_i11_8hpp_source.html#l00046">CLI::Error::print_help</a>.</p>
+<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l00065">CLI::Error::exit_code</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00067">CLI::Error::get_exit_code()</a>, <a class="el" href="_c_l_i11_8hpp_source.html#l00066">CLI::Error::print_help</a>, and <a class="el" href="namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037ea505a83f220c02df2f85c3810cd9ceb38">CLI::Success</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="_application_8h_source.html#l00108">GooFit::Application::exit()</a>.</p>
 
@@ -1441,7 +1509,7 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 <p>Stop subcommand fallthrough, so that parent commands cannot collect commands after subcommand. Default from parent, usually set on parent. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01215">1215</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01420">1420</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -1470,7 +1538,7 @@ template&lt;typename T &gt; </div>
 
 <p>Get a pointer to the config option. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01691">1691</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01921">1921</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -1499,7 +1567,7 @@ template&lt;typename T &gt; </div>
 
 <p>Get a pointer to the help flag. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01686">1686</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01916">1916</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -1528,7 +1596,7 @@ template&lt;typename T &gt; </div>
 
 <p>Get the name of the current app. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01696">1696</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01926">1926</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -1557,7 +1625,7 @@ template&lt;typename T &gt; </div>
 
 <p>Get a subcommand pointer list to the currently selected subcommands (after parsing) </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01560">1560</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01766">1766</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -1587,7 +1655,7 @@ template&lt;typename T &gt; </div>
 
 <p>Check to see if selected subcommand in list. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01566">1566</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01772">1772</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -1617,7 +1685,9 @@ template&lt;typename T &gt; </div>
 
 <p>Check with name instead of pointer. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01573">1573</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01779">1779</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+
+<p class="reference">References <a class="el" href="namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037eaa40b471f8a3c0ca91e719ea8101aa46d">CLI::OptionNotFound</a>.</p>
 
 </div>
 </div>
@@ -1657,9 +1727,9 @@ template&lt;typename T &gt; </div>
 
 <p>Makes a help message, with a column wid for column 1. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01595">1595</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01825">1825</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l00367">CLI::detail::format_help()</a>, and <a class="el" href="_c_l_i11_8hpp_source.html#l00401">CLI::detail::to_lower()</a>.</p>
+<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l00427">CLI::detail::format_help()</a>, and <a class="el" href="_c_l_i11_8hpp_source.html#l00461">CLI::detail::to_lower()</a>.</p>
 
 </div>
 </div>
@@ -1689,9 +1759,9 @@ template&lt;typename T &gt; </div>
 
 <p>Ignore case. Subcommand inherit value. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01195">1195</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01400">1400</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l01126">subcommands_</a>.</p>
+<p class="reference">References <a class="el" href="namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037eade33f5f54db87abfb2926228f0867038">CLI::OptionAlreadyAdded</a>, and <a class="el" href="_c_l_i11_8hpp_source.html#l01330">subcommands_</a>.</p>
 
 </div>
 </div>
@@ -1720,11 +1790,11 @@ template&lt;typename T &gt; </div>
 
 <p>Return missing from the master. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01718">1718</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01960">1960</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l01718">missing()</a>.</p>
+<p class="reference">References <a class="el" href="_c_l_i11_8hpp_source.html#l01960">missing()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_c_l_i11_8hpp_source.html#l01718">missing()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_c_l_i11_8hpp_source.html#l01960">missing()</a>.</p>
 
 </div>
 </div>
@@ -1763,7 +1833,7 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 <p>Parses the command line - throws errors This must be called after the options are in but before the rest of the program. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01500">1500</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01705">1705</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -1792,7 +1862,7 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 <p>The real work is done here. Expects a reversed vector. Changes the vector to the remaining options. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01511">1511</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01716">1716</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -1823,7 +1893,7 @@ template&lt;typename T &gt; </div>
 
 <p>Reimplemented in <a class="el" href="class_goo_fit_1_1_application.html#ae6c613dddde390eadc320aec4cb06d49">GooFit::Application</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01492">1492</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01697">1697</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -1853,7 +1923,7 @@ template&lt;typename T &gt; </div>
 
 <p>Removes an option from the <a class="el" href="class_c_l_i_1_1_app.html" title="Creates a command line program, with very few defaults. ">App</a>. Takes an option pointer. Returns true if found and removed. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01454">1454</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01659">1659</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -1882,7 +1952,7 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 <p>Require a subcommand to be given (does not affect help call) Does not return a pointer since it is supposed to be called on the main <a class="el" href="class_c_l_i_1_1_app.html" title="Creates a command line program, with very few defaults. ">App</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01208">1208</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01413">1413</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -1911,7 +1981,7 @@ template&lt;typename T &gt; </div>
 
 <p>Reset the parsed data. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01532">1532</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01738">1738</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -1940,7 +2010,7 @@ template&lt;typename T &gt; </div>
 
 <p>Internal function to run (<a class="el" href="class_c_l_i_1_1_app.html" title="Creates a command line program, with very few defaults. ">App</a>) callback, top down. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01725">1725</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01967">1967</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -1970,7 +2040,7 @@ template&lt;typename T &gt; </div>
 <p>Set a callback for the end of parsing.</p>
 <p>Due to a bug in c++11, it is not possible to overload on std::function (fixed in c++14 and backported to c++11 on newer compilers). Use capture by reference to get a pointer to <a class="el" href="class_c_l_i_1_1_app.html" title="Creates a command line program, with very few defaults. ">App</a> if needed. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01183">1183</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01388">1388</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -1997,7 +2067,7 @@ template&lt;typename T &gt; </div>
 
 <p>If true, allow extra arguments (ie, don't throw an error). </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01095">1095</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01299">1299</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -2023,7 +2093,7 @@ template&lt;typename T &gt; </div>
 
 <p>This is a function that runs when complete. Great for subcommands. Can throw. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01098">1098</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01302">1302</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -2049,7 +2119,7 @@ template&lt;typename T &gt; </div>
 
 <p>The name of the connected config file. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01148">1148</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01352">1352</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -2075,7 +2145,7 @@ template&lt;typename T &gt; </div>
 
 <p>Pointer to the config option. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01154">1154</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01358">1358</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -2101,7 +2171,7 @@ template&lt;typename T &gt; </div>
 
 <p>True if ini is required (throws if not present), if false simply keep going. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01151">1151</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01355">1355</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -2127,7 +2197,7 @@ template&lt;typename T &gt; </div>
 
 <p>Description of the current program/subcommand. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01092">1092</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01296">1296</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -2153,7 +2223,7 @@ template&lt;typename T &gt; </div>
 
 <p>Allow subcommand fallthrough, so that parent commands can collect commands after subcommand. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01132">1132</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01336">1336</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -2179,7 +2249,7 @@ template&lt;typename T &gt; </div>
 
 <p>A pointer to the help flag if there is one. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01108">1108</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01312">1312</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -2205,7 +2275,7 @@ template&lt;typename T &gt; </div>
 
 <p>If true, the program name is not case sensitive. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01129">1129</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01333">1333</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -2231,7 +2301,7 @@ template&lt;typename T &gt; </div>
 <p>Pair of classifier, string for missing options. (extra detail is removed on returning from parse)</p>
 <p>This is faster and cleaner than storing just a list of strings and reparsing. This may contain the &ndash; separator. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01119">1119</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01323">1323</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -2257,9 +2327,9 @@ template&lt;typename T &gt; </div>
 
 <p>Subcommand name or program name (from parser) </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01089">1089</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01293">1293</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_c_l_i11_8hpp_source.html#l01469">add_subcommand()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_c_l_i11_8hpp_source.html#l01674">add_subcommand()</a>.</p>
 
 </div>
 </div>
@@ -2285,7 +2355,7 @@ template&lt;typename T &gt; </div>
 
 <p>The list of options, stored locally. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01105">1105</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01309">1309</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -2311,7 +2381,7 @@ template&lt;typename T &gt; </div>
 
 <p>A pointer to the parent if this is a subcommand. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01135">1135</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01339">1339</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -2337,7 +2407,7 @@ template&lt;typename T &gt; </div>
 
 <p>-1 for 1 or more, 0 for not required, # for exact number required </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01141">1141</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01345">1345</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -2363,7 +2433,7 @@ template&lt;typename T &gt; </div>
 
 <p>A list of all the subcommand pointers that have been collected on the command line. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01138">1138</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01342">1342</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
 </div>
 </div>
@@ -2389,9 +2459,9 @@ template&lt;typename T &gt; </div>
 
 <p>Storage for subcommand list. </p>
 
-<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01126">1126</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_c_l_i11_8hpp_source.html#l01330">1330</a> of file <a class="el" href="_c_l_i11_8hpp_source.html">CLI11.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_c_l_i11_8hpp_source.html#l01195">ignore_case()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_c_l_i11_8hpp_source.html#l01400">ignore_case()</a>.</p>
 
 </div>
 </div>
@@ -2401,7 +2471,7 @@ template&lt;typename T &gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 8 2017 16:24:23 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 28 2017 19:35:33 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

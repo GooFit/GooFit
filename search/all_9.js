@@ -8,6 +8,7 @@ var searchData=
   ['help_5fpname',['help_pname',['../class_c_l_i_1_1_option.html#adc163181d02633344838b04191624306',1,'CLI::Option']]],
   ['help_5fpositional',['help_positional',['../class_c_l_i_1_1_option.html#a4b4efb7ea6c264b3dc09f5022121a9fe',1,'CLI::Option']]],
   ['help_5fptr_5f',['help_ptr_',['../class_c_l_i_1_1_app.html#ac7ee114dd086a41f0f144416bcdba097',1,'CLI::App']]],
+  ['horrible',['Horrible',['../namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037ea0dba0fac50f462bd91cd0fda9ad92977',1,'CLI']]],
   ['horribleerror',['HorribleError',['../struct_c_l_i_1_1_horrible_error.html',1,'CLI::HorribleError'],['../struct_c_l_i_1_1_horrible_error.html#a4883192c5b7e3f2a263caf24a09a86ec',1,'CLI::HorribleError::HorribleError()']]],
   ['host_5fcallnumber',['host_callnumber',['../_global_cuda_defines_8h.html#ab075a886819d967f700cde239187a5f5',1,'GlobalCudaDefines.h']]],
   ['host_5ffcn_5fptr',['host_fcn_ptr',['../_goo_pdf_8h.html#a2106f11c00570b6546f63c98afffbd0e',1,'GooPdf.h']]],

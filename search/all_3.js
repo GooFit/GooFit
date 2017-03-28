@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['badnamestring',['BadNameString',['../struct_c_l_i_1_1_bad_name_string.html',1,'CLI::BadNameString'],['../struct_c_l_i_1_1_bad_name_string.html#ab1b309894dd5d3674a62c4fed7615fe9',1,'CLI::BadNameString::BadNameString()']]],
+  ['badnamestring',['BadNameString',['../struct_c_l_i_1_1_bad_name_string.html',1,'CLI::BadNameString'],['../struct_c_l_i_1_1_bad_name_string.html#ab1b309894dd5d3674a62c4fed7615fe9',1,'CLI::BadNameString::BadNameString()'],['../namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037eab319e260db27232cb74e2a23124b7a2c',1,'CLI::BadNameString()']]],
+  ['baseclass',['BaseClass',['../namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037ea45b3e4c35409fb597ea598dc4b984b8c',1,'CLI']]],
   ['begin',['begin',['../classstrided__range.html#a9581283e86c1a9140487de4568a411ef',1,'strided_range']]],
   ['bg',['bg',['../namespacerang.html#ad33ed681a0b63f07283bbb55d19da7d2',1,'rang']]],
   ['bgb',['bgB',['../namespacerang.html#a42edf1c1b0d8e843ceb1208259177f08',1,'rang']]],

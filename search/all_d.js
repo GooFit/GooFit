@@ -8,6 +8,7 @@ var searchData=
   ['lass',['Lass',['../_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3aeb60ec1beae3adf63350208615dc44c1',1,'LineshapesPdf.h']]],
   ['lass_5fm3',['Lass_M3',['../_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3a281f928e14010b898799fbcffca5a839',1,'LineshapesPdf.h']]],
   ['last',['last',['../classstrided__range.html#a9fc39d970e757dfc487ad9febae56d49',1,'strided_range']]],
+  ['level',['level',['../struct_c_l_i_1_1detail_1_1ini__ret__t.html#afa0edc02b084804de00dba87b20c0a92',1,'CLI::detail::ini_ret_t']]],
   ['levicivita',['LeviCivita',['../_spin_helper_8h.html#a75e60ecbbb557fe28c80bd2f605ca879',1,'LeviCivita(const gpuLVec &amp;p1, const gpuLVec &amp;p2, const gpuLVec &amp;p3, const gpuLVec &amp;p4):&#160;SpinHelper.h'],['../_spin_helper_8h.html#a0c772ece7b8ed84fe19fa8abc8f5d53d',1,'LeviCivita(const gpuLVec &amp;a, const gpuLVec &amp;b, const gpuLVec &amp;c):&#160;SpinHelper.h']]],
   ['lexical_5fcast',['lexical_cast',['../namespace_c_l_i_1_1detail.html#ac3bdd048c40fd69bf65d9eaf52f10a06',1,'CLI::detail']]],
   ['lineshape',['Lineshape',['../class_lineshape.html',1,'Lineshape'],['../class_lineshape.html#acc1f8e0d0815a3dbfa86e1299936c698',1,'Lineshape::Lineshape(string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, LS kind=LS::BW, FF FormFac=FF::BL_Prime, fptype radius=1.5, std::vector&lt; Variable *&gt; AdditionalVars=std::vector&lt; Variable *&gt;())'],['../class_lineshape.html#a76bcb49c27dda830aee0c89db872fadb',1,'Lineshape::Lineshape(string name)']]],

@@ -1,9 +1,13 @@
 var searchData=
 [
   ['parameterschanged',['parametersChanged',['../class_pdf_base.html#ac450243387d85618dff8a991b0ddc24d',1,'PdfBase']]],
+  ['parent',['parent',['../struct_c_l_i_1_1detail_1_1ini__ret__t.html#a3eea594b003a4262919317cefa9c636c',1,'CLI::detail::ini_ret_t']]],
   ['parse',['parse',['../class_c_l_i_1_1_app.html#ad4c51103392faf91cc34fc642a90a17c',1,'CLI::App::parse(int argc, char **argv)'],['../class_c_l_i_1_1_app.html#a3d142053cce723e210a07edcc3de5332',1,'CLI::App::parse(std::vector&lt; std::string &gt; &amp;args)']]],
-  ['parse_5fini',['parse_ini',['../namespace_c_l_i_1_1detail.html#ac1615537881927733c464a05da8c7a30',1,'CLI::detail::parse_ini(std::istream &amp;input)'],['../namespace_c_l_i_1_1detail.html#a9e264b6aec663d4aaf224e03c5d39dbb',1,'CLI::detail::parse_ini(const std::string &amp;name)']]],
-  ['parseerror',['ParseError',['../struct_c_l_i_1_1_parse_error.html#ad7af7bf698b0fea17454b8cc27df19ab',1,'CLI::ParseError']]],
+  ['parse_5fini',['parse_ini',['../namespace_c_l_i_1_1detail.html#ac8c8e65c0837af2759e45a3d4df475f8',1,'CLI::detail::parse_ini(std::istream &amp;input)'],['../namespace_c_l_i_1_1detail.html#a028954ee0a0cf5333f66b85cec493bb7',1,'CLI::detail::parse_ini(const std::string &amp;name)']]],
+  ['parse_5flong',['parse_long',['../struct_c_l_i_1_1detail_1_1_app_friend.html#adc27aa2b5ee87f86b714875f4d2df568',1,'CLI::detail::AppFriend']]],
+  ['parse_5fshort',['parse_short',['../struct_c_l_i_1_1detail_1_1_app_friend.html#acc4647dc4272977fbfd47e7c6952baf1',1,'CLI::detail::AppFriend']]],
+  ['parse_5fsubcommand',['parse_subcommand',['../struct_c_l_i_1_1detail_1_1_app_friend.html#a091bd002147e12c2e21b4d1b42becff7',1,'CLI::detail::AppFriend']]],
+  ['parseerror',['ParseError',['../struct_c_l_i_1_1_parse_error.html#ae379a574967c6e9734f859b327c4507e',1,'CLI::ParseError']]],
   ['pdfbase',['PdfBase',['../class_pdf_base.html#a1620f7f438b6c7c6cc99569321cf947d',1,'PdfBase']]],
   ['phi',['phi',['../struct_dim5.html#a27eb37c098535b096c2653f08132aadc',1,'Dim5']]],
   ['poisson',['Poisson',['../class_t_random.html#a51c93a3ff4beda343267c0f02de62dc1',1,'TRandom']]],

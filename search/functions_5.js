@@ -4,7 +4,7 @@ var searchData=
   ['end',['end',['../classstrided__range.html#a6e1082a3cbe0debdd662cec2bc0bc22a',1,'strided_range']]],
   ['enum_5fto_5funderlying',['enum_to_underlying',['../_dalitz_plot_helpers_8h.html#a17ed9540c8489c150e57cf9a6b34f25d',1,'DalitzPlotHelpers.h']]],
   ['envname',['envname',['../class_c_l_i_1_1_option.html#aa1969c5f5a525910d761756a6d8e63a8',1,'CLI::Option']]],
-  ['error',['Error',['../struct_c_l_i_1_1_error.html#a4a7d1df599d7b771bd46eb6f72221cc1',1,'CLI::Error']]],
+  ['error',['Error',['../struct_c_l_i_1_1_error.html#a37ba5fcde7c1aa746803532ff549ff11',1,'CLI::Error']]],
   ['eval',['Eval',['../class_t_minuit.html#aa54f860c7100eeedd4f5e6cdc76c1302',1,'TMinuit']]],
   ['evaluateatpoints',['evaluateAtPoints',['../class_goo_pdf.html#a875f97d6406d58d99afaafbe2514e40f',1,'GooPdf::evaluateAtPoints(std::vector&lt; fptype &gt; &amp;points) const'],['../class_goo_pdf.html#a6bad6ce9eebdd78128f39596246703ef',1,'GooPdf::evaluateAtPoints(Variable *var, std::vector&lt; fptype &gt; &amp;res)']]],
   ['eventweightedaddpdf',['EventWeightedAddPdf',['../class_event_weighted_add_pdf.html#ac4226f08c07953a96cf4cd710deb372a',1,'EventWeightedAddPdf']]],
@@ -18,5 +18,6 @@ var searchData=
   ['expgauspdf',['ExpGausPdf',['../class_exp_gaus_pdf.html#a5248b4be67116077d5782de4030da549',1,'ExpGausPdf']]],
   ['exppdf',['ExpPdf',['../class_exp_pdf.html#a73b6dc4819fd133c6c868c7f5c78c549',1,'ExpPdf::ExpPdf(std::string n, Variable *_x, Variable *alpha, Variable *offset=0)'],['../class_exp_pdf.html#a4a86ef398fb09e42171bdf64b23116d0',1,'ExpPdf::ExpPdf(std::string n, Variable *_x, std::vector&lt; Variable *&gt; &amp;weights, Variable *offset=0)']]],
   ['extracthistogram',['extractHistogram',['../class_smooth_histogram_pdf.html#add629bdbca3b32d987cd2f7438feadfc',1,'SmoothHistogramPdf']]],
-  ['extraserror',['ExtrasError',['../struct_c_l_i_1_1_extras_error.html#a2144fc68bb1b9d34a6e6a39f7aad361e',1,'CLI::ExtrasError']]]
+  ['extraserror',['ExtrasError',['../struct_c_l_i_1_1_extras_error.html#a2144fc68bb1b9d34a6e6a39f7aad361e',1,'CLI::ExtrasError']]],
+  ['extrasinierror',['ExtrasINIError',['../struct_c_l_i_1_1_extras_i_n_i_error.html#a6bc4f7828c0439027cc5eb928d2e39fd',1,'CLI::ExtrasINIError']]]
 ];

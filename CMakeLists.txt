@@ -105,8 +105,7 @@ set(GOOFIT_ARCH Auto CACHE STRING "The GPU Archetecture, can be Auto, All, Commo
 option(GOOFIT_DOWNLOAD_THRUST "Download Thrust if not found (OMP only)" ON)
 
 
-option(GOOFIT_MPI "Turn on MPI for goofit (not implemented yet)" OFF)
-mark_as_advanced(GOOFIT_MPI)
+option(GOOFIT_MPI "Turn on MPI for goofit" OFF)
 
 if(GOOFIT_MPI)
     find_package(MPI REQUIRED)

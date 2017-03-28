@@ -43,37 +43,35 @@ public:
         int deviceCount;
         cudaGetDeviceCount (&deviceCount);
 
-        int nodes = atoi (getenv("PBS_NUM_NODES"));
+        // Get Batch system number of nodes if possible
+        auto PBS_NUM_NODES = getenv("PBS_NUM_NODES");
+
+        int nodes = PBS_NUM_NODES == nullptr ? 1 : atoi(PBS_NUM_NODES);
+
         if (nodes == 0)
             nodes = 1;
 
-        int procsPerNode = numProcs/nodes;
+        int procsPerNode = numProcs / nodes;
         int localRank = myId % procsPerNode;
 
         //Note, this will (probably) be overwritten by gpu-set-device calls...
-        if (deviceCount == 1 && localRank > 1)
-        {
+        if (deviceCount == 1 && localRank > 1) {
             //Multi-process to one GPU!
-            cudaSetDevice(0);
-        }
-        else if (procsPerNode > 1 && deviceCount > 1)
-        {
-            if (localRank <= deviceCount)
-            {
+            gpuDev_ = 0;
+        } else if (procsPerNode > 1 && deviceCount > 1) {
+            if (localRank <= deviceCount) {
                 //setting multiple processes to multiple GPU's
-                cudaSetDevice (localRank);
-            }
-            else
-            {
+                gpuDev_ = localRank;
+            } else {
                 //More multiple processes than GPU's, distribute sort of evenly!
-                cudaSetDevice (localRank % deviceCount);
+                gpuDev_ = localRank % deviceCount;
             }
-        }
-        else
-        {
+        } else {
             //multiple GPU's, using one process
-            cudaSetDevice(0);
+            gpuDev_ = 0;
         }
+        std::cout << "MPI using CUDA device: "  << gpuDev_ << std::endl;
+        cudaSetDevice(gpuDev_);
         #endif
         #endif
 
@@ -146,6 +144,12 @@ public:
     }
 
     int exit(const CLI::Error &e) {
+        #ifdef GOOFIT_MPI
+        int myId;
+        MPI_Comm_rank (MPI_COMM_WORLD, &myId);
+        if(myId>0)
+            return e.exit_code;
+        #endif
         std::cout << (e.exit_code==0 ? rang::fg::blue : rang::fg::red);
         int rval = CLI::App::exit(e);
         std::cout << rang::fg::reset;

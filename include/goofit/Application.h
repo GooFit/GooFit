@@ -148,9 +148,9 @@ public:
         int myId;
         MPI_Comm_rank (MPI_COMM_WORLD, &myId);
         if(myId>0)
-            return e.exit_code;
+            return e.get_exit_code();
         #endif
-        std::cout << (e.exit_code==0 ? rang::fg::blue : rang::fg::red);
+        std::cout << (e.get_exit_code()==0 ? rang::fg::blue : rang::fg::red);
         int rval = CLI::App::exit(e);
         std::cout << rang::fg::reset;
         return rval;

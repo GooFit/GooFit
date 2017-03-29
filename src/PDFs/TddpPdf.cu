@@ -339,7 +339,7 @@ EXEC_TARGET fptype device_Tddp(fptype* evt, fptype* p, unsigned int* indices) {
 MEM_DEVICE device_function_ptr ptr_to_Tddp = device_Tddp;
 
 __host__ TddpPdf::TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Variable* m12, Variable* m13,
-                          Variable* eventNumber, DecayInfo* decay, MixingTimeResolution* r, GooPdf* efficiency, Variable* mistag)
+                          CountingVariable* eventNumber, DecayInfo* decay, MixingTimeResolution* r, GooPdf* efficiency, Variable* mistag)
     : GooPdf(_dtime, n)
     , decayInfo(decay)
     , _m12(m12)
@@ -434,7 +434,7 @@ __host__ TddpPdf::TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Va
 }
 
 __host__ TddpPdf::TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Variable* m12, Variable* m13,
-                          Variable* eventNumber, DecayInfo* decay, vector<MixingTimeResolution*>& r, GooPdf* efficiency, Variable* md0,
+                          CountingVariable* eventNumber, DecayInfo* decay, vector<MixingTimeResolution*>& r, GooPdf* efficiency, Variable* md0,
                           Variable* mistag)
     : GooPdf(_dtime, n)
     , decayInfo(decay)
@@ -550,8 +550,32 @@ __host__ void TddpPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) 
 
     numEntries = dataSize;
 
+    //Ideally this would not be required, this would be called AFTER setData which will set m_iEventsPerTask
+#ifdef GOOFIT_MPI
+    int myId, numProcs;
+    MPI_Comm_size(MPI_COMM_WORLD, &numProcs);
+    MPI_Comm_rank(MPI_COMM_WORLD, &myId);
+
+    int perTask = numEntries/numProcs;
+
+    int* counts = new int[numProcs];
+
+    for(int i = 0; i < numProcs - 1; i++)
+        counts[i] = perTask;
+
+    counts[numProcs - 1] = numEntries - perTask*(numProcs - 1);
+
+    setNumPerTask(this, counts[myId]);
+
+    delete [] counts;
+#endif
+
     for(int i = 0; i < 16; i++) {
+#ifdef GOOFIT_MPI
+        cachedWaves[i] = new thrust::device_vector<WaveHolder_s>(m_iEventsPerTask);
+#else
         cachedWaves[i] = new thrust::device_vector<WaveHolder_s>(dataSize);
+#endif
         void* dummy = thrust::raw_pointer_cast(cachedWaves[i]->data());
         MEMCPY_TO_SYMBOL(cWaves, &dummy, sizeof(WaveHolder_s*), i*sizeof(WaveHolder_s*), cudaMemcpyHostToDevice);
     }
@@ -612,10 +636,17 @@ __host__ fptype TddpPdf::normalise() const {
     for(int i = 0; i < decayInfo->resonances.size(); ++i) {
         if(redoIntegral[i]) {
 
+#ifdef GOOFIT_MPI
+            thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
+                              thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, arrayAddress, eventSize)),
+                              strided_range<thrust::device_vector<WaveHolder_s>::iterator>(cachedWaves[i]->begin(), cachedWaves[i]->end(), 1).begin(),
+                              *(calculators[i]));
+#else
             thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
                               thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
                               strided_range<thrust::device_vector<WaveHolder_s>::iterator>(cachedWaves[i]->begin(), cachedWaves[i]->end(), 1).begin(),
                               *(calculators[i]));
+#endif
             //std::cout << "Integral for resonance " << i << " " << numEntries << " " << totalEventSize << std::endl;
         }
 

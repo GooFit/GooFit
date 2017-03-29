@@ -1,10 +1,10 @@
 #pragma once
 
 // Distributed under the LGPL v2.1 license.  See accompanying
-// file LICENSE or https://github.com/henryiii/CLI11 for details.
+// file LICENSE or https://github.com/CLTools/CLI11 for details.
 
 // This file was generated using MakeSingleHeader.py in CLI11/scripts
-// from: v0.6
+// from: v0.8
 
 // This has the complete CLI library in one file.
 
@@ -32,6 +32,26 @@
 
 namespace CLI {
 
+/// These codes are part of every error in CLI. They can be obtained from e using e.exit_code or as a quick shortcut, int values from e.get_error_code().
+enum class ExitCodes {
+    Success = 0,
+    IncorrectConstruction=100,
+    BadNameString,
+    OptionAlreadyAdded,
+    File,
+    Conversion,
+    Validation,
+    Required,
+    Requires,
+    Excludes,
+    Extras,
+    ExtrasINI,
+    Invalid,
+    Horrible,
+    OptionNotFound,
+    BaseClass = 255
+};
+
 // Error definitions
 
 /// @defgroup error_group Errors
@@ -42,97 +62,127 @@ namespace CLI {
 
 /// All errors derive from this one
 struct Error : public std::runtime_error {
-    int exit_code;
+    ExitCodes exit_code;
     bool print_help;
-    Error(std::string parent, std::string name, int exit_code=255, bool print_help=true) : runtime_error(parent + ": " + name), exit_code(exit_code), print_help(print_help) {}
+    int get_exit_code() const {return static_cast<int>(exit_code);}
+    Error(std::string parent, std::string name, ExitCodes exit_code=ExitCodes::BaseClass, bool print_help=true)
+        : runtime_error(parent + ": " + name), exit_code(exit_code), print_help(print_help) {}
 };
 
 /// Construction errors (not in parsing)
 struct ConstructionError : public Error {
     // Using Error::Error constructors seem to not work on GCC 4.7
-    ConstructionError(std::string parent, std::string name, int exit_code=255, bool print_help=true) : Error(parent, name, exit_code, print_help) {}
+    ConstructionError(std::string parent, std::string name, ExitCodes exit_code=ExitCodes::BaseClass, bool print_help=true)
+        : Error(parent, name, exit_code, print_help) {}
 };
 
 /// Thrown when an option is set to conflicting values (non-vector and multi args, for example)
 struct IncorrectConstruction : public ConstructionError {
-    IncorrectConstruction(std::string name) : ConstructionError("IncorrectConstruction", name, 8) {}
+    IncorrectConstruction(std::string name)
+        : ConstructionError("IncorrectConstruction", name, ExitCodes::IncorrectConstruction) {}
 };
 
 /// Thrown on construction of a bad name
 struct BadNameString : public ConstructionError {
-    BadNameString(std::string name) : ConstructionError("BadNameString", name, 1) {}
+    BadNameString(std::string name)
+        : ConstructionError("BadNameString", name, ExitCodes::BadNameString) {}
 };
 
 /// Thrown when an option already exists
 struct OptionAlreadyAdded : public ConstructionError {
-    OptionAlreadyAdded(std::string name) : ConstructionError("OptionAlreadyAdded", name, 3) {}
+    OptionAlreadyAdded(std::string name)
+        : ConstructionError("OptionAlreadyAdded", name, ExitCodes::OptionAlreadyAdded) {}
 };
 
 // Parsing errors
 
 /// Anything that can error in Parse
 struct ParseError : public Error {
-    ParseError(std::string parent, std::string name, int exit_code=255, bool print_help=true) : Error(parent, name, exit_code, print_help) {}
+    ParseError(std::string parent, std::string name, ExitCodes exit_code=ExitCodes::BaseClass, bool print_help=true)
+        : Error(parent, name, exit_code, print_help) {}
 };
 
 // Not really "errors"
 
 /// This is a successful completion on parsing, supposed to exit
 struct Success : public ParseError {
-    Success() : ParseError("Success", "Successfully completed, should be caught and quit", 0, false) {}
+    Success()
+        : ParseError("Success", "Successfully completed, should be caught and quit", ExitCodes::Success, false) {}
 };
 
 /// -h or --help on command line
 struct CallForHelp : public ParseError {
-    CallForHelp() : ParseError("CallForHelp", "This should be caught in your main function, see examples", 0) {}
+    CallForHelp()
+        : ParseError("CallForHelp", "This should be caught in your main function, see examples", ExitCodes::Success) {}
 };
 
 
 /// Thrown when parsing an INI file and it is missing
 struct FileError : public ParseError {
-    FileError (std::string name) : ParseError("FileError", name, 10) {}
+    FileError (std::string name)
+        : ParseError("FileError", name, ExitCodes::File) {}
 };
 
 /// Thrown when conversion call back fails, such as when an int fails to coerse to a string
 struct ConversionError : public ParseError {
-    ConversionError(std::string name) : ParseError("ConversionError", name, 2) {}
+    ConversionError(std::string name)
+        : ParseError("ConversionError", name, ExitCodes::Conversion) {}
 };
 
 /// Thrown when validation of results fails
 struct ValidationError : public ParseError {
-    ValidationError(std::string name) : ParseError("ValidationError", name, 2) {}
+    ValidationError(std::string name)
+        : ParseError("ValidationError", name, ExitCodes::Validation) {}
 };
 
 /// Thrown when a required option is missing
 struct RequiredError : public ParseError {
-    RequiredError(std::string name) : ParseError("RequiredError", name, 5) {}
+    RequiredError(std::string name)
+        : ParseError("RequiredError", name, ExitCodes::Required) {}
 };
 
 /// Thrown when a requires option is missing
 struct RequiresError : public ParseError {
-    RequiresError(std::string name, std::string subname) : ParseError("RequiresError", name + " requires " + subname, 13) {}
+    RequiresError(std::string name, std::string subname)
+        : ParseError("RequiresError", name + " requires " + subname, ExitCodes::Requires) {}
 };
 
 /// Thrown when a exludes option is present
 struct ExcludesError : public ParseError {
-    ExcludesError(std::string name, std::string subname) : ParseError("ExcludesError", name + " excludes " + subname, 14) {}
+    ExcludesError(std::string name, std::string subname)
+        : ParseError("ExcludesError", name + " excludes " + subname, ExitCodes::Excludes) {}
 };
 
 /// Thrown when too many positionals or options are found
 struct ExtrasError : public ParseError {
-    ExtrasError(std::string name) : ParseError("ExtrasError", name, 6) {}
+    ExtrasError(std::string name)
+        : ParseError("ExtrasError", name, ExitCodes::Extras) {}
+};
+
+/// Thrown when extra values are found in an INI file
+struct ExtrasINIError : public ParseError {
+    ExtrasINIError(std::string name)
+        : ParseError("ExtrasINIError", name, ExitCodes::ExtrasINI) {}
+};
+
+/// Thrown when validation fails before parsing
+struct InvalidError : public ParseError {
+    InvalidError(std::string name)
+        : ParseError("InvalidError", name, ExitCodes::Invalid) {}
 };
 
 /// This is just a safety check to verify selection and parsing match
 struct HorribleError : public ParseError {
-    HorribleError(std::string name) : ParseError("HorribleError", "(You should never see this error) " + name, 7) {}
+    HorribleError(std::string name)
+        : ParseError("HorribleError", "(You should never see this error) " + name, ExitCodes::Horrible) {}
 };
 
 // After parsing
 
 /// Thrown when counting a non-existent option
 struct OptionNotFound : public Error {
-    OptionNotFound(std::string name) : Error("OptionNotFound", name, 4) {}
+    OptionNotFound(std::string name)
+        : Error("OptionNotFound", name,  ExitCodes::OptionNotFound) {}
 };
 
 /// @}
@@ -257,20 +307,10 @@ namespace detail {
         }
     }
 
-    /// Vector
-    template<typename T, 
-    enable_if_t<is_vector<T>::value, detail::enabler> = detail::dummy>
-    bool lexical_cast(std::string input, T& output) {
-        if(output.size() == input.size())
-            output.resize(input.size());
-        for(size_t i=0; i<input.size(); i++)
-            output[i] = input[i];
-        return true;
-    }
 
     /// String and similar
     template<typename T, 
-    enable_if_t<!std::is_floating_point<T>::value && !std::is_integral<T>::value && !is_vector<T>::value
+    enable_if_t<!std::is_floating_point<T>::value && !std::is_integral<T>::value
     , detail::enabler> = detail::dummy>
     bool lexical_cast(std::string input, T& output) {
         output = input;
@@ -287,6 +327,25 @@ namespace CLI {
 namespace detail {
 
 
+// Based on http://stackoverflow.com/questions/236129/split-a-string-in-c
+///Split a string by a delim
+std::vector<std::string> split(const std::string &s, char delim) {
+    std::vector<std::string> elems;
+    // Check to see if emtpy string, give consistent result
+    if(s=="")
+        elems.push_back("");
+    else {
+        std::stringstream ss;
+        ss.str(s);
+        std::string item;
+        while (std::getline(ss, item, delim)) {
+            elems.push_back(item);
+        }
+    }
+    return elems;
+}
+
+
 /// Simple function to join a string
 template <typename T>
 std::string join(const T& v, std::string delim = ",") {
@@ -300,6 +359,7 @@ std::string join(const T& v, std::string delim = ",") {
     return s.str();
 }
 
+/// Join a string in reverse order
 template<typename T>
 std::string rjoin(const T& v, std::string delim = ",") {
     std::ostringstream s;
@@ -311,7 +371,7 @@ std::string rjoin(const T& v, std::string delim = ",") {
     return s.str();
 }
 
-// Based on http://stackoverflow.com/questions/25829143/c-trim-whitespace-from-a-string
+// Based roughly on http://stackoverflow.com/questions/25829143/c-trim-whitespace-from-a-string
 
 /// Trim whitespace from left of string
 std::string& ltrim(std::string &str) {
@@ -361,7 +421,7 @@ std::string trim_copy(const std::string &str) {
 /// Make a copy of the string and then trim it, any filter string can be used (any char in string is filtered)
 std::string trim_copy(const std::string &str, const std::string &filter) {
     std::string s = str;
-    return rtrim(s, filter);
+    return trim(s, filter);
 }
 /// Print a two part "help" string
 void format_help(std::stringstream &out, std::string name, std::string description, size_t wid) {
@@ -404,6 +464,52 @@ std::string inline to_lower(std::string str) {
     return str;
 }
 
+/// Split a string '"one two" "three"' into 'one two', 'three'
+std::vector<std::string> inline split_up(std::string str) {
+    
+    std::vector<char> delims = {'\'', '\"'};
+    auto find_ws = [](char ch){ return std::isspace<char>(ch , std::locale());};
+    trim(str);
+
+    std::vector<std::string> output;
+
+    while(str.size() > 0) {
+        if(str[0] == '\'') {
+            auto end = str.find('\'', 1);
+            if(end != std::string::npos) {
+                output.push_back(str.substr(1,end-1));
+                str = str.substr(end+1);
+            } else {
+                output.push_back(str.substr(1));
+                str = "";
+            }
+        } else if(str[0] == '\"') {
+            auto end = str.find('\"', 1);
+            if(end != std::string::npos) {
+                output.push_back(str.substr(1,end-1));
+                str = str.substr(end+1);
+            } else {
+                output.push_back(str.substr(1));
+                str = "";
+            }
+
+        } else {
+            auto it = std::find_if(std::begin(str), std::end(str), find_ws);
+            if(it != std::end(str)) {
+                std::string value = std::string(str.begin(),it);
+                output.push_back(value);
+                str = std::string(it, str.end());
+            } else {
+                output.push_back(str);
+                str = "";
+            }
+        }
+        trim(str);
+    }
+
+    return output;
+}
+
 }
 }
 
@@ -412,40 +518,96 @@ std::string inline to_lower(std::string str) {
 namespace CLI {
 namespace detail {
 
+inline std::string inijoin(std::vector<std::string> args) {
+    std::ostringstream s;
+    size_t start = 0;
+    for (const auto& arg : args) {
+        if(start++ > 0)
+            s << " ";
+
+        auto it = std::find_if(arg.begin(), arg.end(), [](char ch){ return std::isspace<char>(ch , std::locale());});
+        if(it == arg.end())
+            s << arg;
+        else if(arg.find("\"") == std::string::npos)
+            s << "\"" << arg << "\"";
+        else
+            s << "\'" << arg << "\'";
+    }
+
+    return s.str();
+}
+
+struct ini_ret_t {
+    /// This is the full name with dots
+    std::string fullname;
+
+    /// Listing of inputs
+    std::vector<std::string> inputs;
+
+    /// Current parent level
+    size_t level = 0;
+
+    /// Return parent or empty string, based on level
+    ///
+    /// Level 0, a.b.c would return a
+    /// Level 1, a.b.c could return b
+    std::string parent () const {
+        std::vector<std::string> plist = detail::split(fullname, '.');
+        if(plist.size() > (level+1))
+            return plist[level];
+        else
+            return "";
+    }
+
+    /// Return name
+    std::string name () const {
+        std::vector<std::string> plist = detail::split(fullname, '.');
+        return plist.at(plist.size()-1);
+    }
+};
 
 /// Internal parsing function
-std::vector<std::string> parse_ini(std::istream &input) {
-    std::string line;
+std::vector<ini_ret_t> parse_ini(std::istream &input) {
+    std::string name, line;
     std::string section = "default";
 
-    std::vector<std::string> output;
+    std::vector<ini_ret_t> output;
 
     while(getline(input, line)) {
+        std::vector<std::string> items;
+
         detail::trim(line);
         size_t len = line.length();
         if(len > 1 && line[0] == '[' && line[len-1] == ']') {
             section = line.substr(1,len-2);
-            section = detail::to_lower(section);
-        } else if (len > 0) {
+        } else if (len > 0 && line[0] != ';') {
+            output.emplace_back();
+            ini_ret_t& out = output.back();
+
             // Find = in string, split and recombine
             auto pos = line.find("=");
             if(pos != std::string::npos) {
-                std::string name = detail::trim_copy(line.substr(0,pos));
+                name = detail::trim_copy(line.substr(0,pos));
                 std::string item = detail::trim_copy(line.substr(pos+1));
-                trim(item, "\"\'"); 
-                line = name + "=" + item;
+                items = detail::split_up(item);
+            } else {
+                name = detail::trim_copy(line);
+                items = {"ON"};
             }
-            if(section == "default")
-                output.push_back("--" + line);
+
+            if(detail::to_lower(section) == "default")
+                out.fullname = name;
             else
-                output.push_back("--" + section + "." + line);
+                out.fullname = section + "." + name;
+
+            out.inputs.insert(std::end(out.inputs), std::begin(items), std::end(items));
         }
     }
     return output;
 }
 
 /// Parse an INI file, throw an error (ParseError:INIParseError or FileError) on failure
-std::vector<std::string> parse_ini(const std::string &name) {
+std::vector<ini_ret_t> parse_ini(const std::string &name) {
 
     std::ifstream input{name};
     if(!input.good())
@@ -581,7 +743,7 @@ bool ExistingDirectory(std::string filename) {
         return true;
     } else {
         std::cerr << "Directory is actually a file: " << filename << std::endl;
-        return true;
+        return false;
     }
 }
 
@@ -678,8 +840,8 @@ protected:
     /// The number of expected values, 0 for flag, -1 for unlimited vector
     int expected_ {1};
 
-    /// A private setting to allow non-vector args to not be able to accept incorrect expected values
-    bool allow_vector_ {false};
+    /// A private setting to allow args to not be able to accept incorrect expected values
+    bool changeable_ {false};
     
     /// Ignore the case when matching (option, not value)
     bool ignore_case_ {false};
@@ -710,6 +872,9 @@ protected:
 
     /// Results of parsing
     results_t results_;
+
+    /// Whether the callback has run (needed for INI parsing)
+    bool callback_run_ {false};
 
     ///@}
 
@@ -759,8 +924,10 @@ public:
     Option* expected(int value) {
         if(value == 0)
             throw IncorrectConstruction("Cannot set 0 expected, use a flag instead");
-        if(!allow_vector_ && value != 1)
-            throw IncorrectConstruction("You can only change the Expected arguments for vectors");
+        else if(expected_ == 0)
+            throw IncorrectConstruction("Cannot make a flag take arguments!");
+        else if(!changeable_)
+            throw IncorrectConstruction("You can only change the expected arguments for vectors");
         expected_ = value;
         return this;
     }
@@ -915,8 +1082,8 @@ public:
     /// The name and any extras needed for positionals
     std::string help_positional() const {
         std::string out = pname_;
-        if(get_expected()<1)
-            out = out + "x" + std::to_string(get_expected());
+        if(get_expected()>1)
+            out = out + "(" + std::to_string(get_expected()) + "x)";
         else if(get_expected()==-1)
             out = out + "...";
         out = get_required() ? out : "["+out+"]";
@@ -966,6 +1133,7 @@ public:
         return out.str();
 
     }
+
 
     ///@}
     /// @name Parser tools
@@ -1044,6 +1212,7 @@ public:
     /// Puts a result at position r
     void add_result(std::string s) {
         results_.push_back(s);
+        callback_run_ = false;
     }
 
 
@@ -1052,8 +1221,40 @@ public:
         return results_;
     }
 
+    /// See if the callback has been run already
+    bool get_callback_run() const {
+        return callback_run_;
+    }
+
+    ///@}
+    /// @name Custom options
+    ///@{
+
+    /// Set a custom option, typestring, expected, and changeable
+    void set_custom_option(std::string typeval, int expected=1, bool changeable = false) {
+        typeval_ = typeval;
+        expected_ = expected;
+        changeable_ = changeable;
+    }
+
+    /// Set the default value string representation
+    void set_default_val(std::string val) {
+        defaultval_ = val;
+    }
+
     ///@}
 
+
+    protected:
+
+
+    /// @name App Helpers
+    ///@{
+    /// Can print positional name detailed option if true
+    bool _has_help_positional() const {
+        return get_positional() && (has_description() || requires_.size()>0 || excludes_.size()>0 );
+    }
+    ///@}
 };
 
 
@@ -1066,9 +1267,11 @@ namespace CLI {
 
 namespace detail {
 enum class Classifer {NONE, POSITIONAL_MARK, SHORT, LONG, SUBCOMMAND};
+class AppFriend;
 }
 
 class App;
+
 
 typedef std::unique_ptr<App> App_p;
 
@@ -1078,6 +1281,7 @@ typedef std::unique_ptr<App> App_p;
 * program, so that the options can be evaluated and the help option doesn't accidentally run your program. */
 class App {
     friend Option;
+    friend detail::AppFriend;
 protected:
     
     // This library follows the Google style guide for member names ending in underscores
@@ -1153,10 +1357,11 @@ protected:
     /// Pointer to the config option
     Option* config_ptr_ {nullptr};
 
+
     ///@}
    
     /// Special private constructor for subcommand
-    App(std::string description_, bool help, detail::enabler dummy_param) 
+    App(std::string description_, bool help, detail::enabler) 
         :  description_(description_) {
 
         if(help)
@@ -1233,7 +1438,7 @@ public:
     /// 
     /// For example,
     /// 
-    ///     std::string filename
+    ///     std::string filename;
     ///     program.add_option("filename", filename, "description of filename");
     ///
     Option* add_option(
@@ -1272,11 +1477,11 @@ public:
         };
 
         Option* opt = add_option(name, fun, description, defaulted);
-        opt->typeval_ = detail::type_name<T>();
+        opt->set_custom_option(detail::type_name<T>());
         if(defaulted) {
             std::stringstream out;
             out << variable;
-            opt->defaultval_ = out.str();
+            opt->set_default_val(out.str());
         }
         return opt;
     }
@@ -1301,11 +1506,9 @@ public:
         };
 
         Option* opt =  add_option(name, fun, description, defaulted);
-        opt->allow_vector_ = true;
-        opt->expected_ = -1;
-        opt->typeval_ = detail::type_name<T>();
+        opt->set_custom_option(detail::type_name<T>(), -1, true);
         if(defaulted)
-            opt->defaultval_ =  "[" + detail::join(variable) + "]";
+            opt->set_default_val("[" + detail::join(variable) + "]");
         return opt;
     }
 
@@ -1321,7 +1524,7 @@ public:
         Option* opt = add_option(name, fun, description, false);
         if(opt->get_positional())
             throw IncorrectConstruction("Flags cannot be positional");
-        opt->expected_ = 0;
+        opt->set_custom_option("", 0);
         return opt;
     }
 
@@ -1343,7 +1546,7 @@ public:
         Option* opt = add_option(name, fun, description, false);
         if(opt->get_positional())
             throw IncorrectConstruction("Flags cannot be positional");
-        opt->expected_ = 0;
+        opt->set_custom_option("", 0);
         return opt;
     }
 
@@ -1365,7 +1568,7 @@ public:
         Option* opt = add_option(name, fun, description, false);
         if(opt->get_positional())
             throw IncorrectConstruction("Flags cannot be positional");
-        opt->expected_ = 0;
+        opt->set_custom_option("", 0);
         return opt;
     }
 
@@ -1391,12 +1594,13 @@ public:
         };
 
         Option* opt = add_option(name, fun, description, defaulted);
-        opt->typeval_ = detail::type_name<T>();
-        opt->typeval_ += " in {" + detail::join(options) + "}";
+        std::string typeval = detail::type_name<T>();
+        typeval += " in {" + detail::join(options) + "}";
+        opt->set_custom_option(typeval);
         if(defaulted) {
             std::stringstream out;
             out << member;
-            opt->defaultval_ = out.str();
+            opt->set_default_val(out.str());
         }
         return opt;
     }
@@ -1426,10 +1630,11 @@ public:
         };
 
         Option* opt = add_option(name, fun, description, defaulted);
-        opt->typeval_ = detail::type_name<std::string>();
-        opt->typeval_ += " in {" + detail::join(options) + "}";
+        std::string typeval = detail::type_name<std::string>();
+        typeval += " in {" + detail::join(options) + "}";
+        opt->set_custom_option(typeval);
         if(defaulted) {
-            opt->defaultval_ = detail::to_lower(member);
+            opt->set_default_val(member);
         }
         return opt;
     }
@@ -1509,6 +1714,7 @@ public:
     /// The real work is done here. Expects a reversed vector.
     /// Changes the vector to the remaining options.
     std::vector<std::string>& parse(std::vector<std::string> &args) {
+        _validate();
         _parse(args);
         run_callback();
         return args;
@@ -1516,7 +1722,7 @@ public:
 
     /// Print a nice error message and return the exit code
     int exit(const Error& e) const {
-        if(e.exit_code != 0) {
+        if(e.exit_code != ExitCodes::Success) {
             std::cerr << "ERROR: ";
             std::cerr << e.what() << std::endl;
             if(e.print_help)
@@ -1525,7 +1731,7 @@ public:
             if(e.print_help)
                 std::cout << help();
         }
-        return e.exit_code;
+        return e.get_exit_code();
     }
 
     /// Reset the parsed data
@@ -1571,23 +1777,47 @@ public:
 
     /// Check with name instead of pointer
     bool got_subcommand(std::string name) const {
-        for(const auto subcomptr : selected_subcommands_)
+        for(const App_p &subcomptr : subcommands_)
             if(subcomptr->check_name(name))
-                return true;
-        return false;
+                return got_subcommand(subcomptr.get());
+        throw CLI::OptionNotFound(name);
     }
     
     ///@}
     /// @name Help
     ///@{
 
-    /// Produce a string that could be read in as a config of the current values of the App
-    std::string config_to_str() const {
+    /// Produce a string that could be read in as a config of the current values of the App. Set default_also to include default arguments. Prefix will add a string to the beginning of each option.
+    std::string config_to_str(bool default_also=false, std::string prefix="") const {
         std::stringstream out;
         for(const Option_p &opt : options_) {
-            if(opt->lnames_.size() > 0 && opt->count() > 0 && opt->get_expected() > 0)
-                out << opt->lnames_[0] << "=" << detail::join(opt->results()) << std::endl;
+
+            // Only process option with a long-name
+            if(opt->lnames_.size() > 0) {
+                std::string name = prefix + opt->lnames_[0];
+
+                // Non-flags
+                if(opt->get_expected() != 0) {
+
+                    // If the option was found on command line
+                    if(opt->count() > 0)
+                        out << name << "=" << detail::inijoin(opt->results()) << std::endl;
+
+                    // If the option has a default and is requested by optional argument
+                    else if(default_also && opt->defaultval_ != "")
+                        out << name << "=" << opt->defaultval_ << std::endl;
+                // Flag, one passed
+                } else if(opt->count() == 1) {
+                    out << name << "=true" << std::endl;
+
+                // Flag, multiple passed
+                } else if(opt->count() > 1) {
+                    out << name << "=" << opt->count() << std::endl;
+                }
+            }
         }
+        for(const App_p &subcom : subcommands_)
+            out << subcom->config_to_str(default_also, prefix + subcom->name_ + ".");
         return out.str();
     }
 
@@ -1627,7 +1857,7 @@ public:
                 //if(detail::to_lower(opt->get_group()) == "hidden")
                 //    continue;
                 out << " " << opt->help_positional();
-                if(opt->has_description())
+                if(opt->_has_help_positional())
                     pos=true;
             }
 
@@ -1646,7 +1876,7 @@ public:
             for(const Option_p &opt : options_) {
                 if(detail::to_lower(opt->get_group()) == "hidden")
                     continue;
-                if(opt->get_positional() && opt->has_description())
+                if(opt->_has_help_positional())
                     detail::format_help(out, opt->help_pname(), opt->get_description(), wid);
             }
             out << std::endl;
@@ -1713,6 +1943,18 @@ public:
 
 protected:
 
+    /// Check the options to make sure there are no conficts.
+    ///
+    /// Currenly checks to see if mutiple positionals exist with -1 args
+    void _validate() const {
+        auto count = std::count_if(std::begin(options_), std::end(options_),
+                [](const Option_p& opt){return opt->get_expected() == -1 && opt->get_positional();});
+        if(count > 1)
+            throw InvalidError(name_ + ": Too many positional arguments with unlimited expected args");
+        for(const App_p& app : subcommands_)
+            app->_validate();
+    }
+
 
     /// Return missing from the master
     missing_t* missing() {
@@ -1774,11 +2016,12 @@ protected:
         // Process an INI file
         if (config_ptr_ != nullptr && config_name_ != "") {
             try {
-                std::vector<std::string> values = detail::parse_ini(config_name_);
+                std::vector<detail::ini_ret_t> values = detail::parse_ini(config_name_);
                 while(values.size() > 0) {
-                    _parse_long(values, false);
+                    if(!_parse_ini(values)) {
+                        throw ExtrasINIError(values.back().fullname);
+                    }
                 }
-                
             } catch (const FileError &) {
                 if(config_required_)
                     throw;
@@ -1798,7 +2041,7 @@ protected:
 
         // Process callbacks
         for(const Option_p& opt : options_) {
-            if (opt->count() > 0) {
+            if (opt->count() > 0 && !opt->get_callback_run()) {
                 opt->run_callback();
             }
         }
@@ -1839,6 +2082,64 @@ protected:
         }
     }
 
+    /// Parse one ini param, return false if not found in any subcommand, remove if it is
+    ///
+    /// If this has more than one dot.separated.name, go into the subcommand matching it
+    /// Returns true if it managed to find the option, if false you'll need to remove the arg manully.
+    bool _parse_ini(std::vector<detail::ini_ret_t> &args) {
+        detail::ini_ret_t& current = args.back();
+        std::string parent = current.parent(); // respects curent.level
+        std::string name = current.name();
+
+        // If a parent is listed, go to a subcommand
+        if(parent != "") {
+            current.level++;
+            for(const App_p &com : subcommands_) 
+                if(com->check_name(parent))
+                    return com->_parse_ini(args);
+            return false;
+        }
+
+        auto op_ptr = std::find_if(std::begin(options_), std::end(options_),
+                [name](const Option_p &v){return v->check_lname(name);});
+        
+        if(op_ptr == std::end(options_)) 
+            return false;
+            
+        // Let's not go crazy with pointer syntax
+        Option_p& op = *op_ptr;
+
+        
+        if(op->results_.empty()) {
+            // Flag parsing
+            if(op->get_expected() == 0) {
+                if(current.inputs.size() == 1) {
+                    std::string val = current.inputs.at(0);
+                    val = detail::to_lower(val);
+                    if(val == "true" || val == "on" || val == "yes")
+                        op->results_ = {""};
+                    else if(val == "false" || val == "off" || val == "no")
+                        ;
+                    else
+                        try {
+                            size_t ui = std::stoul(val);
+                            for (size_t i=0; i<ui; i++)
+                                op->results_.push_back("");
+                        } catch (const std::invalid_argument &) {
+                            throw ConversionError(current.fullname + ": Should be true/false or a number");
+                        }
+                } else
+                    throw ConversionError(current.fullname + ": too many inputs for a flag");
+            } else {
+                op->results_ = current.inputs;
+                op->run_callback();
+            }
+        }
+
+        args.pop_back();
+        return true;
+    }
+
     /// Parse "one" argument (some may eat more than one), delegate to parent if fails, add to missing if missing from master
     void _parse_single(std::vector<std::string> &args, bool &positional_only) {
 
@@ -1875,7 +2176,8 @@ protected:
         for(const Option_p& opt : options_) {
             // Eat options, one by one, until done
             if (    opt->get_positional()
-                    && opt->count() < opt->get_expected()
+                    && (opt->count() < opt->get_expected()
+                        || opt->get_expected() < 0)
                     ) {
 
                 opt->add_result(positional);
@@ -1972,13 +2274,13 @@ protected:
     }
 
     /// Parse a long argument, must be at the top of the list
-    void _parse_long(std::vector<std::string> &args, bool overwrite=true) {
+    void _parse_long(std::vector<std::string> &args) {
         std::string current = args.back();
 
         std::string name;
         std::string value;
         if(!detail::split_long(current, name, value))
-            throw HorribleError("Long");
+            throw HorribleError("Long:" + args.back());
 
         auto op_ptr = std::find_if(std::begin(options_), std::end(options_), [name](const Option_p &v){return v->check_lname(name);});
 
@@ -1999,11 +2301,6 @@ protected:
 
         // Get a reference to the pointer to make syntax bearable
         Option_p& op = *op_ptr;
-
-
-        // Stop if not overwriting options_ (for ini parse)
-        if(!overwrite && op->count() > 0)
-            return;
 
         int num = op->get_expected();
         
@@ -2029,5 +2326,34 @@ protected:
 
 };
 
+namespace detail {
+/// This class is simply to allow tests access to App's protected functions
+struct AppFriend {
+
+    /// Wrap _parse_short, perfectly forward arguments and return
+    template<typename ...Args>
+    static auto parse_short(App* app, Args &&  ...args)
+      -> typename std::result_of<decltype(&App::_parse_short)(App, Args...)>::type {
+        return app->_parse_short(std::forward<Args>(args)...);
+    }
+
+
+    /// Wrap _parse_long, perfectly forward arguments and return
+    template<typename ...Args>
+    static auto parse_long(App* app, Args &&  ...args)
+      -> typename std::result_of<decltype(&App::_parse_long)(App, Args...)>::type {
+        return app->_parse_long(std::forward<Args>(args)...);
+    }
+
+    /// Wrap _parse_subcommand, perfectly forward arguments and return
+    template<typename ...Args>
+    static auto parse_subcommand(App* app, Args &&  ...args)
+      -> typename std::result_of<decltype(&App::_parse_subcommand)(App, Args...)>::type {
+        return app->_parse_subcommand(std::forward<Args>(args)...);
+    }
+
+};
+}
 
 }
+

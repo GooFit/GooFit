@@ -39,7 +39,7 @@ EXEC_TARGET fptype device_incoherent(fptype* evt, fptype* p, unsigned int* indic
 
 MEM_DEVICE device_function_ptr ptr_to_incoherent = device_incoherent;
 
-__host__ IncoherentSumPdf::IncoherentSumPdf(std::string n, Variable* m12, Variable* m13, Variable* eventNumber,
+__host__ IncoherentSumPdf::IncoherentSumPdf(std::string n, Variable* m12, Variable* m13, CountingVariable* eventNumber,
         DecayInfo* decay, GooPdf* eff)
     : GooPdf(0, n)
     , decayInfo(decay)

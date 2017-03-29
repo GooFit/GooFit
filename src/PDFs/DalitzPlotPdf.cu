@@ -106,7 +106,7 @@ MEM_DEVICE device_function_ptr ptr_to_DalitzPlot = device_DalitzPlot;
 __host__ DalitzPlotPdf::DalitzPlotPdf(std::string n,
                                       Variable* m12,
                                       Variable* m13,
-                                      Variable* eventNumber,
+                                      CountingVariable* eventNumber,
                                       DecayInfo* decay,
                                       GooPdf* efficiency)
     : GooPdf(0, n)

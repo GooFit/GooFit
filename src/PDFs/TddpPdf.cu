@@ -339,7 +339,7 @@ EXEC_TARGET fptype device_Tddp(fptype* evt, fptype* p, unsigned int* indices) {
 MEM_DEVICE device_function_ptr ptr_to_Tddp = device_Tddp;
 
 __host__ TddpPdf::TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Variable* m12, Variable* m13,
-                          Variable* eventNumber, DecayInfo* decay, MixingTimeResolution* r, GooPdf* efficiency, Variable* mistag)
+                          CountingVariable* eventNumber, DecayInfo* decay, MixingTimeResolution* r, GooPdf* efficiency, Variable* mistag)
     : GooPdf(_dtime, n)
     , decayInfo(decay)
     , _m12(m12)
@@ -434,7 +434,7 @@ __host__ TddpPdf::TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Va
 }
 
 __host__ TddpPdf::TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Variable* m12, Variable* m13,
-                          Variable* eventNumber, DecayInfo* decay, vector<MixingTimeResolution*>& r, GooPdf* efficiency, Variable* md0,
+                          CountingVariable* eventNumber, DecayInfo* decay, vector<MixingTimeResolution*>& r, GooPdf* efficiency, Variable* md0,
                           Variable* mistag)
     : GooPdf(_dtime, n)
     , decayInfo(decay)

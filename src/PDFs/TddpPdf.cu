@@ -553,24 +553,24 @@ __host__ void TddpPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) 
     //Ideally this would not be required, this would be called AFTER setData which will set m_iEventsPerTask
 #ifdef GOOFIT_MPI
     int myId, numProcs;
-    MPI_Comm_size (MPI_COMM_WORLD, &numProcs);
-    MPI_Comm_rank (MPI_COMM_WORLD, &myId);
-    
+    MPI_Comm_size(MPI_COMM_WORLD, &numProcs);
+    MPI_Comm_rank(MPI_COMM_WORLD, &myId);
+
     int perTask = numEntries/numProcs;
 
-    int *counts = new int[numProcs];
+    int* counts = new int[numProcs];
 
-    for (int i = 0; i < numProcs - 1; i++)
+    for(int i = 0; i < numProcs - 1; i++)
         counts[i] = perTask;
+
     counts[numProcs - 1] = numEntries - perTask*(numProcs - 1);
 
-    setNumPerTask (this, counts[myId]);
+    setNumPerTask(this, counts[myId]);
 
     delete [] counts;
 #endif
 
-    for(int i = 0; i < 16; i++)
-    {
+    for(int i = 0; i < 16; i++) {
 #ifdef GOOFIT_MPI
         cachedWaves[i] = new thrust::device_vector<WaveHolder_s>(m_iEventsPerTask);
 #else

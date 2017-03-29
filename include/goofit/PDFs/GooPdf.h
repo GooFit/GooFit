@@ -25,7 +25,7 @@
 
 #ifdef SEPARABLE
 extern MEM_CONSTANT fptype cudaArray[maxParams];
-extern MEM_CONSTANT unsigned int paramIndices[maxParams];  
+extern MEM_CONSTANT unsigned int paramIndices[maxParams];
 extern MEM_CONSTANT fptype functorConstants[maxParams];
 extern MEM_CONSTANT fptype normalisationFactors[maxParams];
 
@@ -56,7 +56,7 @@ public:
     __host__ void evaluateAtPoints(std::vector<fptype>& points) const;
     __host__ void evaluateAtPoints(Variable* var, std::vector<fptype>& res);
 
-    /// A normalize function. This fills in the host_normalize 
+    /// A normalize function. This fills in the host_normalize
     __host__ virtual fptype normalise() const;
     __host__ virtual fptype integrate(fptype lo, fptype hi) const {
         return 0;

@@ -12,7 +12,9 @@ public:
     Indexable(std::string n, fptype val = 0) : name(n), value(val), index(-1) {}
     virtual ~Indexable() {}
 
-    inline int getIndex() const { return index; }
+    inline int getIndex() const {
+        return index;
+    }
 
     std::string name;
     fptype value;

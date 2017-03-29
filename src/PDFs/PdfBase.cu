@@ -198,34 +198,37 @@ __host__ void PdfBase::setData(UnbinnedDataSet* data) {
     int perTask = numEvents/numProcs;
 
     //This will track for a given rank where they will start and how far they will go
-    int *counts = new int[numProcs];
-    int *displacements = new int[numProcs];
-    
-    for (int i = 0; i < numProcs - 1; i++)
+    int* counts = new int[numProcs];
+    int* displacements = new int[numProcs];
+
+    for(int i = 0; i < numProcs - 1; i++)
         counts[i] = perTask;
+
     counts[numProcs - 1] = numEntries - perTask*(numProcs - 1);
 
     displacements[0] = 0;
-    for (int i = 1; i < numProcs; i++)
+
+    for(int i = 1; i < numProcs; i++)
         displacements[i] = displacements[i - 1] + counts[i - 1];
+
 #endif
 
     fptype* host_array = new fptype[numEntries*dimensions];
 
 #ifdef GOOFIT_MPI
     //This is an array to track if we need to re-index the observable
-    int fixme[observables.size ()];
-    memset (fixme, 0, sizeof (int)*observables.size ());
+    int fixme[observables.size()];
+    memset(fixme, 0, sizeof(int)*observables.size());
 
-    for (int i = 0; i < observables.size (); i++)
-    {
+    for(int i = 0; i < observables.size(); i++) {
         //We are casting the observable to a CountVariable
-        CountingVariable *c = dynamic_cast <CountingVariable*> (observables[i]);
+        CountingVariable* c = dynamic_cast <CountingVariable*>(observables[i]);
 
         //if it is true re-index
-        if (c)
+        if(c)
             fixme[i] = 1;
     }
+
 #endif
 
     //Transfer into our whole buffer
@@ -237,14 +240,12 @@ __host__ void PdfBase::setData(UnbinnedDataSet* data) {
     }
 
 #ifdef GOOFIT_MPI
+
     //We will go through all of the events and re-index if appropriate
-    for (int i = 1; i < numProcs; i++)
-    {
-        for (int j = 0; j < counts[i]; j++)
-        {
-            for (int k = 0; k < dimensions; k++)
-            {
-                if (fixme[k] > 0)
+    for(int i = 1; i < numProcs; i++) {
+        for(int j = 0; j < counts[i]; j++) {
+            for(int k = 0; k < dimensions; k++) {
+                if(fixme[k] > 0)
                     host_array[(j + displacements[i])*dimensions + k] = float (j);
             }
         }
@@ -295,34 +296,37 @@ __host__ void PdfBase::setData(BinnedDataSet* data) {
     int perTask = numEvents/numProcs;
 
     //This will track for a given rank where they will start and how far they will go
-    int *counts = new int[numProcs];
-    int *displacements = new int[numProcs];
-    
-    for (int i = 0; i < numProcs - 1; i++)
+    int* counts = new int[numProcs];
+    int* displacements = new int[numProcs];
+
+    for(int i = 0; i < numProcs - 1; i++)
         counts[i] = perTask;
+
     counts[numProcs - 1] = numEntries - perTask*(numProcs - 1);
 
     displacements[0] = 0;
-    for (int i = 1; i < numProcs; i++)
+
+    for(int i = 1; i < numProcs; i++)
         displacements[i] = displacements[i - 1] + counts[i - 1];
+
 #endif
 
     fptype* host_array = new fptype[numEntries*dimensions];
 
 #ifdef GOOFIT_MPI
     //This is an array to track if we need to re-index the observable
-    int fixme[observables.size ()];
-    memset (fixme, 0, sizeof (int)*observables.size ());
+    int fixme[observables.size()];
+    memset(fixme, 0, sizeof(int)*observables.size());
 
-    for (int i = 0; i < observables.size (); i++)
-    {
+    for(int i = 0; i < observables.size(); i++) {
         //We are casting the observable to a CountVariable
-        CountingVariable *c = dynamic_cast <CountingVariable*> (observables[i]);
+        CountingVariable* c = dynamic_cast <CountingVariable*>(observables[i]);
 
         //if it is true re-index
-        if (c)
+        if(c)
             fixme[i] = 1;
     }
+
 #endif
 
     for(unsigned int i = 0; i < numEntries; ++i) {
@@ -337,14 +341,12 @@ __host__ void PdfBase::setData(BinnedDataSet* data) {
     }
 
 #ifdef GOOFIT_MPI
+
     //We will go through all of the events and re-index if appropriate
-    for (int i = 1; i < numProcs; i++)
-    {
-        for (int j = 0; j < counts[j]; j++)
-        {
-            for (int k = 0; k < dimensions; k++)
-            {
-                if (fixme[k] > 0)
+    for(int i = 1; i < numProcs; i++) {
+        for(int j = 0; j < counts[j]; j++) {
+            for(int k = 0; k < dimensions; k++) {
+                if(fixme[k] > 0)
                     host_array[(j + displacements[i])*dimensions + k] = float (j);
             }
         }

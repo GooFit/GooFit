@@ -191,17 +191,15 @@ __host__ void DalitzPlotPdf::setDataSize(unsigned int dataSize, unsigned int evt
     assert(totalEventSize >= 3);
 
     //if (cachedWaves) delete cachedWaves;
-    if (cachedWaves[0])
-    {
+    if(cachedWaves[0]) {
         for(int j = 0; j < 16; j++)
-             delete cachedWaves[j];
+            delete cachedWaves[j];
     }
 
     numEntries = dataSize;
 
-    
-    for(int i = 0; i < 16; i++)
-    {
+
+    for(int i = 0; i < 16; i++) {
 #ifdef GOOFIT_MPI
         cachedWaves[i] = new DEVICE_VECTOR<devcomplex<fptype>>(m_iEventsPerTask);
 #else
@@ -262,8 +260,7 @@ __host__ fptype DalitzPlotPdf::normalise() const {
     thrust::counting_iterator<int> eventIndex(0);
 
     for(int i = 0; i < decayInfo->resonances.size(); ++i) {
-        if(redoIntegral[i])
-        {
+        if(redoIntegral[i]) {
 #ifdef GOOFIT_MPI
             thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
                               thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, arrayAddress, eventSize)),

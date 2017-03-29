@@ -12,11 +12,11 @@
 
 MEM_CONSTANT fptype cudaArray[maxParams];           // Holds device-side fit parameters.
 
-MEM_CONSTANT unsigned int paramIndices[maxParams];  
-  // Holds functor-specific indices into cudaArray. Also overloaded to hold integer constants (ie parameters that cannot vary.)
+MEM_CONSTANT unsigned int paramIndices[maxParams];
+// Holds functor-specific indices into cudaArray. Also overloaded to hold integer constants (ie parameters that cannot vary.)
 
 MEM_CONSTANT fptype functorConstants[maxParams];
-  // Holds non-integer constants. Notice that first entry is number of events.
+// Holds non-integer constants. Notice that first entry is number of events.
 
 MEM_CONSTANT fptype normalisationFactors[maxParams];
 
@@ -36,7 +36,7 @@ fptype host_timeHist[10000];
 
 // Function-pointer related.
 MEM_DEVICE void* device_function_table[200];
-  // Not clear why this cannot be MEM_CONSTANT, but it causes crashes to declare it so.
+// Not clear why this cannot be MEM_CONSTANT, but it causes crashes to declare it so.
 
 void* host_function_table[200];
 unsigned int num_device_functions = 0;
@@ -249,16 +249,16 @@ __host__ double GooPdf::sumOfNll(int numVars) const {
 #if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_CUDA
     goofit_policy my_policy;
     double r = thrust::transform_reduce(my_policy,
-                                    thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
-                                    thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, arrayAddress, eventSize)),
-                                    *logger, dummy, cudaPlus);
+                                        thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
+                                        thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, arrayAddress, eventSize)),
+                                        *logger, dummy, cudaPlus);
 
     MPI_Allreduce(&r, &ret, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 #else
     double r = thrust::transform_reduce(
-                                    thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
-                                    thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, arrayAddress, eventSize)),
-                                    *logger, dummy, cudaPlus);
+                   thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
+                   thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, arrayAddress, eventSize)),
+                   *logger, dummy, cudaPlus);
 #endif
 
     MPI_Allreduce(&r, &ret, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
@@ -266,14 +266,14 @@ __host__ double GooPdf::sumOfNll(int numVars) const {
 #if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_CUDA
     goofit_policy my_policy;
     ret = thrust::transform_reduce(my_policy,
-                                    thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
-                                    thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
-                                    *logger, dummy, cudaPlus);
+                                   thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
+                                   thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
+                                   *logger, dummy, cudaPlus);
 #else
     ret = thrust::transform_reduce(
-                                    thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
-                                    thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
-                                    *logger, dummy, cudaPlus);
+              thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
+              thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
+              *logger, dummy, cudaPlus);
 #endif
 #endif
     return ret;
@@ -487,29 +487,29 @@ __host__ fptype GooPdf::normalise() const {
 #if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_CUDA
     goofit_policy my_policy;
     fptype s = thrust::transform_reduce(my_policy,
-					  thrust::make_zip_iterator(thrust::make_tuple(binIndex, eventSize, arrayAddress)),
-                                          thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, eventSize, arrayAddress)),
-                                          *logger, dummy, cudaPlus);
+                                        thrust::make_zip_iterator(thrust::make_tuple(binIndex, eventSize, arrayAddress)),
+                                        thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, eventSize, arrayAddress)),
+                                        *logger, dummy, cudaPlus);
 #else
     fptype s = thrust::transform_reduce(
-					  thrust::make_zip_iterator(thrust::make_tuple(binIndex, eventSize, arrayAddress)),
-                                          thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, eventSize, arrayAddress)),
-                                          *logger, dummy, cudaPlus);
+                   thrust::make_zip_iterator(thrust::make_tuple(binIndex, eventSize, arrayAddress)),
+                   thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, eventSize, arrayAddress)),
+                   *logger, dummy, cudaPlus);
 #endif
-    
-    MPI_Allreduce (&s, &sum, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+
+    MPI_Allreduce(&s, &sum, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 #else
 #if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_CUDA
     goofit_policy my_policy;
     sum = thrust::transform_reduce(my_policy,
-					  thrust::make_zip_iterator(thrust::make_tuple(binIndex, eventSize, arrayAddress)),
-                                          thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, eventSize, arrayAddress)),
-                                          *logger, dummy, cudaPlus);
+                                   thrust::make_zip_iterator(thrust::make_tuple(binIndex, eventSize, arrayAddress)),
+                                   thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, eventSize, arrayAddress)),
+                                   *logger, dummy, cudaPlus);
 #else
     sum = thrust::transform_reduce(
-					  thrust::make_zip_iterator(thrust::make_tuple(binIndex, eventSize, arrayAddress)),
-                                          thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, eventSize, arrayAddress)),
-                                          *logger, dummy, cudaPlus);
+              thrust::make_zip_iterator(thrust::make_tuple(binIndex, eventSize, arrayAddress)),
+              thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, eventSize, arrayAddress)),
+              *logger, dummy, cudaPlus);
 #endif
 #endif
 

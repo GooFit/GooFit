@@ -1861,6 +1861,8 @@ void makeToyDalitzPlots(GooPdf* overallSignal, string plotdir) {
 
 
 void makeDalitzPlots(GooPdf* overallSignal, string plotdir = "./plots_from_mixfit/") {
+    string mkplotdir {"mkdir " + plotdir};
+    system(mkplotdir.c_str());
     foo->cd();
 
     TH1F dtime_dat_hist("dtime_dat_hist", "", dtime->numbins, dtime->lowerlimit, dtime->upperlimit);
@@ -2623,6 +2625,7 @@ GooPdf* makeOverallSignal() {
     loadDataFile("./dataFiles/efficiency_flat.txt", &effdata);
 
     if(saveEffPlot) {
+        system("mkdir plots_from_mixfit");
         foodal->cd();
         underlyingBins->Draw("colz");
         foodal->SaveAs("plots_from_mixfit/efficiency_bins.png");

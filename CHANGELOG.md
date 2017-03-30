@@ -24,7 +24,7 @@ A new feature of the CMake build system is GooFit Packages, which are complete p
 * Travis builds [PR 32](https://github.com/GooFit/GooFit/pull/32)
 * Improved documentation, automatically builds on changes to master
 * `GooFit::Application`, based on [CLI11](https://github.com/CLIUtils/CLI11). See [PR](https://github.com/GooFit/GooFit/pull/36) and [Issue](https://github.com/GooFit/GooFit/issues/33).
-* Added MPI support in PR #51
+* Added MPI support in [PR 51](https://github.com/GooFit/GooFit/pull/36)
 * Added (this) changelog
 
 The Makefile system is somewhere between deprecated and obsolete, and will be removed in the next release. It is not possible to do an in-source CMake build while the makefile system is in place, so please use a build directory.

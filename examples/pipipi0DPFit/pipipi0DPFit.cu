@@ -62,7 +62,7 @@ TH2F* underlyingBins = 0;
 
 Variable* m12 = 0;
 Variable* m13 = 0;
-Variable* eventNumber = 0;
+CountingVariable* eventNumber = 0;
 Variable* massd0 = 0;
 Variable* deltam = 0;
 Variable* dtime = 0;
@@ -96,8 +96,8 @@ bool useHistogramSigma = false;
 enum Bkg2Model {Histogram, Parameter, Sideband};
 Bkg2Model bkg2Model = Sideband;
 std::string bkg2Model_str = "sideband";
-bool useBackground3Hist = true;
-bool useBackground4Hist = true;
+bool notUseBackground3Hist = false;
+bool notUseBackground4Hist = false;
 bool makePlots = false;
 int m23Slices = 6;
 bool drop_rho_1450 = false;
@@ -884,7 +884,7 @@ void runToyFit(int ifile, int nfile, bool noPlots = true) {
     m12->numbins = 240;
     m13   = new Variable("m13",   0, 3);
     m13->numbins = 240;
-    eventNumber = new Variable("eventNumber", 0, INT_MAX);
+    eventNumber = new CountingVariable("eventNumber", 0, INT_MAX);
     wSig0 = new Variable("wSig0", 0, 1);
 
     for(int i =0 ; i<nfile; i++) {
@@ -1141,7 +1141,7 @@ void makeFullFitVariables() {
     m12   = new Variable("m12",   0, 3);
     m13   = new Variable("m13",   0, 3);
     m12->numbins = m13->numbins = normBinning;
-    eventNumber = new Variable("eventNumber", 0, INT_MAX);
+    eventNumber = new CountingVariable("eventNumber", 0, INT_MAX);
     wSig0 = new Variable("wSig0", 0, 1);
     wBkg1 = new Variable("wBkg1", 0, 1);
     wBkg2 = new Variable("wBkg2", 0, 1);
@@ -1861,6 +1861,8 @@ void makeToyDalitzPlots(GooPdf* overallSignal, string plotdir) {
 
 
 void makeDalitzPlots(GooPdf* overallSignal, string plotdir = "./plots_from_mixfit/") {
+    string mkplotdir {"mkdir " + plotdir};
+    system(mkplotdir.c_str());
     foo->cd();
 
     TH1F dtime_dat_hist("dtime_dat_hist", "", dtime->numbins, dtime->lowerlimit, dtime->upperlimit);
@@ -2623,6 +2625,7 @@ GooPdf* makeOverallSignal() {
     loadDataFile("./dataFiles/efficiency_flat.txt", &effdata);
 
     if(saveEffPlot) {
+        system("mkdir plots_from_mixfit");
         foodal->cd();
         underlyingBins->Draw("colz");
         foodal->SaveAs("plots_from_mixfit/efficiency_bins.png");
@@ -3839,7 +3842,7 @@ GooPdf* makeBkg3DalitzPdf(bool fixem = true) {
 
     GooPdf* bkg3_dalitz = 0;
 
-    if(useBackground3Hist)
+    if(!notUseBackground3Hist)
         bkg3_dalitz = makeBackgroundHistogram(3);
     else
         bkg3_dalitz = makeBackground3DalitzParam();
@@ -3892,7 +3895,7 @@ GooPdf* makeBkg4DalitzPdf(bool fixem = true) {
 
     GooPdf* bkg4_dalitz = 0;
 
-    if(useBackground4Hist)
+    if(!notUseBackground4Hist)
         bkg4_dalitz = makeBackgroundHistogram(4);
     else
         bkg4_dalitz = makeBackground4DalitzParam();
@@ -4533,8 +4536,8 @@ void getBackgroundFile(int bkgType) {
         } else {
             string pdftype;
 
-            if(((3 == bkgType) && (!useBackground3Hist)) ||
-                    ((4 == bkgType) && (!useBackground4Hist)))
+            if(((3 == bkgType) && (notUseBackground3Hist)) ||
+                    ((4 == bkgType) && (notUseBackground4Hist)))
                 pdftype = "_param";
 
             sprintf(strbuffer, "./bkg_%i_pdf%s.txt", bkgType, pdftype.c_str());
@@ -4754,8 +4757,8 @@ void parseArg(GooFit::App *app) {
     app->add_flag("--histSigma", useHistogramSigma);
     app->add_flag("--makePlots", makePlots);
     app->add_set("--mkg2Model", bkg2Model_str, {"histogram", "parameter", "sideband"}, "", true);
-    app->add_flag("--bkg3Hist", useBackground3Hist);
-    app->add_flag("--bkg4Hist", useBackground4Hist);
+    app->add_flag("--bkg3Hist", notUseBackground3Hist);
+    app->add_flag("--bkg4Hist", notUseBackground4Hist);
     app->add_option("--bkgHistBins", bkgHistBins, "", true);
     app->add_option("--varyParameterUp", paramUp, "", true);
     app->add_option("--varyParameterDn", paramDn, "", true);
@@ -4785,11 +4788,9 @@ int main(int argc, char** argv) {
     //foodal->SetLeftMargin(0.13);
 
 
-#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-    cudaSetDevice(0);
-#endif
-
-
+//#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
+//    cudaSetDevice(0);
+//#endif
 
     GooFit::Application app("pipipi0 Dalitz fit example", argc, argv);
     app.require_subcommand();

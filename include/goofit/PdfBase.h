@@ -119,6 +119,10 @@ protected:
 
     unsigned int functionIdx; // Stores index of device function pointer.
 
+    int m_iEventsPerTask;
+    //This needs to be set before a call to setData.
+    void setNumPerTask(PdfBase* p, const int& c);
+
 private:
     std::string name;
 

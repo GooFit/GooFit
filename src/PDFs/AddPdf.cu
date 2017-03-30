@@ -174,11 +174,40 @@ __host__ double AddPdf::sumOfNll(int numVars) const {
     thrust::constant_iterator<int> eventSize(numVars);
     thrust::constant_iterator<fptype*> arrayAddress(dev_event_array);
     double dummy = 0;
+
     thrust::counting_iterator<int> eventIndex(0);
-    double ret = thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress,
-                                          eventSize)),
-                                          thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
-                                          *logger, dummy, cudaPlus);
+
+    double ret;
+#ifdef GOOFIT_MPI
+#if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_CUDA
+    goofit_policy my_policy;
+    double r = thrust::transform_reduce(my_policy, thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress,
+                                        eventSize)),
+                                        thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, arrayAddress, eventSize)),
+                                        *logger, dummy, cudaPlus);
+#else
+    double r = thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress,
+                                        eventSize)),
+                                        thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, arrayAddress, eventSize)),
+                                        *logger, dummy, cudaPlus);
+#endif
+
+    MPI_Allreduce(&r, &ret, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+#else
+#if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_CUDA
+    goofit_policy my_policy;
+    ret = thrust::transform_reduce(my_policy, thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress,
+                                   eventSize)),
+                                   thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
+                                   *logger, dummy, cudaPlus);
+#else
+    ret = thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress,
+                                   eventSize)),
+                                   thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
+                                   *logger, dummy, cudaPlus);
+#endif
+#endif
+
 
     if(extended) {
         fptype expEvents = 0;

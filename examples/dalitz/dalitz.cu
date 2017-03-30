@@ -39,7 +39,7 @@ UnbinnedDataSet* data = 0;
 
 Variable* m12 = 0;
 Variable* m13 = 0;
-Variable* eventNumber = 0;
+CountingVariable* eventNumber = 0;
 bool fitMasses = false;
 Variable* fixedRhoMass  = new Variable("rho_mass", 0.7758, 0.01, 0.7, 0.8);
 Variable* fixedRhoWidth = new Variable("rho_width", 0.1503, 0.01, 0.1, 0.2);
@@ -369,7 +369,7 @@ void runToyFit(std::string toyFileName) {
     m13 = new Variable("m13", 0, 3);
     m12->numbins = 240;
     m13->numbins = 240;
-    eventNumber = new Variable("eventNumber", 0, INT_MAX);
+    eventNumber = new CountingVariable("eventNumber", 0, INT_MAX);
     getToyData(toyFileName);
 
     // EXERCISE 1 (real part): Create a PolynomialPdf which models

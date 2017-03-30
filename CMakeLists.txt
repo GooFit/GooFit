@@ -8,10 +8,20 @@ if(EXISTS ${LOC_PATH})
     message(FATAL_ERROR "You cannot build in the source directory (or any directory with a CMakeLists.txt file). Please make a build subdirectory.")
 endif()
 
+
+set(GOOFIT_CUDA_OR_GROUPSIZE "128" CACHE STRING "Overrides the default group distribution for Thrust's transform_reduce")
+set(GOOFIT_CUDA_OR_GRAINSIZE "7" CACHE STRING "Overrides the default grain size for Thrust's transform_reduce")
+
+configure_file (
+    "${PROJECT_SOURCE_DIR}/include/goofit/ThrustOverrideConfig.h.in"
+    "${PROJECT_BINARY_DIR}/include/goofit/ThrustOverrideConfig.h"
+)
+
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 if(CMAKE_VERSION VERSION_LESS 3.7)
     set(CMAKE_MODULE_PATH  ${PROJECT_SOURCE_DIR}/cmake/support_old_cmake ${CMAKE_MODULE_PATH})
 endif()
+
 
 ### Version number ###
 set(GOOFIT_VERSION_MAJOR 2)
@@ -95,8 +105,7 @@ set(GOOFIT_ARCH Auto CACHE STRING "The GPU Archetecture, can be Auto, All, Commo
 option(GOOFIT_DOWNLOAD_THRUST "Download Thrust if not found (OMP only)" ON)
 
 
-option(GOOFIT_MPI "Turn on MPI for goofit (not implemented yet)" OFF)
-mark_as_advanced(GOOFIT_MPI)
+option(GOOFIT_MPI "Turn on MPI for goofit" OFF)
 
 if(GOOFIT_MPI)
     find_package(MPI REQUIRED)
@@ -135,17 +144,17 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
     endif()
 else()
     include_directories(${PROJECT_SOURCE_DIR}/include/goofit/fakecuda)
-    find_package(Thrust QUIET)
-    if(NOT THRUST_FOUND)
-        if(GOOFIT_DOWNLOAD_THRUST)
-            message(STATUS "Thrust not found, downloading to build dir")
-            include(AddThrust)
-        else()
-            find_package(Thrust REQUIRED)
-        endif()
-    endif()
-    include_directories(SYSTEM "${THRUST_INCLUDE_DIRS}")
 endif()
+find_package(Thrust QUIET)
+if(NOT THRUST_FOUND)
+    if(GOOFIT_DOWNLOAD_THRUST)
+        message(STATUS "Thrust not found, downloading to build dir")
+        include(AddThrust)
+    else()
+        find_package(Thrust REQUIRED)
+    endif()
+endif()
+include_directories(SYSTEM "${THRUST_INCLUDE_DIRS}")
 
 if(GOOFIT_DEVICE STREQUAL OMP OR GOOFIT_HOST STREQUAL OMP)
 find_package(OpenMP REQUIRED)

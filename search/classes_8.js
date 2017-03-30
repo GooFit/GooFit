@@ -2,7 +2,7 @@ var searchData=
 [
   ['incoherentsumpdf',['IncoherentSumPdf',['../class_incoherent_sum_pdf.html',1,'']]],
   ['incorrectconstruction',['IncorrectConstruction',['../struct_c_l_i_1_1_incorrect_construction.html',1,'CLI']]],
-  ['indexable',['Indexable',['../struct_indexable.html',1,'']]],
+  ['indexable',['Indexable',['../class_indexable.html',1,'']]],
   ['ini_5fret_5ft',['ini_ret_t',['../struct_c_l_i_1_1detail_1_1ini__ret__t.html',1,'CLI::detail']]],
   ['interhistpdf',['InterHistPdf',['../class_inter_hist_pdf.html',1,'']]],
   ['invaliderror',['InvalidError',['../struct_c_l_i_1_1_invalid_error.html',1,'CLI']]],

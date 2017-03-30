@@ -11,7 +11,7 @@ var searchData=
   ['envname_5f',['envname_',['../class_c_l_i_1_1_option.html#acac4bf11cbd933967ced9175946ffbe6',1,'CLI::Option']]],
   ['erf',['ERF',['../_global_cuda_defines_8h.html#a7f0564892d185f409da7019460106cc8',1,'GlobalCudaDefines.h']]],
   ['erfc',['ERFC',['../_global_cuda_defines_8h.html#a6677d29cca7304ef61758efa8e274063',1,'GlobalCudaDefines.h']]],
-  ['error',['Error',['../struct_c_l_i_1_1_error.html',1,'CLI::Error'],['../struct_variable.html#acaf425a434c5afaf2d2618a10ed9b035',1,'Variable::error()'],['../struct_c_l_i_1_1_error.html#a37ba5fcde7c1aa746803532ff549ff11',1,'CLI::Error::Error()']]],
+  ['error',['Error',['../struct_c_l_i_1_1_error.html',1,'CLI::Error'],['../class_variable.html#acaf425a434c5afaf2d2618a10ed9b035',1,'Variable::error()'],['../struct_c_l_i_1_1_error.html#a37ba5fcde7c1aa746803532ff549ff11',1,'CLI::Error::Error()']]],
   ['errors',['Errors',['../group__error__group.html',1,'']]],
   ['errorsonbins',['errorsOnBins',['../class_fit_control.html#a2be908a5befe80ddd65a1ba995ed9809',1,'FitControl']]],
   ['eval',['Eval',['../class_t_minuit.html#aa54f860c7100eeedd4f5e6cdc76c1302',1,'TMinuit']]],

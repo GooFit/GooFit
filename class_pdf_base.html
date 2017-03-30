@@ -67,6 +67,7 @@ $(function() {
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="class_pdf_base-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -126,13 +127,13 @@ Public Types</h2></td></tr>
 <a class="el" href="class_pdf_base.html#a485f1602f74b5f47c1e5672ce1ea6b1da1bde5267d5e7d24ded2e3721359b7d9a">ForceCommonNorm</a> = 2
  }</td></tr>
 <tr class="separator:a485f1602f74b5f47c1e5672ce1ea6b1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd50e7a9a2ceb33bac71a8cc636e61fb"><td class="memItemLeft" align="right" valign="top">typedef std::vector&lt; <a class="el" href="struct_variable.html">Variable</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#acd50e7a9a2ceb33bac71a8cc636e61fb">obsCont</a></td></tr>
+<tr class="memitem:acd50e7a9a2ceb33bac71a8cc636e61fb"><td class="memItemLeft" align="right" valign="top">typedef std::vector&lt; <a class="el" href="class_variable.html">Variable</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#acd50e7a9a2ceb33bac71a8cc636e61fb">obsCont</a></td></tr>
 <tr class="separator:acd50e7a9a2ceb33bac71a8cc636e61fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afa8c406613fe0b4ab29c700b6d1a93ee"><td class="memItemLeft" align="right" valign="top">typedef obsCont::iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#afa8c406613fe0b4ab29c700b6d1a93ee">obsIter</a></td></tr>
 <tr class="separator:afa8c406613fe0b4ab29c700b6d1a93ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0d986ce9e6108e2289c0fb2ce1177234"><td class="memItemLeft" align="right" valign="top">typedef obsCont::const_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a0d986ce9e6108e2289c0fb2ce1177234">obsConstIter</a></td></tr>
 <tr class="separator:a0d986ce9e6108e2289c0fb2ce1177234"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adde4851584b1fffeebd4b0ec2b9ca1c7"><td class="memItemLeft" align="right" valign="top">typedef std::vector&lt; <a class="el" href="struct_variable.html">Variable</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#adde4851584b1fffeebd4b0ec2b9ca1c7">parCont</a></td></tr>
+<tr class="memitem:adde4851584b1fffeebd4b0ec2b9ca1c7"><td class="memItemLeft" align="right" valign="top">typedef std::vector&lt; <a class="el" href="class_variable.html">Variable</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#adde4851584b1fffeebd4b0ec2b9ca1c7">parCont</a></td></tr>
 <tr class="separator:adde4851584b1fffeebd4b0ec2b9ca1c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abd15730dc8d50cd36b8dab8322257b4b"><td class="memItemLeft" align="right" valign="top">typedef parCont::iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#abd15730dc8d50cd36b8dab8322257b4b">parIter</a></td></tr>
 <tr class="separator:abd15730dc8d50cd36b8dab8322257b4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -141,7 +142,7 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a1620f7f438b6c7c6cc99569321cf947d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a1620f7f438b6c7c6cc99569321cf947d">PdfBase</a> (<a class="el" href="struct_variable.html">Variable</a> *x, std::string n)</td></tr>
+<tr class="memitem:a1620f7f438b6c7c6cc99569321cf947d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a1620f7f438b6c7c6cc99569321cf947d">PdfBase</a> (<a class="el" href="class_variable.html">Variable</a> *x, std::string n)</td></tr>
 <tr class="separator:a1620f7f438b6c7c6cc99569321cf947d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a63e809b5af9291b10a5f636e6b91fd70"><td class="memItemLeft" align="right" valign="top">virtual __host__ double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a63e809b5af9291b10a5f636e6b91fd70">calculateNLL</a> () const =0</td></tr>
 <tr class="separator:a63e809b5af9291b10a5f636e6b91fd70"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -165,7 +166,7 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a4db79c9bb725404cf2feae16933bb60d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:addb112cc92114e55890b510f0a21670f"><td class="memItemLeft" align="right" valign="top">virtual __host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#addb112cc92114e55890b510f0a21670f">getParameters</a> (<a class="el" href="class_pdf_base.html#adde4851584b1fffeebd4b0ec2b9ca1c7">parCont</a> &amp;ret) const</td></tr>
 <tr class="separator:addb112cc92114e55890b510f0a21670f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a88530c6c00be1c0892c4755b9125e5d1"><td class="memItemLeft" align="right" valign="top">__host__ <a class="el" href="struct_variable.html">Variable</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a88530c6c00be1c0892c4755b9125e5d1">getParameterByName</a> (string n) const</td></tr>
+<tr class="memitem:a88530c6c00be1c0892c4755b9125e5d1"><td class="memItemLeft" align="right" valign="top">__host__ <a class="el" href="class_variable.html">Variable</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a88530c6c00be1c0892c4755b9125e5d1">getParameterByName</a> (string n) const</td></tr>
 <tr class="separator:a88530c6c00be1c0892c4755b9125e5d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4f98e720d15482fe66f2560cac9dcffe"><td class="memItemLeft" align="right" valign="top">__host__ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a4f98e720d15482fe66f2560cac9dcffe">getSpecialMask</a> () const</td></tr>
 <tr class="separator:a4f98e720d15482fe66f2560cac9dcffe"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -173,7 +174,7 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ae280cb7da97d02ea522a4fe7d56330d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a651de3d12a350e33c8d9e9ac0605131b"><td class="memItemLeft" align="right" valign="top">__host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a651de3d12a350e33c8d9e9ac0605131b">setData</a> (<a class="el" href="class_unbinned_data_set.html">UnbinnedDataSet</a> *data)</td></tr>
 <tr class="separator:a651de3d12a350e33c8d9e9ac0605131b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aed5a8b6b0608a60f9c34f07ce2f2dd0c"><td class="memItemLeft" align="right" valign="top">__host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#aed5a8b6b0608a60f9c34f07ce2f2dd0c">setData</a> (std::vector&lt; std::map&lt; <a class="el" href="struct_variable.html">Variable</a> *, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &gt;&gt; &amp;data)</td></tr>
+<tr class="memitem:aed5a8b6b0608a60f9c34f07ce2f2dd0c"><td class="memItemLeft" align="right" valign="top">__host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#aed5a8b6b0608a60f9c34f07ce2f2dd0c">setData</a> (std::vector&lt; std::map&lt; <a class="el" href="class_variable.html">Variable</a> *, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &gt;&gt; &amp;data)</td></tr>
 <tr class="separator:aed5a8b6b0608a60f9c34f07ce2f2dd0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:affa49ce31ee55193a6870fab711680c0"><td class="memItemLeft" align="right" valign="top">virtual __host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#affa49ce31ee55193a6870fab711680c0">setFitControl</a> (<a class="el" href="class_fit_control.html">FitControl</a> *const fc, bool takeOwnerShip=true)=0</td></tr>
 <tr class="separator:affa49ce31ee55193a6870fab711680c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -183,15 +184,15 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a687e4184974c651c409bddf830a9b878"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a00bf910562f6b2103dc87599caf43846"><td class="memItemLeft" align="right" valign="top">__host__ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a00bf910562f6b2103dc87599caf43846">getParameterIndex</a> () const</td></tr>
 <tr class="separator:a00bf910562f6b2103dc87599caf43846"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9520ede7a636daee2819b661f0db0a37"><td class="memItemLeft" align="right" valign="top">__host__ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a9520ede7a636daee2819b661f0db0a37">registerParameter</a> (<a class="el" href="struct_variable.html">Variable</a> *var)</td></tr>
+<tr class="memitem:a9520ede7a636daee2819b661f0db0a37"><td class="memItemLeft" align="right" valign="top">__host__ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a9520ede7a636daee2819b661f0db0a37">registerParameter</a> (<a class="el" href="class_variable.html">Variable</a> *var)</td></tr>
 <tr class="separator:a9520ede7a636daee2819b661f0db0a37"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a946cd8a190e00fc2054fefeec59d1225"><td class="memItemLeft" align="right" valign="top">__host__ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a946cd8a190e00fc2054fefeec59d1225">registerConstants</a> (unsigned int amount)</td></tr>
 <tr class="separator:a946cd8a190e00fc2054fefeec59d1225"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a582459d1a7258199f9063ee88dceea7d"><td class="memItemLeft" align="right" valign="top">virtual __host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a582459d1a7258199f9063ee88dceea7d">recursiveSetNormalisation</a> (<a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> <a class="el" href="devcomplex_8h.html#af54c6306ac31991a2436c480065c39f9">norm</a>=1) const</td></tr>
 <tr class="separator:a582459d1a7258199f9063ee88dceea7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a66b28f14a05c805475d7410f8baea45a"><td class="memItemLeft" align="right" valign="top">__host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a66b28f14a05c805475d7410f8baea45a">unregisterParameter</a> (<a class="el" href="struct_variable.html">Variable</a> *var)</td></tr>
+<tr class="memitem:a66b28f14a05c805475d7410f8baea45a"><td class="memItemLeft" align="right" valign="top">__host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a66b28f14a05c805475d7410f8baea45a">unregisterParameter</a> (<a class="el" href="class_variable.html">Variable</a> *var)</td></tr>
 <tr class="separator:a66b28f14a05c805475d7410f8baea45a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5e6e3bd872bd5afeb656a26684309cdc"><td class="memItemLeft" align="right" valign="top">__host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a5e6e3bd872bd5afeb656a26684309cdc">registerObservable</a> (<a class="el" href="struct_variable.html">Variable</a> *obs)</td></tr>
+<tr class="memitem:a5e6e3bd872bd5afeb656a26684309cdc"><td class="memItemLeft" align="right" valign="top">__host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a5e6e3bd872bd5afeb656a26684309cdc">registerObservable</a> (<a class="el" href="class_variable.html">Variable</a> *obs)</td></tr>
 <tr class="separator:a5e6e3bd872bd5afeb656a26684309cdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa98cdf26fb23cabc95f320631e90a15f"><td class="memItemLeft" align="right" valign="top">__host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#aa98cdf26fb23cabc95f320631e90a15f">setIntegrationFineness</a> (int i)</td></tr>
 <tr class="separator:aa98cdf26fb23cabc95f320631e90a15f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -215,6 +216,11 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a79204579275ad7dfca43c670b0576d6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaed8cbe5104afcd29b5770d9996861ff"><td class="memItemLeft" align="right" valign="top">__host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#aaed8cbe5104afcd29b5770d9996861ff">SigGenSetIndices</a> ()</td></tr>
 <tr class="separator:aaed8cbe5104afcd29b5770d9996861ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr class="memitem:a7f36d901fd8ecc56005f15dd8b874edc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a7f36d901fd8ecc56005f15dd8b874edc">setNumPerTask</a> (<a class="el" href="class_pdf_base.html">PdfBase</a> *p, const int &amp;c)</td></tr>
+<tr class="separator:a7f36d901fd8ecc56005f15dd8b874edc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -246,6 +252,8 @@ Protected Attributes</h2></td></tr>
 <tr class="separator:a098345520f86fb37c9a8571b5a4ede16"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a201930b5ce1146bec6dfdd7acfe14867"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a201930b5ce1146bec6dfdd7acfe14867">functionIdx</a></td></tr>
 <tr class="separator:a201930b5ce1146bec6dfdd7acfe14867"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae0d4d6b6d8e7b5bc998e0dfd6ce2e878"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#ae0d4d6b6d8e7b5bc998e0dfd6ce2e878">m_iEventsPerTask</a></td></tr>
+<tr class="separator:ae0d4d6b6d8e7b5bc998e0dfd6ce2e878"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
@@ -274,7 +282,7 @@ Protected Attributes</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef std::vector&lt;<a class="el" href="struct_variable.html">Variable</a>*&gt; <a class="el" href="class_pdf_base.html#acd50e7a9a2ceb33bac71a8cc636e61fb">PdfBase::obsCont</a></td>
+          <td class="memname">typedef std::vector&lt;<a class="el" href="class_variable.html">Variable</a>*&gt; <a class="el" href="class_pdf_base.html#acd50e7a9a2ceb33bac71a8cc636e61fb">PdfBase::obsCont</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -322,7 +330,7 @@ Protected Attributes</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef std::vector&lt;<a class="el" href="struct_variable.html">Variable</a>*&gt; <a class="el" href="class_pdf_base.html#adde4851584b1fffeebd4b0ec2b9ca1c7">PdfBase::parCont</a></td>
+          <td class="memname">typedef std::vector&lt;<a class="el" href="class_variable.html">Variable</a>*&gt; <a class="el" href="class_pdf_base.html#adde4851584b1fffeebd4b0ec2b9ca1c7">PdfBase::parCont</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -378,7 +386,7 @@ Protected Attributes</h2></td></tr>
         <tr>
           <td class="memname">PdfBase::PdfBase </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct_variable.html">Variable</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="class_variable.html">Variable</a> *&#160;</td>
           <td class="paramname"><em>x</em>, </td>
         </tr>
         <tr>
@@ -664,7 +672,7 @@ Protected Attributes</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">__host__ <a class="el" href="struct_variable.html">Variable</a>* PdfBase::getParameterByName </td>
+          <td class="memname">__host__ <a class="el" href="class_variable.html">Variable</a>* PdfBase::getParameterByName </td>
           <td>(</td>
           <td class="paramtype">string&#160;</td>
           <td class="paramname"><em>n</em></td><td>)</td>
@@ -833,7 +841,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="class_tddp_pdf.html#ad92b18fffdf2b963c0052cce506e8fdb">TddpPdf</a>, <a class="el" href="class_goo_pdf.html#adbb6d45905871ca107533d84f8bfa461">GooPdf</a>, <a class="el" href="class_d_p_pdf.html#a08ecf1882758d0ff21abcc534b2bcbde">DPPdf</a>, <a class="el" href="class_t_d_d_p4.html#aa6dc24cb6784d533a679b41079ad4dc5">TDDP4</a>, <a class="el" href="class_incoherent_sum_pdf.html#a5dbfadb2a1c4a6cb5c9961e794a5e461">IncoherentSumPdf</a>, <a class="el" href="class_dalitz_plot_pdf.html#a1132086d20c501511fb0c86419b35c2c">DalitzPlotPdf</a>, <a class="el" href="class_composite_pdf.html#a9414b73007262ed8d08745c7cb48ae35">CompositePdf</a>, <a class="el" href="class_event_weighted_add_pdf.html#a4f7a3a04f3f3c9ccdab8af8191f28b9c">EventWeightedAddPdf</a>, <a class="el" href="class_add_pdf.html#a453bfb1665af33cbd423761c096c4985">AddPdf</a>, <a class="el" href="class_convolution_pdf.html#a65dd0276f858cefa4572a6332888d143">ConvolutionPdf</a>, <a class="el" href="class_mapped_pdf.html#aada3ead4d3569c0339d49fc484e19110">MappedPdf</a>, <a class="el" href="class_prod_pdf.html#a64036c7c1671f2116cf53bc6c064b225">ProdPdf</a>, and <a class="el" href="class_smooth_histogram_pdf.html#a8e312c2722e28301da3472f68f7ef1ab">SmoothHistogramPdf</a>.</p>
+<p>Implemented in <a class="el" href="class_goo_pdf.html#adbb6d45905871ca107533d84f8bfa461">GooPdf</a>, <a class="el" href="class_tddp_pdf.html#ad92b18fffdf2b963c0052cce506e8fdb">TddpPdf</a>, <a class="el" href="class_d_p_pdf.html#a08ecf1882758d0ff21abcc534b2bcbde">DPPdf</a>, <a class="el" href="class_t_d_d_p4.html#aa6dc24cb6784d533a679b41079ad4dc5">TDDP4</a>, <a class="el" href="class_incoherent_sum_pdf.html#a5dbfadb2a1c4a6cb5c9961e794a5e461">IncoherentSumPdf</a>, <a class="el" href="class_dalitz_plot_pdf.html#a1132086d20c501511fb0c86419b35c2c">DalitzPlotPdf</a>, <a class="el" href="class_composite_pdf.html#a9414b73007262ed8d08745c7cb48ae35">CompositePdf</a>, <a class="el" href="class_event_weighted_add_pdf.html#a4f7a3a04f3f3c9ccdab8af8191f28b9c">EventWeightedAddPdf</a>, <a class="el" href="class_add_pdf.html#a453bfb1665af33cbd423761c096c4985">AddPdf</a>, <a class="el" href="class_convolution_pdf.html#a65dd0276f858cefa4572a6332888d143">ConvolutionPdf</a>, <a class="el" href="class_mapped_pdf.html#aada3ead4d3569c0339d49fc484e19110">MappedPdf</a>, <a class="el" href="class_prod_pdf.html#a64036c7c1671f2116cf53bc6c064b225">ProdPdf</a>, and <a class="el" href="class_smooth_histogram_pdf.html#a8e312c2722e28301da3472f68f7ef1ab">SmoothHistogramPdf</a>.</p>
 
 </div>
 </div>
@@ -1049,7 +1057,7 @@ Protected Attributes</h2></td></tr>
         <tr>
           <td class="memname">__host__ void PdfBase::registerObservable </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct_variable.html">Variable</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="class_variable.html">Variable</a> *&#160;</td>
           <td class="paramname"><em>obs</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1069,7 +1077,7 @@ Protected Attributes</h2></td></tr>
         <tr>
           <td class="memname">__host__ unsigned int PdfBase::registerParameter </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct_variable.html">Variable</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="class_variable.html">Variable</a> *&#160;</td>
           <td class="paramname"><em>var</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1127,7 +1135,7 @@ Protected Attributes</h2></td></tr>
         <tr>
           <td class="memname">__host__ void PdfBase::setData </td>
           <td>(</td>
-          <td class="paramtype">std::vector&lt; std::map&lt; <a class="el" href="struct_variable.html">Variable</a> *, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &gt;&gt; &amp;&#160;</td>
+          <td class="paramtype">std::vector&lt; std::map&lt; <a class="el" href="class_variable.html">Variable</a> *, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &gt;&gt; &amp;&#160;</td>
           <td class="paramname"><em>data</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1196,6 +1204,42 @@ Protected Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a7f36d901fd8ecc56005f15dd8b874edc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7f36d901fd8ecc56005f15dd8b874edc">&#9670;&nbsp;</a></span>setNumPerTask()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void PdfBase::setNumPerTask </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_pdf_base.html">PdfBase</a> *&#160;</td>
+          <td class="paramname"><em>p</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int &amp;&#160;</td>
+          <td class="paramname"><em>c</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aaed8cbe5104afcd29b5770d9996861ff"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aaed8cbe5104afcd29b5770d9996861ff">&#9670;&nbsp;</a></span>SigGenSetIndices()</h2>
 
@@ -1251,7 +1295,7 @@ Protected Attributes</h2></td></tr>
         <tr>
           <td class="memname">__host__ void PdfBase::unregisterParameter </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct_variable.html">Variable</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="class_variable.html">Variable</a> *&#160;</td>
           <td class="paramname"><em>var</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1406,6 +1450,30 @@ Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00115">115</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
+
+</div>
+</div>
+<a id="ae0d4d6b6d8e7b5bc998e0dfd6ce2e878"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae0d4d6b6d8e7b5bc998e0dfd6ce2e878">&#9670;&nbsp;</a></span>m_iEventsPerTask</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int PdfBase::m_iEventsPerTask</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00122">122</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
 </div>
 </div>
@@ -1615,7 +1683,7 @@ Protected Attributes</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Mar 28 2017 19:35:33 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Mar 30 2017 16:14:52 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

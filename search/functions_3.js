@@ -15,7 +15,7 @@ var searchData=
   ['compositepdf',['CompositePdf',['../class_composite_pdf.html#a55f7d6a77def5e032a2583edb8cec748',1,'CompositePdf']]],
   ['config_5fto_5fstr',['config_to_str',['../class_c_l_i_1_1_app.html#a282b98fb4878410e502e6169392ace11',1,'CLI::App']]],
   ['conj',['conj',['../devcomplex_8h.html#a47349a46df287fa65dd9a75c8d66352b',1,'devcomplex.h']]],
-  ['constant',['Constant',['../struct_constant.html#a12ad10237a79463f5115fdfecfdff4dd',1,'Constant']]],
+  ['constant',['Constant',['../class_constant.html#a12ad10237a79463f5115fdfecfdff4dd',1,'Constant']]],
   ['constructionerror',['ConstructionError',['../struct_c_l_i_1_1_construction_error.html#affb7ef6f314c46ba10c875bbfc4f68a1',1,'CLI::ConstructionError']]],
   ['contract',['Contract',['../class_z_tspin1.html#a8c6650a36fc264114e51a6f75afad85e',1,'ZTspin1::Contract()'],['../class_symm_lorentz_matrix.html#a7c34de09cfd9c03598aeac4bb3e58c74',1,'SymmLorentzMatrix::Contract()']]],
   ['contract_5f1',['Contract_1',['../class_symm_lorentz_matrix.html#a5823a61d73bd8a42e3d534af1b31b91d',1,'SymmLorentzMatrix']]],
@@ -28,6 +28,7 @@ var searchData=
   ['corrgaussianpdf',['CorrGaussianPdf',['../class_corr_gaussian_pdf.html#ac7baf029d3ef57941eca58446b16c11b',1,'CorrGaussianPdf']]],
   ['coshelang',['cosHELANG',['../struct_dim5.html#abb1436c4993cb9a0562333b4a82ffba9',1,'Dim5']]],
   ['count',['count',['../class_c_l_i_1_1_option.html#ac1f93311a6577359953e54a2e575ae71',1,'CLI::Option::count()'],['../class_c_l_i_1_1_app.html#aeba4b7ab5774f6208ede2e1d56df9b43',1,'CLI::App::count()']]],
+  ['countingvariable',['CountingVariable',['../class_counting_variable.html#ac3e8a84da2eba9f483c70999f0f5e47c',1,'CountingVariable::CountingVariable(std::string n)'],['../class_counting_variable.html#a214d0b8c25537e2069c066aa3c1ab663',1,'CountingVariable::CountingVariable(std::string n, fptype val)'],['../class_counting_variable.html#ac55307f4a030ea3e6e10eec8fc51682c',1,'CountingVariable::CountingVariable(std::string n, fptype dn, fptype up)'],['../class_counting_variable.html#a406ba616e96a9ae8b4bc4135a5e5a5f2',1,'CountingVariable::CountingVariable(std::string n, fptype v, fptype dn, fptype up)'],['../class_counting_variable.html#a482cdebcabc3685accfc1764602e9d8d',1,'CountingVariable::CountingVariable(std::string n, fptype v, fptype e, fptype dn, fptype up)']]],
   ['cpuvoigtian',['cpuvoigtian',['../_faddeeva_8h.html#a53443eeec9436629103539000af9a6cb',1,'Faddeeva.h']]],
   ['createparameters',['createParameters',['../class_mixing_time_resolution.html#a9358e92b59d8acf1a9cbe27360a650f4',1,'MixingTimeResolution::createParameters()'],['../class_three_gauss_resolution.html#af84a5f9437383fcc35f7e9d742f1b13d',1,'ThreeGaussResolution::createParameters()'],['../class_truth_resolution.html#adfd7a68a05b97fcb8b036e64b078fa2e',1,'TruthResolution::createParameters()']]],
   ['crystalballpdf',['CrystalBallPdf',['../class_crystal_ball_pdf.html#a6839362aa401075f0d74d3a577090ea4',1,'CrystalBallPdf']]]

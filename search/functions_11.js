@@ -8,6 +8,7 @@ var searchData=
   ['readfromfile',['readFromFile',['../_functor_writer_8h.html#a66f8c6ed928cfd33ef71a08d16b26821',1,'FunctorWriter.h']]],
   ['readlistofnumbers',['readListOfNumbers',['../_functor_writer_8h.html#a3753fb3fc8d487d99014ba21137df9ea',1,'FunctorWriter.h']]],
   ['recursivesetnormalisation',['recursiveSetNormalisation',['../class_pdf_base.html#a582459d1a7258199f9063ee88dceea7d',1,'PdfBase']]],
+  ['reduce',['reduce',['../_thrust_override_8h.html#a078913f6f445899c342ef21d4b1a78cb',1,'ThrustOverride.h']]],
   ['registerconstants',['registerConstants',['../class_pdf_base.html#a946cd8a190e00fc2054fefeec59d1225',1,'PdfBase']]],
   ['registerobservable',['registerObservable',['../class_pdf_base.html#a5e6e3bd872bd5afeb656a26684309cdc',1,'PdfBase']]],
   ['registerothers',['registerOthers',['../class_convolution_pdf.html#a89f80f9226032bfaa741ba5d2b66a9ab',1,'ConvolutionPdf']]],

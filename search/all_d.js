@@ -20,7 +20,7 @@ var searchData=
   ['logger',['logger',['../class_goo_pdf.html#a0f2eaa48ead3a6cfebd39f5cdd3e97ab',1,'GooPdf']]],
   ['long',['LONG',['../namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499ac1fabfea54ec6011e694f211f3ffebf3',1,'CLI::detail']]],
   ['lorentzmatrix',['LorentzMatrix',['../class_lorentz_matrix.html',1,'LorentzMatrix'],['../class_lorentz_matrix.html#a4d18fab04167f3d722108d2a76bbed0a',1,'LorentzMatrix::LorentzMatrix()'],['../class_lorentz_matrix.html#a03298d40a33e16e1121bb7849dfb1343',1,'LorentzMatrix::LorentzMatrix(const gpuLVec p[4])'],['../class_lorentz_matrix.html#ae94a7c0167dddaf4cb7ca88dc8bcf75d',1,'LorentzMatrix::LorentzMatrix(const LorentzMatrix &amp;other)']]],
-  ['lowerlimit',['lowerlimit',['../struct_variable.html#a5683e712f71d894b92dcf4a70ba97a54',1,'Variable']]],
+  ['lowerlimit',['lowerlimit',['../class_variable.html#a5683e712f71d894b92dcf4a70ba97a54',1,'Variable']]],
   ['ls',['LS',['../_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3',1,'LineshapesPdf.h']]],
   ['lscalculator',['LSCalculator',['../class_l_s_calculator.html',1,'LSCalculator'],['../class_l_s_calculator.html#a6df78f3d752f88982160d1327c7a9c9e',1,'LSCalculator::LSCalculator()']]],
   ['lscalculator_5ftd',['LSCalculator_TD',['../class_l_s_calculator___t_d.html',1,'LSCalculator_TD'],['../class_l_s_calculator___t_d.html#a9ac67c1a14facace07b800f136acb892',1,'LSCalculator_TD::LSCalculator_TD()']]],

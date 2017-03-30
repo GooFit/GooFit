@@ -1,10 +1,10 @@
 var searchData=
 [
   ['ignore_5fcase',['ignore_case',['../class_c_l_i_1_1_option.html#aa8a01bd3a71479b7b57fec05e60cb3dd',1,'CLI::Option::ignore_case()'],['../class_c_l_i_1_1_app.html#abc06fa2dcf43b1eb2da3fc013c5336f4',1,'CLI::App::ignore_case()']]],
-  ['incoherentsumpdf',['IncoherentSumPdf',['../class_incoherent_sum_pdf.html#ad129f6e67d8786bfd93608582122701b',1,'IncoherentSumPdf']]],
+  ['incoherentsumpdf',['IncoherentSumPdf',['../class_incoherent_sum_pdf.html#a32741c62b34dfe0e03cea460d78e1d1a',1,'IncoherentSumPdf']]],
   ['incorrectconstruction',['IncorrectConstruction',['../struct_c_l_i_1_1_incorrect_construction.html#a5d605f307996db7e763d02a5038377ff',1,'CLI::IncorrectConstruction']]],
   ['indalitz',['inDalitz',['../_dalitz_plot_helpers_8h.html#a6fce4517df40bf9a18507b2a631d0c73',1,'DalitzPlotHelpers.h']]],
-  ['indexable',['Indexable',['../struct_indexable.html#aaf40fcbcf877ba654309f61ac98b2e6d',1,'Indexable']]],
+  ['indexable',['Indexable',['../class_indexable.html#aaf40fcbcf877ba654309f61ac98b2e6d',1,'Indexable']]],
   ['indexofvariable',['indexOfVariable',['../class_data_set.html#a3de244bfc001515be083608c5ca80e7e',1,'DataSet']]],
   ['inijoin',['inijoin',['../namespace_c_l_i_1_1detail.html#ad8f170ac15543f330675e435a5a2f9e1',1,'CLI::detail']]],
   ['init',['init',['../namespacerang.html#ad812fcadddedcd2eed7f6e7c0139a2b8',1,'rang']]],

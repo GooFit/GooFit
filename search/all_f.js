@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['name',['name',['../struct_indexable.html#acce56f344c1ffdb362c347745e50b8c8',1,'Indexable::name()'],['../struct_c_l_i_1_1detail_1_1ini__ret__t.html#a7ca843ce6b8cd226ec4c50114bcc6fe8',1,'CLI::detail::ini_ret_t::name()']]],
+  ['name',['name',['../class_indexable.html#acce56f344c1ffdb362c347745e50b8c8',1,'Indexable::name()'],['../struct_c_l_i_1_1detail_1_1ini__ret__t.html#a7ca843ce6b8cd226ec4c50114bcc6fe8',1,'CLI::detail::ini_ret_t::name()']]],
   ['name_5f',['name_',['../class_c_l_i_1_1_app.html#a61a36f7297a3199b9e789887510fa3fa',1,'CLI::App']]],
   ['none',['NONE',['../namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499ab50339a10e1de285ac99d4c3990b8693',1,'CLI::detail']]],
   ['nonexistentpath',['NonexistentPath',['../group__validator__group.html#ga0c95be9a1d6429b133d4f1edbf5598b0',1,'CLI']]],
@@ -20,7 +20,7 @@ var searchData=
   ['novosibirskpdf',['NovosibirskPdf',['../class_novosibirsk_pdf.html',1,'NovosibirskPdf'],['../class_novosibirsk_pdf.html#a148e782cc7fde108b545bd9680a25333',1,'NovosibirskPdf::NovosibirskPdf()']]],
   ['novosibirskpdf_2ecu',['NovosibirskPdf.cu',['../_novosibirsk_pdf_8cu.html',1,'']]],
   ['novosibirskpdf_2eh',['NovosibirskPdf.h',['../_novosibirsk_pdf_8h.html',1,'']]],
-  ['numbins',['numbins',['../struct_variable.html#a9c357d78357c4c4cbe15eb0507ae4c32',1,'Variable']]],
+  ['numbins',['numbins',['../class_variable.html#a9c357d78357c4c4cbe15eb0507ae4c32',1,'Variable']]],
   ['numentries',['numEntries',['../class_pdf_base.html#ad9277a52bf3e454d7bcb2e37ea329ee7',1,'PdfBase']]],
   ['numevents',['numEvents',['../class_pdf_base.html#aac9f1f5f2e31ed672260b3610519b684',1,'PdfBase::numEvents()'],['../class_data_set.html#add3839dc27b4c38e7688e1556617c727',1,'DataSet::numEvents()']]],
   ['numeventsadded',['numEventsAdded',['../class_data_set.html#afcb84d3ac057749f03299f69ddac4bf9',1,'DataSet']]],

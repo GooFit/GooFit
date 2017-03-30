@@ -58,7 +58,7 @@ var searchData=
   ['fisyswr',['fIsyswr',['../class_t_minuit.html#ad2e84e5101268a789dc9e7a5a632fd12',1,'TMinuit']]],
   ['fitaur',['fItaur',['../class_t_minuit.html#aec11ddfe12374ab93cdfb2506f5f9c93',1,'TMinuit']]],
   ['fitcontrol',['fitControl',['../class_pdf_base.html#ab9b8fa066ac7e9a3a00e288dc60c85ea',1,'PdfBase']]],
-  ['fixed',['fixed',['../struct_variable.html#ac2a9b9b63a71bbfb159a212325eeafde',1,'Variable']]],
+  ['fixed',['fixed',['../class_variable.html#ac2a9b9b63a71bbfb159a212325eeafde',1,'Variable']]],
   ['fke1cr',['fKe1cr',['../class_t_minuit.html#a3fb0b1dfa3617326f29ca1def5b53f22',1,'TMinuit']]],
   ['fke2cr',['fKe2cr',['../class_t_minuit.html#ad08992ecbe72154415954d2a92b5ed65',1,'TMinuit']]],
   ['flimset',['fLimset',['../class_t_minuit.html#aad830d4386356e2172e5ad8555ba86c2',1,'TMinuit']]],

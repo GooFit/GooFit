@@ -3,7 +3,7 @@ var searchData=
   ['dalitz_2ecu',['dalitz.cu',['../dalitz_8cu.html',1,'']]],
   ['dalitzplothelpers_2ecu',['DalitzPlotHelpers.cu',['../_dalitz_plot_helpers_8cu.html',1,'']]],
   ['dalitzplothelpers_2eh',['DalitzPlotHelpers.h',['../_dalitz_plot_helpers_8h.html',1,'']]],
-  ['dalitzplotpdf',['DalitzPlotPdf',['../class_dalitz_plot_pdf.html',1,'DalitzPlotPdf'],['../class_resonance_pdf.html#a5a8c21f81d8a30585289f677d70c08e4',1,'ResonancePdf::DalitzPlotPdf()'],['../class_dalitz_plot_pdf.html#ae97d74827db8c0b9f08872e97f4142d0',1,'DalitzPlotPdf::DalitzPlotPdf()']]],
+  ['dalitzplotpdf',['DalitzPlotPdf',['../class_dalitz_plot_pdf.html',1,'DalitzPlotPdf'],['../class_resonance_pdf.html#a5a8c21f81d8a30585289f677d70c08e4',1,'ResonancePdf::DalitzPlotPdf()'],['../class_dalitz_plot_pdf.html#a411183a2f244b5a4f166d11751333915',1,'DalitzPlotPdf::DalitzPlotPdf()']]],
   ['dalitzplotpdf_2ecu',['DalitzPlotPdf.cu',['../_dalitz_plot_pdf_8cu.html',1,'']]],
   ['dalitzplotpdf_2eh',['DalitzPlotPdf.h',['../_dalitz_plot_pdf_8h.html',1,'']]],
   ['dalitzvetopdf',['DalitzVetoPdf',['../class_dalitz_veto_pdf.html',1,'DalitzVetoPdf'],['../class_dalitz_veto_pdf.html#aaeaa7231c865ca6941e80579e150d646',1,'DalitzVetoPdf::DalitzVetoPdf()']]],

@@ -14,6 +14,7 @@ var searchData=
   ['real',['real',['../structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3',1,'devcomplex']]],
   ['recursivesetnormalisation',['recursiveSetNormalisation',['../class_pdf_base.html#a582459d1a7258199f9063ee88dceea7d',1,'PdfBase']]],
   ['red',['red',['../namespacerang.html#a41a68f6ed991b29fa720fcfbcd319ef9abda9643ac6601722a28f238714274da4',1,'rang::red()'],['../namespacerang.html#ad33ed681a0b63f07283bbb55d19da7d2abda9643ac6601722a28f238714274da4',1,'rang::red()'],['../namespacerang.html#a3b83d0d73d49b5a75c3b92031f2c77eeabda9643ac6601722a28f238714274da4',1,'rang::red()'],['../namespacerang.html#a42edf1c1b0d8e843ceb1208259177f08abda9643ac6601722a28f238714274da4',1,'rang::red()']]],
+  ['reduce',['reduce',['../_thrust_override_8h.html#a078913f6f445899c342ef21d4b1a78cb',1,'ThrustOverride.h']]],
   ['registerconstants',['registerConstants',['../class_pdf_base.html#a946cd8a190e00fc2054fefeec59d1225',1,'PdfBase']]],
   ['registerobservable',['registerObservable',['../class_pdf_base.html#a5e6e3bd872bd5afeb656a26684309cdc',1,'PdfBase']]],
   ['registerothers',['registerOthers',['../class_convolution_pdf.html#a89f80f9226032bfaa741ba5d2b66a9ab',1,'ConvolutionPdf']]],

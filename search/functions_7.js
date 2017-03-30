@@ -31,7 +31,7 @@ var searchData=
   ['getcurrentvalues',['getCurrentValues',['../class_data_set.html#a7f4c2aa3e599752dd6c1bac509dd068c',1,'DataSet']]],
   ['getdevicefunction',['getDeviceFunction',['../class_mixing_time_resolution.html#a5ee2470800b81c85b57a5179d65c0a4d',1,'MixingTimeResolution']]],
   ['getfunctionindex',['getFunctionIndex',['../class_pdf_base.html#a687e4184974c651c409bddf830a9b878',1,'PdfBase']]],
-  ['getindex',['getIndex',['../struct_indexable.html#a23dbb08c08ae676c84083ae890f50aad',1,'Indexable']]],
+  ['getindex',['getIndex',['../class_indexable.html#a23dbb08c08ae676c84083ae890f50aad',1,'Indexable']]],
   ['getiword',['getIword',['../namespacerang_1_1rang__implementation.html#afb46ef17c203660028a5abf745a6c4b3',1,'rang::rang_implementation']]],
   ['getmass',['getmass',['../_dalitz_plot_helpers_8h.html#a6ba9959e84d6e7411f230a74ee6b9522',1,'DalitzPlotHelpers.h']]],
   ['getmaxiterations',['GetMaxIterations',['../class_t_minuit.html#ab3e138b9856bd41697c04b989e411bd6',1,'TMinuit']]],

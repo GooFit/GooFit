@@ -27,7 +27,10 @@ A new feature of the CMake build system is GooFit Packages, which are complete p
 * Added MPI support in [PR 51](https://github.com/GooFit/GooFit/pull/36)
 * Added (this) changelog
 
-The Makefile system is somewhere between deprecated and obsolete, and will be removed in the next release. It is not possible to do an in-source CMake build while the makefile system is in place, so please use a build directory.
+## Special tag: Final Makefile release
+# March 31, 2017
+
+The Makefile system was partially maintained but deprecated after version 1.0, and received one special tag before it was removed. It is not possible to do an in-source CMake build while the makefile system is in place.
 
 ## v1.0.0: Final Classic Makefile Release
 #### December 17, 2016

@@ -95,23 +95,6 @@ A few standard cmake tricks:
 * Use `-j12` to build with 12 cores (for example).
 * Use `cmake --build .` to build without referring to your specific build tool, like `make` or `ninja`.
 
-
-> ## Classic Makefile system (depreciated)
->   
-> * You should set `CUDALOCATION` for your system
-> 
-> * You should have run source `thisroot.sh` to setup ROOT paths and other environment variables
-> 
-> * Set `TARGET_OMP=1` if you want to use OMP
->   * Checkout a copy of CUDA's thrust next to the goofit repository (there's nothing to compile)
->   * If you already have thrust in a different location, set `THRUSTLOCATION`
-> 
-> ```
-> make all TARGET_OMP=1
-> ```
-> 
-> Following the fairly standard makefile convention, all programs are built in-place instead of in a build directory.
-
 ## Running the Examples
 
 * To run all the examples, with timing information, use:
@@ -136,8 +119,6 @@ goofit_add_executible(MyNewExample MyNewExample.cu)
 The first line adds your `.cu` file with goofit code as an executible, and the second one sets up a symbolic links to the source and datafiles in the build directory to the source directory. If you perfer to only have some files symbolically linked, use `goofit_add_link(filename.ext)` explicitly for each file. To get the example to build when you build goofit, add the name of your directory to `examples/CMakeLists.txt`.
 
 If you are building with separable compilation, you can also use `goofit_add_pdf(mypdf.cu)` to add a PDF. This will also require that you include any directory that you need with `include_directory`, as usual.
-
-> If you want to extend the Makefile system instead, copy a Makefile from a different directory, changing the relevent project name (only one program per directory supported), and make a new target in `examples/Makefile`. 
 
 To add packages, use standard CMake tools. For example (CMake 3.5), to add [Boost][FindBoost] 1.49+ filesystem and `TTreeReader` from ROOT:
 

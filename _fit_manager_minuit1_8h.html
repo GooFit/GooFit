@@ -142,6 +142,15 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p class="definition">Definition at line <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00100">100</a> of file <a class="el" href="_fit_manager_minuit1_8cc_source.html">FitManagerMinuit1.cc</a>.</p>
+<div class="fragment"><div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;                                                                        {</div><div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    vector&lt;double&gt; pars;</div><div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="comment">// Notice that npar is number of variable parameters, not total.</span></div><div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    pars.resize(<a class="code" href="_fit_manager_minuit1_8cc.html#acfaae49925f72df5443f32e1d1d01b34">numPars</a>);</div><div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="keywordtype">int</span> counter = 0;</div><div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;</div><div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    <span class="keywordflow">for</span>(std::vector&lt;Variable*&gt;::iterator i = <a class="code" href="_fit_manager_minuit1_8cc.html#ad53bfbfdeb3cdc238333bda7b4aa7a41">vars</a>.begin(); i != <a class="code" href="_fit_manager_minuit1_8cc.html#ad53bfbfdeb3cdc238333bda7b4aa7a41">vars</a>.end(); ++i) {</div><div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        <span class="keywordflow">if</span>(std::isnan(fp[counter]))</div><div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;            cout &lt;&lt; <span class="stringliteral">&quot;Variable &quot;</span> &lt;&lt; (*i)-&gt;name &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; (*i)-&gt;index &lt;&lt; <span class="stringliteral">&quot; is NaN\n&quot;</span>;</div><div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;</div><div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;        pars[(*i)-&gt;getIndex()] = fp[counter++] + (*i)-&gt;blind;</div><div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    }</div><div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;</div><div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <a class="code" href="_fit_manager_minuit1_8cc.html#a236f10253e82b5cf231a867698670d04">pdfPointer</a>-&gt;<a class="code" href="class_pdf_base.html#a6d89fd29e75035dcdabed6f93b8bdfda">copyParams</a>(pars);</div><div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    fun = <a class="code" href="_fit_manager_minuit1_8cc.html#a236f10253e82b5cf231a867698670d04">pdfPointer</a>-&gt;<a class="code" href="class_pdf_base.html#a63e809b5af9291b10a5f636e6b91fd70">calculateNLL</a>();</div><div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    <a class="code" href="_global_cuda_defines_8h.html#ab075a886819d967f700cde239187a5f5">host_callnumber</a>++;</div><div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;</div><div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="preprocessor">#ifdef PRINTCALLS</span></div><div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    <a class="code" href="_fit_manager_minuit1_8cc.html#aad3938df3379693178d75bf04fef79a1">specialTddpPrint</a>(fun);</div><div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="preprocessor">#endif</span></div><div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;}</div><div class="ttc" id="_fit_manager_minuit1_8cc_html_a236f10253e82b5cf231a867698670d04"><div class="ttname"><a href="_fit_manager_minuit1_8cc.html#a236f10253e82b5cf231a867698670d04">pdfPointer</a></div><div class="ttdeci">PdfBase * pdfPointer</div><div class="ttdef"><b>Definition:</b> <a href="_fit_manager_minuit1_8cc_source.html#l00001">FitManagerMinuit1.cc:1</a></div></div>
+<div class="ttc" id="_fit_manager_minuit1_8cc_html_acfaae49925f72df5443f32e1d1d01b34"><div class="ttname"><a href="_fit_manager_minuit1_8cc.html#acfaae49925f72df5443f32e1d1d01b34">numPars</a></div><div class="ttdeci">int numPars</div><div class="ttdef"><b>Definition:</b> <a href="_fit_manager_minuit1_8cc_source.html#l00003">FitManagerMinuit1.cc:3</a></div></div>
+<div class="ttc" id="_fit_manager_minuit1_8cc_html_ad53bfbfdeb3cdc238333bda7b4aa7a41"><div class="ttname"><a href="_fit_manager_minuit1_8cc.html#ad53bfbfdeb3cdc238333bda7b4aa7a41">vars</a></div><div class="ttdeci">vector&lt; Variable * &gt; vars</div><div class="ttdef"><b>Definition:</b> <a href="_fit_manager_minuit1_8cc_source.html#l00004">FitManagerMinuit1.cc:4</a></div></div>
+<div class="ttc" id="class_pdf_base_html_a63e809b5af9291b10a5f636e6b91fd70"><div class="ttname"><a href="class_pdf_base.html#a63e809b5af9291b10a5f636e6b91fd70">PdfBase::calculateNLL</a></div><div class="ttdeci">virtual __host__ double calculateNLL() const =0</div></div>
+<div class="ttc" id="_fit_manager_minuit1_8cc_html_aad3938df3379693178d75bf04fef79a1"><div class="ttname"><a href="_fit_manager_minuit1_8cc.html#aad3938df3379693178d75bf04fef79a1">specialTddpPrint</a></div><div class="ttdeci">void specialTddpPrint(double fun)</div></div>
+<div class="ttc" id="class_pdf_base_html_a6d89fd29e75035dcdabed6f93b8bdfda"><div class="ttname"><a href="class_pdf_base.html#a6d89fd29e75035dcdabed6f93b8bdfda">PdfBase::copyParams</a></div><div class="ttdeci">__host__ void copyParams(const std::vector&lt; double &gt; &amp;pars) const</div></div>
+<div class="ttc" id="_global_cuda_defines_8h_html_ab075a886819d967f700cde239187a5f5"><div class="ttname"><a href="_global_cuda_defines_8h.html#ab075a886819d967f700cde239187a5f5">host_callnumber</a></div><div class="ttdeci">int host_callnumber</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8cc_source.html#l00008">PdfBase.cc:8</a></div></div>
+</div><!-- fragment -->
 </div>
 </div>
 <h2 class="groupheader">Variable Documentation</h2>
@@ -157,6 +166,8 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p class="definition">Definition at line <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00003">3</a> of file <a class="el" href="_fit_manager_minuit1_8cc_source.html">FitManagerMinuit1.cc</a>.</p>
+
 </div>
 </div>
 <a id="a236f10253e82b5cf231a867698670d04"></a>
@@ -171,12 +182,14 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p class="definition">Definition at line <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00001">1</a> of file <a class="el" href="_fit_manager_minuit1_8cc_source.html">FitManagerMinuit1.cc</a>.</p>
+
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Mar 30 2017 16:14:51 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Apr 1 2017 01:14:18 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

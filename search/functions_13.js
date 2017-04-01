@@ -6,6 +6,7 @@ var searchData=
   ['threegaussresolution',['ThreeGaussResolution',['../class_three_gauss_resolution.html#aa43efa5d18117f277f59b5335d4ccfbb',1,'ThreeGaussResolution']]],
   ['tminuit',['TMinuit',['../class_t_minuit.html#ad60eaf04b65f51575377f3494e8d5145',1,'TMinuit']]],
   ['to_5flower',['to_lower',['../namespace_c_l_i_1_1detail.html#ae83709ec148057ec53df4383645727e9',1,'CLI::detail']]],
+  ['toupper',['toUpper',['../_t_minuit_8cc.html#a051dd1f9f55502b1c7c79b86a4a314d5',1,'TMinuit.cc']]],
   ['trandom',['TRandom',['../class_t_random.html#a446e6d56ef610c9cc04ad0c690e4d8e3',1,'TRandom']]],
   ['trandom3',['TRandom3',['../class_t_random3.html#a660424ea92233915557a9bc01943a1bb',1,'TRandom3']]],
   ['transform_5freduce',['transform_reduce',['../_thrust_override_8h.html#a5dd7e03e1d7dcd391fcfdb6397b3fd9a',1,'ThrustOverride.h']]],

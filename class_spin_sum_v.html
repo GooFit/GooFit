@@ -130,7 +130,9 @@ Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="_spin_helper_8h_source.html#l00120">120</a> of file <a class="el" href="_spin_helper_8h_source.html">SpinHelper.h</a>.</p>
-
+<div class="fragment"><div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        : <a class="code" href="class_spin_sum_v.html#a512787e05b1e6d78f66b922296a193b4">_p</a>(p)</div><div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;        , <a class="code" href="class_spin_sum_v.html#ae98b4d06d7d1cde7b79e3c56b881903b">_mR</a>(mR)</div><div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    {}</div><div class="ttc" id="class_spin_sum_v_html_ae98b4d06d7d1cde7b79e3c56b881903b"><div class="ttname"><a href="class_spin_sum_v.html#ae98b4d06d7d1cde7b79e3c56b881903b">SpinSumV::_mR</a></div><div class="ttdeci">fptype _mR</div><div class="ttdef"><b>Definition:</b> <a href="_spin_helper_8h_source.html#l00118">SpinHelper.h:118</a></div></div>
+<div class="ttc" id="class_spin_sum_v_html_a512787e05b1e6d78f66b922296a193b4"><div class="ttname"><a href="class_spin_sum_v.html#a512787e05b1e6d78f66b922296a193b4">SpinSumV::_p</a></div><div class="ttdeci">gpuLVec _p</div><div class="ttdef"><b>Definition:</b> <a href="_spin_helper_8h_source.html#l00117">SpinHelper.h:117</a></div></div>
+</div><!-- fragment -->
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
@@ -159,7 +161,9 @@ Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="_spin_helper_8h_source.html#l00125">125</a> of file <a class="el" href="_spin_helper_8h_source.html">SpinHelper.h</a>.</p>
-
+<div class="fragment"><div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;                                                      {</div><div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;        <span class="keywordflow">return</span> -1.0 * rhs + <a class="code" href="class_spin_sum_v.html#a512787e05b1e6d78f66b922296a193b4">_p</a> * (<a class="code" href="class_spin_sum_v.html#a512787e05b1e6d78f66b922296a193b4">_p</a>.Dot(rhs) / (<a class="code" href="class_spin_sum_v.html#ae98b4d06d7d1cde7b79e3c56b881903b">_mR</a>*<a class="code" href="class_spin_sum_v.html#ae98b4d06d7d1cde7b79e3c56b881903b">_mR</a>));</div><div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    }</div><div class="ttc" id="class_spin_sum_v_html_ae98b4d06d7d1cde7b79e3c56b881903b"><div class="ttname"><a href="class_spin_sum_v.html#ae98b4d06d7d1cde7b79e3c56b881903b">SpinSumV::_mR</a></div><div class="ttdeci">fptype _mR</div><div class="ttdef"><b>Definition:</b> <a href="_spin_helper_8h_source.html#l00118">SpinHelper.h:118</a></div></div>
+<div class="ttc" id="class_spin_sum_v_html_a512787e05b1e6d78f66b922296a193b4"><div class="ttname"><a href="class_spin_sum_v.html#a512787e05b1e6d78f66b922296a193b4">SpinSumV::_p</a></div><div class="ttdeci">gpuLVec _p</div><div class="ttdef"><b>Definition:</b> <a href="_spin_helper_8h_source.html#l00117">SpinHelper.h:117</a></div></div>
+</div><!-- fragment -->
 </div>
 </div>
 <a id="aed1a7f98b7b5753cef595da483169fdc"></a>
@@ -199,7 +203,8 @@ Protected Attributes</h2></td></tr>
 <p class="definition">Definition at line <a class="el" href="_spin_helper_8h_source.html#l00128">128</a> of file <a class="el" href="_spin_helper_8h_source.html">SpinHelper.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="_spin_helper_8h_source.html#l00142">SpinSumT::Sandwich()</a>.</p>
-
+<div class="fragment"><div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;                                                            {</div><div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        <span class="keywordflow">return</span> lhs.Dot(this-&gt;<a class="code" href="class_spin_sum_v.html#aae2c0292176cfb3eacd75f40a5ed1471">Dot</a>(rhs));</div><div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    }</div><div class="ttc" id="class_spin_sum_v_html_aae2c0292176cfb3eacd75f40a5ed1471"><div class="ttname"><a href="class_spin_sum_v.html#aae2c0292176cfb3eacd75f40a5ed1471">SpinSumV::Dot</a></div><div class="ttdeci">EXEC_TARGET gpuLVec Dot(const gpuLVec &amp;rhs) const</div><div class="ttdef"><b>Definition:</b> <a href="_spin_helper_8h_source.html#l00125">SpinHelper.h:125</a></div></div>
+</div><!-- fragment -->
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
@@ -257,7 +262,7 @@ Protected Attributes</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Mar 30 2017 16:14:52 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Apr 1 2017 01:14:18 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

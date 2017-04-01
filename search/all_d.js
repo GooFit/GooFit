@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['landau',['Landau',['../class_t_random.html#aaf504fc9bf90ccaa2a887c10afa755b5',1,'TRandom']]],
+  ['landau',['Landau',['../class_t_random.html#adce86e208edbec98bae18197d7c2c742',1,'TRandom']]],
   ['landau_5fquantile',['landau_quantile',['../class_t_random.html#ace9ff924d8569ad9cfa6eab7c89d4870',1,'TRandom']]],
   ['landaupdf',['LandauPdf',['../class_landau_pdf.html',1,'LandauPdf'],['../class_landau_pdf.html#a18649317da6edf2ba1999951746c8434',1,'LandauPdf::LandauPdf()']]],
   ['landaupdf_2ecu',['LandauPdf.cu',['../_landau_pdf_8cu.html',1,'']]],
@@ -8,6 +8,7 @@ var searchData=
   ['lass',['Lass',['../_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3aeb60ec1beae3adf63350208615dc44c1',1,'LineshapesPdf.h']]],
   ['lass_5fm3',['Lass_M3',['../_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3a281f928e14010b898799fbcffca5a839',1,'LineshapesPdf.h']]],
   ['last',['last',['../classstrided__range.html#a9fc39d970e757dfc487ad9febae56d49',1,'strided_range']]],
+  ['length',['length',['../_gen_voigtian_8cc.html#a9f59b34b1f25fe00023291b678246bcc',1,'GenVoigtian.cc']]],
   ['level',['level',['../struct_c_l_i_1_1detail_1_1ini__ret__t.html#afa0edc02b084804de00dba87b20c0a92',1,'CLI::detail::ini_ret_t']]],
   ['levicivita',['LeviCivita',['../_spin_helper_8h.html#a75e60ecbbb557fe28c80bd2f605ca879',1,'LeviCivita(const gpuLVec &amp;p1, const gpuLVec &amp;p2, const gpuLVec &amp;p3, const gpuLVec &amp;p4):&#160;SpinHelper.h'],['../_spin_helper_8h.html#a0c772ece7b8ed84fe19fa8abc8f5d53d',1,'LeviCivita(const gpuLVec &amp;a, const gpuLVec &amp;b, const gpuLVec &amp;c):&#160;SpinHelper.h']]],
   ['lexical_5fcast',['lexical_cast',['../namespace_c_l_i_1_1detail.html#ac3bdd048c40fd69bf65d9eaf52f10a06',1,'CLI::detail']]],
@@ -16,6 +17,7 @@ var searchData=
   ['lineshapespdf_2eh',['LineshapesPdf.h',['../_lineshapes_pdf_8h.html',1,'']]],
   ['lnames_5f',['lnames_',['../class_c_l_i_1_1_option.html#ae06feaf7ca62a5497514a09f44724430',1,'CLI::Option']]],
   ['loadevent',['loadEvent',['../class_unbinned_data_set.html#afcb8588e12c25f90b352ae507d63d3aa',1,'UnbinnedDataSet']]],
+  ['local_5fform',['local_Form',['../_t_minuit_8cc.html#aca6a8a8dba43cf28a81f75d5207a3e9a',1,'TMinuit.cc']]],
   ['log',['LOG',['../_global_cuda_defines_8h.html#a159ca84d25a5487d8e81e4438725df19',1,'GlobalCudaDefines.h']]],
   ['logger',['logger',['../class_goo_pdf.html#a0f2eaa48ead3a6cfebd39f5cdd3e97ab',1,'GooPdf']]],
   ['long',['LONG',['../namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499ac1fabfea54ec6011e694f211f3ffebf3',1,'CLI::detail']]],

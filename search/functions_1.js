@@ -11,7 +11,7 @@ var searchData=
   ['add_5fset_5fignore_5fcase',['add_set_ignore_case',['../class_c_l_i_1_1_app.html#a2475df413b8fa69008ac2078deab3c4f',1,'CLI::App']]],
   ['add_5fsubcommand',['add_subcommand',['../class_c_l_i_1_1_app.html#a4c329987155640f837e655b886d3ce80',1,'CLI::App']]],
   ['addevent',['addEvent',['../class_data_set.html#a363d1779faf6983e6e428c43c5fe64e6',1,'DataSet::addEvent()'],['../class_data_set.html#a5110aa9f8297cbb4a02bb4e7927d1c4f',1,'DataSet::addEvent(fptype val)']]],
-  ['addeventvector',['addEventVector',['../class_binned_data_set.html#ac5a7643159d3f76ed253643f53a0fcc6',1,'BinnedDataSet::addEventVector()'],['../class_data_set.html#a682607e211780dfb653ab81afcafa033',1,'DataSet::addEventVector()'],['../class_unbinned_data_set.html#a7bfdcf548fb46b3646a870f4cc6ee40a',1,'UnbinnedDataSet::addEventVector()']]],
+  ['addeventvector',['addEventVector',['../class_binned_data_set.html#a11559fdc4ec9bdc5e4dcb22bb520d8db',1,'BinnedDataSet::addEventVector()'],['../class_data_set.html#a682607e211780dfb653ab81afcafa033',1,'DataSet::addEventVector()'],['../class_unbinned_data_set.html#a3c9147954f1b42a953f6034570043cc1',1,'UnbinnedDataSet::addEventVector()']]],
   ['addpdf',['AddPdf',['../class_add_pdf.html#a500be46553c62af953e9e641b803f03a',1,'AddPdf::AddPdf(std::string n, std::vector&lt; Variable *&gt; weights, std::vector&lt; PdfBase *&gt; comps)'],['../class_add_pdf.html#a7cd4d46b80b9e97855d58f7c74a59503',1,'AddPdf::AddPdf(std::string n, Variable *frac1, PdfBase *func1, PdfBase *func2)']]],
   ['addspecialmask',['addSpecialMask',['../class_pdf_base.html#a87ef89218724b71256e54f844b299ee9',1,'PdfBase']]],
   ['addweightedevent',['addWeightedEvent',['../class_data_set.html#afe2a52ec86aaa4aa6e2ef5dfaef6c597',1,'DataSet']]],

@@ -150,7 +150,10 @@ template&lt;typename T &gt; </div>
 <p class="definition">Definition at line <a class="el" href="devcomplex_8h_source.html#l00126">126</a> of file <a class="el" href="devcomplex_8h_source.html">devcomplex.h</a>.</p>
 
 <p class="reference">References <a class="el" href="devcomplex_8h_source.html#l00006">devcomplex&lt; T &gt;::imag</a>, and <a class="el" href="devcomplex_8h_source.html#l00005">devcomplex&lt; T &gt;::real</a>.</p>
-
+<div class="fragment"><div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;                                                                             {</div><div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="structdevcomplex.html">devcomplex&lt;T&gt;</a>(z.<a class="code" href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">real</a>, -(z.<a class="code" href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">imag</a>));</div><div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;}</div><div class="ttc" id="structdevcomplex_html"><div class="ttname"><a href="structdevcomplex.html">devcomplex</a></div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00004">devcomplex.h:4</a></div></div>
+<div class="ttc" id="structdevcomplex_html_a22abfb53be7d8b0c345268b4a0328fe3"><div class="ttname"><a href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">devcomplex::real</a></div><div class="ttdeci">T real</div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00005">devcomplex.h:5</a></div></div>
+<div class="ttc" id="structdevcomplex_html_a4a59d87a6478bb607a2cf0c70f4323bd"><div class="ttname"><a href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">devcomplex::imag</a></div><div class="ttdeci">T imag</div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00006">devcomplex.h:6</a></div></div>
+</div><!-- fragment -->
 </div>
 </div>
 <a id="ab6507d0f0bdc1926634d8f8005b52dd2"></a>
@@ -175,6 +178,14 @@ template&lt;typename T &gt; </div>
 
 <p class="reference">References <a class="el" href="_global_cuda_defines_8h_source.html#l00096">COS</a>, <a class="el" href="_global_cuda_defines_8h_source.html#l00101">EXP</a>, <a class="el" href="devcomplex_8h_source.html#l00006">devcomplex&lt; T &gt;::imag</a>, <a class="el" href="devcomplex_8h_source.html#l00005">devcomplex&lt; T &gt;::real</a>, and <a class="el" href="_global_cuda_defines_8h_source.html#l00106">SIN</a>.</p>
 
+<p class="reference">Referenced by <a class="el" href="_gen_voigtian_8cc_source.html#l00014">cpuvoigtian()</a>, <a class="el" href="_faddeeva_8cc_source.html#l00037">Faddeeva_2()</a>, <a class="el" href="_t_random_8cc_source.html#l00212">TRandom::Gaus()</a>, <a class="el" href="_t_random_8cc_source.html#l00342">TRandom::Poisson()</a>, and <a class="el" href="_t_random_8cc_source.html#l00405">TRandom::PoissonD()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;                                                                            {</div><div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    T mult = <a class="code" href="_global_cuda_defines_8h.html#a84db90500a1f9527c04e28817d9f60a1">EXP</a>(z.<a class="code" href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">real</a>);</div><div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="structdevcomplex.html">devcomplex&lt;T&gt;</a>(mult*<a class="code" href="_global_cuda_defines_8h.html#af1af2de870caad797b91210f0fc6fe78">COS</a>(z.<a class="code" href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">imag</a>), mult*<a class="code" href="_global_cuda_defines_8h.html#ac80ce9955a1af2ab7aa3a67251ec9f5c">SIN</a>(z.<a class="code" href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">imag</a>));</div><div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;}</div><div class="ttc" id="structdevcomplex_html"><div class="ttname"><a href="structdevcomplex.html">devcomplex</a></div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00004">devcomplex.h:4</a></div></div>
+<div class="ttc" id="_global_cuda_defines_8h_html_ac80ce9955a1af2ab7aa3a67251ec9f5c"><div class="ttname"><a href="_global_cuda_defines_8h.html#ac80ce9955a1af2ab7aa3a67251ec9f5c">SIN</a></div><div class="ttdeci">#define SIN</div><div class="ttdef"><b>Definition:</b> <a href="_global_cuda_defines_8h_source.html#l00106">GlobalCudaDefines.h:106</a></div></div>
+<div class="ttc" id="_global_cuda_defines_8h_html_a84db90500a1f9527c04e28817d9f60a1"><div class="ttname"><a href="_global_cuda_defines_8h.html#a84db90500a1f9527c04e28817d9f60a1">EXP</a></div><div class="ttdeci">#define EXP</div><div class="ttdef"><b>Definition:</b> <a href="_global_cuda_defines_8h_source.html#l00101">GlobalCudaDefines.h:101</a></div></div>
+<div class="ttc" id="structdevcomplex_html_a22abfb53be7d8b0c345268b4a0328fe3"><div class="ttname"><a href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">devcomplex::real</a></div><div class="ttdeci">T real</div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00005">devcomplex.h:5</a></div></div>
+<div class="ttc" id="structdevcomplex_html_a4a59d87a6478bb607a2cf0c70f4323bd"><div class="ttname"><a href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">devcomplex::imag</a></div><div class="ttdeci">T imag</div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00006">devcomplex.h:6</a></div></div>
+<div class="ttc" id="_global_cuda_defines_8h_html_af1af2de870caad797b91210f0fc6fe78"><div class="ttname"><a href="_global_cuda_defines_8h.html#af1af2de870caad797b91210f0fc6fe78">COS</a></div><div class="ttdeci">#define COS</div><div class="ttdef"><b>Definition:</b> <a href="_global_cuda_defines_8h_source.html#l00096">GlobalCudaDefines.h:96</a></div></div>
+</div><!-- fragment -->
 </div>
 </div>
 <a id="af54c6306ac31991a2436c480065c39f9"></a>
@@ -199,8 +210,11 @@ template&lt;typename T &gt; </div>
 
 <p class="reference">References <a class="el" href="devcomplex_8h_source.html#l00006">devcomplex&lt; T &gt;::imag</a>, <a class="el" href="devcomplex_8h_source.html#l00005">devcomplex&lt; T &gt;::real</a>, and <a class="el" href="_global_cuda_defines_8h_source.html#l00107">SQRT</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00073">PdfBase::getParameterIndex()</a>.</p>
-
+<p class="reference">Referenced by <a class="el" href="_faddeeva_8cc_source.html#l00037">Faddeeva_2()</a>, <a class="el" href="_pdf_base_8h_source.html#l00073">PdfBase::getParameterIndex()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00036">PdfBase::recursiveSetNormalisation()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;                                                                 {</div><div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="_global_cuda_defines_8h.html#a095e93222540fb38e433670cf08b5a46">SQRT</a>(z.<a class="code" href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">real</a>*z.<a class="code" href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">real</a> + z.<a class="code" href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">imag</a>*z.<a class="code" href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">imag</a>);</div><div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;}</div><div class="ttc" id="_global_cuda_defines_8h_html_a095e93222540fb38e433670cf08b5a46"><div class="ttname"><a href="_global_cuda_defines_8h.html#a095e93222540fb38e433670cf08b5a46">SQRT</a></div><div class="ttdeci">#define SQRT</div><div class="ttdef"><b>Definition:</b> <a href="_global_cuda_defines_8h_source.html#l00107">GlobalCudaDefines.h:107</a></div></div>
+<div class="ttc" id="structdevcomplex_html_a22abfb53be7d8b0c345268b4a0328fe3"><div class="ttname"><a href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">devcomplex::real</a></div><div class="ttdeci">T real</div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00005">devcomplex.h:5</a></div></div>
+<div class="ttc" id="structdevcomplex_html_a4a59d87a6478bb607a2cf0c70f4323bd"><div class="ttname"><a href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">devcomplex::imag</a></div><div class="ttdeci">T imag</div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00006">devcomplex.h:6</a></div></div>
+</div><!-- fragment -->
 </div>
 </div>
 <a id="a9b4342b562be74b09ab0dee36aff4c4b"></a>
@@ -224,7 +238,9 @@ template&lt;typename T &gt; </div>
 <p class="definition">Definition at line <a class="el" href="devcomplex_8h_source.html#l00117">117</a> of file <a class="el" href="devcomplex_8h_source.html">devcomplex.h</a>.</p>
 
 <p class="reference">References <a class="el" href="devcomplex_8h_source.html#l00006">devcomplex&lt; T &gt;::imag</a>, and <a class="el" href="devcomplex_8h_source.html#l00005">devcomplex&lt; T &gt;::real</a>.</p>
-
+<div class="fragment"><div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;                                                                  {</div><div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    <span class="keywordflow">return</span> (z.<a class="code" href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">real</a>*z.<a class="code" href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">real</a> + z.<a class="code" href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">imag</a>*z.<a class="code" href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">imag</a>);</div><div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;}</div><div class="ttc" id="structdevcomplex_html_a22abfb53be7d8b0c345268b4a0328fe3"><div class="ttname"><a href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">devcomplex::real</a></div><div class="ttdeci">T real</div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00005">devcomplex.h:5</a></div></div>
+<div class="ttc" id="structdevcomplex_html_a4a59d87a6478bb607a2cf0c70f4323bd"><div class="ttname"><a href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">devcomplex::imag</a></div><div class="ttdeci">T imag</div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00006">devcomplex.h:6</a></div></div>
+</div><!-- fragment -->
 </div>
 </div>
 <a id="a9bfaa6c40c4ff5628d19c29df2f48625"></a>
@@ -258,7 +274,10 @@ template&lt;typename T &gt; </div>
 <p class="definition">Definition at line <a class="el" href="devcomplex_8h_source.html#l00087">87</a> of file <a class="el" href="devcomplex_8h_source.html">devcomplex.h</a>.</p>
 
 <p class="reference">References <a class="el" href="devcomplex_8h_source.html#l00006">devcomplex&lt; T &gt;::imag</a>, and <a class="el" href="devcomplex_8h_source.html#l00005">devcomplex&lt; T &gt;::real</a>.</p>
-
+<div class="fragment"><div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                                                                                                                 {</div><div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="structdevcomplex.html">devcomplex&lt;T&gt;</a>(one.<a class="code" href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">real</a>*other.<a class="code" href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">real</a> - one.<a class="code" href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">imag</a>*other.<a class="code" href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">imag</a>, one.<a class="code" href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">real</a>*other.<a class="code" href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">imag</a> + one.<a class="code" href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">imag</a>*other.<a class="code" href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">real</a>);</div><div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;}</div><div class="ttc" id="structdevcomplex_html"><div class="ttname"><a href="structdevcomplex.html">devcomplex</a></div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00004">devcomplex.h:4</a></div></div>
+<div class="ttc" id="structdevcomplex_html_a22abfb53be7d8b0c345268b4a0328fe3"><div class="ttname"><a href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">devcomplex::real</a></div><div class="ttdeci">T real</div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00005">devcomplex.h:5</a></div></div>
+<div class="ttc" id="structdevcomplex_html_a4a59d87a6478bb607a2cf0c70f4323bd"><div class="ttname"><a href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">devcomplex::imag</a></div><div class="ttdeci">T imag</div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00006">devcomplex.h:6</a></div></div>
+</div><!-- fragment -->
 </div>
 </div>
 <a id="ac943ce580ee94fb6b877ea7e86a726f2"></a>
@@ -292,7 +311,10 @@ template&lt;typename T &gt; </div>
 <p class="definition">Definition at line <a class="el" href="devcomplex_8h_source.html#l00091">91</a> of file <a class="el" href="devcomplex_8h_source.html">devcomplex.h</a>.</p>
 
 <p class="reference">References <a class="el" href="devcomplex_8h_source.html#l00006">devcomplex&lt; T &gt;::imag</a>, and <a class="el" href="devcomplex_8h_source.html#l00005">devcomplex&lt; T &gt;::real</a>.</p>
-
+<div class="fragment"><div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;                                                                                                       {</div><div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="structdevcomplex.html">devcomplex&lt;T&gt;</a>(one.<a class="code" href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">real</a>*other, one.<a class="code" href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">imag</a>*other);</div><div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;}</div><div class="ttc" id="structdevcomplex_html"><div class="ttname"><a href="structdevcomplex.html">devcomplex</a></div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00004">devcomplex.h:4</a></div></div>
+<div class="ttc" id="structdevcomplex_html_a22abfb53be7d8b0c345268b4a0328fe3"><div class="ttname"><a href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">devcomplex::real</a></div><div class="ttdeci">T real</div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00005">devcomplex.h:5</a></div></div>
+<div class="ttc" id="structdevcomplex_html_a4a59d87a6478bb607a2cf0c70f4323bd"><div class="ttname"><a href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">devcomplex::imag</a></div><div class="ttdeci">T imag</div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00006">devcomplex.h:6</a></div></div>
+</div><!-- fragment -->
 </div>
 </div>
 <a id="aee7fdcfcb427151250a6ccbe6abbf646"></a>
@@ -326,7 +348,10 @@ template&lt;typename T &gt; </div>
 <p class="definition">Definition at line <a class="el" href="devcomplex_8h_source.html#l00095">95</a> of file <a class="el" href="devcomplex_8h_source.html">devcomplex.h</a>.</p>
 
 <p class="reference">References <a class="el" href="devcomplex_8h_source.html#l00006">devcomplex&lt; T &gt;::imag</a>, and <a class="el" href="devcomplex_8h_source.html#l00005">devcomplex&lt; T &gt;::real</a>.</p>
-
+<div class="fragment"><div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;                                                                                                       {</div><div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="structdevcomplex.html">devcomplex&lt;T&gt;</a>(one.<a class="code" href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">real</a>*other, one.<a class="code" href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">imag</a>*other);</div><div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;}</div><div class="ttc" id="structdevcomplex_html"><div class="ttname"><a href="structdevcomplex.html">devcomplex</a></div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00004">devcomplex.h:4</a></div></div>
+<div class="ttc" id="structdevcomplex_html_a22abfb53be7d8b0c345268b4a0328fe3"><div class="ttname"><a href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">devcomplex::real</a></div><div class="ttdeci">T real</div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00005">devcomplex.h:5</a></div></div>
+<div class="ttc" id="structdevcomplex_html_a4a59d87a6478bb607a2cf0c70f4323bd"><div class="ttname"><a href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">devcomplex::imag</a></div><div class="ttdeci">T imag</div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00006">devcomplex.h:6</a></div></div>
+</div><!-- fragment -->
 </div>
 </div>
 <a id="aa93558af8f9f00865af24a33c76e17da"></a>
@@ -360,7 +385,10 @@ template&lt;typename T &gt; </div>
 <p class="definition">Definition at line <a class="el" href="devcomplex_8h_source.html#l00105">105</a> of file <a class="el" href="devcomplex_8h_source.html">devcomplex.h</a>.</p>
 
 <p class="reference">References <a class="el" href="devcomplex_8h_source.html#l00006">devcomplex&lt; T &gt;::imag</a>, and <a class="el" href="devcomplex_8h_source.html#l00005">devcomplex&lt; T &gt;::real</a>.</p>
-
+<div class="fragment"><div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;                                                                                       {</div><div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="structdevcomplex.html">devcomplex&lt;T&gt;</a>(a*b.<a class="code" href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">real</a>, a*b.<a class="code" href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">imag</a>);</div><div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;}</div><div class="ttc" id="structdevcomplex_html"><div class="ttname"><a href="structdevcomplex.html">devcomplex</a></div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00004">devcomplex.h:4</a></div></div>
+<div class="ttc" id="structdevcomplex_html_a22abfb53be7d8b0c345268b4a0328fe3"><div class="ttname"><a href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">devcomplex::real</a></div><div class="ttdeci">T real</div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00005">devcomplex.h:5</a></div></div>
+<div class="ttc" id="structdevcomplex_html_a4a59d87a6478bb607a2cf0c70f4323bd"><div class="ttname"><a href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">devcomplex::imag</a></div><div class="ttdeci">T imag</div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00006">devcomplex.h:6</a></div></div>
+</div><!-- fragment -->
 </div>
 </div>
 <a id="a50ba017f6415e7d9dad7ef3295c4643e"></a>
@@ -394,7 +422,10 @@ template&lt;typename T &gt; </div>
 <p class="definition">Definition at line <a class="el" href="devcomplex_8h_source.html#l00109">109</a> of file <a class="el" href="devcomplex_8h_source.html">devcomplex.h</a>.</p>
 
 <p class="reference">References <a class="el" href="devcomplex_8h_source.html#l00006">devcomplex&lt; T &gt;::imag</a>, and <a class="el" href="devcomplex_8h_source.html#l00005">devcomplex&lt; T &gt;::real</a>.</p>
-
+<div class="fragment"><div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;                                                                                                    {</div><div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="structdevcomplex.html">devcomplex&lt;T&gt;</a>(one.<a class="code" href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">real</a>*other, one.<a class="code" href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">imag</a>*other);</div><div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;}</div><div class="ttc" id="structdevcomplex_html"><div class="ttname"><a href="structdevcomplex.html">devcomplex</a></div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00004">devcomplex.h:4</a></div></div>
+<div class="ttc" id="structdevcomplex_html_a22abfb53be7d8b0c345268b4a0328fe3"><div class="ttname"><a href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">devcomplex::real</a></div><div class="ttdeci">T real</div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00005">devcomplex.h:5</a></div></div>
+<div class="ttc" id="structdevcomplex_html_a4a59d87a6478bb607a2cf0c70f4323bd"><div class="ttname"><a href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">devcomplex::imag</a></div><div class="ttdeci">T imag</div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00006">devcomplex.h:6</a></div></div>
+</div><!-- fragment -->
 </div>
 </div>
 <a id="aeccc3035029566ec05dffe8ecd13e2b7"></a>
@@ -428,7 +459,10 @@ template&lt;typename T &gt; </div>
 <p class="definition">Definition at line <a class="el" href="devcomplex_8h_source.html#l00068">68</a> of file <a class="el" href="devcomplex_8h_source.html">devcomplex.h</a>.</p>
 
 <p class="reference">References <a class="el" href="devcomplex_8h_source.html#l00006">devcomplex&lt; T &gt;::imag</a>, and <a class="el" href="devcomplex_8h_source.html#l00005">devcomplex&lt; T &gt;::real</a>.</p>
-
+<div class="fragment"><div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;                                                                                                                 {</div><div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="structdevcomplex.html">devcomplex&lt;T&gt;</a>(one.<a class="code" href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">real</a>+other.<a class="code" href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">real</a>, one.<a class="code" href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">imag</a>+other.<a class="code" href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">imag</a>);</div><div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;}</div><div class="ttc" id="structdevcomplex_html"><div class="ttname"><a href="structdevcomplex.html">devcomplex</a></div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00004">devcomplex.h:4</a></div></div>
+<div class="ttc" id="structdevcomplex_html_a22abfb53be7d8b0c345268b4a0328fe3"><div class="ttname"><a href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">devcomplex::real</a></div><div class="ttdeci">T real</div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00005">devcomplex.h:5</a></div></div>
+<div class="ttc" id="structdevcomplex_html_a4a59d87a6478bb607a2cf0c70f4323bd"><div class="ttname"><a href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">devcomplex::imag</a></div><div class="ttdeci">T imag</div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00006">devcomplex.h:6</a></div></div>
+</div><!-- fragment -->
 </div>
 </div>
 <a id="a4a03ede7dc4b9c8621c19020e9cc6a27"></a>
@@ -462,7 +496,10 @@ template&lt;typename T &gt; </div>
 <p class="definition">Definition at line <a class="el" href="devcomplex_8h_source.html#l00076">76</a> of file <a class="el" href="devcomplex_8h_source.html">devcomplex.h</a>.</p>
 
 <p class="reference">References <a class="el" href="devcomplex_8h_source.html#l00006">devcomplex&lt; T &gt;::imag</a>, and <a class="el" href="devcomplex_8h_source.html#l00005">devcomplex&lt; T &gt;::real</a>.</p>
-
+<div class="fragment"><div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;                                                                                              {</div><div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="structdevcomplex.html">devcomplex&lt;T&gt;</a>(one.<a class="code" href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">real</a>+other, one.<a class="code" href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">imag</a>);</div><div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;}</div><div class="ttc" id="structdevcomplex_html"><div class="ttname"><a href="structdevcomplex.html">devcomplex</a></div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00004">devcomplex.h:4</a></div></div>
+<div class="ttc" id="structdevcomplex_html_a22abfb53be7d8b0c345268b4a0328fe3"><div class="ttname"><a href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">devcomplex::real</a></div><div class="ttdeci">T real</div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00005">devcomplex.h:5</a></div></div>
+<div class="ttc" id="structdevcomplex_html_a4a59d87a6478bb607a2cf0c70f4323bd"><div class="ttname"><a href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">devcomplex::imag</a></div><div class="ttdeci">T imag</div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00006">devcomplex.h:6</a></div></div>
+</div><!-- fragment -->
 </div>
 </div>
 <a id="ad92c8bbef214abaa4fec4da963fea9f2"></a>
@@ -496,7 +533,10 @@ template&lt;typename T &gt; </div>
 <p class="definition">Definition at line <a class="el" href="devcomplex_8h_source.html#l00072">72</a> of file <a class="el" href="devcomplex_8h_source.html">devcomplex.h</a>.</p>
 
 <p class="reference">References <a class="el" href="devcomplex_8h_source.html#l00006">devcomplex&lt; T &gt;::imag</a>, and <a class="el" href="devcomplex_8h_source.html#l00005">devcomplex&lt; T &gt;::real</a>.</p>
-
+<div class="fragment"><div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;                                                                                                                 {</div><div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="structdevcomplex.html">devcomplex&lt;T&gt;</a>(one.<a class="code" href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">real</a>-other.<a class="code" href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">real</a>, one.<a class="code" href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">imag</a>-other.<a class="code" href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">imag</a>);</div><div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;}</div><div class="ttc" id="structdevcomplex_html"><div class="ttname"><a href="structdevcomplex.html">devcomplex</a></div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00004">devcomplex.h:4</a></div></div>
+<div class="ttc" id="structdevcomplex_html_a22abfb53be7d8b0c345268b4a0328fe3"><div class="ttname"><a href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">devcomplex::real</a></div><div class="ttdeci">T real</div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00005">devcomplex.h:5</a></div></div>
+<div class="ttc" id="structdevcomplex_html_a4a59d87a6478bb607a2cf0c70f4323bd"><div class="ttname"><a href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">devcomplex::imag</a></div><div class="ttdeci">T imag</div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00006">devcomplex.h:6</a></div></div>
+</div><!-- fragment -->
 </div>
 </div>
 <a id="ad02451d5a565c3853d442fd8ddfb6b5b"></a>
@@ -530,7 +570,10 @@ template&lt;typename T &gt; </div>
 <p class="definition">Definition at line <a class="el" href="devcomplex_8h_source.html#l00080">80</a> of file <a class="el" href="devcomplex_8h_source.html">devcomplex.h</a>.</p>
 
 <p class="reference">References <a class="el" href="devcomplex_8h_source.html#l00006">devcomplex&lt; T &gt;::imag</a>, and <a class="el" href="devcomplex_8h_source.html#l00005">devcomplex&lt; T &gt;::real</a>.</p>
-
+<div class="fragment"><div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;                                                                                                                 {</div><div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    T inverse(1);</div><div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    inverse /= (other.<a class="code" href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">real</a>*other.<a class="code" href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">real</a> + other.<a class="code" href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">imag</a>*other.<a class="code" href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">imag</a>);</div><div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="structdevcomplex.html">devcomplex&lt;T&gt;</a>(inverse*(one.<a class="code" href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">real</a>*other.<a class="code" href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">real</a>+one.<a class="code" href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">imag</a>*other.<a class="code" href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">imag</a>),</div><div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;                         inverse*(one.<a class="code" href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">imag</a>*other.<a class="code" href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">real</a> - one.<a class="code" href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">real</a>*other.<a class="code" href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">imag</a>));</div><div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;}</div><div class="ttc" id="structdevcomplex_html"><div class="ttname"><a href="structdevcomplex.html">devcomplex</a></div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00004">devcomplex.h:4</a></div></div>
+<div class="ttc" id="structdevcomplex_html_a22abfb53be7d8b0c345268b4a0328fe3"><div class="ttname"><a href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">devcomplex::real</a></div><div class="ttdeci">T real</div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00005">devcomplex.h:5</a></div></div>
+<div class="ttc" id="structdevcomplex_html_a4a59d87a6478bb607a2cf0c70f4323bd"><div class="ttname"><a href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">devcomplex::imag</a></div><div class="ttdeci">T imag</div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00006">devcomplex.h:6</a></div></div>
+</div><!-- fragment -->
 </div>
 </div>
 <a id="a8dab99a2f6d1945f3930ddb44a8d778c"></a>
@@ -564,13 +607,16 @@ template&lt;typename T &gt; </div>
 <p class="definition">Definition at line <a class="el" href="devcomplex_8h_source.html#l00099">99</a> of file <a class="el" href="devcomplex_8h_source.html">devcomplex.h</a>.</p>
 
 <p class="reference">References <a class="el" href="devcomplex_8h_source.html#l00006">devcomplex&lt; T &gt;::imag</a>, and <a class="el" href="devcomplex_8h_source.html#l00005">devcomplex&lt; T &gt;::real</a>.</p>
-
+<div class="fragment"><div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;                                                                                              {</div><div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    T inverse(1);</div><div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    inverse /= (b.<a class="code" href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">real</a>*b.<a class="code" href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">real</a> + b.<a class="code" href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">imag</a>*b.<a class="code" href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">imag</a>);</div><div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="structdevcomplex.html">devcomplex&lt;T&gt;</a>(inverse*a*b.<a class="code" href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">real</a>, -inverse*a*b.<a class="code" href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">imag</a>);</div><div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;}</div><div class="ttc" id="structdevcomplex_html"><div class="ttname"><a href="structdevcomplex.html">devcomplex</a></div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00004">devcomplex.h:4</a></div></div>
+<div class="ttc" id="structdevcomplex_html_a22abfb53be7d8b0c345268b4a0328fe3"><div class="ttname"><a href="structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3">devcomplex::real</a></div><div class="ttdeci">T real</div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00005">devcomplex.h:5</a></div></div>
+<div class="ttc" id="structdevcomplex_html_a4a59d87a6478bb607a2cf0c70f4323bd"><div class="ttname"><a href="structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd">devcomplex::imag</a></div><div class="ttdeci">T imag</div><div class="ttdef"><b>Definition:</b> <a href="devcomplex_8h_source.html#l00006">devcomplex.h:6</a></div></div>
+</div><!-- fragment -->
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Mar 30 2017 16:14:51 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Apr 1 2017 01:14:18 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

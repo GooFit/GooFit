@@ -265,8 +265,9 @@ endmacro()
 include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/MCBooster)
 
-include(AddCLI.cmake)
-include(AddRang.cmake)
+# Adding header only libraries
+include(AddCLI)
+include(AddRang)
 
 add_library(goofit_lib INTERFACE)
 target_link_libraries(goofit_lib INTERFACE goofit_base PDFs rootstuff ROOT::ROOT rang CLI11)

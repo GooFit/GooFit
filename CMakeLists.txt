@@ -168,8 +168,6 @@ find_package(TBB REQUIRED)
 include_directories(SYSTEM "${TBB_INCLUDE_DIRS}")
 endif()
 
-
-# The target is setup to avoid clashes with fakeroot
 # Include directories are not picked up by FindCUDA
 find_package(ROOT 6 REQUIRED COMPONENTS Minuit)
 

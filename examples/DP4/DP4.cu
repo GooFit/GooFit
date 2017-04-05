@@ -1,6 +1,7 @@
 #include <fstream>
 
 // GooFit stuff
+#include "goofit/Application.h"
 #include "goofit/FitManager.h"
 #include "goofit/Variable.h"
 #include "goofit/PDFs/PolynomialPdf.h"
@@ -16,12 +17,20 @@ const fptype KmMass = .493677;
 
 int main(int argc, char** argv) {
 
+    GooFit::Application app("Dalitz 4 daughter example", argc, argv);
+
+    try {
+        app.run();
+    } catch (const GooFit::ParseError &e) {
+        return app.exit(e);
+    }
+
     Variable* m12 = new Variable("m12", 0, 3);
     Variable* m34 = new Variable("m34", 0, 3);
     Variable* cos12 = new Variable("cos12", -1, 1);
     Variable* cos34 = new Variable("m12", -1, 1);
     Variable* phi = new Variable("phi", -3.5, 3.5);
-    Variable* eventNumber = new Variable("eventNumber", 0, INT_MAX);
+    CountingVariable* eventNumber = new CountingVariable("eventNumber", 0, INT_MAX);
 
     std::vector<Variable*> vars;
     vars.push_back(m12);

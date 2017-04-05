@@ -106,7 +106,7 @@ MEM_DEVICE device_function_ptr ptr_to_DalitzPlot = device_DalitzPlot;
 __host__ DalitzPlotPdf::DalitzPlotPdf(std::string n,
                                       Variable* m12,
                                       Variable* m13,
-                                      Variable* eventNumber,
+                                      CountingVariable* eventNumber,
                                       DecayInfo* decay,
                                       GooPdf* efficiency)
     : GooPdf(0, n)
@@ -127,8 +127,8 @@ __host__ DalitzPlotPdf::DalitzPlotPdf(std::string n,
 
     fptype decayConstants[5];
 
-    for(int i = 0; i < 16; i++)
-        cachedWaves[i] = 0;
+    for(int j = 0; j < 16; j++)
+        cachedWaves[j] = 0;
 
     std::vector<unsigned int> pindices;
     pindices.push_back(registerConstants(5));
@@ -192,14 +192,19 @@ __host__ void DalitzPlotPdf::setDataSize(unsigned int dataSize, unsigned int evt
 
     //if (cachedWaves) delete cachedWaves;
     if(cachedWaves[0]) {
-        for(int i = 0; i < 16; i++)
-            delete cachedWaves[i];
+        for(int j = 0; j < 16; j++)
+            delete cachedWaves[j];
     }
 
     numEntries = dataSize;
 
+
     for(int i = 0; i < 16; i++) {
+#ifdef GOOFIT_MPI
+        cachedWaves[i] = new DEVICE_VECTOR<devcomplex<fptype>>(m_iEventsPerTask);
+#else
         cachedWaves[i] = new DEVICE_VECTOR<devcomplex<fptype>>(dataSize);
+#endif
         void* dummy = thrust::raw_pointer_cast(cachedWaves[i]->data());
         MEMCPY_TO_SYMBOL(cResonances, &dummy, sizeof(devcomplex<fptype>*), i*sizeof(devcomplex<fptype>*),
                          cudaMemcpyHostToDevice);
@@ -256,12 +261,21 @@ __host__ fptype DalitzPlotPdf::normalise() const {
 
     for(int i = 0; i < decayInfo->resonances.size(); ++i) {
         if(redoIntegral[i]) {
+#ifdef GOOFIT_MPI
+            thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
+                              thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, arrayAddress, eventSize)),
+                              strided_range<DEVICE_VECTOR<devcomplex<fptype>>::iterator>(cachedWaves[i]->begin(),
+                                      cachedWaves[i]->end(),
+                                      1).begin(),
+                              *(calculators[i]));
+#else
             thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
                               thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
                               strided_range<DEVICE_VECTOR<devcomplex<fptype>>::iterator>(cachedWaves[i]->begin(),
                                       cachedWaves[i]->end(),
                                       1).begin(),
                               *(calculators[i]));
+#endif
         }
 
         // Possibly this can be done more efficiently by exploiting symmetry?

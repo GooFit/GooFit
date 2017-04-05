@@ -8,6 +8,21 @@ if(EXISTS ${LOC_PATH})
     message(FATAL_ERROR "You cannot build in the source directory (or any directory with a CMakeLists.txt file). Please make a build subdirectory.")
 endif()
 
+
+set(GOOFIT_CUDA_OR_GROUPSIZE "128" CACHE STRING "Overrides the default group distribution for Thrust's transform_reduce")
+set(GOOFIT_CUDA_OR_GRAINSIZE "7" CACHE STRING "Overrides the default grain size for Thrust's transform_reduce")
+
+configure_file (
+    "${PROJECT_SOURCE_DIR}/include/goofit/ThrustOverrideConfig.h.in"
+    "${PROJECT_BINARY_DIR}/include/goofit/ThrustOverrideConfig.h"
+)
+
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
+if(CMAKE_VERSION VERSION_LESS 3.7)
+    set(CMAKE_MODULE_PATH  ${PROJECT_SOURCE_DIR}/cmake/support_old_cmake ${CMAKE_MODULE_PATH})
+endif()
+
+
 ### Version number ###
 set(GOOFIT_VERSION_MAJOR 2)
 set(GOOFIT_VERSION_MINOR 0)
@@ -36,9 +51,15 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 
+# Code coverage
+if(CMAKE_BUILD_TYPE STREQUAL Coverage)
+    include(CodeCoverage)
+    setup_target_for_coverage(GooFit_coverage ctest coverage)
+endif()
+
 ### Options ###
-set(DEVICE_LISTING CUDA OMP TBB CPP Auto)
-set(HOST_LISTING OMP TBB CPP)
+set(DEVICE_LISTING CUDA OMP CPP Auto)
+set(HOST_LISTING OMP CPP)
 mark_as_advanced(DEVICE_LISTING HOST_LISTING)
 
 set(GOOFIT_DEVICE Auto CACHE STRING "The compute device, options are ${DEVICE_LISTING}")
@@ -62,7 +83,14 @@ if(GOOFIT_DEVICE STREQUAL Auto)
     message(STATUS "Auto device selection: ${GOOFIT_DEVICE}")
 endif()
 
-option(GOOFIT_SEPARATE_COMP "Enable separate compilation of PDFs" OFF)
+# Only default to off for CUDA
+if(GOOFIT_DEVICE STREQUAL CUDA)
+    option(GOOFIT_SEPARATE_COMP "Enable separate compilation of PDFs" OFF)
+else()
+    option(GOOFIT_SEPARATE_COMP "Enable separate compilation of PDFs" ON)
+endif()
+
+
 if(GOOFIT_SEPARATE_COMP)
     add_definitions("-DSEPARABLE")
 endif()
@@ -73,14 +101,27 @@ add_definitions("-DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_${GOOFIT_HOST}")
 
 # -Wl,--no-undefined,--no-allow-shlib-undefined")
 
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
-if(CMAKE_VERSION VERSION_LESS 3.7)
-    set(CMAKE_MODULE_PATH  ${PROJECT_SOURCE_DIR}/cmake/support_old_cmake ${CMAKE_MODULE_PATH})
-endif()
-
 set(GOOFIT_ARCH Auto CACHE STRING "The GPU Archetecture, can be Auto, All, Common, a number, or a name")
 
 option(GOOFIT_DOWNLOAD_THRUST "Download Thrust if not found (OMP only)" ON)
+
+
+option(GOOFIT_MPI "Turn on MPI for goofit" OFF)
+
+if(GOOFIT_MPI)
+    find_package(MPI REQUIRED)
+
+    # Added globally
+    add_definitions("-DGOOFIT_MPI")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${MPI_CXX_COMPILE_FLAGS}")
+    include_directories(${MPI_CXX_INCLUDE_PATH})
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${MPI_CXX_LINK_FLAGS}")
+    link_libraries(${MPI_CXX_LIBRARIES})
+
+    message(STATUS "MPI found. Use the following to run your program")
+    message(STATUS "${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} PROCS ${MPIEXEC_PREFLAGS} EXECUTABLE ${MPIEXEC_POSTFLAGS} ARGS")
+    message(STATUS "where PROCS is the number of processors on which to execute the program, EXECUTABLE is the MPI program, and ARGS are the arguments to pass to the MPI program.")
+endif()
 
 if(GOOFIT_DEVICE STREQUAL CUDA)
     find_package(CUDA 7.5 REQUIRED)
@@ -104,17 +145,17 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
     endif()
 else()
     include_directories(${PROJECT_SOURCE_DIR}/include/goofit/fakecuda)
-    find_package(Thrust QUIET)
-    if(NOT THRUST_FOUND)
-        if(GOOFIT_DOWNLOAD_THRUST)
-            message(STATUS "Thrust not found, downloading to build dir")
-            include(AddThrust)
-        else()
-            find_package(Thrust REQUIRED)
-        endif()
-    endif()
-    include_directories(SYSTEM "${THRUST_INCLUDE_DIRS}")
 endif()
+find_package(Thrust QUIET)
+if(NOT THRUST_FOUND)
+    if(GOOFIT_DOWNLOAD_THRUST)
+        message(STATUS "Thrust not found, downloading to build dir")
+        include(AddThrust)
+    else()
+        find_package(Thrust REQUIRED)
+    endif()
+endif()
+include_directories(SYSTEM "${THRUST_INCLUDE_DIRS}")
 
 if(GOOFIT_DEVICE STREQUAL OMP OR GOOFIT_HOST STREQUAL OMP)
 find_package(OpenMP REQUIRED)
@@ -132,10 +173,7 @@ endif()
 # The target is setup to avoid clashes with fakeroot
 # Include directories are not picked up by FindCUDA
 find_package(ROOT 6 REQUIRED COMPONENTS Minuit)
-add_library(Root INTERFACE)
 include_directories(BEFORE "include/goofit/rootstuff")
-include_directories(AFTER SYSTEM "${ROOT_INCLUDE_DIRS}")
-target_link_libraries(Root INTERFACE ${ROOT_LIBRARIES})
 # Note: it is very important that the includes and links for root are after fakeroot!
 
 
@@ -219,7 +257,7 @@ set_property(GLOBAL PROPERTY GOOFIT_EXTRA_PDFS "")
 macro(goofit_add_pdf)
     foreach(N ${ARGN})
         get_filename_component(N ${N} ABSOLUTE)
-        message(STATUS ${N})
+        message(STATUS "Adding PDF: ${N}")
         get_property(goo_extra GLOBAL PROPERTY GOOFIT_EXTRA_PDFS)
         set_property(GLOBAL PROPERTY GOOFIT_EXTRA_PDFS ${goo_extra} ${N})
     endforeach()
@@ -229,7 +267,7 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/MCBooster)
 
 add_library(goofit_lib INTERFACE)
-target_link_libraries(goofit_lib INTERFACE goofit_base PDFs rootstuff Root)
+target_link_libraries(goofit_lib INTERFACE goofit_base PDFs rootstuff ROOT::ROOT)
 
 option(GOOFIT_EXAMPLES "Build the example programs" ON)
 if(GOOFIT_EXAMPLES)

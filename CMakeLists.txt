@@ -291,6 +291,12 @@ endif()
 
 add_subdirectory(src)
 
+option(GOOFIT_PYTHON "Python bindings for goofit" OFF)
+if(GOOFIT_PYTHON)
+    include(AddPybind)
+    add_subdirectory(python)
+endif()
+
 option(GOOFIT_TESTS "Build the goofit tests" OFF)
 if(GOOFIT_TESTS)
     enable_testing()

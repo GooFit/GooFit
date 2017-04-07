@@ -1,3 +1,13 @@
+#include "goofit/PdfBase.h"
+#include "goofit/FitManager.h"
+#include "goofit/PDFs/GooPdf.h"
+#include <cstdio>
+#include <cassert>
+#include <limits>
+#include <typeinfo>
+#include <set>
+#include "goofit/Variable.h"
+
 PdfBase* pdfPointer;
 FitManager* currGlue = 0;
 int numPars = 0;
@@ -5,7 +15,9 @@ vector<Variable*> vars;
 
 void specialTddpPrint(double fun);
 
-FitManager::FitManager(PdfBase* dat)
+namespace GooFit {
+
+FitManagerMinuit1::FitManagerMinuit1(PdfBase* dat)
     : minuit(0)
     , overrideCallLimit(-1)
     , _useHesseBefore(true)
@@ -16,12 +28,12 @@ FitManager::FitManager(PdfBase* dat)
     currGlue = this;
 }
 
-FitManager::~FitManager() {
+FitManagerMinuit1::~FitManagerMinuit1() {
     if(minuit)
         delete minuit;
 }
 
-void FitManager::setupMinuit() {
+void FitManagerMinuit1::setupMinuit() {
     vars.clear();
     pdfPointer->getParameters(vars);
 
@@ -51,12 +63,12 @@ void FitManager::setupMinuit() {
     minuit->SetFCN(FitFun);
 }
 
-void FitManager::fit() {
+void FitManagerMinuit1::fit() {
     setupMinuit();
     runMigrad();
 }
 
-void FitManager::runMigrad() {
+void FitManagerMinuit1::runMigrad() {
     assert(minuit);
     host_callnumber = 0;
 
@@ -83,7 +95,7 @@ void FitManager::runMigrad() {
         minuit->Migrad();
 }
 
-void FitManager::getMinuitValues() const {
+void FitManagerMinuit1::getMinuitValues() const {
     int counter = 0;
 
     for(std::vector<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
@@ -91,10 +103,12 @@ void FitManager::getMinuitValues() const {
     }
 }
 
-void FitManager::getMinuitStatus(double& fmin, double& fedm, double& errdef, int& npari, int& nparx, int& istat) const {
+void FitManagerMinuit1::getMinuitStatus(double& fmin, double& fedm, double& errdef, int& npari, int& nparx, int& istat) const {
     minuit->mnstat(fmin, fedm, errdef, npari, nparx, istat);
     std::cout << "mnstat(fmin = " << fmin << ", fedm = " << fedm << ", errdef = " << errdef
               << ", npari = " << npari << ", nparx = " << nparx << ", istat = " << istat << ")" << std::endl;
+}
+
 }
 
 void FitFun(int& npar, double* gin, double& fun, double* fp, int iflag) {
@@ -118,6 +132,7 @@ void FitFun(int& npar, double* gin, double& fun, double* fp, int iflag) {
     specialTddpPrint(fun);
 #endif
 }
+
 
 #ifdef PRINTCALLS
 void specialTddpPrint(double fun) {
@@ -177,3 +192,4 @@ void specialTddpPrint(double fun) {
     cout << endl;
 }
 #endif
+

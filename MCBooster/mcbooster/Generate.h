@@ -32,7 +32,6 @@
 #include <vector>
 #include <string>
 #include <map>
-#include <omp.h>
 #include <iostream>
 #include <ostream>
 #include <algorithm>
@@ -71,6 +70,7 @@
 #include <thrust/system/cuda/execution_policy.h>
 #elif MCBOOSTER_BACKEND==OPENMP
 #include <thrust/system/omp/execution_policy.h>
+#include <omp.h>
 #elif MCBOOSTER_BACKEND==TBB
 #include <thrust/system/tbb/execution_policy.h>
 #endif

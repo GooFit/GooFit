@@ -7,6 +7,7 @@
 using namespace std;
 extern int host_callnumber;
 
+//  Non-cuda defines
 #if THRUST_DEVICE_SYSTEM!=THRUST_DEVICE_SYSTEM_CUDA
 // OMP target - all 'device' memory is actually on host.
 #define ALIGN(n)
@@ -14,7 +15,6 @@ extern int host_callnumber;
 #define MEM_SHARED
 #define MEM_CONSTANT
 #define EXEC_TARGET __host__
-#define THREAD_SYNCH _Pragma("omp barrier") // valid in C99 and C++11, but probably not C++93
 #define DEVICE_VECTOR thrust::host_vector
 // Use char* here because I need +1 to mean "offset by one byte", not "by one sizeof(whatever)".
 // Can't use void* because then the compiler doesn't know how to do pointer arithmetic.
@@ -37,11 +37,13 @@ enum gooError {gooSuccess = 0, gooErrorMemoryAllocation};
 
 #define THREADIDX (omp_get_thread_num())
 #define BLOCKDIM (omp_get_num_threads())
+#define THREAD_SYNCH _Pragma("omp barrier") // valid in C99 and C++11, but probably not C++93
 
-#elif THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_TBB
+#elif THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_CPP
 
 #define THREADIDX (1)
 #define BLOCKDIM (1)
+#define THREAD_SYNCH 
 
 #elif THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_CUDA
 

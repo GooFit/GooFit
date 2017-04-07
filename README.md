@@ -65,7 +65,7 @@ If you want to change compiler, set `CC` and `CXX` to appropriate defaults *befo
 cmake .. -DGOOFIT_DEVICE=CUDA -DGOOFIT_HOST=OMP
 ```
 
-Valid options are `CUDA` (device only), `OMP`, and CPP (host only). While the current backend is used, `CPP`, and `TBB` will probably remain unavailable for device calculations. The default is `Auto`, and will select `CUDA` if CUDA is found.
+Valid options are `CUDA` (device only), `OMP`, and `CPP`. The Thrust `TBB` backend will probably remain unavailable for device calculations due to custom usage of the thread number in GooFit code. The default is `Auto`, and will select `CUDA` if CUDA is found. On a Mac, you should set both backends to `CPP`.
 
 Other custom options supported along with the defaults:
 
@@ -79,6 +79,7 @@ Advanced Options:
 * `-DGOOFIT_MPI=ON`: (OFF/ON.  With this feature on, GPU devices are selected automatically).  Tested with MVAPICH2/2.2 and OpenMPI.
 * `-DGOOFIT_CUDA_OR_GROUPSIZE:INT=128`: This sets the group size that thrust will use for distributing the problem.  This parameter can be thought of as 'Threads per block'.  These will be used after running 'find_optimal.py' to figure out the optimal size.
 * `-DGOOFIT_CUDA_OR_GRAINSIZE:INT=7`: This is the grain size thrust uses for distributing the problem.  This parameter can be thought of as 'Items per thread'.
+* `-DGOOFIT_PYTHON=OFF`: Preliminary python bindings
 
 
 A few standard cmake tricks:

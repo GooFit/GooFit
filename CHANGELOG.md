@@ -15,8 +15,9 @@ A new feature of the CMake build system is GooFit Packages, which are complete p
 * CMake build system: See [Issue 22](https://github.com/GooFit/GooFit/issues/22) and [PR 23](https://github.com/GooFit/GooFit/pull/23).
   * Auto compute capability detection
   * Auto Cuda/OMP selection
+  * Added CPP single threaded backend, support for MacOS
   * Optional separable compilation for PDFs
-  * Supports Intel compilers
+  * (Almost) supports Intel compilers
   * Macros for `CMakeLists.txt` for adding a new package in 2-3 lines
   * Auto linking for build directory
 * Fixes for building examples, nicer warnings with incorrect command line parameters.

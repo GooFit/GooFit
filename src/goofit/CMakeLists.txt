@@ -5,9 +5,13 @@ goofit_add_library(Variable
     )
 
 goofit_add_library(FitManager
-    FitManager.cc
+    FitManagerMinuit1.cc
     ${PROJECT_SOURCE_DIR}/include/goofit/FitManager.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/FitManagerMinuit1.h
     )
+
+#FitManagerMinuit2.cc
+#${PROJECT_SOURCE_DIR}/include/goofit/FitManagerMinuit2.h
 
 goofit_add_library(Faddeeva
     Faddeeva.cc

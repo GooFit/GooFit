@@ -111,9 +111,9 @@ if(GOOFIT_MPI)
 
     # Added globally
     add_definitions("-DGOOFIT_MPI")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${MPI_CXX_COMPILE_FLAGS}")
+    list(APPEND CMAKE_CXX_FLAGS ${MPI_CXX_COMPILE_FLAGS})
     include_directories(${MPI_CXX_INCLUDE_PATH})
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${MPI_CXX_LINK_FLAGS}")
+    list(APPEND CMAKE_EXE_LINKER_FLAGS ${MPI_CXX_LINK_FLAGS})
     link_libraries(${MPI_CXX_LIBRARIES})
 
     message(STATUS "MPI found. Use the following to run your program")
@@ -124,7 +124,8 @@ endif()
 if(GOOFIT_DEVICE STREQUAL CUDA)
     find_package(CUDA 6.0 REQUIRED)
 
-    set(CUDA_NVCC_FLAGS; ${CUDA_NVCC_FLAGS}; -std=c++11; ${CMAKE_CXX_FLAGS})
+    list(APPEND CUDA_NVCC_FLAGS -std=c++11)
+    list(APPEND CUDA_NVCC_FLAGS ${CMAKE_CXX_FLAGS})
     if(GOOFIT_SEPARATE_COMP)
         set(CUDA_SEPARABLE_COMPILATION ON)
     else()

@@ -1,12 +1,25 @@
 cmake_minimum_required(VERSION 3.4)
-project(GOOFIT CXX)
 
-### Require out-of-source builds (needed to keep old build system) ###
+project(GOOFIT
+    VERSION 2.0.0
+    LANGUAGES CXX)
+
+### Require out-of-source builds except in main directory
 file(TO_CMAKE_PATH "${PROJECT_BINARY_DIR}/CMakeLists.txt" LOC_PATH)
-message(STATUS ${LOC_PATH})
-if(EXISTS ${LOC_PATH})
-    message(FATAL_ERROR "You cannot build in the source directory (or any directory with a CMakeLists.txt file). Please make a build subdirectory.")
+if(NOT PROJECT_BINARY_DIR STREQUAL PROJECT_SOURCE_DIR AND EXISTS ${LOC_PATH})
+    message(FATAL_ERROR "You cannot build in a sub-source directory (or any directory with a CMakeLists.txt file). Please make a build subdirectory.")
 endif()
+
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
+if(CMAKE_VERSION VERSION_LESS 3.7)
+    set(CMAKE_MODULE_PATH  ${PROJECT_SOURCE_DIR}/cmake/support_old_cmake ${CMAKE_MODULE_PATH})
+endif()
+
+
+configure_file (
+    "${PROJECT_SOURCE_DIR}/include/goofit/Version.h.in"
+    "${PROJECT_BINARY_DIR}/include/goofit/Version.h"
+)
 
 
 set(GOOFIT_CUDA_OR_GROUPSIZE "128" CACHE STRING "Overrides the default group distribution for Thrust's transform_reduce")
@@ -17,32 +30,15 @@ configure_file (
     "${PROJECT_BINARY_DIR}/include/goofit/ThrustOverrideConfig.h"
 )
 
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
-if(CMAKE_VERSION VERSION_LESS 3.7)
-    set(CMAKE_MODULE_PATH  ${PROJECT_SOURCE_DIR}/cmake/support_old_cmake ${CMAKE_MODULE_PATH})
-endif()
-
-
-### Version number ###
-set(GOOFIT_VERSION_MAJOR 2)
-set(GOOFIT_VERSION_MINOR 0)
-set(GOOFIT_VERSION_PATCH 0)
-set(GOOFIT_VERSION "${GOOFIT_VERSION_MAJOR}.${GOOFIT_VERSION_MINOR}.${GOOFIT_VERSION_PATCH}")
-
-configure_file (
-    "${PROJECT_SOURCE_DIR}/include/goofit/Version.h.in"
-    "${PROJECT_BINARY_DIR}/include/goofit/Version.h"
-)
-
 include_directories("${PROJECT_BINARY_DIR}/include")
-
 
 ### C++ settings ###
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-set(CMAKE_CXX_VISIBILITY_PRESET hidden)  
+
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING

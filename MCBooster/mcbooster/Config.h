@@ -58,11 +58,11 @@
 	#include <cuda_runtime.h>
 	#include <cuda_runtime_api.h>
 #elif MCBOOSTER_BACKEND==OMP
- //    #define THRUST_DEVICE_SYSTEM OMP
-	// #define THRUST_HOST_SYSTEM OMP
+//    #define THRUST_DEVICE_SYSTEM OMP
+//    #define THRUST_HOST_SYSTEM OMP
 #elif MCBOOSTER_BACKEND==TBB
-    #define THRUST_DEVICE_SYSTEM TBB
-	#define THRUST_HOST_SYSTEM TBB
+//    #define THRUST_DEVICE_SYSTEM TBB
+//    #define THRUST_HOST_SYSTEM TBB
 #endif
 
 

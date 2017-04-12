@@ -5,10 +5,8 @@
 
 ![GooFit logo](./docs/GooFitLogo.png)
 
-GooFit is a massively-parallel framework, written in CUDA, for
-doing maximum-likelihood fits with a comfortable syntax.
-It is also possible to build
-GooFit using OpenMP.
+GooFit is a massively-parallel framework, written using Thrust for CUDA and OpenMP, for
+doing maximum-likelihood fits with a familiar syntax.
 
 * [Changelog](./CHANGELOG.md)
 * [Contributing](./CONTRIBUTING.md)
@@ -16,7 +14,7 @@ GooFit using OpenMP.
 
 ## Requirements
 
-* A new version of CMake if using the CMake build. Like ROOT, the minimum is 3.4, but tested primarily with 3.7. CMake is incredibly easy to install.
+* A new version of CMake if using the CMake build. Like ROOT, the minimum is 3.4, but tested primarily with 3.6 and newer. CMake is incredibly easy to install.
   * With CMake, Thrust is downloaded automatically for OpenMP if not found
   * GoogleTest is downloaded automatically
 * A ROOT 6 build highly recommended.
@@ -79,7 +77,7 @@ Advanced Options:
 * `-DGOOFIT_MPI=ON`: (OFF/ON.  With this feature on, GPU devices are selected automatically).  Tested with MVAPICH2/2.2 and OpenMPI.
 * `-DGOOFIT_CUDA_OR_GROUPSIZE:INT=128`: This sets the group size that thrust will use for distributing the problem.  This parameter can be thought of as 'Threads per block'.  These will be used after running 'find_optimal.py' to figure out the optimal size.
 * `-DGOOFIT_CUDA_OR_GRAINSIZE:INT=7`: This is the grain size thrust uses for distributing the problem.  This parameter can be thought of as 'Items per thread'.
-* `-DGOOFIT_PYTHON=OFF`: Preliminary python bindings
+* `-DGOOFIT_PYTHON=OFF`: Preliminary python bindings using [PyBind11].
 
 
 A few standard cmake tricks:
@@ -143,6 +141,25 @@ If you'd like to make a separate goofit project, you can do so. Simply checkout 
 The build system underwent a major upgrade in the move to CMake. The folders that were introduced to keep the includes structured require modifications of source code, converting lines like `#include "Variable.hh"` to `#include "goofit/Variable.h"`. This modification can be done for you by running the provided script, `scripts/ModernizeGooFit.py` on your source files (requires Python and Plumbum). You should remove your old Makefiles and use the new `CMakeFiles.txt` files provided in examples - this should require
 writing two lines of code instead of the 50 or so previously needed.
 
+The new `GooFit::Application`, which is not required but provides GooFit options, like GPU selection and status, as well as MPI support and configurable command line options, is available by adding:
+
+```cpp
+#include "goofit/Application.h"
+
+// Place this at the beginning of main
+GooFit::Application app{"Optional discription", argv, argc};
+
+// Command line options can be added here.
+
+try {
+    app.run();
+} catch(const GooFit::ParseError &e) {
+    app.exit(e);
+}
+```
+
+See [CLI11] for more details. The [pipipi0](./examples/pipipi0DPFit) example has an example of a complex set of options.
+
 ## Improving Performance with MPI
 
 Using the MPI verion with an appropriate environment setup will allow for multiple GPU's to be used, and/or allow for multiple nodes.  To use this feature simply turn the flag on with cmake `-DGOOFIT_MPI=ON`.  This will divide the dataset by the number of processes involved.  For instance, if you have two nodes that will be involved in the calculation, the data will be split in half.  Currently, each node will load the entire buffer from disk, then load partitioned data it will work on.  It is highly recommended not to use more than one process per node for MPI+OpenMP versions.
@@ -164,7 +181,7 @@ Any opinions, findings, and conclusions or recommendations expressed in this mat
 and do not necessarily reflect the views of the National Science Foundation.
 
 [API documentation]: https://GooFit.github.io/GooFit
-[travis-badge]:      https://travis-ci.org/GooFit/GooFit.svg?branch=master  
+[travis-badge]:      https://travis-ci.org/GooFit/GooFit.svg?branch=master
 [travis-link]:       https://travis-ci.org/GooFit/GooFit
 [codecov-badge]:     https://codecov.io/gh/GooFit/GooFit/branch/master/graph/badge.svg
 [codecov-link]:      https://codecov.io/gh/GooFit/GooFit
@@ -176,3 +193,5 @@ and do not necessarily reflect the views of the National Science Foundation.
 [CUDA_SELECT_NVCC_ARCH_FLAGS]: https://cmake.org/cmake/help/v3.7/module/FindCUDA.html
 [Plumbum]:           https://plumbum.readthedocs.io/en/latest/
 [FindBoost]:         https://cmake.org/cmake/help/v3.7/module/FindBoost.html
+[CLI11]:             https://github.com/CLIUtils/CLI11
+[PyBind11]:          http://pybind11.readthedocs.io/en/master

@@ -95,6 +95,7 @@ A few standard cmake tricks:
 * CMake reruns when needed when you `make` unless you add a file that it globs for (like new `goofit_projects`).
 * Use `-j12` to build with 12 cores (for example).
 * Use `cmake --build .` to build without referring to your specific build tool, like `make` or `ninja`.
+* Change compiler using CMAKE_C_COMPILER and CMAKE_CXX_COMPILER flags.
 
 ## Running the Examples
 

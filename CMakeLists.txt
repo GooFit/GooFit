@@ -54,8 +54,8 @@ if(CMAKE_BUILD_TYPE STREQUAL Coverage)
 endif()
 
 ### Options ###
-set(DEVICE_LISTING CUDA OMP CPP Auto)
-set(HOST_LISTING OMP CPP)
+set(DEVICE_LISTING CUDA OMP CPP TBB Auto)
+set(HOST_LISTING OMP CPP TBB)
 mark_as_advanced(DEVICE_LISTING HOST_LISTING)
 
 set(GOOFIT_DEVICE Auto CACHE STRING "The compute device, options are ${DEVICE_LISTING}")
@@ -164,8 +164,11 @@ link_libraries(Threads::Threads)
 endif()
 
 if(GOOFIT_DEVICE STREQUAL TBB OR GOOFIT_HOST STREQUAL TBB)
-find_package(TBB REQUIRED)
+find_package(TBB COMPONENTS tbbmalloc tbbmalloc_proxy tbb_preview)
+#set(CMAKE_CXX_FLAGS -xMIC-AVX512)
+set(CMAKE_CXX_FLAGS "-xHOST -qopenmp")
 include_directories(SYSTEM "${TBB_INCLUDE_DIRS}")
+link_libraries(${TBB_LIBRARIES})
 endif()
 
 

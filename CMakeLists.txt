@@ -275,7 +275,7 @@ include(AddCLI)
 include(AddRang)
 
 add_library(goofit_lib INTERFACE)
-target_link_libraries(goofit_lib INTERFACE goofit_base PDFs rootstuff ROOT::ROOT rang CLI11 ROOT::Minuit)
+target_link_libraries(goofit_lib INTERFACE goofit_base PDFs ROOT::ROOT rang CLI11 ROOT::Minuit)
 
 option(GOOFIT_EXAMPLES "Build the example programs" ON)
 if(GOOFIT_EXAMPLES)

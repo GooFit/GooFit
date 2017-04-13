@@ -33,7 +33,7 @@ enum gooError {gooSuccess = 0, gooErrorMemoryAllocation};
 #define RO_CACHE(x) x
 #endif
 
-#if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_OMP
+#if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_OMP || THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_TBB
 
 #define THREADIDX (omp_get_thread_num())
 #define BLOCKDIM (omp_get_num_threads())

@@ -14,7 +14,7 @@ doing maximum-likelihood fits with a familiar syntax.
 
 ## Requirements
 
-* A new version of CMake if using the CMake build. Like ROOT, the minimum is 3.4, but tested primarily with 3.6 and newer. CMake is incredibly easy to install.
+* A recent version of CMake is required. Like [ROOT], the minimum is 3.4, but tested primarily with 3.6 and newer. CMake is incredibly easy to install (see below)
   * With CMake, Thrust is downloaded automatically for OpenMP if not found
   * GoogleTest is downloaded automatically
 * A ROOT 6 build highly recommended.
@@ -23,6 +23,8 @@ doing maximum-likelihood fits with a familiar syntax.
   * An nVidia GPU supporting compute capability at least 2.0 (3.5 recommended)
 * If using OpenMP:
   * A compiler supporting OpenMP and C++11 (GCC 4.8+ and Intel 17 tested)
+* If using CPP:
+  * Single threaded builds are available for debugging and development (such as on Mac)
 
 ## Getting the files
 
@@ -37,7 +39,7 @@ You can either checkout a tagged version, or stay on the master for the latest a
 
 ## Building 
 
-The build system now uses CMake. The procedure is standard for CMake builds:
+The build system uses CMake. The procedure is standard for CMake builds:
 
 ```bash
 mkdir build
@@ -119,7 +121,7 @@ The first line adds your `.cu` file with goofit code as an executible, and the s
 
 If you are building with separable compilation, you can also use `goofit_add_pdf(mypdf.cu)` to add a PDF. This will also require that you include any directory that you need with `include_directory`, as usual.
 
-To add packages, use standard CMake tools. For example (CMake 3.5), to add [Boost][FindBoost] 1.49+ filesystem and `TTreeReader` from ROOT:
+To add packages, use standard CMake tools. For example (CMake 3.5+), to add [Boost][FindBoost] 1.49+ filesystem and `TTreeReader` from ROOT:
 
 ```cmake
 set(Boost_USE_STATIC_LIBS OFF)
@@ -195,3 +197,4 @@ and do not necessarily reflect the views of the National Science Foundation.
 [FindBoost]:         https://cmake.org/cmake/help/v3.7/module/FindBoost.html
 [CLI11]:             https://github.com/CLIUtils/CLI11
 [PyBind11]:          http://pybind11.readthedocs.io/en/master
+[ROOT]:              https://root.cern.ch

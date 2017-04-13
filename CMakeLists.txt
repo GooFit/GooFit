@@ -1,12 +1,25 @@
 cmake_minimum_required(VERSION 3.4)
-project(GOOFIT CXX)
 
-### Require out-of-source builds (needed to keep old build system) ###
+project(GOOFIT
+    VERSION 2.0.0
+    LANGUAGES CXX)
+
+### Require out-of-source builds except in main directory
 file(TO_CMAKE_PATH "${PROJECT_BINARY_DIR}/CMakeLists.txt" LOC_PATH)
-message(STATUS ${LOC_PATH})
-if(EXISTS ${LOC_PATH})
-    message(FATAL_ERROR "You cannot build in the source directory (or any directory with a CMakeLists.txt file). Please make a build subdirectory.")
+if(NOT PROJECT_BINARY_DIR STREQUAL PROJECT_SOURCE_DIR AND EXISTS ${LOC_PATH})
+    message(FATAL_ERROR "You cannot build in a sub-source directory (or any directory with a CMakeLists.txt file). Please make a build subdirectory.")
 endif()
+
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
+if(CMAKE_VERSION VERSION_LESS 3.7)
+    set(CMAKE_MODULE_PATH  ${PROJECT_SOURCE_DIR}/cmake/support_old_cmake ${CMAKE_MODULE_PATH})
+endif()
+
+
+configure_file (
+    "${PROJECT_SOURCE_DIR}/include/goofit/Version.h.in"
+    "${PROJECT_BINARY_DIR}/include/goofit/Version.h"
+)
 
 
 set(GOOFIT_CUDA_OR_GROUPSIZE "128" CACHE STRING "Overrides the default group distribution for Thrust's transform_reduce")
@@ -17,32 +30,16 @@ configure_file (
     "${PROJECT_BINARY_DIR}/include/goofit/ThrustOverrideConfig.h"
 )
 
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
-if(CMAKE_VERSION VERSION_LESS 3.7)
-    set(CMAKE_MODULE_PATH  ${PROJECT_SOURCE_DIR}/cmake/support_old_cmake ${CMAKE_MODULE_PATH})
-endif()
-
-
-### Version number ###
-set(GOOFIT_VERSION_MAJOR 2)
-set(GOOFIT_VERSION_MINOR 0)
-set(GOOFIT_VERSION_PATCH 0)
-set(GOOFIT_VERSION "${GOOFIT_VERSION_MAJOR}.${GOOFIT_VERSION_MINOR}.${GOOFIT_VERSION_PATCH}")
-
-configure_file (
-    "${PROJECT_SOURCE_DIR}/include/goofit/Version.h.in"
-    "${PROJECT_BINARY_DIR}/include/goofit/Version.h"
-)
-
 include_directories("${PROJECT_BINARY_DIR}/include")
-
 
 ### C++ settings ###
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-  
+
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING
         "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel."
@@ -94,6 +91,8 @@ if(GOOFIT_SEPARATE_COMP)
     add_definitions("-DSEPARABLE")
 endif()
 
+
+
 add_definitions("-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_${GOOFIT_DEVICE}")
 add_definitions("-DMCBOOSTER_BACKEND=${GOOFIT_DEVICE}")
 add_definitions("-DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_${GOOFIT_HOST}")
@@ -112,9 +111,9 @@ if(GOOFIT_MPI)
 
     # Added globally
     add_definitions("-DGOOFIT_MPI")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${MPI_CXX_COMPILE_FLAGS}")
+    list(APPEND CMAKE_CXX_FLAGS ${MPI_CXX_COMPILE_FLAGS})
     include_directories(${MPI_CXX_INCLUDE_PATH})
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${MPI_CXX_LINK_FLAGS}")
+    list(APPEND CMAKE_EXE_LINKER_FLAGS ${MPI_CXX_LINK_FLAGS})
     link_libraries(${MPI_CXX_LIBRARIES})
 
     message(STATUS "MPI found. Use the following to run your program")
@@ -125,7 +124,8 @@ endif()
 if(GOOFIT_DEVICE STREQUAL CUDA)
     find_package(CUDA 6.0 REQUIRED)
 
-    set(CUDA_NVCC_FLAGS; ${CUDA_NVCC_FLAGS}; -std=c++11; ${CMAKE_CXX_FLAGS})
+    list(APPEND CUDA_NVCC_FLAGS -std=c++11)
+    list(APPEND CUDA_NVCC_FLAGS ${CMAKE_CXX_FLAGS})
     if(GOOFIT_SEPARATE_COMP)
         set(CUDA_SEPARABLE_COMPILATION ON)
     else()
@@ -174,12 +174,18 @@ find_package(ROOT 6 REQUIRED COMPONENTS Minuit)
 function(goofit_add_library GNAME)
     if(GOOFIT_DEVICE STREQUAL CUDA)
         foreach(N ${ARGN})
-            SET_SOURCE_FILES_PROPERTIES(${N} PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
+            get_filename_component(NEXT ${N} EXT)
+            if(NEXT STREQUAL ".cc" OR NEXT STREQUAL ".cpp" OR NEXT STREQUAL ".cxx")
+                set_source_files_properties(${N} PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
+            endif()
         endforeach()
-        cuda_add_library(${GNAME} STATIC ${ARGN})
+        cuda_add_library(${GNAME} STATIC ${ARGN} OPTIONS "-Xcompiler=-fPIC")
     else()
         foreach(N ${ARGN})
-            SET_SOURCE_FILES_PROPERTIES(${N} PROPERTIES LANGUAGE CXX)
+            get_filename_component(NEXT ${N} EXT)
+            if(NEXT STREQUAL ".cu")
+                set_source_files_properties(${N} PROPERTIES LANGUAGE CXX)
+            endif()
         endforeach()
         add_library(${GNAME} STATIC ${ARGN})
         target_compile_options(${GNAME} PUBLIC -x c++)
@@ -193,9 +199,12 @@ function(goofit_add_executable NAMEEXE)
         link_libraries(${CUDA_LIBRARIES})
     else()
         foreach(N ${ARGN})
-            SET_SOURCE_FILES_PROPERTIES(${N} PROPERTIES LANGUAGE CXX)
+            get_filename_component(NEXT ${N} EXT)
+            if(NEXT STREQUAL ".cu")
+                set_source_files_properties(${N} PROPERTIES LANGUAGE CXX)
+            endif()
         endforeach()
-	    add_executable(${NAMEEXE} ${ARGN})
+        add_executable(${NAMEEXE} ${ARGN})
     endif()
     target_link_libraries(${NAMEEXE} goofit_lib)
     target_compile_options(${NAMEEXE} PUBLIC -x c++)
@@ -261,8 +270,12 @@ endmacro()
 include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/MCBooster)
 
+# Adding header only libraries
+include(AddCLI)
+include(AddRang)
+
 add_library(goofit_lib INTERFACE)
-target_link_libraries(goofit_lib INTERFACE goofit_base PDFs ROOT::ROOT ROOT::Minuit) 
+target_link_libraries(goofit_lib INTERFACE goofit_base PDFs rootstuff ROOT::ROOT rang CLI11 ROOT::Minuit)
 
 option(GOOFIT_EXAMPLES "Build the example programs" ON)
 if(GOOFIT_EXAMPLES)
@@ -273,8 +286,8 @@ if(EXISTS work)
     add_subdirectory(work)
 endif()
 
-option(GOOFIT_PROJECTS "Build any goofit* projects found" ON)
-if(GOOFIT_PROJECTS)
+option(GOOFIT_PACKAGES "Build any goofit* packages found" ON)
+if(GOOFIT_PACKAGES)
     file(GLOB list_of_packages RELATIVE ${PROJECT_SOURCE_DIR} goofit*)
     foreach(d ${list_of_packages})
         add_subdirectory(${d})
@@ -282,6 +295,13 @@ if(GOOFIT_PROJECTS)
 endif()
 
 add_subdirectory(src)
+
+option(GOOFIT_PYTHON "Python bindings for goofit" OFF)
+if(GOOFIT_PYTHON)
+    include(AddPybind)
+    message(STATUS "Found Python at ${PYTHON_LIBRARIES}")
+    add_subdirectory(python)
+endif()
 
 option(GOOFIT_TESTS "Build the goofit tests" OFF)
 if(GOOFIT_TESTS)

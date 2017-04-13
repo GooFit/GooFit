@@ -42,6 +42,9 @@ if(ROOT_CONFIG_EXECUTABLE)
         OUTPUT_STRIP_TRAILING_WHITESPACE)
     set(ROOT_LIBRARY_DIRS ${ROOT_LIBRARY_DIR})
 
+    # Needed because ROOT on Mac does not use Mac conventions
+    set(CMAKE_SHARED_LIBRARY_SUFFIX .so)
+
     file(GLOB ROOT_LIBFILELIST
         LIST_DIRECTORIES false
         RELATIVE "${ROOT_LIBRARY_DIR}"

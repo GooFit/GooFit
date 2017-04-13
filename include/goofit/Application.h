@@ -1,7 +1,7 @@
-#include "goofit/detail/CLI11.hpp"
+#include "CLI/CLI.hpp"
 #include "goofit/Version.h"
 #include "thrust/detail/config/device_system.h"
-#include "goofit/detail/rang.hpp"
+#include "rang.hpp"
 
 #ifdef GOOFIT_MPI
 #include <mpi.h>

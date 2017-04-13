@@ -1,17 +1,21 @@
-#ifndef FITMANAGER_MINUIT1_HH
-#define FITMANAGER_MINUIT1_HH
+#pragma once
 
-#include "TMinuit.h"
+#include "goofit/GlobalCudaDefines.h"
+#include "goofit/PDFs/GooPdf.h"
+#include <TMinuit.h>
+
 
 extern PdfBase* pdfPointer;
 extern int numPars;
 
 void FitFun(int& npar, double* gin, double& fun, double* fp, int iflag);
 
-class FitManager {
+namespace GooFit {
+
+class FitManagerMinuit1 {
 public:
-    FitManager(PdfBase* dat);
-    ~FitManager();
+    FitManagerMinuit1(PdfBase* dat);
+    ~FitManagerMinuit1();
     void setMaxCalls(double mxc) {
         overrideCallLimit = mxc;
     }
@@ -44,4 +48,4 @@ private:
     bool _useImprove;
 };
 
-#endif
+}

@@ -166,13 +166,9 @@ endif()
 if(GOOFIT_DEVICE STREQUAL TBB OR GOOFIT_HOST STREQUAL TBB)
 find_package(TBB COMPONENTS tbbmalloc tbbmalloc_proxy tbb_preview)
 #set(CMAKE_CXX_FLAGS -xMIC-AVX512)
-set(CMAKE_CXX_FLAGS "-xHOST -g -qopenmp")
+set(CMAKE_CXX_FLAGS "-xHOST -qopenmp")
 include_directories(SYSTEM "${TBB_INCLUDE_DIRS}")
 link_libraries(${TBB_LIBRARIES})
-
-#force intel compiler???
-set(CMAKE_C_COMPILER icc)
-set(CMAKE_CXX_COMPILER icpc)
 endif()
 
 

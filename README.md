@@ -60,7 +60,7 @@ make
 > export PATH=`pwd`/cmake/bin:$PATH
 > ```
 
-If you want to change compiler, set `CC` and `CXX` to appropriate defaults *before* you run cmake either inline or in your environment. If you want to set the host and device backends, you can set those options. The defaults are:
+If you want to change compiler, set `CC` and `CXX` to appropriate defaults *before* you run cmake either inline or in your environment. You can also set `CMAKE_C_COMPILER` and `CMAKE_CXX_COMPILER` directly on the command line wiht `-D`. If you want to set the host and device backends, you can set those options. The defaults are:
 ```
 cmake .. -DGOOFIT_DEVICE=CUDA -DGOOFIT_HOST=OMP
 ```
@@ -95,7 +95,6 @@ A few standard cmake tricks:
 * CMake reruns when needed when you `make` unless you add a file that it globs for (like new `goofit_projects`).
 * Use `-j12` to build with 12 cores (for example).
 * Use `cmake --build .` to build without referring to your specific build tool, like `make` or `ninja`.
-* Change compiler using CMAKE_C_COMPILER and CMAKE_CXX_COMPILER flags.
 
 ## Running the Examples
 

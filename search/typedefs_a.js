@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['sizeiterator',['SizeIterator',['../_pdf_base_8h.html#a97a89b07d0a6f4ed6c285119b641991f',1,'PdfBase.h']]],
-  ['spin_5ffunction_5fptr',['spin_function_ptr',['../_spin_factors_8h.html#afa44b76d74482fa6af9a8895c2933e30',1,'SpinFactors.h']]]
+  ['varconstit',['varConstIt',['../_data_set_8h.html#a1aeb71582a6973961bda1e13606515b7',1,'DataSet.h']]],
+  ['varconstrit',['varConstRIt',['../_data_set_8h.html#a2aca378f0ccd1462789742ec3295898a',1,'DataSet.h']]]
 ];

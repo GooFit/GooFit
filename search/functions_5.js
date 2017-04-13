@@ -1,23 +1,12 @@
 var searchData=
 [
-  ['e',['E',['../class_lorentz_matrix.html#a3d7e512a14bcb4fede00210fe7935acb',1,'LorentzMatrix::E() const'],['../class_lorentz_matrix.html#a28e1f3c38937e76f6fb1abcfc117b8ac',1,'LorentzMatrix::E()']]],
-  ['end',['end',['../classstrided__range.html#a6e1082a3cbe0debdd662cec2bc0bc22a',1,'strided_range']]],
-  ['enum_5fto_5funderlying',['enum_to_underlying',['../_dalitz_plot_helpers_8h.html#a17ed9540c8489c150e57cf9a6b34f25d',1,'DalitzPlotHelpers.h']]],
-  ['envname',['envname',['../class_c_l_i_1_1_option.html#aa1969c5f5a525910d761756a6d8e63a8',1,'CLI::Option']]],
-  ['error',['Error',['../struct_c_l_i_1_1_error.html#a37ba5fcde7c1aa746803532ff549ff11',1,'CLI::Error']]],
-  ['eval',['Eval',['../class_t_minuit.html#aae90fc1501d0e2e677beae28cc5470c0',1,'TMinuit']]],
-  ['evaluateatpoints',['evaluateAtPoints',['../class_goo_pdf.html#a875f97d6406d58d99afaafbe2514e40f',1,'GooPdf::evaluateAtPoints(std::vector&lt; fptype &gt; &amp;points) const'],['../class_goo_pdf.html#a6bad6ce9eebdd78128f39596246703ef',1,'GooPdf::evaluateAtPoints(Variable *var, std::vector&lt; fptype &gt; &amp;res)']]],
-  ['eventweightedaddpdf',['EventWeightedAddPdf',['../class_event_weighted_add_pdf.html#ac4226f08c07953a96cf4cd710deb372a',1,'EventWeightedAddPdf']]],
-  ['excludes',['excludes',['../class_c_l_i_1_1_option.html#a9597b8271ebc4ad41c2e86f31834a1a3',1,'CLI::Option::excludes(Option *opt)'],['../class_c_l_i_1_1_option.html#ae18a3913306b0f468c9e13e6046b6ffc',1,'CLI::Option::excludes(std::string opt_name)'],['../class_c_l_i_1_1_option.html#a758ca7c5f8bf8a9fc2ccd4c347f871fb',1,'CLI::Option::excludes(A opt, B opt1, ARG... args)']]],
-  ['excludeserror',['ExcludesError',['../struct_c_l_i_1_1_excludes_error.html#ac019c598d7bd8bd6a370aaf05f0ddda2',1,'CLI::ExcludesError']]],
-  ['existingdirectory',['ExistingDirectory',['../group__validator__group.html#gaf988c38e9f27c2577877b61e4fab7dae',1,'CLI']]],
-  ['existingfile',['ExistingFile',['../group__validator__group.html#ga3686c9f734556a7708e9450c936c20b2',1,'CLI']]],
-  ['exit',['exit',['../class_goo_fit_1_1_application.html#a71e0d2e61c0e873642a4a985dd1b8bb2',1,'GooFit::Application::exit()'],['../class_c_l_i_1_1_app.html#a34e711976aeaf056dc8cde1f9099f109',1,'CLI::App::exit()']]],
-  ['exp',['Exp',['../class_t_random.html#a526b8d2a7c259be86f48ca05ab63cc09',1,'TRandom::Exp()'],['../devcomplex_8h.html#ab6507d0f0bdc1926634d8f8005b52dd2',1,'exp():&#160;devcomplex.h']]],
-  ['expected',['expected',['../class_c_l_i_1_1_option.html#af75c26433baa09c7c762bfb9eb466215',1,'CLI::Option']]],
-  ['expgauspdf',['ExpGausPdf',['../class_exp_gaus_pdf.html#a5248b4be67116077d5782de4030da549',1,'ExpGausPdf']]],
-  ['exppdf',['ExpPdf',['../class_exp_pdf.html#a73b6dc4819fd133c6c868c7f5c78c549',1,'ExpPdf::ExpPdf(std::string n, Variable *_x, Variable *alpha, Variable *offset=0)'],['../class_exp_pdf.html#a4a86ef398fb09e42171bdf64b23116d0',1,'ExpPdf::ExpPdf(std::string n, Variable *_x, std::vector&lt; Variable *&gt; &amp;weights, Variable *offset=0)']]],
-  ['extracthistogram',['extractHistogram',['../class_smooth_histogram_pdf.html#add629bdbca3b32d987cd2f7438feadfc',1,'SmoothHistogramPdf']]],
-  ['extraserror',['ExtrasError',['../struct_c_l_i_1_1_extras_error.html#a2144fc68bb1b9d34a6e6a39f7aad361e',1,'CLI::ExtrasError']]],
-  ['extrasinierror',['ExtrasINIError',['../struct_c_l_i_1_1_extras_i_n_i_error.html#a6bc4f7828c0439027cc5eb928d2e39fd',1,'CLI::ExtrasINIError']]]
+  ['faddeeva_5f2',['Faddeeva_2',['../_faddeeva_8cc.html#a423d75897fc35f35062361b4b456ba36',1,'Faddeeva.cc']]],
+  ['fill',['Fill',['../class_t_h1.html#aa47100e4a7b245ab8f2c4a7f97f85c64',1,'TH1']]],
+  ['findfunctionidx',['findFunctionIdx',['../class_goo_pdf.html#ac0638dc0627afc85dd619e4ed0473251',1,'GooPdf']]],
+  ['fit',['fit',['../class_goo_fit_1_1_fit_manager_minuit1.html#a04ac2082ecea8bf609a07809c73c28b3',1,'GooFit::FitManagerMinuit1::fit()'],['../class_goo_fit_1_1_fit_manager_minuit2.html#aea24e9d9d9729c16413fac545414dd17',1,'GooFit::FitManagerMinuit2::fit()']]],
+  ['fitcontrol',['FitControl',['../class_fit_control.html#a010846aa520a8fe8cb7bc7c900b3785f',1,'FitControl']]],
+  ['fitfun',['FitFun',['../_fit_manager_minuit1_8h.html#a3a8d4edb350fc9a9c6f4e2ffc0236314',1,'FitFun(int &amp;npar, double *gin, double &amp;fun, double *fp, int iflag):&#160;FitManagerMinuit1.cc'],['../_fit_manager_minuit1_8cc.html#a3a8d4edb350fc9a9c6f4e2ffc0236314',1,'FitFun(int &amp;npar, double *gin, double &amp;fun, double *fp, int iflag):&#160;FitManagerMinuit1.cc']]],
+  ['fitmanagerminuit1',['FitManagerMinuit1',['../class_goo_fit_1_1_fit_manager_minuit1.html#a155a82794093d1981282e0686d2be056',1,'GooFit::FitManagerMinuit1']]],
+  ['fitmanagerminuit2',['FitManagerMinuit2',['../class_goo_fit_1_1_fit_manager_minuit2.html#ac594da38a8551a78af54f081572b0a29',1,'GooFit::FitManagerMinuit2']]],
+  ['fixparameter',['FixParameter',['../class_t_minuit.html#adaddb6292249f27bcb7df4f9eb25cd26',1,'TMinuit']]]
 ];

@@ -1,14 +1,17 @@
 var searchData=
 [
-  ['_5fhas_5fhelp_5fpositional',['_has_help_positional',['../class_c_l_i_1_1_option.html#afa1805fe998e74f188388706e7403af4',1,'CLI::Option']]],
-  ['_5fparse',['_parse',['../class_c_l_i_1_1_app.html#a241ba75a6c98b36349ae2f71a9137291',1,'CLI::App']]],
-  ['_5fparse_5fini',['_parse_ini',['../class_c_l_i_1_1_app.html#a98057e95b09475275df3ee5875058c8d',1,'CLI::App']]],
-  ['_5fparse_5flong',['_parse_long',['../class_c_l_i_1_1_app.html#ad59bd843c6ae11e57a38aa3eaa3a1385',1,'CLI::App']]],
-  ['_5fparse_5fpositional',['_parse_positional',['../class_c_l_i_1_1_app.html#a737881acf2e03c6d316b14fd6d8a5073',1,'CLI::App']]],
-  ['_5fparse_5fshort',['_parse_short',['../class_c_l_i_1_1_app.html#ad20d7e3b5292f92e41262e2bd2ff440d',1,'CLI::App']]],
-  ['_5fparse_5fsingle',['_parse_single',['../class_c_l_i_1_1_app.html#a9c18493ffbb1ada02822ca19b6d5e624',1,'CLI::App']]],
-  ['_5fparse_5fsubcommand',['_parse_subcommand',['../class_c_l_i_1_1_app.html#a426161917aba1daec0fdc5f3b6950e02',1,'CLI::App']]],
-  ['_5frecognize',['_recognize',['../class_c_l_i_1_1_app.html#a5041d10b0b58fd5d91ef9ba8221de0a0',1,'CLI::App']]],
-  ['_5fvalid_5fsubcommand',['_valid_subcommand',['../class_c_l_i_1_1_app.html#adbf5784ec700f084eaf09ea81036daf1',1,'CLI::App']]],
-  ['_5fvalidate',['_validate',['../class_c_l_i_1_1_app.html#ae2908ce3eded7e3d6bb2e6fdd2410576',1,'CLI::App']]]
+  ['abortwithcudaprintflush',['abortWithCudaPrintFlush',['../_global_cuda_defines_8h.html#ab84f5ad3389ceea62f8449c15b793a2a',1,'GlobalCudaDefines.h']]],
+  ['abs2',['abs2',['../structdevcomplex.html#ae5b6795466a12d5da923996f482a6b9f',1,'devcomplex']]],
+  ['add',['add',['../class_lorentz_matrix.html#a2a441783fdfbecf73dbbb517cf9c749a',1,'LorentzMatrix::add()'],['../class_symm_lorentz_matrix.html#ae326ca2738f229322b00fd5c00e5b914',1,'SymmLorentzMatrix::add()']]],
+  ['addevent',['addEvent',['../class_data_set.html#a363d1779faf6983e6e428c43c5fe64e6',1,'DataSet::addEvent()'],['../class_data_set.html#a5110aa9f8297cbb4a02bb4e7927d1c4f',1,'DataSet::addEvent(fptype val)']]],
+  ['addeventvector',['addEventVector',['../class_binned_data_set.html#a11559fdc4ec9bdc5e4dcb22bb520d8db',1,'BinnedDataSet::addEventVector()'],['../class_data_set.html#a682607e211780dfb653ab81afcafa033',1,'DataSet::addEventVector()'],['../class_unbinned_data_set.html#a3c9147954f1b42a953f6034570043cc1',1,'UnbinnedDataSet::addEventVector()']]],
+  ['addpdf',['AddPdf',['../class_add_pdf.html#a500be46553c62af953e9e641b803f03a',1,'AddPdf::AddPdf(std::string n, std::vector&lt; Variable *&gt; weights, std::vector&lt; PdfBase *&gt; comps)'],['../class_add_pdf.html#a7cd4d46b80b9e97855d58f7c74a59503',1,'AddPdf::AddPdf(std::string n, Variable *frac1, PdfBase *func1, PdfBase *func2)']]],
+  ['addspecialmask',['addSpecialMask',['../class_pdf_base.html#a87ef89218724b71256e54f844b299ee9',1,'PdfBase']]],
+  ['addweightedevent',['addWeightedEvent',['../class_data_set.html#afe2a52ec86aaa4aa6e2ef5dfaef6c597',1,'DataSet']]],
+  ['align',['ALIGN',['../_spin_helper_8h.html#a4b3fbfc5401e613ca821db19cdf5f113',1,'SpinHelper.h']]],
+  ['ampcalc',['AmpCalc',['../class_amp_calc.html#af7cbcd85a1cca30309887b28a2274890',1,'AmpCalc']]],
+  ['ampcalc_5ftd',['AmpCalc_TD',['../class_amp_calc___t_d.html#a985914b09655b32e8df3144cf77d6cdf',1,'AmpCalc_TD']]],
+  ['amplitude',['Amplitude',['../class_amplitude.html#a52d3350f60972b111d356848cb964c1f',1,'Amplitude']]],
+  ['application',['Application',['../class_goo_fit_1_1_application.html#aef51b6419e7dae1667dcbdb9c163a18e',1,'GooFit::Application::Application(std::string discription, int argc, char **argv)'],['../class_goo_fit_1_1_application.html#ac5b20376503ea5481c26718cce1cf0b4',1,'GooFit::Application::Application(int argc, char **argv)']]],
+  ['arguspdf',['ArgusPdf',['../class_argus_pdf.html#a4b3fd1ba29bcab42b377db8ac6b2758b',1,'ArgusPdf']]]
 ];

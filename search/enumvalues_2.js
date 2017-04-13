@@ -1,7 +1,10 @@
 var searchData=
 [
-  ['conceal',['conceal',['../namespacerang.html#add4e682fec2856474978ff76efcc8b4eaa27efeecfcdb7794476cafb0b362835e',1,'rang']]],
-  ['conversion',['Conversion',['../namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037ea3bb1503332637805beddb73a2dd1fe1b',1,'CLI']]],
-  ['crossed',['crossed',['../namespacerang.html#add4e682fec2856474978ff76efcc8b4eafade7e5041fdebd013b445486161c31c',1,'rang']]],
-  ['cyan',['cyan',['../namespacerang.html#a41a68f6ed991b29fa720fcfbcd319ef9a6411532ba4971f378391776a9db629d3',1,'rang::cyan()'],['../namespacerang.html#ad33ed681a0b63f07283bbb55d19da7d2a6411532ba4971f378391776a9db629d3',1,'rang::cyan()'],['../namespacerang.html#a3b83d0d73d49b5a75c3b92031f2c77eea6411532ba4971f378391776a9db629d3',1,'rang::cyan()'],['../namespacerang.html#a42edf1c1b0d8e843ceb1208259177f08a6411532ba4971f378391776a9db629d3',1,'rang::cyan()']]]
+  ['ff_5f123_5f4_5fl1',['FF_123_4_L1',['../_spin_factors_8h.html#aae294f461ad93bdcfafe203e5717560da8ddf307ed46f83596d9d9f07092692c4',1,'SpinFactors.h']]],
+  ['ff_5f123_5f4_5fl2',['FF_123_4_L2',['../_spin_factors_8h.html#aae294f461ad93bdcfafe203e5717560da47cb11065863491f1f2edcbb8d7db184',1,'SpinFactors.h']]],
+  ['ff_5f12_5f34_5fl1',['FF_12_34_L1',['../_spin_factors_8h.html#aae294f461ad93bdcfafe203e5717560da2af9d1fbd59afdf3a5af755456a4121c',1,'SpinFactors.h']]],
+  ['ff_5f12_5f34_5fl2',['FF_12_34_L2',['../_spin_factors_8h.html#aae294f461ad93bdcfafe203e5717560dacc0ee83b7064616dbc2407cbe7ab8c38',1,'SpinFactors.h']]],
+  ['flatte',['Flatte',['../_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3a2609fc244129252b283c82842850816c',1,'LineshapesPdf.h']]],
+  ['forcecommonnorm',['ForceCommonNorm',['../class_pdf_base.html#a485f1602f74b5f47c1e5672ce1ea6b1da1bde5267d5e7d24ded2e3721359b7d9a',1,'PdfBase']]],
+  ['forceseparatenorm',['ForceSeparateNorm',['../class_pdf_base.html#a485f1602f74b5f47c1e5672ce1ea6b1da87e7882cbb347a68dd101ec69b679eab',1,'PdfBase']]]
 ];

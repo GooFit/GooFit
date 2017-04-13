@@ -1,15 +1,14 @@
 var searchData=
 [
-  ['badnamestring',['BadNameString',['../namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037eab319e260db27232cb74e2a23124b7a2c',1,'CLI']]],
-  ['baseclass',['BaseClass',['../namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037ea45b3e4c35409fb597ea598dc4b984b8c',1,'CLI']]],
-  ['bl',['BL',['../_lineshapes_pdf_8h.html#ac9ea339e5b9617e72d7a8b4042796027aa6f5350f5a2b25a96d66757f761ce65c',1,'LineshapesPdf.h']]],
-  ['bl2',['BL2',['../_lineshapes_pdf_8h.html#ac9ea339e5b9617e72d7a8b4042796027a8c13a541ade512c7fe90516306fc96f4',1,'LineshapesPdf.h']]],
-  ['bl_5fprime',['BL_Prime',['../_lineshapes_pdf_8h.html#ac9ea339e5b9617e72d7a8b4042796027ac29d73f0922a78500ae4bf1ba74ef293',1,'LineshapesPdf.h']]],
-  ['black',['black',['../namespacerang.html#a41a68f6ed991b29fa720fcfbcd319ef9a1ffd9e753c8054cc61456ac7fac1ac89',1,'rang::black()'],['../namespacerang.html#ad33ed681a0b63f07283bbb55d19da7d2a1ffd9e753c8054cc61456ac7fac1ac89',1,'rang::black()'],['../namespacerang.html#a3b83d0d73d49b5a75c3b92031f2c77eea1ffd9e753c8054cc61456ac7fac1ac89',1,'rang::black()'],['../namespacerang.html#a42edf1c1b0d8e843ceb1208259177f08a1ffd9e753c8054cc61456ac7fac1ac89',1,'rang::black()']]],
-  ['blink',['blink',['../namespacerang.html#add4e682fec2856474978ff76efcc8b4ea40652ee9ae143f1c1c830f01a5449ecb',1,'rang']]],
-  ['blue',['blue',['../namespacerang.html#a41a68f6ed991b29fa720fcfbcd319ef9a48d6215903dff56238e52e8891380c8f',1,'rang::blue()'],['../namespacerang.html#ad33ed681a0b63f07283bbb55d19da7d2a48d6215903dff56238e52e8891380c8f',1,'rang::blue()'],['../namespacerang.html#a3b83d0d73d49b5a75c3b92031f2c77eea48d6215903dff56238e52e8891380c8f',1,'rang::blue()'],['../namespacerang.html#a42edf1c1b0d8e843ceb1208259177f08a48d6215903dff56238e52e8891380c8f',1,'rang::blue()']]],
-  ['bold',['bold',['../namespacerang.html#add4e682fec2856474978ff76efcc8b4ea69dcab4a73aeec2113f69b61e6263da8',1,'rang']]],
-  ['bugg',['Bugg',['../_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3a4711158a0e494cdca45e673bb3af56b1',1,'LineshapesPdf.h']]],
-  ['bugg3',['Bugg3',['../_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3a379568076564c4217b628ec8941ce9b0',1,'LineshapesPdf.h']]],
-  ['bw',['BW',['../_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3a81043f8c681575bca3e4eff6afbd9db9',1,'LineshapesPdf.h']]]
+  ['dtoap1_5fatosp2_5fstop3p4',['DtoAP1_AtoSP2_StoP3P4',['../_spin_factors_8h.html#aae294f461ad93bdcfafe203e5717560da70abcd2d44b821cf5d97cdd3e4fcd4e9',1,'SpinFactors.h']]],
+  ['dtoap1_5fatovp2_5fvtop3p4',['DtoAP1_AtoVP2_VtoP3P4',['../_spin_factors_8h.html#aae294f461ad93bdcfafe203e5717560dabe766af1dee52ab53a292b0d69f182d3',1,'SpinFactors.h']]],
+  ['dtoap1_5fatovp2dwave_5fvtop3p4',['DtoAP1_AtoVP2Dwave_VtoP3P4',['../_spin_factors_8h.html#aae294f461ad93bdcfafe203e5717560daaf52e2845624c11217355a275c83ba61',1,'SpinFactors.h']]],
+  ['dtopp1_5fptosp2_5fstop3p4',['DtoPP1_PtoSP2_StoP3P4',['../_spin_factors_8h.html#aae294f461ad93bdcfafe203e5717560da189c74b056a367ff3ea26f1202ad7849',1,'SpinFactors.h']]],
+  ['dtopp1_5fptovp2_5fvtop3p4',['DtoPP1_PtoVP2_VtoP3P4',['../_spin_factors_8h.html#aae294f461ad93bdcfafe203e5717560da0488159712bead736d0fd06ef25ec273',1,'SpinFactors.h']]],
+  ['dtotp1_5fttovp2_5fvtop3p4',['DtoTP1_TtoVP2_VtoP3P4',['../_spin_factors_8h.html#aae294f461ad93bdcfafe203e5717560da79c02b9827a2dba43d54c3ef1fb93b07',1,'SpinFactors.h']]],
+  ['dtov1p1_5fv1tov2p2_5fv2top3p4',['DtoV1P1_V1toV2P2_V2toP3P4',['../_spin_factors_8h.html#aae294f461ad93bdcfafe203e5717560dad5f4eb5b4e7f48646cbd06dd616be5eb',1,'SpinFactors.h']]],
+  ['dtov1v2_5fv1top1p2_5fv2top3p4_5fd',['DtoV1V2_V1toP1P2_V2toP3P4_D',['../_spin_factors_8h.html#aae294f461ad93bdcfafe203e5717560dad7042149039b897e025a563e5fc7d050',1,'SpinFactors.h']]],
+  ['dtov1v2_5fv1top1p2_5fv2top3p4_5fp',['DtoV1V2_V1toP1P2_V2toP3P4_P',['../_spin_factors_8h.html#aae294f461ad93bdcfafe203e5717560dad77ed50054c294b26b9a4bfb4fe89743',1,'SpinFactors.h']]],
+  ['dtov1v2_5fv1top1p2_5fv2top3p4_5fs',['DtoV1V2_V1toP1P2_V2toP3P4_S',['../_spin_factors_8h.html#aae294f461ad93bdcfafe203e5717560da25d21643d4712f6621a2e557439ec97b',1,'SpinFactors.h']]],
+  ['dtovs_5fvtop1p2_5fstop3p4',['DtoVS_VtoP1P2_StoP3P4',['../_spin_factors_8h.html#aae294f461ad93bdcfafe203e5717560da045dc85d7ea1c17e0104e8abf38817a9',1,'SpinFactors.h']]]
 ];

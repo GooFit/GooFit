@@ -1,10 +1,6 @@
 var searchData=
 [
-  ['badnamestring',['BadNameString',['../struct_c_l_i_1_1_bad_name_string.html',1,'CLI::BadNameString'],['../struct_c_l_i_1_1_bad_name_string.html#ab1b309894dd5d3674a62c4fed7615fe9',1,'CLI::BadNameString::BadNameString()'],['../namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037eab319e260db27232cb74e2a23124b7a2c',1,'CLI::BadNameString()']]],
-  ['baseclass',['BaseClass',['../namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037ea45b3e4c35409fb597ea598dc4b984b8c',1,'CLI']]],
   ['begin',['begin',['../classstrided__range.html#a9581283e86c1a9140487de4568a411ef',1,'strided_range']]],
-  ['bg',['bg',['../namespacerang.html#ad33ed681a0b63f07283bbb55d19da7d2',1,'rang']]],
-  ['bgb',['bgB',['../namespacerang.html#a42edf1c1b0d8e843ceb1208259177f08',1,'rang']]],
   ['bi_5fimag',['bi_imag',['../struct_wave_holder__s.html#aa4023582de0d0e20c440c2edf80b176b',1,'WaveHolder_s']]],
   ['bi_5freal',['bi_real',['../struct_wave_holder__s.html#aa35e839027a55575047f2bfeff6253de',1,'WaveHolder_s']]],
   ['bifurgausspdf',['BifurGaussPdf',['../class_bifur_gauss_pdf.html',1,'BifurGaussPdf'],['../class_bifur_gauss_pdf.html#a0611a8f8426a01bfea397a1583f487de',1,'BifurGaussPdf::BifurGaussPdf()']]],
@@ -25,12 +21,8 @@ var searchData=
   ['bl',['BL',['../_lineshapes_pdf_8h.html#ac9ea339e5b9617e72d7a8b4042796027aa6f5350f5a2b25a96d66757f761ce65c',1,'LineshapesPdf.h']]],
   ['bl2',['BL2',['../_lineshapes_pdf_8h.html#ac9ea339e5b9617e72d7a8b4042796027a8c13a541ade512c7fe90516306fc96f4',1,'LineshapesPdf.h']]],
   ['bl_5fprime',['BL_Prime',['../_lineshapes_pdf_8h.html#ac9ea339e5b9617e72d7a8b4042796027ac29d73f0922a78500ae4bf1ba74ef293',1,'LineshapesPdf.h']]],
-  ['black',['black',['../namespacerang.html#a41a68f6ed991b29fa720fcfbcd319ef9a1ffd9e753c8054cc61456ac7fac1ac89',1,'rang::black()'],['../namespacerang.html#ad33ed681a0b63f07283bbb55d19da7d2a1ffd9e753c8054cc61456ac7fac1ac89',1,'rang::black()'],['../namespacerang.html#a3b83d0d73d49b5a75c3b92031f2c77eea1ffd9e753c8054cc61456ac7fac1ac89',1,'rang::black()'],['../namespacerang.html#a42edf1c1b0d8e843ceb1208259177f08a1ffd9e753c8054cc61456ac7fac1ac89',1,'rang::black()']]],
   ['blind',['blind',['../class_variable.html#a71b5613be9d0b2bfab7e48f8963a966f',1,'Variable']]],
-  ['blink',['blink',['../namespacerang.html#add4e682fec2856474978ff76efcc8b4ea40652ee9ae143f1c1c830f01a5449ecb',1,'rang']]],
   ['blockdim',['BLOCKDIM',['../_global_cuda_defines_8h.html#a06dbd88a0344955413f99eead6231dc2',1,'GlobalCudaDefines.h']]],
-  ['blue',['blue',['../namespacerang.html#a41a68f6ed991b29fa720fcfbcd319ef9a48d6215903dff56238e52e8891380c8f',1,'rang::blue()'],['../namespacerang.html#ad33ed681a0b63f07283bbb55d19da7d2a48d6215903dff56238e52e8891380c8f',1,'rang::blue()'],['../namespacerang.html#a3b83d0d73d49b5a75c3b92031f2c77eea48d6215903dff56238e52e8891380c8f',1,'rang::blue()'],['../namespacerang.html#a42edf1c1b0d8e843ceb1208259177f08a48d6215903dff56238e52e8891380c8f',1,'rang::blue()']]],
-  ['bold',['bold',['../namespacerang.html#add4e682fec2856474978ff76efcc8b4ea69dcab4a73aeec2113f69b61e6263da8',1,'rang']]],
   ['breitwigner',['BreitWigner',['../class_t_random.html#a71c3af2fd58574688fcf7fdcf913a19e',1,'TRandom']]],
   ['bugg',['Bugg',['../_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3a4711158a0e494cdca45e673bb3af56b1',1,'LineshapesPdf.h']]],
   ['bugg3',['Bugg3',['../_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3a379568076564c4217b628ec8941ce9b0',1,'LineshapesPdf.h']]],

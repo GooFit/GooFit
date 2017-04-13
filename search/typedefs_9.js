@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['resonance_5ffunction_5fptr',['resonance_function_ptr',['../_resonance_pdf_8h.html#a2c72412f0046bfc3513a43a55c835845',1,'ResonancePdf.h']]],
-  ['results_5ft',['results_t',['../namespace_c_l_i.html#aa7423a3cb3e9faef28c3cad2937695b8',1,'CLI']]]
+  ['th1f',['TH1F',['../fake_t_h1_f_8h.html#a1bec1128e502dbf46020e554a1e948c5',1,'fakeTH1F.h']]],
+  ['threecomplex',['ThreeComplex',['../_tddp_pdf_8h.html#ad5de01c9383ec9374d31d63e64c70478',1,'TddpPdf.h']]],
+  ['transformiterator',['TransformIterator',['../classstrided__range.html#ae4671b819eabb9e3619be85285571957',1,'strided_range']]]
 ];

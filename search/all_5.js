@@ -20,11 +20,8 @@ var searchData=
   ['daughterpair',['DaughterPair',['../_dalitz_plot_helpers_8h.html#a105455728dce67dab0cd2b5c1dcd9342',1,'DalitzPlotHelpers.h']]],
   ['decayinfo',['DecayInfo',['../struct_decay_info.html',1,'']]],
   ['decayinfo_5fdp',['DecayInfo_DP',['../struct_decay_info___d_p.html',1,'']]],
-  ['default_5f',['default_',['../class_c_l_i_1_1_option.html#a19eea42937479f91fceae827c8e28adf',1,'CLI::Option']]],
-  ['defaultval_5f',['defaultval_',['../class_c_l_i_1_1_option.html#af5801b4cec3c87ce84a2cfd9decdb1fd',1,'CLI::Option']]],
   ['defineparameter',['DefineParameter',['../class_t_minuit.html#ad41b9ee94910b91c1fa711fc502d877d',1,'TMinuit']]],
   ['deletearrays',['DeleteArrays',['../class_t_minuit.html#a65a5cd04e8abfab83e94c15fca6c8694',1,'TMinuit']]],
-  ['description_5f',['description_',['../class_c_l_i_1_1_option.html#aa6427b2f3303cc4469cacdc098b9d4bf',1,'CLI::Option::description_()'],['../class_c_l_i_1_1_app.html#aa6a2e79e0a5990b44bc5d76504437fcd',1,'CLI::App::description_()']]],
   ['dev_5fevent_5farray',['dev_event_array',['../_pdf_base_8h.html#a7951a490445f7f71b2f6cc3ceac1943c',1,'dev_event_array():&#160;PdfBase.cc'],['../_pdf_base_8cc.html#a7951a490445f7f71b2f6cc3ceac1943c',1,'dev_event_array():&#160;PdfBase.cc']]],
   ['dev_5fpowi',['dev_powi',['../_goo_pdf_8h.html#ad0793a52c5cadabd53092551b5da7a99',1,'GooPdf.h']]],
   ['devcomplex',['devcomplex',['../structdevcomplex.html',1,'devcomplex&lt; T &gt;'],['../structdevcomplex.html#af3bb0c8799af8096dac61cab98c3961a',1,'devcomplex::devcomplex()'],['../structdevcomplex.html#a3a591d9344ccef259cd206bab2253c79',1,'devcomplex::devcomplex(T r, T i)']]],
@@ -35,7 +32,6 @@ var searchData=
   ['device_5fmetric_5fptr',['device_metric_ptr',['../_goo_pdf_8h.html#ad4373186534aee81ce1e876b2f25a9b4',1,'GooPdf.h']]],
   ['device_5fresfunction_5fptr',['device_resfunction_ptr',['../_mixing_time_resolution___aux_8h.html#a016218f05cc112645db3b52fdc7220c6',1,'MixingTimeResolution_Aux.h']]],
   ['difference_5ftype',['difference_type',['../classstrided__range.html#a9eb25e2c775897f4189f01b996b28d0b',1,'strided_range']]],
-  ['dim',['dim',['../namespacerang.html#add4e682fec2856474978ff76efcc8b4ea563728df0fdd90631ac1e51258e2857d',1,'rang']]],
   ['dim5',['Dim5',['../struct_dim5.html',1,'Dim5'],['../struct_dim5.html#a02460e3c1bf152b0ab76dd9a6d9215fa',1,'Dim5::Dim5()']]],
   ['div',['div',['../class_lorentz_matrix.html#aadc4d40801cbd516d025967d9adf52b2',1,'LorentzMatrix::div()'],['../class_symm_lorentz_matrix.html#adfcc0e80780b8cc5a112fbecb0d8582e',1,'SymmLorentzMatrix::div()']]],
   ['documentation_2emd',['documentation.md',['../documentation_8md.html',1,'']]],
@@ -57,6 +53,5 @@ var searchData=
   ['dtov1v2_5fv1top1p2_5fv2top3p4_5fp',['DtoV1V2_V1toP1P2_V2toP3P4_P',['../_spin_factors_8h.html#aae294f461ad93bdcfafe203e5717560dad77ed50054c294b26b9a4bfb4fe89743',1,'SpinFactors.h']]],
   ['dtov1v2_5fv1top1p2_5fv2top3p4_5fs',['DtoV1V2_V1toP1P2_V2toP3P4_S',['../_spin_factors_8h.html#aae294f461ad93bdcfafe203e5717560da25d21643d4712f6621a2e557439ec97b',1,'SpinFactors.h']]],
   ['dtovs_5fvtop1p2_5fstop3p4',['DtoVS_VtoP1P2_StoP3P4',['../_spin_factors_8h.html#aae294f461ad93bdcfafe203e5717560da045dc85d7ea1c17e0104e8abf38817a9',1,'SpinFactors.h']]],
-  ['dummy',['dummy',['../namespace_c_l_i_1_1detail.html#a01c35a876e2917ffdc1ee618e0c06619',1,'CLI::detail']]],
   ['dummysynch',['dummySynch',['../_pdf_base_8cc.html#a9e68d6b1686d4f36b586ec63ddda6c65',1,'PdfBase.cc']]]
 ];

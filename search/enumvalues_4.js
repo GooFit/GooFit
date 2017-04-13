@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['excludes',['Excludes',['../namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037ea9c996acd3d07c857bf343151d04f6c00',1,'CLI']]],
-  ['extras',['Extras',['../namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037ea0a3f082873eb454bde444150b70253cc',1,'CLI']]],
-  ['extrasini',['ExtrasINI',['../namespace_c_l_i.html#a1d8108a219533f0b0361640a017f037eafc325318850beba46a99cec4701838d6',1,'CLI']]]
+  ['lass',['Lass',['../_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3aeb60ec1beae3adf63350208615dc44c1',1,'LineshapesPdf.h']]],
+  ['lass_5fm3',['Lass_M3',['../_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3a281f928e14010b898799fbcffca5a839',1,'LineshapesPdf.h']]]
 ];

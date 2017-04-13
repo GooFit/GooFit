@@ -1,11 +1,7 @@
 var searchData=
 [
-  ['name',['name',['../class_indexable.html#acce56f344c1ffdb362c347745e50b8c8',1,'Indexable::name()'],['../struct_c_l_i_1_1detail_1_1ini__ret__t.html#a7ca843ce6b8cd226ec4c50114bcc6fe8',1,'CLI::detail::ini_ret_t::name()']]],
-  ['name_5f',['name_',['../class_c_l_i_1_1_app.html#a61a36f7297a3199b9e789887510fa3fa',1,'CLI::App']]],
+  ['name',['name',['../class_indexable.html#acce56f344c1ffdb362c347745e50b8c8',1,'Indexable']]],
   ['ncpu',['nCPU',['../_gen_voigtian_8cc.html#a12d2bc80847e5879f5657e9a451736bc',1,'GenVoigtian.cc']]],
-  ['none',['NONE',['../namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499ab50339a10e1de285ac99d4c3990b8693',1,'CLI::detail']]],
-  ['nonexistentpath',['NonexistentPath',['../group__validator__group.html#ga0c95be9a1d6429b133d4f1edbf5598b0',1,'CLI']]],
-  ['nonpositional',['nonpositional',['../class_c_l_i_1_1_option.html#a94cc5149d388be946c449e8ee61cd034',1,'CLI::Option']]],
   ['nonres',['nonRes',['../_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3a2398556ba32d5dcbf9d58f432382bcf8',1,'LineshapesPdf.h']]],
   ['norm',['norm',['../devcomplex_8h.html#af54c6306ac31991a2436c480065c39f9',1,'devcomplex.h']]],
   ['norm2',['norm2',['../devcomplex_8h.html#a9b4342b562be74b09ab0dee36aff4c4b',1,'devcomplex.h']]],
@@ -25,6 +21,6 @@ var searchData=
   ['numentries',['numEntries',['../class_pdf_base.html#ad9277a52bf3e454d7bcb2e37ea329ee7',1,'PdfBase']]],
   ['numevents',['numEvents',['../class_pdf_base.html#aac9f1f5f2e31ed672260b3610519b684',1,'PdfBase::numEvents()'],['../class_data_set.html#add3839dc27b4c38e7688e1556617c727',1,'DataSet::numEvents()']]],
   ['numeventsadded',['numEventsAdded',['../class_data_set.html#afcb84d3ac057749f03299f69ddac4bf9',1,'DataSet']]],
-  ['numpars',['numPars',['../class_fit_manager.html#a233909f9a22bdf1d7d236fa251eed1ac',1,'FitManager::numPars()'],['../_fit_manager_minuit1_8h.html#acfaae49925f72df5443f32e1d1d01b34',1,'numPars():&#160;FitManagerMinuit1.cc'],['../_fit_manager_minuit3_8h.html#acfaae49925f72df5443f32e1d1d01b34',1,'numPars():&#160;FitManagerMinuit1.cc'],['../_fit_manager_minuit1_8cc.html#acfaae49925f72df5443f32e1d1d01b34',1,'numPars():&#160;FitManagerMinuit1.cc'],['../_fit_manager_minuit3_8cc.html#acfaae49925f72df5443f32e1d1d01b34',1,'numPars():&#160;FitManagerMinuit3.cc']]],
+  ['numpars',['numPars',['../class_goo_fit_1_1_fit_manager_minuit2.html#a840e6a914f4a0ccd4678285b0ea51044',1,'GooFit::FitManagerMinuit2::numPars()'],['../_fit_manager_minuit1_8h.html#acfaae49925f72df5443f32e1d1d01b34',1,'numPars():&#160;FitManagerMinuit1.cc'],['../_fit_manager_minuit1_8cc.html#acfaae49925f72df5443f32e1d1d01b34',1,'numPars():&#160;FitManagerMinuit1.cc']]],
   ['numvariables',['numVariables',['../class_data_set.html#abd6e1d413f09d901be5c99456ca022a9',1,'DataSet']]]
 ];

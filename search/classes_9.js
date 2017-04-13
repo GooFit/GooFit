@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['johnsonsupdf',['JohnsonSUPdf',['../class_johnson_s_u_pdf.html',1,'']]]
+  ['kinlimitbwpdf',['KinLimitBWPdf',['../class_kin_limit_b_w_pdf.html',1,'']]]
 ];

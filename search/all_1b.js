@@ -6,7 +6,7 @@ var searchData=
   ['_7ecountingvariable',['~CountingVariable',['../class_counting_variable.html#a5c0b57798e2c21fc60d2cf481295e905',1,'CountingVariable']]],
   ['_7edataset',['~DataSet',['../class_data_set.html#a2cdb84d32331956b413ca36933e516bd',1,'DataSet']]],
   ['_7efitcontrol',['~FitControl',['../class_fit_control.html#af73ae3e963a1c2381132984445c8e194',1,'FitControl']]],
-  ['_7efitmanager',['~FitManager',['../class_fit_manager.html#ae91054af3f17061de5d61f0c675eb9ba',1,'FitManager']]],
+  ['_7efitmanagerminuit1',['~FitManagerMinuit1',['../class_goo_fit_1_1_fit_manager_minuit1.html#a1ca9f387e56e75706c6c4cd75aded4cb',1,'GooFit::FitManagerMinuit1']]],
   ['_7eindexable',['~Indexable',['../class_indexable.html#a3238424e0b148bdc98c71e77ff46ab12',1,'Indexable']]],
   ['_7emixingtimeresolution',['~MixingTimeResolution',['../class_mixing_time_resolution.html#a1d8776afa705b8850cae9ad38d572ec4',1,'MixingTimeResolution']]],
   ['_7ethreegaussresolution',['~ThreeGaussResolution',['../class_three_gauss_resolution.html#a05d613f9938010b7fc5ea298f3ed47c0',1,'ThreeGaussResolution']]],

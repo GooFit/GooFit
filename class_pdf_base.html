@@ -477,7 +477,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Implemented in <a class="el" href="class_goo_pdf.html#a0e95dcd6dda393d2cd24af663a2becbd">GooPdf</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00100">FitFun()</a>, and <a class="el" href="_fit_manager_minuit2_8cc_source.html#l00030">FitManager::operator()()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00114">FitFun()</a>, and <a class="el" href="_fit_manager_minuit2_8cc_source.html#l00044">GooFit::FitManagerMinuit2::operator()()</a>.</p>
 
 </div>
 </div>
@@ -562,7 +562,7 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="reference">Referenced by <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00100">FitFun()</a>, <a class="el" href="_fit_manager_minuit2_8cc_source.html#l00030">FitManager::operator()()</a>, and <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00024">FitManager::setupMinuit()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00114">FitFun()</a>, <a class="el" href="_fit_manager_minuit2_8cc_source.html#l00044">GooFit::FitManagerMinuit2::operator()()</a>, and <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00036">GooFit::FitManagerMinuit1::setupMinuit()</a>.</p>
 
 </div>
 </div>
@@ -787,7 +787,7 @@ Protected Attributes</h2></td></tr>
 
 <p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00114">components</a>, and <a class="el" href="_pdf_base_8h_source.html#l00112">parameterList</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00054">getName()</a>, <a class="el" href="_fit_manager_minuit2_8cc_source.html#l00030">FitManager::operator()()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00168">parametersChanged()</a>, <a class="el" href="_functor_writer_8cc_source.html#l00027">readFromFile()</a>, <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00024">FitManager::setupMinuit()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00184">storeParameters()</a>, and <a class="el" href="_functor_writer_8cc_source.html#l00006">writeToFile()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_fit_manager_minuit2_8cc_source.html#l00015">GooFit::FitManagerMinuit2::fit()</a>, <a class="el" href="_pdf_base_8h_source.html#l00054">getName()</a>, <a class="el" href="_fit_manager_minuit2_8cc_source.html#l00044">GooFit::FitManagerMinuit2::operator()()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00168">parametersChanged()</a>, <a class="el" href="_functor_writer_8cc_source.html#l00027">readFromFile()</a>, <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00036">GooFit::FitManagerMinuit1::setupMinuit()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00184">storeParameters()</a>, and <a class="el" href="_functor_writer_8cc_source.html#l00006">writeToFile()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;                                                       {</div><div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    <span class="keywordflow">for</span>(<a class="code" href="class_pdf_base.html#af4074fb3fa236257a7d3865c8a57439f">parConstIter</a> p = <a class="code" href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">parameterList</a>.begin(); p != <a class="code" href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">parameterList</a>.end(); ++p) {</div><div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        <span class="keywordflow">if</span>(std::find(ret.begin(), ret.end(), (*p)) != ret.end())</div><div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;            <span class="keywordflow">continue</span>;</div><div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;</div><div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        ret.push_back(*p);</div><div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    }</div><div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;</div><div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    <span class="keywordflow">for</span>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; <a class="code" href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">components</a>.size(); ++i) {</div><div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        <a class="code" href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">components</a>[i]-&gt;getParameters(ret);</div><div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    }</div><div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;}</div><div class="ttc" id="class_pdf_base_html_af4074fb3fa236257a7d3865c8a57439f"><div class="ttname"><a href="class_pdf_base.html#af4074fb3fa236257a7d3865c8a57439f">PdfBase::parConstIter</a></div><div class="ttdeci">parCont::const_iterator parConstIter</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00045">PdfBase.h:45</a></div></div>
 <div class="ttc" id="class_pdf_base_html_a596ab091a75307aceb298e5ff13fa03b"><div class="ttname"><a href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">PdfBase::parameterList</a></div><div class="ttdeci">parCont parameterList</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00112">PdfBase.h:112</a></div></div>
 <div class="ttc" id="class_pdf_base_html_af583bab20870f9e4d24bb31af9d2e5e2"><div class="ttname"><a href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">PdfBase::components</a></div><div class="ttdeci">std::vector&lt; PdfBase * &gt; components</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00114">PdfBase.h:114</a></div></div>
@@ -1403,7 +1403,7 @@ Protected Attributes</h2></td></tr>
 <div class="ttc" id="class_pdf_base_html_abd15730dc8d50cd36b8dab8322257b4b"><div class="ttname"><a href="class_pdf_base.html#abd15730dc8d50cd36b8dab8322257b4b">PdfBase::parIter</a></div><div class="ttdeci">parCont::iterator parIter</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00044">PdfBase.h:44</a></div></div>
 <div class="ttc" id="class_pdf_base_html_ab02a5f801af94475220e2bb5faf8027e"><div class="ttname"><a href="class_pdf_base.html#ab02a5f801af94475220e2bb5faf8027e">PdfBase::cachedParams</a></div><div class="ttdeci">fptype * cachedParams</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00117">PdfBase.h:117</a></div></div>
 <div class="ttc" id="class_pdf_base_html_adde4851584b1fffeebd4b0ec2b9ca1c7"><div class="ttname"><a href="class_pdf_base.html#adde4851584b1fffeebd4b0ec2b9ca1c7">PdfBase::parCont</a></div><div class="ttdeci">std::vector&lt; Variable * &gt; parCont</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00043">PdfBase.h:43</a></div></div>
-<div class="ttc" id="_global_cuda_defines_8h_html_a913b5aaf78163d5e196b13cd79e7d43a"><div class="ttname"><a href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a></div><div class="ttdeci">double fptype</div><div class="ttdef"><b>Definition:</b> <a href="_global_cuda_defines_8h_source.html#l00093">GlobalCudaDefines.h:93</a></div></div>
+<div class="ttc" id="_global_cuda_defines_8h_html_a913b5aaf78163d5e196b13cd79e7d43a"><div class="ttname"><a href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a></div><div class="ttdeci">double fptype</div><div class="ttdef"><b>Definition:</b> <a href="_global_cuda_defines_8h_source.html#l00095">GlobalCudaDefines.h:95</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1828,7 +1828,7 @@ Protected Attributes</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Apr 1 2017 01:14:18 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Apr 13 2017 18:15:35 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

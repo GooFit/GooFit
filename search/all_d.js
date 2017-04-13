@@ -9,22 +9,17 @@ var searchData=
   ['lass_5fm3',['Lass_M3',['../_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3a281f928e14010b898799fbcffca5a839',1,'LineshapesPdf.h']]],
   ['last',['last',['../classstrided__range.html#a9fc39d970e757dfc487ad9febae56d49',1,'strided_range']]],
   ['length',['length',['../_gen_voigtian_8cc.html#a9f59b34b1f25fe00023291b678246bcc',1,'GenVoigtian.cc']]],
-  ['level',['level',['../struct_c_l_i_1_1detail_1_1ini__ret__t.html#afa0edc02b084804de00dba87b20c0a92',1,'CLI::detail::ini_ret_t']]],
   ['levicivita',['LeviCivita',['../_spin_helper_8h.html#a75e60ecbbb557fe28c80bd2f605ca879',1,'LeviCivita(const gpuLVec &amp;p1, const gpuLVec &amp;p2, const gpuLVec &amp;p3, const gpuLVec &amp;p4):&#160;SpinHelper.h'],['../_spin_helper_8h.html#a0c772ece7b8ed84fe19fa8abc8f5d53d',1,'LeviCivita(const gpuLVec &amp;a, const gpuLVec &amp;b, const gpuLVec &amp;c):&#160;SpinHelper.h']]],
-  ['lexical_5fcast',['lexical_cast',['../namespace_c_l_i_1_1detail.html#ac3bdd048c40fd69bf65d9eaf52f10a06',1,'CLI::detail']]],
   ['lineshape',['Lineshape',['../class_lineshape.html',1,'Lineshape'],['../class_lineshape.html#acc1f8e0d0815a3dbfa86e1299936c698',1,'Lineshape::Lineshape(string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, LS kind=LS::BW, FF FormFac=FF::BL_Prime, fptype radius=1.5, std::vector&lt; Variable *&gt; AdditionalVars=std::vector&lt; Variable *&gt;())'],['../class_lineshape.html#a76bcb49c27dda830aee0c89db872fadb',1,'Lineshape::Lineshape(string name)']]],
   ['lineshapespdf_2ecu',['LineshapesPdf.cu',['../_lineshapes_pdf_8cu.html',1,'']]],
   ['lineshapespdf_2eh',['LineshapesPdf.h',['../_lineshapes_pdf_8h.html',1,'']]],
-  ['lnames_5f',['lnames_',['../class_c_l_i_1_1_option.html#ae06feaf7ca62a5497514a09f44724430',1,'CLI::Option']]],
   ['loadevent',['loadEvent',['../class_unbinned_data_set.html#afcb8588e12c25f90b352ae507d63d3aa',1,'UnbinnedDataSet']]],
   ['local_5fform',['local_Form',['../_t_minuit_8cc.html#aca6a8a8dba43cf28a81f75d5207a3e9a',1,'TMinuit.cc']]],
   ['log',['LOG',['../_global_cuda_defines_8h.html#a159ca84d25a5487d8e81e4438725df19',1,'GlobalCudaDefines.h']]],
   ['logger',['logger',['../class_goo_pdf.html#a0f2eaa48ead3a6cfebd39f5cdd3e97ab',1,'GooPdf']]],
-  ['long',['LONG',['../namespace_c_l_i_1_1detail.html#a9479c723e730ac0a15b872b58834a499ac1fabfea54ec6011e694f211f3ffebf3',1,'CLI::detail']]],
   ['lorentzmatrix',['LorentzMatrix',['../class_lorentz_matrix.html',1,'LorentzMatrix'],['../class_lorentz_matrix.html#a4d18fab04167f3d722108d2a76bbed0a',1,'LorentzMatrix::LorentzMatrix()'],['../class_lorentz_matrix.html#a03298d40a33e16e1121bb7849dfb1343',1,'LorentzMatrix::LorentzMatrix(const gpuLVec p[4])'],['../class_lorentz_matrix.html#ae94a7c0167dddaf4cb7ca88dc8bcf75d',1,'LorentzMatrix::LorentzMatrix(const LorentzMatrix &amp;other)']]],
   ['lowerlimit',['lowerlimit',['../class_variable.html#a5683e712f71d894b92dcf4a70ba97a54',1,'Variable']]],
   ['ls',['LS',['../_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3',1,'LineshapesPdf.h']]],
   ['lscalculator',['LSCalculator',['../class_l_s_calculator.html',1,'LSCalculator'],['../class_l_s_calculator.html#a6df78f3d752f88982160d1327c7a9c9e',1,'LSCalculator::LSCalculator()']]],
-  ['lscalculator_5ftd',['LSCalculator_TD',['../class_l_s_calculator___t_d.html',1,'LSCalculator_TD'],['../class_l_s_calculator___t_d.html#a9ac67c1a14facace07b800f136acb892',1,'LSCalculator_TD::LSCalculator_TD()']]],
-  ['ltrim',['ltrim',['../namespace_c_l_i_1_1detail.html#acae078b951ab0e11b84dffe200d0049c',1,'CLI::detail::ltrim(std::string &amp;str)'],['../namespace_c_l_i_1_1detail.html#a2cb44de7c57bbb1384f737dc2f04265b',1,'CLI::detail::ltrim(std::string &amp;str, const std::string &amp;filter)']]]
+  ['lscalculator_5ftd',['LSCalculator_TD',['../class_l_s_calculator___t_d.html',1,'LSCalculator_TD'],['../class_l_s_calculator___t_d.html#a9ac67c1a14facace07b800f136acb892',1,'LSCalculator_TD::LSCalculator_TD()']]]
 ];

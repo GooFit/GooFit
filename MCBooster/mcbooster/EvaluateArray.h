@@ -560,15 +560,21 @@ void EvaluateArray(const CUSTOMFUNC funcObj, ParticlesSet_d &pset,
 				Calculate3<CUSTOMFUNC>(funcObj));
 
 	}
-#if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_OMP || THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_TBB
+#if THRUST_DEVICE_SYSTEM!=THRUST_DEVICE_SYSTEM_CUDA 
 
 #pragma omp parallel num_threads(  arrayWidth )
 	{
-		strided_range<RealVector_d::iterator> it_array(dev_array.begin() + omp_get_thread_num()
+	#if THRUST_DEVICE_SYSTEM!=THRUST_DEVICE_SYSTEM_CPP
+	size_t omp_thread_num = omp_get_thread_num();
+        #else
+        size_t omp_thread_num = omp_get_thread_num();
+        #endif
+
+	strided_range<RealVector_d::iterator> it_array(dev_array.begin() + omp_thread_num
 				, dev_array.end(), arrayWidth);
 
 		thrust::copy(it_array.begin(),it_array.end(),
-				varset[omp_get_thread_num()]->begin());
+				varset[omp_thread_num]->begin());
 	}
 
 #else

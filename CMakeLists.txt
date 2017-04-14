@@ -169,7 +169,7 @@ include_directories(SYSTEM "${TBB_INCLUDE_DIRS}")
 endif()
 
 # Include directories are not picked up by FindCUDA
-find_package(ROOT 6 REQUIRED COMPONENTS Minuit)
+find_package(ROOT 6 REQUIRED COMPONENTS Minuit Minuit2)
 
 function(goofit_add_library GNAME)
     if(GOOFIT_DEVICE STREQUAL CUDA)
@@ -275,7 +275,7 @@ include(AddCLI)
 include(AddRang)
 
 add_library(goofit_lib INTERFACE)
-target_link_libraries(goofit_lib INTERFACE goofit_base PDFs ROOT::ROOT rang CLI11 ROOT::Minuit)
+target_link_libraries(goofit_lib INTERFACE goofit_base PDFs ROOT::ROOT rang CLI11 ROOT::Minuit ROOT::Minuit2)
 
 option(GOOFIT_EXAMPLES "Build the example programs" ON)
 if(GOOFIT_EXAMPLES)

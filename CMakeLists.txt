@@ -162,6 +162,7 @@ if(GOOFIT_DEVICE STREQUAL OMP OR GOOFIT_HOST STREQUAL OMP OR GOOFIT_DEVICE STREQ
     add_compile_options(${OpenMP_CXX_FLAGS})
     find_package(Threads REQUIRED)
     link_libraries(Threads::Threads)
+    link_libraries(${OpenMP_CXX_FLAGS})
 endif()
 
 if(GOOFIT_DEVICE STREQUAL TBB OR GOOFIT_HOST STREQUAL TBB)

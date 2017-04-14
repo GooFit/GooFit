@@ -68,6 +68,14 @@ if(NOT ${GOOFIT_HOST} IN_LIST HOST_LISTING)
     message(FATAL_ERROR "You must select a host from ${HOST_LISTING}, not ${HOST_DEVICE}")
 endif()
 
+# Checks for invalid combinations
+if(${GOOFIT_DEVICE} STREQUAL TBB AND ${GOOFIT_HOST} STREQUAL OMP)
+    message(FATAL_ERROR "You must set TBB as both host and device (OMP will still be required)")
+endif()
+if(${GOOFIT_DEVICE} STREQUAL OMP AND ${GOOFIT_HOST} STREQUAL TBB)
+    message(FATAL_ERROR "TBB cannot be a host backend for OMP")
+endif()
+
 if(GOOFIT_DEVICE STREQUAL Auto)
     find_package(CUDA 6.0)
     if(CUDA_FOUND)

@@ -35,6 +35,7 @@ enum gooError {gooSuccess = 0, gooErrorMemoryAllocation};
 
 #if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_OMP || THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_TBB
 
+#include <omp.h>
 #define THREADIDX (omp_get_thread_num())
 #define BLOCKDIM (omp_get_num_threads())
 #define THREAD_SYNCH _Pragma("omp barrier") // valid in C99 and C++11, but probably not C++93

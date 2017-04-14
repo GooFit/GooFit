@@ -66,14 +66,7 @@
 #include <thrust/sort.h>
 #include <thrust/iterator/counting_iterator.h>
 
-#if MCBOOSTER_BACKEND==CUDA
-#include <thrust/system/cuda/execution_policy.h>
-#elif MCBOOSTER_BACKEND==OPENMP
-#include <thrust/system/omp/execution_policy.h>
-#include <omp.h>
-#elif MCBOOSTER_BACKEND==TBB
-#include <thrust/system/tbb/execution_policy.h>
-#endif
+#include <thrust/execution_policy.h>
 
 #define TIMER CLOCK_REALTIME
 

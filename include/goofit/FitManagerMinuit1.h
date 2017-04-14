@@ -1,12 +1,10 @@
 #pragma once
 
-#include "goofit/GlobalCudaDefines.h"
-#include "goofit/PDFs/GooPdf.h"
+#include <memory>
 #include <TMinuit.h>
 
-
+class PdfBase;
 extern PdfBase* pdfPointer;
-extern int numPars;
 
 void FitFun(int& npar, double* gin, double& fun, double* fp, int iflag);
 
@@ -14,8 +12,10 @@ namespace GooFit {
 
 class FitManagerMinuit1 {
 public:
-    FitManagerMinuit1(PdfBase* dat);
-    ~FitManagerMinuit1();
+    FitManagerMinuit1(PdfBase* dat) {
+        pdfPointer = dat;
+    }
+        
     void setMaxCalls(double mxc) {
         overrideCallLimit = mxc;
     }
@@ -31,21 +31,35 @@ public:
     void useImprove(bool use=true) {
         _useImprove = use;
     }
-    void setupMinuit();
+    
+    // This is expected to prepare the fitting
+    void setup();
+        
     void runMigrad();
-    void fit();
+        
+    void runFit();
+    
+    // This runs the fit
+    void fit() {
+        setup();
+        runFit();
+    };
+        
     TMinuit* getMinuitObject() {
-        return minuit;
+        return minuit_.get();
     }
     void getMinuitValues() const;
+        
     void getMinuitStatus(double& fmin, double& fedm, double& errdef, int& npari, int& nparx, int& istat) const;
-    TMinuit* minuit;
+    
+        
 private:
-    double overrideCallLimit;
-    bool _useHesseBefore;
-    bool _useHesse;
-    bool _useMinos;
-    bool _useImprove;
+    double overrideCallLimit {-1};
+    bool _useHesseBefore {true};
+    bool _useHesse {true};
+    bool _useMinos {false};
+    bool _useImprove {false};
+    std::unique_ptr<TMinuit> minuit_;
 };
 
 }

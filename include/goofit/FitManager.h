@@ -5,3 +5,4 @@
 #include "goofit/FitManagerMinuit1.h"
 
 typedef GooFit::FitManagerMinuit1 FitManager;
+

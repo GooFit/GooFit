@@ -21,17 +21,17 @@ ROOT::Minuit2::FunctionMinimum* FitManagerMinuit2::fit() {
     numPars = vars.size();
     int maxIndex = 0;
 
-    for(std::vector<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
-        if((*i)->lowerlimit == (*i)->upperlimit)
-            params->Add((*i)->name, (*i)->value, (*i)->error);
+    for(Variable* var : vars) {
+        if(var->lowerlimit == var->upperlimit)
+            params->Add(var->name, var->value, var->error);
         else
-            params->Add((*i)->name, (*i)->value, (*i)->error, (*i)->lowerlimit, (*i)->upperlimit);
+            params->Add(var->name, var->value, var->error, var->lowerlimit, var->upperlimit);
 
-        if((*i)->fixed)
-            params->Fix(params->Index((*i)->name));
+        if(var->fixed)
+            params->Fix(params->Index(var->name));
 
-        if(maxIndex < (*i)->getIndex())
-            maxIndex = (*i)->getIndex();
+        if(maxIndex < var->getIndex())
+            maxIndex = var->getIndex();
     }
 
     numPars = maxIndex+1;
@@ -46,36 +46,13 @@ double FitManagerMinuit2::operator()(const vector<double>& pars) const {
     gooPars.resize(numPars);
     int counter = 0;
 
-    for(std::vector<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
-        gooPars[(*i)->index] = pars[counter++];
+    for(Variable* var : vars) {
+        gooPars[var->index] = pars[counter++];
     }
 
     pdfPointer->copyParams(gooPars);
     double nll = pdfPointer->calculateNLL();
     host_callnumber++;
-
-#ifdef PRINTCALLS
-    double edm = migrad->State().Edm();
-    cout.precision(8);
-    cout << "State at call "
-         << host_callnumber << " : "
-         << nll << " "
-         << edm << " Pars: ";
-    std::vector<Variable*> vars;
-    pdfPointer->getParameters(vars);
-
-    for(std::vector<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
-        if(0 > (*i)->getIndex())
-            continue;
-
-        if((*i)->fixed)
-            continue;
-
-        cout << "(" << (*i)->name << " " << pars[(*i)->getIndex()] << ") "; // migrad->Value((*i)->getIndex()) << ") ";
-    }
-
-    cout << endl;
-#endif
 
     return nll;
 }

@@ -1,10 +1,3 @@
-
-#include <cstdio>
-#include <cassert>
-#include <limits>
-#include <typeinfo>
-#include <set>
-
 #include "goofit/PdfBase.h"
 #include "goofit/FCN.h"
 #include "goofit/PDFs/GooPdf.h"
@@ -51,4 +44,5 @@ double FCN::operator()(const vector<double>& pars) const {
 
     return nll;
 }
+
 }

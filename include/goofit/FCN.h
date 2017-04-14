@@ -26,13 +26,11 @@ public:
     }
     
     // This value is 0.5 for ll, 1 for chi2
-    virtual double Up() const override {
+    double Up() const override {
         return 0.5;
     }
     
     FCN(PdfBase* dat);
-    
-    virtual ~FCN() {}
     
     // Minimization function
     double operator()(const std::vector<double>& pars) const override;

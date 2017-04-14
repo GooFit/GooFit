@@ -15,6 +15,11 @@ goofit_add_library(FCN
     ${PROJECT_SOURCE_DIR}/include/goofit/FCN.h
     )
 
+goofit_add_library(FitManager2
+    FitManagerMinuit2.cc
+    ${PROJECT_SOURCE_DIR}/include/goofit/FitManagerMinuit2.h
+    )
+
 goofit_add_library(Faddeeva
     Faddeeva.cc
     ${PROJECT_SOURCE_DIR}/include/goofit/Faddeeva.h
@@ -56,7 +61,7 @@ set(lib_list
     Variable Faddeeva DataSet
     BinnedDataSet UnbinnedDataSet
     FitManager FunctorWriter FitControl
-    PdfBase FCN
+    PdfBase FCN FitManager2
     )
 
 add_library(goofit_base INTERFACE)

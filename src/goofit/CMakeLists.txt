@@ -61,7 +61,7 @@ set(lib_list
     Variable Faddeeva DataSet
     BinnedDataSet UnbinnedDataSet
     FitManager FunctorWriter FitControl
-    PdfBase FCN FitManager2
+    PdfBase FitManager2 FCN
     )
 
 add_library(goofit_base INTERFACE)

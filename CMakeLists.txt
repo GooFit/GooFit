@@ -98,7 +98,7 @@ if(GOOFIT_SEPARATE_COMP)
     add_definitions("-DSEPARABLE")
 endif()
 
-
+set(GOOFIT_CFLAGS "-march=native" CACHE STRING "compiler flags")
 
 add_definitions("-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_${GOOFIT_DEVICE}")
 add_definitions("-DMCBOOSTER_BACKEND=${GOOFIT_DEVICE}")
@@ -149,7 +149,7 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
 else()
     include_directories(${PROJECT_SOURCE_DIR}/include/goofit/fakecuda)
     if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
-        add_compile_options("-march=native")
+        add_compile_options("${GOOFIT_CFLAGS}")
     endif()
 endif()
 

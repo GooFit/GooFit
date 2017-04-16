@@ -58,7 +58,7 @@ set(HOST_LISTING OMP CPP TBB)
 mark_as_advanced(DEVICE_LISTING HOST_LISTING)
 
 set(GOOFIT_DEVICE Auto CACHE STRING "The compute device, options are ${DEVICE_LISTING}")
-set(GOOFIT_HOST OMP CACHE STRING "The compute device, options are ${HOST_LISTING}")
+set(GOOFIT_HOST CPP CACHE STRING "The compute device, options are ${HOST_LISTING}")
 
 # Requires CMake 3.3 or greater
 if(NOT ${GOOFIT_DEVICE} IN_LIST DEVICE_LISTING)
@@ -74,6 +74,9 @@ if(${GOOFIT_DEVICE} STREQUAL TBB AND ${GOOFIT_HOST} STREQUAL OMP)
 endif()
 if(${GOOFIT_DEVICE} STREQUAL OMP AND ${GOOFIT_HOST} STREQUAL TBB)
     message(FATAL_ERROR "TBB cannot be a host backend for OMP")
+endif()
+if(${GOOFIT_DEVICE} STREQUAL CUDA AND ${GOOFIT_HOST} STREQUAL OMP)
+    message(FATAL_ERROR "OMP cannot be a host backend for CUDA")
 endif()
 
 if(GOOFIT_DEVICE STREQUAL Auto)

@@ -60,12 +60,12 @@ make
 > export PATH=`pwd`/cmake/bin:$PATH
 > ```
 
-If you want to change compiler, set `CC` and `CXX` to appropriate defaults *before* you run cmake either inline or in your environment. If you want to set the host and device backends, you can set those options. The defaults are:
+If you want to change compiler, set `CC` and `CXX` to appropriate defaults *before* you run cmake either inline or in your environment. You can also set `CMAKE_C_COMPILER` and `CMAKE_CXX_COMPILER` directly on the command line wiht `-D`. If you want to set the host and device backends, you can set those options. The defaults are:
 ```
-cmake .. -DGOOFIT_DEVICE=CUDA -DGOOFIT_HOST=OMP
+cmake .. -DGOOFIT_DEVICE=CUDA -DGOOFIT_HOST=CPP
 ```
 
-Valid options are `CUDA` (device only), `OMP`, and `CPP`. The Thrust `TBB` backend will probably remain unavailable for device calculations due to custom usage of the thread number in GooFit code. The default is `Auto`, and will select `CUDA` if CUDA is found. On a Mac, you should set both backends to `CPP`.
+Valid options are `CUDA` (device only), `OMP`, `TBB`, and `CPP`. The Thrust `TBB` backend requires the Intel compiler.  The default device is `Auto`, and will select `CUDA` if CUDA is found. On a Mac, you should set both backends to `CPP`.
 
 Other custom options supported along with the defaults:
 
@@ -80,6 +80,9 @@ Advanced Options:
 * `-DGOOFIT_CUDA_OR_GROUPSIZE:INT=128`: This sets the group size that thrust will use for distributing the problem.  This parameter can be thought of as 'Threads per block'.  These will be used after running 'find_optimal.py' to figure out the optimal size.
 * `-DGOOFIT_CUDA_OR_GRAINSIZE:INT=7`: This is the grain size thrust uses for distributing the problem.  This parameter can be thought of as 'Items per thread'.
 * `-DGOOFIT_PYTHON=OFF`: Preliminary python bindings using [PyBind11].
+
+Note for targeting Tesla P100:
+* `Please use -DGOOFIT_SEPARATE_COMP=ON -DGOOFIT_ARCH=6.0 flags to compile.
 
 
 A few standard cmake tricks:

@@ -46,7 +46,6 @@ if(NOT CMAKE_BUILD_TYPE)
         FORCE)
 endif()
 
-
 # Code coverage
 if(CMAKE_BUILD_TYPE STREQUAL Coverage)
     include(CodeCoverage)
@@ -54,12 +53,12 @@ if(CMAKE_BUILD_TYPE STREQUAL Coverage)
 endif()
 
 ### Options ###
-set(DEVICE_LISTING CUDA OMP CPP Auto)
-set(HOST_LISTING OMP CPP)
+set(DEVICE_LISTING CUDA OMP CPP TBB Auto)
+set(HOST_LISTING OMP CPP TBB)
 mark_as_advanced(DEVICE_LISTING HOST_LISTING)
 
 set(GOOFIT_DEVICE Auto CACHE STRING "The compute device, options are ${DEVICE_LISTING}")
-set(GOOFIT_HOST OMP CACHE STRING "The compute device, options are ${HOST_LISTING}")
+set(GOOFIT_HOST CPP CACHE STRING "The compute device, options are ${HOST_LISTING}")
 
 # Requires CMake 3.3 or greater
 if(NOT ${GOOFIT_DEVICE} IN_LIST DEVICE_LISTING)
@@ -67,6 +66,17 @@ if(NOT ${GOOFIT_DEVICE} IN_LIST DEVICE_LISTING)
 endif()
 if(NOT ${GOOFIT_HOST} IN_LIST HOST_LISTING)
     message(FATAL_ERROR "You must select a host from ${HOST_LISTING}, not ${HOST_DEVICE}")
+endif()
+
+# Checks for invalid combinations
+if(${GOOFIT_DEVICE} STREQUAL TBB AND ${GOOFIT_HOST} STREQUAL OMP)
+    message(FATAL_ERROR "You must set TBB as both host and device (OMP will still be required)")
+endif()
+if(${GOOFIT_DEVICE} STREQUAL OMP AND ${GOOFIT_HOST} STREQUAL TBB)
+    message(FATAL_ERROR "TBB cannot be a host backend for OMP")
+endif()
+if(${GOOFIT_DEVICE} STREQUAL CUDA AND ${GOOFIT_HOST} STREQUAL OMP)
+    message(FATAL_ERROR "OMP cannot be a host backend for CUDA")
 endif()
 
 if(GOOFIT_DEVICE STREQUAL Auto)
@@ -91,18 +101,15 @@ if(GOOFIT_SEPARATE_COMP)
     add_definitions("-DSEPARABLE")
 endif()
 
-
+set(GOOFIT_CFLAGS "-march=native" CACHE STRING "compiler flags")
 
 add_definitions("-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_${GOOFIT_DEVICE}")
 add_definitions("-DMCBOOSTER_BACKEND=${GOOFIT_DEVICE}")
 add_definitions("-DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_${GOOFIT_HOST}")
 
-# -Wl,--no-undefined,--no-allow-shlib-undefined")
-
 set(GOOFIT_ARCH Auto CACHE STRING "The GPU Archetecture, can be Auto, All, Common, a number, or a name")
 
 option(GOOFIT_DOWNLOAD_THRUST "Download Thrust if not found (OMP only)" ON)
-
 
 option(GOOFIT_MPI "Turn on MPI for goofit" OFF)
 
@@ -111,7 +118,7 @@ if(GOOFIT_MPI)
 
     # Added globally
     add_definitions("-DGOOFIT_MPI")
-    list(APPEND CMAKE_CXX_FLAGS ${MPI_CXX_COMPILE_FLAGS})
+    add_compile_options(${MPI_CXX_COMPILE_FLAGS})
     include_directories(${MPI_CXX_INCLUDE_PATH})
     list(APPEND CMAKE_EXE_LINKER_FLAGS ${MPI_CXX_LINK_FLAGS})
     link_libraries(${MPI_CXX_LIBRARIES})
@@ -125,7 +132,7 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
     find_package(CUDA 6.0 REQUIRED)
 
     list(APPEND CUDA_NVCC_FLAGS -std=c++11)
-    list(APPEND CUDA_NVCC_FLAGS ${CMAKE_CXX_FLAGS})
+    list(APPEND CUDA_NVCC_FLAGS ${MPI_CXX_LINK_FLAGS})
     if(GOOFIT_SEPARATE_COMP)
         set(CUDA_SEPARABLE_COMPILATION ON)
     else()
@@ -144,7 +151,12 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
     endif()
 else()
     include_directories(${PROJECT_SOURCE_DIR}/include/goofit/fakecuda)
+    if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+        add_compile_options("${GOOFIT_CFLAGS}")
+    endif()
 endif()
+
+
 find_package(Thrust QUIET)
 if(NOT THRUST_FOUND)
     if(GOOFIT_DOWNLOAD_THRUST)
@@ -156,16 +168,20 @@ if(NOT THRUST_FOUND)
 endif()
 include_directories(SYSTEM "${THRUST_INCLUDE_DIRS}")
 
-if(GOOFIT_DEVICE STREQUAL OMP OR GOOFIT_HOST STREQUAL OMP)
-find_package(OpenMP REQUIRED)
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-find_package(Threads REQUIRED)
-link_libraries(Threads::Threads)
+if(GOOFIT_DEVICE STREQUAL OMP OR GOOFIT_HOST STREQUAL OMP OR GOOFIT_DEVICE STREQUAL TBB OR GOOFIT_HOST STREQUAL TBB)
+    find_package(OpenMP REQUIRED)
+    add_compile_options(${OpenMP_CXX_FLAGS})
+    find_package(Threads REQUIRED)
+    link_libraries(Threads::Threads)
+    link_libraries(${OpenMP_CXX_FLAGS})
 endif()
 
 if(GOOFIT_DEVICE STREQUAL TBB OR GOOFIT_HOST STREQUAL TBB)
-find_package(TBB REQUIRED)
-include_directories(SYSTEM "${TBB_INCLUDE_DIRS}")
+    find_package(TBB COMPONENTS tbbmalloc tbbmalloc_proxy tbb_preview)
+    #set(CMAKE_CXX_FLAGS -xMIC-AVX512)
+    #set(CMAKE_CXX_FLAGS "-xHOST -qopenmp")
+    include_directories(SYSTEM "${TBB_INCLUDE_DIRS}")
+    link_libraries(${TBB_LIBRARIES})
 endif()
 
 

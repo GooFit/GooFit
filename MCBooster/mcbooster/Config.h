@@ -56,8 +56,10 @@
 	#include <cuda.h>
 	#include <cuda_runtime.h>
 	#include <cuda_runtime_api.h>
-#elif MCBOOSTER_BACKEND!=OMP
+#elif MCBOOSTER_BACKEND==CPP
 inline int omp_get_thread_num() {return 0;};
+#else
+#include <omp.h>
 #endif
 
 

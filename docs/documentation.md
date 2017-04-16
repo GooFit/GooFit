@@ -59,42 +59,38 @@ With your CUDA environment set up, you can install GooFit thus:
 
         git clone git://github.com/GooFit/GooFit.git
         cd GooFit
-        git checkout v1.0.0
 
--   If necessary, edit the Makefile so the variable `CUDALOCATION`
-    points to your local CUDA install.
+-   Compile with `cmake`:
 
--   Compile with `gmake`.
+        mkdir build
+        cd build
+        cmake ..
+        make
+
     Do not be alarmed by warning
     messages saying that such-and-such a function’s stack size could not
     be statically determined; this is an unavoidable (so far) side
     effect of the function-pointer implementation discussed in section
     [Engine](@ref engine).
 
--   Compile and run the ‘simpleFitExample’ program, which generates
+-   Run the ‘simpleFitExample’ program, which generates
     three distributions, fits them, and plots the results:
 
         cd examples/simpleFit
-        gmake
-        ./simpleFitExample
+        ./simpleFit
 
     The expected output is a MINUIT log for three different fits, and
     three image files.
 
--   Compile and run the Dalitz-plot tutorial, which fits a text file
+-   Run the Dalitz-plot tutorial, which fits a text file
     containing toy Monte Carlo data to a coherent sum of Breit-Wigner
     resonances:
 
         cd examples/dalitz
-        export CUDALOCATION=/usr/local/cuda/
-        gmake
         ./dalitz dalitz_toyMC_000.txt
 
-Quick troubleshooting: If your shell doesn’t like `export`, try instead
-`setenv CUDALOCATION /usr/local/cuda/`. Check that `/usr/local/cuda/`
-exists and contains, eg, `bin/nvcc` - otherwise, track down the
-directory that does and set `CUDALOCATION` to point to that instead.
-Some installs have `make` in place of `gmake`.
+Quick troubleshooting: GooFit uses [FindCUDA](https://cmake.org/cmake/help/v3.7/module/FindCUDA.html), and expects
+to find `root-config` in your path. Check the docs for FindCUDA if you need help locating your CUDA install.
 
 The text file contains information about simulated decays of the \f$D^0\f$
 particle to \f$\pi^+\pi^-\pi^0\f$; in particular, in each line, the second
@@ -122,15 +118,27 @@ Simple Gaussian fit {#listinggaussfit}
 
 ```{.cpp}
 int main (int argc, char** argv) {
+
+  // Optional, but highly recommended. Based loosly on TApplication.
+  GooFit::Application app {"Simple Gaussian Fit", argc, argv};
+
+  // Run the application parser, setup MPI if needed, and exit if parsing failed
+  try {
+      app.run();
+  } catch (const GooFit::ParseError& e) {
+      return app.exit(e);
+  }
+
+
   // Create an object to represent the observable, 
   // the number we have measured. Give it a name,
   // upper and lower bounds, and a number of bins
   // to use in numerical integration. 
-  Variable* xvar = new Variable("xvar", -5, 5); 
-  xvar->numbins = 1000; 
+  Variable xvar {"xvar", -5, 5}; 
+  xvar.numbins = 1000; 
 
   // A data set to store our observations in.
-  UnbinnedDataSet data(xvar);
+  UnbinnedDataSet data {xvar};
 
   // "Observe" ten thousand events and add them
   // to the data set, throwing out any events outside
@@ -150,22 +158,22 @@ int main (int argc, char** argv) {
   // step size and upper and lower bounds. Notice that
   // here only the mean is given a step size; the sigma
   // will use the default step of one-tenth of its range.
-  Variable* mean = new Variable("mean", 0, 1, -10, 10);
-  Variable* sigm = new Variable("sigm", 1, 0.5, 1.5); 
+  Variable mean {"mean", 0, 1, -10, 10};
+  Variable sigm {"sigm", 1, 0.5, 1.5}; 
 
   // The actual PDF. The Gaussian takes a name, an independent
   // (ie observed) variable, and a mean and width. 
-  GaussianPdf gauss("gauss", xvar, mean, sigm); 
+  GaussianPdf gauss {"gauss", &xvar, &mean, &sigm}; 
 
   // Copy the data to the GPU. 
   gauss.setData(&data);
 
   // A class that talks to MINUIT and GooFit. It needs
   // to know what PDF it should set up in MINUIT. 
-  FitManager fitter(&gauss); 
+  FitManager fitter {&gauss}; 
 
   // The actual fit. 
-  fitter.fit(); 
+  fitter.fit();
   return 0;
 }
 ```
@@ -183,10 +191,10 @@ To create a data set with several dimensions, supply a `vector` of
 
 ```{.cpp}
 vector<Variable*> vars;
-Variable* xvar = new Variable("xvar", -10, 10);
-Variable* yvar = new Variable("yvar", -10, 10);
-vars.push_back(xvar);
-vars.push_back(yvar);
+Variable xvar {"xvar", -10, 10};
+Variable yvar {"yvar", -10, 10};
+vars.push_back(&xvar);
+vars.push_back(&yvar);
 UnbinnedDataSet data(vars);
 ```
 
@@ -194,8 +202,8 @@ In this case, to fill the data set, set the `Variable` values and call
 the `addEvent` method without arguments:
 
 ```{.cpp}
-xvar->value = 3;
-yvar->value = -2;
+xvar.value = 3;
+yvar.value = -2;
 data.addEvent();
 ```
 
@@ -242,11 +250,11 @@ fit), you should create a suitable `FitControl` object and send it to
 the top-level `GooPdf`:
 
 ```{.cpp}
-decayTime = new Variable("decayTime", 100, 0, 10); 
-BinnedDataSet* ratioData = new BinnedDataSet(decayTime); 
+Variable decayTime {"decayTime", 100, 0, 10}; 
+BinnedDataSet* ratioData {&decayTime}; 
 for (int i = 0; i < 100; ++i) {
-  ratioData->SetBinContent(getRatio(i));
-  ratioData->SetBinError(getError(i));
+  ratioData.SetBinContent(getRatio(i));
+  ratioData.SetBinError(getError(i));
 }
 
 vector<Variable*> weights;
@@ -254,10 +262,9 @@ weights.push_back(new Variable("constaCoef", 0.03, 0.01, -1, 1));
 weights.push_back(new Variable("linearCoef", 0, 0.01, -1, 1));
 weights.push_back(new Variable("secondCoef", 0, 0.01, -1, 1));
 
-PolynomialPdf* poly;
-poly = new PolynomialPdf("poly", decayTime, weights); 
-poly->setFitControl(new BinnedErrorFit()); 
-poly->setData(ratioData); 
+PolynomialPdf poly {"poly", decayTime, weights}; 
+poly.setFitControl(new BinnedErrorFit()); 
+poly.setData(&ratioData); 
 ```
 
 The `FitControl` classes are `UnbinnedNLLFit` (the default),

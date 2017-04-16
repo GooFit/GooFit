@@ -31,6 +31,7 @@
 #define CUDA 1
 #define OMP 2
 #define TBB 3
+#define CPP 4
 
 #if (__cplusplus < 201103L)
 #error "This library needs a C++11 compliant compiler"
@@ -42,9 +43,9 @@
 #endif
 
 
-#if MCBOOSTER_BACKEND!=CUDA && MCBOOSTER_BACKEND!=OMP && MCBOOSTER_BACKEND!=TBB
+#if MCBOOSTER_BACKEND!=CUDA && MCBOOSTER_BACKEND!=OMP && MCBOOSTER_BACKEND!=TBB && MCBOOSTER_BACKEND!=CPP
 
-#error "MCBooster: Backend not supported. MCBOOSTER_BACKEND = CUDA, OMP or TBB "
+#error "MCBooster: Backend not supported. MCBOOSTER_BACKEND = CUDA, OMP, TBB, or CPP"
 
 #endif
 
@@ -52,17 +53,13 @@
 
 #if MCBOOSTER_BACKEND==CUDA
 	#define CUDA_API_PER_THREAD_DEFAULT_STREAM
-	// #define THRUST_DEVICE_SYSTEM CUDA//THRUST_DEVICE_SYSTEM_CUDA
-	// #define THRUST_HOST_SYSTEM OMP
 	#include <cuda.h>
 	#include <cuda_runtime.h>
 	#include <cuda_runtime_api.h>
-#elif MCBOOSTER_BACKEND==OMP
-//    #define THRUST_DEVICE_SYSTEM OMP
-//    #define THRUST_HOST_SYSTEM OMP
-#elif MCBOOSTER_BACKEND==TBB
-//    #define THRUST_DEVICE_SYSTEM TBB
-//    #define THRUST_HOST_SYSTEM TBB
+#elif MCBOOSTER_BACKEND==CPP
+inline int omp_get_thread_num() {return 0;};
+#else
+#include <omp.h>
 #endif
 
 

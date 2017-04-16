@@ -1,7 +1,7 @@
-#include "goofit/detail/CLI11.hpp"
+#include "CLI/CLI.hpp"
 #include "goofit/Version.h"
 #include "thrust/detail/config/device_system.h"
-#include "goofit/detail/rang.hpp"
+#include "rang.hpp"
 
 #ifdef GOOFIT_MPI
 #include <mpi.h>
@@ -11,7 +11,7 @@
 #include <cuda.h>
 #endif
 
-#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_OMP
+#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_OMP || THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_TBB
 #include <omp.h>
 #endif
 
@@ -80,7 +80,9 @@ public:
         fallthrough();
 
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
+#ifndef GOOFIT_MPI
         add_option("--gpu-dev", gpuDev_, "GPU device to use", true)->group("GooFit");
+#endif
         add_flag("--show-gpus", show_gpus_, "Show the available GPU devices and exit")->group("GooFit");
 #endif
         add_flag("--goofit-details", show_threads_, "Output system and threading details")->group("GooFit");

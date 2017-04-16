@@ -31,12 +31,12 @@
 #include <time.h>
 #include <string>
 #include <map>
-#include <omp.h>
 #include <math.h>
 
 #define CUDA_API_PER_THREAD_DEFAULT_STREAM
 
 //this lib
+#include <mcbooster/Config.h>
 #include <mcbooster/GTypes.h>
 #include <mcbooster/Vector4R.h>
 #include <mcbooster/Generate.h>

@@ -80,6 +80,7 @@ $(function() {
 <div class="textblock"><code>#include &lt;thrust/functional.h&gt;</code><br />
 <code>#include &lt;cmath&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
+<code>#include &lt;omp.h&gt;</code><br />
 </div>
 <p><a href="_global_cuda_defines_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -162,7 +163,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00097">97</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00098">98</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
 
 </div>
 </div>
@@ -178,7 +179,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00039">39</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00040">40</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
 
 </div>
 </div>
@@ -194,7 +195,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00098">98</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00099">99</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="devcomplex_8h_source.html#l00121">exp()</a>.</p>
 
@@ -212,7 +213,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00099">99</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00100">100</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
 
 </div>
 </div>
@@ -228,7 +229,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00087">87</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00088">88</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
 
 </div>
 </div>
@@ -244,7 +245,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00101">101</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00102">102</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
 
 </div>
 </div>
@@ -260,7 +261,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00102">102</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00103">103</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
 
 </div>
 </div>
@@ -276,7 +277,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00103">103</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00104">104</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="_faddeeva_8cc_source.html#l00140">cpuvoigtian()</a>, and <a class="el" href="devcomplex_8h_source.html#l00121">exp()</a>.</p>
 
@@ -294,7 +295,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00104">104</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00105">105</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
 
 </div>
 </div>
@@ -310,7 +311,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00115">115</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00116">116</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
 
 </div>
 </div>
@@ -326,7 +327,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00105">105</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00106">106</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
 
 </div>
 </div>
@@ -342,7 +343,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00093">93</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00094">94</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
 
 </div>
 </div>
@@ -358,7 +359,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00106">106</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00107">107</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
 
 </div>
 </div>
@@ -374,7 +375,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00107">107</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00108">108</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
 
 </div>
 </div>
@@ -390,7 +391,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00116">116</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00117">117</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
 
 </div>
 </div>
@@ -406,7 +407,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00092">92</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00093">93</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
 
 </div>
 </div>
@@ -422,7 +423,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00113">113</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00114">114</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
 
 </div>
 </div>
@@ -438,7 +439,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00108">108</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00109">109</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="devcomplex_8h_source.html#l00121">exp()</a>.</p>
 
@@ -456,7 +457,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00100">100</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00101">101</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
 
 </div>
 </div>
@@ -472,7 +473,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00109">109</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00110">110</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="_spin_helper_8h_source.html#l00014">ALIGN()</a>, <a class="el" href="_binned_data_set_8cc_source.html#l00111">BinnedDataSet::getBinError()</a>, and <a class="el" href="devcomplex_8h_source.html#l00113">norm()</a>.</p>
 
@@ -490,7 +491,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00040">40</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00041">41</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
 
 </div>
 </div>
@@ -506,7 +507,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00038">38</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00039">39</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
 
 </div>
 </div>
@@ -523,7 +524,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00095">95</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00096">96</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
 
 </div>
 </div>
@@ -624,7 +625,7 @@ Variables</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Apr 13 2017 19:20:08 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun Apr 16 2017 19:22:00 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

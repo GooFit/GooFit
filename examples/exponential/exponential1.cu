@@ -1,6 +1,6 @@
 #include "goofit/Application.h"
 #include "goofit/Variable.h"
-#include "goofit/FitManagerMinuit2.h"
+#include "goofit/fitting/FitManagerMinuit2.h"
 #include "goofit/UnbinnedDataSet.h"
 #include "goofit/PDFs/ExpPdf.h"
 #include <iostream>

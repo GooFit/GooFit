@@ -187,6 +187,10 @@ endif()
 # Include directories are not picked up by FindCUDA
 find_package(ROOT 6 REQUIRED COMPONENTS Minuit Minuit2)
 
+# Adding header only libraries
+include(AddCLI)
+include(AddRang)
+
 function(goofit_add_library GNAME)
     if(GOOFIT_DEVICE STREQUAL CUDA)
         foreach(N ${ARGN})
@@ -286,9 +290,7 @@ endmacro()
 include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/MCBooster)
 
-# Adding header only libraries
-include(AddCLI)
-include(AddRang)
+add_subdirectory(src)
 
 add_library(goofit_lib INTERFACE)
 target_link_libraries(goofit_lib INTERFACE goofit_base PDFs ROOT::ROOT rang CLI11 ROOT::Minuit ROOT::Minuit2)
@@ -310,7 +312,6 @@ if(GOOFIT_PACKAGES)
     endforeach()
 endif()
 
-add_subdirectory(src)
 
 option(GOOFIT_PYTHON "Python bindings for goofit" OFF)
 if(GOOFIT_PYTHON)
@@ -324,7 +325,4 @@ if(GOOFIT_TESTS)
     enable_testing()
     add_subdirectory(tests)
 endif()
-
-export(EXPORT GooFitTargets FILE GooFitConfig.cmake)
-export(PACKAGE GooFit)
 

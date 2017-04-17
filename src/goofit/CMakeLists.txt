@@ -7,18 +7,22 @@ goofit_add_library(Variable
 goofit_add_library(FitManager
     FitManagerMinuit1.cc
     ${PROJECT_SOURCE_DIR}/include/goofit/FitManager.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/FitManagerMinuit1.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/fitting/FitManagerMinuit1.h
     )
 
 goofit_add_library(FCN
+    Params.cc
     FCN.cc
-    ${PROJECT_SOURCE_DIR}/include/goofit/FCN.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/fitting/FCN.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/fitting/Params.h
     )
 
 goofit_add_library(FitManager2
     FitManagerMinuit2.cc
-    ${PROJECT_SOURCE_DIR}/include/goofit/FitManagerMinuit2.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/fitting/FitManagerMinuit2.h
     )
+
+target_link_libraries(FitManager2 rang)
 
 goofit_add_library(Faddeeva
     Faddeeva.cc
@@ -66,4 +70,3 @@ set(lib_list
 
 add_library(goofit_base INTERFACE)
 target_link_libraries(goofit_base INTERFACE ${lib_list})
-install(TARGETS goofit_base ${lib_list} EXPORT GooFitTargets DESTINATION lib)

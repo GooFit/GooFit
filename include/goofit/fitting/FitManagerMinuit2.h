@@ -3,9 +3,10 @@
 #include <memory>
 #include <TMinuit.h>
 #include <Minuit2/FunctionMinimum.h>
-#include "goofit/FCN.h"
+#include "goofit/fitting/FCN.h"
 
 class PdfBase;
+
 namespace GooFit {
 
 class FitManagerMinuit2 {
@@ -15,9 +16,9 @@ public:
     // This runs the fit
     ROOT::Minuit2::FunctionMinimum fit();
     
-    
 private:
-    std::unique_ptr<FCN> fcn_;
+    Params upar_;
+    FCN fcn_;
 };
     
 }

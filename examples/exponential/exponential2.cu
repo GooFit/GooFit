@@ -1,6 +1,7 @@
 #include "goofit/Application.h"
 #include "goofit/Variable.h"
-#include "goofit/FCN.h"
+#include "goofit/fitting/Params.h"
+#include "goofit/fitting/FCN.h"
 #include "goofit/UnbinnedDataSet.h"
 #include "goofit/PDFs/ExpPdf.h"
 
@@ -44,9 +45,10 @@ int main(int argc, char** argv) {
     ExpPdf exppdf{"exppdf", &xvar, &alpha};
     exppdf.setData(&data);
 
-    GooFit::FCN fcn{&exppdf};
-    Minuit2::MnUserParameters* upar = fcn.get_params();
-    Minuit2::MnMigrad migrad{fcn, *upar};
+    GooFit::Params upar{exppdf};
+    GooFit::FCN fcn{upar};
+
+    Minuit2::MnMigrad migrad{fcn, upar};
 
     Minuit2::FunctionMinimum min = migrad();
     std::cout << "min= " << min << std::endl;

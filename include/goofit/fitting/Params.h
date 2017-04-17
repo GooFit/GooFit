@@ -2,6 +2,7 @@
 
 #include <Minuit2/FCNBase.h>
 #include <Minuit2/MnUserParameters.h>
+#include <Minuit2/MnUserParameterState.h>
 #include <vector>
 
 class PdfBase;
@@ -18,7 +19,7 @@ class Params : public Minuit2::MnUserParameters {
 protected:
     std::vector<Variable*> vars_;
     PdfBase* pdf_;
-    int num_;
+    size_t num_;
     
 public:
     using MnUserParameters::MnUserParameters;
@@ -26,7 +27,10 @@ public:
     Params(PdfBase &pdf);
     
     // Read the values back into GooFit
-    void GetParams() const;
+    void SetGooFitParams(const Minuit2::MnUserParameterState& input);
+    
+    // Get the number of params in the fit
+    size_t GetNumPars() const {return num_;};
 };
     
 }

@@ -9,7 +9,7 @@ namespace GooFit {
     pdf_->getParameters(vars_);
     num_ = vars_.size();
     
-    int maxIndex = 0;
+    size_t maxIndex = 0;
     
     for(Variable* var : vars_) {
         if(var->lowerlimit == var->upperlimit)
@@ -27,11 +27,14 @@ namespace GooFit {
     num_ = maxIndex+1;
 }
     
-void Params::GetParams() const {
+void Params::SetGooFitParams(const Minuit2::MnUserParameterState& input) {
     int counter = 0;
     for(Variable* var : vars_) {
-        var->value = Value(counter);
-        var->error = Error(counter++);
+        var->value = input.Value(counter);
+        var->error = input.Error(counter);
+        SetValue(counter, var->value);
+        SetError(counter, var->error);
+        counter++;
     }
 }
     

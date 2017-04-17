@@ -1,6 +1,6 @@
 #include "goofit/Application.h"
 #include "goofit/Variable.h"
-#include "goofit/fitting/FitManagerMinuit2.h"
+#include "goofit/fitting/FitManagerMinuit1.h"
 #include "goofit/UnbinnedDataSet.h"
 #include "goofit/PDFs/ExpPdf.h"
 #include <iostream>
@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
     ExpPdf exppdf{"exppdf", &xvar, &alpha};
     exppdf.setData(&data);
 
-    GooFit::FitManagerMinuit2 fitter{&exppdf};
+    GooFit::FitManagerMinuit1 fitter{&exppdf};
     fitter.fit();
 
     return 0;

@@ -37,7 +37,10 @@ int main(int argc, char** argv) {
     exppdf.setData(&data);
 
     FitManager fitter{&exppdf};
+    fitter.useMinos();
     fitter.fit();
+    
+    std::cout << alpha << std::endl;
 
     return 0;
 }

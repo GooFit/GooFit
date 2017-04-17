@@ -34,7 +34,12 @@ Minuit2::FunctionMinimum FitManagerMinuit2::fit() {
     // Do the minimization
     std::cout << rang::fg::gray << rang::style::bold;
     Minuit2::FunctionMinimum min = migrad(maxfcn_);
-
+    
+    // Print nice output
+    std::cout << rang::style::reset << (min.IsValid() ? rang::fg::green : rang::fg::red);   
+    std::cout << min << rang::style::reset;
+    std::cout << rang::fg::magenta << timer << rang::style::reset << std::endl;
+  
     if(useMinos_ && min.IsValid()) {
         Minuit2::MnPrint::SetLevel(0);
         Minuit2::MnMinos minos{fcn_, min};
@@ -42,11 +47,6 @@ Minuit2::FunctionMinimum FitManagerMinuit2::fit() {
         for(int i=0; i<upar_.GetNumPars(); i++)
             std::cout << minos.Minos(i, maxfcn_) << std::endl;
     }
-    
-    // Print nice output
-    std::cout << rang::style::reset << (min.IsValid() ? rang::fg::green : rang::fg::red);   
-    std::cout << min << rang::style::reset;
-    std::cout << rang::fg::magenta << timer << rang::style::reset << std::endl;
     
     // Set the parameters in GooFit to the new values
     upar_.SetGooFitParams(min.UserState());

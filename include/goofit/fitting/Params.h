@@ -30,7 +30,7 @@ public:
     void SetGooFitParams(const Minuit2::MnUserParameterState& input);
     
     // Get the number of params in the fit
-    size_t GetNumPars() const {return num_;};
+    size_t GetNumPars() const {return vars_.size();};
 };
     
 }

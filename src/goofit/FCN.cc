@@ -26,6 +26,7 @@ double FCN::operator()(const std::vector<double>& pars) const {
     return nll;
 }
 
+    // Get the number of variable parameters
     Params* FCN::GetParams() {
         return params_;
     }

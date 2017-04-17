@@ -1757,6 +1757,8 @@ ChisqInfo* getAdaptiveChisquare(TH2F* datPlot, TH2F* pdfPlot) {
 }
 
 void makeToyDalitzPlots(GooPdf* overallSignal, string plotdir) {
+    std::string call = "mkdir -p " + plotdir;
+    system(call.c_str());
     foo->cd();
 
     TH1F dtime_dat_hist("dtime_dat_hist", "", dtime->numbins, dtime->lowerlimit, dtime->upperlimit);

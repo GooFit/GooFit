@@ -6,10 +6,7 @@
 
 #include <Minuit2/MnUserParameters.h>
 #include <Minuit2/MnUserParameterState.h>
-#include <Minuit2/MnHesse.h>
-#include <Minuit2/MnMinos.h>
 #include <Minuit2/MnMigrad.h>
-#include <Minuit2/MinosError.h>
 #include <Minuit2/FunctionMinimum.h>
 #include "Minuit2/MnPrint.h"
 

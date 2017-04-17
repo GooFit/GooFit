@@ -18,9 +18,9 @@ conversion = [
     ('["<]Faddeeva.hh?[">]', '"goofit/Faddeeva.h"'),
     ('["<]FitControl.hh?[">]', '"goofit/FitControl.h"'),
     ('["<]FitManager.hh?[">]', '"goofit/FitManager.h"'),
-    ('["<]FitManagerMinuit1.hh?[">]', '"goofit/FitManagerMinuit1.h"'),
-    ('["<]FitManagerMinuit2.hh?[">]', '"goofit/FitManagerMinuit2.h"'),
-    ('["<]FitManagerMinuit3.hh?[">]', '"goofit/FitManagerMinuit3.h"'),
+    ('["<]FitManagerMinuit1.hh?[">]', '"goofit/fitting/FitManagerMinuit1.h"'),
+    ('["<]FitManagerMinuit2.hh?[">]', '"goofit/fitting/FitManagerMinuit2.h"'),
+    ('#include ["<]FitManagerMinuit3.hh?[">]', '"\\*Fit Manager 3 removed*\\"'),
     ('["<]FunctorWriter.hh?[">]', '"goofit/FunctorWriter.h"'),
     ('["<]GlobalCudaDefines.hh?[">]', '"goofit/GlobalCudaDefines.h"'),
     ('["<]PdfBase.hh?[">]', '"goofit/PdfBase.h"'),
@@ -69,10 +69,10 @@ conversion = [
     ('["<]TrigThresholdPdf.hh?[">]', '"goofit/PDFs/TrigThresholdPdf.h"'),
     ('["<]TruthResolution_Aux.hh?[">]', '"goofit/PDFs/TruthResolution_Aux.h"'),
     ('["<]VoigtianPdf.hh?[">]', '"goofit/PDFs/VoigtianPdf.h"'),
-    ('["<]fakeTH1F.hh?[">]', '"goofit/rootstuff/fakeTH1F.h"'),
-    ('["<]TMinuit.hh?[">]', '"goofit/rootstuff/TMinuit.h"'),
-    ('["<]TRandom.hh?[">]', '"goofit/rootstuff/TRandom.h"'),
-    ('["<]TRandom3.hh?[">]', '"goofit/rootstuff/TRandom3.h"'),
+    ('["<]fakeTH1F.hh?[">]', '"TH1F.h"'),
+    ('["<]TMinuit.hh?[">]', '"TMinuit.h"'),
+    ('["<]TRandom.hh?[">]', '"TRandom.h"'),
+    ('["<]TRandom3.hh?[">]', '"TRandom3.h"'),
 ]
 
 def fix_text(contents):

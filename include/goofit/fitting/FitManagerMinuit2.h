@@ -27,19 +27,12 @@ public:
     
     // Get a pointer to the fcn
     FCN* getFCN() {return &fcn_;}
-    
-
-    // Print Minos error analysis after fitting
-    void useMinos(bool use=true) {
-        useMinos_ = use;
-    }
 
     
 private:
     Params upar_;
     FCN fcn_;
     unsigned int maxfcn_ {0};
-    bool useMinos_ {false};
 };
     
 }

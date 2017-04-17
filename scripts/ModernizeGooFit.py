@@ -20,7 +20,7 @@ conversion = [
     ('["<]FitManager.hh?[">]', '"goofit/FitManager.h"'),
     ('["<]FitManagerMinuit1.hh?[">]', '"goofit/fitting/FitManagerMinuit1.h"'),
     ('["<]FitManagerMinuit2.hh?[">]', '"goofit/fitting/FitManagerMinuit2.h"'),
-    ('#include ["<]FitManagerMinuit3.hh?[">]', '"\\*Fit Manager 3 removed*\\"'),
+    ('#include ["<]FitManagerMinuit3.hh?[">]', r'\\\\ Fit Manager 3 removed'),
     ('["<]FunctorWriter.hh?[">]', '"goofit/FunctorWriter.h"'),
     ('["<]GlobalCudaDefines.hh?[">]', '"goofit/GlobalCudaDefines.h"'),
     ('["<]PdfBase.hh?[">]', '"goofit/PdfBase.h"'),
@@ -76,7 +76,7 @@ conversion = [
 ]
 
 def fix_text(contents):
-    """
+    r"""
     >>> text = '''
     ... #include "Variable.h"
     ... #include "GlobalCudaDefines.h"
@@ -84,9 +84,11 @@ def fix_text(contents):
     ... #include <set>
     ... #include <goofit/BinnedDataSet.h>
     ... #include <UnbinnedDataSet.h>
+    ... #include <FitManagerMinuit3.hh>
     ... '''
 
     >>> corrected = fix_text(text)
+      Converting #include ["<]FitManagerMinuit3.hh?[">] -> \\\\ Fit Manager 3 removed
       Converting ["<]GlobalCudaDefines.hh?[">] -> "goofit/GlobalCudaDefines.h"
       Converting ["<]UnbinnedDataSet.hh?[">] -> "goofit/UnbinnedDataSet.h"
       Converting ["<]Variable.hh?[">] -> "goofit/Variable.h"
@@ -97,6 +99,7 @@ def fix_text(contents):
     #include <set>
     #include <goofit/BinnedDataSet.h>
     #include "goofit/UnbinnedDataSet.h"
+    \\ Fit Manager 3 removed
     """
 
     for r in conversion:

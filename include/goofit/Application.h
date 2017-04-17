@@ -89,7 +89,7 @@ public:
 
         add_config("--config", "config.ini", "An ini file with command line options in it");
 
-        // Reset color on exit
+        // Reset color on exit (but not control-c)
         std::atexit([]() {
             std::cout << rang::style::reset;
         });

@@ -3,7 +3,6 @@
 #include <Minuit2/FCNBase.h>
 
 #include <vector>
-#include <memory>
 
 #include "goofit/fitting/Params.h"
 
@@ -18,12 +17,15 @@ public:
     FCN(Params& params);
     
     // Run the fit (used by Minuit2 class)
-    double operator()(const vector<double>& pars) const override;
+    double operator()(const std::vector<double>& pars) const override;
     
     // This value is 0.5 for ll, 1 for chi2
     double Up() const override {
         return 0.5;
     }
+    
+    // Get a pointer to the parameters
+    Params* GetParams();
 };
 
 }

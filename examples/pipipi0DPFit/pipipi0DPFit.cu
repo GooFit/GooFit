@@ -923,7 +923,7 @@ void runToyFit(int ifile, int nfile, bool noPlots = true) {
     mixPdf->setData(data);
     FitManager datapdf(mixPdf);
     datapdf.setMaxCalls(64000);
-    datapdf.useMinos();
+    //datapdf.useMinos();
 
     gettimeofday(&startTime, NULL);
     startCPU = times(&startProc);

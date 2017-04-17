@@ -6,7 +6,6 @@ goofit_add_library(Variable
 
 goofit_add_library(FitManager
     FitManagerMinuit1.cc
-    ${PROJECT_SOURCE_DIR}/include/goofit/FitManager.h
     ${PROJECT_SOURCE_DIR}/include/goofit/fitting/FitManagerMinuit1.h
     )
 
@@ -19,10 +18,11 @@ goofit_add_library(FCN
 
 goofit_add_library(FitManager2
     FitManagerMinuit2.cc
+    ${PROJECT_SOURCE_DIR}/include/goofit/FitManager.h
     ${PROJECT_SOURCE_DIR}/include/goofit/fitting/FitManagerMinuit2.h
     )
 
-target_link_libraries(FitManager2 rang)
+target_link_libraries(FitManager2 rang CLI11)
 
 goofit_add_library(Faddeeva
     Faddeeva.cc

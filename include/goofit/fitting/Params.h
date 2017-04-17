@@ -3,7 +3,6 @@
 #include <Minuit2/FCNBase.h>
 #include <Minuit2/MnUserParameters.h>
 #include <vector>
-#include <memory>
 
 class PdfBase;
 class Variable;
@@ -26,6 +25,8 @@ public:
     
     Params(PdfBase &pdf);
     
+    // Read the values back into GooFit
+    void GetParams() const;
 };
     
 }

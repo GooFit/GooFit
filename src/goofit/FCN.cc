@@ -10,7 +10,7 @@ FCN::FCN(Params& params) : params_(&params) {
     
 }
 
-double FCN::operator()(const vector<double>& pars) const {
+double FCN::operator()(const std::vector<double>& pars) const {
     vector<double> gooPars; // Translates from Minuit indexing to GooFit indexing
     gooPars.resize(params_->num_);
     int counter = 0;
@@ -26,4 +26,8 @@ double FCN::operator()(const vector<double>& pars) const {
     return nll;
 }
 
+    Params* FCN::GetParams() {
+        return params_;
+    }
+    
 }

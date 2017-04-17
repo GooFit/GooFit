@@ -10,6 +10,7 @@
 #include "Minuit2/MnPrint.h"
 
 #include <rang.hpp>
+#include <CLI/Timer.hpp>
 
 namespace GooFit {
     
@@ -25,13 +26,21 @@ Minuit2::FunctionMinimum FitManagerMinuit2::fit() {
     Minuit2::MnMigrad migrad{fcn_, upar_};
     
     std::cout << rang::fg::gray << rang::style::bold;
-    Minuit2::FunctionMinimum min = migrad();
+    CLI::Timer timer{"Fitting"};
+    Minuit2::FunctionMinimum min = migrad(maxfcn_);
     std::cout << rang::style::reset << (min.IsValid() ? rang::fg::green : rang::fg::red);
     
-    std::cout << min << rang::style::reset << std::flush;
+    std::cout << min << rang::style::reset;
+    std::cout << rang::fg::magenta << timer << rang::style::reset << std::endl;
+    
+    //upar_.GetParams();
     
     Minuit2::MnPrint::SetLevel(val);
     return min;
+}
+    
+void FitManagerMinuit2::getMinuitValues() {
+    upar_.GetParams();
 }
     
 }

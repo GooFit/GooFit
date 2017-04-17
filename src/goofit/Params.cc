@@ -27,4 +27,12 @@ namespace GooFit {
     num_ = maxIndex+1;
 }
     
+void Params::GetParams() const {
+    int counter = 0;
+    for(Variable* var : vars_) {
+        var->value = Value(counter);
+        var->error = Error(counter++);
+    }
+}
+    
 }

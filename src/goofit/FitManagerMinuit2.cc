@@ -26,21 +26,19 @@ Minuit2::FunctionMinimum FitManagerMinuit2::fit() {
     Minuit2::MnMigrad migrad{fcn_, upar_};
     
     std::cout << rang::fg::gray << rang::style::bold;
-    CLI::Timer timer{"Fitting"};
+    CLI::Timer timer{"The minimization took"};
     Minuit2::FunctionMinimum min = migrad(maxfcn_);
-    std::cout << rang::style::reset << (min.IsValid() ? rang::fg::green : rang::fg::red);
-    
+
+    // Print nice output
+    std::cout << rang::style::reset << (min.IsValid() ? rang::fg::green : rang::fg::red);   
     std::cout << min << rang::style::reset;
     std::cout << rang::fg::magenta << timer << rang::style::reset << std::endl;
     
-    //upar_.GetParams();
+    // Set the parameters in GooFit to the new values
+    upar_.GetParams();
     
     Minuit2::MnPrint::SetLevel(val);
     return min;
-}
-    
-void FitManagerMinuit2::getMinuitValues() {
-    upar_.GetParams();
 }
     
 }

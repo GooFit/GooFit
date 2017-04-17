@@ -2,3 +2,4 @@
 -Ibuild/cli-src/include
 -Ibuild/thrust-src
 -Ibuild/rang-src/include
+-Iinclude/fakecuda

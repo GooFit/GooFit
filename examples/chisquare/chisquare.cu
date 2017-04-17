@@ -123,7 +123,6 @@ void fitRatio(vector<int>& rsEvts, vector<int>& wsEvts, std::string plotName = "
     gettimeofday(&startTime, NULL);
     datapdf->fit();
     gettimeofday(&stopTime, NULL);
-    datapdf->getMinuitValues();
 
     vector<fptype> values;
     poly->evaluateAtPoints(decayTime, values);

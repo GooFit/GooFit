@@ -99,7 +99,6 @@ int main(int argc, char** argv) {
     total.setData(&data);
     FitManager fitter(&total);
     fitter.fit();
-    fitter.getMinuitValues();
 
     TH2F pdfHist("pdfHist", "",
                  xvar->numbins, xvar->lowerlimit, xvar->upperlimit,

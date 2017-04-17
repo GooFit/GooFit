@@ -7,7 +7,8 @@ namespace py = pybind11;
 void init_FitManager(py::module &m) {
     py::class_<FitManager>(m, "FitManager")
         .def(py::init<PdfBase*>())
-        .def("fit", &FitManager::fit)
+        // Can't directly wrap becase we (currently) don't want the return value in python
+        .def("fit", [](FitManager& self){self.fit();})
         ;
 
 

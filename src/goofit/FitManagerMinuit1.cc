@@ -1,5 +1,5 @@
 #include "goofit/PdfBase.h"
-#include "goofit/FitManager.h"
+#include "goofit/fitting/FitManagerMinuit1.h"
 #include "goofit/PDFs/GooPdf.h"
 #include <cstdio>
 #include <cassert>

@@ -15,7 +15,17 @@
 #include <omp.h>
 #endif
 
+#include <signal.h>
+
+
+
 namespace GooFit {
+    
+void signal_handler(int s){
+    std::cout << std::endl << rang::style::reset << rang::fg::red << rang::style::bold;
+    std::cout << "GooFit: Control-C detected, exiting..." << rang::style::reset << std::endl;
+    std::exit(1); // will call the correct exit func, no unwinding of the stack though
+}
 
 using namespace CLI;
 
@@ -27,6 +37,9 @@ protected:
     int argc_;
     char** argv_;
 
+    /// Handle control-c codes
+    struct sigaction sigIntHandler;
+    
 public:
     /// Make a new Application
     Application(std::string discription,
@@ -93,6 +106,11 @@ public:
         std::atexit([]() {
             std::cout << rang::style::reset;
         });
+        
+        sigIntHandler.sa_handler = signal_handler;
+        sigemptyset(&sigIntHandler.sa_mask);
+        sigIntHandler.sa_flags = 0;
+        sigaction(SIGINT, &sigIntHandler, nullptr);
 
     }
 

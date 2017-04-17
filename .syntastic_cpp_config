@@ -1,4 +1,4 @@
 -Ibuild/pybind-src/include
 -Ibuild/cli-src/include
--Ibuild/thrust-src/include
+-Ibuild/thrust-src
 -Ibuild/rang-src/include

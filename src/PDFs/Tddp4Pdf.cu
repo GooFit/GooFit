@@ -29,7 +29,7 @@ struct genExp {
     unsigned int offset;
 
     __host__ __device__
-    genExp(unsigned int c, fptype d) : offset(c), gamma(d) {};
+    genExp(unsigned int c, fptype d) : gamma(d), offset(c) {};
 
     __host__ __device__
     fptype operator()(unsigned int x) const {
@@ -45,8 +45,9 @@ struct genExp {
 
 
 struct exp_functor {
-    fptype tmpparam, tmpoff, gammamin, wmax;
-    exp_functor(fptype tmpparam, fptype tmpoff, fptype gammamin, fptype wmax)
+    size_t tmpparam, tmpoff;
+    fptype gammamin, wmax;
+    exp_functor(size_t tmpparam, size_t tmpoff, fptype gammamin, fptype wmax)
         : tmpparam(tmpparam),
           tmpoff(tmpoff),
           gammamin(gammamin),

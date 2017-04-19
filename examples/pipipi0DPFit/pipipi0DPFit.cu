@@ -3487,7 +3487,7 @@ SmoothHistogramPdf* makeBackgroundHistogram(int bkgnum, string overridename) {
     sprintf(strbuffer, "bkg%i_dalitz_smoothing", bkgnum);
     Variable* smoothing = new Variable(strbuffer, 1);
 
-    if((-1 != bkgHistRandSeed) && (3 == bkgnum) || (4 == bkgnum)) {
+    if((-1 != bkgHistRandSeed) && ((3 == bkgnum) || (4 == bkgnum))) {
         std::cout << "Shuffling background " << bkgnum << " histogram with random seed " << bkgHistRandSeed << std::endl;
         TRandom donram(bkgHistRandSeed);
 
@@ -4798,7 +4798,7 @@ int main(int argc, char** argv) {
     std::string data;
     int sample = 0;
     int load = 1;
-    int plots;
+    bool plots;
     int genResolutions = 0;
     double dplotres = 0;
     
@@ -4810,7 +4810,7 @@ int main(int argc, char** argv) {
     toy->add_flag("-p,--plot", plots,
             "Also make plots");
     toy->set_callback([&sample, &load, &plots](){
-            runToyFit(sample, load, !plots > 0);
+            runToyFit(sample, load, plots);
             });
 
 

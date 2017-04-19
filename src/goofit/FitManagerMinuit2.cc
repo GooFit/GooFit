@@ -1,4 +1,18 @@
-ROOT::Minuit2::FunctionMinimum* FitManager::fit() {
+
+#include <cstdio>
+#include <cassert>
+#include <limits>
+#include <typeinfo>
+#include <set>
+
+#include "goofit/PdfBase.h"
+#include "goofit/FitManagerMinuit2.h"
+#include "goofit/PDFs/GooPdf.h"
+#include "goofit/Variable.h"
+
+namespace GooFit {
+
+ROOT::Minuit2::FunctionMinimum* FitManagerMinuit2::fit() {
     host_callnumber = 0;
     params = new ROOT::Minuit2::MnUserParameters();
     vars.clear();
@@ -27,7 +41,7 @@ ROOT::Minuit2::FunctionMinimum* FitManager::fit() {
     return ret;
 }
 
-double FitManager::operator()(const vector<double>& pars) const {
+double FitManagerMinuit2::operator()(const vector<double>& pars) const {
     vector<double> gooPars; // Translates from Minuit indexing to GooFit indexing
     gooPars.resize(numPars);
     int counter = 0;
@@ -65,4 +79,4 @@ double FitManager::operator()(const vector<double>& pars) const {
 
     return nll;
 }
-
+}

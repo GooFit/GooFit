@@ -1,12 +1,25 @@
 cmake_minimum_required(VERSION 3.4)
-project(GOOFIT CXX)
 
-### Require out-of-source builds (needed to keep old build system) ###
+project(GOOFIT
+    VERSION 2.0.0
+    LANGUAGES CXX)
+
+### Require out-of-source builds except in main directory
 file(TO_CMAKE_PATH "${PROJECT_BINARY_DIR}/CMakeLists.txt" LOC_PATH)
-message(STATUS ${LOC_PATH})
-if(EXISTS ${LOC_PATH})
-    message(FATAL_ERROR "You cannot build in the source directory (or any directory with a CMakeLists.txt file). Please make a build subdirectory.")
+if(NOT PROJECT_BINARY_DIR STREQUAL PROJECT_SOURCE_DIR AND EXISTS ${LOC_PATH})
+    message(FATAL_ERROR "You cannot build in a sub-source directory (or any directory with a CMakeLists.txt file). Please make a build subdirectory.")
 endif()
+
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
+if(CMAKE_VERSION VERSION_LESS 3.7)
+    set(CMAKE_MODULE_PATH  ${PROJECT_SOURCE_DIR}/cmake/support_old_cmake ${CMAKE_MODULE_PATH})
+endif()
+
+
+configure_file (
+    "${PROJECT_SOURCE_DIR}/include/goofit/Version.h.in"
+    "${PROJECT_BINARY_DIR}/include/goofit/Version.h"
+)
 
 
 set(GOOFIT_CUDA_OR_GROUPSIZE "128" CACHE STRING "Overrides the default group distribution for Thrust's transform_reduce")
@@ -17,25 +30,7 @@ configure_file (
     "${PROJECT_BINARY_DIR}/include/goofit/ThrustOverrideConfig.h"
 )
 
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
-if(CMAKE_VERSION VERSION_LESS 3.7)
-    set(CMAKE_MODULE_PATH  ${PROJECT_SOURCE_DIR}/cmake/support_old_cmake ${CMAKE_MODULE_PATH})
-endif()
-
-
-### Version number ###
-set(GOOFIT_VERSION_MAJOR 2)
-set(GOOFIT_VERSION_MINOR 0)
-set(GOOFIT_VERSION_PATCH 0)
-set(GOOFIT_VERSION "${GOOFIT_VERSION_MAJOR}.${GOOFIT_VERSION_MINOR}.${GOOFIT_VERSION_PATCH}")
-
-configure_file (
-    "${PROJECT_SOURCE_DIR}/include/goofit/Version.h.in"
-    "${PROJECT_BINARY_DIR}/include/goofit/Version.h"
-)
-
 include_directories("${PROJECT_BINARY_DIR}/include")
-
 
 ### C++ settings ###
 set(CMAKE_CXX_STANDARD 11)
@@ -43,13 +38,13 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING
         "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel."
         FORCE)
 endif()
-
 
 # Code coverage
 if(CMAKE_BUILD_TYPE STREQUAL Coverage)
@@ -58,12 +53,12 @@ if(CMAKE_BUILD_TYPE STREQUAL Coverage)
 endif()
 
 ### Options ###
-set(DEVICE_LISTING CUDA OMP CPP Auto)
-set(HOST_LISTING OMP CPP)
+set(DEVICE_LISTING CUDA OMP CPP TBB Auto)
+set(HOST_LISTING OMP CPP TBB)
 mark_as_advanced(DEVICE_LISTING HOST_LISTING)
 
 set(GOOFIT_DEVICE Auto CACHE STRING "The compute device, options are ${DEVICE_LISTING}")
-set(GOOFIT_HOST OMP CACHE STRING "The compute device, options are ${HOST_LISTING}")
+set(GOOFIT_HOST CPP CACHE STRING "The compute device, options are ${HOST_LISTING}")
 
 # Requires CMake 3.3 or greater
 if(NOT ${GOOFIT_DEVICE} IN_LIST DEVICE_LISTING)
@@ -71,6 +66,17 @@ if(NOT ${GOOFIT_DEVICE} IN_LIST DEVICE_LISTING)
 endif()
 if(NOT ${GOOFIT_HOST} IN_LIST HOST_LISTING)
     message(FATAL_ERROR "You must select a host from ${HOST_LISTING}, not ${HOST_DEVICE}")
+endif()
+
+# Checks for invalid combinations
+if(${GOOFIT_DEVICE} STREQUAL TBB AND ${GOOFIT_HOST} STREQUAL OMP)
+    message(FATAL_ERROR "You must set TBB as both host and device (OMP will still be required)")
+endif()
+if(${GOOFIT_DEVICE} STREQUAL OMP AND ${GOOFIT_HOST} STREQUAL TBB)
+    message(FATAL_ERROR "TBB cannot be a host backend for OMP")
+endif()
+if(${GOOFIT_DEVICE} STREQUAL CUDA AND ${GOOFIT_HOST} STREQUAL OMP)
+    message(FATAL_ERROR "OMP cannot be a host backend for CUDA")
 endif()
 
 if(GOOFIT_DEVICE STREQUAL Auto)
@@ -95,16 +101,15 @@ if(GOOFIT_SEPARATE_COMP)
     add_definitions("-DSEPARABLE")
 endif()
 
+set(GOOFIT_CFLAGS "-march=native" CACHE STRING "compiler flags")
+
 add_definitions("-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_${GOOFIT_DEVICE}")
 add_definitions("-DMCBOOSTER_BACKEND=${GOOFIT_DEVICE}")
 add_definitions("-DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_${GOOFIT_HOST}")
 
-# -Wl,--no-undefined,--no-allow-shlib-undefined")
-
 set(GOOFIT_ARCH Auto CACHE STRING "The GPU Archetecture, can be Auto, All, Common, a number, or a name")
 
 option(GOOFIT_DOWNLOAD_THRUST "Download Thrust if not found (OMP only)" ON)
-
 
 option(GOOFIT_MPI "Turn on MPI for goofit" OFF)
 
@@ -113,9 +118,9 @@ if(GOOFIT_MPI)
 
     # Added globally
     add_definitions("-DGOOFIT_MPI")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${MPI_CXX_COMPILE_FLAGS}")
+    add_compile_options(${MPI_CXX_COMPILE_FLAGS})
     include_directories(${MPI_CXX_INCLUDE_PATH})
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${MPI_CXX_LINK_FLAGS}")
+    list(APPEND CMAKE_EXE_LINKER_FLAGS ${MPI_CXX_LINK_FLAGS})
     link_libraries(${MPI_CXX_LIBRARIES})
 
     message(STATUS "MPI found. Use the following to run your program")
@@ -126,7 +131,9 @@ endif()
 if(GOOFIT_DEVICE STREQUAL CUDA)
     find_package(CUDA 7.5 REQUIRED)
 
-    set(CUDA_NVCC_FLAGS; ${CUDA_NVCC_FLAGS}; -std=c++11; --expt-extended-lambda ${CMAKE_CXX_FLAGS})
+    list(APPEND CUDA_NVCC_FLAGS -std=c++11)
+    list(APPEND CUDA_NVCC_FLAGS ${MPI_CXX_LINK_FLAGS})
+
     if(GOOFIT_SEPARATE_COMP)
         set(CUDA_SEPARABLE_COMPILATION ON)
     else()
@@ -145,7 +152,12 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
     endif()
 else()
     include_directories(${PROJECT_SOURCE_DIR}/include/goofit/fakecuda)
+    if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+        add_compile_options("${GOOFIT_CFLAGS}")
+    endif()
 endif()
+
+
 find_package(Thrust QUIET)
 if(NOT THRUST_FOUND)
     if(GOOFIT_DOWNLOAD_THRUST)
@@ -157,16 +169,20 @@ if(NOT THRUST_FOUND)
 endif()
 include_directories(SYSTEM "${THRUST_INCLUDE_DIRS}")
 
-if(GOOFIT_DEVICE STREQUAL OMP OR GOOFIT_HOST STREQUAL OMP)
-find_package(OpenMP REQUIRED)
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-find_package(Threads REQUIRED)
-link_libraries(Threads::Threads)
+if(GOOFIT_DEVICE STREQUAL OMP OR GOOFIT_HOST STREQUAL OMP OR GOOFIT_DEVICE STREQUAL TBB OR GOOFIT_HOST STREQUAL TBB)
+    find_package(OpenMP REQUIRED)
+    add_compile_options(${OpenMP_CXX_FLAGS})
+    find_package(Threads REQUIRED)
+    link_libraries(Threads::Threads)
+    link_libraries(${OpenMP_CXX_FLAGS})
 endif()
 
 if(GOOFIT_DEVICE STREQUAL TBB OR GOOFIT_HOST STREQUAL TBB)
-find_package(TBB REQUIRED)
-include_directories(SYSTEM "${TBB_INCLUDE_DIRS}")
+    find_package(TBB COMPONENTS tbbmalloc tbbmalloc_proxy tbb_preview)
+    #set(CMAKE_CXX_FLAGS -xMIC-AVX512)
+    #set(CMAKE_CXX_FLAGS "-xHOST -qopenmp")
+    include_directories(SYSTEM "${TBB_INCLUDE_DIRS}")
+    link_libraries(${TBB_LIBRARIES})
 endif()
 
 
@@ -176,16 +192,21 @@ find_package(ROOT 6 REQUIRED COMPONENTS Minuit)
 include_directories(BEFORE "include/goofit/rootstuff")
 # Note: it is very important that the includes and links for root are after fakeroot!
 
-
 function(goofit_add_library GNAME)
     if(GOOFIT_DEVICE STREQUAL CUDA)
         foreach(N ${ARGN})
-            SET_SOURCE_FILES_PROPERTIES(${N} PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
+            get_filename_component(NEXT ${N} EXT)
+            if(NEXT STREQUAL ".cc" OR NEXT STREQUAL ".cpp" OR NEXT STREQUAL ".cxx")
+                set_source_files_properties(${N} PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
+            endif()
         endforeach()
-        cuda_add_library(${GNAME} STATIC ${ARGN})
+        cuda_add_library(${GNAME} STATIC ${ARGN} OPTIONS "-Xcompiler=-fPIC")
     else()
         foreach(N ${ARGN})
-            SET_SOURCE_FILES_PROPERTIES(${N} PROPERTIES LANGUAGE CXX)
+            get_filename_component(NEXT ${N} EXT)
+            if(NEXT STREQUAL ".cu")
+                set_source_files_properties(${N} PROPERTIES LANGUAGE CXX)
+            endif()
         endforeach()
         add_library(${GNAME} STATIC ${ARGN})
         target_compile_options(${GNAME} PUBLIC -x c++)
@@ -198,9 +219,12 @@ function(goofit_add_executable NAMEEXE)
         link_libraries(${CUDA_LIBRARIES})
     else()
         foreach(N ${ARGN})
-            SET_SOURCE_FILES_PROPERTIES(${N} PROPERTIES LANGUAGE CXX)
+            get_filename_component(NEXT ${N} EXT)
+            if(NEXT STREQUAL ".cu")
+                set_source_files_properties(${N} PROPERTIES LANGUAGE CXX)
+            endif()
         endforeach()
-	    add_executable(${NAMEEXE} ${ARGN})
+        add_executable(${NAMEEXE} ${ARGN})
     endif()
     target_link_libraries(${NAMEEXE} goofit_lib)
     target_compile_options(${NAMEEXE} PUBLIC -x c++)
@@ -266,8 +290,12 @@ endmacro()
 include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/MCBooster)
 
+# Adding header only libraries
+include(AddCLI)
+include(AddRang)
+
 add_library(goofit_lib INTERFACE)
-target_link_libraries(goofit_lib INTERFACE goofit_base PDFs rootstuff ROOT::ROOT)
+target_link_libraries(goofit_lib INTERFACE goofit_base PDFs rootstuff ROOT::ROOT rang CLI11)
 
 option(GOOFIT_EXAMPLES "Build the example programs" ON)
 if(GOOFIT_EXAMPLES)
@@ -278,8 +306,8 @@ if(EXISTS work)
     add_subdirectory(work)
 endif()
 
-option(GOOFIT_PROJECTS "Build any goofit* projects found" ON)
-if(GOOFIT_PROJECTS)
+option(GOOFIT_PACKAGES "Build any goofit* packages found" ON)
+if(GOOFIT_PACKAGES)
     file(GLOB list_of_packages RELATIVE ${PROJECT_SOURCE_DIR} goofit*)
     foreach(d ${list_of_packages})
         add_subdirectory(${d})
@@ -287,6 +315,13 @@ if(GOOFIT_PROJECTS)
 endif()
 
 add_subdirectory(src)
+
+option(GOOFIT_PYTHON "Python bindings for goofit" OFF)
+if(GOOFIT_PYTHON)
+    include(AddPybind)
+    message(STATUS "Found Python at ${PYTHON_LIBRARIES}")
+    add_subdirectory(python)
+endif()
 
 option(GOOFIT_TESTS "Build the goofit tests" OFF)
 if(GOOFIT_TESTS)

@@ -319,7 +319,7 @@ void EvaluateArray(const CUSTOMFUNC funcObj, ParticlesSet_d &pset,
 	return;
 }
 
-#if MCBOOSTER_BACKEND==CUDA
+//#if MCBOOSTER_BACKEND==CUDA
 
 /** Template functor for calculate an array of variables over a given set of particles.
  * Template functor for evaluate an arbitrary function object over the a set of particles stored
@@ -560,19 +560,19 @@ void EvaluateArray(const CUSTOMFUNC funcObj, ParticlesSet_d &pset,
 				Calculate3<CUSTOMFUNC>(funcObj));
 
 	}
-/*
-//#if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_OMP || THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_TBB
+#if THRUST_DEVICE_SYSTEM!=THRUST_DEVICE_SYSTEM_CUDA 
 
 #pragma omp parallel num_threads(  arrayWidth )
 	{
-		strided_range<RealVector_d::iterator> it_array(dev_array.begin() + omp_get_thread_num()
+
+	strided_range<RealVector_d::iterator> it_array(dev_array.begin() + omp_get_thread_num()
 				, dev_array.end(), arrayWidth);
 
 		thrust::copy(it_array.begin(),it_array.end(),
 				varset[omp_get_thread_num()]->begin());
 	}
 
-#else*/
+#else
 	cudaStream_t s[arrayWidth];
 
 	for (GInt_t d = 0; d < arrayWidth; d++)
@@ -597,10 +597,10 @@ void EvaluateArray(const CUSTOMFUNC funcObj, ParticlesSet_d &pset,
 	for (GInt_t d = 0; d < arrayWidth; d++)
 		delete it[d];
 
-//#endif*/
+#endif
 	return;
 }
-#endif
+//#endif
 
 }
 

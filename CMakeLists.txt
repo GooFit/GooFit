@@ -129,7 +129,7 @@ if(GOOFIT_MPI)
 endif()
 
 if(GOOFIT_DEVICE STREQUAL CUDA)
-    find_package(CUDA 7.5 REQUIRED)
+    find_package(CUDA 7.0 REQUIRED)
 
     list(APPEND CUDA_NVCC_FLAGS -std=c++11)
     list(APPEND CUDA_NVCC_FLAGS ${MPI_CXX_LINK_FLAGS})

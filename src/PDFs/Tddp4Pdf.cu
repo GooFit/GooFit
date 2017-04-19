@@ -44,6 +44,32 @@ struct genExp {
 };
 
 
+struct exp_functor {
+    fptype tmpparam, tmpoff, gammamin, wmax;
+    exp_functor(fptype tmpparam, fptype tmpoff, fptype gammamin, fptype wmax)
+        : tmpparam(tmpparam),
+          tmpoff(tmpoff),
+          gammamin(gammamin),
+          wmax(wmax) {}
+    
+    __device__
+    fptype operator()(thrust::tuple<unsigned int, fptype, fptype*, unsigned int> t) {
+        int evtNum = thrust::get<0>(t);
+        fptype* evt = thrust::get<2>(t) + (evtNum * thrust::get<3>(t));
+        unsigned int* indices = paramIndices + tmpparam;
+        fptype time    = evt[indices[8 + indices[0]]];
+
+        thrust::random::minstd_rand0 rand(1431655765);
+        thrust::uniform_real_distribution<fptype> dist(0,1);
+        rand.discard( tmpoff + evtNum );
+
+        return  ( dist(rand) * EXP(-time*gammamin) * wmax) < thrust::get<1>(t);
+    }
+
+};
+
+
+
 // The function of this array is to hold all the cached waves; specific
 // waves are recalculated when the corresponding resonance mass or width
 // changes. Note that in a multithread environment each thread needs its
@@ -801,23 +827,12 @@ TDDP4::GenerateSig(unsigned int numEvents) {
     unsigned int tmpparam = parameters;
     wmax = maxWeight;
 
+    exp_functor exp_functor_instance {tmpparam, tmpoff, gammamin, wmax};
+
     thrust::transform(thrust::make_zip_iterator( thrust::make_tuple(eventIndex, results.begin(), arrayAddress, eventSize) ),
                       thrust::make_zip_iterator( thrust::make_tuple(eventIndex + nAcc, results.end(), arrayAddress, eventSize ) ),
                       flag2.begin(),
-                      [tmpparam, tmpoff, gammamin, wmax] EXEC_TARGET (thrust::tuple<unsigned int, fptype, fptype*, unsigned int> t){
-
-                        int evtNum = thrust::get<0>(t);
-                        fptype* evt = thrust::get<2>(t) + (evtNum * thrust::get<3>(t));
-                        unsigned int* indices = paramIndices + tmpparam;
-                        fptype time    = evt[indices[8 + indices[0]]];
-
-                        thrust::random::minstd_rand0 rand(1431655765);
-                        thrust::uniform_real_distribution<fptype> dist(0,1);
-                        rand.discard( tmpoff + evtNum );
-
-                        return  ( dist(rand) * EXP(-time*gammamin) * wmax) < thrust::get<1>(t);
-                      });
-
+                      exp_functor(tmpparam, tmpoff, gammamin, wmax));
 
     gooFree(dev_event_array);
 

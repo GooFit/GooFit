@@ -320,9 +320,9 @@ add_library(goofit_lib INTERFACE)
 target_link_libraries(goofit_lib INTERFACE goofit_base PDFs rang CLI11)
 
 if(ROOT_FOUND)
-    target_link_libraries(${GNAME} ROOT::ROOT ROOT::Minuit ROOT::Minuit2)
+    target_link_libraries(goofit_lib INTERFACE ROOT::ROOT ROOT::Minuit ROOT::Minuit2)
 else()
-    target_link_libraries(${GNAME} Minuit2)
+    target_link_libraries(goofit_lib INTERFACE Minuit2)
 endif()
 
 

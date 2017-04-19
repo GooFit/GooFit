@@ -1,5 +1,6 @@
 #include "goofit/Application.h"
 #include "goofit/Variable.h"
+#include "goofit/fitting/FitManagerMinuit1.h"
 #include "goofit/FitManager.h"
 #include "goofit/UnbinnedDataSet.h"
 #include "goofit/PDFs/PolynomialPdf.h"

@@ -54,11 +54,11 @@ endif()
 
 ### Options ###
 set(DEVICE_LISTING CUDA OMP CPP TBB Auto)
-set(HOST_LISTING OMP CPP TBB)
+set(HOST_LISTING OMP CPP TBB Auto)
 mark_as_advanced(DEVICE_LISTING HOST_LISTING)
 
 set(GOOFIT_DEVICE Auto CACHE STRING "The compute device, options are ${DEVICE_LISTING}")
-set(GOOFIT_HOST CPP CACHE STRING "The compute device, options are ${HOST_LISTING}")
+set(GOOFIT_HOST Auto CACHE STRING "The compute device, options are ${HOST_LISTING}")
 
 # Requires CMake 3.3 or greater
 if(NOT ${GOOFIT_DEVICE} IN_LIST DEVICE_LISTING)
@@ -66,6 +66,33 @@ if(NOT ${GOOFIT_DEVICE} IN_LIST DEVICE_LISTING)
 endif()
 if(NOT ${GOOFIT_HOST} IN_LIST HOST_LISTING)
     message(FATAL_ERROR "You must select a host from ${HOST_LISTING}, not ${HOST_DEVICE}")
+endif()
+
+# Auto device selection
+if(GOOFIT_DEVICE STREQUAL Auto)
+    find_package(CUDA 7.0)
+    if(CUDA_FOUND)
+        set(GOOFIT_DEVICE CUDA)
+    else()
+        find_package(OpenMP)
+        if(OpenMP_FOUND)
+            set(GOOFIT_DEVICE OMP)
+        else()
+            set(GOOFIT_DEVICE CPP)
+        endif()
+    endif()
+    message(STATUS "Auto device selection: ${GOOFIT_DEVICE}")
+endif()
+
+# Auto host selection based on device
+if(GOOFIT_HOST STREQUAL Auto)
+    if(GOOFIT_DEVICE STREQUAL OMP)
+        set(GOOFIT_HOST OMP)
+    elseif(GOOFIT_DEVICE STREQUAL TBB)
+        set(GOOFIT_HOST TBB)
+    else()
+        set(GOOFIT_HOST CPP)
+    endif()
 endif()
 
 # Checks for invalid combinations
@@ -79,23 +106,12 @@ if(${GOOFIT_DEVICE} STREQUAL CUDA AND ${GOOFIT_HOST} STREQUAL OMP)
     message(FATAL_ERROR "OMP cannot be a host backend for CUDA")
 endif()
 
-if(GOOFIT_DEVICE STREQUAL Auto)
-    find_package(CUDA 6.0)
-    if(CUDA_FOUND)
-        set(GOOFIT_DEVICE CUDA)
-    else()
-        set(GOOFIT_DEVICE OMP)
-    endif()
-    message(STATUS "Auto device selection: ${GOOFIT_DEVICE}")
-endif()
-
 # Only default to off for CUDA
 if(GOOFIT_DEVICE STREQUAL CUDA)
     option(GOOFIT_SEPARATE_COMP "Enable separate compilation of PDFs" OFF)
 else()
     option(GOOFIT_SEPARATE_COMP "Enable separate compilation of PDFs" ON)
 endif()
-
 
 if(GOOFIT_SEPARATE_COMP)
     add_definitions("-DSEPARABLE")
@@ -129,7 +145,7 @@ if(GOOFIT_MPI)
 endif()
 
 if(GOOFIT_DEVICE STREQUAL CUDA)
-    find_package(CUDA 6.0 REQUIRED)
+    find_package(CUDA 7.0 REQUIRED)
 
     list(APPEND CUDA_NVCC_FLAGS -std=c++11)
     list(APPEND CUDA_NVCC_FLAGS ${MPI_CXX_LINK_FLAGS})
@@ -185,7 +201,10 @@ if(GOOFIT_DEVICE STREQUAL TBB OR GOOFIT_HOST STREQUAL TBB)
 endif()
 
 # Include directories are not picked up by FindCUDA
-find_package(ROOT 6 REQUIRED COMPONENTS Minuit Minuit2)
+find_package(ROOT 6 COMPONENTS Minuit Minuit2)
+if(NOT ROOT_FOUND)
+    include(AddMinuit2)
+endif()
 
 # Adding header only libraries
 include(AddCLI)
@@ -210,7 +229,12 @@ function(goofit_add_library GNAME)
         add_library(${GNAME} STATIC ${ARGN})
         target_compile_options(${GNAME} PUBLIC -x c++)
     endif()
-    target_link_libraries(${GNAME} ROOT::ROOT)
+
+    if(ROOT_FOUND)
+        target_link_libraries(${GNAME} ROOT::ROOT)
+    else()
+        target_link_libraries(${GNAME} Minuit2)
+    endif()
 endfunction()
 
 function(goofit_add_executable NAMEEXE)
@@ -293,7 +317,14 @@ include_directories(${PROJECT_SOURCE_DIR}/MCBooster)
 add_subdirectory(src)
 
 add_library(goofit_lib INTERFACE)
-target_link_libraries(goofit_lib INTERFACE goofit_base PDFs ROOT::ROOT rang CLI11 ROOT::Minuit ROOT::Minuit2)
+target_link_libraries(goofit_lib INTERFACE goofit_base PDFs rang CLI11)
+
+if(ROOT_FOUND)
+    target_link_libraries(${GNAME} ROOT::ROOT ROOT::Minuit ROOT::Minuit2)
+else()
+    target_link_libraries(${GNAME} Minuit2)
+endif()
+
 
 option(GOOFIT_EXAMPLES "Build the example programs" ON)
 if(GOOFIT_EXAMPLES)

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <memory>
-#include <TMinuit.h>
 #include <Minuit2/FunctionMinimum.h>
 #include "goofit/fitting/FCN.h"
 

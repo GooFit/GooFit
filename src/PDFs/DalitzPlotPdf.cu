@@ -13,7 +13,7 @@ const int resonanceOffset_DP = 4; // Offset of the first resonance into the para
 // own cache, hence the '10'. Ten threads should be enough for anyone!
 
 //NOTE: This is does not support ten instances (ten threads) of resoncances now, only one set of resonances.
-MEM_DEVICE devcomplex<fptype>* cResonances[16];
+__device__ devcomplex<fptype>* cResonances[16];
 
 EXEC_TARGET inline int parIndexFromResIndex_DP(int resIndex) {
     return resonanceOffset_DP + resIndex*resonanceSize;
@@ -101,7 +101,7 @@ EXEC_TARGET fptype device_DalitzPlot(fptype* evt, fptype* p, unsigned int* indic
     return ret;
 }
 
-MEM_DEVICE device_function_ptr ptr_to_DalitzPlot = device_DalitzPlot;
+__device__ device_function_ptr ptr_to_DalitzPlot = device_DalitzPlot;
 
 __host__ DalitzPlotPdf::DalitzPlotPdf(std::string n,
                                       Variable* m12,

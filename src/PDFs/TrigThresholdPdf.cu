@@ -58,11 +58,11 @@ EXEC_TARGET fptype device_VerySpecialEpisodeTrigThresholdLower(fptype* evt, fpty
     return ret;
 }
 
-MEM_DEVICE device_function_ptr ptr_to_TrigThresholdUpper = device_TrigThresholdUpper;
-MEM_DEVICE device_function_ptr ptr_to_TrigThresholdLower = device_TrigThresholdLower;
-MEM_DEVICE device_function_ptr ptr_to_VerySpecialEpisodeTrigThresholdUpper =
+__device__ device_function_ptr ptr_to_TrigThresholdUpper = device_TrigThresholdUpper;
+__device__ device_function_ptr ptr_to_TrigThresholdLower = device_TrigThresholdLower;
+__device__ device_function_ptr ptr_to_VerySpecialEpisodeTrigThresholdUpper =
     device_VerySpecialEpisodeTrigThresholdUpper;
-MEM_DEVICE device_function_ptr ptr_to_VerySpecialEpisodeTrigThresholdLower =
+__device__ device_function_ptr ptr_to_VerySpecialEpisodeTrigThresholdLower =
     device_VerySpecialEpisodeTrigThresholdLower;
 
 

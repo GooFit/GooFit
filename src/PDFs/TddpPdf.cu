@@ -15,7 +15,7 @@ const unsigned int SPECIAL_RESOLUTION_FLAG = 999999999;
 // own cache, hence the '10'. Ten threads should be enough for anyone!
 
 //NOTE: only one set of wave holders is supported currently.
-MEM_DEVICE WaveHolder_s* cWaves[16];
+__device__ WaveHolder_s* cWaves[16];
 
 /*
 EXEC_TARGET bool inDalitz (const fptype &m12, const fptype &m13, const fptype &bigM, const fptype &dm1, const fptype &dm2, const fptype &dm3) {
@@ -335,7 +335,7 @@ EXEC_TARGET fptype device_Tddp(fptype* evt, fptype* p, unsigned int* indices) {
     return ret;
 }
 
-MEM_DEVICE device_function_ptr ptr_to_Tddp = device_Tddp;
+__device__ device_function_ptr ptr_to_Tddp = device_Tddp;
 
 __host__ TddpPdf::TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Variable* m12, Variable* m13,
                           CountingVariable* eventNumber, DecayInfo* decay, MixingTimeResolution* r, GooPdf* efficiency, Variable* mistag)

@@ -110,8 +110,8 @@ EXEC_TARGET fptype device_ConvolveSharedPdfs(fptype* evt, fptype* p, unsigned in
     return ret;
 }
 
-MEM_DEVICE device_function_ptr ptr_to_ConvolvePdfs = device_ConvolvePdfs;
-MEM_DEVICE device_function_ptr ptr_to_ConvolveSharedPdfs = device_ConvolveSharedPdfs;
+__device__ device_function_ptr ptr_to_ConvolvePdfs = device_ConvolvePdfs;
+__device__ device_function_ptr ptr_to_ConvolveSharedPdfs = device_ConvolveSharedPdfs;
 
 ConvolutionPdf::ConvolutionPdf(std::string n,
                                Variable* x,

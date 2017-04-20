@@ -21,7 +21,7 @@ EXEC_TARGET fptype device_Mapped(fptype* evt, fptype* p, unsigned int* indices) 
     return ret;
 }
 
-MEM_DEVICE device_function_ptr ptr_to_Mapped = device_Mapped;
+__device__ device_function_ptr ptr_to_Mapped = device_Mapped;
 
 __host__ MappedPdf::MappedPdf(std::string n, GooPdf* m, vector<GooPdf*>& t)
     : GooPdf(0, n) {

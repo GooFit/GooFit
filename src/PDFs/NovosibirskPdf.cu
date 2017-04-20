@@ -32,7 +32,7 @@ EXEC_TARGET fptype device_Novosibirsk(fptype* evt, fptype* p, unsigned int* indi
     return EXP(-qc);
 }
 
-MEM_DEVICE device_function_ptr ptr_to_Novosibirsk = device_Novosibirsk;
+__device__ device_function_ptr ptr_to_Novosibirsk = device_Novosibirsk;
 
 __host__ NovosibirskPdf::NovosibirskPdf(std::string n, Variable* _x, Variable* mean, Variable* sigma, Variable* tail)
     : GooPdf(_x, n) {

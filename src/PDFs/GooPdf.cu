@@ -25,17 +25,17 @@ __constant__ fptype normalisationFactors[maxParams];
 __constant__ int callnumber;
 __constant__ int gpuDebug;
 __constant__ unsigned int debugParamIndex;
-MEM_DEVICE int internalDebug1 = -1;
-MEM_DEVICE int internalDebug2 = -1;
-MEM_DEVICE int internalDebug3 = -1;
+__device__ int internalDebug1 = -1;
+__device__ int internalDebug2 = -1;
+__device__ int internalDebug3 = -1;
 int cpuDebug = 0;
 #ifdef PROFILING
-MEM_DEVICE fptype timeHistogram[10000];
+__device__ fptype timeHistogram[10000];
 fptype host_timeHist[10000];
 #endif
 
 // Function-pointer related.
-MEM_DEVICE void* device_function_table[200];
+__device__ void* device_function_table[200];
 // Not clear why this cannot be __constant__, but it causes crashes to declare it so.
 
 void* host_function_table[200];
@@ -145,12 +145,12 @@ EXEC_TARGET fptype calculateChisq(fptype rawPdf, fptype* evtVal, unsigned int pa
     return pow(rawPdf * functorConstants[0] - evtVal[0], 2) / (evtVal[0] > 1 ? evtVal[0] : 1);
 }
 
-MEM_DEVICE device_metric_ptr ptr_to_Eval         = calculateEval;
-MEM_DEVICE device_metric_ptr ptr_to_NLL          = calculateNLL;
-MEM_DEVICE device_metric_ptr ptr_to_Prob         = calculateProb;
-MEM_DEVICE device_metric_ptr ptr_to_BinAvg       = calculateBinAvg;
-MEM_DEVICE device_metric_ptr ptr_to_BinWithError = calculateBinWithError;
-MEM_DEVICE device_metric_ptr ptr_to_Chisq        = calculateChisq;
+__device__ device_metric_ptr ptr_to_Eval         = calculateEval;
+__device__ device_metric_ptr ptr_to_NLL          = calculateNLL;
+__device__ device_metric_ptr ptr_to_Prob         = calculateProb;
+__device__ device_metric_ptr ptr_to_BinAvg       = calculateBinAvg;
+__device__ device_metric_ptr ptr_to_BinWithError = calculateBinWithError;
+__device__ device_metric_ptr ptr_to_Chisq        = calculateChisq;
 
 void* host_fcn_ptr = 0;
 

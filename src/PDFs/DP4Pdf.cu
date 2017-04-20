@@ -28,8 +28,8 @@ TODO:
 // waves are recalculated when the corresponding resonance mass or width
 // changes. Note that in a multithread environment each thread needs its
 // own cache, hence the '10'. Ten threads should be enough for anyone!
-MEM_DEVICE devcomplex<fptype>* cResSF[10];
-MEM_DEVICE devcomplex<fptype>* Amps_DP[10];
+__device__ devcomplex<fptype>* cResSF[10];
+__device__ devcomplex<fptype>* Amps_DP[10];
 /*
 Constant memory array to hold specific info for amplitude calculation.
 First entries are the starting points in array, necessary, because number of Lineshapes(LS) or Spinfactors(SF) can vary
@@ -70,7 +70,7 @@ EXEC_TARGET fptype device_DP(fptype* evt, fptype* p, unsigned int* indices) {
     return ret;
 }
 
-MEM_DEVICE device_function_ptr ptr_to_DP = device_DP;
+__device__ device_function_ptr ptr_to_DP = device_DP;
 
 __host__ DPPdf::DPPdf(std::string n,
                       std::vector<Variable*> observables,

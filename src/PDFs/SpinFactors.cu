@@ -473,25 +473,25 @@ EXEC_TARGET fptype DtoTP1_TtoVP2_VtoP3P4(fptype* Vecs, unsigned int* indices) {
 #endif
 }
 
-MEM_DEVICE spin_function_ptr ptr_to_DtoPP1_PtoSP2_StoP3P4       = DtoPP1_PtoSP2_StoP3P4;
-MEM_DEVICE spin_function_ptr ptr_to_DtoPP1_PtoVP2_VtoP3P4       = DtoPP1_PtoVP2_VtoP3P4;
-MEM_DEVICE spin_function_ptr ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_S = DtoV1V2_V1toP1P2_V2toP3P4_S;
-MEM_DEVICE spin_function_ptr ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_P = DtoV1V2_V1toP1P2_V2toP3P4_P;
-MEM_DEVICE spin_function_ptr ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_D = DtoV1V2_V1toP1P2_V2toP3P4_D;
-MEM_DEVICE spin_function_ptr ptr_to_DtoVS_VtoP1P2_StoP3P4       = DtoVS_VtoP1P2_StoP3P4;
-MEM_DEVICE spin_function_ptr ptr_to_DtoV1P1_V1toV2P2_V2toP3P4   = DtoV1P1_V1toV2P2_V2toP3P4;
-MEM_DEVICE spin_function_ptr ptr_to_DtoAP1_AtoSP2_StoP3P4       = DtoAP1_AtoSP2_StoP3P4;
-MEM_DEVICE spin_function_ptr ptr_to_DtoAP1_AtoVP2_VtoP3P4       = DtoAP1_AtoVP2_VtoP3P4;
-MEM_DEVICE spin_function_ptr ptr_to_DtoAP1_AtoVP2Dwave_VtoP3P4  = DtoAP1_AtoVP2Dwave_VtoP3P4;
-MEM_DEVICE spin_function_ptr ptr_to_DtoTP1_TtoVP2_VtoP3P4       = DtoTP1_TtoVP2_VtoP3P4;
+__device__ spin_function_ptr ptr_to_DtoPP1_PtoSP2_StoP3P4       = DtoPP1_PtoSP2_StoP3P4;
+__device__ spin_function_ptr ptr_to_DtoPP1_PtoVP2_VtoP3P4       = DtoPP1_PtoVP2_VtoP3P4;
+__device__ spin_function_ptr ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_S = DtoV1V2_V1toP1P2_V2toP3P4_S;
+__device__ spin_function_ptr ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_P = DtoV1V2_V1toP1P2_V2toP3P4_P;
+__device__ spin_function_ptr ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_D = DtoV1V2_V1toP1P2_V2toP3P4_D;
+__device__ spin_function_ptr ptr_to_DtoVS_VtoP1P2_StoP3P4       = DtoVS_VtoP1P2_StoP3P4;
+__device__ spin_function_ptr ptr_to_DtoV1P1_V1toV2P2_V2toP3P4   = DtoV1P1_V1toV2P2_V2toP3P4;
+__device__ spin_function_ptr ptr_to_DtoAP1_AtoSP2_StoP3P4       = DtoAP1_AtoSP2_StoP3P4;
+__device__ spin_function_ptr ptr_to_DtoAP1_AtoVP2_VtoP3P4       = DtoAP1_AtoVP2_VtoP3P4;
+__device__ spin_function_ptr ptr_to_DtoAP1_AtoVP2Dwave_VtoP3P4  = DtoAP1_AtoVP2Dwave_VtoP3P4;
+__device__ spin_function_ptr ptr_to_DtoTP1_TtoVP2_VtoP3P4       = DtoTP1_TtoVP2_VtoP3P4;
 
 
 
-MEM_DEVICE spin_function_ptr ptr_to_FF_12_34_L1       = FF_12_34_L1;
-MEM_DEVICE spin_function_ptr ptr_to_FF_12_34_L2       = FF_12_34_L2;
-MEM_DEVICE spin_function_ptr ptr_to_FF_123_4_L1       = FF_123_4_L1;
-MEM_DEVICE spin_function_ptr ptr_to_FF_123_4_L2       = FF_123_4_L2;
-MEM_DEVICE spin_function_ptr ptr_to_ONE               = ONE;
+__device__ spin_function_ptr ptr_to_FF_12_34_L1       = FF_12_34_L1;
+__device__ spin_function_ptr ptr_to_FF_12_34_L2       = FF_12_34_L2;
+__device__ spin_function_ptr ptr_to_FF_123_4_L1       = FF_123_4_L1;
+__device__ spin_function_ptr ptr_to_FF_123_4_L2       = FF_123_4_L2;
+__device__ spin_function_ptr ptr_to_ONE               = ONE;
 
 
 

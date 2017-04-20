@@ -6,7 +6,7 @@ const int resonanceOffset_incoherent = 4; // Offset of the first resonance into 
 // Notice that this is different from the TddpPdf case because there's no time information.
 // In particular the offset consists of nP, constant index, number of resonances, and cache index.
 
-MEM_DEVICE devcomplex<fptype>* cResonanceValues[10];
+__device__ devcomplex<fptype>* cResonanceValues[10];
 
 EXEC_TARGET inline int parIndexFromResIndex_incoherent(int resIndex) {
     return resonanceOffset_incoherent + resIndex*resonanceSize;
@@ -37,7 +37,7 @@ EXEC_TARGET fptype device_incoherent(fptype* evt, fptype* p, unsigned int* indic
     return ret;
 }
 
-MEM_DEVICE device_function_ptr ptr_to_incoherent = device_incoherent;
+__device__ device_function_ptr ptr_to_incoherent = device_incoherent;
 
 __host__ IncoherentSumPdf::IncoherentSumPdf(std::string n, Variable* m12, Variable* m13, CountingVariable* eventNumber,
         DecayInfo* decay, GooPdf* eff)

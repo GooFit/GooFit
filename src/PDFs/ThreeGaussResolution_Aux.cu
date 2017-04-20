@@ -96,7 +96,7 @@ EXEC_TARGET fptype device_threegauss_resolution(fptype coshterm, fptype costerm,
     return ret;
 }
 
-MEM_DEVICE device_resfunction_ptr ptr_to_threegauss = device_threegauss_resolution;
+__device__ device_resfunction_ptr ptr_to_threegauss = device_threegauss_resolution;
 
 ThreeGaussResolution::ThreeGaussResolution(Variable* cf, Variable* tf, Variable* cb, Variable* cs, Variable* tb,
         Variable* ts, Variable* ob, Variable* os)

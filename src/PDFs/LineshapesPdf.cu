@@ -422,15 +422,15 @@ EXEC_TARGET devcomplex<fptype> nonres_DP(fptype Mpair, fptype m1, fptype m2, uns
     return devcomplex<fptype>(1, 0)*formfactor;
 }
 
-MEM_DEVICE resonance_function_ptr ptr_to_LS_ONE = LS_ONE;
-MEM_DEVICE resonance_function_ptr ptr_to_BW_DP4 = BW;
-MEM_DEVICE resonance_function_ptr ptr_to_lass = lass_MINT;
-MEM_DEVICE resonance_function_ptr ptr_to_glass3 = glass_MINT3;
-MEM_DEVICE resonance_function_ptr ptr_to_bugg_MINT = bugg_MINT;
-MEM_DEVICE resonance_function_ptr ptr_to_bugg_MINT3 = bugg_MINT3;
-MEM_DEVICE resonance_function_ptr ptr_to_SBW = SBW;
-MEM_DEVICE resonance_function_ptr ptr_to_NONRES_DP = nonres_DP;
-MEM_DEVICE resonance_function_ptr ptr_to_Flatte = Flatte_MINT;
+__device__ resonance_function_ptr ptr_to_LS_ONE = LS_ONE;
+__device__ resonance_function_ptr ptr_to_BW_DP4 = BW;
+__device__ resonance_function_ptr ptr_to_lass = lass_MINT;
+__device__ resonance_function_ptr ptr_to_glass3 = glass_MINT3;
+__device__ resonance_function_ptr ptr_to_bugg_MINT = bugg_MINT;
+__device__ resonance_function_ptr ptr_to_bugg_MINT3 = bugg_MINT3;
+__device__ resonance_function_ptr ptr_to_SBW = SBW;
+__device__ resonance_function_ptr ptr_to_NONRES_DP = nonres_DP;
+__device__ resonance_function_ptr ptr_to_Flatte = Flatte_MINT;
 
 Lineshape::Lineshape(string name,
                      Variable* mass,

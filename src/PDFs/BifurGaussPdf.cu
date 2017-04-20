@@ -16,7 +16,7 @@ EXEC_TARGET fptype device_BifurGauss(fptype* evt, fptype* p, unsigned int* indic
     return ret;
 }
 
-MEM_DEVICE device_function_ptr ptr_to_BifurGauss = device_BifurGauss;
+__device__ device_function_ptr ptr_to_BifurGauss = device_BifurGauss;
 
 __host__ BifurGaussPdf::BifurGaussPdf(std::string n, Variable* _x, Variable* mean, Variable* sigmaL, Variable* sigmaR)
     : GooPdf(_x, n) {

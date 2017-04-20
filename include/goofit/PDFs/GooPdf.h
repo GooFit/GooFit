@@ -29,7 +29,7 @@ extern __constant__ unsigned int paramIndices[maxParams];
 extern __constant__ fptype functorConstants[maxParams];
 extern __constant__ fptype normalisationFactors[maxParams];
 
-extern MEM_DEVICE void* device_function_table[200];
+extern __device__ void* device_function_table[200];
 extern void* host_function_table[200];
 extern unsigned int num_device_functions;
 #endif

@@ -118,7 +118,7 @@ EXEC_TARGET fptype device_InterHistogram(fptype* evt, fptype* p, unsigned int* i
     return ret;
 }
 
-MEM_DEVICE device_function_ptr ptr_to_InterHistogram = device_InterHistogram;
+__device__ device_function_ptr ptr_to_InterHistogram = device_InterHistogram;
 
 __host__ InterHistPdf::InterHistPdf(std::string n,
                                     BinnedDataSet* x,

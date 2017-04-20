@@ -11,7 +11,7 @@ extern int host_callnumber;
 #if THRUST_DEVICE_SYSTEM!=THRUST_DEVICE_SYSTEM_CUDA
 // OMP target - all 'device' memory is actually on host.
 #define __align__(n)
-#define MEM_DEVICE
+#define __device__
 #define MEM_SHARED
 #define __constant__
 #define EXEC_TARGET __host__
@@ -49,7 +49,6 @@ enum gooError {gooSuccess = 0, gooErrorMemoryAllocation};
 #elif THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_CUDA
 
 // CUDA target - defaults
-#define MEM_DEVICE __device__
 #define MEM_SHARED __shared__
 #define EXEC_TARGET __device__
 #define SYNCH cudaDeviceSynchronize

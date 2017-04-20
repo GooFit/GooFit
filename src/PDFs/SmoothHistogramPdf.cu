@@ -108,7 +108,7 @@ struct Smoother {
     }
 };
 
-MEM_DEVICE device_function_ptr ptr_to_EvalHistogram = device_EvalHistogram;
+__device__ device_function_ptr ptr_to_EvalHistogram = device_EvalHistogram;
 
 __host__ SmoothHistogramPdf::SmoothHistogramPdf(std::string n, BinnedDataSet* hist, Variable* smoothing)
     : GooPdf(0, n) {

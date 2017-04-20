@@ -31,8 +31,8 @@ EXEC_TARGET fptype device_truth_resolution_average_tau(fptype A2, fptype B2, fpt
     return averagetau;
 }
 
-MEM_DEVICE device_resfunction_ptr ptr_to_truth = device_truth_resolution;
-MEM_DEVICE device_calc_tau_fcn_ptr ptr_to_calc_tau = device_truth_resolution_average_tau;
+__device__ device_resfunction_ptr ptr_to_truth = device_truth_resolution;
+__device__ device_calc_tau_fcn_ptr ptr_to_calc_tau = device_truth_resolution_average_tau;
 
 TruthResolution::TruthResolution()
     : MixingTimeResolution() {

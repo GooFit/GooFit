@@ -318,11 +318,11 @@ EXEC_TARGET void getAmplitudeCoefficients(devcomplex<fptype> a1, devcomplex<fpty
     a1a2imag = a1.imag;
 }
 
-MEM_DEVICE resonance_function_ptr ptr_to_RBW = plainBW;
-MEM_DEVICE resonance_function_ptr ptr_to_GOUSAK = gouSak;
-MEM_DEVICE resonance_function_ptr ptr_to_GAUSSIAN = gaussian;
-MEM_DEVICE resonance_function_ptr ptr_to_NONRES = nonres;
-MEM_DEVICE resonance_function_ptr ptr_to_LASS = lass;
+__device__ resonance_function_ptr ptr_to_RBW = plainBW;
+__device__ resonance_function_ptr ptr_to_GOUSAK = gouSak;
+__device__ resonance_function_ptr ptr_to_GAUSSIAN = gaussian;
+__device__ resonance_function_ptr ptr_to_NONRES = nonres;
+__device__ resonance_function_ptr ptr_to_LASS = lass;
 
 ResonancePdf::ResonancePdf(string name,
                            Variable* ar,

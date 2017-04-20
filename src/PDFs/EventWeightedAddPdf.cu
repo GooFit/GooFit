@@ -53,8 +53,8 @@ EXEC_TARGET fptype device_EventWeightedAddPdfsExt(fptype* evt, fptype* p, unsign
     return ret;
 }
 
-MEM_DEVICE device_function_ptr ptr_to_EventWeightedAddPdfs = device_EventWeightedAddPdfs;
-MEM_DEVICE device_function_ptr ptr_to_EventWeightedAddPdfsExt = device_EventWeightedAddPdfsExt;
+__device__ device_function_ptr ptr_to_EventWeightedAddPdfs = device_EventWeightedAddPdfs;
+__device__ device_function_ptr ptr_to_EventWeightedAddPdfsExt = device_EventWeightedAddPdfsExt;
 
 EventWeightedAddPdf::EventWeightedAddPdf(std::string n, std::vector<Variable*> weights, std::vector<PdfBase*> comps)
     : GooPdf(0, n) {

@@ -11,7 +11,7 @@ This code is not sufficently tested yet and still under heavy development!
 
 #include "goofit/PDFs/DalitzPlotHelpers.h"
 
-class ALIGN(16) gpuLVec {
+class __align__(16) gpuLVec {
 private:
     fptype X;
     fptype Y;

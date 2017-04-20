@@ -202,4 +202,3 @@ __host__ void PdfBase::setNumPerTask(PdfBase* p, const int& c) {
     m_iEventsPerTask = c;
 }
 
-void dummySynch() {}

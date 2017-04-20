@@ -23,9 +23,9 @@ extern int host_callnumber;
 #define MEMCPY_TO_SYMBOL(target, source, count, offset, direction) memcpy(((char*) target)+offset, source, count)
 #define MEMCPY_FROM_SYMBOL(target, source, count, offset, direction) memcpy((char*) target, ((char*) source)+offset, count)
 #define GET_FUNCTION_ADDR(fname) host_fcn_ptr = (void*) fname
-#define SYNCH dummySynch
+#define cudaDeviceSynchronize dummySynch
 #define BLOCKIDX (1)
-void dummySynch();
+inline void cudaDeviceSynchronize() {}
 #define CONST_PI M_PI
 // Create my own error type to avoid __host__ redefinition
 // conflict in Thrust from including driver_types.h
@@ -49,7 +49,6 @@ enum gooError {gooSuccess = 0, gooErrorMemoryAllocation};
 #elif THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_CUDA
 
 // CUDA target - defaults
-#define SYNCH cudaDeviceSynchronize
 #define THREAD_SYNCH __syncthreads();
 #define DEVICE_VECTOR thrust::device_vector
 #define MEMCPY(target, source, count, direction) cudaMemcpy(target, source, count, direction)

@@ -530,7 +530,7 @@ DPPdf::GenerateSig(unsigned int numEvents) {
                       thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEvents, arrayAddress, eventSize)),
                       results.begin(),
                       evalor);
-    SYNCH();
+    cudaDeviceSynchronize();
     gooFree(dev_event_array);
 
     thrust::transform(results.begin(), results.end(), weights.begin(), weights.begin(),
@@ -546,7 +546,7 @@ DPPdf::GenerateSig(unsigned int numEvents) {
     auto weights_h = mcbooster::RealVector_h(weights);
     auto results_h = mcbooster::RealVector_h(results);
     auto flags_h = mcbooster::BoolVector_h(flags);
-    SYNCH();
+    cudaDeviceSynchronize();
     return std::make_tuple(ParSet, VarSet, weights_h, flags_h);
 }
 

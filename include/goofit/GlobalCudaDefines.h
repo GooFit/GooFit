@@ -1,5 +1,6 @@
-#ifndef __GLOBAL_CUDA_HH__
-#define __GLOBAL_CUDA_HH__
+#pragma once
+
+#include <thrust/detail/config.h> // __host__, __device__ defines
 
 #include <thrust/functional.h> // Needed for Thrust constants
 #include <cmath>
@@ -11,10 +12,8 @@ extern int host_callnumber;
 #if THRUST_DEVICE_SYSTEM!=THRUST_DEVICE_SYSTEM_CUDA
 // OMP target - all 'device' memory is actually on host.
 #define __align__(n)
-#define __device__
 #define __shared__
 #define __constant__
-#define __host__
 #define DEVICE_VECTOR thrust::host_vector
 // Use char* here because I need +1 to mean "offset by one byte", not "by one sizeof(whatever)".
 // Can't use void* because then the compiler doesn't know how to do pointer arithmetic.
@@ -84,6 +83,7 @@ gooError gooFree(void* ptr);
 void abortWithCudaPrintFlush(std::string file, int line);
 
 #ifdef DOUBLES
+
 #define root2 1.4142135623730951
 #define invRootPi 0.5641895835477563
 
@@ -134,5 +134,3 @@ typedef float fptype;
 #define POW powf
 #endif
 
-
-#endif

@@ -71,7 +71,7 @@ First entries are the starting points in array, necessary, because number of Lin
 
 
 // This function gets called by the GooFit framework to get the value of the PDF.
-EXEC_TARGET fptype device_TDDP4(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_TDDP4(fptype* evt, fptype* p, unsigned int* indices) {
     //printf("DalitzPlot evt %i zero: %i %i %f (%f, %f).\n", evtNum, numResonances, effFunctionIdx, eff, totalAmp.real, totalAmp.imag);
 
     int evtNum = (int) FLOOR(0.5 + evt[indices[7 + indices[0]]]);
@@ -792,7 +792,7 @@ SFCalculator_TD::SFCalculator_TD(int pIdx, unsigned int sf_idx)
     , _parameters(pIdx)
 {}
 
-EXEC_TARGET devcomplex<fptype> SFCalculator_TD::operator()(thrust::tuple<int, fptype*, int> t) const {
+__device__ devcomplex<fptype> SFCalculator_TD::operator()(thrust::tuple<int, fptype*, int> t) const {
 
     int evtNum = thrust::get<0>(t);
     fptype* evt = thrust::get<1>(t) + (evtNum * thrust::get<2>(t));
@@ -828,7 +828,7 @@ NormSpinCalculator_TD::NormSpinCalculator_TD(int pIdx, unsigned int sf_idx)
     , _parameters(pIdx)
 {}
 
-EXEC_TARGET fptype NormSpinCalculator_TD::operator()(
+__device__ fptype NormSpinCalculator_TD::operator()(
     thrust::tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t)
 const {
 
@@ -868,7 +868,7 @@ LSCalculator_TD::LSCalculator_TD(int pIdx, unsigned int res_idx)
     , _parameters(pIdx)
 {}
 
-EXEC_TARGET devcomplex<fptype> LSCalculator_TD::operator()(thrust::tuple<int, fptype*, int> t) const {
+__device__ devcomplex<fptype> LSCalculator_TD::operator()(thrust::tuple<int, fptype*, int> t) const {
     // Calculates the BW values for a specific resonance.
     devcomplex<fptype> ret;
 
@@ -924,7 +924,7 @@ NormLSCalculator_TD::NormLSCalculator_TD(int pIdx, unsigned int res_idx)
     , _parameters(pIdx)
 {}
 
-EXEC_TARGET devcomplex<fptype> NormLSCalculator_TD::operator()(
+__device__ devcomplex<fptype> NormLSCalculator_TD::operator()(
     thrust::tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t)
 const {
     // Calculates the BW values for a specific resonance.
@@ -979,7 +979,7 @@ AmpCalc_TD::AmpCalc_TD(unsigned int AmpIdx, unsigned int pIdx, unsigned int nPer
 {}
 
 
-EXEC_TARGET devcomplex<fptype> AmpCalc_TD::operator()(thrust::tuple<int, fptype*, int> t) const {
+__device__ devcomplex<fptype> AmpCalc_TD::operator()(thrust::tuple<int, fptype*, int> t) const {
     unsigned int* indices = paramIndices + _parameters;
     unsigned int cacheToUse = indices[2];
     unsigned int totalLS = indices[3];
@@ -1028,7 +1028,7 @@ NormIntegrator_TD::NormIntegrator_TD(unsigned int pIdx)
 {}
 
 
-EXEC_TARGET thrust::tuple<fptype, fptype, fptype, fptype> NormIntegrator_TD::operator()(
+__device__ thrust::tuple<fptype, fptype, fptype, fptype> NormIntegrator_TD::operator()(
     thrust::tuple<int, int, fptype*, devcomplex<fptype>*> t) const {
     unsigned int* indices = paramIndices + _parameters;
     unsigned int totalAMP = indices[5];

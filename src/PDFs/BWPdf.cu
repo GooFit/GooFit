@@ -1,6 +1,6 @@
 #include "goofit/PDFs/BWPdf.h"
 
-EXEC_TARGET fptype device_BW(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_BW(fptype* evt, fptype* p, unsigned int* indices) {
     fptype x = evt[indices[2 + indices[0]]];
     fptype mean  = p[indices[1]];
     fptype gamma = p[indices[2]];

@@ -99,7 +99,7 @@ class SFCalculator_TD : public thrust::unary_function<thrust::tuple<int, fptype*
 public:
     // Used to create the cached BW values.
     SFCalculator_TD(int pIdx, unsigned int sf_idx);
-    EXEC_TARGET devcomplex<fptype> operator()(thrust::tuple<int, fptype*, int> t) const;
+    __device__ devcomplex<fptype> operator()(thrust::tuple<int, fptype*, int> t) const;
 
 private:
 
@@ -112,7 +112,7 @@ class NormSpinCalculator_TD : public
 public:
     // Used to create the cached BW values.
     NormSpinCalculator_TD(int pIdx, unsigned int sf_idx);
-    EXEC_TARGET fptype operator()(thrust::tuple<fptype, fptype, fptype, fptype, fptype> t) const;
+    __device__ fptype operator()(thrust::tuple<fptype, fptype, fptype, fptype, fptype> t) const;
 
 private:
 
@@ -125,7 +125,7 @@ class LSCalculator_TD : public thrust::unary_function<thrust::tuple<int, fptype*
 public:
     // Used to create the cached BW values.
     LSCalculator_TD(int pIdx, unsigned int res_idx);
-    EXEC_TARGET devcomplex<fptype> operator()(thrust::tuple<int, fptype*, int> t) const;
+    __device__ devcomplex<fptype> operator()(thrust::tuple<int, fptype*, int> t) const;
 
 private:
 
@@ -138,7 +138,7 @@ class NormLSCalculator_TD : public
 public:
     // Used to create the cached BW values.
     NormLSCalculator_TD(int pIdx, unsigned int res_idx);
-    EXEC_TARGET devcomplex<fptype> operator()(
+    __device__ devcomplex<fptype> operator()(
         thrust::tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t)
     const;
 
@@ -152,7 +152,7 @@ class AmpCalc_TD : public thrust::unary_function<unsigned int, devcomplex<fptype
 public:
     AmpCalc_TD(unsigned int AmpIdx, unsigned int pIdx, unsigned int nPerm);
     // void setpIdx(unsigned int pIdx){_parameters = pIdx;}
-    EXEC_TARGET devcomplex<fptype> operator()(thrust::tuple<int, fptype*, int> t) const;
+    __device__ devcomplex<fptype> operator()(thrust::tuple<int, fptype*, int> t) const;
 private:
     unsigned int _nPerm;
     unsigned int _AmpIdx;
@@ -163,7 +163,7 @@ class NormIntegrator_TD : public
     thrust::unary_function<thrust::tuple<int, int, fptype*, devcomplex<fptype>*>, fptype > {
 public:
     NormIntegrator_TD(unsigned int pIdx);
-    EXEC_TARGET thrust::tuple<fptype, fptype, fptype, fptype> operator()(
+    __device__ thrust::tuple<fptype, fptype, fptype, fptype> operator()(
         thrust::tuple<int, int, fptype*, devcomplex<fptype>*> t) const;
 private:
     unsigned int _parameters;

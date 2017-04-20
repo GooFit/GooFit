@@ -96,24 +96,24 @@ void abortWithCudaPrintFlush(std::string file, int line, std::string reason, con
     exit(1);
 }
 
-EXEC_TARGET fptype calculateEval(fptype rawPdf, fptype* evtVal, unsigned int par) {
+__device__ fptype calculateEval(fptype rawPdf, fptype* evtVal, unsigned int par) {
     // Just return the raw PDF value, for use in (eg) normalisation.
     return rawPdf;
 }
 
-EXEC_TARGET fptype calculateNLL(fptype rawPdf, fptype* evtVal, unsigned int par) {
+__device__ fptype calculateNLL(fptype rawPdf, fptype* evtVal, unsigned int par) {
     //if ((10 > callnumber) && (THREADIDX < 10) && (BLOCKIDX == 0)) cuPrintf("calculateNll %i %f %f %f\n", callnumber, rawPdf, normalisationFactors[par], rawPdf*normalisationFactors[par]);
     //if (THREADIDX < 50) printf("Thread %i %f %f\n", THREADIDX, rawPdf, normalisationFactors[par]);
     rawPdf *= normalisationFactors[par];
     return rawPdf > 0 ? -LOG(rawPdf) : 0;
 }
 
-EXEC_TARGET fptype calculateProb(fptype rawPdf, fptype* evtVal, unsigned int par) {
+__device__ fptype calculateProb(fptype rawPdf, fptype* evtVal, unsigned int par) {
     // Return probability, ie normalised PDF value.
     return rawPdf * normalisationFactors[par];
 }
 
-EXEC_TARGET fptype calculateBinAvg(fptype rawPdf, fptype* evtVal, unsigned int par) {
+__device__ fptype calculateBinAvg(fptype rawPdf, fptype* evtVal, unsigned int par) {
     rawPdf *= normalisationFactors[par];
     rawPdf *= evtVal[1]; // Bin volume
 
@@ -127,7 +127,7 @@ EXEC_TARGET fptype calculateBinAvg(fptype rawPdf, fptype* evtVal, unsigned int p
     return 0;
 }
 
-EXEC_TARGET fptype calculateBinWithError(fptype rawPdf, fptype* evtVal, unsigned int par) {
+__device__ fptype calculateBinWithError(fptype rawPdf, fptype* evtVal, unsigned int par) {
     // In this case interpret the rawPdf as just a number, not a number of events.
     // Do not divide by integral over phase space, do not multiply by bin volume,
     // and do not collect 200 dollars. evtVal should have the structure (bin entry, bin error).
@@ -138,7 +138,7 @@ EXEC_TARGET fptype calculateBinWithError(fptype rawPdf, fptype* evtVal, unsigned
     return rawPdf;
 }
 
-EXEC_TARGET fptype calculateChisq(fptype rawPdf, fptype* evtVal, unsigned int par) {
+__device__ fptype calculateChisq(fptype rawPdf, fptype* evtVal, unsigned int par) {
     rawPdf *= normalisationFactors[par];
     rawPdf *= evtVal[1]; // Bin volume
 
@@ -529,7 +529,7 @@ __host__ fptype GooPdf::normalise() const {
 
 #ifdef PROFILING
 __constant__ fptype conversion = (1.0 / CLOCKS_PER_SEC);
-EXEC_TARGET fptype callFunction(fptype* eventAddress, unsigned int functionIdx, unsigned int paramIdx) {
+__device__ fptype callFunction(fptype* eventAddress, unsigned int functionIdx, unsigned int paramIdx) {
     clock_t start = clock();
     fptype ret = (*(reinterpret_cast<device_function_ptr>(device_function_table[functionIdx])))(eventAddress, cudaArray,
                  paramIndices + paramIdx);
@@ -544,7 +544,7 @@ EXEC_TARGET fptype callFunction(fptype* eventAddress, unsigned int functionIdx, 
     return ret;
 }
 #else
-EXEC_TARGET fptype callFunction(fptype* eventAddress, unsigned int functionIdx, unsigned int paramIdx) {
+__device__ fptype callFunction(fptype* eventAddress, unsigned int functionIdx, unsigned int paramIdx) {
     return (*(reinterpret_cast<device_function_ptr>(device_function_table[functionIdx])))(eventAddress, cudaArray,
             paramIndices + paramIdx);
 }
@@ -555,7 +555,7 @@ EXEC_TARGET fptype callFunction(fptype* eventAddress, unsigned int functionIdx, 
 
 // Main operator: Calls the PDF to get a predicted value, then the metric
 // to get the goodness-of-prediction number which is returned to MINUIT.
-EXEC_TARGET fptype MetricTaker::operator()(thrust::tuple<int, fptype*, int> t) const {
+__device__ fptype MetricTaker::operator()(thrust::tuple<int, fptype*, int> t) const {
     // Calculate event offset for this thread.
     int eventIndex = thrust::get<0>(t);
     int eventSize  = thrust::get<2>(t);
@@ -576,7 +576,7 @@ EXEC_TARGET fptype MetricTaker::operator()(thrust::tuple<int, fptype*, int> t) c
 // Operator for binned evaluation, no metric.
 // Used in normalisation.
 #define MAX_NUM_OBSERVABLES 5
-EXEC_TARGET fptype MetricTaker::operator()(thrust::tuple<int, int, fptype*> t) const {
+__device__ fptype MetricTaker::operator()(thrust::tuple<int, int, fptype*> t) const {
     // Bin index, event size, base address [lower, upper, numbins]
 
     int evtSize = thrust::get<1>(t);

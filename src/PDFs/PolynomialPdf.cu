@@ -1,6 +1,6 @@
 #include "goofit/PDFs/PolynomialPdf.h"
 
-EXEC_TARGET fptype device_Polynomial(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_Polynomial(fptype* evt, fptype* p, unsigned int* indices) {
     // Structure is nP lowestdegree c1 c2 c3 nO o1
 
     int numParams = RO_CACHE(indices[0])+1;
@@ -16,7 +16,7 @@ EXEC_TARGET fptype device_Polynomial(fptype* evt, fptype* p, unsigned int* indic
     return ret;
 }
 
-EXEC_TARGET fptype device_OffsetPolynomial(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_OffsetPolynomial(fptype* evt, fptype* p, unsigned int* indices) {
     int numParams = RO_CACHE(indices[0]);
     int lowestDegree = RO_CACHE(indices[1]);
 
@@ -31,7 +31,7 @@ EXEC_TARGET fptype device_OffsetPolynomial(fptype* evt, fptype* p, unsigned int*
     return ret;
 }
 
-EXEC_TARGET fptype device_MultiPolynomial(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_MultiPolynomial(fptype* evt, fptype* p, unsigned int* indices) {
     // Structure is nP, maxDegree, offset1, offset2, ..., coeff1, coeff2, ..., nO, o1, o2, ...
 
     int numObservables = RO_CACHE(indices[RO_CACHE(indices[0]) + 1]);

@@ -8,11 +8,11 @@ const int resonanceOffset_incoherent = 4; // Offset of the first resonance into 
 
 __device__ devcomplex<fptype>* cResonanceValues[10];
 
-EXEC_TARGET inline int parIndexFromResIndex_incoherent(int resIndex) {
+__device__ inline int parIndexFromResIndex_incoherent(int resIndex) {
     return resonanceOffset_incoherent + resIndex*resonanceSize;
 }
 
-EXEC_TARGET fptype device_incoherent(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_incoherent(fptype* evt, fptype* p, unsigned int* indices) {
     // Calculates the incoherent sum over the resonances.
     int evtNum = (int) FLOOR(0.5 + evt[indices[4 + indices[0]]]);
 
@@ -227,7 +227,7 @@ SpecialIncoherentIntegrator::SpecialIncoherentIntegrator(int pIdx, unsigned int 
     , parameters(pIdx)
 {}
 
-EXEC_TARGET fptype SpecialIncoherentIntegrator::operator()(thrust::tuple<int, fptype*> t) const {
+__device__ fptype SpecialIncoherentIntegrator::operator()(thrust::tuple<int, fptype*> t) const {
     // Returns integral of specific BW over Dalitz plot, to be cached and
     // multiplied by rapidly-changing amplitude.
 
@@ -286,7 +286,7 @@ SpecialIncoherentResonanceCalculator::SpecialIncoherentResonanceCalculator(int p
     , parameters(pIdx)
 {}
 
-EXEC_TARGET devcomplex<fptype> SpecialIncoherentResonanceCalculator::operator()(thrust::tuple<int, fptype*, int> t)
+__device__ devcomplex<fptype> SpecialIncoherentResonanceCalculator::operator()(thrust::tuple<int, fptype*, int> t)
 const {
     // Returns the BW, or other resonance function, for a specific resonance.
     // Is special because the value is expected to change slowly, so it's

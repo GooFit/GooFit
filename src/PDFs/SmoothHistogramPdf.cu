@@ -4,7 +4,7 @@ __constant__ fptype* dev_base_histograms[100]; // Multiple histograms for the ca
 __constant__ fptype* dev_smoothed_histograms[100];
 unsigned int SmoothHistogramPdf::totalHistograms = 0;
 
-EXEC_TARGET int dev_powi(int base, int exp) {
+__device__ int dev_powi(int base, int exp) {
     int ret = 1;
 
     for(int i = 0; i < exp; ++i)
@@ -13,7 +13,7 @@ EXEC_TARGET int dev_powi(int base, int exp) {
     return ret;
 }
 
-EXEC_TARGET fptype device_EvalHistogram(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_EvalHistogram(fptype* evt, fptype* p, unsigned int* indices) {
     // Structure is
     // nP smoothingIndex totalHistograms (limit1 step1 bins1) (limit2 step2 bins2) nO o1 o2
     // where limit and step are indices into functorConstants.
@@ -52,7 +52,7 @@ EXEC_TARGET fptype device_EvalHistogram(fptype* evt, fptype* p, unsigned int* in
 struct Smoother {
     int parameters;
 
-    EXEC_TARGET fptype operator()(int globalBin) {
+    __device__ fptype operator()(int globalBin) {
         unsigned int* indices = paramIndices + parameters;
         int numVars = RO_CACHE(indices[RO_CACHE(indices[0]) + 1]);
         fptype smoothing = RO_CACHE(cudaArray[RO_CACHE(indices[1])]);

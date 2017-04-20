@@ -1,6 +1,6 @@
 #include "goofit/PDFs/KinLimitBWPdf.h"
 
-EXEC_TARGET fptype getMomentum(const fptype& mass, const fptype& pimass, const fptype& d0mass) {
+__device__ fptype getMomentum(const fptype& mass, const fptype& pimass, const fptype& d0mass) {
     if(mass <= 0)
         return 0;
 
@@ -14,12 +14,12 @@ EXEC_TARGET fptype getMomentum(const fptype& mass, const fptype& pimass, const f
     return SQRT(0.5*lambda/mass);
 }
 
-EXEC_TARGET fptype bwFactor(const fptype& momentum) {
+__device__ fptype bwFactor(const fptype& momentum) {
     // 2.56 = 1.6^2, comes from radius for spin-1 particle
     return 1/SQRT(1.0 + 2.56 * momentum*momentum);
 }
 
-EXEC_TARGET fptype device_KinLimitBW(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_KinLimitBW(fptype* evt, fptype* p, unsigned int* indices) {
     fptype x = evt[RO_CACHE(indices[2 + RO_CACHE(indices[0])])];
     fptype mean  = RO_CACHE(p[RO_CACHE(indices[1])]);
     fptype width = RO_CACHE(p[RO_CACHE(indices[2])]);

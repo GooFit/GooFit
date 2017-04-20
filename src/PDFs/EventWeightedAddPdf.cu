@@ -1,6 +1,6 @@
 #include "goofit/PDFs/EventWeightedAddPdf.h"
 
-EXEC_TARGET fptype device_EventWeightedAddPdfs(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_EventWeightedAddPdfs(fptype* evt, fptype* p, unsigned int* indices) {
     int numParameters = RO_CACHE(indices[0]);
     fptype ret = 0;
     fptype totalWeight = 0;
@@ -22,7 +22,7 @@ EXEC_TARGET fptype device_EventWeightedAddPdfs(fptype* evt, fptype* p, unsigned 
     return ret;
 }
 
-EXEC_TARGET fptype device_EventWeightedAddPdfsExt(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_EventWeightedAddPdfsExt(fptype* evt, fptype* p, unsigned int* indices) {
     // numParameters does not count itself. So the array structure for two functions is
     // nP | F P | F P | nO | o1 o2
     // in which nP = 4, nO = 2.

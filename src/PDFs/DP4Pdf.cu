@@ -40,7 +40,7 @@ __constant__ unsigned int AmpIndices[500];
 
 
 // This function gets called by the GooFit framework to get the value of the PDF.
-EXEC_TARGET fptype device_DP(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_DP(fptype* evt, fptype* p, unsigned int* indices) {
     //printf("DalitzPlot evt %i zero: %i %i %f (%f, %f).\n", evtNum, numResonances, effFunctionIdx, eff, totalAmp.real, totalAmp.imag);
 
     int evtNum = (int) FLOOR(0.5 + evt[indices[7 + indices[0]]]);
@@ -556,7 +556,7 @@ SFCalculator::SFCalculator(int pIdx, unsigned int sf_idx)
     , _parameters(pIdx)
 {}
 
-EXEC_TARGET devcomplex<fptype> SFCalculator::operator()(thrust::tuple<int, fptype*, int> t) const {
+__device__ devcomplex<fptype> SFCalculator::operator()(thrust::tuple<int, fptype*, int> t) const {
 
     int evtNum = thrust::get<0>(t);
     fptype* evt = thrust::get<1>(t) + (evtNum * thrust::get<2>(t));
@@ -592,7 +592,7 @@ NormSpinCalculator::NormSpinCalculator(int pIdx, unsigned int sf_idx)
     , _parameters(pIdx)
 {}
 
-EXEC_TARGET fptype NormSpinCalculator::operator()(
+__device__ fptype NormSpinCalculator::operator()(
     thrust::tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t)
 const {
 
@@ -634,7 +634,7 @@ LSCalculator::LSCalculator(int pIdx, unsigned int res_idx)
     , _parameters(pIdx)
 {}
 
-EXEC_TARGET devcomplex<fptype> LSCalculator::operator()(thrust::tuple<int, fptype*, int> t) const {
+__device__ devcomplex<fptype> LSCalculator::operator()(thrust::tuple<int, fptype*, int> t) const {
     // Calculates the BW values for a specific resonance.
     devcomplex<fptype> ret;
 
@@ -688,7 +688,7 @@ NormLSCalculator::NormLSCalculator(int pIdx, unsigned int res_idx)
     , _parameters(pIdx)
 {}
 
-EXEC_TARGET devcomplex<fptype> NormLSCalculator::operator()(
+__device__ devcomplex<fptype> NormLSCalculator::operator()(
     thrust::tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t)
 const {
     // Calculates the BW values for a specific resonance.
@@ -744,7 +744,7 @@ AmpCalc::AmpCalc(unsigned int AmpIdx, unsigned int pIdx, unsigned int nPerm)
 {}
 
 
-EXEC_TARGET devcomplex<fptype> AmpCalc::operator()(thrust::tuple<int, fptype*, int> t) const {
+__device__ devcomplex<fptype> AmpCalc::operator()(thrust::tuple<int, fptype*, int> t) const {
     unsigned int* indices = paramIndices + _parameters;
     unsigned int cacheToUse = indices[2];
     unsigned int totalLS = indices[3];
@@ -792,7 +792,7 @@ NormIntegrator::NormIntegrator(unsigned int pIdx)
 {}
 
 
-EXEC_TARGET fptype NormIntegrator::operator()(thrust::tuple<int, int, fptype*, devcomplex<fptype>*> t) const {
+__device__ fptype NormIntegrator::operator()(thrust::tuple<int, int, fptype*, devcomplex<fptype>*> t) const {
     unsigned int* indices = paramIndices + _parameters;
     unsigned int totalAMP = indices[5];
 

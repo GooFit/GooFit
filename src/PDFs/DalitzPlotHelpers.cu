@@ -8,22 +8,22 @@ Helper functions
 
 #include "goofit/PDFs/DalitzPlotHelpers.h"
 
-EXEC_TARGET fptype Mass(const fptype* P0) {
+__device__ fptype Mass(const fptype* P0) {
     return SQRT(-P0[0]*P0[0] - P0[1]*P0[1] - P0[2]*P0[2] + P0[3]*P0[3]);
 }
-EXEC_TARGET fptype Mass(const fptype* P0, const fptype* P1) {
+__device__ fptype Mass(const fptype* P0, const fptype* P1) {
     return SQRT(-((P0[0]+P1[0]) * (P0[0]+P1[0])) - ((P0[1]+P1[1]) * (P0[1]+P1[1])) - ((P0[2]+P1[2]) * (P0[2]+P1[2])) + ((
                     P0[3]+P1[3]) * (P0[3]+P1[3])));
 }
-EXEC_TARGET fptype Mass(const fptype* P0, const fptype* P1, const fptype* P2) {
+__device__ fptype Mass(const fptype* P0, const fptype* P1, const fptype* P2) {
     return SQRT(-((P0[0]+P1[0]+P2[0]) * (P0[0]+P1[0]+P2[0])) - ((P0[1]+P1[1]+P2[1]) * (P0[1]+P1[1]+P2[1])) - ((
                     P0[2]+P1[2]+P2[2]) * (P0[2]+P1[2]+P2[2])) + ((P0[3]+P1[3]+P2[3]) * (P0[3]+P1[3]+P2[3])));
 }
-EXEC_TARGET fptype VecDot(const fptype* P0, const fptype* P1) {
+__device__ fptype VecDot(const fptype* P0, const fptype* P1) {
     return (P0[0]*P1[0]  + P0[1]+P1[1] + P0[2]+P1[2] + P0[3]+P1[3]);
 }
 
-EXEC_TARGET void get4Vecs(fptype* Vecs, const unsigned int& constants, const fptype& m12, const fptype& m34,
+__device__ void get4Vecs(fptype* Vecs, const unsigned int& constants, const fptype& m12, const fptype& m34,
                           const fptype& cos12, const fptype& cos34, const fptype& phi) {
     fptype M = functorConstants[constants + 1];
     fptype m1  = functorConstants[constants + 2];
@@ -106,7 +106,7 @@ EXEC_TARGET void get4Vecs(fptype* Vecs, const unsigned int& constants, const fpt
 
 }
 
-EXEC_TARGET fptype getmass(const unsigned int& pair, fptype& d1, fptype& d2, const fptype* vecs, const fptype& m1,
+__device__ fptype getmass(const unsigned int& pair, fptype& d1, fptype& d2, const fptype* vecs, const fptype& m1,
                            const fptype& m2, const fptype& m3, const fptype& m4) {
     const fptype* P1 = vecs;
     const fptype* P2 = (vecs+4);

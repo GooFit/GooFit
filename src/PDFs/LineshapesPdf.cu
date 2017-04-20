@@ -13,7 +13,7 @@ Also right now it is the home to some helper functions needed and an implementat
 
 
 // Form factors as in pdg http://pdg.lbl.gov/2012/reviews/rpp2012-rev-dalitz-analysis-formalism.pdf
-EXEC_TARGET fptype BL_PRIME(fptype z2, fptype z02, int L) {
+__device__ fptype BL_PRIME(fptype z2, fptype z02, int L) {
     if(0 ==L)
         return 1.0;
     else if(1 == L)
@@ -28,7 +28,7 @@ EXEC_TARGET fptype BL_PRIME(fptype z2, fptype z02, int L) {
     // Spin 3 and up not accounted for.
 }
 
-EXEC_TARGET fptype BL(fptype z2, int L) {
+__device__ fptype BL(fptype z2, int L) {
     if(0 ==L)
         return 1.0;
     else if(1==L)
@@ -43,7 +43,7 @@ EXEC_TARGET fptype BL(fptype z2, int L) {
     // Spin 3 and up not accounted for.
 }
 
-EXEC_TARGET fptype BL2(fptype z2, int L) {
+__device__ fptype BL2(fptype z2, int L) {
     if(0 ==L)
         return 1.0;
     else if(1==L)
@@ -58,12 +58,12 @@ EXEC_TARGET fptype BL2(fptype z2, int L) {
     // Spin 3 and up not accounted for.
 }
 
-EXEC_TARGET devcomplex<fptype> LS_ONE(fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
+__device__ devcomplex<fptype> LS_ONE(fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
     return devcomplex<fptype>(1, 0);
 }
 
 //This function is modeled after BW_BW::getVal() in BW_BW.cpp from the MINT package written by Jonas Rademacker.
-EXEC_TARGET devcomplex<fptype> BW(fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
+__device__ devcomplex<fptype> BW(fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
     fptype meson_radius           = functorConstants[indices[7]];
     fptype resmass                = cudaArray[indices[2]];
     fptype reswidth               = cudaArray[indices[3]];
@@ -121,7 +121,7 @@ EXEC_TARGET devcomplex<fptype> BW(fptype Mpair, fptype m1, fptype m2, unsigned i
 }
 
 //This function is modeled after SBW from the MINT package written by Jonas Rademacker.
-EXEC_TARGET devcomplex<fptype> SBW(fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
+__device__ devcomplex<fptype> SBW(fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
     fptype meson_radius           = functorConstants[indices[7]];
     fptype resmass                = cudaArray[indices[2]];
     fptype reswidth               = cudaArray[indices[3]];
@@ -165,21 +165,21 @@ EXEC_TARGET devcomplex<fptype> SBW(fptype Mpair, fptype m1, fptype m2, unsigned 
     return  ret ;
 }
 
-EXEC_TARGET devcomplex<fptype> bugg_rho2(const fptype& s, const fptype m) {
+__device__ devcomplex<fptype> bugg_rho2(const fptype& s, const fptype m) {
     fptype rho_squared = 1. - 4. * m*m /s;
     devcomplex<fptype> returnVal = (rho_squared >= 0) ? devcomplex<fptype>(1, 0) : devcomplex<fptype>(0, 1);
     rho_squared = (rho_squared >= 0) ? SQRT(rho_squared) : SQRT(-rho_squared);
     return rho_squared * returnVal;
 }
 
-EXEC_TARGET fptype bugg_j1(const fptype& s, const fptype m) {
+__device__ fptype bugg_j1(const fptype& s, const fptype m) {
     fptype rho_pipi = bugg_rho2(s, m).real;
     fptype returnVal = 2.;
     returnVal += (rho_pipi>0.) ? rho_pipi * LOG((1.-rho_pipi)/(1.+rho_pipi)) : 0;
     return returnVal/M_PI;
 }
 
-EXEC_TARGET fptype bugg_Gamma_4pi(const fptype& s, const fptype mpi, const fptype& g_4pi, const fptype& M,
+__device__ fptype bugg_Gamma_4pi(const fptype& s, const fptype mpi, const fptype& g_4pi, const fptype& M,
                                   const fptype& lambda_4pi, const fptype& s0_4pi) {
     fptype returnVal = (s < (16. * mpi*mpi)) ? 0 : g_4pi* (1./(1+EXP(lambda_4pi*(s0_4pi-s))))/(1./(1+EXP(lambda_4pi*
                        (s0_4pi-M*M))));
@@ -188,7 +188,7 @@ EXEC_TARGET fptype bugg_Gamma_4pi(const fptype& s, const fptype mpi, const fptyp
 
 //This function is an adaptation from the bugg lineshape implemented in the MINT package written by Jonas Rademacker.
 // this lineshape is not tested yet!
-EXEC_TARGET devcomplex<fptype> bugg_MINT(fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
+__device__ devcomplex<fptype> bugg_MINT(fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
     fptype s                      = Mpair*Mpair;
 
     fptype M            = 0.953;
@@ -231,7 +231,7 @@ EXEC_TARGET devcomplex<fptype> bugg_MINT(fptype Mpair, fptype m1, fptype m2, uns
     return returnVal*SQRT(1000.0);
 }
 
-EXEC_TARGET devcomplex<fptype> bugg_MINT3(fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
+__device__ devcomplex<fptype> bugg_MINT3(fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
     fptype s                      = Mpair*Mpair;
     fptype M            = 0.953;
     fptype b1           = 1.302;
@@ -273,7 +273,7 @@ EXEC_TARGET devcomplex<fptype> bugg_MINT3(fptype Mpair, fptype m1, fptype m2, un
     return returnVal;
 }
 
-EXEC_TARGET devcomplex<fptype> lass_MINT(fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
+__device__ devcomplex<fptype> lass_MINT(fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
     fptype resmass                = cudaArray[indices[2]];
     fptype reswidth               = cudaArray[indices[3]];
     fptype rMass2                 = Mpair*Mpair;
@@ -305,7 +305,7 @@ EXEC_TARGET devcomplex<fptype> lass_MINT(fptype Mpair, fptype m1, fptype m2, uns
 
 //generalized lass lineshape as implemented in MINT3 by Tim Evans. if F=R=1 and phiF=phiR=0 this is equal to normal lass as implemented in Mint3.
 //The difference between this and lass mint is not quite clear to me. need to get back to this later.
-EXEC_TARGET devcomplex<fptype> glass_MINT3(fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
+__device__ devcomplex<fptype> glass_MINT3(fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
     fptype meson_radius           = functorConstants[indices[7]];
     fptype resmass                = cudaArray[indices[2]];
     fptype reswidth               = cudaArray[indices[3]];
@@ -365,13 +365,13 @@ EXEC_TARGET devcomplex<fptype> glass_MINT3(fptype Mpair, fptype m1, fptype m2, u
 
 
 
-EXEC_TARGET devcomplex<fptype> aSqrtTerm(const fptype& m0, const fptype& m) {
+__device__ devcomplex<fptype> aSqrtTerm(const fptype& m0, const fptype& m) {
     fptype a2 = 1 - (2*m0/m)*(2*m0/m);
     devcomplex<fptype> returnVal = a2>0 ? devcomplex<fptype>(SQRT(a2), 0) : devcomplex<fptype>(0, SQRT(-a2));
     return returnVal;
 }
 
-EXEC_TARGET devcomplex<fptype> Flatte_MINT(fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
+__device__ devcomplex<fptype> Flatte_MINT(fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
     fptype meson_radius           = functorConstants[indices[7]];
     fptype resmass                = cudaArray[indices[2]];
     unsigned int orbital             = indices[4];
@@ -406,7 +406,7 @@ EXEC_TARGET devcomplex<fptype> Flatte_MINT(fptype Mpair, fptype m1, fptype m2, u
 }
 
 
-EXEC_TARGET devcomplex<fptype> nonres_DP(fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
+__device__ devcomplex<fptype> nonres_DP(fptype Mpair, fptype m1, fptype m2, unsigned int* indices) {
     fptype meson_radius           = functorConstants[indices[7]];
     unsigned int orbital          = indices[4];
 

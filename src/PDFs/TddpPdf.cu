@@ -18,7 +18,7 @@ const unsigned int SPECIAL_RESOLUTION_FLAG = 999999999;
 __device__ WaveHolder_s* cWaves[16];
 
 /*
-EXEC_TARGET bool inDalitz (const fptype &m12, const fptype &m13, const fptype &bigM, const fptype &dm1, const fptype &dm2, const fptype &dm3) {
+__device__ bool inDalitz (const fptype &m12, const fptype &m13, const fptype &bigM, const fptype &dm1, const fptype &dm2, const fptype &dm3) {
   if (m12 < POW(dm1 + dm2, 2)) return false; // This m12 cannot exist, it's less than the square of the (1,2) particle mass.
   if (m12 > POW(bigM - dm3, 2)) return false;   // This doesn't work either, there's no room for an at-rest 3 daughter.
 
@@ -36,7 +36,7 @@ EXEC_TARGET bool inDalitz (const fptype &m12, const fptype &m13, const fptype &b
 }
 */
 
-EXEC_TARGET bool inDalitz(const fptype& m12, const fptype& m13, const fptype& bigM, const fptype& dm1,
+__device__ bool inDalitz(const fptype& m12, const fptype& m13, const fptype& bigM, const fptype& dm1,
                           const fptype& dm2, const fptype& dm3) {
     fptype dm1pdm2 = dm1 + dm2;
     fptype bigMmdm3 = bigM - dm3;
@@ -75,17 +75,17 @@ EXEC_TARGET bool inDalitz(const fptype& m12, const fptype& m13, const fptype& bi
     return m12less && m12grea && m13less && m13grea;
 }
 
-EXEC_TARGET inline int parIndexFromResIndex(int resIndex) {
+__device__ inline int parIndexFromResIndex(int resIndex) {
     return resonanceOffset + resIndex*resonanceSize;
 }
 
-EXEC_TARGET devcomplex<fptype> getResonanceAmplitude(fptype m12, fptype m13, fptype m23,
+__device__ devcomplex<fptype> getResonanceAmplitude(fptype m12, fptype m13, fptype m23,
         unsigned int functionIdx, unsigned int pIndex) {
     resonance_function_ptr func = reinterpret_cast<resonance_function_ptr>(device_function_table[functionIdx]);
     return (*func)(m12, m13, m23, paramIndices + pIndex);
 }
 
-EXEC_TARGET ThreeComplex device_Tddp_calcIntegrals(fptype m12, fptype m13, int res_i, int res_j, fptype* p,
+__device__ ThreeComplex device_Tddp_calcIntegrals(fptype m12, fptype m13, int res_i, int res_j, fptype* p,
         unsigned int* indices) {
     // For calculating Dalitz-plot integrals. What's needed is the products
     // AiAj*, AiBj*, and BiBj*, where
@@ -130,7 +130,7 @@ EXEC_TARGET ThreeComplex device_Tddp_calcIntegrals(fptype m12, fptype m13, int r
     return ret;
 }
 
-EXEC_TARGET fptype device_Tddp(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_Tddp(fptype* evt, fptype* p, unsigned int* indices) {
     fptype motherMass = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 0]);
     fptype daug1Mass  = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 1]);
     fptype daug2Mass  = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 2]);
@@ -763,7 +763,7 @@ SpecialDalitzIntegrator::SpecialDalitzIntegrator(int pIdx, unsigned int ri, unsi
     , parameters(pIdx)
 {}
 
-EXEC_TARGET ThreeComplex SpecialDalitzIntegrator::operator()(thrust::tuple<int, fptype*> t) const {
+__device__ ThreeComplex SpecialDalitzIntegrator::operator()(thrust::tuple<int, fptype*> t) const {
     // Bin index, base address [lower, upper, numbins]
     // Notice that this is basically MetricTaker::operator (binned) with the special-case knowledge
     // that event size is two, and that the function to call is dev_Tddp_calcIntegrals.
@@ -824,7 +824,7 @@ SpecialWaveCalculator::SpecialWaveCalculator(int pIdx, unsigned int res_idx)
     , parameters(pIdx)
 {}
 
-EXEC_TARGET WaveHolder_s SpecialWaveCalculator::operator()(thrust::tuple<int, fptype*, int> t) const {
+__device__ WaveHolder_s SpecialWaveCalculator::operator()(thrust::tuple<int, fptype*, int> t) const {
     // Calculates the BW values for a specific resonance.
     // The 'A' wave stores the value at each point, the 'B'
     // at the opposite (reversed) point.

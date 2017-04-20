@@ -39,7 +39,7 @@ __constant__ fptype e2[12] = { 0.7551038420890235,    0.3251072991205958,
                                1.733038792213266e-15, 2.709954036083074e-18
                              };
 
-EXEC_TARGET devcomplex<fptype> device_Faddeeva_2(const devcomplex<fptype>& z) {
+__device__ devcomplex<fptype> device_Faddeeva_2(const devcomplex<fptype>& z) {
     fptype* n, *e, t, u, r, s, d, f, g, h;
     devcomplex<fptype> c, d2, v;
     int i;
@@ -117,7 +117,7 @@ EXEC_TARGET devcomplex<fptype> device_Faddeeva_2(const devcomplex<fptype>& z) {
 }
 
 #else
-EXEC_TARGET devcomplex<fptype> device_Faddeeva_2(const devcomplex<fptype>& z) {
+__device__ devcomplex<fptype> device_Faddeeva_2(const devcomplex<fptype>& z) {
     fptype u, s, d, f, g, h;
     devcomplex<fptype> c, d2, v;
 
@@ -266,7 +266,7 @@ EXEC_TARGET devcomplex<fptype> device_Faddeeva_2(const devcomplex<fptype>& z) {
 }
 #endif
 
-EXEC_TARGET fptype device_Voigtian(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_Voigtian(fptype* evt, fptype* p, unsigned int* indices) {
     fptype x = evt[0];
     fptype m = p[indices[1]];
     fptype w = p[indices[2]];

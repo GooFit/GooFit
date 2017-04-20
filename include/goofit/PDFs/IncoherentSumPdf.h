@@ -56,7 +56,7 @@ private:
 class SpecialIncoherentIntegrator : public thrust::unary_function<thrust::tuple<int, fptype*>, fptype > {
 public:
     SpecialIncoherentIntegrator(int pIdx, unsigned int ri);
-    EXEC_TARGET fptype operator()(thrust::tuple<int, fptype*> t) const;
+    __device__ fptype operator()(thrust::tuple<int, fptype*> t) const;
 
 private:
     unsigned int resonance_i;
@@ -68,7 +68,7 @@ class SpecialIncoherentResonanceCalculator : public
 public:
 
     SpecialIncoherentResonanceCalculator(int pIdx, unsigned int res_idx);
-    EXEC_TARGET devcomplex<fptype> operator()(thrust::tuple<int, fptype*, int> t) const;
+    __device__ devcomplex<fptype> operator()(thrust::tuple<int, fptype*, int> t) const;
 
 private:
 

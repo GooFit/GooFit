@@ -1,6 +1,6 @@
 #include "goofit/PDFs/GaussianPdf.h"
 
-EXEC_TARGET fptype device_Gaussian(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_Gaussian(fptype* evt, fptype* p, unsigned int* indices) {
     fptype x = evt[RO_CACHE(indices[2 + RO_CACHE(indices[0])])];
     fptype mean = RO_CACHE(p[RO_CACHE(indices[1])]);
     fptype sigma = RO_CACHE(p[RO_CACHE(indices[2])]);

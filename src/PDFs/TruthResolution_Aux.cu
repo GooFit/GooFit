@@ -1,6 +1,6 @@
 #include "goofit/PDFs/TruthResolution_Aux.h"
 
-EXEC_TARGET fptype device_truth_resolution(fptype coshterm, fptype costerm, fptype sinhterm, fptype sinterm,
+__device__ fptype device_truth_resolution(fptype coshterm, fptype costerm, fptype sinhterm, fptype sinterm,
         fptype tau, fptype dtime, fptype xmixing, fptype ymixing, fptype /*sigma*/,
         fptype* /*p*/, unsigned int* /*indices*/) {
     fptype ret = 0;
@@ -16,7 +16,7 @@ EXEC_TARGET fptype device_truth_resolution(fptype coshterm, fptype costerm, fpty
     return ret;
 }
 
-EXEC_TARGET fptype device_truth_resolution_average_tau(fptype A2, fptype B2, fptype ABr, fptype ABi, fptype xmixing,
+__device__ fptype device_truth_resolution_average_tau(fptype A2, fptype B2, fptype ABr, fptype ABi, fptype xmixing,
         fptype ymixing, fptype tau) {
     fptype a = A2-B2;
     fptype b = 2*ABi;

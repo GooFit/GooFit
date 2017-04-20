@@ -34,7 +34,7 @@ extern void* host_function_table[200];
 extern unsigned int num_device_functions;
 #endif
 
-EXEC_TARGET int dev_powi(int base, int exp);  // Implemented in SmoothHistogramPdf.
+__device__ int dev_powi(int base, int exp);  // Implemented in SmoothHistogramPdf.
 void* getMetricPointer(std::string name);
 
 
@@ -44,7 +44,7 @@ typedef fptype(*device_metric_ptr)(fptype, fptype*, unsigned int);
 
 extern void* host_fcn_ptr;
 
-EXEC_TARGET fptype callFunction(fptype* eventAddress, unsigned int functionIdx, unsigned int paramIdx);
+__device__ fptype callFunction(fptype* eventAddress, unsigned int functionIdx, unsigned int paramIdx);
 
 class MetricTaker;
 
@@ -88,9 +88,9 @@ public:
 
     MetricTaker(PdfBase* dat, void* dev_functionPtr);
     MetricTaker(int fIdx, int pIdx);
-    EXEC_TARGET fptype operator()(thrust::tuple<int, fptype*, int> t)
+    __device__ fptype operator()(thrust::tuple<int, fptype*, int> t)
     const;             // Event number, dev_event_array (pass this way for nvcc reasons), event size
-    EXEC_TARGET fptype operator()(thrust::tuple<int, int, fptype*> t)
+    __device__ fptype operator()(thrust::tuple<int, int, fptype*> t)
     const;             // Event number, event size, normalisation ranges (for binned stuff, eg integration)
 
 private:

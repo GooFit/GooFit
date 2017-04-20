@@ -15,11 +15,11 @@ const int resonanceOffset_DP = 4; // Offset of the first resonance into the para
 //NOTE: This is does not support ten instances (ten threads) of resoncances now, only one set of resonances.
 __device__ devcomplex<fptype>* cResonances[16];
 
-EXEC_TARGET inline int parIndexFromResIndex_DP(int resIndex) {
+__device__ inline int parIndexFromResIndex_DP(int resIndex) {
     return resonanceOffset_DP + resIndex*resonanceSize;
 }
 
-EXEC_TARGET devcomplex<fptype> device_DalitzPlot_calcIntegrals(fptype m12, fptype m13, int res_i, int res_j, fptype* p,
+__device__ devcomplex<fptype> device_DalitzPlot_calcIntegrals(fptype m12, fptype m13, int res_i, int res_j, fptype* p,
         unsigned int* indices) {
     // Calculates BW_i(m12, m13) * BW_j^*(m12, m13).
     // This calculation is in a separate function so
@@ -53,7 +53,7 @@ EXEC_TARGET devcomplex<fptype> device_DalitzPlot_calcIntegrals(fptype m12, fptyp
     return ret;
 }
 
-EXEC_TARGET fptype device_DalitzPlot(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_DalitzPlot(fptype* evt, fptype* p, unsigned int* indices) {
     fptype motherMass = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 0]);
     fptype daug1Mass  = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 1]);
     fptype daug2Mass  = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 2]);
@@ -326,7 +326,7 @@ SpecialResonanceIntegrator::SpecialResonanceIntegrator(int pIdx, unsigned int ri
     , parameters(pIdx)
 {}
 
-EXEC_TARGET devcomplex<fptype> SpecialResonanceIntegrator::operator()(thrust::tuple<int, fptype*> t) const {
+__device__ devcomplex<fptype> SpecialResonanceIntegrator::operator()(thrust::tuple<int, fptype*> t) const {
     // Bin index, base address [lower, upper, numbins]
     // Notice that this is basically MetricTaker::operator (binned) with the special-case knowledge
     // that event size is two, and that the function to call is dev_DalitzPlot_calcIntegrals.
@@ -375,7 +375,7 @@ SpecialResonanceCalculator::SpecialResonanceCalculator(int pIdx, unsigned int re
     , parameters(pIdx)
 {}
 
-EXEC_TARGET devcomplex<fptype> SpecialResonanceCalculator::operator()(thrust::tuple<int, fptype*, int> t) const {
+__device__ devcomplex<fptype> SpecialResonanceCalculator::operator()(thrust::tuple<int, fptype*, int> t) const {
     // Calculates the BW values for a specific resonance.
     devcomplex<fptype> ret;
     int evtNum = thrust::get<0>(t);

@@ -1,6 +1,6 @@
 #include "goofit/PDFs/StepPdf.h"
 
-EXEC_TARGET fptype device_Step(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_Step(fptype* evt, fptype* p, unsigned int* indices) {
     fptype x = evt[indices[2 + indices[0]]];
     fptype x0 = p[indices[1]];
     return (x > x0 ? 1 : 0);

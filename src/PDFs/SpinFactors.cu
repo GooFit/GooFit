@@ -10,15 +10,15 @@ This code is not sufficently tested yet and still under heavy development!
 
 #define ZEMACH 1
 
-EXEC_TARGET fptype DtoPP1_PtoSP2_StoP3P4(fptype* Vecs, unsigned int* indices) {
+__device__ fptype DtoPP1_PtoSP2_StoP3P4(fptype* Vecs, unsigned int* indices) {
     return 1.0;
 }
 
-EXEC_TARGET fptype ONE(fptype* Vecs, unsigned int* indices) {
+__device__ fptype ONE(fptype* Vecs, unsigned int* indices) {
     return 1.0;
 }
 
-EXEC_TARGET fptype FF_12_34_L1(fptype* Vecs, unsigned int* indices) {
+__device__ fptype FF_12_34_L1(fptype* Vecs, unsigned int* indices) {
     fptype mother_radius           = functorConstants[indices[1]];
     unsigned int p1          = indices[2];
     unsigned int p2          = indices[3];
@@ -40,7 +40,7 @@ EXEC_TARGET fptype FF_12_34_L1(fptype* Vecs, unsigned int* indices) {
     return SQRT(ff);
 }
 
-EXEC_TARGET fptype FF_12_34_L2(fptype* Vecs, unsigned int* indices) {
+__device__ fptype FF_12_34_L2(fptype* Vecs, unsigned int* indices) {
     fptype mother_radius           = functorConstants[indices[1]];
     unsigned int p1          = indices[2];
     unsigned int p2          = indices[3];
@@ -62,7 +62,7 @@ EXEC_TARGET fptype FF_12_34_L2(fptype* Vecs, unsigned int* indices) {
     return SQRT(ff);
 }
 
-EXEC_TARGET fptype FF_123_4_L1(fptype* Vecs, unsigned int* indices) {
+__device__ fptype FF_123_4_L1(fptype* Vecs, unsigned int* indices) {
     fptype mother_radius           = functorConstants[indices[1]];
     unsigned int p1          = indices[2];
     unsigned int p2          = indices[3];
@@ -84,7 +84,7 @@ EXEC_TARGET fptype FF_123_4_L1(fptype* Vecs, unsigned int* indices) {
     return SQRT(ff);
 }
 
-EXEC_TARGET fptype FF_123_4_L2(fptype* Vecs, unsigned int* indices) {
+__device__ fptype FF_123_4_L2(fptype* Vecs, unsigned int* indices) {
     fptype mother_radius           = functorConstants[indices[1]];
     unsigned int p1          = indices[2];
     unsigned int p2          = indices[3];
@@ -108,7 +108,7 @@ EXEC_TARGET fptype FF_123_4_L2(fptype* Vecs, unsigned int* indices) {
 
 
 
-EXEC_TARGET fptype DtoPP1_PtoVP2_VtoP3P4(fptype* Vecs, unsigned int* indices) {
+__device__ fptype DtoPP1_PtoVP2_VtoP3P4(fptype* Vecs, unsigned int* indices) {
     unsigned int p1          = indices[2];
     unsigned int p2          = indices[3];
     unsigned int p3          = indices[4];
@@ -137,7 +137,7 @@ EXEC_TARGET fptype DtoPP1_PtoVP2_VtoP3P4(fptype* Vecs, unsigned int* indices) {
 
 
 
-EXEC_TARGET fptype DtoV1V2_V1toP1P2_V2toP3P4_S(fptype* Vecs, unsigned int* indices) {
+__device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_S(fptype* Vecs, unsigned int* indices) {
     unsigned int p1          = indices[2];
     unsigned int p2          = indices[3];
     unsigned int p3          = indices[4];
@@ -169,7 +169,7 @@ EXEC_TARGET fptype DtoV1V2_V1toP1P2_V2toP3P4_S(fptype* Vecs, unsigned int* indic
     return returnVal;
 }
 
-EXEC_TARGET fptype DtoV1V2_V1toP1P2_V2toP3P4_P(fptype* Vecs, unsigned int* indices) {
+__device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_P(fptype* Vecs, unsigned int* indices) {
     unsigned int p1          = indices[2];
     unsigned int p2          = indices[3];
     unsigned int p3          = indices[4];
@@ -202,7 +202,7 @@ EXEC_TARGET fptype DtoV1V2_V1toP1P2_V2toP3P4_P(fptype* Vecs, unsigned int* indic
 #endif
 }
 
-EXEC_TARGET fptype DtoV1V2_V1toP1P2_V2toP3P4_D(fptype* Vecs, unsigned int* indices) {
+__device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_D(fptype* Vecs, unsigned int* indices) {
     unsigned int p1          = indices[2];
     unsigned int p2          = indices[3];
     unsigned int p3          = indices[4];
@@ -247,7 +247,7 @@ EXEC_TARGET fptype DtoV1V2_V1toP1P2_V2toP3P4_D(fptype* Vecs, unsigned int* indic
 #endif
 }
 
-EXEC_TARGET fptype DtoV1P1_V1toV2P2_V2toP3P4(fptype* Vecs, unsigned int* indices) {
+__device__ fptype DtoV1P1_V1toV2P2_V2toP3P4(fptype* Vecs, unsigned int* indices) {
     unsigned int p1          = indices[2];
     unsigned int p2          = indices[3];
     unsigned int p3          = indices[4];
@@ -289,7 +289,7 @@ EXEC_TARGET fptype DtoV1P1_V1toV2P2_V2toP3P4(fptype* Vecs, unsigned int* indices
 #endif
 }
 
-EXEC_TARGET fptype DtoVS_VtoP1P2_StoP3P4(fptype* Vecs, unsigned int* indices) {
+__device__ fptype DtoVS_VtoP1P2_StoP3P4(fptype* Vecs, unsigned int* indices) {
     unsigned int p1          = indices[2];
     unsigned int p2          = indices[3];
     unsigned int p3          = indices[4];
@@ -324,7 +324,7 @@ EXEC_TARGET fptype DtoVS_VtoP1P2_StoP3P4(fptype* Vecs, unsigned int* indices) {
 #endif
 }
 
-EXEC_TARGET fptype DtoAP1_AtoSP2_StoP3P4(fptype* Vecs, unsigned int* indices) {
+__device__ fptype DtoAP1_AtoSP2_StoP3P4(fptype* Vecs, unsigned int* indices) {
     unsigned int p1          = indices[2];
     unsigned int p2          = indices[3];
     unsigned int p3          = indices[4];
@@ -357,7 +357,7 @@ EXEC_TARGET fptype DtoAP1_AtoSP2_StoP3P4(fptype* Vecs, unsigned int* indices) {
 #endif
 }
 
-EXEC_TARGET fptype DtoAP1_AtoVP2_VtoP3P4(fptype* Vecs, unsigned int* indices) {
+__device__ fptype DtoAP1_AtoVP2_VtoP3P4(fptype* Vecs, unsigned int* indices) {
     unsigned int p1          = indices[2];
     unsigned int p2          = indices[3];
     unsigned int p3          = indices[4];
@@ -394,7 +394,7 @@ EXEC_TARGET fptype DtoAP1_AtoVP2_VtoP3P4(fptype* Vecs, unsigned int* indices) {
 #endif
 }
 
-EXEC_TARGET fptype DtoAP1_AtoVP2Dwave_VtoP3P4(fptype* Vecs, unsigned int* indices) {
+__device__ fptype DtoAP1_AtoVP2Dwave_VtoP3P4(fptype* Vecs, unsigned int* indices) {
     unsigned int p1          = indices[2];
     unsigned int p2          = indices[3];
     unsigned int p3          = indices[4];
@@ -433,7 +433,7 @@ EXEC_TARGET fptype DtoAP1_AtoVP2Dwave_VtoP3P4(fptype* Vecs, unsigned int* indice
 
 
 
-EXEC_TARGET fptype DtoTP1_TtoVP2_VtoP3P4(fptype* Vecs, unsigned int* indices) {
+__device__ fptype DtoTP1_TtoVP2_VtoP3P4(fptype* Vecs, unsigned int* indices) {
     unsigned int p1          = indices[2];
     unsigned int p2          = indices[3];
     unsigned int p3          = indices[4];

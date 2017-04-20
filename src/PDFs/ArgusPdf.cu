@@ -1,6 +1,6 @@
 #include "goofit/PDFs/ArgusPdf.h"
 
-EXEC_TARGET fptype device_Argus_Upper(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_Argus_Upper(fptype* evt, fptype* p, unsigned int* indices) {
     fptype x = evt[indices[2 + indices[0]]];
     fptype m0 = p[indices[1]];
 
@@ -17,7 +17,7 @@ EXEC_TARGET fptype device_Argus_Upper(fptype* evt, fptype* p, unsigned int* indi
     return x * POW(t, power) * EXP(slope * t);
 }
 
-EXEC_TARGET fptype device_Argus_Lower(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_Argus_Lower(fptype* evt, fptype* p, unsigned int* indices) {
     fptype x = evt[indices[2 + indices[0]]];
     fptype m0 = p[indices[1]];
 

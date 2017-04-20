@@ -10,21 +10,21 @@
 
 // Device-side, translation-unit constrained.
 
-MEM_CONSTANT fptype cudaArray[maxParams];           // Holds device-side fit parameters.
+__constant__ fptype cudaArray[maxParams];           // Holds device-side fit parameters.
 
-MEM_CONSTANT unsigned int paramIndices[maxParams];
+__constant__ unsigned int paramIndices[maxParams];
 // Holds functor-specific indices into cudaArray. Also overloaded to hold integer constants (ie parameters that cannot vary.)
 
-MEM_CONSTANT fptype functorConstants[maxParams];
+__constant__ fptype functorConstants[maxParams];
 // Holds non-integer constants. Notice that first entry is number of events.
 
-MEM_CONSTANT fptype normalisationFactors[maxParams];
+__constant__ fptype normalisationFactors[maxParams];
 
 // For debugging
 
-MEM_CONSTANT int callnumber;
-MEM_CONSTANT int gpuDebug;
-MEM_CONSTANT unsigned int debugParamIndex;
+__constant__ int callnumber;
+__constant__ int gpuDebug;
+__constant__ unsigned int debugParamIndex;
 MEM_DEVICE int internalDebug1 = -1;
 MEM_DEVICE int internalDebug2 = -1;
 MEM_DEVICE int internalDebug3 = -1;
@@ -36,7 +36,7 @@ fptype host_timeHist[10000];
 
 // Function-pointer related.
 MEM_DEVICE void* device_function_table[200];
-// Not clear why this cannot be MEM_CONSTANT, but it causes crashes to declare it so.
+// Not clear why this cannot be __constant__, but it causes crashes to declare it so.
 
 void* host_function_table[200];
 unsigned int num_device_functions = 0;
@@ -528,7 +528,7 @@ __host__ fptype GooPdf::normalise() const {
 }
 
 #ifdef PROFILING
-MEM_CONSTANT fptype conversion = (1.0 / CLOCKS_PER_SEC);
+__constant__ fptype conversion = (1.0 / CLOCKS_PER_SEC);
 EXEC_TARGET fptype callFunction(fptype* eventAddress, unsigned int functionIdx, unsigned int paramIdx) {
     clock_t start = clock();
     fptype ret = (*(reinterpret_cast<device_function_ptr>(device_function_table[functionIdx])))(eventAddress, cudaArray,

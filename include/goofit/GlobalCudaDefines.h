@@ -13,7 +13,7 @@ extern int host_callnumber;
 #define __align__(n)
 #define MEM_DEVICE
 #define MEM_SHARED
-#define MEM_CONSTANT
+#define __constant__
 #define EXEC_TARGET __host__
 #define DEVICE_VECTOR thrust::host_vector
 // Use char* here because I need +1 to mean "offset by one byte", not "by one sizeof(whatever)".
@@ -51,7 +51,6 @@ enum gooError {gooSuccess = 0, gooErrorMemoryAllocation};
 // CUDA target - defaults
 #define MEM_DEVICE __device__
 #define MEM_SHARED __shared__
-#define MEM_CONSTANT __constant__
 #define EXEC_TARGET __device__
 #define SYNCH cudaDeviceSynchronize
 #define THREAD_SYNCH __syncthreads();

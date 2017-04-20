@@ -1,6 +1,6 @@
 #include "goofit/PDFs/InterHistPdf.h"
 
-MEM_CONSTANT fptype* dev_base_interhists[100]; // Multiple histograms for the case of multiple PDFs
+__constant__ fptype* dev_base_interhists[100]; // Multiple histograms for the case of multiple PDFs
 #define OBS_CODE 4242424242
 // This number is presumably so high that it will never collide
 // with an actual parameter index. It indicates that this dimension

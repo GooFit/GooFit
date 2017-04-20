@@ -67,7 +67,7 @@ First entries are the starting points in array, necessary, because number of Lin
 |start of each Amplitude| #Linshapes | #Spinfactors | LS-indices | SF-indices|
 | 1 entry per Amplitude | 1 per Amp  | 1 per Amp    | #LS in Amp| #SF in Amp|
 */
-// MEM_CONSTANT unsigned int AmpIndices_TD[100];
+// __constant__ unsigned int AmpIndices_TD[100];
 
 
 // This function gets called by the GooFit framework to get the value of the PDF.

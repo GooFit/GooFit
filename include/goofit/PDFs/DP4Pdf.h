@@ -18,7 +18,7 @@ See *.cu file for more details
 
 
 #ifdef SEPARABLE
-extern MEM_CONSTANT unsigned int AmpIndices[500];
+extern __constant__ unsigned int AmpIndices[500];
 #endif
 
 class LSCalculator;

@@ -24,10 +24,10 @@
 
 
 #ifdef SEPARABLE
-extern MEM_CONSTANT fptype cudaArray[maxParams];
-extern MEM_CONSTANT unsigned int paramIndices[maxParams];
-extern MEM_CONSTANT fptype functorConstants[maxParams];
-extern MEM_CONSTANT fptype normalisationFactors[maxParams];
+extern __constant__ fptype cudaArray[maxParams];
+extern __constant__ unsigned int paramIndices[maxParams];
+extern __constant__ fptype functorConstants[maxParams];
+extern __constant__ fptype normalisationFactors[maxParams];
 
 extern MEM_DEVICE void* device_function_table[200];
 extern void* host_function_table[200];

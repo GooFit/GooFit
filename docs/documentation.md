@@ -734,7 +734,7 @@ Bin-center calculation {#listingbincenter}
 ----------------------
 
 ```{.cpp}
-MEM_SHARED fptype binCenters[1024*MAX_NUM_OBSERVABLES];
+__shared__ fptype binCenters[1024*MAX_NUM_OBSERVABLES];
 
 // To convert global bin number to (x,y,z...) coordinates: 
 // For each dimension, take the mod with the number of bins 
@@ -761,7 +761,7 @@ for (int i = 0; i < evtSize; ++i) {
 
 in the straightforward way, and stores the bin centers in a *fake
 event*. Since events are just lists of observables, all that’s necessary
-is to keep track of which part of the `MEM_SHARED` (\ref footnote7 "7") `binCenters`
+is to keep track of which part of the `__shared__` (\ref footnote7 "7") `binCenters`
 array is owned by this thread, look up the index-within-events of each
 observable, and set the entries of the locally-owned part of
 `binCenters` accordingly. This fake event is then sent to the PDF for

@@ -12,7 +12,7 @@ extern int host_callnumber;
 // OMP target - all 'device' memory is actually on host.
 #define __align__(n)
 #define __device__
-#define MEM_SHARED
+#define __shared__
 #define __constant__
 #define __host__
 #define DEVICE_VECTOR thrust::host_vector
@@ -49,7 +49,6 @@ enum gooError {gooSuccess = 0, gooErrorMemoryAllocation};
 #elif THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_CUDA
 
 // CUDA target - defaults
-#define MEM_SHARED __shared__
 #define SYNCH cudaDeviceSynchronize
 #define THREAD_SYNCH __syncthreads();
 #define DEVICE_VECTOR thrust::device_vector

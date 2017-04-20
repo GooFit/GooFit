@@ -1,8 +1,8 @@
 #pragma once
 
 #include <thrust/detail/config.h> // __host__, __device__ defines
+#include <thrust/system_error.h> // Error types
 
-#include <thrust/functional.h> // Needed for Thrust constants
 #include <cmath>
 #include <string>
 using namespace std;

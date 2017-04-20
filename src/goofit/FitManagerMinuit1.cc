@@ -99,7 +99,7 @@ void FitFun(int& npar, double* gin, double& fun, double* fp, int iflag) {
         if(std::isnan(fp[counter]))
             cout << "Variable " << var->name << " " << var->index << " is NaN\n";
 
-        pars[var->getIndex()] = fp[counter++] + var->blind;
+        pars.at(var->getIndex()) = fp[counter++] + var->blind;
     }
 
     pdfPointer->copyParams(pars);

@@ -14,9 +14,9 @@ double FCN::operator()(const std::vector<double>& pars) const {
     vector<double> gooPars; // Translates from Minuit indexing to GooFit indexing
     gooPars.resize(params_->num_);
     int counter = 0;
-
+    
     for(Variable* var : params_->vars_) {
-        gooPars[var->index] = pars[counter++];
+        gooPars.at(var->index) = pars.at(counter++);
     }
 
     params_->pdf_->copyParams(gooPars);
@@ -26,9 +26,9 @@ double FCN::operator()(const std::vector<double>& pars) const {
     return nll;
 }
 
-    // Get the number of variable parameters
-    Params* FCN::GetParams() {
-        return params_;
-    }
+// Get the number of variable parameters
+Params* FCN::GetParams() {
+    return params_;
+}
     
 }

@@ -828,8 +828,6 @@ TDDP4::GenerateSig(unsigned int numEvents) {
     unsigned int tmpparam = parameters;
     wmax = maxWeight;
 
-    exp_functor exp_functor_instance {tmpparam, tmpoff, gammamin, wmax};
-
     thrust::transform(thrust::make_zip_iterator( thrust::make_tuple(eventIndex, results.begin(), arrayAddress, eventSize) ),
                       thrust::make_zip_iterator( thrust::make_tuple(eventIndex + nAcc, results.end(), arrayAddress, eventSize ) ),
                       flag2.begin(),

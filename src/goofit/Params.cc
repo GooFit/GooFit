@@ -3,6 +3,8 @@
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/Variable.h"
 
+#include <unordered_set>
+
 namespace GooFit {
 
     Params::Params(PdfBase &pdf) : pdf_(&pdf) {
@@ -10,15 +12,19 @@ namespace GooFit {
     num_ = vars_.size();
     
     size_t maxIndex = 0;
-    
-    for(Variable* var : vars_) {
-        if(var->lowerlimit == var->upperlimit)
-            Add(var->name, var->value, var->error);
-        else
-            Add(var->name, var->value, var->error, var->lowerlimit, var->upperlimit);
         
-        if(var->fixed)
-            Fix(Index(var->name));
+    for(Variable* var : vars_) {
+        bool added;
+        if(var->fixed) {
+            added = Add(var->name, var->value);
+        } else if(var->lowerlimit == var->upperlimit) {
+            added = Add(var->name, var->value, var->error);
+        } else {
+            added = Add(var->name, var->value, var->error, var->lowerlimit, var->upperlimit);
+        }
+        
+        if(!added)
+            throw std::runtime_error("The name " + var->name + " appears more than once!");
         
         if(maxIndex < var->getIndex())
             maxIndex = var->getIndex();

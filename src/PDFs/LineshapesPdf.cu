@@ -529,8 +529,8 @@ Amplitude::Amplitude(std::string uniqueDecayStr, Variable* ar, Variable* ai, std
     : _uniqueDecayStr(uniqueDecayStr),
       _ar(ar),
       _ai(ai),
-      _LS(LS),
       _SF(SF),
+      _LS(LS),
       _nPerm(nPerm)
 {}
 

@@ -169,15 +169,8 @@ __host__ TDDP4::TDDP4(std::string n,
     , _observables(observables)
     , cachedAMPs(0)
     , cachedResSF(0)
-    , forceRedoIntegrals(true)
     , totalEventSize(observables.size()+2) // number of observables plus eventnumber
-    , cacheToUse(0)
-    , SpinsCalculated(false)
-    , resolution(Tres)
-    , generation_offset(25031992)
-    , genlow(0)
-    , genhigh(5)
-    , generation_no_norm(false) {
+    , resolution(Tres) {
     // should include m12, m34, cos12, cos34, phi, eventnumber, dtime, sigmat. In this order!
     for(std::vector<Variable*>::iterator obsIT = observables.begin(); obsIT != observables.end(); ++obsIT) {
         registerObservable(*obsIT);

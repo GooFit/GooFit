@@ -31,12 +31,12 @@ public:
     void setOwner(PdfBase* dat);
 
 protected:
-    bool errorsOnBins;
+    bool errorsOnBins {false};
 
 private:
     bool binned;
     std::string metricName;
-    PdfBase* owner;
+    PdfBase* owner {nullptr};
 };
 
 class UnbinnedNllFit : public FitControl {

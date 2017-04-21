@@ -76,23 +76,22 @@ private:
     DecayInfo_DP* decayInfo;
     std::vector<Variable*> _observables;
     MixingTimeResolution* resolution;
-    fptype* hostphsp;
     int MCevents;
     // Following variables are useful if masses and widths, involved in difficult BW calculation,
     // change infrequently while amplitudes, only used in adding BW results together, change rapidly.
     DEVICE_VECTOR<devcomplex<fptype>>* cachedResSF; // Caches the BW values and Spins for each event.
     DEVICE_VECTOR<devcomplex<fptype>>* cachedAMPs; // cache Amplitude values for each event.
-    mutable bool generation_no_norm;
-    mutable bool SpinsCalculated;
+    mutable bool generation_no_norm {false};
+    mutable bool SpinsCalculated {false};
     bool* redoIntegral;
-    mutable bool forceRedoIntegrals;
+    mutable bool forceRedoIntegrals {true};
     fptype* cachedMasses;
     fptype* cachedWidths;
     int totalEventSize;
-    int cacheToUse;
-    unsigned int generation_offset;
-    double genlow;
-    double genhigh;
+    int cacheToUse {0};
+    unsigned int generation_offset {25031992};
+    double genlow {0};
+    double genhigh {5};
 };
 
 class SFCalculator_TD : public thrust::unary_function<thrust::tuple<int, fptype*, int>, devcomplex<fptype>> {

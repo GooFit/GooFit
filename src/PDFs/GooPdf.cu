@@ -1,5 +1,6 @@
 #include "goofit/GlobalCudaDefines.h"
 #include "goofit/PDFs/GooPdf.h"
+#include "goofit/ThrustOverride.h"
 
 #include "goofit/Variable.h"
 #include "goofit/FitControl.h"

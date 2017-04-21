@@ -82,6 +82,23 @@ conversion = [
     (r'\bdevcomplex\b', 'thrust::complex'),
     (r'\bstd::complex\b', 'thrust::complex'),
     (r'\bDEVICE_VECTOR\b', 'thrust::device_vector'),
+    (r'\bATAN2\b', 'atan2'),
+    (r'\bCOS\b', 'cos'),
+    (r'\bCOSH\b', 'cosh'),
+    (r'\bSINH\b', 'sinh'),
+    (r'\bERF\b', 'erf'),
+    (r'\bERFC\b', 'erfc'),
+    (r'\bEXP\b', 'exp'),
+    (r'\bFABS\b', 'fabs'),
+    (r'\bFMOD\b', 'fmod'),
+    (r'\bLOG\b', 'log'),
+    (r'\bMODF\b', 'modf'),
+    (r'\bSIN\b', 'sin'),
+    (r'\bSQRT\b', 'sqrt'),
+    (r'\bRSQRT\b', 'rsqrt'),
+    (r'\bFLOOR\b', 'floor'),
+    (r'\bCONST_PI\b', 'M_PI'),
+
 ]
 
 def fix_text(contents):

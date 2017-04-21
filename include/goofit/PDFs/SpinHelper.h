@@ -49,7 +49,7 @@ public:
         return this->Dot(*this);
     }
     __device__ inline fptype M() const {
-        return SQRT(this->Mag2());
+        return sqrt(this->Mag2());
     }
     __device__ inline void SetX(fptype a) {
         X=a;

@@ -4,7 +4,7 @@ __device__ fptype device_Exp(fptype* evt, fptype* p, unsigned int* indices) {
     fptype x = evt[indices[2 + indices[0]]];
     fptype alpha = p[indices[1]];
 
-    fptype ret = EXP(alpha*x);
+    fptype ret = exp(alpha*x);
     return ret;
 }
 
@@ -13,7 +13,7 @@ __device__ fptype device_ExpOffset(fptype* evt, fptype* p, unsigned int* indices
     x -= p[indices[1]];
     fptype alpha = p[indices[2]];
 
-    fptype ret = EXP(alpha*x);
+    fptype ret = exp(alpha*x);
     return ret;
 }
 
@@ -23,10 +23,10 @@ __device__ fptype device_ExpPoly(fptype* evt, fptype* p, unsigned int* indices) 
     fptype exparg = 0;
 
     for(int i = 0; i <= indices[0]; ++i) {
-        exparg += POW(x, i) * p[indices[i+1]];
+        exparg += pow(x, i) * p[indices[i+1]];
     }
 
-    fptype ret = EXP(exparg);
+    fptype ret = exp(exparg);
     return ret;
 }
 
@@ -37,10 +37,10 @@ __device__ fptype device_ExpPolyOffset(fptype* evt, fptype* p, unsigned int* ind
     fptype exparg = 0;
 
     for(int i = 0; i <= indices[0]; ++i) {
-        exparg += POW(x, i) * p[indices[i+2]];
+        exparg += pow(x, i) * p[indices[i+2]];
     }
 
-    fptype ret = EXP(exparg);
+    fptype ret = exp(exparg);
     return ret;
 }
 
@@ -95,7 +95,7 @@ __host__ fptype ExpPdf::integrate(fptype lo, fptype hi) const {
         return (hi - lo);
     }
 
-    fptype ret = EXP(alpha*hi) - EXP(alpha*lo);
+    fptype ret = exp(alpha*hi) - exp(alpha*lo);
     ret /= alpha;
     return ret;
 }

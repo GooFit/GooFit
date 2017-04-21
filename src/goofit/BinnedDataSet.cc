@@ -112,7 +112,7 @@ fptype BinnedDataSet::getBinVolume(unsigned int bin) const {
 
 fptype BinnedDataSet::getBinError(unsigned int bin) const {
     if(0 == binerrors.size())
-        return SQRT(binvalues[bin]);
+        return sqrt(binvalues[bin]);
 
     assert(bin < binerrors.size());
     return binerrors[bin];

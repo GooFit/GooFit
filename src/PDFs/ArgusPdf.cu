@@ -13,9 +13,9 @@ __device__ fptype device_Argus_Upper(fptype* evt, fptype* p, unsigned int* indic
     fptype slope = p[indices[2]];
     fptype power = p[indices[3]];
     t = 1 - t*t;
-    //printf("device_Argus_Upper %f %f %f %f %f\n", x, m0, slope, t, x * POW(t, power) * EXP(slope * t));
+    //printf("device_Argus_Upper %f %f %f %f %f\n", x, m0, slope, t, x * pow(t, power) * exp(slope * t));
 
-    return x * POW(t, power) * EXP(slope * t);
+    return x * pow(t, power) * exp(slope * t);
 }
 
 __device__ fptype device_Argus_Lower(fptype* evt, fptype* p, unsigned int* indices) {
@@ -36,11 +36,11 @@ __device__ fptype device_Argus_Lower(fptype* evt, fptype* p, unsigned int* indic
 
     fptype slope = p[indices[2]];
     fptype power = p[indices[3]];
-    fptype ret = x * POW(t, power) * EXP(slope * t);
+    fptype ret = x * pow(t, power) * exp(slope * t);
     //if ((0 == THREADIDX) && (0 == BLOCKIDX) && (callnumber < 1)) cuPrintf("device_Argus_Lower %i %i %f %f %f %f %f\n", indices[1], indices[2], x, m0, slope, t, ret);
-    //if (isnan(ret)) printf("NaN Argus: %f %f %f %f %f %f %f\n", x, m0, t, slope, power, POW(t, power), EXP(slope*t));
+    //if (isnan(ret)) printf("NaN Argus: %f %f %f %f %f %f %f\n", x, m0, t, slope, power, pow(t, power), exp(slope*t));
     //if ((0 == THREADIDX) && (0 == BLOCKIDX) && (gpuDebug & 1))
-    //printf("(%i, %i) device_Argus_Lower %f %f %f %f %f\n", BLOCKIDX, THREADIDX, x, m0, slope, t, x * POW(t, power) * EXP(slope * t));
+    //printf("(%i, %i) device_Argus_Lower %f %f %f %f %f\n", BLOCKIDX, THREADIDX, x, m0, slope, t, x * pow(t, power) * exp(slope * t));
 
 
     return ret;
@@ -82,7 +82,7 @@ fptype argus_lower_helper(fptype x, fptype m0, fptype slope, fptype power) {
     t *= t;
     t -= 1;
 
-    fptype ret = x * POW(t, power) * EXP(slope * t);
+    fptype ret = x * pow(t, power) * exp(slope * t);
 
     return ret;
 }

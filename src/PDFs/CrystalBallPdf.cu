@@ -17,14 +17,14 @@ __device__ fptype device_CrystalBall(fptype* evt, fptype* p, unsigned int* indic
     if((alpha > 0 && rx <= alpha) ||  // Right-hand tail, in Gaussian region
             (alpha < 0 && rx >= alpha) || // Left-hand tail, in Gaussian region
             (alpha == 0)) {               // Pure Gaussian
-        ret = EXP(-0.5*rx*rx);
+        ret = exp(-0.5*rx*rx);
     } else { // Tail part
         fptype n_over_alpha = power / alpha;
-        fptype a = EXP(-0.5 * alpha*alpha);
+        fptype a = exp(-0.5 * alpha*alpha);
         fptype b = n_over_alpha - alpha;
         fptype d = b + rx;
         d = (d != 0) ? n_over_alpha / d : 0;
-        ret = a*POW(d, power);
+        ret = a*pow(d, power);
     }
 
     //if ((0 == THREADIDX) && (0 == BLOCKIDX)) printf("device_CB: %f %f %f %f %f %f\n", x, mean, sigma, alpha, power, ret);
@@ -80,19 +80,19 @@ __host__ fptype CrystalBallPdf::integrate(fptype lo, fptype hi) const {
     fptype absAlpha = fabs(alpha);
 
     if(tmin >= -absAlpha) {
-        result += sigma*sqrtPiOver2*(ERF(tmax/sqrt2) -
-                                     ERF(tmin/sqrt2));
+        result += sigma*sqrtPiOver2*(erf(tmax/sqrt2) -
+                                     erf(tmin/sqrt2));
     } else if(tmax <= -absAlpha) {
-        fptype a = POW(power/absAlpha, power)*exp(-0.5*absAlpha*absAlpha);
+        fptype a = pow(power/absAlpha, power)*exp(-0.5*absAlpha*absAlpha);
         fptype b = power/absAlpha - absAlpha;
 
         if(useLog) {
             result += a*sigma*(log(b-tmin) - log(b-tmax));
         } else {
-            result += a*sigma/(1.0-power)*(1.0/(POW(b-tmin, power-1.0)) - 1.0/(POW(b-tmax, power-1.0)));
+            result += a*sigma/(1.0-power)*(1.0/(pow(b-tmin, power-1.0)) - 1.0/(pow(b-tmax, power-1.0)));
         }
     } else {
-        fptype a = POW(power/absAlpha, power)*exp(-0.5*absAlpha*absAlpha);
+        fptype a = pow(power/absAlpha, power)*exp(-0.5*absAlpha*absAlpha);
         fptype b = power/absAlpha - absAlpha;
 
         fptype term1 = 0.0;
@@ -100,10 +100,10 @@ __host__ fptype CrystalBallPdf::integrate(fptype lo, fptype hi) const {
         if(useLog) {
             term1 = a*sigma*(log(b-tmin) - log(power/absAlpha));
         } else {
-            term1 = a*sigma/(1.0-power)*(1.0/(POW(b-tmin, power-1.0)) - 1.0/(POW(power/absAlpha, power-1.0)));
+            term1 = a*sigma/(1.0-power)*(1.0/(pow(b-tmin, power-1.0)) - 1.0/(pow(power/absAlpha, power-1.0)));
         }
 
-        fptype term2 = sigma*sqrtPiOver2*(ERF(tmax/sqrt2) - ERF(-absAlpha/sqrt2));
+        fptype term2 = sigma*sqrtPiOver2*(erf(tmax/sqrt2) - erf(-absAlpha/sqrt2));
         result += term1 + term2;
     }
 

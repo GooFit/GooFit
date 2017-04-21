@@ -11,7 +11,7 @@ __device__ fptype device_Polynomial(fptype* evt, fptype* p, unsigned int* indice
     fptype ret = 0;
 
     for(int i = 2; i < numParams; ++i) {
-        ret += RO_CACHE(p[RO_CACHE(indices[i])]) * POW(x, lowestDegree + i - 2);
+        ret += RO_CACHE(p[RO_CACHE(indices[i])]) * pow(x, lowestDegree + i - 2);
     }
 
     return ret;
@@ -26,7 +26,7 @@ __device__ fptype device_OffsetPolynomial(fptype* evt, fptype* p, unsigned int* 
     fptype ret = 0;
 
     for(int i = 2; i < numParams; ++i) {
-        ret += RO_CACHE(p[RO_CACHE(indices[i])]) * POW(x, lowestDegree + i - 2);
+        ret += RO_CACHE(p[RO_CACHE(indices[i])]) * pow(x, lowestDegree + i - 2);
     }
 
     return ret;
@@ -68,12 +68,12 @@ __device__ fptype device_MultiPolynomial(fptype* evt, fptype* p, unsigned int* i
             x -= offset;
             int currPower = currIndex % maxDegree;
             currIndex /= maxDegree;
-            currTerm *= POW(x, currPower);
+            currTerm *= pow(x, currPower);
             sumOfIndices += currPower;
             //if ((gpuDebug & 1) && (THREADIDX == 50) && (BLOCKIDX == 3))
             //if ((BLOCKIDX == internalDebug1) && (THREADIDX == internalDebug2))
             //if ((1 > (int) floor(0.5 + evt[8])) && (gpuDebug & 1) && (paramIndices + debugParamIndex == indices))
-            //printf("  [%f -> %f^%i = %f] (%i %i) \n", evt[indices[2 + indices[0] + j]], x, currPower, POW(x, currPower), sumOfIndices, indices[2 + indices[0] + j]);
+            //printf("  [%f -> %f^%i = %f] (%i %i) \n", evt[indices[2 + indices[0] + j]], x, currPower, pow(x, currPower), sumOfIndices, indices[2 + indices[0] + j]);
         }
 
         //if ((gpuDebug & 1) && (THREADIDX == 50) && (BLOCKIDX == 3))
@@ -194,8 +194,8 @@ __host__ fptype PolynomialPdf::integrate(fptype lo, fptype hi) const {
 
     for(int i = 2; i < indices[0] + (center ? 0 : 1); ++i) {
         fptype powerPlusOne = lowestDegree + i - 2;
-        fptype curr = POW(hi, powerPlusOne);
-        curr       -= POW(lo, powerPlusOne);
+        fptype curr = pow(hi, powerPlusOne);
+        curr       -= pow(lo, powerPlusOne);
         curr       /= powerPlusOne;
         ret        += host_params[indices[i]] * curr;
     }

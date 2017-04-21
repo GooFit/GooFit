@@ -16,7 +16,7 @@ __device__ inline int parIndexFromResIndex_incoherent(int resIndex) {
 
 __device__ fptype device_incoherent(fptype* evt, fptype* p, unsigned int* indices) {
     // Calculates the incoherent sum over the resonances.
-    int evtNum = (int) FLOOR(0.5 + evt[indices[4 + indices[0]]]);
+    int evtNum = (int) floor(0.5 + evt[indices[4 + indices[0]]]);
 
     fptype ret = 0;
     unsigned int numResonances = indices[2];
@@ -240,7 +240,7 @@ __device__ fptype SpecialIncoherentIntegrator::operator()(thrust::tuple<int, fpt
     int globalBinNumber  = thrust::get<0>(t);
     fptype lowerBoundM12 = thrust::get<1>(t)[0];
     fptype upperBoundM12 = thrust::get<1>(t)[1];
-    int numBinsM12       = (int) FLOOR(thrust::get<1>(t)[2] + 0.5);
+    int numBinsM12       = (int) floor(thrust::get<1>(t)[2] + 0.5);
     int binNumberM12     = globalBinNumber % numBinsM12;
     fptype binCenterM12  = upperBoundM12 - lowerBoundM12;
     binCenterM12        /= numBinsM12;
@@ -250,7 +250,7 @@ __device__ fptype SpecialIncoherentIntegrator::operator()(thrust::tuple<int, fpt
     globalBinNumber     /= numBinsM12;
     fptype lowerBoundM13 = thrust::get<1>(t)[3];
     fptype upperBoundM13 = thrust::get<1>(t)[4];
-    int numBinsM13       = (int) FLOOR(thrust::get<1>(t)[5] + 0.5);
+    int numBinsM13       = (int) floor(thrust::get<1>(t)[5] + 0.5);
     fptype binCenterM13  = upperBoundM13 - lowerBoundM13;
     binCenterM13        /= numBinsM13;
     binCenterM13        *= (globalBinNumber + 0.5);

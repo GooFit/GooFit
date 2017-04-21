@@ -12,12 +12,12 @@ __device__ fptype getMomentum(const fptype& mass, const fptype& pimass, const fp
     if(lambda <= 0)
         return 0;
 
-    return SQRT(0.5*lambda/mass);
+    return sqrt(0.5*lambda/mass);
 }
 
 __device__ fptype bwFactor(const fptype& momentum) {
     // 2.56 = 1.6^2, comes from radius for spin-1 particle
-    return 1/SQRT(1.0 + 2.56 * momentum*momentum);
+    return 1/sqrt(1.0 + 2.56 * momentum*momentum);
 }
 
 __device__ fptype device_KinLimitBW(fptype* evt, fptype* p, unsigned int* indices) {

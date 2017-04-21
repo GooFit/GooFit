@@ -247,23 +247,23 @@ fptype cpuGetM23(fptype massPZ, fptype massPM) {
 }
 
 bool cpuDalitz(fptype m12, fptype m13, fptype bigM, fptype dm1, fptype dm2, fptype dm3) {
-    if(m12 < POW(dm1 + dm2, 2))
+    if(m12 < pow(dm1 + dm2, 2))
         return false; // This m12 cannot exist, it's less than the square of the (1,2) particle mass.
 
-    if(m12 > POW(bigM - dm3, 2))
+    if(m12 > pow(bigM - dm3, 2))
         return false;   // This doesn't work either, there's no room for an at-rest 3 daughter.
 
     // Calculate energies of 1 and 3 particles in m12 rest frame.
-    fptype e1star = 0.5 * (m12 - dm2*dm2 + dm1*dm1) / SQRT(m12);
-    fptype e3star = 0.5 * (bigM*bigM - m12 - dm3*dm3) / SQRT(m12);
+    fptype e1star = 0.5 * (m12 - dm2*dm2 + dm1*dm1) / sqrt(m12);
+    fptype e3star = 0.5 * (bigM*bigM - m12 - dm3*dm3) / sqrt(m12);
 
     // Bounds for m13 at this value of m12.
-    fptype minimum = POW(e1star + e3star, 2) - POW(SQRT(e1star*e1star - dm1*dm1) + SQRT(e3star*e3star - dm3*dm3), 2);
+    fptype minimum = pow(e1star + e3star, 2) - pow(sqrt(e1star*e1star - dm1*dm1) + sqrt(e3star*e3star - dm3*dm3), 2);
 
     if(m13 < minimum)
         return false;
 
-    fptype maximum = POW(e1star + e3star, 2) - POW(SQRT(e1star*e1star - dm1*dm1) - SQRT(e3star*e3star - dm3*dm3), 2);
+    fptype maximum = pow(e1star + e3star, 2) - pow(sqrt(e1star*e1star - dm1*dm1) - sqrt(e3star*e3star - dm3*dm3), 2);
 
     if(m13 > maximum)
         return false;

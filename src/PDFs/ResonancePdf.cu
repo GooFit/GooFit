@@ -7,18 +7,18 @@ __device__ fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m) {
     fptype kin1 = 1 - POW2(d1m+d2m) / rMassSq;
 
     if(kin1 >= 0)
-        kin1 = SQRT(kin1);
+        kin1 = sqrt(kin1);
     else
         kin1 = 1;
 
     fptype kin2 = 1 - POW2(d1m-d2m) / rMassSq;
 
     if(kin2 >= 0)
-        kin2 = SQRT(kin2);
+        kin2 = sqrt(kin2);
     else
         kin2 = 1;
 
-    return 0.5*SQRT(rMassSq)*kin1*kin2;
+    return 0.5*sqrt(rMassSq)*kin1*kin2;
 }
 
 __device__ fptype dampingFactorSquare(const fptype& cmmom, const int& spin, const fptype& mRadius) {
@@ -113,11 +113,11 @@ __device__ thrust::complex<fptype> plainBW(fptype m12, fptype m13, fptype m23, u
 
     // RBW evaluation
     fptype A = (resmass - rMassSq);
-    fptype B = resmass*reswidth * POW(measureDaughterMoms / nominalDaughterMoms, 2.0*spin + 1) * frFactor / SQRT(rMassSq);
+    fptype B = resmass*reswidth * pow(measureDaughterMoms / nominalDaughterMoms, 2.0*spin + 1) * frFactor / sqrt(rMassSq);
     fptype C = 1.0 / (A*A + B*B);
     thrust::complex<fptype> ret(A*C, B*C); // Dropping F_D=1
 
-    ret *= SQRT(frFactor);
+    ret *= sqrt(frFactor);
     fptype spinF = spinFactor(spin, motherMass, daug1Mass, daug2Mass, daug3Mass, m12, m13, m23, cyclic_index);
     ret *= spinF;
     // printf("%f, %f, %f, %f\n",ret.real, ret.imag, m12, m13);
@@ -131,11 +131,11 @@ __device__ thrust::complex<fptype> gaussian(fptype m12, fptype m13, fptype m23, 
     unsigned int cyclic_index     = indices[4];
 
     // Notice sqrt - this function uses mass, not mass-squared like the other resonance types.
-    fptype massToUse = SQRT(PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
+    fptype massToUse = sqrt(PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
     massToUse -= resmass;
     massToUse /= reswidth;
     massToUse *= massToUse;
-    fptype ret = EXP(-0.5*massToUse);
+    fptype ret = exp(-0.5*massToUse);
 
     // Ignore factor 1/sqrt(2pi).
     ret /= reswidth;
@@ -219,13 +219,13 @@ __device__ thrust::complex<fptype> gouSak(fptype m12, fptype m13, fptype m23, un
 
     // Implement Gou-Sak:
 
-    fptype D = (1.0 + dFun(resmass, daug2Mass, daug3Mass) * reswidth/SQRT(resmass));
+    fptype D = (1.0 + dFun(resmass, daug2Mass, daug3Mass) * reswidth/sqrt(resmass));
     fptype E = resmass - rMassSq + fsFun(rMassSq, resmass, reswidth, daug2Mass, daug3Mass);
-    fptype F = SQRT(resmass) * reswidth * POW(measureDaughterMoms / nominalDaughterMoms, 2.0*spin + 1) * frFactor;
+    fptype F = sqrt(resmass) * reswidth * pow(measureDaughterMoms / nominalDaughterMoms, 2.0*spin + 1) * frFactor;
 
     D       /= (E*E + F*F);
     thrust::complex<fptype> retur(D*E, D*F); // Dropping F_D=1
-    retur *= SQRT(frFactor);
+    retur *= sqrt(frFactor);
     retur *= spinFactor(spin, motherMass, daug1Mass, daug2Mass, daug3Mass, m12, m13, m23, cyclic_index);
 
     return retur;
@@ -271,7 +271,7 @@ __device__ thrust::complex<fptype> lass(fptype m12, fptype m13, fptype m23, unsi
     */
 
     fptype q = measureDaughterMoms;
-    fptype g = reswidth * POW(measureDaughterMoms / nominalDaughterMoms, 2.0*spin + 1) * frFactor / SQRT(rMassSq);
+    fptype g = reswidth * pow(measureDaughterMoms / nominalDaughterMoms, 2.0*spin + 1) * frFactor / sqrt(rMassSq);
 
     fptype _a    = 0.22357;
     fptype _r    = -15.042;
@@ -288,15 +288,15 @@ __device__ thrust::complex<fptype> lass(fptype m12, fptype m13, fptype m23, unsi
     thrust::complex<fptype> expi2deltaB = thrust::complex<fptype>(qcot_deltaB, q)/thrust::complex<fptype>(qcot_deltaB, -q);
     thrust::complex<fptype>  resT = thrust::complex<fptype>(cos(_phiR+2*_phiB), sin(_phiR+2*_phiB))*_R;
 
-    thrust::complex<fptype> prop = thrust::complex<fptype>(1, 0)/thrust::complex<fptype>(resmass-rMassSq, SQRT(resmass)*g);
+    thrust::complex<fptype> prop = thrust::complex<fptype>(1, 0)/thrust::complex<fptype>(resmass-rMassSq, sqrt(resmass)*g);
     // resT *= prop*m0*_g0*m0/twoBodyCMmom(m0*m0, _trackinfo[i])*expi2deltaB;
     resT *= prop*(resmass*reswidth/nominalDaughterMoms)*expi2deltaB;
 
     // calculate bkg part
     resT += thrust::complex<fptype>(cos(_phiB),
-                               sin(_phiB))*_B*(cos(_phiB)+cot_deltaB*sin(_phiB))*SQRT(rMassSq)/thrust::complex<fptype>(qcot_deltaB, -q);
+                               sin(_phiB))*_B*(cos(_phiB)+cot_deltaB*sin(_phiB))*sqrt(rMassSq)/thrust::complex<fptype>(qcot_deltaB, -q);
 
-    resT *= SQRT(frFactor);
+    resT *= sqrt(frFactor);
     resT *= spinFactor(spin, motherMass, daug1Mass, daug2Mass, daug3Mass, m12, m13, m23, cyclic_index);
 
     return resT;

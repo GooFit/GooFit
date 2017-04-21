@@ -25,11 +25,11 @@ __device__ fptype device_ConvolvePdfs(fptype* evt, fptype* p, unsigned int* indi
     fptype x0      = evt[indices[2 + indices[0]]];
     int workSpaceIndex = indices[6];
 
-    int numbins = (int) FLOOR((hiBound - loBound) / step + 0.5);
+    int numbins = (int) floor((hiBound - loBound) / step + 0.5);
 
     fptype lowerBoundOffset = loBound / step;
-    lowerBoundOffset -= FLOOR(lowerBoundOffset);
-    int offsetInBins = (int) FLOOR(x0 / step - lowerBoundOffset);
+    lowerBoundOffset -= floor(lowerBoundOffset);
+    int offsetInBins = (int) floor(x0 / step - lowerBoundOffset);
 
     // Brute-force calculate integral M(x) * R(x - x0) dx
     int offset = RO_CACHE(modelOffset[workSpaceIndex]);
@@ -56,11 +56,11 @@ __device__ fptype device_ConvolveSharedPdfs(fptype* evt, fptype* p, unsigned int
     unsigned int workSpaceIndex = indices[6];
     unsigned int numOthers = indices[7] + 1; // +1 for this PDF.
 
-    int numbins = (int) FLOOR((hiBound - loBound) / step + 0.5);
+    int numbins = (int) floor((hiBound - loBound) / step + 0.5);
 
     fptype lowerBoundOffset = loBound / step;
-    lowerBoundOffset -= FLOOR(lowerBoundOffset);
-    int offsetInBins = (int) FLOOR(x0 / step - lowerBoundOffset);
+    lowerBoundOffset -= floor(lowerBoundOffset);
+    int offsetInBins = (int) floor(x0 / step - lowerBoundOffset);
 
     // Brute-force calculate integral M(x) * R(x - x0) dx
     __shared__ fptype modelCache[CONVOLUTION_CACHE_SIZE];

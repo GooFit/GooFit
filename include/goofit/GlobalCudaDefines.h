@@ -10,7 +10,6 @@ extern int host_callnumber;
 
 //  Non-cuda defines
 #if THRUST_DEVICE_SYSTEM!=THRUST_DEVICE_SYSTEM_CUDA
-// OMP target - all 'device' memory is actually on host.
 #define __align__(n)
 #define __shared__
 #define __constant__
@@ -36,7 +35,7 @@ enum gooError {gooSuccess = 0, gooErrorMemoryAllocation};
 #include <omp.h>
 #define THREADIDX (omp_get_thread_num())
 #define BLOCKDIM (omp_get_num_threads())
-#define THREAD_SYNCH _Pragma("omp barrier") // valid in C99 and C++11, but probably not C++93
+#define THREAD_SYNCH _Pragma("omp barrier")
 
 #elif THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_CPP
 
@@ -73,71 +72,35 @@ enum gooError {gooSuccess = cudaSuccess,
 gooError gooMalloc(void** target, size_t bytes);
 gooError gooFree(void* ptr);
 
-#define DOUBLES 1
-
 void abortWithCudaPrintFlush(std::string file, int line);
 
-#ifdef DOUBLES
 
-#define root2 1.4142135623730951
-#define invRootPi 0.5641895835477563
+#ifndef GOOFIT_SINGLES
 
 typedef double fptype;
-// Double math functions
-#define ATAN2 atan2
-#define COS cos
-#define COSH cosh
-#define SINH sinh
-#define ERF erf
-#define ERFC erfc
-#define EXP exp
-#define FABS fabs
-#define FMOD fmod
-#define LOG log
-#define MODF modf
-#define SIN sin
-#define SQRT sqrt
-#if defined(__CUDA_ARCH__) && (__CUDA_ARCH__ >= 350)
-#define RSQRT rsqrt
-#else
-#define RSQRT 1.0/SQRT
-#endif
-#define FLOOR floor
-
-// Fix for bug in pow(double,int) for CUDA 7 and 7.5
-#if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_CUDA && __CUDACC_VER_MAJOR__ >= 8
-#define POW pow
-#else
-#define POW(x,y) pow((x),(double) (y))
-#endif
+#define root2 1.4142135623730951
+#define invRootPi 0.5641895835477563
 
 #else
 
 typedef float fptype;
-
 #define root2 1.4142135623730951f
 #define invRootPi 0.5641895835477563f
 
-
-// Float math functions
-#define ATAN2 atan2f
-#define COS cosf
-#define COSH coshf
-#define SINH sinhf
-#define ERF erff
-#define ERFC erfcf
-#define EXP expf
-#define FABS fabsf
-#define FMOD fmodf
-#define LOG logf
-#define MODF modff
-#define SIN sinf
-#define SQRT sqrtf
-#define FLOOR floorf
-#define POW powf
 #endif
+
 
 // Often faster than pow, and works with ints on CUDA<8
 #define POW2(x) ((x)*(x))
 #define POW3(x) ((x)*(x)*(x))
 
+#if !defined(__CUDA_ARCH__) || (__CUDA_ARCH__ < 350)
+template<typename T>
+T rsqrt(T val) {return 1.0/sqrt(val);}
+#endif
+
+// Fix for bug in pow(double,int) for CUDA 7 and 7.5
+#if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_CUDA && __CUDACC_VER_MAJOR__ < 8
+template<typename T>
+T pow(T x, int y) {return pow(x, (T) y);}
+#endif

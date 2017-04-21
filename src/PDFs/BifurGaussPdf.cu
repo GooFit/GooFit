@@ -12,7 +12,7 @@ __device__ fptype device_BifurGauss(fptype* evt, fptype* p, unsigned int* indice
     if(x > mean)
         sigma = sigmaRight;
 
-    fptype ret = EXP(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
+    fptype ret = exp(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
     return ret;
 }
 

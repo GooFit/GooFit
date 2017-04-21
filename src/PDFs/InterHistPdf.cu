@@ -46,7 +46,7 @@ __device__ fptype device_InterHistogram(fptype* evt, fptype* p, unsigned int* in
         currVariable   -= lowerBound;
         currVariable   /= step;
 
-        int localBin    = (int) FLOOR(currVariable);
+        int localBin    = (int) floor(currVariable);
         binDistances[i] = currVariable - localBin - fptype(0.5);
         globalBin      += previous * localBin;
         previous       *= indices[lowerBoundIdx + 2];
@@ -104,7 +104,7 @@ __device__ fptype device_InterHistogram(fptype* evt, fptype* p, unsigned int* in
         }
 
         // Only interpolate the four closest boxes (in two dimensions; more in three dimensions).
-        currentWeight = currentWeight > 0 ? (currentWeight <= SQRT((fptype) numVars) ? 1 / SQRT(currentWeight) : 0) : 0;
+        currentWeight = currentWeight > 0 ? (currentWeight <= sqrt((fptype) numVars) ? 1 / sqrt(currentWeight) : 0) : 0;
         fptype currentEntry = offSomeAxis ? 0 : myHistogram[currBin];
         ret += currentWeight * currentEntry;
         totalWeight += currentWeight;

@@ -76,7 +76,7 @@ First entries are the starting points in array, necessary, because number of Lin
 __device__ fptype device_TDDP4(fptype* evt, fptype* p, unsigned int* indices) {
     //printf("DalitzPlot evt %i zero: %i %i %f (%f, %f).\n", evtNum, numResonances, effFunctionIdx, eff, totalAmp.real, totalAmp.imag);
 
-    int evtNum = (int) FLOOR(0.5 + evt[indices[7 + indices[0]]]);
+    int evtNum = (int) floor(0.5 + evt[indices[7 + indices[0]]]);
     // printf("%i\n",evtNum );
     unsigned int cacheToUse    = indices[2];
     unsigned int numAmps       = indices[5];
@@ -1004,7 +1004,7 @@ __device__ thrust::complex<fptype> AmpCalc_TD::operator()(thrust::tuple<int, fpt
         returnVal += ret;
     }
 
-    returnVal *= (1/SQRT((fptype)(_nPerm)));
+    returnVal *= (1/sqrt((fptype)(_nPerm)));
     // printf("Amplitude Value = (%.7g, %.7g)\n", returnVal.real, returnVal.imag);
     return  returnVal;
 }
@@ -1040,7 +1040,7 @@ __device__ thrust::tuple<fptype, fptype, fptype, fptype> NormIntegrator_TD::oper
         unsigned int SF_step = numSF/nPerm;
         unsigned int LS_step = numLS/nPerm;
         thrust::complex<fptype> ret2(0, 0);
-        // printf("%i, %i, %i, %i, %i, %i, %i, %i, %i, %f\n",ampidx, amp, numLS, numSF, nPerm,AmpIndices[totalAMP + ampidx + 4 + 0], AmpIndices[totalAMP + ampidx + 4 + 1], AmpIndices[totalAMP + ampidx + 4 + 2], AmpIndices[totalAMP + ampidx + 4 + 3], (1/SQRT((fptype)(nPerm))) );
+        // printf("%i, %i, %i, %i, %i, %i, %i, %i, %i, %f\n",ampidx, amp, numLS, numSF, nPerm,AmpIndices[totalAMP + ampidx + 4 + 0], AmpIndices[totalAMP + ampidx + 4 + 1], AmpIndices[totalAMP + ampidx + 4 + 2], AmpIndices[totalAMP + ampidx + 4 + 3], (1/sqrt((fptype)(nPerm))) );
 
         for(int j = 0; j < nPerm; ++j) {
             thrust::complex<fptype> ret(1, 0);
@@ -1062,7 +1062,7 @@ __device__ thrust::tuple<fptype, fptype, fptype, fptype> NormIntegrator_TD::oper
             ret2 += ret;
         }
 
-        ret2 *= (1/SQRT((fptype)(nPerm)));
+        ret2 *= (1/sqrt((fptype)(nPerm)));
         // printf("Result Amplitude %i, %i, %.5g, %.5g\n",flag, amp, ret2.real, ret2.imag);
 
         switch(flag) {

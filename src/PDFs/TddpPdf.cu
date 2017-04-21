@@ -20,17 +20,17 @@ __device__ WaveHolder_s* cWaves[16];
 
 /*
 __device__ bool inDalitz (const fptype &m12, const fptype &m13, const fptype &bigM, const fptype &dm1, const fptype &dm2, const fptype &dm3) {
-  if (m12 < POW(dm1 + dm2, 2)) return false; // This m12 cannot exist, it's less than the square of the (1,2) particle mass.
-  if (m12 > POW(bigM - dm3, 2)) return false;   // This doesn't work either, there's no room for an at-rest 3 daughter.
+  if (m12 < pow(dm1 + dm2, 2)) return false; // This m12 cannot exist, it's less than the square of the (1,2) particle mass.
+  if (m12 > pow(bigM - dm3, 2)) return false;   // This doesn't work either, there's no room for an at-rest 3 daughter.
 
   // Calculate energies of 1 and 3 particles in m12 rest frame.
-  fptype e1star = 0.5 * (m12 - dm2*dm2 + dm1*dm1) / SQRT(m12);
-  fptype e3star = 0.5 * (bigM*bigM - m12 - dm3*dm3) / SQRT(m12);
+  fptype e1star = 0.5 * (m12 - dm2*dm2 + dm1*dm1) / sqrt(m12);
+  fptype e3star = 0.5 * (bigM*bigM - m12 - dm3*dm3) / sqrt(m12);
 
   // Bounds for m13 at this value of m12.
-  fptype minimum = POW(e1star + e3star, 2) - POW(SQRT(e1star*e1star - dm1*dm1) + SQRT(e3star*e3star - dm3*dm3), 2);
+  fptype minimum = pow(e1star + e3star, 2) - pow(sqrt(e1star*e1star - dm1*dm1) + sqrt(e3star*e3star - dm3*dm3), 2);
   if (m13 < minimum) return false;
-  fptype maximum = POW(e1star + e3star, 2) - POW(SQRT(e1star*e1star - dm1*dm1) - SQRT(e3star*e3star - dm3*dm3), 2);
+  fptype maximum = pow(e1star + e3star, 2) - pow(sqrt(e1star*e1star - dm1*dm1) - sqrt(e3star*e3star - dm3*dm3), 2);
   if (m13 > maximum) return false;
 
   return true;
@@ -47,28 +47,28 @@ __device__ bool inDalitz(const fptype& m12, const fptype& m13, const fptype& big
     bool m12grea = (m12 > bigMmdm3*bigMmdm3) ? false : true;
     //if (m12 > bigMmdm3*bigMmdm3) return false;   // This doesn't work either, there's no room for an at-rest 3 daughter.
 
-    fptype sqrtM12 = SQRT(m12);
+    fptype sqrtM12 = sqrt(m12);
     fptype dm11 = dm1*dm1;
     fptype dm22 = dm2*dm2;
     fptype dm33 = dm3*dm3;
 
     // Calculate energies of 1 and 3 particles in m12 rest frame.
-    //fptype e1star = 0.5 * (m12 - dm2*dm2 + dm1*dm1) / SQRT(m12);
+    //fptype e1star = 0.5 * (m12 - dm2*dm2 + dm1*dm1) / sqrt(m12);
     fptype e1star = 0.5 * (m12 - dm22 + dm11) / sqrtM12;
-    //fptype e3star = 0.5 * (bigM*bigM - m12 - dm3*dm3) / SQRT(m12);
+    //fptype e3star = 0.5 * (bigM*bigM - m12 - dm3*dm3) / sqrt(m12);
     fptype e3star = 0.5 * (bigM*bigM - m12 - dm33) / sqrtM12;
 
-    fptype rte1mdm11 = SQRT(e1star*e1star - dm11);
-    fptype rte3mdm33 = SQRT(e3star*e3star - dm33);
+    fptype rte1mdm11 = sqrt(e1star*e1star - dm11);
+    fptype rte3mdm33 = sqrt(e3star*e3star - dm33);
 
     // Bounds for m13 at this value of m12.
-    //fptype minimum = (e1star + e3star)*(e1star + e3star) - POW(SQRT(e1star1 - dm11) + SQRT(e3star*e3star - dm33), 2);
+    //fptype minimum = (e1star + e3star)*(e1star + e3star) - pow(sqrt(e1star1 - dm11) + sqrt(e3star*e3star - dm33), 2);
     fptype minimum = (e1star + e3star)*(e1star + e3star) - (rte1mdm11 + rte3mdm33)*(rte1mdm11 + rte3mdm33);
 
     bool m13less = (m13 < minimum) ? false : true;
     //if (m13 < minimum) return false;
 
-    //fptype maximum = POW(e1star + e3star, 2) - POW(SQRT(e1star*e1star - dm1*dm1) - SQRT(e3star*e3star - dm3*dm3), 2);
+    //fptype maximum = pow(e1star + e3star, 2) - pow(sqrt(e1star*e1star - dm1*dm1) - sqrt(e3star*e3star - dm3*dm3), 2);
     fptype maximum = (e1star + e3star)*(e1star + e3star) - (rte1mdm11 - rte3mdm33)*(rte1mdm11 - rte3mdm33);
     bool m13grea = (m13 > maximum) ? false : true;
     //if (m13 > maximum) return false;
@@ -143,7 +143,7 @@ __device__ fptype device_Tddp(fptype* evt, fptype* p, unsigned int* indices) {
     if(!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass))
         return 0;
 
-    int evtNum = (int) FLOOR(0.5 + RO_CACHE(evt[indices[6 + RO_CACHE(indices[0])]]));
+    int evtNum = (int) floor(0.5 + RO_CACHE(evt[indices[6 + RO_CACHE(indices[0])]]));
 
     thrust::complex<fptype> sumWavesA(0, 0);
     thrust::complex<fptype> sumWavesB(0, 0);
@@ -189,12 +189,12 @@ __device__ fptype device_Tddp(fptype* evt, fptype* p, unsigned int* indices) {
 
     /*
     fptype ret = 0;
-    ret += (norm2(sumWavesA) + norm2(sumWavesB))*COSH(_ymixing * _time);
-    ret += (norm2(sumWavesA) - norm2(sumWavesB))*COS (_xmixing * _time);
+    ret += (norm2(sumWavesA) + norm2(sumWavesB))*cosh(_ymixing * _time);
+    ret += (norm2(sumWavesA) - norm2(sumWavesB))*cos (_xmixing * _time);
     sumWavesA *= conj(sumWavesB);
-    ret -= 2*sumWavesA.real * SINH(_ymixing * _time);
-    ret -= 2*sumWavesA.imag * SIN (_xmixing * _time); // Notice sign difference wrt to Mikhail's code, because I have AB* and he has A*B.
-    ret *= EXP(-_time);
+    ret -= 2*sumWavesA.real * sinh(_ymixing * _time);
+    ret -= 2*sumWavesA.imag * sin (_xmixing * _time); // Notice sign difference wrt to Mikhail's code, because I have AB* and he has A*B.
+    ret *= exp(-_time);
     */
 
     fptype term1 = thrust::norm(sumWavesA) + thrust::norm(sumWavesB);
@@ -216,7 +216,7 @@ __device__ fptype device_Tddp(fptype* evt, fptype* p, unsigned int* indices) {
         fptype massd0 = RO_CACHE(evt[indices[7 + RO_CACHE(indices[0])]]);
         fptype minMass = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 6]);
         fptype md0Step = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 7]);
-        int res_to_use = (massd0 <= minMass) ? 0 : (int) FLOOR((massd0 - minMass) / md0Step);
+        int res_to_use = (massd0 <= minMass) ? 0 : (int) floor((massd0 - minMass) / md0Step);
         int maxFcn     = RO_CACHE(indices[2+effFunctionIdx]);
 
         if(res_to_use > maxFcn)
@@ -680,7 +680,7 @@ __device__ ThreeComplex SpecialDalitzIntegrator::operator()(thrust::tuple<int, f
     int globalBinNumber  = thrust::get<0>(t);
     fptype lowerBoundM12 = thrust::get<1>(t)[0];
     fptype upperBoundM12 = thrust::get<1>(t)[1];
-    int numBinsM12       = (int) FLOOR(thrust::get<1>(t)[2] + 0.5);
+    int numBinsM12       = (int) floor(thrust::get<1>(t)[2] + 0.5);
     int binNumberM12     = globalBinNumber % numBinsM12;
     fptype binCenterM12  = upperBoundM12 - lowerBoundM12;
     binCenterM12        /= numBinsM12;
@@ -690,7 +690,7 @@ __device__ ThreeComplex SpecialDalitzIntegrator::operator()(thrust::tuple<int, f
     globalBinNumber     /= numBinsM12;
     fptype lowerBoundM13 = thrust::get<1>(t)[3];
     fptype upperBoundM13 = thrust::get<1>(t)[4];
-    int numBinsM13       = (int) FLOOR(thrust::get<1>(t)[5] + 0.5);
+    int numBinsM13       = (int) floor(thrust::get<1>(t)[5] + 0.5);
     fptype binCenterM13  = upperBoundM13 - lowerBoundM13;
     binCenterM13        /= numBinsM13;
     binCenterM13        *= (globalBinNumber + 0.5);

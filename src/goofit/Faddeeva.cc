@@ -69,11 +69,11 @@ thrust::complex<fptype> Faddeeva_2(const thrust::complex<fptype>& z) {
     r = M_1_PI * 0.5;
 
     // if z is too close to a pole select table 2
-    if(FABS(z.imag()) < 0.01 && FABS(z.real()) < 6.01) {
+    if(fabs(z.imag()) < 0.01 && fabs(z.real()) < 6.01) {
 
-        h = FABS(z.real())*2;
+        h = fabs(z.real())*2;
         // Equivalent to modf(h, &g). Do this way because nvcc only knows about double version of modf.
-        g = FLOOR(h);
+        g = floor(h);
         h -= g;
 
         if(h < 0.02 || h > 0.98) {
@@ -105,13 +105,13 @@ thrust::complex<fptype> Faddeeva_2(const thrust::complex<fptype>& z) {
         s = 2.0 / r;
         t = s * z.real();
         u = s * z.imag();
-        s = SIN(t);
-        h = COS(t);
-        f = EXP(- u) - h;
-        g = 2.0 * EXP(d-u) / (s * s + f * f);
+        s = sin(t);
+        h = cos(t);
+        f = exp(- u) - h;
+        g = 2.0 * exp(d-u) / (s * s + f * f);
         u = 2.0 * z.real() * z.imag();
-        h = COS(u);
-        t = SIN(u);
+        h = cos(u);
+        t = sin(u);
         c += g * thrust::complex<fptype>((h * f - t * s), -(h * s + t * f));
     }
 
@@ -138,7 +138,7 @@ fptype cpuvoigtian(fptype x, fptype m, fptype w, fptype s) {
 
     // Gauss for zero width
     if(0==w)
-        return EXP(coef*arg*arg);
+        return exp(coef*arg*arg);
 
     // actual Voigtian for non-trivial width and sigma
     fptype c = 1./(sqrt(2)*s);

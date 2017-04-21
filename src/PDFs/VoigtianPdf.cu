@@ -68,11 +68,11 @@ __device__ thrust::complex<fptype> device_Faddeeva_2(const thrust::complex<fptyp
     r = M_1_PI * 0.5;
 
     // if z is too close to a pole select table 2
-    if(FABS(z.imag()) < 0.01 && FABS(z.real()) < 6.01) {
-        // h = modf(2*FABS(z.real),&g);
+    if(fabs(z.imag()) < 0.01 && fabs(z.real()) < 6.01) {
+        // h = modf(2*fabs(z.real),&g);
         // Equivalent to above. Do this way because nvcc only knows about double version of modf.
-        h = FABS(z.real())*2;
-        g = FLOOR(h);
+        h = fabs(z.real())*2;
+        g = floor(h);
         h -= g;
 
         if(h < 0.02 || h > 0.98) {
@@ -103,13 +103,13 @@ __device__ thrust::complex<fptype> device_Faddeeva_2(const thrust::complex<fptyp
         s = 2.0 / r;
         t = s * z.real();
         u = s * z.imag();
-        s = SIN(t);
-        h = COS(t);
-        f = EXP(- u) - h;
-        g = 2.0 * EXP(d-u) / (s * s + f * f);
+        s = sin(t);
+        h = cos(t);
+        f = exp(- u) - h;
+        g = 2.0 * exp(d-u) / (s * s + f * f);
         u = 2.0 * z.real() * z.imag();
-        h = COS(u);
-        t = SIN(u);
+        h = cos(u);
+        t = sin(u);
         c += g * thrust::complex<fptype>((h * f - t * s), -(h * s + t * f));
     }
 
@@ -143,11 +143,11 @@ __device__ thrust::complex<fptype> device_Faddeeva_2(const thrust::complex<fptyp
     bool useDefault = true;
 
     // if z is too close to a pole select table 2
-    if(FABS(z.imag) < 0.01 && FABS(z.real) < 6.01) {
-        // h = modf(2*FABS(z.real),&g);
+    if(fabs(z.imag) < 0.01 && fabs(z.real) < 6.01) {
+        // h = modf(2*fabs(z.real),&g);
         // Equivalent to above. Do this way because nvcc only knows about double version of modf.
-        h = FABS(z.real)*2;
-        g = FLOOR(h);
+        h = fabs(z.real)*2;
+        g = floor(h);
         h -= g;
 
         if(h < 0.02 || h > 0.98) {
@@ -252,13 +252,13 @@ __device__ thrust::complex<fptype> device_Faddeeva_2(const thrust::complex<fptyp
         s = 2.0 / r;
         t = s * z.real;
         u = s * z.imag;
-        s = SIN(t);
-        h = COS(t);
-        f = EXP(- u) - h;
-        g = 2.0 * EXP(d-u) / (s * s + f * f);
+        s = sin(t);
+        h = cos(t);
+        f = exp(- u) - h;
+        g = 2.0 * exp(d-u) / (s * s + f * f);
         u = 2.0 * z.real * z.imag;
-        h = COS(u);
-        t = SIN(u);
+        h = cos(u);
+        t = sin(u);
         c += g * thrust::complex<fptype>((h * f - t * s), -(h * s + t * f));
     }
 
@@ -290,7 +290,7 @@ __device__ fptype device_Voigtian(fptype* evt, fptype* p, unsigned int* indices)
 
     // Gauss for zero width
     if(0==w)
-        return EXP(coef*arg*arg);
+        return exp(coef*arg*arg);
 
     // actual Voigtian for non-trivial width and sigma
     //fptype c = 1./(ROOT2*s);

@@ -2,7 +2,7 @@
 #include <math.h>
 const fptype R1o6      = 1.0 / 6.0;
 #define SQRTPIo2 (1.0/M_2_SQRTPI)
-#define SQRT1o2PI (SQRT(0.5*M_1_PI))
+#define SQRT1o2PI (sqrt(0.5*M_1_PI))
 
 __device__ void gaussian(fptype& _P1, fptype& _P2, fptype& _P3, fptype& _P4,
                           fptype _tau, fptype adjTime, fptype xmixing, fptype ymixing, fptype adjSigma) {
@@ -23,7 +23,7 @@ __device__ void gaussian(fptype& _P1, fptype& _P2, fptype& _P3, fptype& _P4,
     fptype _u02      = _u0 *_u0;
     fptype _F        = _1oSqrtA * exp(-_C + _u02);
 
-    fptype _Ig0      = SQRTPIo2 * ERFC(_u0);
+    fptype _Ig0      = SQRTPIo2 * erfc(_u0);
     fptype _Ig1      =  0.5 * exp(-_u02);
     fptype _Ig2      = _Ig1 *_u0 + 0.5 *_Ig0;
     fptype _Ig3      = _Ig1 * (_u02 + 1);
@@ -43,8 +43,8 @@ __device__ void gaussian(fptype& _P1, fptype& _P2, fptype& _P3, fptype& _P4,
     fptype _u0my = _1o2SqrtA * (_B + ymixing *_Gamma);
     fptype _Fpy  = _1oSqrtA * exp(-_C + _u0py * _u0py);
     fptype _Fmy  = _1oSqrtA * exp(-_C + _u0my * _u0my);
-    fptype _Ipy  = _Fpy * SQRTPIo2 * ERFC(_u0py);
-    fptype _Imy  = _Fmy * SQRTPIo2 * ERFC(_u0my);
+    fptype _Ipy  = _Fpy * SQRTPIo2 * erfc(_u0py);
+    fptype _Imy  = _Fmy * SQRTPIo2 * erfc(_u0my);
     _P1   = _NormG * 0.5 * (_Ipy + _Imy);
     _P3   = _NormG * 0.5 * (_Ipy - _Imy);
 }

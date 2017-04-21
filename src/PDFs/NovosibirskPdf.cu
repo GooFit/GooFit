@@ -12,24 +12,24 @@ __device__ fptype device_Novosibirsk(fptype* evt, fptype* p, unsigned int* indic
     fptype qx = 0;
     fptype qy = 0;
 
-    if(FABS(_Tail) <  1.e-7) {
+    if(fabs(_Tail) <  1.e-7) {
         qc = 0.5*POW2((x-_Mean)/_Sigma);
     } else {
-        qa = _Tail*SQRT(LOG(4.));
-        qb = SINH(qa)/qa;
+        qa = _Tail*sqrt(log(4.));
+        qb = sinh(qa)/qa;
         qx = (x-_Mean)/_Sigma*qb;
         qy = 1.+_Tail*qx;
 
         //---- Cutting curve from right side
 
         if(qy > 1.e-7)
-            qc = 0.5*(POW2(LOG(qy)/_Tail) + _Tail*_Tail);
+            qc = 0.5*(POW2(log(qy)/_Tail) + _Tail*_Tail);
         else
             qc = 15.0;
     }
 
     //---- Normalize the result
-    return EXP(-qc);
+    return exp(-qc);
 }
 
 __device__ device_function_ptr ptr_to_Novosibirsk = device_Novosibirsk;

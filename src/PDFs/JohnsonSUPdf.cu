@@ -11,14 +11,14 @@ __device__ fptype device_JohnsonSU(fptype* evt, fptype* p, unsigned int* indices
 
     fptype px       = (x -_Jm)/_Js;
     fptype px2      = px * px;
-    fptype sqrt_arg = SQRT(1+px2);
-    fptype inv_sinh = LOG(px + sqrt_arg);
+    fptype sqrt_arg = sqrt(1+px2);
+    fptype inv_sinh = log(px + sqrt_arg);
     fptype gaus_arg = _Jg + _Jd * inv_sinh;
     //if ((gpuDebug & 1) && (0 == BLOCKIDX) && (0 == THREADIDX))
     //if (gpuDebug & 1)
-    //printf("Johnson SU: %f %f %f %f | %f %f %i\n", _Jm, _Js, _Jg, _Jd, x, _Jd / (_Js * SQRT2PI * sqrt_arg) * EXP(-0.5 * gaus_arg * gaus_arg), indices[2 + indices[0]]);
-    //printf("Johnson SU: %f %f %f %f | %f %f %f %f\n", _Jm, _Js, _Jg, _Jd, x, _Jd / (_Js * SQRT2PI * sqrt_arg) * EXP(-0.5 * gaus_arg * gaus_arg), cudaArray[indices[1]], cudaArray[indices[2]]);
-    return _Jd / (_Js * SQRT2PI * sqrt_arg) * EXP(-0.5 * gaus_arg * gaus_arg);
+    //printf("Johnson SU: %f %f %f %f | %f %f %i\n", _Jm, _Js, _Jg, _Jd, x, _Jd / (_Js * SQRT2PI * sqrt_arg) * exp(-0.5 * gaus_arg * gaus_arg), indices[2 + indices[0]]);
+    //printf("Johnson SU: %f %f %f %f | %f %f %f %f\n", _Jm, _Js, _Jg, _Jd, x, _Jd / (_Js * SQRT2PI * sqrt_arg) * exp(-0.5 * gaus_arg * gaus_arg), cudaArray[indices[1]], cudaArray[indices[2]]);
+    return _Jd / (_Js * SQRT2PI * sqrt_arg) * exp(-0.5 * gaus_arg * gaus_arg);
 }
 
 __device__ device_function_ptr ptr_to_JohnsonSU = device_JohnsonSU;

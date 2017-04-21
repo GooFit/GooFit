@@ -5,12 +5,12 @@ __device__ fptype device_truth_resolution(fptype coshterm, fptype costerm, fptyp
         fptype* /*p*/, unsigned int* /*indices*/) {
     fptype ret = 0;
     dtime /= tau;
-    ret += coshterm*COSH(ymixing * dtime);
-    ret += costerm*COS(xmixing * dtime);
-    ret -= 2*sinhterm * SINH(ymixing * dtime);
-    ret -= 2*sinterm * SIN(xmixing *
+    ret += coshterm*cosh(ymixing * dtime);
+    ret += costerm*cos(xmixing * dtime);
+    ret -= 2*sinhterm * sinh(ymixing * dtime);
+    ret -= 2*sinterm * sin(xmixing *
                            dtime);  // Notice sign difference wrt to Mikhail's code, because I have AB* and he has A*B.
-    ret *= EXP(-dtime);
+    ret *= exp(-dtime);
 
     // printf("device_truth_resolution %f %f %f %f %f\n", coshterm, costerm, sinhterm, sinterm, dtime);
     return ret;

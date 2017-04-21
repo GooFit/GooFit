@@ -5,7 +5,7 @@ __device__ fptype device_Gaussian(fptype* evt, fptype* p, unsigned int* indices)
     fptype mean = RO_CACHE(p[RO_CACHE(indices[1])]);
     fptype sigma = RO_CACHE(p[RO_CACHE(indices[2])]);
 
-    fptype ret = EXP(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
+    fptype ret = exp(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
 
     //if ((0 == THREADIDX) && (0 == BLOCKIDX)) cuPrintf("Gaussian Values %f %i %i %f %f %i\n", x, indices[1], indices[2], mean, sigma, callnumber);
     //cuPrintf("device_Gaussian %f %i %i %f %f %i %p %f\n", x, indices[1], indices[2], mean, sigma, callnumber, indices, ret);
@@ -40,14 +40,14 @@ __host__ fptype GaussianPdf::integrate(fptype lo, fptype hi) const {
         << xscale << " "
         << host_params[indices[1]] << " "
         << host_params[indices[2]] << " "
-        << ERF((hi-host_params[indices[1]])/xscale) << " "
-        << ERF((lo-host_params[indices[1]])/xscale) << " "
-        << rootPiBy2*host_params[indices[2]]*(ERF((hi-host_params[indices[1]])/xscale) -
-    					  ERF((lo-host_params[indices[1]])/xscale))
+        << erf((hi-host_params[indices[1]])/xscale) << " "
+        << erf((lo-host_params[indices[1]])/xscale) << " "
+        << rootPiBy2*host_params[indices[2]]*(erf((hi-host_params[indices[1]])/xscale) -
+    					  erf((lo-host_params[indices[1]])/xscale))
         << std::endl;
     */
-    //return rootPiBy2*host_params[indices[2]]*(ERF((hi-host_params[indices[1]])/xscale) -
-    //					    ERF((lo-host_params[indices[1]])/xscale));
+    //return rootPiBy2*host_params[indices[2]]*(erf((hi-host_params[indices[1]])/xscale) -
+    //					    erf((lo-host_params[indices[1]])/xscale));
 
     // Integral over all R.
     fptype sigma = host_params[indices[2]];

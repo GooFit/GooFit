@@ -9,14 +9,14 @@ Helper functions
 #include "goofit/PDFs/DalitzPlotHelpers.h"
 
 __device__ fptype Mass(const fptype* P0) {
-    return SQRT(-P0[0]*P0[0] - P0[1]*P0[1] - P0[2]*P0[2] + P0[3]*P0[3]);
+    return sqrt(-P0[0]*P0[0] - P0[1]*P0[1] - P0[2]*P0[2] + P0[3]*P0[3]);
 }
 __device__ fptype Mass(const fptype* P0, const fptype* P1) {
-    return SQRT(-((P0[0]+P1[0]) * (P0[0]+P1[0])) - ((P0[1]+P1[1]) * (P0[1]+P1[1])) - ((P0[2]+P1[2]) * (P0[2]+P1[2])) + ((
+    return sqrt(-((P0[0]+P1[0]) * (P0[0]+P1[0])) - ((P0[1]+P1[1]) * (P0[1]+P1[1])) - ((P0[2]+P1[2]) * (P0[2]+P1[2])) + ((
                     P0[3]+P1[3]) * (P0[3]+P1[3])));
 }
 __device__ fptype Mass(const fptype* P0, const fptype* P1, const fptype* P2) {
-    return SQRT(-((P0[0]+P1[0]+P2[0]) * (P0[0]+P1[0]+P2[0])) - ((P0[1]+P1[1]+P2[1]) * (P0[1]+P1[1]+P2[1])) - ((
+    return sqrt(-((P0[0]+P1[0]+P2[0]) * (P0[0]+P1[0]+P2[0])) - ((P0[1]+P1[1]+P2[1]) * (P0[1]+P1[1]+P2[1])) - ((
                     P0[2]+P1[2]+P2[2]) * (P0[2]+P1[2]+P2[2])) + ((P0[3]+P1[3]+P2[3]) * (P0[3]+P1[3]+P2[3])));
 }
 __device__ fptype VecDot(const fptype* P0, const fptype* P1) {
@@ -35,18 +35,18 @@ __device__ void get4Vecs(fptype* Vecs, const unsigned int& constants, const fpty
     fptype E2 = (m12*m12 - m1*m1 + m2*m2) / (2 * m12) ;
     fptype E3 = (m34*m34 + m3*m3 - m4*m4) / (2 * m34) ;
     fptype E4 = (m34*m34 - m3*m3 + m4*m4) / (2 * m34) ;
-    fptype p1 = SQRT(E1*E1 - m1*m1);
-    fptype p3 = SQRT(E3*E3 - m3*m3);
-    fptype sin12 = SQRT(1-cos12*cos12);
-    fptype sin34 = SQRT(1-cos34*cos34);
+    fptype p1 = sqrt(E1*E1 - m1*m1);
+    fptype p3 = sqrt(E3*E3 - m3*m3);
+    fptype sin12 = sqrt(1-cos12*cos12);
+    fptype sin34 = sqrt(1-cos34*cos34);
     fptype ED1 = (M*M + m12*m12 - m34*m34) / (2*m12);
-    fptype PD1 = SQRT(ED1*ED1 - M*M);
+    fptype PD1 = sqrt(ED1*ED1 - M*M);
     fptype beta1 = PD1 / ED1;
-    fptype gamma1 = 1.0/SQRT(1-beta1*beta1);
+    fptype gamma1 = 1.0/sqrt(1-beta1*beta1);
     fptype ED2 = (M*M - m12*m12 + m34*m34) / (2*m34);
-    fptype PD2 = SQRT(ED2*ED2 - M*M);
+    fptype PD2 = sqrt(ED2*ED2 - M*M);
     fptype beta2 = -PD2 / ED2;
-    fptype gamma2 = 1.0/SQRT(1-beta2*beta2);
+    fptype gamma2 = 1.0/sqrt(1-beta2*beta2);
     // printf("g4v %f, %f, %f, %f, %f\n",E1, m1, E2, p1, p3 );
 
     //set X-component

@@ -7,7 +7,7 @@ __device__ fptype device_ScaledGaussian(fptype* evt, fptype* p, unsigned int* in
     fptype x = evt[0];
     fptype mean = p[indices[1]] + p[indices[3]];
     fptype sigma = p[indices[2]] * (1 + p[indices[4]]);
-    fptype ret = EXP(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
+    fptype ret = exp(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
 
     return ret;
 }

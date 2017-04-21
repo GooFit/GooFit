@@ -144,7 +144,7 @@ int main(int argc, char** argv) {
     DK3P_DI->_tau = new Variable("tau", 0.4101, 0.001, 0.300, 0.500);
     DK3P_DI->_xmixing = new Variable("xmixing", 0.005, 0.001, 0, 0);
     DK3P_DI->_ymixing = new Variable("ymixing", 0.01, 0.001, 0, 0);
-    DK3P_DI->_SqWStoRSrate = new Variable("SqWStoRSrate", 1.0/SQRT(300.0));
+    DK3P_DI->_SqWStoRSrate = new Variable("SqWStoRSrate", 1.0/sqrt(300.0));
 
     Variable* m12 = new Variable("m12", 0, 3);
     Variable* m34 = new Variable("m34", 0, 3);

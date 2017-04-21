@@ -394,7 +394,7 @@ __device__ fptype device_Gaussian (fptype* evt,
   fptype mean = p[indices[1]];
   fptype sigma = p[indices[2]];
 
-  fptype ret = EXP(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
+  fptype ret = exp(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
   return ret; 
 }
 ```
@@ -479,7 +479,7 @@ __host__ GaussianPdf::GaussianPdf (std::string n,
   pindices.push_back(registerParameter(sigma));
 
   pindices.push_back(registerConstants(1)); 
-  fptype sqrt2pi = SQRT(2*M_PI);
+  fptype sqrt2pi = sqrt(2*M_PI);
   MEMCPY_TO_SYMBOL(functorConstants, &sqrt2pi, sizeof(fptype), 
                      cIndex*sizeof(fptype), cudaMemcpyHostToDevice); 
 
@@ -503,7 +503,7 @@ __device__ fptype device_Gaussian (fptype* evt,
   fptype sigma = p[indices[2]];
   fptype sqrt2pi = functorConstants[indices[3]];
 
-  fptype ret = EXP(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
+  fptype ret = exp(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
   ret /= sqrt2pi; 
   return ret; 
 }
@@ -747,7 +747,7 @@ unsigned int* indices = paramIndices + parameters;
 for (int i = 0; i < evtSize; ++i) {
   fptype lowerBound = thrust::get<2>(t)[3*i+0];
   fptype upperBound = thrust::get<2>(t)[3*i+1];
-  int numBins    = (int) FLOOR(thrust::get<2>(t)[3*i+2] + 0.5); 
+  int numBins    = (int) floor(thrust::get<2>(t)[3*i+2] + 0.5); 
   int localBin = binNumber % numBins;
 
   fptype x = upperBound - lowerBound; 
@@ -897,7 +897,7 @@ __device__ fptype calculateNLL (fptype rawPdf,
                                  fptype* evtVal, 
                                  unsigned int par) {
   rawPdf *= normalisationFactors[par];
-  return rawPdf > 0 ? -LOG(rawPdf) : 0; 
+  return rawPdf > 0 ? -log(rawPdf) : 0; 
 }
 
 __device__ fptype calculateProb (fptype rawPdf, 

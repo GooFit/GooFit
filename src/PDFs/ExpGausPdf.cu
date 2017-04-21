@@ -10,8 +10,8 @@ __device__ fptype device_ExpGaus(fptype* evt, fptype* p, unsigned int* indices) 
     fptype exparg = ret * (2*mean + alpha*sigma*sigma - 2*x);
     fptype erfarg = (mean + alpha*sigma*sigma - x) / (sigma * 1.4142135623);
 
-    ret *= EXP(exparg);
-    ret *= ERFC(erfarg);
+    ret *= exp(exparg);
+    ret *= erfc(erfarg);
 
     return ret;
 }

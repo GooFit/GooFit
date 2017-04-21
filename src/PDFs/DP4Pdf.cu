@@ -43,7 +43,7 @@ __constant__ unsigned int AmpIndices[500];
 __device__ fptype device_DP(fptype* evt, fptype* p, unsigned int* indices) {
     //printf("DalitzPlot evt %i zero: %i %i %f (%f, %f).\n", evtNum, numResonances, effFunctionIdx, eff, totalAmp.real, totalAmp.imag);
 
-    int evtNum = (int) FLOOR(0.5 + evt[indices[7 + indices[0]]]);
+    int evtNum = (int) floor(0.5 + evt[indices[7 + indices[0]]]);
     // printf("%i\n",evtNum );
     thrust::complex<fptype> totalAmp(0, 0);
     unsigned int cacheToUse    = indices[2];
@@ -773,7 +773,7 @@ __device__ thrust::complex<fptype> AmpCalc::operator()(thrust::tuple<int, fptype
         returnVal += ret;
     }
 
-    returnVal *= (1/SQRT((fptype)(_nPerm)));
+    returnVal *= (1/sqrt((fptype)(_nPerm)));
     // printf("Amplitude Value = (%.7g, %.7g)\n", returnVal.real, returnVal.imag);
     return  returnVal;
 }
@@ -802,7 +802,7 @@ __device__ fptype NormIntegrator::operator()(thrust::tuple<int, int, fptype*, th
         unsigned int SF_step = numSF/nPerm;
         unsigned int LS_step = numLS/nPerm;
         thrust::complex<fptype> ret2(0, 0);
-        // printf("%i, %i, %i, %i, %i, %i, %i, %i, %i, %f\n",ampidx, amp, numLS, numSF, nPerm,AmpIndices[totalAMP + ampidx + 3 + 0], AmpIndices[totalAMP + ampidx + 3 + 1], AmpIndices[totalAMP + ampidx + 3 + 2], AmpIndices[totalAMP + ampidx + 3 + 3], (1/SQRT((fptype)(nPerm))) );
+        // printf("%i, %i, %i, %i, %i, %i, %i, %i, %i, %f\n",ampidx, amp, numLS, numSF, nPerm,AmpIndices[totalAMP + ampidx + 3 + 0], AmpIndices[totalAMP + ampidx + 3 + 1], AmpIndices[totalAMP + ampidx + 3 + 2], AmpIndices[totalAMP + ampidx + 3 + 3], (1/sqrt((fptype)(nPerm))) );
 
         for(int j = 0; j < nPerm; ++j) {
             thrust::complex<fptype> ret(1, 0);
@@ -825,7 +825,7 @@ __device__ fptype NormIntegrator::operator()(thrust::tuple<int, int, fptype*, th
         }
 
         thrust::complex<fptype> amp_C { cudaArray[indices[2*amp + 6]], cudaArray[indices[2*amp + 7]] };
-        ret2 *= (1/SQRT((fptype)(nPerm)));
+        ret2 *= (1/sqrt((fptype)(nPerm)));
         // printf("Result Amplitude %i, %.5g, %.5g\n",amp, ret2.real, ret2.imag);
         returnVal += ret2 * amp_C;
     }

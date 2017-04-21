@@ -2,8 +2,9 @@
 #define RESONANCE_PDF_HH
 
 #include "goofit/PDFs/GooPdf.h"
-#include "goofit/PDFs/devcomplex.h"
-typedef devcomplex<fptype> (*resonance_function_ptr)(fptype, fptype, fptype, unsigned int*);
+#include <thrust/complex.h>
+
+typedef thrust::complex<fptype> (*resonance_function_ptr)(fptype, fptype, fptype, unsigned int*);
 
 __device__ fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m);
 

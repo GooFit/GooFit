@@ -73,7 +73,7 @@ private:
 
     //store spin and lineshape values for normalization
     mutable mcbooster::RealVector_d norm_SF;
-    mutable mcbooster::mc_device_vector<devcomplex<fptype>> norm_LS;
+    mutable mcbooster::mc_device_vector<thrust::complex<fptype>> norm_LS;
 
 
     DecayInfo_DP* decayInfo;
@@ -82,8 +82,8 @@ private:
     int MCevents;
     // Following variables are useful if masses and widths, involved in difficult BW calculation,
     // change infrequently while amplitudes, only used in adding BW results together, change rapidly.
-    DEVICE_VECTOR<devcomplex<fptype>>* cachedResSF; // Caches the BW values and Spins for each event.
-    DEVICE_VECTOR<devcomplex<fptype>>* cachedAMPs; // cache Amplitude values for each event.
+    DEVICE_VECTOR<thrust::complex<fptype>>* cachedResSF; // Caches the BW values and Spins for each event.
+    DEVICE_VECTOR<thrust::complex<fptype>>* cachedAMPs; // cache Amplitude values for each event.
 
     mutable bool generation_no_norm;
     mutable bool SpinsCalculated;
@@ -97,11 +97,11 @@ private:
 };
 
 
-class SFCalculator : public thrust::unary_function<thrust::tuple<int, fptype*, int>, devcomplex<fptype>> {
+class SFCalculator : public thrust::unary_function<thrust::tuple<int, fptype*, int>, thrust::complex<fptype>> {
 public:
     // Used to create the cached BW values.
     SFCalculator(int pIdx, unsigned int sf_idx);
-    __device__ devcomplex<fptype> operator()(thrust::tuple<int, fptype*, int> t) const;
+    __device__ thrust::complex<fptype> operator()(thrust::tuple<int, fptype*, int> t) const;
 
 private:
 
@@ -123,11 +123,11 @@ private:
 };
 
 
-class LSCalculator : public thrust::unary_function<thrust::tuple<int, fptype*, int>, devcomplex<fptype>> {
+class LSCalculator : public thrust::unary_function<thrust::tuple<int, fptype*, int>, thrust::complex<fptype>> {
 public:
     // Used to create the cached BW values.
     LSCalculator(int pIdx, unsigned int res_idx);
-    __device__ devcomplex<fptype> operator()(thrust::tuple<int, fptype*, int> t) const;
+    __device__ thrust::complex<fptype> operator()(thrust::tuple<int, fptype*, int> t) const;
 
 private:
 
@@ -136,11 +136,11 @@ private:
 };
 
 class NormLSCalculator : public
-    thrust::unary_function<thrust::tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t>, devcomplex<fptype>> {
+    thrust::unary_function<thrust::tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t>, thrust::complex<fptype>> {
 public:
     // Used to create the cached BW values.
     NormLSCalculator(int pIdx, unsigned int res_idx);
-    __device__ devcomplex<fptype> operator()(
+    __device__ thrust::complex<fptype> operator()(
         thrust::tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t)
     const;
 
@@ -150,21 +150,21 @@ private:
     unsigned int _parameters;
 };
 
-class AmpCalc : public thrust::unary_function<unsigned int, devcomplex<fptype>> {
+class AmpCalc : public thrust::unary_function<unsigned int, thrust::complex<fptype>> {
 public:
     AmpCalc(unsigned int AmpIdx, unsigned int pIdx, unsigned int nPerm);
     // void setpIdx(unsigned int pIdx){_parameters = pIdx;}
-    __device__ devcomplex<fptype> operator()(thrust::tuple<int, fptype*, int> t) const;
+    __device__ thrust::complex<fptype> operator()(thrust::tuple<int, fptype*, int> t) const;
 private:
     unsigned int _nPerm;
     unsigned int _AmpIdx;
     unsigned int _parameters;
 };
 
-class NormIntegrator : public thrust::unary_function<thrust::tuple<int, int, fptype*, devcomplex<fptype>*>, fptype > {
+class NormIntegrator : public thrust::unary_function<thrust::tuple<int, int, fptype*, thrust::complex<fptype>*>, fptype > {
 public:
     NormIntegrator(unsigned int pIdx);
-    __device__ fptype operator()(thrust::tuple<int, int, fptype*, devcomplex<fptype>*> t) const;
+    __device__ fptype operator()(thrust::tuple<int, int, fptype*, thrust::complex<fptype>*> t) const;
 private:
     unsigned int _parameters;
 };

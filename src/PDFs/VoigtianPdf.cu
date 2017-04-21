@@ -1,7 +1,7 @@
 #include "goofit/PDFs/VoigtianPdf.h"
 #include <limits>
 #include "goofit/Faddeeva.h"
-#include "goofit/PDFs/devcomplex.h"
+#include <thrust/complex.h>
 
 #define M_2PI 6.28318530717958
 //#define ROOT2 1.41421356
@@ -39,17 +39,17 @@ __constant__ fptype e2[12] = { 0.7551038420890235,    0.3251072991205958,
                                1.733038792213266e-15, 2.709954036083074e-18
                              };
 
-__device__ devcomplex<fptype> device_Faddeeva_2(const devcomplex<fptype>& z) {
+__device__ thrust::complex<fptype> device_Faddeeva_2(const thrust::complex<fptype>& z) {
     fptype* n, *e, t, u, r, s, d, f, g, h;
-    devcomplex<fptype> c, d2, v;
+    thrust::complex<fptype> c, d2, v;
     int i;
 
-    s = norm2(z); // NB: norm2 is correct although CPU version calls the function 'norm'.
+    s = thrust::norm(z); // NB: norm2 is correct although CPU version calls the function 'norm'.
 
     if(s < 1e-7) {
         // use Pade approximation
-        devcomplex<fptype> zz = z*z;
-        v  = exp(zz); // Note lower-case! This is our own already-templated exp function for devcomplex, no need for float/double define.
+        thrust::complex<fptype> zz = z*z;
+        v  = exp(zz); // Note lower-case! This is our own already-templated exp function for thrust::complex, no need for float/double define.
         c  = C[0];
         d2 = D[0];
 
@@ -58,7 +58,7 @@ __device__ devcomplex<fptype> device_Faddeeva_2(const devcomplex<fptype>& z) {
             d2 = d2 * zz + D[i];
         }
 
-        return fptype(1.0) / v + devcomplex<fptype>(0.0, M_2_SQRTPI) * c/d2 * z * v;
+        return fptype(1.0) / v + thrust::complex<fptype>(0.0, M_2_SQRTPI) * c/d2 * z * v;
     }
 
     // use trapezoid rule
@@ -68,10 +68,10 @@ __device__ devcomplex<fptype> device_Faddeeva_2(const devcomplex<fptype>& z) {
     r = M_1_PI * 0.5;
 
     // if z is too close to a pole select table 2
-    if(FABS(z.imag) < 0.01 && FABS(z.real) < 6.01) {
+    if(FABS(z.imag()) < 0.01 && FABS(z.real()) < 6.01) {
         // h = modf(2*FABS(z.real),&g);
         // Equivalent to above. Do this way because nvcc only knows about double version of modf.
-        h = FABS(z.real)*2;
+        h = FABS(z.real())*2;
         g = FLOOR(h);
         h -= g;
 
@@ -82,8 +82,8 @@ __device__ devcomplex<fptype> device_Faddeeva_2(const devcomplex<fptype>& z) {
         }
     }
 
-    d = (z.imag - z.real) * (z.imag + z.real);
-    f = 4 * z.real * z.real * z.imag * z.imag;
+    d = (z.imag() - z.real()) * (z.imag() + z.real());
+    f = 4 * z.real() * z.real() * z.imag() * z.imag();
 
     g = h = 0.0;
 
@@ -96,37 +96,37 @@ __device__ devcomplex<fptype> device_Faddeeva_2(const devcomplex<fptype>& z) {
 
     u = 1 / s;
 
-    c = r * devcomplex<fptype>(z.imag * (u + 2.0 * g),
-                               z.real * (u + 2.0 * h));
+    c = r * thrust::complex<fptype>(z.imag() * (u + 2.0 * g),
+                                    z.real() * (u + 2.0 * h));
 
-    if(z.imag < M_2PI) {
+    if(z.imag() < M_2PI) {
         s = 2.0 / r;
-        t = s * z.real;
-        u = s * z.imag;
+        t = s * z.real();
+        u = s * z.imag();
         s = SIN(t);
         h = COS(t);
         f = EXP(- u) - h;
         g = 2.0 * EXP(d-u) / (s * s + f * f);
-        u = 2.0 * z.real * z.imag;
+        u = 2.0 * z.real() * z.imag();
         h = COS(u);
         t = SIN(u);
-        c += g * devcomplex<fptype>((h * f - t * s), -(h * s + t * f));
+        c += g * thrust::complex<fptype>((h * f - t * s), -(h * s + t * f));
     }
 
     return c;
 }
 
 #else
-__device__ devcomplex<fptype> device_Faddeeva_2(const devcomplex<fptype>& z) {
+__device__ thrust::complex<fptype> device_Faddeeva_2(const thrust::complex<fptype>& z) {
     fptype u, s, d, f, g, h;
-    devcomplex<fptype> c, d2, v;
+    thrust::complex<fptype> c, d2, v;
 
     s = norm2(z); // NB: norm2 is correct although CPU version calls the function 'norm'.
 
     if(s < 1e-7) {
         // use Pade approximation
-        devcomplex<fptype> zz = z*z;
-        v  = exp(zz); // Note lower-case! This is our own already-templated exp function for devcomplex, no need for float/double define.
+        thrust::complex<fptype> zz = z*z;
+        v  = exp(zz); // Note lower-case! This is our own already-templated exp function for thrust::complex, no need for float/double define.
         c  = C[0];
         d2 = D[0];
 
@@ -135,7 +135,7 @@ __device__ devcomplex<fptype> device_Faddeeva_2(const devcomplex<fptype>& z) {
             d2 = d2 * zz + D[i];
         }
 
-        return fptype(1.0) / v + devcomplex<fptype>(0.0, M_2_SQRTPI) * c/d2 * z * v;
+        return fptype(1.0) / v + thrust::complex<fptype>(0.0, M_2_SQRTPI) * c/d2 * z * v;
     }
 
     // use trapezoid rule
@@ -245,7 +245,7 @@ __device__ devcomplex<fptype> device_Faddeeva_2(const devcomplex<fptype>& z) {
     h += (s - currentN)*u;
 
     u = 1 / s;
-    c = r * devcomplex<fptype>(z.imag * (u + 2.0 * g),
+    c = r * thrust::complex<fptype>(z.imag * (u + 2.0 * g),
                                z.real * (u + 2.0 * h));
 
     if(z.imag < M_2PI) {
@@ -259,7 +259,7 @@ __device__ devcomplex<fptype> device_Faddeeva_2(const devcomplex<fptype>& z) {
         u = 2.0 * z.real * z.imag;
         h = COS(u);
         t = SIN(u);
-        c += g * devcomplex<fptype>((h * f - t * s), -(h * s + t * f));
+        c += g * thrust::complex<fptype>((h * f - t * s), -(h * s + t * f));
     }
 
     return c;
@@ -306,11 +306,11 @@ __device__ fptype device_Voigtian(fptype* evt, fptype* p, unsigned int* indices)
     c /= s;
     fptype a = 0.5*c*w;
     fptype u = c*arg;
-    devcomplex<fptype> z(u, a) ;
-    devcomplex<fptype> v = device_Faddeeva_2(z);
+    thrust::complex<fptype> z(u, a) ;
+    thrust::complex<fptype> v = device_Faddeeva_2(z);
 
 #define rsqrtPi 0.5641895835477563
-    return c*rsqrtPi*v.real;
+    return c*rsqrtPi*v.real();
 }
 
 __device__ device_function_ptr ptr_to_Voigtian = device_Voigtian;

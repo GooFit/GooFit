@@ -24,7 +24,7 @@ __device__ bool inDalitz(const fptype& m12,
                           const fptype& dm1,
                           const fptype& dm2,
                           const fptype& dm3);
-__device__ devcomplex<fptype> getResonanceAmplitude(fptype m12, fptype m13, fptype m23, unsigned int functionIdx,
+__device__ thrust::complex<fptype> getResonanceAmplitude(fptype m12, fptype m13, fptype m23, unsigned int functionIdx,
         unsigned int pIndex);
 __device__ void get4Vecs(fptype* Vecs, const unsigned int& constants, const fptype& m12, const fptype& m34,
                           const fptype& cos12, const fptype& cos34, const fptype& phi);

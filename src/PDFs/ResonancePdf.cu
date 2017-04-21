@@ -82,7 +82,7 @@ __device__ fptype spinFactor(unsigned int spin, fptype motherMass, fptype daug1M
     return sFactor;
 }
 
-__device__ devcomplex<fptype> plainBW(fptype m12, fptype m13, fptype m23, unsigned int* indices) {
+__device__ thrust::complex<fptype> plainBW(fptype m12, fptype m13, fptype m23, unsigned int* indices) {
     fptype motherMass             = RO_CACHE(functorConstants[RO_CACHE(indices[1])+0]);
     fptype daug1Mass              = RO_CACHE(functorConstants[RO_CACHE(indices[1])+1]);
     fptype daug2Mass              = RO_CACHE(functorConstants[RO_CACHE(indices[1])+2]);
@@ -115,7 +115,7 @@ __device__ devcomplex<fptype> plainBW(fptype m12, fptype m13, fptype m23, unsign
     fptype A = (resmass - rMassSq);
     fptype B = resmass*reswidth * POW(measureDaughterMoms / nominalDaughterMoms, 2.0*spin + 1) * frFactor / SQRT(rMassSq);
     fptype C = 1.0 / (A*A + B*B);
-    devcomplex<fptype> ret(A*C, B*C); // Dropping F_D=1
+    thrust::complex<fptype> ret(A*C, B*C); // Dropping F_D=1
 
     ret *= SQRT(frFactor);
     fptype spinF = spinFactor(spin, motherMass, daug1Mass, daug2Mass, daug3Mass, m12, m13, m23, cyclic_index);
@@ -124,7 +124,7 @@ __device__ devcomplex<fptype> plainBW(fptype m12, fptype m13, fptype m23, unsign
     return ret;
 }
 
-__device__ devcomplex<fptype> gaussian(fptype m12, fptype m13, fptype m23, unsigned int* indices) {
+__device__ thrust::complex<fptype> gaussian(fptype m12, fptype m13, fptype m23, unsigned int* indices) {
     // indices[1] is unused constant index, for consistency with other function types.
     fptype resmass                = RO_CACHE(cudaArray[RO_CACHE(indices[2])]);
     fptype reswidth               = RO_CACHE(cudaArray[RO_CACHE(indices[3])]);
@@ -140,7 +140,7 @@ __device__ devcomplex<fptype> gaussian(fptype m12, fptype m13, fptype m23, unsig
     // Ignore factor 1/sqrt(2pi).
     ret /= reswidth;
 
-    return devcomplex<fptype>(ret, 0);
+    return thrust::complex<fptype>(ret, 0);
 }
 
 __device__ fptype hFun(double s, double daug2Mass, double daug3Mass) {
@@ -190,7 +190,7 @@ __device__ fptype fsFun(double s, double m2, double gam, double daug2Mass, doubl
     return f;
 }
 
-__device__ devcomplex<fptype> gouSak(fptype m12, fptype m13, fptype m23, unsigned int* indices) {
+__device__ thrust::complex<fptype> gouSak(fptype m12, fptype m13, fptype m23, unsigned int* indices) {
     fptype motherMass             = RO_CACHE(functorConstants[RO_CACHE(indices[1])+0]);
     fptype daug1Mass              = RO_CACHE(functorConstants[RO_CACHE(indices[1])+1]);
     fptype daug2Mass              = RO_CACHE(functorConstants[RO_CACHE(indices[1])+2]);
@@ -224,7 +224,7 @@ __device__ devcomplex<fptype> gouSak(fptype m12, fptype m13, fptype m23, unsigne
     fptype F = SQRT(resmass) * reswidth * POW(measureDaughterMoms / nominalDaughterMoms, 2.0*spin + 1) * frFactor;
 
     D       /= (E*E + F*F);
-    devcomplex<fptype> retur(D*E, D*F); // Dropping F_D=1
+    thrust::complex<fptype> retur(D*E, D*F); // Dropping F_D=1
     retur *= SQRT(frFactor);
     retur *= spinFactor(spin, motherMass, daug1Mass, daug2Mass, daug3Mass, m12, m13, m23, cyclic_index);
 
@@ -232,7 +232,7 @@ __device__ devcomplex<fptype> gouSak(fptype m12, fptype m13, fptype m23, unsigne
 }
 
 
-__device__ devcomplex<fptype> lass(fptype m12, fptype m13, fptype m23, unsigned int* indices) {
+__device__ thrust::complex<fptype> lass(fptype m12, fptype m13, fptype m23, unsigned int* indices) {
     fptype motherMass             = RO_CACHE(functorConstants[RO_CACHE(indices[1])+0]);
     fptype daug1Mass              = RO_CACHE(functorConstants[RO_CACHE(indices[1])+1]);
     fptype daug2Mass              = RO_CACHE(functorConstants[RO_CACHE(indices[1])+2]);
@@ -285,16 +285,16 @@ __device__ devcomplex<fptype> lass(fptype m12, fptype m13, fptype m23, unsigned 
     fptype qcot_deltaB = (1.0 / _a) + 0.5*_r*q*q;
 
     // calculate resonant part
-    devcomplex<fptype> expi2deltaB = devcomplex<fptype>(qcot_deltaB, q)/devcomplex<fptype>(qcot_deltaB, -q);
-    devcomplex<fptype>  resT = devcomplex<fptype>(cos(_phiR+2*_phiB), sin(_phiR+2*_phiB))*_R;
+    thrust::complex<fptype> expi2deltaB = thrust::complex<fptype>(qcot_deltaB, q)/thrust::complex<fptype>(qcot_deltaB, -q);
+    thrust::complex<fptype>  resT = thrust::complex<fptype>(cos(_phiR+2*_phiB), sin(_phiR+2*_phiB))*_R;
 
-    devcomplex<fptype> prop = devcomplex<fptype>(1, 0)/devcomplex<fptype>(resmass-rMassSq, SQRT(resmass)*g);
+    thrust::complex<fptype> prop = thrust::complex<fptype>(1, 0)/thrust::complex<fptype>(resmass-rMassSq, SQRT(resmass)*g);
     // resT *= prop*m0*_g0*m0/twoBodyCMmom(m0*m0, _trackinfo[i])*expi2deltaB;
     resT *= prop*(resmass*reswidth/nominalDaughterMoms)*expi2deltaB;
 
     // calculate bkg part
-    resT += devcomplex<fptype>(cos(_phiB),
-                               sin(_phiB))*_B*(cos(_phiB)+cot_deltaB*sin(_phiB))*SQRT(rMassSq)/devcomplex<fptype>(qcot_deltaB, -q);
+    resT += thrust::complex<fptype>(cos(_phiB),
+                               sin(_phiB))*_B*(cos(_phiB)+cot_deltaB*sin(_phiB))*SQRT(rMassSq)/thrust::complex<fptype>(qcot_deltaB, -q);
 
     resT *= SQRT(frFactor);
     resT *= spinFactor(spin, motherMass, daug1Mass, daug2Mass, daug3Mass, m12, m13, m23, cyclic_index);
@@ -303,19 +303,19 @@ __device__ devcomplex<fptype> lass(fptype m12, fptype m13, fptype m23, unsigned 
 }
 
 
-__device__ devcomplex<fptype> nonres(fptype m12, fptype m13, fptype m23, unsigned int* indices) {
-    return devcomplex<fptype>(1, 0);
+__device__ thrust::complex<fptype> nonres(fptype m12, fptype m13, fptype m23, unsigned int* indices) {
+    return thrust::complex<fptype>(1, 0);
 }
 
 
-__device__ void getAmplitudeCoefficients(devcomplex<fptype> a1, devcomplex<fptype> a2, fptype& a1sq, fptype& a2sq,
+__device__ void getAmplitudeCoefficients(thrust::complex<fptype> a1, thrust::complex<fptype> a2, fptype& a1sq, fptype& a2sq,
         fptype& a1a2real, fptype& a1a2imag) {
     // Returns A_1^2, A_2^2, real and imaginary parts of A_1A_2^*
-    a1sq = a1.abs2();
-    a2sq = a2.abs2();
+    a1sq = thrust::norm(a1);
+    a2sq = thrust::norm(a2);
     a1 *= conj(a2);
-    a1a2real = a1.real;
-    a1a2imag = a1.imag;
+    a1a2real = a1.real();
+    a1a2imag = a1.imag();
 }
 
 __device__ resonance_function_ptr ptr_to_RBW = plainBW;

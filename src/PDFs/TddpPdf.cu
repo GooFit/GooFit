@@ -79,7 +79,7 @@ __device__ inline int parIndexFromResIndex(int resIndex) {
     return resonanceOffset + resIndex*resonanceSize;
 }
 
-__device__ devcomplex<fptype> getResonanceAmplitude(fptype m12, fptype m13, fptype m23,
+__device__ thrust::complex<fptype> getResonanceAmplitude(fptype m12, fptype m13, fptype m23,
         unsigned int functionIdx, unsigned int pIndex) {
     resonance_function_ptr func = reinterpret_cast<resonance_function_ptr>(device_function_table[functionIdx]);
     return (*func)(m12, m13, m23, paramIndices + pIndex);
@@ -118,15 +118,15 @@ __device__ ThreeComplex device_Tddp_calcIntegrals(fptype m12, fptype m13, int re
     //fptype amp_imag             = p[indices[parameter_i+1]];
     unsigned int functn_i = RO_CACHE(indices[parameter_i+2]);
     unsigned int params_i = RO_CACHE(indices[parameter_i+3]);
-    devcomplex<fptype> ai = getResonanceAmplitude(m12, m13, m23, functn_i, params_i);
-    devcomplex<fptype> bi = getResonanceAmplitude(m13, m12, m23, functn_i, params_i);
+    thrust::complex<fptype> ai = getResonanceAmplitude(m12, m13, m23, functn_i, params_i);
+    thrust::complex<fptype> bi = getResonanceAmplitude(m13, m12, m23, functn_i, params_i);
 
     unsigned int functn_j = RO_CACHE(indices[parameter_j+2]);
     unsigned int params_j = RO_CACHE(indices[parameter_j+3]);
-    devcomplex<fptype> aj = conj(getResonanceAmplitude(m12, m13, m23, functn_j, params_j));
-    devcomplex<fptype> bj = conj(getResonanceAmplitude(m13, m12, m23, functn_j, params_j));
+    thrust::complex<fptype> aj = conj(getResonanceAmplitude(m12, m13, m23, functn_j, params_j));
+    thrust::complex<fptype> bj = conj(getResonanceAmplitude(m13, m12, m23, functn_j, params_j));
 
-    ret = ThreeComplex((ai*aj).real, (ai*aj).imag, (ai*bj).real, (ai*bj).imag, (bi*bj).real, (bi*bj).imag);
+    ret = ThreeComplex((ai*aj).real(), (ai*aj).imag(), (ai*bj).real(), (ai*bj).imag(), (bi*bj).real(), (bi*bj).imag());
     return ret;
 }
 
@@ -144,38 +144,35 @@ __device__ fptype device_Tddp(fptype* evt, fptype* p, unsigned int* indices) {
 
     int evtNum = (int) FLOOR(0.5 + RO_CACHE(evt[indices[6 + RO_CACHE(indices[0])]]));
 
-    devcomplex<fptype> sumWavesA(0, 0);
-    devcomplex<fptype> sumWavesB(0, 0);
-    devcomplex<fptype> sumRateAA(0, 0);
-    devcomplex<fptype> sumRateAB(0, 0);
-    devcomplex<fptype> sumRateBB(0, 0);
+    thrust::complex<fptype> sumWavesA(0, 0);
+    thrust::complex<fptype> sumWavesB(0, 0);
+    thrust::complex<fptype> sumRateAA(0, 0);
+    thrust::complex<fptype> sumRateAB(0, 0);
+    thrust::complex<fptype> sumRateBB(0, 0);
 
     unsigned int numResonances = RO_CACHE(indices[6]);
     //unsigned int cacheToUse    = RO_CACHE(indices[7]);
 
     for(int i = 0; i < numResonances; ++i) {
         int paramIndex  = parIndexFromResIndex(i);
-        fptype amp_real = RO_CACHE(p[RO_CACHE(indices[paramIndex+0])]);
-        fptype amp_imag = RO_CACHE(p[RO_CACHE(indices[paramIndex+1])]);
+        thrust::complex<fptype> amp { RO_CACHE(p[RO_CACHE(indices[paramIndex+0])]),
+                                      RO_CACHE(p[RO_CACHE(indices[paramIndex+1])]) };
 
-        //devcomplex<fptype> matrixelement(thrust::get<0>(cWaves[cacheToUse][evtNum*numResonances + i]),
+        //thrust::complex<fptype> matrixelement(thrust::get<0>(cWaves[cacheToUse][evtNum*numResonances + i]),
         //				     thrust::get<1>(cWaves[cacheToUse][evtNum*numResonances + i]));
         //Note, to make this more efficient we should change it to only an array of fptype's, and read double2 at a time.
-        fptype ai_real = RO_CACHE(cWaves[i][evtNum].ai_real);
-        fptype ai_imag = RO_CACHE(cWaves[i][evtNum].ai_imag);
-        fptype bi_real = RO_CACHE(cWaves[i][evtNum].bi_real);
-        fptype bi_imag = RO_CACHE(cWaves[i][evtNum].bi_imag);
+        thrust::complex<fptype> ai { RO_CACHE(cWaves[i][evtNum].ai_real), RO_CACHE(cWaves[i][evtNum].ai_imag)};
+        thrust::complex<fptype> bi { RO_CACHE(cWaves[i][evtNum].bi_real), RO_CACHE(cWaves[i][evtNum].bi_imag)};
 
-        devcomplex<fptype> matrixelement(ai_real, ai_imag);
-        matrixelement.multiply(amp_real, amp_imag);
+        thrust::complex<fptype> matrixelement = ai * amp;
         sumWavesA += matrixelement;
 
 #ifdef DEBUGSUMRATES
 
         if(25 > evtNum) {
-            devcomplex<fptype> waveA_i(thrust::get<0>(cWaves[cacheToUse][evtNum*numResonances + i]),
+            thrust::complex<fptype> waveA_i(thrust::get<0>(cWaves[cacheToUse][evtNum*numResonances + i]),
                                        thrust::get<1>(cWaves[cacheToUse][evtNum*numResonances + i]));
-            devcomplex<fptype> waveB_i(thrust::get<2>(cWaves[cacheToUse][evtNum*numResonances + i]),
+            thrust::complex<fptype> waveB_i(thrust::get<2>(cWaves[cacheToUse][evtNum*numResonances + i]),
                                        thrust::get<3>(cWaves[cacheToUse][evtNum*numResonances + i]));
 
             for(int j = 0; j < numResonances; ++j) {
@@ -183,17 +180,17 @@ __device__ fptype device_Tddp(fptype* evt, fptype* p, unsigned int* indices) {
                 fptype amp_real_j = p[indices[paramIndex_j+0]];
                 fptype amp_imag_j = p[indices[paramIndex_j+1]];
 
-                devcomplex<fptype> waveA_j(thrust::get<0>(cWaves[cacheToUse][evtNum*numResonances + j]),
+                thrust::complex<fptype> waveA_j(thrust::get<0>(cWaves[cacheToUse][evtNum*numResonances + j]),
                                            thrust::get<1>(cWaves[cacheToUse][evtNum*numResonances + j]));
 
-                devcomplex<fptype> waveB_j(thrust::get<2>(cWaves[cacheToUse][evtNum*numResonances + j]),
+                thrust::complex<fptype> waveB_j(thrust::get<2>(cWaves[cacheToUse][evtNum*numResonances + j]),
                                            thrust::get<3>(cWaves[cacheToUse][evtNum*numResonances + j]));
-                devcomplex<fptype> amps(amp_real, -amp_imag);
+                thrust::complex<fptype> amps(amp_real, -amp_imag);
                 amps.multiply(amp_real_j, amp_imag_j);
 
-                devcomplex<fptype> rateAA = conj(waveA_i)*waveA_j*amps;
-                devcomplex<fptype> rateAB = conj(waveA_i)*waveB_j*amps;
-                devcomplex<fptype> rateBB = conj(waveB_i)*waveB_j*amps;
+                thrust::complex<fptype> rateAA = conj(waveA_i)*waveA_j*amps;
+                thrust::complex<fptype> rateAB = conj(waveA_i)*waveB_j*amps;
+                thrust::complex<fptype> rateBB = conj(waveB_i)*waveB_j*amps;
 
                 sumRateAA += rateAA;
                 sumRateAB += rateAB;
@@ -206,10 +203,9 @@ __device__ fptype device_Tddp(fptype* evt, fptype* p, unsigned int* indices) {
 
 #endif
 
-        //matrixelement = devcomplex<fptype>(thrust::get<2>(cWaves[cacheToUse][evtNum*numResonances + i]),
+        //matrixelement = thrust::complex<fptype>(thrust::get<2>(cWaves[cacheToUse][evtNum*numResonances + i]),
         //				       thrust::get<3>(cWaves[cacheToUse][evtNum*numResonances + i]));
-        matrixelement = devcomplex<fptype> (bi_real, bi_imag);
-        matrixelement.multiply(amp_real, amp_imag);
+        matrixelement = bi * amp;
         sumWavesB += matrixelement;
     }
 
@@ -235,8 +231,8 @@ __device__ fptype device_Tddp(fptype* evt, fptype* p, unsigned int* indices) {
     ret *= EXP(-_time);
     */
 
-    fptype term1 = norm2(sumWavesA) + norm2(sumWavesB);
-    fptype term2 = norm2(sumWavesA) - norm2(sumWavesB);
+    fptype term1 = thrust::norm(sumWavesA) + thrust::norm(sumWavesB);
+    fptype term2 = thrust::norm(sumWavesA) - thrust::norm(sumWavesB);
     sumWavesA *= conj(sumWavesB);
     //printf("(%i, %i) TDDP: %f %f %f %f %f %f %f\n", BLOCKIDX, THREADIDX, term1, term2, sumWavesA.real, sumWavesA.imag, m12, m13, _tau);
 
@@ -274,8 +270,8 @@ __device__ fptype device_Tddp(fptype* evt, fptype* p, unsigned int* indices) {
         resFunctionPar = res_to_use + 1;
     }
 
-    ret = (*(reinterpret_cast<device_resfunction_ptr>(device_function_table[resFunctionIdx])))(term1, term2, sumWavesA.real,
-            sumWavesA.imag,
+    ret = (*(reinterpret_cast<device_resfunction_ptr>(device_function_table[resFunctionIdx])))(term1, term2, sumWavesA.real(),
+            sumWavesA.imag(),
             _tau, _time, _xmixing, _ymixing, _sigma,
             p, indices + resFunctionPar);
 
@@ -294,7 +290,7 @@ __device__ fptype device_Tddp(fptype* evt, fptype* p, unsigned int* indices) {
         mistag = RO_CACHE(evt[RO_CACHE(indices[md0_offset + 7 + RO_CACHE(indices[0])])]);
         ret *= mistag;
         ret += (1 - mistag) * (*(reinterpret_cast<device_resfunction_ptr>(device_function_table[resFunctionIdx])))(term1,
-                -term2, sumWavesA.real, -sumWavesA.imag,
+                -term2, sumWavesA.real(), -sumWavesA.imag(),
                 _tau, _time, _xmixing, _ymixing, _sigma,
                 p, &(indices[resFunctionPar]));
     }
@@ -856,15 +852,15 @@ __device__ WaveHolder_s SpecialWaveCalculator::operator()(thrust::tuple<int, fpt
     unsigned int functn_i = indices[parameter_i+2];
     unsigned int params_i = indices[parameter_i+3];
 
-    devcomplex<fptype> ai = getResonanceAmplitude(m12, m13, m23, functn_i, params_i);
-    devcomplex<fptype> bi = getResonanceAmplitude(m13, m12, m23, functn_i, params_i);
+    thrust::complex<fptype> ai = getResonanceAmplitude(m12, m13, m23, functn_i, params_i);
+    thrust::complex<fptype> bi = getResonanceAmplitude(m13, m12, m23, functn_i, params_i);
 
     //printf("Amplitudes %f, %f => (%f %f) (%f %f)\n", m12, m13, ai.real, ai.imag, bi.real, bi.imag);
 
-    ret.ai_real = ai.real;
-    ret.ai_imag = ai.imag;
-    ret.bi_real = bi.real;
-    ret.bi_imag = bi.imag;
+    ret.ai_real = ai.real();
+    ret.ai_imag = ai.imag();
+    ret.bi_real = bi.real();
+    ret.bi_imag = bi.imag();
 
     return ret;
 }

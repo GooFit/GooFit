@@ -24,3 +24,5 @@ latex/
 /work/*
 /goofit*
 */.ipynb_checkpoints/*
+
+*.pyc

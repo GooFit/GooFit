@@ -10,8 +10,9 @@ See *.cu file for more details
 #define LINESHAPES_PDF_HH
 
 #include "goofit/PDFs/GooPdf.h"
-#include "goofit/PDFs/devcomplex.h"
 #include "goofit/PDFs/ResonancePdf.h"
+
+#include <thrust/complex.h>
 
 class SpinFactor;
 

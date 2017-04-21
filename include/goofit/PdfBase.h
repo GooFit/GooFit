@@ -7,7 +7,6 @@
 
 #include <thrust/iterator/constant_iterator.h>
 #include <thrust/device_vector.h>
-#include <algorithm>
 
 typedef thrust::counting_iterator<int> IndexIterator;
 typedef thrust::constant_iterator<fptype*> DataIterator;

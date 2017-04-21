@@ -1,8 +1,9 @@
 #include <pybind11/pybind11.h>
+
+#include <goofit/Variable.h>
 #include <goofit/DataSet.h>
 
 namespace py = pybind11;
-
 
 template<class DataSetBase = DataSet>
 class PyDataSet : public DataSetBase {

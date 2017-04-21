@@ -1,5 +1,9 @@
 
 #include <pybind11/pybind11.h>
+
+#include <goofit/Variable.h>
+#include <goofit/BinnedDataSet.h>
+#include <goofit/UnbinnedDataSet.h>
 #include <goofit/PdfBase.h>
 
 namespace py = pybind11;

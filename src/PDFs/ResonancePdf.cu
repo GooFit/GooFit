@@ -4,14 +4,14 @@
 EXEC_TARGET fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m) {
     // For A -> B + C, calculate momentum of B and C in rest frame of A.
     // PDG 38.16.
-    fptype kin1 = 1 - POW(d1m+d2m, 2) / rMassSq;
+    fptype kin1 = 1 - POW2(d1m+d2m) / rMassSq;
 
     if(kin1 >= 0)
         kin1 = SQRT(kin1);
     else
         kin1 = 1;
 
-    fptype kin2 = 1 - POW(d1m-d2m, 2) / rMassSq;
+    fptype kin2 = 1 - POW2(d1m-d2m) / rMassSq;
 
     if(kin2 >= 0)
         kin2 = SQRT(kin2);
@@ -73,8 +73,8 @@ EXEC_TARGET fptype spinFactor(unsigned int spin, fptype motherMass, fptype daug1
 
     if(2 == spin) {
         sFactor *= sFactor;
-        fptype extraterm = ((_mAB-(2*motherMass*motherMass)-(2*_mC*_mC))+massFactor*pow((motherMass*motherMass-_mC*_mC), 2));
-        extraterm *= ((_mAB-(2*_mA*_mA)-(2*_mB*_mB))+massFactor*pow((_mA*_mA-_mB*_mB), 2));
+        fptype extraterm = ((_mAB-(2*motherMass*motherMass)-(2*_mC*_mC))+massFactor*POW2(motherMass*motherMass-_mC*_mC));
+        extraterm *= ((_mAB-(2*_mA*_mA)-(2*_mB*_mB))+massFactor*POW2(_mA*_mA-_mB*_mB));
         extraterm /= 3;
         sFactor -= extraterm;
     }
@@ -160,7 +160,7 @@ EXEC_TARGET fptype dh_dsFun(double s, double daug2Mass, double daug3Mass) {
     const fptype _pi = 3.14159265359;
     double k_s = twoBodyCMmom(s, daug2Mass, daug3Mass);
 
-    double val = (hFun(s, daug2Mass, daug3Mass) * (1.0/(8.0*pow(k_s, 2)) - 1.0/(2.0 * s)) + 1.0/(2.0* _pi*s));
+    double val = hFun(s, daug2Mass, daug3Mass) * (1.0/(8.0*POW2(k_s)) - 1.0/(2.0 * s)) + 1.0/(2.0* _pi*s);
     return val;
 }
 
@@ -173,7 +173,7 @@ EXEC_TARGET fptype dFun(double s, double daug2Mass, double daug3Mass) {
     double m    = sqrt(s);
     double k_m2 = twoBodyCMmom(s, daug2Mass, daug3Mass);
 
-    double val = 3.0/_pi * sm24/pow(k_m2, 2) * log((m + 2*k_m2)/sm) + m/(2*_pi*k_m2) - sm24*m/(_pi * pow(k_m2, 3));
+    double val = 3.0/_pi * sm24/POW2(k_m2) * log((m + 2*k_m2)/sm) + m/(2*_pi*k_m2) - sm24*m/(_pi * POW3(k_m2));
     return val;
 }
 
@@ -183,9 +183,9 @@ EXEC_TARGET fptype fsFun(double s, double m2, double gam, double daug2Mass, doub
     double k_s   = twoBodyCMmom(s,  daug2Mass, daug3Mass);
     double k_Am2 = twoBodyCMmom(m2, daug2Mass, daug3Mass);
 
-    double f     = gam * m2 / POW(k_Am2, 3);
-    f           *= (POW(k_s, 2) * (hFun(s, daug2Mass, daug3Mass) - hFun(m2, daug2Mass, daug3Mass)) + (m2 - s) * pow(k_Am2,
-                    2) * dh_dsFun(m2, daug2Mass, daug3Mass));
+    double f     = gam * m2 / POW3(k_Am2);
+    f           *= (POW2(k_s) * (hFun(s, daug2Mass, daug3Mass) - hFun(m2, daug2Mass, daug3Mass))
+                   + (m2 - s) * POW2(k_Am2) * dh_dsFun(m2, daug2Mass, daug3Mass));
 
     return f;
 }

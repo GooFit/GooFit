@@ -1,6 +1,4 @@
 
-
-
 ## v2.0.0: CMake
 #### In progress
 
@@ -29,7 +27,7 @@ A new feature of the CMake build system is GooFit Packages, which are complete p
 * Added (this) changelog
 
 ## Special tag: Final Makefile release
-# March 31, 2017
+#### March 31, 2017
 
 The Makefile system was partially maintained and adapted to the new file structure, but was deprecated after version 1.0, and received one special tag before it was removed. It was not possible to have an in-source CMake build while the makefile system was in place (and still not recommended).
 

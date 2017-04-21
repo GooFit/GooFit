@@ -1,7 +1,9 @@
-#ifndef BINNED_DATASET_HH
-#define BINNED_DATASET_HH
+#pragma once
 
 #include "goofit/DataSet.h"
+
+#include <map>
+#include <vector>
 
 class BinnedDataSet : public DataSet {
     // Class for rectangularly binned datasets - every bin the same size.
@@ -41,5 +43,3 @@ private:
     cachedNumBins; // Store these numbers in case they change on the user end - vast confusion possible.
 };
 
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef VARIABLE_HH
-#define VARIABLE_HH
+#pragma once
 
 #include <string>
 #include <map>
@@ -64,5 +63,3 @@ public:
     virtual ~Constant() {}
 };
 
-
-#endif

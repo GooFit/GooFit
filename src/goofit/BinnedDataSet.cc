@@ -1,4 +1,6 @@
 #include "goofit/BinnedDataSet.h"
+#include "goofit/Variable.h"
+#include <cassert>
 
 // Special constructor for one variable
 BinnedDataSet::BinnedDataSet(Variable* var, string n)

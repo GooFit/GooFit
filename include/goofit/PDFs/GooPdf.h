@@ -8,6 +8,7 @@
 #include <thrust/transform_reduce.h>
 #include <thrust/transform.h>
 #include <thrust/host_vector.h>
+
 #include <cmath>
 #include <cassert>
 #include <set>

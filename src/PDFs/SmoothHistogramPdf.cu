@@ -1,4 +1,5 @@
 #include "goofit/PDFs/SmoothHistogramPdf.h"
+#include "goofit/Variable.h"
 
 __constant__ fptype* dev_base_histograms[100]; // Multiple histograms for the case of multiple PDFs
 __constant__ fptype* dev_smoothed_histograms[100];

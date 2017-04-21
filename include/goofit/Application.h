@@ -1,3 +1,5 @@
+#pragma once
+
 #include "CLI/CLI.hpp"
 #include "goofit/Version.h"
 #include "thrust/detail/config/device_system.h"

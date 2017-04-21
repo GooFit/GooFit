@@ -1,10 +1,9 @@
-#ifndef FITCONTROL_HH
-#define FITCONTROL_HH
+#pragma once
 
-#include <string>
 #include "goofit/GlobalCudaDefines.h"
-#include "goofit/Variable.h"
+
 #include <vector>
+#include <string>
 
 class PdfBase;
 
@@ -59,6 +58,3 @@ public:
     BinnedChisqFit();
 };
 
-
-
-#endif

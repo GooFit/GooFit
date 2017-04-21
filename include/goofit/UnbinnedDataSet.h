@@ -1,7 +1,9 @@
-#ifndef UNBINNED_DATASET_HH
-#define UNBINNED_DATASET_HH
+#pragma once
 
 #include "goofit/DataSet.h"
+
+#include <map>
+#include <vector>
 
 class UnbinnedDataSet : public DataSet {
     // Class for unbinned datasets.
@@ -24,5 +26,3 @@ private:
     std::vector<std::map<Variable*, fptype>> data;
 
 };
-
-#endif

@@ -1,9 +1,9 @@
 #pragma once
 
 #include "goofit/GlobalCudaDefines.h"
-#include "goofit/PDFs/GooPdf.h"
 #include <TMinuit.h>
 
+class PdfBase;
 
 extern PdfBase* pdfPointer;
 extern int numPars;

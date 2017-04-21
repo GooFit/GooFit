@@ -1,5 +1,4 @@
-#ifndef PDF_BASE_HH
-#define PDF_BASE_HH
+#pragma once
 
 #include "goofit/GlobalCudaDefines.h"
 
@@ -134,5 +133,3 @@ private:
     __host__ void setIndices();
 };
 
-
-#endif

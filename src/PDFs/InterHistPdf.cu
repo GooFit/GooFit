@@ -1,4 +1,5 @@
 #include "goofit/PDFs/InterHistPdf.h"
+#include "goofit/Variable.h"
 
 __constant__ fptype* dev_base_interhists[100]; // Multiple histograms for the case of multiple PDFs
 #define OBS_CODE 4242424242

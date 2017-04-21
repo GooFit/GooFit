@@ -52,11 +52,9 @@ enum gooError {gooSuccess = 0, gooErrorMemoryAllocation};
 #define DEVICE_VECTOR thrust::device_vector
 #define MEMCPY(target, source, count, direction) cudaMemcpy(target, source, count, direction)
 #define MEMCPY_TO_SYMBOL(target, source, count, offset, direction) cudaMemcpyToSymbol(target, source, count, offset, direction)
-#ifdef TARGET_SM35
+// This automatically selects the correct CUDA arch and expands the intrinsic to work on arbitrary types
+#include <generics/ldg.h>
 #define RO_CACHE(x) __ldg(&x)
-#else
-#define RO_CACHE(x) x
-#endif
 #define GET_FUNCTION_ADDR(fname) cudaMemcpyFromSymbol((void**) &host_fcn_ptr, fname, sizeof(void*))
 #define MEMCPY_FROM_SYMBOL(target, source, count, offset, direction) cudaMemcpyFromSymbol(target, source, count, offset, direction)
 // For CUDA case, just use existing errors, renamed
@@ -102,7 +100,7 @@ typedef double fptype;
 #define MODF modf
 #define SIN sin
 #define SQRT sqrt
-#ifdef TARGET_SM35
+#if defined(__CUDA_ARCH__) && (__CUDA_ARCH__ >= 350)
 #define RSQRT rsqrt
 #else
 #define RSQRT 1.0/SQRT

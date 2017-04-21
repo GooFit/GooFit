@@ -143,12 +143,6 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
     list(APPEND CUDA_NVCC_FLAGS ${ARCH_FLAGS})
     message(STATUS "Compiling for GPU arch: ${ARCH_FLAGS}")
 
-    if(ARCH_FLAGS MATCHES "20|21|30|32")
-        message(STATUS "Removing GPU Arch 3.5+ features")
-    else()
-        message(STATUS "Activating GPU Arch 3.5+ features")
-        add_definitions("-DTARGET_SM35")
-    endif()
 else()
     if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
         add_compile_options("${GOOFIT_CFLAGS}")
@@ -286,11 +280,13 @@ macro(goofit_add_pdf)
 endmacro()
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
-include_directories(${PROJECT_SOURCE_DIR}/MCBooster)
+include_directories(${PROJECT_SOURCE_DIR}/extern/MCBooster)
+include_directories(${PROJECT_SOURCE_DIR}/extern/generics)
 
 # Adding header only libraries
 include(AddCLI)
 include(AddRang)
+
 
 add_library(goofit_lib INTERFACE)
 target_link_libraries(goofit_lib INTERFACE goofit_base PDFs rootstuff ROOT::ROOT rang CLI11)

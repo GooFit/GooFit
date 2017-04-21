@@ -1,0 +1,3 @@
+[submodule "extern/generics"]
+	path = extern/generics
+	url = ../generics.git

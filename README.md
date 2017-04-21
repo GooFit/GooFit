@@ -19,8 +19,8 @@ doing maximum-likelihood fits with a familiar syntax.
   * GoogleTest is downloaded automatically
 * A ROOT 6 build highly recommended.
 * If using CUDA:
-  * CUDA 7.5 and 8.0 tested, older versions should work for now
-  * An nVidia GPU supporting compute capability at least 2.0 (3.5 recommended)
+  * CUDA 7.0+
+  * An nVidia GPU supporting compute capability at least 2.0 (3.5+ recommended)
 * If using OpenMP:
   * A compiler supporting OpenMP and C++11 (GCC 4.8+ and Intel 17 tested)
 * If using CPP:

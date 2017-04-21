@@ -13,7 +13,7 @@ EXEC_TARGET fptype device_Novosibirsk(fptype* evt, fptype* p, unsigned int* indi
     fptype qy = 0;
 
     if(FABS(_Tail) <  1.e-7) {
-        qc = 0.5*POW(((x-_Mean)/_Sigma), 2);
+        qc = 0.5*POW2((x-_Mean)/_Sigma);
     } else {
         qa = _Tail*SQRT(LOG(4.));
         qb = SINH(qa)/qa;
@@ -23,7 +23,7 @@ EXEC_TARGET fptype device_Novosibirsk(fptype* evt, fptype* p, unsigned int* indi
         //---- Cutting curve from right side
 
         if(qy > 1.e-7)
-            qc = 0.5*(POW((LOG(qy)/_Tail), 2) + _Tail*_Tail);
+            qc = 0.5*(POW2(LOG(qy)/_Tail) + _Tail*_Tail);
         else
             qc = 15.0;
     }

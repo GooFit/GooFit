@@ -1,5 +1,4 @@
-#ifndef THRUST_PDF_FUNCTOR_HH
-#define THRUST_PDF_FUNCTOR_HH
+#pragma once
 
 #include <thrust/device_vector.h>
 #include <thrust/functional.h>
@@ -19,8 +18,6 @@
 #ifdef GOOFIT_MPI
 #include <mpi.h>
 #endif
-
-#define CALLS_TO_PRINT 10
 
 
 #ifdef SEPARABLE
@@ -103,5 +100,3 @@ private:
 };
 
 
-
-#endif

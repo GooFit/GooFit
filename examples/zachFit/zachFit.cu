@@ -37,16 +37,6 @@
 #include "goofit/PDFs/AddPdf.h"
 
 
-
-//#define OMP_ON 1
-//#ifdef OMP_ON
-//#include "omp.h"
-//#endif
-
-#ifdef CUDAPRINT
-#include "cuPrintf.cuh"
-#endif
-
 TCanvas* foo;
 timeval startTime, stopTime, totalTime;
 clock_t startCPU, stopCPU;

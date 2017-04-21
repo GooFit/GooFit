@@ -165,41 +165,6 @@ __device__ fptype device_Tddp(fptype* evt, fptype* p, unsigned int* indices) {
         thrust::complex<fptype> matrixelement = ai * amp;
         sumWavesA += matrixelement;
 
-#ifdef DEBUGSUMRATES
-
-        if(25 > evtNum) {
-            thrust::complex<fptype> waveA_i(thrust::get<0>(cWaves[cacheToUse][evtNum*numResonances + i]),
-                                       thrust::get<1>(cWaves[cacheToUse][evtNum*numResonances + i]));
-            thrust::complex<fptype> waveB_i(thrust::get<2>(cWaves[cacheToUse][evtNum*numResonances + i]),
-                                       thrust::get<3>(cWaves[cacheToUse][evtNum*numResonances + i]));
-
-            for(int j = 0; j < numResonances; ++j) {
-                int paramIndex_j  = parIndexFromResIndex(j);
-                fptype amp_real_j = p[indices[paramIndex_j+0]];
-                fptype amp_imag_j = p[indices[paramIndex_j+1]];
-
-                thrust::complex<fptype> waveA_j(thrust::get<0>(cWaves[cacheToUse][evtNum*numResonances + j]),
-                                           thrust::get<1>(cWaves[cacheToUse][evtNum*numResonances + j]));
-
-                thrust::complex<fptype> waveB_j(thrust::get<2>(cWaves[cacheToUse][evtNum*numResonances + j]),
-                                           thrust::get<3>(cWaves[cacheToUse][evtNum*numResonances + j]));
-                thrust::complex<fptype> amps(amp_real, -amp_imag);
-                amps.multiply(amp_real_j, amp_imag_j);
-
-                thrust::complex<fptype> rateAA = conj(waveA_i)*waveA_j*amps;
-                thrust::complex<fptype> rateAB = conj(waveA_i)*waveB_j*amps;
-                thrust::complex<fptype> rateBB = conj(waveB_i)*waveB_j*amps;
-
-                sumRateAA += rateAA;
-                sumRateAB += rateAB;
-                sumRateBB += rateBB;
-            }
-
-            waveA_i.multiply(amp_real, amp_imag);
-            waveB_i.multiply(amp_real, amp_imag);
-        }
-
-#endif
 
         //matrixelement = thrust::complex<fptype>(thrust::get<2>(cWaves[cacheToUse][evtNum*numResonances + i]),
         //				       thrust::get<3>(cWaves[cacheToUse][evtNum*numResonances + i]));
@@ -297,34 +262,6 @@ __device__ fptype device_Tddp(fptype* evt, fptype* p, unsigned int* indices) {
     //internalDebug = 0;
     ret *= eff;
 
-    //if ((gpuDebug & 1) && (4000 > evtNum)) {
-    //printf("FULLPRINT: %i: %f %f\n", evtNum, ret*normalisationFactors[(indices - paramIndices)], eff);
-    //printf("FULLPRINT: %i: %f %f (%f %f %f %f)\n", evtNum, ret, eff, m12, m13, _time, _sigma);
-    //}
-
-
-
-    //if (evtNum < 50) {
-    //if ((gpuDebug & 1) && (0 == THREADIDX)) {
-    //if ((gpuDebug & 1) && (180 == evtNum)) {
-    //if ((0 == THREADIDX) && (0 == BLOCKIDX) && (gpuDebug & 1)) {
-    //sumRateAA *= eff;
-    //sumRateAB *= eff;
-    //sumRateBB *= eff;
-    //printf("Signal1 %i (%f, %f) (%f, %f) (%f, %f)\n", evtNum, sumRateAA.real, sumRateAA.imag, sumRateAB.real, sumRateAB.imag, sumRateBB.real, sumRateBB.imag);
-    //printf("Signal1 %i (%f, %f) (%f, %f) (%f, %f %f) %f\n", evtNum, term1, term2, sumWavesA.real, sumWavesA.imag, _tau, _xmixing, _ymixing, ret);
-    //fptype m23 = motherMass*motherMass + daug1Mass*daug1Mass + daug2Mass*daug2Mass + daug3Mass*daug3Mass - m12 - m13;
-    //printf("Signal2 %i (%f, %f, %f) %f, %f | %f %f %f\n", evtNum, m12, m13, m23, _time, _sigma, eff, ret, normalisationFactors[(indices - paramIndices)]);
-    //printf("Signal3 %f %f %f %f %f %f %f %f\n", cudaArray[indices[effFunctionIdx+1]+1], cudaArray[indices[effFunctionIdx+1]+2], cudaArray[indices[effFunctionIdx+1]+3],
-    //cudaArray[indices[effFunctionIdx+1]+4], cudaArray[indices[effFunctionIdx+1]+5], cudaArray[indices[effFunctionIdx+1]+6],
-    //cudaArray[indices[effFunctionIdx+1]+7], cudaArray[indices[effFunctionIdx+1]+8]);
-    //}
-
-    //printf("(%i, %i) TDDP: %f %f %f %f %f %i %f\n", BLOCKIDX, THREADIDX, _time, _sigma, m12, m13, term1, evtNum, ret);
-    //if ((gpuDebug & 1) && (isnan(ret)))
-    //printf("(%i, %i) TDDP: %f %f %f %f %i %i %f\n", BLOCKIDX, THREADIDX, _time, _sigma, m12, m13, evtNum, indices[6 + indices[0]], evt[indices[6 + indices[0]]]);
-    //if ((gpuDebug & 1) && (isnan(ret)))
-    //printf("(%i, %i) TDDP: %f %f %f %f %f %f %f\n", BLOCKIDX, THREADIDX, term1, term2, sumWavesA.real, sumWavesA.imag, _xmixing, _ymixing, _tau);
 
     return ret;
 }
@@ -719,18 +656,6 @@ __host__ fptype TddpPdf::normalise() const {
     binSizeFactor *= ((_m12->upperlimit - _m12->lowerlimit) / _m12->numbins);
     binSizeFactor *= ((_m13->upperlimit - _m13->lowerlimit) / _m13->numbins);
     ret *= binSizeFactor;
-
-#ifdef CUDAPRINT
-    std::cout << "Tddp dalitz integrals: "
-              << dalitzIntegralOne* binSizeFactor << " "
-              << dalitzIntegralTwo* binSizeFactor << " "
-              << dalitzIntegralThr* binSizeFactor << " "
-              << dalitzIntegralFou* binSizeFactor << " | "
-              << binSizeFactor << " "
-              << tau << " " << xmixing << " " << ymixing << " "
-              << ret << " "
-              << std::endl;
-#endif
 
     host_normalisation[parameters] = 1.0/ret;
     //std::cout << "End of TDDP normalisation: " << ret << " " << host_normalisation[parameters] << " " << binSizeFactor << std::endl;

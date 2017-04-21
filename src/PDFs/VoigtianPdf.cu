@@ -272,14 +272,6 @@ __device__ fptype device_Voigtian(fptype* evt, fptype* p, unsigned int* indices)
     fptype w = p[indices[2]];
     fptype s = p[indices[3]];
 
-#ifdef CUDAPRINT
-
-    //if ((0 == THREADIDX) && (0 == BLOCKIDX))
-    //cuPrintf("Values %f %i %i %i %f %f %f %i %i\n", x, indices[1], indices[2], indices[3], m, w, s, indices, callnumber);
-    if(callnumber < 1)
-        cuPrintf("Voigtian Values %f %i %i %i %f %f %f %i\n", x, indices[1], indices[2], indices[3], m, w, s, callnumber);
-
-#endif
 
     // return constant for zero width and sigma
     if((0==s) && (0==w))

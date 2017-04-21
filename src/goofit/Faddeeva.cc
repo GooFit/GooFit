@@ -68,15 +68,8 @@ thrust::complex<fptype> Faddeeva_2(const thrust::complex<fptype>& z) {
     e = e1;
     r = M_1_PI * 0.5;
 
-#ifdef FADEBUG
-    std::cout << "Start " << z.real() << ", " << z.imag() << std::endl;
-#endif
-
     // if z is too close to a pole select table 2
     if(FABS(z.imag()) < 0.01 && FABS(z.real()) < 6.01) {
-#ifdef FADEBUG
-        std::cout << "Table 2" << std::endl;
-#endif
 
         h = FABS(z.real())*2;
         // Equivalent to modf(h, &g). Do this way because nvcc only knows about double version of modf.
@@ -93,10 +86,6 @@ thrust::complex<fptype> Faddeeva_2(const thrust::complex<fptype>& z) {
     d = (z.imag() - z.real()) * (z.imag() + z.real());
     f = 4 * z.real() * z.real() * z.imag() * z.imag();
 
-#ifdef FADEBUG
-    printf("check 1, %f %f %f %f\n", d, f, n[0], e[0]);
-#endif
-
     g = h = 0.0;
 
     for(i = 0; i < 12; i++) {
@@ -108,16 +97,8 @@ thrust::complex<fptype> Faddeeva_2(const thrust::complex<fptype>& z) {
 
     u = 1 / s;
 
-#ifdef FADEBUG
-    printf("check 2, %f %f %f %f %f\n", r, u, g, h, s);
-#endif
-
     c = r * thrust::complex<fptype>(z.imag() * (u + 2.0 * g),
                                  z.real() * (u + 2.0 * h));
-
-#ifdef FADEBUG
-    printf("check 3, c is %f %f\n", real(c), imag(c));
-#endif
 
 
     if(z.imag() < M_2PI) {
@@ -134,9 +115,6 @@ thrust::complex<fptype> Faddeeva_2(const thrust::complex<fptype>& z) {
         c += g * thrust::complex<fptype>((h * f - t * s), -(h * s + t * f));
     }
 
-#ifdef FADEBUG
-    std::cout << "c value is " << c << std::endl;
-#endif
     return c;
 }
 

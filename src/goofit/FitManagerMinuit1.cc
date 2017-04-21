@@ -128,68 +128,6 @@ void FitFun(int& npar, double* gin, double& fun, double* fp, int iflag) {
     fun = pdfPointer->calculateNLL();
     host_callnumber++;
 
-#ifdef PRINTCALLS
-    specialTddpPrint(fun);
-#endif
 }
 
-
-#ifdef PRINTCALLS
-void specialTddpPrint(double fun) {
-    // Stupid amplitude-fit debugging method.
-   std::cout << "Function call " << host_callnumber << ": " << fun << "\n";
-    currGlue->getMinuitValues();
-    int varCount = 1;
-
-    for(std::vector<Variable*>::iterator v = vars.begin(); v != vars.end(); ++v) {
-        if(!(*v))
-           std::cout << "Null!" <<std::endl;
-
-        if((*v)->fixed)
-            continue;
-
-        const fptype _mD0 = 1.86484;
-        const fptype _mD02 = _mD0 *_mD0;
-        const fptype _mD02inv = 1./_mD02;
-        double stupidSpecialModifier = 1; // Mikhail interprets some of the weights differently.
-
-        if(((*v)->name == "f0_980_amp_real") ||
-                ((*v)->name == "f0_980_amp_imag") ||
-                ((*v)->name == "f0_1370_amp_real") ||
-                ((*v)->name == "f0_1370_amp_imag") ||
-                ((*v)->name == "f0_1500_amp_real") ||
-                ((*v)->name == "f0_1500_amp_imag") ||
-                ((*v)->name == "f0_1710_amp_real") ||
-                ((*v)->name == "f0_1710_amp_imag") ||
-                ((*v)->name == "f0_600_amp_real") ||
-                ((*v)->name == "f0_600_amp_imag"))
-            stupidSpecialModifier = -_mD02;
-        else if(((*v)->name == "f2_1270_amp_real") ||
-                ((*v)->name == "f2_1270_amp_imag"))
-            stupidSpecialModifier = -_mD02inv;
-        else if(((*v)->name == "nonr_amp_real") ||
-                ((*v)->name == "nonr_amp_imag"))
-            stupidSpecialModifier = -1;
-
-       std::cout.width(20);
-       std::cout << (*v)->name;
-       std::cout.setf(ios_base::right, ios_base::adjustfield);
-       std::cout.width(3);
-       std::cout << varCount++;
-       std::cout.setf(ios_base::right, ios_base::adjustfield);
-       std::cout.precision(8);
-       std::cout << "  ";
-       std::cout.width(12);
-       std::cout << (*v)->value / stupidSpecialModifier;
-       std::cout.setf(ios_base::right, ios_base::adjustfield);
-       std::cout.precision(8);
-       std::cout << "  ";
-       std::cout.width(12);
-       std::cout << (*v)->error;
-       std::cout <<std::endl;
-    }
-
-   std::cout <<std::endl;
-}
-#endif
 

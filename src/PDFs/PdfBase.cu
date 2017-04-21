@@ -7,32 +7,6 @@
 // off on its own in this inline-cuda file, which GooPdf.cu
 // should include.
 
-#ifdef CUDAPRINT
-__host__ void PdfBase::copyParams(const std::vector<double>& pars) const {
-    if(host_callnumber < 1) {
-        std::cout << "Copying parameters: " << (long long) cudaArray << " ";
-    }
-
-    for(unsigned int i = 0; i < pars.size(); ++i) {
-        host_params[i] = pars[i];
-
-        if(host_callnumber < 1) {
-            std::cout << pars[i] << " ";
-        }
-
-        if(std::isnan(host_params[i])) {
-            std::cout << " agh, NaN, die " << i << std::endl;
-            abortWithCudaPrintFlush(__FILE__, __LINE__, "NaN in parameter");
-        }
-    }
-
-    if(host_callnumber < 1) {
-        std::cout << std::endl;
-    }
-
-    MEMCPY_TO_SYMBOL(cudaArray, host_params, pars.size()*sizeof(fptype), 0, cudaMemcpyHostToDevice);
-}
-#else
 __host__ void PdfBase::copyParams(const std::vector<double>& pars) const {
     // copyParams method performs eponymous action!
 
@@ -47,7 +21,6 @@ __host__ void PdfBase::copyParams(const std::vector<double>& pars) const {
 
     MEMCPY_TO_SYMBOL(cudaArray, host_params, pars.size()*sizeof(fptype), 0, cudaMemcpyHostToDevice);
 }
-#endif
 
 __host__ void PdfBase::copyParams() {
     // Copies values of Variable objects

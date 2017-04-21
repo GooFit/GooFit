@@ -54,29 +54,6 @@ double FitManagerMinuit2::operator()(const vector<double>& pars) const {
     double nll = pdfPointer->calculateNLL();
     host_callnumber++;
 
-#ifdef PRINTCALLS
-    double edm = migrad->State().Edm();
-   std::cout.precision(8);
-   std::cout << "State at call "
-         << host_callnumber << " : "
-         << nll << " "
-         << edm << " Pars: ";
-    std::vector<Variable*> vars;
-    pdfPointer->getParameters(vars);
-
-    for(std::vector<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
-        if(0 > (*i)->getIndex())
-            continue;
-
-        if((*i)->fixed)
-            continue;
-
-       std::cout << "(" << (*i)->name << " " << pars[(*i)->getIndex()] << ") "; // migrad->Value((*i)->getIndex()) << ") ";
-    }
-
-   std::cout <<std::endl;
-#endif
-
     return nll;
 }
 }

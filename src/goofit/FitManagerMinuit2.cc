@@ -1,59 +1,45 @@
+#include "goofit/fitting/FitManagerMinuit2.h"
 
-#include <cstdio>
-#include <cassert>
-#include <limits>
-#include <typeinfo>
-#include <set>
+#include <Minuit2/MnUserParameters.h>
+#include <Minuit2/MnUserParameterState.h>
+#include <Minuit2/MnMigrad.h>
+#include <Minuit2/FunctionMinimum.h>
+#include "Minuit2/MnPrint.h"
 
-#include "goofit/PdfBase.h"
-#include "goofit/FitManagerMinuit2.h"
-#include "goofit/PDFs/GooPdf.h"
-#include "goofit/Variable.h"
+#include <rang.hpp>
+#include <CLI/Timer.hpp>
 
 namespace GooFit {
+    
+FitManagerMinuit2::FitManagerMinuit2(PdfBase* dat) : upar_(*dat), fcn_(upar_) {}
 
-ROOT::Minuit2::FunctionMinimum* FitManagerMinuit2::fit() {
+Minuit2::FunctionMinimum FitManagerMinuit2::fit() {
+    auto val = Minuit2::MnPrint::Level();
+    Minuit2::MnPrint::SetLevel(3);
+    
+    // Setting global call number to 0
     host_callnumber = 0;
-    params = new ROOT::Minuit2::MnUserParameters();
-    vars.clear();
-    pdfPointer->getParameters(vars);
+    
+    CLI::Timer timer{"The minimization took"};
+    
+    Minuit2::MnMigrad migrad{fcn_, upar_};
+    
+    // Do the minimization
+    std::cout << rang::fg::gray << rang::style::bold;
+    Minuit2::FunctionMinimum min = migrad(maxfcn_);
+    
+    // Print nice output
+    std::cout << rang::style::reset << (min.IsValid() ? rang::fg::green : rang::fg::red);   
+    std::cout << min << rang::style::reset;
+    std::cout << rang::fg::magenta << timer << rang::style::reset << std::endl;
+    
+    // Set the parameters in GooFit to the new values
+    upar_.SetGooFitParams(min.UserState());
 
-    numPars = vars.size();
-    int maxIndex = 0;
-
-    for(std::vector<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
-        if((*i)->lowerlimit == (*i)->upperlimit)
-            params->Add((*i)->name, (*i)->value, (*i)->error);
-        else
-            params->Add((*i)->name, (*i)->value, (*i)->error, (*i)->lowerlimit, (*i)->upperlimit);
-
-        if((*i)->fixed)
-            params->Fix(params->Index((*i)->name));
-
-        if(maxIndex < (*i)->getIndex())
-            maxIndex = (*i)->getIndex();
-    }
-
-    numPars = maxIndex+1;
-    migrad = new ROOT::Minuit2::MnMigrad(*this, *params);
-    ROOT::Minuit2::FunctionMinimum* ret = new ROOT::Minuit2::FunctionMinimum((*migrad)());
-
-    return ret;
+    Minuit2::MnPrint::SetLevel(val);
+    return min;
 }
-
-double FitManagerMinuit2::operator()(const vector<double>& pars) const {
-    vector<double> gooPars; // Translates from Minuit indexing to GooFit indexing
-    gooPars.resize(numPars);
-    int counter = 0;
-
-    for(std::vector<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
-        gooPars[(*i)->index] = pars[counter++];
-    }
-
-    pdfPointer->copyParams(gooPars);
-    double nll = pdfPointer->calculateNLL();
-    host_callnumber++;
-
-    return nll;
+    
 }
-}
+  
+

@@ -37,9 +37,9 @@ __device__ fptype device_KinLimitBW(fptype* evt, fptype* p, unsigned int* indice
 
     mean *= mean;
     fptype pUsingX     = getMomentum(x, pimass, d0mass);
-    fptype phspfactor  = pow(pUsingX / pUsingRealMass, 3) * pow(bwFactor(pUsingX) / bwFactor(pUsingRealMass), 2);
-    fptype phspMassSq  = pow(mean - x*x, 2);
-    fptype phspGammaSq = pow(width*phspfactor, 2);
+    fptype phspfactor  = POW3(pUsingX / pUsingRealMass) * POW2(bwFactor(pUsingX) / bwFactor(pUsingRealMass));
+    fptype phspMassSq  = POW2(mean - x*x);
+    fptype phspGammaSq = POW2(width*phspfactor);
 
     fptype ret = (phspfactor * mean*width*width)/(phspMassSq + mean*phspGammaSq);
 

@@ -101,4 +101,3 @@ else()
 endif()
 
 target_link_libraries(PDFs goofit_base)
-install(TARGETS PDFs EXPORT GooFitTargets DESTINATION lib)

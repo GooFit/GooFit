@@ -143,7 +143,7 @@ __device__ fptype calculateChisq(fptype rawPdf, fptype* evtVal, unsigned int par
     rawPdf *= normalisationFactors[par];
     rawPdf *= evtVal[1]; // Bin volume
 
-    return pow(rawPdf * functorConstants[0] - evtVal[0], 2) / (evtVal[0] > 1 ? evtVal[0] : 1);
+    return POW2(rawPdf * functorConstants[0] - evtVal[0]) / (evtVal[0] > 1 ? evtVal[0] : 1);
 }
 
 __device__ device_metric_ptr ptr_to_Eval         = calculateEval;

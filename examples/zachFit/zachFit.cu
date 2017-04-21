@@ -207,8 +207,6 @@ void CudaMinimise(int fitType) {
     //ROOT::Minuit2::FunctionMinimum* min = mcpdf.fit();
     mcpdf.fit();
 
-    mcpdf.getMinuitValues();
-
     mean1.fixed = true;
     mean2.fixed = true;
     mean3.fixed = true;
@@ -319,7 +317,6 @@ void CudaMinimise(int fitType) {
       dm->numbins = 300;
       dm->lowerlimit = 0.1365;
       dm->upperlimit = 0.1665;
-      datapdf.getMinuitValues();
       std::cout << bkg_frac.value << std::endl;
 
       // plotComponent seems broken?

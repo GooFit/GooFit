@@ -19,8 +19,8 @@ doing maximum-likelihood fits with a familiar syntax.
   * GoogleTest is downloaded automatically
 * A ROOT 6 build highly recommended.
 * If using CUDA:
-  * CUDA 7.5 and 8.0 tested, older versions should work for now
-  * An nVidia GPU supporting compute capability at least 2.0 (3.5 recommended)
+  * CUDA 7.0+
+  * An nVidia GPU supporting compute capability at least 2.0 (3.5+ recommended)
 * If using OpenMP:
   * A compiler supporting OpenMP and C++11 (GCC 4.8+ and Intel 17 tested)
 * If using CPP:
@@ -143,8 +143,8 @@ If you'd like to make a separate goofit project, you can do so. Simply checkout 
 
 ## Converting from older GooFit code
  
-The build system underwent a major upgrade in the move to CMake. The folders that were introduced to keep the includes structured require modifications of source code, converting lines like `#include "Variable.hh"` to `#include "goofit/Variable.h"`. This modification can be done for you by running the provided script, `scripts/ModernizeGooFit.py` on your source files (requires Python and Plumbum). You should remove your old Makefiles and use the new `CMakeFiles.txt` files provided in examples - this should require
-writing two lines of code instead of the 50 or so previously needed.
+The build system underwent a major upgrade in the move to CMake. The folders that were introduced to keep the includes structured require modifications of source code, converting lines like `#include "Variable.hh"` to `#include "goofit/Variable.h"`. This modification can be done for you by running the provided script, `scripts/ModernizeGooFit.py` on your source files (requires Python and [Plumbum](https://github.com/tomerfiliba/plumbum)). You should remove your old Makefiles and use the new `CMakeFiles.txt` files provided in examples - this should require
+writing two lines of code instead of the 50 or so previously needed. You shuld also add a GooFit Application to your code. (5 lines)
 
 The new `GooFit::Application`, which is not required but provides GooFit options, like GPU selection and status, as well as MPI support and configurable command line options, is available by adding:
 

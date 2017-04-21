@@ -1,7 +1,6 @@
 #include "mpi.h"
 #include "TestThrust.hh"
 #include "TRandom.h"
-#include <complex>
 #include "Faddeeva.cc"
 #include <fstream>
 #include <cassert>
@@ -37,9 +36,9 @@ double cpuvoigtian(double x, double m, double w, double s) {
     double c = 1./(sqrt(2)*s);
     double a = 0.5*c*w;
     double u = c*arg;
-    std::complex<double> z(u, a) ;
+    thrust::complex<double> z(u, a) ;
     //printf("Calling Faddeeva %f %f %f %f %f %f %f\n", x, m, s, w, c, a, u);
-    std::complex<double> v = Faddeeva_2(z);
+    thrust::complex<double> v = Faddeeva_2(z);
 
     static const double rsqrtPi = 0.5641895835477563;
     return c*rsqrtPi*v.real();

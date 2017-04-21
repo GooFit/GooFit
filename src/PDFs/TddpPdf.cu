@@ -1,6 +1,4 @@
 #include "goofit/PDFs/TddpPdf.h"
-#include <complex>
-using std::complex;
 
 const int resonanceOffset = 8; // Offset of the first resonance into the parameter index array
 // Offset is number of parameters, constant index, indices for tau, xmix, and ymix, index
@@ -659,24 +657,24 @@ __host__ fptype TddpPdf::normalise() const {
 
     // End of time-consuming integrals.
 
-    complex<fptype> integralA_2(0, 0);
-    complex<fptype> integralB_2(0, 0);
-    complex<fptype> integralABs(0, 0);
+    thrust::complex<fptype> integralA_2(0, 0);
+    thrust::complex<fptype> integralB_2(0, 0);
+    thrust::complex<fptype> integralABs(0, 0);
 
     for(unsigned int i = 0; i < decayInfo->resonances.size(); ++i) {
         int param_i = parameters + resonanceOffset + resonanceSize*i;
-        complex<fptype> amplitude_i(host_params[host_indices[param_i]], host_params[host_indices[param_i + 1]]);
+        thrust::complex<fptype> amplitude_i(host_params[host_indices[param_i]], host_params[host_indices[param_i + 1]]);
 
         for(unsigned int j = 0; j < decayInfo->resonances.size(); ++j) {
             int param_j = parameters + resonanceOffset + resonanceSize*j;
-            complex<fptype> amplitude_j(host_params[host_indices[param_j]],
+            thrust::complex<fptype> amplitude_j(host_params[host_indices[param_j]],
                                         -host_params[host_indices[param_j + 1]]); // Notice complex conjugation
 
-            integralA_2 += (amplitude_i * amplitude_j * complex<fptype>(thrust::get<0>(*(integrals[i][j])),
+            integralA_2 += (amplitude_i * amplitude_j * thrust::complex<fptype>(thrust::get<0>(*(integrals[i][j])),
                             thrust::get<1>(*(integrals[i][j]))));
-            integralABs += (amplitude_i * amplitude_j * complex<fptype>(thrust::get<2>(*(integrals[i][j])),
+            integralABs += (amplitude_i * amplitude_j * thrust::complex<fptype>(thrust::get<2>(*(integrals[i][j])),
                             thrust::get<3>(*(integrals[i][j]))));
-            integralB_2 += (amplitude_i * amplitude_j * complex<fptype>(thrust::get<4>(*(integrals[i][j])),
+            integralB_2 += (amplitude_i * amplitude_j * thrust::complex<fptype>(thrust::get<4>(*(integrals[i][j])),
                             thrust::get<5>(*(integrals[i][j]))));
 
             /*
@@ -705,11 +703,10 @@ __host__ fptype TddpPdf::normalise() const {
         }
     }
 
-    double dalitzIntegralOne = real(
-                                   integralA_2); // Notice that this is already the abs2, so it's real by construction; but the compiler doesn't know that.
-    double dalitzIntegralTwo = real(integralB_2);
-    double dalitzIntegralThr = real(integralABs);
-    double dalitzIntegralFou = imag(integralABs);
+    double dalitzIntegralOne = integralA_2.real(); // Notice that this is already the abs2, so it's real by construction; but the compiler doesn't know that.
+    double dalitzIntegralTwo = integralB_2.real();
+    double dalitzIntegralThr = integralABs.real();
+    double dalitzIntegralFou = integralABs.imag();
 
     fptype tau     = host_params[host_indices[parameters + 2]];
     fptype xmixing = host_params[host_indices[parameters + 3]];

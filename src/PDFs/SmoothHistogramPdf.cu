@@ -174,8 +174,8 @@ fptype* pointerToFirst(thrust::host_vector<fptype>* hist) {
 }
 
 __host__ void SmoothHistogramPdf::copyHistogramToDevice(thrust::host_vector<fptype>& host_histogram) {
-    dev_base_histogram = new DEVICE_VECTOR<fptype>(host_histogram);
-    dev_smoothed_histogram = new DEVICE_VECTOR<fptype>(host_histogram);
+    dev_base_histogram = new thrust::device_vector<fptype>(host_histogram);
+    dev_smoothed_histogram = new thrust::device_vector<fptype>(host_histogram);
     static fptype* dev_address[1];
     dev_address[0] = pointerToFirst(dev_base_histogram);
     MEMCPY_TO_SYMBOL(dev_base_histograms, dev_address, sizeof(fptype*), totalHistograms*sizeof(fptype*),

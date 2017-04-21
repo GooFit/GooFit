@@ -201,9 +201,9 @@ __host__ void DalitzPlotPdf::setDataSize(unsigned int dataSize, unsigned int evt
 
     for(int i = 0; i < 16; i++) {
 #ifdef GOOFIT_MPI
-        cachedWaves[i] = new DEVICE_VECTOR<thrust::complex<fptype>>(m_iEventsPerTask);
+        cachedWaves[i] = new thrust::device_vector<thrust::complex<fptype>>(m_iEventsPerTask);
 #else
-        cachedWaves[i] = new DEVICE_VECTOR<thrust::complex<fptype>>(dataSize);
+        cachedWaves[i] = new thrust::device_vector<thrust::complex<fptype>>(dataSize);
 #endif
         void* dummy = thrust::raw_pointer_cast(cachedWaves[i]->data());
         MEMCPY_TO_SYMBOL(cResonances, &dummy, sizeof(thrust::complex<fptype>*), i*sizeof(thrust::complex<fptype>*),
@@ -264,14 +264,14 @@ __host__ fptype DalitzPlotPdf::normalise() const {
 #ifdef GOOFIT_MPI
             thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
                               thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, arrayAddress, eventSize)),
-                              strided_range<DEVICE_VECTOR<thrust::complex<fptype>>::iterator>(cachedWaves[i]->begin(),
+                              strided_range<thrust::device_vector<thrust::complex<fptype>>::iterator>(cachedWaves[i]->begin(),
                                       cachedWaves[i]->end(),
                                       1).begin(),
                               *(calculators[i]));
 #else
             thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
                               thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
-                              strided_range<DEVICE_VECTOR<thrust::complex<fptype>>::iterator>(cachedWaves[i]->begin(),
+                              strided_range<thrust::device_vector<thrust::complex<fptype>>::iterator>(cachedWaves[i]->begin(),
                                       cachedWaves[i]->end(),
                                       1).begin(),
                               *(calculators[i]));

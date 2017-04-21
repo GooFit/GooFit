@@ -14,7 +14,7 @@ extern int host_callnumber;
 #define __align__(n)
 #define __shared__
 #define __constant__
-#define DEVICE_VECTOR thrust::host_vector
+
 // Use char* here because I need +1 to mean "offset by one byte", not "by one sizeof(whatever)".
 // Can't use void* because then the compiler doesn't know how to do pointer arithmetic.
 // This will fail if sizeof(char) is more than 1. But that should never happen, right?
@@ -22,7 +22,6 @@ extern int host_callnumber;
 #define MEMCPY_TO_SYMBOL(target, source, count, offset, direction) memcpy(((char*) target)+offset, source, count)
 #define MEMCPY_FROM_SYMBOL(target, source, count, offset, direction) memcpy((char*) target, ((char*) source)+offset, count)
 #define GET_FUNCTION_ADDR(fname) host_fcn_ptr = (void*) fname
-#define cudaDeviceSynchronize dummySynch
 #define BLOCKIDX (1)
 inline void cudaDeviceSynchronize() {}
 #define CONST_PI M_PI
@@ -49,9 +48,9 @@ enum gooError {gooSuccess = 0, gooErrorMemoryAllocation};
 
 // CUDA target - defaults
 #define THREAD_SYNCH __syncthreads();
-#define DEVICE_VECTOR thrust::device_vector
 #define MEMCPY(target, source, count, direction) cudaMemcpy(target, source, count, direction)
 #define MEMCPY_TO_SYMBOL(target, source, count, offset, direction) cudaMemcpyToSymbol(target, source, count, offset, direction)
+
 // This automatically selects the correct CUDA arch and expands the intrinsic to work on arbitrary types
 #include <generics/ldg.h>
 #define RO_CACHE(x) __ldg(&x)
@@ -66,9 +65,7 @@ enum gooError {gooSuccess = cudaSuccess,
 #define BLOCKDIM (blockDim.x)
 #define BLOCKIDX (blockIdx.x)
 #define CONST_PI CUDART_PI
-
 #else
-
 #define THREADIDX (1)
 #define BLOCKDIM (1)
 #endif

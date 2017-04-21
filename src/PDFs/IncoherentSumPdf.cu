@@ -127,7 +127,7 @@ __host__ void IncoherentSumPdf::setDataSize(unsigned int dataSize, unsigned int 
     }
 
     numEntries = dataSize;
-    cachedResonances = new DEVICE_VECTOR<thrust::complex<fptype>>(dataSize*decayInfo->resonances.size());
+    cachedResonances = new thrust::device_vector<thrust::complex<fptype>>(dataSize*decayInfo->resonances.size());
     void* dummy = thrust::raw_pointer_cast(cachedResonances->data());
     MEMCPY_TO_SYMBOL(cResonanceValues, &dummy, sizeof(thrust::complex<fptype>*), cacheToUse*sizeof(thrust::complex<fptype>*),
                      cudaMemcpyHostToDevice);
@@ -190,7 +190,7 @@ __host__ fptype IncoherentSumPdf::normalise() const {
         if(redoIntegral[i]) {
             thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
                               thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
-                              strided_range<DEVICE_VECTOR<thrust::complex<fptype>>::iterator>(cachedResonances->begin() + i,
+                              strided_range<thrust::device_vector<thrust::complex<fptype>>::iterator>(cachedResonances->begin() + i,
                                       cachedResonances->end(),
                                       decayInfo->resonances.size()).begin(),
                               *(calculators[i]));

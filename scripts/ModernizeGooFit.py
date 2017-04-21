@@ -81,6 +81,7 @@ conversion = [
     (r'\bSYNCH\b', 'cudaDeviceSynchronize'),
     (r'\bdevcomplex\b', 'thrust::complex'),
     (r'\bstd::complex\b', 'thrust::complex'),
+    (r'\bDEVICE_VECTOR\b', 'thrust::device_vector'),
 ]
 
 def fix_text(contents):

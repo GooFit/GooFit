@@ -38,7 +38,7 @@ private:
 
     // Following variables are useful if masses and widths, involved in difficult BW calculation,
     // change infrequently while amplitudes, only used in adding BW results together, change rapidly.
-    DEVICE_VECTOR<thrust::complex<fptype>>* cachedResonances; // BW (and other) results for each event.
+    thrust::device_vector<thrust::complex<fptype>>* cachedResonances; // BW (and other) results for each event.
     double* integrals; // Integrals of each BW resonance across the Daliz plot.
 
     bool* redoIntegral;

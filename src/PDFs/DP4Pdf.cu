@@ -281,13 +281,13 @@ __host__ void DPPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) {
         delete cachedAMPs;
 
     numEntries = dataSize;
-    cachedResSF = new DEVICE_VECTOR<thrust::complex<fptype>>(dataSize*(components.size() + SpinFactors.size() -
+    cachedResSF = new thrust::device_vector<thrust::complex<fptype>>(dataSize*(components.size() + SpinFactors.size() -
             1)); //   -1 because 1 component is efficiency
     void* dummy = thrust::raw_pointer_cast(cachedResSF->data());
     MEMCPY_TO_SYMBOL(cResSF, &dummy, sizeof(thrust::complex<fptype>*), cacheToUse*sizeof(thrust::complex<fptype>*),
                      cudaMemcpyHostToDevice);
 
-    cachedAMPs = new DEVICE_VECTOR<thrust::complex<fptype>>(dataSize*(AmpCalcs.size()));
+    cachedAMPs = new thrust::device_vector<thrust::complex<fptype>>(dataSize*(AmpCalcs.size()));
     void* dummy2 = thrust::raw_pointer_cast(cachedAMPs->data());
     MEMCPY_TO_SYMBOL(Amps_DP, &dummy2, sizeof(thrust::complex<fptype>*), cacheToUse*sizeof(thrust::complex<fptype>*),
                      cudaMemcpyHostToDevice);
@@ -332,7 +332,7 @@ __host__ fptype DPPdf::normalise() const {
             unsigned int offset = components.size() -1;
             thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
                               thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, dataArray, eventSize)),
-                              strided_range<DEVICE_VECTOR<thrust::complex<fptype>>::iterator>(cachedResSF->begin() + offset + i,
+                              strided_range<thrust::device_vector<thrust::complex<fptype>>::iterator>(cachedResSF->begin() + offset + i,
                                       cachedResSF->end(),
                                       (components.size() + SpinFactors.size() - 1)).begin(),
                               *(sfcalculators[i]));
@@ -355,7 +355,7 @@ __host__ fptype DPPdf::normalise() const {
         if(redoIntegral[i]) {
             thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
                               thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, dataArray, eventSize)),
-                              strided_range<DEVICE_VECTOR<thrust::complex<fptype>>::iterator>(cachedResSF->begin() + i,
+                              strided_range<thrust::device_vector<thrust::complex<fptype>>::iterator>(cachedResSF->begin() + i,
                                       cachedResSF->end(),
                                       (components.size() + SpinFactors.size() - 1)).begin(),
                               *(lscalculators[i]));
@@ -380,7 +380,7 @@ __host__ fptype DPPdf::normalise() const {
 
         if(redo) {
             thrust::transform(eventIndex, eventIndex + numEntries,
-                              strided_range<DEVICE_VECTOR<thrust::complex<fptype>>::iterator>(cachedAMPs->begin() + i,
+                              strided_range<thrust::device_vector<thrust::complex<fptype>>::iterator>(cachedAMPs->begin() + i,
                                       cachedAMPs->end(), AmpCalcs.size()).begin(),
                               *(AmpCalcs[i]));
         }

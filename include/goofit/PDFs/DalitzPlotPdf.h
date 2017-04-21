@@ -32,7 +32,7 @@ private:
 
     // Following variables are useful if masses and widths, involved in difficult BW calculation,
     // change infrequently while amplitudes, only used in adding BW results together, change rapidly.
-    DEVICE_VECTOR<thrust::complex<fptype>>* cachedWaves[16]; // Caches the BW values for each event.
+    thrust::device_vector<thrust::complex<fptype>>* cachedWaves[16]; // Caches the BW values for each event.
     thrust::complex<fptype>*** integrals; // Caches the integrals of the BW waves for each combination of resonances.
 
     bool* redoIntegral;

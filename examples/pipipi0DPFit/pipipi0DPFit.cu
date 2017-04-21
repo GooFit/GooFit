@@ -405,7 +405,6 @@ void getToyData(float sigweight = 0.9) {
         //if (dtime->value < dtime->lowerlimit) continue;
         //if (dtime->value > dtime->upperlimit) continue;
 
-        double prob = donram.Uniform();
         double resolution = donram.Gaus(0, 1);
         dtime->value += resolution*sigma->value;
 
@@ -907,7 +906,7 @@ void runToyFit(int ifile, int nfile, bool noPlots = true) {
     comps.push_back(signalDalitz);
 //  comps.push_back(sig0_jsugg);
     std::cout << "Creating overall PDF\n";
-    ProdPdf* overallSignal = new ProdPdf("overallSignal", comps);
+    //ProdPdf* overallSignal = new ProdPdf("overallSignal", comps);
     GooPdf* bkgPdf = makeFlatBkgDalitzPdf();
     bkgPdf->setParameterConstantness(true);
 
@@ -1191,7 +1190,7 @@ GooPdf* makeSignalJSU_gg(int idx, bool fixem = true) {
     sprintf(strbuffer, "g1_%i", jsugg_num);
     GaussianPdf*  g1 = new GaussianPdf(strbuffer, sigma, g1_meana, g1_sigma);
     sprintf(strbuffer, "g2_%i", jsugg_num);
-    GaussianPdf*  g2 = new GaussianPdf(strbuffer, sigma, g2_meana, g2_sigma);
+    //GaussianPdf*  g2 = new GaussianPdf(strbuffer, sigma, g2_meana, g2_sigma);
 
     weights.clear();
     weights.push_back(frac_jsu);
@@ -3618,7 +3617,7 @@ GooPdf* makeBackground3DalitzParam() {
     comps.push_back(bkg3_pi0_transZ_total);
     //comps.push_back(bkg3_eff);
     //comps.push_back(bkg3_loZ);
-    ProdPdf* bkg3_pi0_mods = new ProdPdf("bkg3_pi0_mods", comps);
+    //ProdPdf* bkg3_pi0_mods = new ProdPdf("bkg3_pi0_mods", comps);
     //incsum3 = new IncoherentSumPdf("incsum3", m12, m13, eventNumber, special_pi0_decay, bkg3_pi0_mods);
 
 
@@ -3661,7 +3660,7 @@ GooPdf* makeBackground3DalitzParam() {
     comps.push_back(kzero_veto);
     //comps.push_back(bkg3_loZ);
     //comps.push_back(bkg3_eff);
-    ProdPdf* bkg3_rho_mods = new ProdPdf("bkg3_rho_mods", comps);
+    //ProdPdf* bkg3_rho_mods = new ProdPdf("bkg3_rho_mods", comps);
 
     //incsum4 = new IncoherentSumPdf("incsum4", m12, m13, eventNumber, incoherent_rhos, bkg3_rho_mods);
     //incsum4 = new IncoherentSumPdf("incsum4", m12, m13, eventNumber, incoherent_rhos, kzero_veto);

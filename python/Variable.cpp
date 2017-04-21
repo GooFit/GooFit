@@ -1,5 +1,7 @@
 #include <pybind11/pybind11.h>
 #include <goofit/Variable.h>
+#include <string>
+#include <sstream>
 
 namespace py = pybind11;
 
@@ -26,6 +28,11 @@ void init_Variable(py::module &m) {
         .def_readwrite("blind", &Variable::blind)
         .def("__repr__", [](const Variable &v){
             return "<Variable: " + v.name + ">";
+        })
+        .def("__str__", [](const Variable &v){
+            std::stringstream os;
+            os << v;
+            return os.str();
         })
         ;
 }

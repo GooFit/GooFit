@@ -1,5 +1,6 @@
 #include "goofit/Application.h"
 #include "goofit/Variable.h"
+#include "goofit/fitting/FitManagerMinuit1.h"
 #include "goofit/FitManager.h"
 #include "goofit/UnbinnedDataSet.h"
 #include "goofit/PDFs/PolynomialPdf.h"
@@ -123,7 +124,6 @@ void fitRatio(vector<int>& rsEvts, vector<int>& wsEvts, std::string plotName = "
     gettimeofday(&startTime, NULL);
     datapdf->fit();
     gettimeofday(&stopTime, NULL);
-    datapdf->getMinuitValues();
 
     vector<fptype> values;
     poly->evaluateAtPoints(decayTime, values);

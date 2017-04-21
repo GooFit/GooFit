@@ -1,5 +1,8 @@
 #include "goofit/PDFs/AddPdf.h"
 
+#include <thrust/transform_reduce.h>
+
+
 __device__ fptype device_AddPdfs(fptype* evt, fptype* p, unsigned int* indices) {
     int numParameters = RO_CACHE(indices[0]);
     fptype ret = 0;

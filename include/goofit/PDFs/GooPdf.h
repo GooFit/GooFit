@@ -1,16 +1,6 @@
 #pragma once
 
-#include <thrust/device_vector.h>
 #include <thrust/functional.h>
-#include <thrust/iterator/zip_iterator.h>
-#include "thrust/iterator/constant_iterator.h"
-#include <thrust/transform_reduce.h>
-#include <thrust/transform.h>
-#include <thrust/host_vector.h>
-
-#include <cmath>
-#include <cassert>
-#include <set>
 
 #include "goofit/PdfBase.h"
 #include "goofit/ThrustOverride.h"
@@ -34,9 +24,9 @@ extern unsigned int num_device_functions;
 __device__ int dev_powi(int base, int exp);  // Implemented in SmoothHistogramPdf.
 void* getMetricPointer(std::string name);
 
+ // Pass event, parameters, index into parameters.
+typedef fptype(*device_function_ptr)(fptype*, fptype*, unsigned int*);
 
-typedef fptype(*device_function_ptr)(fptype*, fptype*,
-                                     unsigned int*);              // Pass event, parameters, index into parameters.
 typedef fptype(*device_metric_ptr)(fptype, fptype*, unsigned int);
 
 extern void* host_fcn_ptr;

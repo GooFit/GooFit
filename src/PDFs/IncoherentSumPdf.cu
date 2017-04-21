@@ -2,6 +2,8 @@
 #include "goofit/PDFs/ResonancePdf.h"
 #include <thrust/complex.h>
 
+#include <thrust/transform_reduce.h>
+
 const int resonanceOffset_incoherent = 4; // Offset of the first resonance into the parameter index array.
 // Notice that this is different from the TddpPdf case because there's no time information.
 // In particular the offset consists of nP, constant index, number of resonances, and cache index.

@@ -1,5 +1,8 @@
 #include "goofit/PDFs/DalitzPlotPdf.h"
+
 #include <thrust/complex.h>
+#include <thrust/transform_reduce.h>
+
 
 const int resonanceOffset_DP = 4; // Offset of the first resonance into the parameter index array
 // Offset is number of parameters, constant index, number of resonances (not calculable

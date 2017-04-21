@@ -64,7 +64,7 @@ struct Dim5: public mcbooster::IFunctionArray {
         // printf("x:%.5g, y%.5g phi %.5g\n", x, y, phi );
 
         if(phi < 0.0)
-            phi += 2.0 * CONST_PI;
+            phi += 2.0 * M_PI;
 
         mcbooster::Vector4R d1n = p4_d1/p4_d1.d3mag();
         mcbooster::Vector4R d2n = p4_d2/p4_d2.d3mag();

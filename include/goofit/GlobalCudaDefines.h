@@ -23,7 +23,6 @@ extern int host_callnumber;
 #define GET_FUNCTION_ADDR(fname) host_fcn_ptr = (void*) fname
 #define BLOCKIDX (1)
 inline void cudaDeviceSynchronize() {}
-#define CONST_PI M_PI
 // Create my own error type to avoid __host__ redefinition
 // conflict in Thrust from including driver_types.h
 enum gooError {gooSuccess = 0, gooErrorMemoryAllocation};
@@ -63,7 +62,6 @@ enum gooError {gooSuccess = cudaSuccess,
 #define THREADIDX (threadIdx.x)
 #define BLOCKDIM (blockDim.x)
 #define BLOCKIDX (blockIdx.x)
-#define CONST_PI CUDART_PI
 #else
 #define THREADIDX (1)
 #define BLOCKDIM (1)

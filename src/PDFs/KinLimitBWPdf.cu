@@ -1,4 +1,5 @@
 #include "goofit/PDFs/KinLimitBWPdf.h"
+#include "goofit/Variable.h"
 
 __device__ fptype getMomentum(const fptype& mass, const fptype& pimass, const fptype& d0mass) {
     if(mass <= 0)

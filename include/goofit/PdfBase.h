@@ -1,12 +1,10 @@
 #ifndef PDF_BASE_HH
 #define PDF_BASE_HH
 
-#include "goofit/Variable.h"
 #include "goofit/GlobalCudaDefines.h"
-#include "goofit/FitControl.h"
+
 #include <set>
-#include "goofit/BinnedDataSet.h"
-#include "goofit/UnbinnedDataSet.h"
+#include <map>
 
 #include <thrust/iterator/constant_iterator.h>
 #include <thrust/device_vector.h>
@@ -25,6 +23,11 @@ extern fptype host_params[maxParams];
 extern unsigned int host_indices[maxParams];
 extern int totalParams;
 extern int totalConstants;
+
+class FitControl;
+class Variable;
+class BinnedDataSet;
+class UnbinnedDataSet;
 
 class PdfBase {
 

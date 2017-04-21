@@ -1,7 +1,10 @@
 #include "goofit/Application.h"
 #include "goofit/Variable.h"
 #include "goofit/FitManager.h"
+#include "goofit/BinnedDataSet.h"
 #include "goofit/UnbinnedDataSet.h"
+#include "goofit/FitControl.h"
+
 #include "goofit/PDFs/PolynomialPdf.h"
 #include "TRandom.h"
 #include "TH1F.h"

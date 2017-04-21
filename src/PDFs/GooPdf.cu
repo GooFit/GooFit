@@ -1,8 +1,13 @@
 #include "goofit/GlobalCudaDefines.h"
 #include "goofit/PDFs/GooPdf.h"
+
 #include "thrust/sequence.h"
 #include "thrust/iterator/constant_iterator.h"
-#include <fstream>
+
+#include "goofit/Variable.h"
+#include "goofit/FitControl.h"
+#include "goofit/BinnedDataSet.h"
+#include "goofit/UnbinnedDataSet.h"
 
 // These variables are either function-pointer related (thus specific to this implementation)
 // or constrained to be in the CUDAglob translation unit by nvcc limitations; otherwise they

@@ -24,13 +24,19 @@
 // GooFit stuff
 #include "goofit/Application.h"
 #include "goofit/Variable.h"
+#include "goofit/UnbinnedDataSet.h"
+#include "goofit/BinnedDataSet.h"
+#include "goofit/FitManager.h"
+#include "goofit/FitControl.h"
+
 #include "goofit/PDFs/KinLimitBWPdf.h"
 #include "goofit/PDFs/ConvolutionPdf.h"
 #include "goofit/PDFs/GaussianPdf.h"
 #include "goofit/PDFs/ScaledGaussianPdf.h"
 #include "goofit/PDFs/ArgusPdf.h"
 #include "goofit/PDFs/AddPdf.h"
-#include "goofit/FitManager.h"
+
+
 
 //#define OMP_ON 1
 //#ifdef OMP_ON

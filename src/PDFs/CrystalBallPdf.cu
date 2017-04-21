@@ -1,4 +1,5 @@
 #include "goofit/PDFs/CrystalBallPdf.h"
+#include "goofit/Variable.h"
 
 __device__ fptype device_CrystalBall(fptype* evt, fptype* p, unsigned int* indices) {
     // Left-hand tail if alpha is less than 0,

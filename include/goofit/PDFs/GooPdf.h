@@ -1,7 +1,6 @@
 #ifndef THRUST_PDF_FUNCTOR_HH
 #define THRUST_PDF_FUNCTOR_HH
-#include <stdlib.h>
-#include <math.h>
+
 #include <thrust/device_vector.h>
 #include <thrust/functional.h>
 #include <thrust/iterator/zip_iterator.h>

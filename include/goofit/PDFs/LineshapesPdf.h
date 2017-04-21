@@ -11,6 +11,7 @@ See *.cu file for more details
 
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/PDFs/ResonancePdf.h"
+#include "goofit/Variable.h"
 
 #include <thrust/complex.h>
 

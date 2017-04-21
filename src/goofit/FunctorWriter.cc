@@ -2,6 +2,7 @@
 #include <fstream>
 #include <map>
 #include "goofit/PdfBase.h"
+#include "goofit/Variable.h"
 
 void writeToFile(PdfBase* pdf, const char* fname) {
     PdfBase::parCont params;

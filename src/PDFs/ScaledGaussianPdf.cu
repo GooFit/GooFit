@@ -1,4 +1,6 @@
 #include "goofit/PDFs/ScaledGaussianPdf.h"
+#include "goofit/Variable.h"
+
 //#include <limits>
 
 __device__ fptype device_ScaledGaussian(fptype* evt, fptype* p, unsigned int* indices) {

@@ -58,9 +58,9 @@ struct DecayMother
 	DecayMother(const Vector4R mother,
 			const mc_device_vector<GReal_t>& _masses,
 			const GInt_t _ndaughters, const GUInt_t _seed):
-			fMasses(thrust::raw_pointer_cast(_masses.data())),
-			fNDaughters(_ndaughters),
-			fSeed(_seed)
+            fSeed(_seed),
+            fNDaughters(_ndaughters),
+			fMasses(thrust::raw_pointer_cast(_masses.data()))
 
 	{
 

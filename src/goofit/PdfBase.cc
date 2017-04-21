@@ -11,15 +11,7 @@ int totalConstants = 1; // First constant is reserved for number of events.
 map<Variable*, std::set<PdfBase*>> variableRegistry;
 
 PdfBase::PdfBase(Variable* x, std::string n)
-    : name(n)
-    , numEvents(0)
-    , numEntries(0)
-    , normRanges(0)
-    , fitControl(0)
-    , integrationBins(-1)
-    , specialMask(0)
-    , cachedParams(0)
-    , properlyInitialised(true) { // Special-case PDFs should set to false.
+    : name(n) { // Special-case PDFs should set to false.
     if(x)
         registerObservable(x);
 }

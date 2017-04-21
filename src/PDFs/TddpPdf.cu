@@ -339,15 +339,9 @@ __host__ TddpPdf::TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Va
     , decayInfo(decay)
     , _m12(m12)
     , _m13(m13)
-    , dalitzNormRange(0)
-//  , cachedWaves(0)
-    , integrals(0)
     , resolution(r)
-    , forceRedoIntegrals(true)
     , totalEventSize(5) // Default 5 = m12, m13, time, sigma_t, evtNum
-    , cacheToUse(0)
-    , integrators(0)
-    , calculators(0) {
+     {
     // NB, _dtime already registered!
     registerObservable(_sigmat);
     registerObservable(_m12);
@@ -435,15 +429,9 @@ __host__ TddpPdf::TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Va
     , decayInfo(decay)
     , _m12(m12)
     , _m13(m13)
-    , dalitzNormRange(0)
-      //, cachedWaves(0)
-    , integrals(0)
     , resolution(r[0])  // Only used for normalisation, which only depends on x and y - it doesn't matter which one we use.
-    , forceRedoIntegrals(true)
     , totalEventSize(6) // This case adds the D0 mass by default.
-    , cacheToUse(0)
-    , integrators(0)
-    , calculators(0) {
+    {
     // NB, _dtime already registered!
     registerObservable(_sigmat);
     registerObservable(_m12);

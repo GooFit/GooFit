@@ -78,22 +78,21 @@ private:
 
     DecayInfo_DP* decayInfo;
     std::vector<Variable*> _observables;
-    fptype* hostphsp;
     int MCevents;
     // Following variables are useful if masses and widths, involved in difficult BW calculation,
     // change infrequently while amplitudes, only used in adding BW results together, change rapidly.
-    DEVICE_VECTOR<thrust::complex<fptype>>* cachedResSF; // Caches the BW values and Spins for each event.
-    DEVICE_VECTOR<thrust::complex<fptype>>* cachedAMPs; // cache Amplitude values for each event.
+    DEVICE_VECTOR<thrust::complex<fptype>>* cachedResSF {nullptr}; // Caches the BW values and Spins for each event.
+    DEVICE_VECTOR<thrust::complex<fptype>>* cachedAMPs {nullptr}; // cache Amplitude values for each event.
 
-    mutable bool generation_no_norm;
-    mutable bool SpinsCalculated;
+    mutable bool generation_no_norm {false};
+    mutable bool SpinsCalculated {false};
     bool* redoIntegral;
-    mutable bool forceRedoIntegrals;
+    mutable bool forceRedoIntegrals {true};
     fptype* cachedMasses;
     fptype* cachedWidths;
     int totalEventSize;
-    int cacheToUse;
-    int generation_offset;
+    int cacheToUse {0};
+    int generation_offset {0};
 };
 
 

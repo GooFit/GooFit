@@ -167,10 +167,9 @@ public:
 	 * - _NEvents: it is the number of events to be generated.
 	 */
 	PhaseSpace(GReal_t _MotherMass, vector<GReal_t> _Masses, GLong_t _NEvents) :
-			fNDaughters(_Masses.size()), fNEvents(_NEvents),
-			fSeed(0),
-			fMaxWeight(0.0),
-			RND_Time(0.0), EVT_Time(0.0), EXP_Time(0.0), fNAccepted(0)
+            fNEvents(_NEvents),
+            fNDaughters(_Masses.size()),
+			fSeed(0)
         {
 
 		if (_Masses.size() < 2 || _Masses.size() > 9) {
@@ -346,12 +345,12 @@ private:
 
 	GLong_t fNEvents; ///< Number of events.
 	GInt_t fNDaughters;///< Number of daughters.
-	GUInt_t fSeed;///< seed.
-	GLong_t fNAccepted;
-	GReal_t RND_Time;///< Random number generation time interval seconds.
-	GReal_t EVT_Time;///< Event generation time interval in seconds.
-	GReal_t EXP_Time;///< Events export time interval in seconds.
-	GReal_t fMaxWeight;///< Maximum weight in sample.
+    GUInt_t fSeed {0};///< seed.
+    GLong_t fNAccepted;
+    GReal_t RND_Time {0.0};///< Random number generation time interval seconds.
+	GReal_t EVT_Time {0.0};///< Event generation time interval in seconds.
+	GReal_t EXP_Time {0.0};///< Events export time interval in seconds.
+    GReal_t fMaxWeight {0.0};///< Maximum weight in sample.
 	//device
 	RealVector_d fMasses;///< Device vector of daughter masses.
 	RealVector_d fWeights;///< Device vector of weights.

@@ -162,8 +162,9 @@ __host__ TDDP4::TDDP4(std::string n,
     : GooPdf(0, n)
     , decayInfo(decay)
     , _observables(observables)
+    , resolution(Tres)
     , totalEventSize(observables.size()+2) // number of observables plus eventnumber
-    , resolution(Tres) {
+    {
     // should include m12, m34, cos12, cos34, phi, eventnumber, dtime, sigmat. In this order!
     for(std::vector<Variable*>::iterator obsIT = observables.begin(); obsIT != observables.end(); ++obsIT) {
         registerObservable(*obsIT);

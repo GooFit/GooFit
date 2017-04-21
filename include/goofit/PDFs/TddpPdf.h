@@ -67,22 +67,24 @@ private:
     DecayInfo* decayInfo;
     Variable* _m12;
     Variable* _m13;
-    fptype* dalitzNormRange;
+    fptype* dalitzNormRange {nullptr};
 
     // Following variables are useful if masses and widths, involved in difficult BW calculation,
     // change infrequently while amplitudes, only used in adding BW results together, change rapidly.
     thrust::device_vector<WaveHolder_s>* cachedWaves[16]; // Caches the BW values for each event.
-    ThreeComplex*** integrals; // Caches the integrals of the BW waves for each combination of resonances.
+    ThreeComplex*** integrals {nullptr}; // Caches the integrals of the BW waves for each combination of resonances.
 
     bool* redoIntegral;
-    mutable bool forceRedoIntegrals;
+    mutable bool forceRedoIntegrals {true};
     fptype* cachedMasses;
     fptype* cachedWidths;
     MixingTimeResolution* resolution;
+    
+    
     int totalEventSize;
-    int cacheToUse;
-    SpecialDalitzIntegrator*** integrators;
-    SpecialWaveCalculator** calculators;
+    int cacheToUse {0};
+    SpecialDalitzIntegrator*** integrators {nullptr};
+    SpecialWaveCalculator** calculators {nullptr};
 };
 
 class SpecialDalitzIntegrator : public thrust::unary_function<thrust::tuple<int, fptype*>, ThreeComplex > {

@@ -103,24 +103,25 @@ public:
         setIndices();
     }
 protected:
-    fptype numEvents;         // Non-integer to allow weighted events
-    unsigned int numEntries;  // Eg number of bins - not always the same as number of events, although it can be.
-    fptype* normRanges;       // This is specific to functor instead of variable so that MetricTaker::operator needn't use indices.
-    unsigned int parameters;  // Stores index, in 'paramIndices', where this functor's information begins.
-    unsigned int cIndex;      // Stores location of constants.
+    fptype numEvents {0};         //< Non-integer to allow weighted events
+    unsigned int numEntries {0};  //< Eg number of bins - not always the same as number of events, although it can be.
+    fptype* normRanges {0};       //< This is specific to functor instead of variable so that MetricTaker::operator needn't use indices.
+    unsigned int parameters;  //< Stores index, in 'paramIndices', where this functor's information begins.
+    unsigned int cIndex;      //< Stores location of constants.
     obsCont observables;
     parCont parameterList;
-    FitControl* fitControl;
+    FitControl* fitControl {nullptr};
     std::vector<PdfBase*> components;
-    int integrationBins;
-    int specialMask; // For storing information unique to PDFs, eg "Normalise me separately" for TddpPdf.
-    mutable fptype* cachedParams;
-    bool properlyInitialised; // Allows checking for required extra steps in, eg, Tddp and Convolution.
+    int integrationBins {-1};
+    int specialMask {0}; //< For storing information unique to PDFs, eg "Normalise me separately" for TddpPdf.
+    mutable fptype* cachedParams {nullptr};
+    bool properlyInitialised {true}; //< Allows checking for required extra steps in, eg, Tddp and Convolution.
 
-    unsigned int functionIdx; // Stores index of device function pointer.
+    unsigned int functionIdx; //< Stores index of device function pointer.
 
     int m_iEventsPerTask;
-    //This needs to be set before a call to setData.
+    
+    /// This needs to be set before a call to setData.
     void setNumPerTask(PdfBase* p, const int& c);
 
 private:

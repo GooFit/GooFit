@@ -77,14 +77,8 @@ __host__ DPPdf::DPPdf(std::string n,
     : GooPdf(0, n)
     , decayInfo(decay)
     , _observables(observables)
-    , cachedAMPs(0)
-    , cachedResSF(0)
-    , forceRedoIntegrals(true)
     , totalEventSize(observables.size()) // number of observables plus eventnumber
-    , cacheToUse(0)
-    , SpinsCalculated(false)
-    , generation_offset(0)
-    , generation_no_norm(false) {
+    {
     for(std::vector<Variable*>::iterator obsIT = observables.begin(); obsIT != observables.end(); ++obsIT) {
         registerObservable(*obsIT);
     }

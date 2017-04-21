@@ -45,8 +45,9 @@ struct RandGen
 	 * RandGen ctor. Takes the number of daughter particles and the address of the array
 	 * of to be filled with random numbers
 	 */
-	RandGen(const GInt_t _ndaughters, GReal_t *_rnd) :
-		fRndNumbers(_rnd), fNDaughters(_ndaughters)
+	RandGen(const GInt_t _ndaughters, GReal_t *_rnd)
+     : fNDaughters(_ndaughters)
+     , fRndNumbers(_rnd)
 	{
 	}
 

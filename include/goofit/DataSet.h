@@ -15,7 +15,7 @@ public:
     DataSet(Variable* var, string n = "");
     DataSet(std::vector<Variable*>& vars, string n = "");
     DataSet(std::set<Variable*>& vars, string n = "");
-    ~DataSet();
+    virtual ~DataSet();
 
     void addEvent();
     void addEvent(fptype val);

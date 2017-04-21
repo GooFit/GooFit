@@ -140,7 +140,7 @@ GInt_t main(int argv, char** argc)
 
 	if(masses_temp.size() < 3 || masses_temp.size()>9)
 	{
-		cout << "Exit. Number of particles is (< 2) or (> 9)." << endl;
+		cout << "Exit. Number of particles is (< 2) or (> 9)." <<std::endl;
 		exit(0);
 	}
 
@@ -148,22 +148,22 @@ GInt_t main(int argv, char** argc)
 
 	if( masses_temp.size() != names_temp.size() )
 	{
-		cout << "Exit. Number of particles is different of number of names." << endl;
+		cout << "Exit. Number of particles is different of number of names." <<std::endl;
 		exit(0);
 	}
 
 
 	//dump configuration
-	cout << "-----------------------------------------------------"<< endl;
-	cout << "---------------------- MCBooster --------------------"<< endl;
-	cout << "- Mother name: " << names_temp[0] << " mass: "<< masses_temp[0] << endl;
+	cout << "-----------------------------------------------------"<<std::endl;
+	cout << "---------------------- MCBooster --------------------"<<std::endl;
+	cout << "- Mother name: " << names_temp[0] << " mass: "<< masses_temp[0] <<std::endl;
 	for(GInt_t i=1;i<masses_temp.size();i++)
 	{
-		cout << "- Daughter name: " << names_temp[i] << " mass: "<< masses_temp[i] << endl;
+		cout << "- Daughter name: " << names_temp[i] << " mass: "<< masses_temp[i] <<std::endl;
 	}
-	cout << "- Number of events: "<<nevents<< endl;
-	cout << "- Output file: "<< output_dir << endl;
-	cout << "-----------------------------------------------------"<< endl;
+	cout << "- Number of events: "<<nevents<<std::endl;
+	cout << "- Output file: "<< output_dir <<std::endl;
+	cout << "-----------------------------------------------------"<<std::endl;
 
 
 	// Generation
@@ -200,12 +200,12 @@ GInt_t main(int argv, char** argc)
 
 	phsp.Export(&GenEvents);
 
-	cout << "-----------------------------------------------------"<< endl;
-	cout << "----------------------- Timing ----------------------"<< endl;
-	cout << "Event generation: " << phsp.GetEvtTime() << endl;
-	cout << "Unweight generation: " << unweight_time_used << endl;
-	cout << "Export events to host: " << exp_time_used << endl;
-	cout << "-----------------------------------------------------"<< endl;
+	cout << "-----------------------------------------------------"<<std::endl;
+	cout << "----------------------- Timing ----------------------"<<std::endl;
+	cout << "Event generation: " << phsp.GetEvtTime() <<std::endl;
+	cout << "Unweight generation: " << unweight_time_used <<std::endl;
+	cout << "Export events to host: " << exp_time_used <<std::endl;
+	cout << "-----------------------------------------------------"<<std::endl;
 
 	TFile *file = new TFile( output_dir.c_str() , "RECREATE");
 	TTree *tree = new TTree("events", "events");

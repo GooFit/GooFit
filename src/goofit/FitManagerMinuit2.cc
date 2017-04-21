@@ -56,8 +56,8 @@ double FitManagerMinuit2::operator()(const vector<double>& pars) const {
 
 #ifdef PRINTCALLS
     double edm = migrad->State().Edm();
-    cout.precision(8);
-    cout << "State at call "
+   std::cout.precision(8);
+   std::cout << "State at call "
          << host_callnumber << " : "
          << nll << " "
          << edm << " Pars: ";
@@ -71,10 +71,10 @@ double FitManagerMinuit2::operator()(const vector<double>& pars) const {
         if((*i)->fixed)
             continue;
 
-        cout << "(" << (*i)->name << " " << pars[(*i)->getIndex()] << ") "; // migrad->Value((*i)->getIndex()) << ") ";
+       std::cout << "(" << (*i)->name << " " << pars[(*i)->getIndex()] << ") "; // migrad->Value((*i)->getIndex()) << ") ";
     }
 
-    cout << endl;
+   std::cout <<std::endl;
 #endif
 
     return nll;

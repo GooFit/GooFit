@@ -78,8 +78,6 @@
 		exit(1);															\
 	} }
 
-using namespace std;
-
 namespace mcbooster {
 /*!
  * Function to calculate time intervals in seconds.
@@ -166,16 +164,16 @@ public:
 	 * - _Masses: STL vector with the mass of the daughter particles.
 	 * - _NEvents: it is the number of events to be generated.
 	 */
-	PhaseSpace(GReal_t _MotherMass, vector<GReal_t> _Masses, GLong_t _NEvents) :
+	PhaseSpace(GReal_t _MotherMass, std::vector<GReal_t> _Masses, GLong_t _NEvents) :
             fNEvents(_NEvents),
             fNDaughters(_Masses.size()),
 			fSeed(0)
         {
 
 		if (_Masses.size() < 2 || _Masses.size() > 9) {
-			cout
+			std::cout
 					<< "The number of daughter particles can not be (< 2 || > 9) or masses and names need to have the same size."
-					<< endl;
+					<< std::endl;
 			exit(1);
 
 		}
@@ -191,7 +189,7 @@ public:
 			fTeCmTm -= _Masses[n];
 		}
 		if (fTeCmTm < 0.0) {
-			cout << "Not enough energy for this decay. Exit." << endl;
+			std::cout << "Not enough energy for this decay. Exit." << std::endl;
 			exit(1);
 		}
 
@@ -200,7 +198,7 @@ public:
 	}    //decay
 
 
-	PhaseSpace(GReal_t _MotherMass, vector<GReal_t> _Masses, GLong_t _NEvents, GLong_t _EvtNumOffset) : PhaseSpace(_MotherMass, _Masses, _NEvents){fSeed = _EvtNumOffset;}
+	PhaseSpace(GReal_t _MotherMass, std::vector<GReal_t> _Masses, GLong_t _NEvents, GLong_t _EvtNumOffset) : PhaseSpace(_MotherMass, _Masses, _NEvents){fSeed = _EvtNumOffset;}
 	/**
 	 * PhaseSpace() dtor. The destructor explicitly frees all the resources owned by the class.
 	 */
@@ -676,7 +674,7 @@ inline void PhaseSpace::Generate(Particles_d fMothers) {
 #endif
 
 	if (fNEvents < fMothers.size())
-		cout << "fNEvents != fMothers.size()" << endl;
+		std::cout << "fNEvents != fMothers.size()" <<std::endl;
 
 	/* random number generation */
 	/*

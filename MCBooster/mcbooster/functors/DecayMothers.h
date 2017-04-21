@@ -36,8 +36,6 @@
 #include <thrust/tuple.h>
 #include <thrust/iterator/zip_iterator.h>
 
-using namespace std;
-
 namespace mcbooster
 {
 

@@ -169,10 +169,10 @@ GInt_t main(void)
 	//chronometer
 	timespec time1, time2;
 
-	cout << "=========================================================" << endl;
-	cout << "===================   B0 -> J/psi K pi=  ================" << endl;
-	cout << "=========================================================" << endl;
-    cout << "Number of events: " << events << endl;
+	cout << "=========================================================" <<std::endl;
+	cout << "===================   B0 -> J/psi K pi=  ================" <<std::endl;
+	cout << "=========================================================" <<std::endl;
+   std::cout << "Number of events: " << events <<std::endl;
 
 	clock_gettime(CLOCK_REALTIME, &time1);
 
@@ -185,7 +185,7 @@ GInt_t main(void)
 			+ time_diff(time1, time2).tv_nsec * 1.0e-9));
 
 	cout << "|\t PhaseSpace ctor time [B0]:\t " << phsp_time_used << " s"
-			<< endl;
+			<<std::endl;
 
 	clock_gettime(CLOCK_REALTIME, &time1);
 	/// Generate events B0-> K pi J/psi
@@ -197,15 +197,15 @@ GInt_t main(void)
 	cpu_time_used = ((GReal_t) (time_diff(time1, time2).tv_sec
 			+ time_diff(time1, time2).tv_nsec * 1.0e-9));*/
 
-	cout << "|\t Generate time [B0]:\t " << cpu_time_used << " s" << endl;
+	cout << "|\t Generate time [B0]:\t " << cpu_time_used << " s" <<std::endl;
 
 
 
 	/// Print the first 10 events with corresponding weights
 	for (GInt_t event = 0; event < 10; event++)
 	{
-		cout << "Event: " << event << endl << "\t| weight "
-				<< phsp.GetWeights()[event] << endl;
+		cout << "Event: " << event <<std::endl << "\t| weight "
+				<< phsp.GetWeights()[event] <<std::endl;
 
 		for (GInt_t daughter = 0; daughter < 3; daughter++)
 		{
@@ -218,10 +218,10 @@ GInt_t main(void)
 					<< v.get(1) << ", "
 					<< v.get(2) << ", "
 					<< v.get(3) << ")  "
-					<< endl;
+					<<std::endl;
 
 		}
-		cout << endl;
+		cout <<std::endl;
 
 	}
 
@@ -237,10 +237,10 @@ GInt_t main(void)
 	massesJpsi.push_back(0.100);
 	massesJpsi.push_back(0.100);
 
-	cout << "=========================================================" << endl;
-	cout << "====================   J/psi -> mu mu  ==================" << endl;
-	cout << "=========================================================" << endl;
-    cout << "Number of events: " << events << endl;
+	cout << "=========================================================" <<std::endl;
+	cout << "====================   J/psi -> mu mu  ==================" <<std::endl;
+	cout << "=========================================================" <<std::endl;
+   std::cout << "Number of events: " << events <<std::endl;
 
 
 	//Decays trees(mothers, names, masses );
@@ -252,7 +252,7 @@ GInt_t main(void)
 			+ time_diff(time1, time2).tv_nsec * 1.0e-9));
 
 	cout << "|\t PhaseSpace ctor time [J/psi]:\t " << phsp_time_usedJpsi << " s"
-			<< endl;
+			<<std::endl;
 
 	clock_gettime(CLOCK_REALTIME, &time1);
 	phspJpsi.Generate(phsp.GetDaughters(0));
@@ -264,14 +264,14 @@ GInt_t main(void)
 			+ time_diff(time1, time2).tv_nsec * 1.0e-9));*/
 
 	cout << "|\t Generate time [J/psi]:\t " << cpu_time_usedJpsi << " s"
-			<< endl;
+			<<std::endl;
 
-	cout << "=========================================================" << endl;
+	cout << "=========================================================" <<std::endl;
 
 	for (GInt_t event = 0; event < 10; event++)
 	{
-		cout << "Event: " << event << endl << "\t| weight "
-				<< phspJpsi.GetWeights()[event] << endl;
+		cout << "Event: " << event <<std::endl << "\t| weight "
+				<< phspJpsi.GetWeights()[event] <<std::endl;
 
 		for (GInt_t daughter = 0; daughter < 2; daughter++)
 		{
@@ -283,10 +283,10 @@ GInt_t main(void)
 					<< v.get(1) << ", "
 					<< v.get(2) << ", "
 					<< v.get(3) << ")  "
-					<< endl;
+					<<std::endl;
 
 		}
-		cout << endl;
+		cout <<std::endl;
 
 	}
 
@@ -317,24 +317,24 @@ GInt_t main(void)
 	clock_gettime(CLOCK_REALTIME, &time2);
 	GReal_t Dataset_time = ((GReal_t) (time_diff(time1, time2).tv_sec
 			+ time_diff(time1, time2).tv_nsec * 1.0e-9));
-	cout << "=========================================================" << endl;
-	cout << "=================   Evaluate Dataset   ===============" << endl;
-	cout << "=========================================================" << endl;
-	cout << "|\t Dataset time : " << Dataset_time << " s" << endl;
-	cout << "=========================================================" << endl;
+	cout << "=========================================================" <<std::endl;
+	cout << "=================   Evaluate Dataset   ===============" <<std::endl;
+	cout << "=========================================================" <<std::endl;
+	cout << "|\t Dataset time : " << Dataset_time << " s" <<std::endl;
+	cout << "=========================================================" <<std::endl;
 
 
 	 for(GInt_t event=0; event<10; event++ )
 	 {
 
-	 cout
+	std::cout
 	 << event
 	 <<" " <<  result_MKpi[event]
 	 <<" " <<  result_MJpsipi[event]
 	 <<" " <<  result_CosThetaK[event]
 	 <<" " <<  result_CosThetaMu[event]
 	 <<" " <<  result_DeltaAngle[event]
-	 << endl;
+	 <<std::endl;
 	 }
 
 

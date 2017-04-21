@@ -54,9 +54,9 @@ void EvaluateArray(const CUSTOMFUNC funcObj, ParticlesSet_d &pset,
 
 	if (pset.size() > 10 || pset.size() < 2)
 	{
-		cout
+		std::cout
 				<< "Can not Calculate(Eval) more than a nine-particle invariant mass."
-				<< endl;
+				<<std::endl;
 		return;
 	}
 
@@ -335,9 +335,9 @@ void EvaluateArray(const CUSTOMFUNC funcObj, ParticlesSet_d &pset,
 
 	if (pset.size() > 10 || pset.size() < 2)
 	{
-		cout
+		std::cout
 				<< "Can not Calculate(Eval) more than a nine-particle invariant mass."
-				<< endl;
+				<<std::endl;
 		return;
 	}
 

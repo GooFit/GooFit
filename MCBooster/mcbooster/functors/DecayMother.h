@@ -36,8 +36,6 @@
 #include <thrust/iterator/zip_iterator.h>
 #include <thrust/random.h>
 
-using namespace std;
-
 namespace mcbooster
 {
 

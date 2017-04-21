@@ -119,7 +119,7 @@ void FitFun(int& npar, double* gin, double& fun, double* fp, int iflag) {
 
     for(std::vector<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
         if(std::isnan(fp[counter]))
-            cout << "Variable " << (*i)->name << " " << (*i)->index << " is NaN\n";
+           std::cout << "Variable " << (*i)->name << " " << (*i)->index << " is NaN\n";
 
         pars[(*i)->getIndex()] = fp[counter++] + (*i)->blind;
     }
@@ -137,13 +137,13 @@ void FitFun(int& npar, double* gin, double& fun, double* fp, int iflag) {
 #ifdef PRINTCALLS
 void specialTddpPrint(double fun) {
     // Stupid amplitude-fit debugging method.
-    cout << "Function call " << host_callnumber << ": " << fun << "\n";
+   std::cout << "Function call " << host_callnumber << ": " << fun << "\n";
     currGlue->getMinuitValues();
     int varCount = 1;
 
     for(std::vector<Variable*>::iterator v = vars.begin(); v != vars.end(); ++v) {
         if(!(*v))
-            cout << "Null!" << endl;
+           std::cout << "Null!" <<std::endl;
 
         if((*v)->fixed)
             continue;
@@ -171,25 +171,25 @@ void specialTddpPrint(double fun) {
                 ((*v)->name == "nonr_amp_imag"))
             stupidSpecialModifier = -1;
 
-        cout.width(20);
-        cout << (*v)->name;
-        cout.setf(ios_base::right, ios_base::adjustfield);
-        cout.width(3);
-        cout << varCount++;
-        cout.setf(ios_base::right, ios_base::adjustfield);
-        cout.precision(8);
-        cout << "  ";
-        cout.width(12);
-        cout << (*v)->value / stupidSpecialModifier;
-        cout.setf(ios_base::right, ios_base::adjustfield);
-        cout.precision(8);
-        cout << "  ";
-        cout.width(12);
-        cout << (*v)->error;
-        cout << endl;
+       std::cout.width(20);
+       std::cout << (*v)->name;
+       std::cout.setf(ios_base::right, ios_base::adjustfield);
+       std::cout.width(3);
+       std::cout << varCount++;
+       std::cout.setf(ios_base::right, ios_base::adjustfield);
+       std::cout.precision(8);
+       std::cout << "  ";
+       std::cout.width(12);
+       std::cout << (*v)->value / stupidSpecialModifier;
+       std::cout.setf(ios_base::right, ios_base::adjustfield);
+       std::cout.precision(8);
+       std::cout << "  ";
+       std::cout.width(12);
+       std::cout << (*v)->error;
+       std::cout <<std::endl;
     }
 
-    cout << endl;
+   std::cout <<std::endl;
 }
 #endif
 

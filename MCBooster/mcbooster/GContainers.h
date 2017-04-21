@@ -46,8 +46,6 @@
 #include <thrust/system/cuda/experimental/pinned_allocator.h>
 #endif
 
-using namespace std;
-
 namespace mcbooster
 {
 
@@ -118,8 +116,8 @@ typedef mc_host_vector<GBool_t>    BoolVector_h; /*! Typedef for a GBool_t host 
 typedef mc_host_vector<GReal_t>    RealVector_h; /*! Typedef for a GReal_t host vector.*/
 typedef mc_host_vector<GComplex_t> ComplexVector_h; /*! Typedef for a GComplex_t host vector.*/
 typedef mc_host_vector<Vector4R>   Particles_h;/*! Typedef for a  Vector4R host vector.*/
-typedef vector<Particles_h*>       ParticlesSet_h;/*! Typedef for a  STL vector of pointers to host Particles_h vectors .*/
-typedef vector<RealVector_h*>      VariableSet_h;/*! Typedef for a STL vector of pointers to host RealVector_h vectors.*/
+typedef std::vector<Particles_h*>       ParticlesSet_h;/*! Typedef for a  STL vector of pointers to host Particles_h vectors .*/
+typedef std::vector<RealVector_h*>      VariableSet_h;/*! Typedef for a STL vector of pointers to host RealVector_h vectors.*/
 
 
 //-----------------------------------------------------------------------
@@ -128,8 +126,8 @@ typedef mc_device_vector<GBool_t>    BoolVector_d; /*! Typedef for a GBool_t dev
 typedef mc_device_vector<GReal_t>    RealVector_d; /*! Typedef for a GReal_t device vector.*/
 typedef mc_device_vector<GComplex_t> ComplexVector_d; /*! Typedef for a GComplex_t device vector.*/
 typedef mc_device_vector<Vector4R>   Particles_d; /*! Typedef for a  Vector4R device vector.*/
-typedef vector<Particles_d*>  ParticlesSet_d; /*! Typedef for a  STL vector of pointers to device Particles_d vectors.*/
-typedef vector<RealVector_d*> VariableSet_d; /*! Typedef for a STL vector of pointers to device RealVector_d vectors.*/
+typedef std::vector<Particles_d*>  ParticlesSet_d; /*! Typedef for a  STL vector of pointers to device Particles_d vectors.*/
+typedef std::vector<RealVector_d*> VariableSet_d; /*! Typedef for a STL vector of pointers to device RealVector_d vectors.*/
 
 
 /*! GT1 iterator is a typedef for thrust::detail::tuple_of_iterator_references<Vector4R &,...> */

@@ -1,5 +1,4 @@
-#ifndef CRYSTALBALL_PDF_HH
-#define CRYSTALBALL_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
 
@@ -13,5 +12,3 @@ public:
 private:
 
 };
-
-#endif

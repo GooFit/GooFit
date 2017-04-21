@@ -1,5 +1,4 @@
-#ifndef SMOOTHHISTOGRAM_PDF_HH
-#define SMOOTHHISTOGRAM_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/BinnedDataSet.h"
@@ -21,5 +20,3 @@ private:
 
     static unsigned int totalHistograms;
 };
-
-#endif

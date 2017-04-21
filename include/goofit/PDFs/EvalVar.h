@@ -6,8 +6,7 @@ This code is not sufficently tested yet and still under heavy development!
 See *.cu file for more details
 */
 
-#ifndef EVAL_VAR_HH
-#define EVAL_VAR_HH
+#pragma once
 
 #include "goofit/PDFs/DalitzPlotHelpers.h"
 #include <mcbooster/GTypes.h>
@@ -116,8 +115,4 @@ struct Dim5: public mcbooster::IFunctionArray {
         variables[4] = phi(pM, ppip, ppim, pK, ppip2);
     }
 };
-
-
-
-#endif
 

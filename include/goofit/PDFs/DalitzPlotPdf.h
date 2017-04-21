@@ -1,5 +1,4 @@
-#ifndef DALITZPLOT_PDF_HH
-#define DALITZPLOT_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/PDFs/DalitzPlotHelpers.h"
@@ -69,7 +68,4 @@ private:
     unsigned int resonance_i;
     unsigned int parameters;
 };
-
-
-#endif
 

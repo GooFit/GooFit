@@ -1,5 +1,4 @@
-#ifndef TDDP_PDF_HH
-#define TDDP_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/PDFs/MixingTimeResolution_Aux.h"
@@ -127,6 +126,4 @@ private:
     unsigned int parameters;
 };
 
-
-#endif
 

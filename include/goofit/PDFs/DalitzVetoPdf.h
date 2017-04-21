@@ -1,5 +1,4 @@
-#ifndef DALITZVETO_PDF_HH
-#define DALITZVETO_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/PDFs/TddpPdf.h"
@@ -18,5 +17,3 @@ public:
 private:
 
 };
-
-#endif

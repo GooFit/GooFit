@@ -1,5 +1,4 @@
-#ifndef TRIGTHRESHOLD_PDF_HH
-#define TRIGTHRESHOLD_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
 
@@ -13,5 +12,3 @@ public:
 private:
 
 };
-
-#endif

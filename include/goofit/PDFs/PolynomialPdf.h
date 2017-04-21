@@ -1,5 +1,4 @@
-#ifndef POLYNOMIAL_PDF_HH
-#define POLYNOMIAL_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
 
@@ -17,5 +16,3 @@ public:
 private:
     Variable* center;
 };
-
-#endif

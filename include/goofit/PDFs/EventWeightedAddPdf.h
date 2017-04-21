@@ -1,5 +1,4 @@
-#ifndef EVENTWEIGHTEDADD_PDF_HH
-#define EVENTWEIGHTEDADD_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
 
@@ -20,5 +19,3 @@ protected:
 private:
 
 };
-
-#endif

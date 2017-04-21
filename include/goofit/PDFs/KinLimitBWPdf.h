@@ -1,5 +1,4 @@
-#ifndef KINLIMITBW_PDF_HH
-#define KINLIMITBW_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
 
@@ -15,5 +14,3 @@ public:
 private:
 
 };
-
-#endif

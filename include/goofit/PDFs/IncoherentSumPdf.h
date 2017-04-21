@@ -1,5 +1,4 @@
-#ifndef INCOHERENT_SUM_PDF_HH
-#define INCOHERENT_SUM_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/PDFs/TddpPdf.h"
@@ -76,9 +75,4 @@ private:
     unsigned int parameters;
 };
 
-
-
-
-
-#endif
 

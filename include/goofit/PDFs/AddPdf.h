@@ -1,5 +1,4 @@
-#ifndef ADD_PDF_HH
-#define ADD_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
 
@@ -20,4 +19,3 @@ private:
     bool extended;
 };
 
-#endif

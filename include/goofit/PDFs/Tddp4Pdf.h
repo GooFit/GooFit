@@ -6,8 +6,7 @@ This code is not sufficently tested yet and still under heavy development!
 See *.cu file for more details
 */
 
-#ifndef TDDP4_PDF_HH
-#define TDDP4_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/PDFs/DalitzPlotHelpers.h"
@@ -182,6 +181,3 @@ public:
                 thrust::get<3>(one) + thrust::get<3>(two));
     }
 };
-
-#endif
-

@@ -1,5 +1,4 @@
-#ifndef THREEGAUSS_RESOLUTION_HH
-#define THREEGAUSS_RESOLUTION_HH
+#pragma once
 
 #include "goofit/PDFs/MixingTimeResolution_Aux.h"
 
@@ -23,5 +22,3 @@ private:
     Variable* outBias;
     Variable* outScaleFactor;
 };
-
-#endif

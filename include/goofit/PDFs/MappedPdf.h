@@ -1,5 +1,4 @@
-#ifndef MAPPED_PDF_HH
-#define MAPPED_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
 
@@ -11,5 +10,3 @@ public:
 private:
 
 };
-
-#endif

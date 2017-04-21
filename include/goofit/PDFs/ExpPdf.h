@@ -1,5 +1,4 @@
-#ifndef EXP_PDF_HH
-#define EXP_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
 
@@ -17,5 +16,3 @@ public:
 private:
 
 };
-
-#endif

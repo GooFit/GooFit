@@ -1,5 +1,4 @@
-#ifndef ARGUS_PDF_HH
-#define ARGUS_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
 
@@ -15,4 +14,3 @@ private:
 
 };
 
-#endif

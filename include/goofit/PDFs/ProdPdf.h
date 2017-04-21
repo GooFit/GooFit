@@ -1,5 +1,4 @@
-#ifndef PROD_PDF_HH
-#define PROD_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
 
@@ -15,5 +14,3 @@ public:
 private:
     bool varOverlaps; // True if any components share an observable.
 };
-
-#endif

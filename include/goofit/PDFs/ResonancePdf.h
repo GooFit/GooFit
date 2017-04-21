@@ -1,5 +1,4 @@
-#ifndef RESONANCE_PDF_HH
-#define RESONANCE_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
 #include <thrust/complex.h>
@@ -83,4 +82,3 @@ private:
     */
 };
 
-#endif

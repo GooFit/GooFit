@@ -6,8 +6,7 @@ This code is not sufficently tested yet and still under heavy development!
 See *.cu file for more details
 */
 
-#ifndef LINESHAPES_PDF_HH
-#define LINESHAPES_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/PDFs/ResonancePdf.h"
@@ -86,5 +85,3 @@ private:
     std::vector<Lineshape*> _LS;
     unsigned int _nPerm;
 };
-
-#endif

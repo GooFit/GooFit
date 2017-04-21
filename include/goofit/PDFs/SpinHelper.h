@@ -6,8 +6,7 @@ DISCLAIMER:
 This code is not sufficently tested yet and still under heavy development!
 */
 
-#ifndef SPIN_HELPER_HH
-#define SPIN_HELPER_HH
+#pragma once
 
 #include "goofit/PDFs/DalitzPlotHelpers.h"
 
@@ -524,4 +523,3 @@ __device__ inline gpuLVec LeviCivita(const gpuLVec& a, const gpuLVec& b, const g
     return  v;
 }
 
-#endif

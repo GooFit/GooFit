@@ -1,5 +1,4 @@
-#ifndef BIFURGAUSSIAN_PDF_HH
-#define BIFURGAUSSIAN_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
 
@@ -13,4 +12,3 @@ private:
 
 };
 
-#endif

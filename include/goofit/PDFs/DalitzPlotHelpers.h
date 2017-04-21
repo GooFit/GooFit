@@ -6,8 +6,7 @@ This code is not sufficently tested yet and still under heavy development!
 See *.cu file for more details
 */
 
-#ifndef DALITZ_PLOT_HELPERS_HH
-#define DALITZ_PLOT_HELPERS_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/PDFs/ResonancePdf.h"
@@ -108,4 +107,3 @@ protected:
     difference_type stride;
 };
 
-#endif

@@ -1,5 +1,4 @@
-#ifndef NOVOSIBIRSK_PDF_HH
-#define NOVOSIBIRSK_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
 
@@ -10,5 +9,3 @@ public:
 private:
 
 };
-
-#endif

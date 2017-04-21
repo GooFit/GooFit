@@ -105,15 +105,15 @@ __device__ device_function_ptr ptr_to_OffsetPolynomial = device_OffsetPolynomial
 __device__ device_function_ptr ptr_to_MultiPolynomial = device_MultiPolynomial;
 
 // Constructor for single-variate polynomial, with optional zero point.
-__host__ PolynomialPdf::PolynomialPdf(string n, Variable* _x, vector<Variable*> weights, Variable* x0,
+__host__ PolynomialPdf::PolynomialPdf(std::string n, Variable* _x, std::vector<Variable*> weights, Variable* x0,
                                       unsigned int lowestDegree)
     : GooPdf(_x, n)
     , center(x0) {
 
-    vector<unsigned int> pindices;
+    std::vector<unsigned int> pindices;
     pindices.push_back(lowestDegree);
 
-    for(vector<Variable*>::iterator v = weights.begin(); v != weights.end(); ++v) {
+    for(std::vector<Variable*>::iterator v = weights.begin(); v != weights.end(); ++v) {
         pindices.push_back(registerParameter(*v));
     }
 
@@ -128,8 +128,8 @@ __host__ PolynomialPdf::PolynomialPdf(string n, Variable* _x, vector<Variable*> 
 }
 
 // Constructor for multivariate polynomial.
-__host__ PolynomialPdf::PolynomialPdf(string n, vector<Variable*> obses, vector<Variable*> coeffs,
-                                      vector<Variable*> offsets, unsigned int maxDegree)
+__host__ PolynomialPdf::PolynomialPdf(std::string n, std::vector<Variable*> obses, std::vector<Variable*> coeffs,
+                                      std::vector<Variable*> offsets, unsigned int maxDegree)
     : GooPdf(0, n) {
     unsigned int numParameters = 1;
 
@@ -153,7 +153,7 @@ __host__ PolynomialPdf::PolynomialPdf(string n, vector<Variable*> obses, vector<
         Variable* newTerm = new Variable(varName, 0);
         coeffs.push_back(newTerm);
 
-        cout << "Warning: " << getName() << " created dummy variable "
+        std::cout << "Warning: " << getName() << " created dummy variable "
              << varName
              << " (fixed at zero) to account for all terms.\n";
     }
@@ -165,14 +165,14 @@ __host__ PolynomialPdf::PolynomialPdf(string n, vector<Variable*> obses, vector<
         offsets.push_back(newOffset);
     }
 
-    vector<unsigned int> pindices;
+    std::vector<unsigned int> pindices;
     pindices.push_back(maxDegree);
 
-    for(vector<Variable*>::iterator o = offsets.begin(); o != offsets.end(); ++o) {
+    for(std::vector<Variable*>::iterator o = offsets.begin(); o != offsets.end(); ++o) {
         pindices.push_back(registerParameter(*o));
     }
 
-    for(vector<Variable*>::iterator c = coeffs.begin(); c != coeffs.end(); ++c) {
+    for(std::vector<Variable*>::iterator c = coeffs.begin(); c != coeffs.end(); ++c) {
         pindices.push_back(registerParameter(*c));
     }
 

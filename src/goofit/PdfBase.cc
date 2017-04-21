@@ -10,7 +10,7 @@ unsigned int host_indices[maxParams];
 int host_callnumber = 0;
 int totalParams = 0;
 int totalConstants = 1; // First constant is reserved for number of events.
-map<Variable*, std::set<PdfBase*>> variableRegistry;
+std::map<Variable*, std::set<PdfBase*>> variableRegistry;
 
 PdfBase::PdfBase(Variable* x, std::string n)
     : name(n) { // Special-case PDFs should set to false.
@@ -108,7 +108,7 @@ __host__ void PdfBase::getParameters(parCont& ret) const {
     }
 }
 
-__host__ Variable* PdfBase::getParameterByName(string n) const {
+__host__ Variable* PdfBase::getParameterByName(std::string n) const {
     for(parConstIter p = parameterList.begin(); p != parameterList.end(); ++p) {
         if((*p)->name == n)
             return (*p);

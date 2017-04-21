@@ -155,7 +155,7 @@ GInt_t main(void)
 
 	//{ "J/psi", "K", "pi", "pi" }
 
-	vector<string> namesB0;
+	vector<std::string> namesB0;
 	namesB0.push_back("J/#psi");
 	namesB0.push_back("K");
 	namesB0.push_back("pi");
@@ -228,7 +228,7 @@ GInt_t main(void)
 
 	//{ "J/psi", "K", "pi", "pi" }
 
-	vector<string> namesJpsi;
+	vector<std::string> namesJpsi;
 	namesJpsi.push_back("mu+");
 	namesJpsi.push_back("mu-");
 

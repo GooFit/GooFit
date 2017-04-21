@@ -3,19 +3,19 @@
 #include <cassert>
 
 // Special constructor for one variable
-BinnedDataSet::BinnedDataSet(Variable* var, string n)
+BinnedDataSet::BinnedDataSet(Variable* var, std::string n)
     : DataSet(var, n) {
     cacheNumBins();
     binvalues.resize(getNumBins());
 }
 
-BinnedDataSet::BinnedDataSet(std::vector<Variable*>& vars, string n)
+BinnedDataSet::BinnedDataSet(std::vector<Variable*>& vars, std::string n)
     : DataSet(vars, n) {
     cacheNumBins();
     binvalues.resize(getNumBins());
 }
 
-BinnedDataSet::BinnedDataSet(std::set<Variable*>& vars, string n)
+BinnedDataSet::BinnedDataSet(std::set<Variable*>& vars, std::string n)
     : DataSet(vars, n) {
     cacheNumBins();
     binvalues.resize(getNumBins());
@@ -52,8 +52,8 @@ void BinnedDataSet::cacheNumBins() {
 }
 
 unsigned int BinnedDataSet::getBinNumber() const {
-    vector<fptype> vals = getCurrentValues();
-    vector<unsigned int> locals = convertValuesToBins(vals);
+    std::vector<fptype> vals = getCurrentValues();
+    std::vector<unsigned int> locals = convertValuesToBins(vals);
     return localToGlobal(locals);
 }
 
@@ -145,7 +145,7 @@ fptype BinnedDataSet::getNumEvents() const {
     return ret;
 }
 
-vector<unsigned int> BinnedDataSet::convertValuesToBins(const vector<fptype>& vals) const {
+std::vector<unsigned int> BinnedDataSet::convertValuesToBins(const std::vector<fptype>& vals) const {
     std::vector<unsigned int> localBins;
     varConstIt currVar = varsBegin();
 

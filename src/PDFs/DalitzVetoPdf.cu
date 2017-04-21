@@ -31,7 +31,7 @@ __device__ fptype device_DalitzVeto(fptype* evt, fptype* p, unsigned int* indice
 __device__ device_function_ptr ptr_to_DalitzVeto = device_DalitzVeto;
 
 __host__ DalitzVetoPdf::DalitzVetoPdf(std::string n, Variable* _x, Variable* _y, Variable* motherM, Variable* d1m,
-                                      Variable* d2m, Variable* d3m, vector<VetoInfo*> vetos)
+                                      Variable* d2m, Variable* d3m, std::vector<VetoInfo*> vetos)
     : GooPdf(0, n) {
     registerObservable(_x);
     registerObservable(_y);
@@ -44,7 +44,7 @@ __host__ DalitzVetoPdf::DalitzVetoPdf(std::string n, Variable* _x, Variable* _y,
 
     pindices.push_back(vetos.size());
 
-    for(vector<VetoInfo*>::iterator v = vetos.begin(); v != vetos.end(); ++v) {
+    for(std::vector<VetoInfo*>::iterator v = vetos.begin(); v != vetos.end(); ++v) {
         pindices.push_back((*v)->cyclic_index);
         pindices.push_back(registerParameter((*v)->minimum));
         pindices.push_back(registerParameter((*v)->maximum));

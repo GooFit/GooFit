@@ -167,8 +167,8 @@ const float toyBkgTimeRMS = 0.7;
 std::string toyFileName;
 char strbuffer[1000];
 
-SmoothHistogramPdf* makeBackgroundHistogram(int bkgnum, string overridename = "");
-void makeToyDalitzPlots(GooPdf* overallSignal, string plotdir = "./plots_from_toy_mixfit/") ;
+SmoothHistogramPdf* makeBackgroundHistogram(int bkgnum, std::string overridename = "");
+void makeToyDalitzPlots(GooPdf* overallSignal, std::string plotdir = "./plots_from_toy_mixfit/") ;
 void getBackgroundFile(int bkgType);
 
 double intGaus = -1;
@@ -1756,7 +1756,7 @@ ChisqInfo* getAdaptiveChisquare(TH2F* datPlot, TH2F* pdfPlot) {
     return ret;
 }
 
-void makeToyDalitzPlots(GooPdf* overallSignal, string plotdir) {
+void makeToyDalitzPlots(GooPdf* overallSignal, std::string plotdir) {
     foo->cd();
 
     TH1F dtime_dat_hist("dtime_dat_hist", "", dtime->numbins, dtime->lowerlimit, dtime->upperlimit);
@@ -1860,8 +1860,8 @@ void makeToyDalitzPlots(GooPdf* overallSignal, string plotdir) {
 }
 
 
-void makeDalitzPlots(GooPdf* overallSignal, string plotdir = "./plots_from_mixfit/") {
-    string mkplotdir {"mkdir " + plotdir};
+void makeDalitzPlots(GooPdf* overallSignal, std::string plotdir = "./plots_from_mixfit/") {
+    std::string mkplotdir {"mkdir " + plotdir};
     system(mkplotdir.c_str());
     foo->cd();
 
@@ -2939,7 +2939,7 @@ void runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
         }
     }
 
-    string ident = fname.substr(pos, 4);
+    std::string ident = fname.substr(pos, 4);
     sprintf(strbuffer, "result_%s_%f", ident.c_str(), dplotres);
     ofstream writer;
     writer.open(strbuffer);
@@ -3102,7 +3102,7 @@ GooPdf* makeGaussianTimePdf(int bkg) {
     Variable* g3_meana;
     Variable* g3_sigma;
 
-    string bkgname = "";
+    std::string bkgname = "";
 
     switch(bkg) {
     case 4:
@@ -3165,7 +3165,7 @@ GooPdf* makeGaussianTimePdf(int bkg) {
 }
 
 GooPdf* makeExpGausTimePdf(int bkg) {
-    string bkgname = "";
+    std::string bkgname = "";
 
     switch(bkg) {
     case 4:
@@ -3442,7 +3442,7 @@ GooPdf* makeBkg3Eff() {
     return ret;
 }
 
-SmoothHistogramPdf* makeBackgroundHistogram(int bkgnum, string overridename) {
+SmoothHistogramPdf* makeBackgroundHistogram(int bkgnum, std::string overridename) {
     std::ifstream reader;
     sprintf(strbuffer, "./dataFiles/bkgDalitz_%i.txt", bkgnum);
 
@@ -4195,7 +4195,7 @@ void runSigmaFit(const char* fname) {
         }
     }
 
-    string plotdir = "./plots_from_mixfit/";
+    std::string plotdir = "./plots_from_mixfit/";
 
     for(int i = 0; i < 6; ++i) {
         if(sigma_data[i]->GetMaximum() > sigma_pdfs[i]->GetMaximum()) {
@@ -4534,7 +4534,7 @@ void getBackgroundFile(int bkgType) {
             else
                 sprintf(strbuffer, "./bkg_2_pdf_%islices.txt", m23Slices);
         } else {
-            string pdftype;
+            std::string pdftype;
 
             if(((3 == bkgType) && (notUseBackground3Hist)) ||
                     ((4 == bkgType) && (notUseBackground4Hist)))

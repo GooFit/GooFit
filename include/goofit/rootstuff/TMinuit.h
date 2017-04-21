@@ -158,16 +158,16 @@ public:
     bool       fLphead;           //true if a heading should be put out for the next parameter definition
     //bool       fGraphicsMode;     //true if graphics mode on (default)
     char*         fChpt;            //!Character to be plotted at the X,Y contour positions
-    string*      fCpnam;           //[fMaxpar2] Array of parameters names
-    string      fCfrom;            //
-    string      fCstatu;           //
-    string      fCtitl;            //
-    string      fCword;            //
-    string      fCundef;           //
-    string      fCvrsn;            //
-    string      fCovmes[4];        //
-    string      fOrigin[kMAXWARN]; //
-    string      fWarmes[kMAXWARN]; //
+    std::string*      fCpnam;           //[fMaxpar2] Array of parameters names
+    std::string      fCfrom;            //
+    std::string      fCstatu;           //
+    std::string      fCtitl;            //
+    std::string      fCword;            //
+    std::string      fCundef;           //
+    std::string      fCvrsn;            //
+    std::string      fCovmes[4];        //
+    std::string      fOrigin[kMAXWARN]; //
+    std::string      fWarmes[kMAXWARN]; //
     //TObject      *fObjectFit;       //Pointer to object being fitted
     //TObject      *fPlot;            //Pointer to TGraph object created by mncont
     //TMethodCall  *fMethodCall;      //Pointer to MethodCall in case of interpreted function
@@ -206,7 +206,7 @@ public:
     virtual void   mncntr(int ke1, int ke2, int& ierrf);
     virtual void   mncomd(const char* crdbin, int& icondn);
     virtual void   mncont(int ke1, int ke2, int nptu, double* xptu, double* yptu, int& ierrf);
-    virtual void   mncrck(string crdbuf, int maxcwd, string& comand, int& lnc
+    virtual void   mncrck(std::string crdbuf, int maxcwd, std::string& comand, int& lnc
                           ,  int mxp, double* plist, int& llist, int& ierr, int isyswr);
     virtual void   mncros(double& aopt, int& iercr);
     virtual void   mncuve();
@@ -221,7 +221,7 @@ public:
     virtual void   mnfixp(int iint, int& ierr);
     virtual void   mnfree(int k);
     virtual void   mngrad();
-    virtual void   mnhelp(string comd);
+    virtual void   mnhelp(std::string comd);
     virtual void   mnhelp(const char* command="");
     virtual void   mnhess();
     virtual void   mnhes1();
@@ -234,12 +234,12 @@ public:
     virtual void   mnmigr();
     virtual void   mnmnos();
     virtual void   mnmnot(int ilax, int ilax2, double& val2pl, double& val2mi);
-    virtual void   mnparm(int k, string cnamj, double uk, double wk, double a, double b, int& ierflg);
-    virtual void   mnpars(string& crdbuf, int& icondn);
+    virtual void   mnparm(int k, std::string cnamj, double uk, double wk, double a, double b, int& ierflg);
+    virtual void   mnpars(std::string& crdbuf, int& icondn);
     virtual void   mnpfit(double* parx2p, double* pary2p, int npar2p, double* coef2p, double& sdev2p);
     virtual void   mnpint(double& pexti, int i, double& pinti);
     virtual void   mnplot(double* xpt, double* ypt, char* chpt, int nxypt, int npagwd, int npagln);
-    virtual void   mnpout(int iuext, string& chnam, double& val, double& err, double& xlolim, double& xuplim,
+    virtual void   mnpout(int iuext, std::string& chnam, double& val, double& err, double& xlolim, double& xuplim,
                           int& iuint) const;
     virtual void   mnprin(int inkode, double fval);
     virtual void   mnpsdf();
@@ -253,7 +253,7 @@ public:
     virtual void   mnsimp();
     virtual void   mnstat(double& fmin, double& fedm, double& errdef, int& npari, int& nparx, int& istat);
     virtual void   mntiny(double epsp1, double& epsbak);
-    bool         mnunpt(string& cfname);
+    bool         mnunpt(std::string& cfname);
     virtual void   mnvert(double* a, int l, int m, int n, int& ifail);
     virtual void   mnwarn(const char* copt, const char* corg, const char* cmes);
     virtual void   mnwerr();

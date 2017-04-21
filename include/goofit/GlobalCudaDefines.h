@@ -6,8 +6,6 @@
 #include <cmath>
 #include <string>
 
-using namespace std;
-
 extern int host_callnumber;
 
 //  Non-cuda defines

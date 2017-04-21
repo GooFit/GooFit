@@ -324,7 +324,7 @@ __device__ resonance_function_ptr ptr_to_GAUSSIAN = gaussian;
 __device__ resonance_function_ptr ptr_to_NONRES = nonres;
 __device__ resonance_function_ptr ptr_to_LASS = lass;
 
-ResonancePdf::ResonancePdf(string name,
+ResonancePdf::ResonancePdf(std::string name,
                            Variable* ar,
                            Variable* ai,
                            Variable* mass,
@@ -334,7 +334,7 @@ ResonancePdf::ResonancePdf(string name,
     : GooPdf(0, name)
     , amp_real(ar)
     , amp_imag(ai) {
-    vector<unsigned int> pindices;
+    std::vector<unsigned int> pindices;
     pindices.push_back(0);
     // Making room for index of decay-related constants. Assumption:
     // These are mother mass and three daughter masses in that order.
@@ -350,7 +350,7 @@ ResonancePdf::ResonancePdf(string name,
     initialise(pindices);
 }
 
-ResonancePdf::ResonancePdf(string name,
+ResonancePdf::ResonancePdf(std::string name,
                            Variable* ar,
                            Variable* ai,
                            unsigned int sp,
@@ -361,7 +361,7 @@ ResonancePdf::ResonancePdf(string name,
     , amp_real(ar)
     , amp_imag(ai) {
     // Same as BW except for function pointed to.
-    vector<unsigned int> pindices;
+    std::vector<unsigned int> pindices;
     pindices.push_back(0);
     pindices.push_back(registerParameter(mass));
     pindices.push_back(registerParameter(width));
@@ -373,7 +373,7 @@ ResonancePdf::ResonancePdf(string name,
 }
 
 
-ResonancePdf::ResonancePdf(string name,
+ResonancePdf::ResonancePdf(std::string name,
                            Variable* ar,
                            Variable* ai,
                            Variable* mass,
@@ -384,7 +384,7 @@ ResonancePdf::ResonancePdf(string name,
     , amp_real(ar)
     , amp_imag(ai) {
     // Same as BW except for function pointed to.
-    vector<unsigned int> pindices;
+    std::vector<unsigned int> pindices;
     pindices.push_back(0);
     pindices.push_back(registerParameter(mass));
     pindices.push_back(registerParameter(width));
@@ -396,13 +396,13 @@ ResonancePdf::ResonancePdf(string name,
 }
 
 
-ResonancePdf::ResonancePdf(string name,
+ResonancePdf::ResonancePdf(std::string name,
                            Variable* ar,
                            Variable* ai)
     : GooPdf(0, name)
     , amp_real(ar)
     , amp_imag(ai) {
-    vector<unsigned int> pindices;
+    std::vector<unsigned int> pindices;
     pindices.push_back(0);
     // Dummy index for constants - won't use it, but calling
     // functions can't know that and will call setConstantIndex anyway.
@@ -410,7 +410,7 @@ ResonancePdf::ResonancePdf(string name,
     initialise(pindices);
 }
 
-ResonancePdf::ResonancePdf(string name,
+ResonancePdf::ResonancePdf(std::string name,
                            Variable* ar,
                            Variable* ai,
                            Variable* mean,
@@ -419,7 +419,7 @@ ResonancePdf::ResonancePdf(string name,
     : GooPdf(0, name)
     , amp_real(ar)
     , amp_imag(ai) {
-    vector<unsigned int> pindices;
+    std::vector<unsigned int> pindices;
     pindices.push_back(0);
     // Dummy index for constants - won't use it, but calling
     // functions can't know that and will call setConstantIndex anyway.

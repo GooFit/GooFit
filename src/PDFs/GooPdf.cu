@@ -45,7 +45,7 @@ __device__ void* device_function_table[200];
 
 void* host_function_table[200];
 unsigned int num_device_functions = 0;
-map<void*, int> functionAddressToDeviceIndexMap;
+std::map<void*, int> functionAddressToDeviceIndexMap;
 
 // For use in debugging memory issues
 void printMemoryStatus(std::string file, int line) {
@@ -184,7 +184,7 @@ GooPdf::GooPdf(Variable* x, std::string n)
 
 __host__ int GooPdf::findFunctionIdx(void* dev_functionPtr) {
     // Code specific to function-pointer implementation
-    map<void*, int>::iterator localPos = functionAddressToDeviceIndexMap.find(dev_functionPtr);
+    std::map<void*, int>::iterator localPos = functionAddressToDeviceIndexMap.find(dev_functionPtr);
 
     if(localPos != functionAddressToDeviceIndexMap.end()) {
         return (*localPos).second;
@@ -692,7 +692,7 @@ MetricTaker::MetricTaker(PdfBase* dat, void* dev_functionPtr)
     , parameters(dat->getParameterIndex()) {
     //std::cout << "MetricTaker constructor with " << functionIdx << std::endl;
 
-    map<void*, int>::iterator localPos = functionAddressToDeviceIndexMap.find(dev_functionPtr);
+    std::map<void*, int>::iterator localPos = functionAddressToDeviceIndexMap.find(dev_functionPtr);
 
     if(localPos != functionAddressToDeviceIndexMap.end()) {
         metricIndex = (*localPos).second;

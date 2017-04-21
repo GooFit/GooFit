@@ -74,7 +74,7 @@ FUNCTION(SELECT_NVCC_ARCH_FLAGS out_variable)
     SET(__archs_name_default "Auto")
   ENDIF()
 
-  # SET CUDA_ARCH_NAME strings (so it will be seen as dropbox in CMake-Gui)
+  # SET CUDA_ARCH_NAME std::strings (so it will be seen as dropbox in CMake-Gui)
   SET(CUDA_ARCH_NAME ${__archs_name_default} CACHE STRING "Select target NVIDIA GPU achitecture.")
   SET_property( CACHE CUDA_ARCH_NAME PROPERTY STRINGS "" ${__archs_names} )
   mark_as_advanced(CUDA_ARCH_NAME)

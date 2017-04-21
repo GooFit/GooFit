@@ -498,7 +498,7 @@ __device__ spin_function_ptr ptr_to_ONE               = ONE;
 SpinFactor::SpinFactor(std::string name, SF_4Body SF, unsigned int P0, unsigned int P1, unsigned int P2,
                        unsigned int P3)
     : GooPdf(0, name), _SF(SF), _P0(P0), _P1(P1), _P2(P2), _P3(P3) {
-    vector<unsigned int> pindices;
+    std::vector<unsigned int> pindices;
     pindices.push_back(0); //dummy for index to constants.
     pindices.push_back(P0);
     pindices.push_back(P1);

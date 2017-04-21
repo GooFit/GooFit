@@ -39,7 +39,7 @@ class Lineshape : public GooPdf {
     fptype _radius;
     std::vector<Variable*> _AdditionalVars;
 public:
-    Lineshape(string name,
+    Lineshape(std::string name,
               Variable* mass,
               Variable* width,
               unsigned int L,
@@ -62,7 +62,7 @@ public:
         return addvar and (L.getName() == getName() and L._mass->value == _mass->value and L._width->value == _width->value
                            and L._L == _L and L._Mpair == _Mpair and L._kind == _kind and L._FormFac == _FormFac);
     }
-    Lineshape(string name);
+    Lineshape(std::string name);
 
     void setConstantIndex(unsigned int idx) {
         host_indices[parameters + 1] = idx;

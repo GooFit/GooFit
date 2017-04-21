@@ -112,19 +112,19 @@ GInt_t main(int argv, char** argc)
 		cmd.add(eArg);
 
 
-		TCLAP::ValueArg<string> oArg("o", "output-file",
+		TCLAP::ValueArg<std::string> oArg("o", "output-file",
 				"Output file",
 				false, "./phsp.root", "string");
 		cmd.add(oArg);
 
 
-		TCLAP::ValueArg<string> pArg("p", "particles",
+		TCLAP::ValueArg<std::string> pArg("p", "particles",
 				"List of particles. First particle is the mother.Example: D0->Kpipi is 'D0;K;pi+;pi-",
 				true, "", "string");
 		cmd.add(pArg);
 
 
-		TCLAP::ValueArg<string> mArg("m", "masses",
+		TCLAP::ValueArg<std::string> mArg("m", "masses",
 				"Particle mass.  First particle is the mother. Example: D0->Kpipi is '1.865;0.439;0.139;0.139",
 				true, "" ,"string");
 		cmd.add(mArg);
@@ -145,7 +145,7 @@ GInt_t main(int argv, char** argc)
 	}
 
 
-	vector<string> names_temp;
+	vector<std::string> names_temp;
 	vector<GReal_t> masses_temp;
 
 	splitReal(_masses, ';'  , masses_temp);

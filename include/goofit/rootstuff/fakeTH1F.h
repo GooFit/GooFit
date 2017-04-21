@@ -4,7 +4,7 @@
 template<typename T>
 class TH1 {
 public:
-    TH1(string const& name, string const& title, int numbins, int lowerlimit, int upperlimit) :
+    TH1(std::string const& name, std::string const& title, int numbins, int lowerlimit, int upperlimit) :
         name_(name), title_(title), numbins_(numbins), lowerlimit_(lowerlimit), upperlimit_(upperlimit),
         hist_(numbins + 2), stats_(false) {
         scale_ = (numbins_ - 1)/(upperlimit_ - lowerlimit_);

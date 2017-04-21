@@ -423,7 +423,7 @@ __host__ TddpPdf::TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Va
 }
 
 __host__ TddpPdf::TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Variable* m12, Variable* m13,
-                          CountingVariable* eventNumber, DecayInfo* decay, vector<MixingTimeResolution*>& r, GooPdf* efficiency, Variable* md0,
+                          CountingVariable* eventNumber, DecayInfo* decay, std::vector<MixingTimeResolution*>& r, GooPdf* efficiency, Variable* md0,
                           Variable* mistag)
     : GooPdf(_dtime, n)
     , decayInfo(decay)

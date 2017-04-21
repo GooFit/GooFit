@@ -65,7 +65,7 @@ void RunMCGen (GInt_t nfinal, GInt_t nevents,  Double_t *time )
 {
 
 
-	vector<string> names;
+	vector<std::string> names;
 	vector<GReal_t> masses;
 
 	for(GInt_t i=0; i<nfinal; i++ )
@@ -123,12 +123,12 @@ GInt_t main(int argv, char** argc)
 					false, 1e6, "long integer");
 			cmd.add(eArg);
 
-			TCLAP::ValueArg<string> sArg("s", "suffix",
+			TCLAP::ValueArg<std::string> sArg("s", "suffix",
 					"Suffix for plots name",
 					false, "", "string");
 			cmd.add(sArg);
 
-			TCLAP::ValueArg<string> oArg("o", "output_dir", "output directory",
+			TCLAP::ValueArg<std::string> oArg("o", "output_dir", "output directory",
 					false, ".", "string");
 			cmd.add(oArg);
 

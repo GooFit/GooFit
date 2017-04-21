@@ -24,8 +24,10 @@ __device__ fptype device_BinTransform(fptype* evt, fptype* p, unsigned int* indi
 __device__ device_function_ptr ptr_to_BinTransform = device_BinTransform;
 
 // Notice that bin sizes and limits can be different, for this purpose, than what's implied by the Variable members.
-__host__ BinTransformPdf::BinTransformPdf(std::string n, vector<Variable*> obses, vector<fptype> limits,
-        vector<fptype> binSizes, vector<int> numBins)
+__host__ BinTransformPdf::BinTransformPdf(std::string n, std::vector<Variable*> obses,
+                                          std::vector<fptype> limits,
+                                          std::vector<fptype> binSizes,
+                                          std::vector<int> numBins)
     : GooPdf(0, n) {
 
     cIndex = registerConstants(2*obses.size());

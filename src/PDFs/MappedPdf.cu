@@ -23,7 +23,7 @@ __device__ fptype device_Mapped(fptype* evt, fptype* p, unsigned int* indices) {
 
 __device__ device_function_ptr ptr_to_Mapped = device_Mapped;
 
-__host__ MappedPdf::MappedPdf(std::string n, GooPdf* m, vector<GooPdf*>& t)
+__host__ MappedPdf::MappedPdf(std::string n, GooPdf* m, std::vector<GooPdf*>& t)
     : GooPdf(0, n) {
     components.push_back(m);
     std::vector<unsigned int> pindices;
@@ -32,7 +32,7 @@ __host__ MappedPdf::MappedPdf(std::string n, GooPdf* m, vector<GooPdf*>& t)
 
     std::set<int> functionIndicesUsed;
 
-    for(vector<GooPdf*>::iterator f = t.begin(); f != t.end(); ++f) {
+    for(std::vector<GooPdf*>::iterator f = t.begin(); f != t.end(); ++f) {
         components.push_back(*f);
         pindices.push_back((*f)->getFunctionIndex());
         pindices.push_back((*f)->getParameterIndex());

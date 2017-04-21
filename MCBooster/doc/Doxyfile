@@ -110,7 +110,7 @@ BRIEF_MEMBER_DESC      = YES
 REPEAT_BRIEF           = NO
 
 # This tag implements a quasi-intelligent brief description abbreviator that is
-# used to form the text in various listings. Each string in this list, if found
+# used to form the text in various listings. Each std::string in this list, if found
 # as the leading text of the brief description, will be stripped from the text
 # and the result, after processing the whole list, is used as the annotated
 # text. Otherwise, the brief description is used as-is. If left blank, the
@@ -153,7 +153,7 @@ INLINE_INHERITED_MEMB  = YES
 FULL_PATH_NAMES        = NO
 
 # The STRIP_FROM_PATH tag can be used to strip a user-defined part of the path.
-# Stripping is only done if one of the specified strings matches the left-hand
+# Stripping is only done if one of the specified std::strings matches the left-hand
 # part of the path. The tag can be used to show relative paths in the file list.
 # If left blank the directory from which doxygen is run is used as the path to
 # strip.
@@ -604,7 +604,7 @@ SORT_BY_SCOPE_NAME     = NO
 # type resolution of all parameters of a function it will reject a match between
 # the prototype and the implementation of a member function even if there is
 # only one candidate or it is obvious which candidate to choose by doing a
-# simple string match. By disabling STRICT_PROTO_MATCHING doxygen will still
+# simple std::string match. By disabling STRICT_PROTO_MATCHING doxygen will still
 # accept a match between prototype and implementation in such cases.
 # The default value is: NO.
 
@@ -750,7 +750,7 @@ WARN_IF_DOC_ERROR      = YES
 WARN_NO_PARAMDOC       = NO
 
 # The WARN_FORMAT tag determines the format of the warning messages that doxygen
-# can produce. The string should contain the $file, $line, and $text tags, which
+# can produce. The std::string should contain the $file, $line, and $text tags, which
 # will be replaced by the file and line number from which the warning originated
 # and the warning text. Optionally the format may contain $version, which will
 # be replaced by the version of the file (if it could be obtained via
@@ -1244,17 +1244,17 @@ GENERATE_DOCSET        = NO
 
 DOCSET_FEEDNAME        = "Doxygen generated docs"
 
-# This tag specifies a string that should uniquely identify the documentation
-# set bundle. This should be a reverse domain-name style string, e.g.
+# This tag specifies a std::string that should uniquely identify the documentation
+# set bundle. This should be a reverse domain-name style std::string, e.g.
 # com.mycompany.MyDocSet. Doxygen will append .docset to the name.
 # The default value is: org.doxygen.Project.
 # This tag requires that the tag GENERATE_DOCSET is set to YES.
 
 DOCSET_BUNDLE_ID       = org.doxygen.Project
 
-# The DOCSET_PUBLISHER_ID tag specifies a string that should uniquely identify
+# The DOCSET_PUBLISHER_ID tag specifies a std::string that should uniquely identify
 # the documentation publisher. This should be a reverse domain-name style
-# string, e.g. com.mycompany.MyDocSet.documentation.
+# std::string, e.g. com.mycompany.MyDocSet.documentation.
 # The default value is: org.doxygen.Publisher.
 # This tag requires that the tag GENERATE_DOCSET is set to YES.
 
@@ -1691,7 +1691,7 @@ EXTRA_PACKAGES         =
 # following commands have a special meaning inside the header: $title,
 # $datetime, $date, $doxygenversion, $projectname, $projectnumber,
 # $projectbrief, $projectlogo. Doxygen will replace $title with the empty
-# string, for the replacement values of the other commands the user is referred
+# std::string, for the replacement values of the other commands the user is referred
 # to HTML_HEADER.
 # This tag requires that the tag GENERATE_LATEX is set to YES.
 
@@ -1993,7 +1993,7 @@ PERLMOD_LATEX          = NO
 PERLMOD_PRETTY         = YES
 
 # The names of the make variables in the generated doxyrules.make file are
-# prefixed with the string contained in PERLMOD_MAKEVAR_PREFIX. This is useful
+# prefixed with the std::string contained in PERLMOD_MAKEVAR_PREFIX. This is useful
 # so different doxyrules.make files included by the same Makefile don't
 # overwrite each other's variables.
 # This tag requires that the tag GENERATE_PERLMOD is set to YES.

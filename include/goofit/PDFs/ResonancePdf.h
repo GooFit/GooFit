@@ -26,7 +26,7 @@ class ResonancePdf : public GooPdf {
     friend class IncoherentSumPdf;
 public:
     // Constructor for regular BW
-    ResonancePdf(string name,
+    ResonancePdf(std::string name,
                  Variable* ar,
                  Variable* ai,
                  Variable* mass,
@@ -35,7 +35,7 @@ public:
                  unsigned int cyc);
 
     // Gounaris-Sakurai
-    ResonancePdf(string name,
+    ResonancePdf(std::string name,
                  Variable* ar,
                  Variable* ai,
                  unsigned int sp,
@@ -44,7 +44,7 @@ public:
                  unsigned int cyc);
 
     // LASS constructor
-    ResonancePdf(string name,
+    ResonancePdf(std::string name,
                  Variable* ar,
                  Variable* ai,
                  Variable* mass,
@@ -54,12 +54,12 @@ public:
 
 
     // Nonresonant constructor
-    ResonancePdf(string name,
+    ResonancePdf(std::string name,
                  Variable* ar,
                  Variable* ai);
 
     // Gaussian constructor
-    ResonancePdf(string name,
+    ResonancePdf(std::string name,
                  Variable* ar,
                  Variable* ai,
                  Variable* mean,

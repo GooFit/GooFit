@@ -323,18 +323,18 @@ TMinuit* TMinuit::gMinuit = 0;
 const char charal[29] = " .ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 // Stupid little helper method because std::string doesn't have basic functionality...
-void toUpper(string& str) {
+void toUpper(std::string& str) {
     for(unsigned int i = 0; i < str.size(); ++i) {
         str[i] = toupper(str[i]);
     }
 }
 
-bool contains(string& toLookIn, string toLookFor) {
-    return (toLookIn.find(toLookFor) != string::npos);
+bool contains(std::string& toLookIn, std::string toLookFor) {
+    return (toLookIn.find(toLookFor) != std::string::npos);
 }
 
 #include "stdarg.h"
-// Why oh why can't C++ do strings?
+// Why oh why can't C++ do std::strings?
 string local_Form(const char* va_fmt, ...) {
     static char strbuffer[10000];
     va_list ap;
@@ -342,7 +342,7 @@ string local_Form(const char* va_fmt, ...) {
     vsnprintf(strbuffer, 10000, va_fmt, ap); // Use vsn, not sn, when we are passing a vararg list and not a strict vararg.
     va_end(ap);
 
-    string ret(strbuffer);
+    std::string ret(strbuffer);
     return ret;
 }
 
@@ -401,7 +401,7 @@ void TMinuit::BuildArrays(int maxpar) {
     fMaxpar2= 2*fMaxpar;
     fMaxpar5= fMaxpar1/2;
     fMaxcpt = 101;
-    fCpnam  = new string[fMaxpar2];
+    fCpnam  = new std::string[fMaxpar2];
     fU      = new double[fMaxpar2];
     fAlim   = new double[fMaxpar2];
     fBlim   = new double[fMaxpar2];
@@ -477,7 +477,7 @@ void TMinuit::BuildArrays(int maxpar) {
 int TMinuit::Command(const char* command) {
 // execute a Minuit command
 //     Equivalent to MNEXCM except that the command is given as a
-//     character string.
+//     character std::string.
 // See TMinuit::mnhelp for the full list of available commands
 // See also http://wwwasdoc.web.cern.ch/wwwasdoc/minuit/node18.html for
 //  a complete documentation of all the available commands
@@ -577,7 +577,7 @@ int TMinuit::DefineParameter(int parNo, const char* name, double initVal, double
 
     int err;
 
-    string sname = name;
+    std::string sname = name;
     mnparm(parNo, sname, initVal, initErr, lowerLimit, upperLimit, err);
 
     return err;
@@ -720,7 +720,7 @@ int TMinuit::FixParameter(int parNo) {
 int TMinuit::GetParameter(int parNo, double& currentValue, double& currentError) const {
 // return parameter value and error
     int    err;
-    string  name; // ignored
+    std::string  name; // ignored
     double bnd1, bnd2; // ignored
 
     mnpout(parNo, name, currentValue, currentError, bnd1, bnd2, err);
@@ -1033,7 +1033,7 @@ void TMinuit::mncntr(int ike1, int ike2, int& ierrf) {
 //*-*                input arguments: parx, pary, devs, ngrid
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
-    static string clabel = "0123456789ABCDEFGHIJ";
+    static std::string clabel = "0123456789ABCDEFGHIJ";
 
     /* Local variables */
     double d__1, d__2;
@@ -1041,7 +1041,7 @@ void TMinuit::mncntr(int ike1, int ike2, int& ierrf) {
     double  ylabel, fmn, fmx, xlo, ylo, xup, yup;
     double devs, xsav, ysav,  bwidx,  bwidy, unext, ff, xb4;
     int i,  ngrid, ixmid, nparx, ix, nx, ny, ki1, ki2, ixzero, iy, ics;
-    string chmid, chln, chzero;
+    std::string chmid, chln, chzero;
 
     int ke1 = ike1+1;
     int ke2 = ike2+1;
@@ -1245,11 +1245,11 @@ L1350:
 
 //______________________________________________________________________________
 void TMinuit::mncomd(const char* crdbin, int& icondn) {
-//*-*-*-*-*-*-*-*-*-*-*Reads a command string and executes*-*-*-*-*-*-*-*-*-*
+//*-*-*-*-*-*-*-*-*-*-*Reads a command std::string and executes*-*-*-*-*-*-*-*-*-*
 //*-*                  ===================================
-//*-*        Called by user.  'Reads' a command string and executes.
+//*-*        Called by user.  'Reads' a command std::string and executes.
 //*-*     Equivalent to MNEXCM except that the command is given as a
-//*-*          character string.
+//*-*          character std::string.
 //*-*
 //*-*     ICONDN = 0: command executed normally
 //*-*              1: command is blank, ignored
@@ -1270,7 +1270,7 @@ void TMinuit::mncomd(const char* crdbin, int& icondn) {
     /* Local variables */
     int ierr, ipos, i, llist, lenbuf, lnc;
     bool leader;
-    string comand, crdbuf, ctemp;
+    std::string comand, crdbuf, ctemp;
 
     crdbuf = crdbin;
     toUpper(crdbuf);
@@ -1697,7 +1697,7 @@ L2000:
 } /* mncont_ */
 
 //______________________________________________________________________________
-void TMinuit::mncrck(string cardbuf, int maxcwd, string& comand, int& lnc,
+void TMinuit::mncrck(std::string cardbuf, int maxcwd, std::string& comand, int& lnc,
                      int mxp, double* plist, int& llist, int& ierr, int) {
 //*-*-*-*-*-*-*-*-*-*-*-*Cracks the free-format input*-*-*-*-*-*-*-*-*-*-*-*-*
 //*-*                    ============================
@@ -1718,7 +1718,7 @@ void TMinuit::mncrck(string cardbuf, int maxcwd, string& comand, int& lnc,
     /* Local variables */
     int ifld, iend, lend, left, nreq, ipos, kcmnd, nextb, ic, ibegin, ltoadd;
     int ielmnt, lelmnt[25], nelmnt;
-    string ctemp;
+    std::string ctemp;
     char* celmnt[25];
     char command[25];
 
@@ -2862,7 +2862,7 @@ void TMinuit::mnemat(double* emat, int ndim) {
     /* Local variables */
     double dxdi, dxdj;
     int i, j, k, npard, k2, kk, iz, nperln, kga, kgb;
-    string ctemp;
+    std::string ctemp;
 
     /* Parameter adjustments */
     emat_dim1 = ndim;
@@ -3060,9 +3060,9 @@ void TMinuit::mnexcm(const char* command, double* plist, int llist, int& ierflg)
 
     /* Initialized data */
 
-    string comand = command;
-    static string clower = "abcdefghijklmnopqrstuvwxyz";
-    static string cupper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    std::string comand = command;
+    static std::string clower = "abcdefghijklmnopqrstuvwxyz";
+    static std::string cupper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const char* cname[40] = {
         "MINImize  ",
         "SEEk      ",
@@ -3113,8 +3113,8 @@ void TMinuit::mnexcm(const char* command, double* plist, int llist, int& ierflg)
     int icol, kcol, ierr, iint, iext, lnow, nptu, i, iflag, ierrf;
     int ilist, nparx, izero, nf, lk, it, iw, inonde, nsuper;
     int it2, ke1, ke2, nowprt, kll, krl;
-    string chwhy, c26, cvblnk, cneway, comd;
-    string ctemp;
+    std::string chwhy, c26, cvblnk, cneway, comd;
+    std::string ctemp;
     bool lfreed, ltofix, lfixed;
 
 //*-*  alphabetical order of command names!
@@ -4046,7 +4046,7 @@ void TMinuit::mngrad() {
     double fzero, err;
     int i, nparx, lc, istsav;
     bool lnone;
-    static string cwd = "    ";
+    static std::string cwd = "    ";
 
     fISW[2] = 1;
     nparx   = fNpar;
@@ -4117,12 +4117,12 @@ L2000:
 //______________________________________________________________________________
 void TMinuit::mnhelp(const char* command) {
     //interface to Minuit help
-    string comd = command;
+    std::string comd = command;
     mnhelp(comd);
 }
 
 //______________________________________________________________________________
-void TMinuit::mnhelp(string comd) {
+void TMinuit::mnhelp(std::string comd) {
 //*-*-*-*-*-*-*-*HELP routine for MINUIT interactive commands*-*-*-*-*-*-*-*-*
 //*-*            ============================================
 //*-*
@@ -5738,7 +5738,7 @@ void TMinuit::mnline(double* start, double fstart, double* step, double slope, d
     double toler8, toler9, overal, undral, slamin, slamax, slopem;
     int i, nparx=0, nvmax=0, nxypt, kk, ipt;
     bool ldebug;
-    string cmess;
+    std::string cmess;
     char chpq[13];
     int     l65, l70, l80;
 
@@ -6051,7 +6051,7 @@ void TMinuit::mnmatu(int kode) {
     /* Local variables */
     int ndex, i, j, m, n, ncoef, nparm, id, it, ix;
     int nsofar, ndi, ndj, iso, isw2, isw5;
-    string ctemp;
+    std::string ctemp;
 
     isw2 = fISW[1];
 
@@ -6763,7 +6763,7 @@ void TMinuit::mnmnot(int ilax, int ilax2, double& val2pl, double& val2mi) {
     double fac, sig, sav;
     int marc, isig, mpar, ndex, imax, indx, ierr, i, j;
     int iercr, it, istrav, nfmxin, nlimit, isw2, isw4;
-    string csig;
+    std::string csig;
 
 //*-*-                                       . . save and prepare start vals
     isw2    = fISW[1];
@@ -6993,7 +6993,7 @@ L700:
 } /* mnmnot_ */
 
 //______________________________________________________________________________
-void TMinuit::mnparm(int k1, string cnamj, double uk, double wk, double a, double b, int& ierflg) {
+void TMinuit::mnparm(int k1, std::string cnamj, double uk, double wk, double a, double b, int& ierflg) {
 //*-*-*-*-*-*-*-*-*Implements one parameter definition*-*-*-*-*-*-*-*-*-*-*-*
 //*-*              ===================================
 //*-*        Called from MNPARS and user-callable
@@ -7011,7 +7011,7 @@ void TMinuit::mnparm(int k1, string cnamj, double uk, double wk, double a, doubl
     /* Local variables */
     double vplu, a_small, gsmin, pinti, vminu, danger, sav, sav2;
     int ierr, kint, in, ix, ktofix, lastin, kinfix, nvl;
-    string cnamk, chbufi;
+    std::string cnamk, chbufi;
 
     int k = k1+1;
     cnamk   = cnamj;
@@ -7250,12 +7250,12 @@ L800:
 } /* mnparm_ */
 
 //______________________________________________________________________________
-void TMinuit::mnpars(string& crdbuf, int& icondn) {
+void TMinuit::mnpars(std::string& crdbuf, int& icondn) {
 //*-*-*-*-*-*-*-*Implements one parameter definition*-*-*-*-*-*-*-*-*-*-*-*-*
 //*-*            =========== =======================
 //*-*        Called from MNREAD and user-callable
 //*-*    Implements one parameter definition, that is:
-//*-*       parses the string CRDBUF and calls MNPARM
+//*-*       parses the std::string CRDBUF and calls MNPARM
 //*-*
 //*-* output conditions:
 //*-*        ICONDN = 0    all OK
@@ -7267,7 +7267,7 @@ void TMinuit::mnpars(string& crdbuf, int& icondn) {
     double a=0, b=0, fk=0, uk=0, wk=0, xk=0;
     int ierr, kapo1, kapo2;
     int k, llist, ibegin, lenbuf, istart, lnc, icy;
-    string cnamk, comand, celmnt, ctemp;
+    std::string cnamk, comand, celmnt, ctemp;
     char stmp[128];
 
     lenbuf = strlen(crdbuf.c_str());
@@ -7477,7 +7477,7 @@ void TMinuit::mnpint(double& pexti, int i1, double& pinti) {
     /* Local variables */
     double a, alimi, blimi, yy, yy2;
     int igo;
-    string chbuf2, chbufi;
+    std::string chbuf2, chbufi;
 
     int i = i1+1;
     pinti   = pexti;
@@ -7532,8 +7532,8 @@ void TMinuit::mnplot(double* xpt, double* ypt, char* chpt, int nxypt, int npagwd
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
 
-    static string cdot   = ".";
-    static string cslash = "/";
+    static std::string cdot   = ".";
+    static std::string cslash = "/";
 
     /* Local variables */
     double xmin, ymin, xmax, ymax, savx, savy, yprt;
@@ -7541,7 +7541,7 @@ void TMinuit::mnplot(double* xpt, double* ypt, char* chpt, int nxypt, int npagwd
     double xvalus[12], any, dxx, dyy;
     int iten, i, j, k, maxnx, maxny, iquit, ni, linodd;
     int nxbest, nybest, km1, ibk, isp1, nx, ny, ks, ix;
-    string chmess, ctemp;
+    std::string chmess, ctemp;
     bool overpr;
     char cline[120];
     char chsav, chbest;
@@ -7749,7 +7749,7 @@ L400:
 } /* mnplot_ */
 
 //______________________________________________________________________________
-void TMinuit::mnpout(int iuext1, string& chnam, double& val, double& err, double& xlolim, double& xuplim,
+void TMinuit::mnpout(int iuext1, std::string& chnam, double& val, double& err, double& xlolim, double& xuplim,
                      int& iuint) const {
 //*-*-*-*Provides the user with information concerning the current status*-*-*
 //*-*    ================================================================
@@ -7841,15 +7841,15 @@ void TMinuit::mnprin(int inkode, double fval) {
 
     /* Initialized data */
 
-    static string cblank = "           ";
-    static string cnambf = "           ";
+    static std::string cblank = "           ";
+    static std::string cnambf = "           ";
 
     /* Local variables */
     double dcmax, x1, x2, x3, dc;
     x2 = x3 = 0;
     int nadd, i, k, l, m, ikode, ic, nc, ntrail, lbl;
-    string chedm;
-    string colhdl[6], colhdu[6], cx2, cx3, cheval;
+    std::string chedm;
+    std::string colhdl[6], colhdu[6], cx2, cx3, cheval;
 
     if(fNu == 0) {
         printf(" THERE ARE CURRENTLY NO PARAMETERS DEFINED\n");
@@ -8090,7 +8090,7 @@ void TMinuit::mnpsdf() {
     /* Local variables */
     double dgmin, padd, pmin, pmax, dg, epspdf, epsmin;
     int ndex, i, j, ndexd, ip, ifault;
-    string chbuff, ctemp;
+    std::string chbuff, ctemp;
 
     epsmin = 1e-6;
     epspdf = max(epsmin, fEpsma2);
@@ -8671,7 +8671,7 @@ void TMinuit::mnset() {
 
     static int nname = 25;
     static int nntot = 30;
-    static string cprlev[5] = {
+    static std::string cprlev[5] = {
         "-1: NO OUTPUT EXCEPT FROM SHOW    ",
         " 0: REDUCED OUTPUT                ",
         " 1: NORMAL OUTPUT                 ",
@@ -8679,13 +8679,13 @@ void TMinuit::mnset() {
         " 3: MAXIMUM OUTPUT                "
     };
 
-    static string cstrat[3] = {
+    static std::string cstrat[3] = {
         " 0: MINIMIZE THE NUMBER OF CALLS TO FUNCTION",
         " 1: TRY TO BALANCE SPEED AGAINST RELIABILITY",
         " 2: MAKE SURE MINIMUM TRUE, ERRORS CORRECT  "
     };
 
-    static string cdbopt[7] = {
+    static std::string cdbopt[7] = {
         "REPORT ALL EXCEPTIONAL CONDITIONS      ",
         "MNLINE: LINE SEARCH MINIMIZATION       ",
         "MNDERI: FIRST DERIVATIVE CALCULATIONS  ",
@@ -8702,7 +8702,7 @@ void TMinuit::mnset() {
     double val;
     int iset, iprm, i, jseed, kname, iseed, iunit, id, ii, kk;
     int ikseed, idbopt, igrain=0, iswsav, isw2;
-    string  cfname, cmode, ckind,  cwarn, copt, ctemp, ctemp2;
+    std::string  cfname, cmode, ckind,  cwarn, copt, ctemp, ctemp2;
     bool lname=false;
 
     for(i = 1; i <= nntot; ++i) {
@@ -9723,14 +9723,14 @@ void TMinuit::mntiny(double epsp1, double& epsbak) {
 } /* mntiny_ */
 
 //______________________________________________________________________________
-bool TMinuit::mnunpt(string& cfname) {
+bool TMinuit::mnunpt(std::string& cfname) {
 //*-*-*-*-*-*Returns .TRUE. if CFNAME contains unprintable characters*-*-*-*
 //*-*        ========================================================
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
     int i, l, ic;
     bool ret_val;
-    static string cpt = " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890./;:[]$%*_!@#&+()";
+    static std::string cpt = " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890./;:[]$%*_!@#&+()";
 
     ret_val = false;
     l       = strlen(cfname.c_str());
@@ -9879,13 +9879,13 @@ void TMinuit::mnwarn(const char* copt1, const char* corg1, const char* cmes1) {
 //*-*             the circular buffer, FIFO, and empties the buffer.
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
-    string copt = copt1;
-    string corg = corg1;
-    string cmes = cmes1;
+    std::string copt = copt1;
+    std::string corg = corg1;
+    std::string cmes = cmes1;
 
     const int kMAXMES = 10;
     int ityp, i, ic, nm;
-    string englsh, ctyp;
+    std::string englsh, ctyp;
 
     if(corg.substr(0, 3) != "SHO" || cmes.substr(0, 3) != "SHO") {
 

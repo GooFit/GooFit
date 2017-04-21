@@ -432,7 +432,7 @@ __device__ resonance_function_ptr ptr_to_SBW = SBW;
 __device__ resonance_function_ptr ptr_to_NONRES_DP = nonres_DP;
 __device__ resonance_function_ptr ptr_to_Flatte = Flatte_MINT;
 
-Lineshape::Lineshape(string name,
+Lineshape::Lineshape(std::string name,
                      Variable* mass,
                      Variable* width,
                      unsigned int L,
@@ -442,7 +442,7 @@ Lineshape::Lineshape(string name,
                      fptype radius,
                      std::vector<Variable*> AdditionalVars)
     : GooPdf(0, name), _mass(mass), _width(width), _L(L), _Mpair(Mpair), _kind(kind), _FormFac(FormFac) {
-    vector<unsigned int> pindices;
+    std::vector<unsigned int> pindices;
     pindices.push_back(0);
     // Making room for index of decay-related constants. Assumption:
     // These are mother mass and three daughter masses in that order.
@@ -514,9 +514,9 @@ Lineshape::Lineshape(string name,
 
 
 
-Lineshape::Lineshape(string name)
+Lineshape::Lineshape(std::string name)
     : GooPdf(0, name) {
-    vector<unsigned int> pindices;
+    std::vector<unsigned int> pindices;
     pindices.push_back(0);
     // Dummy index for constants - won't use it, but calling
     // functions can't know that and will call setConstantIndex anyway.

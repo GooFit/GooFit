@@ -13,9 +13,9 @@ typedef std::vector<Variable*>::const_reverse_iterator varConstRIt;
 
 class DataSet {
 public:
-    DataSet(Variable* var, string n = "");
-    DataSet(std::vector<Variable*>& vars, string n = "");
-    DataSet(std::set<Variable*>& vars, string n = "");
+    DataSet(Variable* var, std::string n = "");
+    DataSet(std::vector<Variable*>& vars, std::string n = "");
+    DataSet(std::set<Variable*>& vars, std::string n = "");
     virtual ~DataSet();
 
     void addEvent();
@@ -44,12 +44,12 @@ public:
         return numEventsAdded;
     }
 
-    string getName() const {
+    std::string getName() const {
         return name;
     }
 
 protected:
-    vector<fptype> getCurrentValues() const;
+    std::vector<fptype> getCurrentValues() const;
     unsigned int indexOfVariable(Variable* var) const;
     int numEventsAdded;
 
@@ -57,6 +57,6 @@ private:
     void generateName();
 
     std::vector<Variable*> variables;
-    string name;
+    std::string name;
 };
 

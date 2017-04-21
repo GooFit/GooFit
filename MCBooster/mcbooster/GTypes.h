@@ -41,7 +41,7 @@ typedef unsigned long GULong_t; //Unsigned long integer 4 bytes (unsigned long)
 typedef float GFloat_t;     ///< Float 4 bytes (float)
 typedef double GDouble_t;    ///< Double 8 bytes
 typedef long double GLongDouble_t;    ///< Long Double
-typedef char GText_t;      ///< General string (char)
+typedef char GText_t;      ///< General std::string (char)
 typedef bool GBool_t;      ///< Boolean (0=false, 1=true) (bool)
 typedef unsigned char GByte_t;      ///< Byte (8 bits) (unsigned char)
 typedef long long GLong64_t; ///< Portable signed long integer 8 bytes

@@ -8,9 +8,6 @@ var searchData=
   ['binnederrorfit',['BinnedErrorFit',['../class_binned_error_fit.html#a677d21eb65c38a2ddaf39b9307e35b36',1,'BinnedErrorFit']]],
   ['binnedfit',['binnedFit',['../class_fit_control.html#a90f0e7388a73616fbee846c1fc34ad2b',1,'FitControl']]],
   ['binnednllfit',['BinnedNllFit',['../class_binned_nll_fit.html#a166753adec4c70609ad20a0644722a8e',1,'BinnedNllFit']]],
-  ['binomial',['Binomial',['../class_t_random.html#a13d6119db24eb6c17630c531f85a4e9b',1,'TRandom']]],
   ['bintransformpdf',['BinTransformPdf',['../class_bin_transform_pdf.html#adc0193d5973d303ab55d7f9aafcfdc97',1,'BinTransformPdf']]],
-  ['breitwigner',['BreitWigner',['../class_t_random.html#a71c3af2fd58574688fcf7fdcf913a19e',1,'TRandom']]],
-  ['buildarrays',['BuildArrays',['../class_t_minuit.html#a39a918b42c9b70e7ec08b2e50f7d3458',1,'TMinuit']]],
   ['bwpdf',['BWPdf',['../class_b_w_pdf.html#aa551c480e2d7447df2d7a9e4c4dde2d1',1,'BWPdf']]]
 ];

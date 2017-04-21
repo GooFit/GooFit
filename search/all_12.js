@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['rank',['rank',['../_gen_voigtian_8cc.html#a6cfd95afd0afebd625b889fb6e58371c',1,'GenVoigtian.cc']]],
-  ['rannor',['Rannor',['../class_t_random.html#a5393d5df4fdd06acfe85eff551158ca0',1,'TRandom::Rannor(float &amp;a, float &amp;b)'],['../class_t_random.html#a71ca1123cb1fcf8e9c5bd3ca7b412482',1,'TRandom::Rannor(double &amp;a, double &amp;b)']]],
   ['readfromfile',['readFromFile',['../_functor_writer_8h.html#a66f8c6ed928cfd33ef71a08d16b26821',1,'readFromFile(PdfBase *pdf, const char *fname):&#160;FunctorWriter.cc'],['../_functor_writer_8cc.html#a66f8c6ed928cfd33ef71a08d16b26821',1,'readFromFile(PdfBase *pdf, const char *fname):&#160;FunctorWriter.cc']]],
   ['readlistofnumbers',['readListOfNumbers',['../_functor_writer_8h.html#a3753fb3fc8d487d99014ba21137df9ea',1,'readListOfNumbers(thrust::host_vector&lt; fptype &gt; &amp;target, const char *fname):&#160;FunctorWriter.cc'],['../_functor_writer_8cc.html#a3753fb3fc8d487d99014ba21137df9ea',1,'readListOfNumbers(thrust::host_vector&lt; fptype &gt; &amp;target, const char *fname):&#160;FunctorWriter.cc']]],
   ['real',['real',['../structdevcomplex.html#a22abfb53be7d8b0c345268b4a0328fe3',1,'devcomplex']]],
@@ -11,17 +9,15 @@ var searchData=
   ['registerobservable',['registerObservable',['../class_pdf_base.html#ad3f4c1923e70513fa4da84dc0d0aaf75',1,'PdfBase']]],
   ['registerothers',['registerOthers',['../class_convolution_pdf.html#a89f80f9226032bfaa741ba5d2b66a9ab',1,'ConvolutionPdf']]],
   ['registerparameter',['registerParameter',['../class_pdf_base.html#a9520ede7a636daee2819b661f0db0a37',1,'PdfBase']]],
-  ['release',['Release',['../class_t_minuit.html#ab8c03f660bdcaa23057594618d579472',1,'TMinuit']]],
   ['resonance_5ffunction_5fptr',['resonance_function_ptr',['../_resonance_pdf_8h.html#a2c72412f0046bfc3513a43a55c835845',1,'ResonancePdf.h']]],
   ['resonancepdf',['ResonancePdf',['../class_resonance_pdf.html',1,'ResonancePdf'],['../class_resonance_pdf.html#a38eedcaea164148a9f31290b6414b20e',1,'ResonancePdf::ResonancePdf(string name, Variable *ar, Variable *ai, Variable *mass, Variable *width, unsigned int sp, unsigned int cyc)'],['../class_resonance_pdf.html#a6e99643d6819f403dbac79bd1fc04456',1,'ResonancePdf::ResonancePdf(string name, Variable *ar, Variable *ai, unsigned int sp, Variable *mass, Variable *width, unsigned int cyc)'],['../class_resonance_pdf.html#a62e23ff51f75dd9d95bfad1b6d2bde76',1,'ResonancePdf::ResonancePdf(string name, Variable *ar, Variable *ai, Variable *mass, unsigned int sp, Variable *width, unsigned int cyc)'],['../class_resonance_pdf.html#ae3673cb4c7507a951274b83c9c614cf7',1,'ResonancePdf::ResonancePdf(string name, Variable *ar, Variable *ai)'],['../class_resonance_pdf.html#ad7e02abe3e189e03e4d810881734e295',1,'ResonancePdf::ResonancePdf(string name, Variable *ar, Variable *ai, Variable *mean, Variable *sigma, unsigned int cyc)']]],
   ['resonancepdf_2ecu',['ResonancePdf.cu',['../_resonance_pdf_8cu.html',1,'']]],
   ['resonancepdf_2eh',['ResonancePdf.h',['../_resonance_pdf_8h.html',1,'']]],
   ['resonances',['resonances',['../struct_decay_info.html#a1a22b3d8952b4b6a07289100aa7cb51a',1,'DecayInfo']]],
   ['resonancesize',['resonanceSize',['../_dalitz_plot_helpers_8h.html#a58bf7c1a720273175d4a60ed59394307',1,'DalitzPlotHelpers.h']]],
-  ['rndm',['Rndm',['../class_t_random.html#ac4a12ab5ecffd3211baf2d1d8973fda0',1,'TRandom::Rndm()'],['../class_t_random3.html#a70ad1c897559a75313536dfcfcc985d0',1,'TRandom3::Rndm()']]],
-  ['rndmarray',['RndmArray',['../class_t_random.html#add2464aef9e911c2dbc3a0d41da93aac',1,'TRandom::RndmArray(int n, float *array)'],['../class_t_random.html#a49cfb0990f090a2b9d7528259916c218',1,'TRandom::RndmArray(int n, double *array)'],['../class_t_random3.html#ad441c53f3fed6138d4f1f65ed2088c64',1,'TRandom3::RndmArray(int n, float *array)'],['../class_t_random3.html#ab853086d44ce7244b831cde1f578d2a3',1,'TRandom3::RndmArray(int n, double *array)']]],
   ['root2',['root2',['../_global_cuda_defines_8h.html#a73dc743cb2ae569c146a5018bd38e468',1,'GlobalCudaDefines.h']]],
   ['rsqrt',['RSQRT',['../_global_cuda_defines_8h.html#af7518e9968ff70bbd539824fb10340b3',1,'GlobalCudaDefines.h']]],
   ['run',['run',['../class_goo_fit_1_1_application.html#a69289910ee9f552990c9c2b9ca253902',1,'GooFit::Application']]],
+  ['runfit',['runFit',['../class_goo_fit_1_1_fit_manager_minuit1.html#aadfcdf60080a1f90e636317b48bee061',1,'GooFit::FitManagerMinuit1']]],
   ['runmigrad',['runMigrad',['../class_goo_fit_1_1_fit_manager_minuit1.html#ab9838627d3073d0f45a2347a2d160536',1,'GooFit::FitManagerMinuit1']]]
 ];

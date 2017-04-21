@@ -65,7 +65,8 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a>  </div>
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">GooFit Namespace Reference</div>  </div>
 </div><!--header-->
@@ -75,15 +76,47 @@ $(function() {
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_application.html">Application</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_f_c_n.html">FCN</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_fit_manager_minuit1.html">FitManagerMinuit1</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_fit_manager_minuit2.html">FitManagerMinuit2</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_params.html">Params</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a5cd9a8ccab2b1f5f499f421f2fc8507f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#a5cd9a8ccab2b1f5f499f421f2fc8507f">signal_handler</a> (int s)</td></tr>
+<tr class="separator:a5cd9a8ccab2b1f5f499f421f2fc8507f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="a5cd9a8ccab2b1f5f499f421f2fc8507f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5cd9a8ccab2b1f5f499f421f2fc8507f">&#9670;&nbsp;</a></span>signal_handler()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void GooFit::signal_handler </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>s</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_application_8h_source.html#l00024">24</a> of file <a class="el" href="_application_8h_source.html">Application.h</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="_application_8h_source.html#l00045">GooFit::Application::Application()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;                          {</div><div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    std::cout &lt;&lt; std::endl &lt;&lt; rang::style::reset &lt;&lt; rang::fg::red &lt;&lt; rang::style::bold;</div><div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    std::cout &lt;&lt; <span class="stringliteral">&quot;GooFit: Control-C detected, exiting...&quot;</span> &lt;&lt; rang::style::reset &lt;&lt; std::endl;</div><div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    std::exit(1); <span class="comment">// will call the correct exit func, no unwinding of the stack though</span></div><div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;}</div></div><!-- fragment -->
+</div>
+</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Apr 21 2017 19:03:59 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Apr 21 2017 19:09:00 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

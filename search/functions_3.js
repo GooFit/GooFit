@@ -4,8 +4,6 @@ var searchData=
   ['dalitzvetopdf',['DalitzVetoPdf',['../class_dalitz_veto_pdf.html#aaeaa7231c865ca6941e80579e150d646',1,'DalitzVetoPdf']]],
   ['dampingfactorsquare',['dampingFactorSquare',['../_resonance_pdf_8h.html#a6cff3e9c5d467f7b7083931a3d9fec60',1,'ResonancePdf.h']]],
   ['dataset',['DataSet',['../class_data_set.html#affa1a24ece1d7f8ea8db9ead1b4e6fb1',1,'DataSet::DataSet(Variable *var, string n=&quot;&quot;)'],['../class_data_set.html#ac52ca4edeb3e23c39113be3095fbf019',1,'DataSet::DataSet(std::vector&lt; Variable *&gt; &amp;vars, string n=&quot;&quot;)'],['../class_data_set.html#ac9ba0ae0a094e428b89f7d5e651b8dd7',1,'DataSet::DataSet(std::set&lt; Variable *&gt; &amp;vars, string n=&quot;&quot;)']]],
-  ['defineparameter',['DefineParameter',['../class_t_minuit.html#ad41b9ee94910b91c1fa711fc502d877d',1,'TMinuit']]],
-  ['deletearrays',['DeleteArrays',['../class_t_minuit.html#a65a5cd04e8abfab83e94c15fca6c8694',1,'TMinuit']]],
   ['dev_5fpowi',['dev_powi',['../_goo_pdf_8h.html#ad0793a52c5cadabd53092551b5da7a99',1,'GooPdf.h']]],
   ['devcomplex',['devcomplex',['../structdevcomplex.html#af3bb0c8799af8096dac61cab98c3961a',1,'devcomplex::devcomplex()'],['../structdevcomplex.html#a3a591d9344ccef259cd206bab2253c79',1,'devcomplex::devcomplex(T r, T i)']]],
   ['dim5',['Dim5',['../struct_dim5.html#a02460e3c1bf152b0ab76dd9a6d9215fa',1,'Dim5']]],

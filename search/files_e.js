@@ -1,5 +1,7 @@
 var searchData=
 [
+  ['params_2ecc',['Params.cc',['../_params_8cc.html',1,'']]],
+  ['params_2eh',['Params.h',['../_params_8h.html',1,'']]],
   ['pdfbase_2ecc',['PdfBase.cc',['../_pdf_base_8cc.html',1,'']]],
   ['pdfbase_2ecu',['PdfBase.cu',['../_pdf_base_8cu.html',1,'']]],
   ['pdfbase_2eh',['PdfBase.h',['../_pdf_base_8h.html',1,'']]],

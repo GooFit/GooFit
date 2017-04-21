@@ -2,9 +2,8 @@ var searchData=
 [
   ['unbinneddataset',['UnbinnedDataSet',['../class_unbinned_data_set.html#a67d6788905f401547c8a5653cb32b04c',1,'UnbinnedDataSet::UnbinnedDataSet(Variable *var, string n=&quot;&quot;)'],['../class_unbinned_data_set.html#aa08963cba9a8302b78a510bb40a7c5d0',1,'UnbinnedDataSet::UnbinnedDataSet(std::vector&lt; Variable *&gt; &amp;vars, string n=&quot;&quot;)'],['../class_unbinned_data_set.html#a1f168a821342c57358b12add34d9aaf2',1,'UnbinnedDataSet::UnbinnedDataSet(std::set&lt; Variable *&gt; &amp;vars, string n=&quot;&quot;)']]],
   ['unbinnednllfit',['UnbinnedNllFit',['../class_unbinned_nll_fit.html#afa67c447fbade199a46bdd58d60a07f7',1,'UnbinnedNllFit']]],
-  ['uniform',['Uniform',['../class_t_random.html#a546f9cae64562da90f37b49a304ce233',1,'TRandom::Uniform(double x1=1)'],['../class_t_random.html#a0f96c7864788e3ac289d8ccbcd6e76b4',1,'TRandom::Uniform(double x1, double x2)']]],
   ['unregisterparameter',['unregisterParameter',['../class_pdf_base.html#a66b28f14a05c805475d7410f8baea45a',1,'PdfBase']]],
-  ['up',['Up',['../class_goo_fit_1_1_fit_manager_minuit2.html#a7443a8d39dc9d8ae2ab223d56b8a4b34',1,'GooFit::FitManagerMinuit2']]],
+  ['up',['Up',['../class_goo_fit_1_1_f_c_n.html#a01b8876d4825908dd5c7f6003e0a8619',1,'GooFit::FCN']]],
   ['usehesse',['useHesse',['../class_goo_fit_1_1_fit_manager_minuit1.html#ae33a7029f5686c0fb6974a199721f4b4',1,'GooFit::FitManagerMinuit1']]],
   ['usehessebefore',['useHesseBefore',['../class_goo_fit_1_1_fit_manager_minuit1.html#a7ba9882137c06b8c60cdd703f5dee827',1,'GooFit::FitManagerMinuit1']]],
   ['useimprove',['useImprove',['../class_goo_fit_1_1_fit_manager_minuit1.html#acc607d8fe48f8f34a6edc0006f90a54d',1,'GooFit::FitManagerMinuit1']]],

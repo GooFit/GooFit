@@ -20,8 +20,6 @@ var searchData=
   ['daughterpair',['DaughterPair',['../_dalitz_plot_helpers_8h.html#a105455728dce67dab0cd2b5c1dcd9342',1,'DalitzPlotHelpers.h']]],
   ['decayinfo',['DecayInfo',['../struct_decay_info.html',1,'']]],
   ['decayinfo_5fdp',['DecayInfo_DP',['../struct_decay_info___d_p.html',1,'']]],
-  ['defineparameter',['DefineParameter',['../class_t_minuit.html#ad41b9ee94910b91c1fa711fc502d877d',1,'TMinuit']]],
-  ['deletearrays',['DeleteArrays',['../class_t_minuit.html#a65a5cd04e8abfab83e94c15fca6c8694',1,'TMinuit']]],
   ['dev_5fevent_5farray',['dev_event_array',['../_pdf_base_8h.html#a7951a490445f7f71b2f6cc3ceac1943c',1,'dev_event_array():&#160;PdfBase.cc'],['../_pdf_base_8cc.html#a7951a490445f7f71b2f6cc3ceac1943c',1,'dev_event_array():&#160;PdfBase.cc']]],
   ['dev_5fpowi',['dev_powi',['../_goo_pdf_8h.html#ad0793a52c5cadabd53092551b5da7a99',1,'GooPdf.h']]],
   ['devcomplex',['devcomplex',['../structdevcomplex.html',1,'devcomplex&lt; T &gt;'],['../structdevcomplex.html#af3bb0c8799af8096dac61cab98c3961a',1,'devcomplex::devcomplex()'],['../structdevcomplex.html#a3a591d9344ccef259cd206bab2253c79',1,'devcomplex::devcomplex(T r, T i)']]],

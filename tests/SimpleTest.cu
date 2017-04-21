@@ -46,7 +46,6 @@ void fitAndPlot(GooPdf* total, UnbinnedDataSet* data, TH1F& dataHist, Variable* 
     total->setData(data);
     FitManager fitter(total);
     fitter.fit();
-    fitter.getMinuitValues();
 
     TH1F pdfHist("pdfHist", "", xvar->numbins, xvar->lowerlimit, xvar->upperlimit);
     pdfHist.SetStats(false);

@@ -246,7 +246,7 @@ int main(int argc, char** argv) {
     DPPdf* dp = new DPPdf("test", observables, DK3P_DI, eff, 1e6);
 
     Variable* constant = new Variable("constant", 0.1);
-    Variable* constant2 = new Variable("constant", 1.0);
+    Variable* constant2 = new Variable("constant2", 1.0);
     vars.clear();
     vars.push_back(constant);
     PolynomialPdf backgr("backgr", m12, vars);

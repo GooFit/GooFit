@@ -1,8 +1,15 @@
 #include "goofit/Application.h"
 #include "goofit/Variable.h"
-#include "goofit/FitManager.h"
+#include "goofit/fitting/Params.h"
+#include "goofit/fitting/FCN.h"
 #include "goofit/UnbinnedDataSet.h"
 #include "goofit/PDFs/ExpPdf.h"
+
+#include <Minuit2/MnUserParameters.h>
+#include <Minuit2/MnMigrad.h>
+#include <Minuit2/FunctionMinimum.h>
+#include "Minuit2/MnPrint.h"
+
 #include <iostream>
 
 using namespace std;
@@ -16,6 +23,8 @@ int main(int argc, char** argv) {
         return app.exit(e);
     }
 
+    Minuit2::MnPrint::SetLevel(3);
+    
     // Independent variable.
     Variable xvar{"xvar", 0, log(1 + RAND_MAX/2)};
 
@@ -36,10 +45,13 @@ int main(int argc, char** argv) {
     ExpPdf exppdf{"exppdf", &xvar, &alpha};
     exppdf.setData(&data);
 
-    FitManager fitter{&exppdf};
-    fitter.fit();
-    
-    std::cout << alpha << std::endl;
+    GooFit::Params upar{exppdf};
+    GooFit::FCN fcn{upar};
 
+    Minuit2::MnMigrad migrad{fcn, upar};
+
+    Minuit2::FunctionMinimum min = migrad();
+    std::cout << "min= " << min << std::endl;
+    
     return 0;
 }

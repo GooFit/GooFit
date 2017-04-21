@@ -2,49 +2,35 @@
 #include <cmath>
 
 Variable::Variable(std::string n)
-    : Indexable(n)
-    , numbins(100)
-    , fixed(false)
-    , blind(0) {
+    : Indexable(n) {
 }
 
 Variable::Variable(std::string n, fptype v)
     : Indexable(n, v)
     , error(0.002)
-    , lowerlimit(v - 0.01)
     , upperlimit(v + 0.01)
-    , numbins(100)
-    , fixed(true)
-    , blind(0) {
+    , lowerlimit(v - 0.01)
+    , fixed(true) {
 }
 
 Variable::Variable(std::string n, fptype dn, fptype up)
     : Indexable(n)
     , upperlimit(up)
-    , lowerlimit(dn)
-    , numbins(100)
-    , fixed(false)
-    , blind(0) {
+    , lowerlimit(dn){
 }
 
 Variable::Variable(std::string n, fptype v, fptype dn, fptype up)
     : Indexable(n, v)
     , error(0.1*(up-dn))
     , upperlimit(up)
-    , lowerlimit(dn)
-    , numbins(100)
-    , fixed(false)
-    , blind(0) {
+    , lowerlimit(dn) {
 }
 
 Variable::Variable(std::string n, fptype v, fptype e, fptype dn, fptype up)
     : Indexable(n, v)
     , error(e)
     , upperlimit(up)
-    , lowerlimit(dn)
-    , numbins(100)
-    , fixed(false)
-    , blind(0) {
+    , lowerlimit(dn) {
 }
 
 Variable::~Variable() {
@@ -70,3 +56,10 @@ CountingVariable::~CountingVariable() {
 }
 
 
+/// Nice print for variables
+std::ostream& operator<< (std::ostream& o, const Variable& var) {
+    o << var.name << ": " << var.value << " +/- " << var.error;
+    if(!var.fixed)
+        o << " [" << var.lowerlimit << ", " << var.upperlimit << "]";
+    return o;
+}

@@ -50,6 +50,10 @@ if(ROOT_CONFIG_EXECUTABLE)
         RELATIVE "${ROOT_LIBRARY_DIR}"
         "${ROOT_LIBRARY_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}*${CMAKE_SHARED_LIBRARY_SUFFIX}")
 
+    if(NOT ROOT_LIBFILELIST)
+        message(FATAL_ERROR "FindROOT failed to find ROOT libs in: ${ROOT_LIBRARY_DIR}")
+    endif()
+
     set(ROOT_ALLLIBS "")
     foreach(_file ${ROOT_LIBFILELIST})
         string(REGEX REPLACE "^${CMAKE_SHARED_LIBRARY_PREFIX}" "" _newer ${_file})

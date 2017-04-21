@@ -4,8 +4,8 @@
 FitControl::FitControl(bool bin, std::string mn)
     : binned(bin)
     , metricName(mn)
-    , owner(0)
     , errorsOnBins(false)
+    , owner(0)
 {}
 
 FitControl::~FitControl() {}

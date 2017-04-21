@@ -923,7 +923,6 @@ void runToyFit(int ifile, int nfile, bool noPlots = true) {
     mixPdf->setData(data);
     FitManager datapdf(mixPdf);
     datapdf.setMaxCalls(64000);
-    datapdf.useMinos();
 
     gettimeofday(&startTime, NULL);
     startCPU = times(&startProc);
@@ -931,7 +930,6 @@ void runToyFit(int ifile, int nfile, bool noPlots = true) {
     stopCPU = times(&stopProc);
     gettimeofday(&stopTime, NULL);
 
-    datapdf.getMinuitValues();
     printf("Fit results:\ntau    : (%.3f $\\pm$ %.3f) fs\nxmixing: (%.3f $\\pm$ %.3f)%%\nymixing: (%.3f $\\pm$ %.3f)%%\n",
            1000*ptr_to_dtau->value, 1000*ptr_to_dtau->error,
            100*ptr_to_xmix->value, 100*ptr_to_xmix->error,
@@ -1343,7 +1341,6 @@ GooPdf* makeSigmaMap() {
             js->setData(sigma_data[i]);
             FitManager currpdf(js);
             currpdf.fit();
-            currpdf.getMinuitValues();
             js->setParameterConstantness(true);
             //js->clearCurrentFit();
             std::cout << "Done with sigma box " << i << "\n";
@@ -1417,7 +1414,6 @@ GooPdf* make1BinSigmaMap() {
             js->setData(sigma_data[i]);
             FitManager currpdf(js);
             currpdf.fit();
-            currpdf.getMinuitValues();
             js->setParameterConstantness(true);
             //js->clearCurrentFit();
             std::cout << "Done with sigma box " << i << "\n";
@@ -1492,7 +1488,6 @@ GooPdf* make4BinSigmaMap() {
             js->setData(sigma_data[i]);
             FitManager currpdf(js);
             currpdf.fit();
-            currpdf.getMinuitValues();
             js->setParameterConstantness(true);
             //js->clearCurrentFit();
             std::cout << "Done with sigma box " << i << "\n";
@@ -1757,6 +1752,8 @@ ChisqInfo* getAdaptiveChisquare(TH2F* datPlot, TH2F* pdfPlot) {
 }
 
 void makeToyDalitzPlots(GooPdf* overallSignal, string plotdir) {
+    std::string call = "mkdir -p " + plotdir;
+    system(call.c_str());
     foo->cd();
 
     TH1F dtime_dat_hist("dtime_dat_hist", "", dtime->numbins, dtime->lowerlimit, dtime->upperlimit);
@@ -2646,7 +2643,6 @@ GooPdf* makeOverallSignal() {
     eff->setData(effdata);
     FitManager effpdf(eff);
     effpdf.fit();
-    effpdf.getMinuitValues();
     eff->setParameterConstantness(true);
     binEffData = 0;
     delete effdata;
@@ -2685,7 +2681,6 @@ GooPdf* makeOverallSignal() {
     gettimeofday(&stopTime, NULL);
     timersub(&stopTime, &startTime, &totalTime);
     std::cout << "Time for sigma fit : " << totalTime.tv_sec + totalTime.tv_usec/1000000.0 << " seconds." << std::endl;
-    jsupdf.getMinuitValues();
     */
     sprintf(strbuffer, "signal_sigma_%islices_pdf.txt", m23Slices);
     readFromFile(sig0_jsugg, strbuffer);
@@ -2719,7 +2714,6 @@ void runTruthMCFit(std::string fname, bool noPlots = true) {
     gettimeofday(&stopTime, NULL);
     //overallSignal->setDebugMask(0);
 
-    datapdf.getMinuitValues();
     std::cout << "Fit results: \n"
               << "tau    : " << ptr_to_dtau->value << " $\\pm$ " << ptr_to_dtau->error << "\n"
               << "xmixing: (" << 100*ptr_to_xmix->value << " $\\pm$ " << 100*ptr_to_xmix->error << ")%\n"
@@ -2864,7 +2858,6 @@ void runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
     //eff->setData(effdata);
     //FitManager effpdf(eff);
     //effpdf.fit();
-    //effpdf.getMinuitValues();
     //eff->setParameterConstantness(true);
     //binEffData = 0;
     //delete effdata; effdata = 0;
@@ -2909,7 +2902,6 @@ void runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
     stopCPU = times(&stopProc);
     gettimeofday(&stopTime, NULL);
 
-    datapdf.getMinuitValues();
     std::cout << "Fit results: \n"
               << "tau    : " << ptr_to_dtau->value << " $\\pm$ " << ptr_to_dtau->error << "\n"
               << "xmixing: (" << 100*ptr_to_xmix->value << " $\\pm$ " << 100*ptr_to_xmix->error << ")%\n"
@@ -4048,7 +4040,6 @@ void runCanonicalFit(std::string fname, bool noPlots = true) {
     overallPdf->printProfileInfo();
 #endif
 
-    datapdf.getMinuitValues();
     printf("Fit results:\ntau    : (%.3f $\\pm$ %.3f) fs\nxmixing: (%.3f $\\pm$ %.3f)%%\nymixing: (%.3f $\\pm$ %.3f)%%\n",
            1000*ptr_to_dtau->value, 1000*ptr_to_dtau->error,
            100*ptr_to_xmix->value, 100*ptr_to_xmix->error,
@@ -4104,7 +4095,6 @@ void runSigmaFit(const char* fname) {
     datapdf.fit();
     stopCPU = times(&stopProc);
     gettimeofday(&stopTime, NULL);
-    datapdf.getMinuitValues();
 
     sprintf(strbuffer, "signal_sigma_%islices_pdf.txt", m23Slices);
     writeToFile(jsu_gg, strbuffer);
@@ -4512,8 +4502,6 @@ GooPdf* runBackgroundDalitzFit(int bkgType, bool plots) {
     stopCPU = times(&stopProc);
     gettimeofday(&stopTime, NULL);
 
-    fitter.getMinuitValues();
-
     if(plots) {
         //sprintf(strbuffer, "./plots_from_mixfit/bkgdalitz_%i/", bkgType);
         //makeDalitzPlots(bkgPdf, strbuffer);
@@ -4689,12 +4677,10 @@ void runBackgroundSigmaFit(int bkgType) {
     stopCPU = times(&stopProc);
     gettimeofday(&stopTime, NULL);
 
-    fitter.getMinuitValues();
     //bkgPdf->setDebugMask(1);
     plotFit(sigma, data, bkgPdf);
     plotLoHiSigma();
 
-    //fitter.getMinuitValues();
     //sprintf(strbuffer, "./plots_from_mixfit/bkgdalitz_%i/", bkgType);
     //makeDalitzPlots(bkgPdf, strbuffer);
 }

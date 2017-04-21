@@ -1,10 +1,12 @@
-#ifndef __GLOBAL_CUDA_HH__
-#define __GLOBAL_CUDA_HH__
+#pragma once
 
 #include <thrust/functional.h> // Needed for Thrust constants
 #include <cmath>
 #include <string>
+
+// Evil:
 using namespace std;
+
 extern int host_callnumber;
 
 //  Non-cuda defines
@@ -114,8 +116,16 @@ typedef double fptype;
 #define RSQRT 1.0/SQRT
 #endif
 #define FLOOR floor
+
+// Fix for bug in pow(double,int) for CUDA 7 and 7.5
+#if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_CUDA && __CUDACC_VER_MAJOR__ >= 8
 #define POW pow
 #else
+#define POW(x,y) pow((x),(double) (y))
+#endif
+
+#else
+
 typedef float fptype;
 
 #define root2 1.4142135623730951f
@@ -140,5 +150,7 @@ typedef float fptype;
 #define POW powf
 #endif
 
+// Often faster than pow, and works with ints on CUDA<8
+#define POW2(x) ((x)*(x))
+#define POW3(x) ((x)*(x)*(x))
 
-#endif

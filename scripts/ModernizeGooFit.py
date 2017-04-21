@@ -9,9 +9,9 @@ except ImportError:
     raise
 
 conversion = [
-    ('["<]cuda_runtime_api.hh?[">]', '"fakecuda/cuda_runtime_api.h"'),
-    ('["<]driver_types.hh?[">]', '"fakecuda/driver_types.h"'),
-    ('["<]host_defines.hh?[">]', '"fakecuda/host_defines.h"'),
+    ('["<]cuda_runtime_api.hh?[">]', r'\\\\ Fake cuda has been removed (cuda_runtime_api.h requested)'),
+    ('["<]driver_types.hh?[">]', r'\\\\ Fake cuda has been removed (driver_types.h requested)'),
+    ('["<]host_defines.hh?[">]', r'\\\\ Fake cuda has been removed (host_defines.h requested)'),
     ('["<]Application.hh?[">]', '"goofit/Application.h"'),
     ('["<]BinnedDataSet.hh?[">]', '"goofit/BinnedDataSet.h"'),
     ('["<]DataSet.hh?[">]', '"goofit/DataSet.h"'),

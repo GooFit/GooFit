@@ -31,7 +31,7 @@ doing maximum-likelihood fits with a familiar syntax.
 * Clone with git:
 
 ```bash
-git clone git://github.com/goofit/goofit.git
+git clone git://github.com/goofit/goofit.git --recursive
 cd goofit
 ```
 
@@ -65,7 +65,7 @@ If you want to change compiler, set `CC` and `CXX` to appropriate defaults *befo
 cmake .. -DGOOFIT_DEVICE=CUDA -DGOOFIT_HOST=CPP
 ```
 
-Valid options are `CUDA` (device only), `OMP`, `TBB`, and `CPP`. The Thrust `TBB` backend requires the Intel compiler.  The default device is `Auto`, and will select `CUDA` if CUDA is found. On a Mac, you should set both backends to `CPP`.
+Valid options are `CUDA` (device only), `OMP`, `TBB`, and `CPP`. The Thrust `TBB` backend requires the Intel compiler.  The default device is `Auto`, and will select `CUDA` if CUDA is found, `OMP` or `CPP` otherwise.
 
 Other custom options supported along with the defaults:
 
@@ -81,8 +81,8 @@ Advanced Options:
 * `-DGOOFIT_CUDA_OR_GRAINSIZE:INT=7`: This is the grain size thrust uses for distributing the problem.  This parameter can be thought of as 'Items per thread'.
 * `-DGOOFIT_PYTHON=OFF`: Preliminary python bindings using [PyBind11].
 
-Note for targeting Tesla P100:
-* `Please use -DGOOFIT_SEPARATE_COMP=ON -DGOOFIT_ARCH=6.0 flags to compile.
+Note for targeting Tesla P100 or any arch=6.0 device:
+* `Please use -DGOOFIT_SEPARATE_COMP=ON flags to compile.
 
 
 A few standard cmake tricks:

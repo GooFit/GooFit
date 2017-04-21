@@ -73,6 +73,14 @@ conversion = [
     ('["<]TMinuit.hh?[">]', '"TMinuit.h"'),
     ('["<]TRandom.hh?[">]', '"TRandom.h"'),
     ('["<]TRandom3.hh?[">]', '"TRandom3.h"'),
+    (r'\bALIGN\b', '__align__'),
+    (r'\bMEM_CONSTANT\b', '__constant__'),
+    (r'\bMEM_DEVICE\b', '__device__'),
+    (r'\bEXEC_TARGET\b', '__device__'),
+    (r'\bMEM_SHARED\b', '__shared__'),
+    (r'\bSYNCH\b', 'cudaDeviceSynchronize'),
+    (r'\bdevcomplex\b', 'thrust::complex'),
+    (r'\bstd::complex\b', 'thrust::complex'),
 ]
 
 def fix_text(contents):
@@ -85,6 +93,8 @@ def fix_text(contents):
     ... #include <goofit/BinnedDataSet.h>
     ... #include <UnbinnedDataSet.h>
     ... #include <FitManagerMinuit3.hh>
+    ... SYNCH();
+    ... THREAD_SYNCH();
     ... '''
 
     >>> corrected = fix_text(text)
@@ -92,6 +102,7 @@ def fix_text(contents):
       Converting ["<]GlobalCudaDefines.hh?[">] -> "goofit/GlobalCudaDefines.h"
       Converting ["<]UnbinnedDataSet.hh?[">] -> "goofit/UnbinnedDataSet.h"
       Converting ["<]Variable.hh?[">] -> "goofit/Variable.h"
+      Converting \bSYNCH\b -> cudaDeviceSynchronize
     >>> print(corrected.strip())
     #include "goofit/Variable.h"
     #include "goofit/GlobalCudaDefines.h"
@@ -100,6 +111,8 @@ def fix_text(contents):
     #include <goofit/BinnedDataSet.h>
     #include "goofit/UnbinnedDataSet.h"
     \\ Fit Manager 3 removed
+    cudaDeviceSynchronize();
+    THREAD_SYNCH();
     """
 
     for r in conversion:

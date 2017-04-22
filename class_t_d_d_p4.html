@@ -99,8 +99,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ab71a74d858ee13bfe0b16c2b0d8c3ab2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad8994dec4b4cca72e1045fa251daa3e1"><td class="memItemLeft" align="right" valign="top">__host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_d_d_p4.html#ad8994dec4b4cca72e1045fa251daa3e1">setGenerationOffset</a> (int off)</td></tr>
 <tr class="separator:ad8994dec4b4cca72e1045fa251daa3e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a34534e0189924c784c0e8c5c3de8f1d2"><td class="memItemLeft" align="right" valign="top">__host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_d_d_p4.html#a34534e0189924c784c0e8c5c3de8f1d2">setGenDecayTimeLimit</a> (double low, double high)</td></tr>
-<tr class="separator:a34534e0189924c784c0e8c5c3de8f1d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a63c43c040d3586f6f67c05945421ebca"><td class="memItemLeft" align="right" valign="top">__host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_d_d_p4.html#a63c43c040d3586f6f67c05945421ebca">setMaxWeight</a> (<a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> wmax)</td></tr>
+<tr class="separator:a63c43c040d3586f6f67c05945421ebca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a070203559e0bf95f336f1d19a05c834a"><td class="memItemLeft" align="right" valign="top">__host__ std::tuple&lt; mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_d_d_p4.html#a070203559e0bf95f336f1d19a05c834a">GenerateSig</a> (unsigned int <a class="el" href="class_pdf_base.html#aac9f1f5f2e31ed672260b3610519b684">numEvents</a>)</td></tr>
 <tr class="separator:a070203559e0bf95f336f1d19a05c834a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_goo_pdf"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_goo_pdf')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_goo_pdf.html">GooPdf</a></td></tr>
@@ -344,7 +344,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="reference">Referenced by <a class="el" href="_tddp4_pdf_8h_source.html#l00045">setGenDecayTimeLimit()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_tddp4_pdf_8h_source.html#l00049">setMaxWeight()</a>.</p>
 
 </div>
 </div>
@@ -371,8 +371,8 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_tddp4_pdf_8h_source.html#l00038">38</a> of file <a class="el" href="_tddp4_pdf_8h_source.html">Tddp4Pdf.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;                               {</div><div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <span class="keywordflow">return</span> MCevents;</div><div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    }</div></div><!-- fragment -->
+<p class="definition">Definition at line <a class="el" href="_tddp4_pdf_8h_source.html#l00041">41</a> of file <a class="el" href="_tddp4_pdf_8h_source.html">Tddp4Pdf.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;                               {</div><div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="keywordflow">return</span> MCevents;</div><div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    }</div></div><!-- fragment -->
 </div>
 </div>
 <a id="aa6dc24cb6784d533a679b41079ad4dc5"></a>
@@ -456,48 +456,8 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_tddp4_pdf_8h_source.html#l00035">35</a> of file <a class="el" href="_tddp4_pdf_8h_source.html">Tddp4Pdf.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;                                                   {</div><div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        forceRedoIntegrals = f;</div><div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    }</div></div><!-- fragment -->
-</div>
-</div>
-<a id="a34534e0189924c784c0e8c5c3de8f1d2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a34534e0189924c784c0e8c5c3de8f1d2">&#9670;&nbsp;</a></span>setGenDecayTimeLimit()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">__host__ void TDDP4::setGenDecayTimeLimit </td>
-          <td>(</td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>low</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>high</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="_tddp4_pdf_8h_source.html#l00045">45</a> of file <a class="el" href="_tddp4_pdf_8h_source.html">Tddp4Pdf.h</a>.</p>
-
-<p class="reference">References <a class="el" href="class_t_d_d_p4.html#a070203559e0bf95f336f1d19a05c834a">GenerateSig()</a>, and <a class="el" href="_pdf_base_8h_source.html#l00106">PdfBase::numEvents</a>.</p>
-<div class="fragment"><div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;                                                                {</div><div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        genlow = low;</div><div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        genhigh = high;</div><div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    }</div></div><!-- fragment -->
+<p class="definition">Definition at line <a class="el" href="_tddp4_pdf_8h_source.html#l00037">37</a> of file <a class="el" href="_tddp4_pdf_8h_source.html">Tddp4Pdf.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;                                                   {</div><div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        forceRedoIntegrals = f;</div><div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    }</div></div><!-- fragment -->
 </div>
 </div>
 <a id="ad8994dec4b4cca72e1045fa251daa3e1"></a>
@@ -524,8 +484,38 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_tddp4_pdf_8h_source.html#l00041">41</a> of file <a class="el" href="_tddp4_pdf_8h_source.html">Tddp4Pdf.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;                                               {</div><div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        generation_offset = off;</div><div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    }</div></div><!-- fragment -->
+<p class="definition">Definition at line <a class="el" href="_tddp4_pdf_8h_source.html#l00045">45</a> of file <a class="el" href="_tddp4_pdf_8h_source.html">Tddp4Pdf.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;                                               {</div><div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        generation_offset = off;</div><div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    }</div></div><!-- fragment -->
+</div>
+</div>
+<a id="a63c43c040d3586f6f67c05945421ebca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a63c43c040d3586f6f67c05945421ebca">&#9670;&nbsp;</a></span>setMaxWeight()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">__host__ void TDDP4::setMaxWeight </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>&#160;</td>
+          <td class="paramname"><em>wmax</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_tddp4_pdf_8h_source.html#l00049">49</a> of file <a class="el" href="_tddp4_pdf_8h_source.html">Tddp4Pdf.h</a>.</p>
+
+<p class="reference">References <a class="el" href="class_t_d_d_p4.html#a070203559e0bf95f336f1d19a05c834a">GenerateSig()</a>, and <a class="el" href="_pdf_base_8h_source.html#l00106">PdfBase::numEvents</a>.</p>
+<div class="fragment"><div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;                                            {</div><div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        maxWeight = wmax;</div><div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    }</div></div><!-- fragment -->
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
@@ -534,7 +524,7 @@ Additional Inherited Members</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Apr 21 2017 19:09:00 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Apr 22 2017 22:25:51 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

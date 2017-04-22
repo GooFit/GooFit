@@ -152,12 +152,13 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
 
     list(APPEND CUDA_NVCC_FLAGS -std=c++11)
     list(APPEND CUDA_NVCC_FLAGS ${MPI_CXX_LINK_FLAGS})
+
     if(GOOFIT_SEPARATE_COMP)
         set(CUDA_SEPARABLE_COMPILATION ON)
     else()
         set(CUDA_SEPARABLE_COMPILATION OFF)
     endif()
-   
+
     cuda_select_nvcc_arch_flags(ARCH_FLAGS ${GOOFIT_ARCH})
     list(APPEND CUDA_NVCC_FLAGS ${ARCH_FLAGS})
     message(STATUS "Compiling for GPU arch: ${ARCH_FLAGS}")

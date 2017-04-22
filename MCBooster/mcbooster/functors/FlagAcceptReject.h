@@ -75,14 +75,13 @@ struct FlagAcceptReject
 	 */
 	__host__ __device__   inline  GBool_t operator ()(GLong_t idx, GReal_t weight)
 	{
-		// GUInt_t seed_local = hash(seed + idx+68464654684);
-		thrust::random::default_random_engine randEng(2863311530);
-		thrust::uniform_real_distribution<GReal_t> uniDist(0.0, wmax);
-		randEng.discard(idx+seed);
-		GReal_t uni = uniDist(randEng);
-		// printf("accRej idx %li seed%u  %.5g %.5g %s\n",idx, seed, uni, weight, (uni<weight) ? "true" : "false" );
-		GBool_t flag = ( uni < weight) ? 1 : 0;
-		return flag;
+        thrust::random::minstd_rand0 randEng(2863311530);
+        thrust::uniform_real_distribution<GReal_t> uniDist(0.0, wmax);
+        randEng.discard(idx+seed);
+        GReal_t uni = uniDist(randEng);
+        // printf("accRej idx %li seed%u  %.5g %.5g %s\n",idx, seed, uni, weight, (uni<weight) ? "true" : "false" );
+        GBool_t flag = ( uni < weight) ? 1 : 0;
+        return flag;
 
 	}
 

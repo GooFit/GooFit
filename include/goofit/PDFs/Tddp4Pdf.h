@@ -31,21 +31,25 @@ public:
     // normalisation will get *really* confused and give wrong answers.
 
     __host__ virtual fptype normalise() const;
+
     __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 8);
+
     __host__ void setForceIntegrals(bool f = true) {
         forceRedoIntegrals = f;
     }
+
     __host__ int getMCevents() {
         return MCevents;
     }
+
     __host__ void setGenerationOffset(int off) {
         generation_offset = off;
     }
-    // __host__ void setGenDecayTimeLimit(double low, double high){genlow = exp(-high); genhigh = exp(-low);}
-    __host__ void setGenDecayTimeLimit(double low, double high) {
-        genlow = low;
-        genhigh = high;
+
+    __host__ void setMaxWeight(fptype wmax) {
+        maxWeight = wmax;
     }
+
     __host__ std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h,  mcbooster::RealVector_h>
     GenerateSig(unsigned int numEvents);
 
@@ -91,8 +95,7 @@ private:
     int totalEventSize;
     int cacheToUse;
     unsigned int generation_offset;
-    double genlow;
-    double genhigh;
+    double maxWeight;
 };
 
 class SFCalculator_TD : public thrust::unary_function<thrust::tuple<int, fptype*, int>, devcomplex<fptype>> {

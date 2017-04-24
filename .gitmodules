@@ -1,6 +1,24 @@
-[submodule "extern/generics"]
-	path = extern/generics
-	url = ../generics.git
 [submodule "cmake"]
 	path = cmake
 	url = ../../CLIUtils/cmake
+[submodule "extern/generics"]
+	path = extern/generics
+	url = ../generics.git
+[submodule "extern/CLI11"]
+	path = extern/CLI11
+	url = ../../CLIUtils/CLI11
+[submodule "extern/Minuit2"]
+	path = extern/Minuit2
+	url = ../Minuit2
+[submodule "extern/thrust"]
+	path = extern/thrust
+	url = ../../thrust/thrust
+[submodule "extern/googletest"]
+	path = extern/googletest
+	url = ../../google/googletest
+[submodule "extern/rang"]
+	path = extern/rang
+	url = ../../agauniyal/rang
+[submodule "extern/pybind11"]
+	path = extern/pybind11
+	url = ../../pybind/pybind11

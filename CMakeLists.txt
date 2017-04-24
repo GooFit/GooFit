@@ -10,24 +10,38 @@ if(NOT PROJECT_BINARY_DIR STREQUAL PROJECT_SOURCE_DIR AND EXISTS ${LOC_PATH})
     message(FATAL_ERROR "You cannot build in a sub-source directory (or any directory with a CMakeLists.txt file). Please make a build subdirectory.")
 endif()
 
-file(TO_CMAKE_PATH "${PROJECT_SOURCE_DIR}/extern/generics" GEN_PATH)
-file(TO_CMAKE_PATH "${PROJECT_SOURCE_DIR}/cmake" CMAKE_EXT_PATH)
-if(NOT EXISTS ${GEN_PATH} OR NOT EXISTS ${CMAKE_EXT_PATH})
-    message(STATUS "Submodules not checked out, CMake will try to check them out for you")
-    execute_process(COMMAND git submodule update --init
-                    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-                    RESULT_VARIABLE GIT_SUBMOD_RESULT)
-    if(NOT GIT_SUBMOD_RESULT EQUAL "0")
-        message(FATAL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
+# Check to see if submodules are checked out (helper function)
+function(check_paths_submod FNAME)
+    file(TO_CMAKE_PATH "${PROJECT_SOURCE_DIR}/${FNAME}" SUBM_PATH)
+    if(NOT EXISTS ${SUBM_PATH})
+        message(STATUS "Submodules not checked out (${FNAME} missing)")
+        message(STATUS "CMake will try to check them out for you")
+        execute_process(COMMAND git submodule update --init
+                        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+                        RESULT_VARIABLE GIT_SUBMOD_RESULT)
+        if(NOT GIT_SUBMOD_RESULT EQUAL "0")
+            message(FATAL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
+        endif()
     endif()
-endif()
+endfunction()
 
+# Go through all submodules and verify they exist
+check_paths_submod(cmake/README.md)
+check_paths_submod(extern/CLI11/CMakeLists.txt)
+check_paths_submod(extern/Minuit2/CMakeLists.txt)
+check_paths_submod(extern/googletest/CMakeLists.txt)
+check_paths_submod(extern/rang/CMakeLists.txt)
+check_paths_submod(extern/thrust/README.md)
+check_paths_submod(extern/generics/README.md)
+check_paths_submod(extern/pybind11/CMakeLists.txt)
+
+# Add support for better CUDA behaviour in CMake < 3.7
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 if(CMAKE_VERSION VERSION_LESS 3.7)
     set(CMAKE_MODULE_PATH  ${PROJECT_SOURCE_DIR}/extern/support_old_cmake ${CMAKE_MODULE_PATH})
 endif()
 
-
+# Output the current GooFit version
 configure_file (
     "${PROJECT_SOURCE_DIR}/include/goofit/Version.h.in"
     "${PROJECT_BINARY_DIR}/include/goofit/Version.h"
@@ -86,7 +100,7 @@ if(GOOFIT_DEVICE STREQUAL Auto)
     if(CUDA_FOUND)
         set(GOOFIT_DEVICE CUDA)
     else()
-        find_package(OpenMP)
+        find_package(OpenMP QUIET)
         if(OpenMP_FOUND)
             set(GOOFIT_DEVICE OMP)
         else()
@@ -137,8 +151,6 @@ add_definitions("-DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_${GOOFIT_HOST}")
 
 set(GOOFIT_ARCH Auto CACHE STRING "The GPU Archetecture, can be Auto, All, Common, a number, or a name")
 
-option(GOOFIT_DOWNLOAD_THRUST "Download Thrust if not found (OMP only)" ON)
-
 option(GOOFIT_MPI "Turn on MPI for goofit" OFF)
 
 if(GOOFIT_MPI)
@@ -182,15 +194,8 @@ else()
 endif()
 
 
-find_package(Thrust QUIET)
-if(NOT THRUST_FOUND)
-    if(GOOFIT_DOWNLOAD_THRUST)
-        message(STATUS "Thrust not found, downloading to build dir")
-        include(AddThrust)
-    else()
-        find_package(Thrust REQUIRED)
-    endif()
-endif()
+set(THRUST_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/extern/thrust")
+find_package(Thrust 1.8 REQUIRED)
 include_directories(SYSTEM "${THRUST_INCLUDE_DIRS}")
 
 if(GOOFIT_DEVICE STREQUAL OMP OR GOOFIT_HOST STREQUAL OMP OR GOOFIT_DEVICE STREQUAL TBB OR GOOFIT_HOST STREQUAL TBB)
@@ -212,12 +217,14 @@ endif()
 # Include directories are not picked up by FindCUDA
 find_package(ROOT 6 COMPONENTS Minuit Minuit2)
 if(NOT ROOT_FOUND)
-    include(AddMinuit2)
+    add_subdirectory("${PROJECT_SOURCE_DIR}/extern/Minuit2")
 endif()
 
 # Adding header only libraries
-include(AddCLI)
-include(AddRang)
+add_subdirectory("${PROJECT_SOURCE_DIR}/extern/CLI11")
+
+add_library(rang INTERFACE)
+target_include_directories(rang INTERFACE "${PROJECT_SOURCE_DIR}/extern/rang/include/rang")
 
 function(goofit_add_library GNAME)
     if(GOOFIT_DEVICE STREQUAL CUDA)
@@ -326,7 +333,6 @@ include_directories(${PROJECT_SOURCE_DIR}/extern/generics)
 
 add_subdirectory(src)
 
-
 add_library(goofit_lib INTERFACE)
 target_link_libraries(goofit_lib INTERFACE goofit_base PDFs rang CLI11)
 
@@ -357,7 +363,7 @@ endif()
 
 option(GOOFIT_PYTHON "Python bindings for goofit" OFF)
 if(GOOFIT_PYTHON)
-    include(AddPybind)
+    add_subdirectory("${PROJECT_SOURCE_DIR}/pybind")
     message(STATUS "Found Python at ${PYTHON_LIBRARIES}")
     add_subdirectory(python)
 endif()

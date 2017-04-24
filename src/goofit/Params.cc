@@ -38,6 +38,7 @@ void Params::SetGooFitParams(const Minuit2::MnUserParameterState& input) {
     for(Variable* var : vars_) {
         var->value = input.Value(counter);
         var->error = input.Error(counter);
+        counter = 0;
         SetValue(counter, var->value);
         SetError(counter, var->error);
         counter++;

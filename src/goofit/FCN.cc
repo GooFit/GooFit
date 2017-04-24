@@ -13,9 +13,10 @@ FCN::FCN(Params& params) : params_(&params) {
 double FCN::operator()(const std::vector<double>& pars) const {
     std::vector<double> gooPars; // Translates from Minuit indexing to GooFit indexing
     gooPars.resize(params_->num_);
-    int counter = 0;
     
+    int counter = 0;
     for(Variable* var : params_->vars_) {
+        var->unchanged_ = var->value == pars.at(counter++);
         gooPars.at(var->index) = pars.at(counter++);
     }
 

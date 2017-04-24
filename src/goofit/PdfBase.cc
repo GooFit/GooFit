@@ -160,18 +160,10 @@ __host__ void PdfBase::setIntegrationFineness(int i) {
 }
 
 __host__ bool PdfBase::parametersChanged() const {
-    if(!cachedParams)
-        return true;
-
-    parCont params;
-    getParameters(params);
-    int counter = 0;
-
-    for(Variable* v : params) {
-        if(cachedParams[counter++] != host_params[v->index])
+    for(Variable* v : parameterList) {
+        if(v->changed())
             return true;
     }
-
     return false;
 }
 

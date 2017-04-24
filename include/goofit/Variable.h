@@ -83,6 +83,9 @@ public:
     
     /// True if the value was unchanged since the last iteration
     bool unchanged_ {false};
+    
+    /// Check to see if the value has changed this iteration (always true the first time)
+    bool changed() const {return !unchanged_;}
 };
 
 

@@ -1,9 +1,4 @@
 
-goofit_add_library(Variable
-    Variable.cc
-    ${PROJECT_SOURCE_DIR}/include/goofit/Variable.h
-    )
-
 if(ROOT_FOUND)
 goofit_add_library(FitManager1
     FitManagerMinuit1.cc
@@ -51,22 +46,22 @@ goofit_add_library(FunctorWriter
     ${PROJECT_SOURCE_DIR}/include/goofit/FunctorWriter.h
     )
 
-goofit_add_library(FitControl
-    FitControl.cc
-    ${PROJECT_SOURCE_DIR}/include/goofit/FitControl.h
-    )
 
 
 goofit_add_library(PdfBase
     PdfBase.cc
     ${PROJECT_SOURCE_DIR}/include/goofit/PdfBase.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/FitControl.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/Variable.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/Application.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/GlobalCudaDefines.h
     )
 
 
 set(lib_list
-    Variable Faddeeva DataSet
+    Faddeeva DataSet
     BinnedDataSet UnbinnedDataSet
-    FunctorWriter FitControl
+    FunctorWriter
     PdfBase FitManager2 FCN
     )
 

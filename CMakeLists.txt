@@ -217,11 +217,11 @@ endif()
 # Include directories are not picked up by FindCUDA
 find_package(ROOT 6 COMPONENTS Minuit Minuit2)
 if(NOT ROOT_FOUND)
-    add_subdirectory("${PROJECT_SOURCE_DIR}/extern/Minuit2")
+    add_subdirectory("extern/Minuit2")
 endif()
 
 # Adding header only libraries
-add_subdirectory("${PROJECT_SOURCE_DIR}/extern/CLI11")
+add_subdirectory("extern/CLI11")
 
 add_library(rang INTERFACE)
 target_include_directories(rang INTERFACE "${PROJECT_SOURCE_DIR}/extern/rang/include/rang")
@@ -363,7 +363,7 @@ endif()
 
 option(GOOFIT_PYTHON "Python bindings for goofit" OFF)
 if(GOOFIT_PYTHON)
-    add_subdirectory("${PROJECT_SOURCE_DIR}/pybind")
+    add_subdirectory("extern/pybind11")
     message(STATUS "Found Python at ${PYTHON_LIBRARIES}")
     add_subdirectory(python)
 endif()

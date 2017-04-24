@@ -313,7 +313,6 @@ __host__ fptype DPPdf::normalise() const {
             continue;
 
         redoIntegral[i] = true;
-        components[i]->storeParameters();
     }
 
     SpinsCalculated = !forceRedoIntegrals;

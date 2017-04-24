@@ -167,20 +167,6 @@ __host__ bool PdfBase::parametersChanged() const {
     return false;
 }
 
-__host__ void PdfBase::storeParameters() const {
-    parCont params;
-    getParameters(params);
-
-    if(!cachedParams)
-        cachedParams = new fptype[params.size()];
-
-    int counter = 0;
-
-    for(Variable* v : params) {
-        cachedParams[counter++] = host_params[v->index];
-    }
-}
-
 __host__ void PdfBase::setNumPerTask(PdfBase* p, const int& c) {
     if(!p)
         return;

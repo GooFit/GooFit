@@ -83,7 +83,6 @@ public:
     __host__ void printProfileInfo(bool topLevel = true);
 
     __host__ bool parametersChanged() const;
-    __host__ void storeParameters() const;
 
     __host__ obsIter obsBegin() {
         return observables.begin();
@@ -115,7 +114,6 @@ protected:
     std::vector<PdfBase*> components;
     int integrationBins {-1};
     int specialMask {0}; //< For storing information unique to PDFs, eg "Normalise me separately" for TddpPdf.
-    mutable fptype* cachedParams {nullptr};
     bool properlyInitialised {true}; //< Allows checking for required extra steps in, eg, Tddp and Convolution.
 
     unsigned int functionIdx; //< Stores index of device function pointer.

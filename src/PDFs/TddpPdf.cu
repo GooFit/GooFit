@@ -535,7 +535,6 @@ __host__ fptype TddpPdf::normalise() const {
             continue;
 
         redoIntegral[i] = true;
-        decayInfo->resonances[i]->storeParameters();
     }
 
     forceRedoIntegrals = false;

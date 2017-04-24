@@ -160,7 +160,6 @@ __host__ fptype IncoherentSumPdf::normalise() const {
     // Check if efficiency changes force redoing the integrals.
     if(efficiency->parametersChanged()) {
         forceRedoIntegrals = true;
-        efficiency->storeParameters();
     }
 
     // Check for changed masses or forced integral redo.
@@ -171,7 +170,6 @@ __host__ fptype IncoherentSumPdf::normalise() const {
             continue;
 
         redoIntegral[i] = true;
-        decayInfo->resonances[i]->storeParameters();
     }
 
     forceRedoIntegrals = false;

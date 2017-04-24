@@ -298,7 +298,6 @@ __host__ fptype ConvolutionPdf::normalise() const {
                           modelWorkSpace->begin(),
                           modalor);
         cudaDeviceSynchronize();
-        model->storeParameters();
         /*
         if ((cpuDebug & 1) && (5 == workSpaceIndex)) {
           thrust::host_vector<fptype> hModel(*modelWorkSpace);
@@ -318,7 +317,6 @@ __host__ fptype ConvolutionPdf::normalise() const {
                           thrust::make_zip_iterator(thrust::make_tuple(binIndex + resolWorkSpace->size(), eventSize, arrayAddress2)),
                           resolWorkSpace->begin(),
                           resalor);
-        resolution->storeParameters();
     }
 
     //cudaDeviceSynchronize();

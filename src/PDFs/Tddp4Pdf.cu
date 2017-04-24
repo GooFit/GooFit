@@ -522,7 +522,6 @@ __host__ fptype TDDP4::normalise() const {
             continue;
 
         redoIntegral[i] = true;
-        components[i]->storeParameters();
     }
 
     SpinsCalculated = !forceRedoIntegrals;

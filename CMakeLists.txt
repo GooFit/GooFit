@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.4)
 
+cmake_policy(SET CMP0048 NEW)
+cmake_policy(SET CMP0063 NEW)
+
 project(GOOFIT
     VERSION 2.0.0
     LANGUAGES CXX)
@@ -224,7 +227,7 @@ endif()
 add_subdirectory("extern/CLI11")
 
 add_library(rang INTERFACE)
-target_include_directories(rang INTERFACE "${PROJECT_SOURCE_DIR}/extern/rang/include/rang")
+target_include_directories(rang INTERFACE "${PROJECT_SOURCE_DIR}/extern/rang/include")
 
 function(goofit_add_library GNAME)
     if(GOOFIT_DEVICE STREQUAL CUDA)

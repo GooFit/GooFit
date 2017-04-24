@@ -1,3 +1,6 @@
 [submodule "extern/generics"]
 	path = extern/generics
 	url = ../generics.git
+[submodule "cmake"]
+	path = cmake
+	url = ../../CLIUtils/cmake

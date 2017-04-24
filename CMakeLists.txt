@@ -10,9 +10,21 @@ if(NOT PROJECT_BINARY_DIR STREQUAL PROJECT_SOURCE_DIR AND EXISTS ${LOC_PATH})
     message(FATAL_ERROR "You cannot build in a sub-source directory (or any directory with a CMakeLists.txt file). Please make a build subdirectory.")
 endif()
 
+file(TO_CMAKE_PATH "${PROJECT_SOURCE_DIR}/extern/generics" GEN_PATH)
+file(TO_CMAKE_PATH "${PROJECT_SOURCE_DIR}/cmake" CMAKE_EXT_PATH)
+if(NOT EXISTS ${GEN_PATH} OR NOT EXISTS ${CMAKE_EXT_PATH})
+    message(STATUS "Submodules not checked out, CMake will try to check them out for you")
+    execute_process(COMMAND git submodule update --init
+                    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+                    RESULT_VARIABLE GIT_SUBMOD_RESULT)
+    if(NOT GIT_SUBMOD_RESULT EQUAL "0")
+        message(FATAL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
+    endif()
+endif()
+
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 if(CMAKE_VERSION VERSION_LESS 3.7)
-    set(CMAKE_MODULE_PATH  ${PROJECT_SOURCE_DIR}/cmake/support_old_cmake ${CMAKE_MODULE_PATH})
+    set(CMAKE_MODULE_PATH  ${PROJECT_SOURCE_DIR}/extern/support_old_cmake ${CMAKE_MODULE_PATH})
 endif()
 
 

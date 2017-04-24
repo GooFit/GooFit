@@ -13,30 +13,17 @@ if(NOT PROJECT_BINARY_DIR STREQUAL PROJECT_SOURCE_DIR AND EXISTS ${LOC_PATH})
     message(FATAL_ERROR "You cannot build in a sub-source directory (or any directory with a CMakeLists.txt file). Please make a build subdirectory.")
 endif()
 
-# Check to see if submodules are checked out (helper function)
-function(check_paths_submod FNAME)
-    file(TO_CMAKE_PATH "${PROJECT_SOURCE_DIR}/${FNAME}" SUBM_PATH)
-    if(NOT EXISTS ${SUBM_PATH})
-        message(STATUS "Submodules not checked out (${FNAME} missing)")
-        message(STATUS "CMake will try to check them out for you")
-        execute_process(COMMAND git submodule update --init
-                        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-                        RESULT_VARIABLE GIT_SUBMOD_RESULT)
-        if(NOT GIT_SUBMOD_RESULT EQUAL "0")
-            message(FATAL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
-        endif()
+# Update submodules as needed
+option(GOOFIT_SUBMODULE "Check submodules during build" ON)
+if(GOOFIT_SUBMODULE)
+    message(STATUS "Submodule update")
+    execute_process(COMMAND git submodule update --init --recursive
+                    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+                    RESULT_VARIABLE GIT_SUBMOD_RESULT)
+    if(NOT GIT_SUBMOD_RESULT EQUAL "0")
+        message(FATAL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
     endif()
-endfunction()
-
-# Go through all submodules and verify they exist
-check_paths_submod(cmake/README.md)
-check_paths_submod(extern/CLI11/CMakeLists.txt)
-check_paths_submod(extern/Minuit2/CMakeLists.txt)
-check_paths_submod(extern/googletest/CMakeLists.txt)
-check_paths_submod(extern/rang/CMakeLists.txt)
-check_paths_submod(extern/thrust/README.md)
-check_paths_submod(extern/generics/README.md)
-check_paths_submod(extern/pybind11/CMakeLists.txt)
+endif()
 
 # Add support for better CUDA behaviour in CMake < 3.7
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})

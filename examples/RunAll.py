@@ -4,6 +4,7 @@
 # It requires plumbum (pip install plumbum or conda install -c conda-forge plumbum)
 
 from __future__ import print_function
+import re
 try:
     from plumbum import local, cli, TEE, colors
 except ImportError:
@@ -23,7 +24,7 @@ class Timer:
 LOCAL_DIR = local.path(__file__).dirname
 
 def test(filename, *args):
-    command = local[LOCAL_DIR / filename / filename]
+    command = local[LOCAL_DIR / filename / filename]['--goofit-details']
     for arg in args:
         command = command[arg]
     colors.info.print('Running', command)
@@ -63,6 +64,7 @@ class RunAll(cli.Application):
 
     @cli.positional(int)
     def main(self, threads=None):
+        print(threads)
         env = local.env(OMP_NUM_THREADS=threads) if threads else local.env()
         with env:
             results = make_results()
@@ -79,7 +81,8 @@ class RunAll(cli.Application):
         print()
         colors.info.print('Resulting times:')
         for result in successes:
-            print((colors.success if result['code'] == 0 else colors.warn) | '{0[name]}: {0[time]}'.format(result))
+            fit = ', '.join(re.compile(r'The minimization took: (.*)$').findall(result['stdout']))
+            print((colors.success if result['code'] == 0 else colors.warn) | '{0[name]}:\t{0[time]}\t{1}'.format(result, fit))
         if threads:
             colors.info.print("OMP Threads:", threads)
 

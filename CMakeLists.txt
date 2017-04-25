@@ -62,6 +62,12 @@ if(NOT CMAKE_BUILD_TYPE)
         FORCE)
 endif()
 
+# Printout time taken to compile
+option(GOOFIT_TIME_COMPILE "Print time to compile during compilation" OFF)
+if(GOOFIT_TIME_COMPILE)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "time")
+endif()
+
 # Code coverage
 if(CMAKE_BUILD_TYPE STREQUAL Coverage)
     include(CodeCoverage)

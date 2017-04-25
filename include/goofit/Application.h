@@ -151,7 +151,7 @@ public:
             std::cout << "CUDA: Total amount of constant memory: " << devProp.totalConstMem << std::endl;
 
 #elif THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_OMP
-            std::cout << "OMP: Number of threads: " << omp_get_max_threads << std::endl;
+            std::cout << "OMP: Number of threads: " << omp_get_max_threads() << std::endl;
 #endif
         }
 

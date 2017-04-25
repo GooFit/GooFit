@@ -33,6 +33,24 @@ Minuit2::FunctionMinimum FitManagerMinuit2::fit() {
     std::cout << min << rang::style::reset;
     std::cout << rang::fg::magenta << timer << rang::style::reset << std::endl;
     
+    if(min.IsValid()) {
+        retval_ = FitErrors::Valid;
+    } else {
+        std::cout << rang::fg::red;
+        std::cout << "HesseFailed: " << min.HesseFailed() << std::endl;
+        std::cout << "HasCovariance: " << min.HasCovariance() << std::endl;
+        std::cout << "HasValidCovariance: " << min.HasValidCovariance() << std::endl;
+        std::cout << "HasValidParameters: " << min.HasValidParameters() << std::endl;
+        std::cout << "IsAboveMaxEdm: " << min.IsAboveMaxEdm() << std::endl;
+        std::cout << "HasReachedCallLimit: " << min.HasReachedCallLimit() << std::endl;
+        std::cout << "HasAccurateCovar: " << min.HasAccurateCovar() << std::endl;
+        std::cout << "HasPosDefCovar : " << min.HasPosDefCovar () << std::endl;
+        std::cout << "HasMadePosDefCovar : " << min.HasMadePosDefCovar () << std::endl;
+        std::cout << rang::style::reset;
+        
+        retval_ = FitErrors::InValid;
+    }
+    
     // Set the parameters in GooFit to the new values
     upar_.SetGooFitParams(min.UserState());
 

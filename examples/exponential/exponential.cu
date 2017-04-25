@@ -39,7 +39,8 @@ int main(int argc, char** argv) {
     FitManager fitter{&exppdf};
     fitter.fit();
     
-    std::cout << alpha << std::endl;
+    if(alpha.value < -1.01 || alpha.value > -0.99)
+        return 1;
 
-    return 0;
+    return fitter;
 }

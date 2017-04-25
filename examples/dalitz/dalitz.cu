@@ -418,11 +418,9 @@ int main(int argc, char** argv) {
     foodal->Size(10, 10);
 
     try {
-        int retval = runToyFit(filename);
+        return runToyFit(filename);
     } catch(const std::runtime_error& e) {
         std::cerr << e.what() << std::endl;
         return 7;
     }
-
-    return retval;
 }

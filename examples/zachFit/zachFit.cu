@@ -404,8 +404,9 @@ int main(int argc, char** argv) {
 
     data_hist = new TH1F("data_hist", "", 300, 0.1365, 0.1665);
 
+    int retval;
     try {
-        int retval = CudaMinimise(mode);
+        retval = CudaMinimise(mode);
     } catch(const std::exception& ex) {
         std::cerr << ex.what() << std::endl;
         return 6;

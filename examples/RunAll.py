@@ -82,7 +82,7 @@ class RunAll(cli.Application):
         colors.info.print('Resulting times:')
         for result in successes:
             fit = ', '.join(re.compile(r'The minimization took: (.*)$').findall(result['stdout']))
-            print((colors.success if result['code'] == 0 else colors.warn) | '{0[name]}:\t{0[time]}\t{1}'.format(result, fit))
+            print((colors.success if result['code'] == 0 else colors.warn) | '{0[name]:20}:\t{0[time]}\t{1}'.format(result, fit))
         if threads:
             colors.info.print("OMP Threads:", threads)
 

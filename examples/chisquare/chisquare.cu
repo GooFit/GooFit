@@ -1,12 +1,12 @@
 #include "goofit/Application.h"
 #include "goofit/Variable.h"
-#include "goofit/fitting/FitManagerMinuit1.h"
 #include "goofit/FitManager.h"
 #include "goofit/BinnedDataSet.h"
 #include "goofit/UnbinnedDataSet.h"
 #include "goofit/FitControl.h"
 
 #include "goofit/PDFs/PolynomialPdf.h"
+#include "TMinuit.h"
 #include "TRandom.h"
 #include "TH1F.h"
 #include "TCanvas.h"
@@ -122,10 +122,10 @@ int fitRatio(vector<int>& rsEvts, vector<int>& wsEvts, std::string plotName = ""
     PolynomialPdf* poly = new PolynomialPdf("poly", decayTime, weights);
     poly->setFitControl(new BinnedErrorFit());
     poly->setData(ratioData);
-    FitManager* datapdf = new FitManager(poly);
+    FitManager datapdf {poly};
 
     gettimeofday(&startTime, NULL);
-    datapdf->fit();
+    datapdf.fit();
     gettimeofday(&stopTime, NULL);
 
     vector<fptype> values;
@@ -169,7 +169,6 @@ int fitRatio(vector<int>& rsEvts, vector<int>& wsEvts, std::string plotName = ""
 
     delete ratioHist;
     delete ratioData;
-    delete datapdf;
     delete poly;
     
     return datapdf;

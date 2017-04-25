@@ -76,7 +76,7 @@ void generateEvents(vector<int>& rsEvtVec, vector<int>& wsEvtVec,
     }
 }
 
-void fitRatio(vector<int>& rsEvts, vector<int>& wsEvts, std::string plotName = "") {
+int fitRatio(vector<int>& rsEvts, vector<int>& wsEvts, std::string plotName = "") {
     TH1D* ratioHist = new TH1D("ratioHist", "", decayTime->numbins, decayTime->lowerlimit, decayTime->upperlimit);
 
     BinnedDataSet* ratioData = new BinnedDataSet(decayTime);
@@ -171,6 +171,8 @@ void fitRatio(vector<int>& rsEvts, vector<int>& wsEvts, std::string plotName = "
     delete ratioData;
     delete datapdf;
     delete poly;
+    
+    return datapdf;
 }
 
 
@@ -290,10 +292,15 @@ int main(int argc, char** argv) {
     double gpuTime = 0;
     double cpuTime = 0;
 
-    fitRatio(dZeroEvtsRS, dZeroEvtsWS, "dzeroEvtRatio.png");
+    int retval;
+    retval = fitRatio(dZeroEvtsRS, dZeroEvtsWS, "dzeroEvtRatio.png");
+    if(retval != 0)
+        return retval;
     timersub(&stopTime, &startTime, &totalTime);
     gpuTime += totalTime.tv_sec + totalTime.tv_usec/1000000.0;
-    fitRatio(d0barEvtsRS, d0barEvtsWS, "dzbarEvtRatio.png");
+    retval = fitRatio(d0barEvtsRS, d0barEvtsWS, "dzbarEvtRatio.png");
+    if(retval != 0)
+        return retval;
     timersub(&stopTime, &startTime, &totalTime);
     gpuTime += totalTime.tv_sec + totalTime.tv_usec/1000000.0;
 

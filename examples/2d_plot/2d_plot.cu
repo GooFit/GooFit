@@ -198,5 +198,5 @@ int main(int argc, char** argv) {
     foo.SaveAs("yhist.png");
 
 
-    return 0;
+    return fitter;
 }

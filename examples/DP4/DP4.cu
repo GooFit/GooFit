@@ -258,5 +258,5 @@ int main(int argc, char** argv) {
     FitManager datapdf(signal);
     datapdf.fit();
 
-    return 0;
+    return datapdf;
 }

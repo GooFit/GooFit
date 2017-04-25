@@ -39,5 +39,5 @@ int main(int argc, char** argv) {
     FitManager fitter(&product);
     fitter.fit();
 
-    return 0;
+    return fitter;
 }

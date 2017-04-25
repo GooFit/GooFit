@@ -68,5 +68,5 @@ int main(int argc, char** argv) {
     FitManager fitter(&convolution);
     fitter.fit();
 
-    return 0;
+    return fitter;
 }

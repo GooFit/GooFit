@@ -3,6 +3,7 @@
 #include "goofit/FitManager.h"
 #include "goofit/UnbinnedDataSet.h"
 #include "goofit/PDFs/ExpPdf.h"
+#include <CLI/Timer.hpp>
 #include <iostream>
 
 using namespace std;
@@ -23,12 +24,15 @@ int main(int argc, char** argv) {
     UnbinnedDataSet data(&xvar);
 
     // Generate toy events.
+    
+    CLI::Timer gen_timer{"Generating took"};
     for(int i=0; i<100000; ++i) {
         xvar.value = xvar.upperlimit - log(1+rand()/2);
 
         if(xvar.value >= 0)
             data.addEvent();
     }
+    std::cout << rang::fg::blue << gen_timer << rang::style::reset << std::endl;
 
     // Fit parameter
     Variable alpha{"alpha", -2, 0.1, -10, 10};

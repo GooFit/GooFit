@@ -1,9 +1,10 @@
 #pragma once
 
-#include "CLI/CLI.hpp"
+#include <CLI/CLI.hpp>
 #include "goofit/Version.h"
-#include "thrust/detail/config/device_system.h"
-#include "rang.hpp"
+#include <thrust/detail/config/device_system.h>
+#include <rang.hpp>
+#include <x86/cpu_x86.h>
 
 #ifdef GOOFIT_MPI
 #include <mpi.h>
@@ -135,8 +136,9 @@ public:
         set_device();
 
         if(show_threads_) {
-            std::cout << "GOOFIT: Version " << GOOFIT_VERSION_MAJOR << "." << GOOFIT_VERSION_MINOR << "." << GOOFIT_VERSION_PATCH <<
-                      std::endl;
+            std::cout << "GOOFIT: Version " << GOOFIT_VERSION_MAJOR
+                                     << "." << GOOFIT_VERSION_MINOR
+                                     << "." << GOOFIT_VERSION_PATCH << std::endl;
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
             std::cout << "CUDA: Device " << get_device() << std::endl;
             cudaDeviceProp devProp;
@@ -153,6 +155,8 @@ public:
 #elif THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_OMP
             std::cout << "OMP: Number of threads: " << omp_get_max_threads() << std::endl;
 #endif
+            // Print out warnings if not fully optimized
+            FeatureDetector::cpu_x86::print_warnings();
         }
 
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA

@@ -1,8 +1,5 @@
 cmake_minimum_required(VERSION 3.4)
 
-cmake_policy(SET CMP0048 NEW)
-cmake_policy(SET CMP0063 NEW)
-
 project(GOOFIT
     VERSION 2.0.0
     LANGUAGES CXX)
@@ -139,7 +136,7 @@ if(GOOFIT_SEPARATE_COMP)
     add_definitions("-DSEPARABLE")
 endif()
 
-set(GOOFIT_CFLAGS "-march=native" CACHE STRING "compiler flags")
+set(GOOFIT_CFLAGS "$<$<CONFIG:Release>:-march=native>" CACHE STRING "compiler flags")
 
 add_definitions("-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_${GOOFIT_DEVICE}")
 add_definitions("-DMCBOOSTER_BACKEND=${GOOFIT_DEVICE}")
@@ -216,8 +213,9 @@ if(NOT ROOT_FOUND)
     add_subdirectory("extern/Minuit2")
 endif()
 
-# Adding header only libraries
+# Adding simple libraries
 add_subdirectory("extern/CLI11")
+add_subdirectory("extern/FeatureDetector")
 
 add_library(rang INTERFACE)
 target_include_directories(rang INTERFACE "${PROJECT_SOURCE_DIR}/extern/rang/include")
@@ -330,7 +328,7 @@ include_directories(${PROJECT_SOURCE_DIR}/extern/generics)
 add_subdirectory(src)
 
 add_library(goofit_lib INTERFACE)
-target_link_libraries(goofit_lib INTERFACE goofit_base PDFs rang CLI11)
+target_link_libraries(goofit_lib INTERFACE goofit_base PDFs rang CLI11 FeatureDetector)
 
 if(ROOT_FOUND)
     target_link_libraries(goofit_lib INTERFACE ROOT::ROOT ROOT::Minuit ROOT::Minuit2)

@@ -64,7 +64,6 @@ class RunAll(cli.Application):
 
     @cli.positional(int)
     def main(self, threads=None):
-        print(threads)
         env = local.env(OMP_NUM_THREADS=threads) if threads else local.env()
         with env:
             results = make_results()

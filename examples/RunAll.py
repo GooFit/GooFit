@@ -60,6 +60,8 @@ def make_results():
     return results
 
 
+MIN_TIME = re.compile(r'The minimization took: (.*?)$', re.MULTILINE)
+
 class RunAll(cli.Application):
 
     @cli.positional(int)
@@ -80,7 +82,7 @@ class RunAll(cli.Application):
         print()
         colors.info.print('Resulting times:')
         for result in successes:
-            fit = ', '.join(re.compile(r'The minimization took: (.*)$').findall(result['stdout']))
+            fit = ', '.join(MIN_TIME.findall(result['stdout']))
             print((colors.success if result['code'] == 0 else colors.warn) | '{0[name]:20}:\t{0[time]}\t{1}'.format(result, fit))
         if threads:
             colors.info.print("OMP Threads:", threads)

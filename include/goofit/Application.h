@@ -140,9 +140,10 @@ public:
                                      << "." << GOOFIT_VERSION_MINOR
                                      << "." << GOOFIT_VERSION_PATCH << std::endl;
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-            std::cout << "CUDA: Device " << get_device() << std::endl;
+            std::cout << "CUDA: Device " << get_device() << ": ";
             cudaDeviceProp devProp;
             cudaGetDeviceProperties(&devProp, gpuDev_);
+            std::cout << devProp.name << std::endl;
             std::cout << "CUDA: Compute " << devProp.major << "." << devProp.minor << std::endl;
             std::cout << "CUDA: Total global memory: " <<  devProp.totalGlobalMem / 1.0e9 << "GB" << std::endl;
             std::cout << "CUDA: Multiprocessors: "<< devProp.multiProcessorCount << std::endl;
@@ -154,7 +155,12 @@ public:
 
 #elif THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_OMP
             std::cout << "OMP: Number of threads: " << omp_get_max_threads() << std::endl;
+#elif THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_TBB
+            std::cout << "TBB: Backend selected" << std::endl;
+#elif THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CPP
+            std::cout << "CPP: Single threaded mode" << std::endl;
 #endif
+
             // Print out warnings if not fully optimized
             FeatureDetector::cpu_x86::print_warnings();
         }

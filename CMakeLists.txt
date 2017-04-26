@@ -179,7 +179,7 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
 
 endif()
 
-set(GOOFIT_CFLAGS "$<$<CONFIG:Release>:-march=native>" CACHE STRING "Compiler flags to add for optimization")
+set(GOOFIT_CFLAGS "$<$<CONFIG:Release>:-march=native>$<$<CONFIG:RelWithDebInfo>:-march=native>" CACHE STRING "compiler flags")
 add_compile_options("${GOOFIT_CFLAGS}")
 
 set(THRUST_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/extern/thrust")

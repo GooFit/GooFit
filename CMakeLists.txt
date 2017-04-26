@@ -136,8 +136,6 @@ if(GOOFIT_SEPARATE_COMP)
     add_definitions("-DSEPARABLE")
 endif()
 
-set(GOOFIT_CFLAGS "$<$<CONFIG:Release>:-march=native>" CACHE STRING "compiler flags")
-
 add_definitions("-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_${GOOFIT_DEVICE}")
 add_definitions("-DMCBOOSTER_BACKEND=${GOOFIT_DEVICE}")
 add_definitions("-DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_${GOOFIT_HOST}")
@@ -166,7 +164,6 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
         find_package(CUDA 7.0 REQUIRED)
     endif()
 
-
     list(APPEND CUDA_NVCC_FLAGS -std=c++11)
     list(APPEND CUDA_NVCC_FLAGS ${MPI_CXX_LINK_FLAGS})
 
@@ -180,12 +177,10 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
     list(APPEND CUDA_NVCC_FLAGS ${ARCH_FLAGS})
     message(STATUS "Compiling for GPU arch: ${ARCH_FLAGS}")
 
-else()
-    if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
-        add_compile_options("${GOOFIT_CFLAGS}")
-    endif()
 endif()
 
+set(GOOFIT_CFLAGS "$<$<CONFIG:Release>:-march=native>" CACHE STRING "Compiler flags to add for optimization")
+add_compile_options("${GOOFIT_CFLAGS}")
 
 set(THRUST_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/extern/thrust")
 find_package(Thrust 1.8 REQUIRED)

@@ -24,4 +24,4 @@
 	url = ../../pybind/pybind11
 [submodule "extern/FeatureDetector"]
 	path = extern/FeatureDetector
-	url = git@github.com:GooFit/FeatureDetector.git
+	url = ../FeatureDetector.git

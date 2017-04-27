@@ -136,6 +136,7 @@ public:
         set_device();
 
         if(show_threads_) {
+            std::cout << rang::fg::blue;
             std::cout << "GOOFIT: Version " << GOOFIT_VERSION_MAJOR
                                      << "." << GOOFIT_VERSION_MINOR
                                      << "." << GOOFIT_VERSION_PATCH << std::endl;
@@ -162,7 +163,9 @@ public:
 #endif
 
             // Print out warnings if not fully optimized
+            std::cout << rang::fg::red;
             FeatureDetector::cpu_x86::print_warnings();
+            std::cout << rang::style::reset << std::flush;
         }
 
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA

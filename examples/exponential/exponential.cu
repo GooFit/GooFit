@@ -32,7 +32,7 @@ int main(int argc, char** argv) {
         if(xvar.value >= 0)
             data.addEvent();
     }
-    std::cout << rang::fg::blue << gen_timer << rang::style::reset << std::endl;
+    std::cout << rang::fg::magenta << gen_timer << rang::style::reset << std::endl;
 
     // Fit parameter
     Variable alpha{"alpha", -2, 0.1, -10, 10};

@@ -80,7 +80,7 @@ class RunAll(cli.Application):
             colors.success.print("All programs completed.")
 
         print()
-        colors.info.print('Resulting times:')
+        colors.info.print('{0:20}:\tTotal time (s)\tFit times'.format("Program"))
         for result in successes:
             fit = ', '.join(MIN_TIME.findall(result['stdout']))
             print((colors.success if result['code'] == 0 else colors.warn) | '{0[name]:20}:\t{0[time]}\t{1}'.format(result, fit))

@@ -43,7 +43,9 @@ int main(int argc, char** argv) {
 
     unsigned int MCevents = 0;
 
-    fstream input("ToyMC.txt", std::ios_base::in);
+    std::string input_str = app.get_filename("ToyMC.txt", "examples/DP4");
+
+    fstream input(input_str, std::ios_base::in);
 
     while(input >> m12->value >> m34->value >> cos12->value >> cos34->value >> phi->value) {
         eventNumber->value = MCevents++;

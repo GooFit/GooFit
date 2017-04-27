@@ -9,9 +9,6 @@ namespace GooFit {
 
     Params::Params(PdfBase &pdf) : pdf_(&pdf) {
     pdf_->getParameters(vars_);
-    num_ = vars_.size();
-    
-    size_t maxIndex = 0;
         
     for(Variable* var : vars_) {
         bool added;
@@ -26,22 +23,18 @@ namespace GooFit {
         if(!added)
             throw std::runtime_error("The name " + var->name + " appears more than once!");
         
-        if(maxIndex < var->getIndex())
-            maxIndex = var->getIndex();
+        var->index = Index(var->name);
     }
     
-    num_ = maxIndex+1;
 }
     
 void Params::SetGooFitParams(const Minuit2::MnUserParameterState& input) {
-    int counter = 0;
     for(Variable* var : vars_) {
+        size_t counter = Index(var->name);
         var->value = input.Value(counter);
         var->error = input.Error(counter);
-        counter = 0;
         SetValue(counter, var->value);
         SetError(counter, var->error);
-        counter++;
     }
 }
     

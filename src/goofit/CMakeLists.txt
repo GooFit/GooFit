@@ -50,6 +50,7 @@ goofit_add_library(FunctorWriter
 
 goofit_add_library(PdfBase
     PdfBase.cc
+    ${PROJECT_SOURCE_DIR}/include/goofit/Error.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PdfBase.h
     ${PROJECT_SOURCE_DIR}/include/goofit/FitControl.h
     ${PROJECT_SOURCE_DIR}/include/goofit/Variable.h

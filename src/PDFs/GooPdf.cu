@@ -2,6 +2,7 @@
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/ThrustOverride.h"
 
+#include "goofit/Error.h"
 #include "goofit/Variable.h"
 #include "goofit/FitControl.h"
 #include "goofit/BinnedDataSet.h"
@@ -99,7 +100,7 @@ void abortWithCudaPrintFlush(std::string file, int line, std::string reason, con
     // print out all the frames to stderr
     backtrace_symbols_fd(stackarray, size, 2);
 
-    exit(1);
+    throw GooFit::GeneralError(reason);
 }
 
 __device__ fptype calculateEval(fptype rawPdf, fptype* evtVal, unsigned int par) {

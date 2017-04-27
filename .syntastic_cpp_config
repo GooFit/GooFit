@@ -1,5 +1,9 @@
--Ibuild/pybind-src/include
--Ibuild/cli-src/include
--Ibuild/thrust-src
--Ibuild/rang-src/include
--Iinclude/fakecuda
+-Iextern/pybind11/include
+-Iextern/CLI11/include
+-Iextern/thrust
+-Iextern/rang/include
+-Iextern/MCBooster
+-Iextern/Minuit2/inc
+-Iextern/generics
+-Iextern/googletest
+-Iextern/FeatureDetector/src

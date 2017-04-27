@@ -54,6 +54,7 @@ goofit_add_library(PdfBase
     ${PROJECT_SOURCE_DIR}/include/goofit/FitControl.h
     ${PROJECT_SOURCE_DIR}/include/goofit/Variable.h
     ${PROJECT_SOURCE_DIR}/include/goofit/Application.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/Color.h
     ${PROJECT_SOURCE_DIR}/include/goofit/GlobalCudaDefines.h
     )
 

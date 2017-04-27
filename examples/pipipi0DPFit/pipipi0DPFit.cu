@@ -225,7 +225,7 @@ void printTime(const char* point) {
 
 void printMemoryStatus(std::string file, int line);
 void loadDataFile(std::string fname, UnbinnedDataSet** setToFill = 0, int effSkip = 3);
-GooPdf* runBackgroundDalitzFit(int bkgType, bool plots = false);
+int runBackgroundDalitzFit(int bkgType, bool plots = false);
 
 void normalise(TH1F* dat) {
     double integral = 0;
@@ -866,9 +866,9 @@ GooPdf* makeFlatBkgDalitzPdf(bool fixem = true) {
 }
 
 
-void runToyFit(int ifile, int nfile, bool noPlots = true) {
+int runToyFit(int ifile, int nfile, bool noPlots = true) {
     if(!nfile || ifile<0|| ifile >=100)
-        return ;
+        return 7; // No File or file error
 
     doToyStudy = true;
 //  dtime = new Variable("dtime", lowerTime, upperTime);
@@ -934,11 +934,11 @@ void runToyFit(int ifile, int nfile, bool noPlots = true) {
            100*ptr_to_xmix->value, 100*ptr_to_xmix->error,
            100*ptr_to_ymix->value, 100*ptr_to_ymix->error);
 
-    if(noPlots)
-        return;
-
-    makeToyDalitzPlots(mixPdf);
+    if(!noPlots)
+        makeToyDalitzPlots(mixPdf);
+    
 //  makeToyDalitzPlots(signalDalitz);
+    return datapdf;
 }
 
 void loadDataFile(std::string fname, UnbinnedDataSet** setToFill, int effSkip) {
@@ -2694,7 +2694,7 @@ GooPdf* makeOverallSignal() {
     return overallSignal;
 }
 
-void runTruthMCFit(std::string fname, bool noPlots = true) {
+int runTruthMCFit(std::string fname, bool noPlots = true) {
     makeFullFitVariables();
 
     std::cout << "Loading MC data from " << fname << std::endl;
@@ -2720,12 +2720,13 @@ void runTruthMCFit(std::string fname, bool noPlots = true) {
               << "ymixing: (" << 100*ptr_to_ymix->value << " $\\pm$ " << 100*ptr_to_ymix->error << ")%\n";
 
     if(noPlots)
-        return;
+        return datapdf;
 
     makeDalitzPlots(overallSignal, "./plots_from_mixfit/fullMCfit/");
+    return datapdf;
 }
 
-void runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
+int runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
     makeFullFitVariables();
     std::cout << "Loading (generated) MC data from " << fname << std::endl;
     dtime->upperlimit = 6;
@@ -2939,6 +2940,7 @@ void runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
            << inputy << " " << 100*ptr_to_ymix->value << " " << 100*ptr_to_ymix->error << std::endl;
     writer.close();
 
+    return datapdf;
     //makeDalitzPlots(signalDalitz, "plots_from_mixfit/generated/");
 }
 
@@ -3919,7 +3921,7 @@ GooPdf* makeBkg4DalitzPdf(bool fixem = true) {
 }
 
 
-void runCanonicalFit(std::string fname, bool noPlots = true) {
+int runCanonicalFit(std::string fname, bool noPlots = true) {
     makeFullFitVariables();
 
     if(mdslices > 1)
@@ -4069,13 +4071,14 @@ void runCanonicalFit(std::string fname, bool noPlots = true) {
     xscan.Draw();
     foo->SaveAs("xscan.png");
     */
-    if(noPlots)
-        return;
-
-    makeDalitzPlots(overallSignal);
+    if(!noPlots)
+        makeDalitzPlots(overallSignal);
+    
+    return datapdf;
+    
 }
 
-void runSigmaFit(const char* fname) {
+int runSigmaFit(const char* fname) {
     makeFullFitVariables();
 
     loM23Sigma = new TH1F("loM23Sigma", "", sigma->numbins, sigma->lowerlimit, sigma->upperlimit);
@@ -4241,9 +4244,11 @@ void runSigmaFit(const char* fname) {
     }
     foodal.SaveAs("./plots_from_mixfit/sigma_dalitz.png");
     */
+    
+    return datapdf;
 }
 
-void runEfficiencyFit(int which) {
+int runEfficiencyFit(int which) {
     makeFullFitVariables();
 
     if(3 == which) {
@@ -4444,9 +4449,11 @@ void runEfficiencyFit(int which) {
 
     loM23pullplot.Draw();
     foo->SaveAs("./plots_from_mixfit/loeffpull.png");
+    
+    return datapdf;
 }
 
-GooPdf* runBackgroundDalitzFit(int bkgType, bool plots) {
+int runBackgroundDalitzFit(int bkgType, bool plots) {
     makeFullFitVariables();
     makeKzeroVeto();
 
@@ -4509,7 +4516,7 @@ GooPdf* runBackgroundDalitzFit(int bkgType, bool plots) {
         writeToFile(bkgPdf, strbuffer);
     }
 
-    return bkgPdf;
+    return fitter;
 }
 
 void getBackgroundFile(int bkgType) {
@@ -4644,7 +4651,7 @@ void makeTimePlots(std::string fname) {
     foo->SaveAs("timeVsMass.png");
 }
 
-void runBackgroundSigmaFit(int bkgType) {
+int runBackgroundSigmaFit(int bkgType) {
     makeFullFitVariables();
 
     GooPdf* bkgPdf = 0;
@@ -4680,6 +4687,8 @@ void runBackgroundSigmaFit(int bkgType) {
     //bkgPdf->setDebugMask(1);
     plotFit(sigma, data, bkgPdf);
     plotLoHiSigma();
+    
+    return fitter;
 
     //sprintf(strbuffer, "./plots_from_mixfit/bkgdalitz_%i/", bkgType);
     //makeDalitzPlots(bkgPdf, strbuffer);
@@ -4769,14 +4778,8 @@ int main(int argc, char** argv) {
     foo = new TCanvas();
     foodal = new TCanvas();
     foodal->Size(10, 10);
-    //foodal->SetRightMargin(0.13);
-    //foodal->SetTopMargin(0.13);
-    //foodal->SetLeftMargin(0.13);
 
-
-//#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-//    cudaSetDevice(0);
-//#endif
+    int retval = 0;
 
     GooFit::Application app("pipipi0 Dalitz fit example", argc, argv);
     app.require_subcommand();
@@ -4795,16 +4798,16 @@ int main(int argc, char** argv) {
             "Number of times to load",  true);
     toy->add_flag("-p,--plot", plots,
             "Also make plots");
-    toy->set_callback([&sample, &load, &plots](){
-            runToyFit(sample, load, plots);
+    toy->set_callback([&](){
+            retval = runToyFit(sample, load, plots);
             });
 
 
     auto truth_fit = app.add_subcommand("truth", "Truth Monte Carlo fit");
     truth_fit->add_option("-d,--data,data", data,
             "Data to use")->required()->check(GooFit::ExistingFile);
-    truth_fit->set_callback([&data](){
-            runTruthMCFit(data, false);
+    truth_fit->set_callback([&](){
+            retval = runTruthMCFit(data, false);
             });
 
 
@@ -4814,14 +4817,14 @@ int main(int argc, char** argv) {
     sigma_fit->add_option("-s,--slices,slices", m23Slices,
             "m23 slices")->required();
     sigma_fit->set_callback([&](){
-            runSigmaFit(data.c_str());
+            retval = runSigmaFit(data.c_str());
             });
 
     auto efficiency_fit = app.add_subcommand("efficiency", "Run efficiency fit");
     efficiency_fit->add_option("-s,--sample,sample", sample,
             "Sample number to use", true);
     efficiency_fit->set_callback([&](){
-            runEfficiencyFit(sample);
+            retval = runEfficiencyFit(sample);
             });
 
     auto canonical_fit = app.add_subcommand("canonical", "Run the canonical fit");
@@ -4830,7 +4833,7 @@ int main(int argc, char** argv) {
     parseArg(canonical_fit);
     canonical_fit->set_callback([&](){
             set_bkg_model_from_string();
-            runCanonicalFit(data, !makePlots);
+            retval = runCanonicalFit(data, !makePlots);
             });
 
     auto background_dalitz_fit = app.add_subcommand("background_dalitz", "Run the background Dalitz fit");
@@ -4839,14 +4842,14 @@ int main(int argc, char** argv) {
     parseArg(background_dalitz_fit);
     background_dalitz_fit->set_callback([&](){
             set_bkg_model_from_string();
-            runBackgroundDalitzFit(sample, true);
+            retval = runBackgroundDalitzFit(sample, true);
             });
 
     auto background_sigma_fit = app.add_subcommand("background_sigma", "Run background sigma fit");
     background_sigma_fit->add_option("-s,--sample,sample", sample,
             "Sample number to use", true);
     background_sigma_fit->set_callback([&](){
-            runBackgroundSigmaFit(sample);
+            retval = runBackgroundSigmaFit(sample);
             });
 
     auto write_background_histograms = app.add_subcommand("background_histograms", "Write background histograms");
@@ -4864,7 +4867,7 @@ int main(int argc, char** argv) {
     run_gen_mc_fit->set_callback([&](){
             if(! (DplotRes & genResolutions) ) 
             dplotres = 0;
-            runGeneratedMCFit(data, genResolutions, dplotres);
+            retval = runGeneratedMCFit(data, genResolutions, dplotres);
             });
 
     auto make_time_plots = app.add_subcommand("make_time_plots", "Make time plots");
@@ -4892,5 +4895,5 @@ int main(int argc, char** argv) {
     myCPU = stopProc.tms_utime - startProc.tms_utime;
     std::cout << "Processor time: " << (myCPU / CLOCKS_PER_SEC) << std::endl;
 
-    return 0;
+    return retval;
 }

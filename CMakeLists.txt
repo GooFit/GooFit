@@ -10,12 +10,25 @@ if(NOT PROJECT_BINARY_DIR STREQUAL PROJECT_SOURCE_DIR AND EXISTS ${LOC_PATH})
     message(FATAL_ERROR "You cannot build in a sub-source directory (or any directory with a CMakeLists.txt file). Please make a build subdirectory.")
 endif()
 
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
-if(CMAKE_VERSION VERSION_LESS 3.7)
-    set(CMAKE_MODULE_PATH  ${PROJECT_SOURCE_DIR}/cmake/support_old_cmake ${CMAKE_MODULE_PATH})
+# Update submodules as needed
+option(GOOFIT_SUBMODULE "Check submodules during build" ON)
+if(GOOFIT_SUBMODULE)
+    message(STATUS "Submodule update")
+    execute_process(COMMAND git submodule update --init --recursive
+                    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+                    RESULT_VARIABLE GIT_SUBMOD_RESULT)
+    if(NOT GIT_SUBMOD_RESULT EQUAL "0")
+        message(FATAL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
+    endif()
 endif()
 
+# Add support for better CUDA behaviour in CMake < 3.7
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
+if(CMAKE_VERSION VERSION_LESS 3.7)
+    set(CMAKE_MODULE_PATH  ${PROJECT_SOURCE_DIR}/extern/support_old_cmake ${CMAKE_MODULE_PATH})
+endif()
 
+# Output the current GooFit version
 configure_file (
     "${PROJECT_SOURCE_DIR}/include/goofit/Version.h.in"
     "${PROJECT_BINARY_DIR}/include/goofit/Version.h"
@@ -46,6 +59,12 @@ if(NOT CMAKE_BUILD_TYPE)
         FORCE)
 endif()
 
+# Printout time taken to compile
+option(GOOFIT_TIME_COMPILE "Print time to compile during compilation" OFF)
+if(GOOFIT_TIME_COMPILE)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "time")
+endif()
+
 # Code coverage
 if(CMAKE_BUILD_TYPE STREQUAL Coverage)
     include(CodeCoverage)
@@ -74,7 +93,7 @@ if(GOOFIT_DEVICE STREQUAL Auto)
     if(CUDA_FOUND)
         set(GOOFIT_DEVICE CUDA)
     else()
-        find_package(OpenMP)
+        find_package(OpenMP QUIET)
         if(OpenMP_FOUND)
             set(GOOFIT_DEVICE OMP)
         else()
@@ -117,15 +136,11 @@ if(GOOFIT_SEPARATE_COMP)
     add_definitions("-DSEPARABLE")
 endif()
 
-set(GOOFIT_CFLAGS "-march=native" CACHE STRING "compiler flags")
-
 add_definitions("-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_${GOOFIT_DEVICE}")
 add_definitions("-DMCBOOSTER_BACKEND=${GOOFIT_DEVICE}")
 add_definitions("-DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_${GOOFIT_HOST}")
 
 set(GOOFIT_ARCH Auto CACHE STRING "The GPU Archetecture, can be Auto, All, Common, a number, or a name")
-
-option(GOOFIT_DOWNLOAD_THRUST "Download Thrust if not found (OMP only)" ON)
 
 option(GOOFIT_MPI "Turn on MPI for goofit" OFF)
 
@@ -149,7 +164,6 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
         find_package(CUDA 7.0 REQUIRED)
     endif()
 
-
     list(APPEND CUDA_NVCC_FLAGS -std=c++11)
     list(APPEND CUDA_NVCC_FLAGS ${MPI_CXX_LINK_FLAGS})
 
@@ -163,22 +177,13 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
     list(APPEND CUDA_NVCC_FLAGS ${ARCH_FLAGS})
     message(STATUS "Compiling for GPU arch: ${ARCH_FLAGS}")
 
-else()
-    if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
-        add_compile_options("${GOOFIT_CFLAGS}")
-    endif()
 endif()
 
+set(GOOFIT_CFLAGS "$<$<CONFIG:Release>:-march=native>$<$<CONFIG:RelWithDebInfo>:-march=native>" CACHE STRING "compiler flags")
+add_compile_options("${GOOFIT_CFLAGS}")
 
-find_package(Thrust QUIET)
-if(NOT THRUST_FOUND)
-    if(GOOFIT_DOWNLOAD_THRUST)
-        message(STATUS "Thrust not found, downloading to build dir")
-        include(AddThrust)
-    else()
-        find_package(Thrust REQUIRED)
-    endif()
-endif()
+set(THRUST_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/extern/thrust")
+find_package(Thrust 1.8 REQUIRED)
 include_directories(SYSTEM "${THRUST_INCLUDE_DIRS}")
 
 if(GOOFIT_DEVICE STREQUAL OMP OR GOOFIT_HOST STREQUAL OMP OR GOOFIT_DEVICE STREQUAL TBB OR GOOFIT_HOST STREQUAL TBB)
@@ -200,12 +205,15 @@ endif()
 # Include directories are not picked up by FindCUDA
 find_package(ROOT 6 COMPONENTS Minuit Minuit2)
 if(NOT ROOT_FOUND)
-    include(AddMinuit2)
+    add_subdirectory("extern/Minuit2")
 endif()
 
-# Adding header only libraries
-include(AddCLI)
-include(AddRang)
+# Adding simple libraries
+add_subdirectory("extern/CLI11")
+add_subdirectory("extern/FeatureDetector")
+
+add_library(rang INTERFACE)
+target_include_directories(rang INTERFACE "${PROJECT_SOURCE_DIR}/extern/rang/include")
 
 function(goofit_add_library GNAME)
     if(GOOFIT_DEVICE STREQUAL CUDA)
@@ -314,9 +322,8 @@ include_directories(${PROJECT_SOURCE_DIR}/extern/generics)
 
 add_subdirectory(src)
 
-
 add_library(goofit_lib INTERFACE)
-target_link_libraries(goofit_lib INTERFACE goofit_base PDFs rang CLI11)
+target_link_libraries(goofit_lib INTERFACE goofit_base PDFs rang CLI11 FeatureDetector)
 
 if(ROOT_FOUND)
     target_link_libraries(goofit_lib INTERFACE ROOT::ROOT ROOT::Minuit ROOT::Minuit2)
@@ -345,7 +352,7 @@ endif()
 
 option(GOOFIT_PYTHON "Python bindings for goofit" OFF)
 if(GOOFIT_PYTHON)
-    include(AddPybind)
+    add_subdirectory("extern/pybind11")
     message(STATUS "Found Python at ${PYTHON_LIBRARIES}")
     add_subdirectory(python)
 endif()

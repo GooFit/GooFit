@@ -1,5 +1,4 @@
--Ibuild/pybind-src/include
--Ibuild/cli-src/include
--Ibuild/thrust-src
--Ibuild/rang-src/include
--Iinclude/fakecuda
+-Ietern/pybind11/include
+-Iextern/CLI11/include
+-Iextern/thrust
+-Iextern/rang/include

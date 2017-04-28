@@ -30,7 +30,7 @@ DataSet::DataSet(std::set<Variable*>& vars, std::string n)
     variables.resize(vars.size());
 
     for(std::set<Variable*>::iterator v = vars.begin(); v != vars.end(); ++v) {
-        variables[(*v)->index] = (*v);
+        variables[(*v)->getIndex()] = (*v);
     }
 
     if(n == "")

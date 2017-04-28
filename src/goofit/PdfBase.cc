@@ -57,7 +57,7 @@ __host__ unsigned int PdfBase::registerParameter(Variable* var) {
             bool canUse = true;
 
             for(std::map<Variable*, std::set<PdfBase*>>::iterator p = variableRegistry.begin(); p != variableRegistry.end(); ++p) {
-                if(unusedIndex != (*p).first->index)
+                if(unusedIndex != (*p).first->getIndex())
                     continue;
 
                 canUse = false;
@@ -70,7 +70,7 @@ __host__ unsigned int PdfBase::registerParameter(Variable* var) {
             unusedIndex++;
         }
 
-        var->index = unusedIndex;
+        var->setIndex(unusedIndex);
     }
 
     return (unsigned int) var->getIndex();
@@ -88,7 +88,7 @@ __host__ void PdfBase::unregisterParameter(Variable* var) {
     variableRegistry[var].erase(this);
 
     if(0 == variableRegistry[var].size())
-        var->index = -1;
+        var->setIndex(-1);
 
     for(unsigned int i = 0; i < components.size(); ++i) {
         components[i]->unregisterParameter(var);

@@ -23,14 +23,14 @@ namespace GooFit {
         if(!added)
             throw std::runtime_error("The name " + var->name + " appears more than once!");
         
-        var->index = Index(var->name);
+        var->setFitterIndex(Index(var->name));
     }
     
 }
     
 void Params::SetGooFitParams(const Minuit2::MnUserParameterState& input) {
     for(Variable* var : vars_) {
-        size_t counter = Index(var->name);
+        size_t counter = var->getFitterIndex();
         var->value = input.Value(counter);
         var->error = input.Error(counter);
         SetValue(counter, var->value);

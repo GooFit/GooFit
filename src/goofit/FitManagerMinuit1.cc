@@ -97,7 +97,7 @@ void FitFun(int& npar, double* gin, double& fun, double* fp, int iflag) {
 
     for(Variable* var : vars) {
         if(std::isnan(fp[counter]))
-            std::cout << "Variable " << var->name << " " << var->index << " is NaN\n";
+            std::cout << "Variable " << var->name << " " << var->getIndex() << " is NaN\n";
 
         pars.at(var->getIndex()) = fp[counter++] + var->blind;
     }

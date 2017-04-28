@@ -104,7 +104,7 @@ __host__ void PdfBase::setData(std::vector<std::map<Variable*, fptype>>& data) {
     for(unsigned int i = 0; i < data.size(); ++i) {
         for(obsIter v = obsBegin(); v != obsEnd(); ++v) {
             assert(data[i].find(*v) != data[i].end());
-            host_array[i*dimensions + (*v)->index] = data[i][*v];
+            host_array[i*dimensions + (*v)->getIndex()] = data[i][*v];
         }
     }
 
@@ -123,7 +123,7 @@ __host__ void PdfBase::recursiveSetIndices() {
     int counter = 0;
 
     for(obsIter v = obsBegin(); v != obsEnd(); ++v) {
-        host_indices[parameters + 2 + numParams + counter] = (*v)->index;
+        host_indices[parameters + 2 + numParams + counter] = (*v)->getIndex();
         //std::cout << getName() << " set index of " << (*v)->name << " to " << (*v)->index << " " << (parameters + 2 + numParams + counter) << std::endl;
         counter++;
     }
@@ -135,7 +135,7 @@ __host__ void PdfBase::setIndices() {
     int counter = 0;
 
     for(obsIter v = obsBegin(); v != obsEnd(); ++v) {
-        (*v)->index = counter++;
+        (*v)->setIndex(counter++);
     }
 
     recursiveSetIndices();
@@ -208,7 +208,7 @@ __host__ void PdfBase::setData(UnbinnedDataSet* data) {
     for(int i = 0; i < numEntries; ++i) {
         for(obsIter v = obsBegin(); v != obsEnd(); ++v) {
             fptype currVal = data->getValue((*v), i);
-            host_array[i*dimensions + (*v)->index] = currVal;
+            host_array[i*dimensions + (*v)->getIndex()] = currVal;
         }
     }
 
@@ -304,7 +304,7 @@ __host__ void PdfBase::setData(BinnedDataSet* data) {
 
     for(unsigned int i = 0; i < numEntries; ++i) {
         for(obsIter v = obsBegin(); v != obsEnd(); ++v) {
-            host_array[i*dimensions + (*v)->index] = data->getBinCenter((*v), i);
+            host_array[i*dimensions + (*v)->getIndex()] = data->getBinCenter((*v), i);
         }
 
         host_array[i*dimensions + observables.size() + 0] = data->getBinContent(i);

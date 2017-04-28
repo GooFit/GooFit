@@ -11,11 +11,21 @@ FCN::FCN(Params& params) : params_(&params) {
 }
 
 double FCN::operator()(const std::vector<double>& pars) const {
-    std::vector<double> gooPars; // Translates from Minuit indexing to GooFit indexing
+    
+    // Get the max value of GooFit index
+    Variable* max_ind_ptr = *std::max_element(std::begin(params_->vars_),
+                                              std::end(params_->vars_),
+                                              [](const Variable *a, const Variable *b)
+                                                {return a->getIndex() < b->getIndex();});
+    int max_ind = max_ind_ptr->getIndex();
+    
+    // Translate from Minuit indexing to GooFit indexing
+    std::vector<double> gooPars;
+    gooPars.resize(max_ind+1);
     
     for(Variable* var : params_->vars_) {
-        var->unchanged_ = var->value == pars.at(var->index);
-        gooPars.push_back(pars.at(var->index));
+        var->unchanged_ = var->value == pars.at(var->getFitterIndex());
+        gooPars.at(var->getIndex()) = pars.at(var->getFitterIndex());
     }
 
     params_->pdf_->copyParams(gooPars);

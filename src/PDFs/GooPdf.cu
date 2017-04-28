@@ -79,10 +79,10 @@ void abortWithCudaPrintFlush(std::string file, int line, std::string reason, con
         std::cout << "Parameters of " << pdf->getName() << " : \n";
 
         for(PdfBase::parIter v = pars.begin(); v != pars.end(); ++v) {
-            if(0 > (*v)->index)
+            if(0 > (*v)->getIndex())
                 continue;
 
-            std::cout << "  " << (*v)->name << " (" << (*v)->index << ") :\t" << host_params[(*v)->index] << std::endl;
+            std::cout << "  " << (*v)->name << " (" << (*v)->getIndex() << ") :\t" << host_params[(*v)->getIndex()] << std::endl;
         }
     }
 

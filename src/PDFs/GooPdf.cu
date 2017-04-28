@@ -617,7 +617,7 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, int, fptype*> t) co
     return ret;
 }
 
-__host__ void GooPdf::getCompProbsAtDataPoints(std::vector<std::vector<fptype>>& values) {
+__host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
     copyParams();
     double overall = normalise();
     MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice);
@@ -638,7 +638,7 @@ __host__ void GooPdf::getCompProbsAtDataPoints(std::vector<std::vector<fptype>>&
                       thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
                       results.begin(),
                       evalor);
-    values.clear();
+    std::vector<std::vector<fptype>> values;
     values.resize(components.size() + 1);
     thrust::host_vector<fptype> host_results = results;
 
@@ -659,6 +659,7 @@ __host__ void GooPdf::getCompProbsAtDataPoints(std::vector<std::vector<fptype>>&
             values[1 + i].push_back(host_results[j]);
         }
     }
+    return values;
 }
 
 // still need to add OpenMP/multi-GPU code here

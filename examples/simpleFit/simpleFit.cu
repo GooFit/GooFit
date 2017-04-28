@@ -64,8 +64,7 @@ void fitAndPlot(GooPdf* total, UnbinnedDataSet* data, TH1F& dataHist, Variable* 
     }
 
     total->setData(&grid);
-    vector<vector<double>> pdfVals;
-    total->getCompProbsAtDataPoints(pdfVals);
+    std::vector<std::vector<double>> total->getCompProbsAtDataPoints();
 
     double totalPdf = 0;
 

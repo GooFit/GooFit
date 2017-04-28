@@ -1824,8 +1824,7 @@ void makeToyDalitzPlots(GooPdf* overallSignal, std::string plotdir) {
 
     overallSignal->setData(&currData);
     signalDalitz->setDataSize(currData.getNumEvents(), 6);
-    std::vector<std::vector<double>> pdfValues;
-    overallSignal->getCompProbsAtDataPoints(pdfValues);
+    std::vector<std::vector<double>> pdfValues = overallSignal->getCompProbsAtDataPoints();
 
     for(unsigned int j = 0; j < pdfValues[0].size(); ++j) {
         double currTime = currData.getValue(dtime, j);
@@ -2096,8 +2095,7 @@ void makeDalitzPlots(GooPdf* overallSignal, std::string plotdir = "./plots_from_
                     incsum6->setDataSize(currData.getNumEvents(), 6);
             }
 
-            std::vector<std::vector<double>> pdfValues;
-            overallSignal->getCompProbsAtDataPoints(pdfValues);
+            std::vector<std::vector<double>> pdfValues = overallSignal->getCompProbsAtDataPoints();
 
             for(unsigned int j = 0; j < pdfValues[0].size(); ++j) {
                 double currTime = currData.getValue(dtime, j);
@@ -4168,8 +4166,7 @@ int runSigmaFit(const char* fname) {
 
     jsu_gg->setData(&grid);
 
-    std::vector<std::vector<double>> pdfValues;
-    jsu_gg->getCompProbsAtDataPoints(pdfValues);
+    std::vector<std::vector<double>> pdfValues = jsu_gg->getCompProbsAtDataPoints();
 
     for(unsigned int j = 0; j < pdfValues[0].size(); ++j) {
         double currM12   = grid.getValue(m12, j);
@@ -4325,8 +4322,7 @@ int runEfficiencyFit(int which) {
     eff->setData(&currData);
 
     //eff->setDebugMask(1);
-    std::vector<std::vector<double>> pdfValues;
-    eff->getCompProbsAtDataPoints(pdfValues);
+    std::vector<std::vector<double>> pdfValues = eff->getCompProbsAtDataPoints();
 
     for(unsigned int j = 0; j < pdfValues[0].size(); ++j) {
         double currVal = currData.getValue(m12, j);

@@ -51,7 +51,9 @@ public:
         return false;
     }
     __host__ fptype getValue();
-    __host__ void getCompProbsAtDataPoints(std::vector<std::vector<fptype>>& values);
+    
+    /// Produce a list of probabilies at points
+    __host__ std::vector<std::vector<fptype>> getCompProbsAtDataPoints();
     __host__ void initialise(std::vector<unsigned int> pindices, void* dev_functionPtr = host_fcn_ptr);
     __host__ void scan(Variable* var, std::vector<fptype>& values);
     __host__ virtual void setFitControl(FitControl* const fc, bool takeOwnerShip = true);

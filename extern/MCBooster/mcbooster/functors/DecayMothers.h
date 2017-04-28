@@ -129,7 +129,7 @@ struct DecayMothers
 		//---->  get the betas of the decaying particle
 		//
 
-		GReal_t _beta = particles[0]->d3mag() / particles[0]->get(0);
+		//GReal_t _beta = particles[0]->d3mag() / particles[0]->get(0);
 
 		GReal_t rno[kMAXP];
 		rno[0] = 0.0;

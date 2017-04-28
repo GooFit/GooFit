@@ -102,20 +102,7 @@ int main(int argc, char** argv) {
     xpdfHist.SetStats(false);
     ypdfHist.SetStats(false);
 
-    UnbinnedDataSet grid{{&xvar, &yvar}};
-
-    for(int i = 0; i < xvar.numbins; ++i) {
-        double step = (xvar.upperlimit - xvar.lowerlimit)/xvar.numbins;
-        xvar.value = xvar.lowerlimit + (i + 0.5) * step;
-
-        for(int j = 0; j < yvar.numbins; ++j) {
-            step = (yvar.upperlimit - yvar.lowerlimit)/yvar.numbins;
-            yvar.value = yvar.lowerlimit + (j + 0.5) * step;
-            grid.addEvent();
-        }
-    }
-
-    total.setData(&grid);
+    UnbinnedDataSet grid = total.makeGrid();
     std::vector<std::vector<double>> pdfVals = total.getCompProbsAtDataPoints();
 
     TCanvas foo;

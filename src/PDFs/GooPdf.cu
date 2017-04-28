@@ -619,7 +619,8 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, int, fptype*> t) co
 
 __host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
     copyParams();
-    double overall = normalise();
+    //double overall =
+    normalise();
     MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
     int numVars = observables.size();
@@ -660,6 +661,36 @@ __host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
         }
     }
     return values;
+}
+
+// Utility function to make a grid of any dimisinion
+__host__ void make_a_grid(std::vector<Variable*> ret, UnbinnedDataSet &grid) {
+    if(ret.empty()) {
+        grid.addEvent();
+        return;
+    }
+    
+    Variable* var = ret.back();
+    ret.pop_back(); // safe because this is a copy
+    
+    for(int i = 0; i < var->numbins; ++i) {
+        double step = (var->upperlimit - var->lowerlimit)/var->numbins;
+        var->value = var->lowerlimit + (i + 0.5) * step;
+        make_a_grid(ret, grid);
+    }
+    
+}
+
+
+__host__ UnbinnedDataSet GooPdf::makeGrid() {
+    obsCont ret;
+    getObservables(ret);
+    
+    UnbinnedDataSet grid{ret};
+    
+    make_a_grid(ret, grid);
+    
+    return grid;
 }
 
 // still need to add OpenMP/multi-GPU code here

@@ -225,9 +225,9 @@ __host__ DPPdf::DPPdf(std::string n,
     auto d3 = phsp.GetDaughters(2);
     auto d4 = phsp.GetDaughters(3);
 
-    auto zip_begin = thrust::make_zip_iterator(thrust::make_tuple(d1.begin(), d2.begin(), d3.begin(), d4.begin()));
-    auto zip_end = zip_begin + d1.size();
-    auto new_end = thrust::remove_if(zip_begin, zip_end, flags.begin(), thrust::logical_not<bool>());
+    //auto zip_begin = thrust::make_zip_iterator(thrust::make_tuple(d1.begin(), d2.begin(), d3.begin(), d4.begin()));
+    //auto zip_end = zip_begin + d1.size();
+    //auto new_end = thrust::remove_if(zip_begin, zip_end, flags.begin(), thrust::logical_not<bool>());
 
     printf("After accept-reject we will keep %.i Events for normalization.\n", (int)nAcc);
     d1.shrink_to_fit();

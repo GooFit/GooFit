@@ -453,7 +453,7 @@ __device__ fptype DtoTP1_TtoVP2_VtoP3P4(fptype* Vecs, unsigned int* indices) {
     ZTspin2 t2T(qT, pT, pT.M());
     ZTspin1 tV(qV, pV, pV.M());
 
-    gpuLVec DT(t2T.Contract(qD));
+    //gpuLVec DT(t2T.Contract(qD));
 
 #ifdef ZEMACH
     ZTspin1 tD(qD, pD, pD.M());

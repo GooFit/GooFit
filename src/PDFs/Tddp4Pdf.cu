@@ -805,7 +805,7 @@ TDDP4::GenerateSig(unsigned int numEvents) {
 
     thrust::device_vector<fptype> flag2(nAcc);
     thrust::counting_iterator<mcbooster::GLong_t> first(0);
-    thrust::counting_iterator<mcbooster::GLong_t> last = first + nAcc;
+    //thrust::counting_iterator<mcbooster::GLong_t> last = first + nAcc;
 
     // we do not want to copy the whole class to the GPU so capturing *this is not a great option
     // therefor perpare local copies to capture the variables we need

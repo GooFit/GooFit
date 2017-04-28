@@ -36,10 +36,13 @@ public:
     FCN* getFCN() {return &fcn_;}
     
     /// Check to see if fit is valid
-    operator bool() {return retval_ == FitErrors::Valid;}
+    operator bool() const {return retval_ == FitErrors::Valid;}
     
     /// Return value for program
-    operator int() {return static_cast<int>(retval_);}
+    operator int() const {return static_cast<int>(retval_);}
+    
+    /// Set the fitting verbosity
+    void setVerbosity(int value) {verbosity = value;}
 
     
 private:
@@ -47,6 +50,7 @@ private:
     FCN fcn_;
     unsigned int maxfcn_ {0};
     FitErrors retval_ {FitErrors::NotRun};
+    int verbosity {3};
 };
     
 }

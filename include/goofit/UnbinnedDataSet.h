@@ -4,14 +4,13 @@
 
 #include <map>
 #include <vector>
+#include <initializer_list>
 
 class UnbinnedDataSet : public DataSet {
     // Class for unbinned datasets.
 
 public:
-    UnbinnedDataSet(Variable* var, std::string n = "");
-    UnbinnedDataSet(std::vector<Variable*>& vars, std::string n = "");
-    UnbinnedDataSet(std::set<Variable*>& vars, std::string n = "");
+    using DataSet::DataSet;
     virtual ~UnbinnedDataSet();
 
     virtual void addEventVector(std::vector<fptype>& vals, fptype weight = 1);

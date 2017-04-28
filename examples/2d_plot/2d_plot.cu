@@ -40,11 +40,9 @@ int main(int argc, char** argv) {
     gStyle->SetLineColor(1);
     gStyle->SetPalette(1, 0);
 
-    vector<Variable*> vars;
-    Variable* xvar = new Variable("xvar", -5, 5);
-    vars.push_back(xvar);
-    Variable* yvar = new Variable("yvar", -5, 5);
-    vars.push_back(yvar);
+    Variable xvar{"xvar", -5, 5};
+    Variable yvar{"yvar", -5, 5};
+    vector<Variable*> vars = {&xvar, &yvar};
     UnbinnedDataSet data(vars);
 
     TH2F dataHist("dataHist", "",

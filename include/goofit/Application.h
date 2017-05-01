@@ -239,7 +239,7 @@ public:
             std::string cdir = prog_name.substr(0,loc);
             std::string new_input {cdir + "/" + input_str}; 
             if(CLI::ExistingFile(new_input)) {
-                std::cout << "Found file at " << new_input;
+                std::cout << "Found file at " << new_input << std::endl;
                 return new_input;
             }
         }
@@ -248,7 +248,7 @@ public:
         if(base.size() > 0) {
             std::string new_input = std::string(GOOFIT_SOURCE_DIR) + "/" + base + "/" + input_str;
             if(CLI::ExistingFile(new_input)) {
-                std::cout << "Found file at " << new_input;
+                std::cout << "Found file at " << new_input << std::endl;
                 return new_input;
             }
         }

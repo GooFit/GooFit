@@ -61,7 +61,10 @@ fptype cpuGetM23(fptype massPZ, fptype massPM) {
     return (_mD02 + piZeroMass*piZeroMass + piPlusMass*piPlusMass + piPlusMass*piPlusMass - massPZ - massPM);
 }
 
-void getToyData(std::string toyFileName) {
+void getToyData(std::string toyFileName, GooFit::Application &app) {
+    
+    toyFileName = app.get_filename(toyFileName, "examples/dalitz");
+    
     TH2F dalitzplot("dalitzplot", "", m12->numbins, m12->lowerlimit, m12->upperlimit, m13->numbins, m13->lowerlimit,
                     m13->upperlimit);
     std::vector<Variable*> vars;
@@ -70,12 +73,7 @@ void getToyData(std::string toyFileName) {
     vars.push_back(eventNumber);
     data = new UnbinnedDataSet(vars);
 
-    std::ifstream reader;
-    reader.open(toyFileName.c_str());
-
-    if(!reader)
-        throw std::runtime_error("Error: Input file does not exist.");
-
+    std::ifstream reader(toyFileName);
     std::string buffer;
 
     while(!reader.eof()) {
@@ -361,13 +359,13 @@ DalitzPlotPdf* makeSignalPdf(GooPdf* eff = 0) {
     return new DalitzPlotPdf("signalPDF", m12, m13, eventNumber, dtop0pp, eff);
 }
 
-int runToyFit(std::string toyFileName) {
+int runToyFit(std::string toyFileName, GooFit::Application &app) {
     m12 = new Variable("m12", 0, 3);
     m13 = new Variable("m13", 0, 3);
     m12->numbins = 240;
     m13->numbins = 240;
     eventNumber = new CountingVariable("eventNumber", 0, INT_MAX);
-    getToyData(toyFileName);
+    getToyData(toyFileName, app);
 
     // EXERCISE 1 (real part): Create a PolynomialPdf which models
     // the efficiency you imposed in the preliminary, and use it in constructing
@@ -418,7 +416,7 @@ int main(int argc, char** argv) {
     foodal->Size(10, 10);
 
     try {
-        return runToyFit(filename);
+        return runToyFit(filename, app);
     } catch(const std::runtime_error& e) {
         std::cerr << e.what() << std::endl;
         return 7;

@@ -237,15 +237,20 @@ public:
         size_t loc = prog_name.rfind("/");
         if(loc != std::string::npos) {
             std::string cdir = prog_name.substr(0,loc);
-            if(CLI::ExistingFile(cdir + "/" + input_str))
-                return input_str;
+            std::string new_input {cdir + "/" + input_str}; 
+            if(CLI::ExistingFile(new_input)) {
+                std::cout << "Found file at " << new_input;
+                return new_input;
+            }
         }
 
         // If all else fails, try to get file from source directory (if base is specified)
         if(base.size() > 0) {
             std::string new_input = std::string(GOOFIT_SOURCE_DIR) + "/" + base + "/" + input_str;
-            if(CLI::ExistingFile(new_input))
+            if(CLI::ExistingFile(new_input)) {
+                std::cout << "Found file at " << new_input;
                 return new_input;
+            }
         }
         
         // Could not find file

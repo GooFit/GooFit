@@ -280,10 +280,15 @@ void EvaluateArray(const CUSTOMFUNC funcObj, ParticlesSet_d &pset,
 
 	}
 
-#if MCBOOSTER_BACKEND!=CUDA
 
+#if MCBOOSTER_BACKEND!=CUDA
+#if MC_BOOSTER_BACKEND!=CPP
 #pragma omp parallel num_threads(  arrayWidth )
-	{
+{
+#else
+    for(size_t val = 0; val<arrayWidth; val++) {
+        auto omp_get_thread_num = [&val](){return val;}
+#endif
 		strided_range<RealVector_d::iterator> it_array(dev_array.begin() + omp_get_thread_num()
 				, dev_array.end(), arrayWidth);
 
@@ -560,10 +565,14 @@ void EvaluateArray(const CUSTOMFUNC funcObj, ParticlesSet_d &pset,
 				Calculate3<CUSTOMFUNC>(funcObj));
 
 	}
-#if THRUST_DEVICE_SYSTEM!=THRUST_DEVICE_SYSTEM_CUDA 
-
+#if MCBOOSTER_BACKEND!=CUDA
+#if MC_BOOSTER_BACKEND!=CPP
 #pragma omp parallel num_threads(  arrayWidth )
-	{
+{
+#else
+    for(size_t val = 0; val<arrayWidth; val++) {
+        auto omp_get_thread_num = [&val](){return val;}
+#endif
 
 	strided_range<RealVector_d::iterator> it_array(dev_array.begin() + omp_get_thread_num()
 				, dev_array.end(), arrayWidth);

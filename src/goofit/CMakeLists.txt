@@ -58,6 +58,7 @@ goofit_add_library(PdfBase
     ${PROJECT_SOURCE_DIR}/include/goofit/Color.h
     ${PROJECT_SOURCE_DIR}/include/goofit/GlobalCudaDefines.h
     )
+target_link_libraries(PdfBase rang CLI11)
 
 
 set(lib_list

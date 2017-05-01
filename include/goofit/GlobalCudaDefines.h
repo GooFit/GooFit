@@ -54,6 +54,7 @@ enum gooError {gooSuccess = 0, gooErrorMemoryAllocation};
 #define RO_CACHE(x) __ldg(&x)
 #define GET_FUNCTION_ADDR(fname) cudaMemcpyFromSymbol((void**) &host_fcn_ptr, fname, sizeof(void*))
 #define MEMCPY_FROM_SYMBOL(target, source, count, offset, direction) cudaMemcpyFromSymbol(target, source, count, offset, direction)
+
 // For CUDA case, just use existing errors, renamed
 #include <driver_types.h>      // Needed for cudaError_t
 enum gooError {gooSuccess = cudaSuccess,
@@ -69,9 +70,6 @@ enum gooError {gooSuccess = cudaSuccess,
 
 gooError gooMalloc(void** target, size_t bytes);
 gooError gooFree(void* ptr);
-
-void abortWithCudaPrintFlush(std::string file, int line);
-
 
 #ifndef GOOFIT_SINGLES
 

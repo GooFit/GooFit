@@ -403,9 +403,13 @@ inline void PhaseSpace::ExportUnweighted(Events *_Events) {
 	_Events->fMaxWeight = fMaxWeight;
 
 #if MCBOOSTER_BACKEND!=CUDA
+#if MC_BOOSTER_BACKEND!=CPP
 #pragma omp parallel num_threads( fNDaughters + 1 )
-	{
-
+    {
+#else
+    for(size_t val = 0; val<fNDaughters; val++) {
+        auto omp_get_thread_num = [&val](){return val;}
+#endif
 		if (omp_get_thread_num() < fNDaughters )
 		{
 			thrust::copy_if( fDaughters[omp_get_thread_num()].begin(),fDaughters[omp_get_thread_num()].end(),
@@ -422,9 +426,7 @@ inline void PhaseSpace::ExportUnweighted(Events *_Events) {
 			thrust::copy_if(fAccRejFlags.begin(), fAccRejFlags.end(),
 					fAccRejFlags.begin(),
 					_Events->fAccRejFlags.begin(), isAccepted() );
-
 		}
-
 	}
 
 #else
@@ -475,9 +477,13 @@ inline void PhaseSpace::Export(Events *_Events) {
 	_Events->fMaxWeight = fMaxWeight;
 
 #if MCBOOSTER_BACKEND!=CUDA
-
+#if MC_BOOSTER_BACKEND!=CPP
 #pragma omp parallel num_threads( fNDaughters + 1 )
-	{
+    {
+#else
+    for(size_t val = 0; val<fNDaughters; val++) {
+        auto omp_get_thread_num = [&val](){return val;}
+#endif
 
 		if (omp_get_thread_num() < fNDaughters )
 		{

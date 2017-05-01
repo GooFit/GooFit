@@ -131,3 +131,5 @@ private:
     __host__ void setIndices();
 };
 
+void abortWithCudaPrintFlush(std::string file, int line, std::string reason, const PdfBase* pdf = 0);
+

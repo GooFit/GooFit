@@ -1,5 +1,4 @@
 #include "goofit/GlobalCudaDefines.h"
-#include "goofit/Color.h"
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/ThrustOverride.h"
 
@@ -68,42 +67,6 @@ void printMemoryStatus(std::string file, int line) {
               (memtotal - memfree) << std::endl;
 }
 
-
-#include <execinfo.h>
-void* stackarray[10];
-void abortWithCudaPrintFlush(std::string file, int line, std::string reason, const PdfBase* pdf = 0) {
-std::cout << GooFit::reset << GooFit::red << "Abort called from " << file << " line " << line << " due to " << reason << std::endl;
-
-    if(pdf) {
-        PdfBase::parCont pars;
-        pdf->getParameters(pars);
-        std::cout << "Parameters of " << pdf->getName() << " : \n";
-
-        for(PdfBase::parIter v = pars.begin(); v != pars.end(); ++v) {
-            if(0 > (*v)->getIndex())
-                continue;
-
-            std::cout << "  " << (*v)->name << " (" << (*v)->getIndex() << ") :\t" << host_params[(*v)->getIndex()] << std::endl;
-        }
-    }
-
-    std::cout << "Parameters (" << totalParams << ") :\n";
-
-    for(int i = 0; i < totalParams; ++i) {
-        std::cout << host_params[i] << " ";
-    }
-
-    std::cout << GooFit::bold << std::endl;
-
-
-    // get void* pointers for all entries on the stack
-    size_t size = backtrace(stackarray, 10);
-    // print out all the frames to stderr
-    backtrace_symbols_fd(stackarray, size, 2);
-    std::cout << GooFit::reset << std::flush;
-
-    throw GooFit::GeneralError(reason);
-}
 
 __device__ fptype calculateEval(fptype rawPdf, fptype* evtVal, unsigned int par) {
     // Just return the raw PDF value, for use in (eg) normalisation.

@@ -420,6 +420,9 @@ __host__ fptype DPPdf::normalise() const {
         ret = sumIntegral;
     }
 
+    if(std::isnan(ret))
+        abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " NAN normalization in DPPdf", this);
+    
     host_normalisation[parameters] = 1.0/ret;
     // printf("end of normalise %f\n", ret);
     return ret;

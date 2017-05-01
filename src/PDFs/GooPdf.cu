@@ -71,7 +71,7 @@ void printMemoryStatus(std::string file, int line) {
 #include <execinfo.h>
 void* stackarray[10];
 void abortWithCudaPrintFlush(std::string file, int line, std::string reason, const PdfBase* pdf = 0) {
-    std::cout << "Abort called from " << file << " line " << line << " due to " << reason << std::endl;
+std::cout << GooFit::reset << GooFit::red << "Abort called from " << file << " line " << line << " due to " << reason << std::endl;
 
     if(pdf) {
         PdfBase::parCont pars;
@@ -92,7 +92,7 @@ void abortWithCudaPrintFlush(std::string file, int line, std::string reason, con
         std::cout << host_params[i] << " ";
     }
 
-    std::cout << std::endl;
+    std::cout << GooFit::reset << std::endl;
 
 
     // get void* pointers for all entries on the stack

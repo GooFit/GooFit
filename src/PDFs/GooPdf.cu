@@ -1,4 +1,5 @@
 #include "goofit/GlobalCudaDefines.h"
+#include "goofit/Color.h"
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/ThrustOverride.h"
 
@@ -92,13 +93,14 @@ std::cout << GooFit::reset << GooFit::red << "Abort called from " << file << " l
         std::cout << host_params[i] << " ";
     }
 
-    std::cout << GooFit::reset << std::endl;
+    std::cout << GooFit::bold << std::endl;
 
 
     // get void* pointers for all entries on the stack
     size_t size = backtrace(stackarray, 10);
     // print out all the frames to stderr
     backtrace_symbols_fd(stackarray, size, 2);
+    std::cout << GooFit::reset << std::flush;
 
     throw GooFit::GeneralError(reason);
 }

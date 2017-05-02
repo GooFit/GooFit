@@ -7,25 +7,22 @@
 #include <typeinfo>
 #include <set>
 #include "goofit/Variable.h"
+
 PdfBase* pdfPointer;
 std::vector<Variable*> vars;
-int numPars = 0;
 
 namespace GooFit {
 
-void FitManagerMinuit1::setup() {
-    vars.clear();
+FitManagerMinuit1::FitManagerMinuit1(PdfBase* ptr) {
+    pdfPointer = ptr;
     pdfPointer->getParameters(vars);
 
-    // Total number of params
-    numPars = vars.size();
+    minuit_.reset(new TMinuit(max_index(vars)+1));
 
-    minuit_.reset(new TMinuit(numPars));
-
-    int maxIndex = 0;
     int counter = 0;
 
     for(Variable* var : vars) {
+        var->setFitterIndex(counter);
         minuit_->DefineParameter(counter,
                                  var->name.c_str(),
                                  var->value,
@@ -37,12 +34,8 @@ void FitManagerMinuit1::setup() {
             minuit_->FixParameter(counter);
 
         counter++;
-
-        if(maxIndex < var->getIndex())
-            maxIndex = var->getIndex();
     }
 
-    numPars = maxIndex+1;
     pdfPointer->copyParams();
     minuit_->SetFCN(FitFun);
 }
@@ -50,6 +43,9 @@ void FitManagerMinuit1::setup() {
 void FitManagerMinuit1::runFit() {
     assert(minuit_);
     host_callnumber = 0;
+    
+    for(Variable* var : vars)
+        var->unchanged_ = false;
 
     if(0 < overrideCallLimit) {
         std::cout << "Calling MIGRAD with call limit " << overrideCallLimit << std::endl;
@@ -71,15 +67,12 @@ void FitManagerMinuit1::runFit() {
             minuit_->mnexcm("IMPROVE", plist, 1, err);
     } else
         minuit_->Migrad();
+    
+    for(Variable* var : vars)
+        minuit_->GetParameter(var->getFitterIndex(), var->value, var->error);
+
 }
 
-void FitManagerMinuit1::getMinuitValues() const {
-    int counter = 0;
-
-    for(Variable* var : vars) {
-        minuit_->GetParameter(counter++, var->value, var->error);
-    }
-}
 
 void FitManagerMinuit1::getMinuitStatus(double& fmin, double& fedm, double& errdef, int& npari, int& nparx, int& istat) const {
     minuit_->mnstat(fmin, fedm, errdef, npari, nparx, istat);
@@ -89,17 +82,22 @@ void FitManagerMinuit1::getMinuitStatus(double& fmin, double& fedm, double& errd
 
 }
 
-void FitFun(int& npar, double* gin, double& fun, double* fp, int iflag) {
-    std::vector<double> pars;
-    // Notice that npar is number of variable parameters, not total.
-    pars.resize(numPars);
-    int counter = 0;
+/// Fit function for Minuit
+void FitFun(int& npar, //< THe number of parameters
+            double* gin, //< The derivatives can be stored here if flag is 2 (output)
+            double& fun, //< The value of the function at this point (output)
+            double* fp, //< The input parameters
+            int iflag //< This is 1 the first time, 2, for derivatives, and 3 after the fit is finished. It is something else if computing.
+            ) {
+
+    std::vector<double> pars {fp, fp+npar};
 
     for(Variable* var : vars) {
-        if(std::isnan(fp[counter]))
+        if(std::isnan(pars.at(var->getFitterIndex())))
             std::cout << "Variable " << var->name << " " << var->getIndex() << " is NaN\n";
-
-        pars.at(var->getIndex()) = fp[counter++] + var->blind;
+        
+        var->unchanged_ = var->value == pars.at(var->getFitterIndex());
+        pars.at(var->getIndex()) = var->value; //  + var->blind
     }
 
     pdfPointer->copyParams(pars);

@@ -13,9 +13,7 @@ namespace GooFit {
 
 class FitManagerMinuit1 {
 public:
-    FitManagerMinuit1(PdfBase* dat) {
-        pdfPointer = dat;
-    }
+    FitManagerMinuit1(PdfBase* dat);
         
     void setMaxCalls(double mxc) {
         overrideCallLimit = mxc;
@@ -42,14 +40,12 @@ public:
     
     // This runs the fit
     void fit() {
-        setup();
         runFit();
     };
         
     TMinuit* getMinuitObject() {
         return minuit_.get();
     }
-    void getMinuitValues() const;
         
     void getMinuitStatus(double& fmin, double& fedm, double& errdef, int& npari, int& nparx, int& istat) const;
     

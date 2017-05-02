@@ -8,20 +8,17 @@ namespace GooFit {
 FCN::FCN(Params& params) : params_(&params) {
     host_callnumber = 0;
     
+    // Verify that all varaibles need to be recached
+    for(Variable* var : params_->vars_)
+        var->unchanged_ = false;
+    
 }
 
 double FCN::operator()(const std::vector<double>& pars) const {
     
-    // Get the max value of GooFit index
-    Variable* max_ind_ptr = *std::max_element(std::begin(params_->vars_),
-                                              std::end(params_->vars_),
-                                              [](const Variable *a, const Variable *b)
-                                                {return a->getIndex() < b->getIndex();});
-    int max_ind = max_ind_ptr->getIndex();
-    
     // Translate from Minuit indexing to GooFit indexing
     std::vector<double> gooPars;
-    gooPars.resize(max_ind+1);
+    gooPars.resize(max_index(params_->vars_)+1);
     
     for(Variable* var : params_->vars_) {
         var->unchanged_ = var->value == pars.at(var->getFitterIndex());

@@ -4,6 +4,7 @@
 #include <map>
 #include <iostream>
 #include <cassert>
+#include <algorithm>
 
 #include "goofit/GlobalCudaDefines.h"
 

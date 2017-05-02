@@ -1,9 +1,10 @@
 #pragma once
 
-#include <memory>
+#include "goofit/GlobalCudaDefines.h"
 #include <TMinuit.h>
 
 class PdfBase;
+
 extern PdfBase* pdfPointer;
 
 void FitFun(int& npar, double* gin, double& fun, double* fp, int iflag);

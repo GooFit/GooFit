@@ -1,27 +1,27 @@
 #include "goofit/PDFs/ResonancePdf.h"
 #include "goofit/PDFs/DalitzPlotHelpers.h"
 
-EXEC_TARGET fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m) {
+__device__ fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m) {
     // For A -> B + C, calculate momentum of B and C in rest frame of A.
     // PDG 38.16.
     fptype kin1 = 1 - POW2(d1m+d2m) / rMassSq;
 
     if(kin1 >= 0)
-        kin1 = SQRT(kin1);
+        kin1 = sqrt(kin1);
     else
         kin1 = 1;
 
     fptype kin2 = 1 - POW2(d1m-d2m) / rMassSq;
 
     if(kin2 >= 0)
-        kin2 = SQRT(kin2);
+        kin2 = sqrt(kin2);
     else
         kin2 = 1;
 
-    return 0.5*SQRT(rMassSq)*kin1*kin2;
+    return 0.5*sqrt(rMassSq)*kin1*kin2;
 }
 
-EXEC_TARGET fptype dampingFactorSquare(const fptype& cmmom, const int& spin, const fptype& mRadius) {
+__device__ fptype dampingFactorSquare(const fptype& cmmom, const int& spin, const fptype& mRadius) {
     fptype square = mRadius*mRadius*cmmom*cmmom;
     fptype dfsq = 1 + square; // This accounts for spin 1
     //if (2 == spin) dfsq += 8 + 2*square + square*square; // Coefficients are 9, 3, 1.
@@ -32,7 +32,7 @@ EXEC_TARGET fptype dampingFactorSquare(const fptype& cmmom, const int& spin, con
     return (spin == 2) ? dfsqres : dfsq;
 }
 
-EXEC_TARGET fptype spinFactor(unsigned int spin, fptype motherMass, fptype daug1Mass, fptype daug2Mass,
+__device__ fptype spinFactor(unsigned int spin, fptype motherMass, fptype daug1Mass, fptype daug2Mass,
                               fptype daug3Mass, fptype m12, fptype m13, fptype m23, unsigned int cyclic_index) {
     if(0 == spin)
         return 1; // Should not cause branching since every thread evaluates the same resonance at the same time.
@@ -82,7 +82,7 @@ EXEC_TARGET fptype spinFactor(unsigned int spin, fptype motherMass, fptype daug1
     return sFactor;
 }
 
-EXEC_TARGET devcomplex<fptype> plainBW(fptype m12, fptype m13, fptype m23, unsigned int* indices) {
+__device__ thrust::complex<fptype> plainBW(fptype m12, fptype m13, fptype m23, unsigned int* indices) {
     fptype motherMass             = RO_CACHE(functorConstants[RO_CACHE(indices[1])+0]);
     fptype daug1Mass              = RO_CACHE(functorConstants[RO_CACHE(indices[1])+1]);
     fptype daug2Mass              = RO_CACHE(functorConstants[RO_CACHE(indices[1])+2]);
@@ -113,37 +113,37 @@ EXEC_TARGET devcomplex<fptype> plainBW(fptype m12, fptype m13, fptype m23, unsig
 
     // RBW evaluation
     fptype A = (resmass - rMassSq);
-    fptype B = resmass*reswidth * POW(measureDaughterMoms / nominalDaughterMoms, 2.0*spin + 1) * frFactor / SQRT(rMassSq);
+    fptype B = resmass*reswidth * pow(measureDaughterMoms / nominalDaughterMoms, 2.0*spin + 1) * frFactor / sqrt(rMassSq);
     fptype C = 1.0 / (A*A + B*B);
-    devcomplex<fptype> ret(A*C, B*C); // Dropping F_D=1
+    thrust::complex<fptype> ret(A*C, B*C); // Dropping F_D=1
 
-    ret *= SQRT(frFactor);
+    ret *= sqrt(frFactor);
     fptype spinF = spinFactor(spin, motherMass, daug1Mass, daug2Mass, daug3Mass, m12, m13, m23, cyclic_index);
     ret *= spinF;
     // printf("%f, %f, %f, %f\n",ret.real, ret.imag, m12, m13);
     return ret;
 }
 
-EXEC_TARGET devcomplex<fptype> gaussian(fptype m12, fptype m13, fptype m23, unsigned int* indices) {
+__device__ thrust::complex<fptype> gaussian(fptype m12, fptype m13, fptype m23, unsigned int* indices) {
     // indices[1] is unused constant index, for consistency with other function types.
     fptype resmass                = RO_CACHE(cudaArray[RO_CACHE(indices[2])]);
     fptype reswidth               = RO_CACHE(cudaArray[RO_CACHE(indices[3])]);
     unsigned int cyclic_index     = indices[4];
 
     // Notice sqrt - this function uses mass, not mass-squared like the other resonance types.
-    fptype massToUse = SQRT(PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
+    fptype massToUse = sqrt(PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
     massToUse -= resmass;
     massToUse /= reswidth;
     massToUse *= massToUse;
-    fptype ret = EXP(-0.5*massToUse);
+    fptype ret = exp(-0.5*massToUse);
 
     // Ignore factor 1/sqrt(2pi).
     ret /= reswidth;
 
-    return devcomplex<fptype>(ret, 0);
+    return thrust::complex<fptype>(ret, 0);
 }
 
-EXEC_TARGET fptype hFun(double s, double daug2Mass, double daug3Mass) {
+__device__ fptype hFun(double s, double daug2Mass, double daug3Mass) {
     // Last helper function
     const fptype _pi = 3.14159265359;
     double sm   = daug2Mass + daug3Mass;
@@ -155,7 +155,7 @@ EXEC_TARGET fptype hFun(double s, double daug2Mass, double daug3Mass) {
     return val;
 }
 
-EXEC_TARGET fptype dh_dsFun(double s, double daug2Mass, double daug3Mass) {
+__device__ fptype dh_dsFun(double s, double daug2Mass, double daug3Mass) {
     // Yet another helper function
     const fptype _pi = 3.14159265359;
     double k_s = twoBodyCMmom(s, daug2Mass, daug3Mass);
@@ -165,7 +165,7 @@ EXEC_TARGET fptype dh_dsFun(double s, double daug2Mass, double daug3Mass) {
 }
 
 
-EXEC_TARGET fptype dFun(double s, double daug2Mass, double daug3Mass) {
+__device__ fptype dFun(double s, double daug2Mass, double daug3Mass) {
     // Helper function used in Gronau-Sakurai
     const fptype _pi = 3.14159265359;
     double sm   = daug2Mass + daug3Mass;
@@ -177,7 +177,7 @@ EXEC_TARGET fptype dFun(double s, double daug2Mass, double daug3Mass) {
     return val;
 }
 
-EXEC_TARGET fptype fsFun(double s, double m2, double gam, double daug2Mass, double daug3Mass) {
+__device__ fptype fsFun(double s, double m2, double gam, double daug2Mass, double daug3Mass) {
     // Another G-S helper function
 
     double k_s   = twoBodyCMmom(s,  daug2Mass, daug3Mass);
@@ -190,7 +190,7 @@ EXEC_TARGET fptype fsFun(double s, double m2, double gam, double daug2Mass, doub
     return f;
 }
 
-EXEC_TARGET devcomplex<fptype> gouSak(fptype m12, fptype m13, fptype m23, unsigned int* indices) {
+__device__ thrust::complex<fptype> gouSak(fptype m12, fptype m13, fptype m23, unsigned int* indices) {
     fptype motherMass             = RO_CACHE(functorConstants[RO_CACHE(indices[1])+0]);
     fptype daug1Mass              = RO_CACHE(functorConstants[RO_CACHE(indices[1])+1]);
     fptype daug2Mass              = RO_CACHE(functorConstants[RO_CACHE(indices[1])+2]);
@@ -219,20 +219,20 @@ EXEC_TARGET devcomplex<fptype> gouSak(fptype m12, fptype m13, fptype m23, unsign
 
     // Implement Gou-Sak:
 
-    fptype D = (1.0 + dFun(resmass, daug2Mass, daug3Mass) * reswidth/SQRT(resmass));
+    fptype D = (1.0 + dFun(resmass, daug2Mass, daug3Mass) * reswidth/sqrt(resmass));
     fptype E = resmass - rMassSq + fsFun(rMassSq, resmass, reswidth, daug2Mass, daug3Mass);
-    fptype F = SQRT(resmass) * reswidth * POW(measureDaughterMoms / nominalDaughterMoms, 2.0*spin + 1) * frFactor;
+    fptype F = sqrt(resmass) * reswidth * pow(measureDaughterMoms / nominalDaughterMoms, 2.0*spin + 1) * frFactor;
 
     D       /= (E*E + F*F);
-    devcomplex<fptype> retur(D*E, D*F); // Dropping F_D=1
-    retur *= SQRT(frFactor);
+    thrust::complex<fptype> retur(D*E, D*F); // Dropping F_D=1
+    retur *= sqrt(frFactor);
     retur *= spinFactor(spin, motherMass, daug1Mass, daug2Mass, daug3Mass, m12, m13, m23, cyclic_index);
 
     return retur;
 }
 
 
-EXEC_TARGET devcomplex<fptype> lass(fptype m12, fptype m13, fptype m23, unsigned int* indices) {
+__device__ thrust::complex<fptype> lass(fptype m12, fptype m13, fptype m23, unsigned int* indices) {
     fptype motherMass             = RO_CACHE(functorConstants[RO_CACHE(indices[1])+0]);
     fptype daug1Mass              = RO_CACHE(functorConstants[RO_CACHE(indices[1])+1]);
     fptype daug2Mass              = RO_CACHE(functorConstants[RO_CACHE(indices[1])+2]);
@@ -271,7 +271,7 @@ EXEC_TARGET devcomplex<fptype> lass(fptype m12, fptype m13, fptype m23, unsigned
     */
 
     fptype q = measureDaughterMoms;
-    fptype g = reswidth * POW(measureDaughterMoms / nominalDaughterMoms, 2.0*spin + 1) * frFactor / SQRT(rMassSq);
+    fptype g = reswidth * pow(measureDaughterMoms / nominalDaughterMoms, 2.0*spin + 1) * frFactor / sqrt(rMassSq);
 
     fptype _a    = 0.22357;
     fptype _r    = -15.042;
@@ -285,46 +285,46 @@ EXEC_TARGET devcomplex<fptype> lass(fptype m12, fptype m13, fptype m23, unsigned
     fptype qcot_deltaB = (1.0 / _a) + 0.5*_r*q*q;
 
     // calculate resonant part
-    devcomplex<fptype> expi2deltaB = devcomplex<fptype>(qcot_deltaB, q)/devcomplex<fptype>(qcot_deltaB, -q);
-    devcomplex<fptype>  resT = devcomplex<fptype>(cos(_phiR+2*_phiB), sin(_phiR+2*_phiB))*_R;
+    thrust::complex<fptype> expi2deltaB = thrust::complex<fptype>(qcot_deltaB, q)/thrust::complex<fptype>(qcot_deltaB, -q);
+    thrust::complex<fptype>  resT = thrust::complex<fptype>(cos(_phiR+2*_phiB), sin(_phiR+2*_phiB))*_R;
 
-    devcomplex<fptype> prop = devcomplex<fptype>(1, 0)/devcomplex<fptype>(resmass-rMassSq, SQRT(resmass)*g);
+    thrust::complex<fptype> prop = thrust::complex<fptype>(1, 0)/thrust::complex<fptype>(resmass-rMassSq, sqrt(resmass)*g);
     // resT *= prop*m0*_g0*m0/twoBodyCMmom(m0*m0, _trackinfo[i])*expi2deltaB;
     resT *= prop*(resmass*reswidth/nominalDaughterMoms)*expi2deltaB;
 
     // calculate bkg part
-    resT += devcomplex<fptype>(cos(_phiB),
-                               sin(_phiB))*_B*(cos(_phiB)+cot_deltaB*sin(_phiB))*SQRT(rMassSq)/devcomplex<fptype>(qcot_deltaB, -q);
+    resT += thrust::complex<fptype>(cos(_phiB),
+                               sin(_phiB))*_B*(cos(_phiB)+cot_deltaB*sin(_phiB))*sqrt(rMassSq)/thrust::complex<fptype>(qcot_deltaB, -q);
 
-    resT *= SQRT(frFactor);
+    resT *= sqrt(frFactor);
     resT *= spinFactor(spin, motherMass, daug1Mass, daug2Mass, daug3Mass, m12, m13, m23, cyclic_index);
 
     return resT;
 }
 
 
-EXEC_TARGET devcomplex<fptype> nonres(fptype m12, fptype m13, fptype m23, unsigned int* indices) {
-    return devcomplex<fptype>(1, 0);
+__device__ thrust::complex<fptype> nonres(fptype m12, fptype m13, fptype m23, unsigned int* indices) {
+    return thrust::complex<fptype>(1, 0);
 }
 
 
-EXEC_TARGET void getAmplitudeCoefficients(devcomplex<fptype> a1, devcomplex<fptype> a2, fptype& a1sq, fptype& a2sq,
+__device__ void getAmplitudeCoefficients(thrust::complex<fptype> a1, thrust::complex<fptype> a2, fptype& a1sq, fptype& a2sq,
         fptype& a1a2real, fptype& a1a2imag) {
     // Returns A_1^2, A_2^2, real and imaginary parts of A_1A_2^*
-    a1sq = a1.abs2();
-    a2sq = a2.abs2();
+    a1sq = thrust::norm(a1);
+    a2sq = thrust::norm(a2);
     a1 *= conj(a2);
-    a1a2real = a1.real;
-    a1a2imag = a1.imag;
+    a1a2real = a1.real();
+    a1a2imag = a1.imag();
 }
 
-MEM_DEVICE resonance_function_ptr ptr_to_RBW = plainBW;
-MEM_DEVICE resonance_function_ptr ptr_to_GOUSAK = gouSak;
-MEM_DEVICE resonance_function_ptr ptr_to_GAUSSIAN = gaussian;
-MEM_DEVICE resonance_function_ptr ptr_to_NONRES = nonres;
-MEM_DEVICE resonance_function_ptr ptr_to_LASS = lass;
+__device__ resonance_function_ptr ptr_to_RBW = plainBW;
+__device__ resonance_function_ptr ptr_to_GOUSAK = gouSak;
+__device__ resonance_function_ptr ptr_to_GAUSSIAN = gaussian;
+__device__ resonance_function_ptr ptr_to_NONRES = nonres;
+__device__ resonance_function_ptr ptr_to_LASS = lass;
 
-ResonancePdf::ResonancePdf(string name,
+ResonancePdf::ResonancePdf(std::string name,
                            Variable* ar,
                            Variable* ai,
                            Variable* mass,
@@ -334,7 +334,7 @@ ResonancePdf::ResonancePdf(string name,
     : GooPdf(0, name)
     , amp_real(ar)
     , amp_imag(ai) {
-    vector<unsigned int> pindices;
+    std::vector<unsigned int> pindices;
     pindices.push_back(0);
     // Making room for index of decay-related constants. Assumption:
     // These are mother mass and three daughter masses in that order.
@@ -350,7 +350,7 @@ ResonancePdf::ResonancePdf(string name,
     initialise(pindices);
 }
 
-ResonancePdf::ResonancePdf(string name,
+ResonancePdf::ResonancePdf(std::string name,
                            Variable* ar,
                            Variable* ai,
                            unsigned int sp,
@@ -361,7 +361,7 @@ ResonancePdf::ResonancePdf(string name,
     , amp_real(ar)
     , amp_imag(ai) {
     // Same as BW except for function pointed to.
-    vector<unsigned int> pindices;
+    std::vector<unsigned int> pindices;
     pindices.push_back(0);
     pindices.push_back(registerParameter(mass));
     pindices.push_back(registerParameter(width));
@@ -373,7 +373,7 @@ ResonancePdf::ResonancePdf(string name,
 }
 
 
-ResonancePdf::ResonancePdf(string name,
+ResonancePdf::ResonancePdf(std::string name,
                            Variable* ar,
                            Variable* ai,
                            Variable* mass,
@@ -384,7 +384,7 @@ ResonancePdf::ResonancePdf(string name,
     , amp_real(ar)
     , amp_imag(ai) {
     // Same as BW except for function pointed to.
-    vector<unsigned int> pindices;
+    std::vector<unsigned int> pindices;
     pindices.push_back(0);
     pindices.push_back(registerParameter(mass));
     pindices.push_back(registerParameter(width));
@@ -396,13 +396,13 @@ ResonancePdf::ResonancePdf(string name,
 }
 
 
-ResonancePdf::ResonancePdf(string name,
+ResonancePdf::ResonancePdf(std::string name,
                            Variable* ar,
                            Variable* ai)
     : GooPdf(0, name)
     , amp_real(ar)
     , amp_imag(ai) {
-    vector<unsigned int> pindices;
+    std::vector<unsigned int> pindices;
     pindices.push_back(0);
     // Dummy index for constants - won't use it, but calling
     // functions can't know that and will call setConstantIndex anyway.
@@ -410,7 +410,7 @@ ResonancePdf::ResonancePdf(string name,
     initialise(pindices);
 }
 
-ResonancePdf::ResonancePdf(string name,
+ResonancePdf::ResonancePdf(std::string name,
                            Variable* ar,
                            Variable* ai,
                            Variable* mean,
@@ -419,7 +419,7 @@ ResonancePdf::ResonancePdf(string name,
     : GooPdf(0, name)
     , amp_real(ar)
     , amp_imag(ai) {
-    vector<unsigned int> pindices;
+    std::vector<unsigned int> pindices;
     pindices.push_back(0);
     // Dummy index for constants - won't use it, but calling
     // functions can't know that and will call setConstantIndex anyway.

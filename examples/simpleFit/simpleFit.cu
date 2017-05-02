@@ -48,6 +48,9 @@ void fitAndPlot(GooPdf* total, UnbinnedDataSet* data, TH1F& dataHist, Variable* 
     total->setData(data);
     FitManager fitter(total);
     fitter.fit();
+    
+    if(!fitter)
+        std::exit(fitter);
 
     TH1F pdfHist("pdfHist", "", xvar->numbins, xvar->lowerlimit, xvar->upperlimit);
     pdfHist.SetStats(false);

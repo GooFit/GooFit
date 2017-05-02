@@ -1,7 +1,10 @@
 #include "goofit/Faddeeva.h"
-#include <complex>
+
 #include <cassert>
 #include <math.h>
+
+#include <thrust/complex.h>
+
 #define M_2PI 6.28318530717958
 
 static fptype n1[12] = { 0.25, 1.0, 2.25, 4.0, 6.25, 9.0, 12.25, 16.0, 20.25, 25.0, 30.25, 36.0 };
@@ -34,9 +37,9 @@ static fptype D[7] = { 192192.0, 8648640.0, 183783600.0, 2329725600.0,
                      };
 
 
-std::complex<fptype> Faddeeva_2(const std::complex<fptype>& z) {
+thrust::complex<fptype> Faddeeva_2(const thrust::complex<fptype>& z) {
     fptype* n, *e, t, u, r, s, d, f, g, h;
-    std::complex<fptype> c, d2, v, w;
+    thrust::complex<fptype> c, d2, v, w;
     int i;
 
 
@@ -44,7 +47,7 @@ std::complex<fptype> Faddeeva_2(const std::complex<fptype>& z) {
 
     if(s < 1e-7) {
         // use Pade approximation
-        std::complex<fptype> zz = z*z;
+        thrust::complex<fptype> zz = z*z;
         v  = exp(zz);
         c  = C[0];
         d2 = D[0];
@@ -54,7 +57,7 @@ std::complex<fptype> Faddeeva_2(const std::complex<fptype>& z) {
             d2 = d2 * zz + D[i];
         }
 
-        w = fptype(1.0) / v + std::complex<fptype>(0.0, M_2_SQRTPI) * c/d2 * z * v;
+        w = fptype(1.0) / v + thrust::complex<fptype>(0.0, M_2_SQRTPI) * c/d2 * z * v;
         return w;
     }
 
@@ -65,19 +68,12 @@ std::complex<fptype> Faddeeva_2(const std::complex<fptype>& z) {
     e = e1;
     r = M_1_PI * 0.5;
 
-#ifdef FADEBUG
-    std::cout << "Start " << real(z) << ", " << imag(z) << std::endl;
-#endif
-
     // if z is too close to a pole select table 2
-    if(FABS(imag(z)) < 0.01 && FABS(real(z)) < 6.01) {
-#ifdef FADEBUG
-        std::cout << "Table 2" << std::endl;
-#endif
+    if(fabs(z.imag()) < 0.01 && fabs(z.real()) < 6.01) {
 
-        h = FABS(real(z))*2;
+        h = fabs(z.real())*2;
         // Equivalent to modf(h, &g). Do this way because nvcc only knows about double version of modf.
-        g = FLOOR(h);
+        g = floor(h);
         h -= g;
 
         if(h < 0.02 || h > 0.98) {
@@ -87,12 +83,8 @@ std::complex<fptype> Faddeeva_2(const std::complex<fptype>& z) {
         }
     }
 
-    d = (imag(z) - real(z)) * (imag(z) + real(z));
-    f = 4 * real(z) * real(z) * imag(z) * imag(z);
-
-#ifdef FADEBUG
-    printf("check 1, %f %f %f %f\n", d, f, n[0], e[0]);
-#endif
+    d = (z.imag() - z.real()) * (z.imag() + z.real());
+    f = 4 * z.real() * z.real() * z.imag() * z.imag();
 
     g = h = 0.0;
 
@@ -105,35 +97,24 @@ std::complex<fptype> Faddeeva_2(const std::complex<fptype>& z) {
 
     u = 1 / s;
 
-#ifdef FADEBUG
-    printf("check 2, %f %f %f %f %f\n", r, u, g, h, s);
-#endif
-
-    c = r * std::complex<fptype>(imag(z) * (u + 2.0 * g),
-                                 real(z) * (u + 2.0 * h));
-
-#ifdef FADEBUG
-    printf("check 3, c is %f %f\n", real(c), imag(c));
-#endif
+    c = r * thrust::complex<fptype>(z.imag() * (u + 2.0 * g),
+                                 z.real() * (u + 2.0 * h));
 
 
-    if(imag(z) < M_2PI) {
+    if(z.imag() < M_2PI) {
         s = 2.0 / r;
-        t = s * real(z);
-        u = s * imag(z);
-        s = SIN(t);
-        h = COS(t);
-        f = EXP(- u) - h;
-        g = 2.0 * EXP(d-u) / (s * s + f * f);
-        u = 2.0 * real(z) * imag(z);
-        h = COS(u);
-        t = SIN(u);
-        c += g * std::complex<fptype>((h * f - t * s), -(h * s + t * f));
+        t = s * z.real();
+        u = s * z.imag();
+        s = sin(t);
+        h = cos(t);
+        f = exp(- u) - h;
+        g = 2.0 * exp(d-u) / (s * s + f * f);
+        u = 2.0 * z.real() * z.imag();
+        h = cos(u);
+        t = sin(u);
+        c += g * thrust::complex<fptype>((h * f - t * s), -(h * s + t * f));
     }
 
-#ifdef FADEBUG
-    std::cout << "c value is " << c << std::endl;
-#endif
     return c;
 }
 
@@ -157,15 +138,15 @@ fptype cpuvoigtian(fptype x, fptype m, fptype w, fptype s) {
 
     // Gauss for zero width
     if(0==w)
-        return EXP(coef*arg*arg);
+        return exp(coef*arg*arg);
 
     // actual Voigtian for non-trivial width and sigma
     fptype c = 1./(sqrt(2)*s);
     fptype a = 0.5*c*w;
     fptype u = c*arg;
-    std::complex<fptype> z(u, a) ;
+    thrust::complex<fptype> z(u, a) ;
     //printf("Calling Faddeeva %f %f %f %f %f %f %f\n", x, m, s, w, c, a, u);
-    std::complex<fptype> v = Faddeeva_2(z);
+    thrust::complex<fptype> v = Faddeeva_2(z);
 
     static const fptype rsqrtPi = 0.5641895835477563;
     return c*rsqrtPi*v.real();

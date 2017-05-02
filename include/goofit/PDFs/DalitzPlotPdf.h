@@ -1,9 +1,9 @@
-#ifndef DALITZPLOT_PDF_HH
-#define DALITZPLOT_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/PDFs/DalitzPlotHelpers.h"
-#include "goofit/PDFs/devcomplex.h"
+
+#include <thrust/complex.h>
 
 class SpecialResonanceIntegrator;
 class SpecialResonanceCalculator;
@@ -32,8 +32,8 @@ private:
 
     // Following variables are useful if masses and widths, involved in difficult BW calculation,
     // change infrequently while amplitudes, only used in adding BW results together, change rapidly.
-    DEVICE_VECTOR<devcomplex<fptype>>* cachedWaves[16]; // Caches the BW values for each event.
-    devcomplex<fptype>*** integrals; // Caches the integrals of the BW waves for each combination of resonances.
+    thrust::device_vector<thrust::complex<fptype>>* cachedWaves[16]; // Caches the BW values for each event.
+    thrust::complex<fptype>*** integrals; // Caches the integrals of the BW waves for each combination of resonances.
 
     bool* redoIntegral;
     mutable bool forceRedoIntegrals;
@@ -45,11 +45,11 @@ private:
     SpecialResonanceCalculator** calculators;
 };
 
-class SpecialResonanceIntegrator : public thrust::unary_function<thrust::tuple<int, fptype*>, devcomplex<fptype>> {
+class SpecialResonanceIntegrator : public thrust::unary_function<thrust::tuple<int, fptype*>, thrust::complex<fptype>> {
 public:
     // Class used to calculate integrals of terms BW_i * BW_j^*.
     SpecialResonanceIntegrator(int pIdx, unsigned int ri, unsigned int rj);
-    EXEC_TARGET devcomplex<fptype> operator()(thrust::tuple<int, fptype*> t) const;
+    __device__ thrust::complex<fptype> operator()(thrust::tuple<int, fptype*> t) const;
 private:
 
     unsigned int resonance_i;
@@ -57,18 +57,15 @@ private:
     unsigned int parameters;
 };
 
-class SpecialResonanceCalculator : public thrust::unary_function<thrust::tuple<int, fptype*, int>, devcomplex<fptype>> {
+class SpecialResonanceCalculator : public thrust::unary_function<thrust::tuple<int, fptype*, int>, thrust::complex<fptype>> {
 public:
     // Used to create the cached BW values.
     SpecialResonanceCalculator(int pIdx, unsigned int res_idx);
-    EXEC_TARGET devcomplex<fptype> operator()(thrust::tuple<int, fptype*, int> t) const;
+    __device__ thrust::complex<fptype> operator()(thrust::tuple<int, fptype*, int> t) const;
 
 private:
 
     unsigned int resonance_i;
     unsigned int parameters;
 };
-
-
-#endif
 

@@ -52,14 +52,14 @@ int main(int argc, char** argv) {
     Variable* RhoWidth = new Variable("rho_width", 0.1478, 0.01, 0.1, 0.2);
     Variable* KstarM   = new Variable("KstarM", 0.89581, 0.01, 0.9, 0.1);
     Variable* KstarW   = new Variable("KstarW", 0.0474, 0.01, 0.1, 0.2);
-    Variable* f600M  = new Variable("f600M", 0.519, 0.01, 0.75, 0.85);
-    Variable* f600W  = new Variable("f600W", 0.454, 0.01, 0.75, 0.85);
-    Variable* a1M  = new Variable("a1M", 1.23, 0.01, 1.2, 1.3);
-    Variable* a1W  = new Variable("a1W", 0.42, 0.01, 0.37, 0.47);
-    Variable* K1M  = new Variable("K1M", 1.272, 0.01, 1.2, 1.3);
-    Variable* K1W  = new Variable("K1W", 0.09, 0.01, 0.08, 0.1);
-    Variable* K1430M  = new Variable("K1430M", 1.414, 0.01, 1.4, 1.5);
-    Variable* K1430W  = new Variable("K1430W", .29, 0.01, 0.25, 0.35);
+    //Variable* f600M  = new Variable("f600M", 0.519, 0.01, 0.75, 0.85);
+    //Variable* f600W  = new Variable("f600W", 0.454, 0.01, 0.75, 0.85);
+    //Variable* a1M  = new Variable("a1M", 1.23, 0.01, 1.2, 1.3);
+    //Variable* a1W  = new Variable("a1W", 0.42, 0.01, 0.37, 0.47);
+    //Variable* K1M  = new Variable("K1M", 1.272, 0.01, 1.2, 1.3);
+    //Variable* K1W  = new Variable("K1W", 0.09, 0.01, 0.08, 0.1);
+    //Variable* K1430M  = new Variable("K1430M", 1.414, 0.01, 1.4, 1.5);
+    //Variable* K1430W  = new Variable("K1430W", .29, 0.01, 0.25, 0.35);
 
     //Spin factors: we have two due to the bose symmetrization of the two pi+
     std::vector<SpinFactor*> SFKRS;
@@ -144,7 +144,7 @@ int main(int argc, char** argv) {
     DK3P_DI->_tau = new Variable("tau", 0.4101, 0.001, 0.300, 0.500);
     DK3P_DI->_xmixing = new Variable("xmixing", 0.005, 0.001, 0, 0);
     DK3P_DI->_ymixing = new Variable("ymixing", 0.01, 0.001, 0, 0);
-    DK3P_DI->_SqWStoRSrate = new Variable("SqWStoRSrate", 1.0/SQRT(300.0));
+    DK3P_DI->_SqWStoRSrate = new Variable("SqWStoRSrate", 1.0/sqrt(300.0));
 
     Variable* m12 = new Variable("m12", 0, 3);
     Variable* m34 = new Variable("m34", 0, 3);

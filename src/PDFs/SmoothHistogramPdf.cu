@@ -1,10 +1,11 @@
 #include "goofit/PDFs/SmoothHistogramPdf.h"
+#include "goofit/Variable.h"
 
-MEM_CONSTANT fptype* dev_base_histograms[100]; // Multiple histograms for the case of multiple PDFs
-MEM_CONSTANT fptype* dev_smoothed_histograms[100];
+__constant__ fptype* dev_base_histograms[100]; // Multiple histograms for the case of multiple PDFs
+__constant__ fptype* dev_smoothed_histograms[100];
 unsigned int SmoothHistogramPdf::totalHistograms = 0;
 
-EXEC_TARGET int dev_powi(int base, int exp) {
+__device__ int dev_powi(int base, int exp) {
     int ret = 1;
 
     for(int i = 0; i < exp; ++i)
@@ -13,7 +14,7 @@ EXEC_TARGET int dev_powi(int base, int exp) {
     return ret;
 }
 
-EXEC_TARGET fptype device_EvalHistogram(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_EvalHistogram(fptype* evt, fptype* p, unsigned int* indices) {
     // Structure is
     // nP smoothingIndex totalHistograms (limit1 step1 bins1) (limit2 step2 bins2) nO o1 o2
     // where limit and step are indices into functorConstants.
@@ -35,7 +36,7 @@ EXEC_TARGET fptype device_EvalHistogram(fptype* evt, fptype* p, unsigned int* in
         currVariable /= step;
         //if (gpuDebug & 1) printf("[%i, %i] Smoothed: %i %i %f %f %f %f\n", BLOCKIDX, THREADIDX, i, varIndex, currVariable, lowerBound, step, evt[varIndex]);
 
-        int localBinNumber  = (int) FLOOR(currVariable);
+        int localBinNumber  = (int) floor(currVariable);
         globalBinNumber    += previous * localBinNumber;
         previous           *= indices[lowerBoundIdx + 2];
     }
@@ -52,7 +53,7 @@ EXEC_TARGET fptype device_EvalHistogram(fptype* evt, fptype* p, unsigned int* in
 struct Smoother {
     int parameters;
 
-    EXEC_TARGET fptype operator()(int globalBin) {
+    __device__ fptype operator()(int globalBin) {
         unsigned int* indices = paramIndices + parameters;
         int numVars = RO_CACHE(indices[RO_CACHE(indices[0]) + 1]);
         fptype smoothing = RO_CACHE(cudaArray[RO_CACHE(indices[1])]);
@@ -108,7 +109,7 @@ struct Smoother {
     }
 };
 
-MEM_DEVICE device_function_ptr ptr_to_EvalHistogram = device_EvalHistogram;
+__device__ device_function_ptr ptr_to_EvalHistogram = device_EvalHistogram;
 
 __host__ SmoothHistogramPdf::SmoothHistogramPdf(std::string n, BinnedDataSet* hist, Variable* smoothing)
     : GooPdf(0, n) {
@@ -173,8 +174,8 @@ fptype* pointerToFirst(thrust::host_vector<fptype>* hist) {
 }
 
 __host__ void SmoothHistogramPdf::copyHistogramToDevice(thrust::host_vector<fptype>& host_histogram) {
-    dev_base_histogram = new DEVICE_VECTOR<fptype>(host_histogram);
-    dev_smoothed_histogram = new DEVICE_VECTOR<fptype>(host_histogram);
+    dev_base_histogram = new thrust::device_vector<fptype>(host_histogram);
+    dev_smoothed_histogram = new thrust::device_vector<fptype>(host_histogram);
     static fptype* dev_address[1];
     dev_address[0] = pointerToFirst(dev_base_histogram);
     MEMCPY_TO_SYMBOL(dev_base_histograms, dev_address, sizeof(fptype*), totalHistograms*sizeof(fptype*),

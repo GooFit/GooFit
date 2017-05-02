@@ -1,7 +1,10 @@
-#include "CLI/CLI.hpp"
+#pragma once
+
+#include <CLI/CLI.hpp>
 #include "goofit/Version.h"
-#include "thrust/detail/config/device_system.h"
-#include "rang.hpp"
+#include "goofit/Color.h"
+#include <thrust/detail/config/device_system.h>
+#include <x86/cpu_x86.h>
 
 #ifdef GOOFIT_MPI
 #include <mpi.h>
@@ -22,11 +25,11 @@
 namespace GooFit {
     
 void signal_handler(int s){
-    std::cout << std::endl << rang::style::reset << rang::fg::red << rang::style::bold;
-    std::cout << "GooFit: Control-C detected, exiting..." << rang::style::reset << std::endl;
+    std::cout << std::endl << reset << red << bold;
+    std::cout << "GooFit: Control-C detected, exiting..." << reset << std::endl;
     std::exit(1); // will call the correct exit func, no unwinding of the stack though
 }
-
+   
 using namespace CLI;
 
 class Application : public CLI::App {
@@ -104,7 +107,7 @@ public:
 
         // Reset color on exit (but not control-c)
         std::atexit([]() {
-            std::cout << rang::style::reset;
+            std::cout << GooFit::reset;
         });
         
         sigIntHandler.sa_handler = signal_handler;
@@ -133,12 +136,15 @@ public:
         set_device();
 
         if(show_threads_) {
-            std::cout << "GOOFIT: Version " << GOOFIT_VERSION_MAJOR << "." << GOOFIT_VERSION_MINOR << "." << GOOFIT_VERSION_PATCH <<
-                      std::endl;
+            std::cout << blue;
+            std::cout << "GOOFIT: Version " << GOOFIT_VERSION_MAJOR
+                                     << "." << GOOFIT_VERSION_MINOR
+                                     << "." << GOOFIT_VERSION_PATCH << std::endl;
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-            std::cout << "CUDA: Device " << get_device() << std::endl;
+            std::cout << "CUDA: Device " << get_device() << ": ";
             cudaDeviceProp devProp;
             cudaGetDeviceProperties(&devProp, gpuDev_);
+            std::cout << devProp.name << std::endl;
             std::cout << "CUDA: Compute " << devProp.major << "." << devProp.minor << std::endl;
             std::cout << "CUDA: Total global memory: " <<  devProp.totalGlobalMem / 1.0e9 << "GB" << std::endl;
             std::cout << "CUDA: Multiprocessors: "<< devProp.multiProcessorCount << std::endl;
@@ -149,8 +155,17 @@ public:
             std::cout << "CUDA: Total amount of constant memory: " << devProp.totalConstMem << std::endl;
 
 #elif THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_OMP
-            std::cout << "OMP: Number of threads: " << omp_get_max_threads << std::endl;
+            std::cout << "OMP: Number of threads: " << omp_get_max_threads() << std::endl;
+#elif THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_TBB
+            std::cout << "TBB: Backend selected" << std::endl;
+#elif THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CPP
+            std::cout << "CPP: Single threaded mode" << std::endl;
 #endif
+
+            // Print out warnings if not fully optimized
+            std::cout << red;
+            FeatureDetector::cpu_x86::print_warnings();
+            std::cout << GooFit::reset << std::flush;
         }
 
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
@@ -182,9 +197,9 @@ public:
             return e.get_exit_code();
 
 #endif
-        std::cout << (e.get_exit_code()==0 ? rang::fg::blue : rang::fg::red);
+        std::cout << (e.get_exit_code()==0 ? blue : red);
         int rval = CLI::App::exit(e);
-        std::cout << rang::fg::reset;
+        std::cout << GooFit::reset;
         return rval;
     }
 

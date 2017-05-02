@@ -32,9 +32,6 @@ using namespace std;
 
 TCanvas* foo;
 TCanvas* foodal;
-timeval startTime, stopTime, totalTime;
-clock_t startCPU, stopCPU;
-tms startProc, stopProc;
 UnbinnedDataSet* data = 0;
 
 Variable* m12 = 0;
@@ -364,7 +361,7 @@ DalitzPlotPdf* makeSignalPdf(GooPdf* eff = 0) {
     return new DalitzPlotPdf("signalPDF", m12, m13, eventNumber, dtop0pp, eff);
 }
 
-void runToyFit(std::string toyFileName) {
+int runToyFit(std::string toyFileName) {
     m12 = new Variable("m12", 0, 3);
     m13 = new Variable("m13", 0, 3);
     m12->numbins = 240;
@@ -386,11 +383,8 @@ void runToyFit(std::string toyFileName) {
     signal->setDataSize(data->getNumEvents());
     FitManager datapdf(signal);
 
-    gettimeofday(&startTime, NULL);
-    startCPU = times(&startProc);
     datapdf.fit();
-    stopCPU = times(&stopProc);
-    gettimeofday(&stopTime, NULL);
+    return datapdf;
 }
 
 int main(int argc, char** argv) {
@@ -423,25 +417,10 @@ int main(int argc, char** argv) {
     foodal = new TCanvas();
     foodal->Size(10, 10);
 
-    // cudaSetDevice(0);
-
     try {
-        runToyFit(filename);
+        return runToyFit(filename);
     } catch(const std::runtime_error& e) {
         std::cerr << e.what() << std::endl;
         return 7;
     }
-
-    // Print total minimization time
-    double myCPU = stopCPU - startCPU;
-    double totalCPU = myCPU;
-
-    timersub(&stopTime, &startTime, &totalTime);
-    std::cout << "Wallclock time  : " << totalTime.tv_sec + totalTime.tv_usec/1000000.0 << " seconds." << std::endl;
-    std::cout << "CPU time: " << (myCPU / CLOCKS_PER_SEC) << std::endl;
-    std::cout << "Total CPU time: " << (totalCPU / CLOCKS_PER_SEC) << std::endl;
-    myCPU = stopProc.tms_utime - startProc.tms_utime;
-    std::cout << "Processor time: " << (myCPU / CLOCKS_PER_SEC) << std::endl;
-
-    return 0;
 }

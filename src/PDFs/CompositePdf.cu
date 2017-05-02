@@ -1,6 +1,6 @@
 #include "goofit/PDFs/CompositePdf.h"
 
-EXEC_TARGET fptype device_Composite(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_Composite(fptype* evt, fptype* p, unsigned int* indices) {
     unsigned int coreFcnIndex  = RO_CACHE(indices[1]);
     unsigned int coreParIndex  = RO_CACHE(indices[2]);
     unsigned int shellFcnIndex = RO_CACHE(indices[3]);
@@ -28,7 +28,7 @@ EXEC_TARGET fptype device_Composite(fptype* evt, fptype* p, unsigned int* indice
     return ret;
 }
 
-MEM_DEVICE device_function_ptr ptr_to_Composite = device_Composite;
+__device__ device_function_ptr ptr_to_Composite = device_Composite;
 
 __host__ CompositePdf::CompositePdf(std::string n, PdfBase* core, PdfBase* shell)
     : GooPdf(0, n) {

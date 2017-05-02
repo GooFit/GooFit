@@ -3,28 +3,28 @@
 // LANDAU pdf : algorithm from CERNLIB G110 denlan
 // same algorithm is used in GSL
 
-MEM_CONSTANT fptype p1[5] = {0.4259894875, -0.1249762550, 0.03984243700, -0.006298287635,   0.001511162253};
-MEM_CONSTANT fptype q1[5] = {1.0, -0.3388260629, 0.09594393323, -0.01608042283,    0.003778942063};
+__constant__ fptype p1[5] = {0.4259894875, -0.1249762550, 0.03984243700, -0.006298287635,   0.001511162253};
+__constant__ fptype q1[5] = {1.0, -0.3388260629, 0.09594393323, -0.01608042283,    0.003778942063};
 
-MEM_CONSTANT fptype p2[5] = {0.1788541609, 0.1173957403, 0.01488850518, -0.001394989411,   0.0001283617211};
-MEM_CONSTANT fptype q2[5] = {1.0, 0.7428795082, 0.3153932961,   0.06694219548,    0.008790609714};
+__constant__ fptype p2[5] = {0.1788541609, 0.1173957403, 0.01488850518, -0.001394989411,   0.0001283617211};
+__constant__ fptype q2[5] = {1.0, 0.7428795082, 0.3153932961,   0.06694219548,    0.008790609714};
 
-MEM_CONSTANT fptype p3[5] = {0.1788544503, 0.09359161662, 0.006325387654, 0.00006611667319, -0.000002031049101};
-MEM_CONSTANT fptype q3[5] = {1.0, 0.6097809921, 0.2560616665,   0.04746722384,    0.006957301675};
+__constant__ fptype p3[5] = {0.1788544503, 0.09359161662, 0.006325387654, 0.00006611667319, -0.000002031049101};
+__constant__ fptype q3[5] = {1.0, 0.6097809921, 0.2560616665,   0.04746722384,    0.006957301675};
 
-MEM_CONSTANT fptype p4[5] = {0.9874054407, 118.6723273,  849.2794360,   -743.7792444,      427.0262186};
-MEM_CONSTANT fptype q4[5] = {1.0, 106.8615961,  337.6496214,    2016.712389,      1597.063511};
+__constant__ fptype p4[5] = {0.9874054407, 118.6723273,  849.2794360,   -743.7792444,      427.0262186};
+__constant__ fptype q4[5] = {1.0, 106.8615961,  337.6496214,    2016.712389,      1597.063511};
 
-MEM_CONSTANT fptype p5[5] = {1.003675074,  167.5702434,  4789.711289,    21217.86767,     -22324.94910};
-MEM_CONSTANT fptype q5[5] = {1.0, 156.9424537,  3745.310488,    9834.698876,      66924.28357};
+__constant__ fptype p5[5] = {1.003675074,  167.5702434,  4789.711289,    21217.86767,     -22324.94910};
+__constant__ fptype q5[5] = {1.0, 156.9424537,  3745.310488,    9834.698876,      66924.28357};
 
-MEM_CONSTANT fptype p6[5] = {1.000827619,  664.9143136,  62972.92665,    475554.6998,     -5743609.109};
-MEM_CONSTANT fptype q6[5] = {1.0, 651.4101098,  56974.73333,    165917.4725,     -2815759.939};
+__constant__ fptype p6[5] = {1.000827619,  664.9143136,  62972.92665,    475554.6998,     -5743609.109};
+__constant__ fptype q6[5] = {1.0, 651.4101098,  56974.73333,    165917.4725,     -2815759.939};
 
-MEM_CONSTANT fptype a1[3] = {0.04166666667, -0.01996527778, 0.02709538966};
-MEM_CONSTANT fptype a2[2] = {-1.845568670, -4.284640743};
+__constant__ fptype a1[3] = {0.04166666667, -0.01996527778, 0.02709538966};
+__constant__ fptype a2[2] = {-1.845568670, -4.284640743};
 
-EXEC_TARGET fptype device_Landau(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_Landau(fptype* evt, fptype* p, unsigned int* indices) {
     fptype x     = evt[indices[2 + indices[0]]];
     fptype mpv   = p[indices[1]];
     fptype sigma = p[indices[2]];
@@ -36,17 +36,17 @@ EXEC_TARGET fptype device_Landau(fptype* evt, fptype* p, unsigned int* indices) 
     fptype u, ue, us, denlan;
 
     if(v < -5.5) {
-        u   = EXP(v+1.0);
+        u   = exp(v+1.0);
 
         if(u < 1e-10)
             return 0.0;
 
-        ue  = EXP(-1/u);
-        us  = SQRT(u);
+        ue  = exp(-1/u);
+        us  = sqrt(u);
         denlan = 0.3989422803*(ue/us)*(1+(a1[0]+(a1[1]+a1[2]*u)*u)*u);
     } else if(v < -1) {
-        u   = EXP(-v-1);
-        denlan = EXP(-u)*SQRT(u)*
+        u   = exp(-v-1);
+        denlan = exp(-u)*sqrt(u)*
                  (p1[0]+(p1[1]+(p1[2]+(p1[3]+p1[4]*v)*v)*v)*v)/
                  (q1[0]+(q1[1]+(q1[2]+(q1[3]+q1[4]*v)*v)*v)*v);
     } else if(v < 1) {
@@ -75,7 +75,7 @@ EXEC_TARGET fptype device_Landau(fptype* evt, fptype* p, unsigned int* indices) 
     return denlan/sigma;
 }
 
-MEM_DEVICE device_function_ptr ptr_to_Landau = device_Landau;
+__device__ device_function_ptr ptr_to_Landau = device_Landau;
 
 __host__ LandauPdf::LandauPdf(std::string n, Variable* _x, Variable* mpv, Variable* sigma)
     : GooPdf(_x, n) {

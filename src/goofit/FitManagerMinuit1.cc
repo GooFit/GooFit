@@ -8,7 +8,7 @@
 #include <set>
 #include "goofit/Variable.h"
 PdfBase* pdfPointer;
-vector<Variable*> vars;
+std::vector<Variable*> vars;
 int numPars = 0;
 
 namespace GooFit {
@@ -97,7 +97,7 @@ void FitFun(int& npar, double* gin, double& fun, double* fp, int iflag) {
 
     for(Variable* var : vars) {
         if(std::isnan(fp[counter]))
-            cout << "Variable " << var->name << " " << var->index << " is NaN\n";
+            std::cout << "Variable " << var->name << " " << var->index << " is NaN\n";
 
         pars.at(var->getIndex()) = fp[counter++] + var->blind;
     }
@@ -106,6 +106,4 @@ void FitFun(int& npar, double* gin, double& fun, double* fp, int iflag) {
     fun = pdfPointer->calculateNLL();
     host_callnumber++;
 }
-
-
 

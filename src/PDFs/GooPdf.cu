@@ -1,8 +1,18 @@
 #include "goofit/GlobalCudaDefines.h"
 #include "goofit/PDFs/GooPdf.h"
-#include "thrust/sequence.h"
-#include "thrust/iterator/constant_iterator.h"
-#include <fstream>
+#include "goofit/ThrustOverride.h"
+
+#include "goofit/Variable.h"
+#include "goofit/FitControl.h"
+#include "goofit/BinnedDataSet.h"
+#include "goofit/UnbinnedDataSet.h"
+
+#include <thrust/transform_reduce.h>
+#include <thrust/transform.h>
+#include <thrust/host_vector.h>
+#include <thrust/sequence.h>
+#include <thrust/iterator/constant_iterator.h>
+#include <thrust/iterator/zip_iterator.h>
 
 // These variables are either function-pointer related (thus specific to this implementation)
 // or constrained to be in the CUDAglob translation unit by nvcc limitations; otherwise they
@@ -10,48 +20,48 @@
 
 // Device-side, translation-unit constrained.
 
-MEM_CONSTANT fptype cudaArray[maxParams];           // Holds device-side fit parameters.
+__constant__ fptype cudaArray[maxParams];           // Holds device-side fit parameters.
 
-MEM_CONSTANT unsigned int paramIndices[maxParams];
+__constant__ unsigned int paramIndices[maxParams];
 // Holds functor-specific indices into cudaArray. Also overloaded to hold integer constants (ie parameters that cannot vary.)
 
-MEM_CONSTANT fptype functorConstants[maxParams];
+__constant__ fptype functorConstants[maxParams];
 // Holds non-integer constants. Notice that first entry is number of events.
 
-MEM_CONSTANT fptype normalisationFactors[maxParams];
+__constant__ fptype normalisationFactors[maxParams];
 
 // For debugging
 
-MEM_CONSTANT int callnumber;
-MEM_CONSTANT int gpuDebug;
-MEM_CONSTANT unsigned int debugParamIndex;
-MEM_DEVICE int internalDebug1 = -1;
-MEM_DEVICE int internalDebug2 = -1;
-MEM_DEVICE int internalDebug3 = -1;
+__constant__ int callnumber;
+__constant__ int gpuDebug;
+__constant__ unsigned int debugParamIndex;
+__device__ int internalDebug1 = -1;
+__device__ int internalDebug2 = -1;
+__device__ int internalDebug3 = -1;
 int cpuDebug = 0;
 #ifdef PROFILING
-MEM_DEVICE fptype timeHistogram[10000];
+__device__ fptype timeHistogram[10000];
 fptype host_timeHist[10000];
 #endif
 
 // Function-pointer related.
-MEM_DEVICE void* device_function_table[200];
-// Not clear why this cannot be MEM_CONSTANT, but it causes crashes to declare it so.
+__device__ void* device_function_table[200];
+// Not clear why this cannot be __constant__, but it causes crashes to declare it so.
 
 void* host_function_table[200];
 unsigned int num_device_functions = 0;
-map<void*, int> functionAddressToDeviceIndexMap;
+std::map<void*, int> functionAddressToDeviceIndexMap;
 
 // For use in debugging memory issues
 void printMemoryStatus(std::string file, int line) {
     size_t memfree = 0;
     size_t memtotal = 0;
-    SYNCH();
+    cudaDeviceSynchronize();
 
 #if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_CUDA
     cudaMemGetInfo(&memfree, &memtotal);
 #endif
-    SYNCH();
+    cudaDeviceSynchronize();
     std::cout << "Memory status " << file << " " << line << " Free " << memfree << " Total " << memtotal << " Used " <<
               (memtotal - memfree) << std::endl;
 }
@@ -60,10 +70,6 @@ void printMemoryStatus(std::string file, int line) {
 #include <execinfo.h>
 void* stackarray[10];
 void abortWithCudaPrintFlush(std::string file, int line, std::string reason, const PdfBase* pdf = 0) {
-#ifdef CUDAPRINT
-    cudaPrintfDisplay(stdout, true);
-    cudaPrintfEnd();
-#endif
     std::cout << "Abort called from " << file << " line " << line << " due to " << reason << std::endl;
 
     if(pdf) {
@@ -96,24 +102,24 @@ void abortWithCudaPrintFlush(std::string file, int line, std::string reason, con
     exit(1);
 }
 
-EXEC_TARGET fptype calculateEval(fptype rawPdf, fptype* evtVal, unsigned int par) {
+__device__ fptype calculateEval(fptype rawPdf, fptype* evtVal, unsigned int par) {
     // Just return the raw PDF value, for use in (eg) normalisation.
     return rawPdf;
 }
 
-EXEC_TARGET fptype calculateNLL(fptype rawPdf, fptype* evtVal, unsigned int par) {
+__device__ fptype calculateNLL(fptype rawPdf, fptype* evtVal, unsigned int par) {
     //if ((10 > callnumber) && (THREADIDX < 10) && (BLOCKIDX == 0)) cuPrintf("calculateNll %i %f %f %f\n", callnumber, rawPdf, normalisationFactors[par], rawPdf*normalisationFactors[par]);
     //if (THREADIDX < 50) printf("Thread %i %f %f\n", THREADIDX, rawPdf, normalisationFactors[par]);
     rawPdf *= normalisationFactors[par];
-    return rawPdf > 0 ? -LOG(rawPdf) : 0;
+    return rawPdf > 0 ? -log(rawPdf) : 0;
 }
 
-EXEC_TARGET fptype calculateProb(fptype rawPdf, fptype* evtVal, unsigned int par) {
+__device__ fptype calculateProb(fptype rawPdf, fptype* evtVal, unsigned int par) {
     // Return probability, ie normalised PDF value.
     return rawPdf * normalisationFactors[par];
 }
 
-EXEC_TARGET fptype calculateBinAvg(fptype rawPdf, fptype* evtVal, unsigned int par) {
+__device__ fptype calculateBinAvg(fptype rawPdf, fptype* evtVal, unsigned int par) {
     rawPdf *= normalisationFactors[par];
     rawPdf *= evtVal[1]; // Bin volume
 
@@ -127,30 +133,30 @@ EXEC_TARGET fptype calculateBinAvg(fptype rawPdf, fptype* evtVal, unsigned int p
     return 0;
 }
 
-EXEC_TARGET fptype calculateBinWithError(fptype rawPdf, fptype* evtVal, unsigned int par) {
+__device__ fptype calculateBinWithError(fptype rawPdf, fptype* evtVal, unsigned int par) {
     // In this case interpret the rawPdf as just a number, not a number of events.
     // Do not divide by integral over phase space, do not multiply by bin volume,
     // and do not collect 200 dollars. evtVal should have the structure (bin entry, bin error).
-    //printf("[%i, %i] ((%f - %f) / %f)^2 = %f\n", BLOCKIDX, THREADIDX, rawPdf, evtVal[0], evtVal[1], POW((rawPdf - evtVal[0]) / evtVal[1], 2));
+    //printf("[%i, %i] ((%f - %f) / %f)^2 = %f\n", BLOCKIDX, THREADIDX, rawPdf, evtVal[0], evtVal[1], pow((rawPdf - evtVal[0]) / evtVal[1], 2));
     rawPdf -= evtVal[0]; // Subtract observed value.
     rawPdf /= evtVal[1]; // Divide by error.
     rawPdf *= rawPdf;
     return rawPdf;
 }
 
-EXEC_TARGET fptype calculateChisq(fptype rawPdf, fptype* evtVal, unsigned int par) {
+__device__ fptype calculateChisq(fptype rawPdf, fptype* evtVal, unsigned int par) {
     rawPdf *= normalisationFactors[par];
     rawPdf *= evtVal[1]; // Bin volume
 
     return POW2(rawPdf * functorConstants[0] - evtVal[0]) / (evtVal[0] > 1 ? evtVal[0] : 1);
 }
 
-MEM_DEVICE device_metric_ptr ptr_to_Eval         = calculateEval;
-MEM_DEVICE device_metric_ptr ptr_to_NLL          = calculateNLL;
-MEM_DEVICE device_metric_ptr ptr_to_Prob         = calculateProb;
-MEM_DEVICE device_metric_ptr ptr_to_BinAvg       = calculateBinAvg;
-MEM_DEVICE device_metric_ptr ptr_to_BinWithError = calculateBinWithError;
-MEM_DEVICE device_metric_ptr ptr_to_Chisq        = calculateChisq;
+__device__ device_metric_ptr ptr_to_Eval         = calculateEval;
+__device__ device_metric_ptr ptr_to_NLL          = calculateNLL;
+__device__ device_metric_ptr ptr_to_Prob         = calculateProb;
+__device__ device_metric_ptr ptr_to_BinAvg       = calculateBinAvg;
+__device__ device_metric_ptr ptr_to_BinWithError = calculateBinWithError;
+__device__ device_metric_ptr ptr_to_Chisq        = calculateChisq;
 
 void* host_fcn_ptr = 0;
 
@@ -179,7 +185,7 @@ GooPdf::GooPdf(Variable* x, std::string n)
 
 __host__ int GooPdf::findFunctionIdx(void* dev_functionPtr) {
     // Code specific to function-pointer implementation
-    map<void*, int>::iterator localPos = functionAddressToDeviceIndexMap.find(dev_functionPtr);
+    std::map<void*, int>::iterator localPos = functionAddressToDeviceIndexMap.find(dev_functionPtr);
 
     if(localPos != functionAddressToDeviceIndexMap.end()) {
         return (*localPos).second;
@@ -299,7 +305,7 @@ __host__ double GooPdf::calculateNLL() const {
         abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " non-positive normalisation", this);
 
     MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    SYNCH(); // Ensure normalisation integrals are finished
+    cudaDeviceSynchronize(); // Ensure normalisation integrals are finished
 
     int numVars = observables.size();
 
@@ -528,8 +534,8 @@ __host__ fptype GooPdf::normalise() const {
 }
 
 #ifdef PROFILING
-MEM_CONSTANT fptype conversion = (1.0 / CLOCKS_PER_SEC);
-EXEC_TARGET fptype callFunction(fptype* eventAddress, unsigned int functionIdx, unsigned int paramIdx) {
+__constant__ fptype conversion = (1.0 / CLOCKS_PER_SEC);
+__device__ fptype callFunction(fptype* eventAddress, unsigned int functionIdx, unsigned int paramIdx) {
     clock_t start = clock();
     fptype ret = (*(reinterpret_cast<device_function_ptr>(device_function_table[functionIdx])))(eventAddress, cudaArray,
                  paramIndices + paramIdx);
@@ -544,7 +550,7 @@ EXEC_TARGET fptype callFunction(fptype* eventAddress, unsigned int functionIdx, 
     return ret;
 }
 #else
-EXEC_TARGET fptype callFunction(fptype* eventAddress, unsigned int functionIdx, unsigned int paramIdx) {
+__device__ fptype callFunction(fptype* eventAddress, unsigned int functionIdx, unsigned int paramIdx) {
     return (*(reinterpret_cast<device_function_ptr>(device_function_table[functionIdx])))(eventAddress, cudaArray,
             paramIndices + paramIdx);
 }
@@ -555,7 +561,7 @@ EXEC_TARGET fptype callFunction(fptype* eventAddress, unsigned int functionIdx, 
 
 // Main operator: Calls the PDF to get a predicted value, then the metric
 // to get the goodness-of-prediction number which is returned to MINUIT.
-EXEC_TARGET fptype MetricTaker::operator()(thrust::tuple<int, fptype*, int> t) const {
+__device__ fptype MetricTaker::operator()(thrust::tuple<int, fptype*, int> t) const {
     // Calculate event offset for this thread.
     int eventIndex = thrust::get<0>(t);
     int eventSize  = thrust::get<2>(t);
@@ -576,7 +582,7 @@ EXEC_TARGET fptype MetricTaker::operator()(thrust::tuple<int, fptype*, int> t) c
 // Operator for binned evaluation, no metric.
 // Used in normalisation.
 #define MAX_NUM_OBSERVABLES 5
-EXEC_TARGET fptype MetricTaker::operator()(thrust::tuple<int, int, fptype*> t) const {
+__device__ fptype MetricTaker::operator()(thrust::tuple<int, int, fptype*> t) const {
     // Bin index, event size, base address [lower, upper, numbins]
 
     int evtSize = thrust::get<1>(t);
@@ -584,7 +590,7 @@ EXEC_TARGET fptype MetricTaker::operator()(thrust::tuple<int, int, fptype*> t) c
 
     // Do not understand why this cannot be declared __shared__. Dynamically allocating shared memory is apparently complicated.
     //fptype* binCenters = (fptype*) malloc(evtSize * sizeof(fptype));
-    MEM_SHARED fptype binCenters[1024*MAX_NUM_OBSERVABLES];
+    __shared__ fptype binCenters[1024*MAX_NUM_OBSERVABLES];
 
     // To convert global bin number to (x,y,z...) coordinates: For each dimension, take the mod
     // with the number of bins in that dimension. Then divide by the number of bins, in effect
@@ -594,7 +600,7 @@ EXEC_TARGET fptype MetricTaker::operator()(thrust::tuple<int, int, fptype*> t) c
     for(int i = 0; i < evtSize; ++i) {
         fptype lowerBound = thrust::get<2>(t)[3*i+0];
         fptype upperBound = thrust::get<2>(t)[3*i+1];
-        int numBins    = (int) FLOOR(thrust::get<2>(t)[3*i+2] + 0.5);
+        int numBins    = (int) floor(thrust::get<2>(t)[3*i+2] + 0.5);
         int localBin = binNumber % numBins;
 
         fptype x = upperBound - lowerBound;
@@ -687,7 +693,7 @@ MetricTaker::MetricTaker(PdfBase* dat, void* dev_functionPtr)
     , parameters(dat->getParameterIndex()) {
     //std::cout << "MetricTaker constructor with " << functionIdx << std::endl;
 
-    map<void*, int>::iterator localPos = functionAddressToDeviceIndexMap.find(dev_functionPtr);
+    std::map<void*, int>::iterator localPos = functionAddressToDeviceIndexMap.find(dev_functionPtr);
 
     if(localPos != functionAddressToDeviceIndexMap.end()) {
         metricIndex = (*localPos).second;

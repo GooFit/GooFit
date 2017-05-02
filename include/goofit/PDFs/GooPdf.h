@@ -1,50 +1,36 @@
-#ifndef THRUST_PDF_FUNCTOR_HH
-#define THRUST_PDF_FUNCTOR_HH
-#include <stdlib.h>
-#include <math.h>
-#include <thrust/device_vector.h>
+#pragma once
+
 #include <thrust/functional.h>
-#include <thrust/iterator/zip_iterator.h>
-#include "thrust/iterator/constant_iterator.h"
-#include <thrust/transform_reduce.h>
-#include <thrust/transform.h>
-#include <thrust/host_vector.h>
-#include <cmath>
-#include <cassert>
-#include <set>
 
 #include "goofit/PdfBase.h"
-#include "goofit/ThrustOverride.h"
 
 #ifdef GOOFIT_MPI
 #include <mpi.h>
 #endif
 
-#define CALLS_TO_PRINT 10
-
 
 #ifdef SEPARABLE
-extern MEM_CONSTANT fptype cudaArray[maxParams];
-extern MEM_CONSTANT unsigned int paramIndices[maxParams];
-extern MEM_CONSTANT fptype functorConstants[maxParams];
-extern MEM_CONSTANT fptype normalisationFactors[maxParams];
+extern __constant__ fptype cudaArray[maxParams];
+extern __constant__ unsigned int paramIndices[maxParams];
+extern __constant__ fptype functorConstants[maxParams];
+extern __constant__ fptype normalisationFactors[maxParams];
 
-extern MEM_DEVICE void* device_function_table[200];
+extern __device__ void* device_function_table[200];
 extern void* host_function_table[200];
 extern unsigned int num_device_functions;
 #endif
 
-EXEC_TARGET int dev_powi(int base, int exp);  // Implemented in SmoothHistogramPdf.
+__device__ int dev_powi(int base, int exp);  // Implemented in SmoothHistogramPdf.
 void* getMetricPointer(std::string name);
 
+ // Pass event, parameters, index into parameters.
+typedef fptype(*device_function_ptr)(fptype*, fptype*, unsigned int*);
 
-typedef fptype(*device_function_ptr)(fptype*, fptype*,
-                                     unsigned int*);              // Pass event, parameters, index into parameters.
 typedef fptype(*device_metric_ptr)(fptype, fptype*, unsigned int);
 
 extern void* host_fcn_ptr;
 
-EXEC_TARGET fptype callFunction(fptype* eventAddress, unsigned int functionIdx, unsigned int paramIdx);
+__device__ fptype callFunction(fptype* eventAddress, unsigned int functionIdx, unsigned int paramIdx);
 
 class MetricTaker;
 
@@ -88,9 +74,9 @@ public:
 
     MetricTaker(PdfBase* dat, void* dev_functionPtr);
     MetricTaker(int fIdx, int pIdx);
-    EXEC_TARGET fptype operator()(thrust::tuple<int, fptype*, int> t)
+    __device__ fptype operator()(thrust::tuple<int, fptype*, int> t)
     const;             // Event number, dev_event_array (pass this way for nvcc reasons), event size
-    EXEC_TARGET fptype operator()(thrust::tuple<int, int, fptype*> t)
+    __device__ fptype operator()(thrust::tuple<int, int, fptype*> t)
     const;             // Event number, event size, normalisation ranges (for binned stuff, eg integration)
 
 private:
@@ -103,5 +89,3 @@ private:
 };
 
 
-
-#endif

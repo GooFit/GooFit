@@ -1,5 +1,4 @@
-#ifndef TDDP_PDF_HH
-#define TDDP_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/PDFs/MixingTimeResolution_Aux.h"
@@ -25,7 +24,7 @@ public:
     TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Variable* m12, Variable* m13, CountingVariable* eventNumber,
             DecayInfo* decay, MixingTimeResolution* r, GooPdf* eff, Variable* mistag = 0);
     TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Variable* m12, Variable* m13, CountingVariable* eventNumber,
-            DecayInfo* decay, vector<MixingTimeResolution*>& r, GooPdf* eff, Variable* md0, Variable* mistag = 0);
+            DecayInfo* decay, std::vector<MixingTimeResolution*>& r, GooPdf* eff, Variable* md0, Variable* mistag = 0);
     // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the
     // coherent sum. The caching method requires that it be done this way or the ProdPdf
     // normalisation will get *really* confused and give wrong answers.
@@ -67,29 +66,31 @@ private:
     DecayInfo* decayInfo;
     Variable* _m12;
     Variable* _m13;
-    fptype* dalitzNormRange;
+    fptype* dalitzNormRange {nullptr};
 
     // Following variables are useful if masses and widths, involved in difficult BW calculation,
     // change infrequently while amplitudes, only used in adding BW results together, change rapidly.
     thrust::device_vector<WaveHolder_s>* cachedWaves[16]; // Caches the BW values for each event.
-    ThreeComplex*** integrals; // Caches the integrals of the BW waves for each combination of resonances.
+    ThreeComplex*** integrals {nullptr}; // Caches the integrals of the BW waves for each combination of resonances.
 
     bool* redoIntegral;
-    mutable bool forceRedoIntegrals;
+    mutable bool forceRedoIntegrals {true};
     fptype* cachedMasses;
     fptype* cachedWidths;
     MixingTimeResolution* resolution;
+    
+    
     int totalEventSize;
-    int cacheToUse;
-    SpecialDalitzIntegrator*** integrators;
-    SpecialWaveCalculator** calculators;
+    int cacheToUse {0};
+    SpecialDalitzIntegrator*** integrators {nullptr};
+    SpecialWaveCalculator** calculators {nullptr};
 };
 
 class SpecialDalitzIntegrator : public thrust::unary_function<thrust::tuple<int, fptype*>, ThreeComplex > {
 public:
 
     SpecialDalitzIntegrator(int pIdx, unsigned int ri, unsigned int rj);
-    EXEC_TARGET ThreeComplex operator()(thrust::tuple<int, fptype*> t) const;
+    __device__ ThreeComplex operator()(thrust::tuple<int, fptype*> t) const;
 private:
 
     unsigned int resonance_i;
@@ -117,7 +118,7 @@ class SpecialWaveCalculator : public thrust::unary_function<thrust::tuple<int, f
 public:
 
     SpecialWaveCalculator(int pIdx, unsigned int res_idx);
-    EXEC_TARGET WaveHolder_s operator()(thrust::tuple<int, fptype*, int> t) const;
+    __device__ WaveHolder_s operator()(thrust::tuple<int, fptype*, int> t) const;
 
 private:
 
@@ -125,6 +126,4 @@ private:
     unsigned int parameters;
 };
 
-
-#endif
 

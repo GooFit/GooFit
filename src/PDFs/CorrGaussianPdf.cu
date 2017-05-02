@@ -1,6 +1,6 @@
 #include "goofit/PDFs/CorrGaussianPdf.h"
 
-EXEC_TARGET fptype device_CorrGaussian(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_CorrGaussian(fptype* evt, fptype* p, unsigned int* indices) {
     fptype x = evt[indices[2 + indices[0]]];
     fptype y = evt[indices[3 + indices[0]]];
     fptype mean1  = p[indices[1]];
@@ -12,7 +12,7 @@ EXEC_TARGET fptype device_CorrGaussian(fptype* evt, fptype* p, unsigned int* ind
     fptype x_dist = (x-mean1) / sigma1;
     sigma2 *= (1 + corr*x_dist*x_dist);
     fptype y_dist = (y - mean2) * (sigma2 == 0 ? 0 : (1.0 / sigma2));
-    fptype ret = EXP(-0.5*(x_dist * x_dist + y_dist * y_dist));
+    fptype ret = exp(-0.5*(x_dist * x_dist + y_dist * y_dist));
 
     //if ((gpuDebug & 1) && (THREADIDX == 60)) printf("CorrGauss: %f %f %f %f %f %f %f %f %f %.12f\n", x, y, mean1, sigma1, mean2, sigma2, corr, x_dist, y_dist, ret);
     //if ((gpuDebug & 1) && (THREADIDX == 60)) printf("[%i, %i] [%i, %i] CorrGauss: %f %f %f\n", BLOCKIDX, THREADIDX, gridDim.x, BLOCKDIM, x, y, ret);
@@ -21,7 +21,7 @@ EXEC_TARGET fptype device_CorrGaussian(fptype* evt, fptype* p, unsigned int* ind
     return ret;
 }
 
-MEM_DEVICE device_function_ptr ptr_to_CorrGaussian = device_CorrGaussian;
+__device__ device_function_ptr ptr_to_CorrGaussian = device_CorrGaussian;
 
 __host__ CorrGaussianPdf::CorrGaussianPdf(std::string n, Variable* _x, Variable* _y, Variable* mean1, Variable* sigma1,
         Variable* mean2, Variable* sigma2, Variable* correlation)

@@ -1,6 +1,8 @@
 #include "goofit/PDFs/InterHistPdf.h"
+#include "goofit/Variable.h"
+#include <algorithm>
 
-MEM_CONSTANT fptype* dev_base_interhists[100]; // Multiple histograms for the case of multiple PDFs
+__constant__ fptype* dev_base_interhists[100]; // Multiple histograms for the case of multiple PDFs
 #define OBS_CODE 4242424242
 // This number is presumably so high that it will never collide
 // with an actual parameter index. It indicates that this dimension
@@ -8,7 +10,7 @@ MEM_CONSTANT fptype* dev_base_interhists[100]; // Multiple histograms for the ca
 
 // dev_powi is implemented in SmoothHistogramPdf.cu.
 
-EXEC_TARGET fptype device_InterHistogram(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_InterHistogram(fptype* evt, fptype* p, unsigned int* indices) {
     // Structure is
     // nP totalHistograms (idx1 limit1 step1 bins1) (idx2 limit2 step2 bins2) nO o1 o2
     // where limit and step are indices into functorConstants.
@@ -44,7 +46,7 @@ EXEC_TARGET fptype device_InterHistogram(fptype* evt, fptype* p, unsigned int* i
         currVariable   -= lowerBound;
         currVariable   /= step;
 
-        int localBin    = (int) FLOOR(currVariable);
+        int localBin    = (int) floor(currVariable);
         binDistances[i] = currVariable - localBin - fptype(0.5);
         globalBin      += previous * localBin;
         previous       *= indices[lowerBoundIdx + 2];
@@ -102,7 +104,7 @@ EXEC_TARGET fptype device_InterHistogram(fptype* evt, fptype* p, unsigned int* i
         }
 
         // Only interpolate the four closest boxes (in two dimensions; more in three dimensions).
-        currentWeight = currentWeight > 0 ? (currentWeight <= SQRT((fptype) numVars) ? 1 / SQRT(currentWeight) : 0) : 0;
+        currentWeight = currentWeight > 0 ? (currentWeight <= sqrt((fptype) numVars) ? 1 / sqrt(currentWeight) : 0) : 0;
         fptype currentEntry = offSomeAxis ? 0 : myHistogram[currBin];
         ret += currentWeight * currentEntry;
         totalWeight += currentWeight;
@@ -118,7 +120,7 @@ EXEC_TARGET fptype device_InterHistogram(fptype* evt, fptype* p, unsigned int* i
     return ret;
 }
 
-MEM_DEVICE device_function_ptr ptr_to_InterHistogram = device_InterHistogram;
+__device__ device_function_ptr ptr_to_InterHistogram = device_InterHistogram;
 
 __host__ InterHistPdf::InterHistPdf(std::string n,
                                     BinnedDataSet* x,

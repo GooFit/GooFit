@@ -1,9 +1,12 @@
 #include "goofit/Application.h"
 #include "goofit/Variable.h"
-#include "goofit/fitting/FitManagerMinuit1.h"
 #include "goofit/FitManager.h"
+#include "goofit/BinnedDataSet.h"
 #include "goofit/UnbinnedDataSet.h"
+#include "goofit/FitControl.h"
+
 #include "goofit/PDFs/PolynomialPdf.h"
+#include "TMinuit.h"
 #include "TRandom.h"
 #include "TH1F.h"
 #include "TCanvas.h"
@@ -73,7 +76,7 @@ void generateEvents(vector<int>& rsEvtVec, vector<int>& wsEvtVec,
     }
 }
 
-void fitRatio(vector<int>& rsEvts, vector<int>& wsEvts, std::string plotName = "") {
+int fitRatio(vector<int>& rsEvts, vector<int>& wsEvts, std::string plotName = "") {
     TH1D* ratioHist = new TH1D("ratioHist", "", decayTime->numbins, decayTime->lowerlimit, decayTime->upperlimit);
 
     BinnedDataSet* ratioData = new BinnedDataSet(decayTime);
@@ -119,10 +122,10 @@ void fitRatio(vector<int>& rsEvts, vector<int>& wsEvts, std::string plotName = "
     PolynomialPdf* poly = new PolynomialPdf("poly", decayTime, weights);
     poly->setFitControl(new BinnedErrorFit());
     poly->setData(ratioData);
-    FitManager* datapdf = new FitManager(poly);
+    FitManager datapdf {poly};
 
     gettimeofday(&startTime, NULL);
-    datapdf->fit();
+    datapdf.fit();
     gettimeofday(&stopTime, NULL);
 
     vector<fptype> values;
@@ -166,8 +169,9 @@ void fitRatio(vector<int>& rsEvts, vector<int>& wsEvts, std::string plotName = "
 
     delete ratioHist;
     delete ratioData;
-    delete datapdf;
     delete poly;
+    
+    return datapdf;
 }
 
 
@@ -287,10 +291,15 @@ int main(int argc, char** argv) {
     double gpuTime = 0;
     double cpuTime = 0;
 
-    fitRatio(dZeroEvtsRS, dZeroEvtsWS, "dzeroEvtRatio.png");
+    int retval;
+    retval = fitRatio(dZeroEvtsRS, dZeroEvtsWS, "dzeroEvtRatio.png");
+    if(retval != 0)
+        return retval;
     timersub(&stopTime, &startTime, &totalTime);
     gpuTime += totalTime.tv_sec + totalTime.tv_usec/1000000.0;
-    fitRatio(d0barEvtsRS, d0barEvtsWS, "dzbarEvtRatio.png");
+    retval = fitRatio(d0barEvtsRS, d0barEvtsWS, "dzbarEvtRatio.png");
+    if(retval != 0)
+        return retval;
     timersub(&stopTime, &startTime, &totalTime);
     gpuTime += totalTime.tv_sec + totalTime.tv_usec/1000000.0;
 

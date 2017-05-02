@@ -2,6 +2,7 @@
 #include <fstream>
 #include <map>
 #include "goofit/PdfBase.h"
+#include "goofit/Variable.h"
 
 void writeToFile(PdfBase* pdf, const char* fname) {
     PdfBase::parCont params;
@@ -28,7 +29,7 @@ void readFromFile(PdfBase* pdf, const char* fname) {
     PdfBase::parCont params;
     pdf->getParameters(params);
 
-    std::map<string, Variable*> tempMap;
+    std::map<std::string, Variable*> tempMap;
 
     for(PdfBase::parIter p = params.begin(); p != params.end(); ++p) {
         tempMap[(*p)->name] = (*p);

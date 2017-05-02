@@ -1,8 +1,10 @@
 #include "goofit/DataSet.h"
+#include "goofit/Variable.h"
+
 #include <cstdlib>
 #include <climits>
 
-DataSet::DataSet(Variable* var, string n)
+DataSet::DataSet(Variable* var, std::string n)
     : numEventsAdded(0)
     , name(n) {
     variables.push_back(var);
@@ -11,7 +13,7 @@ DataSet::DataSet(Variable* var, string n)
         generateName();
 }
 
-DataSet::DataSet(std::vector<Variable*>& vars, string n)
+DataSet::DataSet(std::vector<Variable*>& vars, std::string n)
     : numEventsAdded(0)
     , name(n) {
     for(std::vector<Variable*>::iterator v = vars.begin(); v != vars.end(); ++v) {
@@ -22,7 +24,7 @@ DataSet::DataSet(std::vector<Variable*>& vars, string n)
         generateName();
 }
 
-DataSet::DataSet(std::set<Variable*>& vars, string n)
+DataSet::DataSet(std::set<Variable*>& vars, std::string n)
     : numEventsAdded(0)
     , name(n) {
     variables.resize(vars.size());
@@ -40,12 +42,12 @@ DataSet::~DataSet() {
 }
 
 void DataSet::addEvent() {
-    vector<fptype> vals = getCurrentValues();
+    std::vector<fptype> vals = getCurrentValues();
     addEventVector(vals);
 }
 
 void DataSet::addWeightedEvent(fptype weight) {
-    vector<fptype> vals = getCurrentValues();
+     std::vector<fptype> vals = getCurrentValues();
     addEventVector(vals, weight);
 }
 
@@ -59,8 +61,8 @@ void DataSet::addEvent(fptype val) {
     addEventVector(helper);
 }
 
-vector<fptype> DataSet::getCurrentValues() const {
-    vector<fptype> values;
+ std::vector<fptype> DataSet::getCurrentValues() const {
+     std::vector<fptype> values;
 
     for(varConstIt v = varsBegin(); v != varsEnd(); ++v) {
         values.push_back((*v)->value);

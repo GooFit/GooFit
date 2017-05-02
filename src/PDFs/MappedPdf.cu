@@ -1,13 +1,13 @@
 #include "goofit/PDFs/MappedPdf.h"
 
-EXEC_TARGET fptype device_Mapped(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_Mapped(fptype* evt, fptype* p, unsigned int* indices) {
     // Structure : nP mapFunctionIndex mapParamIndex functionIndex1 parameterIndex1 functionIndex2 parameterIndex2 ...
 
     // Find mapping between event variables and function to evaluate
     unsigned int mapFunction = RO_CACHE(indices[1]);
     // This is an index into the MappedPdf's list of functions
-    //int targetFunction = (int) FLOOR(0.5 + (*(reinterpret_cast<device_function_ptr>(device_function_table[mapFunction])))(evt, p, paramIndices + indices[2]));
-    int targetFunction = (int) FLOOR(0.5 + callFunction(evt, mapFunction, RO_CACHE(indices[2])));
+    //int targetFunction = (int) floor(0.5 + (*(reinterpret_cast<device_function_ptr>(device_function_table[mapFunction])))(evt, p, paramIndices + indices[2]));
+    int targetFunction = (int) floor(0.5 + callFunction(evt, mapFunction, RO_CACHE(indices[2])));
 
     targetFunction *= 2; // Because there are two pieces of information about each function
     targetFunction += 3; // Because first function information begins at index 3
@@ -21,9 +21,9 @@ EXEC_TARGET fptype device_Mapped(fptype* evt, fptype* p, unsigned int* indices) 
     return ret;
 }
 
-MEM_DEVICE device_function_ptr ptr_to_Mapped = device_Mapped;
+__device__ device_function_ptr ptr_to_Mapped = device_Mapped;
 
-__host__ MappedPdf::MappedPdf(std::string n, GooPdf* m, vector<GooPdf*>& t)
+__host__ MappedPdf::MappedPdf(std::string n, GooPdf* m, std::vector<GooPdf*>& t)
     : GooPdf(0, n) {
     components.push_back(m);
     std::vector<unsigned int> pindices;
@@ -32,7 +32,7 @@ __host__ MappedPdf::MappedPdf(std::string n, GooPdf* m, vector<GooPdf*>& t)
 
     std::set<int> functionIndicesUsed;
 
-    for(vector<GooPdf*>::iterator f = t.begin(); f != t.end(); ++f) {
+    for(std::vector<GooPdf*>::iterator f = t.begin(); f != t.end(); ++f) {
         components.push_back(*f);
         pindices.push_back((*f)->getFunctionIndex());
         pindices.push_back((*f)->getParameterIndex());

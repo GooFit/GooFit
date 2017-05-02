@@ -1,5 +1,5 @@
-#ifndef MIXING_TIME_RESOLUTION_HH
-#define MIXING_TIME_RESOLUTION_HH
+#pragma once
+
 #include "goofit/GlobalCudaDefines.h"
 #include "goofit/PDFs/GooPdf.h"
 
@@ -30,5 +30,3 @@ private:
     int resFunctionIdx;
     int resCalcTauFcnIdx;
 };
-
-#endif

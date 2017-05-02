@@ -1,6 +1,6 @@
 #include "goofit/PDFs/BinTransformPdf.h"
 
-EXEC_TARGET fptype device_BinTransform(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_BinTransform(fptype* evt, fptype* p, unsigned int* indices) {
     // Index structure: nP lim1 bin1 lim2 bin2 ... nO o1 o2
     int numObservables = indices[1 + indices[0]];
     int ret = 0;
@@ -13,7 +13,7 @@ EXEC_TARGET fptype device_BinTransform(fptype* evt, fptype* p, unsigned int* ind
         fptype binSize    = functorConstants[indices[i*3+2]];
         int numBins       = indices[i*3+3];
 
-        int localBin = (int) FLOOR((obsValue - lowerLimit) / binSize);
+        int localBin = (int) floor((obsValue - lowerLimit) / binSize);
         ret += localBin * previousSize;
         previousSize *= numBins;
     }
@@ -21,11 +21,13 @@ EXEC_TARGET fptype device_BinTransform(fptype* evt, fptype* p, unsigned int* ind
     return fptype(ret);
 }
 
-MEM_DEVICE device_function_ptr ptr_to_BinTransform = device_BinTransform;
+__device__ device_function_ptr ptr_to_BinTransform = device_BinTransform;
 
 // Notice that bin sizes and limits can be different, for this purpose, than what's implied by the Variable members.
-__host__ BinTransformPdf::BinTransformPdf(std::string n, vector<Variable*> obses, vector<fptype> limits,
-        vector<fptype> binSizes, vector<int> numBins)
+__host__ BinTransformPdf::BinTransformPdf(std::string n, std::vector<Variable*> obses,
+                                          std::vector<fptype> limits,
+                                          std::vector<fptype> binSizes,
+                                          std::vector<int> numBins)
     : GooPdf(0, n) {
 
     cIndex = registerConstants(2*obses.size());

@@ -16,7 +16,6 @@ void init_Variable(py::module &m) {
 
 
     py::class_<Variable, Indexable>(m, "Variable")
-        .def(py::init<std::string>())
         .def(py::init<std::string, fptype>())
         .def(py::init<std::string, fptype, fptype>())
         .def(py::init<std::string, fptype, fptype, fptype>())

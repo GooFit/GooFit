@@ -1,5 +1,7 @@
 #include "goofit/GlobalCudaDefines.h"
 #include "goofit/PdfBase.h"
+#include "goofit/Variable.h"
+#include <algorithm>
 
 fptype* dev_event_array;
 fptype host_normalisation[maxParams];
@@ -8,19 +10,10 @@ unsigned int host_indices[maxParams];
 int host_callnumber = 0;
 int totalParams = 0;
 int totalConstants = 1; // First constant is reserved for number of events.
-map<Variable*, std::set<PdfBase*>> variableRegistry;
+std::map<Variable*, std::set<PdfBase*>> variableRegistry;
 
 PdfBase::PdfBase(Variable* x, std::string n)
-    : numEvents(0)
-    , numEntries(0)
-    , normRanges(0)
-    , fitControl(0)
-    , integrationBins(-1)
-    , specialMask(0)
-    , cachedParams(0)
-    , properlyInitialised(true)
-    , name(n) {
-    // Special-case PDFs should set to false.
+    : name(n) { // Special-case PDFs should set to false.
     if(x)
         registerObservable(x);
 }
@@ -115,7 +108,7 @@ __host__ void PdfBase::getParameters(parCont& ret) const {
     }
 }
 
-__host__ Variable* PdfBase::getParameterByName(string n) const {
+__host__ Variable* PdfBase::getParameterByName(std::string n) const {
     for(parConstIter p = parameterList.begin(); p != parameterList.end(); ++p) {
         if((*p)->name == n)
             return (*p);
@@ -203,4 +196,3 @@ __host__ void PdfBase::setNumPerTask(PdfBase* p, const int& c) {
     m_iEventsPerTask = c;
 }
 
-void dummySynch() {}

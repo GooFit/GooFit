@@ -1,6 +1,6 @@
 #include "goofit/PDFs/ExpGausPdf.h"
 
-EXEC_TARGET fptype device_ExpGaus(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_ExpGaus(fptype* evt, fptype* p, unsigned int* indices) {
     fptype x     = evt[RO_CACHE(indices[2 + RO_CACHE(indices[0])])];
     fptype mean  = RO_CACHE(p[RO_CACHE(indices[1])]);
     fptype sigma = RO_CACHE(p[RO_CACHE(indices[2])]);
@@ -10,13 +10,13 @@ EXEC_TARGET fptype device_ExpGaus(fptype* evt, fptype* p, unsigned int* indices)
     fptype exparg = ret * (2*mean + alpha*sigma*sigma - 2*x);
     fptype erfarg = (mean + alpha*sigma*sigma - x) / (sigma * 1.4142135623);
 
-    ret *= EXP(exparg);
-    ret *= ERFC(erfarg);
+    ret *= exp(exparg);
+    ret *= erfc(erfarg);
 
     return ret;
 }
 
-MEM_DEVICE device_function_ptr ptr_to_ExpGaus = device_ExpGaus;
+__device__ device_function_ptr ptr_to_ExpGaus = device_ExpGaus;
 
 ExpGausPdf::ExpGausPdf(std::string n, Variable* _x, Variable* mean, Variable* sigma, Variable* tau)
     : GooPdf(_x, n) {

@@ -1,9 +1,8 @@
-#ifndef INCOHERENT_SUM_PDF_HH
-#define INCOHERENT_SUM_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/PDFs/TddpPdf.h"
-#include "goofit/PDFs/devcomplex.h"
+#include <thrust/complex.h>
 
 // Very similar class to TddpPdf, but without time dependence
 // (so no time resolution or mixing) and ignoring interference between
@@ -39,7 +38,7 @@ private:
 
     // Following variables are useful if masses and widths, involved in difficult BW calculation,
     // change infrequently while amplitudes, only used in adding BW results together, change rapidly.
-    DEVICE_VECTOR<devcomplex<fptype>>* cachedResonances; // BW (and other) results for each event.
+    thrust::device_vector<thrust::complex<fptype>>* cachedResonances; // BW (and other) results for each event.
     double* integrals; // Integrals of each BW resonance across the Daliz plot.
 
     bool* redoIntegral;
@@ -56,7 +55,7 @@ private:
 class SpecialIncoherentIntegrator : public thrust::unary_function<thrust::tuple<int, fptype*>, fptype > {
 public:
     SpecialIncoherentIntegrator(int pIdx, unsigned int ri);
-    EXEC_TARGET fptype operator()(thrust::tuple<int, fptype*> t) const;
+    __device__ fptype operator()(thrust::tuple<int, fptype*> t) const;
 
 private:
     unsigned int resonance_i;
@@ -64,11 +63,11 @@ private:
 };
 
 class SpecialIncoherentResonanceCalculator : public
-    thrust::unary_function<thrust::tuple<int, fptype*, int>, devcomplex<fptype>> {
+    thrust::unary_function<thrust::tuple<int, fptype*, int>, thrust::complex<fptype>> {
 public:
 
     SpecialIncoherentResonanceCalculator(int pIdx, unsigned int res_idx);
-    EXEC_TARGET devcomplex<fptype> operator()(thrust::tuple<int, fptype*, int> t) const;
+    __device__ thrust::complex<fptype> operator()(thrust::tuple<int, fptype*, int> t) const;
 
 private:
 
@@ -76,9 +75,4 @@ private:
     unsigned int parameters;
 };
 
-
-
-
-
-#endif
 

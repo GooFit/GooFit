@@ -1,5 +1,4 @@
-#ifndef SMOOTHHISTOGRAM_PDF_HH
-#define SMOOTHHISTOGRAM_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/BinnedDataSet.h"
@@ -14,12 +13,10 @@ public:
     __host__ void copyHistogramToDevice(thrust::host_vector<fptype>& host_histogram);
 
 private:
-    DEVICE_VECTOR<fptype>* dev_base_histogram;
-    DEVICE_VECTOR<fptype>* dev_smoothed_histogram;
+    thrust::device_vector<fptype>* dev_base_histogram;
+    thrust::device_vector<fptype>* dev_smoothed_histogram;
     fptype totalEvents;
     fptype* host_constants;
 
     static unsigned int totalHistograms;
 };
-
-#endif

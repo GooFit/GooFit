@@ -1,5 +1,4 @@
-#ifndef _ThrustOverride_h_
-#define _ThrustOverride_h_
+#pragma once
 
 #if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_CUDA
 
@@ -106,7 +105,4 @@ OutputType reduce(goofit_policy& exec,
 } // end goofit_reduce()
 
 #endif
-
-#endif
-
 

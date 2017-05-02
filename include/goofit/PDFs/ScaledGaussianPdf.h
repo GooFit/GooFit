@@ -1,5 +1,4 @@
-#ifndef SCALEDGAUSSIAN_PDF_HH
-#define SCALEDGAUSSIAN_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
 
@@ -15,5 +14,3 @@ public:
 private:
 
 };
-
-#endif

@@ -1,6 +1,7 @@
 #include "goofit/PDFs/ProdPdf.h"
+#include <algorithm>
 
-EXEC_TARGET fptype device_ProdPdfs(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_ProdPdfs(fptype* evt, fptype* p, unsigned int* indices) {
     // Index structure is nP | F1 P1 | F2 P2 | ...
     // where nP is number of parameters, Fs are function indices, and Ps are parameter indices
 
@@ -32,7 +33,7 @@ EXEC_TARGET fptype device_ProdPdfs(fptype* evt, fptype* p, unsigned int* indices
     return ret;
 }
 
-MEM_DEVICE device_function_ptr ptr_to_ProdPdfs = device_ProdPdfs;
+__device__ device_function_ptr ptr_to_ProdPdfs = device_ProdPdfs;
 
 ProdPdf::ProdPdf(std::string n, std::vector<PdfBase*> comps)
     : GooPdf(0, n)

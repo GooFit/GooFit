@@ -9,9 +9,9 @@ except ImportError:
     raise
 
 conversion = [
-    ('["<]cuda_runtime_api.hh?[">]', '"fakecuda/cuda_runtime_api.h"'),
-    ('["<]driver_types.hh?[">]', '"fakecuda/driver_types.h"'),
-    ('["<]host_defines.hh?[">]', '"fakecuda/host_defines.h"'),
+    ('["<]cuda_runtime_api.hh?[">]', r'\\\\ Fake cuda has been removed (cuda_runtime_api.h requested)'),
+    ('["<]driver_types.hh?[">]', r'\\\\ Fake cuda has been removed (driver_types.h requested)'),
+    ('["<]host_defines.hh?[">]', r'\\\\ Fake cuda has been removed (host_defines.h requested)'),
     ('["<]Application.hh?[">]', '"goofit/Application.h"'),
     ('["<]BinnedDataSet.hh?[">]', '"goofit/BinnedDataSet.h"'),
     ('["<]DataSet.hh?[">]', '"goofit/DataSet.h"'),
@@ -73,6 +73,32 @@ conversion = [
     ('["<]TMinuit.hh?[">]', '"TMinuit.h"'),
     ('["<]TRandom.hh?[">]', '"TRandom.h"'),
     ('["<]TRandom3.hh?[">]', '"TRandom3.h"'),
+    (r'\bALIGN\b', '__align__'),
+    (r'\bMEM_CONSTANT\b', '__constant__'),
+    (r'\bMEM_DEVICE\b', '__device__'),
+    (r'\bEXEC_TARGET\b', '__device__'),
+    (r'\bMEM_SHARED\b', '__shared__'),
+    (r'\bSYNCH\b', 'cudaDeviceSynchronize'),
+    (r'\bdevcomplex\b', 'thrust::complex'),
+    (r'\bstd::complex\b', 'thrust::complex'),
+    (r'\bDEVICE_VECTOR\b', 'thrust::device_vector'),
+    (r'\bATAN2\b', 'atan2'),
+    (r'\bCOS\b', 'cos'),
+    (r'\bCOSH\b', 'cosh'),
+    (r'\bSINH\b', 'sinh'),
+    (r'\bERF\b', 'erf'),
+    (r'\bERFC\b', 'erfc'),
+    (r'\bEXP\b', 'exp'),
+    (r'\bFABS\b', 'fabs'),
+    (r'\bFMOD\b', 'fmod'),
+    (r'\bLOG\b', 'log'),
+    (r'\bMODF\b', 'modf'),
+    (r'\bSIN\b', 'sin'),
+    (r'\bSQRT\b', 'sqrt'),
+    (r'\bRSQRT\b', 'rsqrt'),
+    (r'\bFLOOR\b', 'floor'),
+    (r'\bCONST_PI\b', 'M_PI'),
+
 ]
 
 def fix_text(contents):
@@ -85,6 +111,8 @@ def fix_text(contents):
     ... #include <goofit/BinnedDataSet.h>
     ... #include <UnbinnedDataSet.h>
     ... #include <FitManagerMinuit3.hh>
+    ... SYNCH();
+    ... THREAD_SYNCH();
     ... '''
 
     >>> corrected = fix_text(text)
@@ -92,6 +120,7 @@ def fix_text(contents):
       Converting ["<]GlobalCudaDefines.hh?[">] -> "goofit/GlobalCudaDefines.h"
       Converting ["<]UnbinnedDataSet.hh?[">] -> "goofit/UnbinnedDataSet.h"
       Converting ["<]Variable.hh?[">] -> "goofit/Variable.h"
+      Converting \bSYNCH\b -> cudaDeviceSynchronize
     >>> print(corrected.strip())
     #include "goofit/Variable.h"
     #include "goofit/GlobalCudaDefines.h"
@@ -100,6 +129,8 @@ def fix_text(contents):
     #include <goofit/BinnedDataSet.h>
     #include "goofit/UnbinnedDataSet.h"
     \\ Fit Manager 3 removed
+    cudaDeviceSynchronize();
+    THREAD_SYNCH();
     """
 
     for r in conversion:

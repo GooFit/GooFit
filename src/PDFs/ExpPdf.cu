@@ -1,53 +1,53 @@
 #include "goofit/PDFs/ExpPdf.h"
 
-EXEC_TARGET fptype device_Exp(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_Exp(fptype* evt, fptype* p, unsigned int* indices) {
     fptype x = evt[indices[2 + indices[0]]];
     fptype alpha = p[indices[1]];
 
-    fptype ret = EXP(alpha*x);
+    fptype ret = exp(alpha*x);
     return ret;
 }
 
-EXEC_TARGET fptype device_ExpOffset(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_ExpOffset(fptype* evt, fptype* p, unsigned int* indices) {
     fptype x = evt[indices[2 + indices[0]]];
     x -= p[indices[1]];
     fptype alpha = p[indices[2]];
 
-    fptype ret = EXP(alpha*x);
+    fptype ret = exp(alpha*x);
     return ret;
 }
 
-EXEC_TARGET fptype device_ExpPoly(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_ExpPoly(fptype* evt, fptype* p, unsigned int* indices) {
     fptype x = evt[indices[2 + indices[0]]];
 
     fptype exparg = 0;
 
     for(int i = 0; i <= indices[0]; ++i) {
-        exparg += POW(x, i) * p[indices[i+1]];
+        exparg += pow(x, i) * p[indices[i+1]];
     }
 
-    fptype ret = EXP(exparg);
+    fptype ret = exp(exparg);
     return ret;
 }
 
-EXEC_TARGET fptype device_ExpPolyOffset(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_ExpPolyOffset(fptype* evt, fptype* p, unsigned int* indices) {
     fptype x = evt[indices[2 + indices[0]]];
     x -= p[indices[1]];
 
     fptype exparg = 0;
 
     for(int i = 0; i <= indices[0]; ++i) {
-        exparg += POW(x, i) * p[indices[i+2]];
+        exparg += pow(x, i) * p[indices[i+2]];
     }
 
-    fptype ret = EXP(exparg);
+    fptype ret = exp(exparg);
     return ret;
 }
 
-MEM_DEVICE device_function_ptr ptr_to_Exp = device_Exp;
-MEM_DEVICE device_function_ptr ptr_to_ExpPoly = device_ExpPoly;
-MEM_DEVICE device_function_ptr ptr_to_ExpOffset = device_ExpOffset;
-MEM_DEVICE device_function_ptr ptr_to_ExpPolyOffset = device_ExpPolyOffset;
+__device__ device_function_ptr ptr_to_Exp = device_Exp;
+__device__ device_function_ptr ptr_to_ExpPoly = device_ExpPoly;
+__device__ device_function_ptr ptr_to_ExpOffset = device_ExpOffset;
+__device__ device_function_ptr ptr_to_ExpPolyOffset = device_ExpPolyOffset;
 
 __host__ ExpPdf::ExpPdf(std::string n, Variable* _x, Variable* alpha, Variable* offset)
     : GooPdf(_x, n) {
@@ -95,7 +95,7 @@ __host__ fptype ExpPdf::integrate(fptype lo, fptype hi) const {
         return (hi - lo);
     }
 
-    fptype ret = EXP(alpha*hi) - EXP(alpha*lo);
+    fptype ret = exp(alpha*hi) - exp(alpha*lo);
     ret /= alpha;
     return ret;
 }

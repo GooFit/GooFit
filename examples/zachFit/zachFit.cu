@@ -24,27 +24,20 @@
 // GooFit stuff
 #include "goofit/Application.h"
 #include "goofit/Variable.h"
+#include "goofit/UnbinnedDataSet.h"
+#include "goofit/BinnedDataSet.h"
+#include "goofit/FitManager.h"
+#include "goofit/FitControl.h"
+
 #include "goofit/PDFs/KinLimitBWPdf.h"
 #include "goofit/PDFs/ConvolutionPdf.h"
 #include "goofit/PDFs/GaussianPdf.h"
 #include "goofit/PDFs/ScaledGaussianPdf.h"
 #include "goofit/PDFs/ArgusPdf.h"
 #include "goofit/PDFs/AddPdf.h"
-#include "goofit/FitManager.h"
 
-//#define OMP_ON 1
-//#ifdef OMP_ON
-//#include "omp.h"
-//#endif
-
-#ifdef CUDAPRINT
-#include "cuPrintf.cuh"
-#endif
 
 TCanvas* foo;
-timeval startTime, stopTime, totalTime;
-clock_t startCPU, stopCPU;
-tms startProc, stopProc;
 BinnedDataSet* binnedData = 0;
 UnbinnedDataSet* data = 0;
 int length = 0;
@@ -150,7 +143,7 @@ void getData() {
     datareader.close();
 }
 
-void CudaMinimise(int fitType) {
+int CudaMinimise(int fitType) {
     dm = new Variable("dm", 0.1395, 0.1665);
     dm->numbins = 2700;
     //dm->numbins = 540;
@@ -301,12 +294,10 @@ void CudaMinimise(int fitType) {
     FitManager datapdf(&total);
 
     std::cout << "Starting fit\n";
-    gettimeofday(&startTime, NULL);
-    startCPU = times(&startProc);
-    //ROOT::Minuit2::FunctionMinimum* min2 = datapdf.fit();
+
     datapdf.fit();
-    stopCPU = times(&stopProc);
-    gettimeofday(&stopTime, NULL);
+
+    return datapdf;
 
     //std::cout << "Minimum: " << *min2 << std::endl;
     /*
@@ -413,8 +404,9 @@ int main(int argc, char** argv) {
 
     data_hist = new TH1F("data_hist", "", 300, 0.1365, 0.1665);
 
+    int retval;
     try {
-        CudaMinimise(mode);
+        retval = CudaMinimise(mode);
     } catch(const std::exception& ex) {
         std::cerr << ex.what() << std::endl;
         return 6;
@@ -429,19 +421,7 @@ int main(int argc, char** argv) {
     foo->Draw();
     foo->SaveAs("zachDraw.png");
 
-
-    // Print total minimization time
-    double myCPU = stopCPU - startCPU;
-    double totalCPU = myCPU;
-
-    timersub(&stopTime, &startTime, &totalTime);
-    std::cout << "Wallclock time  : " << totalTime.tv_sec + totalTime.tv_usec/1000000.0 << " seconds." << std::endl;
-    std::cout << "CPU time: " << (myCPU / CLOCKS_PER_SEC) << std::endl;
-    std::cout << "Total CPU time: " << (totalCPU / CLOCKS_PER_SEC) << std::endl;
-    myCPU = stopProc.tms_utime - startProc.tms_utime;
-    std::cout << "Processor time: " << (myCPU / CLOCKS_PER_SEC) << std::endl;
-
     delete binnedData;
 
-    return 0;
+    return retval;
 }

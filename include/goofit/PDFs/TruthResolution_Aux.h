@@ -1,5 +1,4 @@
-#ifndef TRUTH_RESOLUTION_HH
-#define TRUTH_RESOLUTION_HH
+#pragma once
 
 #include "goofit/PDFs/MixingTimeResolution_Aux.h"
 
@@ -14,5 +13,3 @@ public:
         pindices.push_back(0);
     }
 };
-
-#endif

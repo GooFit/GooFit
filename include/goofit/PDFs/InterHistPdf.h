@@ -1,5 +1,4 @@
-#ifndef INTERHIST_PDF_HH
-#define INTERHIST_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/BinnedDataSet.h"
@@ -19,4 +18,3 @@ private:
     int numVars;
 };
 
-#endif

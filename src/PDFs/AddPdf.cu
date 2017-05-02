@@ -1,6 +1,10 @@
 #include "goofit/PDFs/AddPdf.h"
+#include "goofit/ThrustOverride.h"
 
-EXEC_TARGET fptype device_AddPdfs(fptype* evt, fptype* p, unsigned int* indices) {
+#include <thrust/transform_reduce.h>
+
+
+__device__ fptype device_AddPdfs(fptype* evt, fptype* p, unsigned int* indices) {
     int numParameters = RO_CACHE(indices[0]);
     fptype ret = 0;
     fptype totalWeight = 0;
@@ -33,7 +37,7 @@ EXEC_TARGET fptype device_AddPdfs(fptype* evt, fptype* p, unsigned int* indices)
     return ret;
 }
 
-EXEC_TARGET fptype device_AddPdfsExt(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_AddPdfsExt(fptype* evt, fptype* p, unsigned int* indices) {
     // numParameters does not count itself. So the array structure for two functions is
     // nP | F P w | F P w
     // in which nP = 6.
@@ -62,8 +66,8 @@ EXEC_TARGET fptype device_AddPdfsExt(fptype* evt, fptype* p, unsigned int* indic
     return ret;
 }
 
-MEM_DEVICE device_function_ptr ptr_to_AddPdfs = device_AddPdfs;
-MEM_DEVICE device_function_ptr ptr_to_AddPdfsExt = device_AddPdfsExt;
+__device__ device_function_ptr ptr_to_AddPdfs = device_AddPdfs;
+__device__ device_function_ptr ptr_to_AddPdfsExt = device_AddPdfsExt;
 
 AddPdf::AddPdf(std::string n, std::vector<Variable*> weights, std::vector<PdfBase*> comps)
     : GooPdf(0, n)

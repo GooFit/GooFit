@@ -39,6 +39,8 @@ set(GOOPDF_HEADERS
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/MixingTimeResolution_Aux.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/TruthResolution_Aux.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/ThreeGaussResolution_Aux.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/EvalVar.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/SpinHelper.h
 )
 
 get_property(goo_extra GLOBAL PROPERTY GOOFIT_EXTRA_PDFS)

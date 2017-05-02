@@ -1,17 +1,18 @@
-#ifndef FITCONTROL_HH
-#define FITCONTROL_HH
+#pragma once
 
-#include <string>
 #include "goofit/GlobalCudaDefines.h"
-#include "goofit/Variable.h"
+
 #include <vector>
+#include <string>
+#include <cassert>
 
 class PdfBase;
 
 class FitControl {
 public:
-    FitControl(bool bin, std::string mn);
-    ~FitControl();
+    FitControl(bool bin, std::string mn)
+      : binned(bin)
+      , metricName(mn) {}
 
     inline bool binnedFit() const {
         return binned;
@@ -28,37 +29,39 @@ public:
     inline PdfBase* getOwner() const {
         return owner;
     }
-    void setOwner(PdfBase* dat);
+    void setOwner(PdfBase* dat) {
+        assert(!owner);
+        owner = dat;
+    }
 
 protected:
-    bool errorsOnBins;
+    bool errorsOnBins {false};
 
 private:
     bool binned;
     std::string metricName;
-    PdfBase* owner;
+    PdfBase* owner {nullptr};
 };
 
 class UnbinnedNllFit : public FitControl {
 public:
-    UnbinnedNllFit();
+    UnbinnedNllFit() : FitControl(false, "ptr_to_NLL") {}
 };
 
 class BinnedNllFit : public FitControl {
 public:
-    BinnedNllFit();
+    BinnedNllFit() : FitControl(true, "ptr_to_BinAvg") {}
 };
 
 class BinnedErrorFit : public FitControl {
 public:
-    BinnedErrorFit();
+    BinnedErrorFit() : FitControl(true, "ptr_to_BinWithError") {
+        errorsOnBins = true;
+    }
 };
 
 class BinnedChisqFit : public FitControl {
 public:
-    BinnedChisqFit();
+    BinnedChisqFit() : FitControl(true, "ptr_to_Chisq") {}
 };
 
-
-
-#endif

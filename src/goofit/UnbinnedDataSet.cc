@@ -1,15 +1,16 @@
 #include "goofit/UnbinnedDataSet.h"
+#include "goofit/Variable.h"
 
 // Special constructor for one variable
-UnbinnedDataSet::UnbinnedDataSet(Variable* var, string n)
+UnbinnedDataSet::UnbinnedDataSet(Variable* var, std::string n)
     : DataSet(var, n)
 {}
 
-UnbinnedDataSet::UnbinnedDataSet(std::vector<Variable*>& vars, string n)
+UnbinnedDataSet::UnbinnedDataSet(std::vector<Variable*>& vars, std::string n)
     : DataSet(vars, n)
 {}
 
-UnbinnedDataSet::UnbinnedDataSet(std::set<Variable*>& vars, string n)
+UnbinnedDataSet::UnbinnedDataSet(std::set<Variable*>& vars, std::string n)
     : DataSet(vars, n)
 {}
 
@@ -39,7 +40,7 @@ fptype UnbinnedDataSet::getValue(Variable* var, int idx) const {
     std::map<Variable*, fptype>::const_iterator event = data[idx].find(var);
 
     if(event == data[idx].end()) {
-        static map<string, bool> printed;
+        static std::map<std::string, bool> printed;
 
         if(!printed[var->name]) {
             std::cout << "UnbinnedDataSet error: Could not find variable "

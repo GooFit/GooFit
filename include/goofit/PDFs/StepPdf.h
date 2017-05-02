@@ -1,5 +1,4 @@
-#ifndef STEP_PDF_HH
-#define STEP_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
 
@@ -16,5 +15,3 @@ public:
 private:
 
 };
-
-#endif

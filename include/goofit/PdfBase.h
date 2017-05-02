@@ -58,6 +58,7 @@ public:
     }
     __host__ virtual void getObservables(obsCont& ret) const;
     __host__ virtual void getParameters(parCont& ret) const;
+    __host__ parCont getParameters() const;
     __host__ Variable* getParameterByName(std::string n) const;
     __host__ int getSpecialMask() const {
         return specialMask;

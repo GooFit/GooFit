@@ -84,17 +84,17 @@ Inheritance diagram for ZTspin1:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:af9c80aa84391f64c8d6dc85eaa061388"><td class="memItemLeft" align="right" valign="top">EXEC_TARGET&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_z_tspin1.html#af9c80aa84391f64c8d6dc85eaa061388">ZTspin1</a> (const gpuLVec &amp;q, const gpuLVec &amp;p, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> mR)</td></tr>
-<tr class="separator:af9c80aa84391f64c8d6dc85eaa061388"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8c6650a36fc264114e51a6f75afad85e"><td class="memItemLeft" align="right" valign="top">EXEC_TARGET <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_z_tspin1.html#a8c6650a36fc264114e51a6f75afad85e">Contract</a> (const gpuLVec &amp;rhs) const</td></tr>
-<tr class="separator:a8c6650a36fc264114e51a6f75afad85e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab986ec491ead7089ec7103ebe952c130"><td class="memItemLeft" align="right" valign="top">__device__&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_z_tspin1.html#ab986ec491ead7089ec7103ebe952c130">ZTspin1</a> (const gpuLVec &amp;q, const gpuLVec &amp;p, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> mR)</td></tr>
+<tr class="separator:ab986ec491ead7089ec7103ebe952c130"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad185933403e925f037c817fc02666e2c"><td class="memItemLeft" align="right" valign="top">__device__ <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_z_tspin1.html#ad185933403e925f037c817fc02666e2c">Contract</a> (const gpuLVec &amp;rhs) const</td></tr>
+<tr class="separator:ad185933403e925f037c817fc02666e2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="_spin_helper_8h_source.html#l00104">104</a> of file <a class="el" href="_spin_helper_8h_source.html">SpinHelper.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_spin_helper_8h_source.html#l00103">103</a> of file <a class="el" href="_spin_helper_8h_source.html">SpinHelper.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="af9c80aa84391f64c8d6dc85eaa061388"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af9c80aa84391f64c8d6dc85eaa061388">&#9670;&nbsp;</a></span>ZTspin1()</h2>
+<a id="ab986ec491ead7089ec7103ebe952c130"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab986ec491ead7089ec7103ebe952c130">&#9670;&nbsp;</a></span>ZTspin1()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -103,7 +103,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">EXEC_TARGET ZTspin1::ZTspin1 </td>
+          <td class="memname">__device__ ZTspin1::ZTspin1 </td>
           <td>(</td>
           <td class="paramtype">const gpuLVec &amp;&#160;</td>
           <td class="paramname"><em>q</em>, </td>
@@ -133,13 +133,13 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_spin_helper_8h_source.html#l00107">107</a> of file <a class="el" href="_spin_helper_8h_source.html">SpinHelper.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        : gpuLVec(q - q.Dot(p)*p * (1./(mR*mR))) {}</div></div><!-- fragment -->
+<p class="definition">Definition at line <a class="el" href="_spin_helper_8h_source.html#l00106">106</a> of file <a class="el" href="_spin_helper_8h_source.html">SpinHelper.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        : gpuLVec(q - q.Dot(p)*p * (1./(mR*mR))) {}</div></div><!-- fragment -->
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a8c6650a36fc264114e51a6f75afad85e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8c6650a36fc264114e51a6f75afad85e">&#9670;&nbsp;</a></span>Contract()</h2>
+<a id="ad185933403e925f037c817fc02666e2c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad185933403e925f037c817fc02666e2c">&#9670;&nbsp;</a></span>Contract()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -148,7 +148,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">EXEC_TARGET <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> ZTspin1::Contract </td>
+          <td class="memname">__device__ <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> ZTspin1::Contract </td>
           <td>(</td>
           <td class="paramtype">const gpuLVec &amp;&#160;</td>
           <td class="paramname"><em>rhs</em></td><td>)</td>
@@ -162,8 +162,8 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_spin_helper_8h_source.html#l00110">110</a> of file <a class="el" href="_spin_helper_8h_source.html">SpinHelper.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;                                                          {</div><div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        <span class="keywordflow">return</span> this-&gt;Dot(rhs);</div><div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    }</div></div><!-- fragment -->
+<p class="definition">Definition at line <a class="el" href="_spin_helper_8h_source.html#l00109">109</a> of file <a class="el" href="_spin_helper_8h_source.html">SpinHelper.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;                                                         {</div><div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;        <span class="keywordflow">return</span> this-&gt;Dot(rhs);</div><div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    }</div></div><!-- fragment -->
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
@@ -172,7 +172,7 @@ Public Member Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Apr 22 2017 22:25:51 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue May 2 2017 19:38:21 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

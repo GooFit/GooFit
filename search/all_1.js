@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['_5f_5falign_5f_5f',['__align__',['../_spin_helper_8h.html#a0a49b1ba759bf8a77cfd59af91efa784',1,'SpinHelper.h']]],
   ['_5fmr',['_mR',['../class_spin_sum_v.html#ae98b4d06d7d1cde7b79e3c56b881903b',1,'SpinSumV']]],
   ['_5fp',['_p',['../class_spin_sum_v.html#a512787e05b1e6d78f66b922296a193b4',1,'SpinSumV']]],
   ['_5fsqwstorsrate',['_SqWStoRSrate',['../struct_decay_info___d_p.html#aafdb748cd3c3c6e9966cc16ff462203e',1,'DecayInfo_DP']]],

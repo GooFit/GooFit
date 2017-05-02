@@ -1,10 +1,11 @@
 var searchData=
 [
-  ['v',['v',['../class_lorentz_matrix.html#a33502b5e913c6aa13b9bdf7acafaa09b',1,'LorentzMatrix']]],
-  ['variable',['Variable',['../class_variable.html#ae6c327eca926c8ff461c8c3b6fb159b3',1,'Variable::Variable(std::string n)'],['../class_variable.html#a7f9d46d38e7e79d71f12b344ae59aa28',1,'Variable::Variable(std::string n, fptype val)'],['../class_variable.html#ac795ebea0d64344249f5b787d78d66f6',1,'Variable::Variable(std::string n, fptype dn, fptype up)'],['../class_variable.html#ac895298f71e6d2f506a7776c2a946d99',1,'Variable::Variable(std::string n, fptype v, fptype dn, fptype up)'],['../class_variable.html#a778435c68888fe911a043744d20fa747',1,'Variable::Variable(std::string n, fptype v, fptype e, fptype dn, fptype up)']]],
-  ['varsbegin',['varsBegin',['../class_data_set.html#a66b94061c7e336c0db3a8c6f6b7a18e7',1,'DataSet']]],
-  ['varsend',['varsEnd',['../class_data_set.html#afe616912d76db2eb7a7cc3757a8cc837',1,'DataSet']]],
-  ['varsrbegin',['varsRBegin',['../class_data_set.html#a86c8ab9528cff84ee4eea4dcba3dd323',1,'DataSet']]],
-  ['varsrend',['varsREnd',['../class_data_set.html#ab9764125c45e76147741acad9c38ef8f',1,'DataSet']]],
-  ['voigtianpdf',['VoigtianPdf',['../class_voigtian_pdf.html#a4b38b48e7aa4a6dc015b7a3099b41692',1,'VoigtianPdf']]]
+  ['unbinneddataset',['UnbinnedDataSet',['../class_unbinned_data_set.html#a6f9ac1d1340c4fde78120fb603f77ab9',1,'UnbinnedDataSet::UnbinnedDataSet(Variable *var, std::string n=&quot;&quot;)'],['../class_unbinned_data_set.html#a177af07b5c80398b8c4715437fe66595',1,'UnbinnedDataSet::UnbinnedDataSet(std::vector&lt; Variable *&gt; &amp;vars, std::string n=&quot;&quot;)'],['../class_unbinned_data_set.html#a06627009f179b98af57442eb200a1475',1,'UnbinnedDataSet::UnbinnedDataSet(std::set&lt; Variable *&gt; &amp;vars, std::string n=&quot;&quot;)']]],
+  ['unbinnednllfit',['UnbinnedNllFit',['../class_unbinned_nll_fit.html#afa67c447fbade199a46bdd58d60a07f7',1,'UnbinnedNllFit']]],
+  ['unregisterparameter',['unregisterParameter',['../class_pdf_base.html#a66b28f14a05c805475d7410f8baea45a',1,'PdfBase']]],
+  ['up',['Up',['../class_goo_fit_1_1_f_c_n.html#a01b8876d4825908dd5c7f6003e0a8619',1,'GooFit::FCN']]],
+  ['usehesse',['useHesse',['../class_goo_fit_1_1_fit_manager_minuit1.html#ae33a7029f5686c0fb6974a199721f4b4',1,'GooFit::FitManagerMinuit1']]],
+  ['usehessebefore',['useHesseBefore',['../class_goo_fit_1_1_fit_manager_minuit1.html#a7ba9882137c06b8c60cdd703f5dee827',1,'GooFit::FitManagerMinuit1']]],
+  ['useimprove',['useImprove',['../class_goo_fit_1_1_fit_manager_minuit1.html#acc607d8fe48f8f34a6edc0006f90a54d',1,'GooFit::FitManagerMinuit1']]],
+  ['useminos',['useMinos',['../class_goo_fit_1_1_fit_manager_minuit1.html#a08bad61d1f8aa57eab67791a0cd27543',1,'GooFit::FitManagerMinuit1']]]
 ];

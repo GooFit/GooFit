@@ -1,15 +1,12 @@
 var searchData=
 [
-  ['readfromfile',['readFromFile',['../_functor_writer_8h.html#a66f8c6ed928cfd33ef71a08d16b26821',1,'readFromFile(PdfBase *pdf, const char *fname):&#160;FunctorWriter.cc'],['../_functor_writer_8cc.html#a66f8c6ed928cfd33ef71a08d16b26821',1,'readFromFile(PdfBase *pdf, const char *fname):&#160;FunctorWriter.cc']]],
-  ['readlistofnumbers',['readListOfNumbers',['../_functor_writer_8h.html#a3753fb3fc8d487d99014ba21137df9ea',1,'readListOfNumbers(thrust::host_vector&lt; fptype &gt; &amp;target, const char *fname):&#160;FunctorWriter.cc'],['../_functor_writer_8cc.html#a3753fb3fc8d487d99014ba21137df9ea',1,'readListOfNumbers(thrust::host_vector&lt; fptype &gt; &amp;target, const char *fname):&#160;FunctorWriter.cc']]],
-  ['recursivesetnormalisation',['recursiveSetNormalisation',['../class_pdf_base.html#a1ca01ed5c3ccf63f00266c62302635d0',1,'PdfBase']]],
-  ['reduce',['reduce',['../_thrust_override_8h.html#a078913f6f445899c342ef21d4b1a78cb',1,'ThrustOverride.h']]],
-  ['registerconstants',['registerConstants',['../class_pdf_base.html#a946cd8a190e00fc2054fefeec59d1225',1,'PdfBase']]],
-  ['registerobservable',['registerObservable',['../class_pdf_base.html#ad3f4c1923e70513fa4da84dc0d0aaf75',1,'PdfBase']]],
-  ['registerothers',['registerOthers',['../class_convolution_pdf.html#a89f80f9226032bfaa741ba5d2b66a9ab',1,'ConvolutionPdf']]],
-  ['registerparameter',['registerParameter',['../class_pdf_base.html#a9520ede7a636daee2819b661f0db0a37',1,'PdfBase']]],
-  ['resonancepdf',['ResonancePdf',['../class_resonance_pdf.html#a38eedcaea164148a9f31290b6414b20e',1,'ResonancePdf::ResonancePdf(string name, Variable *ar, Variable *ai, Variable *mass, Variable *width, unsigned int sp, unsigned int cyc)'],['../class_resonance_pdf.html#a6e99643d6819f403dbac79bd1fc04456',1,'ResonancePdf::ResonancePdf(string name, Variable *ar, Variable *ai, unsigned int sp, Variable *mass, Variable *width, unsigned int cyc)'],['../class_resonance_pdf.html#a62e23ff51f75dd9d95bfad1b6d2bde76',1,'ResonancePdf::ResonancePdf(string name, Variable *ar, Variable *ai, Variable *mass, unsigned int sp, Variable *width, unsigned int cyc)'],['../class_resonance_pdf.html#ae3673cb4c7507a951274b83c9c614cf7',1,'ResonancePdf::ResonancePdf(string name, Variable *ar, Variable *ai)'],['../class_resonance_pdf.html#ad7e02abe3e189e03e4d810881734e295',1,'ResonancePdf::ResonancePdf(string name, Variable *ar, Variable *ai, Variable *mean, Variable *sigma, unsigned int cyc)']]],
-  ['run',['run',['../class_goo_fit_1_1_application.html#a69289910ee9f552990c9c2b9ca253902',1,'GooFit::Application']]],
-  ['runfit',['runFit',['../class_goo_fit_1_1_fit_manager_minuit1.html#aadfcdf60080a1f90e636317b48bee061',1,'GooFit::FitManagerMinuit1']]],
-  ['runmigrad',['runMigrad',['../class_goo_fit_1_1_fit_manager_minuit1.html#ab9838627d3073d0f45a2347a2d160536',1,'GooFit::FitManagerMinuit1']]]
+  ['parameterschanged',['parametersChanged',['../class_pdf_base.html#ac450243387d85618dff8a991b0ddc24d',1,'PdfBase']]],
+  ['params',['Params',['../class_goo_fit_1_1_params.html#aca825c8a205260d53727a0676f059c76',1,'GooFit::Params']]],
+  ['pdfbase',['PdfBase',['../class_pdf_base.html#a1620f7f438b6c7c6cc99569321cf947d',1,'PdfBase']]],
+  ['phi',['phi',['../struct_dim5.html#a27eb37c098535b096c2653f08132aadc',1,'Dim5']]],
+  ['polynomialpdf',['PolynomialPdf',['../class_polynomial_pdf.html#ad39556cae0a4e4e668326ba2c5512a64',1,'PolynomialPdf::PolynomialPdf(std::string n, Variable *_x, std::vector&lt; Variable *&gt; weights, Variable *x0=0, unsigned int lowestDegree=0)'],['../class_polynomial_pdf.html#a16227b436bef8b72aee59d52e19348ee',1,'PolynomialPdf::PolynomialPdf(std::string n, std::vector&lt; Variable *&gt; obses, std::vector&lt; Variable *&gt; coeffs, std::vector&lt; Variable *&gt; offsets, unsigned int maxDegree)']]],
+  ['pow',['pow',['../_global_cuda_defines_8h.html#ad057e3b2e9b41ea10b8b3fd0437d3f8e',1,'GlobalCudaDefines.h']]],
+  ['pre_5fcallback',['pre_callback',['../class_goo_fit_1_1_application.html#ae6c613dddde390eadc320aec4cb06d49',1,'GooFit::Application']]],
+  ['printprofileinfo',['printProfileInfo',['../class_pdf_base.html#a2887cc44f42e788e11973661a37af226',1,'PdfBase']]],
+  ['prodpdf',['ProdPdf',['../class_prod_pdf.html#ab4674f098d0633355860190a2c6ed83b',1,'ProdPdf']]]
 ];

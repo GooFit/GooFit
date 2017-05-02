@@ -1,11 +1,11 @@
 var searchData=
 [
-  ['makegmunu',['makeGmunu',['../class_symm_lorentz_matrix.html#a66fae1d5ab895e51c62bb5e194d373df',1,'SymmLorentzMatrix']]],
-  ['makezero',['makeZero',['../class_lorentz_matrix.html#a29ae4e06f40b29c1cb5c571aa1670104',1,'LorentzMatrix::makeZero()'],['../class_symm_lorentz_matrix.html#a1520dec2ce00794aefd5db78fb90fe2d',1,'SymmLorentzMatrix::makeZero()']]],
-  ['mappedpdf',['MappedPdf',['../class_mapped_pdf.html#a6c8facb294d08f4206bb47a77113dc63',1,'MappedPdf']]],
-  ['metricispdf',['metricIsPdf',['../class_fit_control.html#aedab1ae247c7840bf13faeb743f39b0c',1,'FitControl']]],
-  ['metrictaker',['MetricTaker',['../class_metric_taker.html#acc275ab80a2fc3e368dc364798f192f1',1,'MetricTaker::MetricTaker(PdfBase *dat, void *dev_functionPtr)'],['../class_metric_taker.html#afc52530cf5590b420599c7923a137e6d',1,'MetricTaker::MetricTaker(int fIdx, int pIdx)']]],
-  ['mixingtimeresolution',['MixingTimeResolution',['../class_mixing_time_resolution.html#aa99f5fac6f6c7b095fd5d655f8d51843',1,'MixingTimeResolution']]],
-  ['mult',['mult',['../class_lorentz_matrix.html#a3a205d012f60caf4f048013ff08747c5',1,'LorentzMatrix::mult()'],['../class_symm_lorentz_matrix.html#af1e8d2914a762cd2115a6c98454e00dc',1,'SymmLorentzMatrix::mult()']]],
-  ['multiply',['multiply',['../structdevcomplex.html#aa97fb44d4dfaf02cd0ab906840cf43d9',1,'devcomplex']]]
+  ['landaupdf',['LandauPdf',['../class_landau_pdf.html#a18649317da6edf2ba1999951746c8434',1,'LandauPdf']]],
+  ['levicivita',['LeviCivita',['../_spin_helper_8h.html#a9bb317798b0120fb460679dee0144753',1,'LeviCivita(const gpuLVec &amp;p1, const gpuLVec &amp;p2, const gpuLVec &amp;p3, const gpuLVec &amp;p4):&#160;SpinHelper.h'],['../_spin_helper_8h.html#acf723b1c04ff9fa36ea7f691805740c5',1,'LeviCivita(const gpuLVec &amp;a, const gpuLVec &amp;b, const gpuLVec &amp;c):&#160;SpinHelper.h']]],
+  ['lineshape',['Lineshape',['../class_lineshape.html#a269a6c1c80c529c586d2d211e1ee2895',1,'Lineshape::Lineshape(std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, LS kind=LS::BW, FF FormFac=FF::BL_Prime, fptype radius=1.5, std::vector&lt; Variable *&gt; AdditionalVars=std::vector&lt; Variable *&gt;())'],['../class_lineshape.html#a2c8e3abbc7cdff3dae50ede6f0cebe28',1,'Lineshape::Lineshape(std::string name)']]],
+  ['loadevent',['loadEvent',['../class_unbinned_data_set.html#afcb8588e12c25f90b352ae507d63d3aa',1,'UnbinnedDataSet']]],
+  ['local_5fform',['local_Form',['../_t_minuit_8cc.html#aca6a8a8dba43cf28a81f75d5207a3e9a',1,'TMinuit.cc']]],
+  ['lorentzmatrix',['LorentzMatrix',['../class_lorentz_matrix.html#aa7ce8dd61574068d1a784ecbd902e0c4',1,'LorentzMatrix::LorentzMatrix()'],['../class_lorentz_matrix.html#acd8b1a351ea74eb5e99ebeae690b0d59',1,'LorentzMatrix::LorentzMatrix(const gpuLVec p[4])'],['../class_lorentz_matrix.html#afecf68cb8234e2725e8d7bbfa255b59d',1,'LorentzMatrix::LorentzMatrix(const LorentzMatrix &amp;other)']]],
+  ['lscalculator',['LSCalculator',['../class_l_s_calculator.html#a6df78f3d752f88982160d1327c7a9c9e',1,'LSCalculator']]],
+  ['lscalculator_5ftd',['LSCalculator_TD',['../class_l_s_calculator___t_d.html#a9ac67c1a14facace07b800f136acb892',1,'LSCalculator_TD']]]
 ];

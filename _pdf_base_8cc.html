@@ -69,7 +69,6 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">PdfBase.cc File Reference</div>  </div>
@@ -77,14 +76,11 @@ $(function() {
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="_global_cuda_defines_8h_source.html">goofit/GlobalCudaDefines.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="_pdf_base_8h_source.html">goofit/PdfBase.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_variable_8h_source.html">goofit/Variable.h</a>&quot;</code><br />
+<code>#include &lt;algorithm&gt;</code><br />
 </div>
 <p><a href="_pdf_base_8cc_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
-Functions</h2></td></tr>
-<tr class="memitem:a9e68d6b1686d4f36b586ec63ddda6c65"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_pdf_base_8cc.html#a9e68d6b1686d4f36b586ec63ddda6c65">dummySynch</a> ()</td></tr>
-<tr class="separator:a9e68d6b1686d4f36b586ec63ddda6c65"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:a7951a490445f7f71b2f6cc3ceac1943c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_pdf_base_8cc.html#a7951a490445f7f71b2f6cc3ceac1943c">dev_event_array</a></td></tr>
@@ -101,29 +97,9 @@ Variables</h2></td></tr>
 <tr class="separator:aed6aaecbc8626ddc21a2406ccb85add7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2aa50cf6ad8d12f2ccb8dee83294e298"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_pdf_base_8cc.html#a2aa50cf6ad8d12f2ccb8dee83294e298">totalConstants</a> = 1</td></tr>
 <tr class="separator:a2aa50cf6ad8d12f2ccb8dee83294e298"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afb992d124a0a4a4abd4d26b69b4452d0"><td class="memItemLeft" align="right" valign="top">map&lt; <a class="el" href="class_variable.html">Variable</a> *, std::set&lt; <a class="el" href="class_pdf_base.html">PdfBase</a> * &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_pdf_base_8cc.html#afb992d124a0a4a4abd4d26b69b4452d0">variableRegistry</a></td></tr>
-<tr class="separator:afb992d124a0a4a4abd4d26b69b4452d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab4d293dc4b6e31175b82d8d2f229ba21"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="class_variable.html">Variable</a> *, std::set&lt; <a class="el" href="class_pdf_base.html">PdfBase</a> * &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_pdf_base_8cc.html#ab4d293dc4b6e31175b82d8d2f229ba21">variableRegistry</a></td></tr>
+<tr class="separator:ab4d293dc4b6e31175b82d8d2f229ba21"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Function Documentation</h2>
-<a id="a9e68d6b1686d4f36b586ec63ddda6c65"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9e68d6b1686d4f36b586ec63ddda6c65">&#9670;&nbsp;</a></span>dummySynch()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void dummySynch </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00206">206</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
-<div class="fragment"><div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;{}</div></div><!-- fragment -->
-</div>
-</div>
 <h2 class="groupheader">Variable Documentation</h2>
 <a id="a7951a490445f7f71b2f6cc3ceac1943c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7951a490445f7f71b2f6cc3ceac1943c">&#9670;&nbsp;</a></span>dev_event_array</h2>
@@ -137,7 +113,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00004">4</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00006">6</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
 
 </div>
 </div>
@@ -153,9 +129,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00008">8</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00010">10</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_f_c_n_8cc_source.html#l00008">GooFit::FCN::FCN()</a>, <a class="el" href="_fit_manager_minuit2_8cc_source.html#l00020">GooFit::FitManagerMinuit2::fit()</a>, <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00092">FitFun()</a>, <a class="el" href="_f_c_n_8cc_source.html#l00013">GooFit::FCN::operator()()</a>, and <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00050">GooFit::FitManagerMinuit1::runFit()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_f_c_n_8cc_source.html#l00008">GooFit::FCN::FCN()</a>, <a class="el" href="_fit_manager_minuit2_8cc_source.html#l00017">GooFit::FitManagerMinuit2::fit()</a>, <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00092">FitFun()</a>, <a class="el" href="_f_c_n_8cc_source.html#l00013">GooFit::FCN::operator()()</a>, and <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00050">GooFit::FitManagerMinuit1::runFit()</a>.</p>
 
 </div>
 </div>
@@ -171,9 +147,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00007">7</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00009">9</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_exp_pdf_8h_source.html#l00011">ExpPdf::hasAnalyticIntegral()</a>, <a class="el" href="_spin_factors_8h_source.html#l00045">SpinFactor::setConstantIndex()</a>, and <a class="el" href="_lineshapes_pdf_8h_source.html#l00065">Lineshape::setConstantIndex()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_exp_pdf_8h_source.html#l00010">ExpPdf::hasAnalyticIntegral()</a>, <a class="el" href="_spin_factors_8h_source.html#l00044">SpinFactor::setConstantIndex()</a>, and <a class="el" href="_lineshapes_pdf_8h_source.html#l00066">Lineshape::setConstantIndex()</a>.</p>
 
 </div>
 </div>
@@ -189,9 +165,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00005">5</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00007">7</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00037">PdfBase::recursiveSetNormalisation()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00030">PdfBase::recursiveSetNormalisation()</a>.</p>
 
 </div>
 </div>
@@ -207,9 +183,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00006">6</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00008">8</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00169">PdfBase::parametersChanged()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00185">PdfBase::storeParameters()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00162">PdfBase::parametersChanged()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00178">PdfBase::storeParameters()</a>.</p>
 
 </div>
 </div>
@@ -225,9 +201,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00010">10</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00012">12</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00147">PdfBase::registerConstants()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00140">PdfBase::registerConstants()</a>.</p>
 
 </div>
 </div>
@@ -243,32 +219,32 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00009">9</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00011">11</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
 
 </div>
 </div>
-<a id="afb992d124a0a4a4abd4d26b69b4452d0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afb992d124a0a4a4abd4d26b69b4452d0">&#9670;&nbsp;</a></span>variableRegistry</h2>
+<a id="ab4d293dc4b6e31175b82d8d2f229ba21"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab4d293dc4b6e31175b82d8d2f229ba21">&#9670;&nbsp;</a></span>variableRegistry</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">map&lt;<a class="el" href="class_variable.html">Variable</a>*, std::set&lt;<a class="el" href="class_pdf_base.html">PdfBase</a>*&gt; &gt; variableRegistry</td>
+          <td class="memname">std::map&lt;<a class="el" href="class_variable.html">Variable</a>*, std::set&lt;<a class="el" href="class_pdf_base.html">PdfBase</a>*&gt; &gt; variableRegistry</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00011">11</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00013">13</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00045">PdfBase::registerParameter()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00086">PdfBase::unregisterParameter()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00038">PdfBase::registerParameter()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00079">PdfBase::unregisterParameter()</a>.</p>
 
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Apr 22 2017 22:25:50 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue May 2 2017 19:38:20 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

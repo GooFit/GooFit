@@ -77,7 +77,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="_goo_pdf_8h_source.html">goofit/PDFs/GooPdf.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="devcomplex_8h_source.html">goofit/PDFs/devcomplex.h</a>&quot;</code><br />
+<code>#include &lt;thrust/complex.h&gt;</code><br />
 </div>
 <p><a href="_resonance_pdf_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -88,27 +88,27 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:a2c72412f0046bfc3513a43a55c835845"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="structdevcomplex.html">devcomplex</a>&lt; <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &gt;(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_resonance_pdf_8h.html#a2c72412f0046bfc3513a43a55c835845">resonance_function_ptr</a>) (<a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>, unsigned int *)</td></tr>
-<tr class="separator:a2c72412f0046bfc3513a43a55c835845"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a07f5eacda21e02f8fa4e12fb65ef1b83"><td class="memItemLeft" align="right" valign="top">typedef thrust::complex&lt; <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &gt;(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_resonance_pdf_8h.html#a07f5eacda21e02f8fa4e12fb65ef1b83">resonance_function_ptr</a>) (<a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>, unsigned int *)</td></tr>
+<tr class="separator:a07f5eacda21e02f8fa4e12fb65ef1b83"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a1b1a037b83cfb36c5228ce8f1e7afd79"><td class="memItemLeft" align="right" valign="top">EXEC_TARGET <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_resonance_pdf_8h.html#a1b1a037b83cfb36c5228ce8f1e7afd79">twoBodyCMmom</a> (double rMassSq, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> d1m, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> d2m)</td></tr>
-<tr class="separator:a1b1a037b83cfb36c5228ce8f1e7afd79"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6cff3e9c5d467f7b7083931a3d9fec60"><td class="memItemLeft" align="right" valign="top">EXEC_TARGET <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_resonance_pdf_8h.html#a6cff3e9c5d467f7b7083931a3d9fec60">dampingFactorSquare</a> (const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;cmmom, const int &amp;spin, const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;mRadius)</td></tr>
-<tr class="separator:a6cff3e9c5d467f7b7083931a3d9fec60"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9830e51cfeacffe380f7dfec0b73161e"><td class="memItemLeft" align="right" valign="top">EXEC_TARGET <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_resonance_pdf_8h.html#a9830e51cfeacffe380f7dfec0b73161e">spinFactor</a> (unsigned int spin, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> motherMass, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> daug1Mass, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> daug2Mass, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> daug3Mass, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> m12, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> m13, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> m23, unsigned int cyclic_index)</td></tr>
-<tr class="separator:a9830e51cfeacffe380f7dfec0b73161e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada7dda35c80974f8c15e8babdb4b73ed"><td class="memItemLeft" align="right" valign="top">__device__ <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_resonance_pdf_8h.html#ada7dda35c80974f8c15e8babdb4b73ed">twoBodyCMmom</a> (double rMassSq, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> d1m, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> d2m)</td></tr>
+<tr class="separator:ada7dda35c80974f8c15e8babdb4b73ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5988a684c5c519bba9dbd7130fddf4b6"><td class="memItemLeft" align="right" valign="top">__device__ <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_resonance_pdf_8h.html#a5988a684c5c519bba9dbd7130fddf4b6">dampingFactorSquare</a> (const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;cmmom, const int &amp;spin, const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;mRadius)</td></tr>
+<tr class="separator:a5988a684c5c519bba9dbd7130fddf4b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5b75d7ca4bae600d24086a733f646e1"><td class="memItemLeft" align="right" valign="top">__device__ <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_resonance_pdf_8h.html#af5b75d7ca4bae600d24086a733f646e1">spinFactor</a> (unsigned int spin, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> motherMass, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> daug1Mass, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> daug2Mass, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> daug3Mass, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> m12, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> m13, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> m23, unsigned int cyclic_index)</td></tr>
+<tr class="separator:af5b75d7ca4bae600d24086a733f646e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Typedef Documentation</h2>
-<a id="a2c72412f0046bfc3513a43a55c835845"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2c72412f0046bfc3513a43a55c835845">&#9670;&nbsp;</a></span>resonance_function_ptr</h2>
+<a id="a07f5eacda21e02f8fa4e12fb65ef1b83"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a07f5eacda21e02f8fa4e12fb65ef1b83">&#9670;&nbsp;</a></span>resonance_function_ptr</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="structdevcomplex.html">devcomplex</a>&lt;<a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>&gt;(* resonance_function_ptr) (<a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>, unsigned int *)</td>
+          <td class="memname">typedef thrust::complex&lt;<a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>&gt;(* resonance_function_ptr) (<a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>, unsigned int *)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -118,14 +118,14 @@ Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a6cff3e9c5d467f7b7083931a3d9fec60"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6cff3e9c5d467f7b7083931a3d9fec60">&#9670;&nbsp;</a></span>dampingFactorSquare()</h2>
+<a id="a5988a684c5c519bba9dbd7130fddf4b6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5988a684c5c519bba9dbd7130fddf4b6">&#9670;&nbsp;</a></span>dampingFactorSquare()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">EXEC_TARGET <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> dampingFactorSquare </td>
+          <td class="memname">__device__ <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> dampingFactorSquare </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;&#160;</td>
           <td class="paramname"><em>cmmom</em>, </td>
@@ -152,14 +152,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a9830e51cfeacffe380f7dfec0b73161e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9830e51cfeacffe380f7dfec0b73161e">&#9670;&nbsp;</a></span>spinFactor()</h2>
+<a id="af5b75d7ca4bae600d24086a733f646e1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5b75d7ca4bae600d24086a733f646e1">&#9670;&nbsp;</a></span>spinFactor()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">EXEC_TARGET <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> spinFactor </td>
+          <td class="memname">__device__ <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> spinFactor </td>
           <td>(</td>
           <td class="paramtype">unsigned int&#160;</td>
           <td class="paramname"><em>spin</em>, </td>
@@ -222,14 +222,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a1b1a037b83cfb36c5228ce8f1e7afd79"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1b1a037b83cfb36c5228ce8f1e7afd79">&#9670;&nbsp;</a></span>twoBodyCMmom()</h2>
+<a id="ada7dda35c80974f8c15e8babdb4b73ed"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ada7dda35c80974f8c15e8babdb4b73ed">&#9670;&nbsp;</a></span>twoBodyCMmom()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">EXEC_TARGET <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> twoBodyCMmom </td>
+          <td class="memname">__device__ <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> twoBodyCMmom </td>
           <td>(</td>
           <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>rMassSq</em>, </td>
@@ -259,7 +259,7 @@ Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Apr 22 2017 22:25:50 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue May 2 2017 19:38:20 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

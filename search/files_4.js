@@ -9,7 +9,6 @@ var searchData=
   ['dalitzvetopdf_2eh',['DalitzVetoPdf.h',['../_dalitz_veto_pdf_8h.html',1,'']]],
   ['dataset_2ecc',['DataSet.cc',['../_data_set_8cc.html',1,'']]],
   ['dataset_2eh',['DataSet.h',['../_data_set_8h.html',1,'']]],
-  ['devcomplex_2eh',['devcomplex.h',['../devcomplex_8h.html',1,'']]],
   ['documentation_2emd',['documentation.md',['../documentation_8md.html',1,'']]],
   ['dp4_2ecu',['DP4.cu',['../_d_p4_8cu.html',1,'']]],
   ['dp4pdf_2ecu',['DP4Pdf.cu',['../_d_p4_pdf_8cu.html',1,'']]],

@@ -143,8 +143,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a6b5e072d502671c7354cdf4d19477e5f inherit pub_methods_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a35bb094b326f1a9f0aa9a675dd9ede43 inherit pub_methods_class_pdf_base"><td class="memItemLeft" align="right" valign="top">virtual __host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a35bb094b326f1a9f0aa9a675dd9ede43">getParameters</a> (<a class="el" href="class_pdf_base.html#adde4851584b1fffeebd4b0ec2b9ca1c7">parCont</a> &amp;ret) const</td></tr>
 <tr class="separator:a35bb094b326f1a9f0aa9a675dd9ede43 inherit pub_methods_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a57e118d6e994bc4319445acd9a515b52 inherit pub_methods_class_pdf_base"><td class="memItemLeft" align="right" valign="top">__host__ <a class="el" href="class_variable.html">Variable</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a57e118d6e994bc4319445acd9a515b52">getParameterByName</a> (string n) const</td></tr>
-<tr class="separator:a57e118d6e994bc4319445acd9a515b52 inherit pub_methods_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5eea9054364bffd75c592642ef67f21 inherit pub_methods_class_pdf_base"><td class="memItemLeft" align="right" valign="top">__host__ <a class="el" href="class_variable.html">Variable</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#ab5eea9054364bffd75c592642ef67f21">getParameterByName</a> (std::string n) const</td></tr>
+<tr class="separator:ab5eea9054364bffd75c592642ef67f21 inherit pub_methods_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4f98e720d15482fe66f2560cac9dcffe inherit pub_methods_class_pdf_base"><td class="memItemLeft" align="right" valign="top">__host__ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a4f98e720d15482fe66f2560cac9dcffe">getSpecialMask</a> () const</td></tr>
 <tr class="separator:a4f98e720d15482fe66f2560cac9dcffe inherit pub_methods_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae280cb7da97d02ea522a4fe7d56330d7 inherit pub_methods_class_pdf_base"><td class="memItemLeft" align="right" valign="top">__host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#ae280cb7da97d02ea522a4fe7d56330d7">setData</a> (<a class="el" href="class_binned_data_set.html">BinnedDataSet</a> *data)</td></tr>
@@ -161,7 +161,7 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a9520ede7a636daee2819b661f0db0a37 inherit pub_methods_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a946cd8a190e00fc2054fefeec59d1225 inherit pub_methods_class_pdf_base"><td class="memItemLeft" align="right" valign="top">__host__ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a946cd8a190e00fc2054fefeec59d1225">registerConstants</a> (unsigned int amount)</td></tr>
 <tr class="separator:a946cd8a190e00fc2054fefeec59d1225 inherit pub_methods_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1ca01ed5c3ccf63f00266c62302635d0 inherit pub_methods_class_pdf_base"><td class="memItemLeft" align="right" valign="top">virtual __host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a1ca01ed5c3ccf63f00266c62302635d0">recursiveSetNormalisation</a> (<a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> <a class="el" href="devcomplex_8h.html#af54c6306ac31991a2436c480065c39f9">norm</a>=1) const</td></tr>
+<tr class="memitem:a1ca01ed5c3ccf63f00266c62302635d0 inherit pub_methods_class_pdf_base"><td class="memItemLeft" align="right" valign="top">virtual __host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a1ca01ed5c3ccf63f00266c62302635d0">recursiveSetNormalisation</a> (<a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> norm=1) const</td></tr>
 <tr class="separator:a1ca01ed5c3ccf63f00266c62302635d0 inherit pub_methods_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a66b28f14a05c805475d7410f8baea45a inherit pub_methods_class_pdf_base"><td class="memItemLeft" align="right" valign="top">__host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a66b28f14a05c805475d7410f8baea45a">unregisterParameter</a> (<a class="el" href="class_variable.html">Variable</a> *var)</td></tr>
 <tr class="separator:a66b28f14a05c805475d7410f8baea45a inherit pub_methods_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -217,16 +217,17 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:aa771af99892ae9bea36fe1391504922d inherit pro_methods_class_goo_pdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_class_pdf_base"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_pdf_base')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_pdf_base.html">PdfBase</a></td></tr>
 <tr class="memitem:a267885c089d7dfddc58f8714fa919918 inherit pro_methods_class_pdf_base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a267885c089d7dfddc58f8714fa919918">setNumPerTask</a> (<a class="el" href="class_pdf_base.html">PdfBase</a> *p, const int &amp;c)</td></tr>
+<tr class="memdesc:a267885c089d7dfddc58f8714fa919918 inherit pro_methods_class_pdf_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">This needs to be set before a call to setData.  <a href="class_pdf_base.html#a267885c089d7dfddc58f8714fa919918">More...</a><br /></td></tr>
 <tr class="separator:a267885c089d7dfddc58f8714fa919918 inherit pro_methods_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_class_goo_pdf"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_goo_pdf')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_goo_pdf.html">GooPdf</a></td></tr>
 <tr class="memitem:a0f2eaa48ead3a6cfebd39f5cdd3e97ab inherit pro_attribs_class_goo_pdf"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_metric_taker.html">MetricTaker</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_pdf.html#a0f2eaa48ead3a6cfebd39f5cdd3e97ab">logger</a></td></tr>
 <tr class="separator:a0f2eaa48ead3a6cfebd39f5cdd3e97ab inherit pro_attribs_class_goo_pdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_class_pdf_base"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_pdf_base')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_pdf_base.html">PdfBase</a></td></tr>
-<tr class="memitem:aac9f1f5f2e31ed672260b3610519b684 inherit pro_attribs_class_pdf_base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#aac9f1f5f2e31ed672260b3610519b684">numEvents</a></td></tr>
+<tr class="memitem:aac9f1f5f2e31ed672260b3610519b684 inherit pro_attribs_class_pdf_base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#aac9f1f5f2e31ed672260b3610519b684">numEvents</a> {0}</td></tr>
 <tr class="separator:aac9f1f5f2e31ed672260b3610519b684 inherit pro_attribs_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad9277a52bf3e454d7bcb2e37ea329ee7 inherit pro_attribs_class_pdf_base"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#ad9277a52bf3e454d7bcb2e37ea329ee7">numEntries</a></td></tr>
+<tr class="memitem:ad9277a52bf3e454d7bcb2e37ea329ee7 inherit pro_attribs_class_pdf_base"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#ad9277a52bf3e454d7bcb2e37ea329ee7">numEntries</a> {0}</td></tr>
 <tr class="separator:ad9277a52bf3e454d7bcb2e37ea329ee7 inherit pro_attribs_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a70d5ddb6d932ce57b36ab9c2c0d61b89 inherit pro_attribs_class_pdf_base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a70d5ddb6d932ce57b36ab9c2c0d61b89">normRanges</a></td></tr>
+<tr class="memitem:a70d5ddb6d932ce57b36ab9c2c0d61b89 inherit pro_attribs_class_pdf_base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a70d5ddb6d932ce57b36ab9c2c0d61b89">normRanges</a> {0}</td></tr>
 <tr class="separator:a70d5ddb6d932ce57b36ab9c2c0d61b89 inherit pro_attribs_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3b5bef5b6436c6a9844055829cb3cba3 inherit pro_attribs_class_pdf_base"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a3b5bef5b6436c6a9844055829cb3cba3">parameters</a></td></tr>
 <tr class="separator:a3b5bef5b6436c6a9844055829cb3cba3 inherit pro_attribs_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -236,17 +237,17 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:ad73d49f857f098fe9ba7f3357faa4956 inherit pro_attribs_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a596ab091a75307aceb298e5ff13fa03b inherit pro_attribs_class_pdf_base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_pdf_base.html#adde4851584b1fffeebd4b0ec2b9ca1c7">parCont</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">parameterList</a></td></tr>
 <tr class="separator:a596ab091a75307aceb298e5ff13fa03b inherit pro_attribs_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab9b8fa066ac7e9a3a00e288dc60c85ea inherit pro_attribs_class_pdf_base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fit_control.html">FitControl</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#ab9b8fa066ac7e9a3a00e288dc60c85ea">fitControl</a></td></tr>
+<tr class="memitem:ab9b8fa066ac7e9a3a00e288dc60c85ea inherit pro_attribs_class_pdf_base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fit_control.html">FitControl</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#ab9b8fa066ac7e9a3a00e288dc60c85ea">fitControl</a> {nullptr}</td></tr>
 <tr class="separator:ab9b8fa066ac7e9a3a00e288dc60c85ea inherit pro_attribs_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af583bab20870f9e4d24bb31af9d2e5e2 inherit pro_attribs_class_pdf_base"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="class_pdf_base.html">PdfBase</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">components</a></td></tr>
 <tr class="separator:af583bab20870f9e4d24bb31af9d2e5e2 inherit pro_attribs_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a085f0680195278543512ee1eeb08e436 inherit pro_attribs_class_pdf_base"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a085f0680195278543512ee1eeb08e436">integrationBins</a></td></tr>
+<tr class="memitem:a085f0680195278543512ee1eeb08e436 inherit pro_attribs_class_pdf_base"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a085f0680195278543512ee1eeb08e436">integrationBins</a> {-1}</td></tr>
 <tr class="separator:a085f0680195278543512ee1eeb08e436 inherit pro_attribs_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1f459f7a8b6e334131f8a60c44069ed5 inherit pro_attribs_class_pdf_base"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a1f459f7a8b6e334131f8a60c44069ed5">specialMask</a></td></tr>
+<tr class="memitem:a1f459f7a8b6e334131f8a60c44069ed5 inherit pro_attribs_class_pdf_base"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a1f459f7a8b6e334131f8a60c44069ed5">specialMask</a> {0}</td></tr>
 <tr class="separator:a1f459f7a8b6e334131f8a60c44069ed5 inherit pro_attribs_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab02a5f801af94475220e2bb5faf8027e inherit pro_attribs_class_pdf_base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#ab02a5f801af94475220e2bb5faf8027e">cachedParams</a></td></tr>
+<tr class="memitem:ab02a5f801af94475220e2bb5faf8027e inherit pro_attribs_class_pdf_base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#ab02a5f801af94475220e2bb5faf8027e">cachedParams</a> {nullptr}</td></tr>
 <tr class="separator:ab02a5f801af94475220e2bb5faf8027e inherit pro_attribs_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a098345520f86fb37c9a8571b5a4ede16 inherit pro_attribs_class_pdf_base"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a098345520f86fb37c9a8571b5a4ede16">properlyInitialised</a></td></tr>
+<tr class="memitem:a098345520f86fb37c9a8571b5a4ede16 inherit pro_attribs_class_pdf_base"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a098345520f86fb37c9a8571b5a4ede16">properlyInitialised</a> {true}</td></tr>
 <tr class="separator:a098345520f86fb37c9a8571b5a4ede16 inherit pro_attribs_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a201930b5ce1146bec6dfdd7acfe14867 inherit pro_attribs_class_pdf_base"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a201930b5ce1146bec6dfdd7acfe14867">functionIdx</a></td></tr>
 <tr class="separator:a201930b5ce1146bec6dfdd7acfe14867 inherit pro_attribs_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -255,7 +256,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="_argus_pdf_8h_source.html#l00006">6</a> of file <a class="el" href="_argus_pdf_8h_source.html">ArgusPdf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_argus_pdf_8h_source.html#l00005">5</a> of file <a class="el" href="_argus_pdf_8h_source.html">ArgusPdf.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a4b3fd1ba29bcab42b377db8ac6b2758b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4b3fd1ba29bcab42b377db8ac6b2758b">&#9670;&nbsp;</a></span>ArgusPdf()</h2>
@@ -335,10 +336,10 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="class_goo_pdf.html#a1eec1aef4a14c28ff372962c18c9956c">GooPdf</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="_argus_pdf_8h_source.html#l00009">9</a> of file <a class="el" href="_argus_pdf_8h_source.html">ArgusPdf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_argus_pdf_8h_source.html#l00008">8</a> of file <a class="el" href="_argus_pdf_8h_source.html">ArgusPdf.h</a>.</p>
 
 <p class="reference">References <a class="el" href="class_argus_pdf.html#a5952164ba28d9b2e9c194f742e1630ef">integrate()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;                                                      {</div><div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div><div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    }</div></div><!-- fragment -->
+<div class="fragment"><div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;                                                      {</div><div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div><div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    }</div></div><!-- fragment -->
 </div>
 </div>
 <a id="a5952164ba28d9b2e9c194f742e1630ef"></a>
@@ -377,7 +378,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="class_goo_pdf.html#a44d6f3493444c079438fcb960a3099bb">GooPdf</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_argus_pdf_8h_source.html#l00009">hasAnalyticIntegral()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_argus_pdf_8h_source.html#l00008">hasAnalyticIntegral()</a>.</p>
 
 </div>
 </div>
@@ -387,7 +388,7 @@ Additional Inherited Members</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Apr 22 2017 22:25:50 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue May 2 2017 19:38:20 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

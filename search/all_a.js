@@ -1,10 +1,9 @@
 var searchData=
 [
-  ['imag',['imag',['../structdevcomplex.html#a4a59d87a6478bb607a2cf0c70f4323bd',1,'devcomplex']]],
   ['incoherentsumpdf',['IncoherentSumPdf',['../class_incoherent_sum_pdf.html',1,'IncoherentSumPdf'],['../class_resonance_pdf.html#a5d402d24c67c8237685fa6a4c908901a',1,'ResonancePdf::IncoherentSumPdf()'],['../class_incoherent_sum_pdf.html#a32741c62b34dfe0e03cea460d78e1d1a',1,'IncoherentSumPdf::IncoherentSumPdf()']]],
   ['incoherentsumpdf_2ecu',['IncoherentSumPdf.cu',['../_incoherent_sum_pdf_8cu.html',1,'']]],
   ['incoherentsumpdf_2eh',['IncoherentSumPdf.h',['../_incoherent_sum_pdf_8h.html',1,'']]],
-  ['indalitz',['inDalitz',['../_dalitz_plot_helpers_8h.html#a6fce4517df40bf9a18507b2a631d0c73',1,'DalitzPlotHelpers.h']]],
+  ['indalitz',['inDalitz',['../_dalitz_plot_helpers_8h.html#a87dfaa7d884e836475c1307d17ee2d1f',1,'DalitzPlotHelpers.h']]],
   ['index',['index',['../class_indexable.html#a7c1bd84c4bafab7215621e28ea65f242',1,'Indexable']]],
   ['indexable',['Indexable',['../class_indexable.html',1,'Indexable'],['../class_indexable.html#aaf40fcbcf877ba654309f61ac98b2e6d',1,'Indexable::Indexable()']]],
   ['indexiterator',['IndexIterator',['../_pdf_base_8h.html#a485075354521f614e0e124e473468f1e',1,'PdfBase.h']]],
@@ -17,6 +16,8 @@ var searchData=
   ['interhistpdf',['InterHistPdf',['../class_inter_hist_pdf.html',1,'InterHistPdf'],['../class_inter_hist_pdf.html#aea392acc7f9cb55425e8590fecae81b0',1,'InterHistPdf::InterHistPdf()']]],
   ['interhistpdf_2ecu',['InterHistPdf.cu',['../_inter_hist_pdf_8cu.html',1,'']]],
   ['interhistpdf_2eh',['InterHistPdf.h',['../_inter_hist_pdf_8h.html',1,'']]],
+  ['invalid',['InValid',['../namespace_goo_fit.html#a145d35e8e46e921ed038de04120d4241a05fe242e96a3e233fc27654efe32c3a6',1,'GooFit']]],
   ['invrootpi',['invRootPi',['../_global_cuda_defines_8h.html#ad8b702874d038de595e56f4e20de240d',1,'GlobalCudaDefines.h']]],
+  ['italic',['italic',['../namespace_goo_fit.html#ae1df94cec5a2325951dc5627b1be68ae',1,'GooFit']]],
   ['iterator',['iterator',['../classstrided__range.html#a71b1d68641c8e35d8666cae9e6b1f198',1,'strided_range']]]
 ];

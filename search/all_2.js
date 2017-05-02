@@ -1,8 +1,7 @@
 var searchData=
 [
   ['abortwithcudaprintflush',['abortWithCudaPrintFlush',['../_global_cuda_defines_8h.html#ab84f5ad3389ceea62f8449c15b793a2a',1,'GlobalCudaDefines.h']]],
-  ['abs2',['abs2',['../structdevcomplex.html#ae5b6795466a12d5da923996f482a6b9f',1,'devcomplex']]],
-  ['add',['add',['../class_lorentz_matrix.html#a2a441783fdfbecf73dbbb517cf9c749a',1,'LorentzMatrix::add()'],['../class_symm_lorentz_matrix.html#ae326ca2738f229322b00fd5c00e5b914',1,'SymmLorentzMatrix::add()']]],
+  ['add',['add',['../class_lorentz_matrix.html#ae353547b7786e7bd49cb012bcec5d25d',1,'LorentzMatrix::add()'],['../class_symm_lorentz_matrix.html#af26910bb6980d57e1519cf3506f41d2a',1,'SymmLorentzMatrix::add()']]],
   ['addevent',['addEvent',['../class_data_set.html#a363d1779faf6983e6e428c43c5fe64e6',1,'DataSet::addEvent()'],['../class_data_set.html#a5110aa9f8297cbb4a02bb4e7927d1c4f',1,'DataSet::addEvent(fptype val)']]],
   ['addeventvector',['addEventVector',['../class_binned_data_set.html#a11559fdc4ec9bdc5e4dcb22bb520d8db',1,'BinnedDataSet::addEventVector()'],['../class_data_set.html#a682607e211780dfb653ab81afcafa033',1,'DataSet::addEventVector()'],['../class_unbinned_data_set.html#a3c9147954f1b42a953f6034570043cc1',1,'UnbinnedDataSet::addEventVector()']]],
   ['addition_2ecu',['addition.cu',['../addition_8cu.html',1,'']]],
@@ -13,7 +12,6 @@ var searchData=
   ['addweightedevent',['addWeightedEvent',['../class_data_set.html#afe2a52ec86aaa4aa6e2ef5dfaef6c597',1,'DataSet']]],
   ['ai_5fimag',['ai_imag',['../struct_wave_holder__s.html#ac3c85124beaf765c5d6bfe1bcc51aab1',1,'WaveHolder_s']]],
   ['ai_5freal',['ai_real',['../struct_wave_holder__s.html#a00967f3b136df17733892a790985c7e4',1,'WaveHolder_s']]],
-  ['align',['ALIGN',['../_spin_helper_8h.html#a4b3fbfc5401e613ca821db19cdf5f113',1,'SpinHelper.h']]],
   ['allpdfs_2ecu',['AllPdfs.cu',['../_all_pdfs_8cu.html',1,'']]],
   ['ampcalc',['AmpCalc',['../class_amp_calc.html',1,'AmpCalc'],['../class_amp_calc.html#af7cbcd85a1cca30309887b28a2274890',1,'AmpCalc::AmpCalc()']]],
   ['ampcalc_5ftd',['AmpCalc_TD',['../class_amp_calc___t_d.html',1,'AmpCalc_TD'],['../class_amp_calc___t_d.html#a985914b09655b32e8df3144cf77d6cdf',1,'AmpCalc_TD::AmpCalc_TD()']]],
@@ -26,6 +24,5 @@ var searchData=
   ['arguspdf',['ArgusPdf',['../class_argus_pdf.html',1,'ArgusPdf'],['../class_argus_pdf.html#a4b3fd1ba29bcab42b377db8ac6b2758b',1,'ArgusPdf::ArgusPdf()']]],
   ['arguspdf_2ecu',['ArgusPdf.cu',['../_argus_pdf_8cu.html',1,'']]],
   ['arguspdf_2eh',['ArgusPdf.h',['../_argus_pdf_8h.html',1,'']]],
-  ['argv_5f',['argv_',['../class_goo_fit_1_1_application.html#a1fbb1549afb8df01d9aa745afc95da1b',1,'GooFit::Application']]],
-  ['atan2',['ATAN2',['../_global_cuda_defines_8h.html#ac0c1f033adeb97850cce1712ad1b09e2',1,'GlobalCudaDefines.h']]]
+  ['argv_5f',['argv_',['../class_goo_fit_1_1_application.html#a1fbb1549afb8df01d9aa745afc95da1b',1,'GooFit::Application']]]
 ];

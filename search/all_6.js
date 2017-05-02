@@ -1,10 +1,8 @@
 var searchData=
 [
-  ['e',['E',['../class_lorentz_matrix.html#a3d7e512a14bcb4fede00210fe7935acb',1,'LorentzMatrix::E() const'],['../class_lorentz_matrix.html#a28e1f3c38937e76f6fb1abcfc117b8ac',1,'LorentzMatrix::E()']]],
+  ['e',['E',['../class_lorentz_matrix.html#a59525fc0cb6efbd85d0480f6dc14197e',1,'LorentzMatrix::E() const'],['../class_lorentz_matrix.html#afa8f10ac191ee1cc9c3e1d81eaa74b73',1,'LorentzMatrix::E()']]],
   ['end',['end',['../classstrided__range.html#a6e1082a3cbe0debdd662cec2bc0bc22a',1,'strided_range']]],
   ['enum_5fto_5funderlying',['enum_to_underlying',['../_dalitz_plot_helpers_8h.html#a17ed9540c8489c150e57cf9a6b34f25d',1,'DalitzPlotHelpers.h']]],
-  ['erf',['ERF',['../_global_cuda_defines_8h.html#a7f0564892d185f409da7019460106cc8',1,'GlobalCudaDefines.h']]],
-  ['erfc',['ERFC',['../_global_cuda_defines_8h.html#a6677d29cca7304ef61758efa8e274063',1,'GlobalCudaDefines.h']]],
   ['error',['error',['../class_variable.html#acaf425a434c5afaf2d2618a10ed9b035',1,'Variable']]],
   ['errorsonbins',['errorsOnBins',['../class_fit_control.html#a2be908a5befe80ddd65a1ba995ed9809',1,'FitControl']]],
   ['evaluateatpoints',['evaluateAtPoints',['../class_goo_pdf.html#a875f97d6406d58d99afaafbe2514e40f',1,'GooPdf::evaluateAtPoints(std::vector&lt; fptype &gt; &amp;points) const'],['../class_goo_pdf.html#a6bad6ce9eebdd78128f39596246703ef',1,'GooPdf::evaluateAtPoints(Variable *var, std::vector&lt; fptype &gt; &amp;res)']]],
@@ -15,7 +13,6 @@ var searchData=
   ['eventweightedaddpdf_2ecu',['EventWeightedAddPdf.cu',['../_event_weighted_add_pdf_8cu.html',1,'']]],
   ['eventweightedaddpdf_2eh',['EventWeightedAddPdf.h',['../_event_weighted_add_pdf_8h.html',1,'']]],
   ['exit',['exit',['../class_goo_fit_1_1_application.html#a71e0d2e61c0e873642a4a985dd1b8bb2',1,'GooFit::Application']]],
-  ['exp',['EXP',['../_global_cuda_defines_8h.html#a84db90500a1f9527c04e28817d9f60a1',1,'EXP():&#160;GlobalCudaDefines.h'],['../devcomplex_8h.html#ab6507d0f0bdc1926634d8f8005b52dd2',1,'exp(const devcomplex&lt; T &gt; &amp;z):&#160;devcomplex.h']]],
   ['expgauspdf',['ExpGausPdf',['../class_exp_gaus_pdf.html',1,'ExpGausPdf'],['../class_exp_gaus_pdf.html#a5248b4be67116077d5782de4030da549',1,'ExpGausPdf::ExpGausPdf()']]],
   ['expgauspdf_2ecu',['ExpGausPdf.cu',['../_exp_gaus_pdf_8cu.html',1,'']]],
   ['expgauspdf_2eh',['ExpGausPdf.h',['../_exp_gaus_pdf_8h.html',1,'']]],

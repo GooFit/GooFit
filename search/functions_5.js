@@ -1,12 +1,12 @@
 var searchData=
 [
-  ['faddeeva_5f2',['Faddeeva_2',['../_faddeeva_8cc.html#a423d75897fc35f35062361b4b456ba36',1,'Faddeeva.cc']]],
-  ['fcn',['FCN',['../class_goo_fit_1_1_f_c_n.html#a9cf98b9478720501f194728c1f5aa553',1,'GooFit::FCN']]],
-  ['fill',['Fill',['../class_t_h1.html#aa47100e4a7b245ab8f2c4a7f97f85c64',1,'TH1']]],
-  ['findfunctionidx',['findFunctionIdx',['../class_goo_pdf.html#ac0638dc0627afc85dd619e4ed0473251',1,'GooPdf']]],
-  ['fit',['fit',['../class_goo_fit_1_1_fit_manager_minuit1.html#a04ac2082ecea8bf609a07809c73c28b3',1,'GooFit::FitManagerMinuit1::fit()'],['../class_goo_fit_1_1_fit_manager_minuit2.html#a027d883752759da2435dabb2396670b1',1,'GooFit::FitManagerMinuit2::fit()']]],
-  ['fitcontrol',['FitControl',['../class_fit_control.html#a010846aa520a8fe8cb7bc7c900b3785f',1,'FitControl']]],
-  ['fitfun',['FitFun',['../_fit_manager_minuit1_8h.html#a3a8d4edb350fc9a9c6f4e2ffc0236314',1,'FitFun(int &amp;npar, double *gin, double &amp;fun, double *fp, int iflag):&#160;FitManagerMinuit1.cc'],['../_fit_manager_minuit1_8cc.html#a3a8d4edb350fc9a9c6f4e2ffc0236314',1,'FitFun(int &amp;npar, double *gin, double &amp;fun, double *fp, int iflag):&#160;FitManagerMinuit1.cc']]],
-  ['fitmanagerminuit1',['FitManagerMinuit1',['../class_goo_fit_1_1_fit_manager_minuit1.html#a155a82794093d1981282e0686d2be056',1,'GooFit::FitManagerMinuit1']]],
-  ['fitmanagerminuit2',['FitManagerMinuit2',['../class_goo_fit_1_1_fit_manager_minuit2.html#ac594da38a8551a78af54f081572b0a29',1,'GooFit::FitManagerMinuit2']]]
+  ['e',['E',['../class_lorentz_matrix.html#a59525fc0cb6efbd85d0480f6dc14197e',1,'LorentzMatrix::E() const'],['../class_lorentz_matrix.html#afa8f10ac191ee1cc9c3e1d81eaa74b73',1,'LorentzMatrix::E()']]],
+  ['end',['end',['../classstrided__range.html#a6e1082a3cbe0debdd662cec2bc0bc22a',1,'strided_range']]],
+  ['enum_5fto_5funderlying',['enum_to_underlying',['../_dalitz_plot_helpers_8h.html#a17ed9540c8489c150e57cf9a6b34f25d',1,'DalitzPlotHelpers.h']]],
+  ['evaluateatpoints',['evaluateAtPoints',['../class_goo_pdf.html#a875f97d6406d58d99afaafbe2514e40f',1,'GooPdf::evaluateAtPoints(std::vector&lt; fptype &gt; &amp;points) const'],['../class_goo_pdf.html#a6bad6ce9eebdd78128f39596246703ef',1,'GooPdf::evaluateAtPoints(Variable *var, std::vector&lt; fptype &gt; &amp;res)']]],
+  ['eventweightedaddpdf',['EventWeightedAddPdf',['../class_event_weighted_add_pdf.html#ac4226f08c07953a96cf4cd710deb372a',1,'EventWeightedAddPdf']]],
+  ['exit',['exit',['../class_goo_fit_1_1_application.html#a71e0d2e61c0e873642a4a985dd1b8bb2',1,'GooFit::Application']]],
+  ['expgauspdf',['ExpGausPdf',['../class_exp_gaus_pdf.html#a5248b4be67116077d5782de4030da549',1,'ExpGausPdf']]],
+  ['exppdf',['ExpPdf',['../class_exp_pdf.html#a73b6dc4819fd133c6c868c7f5c78c549',1,'ExpPdf::ExpPdf(std::string n, Variable *_x, Variable *alpha, Variable *offset=0)'],['../class_exp_pdf.html#a4a86ef398fb09e42171bdf64b23116d0',1,'ExpPdf::ExpPdf(std::string n, Variable *_x, std::vector&lt; Variable *&gt; &amp;weights, Variable *offset=0)']]],
+  ['extracthistogram',['extractHistogram',['../class_smooth_histogram_pdf.html#add629bdbca3b32d987cd2f7438feadfc',1,'SmoothHistogramPdf']]]
 ];

@@ -1,9 +1,10 @@
 var searchData=
 [
-  ['unbinneddataset',['UnbinnedDataSet',['../class_unbinned_data_set.html',1,'UnbinnedDataSet'],['../class_unbinned_data_set.html#a67d6788905f401547c8a5653cb32b04c',1,'UnbinnedDataSet::UnbinnedDataSet(Variable *var, string n=&quot;&quot;)'],['../class_unbinned_data_set.html#aa08963cba9a8302b78a510bb40a7c5d0',1,'UnbinnedDataSet::UnbinnedDataSet(std::vector&lt; Variable *&gt; &amp;vars, string n=&quot;&quot;)'],['../class_unbinned_data_set.html#a1f168a821342c57358b12add34d9aaf2',1,'UnbinnedDataSet::UnbinnedDataSet(std::set&lt; Variable *&gt; &amp;vars, string n=&quot;&quot;)']]],
+  ['unbinneddataset',['UnbinnedDataSet',['../class_unbinned_data_set.html',1,'UnbinnedDataSet'],['../class_unbinned_data_set.html#a6f9ac1d1340c4fde78120fb603f77ab9',1,'UnbinnedDataSet::UnbinnedDataSet(Variable *var, std::string n=&quot;&quot;)'],['../class_unbinned_data_set.html#a177af07b5c80398b8c4715437fe66595',1,'UnbinnedDataSet::UnbinnedDataSet(std::vector&lt; Variable *&gt; &amp;vars, std::string n=&quot;&quot;)'],['../class_unbinned_data_set.html#a06627009f179b98af57442eb200a1475',1,'UnbinnedDataSet::UnbinnedDataSet(std::set&lt; Variable *&gt; &amp;vars, std::string n=&quot;&quot;)']]],
   ['unbinneddataset_2ecc',['UnbinnedDataSet.cc',['../_unbinned_data_set_8cc.html',1,'']]],
   ['unbinneddataset_2eh',['UnbinnedDataSet.h',['../_unbinned_data_set_8h.html',1,'']]],
   ['unbinnednllfit',['UnbinnedNllFit',['../class_unbinned_nll_fit.html',1,'UnbinnedNllFit'],['../class_unbinned_nll_fit.html#afa67c447fbade199a46bdd58d60a07f7',1,'UnbinnedNllFit::UnbinnedNllFit()']]],
+  ['unchanged_5f',['unchanged_',['../class_variable.html#a68cce72811863cc0627bf7a857ef4bd7',1,'Variable']]],
   ['unregisterparameter',['unregisterParameter',['../class_pdf_base.html#a66b28f14a05c805475d7410f8baea45a',1,'PdfBase']]],
   ['up',['Up',['../class_goo_fit_1_1_f_c_n.html#a01b8876d4825908dd5c7f6003e0a8619',1,'GooFit::FCN']]],
   ['upperlimit',['upperlimit',['../class_variable.html#acbecc518e7fcbc311a7a94480e32a1d9',1,'Variable']]],

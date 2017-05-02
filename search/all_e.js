@@ -20,9 +20,11 @@ var searchData=
   ['m_5f34_5f1',['M_34_1',['../_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140da9b6eb12f44dba7a1dfc38a0d80efab9c',1,'DalitzPlotHelpers.h']]],
   ['m_5f34_5f2',['M_34_2',['../_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140dac32bacb80090ace74fefb5effc8ee736',1,'DalitzPlotHelpers.h']]],
   ['m_5fieventspertask',['m_iEventsPerTask',['../class_pdf_base.html#ae0d4d6b6d8e7b5bc998e0dfd6ce2e878',1,'PdfBase']]],
-  ['makegmunu',['makeGmunu',['../class_symm_lorentz_matrix.html#a66fae1d5ab895e51c62bb5e194d373df',1,'SymmLorentzMatrix']]],
-  ['makezero',['makeZero',['../class_lorentz_matrix.html#a29ae4e06f40b29c1cb5c571aa1670104',1,'LorentzMatrix::makeZero()'],['../class_symm_lorentz_matrix.html#a1520dec2ce00794aefd5db78fb90fe2d',1,'SymmLorentzMatrix::makeZero()']]],
-  ['mappedpdf',['MappedPdf',['../class_mapped_pdf.html',1,'MappedPdf'],['../class_mapped_pdf.html#a6c8facb294d08f4206bb47a77113dc63',1,'MappedPdf::MappedPdf()']]],
+  ['magenta',['magenta',['../namespace_goo_fit.html#ad8ca018216ddb23824741aeeb8d5da56',1,'GooFit']]],
+  ['main',['main',['../_gen_voigtian_8cc.html#a3c04138a5bfe5d72780bb7e82a18e627',1,'GenVoigtian.cc']]],
+  ['makegmunu',['makeGmunu',['../class_symm_lorentz_matrix.html#a250d4cedbe9e684944afab375cbd3d44',1,'SymmLorentzMatrix']]],
+  ['makezero',['makeZero',['../class_lorentz_matrix.html#a4f630cd97a1986c8d389140ac0843963',1,'LorentzMatrix::makeZero()'],['../class_symm_lorentz_matrix.html#afd4b64bbef5c97206757b94a730767c0',1,'SymmLorentzMatrix::makeZero()']]],
+  ['mappedpdf',['MappedPdf',['../class_mapped_pdf.html',1,'MappedPdf'],['../class_mapped_pdf.html#a15a3125cacc194173cfd81112f5161b0',1,'MappedPdf::MappedPdf()']]],
   ['mappedpdf_2ecu',['MappedPdf.cu',['../_mapped_pdf_8cu.html',1,'']]],
   ['mappedpdf_2eh',['MappedPdf.h',['../_mapped_pdf_8h.html',1,'']]],
   ['maximum',['maximum',['../struct_veto_info.html#a0869ec723a4629ee35a9eba068c176fa',1,'VetoInfo']]],
@@ -34,8 +36,6 @@ var searchData=
   ['mixingtimeresolution',['MixingTimeResolution',['../class_mixing_time_resolution.html',1,'MixingTimeResolution'],['../class_mixing_time_resolution.html#aa99f5fac6f6c7b095fd5d655f8d51843',1,'MixingTimeResolution::MixingTimeResolution()']]],
   ['mixingtimeresolution_5faux_2ecu',['MixingTimeResolution_Aux.cu',['../_mixing_time_resolution___aux_8cu.html',1,'']]],
   ['mixingtimeresolution_5faux_2eh',['MixingTimeResolution_Aux.h',['../_mixing_time_resolution___aux_8h.html',1,'']]],
-  ['modf',['MODF',['../_global_cuda_defines_8h.html#a022fefdb92bb304842c479d15cfa0847',1,'GlobalCudaDefines.h']]],
   ['mothermass',['motherMass',['../struct_decay_info.html#a6026459c3530fc40a58250d53d1cc0ea',1,'DecayInfo']]],
-  ['mult',['mult',['../class_lorentz_matrix.html#a3a205d012f60caf4f048013ff08747c5',1,'LorentzMatrix::mult()'],['../class_symm_lorentz_matrix.html#af1e8d2914a762cd2115a6c98454e00dc',1,'SymmLorentzMatrix::mult()']]],
-  ['multiply',['multiply',['../structdevcomplex.html#aa97fb44d4dfaf02cd0ab906840cf43d9',1,'devcomplex']]]
+  ['mult',['mult',['../class_lorentz_matrix.html#a9cc3714bf305146a62dc2ebabdc1e9f6',1,'LorentzMatrix::mult()'],['../class_symm_lorentz_matrix.html#a83f7623acbcce2556a28afdd4658b119',1,'SymmLorentzMatrix::mult()']]]
 ];

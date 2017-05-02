@@ -1,6 +1,7 @@
 var searchData=
 [
   ['name',['name',['../class_indexable.html#acce56f344c1ffdb362c347745e50b8c8',1,'Indexable']]],
+  ['ncpu',['nCPU',['../_gen_voigtian_8cc.html#a12d2bc80847e5879f5657e9a451736bc',1,'GenVoigtian.cc']]],
   ['normranges',['normRanges',['../class_pdf_base.html#a70d5ddb6d932ce57b36ab9c2c0d61b89',1,'PdfBase']]],
   ['num_5f',['num_',['../class_goo_fit_1_1_params.html#a425b06f8f100140f17e26226846d404f',1,'GooFit::Params']]],
   ['numbins',['numbins',['../class_variable.html#a9c357d78357c4c4cbe15eb0507ae4c32',1,'Variable']]],

@@ -5,11 +5,9 @@ var searchData=
   ['tddp4_2ecu',['TDDP4.cu',['../_t_d_d_p4_8cu.html',1,'']]],
   ['tddp4pdf_2ecu',['Tddp4Pdf.cu',['../_tddp4_pdf_8cu.html',1,'']]],
   ['tddp4pdf_2eh',['Tddp4Pdf.h',['../_tddp4_pdf_8h.html',1,'']]],
-  ['tddppdf',['TddpPdf',['../class_tddp_pdf.html',1,'TddpPdf'],['../class_resonance_pdf.html#aef7afa127eb4d6f76a3df9559e5dcf5c',1,'ResonancePdf::TddpPdf()'],['../class_tddp_pdf.html#a11a45c7cc46a47fa760f4ecbaa8c3555',1,'TddpPdf::TddpPdf(std::string n, Variable *_dtime, Variable *_sigmat, Variable *m12, Variable *m13, CountingVariable *eventNumber, DecayInfo *decay, MixingTimeResolution *r, GooPdf *eff, Variable *mistag=0)'],['../class_tddp_pdf.html#a1d934c142daa1e433981ee0c6043d72d',1,'TddpPdf::TddpPdf(std::string n, Variable *_dtime, Variable *_sigmat, Variable *m12, Variable *m13, CountingVariable *eventNumber, DecayInfo *decay, vector&lt; MixingTimeResolution *&gt; &amp;r, GooPdf *eff, Variable *md0, Variable *mistag=0)']]],
+  ['tddppdf',['TddpPdf',['../class_tddp_pdf.html',1,'TddpPdf'],['../class_resonance_pdf.html#aef7afa127eb4d6f76a3df9559e5dcf5c',1,'ResonancePdf::TddpPdf()'],['../class_tddp_pdf.html#a11a45c7cc46a47fa760f4ecbaa8c3555',1,'TddpPdf::TddpPdf(std::string n, Variable *_dtime, Variable *_sigmat, Variable *m12, Variable *m13, CountingVariable *eventNumber, DecayInfo *decay, MixingTimeResolution *r, GooPdf *eff, Variable *mistag=0)'],['../class_tddp_pdf.html#a71de48f9a3d28fb8c4439cf5db11c6a7',1,'TddpPdf::TddpPdf(std::string n, Variable *_dtime, Variable *_sigmat, Variable *m12, Variable *m13, CountingVariable *eventNumber, DecayInfo *decay, std::vector&lt; MixingTimeResolution *&gt; &amp;r, GooPdf *eff, Variable *md0, Variable *mistag=0)']]],
   ['tddppdf_2ecu',['TddpPdf.cu',['../_tddp_pdf_8cu.html',1,'']]],
   ['tddppdf_2eh',['TddpPdf.h',['../_tddp_pdf_8h.html',1,'']]],
-  ['th1',['TH1',['../class_t_h1.html',1,'TH1&lt; T &gt;'],['../class_t_h1.html#a8b755ec472b493850f4affa399d15c3f',1,'TH1::TH1()']]],
-  ['th1f',['TH1F',['../fake_t_h1_f_8h.html#a1bec1128e502dbf46020e554a1e948c5',1,'fakeTH1F.h']]],
   ['thread_5fsynch',['THREAD_SYNCH',['../_global_cuda_defines_8h.html#ad515070d237be85f5fbbb8a49b1ee44e',1,'GlobalCudaDefines.h']]],
   ['threadidx',['THREADIDX',['../_global_cuda_defines_8h.html#a595c708029e8a814d1cc628efccae426',1,'GlobalCudaDefines.h']]],
   ['threecomplex',['ThreeComplex',['../_tddp_pdf_8h.html#ad5de01c9383ec9374d31d63e64c70478',1,'TddpPdf.h']]],
@@ -17,8 +15,10 @@ var searchData=
   ['threegaussresolution_5faux_2ecu',['ThreeGaussResolution_Aux.cu',['../_three_gauss_resolution___aux_8cu.html',1,'']]],
   ['threegaussresolution_5faux_2eh',['ThreeGaussResolution_Aux.h',['../_three_gauss_resolution___aux_8h.html',1,'']]],
   ['thrustoverride_2eh',['ThrustOverride.h',['../_thrust_override_8h.html',1,'']]],
+  ['tminuit_2ecc',['TMinuit.cc',['../_t_minuit_8cc.html',1,'']]],
   ['totalconstants',['totalConstants',['../_pdf_base_8h.html#a2aa50cf6ad8d12f2ccb8dee83294e298',1,'totalConstants():&#160;PdfBase.cc'],['../_pdf_base_8cc.html#a2aa50cf6ad8d12f2ccb8dee83294e298',1,'totalConstants():&#160;PdfBase.cc']]],
   ['totalparams',['totalParams',['../_pdf_base_8h.html#aed6aaecbc8626ddc21a2406ccb85add7',1,'totalParams():&#160;PdfBase.cc'],['../_pdf_base_8cc.html#aed6aaecbc8626ddc21a2406ccb85add7',1,'totalParams():&#160;PdfBase.cc']]],
+  ['toupper',['toUpper',['../_t_minuit_8cc.html#a475ebbd3c5e42793f821d27cf540d5ff',1,'TMinuit.cc']]],
   ['transform_5freduce',['transform_reduce',['../_thrust_override_8h.html#a5dd7e03e1d7dcd391fcfdb6397b3fd9a',1,'ThrustOverride.h']]],
   ['transformgrid',['transformGrid',['../class_goo_pdf.html#ab088bfb0f86cc582774dfe786b157913',1,'GooPdf']]],
   ['transformiterator',['TransformIterator',['../classstrided__range.html#ae4671b819eabb9e3619be85285571957',1,'strided_range']]],
@@ -28,5 +28,5 @@ var searchData=
   ['truthresolution',['TruthResolution',['../class_truth_resolution.html',1,'TruthResolution'],['../class_truth_resolution.html#a516a0dc62bba865a41b2a7ed2b584594',1,'TruthResolution::TruthResolution()']]],
   ['truthresolution_5faux_2ecu',['TruthResolution_Aux.cu',['../_truth_resolution___aux_8cu.html',1,'']]],
   ['truthresolution_5faux_2eh',['TruthResolution_Aux.h',['../_truth_resolution___aux_8h.html',1,'']]],
-  ['twobodycmmom',['twoBodyCMmom',['../_resonance_pdf_8h.html#a1b1a037b83cfb36c5228ce8f1e7afd79',1,'ResonancePdf.h']]]
+  ['twobodycmmom',['twoBodyCMmom',['../_resonance_pdf_8h.html#ada7dda35c80974f8c15e8babdb4b73ed',1,'ResonancePdf.h']]]
 ];

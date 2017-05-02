@@ -1,13 +1,12 @@
 var searchData=
 [
-  ['e',['E',['../class_lorentz_matrix.html#a3d7e512a14bcb4fede00210fe7935acb',1,'LorentzMatrix::E() const'],['../class_lorentz_matrix.html#a28e1f3c38937e76f6fb1abcfc117b8ac',1,'LorentzMatrix::E()']]],
-  ['end',['end',['../classstrided__range.html#a6e1082a3cbe0debdd662cec2bc0bc22a',1,'strided_range']]],
-  ['enum_5fto_5funderlying',['enum_to_underlying',['../_dalitz_plot_helpers_8h.html#a17ed9540c8489c150e57cf9a6b34f25d',1,'DalitzPlotHelpers.h']]],
-  ['evaluateatpoints',['evaluateAtPoints',['../class_goo_pdf.html#a875f97d6406d58d99afaafbe2514e40f',1,'GooPdf::evaluateAtPoints(std::vector&lt; fptype &gt; &amp;points) const'],['../class_goo_pdf.html#a6bad6ce9eebdd78128f39596246703ef',1,'GooPdf::evaluateAtPoints(Variable *var, std::vector&lt; fptype &gt; &amp;res)']]],
-  ['eventweightedaddpdf',['EventWeightedAddPdf',['../class_event_weighted_add_pdf.html#ac4226f08c07953a96cf4cd710deb372a',1,'EventWeightedAddPdf']]],
-  ['exit',['exit',['../class_goo_fit_1_1_application.html#a71e0d2e61c0e873642a4a985dd1b8bb2',1,'GooFit::Application']]],
-  ['exp',['exp',['../devcomplex_8h.html#ab6507d0f0bdc1926634d8f8005b52dd2',1,'devcomplex.h']]],
-  ['expgauspdf',['ExpGausPdf',['../class_exp_gaus_pdf.html#a5248b4be67116077d5782de4030da549',1,'ExpGausPdf']]],
-  ['exppdf',['ExpPdf',['../class_exp_pdf.html#a73b6dc4819fd133c6c868c7f5c78c549',1,'ExpPdf::ExpPdf(std::string n, Variable *_x, Variable *alpha, Variable *offset=0)'],['../class_exp_pdf.html#a4a86ef398fb09e42171bdf64b23116d0',1,'ExpPdf::ExpPdf(std::string n, Variable *_x, std::vector&lt; Variable *&gt; &amp;weights, Variable *offset=0)']]],
-  ['extracthistogram',['extractHistogram',['../class_smooth_histogram_pdf.html#add629bdbca3b32d987cd2f7438feadfc',1,'SmoothHistogramPdf']]]
+  ['dalitzplotpdf',['DalitzPlotPdf',['../class_dalitz_plot_pdf.html#a411183a2f244b5a4f166d11751333915',1,'DalitzPlotPdf']]],
+  ['dalitzvetopdf',['DalitzVetoPdf',['../class_dalitz_veto_pdf.html#ae7ba514108e38ddaf0c24ef5bf2dc71c',1,'DalitzVetoPdf']]],
+  ['dampingfactorsquare',['dampingFactorSquare',['../_resonance_pdf_8h.html#a5988a684c5c519bba9dbd7130fddf4b6',1,'ResonancePdf.h']]],
+  ['dataset',['DataSet',['../class_data_set.html#a53fbc67c0cea9037ddf9ab433f07abd7',1,'DataSet::DataSet(Variable *var, std::string n=&quot;&quot;)'],['../class_data_set.html#a7b310692b06b447a5d814162607c8272',1,'DataSet::DataSet(std::vector&lt; Variable *&gt; &amp;vars, std::string n=&quot;&quot;)'],['../class_data_set.html#a0f601d1158a30ea4a732ead7766b9b38',1,'DataSet::DataSet(std::set&lt; Variable *&gt; &amp;vars, std::string n=&quot;&quot;)']]],
+  ['dev_5fpowi',['dev_powi',['../_goo_pdf_8h.html#a8a35f07d408b2bbe757a1ca880877b14',1,'GooPdf.h']]],
+  ['dim5',['Dim5',['../struct_dim5.html#a02460e3c1bf152b0ab76dd9a6d9215fa',1,'Dim5']]],
+  ['div',['div',['../class_lorentz_matrix.html#ab9a7ba12ace3a77ed8461dafaba1e9a6',1,'LorentzMatrix::div()'],['../class_symm_lorentz_matrix.html#a30b28410737f110b7ade1d3a8df926eb',1,'SymmLorentzMatrix::div()']]],
+  ['dot',['Dot',['../class_spin_sum_v.html#ab05319bd75b4e1a246dd602ae491aa9d',1,'SpinSumV']]],
+  ['dppdf',['DPPdf',['../class_d_p_pdf.html#a33ec3620ebd7afed7011b4e6ed01b1d2',1,'DPPdf']]]
 ];

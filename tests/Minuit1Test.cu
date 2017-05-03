@@ -44,7 +44,7 @@ TEST(Minuit1, SimpleFit) {
     exppdf.setData(&data);
     
     GooFit::FitManagerMinuit1 fitter{&exppdf};
-    fitter.setVerbosity(0);
+    fitter.setVerbosity(2);
     fitter.fit();
 
     EXPECT_TRUE(fitter);
@@ -89,7 +89,7 @@ TEST(Minuit1, DifferentFitterVariable) {
     totalpdf.setData(&data);
     
     GooFit::FitManagerMinuit1 fitter{&totalpdf};
-    fitter.setVerbosity(0);
+    fitter.setVerbosity(2);
     fitter.fit();
     
     EXPECT_TRUE(fitter);

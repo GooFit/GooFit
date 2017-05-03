@@ -48,7 +48,7 @@ Int_t Minuit1::Eval(
             std::cout << "Variable " << var->name << " " << var->getIndex() << " is NaN\n";
         
         var->unchanged_ = var->value == pars.at(var->getFitterIndex());
-        pars.at(var->getIndex()) = var->value; //  + var->blind
+        var->value = pars.at(var->getIndex()); //  + var->blind
     }
     
     pdfPointer->copyParams(pars);

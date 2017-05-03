@@ -85,7 +85,7 @@ __host__ void PdfBase::unregisterParameter(Variable* var) {
     if(!var)
         return;
 
-    parIter pos = std::find(parameterList.begin(), parameterList.end(), var);
+    auto pos = std::find(parameterList.begin(), parameterList.end(), var);
 
     if(pos != parameterList.end())
         parameterList.erase(pos);
@@ -100,29 +100,27 @@ __host__ void PdfBase::unregisterParameter(Variable* var) {
     }
 }
 
-__host__ PdfBase::parCont PdfBase::getParameters() const {
-    parCont ret;
-    getParameters(ret);
-    return ret;
-}
 
-__host__ void PdfBase::getParameters(parCont& ret) const {
-    for(parConstIter p = parameterList.begin(); p != parameterList.end(); ++p) {
-        if(std::find(ret.begin(), ret.end(), (*p)) != ret.end())
+__host__ Variable_v PdfBase::getParameters() const {
+    Variable_v ret;
+    for(Variable* p : parameterList) {
+        if(std::find(ret.begin(), ret.end(), p) != ret.end())
             continue;
 
-        ret.push_back(*p);
+        ret.push_back(p);
     }
 
     for(unsigned int i = 0; i < components.size(); ++i) {
-        components[i]->getParameters(ret);
+        Variable_v sub_comp = components[i]->getParameters();
+        ret.insert(std::begin(ret), std::begin(sub_comp), std::end(sub_comp));
     }
+    return ret;
 }
 
 __host__ Variable* PdfBase::getParameterByName(std::string n) const {
-    for(parConstIter p = parameterList.begin(); p != parameterList.end(); ++p) {
-        if((*p)->name == n)
-            return (*p);
+    for(Variable* p : parameterList) {
+        if(p->name == n)
+            return p;
     }
 
     for(unsigned int i = 0; i < components.size(); ++i) {
@@ -135,17 +133,21 @@ __host__ Variable* PdfBase::getParameterByName(std::string n) const {
     return 0;
 }
 
-__host__ void PdfBase::getObservables(std::vector<Variable*>& ret) const {
-    for(obsConstIter p = obsCBegin(); p != obsCEnd(); ++p) {
-        if(std::find(ret.begin(), ret.end(), *p) != ret.end())
+__host__ Variable_v PdfBase::getObservables() const {
+    Variable_v ret;
+    
+    for(Variable* p : observables) {
+        if(std::find(ret.begin(), ret.end(), p) != ret.end())
             continue;
 
-        ret.push_back(*p);
+        ret.push_back(p);
     }
 
     for(unsigned int i = 0; i < components.size(); ++i) {
-        components[i]->getObservables(ret);
+        Variable_v sub_comp = components[i]->getObservables();
+        ret.insert(std::begin(ret), std::begin(sub_comp), std::end(sub_comp));
     }
+    return ret;
 }
 
 __host__ unsigned int PdfBase::registerConstants(unsigned int amount) {
@@ -192,15 +194,14 @@ void abortWithCudaPrintFlush(std::string file, int line, std::string reason, con
     std::cout << GooFit::reset << GooFit::red << "Abort called from " << file << " line " << line << " due to " << reason << std::endl;
     
     if(pdf) {
-        PdfBase::parCont pars;
-        pdf->getParameters(pars);
+        Variable_v pars = pdf->getParameters();
         std::cout << "Parameters of " << pdf->getName() << " : \n";
         
-        for(PdfBase::parIter v = pars.begin(); v != pars.end(); ++v) {
-            if(0 > (*v)->getIndex())
+        for(Variable* v : pars) {
+            if(0 > v->getIndex())
                 continue;
             
-            std::cout << "  " << (*v)->name << " (" << (*v)->getIndex() << ") :\t" << host_params[(*v)->getIndex()] << std::endl;
+            std::cout << "  " << v->name << " (" << v->getIndex() << ") :\t" << host_params[v->getIndex()] << std::endl;
         }
     }
     

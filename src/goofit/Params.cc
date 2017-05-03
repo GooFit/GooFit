@@ -8,7 +8,7 @@
 namespace GooFit {
 
     Params::Params(PdfBase &pdf) : pdf_(&pdf) {
-    pdf_->getParameters(vars_);
+    vars_ = pdf_->getParameters();
         
     for(Variable* var : vars_) {
         bool added;

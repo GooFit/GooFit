@@ -2,6 +2,7 @@
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/ThrustOverride.h"
 
+#include "goofit/Log.h"
 #include "goofit/Error.h"
 #include "goofit/Variable.h"
 #include "goofit/FitControl.h"
@@ -382,11 +383,10 @@ __host__ void GooPdf::scan(Variable* var, std::vector<fptype>& values) {
 }
 
 __host__ void GooPdf::setParameterConstantness(bool constant) {
-    PdfBase::parCont pars;
-    getParameters(pars);
+    Variable_v pars = getParameters();
 
-    for(PdfBase::parIter p = pars.begin(); p != pars.end(); ++p) {
-        (*p)->fixed = constant;
+    for(Variable* p : pars) {
+        p->fixed = constant;
     }
 }
 
@@ -426,22 +426,25 @@ __host__ fptype GooPdf::normalize() const {
     fptype ret = 1;
 
     if(hasAnalyticIntegral()) {
-        for(obsConstIter v = obsCBegin(); v != obsCEnd(); ++v) {  // Loop goes only over observables of this PDF.
-            //if (cpuDebug & 1) std::cout << "Analytically integrating " << getName() << " over " << (*v)->name << std::endl;
-            ret *= integrate((*v)->lowerlimit, (*v)->upperlimit);
+        // Loop goes only over observables of this PDF.
+        for(Variable* v : observables) {
+            GOOFIT_TRACE(")Analytically integrating {} over {}", getName(), v->name);
+            ret *= integrate(v->lowerlimit, v->upperlimit);
         }
 
         host_normalisation[parameters] = 1.0/ret;
-        //if (cpuDebug & 1) std::cout << "Analytic integral of " << getName() << " is " << ret << std::endl;
+        GOOFIT_DEBUG("Analytic integral of {} is {}", getName(), ret);
+        
         return ret;
     }
 
     int totalBins = 1;
 
-    for(obsConstIter v = obsCBegin(); v != obsCEnd(); ++v) {
-        ret *= ((*v)->upperlimit - (*v)->lowerlimit);
-        totalBins *= (integrationBins > 0 ? integrationBins : (*v)->numbins);
-        //if (cpuDebug & 1) std::cout << "Total bins " << totalBins << " due to " << (*v)->name << " " << integrationBins << " " << (*v)->numbins << std::endl;
+    for(Variable* v : observables) {
+        ret *= v->upperlimit - v->lowerlimit;
+        totalBins *= integrationBins > 0 ? integrationBins : v->numbins;
+
+        GOOFIT_TRACE("Total bins {} due to {} {} {}", totalBins, v->name, integrationBins, v->numBins);
     }
 
     ret /= totalBins;
@@ -648,8 +651,7 @@ __host__ void make_a_grid(std::vector<Variable*> ret, UnbinnedDataSet &grid) {
 
 
 __host__ UnbinnedDataSet GooPdf::makeGrid() {
-    obsCont ret;
-    getObservables(ret);
+    Variable_v ret = getObservables();
     
     UnbinnedDataSet grid{ret};
     
@@ -664,8 +666,8 @@ __host__ void GooPdf::transformGrid(fptype* host_output) {
     //normalize();
     int totalBins = 1;
 
-    for(obsConstIter v = obsCBegin(); v != obsCEnd(); ++v) {
-        totalBins *= (*v)->numbins;
+    for(Variable* v : observables) {
+        totalBins *= v->numbins;
     }
 
     thrust::constant_iterator<fptype*> arrayAddress(normRanges);

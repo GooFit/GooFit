@@ -100,7 +100,10 @@ conversion = [
     (r'\bCONST_PI\b', 'M_PI'),
     (r'normalise', 'normalize'),
     (r'Normalise', 'Normalize'),
-
+    (r'\bPdfBase::parCont\b', 'Variable_v')
+    (r'\bPdfBase::obsCont\b', 'Variable_v')
+    (r'\bobsCont\b', 'Variable_v')
+    (r'\bparCont\b', 'Variable_v')
 ]
 
 def fix_text(contents):

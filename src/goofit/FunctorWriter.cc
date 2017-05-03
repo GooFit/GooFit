@@ -5,19 +5,18 @@
 #include "goofit/Variable.h"
 
 void writeToFile(PdfBase* pdf, const char* fname) {
-    PdfBase::parCont params;
-    pdf->getParameters(params);
+    Variable_v params = pdf->getParameters();
 
     std::ofstream writer;
     writer.open(fname);
 
-    for(PdfBase::parIter p = params.begin(); p != params.end(); ++p) {
-        writer << (*p)->name << " "
-               << (*p)->value << " "
-               << (*p)->error << " "
-               << (*p)->numbins << " "
-               << (*p)->lowerlimit << " "
-               << (*p)->upperlimit
+    for(Variable* p : params) {
+        writer << p->name << " "
+               << p->value << " "
+               << p->error << " "
+               << p->numbins << " "
+               << p->lowerlimit << " "
+               << p->upperlimit
                << std::endl;
     }
 
@@ -26,13 +25,12 @@ void writeToFile(PdfBase* pdf, const char* fname) {
 
 
 void readFromFile(PdfBase* pdf, const char* fname) {
-    PdfBase::parCont params;
-    pdf->getParameters(params);
+    Variable_v params = pdf->getParameters();
 
     std::map<std::string, Variable*> tempMap;
 
-    for(PdfBase::parIter p = params.begin(); p != params.end(); ++p) {
-        tempMap[(*p)->name] = (*p);
+    for(Variable* p : params) {
+        tempMap[p->name] = p;
     }
 
     std::ifstream reader;
@@ -87,8 +85,8 @@ void writeListOfNumbers(thrust::host_vector<fptype>& target, const char* fname) 
     std::ofstream writer;
     writer.open(fname);
 
-    for(thrust::host_vector<fptype>::iterator t = target.begin(); t != target.end(); ++t) {
-        writer << (*t) << " ";
+    for(fptype t : target) {
+        writer << t << " ";
     }
 
     writer.close();

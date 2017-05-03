@@ -90,7 +90,7 @@ EventWeightedAddPdf::EventWeightedAddPdf(std::string n, std::vector<Variable*> w
     }
 
     // This must occur after registering weights, or the indices will be off - the device functions assume that the weights are first.
-    getObservables(observables);
+    observables = getObservables();
 
     if(extended)
         GET_FUNCTION_ADDR(ptr_to_EventWeightedAddPdfsExt);

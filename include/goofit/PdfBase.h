@@ -2,8 +2,10 @@
 
 #include "goofit/GlobalCudaDefines.h"
 
+#include "goofit/Variable.h"
 #include <set>
 #include <map>
+#include <vector>
 
 #include <thrust/iterator/constant_iterator.h>
 #include <thrust/device_vector.h>
@@ -23,7 +25,7 @@ extern int totalParams;
 extern int totalConstants;
 
 class FitControl;
-class Variable;
+
 class BinnedDataSet;
 class UnbinnedDataSet;
 
@@ -39,13 +41,6 @@ public:
     __host__ virtual fptype normalize() const = 0;
     __host__ void initialiseIndices(std::vector<unsigned int> pindices);
 
-    typedef std::vector<Variable*> obsCont;
-    typedef obsCont::iterator obsIter;
-    typedef obsCont::const_iterator obsConstIter;
-    typedef std::vector<Variable*> parCont;
-    typedef parCont::iterator parIter;
-    typedef parCont::const_iterator parConstIter;
-
     __host__ void addSpecialMask(int m) {
         specialMask |= m;
     }
@@ -56,9 +51,9 @@ public:
     __host__ std::string getName() const {
         return name;
     }
-    __host__ virtual void getObservables(obsCont& ret) const;
-    __host__ virtual void getParameters(parCont& ret) const;
-    __host__ parCont getParameters() const;
+
+    __host__ virtual Variable_v getObservables() const;
+    __host__ virtual Variable_v getParameters() const;
     __host__ Variable* getParameterByName(std::string n) const;
     __host__ int getSpecialMask() const {
         return specialMask;
@@ -86,19 +81,6 @@ public:
 
     __host__ bool parametersChanged() const;
 
-    __host__ obsIter obsBegin() {
-        return observables.begin();
-    }
-    __host__ obsIter obsEnd() {
-        return observables.end();
-    }
-    __host__ obsConstIter obsCBegin() const {
-        return observables.begin();
-    }
-    __host__ obsConstIter obsCEnd() const {
-        return observables.end();
-    }
-
     __host__ void checkInitStatus(std::vector<std::string>& unInited) const;
     void clearCurrentFit();
     __host__ void SigGenSetIndices() {
@@ -110,8 +92,8 @@ protected:
     fptype* normRanges {0};       //< This is specific to functor instead of variable so that MetricTaker::operator needn't use indices.
     unsigned int parameters;  //< Stores index, in 'paramIndices', where this functor's information begins.
     unsigned int cIndex;      //< Stores location of constants.
-    obsCont observables;
-    parCont parameterList;
+    Variable_v observables;
+    Variable_v parameterList;
     FitControl* fitControl {nullptr};
     std::vector<PdfBase*> components;
     int integrationBins {-1};

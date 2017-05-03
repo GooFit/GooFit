@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <map>
+#include <vector>
 #include <iostream>
 #include <cassert>
 #include <algorithm>
@@ -99,6 +99,7 @@ public:
     bool changed() const {return !unchanged_;}
 };
 
+typedef std::vector<Variable*> Variable_v;
 
 /// This is used to track event number for MPI versions.
 /// A cast is done to know whether the values need to be fixed.

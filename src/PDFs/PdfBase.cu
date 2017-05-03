@@ -24,17 +24,16 @@ __host__ void PdfBase::copyParams(const std::vector<double>& pars) const {
 
 __host__ void PdfBase::copyParams() {
     // Copies values of Variable objects
-    parCont pars;
-    getParameters(pars);
+    Variable_v pars = getParameters();
     std::vector<double> values;
 
-    for(parIter v = pars.begin(); v != pars.end(); ++v) {
-        int index = (*v)->getIndex();
+    for(Variable* v : pars) {
+        int index = v->getIndex();
 
         if(index >= (int) values.size())
             values.resize(index + 1);
 
-        values[index] = (*v)->value;
+        values[index] = v->value;
     }
 
     copyParams(values);
@@ -102,9 +101,9 @@ __host__ void PdfBase::setData(std::vector<std::map<Variable*, fptype>>& data) {
     fptype* host_array = new fptype[data.size()*dimensions];
 
     for(unsigned int i = 0; i < data.size(); ++i) {
-        for(obsIter v = obsBegin(); v != obsEnd(); ++v) {
-            assert(data[i].find(*v) != data[i].end());
-            host_array[i*dimensions + (*v)->getIndex()] = data[i][*v];
+        for(Variable*  v : observables) {
+            assert(data[i].find(v) != data[i].end());
+            host_array[i*dimensions + v->getIndex()] = data[i][v];
         }
     }
 
@@ -122,9 +121,9 @@ __host__ void PdfBase::recursiveSetIndices() {
     int numParams = host_indices[parameters];
     int counter = 0;
 
-    for(obsIter v = obsBegin(); v != obsEnd(); ++v) {
-        host_indices[parameters + 2 + numParams + counter] = (*v)->getIndex();
-        //std::cout << getName() << " set index of " << (*v)->name << " to " << (*v)->index << " " << (parameters + 2 + numParams + counter) << std::endl;
+    for(Variable* v : observables) {
+        host_indices[parameters + 2 + numParams + counter] = v->getIndex();
+        GOOFIT_TRACE("{} set index of {} to {} -> host {}", getName(), v->name, v->index, parameters + 2 + numParams + counter)
         counter++;
     }
 
@@ -134,8 +133,8 @@ __host__ void PdfBase::recursiveSetIndices() {
 __host__ void PdfBase::setIndices() {
     int counter = 0;
 
-    for(obsIter v = obsBegin(); v != obsEnd(); ++v) {
-        (*v)->setIndex(counter++);
+    for(Variable* v : observables) {
+        v->setIndex(counter++);
     }
 
     recursiveSetIndices();
@@ -206,9 +205,9 @@ __host__ void PdfBase::setData(UnbinnedDataSet* data) {
 
     //Transfer into our whole buffer
     for(int i = 0; i < numEntries; ++i) {
-        for(obsIter v = obsBegin(); v != obsEnd(); ++v) {
-            fptype currVal = data->getValue((*v), i);
-            host_array[i*dimensions + (*v)->getIndex()] = currVal;
+        for(Variable* v : observables) {
+            fptype currVal = data->getValue(v, i);
+            host_array[i*dimensions + v->getIndex()] = currVal;
         }
     }
 
@@ -303,13 +302,12 @@ __host__ void PdfBase::setData(BinnedDataSet* data) {
 #endif
 
     for(unsigned int i = 0; i < numEntries; ++i) {
-        for(obsIter v = obsBegin(); v != obsEnd(); ++v) {
-            host_array[i*dimensions + (*v)->getIndex()] = data->getBinCenter((*v), i);
+        for(Variable* v : observables) {
+            host_array[i*dimensions + v->getIndex()] = data->getBinCenter(v, i);
         }
 
         host_array[i*dimensions + observables.size() + 0] = data->getBinContent(i);
-        host_array[i*dimensions + observables.size() + 1] = fitControl->binErrors() ? data->getBinError(i) : data->getBinVolume(
-                    i);
+        host_array[i*dimensions + observables.size() + 1] = fitControl->binErrors() ? data->getBinError(i) : data->getBinVolume(i);
         numEvents += data->getBinContent(i);
     }
 
@@ -359,10 +357,10 @@ __host__ void PdfBase::generateNormRange() {
     // 0 and 2. Make one array per functor, as opposed to variable, to make
     // it easy to pass MetricTaker a range without worrying about which parts
     // to use.
-    for(obsIter v = obsBegin(); v != obsEnd(); ++v) {
-        host_norms[3*counter+0] = (*v)->lowerlimit;
-        host_norms[3*counter+1] = (*v)->upperlimit;
-        host_norms[3*counter+2] = integrationBins > 0 ? integrationBins : (*v)->numbins;
+    for(Variable* v : observables) {
+        host_norms[3*counter+0] = v->lowerlimit;
+        host_norms[3*counter+1] = v->upperlimit;
+        host_norms[3*counter+2] = integrationBins > 0 ? integrationBins : v->numbins;
         counter++;
     }
 

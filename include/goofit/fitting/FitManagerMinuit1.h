@@ -1,6 +1,7 @@
 #pragma once
 
 #include "goofit/GlobalCudaDefines.h"
+#include "goofit/Variable.h"
 #include <TMinuit.h>
 
 class PdfBase;
@@ -9,7 +10,7 @@ namespace GooFit {
     
 class Minuit1 : public TMinuit {
     PdfBase* pdfPointer;
-    std::vector<Variable*> vars;
+    Variable_v vars;
     
 public:
     Minuit1(PdfBase* pdfPointer);
@@ -22,7 +23,7 @@ public:
                        ) override;
     
     // Get a copy of the list of variables
-    std::vector<Variable*> getVaraibles() const {return vars;};
+    Variable_v getVaraibles() const {return vars;};
 };
 
 class FitManagerMinuit1 {
@@ -44,7 +45,16 @@ public:
     void useImprove(bool use=true) {
         _useImprove = use;
     }
+    void setVerbosity(int v) {
+        minuit_.SetPrintLevel(v-1);
+    }
  
+    operator bool() const {
+        return minuit_.GetStatus() == 0;
+    }
+    operator int() const {
+        return minuit_.GetStatus();
+    }
     
     // This runs the fit
     void fit();
@@ -62,7 +72,7 @@ private:
     bool _useHesse {true};
     bool _useMinos {false};
     bool _useImprove {false};
-
+    
     Minuit1 minuit_;
 };
 

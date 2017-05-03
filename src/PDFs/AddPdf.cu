@@ -77,12 +77,12 @@ AddPdf::AddPdf(std::string n, std::vector<Variable*> weights, std::vector<PdfBas
 
     // Indices stores (function index)(function parameter index)(weight index) triplet for each component.
     // Last component has no weight index unless function is extended.
-    for(std::vector<PdfBase*>::iterator p = comps.begin(); p != comps.end(); ++p) {
-        components.push_back(*p);
+    for(PdfBase* p : comps) {
+        components.push_back(p);
         assert(components.back());
     }
 
-    getObservables(observables);
+    observables = getObservables();
 
     std::vector<unsigned int> pindices;
 
@@ -117,7 +117,7 @@ AddPdf::AddPdf(std::string n, Variable* frac1, PdfBase* func1, PdfBase* func2)
     // Special-case constructor for common case of adding two functions.
     components.push_back(func1);
     components.push_back(func2);
-    getObservables(observables);
+    observables = getObservables();
 
     std::vector<unsigned int> pindices;
     pindices.push_back(func1->getFunctionIndex());

@@ -2020,8 +2020,7 @@ void makeDalitzPlots(GooPdf* overallSignal, std::string plotdir = "./plots_from_
     std::cout << "Max bin content: " << maxBinContent << " (" << bestI << ", " << bestJ << ")\n";
 
     bool dependsOnSigma = true;
-    PdfBase::obsCont obses;
-    overallSignal->getObservables(obses);
+    Variable_v obses = overallSignal->getObservables();
 
     if(std::find(obses.begin(), obses.end(), sigma) == obses.end())
         dependsOnSigma = false;

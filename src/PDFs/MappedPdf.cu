@@ -32,11 +32,11 @@ __host__ MappedPdf::MappedPdf(std::string n, GooPdf* m, std::vector<GooPdf*>& t)
 
     std::set<int> functionIndicesUsed;
 
-    for(std::vector<GooPdf*>::iterator f = t.begin(); f != t.end(); ++f) {
-        components.push_back(*f);
-        pindices.push_back((*f)->getFunctionIndex());
-        pindices.push_back((*f)->getParameterIndex());
-        functionIndicesUsed.insert((*f)->getFunctionIndex());
+    for(GooPdf* f : t) {
+        components.push_back(f);
+        pindices.push_back(f->getFunctionIndex());
+        pindices.push_back(f->getParameterIndex());
+        functionIndicesUsed.insert(f->getFunctionIndex());
     }
 
     if(functionIndicesUsed.size() > 1) {
@@ -45,7 +45,7 @@ __host__ MappedPdf::MappedPdf(std::string n, GooPdf* m, std::vector<GooPdf*>& t)
                   << " constructor. This may slow execution by causing sequential evaluations.\n";
     }
 
-    getObservables(observables);
+    observables = getObservables();
     GET_FUNCTION_ADDR(ptr_to_Mapped);
     initialise(pindices);
 }

@@ -4,6 +4,8 @@
 #include "goofit/Version.h"
 #include "goofit/Error.h"
 #include "goofit/Color.h"
+#include "goofit/Log.h"
+
 #include <thrust/detail/config/device_system.h>
 #include <x86/cpu_x86.h>
 
@@ -37,7 +39,7 @@ class Application : public CLI::App {
 protected:
     int gpuDev_ = 0;
     bool show_gpus_;
-    bool show_threads_;
+    bool quiet_;
     int argc_;
     char** argv_;
 
@@ -102,9 +104,9 @@ public:
 #endif
         add_flag("--show-gpus", show_gpus_, "Show the available GPU devices and exit")->group("GooFit");
 #endif
-        add_flag("--goofit-details", show_threads_, "Output system and threading details")->group("GooFit");
+        add_flag("-q,--quiet", quiet_, "Reduce the verbosity of the Application")->group("GooFit");
 
-        add_config("--config", "config.ini", "An ini file with command line options in it");
+        add_config("--config", "config.ini", "An ini file with command line options in it")->group("GooFit");
 
         // Reset color on exit (but not control-c)
         std::atexit([]() {
@@ -136,31 +138,31 @@ public:
 
         set_device();
 
-        if(show_threads_) {
-            std::cout << blue;
-            std::cout << "GOOFIT: Version " << GOOFIT_VERSION_MAJOR
-                                     << "." << GOOFIT_VERSION_MINOR
-                                     << "." << GOOFIT_VERSION_PATCH << std::endl;
+        if(!quiet_) {
+            GOOFIT_INFO("GooFit: Version {}.{}.{}", GOOFIT_VERSION_MAJOR, GOOFIT_VERSION_MINOR, GOOFIT_VERSION_PATCH);
+
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-            std::cout << "CUDA: Device " << get_device() << ": ";
             cudaDeviceProp devProp;
             cudaGetDeviceProperties(&devProp, gpuDev_);
-            std::cout << devProp.name << std::endl;
-            std::cout << "CUDA: Compute " << devProp.major << "." << devProp.minor << std::endl;
-            std::cout << "CUDA: Total global memory: " <<  devProp.totalGlobalMem / 1.0e9 << "GB" << std::endl;
-            std::cout << "CUDA: Multiprocessors: "<< devProp.multiProcessorCount << std::endl;
-            std::cout << "CUDA: Total amount of shared memory per block: " << devProp.sharedMemPerBlock << std::endl;
-            std::cout << "CUDA: Total registers per block: " << devProp.regsPerBlock << std::endl;
-            std::cout << "CUDA: Warp size: " << devProp.warpSize << std::endl;
-            std::cout << "CUDA: Maximum memory pitch: " << devProp.memPitch << std::endl;
-            std::cout << "CUDA: Total amount of constant memory: " << devProp.totalConstMem << std::endl;
+            
+            GOOFIT_INFO("CUDA: Device {}: {}", get_device(), devProp.name);
+            
+            GOOFIT_INFO("CUDA: Compute {}.{}" << devProp.major, devProp.minor;
+            GOOFIT_INFO("CUDA: Total global memory: {} GB", devProp.totalGlobalMem / 1.0e9);
+            GOOFIT_INFO("CUDA: Multiprocessors: {}", devProp.multiProcessorCount);
+                        
+            GOOFIT_DEBUG("CUDA: Total amount of shared memory per block: " << devProp.sharedMemPerBlock << std::endl;
+            GOOFIT_DEBUG("CUDA: Total registers per block: " << devProp.regsPerBlock << std::endl;
+            GOOFIT_DEBUG("CUDA: Warp size: " << devProp.warpSize << std::endl;
+            GOOFIT_DEBUG("CUDA: Maximum memory pitch: " << devProp.memPitch << std::endl;
+            GOOFIT_DEBUG("CUDA: Total amount of constant memory: " << devProp.totalConstMem << std::endl;
 
 #elif THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_OMP
-            std::cout << "OMP: Number of threads: " << omp_get_max_threads() << std::endl;
+            GOOFIT_INFO("OMP: Number of threads: ", omp_get_max_threads());
 #elif THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_TBB
-            std::cout << "TBB: Backend selected" << std::endl;
+            GOOFIT_INFO("TBB: Backend selected");
 #elif THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CPP
-            std::cout << "CPP: Single threaded mode" << std::endl;
+            GOOFIT_INFO("CPP: Single threaded mode");
 #endif
 
             // Print out warnings if not fully optimized

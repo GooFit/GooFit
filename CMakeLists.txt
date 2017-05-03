@@ -4,6 +4,10 @@ project(GOOFIT
     VERSION 2.0.0
     LANGUAGES CXX)
 
+if(NOT DEFINED CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
+    set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE INTERNAL "No dev warnings")
+endif()
+
 ### Require out-of-source builds except in main directory
 file(TO_CMAKE_PATH "${PROJECT_BINARY_DIR}/CMakeLists.txt" LOC_PATH)
 if(NOT PROJECT_BINARY_DIR STREQUAL PROJECT_SOURCE_DIR AND EXISTS ${LOC_PATH})
@@ -27,6 +31,7 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 if(CMAKE_VERSION VERSION_LESS 3.7)
     set(CMAKE_MODULE_PATH  ${PROJECT_SOURCE_DIR}/extern/support_old_cmake ${CMAKE_MODULE_PATH})
 endif()
+
 
 # Output the current GooFit version
 configure_file (
@@ -140,6 +145,16 @@ add_definitions("-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_${GOOFIT_DEVICE}")
 add_definitions("-DMCBOOSTER_BACKEND=${GOOFIT_DEVICE}")
 add_definitions("-DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_${GOOFIT_HOST}")
 
+option(GOOFIT_DEBUG "Print debugging messages" OFF)
+option(GOOFIT_TRACE "Print messages to trace the behavior of GooFit" OFF)
+if(GOOFIT_DEBUG)
+    add_definitions("-DGOOFIT_DEBUG_FLAG=1")
+endif()
+if(GOOFIT_TRACE)
+    add_definitions("-DGOOFIT_TRACE_FLAG=1")
+endif()
+
+
 set(GOOFIT_ARCH Auto CACHE STRING "The GPU Archetecture, can be Auto, All, Common, a number, or a name")
 
 option(GOOFIT_MPI "Turn on MPI for goofit" OFF)
@@ -211,6 +226,7 @@ endif()
 # Adding simple libraries
 add_subdirectory("extern/CLI11")
 add_subdirectory("extern/FeatureDetector")
+add_subdirectory("extern/fmt")
 
 add_library(rang INTERFACE)
 target_include_directories(rang INTERFACE "${PROJECT_SOURCE_DIR}/extern/rang/include")

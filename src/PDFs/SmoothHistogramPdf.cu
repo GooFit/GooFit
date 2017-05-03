@@ -113,7 +113,7 @@ __device__ device_function_ptr ptr_to_EvalHistogram = device_EvalHistogram;
 
 __host__ SmoothHistogramPdf::SmoothHistogramPdf(std::string n, BinnedDataSet* hist, Variable* smoothing)
     : GooPdf(0, n) {
-    int numVars = hist->numVariables();
+    int numVars = hist->size();
     int numConstants = 2*numVars;
     registerConstants(numConstants);
     host_constants = new fptype[numConstants];
@@ -125,16 +125,16 @@ __host__ SmoothHistogramPdf::SmoothHistogramPdf(std::string n, BinnedDataSet* hi
 
     int varIndex = 0;
 
-    for(varConstIt var = hist->varsBegin(); var != hist->varsEnd(); ++var) {
-        registerObservable(*var);
+    for(Variable* var : *hist) {
+        registerObservable(var);
         //pindices.push_back((*var)->index);
         pindices.push_back(cIndex + 2*varIndex + 0);
         pindices.push_back(cIndex + 2*varIndex + 1);
-        pindices.push_back((*var)->numbins);
+        pindices.push_back(var->numbins);
 
         host_constants[2*varIndex + 0] =
-            (*var)->lowerlimit; // NB, do not put cIndex here, it is accounted for by the offset in MEMCPY_TO_SYMBOL below.
-        host_constants[2*varIndex + 1] = ((*var)->upperlimit - (*var)->lowerlimit) / (*var)->numbins;
+            var->lowerlimit; // NB, do not put cIndex here, it is accounted for by the offset in MEMCPY_TO_SYMBOL below.
+        host_constants[2*varIndex + 1] = (var->upperlimit - var->lowerlimit) / var->numbins;
         varIndex++;
     }
 

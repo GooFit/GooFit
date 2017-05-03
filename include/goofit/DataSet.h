@@ -7,10 +7,7 @@
 #include <string>
 #include <initializer_list>
 
-class Variable;
-
-typedef std::vector<Variable*>::const_iterator varConstIt;
-typedef std::vector<Variable*>::const_reverse_iterator varConstRIt;
+#include "goofit/Variable.h"
 
 class DataSet {
 public:
@@ -27,23 +24,19 @@ public:
     virtual void addEventVector(std::vector<fptype>& vals, fptype weight = 1) = 0;
     void addWeightedEvent(fptype weight);
 
-    varConstIt varsBegin() const {
+    Variable_v::const_iterator begin() const {
         return variables.begin();
     }
-    varConstIt varsEnd() const {
+    Variable_v::const_iterator end() const {
         return variables.end();
     }
-    void getVariables(std::vector<Variable*>& vars);
+    
+    Variable_v getVariables() const;
 
-    varConstRIt varsRBegin() const {
-        return variables.rbegin();
-    }
-    varConstRIt varsREnd() const {
-        return variables.rend();
-    }
-    int numVariables() const {
+    size_t size() const {
         return variables.size();
     }
+    
     int numEvents() const {
         return numEventsAdded;
     }
@@ -55,13 +48,13 @@ public:
 protected:
     std::vector<fptype> getCurrentValues() const;
     unsigned int indexOfVariable(Variable* var) const;
-    
     int numEventsAdded {0};
-
+    
 private:
     void generateName();
-
     std::string name;
+
+protected:
     std::vector<Variable*> variables;
 };
 

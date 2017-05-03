@@ -52,8 +52,8 @@ void BinnedDataSet::addEventVector(std::vector<fptype>& vals, fptype weight) {
 }
 
 void BinnedDataSet::cacheNumBins() {
-    for(varConstIt v = varsBegin(); v != varsEnd(); ++v) {
-        cachedNumBins[*v] = (*v)->numbins;
+    for(Variable* v : variables) {
+        cachedNumBins[v] = v->numbins;
     }
 }
 
@@ -67,10 +67,10 @@ unsigned int BinnedDataSet::localToGlobal(std::vector<unsigned int>& locals) con
     unsigned int priorMatrixSize = 1;
     unsigned int ret = 0;
 
-    for(varConstIt v = varsBegin(); v != varsEnd(); ++v) {
-        unsigned int localBin = locals[indexOfVariable(*v)];
+    for(Variable* v: variables) {
+        unsigned int localBin = locals[indexOfVariable(v)];
         ret += localBin * priorMatrixSize;
-        priorMatrixSize *= cachedNumBins.at(*v); // Use 'at' to preserve const-ness.
+        priorMatrixSize *= cachedNumBins.at(v); // Use 'at' to preserve const-ness.
     }
 
     return ret;
@@ -82,10 +82,10 @@ void BinnedDataSet::globalToLocal(std::vector<unsigned int>& locals, unsigned in
     // To convert global bin number to (x,y,z...) coordinates: For each dimension, take the mod
     // with the number of bins in that dimension. Then divide by the number of bins, in effect
     // collapsing so the grid has one fewer dimension. Rinse and repeat.
-    for(varConstIt v = varsBegin(); v != varsEnd(); ++v) {
-        int localBin = global % cachedNumBins.at(*v);
+    for(Variable* v: variables) {
+        int localBin = global % cachedNumBins.at(v);
         locals.push_back(localBin);
-        global /= cachedNumBins.at(*v);
+        global /= cachedNumBins.at(v);
     }
 }
 
@@ -106,10 +106,10 @@ fptype BinnedDataSet::getBinCenter(Variable* var, unsigned int bin) const {
 fptype BinnedDataSet::getBinVolume(unsigned int bin) const {
     fptype ret = 1;
 
-    for(varConstIt v = varsBegin(); v != varsEnd(); ++v) {
-        fptype step = (*v)->upperlimit;
-        step       -= (*v)->lowerlimit;
-        step       /= cachedNumBins.at(*v);
+    for(Variable* v: variables) {
+        fptype step = v->upperlimit;
+        step       -= v->lowerlimit;
+        step       /= cachedNumBins.at(v);
         ret *= step;
     }
 
@@ -135,8 +135,8 @@ void BinnedDataSet::setBinError(unsigned int bin, fptype error) {
 unsigned int BinnedDataSet::getNumBins() const {
     unsigned int ret = 1;
 
-    for(varConstIt v = varsBegin(); v != varsEnd(); ++v) {
-        ret *= cachedNumBins.at(*v);
+    for(Variable* v: variables) {
+        ret *= cachedNumBins.at(v);
     }
 
     return ret;
@@ -153,10 +153,10 @@ fptype BinnedDataSet::getNumEvents() const {
 
 std::vector<unsigned int> BinnedDataSet::convertValuesToBins(const std::vector<fptype>& vals) const {
     std::vector<unsigned int> localBins;
-    varConstIt currVar = varsBegin();
+    Variable_v::const_iterator currVar = begin();
 
     for(unsigned int i = 0; i < vals.size(); ++i) {
-        assert(currVar != varsEnd());
+        assert(currVar != end());
         double currVal = vals[i];
 
         if(currVal < (*currVar)->lowerlimit) {

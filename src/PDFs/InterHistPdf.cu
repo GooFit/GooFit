@@ -127,7 +127,7 @@ __host__ InterHistPdf::InterHistPdf(std::string n,
                                     std::vector<Variable*> params,
                                     std::vector<Variable*> obses)
     : GooPdf(0, n)
-    , numVars(x->numVariables()) {
+    , numVars(x->size()) {
     int numConstants = 2*numVars;
     registerConstants(numConstants);
     static unsigned int totalHistograms = 0;
@@ -139,21 +139,21 @@ __host__ InterHistPdf::InterHistPdf(std::string n,
 
     int varIndex = 0;
 
-    for(varConstIt var = x->varsBegin(); var != x->varsEnd(); ++var) {
-        if(std::find(obses.begin(), obses.end(), *var) != obses.end()) {
-            registerObservable(*var);
+    for(Variable* var : *x) {
+        if(std::find(obses.begin(), obses.end(), var) != obses.end()) {
+            registerObservable(var);
             pindices.push_back(OBS_CODE);
         } else {
-            pindices.push_back(registerParameter(*var));
+            pindices.push_back(registerParameter(var));
         }
 
         pindices.push_back(cIndex + 2*varIndex + 0);
         pindices.push_back(cIndex + 2*varIndex + 1);
-        pindices.push_back((*var)->numbins);
+        pindices.push_back(var->numbins);
 
         // NB, do not put cIndex here, it is accounted for by the offset in MEMCPY_TO_SYMBOL below.
-        host_constants[2*varIndex + 0] = (*var)->lowerlimit;
-        host_constants[2*varIndex + 1] = ((*var)->upperlimit - (*var)->lowerlimit) / (*var)->numbins;
+        host_constants[2*varIndex + 0] = var->lowerlimit;
+        host_constants[2*varIndex + 1] = (var->upperlimit - var->lowerlimit) / var->numbins;
         varIndex++;
     }
 

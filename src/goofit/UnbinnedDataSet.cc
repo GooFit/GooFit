@@ -51,11 +51,11 @@ void UnbinnedDataSet::addEventVector(std::vector<fptype>& vals, fptype /*weight*
     // NB, unbinned data set ignores weights.
     numEventsAdded++;
 
-    varConstIt currVar = varsBegin();
+    Variable_v::const_iterator currVar = begin();
     std::map<Variable*, fptype> currEvent;
 
     for(unsigned int i = 0; i < vals.size(); ++i) {
-        assert(currVar != varsEnd());
+        assert(currVar != end());
         double currVal = vals[i];
 
         if(currVal < (*currVar)->lowerlimit) {
@@ -84,7 +84,7 @@ void UnbinnedDataSet::addEventVector(std::vector<fptype>& vals, fptype /*weight*
         ++currVar;
     }
 
-    assert(currVar == varsEnd());
+    assert(currVar == end());
     data.push_back(currEvent);
 }
 

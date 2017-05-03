@@ -55,17 +55,15 @@ void DataSet::addEvent(fptype val) {
  std::vector<fptype> DataSet::getCurrentValues() const {
      std::vector<fptype> values;
 
-    for(varConstIt v = varsBegin(); v != varsEnd(); ++v) {
-        values.push_back((*v)->value);
+for(Variable* v : variables) {
+        values.push_back(v->value);
     }
 
     return values;
 }
 
-void DataSet::getVariables(std::vector<Variable*>& vars) {
-    for(std::vector<Variable*>::iterator v = variables.begin(); v != variables.end(); ++v) {
-        vars.push_back(*v);
-    }
+Variable_v DataSet::getVariables() const {
+    return variables;
 }
 
 unsigned int DataSet::indexOfVariable(Variable* var) const {
@@ -80,8 +78,8 @@ unsigned int DataSet::indexOfVariable(Variable* var) const {
               << var->name
               << " in DataSet of ";
 
-    for(varConstIt v = varsBegin(); v != varsEnd(); ++v) {
-        std::cout << "\n  " << (*v)->name << std::endl;
+    for(Variable* v : variables) {
+        std::cout << "\n  " << v->name << std::endl;
     }
 
     std::cout << "\nAborting." << std::endl;
@@ -94,15 +92,10 @@ void DataSet::generateName() {
     // Create default name as list of variables.
     if(name != "")
         return;
-
-    for(varConstIt v = varsBegin(); v != varsEnd(); ++v) {
-        name += (*v)->name;
-        varConstIt next = v;
-        next++;
-
-        if(next == varsEnd())
-            continue;
-
-        name += ", ";
+    
+    for(Variable* v : variables) {
+        if(v != variables[0])
+            name += ", ";
+        name += v->name;
     }
 }

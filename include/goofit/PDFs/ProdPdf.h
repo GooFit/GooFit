@@ -6,7 +6,7 @@ class ProdPdf : public GooPdf {
 public:
 
     ProdPdf(std::string n, std::vector<PdfBase*> comps);
-    __host__ virtual fptype normalise() const;
+    __host__ virtual fptype normalize() const;
     __host__ virtual bool hasAnalyticIntegral() const {
         return false;
     }

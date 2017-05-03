@@ -82,25 +82,25 @@ ProdPdf::ProdPdf(std::string n, std::vector<PdfBase*> comps)
     initialise(pindices);
 }
 
-__host__ fptype ProdPdf::normalise() const {
+__host__ fptype ProdPdf::normalize() const {
 
     if(varOverlaps) {
         // Two or more components share an observable and cannot be separately
-        // normalised, since \int A*B dx does not equal int A dx * int B dx.
+        // normalized, since \int A*B dx does not equal int A dx * int B dx.
         recursiveSetNormalisation(fptype(1.0));
         MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
-        // Normalise numerically.
+        // Normalize numerically.
         //std::cout << "Numerical normalisation of " << getName() << " due to varOverlaps.\n";
-        fptype ret = GooPdf::normalise();
+        fptype ret = GooPdf::normalize();
         //if (cpuDebug & 1)
         //std::cout << "ProdPdf " << getName() << " has normalisation " << ret << " " << host_callnumber << std::endl;
         return ret;
     }
 
-    // Normalise components individually
+    // Normalize components individually
     for(std::vector<PdfBase*>::const_iterator c = components.begin(); c != components.end(); ++c) {
-        (*c)->normalise();
+        (*c)->normalize();
     }
 
     host_normalisation[parameters] = 1;

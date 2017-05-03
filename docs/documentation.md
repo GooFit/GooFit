@@ -629,8 +629,8 @@ parameters to be evaluated. Control continues to pass back and forth in
 this way until MINUIT converges or gives up, or until GooFit crashes.
 
 The `calculateNLL` method does two things: First it calls the
-`normalise` function of the PDF, which in turn will usually recursively
-normalise the components; the results of the `normalise` call are copied
+`normalize` function of the PDF, which in turn will usually recursively
+normalize the components; the results of the `normalize` call are copied
 into the `normalisationFactors` array on the GPU. Next it calls
 `sumOfNll` and returns the resulting value. Particular PDF
 implementations may override `sumOfNll`; most notably `AddPdf` does so
@@ -638,7 +638,7 @@ in order to have the option of returning an ‘extended’ likelihood, with
 a term for the Poisson probability of the observed number of events in
 addition to the event probabilities.
 
-The `normalise` method, by default, simply evaluates the PDF at a grid
+The `normalize` method, by default, simply evaluates the PDF at a grid
 of points, returning the sum of all the values multiplied by the grid
 fineness - a primitive algorithm for numerical integration, but one
 which takes advantage of the GPU’s massive parallelisation. The fineness
@@ -650,7 +650,7 @@ However, this behaviour can be overridden by calling the
 number of bins (in each observable) will be equal to the supplied
 fineness.
 
-Stripped of complications, the essential part of the `normalise`
+Stripped of complications, the essential part of the `normalize`
 function is a call to `transform_reduce`:
 
 Normalisation code. {#listingnormalisation}
@@ -692,15 +692,15 @@ every thread.
 
 PDF implementations may override the `normalisation` method, and among
 the default PDFs, both `AddPdf` and `ProdPdf` do so to ensure that their
-components are correctly normalised. Among the more specialised
-implementations, `TddpPdf` overrides `normalise` so that it may cache
+components are correctly normalized. Among the more specialised
+implementations, `TddpPdf` overrides `normalize` so that it may cache
 the slowly-changing Breit-Wigner calculations, and also because its time
 dependence is analytically integrable and it is a good optimisation to
 do only the Dalitz-plot part numerically. This points to a more general
 rule, that once a PDF depends on three or four observables, the
 relatively primitive numerical integration outlined above may become
 unmanageable because of the number of points it creates. Finally, note
-that PDFs may, without overriding `normalise`, advertise an analytical
+that PDFs may, without overriding `normalize`, advertise an analytical
 integral by overriding `GooPdf`’s `hasAnalyticIntegral` method to return
 `true`, and then implementing an `integrate` method to be evaluated on
 the CPU.
@@ -903,7 +903,7 @@ __device__ fptype calculateNLL (fptype rawPdf,
 __device__ fptype calculateProb (fptype rawPdf, 
                                  fptype* evtVal, 
                                  unsigned int par) {
-  // Return probability, ie normalised PDF value.
+  // Return probability, ie normalized PDF value.
   return rawPdf * normalisationFactors[par];
 }
 
@@ -1049,7 +1049,7 @@ example is the Gaussian PDF.
     e^{-\frac{(x-\bar x)^2}{2\sigma_x^2}}e^{-\frac{(y-\bar y)^2}{2(1 + k(\frac{x-\bar x}{\sigma_x})^2)\sigma_y^2}}
 \f}
     In other words, the effective \f$\sigma_y\f$ grows quadratically in the
-    normalised distance from the mean of \f$x\f$, with the quadratic term
+    normalized distance from the mean of \f$x\f$, with the quadratic term
     having coefficient \f$k\f$. The constructor takes observables \f$x\f$ and
     \f$y\f$, means and widths \f$\bar x\f$, \f$\sigma_x\f$, \f$\bar y\f$ and \f$\sigma_y\f$,
     and coefficient \f$k\f$. Notice that if \f$k\f$ is zero, the function
@@ -1330,7 +1330,7 @@ Gaussian to your fit.
 
     Also note that if the `AddPdf`’s options mask (set by calling
     `setSpecialMask`) includes `ForceCommonNorm`, the normalisation
-    changes. By default the components are normalised separately, so
+    changes. By default the components are normalized separately, so
     that 
 \f{align}{
     P(x;\vec F, \vec w) &=& \sum\limits_i \frac{w_iF_i(x)}{\int F_i(x) \mathrm{d}x},
@@ -1418,12 +1418,12 @@ Gaussian to your fit.
 
     `ProdPdf` does allow variable overlaps, that is, the components may
     depend on the same variable, eg \f$P(x) = A(x)B(x)\f$. If this happens,
-    the entire `ProdPdf` object will be normalised together, since in
+    the entire `ProdPdf` object will be normalized together, since in
     general
     \f$\int A(x)B(x) \mathrm{d}x \ne \int A(x) \mathrm{d}x \int B(x) \mathrm{d}x\f$.
     However, if any of the components have the flag `ForceSeparateNorm`
     set, as well as in the default case that the components depend on
-    separate observables, each component will be normalised
+    separate observables, each component will be normalized
     individually. Some care is indicated when using the
     `ForceSeparateNorm` flag, and possibly a rethink of why there is a
     product of two PDFs depending on the same variable in the first

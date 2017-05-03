@@ -227,7 +227,7 @@ void printMemoryStatus(std::string file, int line);
 void loadDataFile(std::string fname, UnbinnedDataSet** setToFill = 0, int effSkip = 3);
 int runBackgroundDalitzFit(int bkgType, bool plots = false);
 
-void normalise(TH1F* dat) {
+void normalize(TH1F* dat) {
     double integral = 0;
 
     for(int i = 1; i <= dat->GetNbinsX(); ++i) {
@@ -275,8 +275,8 @@ void plotLoHiSigma() {
     if(!loM23Sigma)
         return;
 
-    normalise(loM23Sigma);
-    normalise(hiM23Sigma);
+    normalize(loM23Sigma);
+    normalize(hiM23Sigma);
 
     loM23Sigma->SetLineWidth(3);
     loM23Sigma->SetLineColor(kBlue);
@@ -4596,12 +4596,12 @@ void makeTimePlots(std::string fname) {
     }
 
     foo->cd();
-    normalise(timePlots[3]);
+    normalize(timePlots[3]);
     timePlots[3]->SetMinimum(0);
     timePlots[3]->Draw("hist");
 
     for(int i = 0; i < 6; ++i) {
-        normalise(timePlots[i]);
+        normalize(timePlots[i]);
         timePlots[i]->Draw("histsame");
         timeMean.SetBinContent(i+1, timePlots[i]->GetMean());
         timeMean.SetBinError(i+1, timePlots[i]->GetMeanError());
@@ -4611,12 +4611,12 @@ void makeTimePlots(std::string fname) {
     timeMean.Draw("e");
     foo->SaveAs("timeMeanPlot.png");
 
-    //normalise(massPlots[2]);
+    //normalize(massPlots[2]);
     massPlots[2]->GetYaxis()->SetRangeUser(0, massPlots[2]->GetMaximum()*1.1);
     massPlots[2]->Draw("");
 
     for(int i = 0; i < 5; ++i) {
-        //normalise(massPlots[i]);
+        //normalize(massPlots[i]);
         massPlots[i]->Draw("same");
     }
 

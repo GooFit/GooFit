@@ -278,7 +278,7 @@ __host__ void ConvolutionPdf::registerOthers(std::vector<ConvolutionPdf*> others
     properlyInitialised = true;
 }
 
-__host__ fptype ConvolutionPdf::normalise() const {
+__host__ fptype ConvolutionPdf::normalize() const {
     //if (cpuDebug & 1) std::cout << getName() << " entering normalisation\n";
 
     // First set normalisation factors to one so we can evaluate convolution without getting zeroes
@@ -322,7 +322,7 @@ __host__ fptype ConvolutionPdf::normalise() const {
     //cudaDeviceSynchronize();
 
     // Then return usual integral
-    fptype ret = GooPdf::normalise();
+    fptype ret = GooPdf::normalize();
     return ret;
 }
 

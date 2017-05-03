@@ -132,7 +132,7 @@ AddPdf::AddPdf(std::string n, Variable* frac1, PdfBase* func1, PdfBase* func2)
     initialise(pindices);
 }
 
-__host__ fptype AddPdf::normalise() const {
+__host__ fptype AddPdf::normalize() const {
     //if (cpuDebug & 1) std::cout << "Normalising AddPdf " << getName() << std::endl;
 
     fptype ret = 0;
@@ -141,11 +141,11 @@ __host__ fptype AddPdf::normalise() const {
     for(unsigned int i = 0; i < components.size()-1; ++i) {
         fptype weight = host_params[host_indices[parameters + 3*(i+1)]];
         totalWeight += weight;
-        fptype curr = components[i]->normalise();
+        fptype curr = components[i]->normalize();
         ret += curr*weight;
     }
 
-    fptype last = components.back()->normalise();
+    fptype last = components.back()->normalize();
 
     if(extended) {
         fptype lastWeight = host_params[host_indices[parameters + 3*components.size()]];
@@ -159,7 +159,7 @@ __host__ fptype AddPdf::normalise() const {
     host_normalisation[parameters] = 1.0;
 
     if(getSpecialMask() & PdfBase::ForceCommonNorm) {
-        // Want to normalise this as
+        // Want to normalize this as
         // (f1 A + (1-f1) B) / int (f1 A + (1-f1) B)
         // instead of default
         // (f1 A / int A) + ((1-f1) B / int B).

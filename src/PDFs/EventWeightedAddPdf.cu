@@ -100,13 +100,13 @@ EventWeightedAddPdf::EventWeightedAddPdf(std::string n, std::vector<Variable*> w
     initialise(pindices);
 }
 
-__host__ fptype EventWeightedAddPdf::normalise() const {
+__host__ fptype EventWeightedAddPdf::normalize() const {
     //if (cpuDebug & 1) std::cout << "Normalising EventWeightedAddPdf " << getName() << " " << components.size() << std::endl;
 
     // Here the PDFs have per-event weights, so there is no per-PDF weight
-    // to keep track of. All we can do is normalise the components.
+    // to keep track of. All we can do is normalize the components.
     for(unsigned int i = 0; i < components.size(); ++i) {
-        components[i]->normalise();
+        components[i]->normalize();
     }
 
     host_normalisation[parameters] = 1.0;

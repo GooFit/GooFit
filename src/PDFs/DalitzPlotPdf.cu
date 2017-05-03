@@ -213,8 +213,8 @@ __host__ void DalitzPlotPdf::setDataSize(unsigned int dataSize, unsigned int evt
     setForceIntegrals();
 }
 
-__host__ fptype DalitzPlotPdf::normalise() const {
-    recursiveSetNormalisation(1); // Not going to normalise efficiency,
+__host__ fptype DalitzPlotPdf::normalize() const {
+    recursiveSetNormalisation(1); // Not going to normalize efficiency,
     // so set normalisation factor to 1 so it doesn't get multiplied by zero.
     // Copy at this time to ensure that the SpecialResonanceCalculators, which need the efficiency,
     // don't get zeroes through multiplying by the normFactor.

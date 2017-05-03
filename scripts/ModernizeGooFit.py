@@ -98,6 +98,8 @@ conversion = [
     (r'\bRSQRT\b', 'rsqrt'),
     (r'\bFLOOR\b', 'floor'),
     (r'\bCONST_PI\b', 'M_PI'),
+    (r'normalise', 'normalize'),
+    (r'Normalise', 'Normalize'),
 
 ]
 

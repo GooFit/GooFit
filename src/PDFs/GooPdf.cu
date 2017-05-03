@@ -81,7 +81,7 @@ __device__ fptype calculateNLL(fptype rawPdf, fptype* evtVal, unsigned int par) 
 }
 
 __device__ fptype calculateProb(fptype rawPdf, fptype* evtVal, unsigned int par) {
-    // Return probability, ie normalised PDF value.
+    // Return probability, ie normalized PDF value.
     return rawPdf * normalisationFactors[par];
 }
 
@@ -256,7 +256,7 @@ __host__ double GooPdf::calculateNLL() const {
     //int oldMask = cpuDebug;
     //if (0 == host_callnumber) setDebugMask(0, false);
     //std::cout << "Start norm " << getName() << std::endl;
-    normalise();
+    normalize();
     //std::cout << "Norm done\n";
     //if ((0 == host_callnumber) && (1 == oldMask)) setDebugMask(1, false);
 
@@ -300,7 +300,7 @@ __host__ void GooPdf::evaluateAtPoints(Variable* var, std::vector<fptype>& res) 
     // the other observables.
 
     copyParams();
-    normalise();
+    normalize();
     MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice);
     UnbinnedDataSet tempdata(observables);
 
@@ -359,7 +359,7 @@ __host__ void GooPdf::evaluateAtPoints(std::vector<fptype>& points) const {
     copyParams(params);
 
     thrust::device_vector<fptype> d_vec = points;
-    normalise();
+    normalize();
     MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice);
     thrust::transform(d_vec.begin(), d_vec.end(), d_vec.begin(), *evalor);
     thrust::host_vector<fptype> h_vec = d_vec;
@@ -394,7 +394,7 @@ __host__ fptype GooPdf::getValue() {
     // Returns the value of the PDF at a single point.
     // Execute redundantly in all threads for OpenMP multiGPU case
     copyParams();
-    normalise();
+    normalize();
     MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
     UnbinnedDataSet point(observables);
@@ -415,7 +415,7 @@ __host__ fptype GooPdf::getValue() {
     return results[0];
 }
 
-__host__ fptype GooPdf::normalise() const {
+__host__ fptype GooPdf::normalize() const {
     //if (cpuDebug & 1) std::cout << "Normalising " << getName() << " " << hasAnalyticIntegral() << " " << normRanges << std::endl;
 
     if(!fitControl->metricIsPdf()) {
@@ -585,7 +585,7 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, int, fptype*> t) co
 __host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
     copyParams();
     //double overall =
-    normalise();
+    normalize();
     MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
     int numVars = observables.size();
@@ -661,7 +661,7 @@ __host__ UnbinnedDataSet GooPdf::makeGrid() {
 // still need to add OpenMP/multi-GPU code here
 __host__ void GooPdf::transformGrid(fptype* host_output) {
     generateNormRange();
-    //normalise();
+    //normalize();
     int totalBins = 1;
 
     for(obsConstIter v = obsCBegin(); v != obsCEnd(); ++v) {

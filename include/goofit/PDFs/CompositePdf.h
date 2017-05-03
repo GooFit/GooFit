@@ -10,7 +10,7 @@
 class CompositePdf : public GooPdf {
 public:
     CompositePdf(std::string n, PdfBase* core, PdfBase* shell);  // Where 'core' corresponds to 'g' and 'shell' to 'h'.
-    __host__ virtual fptype normalise() const;
+    __host__ virtual fptype normalize() const;
 
 private:
 

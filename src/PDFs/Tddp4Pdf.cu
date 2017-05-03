@@ -505,9 +505,9 @@ __host__ void TDDP4::setDataSize(unsigned int dataSize, unsigned int evtSize) {
 }
 
 // this is where the actual magic happens. This function does all the calculations!
-__host__ fptype TDDP4::normalise() const {
-    // fprintf(stderr, "start normalise\n");
-    recursiveSetNormalisation(1); // Not going to normalise efficiency,
+__host__ fptype TDDP4::normalize() const {
+    // fprintf(stderr, "start normalize\n");
+    recursiveSetNormalisation(1); // Not going to normalize efficiency,
     // so set normalisation factor to 1 so it doesn't get multiplied by zero.
     // Copy at this time to ensure that the SpecialResonanceCalculators, which need the efficiency,
     // don't get zeroes through multiplying by the normFactor.
@@ -558,7 +558,7 @@ __host__ fptype TDDP4::normalise() const {
         SpinsCalculated = true;
     }
 
-    // fprintf(stderr, "normalise after spins\n");
+    // fprintf(stderr, "normalize after spins\n");
 
     // this calculates the values of the lineshapes and stores them in the array. It is recalculated every time parameters change.
     for(int i = 0; i < components.size() -1 ; ++i) {
@@ -572,7 +572,7 @@ __host__ fptype TDDP4::normalise() const {
         }
     }
 
-    // fprintf(stderr, "normalise after LS\n");
+    // fprintf(stderr, "normalize after LS\n");
 
     // this is a little messy but it basically checks if the amplitude includes one of the recalculated lineshapes and if so recalculates that amplitude
     std::map<std::string, std::pair<std::vector<unsigned int>, std::vector<unsigned int>>>::const_iterator AmpMapIt =
@@ -598,7 +598,7 @@ __host__ fptype TDDP4::normalise() const {
         }
     }
 
-    // fprintf(stderr, "normalise after Amps\n");
+    // fprintf(stderr, "normalize after Amps\n");
 
     // lineshape value calculation for the normalisation, also recalculated every time parameter change
     if(!generation_no_norm) {
@@ -633,7 +633,7 @@ __host__ fptype TDDP4::normalise() const {
                                                dummy,
                                                MyFourDoubleTupleAdditionFunctor);
 
-        // printf("normalise A2/#evts , B2/#evts: %.5g, %.5g\n",thrust::get<0>(sumIntegral)/MCevents, thrust::get<1>(sumIntegral)/MCevents);
+        // printf("normalize A2/#evts , B2/#evts: %.5g, %.5g\n",thrust::get<0>(sumIntegral)/MCevents, thrust::get<1>(sumIntegral)/MCevents);
         fptype tau     = host_params[host_indices[parameters + 7]];
         fptype xmixing = host_params[host_indices[parameters + 8]];
         fptype ymixing = host_params[host_indices[parameters + 9]];
@@ -646,7 +646,7 @@ __host__ fptype TDDP4::normalise() const {
     }
 
     host_normalisation[parameters] = 1.0/ret;
-    // printf("end of normalise %f\n", ret);
+    // printf("end of normalize %f\n", ret);
     return ret;
 }
 
@@ -766,7 +766,7 @@ TDDP4::GenerateSig(unsigned int numEvents) {
 
     generation_no_norm=true; // we need no normalization for generation, but we do need to make sure that norm = 1;
     SigGenSetIndices();
-    normalise();
+    normalize();
     setForceIntegrals();
     MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice);
 

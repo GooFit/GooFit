@@ -256,6 +256,7 @@ function(goofit_add_library GNAME)
         add_sanitizers(${GNAME})
         target_compile_options(${GNAME} PUBLIC -x c++)
     endif()
+    target_link_libraries(${GNAME} rang CLI11 fmt)
 
     if(ROOT_FOUND)
         target_link_libraries(${GNAME} ROOT::ROOT)

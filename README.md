@@ -80,6 +80,7 @@ Advanced Options:
 * `-DGOOFIT_CUDA_OR_GROUPSIZE:INT=128`: This sets the group size that thrust will use for distributing the problem.  This parameter can be thought of as 'Threads per block'.  These will be used after running 'find_optimal.py' to figure out the optimal size.
 * `-DGOOFIT_CUDA_OR_GRAINSIZE:INT=7`: This is the grain size thrust uses for distributing the problem.  This parameter can be thought of as 'Items per thread'.
 * `-DGOOFIT_PYTHON=OFF`: Preliminary python bindings using [PyBind11].
+* `-DGOOFIT_DEBUG=ON` and `-DGOOFIT_TRACE=ON` will enable the matching printout macros
 * You can enable sanitizers on non-CUDA builds with `-DSANITIZE_ADDRESS=ON`, `-DSANITIZE_MEMORY=ON`, `-DSANITIZE_THREAD=ON` or `-DSANITIZE_UNDEFINED=ON`.
 
 Note for targeting Tesla P100 or any arch=6.0 device:

@@ -28,7 +28,7 @@ TEST(FullFit, SimpleFit) {
     UnbinnedDataSet data(&xvar);
     
     // Generate toy events.
-    for(int i=0; i<100000; ++i) {
+    for(int i=0; i<1000; ++i) {
         double val = d(gen);
         if(val < 10) {
             xvar.value = val;
@@ -48,7 +48,7 @@ TEST(FullFit, SimpleFit) {
     fitter.fit();
 
     EXPECT_TRUE(fitter);
-    EXPECT_LT(alpha.error, .01);
+    EXPECT_LT(alpha.error, .1);
     EXPECT_NEAR(-1.5, alpha.value, alpha.error*3);
  }
 
@@ -67,7 +67,7 @@ TEST(FullFit, DualFit) {
     UnbinnedDataSet data {{&xvar, &yvar}};
     
     // Generate toy events.
-    for(int i=0; i<100000; ++i) {
+    for(int i=0; i<20000; ++i) {
         double xval = dx(gen);
         double yval = dy(gen);
         if(xval < 10 && yval < 10) {
@@ -93,8 +93,8 @@ TEST(FullFit, DualFit) {
     fitter.fit();
     
     EXPECT_TRUE(fitter);
-    EXPECT_LT(xalpha.error, .01);
-    EXPECT_LT(yalpha.error, .01);
+    EXPECT_LT(xalpha.error, .1);
+    EXPECT_LT(yalpha.error, .1);
     EXPECT_NEAR(-1.5, xalpha.value, xalpha.error*3);
     EXPECT_NEAR(-.75, yalpha.value, yalpha.error*3);
 }
@@ -114,7 +114,7 @@ TEST(FullFit, DifferentFitterVariable) {
     UnbinnedDataSet data {{&xvar, &yvar}, "Some name"};
     
     // Generate toy events.
-    for(int i=0; i<100000; ++i) {
+    for(int i=0; i<20000; ++i) {
         double xval = dx(gen);
         double yval = dy(gen);
         if(xval < 10 && yval < 10) {
@@ -140,8 +140,9 @@ TEST(FullFit, DifferentFitterVariable) {
     fitter.fit();
     
     EXPECT_TRUE(fitter);
-    EXPECT_LT(xalpha.error, .01);
-    EXPECT_LT(yalpha.error, .01);
+    EXPECT_LT(xalpha.error, .1);
+    EXPECT_LT(yalpha.error, .1);
     EXPECT_NEAR(-1.5, xalpha.value, xalpha.error*3);
     EXPECT_NEAR(-.75, yalpha.value, yalpha.error*3);
 }
+

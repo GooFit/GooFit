@@ -27,4 +27,4 @@
 	url = ../FeatureDetector.git
 [submodule "extern/fmt"]
 	path = extern/fmt
-	url = git@github.com:fmtlib/fmt.git
+	url = ../../fmtlib/fmt.git

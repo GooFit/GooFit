@@ -12,6 +12,9 @@ See *.cu file for more details
 #include "goofit/PDFs/ResonancePdf.h"
 #include "goofit/PDFs/LineshapesPdf.h"
 
+#include <thrust/iterator/constant_iterator.h>
+#include <thrust/device_vector.h>
+
 template<typename E>
 constexpr typename std::underlying_type<E>::type enum_to_underlying(E e) {
     return static_cast<typename std::underlying_type<E>::type>(e);

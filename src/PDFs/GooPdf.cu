@@ -12,6 +12,7 @@
 #include <thrust/transform_reduce.h>
 #include <thrust/transform.h>
 #include <thrust/host_vector.h>
+#include <thrust/device_vector.h>
 #include <thrust/sequence.h>
 #include <thrust/iterator/constant_iterator.h>
 #include <thrust/iterator/zip_iterator.h>
@@ -41,6 +42,7 @@ __device__ int internalDebug1 = -1;
 __device__ int internalDebug2 = -1;
 __device__ int internalDebug3 = -1;
 int cpuDebug = 0;
+
 #ifdef PROFILING
 __device__ fptype timeHistogram[10000];
 fptype host_timeHist[10000];

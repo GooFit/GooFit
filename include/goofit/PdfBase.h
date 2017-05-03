@@ -7,6 +7,7 @@
 #include <map>
 #include <vector>
 
+/* Future use, apperently:
 #include <thrust/iterator/constant_iterator.h>
 #include <thrust/device_vector.h>
 
@@ -15,6 +16,7 @@ typedef thrust::constant_iterator<fptype*> DataIterator;
 typedef thrust::constant_iterator<int> SizeIterator;
 typedef thrust::tuple<IndexIterator, DataIterator, SizeIterator> EventTuple;
 typedef thrust::zip_iterator<EventTuple> EventIterator;
+*/
 
 const int maxParams = 1500;
 extern fptype* dev_event_array;

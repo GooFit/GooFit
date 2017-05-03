@@ -2,6 +2,7 @@
 
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/BinnedDataSet.h"
+#include <thrust/device_vector.h>
 
 class InterHistPdf : public GooPdf {
 public:

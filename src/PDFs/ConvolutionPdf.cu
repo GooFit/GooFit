@@ -1,6 +1,9 @@
 #include "goofit/PDFs/ConvolutionPdf.h"
 #include "goofit/Variable.h"
 
+#include <thrust/iterator/constant_iterator.h>
+#include <thrust/iterator/counting_iterator.h>
+
 int totalConvolutions = 0;
 
 #define CONVOLUTION_CACHE_SIZE 512

@@ -173,11 +173,7 @@ __host__ void PdfBase::setIntegrationFineness(int i) {
 }
 
 __host__ bool PdfBase::parametersChanged() const {
-    for(Variable* v : parameterList) {
-        if(v->changed())
-            return true;
-    }
-    return false;
+    return std::any_of(std::begin(parameterList), std::end(parameterList), [](Variable* v){return v->changed();});
 }
 
 __host__ void PdfBase::setNumPerTask(PdfBase* p, const int& c) {

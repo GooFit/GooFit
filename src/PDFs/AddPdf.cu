@@ -2,7 +2,7 @@
 #include "goofit/ThrustOverride.h"
 
 #include <thrust/transform_reduce.h>
-
+#include <thrust/iterator/constant_iterator.h>
 
 __device__ fptype device_AddPdfs(fptype* evt, fptype* p, unsigned int* indices) {
     int numParameters = RO_CACHE(indices[0]);

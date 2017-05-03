@@ -26,11 +26,16 @@ if(GOOFIT_SUBMODULE)
     endif()
 endif()
 
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+
 # Add support for better CUDA behaviour in CMake < 3.7
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 if(CMAKE_VERSION VERSION_LESS 3.7)
-    set(CMAKE_MODULE_PATH  ${PROJECT_SOURCE_DIR}/extern/support_old_cmake ${CMAKE_MODULE_PATH})
+    set(CMAKE_MODULE_PATH  "${PROJECT_SOURCE_DIR}/extern/support_old_cmake" ${CMAKE_MODULE_PATH})
 endif()
+
+# Add Sanatizers
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/extern/sanitizers/cmake" ${CMAKE_MODULE_PATH})
+find_package(Sanitizers)
 
 
 # Output the current GooFit version
@@ -248,6 +253,7 @@ function(goofit_add_library GNAME)
             endif()
         endforeach()
         add_library(${GNAME} STATIC ${ARGN})
+        add_sanitizers(${GNAME})
         target_compile_options(${GNAME} PUBLIC -x c++)
     endif()
 
@@ -270,6 +276,7 @@ function(goofit_add_executable NAMEEXE)
             endif()
         endforeach()
         add_executable(${NAMEEXE} ${ARGN})
+        add_sanitizers(${NAMEEXE})
     endif()
     target_link_libraries(${NAMEEXE} goofit_lib)
     target_compile_options(${NAMEEXE} PUBLIC -x c++)

@@ -144,6 +144,8 @@ Public Types</h2></td></tr>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a1620f7f438b6c7c6cc99569321cf947d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a1620f7f438b6c7c6cc99569321cf947d">PdfBase</a> (<a class="el" href="class_variable.html">Variable</a> *x, std::string n)</td></tr>
 <tr class="separator:a1620f7f438b6c7c6cc99569321cf947d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad318a19de54f21ac06fad044d58bd2f6"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#ad318a19de54f21ac06fad044d58bd2f6">~PdfBase</a> ()=default</td></tr>
+<tr class="separator:ad318a19de54f21ac06fad044d58bd2f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a63e809b5af9291b10a5f636e6b91fd70"><td class="memItemLeft" align="right" valign="top">virtual __host__ double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a63e809b5af9291b10a5f636e6b91fd70">calculateNLL</a> () const =0</td></tr>
 <tr class="separator:a63e809b5af9291b10a5f636e6b91fd70"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afa08f9b84ba0d25edf1fbece29755983"><td class="memItemLeft" align="right" valign="top">virtual __host__ <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#afa08f9b84ba0d25edf1fbece29755983">normalise</a> () const =0</td></tr>
@@ -166,6 +168,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a6b5e072d502671c7354cdf4d19477e5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a35bb094b326f1a9f0aa9a675dd9ede43"><td class="memItemLeft" align="right" valign="top">virtual __host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a35bb094b326f1a9f0aa9a675dd9ede43">getParameters</a> (<a class="el" href="class_pdf_base.html#adde4851584b1fffeebd4b0ec2b9ca1c7">parCont</a> &amp;ret) const</td></tr>
 <tr class="separator:a35bb094b326f1a9f0aa9a675dd9ede43"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a05e3daf0a3344850a16865307674c438"><td class="memItemLeft" align="right" valign="top">__host__ <a class="el" href="class_pdf_base.html#adde4851584b1fffeebd4b0ec2b9ca1c7">parCont</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a05e3daf0a3344850a16865307674c438">getParameters</a> () const</td></tr>
+<tr class="separator:a05e3daf0a3344850a16865307674c438"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab5eea9054364bffd75c592642ef67f21"><td class="memItemLeft" align="right" valign="top">__host__ <a class="el" href="class_variable.html">Variable</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#ab5eea9054364bffd75c592642ef67f21">getParameterByName</a> (std::string n) const</td></tr>
 <tr class="separator:ab5eea9054364bffd75c592642ef67f21"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4f98e720d15482fe66f2560cac9dcffe"><td class="memItemLeft" align="right" valign="top">__host__ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a4f98e720d15482fe66f2560cac9dcffe">getSpecialMask</a> () const</td></tr>
@@ -200,8 +204,6 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a2887cc44f42e788e11973661a37af226"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac450243387d85618dff8a991b0ddc24d"><td class="memItemLeft" align="right" valign="top">__host__ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#ac450243387d85618dff8a991b0ddc24d">parametersChanged</a> () const</td></tr>
 <tr class="separator:ac450243387d85618dff8a991b0ddc24d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa50c0e760f79ef841452b3911e5ab4d1"><td class="memItemLeft" align="right" valign="top">__host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#aa50c0e760f79ef841452b3911e5ab4d1">storeParameters</a> () const</td></tr>
-<tr class="separator:aa50c0e760f79ef841452b3911e5ab4d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9bdb091fd1fa186b53ec08bd02085eb2"><td class="memItemLeft" align="right" valign="top">__host__ <a class="el" href="class_pdf_base.html#afa8c406613fe0b4ab29c700b6d1a93ee">obsIter</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a9bdb091fd1fa186b53ec08bd02085eb2">obsBegin</a> ()</td></tr>
 <tr class="separator:a9bdb091fd1fa186b53ec08bd02085eb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a73fd95deaba8c2cdcc9ce4aa740ebbe2"><td class="memItemLeft" align="right" valign="top">__host__ <a class="el" href="class_pdf_base.html#afa8c406613fe0b4ab29c700b6d1a93ee">obsIter</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a73fd95deaba8c2cdcc9ce4aa740ebbe2">obsEnd</a> ()</td></tr>
@@ -247,8 +249,6 @@ Protected Attributes</h2></td></tr>
 <tr class="separator:a085f0680195278543512ee1eeb08e436"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1f459f7a8b6e334131f8a60c44069ed5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a1f459f7a8b6e334131f8a60c44069ed5">specialMask</a> {0}</td></tr>
 <tr class="separator:a1f459f7a8b6e334131f8a60c44069ed5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab02a5f801af94475220e2bb5faf8027e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#ab02a5f801af94475220e2bb5faf8027e">cachedParams</a> {nullptr}</td></tr>
-<tr class="separator:ab02a5f801af94475220e2bb5faf8027e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a098345520f86fb37c9a8571b5a4ede16"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a098345520f86fb37c9a8571b5a4ede16">properlyInitialised</a> {true}</td></tr>
 <tr class="separator:a098345520f86fb37c9a8571b5a4ede16"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a201930b5ce1146bec6dfdd7acfe14867"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a201930b5ce1146bec6dfdd7acfe14867">functionIdx</a></td></tr>
@@ -272,7 +272,7 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00043">43</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00044">44</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
 </div>
 </div>
@@ -288,7 +288,7 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00041">41</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00042">42</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
 </div>
 </div>
@@ -304,7 +304,7 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00042">42</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00043">43</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
 </div>
 </div>
@@ -320,7 +320,7 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00046">46</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00047">47</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
 </div>
 </div>
@@ -336,7 +336,7 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00044">44</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00045">45</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
 </div>
 </div>
@@ -352,7 +352,7 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00045">45</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00046">46</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
 </div>
 </div>
@@ -373,9 +373,9 @@ Protected Attributes</h2></td></tr>
 <tr><td class="fieldname"><a id="a485f1602f74b5f47c1e5672ce1ea6b1da1bde5267d5e7d24ded2e3721359b7d9a"></a>ForceCommonNorm&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00035">35</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;{<a class="code" href="class_pdf_base.html#a485f1602f74b5f47c1e5672ce1ea6b1da87e7882cbb347a68dd101ec69b679eab">ForceSeparateNorm</a> = 1, <a class="code" href="class_pdf_base.html#a485f1602f74b5f47c1e5672ce1ea6b1da1bde5267d5e7d24ded2e3721359b7d9a">ForceCommonNorm</a> = 2};</div><div class="ttc" id="class_pdf_base_html_a485f1602f74b5f47c1e5672ce1ea6b1da87e7882cbb347a68dd101ec69b679eab"><div class="ttname"><a href="class_pdf_base.html#a485f1602f74b5f47c1e5672ce1ea6b1da87e7882cbb347a68dd101ec69b679eab">PdfBase::ForceSeparateNorm</a></div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00035">PdfBase.h:35</a></div></div>
-<div class="ttc" id="class_pdf_base_html_a485f1602f74b5f47c1e5672ce1ea6b1da1bde5267d5e7d24ded2e3721359b7d9a"><div class="ttname"><a href="class_pdf_base.html#a485f1602f74b5f47c1e5672ce1ea6b1da1bde5267d5e7d24ded2e3721359b7d9a">PdfBase::ForceCommonNorm</a></div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00035">PdfBase.h:35</a></div></div>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00036">36</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;{<a class="code" href="class_pdf_base.html#a485f1602f74b5f47c1e5672ce1ea6b1da87e7882cbb347a68dd101ec69b679eab">ForceSeparateNorm</a> = 1, <a class="code" href="class_pdf_base.html#a485f1602f74b5f47c1e5672ce1ea6b1da1bde5267d5e7d24ded2e3721359b7d9a">ForceCommonNorm</a> = 2};</div><div class="ttc" id="class_pdf_base_html_a485f1602f74b5f47c1e5672ce1ea6b1da87e7882cbb347a68dd101ec69b679eab"><div class="ttname"><a href="class_pdf_base.html#a485f1602f74b5f47c1e5672ce1ea6b1da87e7882cbb347a68dd101ec69b679eab">PdfBase::ForceSeparateNorm</a></div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00036">PdfBase.h:36</a></div></div>
+<div class="ttc" id="class_pdf_base_html_a485f1602f74b5f47c1e5672ce1ea6b1da1bde5267d5e7d24ded2e3721359b7d9a"><div class="ttname"><a href="class_pdf_base.html#a485f1602f74b5f47c1e5672ce1ea6b1da1bde5267d5e7d24ded2e3721359b7d9a">PdfBase::ForceCommonNorm</a></div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00036">PdfBase.h:36</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -406,11 +406,36 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00015">15</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00020">20</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="_pdf_base_8cc_source.html#l00147">registerObservable()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    : name(n) { <span class="comment">// Special-case PDFs should set to false.</span></div><div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <span class="keywordflow">if</span>(x)</div><div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        <a class="code" href="class_pdf_base.html#ad3f4c1923e70513fa4da84dc0d0aaf75">registerObservable</a>(x);</div><div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;}</div><div class="ttc" id="class_pdf_base_html_ad3f4c1923e70513fa4da84dc0d0aaf75"><div class="ttname"><a href="class_pdf_base.html#ad3f4c1923e70513fa4da84dc0d0aaf75">PdfBase::registerObservable</a></div><div class="ttdeci">__host__ void registerObservable(Variable *obs)</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8cc_source.html#l00147">PdfBase.cc:147</a></div></div>
+<p class="reference">References <a class="el" href="_pdf_base_8cc_source.html#l00158">registerObservable()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    : name(n) { <span class="comment">// Special-case PDFs should set to false.</span></div><div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <span class="keywordflow">if</span>(x)</div><div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <a class="code" href="class_pdf_base.html#ad3f4c1923e70513fa4da84dc0d0aaf75">registerObservable</a>(x);</div><div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;}</div><div class="ttc" id="class_pdf_base_html_ad3f4c1923e70513fa4da84dc0d0aaf75"><div class="ttname"><a href="class_pdf_base.html#ad3f4c1923e70513fa4da84dc0d0aaf75">PdfBase::registerObservable</a></div><div class="ttdeci">__host__ void registerObservable(Variable *obs)</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8cc_source.html#l00158">PdfBase.cc:158</a></div></div>
 </div><!-- fragment -->
+</div>
+</div>
+<a id="ad318a19de54f21ac06fad044d58bd2f6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad318a19de54f21ac06fad044d58bd2f6">&#9670;&nbsp;</a></span>~PdfBase()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual PdfBase::~PdfBase </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
@@ -438,10 +463,10 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00048">48</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00049">49</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
-<p class="reference">References <a class="el" href="class_pdf_base.html#aa3479f7909bc475e3b4b33b2a270fe1f">copyNormFactors()</a>, <a class="el" href="class_pdf_base.html#aa7606292b5ed3c0b48024fea0b02f85d">copyParams()</a>, <a class="el" href="class_pdf_base.html#aba8918ccf41318b0b102a2e12e7da4a1">generateNormRange()</a>, and <a class="el" href="_pdf_base_8h_source.html#l00117">specialMask</a>.</p>
-<div class="fragment"><div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;                                        {</div><div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        <a class="code" href="class_pdf_base.html#a1f459f7a8b6e334131f8a60c44069ed5">specialMask</a> |= m;</div><div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    }</div><div class="ttc" id="class_pdf_base_html_a1f459f7a8b6e334131f8a60c44069ed5"><div class="ttname"><a href="class_pdf_base.html#a1f459f7a8b6e334131f8a60c44069ed5">PdfBase::specialMask</a></div><div class="ttdeci">int specialMask</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00117">PdfBase.h:117</a></div></div>
+<p class="reference">References <a class="el" href="class_pdf_base.html#aa3479f7909bc475e3b4b33b2a270fe1f">copyNormFactors()</a>, <a class="el" href="class_pdf_base.html#aa7606292b5ed3c0b48024fea0b02f85d">copyParams()</a>, <a class="el" href="class_pdf_base.html#aba8918ccf41318b0b102a2e12e7da4a1">generateNormRange()</a>, and <a class="el" href="_pdf_base_8h_source.html#l00118">specialMask</a>.</p>
+<div class="fragment"><div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;                                        {</div><div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        <a class="code" href="class_pdf_base.html#a1f459f7a8b6e334131f8a60c44069ed5">specialMask</a> |= m;</div><div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    }</div><div class="ttc" id="class_pdf_base_html_a1f459f7a8b6e334131f8a60c44069ed5"><div class="ttname"><a href="class_pdf_base.html#a1f459f7a8b6e334131f8a60c44069ed5">PdfBase::specialMask</a></div><div class="ttdeci">int specialMask</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00118">PdfBase.h:118</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -470,7 +495,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Implemented in <a class="el" href="class_goo_pdf.html#a0e95dcd6dda393d2cd24af663a2becbd">GooPdf</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00092">FitFun()</a>, and <a class="el" href="_f_c_n_8cc_source.html#l00013">GooFit::FCN::operator()()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00037">GooFit::Minuit1::Eval()</a>, and <a class="el" href="_f_c_n_8cc_source.html#l00017">GooFit::FCN::operator()()</a>.</p>
 
 </div>
 </div>
@@ -490,13 +515,13 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00021">21</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00026">26</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00115">components</a>, <a class="el" href="_pdf_base_8h_source.html#l00055">getName()</a>, and <a class="el" href="_pdf_base_8h_source.html#l00119">properlyInitialised</a>.</p>
+<p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00116">components</a>, <a class="el" href="_pdf_base_8h_source.html#l00056">getName()</a>, and <a class="el" href="_pdf_base_8h_source.html#l00119">properlyInitialised</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00097">obsCEnd()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;                                                                           {</div><div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <span class="keywordflow">if</span>(!<a class="code" href="class_pdf_base.html#a098345520f86fb37c9a8571b5a4ede16">properlyInitialised</a>)</div><div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        unInited.push_back(<a class="code" href="class_pdf_base.html#aff31801fe304c5d048dc2c2c84e39127">getName</a>());</div><div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div><div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="keywordflow">for</span>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; <a class="code" href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">components</a>.size(); ++i) {</div><div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        <a class="code" href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">components</a>[i]-&gt;checkInitStatus(unInited);</div><div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    }</div><div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;}</div><div class="ttc" id="class_pdf_base_html_aff31801fe304c5d048dc2c2c84e39127"><div class="ttname"><a href="class_pdf_base.html#aff31801fe304c5d048dc2c2c84e39127">PdfBase::getName</a></div><div class="ttdeci">__host__ std::string getName() const</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00055">PdfBase.h:55</a></div></div>
-<div class="ttc" id="class_pdf_base_html_af583bab20870f9e4d24bb31af9d2e5e2"><div class="ttname"><a href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">PdfBase::components</a></div><div class="ttdeci">std::vector&lt; PdfBase * &gt; components</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00115">PdfBase.h:115</a></div></div>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00098">obsCEnd()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;                                                                           {</div><div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keywordflow">if</span>(!<a class="code" href="class_pdf_base.html#a098345520f86fb37c9a8571b5a4ede16">properlyInitialised</a>)</div><div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        unInited.push_back(<a class="code" href="class_pdf_base.html#aff31801fe304c5d048dc2c2c84e39127">getName</a>());</div><div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;</div><div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="keywordflow">for</span>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; <a class="code" href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">components</a>.size(); ++i) {</div><div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        <a class="code" href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">components</a>[i]-&gt;checkInitStatus(unInited);</div><div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    }</div><div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;}</div><div class="ttc" id="class_pdf_base_html_aff31801fe304c5d048dc2c2c84e39127"><div class="ttname"><a href="class_pdf_base.html#aff31801fe304c5d048dc2c2c84e39127">PdfBase::getName</a></div><div class="ttdeci">__host__ std::string getName() const</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00056">PdfBase.h:56</a></div></div>
+<div class="ttc" id="class_pdf_base_html_af583bab20870f9e4d24bb31af9d2e5e2"><div class="ttname"><a href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">PdfBase::components</a></div><div class="ttdeci">std::vector&lt; PdfBase * &gt; components</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00116">PdfBase.h:116</a></div></div>
 <div class="ttc" id="class_pdf_base_html_a098345520f86fb37c9a8571b5a4ede16"><div class="ttname"><a href="class_pdf_base.html#a098345520f86fb37c9a8571b5a4ede16">PdfBase::properlyInitialised</a></div><div class="ttdeci">bool properlyInitialised</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00119">PdfBase.h:119</a></div></div>
 </div><!-- fragment -->
 </div>
@@ -516,7 +541,7 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00097">obsCEnd()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00098">obsCEnd()</a>.</p>
 
 </div>
 </div>
@@ -535,7 +560,7 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00048">addSpecialMask()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00049">addSpecialMask()</a>.</p>
 
 </div>
 </div>
@@ -555,7 +580,7 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="reference">Referenced by <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00092">FitFun()</a>, <a class="el" href="_f_c_n_8cc_source.html#l00013">GooFit::FCN::operator()()</a>, and <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00016">GooFit::FitManagerMinuit1::setup()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00037">GooFit::Minuit1::Eval()</a>, <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00014">GooFit::Minuit1::Minuit1()</a>, and <a class="el" href="_f_c_n_8cc_source.html#l00017">GooFit::FCN::operator()()</a>.</p>
 
 </div>
 </div>
@@ -574,7 +599,7 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00048">addSpecialMask()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00049">addSpecialMask()</a>.</p>
 
 </div>
 </div>
@@ -593,7 +618,7 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00048">addSpecialMask()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00157">setIntegrationFineness()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00049">addSpecialMask()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00168">setIntegrationFineness()</a>.</p>
 
 </div>
 </div>
@@ -620,10 +645,10 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00071">71</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00073">73</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
 <p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00121">functionIdx</a>.</p>
-<div class="fragment"><div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;                                                   {</div><div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_pdf_base.html#a201930b5ce1146bec6dfdd7acfe14867">functionIdx</a>;</div><div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    }</div><div class="ttc" id="class_pdf_base_html_a201930b5ce1146bec6dfdd7acfe14867"><div class="ttname"><a href="class_pdf_base.html#a201930b5ce1146bec6dfdd7acfe14867">PdfBase::functionIdx</a></div><div class="ttdeci">unsigned int functionIdx</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00121">PdfBase.h:121</a></div></div>
+<div class="fragment"><div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;                                                   {</div><div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_pdf_base.html#a201930b5ce1146bec6dfdd7acfe14867">functionIdx</a>;</div><div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    }</div><div class="ttc" id="class_pdf_base_html_a201930b5ce1146bec6dfdd7acfe14867"><div class="ttname"><a href="class_pdf_base.html#a201930b5ce1146bec6dfdd7acfe14867">PdfBase::functionIdx</a></div><div class="ttdeci">unsigned int functionIdx</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00121">PdfBase.h:121</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -650,12 +675,12 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00055">55</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00056">56</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
-<p class="reference">References <a class="el" href="_pdf_base_8cc_source.html#l00127">getObservables()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00111">getParameterByName()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00098">getParameters()</a>.</p>
+<p class="reference">References <a class="el" href="_pdf_base_8cc_source.html#l00138">getObservables()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00122">getParameterByName()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00103">getParameters()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00021">checkInitStatus()</a>, <a class="el" href="_spin_factors_8h_source.html#l00047">SpinFactor::operator==()</a>, <a class="el" href="_lineshapes_pdf_8h_source.html#l00051">Lineshape::operator==()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00038">registerParameter()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;                                       {</div><div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        <span class="keywordflow">return</span> name;</div><div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    }</div></div><!-- fragment -->
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00189">abortWithCudaPrintFlush()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00026">checkInitStatus()</a>, <a class="el" href="_spin_factors_8h_source.html#l00047">SpinFactor::operator==()</a>, <a class="el" href="_lineshapes_pdf_8h_source.html#l00051">Lineshape::operator==()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00043">registerParameter()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;                                       {</div><div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        <span class="keywordflow">return</span> name;</div><div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    }</div></div><!-- fragment -->
 </div>
 </div>
 <a id="a6b5e072d502671c7354cdf4d19477e5f"></a>
@@ -682,15 +707,15 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00127">127</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00138">138</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00115">components</a>, <a class="el" href="_pdf_base_8h_source.html#l00094">obsCBegin()</a>, and <a class="el" href="_pdf_base_8h_source.html#l00097">obsCEnd()</a>.</p>
+<p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00116">components</a>, <a class="el" href="_pdf_base_8h_source.html#l00095">obsCBegin()</a>, and <a class="el" href="_pdf_base_8h_source.html#l00098">obsCEnd()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00055">getName()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;                                                                     {</div><div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <span class="keywordflow">for</span>(<a class="code" href="class_pdf_base.html#a0d986ce9e6108e2289c0fb2ce1177234">obsConstIter</a> p = <a class="code" href="class_pdf_base.html#aa1405fbf834a76200a37c55003f75cff">obsCBegin</a>(); p != <a class="code" href="class_pdf_base.html#a36e08f3d0131700f854a4e65329e96e1">obsCEnd</a>(); ++p) {</div><div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;        <span class="keywordflow">if</span>(std::find(ret.begin(), ret.end(), *p) != ret.end())</div><div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;            <span class="keywordflow">continue</span>;</div><div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;</div><div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;        ret.push_back(*p);</div><div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    }</div><div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;</div><div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    <span class="keywordflow">for</span>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; <a class="code" href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">components</a>.size(); ++i) {</div><div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;        <a class="code" href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">components</a>[i]-&gt;getObservables(ret);</div><div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    }</div><div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;}</div><div class="ttc" id="class_pdf_base_html_a36e08f3d0131700f854a4e65329e96e1"><div class="ttname"><a href="class_pdf_base.html#a36e08f3d0131700f854a4e65329e96e1">PdfBase::obsCEnd</a></div><div class="ttdeci">__host__ obsConstIter obsCEnd() const</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00097">PdfBase.h:97</a></div></div>
-<div class="ttc" id="class_pdf_base_html_aa1405fbf834a76200a37c55003f75cff"><div class="ttname"><a href="class_pdf_base.html#aa1405fbf834a76200a37c55003f75cff">PdfBase::obsCBegin</a></div><div class="ttdeci">__host__ obsConstIter obsCBegin() const</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00094">PdfBase.h:94</a></div></div>
-<div class="ttc" id="class_pdf_base_html_af583bab20870f9e4d24bb31af9d2e5e2"><div class="ttname"><a href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">PdfBase::components</a></div><div class="ttdeci">std::vector&lt; PdfBase * &gt; components</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00115">PdfBase.h:115</a></div></div>
-<div class="ttc" id="class_pdf_base_html_a0d986ce9e6108e2289c0fb2ce1177234"><div class="ttname"><a href="class_pdf_base.html#a0d986ce9e6108e2289c0fb2ce1177234">PdfBase::obsConstIter</a></div><div class="ttdeci">obsCont::const_iterator obsConstIter</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00043">PdfBase.h:43</a></div></div>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00056">getName()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;                                                                     {</div><div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    <span class="keywordflow">for</span>(<a class="code" href="class_pdf_base.html#a0d986ce9e6108e2289c0fb2ce1177234">obsConstIter</a> p = <a class="code" href="class_pdf_base.html#aa1405fbf834a76200a37c55003f75cff">obsCBegin</a>(); p != <a class="code" href="class_pdf_base.html#a36e08f3d0131700f854a4e65329e96e1">obsCEnd</a>(); ++p) {</div><div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;        <span class="keywordflow">if</span>(std::find(ret.begin(), ret.end(), *p) != ret.end())</div><div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;            <span class="keywordflow">continue</span>;</div><div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;</div><div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;        ret.push_back(*p);</div><div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    }</div><div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;</div><div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    <span class="keywordflow">for</span>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; <a class="code" href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">components</a>.size(); ++i) {</div><div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;        <a class="code" href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">components</a>[i]-&gt;getObservables(ret);</div><div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    }</div><div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;}</div><div class="ttc" id="class_pdf_base_html_a36e08f3d0131700f854a4e65329e96e1"><div class="ttname"><a href="class_pdf_base.html#a36e08f3d0131700f854a4e65329e96e1">PdfBase::obsCEnd</a></div><div class="ttdeci">__host__ obsConstIter obsCEnd() const</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00098">PdfBase.h:98</a></div></div>
+<div class="ttc" id="class_pdf_base_html_aa1405fbf834a76200a37c55003f75cff"><div class="ttname"><a href="class_pdf_base.html#aa1405fbf834a76200a37c55003f75cff">PdfBase::obsCBegin</a></div><div class="ttdeci">__host__ obsConstIter obsCBegin() const</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00095">PdfBase.h:95</a></div></div>
+<div class="ttc" id="class_pdf_base_html_af583bab20870f9e4d24bb31af9d2e5e2"><div class="ttname"><a href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">PdfBase::components</a></div><div class="ttdeci">std::vector&lt; PdfBase * &gt; components</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00116">PdfBase.h:116</a></div></div>
+<div class="ttc" id="class_pdf_base_html_a0d986ce9e6108e2289c0fb2ce1177234"><div class="ttname"><a href="class_pdf_base.html#a0d986ce9e6108e2289c0fb2ce1177234">PdfBase::obsConstIter</a></div><div class="ttdeci">obsCont::const_iterator obsConstIter</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00044">PdfBase.h:44</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -710,15 +735,15 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00111">111</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00122">122</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00115">components</a>, and <a class="el" href="_pdf_base_8h_source.html#l00113">parameterList</a>.</p>
+<p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00116">components</a>, and <a class="el" href="_pdf_base_8h_source.html#l00114">parameterList</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00055">getName()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;                                                                {</div><div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    <span class="keywordflow">for</span>(<a class="code" href="class_pdf_base.html#af4074fb3fa236257a7d3865c8a57439f">parConstIter</a> p = <a class="code" href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">parameterList</a>.begin(); p != <a class="code" href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">parameterList</a>.end(); ++p) {</div><div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        <span class="keywordflow">if</span>((*p)-&gt;name == n)</div><div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;            <span class="keywordflow">return</span> (*p);</div><div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    }</div><div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;</div><div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    <span class="keywordflow">for</span>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; <a class="code" href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">components</a>.size(); ++i) {</div><div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        <a class="code" href="class_variable.html">Variable</a>* cand = <a class="code" href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">components</a>[i]-&gt;getParameterByName(n);</div><div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;</div><div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;        <span class="keywordflow">if</span>(cand)</div><div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;            <span class="keywordflow">return</span> cand;</div><div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    }</div><div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;</div><div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    <span class="keywordflow">return</span> 0;</div><div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;}</div><div class="ttc" id="class_pdf_base_html_af4074fb3fa236257a7d3865c8a57439f"><div class="ttname"><a href="class_pdf_base.html#af4074fb3fa236257a7d3865c8a57439f">PdfBase::parConstIter</a></div><div class="ttdeci">parCont::const_iterator parConstIter</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00046">PdfBase.h:46</a></div></div>
-<div class="ttc" id="class_pdf_base_html_a596ab091a75307aceb298e5ff13fa03b"><div class="ttname"><a href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">PdfBase::parameterList</a></div><div class="ttdeci">parCont parameterList</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00113">PdfBase.h:113</a></div></div>
-<div class="ttc" id="class_pdf_base_html_af583bab20870f9e4d24bb31af9d2e5e2"><div class="ttname"><a href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">PdfBase::components</a></div><div class="ttdeci">std::vector&lt; PdfBase * &gt; components</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00115">PdfBase.h:115</a></div></div>
-<div class="ttc" id="class_variable_html"><div class="ttname"><a href="class_variable.html">Variable</a></div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00032">Variable.h:32</a></div></div>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00056">getName()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;                                                                {</div><div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    <span class="keywordflow">for</span>(<a class="code" href="class_pdf_base.html#af4074fb3fa236257a7d3865c8a57439f">parConstIter</a> p = <a class="code" href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">parameterList</a>.begin(); p != <a class="code" href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">parameterList</a>.end(); ++p) {</div><div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;        <span class="keywordflow">if</span>((*p)-&gt;name == n)</div><div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;            <span class="keywordflow">return</span> (*p);</div><div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    }</div><div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;</div><div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <span class="keywordflow">for</span>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; <a class="code" href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">components</a>.size(); ++i) {</div><div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;        <a class="code" href="class_variable.html">Variable</a>* cand = <a class="code" href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">components</a>[i]-&gt;getParameterByName(n);</div><div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;</div><div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;        <span class="keywordflow">if</span>(cand)</div><div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;            <span class="keywordflow">return</span> cand;</div><div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    }</div><div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;</div><div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    <span class="keywordflow">return</span> 0;</div><div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;}</div><div class="ttc" id="class_pdf_base_html_af4074fb3fa236257a7d3865c8a57439f"><div class="ttname"><a href="class_pdf_base.html#af4074fb3fa236257a7d3865c8a57439f">PdfBase::parConstIter</a></div><div class="ttdeci">parCont::const_iterator parConstIter</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00047">PdfBase.h:47</a></div></div>
+<div class="ttc" id="class_pdf_base_html_a596ab091a75307aceb298e5ff13fa03b"><div class="ttname"><a href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">PdfBase::parameterList</a></div><div class="ttdeci">parCont parameterList</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00114">PdfBase.h:114</a></div></div>
+<div class="ttc" id="class_pdf_base_html_af583bab20870f9e4d24bb31af9d2e5e2"><div class="ttname"><a href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">PdfBase::components</a></div><div class="ttdeci">std::vector&lt; PdfBase * &gt; components</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00116">PdfBase.h:116</a></div></div>
+<div class="ttc" id="class_variable_html"><div class="ttname"><a href="class_variable.html">Variable</a></div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00046">Variable.h:46</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -745,15 +770,15 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00074">74</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00076">76</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
-<p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00110">parameters</a>, <a class="el" href="_pdf_base_8cc_source.html#l00162">parametersChanged()</a>, <a class="el" href="class_pdf_base.html#a2887cc44f42e788e11973661a37af226">printProfileInfo()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00030">recursiveSetNormalisation()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00140">registerConstants()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00147">registerObservable()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00038">registerParameter()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00157">setIntegrationFineness()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00178">storeParameters()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00079">unregisterParameter()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;                                                    {</div><div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_pdf_base.html#a3b5bef5b6436c6a9844055829cb3cba3">parameters</a>;</div><div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    }</div><div class="ttc" id="class_pdf_base_html_a3b5bef5b6436c6a9844055829cb3cba3"><div class="ttname"><a href="class_pdf_base.html#a3b5bef5b6436c6a9844055829cb3cba3">PdfBase::parameters</a></div><div class="ttdeci">unsigned int parameters</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00110">PdfBase.h:110</a></div></div>
+<p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00111">parameters</a>, <a class="el" href="_pdf_base_8cc_source.html#l00173">parametersChanged()</a>, <a class="el" href="class_pdf_base.html#a2887cc44f42e788e11973661a37af226">printProfileInfo()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00035">recursiveSetNormalisation()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00151">registerConstants()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00158">registerObservable()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00043">registerParameter()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00168">setIntegrationFineness()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00084">unregisterParameter()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;                                                    {</div><div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_pdf_base.html#a3b5bef5b6436c6a9844055829cb3cba3">parameters</a>;</div><div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    }</div><div class="ttc" id="class_pdf_base_html_a3b5bef5b6436c6a9844055829cb3cba3"><div class="ttname"><a href="class_pdf_base.html#a3b5bef5b6436c6a9844055829cb3cba3">PdfBase::parameters</a></div><div class="ttdeci">unsigned int parameters</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00111">PdfBase.h:111</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
 <a id="a35bb094b326f1a9f0aa9a675dd9ede43"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a35bb094b326f1a9f0aa9a675dd9ede43">&#9670;&nbsp;</a></span>getParameters()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a35bb094b326f1a9f0aa9a675dd9ede43">&#9670;&nbsp;</a></span>getParameters() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -776,14 +801,37 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00098">98</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00109">109</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00115">components</a>, and <a class="el" href="_pdf_base_8h_source.html#l00113">parameterList</a>.</p>
+<p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00116">components</a>, and <a class="el" href="_pdf_base_8h_source.html#l00114">parameterList</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00055">getName()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00162">parametersChanged()</a>, <a class="el" href="_params_8cc_source.html#l00010">GooFit::Params::Params()</a>, <a class="el" href="_functor_writer_8cc_source.html#l00028">readFromFile()</a>, <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00016">GooFit::FitManagerMinuit1::setup()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00178">storeParameters()</a>, and <a class="el" href="_functor_writer_8cc_source.html#l00007">writeToFile()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;                                                       {</div><div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <span class="keywordflow">for</span>(<a class="code" href="class_pdf_base.html#af4074fb3fa236257a7d3865c8a57439f">parConstIter</a> p = <a class="code" href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">parameterList</a>.begin(); p != <a class="code" href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">parameterList</a>.end(); ++p) {</div><div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        <span class="keywordflow">if</span>(std::find(ret.begin(), ret.end(), (*p)) != ret.end())</div><div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;            <span class="keywordflow">continue</span>;</div><div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;</div><div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        ret.push_back(*p);</div><div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    }</div><div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;</div><div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    <span class="keywordflow">for</span>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; <a class="code" href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">components</a>.size(); ++i) {</div><div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        <a class="code" href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">components</a>[i]-&gt;getParameters(ret);</div><div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    }</div><div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;}</div><div class="ttc" id="class_pdf_base_html_af4074fb3fa236257a7d3865c8a57439f"><div class="ttname"><a href="class_pdf_base.html#af4074fb3fa236257a7d3865c8a57439f">PdfBase::parConstIter</a></div><div class="ttdeci">parCont::const_iterator parConstIter</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00046">PdfBase.h:46</a></div></div>
-<div class="ttc" id="class_pdf_base_html_a596ab091a75307aceb298e5ff13fa03b"><div class="ttname"><a href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">PdfBase::parameterList</a></div><div class="ttdeci">parCont parameterList</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00113">PdfBase.h:113</a></div></div>
-<div class="ttc" id="class_pdf_base_html_af583bab20870f9e4d24bb31af9d2e5e2"><div class="ttname"><a href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">PdfBase::components</a></div><div class="ttdeci">std::vector&lt; PdfBase * &gt; components</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00115">PdfBase.h:115</a></div></div>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00189">abortWithCudaPrintFlush()</a>, <a class="el" href="_params_8cc_source.html#l00010">GooFit::Params::Params()</a>, <a class="el" href="_functor_writer_8cc_source.html#l00028">readFromFile()</a>, and <a class="el" href="_functor_writer_8cc_source.html#l00007">writeToFile()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;                                                       {</div><div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="keywordflow">for</span>(<a class="code" href="class_pdf_base.html#af4074fb3fa236257a7d3865c8a57439f">parConstIter</a> p = <a class="code" href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">parameterList</a>.begin(); p != <a class="code" href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">parameterList</a>.end(); ++p) {</div><div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        <span class="keywordflow">if</span>(std::find(ret.begin(), ret.end(), (*p)) != ret.end())</div><div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;            <span class="keywordflow">continue</span>;</div><div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;</div><div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;        ret.push_back(*p);</div><div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    }</div><div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;</div><div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    <span class="keywordflow">for</span>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; <a class="code" href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">components</a>.size(); ++i) {</div><div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        <a class="code" href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">components</a>[i]-&gt;getParameters(ret);</div><div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    }</div><div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;}</div><div class="ttc" id="class_pdf_base_html_af4074fb3fa236257a7d3865c8a57439f"><div class="ttname"><a href="class_pdf_base.html#af4074fb3fa236257a7d3865c8a57439f">PdfBase::parConstIter</a></div><div class="ttdeci">parCont::const_iterator parConstIter</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00047">PdfBase.h:47</a></div></div>
+<div class="ttc" id="class_pdf_base_html_a596ab091a75307aceb298e5ff13fa03b"><div class="ttname"><a href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">PdfBase::parameterList</a></div><div class="ttdeci">parCont parameterList</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00114">PdfBase.h:114</a></div></div>
+<div class="ttc" id="class_pdf_base_html_af583bab20870f9e4d24bb31af9d2e5e2"><div class="ttname"><a href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">PdfBase::components</a></div><div class="ttdeci">std::vector&lt; PdfBase * &gt; components</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00116">PdfBase.h:116</a></div></div>
+</div><!-- fragment -->
+</div>
+</div>
+<a id="a05e3daf0a3344850a16865307674c438"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a05e3daf0a3344850a16865307674c438">&#9670;&nbsp;</a></span>getParameters() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">__host__ <a class="el" href="class_pdf_base.html#adde4851584b1fffeebd4b0ec2b9ca1c7">PdfBase::parCont</a> PdfBase::getParameters </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00103">103</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00056">getName()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;                                                     {</div><div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <a class="code" href="class_pdf_base.html#adde4851584b1fffeebd4b0ec2b9ca1c7">parCont</a> ret;</div><div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    <a class="code" href="class_pdf_base.html#a05e3daf0a3344850a16865307674c438">getParameters</a>(ret);</div><div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    <span class="keywordflow">return</span> ret;</div><div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;}</div><div class="ttc" id="class_pdf_base_html_a05e3daf0a3344850a16865307674c438"><div class="ttname"><a href="class_pdf_base.html#a05e3daf0a3344850a16865307674c438">PdfBase::getParameters</a></div><div class="ttdeci">__host__ parCont getParameters() const</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8cc_source.html#l00103">PdfBase.cc:103</a></div></div>
+<div class="ttc" id="class_pdf_base_html_adde4851584b1fffeebd4b0ec2b9ca1c7"><div class="ttname"><a href="class_pdf_base.html#adde4851584b1fffeebd4b0ec2b9ca1c7">PdfBase::parCont</a></div><div class="ttdeci">std::vector&lt; Variable * &gt; parCont</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00045">PdfBase.h:45</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -810,10 +858,10 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00061">61</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00063">63</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
-<p class="reference">References <a class="el" href="class_pdf_base.html#ae280cb7da97d02ea522a4fe7d56330d7">setData()</a>, <a class="el" href="class_pdf_base.html#affa49ce31ee55193a6870fab711680c0">setFitControl()</a>, and <a class="el" href="_pdf_base_8h_source.html#l00117">specialMask</a>.</p>
-<div class="fragment"><div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;                                        {</div><div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_pdf_base.html#a1f459f7a8b6e334131f8a60c44069ed5">specialMask</a>;</div><div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    }</div><div class="ttc" id="class_pdf_base_html_a1f459f7a8b6e334131f8a60c44069ed5"><div class="ttname"><a href="class_pdf_base.html#a1f459f7a8b6e334131f8a60c44069ed5">PdfBase::specialMask</a></div><div class="ttdeci">int specialMask</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00117">PdfBase.h:117</a></div></div>
+<p class="reference">References <a class="el" href="class_pdf_base.html#ae280cb7da97d02ea522a4fe7d56330d7">setData()</a>, <a class="el" href="class_pdf_base.html#affa49ce31ee55193a6870fab711680c0">setFitControl()</a>, and <a class="el" href="_pdf_base_8h_source.html#l00118">specialMask</a>.</p>
+<div class="fragment"><div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;                                        {</div><div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_pdf_base.html#a1f459f7a8b6e334131f8a60c44069ed5">specialMask</a>;</div><div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    }</div><div class="ttc" id="class_pdf_base_html_a1f459f7a8b6e334131f8a60c44069ed5"><div class="ttname"><a href="class_pdf_base.html#a1f459f7a8b6e334131f8a60c44069ed5">PdfBase::specialMask</a></div><div class="ttdeci">int specialMask</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00118">PdfBase.h:118</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -842,8 +890,8 @@ Protected Attributes</h2></td></tr>
 
 <p>Reimplemented in <a class="el" href="class_goo_pdf.html#a1eec1aef4a14c28ff372962c18c9956c">GooPdf</a>, <a class="el" href="class_event_weighted_add_pdf.html#af4384c562f65d5509ad5adb795797773">EventWeightedAddPdf</a>, <a class="el" href="class_add_pdf.html#a9d7e28ba4d5a27970e4882f9e7e94cfe">AddPdf</a>, <a class="el" href="class_exp_pdf.html#a16b5616c0a3a66380d94e6059ba9a176">ExpPdf</a>, <a class="el" href="class_prod_pdf.html#a7a108d8d9dacde743a0683734cfe6749">ProdPdf</a>, <a class="el" href="class_gaussian_pdf.html#a5d811ebfa6014dba7299b9dfb1a3d782">GaussianPdf</a>, <a class="el" href="class_johnson_s_u_pdf.html#a9a8a020848c13aaed998e2eecc74ffa8">JohnsonSUPdf</a>, <a class="el" href="class_kin_limit_b_w_pdf.html#a7d7eae47b3f2165ca9b436596e6c49fd">KinLimitBWPdf</a>, <a class="el" href="class_step_pdf.html#a3dd30b01b36d8a940ac45e6909aba92e">StepPdf</a>, <a class="el" href="class_argus_pdf.html#af29e3bc624330f8b8aa4d54f8487c0ea">ArgusPdf</a>, and <a class="el" href="class_scaled_gaussian_pdf.html#adde961ec5ad994f8208b1b32a9540c12">ScaledGaussianPdf</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00068">68</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;                                                      {</div><div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div><div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    }</div></div><!-- fragment -->
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00070">70</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;                                                      {</div><div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div><div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    }</div></div><!-- fragment -->
 </div>
 </div>
 <a id="ab5ca8a46986f884f08e5b14c21c75683"></a>
@@ -914,10 +962,10 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00088">88</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00089">89</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
-<p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00112">observables</a>.</p>
-<div class="fragment"><div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;                                {</div><div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_pdf_base.html#ad73d49f857f098fe9ba7f3357faa4956">observables</a>.begin();</div><div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    }</div><div class="ttc" id="class_pdf_base_html_ad73d49f857f098fe9ba7f3357faa4956"><div class="ttname"><a href="class_pdf_base.html#ad73d49f857f098fe9ba7f3357faa4956">PdfBase::observables</a></div><div class="ttdeci">obsCont observables</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00112">PdfBase.h:112</a></div></div>
+<p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00113">observables</a>.</p>
+<div class="fragment"><div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;                                {</div><div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_pdf_base.html#ad73d49f857f098fe9ba7f3357faa4956">observables</a>.begin();</div><div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    }</div><div class="ttc" id="class_pdf_base_html_ad73d49f857f098fe9ba7f3357faa4956"><div class="ttname"><a href="class_pdf_base.html#ad73d49f857f098fe9ba7f3357faa4956">PdfBase::observables</a></div><div class="ttdeci">obsCont observables</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00113">PdfBase.h:113</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -944,12 +992,12 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00094">94</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00095">95</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
-<p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00112">observables</a>.</p>
+<p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00113">observables</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00127">getObservables()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;                                            {</div><div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_pdf_base.html#ad73d49f857f098fe9ba7f3357faa4956">observables</a>.begin();</div><div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    }</div><div class="ttc" id="class_pdf_base_html_ad73d49f857f098fe9ba7f3357faa4956"><div class="ttname"><a href="class_pdf_base.html#ad73d49f857f098fe9ba7f3357faa4956">PdfBase::observables</a></div><div class="ttdeci">obsCont observables</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00112">PdfBase.h:112</a></div></div>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00138">getObservables()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;                                            {</div><div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_pdf_base.html#ad73d49f857f098fe9ba7f3357faa4956">observables</a>.begin();</div><div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    }</div><div class="ttc" id="class_pdf_base_html_ad73d49f857f098fe9ba7f3357faa4956"><div class="ttname"><a href="class_pdf_base.html#ad73d49f857f098fe9ba7f3357faa4956">PdfBase::observables</a></div><div class="ttdeci">obsCont observables</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00113">PdfBase.h:113</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -976,12 +1024,12 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00097">97</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00098">98</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
-<p class="reference">References <a class="el" href="_pdf_base_8cc_source.html#l00021">checkInitStatus()</a>, <a class="el" href="class_pdf_base.html#a79204579275ad7dfca43c670b0576d6a">clearCurrentFit()</a>, and <a class="el" href="_pdf_base_8h_source.html#l00112">observables</a>.</p>
+<p class="reference">References <a class="el" href="_pdf_base_8cc_source.html#l00026">checkInitStatus()</a>, <a class="el" href="class_pdf_base.html#a79204579275ad7dfca43c670b0576d6a">clearCurrentFit()</a>, and <a class="el" href="_pdf_base_8h_source.html#l00113">observables</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00127">getObservables()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;                                          {</div><div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_pdf_base.html#ad73d49f857f098fe9ba7f3357faa4956">observables</a>.end();</div><div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    }</div><div class="ttc" id="class_pdf_base_html_ad73d49f857f098fe9ba7f3357faa4956"><div class="ttname"><a href="class_pdf_base.html#ad73d49f857f098fe9ba7f3357faa4956">PdfBase::observables</a></div><div class="ttdeci">obsCont observables</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00112">PdfBase.h:112</a></div></div>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00138">getObservables()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;                                          {</div><div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_pdf_base.html#ad73d49f857f098fe9ba7f3357faa4956">observables</a>.end();</div><div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    }</div><div class="ttc" id="class_pdf_base_html_ad73d49f857f098fe9ba7f3357faa4956"><div class="ttname"><a href="class_pdf_base.html#ad73d49f857f098fe9ba7f3357faa4956">PdfBase::observables</a></div><div class="ttdeci">obsCont observables</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00113">PdfBase.h:113</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1008,10 +1056,10 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00091">91</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00092">92</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
-<p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00112">observables</a>.</p>
-<div class="fragment"><div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;                              {</div><div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_pdf_base.html#ad73d49f857f098fe9ba7f3357faa4956">observables</a>.end();</div><div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    }</div><div class="ttc" id="class_pdf_base_html_ad73d49f857f098fe9ba7f3357faa4956"><div class="ttname"><a href="class_pdf_base.html#ad73d49f857f098fe9ba7f3357faa4956">PdfBase::observables</a></div><div class="ttdeci">obsCont observables</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00112">PdfBase.h:112</a></div></div>
+<p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00113">observables</a>.</p>
+<div class="fragment"><div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;                              {</div><div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_pdf_base.html#ad73d49f857f098fe9ba7f3357faa4956">observables</a>.end();</div><div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    }</div><div class="ttc" id="class_pdf_base_html_ad73d49f857f098fe9ba7f3357faa4956"><div class="ttname"><a href="class_pdf_base.html#ad73d49f857f098fe9ba7f3357faa4956">PdfBase::observables</a></div><div class="ttdeci">obsCont observables</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00113">PdfBase.h:113</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1030,16 +1078,13 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00162">162</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00173">173</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00118">cachedParams</a>, <a class="el" href="_pdf_base_8cc_source.html#l00098">getParameters()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00008">host_params</a>.</p>
+<p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00114">parameterList</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00074">getParameterIndex()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;                                               {</div><div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    <span class="keywordflow">if</span>(!<a class="code" href="class_pdf_base.html#ab02a5f801af94475220e2bb5faf8027e">cachedParams</a>)</div><div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div><div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;</div><div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    <a class="code" href="class_pdf_base.html#adde4851584b1fffeebd4b0ec2b9ca1c7">parCont</a> params;</div><div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    <a class="code" href="class_pdf_base.html#a35bb094b326f1a9f0aa9a675dd9ede43">getParameters</a>(params);</div><div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    <span class="keywordtype">int</span> counter = 0;</div><div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;</div><div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    <span class="keywordflow">for</span>(<a class="code" href="class_variable.html">Variable</a>* v : params) {</div><div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;        <span class="keywordflow">if</span>(<a class="code" href="class_pdf_base.html#ab02a5f801af94475220e2bb5faf8027e">cachedParams</a>[counter++] != <a class="code" href="_pdf_base_8cc.html#a42ae25ee78d098c45fff379245021222">host_params</a>[v-&gt;index])</div><div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">true</span>;</div><div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    }</div><div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;</div><div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div><div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;}</div><div class="ttc" id="class_pdf_base_html_a35bb094b326f1a9f0aa9a675dd9ede43"><div class="ttname"><a href="class_pdf_base.html#a35bb094b326f1a9f0aa9a675dd9ede43">PdfBase::getParameters</a></div><div class="ttdeci">virtual __host__ void getParameters(parCont &amp;ret) const</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8cc_source.html#l00098">PdfBase.cc:98</a></div></div>
-<div class="ttc" id="_pdf_base_8cc_html_a42ae25ee78d098c45fff379245021222"><div class="ttname"><a href="_pdf_base_8cc.html#a42ae25ee78d098c45fff379245021222">host_params</a></div><div class="ttdeci">fptype host_params[maxParams]</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8cc_source.html#l00008">PdfBase.cc:8</a></div></div>
-<div class="ttc" id="class_pdf_base_html_ab02a5f801af94475220e2bb5faf8027e"><div class="ttname"><a href="class_pdf_base.html#ab02a5f801af94475220e2bb5faf8027e">PdfBase::cachedParams</a></div><div class="ttdeci">fptype * cachedParams</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00118">PdfBase.h:118</a></div></div>
-<div class="ttc" id="class_pdf_base_html_adde4851584b1fffeebd4b0ec2b9ca1c7"><div class="ttname"><a href="class_pdf_base.html#adde4851584b1fffeebd4b0ec2b9ca1c7">PdfBase::parCont</a></div><div class="ttdeci">std::vector&lt; Variable * &gt; parCont</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00044">PdfBase.h:44</a></div></div>
-<div class="ttc" id="class_variable_html"><div class="ttname"><a href="class_variable.html">Variable</a></div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00032">Variable.h:32</a></div></div>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00076">getParameterIndex()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;                                               {</div><div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    <span class="keywordflow">for</span>(<a class="code" href="class_variable.html">Variable</a>* v : <a class="code" href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">parameterList</a>) {</div><div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;        <span class="keywordflow">if</span>(v-&gt;changed())</div><div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">true</span>;</div><div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    }</div><div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div><div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;}</div><div class="ttc" id="class_pdf_base_html_a596ab091a75307aceb298e5ff13fa03b"><div class="ttname"><a href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">PdfBase::parameterList</a></div><div class="ttdeci">parCont parameterList</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00114">PdfBase.h:114</a></div></div>
+<div class="ttc" id="class_variable_html"><div class="ttname"><a href="class_variable.html">Variable</a></div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00046">Variable.h:46</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1059,7 +1104,7 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00074">getParameterIndex()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00076">getParameterIndex()</a>.</p>
 
 </div>
 </div>
@@ -1087,14 +1132,14 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00030">30</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00035">35</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00115">components</a>, <a class="el" href="_pdf_base_8cc_source.html#l00007">host_normalisation</a>, and <a class="el" href="_pdf_base_8h_source.html#l00110">parameters</a>.</p>
+<p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00116">components</a>, <a class="el" href="_pdf_base_8cc_source.html#l00012">host_normalisation</a>, and <a class="el" href="_pdf_base_8h_source.html#l00111">parameters</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00074">getParameterIndex()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;                                                                  {</div><div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <a class="code" href="_pdf_base_8cc.html#a8d6989b00b97dfeca14d4c479f43ca27">host_normalisation</a>[<a class="code" href="class_pdf_base.html#a3b5bef5b6436c6a9844055829cb3cba3">parameters</a>] = norm;</div><div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div><div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keywordflow">for</span>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; <a class="code" href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">components</a>.size(); ++i) {</div><div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        <a class="code" href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">components</a>[i]-&gt;recursiveSetNormalisation(norm);</div><div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    }</div><div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;}</div><div class="ttc" id="_pdf_base_8cc_html_a8d6989b00b97dfeca14d4c479f43ca27"><div class="ttname"><a href="_pdf_base_8cc.html#a8d6989b00b97dfeca14d4c479f43ca27">host_normalisation</a></div><div class="ttdeci">fptype host_normalisation[maxParams]</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8cc_source.html#l00007">PdfBase.cc:7</a></div></div>
-<div class="ttc" id="class_pdf_base_html_af583bab20870f9e4d24bb31af9d2e5e2"><div class="ttname"><a href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">PdfBase::components</a></div><div class="ttdeci">std::vector&lt; PdfBase * &gt; components</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00115">PdfBase.h:115</a></div></div>
-<div class="ttc" id="class_pdf_base_html_a3b5bef5b6436c6a9844055829cb3cba3"><div class="ttname"><a href="class_pdf_base.html#a3b5bef5b6436c6a9844055829cb3cba3">PdfBase::parameters</a></div><div class="ttdeci">unsigned int parameters</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00110">PdfBase.h:110</a></div></div>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00076">getParameterIndex()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;                                                                  {</div><div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <a class="code" href="_pdf_base_8cc.html#a8d6989b00b97dfeca14d4c479f43ca27">host_normalisation</a>[<a class="code" href="class_pdf_base.html#a3b5bef5b6436c6a9844055829cb3cba3">parameters</a>] = norm;</div><div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div><div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keywordflow">for</span>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; <a class="code" href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">components</a>.size(); ++i) {</div><div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <a class="code" href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">components</a>[i]-&gt;recursiveSetNormalisation(norm);</div><div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    }</div><div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;}</div><div class="ttc" id="_pdf_base_8cc_html_a8d6989b00b97dfeca14d4c479f43ca27"><div class="ttname"><a href="_pdf_base_8cc.html#a8d6989b00b97dfeca14d4c479f43ca27">host_normalisation</a></div><div class="ttdeci">fptype host_normalisation[maxParams]</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8cc_source.html#l00012">PdfBase.cc:12</a></div></div>
+<div class="ttc" id="class_pdf_base_html_af583bab20870f9e4d24bb31af9d2e5e2"><div class="ttname"><a href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">PdfBase::components</a></div><div class="ttdeci">std::vector&lt; PdfBase * &gt; components</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00116">PdfBase.h:116</a></div></div>
+<div class="ttc" id="class_pdf_base_html_a3b5bef5b6436c6a9844055829cb3cba3"><div class="ttname"><a href="class_pdf_base.html#a3b5bef5b6436c6a9844055829cb3cba3">PdfBase::parameters</a></div><div class="ttdeci">unsigned int parameters</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00111">PdfBase.h:111</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1114,14 +1159,14 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00140">140</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00151">151</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00111">cIndex</a>, <a class="el" href="_pdf_base_8h_source.html#l00017">maxParams</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00012">totalConstants</a>.</p>
+<p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00112">cIndex</a>, <a class="el" href="_pdf_base_8h_source.html#l00017">maxParams</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00017">totalConstants</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00074">getParameterIndex()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;                                                                    {</div><div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    assert(<a class="code" href="_pdf_base_8cc.html#a2aa50cf6ad8d12f2ccb8dee83294e298">totalConstants</a> + amount &lt; <a class="code" href="_pdf_base_8h.html#a51204bb43a19d439e09ec85a8581ba03">maxParams</a>);</div><div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    <a class="code" href="class_pdf_base.html#a5e833f66e681f932fded4d6328be736c">cIndex</a> = <a class="code" href="_pdf_base_8cc.html#a2aa50cf6ad8d12f2ccb8dee83294e298">totalConstants</a>;</div><div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;    <a class="code" href="_pdf_base_8cc.html#a2aa50cf6ad8d12f2ccb8dee83294e298">totalConstants</a> += amount;</div><div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="class_pdf_base.html#a5e833f66e681f932fded4d6328be736c">cIndex</a>;</div><div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;}</div><div class="ttc" id="_pdf_base_8cc_html_a2aa50cf6ad8d12f2ccb8dee83294e298"><div class="ttname"><a href="_pdf_base_8cc.html#a2aa50cf6ad8d12f2ccb8dee83294e298">totalConstants</a></div><div class="ttdeci">int totalConstants</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8cc_source.html#l00012">PdfBase.cc:12</a></div></div>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00076">getParameterIndex()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;                                                                    {</div><div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    assert(<a class="code" href="_pdf_base_8cc.html#a2aa50cf6ad8d12f2ccb8dee83294e298">totalConstants</a> + amount &lt; <a class="code" href="_pdf_base_8h.html#a51204bb43a19d439e09ec85a8581ba03">maxParams</a>);</div><div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    <a class="code" href="class_pdf_base.html#a5e833f66e681f932fded4d6328be736c">cIndex</a> = <a class="code" href="_pdf_base_8cc.html#a2aa50cf6ad8d12f2ccb8dee83294e298">totalConstants</a>;</div><div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    <a class="code" href="_pdf_base_8cc.html#a2aa50cf6ad8d12f2ccb8dee83294e298">totalConstants</a> += amount;</div><div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="class_pdf_base.html#a5e833f66e681f932fded4d6328be736c">cIndex</a>;</div><div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;}</div><div class="ttc" id="_pdf_base_8cc_html_a2aa50cf6ad8d12f2ccb8dee83294e298"><div class="ttname"><a href="_pdf_base_8cc.html#a2aa50cf6ad8d12f2ccb8dee83294e298">totalConstants</a></div><div class="ttdeci">int totalConstants</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8cc_source.html#l00017">PdfBase.cc:17</a></div></div>
 <div class="ttc" id="_pdf_base_8h_html_a51204bb43a19d439e09ec85a8581ba03"><div class="ttname"><a href="_pdf_base_8h.html#a51204bb43a19d439e09ec85a8581ba03">maxParams</a></div><div class="ttdeci">const int maxParams</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00017">PdfBase.h:17</a></div></div>
-<div class="ttc" id="class_pdf_base_html_a5e833f66e681f932fded4d6328be736c"><div class="ttname"><a href="class_pdf_base.html#a5e833f66e681f932fded4d6328be736c">PdfBase::cIndex</a></div><div class="ttdeci">unsigned int cIndex</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00111">PdfBase.h:111</a></div></div>
+<div class="ttc" id="class_pdf_base_html_a5e833f66e681f932fded4d6328be736c"><div class="ttname"><a href="class_pdf_base.html#a5e833f66e681f932fded4d6328be736c">PdfBase::cIndex</a></div><div class="ttdeci">unsigned int cIndex</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00112">PdfBase.h:112</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1141,12 +1186,12 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00147">147</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00158">158</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00112">observables</a>.</p>
+<p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00113">observables</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00074">getParameterIndex()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00015">PdfBase()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;                                              {</div><div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    <span class="keywordflow">if</span>(!obs)</div><div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;        <span class="keywordflow">return</span>;</div><div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;</div><div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    <span class="keywordflow">if</span>(find(<a class="code" href="class_pdf_base.html#ad73d49f857f098fe9ba7f3357faa4956">observables</a>.begin(), <a class="code" href="class_pdf_base.html#ad73d49f857f098fe9ba7f3357faa4956">observables</a>.end(), obs) != <a class="code" href="class_pdf_base.html#ad73d49f857f098fe9ba7f3357faa4956">observables</a>.end())</div><div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;        <span class="keywordflow">return</span>;</div><div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;</div><div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    <a class="code" href="class_pdf_base.html#ad73d49f857f098fe9ba7f3357faa4956">observables</a>.push_back(obs);</div><div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;}</div><div class="ttc" id="class_pdf_base_html_ad73d49f857f098fe9ba7f3357faa4956"><div class="ttname"><a href="class_pdf_base.html#ad73d49f857f098fe9ba7f3357faa4956">PdfBase::observables</a></div><div class="ttdeci">obsCont observables</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00112">PdfBase.h:112</a></div></div>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00076">getParameterIndex()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00020">PdfBase()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;                                              {</div><div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    <span class="keywordflow">if</span>(!obs)</div><div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;        <span class="keywordflow">return</span>;</div><div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;</div><div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    <span class="keywordflow">if</span>(find(<a class="code" href="class_pdf_base.html#ad73d49f857f098fe9ba7f3357faa4956">observables</a>.begin(), <a class="code" href="class_pdf_base.html#ad73d49f857f098fe9ba7f3357faa4956">observables</a>.end(), obs) != <a class="code" href="class_pdf_base.html#ad73d49f857f098fe9ba7f3357faa4956">observables</a>.end())</div><div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;        <span class="keywordflow">return</span>;</div><div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;</div><div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    <a class="code" href="class_pdf_base.html#ad73d49f857f098fe9ba7f3357faa4956">observables</a>.push_back(obs);</div><div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;}</div><div class="ttc" id="class_pdf_base_html_ad73d49f857f098fe9ba7f3357faa4956"><div class="ttname"><a href="class_pdf_base.html#ad73d49f857f098fe9ba7f3357faa4956">PdfBase::observables</a></div><div class="ttdeci">obsCont observables</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00113">PdfBase.h:113</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1166,17 +1211,17 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00038">38</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00043">43</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="_variable_8h_source.html#l00014">Indexable::getIndex()</a>, <a class="el" href="_pdf_base_8h_source.html#l00055">getName()</a>, <a class="el" href="_variable_8h_source.html#l00025">Indexable::index</a>, <a class="el" href="_pdf_base_8h_source.html#l00113">parameterList</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00013">variableRegistry</a>.</p>
+<p class="reference">References <a class="el" href="_variable_8h_source.html#l00017">Indexable::getIndex()</a>, <a class="el" href="_pdf_base_8h_source.html#l00056">getName()</a>, <a class="el" href="_pdf_base_8h_source.html#l00114">parameterList</a>, <a class="el" href="_variable_8h_source.html#l00020">Indexable::setIndex()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00018">variableRegistry</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00074">getParameterIndex()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;                                                              {</div><div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="keywordflow">if</span>(!var) {</div><div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        std::cout &lt;&lt; <span class="stringliteral">&quot;Error: Attempt to register null Variable with &quot;</span></div><div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;                  &lt;&lt; <a class="code" href="class_pdf_base.html#aff31801fe304c5d048dc2c2c84e39127">getName</a>()</div><div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;                  &lt;&lt; <span class="stringliteral">&quot;, aborting.\n&quot;</span>;</div><div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        assert(var);</div><div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        exit(1);</div><div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    }</div><div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div><div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keywordflow">if</span>(std::find(<a class="code" href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">parameterList</a>.begin(), <a class="code" href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">parameterList</a>.end(), var) != <a class="code" href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">parameterList</a>.end())</div><div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        <span class="keywordflow">return</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>) var-&gt;<a class="code" href="class_indexable.html#a23dbb08c08ae676c84083ae890f50aad">getIndex</a>();</div><div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div><div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <a class="code" href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">parameterList</a>.push_back(var);</div><div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <a class="code" href="_pdf_base_8cc.html#ab4d293dc4b6e31175b82d8d2f229ba21">variableRegistry</a>[var].insert(<span class="keyword">this</span>);</div><div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div><div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keywordflow">if</span>(0 &gt; var-&gt;<a class="code" href="class_indexable.html#a23dbb08c08ae676c84083ae890f50aad">getIndex</a>()) {</div><div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> unusedIndex = 0;</div><div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div><div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        <span class="keywordflow">while</span>(<span class="keyword">true</span>) {</div><div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;            <span class="keywordtype">bool</span> canUse = <span class="keyword">true</span>;</div><div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div><div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;            <span class="keywordflow">for</span>(std::map&lt;<a class="code" href="class_variable.html">Variable</a>*, std::set&lt;PdfBase*&gt;&gt;::iterator p = <a class="code" href="_pdf_base_8cc.html#ab4d293dc4b6e31175b82d8d2f229ba21">variableRegistry</a>.begin(); p != <a class="code" href="_pdf_base_8cc.html#ab4d293dc4b6e31175b82d8d2f229ba21">variableRegistry</a>.end(); ++p) {</div><div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;                <span class="keywordflow">if</span>(unusedIndex != (*p).first-&gt;index)</div><div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;                    <span class="keywordflow">continue</span>;</div><div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div><div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;                canUse = <span class="keyword">false</span>;</div><div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;                <span class="keywordflow">break</span>;</div><div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;            }</div><div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;</div><div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;            <span class="keywordflow">if</span>(canUse)</div><div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;                <span class="keywordflow">break</span>;</div><div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div><div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;            unusedIndex++;</div><div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        }</div><div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;</div><div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        var-&gt;<a class="code" href="class_indexable.html#a7c1bd84c4bafab7215621e28ea65f242">index</a> = unusedIndex;</div><div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    }</div><div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div><div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keywordflow">return</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>) var-&gt;<a class="code" href="class_indexable.html#a23dbb08c08ae676c84083ae890f50aad">getIndex</a>();</div><div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;}</div><div class="ttc" id="class_pdf_base_html_aff31801fe304c5d048dc2c2c84e39127"><div class="ttname"><a href="class_pdf_base.html#aff31801fe304c5d048dc2c2c84e39127">PdfBase::getName</a></div><div class="ttdeci">__host__ std::string getName() const</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00055">PdfBase.h:55</a></div></div>
-<div class="ttc" id="class_pdf_base_html_a596ab091a75307aceb298e5ff13fa03b"><div class="ttname"><a href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">PdfBase::parameterList</a></div><div class="ttdeci">parCont parameterList</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00113">PdfBase.h:113</a></div></div>
-<div class="ttc" id="class_indexable_html_a23dbb08c08ae676c84083ae890f50aad"><div class="ttname"><a href="class_indexable.html#a23dbb08c08ae676c84083ae890f50aad">Indexable::getIndex</a></div><div class="ttdeci">int getIndex() const</div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00014">Variable.h:14</a></div></div>
-<div class="ttc" id="_pdf_base_8cc_html_ab4d293dc4b6e31175b82d8d2f229ba21"><div class="ttname"><a href="_pdf_base_8cc.html#ab4d293dc4b6e31175b82d8d2f229ba21">variableRegistry</a></div><div class="ttdeci">std::map&lt; Variable *, std::set&lt; PdfBase * &gt; &gt; variableRegistry</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8cc_source.html#l00013">PdfBase.cc:13</a></div></div>
-<div class="ttc" id="class_indexable_html_a7c1bd84c4bafab7215621e28ea65f242"><div class="ttname"><a href="class_indexable.html#a7c1bd84c4bafab7215621e28ea65f242">Indexable::index</a></div><div class="ttdeci">int index</div><div class="ttdoc">The index, -1 if unset. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00025">Variable.h:25</a></div></div>
-<div class="ttc" id="class_variable_html"><div class="ttname"><a href="class_variable.html">Variable</a></div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00032">Variable.h:32</a></div></div>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00076">getParameterIndex()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;                                                              {</div><div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="keywordflow">if</span>(!var) {</div><div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        std::cout &lt;&lt; <span class="stringliteral">&quot;Error: Attempt to register null Variable with &quot;</span></div><div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;                  &lt;&lt; <a class="code" href="class_pdf_base.html#aff31801fe304c5d048dc2c2c84e39127">getName</a>()</div><div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;                  &lt;&lt; <span class="stringliteral">&quot;, aborting.\n&quot;</span>;</div><div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        assert(var);</div><div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        exit(1);</div><div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    }</div><div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div><div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keywordflow">if</span>(std::find(<a class="code" href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">parameterList</a>.begin(), <a class="code" href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">parameterList</a>.end(), var) != <a class="code" href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">parameterList</a>.end())</div><div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <span class="keywordflow">return</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>) var-&gt;<a class="code" href="class_indexable.html#a23dbb08c08ae676c84083ae890f50aad">getIndex</a>();</div><div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div><div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <a class="code" href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">parameterList</a>.push_back(var);</div><div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <a class="code" href="_pdf_base_8cc.html#ab4d293dc4b6e31175b82d8d2f229ba21">variableRegistry</a>[var].insert(<span class="keyword">this</span>);</div><div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div><div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keywordflow">if</span>(0 &gt; var-&gt;<a class="code" href="class_indexable.html#a23dbb08c08ae676c84083ae890f50aad">getIndex</a>()) {</div><div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> unusedIndex = 0;</div><div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div><div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <span class="keywordflow">while</span>(<span class="keyword">true</span>) {</div><div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;            <span class="keywordtype">bool</span> canUse = <span class="keyword">true</span>;</div><div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div><div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;            <span class="keywordflow">for</span>(std::map&lt;<a class="code" href="class_variable.html">Variable</a>*, std::set&lt;PdfBase*&gt;&gt;::iterator p = <a class="code" href="_pdf_base_8cc.html#ab4d293dc4b6e31175b82d8d2f229ba21">variableRegistry</a>.begin(); p != <a class="code" href="_pdf_base_8cc.html#ab4d293dc4b6e31175b82d8d2f229ba21">variableRegistry</a>.end(); ++p) {</div><div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;                <span class="keywordflow">if</span>(unusedIndex != (*p).first-&gt;getIndex())</div><div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;                    <span class="keywordflow">continue</span>;</div><div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div><div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;                canUse = <span class="keyword">false</span>;</div><div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;                <span class="keywordflow">break</span>;</div><div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;            }</div><div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div><div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;            <span class="keywordflow">if</span>(canUse)</div><div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;                <span class="keywordflow">break</span>;</div><div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div><div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;            unusedIndex++;</div><div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        }</div><div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div><div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        var-&gt;<a class="code" href="class_indexable.html#a8e581a1caf2760cebcfbf1023318e40a">setIndex</a>(unusedIndex);</div><div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    }</div><div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div><div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordflow">return</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>) var-&gt;<a class="code" href="class_indexable.html#a23dbb08c08ae676c84083ae890f50aad">getIndex</a>();</div><div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;}</div><div class="ttc" id="class_indexable_html_a8e581a1caf2760cebcfbf1023318e40a"><div class="ttname"><a href="class_indexable.html#a8e581a1caf2760cebcfbf1023318e40a">Indexable::setIndex</a></div><div class="ttdeci">void setIndex(int value)</div><div class="ttdoc">Set the GooFit index. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00020">Variable.h:20</a></div></div>
+<div class="ttc" id="class_pdf_base_html_aff31801fe304c5d048dc2c2c84e39127"><div class="ttname"><a href="class_pdf_base.html#aff31801fe304c5d048dc2c2c84e39127">PdfBase::getName</a></div><div class="ttdeci">__host__ std::string getName() const</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00056">PdfBase.h:56</a></div></div>
+<div class="ttc" id="class_pdf_base_html_a596ab091a75307aceb298e5ff13fa03b"><div class="ttname"><a href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">PdfBase::parameterList</a></div><div class="ttdeci">parCont parameterList</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00114">PdfBase.h:114</a></div></div>
+<div class="ttc" id="class_indexable_html_a23dbb08c08ae676c84083ae890f50aad"><div class="ttname"><a href="class_indexable.html#a23dbb08c08ae676c84083ae890f50aad">Indexable::getIndex</a></div><div class="ttdeci">int getIndex() const</div><div class="ttdoc">Get the GooFit index. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00017">Variable.h:17</a></div></div>
+<div class="ttc" id="_pdf_base_8cc_html_ab4d293dc4b6e31175b82d8d2f229ba21"><div class="ttname"><a href="_pdf_base_8cc.html#ab4d293dc4b6e31175b82d8d2f229ba21">variableRegistry</a></div><div class="ttdeci">std::map&lt; Variable *, std::set&lt; PdfBase * &gt; &gt; variableRegistry</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8cc_source.html#l00018">PdfBase.cc:18</a></div></div>
+<div class="ttc" id="class_variable_html"><div class="ttname"><a href="class_variable.html">Variable</a></div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00046">Variable.h:46</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1196,7 +1241,7 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00061">getSpecialMask()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00063">getSpecialMask()</a>.</p>
 
 </div>
 </div>
@@ -1272,7 +1317,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Implemented in <a class="el" href="class_goo_pdf.html#a33328ca1b0c3d45c1717c2d9351c031e">GooPdf</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00061">getSpecialMask()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00063">getSpecialMask()</a>.</p>
 
 </div>
 </div>
@@ -1292,13 +1337,13 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00157">157</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00168">168</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="class_pdf_base.html#aba8918ccf41318b0b102a2e12e7da4a1">generateNormRange()</a>, and <a class="el" href="_pdf_base_8h_source.html#l00116">integrationBins</a>.</p>
+<p class="reference">References <a class="el" href="class_pdf_base.html#aba8918ccf41318b0b102a2e12e7da4a1">generateNormRange()</a>, and <a class="el" href="_pdf_base_8h_source.html#l00117">integrationBins</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00074">getParameterIndex()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;                                                   {</div><div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    <a class="code" href="class_pdf_base.html#a085f0680195278543512ee1eeb08e436">integrationBins</a> = i;</div><div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    <a class="code" href="class_pdf_base.html#aba8918ccf41318b0b102a2e12e7da4a1">generateNormRange</a>();</div><div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;}</div><div class="ttc" id="class_pdf_base_html_aba8918ccf41318b0b102a2e12e7da4a1"><div class="ttname"><a href="class_pdf_base.html#aba8918ccf41318b0b102a2e12e7da4a1">PdfBase::generateNormRange</a></div><div class="ttdeci">__host__ void generateNormRange()</div></div>
-<div class="ttc" id="class_pdf_base_html_a085f0680195278543512ee1eeb08e436"><div class="ttname"><a href="class_pdf_base.html#a085f0680195278543512ee1eeb08e436">PdfBase::integrationBins</a></div><div class="ttdeci">int integrationBins</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00116">PdfBase.h:116</a></div></div>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00076">getParameterIndex()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;                                                   {</div><div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    <a class="code" href="class_pdf_base.html#a085f0680195278543512ee1eeb08e436">integrationBins</a> = i;</div><div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    <a class="code" href="class_pdf_base.html#aba8918ccf41318b0b102a2e12e7da4a1">generateNormRange</a>();</div><div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;}</div><div class="ttc" id="class_pdf_base_html_aba8918ccf41318b0b102a2e12e7da4a1"><div class="ttname"><a href="class_pdf_base.html#aba8918ccf41318b0b102a2e12e7da4a1">PdfBase::generateNormRange</a></div><div class="ttdeci">__host__ void generateNormRange()</div></div>
+<div class="ttc" id="class_pdf_base_html_a085f0680195278543512ee1eeb08e436"><div class="ttname"><a href="class_pdf_base.html#a085f0680195278543512ee1eeb08e436">PdfBase::integrationBins</a></div><div class="ttdeci">int integrationBins</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00117">PdfBase.h:117</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1338,10 +1383,10 @@ Protected Attributes</h2></td></tr>
 
 <p>This needs to be set before a call to setData. </p>
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00192">192</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00181">181</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00123">m_iEventsPerTask</a>.</p>
-<div class="fragment"><div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;                                                             {</div><div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;    <span class="keywordflow">if</span>(!p)</div><div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;        <span class="keywordflow">return</span>;</div><div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;</div><div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    <a class="code" href="class_pdf_base.html#ae0d4d6b6d8e7b5bc998e0dfd6ce2e878">m_iEventsPerTask</a> = c;</div><div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;}</div><div class="ttc" id="class_pdf_base_html_ae0d4d6b6d8e7b5bc998e0dfd6ce2e878"><div class="ttname"><a href="class_pdf_base.html#ae0d4d6b6d8e7b5bc998e0dfd6ce2e878">PdfBase::m_iEventsPerTask</a></div><div class="ttdeci">int m_iEventsPerTask</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00123">PdfBase.h:123</a></div></div>
+<div class="fragment"><div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;                                                             {</div><div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    <span class="keywordflow">if</span>(!p)</div><div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;        <span class="keywordflow">return</span>;</div><div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;</div><div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    <a class="code" href="class_pdf_base.html#ae0d4d6b6d8e7b5bc998e0dfd6ce2e878">m_iEventsPerTask</a> = c;</div><div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;}</div><div class="ttc" id="class_pdf_base_html_ae0d4d6b6d8e7b5bc998e0dfd6ce2e878"><div class="ttname"><a href="class_pdf_base.html#ae0d4d6b6d8e7b5bc998e0dfd6ce2e878">PdfBase::m_iEventsPerTask</a></div><div class="ttdeci">int m_iEventsPerTask</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00123">PdfBase.h:123</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1368,37 +1413,8 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00103">103</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;                                     {</div><div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        setIndices();</div><div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    }</div></div><!-- fragment -->
-</div>
-</div>
-<a id="aa50c0e760f79ef841452b3911e5ab4d1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa50c0e760f79ef841452b3911e5ab4d1">&#9670;&nbsp;</a></span>storeParameters()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">__host__ void PdfBase::storeParameters </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00178">178</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
-
-<p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00118">cachedParams</a>, <a class="el" href="_pdf_base_8cc_source.html#l00098">getParameters()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00008">host_params</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00074">getParameterIndex()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;                                             {</div><div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;    <a class="code" href="class_pdf_base.html#adde4851584b1fffeebd4b0ec2b9ca1c7">parCont</a> params;</div><div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    <a class="code" href="class_pdf_base.html#a35bb094b326f1a9f0aa9a675dd9ede43">getParameters</a>(params);</div><div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;</div><div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    <span class="keywordflow">if</span>(!<a class="code" href="class_pdf_base.html#ab02a5f801af94475220e2bb5faf8027e">cachedParams</a>)</div><div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;        <a class="code" href="class_pdf_base.html#ab02a5f801af94475220e2bb5faf8027e">cachedParams</a> = <span class="keyword">new</span> <a class="code" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>[params.size()];</div><div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;</div><div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    <span class="keywordtype">int</span> counter = 0;</div><div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;</div><div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    <span class="keywordflow">for</span>(<a class="code" href="class_variable.html">Variable</a>* v : params) {</div><div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;        <a class="code" href="class_pdf_base.html#ab02a5f801af94475220e2bb5faf8027e">cachedParams</a>[counter++] = <a class="code" href="_pdf_base_8cc.html#a42ae25ee78d098c45fff379245021222">host_params</a>[v-&gt;index];</div><div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    }</div><div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;}</div><div class="ttc" id="class_pdf_base_html_a35bb094b326f1a9f0aa9a675dd9ede43"><div class="ttname"><a href="class_pdf_base.html#a35bb094b326f1a9f0aa9a675dd9ede43">PdfBase::getParameters</a></div><div class="ttdeci">virtual __host__ void getParameters(parCont &amp;ret) const</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8cc_source.html#l00098">PdfBase.cc:98</a></div></div>
-<div class="ttc" id="_pdf_base_8cc_html_a42ae25ee78d098c45fff379245021222"><div class="ttname"><a href="_pdf_base_8cc.html#a42ae25ee78d098c45fff379245021222">host_params</a></div><div class="ttdeci">fptype host_params[maxParams]</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8cc_source.html#l00008">PdfBase.cc:8</a></div></div>
-<div class="ttc" id="class_pdf_base_html_ab02a5f801af94475220e2bb5faf8027e"><div class="ttname"><a href="class_pdf_base.html#ab02a5f801af94475220e2bb5faf8027e">PdfBase::cachedParams</a></div><div class="ttdeci">fptype * cachedParams</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00118">PdfBase.h:118</a></div></div>
-<div class="ttc" id="class_pdf_base_html_adde4851584b1fffeebd4b0ec2b9ca1c7"><div class="ttname"><a href="class_pdf_base.html#adde4851584b1fffeebd4b0ec2b9ca1c7">PdfBase::parCont</a></div><div class="ttdeci">std::vector&lt; Variable * &gt; parCont</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00044">PdfBase.h:44</a></div></div>
-<div class="ttc" id="_global_cuda_defines_8h_html_a913b5aaf78163d5e196b13cd79e7d43a"><div class="ttname"><a href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a></div><div class="ttdeci">double fptype</div><div class="ttdef"><b>Definition:</b> <a href="_global_cuda_defines_8h_source.html#l00078">GlobalCudaDefines.h:78</a></div></div>
-<div class="ttc" id="class_variable_html"><div class="ttname"><a href="class_variable.html">Variable</a></div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00032">Variable.h:32</a></div></div>
-</div><!-- fragment -->
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00104">104</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;                                     {</div><div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        setIndices();</div><div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    }</div></div><!-- fragment -->
 </div>
 </div>
 <a id="a66b28f14a05c805475d7410f8baea45a"></a>
@@ -1417,46 +1433,20 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00079">79</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00084">84</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00115">components</a>, <a class="el" href="_variable_8h_source.html#l00025">Indexable::index</a>, <a class="el" href="_pdf_base_8h_source.html#l00113">parameterList</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00013">variableRegistry</a>.</p>
+<p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00116">components</a>, <a class="el" href="_pdf_base_8h_source.html#l00114">parameterList</a>, <a class="el" href="_variable_8h_source.html#l00020">Indexable::setIndex()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00018">variableRegistry</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00074">getParameterIndex()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;                                                        {</div><div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keywordflow">if</span>(!var)</div><div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="keywordflow">return</span>;</div><div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div><div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <a class="code" href="class_pdf_base.html#abd15730dc8d50cd36b8dab8322257b4b">parIter</a> pos = std::find(<a class="code" href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">parameterList</a>.begin(), <a class="code" href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">parameterList</a>.end(), var);</div><div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;</div><div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordflow">if</span>(pos != <a class="code" href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">parameterList</a>.end())</div><div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        <a class="code" href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">parameterList</a>.erase(pos);</div><div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;</div><div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <a class="code" href="_pdf_base_8cc.html#ab4d293dc4b6e31175b82d8d2f229ba21">variableRegistry</a>[var].erase(<span class="keyword">this</span>);</div><div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;</div><div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="keywordflow">if</span>(0 == <a class="code" href="_pdf_base_8cc.html#ab4d293dc4b6e31175b82d8d2f229ba21">variableRegistry</a>[var].size())</div><div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        var-&gt;<a class="code" href="class_indexable.html#a7c1bd84c4bafab7215621e28ea65f242">index</a> = -1;</div><div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;</div><div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <span class="keywordflow">for</span>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; <a class="code" href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">components</a>.size(); ++i) {</div><div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        <a class="code" href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">components</a>[i]-&gt;unregisterParameter(var);</div><div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    }</div><div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;}</div><div class="ttc" id="class_pdf_base_html_a596ab091a75307aceb298e5ff13fa03b"><div class="ttname"><a href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">PdfBase::parameterList</a></div><div class="ttdeci">parCont parameterList</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00113">PdfBase.h:113</a></div></div>
-<div class="ttc" id="class_pdf_base_html_abd15730dc8d50cd36b8dab8322257b4b"><div class="ttname"><a href="class_pdf_base.html#abd15730dc8d50cd36b8dab8322257b4b">PdfBase::parIter</a></div><div class="ttdeci">parCont::iterator parIter</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00045">PdfBase.h:45</a></div></div>
-<div class="ttc" id="_pdf_base_8cc_html_ab4d293dc4b6e31175b82d8d2f229ba21"><div class="ttname"><a href="_pdf_base_8cc.html#ab4d293dc4b6e31175b82d8d2f229ba21">variableRegistry</a></div><div class="ttdeci">std::map&lt; Variable *, std::set&lt; PdfBase * &gt; &gt; variableRegistry</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8cc_source.html#l00013">PdfBase.cc:13</a></div></div>
-<div class="ttc" id="class_pdf_base_html_af583bab20870f9e4d24bb31af9d2e5e2"><div class="ttname"><a href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">PdfBase::components</a></div><div class="ttdeci">std::vector&lt; PdfBase * &gt; components</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00115">PdfBase.h:115</a></div></div>
-<div class="ttc" id="class_indexable_html_a7c1bd84c4bafab7215621e28ea65f242"><div class="ttname"><a href="class_indexable.html#a7c1bd84c4bafab7215621e28ea65f242">Indexable::index</a></div><div class="ttdeci">int index</div><div class="ttdoc">The index, -1 if unset. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00025">Variable.h:25</a></div></div>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00076">getParameterIndex()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;                                                        {</div><div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordflow">if</span>(!var)</div><div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        <span class="keywordflow">return</span>;</div><div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;</div><div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <a class="code" href="class_pdf_base.html#abd15730dc8d50cd36b8dab8322257b4b">parIter</a> pos = std::find(<a class="code" href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">parameterList</a>.begin(), <a class="code" href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">parameterList</a>.end(), var);</div><div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;</div><div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="keywordflow">if</span>(pos != <a class="code" href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">parameterList</a>.end())</div><div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        <a class="code" href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">parameterList</a>.erase(pos);</div><div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;</div><div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <a class="code" href="_pdf_base_8cc.html#ab4d293dc4b6e31175b82d8d2f229ba21">variableRegistry</a>[var].erase(<span class="keyword">this</span>);</div><div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;</div><div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="keywordflow">if</span>(0 == <a class="code" href="_pdf_base_8cc.html#ab4d293dc4b6e31175b82d8d2f229ba21">variableRegistry</a>[var].size())</div><div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        var-&gt;<a class="code" href="class_indexable.html#a8e581a1caf2760cebcfbf1023318e40a">setIndex</a>(-1);</div><div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;</div><div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keywordflow">for</span>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; <a class="code" href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">components</a>.size(); ++i) {</div><div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        <a class="code" href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">components</a>[i]-&gt;unregisterParameter(var);</div><div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    }</div><div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;}</div><div class="ttc" id="class_indexable_html_a8e581a1caf2760cebcfbf1023318e40a"><div class="ttname"><a href="class_indexable.html#a8e581a1caf2760cebcfbf1023318e40a">Indexable::setIndex</a></div><div class="ttdeci">void setIndex(int value)</div><div class="ttdoc">Set the GooFit index. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00020">Variable.h:20</a></div></div>
+<div class="ttc" id="class_pdf_base_html_a596ab091a75307aceb298e5ff13fa03b"><div class="ttname"><a href="class_pdf_base.html#a596ab091a75307aceb298e5ff13fa03b">PdfBase::parameterList</a></div><div class="ttdeci">parCont parameterList</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00114">PdfBase.h:114</a></div></div>
+<div class="ttc" id="class_pdf_base_html_abd15730dc8d50cd36b8dab8322257b4b"><div class="ttname"><a href="class_pdf_base.html#abd15730dc8d50cd36b8dab8322257b4b">PdfBase::parIter</a></div><div class="ttdeci">parCont::iterator parIter</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00046">PdfBase.h:46</a></div></div>
+<div class="ttc" id="_pdf_base_8cc_html_ab4d293dc4b6e31175b82d8d2f229ba21"><div class="ttname"><a href="_pdf_base_8cc.html#ab4d293dc4b6e31175b82d8d2f229ba21">variableRegistry</a></div><div class="ttdeci">std::map&lt; Variable *, std::set&lt; PdfBase * &gt; &gt; variableRegistry</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8cc_source.html#l00018">PdfBase.cc:18</a></div></div>
+<div class="ttc" id="class_pdf_base_html_af583bab20870f9e4d24bb31af9d2e5e2"><div class="ttname"><a href="class_pdf_base.html#af583bab20870f9e4d24bb31af9d2e5e2">PdfBase::components</a></div><div class="ttdeci">std::vector&lt; PdfBase * &gt; components</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00116">PdfBase.h:116</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="ab02a5f801af94475220e2bb5faf8027e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab02a5f801af94475220e2bb5faf8027e">&#9670;&nbsp;</a></span>cachedParams</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>* PdfBase::cachedParams {nullptr}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">mutable</span><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00118">118</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00162">parametersChanged()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00178">storeParameters()</a>.</p>
-
-</div>
-</div>
 <a id="a5e833f66e681f932fded4d6328be736c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5e833f66e681f932fded4d6328be736c">&#9670;&nbsp;</a></span>cIndex</h2>
 
@@ -1477,9 +1467,9 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00111">111</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00112">112</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00140">registerConstants()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00151">registerConstants()</a>.</p>
 
 </div>
 </div>
@@ -1503,9 +1493,9 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00115">115</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00116">116</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00021">checkInitStatus()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00127">getObservables()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00111">getParameterByName()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00098">getParameters()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00030">recursiveSetNormalisation()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00079">unregisterParameter()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00026">checkInitStatus()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00138">getObservables()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00122">getParameterByName()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00109">getParameters()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00035">recursiveSetNormalisation()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00084">unregisterParameter()</a>.</p>
 
 </div>
 </div>
@@ -1529,7 +1519,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00114">114</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00115">115</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
 </div>
 </div>
@@ -1555,7 +1545,7 @@ Protected Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00121">121</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00071">getFunctionIndex()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00073">getFunctionIndex()</a>.</p>
 
 </div>
 </div>
@@ -1579,9 +1569,9 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00116">116</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00117">117</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00157">setIntegrationFineness()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00168">setIntegrationFineness()</a>.</p>
 
 </div>
 </div>
@@ -1607,7 +1597,7 @@ Protected Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00123">123</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00192">setNumPerTask()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00181">setNumPerTask()</a>.</p>
 
 </div>
 </div>
@@ -1631,7 +1621,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00109">109</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00110">110</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
 </div>
 </div>
@@ -1655,7 +1645,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00108">108</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00109">109</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
 </div>
 </div>
@@ -1679,7 +1669,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00107">107</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00108">108</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="_d_p4_pdf_8h_source.html#l00046">DPPdf::setGenerationOffset()</a>, and <a class="el" href="_tddp4_pdf_8h_source.html#l00048">TDDP4::setMaxWeight()</a>.</p>
 
@@ -1705,9 +1695,9 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00112">112</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00113">113</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00088">obsBegin()</a>, <a class="el" href="_pdf_base_8h_source.html#l00094">obsCBegin()</a>, <a class="el" href="_pdf_base_8h_source.html#l00097">obsCEnd()</a>, <a class="el" href="_pdf_base_8h_source.html#l00091">obsEnd()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00147">registerObservable()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00089">obsBegin()</a>, <a class="el" href="_pdf_base_8h_source.html#l00095">obsCBegin()</a>, <a class="el" href="_pdf_base_8h_source.html#l00098">obsCEnd()</a>, <a class="el" href="_pdf_base_8h_source.html#l00092">obsEnd()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00158">registerObservable()</a>.</p>
 
 </div>
 </div>
@@ -1731,9 +1721,9 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00113">113</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00114">114</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00111">getParameterByName()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00098">getParameters()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00038">registerParameter()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00079">unregisterParameter()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00122">getParameterByName()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00109">getParameters()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00173">parametersChanged()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00043">registerParameter()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00084">unregisterParameter()</a>.</p>
 
 </div>
 </div>
@@ -1757,9 +1747,9 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00110">110</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00111">111</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00074">getParameterIndex()</a>, <a class="el" href="_exp_pdf_8h_source.html#l00010">ExpPdf::hasAnalyticIntegral()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00030">recursiveSetNormalisation()</a>, <a class="el" href="_spin_factors_8h_source.html#l00044">SpinFactor::setConstantIndex()</a>, and <a class="el" href="_lineshapes_pdf_8h_source.html#l00066">Lineshape::setConstantIndex()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00076">getParameterIndex()</a>, <a class="el" href="_exp_pdf_8h_source.html#l00010">ExpPdf::hasAnalyticIntegral()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00035">recursiveSetNormalisation()</a>, <a class="el" href="_spin_factors_8h_source.html#l00044">SpinFactor::setConstantIndex()</a>, and <a class="el" href="_lineshapes_pdf_8h_source.html#l00066">Lineshape::setConstantIndex()</a>.</p>
 
 </div>
 </div>
@@ -1785,7 +1775,7 @@ Protected Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00119">119</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00021">checkInitStatus()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00026">checkInitStatus()</a>.</p>
 
 </div>
 </div>
@@ -1809,9 +1799,9 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00117">117</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00118">118</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00048">addSpecialMask()</a>, and <a class="el" href="_pdf_base_8h_source.html#l00061">getSpecialMask()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8h_source.html#l00049">addSpecialMask()</a>, and <a class="el" href="_pdf_base_8h_source.html#l00063">getSpecialMask()</a>.</p>
 
 </div>
 </div>
@@ -1822,7 +1812,7 @@ Protected Attributes</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue May 2 2017 19:38:21 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed May 3 2017 15:14:58 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

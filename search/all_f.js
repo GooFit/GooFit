@@ -21,6 +21,5 @@ var searchData=
   ['numentries',['numEntries',['../class_pdf_base.html#ad9277a52bf3e454d7bcb2e37ea329ee7',1,'PdfBase']]],
   ['numevents',['numEvents',['../class_pdf_base.html#aac9f1f5f2e31ed672260b3610519b684',1,'PdfBase::numEvents()'],['../class_data_set.html#add3839dc27b4c38e7688e1556617c727',1,'DataSet::numEvents()']]],
   ['numeventsadded',['numEventsAdded',['../class_data_set.html#afcb84d3ac057749f03299f69ddac4bf9',1,'DataSet']]],
-  ['numpars',['numPars',['../_fit_manager_minuit1_8cc.html#acfaae49925f72df5443f32e1d1d01b34',1,'FitManagerMinuit1.cc']]],
   ['numvariables',['numVariables',['../class_data_set.html#abd6e1d413f09d901be5c99456ca022a9',1,'DataSet']]]
 ];

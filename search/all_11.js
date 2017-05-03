@@ -19,7 +19,6 @@ var searchData=
   ['pdfbase_2ecc',['PdfBase.cc',['../_pdf_base_8cc.html',1,'']]],
   ['pdfbase_2ecu',['PdfBase.cu',['../_pdf_base_8cu.html',1,'']]],
   ['pdfbase_2eh',['PdfBase.h',['../_pdf_base_8h.html',1,'']]],
-  ['pdfpointer',['pdfPointer',['../_fit_manager_minuit1_8h.html#a236f10253e82b5cf231a867698670d04',1,'pdfPointer():&#160;FitManagerMinuit1.cc'],['../_fit_manager_minuit1_8cc.html#a236f10253e82b5cf231a867698670d04',1,'pdfPointer():&#160;FitManagerMinuit1.cc']]],
   ['permutationiterator',['PermutationIterator',['../classstrided__range.html#a5fa7e0b118e4c7baf1dd51a4ab8e7aba',1,'strided_range']]],
   ['phi',['phi',['../struct_dim5.html#a27eb37c098535b096c2653f08132aadc',1,'Dim5']]],
   ['pipipi0dpfit_2ecu',['pipipi0DPFit.cu',['../pipipi0_d_p_fit_8cu.html',1,'']]],

@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['unbinneddataset',['UnbinnedDataSet',['../class_unbinned_data_set.html',1,'UnbinnedDataSet'],['../class_unbinned_data_set.html#a6f9ac1d1340c4fde78120fb603f77ab9',1,'UnbinnedDataSet::UnbinnedDataSet(Variable *var, std::string n=&quot;&quot;)'],['../class_unbinned_data_set.html#a177af07b5c80398b8c4715437fe66595',1,'UnbinnedDataSet::UnbinnedDataSet(std::vector&lt; Variable *&gt; &amp;vars, std::string n=&quot;&quot;)'],['../class_unbinned_data_set.html#a06627009f179b98af57442eb200a1475',1,'UnbinnedDataSet::UnbinnedDataSet(std::set&lt; Variable *&gt; &amp;vars, std::string n=&quot;&quot;)']]],
+  ['unbinneddataset',['UnbinnedDataSet',['../class_unbinned_data_set.html',1,'']]],
   ['unbinneddataset_2ecc',['UnbinnedDataSet.cc',['../_unbinned_data_set_8cc.html',1,'']]],
   ['unbinneddataset_2eh',['UnbinnedDataSet.h',['../_unbinned_data_set_8h.html',1,'']]],
   ['unbinnednllfit',['UnbinnedNllFit',['../class_unbinned_nll_fit.html',1,'UnbinnedNllFit'],['../class_unbinned_nll_fit.html#afa67c447fbade199a46bdd58d60a07f7',1,'UnbinnedNllFit::UnbinnedNllFit()']]],

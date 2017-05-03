@@ -8,7 +8,6 @@ var searchData=
   ['variable',['Variable',['../class_variable.html',1,'Variable'],['../class_variable.html#a86d546d5959d6ef1af8887fad26e45a7',1,'Variable::Variable(std::string n, fptype v)'],['../class_variable.html#ac795ebea0d64344249f5b787d78d66f6',1,'Variable::Variable(std::string n, fptype dn, fptype up)'],['../class_variable.html#ac895298f71e6d2f506a7776c2a946d99',1,'Variable::Variable(std::string n, fptype v, fptype dn, fptype up)'],['../class_variable.html#a778435c68888fe911a043744d20fa747',1,'Variable::Variable(std::string n, fptype v, fptype e, fptype dn, fptype up)']]],
   ['variable_2eh',['Variable.h',['../_variable_8h.html',1,'']]],
   ['variableregistry',['variableRegistry',['../_pdf_base_8cc.html#ab4d293dc4b6e31175b82d8d2f229ba21',1,'PdfBase.cc']]],
-  ['vars',['vars',['../_fit_manager_minuit1_8cc.html#a8b6a700da9136bfc35439b6f5cd8beb6',1,'FitManagerMinuit1.cc']]],
   ['vars_5f',['vars_',['../class_goo_fit_1_1_params.html#a5b93810d124e5f3fe95cde3c0a84eb7f',1,'GooFit::Params']]],
   ['varsbegin',['varsBegin',['../class_data_set.html#a66b94061c7e336c0db3a8c6f6b7a18e7',1,'DataSet']]],
   ['varsend',['varsEnd',['../class_data_set.html#afe616912d76db2eb7a7cc3757a8cc837',1,'DataSet']]],

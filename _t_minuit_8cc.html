@@ -157,7 +157,7 @@ Variables</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="_t_minuit_8cc_source.html#l00338">338</a> of file <a class="el" href="_t_minuit_8cc_source.html">TMinuit.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="_t_minuit_8cc_source.html#l00323">charal</a>, <a class="el" href="_global_cuda_defines_8h_source.html#l00103">pow()</a>, and <a class="el" href="_t_minuit_8cc_source.html#l00326">toUpper()</a>.</p>
+<p class="reference">References <a class="el" href="_t_minuit_8cc_source.html#l00323">charal</a>, <a class="el" href="_global_cuda_defines_8h_source.html#l00101">pow()</a>, and <a class="el" href="_t_minuit_8cc_source.html#l00326">toUpper()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;                                           {</div><div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">char</span> strbuffer[10000];</div><div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;    va_list ap;</div><div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;    va_start(ap, va_fmt);</div><div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;    vsnprintf(strbuffer, 10000, va_fmt, ap); <span class="comment">// Use vsn, not sn, when we are passing a vararg list and not a strict vararg.</span></div><div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;    va_end(ap);</div><div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;</div><div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;    std::string ret(strbuffer);</div><div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;    <span class="keywordflow">return</span> ret;</div><div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;}</div></div><!-- fragment -->
 </div>
 </div>
@@ -205,7 +205,7 @@ Variables</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue May 2 2017 19:38:20 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed May 3 2017 15:14:58 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

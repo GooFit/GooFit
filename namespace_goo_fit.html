@@ -84,6 +84,11 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_fit_manager_minuit2.html">FitManagerMinuit2</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_goo_fit_1_1_general_error.html">GeneralError</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Thrown when a general error is encountered.  <a href="struct_goo_fit_1_1_general_error.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_minuit1.html">Minuit1</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_params.html">Params</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -177,12 +182,12 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_application_8h_source.html#l00027">27</a> of file <a class="el" href="_application_8h_source.html">Application.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_application_8h_source.html#l00028">28</a> of file <a class="el" href="_application_8h_source.html">Application.h</a>.</p>
 
 <p class="reference">References <a class="el" href="_color_8h_source.html#l00017">bold</a>, <a class="el" href="_color_8h_source.html#l00009">red</a>, and <a class="el" href="_color_8h_source.html#l00016">reset</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_application_8h_source.html#l00048">GooFit::Application::Application()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;                          {</div><div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    std::cout &lt;&lt; std::endl &lt;&lt; <a class="code" href="namespace_goo_fit.html#aa65eefd41f0c68192969ff3ede4f979e">reset</a> &lt;&lt; <a class="code" href="namespace_goo_fit.html#a7e27700e0a78d83f9533cf7667cd79ce">red</a> &lt;&lt; <a class="code" href="namespace_goo_fit.html#a80e6f6c13fd60e59826e0e864c7e3bf6">bold</a>;</div><div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    std::cout &lt;&lt; <span class="stringliteral">&quot;GooFit: Control-C detected, exiting...&quot;</span> &lt;&lt; <a class="code" href="namespace_goo_fit.html#aa65eefd41f0c68192969ff3ede4f979e">reset</a> &lt;&lt; std::endl;</div><div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    std::exit(1); <span class="comment">// will call the correct exit func, no unwinding of the stack though</span></div><div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;}</div><div class="ttc" id="namespace_goo_fit_html_a80e6f6c13fd60e59826e0e864c7e3bf6"><div class="ttname"><a href="namespace_goo_fit.html#a80e6f6c13fd60e59826e0e864c7e3bf6">GooFit::bold</a></div><div class="ttdeci">constexpr rang::style const bold</div><div class="ttdef"><b>Definition:</b> <a href="_color_8h_source.html#l00017">Color.h:17</a></div></div>
+<p class="reference">Referenced by <a class="el" href="_application_8h_source.html#l00049">GooFit::Application::Application()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;                          {</div><div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    std::cout &lt;&lt; std::endl &lt;&lt; <a class="code" href="namespace_goo_fit.html#aa65eefd41f0c68192969ff3ede4f979e">reset</a> &lt;&lt; <a class="code" href="namespace_goo_fit.html#a7e27700e0a78d83f9533cf7667cd79ce">red</a> &lt;&lt; <a class="code" href="namespace_goo_fit.html#a80e6f6c13fd60e59826e0e864c7e3bf6">bold</a>;</div><div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    std::cout &lt;&lt; <span class="stringliteral">&quot;GooFit: Control-C detected, exiting...&quot;</span> &lt;&lt; <a class="code" href="namespace_goo_fit.html#aa65eefd41f0c68192969ff3ede4f979e">reset</a> &lt;&lt; std::endl;</div><div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    std::exit(1); <span class="comment">// will call the correct exit func, no unwinding of the stack though</span></div><div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;}</div><div class="ttc" id="namespace_goo_fit_html_a80e6f6c13fd60e59826e0e864c7e3bf6"><div class="ttname"><a href="namespace_goo_fit.html#a80e6f6c13fd60e59826e0e864c7e3bf6">GooFit::bold</a></div><div class="ttdeci">constexpr rang::style const bold</div><div class="ttdef"><b>Definition:</b> <a href="_color_8h_source.html#l00017">Color.h:17</a></div></div>
 <div class="ttc" id="namespace_goo_fit_html_a7e27700e0a78d83f9533cf7667cd79ce"><div class="ttname"><a href="namespace_goo_fit.html#a7e27700e0a78d83f9533cf7667cd79ce">GooFit::red</a></div><div class="ttdeci">constexpr rang::fg const red</div><div class="ttdef"><b>Definition:</b> <a href="_color_8h_source.html#l00009">Color.h:9</a></div></div>
 <div class="ttc" id="namespace_goo_fit_html_aa65eefd41f0c68192969ff3ede4f979e"><div class="ttname"><a href="namespace_goo_fit.html#aa65eefd41f0c68192969ff3ede4f979e">GooFit::reset</a></div><div class="ttdeci">constexpr rang::style const reset</div><div class="ttdef"><b>Definition:</b> <a href="_color_8h_source.html#l00016">Color.h:16</a></div></div>
 </div><!-- fragment -->
@@ -219,7 +224,7 @@ Variables</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="_color_8h_source.html#l00012">12</a> of file <a class="el" href="_color_8h_source.html">Color.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_application_8h_source.html#l00191">GooFit::Application::exit()</a>, and <a class="el" href="_application_8h_source.html#l00134">GooFit::Application::pre_callback()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_application_8h_source.html#l00192">GooFit::Application::exit()</a>, and <a class="el" href="_application_8h_source.html#l00135">GooFit::Application::pre_callback()</a>.</p>
 
 </div>
 </div>
@@ -237,7 +242,7 @@ Variables</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="_color_8h_source.html#l00017">17</a> of file <a class="el" href="_color_8h_source.html">Color.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_fit_manager_minuit2_8cc_source.html#l00017">GooFit::FitManagerMinuit2::fit()</a>, and <a class="el" href="_application_8h_source.html#l00027">signal_handler()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00189">abortWithCudaPrintFlush()</a>, <a class="el" href="_fit_manager_minuit2_8cc_source.html#l00017">GooFit::FitManagerMinuit2::fit()</a>, and <a class="el" href="_application_8h_source.html#l00028">signal_handler()</a>.</p>
 
 </div>
 </div>
@@ -359,7 +364,7 @@ Variables</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="_color_8h_source.html#l00009">9</a> of file <a class="el" href="_color_8h_source.html">Color.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_application_8h_source.html#l00191">GooFit::Application::exit()</a>, <a class="el" href="_fit_manager_minuit2_8cc_source.html#l00017">GooFit::FitManagerMinuit2::fit()</a>, <a class="el" href="_application_8h_source.html#l00134">GooFit::Application::pre_callback()</a>, and <a class="el" href="_application_8h_source.html#l00027">signal_handler()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00189">abortWithCudaPrintFlush()</a>, <a class="el" href="_application_8h_source.html#l00192">GooFit::Application::exit()</a>, <a class="el" href="_fit_manager_minuit2_8cc_source.html#l00017">GooFit::FitManagerMinuit2::fit()</a>, <a class="el" href="_application_8h_source.html#l00135">GooFit::Application::pre_callback()</a>, and <a class="el" href="_application_8h_source.html#l00028">signal_handler()</a>.</p>
 
 </div>
 </div>
@@ -377,7 +382,7 @@ Variables</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="_color_8h_source.html#l00016">16</a> of file <a class="el" href="_color_8h_source.html">Color.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_application_8h_source.html#l00048">GooFit::Application::Application()</a>, <a class="el" href="_application_8h_source.html#l00191">GooFit::Application::exit()</a>, <a class="el" href="_fit_manager_minuit2_8cc_source.html#l00017">GooFit::FitManagerMinuit2::fit()</a>, <a class="el" href="_application_8h_source.html#l00134">GooFit::Application::pre_callback()</a>, and <a class="el" href="_application_8h_source.html#l00027">signal_handler()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00189">abortWithCudaPrintFlush()</a>, <a class="el" href="_application_8h_source.html#l00049">GooFit::Application::Application()</a>, <a class="el" href="_application_8h_source.html#l00192">GooFit::Application::exit()</a>, <a class="el" href="_fit_manager_minuit2_8cc_source.html#l00017">GooFit::FitManagerMinuit2::fit()</a>, <a class="el" href="_application_8h_source.html#l00135">GooFit::Application::pre_callback()</a>, and <a class="el" href="_application_8h_source.html#l00028">signal_handler()</a>.</p>
 
 </div>
 </div>
@@ -400,7 +405,7 @@ Variables</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue May 2 2017 19:38:21 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed May 3 2017 15:14:59 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

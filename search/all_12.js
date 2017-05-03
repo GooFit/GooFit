@@ -19,7 +19,5 @@ var searchData=
   ['resonancesize',['resonanceSize',['../_dalitz_plot_helpers_8h.html#a58bf7c1a720273175d4a60ed59394307',1,'DalitzPlotHelpers.h']]],
   ['root2',['root2',['../_global_cuda_defines_8h.html#a73dc743cb2ae569c146a5018bd38e468',1,'GlobalCudaDefines.h']]],
   ['rsqrt',['rsqrt',['../_global_cuda_defines_8h.html#ac6d79cffe1cc0f015337bf7f866677fd',1,'GlobalCudaDefines.h']]],
-  ['run',['run',['../class_goo_fit_1_1_application.html#a69289910ee9f552990c9c2b9ca253902',1,'GooFit::Application']]],
-  ['runfit',['runFit',['../class_goo_fit_1_1_fit_manager_minuit1.html#aadfcdf60080a1f90e636317b48bee061',1,'GooFit::FitManagerMinuit1']]],
-  ['runmigrad',['runMigrad',['../class_goo_fit_1_1_fit_manager_minuit1.html#ab9838627d3073d0f45a2347a2d160536',1,'GooFit::FitManagerMinuit1']]]
+  ['run',['run',['../class_goo_fit_1_1_application.html#a69289910ee9f552990c9c2b9ca253902',1,'GooFit::Application']]]
 ];

@@ -140,8 +140,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a1eec1aef4a14c28ff372962c18c9956c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad7f62697316c7faec31787f2aeb44717"><td class="memItemLeft" align="right" valign="top">__host__ <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_pdf.html#ad7f62697316c7faec31787f2aeb44717">getValue</a> ()</td></tr>
 <tr class="separator:ad7f62697316c7faec31787f2aeb44717"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abfb9a876836192b2250e02cb294822ed"><td class="memItemLeft" align="right" valign="top">__host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_pdf.html#abfb9a876836192b2250e02cb294822ed">getCompProbsAtDataPoints</a> (std::vector&lt; std::vector&lt; <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &gt;&gt; &amp;values)</td></tr>
-<tr class="separator:abfb9a876836192b2250e02cb294822ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af34228ff3d5d94405aa0634adcff179a"><td class="memItemLeft" align="right" valign="top">__host__ std::vector&lt; std::vector&lt; <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_pdf.html#af34228ff3d5d94405aa0634adcff179a">getCompProbsAtDataPoints</a> ()</td></tr>
+<tr class="memdesc:af34228ff3d5d94405aa0634adcff179a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Produce a list of probabilies at points.  <a href="#af34228ff3d5d94405aa0634adcff179a">More...</a><br /></td></tr>
+<tr class="separator:af34228ff3d5d94405aa0634adcff179a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af0d40bc12d5883bca813ebd45fe6684c"><td class="memItemLeft" align="right" valign="top">__host__ <a class="el" href="class_unbinned_data_set.html">UnbinnedDataSet</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_pdf.html#af0d40bc12d5883bca813ebd45fe6684c">makeGrid</a> ()</td></tr>
+<tr class="memdesc:af0d40bc12d5883bca813ebd45fe6684c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set an equidistant grid based on the stored variable binning.  <a href="#af0d40bc12d5883bca813ebd45fe6684c">More...</a><br /></td></tr>
+<tr class="separator:af0d40bc12d5883bca813ebd45fe6684c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0182974de120e4f70ef0f2c16e1be25a"><td class="memItemLeft" align="right" valign="top">__host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_pdf.html#a0182974de120e4f70ef0f2c16e1be25a">initialise</a> (std::vector&lt; unsigned int &gt; pindices, void *dev_functionPtr=<a class="el" href="_goo_pdf_8h.html#a2106f11c00570b6546f63c98afffbd0e">host_fcn_ptr</a>)</td></tr>
 <tr class="separator:a0182974de120e4f70ef0f2c16e1be25a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae56d23fc1961f1e228de07d8a9862e65"><td class="memItemLeft" align="right" valign="top">__host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_pdf.html#ae56d23fc1961f1e228de07d8a9862e65">scan</a> (<a class="el" href="class_variable.html">Variable</a> *var, std::vector&lt; <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &gt; &amp;values)</td></tr>
@@ -159,6 +163,8 @@ Public Member Functions</h2></td></tr>
 <tr class="inherit_header pub_methods_class_pdf_base"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_pdf_base')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_pdf_base.html">PdfBase</a></td></tr>
 <tr class="memitem:a1620f7f438b6c7c6cc99569321cf947d inherit pub_methods_class_pdf_base"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a1620f7f438b6c7c6cc99569321cf947d">PdfBase</a> (<a class="el" href="class_variable.html">Variable</a> *x, std::string n)</td></tr>
 <tr class="separator:a1620f7f438b6c7c6cc99569321cf947d inherit pub_methods_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad318a19de54f21ac06fad044d58bd2f6 inherit pub_methods_class_pdf_base"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#ad318a19de54f21ac06fad044d58bd2f6">~PdfBase</a> ()=default</td></tr>
+<tr class="separator:ad318a19de54f21ac06fad044d58bd2f6 inherit pub_methods_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab5ca8a46986f884f08e5b14c21c75683 inherit pub_methods_class_pdf_base"><td class="memItemLeft" align="right" valign="top">__host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#ab5ca8a46986f884f08e5b14c21c75683">initialiseIndices</a> (std::vector&lt; unsigned int &gt; pindices)</td></tr>
 <tr class="separator:ab5ca8a46986f884f08e5b14c21c75683 inherit pub_methods_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a87ef89218724b71256e54f844b299ee9 inherit pub_methods_class_pdf_base"><td class="memItemLeft" align="right" valign="top">__host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a87ef89218724b71256e54f844b299ee9">addSpecialMask</a> (int m)</td></tr>
@@ -177,6 +183,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a6b5e072d502671c7354cdf4d19477e5f inherit pub_methods_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a35bb094b326f1a9f0aa9a675dd9ede43 inherit pub_methods_class_pdf_base"><td class="memItemLeft" align="right" valign="top">virtual __host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a35bb094b326f1a9f0aa9a675dd9ede43">getParameters</a> (<a class="el" href="class_pdf_base.html#adde4851584b1fffeebd4b0ec2b9ca1c7">parCont</a> &amp;ret) const</td></tr>
 <tr class="separator:a35bb094b326f1a9f0aa9a675dd9ede43 inherit pub_methods_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a05e3daf0a3344850a16865307674c438 inherit pub_methods_class_pdf_base"><td class="memItemLeft" align="right" valign="top">__host__ <a class="el" href="class_pdf_base.html#adde4851584b1fffeebd4b0ec2b9ca1c7">parCont</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a05e3daf0a3344850a16865307674c438">getParameters</a> () const</td></tr>
+<tr class="separator:a05e3daf0a3344850a16865307674c438 inherit pub_methods_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab5eea9054364bffd75c592642ef67f21 inherit pub_methods_class_pdf_base"><td class="memItemLeft" align="right" valign="top">__host__ <a class="el" href="class_variable.html">Variable</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#ab5eea9054364bffd75c592642ef67f21">getParameterByName</a> (std::string n) const</td></tr>
 <tr class="separator:ab5eea9054364bffd75c592642ef67f21 inherit pub_methods_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4f98e720d15482fe66f2560cac9dcffe inherit pub_methods_class_pdf_base"><td class="memItemLeft" align="right" valign="top">__host__ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a4f98e720d15482fe66f2560cac9dcffe">getSpecialMask</a> () const</td></tr>
@@ -207,8 +215,6 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a2887cc44f42e788e11973661a37af226 inherit pub_methods_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac450243387d85618dff8a991b0ddc24d inherit pub_methods_class_pdf_base"><td class="memItemLeft" align="right" valign="top">__host__ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#ac450243387d85618dff8a991b0ddc24d">parametersChanged</a> () const</td></tr>
 <tr class="separator:ac450243387d85618dff8a991b0ddc24d inherit pub_methods_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa50c0e760f79ef841452b3911e5ab4d1 inherit pub_methods_class_pdf_base"><td class="memItemLeft" align="right" valign="top">__host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#aa50c0e760f79ef841452b3911e5ab4d1">storeParameters</a> () const</td></tr>
-<tr class="separator:aa50c0e760f79ef841452b3911e5ab4d1 inherit pub_methods_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9bdb091fd1fa186b53ec08bd02085eb2 inherit pub_methods_class_pdf_base"><td class="memItemLeft" align="right" valign="top">__host__ <a class="el" href="class_pdf_base.html#afa8c406613fe0b4ab29c700b6d1a93ee">obsIter</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a9bdb091fd1fa186b53ec08bd02085eb2">obsBegin</a> ()</td></tr>
 <tr class="separator:a9bdb091fd1fa186b53ec08bd02085eb2 inherit pub_methods_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a73fd95deaba8c2cdcc9ce4aa740ebbe2 inherit pub_methods_class_pdf_base"><td class="memItemLeft" align="right" valign="top">__host__ <a class="el" href="class_pdf_base.html#afa8c406613fe0b4ab29c700b6d1a93ee">obsIter</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a73fd95deaba8c2cdcc9ce4aa740ebbe2">obsEnd</a> ()</td></tr>
@@ -265,8 +271,6 @@ Protected Attributes</h2></td></tr>
 <tr class="separator:a085f0680195278543512ee1eeb08e436 inherit pro_attribs_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1f459f7a8b6e334131f8a60c44069ed5 inherit pro_attribs_class_pdf_base"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a1f459f7a8b6e334131f8a60c44069ed5">specialMask</a> {0}</td></tr>
 <tr class="separator:a1f459f7a8b6e334131f8a60c44069ed5 inherit pro_attribs_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab02a5f801af94475220e2bb5faf8027e inherit pro_attribs_class_pdf_base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#ab02a5f801af94475220e2bb5faf8027e">cachedParams</a> {nullptr}</td></tr>
-<tr class="separator:ab02a5f801af94475220e2bb5faf8027e inherit pro_attribs_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a098345520f86fb37c9a8571b5a4ede16 inherit pro_attribs_class_pdf_base"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a098345520f86fb37c9a8571b5a4ede16">properlyInitialised</a> {true}</td></tr>
 <tr class="separator:a098345520f86fb37c9a8571b5a4ede16 inherit pro_attribs_class_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a201930b5ce1146bec6dfdd7acfe14867 inherit pro_attribs_class_pdf_base"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pdf_base.html#a201930b5ce1146bec6dfdd7acfe14867">functionIdx</a></td></tr>
@@ -296,7 +300,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="_goo_pdf_8h_source.html#l00037">37</a> of file <a class="el" href="_goo_pdf_8h_source.html">GooPdf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_goo_pdf_8h_source.html#l00038">38</a> of file <a class="el" href="_goo_pdf_8h_source.html">GooPdf.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aafdb36c60a65eded4bd7009a2f5034f2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aafdb36c60a65eded4bd7009a2f5034f2">&#9670;&nbsp;</a></span>GooPdf()</h2>
@@ -424,27 +428,28 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="reference">Referenced by <a class="el" href="_goo_pdf_8h_source.html#l00050">hasAnalyticIntegral()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_goo_pdf_8h_source.html#l00051">hasAnalyticIntegral()</a>.</p>
 
 </div>
 </div>
-<a id="abfb9a876836192b2250e02cb294822ed"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abfb9a876836192b2250e02cb294822ed">&#9670;&nbsp;</a></span>getCompProbsAtDataPoints()</h2>
+<a id="af34228ff3d5d94405aa0634adcff179a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af34228ff3d5d94405aa0634adcff179a">&#9670;&nbsp;</a></span>getCompProbsAtDataPoints()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">__host__ void GooPdf::getCompProbsAtDataPoints </td>
+          <td class="memname">__host__ std::vector&lt;std::vector&lt;<a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>&gt; &gt; GooPdf::getCompProbsAtDataPoints </td>
           <td>(</td>
-          <td class="paramtype">std::vector&lt; std::vector&lt; <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &gt;&gt; &amp;&#160;</td>
-          <td class="paramname"><em>values</em></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="reference">Referenced by <a class="el" href="_goo_pdf_8h_source.html#l00050">hasAnalyticIntegral()</a>.</p>
+<p>Produce a list of probabilies at points. </p>
+
+<p class="reference">Referenced by <a class="el" href="_goo_pdf_8h_source.html#l00051">hasAnalyticIntegral()</a>.</p>
 
 </div>
 </div>
@@ -463,7 +468,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="reference">Referenced by <a class="el" href="_goo_pdf_8h_source.html#l00050">hasAnalyticIntegral()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_goo_pdf_8h_source.html#l00051">hasAnalyticIntegral()</a>.</p>
 
 </div>
 </div>
@@ -494,10 +499,10 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented in <a class="el" href="class_event_weighted_add_pdf.html#af4384c562f65d5509ad5adb795797773">EventWeightedAddPdf</a>, <a class="el" href="class_add_pdf.html#a9d7e28ba4d5a27970e4882f9e7e94cfe">AddPdf</a>, <a class="el" href="class_exp_pdf.html#a16b5616c0a3a66380d94e6059ba9a176">ExpPdf</a>, <a class="el" href="class_prod_pdf.html#a7a108d8d9dacde743a0683734cfe6749">ProdPdf</a>, <a class="el" href="class_gaussian_pdf.html#a5d811ebfa6014dba7299b9dfb1a3d782">GaussianPdf</a>, <a class="el" href="class_johnson_s_u_pdf.html#a9a8a020848c13aaed998e2eecc74ffa8">JohnsonSUPdf</a>, <a class="el" href="class_kin_limit_b_w_pdf.html#a7d7eae47b3f2165ca9b436596e6c49fd">KinLimitBWPdf</a>, <a class="el" href="class_step_pdf.html#a3dd30b01b36d8a940ac45e6909aba92e">StepPdf</a>, <a class="el" href="class_argus_pdf.html#af29e3bc624330f8b8aa4d54f8487c0ea">ArgusPdf</a>, and <a class="el" href="class_scaled_gaussian_pdf.html#adde961ec5ad994f8208b1b32a9540c12">ScaledGaussianPdf</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="_goo_pdf_8h_source.html#l00050">50</a> of file <a class="el" href="_goo_pdf_8h_source.html">GooPdf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_goo_pdf_8h_source.html#l00051">51</a> of file <a class="el" href="_goo_pdf_8h_source.html">GooPdf.h</a>.</p>
 
-<p class="reference">References <a class="el" href="class_goo_pdf.html#ac0638dc0627afc85dd619e4ed0473251">findFunctionIdx()</a>, <a class="el" href="class_goo_pdf.html#abfb9a876836192b2250e02cb294822ed">getCompProbsAtDataPoints()</a>, <a class="el" href="class_goo_pdf.html#ad7f62697316c7faec31787f2aeb44717">getValue()</a>, <a class="el" href="_goo_pdf_8h.html#a2106f11c00570b6546f63c98afffbd0e">host_fcn_ptr</a>, <a class="el" href="class_goo_pdf.html#a0182974de120e4f70ef0f2c16e1be25a">initialise()</a>, <a class="el" href="class_goo_pdf.html#ae56d23fc1961f1e228de07d8a9862e65">scan()</a>, <a class="el" href="class_goo_pdf.html#acd85b22ec9f922f04e5968af1ed40c63">setDebugMask()</a>, <a class="el" href="class_goo_pdf.html#a33328ca1b0c3d45c1717c2d9351c031e">setFitControl()</a>, <a class="el" href="class_goo_pdf.html#ab1569a5533de14cc184d7bdf3d4b340f">setMetrics()</a>, <a class="el" href="class_goo_pdf.html#aec7ca7d9cbf948b74d6b00896f9ddd51">setParameterConstantness()</a>, <a class="el" href="class_goo_pdf.html#aa771af99892ae9bea36fe1391504922d">sumOfNll()</a>, and <a class="el" href="class_goo_pdf.html#ab088bfb0f86cc582774dfe786b157913">transformGrid()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;                                                      {</div><div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div><div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    }</div></div><!-- fragment -->
+<p class="reference">References <a class="el" href="class_goo_pdf.html#ac0638dc0627afc85dd619e4ed0473251">findFunctionIdx()</a>, <a class="el" href="class_goo_pdf.html#af34228ff3d5d94405aa0634adcff179a">getCompProbsAtDataPoints()</a>, <a class="el" href="class_goo_pdf.html#ad7f62697316c7faec31787f2aeb44717">getValue()</a>, <a class="el" href="_goo_pdf_8h.html#a2106f11c00570b6546f63c98afffbd0e">host_fcn_ptr</a>, <a class="el" href="class_goo_pdf.html#a0182974de120e4f70ef0f2c16e1be25a">initialise()</a>, <a class="el" href="class_goo_pdf.html#af0d40bc12d5883bca813ebd45fe6684c">makeGrid()</a>, <a class="el" href="class_goo_pdf.html#ae56d23fc1961f1e228de07d8a9862e65">scan()</a>, <a class="el" href="class_goo_pdf.html#acd85b22ec9f922f04e5968af1ed40c63">setDebugMask()</a>, <a class="el" href="class_goo_pdf.html#a33328ca1b0c3d45c1717c2d9351c031e">setFitControl()</a>, <a class="el" href="class_goo_pdf.html#ab1569a5533de14cc184d7bdf3d4b340f">setMetrics()</a>, <a class="el" href="class_goo_pdf.html#aec7ca7d9cbf948b74d6b00896f9ddd51">setParameterConstantness()</a>, <a class="el" href="class_goo_pdf.html#aa771af99892ae9bea36fe1391504922d">sumOfNll()</a>, and <a class="el" href="class_goo_pdf.html#ab088bfb0f86cc582774dfe786b157913">transformGrid()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;                                                      {</div><div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div><div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    }</div></div><!-- fragment -->
 </div>
 </div>
 <a id="a0182974de120e4f70ef0f2c16e1be25a"></a>
@@ -526,7 +531,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="reference">Referenced by <a class="el" href="_goo_pdf_8h_source.html#l00050">hasAnalyticIntegral()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_goo_pdf_8h_source.html#l00051">hasAnalyticIntegral()</a>.</p>
 
 </div>
 </div>
@@ -566,8 +571,29 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented in <a class="el" href="class_argus_pdf.html#a5952164ba28d9b2e9c194f742e1630ef">ArgusPdf</a>, <a class="el" href="class_polynomial_pdf.html#a798a67b935f200c52aa1ac0534166144">PolynomialPdf</a>, <a class="el" href="class_exp_pdf.html#a1343a5bc372bc3a9d698b302f77bdb68">ExpPdf</a>, <a class="el" href="class_bifur_gauss_pdf.html#a16517341fb55bc19906200d0d004a59b">BifurGaussPdf</a>, <a class="el" href="class_crystal_ball_pdf.html#ac9ed0540ff5b368262933fcadb94d797">CrystalBallPdf</a>, <a class="el" href="class_gaussian_pdf.html#a6cb3491c57fa2e8447b4f4c09db9b0ac">GaussianPdf</a>, <a class="el" href="class_johnson_s_u_pdf.html#afba26c3e8dbc4b80fcdd8f47d9d00761">JohnsonSUPdf</a>, and <a class="el" href="class_step_pdf.html#a4a9d737dc8ef014b0db2f15f9effb1a2">StepPdf</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="_goo_pdf_8h_source.html#l00047">47</a> of file <a class="el" href="_goo_pdf_8h_source.html">GooPdf.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;                                                                  {</div><div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        <span class="keywordflow">return</span> 0;</div><div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    }</div></div><!-- fragment -->
+<p class="definition">Definition at line <a class="el" href="_goo_pdf_8h_source.html#l00048">48</a> of file <a class="el" href="_goo_pdf_8h_source.html">GooPdf.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;                                                                  {</div><div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        <span class="keywordflow">return</span> 0;</div><div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    }</div></div><!-- fragment -->
+</div>
+</div>
+<a id="af0d40bc12d5883bca813ebd45fe6684c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af0d40bc12d5883bca813ebd45fe6684c">&#9670;&nbsp;</a></span>makeGrid()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">__host__ <a class="el" href="class_unbinned_data_set.html">UnbinnedDataSet</a> GooPdf::makeGrid </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set an equidistant grid based on the stored variable binning. </p>
+
+<p class="reference">Referenced by <a class="el" href="_goo_pdf_8h_source.html#l00051">hasAnalyticIntegral()</a>.</p>
+
 </div>
 </div>
 <a id="adbb6d45905871ca107533d84f8bfa461"></a>
@@ -627,7 +653,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="reference">Referenced by <a class="el" href="_goo_pdf_8h_source.html#l00050">hasAnalyticIntegral()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_goo_pdf_8h_source.html#l00051">hasAnalyticIntegral()</a>.</p>
 
 </div>
 </div>
@@ -657,7 +683,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="reference">Referenced by <a class="el" href="_goo_pdf_8h_source.html#l00050">hasAnalyticIntegral()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_goo_pdf_8h_source.html#l00051">hasAnalyticIntegral()</a>.</p>
 
 </div>
 </div>
@@ -697,7 +723,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="class_pdf_base.html#affa49ce31ee55193a6870fab711680c0">PdfBase</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_goo_pdf_8h_source.html#l00050">hasAnalyticIntegral()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_goo_pdf_8h_source.html#l00051">hasAnalyticIntegral()</a>.</p>
 
 </div>
 </div>
@@ -724,7 +750,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="reference">Referenced by <a class="el" href="_goo_pdf_8h_source.html#l00050">hasAnalyticIntegral()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_goo_pdf_8h_source.html#l00051">hasAnalyticIntegral()</a>.</p>
 
 </div>
 </div>
@@ -744,7 +770,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="reference">Referenced by <a class="el" href="_goo_pdf_8h_source.html#l00050">hasAnalyticIntegral()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_goo_pdf_8h_source.html#l00051">hasAnalyticIntegral()</a>.</p>
 
 </div>
 </div>
@@ -774,7 +800,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented in <a class="el" href="class_add_pdf.html#a87043a95e178eaa860ca696198c045d1">AddPdf</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_goo_pdf_8h_source.html#l00050">hasAnalyticIntegral()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_goo_pdf_8h_source.html#l00051">hasAnalyticIntegral()</a>.</p>
 
 </div>
 </div>
@@ -802,7 +828,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="reference">Referenced by <a class="el" href="_goo_pdf_8h_source.html#l00050">hasAnalyticIntegral()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_goo_pdf_8h_source.html#l00051">hasAnalyticIntegral()</a>.</p>
 
 </div>
 </div>
@@ -827,7 +853,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_goo_pdf_8h_source.html#l00067">67</a> of file <a class="el" href="_goo_pdf_8h_source.html">GooPdf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_goo_pdf_8h_source.html#l00074">74</a> of file <a class="el" href="_goo_pdf_8h_source.html">GooPdf.h</a>.</p>
 
 </div>
 </div>
@@ -837,7 +863,7 @@ Additional Inherited Members</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue May 2 2017 19:38:20 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed May 3 2017 15:14:58 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

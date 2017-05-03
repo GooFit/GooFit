@@ -11,7 +11,7 @@ var searchData=
   ['dalitzvetopdf_2eh',['DalitzVetoPdf.h',['../_dalitz_veto_pdf_8h.html',1,'']]],
   ['dampingfactorsquare',['dampingFactorSquare',['../_resonance_pdf_8h.html#a5988a684c5c519bba9dbd7130fddf4b6',1,'ResonancePdf.h']]],
   ['dataiterator',['DataIterator',['../_pdf_base_8h.html#a2717c7a300a249612071568162cac7b9',1,'PdfBase.h']]],
-  ['dataset',['DataSet',['../class_data_set.html',1,'DataSet'],['../class_data_set.html#a53fbc67c0cea9037ddf9ab433f07abd7',1,'DataSet::DataSet(Variable *var, std::string n=&quot;&quot;)'],['../class_data_set.html#a7b310692b06b447a5d814162607c8272',1,'DataSet::DataSet(std::vector&lt; Variable *&gt; &amp;vars, std::string n=&quot;&quot;)'],['../class_data_set.html#a0f601d1158a30ea4a732ead7766b9b38',1,'DataSet::DataSet(std::set&lt; Variable *&gt; &amp;vars, std::string n=&quot;&quot;)']]],
+  ['dataset',['DataSet',['../class_data_set.html',1,'DataSet'],['../class_data_set.html#a53fbc67c0cea9037ddf9ab433f07abd7',1,'DataSet::DataSet(Variable *var, std::string n=&quot;&quot;)'],['../class_data_set.html#a7b310692b06b447a5d814162607c8272',1,'DataSet::DataSet(std::vector&lt; Variable *&gt; &amp;vars, std::string n=&quot;&quot;)'],['../class_data_set.html#a0f601d1158a30ea4a732ead7766b9b38',1,'DataSet::DataSet(std::set&lt; Variable *&gt; &amp;vars, std::string n=&quot;&quot;)'],['../class_data_set.html#ae64f8cb861a44b90966d7c03eb4d0128',1,'DataSet::DataSet(std::initializer_list&lt; Variable *&gt; vars, std::string n=&quot;&quot;)']]],
   ['dataset_2ecc',['DataSet.cc',['../_data_set_8cc.html',1,'']]],
   ['dataset_2eh',['DataSet.h',['../_data_set_8h.html',1,'']]],
   ['daug1mass',['daug1Mass',['../struct_decay_info.html#a4fd8f25ff46fb57aa267528240a05688',1,'DecayInfo']]],

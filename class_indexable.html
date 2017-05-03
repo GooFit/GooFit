@@ -67,6 +67,7 @@ $(function() {
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="class_indexable-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">Indexable Class Reference</div>  </div>
@@ -93,7 +94,17 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a3238424e0b148bdc98c71e77ff46ab12"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_indexable.html#a3238424e0b148bdc98c71e77ff46ab12">~Indexable</a> ()</td></tr>
 <tr class="separator:a3238424e0b148bdc98c71e77ff46ab12"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a23dbb08c08ae676c84083ae890f50aad"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_indexable.html#a23dbb08c08ae676c84083ae890f50aad">getIndex</a> () const</td></tr>
+<tr class="memdesc:a23dbb08c08ae676c84083ae890f50aad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the <a class="el" href="namespace_goo_fit.html">GooFit</a> index.  <a href="#a23dbb08c08ae676c84083ae890f50aad">More...</a><br /></td></tr>
 <tr class="separator:a23dbb08c08ae676c84083ae890f50aad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e581a1caf2760cebcfbf1023318e40a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_indexable.html#a8e581a1caf2760cebcfbf1023318e40a">setIndex</a> (int <a class="el" href="class_indexable.html#ac3917fe4b5bce382b18c754e89f36e3d">value</a>)</td></tr>
+<tr class="memdesc:a8e581a1caf2760cebcfbf1023318e40a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the <a class="el" href="namespace_goo_fit.html">GooFit</a> index.  <a href="#a8e581a1caf2760cebcfbf1023318e40a">More...</a><br /></td></tr>
+<tr class="separator:a8e581a1caf2760cebcfbf1023318e40a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a17d6cda10af36a409985385439e0b133"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_indexable.html#a17d6cda10af36a409985385439e0b133">getFitterIndex</a> () const</td></tr>
+<tr class="memdesc:a17d6cda10af36a409985385439e0b133"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the index from the fitter.  <a href="#a17d6cda10af36a409985385439e0b133">More...</a><br /></td></tr>
+<tr class="separator:a17d6cda10af36a409985385439e0b133"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0600c5bf2e28653ba703297e6931995f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_indexable.html#a0600c5bf2e28653ba703297e6931995f">setFitterIndex</a> (int <a class="el" href="class_indexable.html#ac3917fe4b5bce382b18c754e89f36e3d">value</a>)</td></tr>
+<tr class="memdesc:a0600c5bf2e28653ba703297e6931995f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the index (should be done by the fitter)  <a href="#a0600c5bf2e28653ba703297e6931995f">More...</a><br /></td></tr>
+<tr class="separator:a0600c5bf2e28653ba703297e6931995f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -103,13 +114,19 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:ac3917fe4b5bce382b18c754e89f36e3d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_indexable.html#ac3917fe4b5bce382b18c754e89f36e3d">value</a></td></tr>
 <tr class="memdesc:ac3917fe4b5bce382b18c754e89f36e3d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The value of the variable.  <a href="#ac3917fe4b5bce382b18c754e89f36e3d">More...</a><br /></td></tr>
 <tr class="separator:ac3917fe4b5bce382b18c754e89f36e3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
+Protected Attributes</h2></td></tr>
 <tr class="memitem:a7c1bd84c4bafab7215621e28ea65f242"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_indexable.html#a7c1bd84c4bafab7215621e28ea65f242">index</a> {-1}</td></tr>
-<tr class="memdesc:a7c1bd84c4bafab7215621e28ea65f242"><td class="mdescLeft">&#160;</td><td class="mdescRight">The index, -1 if unset.  <a href="#a7c1bd84c4bafab7215621e28ea65f242">More...</a><br /></td></tr>
+<tr class="memdesc:a7c1bd84c4bafab7215621e28ea65f242"><td class="mdescLeft">&#160;</td><td class="mdescRight">The goofit index, -1 if unset.  <a href="#a7c1bd84c4bafab7215621e28ea65f242">More...</a><br /></td></tr>
 <tr class="separator:a7c1bd84c4bafab7215621e28ea65f242"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1a800077af881da9aec688fd62508130"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_indexable.html#a1a800077af881da9aec688fd62508130">fitter_index</a> {-1}</td></tr>
+<tr class="memdesc:a1a800077af881da9aec688fd62508130"><td class="mdescLeft">&#160;</td><td class="mdescRight">The fitter index, -1 if unset.  <a href="#a1a800077af881da9aec688fd62508130">More...</a><br /></td></tr>
+<tr class="separator:a1a800077af881da9aec688fd62508130"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00009">9</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00011">11</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aaf40fcbcf877ba654309f61ac98b2e6d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aaf40fcbcf877ba654309f61ac98b2e6d">&#9670;&nbsp;</a></span>Indexable()</h2>
@@ -145,9 +162,9 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00011">11</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;: <a class="code" href="class_indexable.html#acce56f344c1ffdb362c347745e50b8c8">name</a>(n), <a class="code" href="class_indexable.html#ac3917fe4b5bce382b18c754e89f36e3d">value</a>(val) {}</div><div class="ttc" id="class_indexable_html_acce56f344c1ffdb362c347745e50b8c8"><div class="ttname"><a href="class_indexable.html#acce56f344c1ffdb362c347745e50b8c8">Indexable::name</a></div><div class="ttdeci">std::string name</div><div class="ttdoc">The variable name. Should be unique. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00019">Variable.h:19</a></div></div>
-<div class="ttc" id="class_indexable_html_ac3917fe4b5bce382b18c754e89f36e3d"><div class="ttname"><a href="class_indexable.html#ac3917fe4b5bce382b18c754e89f36e3d">Indexable::value</a></div><div class="ttdeci">fptype value</div><div class="ttdoc">The value of the variable. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00022">Variable.h:22</a></div></div>
+<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00013">13</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;: <a class="code" href="class_indexable.html#acce56f344c1ffdb362c347745e50b8c8">name</a>(n), <a class="code" href="class_indexable.html#ac3917fe4b5bce382b18c754e89f36e3d">value</a>(val) {}</div><div class="ttc" id="class_indexable_html_acce56f344c1ffdb362c347745e50b8c8"><div class="ttname"><a href="class_indexable.html#acce56f344c1ffdb362c347745e50b8c8">Indexable::name</a></div><div class="ttdeci">std::string name</div><div class="ttdoc">The variable name. Should be unique. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00029">Variable.h:29</a></div></div>
+<div class="ttc" id="class_indexable_html_ac3917fe4b5bce382b18c754e89f36e3d"><div class="ttname"><a href="class_indexable.html#ac3917fe4b5bce382b18c754e89f36e3d">Indexable::value</a></div><div class="ttdeci">fptype value</div><div class="ttdoc">The value of the variable. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00032">Variable.h:32</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -174,11 +191,45 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00012">12</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;{}</div></div><!-- fragment -->
+<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00014">14</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;{}</div></div><!-- fragment -->
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a17d6cda10af36a409985385439e0b133"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a17d6cda10af36a409985385439e0b133">&#9670;&nbsp;</a></span>getFitterIndex()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int Indexable::getFitterIndex </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the index from the fitter. </p>
+
+<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00023">23</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+
+<p class="reference">References <a class="el" href="_variable_8h_source.html#l00039">fitter_index</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="_f_c_n_8cc_source.html#l00017">GooFit::FCN::operator()()</a>, and <a class="el" href="_variable_8h_source.html#l00121">operator&lt;&lt;()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;{<span class="keywordflow">return</span> <a class="code" href="class_indexable.html#a1a800077af881da9aec688fd62508130">fitter_index</a>;}</div><div class="ttc" id="class_indexable_html_a1a800077af881da9aec688fd62508130"><div class="ttname"><a href="class_indexable.html#a1a800077af881da9aec688fd62508130">Indexable::fitter_index</a></div><div class="ttdeci">int fitter_index</div><div class="ttdoc">The fitter index, -1 if unset. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00039">Variable.h:39</a></div></div>
+</div><!-- fragment -->
+</div>
+</div>
 <a id="a23dbb08c08ae676c84083ae890f50aad"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a23dbb08c08ae676c84083ae890f50aad">&#9670;&nbsp;</a></span>getIndex()</h2>
 
@@ -202,33 +253,141 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00014">14</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+<p>Get the <a class="el" href="namespace_goo_fit.html">GooFit</a> index. </p>
 
-<p class="reference">References <a class="el" href="_variable_8h_source.html#l00025">index</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00017">17</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00038">PdfBase::registerParameter()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;                                {</div><div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_indexable.html#a7c1bd84c4bafab7215621e28ea65f242">index</a>;</div><div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    }</div><div class="ttc" id="class_indexable_html_a7c1bd84c4bafab7215621e28ea65f242"><div class="ttname"><a href="class_indexable.html#a7c1bd84c4bafab7215621e28ea65f242">Indexable::index</a></div><div class="ttdeci">int index</div><div class="ttdoc">The index, -1 if unset. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00025">Variable.h:25</a></div></div>
+<p class="reference">References <a class="el" href="_variable_8h_source.html#l00036">index</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="_variable_8h_source.html#l00135">max_index()</a>, <a class="el" href="_f_c_n_8cc_source.html#l00017">GooFit::FCN::operator()()</a>, <a class="el" href="_variable_8h_source.html#l00121">operator&lt;&lt;()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00043">PdfBase::registerParameter()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;{<span class="keywordflow">return</span> <a class="code" href="class_indexable.html#a7c1bd84c4bafab7215621e28ea65f242">index</a>;}</div><div class="ttc" id="class_indexable_html_a7c1bd84c4bafab7215621e28ea65f242"><div class="ttname"><a href="class_indexable.html#a7c1bd84c4bafab7215621e28ea65f242">Indexable::index</a></div><div class="ttdeci">int index</div><div class="ttdoc">The goofit index, -1 if unset. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00036">Variable.h:36</a></div></div>
+</div><!-- fragment -->
+</div>
+</div>
+<a id="a0600c5bf2e28653ba703297e6931995f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0600c5bf2e28653ba703297e6931995f">&#9670;&nbsp;</a></span>setFitterIndex()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Indexable::setFitterIndex </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>value</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the index (should be done by the fitter) </p>
+
+<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00026">26</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+
+<p class="reference">References <a class="el" href="_variable_8h_source.html#l00039">fitter_index</a>, and <a class="el" href="_variable_8h_source.html#l00032">value</a>.</p>
+<div class="fragment"><div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;{<a class="code" href="class_indexable.html#a1a800077af881da9aec688fd62508130">fitter_index</a> = <a class="code" href="class_indexable.html#ac3917fe4b5bce382b18c754e89f36e3d">value</a>;}</div><div class="ttc" id="class_indexable_html_a1a800077af881da9aec688fd62508130"><div class="ttname"><a href="class_indexable.html#a1a800077af881da9aec688fd62508130">Indexable::fitter_index</a></div><div class="ttdeci">int fitter_index</div><div class="ttdoc">The fitter index, -1 if unset. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00039">Variable.h:39</a></div></div>
+<div class="ttc" id="class_indexable_html_ac3917fe4b5bce382b18c754e89f36e3d"><div class="ttname"><a href="class_indexable.html#ac3917fe4b5bce382b18c754e89f36e3d">Indexable::value</a></div><div class="ttdeci">fptype value</div><div class="ttdoc">The value of the variable. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00032">Variable.h:32</a></div></div>
+</div><!-- fragment -->
+</div>
+</div>
+<a id="a8e581a1caf2760cebcfbf1023318e40a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8e581a1caf2760cebcfbf1023318e40a">&#9670;&nbsp;</a></span>setIndex()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Indexable::setIndex </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>value</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the <a class="el" href="namespace_goo_fit.html">GooFit</a> index. </p>
+
+<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00020">20</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+
+<p class="reference">References <a class="el" href="_variable_8h_source.html#l00036">index</a>, and <a class="el" href="_variable_8h_source.html#l00032">value</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00043">PdfBase::registerParameter()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00084">PdfBase::unregisterParameter()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;{<a class="code" href="class_indexable.html#a7c1bd84c4bafab7215621e28ea65f242">index</a> = <a class="code" href="class_indexable.html#ac3917fe4b5bce382b18c754e89f36e3d">value</a>;}</div><div class="ttc" id="class_indexable_html_ac3917fe4b5bce382b18c754e89f36e3d"><div class="ttname"><a href="class_indexable.html#ac3917fe4b5bce382b18c754e89f36e3d">Indexable::value</a></div><div class="ttdeci">fptype value</div><div class="ttdoc">The value of the variable. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00032">Variable.h:32</a></div></div>
+<div class="ttc" id="class_indexable_html_a7c1bd84c4bafab7215621e28ea65f242"><div class="ttname"><a href="class_indexable.html#a7c1bd84c4bafab7215621e28ea65f242">Indexable::index</a></div><div class="ttdeci">int index</div><div class="ttdoc">The goofit index, -1 if unset. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00036">Variable.h:36</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
+<a id="a1a800077af881da9aec688fd62508130"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1a800077af881da9aec688fd62508130">&#9670;&nbsp;</a></span>fitter_index</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int Indexable::fitter_index {-1}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The fitter index, -1 if unset. </p>
+
+<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00039">39</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="_variable_8h_source.html#l00023">getFitterIndex()</a>, and <a class="el" href="_variable_8h_source.html#l00026">setFitterIndex()</a>.</p>
+
+</div>
+</div>
 <a id="a7c1bd84c4bafab7215621e28ea65f242"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7c1bd84c4bafab7215621e28ea65f242">&#9670;&nbsp;</a></span>index</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">int Indexable::index {-1}</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>The index, -1 if unset. </p>
+<p>The goofit index, -1 if unset. </p>
 
-<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00025">25</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00036">36</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_variable_8h_source.html#l00014">getIndex()</a>, <a class="el" href="_f_c_n_8cc_source.html#l00013">GooFit::FCN::operator()()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00038">PdfBase::registerParameter()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00079">PdfBase::unregisterParameter()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_variable_8h_source.html#l00017">getIndex()</a>, and <a class="el" href="_variable_8h_source.html#l00020">setIndex()</a>.</p>
 
 </div>
 </div>
@@ -246,9 +405,9 @@ Public Attributes</h2></td></tr>
 
 <p>The variable name. Should be unique. </p>
 
-<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00019">19</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00029">29</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_unbinned_data_set_8cc_source.html#l00019">UnbinnedDataSet::getValue()</a>, <a class="el" href="_data_set_8cc_source.html#l00080">DataSet::indexOfVariable()</a>, and <a class="el" href="_variable_8h_source.html#l00107">operator&lt;&lt;()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_unbinned_data_set_8cc_source.html#l00007">UnbinnedDataSet::getValue()</a>, <a class="el" href="_data_set_8cc_source.html#l00071">DataSet::indexOfVariable()</a>, and <a class="el" href="_variable_8h_source.html#l00121">operator&lt;&lt;()</a>.</p>
 
 </div>
 </div>
@@ -266,9 +425,9 @@ Public Attributes</h2></td></tr>
 
 <p>The value of the variable. </p>
 
-<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00022">22</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00032">32</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_variable_8h_source.html#l00107">operator&lt;&lt;()</a>, <a class="el" href="_lineshapes_pdf_8h_source.html#l00051">Lineshape::operator==()</a>, <a class="el" href="_functor_writer_8cc_source.html#l00028">readFromFile()</a>, and <a class="el" href="_unbinned_data_set_8cc_source.html#l00125">UnbinnedDataSet::setValueForAllEvents()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_f_c_n_8cc_source.html#l00017">GooFit::FCN::operator()()</a>, <a class="el" href="_variable_8h_source.html#l00121">operator&lt;&lt;()</a>, <a class="el" href="_lineshapes_pdf_8h_source.html#l00051">Lineshape::operator==()</a>, <a class="el" href="_functor_writer_8cc_source.html#l00028">readFromFile()</a>, <a class="el" href="_variable_8h_source.html#l00026">setFitterIndex()</a>, <a class="el" href="_variable_8h_source.html#l00020">setIndex()</a>, and <a class="el" href="_unbinned_data_set_8cc_source.html#l00113">UnbinnedDataSet::setValueForAllEvents()</a>.</p>
 
 </div>
 </div>
@@ -278,7 +437,7 @@ Public Attributes</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue May 2 2017 19:38:20 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed May 3 2017 15:14:58 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

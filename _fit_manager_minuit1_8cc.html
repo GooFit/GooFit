@@ -69,9 +69,7 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#namespaces">Namespaces</a> &#124;
-<a href="#func-members">Functions</a> &#124;
-<a href="#var-members">Variables</a>  </div>
+<a href="#namespaces">Namespaces</a>  </div>
   <div class="headertitle">
 <div class="title">FitManagerMinuit1.cc File Reference</div>  </div>
 </div><!--header-->
@@ -92,138 +90,11 @@ $(function() {
 Namespaces</h2></td></tr>
 <tr class="memitem:namespace_goo_fit"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html">GooFit</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
-Functions</h2></td></tr>
-<tr class="memitem:a3a8d4edb350fc9a9c6f4e2ffc0236314"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_fit_manager_minuit1_8cc.html#a3a8d4edb350fc9a9c6f4e2ffc0236314">FitFun</a> (int &amp;npar, double *gin, double &amp;fun, double *fp, int iflag)</td></tr>
-<tr class="separator:a3a8d4edb350fc9a9c6f4e2ffc0236314"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
-Variables</h2></td></tr>
-<tr class="memitem:a236f10253e82b5cf231a867698670d04"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_pdf_base.html">PdfBase</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_fit_manager_minuit1_8cc.html#a236f10253e82b5cf231a867698670d04">pdfPointer</a></td></tr>
-<tr class="separator:a236f10253e82b5cf231a867698670d04"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8b6a700da9136bfc35439b6f5cd8beb6"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="class_variable.html">Variable</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_fit_manager_minuit1_8cc.html#a8b6a700da9136bfc35439b6f5cd8beb6">vars</a></td></tr>
-<tr class="separator:a8b6a700da9136bfc35439b6f5cd8beb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acfaae49925f72df5443f32e1d1d01b34"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_fit_manager_minuit1_8cc.html#acfaae49925f72df5443f32e1d1d01b34">numPars</a> = 0</td></tr>
-<tr class="separator:acfaae49925f72df5443f32e1d1d01b34"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Function Documentation</h2>
-<a id="a3a8d4edb350fc9a9c6f4e2ffc0236314"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3a8d4edb350fc9a9c6f4e2ffc0236314">&#9670;&nbsp;</a></span>FitFun()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void FitFun </td>
-          <td>(</td>
-          <td class="paramtype">int &amp;&#160;</td>
-          <td class="paramname"><em>npar</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double *&#160;</td>
-          <td class="paramname"><em>gin</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double &amp;&#160;</td>
-          <td class="paramname"><em>fun</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double *&#160;</td>
-          <td class="paramname"><em>fp</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>iflag</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00092">92</a> of file <a class="el" href="_fit_manager_minuit1_8cc_source.html">FitManagerMinuit1.cc</a>.</p>
-
-<p class="reference">References <a class="el" href="class_pdf_base.html#a63e809b5af9291b10a5f636e6b91fd70">PdfBase::calculateNLL()</a>, <a class="el" href="class_pdf_base.html#a6d89fd29e75035dcdabed6f93b8bdfda">PdfBase::copyParams()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00010">host_callnumber</a>, <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00012">numPars</a>, and <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00011">vars</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00016">GooFit::FitManagerMinuit1::setup()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;                                                                        {</div><div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    std::vector&lt;double&gt; pars;</div><div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <span class="comment">// Notice that npar is number of variable parameters, not total.</span></div><div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    pars.resize(<a class="code" href="_fit_manager_minuit1_8cc.html#acfaae49925f72df5443f32e1d1d01b34">numPars</a>);</div><div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keywordtype">int</span> counter = 0;</div><div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;</div><div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keywordflow">for</span>(<a class="code" href="class_variable.html">Variable</a>* var : <a class="code" href="_fit_manager_minuit1_8cc.html#a8b6a700da9136bfc35439b6f5cd8beb6">vars</a>) {</div><div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        <span class="keywordflow">if</span>(std::isnan(fp[counter]))</div><div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;            std::cout &lt;&lt; <span class="stringliteral">&quot;Variable &quot;</span> &lt;&lt; var-&gt;name &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; var-&gt;index &lt;&lt; <span class="stringliteral">&quot; is NaN\n&quot;</span>;</div><div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;</div><div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        pars.at(var-&gt;getIndex()) = fp[counter++] + var-&gt;blind;</div><div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    }</div><div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;</div><div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    <a class="code" href="_fit_manager_minuit1_8cc.html#a236f10253e82b5cf231a867698670d04">pdfPointer</a>-&gt;<a class="code" href="class_pdf_base.html#a6d89fd29e75035dcdabed6f93b8bdfda">copyParams</a>(pars);</div><div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    fun = <a class="code" href="_fit_manager_minuit1_8cc.html#a236f10253e82b5cf231a867698670d04">pdfPointer</a>-&gt;<a class="code" href="class_pdf_base.html#a63e809b5af9291b10a5f636e6b91fd70">calculateNLL</a>();</div><div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <a class="code" href="_global_cuda_defines_8h.html#ab075a886819d967f700cde239187a5f5">host_callnumber</a>++;</div><div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;}</div><div class="ttc" id="_fit_manager_minuit1_8cc_html_a236f10253e82b5cf231a867698670d04"><div class="ttname"><a href="_fit_manager_minuit1_8cc.html#a236f10253e82b5cf231a867698670d04">pdfPointer</a></div><div class="ttdeci">PdfBase * pdfPointer</div><div class="ttdef"><b>Definition:</b> <a href="_fit_manager_minuit1_8cc_source.html#l00010">FitManagerMinuit1.cc:10</a></div></div>
-<div class="ttc" id="_fit_manager_minuit1_8cc_html_acfaae49925f72df5443f32e1d1d01b34"><div class="ttname"><a href="_fit_manager_minuit1_8cc.html#acfaae49925f72df5443f32e1d1d01b34">numPars</a></div><div class="ttdeci">int numPars</div><div class="ttdef"><b>Definition:</b> <a href="_fit_manager_minuit1_8cc_source.html#l00012">FitManagerMinuit1.cc:12</a></div></div>
-<div class="ttc" id="class_pdf_base_html_a63e809b5af9291b10a5f636e6b91fd70"><div class="ttname"><a href="class_pdf_base.html#a63e809b5af9291b10a5f636e6b91fd70">PdfBase::calculateNLL</a></div><div class="ttdeci">virtual __host__ double calculateNLL() const =0</div></div>
-<div class="ttc" id="_fit_manager_minuit1_8cc_html_a8b6a700da9136bfc35439b6f5cd8beb6"><div class="ttname"><a href="_fit_manager_minuit1_8cc.html#a8b6a700da9136bfc35439b6f5cd8beb6">vars</a></div><div class="ttdeci">std::vector&lt; Variable * &gt; vars</div><div class="ttdef"><b>Definition:</b> <a href="_fit_manager_minuit1_8cc_source.html#l00011">FitManagerMinuit1.cc:11</a></div></div>
-<div class="ttc" id="class_pdf_base_html_a6d89fd29e75035dcdabed6f93b8bdfda"><div class="ttname"><a href="class_pdf_base.html#a6d89fd29e75035dcdabed6f93b8bdfda">PdfBase::copyParams</a></div><div class="ttdeci">__host__ void copyParams(const std::vector&lt; double &gt; &amp;pars) const</div></div>
-<div class="ttc" id="_global_cuda_defines_8h_html_ab075a886819d967f700cde239187a5f5"><div class="ttname"><a href="_global_cuda_defines_8h.html#ab075a886819d967f700cde239187a5f5">host_callnumber</a></div><div class="ttdeci">int host_callnumber</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8cc_source.html#l00010">PdfBase.cc:10</a></div></div>
-<div class="ttc" id="class_variable_html"><div class="ttname"><a href="class_variable.html">Variable</a></div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00032">Variable.h:32</a></div></div>
-</div><!-- fragment -->
-</div>
-</div>
-<h2 class="groupheader">Variable Documentation</h2>
-<a id="acfaae49925f72df5443f32e1d1d01b34"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acfaae49925f72df5443f32e1d1d01b34">&#9670;&nbsp;</a></span>numPars</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int numPars = 0</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00012">12</a> of file <a class="el" href="_fit_manager_minuit1_8cc_source.html">FitManagerMinuit1.cc</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00092">FitFun()</a>, and <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00016">GooFit::FitManagerMinuit1::setup()</a>.</p>
-
-</div>
-</div>
-<a id="a236f10253e82b5cf231a867698670d04"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a236f10253e82b5cf231a867698670d04">&#9670;&nbsp;</a></span>pdfPointer</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class_pdf_base.html">PdfBase</a>* pdfPointer</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00010">10</a> of file <a class="el" href="_fit_manager_minuit1_8cc_source.html">FitManagerMinuit1.cc</a>.</p>
-
-</div>
-</div>
-<a id="a8b6a700da9136bfc35439b6f5cd8beb6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8b6a700da9136bfc35439b6f5cd8beb6">&#9670;&nbsp;</a></span>vars</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;<a class="el" href="class_variable.html">Variable</a>*&gt; vars</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00011">11</a> of file <a class="el" href="_fit_manager_minuit1_8cc_source.html">FitManagerMinuit1.cc</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00092">FitFun()</a>, <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00076">GooFit::FitManagerMinuit1::getMinuitValues()</a>, and <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00016">GooFit::FitManagerMinuit1::setup()</a>.</p>
-
-</div>
-</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue May 2 2017 19:38:20 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed May 3 2017 15:14:58 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

@@ -2,6 +2,7 @@ var searchData=
 [
   ['calculatenll',['calculateNLL',['../class_pdf_base.html#a63e809b5af9291b10a5f636e6b91fd70',1,'PdfBase::calculateNLL()'],['../class_goo_pdf.html#a0e95dcd6dda393d2cd24af663a2becbd',1,'GooPdf::calculateNLL()']]],
   ['callfunction',['callFunction',['../_goo_pdf_8h.html#ab2454dfe972e4477a08b425432f13ac3',1,'GooPdf.h']]],
+  ['changed',['changed',['../class_variable.html#ac5c794c582d12c3df642c7b186ecbda7',1,'Variable']]],
   ['checkinitstatus',['checkInitStatus',['../class_pdf_base.html#afa66f2dab8e459e07d239eedcc694690',1,'PdfBase']]],
   ['clearcurrentfit',['clearCurrentFit',['../class_pdf_base.html#a79204579275ad7dfca43c670b0576d6a',1,'PdfBase']]],
   ['compositepdf',['CompositePdf',['../class_composite_pdf.html#a55f7d6a77def5e032a2583edb8cec748',1,'CompositePdf']]],

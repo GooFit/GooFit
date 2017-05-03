@@ -71,6 +71,7 @@ $(function() {
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#typedef-members">Typedefs</a> &#124;
+<a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">PdfBase.h File Reference</div>  </div>
@@ -101,6 +102,11 @@ Typedefs</h2></td></tr>
 <tr class="separator:a87f0a547f668408f4f52118c30f592fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9fc16db2d9fc21fa821da9ce76bf9c78"><td class="memItemLeft" align="right" valign="top">typedef thrust::zip_iterator&lt; <a class="el" href="_pdf_base_8h.html#a87f0a547f668408f4f52118c30f592fc">EventTuple</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_pdf_base_8h.html#a9fc16db2d9fc21fa821da9ce76bf9c78">EventIterator</a></td></tr>
 <tr class="separator:a9fc16db2d9fc21fa821da9ce76bf9c78"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a82e4e338aa4e2a85bb66d691334c12f3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_pdf_base_8h.html#a82e4e338aa4e2a85bb66d691334c12f3">abortWithCudaPrintFlush</a> (std::string file, int line, std::string reason, const <a class="el" href="class_pdf_base.html">PdfBase</a> *pdf=0)</td></tr>
+<tr class="separator:a82e4e338aa4e2a85bb66d691334c12f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -200,6 +206,61 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="a82e4e338aa4e2a85bb66d691334c12f3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a82e4e338aa4e2a85bb66d691334c12f3">&#9670;&nbsp;</a></span>abortWithCudaPrintFlush()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void abortWithCudaPrintFlush </td>
+          <td>(</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>file</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>line</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>reason</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="class_pdf_base.html">PdfBase</a> *&#160;</td>
+          <td class="paramname"><em>pdf</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00189">189</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="_color_8h_source.html#l00017">GooFit::bold</a>, <a class="el" href="_pdf_base_8h_source.html#l00056">PdfBase::getName()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00109">PdfBase::getParameters()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00013">host_params</a>, <a class="el" href="_color_8h_source.html#l00009">GooFit::red</a>, <a class="el" href="_color_8h_source.html#l00016">GooFit::reset</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00016">totalParams</a>.</p>
+<div class="fragment"><div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;                                                                                             {</div><div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    <span class="keywordtype">void</span>* stackarray[20];</div><div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    </div><div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;    std::cout &lt;&lt; <a class="code" href="namespace_goo_fit.html#aa65eefd41f0c68192969ff3ede4f979e">GooFit::reset</a> &lt;&lt; <a class="code" href="namespace_goo_fit.html#a7e27700e0a78d83f9533cf7667cd79ce">GooFit::red</a> &lt;&lt; <span class="stringliteral">&quot;Abort called from &quot;</span> &lt;&lt; file &lt;&lt; <span class="stringliteral">&quot; line &quot;</span> &lt;&lt; line &lt;&lt; <span class="stringliteral">&quot; due to &quot;</span> &lt;&lt; reason &lt;&lt; std::endl;</div><div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;    </div><div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;    <span class="keywordflow">if</span>(pdf) {</div><div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;        <a class="code" href="class_pdf_base.html#adde4851584b1fffeebd4b0ec2b9ca1c7">PdfBase::parCont</a> pars;</div><div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;        pdf-&gt;<a class="code" href="class_pdf_base.html#a35bb094b326f1a9f0aa9a675dd9ede43">getParameters</a>(pars);</div><div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;        std::cout &lt;&lt; <span class="stringliteral">&quot;Parameters of &quot;</span> &lt;&lt; pdf-&gt;<a class="code" href="class_pdf_base.html#aff31801fe304c5d048dc2c2c84e39127">getName</a>() &lt;&lt; <span class="stringliteral">&quot; : \n&quot;</span>;</div><div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;        </div><div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;        <span class="keywordflow">for</span>(<a class="code" href="class_pdf_base.html#abd15730dc8d50cd36b8dab8322257b4b">PdfBase::parIter</a> v = pars.begin(); v != pars.end(); ++v) {</div><div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;            <span class="keywordflow">if</span>(0 &gt; (*v)-&gt;getIndex())</div><div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;                <span class="keywordflow">continue</span>;</div><div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;            </div><div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;            std::cout &lt;&lt; <span class="stringliteral">&quot;  &quot;</span> &lt;&lt; (*v)-&gt;name &lt;&lt; <span class="stringliteral">&quot; (&quot;</span> &lt;&lt; (*v)-&gt;getIndex() &lt;&lt; <span class="stringliteral">&quot;) :\t&quot;</span> &lt;&lt; <a class="code" href="_pdf_base_8cc.html#a42ae25ee78d098c45fff379245021222">host_params</a>[(*v)-&gt;getIndex()] &lt;&lt; std::endl;</div><div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;        }</div><div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;    }</div><div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;    </div><div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;    std::cout &lt;&lt; <span class="stringliteral">&quot;Parameters (&quot;</span> &lt;&lt; <a class="code" href="_pdf_base_8cc.html#aed6aaecbc8626ddc21a2406ccb85add7">totalParams</a> &lt;&lt; <span class="stringliteral">&quot;) :\n&quot;</span>;</div><div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;    </div><div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;    <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; <a class="code" href="_pdf_base_8cc.html#aed6aaecbc8626ddc21a2406ccb85add7">totalParams</a>; ++i) {</div><div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;        std::cout &lt;&lt; <a class="code" href="_pdf_base_8cc.html#a42ae25ee78d098c45fff379245021222">host_params</a>[i] &lt;&lt; <span class="stringliteral">&quot; &quot;</span>;</div><div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    }</div><div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;    </div><div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;    std::cout &lt;&lt; <a class="code" href="namespace_goo_fit.html#a80e6f6c13fd60e59826e0e864c7e3bf6">GooFit::bold</a> &lt;&lt; std::endl;</div><div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;    </div><div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;    </div><div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;    <span class="comment">// get void* pointers for all entries on the stack</span></div><div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;    <span class="keywordtype">size_t</span> size = backtrace(stackarray, 20);</div><div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;    <span class="comment">// print out all the frames to stderr</span></div><div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;    backtrace_symbols_fd(stackarray, size, 2);</div><div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;    std::cout &lt;&lt; <a class="code" href="namespace_goo_fit.html#aa65eefd41f0c68192969ff3ede4f979e">GooFit::reset</a> &lt;&lt; std::flush;</div><div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;    </div><div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;    <span class="keywordflow">throw</span> <a class="code" href="struct_goo_fit_1_1_general_error.html">GooFit::GeneralError</a>(reason);</div><div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;}</div><div class="ttc" id="struct_goo_fit_1_1_general_error_html"><div class="ttname"><a href="struct_goo_fit_1_1_general_error.html">GooFit::GeneralError</a></div><div class="ttdoc">Thrown when a general error is encountered. </div><div class="ttdef"><b>Definition:</b> <a href="_error_8h_source.html#l00008">Error.h:8</a></div></div>
+<div class="ttc" id="class_pdf_base_html_aff31801fe304c5d048dc2c2c84e39127"><div class="ttname"><a href="class_pdf_base.html#aff31801fe304c5d048dc2c2c84e39127">PdfBase::getName</a></div><div class="ttdeci">__host__ std::string getName() const</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00056">PdfBase.h:56</a></div></div>
+<div class="ttc" id="class_pdf_base_html_a35bb094b326f1a9f0aa9a675dd9ede43"><div class="ttname"><a href="class_pdf_base.html#a35bb094b326f1a9f0aa9a675dd9ede43">PdfBase::getParameters</a></div><div class="ttdeci">virtual __host__ void getParameters(parCont &amp;ret) const</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8cc_source.html#l00109">PdfBase.cc:109</a></div></div>
+<div class="ttc" id="_pdf_base_8cc_html_a42ae25ee78d098c45fff379245021222"><div class="ttname"><a href="_pdf_base_8cc.html#a42ae25ee78d098c45fff379245021222">host_params</a></div><div class="ttdeci">fptype host_params[maxParams]</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8cc_source.html#l00013">PdfBase.cc:13</a></div></div>
+<div class="ttc" id="namespace_goo_fit_html_a80e6f6c13fd60e59826e0e864c7e3bf6"><div class="ttname"><a href="namespace_goo_fit.html#a80e6f6c13fd60e59826e0e864c7e3bf6">GooFit::bold</a></div><div class="ttdeci">constexpr rang::style const bold</div><div class="ttdef"><b>Definition:</b> <a href="_color_8h_source.html#l00017">Color.h:17</a></div></div>
+<div class="ttc" id="namespace_goo_fit_html_a7e27700e0a78d83f9533cf7667cd79ce"><div class="ttname"><a href="namespace_goo_fit.html#a7e27700e0a78d83f9533cf7667cd79ce">GooFit::red</a></div><div class="ttdeci">constexpr rang::fg const red</div><div class="ttdef"><b>Definition:</b> <a href="_color_8h_source.html#l00009">Color.h:9</a></div></div>
+<div class="ttc" id="class_pdf_base_html_abd15730dc8d50cd36b8dab8322257b4b"><div class="ttname"><a href="class_pdf_base.html#abd15730dc8d50cd36b8dab8322257b4b">PdfBase::parIter</a></div><div class="ttdeci">parCont::iterator parIter</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00046">PdfBase.h:46</a></div></div>
+<div class="ttc" id="_pdf_base_8cc_html_aed6aaecbc8626ddc21a2406ccb85add7"><div class="ttname"><a href="_pdf_base_8cc.html#aed6aaecbc8626ddc21a2406ccb85add7">totalParams</a></div><div class="ttdeci">int totalParams</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8cc_source.html#l00016">PdfBase.cc:16</a></div></div>
+<div class="ttc" id="namespace_goo_fit_html_aa65eefd41f0c68192969ff3ede4f979e"><div class="ttname"><a href="namespace_goo_fit.html#aa65eefd41f0c68192969ff3ede4f979e">GooFit::reset</a></div><div class="ttdeci">constexpr rang::style const reset</div><div class="ttdef"><b>Definition:</b> <a href="_color_8h_source.html#l00016">Color.h:16</a></div></div>
+<div class="ttc" id="class_pdf_base_html_adde4851584b1fffeebd4b0ec2b9ca1c7"><div class="ttname"><a href="class_pdf_base.html#adde4851584b1fffeebd4b0ec2b9ca1c7">PdfBase::parCont</a></div><div class="ttdeci">std::vector&lt; Variable * &gt; parCont</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00045">PdfBase.h:45</a></div></div>
+</div><!-- fragment -->
+</div>
+</div>
 <h2 class="groupheader">Variable Documentation</h2>
 <a id="a7951a490445f7f71b2f6cc3ceac1943c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7951a490445f7f71b2f6cc3ceac1943c">&#9670;&nbsp;</a></span>dev_event_array</h2>
@@ -213,7 +274,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00006">6</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00011">11</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
 
 </div>
 </div>
@@ -229,7 +290,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00009">9</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00014">14</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="_exp_pdf_8h_source.html#l00010">ExpPdf::hasAnalyticIntegral()</a>, <a class="el" href="_spin_factors_8h_source.html#l00044">SpinFactor::setConstantIndex()</a>, and <a class="el" href="_lineshapes_pdf_8h_source.html#l00066">Lineshape::setConstantIndex()</a>.</p>
 
@@ -247,9 +308,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00007">7</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00012">12</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00030">PdfBase::recursiveSetNormalisation()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00035">PdfBase::recursiveSetNormalisation()</a>.</p>
 
 </div>
 </div>
@@ -265,9 +326,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00008">8</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00013">13</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00162">PdfBase::parametersChanged()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00178">PdfBase::storeParameters()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00189">abortWithCudaPrintFlush()</a>.</p>
 
 </div>
 </div>
@@ -285,7 +346,7 @@ Variables</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00017">17</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00140">PdfBase::registerConstants()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00151">PdfBase::registerConstants()</a>.</p>
 
 </div>
 </div>
@@ -301,9 +362,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00012">12</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00017">17</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00140">PdfBase::registerConstants()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00151">PdfBase::registerConstants()</a>.</p>
 
 </div>
 </div>
@@ -319,14 +380,16 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00011">11</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00016">16</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00189">abortWithCudaPrintFlush()</a>.</p>
 
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue May 2 2017 19:38:20 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed May 3 2017 15:14:58 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

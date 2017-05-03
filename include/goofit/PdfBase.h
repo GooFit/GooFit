@@ -31,6 +31,7 @@ class PdfBase {
 
 public:
     PdfBase(Variable* x, std::string n);
+    virtual ~PdfBase() = default;
 
     enum Specials {ForceSeparateNorm = 1, ForceCommonNorm = 2};
 
@@ -57,6 +58,7 @@ public:
     }
     __host__ virtual void getObservables(obsCont& ret) const;
     __host__ virtual void getParameters(parCont& ret) const;
+    __host__ parCont getParameters() const;
     __host__ Variable* getParameterByName(std::string n) const;
     __host__ int getSpecialMask() const {
         return specialMask;
@@ -83,7 +85,6 @@ public:
     __host__ void printProfileInfo(bool topLevel = true);
 
     __host__ bool parametersChanged() const;
-    __host__ void storeParameters() const;
 
     __host__ obsIter obsBegin() {
         return observables.begin();
@@ -115,7 +116,6 @@ protected:
     std::vector<PdfBase*> components;
     int integrationBins {-1};
     int specialMask {0}; //< For storing information unique to PDFs, eg "Normalise me separately" for TddpPdf.
-    mutable fptype* cachedParams {nullptr};
     bool properlyInitialised {true}; //< Allows checking for required extra steps in, eg, Tddp and Convolution.
 
     unsigned int functionIdx; //< Stores index of device function pointer.
@@ -131,4 +131,6 @@ private:
     __host__ void recursiveSetIndices();
     __host__ void setIndices();
 };
+
+void abortWithCudaPrintFlush(std::string file, int line, std::string reason, const PdfBase* pdf = 0);
 

@@ -1,7 +1,12 @@
 #include "goofit/GlobalCudaDefines.h"
 #include "goofit/PdfBase.h"
 #include "goofit/Variable.h"
+#include "goofit/Color.h"
+#include "goofit/Error.h"
+
 #include <algorithm>
+
+#include <execinfo.h>
 
 fptype* dev_event_array;
 fptype host_normalisation[maxParams];
@@ -57,7 +62,7 @@ __host__ unsigned int PdfBase::registerParameter(Variable* var) {
             bool canUse = true;
 
             for(std::map<Variable*, std::set<PdfBase*>>::iterator p = variableRegistry.begin(); p != variableRegistry.end(); ++p) {
-                if(unusedIndex != (*p).first->index)
+                if(unusedIndex != (*p).first->getIndex())
                     continue;
 
                 canUse = false;
@@ -70,7 +75,7 @@ __host__ unsigned int PdfBase::registerParameter(Variable* var) {
             unusedIndex++;
         }
 
-        var->index = unusedIndex;
+        var->setIndex(unusedIndex);
     }
 
     return (unsigned int) var->getIndex();
@@ -88,11 +93,17 @@ __host__ void PdfBase::unregisterParameter(Variable* var) {
     variableRegistry[var].erase(this);
 
     if(0 == variableRegistry[var].size())
-        var->index = -1;
+        var->setIndex(-1);
 
     for(unsigned int i = 0; i < components.size(); ++i) {
         components[i]->unregisterParameter(var);
     }
+}
+
+__host__ PdfBase::parCont PdfBase::getParameters() const {
+    parCont ret;
+    getParameters(ret);
+    return ret;
 }
 
 __host__ void PdfBase::getParameters(parCont& ret) const {
@@ -160,33 +171,11 @@ __host__ void PdfBase::setIntegrationFineness(int i) {
 }
 
 __host__ bool PdfBase::parametersChanged() const {
-    if(!cachedParams)
-        return true;
-
-    parCont params;
-    getParameters(params);
-    int counter = 0;
-
-    for(Variable* v : params) {
-        if(cachedParams[counter++] != host_params[v->index])
+    for(Variable* v : parameterList) {
+        if(v->changed())
             return true;
     }
-
     return false;
-}
-
-__host__ void PdfBase::storeParameters() const {
-    parCont params;
-    getParameters(params);
-
-    if(!cachedParams)
-        cachedParams = new fptype[params.size()];
-
-    int counter = 0;
-
-    for(Variable* v : params) {
-        cachedParams[counter++] = host_params[v->index];
-    }
 }
 
 __host__ void PdfBase::setNumPerTask(PdfBase* p, const int& c) {
@@ -196,3 +185,39 @@ __host__ void PdfBase::setNumPerTask(PdfBase* p, const int& c) {
     m_iEventsPerTask = c;
 }
 
+
+void abortWithCudaPrintFlush(std::string file, int line, std::string reason, const PdfBase* pdf) {
+    void* stackarray[20];
+    
+    std::cout << GooFit::reset << GooFit::red << "Abort called from " << file << " line " << line << " due to " << reason << std::endl;
+    
+    if(pdf) {
+        PdfBase::parCont pars;
+        pdf->getParameters(pars);
+        std::cout << "Parameters of " << pdf->getName() << " : \n";
+        
+        for(PdfBase::parIter v = pars.begin(); v != pars.end(); ++v) {
+            if(0 > (*v)->getIndex())
+                continue;
+            
+            std::cout << "  " << (*v)->name << " (" << (*v)->getIndex() << ") :\t" << host_params[(*v)->getIndex()] << std::endl;
+        }
+    }
+    
+    std::cout << "Parameters (" << totalParams << ") :\n";
+    
+    for(int i = 0; i < totalParams; ++i) {
+        std::cout << host_params[i] << " ";
+    }
+    
+    std::cout << GooFit::bold << std::endl;
+    
+    
+    // get void* pointers for all entries on the stack
+    size_t size = backtrace(stackarray, 20);
+    // print out all the frames to stderr
+    backtrace_symbols_fd(stackarray, size, 2);
+    std::cout << GooFit::reset << std::flush;
+    
+    throw GooFit::GeneralError(reason);
+}

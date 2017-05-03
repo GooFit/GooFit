@@ -50,6 +50,7 @@ goofit_add_library(FunctorWriter
 
 goofit_add_library(PdfBase
     PdfBase.cc
+    ${PROJECT_SOURCE_DIR}/include/goofit/Error.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PdfBase.h
     ${PROJECT_SOURCE_DIR}/include/goofit/FitControl.h
     ${PROJECT_SOURCE_DIR}/include/goofit/Variable.h
@@ -57,6 +58,7 @@ goofit_add_library(PdfBase
     ${PROJECT_SOURCE_DIR}/include/goofit/Color.h
     ${PROJECT_SOURCE_DIR}/include/goofit/GlobalCudaDefines.h
     )
+target_link_libraries(PdfBase rang CLI11)
 
 
 set(lib_list

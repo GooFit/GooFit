@@ -22,7 +22,7 @@ doing maximum-likelihood fits with a familiar syntax.
   * CUDA 7.0+
   * An nVidia GPU supporting compute capability at least 2.0 (3.5+ recommended)
 * If using OpenMP:
-  * A compiler supporting OpenMP and C++11 (GCC 4.8+ and Intel 17 tested)
+  * A compiler supporting OpenMP and C++11 (GCC 4.8+, Clang, and Intel 17 tested, GCC 4.7 not supported)
 * If using CPP:
   * Single threaded builds are available for debugging and development (such as on Mac)
 

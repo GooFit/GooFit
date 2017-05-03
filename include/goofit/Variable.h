@@ -4,16 +4,26 @@
 #include <map>
 #include <iostream>
 #include <cassert>
+#include <algorithm>
+
 #include "goofit/GlobalCudaDefines.h"
 
 class Indexable {
 public:
     Indexable(std::string n, fptype val = 0) : name(n), value(val) {}
     virtual ~Indexable() {}
-
-    inline int getIndex() const {
-        return index;
-    }
+    
+    /// Get the GooFit index
+    int getIndex() const {return index;}
+    
+    /// Set the GooFit index
+    void setIndex(int value) {index = value;}
+    
+    /// Get the index from the fitter
+    int getFitterIndex() const {return fitter_index;}
+    
+    /// Set the index (should be done by the fitter)
+    void setFitterIndex(int value) {fitter_index = value;}
 
     /// The variable name. Should be unique
     std::string name;
@@ -21,8 +31,12 @@ public:
     /// The value of the variable
     fptype value;
     
-    /// The index, -1 if unset
+protected:
+    /// The goofit index, -1 if unset
     int index {-1};
+    
+    /// The fitter index, -1 if unset
+    int fitter_index {-1};
 };
 
 /// Contains information about a parameter allowed
@@ -33,10 +47,7 @@ class Variable : public Indexable {
 public:
     friend std::ostream& operator<< (std::ostream& o, const Variable& var);
 
-    // This shoud not be used?
-    // Variable(std::string n) : Indexable(n) {}
-    
-    
+
     /// This is a constant varaible
     Variable(std::string n, fptype v)
       : Indexable(n, v)
@@ -83,6 +94,9 @@ public:
     
     /// True if the value was unchanged since the last iteration
     bool unchanged_ {false};
+    
+    /// Check to see if the value has changed this iteration (always true the first time)
+    bool changed() const {return !unchanged_;}
 };
 
 
@@ -108,6 +122,20 @@ inline std::ostream& operator<< (std::ostream& o, const Variable& var) {
     o << var.name << ": " << var.value << " +/- " << var.error;
     if(!var.fixed)
         o << " [" << var.lowerlimit << ", " << var.upperlimit << "]";
+    if(var.getIndex() >= 0)
+        o << " GooFit index: " << var.getIndex();
+    if(var.getFitterIndex() >= 0)
+        o << " Fitter index: " << var.getFitterIndex();
+
     return o;
 }
 
+
+/// Get the max index of a variable from a list
+inline int max_index(const std::vector<Variable*> &vars) {
+    Variable* max_ind_ptr = *std::max_element(std::begin(vars),
+                                              std::end(vars),
+                                              [](const Variable *a, const Variable *b)
+                                              {return a->getIndex() < b->getIndex();});
+    return max_ind_ptr->getIndex();
+}

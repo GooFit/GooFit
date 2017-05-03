@@ -8,15 +8,21 @@ namespace GooFit {
 FCN::FCN(Params& params) : params_(&params) {
     host_callnumber = 0;
     
+    // Verify that all varaibles need to be recached
+    for(Variable* var : params_->vars_)
+        var->unchanged_ = false;
+    
 }
 
 double FCN::operator()(const std::vector<double>& pars) const {
-    std::vector<double> gooPars; // Translates from Minuit indexing to GooFit indexing
-    gooPars.resize(params_->num_);
-    int counter = 0;
+    
+    // Translate from Minuit indexing to GooFit indexing
+    std::vector<double> gooPars;
+    gooPars.resize(max_index(params_->vars_)+1);
     
     for(Variable* var : params_->vars_) {
-        gooPars.at(var->index) = pars.at(counter++);
+        var->unchanged_ = var->value == pars.at(var->getFitterIndex());
+        gooPars.at(var->getIndex()) = pars.at(var->getFitterIndex());
     }
 
     params_->pdf_->copyParams(gooPars);

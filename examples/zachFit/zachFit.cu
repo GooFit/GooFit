@@ -73,10 +73,12 @@ TH1F* plotComponent(GooPdf* toPlot, double normFactor) {
     return ret;
 }
 
-void getMCData() {
+void getMCData(GooFit::Application &app) {
     data = new UnbinnedDataSet(dm);
-    std::ifstream mcreader;
-    mcreader.open("dataFiles/dstwidth_kpi_resMC.dat");
+    std::string filename = app.get_filename("dataFiles/dstwidth_kpi_data.dat", "examples/zachFit");
+    
+    std::ifstream mcreader(filename);
+    
     TH1F* mchist = new TH1F("mchist", "", 300, 0.1365, 0.1665);
 
     double currDM = 0;
@@ -105,14 +107,9 @@ void getMCData() {
     std::cout << "MC: Got " << data->getNumEvents() << " events.\n";
 }
 
-void getData() {
+void getData(GooFit::Application &app) {
     std::ifstream datareader;
-    std::string filename = "dataFiles/zach/dstwidth_kpi_data.dat";
-
-    if(!((bool) std::ifstream(filename))) {
-        std::cerr << "The file " << filename << " does not exist! Exiting" << std::endl;
-        throw std::runtime_error("Missing data file");
-    }
+    std::string filename = app.get_filename("dataFiles/dstwidth_kpi_data.dat", "examples/zachFit");
 
     datareader.open(filename);
 
@@ -143,12 +140,12 @@ void getData() {
     datareader.close();
 }
 
-int CudaMinimise(int fitType) {
+int CudaMinimise(int fitType, GooFit::Application &app) {
     dm = new Variable("dm", 0.1395, 0.1665);
     dm->numbins = 2700;
     //dm->numbins = 540;
 
-    getMCData();
+    getMCData(app);
     std::cout << "Done getting MC\n";
 
     Variable mean1("kpi_mc_mean1", 0.145402, 0.00001, 0.143, 0.148);
@@ -278,7 +275,7 @@ int CudaMinimise(int fitType) {
     comps.push_back(&bkg);
     comps.push_back(&signal);
 
-    getData();
+    getData(app);
 
     AddPdf total("total", weights, comps);
 
@@ -406,7 +403,7 @@ int main(int argc, char** argv) {
 
     int retval;
     try {
-        retval = CudaMinimise(mode);
+        retval = CudaMinimise(mode, app);
     } catch(const std::exception& ex) {
         std::cerr << ex.what() << std::endl;
         return 6;

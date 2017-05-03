@@ -12,6 +12,7 @@ public:
     BinnedDataSet(Variable* var, std::string n = "");
     BinnedDataSet(std::vector<Variable*>& vars, std::string n = "");
     BinnedDataSet(std::set<Variable*>& vars, std::string n = "");
+    BinnedDataSet(std::initializer_list<Variable*> vars, std::string n="");
     virtual ~BinnedDataSet();
 
     virtual void addEventVector(std::vector<fptype>& vals, fptype weight = 1);

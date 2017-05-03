@@ -21,6 +21,12 @@ BinnedDataSet::BinnedDataSet(std::set<Variable*>& vars, std::string n)
     binvalues.resize(getNumBins());
 }
 
+BinnedDataSet::BinnedDataSet(std::initializer_list<Variable*> vars, std::string n)
+: DataSet(vars, n) {
+    cacheNumBins();
+    binvalues.resize(getNumBins());
+}
+
 BinnedDataSet::~BinnedDataSet() {}
 
 void BinnedDataSet::addEventVector(std::vector<fptype>& vals, fptype weight) {

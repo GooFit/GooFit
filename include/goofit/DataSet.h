@@ -5,6 +5,7 @@
 #include <vector>
 #include <set>
 #include <string>
+#include <initializer_list>
 
 class Variable;
 
@@ -14,9 +15,12 @@ typedef std::vector<Variable*>::const_reverse_iterator varConstRIt;
 class DataSet {
 public:
     DataSet(Variable* var, std::string n = "");
+    
     DataSet(std::vector<Variable*>& vars, std::string n = "");
     DataSet(std::set<Variable*>& vars, std::string n = "");
-    virtual ~DataSet();
+    DataSet(std::initializer_list<Variable*> vars, std::string n = "");
+    
+    virtual ~DataSet() = default;
 
     void addEvent();
     void addEvent(fptype val);
@@ -51,12 +55,13 @@ public:
 protected:
     std::vector<fptype> getCurrentValues() const;
     unsigned int indexOfVariable(Variable* var) const;
-    int numEventsAdded;
+    
+    int numEventsAdded {0};
 
 private:
     void generateName();
 
-    std::vector<Variable*> variables;
     std::string name;
+    std::vector<Variable*> variables;
 };
 

@@ -1,18 +1,6 @@
 #include "goofit/UnbinnedDataSet.h"
 #include "goofit/Variable.h"
 
-// Special constructor for one variable
-UnbinnedDataSet::UnbinnedDataSet(Variable* var, std::string n)
-    : DataSet(var, n)
-{}
-
-UnbinnedDataSet::UnbinnedDataSet(std::vector<Variable*>& vars, std::string n)
-    : DataSet(vars, n)
-{}
-
-UnbinnedDataSet::UnbinnedDataSet(std::set<Variable*>& vars, std::string n)
-    : DataSet(vars, n)
-{}
 
 UnbinnedDataSet::~UnbinnedDataSet() {}
 

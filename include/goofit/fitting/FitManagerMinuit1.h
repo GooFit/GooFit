@@ -5,17 +5,29 @@
 
 class PdfBase;
 
-extern PdfBase* pdfPointer;
-
-void FitFun(int& npar, double* gin, double& fun, double* fp, int iflag);
-
 namespace GooFit {
+    
+class Minuit1 : public TMinuit {
+    PdfBase* pdfPointer;
+    std::vector<Variable*> vars;
+    
+public:
+    Minuit1(PdfBase* pdfPointer);
+    /// Fit function for Minuit
+    virtual Int_t Eval(Int_t npar,     //< The number of parameters
+                       Double_t *grad, //< The derivatives can be stored here if flag is 2 (output)
+                       Double_t &fval, //< The value of the function at this point (output)
+                       Double_t *par,  //< The input parameters
+                       Int_t flag      //< This is 1 the first time, 2, for derivatives, and 3 after the fit is finished. It is something else if computing.
+                       ) override;
+    
+    // Get a copy of the list of variables
+    std::vector<Variable*> getVaraibles() const {return vars;};
+};
 
 class FitManagerMinuit1 {
 public:
-    FitManagerMinuit1(PdfBase* dat) {
-        pdfPointer = dat;
-    }
+    FitManagerMinuit1(PdfBase* dat) : minuit_(dat) {}
         
     void setMaxCalls(double mxc) {
         overrideCallLimit = mxc;
@@ -32,26 +44,16 @@ public:
     void useImprove(bool use=true) {
         _useImprove = use;
     }
-    
-    // This is expected to prepare the fitting
-    void setup();
-        
-    void runMigrad();
-        
-    void runFit();
+ 
     
     // This runs the fit
-    void fit() {
-        setup();
-        runFit();
-    };
+    void fit();
         
-    TMinuit* getMinuitObject() {
-        return minuit_.get();
+    Minuit1* getMinuitObject() {
+        return &minuit_;
     }
-    void getMinuitValues() const;
         
-    void getMinuitStatus(double& fmin, double& fedm, double& errdef, int& npari, int& nparx, int& istat) const;
+    void getMinuitStatus(double& fmin, double& fedm, double& errdef, int& npari, int& nparx, int& istat);
     
         
 private:
@@ -60,7 +62,8 @@ private:
     bool _useHesse {true};
     bool _useMinos {false};
     bool _useImprove {false};
-    std::unique_ptr<TMinuit> minuit_;
+
+    Minuit1 minuit_;
 };
 
 }

@@ -390,9 +390,9 @@ __device__ thrust::complex<fptype> Flatte_MINT(fptype Mpair, fptype m1, fptype m
     fptype mpsq = (m1+m2)*(m1+m2);
     fptype mmsq = (m1-m2)*(m1-m2);
     fptype num  = (rMass2 - mpsq)*(rMass2 - mmsq);
-    fptype num2  = (resmass*resmass - mpsq)*(resmass*resmass - mmsq);
+    //fptype num2  = (resmass*resmass - mpsq)*(resmass*resmass - mmsq);
     fptype pABSq = num/(4*rMass2);
-    fptype prSq = fabs(num2/(4*resmass*resmass));
+    //fptype prSq = fabs(num2/(4*resmass*resmass));
 
     thrust::complex<fptype> Gpipi = (1./3.) * aSqrtTerm(mPi0, Mpair) + (2./3.) * aSqrtTerm(mPiPlus, Mpair);
     thrust::complex<fptype> GKK = (1./2.) * aSqrtTerm(mK0, Mpair) + (1./2.) * aSqrtTerm(mKPlus, Mpair);

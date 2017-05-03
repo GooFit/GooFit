@@ -243,7 +243,6 @@ __host__ fptype DalitzPlotPdf::normalise() const {
             continue;
 
         redoIntegral[i] = true;
-        decayInfo->resonances[i]->storeParameters();
     }
 
     forceRedoIntegrals = false;

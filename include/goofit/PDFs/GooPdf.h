@@ -3,6 +3,7 @@
 #include <thrust/functional.h>
 
 #include "goofit/PdfBase.h"
+#include "goofit/UnbinnedDataSet.h"
 
 #ifdef GOOFIT_MPI
 #include <mpi.h>
@@ -51,7 +52,13 @@ public:
         return false;
     }
     __host__ fptype getValue();
-    __host__ void getCompProbsAtDataPoints(std::vector<std::vector<fptype>>& values);
+    
+    /// Produce a list of probabilies at points
+    __host__ std::vector<std::vector<fptype>> getCompProbsAtDataPoints();
+    
+    /// Set an equidistant grid based on the stored variable binning
+    __host__ UnbinnedDataSet makeGrid();
+    
     __host__ void initialise(std::vector<unsigned int> pindices, void* dev_functionPtr = host_fcn_ptr);
     __host__ void scan(Variable* var, std::vector<fptype>& values);
     __host__ virtual void setFitControl(FitControl* const fc, bool takeOwnerShip = true);

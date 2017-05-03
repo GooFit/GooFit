@@ -2,6 +2,7 @@
 
 #include <CLI/CLI.hpp>
 #include "goofit/Version.h"
+#include "goofit/Error.h"
 #include "goofit/Color.h"
 #include <thrust/detail/config/device_system.h>
 #include <x86/cpu_x86.h>
@@ -221,6 +222,39 @@ public:
 #ifdef GOOFIT_MPI
         MPI_Finalize();
 #endif
+    }
+    
+    /// Get a file from the current directory, looks up one and in the true current directory
+    /// Base gives a relative path from the source directory
+    std::string get_filename(const std::string& input_str, std::string base = "") const {
+        
+        // Run from current directory
+        if(CLI::ExistingFile(input_str))
+            return input_str;
+        
+        // Run from a different directory
+        std::string prog_name {argv_[0]};
+        size_t loc = prog_name.rfind("/");
+        if(loc != std::string::npos) {
+            std::string cdir = prog_name.substr(0,loc);
+            std::string new_input {cdir + "/" + input_str}; 
+            if(CLI::ExistingFile(new_input)) {
+                std::cout << "Found file at " << new_input << std::endl;
+                return new_input;
+            }
+        }
+
+        // If all else fails, try to get file from source directory (if base is specified)
+        if(base.size() > 0) {
+            std::string new_input = std::string(GOOFIT_SOURCE_DIR) + "/" + base + "/" + input_str;
+            if(CLI::ExistingFile(new_input)) {
+                std::cout << "Found file at " << new_input << std::endl;
+                return new_input;
+            }
+        }
+        
+        // Could not find file
+        throw GooFit::FileError(input_str);
     }
 };
 

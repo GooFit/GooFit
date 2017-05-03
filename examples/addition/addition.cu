@@ -111,8 +111,7 @@ int main(int argc, char** argv) {
     }
 
     total.setData(&grid);
-    vector<vector<double>> pdfVals;
-    total.getCompProbsAtDataPoints(pdfVals);
+    std::vector<std::vector<double>> pdfVals = total.getCompProbsAtDataPoints();
 
     TCanvas foo;
 

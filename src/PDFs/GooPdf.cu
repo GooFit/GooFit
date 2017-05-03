@@ -2,6 +2,7 @@
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/ThrustOverride.h"
 
+#include "goofit/Error.h"
 #include "goofit/Variable.h"
 #include "goofit/FitControl.h"
 #include "goofit/BinnedDataSet.h"
@@ -66,41 +67,6 @@ void printMemoryStatus(std::string file, int line) {
               (memtotal - memfree) << std::endl;
 }
 
-
-#include <execinfo.h>
-void* stackarray[10];
-void abortWithCudaPrintFlush(std::string file, int line, std::string reason, const PdfBase* pdf = 0) {
-    std::cout << "Abort called from " << file << " line " << line << " due to " << reason << std::endl;
-
-    if(pdf) {
-        PdfBase::parCont pars;
-        pdf->getParameters(pars);
-        std::cout << "Parameters of " << pdf->getName() << " : \n";
-
-        for(PdfBase::parIter v = pars.begin(); v != pars.end(); ++v) {
-            if(0 > (*v)->index)
-                continue;
-
-            std::cout << "  " << (*v)->name << " (" << (*v)->index << ") :\t" << host_params[(*v)->index] << std::endl;
-        }
-    }
-
-    std::cout << "Parameters (" << totalParams << ") :\n";
-
-    for(int i = 0; i < totalParams; ++i) {
-        std::cout << host_params[i] << " ";
-    }
-
-    std::cout << std::endl;
-
-
-    // get void* pointers for all entries on the stack
-    size_t size = backtrace(stackarray, 10);
-    // print out all the frames to stderr
-    backtrace_symbols_fd(stackarray, size, 2);
-
-    exit(1);
-}
 
 __device__ fptype calculateEval(fptype rawPdf, fptype* evtVal, unsigned int par) {
     // Just return the raw PDF value, for use in (eg) normalisation.
@@ -616,9 +582,10 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, int, fptype*> t) co
     return ret;
 }
 
-__host__ void GooPdf::getCompProbsAtDataPoints(std::vector<std::vector<fptype>>& values) {
+__host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
     copyParams();
-    double overall = normalise();
+    //double overall =
+    normalise();
     MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
     int numVars = observables.size();
@@ -637,7 +604,7 @@ __host__ void GooPdf::getCompProbsAtDataPoints(std::vector<std::vector<fptype>>&
                       thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
                       results.begin(),
                       evalor);
-    values.clear();
+    std::vector<std::vector<fptype>> values;
     values.resize(components.size() + 1);
     thrust::host_vector<fptype> host_results = results;
 
@@ -658,6 +625,37 @@ __host__ void GooPdf::getCompProbsAtDataPoints(std::vector<std::vector<fptype>>&
             values[1 + i].push_back(host_results[j]);
         }
     }
+    return values;
+}
+
+// Utility function to make a grid of any dimisinion
+__host__ void make_a_grid(std::vector<Variable*> ret, UnbinnedDataSet &grid) {
+    if(ret.empty()) {
+        grid.addEvent();
+        return;
+    }
+    
+    Variable* var = ret.back();
+    ret.pop_back(); // safe because this is a copy
+    
+    for(int i = 0; i < var->numbins; ++i) {
+        double step = (var->upperlimit - var->lowerlimit)/var->numbins;
+        var->value = var->lowerlimit + (i + 0.5) * step;
+        make_a_grid(ret, grid);
+    }
+    
+}
+
+
+__host__ UnbinnedDataSet GooPdf::makeGrid() {
+    obsCont ret;
+    getObservables(ret);
+    
+    UnbinnedDataSet grid{ret};
+    
+    make_a_grid(ret, grid);
+    
+    return grid;
 }
 
 // still need to add OpenMP/multi-GPU code here

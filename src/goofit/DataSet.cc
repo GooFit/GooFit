@@ -5,40 +5,31 @@
 #include <climits>
 
 DataSet::DataSet(Variable* var, std::string n)
-    : numEventsAdded(0)
-    , name(n) {
-    variables.push_back(var);
-
+: name(n), variables({var}) {
+    
     if(n == "")
         generateName();
 }
 
 DataSet::DataSet(std::vector<Variable*>& vars, std::string n)
-    : numEventsAdded(0)
-    , name(n) {
-    for(std::vector<Variable*>::iterator v = vars.begin(); v != vars.end(); ++v) {
-        variables.push_back(*v);
-    }
-
+    : name(n), variables(vars) {
+        
     if(n == "")
         generateName();
 }
 
 DataSet::DataSet(std::set<Variable*>& vars, std::string n)
-    : numEventsAdded(0)
-    , name(n) {
-    variables.resize(vars.size());
-
-    for(std::set<Variable*>::iterator v = vars.begin(); v != vars.end(); ++v) {
-        variables[(*v)->index] = (*v);
-    }
-
+: name(n), variables(std::begin(vars), std::end(vars)) {
+    
     if(n == "")
         generateName();
 }
 
-DataSet::~DataSet() {
-    variables.clear();
+DataSet::DataSet(std::initializer_list<Variable*> vars, std::string n) :
+    name(n), variables(vars) {
+
+    if(n == "")
+        generateName();
 }
 
 void DataSet::addEvent() {

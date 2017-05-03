@@ -49,16 +49,12 @@
 
 #endif
 
-
-
 #if MCBOOSTER_BACKEND==CUDA
 	#define CUDA_API_PER_THREAD_DEFAULT_STREAM
 	#include <cuda.h>
 	#include <cuda_runtime.h>
 	#include <cuda_runtime_api.h>
-#elif MCBOOSTER_BACKEND==CPP
-inline int omp_get_thread_num() {return 0;};
-#else
+#elif MCBOOSTER_BACKEND!=CPP
 #include <omp.h>
 #endif
 

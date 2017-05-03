@@ -147,18 +147,18 @@ public:
             
             GOOFIT_INFO("CUDA: Device {}: {}", get_device(), devProp.name);
             
-            GOOFIT_INFO("CUDA: Compute {}.{}" << devProp.major, devProp.minor;
+            GOOFIT_INFO("CUDA: Compute {}.{}", devProp.major, devProp.minor);
             GOOFIT_INFO("CUDA: Total global memory: {} GB", devProp.totalGlobalMem / 1.0e9);
             GOOFIT_INFO("CUDA: Multiprocessors: {}", devProp.multiProcessorCount);
                         
-            GOOFIT_DEBUG("CUDA: Total amount of shared memory per block: " << devProp.sharedMemPerBlock << std::endl;
-            GOOFIT_DEBUG("CUDA: Total registers per block: " << devProp.regsPerBlock << std::endl;
-            GOOFIT_DEBUG("CUDA: Warp size: " << devProp.warpSize << std::endl;
-            GOOFIT_DEBUG("CUDA: Maximum memory pitch: " << devProp.memPitch << std::endl;
-            GOOFIT_DEBUG("CUDA: Total amount of constant memory: " << devProp.totalConstMem << std::endl;
+            GOOFIT_DEBUG("CUDA: Total amount of shared memory per block: {}", devProp.sharedMemPerBlock);
+            GOOFIT_DEBUG("CUDA: Total registers per block: {}", devProp.regsPerBlock);
+            GOOFIT_DEBUG("CUDA: Warp size: {}", devProp.warpSize);
+            GOOFIT_DEBUG("CUDA: Maximum memory pitch: {}", devProp.memPitch);
+            GOOFIT_DEBUG("CUDA: Total amount of constant memory: {}", devProp.totalConstMem);
 
 #elif THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_OMP
-            GOOFIT_INFO("OMP: Number of threads: ", omp_get_max_threads());
+            GOOFIT_INFO("OMP: Number of threads: {}", omp_get_max_threads());
 #elif THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_TBB
             GOOFIT_INFO("TBB: Backend selected");
 #elif THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CPP

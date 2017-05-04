@@ -40,3 +40,15 @@ TEST(Simple, UnbinnedAdding) {
     EXPECT_FLOAT_EQ(5, data.getValue(&xvar, 2));
     EXPECT_FLOAT_EQ(6, data.getValue(&yvar, 2));
 }
+TEST(Simple, SettingAndGetting) {
+    
+    // Independent variable.
+    Variable var{"var", 0, 10};
+    
+    var = 1.0;
+    
+    fptype val = var;
+    
+    EXPECT_EQ(1.0, val);
+    EXPECT_EQ(1.0, var.getValue());
+}

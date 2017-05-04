@@ -11,6 +11,11 @@
 class Indexable {
 public:
     Indexable(std::string n, fptype val = 0) : name(n), value(val) {}
+    
+    // These classes can not be duplicated
+    Indexable(Indexable &) = delete;
+    Indexable& operator=(Indexable&) = delete;
+    
     virtual ~Indexable() {}
     
     /// Get the GooFit index
@@ -32,6 +37,16 @@ public:
     fptype getValue() const {return value;}
     /// Set the value
     void setValue(fptype val) {value = val;}
+    
+    // Utilities
+    
+    /// Support var = 3
+    void operator=(const fptype& val) {setValue(val);}
+    
+    /// Support fptype val = var
+    operator fptype() const {return getValue();}
+    
+    /// Support for less than, etc.
     
 protected:
     
@@ -57,7 +72,12 @@ public:
     friend std::ostream& operator<< (std::ostream& o, const Variable& var);
     friend std::istream& operator>> (std::istream& o, Variable& var);
 
-
+    // These classes can not be duplicated
+    Variable(Variable &) = delete;
+    Variable& operator=(Variable&) = delete;
+    /// Support var = 3
+    void operator=(const fptype& val) {setValue(val);}
+    
     /// This is a constant varaible
     Variable(std::string n, fptype v)
       : Indexable(n, v)
@@ -170,12 +190,22 @@ public:
 
     using Variable::Variable;
     virtual ~CountingVariable() = default;
+    // These classes can not be duplicated
+    CountingVariable& operator=(CountingVariable&) = delete;
+    /// Support var = 3
+    void operator=(const fptype& val) {setValue(val);}
 };
 
 /// This is similar to Variable, but the index points
 /// to functorConstants instead of cudaArray.
 class Constant : public Indexable {
 public:
+    
+    // These classes can not be duplicated
+    Constant(Constant &) = delete;
+    Constant& operator=(Constant&) = delete;
+    /// Support var = 3
+    void operator=(const fptype& val) {setValue(val);}
 
     Constant(std::string n, fptype val) : Indexable(n, val) {}
     virtual ~Constant() {}

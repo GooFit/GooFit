@@ -102,20 +102,17 @@ __host__ void PdfBase::unregisterParameter(Variable* var) {
 
 
 __host__ Variable_v PdfBase::getParameters() const {
-    Variable_v ret;
-    for(Variable* p : parameterList) {
-        if(std::find(ret.begin(), ret.end(), p) != ret.end())
-            continue;
-
-        ret.push_back(p);
+    
+    std::set<Variable*> ret {parameterList.begin(), parameterList.end()};
+    
+    
+    for(const PdfBase* comp : components) {
+        Variable_v sub_comp = comp->getParameters();
+        ret.insert(sub_comp.begin(), sub_comp.end());
     }
-
-    for(unsigned int i = 0; i < components.size(); ++i) {
-        Variable_v sub_comp = components[i]->getParameters();
-        ret.insert(std::begin(ret), std::begin(sub_comp), std::end(sub_comp));
-    }
-    return ret;
+    return Variable_v(ret.begin(), ret.end());
 }
+
 
 __host__ Variable* PdfBase::getParameterByName(std::string n) const {
     for(Variable* p : parameterList) {
@@ -134,20 +131,15 @@ __host__ Variable* PdfBase::getParameterByName(std::string n) const {
 }
 
 __host__ Variable_v PdfBase::getObservables() const {
-    Variable_v ret;
+    std::set<Variable*> ret {observables.begin(), observables.end()};
+
+
+    for(const PdfBase* comp : components) {
+        Variable_v sub_comp = comp->getObservables();
+        ret.insert(sub_comp.begin(), sub_comp.end());
+    }
     
-    for(Variable* p : observables) {
-        if(std::find(ret.begin(), ret.end(), p) != ret.end())
-            continue;
-
-        ret.push_back(p);
-    }
-
-    for(unsigned int i = 0; i < components.size(); ++i) {
-        Variable_v sub_comp = components[i]->getObservables();
-        ret.insert(std::begin(ret), std::begin(sub_comp), std::end(sub_comp));
-    }
-    return ret;
+    return Variable_v(ret.begin(), ret.end());
 }
 
 __host__ unsigned int PdfBase::registerConstants(unsigned int amount) {

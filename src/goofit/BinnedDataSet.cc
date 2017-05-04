@@ -60,7 +60,7 @@ size_t BinnedDataSet::localToGlobal(const std::vector<size_t>& locals) const {
     unsigned int priorMatrixSize = 1;
     unsigned int ret = 0;
 
-    for(size_t i=0; i<size(); i++) {
+    for(size_t i=0; i<variables.size(); i++) {
         unsigned int localBin = locals[i];
         ret += localBin * priorMatrixSize;
         priorMatrixSize *= cachedNumBins[i];
@@ -76,7 +76,7 @@ std::vector<size_t> BinnedDataSet::globalToLocal(size_t global) const {
     // with the number of bins in that dimension. Then divide by the number of bins, in effect
     // collapsing so the grid has one fewer dimension. Rinse and repeat.
     
-    for(size_t i=0; i<size(); i++) {
+    for(size_t i=0; i<variables.size(); i++) {
         int localBin = global % cachedNumBins[i];
         locals.push_back(localBin);
         global /= cachedNumBins[i];
@@ -103,7 +103,7 @@ fptype BinnedDataSet::getBinCenter(Variable* var, size_t bin) const {
 fptype BinnedDataSet::getBinVolume(size_t bin) const {
     fptype ret = 1;
 
-    for(size_t i=0; i<size(); i++) {
+    for(size_t i=0; i<variables.size(); i++) {
         fptype step = (variables[i]->upperlimit - variables[i]->lowerlimit) / cachedNumBins[i];
         ret *= step;
     }
@@ -128,7 +128,7 @@ void BinnedDataSet::setBinError(unsigned int bin, fptype error) {
 size_t BinnedDataSet::getNumBins() const {
     unsigned int ret = 1;
 
-    for(size_t i=0; i<size(); i++) {
+    for(size_t i=0; i<variables.size(); i++) {
         ret *= cachedNumBins[i];
     }
 
@@ -145,11 +145,11 @@ fptype BinnedDataSet::getNumEvents() const {
 }
 
 std::vector<size_t> BinnedDataSet::convertValuesToBins(const std::vector<fptype>& vals) const {
-    if(vals.size() != size())
-        throw GooFit::GeneralError("Incorrect number of bins {} for {} variables", vals.size(), size());
+    if(vals.size() != variables.size())
+        throw GooFit::GeneralError("Incorrect number of bins {} for {} variables", vals.size(), variables.size());
 
     std::vector<size_t> localBins;
-    for(size_t i=0; i<size(); i++) {
+    for(size_t i=0; i<variables.size(); i++) {
         fptype currval = vals[i];
         fptype betval = std::min(std::max(currval, variables[i]->lowerlimit),variables[i]->upperlimit);
         if(currval != betval)

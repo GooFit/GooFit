@@ -3,8 +3,6 @@
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/Variable.h"
 
-#include <unordered_set>
-
 namespace GooFit {
 
     Params::Params(PdfBase &pdf) : pdf_(&pdf) {
@@ -12,27 +10,27 @@ namespace GooFit {
         
     for(Variable* var : vars_) {
         bool added;
-        if(var->fixed) {
-            added = Add(var->name, var->value);
-        } else if(var->lowerlimit == var->upperlimit) {
-            added = Add(var->name, var->value, var->error);
+        if(var->IsFixed()) {
+            added = Add(var->GetName(), var->GetValue());
+        } else if(var->GetLowerLimit() == var->GetUpperLimit()) {
+            added = Add(var->GetName(), var->GetValue(), var->GetError());
         } else {
-            added = Add(var->name, var->value, var->error, var->lowerlimit, var->upperlimit);
+            added = Add(var->GetName(), var->GetValue(), var->GetError(), var->GetLowerLimit(), var->GetUpperLimit());
         }
         
         if(!added)
-            throw std::runtime_error("The name " + var->name + " appears more than once!");
+            throw std::runtime_error("The name " + var->GetName() + " appears more than once!");
         
-        var->setFitterIndex(Index(var->name));
+        var->SetFitterIndex(Index(var->GetName()));
     }
     
 }
     
 void Params::SetGooFitParams(const Minuit2::MnUserParameterState& input) {
     for(Variable* var : vars_) {
-        size_t counter = var->getFitterIndex();
-        var->value = input.Value(counter);
-        var->error = input.Error(counter);
+        size_t counter = var->GetFitterIndex();
+        var->SetValue(input.Value(counter));
+        var->SetError(input.Error(counter));
         SetValue(counter, var->value);
         SetError(counter, var->error);
     }

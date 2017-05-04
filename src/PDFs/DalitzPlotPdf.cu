@@ -220,18 +220,18 @@ __host__ fptype DalitzPlotPdf::normalize() const {
     // don't get zeroes through multiplying by the normFactor.
     MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
-    int totalBins = _m12->numbins * _m13->numbins;
+    int totalBins = _m12->GetNumBins() * _m13->GetNumBins();
 
     if(!dalitzNormRange) {
         gooMalloc((void**) &dalitzNormRange, 6*sizeof(fptype));
 
         fptype* host_norms = new fptype[6];
-        host_norms[0] = _m12->lowerlimit;
-        host_norms[1] = _m12->upperlimit;
-        host_norms[2] = _m12->numbins;
-        host_norms[3] = _m13->lowerlimit;
-        host_norms[4] = _m13->upperlimit;
-        host_norms[5] = _m13->numbins;
+        host_norms[0] = _m12->GetLowerLimit();
+        host_norms[1] = _m12->GetUpperLimit();
+        host_norms[2] = _m12->GetNumBins();
+        host_norms[3] = _m13->GetLowerLimit();
+        host_norms[4] = _m13->GetUpperLimit();
+        host_norms[5] = _m13->GetNumBins();
         MEMCPY(dalitzNormRange, host_norms, 6*sizeof(fptype), cudaMemcpyHostToDevice);
         delete[] host_norms;
     }
@@ -310,8 +310,8 @@ __host__ fptype DalitzPlotPdf::normalize() const {
 
     fptype ret = sumIntegral.real(); // That complex number is a square, so it's fully real
     double binSizeFactor = 1;
-    binSizeFactor *= ((_m12->upperlimit - _m12->lowerlimit) / _m12->numbins);
-    binSizeFactor *= ((_m13->upperlimit - _m13->lowerlimit) / _m13->numbins);
+    binSizeFactor *= _m12->GetBinSize();
+    binSizeFactor *= _m13->GetBinSize();
     ret *= binSizeFactor;
 
     host_normalisation[parameters] = 1.0/ret;
@@ -326,7 +326,7 @@ SpecialResonanceIntegrator::SpecialResonanceIntegrator(int pIdx, unsigned int ri
 {}
 
 __device__ thrust::complex<fptype> SpecialResonanceIntegrator::operator()(thrust::tuple<int, fptype*> t) const {
-    // Bin index, base address [lower, upper, numbins]
+    // Bin index, base address [lower, upper,GetNumBins]
     // Notice that this is basically MetricTaker::operator (binned) with the special-case knowledge
     // that event size is two, and that the function to call is dev_DalitzPlot_calcIntegrals.
 

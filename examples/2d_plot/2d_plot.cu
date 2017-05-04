@@ -50,12 +50,12 @@ int main(int argc, char** argv) {
     UnbinnedDataSet data({&xvar, &yvar});
 
     TH2F dataHist("dataHist", "",
-                  xvar.numbins, xvar.lowerlimit, xvar.upperlimit,
-                  yvar.numbins, yvar.lowerlimit, yvar.upperlimit);
+                  xvar.GetNumBins(), xvar.GetLowerLimit(), xvar.GetUpperLimit(),
+                  yvar.GetNumBins(), yvar.GetLowerLimit(), yvar.GetUpperLimit());
     TH1F xvarHist("xvarHist", "",
-                  xvar.numbins, xvar.lowerlimit, xvar.upperlimit);
+                  xvar.GetNumBins(), xvar.GetLowerLimit(), xvar.GetUpperLimit());
     TH1F yvarHist("yvarHist", "",
-                  yvar.numbins, yvar.lowerlimit, yvar.upperlimit);
+                  yvar.GetNumBins(), yvar.GetLowerLimit(), yvar.GetUpperLimit());
 
     dataHist.SetStats(false);
     xvarHist.SetStats(false);
@@ -91,12 +91,12 @@ int main(int argc, char** argv) {
     fitter.fit();
 
     TH2F pdfHist("pdfHist", "",
-                 xvar.numbins, xvar.lowerlimit, xvar.upperlimit,
-                 yvar.numbins, yvar.lowerlimit, yvar.upperlimit);
+                 xvar.GetNumBins(), xvar.lowerlimit, xvar.upperlimit,
+                 yvar.GetNumBins(), yvar.lowerlimit, yvar.upperlimit);
     TH1F xpdfHist("xpdfHist", "",
-                  xvar.numbins, xvar.lowerlimit, xvar.upperlimit);
+                  xvar.GetNumBins(), xvar.lowerlimit, xvar.upperlimit);
     TH1F ypdfHist("ypdfHist", "",
-                  yvar.numbins, yvar.lowerlimit, yvar.upperlimit);
+                  yvar.GetNumBins(), yvar.lowerlimit, yvar.upperlimit);
 
     pdfHist.SetStats(false);
     xpdfHist.SetStats(false);
@@ -119,20 +119,20 @@ int main(int argc, char** argv) {
         totalPdf += pdfVals[0][i];
     }
 
-    for(int i = 0; i < xvar.numbins; ++i) {
+    for(int i = 0; i < xvar.GetNumBins(); ++i) {
         double val = xpdfHist.GetBinContent(i+1);
         val /= totalPdf;
         val *= totalData;
         xpdfHist.SetBinContent(i+1, val);
     }
 
-    for(int i = 0; i < yvar.numbins; ++i) {
+    for(int i = 0; i < yvar.GetNumBins(); ++i) {
         double val = ypdfHist.GetBinContent(i+1);
         val /= totalPdf;
         val *= totalData;
         ypdfHist.SetBinContent(i+1, val);
 
-        for(int j = 0; j < xvar.numbins; ++j) {
+        for(int j = 0; j < xvar.GetNumBins(); ++j) {
             val = pdfHist.GetBinContent(j+1, i+1);
             val /= totalPdf;
             val *= totalData;
@@ -143,8 +143,8 @@ int main(int argc, char** argv) {
     pdfHist.Draw("colz");
     foo.SaveAs("pdf.png");
 
-    for(int i = 0; i < yvar.numbins; ++i) {
-        for(int j = 0; j < xvar.numbins; ++j) {
+    for(int i = 0; i < yvar.GetNumBins(); ++i) {
+        for(int j = 0; j < xvar.GetNumBins(); ++j) {
             double pval = pdfHist.GetBinContent(j+1, i+1);
             double dval = dataHist.GetBinContent(j+1, i+1);
             pval -= dval;

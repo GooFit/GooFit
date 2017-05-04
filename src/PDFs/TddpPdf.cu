@@ -382,8 +382,8 @@ __host__ TddpPdf::TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Va
 
     fptype decayConstants[8];
     decayConstants[5] = 0;
-    decayConstants[6] = md0->lowerlimit;
-    decayConstants[7] = (md0->upperlimit - md0->lowerlimit) / r.size();
+    decayConstants[6] = md0->GetLowerLimit();
+    decayConstants[7] = (md0->GetUpperLimit() - md0->GetLowerLimit()) / r.size();
 
     if(mistag) {
         registerObservable(mistag);
@@ -510,20 +510,20 @@ __host__ fptype TddpPdf::normalize() const {
     // Copy at this time to ensure that the SpecialWaveCalculators, which need the efficiency,
     // don't get zeroes through multiplying by the normFactor.
     MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    //std::cout << "TDDP normalisation " << getName() << std::endl;
+    //std::cout << "TDDP normalisation " << GetName() << std::endl;
 
-    int totalBins = _m12->numbins * _m13->numbins;
+    int totalBins = _m12->GetNumBins() * _m13->GetNumBins();
 
     if(!dalitzNormRange) {
         gooMalloc((void**) &dalitzNormRange, 6*sizeof(fptype));
 
         fptype* host_norms = new fptype[6];
-        host_norms[0] = _m12->lowerlimit;
-        host_norms[1] = _m12->upperlimit;
-        host_norms[2] = _m12->numbins;
-        host_norms[3] = _m13->lowerlimit;
-        host_norms[4] = _m13->upperlimit;
-        host_norms[5] = _m13->numbins;
+        host_norms[0] = _m12->GetLowerLimit();
+        host_norms[1] = _m12->GetUpperLimit();
+        host_norms[2] = _m12->GetNumBins();
+        host_norms[3] = _m13->GetLowerLimit();
+        host_norms[4] = _m13->GetUpperLimit();
+        host_norms[5] = _m13->GetNumBins();
         MEMCPY(dalitzNormRange, host_norms, 6*sizeof(fptype), cudaMemcpyHostToDevice);
         delete[] host_norms;
     }
@@ -655,8 +655,8 @@ __host__ fptype TddpPdf::normalize() const {
                                            xmixing, ymixing);
 
     double binSizeFactor = 1;
-    binSizeFactor *= ((_m12->upperlimit - _m12->lowerlimit) / _m12->numbins);
-    binSizeFactor *= ((_m13->upperlimit - _m13->lowerlimit) / _m13->numbins);
+    binSizeFactor *= ((_m12->GetUpperLimit() - _m12->GetLowerLimit()) / _m12->GetNumBins());
+    binSizeFactor *= ((_m13->GetUpperLimit() - _m13->GetLowerLimit()) / _m13->GetNumBins());
     ret *= binSizeFactor;
 
     host_normalisation[parameters] = 1.0/ret;
@@ -672,7 +672,7 @@ SpecialDalitzIntegrator::SpecialDalitzIntegrator(int pIdx, unsigned int ri, unsi
 {}
 
 __device__ ThreeComplex SpecialDalitzIntegrator::operator()(thrust::tuple<int, fptype*> t) const {
-    // Bin index, base address [lower, upper, numbins]
+    // Bin index, base address [lower, upper,GetNumBins]
     // Notice that this is basically MetricTaker::operator (binned) with the special-case knowledge
     // that event size is two, and that the function to call is dev_Tddp_calcIntegrals.
 

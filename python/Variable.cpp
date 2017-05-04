@@ -22,7 +22,7 @@ void init_Variable(py::module &m) {
         .def(py::init<std::string, fptype, fptype, fptype, fptype>())
         .def_readwrite("error", &Variable::error)
         .def_readwrite("upperlimit", &Variable::upperlimit)
-        .def_readwrite("numbins", &Variable::numbins)
+        .def_readwrite(GetNumBins", &Variable:GetNumBins)
         .def_readwrite("fixed", &Variable::fixed)
         .def_readwrite("blind", &Variable::blind)
         .def("__repr__", [](const Variable &v){

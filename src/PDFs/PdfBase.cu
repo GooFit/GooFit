@@ -28,7 +28,7 @@ __host__ void PdfBase::copyParams() {
     std::vector<double> values;
 
     for(Variable* v : pars) {
-        int index = v->getIndex();
+        int index = v->GetIndex();
 
         if(index >= (int) values.size())
             values.resize(index + 1);
@@ -70,7 +70,7 @@ __host__ void PdfBase::initialiseIndices(std::vector<unsigned int> pindices) {
     parameters = totalParams;
     totalParams += (2 + pindices.size() + observables.size());
     /*
-    std::cout << "host_indices after " << getName() << " initialisation : ";
+    std::cout << "host_indices after " << GetName() << " initialisation : ";
     for (int i = 0; i < totalParams; ++i) {
       std::cout << host_indices[i] << " ";
     }
@@ -103,7 +103,7 @@ __host__ void PdfBase::setData(std::vector<std::map<Variable*, fptype>>& data) {
     for(unsigned int i = 0; i < data.size(); ++i) {
         for(Variable*  v : observables) {
             assert(data[i].find(v) != data[i].end());
-            host_array[i*dimensions + v->getIndex()] = data[i][v];
+            host_array[i*dimensions + v->GetIndex()] = data[i][v];
         }
     }
 
@@ -122,8 +122,8 @@ __host__ void PdfBase::recursiveSetIndices() {
     int counter = 0;
 
     for(Variable* v : observables) {
-        host_indices[parameters + 2 + numParams + counter] = v->getIndex();
-        GOOFIT_TRACE("{} set index of {} to {} -> host {}", getName(), v->name, v->index, parameters + 2 + numParams + counter)
+        host_indices[parameters + 2 + numParams + counter] = v->GetIndex();
+        GOOFIT_TRACE("{} set index of {} to {} -> host {}", GetName(), v->name, v->index, parameters + 2 + numParams + counter)
         counter++;
     }
 
@@ -134,13 +134,13 @@ __host__ void PdfBase::setIndices() {
     int counter = 0;
 
     for(Variable* v : observables) {
-        v->setIndex(counter++);
+        v->SetIndex(counter++);
     }
 
     recursiveSetIndices();
     MEMCPY_TO_SYMBOL(paramIndices, host_indices, totalParams*sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
 
-    //std::cout << "host_indices after " << getName() << " observable setIndices : ";
+    //std::cout << "host_indices after " << GetName() << " observable setIndices : ";
     //for (int i = 0; i < totalParams; ++i) {
     //std::cout << host_indices[i] << " ";
     //}
@@ -206,8 +206,8 @@ __host__ void PdfBase::setData(UnbinnedDataSet* data) {
     //Transfer into our whole buffer
     for(int i = 0; i < numEntries; ++i) {
         for(Variable* v : observables) {
-            fptype currVal = data->getValue(v, i);
-            host_array[i*dimensions + v->getIndex()] = currVal;
+            fptype currVal = data->GetValue(v, i);
+            host_array[i*dimensions + v->GetIndex()] = currVal;
         }
     }
 
@@ -303,7 +303,7 @@ __host__ void PdfBase::setData(BinnedDataSet* data) {
 
     for(unsigned int i = 0; i < numEntries; ++i) {
         for(Variable* v : observables) {
-            host_array[i*dimensions + v->getIndex()] = data->getBinCenter(v, i);
+            host_array[i*dimensions + v->GetIndex()] = data->getBinCenter(v, i);
         }
 
         host_array[i*dimensions + observables.size() + 0] = data->getBinContent(i);
@@ -358,9 +358,9 @@ __host__ void PdfBase::generateNormRange() {
     // it easy to pass MetricTaker a range without worrying about which parts
     // to use.
     for(Variable* v : observables) {
-        host_norms[3*counter+0] = v->lowerlimit;
-        host_norms[3*counter+1] = v->upperlimit;
-        host_norms[3*counter+2] = integrationBins > 0 ? integrationBins : v->numbins;
+        host_norms[3*counter+0] = v->GetLowerLimit();
+        host_norms[3*counter+1] = v->GetUpperLimit();
+        host_norms[3*counter+2] = integrationBins > 0 ? integrationBins : v->GetNumBins();
         counter++;
     }
 
@@ -385,7 +385,7 @@ __host__ void PdfBase::printProfileInfo(bool topLevel) {
             return;
         }
 
-        std::cout << getName() << " : " << getFunctionIndex() << " " << host_timeHist[100*getFunctionIndex() +
+        std::cout << GetName() << " : " << getFunctionIndex() << " " << host_timeHist[100*getFunctionIndex() +
                                          getParameterIndex()] << std::endl;
 
         for(unsigned int i = 0; i < components.size(); ++i) {

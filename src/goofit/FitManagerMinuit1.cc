@@ -15,15 +15,15 @@ Minuit1::Minuit1(PdfBase* pdfPointer) : TMinuit(max_index(pdfPointer->getParamet
     int counter = 0;
     
     for(Variable* var : vars) {
-        var->setFitterIndex(counter);
+        var->SetFitterIndex(counter);
         DefineParameter(counter,
                                 var->name.c_str(),
                                 var->value,
                                 var->error,
-                                var->lowerlimit,
-                                var->upperlimit);
+                                var->GetLowerLimit(),
+                                var->GetUpperLimit());
         
-        if(var->fixed)
+        if(var->IsFixed())
             FixParameter(counter);
         
         counter++;
@@ -47,12 +47,12 @@ Int_t Minuit1::Eval(
     gooPars.resize(max_index(vars)+1);
     
     for(Variable* var : vars) {
-        if(std::isnan(pars.at(var->getFitterIndex())))
-            GOOFIT_WARN("Variable {} at {} is NaN", var->name, var->getIndex());
+        if(std::isnan(pars.at(var->GetFitterIndex())))
+            GOOFIT_WARN("Variable {} at {} is NaN", var->name, var->GetIndex());
         
-        var->unchanged_ = var->value == pars.at(var->getFitterIndex());
-        var->value = pars.at(var->getFitterIndex()); //  + var->blind
-        gooPars.at(var->getIndex()) = var->value;
+        var->SetChanged(var->value != pars.at(var->GetFitterIndex()));
+        var->SetValue(pars.at(var->GetFitterIndex())); //  + var->blind
+        gooPars.at(var->GetIndex()) = var->value;
     }
     
     pdfPointer->copyParams(gooPars);
@@ -67,7 +67,7 @@ void FitManagerMinuit1::fit() {
     host_callnumber = 0;
     
     for(Variable* var : minuit_.getVaraibles())
-        var->unchanged_ = false;
+        var->SetChanged(true);
 
     std::cout << GooFit::gray << GooFit::bold;
     
@@ -95,7 +95,7 @@ void FitManagerMinuit1::fit() {
     std::cout << GooFit::reset;
     
     for(Variable* var : minuit_.getVaraibles())
-        minuit_.GetParameter(var->getFitterIndex(), var->value, var->error);
+        minuit_.GetParameter(var->GetFitterIndex(), var->value, var->error);
 
 }
 

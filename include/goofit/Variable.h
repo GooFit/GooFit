@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <vector>
 
+#include "goofit/Error.h"
 #include "goofit/GlobalCudaDefines.h"
 
 class Indexable {
@@ -13,17 +14,25 @@ public:
     virtual ~Indexable() {}
     
     /// Get the GooFit index
-    int getIndex() const {return index;}
-    
+    int GetIndex() const {return index;}
     /// Set the GooFit index
-    void setIndex(int value) {index = value;}
+    void SetIndex(int value) {index = value;}
     
     /// Get the index from the fitter
-    int getFitterIndex() const {return fitter_index;}
-    
+    int GetFitterIndex() const {return fitter_index;}
     /// Set the index (should be done by the fitter)
-    void setFitterIndex(int value) {fitter_index = value;}
+    void SetFitterIndex(int value) {fitter_index = value;}
 
+    /// Get the name
+    const std::string& GetName() const {return name;}
+    /// Set the name
+    void SetName(const std::string& val) {name = val;}
+    
+    /// Get the value
+    fptype GetValue() const {return value;}
+    /// Set the value
+    void SetValue(fptype val) {value = val;}
+    
     /// The variable name. Should be unique
     std::string name;
     
@@ -78,24 +87,71 @@ public:
     
     
     virtual ~Variable() = default;
-
+    
+    /// Get the error
+    fptype GetError() const {return error;}
+    /// Set the error
+    void SetError(fptype val) {error = val;}
+    
+    /// Get the upper limit
+    fptype GetUpperLimit() const {return upperlimit;}
+    /// Set the upper limit
+    void SetUpperLimit(fptype val) {upperlimit = val;}
+    
+    /// Get the lower limit
+    fptype GetLowerLimit() const {return lowerlimit;}
+    /// Set the lower limit
+    void SetLowerLimit(fptype val) {lowerlimit = val;}
+    
+    /// Check to see if the value has changed this iteration (always true the first time)
+    bool Changed() const {return changed_;}
+    
+    /// Get and set the number of bins
+    void SetNumBins(size_t num) {
+        if(locked_)
+            throw GooFit::GeneralError("BinnedDataSet does not allow the bins to be changed after creation");
+       numbins = num;
+    }
+    size_t GetNumBins() const {return numbins;}
+    
+    /// Check to see if this is a constant
+    bool IsFixed() const {return fixed;}
+    
+    /// Set the fixedness of a variable (needed for GooPdf)
+    void SetFixed(bool fix) {fixed = fix;}
+    
+    
+    /// Check to see if this has been changed since last iteration
+    void SetChanged(bool val=true) {changed_ = val;}
+    
+    
+    /// Get the bin size, (upper-lower) / bins
+    fptype GetBinSize() const {return (GetUpperLimit() - GetLowerLimit()) / GetNumBins();}
+    
+    /// Currently deactivated
+    void SetBlind(fptype val) {blind = val;}
+    
     fptype error;
     fptype upperlimit;
     fptype lowerlimit;
     
-    int numbins {100};
+protected:
+    
+    /// A blinding value to add (disabled at the moment, TODO)
+    fptype blind {0};
+    
+    /// The number of bins (mostly for BinnedData, or plotting help)
+    size_t numbins;
+    
+    /// True if the value was unchanged since the last iteration
+    bool changed_ {true};
     
     /// This "fixes" the variable (constant)
     bool fixed {false};
     
-    /// A blinding value to add
-    fptype blind {0};
+    /// You can no longer change the binning after a BinnedDataSet is created
+    bool locked_ {false};
     
-    /// True if the value was unchanged since the last iteration
-    bool unchanged_ {false};
-    
-    /// Check to see if the value has changed this iteration (always true the first time)
-    bool changed() const {return !unchanged_;}
 };
 
 /// This is used to track event number for MPI versions.
@@ -117,13 +173,13 @@ public:
 };
 
 inline std::ostream& operator<< (std::ostream& o, const Variable& var) {
-    o << var.name << ": " << var.value << " +/- " << var.error;
+    o << var.GetName() << ": " << var.GetValue() << " +/- " << var.GetError();
     if(!var.fixed)
-        o << " [" << var.lowerlimit << ", " << var.upperlimit << "]";
-    if(var.getIndex() >= 0)
-        o << " GooFit index: " << var.getIndex();
-    if(var.getFitterIndex() >= 0)
-        o << " Fitter index: " << var.getFitterIndex();
+        o << " [" << var.GetLowerLimit() << ", " << var.GetUpperLimit() << "]";
+    if(var.GetIndex() >= 0)
+        o << " GooFit index: " << var.GetIndex();
+    if(var.GetFitterIndex() >= 0)
+        o << " Fitter index: " << var.GetFitterIndex();
 
     return o;
 }
@@ -134,6 +190,6 @@ inline int max_index(const std::vector<Variable*> &vars) {
     const Variable* max_ind_ptr = *std::max_element(std::begin(vars),
                                               std::end(vars),
                                               [](const Variable *a, const Variable *b)
-                                              {return a->getIndex() < b->getIndex();});
-    return max_ind_ptr->getIndex();
+                                              {return a->GetIndex() < b->GetIndex();});
+    return max_ind_ptr->GetIndex();
 }

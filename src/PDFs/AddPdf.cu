@@ -133,7 +133,7 @@ AddPdf::AddPdf(std::string n, Variable* frac1, PdfBase* func1, PdfBase* func2)
 }
 
 __host__ fptype AddPdf::normalize() const {
-    //if (cpuDebug & 1) std::cout << "Normalising AddPdf " << getName() << std::endl;
+    //if (cpuDebug & 1) std::cout << "Normalising AddPdf " << GetName() << std::endl;
 
     fptype ret = 0;
     fptype totalWeight = 0;
@@ -169,7 +169,7 @@ __host__ fptype AddPdf::normalize() const {
         }
     }
 
-    //if (cpuDebug & 1) std::cout << getName() << " integral returning " << ret << std::endl;
+    //if (cpuDebug & 1) std::cout << GetName() << " integral returning " << ret << std::endl;
     return ret;
 }
 

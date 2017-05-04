@@ -45,6 +45,6 @@ public:
         host_indices[parameters + 1] = idx;
     }
     bool operator==(const SpinFactor& S) const {
-        return (S.getName() == getName() and S._SF == _SF and S._P0 == _P0 and S._P1 == _P1 and S._P2 == _P2 and S._P3 == _P3);
+        return (S.GetName() == GetName() and S._SF == _SF and S._P0 == _P0 and S._P1 == _P1 and S._P2 == _P2 and S._P3 == _P3);
     }
 };

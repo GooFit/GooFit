@@ -54,8 +54,8 @@ __host__ KinLimitBWPdf::KinLimitBWPdf(std::string n, Variable* _x, Variable* mea
     registerParameter(width);
 
     std::vector<unsigned int> pindices;
-    pindices.push_back(mean->getIndex());
-    pindices.push_back(width->getIndex());
+    pindices.push_back(mean->GetIndex());
+    pindices.push_back(width->GetIndex());
     pindices.push_back(registerConstants(2));
     setMasses(1.8645, 0.13957);
     GET_FUNCTION_ADDR(ptr_to_KinLimitBW);

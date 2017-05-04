@@ -149,11 +149,11 @@ __host__ InterHistPdf::InterHistPdf(std::string n,
 
         pindices.push_back(cIndex + 2*varIndex + 0);
         pindices.push_back(cIndex + 2*varIndex + 1);
-        pindices.push_back(var->numbins);
+        pindices.push_back(var->GetNumBins());
 
         // NB, do not put cIndex here, it is accounted for by the offset in MEMCPY_TO_SYMBOL below.
-        host_constants[2*varIndex + 0] = var->lowerlimit;
-        host_constants[2*varIndex + 1] = (var->upperlimit - var->lowerlimit) / var->numbins;
+        host_constants[2*varIndex + 0] = var->GetLowerLimit();
+        host_constants[2*varIndex + 1] = var->GetBinSize();
         varIndex++;
     }
 

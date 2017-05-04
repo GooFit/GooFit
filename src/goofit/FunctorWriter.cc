@@ -11,12 +11,12 @@ void writeToFile(PdfBase* pdf, const char* fname) {
     writer.open(fname);
 
     for(Variable* p : params) {
-        writer << p->name << " "
-               << p->value << " "
-               << p->error << " "
-               << p->numbins << " "
-               << p->lowerlimit << " "
-               << p->upperlimit
+        writer << p->GetName() << " "
+               << p->GetValue() << " "
+               << p->GetError() << " "
+               << p->GetNumBins() << " "
+               << p->GetLowerLimit() << " "
+               << p->GetUpperLimit()
                << std::endl;
     }
 
@@ -46,13 +46,22 @@ void readFromFile(PdfBase* pdf, const char* fname) {
             break;
 
         Variable* var = tempMap[buffer];
+        
+        fptype value, error, lowerlimit, upperlimit;
+        size_t numbins;
 
         if(var) {
-            reader >> var->value
-                   >> var->error
-                   >> var->numbins
-                   >> var->lowerlimit
-                   >> var->upperlimit;
+            reader >> value
+                   >> error
+                   >> numbins
+                   >> lowerlimit
+                   >> upperlimit;
+            
+            var->SetValue(value);
+            var->SetError(error);
+            var->SetNumBins(numbins);
+            var->SetLowerLimit(lowerlimit);
+            var->SetUpperLimit(upperlimit);
 
             if(++numSet == tempMap.size())
                 break;

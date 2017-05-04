@@ -43,7 +43,7 @@ public:
         return numEventsAdded;
     }
 
-    std::string getName() const {
+    std::string GetName() const {
         return name;
     }
 

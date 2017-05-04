@@ -53,21 +53,21 @@ int numHists = 0;
 TH1F* plotComponent(GooPdf* toPlot, double normFactor) {
 //  static char name[1000];
 //  static int numHists = 0;
-    sprintf(histName, "%s_hist_%i", toPlot->getName().c_str(), numHists++);
-    TH1F* ret = new TH1F(histName, "", dm->numbins, dm->lowerlimit, dm->upperlimit);
+    sprintf(histName, "%s_hist_%i", toPlot->GetName().c_str(), numHists++);
+    TH1F* ret = new TH1F(histName, "", dm->GetNumBins(), dm->GetLowerLimit(), dm->GetUpperLimit());
     std::vector<fptype> binValues;
     toPlot->evaluateAtPoints(dm, binValues);
 
     pdf_int = 0;
-    double step = dm->upperlimit - dm->lowerlimit;
-    step /= dm->numbins;
+    double step = dm->GetUpperLimit() - dm->GetLowerLimit();
+    step /= dm->GetNumBins();
 
-    for(int i = 1; i <= dm->numbins; ++i) {
-        //std::cout << name << " " << i << " : " << binValues[i-1] << " " << (dm->lowerlimit + (i-1)*step) << std::endl;
+    for(int i = 1; i <= dm->GetNumBins(); ++i) {
+        //std::cout << name << " " << i << " : " << binValues[i-1] << " " << (dm->GetLowerLimit() + (i-1)*step) << std::endl;
         pdf_int += binValues[i-1];
     }
 
-    for(int i = 1; i <= dm->numbins; ++i)
+    for(int i = 1; i <= dm->GetNumBins(); ++i)
         ret->SetBinContent(i, binValues[i-1] * normFactor / pdf_int);
 
     return ret;
@@ -124,10 +124,10 @@ void getData(GooFit::Application &app) {
         if(datareader.eof())
             break;
 
-        if(currDM > dm->upperlimit)
+        if(currDM > dm->GetUpperLimit())
             continue;
 
-        if(currDM < dm->lowerlimit)
+        if(currDM < dm->GetLowerLimit())
             continue;
 
         data->addEvent(currDM);
@@ -142,8 +142,8 @@ void getData(GooFit::Application &app) {
 
 int CudaMinimise(int fitType, GooFit::Application &app) {
     dm = new Variable("dm", 0.1395, 0.1665);
-    dm->numbins = 2700;
-    //dm->numbins = 540;
+    dm->SetNumBins(2700);
+    //dm->GetNumBins() = 540;
 
     getMCData(app);
     std::cout << "Done getting MC\n";
@@ -201,18 +201,18 @@ int CudaMinimise(int fitType, GooFit::Application &app) {
     //ROOT::Minuit2::FunctionMinimum* min = mcpdf.fit();
     mcpdf.fit();
 
-    mean1.fixed = true;
-    mean2.fixed = true;
-    mean3.fixed = true;
-    sigma1.fixed = true;
-    sigma2.fixed = true;
-    sigma3.fixed = true;
-    pimass.fixed = true;
-    aslope.fixed = true;
-    gfrac1.fixed = true;
-    gfrac2.fixed = true;
-    afrac.fixed = true;
-    apower.fixed = true;
+    mean1.SetFixed(true);
+    mean2.SetFixed(true);
+    mean3.SetFixed(true);
+    sigma1.SetFixed(true);
+    sigma2.SetFixed(true);
+    sigma3.SetFixed(true);
+    pimass.SetFixed(true);
+    aslope.SetFixed(true);
+    gfrac1.SetFixed(true);
+    gfrac2.SetFixed(true);
+    afrac.SetFixed(true);
+    apower.SetFixed(true);
 
     Variable dummyzero("kpi_rd_dummyzero", 0);
     Variable delta("kpi_rd_delta", 0.000002, -0.00005, 0.00005);
@@ -306,9 +306,9 @@ int CudaMinimise(int fitType, GooFit::Application &app) {
       signal1.setIntegrationConstants(0.1365, 0.1665, 0.00003);
       signal2.setIntegrationConstants(0.1365, 0.1665, 0.00003);
       signal3.setIntegrationConstants(0.1365, 0.1665, 0.00003);
-      dm->numbins = 300;
-      dm->lowerlimit = 0.1365;
-      dm->upperlimit = 0.1665;
+      dm->GetNumBins() = 300;
+      dm->GetLowerLimit() = 0.1365;
+      dm->GetUpperLimit() = 0.1665;
       std::cout << bkg_frac.value << std::endl;
 
       // plotComponent seems broken?
@@ -334,9 +334,9 @@ int CudaMinimise(int fitType, GooFit::Application &app) {
     dm->value = 0.1568;
     /*
       std::cout << "PDF: "
-    	    << (dat_int/totalIntegral) * total.getValue() << " "
-    	    << (1-bkg_frac.value)*(dat_int/sigIntegral)*signal.getValue() << " "
-    	    << bkg_frac.value*(dat_int/bkgIntegral)*bkg.getValue() << " | "
+    	    << (dat_int/totalIntegral) * total.GetValue() << " "
+    	    << (1-bkg_frac.value)*(dat_int/sigIntegral)*signal.GetValue() << " "
+    	    << bkg_frac.value*(dat_int/bkgIntegral)*bkg.GetValue() << " | "
     	    << dat_int << " " << sigIntegral << " " << bkgIntegral << " " << totalIntegral << " | "
     	    << sig_int << " " << bkg_int << " " << tot_int  << " | "
     	    << dpdf_hist->GetBinContent(204) << " " << sign_hist->GetBinContent(204) << " " << barg_hist->GetBinContent(204) << " "

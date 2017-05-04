@@ -50,7 +50,7 @@ public:
     __host__ void copyParams();
     __host__ void copyNormFactors() const;
     __host__ void generateNormRange();
-    __host__ std::string getName() const {
+    __host__ std::string GetName() const {
         return name;
     }
 

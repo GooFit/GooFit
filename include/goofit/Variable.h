@@ -141,7 +141,7 @@ protected:
     fptype blind {0};
     
     /// The number of bins (mostly for BinnedData, or plotting help)
-    size_t numbins;
+    size_t numbins {100};
     
     /// True if the value was unchanged since the last iteration
     bool changed_ {true};

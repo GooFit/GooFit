@@ -129,7 +129,7 @@ size_t BinnedDataSet::getNumBins() const {
     unsigned int ret = 1;
 
     for(size_t i=0; i<variables.size(); i++) {
-        ret *= cachedNumBins[i];
+        ret *= cachedNumBins.at(i);
     }
 
     return ret;

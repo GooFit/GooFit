@@ -385,7 +385,7 @@ __host__ void GooPdf::scan(Variable* var, std::vector<fptype>& values) {
 }
 
 __host__ void GooPdf::setParameterConstantness(bool constant) {
-    Variable_v pars = getParameters();
+    std::vector<Variable*> pars = getParameters();
 
     for(Variable* p : pars) {
         p->fixed = constant;
@@ -653,7 +653,7 @@ __host__ void make_a_grid(std::vector<Variable*> ret, UnbinnedDataSet &grid) {
 
 
 __host__ UnbinnedDataSet GooPdf::makeGrid() {
-    Variable_v ret = getObservables();
+    std::vector<Variable*> ret = getObservables();
     
     UnbinnedDataSet grid{ret};
     

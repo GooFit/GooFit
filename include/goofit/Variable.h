@@ -1,9 +1,9 @@
 #pragma once
 
 #include <string>
-#include <vector>
 #include <iostream>
 #include <algorithm>
+#include <vector>
 
 #include "goofit/GlobalCudaDefines.h"
 
@@ -98,8 +98,6 @@ public:
     bool changed() const {return !unchanged_;}
 };
 
-typedef std::vector<Variable*> Variable_v;
-
 /// This is used to track event number for MPI versions.
 /// A cast is done to know whether the values need to be fixed.
 class CountingVariable : public Variable {
@@ -133,7 +131,7 @@ inline std::ostream& operator<< (std::ostream& o, const Variable& var) {
 
 /// Get the max index of a variable from a list
 inline int max_index(const std::vector<Variable*> &vars) {
-    Variable* max_ind_ptr = *std::max_element(std::begin(vars),
+    const Variable* max_ind_ptr = *std::max_element(std::begin(vars),
                                               std::end(vars),
                                               [](const Variable *a, const Variable *b)
                                               {return a->getIndex() < b->getIndex();});

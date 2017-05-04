@@ -5,7 +5,7 @@
 #include "goofit/Variable.h"
 
 void writeToFile(PdfBase* pdf, const char* fname) {
-    Variable_v params = pdf->getParameters();
+    std::vector<Variable*> params = pdf->getParameters();
 
     std::ofstream writer;
     writer.open(fname);
@@ -25,7 +25,7 @@ void writeToFile(PdfBase* pdf, const char* fname) {
 
 
 void readFromFile(PdfBase* pdf, const char* fname) {
-    Variable_v params = pdf->getParameters();
+    std::vector<Variable*> params = pdf->getParameters();
 
     std::map<std::string, Variable*> tempMap;
 

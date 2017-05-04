@@ -101,16 +101,16 @@ __host__ void PdfBase::unregisterParameter(Variable* var) {
 }
 
 
-__host__ Variable_v PdfBase::getParameters() const {
+__host__ std::vector<Variable*> PdfBase::getParameters() const {
     
     std::set<Variable*> ret {parameterList.begin(), parameterList.end()};
     
     
     for(const PdfBase* comp : components) {
-        Variable_v sub_comp = comp->getParameters();
+        std::vector<Variable*> sub_comp = comp->getParameters();
         ret.insert(sub_comp.begin(), sub_comp.end());
     }
-    return Variable_v(ret.begin(), ret.end());
+    return std::vector<Variable*>(ret.begin(), ret.end());
 }
 
 
@@ -130,16 +130,16 @@ __host__ Variable* PdfBase::getParameterByName(std::string n) const {
     return 0;
 }
 
-__host__ Variable_v PdfBase::getObservables() const {
+__host__ std::vector<Variable*> PdfBase::getObservables() const {
     std::set<Variable*> ret {observables.begin(), observables.end()};
 
 
     for(const PdfBase* comp : components) {
-        Variable_v sub_comp = comp->getObservables();
+        std::vector<Variable*> sub_comp = comp->getObservables();
         ret.insert(sub_comp.begin(), sub_comp.end());
     }
     
-    return Variable_v(ret.begin(), ret.end());
+    return std::vector<Variable*>(ret.begin(), ret.end());
 }
 
 __host__ unsigned int PdfBase::registerConstants(unsigned int amount) {
@@ -182,7 +182,7 @@ void abortWithCudaPrintFlush(std::string file, int line, std::string reason, con
     std::cout << GooFit::reset << GooFit::red << "Abort called from " << file << " line " << line << " due to " << reason << std::endl;
     
     if(pdf) {
-        Variable_v pars = pdf->getParameters();
+        std::vector<Variable*> pars = pdf->getParameters();
         std::cout << "Parameters of " << pdf->getName() << " : \n";
         
         for(Variable* v : pars) {

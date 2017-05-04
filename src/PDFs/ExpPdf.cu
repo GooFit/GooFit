@@ -1,4 +1,5 @@
 #include "goofit/PDFs/ExpPdf.h"
+#include <cassert>
 
 __device__ fptype device_Exp(fptype* evt, fptype* p, unsigned int* indices) {
     fptype x = evt[indices[2 + indices[0]]];

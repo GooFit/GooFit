@@ -10,7 +10,7 @@ namespace GooFit {
     
 class Minuit1 : public TMinuit {
     PdfBase* pdfPointer;
-    Variable_v vars;
+    std::vector<Variable*> vars;
     
 public:
     Minuit1(PdfBase* pdfPointer);
@@ -23,7 +23,7 @@ public:
                        ) override;
     
     // Get a copy of the list of variables
-    Variable_v getVaraibles() const {return vars;};
+    std::vector<Variable*> getVaraibles() const {return vars;};
 };
 
 class FitManagerMinuit1 {

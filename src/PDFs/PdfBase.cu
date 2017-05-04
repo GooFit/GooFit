@@ -24,7 +24,7 @@ __host__ void PdfBase::copyParams(const std::vector<double>& pars) const {
 
 __host__ void PdfBase::copyParams() {
     // Copies values of Variable objects
-    Variable_v pars = getParameters();
+    std::vector<Variable*> pars = getParameters();
     std::vector<double> values;
 
     for(Variable* v : pars) {

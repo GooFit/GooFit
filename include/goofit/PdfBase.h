@@ -54,8 +54,8 @@ public:
         return name;
     }
 
-    __host__ virtual Variable_v getObservables() const;
-    __host__ virtual Variable_v getParameters() const;
+    __host__ virtual std::vector<Variable*> getObservables() const;
+    __host__ virtual std::vector<Variable*> getParameters() const;
     __host__ Variable* getParameterByName(std::string n) const;
     __host__ int getSpecialMask() const {
         return specialMask;
@@ -94,8 +94,8 @@ protected:
     fptype* normRanges {0};       //< This is specific to functor instead of variable so that MetricTaker::operator needn't use indices.
     unsigned int parameters;  //< Stores index, in 'paramIndices', where this functor's information begins.
     unsigned int cIndex;      //< Stores location of constants.
-    Variable_v observables;
-    Variable_v parameterList;
+    std::vector<Variable*> observables;
+    std::vector<Variable*> parameterList;
     FitControl* fitControl {nullptr};
     std::vector<PdfBase*> components;
     int integrationBins {-1};

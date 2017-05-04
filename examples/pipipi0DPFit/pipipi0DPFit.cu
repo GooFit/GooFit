@@ -2020,7 +2020,7 @@ void makeDalitzPlots(GooPdf* overallSignal, std::string plotdir = "./plots_from_
     std::cout << "Max bin content: " << maxBinContent << " (" << bestI << ", " << bestJ << ")\n";
 
     bool dependsOnSigma = true;
-    Variable_v obses = overallSignal->getObservables();
+    std::vector<Variable*> obses = overallSignal->getObservables();
 
     if(std::find(obses.begin(), obses.end(), sigma) == obses.end())
         dependsOnSigma = false;
@@ -2732,7 +2732,7 @@ int runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
     loadDataFile(fname);
 
     TRandom donram(42);
-    Variable_v vars = data->getVariables();
+    std::vector<Variable*> vars = data->getVariables();
     UnbinnedDataSet* smearedData = new UnbinnedDataSet(vars);
 
     if(0 != genResolutions) {

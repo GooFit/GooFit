@@ -26,14 +26,14 @@ public:
     // Helper to add 1D events
     virtual void addEvent (fptype val) ;
 
-    Variable_v::const_iterator begin() const {
+    std::vector<Variable*>::const_iterator begin() const {
         return variables.begin();
     }
-    Variable_v::const_iterator end() const {
+    std::vector<Variable*>::const_iterator end() const {
         return variables.end();
     }
     
-    Variable_v getVariables() const;
+    std::vector<Variable*> getVariables() const;
 
     size_t size() const {
         return variables.size();

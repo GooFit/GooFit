@@ -1,5 +1,6 @@
 #include "goofit/PDFs/ProdPdf.h"
 #include <algorithm>
+#include <cassert>
 
 __device__ fptype device_ProdPdfs(fptype* evt, fptype* p, unsigned int* indices) {
     // Index structure is nP | F1 P1 | F2 P2 | ...
@@ -47,7 +48,7 @@ ProdPdf::ProdPdf(std::string n, std::vector<PdfBase*> comps)
 
     observables = getObservables(); // Gathers from components
 
-    Variable_v observableCheck; // Use to check for overlap in observables
+    std::vector<Variable*> observableCheck; // Use to check for overlap in observables
 
     // Indices stores (function index)(function parameter index)(variable index) for each component.
     for(PdfBase* p : comps) {
@@ -57,7 +58,7 @@ ProdPdf::ProdPdf(std::string n, std::vector<PdfBase*> comps)
         if(varOverlaps)
             continue; // Only need to establish this once.
 
-        Variable_v currObses = p->getObservables();
+        std::vector<Variable*> currObses = p->getObservables();
 
         for(Variable* o : currObses) {
             if(find(observableCheck.begin(), observableCheck.end(), o) == observableCheck.end())

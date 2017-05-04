@@ -1,5 +1,11 @@
 # How to contribute to GooFit?
 
+## Adding a library
+
+See [adding a package](doc/ADDING_EXTERN.md).
+
+## Git
+
 GooFit is hosted as a [git](http://git-scm.com) repository on [GitHub](https://github.com).
 
 If you know git and GitHub, contributing to GooFit is easy:
@@ -20,6 +26,8 @@ There's no point in repeating all that info specifically for GooFit here, we do 
 
 If you don't have time to learn about git and pull requests, we still do want your contribution to GooFit. In that case please make an issue on GitHub and link to your updated files or patches e.g. in [gists](https://gist.github.com).
 Note that this way you won't get credit for you contribution though in the commit history, so we prefer you make a GitHub pull request or ask for help in a GitHub issue on where you got stuck (fork -> clone -> branch -> edit -> commit -> push -> pull request) with making the pull request.
+
+## Contact
 
 Please use [Issues](https://github.com/GooFit/GooFit/issues) for suggestions,
 ask us questions on [Gitter](https://gitter.im/GooFit/Lobby),

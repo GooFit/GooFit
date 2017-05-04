@@ -7,7 +7,7 @@ public:
 
     ConvolutionPdf(std::string n, Variable* _x, GooPdf* model, GooPdf* resolution);
     ConvolutionPdf(std::string n, Variable* _x, GooPdf* model, GooPdf* resolution, unsigned int numOthers);
-    __host__ virtual fptype normalise() const;
+    __host__ virtual fptype normalize() const;
     __host__ void setIntegrationConstants(fptype lo, fptype hi, fptype step);
     __host__ void registerOthers(std::vector<ConvolutionPdf*> others);
 

@@ -296,9 +296,9 @@ __host__ void DPPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) {
 }
 
 // this is where the actual magic happens. This function does all the calculations!
-__host__ fptype DPPdf::normalise() const {
-    // fprintf(stderr, "start normalise\n");
-    recursiveSetNormalisation(1); // Not going to normalise efficiency,
+__host__ fptype DPPdf::normalize() const {
+    // fprintf(stderr, "start normalize\n");
+    recursiveSetNormalisation(1); // Not going to normalize efficiency,
     // so set normalisation factor to 1 so it doesn't get multiplied by zero.
     // Copy at this time to ensure that the SpecialResonanceCalculators, which need the efficiency,
     // don't get zeroes through multiplying by the normFactor.
@@ -424,7 +424,7 @@ __host__ fptype DPPdf::normalise() const {
         abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " NAN normalization in DPPdf", this);
     
     host_normalisation[parameters] = 1.0/ret;
-    // printf("end of normalise %f\n", ret);
+    // printf("end of normalize %f\n", ret);
     return ret;
 }
 
@@ -509,7 +509,7 @@ DPPdf::GenerateSig(unsigned int numEvents) {
     generation_no_norm=true; // we need no normalization for generation, but we do need to make sure that norm = 1;
     SigGenSetIndices();
     copyParams();
-    normalise();
+    normalize();
     setForceIntegrals();
     MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice);
 

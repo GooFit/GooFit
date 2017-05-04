@@ -198,7 +198,7 @@ __host__ void SmoothHistogramPdf::copyHistogramToDevice(thrust::host_vector<fpty
     }
 }
 
-__host__ fptype SmoothHistogramPdf::normalise() const {
+__host__ fptype SmoothHistogramPdf::normalize() const {
     Smoother smoother;
     smoother.parameters = parameters;
 

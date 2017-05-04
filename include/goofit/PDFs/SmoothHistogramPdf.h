@@ -6,7 +6,7 @@
 class SmoothHistogramPdf : public GooPdf {
 public:
     SmoothHistogramPdf(std::string n, BinnedDataSet* x, Variable* smoothing);
-    __host__ virtual fptype normalise() const;
+    __host__ virtual fptype normalize() const;
     __host__ void extractHistogram(thrust::host_vector<fptype>& host_hist) {
         host_hist = *dev_base_histogram;
     }

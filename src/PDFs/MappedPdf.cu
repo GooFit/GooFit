@@ -50,12 +50,12 @@ __host__ MappedPdf::MappedPdf(std::string n, GooPdf* m, std::vector<GooPdf*>& t)
     initialise(pindices);
 }
 
-__host__ fptype MappedPdf::normalise() const {
+__host__ fptype MappedPdf::normalize() const {
     //std::cout << "Normalising MappedPdf " << getName() << std::endl;
     fptype ret = 0;
 
-    for(unsigned int i = 1; i < components.size(); ++i) {  // No need to normalise mapping function.
-        fptype curr = components[i]->normalise();
+    for(unsigned int i = 1; i < components.size(); ++i) {  // No need to normalize mapping function.
+        fptype curr = components[i]->normalize();
         ret += curr;
     }
 

@@ -24,7 +24,7 @@ class Timer:
 LOCAL_DIR = local.path(__file__).dirname
 
 def test(filename, *args):
-    command = local[LOCAL_DIR / filename / filename]['--goofit-details']
+    command = local[LOCAL_DIR / filename / filename]
     for arg in args:
         command = command[arg]
     colors.info.print('Running', command)

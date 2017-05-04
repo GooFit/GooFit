@@ -2,6 +2,7 @@
 #include "goofit/fitting/FCN.h"
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/Variable.h"
+#include "goofit/Log.h"
 
 namespace GooFit {
 
@@ -26,7 +27,10 @@ double FCN::operator()(const std::vector<double>& pars) const {
     }
 
     params_->pdf_->copyParams(gooPars);
+    
+    GOOFIT_TRACE("Calculating NLL");
     double nll = params_->pdf_->calculateNLL();
+    
     host_callnumber++;
 
     return nll;

@@ -9,7 +9,7 @@ public:
                  BinnedDataSet* x,
                  std::vector<Variable*> params,
                  std::vector<Variable*> obses);
-    //__host__ virtual fptype normalise () const;
+    //__host__ virtual fptype normalize () const;
 
 private:
     thrust::device_vector<fptype>* dev_base_histogram;

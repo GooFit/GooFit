@@ -226,7 +226,7 @@ __host__ fptype PolynomialPdf::getCoefficient(int coef) const {
     if(coef > indices[1] + (indices[0] - 1))
         return 0; // Greater than max power.
 
-    fptype norm = normalise();
+    fptype norm = normalize();
     norm = (1.0 / norm);
 
     fptype param = host_params[indices[2 + coef - indices[1]]];

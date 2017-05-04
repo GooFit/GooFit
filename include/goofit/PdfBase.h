@@ -36,7 +36,7 @@ public:
     enum Specials {ForceSeparateNorm = 1, ForceCommonNorm = 2};
 
     __host__ virtual double calculateNLL() const = 0;
-    __host__ virtual fptype normalise() const = 0;
+    __host__ virtual fptype normalize() const = 0;
     __host__ void initialiseIndices(std::vector<unsigned int> pindices);
 
     typedef std::vector<Variable*> obsCont;
@@ -115,7 +115,7 @@ protected:
     FitControl* fitControl {nullptr};
     std::vector<PdfBase*> components;
     int integrationBins {-1};
-    int specialMask {0}; //< For storing information unique to PDFs, eg "Normalise me separately" for TddpPdf.
+    int specialMask {0}; //< For storing information unique to PDFs, eg "Normalize me separately" for TddpPdf.
     bool properlyInitialised {true}; //< Allows checking for required extra steps in, eg, Tddp and Convolution.
 
     unsigned int functionIdx; //< Stores index of device function pointer.

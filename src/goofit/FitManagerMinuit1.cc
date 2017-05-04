@@ -7,7 +7,7 @@
 #include <typeinfo>
 #include <set>
 #include "goofit/Variable.h"
-
+#include "goofit/Log.h"
 
 namespace GooFit {
 
@@ -52,6 +52,8 @@ Int_t Minuit1::Eval(
     }
     
     pdfPointer->copyParams(pars);
+    
+    GOOFIT_TRACE("Calculating NLL");
     fun = pdfPointer->calculateNLL();
     host_callnumber++;
     return 0;

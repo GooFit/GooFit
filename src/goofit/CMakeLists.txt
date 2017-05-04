@@ -19,8 +19,6 @@ goofit_add_library(FitManager2
     ${PROJECT_SOURCE_DIR}/include/goofit/fitting/FitManagerMinuit2.h
     )
 
-target_link_libraries(FitManager2 rang CLI11)
-
 goofit_add_library(Faddeeva
     Faddeeva.cc
     ${PROJECT_SOURCE_DIR}/include/goofit/Faddeeva.h
@@ -56,9 +54,9 @@ goofit_add_library(PdfBase
     ${PROJECT_SOURCE_DIR}/include/goofit/Variable.h
     ${PROJECT_SOURCE_DIR}/include/goofit/Application.h
     ${PROJECT_SOURCE_DIR}/include/goofit/Color.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/Log.h
     ${PROJECT_SOURCE_DIR}/include/goofit/GlobalCudaDefines.h
     )
-target_link_libraries(PdfBase rang CLI11)
 
 
 set(lib_list

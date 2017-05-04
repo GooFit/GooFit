@@ -44,8 +44,9 @@ void BinnedDataSet::addWeightedEvent(double weight) {
 
 
 void BinnedDataSet::cacheNumBins() {
-    for(size_t i=0; i<size(); i++) {
-        cachedNumBins[i] = variables[i]->numbins;
+    cachedNumBins.clear();
+    for(Variable* v : variables) {
+        cachedNumBins.push_back(v->numbins);
     }
 }
 
@@ -151,10 +152,10 @@ std::vector<size_t> BinnedDataSet::convertValuesToBins(const std::vector<fptype>
         fptype currval = vals[i];
         fptype betval = std::min(std::max(currval, variables[i]->lowerlimit),variables[i]->upperlimit);
         if(currval != betval)
-            GOOFIT_INFO("Warning: Value {} outside {} range [{},{}] - clamping",
-                        currval, variables[i]->name, variables[i]->lowerlimit, variables[i]->upperlimit);
+            GOOFIT_INFO("Warning: Value {} outside {} range [{},{}] - clamping to {}",
+                        currval, variables[i]->name, variables[i]->lowerlimit, variables[i]->upperlimit, betval);
         fptype step = (variables[i]->upperlimit - variables[i]->lowerlimit) / cachedNumBins[i];
-        localBins.push_back( (size_t) floor((currval - variables[i]->lowerlimit)/step));
+        localBins.push_back( (size_t) floor((betval - variables[i]->lowerlimit)/step));
     
     }
     

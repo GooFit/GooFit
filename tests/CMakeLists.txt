@@ -7,6 +7,8 @@ macro(goofit_add_test TESTNAME)
 endmacro()
 
 goofit_add_test(SimpleTest)
+goofit_add_test(BinnedTest)
+goofit_add_test(UnbinnedTest)
 goofit_add_test(NormalizeTest)
 
 if(ROOT_FOUND)

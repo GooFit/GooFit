@@ -381,7 +381,7 @@ if(GOOFIT_PYTHON)
     add_subdirectory(python)
 endif()
 
-option(GOOFIT_TESTS "Build the goofit tests" OFF)
+option(GOOFIT_TESTS "Build the goofit tests" ON)
 if(GOOFIT_TESTS)
     enable_testing()
     add_subdirectory(tests)

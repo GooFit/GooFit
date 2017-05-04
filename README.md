@@ -73,7 +73,7 @@ Other custom options supported along with the defaults:
 * `-DGOOFIT_EXAMPLES=ON`: Build the examples
 * `-DGOOFIT_PACKAGES=ON`: Build any packages found with the name `goofit*`
 * `-DGOOFIT_SEPARATE_COMP=OFF`: Enable separable compilation of PDFs
-* `-DGOOFIT_TESTS=OFF`: Build the goofit tests
+* `-DGOOFIT_TESTS=ON`: Build the goofit tests
 
 Advanced Options:
 * `-DGOOFIT_MPI=ON`: (OFF/ON.  With this feature on, GPU devices are selected automatically).  Tested with MVAPICH2/2.2 and OpenMPI.

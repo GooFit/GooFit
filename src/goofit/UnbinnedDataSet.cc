@@ -24,8 +24,6 @@ UnbinnedDataSet::UnbinnedDataSet(std::initializer_list<Variable*> vars, std::str
     data.resize(vars.size());
 }
 
-UnbinnedDataSet::~UnbinnedDataSet() {}
-
 fptype UnbinnedDataSet::getValue(Variable* var, size_t idx) const {
     
     if(idx >= numEvents()) {

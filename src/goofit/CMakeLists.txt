@@ -59,9 +59,10 @@ goofit_add_library(PdfBase
     )
 
 
+# Note: order is important on Linux, derived classes first
 set(lib_list
-    Faddeeva DataSet
-    BinnedDataSet UnbinnedDataSet
+    Faddeeva
+    BinnedDataSet UnbinnedDataSet DataSet
     FunctorWriter
     PdfBase FitManager2 FCN
     )

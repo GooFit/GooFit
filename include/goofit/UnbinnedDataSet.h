@@ -17,7 +17,7 @@ public:
     UnbinnedDataSet(std::set<Variable*>& vars, std::string n = "");
     UnbinnedDataSet(std::initializer_list<Variable*> vars, std::string n="");
     
-    virtual ~UnbinnedDataSet();
+    virtual ~UnbinnedDataSet() = default;
 
     virtual void addEvent() override;
     

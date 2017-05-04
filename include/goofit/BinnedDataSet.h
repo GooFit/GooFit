@@ -15,7 +15,7 @@ public:
     BinnedDataSet(std::vector<Variable*>& vars, std::string n = "");
     BinnedDataSet(std::set<Variable*>& vars, std::string n = "");
     BinnedDataSet(std::initializer_list<Variable*> vars, std::string n="");
-    virtual ~BinnedDataSet();
+    virtual ~BinnedDataSet() = default;
 
     virtual void addEvent() override;
     virtual void addWeightedEvent(double weight) override;

@@ -29,8 +29,6 @@ BinnedDataSet::BinnedDataSet(std::initializer_list<Variable*> vars, std::string 
     binvalues.resize(getNumBins());
 }
 
-BinnedDataSet::~BinnedDataSet() {}
-
 void BinnedDataSet::addEvent() {
     size_t ibin = getBinNumber();
     binvalues.at(ibin) += 1;

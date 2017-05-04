@@ -69,7 +69,7 @@ class RunAll(cli.Application):
     def main(self, threads=None):
         env = local.env(OMP_NUM_THREADS=threads) if threads else local.env()
         with env:
-            results = make_results(profile)
+            results = make_results(self.profile)
         failed = [result for result in results if result['code'] != 0]
         successes = [result for result in results if result['code'] == 0]
 

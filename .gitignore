@@ -1,5 +1,6 @@
 *.so
 .project
+compile_commands.json
 
 include/goofit/PDFs/PdfHelpers.h
 include/goofit/ThrustOverrideConfig.h

@@ -1,117 +1,61 @@
 #include "goofit/UnbinnedDataSet.h"
 #include "goofit/Variable.h"
+#include "goofit/Error.h"
+#include "goofit/Log.h"
 
+using namespace fmt::literals;
+
+// Special constructor for one variable
+UnbinnedDataSet::UnbinnedDataSet(Variable* var, std::string n)
+: DataSet(var, n) {
+    data.resize(1);
+}
+
+UnbinnedDataSet::UnbinnedDataSet(std::vector<Variable*>& vars, std::string n)
+: DataSet(vars, n) {
+    data.resize(vars.size());
+}
+
+UnbinnedDataSet::UnbinnedDataSet(std::set<Variable*>& vars, std::string n)
+: DataSet(vars, n) {
+    data.resize(vars.size());
+}
+
+UnbinnedDataSet::UnbinnedDataSet(std::initializer_list<Variable*> vars, std::string n)
+: DataSet(vars, n) {
+    data.resize(vars.size());
+}
 
 UnbinnedDataSet::~UnbinnedDataSet() {}
 
-fptype UnbinnedDataSet::getValue(Variable* var, int idx) const {
+fptype UnbinnedDataSet::getValue(Variable* var, size_t idx) const {
+    
     if(idx >= getNumEvents()) {
-        std::cout << "UnbinnedDataSet error: Attempt to find "
-                  << var->name
-                  << " in event "
-                  << idx
-                  << " when only "
-                  << getNumEvents()
-                  << " events exist.\n";
-        return -1;
+        throw GooFit::GeneralError("UnbinnedDataSet: Attepted to fine {} in event {} when only {} events exits"_format(
+                                                var->name, idx, getNumEvents()) );
     }
+    
+    size_t var_idx = indexOfVariable(var);
 
-    if(0 > idx) {
-        std::cout << "UnbinnedDataSet error: Cannot return value of "
-                  << var->name
-                  << " for index "
-                  << idx
-                  << std::endl;
-        return -1;
-    }
-
-    std::map<Variable*, fptype>::const_iterator event = data[idx].find(var);
-
-    if(event == data[idx].end()) {
-        static std::map<std::string, bool> printed;
-
-        if(!printed[var->name]) {
-            std::cout << "UnbinnedDataSet error: Could not find variable "
-                      << var->name
-                      << " in event "
-                      << idx
-                      << " of data set "
-                      << getName()
-                      << ". Returning -1. This message will only be printed once.\n";
-            printed[var->name] = true;
-        }
-
-        return -1;
-    }
-
-    return (*event).second;
+    return data[var_idx].at(idx);
 }
 
-void UnbinnedDataSet::addEventVector(std::vector<fptype>& vals, fptype /*weight*/) {
-    // NB, unbinned data set ignores weights.
-    numEventsAdded++;
-
-    Variable_v::const_iterator currVar = begin();
-    std::map<Variable*, fptype> currEvent;
-
-    for(unsigned int i = 0; i < vals.size(); ++i) {
-        assert(currVar != end());
-        double currVal = vals[i];
-
-        if(currVal < (*currVar)->lowerlimit) {
-            std::cout << "Warning: Value "
-                      << currVal
-                      << " less than minimum "
-                      << (*currVar)->lowerlimit
-                      << " for "
-                      << (*currVar)->name
-                      << "; clamping to minimum.\n";
-            currVal = (*currVar)->lowerlimit;
-        }
-
-        if(currVal > (*currVar)->upperlimit) {
-            std::cout << "Warning: Value "
-                      << currVal
-                      << " more than maximum "
-                      << (*currVar)->upperlimit
-                      << " for "
-                      << (*currVar)->name
-                      << "; clamping to maximum.\n";
-            currVal = (*currVar)->upperlimit;
-        }
-
-        currEvent[*currVar] = currVal;
-        ++currVar;
-    }
-
-    assert(currVar == end());
-    data.push_back(currEvent);
-}
-
-void UnbinnedDataSet::loadEvent(int idx) {
-    if(idx >= getNumEvents()) {
-        std::cout << "UnbinnedDataSet error: Attempt to load event "
-                  << idx
-                  << " when only "
-                  << getNumEvents()
-                  << " events exist.\n";
-        return;
-    }
-
-    if(0 > idx) {
-        std::cout << "UnbinnedDataSet error: Cannot load event "
-                  << idx
-                  << std::endl;
-        return;
-    }
-
-    for(std::map<Variable*, fptype>::iterator v = data[idx].begin(); v != data[idx].end(); ++v) {
-        (*v).first->value = (*v).second;
+void UnbinnedDataSet::loadEvent(size_t idx) {
+    size_t i = 0;
+    for(Variable* v : variables) {
+        v->value = data.at(idx)[i++];
     }
 }
 
 void UnbinnedDataSet::setValueForAllEvents(Variable* var) {
-    for(std::vector<std::map<Variable*, fptype>>::iterator i = data.begin(); i != data.end(); ++i) {
-        (*i)[var] = var->value;
+    size_t ivar = indexOfVariable(var);
+    for(size_t i=0; i<getNumEvents(); i++) {
+        data[ivar][i] = var->value;
     }
+}
+
+void UnbinnedDataSet::addEvent() {
+    size_t i = 0;
+    for(Variable* v : variables)
+        data.at(i++).push_back(v->value);
 }

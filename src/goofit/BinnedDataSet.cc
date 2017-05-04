@@ -145,8 +145,8 @@ unsigned int BinnedDataSet::getNumBins() const {
 fptype BinnedDataSet::getNumEvents() const {
     fptype ret = 0;
 
-    for(std::vector<fptype>::const_iterator bin = binvalues.begin(); bin != binvalues.end(); ++bin)
-        ret += (*bin);
+    for(const fptype& bin : binvalues)
+        ret += bin;
 
     return ret;
 }

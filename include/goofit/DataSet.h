@@ -19,9 +19,12 @@ public:
     
     virtual ~DataSet() = default;
 
-    void addEvent();
+    virtual void addEvent() = 0;
+    
+    
+    // Helper to add 1D events
     void addEvent(fptype val);
-    virtual void addEventVector(std::vector<fptype>& vals, fptype weight = 1) = 0;
+    
     void addWeightedEvent(fptype weight);
 
     Variable_v::const_iterator begin() const {
@@ -47,11 +50,13 @@ public:
 
 protected:
     std::vector<fptype> getCurrentValues() const;
-    unsigned int indexOfVariable(Variable* var) const;
+    size_t indexOfVariable(Variable* var) const;
     int numEventsAdded {0};
     
 private:
+    /// Make a name, does not change the exising name. Called by all constructors.
     void generateName();
+    
     std::string name;
 
 protected:

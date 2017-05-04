@@ -20,12 +20,17 @@ public:
     virtual ~UnbinnedDataSet();
 
     virtual void addEvent() override;
-    int getNumEvents() const {
-        return data.size();
+    
+    /// See how many events were added
+    size_t getNumEvents() const {
+        return data.at(0).size();
     }
+    
+    /// Get the value at a specific variable and event number
     fptype getValue(Variable* var, size_t idx) const;
+    
+    /// Set all the variables to the current event values
     void loadEvent(size_t idx);
-    void setValueForAllEvents(Variable* var);
 
 private:
     std::vector<std::vector<fptype>> data;

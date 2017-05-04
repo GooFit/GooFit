@@ -41,14 +41,7 @@ fptype UnbinnedDataSet::getValue(Variable* var, size_t idx) const {
 void UnbinnedDataSet::loadEvent(size_t idx) {
     size_t i = 0;
     for(Variable* v : variables) {
-        v->value = data.at(idx)[i++];
-    }
-}
-
-void UnbinnedDataSet::setValueForAllEvents(Variable* var) {
-    size_t ivar = indexOfVariable(var);
-    for(size_t i=0; i<getNumEvents(); i++) {
-        data[ivar][i] = var->value;
+        v->value = data.at(i++).at(idx);
     }
 }
 

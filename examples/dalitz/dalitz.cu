@@ -65,8 +65,8 @@ void getToyData(std::string toyFileName, GooFit::Application &app) {
     
     toyFileName = app.get_filename(toyFileName, "examples/dalitz");
     
-    TH2F dalitzplot("dalitzplot", "", m12->GetNumBins(), m12->GetLowerLimit(), m12->GetUpperLimit(), m13->GetNumBins(), m13->GetLowerLimit(),
-                    m13->GetUpperLimit());
+    TH2F dalitzplot("dalitzplot", "", m12->getNumBins(), m12->getLowerLimit(), m12->getUpperLimit(), m13->getNumBins(), m13->getLowerLimit(),
+                    m13->getUpperLimit());
     std::vector<Variable*> vars;
     vars.push_back(m12);
     vars.push_back(m13);
@@ -362,8 +362,8 @@ DalitzPlotPdf* makeSignalPdf(GooPdf* eff = 0) {
 int runToyFit(std::string toyFileName, GooFit::Application &app) {
     m12 = new Variable("m12", 0, 3);
     m13 = new Variable("m13", 0, 3);
-    m12->SetNumBins(240);
-    m13->SetNumBins(240);
+    m12->setNumBins(240);
+    m13->setNumBins(240);
     eventNumber = new CountingVariable("eventNumber", 0, INT_MAX);
     getToyData(toyFileName, app);
 

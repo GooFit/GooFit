@@ -120,10 +120,10 @@ GInt_t main(int argv, char** argc)
 		cmd.parse(argv, argc);
 
 		// Get the value parsed by each arg.
-		nevents        = eArg.GetValue();
-		output_dir     = oArg.GetValue();
-		_masses        = mArg.GetValue();
-		_names         = pArg.GetValue();
+		nevents        = eArg.getValue();
+		output_dir     = oArg.getValue();
+		_masses        = mArg.getValue();
+		_names         = pArg.getValue();
 
 	} catch (TCLAP::ArgException &e)  // catch any exceptions
 	{

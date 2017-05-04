@@ -246,11 +246,11 @@ __host__ TDDP4::TDDP4(std::string n,
 
             if(found != components.end()) {
                 AmpMap[AmpsA[i]->_uniqueDecayStr].first.push_back(std::distance(components.begin(), found));
-                // printf("LS %s found at %i\n",(*found)->GetName().c_str(),std::distance(components.begin(), found));
+                // printf("LS %s found at %i\n",(*found)->getName().c_str(),std::distance(components.begin(), found));
             } else {
                 components.push_back(*LSIT);
                 AmpMap[AmpsA[i]->_uniqueDecayStr].first.push_back(components.size() - 1);
-                // printf("Adding LS %s\n",(*LSIT)->GetName().c_str());
+                // printf("Adding LS %s\n",(*LSIT)->getName().c_str());
 
             }
         }
@@ -264,11 +264,11 @@ __host__ TDDP4::TDDP4(std::string n,
 
             if(found != SpinFactors.end()) {
                 AmpMap[AmpsA[i]->_uniqueDecayStr].second.push_back(std::distance(SpinFactors.begin(), found));
-                // printf("SF %s found at %i\n",(*found)->GetName().c_str(), std::distance(SpinFactors.begin(), found));
+                // printf("SF %s found at %i\n",(*found)->getName().c_str(), std::distance(SpinFactors.begin(), found));
             } else {
                 SpinFactors.push_back(*SFIT);
                 AmpMap[AmpsA[i]->_uniqueDecayStr].second.push_back(SpinFactors.size() - 1);
-                // printf("Adding SF %s\n",(*SFIT)->GetName().c_str());
+                // printf("Adding SF %s\n",(*SFIT)->getName().c_str());
 
             }
         }
@@ -326,11 +326,11 @@ __host__ TDDP4::TDDP4(std::string n,
 
             if(found != components.end()) {
                 AmpMap[AmpsB[i]->_uniqueDecayStr].first.push_back(std::distance(components.begin(), found));
-                // fprintf("LS %s found at %i\n",(*found)->GetName().c_str(), std::distance(components.begin(), found));
+                // fprintf("LS %s found at %i\n",(*found)->getName().c_str(), std::distance(components.begin(), found));
             } else {
                 components.push_back(*LSIT);
                 AmpMap[AmpsB[i]->_uniqueDecayStr].first.push_back(components.size() - 1);
-                // fprintf("Adding LS %s\n",(*LSIT)->GetName().c_str());
+                // fprintf("Adding LS %s\n",(*LSIT)->getName().c_str());
             }
         }
 
@@ -343,11 +343,11 @@ __host__ TDDP4::TDDP4(std::string n,
 
             if(found != SpinFactors.end()) {
                 AmpMap[AmpsB[i]->_uniqueDecayStr].second.push_back(std::distance(SpinFactors.begin(), found));
-                // fprintf("SF %s found at %i\n",(*found)->GetName().c_str(), std::distance(SpinFactors.begin(), found));
+                // fprintf("SF %s found at %i\n",(*found)->getName().c_str(), std::distance(SpinFactors.begin(), found));
             } else {
                 SpinFactors.push_back(*SFIT);
                 AmpMap[AmpsB[i]->_uniqueDecayStr].second.push_back(SpinFactors.size() - 1);
-                // fprintf("Adding SF %s\n",(*SFIT)->GetName().c_str());
+                // fprintf("Adding SF %s\n",(*SFIT)->getName().c_str());
             }
         }
 
@@ -518,7 +518,7 @@ __host__ fptype TDDP4::normalize() const {
     for(unsigned int i = 0; i < components.size() - 1; ++i) {
         redoIntegral[i] = forceRedoIntegrals;
 
-        if(!(components[i]->parametersChanged()))
+        if(!(components[i]->parametersgetChanged()))
             continue;
 
         redoIntegral[i] = true;

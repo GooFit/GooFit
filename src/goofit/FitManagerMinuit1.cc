@@ -15,13 +15,13 @@ Minuit1::Minuit1(PdfBase* pdfPointer) : TMinuit(max_index(pdfPointer->getParamet
     int counter = 0;
     
     for(Variable* var : vars) {
-        var->SetFitterIndex(counter);
+        var->setFitterIndex(counter);
         DefineParameter(counter,
                                 var->name.c_str(),
                                 var->value,
                                 var->error,
-                                var->GetLowerLimit(),
-                                var->GetUpperLimit());
+                                var->getLowerLimit(),
+                                var->getUpperLimit());
         
         if(var->IsFixed())
             FixParameter(counter);
@@ -47,12 +47,12 @@ Int_t Minuit1::Eval(
     gooPars.resize(max_index(vars)+1);
     
     for(Variable* var : vars) {
-        if(std::isnan(pars.at(var->GetFitterIndex())))
-            GOOFIT_WARN("Variable {} at {} is NaN", var->name, var->GetIndex());
+        if(std::isnan(pars.at(var->getFitterIndex())))
+            GOOFIT_WARN("Variable {} at {} is NaN", var->name, var->getIndex());
         
-        var->SetChanged(var->value != pars.at(var->GetFitterIndex()));
-        var->SetValue(pars.at(var->GetFitterIndex())); //  + var->blind
-        gooPars.at(var->GetIndex()) = var->value;
+        var->setChanged(var->value != pars.at(var->getFitterIndex()));
+        var->setValue(pars.at(var->getFitterIndex())); //  + var->blind
+        gooPars.at(var->getIndex()) = var->value;
     }
     
     pdfPointer->copyParams(gooPars);
@@ -67,7 +67,7 @@ void FitManagerMinuit1::fit() {
     host_callnumber = 0;
     
     for(Variable* var : minuit_.getVaraibles())
-        var->SetChanged(true);
+        var->setChanged(true);
 
     std::cout << GooFit::gray << GooFit::bold;
     
@@ -95,7 +95,7 @@ void FitManagerMinuit1::fit() {
     std::cout << GooFit::reset;
     
     for(Variable* var : minuit_.getVaraibles())
-        minuit_.GetParameter(var->GetFitterIndex(), var->value, var->error);
+        minuit_.GetParameter(var->getFitterIndex(), var->value, var->error);
 
 }
 

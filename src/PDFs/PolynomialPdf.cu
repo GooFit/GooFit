@@ -148,19 +148,19 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n, std::vector<Variable*> obse
 
     while(numParameters > coeffs.size()) {
         char varName[100];
-        sprintf(varName, "%s_extra_coeff_%i", GetName().c_str(), (int) coeffs.size());
+        sprintf(varName, "%s_extra_coeff_%i", getName().c_str(), (int) coeffs.size());
 
         Variable* newTerm = new Variable(varName, 0);
         coeffs.push_back(newTerm);
 
-        std::cout << "Warning: " << GetName() << " created dummy variable "
+        std::cout << "Warning: " << getName() << " created dummy variable "
              << varName
              << " (fixed at zero) to account for all terms.\n";
     }
 
     while(offsets.size() < obses.size()) {
         char varName[100];
-        sprintf(varName, "%s_extra_offset_%i", GetName().c_str(), (int) offsets.size());
+        sprintf(varName, "%s_extra_offset_%i", getName().c_str(), (int) offsets.size());
         Variable* newOffset = new Variable(varName, 0);
         offsets.push_back(newOffset);
     }

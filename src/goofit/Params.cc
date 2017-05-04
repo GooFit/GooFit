@@ -11,26 +11,26 @@ namespace GooFit {
     for(Variable* var : vars_) {
         bool added;
         if(var->IsFixed()) {
-            added = Add(var->GetName(), var->GetValue());
-        } else if(var->GetLowerLimit() == var->GetUpperLimit()) {
-            added = Add(var->GetName(), var->GetValue(), var->GetError());
+            added = Add(var->getName(), var->getValue());
+        } else if(var->getLowerLimit() == var->getUpperLimit()) {
+            added = Add(var->getName(), var->getValue(), var->getError());
         } else {
-            added = Add(var->GetName(), var->GetValue(), var->GetError(), var->GetLowerLimit(), var->GetUpperLimit());
+            added = Add(var->getName(), var->getValue(), var->getError(), var->getLowerLimit(), var->getUpperLimit());
         }
         
         if(!added)
-            throw std::runtime_error("The name " + var->GetName() + " appears more than once!");
+            throw std::runtime_error("The name " + var->getName() + " appears more than once!");
         
-        var->SetFitterIndex(Index(var->GetName()));
+        var->setFitterIndex(Index(var->getName()));
     }
     
 }
     
 void Params::SetGooFitParams(const Minuit2::MnUserParameterState& input) {
     for(Variable* var : vars_) {
-        size_t counter = var->GetFitterIndex();
-        var->SetValue(input.Value(counter));
-        var->SetError(input.Error(counter));
+        size_t counter = var->getFitterIndex();
+        var->setValue(input.Value(counter));
+        var->setError(input.Error(counter));
         SetValue(counter, var->value);
         SetError(counter, var->error);
     }

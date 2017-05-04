@@ -91,10 +91,10 @@ __host__ fptype ProdPdf::normalize() const {
         MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
         // Normalize numerically.
-        //std::cout << "Numerical normalisation of " << GetName() << " due to varOverlaps.\n";
+        //std::cout << "Numerical normalisation of " << getName() << " due to varOverlaps.\n";
         fptype ret = GooPdf::normalize();
         //if (cpuDebug & 1)
-        //std::cout << "ProdPdf " << GetName() << " has normalisation " << ret << " " << host_callnumber << std::endl;
+        //std::cout << "ProdPdf " << getName() << " has normalisation " << ret << " " << host_callnumber << std::endl;
         return ret;
     }
 

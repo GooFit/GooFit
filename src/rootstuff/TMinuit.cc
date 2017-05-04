@@ -776,7 +776,7 @@ int TMinuit::Release(int parNo) {
 }
 
 //______________________________________________________________________________
-int TMinuit::SetErrorDef(double up) {
+int TMinuit::setErrorDef(double up) {
 // To get the n-sigma contour the error def parameter "up" has to set to n^2.
 
     int err;

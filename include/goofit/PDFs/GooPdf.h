@@ -51,7 +51,7 @@ public:
     __host__ virtual bool hasAnalyticIntegral() const {
         return false;
     }
-    __host__ fptype GetValue();
+    __host__ fptype getValue();
     
     /// Produce a list of probabilies at points
     __host__ std::vector<std::vector<fptype>> getCompProbsAtDataPoints();

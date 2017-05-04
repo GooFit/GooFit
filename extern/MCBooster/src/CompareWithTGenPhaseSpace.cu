@@ -133,10 +133,10 @@ GInt_t main(int argv, char** argc)
 		cmd.parse(argv, argc);
 
 		// Get the value parsed by each arg.
-		nevents        = eArg.GetValue();
-		output_dir     = oArg.GetValue();
-		_masses        = mArg.GetValue();
-		_names         = pArg.GetValue();
+		nevents        = eArg.getValue();
+		output_dir     = oArg.getValue();
+		_masses        = mArg.getValue();
+		_names         = pArg.getValue();
 
 	} catch (TCLAP::ArgException &e)  // catch any exceptions
 	{
@@ -343,7 +343,7 @@ h2->Sumw2();
 		{
 			if(j>=i) continue;
 			GInt_t index =  i+j*masses.size();
-			TCanvas *c = new TCanvas( H1D[index]->GetName(), H1D[index]->GetName(), 600, 500 );
+			TCanvas *c = new TCanvas( H1D[index]->getName(), H1D[index]->getName(), 600, 500 );
 
 			H1D[index]->Draw("e0");
 			H1D[index]->SetMarkerColor(kBlue);

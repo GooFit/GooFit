@@ -50,7 +50,7 @@ public:
     __host__ void copyParams();
     __host__ void copyNormFactors() const;
     __host__ void generateNormRange();
-    __host__ std::string GetName() const {
+    __host__ std::string getName() const {
         return name;
     }
 
@@ -81,7 +81,7 @@ public:
     __host__ void setIntegrationFineness(int i);
     __host__ void printProfileInfo(bool topLevel = true);
 
-    __host__ bool parametersChanged() const;
+    __host__ bool parametersgetChanged() const;
 
     __host__ void checkInitStatus(std::vector<std::string>& unInited) const;
     void clearCurrentFit();

@@ -25,7 +25,7 @@ PdfBase::PdfBase(Variable* x, std::string n)
 
 __host__ void PdfBase::checkInitStatus(std::vector<std::string>& unInited) const {
     if(!properlyInitialised)
-        unInited.push_back(GetName());
+        unInited.push_back(getName());
 
     for(unsigned int i = 0; i < components.size(); ++i) {
         components[i]->checkInitStatus(unInited);
@@ -43,26 +43,26 @@ __host__ void PdfBase::recursiveSetNormalisation(fptype norm) const {
 __host__ unsigned int PdfBase::registerParameter(Variable* var) {
     if(!var) {
         std::cout << "Error: Attempt to register null Variable with "
-                  << GetName()
+                  << getName()
                   << ", aborting.\n";
         assert(var);
         exit(1);
     }
 
     if(std::find(parameterList.begin(), parameterList.end(), var) != parameterList.end())
-        return (unsigned int) var->GetIndex();
+        return (unsigned int) var->getIndex();
 
     parameterList.push_back(var);
     variableRegistry[var].insert(this);
 
-    if(0 > var->GetIndex()) {
+    if(0 > var->getIndex()) {
         unsigned int unusedIndex = 0;
 
         while(true) {
             bool canUse = true;
 
             for(std::map<Variable*, std::set<PdfBase*>>::iterator p = variableRegistry.begin(); p != variableRegistry.end(); ++p) {
-                if(unusedIndex != (*p).first->GetIndex())
+                if(unusedIndex != (*p).first->getIndex())
                     continue;
 
                 canUse = false;
@@ -75,10 +75,10 @@ __host__ unsigned int PdfBase::registerParameter(Variable* var) {
             unusedIndex++;
         }
 
-        var->SetIndex(unusedIndex);
+        var->setIndex(unusedIndex);
     }
 
-    return (unsigned int) var->GetIndex();
+    return (unsigned int) var->getIndex();
 }
 
 __host__ void PdfBase::unregisterParameter(Variable* var) {
@@ -93,7 +93,7 @@ __host__ void PdfBase::unregisterParameter(Variable* var) {
     variableRegistry[var].erase(this);
 
     if(0 == variableRegistry[var].size())
-        var->SetIndex(-1);
+        var->setIndex(-1);
 
     for(unsigned int i = 0; i < components.size(); ++i) {
         components[i]->unregisterParameter(var);
@@ -164,8 +164,8 @@ __host__ void PdfBase::setIntegrationFineness(int i) {
     generateNormRange();
 }
 
-__host__ bool PdfBase::parametersChanged() const {
-    return std::any_of(std::begin(parameterList), std::end(parameterList), [](Variable* v){return v->Changed();});
+__host__ bool PdfBase::parametersgetChanged() const {
+    return std::any_of(std::begin(parameterList), std::end(parameterList), [](Variable* v){return v->getChanged();});
 }
 
 __host__ void PdfBase::setNumPerTask(PdfBase* p, const int& c) {
@@ -183,13 +183,13 @@ void abortWithCudaPrintFlush(std::string file, int line, std::string reason, con
     
     if(pdf) {
         std::vector<Variable*> pars = pdf->getParameters();
-        std::cout << "Parameters of " << pdf->GetName() << " : \n";
+        std::cout << "Parameters of " << pdf->getName() << " : \n";
         
         for(Variable* v : pars) {
-            if(0 > v->GetIndex())
+            if(0 > v->getIndex())
                 continue;
             
-            std::cout << "  " << v->name << " (" << v->GetIndex() << ") :\t" << host_params[v->GetIndex()] << std::endl;
+            std::cout << "  " << v->name << " (" << v->getIndex() << ") :\t" << host_params[v->getIndex()] << std::endl;
         }
     }
     

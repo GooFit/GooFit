@@ -11,7 +11,7 @@ FCN::FCN(Params& params) : params_(&params) {
     
     // Verify that all varaibles need to be recached
     for(Variable* var : params_->vars_)
-        var->SetChanged(true);
+        var->setChanged(true);
     
 }
 
@@ -23,8 +23,8 @@ double FCN::operator()(const std::vector<double>& pars) const {
     
     for(Variable* var : params_->vars_) {
         // TODO: support for blinding
-        var->SetChanged(var->value != pars.at(var->GetFitterIndex()));
-        gooPars.at(var->GetIndex()) = pars.at(var->GetFitterIndex());
+        var->setChanged(var->value != pars.at(var->getFitterIndex()));
+        gooPars.at(var->getIndex()) = pars.at(var->getFitterIndex());
     }
 
     params_->pdf_->copyParams(gooPars);

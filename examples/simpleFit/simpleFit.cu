@@ -52,14 +52,14 @@ void fitAndPlot(GooPdf* total, UnbinnedDataSet* data, TH1F& dataHist, Variable* 
     if(!fitter)
         std::exit(fitter);
 
-    TH1F pdfHist("pdfHist", "", xvar->GetNumBins(), xvar->GetLowerLimit(), xvar->GetUpperLimit());
+    TH1F pdfHist("pdfHist", "", xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
     pdfHist.SetStats(false);
 
     UnbinnedDataSet grid(xvar);
-    double step = (xvar->GetUpperLimit() - xvar->GetLowerLimit())/xvar->GetNumBins();
+    double step = (xvar->getUpperLimit() - xvar->getLowerLimit())/xvar->getNumBins();
 
-    for(int i = 0; i < xvar->GetNumBins(); ++i) {
-        xvar->value = xvar->GetLowerLimit() + (i + 0.5) * step;
+    for(int i = 0; i < xvar->getNumBins(); ++i) {
+        xvar->value = xvar->getLowerLimit() + (i + 0.5) * step;
         grid.addEvent();
     }
 
@@ -74,7 +74,7 @@ void fitAndPlot(GooPdf* total, UnbinnedDataSet* data, TH1F& dataHist, Variable* 
         totalPdf += pdfVals[0][i];
     }
 
-    for(int i = 0; i < xvar->GetNumBins(); ++i) {
+    for(int i = 0; i < xvar->getNumBins(); ++i) {
         double val = pdfHist.GetBinContent(i+1);
         val /= totalPdf;
         val *= data->getNumEvents();
@@ -115,7 +115,7 @@ int main(int argc, char** argv) {
 
     // Independent variable.
     Variable* xvar = new Variable("xvar", -100, 100);
-    xvar->SetNumBins(1000); // For such a large range, want more bins for better accuracy in normalisation.
+    xvar->setNumBins(1000); // For such a large range, want more bins for better accuracy in normalisation.
 
     // Data sets for the three fits.
     UnbinnedDataSet landdata(xvar);
@@ -123,9 +123,9 @@ int main(int argc, char** argv) {
     UnbinnedDataSet novodata(xvar);
 
     // Histograms for showing the fit.
-    TH1F landHist("landHist", "", xvar->GetNumBins(), xvar->GetLowerLimit(), xvar->GetUpperLimit());
-    TH1F bifgHist("bifgHist", "", xvar->GetNumBins(), xvar->GetLowerLimit(), xvar->GetUpperLimit());
-    TH1F novoHist("novoHist", "", xvar->GetNumBins(), xvar->GetLowerLimit(), xvar->GetUpperLimit());
+    TH1F landHist("landHist", "", xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
+    TH1F bifgHist("bifgHist", "", xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
+    TH1F novoHist("novoHist", "", xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
     landHist.SetStats(false);
     bifgHist.SetStats(false);
     novoHist.SetStats(false);
@@ -134,7 +134,7 @@ int main(int argc, char** argv) {
 
     double maxNovo = 0;
 
-    for(double x = xvar->GetLowerLimit(); x < xvar->GetUpperLimit(); x += 0.01) {
+    for(double x = xvar->getLowerLimit(); x < xvar->getUpperLimit(); x += 0.01) {
         double curr = novosib(x, 0.3, 0.5, 1.0);
 
         if(curr < maxNovo)
@@ -153,9 +153,9 @@ int main(int argc, char** argv) {
     // Generating three sets of toy MC.
     for(int i = 0; i < 100000; ++i) {
         // Landau
-        xvar->value = xvar->GetUpperLimit() + 1;
+        xvar->value = xvar->getUpperLimit() + 1;
 
-        while((xvar->value > xvar->GetUpperLimit()) || (xvar->value < xvar->GetLowerLimit())) {
+        while((xvar->value > xvar->getUpperLimit()) || (xvar->value < xvar->getLowerLimit())) {
             xvar->value = donram.Landau(20, 1);
         }
 
@@ -166,12 +166,12 @@ int main(int argc, char** argv) {
         if(donram.Uniform() < (leftIntegral / totalIntegral)) {
             xvar->value = bifpoint - 1;
 
-            while((xvar->value < bifpoint) || (xvar->value > xvar->GetUpperLimit()))
+            while((xvar->value < bifpoint) || (xvar->value > xvar->getUpperLimit()))
                 xvar->value = donram.Gaus(bifpoint, rightSigma);
         } else {
             xvar->value = bifpoint + 1;
 
-            while((xvar->value > bifpoint) || (xvar->value < xvar->GetLowerLimit()))
+            while((xvar->value > bifpoint) || (xvar->value < xvar->getLowerLimit()))
                 xvar->value = donram.Gaus(bifpoint, leftSigma);
         }
 
@@ -180,7 +180,7 @@ int main(int argc, char** argv) {
 
         // And Novosibirsk.
         while(true) {
-            xvar->value = donram.Uniform(xvar->GetLowerLimit(), xvar->GetUpperLimit());
+            xvar->value = donram.Uniform(xvar->getLowerLimit(), xvar->getUpperLimit());
             double y = donram.Uniform(0, maxNovo);
 
             if(y < novosib(xvar->value, 0.3, 0.5, 1.0))

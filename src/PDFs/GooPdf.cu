@@ -216,7 +216,7 @@ __host__ double GooPdf::sumOfNll(int numVars) const {
     thrust::constant_iterator<fptype*> arrayAddress(dev_event_array);
     double dummy = 0;
 
-    //if (host_callnumber >= 2) abortWithCudaPrintFlush(__FILE__, __LINE__, GetName() + " debug abort", this);
+    //if (host_callnumber >= 2) abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " debug abort", this);
     thrust::counting_iterator<int> eventIndex(0);
 
     double ret;
@@ -253,12 +253,12 @@ __host__ double GooPdf::sumOfNll(int numVars) const {
 }
 
 __host__ double GooPdf::calculateNLL() const {
-    //if (cpuDebug & 1) std::cout << GetName() << " entering calculateNLL (" << host_callnumber << ")" << std::endl;
+    //if (cpuDebug & 1) std::cout << getName() << " entering calculateNLL (" << host_callnumber << ")" << std::endl;
 
     //MEMCPY_TO_SYMBOL(callnumber, &host_callnumber, sizeof(int));
     //int oldMask = cpuDebug;
     //if (0 == host_callnumber) setDebugMask(0, false);
-    //std::cout << "Start norm " << GetName() << std::endl;
+    //std::cout << "Start norm " << getName() << std::endl;
     normalize();
     //std::cout << "Norm done\n";
     //if ((0 == host_callnumber) && (1 == oldMask)) setDebugMask(1, false);
@@ -271,7 +271,7 @@ __host__ double GooPdf::calculateNLL() const {
     //}
 
     if(host_normalisation[parameters] <= 0)
-        abortWithCudaPrintFlush(__FILE__, __LINE__, GetName() + " non-positive normalisation", this);
+        abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " non-positive normalisation", this);
 
     MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice);
     cudaDeviceSynchronize(); // Ensure normalisation integrals are finished
@@ -286,12 +286,12 @@ __host__ double GooPdf::calculateNLL() const {
     fptype ret = sumOfNll(numVars);
 
     if(0 == ret)
-        abortWithCudaPrintFlush(__FILE__, __LINE__, GetName() + " zero NLL", this);
+        abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " zero NLL", this);
 
     //if (cpuDebug & 1) std::cout << "Full NLL " << host_callnumber << " : " << 2*ret << std::endl;
     //setDebugMask(0);
 
-    //if ((cpuDebug & 1) && (host_callnumber >= 1)) abortWithCudaPrintFlush(__FILE__, __LINE__, GetName() + " debug abort", this);
+    //if ((cpuDebug & 1) && (host_callnumber >= 1)) abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " debug abort", this);
     return 2*ret;
 }
 
@@ -307,10 +307,10 @@ __host__ void GooPdf::evaluateAtPoints(Variable* var, std::vector<fptype>& res) 
     MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice);
     UnbinnedDataSet tempdata(observables);
 
-    double step = (var->GetUpperLimit() - var->GetLowerLimit()) / var->GetNumBins();
+    double step = (var->getUpperLimit() - var->getLowerLimit()) / var->getNumBins();
 
-    for(int i = 0; i < var->GetNumBins(); ++i) {
-        var->value = var->GetLowerLimit() + (i+0.5)*step;
+    for(int i = 0; i < var->getNumBins(); ++i) {
+        var->value = var->getLowerLimit() + (i+0.5)*step;
         tempdata.addEvent();
     }
 
@@ -319,7 +319,7 @@ __host__ void GooPdf::evaluateAtPoints(Variable* var, std::vector<fptype>& res) 
     thrust::counting_iterator<int> eventIndex(0);
     thrust::constant_iterator<int> eventSize(observables.size());
     thrust::constant_iterator<fptype*> arrayAddress(dev_event_array);
-    thrust::device_vector<fptype> results(var->GetNumBins());
+    thrust::device_vector<fptype> results(var->getNumBins());
 
     MetricTaker evalor(this, getMetricPointer("ptr_to_Eval"));
 #ifdef GOOFIT_MPI
@@ -337,9 +337,9 @@ __host__ void GooPdf::evaluateAtPoints(Variable* var, std::vector<fptype>& res) 
     //Note, This is not fully realized with MPI.  We need to copy each 'results' buffer to each other 'MPI_Scatterv', then we can do the rest.
     thrust::host_vector<fptype> h_results = results;
     res.clear();
-    res.resize(var->GetNumBins());
+    res.resize(var->getNumBins());
 
-    for(int i = 0; i < var->GetNumBins(); ++i) {
+    for(int i = 0; i < var->getNumBins(); ++i) {
         res[i] = h_results[i] * host_normalisation[parameters];
     }
 }
@@ -350,14 +350,14 @@ __host__ void GooPdf::evaluateAtPoints(std::vector<fptype>& points) const {
     getParameters(vars);
     unsigned int maxIndex = 0;
     for (std::set<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
-      if ((*i)->GetIndex() < maxIndex) continue;
-      maxIndex = (*i)->GetIndex();
+      if ((*i)->getIndex() < maxIndex) continue;
+      maxIndex = (*i)->getIndex();
     }
     std::vector<double> params;
     params.resize(maxIndex+1);
     for (std::set<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
-      if (0 > (*i)->GetIndex()) continue;
-      params[(*i)->GetIndex()] = (*i)->value;
+      if (0 > (*i)->getIndex()) continue;
+      params[(*i)->getIndex()] = (*i)->value;
     }
     copyParams(params);
 
@@ -371,12 +371,12 @@ __host__ void GooPdf::evaluateAtPoints(std::vector<fptype>& points) const {
 }
 
 __host__ void GooPdf::scan(Variable* var, std::vector<fptype>& values) {
-    fptype step = var->GetUpperLimit();
-    step -= var->GetLowerLimit();
-    step /= var->GetNumBins();
+    fptype step = var->getUpperLimit();
+    step -= var->getLowerLimit();
+    step /= var->getNumBins();
     values.clear();
 
-    for(fptype v = var->GetLowerLimit() + 0.5*step; v < var->GetUpperLimit(); v += step) {
+    for(fptype v = var->getLowerLimit() + 0.5*step; v < var->getUpperLimit(); v += step) {
         var->value = v;
         copyParams();
         fptype curr = calculateNLL();
@@ -389,11 +389,11 @@ __host__ void GooPdf::setParameterConstantness(bool constant) {
     std::vector<Variable*> pars = getParameters();
 
     for(Variable* p : pars) {
-        p->SetFixed(constant);
+        p->setFixed(constant);
     }
 }
 
-__host__ fptype GooPdf::GetValue() {
+__host__ fptype GooPdf::getValue() {
     // Returns the value of the PDF at a single point.
     // Execute redundantly in all threads for OpenMP multiGPU case
     copyParams();
@@ -419,7 +419,7 @@ __host__ fptype GooPdf::GetValue() {
 }
 
 __host__ fptype GooPdf::normalize() const {
-    //if (cpuDebug & 1) std::cout << "Normalising " << GetName() << " " << hasAnalyticIntegral() << " " << normRanges << std::endl;
+    //if (cpuDebug & 1) std::cout << "Normalising " << getName() << " " << hasAnalyticIntegral() << " " << normRanges << std::endl;
 
     if(!fitControl->metricIsPdf()) {
         host_normalisation[parameters] = 1.0;
@@ -431,12 +431,12 @@ __host__ fptype GooPdf::normalize() const {
     if(hasAnalyticIntegral()) {
         // Loop goes only over observables of this PDF.
         for(Variable* v : observables) {
-            GOOFIT_TRACE(")Analytically integrating {} over {}", GetName(), v->name);
-            ret *= integrate(v->GetLowerLimit(), v->GetUpperLimit());
+            GOOFIT_TRACE(")Analytically integrating {} over {}", getName(), v->name);
+            ret *= integrate(v->getLowerLimit(), v->getUpperLimit());
         }
 
         host_normalisation[parameters] = 1.0/ret;
-        GOOFIT_DEBUG("Analytic integral of {} is {}", GetName(), ret);
+        GOOFIT_DEBUG("Analytic integral of {} is {}", getName(), ret);
         
         return ret;
     }
@@ -444,10 +444,10 @@ __host__ fptype GooPdf::normalize() const {
     int totalBins = 1;
 
     for(Variable* v : observables) {
-        ret *= v->GetUpperLimit() - v->GetLowerLimit();
-        totalBins *= integrationBins > 0 ? integrationBins : v->GetNumBins();
+        ret *= v->getUpperLimit() - v->getLowerLimit();
+        totalBins *= integrationBins > 0 ? integrationBins : v->getNumBins();
 
-        GOOFIT_TRACE("Total bins {} due to {} {} {}", totalBins, v->name, integrationBins, v->GetNumBins());
+        GOOFIT_TRACE("Total bins {} due to {} {} {}", totalBins, v->name, integrationBins, v->getNumBins());
     }
 
     ret /= totalBins;
@@ -490,7 +490,7 @@ __host__ fptype GooPdf::normalize() const {
 #endif
 
     if(std::isnan(sum)) {
-        abortWithCudaPrintFlush(__FILE__, __LINE__, GetName() + " NaN in normalisation", this);
+        abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " NaN in normalisation", this);
     } else if(0 >= sum) {
         abortWithCudaPrintFlush(__FILE__, __LINE__, "Non-positive normalisation", this);
     }
@@ -555,7 +555,7 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, fptype*, int> t) co
 // Used in normalisation.
 #define MAX_NUM_OBSERVABLES 5
 __device__ fptype MetricTaker::operator()(thrust::tuple<int, int, fptype*> t) const {
-    // Bin index, event size, base address [lower, upper,GetNumBins]
+    // Bin index, event size, base address [lower, upper,getNumBins]
 
     int evtSize = thrust::get<1>(t);
     int binNumber = thrust::get<0>(t);
@@ -644,9 +644,9 @@ __host__ void make_a_grid(std::vector<Variable*> ret, UnbinnedDataSet &grid) {
     Variable* var = ret.back();
     ret.pop_back(); // safe because this is a copy
     
-    for(int i = 0; i < var->GetNumBins(); ++i) {
-        double step = (var->GetUpperLimit() - var->GetLowerLimit())/var->GetNumBins();
-        var->value = var->GetLowerLimit() + (i + 0.5) * step;
+    for(int i = 0; i < var->getNumBins(); ++i) {
+        double step = (var->getUpperLimit() - var->getLowerLimit())/var->getNumBins();
+        var->value = var->getLowerLimit() + (i + 0.5) * step;
         make_a_grid(ret, grid);
     }
     
@@ -670,7 +670,7 @@ __host__ void GooPdf::transformGrid(fptype* host_output) {
     int totalBins = 1;
 
     for(Variable* v : observables) {
-        totalBins *= v->GetNumBins();
+        totalBins *= v->getNumBins();
     }
 
     thrust::constant_iterator<fptype*> arrayAddress(normRanges);

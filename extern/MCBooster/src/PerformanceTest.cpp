@@ -136,9 +136,9 @@ GInt_t main(int argv, char** argc)
 			cmd.parse(argv, argc);
 
 			// Get the value parsed by each arg.
-			nevents_scan   = eArg.GetValue();
-			suffix         = sArg.GetValue();
-			output_dir     = oArg.GetValue();
+			nevents_scan   = eArg.getValue();
+			suffix         = sArg.getValue();
+			output_dir     = oArg.getValue();
 
 		} catch (TCLAP::ArgException &e)  // catch any exceptions
 		{

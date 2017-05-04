@@ -67,7 +67,7 @@ EventWeightedAddPdf::EventWeightedAddPdf(std::string n, std::vector<Variable*> w
     // are not added to the pindices array at this stage, although 'initialise' will reserve space
     // for them.
     for(std::vector<PdfBase*>::iterator p = comps.begin(); p != comps.end(); ++p) {
-        //std::cout << "EventWeighted component: " << (*p)->GetName() << std::endl;
+        //std::cout << "EventWeighted component: " << (*p)->getName() << std::endl;
         components.push_back(*p);
         assert(components.back());
     }
@@ -102,7 +102,7 @@ EventWeightedAddPdf::EventWeightedAddPdf(std::string n, std::vector<Variable*> w
 }
 
 __host__ fptype EventWeightedAddPdf::normalize() const {
-    //if (cpuDebug & 1) std::cout << "Normalising EventWeightedAddPdf " << GetName() << " " << components.size() << std::endl;
+    //if (cpuDebug & 1) std::cout << "Normalising EventWeightedAddPdf " << getName() << " " << components.size() << std::endl;
 
     // Here the PDFs have per-event weights, so there is no per-PDF weight
     // to keep track of. All we can do is normalize the components.

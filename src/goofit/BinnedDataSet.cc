@@ -46,7 +46,7 @@ void BinnedDataSet::addWeightedEvent(double weight) {
 void BinnedDataSet::cacheNumBins() {
     cachedNumBins.clear();
     for(Variable* v : variables) {
-        cachedNumBins.push_back(v->GetNumBins());
+        cachedNumBins.push_back(v->getNumBins());
     }
 }
 
@@ -88,9 +88,9 @@ fptype BinnedDataSet::getBinCenter(size_t ivar, size_t bin) const {
     std::vector<size_t> locals = globalToLocal(bin);
     size_t localBin = locals.at(ivar);
     
-    fptype ret = (variables[ivar]->GetUpperLimit() - variables[ivar]->GetLowerLimit()) / cachedNumBins[ivar];
+    fptype ret = (variables[ivar]->getUpperLimit() - variables[ivar]->getLowerLimit()) / cachedNumBins[ivar];
     ret       *= (localBin + 0.5);
-    ret       += variables[ivar]->GetLowerLimit();
+    ret       += variables[ivar]->getLowerLimit();
     return ret;
 }
 
@@ -104,7 +104,7 @@ fptype BinnedDataSet::getBinVolume(size_t bin) const {
     fptype ret = 1;
 
     for(size_t i=0; i<variables.size(); i++) {
-        fptype step = (variables[i]->GetUpperLimit() - variables[i]->GetLowerLimit()) / cachedNumBins[i];
+        fptype step = (variables[i]->getUpperLimit() - variables[i]->getLowerLimit()) / cachedNumBins[i];
         ret *= step;
     }
 
@@ -151,12 +151,12 @@ std::vector<size_t> BinnedDataSet::convertValuesToBins(const std::vector<fptype>
     std::vector<size_t> localBins;
     for(size_t i=0; i<variables.size(); i++) {
         fptype currval = vals[i];
-        fptype betval = std::min(std::max(currval, variables[i]->GetLowerLimit()),variables[i]->GetUpperLimit());
+        fptype betval = std::min(std::max(currval, variables[i]->getLowerLimit()),variables[i]->getUpperLimit());
         if(currval != betval)
             GOOFIT_INFO("Warning: Value {} outside {} range [{},{}] - clamping to {}",
-                        currval, variables[i]->name, variables[i]->GetLowerLimit(), variables[i]->GetUpperLimit(), betval);
-        fptype step = (variables[i]->GetUpperLimit() - variables[i]->GetLowerLimit()) / cachedNumBins[i];
-        localBins.push_back( (size_t) floor((betval - variables[i]->GetLowerLimit())/step));
+                        currval, variables[i]->name, variables[i]->getLowerLimit(), variables[i]->getUpperLimit(), betval);
+        fptype step = (variables[i]->getUpperLimit() - variables[i]->getLowerLimit()) / cachedNumBins[i];
+        localBins.push_back( (size_t) floor((betval - variables[i]->getLowerLimit())/step));
     
     }
     

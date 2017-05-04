@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
     UnbinnedDataSet data(vars);
 
     TH1F xvarHist("xvarHist", "",
-                  xvar->GetNumBins(), xvar->GetLowerLimit(), xvar->GetUpperLimit());
+                  xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
 
     xvarHist.SetStats(false);
 
@@ -57,7 +57,7 @@ int main(int argc, char** argv) {
         xvar->value = donram.Gaus(0.2, 1.1);
 
         if(donram.Uniform() < 0.1)
-            xvar->value = donram.Uniform(xvar->GetLowerLimit(), xvar->GetUpperLimit());
+            xvar->value = donram.Uniform(xvar->getLowerLimit(), xvar->getUpperLimit());
 
         if(fabs(xvar->value) > 5) {
             --i;
@@ -92,11 +92,11 @@ int main(int argc, char** argv) {
     fitter.fit();
 
     TH1F pdfHist("pdfHist", "",
-                 xvar->GetNumBins(), xvar->GetLowerLimit(), xvar->GetUpperLimit());
+                 xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
     TH1F sigHist("sigHist", "",
-                 xvar->GetNumBins(), xvar->GetLowerLimit(), xvar->GetUpperLimit());
+                 xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
     TH1F bkgHist("bkgHist", "",
-                 xvar->GetNumBins(), xvar->GetLowerLimit(), xvar->GetUpperLimit());
+                 xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
 
     pdfHist.SetStats(false);
     sigHist.SetStats(false);
@@ -104,9 +104,9 @@ int main(int argc, char** argv) {
 
     UnbinnedDataSet grid(xvar);
 
-    for(int i = 0; i < xvar->GetNumBins(); ++i) {
-        double step = (xvar->GetUpperLimit() - xvar->GetLowerLimit())/xvar->GetNumBins();
-        xvar->value = xvar->GetLowerLimit() + (i + 0.5) * step;
+    for(int i = 0; i < xvar->getNumBins(); ++i) {
+        double step = (xvar->getUpperLimit() - xvar->getLowerLimit())/xvar->getNumBins();
+        xvar->value = xvar->getLowerLimit() + (i + 0.5) * step;
         grid.addEvent();
     }
 
@@ -125,7 +125,7 @@ int main(int argc, char** argv) {
         totalPdf += pdfVals[0][i];
     }
 
-    for(int i = 0; i < xvar->GetNumBins(); ++i) {
+    for(int i = 0; i < xvar->getNumBins(); ++i) {
         double val = pdfHist.GetBinContent(i+1);
         val /= totalPdf;
         val *= totalData;

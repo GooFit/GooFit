@@ -130,11 +130,11 @@ __host__ SmoothHistogramPdf::SmoothHistogramPdf(std::string n, BinnedDataSet* hi
         //pindices.push_back((*var)->index);
         pindices.push_back(cIndex + 2*varIndex + 0);
         pindices.push_back(cIndex + 2*varIndex + 1);
-        pindices.push_back(var->GetNumBins());
+        pindices.push_back(var->getNumBins());
 
         host_constants[2*varIndex + 0] =
-            var->GetLowerLimit(); // NB, do not put cIndex here, it is accounted for by the offset in MEMCPY_TO_SYMBOL below.
-        host_constants[2*varIndex + 1] = (var->GetUpperLimit() - var->GetLowerLimit()) / var->GetNumBins();
+            var->getLowerLimit(); // NB, do not put cIndex here, it is accounted for by the offset in MEMCPY_TO_SYMBOL below.
+        host_constants[2*varIndex + 1] = (var->getUpperLimit() - var->getLowerLimit()) / var->getNumBins();
         varIndex++;
     }
 
@@ -153,7 +153,7 @@ __host__ SmoothHistogramPdf::SmoothHistogramPdf(std::string n, BinnedDataSet* hi
     if(totalEvents > 0)
         copyHistogramToDevice(host_histogram);
     else
-        std::cout << "Warning: Empty histogram supplied to " << GetName() <<
+        std::cout << "Warning: Empty histogram supplied to " << getName() <<
                   " not copied to device. Expect copyHistogramToDevice call later.\n";
 
     GET_FUNCTION_ADDR(ptr_to_EvalHistogram);
@@ -189,11 +189,11 @@ __host__ void SmoothHistogramPdf::copyHistogramToDevice(thrust::host_vector<fpty
     int expectedBins = 1;
 
     for(unsigned int varIndex = 0; varIndex < observables.size(); ++varIndex) {
-        expectedBins *= observables[varIndex]->GetNumBins();
+        expectedBins *= observables[varIndex]->getNumBins();
     }
 
     if(expectedBins != host_histogram.size()) {
-        std::cout << "Warning: Histogram supplied to " << GetName() << " has " << host_histogram.size() << " bins, expected " <<
+        std::cout << "Warning: Histogram supplied to " << getName() << " has " << host_histogram.size() << " bins, expected " <<
                   expectedBins << " - may indicate a problem.\n";
     }
 }
@@ -215,7 +215,7 @@ __host__ fptype SmoothHistogramPdf::normalize() const {
         ret *= host_constants[2*varIndex + 1]; // Bin size cached by constructor.
     }
 
-    //if (cpuDebug & 1) std::cout << "Normalising " << GetName() << " " << host_params[host_indices[parameters + 1]] << " " << ret << std::endl;
+    //if (cpuDebug & 1) std::cout << "Normalising " << getName() << " " << host_params[host_indices[parameters + 1]] << " " << ret << std::endl;
     host_normalisation[parameters] = 1.0/ret;
     return ret;
 }

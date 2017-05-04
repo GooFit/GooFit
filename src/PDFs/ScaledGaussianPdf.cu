@@ -23,10 +23,10 @@ __host__ ScaledGaussianPdf::ScaledGaussianPdf(std::string n, Variable* _x, Varia
     registerParameter(epsilon);
 
     std::vector<unsigned int> pindices;
-    pindices.push_back(mean->GetIndex());
-    pindices.push_back(sigma->GetIndex());
-    pindices.push_back(delta->GetIndex());
-    pindices.push_back(epsilon->GetIndex());
+    pindices.push_back(mean->getIndex());
+    pindices.push_back(sigma->getIndex());
+    pindices.push_back(delta->getIndex());
+    pindices.push_back(epsilon->getIndex());
     GET_FUNCTION_ADDR(ptr_to_ScaledGaussian);
     initialise(pindices);
 }

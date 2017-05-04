@@ -50,11 +50,11 @@ void generateEvents(vector<int>& rsEvtVec, vector<int>& wsEvtVec,
 
     static TRandom donram(24);
     double totalRSintegral = integralExpCon(0, 100);
-    double step = (decayTime->GetUpperLimit() - decayTime->GetLowerLimit()) / decayTime->GetNumBins();
+    double step = (decayTime->getUpperLimit() - decayTime->getLowerLimit()) / decayTime->getNumBins();
 
-    for(int i = 0; i < decayTime->GetNumBins(); ++i) {
+    for(int i = 0; i < decayTime->getNumBins(); ++i) {
         double binStart = i*step;
-        binStart += decayTime->GetLowerLimit();
+        binStart += decayTime->getLowerLimit();
         double binFinal = binStart + step;
 
         double rsIntegral = integralExpCon(binStart, binFinal);
@@ -77,7 +77,7 @@ void generateEvents(vector<int>& rsEvtVec, vector<int>& wsEvtVec,
 }
 
 int fitRatio(vector<int>& rsEvts, vector<int>& wsEvts, std::string plotName = "") {
-    TH1D* ratioHist = new TH1D("ratioHist", "", decayTime->GetNumBins(), decayTime->GetLowerLimit(), decayTime->GetUpperLimit());
+    TH1D* ratioHist = new TH1D("ratioHist", "", decayTime->getNumBins(), decayTime->getLowerLimit(), decayTime->getUpperLimit());
 
     BinnedDataSet* ratioData = new BinnedDataSet(decayTime);
 
@@ -130,7 +130,7 @@ int fitRatio(vector<int>& rsEvts, vector<int>& wsEvts, std::string plotName = ""
 
     vector<fptype> values;
     poly->evaluateAtPoints(decayTime, values);
-    TH1D pdfHist("pdfHist", "", decayTime->GetNumBins(), decayTime->GetLowerLimit(), decayTime->GetUpperLimit());
+    TH1D pdfHist("pdfHist", "", decayTime->getNumBins(), decayTime->getLowerLimit(), decayTime->getUpperLimit());
 
     for(int i = 0; i < values.size(); ++i) {
         pdfHist.SetBinContent(i+1, values[i]);
@@ -197,10 +197,10 @@ void cpvFitFcn(int& npar, double* gin, double& fun, double* fp, int iflag) {
     double squCoef = fp[2];
 
     double chisq = 0;
-    double step = (decayTime->GetUpperLimit() - decayTime->GetLowerLimit()) / decayTime->GetNumBins();
+    double step = (decayTime->getUpperLimit() - decayTime->getLowerLimit()) / decayTime->getNumBins();
 
     for(unsigned int i = 0; i < ratios.size(); ++i) {
-        double currDTime = decayTime->GetLowerLimit() + (i+0.5)*step;
+        double currDTime = decayTime->getLowerLimit() + (i+0.5)*step;
         double pdfval = conCoef + linCoef*currDTime + squCoef*currDTime*currDTime;
         chisq += pow((pdfval - ratios[i]) / errors[i], 2);
     }
@@ -209,7 +209,7 @@ void cpvFitFcn(int& npar, double* gin, double& fun, double* fp, int iflag) {
 }
 
 void fitRatioCPU(vector<int>& rsEvts, vector<int>& wsEvts) {
-    TH1D* ratioHist = new TH1D("ratioHist", "", decayTime->GetNumBins(), decayTime->GetLowerLimit(), decayTime->GetUpperLimit());
+    TH1D* ratioHist = new TH1D("ratioHist", "", decayTime->getNumBins(), decayTime->getLowerLimit(), decayTime->getUpperLimit());
 
     ratios.resize(wsEvts.size());
     errors.resize(wsEvts.size());
@@ -252,7 +252,7 @@ int main(int argc, char** argv) {
     GooFit::Application app("Chi-square example", argc, argv);
 
     int numbins = 100;
-    app.add_option("-n,-GetNumBinsGetNumBins", numbins, "Number of bins", true);
+    app.add_option("-n,-getNumBinsgetNumBins", numbins, "Number of bins", true);
 
     try {
         app.run();
@@ -262,7 +262,7 @@ int main(int argc, char** argv) {
 
     // Time is in units of lifetime
     decayTime = new Variable("decayTime", 100, 0, 10);
-    decayTime->SetNumBins(numbins);
+    decayTime->setNumBins(numbins);
     double rSubD = 0.03;
     double rBarD = 0.03;
     double delta = 0;
@@ -274,10 +274,10 @@ int main(int argc, char** argv) {
 
     int eventsToGenerate = 10000000;
 
-    vector<int> dZeroEvtsWS(decayTime->GetNumBins());
-    vector<int> dZeroEvtsRS(decayTime->GetNumBins());
-    vector<int> d0barEvtsWS(decayTime->GetNumBins());
-    vector<int> d0barEvtsRS(decayTime->GetNumBins());
+    vector<int> dZeroEvtsWS(decayTime->getNumBins());
+    vector<int> dZeroEvtsRS(decayTime->getNumBins());
+    vector<int> d0barEvtsWS(decayTime->getNumBins());
+    vector<int> d0barEvtsRS(decayTime->getNumBins());
 
     double dZeroLinearCoef = magPQ*sqrt(rSubD)*(y_mix*cos(delta+wpPhi) - x_mix*sin(delta+wpPhi));
     double d0barLinearCoef = magQP*sqrt(rBarD)*(y_mix*cos(delta-wpPhi) - x_mix*sin(delta-wpPhi));

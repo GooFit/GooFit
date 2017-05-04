@@ -58,7 +58,7 @@ public:
             addvar = addvar and (L._AdditionalVars[i]->value ==  _AdditionalVars[i]->value);
         }
 
-        return addvar and (L.GetName() == GetName() and L._mass->value == _mass->value and L._width->value == _width->value
+        return addvar and (L.getName() == getName() and L._mass->value == _mass->value and L._width->value == _width->value
                            and L._L == _L and L._Mpair == _Mpair and L._kind == _kind and L._FormFac == _FormFac);
     }
     Lineshape(std::string name);

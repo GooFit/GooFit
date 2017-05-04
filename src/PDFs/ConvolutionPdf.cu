@@ -231,15 +231,15 @@ __host__ void ConvolutionPdf::setIntegrationConstants(fptype lo, fptype hi, fpty
     Variable* dependent = *(observables.begin());
 
     host_iConsts[2] = numbins;
-    host_iConsts[3] = (host_iConsts[0] - dependent->GetUpperLimit());
-    host_iConsts[4] = (host_iConsts[1] - dependent->GetLowerLimit());
+    host_iConsts[3] = (host_iConsts[0] - dependent->getUpperLimit());
+    host_iConsts[4] = (host_iConsts[1] - dependent->getLowerLimit());
 
     numbins = (int) floor((host_iConsts[4] - host_iConsts[3]) / step + 0.5);
     host_iConsts[5] = numbins;
     MEMCPY(dev_iConsts, host_iConsts, 6*sizeof(fptype), cudaMemcpyHostToDevice);
     resolWorkSpace = new thrust::device_vector<fptype>(numbins);
 
-    int offset = dependent->GetUpperLimit() / step;
+    int offset = dependent->getUpperLimit() / step;
     MEMCPY_TO_SYMBOL(modelOffset, &offset, sizeof(int), workSpaceIndex*sizeof(int), cudaMemcpyHostToDevice);
 
     fptype* dev_address[1];
@@ -255,7 +255,7 @@ __host__ void ConvolutionPdf::registerOthers(std::vector<ConvolutionPdf*> others
     unsigned int numExpectedOthers = host_indices[parameters + 7] + 1;
 
     if(numExpectedOthers != others.size()) {
-        std::cout << "Problem: " << GetName() << " initialised with " << others.size()
+        std::cout << "Problem: " << getName() << " initialised with " << others.size()
                   << " other PDFs, expected " << numExpectedOthers
                   << " (including itself). Returning without initialisation.\n";
         return;
@@ -273,7 +273,7 @@ __host__ void ConvolutionPdf::registerOthers(std::vector<ConvolutionPdf*> others
     }
 
     if(!foundSelf) {
-        std::cout << "Problem: " << GetName() <<
+        std::cout << "Problem: " << getName() <<
                   " initialised with list that did not include itself. Returning without initialisation.\n";
         return;
     }
@@ -282,7 +282,7 @@ __host__ void ConvolutionPdf::registerOthers(std::vector<ConvolutionPdf*> others
 }
 
 __host__ fptype ConvolutionPdf::normalize() const {
-    //if (cpuDebug & 1) std::cout << GetName() << " entering normalisation\n";
+    //if (cpuDebug & 1) std::cout << getName() << " entering normalisation\n";
 
     // First set normalisation factors to one so we can evaluate convolution without getting zeroes
     recursiveSetNormalisation(fptype(1.0));
@@ -293,7 +293,7 @@ __host__ fptype ConvolutionPdf::normalize() const {
     thrust::constant_iterator<int> eventSize(1);
     thrust::counting_iterator<int> binIndex(0);
 
-    if(model->parametersChanged()) {
+    if(model->parametersgetChanged()) {
         // Calculate model function at every point in integration space
         MetricTaker modalor(model, getMetricPointer("ptr_to_Eval"));
         thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(binIndex, eventSize, arrayAddress)),
@@ -312,7 +312,7 @@ __host__ fptype ConvolutionPdf::normalize() const {
         */
     }
 
-    if(resolution->parametersChanged()) {
+    if(resolution->parametersgetChanged()) {
         // Same for resolution function.
         thrust::constant_iterator<fptype*> arrayAddress2(dev_iConsts + 3);
         MetricTaker resalor(resolution, getMetricPointer("ptr_to_Eval"));

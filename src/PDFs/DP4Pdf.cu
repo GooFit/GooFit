@@ -309,7 +309,7 @@ __host__ fptype DPPdf::normalize() const {
     for(unsigned int i = 0; i < components.size() - 1; ++i) {
         redoIntegral[i] = forceRedoIntegrals;
 
-        if(!(components[i]->parametersChanged()))
+        if(!(components[i]->parametersgetChanged()))
             continue;
 
         redoIntegral[i] = true;
@@ -421,7 +421,7 @@ __host__ fptype DPPdf::normalize() const {
     }
 
     if(std::isnan(ret))
-        abortWithCudaPrintFlush(__FILE__, __LINE__, GetName() + " NAN normalization in DPPdf", this);
+        abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " NAN normalization in DPPdf", this);
     
     host_normalisation[parameters] = 1.0/ret;
     // printf("end of normalize %f\n", ret);

@@ -141,24 +141,24 @@ __host__ fptype IncoherentSumPdf::normalize() const {
     // don't get zeroes through multiplying by the normFactor.
     MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
-    int totalBins = _m12->GetNumBins() * _m13->GetNumBins();
+    int totalBins = _m12->getNumBins() * _m13->getNumBins();
 
     if(!dalitzNormRange) {
         gooMalloc((void**) &dalitzNormRange, 6*sizeof(fptype));
 
         fptype* host_norms = new fptype[6];
-        host_norms[0] = _m12->GetLowerLimit();
-        host_norms[1] = _m12->GetUpperLimit();
-        host_norms[2] = _m12->GetNumBins();
-        host_norms[3] = _m13->GetLowerLimit();
-        host_norms[4] = _m13->GetUpperLimit();
-        host_norms[5] = _m13->GetNumBins();
+        host_norms[0] = _m12->getLowerLimit();
+        host_norms[1] = _m12->getUpperLimit();
+        host_norms[2] = _m12->getNumBins();
+        host_norms[3] = _m13->getLowerLimit();
+        host_norms[4] = _m13->getUpperLimit();
+        host_norms[5] = _m13->getNumBins();
         MEMCPY(dalitzNormRange, host_norms, 6*sizeof(fptype), cudaMemcpyHostToDevice);
         delete[] host_norms;
     }
 
     // Check if efficiency changes force redoing the integrals.
-    if(efficiency->parametersChanged()) {
+    if(efficiency->parametersgetChanged()) {
         forceRedoIntegrals = true;
     }
 
@@ -166,7 +166,7 @@ __host__ fptype IncoherentSumPdf::normalize() const {
     for(unsigned int i = 0; i < decayInfo->resonances.size(); ++i) {
         redoIntegral[i] = forceRedoIntegrals;
 
-        if(!(decayInfo->resonances[i]->parametersChanged()))
+        if(!(decayInfo->resonances[i]->parametersgetChanged()))
             continue;
 
         redoIntegral[i] = true;
@@ -214,8 +214,8 @@ __host__ fptype IncoherentSumPdf::normalize() const {
     }
 
     double binSizeFactor = 1;
-    binSizeFactor *= _m12->GetBinSize();
-    binSizeFactor *= _m13->GetBinSize();
+    binSizeFactor *= _m12->getBinSize();
+    binSizeFactor *= _m13->getBinSize();
     ret *= binSizeFactor;
 
     host_normalisation[parameters] = 1.0/ret;
@@ -231,7 +231,7 @@ __device__ fptype SpecialIncoherentIntegrator::operator()(thrust::tuple<int, fpt
     // Returns integral of specific BW over Dalitz plot, to be cached and
     // multiplied by rapidly-changing amplitude.
 
-    // Bin index, base address [lower, upper,GetNumBins]
+    // Bin index, base address [lower, upper,getNumBins]
     // Notice that this is basically MetricTaker::operator (binned) with the special-case knowledge
     // that event size is two, and that the function to call is getResonanceAmplitude.
 

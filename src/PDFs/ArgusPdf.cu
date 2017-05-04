@@ -61,9 +61,9 @@ __host__ ArgusPdf::ArgusPdf(std::string n, Variable* _x, Variable* m0, Variable*
     registerParameter(power);
 
     std::vector<unsigned int> pindices;
-    pindices.push_back(m0->GetIndex());
-    pindices.push_back(slope->GetIndex());
-    pindices.push_back(power->GetIndex());
+    pindices.push_back(m0->getIndex());
+    pindices.push_back(slope->getIndex());
+    pindices.push_back(power->getIndex());
 
     if(upper)
         GET_FUNCTION_ADDR(ptr_to_Argus_Upper);

@@ -33,10 +33,10 @@ TEST(Simple, UnbinnedAdding) {
     EXPECT_FLOAT_EQ(3, xvar.value);
     EXPECT_FLOAT_EQ(4, yvar.value);
     
-    EXPECT_FLOAT_EQ(1, data.GetValue(&xvar, 0));
-    EXPECT_FLOAT_EQ(2, data.GetValue(&yvar, 0));
-    EXPECT_FLOAT_EQ(3, data.GetValue(&xvar, 1));
-    EXPECT_FLOAT_EQ(4, data.GetValue(&yvar, 1));
-    EXPECT_FLOAT_EQ(5, data.GetValue(&xvar, 2));
-    EXPECT_FLOAT_EQ(6, data.GetValue(&yvar, 2));
+    EXPECT_FLOAT_EQ(1, data.getValue(&xvar, 0));
+    EXPECT_FLOAT_EQ(2, data.getValue(&yvar, 0));
+    EXPECT_FLOAT_EQ(3, data.getValue(&xvar, 1));
+    EXPECT_FLOAT_EQ(4, data.getValue(&yvar, 1));
+    EXPECT_FLOAT_EQ(5, data.getValue(&xvar, 2));
+    EXPECT_FLOAT_EQ(6, data.getValue(&yvar, 2));
 }

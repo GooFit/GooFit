@@ -41,7 +41,7 @@ __host__ MappedPdf::MappedPdf(std::string n, GooPdf* m, std::vector<GooPdf*>& t)
 
     if(functionIndicesUsed.size() > 1) {
         std::cout << "Warning: More than one function type given to MappedPdf "
-                  << GetName()
+                  << getName()
                   << " constructor. This may slow execution by causing sequential evaluations.\n";
     }
 
@@ -51,7 +51,7 @@ __host__ MappedPdf::MappedPdf(std::string n, GooPdf* m, std::vector<GooPdf*>& t)
 }
 
 __host__ fptype MappedPdf::normalize() const {
-    //std::cout << "Normalising MappedPdf " << GetName() << std::endl;
+    //std::cout << "Normalising MappedPdf " << getName() << std::endl;
     fptype ret = 0;
 
     for(unsigned int i = 1; i < components.size(); ++i) {  // No need to normalize mapping function.

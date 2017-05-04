@@ -25,7 +25,7 @@ public:
     size_t getNumEvents() const {return numEvents();}
     
     /// Get the value at a specific variable and event number
-    fptype GetValue(Variable* var, size_t idx) const;
+    fptype getValue(Variable* var, size_t idx) const;
     
     /// Set all the variables to the current event values
     void loadEvent(size_t idx);

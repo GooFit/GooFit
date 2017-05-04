@@ -28,7 +28,7 @@ fptype UnbinnedDataSet::getValue(Variable* var, size_t idx) const {
     
     if(idx >= numEvents()) {
         throw GooFit::GeneralError("UnbinnedDataSet: Attepted to find {} in event {} when only {} events exits",
-                                                var->name, idx, numEvents());
+                                                var->getName(), idx, numEvents());
     }
     
     size_t var_idx = indexOfVariable(var);
@@ -39,20 +39,20 @@ fptype UnbinnedDataSet::getValue(Variable* var, size_t idx) const {
 void UnbinnedDataSet::loadEvent(size_t idx) {
     size_t i = 0;
     for(Variable* v : variables) {
-        v->value = data.at(i++).at(idx);
+        v->setValue(data.at(i++).at(idx));
     }
 }
 
 void UnbinnedDataSet::setValueForAllEvents(Variable* var) {
     size_t ivar = indexOfVariable(var);
     for(size_t i=0; i<getNumEvents(); i++) {
-        data[ivar][i] = var->value;
+        data[ivar][i] = var->getValue();
     }
 }
 
 void UnbinnedDataSet::addEvent() {
     size_t i = 0;
     for(Variable* v : variables)
-        data.at(i++).push_back(v->value);
+        data.at(i++).push_back(v->getValue());
     numEventsAdded++;
 }

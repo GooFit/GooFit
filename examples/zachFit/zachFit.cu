@@ -331,7 +331,7 @@ int CudaMinimise(int fitType, GooFit::Application &app) {
       }
     */
 
-    dm->value = 0.1568;
+    dm->setValue(0.1568);
     /*
       std::cout << "PDF: "
     	    << (dat_int/totalIntegral) * total.getValue() << " "

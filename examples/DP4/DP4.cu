@@ -50,8 +50,8 @@ int main(int argc, char** argv) {
 
     fstream input(input_str, std::ios_base::in);
 
-    while(input >> m12->value >> m34->value >> cos12->value >> cos34->value >> phi->value) {
-        eventNumber->value = MCevents++;
+    while(input >> *m12 >> *m34 >> *cos12 >> *cos34 >> *phi) {
+        eventNumber->setValue(MCevents++);
         currData.addEvent();
     }
 

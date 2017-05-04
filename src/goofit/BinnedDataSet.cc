@@ -154,7 +154,7 @@ std::vector<size_t> BinnedDataSet::convertValuesToBins(const std::vector<fptype>
         fptype betval = std::min(std::max(currval, variables[i]->getLowerLimit()),variables[i]->getUpperLimit());
         if(currval != betval)
             GOOFIT_INFO("Warning: Value {} outside {} range [{},{}] - clamping to {}",
-                        currval, variables[i]->name, variables[i]->getLowerLimit(), variables[i]->getUpperLimit(), betval);
+                        currval, variables[i]->getName(), variables[i]->getLowerLimit(), variables[i]->getUpperLimit(), betval);
         fptype step = (variables[i]->getUpperLimit() - variables[i]->getLowerLimit()) / cachedNumBins[i];
         localBins.push_back( (size_t) floor((betval - variables[i]->getLowerLimit())/step));
     

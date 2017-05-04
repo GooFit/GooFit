@@ -59,7 +59,7 @@ void fitAndPlot(GooPdf* total, UnbinnedDataSet* data, TH1F& dataHist, Variable* 
     double step = (xvar->getUpperLimit() - xvar->getLowerLimit())/xvar->getNumBins();
 
     for(int i = 0; i < xvar->getNumBins(); ++i) {
-        xvar->value = xvar->getLowerLimit() + (i + 0.5) * step;
+        xvar->setValue(xvar->getLowerLimit() + (i + 0.5) * step);
         grid.addEvent();
     }
 
@@ -70,7 +70,7 @@ void fitAndPlot(GooPdf* total, UnbinnedDataSet* data, TH1F& dataHist, Variable* 
 
     for(int i = 0; i < grid.getNumEvents(); ++i) {
         grid.loadEvent(i);
-        pdfHist.Fill(xvar->value, pdfVals[0][i]);
+        pdfHist.Fill(xvar->getValue(), pdfVals[0][i]);
         totalPdf += pdfVals[0][i];
     }
 
@@ -153,42 +153,42 @@ int main(int argc, char** argv) {
     // Generating three sets of toy MC.
     for(int i = 0; i < 100000; ++i) {
         // Landau
-        xvar->value = xvar->getUpperLimit() + 1;
+        xvar->setValue(xvar->getUpperLimit() + 1);
 
-        while((xvar->value > xvar->getUpperLimit()) || (xvar->value < xvar->getLowerLimit())) {
-            xvar->value = donram.Landau(20, 1);
+        while((xvar->getValue() > xvar->getUpperLimit()) || (xvar->getValue() < xvar->getLowerLimit())) {
+            xvar->setValue(donram.Landau(20, 1));
         }
 
         landdata.addEvent();
-        landHist.Fill(xvar->value);
+        landHist.Fill(xvar->getValue());
 
         // Bifurcated Gaussian
         if(donram.Uniform() < (leftIntegral / totalIntegral)) {
-            xvar->value = bifpoint - 1;
+            xvar->setValue(bifpoint - 1);
 
-            while((xvar->value < bifpoint) || (xvar->value > xvar->getUpperLimit()))
-                xvar->value = donram.Gaus(bifpoint, rightSigma);
+            while((xvar->getValue() < bifpoint) || (xvar->getValue() > xvar->getUpperLimit()))
+                xvar->setValue(donram.Gaus(bifpoint, rightSigma));
         } else {
-            xvar->value = bifpoint + 1;
+            xvar->setValue(bifpoint + 1);
 
-            while((xvar->value > bifpoint) || (xvar->value < xvar->getLowerLimit()))
-                xvar->value = donram.Gaus(bifpoint, leftSigma);
+            while((xvar->getValue() > bifpoint) || (xvar->getValue() < xvar->getLowerLimit()))
+                xvar->setValue(donram.Gaus(bifpoint, leftSigma));
         }
 
         bifgdata.addEvent();
-        bifgHist.Fill(xvar->value);
+        bifgHist.Fill(xvar->getValue());
 
         // And Novosibirsk.
         while(true) {
-            xvar->value = donram.Uniform(xvar->getLowerLimit(), xvar->getUpperLimit());
+            xvar->setValue(donram.Uniform(xvar->getLowerLimit(), xvar->getUpperLimit()));
             double y = donram.Uniform(0, maxNovo);
 
-            if(y < novosib(xvar->value, 0.3, 0.5, 1.0))
+            if(y < novosib(xvar->getValue(), 0.3, 0.5, 1.0))
                 break;
         }
 
         novodata.addEvent();
-        novoHist.Fill(xvar->value);
+        novoHist.Fill(xvar->getValue());
     }
 
     foo = new TCanvas();

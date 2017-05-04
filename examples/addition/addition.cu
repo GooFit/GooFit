@@ -54,18 +54,18 @@ int main(int argc, char** argv) {
     double totalData = 0;
 
     for(int i = 0; i < 100000; ++i) {
-        xvar->value = donram.Gaus(0.2, 1.1);
+        xvar->setValue(donram.Gaus(0.2, 1.1));
 
         if(donram.Uniform() < 0.1)
-            xvar->value = donram.Uniform(xvar->getLowerLimit(), xvar->getUpperLimit());
+            xvar->setValue(donram.Uniform(xvar->getLowerLimit(), xvar->getUpperLimit()));
 
-        if(fabs(xvar->value) > 5) {
+        if(fabs(xvar->getValue()) > 5) {
             --i;
             continue;
         }
 
         data.addEvent();
-        xvarHist.Fill(xvar->value);
+        xvarHist.Fill(xvar->getValue());
         totalData++;
     }
 
@@ -106,7 +106,7 @@ int main(int argc, char** argv) {
 
     for(int i = 0; i < xvar->getNumBins(); ++i) {
         double step = (xvar->getUpperLimit() - xvar->getLowerLimit())/xvar->getNumBins();
-        xvar->value = xvar->getLowerLimit() + (i + 0.5) * step;
+        xvar->setValue(xvar->getLowerLimit() + (i + 0.5) * step);
         grid.addEvent();
     }
 
@@ -119,9 +119,9 @@ int main(int argc, char** argv) {
 
     for(int i = 0; i < grid.getNumEvents(); ++i) {
         grid.loadEvent(i);
-        pdfHist.Fill(xvar->value, pdfVals[0][i]);
-        sigHist.Fill(xvar->value, pdfVals[1][i]);
-        bkgHist.Fill(xvar->value, pdfVals[2][i]);
+        pdfHist.Fill(xvar->getValue(), pdfVals[0][i]);
+        sigHist.Fill(xvar->getValue(), pdfVals[1][i]);
+        bkgHist.Fill(xvar->getValue(), pdfVals[2][i]);
         totalPdf += pdfVals[0][i];
     }
 
@@ -132,12 +132,12 @@ int main(int argc, char** argv) {
         pdfHist.SetBinContent(i+1, val);
         val = sigHist.GetBinContent(i+1);
         val /= totalPdf;
-        val *= sigFrac->value;
+        val *= sigFrac->getValue();
         val *= totalData;
         sigHist.SetBinContent(i+1, val);
         val = bkgHist.GetBinContent(i+1);
         val /= totalPdf;
-        val *= (1.0 - sigFrac->value);
+        val *= (1.0 - sigFrac->getValue());
         val *= totalData;
         bkgHist.SetBinContent(i+1, val);
     }

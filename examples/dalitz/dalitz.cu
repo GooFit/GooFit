@@ -89,9 +89,9 @@ void getToyData(std::string toyFileName, GooFit::Application &app) {
 
     while(!reader.eof()) {
         reader >> dummy;
-        reader >> dummy;      // m23, m(pi+ pi-), called m12 in processToyRoot convention.
-        reader >> m12->value; // Already swapped according to D* charge. m12 = m(pi+pi0)
-        reader >> m13->value;
+        reader >> dummy;  // m23, m(pi+ pi-), called m12 in processToyRoot convention.
+        reader >> *m12;   // Already swapped according to D* charge. m12 = m(pi+pi0)
+        reader >> *m13;
 
         // Errors on Dalitz variables
         reader >> dummy;
@@ -122,10 +122,10 @@ void getToyData(std::string toyFileName, GooFit::Application &app) {
 
         // EXERCISE 3: Use both the above.
 
-        eventNumber->value = data->getNumEvents();
+        eventNumber->setValue(data->getNumEvents());
         data->addEvent();
 
-        dalitzplot.Fill(m12->value, m13->value);
+        dalitzplot.Fill(m12->getValue(), m13->getValue());
     }
 
     dalitzplot.SetStats(false);

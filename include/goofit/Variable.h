@@ -54,6 +54,7 @@ protected:
 class Variable : public Indexable {
 public:
     friend std::ostream& operator<< (std::ostream& o, const Variable& var);
+    friend std::istream& operator>> (std::istream& o, Variable& var);
 
 
     /// This is a constant varaible
@@ -184,6 +185,9 @@ inline std::ostream& operator<< (std::ostream& o, const Variable& var) {
     return o;
 }
 
+inline std::istream& operator>> (std::istream& i, Variable& var) {
+    return i >> var.value;
+}
 
 /// Get the max index of a variable from a list
 inline int max_index(const std::vector<Variable*> &vars) {

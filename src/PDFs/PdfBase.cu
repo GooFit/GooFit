@@ -33,7 +33,7 @@ __host__ void PdfBase::copyParams() {
         if(index >= (int) values.size())
             values.resize(index + 1);
 
-        values[index] = v->value;
+        values[index] = v->getValue();
     }
 
     copyParams(values);
@@ -123,7 +123,7 @@ __host__ void PdfBase::recursiveSetIndices() {
 
     for(Variable* v : observables) {
         host_indices[parameters + 2 + numParams + counter] = v->getIndex();
-        GOOFIT_TRACE("{} set index of {} to {} -> host {}", getName(), v->name, v->index, parameters + 2 + numParams + counter)
+        GOOFIT_TRACE("{} set index of {} to {} -> host {}", getName(), v->getName(), v->index, parameters + 2 + numParams + counter)
         counter++;
     }
 

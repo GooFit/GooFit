@@ -104,14 +104,14 @@ int fitRatio(vector<int>& rsEvts, vector<int>& wsEvts, std::string plotName = ""
 
     if(0 == constaCoef) {
         constaCoef = new Variable("constaCoef", 0.03, 0.01, -1, 1);
-        constaCoef->value = 0.03;
-        constaCoef->error = 0.01;
+        constaCoef->setValue(0.03);
+        constaCoef->setError(0.01);
         linearCoef = new Variable("linearCoef", 0, 0.01, -1, 1);
-        linearCoef->value = 0.00;
-        linearCoef->error = 0.01;
+        linearCoef->setValue(0.00);
+        linearCoef->setError(0.01);
         secondCoef = new Variable("secondCoef", 0, 0.01, -1, 1);
-        secondCoef->value = 0.00;
-        secondCoef->error = 0.01;
+        secondCoef->setValue(0.00);
+        secondCoef->setError(0.01);
     }
 
     vector<Variable*> weights;
@@ -142,13 +142,13 @@ int fitRatio(vector<int>& rsEvts, vector<int>& wsEvts, std::string plotName = ""
     ratioHist->Draw("p");
 
     char strbuffer[1000];
-    sprintf(strbuffer, "Constant [10^{-2}] : %.3f #pm %.3f", 1e2*constaCoef->value, constaCoef->error*1e2);
+    sprintf(strbuffer, "Constant [10^{-2}] : %.3f #pm %.3f", 1e2*constaCoef->getValue(), constaCoef->getError()*1e2);
     TLatex res1(0.14, 0.83, strbuffer);
     res1.SetNDC(true);
-    sprintf(strbuffer, "Linear [10^{-4}]   : %.3f #pm %.3f", 1e4*linearCoef->value, linearCoef->error*1e4);
+    sprintf(strbuffer, "Linear [10^{-4}]   : %.3f #pm %.3f", 1e4*linearCoef->getValue(), linearCoef->getError()*1e4);
     TLatex res2(0.14, 0.73, strbuffer);
     res2.SetNDC(true);
-    sprintf(strbuffer, "Quadratic [10^{-6}]: %.3f #pm %.3f", 1e6*secondCoef->value, secondCoef->error*1e6);
+    sprintf(strbuffer, "Quadratic [10^{-6}]: %.3f #pm %.3f", 1e6*secondCoef->getValue(), secondCoef->getError()*1e6);
     TLatex res3(0.14, 0.63, strbuffer);
     res3.SetNDC(true);
 

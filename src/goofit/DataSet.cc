@@ -32,7 +32,7 @@ void DataSet::addEvent(fptype val) {
     // Helper method to avoid the user having to wrap
     // every one-dimensional event in a vector.
     assert(1 == variables.size());
-    variables[0]->value = val;
+    variables[0]->setValue(val);
     addEvent();
 }
 
@@ -44,7 +44,7 @@ void DataSet::addWeightedEvent(fptype) {
      std::vector<fptype> values;
 
      for(Variable* v : variables) {
-        values.push_back(v->value);
+        values.push_back(v->getValue());
     }
 
     return values;
@@ -70,6 +70,6 @@ void DataSet::generateName() {
     for(Variable* v : variables) {
         if(v != variables[0])
             name += ", ";
-        name += v->name;
+        name += v->getName();
     }
 }

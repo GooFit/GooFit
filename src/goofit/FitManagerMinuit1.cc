@@ -17,9 +17,9 @@ Minuit1::Minuit1(PdfBase* pdfPointer) : TMinuit(max_index(pdfPointer->getParamet
     for(Variable* var : vars) {
         var->setFitterIndex(counter);
         DefineParameter(counter,
-                                var->name.c_str(),
-                                var->value,
-                                var->error,
+                                var->getName().c_str(),
+                                var->getValue(),
+                                var->getError(),
                                 var->getLowerLimit(),
                                 var->getUpperLimit());
         
@@ -48,11 +48,11 @@ Int_t Minuit1::Eval(
     
     for(Variable* var : vars) {
         if(std::isnan(pars.at(var->getFitterIndex())))
-            GOOFIT_WARN("Variable {} at {} is NaN", var->name, var->getIndex());
+            GOOFIT_WARN("Variable {} at {} is NaN", var->getName(), var->getIndex());
         
-        var->setChanged(var->value != pars.at(var->getFitterIndex()));
+        var->setChanged(var->getValue() != pars.at(var->getFitterIndex()));
         var->setValue(pars.at(var->getFitterIndex())); //  + var->blind
-        gooPars.at(var->getIndex()) = var->value;
+        gooPars.at(var->getIndex()) = var->getValue();
     }
     
     pdfPointer->copyParams(gooPars);
@@ -94,8 +94,12 @@ void FitManagerMinuit1::fit() {
     
     std::cout << GooFit::reset;
     
-    for(Variable* var : minuit_.getVaraibles())
-        minuit_.GetParameter(var->getFitterIndex(), var->value, var->error);
+    double tmp_value, tmp_error;
+    for(Variable* var : minuit_.getVaraibles()) {
+        minuit_.GetParameter(var->getFitterIndex(), tmp_value, tmp_error);
+        var->setValue(tmp_value);
+        var->setError(tmp_error);
+    }
 
 }
 

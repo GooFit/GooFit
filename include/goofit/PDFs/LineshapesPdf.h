@@ -55,10 +55,10 @@ public:
         bool addvar = true;
 
         for(int i = 0; i < _AdditionalVars.size(); ++i) {
-            addvar = addvar and (L._AdditionalVars[i]->value ==  _AdditionalVars[i]->value);
+            addvar = addvar and (L._AdditionalVars[i]->getValue() ==  _AdditionalVars[i]->getValue());
         }
 
-        return addvar and (L.getName() == getName() and L._mass->value == _mass->value and L._width->value == _width->value
+        return addvar and (L.getName() == getName() and L._mass->getValue() == _mass->getValue() and L._width->getValue() == _width->getValue()
                            and L._L == _L and L._Mpair == _Mpair and L._kind == _kind and L._FormFac == _FormFac);
     }
     Lineshape(std::string name);

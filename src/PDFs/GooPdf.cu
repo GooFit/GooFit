@@ -310,7 +310,7 @@ __host__ void GooPdf::evaluateAtPoints(Variable* var, std::vector<fptype>& res) 
     double step = (var->getUpperLimit() - var->getLowerLimit()) / var->getNumBins();
 
     for(int i = 0; i < var->getNumBins(); ++i) {
-        var->value = var->getLowerLimit() + (i+0.5)*step;
+        var->setValue(var->getLowerLimit() + (i+0.5)*step);
         tempdata.addEvent();
     }
 
@@ -357,7 +357,7 @@ __host__ void GooPdf::evaluateAtPoints(std::vector<fptype>& points) const {
     params.resize(maxIndex+1);
     for (std::set<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
       if (0 > (*i)->getIndex()) continue;
-      params[(*i)->getIndex()] = (*i)->value;
+      params[(*i)->getIndex()] = (*i)->getValue();
     }
     copyParams(params);
 
@@ -377,7 +377,7 @@ __host__ void GooPdf::scan(Variable* var, std::vector<fptype>& values) {
     values.clear();
 
     for(fptype v = var->getLowerLimit() + 0.5*step; v < var->getUpperLimit(); v += step) {
-        var->value = v;
+        var->setValue(v);
         copyParams();
         fptype curr = calculateNLL();
         values.push_back(curr);
@@ -431,7 +431,7 @@ __host__ fptype GooPdf::normalize() const {
     if(hasAnalyticIntegral()) {
         // Loop goes only over observables of this PDF.
         for(Variable* v : observables) {
-            GOOFIT_TRACE(")Analytically integrating {} over {}", getName(), v->name);
+            GOOFIT_TRACE(")Analytically integrating {} over {}", getName(), v->getName());
             ret *= integrate(v->getLowerLimit(), v->getUpperLimit());
         }
 
@@ -447,7 +447,7 @@ __host__ fptype GooPdf::normalize() const {
         ret *= v->getUpperLimit() - v->getLowerLimit();
         totalBins *= integrationBins > 0 ? integrationBins : v->getNumBins();
 
-        GOOFIT_TRACE("Total bins {} due to {} {} {}", totalBins, v->name, integrationBins, v->getNumBins());
+        GOOFIT_TRACE("Total bins {} due to {} {} {}", totalBins, v->getName(), integrationBins, v->getNumBins());
     }
 
     ret /= totalBins;
@@ -646,7 +646,7 @@ __host__ void make_a_grid(std::vector<Variable*> ret, UnbinnedDataSet &grid) {
     
     for(int i = 0; i < var->getNumBins(); ++i) {
         double step = (var->getUpperLimit() - var->getLowerLimit())/var->getNumBins();
-        var->value = var->getLowerLimit() + (i + 0.5) * step;
+        var->setValue(var->getLowerLimit() + (i + 0.5) * step);
         make_a_grid(ret, grid);
     }
     

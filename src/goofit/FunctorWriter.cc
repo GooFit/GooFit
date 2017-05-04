@@ -30,7 +30,7 @@ void readFromFile(PdfBase* pdf, const char* fname) {
     std::map<std::string, Variable*> tempMap;
 
     for(Variable* p : params) {
-        tempMap[p->name] = p;
+        tempMap[p->getName()] = p;
     }
 
     std::ifstream reader;

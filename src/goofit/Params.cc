@@ -31,8 +31,8 @@ void Params::SetGooFitParams(const Minuit2::MnUserParameterState& input) {
         size_t counter = var->getFitterIndex();
         var->setValue(input.Value(counter));
         var->setError(input.Error(counter));
-        SetValue(counter, var->value);
-        SetError(counter, var->error);
+        SetValue(counter, var->getValue());
+        SetError(counter, var->getError());
     }
 }
     

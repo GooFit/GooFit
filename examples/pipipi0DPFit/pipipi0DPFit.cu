@@ -298,13 +298,13 @@ void plotLoHiSigma() {
 
 void plotFit(Variable* var, UnbinnedDataSet* dat, GooPdf* fit) {
     int numEvents = dat->getNumEvents();
-    TH1F* dat_hist = new TH1F((var->name + "_dathist").c_str(), "", var->getNumBins(), var->getLowerLimit(), var->getUpperLimit());
+    TH1F* dat_hist = new TH1F((var->getName() + "_dathist").c_str(), "", var->getNumBins(), var->getLowerLimit(), var->getUpperLimit());
 
     for(int i = 0; i < numEvents; ++i) {
         dat_hist->Fill(dat->getValue(var, i));
     }
 
-    TH1F* pdf_hist = new TH1F((var->name + "_pdfhist").c_str(), "", var->getNumBins(), var->getLowerLimit(), var->getUpperLimit());
+    TH1F* pdf_hist = new TH1F((var->getName() + "_pdfhist").c_str(), "", var->getNumBins(), var->getLowerLimit(), var->getUpperLimit());
     std::vector<fptype> values;
     fit->evaluateAtPoints(var, values);
 
@@ -329,9 +329,9 @@ void plotFit(Variable* var, UnbinnedDataSet* dat, GooPdf* fit) {
 
     pdf_hist->Draw("lsame");
 
-    foo->SaveAs((var->name + "_fit.png").c_str());
+    foo->SaveAs((var->getName() + "_fit.png").c_str());
     foo->SetLogy(true);
-    foo->SaveAs((var->name + "_logfit.png").c_str());
+    foo->SaveAs((var->getName() + "_logfit.png").c_str());
     foo->SetLogy(false);
 }
 
@@ -379,16 +379,16 @@ void getToyData(float sigweight = 0.9) {
     while(!reader.eof()) {
         reader >> dummy;
         reader >> dummy;      // m23, m(pi+ pi-), called m12 in processToyRoot convention.
-        reader >> m12->value; // Already swapped according to D* charge. m12 = m(pi+pi0)
-        reader >> m13->value;
+        reader >> *m12; // Already swapped according to D* charge. m12 = m(pi+pi0)
+        reader >> *m13;
 
         // Errors on Dalitz variables
         reader >> dummy;
         reader >> dummy;
         reader >> dummy;
 
-        reader >> dtime->value;
-        reader >> sigma->value;
+        reader >> *dtime;
+        reader >> *sigma;
 
         reader >> dummy; // Md0
         reader >> dummy; // deltaM
@@ -402,31 +402,31 @@ void getToyData(float sigweight = 0.9) {
         reader >> dummy;
         reader >> dummy;
 
-        //if (dtime->value < dtime->getLowerLimit()) continue;
-        //if (dtime->value > dtime->getUpperLimit()) continue;
+        //if (dtime->getValue() < dtime->getLowerLimit()) continue;
+        //if (dtime->getValue() > dtime->getUpperLimit()) continue;
 
         double resolution = donram.Gaus(0, 1);
-        dtime->value += resolution*sigma->value;
+        dtime->setValue(dtime->getValue() + resolution*sigma->getValue());
 
-        eventNumber->value = data->getNumEvents();
+        eventNumber->setValue(data->getNumEvents());
 
         do {
             md0 = donram.Gaus(md0_toy_mean, md0_toy_width);
         } while(md0 <= 1.8654 + 0.0075*md0_lower_window||md0 >= 1.8654 + 0.0075*md0_upper_window);
 
-//    wSig0->value = sigweight;
-        wSig0->value = calcToyWeight(sigweight, md0);
-        sigprob += wSig0->value;
+//    wSig0->getValue() = sigweight;
+        wSig0->setValue(calcToyWeight(sigweight, md0));
+        sigprob += wSig0->getValue();
         data->addEvent();
         nsig ++;
 
 
         if(data->getNumEvents() < 10) {
             std::cout << data->getNumEvents() << " : "
-                      << m12->value << " "
-                      << m13->value << " "
-                      << dtime->value << " "
-                      << sigma->value << " "
+                      << m12->getValue() << " "
+                      << m13->getValue() << " "
+                      << dtime->getValue() << " "
+                      << sigma->getValue() << " "
                       << std::endl;
         }
 
@@ -435,19 +435,19 @@ void getToyData(float sigweight = 0.9) {
 
     for(int ib = 0; ib < nsig*(1-sigweight)/sigweight; ib++) {
         do {
-            m12->value = donram.Uniform()*(m12->getUpperLimit() - m12->getLowerLimit())+m12->getLowerLimit();
-            m13->value = donram.Uniform()*(m13->getUpperLimit() - m13->getLowerLimit())+m13->getLowerLimit();
-        } while(!cpuDalitz(m12->value, m13->value, _mD0, piZeroMass, piPlusMass, piPlusMass));
+            m12->setValue(donram.Uniform()*(m12->getUpperLimit() - m12->getLowerLimit())+m12->getLowerLimit());
+            m13->setValue(donram.Uniform()*(m13->getUpperLimit() - m13->getLowerLimit())+m13->getLowerLimit());
+        } while(!cpuDalitz(m12->getValue(), m13->getValue(), _mD0, piZeroMass, piPlusMass, piPlusMass));
 
         do {
-            dtime->value = donram.Gaus(toyBkgTimeMean, toyBkgTimeRMS);
-        } while(!(dtime->value > dtime->getLowerLimit()&&dtime->value < dtime->getUpperLimit()));
+            dtime->setValue(donram.Gaus(toyBkgTimeMean, toyBkgTimeRMS));
+        } while(!(dtime->getValue() > dtime->getLowerLimit()&&dtime->getValue() < dtime->getUpperLimit()));
 
-        eventNumber->value = data->getNumEvents();
+        eventNumber->setValue(data->getNumEvents());
         md0 = donram.Uniform(1.8654 + 0.0075*md0_lower_window, 1.8654 + 0.0075*md0_upper_window);
-//    wSig0->value = sigweight;
-        wSig0->value = calcToyWeight(sigweight, md0);
-        sigprob += wSig0->value;
+//    wSig0->getValue() = sigweight;
+        wSig0->setValue(calcToyWeight(sigweight, md0));
+        sigprob += wSig0->getValue();
         data->addEvent();
     }
 
@@ -821,8 +821,8 @@ TddpPdf* makeSignalPdf(MixingTimeResolution* resolution = 0, GooPdf* eff = 0) {
                 resolution = new ThreeGaussResolution(coreFrac, constantOne, coreBias, coreScaleFactor, coreBias, tailScaleFactor,
                                                       constantZero, constantOne);
             else {
-                coreBias->value = 0;
-                coreScaleFactor->value = 1;
+                coreBias->setValue(0);
+                coreScaleFactor->setValue(1);
                 coreScaleFactor->setFixed(false);
                 resolution = new ThreeGaussResolution(constantOne, constantOne, coreBias, coreScaleFactor, constantZero, constantOne,
                                                       constantZero, constantOne);
@@ -930,9 +930,9 @@ int runToyFit(int ifile, int nfile, bool noPlots = true) {
     gettimeofday(&stopTime, NULL);
 
     printf("Fit results:\ntau    : (%.3f $\\pm$ %.3f) fs\nxmixing: (%.3f $\\pm$ %.3f)%%\nymixing: (%.3f $\\pm$ %.3f)%%\n",
-           1000*ptr_to_dtau->value, 1000*ptr_to_dtau->error,
-           100*ptr_to_xmix->value, 100*ptr_to_xmix->error,
-           100*ptr_to_ymix->value, 100*ptr_to_ymix->error);
+           1000*ptr_to_dtau->getValue(), 1000*ptr_to_dtau->getError(),
+           100*ptr_to_xmix->getValue(), 100*ptr_to_xmix->getError(),
+           100*ptr_to_ymix->getValue(), 100*ptr_to_ymix->getError());
 
     if(!noPlots)
         makeToyDalitzPlots(mixPdf);
@@ -989,42 +989,42 @@ void loadDataFile(std::string fname, UnbinnedDataSet** setToFill, int effSkip) {
             break;
 
         reader >> dummy;      // m23, m(pi+ pi-), called m12 in processToyRoot convention.
-        reader >> m12->value; // Already swapped according to D* charge
-        reader >> m13->value;
+        reader >> *m12; // Already swapped according to D* charge
+        reader >> *m13;
 
         // Errors on Dalitz variables
         reader >> dummy;
         reader >> dummy;
         reader >> dummy;
 
-        reader >> dtime->value;
-        reader >> sigma->value;
+        reader >> *dtime;
+        reader >> *sigma;
 
-        if(massd0)
-            reader >> massd0->value; // Md0
-        else
+        if(massd0) {
+            reader >> *massd0; // Md0
+        } else
             reader >> mass;
 
-        if(deltam)
-            reader >> deltam->value;
-        else
+        if(deltam) {
+            reader >> *deltam;
+        } else
             reader >> delm;
 
         reader >> dummy; // ProbSig
         reader >> dummy; // Dst charge
         reader >> dummy; // Run
         reader >> dummy; // Event
-        reader >> wSig0->value;
-        reader >> wBkg1->value;
-        reader >> wBkg2->value;
-        reader >> wBkg3->value;
-        reader >> wBkg4->value;
+        reader >> *wSig0;
+        reader >> *wBkg1;
+        reader >> *wBkg2;
+        reader >> *wBkg3;
+        reader >> *wBkg4;
 
         if(massd0) {
-            if(massd0->value <= massd0->getLowerLimit())
+            if(massd0->getValue() <= massd0->getLowerLimit())
                 continue;
 
-            if(massd0->value >= massd0->getUpperLimit())
+            if(massd0->getValue() >= massd0->getUpperLimit())
                 continue;
         } else {
             // Enforce signal box on all data sets!
@@ -1036,10 +1036,10 @@ void loadDataFile(std::string fname, UnbinnedDataSet** setToFill, int effSkip) {
         }
 
         if(deltam) {
-            if(deltam->value >= deltam->getUpperLimit())
+            if(deltam->getValue() >= deltam->getUpperLimit())
                 continue;
 
-            if(deltam->value <= deltam->getLowerLimit())
+            if(deltam->getValue() <= deltam->getLowerLimit())
                 continue;
         } else {
             if(delm >= 0.1454 + 0.0003*deltam_upper_window)
@@ -1049,66 +1049,66 @@ void loadDataFile(std::string fname, UnbinnedDataSet** setToFill, int effSkip) {
                 continue;
         }
 
-        if(dtime->value < dtime->getLowerLimit())
+        if(dtime->getValue() < dtime->getLowerLimit())
             continue;
 
-        if(dtime->value > dtime->getUpperLimit())
+        if(dtime->getValue() > dtime->getUpperLimit())
             continue;
 
-        if(sigma->value > sigma->getUpperLimit())
+        if(sigma->getValue() > sigma->getUpperLimit())
             continue; // Lower limit is 0, and it can't be lower than that, so whatever.
 
-        integralWeights[0] += wSig0->value;
-        integralWeights[1] += wBkg1->value;
-        integralWeights[2] += wBkg2->value;
-        integralWeights[3] += wBkg3->value;
-        integralWeights[4] += wBkg4->value;
-        eventNumber->value = (*setToFill)->getNumEvents();
+        integralWeights[0] += wSig0->getValue();
+        integralWeights[1] += wBkg1->getValue();
+        integralWeights[2] += wBkg2->getValue();
+        integralWeights[3] += wBkg3->getValue();
+        integralWeights[4] += wBkg4->getValue();
+        eventNumber->setValue( (*setToFill)->getNumEvents());
 
         // See comments in TddpPdf.hh for explanation of this.
-        double mistag = wSig0->value + wBkg1->value * luckyFrac;
-        wSig0->value += wBkg1->value;
-        wBkg1->value = mistag / wSig0->value;
+        double mistag = wSig0->getValue() + wBkg1->getValue() * luckyFrac;
+        wSig0->setValue(wSig0->getValue() + wBkg1->getValue());
+        wBkg1->setValue( mistag / wSig0->getValue());
 
         if((binEffData) && (0 == events % effSkip)) {
-            double weight = weightHistogram->GetBinContent(weightHistogram->FindBin(m12->value, m13->value));
+            double weight = weightHistogram->GetBinContent(weightHistogram->FindBin(m12->getValue(), m13->getValue()));
             //weight = 1;
             binEffData->addWeightedEvent(weight);
 
             //binEffData->addEvent();
             if(underlyingBins)
-                underlyingBins->Fill(m12->value, m13->value, weight);
+                underlyingBins->Fill(m12->getValue(), m13->getValue(), weight);
         } else(*setToFill)->addEvent();
 
         events++;
 
         if(loM23Sigma) {
-            double currM23 = cpuGetM23(m12->value, m13->value);
+            double currM23 = cpuGetM23(m12->getValue(), m13->getValue());
 
             if(currM23 < 1.5)
-                loM23Sigma->Fill(sigma->value);
+                loM23Sigma->Fill(sigma->getValue());
             else
-                hiM23Sigma->Fill(sigma->value);
+                hiM23Sigma->Fill(sigma->getValue());
 
-            //std::cout << "Filled sigma with " << sigma->value << " " << currM23 << std::endl;
+            //std::cout << "Filled sigma with " << sigma->getValue() << " " << currM23 << std::endl;
         }
 
-        if(wSig0->value > 1.0)
-            std::cout << "Problem with event " << (*setToFill)->getNumEvents() << ", too-large signal weight " << wSig0->value <<
+        if(wSig0->getValue() > 1.0)
+            std::cout << "Problem with event " << (*setToFill)->getNumEvents() << ", too-large signal weight " << wSig0->getValue() <<
                       std::endl;
 
         /*
         if ((*setToFill)->getNumEvents() < 10) {
           std::cout << (*setToFill)->getNumEvents() << " : "
-        	<< m12->value << " "
-        	<< m13->value << " "
-        	<< dtime->value << " "
-        	<< sigma->value << " "
-        	<< wSig0->value << " "
-        	<< wBkg1->value << " "
-        	<< wBkg2->value << " "
-        	<< wBkg3->value << " "
-        	<< wBkg4->value << " "
+        	<< m12->getValue() << " "
+        	<< m13->getValue() << " "
+        	<< dtime->getValue() << " "
+        	<< sigma->getValue() << " "
+        	<< wSig0->getValue() << " "
+        	<< wBkg1->getValue() << " "
+        	<< wBkg2->getValue() << " "
+        	<< wBkg3->getValue() << " "
+        	<< wBkg4->getValue() << " "
         	<< std::endl;
         }
         */
@@ -1206,20 +1206,20 @@ GooPdf* makeSignalJSU_gg(int idx, bool fixem = true) {
         break;
 
     case 2:
-        frac_jsu->value = 0.80;
+        frac_jsu->setValue(0.80);
         break;
 
     //case 5:
     //g1_sigma->getLowerLimit() = 0.005;
     //break;
     case 7:
-        frac_jsu->value = 0.80;
-        //frac_ga1->value = 0.05;
+        frac_jsu->setValue(0.80);
+        //frac_ga1->getValue() = 0.05;
         break;
 
     case 11:
         frac_ga1->setUpperLimit(0.4);
-        frac_jsu->value = 0.80;
+        frac_jsu->setValue(0.80);
         break;
 
     default:
@@ -1257,7 +1257,7 @@ GooPdf* makeMikhailJSU_gg(bool fixem = true) {
 
     //Variable* g2_sigma = new Variable("g2_sigma", 0.5825);
 
-    frac_ga1->value *= (1 - frac_jsu->value);
+    frac_ga1->setValue(frac_ga1->getValue() * (1 - frac_jsu->getValue()));
 
     JohnsonSUPdf* js = new JohnsonSUPdf("js", sigma, js_meana, js_sigma, js_gamma, js_delta);
     GaussianPdf*  g1 = new GaussianPdf("g1", sigma, g1_meana, g1_sigma);
@@ -1307,14 +1307,14 @@ GooPdf* makeSigmaMap() {
     int numEvents = data->getNumEvents();
 
     for(int i = 0; i < numEvents; ++i) {
-        m12->value = data->getValue(m12, i);
-        m13->value = data->getValue(m13, i);
-        sigma->value = data->getValue(sigma, i);
+        m12->setValue( data->getValue(m12, i));
+        m13->setValue( data->getValue(m13, i));
+        sigma->setValue( data->getValue(sigma, i));
 
-        int xbin = (int) floor(m12->value / 0.5);
-        int ybin = (int) floor(m13->value / 0.5);
+        int xbin = (int) floor(m12->getValue() / 0.5);
+        int ybin = (int) floor(m13->getValue() / 0.5);
         int overallbin = ybin*6 + xbin;
-        sigma_dat_hists[overallbin]->Fill(sigma->value);
+        sigma_dat_hists[overallbin]->Fill(sigma->getValue());
         sigma_data[overallbin]->addEvent();
     }
 
@@ -1391,12 +1391,12 @@ GooPdf* make1BinSigmaMap() {
     int numEvents = data->getNumEvents();
 
     for(int i = 0; i < numEvents; ++i) {
-        m12->value = data->getValue(m12, i);
-        m13->value = data->getValue(m13, i);
-        sigma->value = data->getValue(sigma, i);
+        m12->setValue( data->getValue(m12, i));
+        m13->setValue( data->getValue(m13, i));
+        sigma->setValue( data->getValue(sigma, i));
 
         int overallbin = 0;
-        sigma_dat_hists[overallbin]->Fill(sigma->value);
+        sigma_dat_hists[overallbin]->Fill(sigma->getValue());
         sigma_data[overallbin]->addEvent();
     }
 
@@ -1463,14 +1463,14 @@ GooPdf* make4BinSigmaMap() {
     int numEvents = data->getNumEvents();
 
     for(int i = 0; i < numEvents; ++i) {
-        m12->value = data->getValue(m12, i);
-        m13->value = data->getValue(m13, i);
-        sigma->value = data->getValue(sigma, i);
+        m12->setValue(data->getValue(m12, i));
+        m13->setValue(data->getValue(m13, i));
+        sigma->setValue(data->getValue(sigma, i));
 
-        int xbin = (int) floor(m12->value / 1.5);
-        int ybin = (int) floor(m13->value / 1.5);
+        int xbin = (int) floor(m12->getValue() / 1.5);
+        int ybin = (int) floor(m13->getValue() / 1.5);
         int overallbin = ybin*2 + xbin;
-        sigma_dat_hists[overallbin]->Fill(sigma->value);
+        sigma_dat_hists[overallbin]->Fill(sigma->getValue());
         sigma_data[overallbin]->addEvent();
     }
 
@@ -1801,22 +1801,22 @@ void makeToyDalitzPlots(GooPdf* overallSignal, std::string plotdir) {
     vars.push_back(eventNumber);
     vars.push_back(wSig0);
     UnbinnedDataSet currData(vars);
-    sigma->value = 0.1;
-    wSig0->value = totalSigProb / totalDat;
+    sigma->setValue( 0.1);
+    wSig0->setValue( totalSigProb / totalDat);
     int evtCounter = 0;
 
     for(int i = 0; i < m12->getNumBins(); ++i) {
-        m12->value = m12->getLowerLimit() + (m12->getUpperLimit() - m12->getLowerLimit())*(i + 0.5) / m12->getNumBins();
+        m12->setValue(m12->getLowerLimit() + (m12->getUpperLimit() - m12->getLowerLimit())*(i + 0.5) / m12->getNumBins());
 
         for(int j = 0; j < m13->getNumBins(); ++j) {
-            m13->value = m13->getLowerLimit() + (m13->getUpperLimit() - m13->getLowerLimit())*(j + 0.5) / m13->getNumBins();
+            m13->setValue( m13->getLowerLimit() + (m13->getUpperLimit() - m13->getLowerLimit())*(j + 0.5) / m13->getNumBins());
 
-            if(!cpuDalitz(m12->value, m13->value, _mD0, piZeroMass, piPlusMass, piPlusMass))
+            if(!cpuDalitz(m12->getValue(), m13->getValue(), _mD0, piZeroMass, piPlusMass, piPlusMass))
                 continue;
 
             for(int l = 0; l < dtime->getNumBins(); ++l) {
-                dtime->value = dtime->getLowerLimit() + (dtime->getUpperLimit() - dtime->getLowerLimit())*(l + 0.5) / dtime->getNumBins();
-                eventNumber->value = evtCounter;
+                dtime->setValue( dtime->getLowerLimit() + (dtime->getUpperLimit() - dtime->getLowerLimit())*(l + 0.5) / dtime->getNumBins());
+                eventNumber->setValue( evtCounter);
                 evtCounter++;
                 currData.addEvent();
             }
@@ -2028,7 +2028,7 @@ void makeDalitzPlots(GooPdf* overallSignal, std::string plotdir = "./plots_from_
 
     //overallSignal->setDebugMask(1);
 
-    wBkg1->value = 0;
+    wBkg1->setValue(0);
     const int division = 2;
 
     for(int half = 0; half < division; ++half) {
@@ -2042,21 +2042,21 @@ void makeDalitzPlots(GooPdf* overallSignal, std::string plotdir = "./plots_from_
 
         UnbinnedDataSet currData(vars);
 
-        sigma->value = 0.5;
+        sigma->setValue(0.5);
         int evtCounter = 0;
 
         for(int i = 0; i < m12->getNumBins(); ++i) {
-            m12->value = m12->getLowerLimit() + (m12->getUpperLimit() - m12->getLowerLimit())*(i + 0.5) / m12->getNumBins();
+            m12->setValue( m12->getLowerLimit() + (m12->getUpperLimit() - m12->getLowerLimit())*(i + 0.5) / m12->getNumBins());
 
             for(int j = 0; j < m13->getNumBins(); ++j) {
-                m13->value = m13->getLowerLimit() + (m13->getUpperLimit() - m13->getLowerLimit())*(j + 0.5) / m13->getNumBins();
+                m13->setValue( m13->getLowerLimit() + (m13->getUpperLimit() - m13->getLowerLimit())*(j + 0.5) / m13->getNumBins());
 
-                if(!cpuDalitz(m12->value, m13->value, _mD0, piZeroMass, piPlusMass, piPlusMass))
+                if(!cpuDalitz(m12->getValue(), m13->getValue(), _mD0, piZeroMass, piPlusMass, piPlusMass))
                     continue;
 
                 for(int l = half; l < dtime->getNumBins(); l += division) {
-                    dtime->value = dtime->getLowerLimit() + (dtime->getUpperLimit() - dtime->getLowerLimit())*(l + 0.5) / dtime->getNumBins();
-                    eventNumber->value = evtCounter;
+                    dtime->setValue(dtime->getLowerLimit() + (dtime->getUpperLimit() - dtime->getLowerLimit())*(l + 0.5) / dtime->getNumBins());
+                    eventNumber->setValue( evtCounter);
                     evtCounter++;
                     currData.addEvent();
                 }
@@ -2064,7 +2064,7 @@ void makeDalitzPlots(GooPdf* overallSignal, std::string plotdir = "./plots_from_
         }
 
         for(int k = 0; k < sigma->getNumBins(); ++k) {
-            sigma->value = sigma->getLowerLimit() + (sigma->getUpperLimit() - sigma->getLowerLimit())*(k + 0.5) / sigma->getNumBins();
+            sigma->setValue( sigma->getLowerLimit() + (sigma->getUpperLimit() - sigma->getLowerLimit())*(k + 0.5) / sigma->getNumBins());
 
             if(0 == k % 10)
                 std::cout << "sigma iteration " << half << " " << k << std::endl;
@@ -2495,8 +2495,8 @@ GooPdf* makeSigmaHists() {
         reader >> dummy;
         reader >> dummy;
         reader >> dummy;
-        reader >> dtime->value;
-        reader >> sigma->value;
+        reader >> *dtime;
+        reader >> *sigma;
 
         reader >> dummy;
         reader >> dummy;
@@ -2510,10 +2510,10 @@ GooPdf* makeSigmaHists() {
         reader >> dummy;
         reader >> dummy;
 
-        if(dtime->value < dtime->getLowerLimit())
+        if(dtime->getValue() < dtime->getLowerLimit())
             continue;
 
-        if(dtime->value > dtime->getUpperLimit())
+        if(dtime->getValue() > dtime->getUpperLimit())
             continue;
 
         int bin = (int) floor((m23 / 3.0) * m23Slices);
@@ -2713,9 +2713,9 @@ int runTruthMCFit(std::string fname, bool noPlots = true) {
     //overallSignal->setDebugMask(0);
 
     std::cout << "Fit results: \n"
-              << "tau    : " << ptr_to_dtau->value << " $\\pm$ " << ptr_to_dtau->error << "\n"
-              << "xmixing: (" << 100*ptr_to_xmix->value << " $\\pm$ " << 100*ptr_to_xmix->error << ")%\n"
-              << "ymixing: (" << 100*ptr_to_ymix->value << " $\\pm$ " << 100*ptr_to_ymix->error << ")%\n";
+              << "tau    : " << ptr_to_dtau->getValue() << " $\\pm$ " << ptr_to_dtau->getError() << "\n"
+              << "xmixing: (" << 100*ptr_to_xmix->getValue() << " $\\pm$ " << 100*ptr_to_xmix->getError() << ")%\n"
+              << "ymixing: (" << 100*ptr_to_ymix->getValue() << " $\\pm$ " << 100*ptr_to_ymix->getError() << ")%\n";
 
     if(noPlots)
         return datapdf;
@@ -2748,19 +2748,19 @@ int runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
 
             if(DplotRes & genResolutions) {
                 if(100 > smearedData->numEvents())
-                    std::cout << "Before smear: " << m12->value << " " << m13->value;
+                    std::cout << "Before smear: " << m12->getValue() << " " << m13->getValue();
 
                 smear1 = donram.Gaus(0, dplotres);
                 smear2 = donram.Gaus(0, dplotres);
             }
 
-            //if (cpuDalitz(m12->value + smear1, m13->value + smear2, _mD0, piZeroMass, piPlusMass, piPlusMass)) {
-            m12->value += smear1;
-            m13->value += smear2;
+            //if (cpuDalitz(m12->getValue() + smear1, m13->getValue() + smear2, _mD0, piZeroMass, piPlusMass, piPlusMass)) {
+            m12->setValue(m12->getValue() + smear1);
+            m13->setValue(m13->getValue() + smear2);
 
             //}
             if(100 > smearedData->numEvents())
-                std::cout << " After smear: " << m12->value << " " << m13->value << "\n";
+                std::cout << " After smear: " << m12->getValue() << " " << m13->getValue() << "\n";
 
             smearedData->addEvent();
         }
@@ -2816,8 +2816,8 @@ int runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
         double gen = genEff.GetBinContent(i+1, j+1);
         if (0.1 > gen) continue;
         double res = resEff.GetBinContent(i+1, j+1);
-        m12->value = m12->getLowerLimit() + (i+0.5)*xstep;
-        m13->value = m13->getLowerLimit() + (j+0.5)*ystep;
+        m12->getValue() = m12->getLowerLimit() + (i+0.5)*xstep;
+        m13->getValue() = m13->getLowerLimit() + (j+0.5)*ystep;
         binEffData->setBinContent(binEffData->getBinNumber(), (res/gen));
         resEff.SetBinContent(i+1, j+1, (res/gen));
       }
@@ -2884,10 +2884,10 @@ int runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
       data->loadEvent(i);
       if ((100 > i) || (fabs(pdfValues1[0][i] - pdfValues2[0][i]) > 0.5)) {
         double eff1 = binEffData->getBinContent(binEffData->getBinNumber());
-        std::cout << i << ": " << m12->value << " " << m13->value << " -> " << pdfValues1[0][i] << " " << eff1 << " " << binEffData->getBinNumber();
+        std::cout << i << ": " << m12->getValue() << " " << m13->getValue() << " -> " << pdfValues1[0][i] << " " << eff1 << " " << binEffData->getBinNumber();
         smearedData->loadEvent(i);
         eff1 = binEffData->getBinContent(binEffData->getBinNumber());
-        std::cout <<     " | " << m12->value << " " << m13->value << " -> " << pdfValues2[0][i] << " " << eff1 << " " << binEffData->getBinNumber();
+        std::cout <<     " | " << m12->getValue() << " " << m13->getValue() << " -> " << pdfValues2[0][i] << " " << eff1 << " " << binEffData->getBinNumber();
         std::cout << std::endl;
       }
     }
@@ -2901,9 +2901,9 @@ int runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
     gettimeofday(&stopTime, NULL);
 
     std::cout << "Fit results: \n"
-              << "tau    : " << ptr_to_dtau->value << " $\\pm$ " << ptr_to_dtau->error << "\n"
-              << "xmixing: (" << 100*ptr_to_xmix->value << " $\\pm$ " << 100*ptr_to_xmix->error << ")%\n"
-              << "ymixing: (" << 100*ptr_to_ymix->value << " $\\pm$ " << 100*ptr_to_ymix->error << ")%\n";
+              << "tau    : " << ptr_to_dtau->getValue() << " $\\pm$ " << ptr_to_dtau->getError() << "\n"
+              << "xmixing: (" << 100*ptr_to_xmix->getValue() << " $\\pm$ " << 100*ptr_to_xmix->getError() << ")%\n"
+              << "ymixing: (" << 100*ptr_to_ymix->getValue() << " $\\pm$ " << 100*ptr_to_ymix->getError() << ")%\n";
 
     // All this relies on exact formatting of the input data files; it's fragile.
     double inputx = 1;
@@ -2933,8 +2933,8 @@ int runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
     sprintf(strbuffer, "result_%s_%f", ident.c_str(), dplotres);
     ofstream writer;
     writer.open(strbuffer);
-    writer << inputx << " " << 100*ptr_to_xmix->value << " " << 100*ptr_to_xmix->error << " "
-           << inputy << " " << 100*ptr_to_ymix->value << " " << 100*ptr_to_ymix->error << std::endl;
+    writer << inputx << " " << 100*ptr_to_xmix->getValue() << " " << 100*ptr_to_xmix->getError() << " "
+           << inputy << " " << 100*ptr_to_ymix->getValue() << " " << 100*ptr_to_ymix->getError() << std::endl;
     writer.close();
 
     return datapdf;
@@ -3413,8 +3413,8 @@ GooPdf* makeBkg3Eff() {
             break;
 
         reader >> dummy;      // m23, m(pi+ pi-), called m12 in processToyRoot convention.
-        reader >> m12->value; // Already swapped according to D* charge
-        reader >> m13->value;
+        reader >> *m12; // Already swapped according to D* charge
+        reader >> *m13;
 
         // Everything else is irrelevant for this purpose!
         for(int i = 0; i < 16; ++i)
@@ -3462,8 +3462,8 @@ SmoothHistogramPdf* makeBackgroundHistogram(int bkgnum, std::string overridename
     while(!reader.eof()) {
         reader >> dummy;
         reader >> dummy;      // m23, m(pi+ pi-), called m12 in processToyRoot convention.
-        reader >> m12->value; // Already swapped according to D* charge. m12 = m(pi+pi0)
-        reader >> m13->value;
+        reader >> *m12; // Already swapped according to D* charge. m12 = m(pi+pi0)
+        reader >> *m13;
 
         // Don't need the rest.
         for(int i = 0; i < 16; ++i)
@@ -3471,7 +3471,7 @@ SmoothHistogramPdf* makeBackgroundHistogram(int bkgnum, std::string overridename
 
         bkg_binned_data->addEvent();
 
-        //std::cout << m12->value << " " << m13->value << std::endl;
+        //std::cout << m12->getValue() << " " << m13->getValue() << std::endl;
     }
 
     std::cout << "Read " << bkg_binned_data->numEvents() << " events for background " << bkgnum << std::endl;
@@ -4015,13 +4015,13 @@ int runCanonicalFit(std::string fname, bool noPlots = true) {
     if(paramUp != "") {
         Variable* target = overallPdf->getParameterByName(paramUp);
         assert(target);
-        target->value += target->error;
+        target->setValue(target->getValue() + target->getError());
     }
 
     if(paramDn != "") {
         Variable* target = overallPdf->getParameterByName(paramDn);
         assert(target);
-        target->value -= target->error;
+        target->setValue(target->getValue() - target->getError());
     }
 
     std::cout << "Starting fit\n";
@@ -4040,24 +4040,24 @@ int runCanonicalFit(std::string fname, bool noPlots = true) {
 #endif
 
     printf("Fit results:\ntau    : (%.3f $\\pm$ %.3f) fs\nxmixing: (%.3f $\\pm$ %.3f)%%\nymixing: (%.3f $\\pm$ %.3f)%%\n",
-           1000*ptr_to_dtau->value, 1000*ptr_to_dtau->error,
-           100*ptr_to_xmix->value, 100*ptr_to_xmix->error,
-           100*ptr_to_ymix->value, 100*ptr_to_ymix->error);
+           1000*ptr_to_dtau->getValue(), 1000*ptr_to_dtau->getError(),
+           100*ptr_to_xmix->getValue(), 100*ptr_to_xmix->getError(),
+           100*ptr_to_ymix->getValue(), 100*ptr_to_ymix->getError());
 
     /*
     std::cout << "Fit results: \n"
-        << "tau    : (" << 1000*ptr_to_dtau->value << " $\\pm$ " << 1000*ptr_to_dtau->error << ") fs\n"
-        << "xmixing: (" << 100*ptr_to_xmix->value << " $\\pm$ " << 100*ptr_to_xmix->error << ")%\n"
-        << "ymixing: (" << 100*ptr_to_ymix->value << " $\\pm$ " << 100*ptr_to_ymix->error << ")%\n";
+        << "tau    : (" << 1000*ptr_to_dtau->getValue() << " $\\pm$ " << 1000*ptr_to_dtau->getError() << ") fs\n"
+        << "xmixing: (" << 100*ptr_to_xmix->getValue() << " $\\pm$ " << 100*ptr_to_xmix->getError() << ")%\n"
+        << "ymixing: (" << 100*ptr_to_ymix->getValue() << " $\\pm$ " << 100*ptr_to_ymix->getError() << ")%\n";
     */
 
     /*
-    double fitx = ptr_to_xmix->value;
+    double fitx = ptr_to_xmix->getValue();
     TH1F xscan("xscan", "", 200, fitx - 0.0001 - 0.0000005, fitx + 0.0001 - 0.0000005);
     xscan.SetStats(false);
-    //double fity = ptr_to_ymix->value;
+    //double fity = ptr_to_ymix->getValue();
     for (int i = 0; i < 200; ++i) {
-      ptr_to_xmix->value = fitx - 0.0001 + 0.000001*i;
+      ptr_to_xmix->getValue() = fitx - 0.0001 + 0.000001*i;
       overallPdf->copyParams();
       double nll = overallPdf->calculateNLL();
       printf("%i: %.10f\n", i, nll);
@@ -4148,16 +4148,16 @@ int runSigmaFit(const char* fname) {
     }
 
     for(int i = 0; i < m12->getNumBins(); ++i) {
-        m12->value = m12->getLowerLimit() + (i + 0.5)*((m12->getUpperLimit() - m12->getLowerLimit()) / m12->getNumBins());
+        m12->setValue( m12->getLowerLimit() + (i + 0.5)*m12->getBinSize());
 
         for(int j = 0; j < m13->getNumBins(); ++j) {
-            m13->value = m13->getLowerLimit() + (j + 0.5)*((m13->getUpperLimit() - m13->getLowerLimit()) / m13->getNumBins());
+            m13->setValue( m13->getLowerLimit() + (j + 0.5)*m13->getBinSize());
 
-            if(!cpuDalitz(m12->value, m13->value, _mD0, piZeroMass, piPlusMass, piPlusMass))
+            if(!cpuDalitz(m12->getValue(), m13->getValue(), _mD0, piZeroMass, piPlusMass, piPlusMass))
                 continue;
 
             for(int k = 0; k < sigma->getNumBins(); ++k) {
-                sigma->value = sigma->getLowerLimit() + (k + 0.5)*((sigma->getUpperLimit() - sigma->getLowerLimit()) / sigma->getNumBins());
+                sigma->setValue(sigma->getLowerLimit() + (k + 0.5)*sigma->getBinSize());
                 grid.addEvent();
             }
         }
@@ -4218,8 +4218,8 @@ int runSigmaFit(const char* fname) {
 
       if (0 == sigma_data[i]->numEvents()) continue;
 
-      //m12->value = 0.5*(xbin + 0.5);
-      //m13->value = 0.5*(ybin + 0.5);
+      //m12->getValue() = 0.5*(xbin + 0.5);
+      //m13->getValue() = 0.5*(ybin + 0.5);
 
       std::vector<fptype> values;
       jsuList[i]->evaluateAtPoints(sigma, values);
@@ -4306,12 +4306,12 @@ int runEfficiencyFit(int which) {
     UnbinnedDataSet currData(nvars);
 
     for(int i = 0; i < m12->getNumBins(); ++i) {
-        m12->value = m12->getLowerLimit() + (m12->getUpperLimit() - m12->getLowerLimit())*(i + 0.5) / m12->getNumBins();
+        m12->setValue(m12->getLowerLimit() + (i + 0.5)*m12->getBinSize());
 
         for(int j = 0; j < m13->getNumBins(); ++j) {
-            m13->value = m13->getLowerLimit() + (m13->getUpperLimit() - m13->getLowerLimit())*(j + 0.5) / m13->getNumBins();
+            m13->setValue( m13->getLowerLimit() + (j + 0.5) * m13->getBinSize());
 
-            if(!cpuDalitz(m12->value, m13->value, _mD0, piZeroMass, piPlusMass, piPlusMass))
+            if(!cpuDalitz(m12->getValue(), m13->getValue(), _mD0, piZeroMass, piPlusMass, piPlusMass))
                 continue;
 
             currData.addEvent();
@@ -4579,19 +4579,19 @@ void makeTimePlots(std::string fname) {
 
     for(int i = 0; i < data->getNumEvents(); ++i) {
         data->loadEvent(i);
-        timeVsMass.Fill(massd0->value, dtime->value);
+        timeVsMass.Fill(massd0->getValue(), dtime->getValue());
 
-        if(massd0->value >= massd0->getUpperLimit())
+        if(massd0->getValue() >= massd0->getUpperLimit())
             continue;
 
-        if(massd0->value < massd0->getLowerLimit())
+        if(massd0->getValue() < massd0->getLowerLimit())
             continue;
 
-        int slice = (int) floor(6 * (massd0->value - massd0->getLowerLimit()) / (massd0->getUpperLimit() - massd0->getLowerLimit()));
-        timePlots[slice]->Fill(dtime->value);
+        int slice = (int) floor(6 * (massd0->getValue() - massd0->getLowerLimit()) / (massd0->getUpperLimit() - massd0->getLowerLimit()));
+        timePlots[slice]->Fill(dtime->getValue());
 
-        slice = (int) floor(5 * (dtime->value - dtime->getLowerLimit()) / (dtime->getUpperLimit() - dtime->getLowerLimit()));
-        massPlots[slice]->Fill(massd0->value);
+        slice = (int) floor(5 * (dtime->getValue() - dtime->getLowerLimit()) / (dtime->getUpperLimit() - dtime->getLowerLimit()));
+        massPlots[slice]->Fill(massd0->getValue());
     }
 
     foo->cd();

@@ -116,7 +116,7 @@ __host__ std::vector<Variable*> PdfBase::getParameters() const {
 
 __host__ Variable* PdfBase::getParameterByName(std::string n) const {
     for(Variable* p : parameterList) {
-        if(p->name == n)
+        if(p->getName() == n)
             return p;
     }
 
@@ -189,7 +189,7 @@ void abortWithCudaPrintFlush(std::string file, int line, std::string reason, con
             if(0 > v->getIndex())
                 continue;
             
-            std::cout << "  " << v->name << " (" << v->getIndex() << ") :\t" << host_params[v->getIndex()] << std::endl;
+            std::cout << "  " << v->getName() << " (" << v->getIndex() << ") :\t" << host_params[v->getIndex()] << std::endl;
         }
     }
     

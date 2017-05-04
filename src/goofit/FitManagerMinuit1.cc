@@ -43,15 +43,19 @@ Int_t Minuit1::Eval(
     
     std::vector<double> pars {fp, fp+npar};
     
+    std::vector<double> gooPars;
+    gooPars.resize(max_index(vars)+1);
+    
     for(Variable* var : vars) {
         if(std::isnan(pars.at(var->getFitterIndex())))
-            std::cout << "Variable " << var->name << " " << var->getIndex() << " is NaN\n";
+            GOOFIT_WARN("Variable {} at {} is NaN", var->name, var->getIndex());
         
         var->unchanged_ = var->value == pars.at(var->getFitterIndex());
-        var->value = pars.at(var->getIndex()); //  + var->blind
+        var->value = pars.at(var->getFitterIndex()); //  + var->blind
+        gooPars.at(var->getIndex()) = var->value;
     }
     
-    pdfPointer->copyParams(pars);
+    pdfPointer->copyParams(gooPars);
     
     GOOFIT_TRACE("Calculating NLL");
     fun = pdfPointer->calculateNLL();
@@ -65,6 +69,8 @@ void FitManagerMinuit1::fit() {
     for(Variable* var : minuit_.getVaraibles())
         var->unchanged_ = false;
 
+    std::cout << GooFit::gray << GooFit::bold;
+    
     if(0 < overrideCallLimit) {
         std::cout << "Calling MIGRAD with call limit " << overrideCallLimit << std::endl;
         double plist[1] = {overrideCallLimit};
@@ -85,6 +91,8 @@ void FitManagerMinuit1::fit() {
             minuit_.mnexcm("IMPROVE", plist, 1, err);
     } else
         minuit_.Migrad();
+    
+    std::cout << GooFit::reset;
     
     for(Variable* var : minuit_.getVaraibles())
         minuit_.GetParameter(var->getFitterIndex(), var->value, var->error);

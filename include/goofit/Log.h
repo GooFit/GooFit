@@ -8,6 +8,8 @@
 #define GOOFIT_INFO(...)  {std::cout << GooFit::reset << GooFit::blue; fmt::print(__VA_ARGS__); std::cout << GooFit::reset << std::endl;}
 #define GOOFIT_INFO_C(color, ...) {std::cout << GooFit::reset << color; fmt::print(__VA_ARGS__); std::cout << GooFit::reset << std::endl;}
 #define GOOFIT_STATUS(...)  {std::cout << GooFit::reset << GooFit::magenta; fmt::print(__VA_ARGS__); std::cout << GooFit::reset << std::endl;}
+#define GOOFIT_WARN(...)  {std::cout << GooFit::reset << GooFit::yellow << GooFit::bold; fmt::print(__VA_ARGS__); std::cout << GooFit::reset << std::endl;}
+#define GOOFIT_ERROR(...)  {std::cout << GooFit::reset << GooFit::red << GooFit::bold; fmt::print(__VA_ARGS__); std::cout << GooFit::reset << std::endl;}
 
 #ifdef GOOFIT_DEBUG_FLAG
 #ifndef __CUDA_ARCH__

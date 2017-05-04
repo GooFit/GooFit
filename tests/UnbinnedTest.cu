@@ -42,7 +42,6 @@ TEST(UnbinnedFit, SimpleFit) {
     exppdf.setData(&data);
     
     FitManager fitter{&exppdf};
-    fitter.setVerbosity(0);
     fitter.fit();
 
     EXPECT_TRUE(fitter);
@@ -88,7 +87,6 @@ TEST(UnbinnedFit, DualFit) {
     totalpdf.setData(&data);
     
     FitManager fitter{&totalpdf};
-    fitter.setVerbosity(0);
     fitter.fit();
     
     EXPECT_TRUE(fitter);
@@ -135,7 +133,6 @@ TEST(UnbinnedFit, DifferentFitterVariable) {
     totalpdf.setData(&data);
     
     FitManager fitter{&totalpdf};
-    fitter.setVerbosity(0);
     fitter.fit();
     
     EXPECT_TRUE(fitter);

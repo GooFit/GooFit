@@ -12,26 +12,26 @@ TEST(Simple, UnbinnedAdding) {
     // Data set
     UnbinnedDataSet data {{&xvar, &yvar}};
 
-    xvar.value = 1;
-    yvar.value = 2;
+    xvar.setValue(1);
+    yvar.setValue(2);
     data.addEvent();
     
-    xvar.value = 3;
-    yvar.value = 4;
+    xvar.setValue(3);
+    yvar.setValue(4);
     data.addEvent();
     
-    xvar.value = 5;
-    yvar.value = 6;
+    xvar.setValue(5);
+    yvar.setValue(6);
     data.addEvent();
     
     data.loadEvent(0);
     
-    EXPECT_FLOAT_EQ(1, xvar.value);
-    EXPECT_FLOAT_EQ(2, yvar.value);
+    EXPECT_FLOAT_EQ(1, xvar.getValue());
+    EXPECT_FLOAT_EQ(2, yvar.getValue());
     
     data.loadEvent(1);
-    EXPECT_FLOAT_EQ(3, xvar.value);
-    EXPECT_FLOAT_EQ(4, yvar.value);
+    EXPECT_FLOAT_EQ(3, xvar.getValue());
+    EXPECT_FLOAT_EQ(4, yvar.getValue());
     
     EXPECT_FLOAT_EQ(1, data.getValue(&xvar, 0));
     EXPECT_FLOAT_EQ(2, data.getValue(&yvar, 0));

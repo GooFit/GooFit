@@ -30,7 +30,7 @@ TEST(BinnedFit, SimpleFit) {
     for(int i=0; i<100000; ++i) {
         double val = d(gen);
         if(val < 10) {
-            xvar.value = val;
+            xvar.setValue(val);
             data.addEvent();
         }
     }
@@ -46,8 +46,8 @@ TEST(BinnedFit, SimpleFit) {
     fitter.fit();
     
     EXPECT_TRUE(fitter);
-    EXPECT_LT(alpha.error, .01);
-    EXPECT_NEAR(-1.5, alpha.value, alpha.error*3);
+    EXPECT_LT(alpha.getError(), .01);
+    EXPECT_NEAR(-1.5, alpha.getValue(), alpha.getError()*3);
 }
 
 
@@ -70,8 +70,8 @@ TEST(BinnedFit, DualFit) {
         double xval = dx(gen);
         double yval = dy(gen);
         if(xval < 10 && yval < 10) {
-            xvar.value = xval;
-            yvar.value = yval;
+            xvar.setValue(xval);
+            yvar.setValue(yval);
             data.addEvent();
         }
     }
@@ -91,10 +91,10 @@ TEST(BinnedFit, DualFit) {
     fitter.fit();
     
     EXPECT_TRUE(fitter);
-    EXPECT_LT(xalpha.error, .1);
-    EXPECT_LT(yalpha.error, .1);
-    EXPECT_NEAR(-1.5, xalpha.value, xalpha.error*3);
-    EXPECT_NEAR(-.75, yalpha.value, yalpha.error*3);
+    EXPECT_LT(xalpha.getError(), .1);
+    EXPECT_LT(yalpha.getError(), .1);
+    EXPECT_NEAR(-1.5, xalpha.getValue(), xalpha.getError()*3);
+    EXPECT_NEAR(-.75, yalpha.getValue(), yalpha.getError()*3);
 }
 
 TEST(BinnedFit, DifferentFitterVariable) {
@@ -116,8 +116,8 @@ TEST(BinnedFit, DifferentFitterVariable) {
         double xval = dx(gen);
         double yval = dy(gen);
         if(xval < 10 && yval < 10) {
-            xvar.value = xval;
-            yvar.value = yval;
+            xvar.setValue(xval);
+            yvar.setValue(yval);
             data.addEvent();
         }
     }
@@ -137,9 +137,9 @@ TEST(BinnedFit, DifferentFitterVariable) {
     fitter.fit();
     
     EXPECT_TRUE(fitter);
-    EXPECT_LT(xalpha.error, .1);
-    EXPECT_LT(yalpha.error, .1);
-    EXPECT_NEAR(-1.5, xalpha.value, xalpha.error*3);
-    EXPECT_NEAR(-.75, yalpha.value, yalpha.error*3);
+    EXPECT_LT(xalpha.getError(), .1);
+    EXPECT_LT(yalpha.getError(), .1);
+    EXPECT_NEAR(-1.5, xalpha.getValue(), xalpha.getError()*3);
+    EXPECT_NEAR(-.75, yalpha.getValue(), yalpha.getError()*3);
 }
 

@@ -40,19 +40,19 @@ int main(int argc, char** argv) {
 
     // Generate toy events.
     for(int i = 0; i < 100000; ++i) {
-        xvar.value = donram.Uniform(20) - 10;
+        xvar.setValue(donram.Uniform(20) - 10);
 
-        double bwvalue = cpu_bw(xvar.value, x0.value, gamma.value);
-        double roll = donram.Uniform() * (2.0 / (sqrt(M_PI)*gamma.value));
+        double bwvalue = cpu_bw(xvar.getValue(), x0.getValue(), gamma.getValue());
+        double roll = donram.Uniform() * (2.0 / (sqrt(M_PI)*gamma.getValue()));
 
         if(roll > bwvalue) {
             --i;
             continue;
         }
 
-        xvar.value += donram.Gaus(0, sigma.value);
+        xvar.setValue(xvar.getValue() + donram.Gaus(0, sigma.getValue()));
 
-        if((xvar.value < xvar.lowerlimit) || (xvar.value > xvar.upperlimit)) {
+        if((xvar.getValue() < xvar.getLowerLimit()) || (xvar.getValue() > xvar.getUpperLimit())) {
             --i;
             continue;
         }

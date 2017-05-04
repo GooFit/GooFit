@@ -23,8 +23,8 @@ int main(int argc, char** argv) {
     UnbinnedDataSet data{varList};
 
     for(int i = 0; i < 100000; ++i) {
-        xvar.value = xvar.upperlimit - log(1+rand()/2);
-        yvar.value = yvar.upperlimit - log(1+rand()/2);
+        xvar.setValue(xvar.getUpperLimit() - log(1+rand()/2));
+        yvar.setValue(yvar.getUpperLimit() - log(1+rand()/2));
         data.addEvent();
     }
 

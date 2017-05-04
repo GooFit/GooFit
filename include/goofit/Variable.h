@@ -33,13 +33,14 @@ public:
     /// Set the value
     void setValue(fptype val) {value = val;}
     
+protected:
+    
     /// The variable name. Should be unique
     std::string name;
     
     /// The value of the variable
     fptype value;
     
-protected:
     /// The goofit index, -1 if unset
     int index {-1};
     
@@ -132,11 +133,18 @@ public:
     /// Currently deactivated
     void setBlind(fptype val) {blind = val;}
     
-    fptype error;
-    fptype upperlimit;
-    fptype lowerlimit;
+
     
 protected:
+    
+    /// The error
+    fptype error;
+    
+    /// The upper limit
+    fptype upperlimit;
+    
+    /// The lower limit
+    fptype lowerlimit;
     
     /// A blinding value to add (disabled at the moment, TODO)
     fptype blind {0};

@@ -20,12 +20,11 @@ public:
     virtual ~DataSet() = default;
 
     virtual void addEvent() = 0;
+    virtual void addWeightedEvent(fptype weight);
     
     
     // Helper to add 1D events
-    void addEvent(fptype val);
-    
-    void addWeightedEvent(fptype weight);
+    virtual void addEvent (fptype val) ;
 
     Variable_v::const_iterator begin() const {
         return variables.begin();

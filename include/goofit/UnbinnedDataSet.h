@@ -10,6 +10,8 @@ class UnbinnedDataSet : public DataSet {
     // Class for unbinned datasets.
 
 public:
+    using DataSet::addEvent;
+    
     UnbinnedDataSet(Variable* var, std::string n = "");
     UnbinnedDataSet(std::vector<Variable*>& vars, std::string n = "");
     UnbinnedDataSet(std::set<Variable*>& vars, std::string n = "");

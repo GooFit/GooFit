@@ -36,6 +36,10 @@ void DataSet::addEvent(fptype val) {
     addEvent();
 }
 
+void DataSet::addWeightedEvent(fptype) {
+    throw GooFit::GeneralError("AddWeightedEvent not implemented for this type of DataSet");
+}
+
  std::vector<fptype> DataSet::getCurrentValues() const {
      std::vector<fptype> values;
 

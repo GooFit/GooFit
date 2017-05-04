@@ -3,8 +3,6 @@
 #include "goofit/Error.h"
 #include "goofit/Log.h"
 
-using namespace fmt::literals;
-
 // Special constructor for one variable
 UnbinnedDataSet::UnbinnedDataSet(Variable* var, std::string n)
 : DataSet(var, n) {
@@ -31,8 +29,8 @@ UnbinnedDataSet::~UnbinnedDataSet() {}
 fptype UnbinnedDataSet::getValue(Variable* var, size_t idx) const {
     
     if(idx >= getNumEvents()) {
-        throw GooFit::GeneralError("UnbinnedDataSet: Attepted to fine {} in event {} when only {} events exits"_format(
-                                                var->name, idx, getNumEvents()) );
+        throw GooFit::GeneralError("UnbinnedDataSet: Attepted to find {} in event {} when only {} events exits",
+                                                var->name, idx, getNumEvents());
     }
     
     size_t var_idx = indexOfVariable(var);

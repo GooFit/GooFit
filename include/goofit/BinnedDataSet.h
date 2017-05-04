@@ -31,6 +31,8 @@ public:
     fptype getBinError(size_t bin) const;
     
     size_t getNumBins() const;
+    
+    /// This is weighted
     fptype getNumEvents() const;
 
     void setBinContent(unsigned int bin, fptype value) {

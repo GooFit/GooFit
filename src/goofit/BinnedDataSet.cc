@@ -34,11 +34,13 @@ BinnedDataSet::~BinnedDataSet() {}
 void BinnedDataSet::addEvent() {
     size_t ibin = getBinNumber();
     binvalues.at(ibin) += 1;
+    numEventsAdded++;
 }
 
 void BinnedDataSet::addWeightedEvent(double weight) {
     size_t ibin = getBinNumber();
     binvalues.at(ibin) += weight;
+    numEventsAdded++;
     
 }
 
@@ -75,6 +77,7 @@ std::vector<size_t> BinnedDataSet::globalToLocal(size_t global) const {
     // To convert global bin number to (x,y,z...) coordinates: For each dimension, take the mod
     // with the number of bins in that dimension. Then divide by the number of bins, in effect
     // collapsing so the grid has one fewer dimension. Rinse and repeat.
+    
     for(size_t i=0; i<size(); i++) {
         int localBin = global % cachedNumBins[i];
         locals.push_back(localBin);

@@ -21,16 +21,17 @@ public:
 
     virtual void addEvent() override;
     
-    /// See how many events were added
-    size_t getNumEvents() const {
-        return data.at(0).size();
-    }
+    /// This is an stand-in for the similarly named BinnedDataSet weighted events TODO: rename
+    size_t getNumEvents() const {return numEvents();}
     
     /// Get the value at a specific variable and event number
     fptype getValue(Variable* var, size_t idx) const;
     
     /// Set all the variables to the current event values
     void loadEvent(size_t idx);
+    
+    /// Set all entries to a constant value (note: this is kind of ugly)
+    void setValueForAllEvents(Variable* var);
 
 private:
     std::vector<std::vector<fptype>> data;

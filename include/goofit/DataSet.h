@@ -19,7 +19,7 @@ public:
     
     virtual ~DataSet() = default;
 
-    virtual void addEvent() = 0;
+    virtual void addEvent() = 0; // Must increment numEventsAdded
     virtual void addWeightedEvent(fptype weight);
     
     
@@ -50,7 +50,7 @@ public:
 protected:
     std::vector<fptype> getCurrentValues() const;
     size_t indexOfVariable(Variable* var) const;
-    int numEventsAdded {0};
+    size_t numEventsAdded {0};
     
 private:
     /// Make a name, does not change the exising name. Called by all constructors.

@@ -135,12 +135,7 @@ if(${GOOFIT_DEVICE} STREQUAL CUDA AND ${GOOFIT_HOST} STREQUAL OMP)
     message(FATAL_ERROR "OMP cannot be a host backend for CUDA")
 endif()
 
-# Only default to off for CUDA
-if(GOOFIT_DEVICE STREQUAL CUDA)
-    option(GOOFIT_SEPARATE_COMP "Enable separate compilation of PDFs" OFF)
-else()
-    option(GOOFIT_SEPARATE_COMP "Enable separate compilation of PDFs" ON)
-endif()
+option(GOOFIT_SEPARATE_COMP "Enable separate compilation of PDFs" ON)
 
 if(GOOFIT_SEPARATE_COMP)
     add_definitions("-DSEPARABLE")

@@ -72,7 +72,7 @@ Other custom options supported along with the defaults:
 * `-DGOOFIT_ARCH=Auto`: (Auto, Common, All, valid number(s) or name(s)): sets the compute architecture. See [CUDA_SELECT_NVCC_ARCH_FLAGS].
 * `-DGOOFIT_EXAMPLES=ON`: Build the examples
 * `-DGOOFIT_PACKAGES=ON`: Build any packages found with the name `goofit*`
-* `-DGOOFIT_SEPARATE_COMP=OFF`: Enable separable compilation of PDFs
+* `-DGOOFIT_SEPARATE_COMP=ON`: Enable separable compilation of PDFs. Single core CUDA builds are faster with this off.
 * `-DGOOFIT_TESTS=ON`: Build the goofit tests
 
 Advanced Options:
@@ -83,7 +83,7 @@ Advanced Options:
 * `-DGOOFIT_DEBUG=ON` and `-DGOOFIT_TRACE=ON` will enable the matching printout macros
 * You can enable sanitizers on non-CUDA builds with `-DSANITIZE_ADDRESS=ON`, `-DSANITIZE_MEMORY=ON`, `-DSANITIZE_THREAD=ON` or `-DSANITIZE_UNDEFINED=ON`.
 
-Note for targeting Tesla P100 or any arch=6.0 device:
+Note for targeting Tesla P100 or any `arch=6.0` device:
 * `Please use -DGOOFIT_SEPARATE_COMP=ON flags to compile.
 
 

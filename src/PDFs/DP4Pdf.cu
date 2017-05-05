@@ -22,6 +22,7 @@ TODO:
 #include <mcbooster/GFunctional.h>
 #include "goofit/PDFs/DP4Pdf.h"
 #include "goofit/PDFs/EvalVar.h"
+#include "goofit/Error.h"
 
 
 // The function of this array is to hold all the cached waves; specific
@@ -272,7 +273,8 @@ __host__ DPPdf::DPPdf(std::string n,
 __host__ void DPPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) {
     // Default 3 is m12, m13, evtNum for DP 2dim, 4-body decay has 5 independent vars plus evtNum = 6
     totalEventSize = evtSize;
-    assert(totalEventSize >= 3);
+    if(totalEventSize < 3)
+        throw GooFit::GeneralError("totalEventSize {} should be 3 or more", totalEventSize);
 
     if(cachedResSF)
         delete cachedResSF;

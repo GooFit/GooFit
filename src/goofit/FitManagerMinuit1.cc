@@ -2,7 +2,6 @@
 #include "goofit/fitting/FitManagerMinuit1.h"
 #include "goofit/PDFs/GooPdf.h"
 #include <cstdio>
-#include <cassert>
 #include <limits>
 #include <typeinfo>
 #include <set>

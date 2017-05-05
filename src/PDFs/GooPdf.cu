@@ -139,7 +139,8 @@ void* getMetricPointer(std::string name) {
     CHOOSE_PTR(ptr_to_BinWithError);
     CHOOSE_PTR(ptr_to_Chisq);
 
-    assert(host_fcn_ptr);
+    if(host_fcn_ptr == nullptr)
+        throw GooFit::GeneralError("host_fcn_ptr is nullptr");
 
     return host_fcn_ptr;
 #undef CHOOSE_PTR

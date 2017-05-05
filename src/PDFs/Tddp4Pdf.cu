@@ -216,7 +216,8 @@ __host__ TDDP4::TDDP4(std::string n,
     pindices.push_back(registerParameter(decayInfo->_xmixing));
     pindices.push_back(registerParameter(decayInfo->_ymixing));
     pindices.push_back(registerParameter(decayInfo->_SqWStoRSrate));
-    assert(resolution->getDeviceFunction() >= 0);
+    if(resolution->getDeviceFunction() < 0)
+        throw GooFit::GeneralError("The resolution device function index {} must be more than 0", resolution->getDeviceFunction());
     pindices.push_back((unsigned int) resolution->getDeviceFunction());
 
     // This is the start of reading in the amplitudes and adding the lineshapes and Spinfactors to this PDF
@@ -481,7 +482,8 @@ __host__ TDDP4::TDDP4(std::string n,
 __host__ void TDDP4::setDataSize(unsigned int dataSize, unsigned int evtSize) {
     // Default 3 is m12, m13, evtNum for DP 2dim, 4-body decay has 5 independent vars plus evtNum = 6
     totalEventSize = evtSize;
-    assert(totalEventSize >= 3);
+    if(totalEventSize < 3)
+        throw GooFit::GeneralError("totalEventSize {} must be 3 or more", totalEventSize);
 
     if(cachedResSF)
         delete cachedResSF;

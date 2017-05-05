@@ -1,5 +1,6 @@
 #include "goofit/PDFs/ConvolutionPdf.h"
 #include "goofit/Variable.h"
+#include "goofit/Error.h"
 
 #include <thrust/iterator/constant_iterator.h>
 #include <thrust/iterator/counting_iterator.h>
@@ -195,7 +196,8 @@ ConvolutionPdf::ConvolutionPdf(std::string n,
         }
     }
 
-    assert(numOthers <= CONVOLUTION_CACHE_SIZE);
+    if(numOthers > CONVOLUTION_CACHE_SIZE)
+        throw GooFit::GeneralError("numOthers {} must be not be more than the cache size {}", numOthers, CONVOLUTION_CACHE_SIZE);
 
     GET_FUNCTION_ADDR(ptr_to_ConvolveSharedPdfs);
     initialise(paramIndices);

@@ -188,7 +188,8 @@ __host__ DalitzPlotPdf::DalitzPlotPdf(std::string n,
 __host__ void DalitzPlotPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) {
     // Default 3 is m12, m13, evtNum
     totalEventSize = evtSize;
-    assert(totalEventSize >= 3);
+    if(totalEventSize < 3)
+        throw GooFit::GeneralError("totalEventSize {} must be 3 or more", totalEventSize);
 
     //if (cachedWaves) delete cachedWaves;
     if(cachedWaves[0]) {

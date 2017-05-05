@@ -1,4 +1,6 @@
 #include "goofit/PdfBase.h"
+#include "goofit/Error.h"
+#include "goofit/Log.h"
 
 // This is code that belongs to the PdfBase class, that is,
 // it is common across all implementations. But it calls on device-side
@@ -58,7 +60,8 @@ __host__ void PdfBase::initialiseIndices(std::vector<unsigned int> pindices) {
                   std::endl;
     }
 
-    assert(totalParams + pindices.size() < maxParams);
+    if(totalParams + pindices.size() >= maxParams)
+        throw GooFit::GeneralError("totalParams {} + pindices {} must be less than {}", totalParams, pindices.size(), maxParams);
     host_indices[totalParams] = pindices.size();
 
     for(int i = 1; i <= host_indices[totalParams]; ++i) {
@@ -102,7 +105,8 @@ __host__ void PdfBase::setData(std::vector<std::map<Variable*, fptype>>& data) {
 
     for(unsigned int i = 0; i < data.size(); ++i) {
         for(Variable*  v : observables) {
-            assert(data[i].find(v) != data[i].end());
+            if(data[i].find(v) == data[i].end())
+                throw GooFit::GeneralError("Variable {} not found", v->getName());
             host_array[i*dimensions + v->getIndex()] = data[i][v];
         }
     }

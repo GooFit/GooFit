@@ -15,6 +15,7 @@
 #include <fstream>
 #include <sys/time.h>
 #include <sys/times.h>
+#include <cassert>
 
 // GooFit stuff
 #include "goofit/Application.h"

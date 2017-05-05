@@ -1,5 +1,6 @@
 #include "goofit/PDFs/IncoherentSumPdf.h"
 #include "goofit/PDFs/ResonancePdf.h"
+#include "goofit/Error.h"
 #include <thrust/complex.h>
 
 #include <thrust/transform_reduce.h>
@@ -120,7 +121,8 @@ __host__ IncoherentSumPdf::IncoherentSumPdf(std::string n, Variable* m12, Variab
 __host__ void IncoherentSumPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) {
     // Default 3 is m12, m13, evtNum
     totalEventSize = evtSize;
-    assert(totalEventSize >= 3);
+    if(totalEventSize < 3)
+        throw GooFit::GeneralError("totalEventSize {} must be 3 or more", totalEventSize);  
 
     if(cachedResonances) {
         delete cachedResonances;

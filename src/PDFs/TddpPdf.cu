@@ -1,4 +1,5 @@
 #include "goofit/PDFs/TddpPdf.h"
+#include "goofit/Error.h"
 
 #include <thrust/transform_reduce.h>
 
@@ -310,7 +311,8 @@ __host__ TddpPdf::TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Va
     pindices.push_back(registerParameter(decayInfo->_tau));
     pindices.push_back(registerParameter(decayInfo->_xmixing));
     pindices.push_back(registerParameter(decayInfo->_ymixing));
-    assert(resolution->getDeviceFunction() >= 0);
+    if(resolution->getDeviceFunction() < 0)
+        throw GooFit::GeneralError("The resolution device function index {} must be more than 0", resolution->getDeviceFunction());
     pindices.push_back((unsigned int) resolution->getDeviceFunction());
     pindices.push_back(decayInfo->resonances.size());
 
@@ -427,7 +429,8 @@ __host__ TddpPdf::TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Va
     pindices.push_back(r.size() - 1); // Highest index, not number of functions.
 
     for(int i = 0; i < r.size(); ++i) {
-        assert(r[i]->getDeviceFunction() >= 0);
+        if(r[i]->getDeviceFunction() < 0)
+            throw GooFit::GeneralError("Device function index {} must be more than 0", r[i]->getDeviceFunction());
         pindices.push_back((unsigned int) r[i]->getDeviceFunction());
         r[i]->createParameters(pindices, this);
     }
@@ -462,7 +465,8 @@ __host__ TddpPdf::TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Va
 __host__ void TddpPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) {
     // Default 5 is m12, m13, time, sigma_t, evtNum
     totalEventSize = evtSize;
-    assert(totalEventSize >= 5);
+    if(totalEventSize < 5)
+        throw GooFit::GeneralError("totalEventSize {} must be 5 or more", totalEventSize);
 
     if(cachedWaves[0]) {
         for(int i = 0; i < 16; i++)

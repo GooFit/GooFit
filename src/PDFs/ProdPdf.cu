@@ -1,6 +1,5 @@
 #include "goofit/PDFs/ProdPdf.h"
 #include <algorithm>
-#include <cassert>
 
 __device__ fptype device_ProdPdfs(fptype* evt, fptype* p, unsigned int* indices) {
     // Index structure is nP | F1 P1 | F2 P2 | ...
@@ -42,7 +41,6 @@ ProdPdf::ProdPdf(std::string n, std::vector<PdfBase*> comps)
     std::vector<unsigned int> pindices;
 
     for(PdfBase* p : comps) {
-        assert(p);
         components.push_back(p);
     }
 

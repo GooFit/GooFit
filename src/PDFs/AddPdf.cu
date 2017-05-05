@@ -1,5 +1,6 @@
 #include "goofit/PDFs/AddPdf.h"
 #include "goofit/ThrustOverride.h"
+#include "goofit/Error.h"
 
 #include <thrust/transform_reduce.h>
 #include <thrust/iterator/constant_iterator.h>
@@ -73,13 +74,17 @@ AddPdf::AddPdf(std::string n, std::vector<Variable*> weights, std::vector<PdfBas
     : GooPdf(0, n)
     , extended(true) {
 
-    assert((weights.size() == comps.size()) || (weights.size() + 1 == comps.size()));
+    if(weights.size() != comps.size() && (weights.size()+1) != comps.size())
+        throw GooFit::GeneralError("Size of weights {} (+1) != comps {}", weights.size(), comps.size());
+    
 
     // Indices stores (function index)(function parameter index)(weight index) triplet for each component.
     // Last component has no weight index unless function is extended.
     for(PdfBase* p : comps) {
         components.push_back(p);
-        assert(components.back());
+        if(components.back() == nullptr)
+            throw GooFit::GeneralError("Invalid component");
+        
     }
 
     observables = getObservables();
@@ -87,13 +92,15 @@ AddPdf::AddPdf(std::string n, std::vector<Variable*> weights, std::vector<PdfBas
     std::vector<unsigned int> pindices;
 
     for(unsigned int w = 0; w < weights.size(); ++w) {
-        assert(components[w]);
+        if(components[w] == nullptr)
+            throw GooFit::GeneralError("Invalid component");
         pindices.push_back(components[w]->getFunctionIndex());
         pindices.push_back(components[w]->getParameterIndex());
         pindices.push_back(registerParameter(weights[w]));
     }
 
-    assert(components.back());
+    if(components.back() == nullptr)
+        throw GooFit::GeneralError("Invalid component");
 
     if(weights.size() < components.size()) {
         pindices.push_back(components.back()->getFunctionIndex());

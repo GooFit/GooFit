@@ -45,7 +45,8 @@ __host__ unsigned int PdfBase::registerParameter(Variable* var) {
         std::cout << "Error: Attempt to register null Variable with "
                   << getName()
                   << ", aborting.\n";
-        assert(var);
+        if(var == nullptr)
+            throw GooFit::GeneralError("Can not register a nullptr");
         exit(1);
     }
 
@@ -143,7 +144,8 @@ __host__ std::vector<Variable*> PdfBase::getObservables() const {
 }
 
 __host__ unsigned int PdfBase::registerConstants(unsigned int amount) {
-    assert(totalConstants + amount < maxParams);
+    if(totalConstants + amount >= maxParams)
+        throw GooFit::GeneralError("totalConstants {} + amount {} can not be more than {}", totalConstants, amount, maxParams);
     cIndex = totalConstants;
     totalConstants += amount;
     return cIndex;

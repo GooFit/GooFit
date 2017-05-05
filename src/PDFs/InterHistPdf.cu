@@ -127,7 +127,7 @@ __host__ InterHistPdf::InterHistPdf(std::string n,
                                     std::vector<Variable*> params,
                                     std::vector<Variable*> obses)
     : GooPdf(0, n)
-    , numVars(x->size()) {
+    , numVars(x->numVariables()) {
     int numConstants = 2*numVars;
     registerConstants(numConstants);
     static unsigned int totalHistograms = 0;
@@ -139,7 +139,7 @@ __host__ InterHistPdf::InterHistPdf(std::string n,
 
     int varIndex = 0;
 
-    for(Variable* var : *x) {
+    for(Variable* var : x->getVariables()) {
         if(std::find(obses.begin(), obses.end(), var) != obses.end()) {
             registerObservable(var);
             pindices.push_back(OBS_CODE);

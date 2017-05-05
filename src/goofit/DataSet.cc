@@ -49,7 +49,7 @@ void DataSet::addWeightedEvent(fptype) {
     return values;
 }
 
-std::vector<Variable*> DataSet::getVariables() const {
+const std::vector<Variable*>& DataSet::getVariables() const {
     return variables;
 }
 

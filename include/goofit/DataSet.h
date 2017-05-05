@@ -23,19 +23,12 @@ public:
     virtual void addWeightedEvent(fptype weight);
     
     
-    // Helper to add 1D events
+    /// Helper to add 1D events
     virtual void addEvent (fptype val) ;
-
-    std::vector<Variable*>::const_iterator begin() const {
-        return variables.begin();
-    }
-    std::vector<Variable*>::const_iterator end() const {
-        return variables.end();
-    }
     
-    std::vector<Variable*> getVariables() const;
+    const std::vector<Variable*>& getVariables() const;
 
-    size_t size() const {
+    size_t numVariables() const {
         return variables.size();
     }
     

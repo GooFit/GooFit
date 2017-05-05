@@ -30,8 +30,8 @@ public:
         return owner;
     }
     void setOwner(PdfBase* dat) {
-        if(owner == nullptr)
-            throw GooFit::GeneralError("Owner is null");
+        if(dat == nullptr)
+            throw GooFit::GeneralError("Owner will be nullptr");
         owner = dat;
     }
 

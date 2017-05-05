@@ -96,8 +96,8 @@ __host__ void PdfBase::unregisterParameter(Variable* var) {
     if(0 == variableRegistry[var].size())
         var->setIndex(-1);
 
-    for(unsigned int i = 0; i < components.size(); ++i) {
-        components[i]->unregisterParameter(var);
+    for(PdfBase* comp : components) {
+        comp->unregisterParameter(var);
     }
 }
 

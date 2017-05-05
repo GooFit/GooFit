@@ -154,6 +154,13 @@ if(GOOFIT_TRACE)
     add_definitions("-DGOOFIT_TRACE_FLAG=1")
 endif()
 
+# Some systems need execinfo explicitly linked
+# Standard CMake module
+find_package(Backtrace)
+if(Backtrace_FOUND)
+    # Assuming no extra flags, assuming execinfo.h header
+    link_libraries(${Backtrace_LIBRARIES})
+endif()
 
 set(GOOFIT_ARCH Auto CACHE STRING "The GPU Archetecture, can be Auto, All, Common, a number, or a name")
 

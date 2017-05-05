@@ -2,30 +2,29 @@
 #include "goofit/Variable.h"
 #include "goofit/Error.h"
 #include "goofit/Log.h"
-#include <cassert>
 
 // Special constructor for one variable
 BinnedDataSet::BinnedDataSet(Variable* var, std::string n)
     : DataSet(var, n) {
-    cacheNumBins();
+    lockBins();
     binvalues.resize(getNumBins());
 }
 
 BinnedDataSet::BinnedDataSet(std::vector<Variable*>& vars, std::string n)
     : DataSet(vars, n) {
-    cacheNumBins();
+    lockBins();
     binvalues.resize(getNumBins());
 }
 
 BinnedDataSet::BinnedDataSet(std::set<Variable*>& vars, std::string n)
     : DataSet(vars, n) {
-    cacheNumBins();
+    lockBins();
     binvalues.resize(getNumBins());
 }
 
 BinnedDataSet::BinnedDataSet(std::initializer_list<Variable*> vars, std::string n)
 : DataSet(vars, n) {
-    cacheNumBins();
+    lockBins();
     binvalues.resize(getNumBins());
 }
 
@@ -42,12 +41,9 @@ void BinnedDataSet::addWeightedEvent(double weight) {
     
 }
 
-
-void BinnedDataSet::cacheNumBins() {
-    cachedNumBins.clear();
-    for(Variable* v : variables) {
-        cachedNumBins.push_back(v->getNumBins());
-    }
+void BinnedDataSet::lockBins() {
+    for(Variable* var : variables)
+        var->setLockedBins(true);
 }
 
 size_t BinnedDataSet::getBinNumber() const {
@@ -63,7 +59,7 @@ size_t BinnedDataSet::localToGlobal(const std::vector<size_t>& locals) const {
     for(size_t i=0; i<variables.size(); i++) {
         unsigned int localBin = locals[i];
         ret += localBin * priorMatrixSize;
-        priorMatrixSize *= cachedNumBins[i];
+        priorMatrixSize *= variables[i]->getNumBins();
     }
 
     return ret;
@@ -77,9 +73,9 @@ std::vector<size_t> BinnedDataSet::globalToLocal(size_t global) const {
     // collapsing so the grid has one fewer dimension. Rinse and repeat.
     
     for(size_t i=0; i<variables.size(); i++) {
-        int localBin = global % cachedNumBins[i];
+        int localBin = global % variables[i]->getNumBins();
         locals.push_back(localBin);
-        global /= cachedNumBins[i];
+        global /= variables[i]->getNumBins();
     }
     return locals;
 }
@@ -88,7 +84,7 @@ fptype BinnedDataSet::getBinCenter(size_t ivar, size_t bin) const {
     std::vector<size_t> locals = globalToLocal(bin);
     size_t localBin = locals.at(ivar);
     
-    fptype ret = (variables[ivar]->getUpperLimit() - variables[ivar]->getLowerLimit()) / cachedNumBins[ivar];
+    fptype ret = variables[ivar]->getBinSize();
     ret       *= (localBin + 0.5);
     ret       += variables[ivar]->getLowerLimit();
     return ret;
@@ -104,7 +100,7 @@ fptype BinnedDataSet::getBinVolume(size_t bin) const {
     fptype ret = 1;
 
     for(size_t i=0; i<variables.size(); i++) {
-        fptype step = (variables[i]->getUpperLimit() - variables[i]->getLowerLimit()) / cachedNumBins[i];
+        fptype step = variables[i]->getBinSize();
         ret *= step;
     }
 
@@ -129,7 +125,7 @@ size_t BinnedDataSet::getNumBins() const {
     unsigned int ret = 1;
 
     for(size_t i=0; i<variables.size(); i++) {
-        ret *= cachedNumBins.at(i);
+        ret *= variables[i]->getNumBins();
     }
 
     return ret;
@@ -155,7 +151,7 @@ std::vector<size_t> BinnedDataSet::convertValuesToBins(const std::vector<fptype>
         if(currval != betval)
             GOOFIT_INFO("Warning: Value {} outside {} range [{},{}] - clamping to {}",
                         currval, variables[i]->getName(), variables[i]->getLowerLimit(), variables[i]->getUpperLimit(), betval);
-        fptype step = (variables[i]->getUpperLimit() - variables[i]->getLowerLimit()) / cachedNumBins[i];
+        fptype step = variables[i]->getBinSize();
         localBins.push_back( (size_t) floor((betval - variables[i]->getLowerLimit())/step));
     
     }

@@ -131,7 +131,7 @@ public:
     /// Get and set the number of bins
     void setNumBins(size_t num) {
         if(locked_)
-            throw GooFit::GeneralError("BinnedDataSet does not allow the bins to be changed after creation");
+            throw GooFit::GeneralError("BinnedDataSet does not allow the number of bins to be changed after creation");
        numbins = num;
     }
     size_t getNumBins() const {return numbins;}
@@ -139,7 +139,7 @@ public:
     /// Check to see if this is a constant
     bool IsFixed() const {return fixed;}
     
-    /// Set the fixedness of a variable (needed for GooPdf)
+    /// Set the fixedness of a variable
     void setFixed(bool fix) {fixed = fix;}
     
     
@@ -153,6 +153,11 @@ public:
     /// Currently deactivated
     void setBlind(fptype val) {blind = val;}
     
+    /// Ensure that the number of bins can not be changed once BinnedDataSets are created
+    void setLockedBins(bool locked) {locked_ = locked;}
+    
+    /// Check to see if variable's bins have been locked by a BinnedDataSet
+    bool getLockedBins() const {return locked_;};
 
     
 protected:

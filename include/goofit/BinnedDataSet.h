@@ -41,15 +41,15 @@ public:
     void setBinError(unsigned int bin, fptype error);
 
 private:
-    void cacheNumBins();
+    /// Lock all variable bin numbers
+    void lockBins();
+    
     std::vector<size_t> convertValuesToBins(const std::vector<fptype>& vals) const;
     size_t localToGlobal(const std::vector<size_t>& locals) const;
     std::vector<size_t> globalToLocal(size_t global) const;
 
     std::vector<fptype> binvalues;
     std::vector<fptype> binerrors;
-    
-    /// Store these numbers in case they change on the user end - vast confusion possible.
-    std::vector<size_t> cachedNumBins;
+
 };
 

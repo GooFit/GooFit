@@ -8,6 +8,7 @@
 #include <initializer_list>
 
 #include "goofit/Variable.h"
+#include "goofit/Error.h"
 
 class DataSet {
 public:
@@ -20,11 +21,23 @@ public:
     virtual ~DataSet() = default;
 
     virtual void addEvent() = 0; // Must increment numEventsAdded
+    
     virtual void addWeightedEvent(fptype weight);
     
-    
-    /// Helper to add 1D events
-    virtual void addEvent (fptype val) ;
+
+    /// This is a helper that allows multiple values to be passed in instead of relying on the content of the Variables.
+    template<typename... Args>
+    void addEvent(fptype value, Args... args) {
+        std::vector<fptype> values {value, static_cast<fptype>(args)...};
+        
+        if(values.size() != variables.size())
+            throw GooFit::GeneralError("You must pass the correct number of values ({}) to addEvent", variables.size());
+        
+        for(size_t i=0; i<values.size(); i++)
+            variables[i]->setValue(values[i]);
+        addEvent();
+    }
+
     
     const std::vector<Variable*>& getVariables() const;
 

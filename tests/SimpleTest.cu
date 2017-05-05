@@ -52,3 +52,27 @@ TEST(Simple, SettingAndGetting) {
     EXPECT_EQ(1.0, val);
     EXPECT_EQ(1.0, var.getValue());
 }
+
+TEST(Simple, FancyAddEvent) {
+    
+    // Independent variable.
+    Variable xvar{"xvar", 0, 10};
+    Variable yvar{"yvar", 0, 10};
+    
+    // Data set
+    UnbinnedDataSet data {{&xvar, &yvar}};
+    
+    data.addEvent(1,2);
+    data.addEvent(3,4);
+    
+    EXPECT_EQ(2, data.getNumEvents());
+    
+    EXPECT_FLOAT_EQ(1, data.getValue(&xvar, 0));
+    EXPECT_FLOAT_EQ(2, data.getValue(&yvar, 0));
+    EXPECT_FLOAT_EQ(3, data.getValue(&xvar, 1));
+    EXPECT_FLOAT_EQ(4, data.getValue(&yvar, 1));
+    
+    EXPECT_THROW(data.addEvent(1), GooFit::GeneralError);
+    EXPECT_THROW(data.addEvent(1,2,3), GooFit::GeneralError);
+}
+

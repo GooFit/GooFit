@@ -26,15 +26,6 @@ DataSet::DataSet(std::initializer_list<Variable*> vars, std::string n) :
 }
 
 
-void DataSet::addEvent(fptype val) {
-    // Helper method to avoid the user having to wrap
-    // every one-dimensional event in a vector.
-    if(1 != variables.size())
-        throw GooFit::GeneralError("You must pass the correct number of values ({}) to addEvent", variables.size());
-    variables[0]->setValue(val);
-    addEvent();
-}
-
 void DataSet::addWeightedEvent(fptype) {
     throw GooFit::GeneralError("AddWeightedEvent not implemented for this type of DataSet");
 }

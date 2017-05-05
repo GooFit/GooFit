@@ -1,4 +1,5 @@
 #include "goofit/PDFs/DalitzPlotPdf.h"
+#include "goofit/Error.h"
 
 #include <thrust/complex.h>
 #include <thrust/transform_reduce.h>

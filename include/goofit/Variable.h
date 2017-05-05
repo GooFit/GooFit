@@ -2,10 +2,9 @@
 
 #include <string>
 #include <iostream>
-#include <algorithm>
+
 #include <vector>
 
-#include "goofit/Error.h"
 #include "goofit/GlobalCudaDefines.h"
 
 class Indexable {
@@ -129,11 +128,8 @@ public:
     bool getChanged() const {return changed_;}
     
     /// Get and set the number of bins
-    void setNumBins(size_t num) {
-        if(locked_)
-            throw GooFit::GeneralError("BinnedDataSet does not allow the number of bins to be changed after creation");
-       numbins = num;
-    }
+    void setNumBins(size_t num);
+    
     size_t getNumBins() const {return numbins;}
     
     /// Check to see if this is a constant
@@ -216,27 +212,11 @@ public:
     virtual ~Constant() {}
 };
 
-inline std::ostream& operator<< (std::ostream& o, const Variable& var) {
-    o << var.getName() << ": " << var.getValue() << " +/- " << var.getError();
-    if(!var.fixed)
-        o << " [" << var.getLowerLimit() << ", " << var.getUpperLimit() << "]";
-    if(var.getIndex() >= 0)
-        o << " GooFit index: " << var.getIndex();
-    if(var.getFitterIndex() >= 0)
-        o << " Fitter index: " << var.getFitterIndex();
+/// Nice print of Variable
+std::ostream& operator<< (std::ostream& o, const Variable& var);
 
-    return o;
-}
-
-inline std::istream& operator>> (std::istream& i, Variable& var) {
-    return i >> var.value;
-}
+/// Allow Variable to be read in
+std::istream& operator>> (std::istream& i, Variable& var);
 
 /// Get the max index of a variable from a list
-inline int max_index(const std::vector<Variable*> &vars) {
-    const Variable* max_ind_ptr = *std::max_element(std::begin(vars),
-                                              std::end(vars),
-                                              [](const Variable *a, const Variable *b)
-                                              {return a->getIndex() < b->getIndex();});
-    return max_ind_ptr->getIndex();
-}
+int max_index(const std::vector<Variable*> &vars);

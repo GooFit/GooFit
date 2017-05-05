@@ -20,6 +20,8 @@ TODO:
 #include <mcbooster/Evaluate.h>
 #include <mcbooster/EvaluateArray.h>
 #include <mcbooster/GFunctional.h>
+
+#include "goofit/Error.h"
 #include "goofit/PDFs/Tddp4Pdf.h"
 #include "goofit/PDFs/EvalVar.h"
 #include "goofit/PDFs/DP4Pdf.h"

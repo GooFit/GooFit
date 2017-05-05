@@ -60,15 +60,15 @@ goofit_add_library(PdfBase
 # Note: order is important on Linux, derived classes first
 set(lib_list
     Faddeeva
-    DataSet
     FunctorWriter
-    PdfBase
     FitManager2 FCN
+    PdfBase
+    DataSet
     Variable
     )
 
 if(ROOT_FOUND)
-    list(APPEND lib_list FitManager1)
+    list(INSERT lib_list 0 FitManager1)
 endif()
 
 add_library(goofit_base INTERFACE)

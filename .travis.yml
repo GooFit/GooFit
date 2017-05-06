@@ -30,6 +30,7 @@ addons:
     - libxft-dev
     - libxext-dev
     - python-pip
+    - python-numpy
     sources:
     - ubuntu-toolchain-r-test
 

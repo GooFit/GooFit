@@ -8,8 +8,8 @@ namespace py = pybind11;
 template<class DataSetBase = DataSet>
 class PyDataSet : public DataSetBase {
     using DataSetBase::DataSetBase;
-    void addEventVector(std::vector<fptype>& vals, fptype weight = 1) override {
-        PYBIND11_OVERLOAD_PURE(void, DataSetBase, addEventVector, vals, weight);
+    void addEvent() override {
+        PYBIND11_OVERLOAD_PURE(void, DataSetBase, addEvent);
     };
 };
 
@@ -21,6 +21,5 @@ void init_DataSet(py::module &m) {
         .def(py::init<std::vector<Variable*>&>())
         .def(py::init<std::vector<Variable*>&, std::string>())
         .def("addEvent", (void (DataSet::*)()) &DataSet::addEvent)
-        .def("addEvent", (void (DataSet::*)(fptype)) &DataSet::addEvent)
         ;
 }

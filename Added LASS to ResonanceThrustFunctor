@@ -1,0 +1,95 @@
+Added the following code into ResonanceThrustFunctor.cu file in GooFit/FPOINTER:
+
+device devcomplex lass (fptype m12, fptype m13, fptype m23, unsigned int* indices) {
+fptype motherMass = functorConstants[indices[1]+0];
+fptype daug1Mass = functorConstants[indices[1]+1];
+fptype daug2Mass = functorConstants[indices[1]+2];
+fptype daug3Mass = functorConstants[indices[1]+3];
+fptype meson_radius = functorConstants[indices[1]+4];
+
+fptype resmass = cudaArray[indices[2]];
+fptype reswidth = cudaArray[indices[3]];
+unsigned int spin = indices[4];
+unsigned int cyclic_index = indices[5];
+
+fptype rMassSq = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
+fptype frFactor = 1;
+
+resmass *= resmass;
+// Calculate momentum of the two daughters in the resonance rest frame; note symmetry under interchange (dm1 <-> dm2).
+
+fptype measureDaughterMoms = twoBodyCMmom(rMassSq, (PAIR_23 == cyclic_index ? daug2Mass : daug1Mass), (PAIR_23 == cyclic_index ? daug3Mass : daug2Mass));
+fptype nominalDaughterMoms = twoBodyCMmom(resmass, (PAIR_23 == cyclic_index ? daug2Mass : daug1Mass), (PAIR_23 == cyclic_index ? daug3Mass : daug2Mass));
+
+if (0 != spin) {
+frFactor = dampingFactorSquare(nominalDaughterMoms, spin, meson_radius);
+frFactor /= dampingFactorSquare(measureDaughterMoms, spin, meson_radius);
+}
+
+//Implement LASS:
+/*
+fptype s = kinematics(m12, m13, _trackinfo[i]);
+fptype q = twoBodyCMmom(s, _trackinfo[i]);
+fptype m0 = _massRes[i]->getValFast();
+fptype _g0 = _gammaRes[i]->getValFast();
+int spin = _spinRes[i];
+fptype g = runningWidthFast(s, m0, _g0, spin, _trackinfo[i], FrEval(s, m0, _trackinfo[i], spin));
+*/
+
+fptype q = measureDaughterMoms;
+fptype g = reswidth * POW(measureDaughterMoms / nominalDaughterMoms, 2.0*spin + 1) * frFactor / SQRT(rMassSq);
+
+fptype _a = 0.22357;
+fptype _r = -15.042;
+fptype _R = 1; // ?
+fptype _phiR = 1.10644;
+fptype _B = 0.614463;
+fptype _phiB = -0.0981907;
+
+// background phase motion
+fptype cot_deltaB = (1.0 / (_a*q)) + 0.5*_r*q;
+fptype qcot_deltaB = (1.0 / _a) + 0.5*_r*q*q;
+
+// calculate resonant part
+devcomplex expi2deltaB = devcomplex(qcot_deltaB,q)/devcomplex(qcot_deltaB,-q);
+devcomplex resT = devcomplex(cos(_phiR+2*_phiB),sin(_phiR+2*_phiB))*_R;
+
+devcomplex prop = devcomplex(1, 0)/devcomplex(resmass-rMassSq, SQRT(resmass)*g);
+// resT = prop*m0_g0*m0/twoBodyCMmom(m0*m0, _trackinfo[i])*expi2deltaB;
+resT = prop(resmass*reswidth/nominalDaughterMoms)*expi2deltaB;
+
+// calculate bkg part
+resT += devcomplex(cos(_phiB),sin(_phiB))*_B*(cos(_phiB)+cot_deltaB*sin(_phiB))*SQRT(rMassSq)/devcomplex(qcot_deltaB,-q);
+
+resT *= SQRT(frFactor);
+resT *= spinFactor(spin, motherMass, daug1Mass, daug2Mass, daug3Mass, m12, m13, m23, cyclic_index);
+
+return resT;
+}
+
+And then added the following code into ResonanceThrustFunctor.hh file in GooFit/FPOINTER:
+
+// LASS constructor
+
+ResonanceThrustFunctor (string name,
+Variable* ar,
+Variable* ai,
+Variable* mass,
+unsigned int sp,
+Variable* width,
+unsigned int cyc);
+
+Also added the following code into MixFit.cu file to test whether the LASS paramerisation works in GooFit:
+
+// constructor for LASS
+ResonanceThrustFunctor* lass = new ResonanceThrustFunctor("",
+fixAmps ? new Variable("lass_amp_real", 0.070 * (-_mD02)) :
+new Variable("lass_amp_real", 0.070 * (-_mD02), 0.001, 0, 0),
+fixAmps ? new Variable("lass_amp_imag", 0.087 * (-_mD02)) :
+new Variable("lass_amp_imag", 0.087 * (-_mD02), 0.1, 0, 0),
+new Variable("lass_mass", 1.0, 0.01, 0.5, 2.0),
+new Variable("lass_width", 0.2, 0.01, 0.01, 0.6),
+0,
+PAIR_23);
+
+dtop0pp->resonances.push_back(lass);

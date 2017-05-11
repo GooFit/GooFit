@@ -420,9 +420,9 @@ __host__ fptype GooPdf::getValue() {
 }
 
 __host__ fptype GooPdf::normalize() const {
-    //if (cpuDebug & 1) std::cout << "Normalising " << getName() << " " << hasAnalyticIntegral() << " " << normRanges << std::endl;
 
     if(!fitControl->metricIsPdf()) {
+        GOOFIT_DEBUG("MetricIsPdf, returning 1");
         host_normalisation[parameters] = 1.0;
         return 1.0;
     }
@@ -432,7 +432,7 @@ __host__ fptype GooPdf::normalize() const {
     if(hasAnalyticIntegral()) {
         // Loop goes only over observables of this PDF.
         for(Variable* v : observables) {
-            GOOFIT_TRACE(")Analytically integrating {} over {}", getName(), v->getName());
+            GOOFIT_TRACE("Analytically integrating {} over {}", getName(), v->getName());
             ret *= integrate(v->getLowerLimit(), v->getUpperLimit());
         }
 
@@ -441,6 +441,8 @@ __host__ fptype GooPdf::normalize() const {
         
         return ret;
     }
+    
+    GOOFIT_DEBUG("Computing integral of {} without analytic help", getName());
 
     int totalBins = 1;
 
@@ -502,6 +504,7 @@ __host__ fptype GooPdf::normalize() const {
     if(0 == ret)
         abortWithCudaPrintFlush(__FILE__, __LINE__, "Zero integral");
 
+    GOOFIT_DEBUG("Computed norm for param {} to be {}", parameters, ret);
     host_normalisation[parameters] = 1.0/ret;
     return (fptype) ret;
 }
@@ -736,4 +739,3 @@ __host__ void GooPdf::setFitControl(FitControl* const fc, bool takeOwnerShip) {
     setMetrics();
 }
 
-#include "PdfBase.cu"

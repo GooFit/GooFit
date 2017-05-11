@@ -48,6 +48,7 @@ get_property(goo_extra GLOBAL PROPERTY GOOFIT_EXTRA_PDFS)
 if(GOOFIT_SEPARATE_COMP)
     goofit_add_library(PDFs
         GooPdf.cu
+        PdfBase.cu
         CrystalBallPdf.cu
         BifurGaussPdf.cu
         LineshapesPdf.cu

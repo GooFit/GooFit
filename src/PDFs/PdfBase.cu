@@ -1,6 +1,11 @@
+#include "goofit/GlobalCudaDefines.h"
 #include "goofit/PdfBase.h"
+#include "goofit/PDFs/GooPdf.h"
 #include "goofit/Error.h"
 #include "goofit/Log.h"
+#include "goofit/BinnedDataSet.h"
+#include "goofit/FitControl.h"
+
 
 // This is code that belongs to the PdfBase class, that is,
 // it is common across all implementations. But it calls on device-side

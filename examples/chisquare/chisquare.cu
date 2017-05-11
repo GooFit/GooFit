@@ -252,7 +252,7 @@ int main(int argc, char** argv) {
     GooFit::Application app("Chi-square example", argc, argv);
 
     int numbins = 100;
-    app.add_option("-n,-getNumBinsgetNumBins", numbins, "Number of bins", true);
+    app.add_option("-n,--numbins", numbins, "Number of bins", true);
 
     try {
         app.run();

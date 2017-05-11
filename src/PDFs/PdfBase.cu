@@ -59,37 +59,25 @@ __host__ void PdfBase::initialiseIndices(std::vector<unsigned int> pindices) {
     // here we only reserve space for them by setting totalParams.
     // This is to allow index sharing between PDFs - all the PDFs must be constructed
     // before we know what observables exist.
-
-    if(totalParams + pindices.size() >= maxParams) {
-        std::cout << "Major problem with pindices size: " << totalParams << " + " << pindices.size() << " >= " << maxParams <<
-                  std::endl;
-    }
+    
+    GOOFIT_DEBUG("Adding space for {} indices for {}", pindices.size(), getName());
 
     if(totalParams + pindices.size() >= maxParams)
         throw GooFit::GeneralError("totalParams {} + pindices {} must be less than {}", totalParams, pindices.size(), maxParams);
     host_indices[totalParams] = pindices.size();
 
     for(int i = 1; i <= host_indices[totalParams]; ++i) {
+        GOOFIT_DEBUG("Setting host index {} to {}", totalParams+i, i-1);
         host_indices[totalParams+i] = pindices[i-1];
     }
 
+    GOOFIT_DEBUG("Setting host index {} to the num of observables, {}", totalParams + pindices.size() + 1, observables.size());
     host_indices[totalParams + pindices.size() + 1] = observables.size();
 
     parameters = totalParams;
     totalParams += (2 + pindices.size() + observables.size());
-    /*
-    std::cout << "host_indices after " << getName() << " initialisation : ";
-    for (int i = 0; i < totalParams; ++i) {
-      std::cout << host_indices[i] << " ";
-    }
+    GOOFIT_DEBUG("New total parameters: {}", totalParams);
 
-    std::cout << " | "
-        << parameters << " "
-        << totalParams << " "
-        << cudaArray << " "
-        << paramIndices << " "
-        << std::endl;
-    */
     MEMCPY_TO_SYMBOL(paramIndices, host_indices, totalParams*sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
 }
 
@@ -104,7 +92,7 @@ __host__ void PdfBase::setData(std::vector<std::map<Variable*, fptype>>& data) {
     setIndices();
     int dimensions = observables.size();
     numEntries = data.size();
-    numEvents = numEntries;
+    numEvents = numEntries; // TODO: Why are there two?
 
     fptype* host_array = new fptype[data.size()*dimensions];
 
@@ -132,7 +120,7 @@ __host__ void PdfBase::recursiveSetIndices() {
 
     for(Variable* v : observables) {
         host_indices[parameters + 2 + numParams + counter] = v->getIndex();
-        GOOFIT_TRACE("{} set index of {} to {} -> host {}", getName(), v->getName(), v->index, parameters + 2 + numParams + counter)
+        GOOFIT_DEBUG("{} set index of {} to {} -> host {}", getName(), v->getName(), v->getIndex(), parameters + 2 + numParams + counter)
         counter++;
     }
 

@@ -21,6 +21,7 @@ TODO:
 #include <mcbooster/EvaluateArray.h>
 #include <mcbooster/GFunctional.h>
 
+#include "goofit/Log.h"
 #include "goofit/Error.h"
 #include "goofit/PDFs/Tddp4Pdf.h"
 #include "goofit/PDFs/EvalVar.h"
@@ -95,7 +96,8 @@ __device__ fptype device_TDDP4(fptype* evt, fptype* p, unsigned int* indices) {
     //printf("DalitzPlot evt %i zero: %i %i %f (%f, %f).\n", evtNum, numResonances, effFunctionIdx, eff, totalAmp.real, totalAmp.imag);
 
     int evtNum = (int) floor(0.5 + evt[indices[7 + indices[0]]]);
-    // printf("%i\n",evtNum );
+    //GOOFIT_TRACE("TDDP4: Number of events: {}", evtNum);
+    
     unsigned int cacheToUse    = indices[2];
     unsigned int numAmps       = indices[5];
 

@@ -45,6 +45,10 @@ public:
 
     /// A normalize function. This fills in the host_normalize
     __host__ virtual fptype normalize() const;
+   
+    /// Just in case you are British and the previous spelling is offensive
+    __host__ fptype normalise() const {return normalize();}
+    
     __host__ virtual fptype integrate(fptype lo, fptype hi) const {
         return 0;
     }

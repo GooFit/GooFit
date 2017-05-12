@@ -30,10 +30,11 @@ using namespace fmt::literals;
 
 TCanvas* foo;
 
-TH1F* plotComponent(GooPdf* toPlot, Variable* var, double normFactor=1) {
+void plotComponent(GooPdf* toPlot, Variable* var, double normFactor=1) {
     static int numHists = 0;
     std::string histName = "{}_hist_{}"_format(toPlot->getName(), numHists++);
-    TH1F* ret = new TH1F(histName.c_str(), "", var->numbins, var->lowerlimit, var->upperlimit);
+    std::string fileName = histName + ".png";
+    TH1F ret(histName.c_str(), "", var->numbins, var->lowerlimit, var->upperlimit);
     std::vector<fptype> binValues;
     toPlot->evaluateAtPoints(var, binValues);
 
@@ -46,12 +47,15 @@ TH1F* plotComponent(GooPdf* toPlot, Variable* var, double normFactor=1) {
     }
 
     for(int i = 1; i <= var->numbins; ++i)
-        ret->SetBinContent(i, binValues[i-1] * normFactor / pdf_int);
+        ret.SetBinContent(i, binValues[i-1] * normFactor / pdf_int);
 
-    return ret;
+    ret.Draw();
+    foo->SetLogy(true);
+    foo->SaveAs(fileName.c_str());
+
 }
 
-void getMCData(DataSet *data, std::string filename) {
+void getMCData(DataSet *data, std::string filename, bool plot) {
     TH1F mchist{"mc_hist", "", 300, 0.1365, 0.1665};
     std::ifstream mcreader{filename};
 
@@ -61,18 +65,20 @@ void getMCData(DataSet *data, std::string filename) {
         mchist.Fill(currDM);
     }
 
-    mchist.SetStats(false);
-    mchist.SetMarkerStyle(8);
-    mchist.SetMarkerSize(0.6);
-    mchist.Draw("p");
+    if(plot) {
+        mchist.SetStats(false);
+        mchist.SetMarkerStyle(8);
+        mchist.SetMarkerSize(0.6);
+        mchist.Draw("p");
 
-    foo->SetLogy(true);
-    foo->SaveAs("zach_mchist.png");
+        foo->SetLogy(true);
+        foo->SaveAs("zach_mchist.png");
+    }
 
     GOOFIT_INFO("MC events: {}", data->getNumEvents());
 }
 
-void getData(DataSet* data, Variable *var, std::string filename) {
+void getData(DataSet* data, Variable *var, std::string filename, bool plot) {
     TH1F data_hist("data_hist", "", 300, 0.1365, 0.1665);
     std::ifstream datareader{filename};
 
@@ -84,12 +90,14 @@ void getData(DataSet* data, Variable *var, std::string filename) {
         data_hist.Fill(currDM);
     }
 
-    data_hist.SetStats(false);
-    data_hist.SetMarkerStyle(8);
-    data_hist.SetMarkerSize(0.6);
-    data_hist.Draw("p");
-    foo->Draw();
-    foo->SaveAs("zach_datahist.png");
+    if(plot) {
+        data_hist.SetStats(false);
+        data_hist.SetMarkerStyle(8);
+        data_hist.SetMarkerSize(0.6);
+        data_hist.Draw("p");
+        foo->Draw();
+        foo->SaveAs("zach_datahist.png");
+    }
 
     GOOFIT_INFO("Data events: {}", data->getNumEvents());
 }
@@ -99,10 +107,12 @@ int main(int argc, char** argv) {
     GooFit::Application app{"Zach-Fit example", argc, argv};
     
     int mode, data = 0;
+    bool plot;
     app.add_set("-m,--mode,mode", mode, {0,1},
             "Program mode: 0-unbinned, 1-binned")->required();
     app.add_set("-d,--data,data", data, {0,1,2},
             "Dataset: 0-simple, 1-kpi, 2-k3pi");
+    app.add_flag("-p,--plot", plot, "Make and save plots of results");
 
     try {
         app.run();
@@ -153,7 +163,7 @@ int main(int argc, char** argv) {
         data_dataset.reset(new BinnedDataSet{&dm});
     }
 
-    getMCData(mc_dataset.get(), mcfile);
+    getMCData(mc_dataset.get(), mcfile, plot);
 
     Variable mean1("kpi_mc_mean1", 0.145402, 0.00001, 0.143, 0.148);
     Variable mean2("kpi_mc_mean2", 0.145465, 0.00001, 0.145, 0.1465);
@@ -234,7 +244,7 @@ int main(int argc, char** argv) {
 
     Variable bkg_frac("kpi_rd_bkg_frac", 0.03, 0.0, 0.3);
 
-    getData(data_dataset.get(), &dm, datafile);
+    getData(data_dataset.get(), &dm, datafile, plot);
 
     AddPdf total("total",
                  {&bkg_frac},
@@ -257,9 +267,10 @@ int main(int argc, char** argv) {
 
     datapdf.fit();
     
-    GOOFIT_INFO("Plotting results");
+    if(plot) {
+        GOOFIT_INFO("Plotting results");
+        plotComponent(&total, &dm);
+    }
     
-    plotComponent(&total, &dm);
-
     return datapdf;
 }

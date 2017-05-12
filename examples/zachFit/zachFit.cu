@@ -7,11 +7,9 @@
 
 // System stuff
 #include <fstream>
-#include <exception>
-#include <sys/time.h>
-#include <sys/times.h>
 
 // GooFit stuff
+#include "goofit/Log.h"
 #include "goofit/Application.h"
 #include "goofit/Variable.h"
 #include "goofit/UnbinnedDataSet.h"
@@ -26,111 +24,136 @@
 #include "goofit/PDFs/ArgusPdf.h"
 #include "goofit/PDFs/AddPdf.h"
 
+#include <fmt/format.h>
+
+using namespace fmt::literals;
 
 TCanvas* foo;
-BinnedDataSet* binnedData = 0;
-UnbinnedDataSet* data = 0;
-int length = 0;
 
-TH1F* data_hist = 0;
-Variable* dm;
-
-double pdf_int;
-
-char histName[1000];
-int numHists = 0;
-
-TH1F* plotComponent(GooPdf* toPlot, double normFactor) {
-    sprintf(histName, "%s_hist_%i", toPlot->getName().c_str(), numHists++);
-    TH1F* ret = new TH1F(histName, "", dm->numbins, dm->lowerlimit, dm->upperlimit);
+TH1F* plotComponent(GooPdf* toPlot, Variable* var, double normFactor=1) {
+    static int numHists = 0;
+    std::string histName = "{}_hist_{}"_format(toPlot->getName(), numHists++);
+    TH1F* ret = new TH1F(histName.c_str(), "", var->numbins, var->lowerlimit, var->upperlimit);
     std::vector<fptype> binValues;
-    toPlot->evaluateAtPoints(dm, binValues);
+    toPlot->evaluateAtPoints(var, binValues);
 
-    pdf_int = 0;
-    double step = dm->upperlimit - dm->lowerlimit;
-    step /= dm->numbins;
+    double pdf_int = 0;
+    double step = var->upperlimit - var->lowerlimit;
+    step /= var->numbins;
 
-    for(int i = 1; i <= dm->numbins; ++i) {
+    for(int i = 1; i <= var->numbins; ++i) {
         pdf_int += binValues[i-1];
     }
 
-    for(int i = 1; i <= dm->numbins; ++i)
+    for(int i = 1; i <= var->numbins; ++i)
         ret->SetBinContent(i, binValues[i-1] * normFactor / pdf_int);
 
     return ret;
 }
 
-void getMCData(std::string filename) {
-    data = new UnbinnedDataSet(dm);
-    std::ifstream mcreader(filename);
-    
-    TH1F* mchist = new TH1F("mchist", "", 300, 0.1365, 0.1665);
+void getMCData(DataSet *data, std::string filename) {
+    TH1F mchist{"mc_hist", "", 300, 0.1365, 0.1665};
+    std::ifstream mcreader{filename};
 
     double currDM = 0;
-
-    while(true) {
-        mcreader >> currDM;
-
-        if(mcreader.eof())
-            break;
-
-        if(currDM < 0.13957)
-            std::cout << "Bad DM\n";
-
+    while(mcreader >> currDM) {
         data->addEvent(currDM);
-        mchist->Fill(currDM);
+        mchist.Fill(currDM);
     }
 
-    mchist->SetStats(false);
-    mchist->SetMarkerStyle(8);
-    mchist->SetMarkerSize(0.6);
-    mchist->Draw("p");
+    mchist.SetStats(false);
+    mchist.SetMarkerStyle(8);
+    mchist.SetMarkerSize(0.6);
+    mchist.Draw("p");
 
     foo->SetLogy(true);
     foo->SaveAs("zach_mchist.png");
 
-    std::cout << "MC: Got " << data->getNumEvents() << " events.\n";
+    GOOFIT_INFO("MC events: {}", data->getNumEvents());
 }
 
-void getData(std::string filename) {
-    std::ifstream datareader;
+void getData(DataSet* data, Variable *var, std::string filename) {
+    TH1F data_hist("data_hist", "", 300, 0.1365, 0.1665);
+    std::ifstream datareader{filename};
 
-    datareader.open(filename);
-
-    binnedData = new BinnedDataSet(dm);
-    delete data;
-    data = new UnbinnedDataSet(dm);
     double currDM = 0;
-
-    while(true) {
-        datareader >> currDM;
-
-        if(datareader.eof())
-            break;
-
-        if(currDM > dm->upperlimit)
+    while(datareader >> currDM) {
+        if(currDM > var->upperlimit || currDM < var->lowerlimit)
             continue;
-
-        if(currDM < dm->lowerlimit)
-            continue;
-
         data->addEvent(currDM);
-        data_hist->Fill(currDM);
-
-        binnedData->addEvent(currDM);
+        data_hist.Fill(currDM);
     }
 
-    std::cout << "Data events: " << data->getNumEvents() << std::endl;
-    datareader.close();
+    data_hist.SetStats(false);
+    data_hist.SetMarkerStyle(8);
+    data_hist.SetMarkerSize(0.6);
+    data_hist.Draw("p");
+    foo->Draw();
+    foo->SaveAs("zach_datahist.png");
+
+    GOOFIT_INFO("Data events: {}", data->getNumEvents());
 }
 
-int CudaMinimise(int fitType, std::string mcfile, std::string datafile) {
-    dm = new Variable("dm", 0.1395, 0.1665);
-    dm->numbins = 2700;
-    //dm->numbins = 540;
 
-    getMCData(mcfile);
-    std::cout << "Done getting MC\n";
+int main(int argc, char** argv) {
+    GooFit::Application app{"Zach-Fit example", argc, argv};
+    
+    int mode, data = 0;
+    app.add_set("-m,--mode,mode", mode, {0,1},
+            "Program mode: 0-unbinned, 1-binned")->required();
+    app.add_set("-d,--data,data", data, {0,1,2},
+            "Dataset: 0-simple, 1-kpi, 2-k3pi");
+
+    try {
+        app.run();
+    } catch (const GooFit::ParseError &e) {
+        return app.exit(e);
+    }
+
+    // Style
+    gStyle->SetCanvasBorderMode(0);
+    gStyle->SetCanvasColor(10);
+    gStyle->SetFrameFillColor(10);
+    gStyle->SetFrameBorderMode(0);
+    gStyle->SetPadColor(0);
+    gStyle->SetTitleColor(1);
+    gStyle->SetStatColor(0);
+    gStyle->SetFillColor(0);
+    gStyle->SetFuncWidth(1);
+    gStyle->SetLineWidth(1);
+    gStyle->SetLineColor(1);
+    gStyle->SetPalette(1, 0);
+    foo = new TCanvas();
+
+
+    // Get the name of the files to use
+    std::string mcfile, datafile;
+    if (data == 0) {
+        mcfile   = app.get_filename("dataFiles/dstwidth_kpi_resMC.dat", "examples/zachFit");
+        datafile = app.get_filename("dataFiles/dstwidth_kpi_data.dat", "examples/zachFit");
+    } else if (data == 1) {
+        mcfile   = app.get_filename("dataFiles/DstarWidth_D0ToKpi_deltaM_MC.dat", "examples/zachFit");
+        datafile = app.get_filename("dataFiles/DstarWidth_D0ToKpi_deltaM_Data.dat", "examples/zachFit");
+    } else {
+        mcfile   = app.get_filename("dataFiles/DstarWidth_D0ToK3pi_deltaM_MC.dat", "examples/zachFit");
+        datafile = app.get_filename("dataFiles/DstarWidth_D0ToK3pi_deltaM_Data.dat", "examples/zachFit");
+    }
+
+    Variable dm{"dm", 0.1395, 0.1665};
+    dm.numbins = 2700;
+
+    // This would be clearer with std::optional from C++17
+    std::unique_ptr<DataSet> mc_dataset, data_dataset;
+
+    if(mode == 0) {
+        mc_dataset.reset(new UnbinnedDataSet{&dm});
+        data_dataset.reset(new UnbinnedDataSet{&dm});
+    } else {
+        mc_dataset.reset(new BinnedDataSet{&dm});
+        data_dataset.reset(new BinnedDataSet{&dm});
+    }
+
+    getMCData(mc_dataset.get(), mcfile);
 
     Variable mean1("kpi_mc_mean1", 0.145402, 0.00001, 0.143, 0.148);
     Variable mean2("kpi_mc_mean2", 0.145465, 0.00001, 0.145, 0.1465);
@@ -147,29 +170,26 @@ int CudaMinimise(int fitType, std::string mcfile, std::string datafile) {
     Variable gfrac2("kpi_mc_gfrac2", 0.02, 0.001, 0.0, 0.12);
     Variable afrac("kpi_mc_afrac", 0.005, 0.003, 0.0, 0.1);
 
-    GaussianPdf gauss1("gauss1", dm, &mean1, &sigma1);
-    GaussianPdf gauss2("gauss2", dm, &mean2, &sigma2);
-    GaussianPdf gauss3("gauss3", dm, &mean3, &sigma3);
-    ArgusPdf argus("argus", dm, &pimass, &aslope, false, &apower);
+    GaussianPdf gauss1("gauss1", &dm, &mean1, &sigma1);
+    GaussianPdf gauss2("gauss2", &dm, &mean2, &sigma2);
+    GaussianPdf gauss3("gauss3", &dm, &mean3, &sigma3);
+    ArgusPdf argus("argus", &dm, &pimass, &aslope, false, &apower);
 
-    std::vector<Variable*> weights;
-    weights.push_back(&gfrac1);
-    weights.push_back(&gfrac2);
-    weights.push_back(&afrac);
 
-    std::vector<PdfBase*> comps;
-    comps.push_back(&gauss1);
-    comps.push_back(&gauss2);
-    comps.push_back(&argus);
-    comps.push_back(&gauss3);
+    AddPdf resolution{"resolution",
+        {&gfrac1, &gfrac2, &afrac},
+        {&gauss1, &gauss2, &argus, &gauss3}};
+    
+    if(mode==0)
+        resolution.setData(static_cast<UnbinnedDataSet*>(mc_dataset.get()));
+    else
+        resolution.setData(static_cast<BinnedDataSet*>(mc_dataset.get()));
+    FitManager mcpdf{&resolution};
 
-    AddPdf resolution("resolution", weights, comps);
-    resolution.setData(data);
-    FitManager mcpdf(&resolution);
-
-    std::cout << "Done with data, starting minimisation" << std::endl;
+    GOOFIT_INFO("Done with data, starting minimisation");
     mcpdf.fit();
 
+    // Locking the MC variables
     mean1.fixed = true;
     mean2.fixed = true;
     mean3.fixed = true;
@@ -187,129 +207,59 @@ int CudaMinimise(int fitType, std::string mcfile, std::string datafile) {
     Variable delta("kpi_rd_delta", 0.000002, -0.00005, 0.00005);
     Variable epsilon("kpi_rd_epsilon", 0.05, -0.1, 0.2);
 
-    ScaledGaussianPdf resolution1("resolution1", dm, &dummyzero, &sigma1, &delta, &epsilon);
-    ScaledGaussianPdf resolution2("resolution2", dm, &dummyzero, &sigma2, &delta, &epsilon);
-    ScaledGaussianPdf resolution3("resolution3", dm, &dummyzero, &sigma3, &delta, &epsilon);
+    ScaledGaussianPdf resolution1("resolution1", &dm, &dummyzero, &sigma1, &delta, &epsilon);
+    ScaledGaussianPdf resolution2("resolution2", &dm, &dummyzero, &sigma2, &delta, &epsilon);
+    ScaledGaussianPdf resolution3("resolution3", &dm, &dummyzero, &sigma3, &delta, &epsilon);
 
     Variable width_bw("kpi_rd_width_bw", 0.0001, 0.00001, 0.0005);
-    KinLimitBWPdf rbw1("rbw1", dm, &mean1, &width_bw);
-    KinLimitBWPdf rbw2("rbw2", dm, &mean2, &width_bw);
-    KinLimitBWPdf rbw3("rbw3", dm, &mean3, &width_bw);
+    KinLimitBWPdf rbw1("rbw1", &dm, &mean1, &width_bw);
+    KinLimitBWPdf rbw2("rbw2", &dm, &mean2, &width_bw);
+    KinLimitBWPdf rbw3("rbw3", &dm, &mean3, &width_bw);
 
-    ConvolutionPdf signal1{"signal1", dm, &rbw1, &resolution1};
-    ConvolutionPdf signal2{"signal2", dm, &rbw2, &resolution2};
-    ConvolutionPdf signal3{"signal3", dm, &rbw3, &resolution3};
+    ConvolutionPdf signal1{"signal1", &dm, &rbw1, &resolution1};
+    ConvolutionPdf signal2{"signal2", &dm, &rbw2, &resolution2};
+    ConvolutionPdf signal3{"signal3", &dm, &rbw3, &resolution3};
 
     signal1.setIntegrationConstants(0.1395, 0.1665, 0.0000027);
     signal2.setIntegrationConstants(0.1395, 0.1665, 0.0000027);
     signal3.setIntegrationConstants(0.1395, 0.1665, 0.0000027);
 
-    weights.clear();
-    weights.push_back(&gfrac1);
-    weights.push_back(&gfrac2);
-    weights.push_back(&afrac);
-
-    comps.clear();
-    comps.push_back(&signal1);
-    comps.push_back(&signal2);
-    comps.push_back(&argus);
-    comps.push_back(&signal3);
-    AddPdf signal("signal", weights, comps);
+    AddPdf signal{"signal",
+        {&gfrac1, &gfrac2, &afrac},
+        {&signal1, &signal2, &argus, &signal3}};
 
     Variable slope("kpi_rd_slope", -1.0, 0.1, -35.0, 25.0);
-    Variable* bpower = NULL;
-    ArgusPdf bkg("bkg", dm, &pimass, &slope, false, bpower);
-
-    weights.clear();
-    comps.clear();
+    Variable* bpower = nullptr;
+    ArgusPdf bkg("bkg", &dm, &pimass, &slope, false, bpower);
 
     Variable bkg_frac("kpi_rd_bkg_frac", 0.03, 0.0, 0.3);
-    weights.push_back(&bkg_frac);
-    comps.push_back(&bkg);
-    comps.push_back(&signal);
 
-    getData(datafile);
+    getData(data_dataset.get(), &dm, datafile);
 
-    AddPdf total("total", weights, comps);
+    AddPdf total("total",
+                 {&bkg_frac},
+                 {&bkg, &signal});
 
-    if(0 == fitType)
-        total.setData(data);
-    else {
-        total.setData(binnedData);
+    if(mode==0)
+        total.setData(static_cast<UnbinnedDataSet*>(data_dataset.get()));
+    else
+        total.setData(static_cast<BinnedDataSet*>(data_dataset.get()));
 
-        if(2 == fitType)
-            total.setFitControl(new BinnedChisqFit());
+    std::unique_ptr<BinnedChisqFit> chi_control;
+    if(2 == mode) {
+        chi_control.reset(new BinnedChisqFit); 
+        total.setFitControl(chi_control.get());
     }
 
-    FitManager datapdf(&total);
+    FitManager datapdf{&total};
 
     GOOFIT_INFO("Starting fit");
 
     datapdf.fit();
+    
+    GOOFIT_INFO("Plotting results");
+    
+    plotComponent(&total, &dm);
 
     return datapdf;
-}
-
-int main(int argc, char** argv) {
-    GooFit::Application app("Zach-Fit example", argc, argv);
-    
-    int mode, data = 0;
-    app.add_set("-m,--mode,mode", mode, {0,1,2},
-            "Program mode: 0-unbinned, 1-binned, 2-binned ChiSq")->required();
-    app.add_set("-d,--data,data", data, {0,1,2},
-            "Dataset: 0-simple, 1-kpi, 2-k3pi");
-
-    try {
-        app.run();
-    } catch (const GooFit::ParseError &e) {
-        return app.exit(e);
-    }
-
-    gStyle->SetCanvasBorderMode(0);
-    gStyle->SetCanvasColor(10);
-    gStyle->SetFrameFillColor(10);
-    gStyle->SetFrameBorderMode(0);
-    gStyle->SetPadColor(0);
-    gStyle->SetTitleColor(1);
-    gStyle->SetStatColor(0);
-    gStyle->SetFillColor(0);
-    gStyle->SetFuncWidth(1);
-    gStyle->SetLineWidth(1);
-    gStyle->SetLineColor(1);
-    gStyle->SetPalette(1, 0);
-    foo = new TCanvas();
-
-    data_hist = new TH1F("data_hist", "", 300, 0.1365, 0.1665);
-
-    std::string mcfile, datafile;
-
-    if (data == 0) {
-        mcfile   = app.get_filename("dataFiles/dstwidth_kpi_resMC.dat", "examples/zachFit");
-        datafile = app.get_filename("dataFiles/dstwidth_kpi_data.dat", "examples/zachFit");
-    } else if (data == 1) {
-        mcfile   = app.get_filename("dataFiles/DstarWidth_D0ToKpi_deltaM_MC.dat", "examples/zachFit");
-        datafile = app.get_filename("dataFiles/DstarWidth_D0ToKpi_deltaM_Data.dat", "examples/zachFit");
-    } else {
-        mcfile   = app.get_filename("dataFiles/DstarWidth_D0ToK3pi_deltaM_MC.dat", "examples/zachFit");
-        datafile = app.get_filename("dataFiles/DstarWidth_D0ToK3pi_deltaM_Data.dat", "examples/zachFit");
-    }
-
-    int retval;
-    try {
-        retval = CudaMinimise(mode, mcfile, datafile);
-    } catch(const std::exception& ex) {
-        std::cerr << ex.what() << std::endl;
-        return 6;
-    }
-
-    data_hist->SetStats(false);
-    data_hist->SetMarkerStyle(8);
-    data_hist->SetMarkerSize(0.6);
-    data_hist->Draw("p");
-    foo->Draw();
-    foo->SaveAs("zachDraw.png");
-
-    delete binnedData;
-
-    return retval;
 }

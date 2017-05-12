@@ -142,13 +142,13 @@ unsigned int BinnedDataSet::getNumBins() const {
     return ret;
 }
 
-fptype BinnedDataSet::getNumEvents() const {
+size_t BinnedDataSet::getNumEvents() const {
     fptype ret = 0;
 
     for(std::vector<fptype>::const_iterator bin = binvalues.begin(); bin != binvalues.end(); ++bin)
         ret += (*bin);
 
-    return ret;
+    return static_cast<size_t>(ret);
 }
 
 std::vector<unsigned int> BinnedDataSet::convertValuesToBins(const std::vector<fptype>& vals) const {

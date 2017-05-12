@@ -11,16 +11,6 @@
 #include <sys/time.h>
 #include <sys/times.h>
 
-// RooFit stuff
-#include "RooRealVar.h"
-#include "RooDataSet.h"
-#include "RooArgSet.h"
-#include "RooPlot.h"
-#include "RooGaussian.h"
-#include "RooAddPdf.h"
-#include "RooMinuit.h"
-#include "RooNLLVar.h"
-
 // GooFit stuff
 #include "goofit/Application.h"
 #include "goofit/Variable.h"
@@ -51,8 +41,6 @@ char histName[1000];
 int numHists = 0;
 
 TH1F* plotComponent(GooPdf* toPlot, double normFactor) {
-//  static char name[1000];
-//  static int numHists = 0;
     sprintf(histName, "%s_hist_%i", toPlot->getName().c_str(), numHists++);
     TH1F* ret = new TH1F(histName, "", dm->numbins, dm->lowerlimit, dm->upperlimit);
     std::vector<fptype> binValues;
@@ -63,7 +51,6 @@ TH1F* plotComponent(GooPdf* toPlot, double normFactor) {
     step /= dm->numbins;
 
     for(int i = 1; i <= dm->numbins; ++i) {
-        //std::cout << name << " " << i << " : " << binValues[i-1] << " " << (dm->lowerlimit + (i-1)*step) << std::endl;
         pdf_int += binValues[i-1];
     }
 
@@ -73,10 +60,8 @@ TH1F* plotComponent(GooPdf* toPlot, double normFactor) {
     return ret;
 }
 
-void getMCData(GooFit::Application &app) {
+void getMCData(std::string filename) {
     data = new UnbinnedDataSet(dm);
-    std::string filename = app.get_filename("dataFiles/dstwidth_kpi_data.dat", "examples/zachFit");
-    
     std::ifstream mcreader(filename);
     
     TH1F* mchist = new TH1F("mchist", "", 300, 0.1365, 0.1665);
@@ -107,9 +92,8 @@ void getMCData(GooFit::Application &app) {
     std::cout << "MC: Got " << data->getNumEvents() << " events.\n";
 }
 
-void getData(GooFit::Application &app) {
+void getData(std::string filename) {
     std::ifstream datareader;
-    std::string filename = app.get_filename("dataFiles/dstwidth_kpi_data.dat", "examples/zachFit");
 
     datareader.open(filename);
 
@@ -140,12 +124,12 @@ void getData(GooFit::Application &app) {
     datareader.close();
 }
 
-int CudaMinimise(int fitType, GooFit::Application &app) {
+int CudaMinimise(int fitType, std::string mcfile, std::string datafile) {
     dm = new Variable("dm", 0.1395, 0.1665);
     dm->numbins = 2700;
     //dm->numbins = 540;
 
-    getMCData(app);
+    getMCData(mcfile);
     std::cout << "Done getting MC\n";
 
     Variable mean1("kpi_mc_mean1", 0.145402, 0.00001, 0.143, 0.148);
@@ -162,19 +146,6 @@ int CudaMinimise(int fitType, GooFit::Application &app) {
     Variable gfrac1("kpi_mc_gfrac1", 0.65, 0.01, 0.0, 0.9);
     Variable gfrac2("kpi_mc_gfrac2", 0.02, 0.001, 0.0, 0.12);
     Variable afrac("kpi_mc_afrac", 0.005, 0.003, 0.0, 0.1);
-
-    //mean1.fixed = true;
-    //mean2.fixed = true;
-    //mean3.fixed = true;
-    //sigma1.fixed = true;
-    //sigma2.fixed = true;
-    //sigma3.fixed = true;
-
-    //aslope.fixed = true;
-    //apower.fixed = true;
-    //gfrac1.fixed = true;
-    //gfrac2.fixed = true;
-    //afrac.fixed = true;
 
     GaussianPdf gauss1("gauss1", dm, &mean1, &sigma1);
     GaussianPdf gauss2("gauss2", dm, &mean2, &sigma2);
@@ -197,8 +168,6 @@ int CudaMinimise(int fitType, GooFit::Application &app) {
     FitManager mcpdf(&resolution);
 
     std::cout << "Done with data, starting minimisation" << std::endl;
-    // Minimize
-    //ROOT::Minuit2::FunctionMinimum* min = mcpdf.fit();
     mcpdf.fit();
 
     mean1.fixed = true;
@@ -227,29 +196,13 @@ int CudaMinimise(int fitType, GooFit::Application &app) {
     KinLimitBWPdf rbw2("rbw2", dm, &mean2, &width_bw);
     KinLimitBWPdf rbw3("rbw3", dm, &mean3, &width_bw);
 
-    //#define OTHERS 1
-#ifdef OTHERS
-    ConvolutionPdf signal1("signal1", dm, &rbw1, &resolution1, 2);
-    ConvolutionPdf signal2("signal2", dm, &rbw2, &resolution2, 2);
-    ConvolutionPdf signal3("signal3", dm, &rbw3, &resolution3, 2);
-    std::vector<ConvolutionPdf*> convList;
-    convList.push_back(&signal1);
-    convList.push_back(&signal2);
-    convList.push_back(&signal3);
-    signal1.registerOthers(convList);
-    signal2.registerOthers(convList);
-    signal3.registerOthers(convList);
-#else
-    ConvolutionPdf signal1("signal1", dm, &rbw1, &resolution1);
-    ConvolutionPdf signal2("signal2", dm, &rbw2, &resolution2);
-    ConvolutionPdf signal3("signal3", dm, &rbw3, &resolution3);
-#endif
+    ConvolutionPdf signal1{"signal1", dm, &rbw1, &resolution1};
+    ConvolutionPdf signal2{"signal2", dm, &rbw2, &resolution2};
+    ConvolutionPdf signal3{"signal3", dm, &rbw3, &resolution3};
 
     signal1.setIntegrationConstants(0.1395, 0.1665, 0.0000027);
     signal2.setIntegrationConstants(0.1395, 0.1665, 0.0000027);
     signal3.setIntegrationConstants(0.1395, 0.1665, 0.0000027);
-
-
 
     weights.clear();
     weights.push_back(&gfrac1);
@@ -275,7 +228,7 @@ int CudaMinimise(int fitType, GooFit::Application &app) {
     comps.push_back(&bkg);
     comps.push_back(&signal);
 
-    getData(app);
+    getData(datafile);
 
     AddPdf total("total", weights, comps);
 
@@ -290,94 +243,21 @@ int CudaMinimise(int fitType, GooFit::Application &app) {
 
     FitManager datapdf(&total);
 
-    std::cout << "Starting fit\n";
+    GOOFIT_INFO("Starting fit");
 
     datapdf.fit();
 
     return datapdf;
-
-    //std::cout << "Minimum: " << *min2 << std::endl;
-    /*
-      double dat_int = 0;
-      for (int i = 1; i <= 300; ++i) {
-        dat_int += data_hist->GetBinContent(i);
-      }
-
-      signal1.setIntegrationConstants(0.1365, 0.1665, 0.00003);
-      signal2.setIntegrationConstants(0.1365, 0.1665, 0.00003);
-      signal3.setIntegrationConstants(0.1365, 0.1665, 0.00003);
-      dm->numbins = 300;
-      dm->lowerlimit = 0.1365;
-      dm->upperlimit = 0.1665;
-      std::cout << bkg_frac.value << std::endl;
-
-      // plotComponent seems broken?
-      TH1F* dpdf_hist = plotComponent(&total, dat_int);
-      double totalIntegral = pdf_int;
-      TH1F* barg_hist = plotComponent(&bkg,   dat_int*bkg_frac.value);
-      double bkgIntegral = pdf_int;
-      TH1F* sign_hist = plotComponent(&signal, dat_int*(1 - bkg_frac.value));
-      double sigIntegral = pdf_int;
-
-      double sig_int = 0;
-      double bkg_int = 0;
-      double tot_int = 0;
-      for (int i = 1; i <= 300; ++i) {
-        sig_int += sign_hist->GetBinContent(i);
-        bkg_int += barg_hist->GetBinContent(i);
-        tot_int += dpdf_hist->GetBinContent(i);
-
-        dpdf_hist->SetBinContent(i, barg_hist->GetBinContent(i) + sign_hist->GetBinContent(i));
-      }
-    */
-
-    dm->value = 0.1568;
-    /*
-      std::cout << "PDF: "
-    	    << (dat_int/totalIntegral) * total.getValue() << " "
-    	    << (1-bkg_frac.value)*(dat_int/sigIntegral)*signal.getValue() << " "
-    	    << bkg_frac.value*(dat_int/bkgIntegral)*bkg.getValue() << " | "
-    	    << dat_int << " " << sigIntegral << " " << bkgIntegral << " " << totalIntegral << " | "
-    	    << sig_int << " " << bkg_int << " " << tot_int  << " | "
-    	    << dpdf_hist->GetBinContent(204) << " " << sign_hist->GetBinContent(204) << " " << barg_hist->GetBinContent(204) << " "
-    	    << std::endl;
-    */
-
-    /*
-    data_hist->SetStats(false);
-    data_hist->SetMarkerStyle(8);
-    data_hist->SetMarkerSize(0.6);
-    data_hist->Draw("p");
-
-    dpdf_hist->SetLineColor(kViolet);
-    dpdf_hist->SetLineWidth(3);
-    dpdf_hist->Draw("lsame");
-    //dpdf_hist->Draw("l");
-
-    barg_hist->SetLineColor(kRed);
-    barg_hist->SetLineWidth(3);
-    barg_hist->SetLineStyle(kDashed);
-    barg_hist->Draw("lsame");
-
-    sign_hist->SetLineColor(kBlue);
-    sign_hist->SetLineWidth(3);
-    sign_hist->SetLineStyle(kDashed);
-    sign_hist->Draw("lsame");
-
-    foo->SetLogy(false);
-    foo->SaveAs("zach_linear_CUDA_fit.png");
-    foo->SetLogy(true);
-    foo->SaveAs("zach_CUDA_fit.png");
-    */
 }
 
 int main(int argc, char** argv) {
     GooFit::Application app("Zach-Fit example", argc, argv);
     
-    int mode;
+    int mode, data = 0;
     app.add_set("-m,--mode,mode", mode, {0,1,2},
             "Program mode: 0-unbinned, 1-binned, 2-binned ChiSq")->required();
-
+    app.add_set("-d,--data,data", data, {0,1,2},
+            "Dataset: 0-simple, 1-kpi, 2-k3pi");
 
     try {
         app.run();
@@ -401,15 +281,26 @@ int main(int argc, char** argv) {
 
     data_hist = new TH1F("data_hist", "", 300, 0.1365, 0.1665);
 
+    std::string mcfile, datafile;
+
+    if (data == 0) {
+        mcfile   = app.get_filename("dataFiles/dstwidth_kpi_resMC.dat", "examples/zachFit");
+        datafile = app.get_filename("dataFiles/dstwidth_kpi_data.dat", "examples/zachFit");
+    } else if (data == 1) {
+        mcfile   = app.get_filename("dataFiles/DstarWidth_D0ToKpi_deltaM_MC.dat", "examples/zachFit");
+        datafile = app.get_filename("dataFiles/DstarWidth_D0ToKpi_deltaM_Data.dat", "examples/zachFit");
+    } else {
+        mcfile   = app.get_filename("dataFiles/DstarWidth_D0ToK3pi_deltaM_MC.dat", "examples/zachFit");
+        datafile = app.get_filename("dataFiles/DstarWidth_D0ToK3pi_deltaM_Data.dat", "examples/zachFit");
+    }
+
     int retval;
     try {
-        retval = CudaMinimise(mode, app);
+        retval = CudaMinimise(mode, mcfile, datafile);
     } catch(const std::exception& ex) {
         std::cerr << ex.what() << std::endl;
         return 6;
     }
-
-    //RooFitMinimise(atoi(argv[3]));
 
     data_hist->SetStats(false);
     data_hist->SetMarkerStyle(8);

@@ -1,5 +1,5 @@
 
-set(DATA_FILE "${CMAKE_CURRENT_SOURCE_DIR}/zachFit_datafiles.tgz")
+set(DATA_FILE "${CMAKE_CURRENT_SOURCE_DIR}/dataFiles_zachFit.tgz")
  
 if(NOT EXISTS ${DATA_FILE})
     message(STATUS "Downloading zachFit data files")
@@ -7,7 +7,7 @@ if(NOT EXISTS ${DATA_FILE})
         https://github.com/GooFit/GooFit/releases/download/v1.0.0/zachFit_dataFiles.tgz
         ${DATA_FILE}
         SHOW_PROGRESS
-        EXPECTED_HASH SHA256=66340df3799392272ee32d6508323d12f8fcca7eb09264ef4f140ae5246f644e
+        EXPECTED_HASH SHA256=7b87cfbc01f915ed7bb07e43516dd8105c45c3366e8c9060bf2637dc79b4bddb
         )
 endif()
 

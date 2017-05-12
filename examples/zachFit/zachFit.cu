@@ -30,11 +30,11 @@ using namespace fmt::literals;
 
 TCanvas* foo;
 
-void plotComponent(GooPdf* toPlot, Variable* var, double normFactor=1) {
+TH1D* plotComponent(GooPdf* toPlot, Variable* var, double normFactor=1) {
     static int numHists = 0;
     std::string histName = "{}_hist_{}"_format(toPlot->getName(), numHists++);
     std::string fileName = histName + ".png";
-    TH1F ret(histName.c_str(), "", var->numbins, var->lowerlimit, var->upperlimit);
+    auto ret = new TH1D(histName.c_str(), "", var->numbins, var->lowerlimit, var->upperlimit);
     std::vector<fptype> binValues;
     toPlot->evaluateAtPoints(var, binValues);
 
@@ -47,12 +47,8 @@ void plotComponent(GooPdf* toPlot, Variable* var, double normFactor=1) {
     }
 
     for(int i = 1; i <= var->numbins; ++i)
-        ret.SetBinContent(i, binValues[i-1] * normFactor / pdf_int);
-
-    ret.Draw();
-    foo->SetLogy(true);
-    foo->SaveAs(fileName.c_str());
-
+        ret->SetBinContent(i, binValues[i-1] * normFactor / pdf_int);
+    return ret;
 }
 
 void getMCData(DataSet *data, std::string filename, bool plot) {
@@ -269,7 +265,18 @@ int main(int argc, char** argv) {
     
     if(plot) {
         GOOFIT_INFO("Plotting results");
-        plotComponent(&total, &dm);
+        auto tot_hist = plotComponent(&total, &dm);
+        tot_hist->SetLineColor(kBlack);
+        auto sig_hist = plotComponent(&signal, &dm, 1 - bkg_frac.value);
+        sig_hist->SetLineColor(kBlue);
+        auto back_hist =plotComponent(&bkg, &dm, bkg_frac.value);
+        back_hist->SetLineColor(kRed);
+
+        tot_hist->Draw();
+        sig_hist->Draw("SAME");
+        back_hist->Draw("SAME");
+
+        foo->SaveAs("ResultFit.png");
     }
     
     return datapdf;

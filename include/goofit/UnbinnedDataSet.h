@@ -21,9 +21,6 @@ public:
 
     virtual void addEvent() override;
     
-    /// This is an stand-in for the similarly named BinnedDataSet weighted events TODO: rename
-    size_t getNumEvents() const {return numEvents();}
-    
     /// Get the value at a specific variable and event number
     fptype getValue(Variable* var, size_t idx) const;
     

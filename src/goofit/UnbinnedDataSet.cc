@@ -26,9 +26,9 @@ UnbinnedDataSet::UnbinnedDataSet(std::initializer_list<Variable*> vars, std::str
 
 fptype UnbinnedDataSet::getValue(Variable* var, size_t idx) const {
     
-    if(idx >= numEvents()) {
+    if(idx >= getNumEvents()) {
         throw GooFit::GeneralError("UnbinnedDataSet: Attepted to find {} in event {} when only {} events exits",
-                                                var->getName(), idx, numEvents());
+                                                var->getName(), idx, getNumEvents());
     }
     
     size_t var_idx = indexOfVariable(var);

@@ -45,7 +45,7 @@ public:
         return variables.size();
     }
     
-    int numEvents() const {
+    size_t getNumEvents() const {
         return numEventsAdded;
     }
 

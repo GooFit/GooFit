@@ -1335,7 +1335,7 @@ GooPdf* makeSigmaMap() {
         if (cpuDalitz(0.5*(xbin+0), 0.5*(ybin+1), _mD0, piZeroMass, piPlusMass, piPlusMass)) inDalitzPlot++;
         if (cpuDalitz(0.5*(xbin+1), 0.5*(ybin+1), _mD0, piZeroMass, piPlusMass, piPlusMass)) inDalitzPlot++;
         */
-        if(0 == sigma_data[i]->numEvents())
+        if(0 == sigma_data[i]->getNumEvents())
             js->setParameterConstantness(true);
         else {
             std::cout << "\n\nAbout to start fit of sigma box " << i << std::endl;
@@ -1408,7 +1408,7 @@ GooPdf* make1BinSigmaMap() {
         GooPdf* js = makeSignalJSU_gg(i, false);
         jsuList.push_back(js);
 
-        if(0 == sigma_data[i]->numEvents())
+        if(0 == sigma_data[i]->getNumEvents())
             js->setParameterConstantness(true);
         else {
             std::cout << "\n\nAbout to start fit of sigma box " << i << std::endl;
@@ -1482,7 +1482,7 @@ GooPdf* make4BinSigmaMap() {
         GooPdf* js = makeSignalJSU_gg(i, false);
         jsuList.push_back(js);
 
-        if(0 == sigma_data[i]->numEvents())
+        if(0 == sigma_data[i]->getNumEvents())
             js->setParameterConstantness(true);
         else {
             std::cout << "\n\nAbout to start fit of sigma box " << i << std::endl;
@@ -2739,7 +2739,7 @@ int runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
 
     if(0 != genResolutions) {
 
-        int numEvents = data->numEvents();
+        int numEvents = data->getNumEvents();
 
         for(int i = 0; i < numEvents; ++i) {
             data->loadEvent(i);
@@ -2748,7 +2748,7 @@ int runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
             double smear2 = 0;
 
             if(DplotRes & genResolutions) {
-                if(100 > smearedData->numEvents())
+                if(100 > smearedData->getNumEvents())
                     std::cout << "Before smear: " << m12->getValue() << " " << m13->getValue();
 
                 smear1 = donram.Gaus(0, dplotres);
@@ -2760,7 +2760,7 @@ int runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
             m13->setValue(m13->getValue() + smear2);
 
             //}
-            if(100 > smearedData->numEvents())
+            if(100 > smearedData->getNumEvents())
                 std::cout << " After smear: " << m12->getValue() << " " << m13->getValue() << "\n";
 
             smearedData->addEvent();
@@ -3475,7 +3475,7 @@ SmoothHistogramPdf* makeBackgroundHistogram(int bkgnum, std::string overridename
         //std::cout << m12->getValue() << " " << m13->getValue() << std::endl;
     }
 
-    std::cout << "Read " << bkg_binned_data->numEvents() << " events for background " << bkgnum << std::endl;
+    std::cout << "Read " << bkg_binned_data->getNumEvents() << " events for background " << bkgnum << std::endl;
     sprintf(strbuffer, "bkg%i_dalitz_smoothing", bkgnum);
     Variable* smoothing = new Variable(strbuffer, 1);
 

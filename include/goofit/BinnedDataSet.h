@@ -32,8 +32,8 @@ public:
     
     size_t getNumBins() const;
     
-    /// This is weighted
-    fptype getNumEvents() const;
+    /// This includes weights
+    fptype getNumWeightedEvents() const;
 
     void setBinContent(unsigned int bin, fptype value) {
         binvalues[bin] = value;

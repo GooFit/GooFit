@@ -131,12 +131,12 @@ size_t BinnedDataSet::getNumBins() const {
     return ret;
 }
 
-fptype BinnedDataSet::getNumEvents() const {
+fptype BinnedDataSet::getNumWeightedEvents() const {
     fptype ret = 0;
-
+    
     for(const fptype& bin : binvalues)
         ret += bin;
-
+    
     return ret;
 }
 

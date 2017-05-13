@@ -28,8 +28,6 @@
 
 using namespace fmt::literals;
 
-TCanvas* foo;
-
 TH1D* plotComponent(GooPdf* toPlot, Variable* var, double normFactor=1) {
     static int numHists = 0;
     std::string histName = "{}_hist_{}"_format(toPlot->getName(), numHists++);
@@ -39,43 +37,39 @@ TH1D* plotComponent(GooPdf* toPlot, Variable* var, double normFactor=1) {
     toPlot->evaluateAtPoints(var, binValues);
 
     double pdf_int = 0;
-    double step = var->upperlimit - var->lowerlimit;
-    step /= var->numbins;
+    double step = (var->upperlimit - var->lowerlimit) /  var->numbins;
 
-    for(int i = 1; i <= var->numbins; ++i) {
-        pdf_int += binValues[i-1];
+    for(int i = 0; i < var->numbins; ++i) {
+        pdf_int += binValues[i];
     }
 
-    for(int i = 1; i <= var->numbins; ++i)
-        ret->SetBinContent(i, binValues[i-1] * normFactor / pdf_int);
+    for(int i = 0; i < var->numbins; ++i)
+        ret->SetBinContent(i+1, binValues[i] * normFactor / pdf_int / step);
     return ret;
 }
 
-void getMCData(DataSet *data, std::string filename, bool plot) {
-    TH1F mchist{"mc_hist", "", 300, 0.1365, 0.1665};
+TH1D* getMCData(DataSet *data, Variable* var, std::string filename) {
+    TH1D* mchist = new TH1D{"mc_hist", "", 300, 0.1365, 0.1665};
     std::ifstream mcreader{filename};
 
     double currDM = 0;
     while(mcreader >> currDM) {
+        if(currDM > var->upperlimit || currDM < var->lowerlimit)
+            continue;
         data->addEvent(currDM);
-        mchist.Fill(currDM);
+        mchist->Fill(currDM);
     }
 
-    if(plot) {
-        mchist.SetStats(false);
-        mchist.SetMarkerStyle(8);
-        mchist.SetMarkerSize(0.6);
-        mchist.Draw("p");
-
-        foo->SetLogy(true);
-        foo->SaveAs("zach_mchist.png");
-    }
+    mchist->SetStats(false);
+    mchist->SetMarkerStyle(8);
+    mchist->SetMarkerSize(0.6);
 
     GOOFIT_INFO("MC events: {}", data->getNumEvents());
+    return mchist;
 }
 
-void getData(DataSet* data, Variable *var, std::string filename, bool plot) {
-    TH1F data_hist("data_hist", "", 300, 0.1365, 0.1665);
+TH1D* getData(DataSet* data, Variable *var, std::string filename) {
+    TH1D* data_hist = new TH1D("data_hist", "", 300, 0.1365, 0.1665);
     std::ifstream datareader{filename};
 
     double currDM = 0;
@@ -83,29 +77,25 @@ void getData(DataSet* data, Variable *var, std::string filename, bool plot) {
         if(currDM > var->upperlimit || currDM < var->lowerlimit)
             continue;
         data->addEvent(currDM);
-        data_hist.Fill(currDM);
+        data_hist->Fill(currDM);
     }
 
-    if(plot) {
-        data_hist.SetStats(false);
-        data_hist.SetMarkerStyle(8);
-        data_hist.SetMarkerSize(0.6);
-        data_hist.Draw("p");
-        foo->Draw();
-        foo->SaveAs("zach_datahist.png");
-    }
+    data_hist->SetStats(false);
+    data_hist->SetMarkerStyle(8);
+    data_hist->SetMarkerSize(0.6);
 
     GOOFIT_INFO("Data events: {}", data->getNumEvents());
+    return data_hist;
 }
 
 
 int main(int argc, char** argv) {
     GooFit::Application app{"Zach-Fit example", argc, argv};
     
-    int mode, data = 0;
+    int mode=0, data = 0;
     bool plot;
     app.add_set("-m,--mode,mode", mode, {0,1},
-            "Program mode: 0-unbinned, 1-binned")->required();
+            "Program mode: 0-unbinned, 1-binned");
     app.add_set("-d,--data,data", data, {0,1,2},
             "Dataset: 0-simple, 1-kpi, 2-k3pi");
     app.add_flag("-p,--plot", plot, "Make and save plots of results");
@@ -129,7 +119,9 @@ int main(int argc, char** argv) {
     gStyle->SetLineWidth(1);
     gStyle->SetLineColor(1);
     gStyle->SetPalette(1, 0);
-    foo = new TCanvas();
+    
+    TCanvas foo;
+    foo.SetLogy(true);
 
 
     // Get the name of the files to use
@@ -159,7 +151,7 @@ int main(int argc, char** argv) {
         data_dataset.reset(new BinnedDataSet{&dm});
     }
 
-    getMCData(mc_dataset.get(), mcfile, plot);
+    TH1D* mc_hist = getMCData(mc_dataset.get(), &dm, mcfile);
 
     Variable mean1("kpi_mc_mean1", 0.145402, 0.00001, 0.143, 0.148);
     Variable mean2("kpi_mc_mean2", 0.145465, 0.00001, 0.145, 0.1465);
@@ -192,9 +184,23 @@ int main(int argc, char** argv) {
         resolution.setData(static_cast<BinnedDataSet*>(mc_dataset.get()));
     FitManager mcpdf{&resolution};
 
-    GOOFIT_INFO("Done with data, starting minimisation");
+    GOOFIT_INFO("Done with collecting MC, starting minimisation");
     mcpdf.fit();
 
+    if(plot) {
+        GOOFIT_INFO("Plotting MC");
+        mc_hist->SetLineColor(kBlack);
+        mc_hist->Draw("e");
+
+        double step = mc_hist->GetXaxis()->GetBinWidth(2);
+        auto tot_hist = plotComponent(&resolution, &dm, mc_dataset->getNumEvents()*step);
+        tot_hist->SetLineColor(kGreen);
+        
+        tot_hist->Draw("SAME");
+
+        foo.SaveAs("MC_plot.png");
+    }
+    
     // Locking the MC variables
     mean1.fixed = true;
     mean2.fixed = true;
@@ -240,7 +246,7 @@ int main(int argc, char** argv) {
 
     Variable bkg_frac("kpi_rd_bkg_frac", 0.03, 0.0, 0.3);
 
-    getData(data_dataset.get(), &dm, datafile, plot);
+    TH1D* data_hist = getData(data_dataset.get(), &dm, datafile);
 
     AddPdf total("total",
                  {&bkg_frac},
@@ -265,18 +271,24 @@ int main(int argc, char** argv) {
     
     if(plot) {
         GOOFIT_INFO("Plotting results");
-        auto tot_hist = plotComponent(&total, &dm);
-        tot_hist->SetLineColor(kBlack);
-        auto sig_hist = plotComponent(&signal, &dm, 1 - bkg_frac.value);
-        sig_hist->SetLineColor(kBlue);
-        auto back_hist =plotComponent(&bkg, &dm, bkg_frac.value);
-        back_hist->SetLineColor(kRed);
+        
+        data_hist->SetLineColor(kBlack);
+        data_hist->Draw("e");
+        
+        double scale = data_hist->GetXaxis()->GetBinWidth(2) * data_dataset->getNumEvents();
 
-        tot_hist->Draw();
+        auto sig_hist = plotComponent(&signal, &dm, (1 - bkg_frac.value)*scale);
+        sig_hist->SetLineColor(kBlue);
+        auto back_hist =plotComponent(&bkg, &dm, bkg_frac.value*scale);
+        back_hist->SetLineColor(kRed);
+        auto tot_hist = plotComponent(&total, &dm, scale);
+        tot_hist->SetLineColor(kGreen);
+
+        tot_hist->Draw("SAME");
         sig_hist->Draw("SAME");
         back_hist->Draw("SAME");
 
-        foo->SaveAs("ResultFit.png");
+        foo.SaveAs("ResultFit.png");
     }
     
     return datapdf;

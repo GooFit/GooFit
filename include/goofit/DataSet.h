@@ -22,6 +22,7 @@ public:
     
     virtual ~DataSet() = default;
 
+    virtual size_t getNumEvents() const {return numEventsAdded;};
     void addEvent();
     void addEvent(fptype val);
     virtual void addEventVector(std::vector<fptype>& vals, fptype weight = 1) = 0;
@@ -56,7 +57,7 @@ protected:
     std::vector<fptype> getCurrentValues() const;
     unsigned int indexOfVariable(Variable* var) const;
     
-    int numEventsAdded {0};
+    size_t numEventsAdded {0};
 
 private:
     void generateName();

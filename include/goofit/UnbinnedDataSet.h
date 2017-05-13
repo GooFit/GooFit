@@ -14,7 +14,7 @@ public:
     virtual ~UnbinnedDataSet();
 
     virtual void addEventVector(std::vector<fptype>& vals, fptype weight = 1);
-    int getNumEvents() const {
+    size_t getNumEvents() const {
         return data.size();
     }
     fptype getValue(Variable* var, int idx) const;

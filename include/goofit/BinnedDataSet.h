@@ -25,7 +25,7 @@ public:
     fptype getBinVolume(unsigned int bin) const;
     fptype getBinError(unsigned int bin) const;
     unsigned int getNumBins() const;
-    fptype getNumEvents() const;
+    size_t getNumEvents() const;
 
     void setBinContent(unsigned int bin, fptype value) {
         binvalues[bin] = value;

@@ -28,24 +28,6 @@
 
 using namespace fmt::literals;
 
-TH1D* plotComponent(GooPdf* toPlot, Variable* var, double normFactor=1) {
-    static int numHists = 0;
-    std::string histName = "{}_hist_{}"_format(toPlot->getName(), numHists++);
-    std::string fileName = histName + ".png";
-    auto ret = new TH1D(histName.c_str(), "", var->getNumBins(), var->getLowerLimit(), var->getUpperLimit());
-    std::vector<fptype> binValues = toPlot->evaluateAtPoints(var);
-
-    double pdf_int = 0;
-
-    for(int i = 0; i < var->getNumBins(); ++i) {
-        pdf_int += binValues[i];
-    }
-
-    for(int i = 0; i < var->getNumBins(); ++i)
-        ret->SetBinContent(i+1, binValues[i] * normFactor / pdf_int / var->getBinSize());
-    return ret;
-}
-
 TH1D* getMCData(DataSet *data, Variable* var, std::string filename) {
     TH1D* mchist = new TH1D{"mc_hist", "", 300, 0.1365, 0.1665};
     std::ifstream mcreader{filename};
@@ -196,7 +178,7 @@ int main(int argc, char** argv) {
         mc_hist->Draw("e");
 
         double step = mc_hist->GetXaxis()->GetBinWidth(2);
-        auto tot_hist = plotComponent(&resolution, &dm, mc_dataset->getNumEvents()*step);
+        auto tot_hist = resolution.plotToROOT(&dm, mc_dataset->getNumEvents()*step);
         tot_hist->SetLineColor(kGreen);
         
         tot_hist->Draw("SAME");
@@ -280,11 +262,11 @@ int main(int argc, char** argv) {
         
         double scale = data_hist->GetXaxis()->GetBinWidth(2) * data_dataset->getNumEvents();
 
-        auto sig_hist = plotComponent(&signal, &dm, (1 - bkg_frac.getValue())*scale);
+        auto sig_hist = signal.plotToROOT(&dm, (1 - bkg_frac.getValue())*scale);
         sig_hist->SetLineColor(kBlue);
-        auto back_hist =plotComponent(&bkg, &dm, bkg_frac.getValue()*scale);
+        auto back_hist =bkg.plotToROOT(&dm, bkg_frac.getValue()*scale);
         back_hist->SetLineColor(kRed);
-        auto tot_hist = plotComponent(&total, &dm, scale);
+        auto tot_hist = total.plotToROOT(&dm, scale);
         tot_hist->SetLineColor(kGreen);
 
         tot_hist->Draw("SAME");

@@ -7,6 +7,10 @@
 #include <map>
 #include <vector>
 
+#ifdef ROOT_FOUND
+class TH1D;
+#endif
+
 /* Future use, apperently:
 #include <thrust/iterator/constant_iterator.h>
 #include <thrust/device_vector.h>

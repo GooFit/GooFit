@@ -21,6 +21,10 @@ extern void* host_function_table[200];
 extern unsigned int num_device_functions;
 #endif
 
+#ifdef ROOT_FOUND
+class TH1D;
+#endif
+
 __device__ int dev_powi(int base, int exp);  // Implemented in SmoothHistogramPdf.
 void* getMetricPointer(std::string name);
 
@@ -77,6 +81,11 @@ public:
     __host__ virtual void transformGrid(fptype* host_output);
     static __host__ int findFunctionIdx(void* dev_functionPtr);
     __host__ void setDebugMask(int mask, bool setSpecific = true) const;
+    
+#ifdef ROOT_FOUND
+    /// Plot a PDF to a ROOT histogram
+    __host__ TH1D* plotToROOT(Variable* var, double normFactor=1, std::string name="");
+#endif
 
 protected:
     __host__ virtual double sumOfNll(int numVars) const;

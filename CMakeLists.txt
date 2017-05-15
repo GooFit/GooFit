@@ -226,7 +226,9 @@ endif()
 
 # Include directories are not picked up by FindCUDA
 find_package(ROOT 6 COMPONENTS Minuit Minuit2)
-if(NOT ROOT_FOUND)
+if(ROOT_FOUND)
+    add_definitions("-DROOT_FOUND")
+else()
     add_subdirectory("extern/Minuit2")
 endif()
 

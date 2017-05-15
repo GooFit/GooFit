@@ -17,6 +17,10 @@
 #include <thrust/iterator/constant_iterator.h>
 #include <thrust/iterator/zip_iterator.h>
 
+#ifdef ROOT_FOUND
+#include <TH1D.h>
+#endif
+
 // These variables are either function-pointer related (thus specific to this implementation)
 // or constrained to be in the CUDAglob translation unit by nvcc limitations; otherwise they
 // would be in PdfBase.
@@ -393,7 +397,7 @@ __host__ fptype GooPdf::getValue() {
 __host__ fptype GooPdf::normalize() const {
 
     if(!fitControl->metricIsPdf()) {
-        GOOFIT_DEBUG("MetricIsPdf, returning 1");
+        GOOFIT_DEBUG("{}: metricIsPdf, returning 1", getName());
         host_normalisation[parameters] = 1.0;
         return 1.0;
     }
@@ -403,17 +407,17 @@ __host__ fptype GooPdf::normalize() const {
     if(hasAnalyticIntegral()) {
         // Loop goes only over observables of this PDF.
         for(Variable* v : observables) {
-            GOOFIT_TRACE("Analytically integrating {} over {}", getName(), v->getName());
+            GOOFIT_TRACE("{}: Analytically integrating over {}", getName(), v->getName());
             ret *= integrate(v->getLowerLimit(), v->getUpperLimit());
         }
 
         host_normalisation[parameters] = 1.0/ret;
-        GOOFIT_DEBUG("Analytic integral of {} is {}", getName(), ret);
+        GOOFIT_DEBUG("{}: Param {} integral is = {}", getName(), parameters, ret);
         
         return ret;
     }
     
-    GOOFIT_DEBUG("Computing integral of {} without analytic help", getName());
+    GOOFIT_TRACE("{}, Computing integral without analytic help", getName());
 
     int totalBins = 1;
 
@@ -475,7 +479,7 @@ __host__ fptype GooPdf::normalize() const {
     if(0 == ret)
         abortWithCudaPrintFlush(__FILE__, __LINE__, "Zero integral");
 
-    GOOFIT_DEBUG("Computed norm for param {} to be {}", parameters, ret);
+    GOOFIT_DEBUG("{}: Param {} integral is ~= {}", getName(), parameters, ret);
     host_normalisation[parameters] = 1.0/ret;
     return (fptype) ret;
 }
@@ -710,3 +714,22 @@ __host__ void GooPdf::setFitControl(FitControl* const fc, bool takeOwnerShip) {
     setMetrics();
 }
 
+#ifdef ROOT_FOUND
+__host__ TH1D* GooPdf::plotToROOT(Variable* var, double normFactor, std::string name) {
+    if(name.empty())
+        name = getName() + "_hist";
+    
+    auto ret = new TH1D(name.c_str(), "", var->getNumBins(), var->getLowerLimit(), var->getUpperLimit());
+    std::vector<fptype> binValues = evaluateAtPoints(var);
+    
+    double pdf_int = 0;
+    
+    for(int i = 0; i < var->getNumBins(); ++i) {
+        pdf_int += binValues[i];
+    }
+    
+    for(int i = 0; i < var->getNumBins(); ++i)
+        ret->SetBinContent(i+1, binValues[i] * normFactor / pdf_int / var->getBinSize());
+    return ret;
+}
+#endif

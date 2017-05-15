@@ -61,8 +61,8 @@ goofit_add_library(PdfBase
 set(lib_list
     Faddeeva
     FunctorWriter
-    FitManager2 FCN
     PdfBase
+    FitManager2 FCN
     DataSet
     Variable
     )

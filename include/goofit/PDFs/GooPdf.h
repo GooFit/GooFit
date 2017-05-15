@@ -106,8 +106,12 @@ public:
 
 private:
 
-    unsigned int metricIndex; // Function-pointer index of processing function, eg logarithm, chi-square, other metric.
-    unsigned int functionIdx; // Function-pointer index of actual PDF
+    /// Function-pointer index of processing function, eg logarithm, chi-square, other metric.
+    unsigned int metricIndex;
+    
+    /// Function-pointer index of actual PDF
+    unsigned int functionIdx;
+    
     unsigned int parameters;
 
 

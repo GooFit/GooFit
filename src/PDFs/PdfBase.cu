@@ -145,7 +145,7 @@ __host__ void PdfBase::setIndices() {
 
 }
 
-__host__ void PdfBase::setData(UnbinnedDataSet* data) {
+__host__ void PdfBase::setData(DataSet* data) {
     if(dev_event_array) {
         gooFree(dev_event_array);
         cudaDeviceSynchronize();
@@ -154,191 +154,192 @@ __host__ void PdfBase::setData(UnbinnedDataSet* data) {
     }
 
     setIndices();
-    int dimensions = observables.size();
-    numEntries = data->getNumEvents();
-    numEvents = numEntries;
+    
+    UnbinnedDataSet* unbinned_data;
+    BinnedDataSet* binned_data;
+    
+    if((unbinned_data = dynamic_cast<UnbinnedDataSet*>(data))) {
+        numEntries = data->getNumEvents();
+        numEvents = numEntries;
+        
+        int dimensions = observables.size();
 
-#ifdef GOOFIT_MPI
-    //This fetches our rank and the total number of processes in the MPI call
-    int myId, numProcs;
-    MPI_Comm_size(MPI_COMM_WORLD, &numProcs);
-    MPI_Comm_rank(MPI_COMM_WORLD, &myId);
+    #ifdef GOOFIT_MPI
+        //This fetches our rank and the total number of processes in the MPI call
+        int myId, numProcs;
+        MPI_Comm_size(MPI_COMM_WORLD, &numProcs);
+        MPI_Comm_rank(MPI_COMM_WORLD, &myId);
 
-    int perTask = numEvents/numProcs;
+        int perTask = numEvents/numProcs;
 
-    //This will track for a given rank where they will start and how far they will go
-    int* counts = new int[numProcs];
-    int* displacements = new int[numProcs];
+        //This will track for a given rank where they will start and how far they will go
+        int* counts = new int[numProcs];
+        int* displacements = new int[numProcs];
 
-    for(int i = 0; i < numProcs - 1; i++)
-        counts[i] = perTask;
+        for(int i = 0; i < numProcs - 1; i++)
+            counts[i] = perTask;
 
-    counts[numProcs - 1] = numEntries - perTask*(numProcs - 1);
+        counts[numProcs - 1] = numEntries - perTask*(numProcs - 1);
 
-    displacements[0] = 0;
+        displacements[0] = 0;
 
-    for(int i = 1; i < numProcs; i++)
-        displacements[i] = displacements[i - 1] + counts[i - 1];
+        for(int i = 1; i < numProcs; i++)
+            displacements[i] = displacements[i - 1] + counts[i - 1];
 
-#endif
+    #endif
 
-    fptype* host_array = new fptype[numEntries*dimensions];
+        fptype* host_array = new fptype[numEntries*dimensions];
 
-#ifdef GOOFIT_MPI
-    //This is an array to track if we need to re-index the observable
-    int fixme[observables.size()];
-    memset(fixme, 0, sizeof(int)*observables.size());
+    #ifdef GOOFIT_MPI
+        //This is an array to track if we need to re-index the observable
+        int fixme[observables.size()];
+        memset(fixme, 0, sizeof(int)*observables.size());
 
-    for(int i = 0; i < observables.size(); i++) {
-        //We are casting the observable to a CountVariable
-        CountingVariable* c = dynamic_cast <CountingVariable*>(observables[i]);
+        for(int i = 0; i < observables.size(); i++) {
+            //We are casting the observable to a CountVariable
+            CountingVariable* c = dynamic_cast <CountingVariable*>(observables[i]);
 
-        //if it is true re-index
-        if(c)
-            fixme[i] = 1;
-    }
-
-#endif
-
-    //Transfer into our whole buffer
-    for(int i = 0; i < numEntries; ++i) {
-        for(Variable* v : observables) {
-            fptype currVal = data->getValue(v, i);
-            host_array[i*dimensions + v->getIndex()] = currVal;
+            //if it is true re-index
+            if(c)
+                fixme[i] = 1;
         }
-    }
 
-#ifdef GOOFIT_MPI
+    #endif
 
-    //We will go through all of the events and re-index if appropriate
-    for(int i = 1; i < numProcs; i++) {
-        for(int j = 0; j < counts[i]; j++) {
-            for(int k = 0; k < dimensions; k++) {
-                if(fixme[k] > 0)
-                    host_array[(j + displacements[i])*dimensions + k] = float (j);
+        //Transfer into our whole buffer
+        for(int i = 0; i < numEntries; ++i) {
+            for(Variable* v : observables) {
+                fptype currVal = unbinned_data->getValue(v, i);
+                host_array[i*dimensions + v->getIndex()] = currVal;
             }
         }
-    }
 
-    int mystart = displacements[myId];
-    int myend = mystart + counts[myId];
-    int mycount = myend - mystart;
+    #ifdef GOOFIT_MPI
 
-    gooMalloc((void**) &dev_event_array, dimensions*mycount*sizeof(fptype));
-    MEMCPY(dev_event_array, host_array + mystart*dimensions, dimensions*mycount*sizeof(fptype), cudaMemcpyHostToDevice);
-    MEMCPY_TO_SYMBOL(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    delete[] host_array;
-
-    setNumPerTask(this, mycount);
-
-    delete []counts;
-    delete []displacements;
-#else
-    gooMalloc((void**) &dev_event_array, dimensions*numEntries*sizeof(fptype));
-    MEMCPY(dev_event_array, host_array, dimensions*numEntries*sizeof(fptype), cudaMemcpyHostToDevice);
-    MEMCPY_TO_SYMBOL(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    delete[] host_array;
-#endif
-}
-
-__host__ void PdfBase::setData(BinnedDataSet* data) {
-    if(dev_event_array) {
-        gooFree(dev_event_array);
-        dev_event_array = 0;
-        m_iEventsPerTask = 0;
-    }
-
-    setIndices();
-    numEvents = 0;
-    numEntries = data->getNumBins();
-    int dimensions = 2 + observables.size(); // Bin center (x,y, ...), bin value, and bin volume.
-
-    if(!fitControl->binnedFit())
-        setFitControl(new BinnedNllFit());
-
-#ifdef GOOFIT_MPI
-    //This fetches our rank and the total number of processes in the MPI call
-    int myId, numProcs;
-    MPI_Comm_size(MPI_COMM_WORLD, &numProcs);
-    MPI_Comm_rank(MPI_COMM_WORLD, &myId);
-
-    int perTask = numEvents/numProcs;
-
-    //This will track for a given rank where they will start and how far they will go
-    int* counts = new int[numProcs];
-    int* displacements = new int[numProcs];
-
-    for(int i = 0; i < numProcs - 1; i++)
-        counts[i] = perTask;
-
-    counts[numProcs - 1] = numEntries - perTask*(numProcs - 1);
-
-    displacements[0] = 0;
-
-    for(int i = 1; i < numProcs; i++)
-        displacements[i] = displacements[i - 1] + counts[i - 1];
-
-#endif
-
-    fptype* host_array = new fptype[numEntries*dimensions];
-
-#ifdef GOOFIT_MPI
-    //This is an array to track if we need to re-index the observable
-    int fixme[observables.size()];
-    memset(fixme, 0, sizeof(int)*observables.size());
-
-    for(int i = 0; i < observables.size(); i++) {
-        //We are casting the observable to a CountVariable
-        CountingVariable* c = dynamic_cast <CountingVariable*>(observables[i]);
-
-        //if it is true re-index
-        if(c)
-            fixme[i] = 1;
-    }
-
-#endif
-
-    for(unsigned int i = 0; i < numEntries; ++i) {
-        for(Variable* v : observables) {
-            host_array[i*dimensions + v->getIndex()] = data->getBinCenter(v, i);
-        }
-
-        host_array[i*dimensions + observables.size() + 0] = data->getBinContent(i);
-        host_array[i*dimensions + observables.size() + 1] = fitControl->binErrors() ? data->getBinError(i) : data->getBinVolume(i);
-        numEvents += data->getBinContent(i);
-    }
-
-#ifdef GOOFIT_MPI
-
-    //We will go through all of the events and re-index if appropriate
-    for(int i = 1; i < numProcs; i++) {
-        for(int j = 0; j < counts[j]; j++) {
-            for(int k = 0; k < dimensions; k++) {
-                if(fixme[k] > 0)
-                    host_array[(j + displacements[i])*dimensions + k] = float (j);
+        //We will go through all of the events and re-index if appropriate
+        for(int i = 1; i < numProcs; i++) {
+            for(int j = 0; j < counts[i]; j++) {
+                for(int k = 0; k < dimensions; k++) {
+                    if(fixme[k] > 0)
+                        host_array[(j + displacements[i])*dimensions + k] = float (j);
+                }
             }
         }
-    }
 
-    int mystart = displacements[myId];
-    int myend = mystart + counts[myId];
-    int mycount = myend - mystart;
+        int mystart = displacements[myId];
+        int myend = mystart + counts[myId];
+        int mycount = myend - mystart;
 
-    gooMalloc((void**) &dev_event_array, dimensions*mycount*sizeof(fptype));
-    MEMCPY(dev_event_array, host_array + mystart*dimensions, dimensions*mycount*sizeof(fptype), cudaMemcpyHostToDevice);
-    MEMCPY_TO_SYMBOL(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    delete[] host_array;
+        gooMalloc((void**) &dev_event_array, dimensions*mycount*sizeof(fptype));
+        MEMCPY(dev_event_array, host_array + mystart*dimensions, dimensions*mycount*sizeof(fptype), cudaMemcpyHostToDevice);
+        MEMCPY_TO_SYMBOL(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice);
+        delete[] host_array;
 
-    setNumPerTask(this, mycount);
+        setNumPerTask(this, mycount);
 
-    delete []counts;
-    delete []displacements;
-#else
-    gooMalloc((void**) &dev_event_array, dimensions*numEntries*sizeof(fptype));
-    MEMCPY(dev_event_array, host_array, dimensions*numEntries*sizeof(fptype), cudaMemcpyHostToDevice);
-    MEMCPY_TO_SYMBOL(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    delete[] host_array;
-#endif
+        delete []counts;
+        delete []displacements;
+    #else
+        gooMalloc((void**) &dev_event_array, dimensions*numEntries*sizeof(fptype));
+        MEMCPY(dev_event_array, host_array, dimensions*numEntries*sizeof(fptype), cudaMemcpyHostToDevice);
+        MEMCPY_TO_SYMBOL(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice);
+        delete[] host_array;
+    #endif
+    } else if ((binned_data = dynamic_cast<BinnedDataSet*>(data))) {
+
+     
+        numEvents = 0;
+        numEntries = binned_data->getNumBins();
+        int dimensions = 2 + observables.size(); // Bin center (x,y, ...), bin value, and bin volume.
+
+        if(!fitControl->binnedFit())
+            setFitControl(new BinnedNllFit());
+
+    #ifdef GOOFIT_MPI
+        //This fetches our rank and the total number of processes in the MPI call
+        int myId, numProcs;
+        MPI_Comm_size(MPI_COMM_WORLD, &numProcs);
+        MPI_Comm_rank(MPI_COMM_WORLD, &myId);
+
+        int perTask = numEvents/numProcs;
+
+        //This will track for a given rank where they will start and how far they will go
+        int* counts = new int[numProcs];
+        int* displacements = new int[numProcs];
+
+        for(int i = 0; i < numProcs - 1; i++)
+            counts[i] = perTask;
+
+        counts[numProcs - 1] = numEntries - perTask*(numProcs - 1);
+
+        displacements[0] = 0;
+
+        for(int i = 1; i < numProcs; i++)
+            displacements[i] = displacements[i - 1] + counts[i - 1];
+
+    #endif
+
+        fptype* host_array = new fptype[numEntries*dimensions];
+
+    #ifdef GOOFIT_MPI
+        //This is an array to track if we need to re-index the observable
+        int fixme[observables.size()];
+        memset(fixme, 0, sizeof(int)*observables.size());
+
+        for(int i = 0; i < observables.size(); i++) {
+            //We are casting the observable to a CountVariable
+            CountingVariable* c = dynamic_cast <CountingVariable*>(observables[i]);
+
+            //if it is true re-index
+            if(c)
+                fixme[i] = 1;
+        }
+
+    #endif
+
+        for(unsigned int i = 0; i < numEntries; ++i) {
+            for(Variable* v : observables) {
+                host_array[i*dimensions + v->getIndex()] = binned_data->getBinCenter(v, i);
+            }
+
+            host_array[i*dimensions + observables.size() + 0] = binned_data->getBinContent(i);
+            host_array[i*dimensions + observables.size() + 1] = fitControl->binErrors() ? binned_data->getBinError(i) : binned_data->getBinVolume(i);
+            numEvents += binned_data->getBinContent(i);
+        }
+
+    #ifdef GOOFIT_MPI
+
+        //We will go through all of the events and re-index if appropriate
+        for(int i = 1; i < numProcs; i++) {
+            for(int j = 0; j < counts[j]; j++) {
+                for(int k = 0; k < dimensions; k++) {
+                    if(fixme[k] > 0)
+                        host_array[(j + displacements[i])*dimensions + k] = float (j);
+                }
+            }
+        }
+
+        int mystart = displacements[myId];
+        int myend = mystart + counts[myId];
+        int mycount = myend - mystart;
+
+        gooMalloc((void**) &dev_event_array, dimensions*mycount*sizeof(fptype));
+        MEMCPY(dev_event_array, host_array + mystart*dimensions, dimensions*mycount*sizeof(fptype), cudaMemcpyHostToDevice);
+        MEMCPY_TO_SYMBOL(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice);
+        delete[] host_array;
+
+        setNumPerTask(this, mycount);
+
+        delete []counts;
+        delete []displacements;
+    #else
+        gooMalloc((void**) &dev_event_array, dimensions*numEntries*sizeof(fptype));
+        MEMCPY(dev_event_array, host_array, dimensions*numEntries*sizeof(fptype), cudaMemcpyHostToDevice);
+        MEMCPY_TO_SYMBOL(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice);
+        delete[] host_array;
+    #endif
+    } else
+        throw GooFit::GeneralError("Dataset must be binned or unbinned!");
 }
 
 __host__ void PdfBase::generateNormRange() {

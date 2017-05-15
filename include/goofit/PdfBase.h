@@ -11,6 +11,8 @@
 class TH1D;
 #endif
 
+#include <Minuit2/FunctionMinimum.h>
+
 /* Future use, apperently:
 #include <thrust/iterator/constant_iterator.h>
 #include <thrust/device_vector.h>
@@ -32,6 +34,7 @@ extern int totalConstants;
 
 class FitControl;
 
+class DataSet;
 class BinnedDataSet;
 class UnbinnedDataSet;
 
@@ -64,13 +67,21 @@ public:
     __host__ int getSpecialMask() const {
         return specialMask;
     }
-    __host__ void setData(BinnedDataSet* data);
-    __host__ void setData(UnbinnedDataSet* data);
+    
+    __host__ void setData(DataSet* data);
+    
+    /// This is the old style input, should be removed
     __host__ void setData(std::vector<std::map<Variable*, fptype>>& data);
+    
+    
     __host__ virtual void setFitControl(FitControl* const fc, bool takeOwnerShip = true) = 0;
     __host__ virtual bool hasAnalyticIntegral() const {
         return false;
     }
+    
+    /// RooFit style fitting shortcut
+    __host__ ROOT::Minuit2::FunctionMinimum fitTo(DataSet* data);
+    
     __host__ unsigned int getFunctionIndex() const {
         return functionIdx;
     }

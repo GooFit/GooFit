@@ -50,7 +50,7 @@ Int_t Minuit1::Eval(
             GOOFIT_WARN("Variable {} at {} is NaN", var->getName(), var->getIndex());
         
         var->setChanged(var->getValue() != pars.at(var->getFitterIndex()));
-        var->setValue(pars.at(var->getFitterIndex())); //  + var->blind
+        var->setValue(pars.at(var->getFitterIndex()));
         gooPars.at(var->getIndex()) = var->getValue();
     }
     

@@ -8,10 +8,15 @@
 
 #include <execinfo.h>
 
+#include "goofit/FitManager.h"
+#include "goofit/BinnedDataSet.h"
+#include "goofit/UnbinnedDataSet.h"
+
 fptype* dev_event_array;
 fptype host_normalisation[maxParams];
 fptype host_params[maxParams];
 unsigned int host_indices[maxParams];
+
 int host_callnumber = 0;
 int totalParams = 0;
 int totalConstants = 1; // First constant is reserved for number of events.
@@ -177,6 +182,11 @@ __host__ void PdfBase::setNumPerTask(PdfBase* p, const int& c) {
     m_iEventsPerTask = c;
 }
 
+__host__ ROOT::Minuit2::FunctionMinimum PdfBase::fitTo(DataSet *data) {
+    setData(data);
+    FitManager fitter{this};
+    return fitter.fit();
+}
 
 void abortWithCudaPrintFlush(std::string file, int line, std::string reason, const PdfBase* pdf) {
     void* stackarray[20];

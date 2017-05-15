@@ -163,10 +163,8 @@ int main(int argc, char** argv) {
         {&gfrac1, &gfrac2, &afrac},
         {&gauss1, &gauss2, &argus, &gauss3}};
     
-    if(mode==0)
-        resolution.setData(static_cast<UnbinnedDataSet*>(mc_dataset.get()));
-    else
-        resolution.setData(static_cast<BinnedDataSet*>(mc_dataset.get()));
+    resolution.setData(mc_dataset.get());
+  
     FitManager mcpdf{&resolution};
 
     GOOFIT_INFO("Done with collecting MC, starting minimisation");
@@ -237,10 +235,7 @@ int main(int argc, char** argv) {
                  {&bkg_frac},
                  {&bkg, &signal});
 
-    if(mode==0)
-        total.setData(static_cast<UnbinnedDataSet*>(data_dataset.get()));
-    else
-        total.setData(static_cast<BinnedDataSet*>(data_dataset.get()));
+    total.setData(data_dataset.get());
 
     std::unique_ptr<BinnedChisqFit> chi_control;
     if(2 == mode) {

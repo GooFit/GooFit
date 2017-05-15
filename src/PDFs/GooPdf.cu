@@ -296,12 +296,7 @@ __host__ double GooPdf::calculateNLL() const {
     return 2*ret;
 }
 
-__host__ void GooPdf::evaluateAtPoints(Variable* var, std::vector<fptype>& res) {
-    // NB: This does not project correctly in multidimensional datasets, because all observables
-    // other than 'var' will have, for every event, whatever value they happened to get set to last
-    // time they were set. This is likely to be the value from the last event in whatever dataset
-    // you were fitting to, but at any rate you don't get the probability-weighted integral over
-    // the other observables.
+__host__ std::vector<fptype> GooPdf::evaluateAtPoints(Variable* var) {
 
     copyParams();
     normalize();
@@ -337,38 +332,14 @@ __host__ void GooPdf::evaluateAtPoints(Variable* var, std::vector<fptype>& res) 
 
     //Note, This is not fully realized with MPI.  We need to copy each 'results' buffer to each other 'MPI_Scatterv', then we can do the rest.
     thrust::host_vector<fptype> h_results = results;
-    res.clear();
+    std::vector<fptype> res;
     res.resize(var->getNumBins());
 
     for(int i = 0; i < var->getNumBins(); ++i) {
         res[i] = h_results[i] * host_normalisation[parameters];
     }
-}
-
-__host__ void GooPdf::evaluateAtPoints(std::vector<fptype>& points) const {
-    /*
-    std::set<Variable*> vars;
-    getParameters(vars);
-    unsigned int maxIndex = 0;
-    for (std::set<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
-      if ((*i)->getIndex() < maxIndex) continue;
-      maxIndex = (*i)->getIndex();
-    }
-    std::vector<double> params;
-    params.resize(maxIndex+1);
-    for (std::set<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
-      if (0 > (*i)->getIndex()) continue;
-      params[(*i)->getIndex()] = (*i)->getValue();
-    }
-    copyParams(params);
-
-    thrust::device_vector<fptype> d_vec = points;
-    normalize();
-    MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    thrust::transform(d_vec.begin(), d_vec.end(), d_vec.begin(), *evalor);
-    thrust::host_vector<fptype> h_vec = d_vec;
-    for (unsigned int i = 0; i < points.size(); ++i) points[i] = h_vec[i];
-    */
+    
+    return res;
 }
 
 __host__ void GooPdf::scan(Variable* var, std::vector<fptype>& values) {

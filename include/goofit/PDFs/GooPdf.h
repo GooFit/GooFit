@@ -40,8 +40,13 @@ public:
 
     GooPdf(Variable* x, std::string n);
     __host__ virtual double calculateNLL() const;
-    __host__ void evaluateAtPoints(std::vector<fptype>& points) const;
-    __host__ void evaluateAtPoints(Variable* var, std::vector<fptype>& res);
+    
+    /// NB: This does not project correctly in multidimensional datasets, because all observables
+    /// other than 'var' will have, for every event, whatever value they happened to get set to last
+    /// time they were set. This is likely to be the value from the last event in whatever dataset
+    /// you were fitting to, but at any rate you don't get the probability-weighted integral over
+    /// the other observables.
+    __host__ std::vector<fptype> evaluateAtPoints(Variable* var);
 
     /// A normalize function. This fills in the host_normalize
     __host__ virtual fptype normalize() const;

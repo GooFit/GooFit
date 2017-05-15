@@ -33,8 +33,7 @@ TH1D* plotComponent(GooPdf* toPlot, Variable* var, double normFactor=1) {
     std::string histName = "{}_hist_{}"_format(toPlot->getName(), numHists++);
     std::string fileName = histName + ".png";
     auto ret = new TH1D(histName.c_str(), "", var->getNumBins(), var->getLowerLimit(), var->getUpperLimit());
-    std::vector<fptype> binValues;
-    toPlot->evaluateAtPoints(var, binValues);
+    std::vector<fptype> binValues = toPlot->evaluateAtPoints(var);
 
     double pdf_int = 0;
 

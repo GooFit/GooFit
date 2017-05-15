@@ -306,8 +306,7 @@ void plotFit(Variable* var, UnbinnedDataSet* dat, GooPdf* fit) {
     }
 
     TH1F* pdf_hist = new TH1F((var->getName() + "_pdfhist").c_str(), "", var->getNumBins(), var->getLowerLimit(), var->getUpperLimit());
-    std::vector<fptype> values;
-    fit->evaluateAtPoints(var, values);
+    std::vector<fptype> values = fit->evaluateAtPoints(var);
 
     double totalPdf = 0;
 

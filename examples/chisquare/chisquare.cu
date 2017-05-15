@@ -128,8 +128,7 @@ int fitRatio(vector<int>& rsEvts, vector<int>& wsEvts, std::string plotName = ""
     datapdf.fit();
     gettimeofday(&stopTime, NULL);
 
-    vector<fptype> values;
-    poly->evaluateAtPoints(decayTime, values);
+    vector<fptype> values = poly->evaluateAtPoints(decayTime);
     TH1D pdfHist("pdfHist", "", decayTime->getNumBins(), decayTime->getLowerLimit(), decayTime->getUpperLimit());
 
     for(int i = 0; i < values.size(); ++i) {

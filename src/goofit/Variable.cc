@@ -17,6 +17,8 @@ std::ostream& operator<< (std::ostream& o, const Variable& var) {
         o << " GooFit index: " << var.getIndex();
     if(var.getFitterIndex() >= 0)
         o << " Fitter index: " << var.getFitterIndex();
+    if(var.blind != 0)
+        o << " Blinded";
     
     return o;
 }

@@ -7,8 +7,15 @@
 
 #include "goofit/GlobalCudaDefines.h"
 
+// Declaring friends
+namespace GooFit {
+class FCN;
+class Minuit1;
+}
+
 class Indexable {
 public:
+    
     Indexable(std::string n, fptype val = 0) : name(n), value(val) {}
     
     // These classes can not be duplicated
@@ -67,6 +74,8 @@ protected:
 /// data set. The index can refer either to cudaArray
 /// or to an event.
 class Variable : public Indexable {
+    friend GooFit::FCN;
+    friend GooFit::Minuit1;
 public:
     friend std::ostream& operator<< (std::ostream& o, const Variable& var);
     friend std::istream& operator>> (std::istream& o, Variable& var);
@@ -146,7 +155,7 @@ public:
     /// Get the bin size, (upper-lower) / bins
     fptype getBinSize() const {return (getUpperLimit() - getLowerLimit()) / getNumBins();}
     
-    /// Currently deactivated
+    /// Hides the number; the real value is the result minus this value. Cannot be retreived once set.
     void setBlind(fptype val) {blind = val;}
     
     /// Ensure that the number of bins can not be changed once BinnedDataSets are created
@@ -180,8 +189,7 @@ protected:
     bool fixed {false};
     
     /// You can no longer change the binning after a BinnedDataSet is created
-    bool locked_ {false};
-    
+    bool locked_ {false};    
 };
 
 /// This is used to track event number for MPI versions.

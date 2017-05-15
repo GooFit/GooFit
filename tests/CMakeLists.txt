@@ -10,6 +10,7 @@ goofit_add_test(SimpleTest)
 goofit_add_test(BinnedTest)
 goofit_add_test(UnbinnedTest)
 goofit_add_test(NormalizeTest)
+goofit_add_test(BlindTest)
 
 if(ROOT_FOUND)
     goofit_add_test(Minuit1Test)

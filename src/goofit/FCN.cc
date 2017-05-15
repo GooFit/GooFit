@@ -24,7 +24,7 @@ double FCN::operator()(const std::vector<double>& pars) const {
     for(Variable* var : params_->vars_) {
         // TODO: support for blinding
         var->setChanged(var->getValue() != pars.at(var->getFitterIndex()));
-        gooPars.at(var->getIndex()) = pars.at(var->getFitterIndex());
+        gooPars.at(var->getIndex()) = pars.at(var->getFitterIndex()) - var->blind;
     }
 
     params_->pdf_->copyParams(gooPars);

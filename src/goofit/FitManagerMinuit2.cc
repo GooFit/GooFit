@@ -29,6 +29,7 @@ Minuit2::FunctionMinimum FitManagerMinuit2::fit() {
     if(verbosity > 0)
         std::cout << GooFit::gray << GooFit::bold;
     
+    CLI::Timer avetimer{"Average time per call"};
     Minuit2::FunctionMinimum min = migrad(maxfcn_);
     
     // Print nice output
@@ -36,6 +37,7 @@ Minuit2::FunctionMinimum FitManagerMinuit2::fit() {
         std::cout << GooFit::reset << (min.IsValid() ? GooFit::green : GooFit::red);
         std::cout << min << GooFit::reset;
         std::cout << GooFit::magenta << timer << GooFit::reset << std::endl;
+        std::cout << avetimer / min.NFcn() << std::endl;
     }
     
     if(min.IsValid()) {

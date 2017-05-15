@@ -97,8 +97,8 @@ int main(int argc, char** argv) {
     
     int mode=0, data = 0;
     bool plot;
-    app.add_set("-m,--mode,mode", mode, {0,1},
-            "Program mode: 0-unbinned, 1-binned");
+    app.add_set("-m,--mode,mode", mode, {0,1,2},
+            "Program mode: 0-unbinned, 1-binned, 2-binned chisq");
     app.add_set("-d,--data,data", data, {0,1,2},
             "Dataset: 0-simple, 1-kpi, 2-k3pi");
     app.add_flag("-p,--plot", plot, "Make and save plots of results");

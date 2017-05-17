@@ -15,7 +15,7 @@ public:
     BinnedDataSet(std::vector<Variable*>& vars, std::string n = "");
     BinnedDataSet(std::set<Variable*>& vars, std::string n = "");
     BinnedDataSet(std::initializer_list<Variable*> vars, std::string n="");
-    virtual ~BinnedDataSet() = default;
+    virtual ~BinnedDataSet();
 
     virtual void addEvent() override;
     virtual void addWeightedEvent(double weight) override;
@@ -43,6 +43,9 @@ public:
 private:
     /// Lock all variable bin numbers
     void lockBins();
+    
+    /// Unlock all variable bins
+    void unlockBins();
     
     std::vector<size_t> convertValuesToBins(const std::vector<fptype>& vals) const;
     size_t localToGlobal(const std::vector<size_t>& locals) const;

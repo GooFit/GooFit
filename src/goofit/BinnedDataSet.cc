@@ -28,6 +28,10 @@ BinnedDataSet::BinnedDataSet(std::initializer_list<Variable*> vars, std::string 
     binvalues.resize(getNumBins());
 }
 
+BinnedDataSet::~BinnedDataSet() {
+    unlockBins();
+}
+
 void BinnedDataSet::addEvent() {
     checkAllVars();
     size_t ibin = getBinNumber();
@@ -46,6 +50,11 @@ void BinnedDataSet::addWeightedEvent(double weight) {
 void BinnedDataSet::lockBins() {
     for(Variable* var : variables)
         var->setLockedBins(true);
+}
+
+void BinnedDataSet::unlockBins() {
+    for(Variable* var : variables)
+        var->setLockedBins(false);
 }
 
 size_t BinnedDataSet::getBinNumber() const {

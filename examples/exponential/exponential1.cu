@@ -24,10 +24,10 @@ int main(int argc, char** argv) {
 
     // Generate toy events.
     for(int i=0; i<100000; ++i) {
-        xvar.setValue(xvar.getUpperLimit() - log(1+rand()/2));
-
-        if(xvar.getValue() >= 0)
+        try {
+            xvar.setValue( xvar.getUpperLimit() - log(1+rand()/2));
             data.addEvent();
+        } catch (const GooFit::OutOfRange &) {}
     }
 
     // Fit parameter

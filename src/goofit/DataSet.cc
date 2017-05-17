@@ -63,3 +63,10 @@ void DataSet::generateName() {
         name += v->getName();
     }
 }
+
+void DataSet::checkAllVars() const {
+    for(Variable* v : variables) {
+        if(!*v)
+            throw GooFit::OutOfRange(v->getName(), v->getValue(), v->getLowerLimit(), v->getUpperLimit());
+    }
+}

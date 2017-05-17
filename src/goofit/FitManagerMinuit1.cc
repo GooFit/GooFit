@@ -40,7 +40,7 @@ Int_t Minuit1::Eval(
             double* fp,  
             int iflag) {
     
-    std::vector<double> pars {fp, fp+npar};
+    std::vector<double> pars {fp, fp+GetNumPars()};
     
     std::vector<double> gooPars;
     gooPars.resize(max_index(vars)+1);

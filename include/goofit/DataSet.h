@@ -58,6 +58,9 @@ protected:
     size_t indexOfVariable(Variable* var) const;
     size_t numEventsAdded {0};
     
+    /// Throw an error if any variables are out of range, call in addEvent
+    void checkAllVars() const;
+    
 private:
     /// Make a name, does not change the exising name. Called by all constructors.
     void generateName();

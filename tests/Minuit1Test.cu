@@ -3,6 +3,7 @@
 #include "goofit/fitting/FitManagerMinuit1.h"
 #include "goofit/UnbinnedDataSet.h"
 #include "goofit/PDFs/ExpPdf.h"
+#include "goofit/PDFs/GaussianPdf.h"
 #include "goofit/PDFs/ProdPdf.h"
 
 #include "goofit/Variable.h"
@@ -116,11 +117,9 @@ TEST(Minuit1, DifferentFitterVariable) {
     
     // Generate toy events.
     for(int i=0; i<20000; ++i) {
-        double xval = dx(gen);
-        double yval = dy(gen);
-        if(xval < 10 && yval < 10) {
-            xvar.setValue(xval);
-            yvar.setValue(yval);
+        xvar = dx(gen);
+        yvar = dy(gen);
+        if(xvar && yvar) {
             data.addEvent();
         }
     }
@@ -146,4 +145,55 @@ TEST(Minuit1, DifferentFitterVariable) {
     EXPECT_NEAR(-1.5, xalpha.getValue(), xalpha.getError()*3);
     EXPECT_NEAR(-.75, yalpha.getValue(), yalpha.getError()*3);
 }
+
+TEST(Minuit1, FitterConstants) {
+    
+    // Random number generation
+    std::mt19937 gen(137);
+    std::normal_distribution<> dx(1.5, .3);
+    std::normal_distribution<> dy(-.75, .2);
+    
+    // Independent variable.
+    Variable xvar{"xvar", -5, 5};
+    Variable yvar{"yvar", -5, 5};
+    
+    // Data set
+    UnbinnedDataSet data {{&xvar, &yvar}, "Some name"};
+    
+    // Generate toy events.
+    for(int i=0; i<20000; ++i) {
+        double xval = dx(gen);
+        double yval = dy(gen);
+        try {
+            xvar.setValue(xval);
+            yvar.setValue(yval);
+            data.addEvent();
+        } catch(const GooFit::OutOfRange &) {}
+    }
+    
+    // Fit parameter
+    Variable xalpha{"xalpha",   2, 0.1, -10, 10};
+    Variable xsigma{"xsigma",  .2};
+    Variable yalpha{"yalpha",  -1, 0.1, -10, 10};
+    Variable ysigma{"ysigma", .3};
+    
+    // GooPdf object
+    GaussianPdf xpdf{"xpdf", &xvar, &xalpha, &xsigma};
+    GaussianPdf ypdf{"ypdf", &yvar, &yalpha, &ysigma};
+    ProdPdf totalpdf {"totalpdf", {&xpdf, &ypdf}};
+    totalpdf.setData(&data);
+    
+    GooFit::FitManagerMinuit1 fitter{&totalpdf};
+    fitter.setVerbosity(2);
+    fitter.fit();
+    
+    EXPECT_TRUE(fitter);
+    EXPECT_LT(xalpha.getError(), .1);
+    EXPECT_LT(yalpha.getError(), .1);
+    EXPECT_NEAR(1.5, xalpha.getValue(), xalpha.getError()*3);
+    EXPECT_NEAR(-.75, yalpha.getValue(), yalpha.getError()*3);
+    EXPECT_EQ(.2, xsigma.getValue());
+    EXPECT_EQ(.3, ysigma.getValue());
+}
+
 

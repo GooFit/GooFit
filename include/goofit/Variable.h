@@ -76,13 +76,14 @@ protected:
 class Variable : public Indexable {
     friend GooFit::FCN;
     friend GooFit::Minuit1;
-public:
     friend std::ostream& operator<< (std::ostream& o, const Variable& var);
     friend std::istream& operator>> (std::istream& o, Variable& var);
-
+public:
+    
     // These classes can not be duplicated
     Variable(Variable &) = delete;
     Variable& operator=(Variable&) = delete;
+    
     /// Support var = 3
     void operator=(const fptype& val) {setValue(val);}
     
@@ -163,6 +164,9 @@ public:
     
     /// Check to see if variable's bins have been locked by a BinnedDataSet
     bool getLockedBins() const {return locked_;};
+    
+    /// Check to see if in range
+    operator bool() const {return getValue() <= getUpperLimit() && getValue() >= getLowerLimit();}
 
     
 protected:

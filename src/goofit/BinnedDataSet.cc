@@ -29,12 +29,14 @@ BinnedDataSet::BinnedDataSet(std::initializer_list<Variable*> vars, std::string 
 }
 
 void BinnedDataSet::addEvent() {
+    checkAllVars();
     size_t ibin = getBinNumber();
     binvalues.at(ibin) += 1;
     numEventsAdded++;
 }
 
 void BinnedDataSet::addWeightedEvent(double weight) {
+    checkAllVars();
     size_t ibin = getBinNumber();
     binvalues.at(ibin) += weight;
     numEventsAdded++;

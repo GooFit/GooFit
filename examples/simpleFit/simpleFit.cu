@@ -94,6 +94,9 @@ void fitAndPlot(GooPdf* total, UnbinnedDataSet* data, TH1F& dataHist, Variable* 
 int main(int argc, char** argv) {
     GooFit::Application app("Simple fit example", argc, argv);
 
+    size_t numevents = 100000;
+    app.add_option("-n,--num", numevents, "Number of events", true);
+    
     try {
         app.run();
     } catch (const GooFit::ParseError &e) {
@@ -151,32 +154,36 @@ int main(int argc, char** argv) {
     double bifpoint = -10;
 
     // Generating three sets of toy MC.
-    for(int i = 0; i < 100000; ++i) {
+    while(landdata.getNumEvents() < numevents) {
         // Landau
-        xvar->setValue(xvar->getUpperLimit() + 1);
-
-        while((xvar->getValue() > xvar->getUpperLimit()) || (xvar->getValue() < xvar->getLowerLimit())) {
+        try {
             xvar->setValue(donram.Landau(20, 1));
-        }
-
-        landdata.addEvent();
-        landHist.Fill(xvar->getValue());
-
+            landdata.addEvent();
+            landHist.Fill(xvar->getValue());
+        } catch (const GooFit::OutOfRange &) {}
+    }
+    
+    while (bifgdata.getNumEvents() < numevents) {
         // Bifurcated Gaussian
+        double val;
         if(donram.Uniform() < (leftIntegral / totalIntegral)) {
-            xvar->setValue(bifpoint - 1);
+            do {
+                val = donram.Gaus(bifpoint, rightSigma);
+            } while(val < bifpoint || val > xvar->getUpperLimit());
+            xvar->setValue(val);
 
-            while((xvar->getValue() < bifpoint) || (xvar->getValue() > xvar->getUpperLimit()))
-                xvar->setValue(donram.Gaus(bifpoint, rightSigma));
         } else {
-            xvar->setValue(bifpoint + 1);
-
-            while((xvar->getValue() > bifpoint) || (xvar->getValue() < xvar->getLowerLimit()))
-                xvar->setValue(donram.Gaus(bifpoint, leftSigma));
+            do {
+                val = donram.Gaus(bifpoint, leftSigma);
+            } while(val > bifpoint || val < xvar->getLowerLimit());
+            xvar->setValue(val);
         }
 
         bifgdata.addEvent();
         bifgHist.Fill(xvar->getValue());
+    }
+    
+    while (novodata.getNumEvents() < numevents) {
 
         // And Novosibirsk.
         while(true) {

@@ -51,6 +51,7 @@ void UnbinnedDataSet::setValueForAllEvents(Variable* var) {
 }
 
 void UnbinnedDataSet::addEvent() {
+    checkAllVars();
     size_t i = 0;
     for(Variable* v : variables)
         data.at(i++).push_back(v->getValue());

@@ -34,7 +34,7 @@ TH1D* getMCData(DataSet *data, Variable* var, std::string filename) {
 
     double currDM = 0;
     while(mcreader >> currDM) {
-        if(currDM > var->getUpperLimit() || currDM < var->getLowerLimit())
+        if(!currDM)
             continue;
         data->addEvent(currDM);
         mchist->Fill(currDM);
@@ -56,7 +56,7 @@ TH1D* getData(DataSet* data, Variable *var, std::string filename) {
 
     double currDM = 0;
     while(datareader >> currDM) {
-        if(currDM > var->getUpperLimit() || currDM < var->getLowerLimit())
+        if(!currDM)
             continue;
         data->addEvent(currDM);
         data_hist->Fill(currDM);

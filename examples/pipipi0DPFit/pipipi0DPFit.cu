@@ -61,6 +61,9 @@ BinnedDataSet* binEffData = 0;
 TH2F* weightHistogram = 0;
 TH2F* underlyingBins = 0;
 
+// I hate having to use globals, but this is the best way for now
+GooFit::Application* app_ptr;
+
 Variable* m12 = 0;
 Variable* m13 = 0;
 CountingVariable* eventNumber = 0;
@@ -889,7 +892,7 @@ int runToyFit(int ifile, int nfile, bool noPlots = true) {
     for(int i =0 ; i<nfile; i++) {
 //      sprintf(strbuffer, "dataFiles/toyPipipi0/dalitz_toyMC_%03d.txt", (i+ifile)%100);
         sprintf(strbuffer, "dataFiles/toyPipipi0/dalitz_toyMC_%03d.txt", ifile);
-        toyFileName = strbuffer;
+        toyFileName = app_ptr->get_filename(strbuffer, "examples/pipipi0PDFit");
         getToyData(toySigFraction);
     }
 
@@ -2472,7 +2475,8 @@ GooPdf* makeSigmaHists() {
         sigmaHists[i] = new BinnedDataSet(sigma);
 
     std::ifstream reader;
-    readWrapper(reader, "./dataFiles/signalMC_truth_mm_0.txt");
+    std::string fname = app_ptr->get_filename("./dataFiles/signalMC_truth_mm_0.txt", "examples/pipipi0PDFit");
+    readWrapper(reader, fname);
     std::string buffer;
 
     while(!reader.eof()) {
@@ -2616,8 +2620,9 @@ GooPdf* makeOverallSignal() {
     lvars.push_back(m13);
     binEffData = new BinnedDataSet(lvars);
     createWeightHistogram();
-    std::cout << "Loading efficiency data\n";
-    loadDataFile("./dataFiles/efficiency_flat.txt", &effdata);
+    std::cout << "Loading efficiency data" << std::endl;
+    std::string fname = app_ptr->get_filename("./dataFiles/efficiency_flat.txt", "examples/pipipi0PDFit");
+    loadDataFile(fname, &effdata);
 
     if(saveEffPlot) {
         system("mkdir plots_from_mixfit");
@@ -2681,6 +2686,7 @@ GooPdf* makeOverallSignal() {
     std::cout << "Time for sigma fit : " << totalTime.tv_sec + totalTime.tv_usec/1000000.0 << " seconds." << std::endl;
     */
     sprintf(strbuffer, "signal_sigma_%islices_pdf.txt", m23Slices);
+    fname = app_ptr->get_filename(strbuffer, "examples/pipipi0PDFit");
     readFromFile(sig0_jsugg, strbuffer);
     sig0_jsugg->setParameterConstantness(true);
 
@@ -2848,7 +2854,8 @@ int runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
     lvars.push_back(m12);
     lvars.push_back(m13);
     binEffData = new BinnedDataSet(lvars);
-    loadDataFile("./dataFiles/efficiency_gen.txt", &effdata, 1);
+    fname = app_ptr->get_filename("dataFiles/efficiency_gen.txt", "examples/pipipi0PDFit");
+    loadDataFile(fname, &effdata, 1);
     GooPdf* eff = makeEfficiencyPdf();
     m12->setNumBins(oldBins1);
     m13->setNumBins(oldBins2);
@@ -3332,8 +3339,10 @@ GooPdf* makeBkg2DalitzPdf(bool fixem = true) {
         // Originally had massD0 sidebands separated into deltaM high and low,
         // but these distributions were extremely similar - collapsed them
         // into just massD0 sidebands.
-        comps.push_back(makeBackgroundHistogram(101, "./dataFiles/sideband1.txt"));
-        comps.push_back(makeBackgroundHistogram(102, "./dataFiles/sideband2.txt"));
+        std::string fname = app_ptr->get_filename("dataFiles/sideband1.txt", "examples/pipipi0PDFit");
+        comps.push_back(makeBackgroundHistogram(101, fname));
+        fname = app_ptr->get_filename("dataFiles/sideband2.txt", "examples/pipipi0PDFit");
+        comps.push_back(makeBackgroundHistogram(102, fname));
         //comps.push_back(makeBackgroundHistogram(103, "./dataFiles/sideband3.txt"));
         //comps.push_back(makeBackgroundHistogram(104, "./dataFiles/sideband4.txt"));
         weights.clear();
@@ -3392,7 +3401,8 @@ GooPdf* makeBkg3Eff() {
     m13->setNumBins(30);
     BinnedDataSet* bkg3_eff_data = new BinnedDataSet(weights);
     std::ifstream reader;
-    readWrapper(reader, "./dataFiles/efficiency_bkg3_flat.txt");
+    std::string fname = app_ptr->get_filename("dataFiles/efficiency_bkg3_flat.txt", "examples/pipipi0PDFit");
+    readWrapper(reader, fname);
     std::string buffer;
 
     while(!reader.eof()) {
@@ -3440,7 +3450,8 @@ SmoothHistogramPdf* makeBackgroundHistogram(int bkgnum, std::string overridename
     if(overridename != "")
         sprintf(strbuffer, "%s", overridename.c_str());
 
-    readWrapper(reader, strbuffer);
+    std::string fname = app_ptr->get_filename(strbuffer, "examples/pipipi0PDFit");
+    readWrapper(reader, fname);
     std::string buffer;
 
     while(!reader.eof()) {
@@ -4261,11 +4272,14 @@ int runEfficiencyFit(int which) {
     makeKzeroVeto();
     //GooPdf* eff = makeEfficiencyPoly();
     GooPdf* eff = makeEfficiencyPdf();
+    
+    std::string fname_3flat = app_ptr->get_filename("dataFiles/efficiency_bkg3_flat.txt", "examples/pipipi0PDFit");
+    std::string fname_flat = app_ptr->get_filename("dataFiles/efficiency_flat.txt", "examples/pipipi0PDFit");
 
     if(3 == which)
-        loadDataFile("./dataFiles/efficiency_bkg3_flat.txt");
+        loadDataFile(fname_3flat);
     else
-        loadDataFile("./dataFiles/efficiency_flat.txt");
+        loadDataFile(fname_flat);
 
     if(underlyingBins) {
         underlyingBins->GetZaxis()->SetRangeUser(10, 40);
@@ -4470,7 +4484,8 @@ int runBackgroundDalitzFit(int bkgType, bool plots) {
     }
 
     sprintf(strbuffer, "./dataFiles/bkgDalitz_%i.txt", bkgType);
-    loadDataFile(strbuffer);
+    std::string fname = app_ptr->get_filename(strbuffer, "examples/pipipi0DPFit");
+    loadDataFile(fname);
 
     bkgPdf->setData(data);
     //bkgPdf->setDebugMask(1);
@@ -4508,7 +4523,8 @@ int runBackgroundDalitzFit(int bkgType, bool plots) {
         //sprintf(strbuffer, "./plots_from_mixfit/bkgdalitz_%i/", bkgType);
         //makeDalitzPlots(bkgPdf, strbuffer);
         getBackgroundFile(bkgType);
-        writeToFile(bkgPdf, strbuffer);
+        std::string fname = app_ptr->get_filename(strbuffer, "examples/pipipi0DPFit");
+        writeToFile(bkgPdf, fname.c_str());
     }
 
     return fitter;
@@ -4668,7 +4684,8 @@ int runBackgroundSigmaFit(int bkgType) {
     }
 
     sprintf(strbuffer, "./dataFiles/bkgDalitz_%i.txt", bkgType);
-    loadDataFile(strbuffer);
+    std::string fname = app_ptr->get_filename(strbuffer, "examples/pipipi0DPFit");
+    loadDataFile(fname);
     bkgPdf->setData(data);
 
     FitManager fitter(bkgPdf);
@@ -4695,7 +4712,8 @@ void writeBackgroundHistograms(int bkg) {
     thrust::host_vector<fptype> host_hist;
     bkg3->extractHistogram(host_hist);
     sprintf(strbuffer, "Bkg%i_dalitzhist.txt", bkg);
-    writeListOfNumbers(host_hist, strbuffer);
+    std::string fname = app_ptr->get_filename(strbuffer, "examples/pipipi0DPFit");
+    writeListOfNumbers(host_hist, fname.c_str());
 
 }
 
@@ -4777,6 +4795,7 @@ int main(int argc, char** argv) {
     int retval = 0;
 
     GooFit::Application app("pipipi0 Dalitz fit example", argc, argv);
+    app_ptr = &app;
     app.require_subcommand();
 
     std::string data;

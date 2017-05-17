@@ -2469,10 +2469,10 @@ GooPdf* make_m23_transform() {
 
 GooPdf* makeSigmaHists() {
     GooPdf* m23_composite = make_m23_transform();
-    BinnedDataSet** sigmaHists = new BinnedDataSet*[m23Slices];
+    std::vector<std::unique_ptr<BinnedDataSet>> sigmaHists;
 
     for(int i = 0; i < m23Slices; ++i)
-        sigmaHists[i] = new BinnedDataSet(sigma);
+        sigmaHists.emplace_back(new BinnedDataSet(sigma));
 
     std::ifstream reader;
     std::string fname = app_ptr->get_filename("./dataFiles/signalMC_truth_mm_0.txt", "examples/pipipi0PDFit");
@@ -2528,7 +2528,7 @@ GooPdf* makeSigmaHists() {
 
     for(int i = 0; i < m23Slices; ++i) {
         sprintf(strbuffer, "signal_sigma_hist_%i", i);
-        SmoothHistogramPdf* hist = new SmoothHistogramPdf(strbuffer, sigmaHists[i], constantZero);
+        SmoothHistogramPdf* hist = new SmoothHistogramPdf(strbuffer, sigmaHists[i].get(), constantZero);
         jsuList.push_back(hist);
     }
 
@@ -2647,9 +2647,10 @@ GooPdf* makeOverallSignal() {
     FitManager effpdf(eff);
     effpdf.fit();
     eff->setParameterConstantness(true);
-    binEffData = 0;
+    delete binEffData;
+    binEffData = nullptr;
     delete effdata;
-    effdata = 0;
+    effdata = nullptr;
 
     m12->setNumBins(oldBins1);
     m13->setNumBins(oldBins2);

@@ -3,34 +3,34 @@
 #include "goofit/Error.h"
 #include "goofit/Log.h"
 
+#include <functional>
+#include <numeric>
+
 // Special constructor for one variable
 BinnedDataSet::BinnedDataSet(Variable* var, std::string n)
     : DataSet(var, n) {
-    lockBins();
+    collectBins();
     binvalues.resize(getNumBins());
 }
 
 BinnedDataSet::BinnedDataSet(std::vector<Variable*>& vars, std::string n)
     : DataSet(vars, n) {
-    lockBins();
+    collectBins();
     binvalues.resize(getNumBins());
 }
 
 BinnedDataSet::BinnedDataSet(std::set<Variable*>& vars, std::string n)
     : DataSet(vars, n) {
-    lockBins();
+    collectBins();
     binvalues.resize(getNumBins());
 }
 
 BinnedDataSet::BinnedDataSet(std::initializer_list<Variable*> vars, std::string n)
 : DataSet(vars, n) {
-    lockBins();
+    collectBins();
     binvalues.resize(getNumBins());
 }
 
-BinnedDataSet::~BinnedDataSet() {
-    unlockBins();
-}
 
 void BinnedDataSet::addEvent() {
     checkAllVars();
@@ -44,17 +44,14 @@ void BinnedDataSet::addWeightedEvent(double weight) {
     size_t ibin = getBinNumber();
     binvalues.at(ibin) += weight;
     numEventsAdded++;
+}
+
+void BinnedDataSet::collectBins() {
+    // Not really intended to be run multiple times, but just in case
+    binsizes.clear();
     
-}
-
-void BinnedDataSet::lockBins() {
     for(Variable* var : variables)
-        var->setLockedBins(true);
-}
-
-void BinnedDataSet::unlockBins() {
-    for(Variable* var : variables)
-        var->setLockedBins(false);
+        binsizes.push_back(var->getNumBins());
 }
 
 size_t BinnedDataSet::getBinNumber() const {
@@ -70,7 +67,7 @@ size_t BinnedDataSet::localToGlobal(const std::vector<size_t>& locals) const {
     for(size_t i=0; i<variables.size(); i++) {
         unsigned int localBin = locals[i];
         ret += localBin * priorMatrixSize;
-        priorMatrixSize *= variables[i]->getNumBins();
+        priorMatrixSize *= binsizes[i];
     }
 
     return ret;
@@ -84,9 +81,9 @@ std::vector<size_t> BinnedDataSet::globalToLocal(size_t global) const {
     // collapsing so the grid has one fewer dimension. Rinse and repeat.
     
     for(size_t i=0; i<variables.size(); i++) {
-        int localBin = global % variables[i]->getNumBins();
+        int localBin = global % binsizes[i];
         locals.push_back(localBin);
-        global /= variables[i]->getNumBins();
+        global /= binsizes[i];
     }
     return locals;
 }
@@ -95,7 +92,7 @@ fptype BinnedDataSet::getBinCenter(size_t ivar, size_t bin) const {
     std::vector<size_t> locals = globalToLocal(bin);
     size_t localBin = locals.at(ivar);
     
-    fptype ret = variables[ivar]->getBinSize();
+    fptype ret = binsizes[ivar];
     ret       *= (localBin + 0.5);
     ret       += variables[ivar]->getLowerLimit();
     return ret;
@@ -111,7 +108,7 @@ fptype BinnedDataSet::getBinVolume(size_t bin) const {
     fptype ret = 1;
 
     for(size_t i=0; i<variables.size(); i++) {
-        fptype step = variables[i]->getBinSize();
+        fptype step = (variables[i]->getUpperLimit() - variables[i]->getLowerLimit()) / binsizes[i];
         ret *= step;
     }
 
@@ -133,22 +130,15 @@ void BinnedDataSet::setBinError(unsigned int bin, fptype error) {
 }
 
 size_t BinnedDataSet::getNumBins() const {
-    unsigned int ret = 1;
-
-    for(size_t i=0; i<variables.size(); i++) {
-        ret *= variables[i]->getNumBins();
-    }
-
-    return ret;
+    return std::accumulate(std::begin(binsizes),
+                           std::end(binsizes),
+                           1,
+                           std::multiplies<size_t>());
 }
 
 fptype BinnedDataSet::getNumWeightedEvents() const {
-    fptype ret = 0;
-    
-    for(const fptype& bin : binvalues)
-        ret += bin;
-    
-    return ret;
+    return std::accumulate(std::begin(binvalues),
+                           std::end(binvalues), 0);
 }
 
 std::vector<size_t> BinnedDataSet::convertValuesToBins(const std::vector<fptype>& vals) const {
@@ -161,7 +151,8 @@ std::vector<size_t> BinnedDataSet::convertValuesToBins(const std::vector<fptype>
         fptype betval = std::min(std::max(currval, variables[i]->getLowerLimit()),variables[i]->getUpperLimit());
         if(currval != betval)
             GOOFIT_INFO("Warning: Value {} outside {} range [{},{}] - clamping to {}",
-                        currval, variables[i]->getName(), variables[i]->getLowerLimit(), variables[i]->getUpperLimit(), betval);
+                        currval, variables[i]->getName(), variables[i]->getLowerLimit(),
+                        variables[i]->getUpperLimit(), betval);
         fptype step = variables[i]->getBinSize();
         localBins.push_back( (size_t) floor((betval - variables[i]->getLowerLimit())/step));
     

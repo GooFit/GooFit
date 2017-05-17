@@ -137,9 +137,10 @@ public:
     /// Check to see if the value has changed this iteration (always true the first time)
     bool getChanged() const {return changed_;}
     
-    /// Get and set the number of bins
-    void setNumBins(size_t num);
+    /// Set the number of bins
+    void setNumBins(size_t num) {numbins = num;}
     
+    /// Get the number of bins
     size_t getNumBins() const {return numbins;}
     
     /// Check to see if this is a constant
@@ -158,19 +159,7 @@ public:
     
     /// Hides the number; the real value is the result minus this value. Cannot be retreived once set.
     void setBlind(fptype val) {blind = val;}
-    
-    /// Ensure that the number of bins can not be changed once BinnedDataSets are created
-    /// True locks the bins once, false releases the locked bins once (only 0 is fully free)
-    void setLockedBins(bool locked) {
-        if(locked)
-            locked_++;
-        else if (locked_ > 0)
-            locked_--;
-    }
-    
-    /// Check to see if variable's bins have been locked by a BinnedDataSet
-    bool getLockedBins() const {return locked_ != 0;};
-    
+
     /// Check to see if in range
     operator bool() const {return getValue() <= getUpperLimit() && getValue() >= getLowerLimit();}
 
@@ -197,9 +186,6 @@ protected:
     
     /// This "fixes" the variable (constant)
     bool fixed {false};
-    
-    /// You can no longer change the binning after a BinnedDataSet is created
-    size_t locked_ {0};
 };
 
 /// This is used to track event number for MPI versions.

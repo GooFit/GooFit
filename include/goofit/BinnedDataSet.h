@@ -15,13 +15,13 @@ public:
     BinnedDataSet(std::vector<Variable*>& vars, std::string n = "");
     BinnedDataSet(std::set<Variable*>& vars, std::string n = "");
     BinnedDataSet(std::initializer_list<Variable*> vars, std::string n="");
-    virtual ~BinnedDataSet();
+    virtual ~BinnedDataSet() = default;
 
     virtual void addEvent() override;
     virtual void addWeightedEvent(double weight) override;
 
     fptype getBinContent(size_t bin) const {
-        return binvalues[bin];
+        return binvalues.at(bin);
     }
     fptype getBinCenter(size_t ivar, size_t bin) const;
     fptype getBinCenter(Variable* var, size_t bin) const;
@@ -36,21 +36,20 @@ public:
     fptype getNumWeightedEvents() const;
 
     void setBinContent(unsigned int bin, fptype value) {
-        binvalues[bin] = value;
+        binvalues.at(bin) = value;
     }
     void setBinError(unsigned int bin, fptype error);
 
 private:
-    /// Lock all variable bin numbers
-    void lockBins();
-    
-    /// Unlock all variable bins
-    void unlockBins();
     
     std::vector<size_t> convertValuesToBins(const std::vector<fptype>& vals) const;
     size_t localToGlobal(const std::vector<size_t>& locals) const;
     std::vector<size_t> globalToLocal(size_t global) const;
+    
+    /// Capture the number of bins on all variables
+    void collectBins();
 
+    std::vector<size_t> binsizes;
     std::vector<fptype> binvalues;
     std::vector<fptype> binerrors;
 

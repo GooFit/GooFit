@@ -3,12 +3,6 @@
 
 #include <algorithm>
 
-void Variable::setNumBins(size_t num) {
-    if(locked_)
-        throw GooFit::GeneralError("BinnedDataSet does not allow the number of bins to be changed after creation");
-    numbins = num;
-}
-
 std::ostream& operator<< (std::ostream& o, const Variable& var) {
     o << var.getName() << ": " << var.getValue() << " +/- " << var.getError();
     if(!var.fixed)

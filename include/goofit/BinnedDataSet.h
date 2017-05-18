@@ -25,6 +25,7 @@ public:
     }
     fptype getBinCenter(size_t ivar, size_t bin) const;
     fptype getBinCenter(Variable* var, size_t bin) const;
+    fptype getBinSize(size_t ivar) const;
     
     size_t getBinNumber() const;
     fptype getBinVolume(size_t bin) const;

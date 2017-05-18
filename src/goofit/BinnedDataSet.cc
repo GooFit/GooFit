@@ -92,7 +92,7 @@ fptype BinnedDataSet::getBinCenter(size_t ivar, size_t bin) const {
     std::vector<size_t> locals = globalToLocal(bin);
     size_t localBin = locals.at(ivar);
     
-    fptype ret = binsizes[ivar];
+    fptype ret = getBinSize(ivar);
     ret       *= (localBin + 0.5);
     ret       += variables[ivar]->getLowerLimit();
     return ret;
@@ -103,13 +103,16 @@ fptype BinnedDataSet::getBinCenter(Variable* var, size_t bin) const {
     return getBinCenter(ivar, bin);
 }
 
+fptype BinnedDataSet::getBinSize(size_t ivar) const {
+    return (variables.at(ivar)->getUpperLimit() - variables[ivar]->getLowerLimit()) / binsizes[ivar];
+}
+
 
 fptype BinnedDataSet::getBinVolume(size_t bin) const {
     fptype ret = 1;
 
     for(size_t i=0; i<variables.size(); i++) {
-        fptype step = (variables[i]->getUpperLimit() - variables[i]->getLowerLimit()) / binsizes[i];
-        ret *= step;
+        ret *= getBinSize(i);
     }
 
     return ret;
@@ -153,9 +156,7 @@ std::vector<size_t> BinnedDataSet::convertValuesToBins(const std::vector<fptype>
             GOOFIT_INFO("Warning: Value {} outside {} range [{},{}] - clamping to {}",
                         currval, variables[i]->getName(), variables[i]->getLowerLimit(),
                         variables[i]->getUpperLimit(), betval);
-        fptype step = variables[i]->getBinSize();
-        localBins.push_back( (size_t) floor((betval - variables[i]->getLowerLimit())/step));
-    
+        localBins.push_back( (size_t) floor((betval - variables[i]->getLowerLimit())/getBinSize(i)));
     }
     
 

@@ -11,16 +11,23 @@
 namespace GooFit {
 
 Minuit1::Minuit1(PdfBase* pdfPointer) : TMinuit(max_index(pdfPointer->getParameters())+1), pdfPointer(pdfPointer), vars(pdfPointer->getParameters()) {
-    int counter = 0;
+    size_t counter = 0;
     
     for(Variable* var : vars) {
         var->setFitterIndex(counter);
-        DefineParameter(counter,
+        
+        Int_t err = DefineParameter(counter,
                                 var->getName().c_str(),
                                 var->getValue(),
                                 var->getError(),
                                 var->getLowerLimit(),
                                 var->getUpperLimit());
+        
+        if(GetNumPars() != counter+1)
+            throw GooFit::GeneralError("Error when implementing param {} (possibly invalid error/lowerlimit/upperlimit values)!", var->getName());
+        
+        if(err != 0)
+            throw GooFit::GeneralError("Was not able to implement param {} (error {})", var->getName(), err);
         
         if(var->IsFixed())
             FixParameter(counter);

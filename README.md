@@ -161,7 +161,7 @@ GooFit::Application app{"Optional discription", argc, argv};
 try {
     app.run();
 } catch(const GooFit::ParseError &e) {
-    app.exit(e);
+    return app.exit(e);
 }
 ```
 

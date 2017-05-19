@@ -13,8 +13,6 @@
 // System stuff
 #include <climits>
 #include <fstream>
-#include <sys/time.h>
-#include <sys/times.h>
 #include <cassert>
 
 // GooFit stuff
@@ -43,7 +41,10 @@
 #include "goofit/PDFs/SmoothHistogramPdf.h"
 #include "goofit/PDFs/TrigThresholdPdf.h"
 #include "goofit/PDFs/GooPdf.h"
-#include "goofit/FitManager.h"
+
+#include "goofit/fitting/FitManagerMinuit1.h"
+#include "goofit/fitting/FitManagerMinuit2.h"
+
 #include "goofit/UnbinnedDataSet.h"
 #include "goofit/PDFs/CompositePdf.h"
 #include "goofit/FunctorWriter.h"
@@ -52,9 +53,7 @@ using namespace std;
 
 TCanvas* foo;
 TCanvas* foodal;
-timeval startTime, stopTime, totalTime;
-clock_t startCPU, stopCPU;
-tms startProc, stopProc;
+
 UnbinnedDataSet* data = 0;
 UnbinnedDataSet* effdata = 0;
 BinnedDataSet* binEffData = 0;
@@ -63,6 +62,7 @@ TH2F* underlyingBins = 0;
 
 // I hate having to use globals, but this is the best way for now
 GooFit::Application* app_ptr;
+bool minuit1;
 
 Variable* m12 = 0;
 Variable* m13 = 0;
@@ -204,27 +204,6 @@ double calcToyWeight(double sigratio, double m) {
     double fsig = sigratio*exp(-t*t/2.)/intGaus;
     double fbkg = (1-sigratio)/((md0_upper_window-md0_lower_window)*0.0075/md0_toy_width);
     return fsig/(fsig+fbkg);
-}
-
-void printTime(const char* point) {
-    static timeval prev;
-    static timeval curr;
-    static timeval result;
-
-    static bool init = false;
-
-    if(!init) {
-        init = true;
-        gettimeofday(&prev, NULL);
-        return;
-    }
-
-    gettimeofday(&curr, NULL);
-    timersub(&curr, &prev, &result);
-
-    std::cout << "Time at " << point << ": " << result.tv_sec + result.tv_usec/1000000.0 << " seconds." << std::endl;
-
-    gettimeofday(&prev, NULL);
 }
 
 void printMemoryStatus(std::string file, int line);
@@ -923,25 +902,30 @@ int runToyFit(int ifile, int nfile, bool noPlots = true) {
 //  GooPdf* mixPdf = overallSignal;
 
     mixPdf->setData(data);
-    FitManager datapdf(mixPdf);
-    datapdf.setMaxCalls(64000);
-
-    gettimeofday(&startTime, NULL);
-    startCPU = times(&startProc);
-    datapdf.fit();
-    stopCPU = times(&stopProc);
-    gettimeofday(&stopTime, NULL);
-
+    
+    int retval;
+    if(minuit1) {
+        GooFit::FitManagerMinuit1 datapdf(mixPdf);
+        datapdf.setMaxCalls(64000);
+        datapdf.fit();
+        retval = datapdf;
+    } else {
+        GooFit::FitManagerMinuit2 datapdf(mixPdf);
+        datapdf.setMaxCalls(64000);
+        datapdf.fit();
+        retval = datapdf;
+    }
+    
     printf("Fit results:\ntau    : (%.3f $\\pm$ %.3f) fs\nxmixing: (%.3f $\\pm$ %.3f)%%\nymixing: (%.3f $\\pm$ %.3f)%%\n",
            1000*ptr_to_dtau->getValue(), 1000*ptr_to_dtau->getError(),
            100*ptr_to_xmix->getValue(), 100*ptr_to_xmix->getError(),
            100*ptr_to_ymix->getValue(), 100*ptr_to_ymix->getError());
-
+    
     if(!noPlots)
         makeToyDalitzPlots(mixPdf);
     
-//  makeToyDalitzPlots(signalDalitz);
-    return datapdf;
+    //  makeToyDalitzPlots(signalDalitz);
+    return retval;
 }
 
 void loadDataFile(std::string fname, UnbinnedDataSet** setToFill, int effSkip) {
@@ -1342,8 +1326,13 @@ GooPdf* makeSigmaMap() {
         else {
             std::cout << "\n\nAbout to start fit of sigma box " << i << std::endl;
             js->setData(sigma_data[i]);
-            FitManager currpdf(js);
-            currpdf.fit();
+            if(minuit1) {
+                GooFit::FitManagerMinuit1 currpdf(js);
+                currpdf.fit();
+            } else {
+                GooFit::FitManagerMinuit2 currpdf(js);
+                currpdf.fit();
+            }
             js->setParameterConstantness(true);
             //js->clearCurrentFit();
             std::cout << "Done with sigma box " << i << "\n";
@@ -1415,8 +1404,13 @@ GooPdf* make1BinSigmaMap() {
         else {
             std::cout << "\n\nAbout to start fit of sigma box " << i << std::endl;
             js->setData(sigma_data[i]);
-            FitManager currpdf(js);
-            currpdf.fit();
+            if(minuit1) {
+                GooFit::FitManagerMinuit1 currpdf(js);
+                currpdf.fit();
+            } else {
+                GooFit::FitManagerMinuit2 currpdf(js);
+                currpdf.fit();
+            }
             js->setParameterConstantness(true);
             //js->clearCurrentFit();
             std::cout << "Done with sigma box " << i << "\n";
@@ -1489,8 +1483,13 @@ GooPdf* make4BinSigmaMap() {
         else {
             std::cout << "\n\nAbout to start fit of sigma box " << i << std::endl;
             js->setData(sigma_data[i]);
-            FitManager currpdf(js);
-            currpdf.fit();
+            if(minuit1) {
+                GooFit::FitManagerMinuit1 currpdf(js);
+                currpdf.fit();
+            } else {
+                GooFit::FitManagerMinuit2 currpdf(js);
+                currpdf.fit();
+            }
             js->setParameterConstantness(true);
             //js->clearCurrentFit();
             std::cout << "Done with sigma box " << i << "\n";
@@ -2644,8 +2643,15 @@ GooPdf* makeOverallSignal() {
         eff = makeEfficiencyPdf();
 
     eff->setData(effdata);
-    FitManager effpdf(eff);
-    effpdf.fit();
+    
+    if(minuit1) {
+        GooFit::FitManagerMinuit1 effpdf(eff);
+        effpdf.fit();
+    } else {
+        GooFit::FitManagerMinuit2 effpdf(eff);
+        effpdf.fit();
+    }
+
     eff->setParameterConstantness(true);
     delete binEffData;
     binEffData = nullptr;
@@ -2709,14 +2715,18 @@ int runTruthMCFit(std::string fname, bool noPlots = true) {
     signalDalitz->setDataSize(data->getNumEvents()); // Default 5 is ok here, no event weighting
     overallSignal->setData(data);
     //overallSignal->setDebugMask(1);
-    FitManager datapdf(overallSignal);
+    
+    int retval;
+    if(minuit1) {
+        GooFit::FitManagerMinuit1 datapdf(overallSignal);
+        datapdf.fit();
+        retval = datapdf;
+    } else {
+        GooFit::FitManagerMinuit2 datapdf(overallSignal);
+        datapdf.fit();
+        retval = datapdf;
+    }
 
-    gettimeofday(&startTime, NULL);
-    startCPU = times(&startProc);
-    //overallSignal->setDebugMask(1);
-    datapdf.fit();
-    stopCPU = times(&stopProc);
-    gettimeofday(&stopTime, NULL);
     //overallSignal->setDebugMask(0);
 
     std::cout << "Fit results: \n"
@@ -2725,10 +2735,10 @@ int runTruthMCFit(std::string fname, bool noPlots = true) {
               << "ymixing: (" << 100*ptr_to_ymix->getValue() << " $\\pm$ " << 100*ptr_to_ymix->getError() << ")%\n";
 
     if(noPlots)
-        return datapdf;
+        return retval;
 
     makeDalitzPlots(overallSignal, "./plots_from_mixfit/fullMCfit/");
-    return datapdf;
+    return retval;
 }
 
 int runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
@@ -2872,8 +2882,7 @@ int runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
     signalDalitz = makeSignalPdf(res, eff);
     signalDalitz->setDataSize(smearedData->getNumEvents()); // Default 5 is ok here, no event weighting
     signalDalitz->setData(smearedData);
-    FitManager datapdf(signalDalitz);
-    datapdf.setMaxCalls(64000);
+
 
     /*
     std::vector<std::vector<double> > pdfValues1;
@@ -2902,11 +2911,18 @@ int runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
     std::cout << "Final NLLs: " << nll1  << " " << nll2 << std::endl;
     */
 
-    gettimeofday(&startTime, NULL);
-    startCPU = times(&startProc);
-    datapdf.fit();
-    stopCPU = times(&stopProc);
-    gettimeofday(&stopTime, NULL);
+    int retval;
+    if(minuit1) {
+        GooFit::FitManagerMinuit1 datapdf(signalDalitz);
+        datapdf.setMaxCalls(64000);
+        datapdf.fit();
+        retval = datapdf;
+    } else {
+        GooFit::FitManagerMinuit2 datapdf(signalDalitz);
+        datapdf.setMaxCalls(64000);
+        datapdf.fit();
+        retval = datapdf;
+    }
 
     std::cout << "Fit results: \n"
               << "tau    : " << ptr_to_dtau->getValue() << " $\\pm$ " << ptr_to_dtau->getError() << "\n"
@@ -2945,7 +2961,7 @@ int runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
            << inputy << " " << 100*ptr_to_ymix->getValue() << " " << 100*ptr_to_ymix->getError() << std::endl;
     writer.close();
 
-    return datapdf;
+    return retval;
     //makeDalitzPlots(signalDalitz, "plots_from_mixfit/generated/");
 }
 
@@ -4021,8 +4037,6 @@ int runCanonicalFit(std::string fname, bool noPlots = true) {
     //overallPdf->setDebugMask(1);
     std::cout << "Copying data to GPU\n";
     overallPdf->setData(data);
-    FitManager datapdf(overallPdf);
-    datapdf.setMaxCalls(64000);
 
     if(paramUp != "") {
         Variable* target = overallPdf->getParameterByName(paramUp);
@@ -4036,15 +4050,23 @@ int runCanonicalFit(std::string fname, bool noPlots = true) {
         target->setValue(target->getValue() - target->getError());
     }
 
-    std::cout << "Starting fit\n";
-    //bkg4Pdf->setDebugMask(1);
-    gettimeofday(&startTime, NULL);
-    startCPU = times(&startProc);
+    int retval;
+    if(minuit1) {
+        GooFit::FitManagerMinuit1 datapdf(overallPdf);
+        datapdf.setMaxCalls(64000);
+        datapdf.fit();
+        retval = datapdf;
+    } else {
+        GooFit::FitManagerMinuit2 datapdf(overallPdf);
+        datapdf.setMaxCalls(64000);
+        datapdf.fit();
+        retval = datapdf;
+    }
+    
     //ROOT::Minuit2::FunctionMinimum* min = datapdf.fit();
     //overallSignal->setDebugMask(1);
-    datapdf.fit();
-    stopCPU = times(&stopProc);
-    gettimeofday(&stopTime, NULL);
+   
+
     //overallSignal->setDebugMask(0);
 
 #ifdef PROFILING
@@ -4083,7 +4105,7 @@ int runCanonicalFit(std::string fname, bool noPlots = true) {
     if(!noPlots)
         makeDalitzPlots(overallSignal);
     
-    return datapdf;
+    return retval;
     
 }
 
@@ -4101,12 +4123,18 @@ int runSigmaFit(const char* fname) {
     GooPdf* jsu_gg = makeBkg_sigma_strips(0);
     jsu_gg->setData(data);
     //jsu_gg->copyParams();
-    FitManager datapdf(jsu_gg);
-    gettimeofday(&startTime, NULL);
-    startCPU = times(&startProc);
-    datapdf.fit();
-    stopCPU = times(&stopProc);
-    gettimeofday(&stopTime, NULL);
+    
+    int retval;
+    if(minuit1) {
+        GooFit::FitManagerMinuit1 datapdf(jsu_gg);
+        datapdf.fit();
+        retval = datapdf;
+    } else {
+        GooFit::FitManagerMinuit2 datapdf(jsu_gg);
+        datapdf.fit();
+        retval = datapdf;
+    }
+
 
     sprintf(strbuffer, "signal_sigma_%islices_pdf.txt", m23Slices);
     writeToFile(jsu_gg, strbuffer);
@@ -4253,7 +4281,7 @@ int runSigmaFit(const char* fname) {
     foodal.SaveAs("./plots_from_mixfit/sigma_dalitz.png");
     */
     
-    return datapdf;
+    return retval;
 }
 
 int runEfficiencyFit(int which) {
@@ -4290,8 +4318,19 @@ int runEfficiencyFit(int which) {
 
     //eff->setDebugMask(1);
     eff->setData(data);
-    FitManager datapdf(eff);
-    datapdf.fit();
+    
+    int retval;
+    if(minuit1) {
+        GooFit::FitManagerMinuit1 datapdf(eff);
+        datapdf.fit();
+        retval = datapdf;
+    } else {
+        GooFit::FitManagerMinuit2 datapdf(eff);
+        datapdf.fit();
+        retval = datapdf;
+    }
+    
+    
     //plotFit(sigma, data, jsu_gg);
 
     TH2F dalitz_dat_hist("dalitz_dat_hist", "", m12->getNumBins(), m12->getLowerLimit(), m12->getUpperLimit(), m13->getNumBins(),
@@ -4460,7 +4499,7 @@ int runEfficiencyFit(int which) {
     loM23pullplot.Draw();
     foo->SaveAs("./plots_from_mixfit/loeffpull.png");
     
-    return datapdf;
+    return retval;
 }
 
 int runBackgroundDalitzFit(int bkgType, bool plots) {
@@ -4512,13 +4551,20 @@ int runBackgroundDalitzFit(int bkgType, bool plots) {
     if(incsum6)
         incsum6->setDataSize(data->getNumEvents(), eventSize);
 
-    FitManager fitter(bkgPdf);
-    fitter.setMaxCalls(32000);
-    gettimeofday(&startTime, NULL);
-    startCPU = times(&startProc);
-    fitter.fit();
-    stopCPU = times(&stopProc);
-    gettimeofday(&stopTime, NULL);
+    int retval;
+    if(minuit1) {
+        GooFit::FitManagerMinuit1 fitter(bkgPdf);
+        fitter.setMaxCalls(32000);
+        fitter.fit();
+        retval = fitter;
+    } else {
+        GooFit::FitManagerMinuit2 fitter(bkgPdf);
+        fitter.setMaxCalls(32000);
+        fitter.fit();
+        retval = fitter;
+    }
+    
+
 
     if(plots) {
         //sprintf(strbuffer, "./plots_from_mixfit/bkgdalitz_%i/", bkgType);
@@ -4528,7 +4574,7 @@ int runBackgroundDalitzFit(int bkgType, bool plots) {
         writeToFile(bkgPdf, fname.c_str());
     }
 
-    return fitter;
+    return retval;
 }
 
 void getBackgroundFile(int bkgType) {
@@ -4689,19 +4735,26 @@ int runBackgroundSigmaFit(int bkgType) {
     loadDataFile(fname);
     bkgPdf->setData(data);
 
-    FitManager fitter(bkgPdf);
-    fitter.setMaxCalls(8000);
-    gettimeofday(&startTime, NULL);
-    startCPU = times(&startProc);
-    fitter.fit();
-    stopCPU = times(&stopProc);
-    gettimeofday(&stopTime, NULL);
 
+    int retval;
+    
+    if(minuit1) {
+        GooFit::FitManagerMinuit1 fitter(bkgPdf);
+        fitter.setMaxCalls(8000);
+        fitter.fit();
+        retval = fitter;
+    } else {
+        GooFit::FitManagerMinuit2 fitter(bkgPdf);
+        fitter.setMaxCalls(8000);
+        fitter.fit();
+        retval = fitter;
+    }
+    
     //bkgPdf->setDebugMask(1);
     plotFit(sigma, data, bkgPdf);
     plotLoHiSigma();
     
-    return fitter;
+    return retval;
 
     //sprintf(strbuffer, "./plots_from_mixfit/bkgdalitz_%i/", bkgType);
     //makeDalitzPlots(bkgPdf, strbuffer);
@@ -4799,6 +4852,8 @@ int main(int argc, char** argv) {
     app_ptr = &app;
     app.require_subcommand();
 
+    app.add_flag("--minuit1", minuit1, "Use Minuit 1 instead of Minuit 2");
+    
     std::string data;
     int sample = 0;
     int load = 1;
@@ -4898,17 +4953,6 @@ int main(int argc, char** argv) {
         return app.exit(e);
     }
 
-
-    // Print total minimization time
-    double myCPU = stopCPU - startCPU;
-    double totalCPU = myCPU;
-
-    timersub(&stopTime, &startTime, &totalTime);
-    std::cout << "Wallclock time  : " << totalTime.tv_sec + totalTime.tv_usec/1000000.0 << " seconds." << std::endl;
-    std::cout << "CPU time: " << (myCPU / CLOCKS_PER_SEC) << std::endl;
-    std::cout << "Total CPU time: " << (totalCPU / CLOCKS_PER_SEC) << std::endl;
-    myCPU = stopProc.tms_utime - startProc.tms_utime;
-    std::cout << "Processor time: " << (myCPU / CLOCKS_PER_SEC) << std::endl;
 
     return retval;
 }

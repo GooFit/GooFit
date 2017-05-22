@@ -169,7 +169,7 @@ __host__ void PdfBase::setIntegrationFineness(int i) {
     generateNormRange();
 }
 
-__host__ bool PdfBase::parametersgetChanged() const {
+__host__ bool PdfBase::parametersChanged() const {
     return std::any_of(std::begin(parameterList), std::end(parameterList), [](Variable* v){return v->getChanged();});
 }
 

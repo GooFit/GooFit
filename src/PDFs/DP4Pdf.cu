@@ -311,7 +311,7 @@ __host__ fptype DPPdf::normalize() const {
     for(unsigned int i = 0; i < components.size() - 1; ++i) {
         redoIntegral[i] = forceRedoIntegrals;
 
-        if(!(components[i]->parametersgetChanged()))
+        if(!(components[i]->parametersChanged()))
             continue;
 
         redoIntegral[i] = true;

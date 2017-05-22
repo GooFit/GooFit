@@ -295,7 +295,7 @@ __host__ fptype ConvolutionPdf::normalize() const {
     thrust::constant_iterator<int> eventSize(1);
     thrust::counting_iterator<int> binIndex(0);
 
-    if(model->parametersgetChanged()) {
+    if(model->parametersChanged()) {
         // Calculate model function at every point in integration space
         MetricTaker modalor(model, getMetricPointer("ptr_to_Eval"));
         thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(binIndex, eventSize, arrayAddress)),
@@ -314,7 +314,7 @@ __host__ fptype ConvolutionPdf::normalize() const {
         */
     }
 
-    if(resolution->parametersgetChanged()) {
+    if(resolution->parametersChanged()) {
         // Same for resolution function.
         thrust::constant_iterator<fptype*> arrayAddress2(dev_iConsts + 3);
         MetricTaker resalor(resolution, getMetricPointer("ptr_to_Eval"));

@@ -160,7 +160,7 @@ __host__ fptype IncoherentSumPdf::normalize() const {
     }
 
     // Check if efficiency changes force redoing the integrals.
-    if(efficiency->parametersgetChanged()) {
+    if(efficiency->parametersChanged()) {
         forceRedoIntegrals = true;
     }
 
@@ -168,7 +168,7 @@ __host__ fptype IncoherentSumPdf::normalize() const {
     for(unsigned int i = 0; i < decayInfo->resonances.size(); ++i) {
         redoIntegral[i] = forceRedoIntegrals;
 
-        if(!(decayInfo->resonances[i]->parametersgetChanged()))
+        if(!(decayInfo->resonances[i]->parametersChanged()))
             continue;
 
         redoIntegral[i] = true;

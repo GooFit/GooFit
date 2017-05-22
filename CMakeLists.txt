@@ -295,23 +295,24 @@ function(goofit_add_executable NAMEEXE)
 endfunction()
 
 function(goofit_add_link)
-    foreach(NAMELINK ${ARGN})
+    if(MSVC) # Not officially supported, but needed to even configure on Windows
+        set(COMM copy)
+    else()
+        set(COMM create_symlink)
+    endif()
 
+    foreach(NAMELINK ${ARGN})
         if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${NAMELINK}")
-            add_custom_command(
-                OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
-                COMMAND ${CMAKE_COMMAND} -E create_symlink
+
+            execute_process(
+                COMMAND ${CMAKE_COMMAND} -E ${COMM}
                 "${CMAKE_CURRENT_SOURCE_DIR}/${NAMELINK}"
                 "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
+                WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
                 )
 
-            get_filename_component(a_dir ${CMAKE_CURRENT_SOURCE_DIR} NAME)
-
-            add_custom_target(
-                "${a_dir}_${NAMELINK}_link" ALL DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
-                )
         else()
-            message(STATUS "Warning: ${NAMELINK} does not exist. Not making link. Build then retry?")
+            message(WARNING "${NAMELINK} does not exist. Not making link.")
         endif()
     endforeach()
 endfunction()
@@ -319,24 +320,13 @@ endfunction()
 
 function(goofit_add_directory)
     file(GLOB directory_listing RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *)
-    set(skip_files CMakeLists.txt Makefile makefile .gitignore .git)
+    set(skip_files CMakeLists.txt CMakeFiles Makefile makefile .gitignore .git)
 
     foreach(NAMELINK ${directory_listing})
         if(NOT ${NAMELINK} IN_LIST skip_files)
-            add_custom_command(
-                OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
-                COMMAND ${CMAKE_COMMAND} -E create_symlink
-                "${CMAKE_CURRENT_SOURCE_DIR}/${NAMELINK}"
-                "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
-                )
-
-            list(APPEND dir_listing "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}")
-
+            goofit_add_link(${NAMELINK})
         endif()
     endforeach()
-
-    get_filename_component(a_dir ${CMAKE_CURRENT_SOURCE_DIR} NAME)
-    add_custom_target("${a_dir}_directory" ALL DEPENDS ${dir_listing})
 endfunction()
 
 

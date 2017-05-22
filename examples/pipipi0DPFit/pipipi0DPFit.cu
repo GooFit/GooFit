@@ -1825,6 +1825,8 @@ void makeToyDalitzPlots(GooPdf* overallSignal, std::string plotdir) {
         }
     }
 
+    GOOFIT_INFO("Adding {} signal events from toy", currData.getNumEvents());
+    
     overallSignal->setData(&currData);
     signalDalitz->setDataSize(currData.getNumEvents(), 6);
     std::vector<std::vector<double>> pdfValues = overallSignal->getCompProbsAtDataPoints();

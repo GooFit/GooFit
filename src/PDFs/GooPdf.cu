@@ -397,7 +397,7 @@ __host__ fptype GooPdf::getValue() {
 __host__ fptype GooPdf::normalize() const {
 
     if(!fitControl->metricIsPdf()) {
-        GOOFIT_DEBUG("{}: metricIsPdf, returning 1", getName());
+        GOOFIT_TRACE("{}: metricIsPdf, returning 1", getName());
         host_normalisation[parameters] = 1.0;
         return 1.0;
     }
@@ -412,7 +412,7 @@ __host__ fptype GooPdf::normalize() const {
         }
 
         host_normalisation[parameters] = 1.0/ret;
-        GOOFIT_DEBUG("{}: Param {} integral is = {}", getName(), parameters, ret);
+        GOOFIT_TRACE("{}: Param {} integral is = {}", getName(), parameters, ret);
         
         return ret;
     }
@@ -479,7 +479,7 @@ __host__ fptype GooPdf::normalize() const {
     if(0 == ret)
         abortWithCudaPrintFlush(__FILE__, __LINE__, "Zero integral");
 
-    GOOFIT_DEBUG("{}: Param {} integral is ~= {}", getName(), parameters, ret);
+    GOOFIT_TRACE("{}: Param {} integral is ~= {}", getName(), parameters, ret);
     host_normalisation[parameters] = 1.0/ret;
     return (fptype) ret;
 }

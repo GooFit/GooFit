@@ -107,8 +107,8 @@ protected:
     fptype numEvents {0};         //< Non-integer to allow weighted events
     unsigned int numEntries {0};  //< Eg number of bins - not always the same as number of events, although it can be.
     fptype* normRanges {0};       //< This is specific to functor instead of variable so that MetricTaker::operator needn't use indices.
-    unsigned int parameters;  //< Stores index, in 'paramIndices', where this functor's information begins.
-    unsigned int cIndex;      //< Stores location of constants.
+    unsigned int parameters {0};  //< Stores index, in 'paramIndices', where this functor's information begins.
+    unsigned int cIndex {1};      //< Stores location of constants.
     std::vector<Variable*> observables;
     std::vector<Variable*> parameterList;
     FitControl* fitControl {nullptr};

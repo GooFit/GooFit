@@ -3,6 +3,7 @@
 #include "goofit/Variable.h"
 #include "goofit/Color.h"
 #include "goofit/Error.h"
+#include "goofit/Log.h"
 
 #include <algorithm>
 
@@ -46,14 +47,8 @@ __host__ void PdfBase::recursiveSetNormalisation(fptype norm) const {
 }
 
 __host__ unsigned int PdfBase::registerParameter(Variable* var) {
-    if(!var) {
-        std::cout << "Error: Attempt to register null Variable with "
-                  << getName()
-                  << ", aborting.\n";
-        if(var == nullptr)
-            throw GooFit::GeneralError("Can not register a nullptr");
-        exit(1);
-    }
+    if(var == nullptr)
+        throw GooFit::GeneralError("{}: Can not register a nullptr", getName());
 
     if(std::find(parameterList.begin(), parameterList.end(), var) != parameterList.end())
         return (unsigned int) var->getIndex();
@@ -81,6 +76,7 @@ __host__ unsigned int PdfBase::registerParameter(Variable* var) {
             unusedIndex++;
         }
 
+        GOOFIT_DEBUG("{}: Registering {} for {}", getName(), unusedIndex, var->getName());
         var->setIndex(unusedIndex);
     }
 
@@ -88,9 +84,11 @@ __host__ unsigned int PdfBase::registerParameter(Variable* var) {
 }
 
 __host__ void PdfBase::unregisterParameter(Variable* var) {
-    if(!var)
+    if(var == nullptr)
         return;
 
+    GOOFIT_DEBUG("{}: Removing {}", getName(), var->getName());
+    
     auto pos = std::find(parameterList.begin(), parameterList.end(), var);
 
     if(pos != parameterList.end())

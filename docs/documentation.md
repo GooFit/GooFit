@@ -135,7 +135,7 @@ int main (int argc, char** argv) {
   // upper and lower bounds, and a number of bins
   // to use in numerical integration. 
   Variable xvar {"xvar", -5, 5}; 
-  xvargetNumBins = 1000; 
+  xvar.setNumBins(1000); 
 
   // A data set to store our observations in.
   UnbinnedDataSet data {xvar};

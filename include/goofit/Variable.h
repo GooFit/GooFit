@@ -224,3 +224,6 @@ std::istream& operator>> (std::istream& i, Variable& var);
 
 /// Get the max index of a variable from a list
 int max_index(const std::vector<Variable*> &vars);
+
+/// Get the max fitter index of a variable from a list
+int max_fitter_index(const std::vector<Variable*> &vars);

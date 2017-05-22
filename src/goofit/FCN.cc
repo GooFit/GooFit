@@ -18,8 +18,7 @@ FCN::FCN(Params& params) : params_(&params) {
 double FCN::operator()(const std::vector<double>& pars) const {
     
     // Translate from Minuit indexing to GooFit indexing
-    std::vector<double> gooPars;
-    gooPars.resize(max_index(params_->vars_)+1);
+    std::vector<double> gooPars(max_index(params_->vars_)+1);
     
     for(Variable* var : params_->vars_) {
         var->setChanged(var->getValue() != pars.at(var->getFitterIndex()));
@@ -34,6 +33,38 @@ double FCN::operator()(const std::vector<double>& pars) const {
     host_callnumber++;
 
     return nll;
+}
+
+double FCN::operator()() const {
+    
+    std::vector<double> pars = makePars();
+    
+    // Translate from Minuit indexing to GooFit indexing
+    std::vector<double> gooPars(max_index(params_->vars_)+1);
+    
+    for(Variable* var : params_->vars_) {
+        var->setChanged(true);
+        gooPars.at(var->getIndex()) = pars.at(var->getFitterIndex()) - var->blind;
+    }
+    
+    params_->pdf_->copyParams(gooPars);
+    
+    GOOFIT_TRACE("Calculating NLL");
+    double nll = params_->pdf_->calculateNLL();
+    
+    host_callnumber++;
+    
+    return nll;
+}
+
+    
+    
+std::vector<double> FCN::makePars() const {
+    std::vector<double> minuitPars(max_fitter_index(params_->vars_)+1);
+    for(Variable* var : params_->vars_) {
+        minuitPars.at(var->getFitterIndex()) = var->getValue();
+    }
+    return minuitPars;
 }
 
 // Get the number of variable parameters

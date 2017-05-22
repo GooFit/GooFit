@@ -13,18 +13,24 @@ protected:
     Params *params_;
 public:
     
-    // Create an FCN given parameters (PDF reference is inside params)
+    /// Create an FCN given parameters (PDF reference is inside params)
     FCN(Params& params);
     
-    // Run the fit (used by Minuit2 class)
+    /// Make a parameter array with the current variable values
+    std::vector<double> makePars() const;
+    
+    /// Run the fit (used by Minuit2 class)
     double operator()(const std::vector<double>& pars) const override;
     
-    // This value is 0.5 for ll, 1 for chi2
+    /// produce the FCN value for the current values of the parameters
+    double operator()() const;
+    
+    /// This value is 0.5 for ll, 1 for chi2
     double Up() const override {
         return 0.5;
     }
     
-    // Get a pointer to the parameters
+    /// Get a pointer to the parameters
     Params* GetParams();
 };
 

@@ -21,11 +21,18 @@ std::istream& operator>> (std::istream& i, Variable& var) {
     return i >> var.value;
 }
 
-/// Get the max index of a variable from a list
 int max_index(const std::vector<Variable*> &vars) {
     const Variable* max_ind_ptr = *std::max_element(std::begin(vars),
                                                     std::end(vars),
                                                     [](const Variable *a, const Variable *b)
                                                     {return a->getIndex() < b->getIndex();});
     return max_ind_ptr->getIndex();
+}
+
+int max_fitter_index(const std::vector<Variable*> &vars) {
+    const Variable* max_ind_ptr = *std::max_element(std::begin(vars),
+                                                    std::end(vars),
+                                                    [](const Variable *a, const Variable *b)
+                                                    {return a->getFitterIndex() < b->getFitterIndex();});
+    return max_ind_ptr->getFitterIndex();
 }

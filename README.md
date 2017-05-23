@@ -27,6 +27,8 @@ doing maximum-likelihood fits with a familiar syntax.
 * If using CPP:
   * Single threaded builds are available for debugging and development (such as on the default Clang on macOS)
 
+A list of installs for different common platforms is available [here](./docs/SYSTEM_INSTALL.md).
+
 ## Getting the files
 
 * Clone with git:

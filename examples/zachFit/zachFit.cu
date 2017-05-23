@@ -32,12 +32,11 @@ TH1D* getMCData(DataSet *data, Variable* var, std::string filename) {
     TH1D* mchist = new TH1D{"mc_hist", "", 300, 0.1365, 0.1665};
     std::ifstream mcreader{filename};
 
-    double currDM = 0;
-    while(mcreader >> currDM) {
-        if(!currDM)
+    while(mcreader >> *var) {
+        if(!*var)
             continue;
-        data->addEvent(currDM);
-        mchist->Fill(currDM);
+        data->addEvent();
+        mchist->Fill(var->getValue());
     }
 
     mchist->SetStats(false);
@@ -54,12 +53,11 @@ TH1D* getData(DataSet* data, Variable *var, std::string filename) {
     TH1D* data_hist = new TH1D("data_hist", "", 300, 0.1365, 0.1665);
     std::ifstream datareader{filename};
 
-    double currDM = 0;
-    while(datareader >> currDM) {
-        if(!currDM)
+    while(datareader >> *var) {
+        if(!*var)
             continue;
-        data->addEvent(currDM);
-        data_hist->Fill(currDM);
+        data->addEvent();
+        data_hist->Fill(var->getValue());
     }
 
     data_hist->SetStats(false);

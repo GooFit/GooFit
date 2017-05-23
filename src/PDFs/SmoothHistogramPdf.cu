@@ -134,7 +134,7 @@ __host__ SmoothHistogramPdf::SmoothHistogramPdf(std::string n, BinnedDataSet* hi
 
         host_constants[2*varIndex + 0] =
             var->getLowerLimit(); // NB, do not put cIndex here, it is accounted for by the offset in MEMCPY_TO_SYMBOL below.
-        host_constants[2*varIndex + 1] = (var->getUpperLimit() - var->getLowerLimit()) / var->getNumBins();
+        host_constants[2*varIndex + 1] = var->getBinSize();
         varIndex++;
     }
 

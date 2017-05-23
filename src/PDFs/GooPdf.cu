@@ -307,7 +307,7 @@ __host__ std::vector<fptype> GooPdf::evaluateAtPoints(Variable* var) {
     MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice);
     UnbinnedDataSet tempdata(observables);
 
-    double step = (var->getUpperLimit() - var->getLowerLimit()) / var->getNumBins();
+    double step = var->getBinSize();
 
     for(int i = 0; i < var->getNumBins(); ++i) {
         var->setValue(var->getLowerLimit() + (i+0.5)*step);

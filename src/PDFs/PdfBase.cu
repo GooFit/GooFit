@@ -92,7 +92,7 @@ __host__ void PdfBase::setData(std::vector<std::map<Variable*, fptype>>& data) {
     setIndices();
     int dimensions = observables.size();
     numEntries = data.size();
-    numEvents = numEntries; // TODO: Why are there two?
+    numEvents = numEntries;
 
     fptype* host_array = new fptype[data.size()*dimensions];
 
@@ -379,7 +379,7 @@ __host__ void PdfBase::printProfileInfo(bool topLevel) {
         cudaError_t err = MEMCPY_FROM_SYMBOL(host_timeHist, timeHistogram, 10000*sizeof(fptype), 0);
 
         if(cudaSuccess != err) {
-            std::cout << "Error on copying timeHistogram: " << cudagetErrorString(err) << std::endl;
+            std::cout << "Error on copying timeHistogram: " << cudaGetErrorString(err) << std::endl;
             return;
         }
 

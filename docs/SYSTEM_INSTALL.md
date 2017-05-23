@@ -1,6 +1,6 @@
 # Installing GooFit on different systems
 
-The docker command for each system is listed at the beginning of each command, to show setup from scratch. Ignore that line if you are not using docker.
+The Docker command for each system is listed at the beginning of each command, to show setup from scratch. Ignore that line if you are not using Docker.
 
 The following commands show you how to get a *minimal* install of GooFit on a vanilla system; you will probably want to add ROOT for your system, and possibly CUDA if you have a graphics card. If you do not have ROOT, some functionality, such as the Minuit1 version of the fitter, will not be available, and most of the examples will not be included in the build.
 

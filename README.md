@@ -27,7 +27,7 @@ doing maximum-likelihood fits with a familiar syntax.
 * If using CPP:
   * Single threaded builds are available for debugging and development (such as on the default Clang on macOS)
 
-A list of installs for different common platforms is available [here](./docs/SYSTEM_INSTALL.md).
+A list of exact commands required for several platforms is [available here](./docs/SYSTEM_INSTALL.md).
 
 ## Getting the files
 
@@ -71,28 +71,29 @@ Valid options are `CUDA` (device only), `OMP`, `TBB`, and `CPP`. The Thrust `TBB
 
 Other custom options supported along with the defaults:
 
-* `-DGOOFIT_ARCH=Auto`: (Auto, Common, All, valid number(s) or name(s)): sets the compute architecture. See [CUDA_SELECT_NVCC_ARCH_FLAGS].
+* `-DGOOFIT_DEVICE=Auto`: The device to use for computation (`CUDA`, `OMP`, `TBB`, or `CPP`). Default setting of `Auto` looks for CUDA first, then OpenMP, then CPP.
+* `-DGOOFIT_ARCH=Auto`: (`Auto`, `Common`, `All`, valid number(s) or name(s)): sets the compute architecture. See [CUDA_SELECT_NVCC_ARCH_FLAGS].
 * `-DGOOFIT_EXAMPLES=ON`: Build the examples
 * `-DGOOFIT_PACKAGES=ON`: Build any packages found with the name `goofit*`
-* `-DGOOFIT_SEPARATE_COMP=ON`: Enable separable compilation of PDFs. Single core CUDA builds are faster with this off.
-* `-DGOOFIT_TESTS=ON`: Build the GooFit tests
+* `-DGOOFIT_DEBUG=ON` and `-DGOOFIT_TRACE=ON` will enable the matching printout macros
 
 Advanced Options:
+* `-DGOOFIT_HOST=Auto`: This is CPP unless device is `OMP`, in which case it is also `OMP`. This changes thrust::host_vector calculations, and is not fully supported when set to a non-default setting.
+* `-DGOOFIT_TESTS=ON`: Build the GooFit tests
+* `-DGOOFIT_SEPARATE_COMP=ON`: Enable separable compilation of PDFs. Single core CUDA builds are faster with this off.
 * `-DGOOFIT_MPI=ON`: (OFF/ON.  With this feature on, GPU devices are selected automatically).  Tested with MVAPICH2/2.2 and OpenMPI.
 * `-DGOOFIT_CUDA_OR_GROUPSIZE:INT=128`: This sets the group size that thrust will use for distributing the problem.  This parameter can be thought of as 'Threads per block'.  These will be used after running 'find_optimal.py' to figure out the optimal size.
 * `-DGOOFIT_CUDA_OR_GRAINSIZE:INT=7`: This is the grain size thrust uses for distributing the problem.  This parameter can be thought of as 'Items per thread'.
 * `-DGOOFIT_PYTHON=OFF`: Preliminary python bindings using [PyBind11].
-* `-DGOOFIT_DEBUG=ON` and `-DGOOFIT_TRACE=ON` will enable the matching printout macros
 * You can enable sanitizers on non-CUDA builds with `-DSANITIZE_ADDRESS=ON`, `-DSANITIZE_MEMORY=ON`, `-DSANITIZE_THREAD=ON` or `-DSANITIZE_UNDEFINED=ON`.
 
 Note for targeting Tesla P100 or any `arch=6.0` device:
 * Please use `-DGOOFIT_SEPARATE_COMP=ON` flags to compile.
 
-
 A few standard CMake tricks:
 
-* Use `VERBOSE=1` to see the commands used to build the files.
-* Use `-L` to list the CMake options.
+* Use `make VERBOSE=1` to see the commands used to build the files.
+* Use `cmake .. -L` to list the CMake options.
 * Use `ccmake` if available to see a curses (terminal) gui, or `cmake-gui` for a completely graphical interface.
 * Use `-G` and the name of a generator to use something other than `make`, like `Xcode` or `Ninja`.
 * Open the `CMakeLists.txt` with QtCreator to generate for that IDE.
@@ -100,14 +101,24 @@ A few standard CMake tricks:
 * Set up multiple build directories, like `build-omp` and `build-cuda`.
 * CMake caches your `-D` option selections in your build directory so you don't have to specify them again.
 * CMake reruns when needed when you `make` unless you add a file that it globs for (like new `goofit_projects`).
-* Use `-j12` to build with 12 cores (for example). You can set this as the `MAKEFLAGS` environment variable, too.
+* Use `make -j12` to build with 12 cores (for example). You can set this as the `MAKEFLAGS` environment variable, too.
 * Use `CMake --build .` to build without referring to your specific build tool, like `make` or `ninja`.
+
+> Note: Running `make`, `make omp`, or `make cuda` in the main directory will make a build directory for you, and will run CMake and make.
+
 
 ## Running the Examples
 
 * To run all the examples, with timing information, use:
-```
+
+```bash
 ./examples/RunAll.py
+```
+
+or
+
+```bash
+./examples/RunAll.py --profile
 ```
 
 (This requires the [Plumbum] library, install with `pip install plumbum`, `pip install --user plumbum`, or `conda -c conda-forge plumbum`.)
@@ -124,7 +135,7 @@ goofit_add_directory()
 goofit_add_executible(MyNewExample MyNewExample.cu)
 ```
 
-The first line adds your `.cu` file with GooFit code as an executable, and the second one sets up a symbolic links to the source and `dataFiles` in the build directory to the source directory. If you prefer to only have some files symbolically linked, use `goofit_add_link(filename.ext)` explicitly for each file. To get the example to build when you build GooFit, add the name of your directory to `examples/CMakeLists.txt`.
+The first line adds your `.cu` file with GooFit code as an executable, and the second one sets up a symbolic links to the source and `dataFiles` in the build directory to the source directory. If you prefer to only have some files symbolically linked, use `goofit_add_link(filename.ext)` explicitly for each file. This happens at configure time. To get the example to build when you build GooFit, add the name of your directory to `examples/CMakeLists.txt`.
 
 If you are building with separable compilation, you can also use `goofit_add_pdf(mypdf.cu)` to add a PDF. This will also require that you include any directory that you need with `include_directory`, as usual.
 
@@ -142,7 +153,7 @@ target_link_libraries(MyNewExample Boost::filesystem ROOT::TreePlayer)
 ```
 
 ## Adding a new project
-  
+
 If you'd like to make a separate GooFit project, you can do so. Simply checkout your project inside GooFit, with the name `work` or `GooFit`+something. CMake will automatically pick up those directories and build them, and GooFit's git will ignore them. Otherwise, they act just like the example directory. If you add a new directory, you will need to explicitly rerun CMake, as that cannot be picked up by the makefile. The automatic search can be turned off with the `GOOFIT_PROJECTS` option.
 
 ## Converting from older GooFit code

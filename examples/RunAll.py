@@ -57,6 +57,7 @@ def make_results(profile=False):
         results.append(test('zachFit', 0))
     if (LOCAL_DIR / 'pipipi0DPFit/dataFiles/toyPipipi0/dalitz_toyMC_000.txt').exists():
         results.append(test('pipipi0DPFit', 'toy', 0, 1))
+        results.append(test('pipipi0DPFit', 'canonical', 'dataFiles/cocktail_pp_0.txt', '--blindSeed=0'))
     return results
 
 

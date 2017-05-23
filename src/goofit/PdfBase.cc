@@ -6,7 +6,7 @@
 #include "goofit/Log.h"
 
 #include <algorithm>
-
+#include <set>
 #include <execinfo.h>
 
 #include "goofit/FitManager.h"
@@ -107,14 +107,15 @@ __host__ void PdfBase::unregisterParameter(Variable* var) {
 
 __host__ std::vector<Variable*> PdfBase::getParameters() const {
     
-    std::set<Variable*> ret {parameterList.begin(), parameterList.end()};
-    
+    std::vector<Variable*> ret = parameterList;
     
     for(const PdfBase* comp : components) {
-        std::vector<Variable*> sub_comp = comp->getParameters();
-        ret.insert(sub_comp.begin(), sub_comp.end());
+        for(Variable* sub_comp : comp->getParameters())
+            if(std::find(std::begin(ret), std::end(ret), sub_comp)==std::end(ret))
+                ret.push_back(sub_comp);
     }
-    return std::vector<Variable*>(ret.begin(), ret.end());
+    
+    return ret;
 }
 
 
@@ -135,15 +136,15 @@ __host__ Variable* PdfBase::getParameterByName(std::string n) const {
 }
 
 __host__ std::vector<Variable*> PdfBase::getObservables() const {
-    std::set<Variable*> ret {observables.begin(), observables.end()};
-
-
+    std::vector<Variable*> ret = observables;
+    
     for(const PdfBase* comp : components) {
-        std::vector<Variable*> sub_comp = comp->getObservables();
-        ret.insert(sub_comp.begin(), sub_comp.end());
+        for(Variable* sub_comp : comp->getObservables())
+            if(std::find(std::begin(ret), std::end(ret), sub_comp)==std::end(ret))
+                ret.push_back(sub_comp);
     }
     
-    return std::vector<Variable*>(ret.begin(), ret.end());
+    return ret;
 }
 
 __host__ unsigned int PdfBase::registerConstants(unsigned int amount) {

@@ -24,7 +24,7 @@ make test
 
 ## Alpine Linux 3.5
 
-A truly minimal system, Alpine gives you a working Docker system under 5 MB. To get a minimal install of GooFit:
+A truly minimal system, Alpine gives you a working Docker system under 3 MB.
 
 ```bash
 docker run -it alpine sh
@@ -38,18 +38,18 @@ make
 make test
 ```
 
-## Ubuntu 17.04
+## Ubuntu 16.04
 
-Ubiquitous Ubuntu works also. Ubuntu was used for the NVidia docker solution due to better support from NVidia. 
+Ubiquitous Ubuntu works also. Ubuntu was used for the NVidia docker solution due to better support from NVidia. The following example uses ninja-build instead of make.
 
 ```bash
 docker run -it ubuntu
-apt-get update && apt-get install -y git cmake make g++
+apt-get update && apt-get install -y git cmake ninja-build g++
 git clone --recursive https://github.com/GooFit/GooFit.git
 cd GooFit
 mkdir build
 cd build
 cmake ..
-make
-make test
+cmake --build .
+ctest
 ```

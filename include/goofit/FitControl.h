@@ -1,10 +1,10 @@
 #pragma once
 
 #include "goofit/GlobalCudaDefines.h"
+#include "goofit/Error.h"
 
 #include <vector>
 #include <string>
-#include <cassert>
 
 class PdfBase;
 
@@ -30,7 +30,8 @@ public:
         return owner;
     }
     void setOwner(PdfBase* dat) {
-        assert(!owner);
+        if(dat == nullptr)
+            throw GooFit::GeneralError("Owner will be nullptr");
         owner = dat;
     }
 

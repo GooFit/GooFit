@@ -27,7 +27,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
-#include <assert.h>
 #include <time.h>
 #include <string>
 #include <sstream>
@@ -343,7 +342,7 @@ h2->Sumw2();
 		{
 			if(j>=i) continue;
 			GInt_t index =  i+j*masses.size();
-			TCanvas *c = new TCanvas( H1D[index]->GetName(), H1D[index]->GetName(), 600, 500 );
+			TCanvas *c = new TCanvas( H1D[index]->getName(), H1D[index]->getName(), 600, 500 );
 
 			H1D[index]->Draw("e0");
 			H1D[index]->SetMarkerColor(kBlue);

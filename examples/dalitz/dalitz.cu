@@ -65,8 +65,8 @@ void getToyData(std::string toyFileName, GooFit::Application &app) {
     
     toyFileName = app.get_filename(toyFileName, "examples/dalitz");
     
-    TH2F dalitzplot("dalitzplot", "", m12->numbins, m12->lowerlimit, m12->upperlimit, m13->numbins, m13->lowerlimit,
-                    m13->upperlimit);
+    TH2F dalitzplot("dalitzplot", "", m12->getNumBins(), m12->getLowerLimit(), m12->getUpperLimit(), m13->getNumBins(), m13->getLowerLimit(),
+                    m13->getUpperLimit());
     std::vector<Variable*> vars;
     vars.push_back(m12);
     vars.push_back(m13);
@@ -89,9 +89,9 @@ void getToyData(std::string toyFileName, GooFit::Application &app) {
 
     while(!reader.eof()) {
         reader >> dummy;
-        reader >> dummy;      // m23, m(pi+ pi-), called m12 in processToyRoot convention.
-        reader >> m12->value; // Already swapped according to D* charge. m12 = m(pi+pi0)
-        reader >> m13->value;
+        reader >> dummy;  // m23, m(pi+ pi-), called m12 in processToyRoot convention.
+        reader >> *m12;   // Already swapped according to D* charge. m12 = m(pi+pi0)
+        reader >> *m13;
 
         // Errors on Dalitz variables
         reader >> dummy;
@@ -122,10 +122,10 @@ void getToyData(std::string toyFileName, GooFit::Application &app) {
 
         // EXERCISE 3: Use both the above.
 
-        eventNumber->value = data->getNumEvents();
+        eventNumber->setValue(data->getNumEvents());
         data->addEvent();
 
-        dalitzplot.Fill(m12->value, m13->value);
+        dalitzplot.Fill(m12->getValue(), m13->getValue());
     }
 
     dalitzplot.SetStats(false);
@@ -362,8 +362,8 @@ DalitzPlotPdf* makeSignalPdf(GooPdf* eff = 0) {
 int runToyFit(std::string toyFileName, GooFit::Application &app) {
     m12 = new Variable("m12", 0, 3);
     m13 = new Variable("m13", 0, 3);
-    m12->numbins = 240;
-    m13->numbins = 240;
+    m12->setNumBins(240);
+    m13->setNumBins(240);
     eventNumber = new CountingVariable("eventNumber", 0, INT_MAX);
     getToyData(toyFileName, app);
 

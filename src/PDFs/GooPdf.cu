@@ -2,6 +2,7 @@
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/ThrustOverride.h"
 
+#include "goofit/Log.h"
 #include "goofit/Error.h"
 #include "goofit/Variable.h"
 #include "goofit/FitControl.h"
@@ -11,9 +12,14 @@
 #include <thrust/transform_reduce.h>
 #include <thrust/transform.h>
 #include <thrust/host_vector.h>
+#include <thrust/device_vector.h>
 #include <thrust/sequence.h>
 #include <thrust/iterator/constant_iterator.h>
 #include <thrust/iterator/zip_iterator.h>
+
+#ifdef ROOT_FOUND
+#include <TH1D.h>
+#endif
 
 // These variables are either function-pointer related (thus specific to this implementation)
 // or constrained to be in the CUDAglob translation unit by nvcc limitations; otherwise they
@@ -40,6 +46,7 @@ __device__ int internalDebug1 = -1;
 __device__ int internalDebug2 = -1;
 __device__ int internalDebug3 = -1;
 int cpuDebug = 0;
+
 #ifdef PROFILING
 __device__ fptype timeHistogram[10000];
 fptype host_timeHist[10000];
@@ -136,7 +143,8 @@ void* getMetricPointer(std::string name) {
     CHOOSE_PTR(ptr_to_BinWithError);
     CHOOSE_PTR(ptr_to_Chisq);
 
-    assert(host_fcn_ptr);
+    if(host_fcn_ptr == nullptr)
+        throw GooFit::GeneralError("host_fcn_ptr is nullptr");
 
     return host_fcn_ptr;
 #undef CHOOSE_PTR
@@ -292,22 +300,17 @@ __host__ double GooPdf::calculateNLL() const {
     return 2*ret;
 }
 
-__host__ void GooPdf::evaluateAtPoints(Variable* var, std::vector<fptype>& res) {
-    // NB: This does not project correctly in multidimensional datasets, because all observables
-    // other than 'var' will have, for every event, whatever value they happened to get set to last
-    // time they were set. This is likely to be the value from the last event in whatever dataset
-    // you were fitting to, but at any rate you don't get the probability-weighted integral over
-    // the other observables.
+__host__ std::vector<fptype> GooPdf::evaluateAtPoints(Variable* var) {
 
     copyParams();
     normalize();
     MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice);
     UnbinnedDataSet tempdata(observables);
 
-    double step = (var->upperlimit - var->lowerlimit) / var->numbins;
+    double step = var->getBinSize();
 
-    for(int i = 0; i < var->numbins; ++i) {
-        var->value = var->lowerlimit + (i+0.5)*step;
+    for(int i = 0; i < var->getNumBins(); ++i) {
+        var->setValue(var->getLowerLimit() + (i+0.5)*step);
         tempdata.addEvent();
     }
 
@@ -316,7 +319,7 @@ __host__ void GooPdf::evaluateAtPoints(Variable* var, std::vector<fptype>& res) 
     thrust::counting_iterator<int> eventIndex(0);
     thrust::constant_iterator<int> eventSize(observables.size());
     thrust::constant_iterator<fptype*> arrayAddress(dev_event_array);
-    thrust::device_vector<fptype> results(var->numbins);
+    thrust::device_vector<fptype> results(var->getNumBins());
 
     MetricTaker evalor(this, getMetricPointer("ptr_to_Eval"));
 #ifdef GOOFIT_MPI
@@ -333,60 +336,36 @@ __host__ void GooPdf::evaluateAtPoints(Variable* var, std::vector<fptype>& res) 
 
     //Note, This is not fully realized with MPI.  We need to copy each 'results' buffer to each other 'MPI_Scatterv', then we can do the rest.
     thrust::host_vector<fptype> h_results = results;
-    res.clear();
-    res.resize(var->numbins);
+    std::vector<fptype> res;
+    res.resize(var->getNumBins());
 
-    for(int i = 0; i < var->numbins; ++i) {
+    for(int i = 0; i < var->getNumBins(); ++i) {
         res[i] = h_results[i] * host_normalisation[parameters];
     }
-}
-
-__host__ void GooPdf::evaluateAtPoints(std::vector<fptype>& points) const {
-    /*
-    std::set<Variable*> vars;
-    getParameters(vars);
-    unsigned int maxIndex = 0;
-    for (std::set<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
-      if ((*i)->getIndex() < maxIndex) continue;
-      maxIndex = (*i)->getIndex();
-    }
-    std::vector<double> params;
-    params.resize(maxIndex+1);
-    for (std::set<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
-      if (0 > (*i)->getIndex()) continue;
-      params[(*i)->getIndex()] = (*i)->value;
-    }
-    copyParams(params);
-
-    thrust::device_vector<fptype> d_vec = points;
-    normalize();
-    MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    thrust::transform(d_vec.begin(), d_vec.end(), d_vec.begin(), *evalor);
-    thrust::host_vector<fptype> h_vec = d_vec;
-    for (unsigned int i = 0; i < points.size(); ++i) points[i] = h_vec[i];
-    */
+    
+    return res;
 }
 
 __host__ void GooPdf::scan(Variable* var, std::vector<fptype>& values) {
-    fptype step = var->upperlimit;
-    step -= var->lowerlimit;
-    step /= var->numbins;
+    fptype step = var->getUpperLimit();
+    step -= var->getLowerLimit();
+    step /= var->getNumBins();
     values.clear();
 
-    for(fptype v = var->lowerlimit + 0.5*step; v < var->upperlimit; v += step) {
-        var->value = v;
+    for(fptype v = var->getLowerLimit() + 0.5*step; v < var->getUpperLimit(); v += step) {
+        var->setValue(v);
         copyParams();
         fptype curr = calculateNLL();
         values.push_back(curr);
     }
 }
 
+// TODO: is this needed?
 __host__ void GooPdf::setParameterConstantness(bool constant) {
-    PdfBase::parCont pars;
-    getParameters(pars);
+    std::vector<Variable*> pars = getParameters();
 
-    for(PdfBase::parIter p = pars.begin(); p != pars.end(); ++p) {
-        (*p)->fixed = constant;
+    for(Variable* p : pars) {
+        p->setFixed(constant);
     }
 }
 
@@ -416,9 +395,9 @@ __host__ fptype GooPdf::getValue() {
 }
 
 __host__ fptype GooPdf::normalize() const {
-    //if (cpuDebug & 1) std::cout << "Normalising " << getName() << " " << hasAnalyticIntegral() << " " << normRanges << std::endl;
 
     if(!fitControl->metricIsPdf()) {
+        GOOFIT_TRACE("{}: metricIsPdf, returning 1", getName());
         host_normalisation[parameters] = 1.0;
         return 1.0;
     }
@@ -426,22 +405,27 @@ __host__ fptype GooPdf::normalize() const {
     fptype ret = 1;
 
     if(hasAnalyticIntegral()) {
-        for(obsConstIter v = obsCBegin(); v != obsCEnd(); ++v) {  // Loop goes only over observables of this PDF.
-            //if (cpuDebug & 1) std::cout << "Analytically integrating " << getName() << " over " << (*v)->name << std::endl;
-            ret *= integrate((*v)->lowerlimit, (*v)->upperlimit);
+        // Loop goes only over observables of this PDF.
+        for(Variable* v : observables) {
+            GOOFIT_TRACE("{}: Analytically integrating over {}", getName(), v->getName());
+            ret *= integrate(v->getLowerLimit(), v->getUpperLimit());
         }
 
         host_normalisation[parameters] = 1.0/ret;
-        //if (cpuDebug & 1) std::cout << "Analytic integral of " << getName() << " is " << ret << std::endl;
+        GOOFIT_TRACE("{}: Param {} integral is = {}", getName(), parameters, ret);
+        
         return ret;
     }
+    
+    GOOFIT_TRACE("{}, Computing integral without analytic help", getName());
 
     int totalBins = 1;
 
-    for(obsConstIter v = obsCBegin(); v != obsCEnd(); ++v) {
-        ret *= ((*v)->upperlimit - (*v)->lowerlimit);
-        totalBins *= (integrationBins > 0 ? integrationBins : (*v)->numbins);
-        //if (cpuDebug & 1) std::cout << "Total bins " << totalBins << " due to " << (*v)->name << " " << integrationBins << " " << (*v)->numbins << std::endl;
+    for(Variable* v : observables) {
+        ret *= v->getUpperLimit() - v->getLowerLimit();
+        totalBins *= integrationBins > 0 ? integrationBins : v->getNumBins();
+
+        GOOFIT_TRACE("Total bins {} due to {} {} {}", totalBins, v->getName(), integrationBins, v->getNumBins());
     }
 
     ret /= totalBins;
@@ -495,6 +479,7 @@ __host__ fptype GooPdf::normalize() const {
     if(0 == ret)
         abortWithCudaPrintFlush(__FILE__, __LINE__, "Zero integral");
 
+    GOOFIT_TRACE("{}: Param {} integral is ~= {}", getName(), parameters, ret);
     host_normalisation[parameters] = 1.0/ret;
     return (fptype) ret;
 }
@@ -549,7 +534,7 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, fptype*, int> t) co
 // Used in normalisation.
 #define MAX_NUM_OBSERVABLES 5
 __device__ fptype MetricTaker::operator()(thrust::tuple<int, int, fptype*> t) const {
-    // Bin index, event size, base address [lower, upper, numbins]
+    // Bin index, event size, base address [lower, upper,getNumBins]
 
     int evtSize = thrust::get<1>(t);
     int binNumber = thrust::get<0>(t);
@@ -638,9 +623,9 @@ __host__ void make_a_grid(std::vector<Variable*> ret, UnbinnedDataSet &grid) {
     Variable* var = ret.back();
     ret.pop_back(); // safe because this is a copy
     
-    for(int i = 0; i < var->numbins; ++i) {
-        double step = (var->upperlimit - var->lowerlimit)/var->numbins;
-        var->value = var->lowerlimit + (i + 0.5) * step;
+    for(int i = 0; i < var->getNumBins(); ++i) {
+        double step = (var->getUpperLimit() - var->getLowerLimit())/var->getNumBins();
+        var->setValue(var->getLowerLimit() + (i + 0.5) * step);
         make_a_grid(ret, grid);
     }
     
@@ -648,8 +633,7 @@ __host__ void make_a_grid(std::vector<Variable*> ret, UnbinnedDataSet &grid) {
 
 
 __host__ UnbinnedDataSet GooPdf::makeGrid() {
-    obsCont ret;
-    getObservables(ret);
+    std::vector<Variable*> ret = getObservables();
     
     UnbinnedDataSet grid{ret};
     
@@ -664,8 +648,8 @@ __host__ void GooPdf::transformGrid(fptype* host_output) {
     //normalize();
     int totalBins = 1;
 
-    for(obsConstIter v = obsCBegin(); v != obsCEnd(); ++v) {
-        totalBins *= (*v)->numbins;
+    for(Variable* v : observables) {
+        totalBins *= v->getNumBins();
     }
 
     thrust::constant_iterator<fptype*> arrayAddress(normRanges);
@@ -730,4 +714,22 @@ __host__ void GooPdf::setFitControl(FitControl* const fc, bool takeOwnerShip) {
     setMetrics();
 }
 
-#include "PdfBase.cu"
+#ifdef ROOT_FOUND
+__host__ TH1D* GooPdf::plotToROOT(Variable* var, double normFactor, std::string name) {
+    if(name.empty())
+        name = getName() + "_hist";
+    
+    auto ret = new TH1D(name.c_str(), "", var->getNumBins(), var->getLowerLimit(), var->getUpperLimit());
+    std::vector<fptype> binValues = evaluateAtPoints(var);
+    
+    double pdf_int = 0;
+    
+    for(int i = 0; i < var->getNumBins(); ++i) {
+        pdf_int += binValues[i];
+    }
+    
+    for(int i = 0; i < var->getNumBins(); ++i)
+        ret->SetBinContent(i+1, binValues[i] * normFactor / pdf_int / var->getBinSize());
+    return ret;
+}
+#endif

@@ -28,36 +28,15 @@
 
 using namespace fmt::literals;
 
-TH1D* plotComponent(GooPdf* toPlot, Variable* var, double normFactor=1) {
-    static int numHists = 0;
-    std::string histName = "{}_hist_{}"_format(toPlot->getName(), numHists++);
-    std::string fileName = histName + ".png";
-    auto ret = new TH1D(histName.c_str(), "", var->numbins, var->lowerlimit, var->upperlimit);
-    std::vector<fptype> binValues;
-    toPlot->evaluateAtPoints(var, binValues);
-
-    double pdf_int = 0;
-    double step = (var->upperlimit - var->lowerlimit) /  var->numbins;
-
-    for(int i = 0; i < var->numbins; ++i) {
-        pdf_int += binValues[i];
-    }
-
-    for(int i = 0; i < var->numbins; ++i)
-        ret->SetBinContent(i+1, binValues[i] * normFactor / pdf_int / step);
-    return ret;
-}
-
 TH1D* getMCData(DataSet *data, Variable* var, std::string filename) {
     TH1D* mchist = new TH1D{"mc_hist", "", 300, 0.1365, 0.1665};
     std::ifstream mcreader{filename};
 
-    double currDM = 0;
-    while(mcreader >> currDM) {
-        if(currDM > var->upperlimit || currDM < var->lowerlimit)
+    while(mcreader >> *var) {
+        if(!*var)
             continue;
-        data->addEvent(currDM);
-        mchist->Fill(currDM);
+        data->addEvent();
+        mchist->Fill(var->getValue());
     }
 
     mchist->SetStats(false);
@@ -65,6 +44,8 @@ TH1D* getMCData(DataSet *data, Variable* var, std::string filename) {
     mchist->SetMarkerSize(0.6);
 
     GOOFIT_INFO("MC events: {}", data->getNumEvents());
+    if(data->getNumEvents() == 0)
+        throw GooFit::GeneralError("No MC events read in!");
     return mchist;
 }
 
@@ -72,12 +53,11 @@ TH1D* getData(DataSet* data, Variable *var, std::string filename) {
     TH1D* data_hist = new TH1D("data_hist", "", 300, 0.1365, 0.1665);
     std::ifstream datareader{filename};
 
-    double currDM = 0;
-    while(datareader >> currDM) {
-        if(currDM > var->upperlimit || currDM < var->lowerlimit)
+    while(datareader >> *var) {
+        if(!*var)
             continue;
-        data->addEvent(currDM);
-        data_hist->Fill(currDM);
+        data->addEvent();
+        data_hist->Fill(var->getValue());
     }
 
     data_hist->SetStats(false);
@@ -85,6 +65,9 @@ TH1D* getData(DataSet* data, Variable *var, std::string filename) {
     data_hist->SetMarkerSize(0.6);
 
     GOOFIT_INFO("Data events: {}", data->getNumEvents());
+    if(data->getNumEvents() == 0)
+        throw GooFit::GeneralError("No Data events read in!");
+
     return data_hist;
 }
 
@@ -94,8 +77,8 @@ int main(int argc, char** argv) {
     
     int mode=0, data = 0;
     bool plot;
-    app.add_set("-m,--mode,mode", mode, {0,1},
-            "Program mode: 0-unbinned, 1-binned");
+    app.add_set("-m,--mode,mode", mode, {0,1,2},
+            "Program mode: 0-unbinned, 1-binned, 2-binned chisq");
     app.add_set("-d,--data,data", data, {0,1,2},
             "Dataset: 0-simple, 1-kpi, 2-k3pi");
     app.add_flag("-p,--plot", plot, "Make and save plots of results");
@@ -138,7 +121,7 @@ int main(int argc, char** argv) {
     }
 
     Variable dm{"dm", 0.1395, 0.1665};
-    dm.numbins = 2700;
+    dm.setNumBins(2700);
 
     // This would be clearer with std::optional from C++17
     std::unique_ptr<DataSet> mc_dataset, data_dataset;
@@ -178,10 +161,8 @@ int main(int argc, char** argv) {
         {&gfrac1, &gfrac2, &afrac},
         {&gauss1, &gauss2, &argus, &gauss3}};
     
-    if(mode==0)
-        resolution.setData(static_cast<UnbinnedDataSet*>(mc_dataset.get()));
-    else
-        resolution.setData(static_cast<BinnedDataSet*>(mc_dataset.get()));
+    resolution.setData(mc_dataset.get());
+  
     FitManager mcpdf{&resolution};
 
     GOOFIT_INFO("Done with collecting MC, starting minimisation");
@@ -193,7 +174,7 @@ int main(int argc, char** argv) {
         mc_hist->Draw("e");
 
         double step = mc_hist->GetXaxis()->GetBinWidth(2);
-        auto tot_hist = plotComponent(&resolution, &dm, mc_dataset->getNumEvents()*step);
+        auto tot_hist = resolution.plotToROOT(&dm, mc_dataset->getNumEvents()*step);
         tot_hist->SetLineColor(kGreen);
         
         tot_hist->Draw("SAME");
@@ -202,18 +183,18 @@ int main(int argc, char** argv) {
     }
     
     // Locking the MC variables
-    mean1.fixed = true;
-    mean2.fixed = true;
-    mean3.fixed = true;
-    sigma1.fixed = true;
-    sigma2.fixed = true;
-    sigma3.fixed = true;
-    pimass.fixed = true;
-    aslope.fixed = true;
-    gfrac1.fixed = true;
-    gfrac2.fixed = true;
-    afrac.fixed = true;
-    apower.fixed = true;
+    mean1.setFixed(true);
+    mean2.setFixed(true);
+    mean3.setFixed(true);
+    sigma1.setFixed(true);
+    sigma2.setFixed(true);
+    sigma3.setFixed(true);
+    pimass.setFixed(true);
+    aslope.setFixed(true);
+    gfrac1.setFixed(true);
+    gfrac2.setFixed(true);
+    afrac.setFixed(true);
+    apower.setFixed(true);
 
     Variable dummyzero("kpi_rd_dummyzero", 0);
     Variable delta("kpi_rd_delta", 0.000002, -0.00005, 0.00005);
@@ -252,10 +233,7 @@ int main(int argc, char** argv) {
                  {&bkg_frac},
                  {&bkg, &signal});
 
-    if(mode==0)
-        total.setData(static_cast<UnbinnedDataSet*>(data_dataset.get()));
-    else
-        total.setData(static_cast<BinnedDataSet*>(data_dataset.get()));
+    total.setData(data_dataset.get());
 
     std::unique_ptr<BinnedChisqFit> chi_control;
     if(2 == mode) {
@@ -277,11 +255,11 @@ int main(int argc, char** argv) {
         
         double scale = data_hist->GetXaxis()->GetBinWidth(2) * data_dataset->getNumEvents();
 
-        auto sig_hist = plotComponent(&signal, &dm, (1 - bkg_frac.value)*scale);
+        auto sig_hist = signal.plotToROOT(&dm, (1 - bkg_frac.getValue())*scale);
         sig_hist->SetLineColor(kBlue);
-        auto back_hist =plotComponent(&bkg, &dm, bkg_frac.value*scale);
+        auto back_hist =bkg.plotToROOT(&dm, bkg_frac.getValue()*scale);
         back_hist->SetLineColor(kRed);
-        auto tot_hist = plotComponent(&total, &dm, scale);
+        auto tot_hist = total.plotToROOT(&dm, scale);
         tot_hist->SetLineColor(kGreen);
 
         tot_hist->Draw("SAME");

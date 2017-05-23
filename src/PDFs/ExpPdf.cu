@@ -1,4 +1,5 @@
 #include "goofit/PDFs/ExpPdf.h"
+#include "goofit/Error.h"
 
 __device__ fptype device_Exp(fptype* evt, fptype* p, unsigned int* indices) {
     fptype x = evt[indices[2 + indices[0]]];
@@ -73,11 +74,11 @@ __host__ ExpPdf::ExpPdf(std::string n, Variable* _x, std::vector<Variable*>& wei
     if(offset)
         pindices.push_back(registerParameter(offset));
 
-    assert(0 < weights.size());
+    if(weights.empty())
+        throw GooFit::GeneralError("Weights are empty!");
 
-    for(std::vector<Variable*>::iterator w = weights.begin(); w != weights.end(); ++w) {
-        pindices.push_back(registerParameter(*w));
-    }
+    for(Variable* w : weights)
+        pindices.push_back(registerParameter(w));
 
     if(offset)
         GET_FUNCTION_ADDR(ptr_to_ExpPolyOffset);

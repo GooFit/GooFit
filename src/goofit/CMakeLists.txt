@@ -26,17 +26,17 @@ goofit_add_library(Faddeeva
 
 goofit_add_library(DataSet
     DataSet.cc
-    ${PROJECT_SOURCE_DIR}/include/goofit/DataSet.h
-    )
-
-goofit_add_library(BinnedDataSet
     BinnedDataSet.cc
+    UnbinnedDataSet.cc
+    ${PROJECT_SOURCE_DIR}/include/goofit/DataSet.h
     ${PROJECT_SOURCE_DIR}/include/goofit/BinnedDataSet.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/UnbinnedDataSet.h
     )
 
-goofit_add_library(UnbinnedDataSet
-    UnbinnedDataSet.cc
-    ${PROJECT_SOURCE_DIR}/include/goofit/UnbinnedDataSet.h
+
+goofit_add_library(Variable
+    Variable.cc
+    ${PROJECT_SOURCE_DIR}/include/goofit/Variable.h
     )
 
 goofit_add_library(FunctorWriter
@@ -45,13 +45,11 @@ goofit_add_library(FunctorWriter
     )
 
 
-
 goofit_add_library(PdfBase
     PdfBase.cc
     ${PROJECT_SOURCE_DIR}/include/goofit/Error.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PdfBase.h
     ${PROJECT_SOURCE_DIR}/include/goofit/FitControl.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/Variable.h
     ${PROJECT_SOURCE_DIR}/include/goofit/Application.h
     ${PROJECT_SOURCE_DIR}/include/goofit/Color.h
     ${PROJECT_SOURCE_DIR}/include/goofit/Log.h
@@ -59,15 +57,18 @@ goofit_add_library(PdfBase
     )
 
 
+# Note: order is important on Linux, derived classes first
 set(lib_list
-    Faddeeva DataSet
-    BinnedDataSet UnbinnedDataSet
+    Faddeeva
     FunctorWriter
-    PdfBase FitManager2 FCN
+    PdfBase
+    FitManager2 FCN
+    DataSet
+    Variable
     )
 
 if(ROOT_FOUND)
-    list(APPEND lib_list FitManager1)
+    list(INSERT lib_list 0 FitManager1)
 endif()
 
 add_library(goofit_base INTERFACE)

@@ -2,9 +2,18 @@
 
 #include "goofit/GlobalCudaDefines.h"
 
+#include "goofit/Variable.h"
 #include <set>
 #include <map>
+#include <vector>
 
+#ifdef ROOT_FOUND
+class TH1D;
+#endif
+
+#include <Minuit2/FunctionMinimum.h>
+
+/* Future use, apperently:
 #include <thrust/iterator/constant_iterator.h>
 #include <thrust/device_vector.h>
 
@@ -13,6 +22,7 @@ typedef thrust::constant_iterator<fptype*> DataIterator;
 typedef thrust::constant_iterator<int> SizeIterator;
 typedef thrust::tuple<IndexIterator, DataIterator, SizeIterator> EventTuple;
 typedef thrust::zip_iterator<EventTuple> EventIterator;
+*/
 
 const int maxParams = 1500;
 extern fptype* dev_event_array;
@@ -23,7 +33,8 @@ extern int totalParams;
 extern int totalConstants;
 
 class FitControl;
-class Variable;
+
+class DataSet;
 class BinnedDataSet;
 class UnbinnedDataSet;
 
@@ -39,13 +50,6 @@ public:
     __host__ virtual fptype normalize() const = 0;
     __host__ void initialiseIndices(std::vector<unsigned int> pindices);
 
-    typedef std::vector<Variable*> obsCont;
-    typedef obsCont::iterator obsIter;
-    typedef obsCont::const_iterator obsConstIter;
-    typedef std::vector<Variable*> parCont;
-    typedef parCont::iterator parIter;
-    typedef parCont::const_iterator parConstIter;
-
     __host__ void addSpecialMask(int m) {
         specialMask |= m;
     }
@@ -56,20 +60,28 @@ public:
     __host__ std::string getName() const {
         return name;
     }
-    __host__ virtual void getObservables(obsCont& ret) const;
-    __host__ virtual void getParameters(parCont& ret) const;
-    __host__ parCont getParameters() const;
+
+    __host__ virtual std::vector<Variable*> getObservables() const;
+    __host__ virtual std::vector<Variable*> getParameters() const;
     __host__ Variable* getParameterByName(std::string n) const;
     __host__ int getSpecialMask() const {
         return specialMask;
     }
-    __host__ void setData(BinnedDataSet* data);
-    __host__ void setData(UnbinnedDataSet* data);
+    
+    __host__ void setData(DataSet* data);
+    
+    /// This is the old style input, should be removed
     __host__ void setData(std::vector<std::map<Variable*, fptype>>& data);
+    
+    
     __host__ virtual void setFitControl(FitControl* const fc, bool takeOwnerShip = true) = 0;
     __host__ virtual bool hasAnalyticIntegral() const {
         return false;
     }
+    
+    /// RooFit style fitting shortcut
+    __host__ ROOT::Minuit2::FunctionMinimum fitTo(DataSet* data);
+    
     __host__ unsigned int getFunctionIndex() const {
         return functionIdx;
     }
@@ -86,19 +98,6 @@ public:
 
     __host__ bool parametersChanged() const;
 
-    __host__ obsIter obsBegin() {
-        return observables.begin();
-    }
-    __host__ obsIter obsEnd() {
-        return observables.end();
-    }
-    __host__ obsConstIter obsCBegin() const {
-        return observables.begin();
-    }
-    __host__ obsConstIter obsCEnd() const {
-        return observables.end();
-    }
-
     __host__ void checkInitStatus(std::vector<std::string>& unInited) const;
     void clearCurrentFit();
     __host__ void SigGenSetIndices() {
@@ -108,10 +107,10 @@ protected:
     fptype numEvents {0};         //< Non-integer to allow weighted events
     unsigned int numEntries {0};  //< Eg number of bins - not always the same as number of events, although it can be.
     fptype* normRanges {0};       //< This is specific to functor instead of variable so that MetricTaker::operator needn't use indices.
-    unsigned int parameters;  //< Stores index, in 'paramIndices', where this functor's information begins.
-    unsigned int cIndex;      //< Stores location of constants.
-    obsCont observables;
-    parCont parameterList;
+    unsigned int parameters {0};  //< Stores index, in 'paramIndices', where this functor's information begins.
+    unsigned int cIndex {1};      //< Stores location of constants.
+    std::vector<Variable*> observables;
+    std::vector<Variable*> parameterList;
     FitControl* fitControl {nullptr};
     std::vector<PdfBase*> components;
     int integrationBins {-1};

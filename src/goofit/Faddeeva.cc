@@ -1,6 +1,6 @@
 #include "goofit/Faddeeva.h"
+#include "goofit/Error.h"
 
-#include <cassert>
 #include <math.h>
 
 #include <thrust/complex.h>
@@ -126,8 +126,8 @@ fptype cpuvoigtian(fptype x, fptype m, fptype w, fptype s) {
     if((0==s) && (0==w))
         return 1;
 
-    assert(s > 0);
-    assert(w > 0);
+    if(s <= 0 || w <= 0)
+        throw GooFit::GeneralError("s {} and w {} must be larger than 0", s, w);
 
     fptype coef = -0.5/(s*s);
     fptype arg = x - m;

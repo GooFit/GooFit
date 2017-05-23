@@ -50,12 +50,12 @@ int main(int argc, char** argv) {
     UnbinnedDataSet data({&xvar, &yvar});
 
     TH2F dataHist("dataHist", "",
-                  xvar.numbins, xvar.lowerlimit, xvar.upperlimit,
-                  yvar.numbins, yvar.lowerlimit, yvar.upperlimit);
+                  xvar.getNumBins(), xvar.getLowerLimit(), xvar.getUpperLimit(),
+                  yvar.getNumBins(), yvar.getLowerLimit(), yvar.getUpperLimit());
     TH1F xvarHist("xvarHist", "",
-                  xvar.numbins, xvar.lowerlimit, xvar.upperlimit);
+                  xvar.getNumBins(), xvar.getLowerLimit(), xvar.getUpperLimit());
     TH1F yvarHist("yvarHist", "",
-                  yvar.numbins, yvar.lowerlimit, yvar.upperlimit);
+                  yvar.getNumBins(), yvar.getLowerLimit(), yvar.getUpperLimit());
 
     dataHist.SetStats(false);
     xvarHist.SetStats(false);
@@ -64,14 +64,14 @@ int main(int argc, char** argv) {
     size_t totalData = 0;
 
     while(totalData < 100000) {
-        xvar.value = dx(gen);
-        yvar.value = dy(gen);
+        xvar.setValue(dx(gen));
+        yvar.setValue(dy(gen));
 
-        if(fabs(xvar.value) < 5 && fabs(yvar.value) < 5) {
+        if(fabs(xvar.getValue()) < 5 && fabs(yvar.getValue()) < 5) {
             data.addEvent();
-            dataHist.Fill(xvar.value, yvar.value);
-            xvarHist.Fill(xvar.value);
-            yvarHist.Fill(yvar.value);
+            dataHist.Fill(xvar.getValue(), yvar.getValue());
+            xvarHist.Fill(xvar.getValue());
+            yvarHist.Fill(yvar.getValue());
             totalData++;
         }
     }
@@ -91,12 +91,12 @@ int main(int argc, char** argv) {
     fitter.fit();
 
     TH2F pdfHist("pdfHist", "",
-                 xvar.numbins, xvar.lowerlimit, xvar.upperlimit,
-                 yvar.numbins, yvar.lowerlimit, yvar.upperlimit);
+                 xvar.getNumBins(), xvar.getLowerLimit(), xvar.getUpperLimit(),
+                 yvar.getNumBins(), yvar.getLowerLimit(), yvar.getUpperLimit());
     TH1F xpdfHist("xpdfHist", "",
-                  xvar.numbins, xvar.lowerlimit, xvar.upperlimit);
+                  xvar.getNumBins(), xvar.getLowerLimit(), xvar.getUpperLimit());
     TH1F ypdfHist("ypdfHist", "",
-                  yvar.numbins, yvar.lowerlimit, yvar.upperlimit);
+                  yvar.getNumBins(), yvar.getLowerLimit(), yvar.getUpperLimit());
 
     pdfHist.SetStats(false);
     xpdfHist.SetStats(false);
@@ -113,26 +113,26 @@ int main(int argc, char** argv) {
 
     for(int i = 0; i < grid.getNumEvents(); ++i) {
         grid.loadEvent(i);
-        pdfHist.Fill(xvar.value, yvar.value, pdfVals[0][i]);
-        xpdfHist.Fill(xvar.value, pdfVals[0][i]);
-        ypdfHist.Fill(yvar.value, pdfVals[0][i]);
+        pdfHist.Fill(xvar.getValue(), yvar.getValue(), pdfVals[0][i]);
+        xpdfHist.Fill(xvar.getValue(), pdfVals[0][i]);
+        ypdfHist.Fill(yvar.getValue(), pdfVals[0][i]);
         totalPdf += pdfVals[0][i];
     }
 
-    for(int i = 0; i < xvar.numbins; ++i) {
+    for(int i = 0; i < xvar.getNumBins(); ++i) {
         double val = xpdfHist.GetBinContent(i+1);
         val /= totalPdf;
         val *= totalData;
         xpdfHist.SetBinContent(i+1, val);
     }
 
-    for(int i = 0; i < yvar.numbins; ++i) {
+    for(int i = 0; i < yvar.getNumBins(); ++i) {
         double val = ypdfHist.GetBinContent(i+1);
         val /= totalPdf;
         val *= totalData;
         ypdfHist.SetBinContent(i+1, val);
 
-        for(int j = 0; j < xvar.numbins; ++j) {
+        for(int j = 0; j < xvar.getNumBins(); ++j) {
             val = pdfHist.GetBinContent(j+1, i+1);
             val /= totalPdf;
             val *= totalData;
@@ -143,8 +143,8 @@ int main(int argc, char** argv) {
     pdfHist.Draw("colz");
     foo.SaveAs("pdf.png");
 
-    for(int i = 0; i < yvar.numbins; ++i) {
-        for(int j = 0; j < xvar.numbins; ++j) {
+    for(int i = 0; i < yvar.getNumBins(); ++i) {
+        for(int j = 0; j < xvar.getNumBins(); ++j) {
             double pval = pdfHist.GetBinContent(j+1, i+1);
             double dval = dataHist.GetBinContent(j+1, i+1);
             pval -= dval;

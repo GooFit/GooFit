@@ -125,16 +125,16 @@ __host__ SmoothHistogramPdf::SmoothHistogramPdf(std::string n, BinnedDataSet* hi
 
     int varIndex = 0;
 
-    for(varConstIt var = hist->varsBegin(); var != hist->varsEnd(); ++var) {
-        registerObservable(*var);
+    for(Variable* var : hist->getVariables()) {
+        registerObservable(var);
         //pindices.push_back((*var)->index);
         pindices.push_back(cIndex + 2*varIndex + 0);
         pindices.push_back(cIndex + 2*varIndex + 1);
-        pindices.push_back((*var)->numbins);
+        pindices.push_back(var->getNumBins());
 
         host_constants[2*varIndex + 0] =
-            (*var)->lowerlimit; // NB, do not put cIndex here, it is accounted for by the offset in MEMCPY_TO_SYMBOL below.
-        host_constants[2*varIndex + 1] = ((*var)->upperlimit - (*var)->lowerlimit) / (*var)->numbins;
+            var->getLowerLimit(); // NB, do not put cIndex here, it is accounted for by the offset in MEMCPY_TO_SYMBOL below.
+        host_constants[2*varIndex + 1] = var->getBinSize();
         varIndex++;
     }
 
@@ -189,7 +189,7 @@ __host__ void SmoothHistogramPdf::copyHistogramToDevice(thrust::host_vector<fpty
     int expectedBins = 1;
 
     for(unsigned int varIndex = 0; varIndex < observables.size(); ++varIndex) {
-        expectedBins *= observables[varIndex]->numbins;
+        expectedBins *= observables[varIndex]->getNumBins();
     }
 
     if(expectedBins != host_histogram.size()) {

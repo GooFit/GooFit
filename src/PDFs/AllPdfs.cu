@@ -1,6 +1,7 @@
 #include "goofit/GlobalCudaDefines.h"
 
 #include "GooPdf.cu"
+#include "PdfBase.cu"
 #include "CrystalBallPdf.cu"
 #include "BifurGaussPdf.cu"
 #include "LineshapesPdf.cu"

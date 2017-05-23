@@ -2,7 +2,6 @@
 #include "goofit/fitting/FitManagerMinuit1.h"
 #include "goofit/PDFs/GooPdf.h"
 #include <cstdio>
-#include <cassert>
 #include <limits>
 #include <typeinfo>
 #include <set>
@@ -12,18 +11,25 @@
 namespace GooFit {
 
 Minuit1::Minuit1(PdfBase* pdfPointer) : TMinuit(max_index(pdfPointer->getParameters())+1), pdfPointer(pdfPointer), vars(pdfPointer->getParameters()) {
-    int counter = 0;
+    size_t counter = 0;
     
     for(Variable* var : vars) {
         var->setFitterIndex(counter);
-        DefineParameter(counter,
-                                var->name.c_str(),
-                                var->value,
-                                var->error,
-                                var->lowerlimit,
-                                var->upperlimit);
         
-        if(var->fixed)
+        Int_t err = DefineParameter(counter,
+                                var->getName().c_str(),
+                                var->getValue(),
+                                var->getError(),
+                                var->getLowerLimit(),
+                                var->getUpperLimit());
+        
+        if(GetNumPars() != counter+1)
+            throw GooFit::GeneralError("Error when implementing param {} (possibly invalid error/lowerlimit/upperlimit values)!", var->getName());
+        
+        if(err != 0)
+            throw GooFit::GeneralError("Was not able to implement param {} (error {})", var->getName(), err);
+        
+        if(var->IsFixed())
             FixParameter(counter);
         
         counter++;
@@ -41,17 +47,21 @@ Int_t Minuit1::Eval(
             double* fp,  
             int iflag) {
     
-    std::vector<double> pars {fp, fp+npar};
+    std::vector<double> pars {fp, fp+GetNumPars()};
+    
+    std::vector<double> gooPars;
+    gooPars.resize(max_index(vars)+1);
     
     for(Variable* var : vars) {
         if(std::isnan(pars.at(var->getFitterIndex())))
-            std::cout << "Variable " << var->name << " " << var->getIndex() << " is NaN\n";
+            GOOFIT_WARN("Variable {} at {} is NaN", var->getName(), var->getIndex());
         
-        var->unchanged_ = var->value == pars.at(var->getFitterIndex());
-        pars.at(var->getIndex()) = var->value; //  + var->blind
+        var->setChanged(var->getValue() != pars.at(var->getFitterIndex()));
+        var->setValue(pars.at(var->getFitterIndex()));
+        gooPars.at(var->getIndex()) = var->getValue() - var->blind;
     }
     
-    pdfPointer->copyParams(pars);
+    pdfPointer->copyParams(gooPars);
     
     GOOFIT_TRACE("Calculating NLL");
     fun = pdfPointer->calculateNLL();
@@ -63,8 +73,10 @@ void FitManagerMinuit1::fit() {
     host_callnumber = 0;
     
     for(Variable* var : minuit_.getVaraibles())
-        var->unchanged_ = false;
+        var->setChanged(true);
 
+    std::cout << GooFit::gray << GooFit::bold;
+    
     if(0 < overrideCallLimit) {
         std::cout << "Calling MIGRAD with call limit " << overrideCallLimit << std::endl;
         double plist[1] = {overrideCallLimit};
@@ -86,8 +98,14 @@ void FitManagerMinuit1::fit() {
     } else
         minuit_.Migrad();
     
-    for(Variable* var : minuit_.getVaraibles())
-        minuit_.GetParameter(var->getFitterIndex(), var->value, var->error);
+    std::cout << GooFit::reset;
+    
+    double tmp_value, tmp_error;
+    for(Variable* var : minuit_.getVaraibles()) {
+        minuit_.GetParameter(var->getFitterIndex(), tmp_value, tmp_error);
+        var->setValue(tmp_value);
+        var->setError(tmp_error);
+    }
 
 }
 

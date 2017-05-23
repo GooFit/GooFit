@@ -3,6 +3,9 @@
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/BinnedDataSet.h"
 
+#include <thrust/device_vector.h>
+#include <thrust/host_vector.h>
+
 class SmoothHistogramPdf : public GooPdf {
 public:
     SmoothHistogramPdf(std::string n, BinnedDataSet* x, Variable* smoothing);

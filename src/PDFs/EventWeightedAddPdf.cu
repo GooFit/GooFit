@@ -1,4 +1,6 @@
 #include "goofit/PDFs/EventWeightedAddPdf.h"
+#include "goofit/Error.h"
+#include "goofit/Log.h"
 
 __device__ fptype device_EventWeightedAddPdfs(fptype* evt, fptype* p, unsigned int* indices) {
     int numParameters = RO_CACHE(indices[0]);
@@ -58,30 +60,34 @@ __device__ device_function_ptr ptr_to_EventWeightedAddPdfsExt = device_EventWeig
 
 EventWeightedAddPdf::EventWeightedAddPdf(std::string n, std::vector<Variable*> weights, std::vector<PdfBase*> comps)
     : GooPdf(0, n) {
-    assert((weights.size() == comps.size()) || (weights.size() + 1 == comps.size()));
+    if(weights.size() != comps.size() && (weights.size()+1) != comps.size())
+        throw GooFit::GeneralError("Size of weights {} (+1) != comps {}", weights.size(), comps.size());
 
     // Indices stores (function index)(function parameter index) doublet for each component.
     // Last component has no weight index unless function is extended. Notice that in this case, unlike
     // AddPdf, weight indices are into the event, not the parameter vector, hence they
     // are not added to the pindices array at this stage, although 'initialise' will reserve space
     // for them.
-    for(std::vector<PdfBase*>::iterator p = comps.begin(); p != comps.end(); ++p) {
-        //std::cout << "EventWeighted component: " << (*p)->getName() << std::endl;
-        components.push_back(*p);
-        assert(components.back());
+    for(PdfBase* p : comps) {
+        GOOFIT_TRACE("EventWeighted component: {}", p->getName());
+        components.push_back(p);
+        if(components.back() == nullptr)
+            throw GooFit::GeneralError("Invalid component");
     }
 
     bool extended = true;
     std::vector<unsigned int> pindices;
 
     for(unsigned int w = 0; w < weights.size(); ++w) {
-        assert(components[w]);
+        if(components[w] == nullptr)
+            throw GooFit::GeneralError("Invalid component");
         pindices.push_back(components[w]->getFunctionIndex());
         pindices.push_back(components[w]->getParameterIndex());
         registerObservable(weights[w]);
     }
 
-    assert(components.back());
+    if(components.back() == nullptr)
+        throw GooFit::GeneralError("Invalid component");
 
     if(weights.size() < components.size()) {
         pindices.push_back(components.back()->getFunctionIndex());
@@ -90,7 +96,7 @@ EventWeightedAddPdf::EventWeightedAddPdf(std::string n, std::vector<Variable*> w
     }
 
     // This must occur after registering weights, or the indices will be off - the device functions assume that the weights are first.
-    getObservables(observables);
+    observables = getObservables();
 
     if(extended)
         GET_FUNCTION_ADDR(ptr_to_EventWeightedAddPdfsExt);
@@ -105,9 +111,8 @@ __host__ fptype EventWeightedAddPdf::normalize() const {
 
     // Here the PDFs have per-event weights, so there is no per-PDF weight
     // to keep track of. All we can do is normalize the components.
-    for(unsigned int i = 0; i < components.size(); ++i) {
-        components[i]->normalize();
-    }
+    for(PdfBase* comp : components)
+        comp->normalize();
 
     host_normalisation[parameters] = 1.0;
 

@@ -27,7 +27,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
-#include <assert.h>
 #include <time.h>
 #include <string>
 #include <sstream>

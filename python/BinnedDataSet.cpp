@@ -11,7 +11,7 @@ void init_BinnedDataSet(py::module &m) {
         .def(py::init<Variable*, std::string>())
         .def(py::init<std::vector<Variable*>&>())
         .def(py::init<std::vector<Variable*>&, std::string>())
-        .def("getBinCenter", &BinnedDataSet::getBinCenter)
+        .def("getBinCenter", (fptype (BinnedDataSet::*) (size_t, size_t) const) &BinnedDataSet::getBinCenter)
         .def("getBinNumber", &BinnedDataSet::getBinNumber)
         .def("getBinVolume", &BinnedDataSet::getBinVolume)
         .def("getBinError", &BinnedDataSet::getBinError)

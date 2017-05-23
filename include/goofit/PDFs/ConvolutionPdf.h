@@ -1,6 +1,7 @@
 #pragma once
 
 #include "goofit/PDFs/GooPdf.h"
+#include <thrust/device_vector.h>
 
 class ConvolutionPdf : public GooPdf {
 public:

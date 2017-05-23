@@ -100,7 +100,10 @@ conversion = [
     (r'\bCONST_PI\b', 'M_PI'),
     (r'normalise', 'normalize'),
     (r'Normalise', 'Normalize'),
-
+    (r'\bPdfBase::parCont\b', 'std::vector<Variable*>')
+    (r'\bPdfBase::obsCont\b', 'std::vector<Variable*>')
+    (r'\bobsCont\b', 'std::vector<Variable*>')
+    (r'\bparCont\b', 'std::vector<Variable*>')
 ]
 
 def fix_text(contents):

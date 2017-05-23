@@ -1,63 +1,59 @@
-#include "gtest/gtest.h"
-
-#include "goofit/FitManager.h"
-#include "goofit/UnbinnedDataSet.h"
-#include "goofit/PDFs/ExpPdf.h"
-#include "goofit/PDFs/ProdPdf.h"
+#include <gtest/gtest.h>
 
 #include "goofit/Variable.h"
+#include "goofit/UnbinnedDataSet.h"
 
-#include <sys/time.h>
-#include <sys/times.h>
-#include <iostream>
-
-#include <random>
-
-using namespace std;
-
-TEST(FullFit, SimpleFit) {
-    
-    // Random number generation
-    std::mt19937 gen(137);
-    std::exponential_distribution<> d(1.5);
+TEST(Simple, UnbinnedAdding) {
 
     // Independent variable.
     Variable xvar{"xvar", 0, 10};
-    
+    Variable yvar{"yvar", 0, 10};
+
     // Data set
-    UnbinnedDataSet data(&xvar);
-    
-    // Generate toy events.
-    for(int i=0; i<1000; ++i) {
-        double val = d(gen);
-        if(val < 10) {
-            xvar.value = val;
-            data.addEvent();
-        }
-    }
-    
-    // Fit parameter
-    Variable alpha{"alpha", -2, 0.1, -10, 10};
-    
-    // GooPdf object
-    ExpPdf exppdf{"exppdf", &xvar, &alpha};
-    exppdf.setData(&data);
-    
-    FitManager fitter{&exppdf};
-    fitter.setVerbosity(0);
-    fitter.fit();
+    UnbinnedDataSet data {{&xvar, &yvar}};
 
-    EXPECT_TRUE(fitter);
-    EXPECT_LT(alpha.error, .1);
-    EXPECT_NEAR(-1.5, alpha.value, alpha.error*3);
- }
-
-TEST(FullFit, DualFit) {
+    xvar.setValue(1);
+    yvar.setValue(2);
+    data.addEvent();
     
-    // Random number generation
-    std::mt19937 gen(137);
-    std::exponential_distribution<> dx(1.5);
-    std::exponential_distribution<> dy(.75);
+    xvar.setValue(3);
+    yvar.setValue(4);
+    data.addEvent();
+    
+    xvar.setValue(5);
+    yvar.setValue(6);
+    data.addEvent();
+    
+    data.loadEvent(0);
+    
+    EXPECT_FLOAT_EQ(1, xvar.getValue());
+    EXPECT_FLOAT_EQ(2, yvar.getValue());
+    
+    data.loadEvent(1);
+    EXPECT_FLOAT_EQ(3, xvar.getValue());
+    EXPECT_FLOAT_EQ(4, yvar.getValue());
+    
+    EXPECT_FLOAT_EQ(1, data.getValue(&xvar, 0));
+    EXPECT_FLOAT_EQ(2, data.getValue(&yvar, 0));
+    EXPECT_FLOAT_EQ(3, data.getValue(&xvar, 1));
+    EXPECT_FLOAT_EQ(4, data.getValue(&yvar, 1));
+    EXPECT_FLOAT_EQ(5, data.getValue(&xvar, 2));
+    EXPECT_FLOAT_EQ(6, data.getValue(&yvar, 2));
+}
+TEST(Simple, SettingAndGetting) {
+    
+    // Independent variable.
+    Variable var{"var", 0, 10};
+    
+    var = 1.0;
+    
+    fptype val = var;
+    
+    EXPECT_EQ(1.0, val);
+    EXPECT_EQ(1.0, var.getValue());
+}
+
+TEST(Simple, FancyAddEvent) {
     
     // Independent variable.
     Variable xvar{"xvar", 0, 10};
@@ -66,83 +62,17 @@ TEST(FullFit, DualFit) {
     // Data set
     UnbinnedDataSet data {{&xvar, &yvar}};
     
-    // Generate toy events.
-    for(int i=0; i<20000; ++i) {
-        double xval = dx(gen);
-        double yval = dy(gen);
-        if(xval < 10 && yval < 10) {
-            xvar.value = xval;
-            yvar.value = yval;
-            data.addEvent();
-        }
-    }
+    data.addEvent(1,2);
+    data.addEvent(3,4);
     
-    // Fit parameter
-    Variable xalpha{"xalpha", -2, 0.1, -10, 10};
-    // Fit parameter
-    Variable yalpha{"yalpha", -2, 0.1, -10, 10};
+    EXPECT_EQ(2, data.getNumEvents());
     
-    // GooPdf object
-    ExpPdf xpdf{"xpdf", &xvar, &xalpha};
-    ExpPdf ypdf{"ypdf", &yvar, &yalpha};
-    ProdPdf totalpdf {"totalpdf", {&xpdf, &ypdf}};
-    totalpdf.setData(&data);
+    EXPECT_FLOAT_EQ(1, data.getValue(&xvar, 0));
+    EXPECT_FLOAT_EQ(2, data.getValue(&yvar, 0));
+    EXPECT_FLOAT_EQ(3, data.getValue(&xvar, 1));
+    EXPECT_FLOAT_EQ(4, data.getValue(&yvar, 1));
     
-    FitManager fitter{&totalpdf};
-    fitter.setVerbosity(0);
-    fitter.fit();
-    
-    EXPECT_TRUE(fitter);
-    EXPECT_LT(xalpha.error, .1);
-    EXPECT_LT(yalpha.error, .1);
-    EXPECT_NEAR(-1.5, xalpha.value, xalpha.error*3);
-    EXPECT_NEAR(-.75, yalpha.value, yalpha.error*3);
-}
-
-TEST(FullFit, DifferentFitterVariable) {
-    
-    // Random number generation
-    std::mt19937 gen(137);
-    std::exponential_distribution<> dx(1.5);
-    std::exponential_distribution<> dy(.75);
-    
-    // Independent variable.
-    Variable xvar{"xvar", 0, 10};
-    Variable yvar{"yvar", 0, 10};
-    
-    // Data set
-    UnbinnedDataSet data {{&xvar, &yvar}, "Some name"};
-    
-    // Generate toy events.
-    for(int i=0; i<20000; ++i) {
-        double xval = dx(gen);
-        double yval = dy(gen);
-        if(xval < 10 && yval < 10) {
-            xvar.value = xval;
-            yvar.value = yval;
-            data.addEvent();
-        }
-    }
-    
-    // Fit parameter
-    Variable xalpha{"xalpha", -2, 0.1, -10, 10};
-    // Fit parameter
-    Variable yalpha{"yalpha", -2, 0.1, -10, 10};
-    
-    // GooPdf object
-    ExpPdf ypdf{"ypdf", &yvar, &yalpha};
-    ExpPdf xpdf{"xpdf", &xvar, &xalpha};
-    ProdPdf totalpdf {"totalpdf", {&xpdf, &ypdf}};
-    totalpdf.setData(&data);
-    
-    FitManager fitter{&totalpdf};
-    fitter.setVerbosity(0);
-    fitter.fit();
-    
-    EXPECT_TRUE(fitter);
-    EXPECT_LT(xalpha.error, .1);
-    EXPECT_LT(yalpha.error, .1);
-    EXPECT_NEAR(-1.5, xalpha.value, xalpha.error*3);
-    EXPECT_NEAR(-.75, yalpha.value, yalpha.error*3);
+    EXPECT_THROW(data.addEvent(1), GooFit::GeneralError);
+    EXPECT_THROW(data.addEvent(1,2,3), GooFit::GeneralError);
 }
 

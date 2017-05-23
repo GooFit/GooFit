@@ -50,11 +50,11 @@ void generateEvents(vector<int>& rsEvtVec, vector<int>& wsEvtVec,
 
     static TRandom donram(24);
     double totalRSintegral = integralExpCon(0, 100);
-    double step = (decayTime->upperlimit - decayTime->lowerlimit) / decayTime->numbins;
+    double step = (decayTime->getUpperLimit() - decayTime->getLowerLimit()) / decayTime->getNumBins();
 
-    for(int i = 0; i < decayTime->numbins; ++i) {
+    for(int i = 0; i < decayTime->getNumBins(); ++i) {
         double binStart = i*step;
-        binStart += decayTime->lowerlimit;
+        binStart += decayTime->getLowerLimit();
         double binFinal = binStart + step;
 
         double rsIntegral = integralExpCon(binStart, binFinal);
@@ -77,7 +77,7 @@ void generateEvents(vector<int>& rsEvtVec, vector<int>& wsEvtVec,
 }
 
 int fitRatio(vector<int>& rsEvts, vector<int>& wsEvts, std::string plotName = "") {
-    TH1D* ratioHist = new TH1D("ratioHist", "", decayTime->numbins, decayTime->lowerlimit, decayTime->upperlimit);
+    TH1D* ratioHist = new TH1D("ratioHist", "", decayTime->getNumBins(), decayTime->getLowerLimit(), decayTime->getUpperLimit());
 
     BinnedDataSet* ratioData = new BinnedDataSet(decayTime);
 
@@ -104,14 +104,14 @@ int fitRatio(vector<int>& rsEvts, vector<int>& wsEvts, std::string plotName = ""
 
     if(0 == constaCoef) {
         constaCoef = new Variable("constaCoef", 0.03, 0.01, -1, 1);
-        constaCoef->value = 0.03;
-        constaCoef->error = 0.01;
+        constaCoef->setValue(0.03);
+        constaCoef->setError(0.01);
         linearCoef = new Variable("linearCoef", 0, 0.01, -1, 1);
-        linearCoef->value = 0.00;
-        linearCoef->error = 0.01;
+        linearCoef->setValue(0.00);
+        linearCoef->setError(0.01);
         secondCoef = new Variable("secondCoef", 0, 0.01, -1, 1);
-        secondCoef->value = 0.00;
-        secondCoef->error = 0.01;
+        secondCoef->setValue(0.00);
+        secondCoef->setError(0.01);
     }
 
     vector<Variable*> weights;
@@ -128,9 +128,8 @@ int fitRatio(vector<int>& rsEvts, vector<int>& wsEvts, std::string plotName = ""
     datapdf.fit();
     gettimeofday(&stopTime, NULL);
 
-    vector<fptype> values;
-    poly->evaluateAtPoints(decayTime, values);
-    TH1D pdfHist("pdfHist", "", decayTime->numbins, decayTime->lowerlimit, decayTime->upperlimit);
+    vector<fptype> values = poly->evaluateAtPoints(decayTime);
+    TH1D pdfHist("pdfHist", "", decayTime->getNumBins(), decayTime->getLowerLimit(), decayTime->getUpperLimit());
 
     for(int i = 0; i < values.size(); ++i) {
         pdfHist.SetBinContent(i+1, values[i]);
@@ -142,13 +141,13 @@ int fitRatio(vector<int>& rsEvts, vector<int>& wsEvts, std::string plotName = ""
     ratioHist->Draw("p");
 
     char strbuffer[1000];
-    sprintf(strbuffer, "Constant [10^{-2}] : %.3f #pm %.3f", 1e2*constaCoef->value, constaCoef->error*1e2);
+    sprintf(strbuffer, "Constant [10^{-2}] : %.3f #pm %.3f", 1e2*constaCoef->getValue(), constaCoef->getError()*1e2);
     TLatex res1(0.14, 0.83, strbuffer);
     res1.SetNDC(true);
-    sprintf(strbuffer, "Linear [10^{-4}]   : %.3f #pm %.3f", 1e4*linearCoef->value, linearCoef->error*1e4);
+    sprintf(strbuffer, "Linear [10^{-4}]   : %.3f #pm %.3f", 1e4*linearCoef->getValue(), linearCoef->getError()*1e4);
     TLatex res2(0.14, 0.73, strbuffer);
     res2.SetNDC(true);
-    sprintf(strbuffer, "Quadratic [10^{-6}]: %.3f #pm %.3f", 1e6*secondCoef->value, secondCoef->error*1e6);
+    sprintf(strbuffer, "Quadratic [10^{-6}]: %.3f #pm %.3f", 1e6*secondCoef->getValue(), secondCoef->getError()*1e6);
     TLatex res3(0.14, 0.63, strbuffer);
     res3.SetNDC(true);
 
@@ -197,10 +196,10 @@ void cpvFitFcn(int& npar, double* gin, double& fun, double* fp, int iflag) {
     double squCoef = fp[2];
 
     double chisq = 0;
-    double step = (decayTime->upperlimit - decayTime->lowerlimit) / decayTime->numbins;
+    double step = (decayTime->getUpperLimit() - decayTime->getLowerLimit()) / decayTime->getNumBins();
 
     for(unsigned int i = 0; i < ratios.size(); ++i) {
-        double currDTime = decayTime->lowerlimit + (i+0.5)*step;
+        double currDTime = decayTime->getLowerLimit() + (i+0.5)*step;
         double pdfval = conCoef + linCoef*currDTime + squCoef*currDTime*currDTime;
         chisq += pow((pdfval - ratios[i]) / errors[i], 2);
     }
@@ -209,7 +208,7 @@ void cpvFitFcn(int& npar, double* gin, double& fun, double* fp, int iflag) {
 }
 
 void fitRatioCPU(vector<int>& rsEvts, vector<int>& wsEvts) {
-    TH1D* ratioHist = new TH1D("ratioHist", "", decayTime->numbins, decayTime->lowerlimit, decayTime->upperlimit);
+    TH1D* ratioHist = new TH1D("ratioHist", "", decayTime->getNumBins(), decayTime->getLowerLimit(), decayTime->getUpperLimit());
 
     ratios.resize(wsEvts.size());
     errors.resize(wsEvts.size());
@@ -252,7 +251,7 @@ int main(int argc, char** argv) {
     GooFit::Application app("Chi-square example", argc, argv);
 
     int numbins = 100;
-    app.add_option("-n,--numbins,numbins", numbins, "Number of bins", true);
+    app.add_option("-n,--numbins", numbins, "Number of bins", true);
 
     try {
         app.run();
@@ -262,7 +261,7 @@ int main(int argc, char** argv) {
 
     // Time is in units of lifetime
     decayTime = new Variable("decayTime", 100, 0, 10);
-    decayTime->numbins = numbins;
+    decayTime->setNumBins(numbins);
     double rSubD = 0.03;
     double rBarD = 0.03;
     double delta = 0;
@@ -274,10 +273,10 @@ int main(int argc, char** argv) {
 
     int eventsToGenerate = 10000000;
 
-    vector<int> dZeroEvtsWS(decayTime->numbins);
-    vector<int> dZeroEvtsRS(decayTime->numbins);
-    vector<int> d0barEvtsWS(decayTime->numbins);
-    vector<int> d0barEvtsRS(decayTime->numbins);
+    vector<int> dZeroEvtsWS(decayTime->getNumBins());
+    vector<int> dZeroEvtsRS(decayTime->getNumBins());
+    vector<int> d0barEvtsWS(decayTime->getNumBins());
+    vector<int> d0barEvtsRS(decayTime->getNumBins());
 
     double dZeroLinearCoef = magPQ*sqrt(rSubD)*(y_mix*cos(delta+wpPhi) - x_mix*sin(delta+wpPhi));
     double d0barLinearCoef = magQP*sqrt(rBarD)*(y_mix*cos(delta-wpPhi) - x_mix*sin(delta-wpPhi));

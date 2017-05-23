@@ -1,4 +1,5 @@
 #include "goofit/PDFs/DalitzPlotPdf.h"
+#include "goofit/Error.h"
 
 #include <thrust/complex.h>
 #include <thrust/transform_reduce.h>
@@ -188,7 +189,8 @@ __host__ DalitzPlotPdf::DalitzPlotPdf(std::string n,
 __host__ void DalitzPlotPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) {
     // Default 3 is m12, m13, evtNum
     totalEventSize = evtSize;
-    assert(totalEventSize >= 3);
+    if(totalEventSize < 3)
+        throw GooFit::GeneralError("totalEventSize {} must be 3 or more", totalEventSize);
 
     //if (cachedWaves) delete cachedWaves;
     if(cachedWaves[0]) {
@@ -220,18 +222,18 @@ __host__ fptype DalitzPlotPdf::normalize() const {
     // don't get zeroes through multiplying by the normFactor.
     MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
-    int totalBins = _m12->numbins * _m13->numbins;
+    int totalBins = _m12->getNumBins() * _m13->getNumBins();
 
     if(!dalitzNormRange) {
         gooMalloc((void**) &dalitzNormRange, 6*sizeof(fptype));
 
         fptype* host_norms = new fptype[6];
-        host_norms[0] = _m12->lowerlimit;
-        host_norms[1] = _m12->upperlimit;
-        host_norms[2] = _m12->numbins;
-        host_norms[3] = _m13->lowerlimit;
-        host_norms[4] = _m13->upperlimit;
-        host_norms[5] = _m13->numbins;
+        host_norms[0] = _m12->getLowerLimit();
+        host_norms[1] = _m12->getUpperLimit();
+        host_norms[2] = _m12->getNumBins();
+        host_norms[3] = _m13->getLowerLimit();
+        host_norms[4] = _m13->getUpperLimit();
+        host_norms[5] = _m13->getNumBins();
         MEMCPY(dalitzNormRange, host_norms, 6*sizeof(fptype), cudaMemcpyHostToDevice);
         delete[] host_norms;
     }
@@ -310,8 +312,8 @@ __host__ fptype DalitzPlotPdf::normalize() const {
 
     fptype ret = sumIntegral.real(); // That complex number is a square, so it's fully real
     double binSizeFactor = 1;
-    binSizeFactor *= ((_m12->upperlimit - _m12->lowerlimit) / _m12->numbins);
-    binSizeFactor *= ((_m13->upperlimit - _m13->lowerlimit) / _m13->numbins);
+    binSizeFactor *= _m12->getBinSize();
+    binSizeFactor *= _m13->getBinSize();
     ret *= binSizeFactor;
 
     host_normalisation[parameters] = 1.0/ret;
@@ -326,7 +328,7 @@ SpecialResonanceIntegrator::SpecialResonanceIntegrator(int pIdx, unsigned int ri
 {}
 
 __device__ thrust::complex<fptype> SpecialResonanceIntegrator::operator()(thrust::tuple<int, fptype*> t) const {
-    // Bin index, base address [lower, upper, numbins]
+    // Bin index, base address [lower, upper,getNumBins]
     // Notice that this is basically MetricTaker::operator (binned) with the special-case knowledge
     // that event size is two, and that the function to call is dev_DalitzPlot_calcIntegrals.
 

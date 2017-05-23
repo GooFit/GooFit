@@ -1,4 +1,5 @@
 #include "goofit/PDFs/TddpPdf.h"
+#include "goofit/Error.h"
 
 #include <thrust/transform_reduce.h>
 
@@ -310,7 +311,8 @@ __host__ TddpPdf::TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Va
     pindices.push_back(registerParameter(decayInfo->_tau));
     pindices.push_back(registerParameter(decayInfo->_xmixing));
     pindices.push_back(registerParameter(decayInfo->_ymixing));
-    assert(resolution->getDeviceFunction() >= 0);
+    if(resolution->getDeviceFunction() < 0)
+        throw GooFit::GeneralError("The resolution device function index {} must be more than 0", resolution->getDeviceFunction());
     pindices.push_back((unsigned int) resolution->getDeviceFunction());
     pindices.push_back(decayInfo->resonances.size());
 
@@ -382,8 +384,8 @@ __host__ TddpPdf::TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Va
 
     fptype decayConstants[8];
     decayConstants[5] = 0;
-    decayConstants[6] = md0->lowerlimit;
-    decayConstants[7] = (md0->upperlimit - md0->lowerlimit) / r.size();
+    decayConstants[6] = md0->getLowerLimit();
+    decayConstants[7] = (md0->getUpperLimit() - md0->getLowerLimit()) / r.size();
 
     if(mistag) {
         registerObservable(mistag);
@@ -427,7 +429,8 @@ __host__ TddpPdf::TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Va
     pindices.push_back(r.size() - 1); // Highest index, not number of functions.
 
     for(int i = 0; i < r.size(); ++i) {
-        assert(r[i]->getDeviceFunction() >= 0);
+        if(r[i]->getDeviceFunction() < 0)
+            throw GooFit::GeneralError("Device function index {} must be more than 0", r[i]->getDeviceFunction());
         pindices.push_back((unsigned int) r[i]->getDeviceFunction());
         r[i]->createParameters(pindices, this);
     }
@@ -462,7 +465,8 @@ __host__ TddpPdf::TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Va
 __host__ void TddpPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) {
     // Default 5 is m12, m13, time, sigma_t, evtNum
     totalEventSize = evtSize;
-    assert(totalEventSize >= 5);
+    if(totalEventSize < 5)
+        throw GooFit::GeneralError("totalEventSize {} must be 5 or more", totalEventSize);
 
     if(cachedWaves[0]) {
         for(int i = 0; i < 16; i++)
@@ -512,18 +516,18 @@ __host__ fptype TddpPdf::normalize() const {
     MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice);
     //std::cout << "TDDP normalisation " << getName() << std::endl;
 
-    int totalBins = _m12->numbins * _m13->numbins;
+    int totalBins = _m12->getNumBins() * _m13->getNumBins();
 
     if(!dalitzNormRange) {
         gooMalloc((void**) &dalitzNormRange, 6*sizeof(fptype));
 
         fptype* host_norms = new fptype[6];
-        host_norms[0] = _m12->lowerlimit;
-        host_norms[1] = _m12->upperlimit;
-        host_norms[2] = _m12->numbins;
-        host_norms[3] = _m13->lowerlimit;
-        host_norms[4] = _m13->upperlimit;
-        host_norms[5] = _m13->numbins;
+        host_norms[0] = _m12->getLowerLimit();
+        host_norms[1] = _m12->getUpperLimit();
+        host_norms[2] = _m12->getNumBins();
+        host_norms[3] = _m13->getLowerLimit();
+        host_norms[4] = _m13->getUpperLimit();
+        host_norms[5] = _m13->getNumBins();
         MEMCPY(dalitzNormRange, host_norms, 6*sizeof(fptype), cudaMemcpyHostToDevice);
         delete[] host_norms;
     }
@@ -655,8 +659,8 @@ __host__ fptype TddpPdf::normalize() const {
                                            xmixing, ymixing);
 
     double binSizeFactor = 1;
-    binSizeFactor *= ((_m12->upperlimit - _m12->lowerlimit) / _m12->numbins);
-    binSizeFactor *= ((_m13->upperlimit - _m13->lowerlimit) / _m13->numbins);
+    binSizeFactor *= ((_m12->getUpperLimit() - _m12->getLowerLimit()) / _m12->getNumBins());
+    binSizeFactor *= ((_m13->getUpperLimit() - _m13->getLowerLimit()) / _m13->getNumBins());
     ret *= binSizeFactor;
 
     host_normalisation[parameters] = 1.0/ret;
@@ -672,7 +676,7 @@ SpecialDalitzIntegrator::SpecialDalitzIntegrator(int pIdx, unsigned int ri, unsi
 {}
 
 __device__ ThreeComplex SpecialDalitzIntegrator::operator()(thrust::tuple<int, fptype*> t) const {
-    // Bin index, base address [lower, upper, numbins]
+    // Bin index, base address [lower, upper,getNumBins]
     // Notice that this is basically MetricTaker::operator (binned) with the special-case knowledge
     // that event size is two, and that the function to call is dev_Tddp_calcIntegrals.
 

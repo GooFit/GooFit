@@ -135,7 +135,7 @@ int main (int argc, char** argv) {
   // upper and lower bounds, and a number of bins
   // to use in numerical integration. 
   Variable xvar {"xvar", -5, 5}; 
-  xvar.numbins = 1000; 
+  xvar.setNumBins(1000); 
 
   // A data set to store our observations in.
   UnbinnedDataSet data {xvar};
@@ -202,8 +202,8 @@ In this case, to fill the data set, set the `Variable` values and call
 the `addEvent` method without arguments:
 
 ```{.cpp}
-xvar.value = 3;
-yvar.value = -2;
+xvar.setValue(3);
+yvar.setValue(-2);
 data.addEvent();
 ```
 
@@ -642,7 +642,7 @@ The `normalize` method, by default, simply evaluates the PDF at a grid
 of points, returning the sum of all the values multiplied by the grid
 fineness - a primitive algorithm for numerical integration, but one
 which takes advantage of the GPU’s massive parallelisation. The fineness
-of the grid usually depends on the `numbins` member of the observables;
+of the grid usually depends on the getNumBins` member of the observables;
 in the case of the example Gaussian fit in listing [Gauss fit](@ref listinggaussfit),
 the PDF will be evaluated at 1000 points, evenly spaced between -5 and 5.
 However, this behaviour can be overridden by calling the

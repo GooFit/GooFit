@@ -1,5 +1,9 @@
 #include "goofit/PDFs/ConvolutionPdf.h"
 #include "goofit/Variable.h"
+#include "goofit/Error.h"
+
+#include <thrust/iterator/constant_iterator.h>
+#include <thrust/iterator/counting_iterator.h>
 
 int totalConvolutions = 0;
 
@@ -192,7 +196,8 @@ ConvolutionPdf::ConvolutionPdf(std::string n,
         }
     }
 
-    assert(numOthers <= CONVOLUTION_CACHE_SIZE);
+    if(numOthers > CONVOLUTION_CACHE_SIZE)
+        throw GooFit::GeneralError("numOthers {} must be not be more than the cache size {}", numOthers, CONVOLUTION_CACHE_SIZE);
 
     GET_FUNCTION_ADDR(ptr_to_ConvolveSharedPdfs);
     initialise(paramIndices);
@@ -228,15 +233,15 @@ __host__ void ConvolutionPdf::setIntegrationConstants(fptype lo, fptype hi, fpty
     Variable* dependent = *(observables.begin());
 
     host_iConsts[2] = numbins;
-    host_iConsts[3] = (host_iConsts[0] - dependent->upperlimit);
-    host_iConsts[4] = (host_iConsts[1] - dependent->lowerlimit);
+    host_iConsts[3] = (host_iConsts[0] - dependent->getUpperLimit());
+    host_iConsts[4] = (host_iConsts[1] - dependent->getLowerLimit());
 
     numbins = (int) floor((host_iConsts[4] - host_iConsts[3]) / step + 0.5);
     host_iConsts[5] = numbins;
     MEMCPY(dev_iConsts, host_iConsts, 6*sizeof(fptype), cudaMemcpyHostToDevice);
     resolWorkSpace = new thrust::device_vector<fptype>(numbins);
 
-    int offset = dependent->upperlimit / step;
+    int offset = dependent->getUpperLimit() / step;
     MEMCPY_TO_SYMBOL(modelOffset, &offset, sizeof(int), workSpaceIndex*sizeof(int), cudaMemcpyHostToDevice);
 
     fptype* dev_address[1];

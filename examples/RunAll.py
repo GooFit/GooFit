@@ -38,7 +38,7 @@ def test(filename, *args):
     return dict(name=filename+' '+' '.join(map(str,args)), code=code, time=t.interval, stdout=stdout, stderr=stderr)
 
 
-def make_results():
+def make_results(profile=False):
     results = [
         test('DP4'),
         test('SigGen'),
@@ -47,28 +47,30 @@ def make_results():
         test('convolution'),
         test('addition'),
         test('exponential'),
-        test('TDDP4'),
+        test('TDDP4', '-t', 100 if profile else 5),
         test('product'),
         test('simpleFit'),
         test('chisquare'),
             ]
 
-    if (LOCAL_DIR / 'zachFit/dataFiles/zach/dstwidth_kpi_data.dat').exists():
+    if (LOCAL_DIR / 'zachFit/dataFiles/dstwidth_kpi_data.dat').exists():
         results.append(test('zachFit', 0))
     if (LOCAL_DIR / 'pipipi0DPFit/dataFiles/toyPipipi0/dalitz_toyMC_000.txt').exists():
         results.append(test('pipipi0DPFit', 'toy', 0, 1))
+        results.append(test('pipipi0DPFit', 'canonical', 'dataFiles/cocktail_pp_0.txt', '--blindSeed=0'))
     return results
 
 
 MIN_TIME = re.compile(r'The minimization took: (.*?)$', re.MULTILINE)
 
 class RunAll(cli.Application):
+    profile = cli.Flag(["-p", "--profile"], help = "Profile (longer) output")
 
     @cli.positional(int)
     def main(self, threads=None):
         env = local.env(OMP_NUM_THREADS=threads) if threads else local.env()
         with env:
-            results = make_results()
+            results = make_results(self.profile)
         failed = [result for result in results if result['code'] != 0]
         successes = [result for result in results if result['code'] == 0]
 

@@ -20,6 +20,9 @@ TODO:
 #include <mcbooster/Evaluate.h>
 #include <mcbooster/EvaluateArray.h>
 #include <mcbooster/GFunctional.h>
+
+#include "goofit/Log.h"
+#include "goofit/Error.h"
 #include "goofit/PDFs/Tddp4Pdf.h"
 #include "goofit/PDFs/EvalVar.h"
 #include "goofit/PDFs/DP4Pdf.h"
@@ -93,7 +96,8 @@ __device__ fptype device_TDDP4(fptype* evt, fptype* p, unsigned int* indices) {
     //printf("DalitzPlot evt %i zero: %i %i %f (%f, %f).\n", evtNum, numResonances, effFunctionIdx, eff, totalAmp.real, totalAmp.imag);
 
     int evtNum = (int) floor(0.5 + evt[indices[7 + indices[0]]]);
-    // printf("%i\n",evtNum );
+    //GOOFIT_TRACE("TDDP4: Number of events: {}", evtNum);
+    
     unsigned int cacheToUse    = indices[2];
     unsigned int numAmps       = indices[5];
 
@@ -216,7 +220,8 @@ __host__ TDDP4::TDDP4(std::string n,
     pindices.push_back(registerParameter(decayInfo->_xmixing));
     pindices.push_back(registerParameter(decayInfo->_ymixing));
     pindices.push_back(registerParameter(decayInfo->_SqWStoRSrate));
-    assert(resolution->getDeviceFunction() >= 0);
+    if(resolution->getDeviceFunction() < 0)
+        throw GooFit::GeneralError("The resolution device function index {} must be more than 0", resolution->getDeviceFunction());
     pindices.push_back((unsigned int) resolution->getDeviceFunction());
 
     // This is the start of reading in the amplitudes and adding the lineshapes and Spinfactors to this PDF
@@ -481,7 +486,8 @@ __host__ TDDP4::TDDP4(std::string n,
 __host__ void TDDP4::setDataSize(unsigned int dataSize, unsigned int evtSize) {
     // Default 3 is m12, m13, evtNum for DP 2dim, 4-body decay has 5 independent vars plus evtNum = 6
     totalEventSize = evtSize;
-    assert(totalEventSize >= 3);
+    if(totalEventSize < 3)
+        throw GooFit::GeneralError("totalEventSize {} must be 3 or more", totalEventSize);
 
     if(cachedResSF)
         delete cachedResSF;

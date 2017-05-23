@@ -52,14 +52,14 @@ void fitAndPlot(GooPdf* total, UnbinnedDataSet* data, TH1F& dataHist, Variable* 
     if(!fitter)
         std::exit(fitter);
 
-    TH1F pdfHist("pdfHist", "", xvar->numbins, xvar->lowerlimit, xvar->upperlimit);
+    TH1F pdfHist("pdfHist", "", xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
     pdfHist.SetStats(false);
 
     UnbinnedDataSet grid(xvar);
-    double step = (xvar->upperlimit - xvar->lowerlimit)/xvar->numbins;
+    double step = (xvar->getUpperLimit() - xvar->getLowerLimit())/xvar->getNumBins();
 
-    for(int i = 0; i < xvar->numbins; ++i) {
-        xvar->value = xvar->lowerlimit + (i + 0.5) * step;
+    for(int i = 0; i < xvar->getNumBins(); ++i) {
+        xvar->setValue(xvar->getLowerLimit() + (i + 0.5) * step);
         grid.addEvent();
     }
 
@@ -70,11 +70,11 @@ void fitAndPlot(GooPdf* total, UnbinnedDataSet* data, TH1F& dataHist, Variable* 
 
     for(int i = 0; i < grid.getNumEvents(); ++i) {
         grid.loadEvent(i);
-        pdfHist.Fill(xvar->value, pdfVals[0][i]);
+        pdfHist.Fill(xvar->getValue(), pdfVals[0][i]);
         totalPdf += pdfVals[0][i];
     }
 
-    for(int i = 0; i < xvar->numbins; ++i) {
+    for(int i = 0; i < xvar->getNumBins(); ++i) {
         double val = pdfHist.GetBinContent(i+1);
         val /= totalPdf;
         val *= data->getNumEvents();
@@ -94,6 +94,9 @@ void fitAndPlot(GooPdf* total, UnbinnedDataSet* data, TH1F& dataHist, Variable* 
 int main(int argc, char** argv) {
     GooFit::Application app("Simple fit example", argc, argv);
 
+    size_t numevents = 100000;
+    app.add_option("-n,--num", numevents, "Number of events", true);
+    
     try {
         app.run();
     } catch (const GooFit::ParseError &e) {
@@ -115,7 +118,7 @@ int main(int argc, char** argv) {
 
     // Independent variable.
     Variable* xvar = new Variable("xvar", -100, 100);
-    xvar->numbins = 1000; // For such a large range, want more bins for better accuracy in normalisation.
+    xvar->setNumBins(1000); // For such a large range, want more bins for better accuracy in normalisation.
 
     // Data sets for the three fits.
     UnbinnedDataSet landdata(xvar);
@@ -123,9 +126,9 @@ int main(int argc, char** argv) {
     UnbinnedDataSet novodata(xvar);
 
     // Histograms for showing the fit.
-    TH1F landHist("landHist", "", xvar->numbins, xvar->lowerlimit, xvar->upperlimit);
-    TH1F bifgHist("bifgHist", "", xvar->numbins, xvar->lowerlimit, xvar->upperlimit);
-    TH1F novoHist("novoHist", "", xvar->numbins, xvar->lowerlimit, xvar->upperlimit);
+    TH1F landHist("landHist", "", xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
+    TH1F bifgHist("bifgHist", "", xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
+    TH1F novoHist("novoHist", "", xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
     landHist.SetStats(false);
     bifgHist.SetStats(false);
     novoHist.SetStats(false);
@@ -134,7 +137,7 @@ int main(int argc, char** argv) {
 
     double maxNovo = 0;
 
-    for(double x = xvar->lowerlimit; x < xvar->upperlimit; x += 0.01) {
+    for(double x = xvar->getLowerLimit(); x < xvar->getUpperLimit(); x += 0.01) {
         double curr = novosib(x, 0.3, 0.5, 1.0);
 
         if(curr < maxNovo)
@@ -151,44 +154,48 @@ int main(int argc, char** argv) {
     double bifpoint = -10;
 
     // Generating three sets of toy MC.
-    for(int i = 0; i < 100000; ++i) {
+    while(landdata.getNumEvents() < numevents) {
         // Landau
-        xvar->value = xvar->upperlimit + 1;
-
-        while((xvar->value > xvar->upperlimit) || (xvar->value < xvar->lowerlimit)) {
-            xvar->value = donram.Landau(20, 1);
-        }
-
-        landdata.addEvent();
-        landHist.Fill(xvar->value);
-
+        try {
+            xvar->setValue(donram.Landau(20, 1));
+            landdata.addEvent();
+            landHist.Fill(xvar->getValue());
+        } catch (const GooFit::OutOfRange &) {}
+    }
+    
+    while (bifgdata.getNumEvents() < numevents) {
         // Bifurcated Gaussian
+        double val;
         if(donram.Uniform() < (leftIntegral / totalIntegral)) {
-            xvar->value = bifpoint - 1;
+            do {
+                val = donram.Gaus(bifpoint, rightSigma);
+            } while(val < bifpoint || val > xvar->getUpperLimit());
+            xvar->setValue(val);
 
-            while((xvar->value < bifpoint) || (xvar->value > xvar->upperlimit))
-                xvar->value = donram.Gaus(bifpoint, rightSigma);
         } else {
-            xvar->value = bifpoint + 1;
-
-            while((xvar->value > bifpoint) || (xvar->value < xvar->lowerlimit))
-                xvar->value = donram.Gaus(bifpoint, leftSigma);
+            do {
+                val = donram.Gaus(bifpoint, leftSigma);
+            } while(val > bifpoint || val < xvar->getLowerLimit());
+            xvar->setValue(val);
         }
 
         bifgdata.addEvent();
-        bifgHist.Fill(xvar->value);
+        bifgHist.Fill(xvar->getValue());
+    }
+    
+    while (novodata.getNumEvents() < numevents) {
 
         // And Novosibirsk.
         while(true) {
-            xvar->value = donram.Uniform(xvar->lowerlimit, xvar->upperlimit);
+            xvar->setValue(donram.Uniform(xvar->getLowerLimit(), xvar->getUpperLimit()));
             double y = donram.Uniform(0, maxNovo);
 
-            if(y < novosib(xvar->value, 0.3, 0.5, 1.0))
+            if(y < novosib(xvar->getValue(), 0.3, 0.5, 1.0))
                 break;
         }
 
         novodata.addEvent();
-        novoHist.Fill(xvar->value);
+        novoHist.Fill(xvar->getValue());
     }
 
     foo = new TCanvas();

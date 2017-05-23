@@ -8,10 +8,10 @@ if(NOT DEFINED CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
     set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE INTERNAL "No dev warnings")
 endif()
 
-### Require out-of-source builds except in main directory
+### Require out-of-source builds
 file(TO_CMAKE_PATH "${PROJECT_BINARY_DIR}/CMakeLists.txt" LOC_PATH)
-if(NOT PROJECT_BINARY_DIR STREQUAL PROJECT_SOURCE_DIR AND EXISTS ${LOC_PATH})
-    message(FATAL_ERROR "You cannot build in a sub-source directory (or any directory with a CMakeLists.txt file). Please make a build subdirectory.")
+if(EXISTS ${LOC_PATH})
+    message(FATAL_ERROR "You cannot build in a source directory (or any directory with a CMakeLists.txt file). Please make a build subdirectory.")
 endif()
 
 # Update submodules as needed
@@ -24,6 +24,13 @@ if(GOOFIT_SUBMODULE)
     if(NOT GIT_SUBMOD_RESULT EQUAL "0")
         message(FATAL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
     endif()
+endif()
+
+if(NOT EXISTS "${PROJECT_SOURCE_DIR}/cmake/FindThrust.cmake"
+OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/CLI11/CMakeLists.txt"
+OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/FeatureDetector/CMakeLists.txt"
+OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/thrust/README.md")
+    message(FATAL_ERROR "The submodules were not downloaded! GOOFIT_SUBMODULE was turned off or failed. Please update submodules and try again.")
 endif()
 
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
@@ -135,12 +142,7 @@ if(${GOOFIT_DEVICE} STREQUAL CUDA AND ${GOOFIT_HOST} STREQUAL OMP)
     message(FATAL_ERROR "OMP cannot be a host backend for CUDA")
 endif()
 
-# Only default to off for CUDA
-if(GOOFIT_DEVICE STREQUAL CUDA)
-    option(GOOFIT_SEPARATE_COMP "Enable separate compilation of PDFs" OFF)
-else()
-    option(GOOFIT_SEPARATE_COMP "Enable separate compilation of PDFs" ON)
-endif()
+option(GOOFIT_SEPARATE_COMP "Enable separate compilation of PDFs" ON)
 
 if(GOOFIT_SEPARATE_COMP)
     add_definitions("-DSEPARABLE")
@@ -159,6 +161,13 @@ if(GOOFIT_TRACE)
     add_definitions("-DGOOFIT_TRACE_FLAG=1")
 endif()
 
+# Some systems need execinfo explicitly linked
+# Standard CMake module
+find_package(Backtrace)
+if(Backtrace_FOUND)
+    # Assuming no extra flags, assuming execinfo.h header
+    link_libraries(${Backtrace_LIBRARIES})
+endif()
 
 set(GOOFIT_ARCH Auto CACHE STRING "The GPU Archetecture, can be Auto, All, Common, a number, or a name")
 
@@ -224,7 +233,9 @@ endif()
 
 # Include directories are not picked up by FindCUDA
 find_package(ROOT 6 COMPONENTS Minuit Minuit2)
-if(NOT ROOT_FOUND)
+if(ROOT_FOUND)
+    add_definitions("-DROOT_FOUND")
+else()
     add_subdirectory("extern/Minuit2")
 endif()
 
@@ -284,23 +295,24 @@ function(goofit_add_executable NAMEEXE)
 endfunction()
 
 function(goofit_add_link)
-    foreach(NAMELINK ${ARGN})
+    if(MSVC) # Not officially supported, but needed to even configure on Windows
+        set(COMM copy)
+    else()
+        set(COMM create_symlink)
+    endif()
 
+    foreach(NAMELINK ${ARGN})
         if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${NAMELINK}")
-            add_custom_command(
-                OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
-                COMMAND ${CMAKE_COMMAND} -E create_symlink
+
+            execute_process(
+                COMMAND ${CMAKE_COMMAND} -E ${COMM}
                 "${CMAKE_CURRENT_SOURCE_DIR}/${NAMELINK}"
                 "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
+                WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
                 )
 
-            get_filename_component(a_dir ${CMAKE_CURRENT_SOURCE_DIR} NAME)
-
-            add_custom_target(
-                "${a_dir}_${NAMELINK}_link" ALL DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
-                )
         else()
-            message(STATUS "Warning: ${NAMELINK} does not exist. Not making link. Build then retry?")
+            message(WARNING "${NAMELINK} does not exist. Not making link.")
         endif()
     endforeach()
 endfunction()
@@ -308,24 +320,13 @@ endfunction()
 
 function(goofit_add_directory)
     file(GLOB directory_listing RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *)
-    set(skip_files CMakeLists.txt Makefile makefile .gitignore .git)
+    set(skip_files CMakeLists.txt CMakeFiles Makefile makefile .gitignore .git)
 
     foreach(NAMELINK ${directory_listing})
         if(NOT ${NAMELINK} IN_LIST skip_files)
-            add_custom_command(
-                OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
-                COMMAND ${CMAKE_COMMAND} -E create_symlink
-                "${CMAKE_CURRENT_SOURCE_DIR}/${NAMELINK}"
-                "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}"
-                )
-
-            list(APPEND dir_listing "${CMAKE_CURRENT_BINARY_DIR}/${NAMELINK}")
-
+            goofit_add_link(${NAMELINK})
         endif()
     endforeach()
-
-    get_filename_component(a_dir ${CMAKE_CURRENT_SOURCE_DIR} NAME)
-    add_custom_target("${a_dir}_directory" ALL DEPENDS ${dir_listing})
 endfunction()
 
 
@@ -381,7 +382,7 @@ if(GOOFIT_PYTHON)
     add_subdirectory(python)
 endif()
 
-option(GOOFIT_TESTS "Build the goofit tests" OFF)
+option(GOOFIT_TESTS "Build the goofit tests" ON)
 if(GOOFIT_TESTS)
     enable_testing()
     add_subdirectory(tests)

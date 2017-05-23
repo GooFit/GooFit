@@ -27,10 +27,10 @@ int main(int argc, char** argv) {
     
     CLI::Timer gen_timer{"Generating took"};
     for(int i=0; i<100000; ++i) {
-        xvar.value = xvar.upperlimit - log(1+rand()/2);
-
-        if(xvar.value >= 0)
+        try {
+            xvar.setValue( xvar.getUpperLimit() - log(1+rand()/2));
             data.addEvent();
+        } catch (const GooFit::OutOfRange &) {}
     }
     
     std::cout << GooFit::magenta << gen_timer << GooFit::reset << std::endl;
@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
     FitManager fitter{&exppdf};
     fitter.fit();
     
-    if(alpha.value < -1.01 || alpha.value > -0.99)
+    if(alpha.getValue() < -1.01 || alpha.getValue() > -0.99)
         return 1;
 
     return fitter;

@@ -1,6 +1,6 @@
 #include "goofit/GlobalCudaDefines.h"
 #include "goofit/PDFs/GooPdf.h"
-#include "goofit/ThrustOverride.h"
+#include "goofit/detail/ThrustOverride.h"
 
 #include "goofit/Log.h"
 #include "goofit/Error.h"

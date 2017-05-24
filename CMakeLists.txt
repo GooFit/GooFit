@@ -56,8 +56,8 @@ set(GOOFIT_CUDA_OR_GROUPSIZE "128" CACHE STRING "Overrides the default group dis
 set(GOOFIT_CUDA_OR_GRAINSIZE "7" CACHE STRING "Overrides the default grain size for Thrust's transform_reduce")
 
 configure_file (
-    "${PROJECT_SOURCE_DIR}/include/goofit/ThrustOverrideConfig.h.in"
-    "${PROJECT_BINARY_DIR}/include/goofit/ThrustOverrideConfig.h"
+    "${PROJECT_SOURCE_DIR}/include/goofit/detail/ThrustOverrideConfig.h.in"
+    "${PROJECT_BINARY_DIR}/include/goofit/detail/ThrustOverrideConfig.h"
 )
 
 include_directories("${PROJECT_BINARY_DIR}/include")

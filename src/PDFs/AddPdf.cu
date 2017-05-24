@@ -1,5 +1,5 @@
 #include "goofit/PDFs/AddPdf.h"
-#include "goofit/ThrustOverride.h"
+#include "goofit/detail/ThrustOverride.h"
 #include "goofit/Error.h"
 
 #include <thrust/transform_reduce.h>

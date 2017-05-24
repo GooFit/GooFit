@@ -5,8 +5,7 @@
 compile_commands.json
 *.vscode
 
-include/goofit/PDFs/PdfHelpers.h
-include/goofit/ThrustOverrideConfig.h
+include/goofit/detail/ThrustOverrideConfig.h
 include/goofit/Version.h
 
 thrust/*

@@ -6,10 +6,6 @@
 #include "goofit/UnbinnedDataSet.h"
 #include "goofit/PDFs/MetricTaker.h"
 
-#ifdef GOOFIT_MPI
-#include <mpi.h>
-#endif
-
 // TODO: Replace this with class MetricTaker;
 // And fill in the .cu files where needed
 

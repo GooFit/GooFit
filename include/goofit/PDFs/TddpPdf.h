@@ -22,9 +22,9 @@ class SpecialWaveCalculator;
 class TddpPdf : public GooPdf {
 public:
     TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Variable* m12, Variable* m13, CountingVariable* eventNumber,
-            DecayInfo* decay, MixingTimeResolution* r, GooPdf* eff, Variable* mistag = 0);
+            DecayInfo* decay, MixingTimeResolution* r, GooPdf* eff, Variable* mistag = nullptr);
     TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Variable* m12, Variable* m13, CountingVariable* eventNumber,
-            DecayInfo* decay, std::vector<MixingTimeResolution*>& r, GooPdf* eff, Variable* md0, Variable* mistag = 0);
+            DecayInfo* decay, std::vector<MixingTimeResolution*>& r, GooPdf* eff, Variable* md0, Variable* mistag = nullptr);
     // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the
     // coherent sum. The caching method requires that it be done this way or the ProdPdf
     // normalisation will get *really* confused and give wrong answers.

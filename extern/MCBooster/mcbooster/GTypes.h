@@ -54,10 +54,6 @@ typedef double GReal_t;///< Double 8 bytes or float 4 bytes
 
 //---- constants ---------------------------------------------------------------
 
-#ifndef NULL
-#define NULL 0
-#endif
-
 const GBool_t kTrue = true;
 const GBool_t kFalse = false;
 

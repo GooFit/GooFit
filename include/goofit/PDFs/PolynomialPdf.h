@@ -4,7 +4,7 @@
 
 class PolynomialPdf : public GooPdf {
 public:
-    PolynomialPdf(std::string n, Variable* _x, std::vector<Variable*> weights, Variable* x0 = 0,
+    PolynomialPdf(std::string n, Variable* _x, std::vector<Variable*> weights, Variable* x0 = nullptr,
                   unsigned int lowestDegree = 0);
     PolynomialPdf(std::string n, std::vector<Variable*> obses, std::vector<Variable*> coeffs, std::vector<Variable*> offsets,
                   unsigned int maxDegree);

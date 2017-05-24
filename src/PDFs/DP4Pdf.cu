@@ -423,7 +423,7 @@ __host__ fptype DPPdf::normalize() const {
     }
 
     if(std::isnan(ret))
-        abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " NAN normalization in DPPdf", this);
+        GooFit::abort(__FILE__, __LINE__, getName() + " NAN normalization in DPPdf", this);
     
     host_normalisation[parameters] = 1.0/ret;
     // printf("end of normalize %f\n", ret);

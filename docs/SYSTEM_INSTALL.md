@@ -6,20 +6,27 @@ The following commands show you how to get a *minimal* install of GooFit on a va
 
 ## CentOS 7
 
-For simplicity, this uses the EPEL version of CMake; feel free to download CMake directly from Kitware instead. The EPEL version has the odd `cmake3` name to distinguish it from CentOS default.
+For simplicity, this uses EPEL to get access to `python-pip`, and uses the pip version of CMake. Feel free to download CMake directly from Kitware instead.
 
 ```bash
 docker run -it centos
-yum install epel-release -y
-yum install cmake3 git -y
-yum group install -y "Development Tools"
+yum install epel-release
+yum install python-pip git gcc-c++ make -y
+pip install cmake plumbum
 git clone --recursive https://github.com/GooFit/GooFit.git
 cd GooFit
 mkdir build
 cd build
-cmake3 ..
+cmake ..
 make
 make test
+```
+
+If you'd like to add ROOT, add the following lines before running CMake:
+
+```bash
+mkdir root-6 && curl https://root.cern.ch/download/root_v6.08.06.Linux-centos7-x86_64-gcc4.8.tar.gz | tar --strip-components=1 -xz -C root-6
+source root-6/bin/thisroot.sh
 ```
 
 ## Alpine Linux 3.5
@@ -35,7 +42,17 @@ mkdir build
 cd build
 cmake ..
 make
-make test
+ctest
+```
+
+In the spirit of minimality, this is less instructive and contains more magic, but also would also work:
+
+```bash
+docker run -it alpine sh
+apk add --no-cache make cmake g++ git
+git clone https://github.com/GooFit/GooFit.git
+cd GooFit
+make
 ```
 
 ## Ubuntu 16.04
@@ -52,4 +69,10 @@ cd build
 cmake ..
 cmake --build .
 ctest
+```
+
+If you'd like to add ROOT, add the following lines before running cmake:
+```bash
+mkdir root-6 && curl https://root.cern.ch/download/root_v6.08.06.Linux-ubuntu16-x86_64-gcc5.4.tar.gz | tar --strip-components=1 -xz -C root-6
+source root-6/bin/thisroot.sh
 ```

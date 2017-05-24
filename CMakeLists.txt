@@ -161,13 +161,20 @@ if(GOOFIT_TRACE)
     add_definitions("-DGOOFIT_TRACE_FLAG=1")
 endif()
 
+# Adding backtrace (optional)
 # Some systems need execinfo explicitly linked
 # Standard CMake module
 find_package(Backtrace)
+add_library(backtrace INTERFACE)
 if(Backtrace_FOUND)
-    # Assuming no extra flags, assuming execinfo.h header
-    link_libraries(${Backtrace_LIBRARIES})
+    # Assuming no extra flags
+    target_include_directories(backtrace INTERFACE ${Backtrace_INCLUDE_DIR})
+    target_link_libraries(backtrace INTERFACE ${Backtrace_LIBRARIES})
 endif()
+configure_file(
+    "${PROJECT_SOURCE_DIR}/include/goofit/detail/Backtrace.h.in"
+    "${PROJECT_BINARY_DIR}/include/goofit/detail/Backtrace.h"
+)
 
 set(GOOFIT_ARCH Auto CACHE STRING "The GPU Archetecture, can be Auto, All, Common, a number, or a name")
 

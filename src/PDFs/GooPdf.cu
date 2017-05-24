@@ -221,7 +221,7 @@ __host__ double GooPdf::sumOfNll(int numVars) const {
     thrust::constant_iterator<fptype*> arrayAddress(dev_event_array);
     double dummy = 0;
 
-    //if (host_callnumber >= 2) abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " debug abort", this);
+    //if (host_callnumber >= 2) GooFit::abort(__FILE__, __LINE__, getName() + " debug abort", this);
     thrust::counting_iterator<int> eventIndex(0);
 
     double ret;
@@ -276,7 +276,7 @@ __host__ double GooPdf::calculateNLL() const {
     //}
 
     if(host_normalisation[parameters] <= 0)
-        abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " non-positive normalisation", this);
+        GooFit::abort(__FILE__, __LINE__, getName() + " non-positive normalisation", this);
 
     MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice);
     cudaDeviceSynchronize(); // Ensure normalisation integrals are finished
@@ -291,12 +291,12 @@ __host__ double GooPdf::calculateNLL() const {
     fptype ret = sumOfNll(numVars);
 
     if(0 == ret)
-        abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " zero NLL", this);
+        GooFit::abort(__FILE__, __LINE__, getName() + " zero NLL", this);
 
     //if (cpuDebug & 1) std::cout << "Full NLL " << host_callnumber << " : " << 2*ret << std::endl;
     //setDebugMask(0);
 
-    //if ((cpuDebug & 1) && (host_callnumber >= 1)) abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " debug abort", this);
+    //if ((cpuDebug & 1) && (host_callnumber >= 1)) GooFit::abort(__FILE__, __LINE__, getName() + " debug abort", this);
     return 2*ret;
 }
 
@@ -468,16 +468,16 @@ __host__ fptype GooPdf::normalize() const {
 #endif
 
     if(std::isnan(sum)) {
-        abortWithCudaPrintFlush(__FILE__, __LINE__, getName() + " NaN in normalisation", this);
+        GooFit::abort(__FILE__, __LINE__, getName() + " NaN in normalisation", this);
     } else if(0 >= sum) {
-        abortWithCudaPrintFlush(__FILE__, __LINE__, "Non-positive normalisation", this);
+        GooFit::abort(__FILE__, __LINE__, "Non-positive normalisation", this);
     }
 
     ret *= sum;
 
 
     if(0 == ret)
-        abortWithCudaPrintFlush(__FILE__, __LINE__, "Zero integral");
+        GooFit::abort(__FILE__, __LINE__, "Zero integral");
 
     GOOFIT_TRACE("{}: Param {} integral is ~= {}", getName(), parameters, ret);
     host_normalisation[parameters] = 1.0/ret;

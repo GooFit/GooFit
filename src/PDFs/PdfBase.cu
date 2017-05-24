@@ -22,7 +22,7 @@ __host__ void PdfBase::copyParams(const std::vector<double>& pars) const {
 
         if(std::isnan(host_params[i])) {
             std::cout << " agh, parameter is NaN, die " << i << std::endl;
-            abortWithCudaPrintFlush(__FILE__, __LINE__, "NaN in parameter");
+            GooFit::abort(__FILE__, __LINE__, "NaN in parameter");
         }
     }
 

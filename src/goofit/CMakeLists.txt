@@ -47,6 +47,9 @@ goofit_add_library(FunctorWriter
 
 goofit_add_library(PdfBase
     PdfBase.cc
+    Abort.cc
+    ${PROJECT_SOURCE_DIR}/include/goofit/detail/Abort.h
+    ${PROJECT_BINARY_DIR}/include/goofit/detail/Backtrace.h
     ${PROJECT_SOURCE_DIR}/include/goofit/Error.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PdfBase.h
     ${PROJECT_SOURCE_DIR}/include/goofit/FitControl.h
@@ -55,6 +58,8 @@ goofit_add_library(PdfBase
     ${PROJECT_SOURCE_DIR}/include/goofit/Log.h
     ${PROJECT_SOURCE_DIR}/include/goofit/GlobalCudaDefines.h
     )
+
+target_link_libraries(PdfBase backtrace)
 
 
 # Note: order is important on Linux, derived classes first

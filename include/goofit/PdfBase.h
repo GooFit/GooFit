@@ -3,6 +3,8 @@
 #include "goofit/GlobalCudaDefines.h"
 
 #include "goofit/Variable.h"
+#include "goofit/detail/Abort.h"
+
 #include <set>
 #include <map>
 #include <vector>
@@ -131,5 +133,4 @@ private:
     __host__ void setIndices();
 };
 
-void abortWithCudaPrintFlush(std::string file, int line, std::string reason, const PdfBase* pdf = 0);
 

@@ -5,6 +5,10 @@
 #include <thrust/transform_reduce.h>
 #include <thrust/iterator/constant_iterator.h>
 
+#ifdef GOOFIT_MPI
+#include <mpi.h>
+#endif
+
 __device__ fptype device_AddPdfs(fptype* evt, fptype* p, unsigned int* indices) {
     int numParameters = RO_CACHE(indices[0]);
     fptype ret = 0;

@@ -21,6 +21,10 @@
 #include <TH1D.h>
 #endif
 
+#ifdef GOOFIT_MPI
+#include <mpi.h>
+#endif
+
 // These variables are either function-pointer related (thus specific to this implementation)
 // or constrained to be in the CUDAglob translation unit by nvcc limitations; otherwise they
 // would be in PdfBase.

@@ -12,9 +12,9 @@ A new feature of the CMake build system is GooFit Packages, which are complete p
 * CMake build system: See [Issue 22](https://github.com/GooFit/GooFit/issues/22) and [PR 23](https://github.com/GooFit/GooFit/pull/23).
   * Auto compute capability detection
   * Auto Cuda/OMP selection 
-  * Added CPP single threaded backend, support for MacOS
-  * Optional separable compilation for PDFs, automatic for non-CUDA builds
-  * (Almost) supports Intel compilers
+  * Added CPP single threaded backend, support for MacOS and IDEs/debuggers
+  * Separable compilation for PDFs
+  * Support for more compilers, such as Clang and Intel
   * Macros for `CMakeLists.txt` for adding a new package in 2-3 lines
   * Auto linking for build directory
   * Auto download of dependencies through git submodules and CMake
@@ -26,8 +26,9 @@ A new feature of the CMake build system is GooFit Packages, which are complete p
 * Improved documentation, automatically builds on changes to master
 * `GooFit::Application`, based on [CLI11](https://github.com/CLIUtils/CLI11). See [PR](https://github.com/GooFit/GooFit/pull/36) and [Issue](https://github.com/GooFit/GooFit/issues/33).
 * Better naming to match CUDA [PR 61](https://github.com/GooFit/GooFit/pull/61)
-* Better Variable based caching with multi-pdf support [PR 65](/GooFit/GooFit/pull/65)
+* Better Variable based caching with multi-pdf support [PR 65](https://github.com/GooFit/GooFit/pull/65) and [PR 68](https://github.com/GooFit/GooFit/pull/68)
 * Logging and formatting support, cleanup of old commented code [PR 66](/GooFit/GooFit/pull/66)
+* Support for Minuit2 (default and availabe without ROOT) joins Minuit1
 * Added MPI support in [PR 51](https://github.com/GooFit/GooFit/pull/51)
 * Added PyGooFit: preliminary Python bindings using [PyBind11](http://pybind11.readthedocs.io/en/master/)
 * Added (this) changelog

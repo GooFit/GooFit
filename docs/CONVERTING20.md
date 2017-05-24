@@ -39,14 +39,14 @@ The new `GooFit::Application`, which is not required but provides GooFit options
 #include "goofit/Application.h"
 
 // Place this at the beginning of main
-GooFit::Application app{"Optional discription", argv, argc};
+GooFit::Application app{"Optional discription", argc, argv};
 
 // Command line options can be added here.
 
 try {
     app.run();
 } catch(const GooFit::ParseError &e) {
-    app.exit(e);
+    return app.exit(e);
 }
 ```
 
@@ -73,3 +73,8 @@ istream >> var; // Shortcut
 ```
 
 The other values do not provide shortcut access. Copying a variable is explicitly disallowed; it was possible before but gave incorrect results.
+
+## Namespaces
+
+GooFit no longer leaks the `std::` namespace, and some of GooFit is now inside the GooFit namespace. To be future-proof, you can add `using namespace GooFit;` at the top of your code.
+

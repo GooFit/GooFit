@@ -173,10 +173,10 @@ set(GOOFIT_ARCH Auto CACHE STRING "The GPU Archetecture, can be Auto, All, Commo
 
 option(GOOFIT_MPI "Turn on MPI for goofit" OFF)
 
+
 if(GOOFIT_MPI)
     find_package(MPI REQUIRED)
 
-    # Added globally
     add_definitions("-DGOOFIT_MPI")
     add_compile_options(${MPI_CXX_COMPILE_FLAGS})
     include_directories(${MPI_CXX_INCLUDE_PATH})
@@ -215,20 +215,21 @@ set(THRUST_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/extern/thrust")
 find_package(Thrust 1.8 REQUIRED)
 include_directories(SYSTEM "${THRUST_INCLUDE_DIRS}")
 
+# This library provides an interface to openMP, etc for all libraries.
+add_library(goofit_mt INTERFACE)
+
 if(GOOFIT_DEVICE STREQUAL OMP OR GOOFIT_HOST STREQUAL OMP OR GOOFIT_DEVICE STREQUAL TBB OR GOOFIT_HOST STREQUAL TBB)
     find_package(OpenMP REQUIRED)
-    add_compile_options(${OpenMP_CXX_FLAGS})
+    target_compile_options(goofit_mt INTERFACE ${OpenMP_CXX_FLAGS})
     find_package(Threads REQUIRED)
-    link_libraries(Threads::Threads)
-    link_libraries(${OpenMP_CXX_FLAGS})
+    target_link_libraries(goofit_mt INTERFACE Threads::Threads)
+    target_link_libraries(goofit_mt INTERFACE ${OpenMP_CXX_FLAGS})
 endif()
 
 if(GOOFIT_DEVICE STREQUAL TBB OR GOOFIT_HOST STREQUAL TBB)
     find_package(TBB COMPONENTS tbbmalloc tbbmalloc_proxy tbb_preview)
-    #set(CMAKE_CXX_FLAGS -xMIC-AVX512)
-    #set(CMAKE_CXX_FLAGS "-xHOST -qopenmp")
-    include_directories(SYSTEM "${TBB_INCLUDE_DIRS}")
-    link_libraries(${TBB_LIBRARIES})
+    target_include_directories(goofit_mt INTERFACE SYSTEM "${TBB_INCLUDE_DIRS}")
+    target_link_libraries(goofit_mt INTERFACE ${TBB_LIBRARIES})
 endif()
 
 # Include directories are not picked up by FindCUDA
@@ -267,7 +268,7 @@ function(goofit_add_library GNAME)
         add_sanitizers(${GNAME})
         target_compile_options(${GNAME} PUBLIC -x c++)
     endif()
-    target_link_libraries(${GNAME} rang CLI11 fmt)
+    target_link_libraries(${GNAME} rang CLI11 fmt goofit_mt)
 
     if(ROOT_FOUND)
         target_link_libraries(${GNAME} ROOT::ROOT)

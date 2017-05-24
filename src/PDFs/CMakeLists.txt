@@ -1,5 +1,6 @@
 set(GOOPDF_HEADERS
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/GooPdf.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/MetricTaker.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/CrystalBallPdf.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/BifurGaussPdf.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/LineshapesPdf.h
@@ -48,6 +49,7 @@ get_property(goo_extra GLOBAL PROPERTY GOOFIT_EXTRA_PDFS)
 if(GOOFIT_SEPARATE_COMP)
     goofit_add_library(PDFs
         GooPdf.cu
+        MetricTaker.cu
         PdfBase.cu
         CrystalBallPdf.cu
         BifurGaussPdf.cu

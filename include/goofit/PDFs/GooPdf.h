@@ -4,11 +4,14 @@
 
 #include "goofit/PdfBase.h"
 #include "goofit/UnbinnedDataSet.h"
+#include "goofit/PDFs/MetricTaker.h"
 
 #ifdef GOOFIT_MPI
 #include <mpi.h>
 #endif
 
+// TODO: Replace this with class MetricTaker;
+// And fill in the .cu files where needed
 
 #ifdef SEPARABLE
 extern __constant__ fptype cudaArray[maxParams];
@@ -19,6 +22,7 @@ extern __constant__ fptype normalisationFactors[maxParams];
 extern __device__ void* device_function_table[200];
 extern void* host_function_table[200];
 extern unsigned int num_device_functions;
+extern std::map<void*, int> functionAddressToDeviceIndexMap;
 #endif
 
 #ifdef ROOT_FOUND
@@ -37,7 +41,6 @@ extern void* host_fcn_ptr;
 
 __device__ fptype callFunction(fptype* eventAddress, unsigned int functionIdx, unsigned int paramIdx);
 
-class MetricTaker;
 
 class GooPdf : public PdfBase {
 public:
@@ -91,29 +94,6 @@ protected:
     __host__ virtual double sumOfNll(int numVars) const;
     MetricTaker* logger;
 private:
-
-};
-
-class MetricTaker : public thrust::unary_function<thrust::tuple<int, fptype*, int>, fptype> {
-public:
-
-    MetricTaker(PdfBase* dat, void* dev_functionPtr);
-    MetricTaker(int fIdx, int pIdx);
-    __device__ fptype operator()(thrust::tuple<int, fptype*, int> t)
-    const;             // Event number, dev_event_array (pass this way for nvcc reasons), event size
-    __device__ fptype operator()(thrust::tuple<int, int, fptype*> t)
-    const;             // Event number, event size, normalisation ranges (for binned stuff, eg integration)
-
-private:
-
-    /// Function-pointer index of processing function, eg logarithm, chi-square, other metric.
-    unsigned int metricIndex;
-    
-    /// Function-pointer index of actual PDF
-    unsigned int functionIdx;
-    
-    unsigned int parameters;
-
 
 };
 

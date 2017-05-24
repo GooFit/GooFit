@@ -14,9 +14,16 @@
 // And fill in the .cu files where needed
 
 #ifdef SEPARABLE
+
+/// Holds device-side fit parameters.
 extern __constant__ fptype cudaArray[maxParams];
+
+/// Holds functor-specific indices into cudaArray. Also overloaded to hold integer constants (ie parameters that cannot vary.)
 extern __constant__ unsigned int paramIndices[maxParams];
+
+/// Holds non-integer constants. Notice that first entry is number of events.
 extern __constant__ fptype functorConstants[maxParams];
+
 extern __constant__ fptype normalisationFactors[maxParams];
 
 extern __device__ void* device_function_table[200];
@@ -32,7 +39,7 @@ class TH1D;
 __device__ int dev_powi(int base, int exp);  // Implemented in SmoothHistogramPdf.
 void* getMetricPointer(std::string name);
 
- // Pass event, parameters, index into parameters.
+/// Pass event, parameters, index into parameters.
 typedef fptype(*device_function_ptr)(fptype*, fptype*, unsigned int*);
 
 typedef fptype(*device_metric_ptr)(fptype, fptype*, unsigned int);

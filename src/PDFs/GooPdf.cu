@@ -27,14 +27,9 @@
 
 // Device-side, translation-unit constrained.
 
-__constant__ fptype cudaArray[maxParams];           // Holds device-side fit parameters.
-
+__constant__ fptype cudaArray[maxParams];
 __constant__ unsigned int paramIndices[maxParams];
-// Holds functor-specific indices into cudaArray. Also overloaded to hold integer constants (ie parameters that cannot vary.)
-
 __constant__ fptype functorConstants[maxParams];
-// Holds non-integer constants. Notice that first entry is number of events.
-
 __constant__ fptype normalisationFactors[maxParams];
 
 // For debugging

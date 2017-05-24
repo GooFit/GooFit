@@ -19,16 +19,8 @@
 #include <thrust/iterator/constant_iterator.h>
 #include <thrust/iterator/zip_iterator.h>
 
-#ifdef ROOT_FOUND
-#include <TH1D.h>
-#endif
 
 
-// Notice that operators are distinguished by the order of the operands,
-// and not otherwise! It's up to the user to make his tuples correctly.
-
-// Main operator: Calls the PDF to get a predicted value, then the metric
-// to get the goodness-of-prediction number which is returned to MINUIT.
 __device__ fptype MetricTaker::operator()(thrust::tuple<int, fptype*, int> t) const {
     // Calculate event offset for this thread.
     int eventIndex = thrust::get<0>(t);
@@ -47,8 +39,7 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, fptype*, int> t) co
     return ret;
 }
 
-// Operator for binned evaluation, no metric.
-// Used in normalisation.
+
 #define MAX_NUM_OBSERVABLES 5
 __device__ fptype MetricTaker::operator()(thrust::tuple<int, int, fptype*> t) const {
     // Bin index, event size, base address [lower, upper,getNumBins]

@@ -6,6 +6,9 @@
 #include "goofit/BinnedDataSet.h"
 #include "goofit/FitControl.h"
 
+#ifdef GOOFIT_MPI
+#include <mpi.h>
+#endif
 
 // This is code that belongs to the PdfBase class, that is,
 // it is common across all implementations. But it calls on device-side

@@ -145,22 +145,22 @@ Variable* maxDalitzZ = new Variable("maxDalitzZ", pow(_mD0 - piZeroMass, 2));
 
 std::vector<Variable*> weights;
 std::vector<PdfBase*> comps;
-TH1F* dataTimePlot = 0;
-TH1F* loM23Sigma = 0;
-TH1F* hiM23Sigma = 0;
-TddpPdf* signalDalitz = 0;
-IncoherentSumPdf* incsum1 = 0;
-IncoherentSumPdf* incsum2 = 0;
-IncoherentSumPdf* incsum3 = 0;
-IncoherentSumPdf* incsum4 = 0;
-IncoherentSumPdf* incsum5 = 0;
-IncoherentSumPdf* incsum6 = 0;
-GooPdf* sig0_jsugg = 0;
-GooPdf* bkg2_jsugg = 0;
-GooPdf* bkg3_jsugg = 0;
-GooPdf* bkg4_jsugg = 0;
+TH1F* dataTimePlot = nullptr;
+TH1F* loM23Sigma = nullptr;
+TH1F* hiM23Sigma = nullptr;
+TddpPdf* signalDalitz = nullptr;
+IncoherentSumPdf* incsum1 = nullptr;
+IncoherentSumPdf* incsum2 = nullptr;
+IncoherentSumPdf* incsum3 = nullptr;
+IncoherentSumPdf* incsum4 = nullptr;
+IncoherentSumPdf* incsum5 = nullptr;
+IncoherentSumPdf* incsum6 = nullptr;
+GooPdf* sig0_jsugg = nullptr;
+GooPdf* bkg2_jsugg = nullptr;
+GooPdf* bkg3_jsugg = nullptr;
+GooPdf* bkg4_jsugg = nullptr;
 Variable* massSum = new Variable("massSum", _mD0*_mD0 + 2*piPlusMass*piPlusMass + piZeroMass* piZeroMass); // = 3.53481
-GooPdf* kzero_veto = 0;
+GooPdf* kzero_veto = nullptr;
 
 bool  doToyStudy = false;
 float md0_toy_width = 0.0075;
@@ -2688,9 +2688,9 @@ GooPdf* makeOverallSignal() {
     /*
     sig0_jsugg->setData(data);
     FitManager jsupdf(sig0_jsugg);
-    gettimeofday(&startTime, NULL);
+    gettimeofday(&startTime, nullptr);
     jsupdf.fit();
-    gettimeofday(&stopTime, NULL);
+    gettimeofday(&stopTime, nullptr);
     timersub(&stopTime, &startTime, &totalTime);
     std::cout << "Time for sigma fit : " << totalTime.tv_sec + totalTime.tv_usec/1000000.0 << " seconds." << std::endl;
     */
@@ -3222,7 +3222,7 @@ GooPdf* makeBkg2DalitzPdf(bool fixem = true) {
     if(!kzero_veto)
         makeKzeroVeto();
 
-    GooPdf* bkg2_dalitz = 0;
+    GooPdf* bkg2_dalitz = nullptr;
 
     if(Parameter == bkg2Model) {
 
@@ -3375,7 +3375,7 @@ GooPdf* makeBkg2DalitzPdf(bool fixem = true) {
         assert(Sideband == bkg2Model);
     }
 
-    GooPdf* bkg2_dtime = 0;
+    GooPdf* bkg2_dtime = nullptr;
 
     if(gaussBkgTime)
         bkg2_dtime = makeGaussianTimePdf(2);
@@ -3861,7 +3861,7 @@ GooPdf* makeBkg3DalitzPdf(bool fixem = true) {
     // histogram. So I load up all the MC data and use it in the histogram, either
     // way.
 
-    GooPdf* bkg3_dalitz = 0;
+    GooPdf* bkg3_dalitz = nullptr;
 
     if(!notUseBackground3Hist)
         bkg3_dalitz = makeBackgroundHistogram(3);
@@ -3870,7 +3870,7 @@ GooPdf* makeBkg3DalitzPdf(bool fixem = true) {
 
     //bkg3_dalitz->setDebugMask(1);
 
-    GooPdf* bkg3_dtime = 0;
+    GooPdf* bkg3_dtime = nullptr;
 
     if(gaussBkgTime)
         bkg3_dtime = makeGaussianTimePdf(3);
@@ -3914,14 +3914,14 @@ GooPdf* makeBkg4DalitzPdf(bool fixem = true) {
     comps.clear();
     weights.clear();
 
-    GooPdf* bkg4_dalitz = 0;
+    GooPdf* bkg4_dalitz = nullptr;
 
     if(!notUseBackground4Hist)
         bkg4_dalitz = makeBackgroundHistogram(4);
     else
         bkg4_dalitz = makeBackground4DalitzParam();
 
-    GooPdf* bkg4_dtime = 0;
+    GooPdf* bkg4_dtime = nullptr;
 
     if(gaussBkgTime)
         bkg4_dtime = makeGaussianTimePdf(4);

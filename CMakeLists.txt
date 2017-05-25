@@ -56,8 +56,8 @@ set(GOOFIT_CUDA_OR_GROUPSIZE "128" CACHE STRING "Overrides the default group dis
 set(GOOFIT_CUDA_OR_GRAINSIZE "7" CACHE STRING "Overrides the default grain size for Thrust's transform_reduce")
 
 configure_file (
-    "${PROJECT_SOURCE_DIR}/include/goofit/ThrustOverrideConfig.h.in"
-    "${PROJECT_BINARY_DIR}/include/goofit/ThrustOverrideConfig.h"
+    "${PROJECT_SOURCE_DIR}/include/goofit/detail/ThrustOverrideConfig.h.in"
+    "${PROJECT_BINARY_DIR}/include/goofit/detail/ThrustOverrideConfig.h"
 )
 
 include_directories("${PROJECT_BINARY_DIR}/include")
@@ -69,6 +69,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+
+if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unknown-pragmas -Wno-long-long -Wno-attributes -Wno-sign-compare -Wno-unused-parameter")
+    # Helpful but irritating: -Wzero-as-null-pointer-constant
+    # no-sign-compare can be removed, but will take some work to clean up
+    # Same is true for no-unused-parameter
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5.0)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wsuggest-override")
+    endif()
+endif()
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING
@@ -200,8 +210,11 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
         find_package(CUDA 7.0 REQUIRED)
     endif()
 
+    if(GOOFIT_MPI)
+        list(APPEND CUDA_NVCC_FLAGS ${MPI_CXX_COMPILE_FLAGS})
+    endif()
+
     list(APPEND CUDA_NVCC_FLAGS -std=c++11)
-    list(APPEND CUDA_NVCC_FLAGS ${MPI_CXX_LINK_FLAGS})
 
     if(GOOFIT_SEPARATE_COMP)
         set(CUDA_SEPARABLE_COMPILATION ON)

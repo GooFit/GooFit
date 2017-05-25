@@ -112,7 +112,7 @@ __device__ fptype getmass(const unsigned int& pair, fptype& d1, fptype& d2, cons
     const fptype* P2 = (vecs+4);
     const fptype* P3 = (vecs+8);
     const fptype* P4 = (vecs+12);
-    fptype mpair;
+    fptype mpair = 0;
 
     switch(pair) {
 

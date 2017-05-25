@@ -3,6 +3,9 @@
 
 #include <thrust/transform_reduce.h>
 
+#ifdef GOOFIT_MPI
+#include <mpi.h>
+#endif
 
 const int resonanceOffset = 8; // Offset of the first resonance into the parameter index array
 // Offset is number of parameters, constant index, indices for tau, xmix, and ymix, index

@@ -124,9 +124,9 @@ int fitRatio(vector<int>& rsEvts, vector<int>& wsEvts, std::string plotName = ""
     poly->setData(ratioData);
     FitManager datapdf {poly};
 
-    gettimeofday(&startTime, NULL);
+    gettimeofday(&startTime, nullptr);
     datapdf.fit();
-    gettimeofday(&stopTime, NULL);
+    gettimeofday(&stopTime, nullptr);
 
     vector<fptype> values = poly->evaluateAtPoints(decayTime);
     TH1D pdfHist("pdfHist", "", decayTime->getNumBins(), decayTime->getLowerLimit(), decayTime->getUpperLimit());
@@ -240,9 +240,9 @@ void fitRatioCPU(vector<int>& rsEvts, vector<int>& wsEvts) {
     minuit->DefineParameter(2, "secondCoef", 0, 0.01, -1, 1);
     minuit->SetFCN(cpvFitFcn);
 
-    gettimeofday(&startTime, NULL);
+    gettimeofday(&startTime, nullptr);
     minuit->Migrad();
-    gettimeofday(&stopTime, NULL);
+    gettimeofday(&stopTime, nullptr);
 }
 
 

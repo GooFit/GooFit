@@ -1,4 +1,4 @@
-.PHONY: auto xcode omp cuda warning
+.PHONY: auto xcode omp cuda warning mpi
 
 auto: warning
 	@mkdir -p build
@@ -19,6 +19,12 @@ xcode:
 	@mkdir -p xbuild
 	cd xbuild && cmake .. -GXcode
 	open xbuild/GOOFIT.xcodeproj
+
+mpi:
+	@mkdir -p build-mpi
+	cd build-mpi && cmake .. -DGOOFIT_MPI=ON && $(MAKE) --no-print-directory
+	cd build-mpi && ctest --output-on-failure
+
 
 warning:
 	@echo "This project builds with CMake 3.4+."

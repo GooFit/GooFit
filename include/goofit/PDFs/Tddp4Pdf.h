@@ -24,7 +24,7 @@ class NormIntegrator_TD;
 class TDDP4 : public GooPdf {
 public:
     TDDP4(std::string n, std::vector<Variable*> observables, DecayInfo_DP* decay, MixingTimeResolution* r, GooPdf* eff,
-          Variable* mistag = 0, unsigned int MCeventsNorm = 5e6);
+          Variable* mistag = nullptr, unsigned int MCeventsNorm = 5e6);
     // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the
     // coherent sum. The caching method requires that it be done this way or the ProdPdf
     // normalisation will get *really* confused and give wrong answers.

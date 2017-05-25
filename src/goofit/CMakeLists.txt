@@ -6,17 +6,14 @@ goofit_add_library(FitManager1
     )
 endif()
 
-goofit_add_library(FCN
+goofit_add_library(FitManager2
     Params.cc
     FCN.cc
-    ${PROJECT_SOURCE_DIR}/include/goofit/fitting/FCN.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/fitting/Params.h
-    )
-
-goofit_add_library(FitManager2
     FitManagerMinuit2.cc
     ${PROJECT_SOURCE_DIR}/include/goofit/FitManager.h
     ${PROJECT_SOURCE_DIR}/include/goofit/fitting/FitManagerMinuit2.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/fitting/FCN.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/fitting/Params.h
     )
 
 goofit_add_library(Faddeeva
@@ -49,6 +46,8 @@ goofit_add_library(PdfBase
     PdfBase.cc
     Abort.cc
     ${PROJECT_SOURCE_DIR}/include/goofit/detail/Abort.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/detail/ThrustOverride.h
+    ${PROJECT_BINARY_DIR}/include/goofit/detail/ThrustOverrideConfig.h
     ${PROJECT_BINARY_DIR}/include/goofit/detail/Backtrace.h
     ${PROJECT_SOURCE_DIR}/include/goofit/Error.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PdfBase.h
@@ -67,7 +66,7 @@ set(lib_list
     Faddeeva
     FunctorWriter
     PdfBase
-    FitManager2 FCN
+    FitManager2
     DataSet
     Variable
     )

@@ -16,6 +16,7 @@
 #include <iostream>
 
 using namespace std;
+using namespace GooFit;
 
 // CPU-side Novosibirsk evaluation for use in generating toy MC.
 double novosib(double x, double peak, double width, double tail) {

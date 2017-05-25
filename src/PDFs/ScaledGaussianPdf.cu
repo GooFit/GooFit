@@ -3,6 +3,9 @@
 
 //#include <limits>
 
+namespace GooFit {
+
+
 __device__ fptype device_ScaledGaussian(fptype* evt, fptype* p, unsigned int* indices) {
     fptype x = evt[0];
     fptype mean = p[indices[1]] + p[indices[3]];
@@ -30,4 +33,6 @@ __host__ ScaledGaussianPdf::ScaledGaussianPdf(std::string n, Variable* _x, Varia
     GET_FUNCTION_ADDR(ptr_to_ScaledGaussian);
     initialise(pindices);
 }
+
+} // namespace GooFit
 

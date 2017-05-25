@@ -6,6 +6,9 @@
 #include <vector>
 #include <initializer_list>
 
+namespace GooFit {
+
+
 class UnbinnedDataSet : public DataSet {
     // Class for unbinned datasets.
 
@@ -34,3 +37,5 @@ private:
     std::vector<std::vector<fptype>> data;
 
 };
+} // namespace GooFit
+

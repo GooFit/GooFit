@@ -5,6 +5,9 @@
 
 #include <thrust/complex.h>
 
+namespace GooFit {
+
+
 #define M_2PI 6.28318530717958
 
 static fptype n1[12] = { 0.25, 1.0, 2.25, 4.0, 6.25, 9.0, 12.25, 16.0, 20.25, 25.0, 30.25, 36.0 };
@@ -151,3 +154,5 @@ fptype cpuvoigtian(fptype x, fptype m, fptype w, fptype s) {
     static const fptype rsqrtPi = 0.5641895835477563;
     return c*rsqrtPi*v.real();
 }
+} // namespace GooFit
+

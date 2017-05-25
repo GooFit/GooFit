@@ -2,8 +2,9 @@
 #include <goofit/Variable.h>
 #include <goofit/BinnedDataSet.h>
 
-namespace py = pybind11;
+using namespace GooFit;
 
+namespace py = pybind11;
 
 void init_BinnedDataSet(py::module &m) {
     py::class_<BinnedDataSet, DataSet>(m, "BinnedDataSet")

@@ -15,6 +15,8 @@ class TH1D;
 
 #include <Minuit2/FunctionMinimum.h>
 
+namespace GooFit {
+
 /* Future use, apperently:
 #include <thrust/iterator/constant_iterator.h>
 #include <thrust/device_vector.h>
@@ -133,4 +135,6 @@ private:
     __host__ void setIndices();
 };
 
+
+} // namespace GooFit
 

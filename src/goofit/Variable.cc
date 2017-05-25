@@ -3,7 +3,7 @@
 
 #include <algorithm>
 
-std::ostream& operator<< (std::ostream& o, const Variable& var) {
+std::ostream& operator<< (std::ostream& o, const GooFit::Variable& var) {
     o << var.getName() << ": " << var.getValue() << " +/- " << var.getError();
     if(!var.fixed)
         o << " [" << var.getLowerLimit() << ", " << var.getUpperLimit() << "]";
@@ -17,9 +17,11 @@ std::ostream& operator<< (std::ostream& o, const Variable& var) {
     return o;
 }
 
-std::istream& operator>> (std::istream& i, Variable& var) {
+std::istream& operator>> (std::istream& i, GooFit::Variable& var) {
     return i >> var.value;
 }
+
+namespace GooFit {
 
 int max_index(const std::vector<Variable*> &vars) {
     const Variable* max_ind_ptr = *std::max_element(std::begin(vars),
@@ -36,3 +38,5 @@ int max_fitter_index(const std::vector<Variable*> &vars) {
                                                     {return a->getFitterIndex() < b->getFitterIndex();});
     return max_ind_ptr->getFitterIndex();
 }
+} // namespace GooFit
+

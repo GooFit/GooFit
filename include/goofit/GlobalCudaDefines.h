@@ -6,7 +6,9 @@
 #include <cmath>
 #include <string>
 
+namespace GooFit {
 extern int host_callnumber;
+}
 
 //  Non-cuda defines
 #if THRUST_DEVICE_SYSTEM!=THRUST_DEVICE_SYSTEM_CUDA
@@ -57,6 +59,7 @@ enum gooError {gooSuccess = 0, gooErrorMemoryAllocation};
 
 // For CUDA case, just use existing errors, renamed
 #include <driver_types.h>      // Needed for cudaError_t
+
 enum gooError {gooSuccess = cudaSuccess,
                gooErrorMemoryAllocation = cudaErrorMemoryAllocation
               };
@@ -68,9 +71,10 @@ enum gooError {gooSuccess = cudaSuccess,
 #define BLOCKDIM (1)
 #endif
 
+namespace GooFit {
 gooError gooMalloc(void** target, size_t bytes);
 gooError gooFree(void* ptr);
-
+}
 #ifndef GOOFIT_SINGLES
 
 typedef double fptype;
@@ -100,3 +104,4 @@ T rsqrt(T val) {return 1.0/sqrt(val);}
 template<typename T>
 T pow(T x, int y) {return pow(x, (T) y);}
 #endif
+

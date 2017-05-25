@@ -14,6 +14,9 @@ See *.cu file for more details
 
 #include <thrust/complex.h>
 
+namespace GooFit {
+
+
 class SpinFactor;
 
 enum class LS {ONE, BW, Lass, Lass_M3, nonRes, Bugg, Bugg3, Flatte, SBW};
@@ -85,3 +88,5 @@ private:
     std::vector<Lineshape*> _LS;
     unsigned int _nPerm;
 };
+} // namespace GooFit
+

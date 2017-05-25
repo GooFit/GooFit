@@ -1,5 +1,8 @@
 #include "goofit/PDFs/GaussianPdf.h"
 
+namespace GooFit {
+
+
 
 __device__ fptype device_Gaussian(fptype* evt, fptype* p, unsigned int* indices) {
     fptype x = evt[RO_CACHE(indices[2 + RO_CACHE(indices[0])])];
@@ -33,4 +36,6 @@ __host__ fptype GaussianPdf::integrate(fptype lo, fptype hi) const {
     sigma *= root2*rootPi;
     return sigma;
 }
+
+} // namespace GooFit
 

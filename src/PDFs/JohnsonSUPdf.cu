@@ -1,5 +1,8 @@
 #include "goofit/PDFs/JohnsonSUPdf.h"
 
+namespace GooFit {
+
+
 const fptype SQRT2PI = 2.506628;
 
 __device__ fptype device_JohnsonSU(fptype* evt, fptype* p, unsigned int* indices) {
@@ -38,3 +41,5 @@ __host__ JohnsonSUPdf::JohnsonSUPdf(std::string n, Variable* _x, Variable* mean,
 __host__ fptype JohnsonSUPdf::integrate(fptype lo, fptype hi) const {
     return 1.0; // Analytic integral included in device function! (Correct for minus to plus inf.)
 }
+} // namespace GooFit
+

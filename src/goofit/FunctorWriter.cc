@@ -4,6 +4,9 @@
 #include "goofit/PdfBase.h"
 #include "goofit/Variable.h"
 
+namespace GooFit {
+
+
 void writeToFile(PdfBase* pdf, const char* fname) {
     std::vector<Variable*> params = pdf->getParameters();
 
@@ -100,3 +103,5 @@ void writeListOfNumbers(thrust::host_vector<fptype>& target, const char* fname) 
 
     writer.close();
 }
+} // namespace GooFit
+

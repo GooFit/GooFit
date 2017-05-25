@@ -4,6 +4,9 @@
 #include "goofit/PDFs/TddpPdf.h"
 #include <thrust/complex.h>
 
+namespace GooFit {
+
+
 // Very similar class to TddpPdf, but without time dependence
 // (so no time resolution or mixing) and ignoring interference between
 // waves. This makes the code just different enough, the assumptions are
@@ -75,4 +78,6 @@ private:
     unsigned int parameters;
 };
 
+
+} // namespace GooFit
 

@@ -4,6 +4,9 @@
 #include <thrust/complex.h>
 #include <thrust/transform_reduce.h>
 
+namespace GooFit {
+
+
 
 const int resonanceOffset_DP = 4; // Offset of the first resonance into the parameter index array
 // Offset is number of parameters, constant index, number of resonances (not calculable
@@ -405,4 +408,6 @@ __device__ thrust::complex<fptype> SpecialResonanceCalculator::operator()(thrust
     //printf("Amplitude %f %f %f (%f, %f)\n ", m12, m13, m23, ret.real, ret.imag);
     return ret;
 }
+
+} // namespace GooFit
 

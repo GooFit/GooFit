@@ -2,6 +2,9 @@
 
 #include "goofit/PDFs/GooPdf.h"
 
+namespace GooFit {
+
+
 class KinLimitBWPdf : public GooPdf {
 
 public:
@@ -14,3 +17,5 @@ public:
 private:
 
 };
+} // namespace GooFit
+

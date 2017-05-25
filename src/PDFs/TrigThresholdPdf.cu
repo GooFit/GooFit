@@ -1,5 +1,8 @@
 #include "goofit/PDFs/TrigThresholdPdf.h"
 
+namespace GooFit {
+
+
 __device__ fptype threshCalc(fptype distance, fptype linConst) {
     fptype ret = (distance > fptype(0.5) ? fptype(1) : (linConst + (1 - linConst) * sin(distance * fptype(3.14159265))));
     return ret;
@@ -101,3 +104,5 @@ __host__ TrigThresholdPdf::TrigThresholdPdf(std::string n, Variable* _x, Variabl
 
     initialise(pindices);
 }
+} // namespace GooFit
+

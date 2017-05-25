@@ -5,6 +5,9 @@
 #include <thrust/iterator/constant_iterator.h>
 #include <thrust/iterator/counting_iterator.h>
 
+namespace GooFit {
+
+
 int totalConvolutions = 0;
 
 #define CONVOLUTION_CACHE_SIZE 512
@@ -332,4 +335,6 @@ __host__ fptype ConvolutionPdf::normalize() const {
 }
 
 
+
+} // namespace GooFit
 

@@ -25,6 +25,9 @@
 #include <mpi.h>
 #endif
 
+namespace GooFit {
+
+
 // These variables are either function-pointer related (thus specific to this implementation)
 // or constrained to be in the CUDAglob translation unit by nvcc limitations; otherwise they
 // would be in PdfBase.
@@ -646,3 +649,5 @@ __host__ TH1D* GooPdf::plotToROOT(Variable* var, double normFactor, std::string 
     return ret;
 }
 #endif
+} // namespace GooFit
+

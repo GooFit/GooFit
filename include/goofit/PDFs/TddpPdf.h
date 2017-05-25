@@ -4,6 +4,9 @@
 #include "goofit/PDFs/MixingTimeResolution_Aux.h"
 #include "goofit/PDFs/DalitzPlotHelpers.h"
 
+namespace GooFit {
+
+
 //thrust::tuple can't go down the read-only cache pipeline, so we are creating a structure for this.
 typedef struct {
     //note: combining these into a single transaction (double2) should improve memory performance
@@ -126,4 +129,6 @@ private:
     unsigned int parameters;
 };
 
+
+} // namespace GooFit
 

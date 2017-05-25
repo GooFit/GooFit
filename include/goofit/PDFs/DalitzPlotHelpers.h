@@ -15,6 +15,9 @@ See *.cu file for more details
 #include <thrust/iterator/constant_iterator.h>
 #include <thrust/device_vector.h>
 
+namespace GooFit {
+
+
 template<typename E>
 constexpr typename std::underlying_type<E>::type enum_to_underlying(E e) {
     return static_cast<typename std::underlying_type<E>::type>(e);
@@ -109,4 +112,6 @@ protected:
     Iterator last;
     difference_type stride;
 };
+
+} // namespace GooFit
 

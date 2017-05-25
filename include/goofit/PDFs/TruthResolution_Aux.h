@@ -2,6 +2,9 @@
 
 #include "goofit/PDFs/MixingTimeResolution_Aux.h"
 
+namespace GooFit {
+
+
 class TruthResolution : public MixingTimeResolution {
 public:
     TruthResolution();
@@ -13,3 +16,5 @@ public:
         pindices.push_back(0);
     }
 };
+} // namespace GooFit
+

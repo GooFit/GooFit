@@ -42,3 +42,8 @@
 #include "MixingTimeResolution_Aux.cu"
 #include "TruthResolution_Aux.cu"
 #include "ThreeGaussResolution_Aux.cu"
+
+namespace GooFit {
+
+} // namespace GooFit
+

@@ -7,11 +7,23 @@
 
 #include "goofit/GlobalCudaDefines.h"
 
+
 // Declaring friends
+
 namespace GooFit {
+    class Variable;
+}
+
+/// Nice print of Variable
+std::ostream& operator<< (std::ostream& o, const GooFit::Variable& var);
+
+/// Allow Variable to be read in
+std::istream& operator>> (std::istream& i, GooFit::Variable& var);
+
+namespace GooFit {
+
 class FCN;
 class Minuit1;
-}
 
 class Indexable {
 public:
@@ -76,8 +88,8 @@ protected:
 class Variable : public Indexable {
     friend GooFit::FCN;
     friend GooFit::Minuit1;
-    friend std::ostream& operator<< (std::ostream& o, const Variable& var);
-    friend std::istream& operator>> (std::istream& o, Variable& var);
+    friend std::ostream& ::operator<< (std::ostream& o, const Variable& var);
+    friend std::istream& ::operator>> (std::istream& o, Variable& var);
 public:
     
     // These classes can not be duplicated
@@ -216,14 +228,11 @@ public:
     virtual ~Constant() {}
 };
 
-/// Nice print of Variable
-std::ostream& operator<< (std::ostream& o, const Variable& var);
-
-/// Allow Variable to be read in
-std::istream& operator>> (std::istream& i, Variable& var);
-
 /// Get the max index of a variable from a list
 int max_index(const std::vector<Variable*> &vars);
 
 /// Get the max fitter index of a variable from a list
 int max_fitter_index(const std::vector<Variable*> &vars);
+
+}
+

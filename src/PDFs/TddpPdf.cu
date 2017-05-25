@@ -7,6 +7,8 @@
 #include <mpi.h>
 #endif
 
+namespace GooFit {
+
 const int resonanceOffset = 8; // Offset of the first resonance into the parameter index array
 // Offset is number of parameters, constant index, indices for tau, xmix, and ymix, index
 // of resolution function, and finally number of resonances (not calculable from nP
@@ -783,4 +785,6 @@ __device__ WaveHolder_s SpecialWaveCalculator::operator()(thrust::tuple<int, fpt
 
     return ret;
 }
+
+} // namespace GooFit
 

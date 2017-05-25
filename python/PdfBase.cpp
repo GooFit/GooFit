@@ -7,6 +7,7 @@
 #include <goofit/PdfBase.h>
 
 namespace py = pybind11;
+using namespace GooFit;
 
 void init_PdfBase(py::module &m) {
     py::class_<PdfBase>(m, "PdfBase")

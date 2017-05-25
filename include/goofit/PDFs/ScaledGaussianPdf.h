@@ -2,6 +2,9 @@
 
 #include "goofit/PDFs/GooPdf.h"
 
+namespace GooFit {
+
+
 class ScaledGaussianPdf : public GooPdf {
 public:
     ScaledGaussianPdf(std::string n, Variable* _x, Variable* m, Variable* s, Variable* d, Variable* e);
@@ -14,3 +17,5 @@ public:
 private:
 
 };
+} // namespace GooFit
+

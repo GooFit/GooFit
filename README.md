@@ -180,6 +180,8 @@ try {
 
 See [CLI11] for more details. The [pipipi0](./examples/pipipi0DPFit) example has an example of a complex set of options.
 
+The other key differences in code are the addition of the `GooFit` namespace (`using namespace GooFit` allows fast conversion), and the removal of direct access to members of `Variable` (using getters/setters, or directly treat the variable like its value).
+
 See [Converting to GooFit 2.0](./docs/CONVERTING20.md) and the [Changelog](./CHANGELOG.md).
 
 ## Improving Performance with MPI

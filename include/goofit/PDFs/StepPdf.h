@@ -2,6 +2,9 @@
 
 #include "goofit/PDFs/GooPdf.h"
 
+namespace GooFit {
+
+
 class StepPdf : public GooPdf {
 public:
     StepPdf(std::string n, Variable* _x, Variable* x0);
@@ -15,3 +18,5 @@ public:
 private:
 
 };
+} // namespace GooFit
+

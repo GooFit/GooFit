@@ -2,6 +2,9 @@
 
 #include "goofit/PDFs/GooPdf.h"
 
+namespace GooFit {
+
+
 class AddPdf : public GooPdf {
 public:
 
@@ -18,4 +21,6 @@ protected:
 private:
     bool extended;
 };
+
+} // namespace GooFit
 

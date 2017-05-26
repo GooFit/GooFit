@@ -5,13 +5,13 @@
 #include <Minuit2/MnUserParameterState.h>
 #include <vector>
 
-class PdfBase;
-class Variable;
 
 namespace Minuit2 = ROOT::Minuit2;
 
 namespace GooFit {
 
+class PdfBase;
+class Variable;
 class FCN;
     
 class Params : public Minuit2::MnUserParameters {

@@ -4,10 +4,10 @@
 #include "goofit/Variable.h"
 #include <TMinuit.h>
 
-class PdfBase;
-
 namespace GooFit {
     
+class PdfBase;
+
 class Minuit1 : public TMinuit {
     PdfBase* pdfPointer;
     std::vector<Variable*> vars;

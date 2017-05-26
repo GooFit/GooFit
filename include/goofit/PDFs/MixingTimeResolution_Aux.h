@@ -3,6 +3,9 @@
 #include "goofit/GlobalCudaDefines.h"
 #include "goofit/PDFs/GooPdf.h"
 
+namespace GooFit {
+
+
 typedef fptype(*device_resfunction_ptr)(fptype, fptype, fptype, fptype, fptype, fptype, fptype, fptype, fptype, fptype*,
                                         unsigned int*);
 typedef fptype(*device_calc_tau_fcn_ptr)(fptype, fptype, fptype, fptype, fptype, fptype, fptype);
@@ -30,3 +33,5 @@ private:
     int resFunctionIdx;
     int resCalcTauFcnIdx;
 };
+} // namespace GooFit
+

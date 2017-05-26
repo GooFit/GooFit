@@ -3,6 +3,9 @@
 #include "goofit/Error.h"
 #include "goofit/Log.h"
 
+namespace GooFit {
+
+
 // Special constructor for one variable
 UnbinnedDataSet::UnbinnedDataSet(Variable* var, std::string n)
 : DataSet(var, n) {
@@ -57,3 +60,5 @@ void UnbinnedDataSet::addEvent() {
         data.at(i++).push_back(v->getValue());
     numEventsAdded++;
 }
+} // namespace GooFit
+

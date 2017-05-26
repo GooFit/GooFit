@@ -6,10 +6,10 @@
 #include "goofit/GlobalCudaDefines.h"
 #include "goofit/fitting/FCN.h"
 
-class PdfBase;
-
 namespace GooFit {
     
+class PdfBase;
+
 enum class FitErrors : int {
     Valid = 0,
     NotRun = 50,

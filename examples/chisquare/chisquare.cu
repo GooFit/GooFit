@@ -23,6 +23,7 @@ timeval startTime, stopTime, totalTime;
 #include <string>
 
 using namespace std;
+using namespace GooFit;
 
 Variable* decayTime = 0;
 Variable* constaCoef = 0;

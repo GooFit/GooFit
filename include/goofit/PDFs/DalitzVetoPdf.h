@@ -3,6 +3,9 @@
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/PDFs/TddpPdf.h"
 
+namespace GooFit {
+
+
 struct VetoInfo {
     DaughterPair cyclic_index;
     Variable* minimum;
@@ -17,3 +20,5 @@ public:
 private:
 
 };
+} // namespace GooFit
+

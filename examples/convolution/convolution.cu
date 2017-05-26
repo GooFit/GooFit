@@ -9,6 +9,7 @@
 #include "TRandom.h"
 
 using namespace std;
+using namespace GooFit;
 
 double cpu_bw(double x, double x0, double gamma) {
     double ret = gamma;

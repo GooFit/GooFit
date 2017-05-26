@@ -2,6 +2,9 @@
 #include "goofit/Variable.h"
 #include <algorithm>
 
+namespace GooFit {
+
+
 __constant__ fptype* dev_base_interhists[100]; // Multiple histograms for the case of multiple PDFs
 #define OBS_CODE 4242424242
 // This number is presumably so high that it will never collide
@@ -179,3 +182,5 @@ __host__ InterHistPdf::InterHistPdf(std::string n,
 
     totalHistograms++;
 }
+} // namespace GooFit
+

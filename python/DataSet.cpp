@@ -4,6 +4,7 @@
 #include <goofit/DataSet.h>
 
 namespace py = pybind11;
+using namespace GooFit;
 
 template<class DataSetBase = DataSet>
 class PyDataSet : public DataSetBase {

@@ -11,6 +11,9 @@ Also right now it is the home to some helper functions needed and an implementat
 #include "goofit/PDFs/LineshapesPdf.h"
 #include "goofit/PDFs/SpinFactors.h"
 
+namespace GooFit {
+
+
 
 // Form factors as in pdg http://pdg.lbl.gov/2012/reviews/rpp2012-rev-dalitz-analysis-formalism.pdf
 __device__ fptype BL_PRIME(fptype z2, fptype z02, int L) {
@@ -544,4 +547,6 @@ bool Amplitude::operator==(const Amplitude& A) const {
 }
 
 
+
+} // namespace GooFit
 

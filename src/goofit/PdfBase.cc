@@ -12,6 +12,9 @@
 #include "goofit/BinnedDataSet.h"
 #include "goofit/UnbinnedDataSet.h"
 
+namespace GooFit {
+
+
 fptype* dev_event_array;
 fptype host_normalisation[maxParams];
 fptype host_params[maxParams];
@@ -185,3 +188,5 @@ __host__ ROOT::Minuit2::FunctionMinimum PdfBase::fitTo(DataSet *data) {
     FitManager fitter{this};
     return fitter.fit();
 }
+} // namespace GooFit
+

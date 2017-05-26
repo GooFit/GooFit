@@ -9,6 +9,8 @@
 #include <mpi.h>
 #endif
 
+namespace GooFit {
+
 __device__ fptype device_AddPdfs(fptype* evt, fptype* p, unsigned int* indices) {
     int numParameters = RO_CACHE(indices[0]);
     fptype ret = 0;
@@ -241,3 +243,5 @@ __host__ double AddPdf::sumOfNll(int numVars) const {
 
     return ret;
 }
+} // namespace GooFit
+

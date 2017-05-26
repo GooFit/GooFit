@@ -10,6 +10,9 @@
 #include <mpi.h>
 #endif
 
+namespace GooFit {
+
+
 // This is code that belongs to the PdfBase class, that is,
 // it is common across all implementations. But it calls on device-side
 // functions, and due to the nvcc translation-unit limitations, it cannot
@@ -421,3 +424,5 @@ gooError gooFree(void* ptr) {
     return (gooError) cudaFree(ptr);
 #endif
 }
+} // namespace GooFit
+

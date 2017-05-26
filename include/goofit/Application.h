@@ -33,7 +33,15 @@ void signal_handler(int s){
     std::exit(1); // will call the correct exit func, no unwinding of the stack though
 }
    
-using namespace CLI;
+// Importing into the GooFit namespace the main classes from CLI11
+using CLI::ParseError;
+using CLI::FileError;
+using CLI::App;
+using CLI::Option;
+using CLI::ExistingFile;
+using CLI::ExistingDirectory;
+using CLI::NonexistentPath;
+using CLI::ExitCodes;
 
 class Application : public CLI::App {
 protected:

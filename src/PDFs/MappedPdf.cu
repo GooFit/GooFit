@@ -1,5 +1,8 @@
 #include "goofit/PDFs/MappedPdf.h"
 
+namespace GooFit {
+
+
 __device__ fptype device_Mapped(fptype* evt, fptype* p, unsigned int* indices) {
     // Structure : nP mapFunctionIndex mapParamIndex functionIndex1 parameterIndex1 functionIndex2 parameterIndex2 ...
 
@@ -62,3 +65,5 @@ __host__ fptype MappedPdf::normalize() const {
     host_normalisation[parameters] = 1.0;
     return ret;
 }
+} // namespace GooFit
+

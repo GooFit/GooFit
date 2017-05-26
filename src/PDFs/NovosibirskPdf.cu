@@ -1,5 +1,8 @@
 #include "goofit/PDFs/NovosibirskPdf.h"
 
+namespace GooFit {
+
+
 __device__ fptype device_Novosibirsk(fptype* evt, fptype* p, unsigned int* indices) {
     fptype _Mean  = p[indices[1]];
     fptype _Sigma = p[indices[2]];
@@ -43,4 +46,6 @@ __host__ NovosibirskPdf::NovosibirskPdf(std::string n, Variable* _x, Variable* m
     GET_FUNCTION_ADDR(ptr_to_Novosibirsk);
     initialise(pindices);
 }
+
+} // namespace GooFit
 

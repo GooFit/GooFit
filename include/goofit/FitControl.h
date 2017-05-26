@@ -6,6 +6,9 @@
 #include <vector>
 #include <string>
 
+namespace GooFit {
+
+
 class PdfBase;
 
 class FitControl {
@@ -65,4 +68,6 @@ class BinnedChisqFit : public FitControl {
 public:
     BinnedChisqFit() : FitControl(true, "ptr_to_Chisq") {}
 };
+
+} // namespace GooFit
 

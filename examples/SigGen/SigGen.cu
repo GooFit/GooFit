@@ -13,6 +13,7 @@
 #include <thrust/count.h>
 
 using namespace std;
+using namespace GooFit;
 
 // Constants used in more than one PDF component.
 const fptype _mD0 = 1.8645;

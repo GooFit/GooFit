@@ -6,6 +6,9 @@
 #include <functional>
 #include <numeric>
 
+namespace GooFit {
+
+
 // Special constructor for one variable
 BinnedDataSet::BinnedDataSet(Variable* var, std::string n)
     : DataSet(var, n) {
@@ -162,3 +165,5 @@ std::vector<size_t> BinnedDataSet::convertValuesToBins(const std::vector<fptype>
 
     return localBins;
 }
+} // namespace GooFit
+

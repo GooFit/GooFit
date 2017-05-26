@@ -15,6 +15,7 @@
 #include <random>
 
 using namespace std;
+using namespace GooFit;
 
 TEST(Minuit1, SimpleFit) {
     

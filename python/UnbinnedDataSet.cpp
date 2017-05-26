@@ -4,6 +4,7 @@
 #include <goofit/UnbinnedDataSet.h>
 
 namespace py = pybind11;
+using namespace GooFit;
 
 void init_UnbinnedDataSet(py::module &m) {
     py::class_<UnbinnedDataSet, DataSet>(m, "UnbinnedDataSet")

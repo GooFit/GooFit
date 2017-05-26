@@ -29,6 +29,9 @@ TODO:
 
 #include <thrust/complex.h>
 
+namespace GooFit {
+
+
 struct genExp {
     fptype gamma;
     unsigned int offset;
@@ -1154,4 +1157,6 @@ __device__ thrust::tuple<fptype, fptype, fptype, fptype> NormIntegrator_TD::oper
     auto AmpAB = AmpA*conj(AmpB);
     return thrust::tuple<fptype, fptype, fptype, fptype>(thrust::norm(AmpA), thrust::norm(AmpB), AmpAB.real(), AmpAB.imag());
 }
+
+} // namespace GooFit
 

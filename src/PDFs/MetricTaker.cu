@@ -19,6 +19,9 @@
 #include <thrust/iterator/constant_iterator.h>
 #include <thrust/iterator/zip_iterator.h>
 
+namespace GooFit {
+
+
 
 
 __device__ fptype MetricTaker::operator()(thrust::tuple<int, fptype*, int> t) const {
@@ -102,4 +105,6 @@ MetricTaker::MetricTaker(int fIdx, int pIdx)
     , parameters(pIdx) {
     // This constructor should only be used for binned evaluation, ie for integrals.
 }
+
+} // namespace GooFit
 

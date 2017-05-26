@@ -8,6 +8,9 @@ This code is not sufficently tested yet and still under heavy development!
 #include "goofit/PDFs/SpinFactors.h"
 #include "goofit/PDFs/SpinHelper.h"
 
+namespace GooFit {
+
+
 #define ZEMACH 1
 
 __device__ fptype DtoPP1_PtoSP2_StoP3P4(fptype* Vecs, unsigned int* indices) {
@@ -578,4 +581,6 @@ SpinFactor::SpinFactor(std::string name, SF_4Body SF, unsigned int P0, unsigned 
 
     initialise(pindices);
 }
+
+} // namespace GooFit
 

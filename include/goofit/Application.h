@@ -139,7 +139,7 @@ public:
         set_device();
 
         if(!quiet_) {
-            GOOFIT_INFO("GooFit: Version {}.{}.{}", GOOFIT_VERSION_MAJOR, GOOFIT_VERSION_MINOR, GOOFIT_VERSION_PATCH);
+            GOOFIT_INFO("GooFit: Version {} ({}) Commit: {}", GOOFIT_VERSION, GOOFIT_TAG, GOOFIT_GIT_VERSION);
 
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
             cudaDeviceProp devProp;

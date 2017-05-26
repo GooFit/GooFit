@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# Use git grep -l "goofit/PDFs" | xargs ./scripts/ModernizeGooFit.py to run on all GooFit Source
+
 from __future__ import print_function
 import re
 try:
@@ -70,9 +72,6 @@ conversion = [
     ('["<]TruthResolution_Aux.hh?[">]', '"goofit/PDFs/TruthResolution_Aux.h"'),
     ('["<]VoigtianPdf.hh?[">]', '"goofit/PDFs/VoigtianPdf.h"'),
     ('["<]fakeTH1F.hh?[">]', '"TH1F.h"'),
-    ('["<]TMinuit.hh?[">]', '"TMinuit.h"'),
-    ('["<]TRandom.hh?[">]', '"TRandom.h"'),
-    ('["<]TRandom3.hh?[">]', '"TRandom3.h"'),
     (r'\bALIGN\b', '__align__'),
     (r'\bMEM_CONSTANT\b', '__constant__'),
     (r'\bMEM_DEVICE\b', '__device__'),
@@ -98,13 +97,14 @@ conversion = [
     (r'\bRSQRT\b', 'rsqrt'),
     (r'\bFLOOR\b', 'floor'),
     (r'\bCONST_PI\b', 'M_PI'),
-    (r'normalise', 'normalize'),
+    #(r'normalise', 'normalize'),
     (r'Normalise', 'Normalize'),
     (r'\bPdfBase::parCont\b', 'std::vector<Variable*>'),
     (r'\bPdfBase::obsCont\b', 'std::vector<Variable*>'),
     (r'\bobsCont\b', 'std::vector<Variable*>'),
     (r'\bparCont\b', 'std::vector<Variable*>'),
     (r'\babortWithCudaPrintFlush\b', 'GooFit::abort'),
+    #(r'["<]goofit/PDFs/AddPdf.h[">]', '"goofit/PDFs/combine/AddPdf.h"'),
 ]
 
 def fix_text(contents):
@@ -149,12 +149,15 @@ def fix_text(contents):
 
 def fix_files(src):
     for name in src:
-        print('Converting: {0}'.format(name))
+        if name == local.path(__file__):
+            continue
         with name.open('r') as f:
             contents = f.read()
-        contents = fix_text(contents)
-        with name.open('w') as f:
-            f.write(contents)
+        new_contents = fix_text(contents)
+        if contents != new_contents:
+            print('Converted: {0}'.format(name))
+            with name.open('w') as f:
+                f.write(contents)
 
 
 

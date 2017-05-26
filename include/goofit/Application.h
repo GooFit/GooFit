@@ -36,6 +36,7 @@ void signal_handler(int s){
 // Importing into the GooFit namespace the main classes from CLI11
 using CLI::ParseError;
 using CLI::FileError;
+using CLI::Success;
 using CLI::App;
 using CLI::Option;
 using CLI::ExistingFile;

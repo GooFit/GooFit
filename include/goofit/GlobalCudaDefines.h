@@ -74,7 +74,7 @@ enum gooError {gooSuccess = cudaSuccess,
 namespace GooFit {
 gooError gooMalloc(void** target, size_t bytes);
 gooError gooFree(void* ptr);
-}
+
 #ifndef GOOFIT_SINGLES
 
 typedef double fptype;
@@ -89,6 +89,7 @@ typedef float fptype;
 
 #endif
 
+}
 
 // Often faster than pow, and works with ints on CUDA<8
 #define POW2(x) ((x)*(x))

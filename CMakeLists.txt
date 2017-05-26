@@ -4,6 +4,11 @@ project(GOOFIT
     VERSION 2.0.0
     LANGUAGES CXX)
 
+set(GOOFIT_TAG "dev")
+#set(GOOFIT_TAG "alpha")
+#set(GOOFIT_TAG "beta")
+#set(GOOFIT_TAG "release")
+
 if(NOT DEFINED CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
     set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE INTERNAL "No dev warnings")
 endif()
@@ -14,16 +19,30 @@ if(EXISTS ${LOC_PATH})
     message(FATAL_ERROR "You cannot build in a source directory (or any directory with a CMakeLists.txt file). Please make a build subdirectory.")
 endif()
 
+# Get the git command
+find_package(Git QUIET)
+
+if(GIT_FOUND)
 # Update submodules as needed
-option(GOOFIT_SUBMODULE "Check submodules during build" ON)
-if(GOOFIT_SUBMODULE)
-    message(STATUS "Submodule update")
-    execute_process(COMMAND git submodule update --init --recursive
-                    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-                    RESULT_VARIABLE GIT_SUBMOD_RESULT)
-    if(NOT GIT_SUBMOD_RESULT EQUAL "0")
-        message(FATAL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
+    option(GOOFIT_SUBMODULE "Check submodules during build" ON)
+    if(GOOFIT_SUBMODULE)
+        message(STATUS "Submodule update")
+        execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
+                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                        RESULT_VARIABLE GIT_SUBMOD_RESULT)
+        if(NOT GIT_SUBMOD_RESULT EQUAL "0")
+            message(FATAL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
+        endif()
     endif()
+
+    execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
+                    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+                    OUTPUT_VARIABLE GOOFIT_GIT_VERSION
+                    ERROR_QUIET
+                    OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+else()
+    set(GOOFIT_GIT_VERSION "unknown")
 endif()
 
 if(NOT EXISTS "${PROJECT_SOURCE_DIR}/cmake/FindThrust.cmake"
@@ -43,7 +62,6 @@ endif()
 # Add Sanatizers
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/extern/sanitizers/cmake" ${CMAKE_MODULE_PATH})
 find_package(Sanitizers)
-
 
 # Output the current GooFit version
 configure_file (

@@ -1,6 +1,9 @@
 #include "goofit/PDFs/SmoothHistogramPdf.h"
 #include "goofit/Variable.h"
 
+namespace GooFit {
+
+
 __constant__ fptype* dev_base_histograms[100]; // Multiple histograms for the case of multiple PDFs
 __constant__ fptype* dev_smoothed_histograms[100];
 unsigned int SmoothHistogramPdf::totalHistograms = 0;
@@ -219,3 +222,5 @@ __host__ fptype SmoothHistogramPdf::normalize() const {
     host_normalisation[parameters] = 1.0/ret;
     return ret;
 }
+} // namespace GooFit
+

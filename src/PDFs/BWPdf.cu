@@ -1,5 +1,8 @@
 #include "goofit/PDFs/BWPdf.h"
 
+namespace GooFit {
+
+
 __device__ fptype device_BW(fptype* evt, fptype* p, unsigned int* indices) {
     fptype x = evt[indices[2 + indices[0]]];
     fptype mean  = p[indices[1]];
@@ -19,3 +22,5 @@ __host__ BWPdf::BWPdf(std::string n, Variable* _x, Variable* mean, Variable* wid
     GET_FUNCTION_ADDR(ptr_to_BW);
     initialise(pindices);
 }
+} // namespace GooFit
+

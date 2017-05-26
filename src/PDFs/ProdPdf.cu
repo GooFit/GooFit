@@ -1,6 +1,9 @@
 #include "goofit/PDFs/ProdPdf.h"
 #include <algorithm>
 
+namespace GooFit {
+
+
 __device__ fptype device_ProdPdfs(fptype* evt, fptype* p, unsigned int* indices) {
     // Index structure is nP | F1 P1 | F2 P2 | ...
     // where nP is number of parameters, Fs are function indices, and Ps are parameter indices
@@ -106,3 +109,5 @@ __host__ fptype ProdPdf::normalize() const {
 
     return 1.0;
 }
+} // namespace GooFit
+

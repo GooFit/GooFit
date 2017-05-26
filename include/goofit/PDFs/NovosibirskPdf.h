@@ -2,6 +2,9 @@
 
 #include "goofit/PDFs/GooPdf.h"
 
+namespace GooFit {
+
+
 class NovosibirskPdf : public GooPdf {
 public:
     NovosibirskPdf(std::string n, Variable* _x, Variable* m, Variable* s, Variable* t);
@@ -9,3 +12,5 @@ public:
 private:
 
 };
+} // namespace GooFit
+

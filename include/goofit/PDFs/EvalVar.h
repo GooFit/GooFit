@@ -14,6 +14,9 @@ See *.cu file for more details
 #include <mcbooster/GContainers.h>
 #include <mcbooster/GFunctional.h>
 
+namespace GooFit {
+
+
 
 struct Dim5: public mcbooster::IFunctionArray {
     Dim5() {
@@ -115,4 +118,6 @@ struct Dim5: public mcbooster::IFunctionArray {
         variables[4] = phi(pM, ppip, ppim, pK, ppip2);
     }
 };
+
+} // namespace GooFit
 

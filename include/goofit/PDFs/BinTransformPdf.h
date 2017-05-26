@@ -2,6 +2,9 @@
 
 #include "goofit/PDFs/GooPdf.h"
 
+namespace GooFit {
+
+
 // Transforms ND coordinates into a single bin number.
 class BinTransformPdf : public GooPdf {
 public:
@@ -14,3 +17,5 @@ public:
 private:
 
 };
+} // namespace GooFit
+

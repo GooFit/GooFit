@@ -3,6 +3,7 @@
 #include <goofit/Variable.h>
 #include <goofit/PDFs/ExpPdf.h>
 
+using namespace GooFit;
 namespace py = pybind11;
 
 void init_ExpPdf(py::module &m) {

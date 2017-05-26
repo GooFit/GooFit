@@ -1,5 +1,8 @@
 #include "goofit/PDFs/BinTransformPdf.h"
 
+namespace GooFit {
+
+
 __device__ fptype device_BinTransform(fptype* evt, fptype* p, unsigned int* indices) {
     // Index structure: nP lim1 bin1 lim2 bin2 ... nO o1 o2
     int numObservables = indices[1 + indices[0]];
@@ -52,4 +55,6 @@ __host__ BinTransformPdf::BinTransformPdf(std::string n, std::vector<Variable*> 
     initialise(pindices);
 }
 
+
+} // namespace GooFit
 

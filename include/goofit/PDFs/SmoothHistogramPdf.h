@@ -6,6 +6,9 @@
 #include <thrust/device_vector.h>
 #include <thrust/host_vector.h>
 
+namespace GooFit {
+
+
 class SmoothHistogramPdf : public GooPdf {
 public:
     SmoothHistogramPdf(std::string n, BinnedDataSet* x, Variable* smoothing);
@@ -23,3 +26,5 @@ private:
 
     static unsigned int totalHistograms;
 };
+} // namespace GooFit
+

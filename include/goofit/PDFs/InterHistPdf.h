@@ -4,6 +4,9 @@
 #include "goofit/BinnedDataSet.h"
 #include <thrust/device_vector.h>
 
+namespace GooFit {
+
+
 class InterHistPdf : public GooPdf {
 public:
     InterHistPdf(std::string n,
@@ -18,4 +21,6 @@ private:
     fptype* host_constants;
     int numVars;
 };
+
+} // namespace GooFit
 

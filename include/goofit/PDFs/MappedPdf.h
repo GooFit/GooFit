@@ -2,6 +2,9 @@
 
 #include "goofit/PDFs/GooPdf.h"
 
+namespace GooFit {
+
+
 class MappedPdf : public GooPdf {
 public:
     MappedPdf(std::string n, GooPdf* m, std::vector<GooPdf*>& t);
@@ -10,3 +13,5 @@ public:
 private:
 
 };
+} // namespace GooFit
+

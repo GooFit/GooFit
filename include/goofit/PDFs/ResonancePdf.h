@@ -3,6 +3,9 @@
 #include "goofit/PDFs/GooPdf.h"
 #include <thrust/complex.h>
 
+namespace GooFit {
+
+
 typedef thrust::complex<fptype> (*resonance_function_ptr)(fptype, fptype, fptype, unsigned int*);
 
 __device__ fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m);
@@ -81,4 +84,6 @@ private:
     unsigned int resonance_type;
     */
 };
+
+} // namespace GooFit
 

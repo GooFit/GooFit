@@ -10,6 +10,9 @@
 #include "goofit/Variable.h"
 #include "goofit/Error.h"
 
+namespace GooFit {
+
+
 class DataSet {
 public:
     DataSet(Variable* var, std::string n = "");
@@ -70,4 +73,6 @@ private:
 protected:
     std::vector<Variable*> variables;
 };
+
+} // namespace GooFit
 

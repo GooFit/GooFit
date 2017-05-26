@@ -2,6 +2,9 @@
 #include "goofit/Error.h"
 #include "goofit/Log.h"
 
+namespace GooFit {
+
+
 __device__ fptype device_EventWeightedAddPdfs(fptype* evt, fptype* p, unsigned int* indices) {
     int numParameters = RO_CACHE(indices[0]);
     fptype ret = 0;
@@ -118,4 +121,6 @@ __host__ fptype EventWeightedAddPdf::normalize() const {
 
     return 1.0;
 }
+
+} // namespace GooFit
 

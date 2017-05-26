@@ -1,6 +1,9 @@
 #include "goofit/PDFs/CrystalBallPdf.h"
 #include "goofit/Variable.h"
 
+namespace GooFit {
+
+
 __device__ fptype device_CrystalBall(fptype* evt, fptype* p, unsigned int* indices) {
     // Left-hand tail if alpha is less than 0,
     // right-hand tail if greater, pure Gaussian if 0.
@@ -109,4 +112,6 @@ __host__ fptype CrystalBallPdf::integrate(fptype lo, fptype hi) const {
 
     return result;
 }
+
+} // namespace GooFit
 

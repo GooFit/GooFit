@@ -3,6 +3,8 @@
 #include "goofit/Variable.h"
 #include "goofit/UnbinnedDataSet.h"
 
+using namespace GooFit;
+
 TEST(Simple, UnbinnedAdding) {
 
     // Independent variable.

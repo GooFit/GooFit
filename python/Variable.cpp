@@ -7,6 +7,7 @@
 
 namespace py = pybind11;
 using namespace fmt::literals;
+using namespace GooFit;
 
 void init_Variable(py::module &m) {
     py::class_<Indexable>(m, "Indexable")

@@ -14,6 +14,8 @@
 
 #include <random>
 
+using namespace GooFit;
+
 TEST(UnbinnedFit, SimpleFit) {
     
     // Random number generation

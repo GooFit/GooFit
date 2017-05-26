@@ -11,6 +11,8 @@
 #include "goofit/fitting/FitManagerMinuit1.h"
 #endif
 
+using namespace GooFit;
+
 TEST(Simple, NoBlind) {
 
     // Independent variable.

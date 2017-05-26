@@ -5,6 +5,9 @@
 #include <cstdlib>
 #include <climits>
 
+namespace GooFit {
+
+
 DataSet::DataSet(Variable* var, std::string n)
 : name(n), variables({var}) {
     generateName();
@@ -70,3 +73,5 @@ void DataSet::checkAllVars() const {
             throw GooFit::OutOfRange(v->getName(), v->getValue(), v->getLowerLimit(), v->getUpperLimit());
     }
 }
+} // namespace GooFit
+

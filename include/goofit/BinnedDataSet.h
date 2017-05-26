@@ -5,6 +5,9 @@
 #include <map>
 #include <vector>
 
+namespace GooFit {
+
+
 class BinnedDataSet : public DataSet {
     // Class for rectangularly binned datasets - every bin the same size.
 
@@ -55,4 +58,6 @@ private:
     std::vector<fptype> binerrors;
 
 };
+
+} // namespace GooFit
 

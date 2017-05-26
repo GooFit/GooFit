@@ -1,6 +1,9 @@
 #include "goofit/PDFs/ArgusPdf.h"
 #include "goofit/Variable.h"
 
+namespace GooFit {
+
+
 __device__ fptype device_Argus_Upper(fptype* evt, fptype* p, unsigned int* indices) {
     fptype x = evt[indices[2 + indices[0]]];
     fptype m0 = p[indices[1]];
@@ -106,3 +109,5 @@ __host__ double ArgusPdf::integrate(fptype lo, fptype hi) const {
     norm *= ((hi - lo) / integrationBins);
     return norm;
 }
+} // namespace GooFit
+

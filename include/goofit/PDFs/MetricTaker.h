@@ -4,6 +4,9 @@
 
 #include "goofit/PdfBase.h"
 
+namespace GooFit {
+
+
 
 // Notice that operators are distinguished by the order of the operands,
 // and not otherwise! It's up to the user to make his tuples correctly.
@@ -38,4 +41,6 @@ private:
 
 };
 
+
+} // namespace GooFit
 

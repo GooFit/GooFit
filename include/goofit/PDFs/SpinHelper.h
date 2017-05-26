@@ -10,6 +10,9 @@ This code is not sufficently tested yet and still under heavy development!
 
 #include "goofit/PDFs/DalitzPlotHelpers.h"
 
+namespace GooFit {
+
+
 class __align__(16) gpuLVec {
 private:
     fptype X;
@@ -522,4 +525,6 @@ __device__ inline gpuLVec LeviCivita(const gpuLVec& a, const gpuLVec& b, const g
 
     return  v;
 }
+
+} // namespace GooFit
 

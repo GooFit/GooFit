@@ -6,8 +6,6 @@
 #include <CLI/Timer.hpp>
 #include <iostream>
 
-using namespace std;
-
 int main(int argc, char** argv) {
     GooFit::Application app("Exponential example", argc, argv);
 
@@ -18,10 +16,10 @@ int main(int argc, char** argv) {
     }
 
     // Independent variable.
-    Variable xvar{"xvar", 0, log(1 + RAND_MAX/2)};
+    GooFit::Variable xvar{"xvar", 0, log(1 + RAND_MAX/2)};
 
     // Data set
-    UnbinnedDataSet data(&xvar);
+    GooFit::UnbinnedDataSet data(&xvar);
 
     // Generate toy events.
     
@@ -36,12 +34,12 @@ int main(int argc, char** argv) {
     std::cout << GooFit::magenta << gen_timer << GooFit::reset << std::endl;
 
     // Fit parameter
-    Variable alpha{"alpha", -2, 0.1, -10, 10};
+    GooFit::Variable alpha{"alpha", -2, 0.1, -10, 10};
     // GooPdf object
-    ExpPdf exppdf{"exppdf", &xvar, &alpha};
+    GooFit::ExpPdf exppdf{"exppdf", &xvar, &alpha};
     exppdf.setData(&data);
 
-    FitManager fitter{&exppdf};
+    GooFit::FitManager fitter{&exppdf};
     fitter.fit();
     
     if(alpha.getValue() < -1.01 || alpha.getValue() > -0.99)

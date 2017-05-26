@@ -2,6 +2,9 @@
 
 #include "goofit/PDFs/MixingTimeResolution_Aux.h"
 
+namespace GooFit {
+
+
 class ThreeGaussResolution : public MixingTimeResolution {
 public:
     ThreeGaussResolution(Variable* cf, Variable* tf, Variable* cb, Variable* cs, Variable* tb, Variable* ts, Variable* ob,
@@ -22,3 +25,5 @@ private:
     Variable* outBias;
     Variable* outScaleFactor;
 };
+} // namespace GooFit
+

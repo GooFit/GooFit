@@ -76,5 +76,5 @@ The other values do not provide shortcut access. Copying a variable is explicitl
 
 ## Namespaces
 
-GooFit no longer leaks the `std::` namespace, and some of GooFit is now inside the GooFit namespace. To be future-proof, you can add `using namespace GooFit;` at the top of your code.
+GooFit no longer leaks the `std::` namespace, and all of GooFit is now inside the GooFit namespace. You can add `using namespace GooFit;` at the top of your code.
 

@@ -1,6 +1,9 @@
 #include "goofit/PDFs/ResonancePdf.h"
 #include "goofit/PDFs/DalitzPlotHelpers.h"
 
+namespace GooFit {
+
+
 __device__ fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m) {
     // For A -> B + C, calculate momentum of B and C in rest frame of A.
     // PDG 38.16.
@@ -432,4 +435,6 @@ ResonancePdf::ResonancePdf(std::string name,
 
 }
 
+
+} // namespace GooFit
 

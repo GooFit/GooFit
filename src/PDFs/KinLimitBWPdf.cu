@@ -1,6 +1,9 @@
 #include "goofit/PDFs/KinLimitBWPdf.h"
 #include "goofit/Variable.h"
 
+namespace GooFit {
+
+
 __device__ fptype getMomentum(const fptype& mass, const fptype& pimass, const fptype& d0mass) {
     if(mass <= 0)
         return 0;
@@ -68,3 +71,5 @@ __host__ void KinLimitBWPdf::setMasses(fptype bigM, fptype smallM) {
     constants[1] = smallM;
     MEMCPY_TO_SYMBOL(functorConstants, constants, 2*sizeof(fptype), cIndex*sizeof(fptype), cudaMemcpyHostToDevice);
 }
+} // namespace GooFit
+

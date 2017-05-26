@@ -8,6 +8,9 @@ Helper functions
 
 #include "goofit/PDFs/DalitzPlotHelpers.h"
 
+namespace GooFit {
+
+
 __device__ fptype Mass(const fptype* P0) {
     return sqrt(-P0[0]*P0[0] - P0[1]*P0[1] - P0[2]*P0[2] + P0[3]*P0[3]);
 }
@@ -215,3 +218,5 @@ __device__ fptype getmass(const unsigned int& pair, fptype& d1, fptype& d2, cons
 
     return mpair;
 }
+} // namespace GooFit
+

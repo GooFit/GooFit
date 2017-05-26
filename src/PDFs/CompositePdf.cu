@@ -1,5 +1,8 @@
 #include "goofit/PDFs/CompositePdf.h"
 
+namespace GooFit {
+
+
 __device__ fptype device_Composite(fptype* evt, fptype* p, unsigned int* indices) {
     unsigned int coreFcnIndex  = RO_CACHE(indices[1]);
     unsigned int coreParIndex  = RO_CACHE(indices[2]);
@@ -72,3 +75,5 @@ __host__ fptype CompositePdf::normalize() const {
     return GooPdf::normalize();
 
 }
+} // namespace GooFit
+

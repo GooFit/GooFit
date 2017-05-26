@@ -1,6 +1,9 @@
 #include "goofit/PDFs/PolynomialPdf.h"
 #include "goofit/Variable.h"
 
+namespace GooFit {
+
+
 __device__ fptype device_Polynomial(fptype* evt, fptype* p, unsigned int* indices) {
     // Structure is nP lowestdegree c1 c2 c3 nO o1
 
@@ -232,3 +235,5 @@ __host__ fptype PolynomialPdf::getCoefficient(int coef) const {
     fptype param = host_params[indices[2 + coef - indices[1]]];
     return norm*param;
 }
+} // namespace GooFit
+

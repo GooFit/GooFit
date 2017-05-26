@@ -2,6 +2,9 @@
 
 #include "goofit/PDFs/GooPdf.h"
 
+namespace GooFit {
+
+
 class TrigThresholdPdf : public GooPdf {
 public:
     TrigThresholdPdf(std::string n, Variable* _x, Variable* thresh, Variable* trigConst, Variable* linConst,
@@ -12,3 +15,5 @@ public:
 private:
 
 };
+} // namespace GooFit
+

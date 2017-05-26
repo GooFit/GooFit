@@ -24,6 +24,9 @@ TODO:
 #include "goofit/PDFs/EvalVar.h"
 #include "goofit/Error.h"
 
+namespace GooFit {
+
+
 
 // The function of this array is to hold all the cached waves; specific
 // waves are recalculated when the corresponding resonance mass or width
@@ -836,3 +839,5 @@ __device__ fptype NormIntegrator::operator()(thrust::tuple<int, int, fptype*, th
 
     return thrust::norm(returnVal);
 }
+} // namespace GooFit
+

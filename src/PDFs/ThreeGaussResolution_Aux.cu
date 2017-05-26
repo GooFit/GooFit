@@ -1,5 +1,8 @@
 #include "goofit/PDFs/ThreeGaussResolution_Aux.h"
 #include <math.h>
+
+namespace GooFit {
+
 const fptype R1o6      = 1.0 / 6.0;
 #define SQRTPIo2 (1.0/M_2_SQRTPI)
 #define SQRT1o2PI (sqrt(0.5*M_1_PI))
@@ -145,3 +148,5 @@ fptype ThreeGaussResolution::normalisation(fptype di1, fptype di2, fptype di3, f
 
     return ret;
 }
+} // namespace GooFit
+

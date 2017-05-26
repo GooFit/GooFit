@@ -2,6 +2,9 @@
 
 #include "goofit/PDFs/GooPdf.h"
 
+namespace GooFit {
+
+
 class ArgusPdf : public GooPdf {
 public:
     ArgusPdf(std::string n, Variable* _x, Variable* m, Variable* s, bool upper, Variable* power = nullptr);
@@ -13,4 +16,6 @@ public:
 private:
 
 };
+
+} // namespace GooFit
 

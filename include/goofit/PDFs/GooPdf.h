@@ -6,6 +6,13 @@
 #include "goofit/UnbinnedDataSet.h"
 #include "goofit/PDFs/MetricTaker.h"
 
+#ifdef ROOT_FOUND
+class TH1D;
+#endif
+
+namespace GooFit {
+
+
 // TODO: Replace this with class MetricTaker;
 // And fill in the .cu files where needed
 
@@ -28,9 +35,6 @@ extern unsigned int num_device_functions;
 extern std::map<void*, int> functionAddressToDeviceIndexMap;
 #endif
 
-#ifdef ROOT_FOUND
-class TH1D;
-#endif
 
 __device__ int dev_powi(int base, int exp);  // Implemented in SmoothHistogramPdf.
 void* getMetricPointer(std::string name);
@@ -100,4 +104,6 @@ private:
 
 };
 
+
+} // namespace GooFit
 

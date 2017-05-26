@@ -2,6 +2,9 @@
 
 #include "goofit/PDFs/GooPdf.h"
 
+namespace GooFit {
+
+
 class GaussianPdf : public GooPdf {
 public:
     GaussianPdf(std::string n, Variable* _x, Variable* m, Variable* s);
@@ -15,3 +18,5 @@ public:
 private:
 
 };
+} // namespace GooFit
+

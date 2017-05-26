@@ -1,5 +1,8 @@
 #include "goofit/PDFs/TruthResolution_Aux.h"
 
+namespace GooFit {
+
+
 __device__ fptype device_truth_resolution(fptype coshterm, fptype costerm, fptype sinhterm, fptype sinterm,
         fptype tau, fptype dtime, fptype xmixing, fptype ymixing, fptype /*sigma*/,
         fptype* /*p*/, unsigned int* /*indices*/) {
@@ -57,4 +60,6 @@ fptype TruthResolution::normalisation(fptype di1, fptype di2, fptype di3, fptype
 
     return ret;
 }
+
+} // namespace GooFit
 

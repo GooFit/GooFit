@@ -29,6 +29,7 @@
 #include "goofit/UnbinnedDataSet.h"
 
 using namespace std;
+using namespace GooFit;
 
 TCanvas* foo;
 TCanvas* foodal;

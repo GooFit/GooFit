@@ -2,6 +2,9 @@
 
 #include "goofit/PDFs/GooPdf.h"
 
+namespace GooFit {
+
+
 class BifurGaussPdf : public GooPdf {
 public:
     BifurGaussPdf(std::string n, Variable* _x, Variable* m, Variable* sL, Variable* sR);
@@ -11,4 +14,6 @@ public:
 private:
 
 };
+
+} // namespace GooFit
 

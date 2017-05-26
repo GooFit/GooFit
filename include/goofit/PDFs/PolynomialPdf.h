@@ -2,6 +2,9 @@
 
 #include "goofit/PDFs/GooPdf.h"
 
+namespace GooFit {
+
+
 class PolynomialPdf : public GooPdf {
 public:
     PolynomialPdf(std::string n, Variable* _x, std::vector<Variable*> weights, Variable* x0 = nullptr,
@@ -16,3 +19,5 @@ public:
 private:
     Variable* center;
 };
+} // namespace GooFit
+

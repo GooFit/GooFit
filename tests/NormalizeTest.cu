@@ -13,6 +13,7 @@
 
 #include <random>
 
+using namespace GooFit;
 
 TEST(Normalize, Dual) {
     // Random number generation

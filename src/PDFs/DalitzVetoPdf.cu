@@ -1,6 +1,9 @@
 #include "goofit/PDFs/DalitzVetoPdf.h"
 #include "goofit/PDFs/DalitzPlotHelpers.h"
 
+namespace GooFit {
+
+
 __device__ fptype device_DalitzVeto(fptype* evt, fptype* p, unsigned int* indices) {
     fptype x         = evt[RO_CACHE(indices[2 + RO_CACHE(indices[0]) + 0])];
     fptype y         = evt[RO_CACHE(indices[2 + RO_CACHE(indices[0]) + 1])];
@@ -53,3 +56,5 @@ __host__ DalitzVetoPdf::DalitzVetoPdf(std::string n, Variable* _x, Variable* _y,
     GET_FUNCTION_ADDR(ptr_to_DalitzVeto);
     initialise(pindices);
 }
+} // namespace GooFit
+

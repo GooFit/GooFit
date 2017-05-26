@@ -5,6 +5,9 @@
 
 #include <thrust/complex.h>
 
+namespace GooFit {
+
+
 class SpecialResonanceIntegrator;
 class SpecialResonanceCalculator;
 
@@ -68,4 +71,6 @@ private:
     unsigned int resonance_i;
     unsigned int parameters;
 };
+
+} // namespace GooFit
 

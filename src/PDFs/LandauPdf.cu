@@ -1,5 +1,8 @@
 #include "goofit/PDFs/LandauPdf.h"
 
+namespace GooFit {
+
+
 // LANDAU pdf : algorithm from CERNLIB G110 denlan
 // same algorithm is used in GSL
 
@@ -86,4 +89,6 @@ __host__ LandauPdf::LandauPdf(std::string n, Variable* _x, Variable* mpv, Variab
     initialise(pindices);
 }
 
+
+} // namespace GooFit
 

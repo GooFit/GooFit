@@ -2,6 +2,9 @@
 
 #include "goofit/PDFs/GooPdf.h"
 
+namespace GooFit {
+
+
 // This class is just like AddPdf except that the
 // event weights are properties of each event, not variables
 // in the fit.
@@ -19,3 +22,5 @@ protected:
 private:
 
 };
+} // namespace GooFit
+

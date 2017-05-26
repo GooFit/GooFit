@@ -4,6 +4,7 @@
 #include <goofit/FitManager.h>
 
 namespace py = pybind11;
+using namespace GooFit;
 
 void init_FitManager(py::module &m) {
     py::class_<FitManager>(m, "FitManager")

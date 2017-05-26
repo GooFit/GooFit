@@ -8,7 +8,9 @@
 #include "goofit/PDFs/AddPdf.h"
 #include "goofit/UnbinnedDataSet.h"
 #include "goofit/PDFs/DP4Pdf.h"
+
 using namespace std;
+using namespace GooFit;
 
 const fptype _mD0 = 1.8645;
 const fptype piPlusMass = 0.13957018;

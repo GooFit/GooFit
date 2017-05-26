@@ -3,6 +3,9 @@
 #include "goofit/Faddeeva.h"
 #include <thrust/complex.h>
 
+namespace GooFit {
+
+
 #define M_2PI 6.28318530717958
 //#define ROOT2 1.41421356
 
@@ -316,4 +319,6 @@ __host__ VoigtianPdf::VoigtianPdf(std::string n, Variable* _x, Variable* m, Vari
     GET_FUNCTION_ADDR(ptr_to_Voigtian);
     initialise(pindices);
 }
+
+} // namespace GooFit
 

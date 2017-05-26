@@ -3,6 +3,9 @@
 #include "goofit/PDFs/GooPdf.h"
 #include <thrust/device_vector.h>
 
+namespace GooFit {
+
+
 class ConvolutionPdf : public GooPdf {
 public:
 
@@ -23,4 +26,6 @@ private:
     int workSpaceIndex;
 
 };
+
+} // namespace GooFit
 

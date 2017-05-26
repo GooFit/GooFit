@@ -15,6 +15,9 @@ See *.cu file for more details
 #include <tuple>
 #include <thrust/remove.h>
 
+namespace GooFit {
+
+
 
 #ifdef SEPARABLE
 extern __constant__ unsigned int AmpIndices[500];
@@ -168,4 +171,6 @@ private:
 };
 
 
+
+} // namespace GooFit
 

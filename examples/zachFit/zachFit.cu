@@ -27,6 +27,7 @@
 #include <fmt/format.h>
 
 using namespace fmt::literals;
+using namespace GooFit;
 
 TH1D* getMCData(DataSet *data, Variable* var, std::string filename) {
     TH1D* mchist = new TH1D{"mc_hist", "", 300, 0.1365, 0.1665};

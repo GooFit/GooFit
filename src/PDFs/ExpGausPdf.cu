@@ -1,5 +1,8 @@
 #include "goofit/PDFs/ExpGausPdf.h"
 
+namespace GooFit {
+
+
 __device__ fptype device_ExpGaus(fptype* evt, fptype* p, unsigned int* indices) {
     fptype x     = evt[RO_CACHE(indices[2 + RO_CACHE(indices[0])])];
     fptype mean  = RO_CACHE(p[RO_CACHE(indices[1])]);
@@ -28,4 +31,6 @@ ExpGausPdf::ExpGausPdf(std::string n, Variable* _x, Variable* mean, Variable* si
     initialise(pindices);
 }
 
+
+} // namespace GooFit
 

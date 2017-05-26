@@ -16,6 +16,9 @@ See *.cu file for more details
 #include <thrust/remove.h>
 #include "goofit/PDFs/MixingTimeResolution_Aux.h"
 
+namespace GooFit {
+
+
 class LSCalculator_TD;
 class AmpCalc_TD;
 class SFCalculator_TD;
@@ -184,3 +187,5 @@ public:
                 thrust::get<3>(one) + thrust::get<3>(two));
     }
 };
+} // namespace GooFit
+

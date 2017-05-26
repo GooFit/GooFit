@@ -1,5 +1,8 @@
 #include "goofit/PDFs/CorrGaussianPdf.h"
 
+namespace GooFit {
+
+
 __device__ fptype device_CorrGaussian(fptype* evt, fptype* p, unsigned int* indices) {
     fptype x = evt[indices[2 + indices[0]]];
     fptype y = evt[indices[3 + indices[0]]];
@@ -40,4 +43,6 @@ __host__ CorrGaussianPdf::CorrGaussianPdf(std::string n, Variable* _x, Variable*
     initialise(pindices);
 }
 
+
+} // namespace GooFit
 

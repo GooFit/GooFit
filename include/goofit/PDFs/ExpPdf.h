@@ -2,6 +2,9 @@
 
 #include "goofit/PDFs/GooPdf.h"
 
+namespace GooFit {
+
+
 class ExpPdf : public GooPdf {
 public:
     ExpPdf(std::string n, Variable* _x, Variable* alpha, Variable* offset = nullptr);
@@ -16,3 +19,5 @@ public:
 private:
 
 };
+} // namespace GooFit
+

@@ -5,6 +5,9 @@
 
 #include <iostream>
 
+namespace GooFit {
+
+
 #define GOOFIT_INFO(...)  {std::cout << GooFit::reset << GooFit::blue; fmt::print(__VA_ARGS__); std::cout << GooFit::reset << std::endl;}
 #define GOOFIT_INFO_C(color, ...) {std::cout << GooFit::reset << color; fmt::print(__VA_ARGS__); std::cout << GooFit::reset << std::endl;}
 #define GOOFIT_STATUS(...)  {std::cout << GooFit::reset << GooFit::magenta; fmt::print(__VA_ARGS__); std::cout << GooFit::reset << std::endl;}
@@ -35,4 +38,6 @@
 #define GOOFIT_TRACE(...)
 #define GOOFIT_TRACEF(...)
 #endif
+
+} // namespace GooFit
 

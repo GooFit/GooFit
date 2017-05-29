@@ -321,6 +321,8 @@ function(goofit_add_library GNAME)
     else()
         target_link_libraries(${GNAME} Minuit2)
     endif()
+
+    source_group("Source Files" REGULAR_EXPRESSION ".*\\.c[uc]")
 endfunction()
 
 function(goofit_add_executable NAMEEXE)
@@ -340,6 +342,7 @@ function(goofit_add_executable NAMEEXE)
     target_link_libraries(${NAMEEXE} goofit_lib)
     target_compile_options(${NAMEEXE} PUBLIC -x c++)
     set_target_properties(${NAMEEXE} PROPERTIES FOLDER projects)
+    source_group("Source Files" REGULAR_EXPRESSION ".*\\.c[uc]")
 endfunction()
 
 function(goofit_add_link)

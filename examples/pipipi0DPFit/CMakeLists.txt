@@ -23,3 +23,4 @@ endif()
 
 goofit_add_executable(pipipi0DPFit pipipi0DPFit.cu)
 goofit_add_directory()
+set_target_properties(pipipi0DPFit PROPERTIES FOLDER examples)

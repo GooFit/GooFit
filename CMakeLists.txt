@@ -19,6 +19,9 @@ if(EXISTS ${LOC_PATH})
     message(FATAL_ERROR "You cannot build in a source directory (or any directory with a CMakeLists.txt file). Please make a build subdirectory.")
 endif()
 
+# Allow IDE's to group targets into folders
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 # Get the git command
 find_package(Git QUIET)
 
@@ -276,12 +279,16 @@ if(ROOT_FOUND)
     add_definitions("-DROOT_FOUND")
 else()
     add_subdirectory("extern/Minuit2")
+    set_target_properties(Minuit2 PROPERTIES FOLDER extern)
+    set_target_properties(Math PROPERTIES FOLDER extern)
 endif()
 
 # Adding simple libraries
 add_subdirectory("extern/CLI11")
 add_subdirectory("extern/FeatureDetector")
+set_target_properties(FeatureDetector PROPERTIES FOLDER extern)
 add_subdirectory("extern/fmt")
+set_target_properties(fmt PROPERTIES FOLDER extern)
 
 add_library(rang INTERFACE)
 target_include_directories(rang INTERFACE "${PROJECT_SOURCE_DIR}/extern/rang/include")
@@ -307,6 +314,7 @@ function(goofit_add_library GNAME)
         target_compile_options(${GNAME} PUBLIC -x c++)
     endif()
     target_link_libraries(${GNAME} rang CLI11 fmt goofit_mt)
+    set_target_properties(${GNAME} PROPERTIES FOLDER core)
 
     if(ROOT_FOUND)
         target_link_libraries(${GNAME} ROOT::ROOT)
@@ -331,6 +339,7 @@ function(goofit_add_executable NAMEEXE)
     endif()
     target_link_libraries(${NAMEEXE} goofit_lib)
     target_compile_options(${NAMEEXE} PUBLIC -x c++)
+    set_target_properties(${NAMEEXE} PROPERTIES FOLDER projects)
 endfunction()
 
 function(goofit_add_link)

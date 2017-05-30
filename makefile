@@ -1,6 +1,8 @@
-.PHONY: auto xcode omp cuda warning mpi
+.PHONY: default auto xcode omp cuda warning mpi
 
-auto: warning
+default: auto warning
+
+auto: 
 	@mkdir -p build
 	cd build && cmake .. && $(MAKE) --no-print-directory
 	cd build && ctest --output-on-failure
@@ -24,7 +26,6 @@ mpi:
 	@mkdir -p build-mpi
 	cd build-mpi && cmake .. -DGOOFIT_MPI=ON && $(MAKE) --no-print-directory
 	cd build-mpi && ctest --output-on-failure
-
 
 warning:
 	@echo "This project builds with CMake 3.4+."

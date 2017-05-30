@@ -1,9 +1,14 @@
 add_subdirectory("${PROJECT_SOURCE_DIR}/extern/googletest" "extern/googletest")
+set_target_properties(gtest PROPERTIES FOLDER extern)
+set_target_properties(gtest_main PROPERTIES FOLDER extern)
+set_target_properties(gmock PROPERTIES FOLDER extern)
+set_target_properties(gmock_main PROPERTIES FOLDER extern)
 
 macro(goofit_add_test TESTNAME)
     goofit_add_executable(${TESTNAME} ${TESTNAME}.cu)
     target_link_libraries(${TESTNAME} gtest gmock gtest_main)
     add_test(${TESTNAME} ${TESTNAME})
+    set_target_properties(${TESTNAME} PROPERTIES FOLDER tests)
 endmacro()
 
 goofit_add_test(SimpleTest)

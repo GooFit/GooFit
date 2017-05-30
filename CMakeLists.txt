@@ -9,7 +9,7 @@ set(GOOFIT_TAG "dev")
 #set(GOOFIT_TAG "beta")
 #set(GOOFIT_TAG "release")
 
-if(NOT DEFINED CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
+if(NOT DEFINED CMAKE_SUPPRESS_DEVELOPER_WARNINGS AND NOT GOOFIT_TAG STREQUAL "dev")
     set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE INTERNAL "No dev warnings")
 endif()
 
@@ -18,6 +18,9 @@ file(TO_CMAKE_PATH "${PROJECT_BINARY_DIR}/CMakeLists.txt" LOC_PATH)
 if(EXISTS ${LOC_PATH})
     message(FATAL_ERROR "You cannot build in a source directory (or any directory with a CMakeLists.txt file). Please make a build subdirectory.")
 endif()
+
+# Allow IDE's to group targets into folders
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Get the git command
 find_package(Git QUIET)
@@ -276,12 +279,16 @@ if(ROOT_FOUND)
     add_definitions("-DROOT_FOUND")
 else()
     add_subdirectory("extern/Minuit2")
+    set_target_properties(Minuit2 PROPERTIES FOLDER extern)
+    set_target_properties(Math PROPERTIES FOLDER extern)
 endif()
 
 # Adding simple libraries
 add_subdirectory("extern/CLI11")
 add_subdirectory("extern/FeatureDetector")
+set_target_properties(FeatureDetector PROPERTIES FOLDER extern)
 add_subdirectory("extern/fmt")
+set_target_properties(fmt PROPERTIES FOLDER extern)
 
 add_library(rang INTERFACE)
 target_include_directories(rang INTERFACE "${PROJECT_SOURCE_DIR}/extern/rang/include")
@@ -307,12 +314,15 @@ function(goofit_add_library GNAME)
         target_compile_options(${GNAME} PUBLIC -x c++)
     endif()
     target_link_libraries(${GNAME} rang CLI11 fmt goofit_mt)
+    set_target_properties(${GNAME} PROPERTIES FOLDER core)
 
     if(ROOT_FOUND)
         target_link_libraries(${GNAME} ROOT::ROOT)
     else()
         target_link_libraries(${GNAME} Minuit2)
     endif()
+
+    source_group("Source Files" REGULAR_EXPRESSION ".*\\.c[uc]")
 endfunction()
 
 function(goofit_add_executable NAMEEXE)
@@ -331,6 +341,8 @@ function(goofit_add_executable NAMEEXE)
     endif()
     target_link_libraries(${NAMEEXE} goofit_lib)
     target_compile_options(${NAMEEXE} PUBLIC -x c++)
+    set_target_properties(${NAMEEXE} PROPERTIES FOLDER projects)
+    source_group("Source Files" REGULAR_EXPRESSION ".*\\.c[uc]")
 endfunction()
 
 function(goofit_add_link)
@@ -413,8 +425,21 @@ if(GOOFIT_PACKAGES)
     endforeach()
 endif()
 
-
 option(GOOFIT_PYTHON "Python bindings for goofit" OFF)
+
+# This would allow GOOFIT_PYTHON to be automatic (off for Version 2.0)
+#if(NOT DEFINED GOOFIT_PYTHON)
+#    set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/extern/pybind11/tools" ${CMAKE_MODULE_PATH})
+#    find_package(PythonLibsNew)
+#    if(PYTHONLIBS_FOUND)
+#        option(GOOFIT_PYTHON "Python bindings for goofit" ON)
+#    else()
+#        option(GOOFIT_PYTHON "Python bindings for goofit" OFF)
+#    endif()
+#else()
+#    option(GOOFIT_PYTHON "Python bindings for goofit")
+#endif()
+
 if(GOOFIT_PYTHON)
     add_subdirectory("extern/pybind11")
     message(STATUS "Found Python at ${PYTHON_LIBRARIES}")

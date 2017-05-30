@@ -1,7 +1,9 @@
-#ifndef NOVOSIBIRSK_PDF_HH
-#define NOVOSIBIRSK_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
+
+namespace GooFit {
+
 
 class NovosibirskPdf : public GooPdf {
 public:
@@ -10,5 +12,5 @@ public:
 private:
 
 };
+} // namespace GooFit
 
-#endif

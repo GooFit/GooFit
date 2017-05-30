@@ -6,12 +6,16 @@ This code is not sufficently tested yet and still under heavy development!
 See *.cu file for more details
 */
 
-#ifndef LINESHAPES_PDF_HH
-#define LINESHAPES_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
-#include "goofit/PDFs/devcomplex.h"
 #include "goofit/PDFs/ResonancePdf.h"
+#include "goofit/Variable.h"
+
+#include <thrust/complex.h>
+
+namespace GooFit {
+
 
 class SpinFactor;
 
@@ -37,7 +41,7 @@ class Lineshape : public GooPdf {
     fptype _radius;
     std::vector<Variable*> _AdditionalVars;
 public:
-    Lineshape(string name,
+    Lineshape(std::string name,
               Variable* mass,
               Variable* width,
               unsigned int L,
@@ -54,13 +58,13 @@ public:
         bool addvar = true;
 
         for(int i = 0; i < _AdditionalVars.size(); ++i) {
-            addvar = addvar and (L._AdditionalVars[i]->value ==  _AdditionalVars[i]->value);
+            addvar = addvar and (L._AdditionalVars[i]->getValue() ==  _AdditionalVars[i]->getValue());
         }
 
-        return addvar and (L.getName() == getName() and L._mass->value == _mass->value and L._width->value == _width->value
+        return addvar and (L.getName() == getName() and L._mass->getValue() == _mass->getValue() and L._width->getValue() == _width->getValue()
                            and L._L == _L and L._Mpair == _Mpair and L._kind == _kind and L._FormFac == _FormFac);
     }
-    Lineshape(string name);
+    Lineshape(std::string name);
 
     void setConstantIndex(unsigned int idx) {
         host_indices[parameters + 1] = idx;
@@ -84,5 +88,5 @@ private:
     std::vector<Lineshape*> _LS;
     unsigned int _nPerm;
 };
+} // namespace GooFit
 
-#endif

@@ -1,7 +1,9 @@
-#ifndef SCALEDGAUSSIAN_PDF_HH
-#define SCALEDGAUSSIAN_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
+
+namespace GooFit {
+
 
 class ScaledGaussianPdf : public GooPdf {
 public:
@@ -15,5 +17,5 @@ public:
 private:
 
 };
+} // namespace GooFit
 
-#endif

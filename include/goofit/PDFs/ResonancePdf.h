@@ -1,15 +1,18 @@
-#ifndef RESONANCE_PDF_HH
-#define RESONANCE_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
-#include "goofit/PDFs/devcomplex.h"
-typedef devcomplex<fptype> (*resonance_function_ptr)(fptype, fptype, fptype, unsigned int*);
+#include <thrust/complex.h>
 
-EXEC_TARGET fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m);
+namespace GooFit {
 
-EXEC_TARGET fptype dampingFactorSquare(const fptype& cmmom, const int& spin, const fptype& mRadius);
 
-EXEC_TARGET fptype spinFactor(unsigned int spin, fptype motherMass, fptype daug1Mass, fptype daug2Mass,
+typedef thrust::complex<fptype> (*resonance_function_ptr)(fptype, fptype, fptype, unsigned int*);
+
+__device__ fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m);
+
+__device__ fptype dampingFactorSquare(const fptype& cmmom, const int& spin, const fptype& mRadius);
+
+__device__ fptype spinFactor(unsigned int spin, fptype motherMass, fptype daug1Mass, fptype daug2Mass,
                               fptype daug3Mass, fptype m12, fptype m13, fptype m23, unsigned int cyclic_index);
 
 class ResonancePdf : public GooPdf {
@@ -25,7 +28,7 @@ class ResonancePdf : public GooPdf {
     friend class IncoherentSumPdf;
 public:
     // Constructor for regular BW
-    ResonancePdf(string name,
+    ResonancePdf(std::string name,
                  Variable* ar,
                  Variable* ai,
                  Variable* mass,
@@ -34,7 +37,7 @@ public:
                  unsigned int cyc);
 
     // Gounaris-Sakurai
-    ResonancePdf(string name,
+    ResonancePdf(std::string name,
                  Variable* ar,
                  Variable* ai,
                  unsigned int sp,
@@ -43,7 +46,7 @@ public:
                  unsigned int cyc);
 
     // LASS constructor
-    ResonancePdf(string name,
+    ResonancePdf(std::string name,
                  Variable* ar,
                  Variable* ai,
                  Variable* mass,
@@ -53,12 +56,12 @@ public:
 
 
     // Nonresonant constructor
-    ResonancePdf(string name,
+    ResonancePdf(std::string name,
                  Variable* ar,
                  Variable* ai);
 
     // Gaussian constructor
-    ResonancePdf(string name,
+    ResonancePdf(std::string name,
                  Variable* ar,
                  Variable* ai,
                  Variable* mean,
@@ -82,4 +85,5 @@ private:
     */
 };
 
-#endif
+} // namespace GooFit
+

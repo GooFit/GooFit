@@ -1,7 +1,9 @@
-#ifndef VOIGTIAN_PDF_HH
-#define VOIGTIAN_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
+
+namespace GooFit {
+
 
 class VoigtianPdf : public GooPdf {
 public:
@@ -10,5 +12,5 @@ public:
 private:
 
 };
+} // namespace GooFit
 
-#endif

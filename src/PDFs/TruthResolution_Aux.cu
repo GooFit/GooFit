@@ -1,22 +1,25 @@
 #include "goofit/PDFs/TruthResolution_Aux.h"
 
-EXEC_TARGET fptype device_truth_resolution(fptype coshterm, fptype costerm, fptype sinhterm, fptype sinterm,
+namespace GooFit {
+
+
+__device__ fptype device_truth_resolution(fptype coshterm, fptype costerm, fptype sinhterm, fptype sinterm,
         fptype tau, fptype dtime, fptype xmixing, fptype ymixing, fptype /*sigma*/,
         fptype* /*p*/, unsigned int* /*indices*/) {
     fptype ret = 0;
     dtime /= tau;
-    ret += coshterm*COSH(ymixing * dtime);
-    ret += costerm*COS(xmixing * dtime);
-    ret -= 2*sinhterm * SINH(ymixing * dtime);
-    ret -= 2*sinterm * SIN(xmixing *
+    ret += coshterm*cosh(ymixing * dtime);
+    ret += costerm*cos(xmixing * dtime);
+    ret -= 2*sinhterm * sinh(ymixing * dtime);
+    ret -= 2*sinterm * sin(xmixing *
                            dtime);  // Notice sign difference wrt to Mikhail's code, because I have AB* and he has A*B.
-    ret *= EXP(-dtime);
+    ret *= exp(-dtime);
 
     // printf("device_truth_resolution %f %f %f %f %f\n", coshterm, costerm, sinhterm, sinterm, dtime);
     return ret;
 }
 
-EXEC_TARGET fptype device_truth_resolution_average_tau(fptype A2, fptype B2, fptype ABr, fptype ABi, fptype xmixing,
+__device__ fptype device_truth_resolution_average_tau(fptype A2, fptype B2, fptype ABr, fptype ABi, fptype xmixing,
         fptype ymixing, fptype tau) {
     fptype a = A2-B2;
     fptype b = 2*ABi;
@@ -31,8 +34,8 @@ EXEC_TARGET fptype device_truth_resolution_average_tau(fptype A2, fptype B2, fpt
     return averagetau;
 }
 
-MEM_DEVICE device_resfunction_ptr ptr_to_truth = device_truth_resolution;
-MEM_DEVICE device_calc_tau_fcn_ptr ptr_to_calc_tau = device_truth_resolution_average_tau;
+__device__ device_resfunction_ptr ptr_to_truth = device_truth_resolution;
+__device__ device_calc_tau_fcn_ptr ptr_to_calc_tau = device_truth_resolution_average_tau;
 
 TruthResolution::TruthResolution()
     : MixingTimeResolution() {
@@ -57,4 +60,6 @@ fptype TruthResolution::normalisation(fptype di1, fptype di2, fptype di3, fptype
 
     return ret;
 }
+
+} // namespace GooFit
 

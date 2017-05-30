@@ -1,3 +1,4 @@
+#include "goofit/Application.h"
 #include "goofit/Variable.h"
 #include "goofit/PDFs/GaussianPdf.h"
 #include "goofit/PDFs/AddPdf.h"
@@ -16,8 +17,17 @@
 #include <iostream>
 
 using namespace std;
+using namespace GooFit;
 
 int main(int argc, char** argv) {
+    GooFit::Application app("Addition example", argc, argv);
+
+    try {
+        app.run();
+    } catch (const GooFit::ParseError &e) {
+        return app.exit(e);
+    }
+
     gStyle->SetCanvasBorderMode(0);
     gStyle->SetCanvasColor(10);
     gStyle->SetFrameFillColor(10);
@@ -37,7 +47,7 @@ int main(int argc, char** argv) {
     UnbinnedDataSet data(vars);
 
     TH1F xvarHist("xvarHist", "",
-                  xvar->numbins, xvar->lowerlimit, xvar->upperlimit);
+                  xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
 
     xvarHist.SetStats(false);
 
@@ -45,18 +55,18 @@ int main(int argc, char** argv) {
     double totalData = 0;
 
     for(int i = 0; i < 100000; ++i) {
-        xvar->value = donram.Gaus(0.2, 1.1);
+        xvar->setValue(donram.Gaus(0.2, 1.1));
 
         if(donram.Uniform() < 0.1)
-            xvar->value = donram.Uniform(xvar->lowerlimit, xvar->upperlimit);
+            xvar->setValue(donram.Uniform(xvar->getLowerLimit(), xvar->getUpperLimit()));
 
-        if(fabs(xvar->value) > 5) {
+        if(fabs(xvar->getValue()) > 5) {
             --i;
             continue;
         }
 
         data.addEvent();
-        xvarHist.Fill(xvar->value);
+        xvarHist.Fill(xvar->getValue());
         totalData++;
     }
 
@@ -81,14 +91,13 @@ int main(int argc, char** argv) {
     total.setData(&data);
     FitManager fitter(&total);
     fitter.fit();
-    fitter.getMinuitValues();
 
     TH1F pdfHist("pdfHist", "",
-                 xvar->numbins, xvar->lowerlimit, xvar->upperlimit);
+                 xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
     TH1F sigHist("sigHist", "",
-                 xvar->numbins, xvar->lowerlimit, xvar->upperlimit);
+                 xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
     TH1F bkgHist("bkgHist", "",
-                 xvar->numbins, xvar->lowerlimit, xvar->upperlimit);
+                 xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
 
     pdfHist.SetStats(false);
     sigHist.SetStats(false);
@@ -96,15 +105,14 @@ int main(int argc, char** argv) {
 
     UnbinnedDataSet grid(xvar);
 
-    for(int i = 0; i < xvar->numbins; ++i) {
-        double step = (xvar->upperlimit - xvar->lowerlimit)/xvar->numbins;
-        xvar->value = xvar->lowerlimit + (i + 0.5) * step;
+    for(int i = 0; i < xvar->getNumBins(); ++i) {
+        double step = (xvar->getUpperLimit() - xvar->getLowerLimit())/xvar->getNumBins();
+        xvar->setValue(xvar->getLowerLimit() + (i + 0.5) * step);
         grid.addEvent();
     }
 
     total.setData(&grid);
-    vector<vector<double>> pdfVals;
-    total.getCompProbsAtDataPoints(pdfVals);
+    std::vector<std::vector<double>> pdfVals = total.getCompProbsAtDataPoints();
 
     TCanvas foo;
 
@@ -112,25 +120,25 @@ int main(int argc, char** argv) {
 
     for(int i = 0; i < grid.getNumEvents(); ++i) {
         grid.loadEvent(i);
-        pdfHist.Fill(xvar->value, pdfVals[0][i]);
-        sigHist.Fill(xvar->value, pdfVals[1][i]);
-        bkgHist.Fill(xvar->value, pdfVals[2][i]);
+        pdfHist.Fill(xvar->getValue(), pdfVals[0][i]);
+        sigHist.Fill(xvar->getValue(), pdfVals[1][i]);
+        bkgHist.Fill(xvar->getValue(), pdfVals[2][i]);
         totalPdf += pdfVals[0][i];
     }
 
-    for(int i = 0; i < xvar->numbins; ++i) {
+    for(int i = 0; i < xvar->getNumBins(); ++i) {
         double val = pdfHist.GetBinContent(i+1);
         val /= totalPdf;
         val *= totalData;
         pdfHist.SetBinContent(i+1, val);
         val = sigHist.GetBinContent(i+1);
         val /= totalPdf;
-        val *= sigFrac->value;
+        val *= sigFrac->getValue();
         val *= totalData;
         sigHist.SetBinContent(i+1, val);
         val = bkgHist.GetBinContent(i+1);
         val /= totalPdf;
-        val *= (1.0 - sigFrac->value);
+        val *= (1.0 - sigFrac->getValue());
         val *= totalData;
         bkgHist.SetBinContent(i+1, val);
     }

@@ -1,7 +1,9 @@
-#ifndef TRIGTHRESHOLD_PDF_HH
-#define TRIGTHRESHOLD_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
+
+namespace GooFit {
+
 
 class TrigThresholdPdf : public GooPdf {
 public:
@@ -13,5 +15,5 @@ public:
 private:
 
 };
+} // namespace GooFit
 
-#endif

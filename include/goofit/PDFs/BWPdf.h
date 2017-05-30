@@ -1,7 +1,9 @@
-#ifndef BW_PDF_HH
-#define BW_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
+
+namespace GooFit {
+
 
 class BWPdf : public GooPdf {
 
@@ -10,5 +12,5 @@ public:
 private:
 
 };
+} // namespace GooFit
 
-#endif

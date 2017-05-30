@@ -1,14 +1,15 @@
+#include "goofit/Application.h"
 #include "goofit/Variable.h"
 #include "goofit/FitManager.h"
 #include "goofit/UnbinnedDataSet.h"
 #include "goofit/PDFs/BWPdf.h"
 #include "goofit/PDFs/GaussianPdf.h"
 #include "goofit/PDFs/ConvolutionPdf.h"
-#include <iostream>
 
 #include "TRandom.h"
 
 using namespace std;
+using namespace GooFit;
 
 double cpu_bw(double x, double x0, double gamma) {
     double ret = gamma;
@@ -18,33 +19,41 @@ double cpu_bw(double x, double x0, double gamma) {
 }
 
 int main(int argc, char** argv) {
-    // Independent variable.
-    Variable* xvar = new Variable("xvar", -10, 10);
+    GooFit::Application app("Convolution example", argc, argv);
 
-    Variable* gamma = new Variable("gamma", 2, 0.1, 0.1, 5);
-    Variable* sigma = new Variable("sigma", 1.5, 0.1, 0.1, 5);
-    Variable* x0    = new Variable("x0", 0.2, 0.05, -1, 1);
-    Variable* zero  = new Variable("zero", 0);
+    try {
+        app.run();
+    } catch (const GooFit::ParseError &e) {
+        return app.exit(e);
+    }
+
+    // Independent variable.
+    Variable xvar{"xvar", -10, 10};
+
+    Variable gamma{"gamma", 2, 0.1, 0.1, 5};
+    Variable sigma{"sigma", 1.5, 0.1, 0.1, 5};
+    Variable x0{"x0", 0.2, 0.05, -1, 1};
+    Variable zero{"zero", 0};
 
     TRandom donram(42);
     // Data set
-    UnbinnedDataSet data(xvar);
+    UnbinnedDataSet data(&xvar);
 
     // Generate toy events.
     for(int i = 0; i < 100000; ++i) {
-        xvar->value = donram.Uniform(20) - 10;
+        xvar.setValue(donram.Uniform(20) - 10);
 
-        double bwvalue = cpu_bw(xvar->value, x0->value, gamma->value);
-        double roll = donram.Uniform() * (2.0 / (sqrt(M_PI)*gamma->value));
+        double bwvalue = cpu_bw(xvar.getValue(), x0.getValue(), gamma.getValue());
+        double roll = donram.Uniform() * (2.0 / (sqrt(M_PI)*gamma.getValue()));
 
         if(roll > bwvalue) {
             --i;
             continue;
         }
 
-        xvar->value += donram.Gaus(0, sigma->value);
+        xvar.setValue(xvar.getValue() + donram.Gaus(0, sigma.getValue()));
 
-        if((xvar->value < xvar->lowerlimit) || (xvar->value > xvar->upperlimit)) {
+        if((xvar.getValue() < xvar.getLowerLimit()) || (xvar.getValue() > xvar.getUpperLimit())) {
             --i;
             continue;
         }
@@ -52,13 +61,13 @@ int main(int argc, char** argv) {
         data.addEvent();
     }
 
-    BWPdf* breit = new BWPdf("breit", xvar, x0, gamma);
-    GaussianPdf* gauss = new GaussianPdf("gauss", xvar, zero, sigma);
-    ConvolutionPdf* convolution = new ConvolutionPdf("convolution", xvar, breit, gauss);
-    convolution->setData(&data);
+    BWPdf breit{"breit", &xvar, &x0, &gamma};
+    GaussianPdf gauss{"gauss", &xvar, &zero, &sigma};
+    ConvolutionPdf convolution{"convolution", &xvar, &breit, &gauss};
+    convolution.setData(&data);
 
-    FitManager fitter(convolution);
+    FitManager fitter(&convolution);
     fitter.fit();
 
-    return 0;
+    return fitter;
 }

@@ -1,64 +1,78 @@
-#ifndef DATASET_HH
-#define DATASET_HH
+#pragma once
 
-#include "goofit/Variable.h"
 #include "goofit/GlobalCudaDefines.h"
+
 #include <vector>
 #include <set>
 #include <string>
+#include <initializer_list>
 
-typedef std::vector<Variable*>::const_iterator varConstIt;
-typedef std::vector<Variable*>::const_reverse_iterator varConstRIt;
+#include "goofit/Variable.h"
+#include "goofit/Error.h"
+
+namespace GooFit {
+
 
 class DataSet {
 public:
-    DataSet(Variable* var, string n = "");
-    DataSet(std::vector<Variable*>& vars, string n = "");
-    DataSet(std::set<Variable*>& vars, string n = "");
-    ~DataSet();
+    DataSet(Variable* var, std::string n = "");
+    
+    DataSet(std::vector<Variable*>& vars, std::string n = "");
+    DataSet(std::set<Variable*>& vars, std::string n = "");
+    DataSet(std::initializer_list<Variable*> vars, std::string n = "");
+    
+    virtual ~DataSet() = default;
 
-    void addEvent();
-    void addEvent(fptype val);
-    virtual void addEventVector(std::vector<fptype>& vals, fptype weight = 1) = 0;
-    void addWeightedEvent(fptype weight);
+    virtual void addEvent() = 0; // Must increment numEventsAdded
+    
+    virtual void addWeightedEvent(fptype weight);
+    
 
-    varConstIt varsBegin() const {
-        return variables.begin();
+    /// This is a helper that allows multiple values to be passed in instead of relying on the content of the Variables.
+    template<typename... Args>
+    void addEvent(fptype value, Args... args) {
+        std::vector<fptype> values {value, static_cast<fptype>(args)...};
+        
+        if(values.size() != variables.size())
+            throw GooFit::GeneralError("You must pass the correct number of values ({}) to addEvent", variables.size());
+        
+        for(size_t i=0; i<values.size(); i++)
+            variables[i]->setValue(values[i]);
+        addEvent();
     }
-    varConstIt varsEnd() const {
-        return variables.end();
-    }
-    void getVariables(std::vector<Variable*>& vars);
 
-    varConstRIt varsRBegin() const {
-        return variables.rbegin();
-    }
-    varConstRIt varsREnd() const {
-        return variables.rend();
-    }
-    int numVariables() const {
+    
+    const std::vector<Variable*>& getVariables() const;
+
+    size_t numVariables() const {
         return variables.size();
     }
-    int numEvents() const {
+    
+    size_t getNumEvents() const {
         return numEventsAdded;
     }
 
-    string getName() const {
+    std::string getName() const {
         return name;
     }
 
 protected:
-    vector<fptype> getCurrentValues() const;
-    unsigned int indexOfVariable(Variable* var) const;
-    int numEventsAdded;
-
+    std::vector<fptype> getCurrentValues() const;
+    size_t indexOfVariable(Variable* var) const;
+    size_t numEventsAdded {0};
+    
+    /// Throw an error if any variables are out of range, call in addEvent
+    void checkAllVars() const;
+    
 private:
+    /// Make a name, does not change the exising name. Called by all constructors.
     void generateName();
+    
+    std::string name;
 
+protected:
     std::vector<Variable*> variables;
-    string name;
 };
 
+} // namespace GooFit
 
-
-#endif

@@ -1,7 +1,9 @@
-#ifndef EXPGAUS_PDF_HH
-#define EXPGAUS_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
+
+namespace GooFit {
+
 
 class ExpGausPdf : public GooPdf {
 public:
@@ -10,5 +12,5 @@ public:
 private:
 
 };
+} // namespace GooFit
 
-#endif

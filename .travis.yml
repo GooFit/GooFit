@@ -13,7 +13,9 @@ branches:
 
 env:
   global:
+  - CTEST_OUTPUT_ON_FAILURE: 1
   - OMP_NUM_THREADS: 2
+  - COMPILER: 4.8
   - DOXYFILE: $TRAVIS_BUILD_DIR/docs/Doxyfile
   - secure: "HG55IEO0TcUtuzfD/pfpPB3irKKBAH1wpBc1RxrtaSo08nohuEoc9Jl0z9k6nw7Kxk5AFQRXiFtXyQAzTm7fONjqST92h6zm+PL4QBPVIrlbQovRPI35GgzFLkUPabkEFjn/3Ojoj5NWSQbfu3tEuARu0qU8vn/2N/PM3qIMbGg="
 addons:
@@ -27,15 +29,20 @@ addons:
     - libxpm-dev
     - libxft-dev
     - libxext-dev
+    - python-pip
+    - python-numpy
     sources:
     - ubuntu-toolchain-r-test
 
 install:
-    - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
     - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
+    - cd "${TRAVIS_BUILD_DIR}" && . .ci/prepare_altern.sh 
     - cd "${TRAVIS_BUILD_DIR}" && . .ci/build_cmake.sh 
     - cd "${TRAVIS_BUILD_DIR}" && . .ci/build_root.sh 
     - cd "${TRAVIS_BUILD_DIR}" && . .ci/build_doxygen.sh 
+    - cd "${TRAVIS_BUILD_DIR}" && . .ci/build_lcov.sh 
+    - pip install --user --upgrade pip
+    - pip install --user pytest
 
 script:
     - cd "${TRAVIS_BUILD_DIR}"
@@ -44,7 +51,7 @@ script:
 after_success:
 - echo "${TRAVIS_BRANCH}"
 - echo "${TRAVIS_PULL_REQUEST}"
-- if [[ "${TRAVIS_BRANCH}" == "master" && "${TRAVIS_PULL_REQUEST}" == "false" ]] ; then echo "Updating docs" &&  cd "${TRAVIS_BUILD_DIR}" && .ci/build_docs.sh ; fi
+- if [[ "${TRAVIS_BRANCH}" == "master" && "${TRAVIS_PULL_REQUEST}" == "false" && -n "${TRAVIS_TAG}" ]] ; then echo "Updating docs" &&  cd "${TRAVIS_BUILD_DIR}" && .ci/build_docs.sh ; fi
 
 notifications:
   webhooks:

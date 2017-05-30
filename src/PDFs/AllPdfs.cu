@@ -1,6 +1,8 @@
 #include "goofit/GlobalCudaDefines.h"
 
 #include "GooPdf.cu"
+#include "MetricTaker.cu"
+#include "PdfBase.cu"
 #include "CrystalBallPdf.cu"
 #include "BifurGaussPdf.cu"
 #include "LineshapesPdf.cu"
@@ -40,3 +42,8 @@
 #include "MixingTimeResolution_Aux.cu"
 #include "TruthResolution_Aux.cu"
 #include "ThreeGaussResolution_Aux.cu"
+
+namespace GooFit {
+
+} // namespace GooFit
+

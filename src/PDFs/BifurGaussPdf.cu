@@ -1,6 +1,9 @@
 #include "goofit/PDFs/BifurGaussPdf.h"
 
-EXEC_TARGET fptype device_BifurGauss(fptype* evt, fptype* p, unsigned int* indices) {
+namespace GooFit {
+
+
+__device__ fptype device_BifurGauss(fptype* evt, fptype* p, unsigned int* indices) {
     fptype x = evt[indices[2 + indices[0]]]; // why does indices recall itself?
     fptype mean = p[indices[1]];
     fptype sigmaLeft = p[indices[2]];
@@ -12,11 +15,11 @@ EXEC_TARGET fptype device_BifurGauss(fptype* evt, fptype* p, unsigned int* indic
     if(x > mean)
         sigma = sigmaRight;
 
-    fptype ret = EXP(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
+    fptype ret = exp(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
     return ret;
 }
 
-MEM_DEVICE device_function_ptr ptr_to_BifurGauss = device_BifurGauss;
+__device__ device_function_ptr ptr_to_BifurGauss = device_BifurGauss;
 
 __host__ BifurGaussPdf::BifurGaussPdf(std::string n, Variable* _x, Variable* mean, Variable* sigmaL, Variable* sigmaR)
     : GooPdf(_x, n) {
@@ -43,3 +46,5 @@ __host__ fptype BifurGaussPdf::integrate(fptype lo, fptype hi) const {
 
     return .5* normL + .5*normR;
 }
+} // namespace GooFit
+

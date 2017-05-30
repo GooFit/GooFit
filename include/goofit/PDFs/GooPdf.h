@@ -1,58 +1,73 @@
-#ifndef THRUST_PDF_FUNCTOR_HH
-#define THRUST_PDF_FUNCTOR_HH
-#include <stdlib.h>
-#include <math.h>
-#include <thrust/device_vector.h>
+#pragma once
+
 #include <thrust/functional.h>
-#include <thrust/iterator/zip_iterator.h>
-#include "thrust/iterator/constant_iterator.h"
-#include <thrust/transform_reduce.h>
-#include <thrust/transform.h>
-#include <thrust/host_vector.h>
-#include <cmath>
-#include <cassert>
-#include <set>
 
 #include "goofit/PdfBase.h"
+#include "goofit/UnbinnedDataSet.h"
+#include "goofit/PDFs/MetricTaker.h"
 
-#define CALLS_TO_PRINT 10
-
-
-#ifdef SEPARABLE
-extern MEM_CONSTANT fptype cudaArray[maxParams];
-extern MEM_CONSTANT unsigned int paramIndices[maxParams];  
-extern MEM_CONSTANT fptype functorConstants[maxParams];
-extern MEM_CONSTANT fptype normalisationFactors[maxParams];
-
-extern MEM_DEVICE void* device_function_table[200];
-extern void* host_function_table[200];
-extern unsigned int num_device_functions;
+#ifdef ROOT_FOUND
+class TH1D;
 #endif
 
-EXEC_TARGET int dev_powi(int base, int exp);  // Implemented in SmoothHistogramPdf.
+namespace GooFit {
+
+
+// TODO: Replace this with class MetricTaker;
+// And fill in the .cu files where needed
+
+#ifdef SEPARABLE
+
+/// Holds device-side fit parameters.
+extern __constant__ fptype cudaArray[maxParams];
+
+/// Holds functor-specific indices into cudaArray. Also overloaded to hold integer constants (ie parameters that cannot vary.)
+extern __constant__ unsigned int paramIndices[maxParams];
+
+/// Holds non-integer constants. Notice that first entry is number of events.
+extern __constant__ fptype functorConstants[maxParams];
+
+extern __constant__ fptype normalisationFactors[maxParams];
+
+extern __device__ void* device_function_table[200];
+extern void* host_function_table[200];
+extern unsigned int num_device_functions;
+extern std::map<void*, int> functionAddressToDeviceIndexMap;
+#endif
+
+
+__device__ int dev_powi(int base, int exp);  // Implemented in SmoothHistogramPdf.
 void* getMetricPointer(std::string name);
 
+/// Pass event, parameters, index into parameters.
+typedef fptype(*device_function_ptr)(fptype*, fptype*, unsigned int*);
 
-typedef fptype(*device_function_ptr)(fptype*, fptype*,
-                                     unsigned int*);              // Pass event, parameters, index into parameters.
 typedef fptype(*device_metric_ptr)(fptype, fptype*, unsigned int);
 
 extern void* host_fcn_ptr;
 
-EXEC_TARGET fptype callFunction(fptype* eventAddress, unsigned int functionIdx, unsigned int paramIdx);
+__device__ fptype callFunction(fptype* eventAddress, unsigned int functionIdx, unsigned int paramIdx);
 
-class MetricTaker;
 
 class GooPdf : public PdfBase {
 public:
 
     GooPdf(Variable* x, std::string n);
     __host__ virtual double calculateNLL() const;
-    __host__ void evaluateAtPoints(std::vector<fptype>& points) const;
-    __host__ void evaluateAtPoints(Variable* var, std::vector<fptype>& res);
+    
+    /// NB: This does not project correctly in multidimensional datasets, because all observables
+    /// other than 'var' will have, for every event, whatever value they happened to get set to last
+    /// time they were set. This is likely to be the value from the last event in whatever dataset
+    /// you were fitting to, but at any rate you don't get the probability-weighted integral over
+    /// the other observables.
+    __host__ std::vector<fptype> evaluateAtPoints(Variable* var);
 
-    /// A normalize function. This fills in the host_normalize 
-    __host__ virtual fptype normalise() const;
+    /// A normalize function. This fills in the host_normalize
+    __host__ virtual fptype normalize() const;
+   
+    /// Just in case you are British and the previous spelling is offensive
+    __host__ fptype normalise() const {return normalize();}
+    
     __host__ virtual fptype integrate(fptype lo, fptype hi) const {
         return 0;
     }
@@ -60,7 +75,13 @@ public:
         return false;
     }
     __host__ fptype getValue();
-    __host__ void getCompProbsAtDataPoints(std::vector<std::vector<fptype>>& values);
+    
+    /// Produce a list of probabilies at points
+    __host__ std::vector<std::vector<fptype>> getCompProbsAtDataPoints();
+    
+    /// Set an equidistant grid based on the stored variable binning
+    __host__ UnbinnedDataSet makeGrid();
+    
     __host__ void initialise(std::vector<unsigned int> pindices, void* dev_functionPtr = host_fcn_ptr);
     __host__ void scan(Variable* var, std::vector<fptype>& values);
     __host__ virtual void setFitControl(FitControl* const fc, bool takeOwnerShip = true);
@@ -70,6 +91,11 @@ public:
     __host__ virtual void transformGrid(fptype* host_output);
     static __host__ int findFunctionIdx(void* dev_functionPtr);
     __host__ void setDebugMask(int mask, bool setSpecific = true) const;
+    
+#ifdef ROOT_FOUND
+    /// Plot a PDF to a ROOT histogram
+    __host__ TH1D* plotToROOT(Variable* var, double normFactor=1, std::string name="");
+#endif
 
 protected:
     __host__ virtual double sumOfNll(int numVars) const;
@@ -78,25 +104,6 @@ private:
 
 };
 
-class MetricTaker : public thrust::unary_function<thrust::tuple<int, fptype*, int>, fptype> {
-public:
 
-    MetricTaker(PdfBase* dat, void* dev_functionPtr);
-    MetricTaker(int fIdx, int pIdx);
-    EXEC_TARGET fptype operator()(thrust::tuple<int, fptype*, int> t)
-    const;             // Event number, dev_event_array (pass this way for nvcc reasons), event size
-    EXEC_TARGET fptype operator()(thrust::tuple<int, int, fptype*> t)
-    const;             // Event number, event size, normalisation ranges (for binned stuff, eg integration)
+} // namespace GooFit
 
-private:
-
-    unsigned int metricIndex; // Function-pointer index of processing function, eg logarithm, chi-square, other metric.
-    unsigned int functionIdx; // Function-pointer index of actual PDF
-    unsigned int parameters;
-
-
-};
-
-
-
-#endif

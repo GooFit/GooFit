@@ -1,8 +1,11 @@
-#ifndef INTERHIST_PDF_HH
-#define INTERHIST_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/BinnedDataSet.h"
+#include <thrust/device_vector.h>
+
+namespace GooFit {
+
 
 class InterHistPdf : public GooPdf {
 public:
@@ -10,7 +13,7 @@ public:
                  BinnedDataSet* x,
                  std::vector<Variable*> params,
                  std::vector<Variable*> obses);
-    //__host__ virtual fptype normalise () const;
+    //__host__ virtual fptype normalize () const;
 
 private:
     thrust::device_vector<fptype>* dev_base_histogram;
@@ -19,4 +22,5 @@ private:
     int numVars;
 };
 
-#endif
+} // namespace GooFit
+

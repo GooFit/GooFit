@@ -1,11 +1,14 @@
 #include "goofit/PDFs/TrigThresholdPdf.h"
 
-EXEC_TARGET fptype threshCalc(fptype distance, fptype linConst) {
-    fptype ret = (distance > fptype(0.5) ? fptype(1) : (linConst + (1 - linConst) * SIN(distance * fptype(3.14159265))));
+namespace GooFit {
+
+
+__device__ fptype threshCalc(fptype distance, fptype linConst) {
+    fptype ret = (distance > fptype(0.5) ? fptype(1) : (linConst + (1 - linConst) * sin(distance * fptype(3.14159265))));
     return ret;
 }
 
-EXEC_TARGET fptype device_TrigThresholdUpper(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_TrigThresholdUpper(fptype* evt, fptype* p, unsigned int* indices) {
     fptype x         = evt[indices[2 + indices[0]]];
     fptype thresh    = p[indices[1]];
     fptype trigConst = p[indices[2]];
@@ -15,7 +18,7 @@ EXEC_TARGET fptype device_TrigThresholdUpper(fptype* evt, fptype* p, unsigned in
     return threshCalc(trigConst, linConst);
 }
 
-EXEC_TARGET fptype device_TrigThresholdLower(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_TrigThresholdLower(fptype* evt, fptype* p, unsigned int* indices) {
     fptype x         = evt[indices[2 + indices[0]]];
     fptype thresh    = p[indices[1]];
     fptype trigConst = p[indices[2]];
@@ -25,7 +28,7 @@ EXEC_TARGET fptype device_TrigThresholdLower(fptype* evt, fptype* p, unsigned in
     return threshCalc(trigConst, linConst);
 }
 
-EXEC_TARGET fptype device_VerySpecialEpisodeTrigThresholdUpper(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_VerySpecialEpisodeTrigThresholdUpper(fptype* evt, fptype* p, unsigned int* indices) {
     // Annoying special case for use with Mikhail's efficiency function across the Dalitz plot
 
     fptype x         = evt[indices[2 + indices[0] + 0]];
@@ -40,7 +43,7 @@ EXEC_TARGET fptype device_VerySpecialEpisodeTrigThresholdUpper(fptype* evt, fpty
     return threshCalc(trigConst, linConst);
 }
 
-EXEC_TARGET fptype device_VerySpecialEpisodeTrigThresholdLower(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_VerySpecialEpisodeTrigThresholdLower(fptype* evt, fptype* p, unsigned int* indices) {
     fptype x         = evt[indices[2 + indices[0] + 0]];
     fptype y         = evt[indices[2 + indices[0] + 1]];
 
@@ -58,11 +61,11 @@ EXEC_TARGET fptype device_VerySpecialEpisodeTrigThresholdLower(fptype* evt, fpty
     return ret;
 }
 
-MEM_DEVICE device_function_ptr ptr_to_TrigThresholdUpper = device_TrigThresholdUpper;
-MEM_DEVICE device_function_ptr ptr_to_TrigThresholdLower = device_TrigThresholdLower;
-MEM_DEVICE device_function_ptr ptr_to_VerySpecialEpisodeTrigThresholdUpper =
+__device__ device_function_ptr ptr_to_TrigThresholdUpper = device_TrigThresholdUpper;
+__device__ device_function_ptr ptr_to_TrigThresholdLower = device_TrigThresholdLower;
+__device__ device_function_ptr ptr_to_VerySpecialEpisodeTrigThresholdUpper =
     device_VerySpecialEpisodeTrigThresholdUpper;
-MEM_DEVICE device_function_ptr ptr_to_VerySpecialEpisodeTrigThresholdLower =
+__device__ device_function_ptr ptr_to_VerySpecialEpisodeTrigThresholdLower =
     device_VerySpecialEpisodeTrigThresholdLower;
 
 
@@ -101,3 +104,5 @@ __host__ TrigThresholdPdf::TrigThresholdPdf(std::string n, Variable* _x, Variabl
 
     initialise(pindices);
 }
+} // namespace GooFit
+

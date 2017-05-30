@@ -1,6 +1,17 @@
 #include "goofit/PDFs/AddPdf.h"
+#include "goofit/detail/ThrustOverride.h"
+#include "goofit/Error.h"
 
-EXEC_TARGET fptype device_AddPdfs(fptype* evt, fptype* p, unsigned int* indices) {
+#include <thrust/transform_reduce.h>
+#include <thrust/iterator/constant_iterator.h>
+
+#ifdef GOOFIT_MPI
+#include <mpi.h>
+#endif
+
+namespace GooFit {
+
+__device__ fptype device_AddPdfs(fptype* evt, fptype* p, unsigned int* indices) {
     int numParameters = RO_CACHE(indices[0]);
     fptype ret = 0;
     fptype totalWeight = 0;
@@ -33,7 +44,7 @@ EXEC_TARGET fptype device_AddPdfs(fptype* evt, fptype* p, unsigned int* indices)
     return ret;
 }
 
-EXEC_TARGET fptype device_AddPdfsExt(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_AddPdfsExt(fptype* evt, fptype* p, unsigned int* indices) {
     // numParameters does not count itself. So the array structure for two functions is
     // nP | F P w | F P w
     // in which nP = 6.
@@ -62,34 +73,40 @@ EXEC_TARGET fptype device_AddPdfsExt(fptype* evt, fptype* p, unsigned int* indic
     return ret;
 }
 
-MEM_DEVICE device_function_ptr ptr_to_AddPdfs = device_AddPdfs;
-MEM_DEVICE device_function_ptr ptr_to_AddPdfsExt = device_AddPdfsExt;
+__device__ device_function_ptr ptr_to_AddPdfs = device_AddPdfs;
+__device__ device_function_ptr ptr_to_AddPdfsExt = device_AddPdfsExt;
 
 AddPdf::AddPdf(std::string n, std::vector<Variable*> weights, std::vector<PdfBase*> comps)
     : GooPdf(0, n)
     , extended(true) {
 
-    assert((weights.size() == comps.size()) || (weights.size() + 1 == comps.size()));
+    if(weights.size() != comps.size() && (weights.size()+1) != comps.size())
+        throw GooFit::GeneralError("Size of weights {} (+1) != comps {}", weights.size(), comps.size());
+    
 
     // Indices stores (function index)(function parameter index)(weight index) triplet for each component.
     // Last component has no weight index unless function is extended.
-    for(std::vector<PdfBase*>::iterator p = comps.begin(); p != comps.end(); ++p) {
-        components.push_back(*p);
-        assert(components.back());
+    for(PdfBase* p : comps) {
+        components.push_back(p);
+        if(components.back() == nullptr)
+            throw GooFit::GeneralError("Invalid component");
+        
     }
 
-    getObservables(observables);
+    observables = getObservables();
 
     std::vector<unsigned int> pindices;
 
     for(unsigned int w = 0; w < weights.size(); ++w) {
-        assert(components[w]);
+        if(components[w] == nullptr)
+            throw GooFit::GeneralError("Invalid component");
         pindices.push_back(components[w]->getFunctionIndex());
         pindices.push_back(components[w]->getParameterIndex());
         pindices.push_back(registerParameter(weights[w]));
     }
 
-    assert(components.back());
+    if(components.back() == nullptr)
+        throw GooFit::GeneralError("Invalid component");
 
     if(weights.size() < components.size()) {
         pindices.push_back(components.back()->getFunctionIndex());
@@ -113,7 +130,7 @@ AddPdf::AddPdf(std::string n, Variable* frac1, PdfBase* func1, PdfBase* func2)
     // Special-case constructor for common case of adding two functions.
     components.push_back(func1);
     components.push_back(func2);
-    getObservables(observables);
+    observables = getObservables();
 
     std::vector<unsigned int> pindices;
     pindices.push_back(func1->getFunctionIndex());
@@ -128,7 +145,7 @@ AddPdf::AddPdf(std::string n, Variable* frac1, PdfBase* func1, PdfBase* func2)
     initialise(pindices);
 }
 
-__host__ fptype AddPdf::normalise() const {
+__host__ fptype AddPdf::normalize() const {
     //if (cpuDebug & 1) std::cout << "Normalising AddPdf " << getName() << std::endl;
 
     fptype ret = 0;
@@ -137,11 +154,11 @@ __host__ fptype AddPdf::normalise() const {
     for(unsigned int i = 0; i < components.size()-1; ++i) {
         fptype weight = host_params[host_indices[parameters + 3*(i+1)]];
         totalWeight += weight;
-        fptype curr = components[i]->normalise();
+        fptype curr = components[i]->normalize();
         ret += curr*weight;
     }
 
-    fptype last = components.back()->normalise();
+    fptype last = components.back()->normalize();
 
     if(extended) {
         fptype lastWeight = host_params[host_indices[parameters + 3*components.size()]];
@@ -155,7 +172,7 @@ __host__ fptype AddPdf::normalise() const {
     host_normalisation[parameters] = 1.0;
 
     if(getSpecialMask() & PdfBase::ForceCommonNorm) {
-        // Want to normalise this as
+        // Want to normalize this as
         // (f1 A + (1-f1) B) / int (f1 A + (1-f1) B)
         // instead of default
         // (f1 A / int A) + ((1-f1) B / int B).
@@ -174,11 +191,40 @@ __host__ double AddPdf::sumOfNll(int numVars) const {
     thrust::constant_iterator<int> eventSize(numVars);
     thrust::constant_iterator<fptype*> arrayAddress(dev_event_array);
     double dummy = 0;
+
     thrust::counting_iterator<int> eventIndex(0);
-    double ret = thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress,
-                                          eventSize)),
-                                          thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
-                                          *logger, dummy, cudaPlus);
+
+    double ret;
+#ifdef GOOFIT_MPI
+#if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_CUDA
+    goofit_policy my_policy;
+    double r = thrust::transform_reduce(my_policy, thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress,
+                                        eventSize)),
+                                        thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, arrayAddress, eventSize)),
+                                        *logger, dummy, cudaPlus);
+#else
+    double r = thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress,
+                                        eventSize)),
+                                        thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, arrayAddress, eventSize)),
+                                        *logger, dummy, cudaPlus);
+#endif
+
+    MPI_Allreduce(&r, &ret, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+#else
+#if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_CUDA
+    goofit_policy my_policy;
+    ret = thrust::transform_reduce(my_policy, thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress,
+                                   eventSize)),
+                                   thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
+                                   *logger, dummy, cudaPlus);
+#else
+    ret = thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress,
+                                   eventSize)),
+                                   thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
+                                   *logger, dummy, cudaPlus);
+#endif
+#endif
+
 
     if(extended) {
         fptype expEvents = 0;
@@ -197,3 +243,5 @@ __host__ double AddPdf::sumOfNll(int numVars) const {
 
     return ret;
 }
+} // namespace GooFit
+

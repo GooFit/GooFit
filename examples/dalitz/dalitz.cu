@@ -16,6 +16,7 @@
 #include <sys/times.h>
 
 // GooFit stuff
+#include "goofit/Application.h"
 #include "goofit/Variable.h"
 #include "goofit/PDFs/PolynomialPdf.h"
 #include "goofit/PDFs/DalitzPlotPdf.h"
@@ -28,17 +29,15 @@
 #include "goofit/UnbinnedDataSet.h"
 
 using namespace std;
+using namespace GooFit;
 
 TCanvas* foo;
 TCanvas* foodal;
-timeval startTime, stopTime, totalTime;
-clock_t startCPU, stopCPU;
-tms startProc, stopProc;
 UnbinnedDataSet* data = 0;
 
 Variable* m12 = 0;
 Variable* m13 = 0;
-Variable* eventNumber = 0;
+CountingVariable* eventNumber = 0;
 bool fitMasses = false;
 Variable* fixedRhoMass  = new Variable("rho_mass", 0.7758, 0.01, 0.7, 0.8);
 Variable* fixedRhoWidth = new Variable("rho_width", 0.1503, 0.01, 0.1, 0.2);
@@ -63,21 +62,19 @@ fptype cpuGetM23(fptype massPZ, fptype massPM) {
     return (_mD02 + piZeroMass*piZeroMass + piPlusMass*piPlusMass + piPlusMass*piPlusMass - massPZ - massPM);
 }
 
-void getToyData(std::string toyFileName) {
-    TH2F dalitzplot("dalitzplot", "", m12->numbins, m12->lowerlimit, m12->upperlimit, m13->numbins, m13->lowerlimit,
-                    m13->upperlimit);
+void getToyData(std::string toyFileName, GooFit::Application &app) {
+    
+    toyFileName = app.get_filename(toyFileName, "examples/dalitz");
+    
+    TH2F dalitzplot("dalitzplot", "", m12->getNumBins(), m12->getLowerLimit(), m12->getUpperLimit(), m13->getNumBins(), m13->getLowerLimit(),
+                    m13->getUpperLimit());
     std::vector<Variable*> vars;
     vars.push_back(m12);
     vars.push_back(m13);
     vars.push_back(eventNumber);
     data = new UnbinnedDataSet(vars);
 
-    std::ifstream reader;
-    reader.open(toyFileName.c_str());
-
-    if(!reader)
-        throw std::runtime_error("Error: Input file does not exist.");
-
+    std::ifstream reader(toyFileName);
     std::string buffer;
 
     while(!reader.eof()) {
@@ -93,9 +90,9 @@ void getToyData(std::string toyFileName) {
 
     while(!reader.eof()) {
         reader >> dummy;
-        reader >> dummy;      // m23, m(pi+ pi-), called m12 in processToyRoot convention.
-        reader >> m12->value; // Already swapped according to D* charge. m12 = m(pi+pi0)
-        reader >> m13->value;
+        reader >> dummy;  // m23, m(pi+ pi-), called m12 in processToyRoot convention.
+        reader >> *m12;   // Already swapped according to D* charge. m12 = m(pi+pi0)
+        reader >> *m13;
 
         // Errors on Dalitz variables
         reader >> dummy;
@@ -126,10 +123,10 @@ void getToyData(std::string toyFileName) {
 
         // EXERCISE 3: Use both the above.
 
-        eventNumber->value = data->getNumEvents();
+        eventNumber->setValue(data->getNumEvents());
         data->addEvent();
 
-        dalitzplot.Fill(m12->value, m13->value);
+        dalitzplot.Fill(m12->getValue(), m13->getValue());
     }
 
     dalitzplot.SetStats(false);
@@ -363,13 +360,13 @@ DalitzPlotPdf* makeSignalPdf(GooPdf* eff = 0) {
     return new DalitzPlotPdf("signalPDF", m12, m13, eventNumber, dtop0pp, eff);
 }
 
-void runToyFit(std::string toyFileName) {
+int runToyFit(std::string toyFileName, GooFit::Application &app) {
     m12 = new Variable("m12", 0, 3);
     m13 = new Variable("m13", 0, 3);
-    m12->numbins = 240;
-    m13->numbins = 240;
-    eventNumber = new Variable("eventNumber", 0, INT_MAX);
-    getToyData(toyFileName);
+    m12->setNumBins(240);
+    m13->setNumBins(240);
+    eventNumber = new CountingVariable("eventNumber", 0, INT_MAX);
+    getToyData(toyFileName, app);
 
     // EXERCISE 1 (real part): Create a PolynomialPdf which models
     // the efficiency you imposed in the preliminary, and use it in constructing
@@ -385,14 +382,24 @@ void runToyFit(std::string toyFileName) {
     signal->setDataSize(data->getNumEvents());
     FitManager datapdf(signal);
 
-    gettimeofday(&startTime, NULL);
-    startCPU = times(&startProc);
     datapdf.fit();
-    stopCPU = times(&stopProc);
-    gettimeofday(&stopTime, NULL);
+    return datapdf;
 }
 
 int main(int argc, char** argv) {
+
+    GooFit::Application app("Dalitz example", argc, argv);
+
+    std::string filename = "dalitz_toyMC_000.txt";
+    app.add_option("-f,--filename,filename", filename,
+            "File to read in", true)->check(GooFit::ExistingFile);
+
+    try {
+        app.run();
+    } catch (const GooFit::ParseError &e) {
+        return app.exit(e);
+    }
+
     gStyle->SetCanvasBorderMode(0);
     gStyle->SetCanvasColor(10);
     gStyle->SetFrameFillColor(10);
@@ -409,26 +416,10 @@ int main(int argc, char** argv) {
     foodal = new TCanvas();
     foodal->Size(10, 10);
 
-    // cudaSetDevice(0);
-    std::string filename = argc>1 ? argv[1] : "dalitz_toyMC_000.txt";
-
     try {
-        runToyFit(filename);
+        return runToyFit(filename, app);
     } catch(const std::runtime_error& e) {
         std::cerr << e.what() << std::endl;
         return 7;
     }
-
-    // Print total minimization time
-    double myCPU = stopCPU - startCPU;
-    double totalCPU = myCPU;
-
-    timersub(&stopTime, &startTime, &totalTime);
-    std::cout << "Wallclock time  : " << totalTime.tv_sec + totalTime.tv_usec/1000000.0 << " seconds." << std::endl;
-    std::cout << "CPU time: " << (myCPU / CLOCKS_PER_SEC) << std::endl;
-    std::cout << "Total CPU time: " << (totalCPU / CLOCKS_PER_SEC) << std::endl;
-    myCPU = stopProc.tms_utime - startProc.tms_utime;
-    std::cout << "Processor time: " << (myCPU / CLOCKS_PER_SEC) << std::endl;
-
-    return 0;
 }

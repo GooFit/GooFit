@@ -1,7 +1,9 @@
-#ifndef LANDAU_PDF_HH
-#define LANDAU_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
+
+namespace GooFit {
+
 
 class LandauPdf : public GooPdf {
 public:
@@ -10,5 +12,5 @@ public:
 private:
 
 };
+} // namespace GooFit
 
-#endif

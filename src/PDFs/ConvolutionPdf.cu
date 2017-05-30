@@ -1,4 +1,13 @@
 #include "goofit/PDFs/ConvolutionPdf.h"
+#include "goofit/Variable.h"
+#include "goofit/Error.h"
+
+#include <thrust/iterator/constant_iterator.h>
+#include <thrust/iterator/counting_iterator.h>
+
+namespace GooFit {
+
+
 int totalConvolutions = 0;
 
 #define CONVOLUTION_CACHE_SIZE 512
@@ -8,14 +17,14 @@ int totalConvolutions = 0;
 // goes wrong. So... 512 should be enough for anyone, right?
 
 // Need multiple working spaces for the case of several convolutions in one PDF.
-MEM_CONSTANT fptype* dev_modWorkSpace[100];
-MEM_CONSTANT fptype* dev_resWorkSpace[100];
+__constant__ fptype* dev_modWorkSpace[100];
+__constant__ fptype* dev_resWorkSpace[100];
 
 // Number which transforms model range (x1, x2) into resolution range (x1 - maxX, x2 - minX).
 // It is equal to the maximum possible value of x0, ie maxX, in bins.
-MEM_CONSTANT int modelOffset[100];
+__constant__ int modelOffset[100];
 
-EXEC_TARGET fptype device_ConvolvePdfs(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_ConvolvePdfs(fptype* evt, fptype* p, unsigned int* indices) {
     fptype ret     = 0;
     fptype loBound = RO_CACHE(functorConstants[RO_CACHE(indices[5])+0]);
     fptype hiBound = RO_CACHE(functorConstants[RO_CACHE(indices[5])+1]);
@@ -23,11 +32,11 @@ EXEC_TARGET fptype device_ConvolvePdfs(fptype* evt, fptype* p, unsigned int* ind
     fptype x0      = evt[indices[2 + indices[0]]];
     int workSpaceIndex = indices[6];
 
-    int numbins = (int) FLOOR((hiBound - loBound) / step + 0.5);
+    int numbins = (int) floor((hiBound - loBound) / step + 0.5);
 
     fptype lowerBoundOffset = loBound / step;
-    lowerBoundOffset -= FLOOR(lowerBoundOffset);
-    int offsetInBins = (int) FLOOR(x0 / step - lowerBoundOffset);
+    lowerBoundOffset -= floor(lowerBoundOffset);
+    int offsetInBins = (int) floor(x0 / step - lowerBoundOffset);
 
     // Brute-force calculate integral M(x) * R(x - x0) dx
     int offset = RO_CACHE(modelOffset[workSpaceIndex]);
@@ -45,7 +54,7 @@ EXEC_TARGET fptype device_ConvolvePdfs(fptype* evt, fptype* p, unsigned int* ind
     return ret;
 }
 
-EXEC_TARGET fptype device_ConvolveSharedPdfs(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_ConvolveSharedPdfs(fptype* evt, fptype* p, unsigned int* indices) {
     fptype ret     = 0;
     fptype loBound = functorConstants[indices[5]+0];
     fptype hiBound = functorConstants[indices[5]+1];
@@ -54,16 +63,16 @@ EXEC_TARGET fptype device_ConvolveSharedPdfs(fptype* evt, fptype* p, unsigned in
     unsigned int workSpaceIndex = indices[6];
     unsigned int numOthers = indices[7] + 1; // +1 for this PDF.
 
-    int numbins = (int) FLOOR((hiBound - loBound) / step + 0.5);
+    int numbins = (int) floor((hiBound - loBound) / step + 0.5);
 
     fptype lowerBoundOffset = loBound / step;
-    lowerBoundOffset -= FLOOR(lowerBoundOffset);
-    int offsetInBins = (int) FLOOR(x0 / step - lowerBoundOffset);
+    lowerBoundOffset -= floor(lowerBoundOffset);
+    int offsetInBins = (int) floor(x0 / step - lowerBoundOffset);
 
     // Brute-force calculate integral M(x) * R(x - x0) dx
-    MEM_SHARED fptype modelCache[CONVOLUTION_CACHE_SIZE];
+    __shared__ fptype modelCache[CONVOLUTION_CACHE_SIZE];
     // Don't try to shared-load more items than we have threads.
-    int numToLoad = min(CONVOLUTION_CACHE_SIZE / numOthers, static_cast<unsigned int>(BLOCKDIM));
+    int numToLoad = thrust::minimum<unsigned int>()(CONVOLUTION_CACHE_SIZE / numOthers, static_cast<unsigned int>(BLOCKDIM));
 
     for(int i = 0; i < numbins; i += numToLoad) {
         // This code avoids this problem: If event 0 is in workspace 0, and
@@ -110,8 +119,8 @@ EXEC_TARGET fptype device_ConvolveSharedPdfs(fptype* evt, fptype* p, unsigned in
     return ret;
 }
 
-MEM_DEVICE device_function_ptr ptr_to_ConvolvePdfs = device_ConvolvePdfs;
-MEM_DEVICE device_function_ptr ptr_to_ConvolveSharedPdfs = device_ConvolveSharedPdfs;
+__device__ device_function_ptr ptr_to_ConvolvePdfs = device_ConvolvePdfs;
+__device__ device_function_ptr ptr_to_ConvolveSharedPdfs = device_ConvolveSharedPdfs;
 
 ConvolutionPdf::ConvolutionPdf(std::string n,
                                Variable* x,
@@ -190,7 +199,8 @@ ConvolutionPdf::ConvolutionPdf(std::string n,
         }
     }
 
-    assert(numOthers <= CONVOLUTION_CACHE_SIZE);
+    if(numOthers > CONVOLUTION_CACHE_SIZE)
+        throw GooFit::GeneralError("numOthers {} must be not be more than the cache size {}", numOthers, CONVOLUTION_CACHE_SIZE);
 
     GET_FUNCTION_ADDR(ptr_to_ConvolveSharedPdfs);
     initialise(paramIndices);
@@ -226,15 +236,15 @@ __host__ void ConvolutionPdf::setIntegrationConstants(fptype lo, fptype hi, fpty
     Variable* dependent = *(observables.begin());
 
     host_iConsts[2] = numbins;
-    host_iConsts[3] = (host_iConsts[0] - dependent->upperlimit);
-    host_iConsts[4] = (host_iConsts[1] - dependent->lowerlimit);
+    host_iConsts[3] = (host_iConsts[0] - dependent->getUpperLimit());
+    host_iConsts[4] = (host_iConsts[1] - dependent->getLowerLimit());
 
     numbins = (int) floor((host_iConsts[4] - host_iConsts[3]) / step + 0.5);
     host_iConsts[5] = numbins;
     MEMCPY(dev_iConsts, host_iConsts, 6*sizeof(fptype), cudaMemcpyHostToDevice);
     resolWorkSpace = new thrust::device_vector<fptype>(numbins);
 
-    int offset = dependent->upperlimit / step;
+    int offset = dependent->getUpperLimit() / step;
     MEMCPY_TO_SYMBOL(modelOffset, &offset, sizeof(int), workSpaceIndex*sizeof(int), cudaMemcpyHostToDevice);
 
     fptype* dev_address[1];
@@ -276,7 +286,7 @@ __host__ void ConvolutionPdf::registerOthers(std::vector<ConvolutionPdf*> others
     properlyInitialised = true;
 }
 
-__host__ fptype ConvolutionPdf::normalise() const {
+__host__ fptype ConvolutionPdf::normalize() const {
     //if (cpuDebug & 1) std::cout << getName() << " entering normalisation\n";
 
     // First set normalisation factors to one so we can evaluate convolution without getting zeroes
@@ -295,8 +305,7 @@ __host__ fptype ConvolutionPdf::normalise() const {
                           thrust::make_zip_iterator(thrust::make_tuple(binIndex + modelWorkSpace->size(), eventSize, arrayAddress)),
                           modelWorkSpace->begin(),
                           modalor);
-        SYNCH();
-        model->storeParameters();
+        cudaDeviceSynchronize();
         /*
         if ((cpuDebug & 1) && (5 == workSpaceIndex)) {
           thrust::host_vector<fptype> hModel(*modelWorkSpace);
@@ -316,15 +325,16 @@ __host__ fptype ConvolutionPdf::normalise() const {
                           thrust::make_zip_iterator(thrust::make_tuple(binIndex + resolWorkSpace->size(), eventSize, arrayAddress2)),
                           resolWorkSpace->begin(),
                           resalor);
-        resolution->storeParameters();
     }
 
-    //SYNCH();
+    //cudaDeviceSynchronize();
 
     // Then return usual integral
-    fptype ret = GooPdf::normalise();
+    fptype ret = GooPdf::normalize();
     return ret;
 }
 
 
+
+} // namespace GooFit
 

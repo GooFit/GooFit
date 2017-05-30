@@ -59,42 +59,38 @@ With your CUDA environment set up, you can install GooFit thus:
 
         git clone git://github.com/GooFit/GooFit.git
         cd GooFit
-        git checkout v1.0.0
 
--   If necessary, edit the Makefile so the variable `CUDALOCATION`
-    points to your local CUDA install.
+-   Compile with `cmake`:
 
--   Compile with `gmake`.
+        mkdir build
+        cd build
+        cmake ..
+        make
+
     Do not be alarmed by warning
     messages saying that such-and-such a function’s stack size could not
     be statically determined; this is an unavoidable (so far) side
     effect of the function-pointer implementation discussed in section
     [Engine](@ref engine).
 
--   Compile and run the ‘simpleFitExample’ program, which generates
+-   Run the ‘simpleFitExample’ program, which generates
     three distributions, fits them, and plots the results:
 
         cd examples/simpleFit
-        gmake
-        ./simpleFitExample
+        ./simpleFit
 
     The expected output is a MINUIT log for three different fits, and
     three image files.
 
--   Compile and run the Dalitz-plot tutorial, which fits a text file
+-   Run the Dalitz-plot tutorial, which fits a text file
     containing toy Monte Carlo data to a coherent sum of Breit-Wigner
     resonances:
 
         cd examples/dalitz
-        export CUDALOCATION=/usr/local/cuda/
-        gmake
         ./dalitz dalitz_toyMC_000.txt
 
-Quick troubleshooting: If your shell doesn’t like `export`, try instead
-`setenv CUDALOCATION /usr/local/cuda/`. Check that `/usr/local/cuda/`
-exists and contains, eg, `bin/nvcc` - otherwise, track down the
-directory that does and set `CUDALOCATION` to point to that instead.
-Some installs have `make` in place of `gmake`.
+Quick troubleshooting: GooFit uses [FindCUDA](https://cmake.org/cmake/help/v3.7/module/FindCUDA.html), and expects
+to find `root-config` in your path. Check the docs for FindCUDA if you need help locating your CUDA install.
 
 The text file contains information about simulated decays of the \f$D^0\f$
 particle to \f$\pi^+\pi^-\pi^0\f$; in particular, in each line, the second
@@ -122,15 +118,27 @@ Simple Gaussian fit {#listinggaussfit}
 
 ```{.cpp}
 int main (int argc, char** argv) {
+
+  // Optional, but highly recommended. Based loosly on TApplication.
+  GooFit::Application app {"Simple Gaussian Fit", argc, argv};
+
+  // Run the application parser, setup MPI if needed, and exit if parsing failed
+  try {
+      app.run();
+  } catch (const GooFit::ParseError& e) {
+      return app.exit(e);
+  }
+
+
   // Create an object to represent the observable, 
   // the number we have measured. Give it a name,
   // upper and lower bounds, and a number of bins
   // to use in numerical integration. 
-  Variable* xvar = new Variable("xvar", -5, 5); 
-  xvar->numbins = 1000; 
+  Variable xvar {"xvar", -5, 5}; 
+  xvar.setNumBins(1000); 
 
   // A data set to store our observations in.
-  UnbinnedDataSet data(xvar);
+  UnbinnedDataSet data {xvar};
 
   // "Observe" ten thousand events and add them
   // to the data set, throwing out any events outside
@@ -150,22 +158,22 @@ int main (int argc, char** argv) {
   // step size and upper and lower bounds. Notice that
   // here only the mean is given a step size; the sigma
   // will use the default step of one-tenth of its range.
-  Variable* mean = new Variable("mean", 0, 1, -10, 10);
-  Variable* sigm = new Variable("sigm", 1, 0.5, 1.5); 
+  Variable mean {"mean", 0, 1, -10, 10};
+  Variable sigm {"sigm", 1, 0.5, 1.5}; 
 
   // The actual PDF. The Gaussian takes a name, an independent
   // (ie observed) variable, and a mean and width. 
-  GaussianPdf gauss("gauss", xvar, mean, sigm); 
+  GaussianPdf gauss {"gauss", &xvar, &mean, &sigm}; 
 
   // Copy the data to the GPU. 
   gauss.setData(&data);
 
   // A class that talks to MINUIT and GooFit. It needs
   // to know what PDF it should set up in MINUIT. 
-  FitManager fitter(&gauss); 
+  FitManager fitter {&gauss}; 
 
   // The actual fit. 
-  fitter.fit(); 
+  fitter.fit();
   return 0;
 }
 ```
@@ -183,10 +191,10 @@ To create a data set with several dimensions, supply a `vector` of
 
 ```{.cpp}
 vector<Variable*> vars;
-Variable* xvar = new Variable("xvar", -10, 10);
-Variable* yvar = new Variable("yvar", -10, 10);
-vars.push_back(xvar);
-vars.push_back(yvar);
+Variable xvar {"xvar", -10, 10};
+Variable yvar {"yvar", -10, 10};
+vars.push_back(&xvar);
+vars.push_back(&yvar);
 UnbinnedDataSet data(vars);
 ```
 
@@ -194,8 +202,8 @@ In this case, to fill the data set, set the `Variable` values and call
 the `addEvent` method without arguments:
 
 ```{.cpp}
-xvar->value = 3;
-yvar->value = -2;
+xvar.setValue(3);
+yvar.setValue(-2);
 data.addEvent();
 ```
 
@@ -242,11 +250,11 @@ fit), you should create a suitable `FitControl` object and send it to
 the top-level `GooPdf`:
 
 ```{.cpp}
-decayTime = new Variable("decayTime", 100, 0, 10); 
-BinnedDataSet* ratioData = new BinnedDataSet(decayTime); 
+Variable decayTime {"decayTime", 100, 0, 10}; 
+BinnedDataSet* ratioData {&decayTime}; 
 for (int i = 0; i < 100; ++i) {
-  ratioData->SetBinContent(getRatio(i));
-  ratioData->SetBinError(getError(i));
+  ratioData.SetBinContent(getRatio(i));
+  ratioData.SetBinError(getError(i));
 }
 
 vector<Variable*> weights;
@@ -254,10 +262,9 @@ weights.push_back(new Variable("constaCoef", 0.03, 0.01, -1, 1));
 weights.push_back(new Variable("linearCoef", 0, 0.01, -1, 1));
 weights.push_back(new Variable("secondCoef", 0, 0.01, -1, 1));
 
-PolynomialPdf* poly;
-poly = new PolynomialPdf("poly", decayTime, weights); 
-poly->setFitControl(new BinnedErrorFit()); 
-poly->setData(ratioData); 
+PolynomialPdf poly {"poly", decayTime, weights}; 
+poly.setFitControl(new BinnedErrorFit()); 
+poly.setData(&ratioData); 
 ```
 
 The `FitControl` classes are `UnbinnedNLLFit` (the default),
@@ -387,7 +394,7 @@ __device__ fptype device_Gaussian (fptype* evt,
   fptype mean = p[indices[1]];
   fptype sigma = p[indices[2]];
 
-  fptype ret = EXP(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
+  fptype ret = exp(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
   return ret; 
 }
 ```
@@ -472,7 +479,7 @@ __host__ GaussianPdf::GaussianPdf (std::string n,
   pindices.push_back(registerParameter(sigma));
 
   pindices.push_back(registerConstants(1)); 
-  fptype sqrt2pi = SQRT(2*M_PI);
+  fptype sqrt2pi = sqrt(2*M_PI);
   MEMCPY_TO_SYMBOL(functorConstants, &sqrt2pi, sizeof(fptype), 
                      cIndex*sizeof(fptype), cudaMemcpyHostToDevice); 
 
@@ -496,7 +503,7 @@ __device__ fptype device_Gaussian (fptype* evt,
   fptype sigma = p[indices[2]];
   fptype sqrt2pi = functorConstants[indices[3]];
 
-  fptype ret = EXP(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
+  fptype ret = exp(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
   ret /= sqrt2pi; 
   return ret; 
 }
@@ -622,8 +629,8 @@ parameters to be evaluated. Control continues to pass back and forth in
 this way until MINUIT converges or gives up, or until GooFit crashes.
 
 The `calculateNLL` method does two things: First it calls the
-`normalise` function of the PDF, which in turn will usually recursively
-normalise the components; the results of the `normalise` call are copied
+`normalize` function of the PDF, which in turn will usually recursively
+normalize the components; the results of the `normalize` call are copied
 into the `normalisationFactors` array on the GPU. Next it calls
 `sumOfNll` and returns the resulting value. Particular PDF
 implementations may override `sumOfNll`; most notably `AddPdf` does so
@@ -631,11 +638,11 @@ in order to have the option of returning an ‘extended’ likelihood, with
 a term for the Poisson probability of the observed number of events in
 addition to the event probabilities.
 
-The `normalise` method, by default, simply evaluates the PDF at a grid
+The `normalize` method, by default, simply evaluates the PDF at a grid
 of points, returning the sum of all the values multiplied by the grid
 fineness - a primitive algorithm for numerical integration, but one
 which takes advantage of the GPU’s massive parallelisation. The fineness
-of the grid usually depends on the `numbins` member of the observables;
+of the grid usually depends on the getNumBins` member of the observables;
 in the case of the example Gaussian fit in listing [Gauss fit](@ref listinggaussfit),
 the PDF will be evaluated at 1000 points, evenly spaced between -5 and 5.
 However, this behaviour can be overridden by calling the
@@ -643,7 +650,7 @@ However, this behaviour can be overridden by calling the
 number of bins (in each observable) will be equal to the supplied
 fineness.
 
-Stripped of complications, the essential part of the `normalise`
+Stripped of complications, the essential part of the `normalize`
 function is a call to `transform_reduce`:
 
 Normalisation code. {#listingnormalisation}
@@ -685,15 +692,15 @@ every thread.
 
 PDF implementations may override the `normalisation` method, and among
 the default PDFs, both `AddPdf` and `ProdPdf` do so to ensure that their
-components are correctly normalised. Among the more specialised
-implementations, `TddpPdf` overrides `normalise` so that it may cache
+components are correctly normalized. Among the more specialised
+implementations, `TddpPdf` overrides `normalize` so that it may cache
 the slowly-changing Breit-Wigner calculations, and also because its time
 dependence is analytically integrable and it is a good optimisation to
 do only the Dalitz-plot part numerically. This points to a more general
 rule, that once a PDF depends on three or four observables, the
 relatively primitive numerical integration outlined above may become
 unmanageable because of the number of points it creates. Finally, note
-that PDFs may, without overriding `normalise`, advertise an analytical
+that PDFs may, without overriding `normalize`, advertise an analytical
 integral by overriding `GooPdf`’s `hasAnalyticIntegral` method to return
 `true`, and then implementing an `integrate` method to be evaluated on
 the CPU.
@@ -727,7 +734,7 @@ Bin-center calculation {#listingbincenter}
 ----------------------
 
 ```{.cpp}
-MEM_SHARED fptype binCenters[1024*MAX_NUM_OBSERVABLES];
+__shared__ fptype binCenters[1024*MAX_NUM_OBSERVABLES];
 
 // To convert global bin number to (x,y,z...) coordinates: 
 // For each dimension, take the mod with the number of bins 
@@ -740,7 +747,7 @@ unsigned int* indices = paramIndices + parameters;
 for (int i = 0; i < evtSize; ++i) {
   fptype lowerBound = thrust::get<2>(t)[3*i+0];
   fptype upperBound = thrust::get<2>(t)[3*i+1];
-  int numBins    = (int) FLOOR(thrust::get<2>(t)[3*i+2] + 0.5); 
+  int numBins    = (int) floor(thrust::get<2>(t)[3*i+2] + 0.5); 
   int localBin = binNumber % numBins;
 
   fptype x = upperBound - lowerBound; 
@@ -754,7 +761,7 @@ for (int i = 0; i < evtSize; ++i) {
 
 in the straightforward way, and stores the bin centers in a *fake
 event*. Since events are just lists of observables, all that’s necessary
-is to keep track of which part of the `MEM_SHARED` (\ref footnote7 "7") `binCenters`
+is to keep track of which part of the `__shared__` (\ref footnote7 "7") `binCenters`
 array is owned by this thread, look up the index-within-events of each
 observable, and set the entries of the locally-owned part of
 `binCenters` accordingly. This fake event is then sent to the PDF for
@@ -890,13 +897,13 @@ __device__ fptype calculateNLL (fptype rawPdf,
                                  fptype* evtVal, 
                                  unsigned int par) {
   rawPdf *= normalisationFactors[par];
-  return rawPdf > 0 ? -LOG(rawPdf) : 0; 
+  return rawPdf > 0 ? -log(rawPdf) : 0; 
 }
 
 __device__ fptype calculateProb (fptype rawPdf, 
                                  fptype* evtVal, 
                                  unsigned int par) {
-  // Return probability, ie normalised PDF value.
+  // Return probability, ie normalized PDF value.
   return rawPdf * normalisationFactors[par];
 }
 
@@ -1042,7 +1049,7 @@ example is the Gaussian PDF.
     e^{-\frac{(x-\bar x)^2}{2\sigma_x^2}}e^{-\frac{(y-\bar y)^2}{2(1 + k(\frac{x-\bar x}{\sigma_x})^2)\sigma_y^2}}
 \f}
     In other words, the effective \f$\sigma_y\f$ grows quadratically in the
-    normalised distance from the mean of \f$x\f$, with the quadratic term
+    normalized distance from the mean of \f$x\f$, with the quadratic term
     having coefficient \f$k\f$. The constructor takes observables \f$x\f$ and
     \f$y\f$, means and widths \f$\bar x\f$, \f$\sigma_x\f$, \f$\bar y\f$ and \f$\sigma_y\f$,
     and coefficient \f$k\f$. Notice that if \f$k\f$ is zero, the function
@@ -1323,7 +1330,7 @@ Gaussian to your fit.
 
     Also note that if the `AddPdf`’s options mask (set by calling
     `setSpecialMask`) includes `ForceCommonNorm`, the normalisation
-    changes. By default the components are normalised separately, so
+    changes. By default the components are normalized separately, so
     that 
 \f{align}{
     P(x;\vec F, \vec w) &=& \sum\limits_i \frac{w_iF_i(x)}{\int F_i(x) \mathrm{d}x},
@@ -1411,12 +1418,12 @@ Gaussian to your fit.
 
     `ProdPdf` does allow variable overlaps, that is, the components may
     depend on the same variable, eg \f$P(x) = A(x)B(x)\f$. If this happens,
-    the entire `ProdPdf` object will be normalised together, since in
+    the entire `ProdPdf` object will be normalized together, since in
     general
     \f$\int A(x)B(x) \mathrm{d}x \ne \int A(x) \mathrm{d}x \int B(x) \mathrm{d}x\f$.
     However, if any of the components have the flag `ForceSeparateNorm`
     set, as well as in the default case that the components depend on
-    separate observables, each component will be normalised
+    separate observables, each component will be normalized
     individually. Some care is indicated when using the
     `ForceSeparateNorm` flag, and possibly a rethink of why there is a
     product of two PDFs depending on the same variable in the first

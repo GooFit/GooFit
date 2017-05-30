@@ -1,7 +1,9 @@
-#ifndef JOHNSONSU_PDF_HH
-#define JOHNSONSU_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
+
+namespace GooFit {
+
 
 class JohnsonSUPdf : public GooPdf {
 public:
@@ -16,5 +18,5 @@ public:
 private:
 
 };
+} // namespace GooFit
 
-#endif

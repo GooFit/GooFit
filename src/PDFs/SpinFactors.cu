@@ -8,17 +8,20 @@ This code is not sufficently tested yet and still under heavy development!
 #include "goofit/PDFs/SpinFactors.h"
 #include "goofit/PDFs/SpinHelper.h"
 
+namespace GooFit {
+
+
 #define ZEMACH 1
 
-EXEC_TARGET fptype DtoPP1_PtoSP2_StoP3P4(fptype* Vecs, unsigned int* indices) {
+__device__ fptype DtoPP1_PtoSP2_StoP3P4(fptype* Vecs, unsigned int* indices) {
     return 1.0;
 }
 
-EXEC_TARGET fptype ONE(fptype* Vecs, unsigned int* indices) {
+__device__ fptype ONE(fptype* Vecs, unsigned int* indices) {
     return 1.0;
 }
 
-EXEC_TARGET fptype FF_12_34_L1(fptype* Vecs, unsigned int* indices) {
+__device__ fptype FF_12_34_L1(fptype* Vecs, unsigned int* indices) {
     fptype mother_radius           = functorConstants[indices[1]];
     unsigned int p1          = indices[2];
     unsigned int p2          = indices[3];
@@ -36,11 +39,11 @@ EXEC_TARGET fptype FF_12_34_L1(fptype* Vecs, unsigned int* indices) {
     fptype q2 = s/4. -(m1 + m2)/2. + (m1 - m2)*(m1 - m2)/(4*s);
     fptype z2 = q2 *  mother_radius*mother_radius;
     fptype ff =  1.0/(1+z2);
-    // printf("%.5g, %.5g, %.5g, %.5g\n",s,m1,m2,SQRT(ff) );
-    return SQRT(ff);
+    // printf("%.5g, %.5g, %.5g, %.5g\n",s,m1,m2,sqrt(ff) );
+    return sqrt(ff);
 }
 
-EXEC_TARGET fptype FF_12_34_L2(fptype* Vecs, unsigned int* indices) {
+__device__ fptype FF_12_34_L2(fptype* Vecs, unsigned int* indices) {
     fptype mother_radius           = functorConstants[indices[1]];
     unsigned int p1          = indices[2];
     unsigned int p2          = indices[3];
@@ -59,10 +62,10 @@ EXEC_TARGET fptype FF_12_34_L2(fptype* Vecs, unsigned int* indices) {
     fptype z2 = q2 *  mother_radius*mother_radius;
     fptype ff =  1.0/ (z2*z2 + 3*z2 + 9);
 
-    return SQRT(ff);
+    return sqrt(ff);
 }
 
-EXEC_TARGET fptype FF_123_4_L1(fptype* Vecs, unsigned int* indices) {
+__device__ fptype FF_123_4_L1(fptype* Vecs, unsigned int* indices) {
     fptype mother_radius           = functorConstants[indices[1]];
     unsigned int p1          = indices[2];
     unsigned int p2          = indices[3];
@@ -81,10 +84,10 @@ EXEC_TARGET fptype FF_123_4_L1(fptype* Vecs, unsigned int* indices) {
     fptype z2 = q2 *  mother_radius*mother_radius;
     fptype ff =  1.0/(1+z2);
 
-    return SQRT(ff);
+    return sqrt(ff);
 }
 
-EXEC_TARGET fptype FF_123_4_L2(fptype* Vecs, unsigned int* indices) {
+__device__ fptype FF_123_4_L2(fptype* Vecs, unsigned int* indices) {
     fptype mother_radius           = functorConstants[indices[1]];
     unsigned int p1          = indices[2];
     unsigned int p2          = indices[3];
@@ -103,12 +106,12 @@ EXEC_TARGET fptype FF_123_4_L2(fptype* Vecs, unsigned int* indices) {
     fptype z2 = q2 *  mother_radius*mother_radius;
     fptype ff =  1.0/ (z2*z2 + 3*z2 + 9);
 
-    return SQRT(ff);
+    return sqrt(ff);
 }
 
 
 
-EXEC_TARGET fptype DtoPP1_PtoVP2_VtoP3P4(fptype* Vecs, unsigned int* indices) {
+__device__ fptype DtoPP1_PtoVP2_VtoP3P4(fptype* Vecs, unsigned int* indices) {
     unsigned int p1          = indices[2];
     unsigned int p2          = indices[3];
     unsigned int p3          = indices[4];
@@ -137,7 +140,7 @@ EXEC_TARGET fptype DtoPP1_PtoVP2_VtoP3P4(fptype* Vecs, unsigned int* indices) {
 
 
 
-EXEC_TARGET fptype DtoV1V2_V1toP1P2_V2toP3P4_S(fptype* Vecs, unsigned int* indices) {
+__device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_S(fptype* Vecs, unsigned int* indices) {
     unsigned int p1          = indices[2];
     unsigned int p2          = indices[3];
     unsigned int p3          = indices[4];
@@ -157,8 +160,8 @@ EXEC_TARGET fptype DtoV1V2_V1toP1P2_V2toP3P4_S(fptype* Vecs, unsigned int* indic
     gpuLVec pV2 = P3 + P4;
     gpuLVec qV2 = P3 - P4;
 
-    fptype MV1 = SQRT(pV1.Dot(pV1));
-    fptype MV2 = SQRT(pV2.Dot(pV2));
+    fptype MV1 = sqrt(pV1.Dot(pV1));
+    fptype MV2 = sqrt(pV2.Dot(pV2));
 
     fptype returnVal = (qV1.Dot(qV2)
                         - qV1.Dot(pV1) * pV1.Dot(qV2) / (MV1*MV1)
@@ -169,7 +172,7 @@ EXEC_TARGET fptype DtoV1V2_V1toP1P2_V2toP3P4_S(fptype* Vecs, unsigned int* indic
     return returnVal;
 }
 
-EXEC_TARGET fptype DtoV1V2_V1toP1P2_V2toP3P4_P(fptype* Vecs, unsigned int* indices) {
+__device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_P(fptype* Vecs, unsigned int* indices) {
     unsigned int p1          = indices[2];
     unsigned int p2          = indices[3];
     unsigned int p3          = indices[4];
@@ -188,8 +191,8 @@ EXEC_TARGET fptype DtoV1V2_V1toP1P2_V2toP3P4_P(fptype* Vecs, unsigned int* indic
     gpuLVec qD = pV1 - pV2;
 
 #ifdef ZEMACH
-    fptype MV1 = SQRT(pV1.Dot(pV1));
-    fptype MV2 = SQRT(pV2.Dot(pV2));
+    fptype MV1 = sqrt(pV1.Dot(pV1));
+    fptype MV2 = sqrt(pV2.Dot(pV2));
 
     ZTspin1 LD(qD, pD, pD.M());
     ZTspin1 LV1(qV1, pV1, MV1);
@@ -202,7 +205,7 @@ EXEC_TARGET fptype DtoV1V2_V1toP1P2_V2toP3P4_P(fptype* Vecs, unsigned int* indic
 #endif
 }
 
-EXEC_TARGET fptype DtoV1V2_V1toP1P2_V2toP3P4_D(fptype* Vecs, unsigned int* indices) {
+__device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_D(fptype* Vecs, unsigned int* indices) {
     unsigned int p1          = indices[2];
     unsigned int p2          = indices[3];
     unsigned int p3          = indices[4];
@@ -236,8 +239,8 @@ EXEC_TARGET fptype DtoV1V2_V1toP1P2_V2toP3P4_D(fptype* Vecs, unsigned int* indic
 #else
 
 
-    fptype MV1 = SQRT(pV1.Dot(pV1));
-    fptype MV2 = SQRT(pV2.Dot(pV2));
+    fptype MV1 = sqrt(pV1.Dot(pV1));
+    fptype MV2 = sqrt(pV2.Dot(pV2));
     fptype returnVal = (qV1.Dot(pV2) - qV1.Dot(pV1) * pV1.Dot(pV2)/(MV1*MV1)
                        )*(
                            qV2.Dot(pV1) - qV2.Dot(pV2) * pV2.Dot(pV1)/(MV2*MV2)
@@ -247,7 +250,7 @@ EXEC_TARGET fptype DtoV1V2_V1toP1P2_V2toP3P4_D(fptype* Vecs, unsigned int* indic
 #endif
 }
 
-EXEC_TARGET fptype DtoV1P1_V1toV2P2_V2toP3P4(fptype* Vecs, unsigned int* indices) {
+__device__ fptype DtoV1P1_V1toV2P2_V2toP3P4(fptype* Vecs, unsigned int* indices) {
     unsigned int p1          = indices[2];
     unsigned int p2          = indices[3];
     unsigned int p3          = indices[4];
@@ -289,7 +292,7 @@ EXEC_TARGET fptype DtoV1P1_V1toV2P2_V2toP3P4(fptype* Vecs, unsigned int* indices
 #endif
 }
 
-EXEC_TARGET fptype DtoVS_VtoP1P2_StoP3P4(fptype* Vecs, unsigned int* indices) {
+__device__ fptype DtoVS_VtoP1P2_StoP3P4(fptype* Vecs, unsigned int* indices) {
     unsigned int p1          = indices[2];
     unsigned int p2          = indices[3];
     unsigned int p3          = indices[4];
@@ -317,14 +320,14 @@ EXEC_TARGET fptype DtoVS_VtoP1P2_StoP3P4(fptype* Vecs, unsigned int* indices) {
     // printf("%f, %f, %f, %f\n",P3.getX(), P3.getY(), P3.getZ(), P3.getE() );
     // printf("%f, %f, %f, %f\n",P4.getX(), P4.getY(), P4.getZ(), P4.getE() );
 
-    fptype MV = SQRT(pV.Dot(pV));
+    fptype MV = sqrt(pV.Dot(pV));
 
     fptype returnVal = (pS.Dot(qV) - pS.Dot(pV) * pV.Dot(qV) / (MV*MV));
     return returnVal;
 #endif
 }
 
-EXEC_TARGET fptype DtoAP1_AtoSP2_StoP3P4(fptype* Vecs, unsigned int* indices) {
+__device__ fptype DtoAP1_AtoSP2_StoP3P4(fptype* Vecs, unsigned int* indices) {
     unsigned int p1          = indices[2];
     unsigned int p2          = indices[3];
     unsigned int p3          = indices[4];
@@ -351,13 +354,13 @@ EXEC_TARGET fptype DtoAP1_AtoSP2_StoP3P4(fptype* Vecs, unsigned int* indices) {
     return (LD.Dot(LA));
 #else
 
-    fptype MA = SQRT(pA.Dot(pA));
+    fptype MA = sqrt(pA.Dot(pA));
     fptype returnVal = (P1.Dot(qA) - P1.Dot(pA) * pA.Dot(qA) / (MA*MA));
     return returnVal;
 #endif
 }
 
-EXEC_TARGET fptype DtoAP1_AtoVP2_VtoP3P4(fptype* Vecs, unsigned int* indices) {
+__device__ fptype DtoAP1_AtoVP2_VtoP3P4(fptype* Vecs, unsigned int* indices) {
     unsigned int p1          = indices[2];
     unsigned int p2          = indices[3];
     unsigned int p3          = indices[4];
@@ -383,8 +386,8 @@ EXEC_TARGET fptype DtoAP1_AtoVP2_VtoP3P4(fptype* Vecs, unsigned int* indices) {
 #else
     gpuLVec p0 = P1;
 
-    fptype MA = SQRT(pA.Dot(pA));
-    fptype MV = SQRT(pV.Dot(pV));
+    fptype MA = sqrt(pA.Dot(pA));
+    fptype MV = sqrt(pV.Dot(pV));
     fptype returnVal =  P1.Dot(qV)
                         -   p0.Dot(pA) * pA.Dot(qV) / (MA*MA)
                         -   p0.Dot(pV) * pV.Dot(qV) / (MV*MV)
@@ -394,7 +397,7 @@ EXEC_TARGET fptype DtoAP1_AtoVP2_VtoP3P4(fptype* Vecs, unsigned int* indices) {
 #endif
 }
 
-EXEC_TARGET fptype DtoAP1_AtoVP2Dwave_VtoP3P4(fptype* Vecs, unsigned int* indices) {
+__device__ fptype DtoAP1_AtoVP2Dwave_VtoP3P4(fptype* Vecs, unsigned int* indices) {
     unsigned int p1          = indices[2];
     unsigned int p2          = indices[3];
     unsigned int p3          = indices[4];
@@ -420,8 +423,8 @@ EXEC_TARGET fptype DtoAP1_AtoVP2Dwave_VtoP3P4(fptype* Vecs, unsigned int* indice
     return (LD.Dot(tmp));
 #else
 
-    fptype MA = SQRT(pA.Dot(pA));
-    fptype MV = SQRT(pV.Dot(pV));
+    fptype MA = sqrt(pA.Dot(pA));
+    fptype MV = sqrt(pV.Dot(pV));
 
     fptype returnVal = P1.Dot((qA - qA.Dot(pA)*pA * (1./(MA*MA)))) * (qV - qV.Dot(pV)*pV * (1./(MV*MV))).Dot(pA);
 
@@ -433,7 +436,7 @@ EXEC_TARGET fptype DtoAP1_AtoVP2Dwave_VtoP3P4(fptype* Vecs, unsigned int* indice
 
 
 
-EXEC_TARGET fptype DtoTP1_TtoVP2_VtoP3P4(fptype* Vecs, unsigned int* indices) {
+__device__ fptype DtoTP1_TtoVP2_VtoP3P4(fptype* Vecs, unsigned int* indices) {
     unsigned int p1          = indices[2];
     unsigned int p2          = indices[3];
     unsigned int p3          = indices[4];
@@ -453,7 +456,7 @@ EXEC_TARGET fptype DtoTP1_TtoVP2_VtoP3P4(fptype* Vecs, unsigned int* indices) {
     ZTspin2 t2T(qT, pT, pT.M());
     ZTspin1 tV(qV, pV, pV.M());
 
-    gpuLVec DT(t2T.Contract(qD));
+    //gpuLVec DT(t2T.Contract(qD));
 
 #ifdef ZEMACH
     ZTspin1 tD(qD, pD, pD.M());
@@ -473,32 +476,32 @@ EXEC_TARGET fptype DtoTP1_TtoVP2_VtoP3P4(fptype* Vecs, unsigned int* indices) {
 #endif
 }
 
-MEM_DEVICE spin_function_ptr ptr_to_DtoPP1_PtoSP2_StoP3P4       = DtoPP1_PtoSP2_StoP3P4;
-MEM_DEVICE spin_function_ptr ptr_to_DtoPP1_PtoVP2_VtoP3P4       = DtoPP1_PtoVP2_VtoP3P4;
-MEM_DEVICE spin_function_ptr ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_S = DtoV1V2_V1toP1P2_V2toP3P4_S;
-MEM_DEVICE spin_function_ptr ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_P = DtoV1V2_V1toP1P2_V2toP3P4_P;
-MEM_DEVICE spin_function_ptr ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_D = DtoV1V2_V1toP1P2_V2toP3P4_D;
-MEM_DEVICE spin_function_ptr ptr_to_DtoVS_VtoP1P2_StoP3P4       = DtoVS_VtoP1P2_StoP3P4;
-MEM_DEVICE spin_function_ptr ptr_to_DtoV1P1_V1toV2P2_V2toP3P4   = DtoV1P1_V1toV2P2_V2toP3P4;
-MEM_DEVICE spin_function_ptr ptr_to_DtoAP1_AtoSP2_StoP3P4       = DtoAP1_AtoSP2_StoP3P4;
-MEM_DEVICE spin_function_ptr ptr_to_DtoAP1_AtoVP2_VtoP3P4       = DtoAP1_AtoVP2_VtoP3P4;
-MEM_DEVICE spin_function_ptr ptr_to_DtoAP1_AtoVP2Dwave_VtoP3P4  = DtoAP1_AtoVP2Dwave_VtoP3P4;
-MEM_DEVICE spin_function_ptr ptr_to_DtoTP1_TtoVP2_VtoP3P4       = DtoTP1_TtoVP2_VtoP3P4;
+__device__ spin_function_ptr ptr_to_DtoPP1_PtoSP2_StoP3P4       = DtoPP1_PtoSP2_StoP3P4;
+__device__ spin_function_ptr ptr_to_DtoPP1_PtoVP2_VtoP3P4       = DtoPP1_PtoVP2_VtoP3P4;
+__device__ spin_function_ptr ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_S = DtoV1V2_V1toP1P2_V2toP3P4_S;
+__device__ spin_function_ptr ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_P = DtoV1V2_V1toP1P2_V2toP3P4_P;
+__device__ spin_function_ptr ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_D = DtoV1V2_V1toP1P2_V2toP3P4_D;
+__device__ spin_function_ptr ptr_to_DtoVS_VtoP1P2_StoP3P4       = DtoVS_VtoP1P2_StoP3P4;
+__device__ spin_function_ptr ptr_to_DtoV1P1_V1toV2P2_V2toP3P4   = DtoV1P1_V1toV2P2_V2toP3P4;
+__device__ spin_function_ptr ptr_to_DtoAP1_AtoSP2_StoP3P4       = DtoAP1_AtoSP2_StoP3P4;
+__device__ spin_function_ptr ptr_to_DtoAP1_AtoVP2_VtoP3P4       = DtoAP1_AtoVP2_VtoP3P4;
+__device__ spin_function_ptr ptr_to_DtoAP1_AtoVP2Dwave_VtoP3P4  = DtoAP1_AtoVP2Dwave_VtoP3P4;
+__device__ spin_function_ptr ptr_to_DtoTP1_TtoVP2_VtoP3P4       = DtoTP1_TtoVP2_VtoP3P4;
 
 
 
-MEM_DEVICE spin_function_ptr ptr_to_FF_12_34_L1       = FF_12_34_L1;
-MEM_DEVICE spin_function_ptr ptr_to_FF_12_34_L2       = FF_12_34_L2;
-MEM_DEVICE spin_function_ptr ptr_to_FF_123_4_L1       = FF_123_4_L1;
-MEM_DEVICE spin_function_ptr ptr_to_FF_123_4_L2       = FF_123_4_L2;
-MEM_DEVICE spin_function_ptr ptr_to_ONE               = ONE;
+__device__ spin_function_ptr ptr_to_FF_12_34_L1       = FF_12_34_L1;
+__device__ spin_function_ptr ptr_to_FF_12_34_L2       = FF_12_34_L2;
+__device__ spin_function_ptr ptr_to_FF_123_4_L1       = FF_123_4_L1;
+__device__ spin_function_ptr ptr_to_FF_123_4_L2       = FF_123_4_L2;
+__device__ spin_function_ptr ptr_to_ONE               = ONE;
 
 
 
 SpinFactor::SpinFactor(std::string name, SF_4Body SF, unsigned int P0, unsigned int P1, unsigned int P2,
                        unsigned int P3)
     : GooPdf(0, name), _SF(SF), _P0(P0), _P1(P1), _P2(P2), _P3(P3) {
-    vector<unsigned int> pindices;
+    std::vector<unsigned int> pindices;
     pindices.push_back(0); //dummy for index to constants.
     pindices.push_back(P0);
     pindices.push_back(P1);
@@ -578,4 +581,6 @@ SpinFactor::SpinFactor(std::string name, SF_4Body SF, unsigned int P0, unsigned 
 
     initialise(pindices);
 }
+
+} // namespace GooFit
 

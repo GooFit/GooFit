@@ -1,6 +1,10 @@
 #include "goofit/PDFs/ProdPdf.h"
+#include <algorithm>
 
-EXEC_TARGET fptype device_ProdPdfs(fptype* evt, fptype* p, unsigned int* indices) {
+namespace GooFit {
+
+
+__device__ fptype device_ProdPdfs(fptype* evt, fptype* p, unsigned int* indices) {
     // Index structure is nP | F1 P1 | F2 P2 | ...
     // where nP is number of parameters, Fs are function indices, and Ps are parameter indices
 
@@ -32,47 +36,45 @@ EXEC_TARGET fptype device_ProdPdfs(fptype* evt, fptype* p, unsigned int* indices
     return ret;
 }
 
-MEM_DEVICE device_function_ptr ptr_to_ProdPdfs = device_ProdPdfs;
+__device__ device_function_ptr ptr_to_ProdPdfs = device_ProdPdfs;
 
 ProdPdf::ProdPdf(std::string n, std::vector<PdfBase*> comps)
     : GooPdf(0, n)
     , varOverlaps(false) {
     std::vector<unsigned int> pindices;
 
-    for(std::vector<PdfBase*>::iterator p = comps.begin(); p != comps.end(); ++p) {
-        assert(*p);
-        components.push_back(*p);
+    for(PdfBase* p : comps) {
+        components.push_back(p);
     }
 
-    getObservables(observables); // Gathers from components
+    observables = getObservables(); // Gathers from components
 
-    PdfBase::obsCont observableCheck; // Use to check for overlap in observables
+    std::vector<Variable*> observableCheck; // Use to check for overlap in observables
 
     // Indices stores (function index)(function parameter index)(variable index) for each component.
-    for(std::vector<PdfBase*>::iterator p = comps.begin(); p != comps.end(); ++p) {
-        pindices.push_back((*p)->getFunctionIndex());
-        pindices.push_back((*p)->getParameterIndex());
+    for(PdfBase* p : comps) {
+        pindices.push_back(p->getFunctionIndex());
+        pindices.push_back(p->getParameterIndex());
 
         if(varOverlaps)
             continue; // Only need to establish this once.
 
-        PdfBase::obsCont currObses;
-        (*p)->getObservables(currObses);
+        std::vector<Variable*> currObses = p->getObservables();
 
-        for(PdfBase::obsIter o = currObses.begin(); o != currObses.end(); ++o) {
-            if(find(observableCheck.begin(), observableCheck.end(), (*o)) == observableCheck.end())
+        for(Variable* o : currObses) {
+            if(find(observableCheck.begin(), observableCheck.end(), o) == observableCheck.end())
                 continue;
 
             varOverlaps = true;
             break;
         }
 
-        (*p)->getObservables(observableCheck);
+        observableCheck = p->getObservables();
     }
 
     if(varOverlaps) {  // Check for components forcing separate normalisation
-        for(std::vector<PdfBase*>::iterator p = comps.begin(); p != comps.end(); ++p) {
-            if((*p)->getSpecialMask() & PdfBase::ForceSeparateNorm)
+        for(PdfBase* p : comps) {
+            if(p->getSpecialMask() & PdfBase::ForceSeparateNorm)
                 varOverlaps = false;
         }
     }
@@ -81,25 +83,25 @@ ProdPdf::ProdPdf(std::string n, std::vector<PdfBase*> comps)
     initialise(pindices);
 }
 
-__host__ fptype ProdPdf::normalise() const {
+__host__ fptype ProdPdf::normalize() const {
 
     if(varOverlaps) {
         // Two or more components share an observable and cannot be separately
-        // normalised, since \int A*B dx does not equal int A dx * int B dx.
+        // normalized, since \int A*B dx does not equal int A dx * int B dx.
         recursiveSetNormalisation(fptype(1.0));
         MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
-        // Normalise numerically.
+        // Normalize numerically.
         //std::cout << "Numerical normalisation of " << getName() << " due to varOverlaps.\n";
-        fptype ret = GooPdf::normalise();
+        fptype ret = GooPdf::normalize();
         //if (cpuDebug & 1)
         //std::cout << "ProdPdf " << getName() << " has normalisation " << ret << " " << host_callnumber << std::endl;
         return ret;
     }
 
-    // Normalise components individually
-    for(std::vector<PdfBase*>::const_iterator c = components.begin(); c != components.end(); ++c) {
-        (*c)->normalise();
+    // Normalize components individually
+    for(PdfBase* c : components) {
+        c->normalize();
     }
 
     host_normalisation[parameters] = 1;
@@ -107,3 +109,5 @@ __host__ fptype ProdPdf::normalise() const {
 
     return 1.0;
 }
+} // namespace GooFit
+

@@ -2,21 +2,24 @@
 #include <fstream>
 #include <map>
 #include "goofit/PdfBase.h"
+#include "goofit/Variable.h"
+
+namespace GooFit {
+
 
 void writeToFile(PdfBase* pdf, const char* fname) {
-    PdfBase::parCont params;
-    pdf->getParameters(params);
+    std::vector<Variable*> params = pdf->getParameters();
 
     std::ofstream writer;
     writer.open(fname);
 
-    for(PdfBase::parIter p = params.begin(); p != params.end(); ++p) {
-        writer << (*p)->name << " "
-               << (*p)->value << " "
-               << (*p)->error << " "
-               << (*p)->numbins << " "
-               << (*p)->lowerlimit << " "
-               << (*p)->upperlimit
+    for(Variable* p : params) {
+        writer << p->getName() << " "
+               << p->getValue() << " "
+               << p->getError() << " "
+               << p->getNumBins() << " "
+               << p->getLowerLimit() << " "
+               << p->getUpperLimit()
                << std::endl;
     }
 
@@ -25,13 +28,12 @@ void writeToFile(PdfBase* pdf, const char* fname) {
 
 
 void readFromFile(PdfBase* pdf, const char* fname) {
-    PdfBase::parCont params;
-    pdf->getParameters(params);
+    std::vector<Variable*> params = pdf->getParameters();
 
-    std::map<string, Variable*> tempMap;
+    std::map<std::string, Variable*> tempMap;
 
-    for(PdfBase::parIter p = params.begin(); p != params.end(); ++p) {
-        tempMap[(*p)->name] = (*p);
+    for(Variable* p : params) {
+        tempMap[p->getName()] = p;
     }
 
     std::ifstream reader;
@@ -47,13 +49,22 @@ void readFromFile(PdfBase* pdf, const char* fname) {
             break;
 
         Variable* var = tempMap[buffer];
+        
+        fptype value, error, lowerlimit, upperlimit;
+        size_t numbins;
 
         if(var) {
-            reader >> var->value
-                   >> var->error
-                   >> var->numbins
-                   >> var->lowerlimit
-                   >> var->upperlimit;
+            reader >> value
+                   >> error
+                   >> numbins
+                   >> lowerlimit
+                   >> upperlimit;
+            
+            var->setValue(value);
+            var->setError(error);
+            var->setNumBins(numbins);
+            var->setLowerLimit(lowerlimit);
+            var->setUpperLimit(upperlimit);
 
             if(++numSet == tempMap.size())
                 break;
@@ -86,9 +97,11 @@ void writeListOfNumbers(thrust::host_vector<fptype>& target, const char* fname) 
     std::ofstream writer;
     writer.open(fname);
 
-    for(thrust::host_vector<fptype>::iterator t = target.begin(); t != target.end(); ++t) {
-        writer << (*t) << " ";
+    for(fptype t : target) {
+        writer << t << " ";
     }
 
     writer.close();
 }
+} // namespace GooFit
+

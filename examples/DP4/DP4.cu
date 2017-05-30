@@ -1,13 +1,16 @@
 #include <fstream>
 
 // GooFit stuff
+#include "goofit/Application.h"
 #include "goofit/FitManager.h"
 #include "goofit/Variable.h"
 #include "goofit/PDFs/PolynomialPdf.h"
 #include "goofit/PDFs/AddPdf.h"
 #include "goofit/UnbinnedDataSet.h"
 #include "goofit/PDFs/DP4Pdf.h"
+
 using namespace std;
+using namespace GooFit;
 
 const fptype _mD0 = 1.8645;
 const fptype piPlusMass = 0.13957018;
@@ -16,12 +19,23 @@ const fptype KmMass = .493677;
 
 int main(int argc, char** argv) {
 
+    GooFit::Application app("Dalitz 4 daughter example", argc, argv);
+
+    for(int i = 0; i<maxParams; i++)
+        host_normalisation[i] = -7;
+    
+    try {
+        app.run();
+    } catch (const GooFit::ParseError &e) {
+        return app.exit(e);
+    }
+
     Variable* m12 = new Variable("m12", 0, 3);
     Variable* m34 = new Variable("m34", 0, 3);
     Variable* cos12 = new Variable("cos12", -1, 1);
     Variable* cos34 = new Variable("m12", -1, 1);
     Variable* phi = new Variable("phi", -3.5, 3.5);
-    Variable* eventNumber = new Variable("eventNumber", 0, INT_MAX);
+    CountingVariable* eventNumber = new CountingVariable("eventNumber", 0, INT_MAX);
 
     std::vector<Variable*> vars;
     vars.push_back(m12);
@@ -34,10 +48,12 @@ int main(int argc, char** argv) {
 
     unsigned int MCevents = 0;
 
-    fstream input("ToyMC.txt", std::ios_base::in);
+    std::string input_str = app.get_filename("ToyMC.txt", "examples/DP4");
 
-    while(input >> m12->value >> m34->value >> cos12->value >> cos34->value >> phi->value) {
-        eventNumber->value = MCevents++;
+    fstream input(input_str, std::ios_base::in);
+
+    while(input >> *m12 >> *m34 >> *cos12 >> *cos34 >> *phi) {
+        eventNumber->setValue(MCevents++);
         currData.addEvent();
     }
 
@@ -237,7 +253,7 @@ int main(int argc, char** argv) {
     DPPdf* dp = new DPPdf("test", observables, DK3P_DI, eff, 1e6);
 
     Variable* constant = new Variable("constant", 0.1);
-    Variable* constant2 = new Variable("constant", 1.0);
+    Variable* constant2 = new Variable("constant2", 1.0);
     vars.clear();
     vars.push_back(constant);
     PolynomialPdf backgr("backgr", m12, vars);
@@ -249,5 +265,5 @@ int main(int argc, char** argv) {
     FitManager datapdf(signal);
     datapdf.fit();
 
-    return 0;
+    return datapdf;
 }

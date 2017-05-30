@@ -1,68 +1,72 @@
-ROOT::Minuit2::FunctionMinimum* FitManager::fit() {
+#include "goofit/fitting/FitManagerMinuit2.h"
+
+#include "goofit/Color.h"
+
+#include <Minuit2/MnUserParameters.h>
+#include <Minuit2/MnUserParameterState.h>
+#include <Minuit2/MnMigrad.h>
+#include <Minuit2/FunctionMinimum.h>
+#include "Minuit2/MnPrint.h"
+
+#include <CLI/Timer.hpp>
+
+namespace GooFit {
+    
+FitManagerMinuit2::FitManagerMinuit2(PdfBase* dat) : upar_(*dat), fcn_(upar_) {}
+
+Minuit2::FunctionMinimum FitManagerMinuit2::fit() {
+    auto val = Minuit2::MnPrint::Level();
+    Minuit2::MnPrint::SetLevel(verbosity);
+    
+    // Setting global call number to 0
     host_callnumber = 0;
-    params = new ROOT::Minuit2::MnUserParameters();
-    vars.clear();
-    pdfPointer->getParameters(vars);
-
-    numPars = vars.size();
-    int maxIndex = 0;
-
-    for(std::vector<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
-        if((*i)->lowerlimit == (*i)->upperlimit)
-            params->Add((*i)->name, (*i)->value, (*i)->error);
-        else
-            params->Add((*i)->name, (*i)->value, (*i)->error, (*i)->lowerlimit, (*i)->upperlimit);
-
-        if((*i)->fixed)
-            params->Fix(params->Index((*i)->name));
-
-        if(maxIndex < (*i)->getIndex())
-            maxIndex = (*i)->getIndex();
+    
+    CLI::Timer timer{"The minimization took"};
+    
+    Minuit2::MnMigrad migrad{fcn_, upar_};
+    
+    // Do the minimization
+    if(verbosity > 0)
+        std::cout << GooFit::gray << GooFit::bold;
+    
+    CLI::Timer avetimer{"Average time per call"};
+    Minuit2::FunctionMinimum min = migrad(maxfcn_);
+    
+    // Print nice output
+    if(verbosity > 0) {
+        std::cout << GooFit::reset << (min.IsValid() ? GooFit::green : GooFit::red);
+        std::cout << min << GooFit::reset;
+        std::cout << GooFit::magenta << timer << GooFit::reset << std::endl;
+        std::cout << avetimer / min.NFcn() << std::endl;
     }
+    
+    if(min.IsValid()) {
+        retval_ = FitErrors::Valid;
+    } else {
+        if (verbosity > 0) {
+            std::cout << GooFit::red;
+            std::cout << "HesseFailed: " << min.HesseFailed() << std::endl;
+            std::cout << "HasCovariance: " << min.HasCovariance() << std::endl;
+            std::cout << "HasValidCovariance: " << min.HasValidCovariance() << std::endl;
+            std::cout << "HasValidParameters: " << min.HasValidParameters() << std::endl;
+            std::cout << "IsAboveMaxEdm: " << min.IsAboveMaxEdm() << std::endl;
+            std::cout << "HasReachedCallLimit: " << min.HasReachedCallLimit() << std::endl;
+            std::cout << "HasAccurateCovar: " << min.HasAccurateCovar() << std::endl;
+            std::cout << "HasPosDefCovar : " << min.HasPosDefCovar () << std::endl;
+            std::cout << "HasMadePosDefCovar : " << min.HasMadePosDefCovar () << std::endl;
+            std::cout << GooFit::reset;
+        }
+        
+        retval_ = FitErrors::InValid;
+    }
+    
+    // Set the parameters in GooFit to the new values
+    upar_.SetGooFitParams(min.UserState());
 
-    numPars = maxIndex+1;
-    migrad = new ROOT::Minuit2::MnMigrad(*this, *params);
-    ROOT::Minuit2::FunctionMinimum* ret = new ROOT::Minuit2::FunctionMinimum((*migrad)());
-
-    return ret;
+    Minuit2::MnPrint::SetLevel(val);
+    return min;
 }
-
-double FitManager::operator()(const vector<double>& pars) const {
-    vector<double> gooPars; // Translates from Minuit indexing to GooFit indexing
-    gooPars.resize(numPars);
-    int counter = 0;
-
-    for(std::vector<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
-        gooPars[(*i)->index] = pars[counter++];
-    }
-
-    pdfPointer->copyParams(gooPars);
-    double nll = pdfPointer->calculateNLL();
-    host_callnumber++;
-
-#ifdef PRINTCALLS
-    double edm = migrad->State().Edm();
-    cout.precision(8);
-    cout << "State at call "
-         << host_callnumber << " : "
-         << nll << " "
-         << edm << " Pars: ";
-    std::vector<Variable*> vars;
-    pdfPointer->getParameters(vars);
-
-    for(std::vector<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
-        if(0 > (*i)->getIndex())
-            continue;
-
-        if((*i)->fixed)
-            continue;
-
-        cout << "(" << (*i)->name << " " << pars[(*i)->getIndex()] << ") "; // migrad->Value((*i)->getIndex()) << ") ";
-    }
-
-    cout << endl;
-#endif
-
-    return nll;
+    
 }
+  
 

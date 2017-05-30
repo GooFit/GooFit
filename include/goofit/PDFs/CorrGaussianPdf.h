@@ -1,7 +1,9 @@
-#ifndef CORRGAUSSIAN_PDF_HH
-#define CORRGAUSSIAN_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
+
+namespace GooFit {
+
 
 class CorrGaussianPdf : public GooPdf {
 public:
@@ -13,4 +15,5 @@ private:
 
 };
 
-#endif
+} // namespace GooFit
+

@@ -1,8 +1,10 @@
-#ifndef DALITZVETO_PDF_HH
-#define DALITZVETO_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/PDFs/TddpPdf.h"
+
+namespace GooFit {
+
 
 struct VetoInfo {
     DaughterPair cyclic_index;
@@ -13,10 +15,10 @@ struct VetoInfo {
 class DalitzVetoPdf : public GooPdf {
 public:
     __host__ DalitzVetoPdf(std::string n,  Variable* _x, Variable* _y, Variable* motherM, Variable* d1m, Variable* d2m,
-                           Variable* d3m, vector<VetoInfo*> vetos);
+                           Variable* d3m, std::vector<VetoInfo*> vetos);
 
 private:
 
 };
+} // namespace GooFit
 
-#endif

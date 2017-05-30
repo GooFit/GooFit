@@ -1,7 +1,9 @@
-#ifndef KINLIMITBW_PDF_HH
-#define KINLIMITBW_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
+
+namespace GooFit {
+
 
 class KinLimitBWPdf : public GooPdf {
 
@@ -15,5 +17,5 @@ public:
 private:
 
 };
+} // namespace GooFit
 
-#endif

@@ -1,7 +1,9 @@
-#ifndef BIFURGAUSSIAN_PDF_HH
-#define BIFURGAUSSIAN_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
+
+namespace GooFit {
+
 
 class BifurGaussPdf : public GooPdf {
 public:
@@ -13,4 +15,5 @@ private:
 
 };
 
-#endif
+} // namespace GooFit
+

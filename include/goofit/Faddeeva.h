@@ -1,7 +1,11 @@
-#ifndef FADDEEVA_HH
-#define FADDEEVA_HH
+#pragma once
+
 #include "goofit/GlobalCudaDefines.h"
+
+namespace GooFit {
+
 
 fptype cpuvoigtian(fptype x, fptype m, fptype w, fptype s);
 
-#endif
+} // namespace GooFit
+

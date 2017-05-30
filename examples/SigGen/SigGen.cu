@@ -3,6 +3,7 @@
 #include <TTree.h>
 
 // GooFit stuff
+#include "goofit/Application.h"
 #include "goofit/Variable.h"
 #include "goofit/PDFs/PolynomialPdf.h"
 #include "goofit/PDFs/AddPdf.h"
@@ -12,6 +13,7 @@
 #include <thrust/count.h>
 
 using namespace std;
+using namespace GooFit;
 
 // Constants used in more than one PDF component.
 const fptype _mD0 = 1.8645;
@@ -19,6 +21,13 @@ const fptype piPlusMass = 0.13957018;
 const fptype KmMass = .493677;
 
 int main(int argc, char** argv) {
+    GooFit::Application app("Signal Generator Example", argc, argv);
+
+    try {
+        app.run();
+    } catch (const GooFit::ParseError &e) {
+        return app.exit(e);
+    }
 
     DecayInfo_DP* DK3P_DI = new DecayInfo_DP();
     DK3P_DI->meson_radius =1.5;
@@ -158,7 +167,7 @@ int main(int argc, char** argv) {
     Variable* cos12 = new Variable("cos12", -1, 1);
     Variable* cos34 = new Variable("m12", -1, 1);
     Variable* phi = new Variable("phi", -3.5, 3.5);
-    Variable* eventNumber = new Variable("eventNumber", 0, INT_MAX);
+    CountingVariable* eventNumber = new CountingVariable("eventNumber", 0, INT_MAX);
     Variable* constantOne = new Variable("constantOne", 1);
     Variable* constantZero = new Variable("constantZero", 0);
 

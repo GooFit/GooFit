@@ -1,52 +1,44 @@
 #include "goofit/Variable.h"
-#include <cmath>
+#include "goofit/Error.h"
 
-Variable::Variable(std::string n)
-    : Indexable(n)
-    , numbins(100)
-    , fixed(false)
-    , blind(0) {
+#include <algorithm>
+
+
+namespace GooFit {
+
+int max_index(const std::vector<Variable*> &vars) {
+    const Variable* max_ind_ptr = *std::max_element(std::begin(vars),
+                                                    std::end(vars),
+                                                    [](const Variable *a, const Variable *b)
+                                                    {return a->getIndex() < b->getIndex();});
+    return max_ind_ptr->getIndex();
 }
 
-Variable::Variable(std::string n, fptype v)
-    : Indexable(n, v)
-    , error(0.002)
-    , lowerlimit(v - 0.01)
-    , upperlimit(v + 0.01)
-    , numbins(100)
-    , fixed(true)
-    , blind(0) {
+int max_fitter_index(const std::vector<Variable*> &vars) {
+    const Variable* max_ind_ptr = *std::max_element(std::begin(vars),
+                                                    std::end(vars),
+                                                    [](const Variable *a, const Variable *b)
+                                                    {return a->getFitterIndex() < b->getFitterIndex();});
+    return max_ind_ptr->getFitterIndex();
 }
 
-Variable::Variable(std::string n, fptype dn, fptype up)
-    : Indexable(n)
-    , upperlimit(up)
-    , lowerlimit(dn)
-    , numbins(100)
-    , fixed(false)
-    , blind(0) {
+std::ostream& operator<< (std::ostream& o, const GooFit::Variable& var) {
+    o << var.getName() << ": " << var.getValue() << " +/- " << var.getError();
+    if(!var.fixed)
+        o << " [" << var.getLowerLimit() << ", " << var.getUpperLimit() << "]";
+    if(var.getIndex() >= 0)
+        o << " GooFit index: " << var.getIndex();
+    if(var.getFitterIndex() >= 0)
+        o << " Fitter index: " << var.getFitterIndex();
+    if(var.blind != 0)
+        o << " Blinded";
+    
+    return o;
 }
 
-Variable::Variable(std::string n, fptype v, fptype dn, fptype up)
-    : Indexable(n, v)
-    , error(0.1*(up-dn))
-    , upperlimit(up)
-    , lowerlimit(dn)
-    , numbins(100)
-    , fixed(false)
-    , blind(0) {
+std::istream& operator>> (std::istream& i, GooFit::Variable& var) {
+    return i >> var.value;
 }
 
-Variable::Variable(std::string n, fptype v, fptype e, fptype dn, fptype up)
-    : Indexable(n, v)
-    , error(e)
-    , upperlimit(up)
-    , lowerlimit(dn)
-    , numbins(100)
-    , fixed(false)
-    , blind(0) {
-}
-
-Variable::~Variable() {
-}
+} // namespace GooFit
 

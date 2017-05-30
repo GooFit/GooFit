@@ -1,179 +1,122 @@
-PdfBase* pdfPointer;
-FitManager* currGlue = 0;
-int numPars = 0;
-vector<Variable*> vars;
+#include "goofit/PdfBase.h"
+#include "goofit/fitting/FitManagerMinuit1.h"
+#include "goofit/PDFs/GooPdf.h"
+#include <cstdio>
+#include <limits>
+#include <typeinfo>
+#include <set>
+#include "goofit/Variable.h"
+#include "goofit/Log.h"
 
-void specialTddpPrint(double fun);
+namespace GooFit {
 
-FitManager::FitManager(PdfBase* dat)
-    : minuit(0)
-    , overrideCallLimit(-1)
-    , _useHesseBefore(true)
-    , _useHesse(true)
-    , _useMinos(false)
-    , _useImprove(false) {
-    pdfPointer = dat;
-    currGlue = this;
-}
-
-FitManager::~FitManager() {
-    if(minuit)
-        delete minuit;
-}
-
-void FitManager::setupMinuit() {
-    vars.clear();
-    pdfPointer->getParameters(vars);
-
-    numPars = vars.size();
-
-    if(minuit)
-        delete minuit;
-
-    minuit = new TMinuit(numPars);
-    int maxIndex = 0;
-    int counter = 0;
-
-    for(std::vector<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
-        minuit->DefineParameter(counter, (*i)->name.c_str(), (*i)->value, (*i)->error, (*i)->lowerlimit, (*i)->upperlimit);
-
-        if((*i)->fixed)
-            minuit->FixParameter(counter);
-
+Minuit1::Minuit1(PdfBase* pdfPointer) : TMinuit(max_index(pdfPointer->getParameters())+1), pdfPointer(pdfPointer), vars(pdfPointer->getParameters()) {
+    size_t counter = 0;
+    
+    for(Variable* var : vars) {
+        var->setFitterIndex(counter);
+        
+        Int_t err = DefineParameter(counter,
+                                var->getName().c_str(),
+                                var->getValue(),
+                                var->getError(),
+                                var->getLowerLimit(),
+                                var->getUpperLimit());
+        
+        if(GetNumPars() != counter+1)
+            throw GooFit::GeneralError("Error when implementing param {} (possibly invalid error/lowerlimit/upperlimit values)!", var->getName());
+        
+        if(err != 0)
+            throw GooFit::GeneralError("Was not able to implement param {} (error {})", var->getName(), err);
+        
+        if(var->IsFixed())
+            FixParameter(counter);
+        
         counter++;
-
-        if(maxIndex < (*i)->getIndex())
-            maxIndex = (*i)->getIndex();
     }
-
-    numPars = maxIndex+1;
+    
     pdfPointer->copyParams();
-    minuit->SetFCN(FitFun);
+
 }
 
-void FitManager::fit() {
-    setupMinuit();
-    runMigrad();
+
+Int_t Minuit1::Eval(
+            int npar, 
+            double* gin,
+            double& fun, 
+            double* fp,  
+            int iflag) {
+    
+    std::vector<double> pars {fp, fp+GetNumPars()};
+    
+    std::vector<double> gooPars;
+    gooPars.resize(max_index(vars)+1);
+    
+    for(Variable* var : vars) {
+        if(std::isnan(pars.at(var->getFitterIndex())))
+            GOOFIT_WARN("Variable {} at {} is NaN", var->getName(), var->getIndex());
+        
+        var->setChanged(var->getValue() != pars.at(var->getFitterIndex()));
+        var->setValue(pars.at(var->getFitterIndex()));
+        gooPars.at(var->getIndex()) = var->getValue() - var->blind;
+    }
+    
+    pdfPointer->copyParams(gooPars);
+    
+    GOOFIT_TRACE("Calculating NLL");
+    fun = pdfPointer->calculateNLL();
+    host_callnumber++;
+    return 0;
 }
 
-void FitManager::runMigrad() {
-    assert(minuit);
+void FitManagerMinuit1::fit() {
     host_callnumber = 0;
+    
+    for(Variable* var : minuit_.getVaraibles())
+        var->setChanged(true);
 
+    std::cout << GooFit::gray << GooFit::bold;
+    
     if(0 < overrideCallLimit) {
         std::cout << "Calling MIGRAD with call limit " << overrideCallLimit << std::endl;
-        double plist[1];
-        plist[0] = overrideCallLimit;
+        double plist[1] = {overrideCallLimit};
         int err = 0;
 
         if(_useHesseBefore)
-            minuit->mnexcm("HESSE", plist, 1, err);
+            minuit_.mnexcm("HESSE", plist, 1, err);
 
-        minuit->mnexcm("MIGRAD", plist, 1, err);
+        minuit_.mnexcm("MIGRAD", plist, 1, err);
 
         if(_useHesse)
-            minuit->mnexcm("HESSE", plist, 1, err);
+            minuit_.mnexcm("HESSE", plist, 1, err);
 
         if(_useMinos)
-            minuit->mnexcm("MINOS", plist, 1, err);
+            minuit_.mnexcm("MINOS", plist, 1, err);
 
         if(_useImprove)
-            minuit->mnexcm("IMPROVE", plist, 1, err);
+            minuit_.mnexcm("IMPROVE", plist, 1, err);
     } else
-        minuit->Migrad();
-}
-
-void FitManager::getMinuitValues() const {
-    int counter = 0;
-
-    for(std::vector<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
-        minuit->GetParameter(counter++, (*i)->value, (*i)->error);
+        minuit_.Migrad();
+    
+    std::cout << GooFit::reset;
+    
+    double tmp_value, tmp_error;
+    for(Variable* var : minuit_.getVaraibles()) {
+        minuit_.GetParameter(var->getFitterIndex(), tmp_value, tmp_error);
+        var->setValue(tmp_value);
+        var->setError(tmp_error);
     }
+
 }
 
-void FitManager::getMinuitStatus(double& fmin, double& fedm, double& errdef, int& npari, int& nparx, int& istat) const {
-    minuit->mnstat(fmin, fedm, errdef, npari, nparx, istat);
+
+void FitManagerMinuit1::getMinuitStatus(double& fmin, double& fedm, double& errdef, int& npari, int& nparx, int& istat) {
+    minuit_.mnstat(fmin, fedm, errdef, npari, nparx, istat);
     std::cout << "mnstat(fmin = " << fmin << ", fedm = " << fedm << ", errdef = " << errdef
               << ", npari = " << npari << ", nparx = " << nparx << ", istat = " << istat << ")" << std::endl;
 }
 
-void FitFun(int& npar, double* gin, double& fun, double* fp, int iflag) {
-    vector<double> pars;
-    // Notice that npar is number of variable parameters, not total.
-    pars.resize(numPars);
-    int counter = 0;
-
-    for(std::vector<Variable*>::iterator i = vars.begin(); i != vars.end(); ++i) {
-        if(std::isnan(fp[counter]))
-            cout << "Variable " << (*i)->name << " " << (*i)->index << " is NaN\n";
-
-        pars[(*i)->getIndex()] = fp[counter++] + (*i)->blind;
-    }
-
-    pdfPointer->copyParams(pars);
-    fun = pdfPointer->calculateNLL();
-    host_callnumber++;
-
-#ifdef PRINTCALLS
-    specialTddpPrint(fun);
-#endif
 }
 
-#ifdef PRINTCALLS
-void specialTddpPrint(double fun) {
-    // Stupid amplitude-fit debugging method.
-    cout << "Function call " << host_callnumber << ": " << fun << "\n";
-    currGlue->getMinuitValues();
-    int varCount = 1;
 
-    for(std::vector<Variable*>::iterator v = vars.begin(); v != vars.end(); ++v) {
-        if(!(*v))
-            cout << "Null!" << endl;
 
-        if((*v)->fixed)
-            continue;
-
-        const fptype _mD0 = 1.86484;
-        const fptype _mD02 = _mD0 *_mD0;
-        const fptype _mD02inv = 1./_mD02;
-        double stupidSpecialModifier = 1; // Mikhail interprets some of the weights differently.
-
-        if(((*v)->name == "f0_980_amp_real") ||
-                ((*v)->name == "f0_980_amp_imag") ||
-                ((*v)->name == "f0_1370_amp_real") ||
-                ((*v)->name == "f0_1370_amp_imag") ||
-                ((*v)->name == "f0_1500_amp_real") ||
-                ((*v)->name == "f0_1500_amp_imag") ||
-                ((*v)->name == "f0_1710_amp_real") ||
-                ((*v)->name == "f0_1710_amp_imag") ||
-                ((*v)->name == "f0_600_amp_real") ||
-                ((*v)->name == "f0_600_amp_imag"))
-            stupidSpecialModifier = -_mD02;
-        else if(((*v)->name == "f2_1270_amp_real") ||
-                ((*v)->name == "f2_1270_amp_imag"))
-            stupidSpecialModifier = -_mD02inv;
-        else if(((*v)->name == "nonr_amp_real") ||
-                ((*v)->name == "nonr_amp_imag"))
-            stupidSpecialModifier = -1;
-
-        cout.width(20);
-        cout << (*v)->name;
-        cout.setf(ios_base::right, ios_base::adjustfield);
-        cout.width(3);
-        cout << varCount++;
-        cout.setf(ios_base::right, ios_base::adjustfield);
-        cout.precision(8);
-        cout << "  ";
-        cout.width(12);
-        cout << (*v)->value / stupidSpecialModifier;
-        cout.setf(ios_base::right, ios_base::adjustfield);
-        cout.precision(8);
-        cout << "  ";
-        cout.width(12);
-        cout << (*v)->error;
-        cout << endl;
-    }
-
-    cout << endl;
-}
-#endif

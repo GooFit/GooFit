@@ -1,7 +1,9 @@
-#ifndef COMPOSITE_PDF_HH
-#define COMPOSITE_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
+
+namespace GooFit {
+
 
 // Composites of arbitrary functions, ie f(x) = h(g(x))
 // for any h and g. In principle we should allow multi-
@@ -11,10 +13,10 @@
 class CompositePdf : public GooPdf {
 public:
     CompositePdf(std::string n, PdfBase* core, PdfBase* shell);  // Where 'core' corresponds to 'g' and 'shell' to 'h'.
-    __host__ virtual fptype normalise() const;
+    __host__ virtual fptype normalize() const;
 
 private:
 
 };
+} // namespace GooFit
 
-#endif

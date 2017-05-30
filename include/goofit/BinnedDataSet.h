@@ -1,45 +1,63 @@
-#ifndef BINNED_DATASET_HH
-#define BINNED_DATASET_HH
+#pragma once
 
 #include "goofit/DataSet.h"
+
+#include <map>
+#include <vector>
+
+namespace GooFit {
+
 
 class BinnedDataSet : public DataSet {
     // Class for rectangularly binned datasets - every bin the same size.
 
 public:
-    BinnedDataSet(Variable* var, string n = "");
-    BinnedDataSet(std::vector<Variable*>& vars, string n = "");
-    BinnedDataSet(std::set<Variable*>& vars, string n = "");
-    ~BinnedDataSet();
+    using DataSet::addEvent;
+    
+    BinnedDataSet(Variable* var, std::string n = "");
+    BinnedDataSet(std::vector<Variable*>& vars, std::string n = "");
+    BinnedDataSet(std::set<Variable*>& vars, std::string n = "");
+    BinnedDataSet(std::initializer_list<Variable*> vars, std::string n="");
+    virtual ~BinnedDataSet() = default;
 
-    virtual void addEventVector(std::vector<fptype>& vals, fptype weight = 1);
+    virtual void addEvent() override;
+    virtual void addWeightedEvent(double weight) override;
 
-    fptype getBinContent(unsigned int bin) const {
-        return binvalues[bin];
+    fptype getBinContent(size_t bin) const {
+        return binvalues.at(bin);
     }
-    fptype getBinCenter(Variable* var, unsigned int bin) const;
-    unsigned int getBinNumber() const;
-    fptype getBinVolume(unsigned int bin) const;
-    fptype getBinError(unsigned int bin) const;
-    unsigned int getNumBins() const;
-    fptype getNumEvents() const;
+    fptype getBinCenter(size_t ivar, size_t bin) const;
+    fptype getBinCenter(Variable* var, size_t bin) const;
+    fptype getBinSize(size_t ivar) const;
+    
+    size_t getBinNumber() const;
+    fptype getBinVolume(size_t bin) const;
+    fptype getBinError(size_t bin) const;
+    
+    size_t getNumBins() const;
+    
+    /// This includes weights
+    fptype getNumWeightedEvents() const;
 
     void setBinContent(unsigned int bin, fptype value) {
-        binvalues[bin] = value;
+        binvalues.at(bin) = value;
     }
     void setBinError(unsigned int bin, fptype error);
 
 private:
-    void cacheNumBins();
-    vector<unsigned int> convertValuesToBins(const vector<fptype>& vals) const;
-    unsigned int localToGlobal(std::vector<unsigned int>& locals) const;
-    void globalToLocal(std::vector<unsigned int>& locals, unsigned int global) const;
+    
+    std::vector<size_t> convertValuesToBins(const std::vector<fptype>& vals) const;
+    size_t localToGlobal(const std::vector<size_t>& locals) const;
+    std::vector<size_t> globalToLocal(size_t global) const;
+    
+    /// Capture the number of bins on all variables
+    void collectBins();
 
+    std::vector<size_t> binsizes;
     std::vector<fptype> binvalues;
     std::vector<fptype> binerrors;
-    std::map<Variable*, int>
-    cachedNumBins; // Store these numbers in case they change on the user end - vast confusion possible.
+
 };
 
+} // namespace GooFit
 
-#endif

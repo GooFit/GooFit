@@ -1,7 +1,9 @@
-#ifndef THREEGAUSS_RESOLUTION_HH
-#define THREEGAUSS_RESOLUTION_HH
+#pragma once
 
 #include "goofit/PDFs/MixingTimeResolution_Aux.h"
+
+namespace GooFit {
+
 
 class ThreeGaussResolution : public MixingTimeResolution {
 public:
@@ -23,5 +25,5 @@ private:
     Variable* outBias;
     Variable* outScaleFactor;
 };
+} // namespace GooFit
 
-#endif

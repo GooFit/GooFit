@@ -1,11 +1,13 @@
-#ifndef ARGUS_PDF_HH
-#define ARGUS_PDF_HH
+#pragma once
 
 #include "goofit/PDFs/GooPdf.h"
 
+namespace GooFit {
+
+
 class ArgusPdf : public GooPdf {
 public:
-    ArgusPdf(std::string n, Variable* _x, Variable* m, Variable* s, bool upper, Variable* power = 0);
+    ArgusPdf(std::string n, Variable* _x, Variable* m, Variable* s, bool upper, Variable* power = nullptr);
     __host__ virtual bool hasAnalyticIntegral() const {
         return false;
     }
@@ -15,4 +17,5 @@ private:
 
 };
 
-#endif
+} // namespace GooFit
+

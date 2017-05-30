@@ -6,10 +6,12 @@ This code is not sufficently tested yet and still under heavy development!
 See *.cu file for more details
 */
 
-#ifndef SPIN_FACTORS_HH
-#define SPIN_FACTORS_HH
+#pragma once
 
 #include "goofit/PDFs/DalitzPlotHelpers.h"
+
+namespace GooFit {
+
 
 typedef fptype(*spin_function_ptr)(fptype*, unsigned int*);
 
@@ -49,6 +51,5 @@ public:
         return (S.getName() == getName() and S._SF == _SF and S._P0 == _P0 and S._P1 == _P1 and S._P2 == _P2 and S._P3 == _P3);
     }
 };
+} // namespace GooFit
 
-
-#endif

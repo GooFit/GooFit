@@ -83,6 +83,10 @@ __host__ void PdfBase::initialiseIndices(std::vector<unsigned int> pindices) {
     parameters = totalParams;
     totalParams += (2 + pindices.size() + observables.size());
     GOOFIT_DEBUG("New total parameters: {}", totalParams);
+    
+    if(totalParams >= maxParams)
+        throw GooFit::GeneralError("{}: Set too many parameters, GooFit array more than {}. Increase max at compile time with -DGOOFIT_MAXPAR=N.",
+                                   getName(), maxParams);
 
     MEMCPY_TO_SYMBOL(paramIndices, host_indices, totalParams*sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
 }

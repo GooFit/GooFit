@@ -4,6 +4,7 @@
 
 #include "goofit/Variable.h"
 #include "goofit/detail/Abort.h"
+#include "goofit/Version.h"
 
 #include <set>
 #include <map>
@@ -28,7 +29,7 @@ typedef thrust::tuple<IndexIterator, DataIterator, SizeIterator> EventTuple;
 typedef thrust::zip_iterator<EventTuple> EventIterator;
 */
 
-const int maxParams = 1500;
+const int maxParams = GOOFIT_MAXPAR;
 extern fptype* dev_event_array;
 extern fptype host_normalisation[maxParams];
 extern fptype host_params[maxParams];

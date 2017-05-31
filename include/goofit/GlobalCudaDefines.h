@@ -77,7 +77,7 @@ gooError gooFree(void* ptr);
 
 #ifndef GOOFIT_SINGLES
 
-typedef double fptype;
+using fptype = double;
 #define root2 1.4142135623730951
 #define invRootPi 0.5641895835477563
 

@@ -54,7 +54,7 @@ struct IFunction
 struct IFunctionArray
 {
 	GInt_t dim{0};
-	IFunctionArray() {	}
+	IFunctionArray() = default;
 
 	__host__ __device__ virtual void operator()(const GInt_t np,
 			Vector4R** particles, GReal_t* variables)=0;

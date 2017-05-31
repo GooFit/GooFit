@@ -87,7 +87,7 @@ Advanced Options:
 * `-DGOOFIT_PYTHON=OFF`: Preliminary python bindings using [PyBind11].
 * `-DGOOFIT_MAXPAR=1800`: The maximum number of parameters to allow. May cause memory issues if too large.
 * You can enable sanitizers on non-CUDA builds with `-DSANITIZE_ADDRESS=ON`, `-DSANITIZE_MEMORY=ON`, `-DSANITIZE_THREAD=ON` or `-DSANITIZE_UNDEFINED=ON`.
-* If `clang-tidy` is available, it will automatically be used to check the source. If you set `-DGOOFIT_TIDY_FIX=ON`, fixes will be applied to the GooFit source (This must be passed on command line, will not be cached).
+* If `clang-tidy` is available, it will automatically be used to check the source. If you set `-DGOOFIT_TIDY_FIX=ON`, fixes will be applied to the GooFit source.
 
 Note for targeting Tesla P100 or any `arch=6.0` device:
 * Please use `-DGOOFIT_SEPARATE_COMP=ON` flags to compile.

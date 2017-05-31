@@ -64,7 +64,7 @@ endif()
 
 if(CMAKE_VERSION VERSION_GREATER 3.6)
 # Add clang-tidy if available
-option(GOOFIT_TIDY_FIX "Perform fixes for Clang-Tidy (resets to OFF)" OFF)
+option(GOOFIT_TIDY_FIX "Perform fixes for Clang-Tidy - changes source inplace" OFF)
     find_program(
         CLANG_TIDY_EXE
         NAMES "clang-tidy"
@@ -486,4 +486,3 @@ if(GOOFIT_TESTS)
     add_subdirectory(tests)
 endif()
 
-set(GOOFIT_TIDY_FIX OFF CACHE BOOL "Perform fixes for Clang-Tidy (resets to OFF)" FORCE)

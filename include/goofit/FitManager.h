@@ -6,8 +6,6 @@
 
 namespace GooFit {
 
-
 using FitManager = GooFit::FitManagerMinuit2;
 
 } // namespace GooFit
-

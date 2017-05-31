@@ -2,8 +2,7 @@
 
 namespace GooFit {
 
-
-__device__ fptype device_Novosibirsk(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_Novosibirsk(fptype *evt, fptype *p, unsigned int *indices) {
     fptype _Mean  = p[indices[1]];
     fptype _Sigma = p[indices[2]];
     fptype _Tail  = p[indices[3]];
@@ -15,18 +14,18 @@ __device__ fptype device_Novosibirsk(fptype* evt, fptype* p, unsigned int* indic
     fptype qx = 0;
     fptype qy = 0;
 
-    if(fabs(_Tail) <  1.e-7) {
-        qc = 0.5*POW2((x-_Mean)/_Sigma);
+    if(fabs(_Tail) < 1.e-7) {
+        qc = 0.5 * POW2((x - _Mean) / _Sigma);
     } else {
-        qa = _Tail*sqrt(log(4.));
-        qb = sinh(qa)/qa;
-        qx = (x-_Mean)/_Sigma*qb;
-        qy = 1.+_Tail*qx;
+        qa = _Tail * sqrt(log(4.));
+        qb = sinh(qa) / qa;
+        qx = (x - _Mean) / _Sigma * qb;
+        qy = 1. + _Tail * qx;
 
         //---- Cutting curve from right side
 
         if(qy > 1.e-7)
-            qc = 0.5*(POW2(log(qy)/_Tail) + _Tail*_Tail);
+            qc = 0.5 * (POW2(log(qy) / _Tail) + _Tail * _Tail);
         else
             qc = 15.0;
     }
@@ -37,7 +36,7 @@ __device__ fptype device_Novosibirsk(fptype* evt, fptype* p, unsigned int* indic
 
 __device__ device_function_ptr ptr_to_Novosibirsk = device_Novosibirsk;
 
-__host__ NovosibirskPdf::NovosibirskPdf(std::string n, Variable* _x, Variable* mean, Variable* sigma, Variable* tail)
+__host__ NovosibirskPdf::NovosibirskPdf(std::string n, Variable *_x, Variable *mean, Variable *sigma, Variable *tail)
     : GooPdf(_x, n) {
     std::vector<unsigned int> pindices;
     pindices.push_back(registerParameter(mean));
@@ -48,4 +47,3 @@ __host__ NovosibirskPdf::NovosibirskPdf(std::string n, Variable* _x, Variable* m
 }
 
 } // namespace GooFit
-

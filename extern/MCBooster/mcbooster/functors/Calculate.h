@@ -33,489 +33,393 @@
 #include <mcbooster/GContainers.h>
 #include <mcbooster/GTypes.h>
 
-namespace mcbooster
-{
+namespace mcbooster {
 
 template<typename FUNCTION, typename RESULT>
-struct Calculate
-{
+struct Calculate {
+    FUNCTION Function;
 
-	FUNCTION Function;
+    Calculate() { Function = FUNCTION(); }
 
-	Calculate()
-	{
+    Calculate(const FUNCTION &_Function)
+        : Function(_Function) {}
 
-		Function = FUNCTION();
+    __host__ __device__ inline RESULT operator()(GT2 &particles) {
+        Vector4R *_Particles[2];
 
-	}
+        _Particles[0] = &thrust::get<0>(particles);
+        _Particles[1] = &thrust::get<1>(particles);
 
+        return Function(2, _Particles);
+    }
 
-	Calculate(const FUNCTION& _Function) :
-			Function(_Function)
-	{
+    __host__ __device__ inline RESULT operator()(GT3 &particles) {
+        Vector4R *_Particles[3];
 
-	}
+        _Particles[0] = &thrust::get<0>(particles);
+        _Particles[1] = &thrust::get<1>(particles);
+        _Particles[2] = &thrust::get<2>(particles);
 
+        return Function(3, _Particles);
+    }
 
-	__host__      __device__  inline  RESULT operator()(GT2 &particles)
-	{
+    __host__ __device__ inline RESULT operator()(GT4 &particles) {
+        Vector4R *_Particles[4];
 
-		Vector4R* _Particles[2];
+        _Particles[0] = &thrust::get<0>(particles);
+        _Particles[1] = &thrust::get<1>(particles);
+        _Particles[2] = &thrust::get<2>(particles);
+        _Particles[3] = &thrust::get<3>(particles);
 
-		_Particles[0] = &thrust::get<0>(particles);
-		_Particles[1] = &thrust::get<1>(particles);
+        return Function(4, _Particles);
+    }
 
-		return Function(2, _Particles);
-	}
+    __host__ __device__ inline RESULT operator()(GT5 &particles) {
+        Vector4R *_Particles[5];
 
-	__host__      __device__   inline  RESULT operator()(GT3 &particles)
-	{
+        _Particles[0] = &thrust::get<0>(particles);
+        _Particles[1] = &thrust::get<1>(particles);
+        _Particles[2] = &thrust::get<2>(particles);
+        _Particles[3] = &thrust::get<3>(particles);
+        _Particles[4] = &thrust::get<4>(particles);
 
-		Vector4R* _Particles[3];
+        return Function(5, _Particles);
+    }
 
-		_Particles[0] = &thrust::get<0>(particles);
-		_Particles[1] = &thrust::get<1>(particles);
-		_Particles[2] = &thrust::get<2>(particles);
+    __host__ __device__ inline RESULT operator()(GT6 &particles) {
+        Vector4R *_Particles[6];
 
-		return Function(3, _Particles);
-	}
+        _Particles[0] = &thrust::get<0>(particles);
+        _Particles[1] = &thrust::get<1>(particles);
+        _Particles[2] = &thrust::get<2>(particles);
+        _Particles[3] = &thrust::get<3>(particles);
+        _Particles[4] = &thrust::get<4>(particles);
+        _Particles[5] = &thrust::get<5>(particles);
 
-	__host__         __device__   inline  RESULT operator()(GT4 &particles)
-	{
+        return Function(6, _Particles);
+    }
 
-		Vector4R* _Particles[4];
+    __host__ __device__ inline RESULT operator()(GT7 &particles) {
+        Vector4R *_Particles[7];
 
-		_Particles[0] = &thrust::get<0>(particles);
-		_Particles[1] = &thrust::get<1>(particles);
-		_Particles[2] = &thrust::get<2>(particles);
-		_Particles[3] = &thrust::get<3>(particles);
+        _Particles[0] = &thrust::get<0>(particles);
+        _Particles[1] = &thrust::get<1>(particles);
+        _Particles[2] = &thrust::get<2>(particles);
+        _Particles[3] = &thrust::get<3>(particles);
+        _Particles[4] = &thrust::get<4>(particles);
+        _Particles[5] = &thrust::get<5>(particles);
+        _Particles[6] = &thrust::get<6>(particles);
 
-		return Function(4, _Particles);
+        return Function(7, _Particles);
+    }
 
-	}
+    __host__ __device__ inline RESULT operator()(GT8 &particles) {
+        Vector4R *_Particles[8];
 
-	__host__         __device__   inline  RESULT operator()(GT5 &particles)
-	{
+        _Particles[0] = &thrust::get<0>(particles);
+        _Particles[1] = &thrust::get<1>(particles);
+        _Particles[2] = &thrust::get<2>(particles);
+        _Particles[3] = &thrust::get<3>(particles);
+        _Particles[4] = &thrust::get<4>(particles);
+        _Particles[5] = &thrust::get<5>(particles);
+        _Particles[6] = &thrust::get<6>(particles);
+        _Particles[7] = &thrust::get<7>(particles);
 
-		Vector4R* _Particles[5];
+        return Function(8, _Particles);
+    }
 
-		_Particles[0] = &thrust::get<0>(particles);
-		_Particles[1] = &thrust::get<1>(particles);
-		_Particles[2] = &thrust::get<2>(particles);
-		_Particles[3] = &thrust::get<3>(particles);
-		_Particles[4] = &thrust::get<4>(particles);
+    __host__ __device__ inline RESULT operator()(GT9 &particles) {
+        Vector4R *_Particles[9];
 
-		return Function(5, _Particles);
-	}
+        _Particles[0] = &thrust::get<0>(particles);
+        _Particles[1] = &thrust::get<1>(particles);
+        _Particles[2] = &thrust::get<2>(particles);
+        _Particles[3] = &thrust::get<3>(particles);
+        _Particles[4] = &thrust::get<4>(particles);
+        _Particles[5] = &thrust::get<5>(particles);
+        _Particles[6] = &thrust::get<6>(particles);
+        _Particles[7] = &thrust::get<7>(particles);
+        _Particles[8] = &thrust::get<8>(particles);
 
-	__host__         __device__   inline  RESULT operator()(GT6 &particles)
-	{
+        return Function(9, _Particles);
+    }
 
-		Vector4R* _Particles[6];
+    __host__ __device__ inline RESULT operator()(GT10 &particles) {
+        Vector4R *_Particles[10];
 
-		_Particles[0] = &thrust::get<0>(particles);
-		_Particles[1] = &thrust::get<1>(particles);
-		_Particles[2] = &thrust::get<2>(particles);
-		_Particles[3] = &thrust::get<3>(particles);
-		_Particles[4] = &thrust::get<4>(particles);
-		_Particles[5] = &thrust::get<5>(particles);
+        _Particles[0] = &thrust::get<0>(particles);
+        _Particles[1] = &thrust::get<1>(particles);
+        _Particles[2] = &thrust::get<2>(particles);
+        _Particles[3] = &thrust::get<3>(particles);
+        _Particles[4] = &thrust::get<4>(particles);
+        _Particles[5] = &thrust::get<5>(particles);
+        _Particles[6] = &thrust::get<6>(particles);
+        _Particles[7] = &thrust::get<7>(particles);
+        _Particles[8] = &thrust::get<8>(particles);
+        _Particles[9] = &thrust::get<9>(particles);
 
-		return Function(6, _Particles);
-	}
-
-	__host__         __device__   inline  RESULT operator()(GT7 &particles)
-	{
-
-		Vector4R* _Particles[7];
-
-		_Particles[0] = &thrust::get<0>(particles);
-		_Particles[1] = &thrust::get<1>(particles);
-		_Particles[2] = &thrust::get<2>(particles);
-		_Particles[3] = &thrust::get<3>(particles);
-		_Particles[4] = &thrust::get<4>(particles);
-		_Particles[5] = &thrust::get<5>(particles);
-		_Particles[6] = &thrust::get<6>(particles);
-
-		return Function(7, _Particles);
-	}
-
-	__host__         __device__   inline  RESULT operator()(GT8 &particles)
-	{
-
-		Vector4R* _Particles[8];
-
-		_Particles[0] = &thrust::get<0>(particles);
-		_Particles[1] = &thrust::get<1>(particles);
-		_Particles[2] = &thrust::get<2>(particles);
-		_Particles[3] = &thrust::get<3>(particles);
-		_Particles[4] = &thrust::get<4>(particles);
-		_Particles[5] = &thrust::get<5>(particles);
-		_Particles[6] = &thrust::get<6>(particles);
-		_Particles[7] = &thrust::get<7>(particles);
-
-		return Function(8, _Particles);
-
-	}
-
-	__host__         __device__   inline  RESULT operator()(GT9 &particles)
-	{
-
-		Vector4R* _Particles[9];
-
-		_Particles[0] = &thrust::get<0>(particles);
-		_Particles[1] = &thrust::get<1>(particles);
-		_Particles[2] = &thrust::get<2>(particles);
-		_Particles[3] = &thrust::get<3>(particles);
-		_Particles[4] = &thrust::get<4>(particles);
-		_Particles[5] = &thrust::get<5>(particles);
-		_Particles[6] = &thrust::get<6>(particles);
-		_Particles[7] = &thrust::get<7>(particles);
-		_Particles[8] = &thrust::get<8>(particles);
-
-		return Function(9, _Particles);
-	}
-
-	__host__         __device__   inline  RESULT operator()(GT10 &particles)
-	{
-
-		Vector4R* _Particles[10];
-
-		_Particles[0] = &thrust::get<0>(particles);
-		_Particles[1] = &thrust::get<1>(particles);
-		_Particles[2] = &thrust::get<2>(particles);
-		_Particles[3] = &thrust::get<3>(particles);
-		_Particles[4] = &thrust::get<4>(particles);
-		_Particles[5] = &thrust::get<5>(particles);
-		_Particles[6] = &thrust::get<6>(particles);
-		_Particles[7] = &thrust::get<7>(particles);
-		_Particles[8] = &thrust::get<8>(particles);
-		_Particles[9] = &thrust::get<9>(particles);
-
-		return Function(10, _Particles);
-	}
-
+        return Function(10, _Particles);
+    }
 };
 
 template<typename FUNCTION>
-struct Calculate2
-{
+struct Calculate2 {
+    FUNCTION Function;
 
-	FUNCTION Function;
+    Calculate2() { Function = FUNCTION(); }
 
-	Calculate2()
-	{
-		Function = FUNCTION();
+    Calculate2(const FUNCTION &_Function)
+        : Function(_Function) {}
 
-	}
+    __host__ __device__ inline void operator()(GT2 particles) {
+        Vector4R *_Particles[2];
 
+        _Particles[0] = &thrust::get<0>(particles);
+        _Particles[1] = &thrust::get<1>(particles);
 
-	Calculate2(const FUNCTION& _Function) :
-			Function(_Function)
-	{
+        Function(2, _Particles);
+    }
 
-	}
+    __host__ __device__ inline void operator()(GT3 particles) {
+        Vector4R *_Particles[3];
 
+        _Particles[0] = &thrust::get<0>(particles);
+        _Particles[1] = &thrust::get<1>(particles);
+        _Particles[2] = &thrust::get<2>(particles);
 
-	__host__ __device__  inline   void operator()(GT2 particles)
-	{
+        Function(3, _Particles);
+    }
 
-		Vector4R* _Particles[2];
+    __host__ __device__ inline void operator()(GT4 particles) {
+        Vector4R *_Particles[4];
 
-		_Particles[0] = &thrust::get<0>(particles);
-		_Particles[1] = &thrust::get<1>(particles);
+        _Particles[0] = &thrust::get<0>(particles);
+        _Particles[1] = &thrust::get<1>(particles);
+        _Particles[2] = &thrust::get<2>(particles);
+        _Particles[3] = &thrust::get<3>(particles);
 
-		Function(2, _Particles);
-	}
+        Function(4, _Particles);
+    }
 
-	__host__ __device__   inline  void operator()(GT3 particles)
-	{
+    __host__ __device__ inline void operator()(GT5 particles) {
+        Vector4R *_Particles[5];
 
-		Vector4R* _Particles[3];
+        _Particles[0] = &thrust::get<0>(particles);
+        _Particles[1] = &thrust::get<1>(particles);
+        _Particles[2] = &thrust::get<2>(particles);
+        _Particles[3] = &thrust::get<3>(particles);
+        _Particles[4] = &thrust::get<4>(particles);
 
-		_Particles[0] = &thrust::get<0>(particles);
-		_Particles[1] = &thrust::get<1>(particles);
-		_Particles[2] = &thrust::get<2>(particles);
+        Function(5, _Particles);
+    }
 
-		Function(3, _Particles);
-	}
+    __host__ __device__ inline void operator()(GT6 particles) {
+        Vector4R *_Particles[6];
 
-	__host__ __device__  inline   void operator()(GT4 particles)
-	{
+        _Particles[0] = &thrust::get<0>(particles);
+        _Particles[1] = &thrust::get<1>(particles);
+        _Particles[2] = &thrust::get<2>(particles);
+        _Particles[3] = &thrust::get<3>(particles);
+        _Particles[4] = &thrust::get<4>(particles);
+        _Particles[5] = &thrust::get<5>(particles);
 
-		Vector4R* _Particles[4];
+        Function(6, _Particles);
+    }
 
-		_Particles[0] = &thrust::get<0>(particles);
-		_Particles[1] = &thrust::get<1>(particles);
-		_Particles[2] = &thrust::get<2>(particles);
-		_Particles[3] = &thrust::get<3>(particles);
+    __host__ __device__ inline void operator()(GT7 particles) {
+        Vector4R *_Particles[7];
 
-		Function(4, _Particles);
+        _Particles[0] = &thrust::get<0>(particles);
+        _Particles[1] = &thrust::get<1>(particles);
+        _Particles[2] = &thrust::get<2>(particles);
+        _Particles[3] = &thrust::get<3>(particles);
+        _Particles[4] = &thrust::get<4>(particles);
+        _Particles[5] = &thrust::get<5>(particles);
+        _Particles[6] = &thrust::get<6>(particles);
 
-	}
+        Function(7, _Particles);
+    }
 
-	__host__ __device__   inline  void operator()(GT5 particles)
-	{
+    __host__ __device__ inline void operator()(GT8 particles) {
+        Vector4R *_Particles[8];
 
-		Vector4R* _Particles[5];
+        _Particles[0] = &thrust::get<0>(particles);
+        _Particles[1] = &thrust::get<1>(particles);
+        _Particles[2] = &thrust::get<2>(particles);
+        _Particles[3] = &thrust::get<3>(particles);
+        _Particles[4] = &thrust::get<4>(particles);
+        _Particles[5] = &thrust::get<5>(particles);
+        _Particles[6] = &thrust::get<6>(particles);
+        _Particles[7] = &thrust::get<7>(particles);
 
-		_Particles[0] = &thrust::get<0>(particles);
-		_Particles[1] = &thrust::get<1>(particles);
-		_Particles[2] = &thrust::get<2>(particles);
-		_Particles[3] = &thrust::get<3>(particles);
-		_Particles[4] = &thrust::get<4>(particles);
+        Function(8, _Particles);
+    }
 
-		Function(5, _Particles);
-	}
+    __host__ __device__ inline void operator()(GT9 particles) {
+        Vector4R *_Particles[9];
 
-	__host__ __device__   inline  void operator()(GT6 particles)
-	{
+        _Particles[0] = &thrust::get<0>(particles);
+        _Particles[1] = &thrust::get<1>(particles);
+        _Particles[2] = &thrust::get<2>(particles);
+        _Particles[3] = &thrust::get<3>(particles);
+        _Particles[4] = &thrust::get<4>(particles);
+        _Particles[5] = &thrust::get<5>(particles);
+        _Particles[6] = &thrust::get<6>(particles);
+        _Particles[7] = &thrust::get<7>(particles);
+        _Particles[8] = &thrust::get<8>(particles);
 
-		Vector4R* _Particles[6];
+        Function(9, _Particles);
+    }
 
-		_Particles[0] = &thrust::get<0>(particles);
-		_Particles[1] = &thrust::get<1>(particles);
-		_Particles[2] = &thrust::get<2>(particles);
-		_Particles[3] = &thrust::get<3>(particles);
-		_Particles[4] = &thrust::get<4>(particles);
-		_Particles[5] = &thrust::get<5>(particles);
+    __host__ __device__ inline void operator()(GT10 particles) {
+        Vector4R *_Particles[10];
 
-		Function(6, _Particles);
-	}
+        _Particles[0] = &thrust::get<0>(particles);
+        _Particles[1] = &thrust::get<1>(particles);
+        _Particles[2] = &thrust::get<2>(particles);
+        _Particles[3] = &thrust::get<3>(particles);
+        _Particles[4] = &thrust::get<4>(particles);
+        _Particles[5] = &thrust::get<5>(particles);
+        _Particles[6] = &thrust::get<6>(particles);
+        _Particles[7] = &thrust::get<7>(particles);
+        _Particles[8] = &thrust::get<8>(particles);
+        _Particles[9] = &thrust::get<9>(particles);
 
-	__host__ __device__   inline  void operator()(GT7 particles)
-	{
-
-		Vector4R* _Particles[7];
-
-		_Particles[0] = &thrust::get<0>(particles);
-		_Particles[1] = &thrust::get<1>(particles);
-		_Particles[2] = &thrust::get<2>(particles);
-		_Particles[3] = &thrust::get<3>(particles);
-		_Particles[4] = &thrust::get<4>(particles);
-		_Particles[5] = &thrust::get<5>(particles);
-		_Particles[6] = &thrust::get<6>(particles);
-
-		Function(7, _Particles);
-	}
-
-	__host__ __device__   inline  void operator()(GT8 particles)
-	{
-
-		Vector4R* _Particles[8];
-
-		_Particles[0] = &thrust::get<0>(particles);
-		_Particles[1] = &thrust::get<1>(particles);
-		_Particles[2] = &thrust::get<2>(particles);
-		_Particles[3] = &thrust::get<3>(particles);
-		_Particles[4] = &thrust::get<4>(particles);
-		_Particles[5] = &thrust::get<5>(particles);
-		_Particles[6] = &thrust::get<6>(particles);
-		_Particles[7] = &thrust::get<7>(particles);
-
-		Function(8, _Particles);
-
-	}
-
-	__host__ __device__   inline  void operator()(GT9 particles)
-	{
-
-		Vector4R* _Particles[9];
-
-		_Particles[0] = &thrust::get<0>(particles);
-		_Particles[1] = &thrust::get<1>(particles);
-		_Particles[2] = &thrust::get<2>(particles);
-		_Particles[3] = &thrust::get<3>(particles);
-		_Particles[4] = &thrust::get<4>(particles);
-		_Particles[5] = &thrust::get<5>(particles);
-		_Particles[6] = &thrust::get<6>(particles);
-		_Particles[7] = &thrust::get<7>(particles);
-		_Particles[8] = &thrust::get<8>(particles);
-
-		Function(9, _Particles);
-	}
-
-	__host__ __device__   inline  void operator()(GT10 particles)
-	{
-
-		Vector4R* _Particles[10];
-
-		_Particles[0] = &thrust::get<0>(particles);
-		_Particles[1] = &thrust::get<1>(particles);
-		_Particles[2] = &thrust::get<2>(particles);
-		_Particles[3] = &thrust::get<3>(particles);
-		_Particles[4] = &thrust::get<4>(particles);
-		_Particles[5] = &thrust::get<5>(particles);
-		_Particles[6] = &thrust::get<6>(particles);
-		_Particles[7] = &thrust::get<7>(particles);
-		_Particles[8] = &thrust::get<8>(particles);
-		_Particles[9] = &thrust::get<9>(particles);
-
-		Function(10, _Particles);
-	}
-
+        Function(10, _Particles);
+    }
 };
 
 template<typename FUNCTION>
-struct Calculate3
-{
+struct Calculate3 {
+    FUNCTION Function;
 
-	FUNCTION Function;
+    Calculate3() { Function = FUNCTION(); }
 
-	Calculate3()
-	{
-		Function = FUNCTION();
+    Calculate3(const FUNCTION &_Function)
+        : Function(_Function) {}
 
-	}
+    __host__ __device__ inline void operator()(GTR3 tuples) {
+        GReal_t *_real;
+        Vector4R *_Particles[2];
 
+        _real         = &thrust::get<0>(tuples);
+        _Particles[0] = &thrust::get<1>(tuples);
+        _Particles[1] = &thrust::get<2>(tuples);
 
-	Calculate3(const FUNCTION& _Function) :
-			Function(_Function)
-	{
+        Function(2, _Particles, _real);
+    }
 
-	}
+    __host__ __device__ inline void operator()(GTR4 tuples) {
+        GReal_t *_real;
 
+        Vector4R *_Particles[3];
 
-	__host__ __device__   inline  void operator()(GTR3 tuples)
-	{
+        _real         = &thrust::get<0>(tuples);
+        _Particles[0] = &thrust::get<1>(tuples);
+        _Particles[1] = &thrust::get<2>(tuples);
+        _Particles[2] = &thrust::get<3>(tuples);
 
-		GReal_t* _real;
-		Vector4R* _Particles[2];
+        Function(3, _Particles, _real);
+    }
 
-		_real = &thrust::get<0>(tuples);
-		_Particles[0] = &thrust::get<1>(tuples);
-		_Particles[1] = &thrust::get<2>(tuples);
+    __host__ __device__ inline void operator()(GTR5 tuples) {
+        GReal_t *_real;
 
-		Function(2, _Particles, _real);
-	}
+        Vector4R *_Particles[4];
 
-	__host__ __device__   inline  void operator()(GTR4 tuples)
-	{
+        _real         = &thrust::get<0>(tuples);
+        _Particles[0] = &thrust::get<1>(tuples);
+        _Particles[1] = &thrust::get<2>(tuples);
+        _Particles[2] = &thrust::get<3>(tuples);
+        _Particles[3] = &thrust::get<4>(tuples);
 
-		GReal_t* _real;
+        Function(4, _Particles, _real);
+    }
 
-		Vector4R* _Particles[3];
+    __host__ __device__ inline void operator()(GTR6 tuples) {
+        GReal_t *_real;
 
-		_real = &thrust::get<0>(tuples);
-		_Particles[0] = &thrust::get<1>(tuples);
-		_Particles[1] = &thrust::get<2>(tuples);
-		_Particles[2] = &thrust::get<3>(tuples);
+        Vector4R *_Particles[5];
 
-		Function(3, _Particles, _real);
+        _real         = &thrust::get<0>(tuples);
+        _Particles[0] = &thrust::get<1>(tuples);
+        _Particles[1] = &thrust::get<2>(tuples);
+        _Particles[2] = &thrust::get<3>(tuples);
+        _Particles[3] = &thrust::get<4>(tuples);
+        _Particles[4] = &thrust::get<5>(tuples);
 
-	}
+        Function(5, _Particles, _real);
+    }
 
-	__host__ __device__   inline  void operator()(GTR5 tuples)
-	{
+    __host__ __device__ inline void operator()(GTR7 tuples) {
+        GReal_t *_real;
 
-		GReal_t* _real;
+        Vector4R *_Particles[6];
 
-		Vector4R* _Particles[4];
+        _real         = &thrust::get<0>(tuples);
+        _Particles[0] = &thrust::get<1>(tuples);
+        _Particles[1] = &thrust::get<2>(tuples);
+        _Particles[2] = &thrust::get<3>(tuples);
+        _Particles[3] = &thrust::get<4>(tuples);
+        _Particles[4] = &thrust::get<5>(tuples);
+        _Particles[5] = &thrust::get<6>(tuples);
 
-		_real = &thrust::get<0>(tuples);
-		_Particles[0] = &thrust::get<1>(tuples);
-		_Particles[1] = &thrust::get<2>(tuples);
-		_Particles[2] = &thrust::get<3>(tuples);
-		_Particles[3] = &thrust::get<4>(tuples);
+        Function(6, _Particles, _real);
+    }
 
-		Function(4, _Particles, _real);
-	}
+    __host__ __device__ inline void operator()(GTR8 tuples) {
+        GReal_t *_real;
 
-	__host__ __device__  inline   void operator()(GTR6 tuples)
-	{
+        Vector4R *_Particles[7];
 
-		GReal_t* _real;
+        _real         = &thrust::get<0>(tuples);
+        _Particles[0] = &thrust::get<1>(tuples);
+        _Particles[1] = &thrust::get<2>(tuples);
+        _Particles[2] = &thrust::get<3>(tuples);
+        _Particles[3] = &thrust::get<4>(tuples);
+        _Particles[4] = &thrust::get<5>(tuples);
+        _Particles[5] = &thrust::get<6>(tuples);
+        _Particles[6] = &thrust::get<7>(tuples);
 
-		Vector4R* _Particles[5];
+        Function(7, _Particles, _real);
+    }
 
-		_real = &thrust::get<0>(tuples);
-		_Particles[0] = &thrust::get<1>(tuples);
-		_Particles[1] = &thrust::get<2>(tuples);
-		_Particles[2] = &thrust::get<3>(tuples);
-		_Particles[3] = &thrust::get<4>(tuples);
-		_Particles[4] = &thrust::get<5>(tuples);
+    __host__ __device__ inline void operator()(GTR9 tuples) {
+        GReal_t *_real;
 
-		Function(5, _Particles, _real);
-	}
+        Vector4R *_Particles[8];
 
-	__host__ __device__   inline  void operator()(GTR7 tuples)
-	{
+        _real         = &thrust::get<0>(tuples);
+        _Particles[0] = &thrust::get<1>(tuples);
+        _Particles[1] = &thrust::get<2>(tuples);
+        _Particles[2] = &thrust::get<3>(tuples);
+        _Particles[3] = &thrust::get<4>(tuples);
+        _Particles[4] = &thrust::get<5>(tuples);
+        _Particles[5] = &thrust::get<6>(tuples);
+        _Particles[6] = &thrust::get<7>(tuples);
+        _Particles[7] = &thrust::get<8>(tuples);
 
-		GReal_t* _real;
+        Function(8, _Particles, _real);
+    }
 
-		Vector4R* _Particles[6];
+    __host__ __device__ inline void operator()(GTR10 tuples) {
+        GReal_t *_real;
 
-		_real = &thrust::get<0>(tuples);
-		_Particles[0] = &thrust::get<1>(tuples);
-		_Particles[1] = &thrust::get<2>(tuples);
-		_Particles[2] = &thrust::get<3>(tuples);
-		_Particles[3] = &thrust::get<4>(tuples);
-		_Particles[4] = &thrust::get<5>(tuples);
-		_Particles[5] = &thrust::get<6>(tuples);
+        Vector4R *_Particles[9];
 
-		Function(6, _Particles, _real);
-	}
+        _real         = &thrust::get<0>(tuples);
+        _Particles[0] = &thrust::get<1>(tuples);
+        _Particles[1] = &thrust::get<2>(tuples);
+        _Particles[2] = &thrust::get<3>(tuples);
+        _Particles[3] = &thrust::get<4>(tuples);
+        _Particles[4] = &thrust::get<5>(tuples);
+        _Particles[5] = &thrust::get<6>(tuples);
+        _Particles[6] = &thrust::get<7>(tuples);
+        _Particles[7] = &thrust::get<8>(tuples);
+        _Particles[8] = &thrust::get<9>(tuples);
 
-	__host__ __device__   inline  void operator()(GTR8 tuples)
-	{
-
-		GReal_t* _real;
-
-		Vector4R* _Particles[7];
-
-		_real = &thrust::get<0>(tuples);
-		_Particles[0] = &thrust::get<1>(tuples);
-		_Particles[1] = &thrust::get<2>(tuples);
-		_Particles[2] = &thrust::get<3>(tuples);
-		_Particles[3] = &thrust::get<4>(tuples);
-		_Particles[4] = &thrust::get<5>(tuples);
-		_Particles[5] = &thrust::get<6>(tuples);
-		_Particles[6] = &thrust::get<7>(tuples);
-
-		Function(7, _Particles, _real);
-
-	}
-
-	__host__ __device__  inline   void operator()(GTR9 tuples)
-	{
-
-		GReal_t* _real;
-
-		Vector4R* _Particles[8];
-
-		_real = &thrust::get<0>(tuples);
-		_Particles[0] = &thrust::get<1>(tuples);
-		_Particles[1] = &thrust::get<2>(tuples);
-		_Particles[2] = &thrust::get<3>(tuples);
-		_Particles[3] = &thrust::get<4>(tuples);
-		_Particles[4] = &thrust::get<5>(tuples);
-		_Particles[5] = &thrust::get<6>(tuples);
-		_Particles[6] = &thrust::get<7>(tuples);
-		_Particles[7] = &thrust::get<8>(tuples);
-
-		Function(8, _Particles, _real);
-	}
-
-	__host__ __device__   inline  void operator()(GTR10 tuples)
-	{
-
-		GReal_t* _real;
-
-		Vector4R* _Particles[9];
-
-		_real = &thrust::get<0>(tuples);
-		_Particles[0] = &thrust::get<1>(tuples);
-		_Particles[1] = &thrust::get<2>(tuples);
-		_Particles[2] = &thrust::get<3>(tuples);
-		_Particles[3] = &thrust::get<4>(tuples);
-		_Particles[4] = &thrust::get<5>(tuples);
-		_Particles[5] = &thrust::get<6>(tuples);
-		_Particles[6] = &thrust::get<7>(tuples);
-		_Particles[7] = &thrust::get<8>(tuples);
-		_Particles[8] = &thrust::get<9>(tuples);
-
-		Function(9, _Particles, _real);
-	}
-
+        Function(9, _Particles, _real);
+    }
 };
 }
 

@@ -6,9 +6,4 @@
 using namespace GooFit;
 namespace py = pybind11;
 
-void init_GooPdf(py::module &m) {
-    py::class_<GooPdf, PdfBase>(m, "GooPdf")
-        ;
-
-}
-
+void init_GooPdf(py::module &m) { py::class_<GooPdf, PdfBase>(m, "GooPdf"); }

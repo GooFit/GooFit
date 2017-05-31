@@ -30,7 +30,6 @@
 #ifndef EVALUATEARRAY_H_
 #define EVALUATEARRAY_H_
 
-
 #include <mcbooster/Config.h>
 #include <mcbooster/Vector3R.h>
 #include <mcbooster/Vector4R.h>
@@ -39,8 +38,7 @@
 #include <mcbooster/functors/Calculate.h>
 #include <mcbooster/strided_iterator.h>
 
-namespace mcbooster
-{
+namespace mcbooster {
 
 /** Template functor for calculate an array of variables over a given set of particles.
  * Template functor for evaluate an arbitrary function object over the a set of particles stored
@@ -49,280 +47,254 @@ namespace mcbooster
  */
 
 template<typename CUSTOMFUNC>
-void EvaluateArray(const CUSTOMFUNC funcObj, ParticlesSet_d &pset,
-		VariableSet_h &varset)
-{
+void EvaluateArray(const CUSTOMFUNC funcObj, ParticlesSet_d &pset, VariableSet_h &varset) {
+    if(pset.size() > 10 || pset.size() < 2) {
+        std::cout << "Can not Calculate(Eval) more than a nine-particle invariant mass." << std::endl;
+        return;
+    }
 
-	if (pset.size() > 10 || pset.size() < 2)
-	{
-		std::cout
-				<< "Can not Calculate(Eval) more than a nine-particle invariant mass."
-				<<std::endl;
-		return;
-	}
+    GInt_t arrayWidth    = varset.size();
+    GLong_t numberEvents = varset[0]->size();
 
-	GInt_t arrayWidth = varset.size();
-	GLong_t numberEvents = varset[0]->size();
+    RealVector_d dev_array(arrayWidth * numberEvents);
 
-	RealVector_d dev_array(arrayWidth * numberEvents);
+    strided_range<RealVector_d::iterator> it_array(dev_array.begin(), dev_array.end(), arrayWidth);
 
-	strided_range<RealVector_d::iterator> it_array(dev_array.begin(),
-			dev_array.end(), arrayWidth);
+    if(pset.size() == 2) {
+        mc_device_vector<Vector4R> *dev_v0 = pset[0];
+        mc_device_vector<Vector4R> *dev_v1 = pset[1];
 
-	if (pset.size() == 2)
-	{
+        thrust::for_each(
+            thrust::make_zip_iterator(thrust::make_tuple(it_array.begin(), dev_v0->begin(), dev_v1->begin())),
+            thrust::make_zip_iterator(thrust::make_tuple(it_array.end(), dev_v0->end(), dev_v1->end())),
+            Calculate3<CUSTOMFUNC>(funcObj));
+    }
 
-		mc_device_vector<Vector4R> *dev_v0 = pset[0];
-		mc_device_vector<Vector4R> *dev_v1 = pset[1];
+    if(pset.size() == 3) {
+        mc_device_vector<Vector4R> *dev_v0 = pset[0];
+        mc_device_vector<Vector4R> *dev_v1 = pset[1];
+        mc_device_vector<Vector4R> *dev_v2 = pset[2];
 
-		thrust::for_each(
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.begin(), dev_v0->begin(),
-								dev_v1->begin())),
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.end(), dev_v0->end(),
-								dev_v1->end())),
-				Calculate3<CUSTOMFUNC>(funcObj));
+        thrust::for_each(
+            thrust::make_zip_iterator(
+                thrust::make_tuple(it_array.begin(), dev_v0->begin(), dev_v1->begin(), dev_v2->begin())),
+            thrust::make_zip_iterator(thrust::make_tuple(it_array.end(), dev_v0->end(), dev_v1->end(), dev_v2->end())),
+            Calculate3<CUSTOMFUNC>(funcObj));
+    }
 
-	}
+    if(pset.size() == 4) {
+        mc_device_vector<Vector4R> *dev_v0 = pset[0];
+        mc_device_vector<Vector4R> *dev_v1 = pset[1];
+        mc_device_vector<Vector4R> *dev_v2 = pset[2];
+        mc_device_vector<Vector4R> *dev_v3 = pset[3];
 
-	if (pset.size() == 3)
-	{
+        thrust::for_each(thrust::make_zip_iterator(thrust::make_tuple(
+                             it_array.begin(), dev_v0->begin(), dev_v1->begin(), dev_v2->begin(), dev_v3->begin())),
+                         thrust::make_zip_iterator(thrust::make_tuple(
+                             it_array.end(), dev_v0->end(), dev_v1->end(), dev_v2->end(), dev_v3->end())),
+                         Calculate3<CUSTOMFUNC>(funcObj));
+    }
 
-		mc_device_vector<Vector4R> *dev_v0 = pset[0];
-		mc_device_vector<Vector4R> *dev_v1 = pset[1];
-		mc_device_vector<Vector4R> *dev_v2 = pset[2];
+    if(pset.size() == 5) {
+        mc_device_vector<Vector4R> *dev_v0 = pset[0];
+        mc_device_vector<Vector4R> *dev_v1 = pset[1];
+        mc_device_vector<Vector4R> *dev_v2 = pset[2];
+        mc_device_vector<Vector4R> *dev_v3 = pset[3];
+        mc_device_vector<Vector4R> *dev_v4 = pset[4];
 
-		thrust::for_each(
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.begin(), dev_v0->begin(),
-								dev_v1->begin(), dev_v2->begin())),
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.end(), dev_v0->end(),
-								dev_v1->end(), dev_v2->end())),
-				Calculate3<CUSTOMFUNC>(funcObj));
+        thrust::for_each(
+            thrust::make_zip_iterator(thrust::make_tuple(
+                it_array.begin(), dev_v0->begin(), dev_v1->begin(), dev_v2->begin(), dev_v3->begin(), dev_v4->begin())),
+            thrust::make_zip_iterator(thrust::make_tuple(
+                it_array.end(), dev_v0->end(), dev_v1->end(), dev_v2->end(), dev_v3->end(), dev_v4->end())),
+            Calculate3<CUSTOMFUNC>(funcObj));
+    }
 
-	}
+    if(pset.size() == 6) {
+        mc_device_vector<Vector4R> *dev_v0 = pset[0];
+        mc_device_vector<Vector4R> *dev_v1 = pset[1];
+        mc_device_vector<Vector4R> *dev_v2 = pset[2];
+        mc_device_vector<Vector4R> *dev_v3 = pset[3];
+        mc_device_vector<Vector4R> *dev_v4 = pset[4];
+        mc_device_vector<Vector4R> *dev_v5 = pset[5];
 
-	if (pset.size() == 4)
-	{
+        thrust::for_each(thrust::make_zip_iterator(thrust::make_tuple(it_array.begin(),
+                                                                      dev_v0->begin(),
+                                                                      dev_v1->begin(),
+                                                                      dev_v2->begin(),
+                                                                      dev_v3->begin(),
+                                                                      dev_v4->begin(),
+                                                                      dev_v5->begin())),
+                         thrust::make_zip_iterator(thrust::make_tuple(it_array.end(),
+                                                                      dev_v0->end(),
+                                                                      dev_v1->end(),
+                                                                      dev_v2->end(),
+                                                                      dev_v3->end(),
+                                                                      dev_v4->end(),
+                                                                      dev_v5->end())),
+                         Calculate3<CUSTOMFUNC>(funcObj));
+    }
 
-		mc_device_vector<Vector4R> *dev_v0 = pset[0];
-		mc_device_vector<Vector4R> *dev_v1 = pset[1];
-		mc_device_vector<Vector4R> *dev_v2 = pset[2];
-		mc_device_vector<Vector4R> *dev_v3 = pset[3];
+    if(pset.size() == 7) {
+        mc_device_vector<Vector4R> *dev_v0 = pset[0];
+        mc_device_vector<Vector4R> *dev_v1 = pset[1];
+        mc_device_vector<Vector4R> *dev_v2 = pset[2];
+        mc_device_vector<Vector4R> *dev_v3 = pset[3];
+        mc_device_vector<Vector4R> *dev_v4 = pset[4];
+        mc_device_vector<Vector4R> *dev_v5 = pset[5];
+        mc_device_vector<Vector4R> *dev_v6 = pset[6];
 
-		thrust::for_each(
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.begin(), dev_v0->begin(),
-								dev_v1->begin(), dev_v2->begin(),
-								dev_v3->begin())),
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.end(), dev_v0->end(),
-								dev_v1->end(), dev_v2->end(), dev_v3->end())),
-				Calculate3<CUSTOMFUNC>(funcObj));
+        thrust::for_each(thrust::make_zip_iterator(thrust::make_tuple(it_array.begin(),
+                                                                      dev_v0->begin(),
+                                                                      dev_v1->begin(),
+                                                                      dev_v2->begin(),
+                                                                      dev_v3->begin(),
+                                                                      dev_v4->begin(),
+                                                                      dev_v5->begin(),
+                                                                      dev_v6->begin())),
+                         thrust::make_zip_iterator(thrust::make_tuple(it_array.end(),
+                                                                      dev_v0->end(),
+                                                                      dev_v1->end(),
+                                                                      dev_v2->end(),
+                                                                      dev_v3->end(),
+                                                                      dev_v4->end(),
+                                                                      dev_v5->end(),
+                                                                      dev_v6->end())),
+                         Calculate3<CUSTOMFUNC>(funcObj));
+    }
 
-	}
+    if(pset.size() == 8) {
+        mc_device_vector<Vector4R> *dev_v0 = pset[0];
+        mc_device_vector<Vector4R> *dev_v1 = pset[1];
+        mc_device_vector<Vector4R> *dev_v2 = pset[2];
+        mc_device_vector<Vector4R> *dev_v3 = pset[3];
+        mc_device_vector<Vector4R> *dev_v4 = pset[4];
+        mc_device_vector<Vector4R> *dev_v5 = pset[5];
+        mc_device_vector<Vector4R> *dev_v6 = pset[6];
+        mc_device_vector<Vector4R> *dev_v7 = pset[7];
 
-	if (pset.size() == 5)
-	{
+        thrust::for_each(thrust::make_zip_iterator(thrust::make_tuple(it_array.begin(),
+                                                                      dev_v0->begin(),
+                                                                      dev_v1->begin(),
+                                                                      dev_v2->begin(),
+                                                                      dev_v3->begin(),
+                                                                      dev_v4->begin(),
+                                                                      dev_v5->begin(),
+                                                                      dev_v6->begin(),
+                                                                      dev_v7->begin())),
+                         thrust::make_zip_iterator(thrust::make_tuple(it_array.end(),
+                                                                      dev_v0->end(),
+                                                                      dev_v1->end(),
+                                                                      dev_v2->end(),
+                                                                      dev_v3->end(),
+                                                                      dev_v4->end(),
+                                                                      dev_v5->end(),
+                                                                      dev_v6->end(),
+                                                                      dev_v7->end())),
+                         Calculate3<CUSTOMFUNC>(funcObj));
+    }
 
-		mc_device_vector<Vector4R> *dev_v0 = pset[0];
-		mc_device_vector<Vector4R> *dev_v1 = pset[1];
-		mc_device_vector<Vector4R> *dev_v2 = pset[2];
-		mc_device_vector<Vector4R> *dev_v3 = pset[3];
-		mc_device_vector<Vector4R> *dev_v4 = pset[4];
+    if(pset.size() == 9) {
+        mc_device_vector<Vector4R> *dev_v0 = pset[0];
+        mc_device_vector<Vector4R> *dev_v1 = pset[1];
+        mc_device_vector<Vector4R> *dev_v2 = pset[2];
+        mc_device_vector<Vector4R> *dev_v3 = pset[3];
+        mc_device_vector<Vector4R> *dev_v4 = pset[4];
+        mc_device_vector<Vector4R> *dev_v5 = pset[5];
+        mc_device_vector<Vector4R> *dev_v6 = pset[6];
+        mc_device_vector<Vector4R> *dev_v7 = pset[7];
+        mc_device_vector<Vector4R> *dev_v8 = pset[8];
 
-		thrust::for_each(
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.begin(), dev_v0->begin(),
-								dev_v1->begin(), dev_v2->begin(),
-								dev_v3->begin(), dev_v4->begin())),
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.end(), dev_v0->end(),
-								dev_v1->end(), dev_v2->end(), dev_v3->end(),
-								dev_v4->end())),
-				Calculate3<CUSTOMFUNC>(funcObj));
+        thrust::for_each(thrust::make_zip_iterator(thrust::make_tuple(it_array.begin(),
+                                                                      dev_v0->begin(),
+                                                                      dev_v1->begin(),
+                                                                      dev_v2->begin(),
+                                                                      dev_v3->begin(),
+                                                                      dev_v4->begin(),
+                                                                      dev_v5->begin(),
+                                                                      dev_v6->begin(),
+                                                                      dev_v7->begin(),
+                                                                      dev_v8->begin())),
+                         thrust::make_zip_iterator(thrust::make_tuple(it_array.end(),
+                                                                      dev_v0->end(),
+                                                                      dev_v1->end(),
+                                                                      dev_v2->end(),
+                                                                      dev_v3->end(),
+                                                                      dev_v4->end(),
+                                                                      dev_v5->end(),
+                                                                      dev_v6->end(),
+                                                                      dev_v7->end(),
+                                                                      dev_v8->end())),
+                         Calculate3<CUSTOMFUNC>(funcObj));
+    }
 
-	}
+    if(pset.size() == 10) {
+        mc_device_vector<Vector4R> *dev_v0 = pset[0];
+        mc_device_vector<Vector4R> *dev_v1 = pset[1];
+        mc_device_vector<Vector4R> *dev_v2 = pset[2];
+        mc_device_vector<Vector4R> *dev_v3 = pset[3];
+        mc_device_vector<Vector4R> *dev_v4 = pset[4];
+        mc_device_vector<Vector4R> *dev_v5 = pset[5];
+        mc_device_vector<Vector4R> *dev_v6 = pset[6];
+        mc_device_vector<Vector4R> *dev_v7 = pset[7];
+        mc_device_vector<Vector4R> *dev_v8 = pset[8];
 
-	if (pset.size() == 6)
-	{
+        thrust::for_each(thrust::make_zip_iterator(thrust::make_tuple(it_array.begin(),
+                                                                      dev_v0->begin(),
+                                                                      dev_v1->begin(),
+                                                                      dev_v2->begin(),
+                                                                      dev_v3->begin(),
+                                                                      dev_v4->begin(),
+                                                                      dev_v5->begin(),
+                                                                      dev_v6->begin(),
+                                                                      dev_v7->begin(),
+                                                                      dev_v8->begin())),
+                         thrust::make_zip_iterator(thrust::make_tuple(it_array.end(),
+                                                                      dev_v0->end(),
+                                                                      dev_v1->end(),
+                                                                      dev_v2->end(),
+                                                                      dev_v3->end(),
+                                                                      dev_v4->end(),
+                                                                      dev_v5->end(),
+                                                                      dev_v6->end(),
+                                                                      dev_v7->end(),
+                                                                      dev_v8->end())),
+                         Calculate3<CUSTOMFUNC>(funcObj));
+    }
 
-		mc_device_vector<Vector4R> *dev_v0 = pset[0];
-		mc_device_vector<Vector4R> *dev_v1 = pset[1];
-		mc_device_vector<Vector4R> *dev_v2 = pset[2];
-		mc_device_vector<Vector4R> *dev_v3 = pset[3];
-		mc_device_vector<Vector4R> *dev_v4 = pset[4];
-		mc_device_vector<Vector4R> *dev_v5 = pset[5];
-
-		thrust::for_each(
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.begin(), dev_v0->begin(),
-								dev_v1->begin(), dev_v2->begin(),
-								dev_v3->begin(), dev_v4->begin(),
-								dev_v5->begin())),
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.end(), dev_v0->end(),
-								dev_v1->end(), dev_v2->end(), dev_v3->end(),
-								dev_v4->end(), dev_v5->end())),
-				Calculate3<CUSTOMFUNC>(funcObj));
-
-	}
-
-	if (pset.size() == 7)
-	{
-
-		mc_device_vector<Vector4R> *dev_v0 = pset[0];
-		mc_device_vector<Vector4R> *dev_v1 = pset[1];
-		mc_device_vector<Vector4R> *dev_v2 = pset[2];
-		mc_device_vector<Vector4R> *dev_v3 = pset[3];
-		mc_device_vector<Vector4R> *dev_v4 = pset[4];
-		mc_device_vector<Vector4R> *dev_v5 = pset[5];
-		mc_device_vector<Vector4R> *dev_v6 = pset[6];
-
-		thrust::for_each(
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.begin(), dev_v0->begin(),
-								dev_v1->begin(), dev_v2->begin(),
-								dev_v3->begin(), dev_v4->begin(),
-								dev_v5->begin(), dev_v6->begin())),
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.end(), dev_v0->end(),
-								dev_v1->end(), dev_v2->end(), dev_v3->end(),
-								dev_v4->end(), dev_v5->end(), dev_v6->end())),
-				Calculate3<CUSTOMFUNC>(funcObj));
-
-	}
-
-	if (pset.size() == 8)
-	{
-
-		mc_device_vector<Vector4R> *dev_v0 = pset[0];
-		mc_device_vector<Vector4R> *dev_v1 = pset[1];
-		mc_device_vector<Vector4R> *dev_v2 = pset[2];
-		mc_device_vector<Vector4R> *dev_v3 = pset[3];
-		mc_device_vector<Vector4R> *dev_v4 = pset[4];
-		mc_device_vector<Vector4R> *dev_v5 = pset[5];
-		mc_device_vector<Vector4R> *dev_v6 = pset[6];
-		mc_device_vector<Vector4R> *dev_v7 = pset[7];
-
-		thrust::for_each(
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.begin(), dev_v0->begin(),
-								dev_v1->begin(), dev_v2->begin(),
-								dev_v3->begin(), dev_v4->begin(),
-								dev_v5->begin(), dev_v6->begin(),
-								dev_v7->begin())),
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.end(), dev_v0->end(),
-								dev_v1->end(), dev_v2->end(), dev_v3->end(),
-								dev_v4->end(), dev_v5->end(), dev_v6->end(),
-								dev_v7->end())),
-				Calculate3<CUSTOMFUNC>(funcObj));
-
-	}
-
-	if (pset.size() == 9)
-	{
-
-		mc_device_vector<Vector4R> *dev_v0 = pset[0];
-		mc_device_vector<Vector4R> *dev_v1 = pset[1];
-		mc_device_vector<Vector4R> *dev_v2 = pset[2];
-		mc_device_vector<Vector4R> *dev_v3 = pset[3];
-		mc_device_vector<Vector4R> *dev_v4 = pset[4];
-		mc_device_vector<Vector4R> *dev_v5 = pset[5];
-		mc_device_vector<Vector4R> *dev_v6 = pset[6];
-		mc_device_vector<Vector4R> *dev_v7 = pset[7];
-		mc_device_vector<Vector4R> *dev_v8 = pset[8];
-
-		thrust::for_each(
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.begin(), dev_v0->begin(),
-								dev_v1->begin(), dev_v2->begin(),
-								dev_v3->begin(), dev_v4->begin(),
-								dev_v5->begin(), dev_v6->begin(),
-								dev_v7->begin(), dev_v8->begin())),
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.end(), dev_v0->end(),
-								dev_v1->end(), dev_v2->end(), dev_v3->end(),
-								dev_v4->end(), dev_v5->end(), dev_v6->end(),
-								dev_v7->end(), dev_v8->end())),
-				Calculate3<CUSTOMFUNC>(funcObj));
-
-	}
-
-	if (pset.size() == 10)
-	{
-
-		mc_device_vector<Vector4R> *dev_v0 = pset[0];
-		mc_device_vector<Vector4R> *dev_v1 = pset[1];
-		mc_device_vector<Vector4R> *dev_v2 = pset[2];
-		mc_device_vector<Vector4R> *dev_v3 = pset[3];
-		mc_device_vector<Vector4R> *dev_v4 = pset[4];
-		mc_device_vector<Vector4R> *dev_v5 = pset[5];
-		mc_device_vector<Vector4R> *dev_v6 = pset[6];
-		mc_device_vector<Vector4R> *dev_v7 = pset[7];
-		mc_device_vector<Vector4R> *dev_v8 = pset[8];
-
-		thrust::for_each(
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.begin(), dev_v0->begin(),
-								dev_v1->begin(), dev_v2->begin(),
-								dev_v3->begin(), dev_v4->begin(),
-								dev_v5->begin(), dev_v6->begin(),
-								dev_v7->begin(), dev_v8->begin())),
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.end(), dev_v0->end(),
-								dev_v1->end(), dev_v2->end(), dev_v3->end(),
-								dev_v4->end(), dev_v5->end(), dev_v6->end(),
-								dev_v7->end(), dev_v8->end())),
-				Calculate3<CUSTOMFUNC>(funcObj));
-
-	}
-
-
-#if MCBOOSTER_BACKEND!=CUDA
-#if MCBOOSTER_BACKEND!=CPP
-#pragma omp parallel num_threads(  arrayWidth )
-{
+#if MCBOOSTER_BACKEND != CUDA
+#if MCBOOSTER_BACKEND != CPP
+#pragma omp parallel num_threads(arrayWidth)
+    {
 #else
-    for(size_t val = 0; val<arrayWidth; val++) {
-        auto omp_get_thread_num = [&val](){return val;};
+    for(size_t val = 0; val < arrayWidth; val++) {
+        auto omp_get_thread_num = [&val]() { return val; };
 #endif
-		strided_range<RealVector_d::iterator> it_array(dev_array.begin() + omp_get_thread_num()
-				, dev_array.end(), arrayWidth);
+        strided_range<RealVector_d::iterator> it_array(
+            dev_array.begin() + omp_get_thread_num(), dev_array.end(), arrayWidth);
 
-		thrust::copy(it_array.begin(),it_array.end(),
-				varset[omp_get_thread_num()]->begin());
-	}
+        thrust::copy(it_array.begin(), it_array.end(), varset[omp_get_thread_num()]->begin());
+    }
 #else
-	cudaStream_t s[arrayWidth];
+    cudaStream_t s[arrayWidth];
 
-	for (GInt_t d = 0; d < arrayWidth; d++)
-	{
-		cudaStreamCreate(&s[d]);
-
-	}
-	strided_range<RealVector_d::iterator> *it[arrayWidth];
-	for (GInt_t d = 0; d < arrayWidth; d++)
-		it[d] = new strided_range<RealVector_d::iterator>(dev_array.begin() + d,
-				dev_array.end(), arrayWidth);
-	for (GInt_t d = 0; d < arrayWidth; d++)
-	{
-
-		thrust::copy(thrust::cuda::par.on(s[d]), it[d]->begin(), it[d]->end(),
-				varset[d]->begin());
-
-	}
-	cudaDeviceSynchronize();
-	for (GInt_t d = 0; d < arrayWidth; d++)
-		cudaStreamDestroy(s[d]);
-	for (GInt_t d = 0; d < arrayWidth; d++)
-		delete it[d];
+    for(GInt_t d = 0; d < arrayWidth; d++) {
+        cudaStreamCreate(&s[d]);
+    }
+    strided_range<RealVector_d::iterator> *it[arrayWidth];
+    for(GInt_t d = 0; d < arrayWidth; d++)
+        it[d]    = new strided_range<RealVector_d::iterator>(dev_array.begin() + d, dev_array.end(), arrayWidth);
+    for(GInt_t d = 0; d < arrayWidth; d++) {
+        thrust::copy(thrust::cuda::par.on(s[d]), it[d]->begin(), it[d]->end(), varset[d]->begin());
+    }
+    cudaDeviceSynchronize();
+    for(GInt_t d = 0; d < arrayWidth; d++)
+        cudaStreamDestroy(s[d]);
+    for(GInt_t d = 0; d < arrayWidth; d++)
+        delete it[d];
 
 #endif
-	return;
+    return;
 }
 
 //#if MCBOOSTER_BACKEND==CUDA
@@ -330,288 +302,263 @@ void EvaluateArray(const CUSTOMFUNC funcObj, ParticlesSet_d &pset,
 /** Template functor for calculate an array of variables over a given set of particles.
  * Template functor for evaluate an arbitrary function object over the a set of particles stored
  * in the device. The function is supposed to evaluate at once many variables and the results are returned to the
- * __device__ via a given VariableSet_h. Datasets with up to nine particles  can be handled. __This function is available
+ * __device__ via a given VariableSet_h. Datasets with up to nine particles  can be handled. __This function is
+ * available
  * only for CUDA SYSTEMs.__
  */
 
 template<typename CUSTOMFUNC>
-void EvaluateArray(const CUSTOMFUNC funcObj, ParticlesSet_d &pset,
-		VariableSet_d &varset)
-{
+void EvaluateArray(const CUSTOMFUNC funcObj, ParticlesSet_d &pset, VariableSet_d &varset) {
+    if(pset.size() > 10 || pset.size() < 2) {
+        std::cout << "Can not Calculate(Eval) more than a nine-particle invariant mass." << std::endl;
+        return;
+    }
 
-	if (pset.size() > 10 || pset.size() < 2)
-	{
-		std::cout
-				<< "Can not Calculate(Eval) more than a nine-particle invariant mass."
-				<<std::endl;
-		return;
-	}
+    GInt_t arrayWidth    = varset.size();
+    GLong_t numberEvents = varset[0]->size();
 
-	GInt_t arrayWidth = varset.size();
-	GLong_t numberEvents = varset[0]->size();
+    RealVector_d dev_array(arrayWidth * numberEvents);
 
-	RealVector_d dev_array(arrayWidth * numberEvents);
+    strided_range<RealVector_d::iterator> it_array(dev_array.begin(), dev_array.end(), arrayWidth);
 
-	strided_range<RealVector_d::iterator> it_array(dev_array.begin(),
-			dev_array.end(), arrayWidth);
+    if(pset.size() == 2) {
+        mc_device_vector<Vector4R> *dev_v0 = pset[0];
+        mc_device_vector<Vector4R> *dev_v1 = pset[1];
 
-	if (pset.size() == 2)
-	{
+        thrust::for_each(
+            thrust::make_zip_iterator(thrust::make_tuple(it_array.begin(), dev_v0->begin(), dev_v1->begin())),
+            thrust::make_zip_iterator(thrust::make_tuple(it_array.end(), dev_v0->end(), dev_v1->end())),
+            Calculate3<CUSTOMFUNC>(funcObj));
+    }
 
-		mc_device_vector<Vector4R> *dev_v0 = pset[0];
-		mc_device_vector<Vector4R> *dev_v1 = pset[1];
+    if(pset.size() == 3) {
+        mc_device_vector<Vector4R> *dev_v0 = pset[0];
+        mc_device_vector<Vector4R> *dev_v1 = pset[1];
+        mc_device_vector<Vector4R> *dev_v2 = pset[2];
 
-		thrust::for_each(
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.begin(), dev_v0->begin(),
-								dev_v1->begin())),
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.end(), dev_v0->end(),
-								dev_v1->end())),
-				Calculate3<CUSTOMFUNC>(funcObj));
+        thrust::for_each(
+            thrust::make_zip_iterator(
+                thrust::make_tuple(it_array.begin(), dev_v0->begin(), dev_v1->begin(), dev_v2->begin())),
+            thrust::make_zip_iterator(thrust::make_tuple(it_array.end(), dev_v0->end(), dev_v1->end(), dev_v2->end())),
+            Calculate3<CUSTOMFUNC>(funcObj));
+    }
 
-	}
+    if(pset.size() == 4) {
+        mc_device_vector<Vector4R> *dev_v0 = pset[0];
+        mc_device_vector<Vector4R> *dev_v1 = pset[1];
+        mc_device_vector<Vector4R> *dev_v2 = pset[2];
+        mc_device_vector<Vector4R> *dev_v3 = pset[3];
 
-	if (pset.size() == 3)
-	{
+        thrust::for_each(thrust::make_zip_iterator(thrust::make_tuple(
+                             it_array.begin(), dev_v0->begin(), dev_v1->begin(), dev_v2->begin(), dev_v3->begin())),
+                         thrust::make_zip_iterator(thrust::make_tuple(
+                             it_array.end(), dev_v0->end(), dev_v1->end(), dev_v2->end(), dev_v3->end())),
+                         Calculate3<CUSTOMFUNC>(funcObj));
+    }
 
-		mc_device_vector<Vector4R> *dev_v0 = pset[0];
-		mc_device_vector<Vector4R> *dev_v1 = pset[1];
-		mc_device_vector<Vector4R> *dev_v2 = pset[2];
+    if(pset.size() == 5) {
+        mc_device_vector<Vector4R> *dev_v0 = pset[0];
+        mc_device_vector<Vector4R> *dev_v1 = pset[1];
+        mc_device_vector<Vector4R> *dev_v2 = pset[2];
+        mc_device_vector<Vector4R> *dev_v3 = pset[3];
+        mc_device_vector<Vector4R> *dev_v4 = pset[4];
 
-		thrust::for_each(
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.begin(), dev_v0->begin(),
-								dev_v1->begin(), dev_v2->begin())),
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.end(), dev_v0->end(),
-								dev_v1->end(), dev_v2->end())),
-				Calculate3<CUSTOMFUNC>(funcObj));
+        thrust::for_each(
+            thrust::make_zip_iterator(thrust::make_tuple(
+                it_array.begin(), dev_v0->begin(), dev_v1->begin(), dev_v2->begin(), dev_v3->begin(), dev_v4->begin())),
+            thrust::make_zip_iterator(thrust::make_tuple(
+                it_array.end(), dev_v0->end(), dev_v1->end(), dev_v2->end(), dev_v3->end(), dev_v4->end())),
+            Calculate3<CUSTOMFUNC>(funcObj));
+    }
 
-	}
+    if(pset.size() == 6) {
+        mc_device_vector<Vector4R> *dev_v0 = pset[0];
+        mc_device_vector<Vector4R> *dev_v1 = pset[1];
+        mc_device_vector<Vector4R> *dev_v2 = pset[2];
+        mc_device_vector<Vector4R> *dev_v3 = pset[3];
+        mc_device_vector<Vector4R> *dev_v4 = pset[4];
+        mc_device_vector<Vector4R> *dev_v5 = pset[5];
 
-	if (pset.size() == 4)
-	{
+        thrust::for_each(thrust::make_zip_iterator(thrust::make_tuple(it_array.begin(),
+                                                                      dev_v0->begin(),
+                                                                      dev_v1->begin(),
+                                                                      dev_v2->begin(),
+                                                                      dev_v3->begin(),
+                                                                      dev_v4->begin(),
+                                                                      dev_v5->begin())),
+                         thrust::make_zip_iterator(thrust::make_tuple(it_array.end(),
+                                                                      dev_v0->end(),
+                                                                      dev_v1->end(),
+                                                                      dev_v2->end(),
+                                                                      dev_v3->end(),
+                                                                      dev_v4->end(),
+                                                                      dev_v5->end())),
+                         Calculate3<CUSTOMFUNC>(funcObj));
+    }
 
-		mc_device_vector<Vector4R> *dev_v0 = pset[0];
-		mc_device_vector<Vector4R> *dev_v1 = pset[1];
-		mc_device_vector<Vector4R> *dev_v2 = pset[2];
-		mc_device_vector<Vector4R> *dev_v3 = pset[3];
+    if(pset.size() == 7) {
+        mc_device_vector<Vector4R> *dev_v0 = pset[0];
+        mc_device_vector<Vector4R> *dev_v1 = pset[1];
+        mc_device_vector<Vector4R> *dev_v2 = pset[2];
+        mc_device_vector<Vector4R> *dev_v3 = pset[3];
+        mc_device_vector<Vector4R> *dev_v4 = pset[4];
+        mc_device_vector<Vector4R> *dev_v5 = pset[5];
+        mc_device_vector<Vector4R> *dev_v6 = pset[6];
 
-		thrust::for_each(
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.begin(), dev_v0->begin(),
-								dev_v1->begin(), dev_v2->begin(),
-								dev_v3->begin())),
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.end(), dev_v0->end(),
-								dev_v1->end(), dev_v2->end(), dev_v3->end())),
-				Calculate3<CUSTOMFUNC>(funcObj));
+        thrust::for_each(thrust::make_zip_iterator(thrust::make_tuple(it_array.begin(),
+                                                                      dev_v0->begin(),
+                                                                      dev_v1->begin(),
+                                                                      dev_v2->begin(),
+                                                                      dev_v3->begin(),
+                                                                      dev_v4->begin(),
+                                                                      dev_v5->begin(),
+                                                                      dev_v6->begin())),
+                         thrust::make_zip_iterator(thrust::make_tuple(it_array.end(),
+                                                                      dev_v0->end(),
+                                                                      dev_v1->end(),
+                                                                      dev_v2->end(),
+                                                                      dev_v3->end(),
+                                                                      dev_v4->end(),
+                                                                      dev_v5->end(),
+                                                                      dev_v6->end())),
+                         Calculate3<CUSTOMFUNC>(funcObj));
+    }
 
-	}
+    if(pset.size() == 8) {
+        mc_device_vector<Vector4R> *dev_v0 = pset[0];
+        mc_device_vector<Vector4R> *dev_v1 = pset[1];
+        mc_device_vector<Vector4R> *dev_v2 = pset[2];
+        mc_device_vector<Vector4R> *dev_v3 = pset[3];
+        mc_device_vector<Vector4R> *dev_v4 = pset[4];
+        mc_device_vector<Vector4R> *dev_v5 = pset[5];
+        mc_device_vector<Vector4R> *dev_v6 = pset[6];
+        mc_device_vector<Vector4R> *dev_v7 = pset[7];
 
-	if (pset.size() == 5)
-	{
+        thrust::for_each(thrust::make_zip_iterator(thrust::make_tuple(it_array.begin(),
+                                                                      dev_v0->begin(),
+                                                                      dev_v1->begin(),
+                                                                      dev_v2->begin(),
+                                                                      dev_v3->begin(),
+                                                                      dev_v4->begin(),
+                                                                      dev_v5->begin(),
+                                                                      dev_v6->begin(),
+                                                                      dev_v7->begin())),
+                         thrust::make_zip_iterator(thrust::make_tuple(it_array.end(),
+                                                                      dev_v0->end(),
+                                                                      dev_v1->end(),
+                                                                      dev_v2->end(),
+                                                                      dev_v3->end(),
+                                                                      dev_v4->end(),
+                                                                      dev_v5->end(),
+                                                                      dev_v6->end(),
+                                                                      dev_v7->end())),
+                         Calculate3<CUSTOMFUNC>(funcObj));
+    }
 
-		mc_device_vector<Vector4R> *dev_v0 = pset[0];
-		mc_device_vector<Vector4R> *dev_v1 = pset[1];
-		mc_device_vector<Vector4R> *dev_v2 = pset[2];
-		mc_device_vector<Vector4R> *dev_v3 = pset[3];
-		mc_device_vector<Vector4R> *dev_v4 = pset[4];
+    if(pset.size() == 9) {
+        mc_device_vector<Vector4R> *dev_v0 = pset[0];
+        mc_device_vector<Vector4R> *dev_v1 = pset[1];
+        mc_device_vector<Vector4R> *dev_v2 = pset[2];
+        mc_device_vector<Vector4R> *dev_v3 = pset[3];
+        mc_device_vector<Vector4R> *dev_v4 = pset[4];
+        mc_device_vector<Vector4R> *dev_v5 = pset[5];
+        mc_device_vector<Vector4R> *dev_v6 = pset[6];
+        mc_device_vector<Vector4R> *dev_v7 = pset[7];
+        mc_device_vector<Vector4R> *dev_v8 = pset[8];
 
-		thrust::for_each(
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.begin(), dev_v0->begin(),
-								dev_v1->begin(), dev_v2->begin(),
-								dev_v3->begin(), dev_v4->begin())),
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.end(), dev_v0->end(),
-								dev_v1->end(), dev_v2->end(), dev_v3->end(),
-								dev_v4->end())),
-				Calculate3<CUSTOMFUNC>(funcObj));
+        thrust::for_each(thrust::make_zip_iterator(thrust::make_tuple(it_array.begin(),
+                                                                      dev_v0->begin(),
+                                                                      dev_v1->begin(),
+                                                                      dev_v2->begin(),
+                                                                      dev_v3->begin(),
+                                                                      dev_v4->begin(),
+                                                                      dev_v5->begin(),
+                                                                      dev_v6->begin(),
+                                                                      dev_v7->begin(),
+                                                                      dev_v8->begin())),
+                         thrust::make_zip_iterator(thrust::make_tuple(it_array.end(),
+                                                                      dev_v0->end(),
+                                                                      dev_v1->end(),
+                                                                      dev_v2->end(),
+                                                                      dev_v3->end(),
+                                                                      dev_v4->end(),
+                                                                      dev_v5->end(),
+                                                                      dev_v6->end(),
+                                                                      dev_v7->end(),
+                                                                      dev_v8->end())),
+                         Calculate3<CUSTOMFUNC>(funcObj));
+    }
 
-	}
+    if(pset.size() == 10) {
+        mc_device_vector<Vector4R> *dev_v0 = pset[0];
+        mc_device_vector<Vector4R> *dev_v1 = pset[1];
+        mc_device_vector<Vector4R> *dev_v2 = pset[2];
+        mc_device_vector<Vector4R> *dev_v3 = pset[3];
+        mc_device_vector<Vector4R> *dev_v4 = pset[4];
+        mc_device_vector<Vector4R> *dev_v5 = pset[5];
+        mc_device_vector<Vector4R> *dev_v6 = pset[6];
+        mc_device_vector<Vector4R> *dev_v7 = pset[7];
+        mc_device_vector<Vector4R> *dev_v8 = pset[8];
 
-	if (pset.size() == 6)
-	{
-
-		mc_device_vector<Vector4R> *dev_v0 = pset[0];
-		mc_device_vector<Vector4R> *dev_v1 = pset[1];
-		mc_device_vector<Vector4R> *dev_v2 = pset[2];
-		mc_device_vector<Vector4R> *dev_v3 = pset[3];
-		mc_device_vector<Vector4R> *dev_v4 = pset[4];
-		mc_device_vector<Vector4R> *dev_v5 = pset[5];
-
-		thrust::for_each(
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.begin(), dev_v0->begin(),
-								dev_v1->begin(), dev_v2->begin(),
-								dev_v3->begin(), dev_v4->begin(),
-								dev_v5->begin())),
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.end(), dev_v0->end(),
-								dev_v1->end(), dev_v2->end(), dev_v3->end(),
-								dev_v4->end(), dev_v5->end())),
-				Calculate3<CUSTOMFUNC>(funcObj));
-
-	}
-
-	if (pset.size() == 7)
-	{
-
-		mc_device_vector<Vector4R> *dev_v0 = pset[0];
-		mc_device_vector<Vector4R> *dev_v1 = pset[1];
-		mc_device_vector<Vector4R> *dev_v2 = pset[2];
-		mc_device_vector<Vector4R> *dev_v3 = pset[3];
-		mc_device_vector<Vector4R> *dev_v4 = pset[4];
-		mc_device_vector<Vector4R> *dev_v5 = pset[5];
-		mc_device_vector<Vector4R> *dev_v6 = pset[6];
-
-		thrust::for_each(
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.begin(), dev_v0->begin(),
-								dev_v1->begin(), dev_v2->begin(),
-								dev_v3->begin(), dev_v4->begin(),
-								dev_v5->begin(), dev_v6->begin())),
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.end(), dev_v0->end(),
-								dev_v1->end(), dev_v2->end(), dev_v3->end(),
-								dev_v4->end(), dev_v5->end(), dev_v6->end())),
-				Calculate3<CUSTOMFUNC>(funcObj));
-
-	}
-
-	if (pset.size() == 8)
-	{
-
-		mc_device_vector<Vector4R> *dev_v0 = pset[0];
-		mc_device_vector<Vector4R> *dev_v1 = pset[1];
-		mc_device_vector<Vector4R> *dev_v2 = pset[2];
-		mc_device_vector<Vector4R> *dev_v3 = pset[3];
-		mc_device_vector<Vector4R> *dev_v4 = pset[4];
-		mc_device_vector<Vector4R> *dev_v5 = pset[5];
-		mc_device_vector<Vector4R> *dev_v6 = pset[6];
-		mc_device_vector<Vector4R> *dev_v7 = pset[7];
-
-		thrust::for_each(
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.begin(), dev_v0->begin(),
-								dev_v1->begin(), dev_v2->begin(),
-								dev_v3->begin(), dev_v4->begin(),
-								dev_v5->begin(), dev_v6->begin(),
-								dev_v7->begin())),
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.end(), dev_v0->end(),
-								dev_v1->end(), dev_v2->end(), dev_v3->end(),
-								dev_v4->end(), dev_v5->end(), dev_v6->end(),
-								dev_v7->end())),
-				Calculate3<CUSTOMFUNC>(funcObj));
-
-	}
-
-	if (pset.size() == 9)
-	{
-
-		mc_device_vector<Vector4R> *dev_v0 = pset[0];
-		mc_device_vector<Vector4R> *dev_v1 = pset[1];
-		mc_device_vector<Vector4R> *dev_v2 = pset[2];
-		mc_device_vector<Vector4R> *dev_v3 = pset[3];
-		mc_device_vector<Vector4R> *dev_v4 = pset[4];
-		mc_device_vector<Vector4R> *dev_v5 = pset[5];
-		mc_device_vector<Vector4R> *dev_v6 = pset[6];
-		mc_device_vector<Vector4R> *dev_v7 = pset[7];
-		mc_device_vector<Vector4R> *dev_v8 = pset[8];
-
-		thrust::for_each(
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.begin(), dev_v0->begin(),
-								dev_v1->begin(), dev_v2->begin(),
-								dev_v3->begin(), dev_v4->begin(),
-								dev_v5->begin(), dev_v6->begin(),
-								dev_v7->begin(), dev_v8->begin())),
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.end(), dev_v0->end(),
-								dev_v1->end(), dev_v2->end(), dev_v3->end(),
-								dev_v4->end(), dev_v5->end(), dev_v6->end(),
-								dev_v7->end(), dev_v8->end())),
-				Calculate3<CUSTOMFUNC>(funcObj));
-
-	}
-
-	if (pset.size() == 10)
-	{
-
-		mc_device_vector<Vector4R> *dev_v0 = pset[0];
-		mc_device_vector<Vector4R> *dev_v1 = pset[1];
-		mc_device_vector<Vector4R> *dev_v2 = pset[2];
-		mc_device_vector<Vector4R> *dev_v3 = pset[3];
-		mc_device_vector<Vector4R> *dev_v4 = pset[4];
-		mc_device_vector<Vector4R> *dev_v5 = pset[5];
-		mc_device_vector<Vector4R> *dev_v6 = pset[6];
-		mc_device_vector<Vector4R> *dev_v7 = pset[7];
-		mc_device_vector<Vector4R> *dev_v8 = pset[8];
-
-		thrust::for_each(
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.begin(), dev_v0->begin(),
-								dev_v1->begin(), dev_v2->begin(),
-								dev_v3->begin(), dev_v4->begin(),
-								dev_v5->begin(), dev_v6->begin(),
-								dev_v7->begin(), dev_v8->begin())),
-				thrust::make_zip_iterator(
-						thrust::make_tuple(it_array.end(), dev_v0->end(),
-								dev_v1->end(), dev_v2->end(), dev_v3->end(),
-								dev_v4->end(), dev_v5->end(), dev_v6->end(),
-								dev_v7->end(), dev_v8->end())),
-				Calculate3<CUSTOMFUNC>(funcObj));
-
-	}
-#if MCBOOSTER_BACKEND!=CUDA
-#if MCBOOSTER_BACKEND!=CPP
-#pragma omp parallel num_threads(  arrayWidth )
-{
+        thrust::for_each(thrust::make_zip_iterator(thrust::make_tuple(it_array.begin(),
+                                                                      dev_v0->begin(),
+                                                                      dev_v1->begin(),
+                                                                      dev_v2->begin(),
+                                                                      dev_v3->begin(),
+                                                                      dev_v4->begin(),
+                                                                      dev_v5->begin(),
+                                                                      dev_v6->begin(),
+                                                                      dev_v7->begin(),
+                                                                      dev_v8->begin())),
+                         thrust::make_zip_iterator(thrust::make_tuple(it_array.end(),
+                                                                      dev_v0->end(),
+                                                                      dev_v1->end(),
+                                                                      dev_v2->end(),
+                                                                      dev_v3->end(),
+                                                                      dev_v4->end(),
+                                                                      dev_v5->end(),
+                                                                      dev_v6->end(),
+                                                                      dev_v7->end(),
+                                                                      dev_v8->end())),
+                         Calculate3<CUSTOMFUNC>(funcObj));
+    }
+#if MCBOOSTER_BACKEND != CUDA
+#if MCBOOSTER_BACKEND != CPP
+#pragma omp parallel num_threads(arrayWidth)
+    {
 #else
-    for(size_t val = 0; val<arrayWidth; val++) {
-        auto omp_get_thread_num = [&val](){return val;};
+    for(size_t val = 0; val < arrayWidth; val++) {
+        auto omp_get_thread_num = [&val]() { return val; };
 #endif
 
-	strided_range<RealVector_d::iterator> it_array(dev_array.begin() + omp_get_thread_num()
-				, dev_array.end(), arrayWidth);
+        strided_range<RealVector_d::iterator> it_array(
+            dev_array.begin() + omp_get_thread_num(), dev_array.end(), arrayWidth);
 
-		thrust::copy(it_array.begin(),it_array.end(),
-				varset[omp_get_thread_num()]->begin());
-	}
+        thrust::copy(it_array.begin(), it_array.end(), varset[omp_get_thread_num()]->begin());
+    }
 
 #else
-	cudaStream_t s[arrayWidth];
+    cudaStream_t s[arrayWidth];
 
-	for (GInt_t d = 0; d < arrayWidth; d++)
-	{
-		cudaStreamCreate(&s[d]);
-
-	}
-	strided_range<RealVector_d::iterator> *it[arrayWidth];
-	for (GInt_t d = 0; d < arrayWidth; d++)
-		it[d] = new strided_range<RealVector_d::iterator>(dev_array.begin() + d,
-				dev_array.end(), arrayWidth);
-	for (GInt_t d = 0; d < arrayWidth; d++)
-	{
-
-		thrust::copy(thrust::cuda::par.on(s[d]), it[d]->begin(), it[d]->end(),
-				varset[d]->begin());
-
-	}
-	cudaDeviceSynchronize();
-	for (GInt_t d = 0; d < arrayWidth; d++)
-		cudaStreamDestroy(s[d]);
-	for (GInt_t d = 0; d < arrayWidth; d++)
-		delete it[d];
+    for(GInt_t d = 0; d < arrayWidth; d++) {
+        cudaStreamCreate(&s[d]);
+    }
+    strided_range<RealVector_d::iterator> *it[arrayWidth];
+    for(GInt_t d = 0; d < arrayWidth; d++)
+        it[d]    = new strided_range<RealVector_d::iterator>(dev_array.begin() + d, dev_array.end(), arrayWidth);
+    for(GInt_t d = 0; d < arrayWidth; d++) {
+        thrust::copy(thrust::cuda::par.on(s[d]), it[d]->begin(), it[d]->end(), varset[d]->begin());
+    }
+    cudaDeviceSynchronize();
+    for(GInt_t d = 0; d < arrayWidth; d++)
+        cudaStreamDestroy(s[d]);
+    for(GInt_t d = 0; d < arrayWidth; d++)
+        delete it[d];
 
 #endif
-	return;
+    return;
 }
 //#endif
-
 }
 
 #endif /* EVALUATEARRAY_H_ */

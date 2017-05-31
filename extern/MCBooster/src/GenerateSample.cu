@@ -2,11 +2,11 @@
  * PerformanceTest.cu
  *
  * Copyright 2016 Antonio Augusto Alves Junior
- *  
+ *
  * Created on : 10/03/2016
  *      Author: augalves
  */
- 
+
 /*
     This file is part of MCBooster.
 
@@ -31,9 +31,9 @@
 #include <string>
 #include <sstream>
 #include <map>
-//command line
+// command line
 #include <tclap/CmdLine.h>
-//this lib
+// this lib
 #include <mcbooster/GTypes.h>
 #include <mcbooster/Vector4R.h>
 #include <mcbooster/Generate.h>
@@ -42,7 +42,7 @@
 #include <mcbooster/EvaluateArray.h>
 #include <mcbooster/GFunctional.h>
 
-//ROOT
+// ROOT
 #include "TString.h"
 #include "TTree.h"
 #include "TFile.h"
@@ -52,201 +52,175 @@ using namespace std;
 
 using namespace mcbooster;
 
-
-void splitString(const std::string &s, const char delim, std::vector<std::string> &elems)
-{
-	std::stringstream ss(s);
-	std::string item;
-	while (std::getline(ss, item, delim))
-	{
-		elems.push_back(item);
-	}
-	//return elems;
-	return;
+void splitString(const std::string &s, const char delim, std::vector<std::string> &elems) {
+    std::stringstream ss(s);
+    std::string item;
+    while(std::getline(ss, item, delim)) {
+        elems.push_back(item);
+    }
+    // return elems;
+    return;
 }
 
-void splitReal(const std::string &s, const char delim, std::vector<GReal_t> &elems)
-{
-	std::stringstream ss(s);
-	std::string item;
-	while (std::getline(ss, item, delim))
-	{
-		elems.push_back(std::stod(item));
-	}
-	//return elems;
-	return;
+void splitReal(const std::string &s, const char delim, std::vector<GReal_t> &elems) {
+    std::stringstream ss(s);
+    std::string item;
+    while(std::getline(ss, item, delim)) {
+        elems.push_back(std::stod(item));
+    }
+    // return elems;
+    return;
 }
 
+GInt_t main(int argv, char **argc) {
+    GULong_t nevents  = 0;
+    string output_dir = "";
+    GReal_t mother;
+    string _names;
+    string _masses;
 
+    try {
+        TCLAP::CmdLine cmd("Command line arguments for GenerateSample", '=');
 
-GInt_t main(int argv, char** argc)
-{
+        TCLAP::ValueArg<GULong_t> eArg("n", "number-of-events", "Number of events", true, 1e6, "long");
+        cmd.add(eArg);
 
-	GULong_t nevents=0;
-	string   output_dir="";
-	GReal_t  mother;
-	string _names;
-	string _masses;
+        TCLAP::ValueArg<std::string> oArg("o", "output-file", "Output file", false, "./phsp.root", "string");
+        cmd.add(oArg);
 
-	try {
+        TCLAP::ValueArg<std::string> pArg(
+            "p",
+            "particles",
+            "List of particles. First particle is the mother.Example: D0->Kpipi is 'D0;K;pi+;pi-",
+            true,
+            "",
+            "string");
+        cmd.add(pArg);
 
-		TCLAP::CmdLine cmd("Command line arguments for GenerateSample", '=');
+        TCLAP::ValueArg<std::string> mArg(
+            "m",
+            "masses",
+            "Particle mass.  First particle is the mother. Example: D0->Kpipi is '1.865;0.439;0.139;0.139",
+            true,
+            "",
+            "string");
+        cmd.add(mArg);
 
-		TCLAP::ValueArg<GULong_t> eArg("n", "number-of-events",
-				"Number of events",
-				true, 1e6, "long");
-		cmd.add(eArg);
+        // Parse the argv array.
+        cmd.parse(argv, argc);
 
+        // Get the value parsed by each arg.
+        nevents    = eArg.getValue();
+        output_dir = oArg.getValue();
+        _masses    = mArg.getValue();
+        _names     = pArg.getValue();
 
-		TCLAP::ValueArg<std::string> oArg("o", "output-file",
-				"Output file",
-				false, "./phsp.root", "string");
-		cmd.add(oArg);
+    } catch(TCLAP::ArgException &e) // catch any exceptions
+    {
+        std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
+    }
 
+    vector<std::string> names_temp;
+    vector<GReal_t> masses_temp;
 
-		TCLAP::ValueArg<std::string> pArg("p", "particles",
-				"List of particles. First particle is the mother.Example: D0->Kpipi is 'D0;K;pi+;pi-",
-				true, "", "string");
-		cmd.add(pArg);
+    splitReal(_masses, ';', masses_temp);
+    splitString(_names, ';', names_temp);
 
+    if(masses_temp.size() < 3 || masses_temp.size() > 9) {
+        cout << "Exit. Number of particles is (< 2) or (> 9)." << std::endl;
+        exit(0);
+    }
 
-		TCLAP::ValueArg<std::string> mArg("m", "masses",
-				"Particle mass.  First particle is the mother. Example: D0->Kpipi is '1.865;0.439;0.139;0.139",
-				true, "" ,"string");
-		cmd.add(mArg);
+    if(masses_temp.size() != names_temp.size()) {
+        cout << "Exit. Number of particles is different of number of names." << std::endl;
+        exit(0);
+    }
 
-		// Parse the argv array.
-		cmd.parse(argv, argc);
+    // dump configuration
+    cout << "-----------------------------------------------------" << std::endl;
+    cout << "---------------------- MCBooster --------------------" << std::endl;
+    cout << "- Mother name: " << names_temp[0] << " mass: " << masses_temp[0] << std::endl;
+    for(GInt_t i = 1; i < masses_temp.size(); i++) {
+        cout << "- Daughter name: " << names_temp[i] << " mass: " << masses_temp[i] << std::endl;
+    }
+    cout << "- Number of events: " << nevents << std::endl;
+    cout << "- Output file: " << output_dir << std::endl;
+    cout << "-----------------------------------------------------" << std::endl;
 
-		// Get the value parsed by each arg.
-		nevents        = eArg.getValue();
-		output_dir     = oArg.getValue();
-		_masses        = mArg.getValue();
-		_names         = pArg.getValue();
+    // Generation
+    GReal_t mother_mass = masses_temp[0];
+    vector<GReal_t> masses(masses_temp.size() - 1);
+    std::copy(masses_temp.begin() + 1, masses_temp.end(), masses.begin());
 
-	} catch (TCLAP::ArgException &e)  // catch any exceptions
-	{
-		std::cerr << "error: " << e.error() << " for arg " << e.argId()
-							<< std::endl;
-	}
+    PhaseSpace phsp(mother_mass, masses, nevents);
+    Events GenEvents(masses.size(), nevents);
 
+    timespec time1, time2;
+    phsp.Generate(Vector4R(mother_mass, 0.0, 0.0, 0.0));
 
-	vector<std::string> names_temp;
-	vector<GReal_t> masses_temp;
+    ///-------------------------------------
+    // unweight
+    clock_gettime(CLOCK_REALTIME, &time1);
+    phsp.Unweight();
 
-	splitReal(_masses, ';'  , masses_temp);
-	splitString(_names, ';' , names_temp );
+    clock_gettime(CLOCK_REALTIME, &time2);
 
-	if(masses_temp.size() < 3 || masses_temp.size()>9)
-	{
-		cout << "Exit. Number of particles is (< 2) or (> 9)." <<std::endl;
-		exit(0);
-	}
+    GReal_t unweight_time_used = ((GReal_t)(time_diff(time1, time2).tv_sec + time_diff(time1, time2).tv_nsec * 1.0e-9));
 
+    //-------------------------------------
+    clock_gettime(CLOCK_REALTIME, &time1);
 
+    /// Create Events container
+    phsp.Export(&GenEvents);
 
-	if( masses_temp.size() != names_temp.size() )
-	{
-		cout << "Exit. Number of particles is different of number of names." <<std::endl;
-		exit(0);
-	}
+    clock_gettime(CLOCK_REALTIME, &time2);
 
+    GReal_t exp_time_used = ((GReal_t)(time_diff(time1, time2).tv_sec + time_diff(time1, time2).tv_nsec * 1.0e-9));
 
-	//dump configuration
-	cout << "-----------------------------------------------------"<<std::endl;
-	cout << "---------------------- MCBooster --------------------"<<std::endl;
-	cout << "- Mother name: " << names_temp[0] << " mass: "<< masses_temp[0] <<std::endl;
-	for(GInt_t i=1;i<masses_temp.size();i++)
-	{
-		cout << "- Daughter name: " << names_temp[i] << " mass: "<< masses_temp[i] <<std::endl;
-	}
-	cout << "- Number of events: "<<nevents<<std::endl;
-	cout << "- Output file: "<< output_dir <<std::endl;
-	cout << "-----------------------------------------------------"<<std::endl;
+    phsp.Export(&GenEvents);
 
+    cout << "-----------------------------------------------------" << std::endl;
+    cout << "----------------------- Timing ----------------------" << std::endl;
+    cout << "Event generation: " << phsp.GetEvtTime() << std::endl;
+    cout << "Unweight generation: " << unweight_time_used << std::endl;
+    cout << "Export events to host: " << exp_time_used << std::endl;
+    cout << "-----------------------------------------------------" << std::endl;
 
-	// Generation
-	GReal_t mother_mass = masses_temp[0];
-	vector<GReal_t> masses(masses_temp.size()-1);
-	std::copy ( masses_temp.begin() +1, masses_temp.end(), masses.begin() );
+    TFile *file = new TFile(output_dir.c_str(), "RECREATE");
+    TTree *tree = new TTree("events", "events");
 
-	PhaseSpace phsp(mother_mass, masses, nevents);
-	Events GenEvents(masses.size(), nevents);
+    TLorentzVector *decayVectors = new TLorentzVector[masses.size() + 1];
 
-	timespec time1, time2;
-	phsp.Generate(Vector4R(mother_mass, 0.0, 0.0, 0.0));
+    for(GInt_t p = 0; p < masses.size(); p++) {
+        tree->Branch(names_temp[p + 1].c_str(), names_temp[p + 1].c_str(), &decayVectors[p]);
+    }
 
-	///-------------------------------------
-	//unweight
-	clock_gettime(CLOCK_REALTIME, &time1);
-	phsp.Unweight();
+    GReal_t wevt, wmax;
+    GInt_t flag;
 
-	clock_gettime(CLOCK_REALTIME, &time2);
+    tree->Branch("weightEvt", &wevt, "weightEvt/D");
+    tree->Branch("weightMax", &wmax, "weightMax/D");
+    tree->Branch("AccRej", &flag, "AccRej/I");
 
-		GReal_t unweight_time_used = ((GReal_t) (time_diff(time1, time2).tv_sec
-				+ time_diff(time1, time2).tv_nsec * 1.0e-9));
+    cout << "\n Storing events in Tree..." << endl;
 
-	//-------------------------------------
-	clock_gettime(CLOCK_REALTIME, &time1);
+    for(GInt_t evt = 0; evt < nevents; evt++) {
+        for(GInt_t p = 0; p < masses.size(); p++) {
+            decayVectors[p].SetPxPyPzE(GenEvents.fDaughters[p][evt].get(1),
+                                       GenEvents.fDaughters[p][evt].get(2),
+                                       GenEvents.fDaughters[p][evt].get(3),
+                                       GenEvents.fDaughters[p][evt].get(0));
+        }
 
-	/// Create Events container
-	phsp.Export(&GenEvents);
-
-	clock_gettime(CLOCK_REALTIME, &time2);
-
-	GReal_t exp_time_used = ((GReal_t) (time_diff(time1, time2).tv_sec
-			+ time_diff(time1, time2).tv_nsec * 1.0e-9));
-
-	phsp.Export(&GenEvents);
-
-	cout << "-----------------------------------------------------"<<std::endl;
-	cout << "----------------------- Timing ----------------------"<<std::endl;
-	cout << "Event generation: " << phsp.GetEvtTime() <<std::endl;
-	cout << "Unweight generation: " << unweight_time_used <<std::endl;
-	cout << "Export events to host: " << exp_time_used <<std::endl;
-	cout << "-----------------------------------------------------"<<std::endl;
-
-	TFile *file = new TFile( output_dir.c_str() , "RECREATE");
-	TTree *tree = new TTree("events", "events");
-
-	TLorentzVector* decayVectors = new TLorentzVector[masses.size()+1 ];
-
-	for (GInt_t p = 0; p < masses.size() ; p++) {
-
-		tree->Branch(names_temp[p+1].c_str(), names_temp[p+1].c_str(), &decayVectors[p]);
-	}
-
-	GReal_t wevt, wmax;
-	GInt_t flag;
-
-	tree->Branch("weightEvt",  &wevt, "weightEvt/D");
-	tree->Branch("weightMax",  &wmax, "weightMax/D");
-	tree->Branch("AccRej"   ,  &flag, "AccRej/I");
-
-	cout << "\n Storing events in Tree..."<<endl;
-
-	for (GInt_t evt = 0; evt < nevents; evt++) {
-		for (GInt_t p = 0; p < masses.size(); p++) {
-
-			decayVectors[p].SetPxPyPzE(
-					GenEvents.fDaughters[p][evt].get(1),
-					GenEvents.fDaughters[p][evt].get(2),
-					GenEvents.fDaughters[p][evt].get(3),
-					GenEvents.fDaughters[p][evt].get(0)
-					);
-
-		}
-
-		wevt = GenEvents.fWeights[evt];
-		wmax = GenEvents.fMaxWeight;
+        wevt = GenEvents.fWeights[evt];
+        wmax = GenEvents.fMaxWeight;
         flag = GenEvents.fAccRejFlags[evt];
 
-		tree->Fill();
+        tree->Fill();
+    }
+    cout << "Done. \n" << endl;
+    tree->Write();
+    file->Close();
 
-	}
-	cout << "Done. \n"<<endl;
-	tree->Write();
-	file->Close();
-
-	return 0;
+    return 0;
 }

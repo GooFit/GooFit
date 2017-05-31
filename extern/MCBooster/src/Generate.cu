@@ -35,7 +35,7 @@
 
 #define CUDA_API_PER_THREAD_DEFAULT_STREAM
 
-//this lib
+// this lib
 #include <mcbooster/GTypes.h>
 #include <mcbooster/Vector4R.h>
 #include <mcbooster/Generate.h>
@@ -43,7 +43,7 @@
 #include <mcbooster/Evaluate.h>
 #include <mcbooster/EvaluateArray.h>
 #include <mcbooster/GFunctional.h>
-//root
+// root
 #include <TROOT.h>
 #include <TH1D.h>
 #include <TH2D.h>
@@ -54,445 +54,383 @@ using namespace std;
 
 using namespace mcbooster;
 
+struct Dataset : public IFunctionArray {
+    Dataset() { dim = 4; }
 
+    __host__ __device__ inline GReal_t cosHELANG(const Vector4R p, const Vector4R q, const Vector4R d) {
+        GReal_t pd  = p * d;
+        GReal_t pq  = p * q;
+        GReal_t qd  = q * d;
+        GReal_t mp2 = p.mass2();
+        GReal_t mq2 = q.mass2();
+        GReal_t md2 = d.mass2();
 
-struct Dataset: public IFunctionArray
-{
-	Dataset()
-	{
-		dim = 4;
-	}
+        return (pd * mq2 - pq * qd) / sqrt((pq * pq - mq2 * mp2) * (qd * qd - mq2 * md2));
+    }
 
-	__host__   __device__   inline  GReal_t cosHELANG(const Vector4R p, const Vector4R q,
-			const Vector4R d)
-	{
-		GReal_t pd = p * d;
-		GReal_t pq = p * q;
-		GReal_t qd = q * d;
-		GReal_t mp2 = p.mass2();
-		GReal_t mq2 = q.mass2();
-		GReal_t md2 = d.mass2();
+    __host__ __device__ inline GReal_t deltaAngle(const Vector4R &p4_p,
+                                                  const Vector4R &p4_d1,
+                                                  const Vector4R &p4_d2,
+                                                  const Vector4R &p4_h1,
+                                                  const Vector4R &p4_h2) {
+        Vector4R p4_d1p, p4_h1p, p4_h2p, p4_d2p;
 
-		return (pd * mq2 - pq * qd)
-				/ sqrt((pq * pq - mq2 * mp2) * (qd * qd - mq2 * md2));
+        Vector4R d1_perp, d1_prime, h1_perp;
+        Vector4R D;
 
-	}
+        D = p4_d1 + p4_d2;
 
-	__host__   __device__   inline GReal_t deltaAngle(const Vector4R& p4_p,
-			const Vector4R& p4_d1, const Vector4R& p4_d2, const Vector4R& p4_h1,
-			const Vector4R& p4_h2)
-	{
+        d1_perp = p4_d1 - (D.dot(p4_d1) / D.dot(D)) * D;
+        h1_perp = p4_h1 - (D.dot(p4_h1) / D.dot(D)) * D;
 
-		Vector4R p4_d1p, p4_h1p, p4_h2p, p4_d2p;
+        // orthogonal to both D and d1_perp
 
-		Vector4R d1_perp, d1_prime, h1_perp;
-		Vector4R D;
+        d1_prime = D.cross(d1_perp);
 
-		D = p4_d1 + p4_d2;
+        d1_perp  = d1_perp / d1_perp.d3mag();
+        d1_prime = d1_prime / d1_prime.d3mag();
 
-		d1_perp = p4_d1 - (D.dot(p4_d1) / D.dot(D)) * D;
-		h1_perp = p4_h1 - (D.dot(p4_h1) / D.dot(D)) * D;
+        GReal_t x, y;
 
-		// orthogonal to both D and d1_perp
+        x = d1_perp.dot(h1_perp);
+        y = d1_prime.dot(h1_perp);
 
-		d1_prime = D.cross(d1_perp);
+        GReal_t chi = atan2(y, x);
 
-		d1_perp = d1_perp / d1_perp.d3mag();
-		d1_prime = d1_prime / d1_prime.d3mag();
+        if(chi < 0.0)
+            chi += 2.0 * CUDART_PI_HI;
 
-		GReal_t x, y;
+        return chi;
+    }
 
-		x = d1_perp.dot(h1_perp);
-		y = d1_prime.dot(h1_perp);
+    __host__ __device__ inline void operator()(const GInt_t n, Vector4R **particles, GReal_t *variables) {
+        Vector4R pJpsi = *particles[0];
+        Vector4R pK    = *particles[1];
+        Vector4R ppi   = *particles[2];
+        Vector4R pMup  = *particles[3];
+        Vector4R pMum  = *particles[4];
 
-		GReal_t chi = atan2(y, x);
+        // K* helicity angle
+        Vector4R pB0     = pJpsi + pK + ppi;
+        Vector4R pKpi    = pK + ppi;
+        Vector4R pJpsipi = pJpsi + ppi;
 
-		if (chi < 0.0)
-			chi += 2.0*CUDART_PI_HI;
-
-		return chi;
-
-	}
-
-	__host__ __device__
-	  inline void operator()(const GInt_t n, Vector4R** particles, GReal_t* variables)
-	{
-		Vector4R pJpsi = *particles[0];
-		Vector4R pK    = *particles[1];
-		Vector4R ppi   = *particles[2];
-		Vector4R pMup  = *particles[3];
-		Vector4R pMum  = *particles[4];
-
-		//K* helicity angle
-		Vector4R pB0 = pJpsi + pK + ppi;
-		Vector4R pKpi = pK + ppi;
-		Vector4R pJpsipi = pJpsi + ppi;
-
-
-		variables[0] = pKpi.mass();
-		variables[1] = pJpsipi.mass();
-		variables[2] = cosHELANG(pB0, pKpi, pK);
-		variables[3] = cosHELANG(pB0, pJpsi, pMup);
-		variables[4] = deltaAngle(pB0, pK, ppi, pMup, pMum);
-
-	}
-
+        variables[0] = pKpi.mass();
+        variables[1] = pJpsipi.mass();
+        variables[2] = cosHELANG(pB0, pKpi, pK);
+        variables[3] = cosHELANG(pB0, pJpsi, pMup);
+        variables[4] = deltaAngle(pB0, pK, ppi, pMup, pMum);
+    }
 };
 
+GInt_t main(void) {
+    TApplication *myapp = new TApplication("myapp", 0, 0);
 
+    GLong_t events    = 10000000;
+    size_t ndaughters = 3;
+    GReal_t mass0     = 5.2795;
 
-GInt_t main(void)
-{
+    // Particles mothers(events, Vector4R(5.2795,0.0,0.0,0.0) );
 
-	TApplication *myapp=new TApplication("myapp",0,0);
+    //{ "J/psi", "K", "pi", "pi" }
 
-	GLong_t events = 10000000;
-	size_t  ndaughters = 3;
-	GReal_t mass0 = 5.2795;
+    vector<std::string> namesB0;
+    namesB0.push_back("J/#psi");
+    namesB0.push_back("K");
+    namesB0.push_back("pi");
 
-	//Particles mothers(events, Vector4R(5.2795,0.0,0.0,0.0) );
+    //{ 3.096916, 0.493677, 0.13957018 }
+    vector<GReal_t> massesB0;
+    massesB0.push_back(3.096916);
+    massesB0.push_back(0.493677);
+    massesB0.push_back(0.13957018);
 
-	//{ "J/psi", "K", "pi", "pi" }
+    // chronometer
+    timespec time1, time2;
 
-	vector<std::string> namesB0;
-	namesB0.push_back("J/#psi");
-	namesB0.push_back("K");
-	namesB0.push_back("pi");
+    cout << "=========================================================" << std::endl;
+    cout << "===================   B0 -> J/psi K pi=  ================" << std::endl;
+    cout << "=========================================================" << std::endl;
+    cout << "Number of events: " << events << std::endl;
 
-	//{ 3.096916, 0.493677, 0.13957018 }
-	vector<GReal_t> massesB0;
-	massesB0.push_back(3.096916);
-	massesB0.push_back(0.493677);
-	massesB0.push_back(0.13957018);
+    clock_gettime(CLOCK_REALTIME, &time1);
 
-	//chronometer
-	timespec time1, time2;
+    /// Create PhaseSpace object for B0-> K pi J/psi
+    PhaseSpace phsp(5.2795, massesB0, events);
 
-	cout << "=========================================================" <<std::endl;
-	cout << "===================   B0 -> J/psi K pi=  ================" <<std::endl;
-	cout << "=========================================================" <<std::endl;
-	cout << "Number of events: " << events <<std::endl;
+    clock_gettime(CLOCK_REALTIME, &time2);
 
-	clock_gettime(CLOCK_REALTIME, &time1);
+    GReal_t phsp_time_used = ((GReal_t)(time_diff(time1, time2).tv_sec + time_diff(time1, time2).tv_nsec * 1.0e-9));
 
-	/// Create PhaseSpace object for B0-> K pi J/psi
-	PhaseSpace phsp(5.2795, massesB0, events);
+    cout << "|\t PhaseSpace ctor time [B0]:\t " << phsp_time_used << " s" << std::endl;
 
-	clock_gettime(CLOCK_REALTIME, &time2);
+    clock_gettime(CLOCK_REALTIME, &time1);
 
-	GReal_t phsp_time_used = ((GReal_t) (time_diff(time1, time2).tv_sec
-			+ time_diff(time1, time2).tv_nsec * 1.0e-9));
+    /// Generate events B0-> K pi J/psi
+    phsp.Generate(Vector4R(5.2795, 0.0, 0.0, 0.0));
 
-	cout << "|\t PhaseSpace ctor time [B0]:\t " << phsp_time_used << " s"
-			<<std::endl;
+    clock_gettime(CLOCK_REALTIME, &time2);
 
-	clock_gettime(CLOCK_REALTIME, &time1);
+    phsp.Unweight();
 
-	/// Generate events B0-> K pi J/psi
-	phsp.Generate(Vector4R(5.2795, 0.0, 0.0, 0.0));
-
-	clock_gettime(CLOCK_REALTIME, &time2);
-
-	phsp.Unweight();
-
-	GReal_t cpu_time_used= phsp.GetEvtTime();
-	/*
-	cpu_time_used = ((GReal_t) (time_diff(time1, time2).tv_sec
-			+ time_diff(time1, time2).tv_nsec * 1.0e-9));
+    GReal_t cpu_time_used = phsp.GetEvtTime();
+    /*
+    cpu_time_used = ((GReal_t) (time_diff(time1, time2).tv_sec
+            + time_diff(time1, time2).tv_nsec * 1.0e-9));
     */
-	cout << "|\t Generate time [B0]:\t " << cpu_time_used << " s" <<std::endl;
+    cout << "|\t Generate time [B0]:\t " << cpu_time_used << " s" << std::endl;
 
-	clock_gettime(CLOCK_REALTIME, &time1);
+    clock_gettime(CLOCK_REALTIME, &time1);
 
-	/// Create Events container
-	Events *MyEvents = new Events(ndaughters, events);
+    /// Create Events container
+    Events *MyEvents = new Events(ndaughters, events);
 
-	clock_gettime(CLOCK_REALTIME, &time2);
+    clock_gettime(CLOCK_REALTIME, &time2);
 
-	GReal_t evt_time_used = ((GReal_t) (time_diff(time1, time2).tv_sec
-			+ time_diff(time1, time2).tv_nsec * 1.0e-9));
+    GReal_t evt_time_used = ((GReal_t)(time_diff(time1, time2).tv_sec + time_diff(time1, time2).tv_nsec * 1.0e-9));
 
-	cout << "|\t Event ctor time [B0]:\t " << evt_time_used << " s" <<std::endl;
+    cout << "|\t Event ctor time [B0]:\t " << evt_time_used << " s" << std::endl;
 
-	clock_gettime(CLOCK_REALTIME, &time1);
+    clock_gettime(CLOCK_REALTIME, &time1);
 
-	/// Export events
-	phsp.Export(MyEvents);
+    /// Export events
+    phsp.Export(MyEvents);
 
-	clock_gettime(CLOCK_REALTIME, &time2);
+    clock_gettime(CLOCK_REALTIME, &time2);
 
-	GReal_t exp_time_used = ((GReal_t) (time_diff(time1, time2).tv_sec
-			+ time_diff(time1, time2).tv_nsec * 1.0e-9));
+    GReal_t exp_time_used = ((GReal_t)(time_diff(time1, time2).tv_sec + time_diff(time1, time2).tv_nsec * 1.0e-9));
 
-	cout << "|\t Export time [B0]:\t\t " << exp_time_used << " s" <<std::endl;
+    cout << "|\t Export time [B0]:\t\t " << exp_time_used << " s" << std::endl;
 
-	cout << "=========================================================" <<std::endl;
+    cout << "=========================================================" << std::endl;
 
-	/// Print the first 10 events with corresponding weights
-	for (GInt_t event = 0; event < 10; event++)
-	{
-		cout << "Event: " << event <<std::endl << "\t| weight "
-				<< MyEvents->fWeights[event]
-				<< "\t| flag " << MyEvents->fAccRejFlags[event] <<endl;
+    /// Print the first 10 events with corresponding weights
+    for(GInt_t event = 0; event < 10; event++) {
+        cout << "Event: " << event << std::endl
+             << "\t| weight " << MyEvents->fWeights[event] << "\t| flag " << MyEvents->fAccRejFlags[event] << endl;
 
-		for (GInt_t daughter = 0; daughter < 3; daughter++)
-		{
-			cout << " \t| " << namesB0[daughter] << " : mass "
-					<< MyEvents->fDaughters[daughter][event].mass()
-					<< " 4-momentum ( "
-					<< MyEvents->fDaughters[daughter][event].get(0) << ", "
-					<< MyEvents->fDaughters[daughter][event].get(1) << ", "
-					<< MyEvents->fDaughters[daughter][event].get(2) << ", "
-					<< MyEvents->fDaughters[daughter][event].get(3) << ")  "
-					<<std::endl;
+        for(GInt_t daughter = 0; daughter < 3; daughter++) {
+            cout << " \t| " << namesB0[daughter] << " : mass " << MyEvents->fDaughters[daughter][event].mass()
+                 << " 4-momentum ( " << MyEvents->fDaughters[daughter][event].get(0) << ", "
+                 << MyEvents->fDaughters[daughter][event].get(1) << ", " << MyEvents->fDaughters[daughter][event].get(2)
+                 << ", " << MyEvents->fDaughters[daughter][event].get(3) << ")  " << std::endl;
+        }
+        cout << std::endl;
+    }
 
-		}
-		cout <<std::endl;
+    //{ "J/psi", "K", "pi", "pi" }
 
-	}
+    vector<std::string> namesJpsi;
+    namesJpsi.push_back("mu+");
+    namesJpsi.push_back("mu-");
 
+    //{ 3.096916, 0.493677, 0.13957018 }
+    vector<GReal_t> massesJpsi;
+    massesJpsi.push_back(0.100);
+    massesJpsi.push_back(0.100);
 
-	//{ "J/psi", "K", "pi", "pi" }
+    cout << "=========================================================" << std::endl;
+    cout << "====================   J/psi -> mu mu  ==================" << std::endl;
+    cout << "=========================================================" << std::endl;
+    std::cout << "Number of events: " << events << std::endl;
 
-	vector<std::string> namesJpsi;
-	namesJpsi.push_back("mu+");
-	namesJpsi.push_back("mu-");
+    clock_gettime(CLOCK_REALTIME, &time1);
+    Events *MyEventsJpsi = new Events(2, events);
+    clock_gettime(CLOCK_REALTIME, &time2);
+    GReal_t evt_time_usedJpsi = ((GReal_t)(time_diff(time1, time2).tv_sec + time_diff(time1, time2).tv_nsec * 1.0e-9));
 
-	//{ 3.096916, 0.493677, 0.13957018 }
-	vector<GReal_t> massesJpsi;
-	massesJpsi.push_back(0.100);
-	massesJpsi.push_back(0.100);
+    cout << "|\t Event ctor time [J/psi]:\t " << evt_time_usedJpsi << " s" << std::endl;
+
+    // Decays trees(mothers, names, masses );
 
-	cout << "=========================================================" <<std::endl;
-	cout << "====================   J/psi -> mu mu  ==================" <<std::endl;
-	cout << "=========================================================" <<std::endl;
-   std::cout << "Number of events: " << events <<std::endl;
-
-	clock_gettime(CLOCK_REALTIME, &time1);
-	Events *MyEventsJpsi = new Events(2, events);
-	clock_gettime(CLOCK_REALTIME, &time2);
-	GReal_t evt_time_usedJpsi = ((GReal_t) (time_diff(time1, time2).tv_sec
-			+ time_diff(time1, time2).tv_nsec * 1.0e-9));
-
-	cout << "|\t Event ctor time [J/psi]:\t " << evt_time_usedJpsi << " s"
-			<<std::endl;
-
-	//Decays trees(mothers, names, masses );
-
-	clock_gettime(CLOCK_REALTIME, &time1);
-	PhaseSpace phspJpsi(3.096916, massesJpsi, events);
-	clock_gettime(CLOCK_REALTIME, &time2);
-	GReal_t phsp_time_usedJpsi = ((GReal_t) (time_diff(time1, time2).tv_sec
-			+ time_diff(time1, time2).tv_nsec * 1.0e-9));
-
-	cout << "|\t PhaseSpace ctor time [J/psi]:\t " << phsp_time_usedJpsi << " s"
-			<<std::endl;
-
-	clock_gettime(CLOCK_REALTIME, &time1);
-	phspJpsi.Generate(phsp.GetDaughters(0));
-	clock_gettime(CLOCK_REALTIME, &time2);
-
-	phspJpsi.Unweight();
-
-	GReal_t cpu_time_usedJpsi = phspJpsi.GetEvtTime();
-	/*
-	cpu_time_usedJpsi = ((GReal_t) (time_diff(time1, time2).tv_sec
-			+ time_diff(time1, time2).tv_nsec * 1.0e-9));*/
-
-	cout << "|\t Generate time [J/psi]:\t " << cpu_time_usedJpsi << " s"
-			<<std::endl;
-
-	clock_gettime(CLOCK_REALTIME, &time1);
-	phspJpsi.Export(MyEventsJpsi);
-	clock_gettime(CLOCK_REALTIME, &time2);
-
-	GReal_t exp_time_usedJpsi = ((GReal_t) (time_diff(time1, time2).tv_sec
-			+ time_diff(time1, time2).tv_nsec * 1.0e-9));
-
-	cout << "|\t Export time [J/psi]:\t\t " << exp_time_usedJpsi << " s"
-			<<std::endl;
-
-	cout << "=========================================================" <<std::endl;
-
-	for (GInt_t event = 0; event < 10; event++)
-	{
-		cout << "Event: " << event <<std::endl << "\t| weight "
-				<< MyEventsJpsi->fWeights[event]
-				<< "\t| flag " << MyEventsJpsi->fAccRejFlags[event] <<endl;
-
-		for (GInt_t daughter = 0; daughter < 2; daughter++)
-		{
-			cout << " \t| " << namesJpsi[daughter] << " : mass "
-					<< MyEventsJpsi->fDaughters[daughter][event].mass()
-					<< " 4-momentum ( "
-					<< MyEventsJpsi->fDaughters[daughter][event].get(0) << ", "
-					<< MyEventsJpsi->fDaughters[daughter][event].get(1) << ", "
-					<< MyEventsJpsi->fDaughters[daughter][event].get(2) << ", "
-					<< MyEventsJpsi->fDaughters[daughter][event].get(3) << ")  "
-					<<std::endl;
-
-		}
-		cout <<std::endl;
-
-	}
-
-	VariableSet_h Var(5);
-	RealVector_h result_MKpi(events);
-	RealVector_h result_MJpsipi(events);
-	RealVector_h result_CosThetaK(events);
-	RealVector_h result_CosThetaMu(events);
-	RealVector_h result_DeltaAngle(events);
-
-	Var[0] = &result_MKpi;
-	Var[1] = &result_MJpsipi;
-	Var[2] = &result_CosThetaK;
-	Var[3] = &result_CosThetaMu;
-	Var[4] = &result_DeltaAngle;
-
-	ParticlesSet_d JpsiKpiMuMu(5);
-	JpsiKpiMuMu[0] = &phsp.GetDaughters(0);
-	JpsiKpiMuMu[1] = &phsp.GetDaughters(1);
-	JpsiKpiMuMu[2] = &phsp.GetDaughters(2);
-	JpsiKpiMuMu[3] = &phspJpsi.GetDaughters(0);
-	JpsiKpiMuMu[4] = &phspJpsi.GetDaughters(1);
-
-	Dataset DataJpsiKpi = Dataset();
-
-	clock_gettime(CLOCK_REALTIME, &time1);
-	EvaluateArray<Dataset>(DataJpsiKpi, JpsiKpiMuMu, Var);
-	clock_gettime(CLOCK_REALTIME, &time2);
-	GReal_t Dataset_time = ((GReal_t) (time_diff(time1, time2).tv_sec
-			+ time_diff(time1, time2).tv_nsec * 1.0e-9));
-	cout << "=========================================================" <<std::endl;
-	cout << "=================   Evaluate Dataset   ===============" <<std::endl;
-	cout << "=========================================================" <<std::endl;
-	cout << "|\t Dataset time : " << Dataset_time << " s" <<std::endl;
-	cout << "=========================================================" <<std::endl;
-
-
-	 for(GInt_t event=0; event<10; event++ )
-	 {
-
-	std::cout
-	 << event
-	 <<" " <<  result_MKpi[event]
-	 <<" " <<  result_MJpsipi[event]
-	 <<" " <<  result_CosThetaK[event]
-	 <<" " <<  result_CosThetaMu[event]
-	 <<" " <<  result_DeltaAngle[event]
-	 <<std::endl;
-	 }
-
-
-	 TH1D *cosThetaK  = new TH1D( "cosThetaK", ";Cos(#theta_{K});Events", 100, -1.0, 1.0);
-	 TH1D *cosThetaMu = new TH1D("cosThetaMu", ";Cos(#theta_{#Mu});Events", 100, -1.0, 1.0);
-	 TH1D *deltaAngle = new TH1D("deltaAngle", ";#Delta #phi;Events", 100, 0.0, 6.3);
-	 TH1D *MKpi       = new TH1D("MKpi", ";M(K,#pi);Events", 100, massesB0[1]+massesB0[2], mass0 - massesB0[0]  );
-	 TH1D *MJpsipi    = new TH1D("MJpsipi", ";M(Jpsi/#psi,#pi);Events", 100, massesB0[0]+massesB0[2], mass0 - massesB0[1]  );
-
-
-	 for(GInt_t event=0; event<events; event++ )
-	 {
-
-	 cosThetaK->Fill( result_CosThetaK[event], MyEvents->fWeights[event]  );
-	 cosThetaMu->Fill(result_CosThetaMu[event], MyEvents->fWeights[event]  );
-	 deltaAngle->Fill(result_DeltaAngle[event], MyEvents->fWeights[event]  );
-	 MKpi->Fill(result_MKpi[event], MyEvents->fWeights[event]  );
-	 MJpsipi->Fill(result_MJpsipi[event], MyEvents->fWeights[event]  );
-
-	 }
-
-	 TCanvas *c_cosThetaK = new TCanvas( "cosThetaK", "", 600, 500 );
-	 cosThetaK->Draw("HIST");
-	 cosThetaK->SetLineColor(4);
-	 cosThetaK->SetLineWidth(2);
-	 cosThetaK->SetStats(0);
-	 cosThetaK->SetMinimum(0);
-	 c_cosThetaK->Print( "cosThetaK.pdf" );
-
-	 TCanvas *c_cosThetaMu = new TCanvas( "cosThetaMu", "", 600, 500 );
-	 cosThetaMu->Draw("HIST");
-	 cosThetaMu->SetLineColor(4);
-	 cosThetaMu->SetLineWidth(2);
-	 cosThetaMu->SetStats(0);
-	 cosThetaMu->SetMinimum(0);
-	 c_cosThetaMu->Print( "cosThetaMu.pdf" );
-
-	 TCanvas *c_deltaAngle = new TCanvas( "deltaAngle", "", 600, 500 );
-	 deltaAngle->Draw("HIST");
-	 deltaAngle->SetLineColor(4);
-	 deltaAngle->SetLineWidth(2);
-	 deltaAngle->SetStats(0);
-	 deltaAngle->SetMinimum(0);
-	 c_deltaAngle->Print( "deltaAngle.pdf" );
-
-	 TCanvas *c_MKpi = new TCanvas( "MKpi", "", 600, 500 );
-	 MKpi->Draw("HIST");
-	 MKpi->SetLineColor(4);
-	 MKpi->SetLineWidth(2);
-	 MKpi->SetStats(0);
-	 MKpi->SetMinimum(0);
-	 c_MKpi->Print( "MKpi.pdf" );
-
-	 TCanvas *c_MJpsipi = new TCanvas( "MJpsipi", "", 600, 500 );
-	 MJpsipi->Draw("HIST");
-	 MJpsipi->SetLineColor(4);
-	 MJpsipi->SetLineWidth(2);
-	 MJpsipi->SetStats(0);
-	 MJpsipi->SetMinimum(0);
-	 c_MJpsipi->Print( "MJpsipi.pdf" );
-
-
-
-
-	 TH2D *dalitz = new TH2D("dalitz",
-			 TString::Format("Weigted;M^{2}(%s,%s) [GeV^{2}/c^{4}]; M^{2}(%s,%s) [GeV^{2}/c^{4}]"
-					 , namesB0[0].c_str(), namesB0[1].c_str()
-					 , namesB0[1].c_str(), namesB0[2].c_str() ).Data(),
-					 100, pow(massesB0[0]+massesB0[2],2), pow(mass0 - massesB0[1],2),
-					 100, pow(massesB0[1]+massesB0[2],2), pow(mass0 - massesB0[0],2) );
-
-
-	 for(GInt_t event=0; event<events; event++ )
-	 {
-
-		 dalitz->Fill( result_MJpsipi[event]*result_MJpsipi[event],
-				 result_MKpi[event]*result_MKpi[event],
-				 MyEvents->fWeights[event]  );
-
-	 }
-
-	 TCanvas *c2 = new TCanvas( "dalitz", "", 600, 500 );
-	 dalitz->Draw("COLZ");
-	 dalitz->SetStats(0);
-	 c2->Print( "dalitzW.pdf" );
-
-	 TH2D *dalitz2 = new TH2D("dalitz2",
-			 TString::Format("Unweigted;M^{2}(%s,%s) [GeV^{2}/c^{4}]; M^{2}(%s,%s) [GeV^{2}/c^{4}]"
-					 , namesB0[0].c_str(), namesB0[1].c_str()
-					 , namesB0[1].c_str(), namesB0[2].c_str() ).Data(),
-					 100, pow(massesB0[0]+massesB0[2],2), pow(mass0 - massesB0[1],2),
-					 100, pow(massesB0[1]+massesB0[2],2), pow(mass0 - massesB0[0],2) );
-
-
-	 for(GInt_t event=0; event<events; event++ )
-	 {
-
-		 dalitz2->Fill( result_MJpsipi[event]*result_MJpsipi[event],
-				 result_MKpi[event]*result_MKpi[event],
-				 MyEvents->fAccRejFlags[event]  );
-
-	 }
-
-
-	 TCanvas *c3 = new TCanvas( "dalitz2", "", 600, 500 );
-		 dalitz2->Draw("COLZ");
-		 dalitz2->SetStats(0);
-		 c2->Print( "dalitzU.pdf" );
-
-
-
-	 myapp->Run();
-	 return 0;
-
+    clock_gettime(CLOCK_REALTIME, &time1);
+    PhaseSpace phspJpsi(3.096916, massesJpsi, events);
+    clock_gettime(CLOCK_REALTIME, &time2);
+    GReal_t phsp_time_usedJpsi = ((GReal_t)(time_diff(time1, time2).tv_sec + time_diff(time1, time2).tv_nsec * 1.0e-9));
+
+    cout << "|\t PhaseSpace ctor time [J/psi]:\t " << phsp_time_usedJpsi << " s" << std::endl;
+
+    clock_gettime(CLOCK_REALTIME, &time1);
+    phspJpsi.Generate(phsp.GetDaughters(0));
+    clock_gettime(CLOCK_REALTIME, &time2);
+
+    phspJpsi.Unweight();
+
+    GReal_t cpu_time_usedJpsi = phspJpsi.GetEvtTime();
+    /*
+    cpu_time_usedJpsi = ((GReal_t) (time_diff(time1, time2).tv_sec
+            + time_diff(time1, time2).tv_nsec * 1.0e-9));*/
+
+    cout << "|\t Generate time [J/psi]:\t " << cpu_time_usedJpsi << " s" << std::endl;
+
+    clock_gettime(CLOCK_REALTIME, &time1);
+    phspJpsi.Export(MyEventsJpsi);
+    clock_gettime(CLOCK_REALTIME, &time2);
+
+    GReal_t exp_time_usedJpsi = ((GReal_t)(time_diff(time1, time2).tv_sec + time_diff(time1, time2).tv_nsec * 1.0e-9));
+
+    cout << "|\t Export time [J/psi]:\t\t " << exp_time_usedJpsi << " s" << std::endl;
+
+    cout << "=========================================================" << std::endl;
+
+    for(GInt_t event = 0; event < 10; event++) {
+        cout << "Event: " << event << std::endl
+             << "\t| weight " << MyEventsJpsi->fWeights[event] << "\t| flag " << MyEventsJpsi->fAccRejFlags[event]
+             << endl;
+
+        for(GInt_t daughter = 0; daughter < 2; daughter++) {
+            cout << " \t| " << namesJpsi[daughter] << " : mass " << MyEventsJpsi->fDaughters[daughter][event].mass()
+                 << " 4-momentum ( " << MyEventsJpsi->fDaughters[daughter][event].get(0) << ", "
+                 << MyEventsJpsi->fDaughters[daughter][event].get(1) << ", "
+                 << MyEventsJpsi->fDaughters[daughter][event].get(2) << ", "
+                 << MyEventsJpsi->fDaughters[daughter][event].get(3) << ")  " << std::endl;
+        }
+        cout << std::endl;
+    }
+
+    VariableSet_h Var(5);
+    RealVector_h result_MKpi(events);
+    RealVector_h result_MJpsipi(events);
+    RealVector_h result_CosThetaK(events);
+    RealVector_h result_CosThetaMu(events);
+    RealVector_h result_DeltaAngle(events);
+
+    Var[0] = &result_MKpi;
+    Var[1] = &result_MJpsipi;
+    Var[2] = &result_CosThetaK;
+    Var[3] = &result_CosThetaMu;
+    Var[4] = &result_DeltaAngle;
+
+    ParticlesSet_d JpsiKpiMuMu(5);
+    JpsiKpiMuMu[0] = &phsp.GetDaughters(0);
+    JpsiKpiMuMu[1] = &phsp.GetDaughters(1);
+    JpsiKpiMuMu[2] = &phsp.GetDaughters(2);
+    JpsiKpiMuMu[3] = &phspJpsi.GetDaughters(0);
+    JpsiKpiMuMu[4] = &phspJpsi.GetDaughters(1);
+
+    Dataset DataJpsiKpi = Dataset();
+
+    clock_gettime(CLOCK_REALTIME, &time1);
+    EvaluateArray<Dataset>(DataJpsiKpi, JpsiKpiMuMu, Var);
+    clock_gettime(CLOCK_REALTIME, &time2);
+    GReal_t Dataset_time = ((GReal_t)(time_diff(time1, time2).tv_sec + time_diff(time1, time2).tv_nsec * 1.0e-9));
+    cout << "=========================================================" << std::endl;
+    cout << "=================   Evaluate Dataset   ===============" << std::endl;
+    cout << "=========================================================" << std::endl;
+    cout << "|\t Dataset time : " << Dataset_time << " s" << std::endl;
+    cout << "=========================================================" << std::endl;
+
+    for(GInt_t event = 0; event < 10; event++) {
+        std::cout << event << " " << result_MKpi[event] << " " << result_MJpsipi[event] << " "
+                  << result_CosThetaK[event] << " " << result_CosThetaMu[event] << " " << result_DeltaAngle[event]
+                  << std::endl;
+    }
+
+    TH1D *cosThetaK  = new TH1D("cosThetaK", ";Cos(#theta_{K});Events", 100, -1.0, 1.0);
+    TH1D *cosThetaMu = new TH1D("cosThetaMu", ";Cos(#theta_{#Mu});Events", 100, -1.0, 1.0);
+    TH1D *deltaAngle = new TH1D("deltaAngle", ";#Delta #phi;Events", 100, 0.0, 6.3);
+    TH1D *MKpi       = new TH1D("MKpi", ";M(K,#pi);Events", 100, massesB0[1] + massesB0[2], mass0 - massesB0[0]);
+    TH1D *MJpsipi
+        = new TH1D("MJpsipi", ";M(Jpsi/#psi,#pi);Events", 100, massesB0[0] + massesB0[2], mass0 - massesB0[1]);
+
+    for(GInt_t event = 0; event < events; event++) {
+        cosThetaK->Fill(result_CosThetaK[event], MyEvents->fWeights[event]);
+        cosThetaMu->Fill(result_CosThetaMu[event], MyEvents->fWeights[event]);
+        deltaAngle->Fill(result_DeltaAngle[event], MyEvents->fWeights[event]);
+        MKpi->Fill(result_MKpi[event], MyEvents->fWeights[event]);
+        MJpsipi->Fill(result_MJpsipi[event], MyEvents->fWeights[event]);
+    }
+
+    TCanvas *c_cosThetaK = new TCanvas("cosThetaK", "", 600, 500);
+    cosThetaK->Draw("HIST");
+    cosThetaK->SetLineColor(4);
+    cosThetaK->SetLineWidth(2);
+    cosThetaK->SetStats(0);
+    cosThetaK->SetMinimum(0);
+    c_cosThetaK->Print("cosThetaK.pdf");
+
+    TCanvas *c_cosThetaMu = new TCanvas("cosThetaMu", "", 600, 500);
+    cosThetaMu->Draw("HIST");
+    cosThetaMu->SetLineColor(4);
+    cosThetaMu->SetLineWidth(2);
+    cosThetaMu->SetStats(0);
+    cosThetaMu->SetMinimum(0);
+    c_cosThetaMu->Print("cosThetaMu.pdf");
+
+    TCanvas *c_deltaAngle = new TCanvas("deltaAngle", "", 600, 500);
+    deltaAngle->Draw("HIST");
+    deltaAngle->SetLineColor(4);
+    deltaAngle->SetLineWidth(2);
+    deltaAngle->SetStats(0);
+    deltaAngle->SetMinimum(0);
+    c_deltaAngle->Print("deltaAngle.pdf");
+
+    TCanvas *c_MKpi = new TCanvas("MKpi", "", 600, 500);
+    MKpi->Draw("HIST");
+    MKpi->SetLineColor(4);
+    MKpi->SetLineWidth(2);
+    MKpi->SetStats(0);
+    MKpi->SetMinimum(0);
+    c_MKpi->Print("MKpi.pdf");
+
+    TCanvas *c_MJpsipi = new TCanvas("MJpsipi", "", 600, 500);
+    MJpsipi->Draw("HIST");
+    MJpsipi->SetLineColor(4);
+    MJpsipi->SetLineWidth(2);
+    MJpsipi->SetStats(0);
+    MJpsipi->SetMinimum(0);
+    c_MJpsipi->Print("MJpsipi.pdf");
+
+    TH2D *dalitz = new TH2D("dalitz",
+                            TString::Format("Weigted;M^{2}(%s,%s) [GeV^{2}/c^{4}]; M^{2}(%s,%s) [GeV^{2}/c^{4}]",
+                                            namesB0[0].c_str(),
+                                            namesB0[1].c_str(),
+                                            namesB0[1].c_str(),
+                                            namesB0[2].c_str())
+                                .Data(),
+                            100,
+                            pow(massesB0[0] + massesB0[2], 2),
+                            pow(mass0 - massesB0[1], 2),
+                            100,
+                            pow(massesB0[1] + massesB0[2], 2),
+                            pow(mass0 - massesB0[0], 2));
+
+    for(GInt_t event = 0; event < events; event++) {
+        dalitz->Fill(result_MJpsipi[event] * result_MJpsipi[event],
+                     result_MKpi[event] * result_MKpi[event],
+                     MyEvents->fWeights[event]);
+    }
+
+    TCanvas *c2 = new TCanvas("dalitz", "", 600, 500);
+    dalitz->Draw("COLZ");
+    dalitz->SetStats(0);
+    c2->Print("dalitzW.pdf");
+
+    TH2D *dalitz2 = new TH2D("dalitz2",
+                             TString::Format("Unweigted;M^{2}(%s,%s) [GeV^{2}/c^{4}]; M^{2}(%s,%s) [GeV^{2}/c^{4}]",
+                                             namesB0[0].c_str(),
+                                             namesB0[1].c_str(),
+                                             namesB0[1].c_str(),
+                                             namesB0[2].c_str())
+                                 .Data(),
+                             100,
+                             pow(massesB0[0] + massesB0[2], 2),
+                             pow(mass0 - massesB0[1], 2),
+                             100,
+                             pow(massesB0[1] + massesB0[2], 2),
+                             pow(mass0 - massesB0[0], 2));
+
+    for(GInt_t event = 0; event < events; event++) {
+        dalitz2->Fill(result_MJpsipi[event] * result_MJpsipi[event],
+                      result_MKpi[event] * result_MKpi[event],
+                      MyEvents->fAccRejFlags[event]);
+    }
+
+    TCanvas *c3 = new TCanvas("dalitz2", "", 600, 500);
+    dalitz2->Draw("COLZ");
+    dalitz2->SetStats(0);
+    c2->Print("dalitzU.pdf");
+
+    myapp->Run();
+    return 0;
 }

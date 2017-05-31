@@ -18,16 +18,15 @@
 using namespace std;
 using namespace GooFit;
 
-int main(int argc, char** argv) {
-
+int main(int argc, char **argv) {
     GooFit::Application app("2D plot example", argc, argv);
 
     try {
         app.run();
-    } catch (const GooFit::ParseError &e) {
+    } catch(const GooFit::ParseError &e) {
         return app.exit(e);
     }
-    
+
     // In real code, use a random device here
     std::mt19937 gen(137);
     std::normal_distribution<> dx(0.2, 1.1);
@@ -50,13 +49,16 @@ int main(int argc, char** argv) {
     Variable yvar{"yvar", -5, 5};
     UnbinnedDataSet data({&xvar, &yvar});
 
-    TH2F dataHist("dataHist", "",
-                  xvar.getNumBins(), xvar.getLowerLimit(), xvar.getUpperLimit(),
-                  yvar.getNumBins(), yvar.getLowerLimit(), yvar.getUpperLimit());
-    TH1F xvarHist("xvarHist", "",
-                  xvar.getNumBins(), xvar.getLowerLimit(), xvar.getUpperLimit());
-    TH1F yvarHist("yvarHist", "",
-                  yvar.getNumBins(), yvar.getLowerLimit(), yvar.getUpperLimit());
+    TH2F dataHist("dataHist",
+                  "",
+                  xvar.getNumBins(),
+                  xvar.getLowerLimit(),
+                  xvar.getUpperLimit(),
+                  yvar.getNumBins(),
+                  yvar.getLowerLimit(),
+                  yvar.getUpperLimit());
+    TH1F xvarHist("xvarHist", "", xvar.getNumBins(), xvar.getLowerLimit(), xvar.getUpperLimit());
+    TH1F yvarHist("yvarHist", "", yvar.getNumBins(), yvar.getLowerLimit(), yvar.getUpperLimit());
 
     dataHist.SetStats(false);
     xvarHist.SetStats(false);
@@ -77,33 +79,36 @@ int main(int argc, char** argv) {
         }
     }
 
-    Variable xmean {"xmean", 0, 1, -10, 10};
-    Variable xsigm {"xsigm", 1, 0.5, 1.5};
+    Variable xmean{"xmean", 0, 1, -10, 10};
+    Variable xsigm{"xsigm", 1, 0.5, 1.5};
     GaussianPdf xgauss("xgauss", &xvar, &xmean, &xsigm);
 
     Variable ymean{"ymean", 0, 1, -10, 10};
-    Variable ysigm {"ysigm", 0.4, 0.1, 0.6};
+    Variable ysigm{"ysigm", 0.4, 0.1, 0.6};
     GaussianPdf ygauss{"ygauss", &yvar, &ymean, &ysigm};
 
     ProdPdf total("total", {&xgauss, &ygauss});
     total.setData(&data);
-    
+
     FitManager fitter(&total);
     fitter.fit();
 
-    TH2F pdfHist("pdfHist", "",
-                 xvar.getNumBins(), xvar.getLowerLimit(), xvar.getUpperLimit(),
-                 yvar.getNumBins(), yvar.getLowerLimit(), yvar.getUpperLimit());
-    TH1F xpdfHist("xpdfHist", "",
-                  xvar.getNumBins(), xvar.getLowerLimit(), xvar.getUpperLimit());
-    TH1F ypdfHist("ypdfHist", "",
-                  yvar.getNumBins(), yvar.getLowerLimit(), yvar.getUpperLimit());
+    TH2F pdfHist("pdfHist",
+                 "",
+                 xvar.getNumBins(),
+                 xvar.getLowerLimit(),
+                 xvar.getUpperLimit(),
+                 yvar.getNumBins(),
+                 yvar.getLowerLimit(),
+                 yvar.getUpperLimit());
+    TH1F xpdfHist("xpdfHist", "", xvar.getNumBins(), xvar.getLowerLimit(), xvar.getUpperLimit());
+    TH1F ypdfHist("ypdfHist", "", yvar.getNumBins(), yvar.getLowerLimit(), yvar.getUpperLimit());
 
     pdfHist.SetStats(false);
     xpdfHist.SetStats(false);
     ypdfHist.SetStats(false);
 
-    UnbinnedDataSet grid = total.makeGrid();
+    UnbinnedDataSet grid                     = total.makeGrid();
     std::vector<std::vector<double>> pdfVals = total.getCompProbsAtDataPoints();
 
     TCanvas foo;
@@ -121,23 +126,23 @@ int main(int argc, char** argv) {
     }
 
     for(int i = 0; i < xvar.getNumBins(); ++i) {
-        double val = xpdfHist.GetBinContent(i+1);
+        double val = xpdfHist.GetBinContent(i + 1);
         val /= totalPdf;
         val *= totalData;
-        xpdfHist.SetBinContent(i+1, val);
+        xpdfHist.SetBinContent(i + 1, val);
     }
 
     for(int i = 0; i < yvar.getNumBins(); ++i) {
-        double val = ypdfHist.GetBinContent(i+1);
+        double val = ypdfHist.GetBinContent(i + 1);
         val /= totalPdf;
         val *= totalData;
-        ypdfHist.SetBinContent(i+1, val);
+        ypdfHist.SetBinContent(i + 1, val);
 
         for(int j = 0; j < xvar.getNumBins(); ++j) {
-            val = pdfHist.GetBinContent(j+1, i+1);
+            val = pdfHist.GetBinContent(j + 1, i + 1);
             val /= totalPdf;
             val *= totalData;
-            pdfHist.SetBinContent(j+1, i+1, val);
+            pdfHist.SetBinContent(j + 1, i + 1, val);
         }
     }
 
@@ -146,11 +151,11 @@ int main(int argc, char** argv) {
 
     for(int i = 0; i < yvar.getNumBins(); ++i) {
         for(int j = 0; j < xvar.getNumBins(); ++j) {
-            double pval = pdfHist.GetBinContent(j+1, i+1);
-            double dval = dataHist.GetBinContent(j+1, i+1);
+            double pval = pdfHist.GetBinContent(j + 1, i + 1);
+            double dval = dataHist.GetBinContent(j + 1, i + 1);
             pval -= dval;
             pval /= std::max(1.0, sqrt(dval));
-            pdfHist.SetBinContent(j+1, i+1, pval);
+            pdfHist.SetBinContent(j + 1, i + 1, pval);
         }
     }
 
@@ -173,7 +178,6 @@ int main(int argc, char** argv) {
     ypdfHist.SetLineWidth(3);
     ypdfHist.Draw("lsame");
     foo.SaveAs("yhist.png");
-
 
     return fitter;
 }

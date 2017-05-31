@@ -5,20 +5,19 @@
 
 namespace GooFit {
 
-
-__device__ fptype device_ScaledGaussian(fptype* evt, fptype* p, unsigned int* indices) {
-    fptype x = evt[0];
-    fptype mean = p[indices[1]] + p[indices[3]];
+__device__ fptype device_ScaledGaussian(fptype *evt, fptype *p, unsigned int *indices) {
+    fptype x     = evt[0];
+    fptype mean  = p[indices[1]] + p[indices[3]];
     fptype sigma = p[indices[2]] * (1 + p[indices[4]]);
-    fptype ret = exp(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
+    fptype ret   = exp(-0.5 * (x - mean) * (x - mean) / (sigma * sigma));
 
     return ret;
 }
 
 __device__ device_function_ptr ptr_to_ScaledGaussian = device_ScaledGaussian;
 
-__host__ ScaledGaussianPdf::ScaledGaussianPdf(std::string n, Variable* _x, Variable* mean, Variable* sigma,
-        Variable* delta, Variable* epsilon)
+__host__ ScaledGaussianPdf::ScaledGaussianPdf(
+    std::string n, Variable *_x, Variable *mean, Variable *sigma, Variable *delta, Variable *epsilon)
     : GooPdf(_x, n) {
     registerParameter(mean);
     registerParameter(sigma);
@@ -35,4 +34,3 @@ __host__ ScaledGaussianPdf::ScaledGaussianPdf(std::string n, Variable* _x, Varia
 }
 
 } // namespace GooFit
-

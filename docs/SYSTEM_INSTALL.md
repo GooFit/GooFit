@@ -34,7 +34,7 @@ source root-6/bin/thisroot.sh
 A truly minimal system, Alpine gives you a working Docker system under 3 MB.
 
 ```bash
-docker run -it alpine sh
+docker run -it alpine
 apk add --no-cache make cmake g++ git libexecinfo-dev
 git clone --recursive https://github.com/GooFit/GooFit.git
 cd GooFit
@@ -48,7 +48,7 @@ ctest
 In the spirit of minimality, this is less instructive and contains more magic, but also would also work:
 
 ```bash
-docker run -it alpine sh
+docker run -it alpine
 apk add --no-cache make cmake g++ git
 git clone https://github.com/GooFit/GooFit.git
 cd GooFit

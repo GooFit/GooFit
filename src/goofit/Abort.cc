@@ -44,4 +44,4 @@ void abort(std::string file, int line, std::string reason, const PdfBase* pdf) {
     throw GooFit::GeneralError(reason);
 }
 
-}
+} // namespace GooFit

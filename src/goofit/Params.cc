@@ -36,4 +36,4 @@ void Params::SetGooFitParams(const Minuit2::MnUserParameterState& input) {
     }
 }
     
-}
+} // namespace GooFit

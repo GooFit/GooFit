@@ -72,4 +72,4 @@ Params* FCN::GetParams() {
     return params_;
 }
     
-}
+} // namespace GooFit

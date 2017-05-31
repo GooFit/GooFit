@@ -64,7 +64,7 @@ endif()
 
 if(CMAKE_VERSION VERSION_GREATER 3.6)
 # Add clang-tidy if available
-option(GOOFIT_TIDY_FIX "Perform fixes for Clang-Tidy (resets to OFF)" OFF)
+option(GOOFIT_TIDY_FIX "Perform fixes for Clang-Tidy - changes source inplace" OFF)
     find_program(
         CLANG_TIDY_EXE
         NAMES "clang-tidy"
@@ -305,10 +305,15 @@ endif()
 
 # Adding simple libraries
 add_subdirectory("extern/CLI11")
+mark_as_advanced(CLI_EXAMPLES CLI_SINGLE_FILE CLI_SINGLE_FILE_TESTS CLI_TESTING)
 add_subdirectory("extern/FeatureDetector")
 set_target_properties(FeatureDetector PROPERTIES FOLDER extern)
+
+## Format
 add_subdirectory("extern/fmt")
 set_target_properties(fmt PROPERTIES FOLDER extern)
+mark_as_advanced(FMT_CPPFORMAT FMT_DOC FMT_INSTALL FMT_PEDANTIC FMT_TEST FMT_USE_CPP11)
+
 
 add_library(rang INTERFACE)
 target_include_directories(rang INTERFACE "${PROJECT_SOURCE_DIR}/extern/rang/include")
@@ -486,4 +491,3 @@ if(GOOFIT_TESTS)
     add_subdirectory(tests)
 endif()
 
-set(GOOFIT_TIDY_FIX OFF CACHE BOOL "Perform fixes for Clang-Tidy (resets to OFF)" FORCE)

@@ -3,12 +3,8 @@
 
 namespace GooFit {
 
-
-MixingTimeResolution::MixingTimeResolution() = default;
+MixingTimeResolution::MixingTimeResolution()  = default;
 MixingTimeResolution::~MixingTimeResolution() = default;
 
-void MixingTimeResolution::initIndex(void* dev_fcn_ptr) {
-    resFunctionIdx = GooPdf::findFunctionIdx(dev_fcn_ptr);
-}
+void MixingTimeResolution::initIndex(void *dev_fcn_ptr) { resFunctionIdx = GooPdf::findFunctionIdx(dev_fcn_ptr); }
 } // namespace GooFit
-

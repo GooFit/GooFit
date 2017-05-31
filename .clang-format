@@ -2,7 +2,7 @@ Language:        Cpp
 BasedOnStyle:  LLVM
 # AccessModifierOffset: -2
 # AlignAfterOpenBracket: Align
-# AlignConsecutiveAssignments: false
+AlignConsecutiveAssignments: true
 # AlignConsecutiveDeclarations: false
 # AlignEscapedNewlinesLeft: false
 # AlignOperands:   true
@@ -16,7 +16,7 @@ BasedOnStyle:  LLVM
 # AlwaysBreakAfterDefinitionReturnType: None
 # AlwaysBreakAfterReturnType: None
 # AlwaysBreakBeforeMultilineStrings: false
-# AlwaysBreakTemplateDeclarations: false
+AlwaysBreakTemplateDeclarations: true
 BinPackArguments: false
 BinPackParameters: false
 # BraceWrapping:   
@@ -31,10 +31,10 @@ BinPackParameters: false
 #   BeforeCatch:     false
 #   BeforeElse:      false
 #   IndentBraces:    false
-# BreakBeforeBinaryOperators: None
+BreakBeforeBinaryOperators: All
 # BreakBeforeBraces: Attach
 # BreakBeforeTernaryOperators: true
-# BreakConstructorInitializersBeforeComma: false
+BreakConstructorInitializersBeforeComma: true
 # BreakAfterJavaFieldAnnotations: false
 # BreakStringLiterals: true
 ColumnLimit:     120
@@ -53,7 +53,7 @@ IndentWidth:     4
 # IndentWrappedFunctionNames: false
 # JavaScriptQuotes: Leave
 # JavaScriptWrapImports: true
-# KeepEmptyLinesAtTheStartOfBlocks: true
+KeepEmptyLinesAtTheStartOfBlocks: false
 # MacroBlockBegin: ''
 # MacroBlockEnd:   ''
 # MaxEmptyLinesToKeep: 1
@@ -71,7 +71,7 @@ IndentWidth:     4
 # ReflowComments:  true
 SortIncludes:    false
 # SpaceAfterCStyleCast: false
-# SpaceAfterTemplateKeyword: true
+SpaceAfterTemplateKeyword: false
 # SpaceBeforeAssignmentOperators: true
 SpaceBeforeParens: Never
 # SpaceInEmptyParentheses: false

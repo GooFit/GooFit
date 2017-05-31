@@ -5,15 +5,21 @@
 
 namespace GooFit {
 
-
-typedef thrust::complex<fptype> (*resonance_function_ptr)(fptype, fptype, fptype, unsigned int*);
+typedef thrust::complex<fptype> (*resonance_function_ptr)(fptype, fptype, fptype, unsigned int *);
 
 __device__ fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m);
 
-__device__ fptype dampingFactorSquare(const fptype& cmmom, const int& spin, const fptype& mRadius);
+__device__ fptype dampingFactorSquare(const fptype &cmmom, const int &spin, const fptype &mRadius);
 
-__device__ fptype spinFactor(unsigned int spin, fptype motherMass, fptype daug1Mass, fptype daug2Mass,
-                              fptype daug3Mass, fptype m12, fptype m13, fptype m23, unsigned int cyclic_index);
+__device__ fptype spinFactor(unsigned int spin,
+                             fptype motherMass,
+                             fptype daug1Mass,
+                             fptype daug2Mass,
+                             fptype daug3Mass,
+                             fptype m12,
+                             fptype m13,
+                             fptype m23,
+                             unsigned int cyclic_index);
 
 class ResonancePdf : public GooPdf {
     // Service class intended to hold parametrisations of
@@ -26,55 +32,46 @@ class ResonancePdf : public GooPdf {
     friend class TddpPdf;
     friend class DalitzPlotPdf;
     friend class IncoherentSumPdf;
-public:
+
+  public:
     // Constructor for regular BW
     ResonancePdf(std::string name,
-                 Variable* ar,
-                 Variable* ai,
-                 Variable* mass,
-                 Variable* width,
+                 Variable *ar,
+                 Variable *ai,
+                 Variable *mass,
+                 Variable *width,
                  unsigned int sp,
                  unsigned int cyc);
 
     // Gounaris-Sakurai
     ResonancePdf(std::string name,
-                 Variable* ar,
-                 Variable* ai,
+                 Variable *ar,
+                 Variable *ai,
                  unsigned int sp,
-                 Variable* mass,
-                 Variable* width,
+                 Variable *mass,
+                 Variable *width,
                  unsigned int cyc);
 
     // LASS constructor
     ResonancePdf(std::string name,
-                 Variable* ar,
-                 Variable* ai,
-                 Variable* mass,
+                 Variable *ar,
+                 Variable *ai,
+                 Variable *mass,
                  unsigned int sp,
-                 Variable* width,
+                 Variable *width,
                  unsigned int cyc);
-
 
     // Nonresonant constructor
-    ResonancePdf(std::string name,
-                 Variable* ar,
-                 Variable* ai);
+    ResonancePdf(std::string name, Variable *ar, Variable *ai);
 
     // Gaussian constructor
-    ResonancePdf(std::string name,
-                 Variable* ar,
-                 Variable* ai,
-                 Variable* mean,
-                 Variable* sigma,
-                 unsigned int cyc);
+    ResonancePdf(std::string name, Variable *ar, Variable *ai, Variable *mean, Variable *sigma, unsigned int cyc);
 
-private:
-    void setConstantIndex(unsigned int idx) {
-        host_indices[parameters + 1] = idx;
-    }
+  private:
+    void setConstantIndex(unsigned int idx) { host_indices[parameters + 1] = idx; }
 
-    Variable* amp_real;
-    Variable* amp_imag;
+    Variable *amp_real;
+    Variable *amp_imag;
     /*
     Variable* mass;
     Variable* width;
@@ -86,4 +83,3 @@ private:
 };
 
 } // namespace GooFit
-

@@ -16,12 +16,11 @@ See *.cu file for more details
 
 namespace GooFit {
 
-
 class SpinFactor;
 
-enum class LS {ONE, BW, Lass, Lass_M3, nonRes, Bugg, Bugg3, Flatte, SBW};
-//PDG notation for FF
-enum class FF : unsigned int {One = 0, BL, BL_Prime, BL2};
+enum class LS { ONE, BW, Lass, Lass_M3, nonRes, Bugg, Bugg3, Flatte, SBW };
+// PDG notation for FF
+enum class FF : unsigned int { One = 0, BL, BL_Prime, BL2 };
 
 class Lineshape : public GooPdf {
     friend class DPPdf;
@@ -32,61 +31,67 @@ class Lineshape : public GooPdf {
     // component in one of the friend classes. It extends
     // GooPdf so as to take advantage of the
     // infrastructure, but will crash if used on its own.
-    Variable* _mass;
-    Variable* _width;
+    Variable *_mass;
+    Variable *_width;
     unsigned int _L;
     unsigned int _Mpair;
     LS _kind;
     FF _FormFac;
     fptype _radius;
-    std::vector<Variable*> _AdditionalVars;
-public:
+    std::vector<Variable *> _AdditionalVars;
+
+  public:
     Lineshape(std::string name,
-              Variable* mass,
-              Variable* width,
+              Variable *mass,
+              Variable *width,
               unsigned int L,
               unsigned int Mpair,
-              LS kind = LS::BW,
-              FF FormFac = FF::BL_Prime,
-              fptype radius = 1.5,
-              std::vector<Variable*> AdditionalVars = std::vector<Variable*>());
+              LS kind                                = LS::BW,
+              FF FormFac                             = FF::BL_Prime,
+              fptype radius                          = 1.5,
+              std::vector<Variable *> AdditionalVars = std::vector<Variable *>());
 
-    bool operator==(const Lineshape& L) const {
+    bool operator==(const Lineshape &L) const {
         if(_AdditionalVars.size() != L._AdditionalVars.size())
             return false;
 
         bool addvar = true;
 
         for(int i = 0; i < _AdditionalVars.size(); ++i) {
-            addvar = addvar and (L._AdditionalVars[i]->getValue() ==  _AdditionalVars[i]->getValue());
+            addvar = addvar and (L._AdditionalVars[i]->getValue() == _AdditionalVars[i]->getValue());
         }
 
-        return addvar and (L.getName() == getName() and L._mass->getValue() == _mass->getValue() and L._width->getValue() == _width->getValue()
-                           and L._L == _L and L._Mpair == _Mpair and L._kind == _kind and L._FormFac == _FormFac);
+        return addvar and (L.getName() == getName() and L._mass->getValue() == _mass->getValue()
+                           and L._width->getValue() == _width->getValue()
+                           and L._L == _L
+                           and L._Mpair == _Mpair
+                           and L._kind == _kind
+                           and L._FormFac == _FormFac);
     }
     Lineshape(std::string name);
 
-    void setConstantIndex(unsigned int idx) {
-        host_indices[parameters + 1] = idx;
-    }
+    void setConstantIndex(unsigned int idx) { host_indices[parameters + 1] = idx; }
 };
 
 class Amplitude {
     friend class DPPdf;
     friend class TDDP4;
 
+  public:
+    Amplitude(std::string uniqueDecayStr,
+              Variable *ar,
+              Variable *ai,
+              std::vector<Lineshape *> LS,
+              std::vector<SpinFactor *> SF,
+              unsigned int nPerm = 1);
+    bool operator==(const Amplitude &A) const;
 
-public:
-    Amplitude(std::string uniqueDecayStr, Variable* ar, Variable* ai, std::vector<Lineshape*> LS,
-              std::vector<SpinFactor*> SF, unsigned int nPerm = 1);
-    bool operator==(const Amplitude& A) const;
-private:
+  private:
     std::string _uniqueDecayStr;
-    Variable* _ar;
-    Variable* _ai;
-    std::vector<SpinFactor*> _SF;
-    std::vector<Lineshape*> _LS;
+    Variable *_ar;
+    Variable *_ai;
+    std::vector<SpinFactor *> _SF;
+    std::vector<Lineshape *> _LS;
     unsigned int _nPerm;
 };
 } // namespace GooFit
-

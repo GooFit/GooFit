@@ -12,18 +12,16 @@ void init_ExpPdf(py::module &);
 void init_FitManager(py::module &);
 
 PYBIND11_PLUGIN(goofit) {
-        py::module m("goofit", "Python interface for GooFit");
+    py::module m("goofit", "Python interface for GooFit");
 
-        init_Variable(m);
-        init_DataSet(m);
-        init_BinnedDataSet(m);
-        init_UnbinnedDataSet(m);
-        init_PdfBase(m);
-        init_GooPdf(m);
-        init_ExpPdf(m);
-        init_FitManager(m);
+    init_Variable(m);
+    init_DataSet(m);
+    init_BinnedDataSet(m);
+    init_UnbinnedDataSet(m);
+    init_PdfBase(m);
+    init_GooPdf(m);
+    init_ExpPdf(m);
+    init_FitManager(m);
 
-        return m.ptr();
+    return m.ptr();
 }
-
-

@@ -19,12 +19,12 @@
 using namespace std;
 using namespace GooFit;
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
     GooFit::Application app("Addition example", argc, argv);
 
     try {
         app.run();
-    } catch (const GooFit::ParseError &e) {
+    } catch(const GooFit::ParseError &e) {
         return app.exit(e);
     }
 
@@ -41,13 +41,12 @@ int main(int argc, char** argv) {
     gStyle->SetLineColor(1);
     gStyle->SetPalette(1, 0);
 
-    vector<Variable*> vars;
-    Variable* xvar = new Variable("xvar", -5, 5);
+    vector<Variable *> vars;
+    Variable *xvar = new Variable("xvar", -5, 5);
     vars.push_back(xvar);
     UnbinnedDataSet data(vars);
 
-    TH1F xvarHist("xvarHist", "",
-                  xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
+    TH1F xvarHist("xvarHist", "", xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
 
     xvarHist.SetStats(false);
 
@@ -70,21 +69,21 @@ int main(int argc, char** argv) {
         totalData++;
     }
 
-    Variable* xmean = new Variable("xmean", 0, 1, -10, 10);
-    Variable* xsigm = new Variable("xsigm", 1, 0.5, 1.5);
+    Variable *xmean = new Variable("xmean", 0, 1, -10, 10);
+    Variable *xsigm = new Variable("xsigm", 1, 0.5, 1.5);
     GaussianPdf signal("signal", xvar, xmean, xsigm);
 
     vars.clear();
-    Variable* constant = new Variable("constant", 1.0);
+    Variable *constant = new Variable("constant", 1.0);
     vars.push_back(constant);
     PolynomialPdf backgr("backgr", xvar, vars);
 
-    vector<PdfBase*> comps;
+    vector<PdfBase *> comps;
     comps.push_back(&signal);
     comps.push_back(&backgr);
 
     vars.clear();
-    Variable* sigFrac = new Variable("sigFrac", 0.9, 0.75, 1.00);
+    Variable *sigFrac = new Variable("sigFrac", 0.9, 0.75, 1.00);
     vars.push_back(sigFrac);
 
     AddPdf total("total", vars, comps);
@@ -92,12 +91,9 @@ int main(int argc, char** argv) {
     FitManager fitter(&total);
     fitter.fit();
 
-    TH1F pdfHist("pdfHist", "",
-                 xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
-    TH1F sigHist("sigHist", "",
-                 xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
-    TH1F bkgHist("bkgHist", "",
-                 xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
+    TH1F pdfHist("pdfHist", "", xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
+    TH1F sigHist("sigHist", "", xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
+    TH1F bkgHist("bkgHist", "", xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
 
     pdfHist.SetStats(false);
     sigHist.SetStats(false);
@@ -106,7 +102,7 @@ int main(int argc, char** argv) {
     UnbinnedDataSet grid(xvar);
 
     for(int i = 0; i < xvar->getNumBins(); ++i) {
-        double step = (xvar->getUpperLimit() - xvar->getLowerLimit())/xvar->getNumBins();
+        double step = (xvar->getUpperLimit() - xvar->getLowerLimit()) / xvar->getNumBins();
         xvar->setValue(xvar->getLowerLimit() + (i + 0.5) * step);
         grid.addEvent();
     }
@@ -127,20 +123,20 @@ int main(int argc, char** argv) {
     }
 
     for(int i = 0; i < xvar->getNumBins(); ++i) {
-        double val = pdfHist.GetBinContent(i+1);
+        double val = pdfHist.GetBinContent(i + 1);
         val /= totalPdf;
         val *= totalData;
-        pdfHist.SetBinContent(i+1, val);
-        val = sigHist.GetBinContent(i+1);
+        pdfHist.SetBinContent(i + 1, val);
+        val = sigHist.GetBinContent(i + 1);
         val /= totalPdf;
         val *= sigFrac->getValue();
         val *= totalData;
-        sigHist.SetBinContent(i+1, val);
-        val = bkgHist.GetBinContent(i+1);
+        sigHist.SetBinContent(i + 1, val);
+        val = bkgHist.GetBinContent(i + 1);
         val /= totalPdf;
         val *= (1.0 - sigFrac->getValue());
         val *= totalData;
-        bkgHist.SetBinContent(i+1, val);
+        bkgHist.SetBinContent(i + 1, val);
     }
 
     xvarHist.SetMarkerStyle(8);
@@ -157,8 +153,6 @@ int main(int argc, char** argv) {
     bkgHist.SetLineWidth(3);
     bkgHist.Draw("lsame");
     foo.SaveAs("xhist.png");
-
-
 
     return 0;
 }

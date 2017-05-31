@@ -8,6 +8,8 @@ This file includes some lineshapes and spinfactors.
 Also right now it is the home to some helper functions needed and an implementation of a simple 4-vec class that works on the GPU
 */
 
+#include <utility>
+
 #include "goofit/PDFs/LineshapesPdf.h"
 #include "goofit/PDFs/SpinFactors.h"
 
@@ -529,11 +531,11 @@ Lineshape::Lineshape(std::string name)
 
 Amplitude::Amplitude(std::string uniqueDecayStr, Variable* ar, Variable* ai, std::vector<Lineshape*> LS,
                      std::vector<SpinFactor*> SF, unsigned int nPerm)
-    : _uniqueDecayStr(uniqueDecayStr),
+    : _uniqueDecayStr(std::move(uniqueDecayStr)),
       _ar(ar),
       _ai(ai),
-      _SF(SF),
-      _LS(LS),
+      _SF(std::move(SF)),
+      _LS(std::move(LS)),
       _nPerm(nPerm)
 {}
 

@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <set>
+#include <utility>
 
 #include "goofit/FitManager.h"
 #include "goofit/BinnedDataSet.h"
@@ -26,7 +27,7 @@ int totalConstants = 1; // First constant is reserved for number of events.
 std::map<Variable*, std::set<PdfBase*>> variableRegistry;
 
 PdfBase::PdfBase(Variable* x, std::string n)
-    : name(n) { // Special-case PDFs should set to false.
+    : name(std::move(n)) { // Special-case PDFs should set to false.
     if(x)
         registerObservable(x);
 }

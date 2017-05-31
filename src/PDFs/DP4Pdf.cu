@@ -13,16 +13,16 @@ TODO:
   -For example the way Spinfactors are stored in the same array as the Lineshape values.
    Is this really worth the memory we lose by using a complex to store the SF?
 */
-#include <mcbooster/GTypes.h>
-#include <mcbooster/Vector4R.h>
-#include <mcbooster/Generate.h>
-#include <mcbooster/GContainers.h>
-#include <mcbooster/Evaluate.h>
-#include <mcbooster/EvaluateArray.h>
-#include <mcbooster/GFunctional.h>
+#include "goofit/Error.h"
 #include "goofit/PDFs/DP4Pdf.h"
 #include "goofit/PDFs/EvalVar.h"
-#include "goofit/Error.h"
+#include <mcbooster/Evaluate.h>
+#include <mcbooster/EvaluateArray.h>
+#include <mcbooster/GContainers.h>
+#include <mcbooster/GFunctional.h>
+#include <mcbooster/GTypes.h>
+#include <mcbooster/Generate.h>
+#include <mcbooster/Vector4R.h>
 
 namespace GooFit {
 

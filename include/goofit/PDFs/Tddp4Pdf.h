@@ -8,13 +8,13 @@ See *.cu file for more details
 
 #pragma once
 
-#include "goofit/PDFs/GooPdf.h"
 #include "goofit/PDFs/DalitzPlotHelpers.h"
+#include "goofit/PDFs/GooPdf.h"
+#include "goofit/PDFs/MixingTimeResolution_Aux.h"
 #include "goofit/PDFs/SpinFactors.h"
 #include <mcbooster/GContainers.h>
-#include <tuple>
 #include <thrust/remove.h>
-#include "goofit/PDFs/MixingTimeResolution_Aux.h"
+#include <tuple>
 
 namespace GooFit {
 

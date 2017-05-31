@@ -2,13 +2,13 @@
 
 #include "goofit/GlobalCudaDefines.h"
 
-#include <vector>
+#include <initializer_list>
 #include <set>
 #include <string>
-#include <initializer_list>
+#include <vector>
 
-#include "goofit/Variable.h"
 #include "goofit/Error.h"
+#include "goofit/Variable.h"
 
 namespace GooFit {
 

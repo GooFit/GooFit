@@ -1,8 +1,8 @@
 #pragma once
 
+#include "goofit/PDFs/DalitzPlotHelpers.h"
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/PDFs/MixingTimeResolution_Aux.h"
-#include "goofit/PDFs/DalitzPlotHelpers.h"
 
 namespace GooFit {
 

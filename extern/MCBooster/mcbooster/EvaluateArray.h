@@ -37,6 +37,7 @@
 #include <mcbooster/GContainers.h>
 #include <mcbooster/GTypes.h>
 #include <mcbooster/functors/Calculate.h>
+#include <mcbooster/strided_iterator.h>
 
 namespace mcbooster
 {

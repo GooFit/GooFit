@@ -1,8 +1,8 @@
 #pragma once
 
 #include <Minuit2/FCNBase.h>
-#include <Minuit2/MnUserParameters.h>
 #include <Minuit2/MnUserParameterState.h>
+#include <Minuit2/MnUserParameters.h>
 #include <vector>
 
 

@@ -1,16 +1,16 @@
 #include "goofit/GlobalCudaDefines.h"
-#include "goofit/PdfBase.h"
-#include "goofit/Variable.h"
 #include "goofit/Color.h"
 #include "goofit/Error.h"
 #include "goofit/Log.h"
+#include "goofit/PdfBase.h"
+#include "goofit/Variable.h"
 
 #include <algorithm>
 #include <set>
 #include <utility>
 
-#include "goofit/FitManager.h"
 #include "goofit/BinnedDataSet.h"
+#include "goofit/FitManager.h"
 #include "goofit/UnbinnedDataSet.h"
 
 namespace GooFit {

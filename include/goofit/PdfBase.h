@@ -3,11 +3,11 @@
 #include "goofit/GlobalCudaDefines.h"
 
 #include "goofit/Variable.h"
-#include "goofit/detail/Abort.h"
 #include "goofit/Version.h"
+#include "goofit/detail/Abort.h"
 
-#include <set>
 #include <map>
+#include <set>
 #include <vector>
 
 #ifdef ROOT_FOUND

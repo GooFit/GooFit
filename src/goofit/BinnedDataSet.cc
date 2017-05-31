@@ -1,7 +1,7 @@
 #include "goofit/BinnedDataSet.h"
-#include "goofit/Variable.h"
 #include "goofit/Error.h"
 #include "goofit/Log.h"
+#include "goofit/Variable.h"
 
 #include <functional>
 #include <numeric>

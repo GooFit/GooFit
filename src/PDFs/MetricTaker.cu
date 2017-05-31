@@ -4,20 +4,20 @@
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/detail/ThrustOverride.h"
 
-#include "goofit/Log.h"
-#include "goofit/Error.h"
-#include "goofit/Variable.h"
-#include "goofit/FitControl.h"
 #include "goofit/BinnedDataSet.h"
+#include "goofit/Error.h"
+#include "goofit/FitControl.h"
+#include "goofit/Log.h"
 #include "goofit/UnbinnedDataSet.h"
+#include "goofit/Variable.h"
 
-#include <thrust/transform_reduce.h>
-#include <thrust/transform.h>
-#include <thrust/host_vector.h>
 #include <thrust/device_vector.h>
-#include <thrust/sequence.h>
+#include <thrust/host_vector.h>
 #include <thrust/iterator/constant_iterator.h>
 #include <thrust/iterator/zip_iterator.h>
+#include <thrust/sequence.h>
+#include <thrust/transform.h>
+#include <thrust/transform_reduce.h>
 
 namespace GooFit {
 

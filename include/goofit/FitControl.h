@@ -1,10 +1,10 @@
 #pragma once
 
-#include "goofit/GlobalCudaDefines.h"
 #include "goofit/Error.h"
+#include "goofit/GlobalCudaDefines.h"
 
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace GooFit {
 

@@ -2,9 +2,9 @@
 
 #include <thrust/functional.h>
 
+#include "goofit/PDFs/MetricTaker.h"
 #include "goofit/PdfBase.h"
 #include "goofit/UnbinnedDataSet.h"
-#include "goofit/PDFs/MetricTaker.h"
 
 #ifdef ROOT_FOUND
 class TH1D;

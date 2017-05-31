@@ -1,10 +1,10 @@
 #include "goofit/GlobalCudaDefines.h"
-#include "goofit/PdfBase.h"
-#include "goofit/PDFs/GooPdf.h"
-#include "goofit/Error.h"
-#include "goofit/Log.h"
 #include "goofit/BinnedDataSet.h"
+#include "goofit/Error.h"
 #include "goofit/FitControl.h"
+#include "goofit/Log.h"
+#include "goofit/PDFs/GooPdf.h"
+#include "goofit/PdfBase.h"
 
 #ifdef GOOFIT_MPI
 #include <mpi.h>

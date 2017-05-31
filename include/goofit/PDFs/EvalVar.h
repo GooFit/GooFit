@@ -9,10 +9,10 @@ See *.cu file for more details
 #pragma once
 
 #include "goofit/PDFs/DalitzPlotHelpers.h"
-#include <mcbooster/GTypes.h>
-#include <mcbooster/Vector4R.h>
 #include <mcbooster/GContainers.h>
 #include <mcbooster/GFunctional.h>
+#include <mcbooster/GTypes.h>
+#include <mcbooster/Vector4R.h>
 
 namespace GooFit {
 

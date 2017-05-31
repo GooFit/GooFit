@@ -1,9 +1,9 @@
 #include "goofit/DataSet.h"
-#include "goofit/Variable.h"
 #include "goofit/Error.h"
+#include "goofit/Variable.h"
 
-#include <cstdlib>
 #include <climits>
+#include <cstdlib>
 #include <utility>
 
 namespace GooFit {

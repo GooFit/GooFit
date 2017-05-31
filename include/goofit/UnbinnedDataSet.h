@@ -2,9 +2,9 @@
 
 #include "goofit/DataSet.h"
 
+#include <initializer_list>
 #include <map>
 #include <vector>
-#include <initializer_list>
 
 namespace GooFit {
 

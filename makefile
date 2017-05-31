@@ -30,9 +30,6 @@ mpi:
 clang-format:
 	git ls-files -- '*.cu' '*.cc' '*.h' '*.cpp' | xargs clang-format -i -style=file
 
-modernize:
-	git ls-files -- '*.cu' '*.cc' '*.h' '*.cpp' | xargs ./scripts/ModernizeGooFit.py
-
 warning:
 	@echo "This project builds with CMake 3.4+."
 	@echo "This makefile is just a shortcut to prepare your build with CMake."

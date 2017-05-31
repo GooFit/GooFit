@@ -47,7 +47,7 @@ __constant__ unsigned int AmpIndices[500];
 __device__ fptype device_DP(fptype* evt, fptype* p, unsigned int* indices) {
     //printf("DalitzPlot evt %i zero: %i %i %f (%f, %f).\n", evtNum, numResonances, effFunctionIdx, eff, totalAmp.real, totalAmp.imag);
 
-    int evtNum = static_cast<int>( floor(0.5 + evt[indices[7 + indices[0]]]));
+    auto evtNum = static_cast<int>( floor(0.5 + evt[indices[7 + indices[0]]]));
     // printf("%i\n",evtNum );
     thrust::complex<fptype> totalAmp(0, 0);
     unsigned int cacheToUse    = indices[2];
@@ -366,7 +366,7 @@ __host__ fptype DPPdf::normalize() const {
     }
 
     // this is a little messy but it basically checks if the amplitude includes one of the recalculated lineshapes and if so recalculates that amplitude
-    std::map<std::string, std::pair<std::vector<unsigned int>, std::vector<unsigned int>>>::const_iterator AmpMapIt =
+    auto AmpMapIt =
         AmpMap.begin();
 
     for(int i = 0; i < AmpCalcs.size(); ++i) {
@@ -578,7 +578,7 @@ __device__ thrust::complex<fptype> SFCalculator::operator()(thrust::tuple<int, f
     // printf("vec%i %f, %f, %f, %f\n",2, vecs[8], vecs[9], vecs[10], vecs[11]);
     // printf("vec%i %f, %f, %f, %f\n",3, vecs[12], vecs[13], vecs[14], vecs[15]);
 
-    spin_function_ptr func = reinterpret_cast<spin_function_ptr>(device_function_table[functn_i]);
+    auto func = reinterpret_cast<spin_function_ptr>(device_function_table[functn_i]);
     fptype sf = (*func)(vecs, paramIndices+params_i);
     // printf("SpinFactors %i : %.7g\n",evtNum, sf );
     return thrust::complex<fptype>(sf, 0);
@@ -615,7 +615,7 @@ const {
 //   printf("evt %i vec%i %.5g, %.5g, %.5g, %.5g\n", evtNum,2, vecs[8], vecs[9], vecs[10], vecs[11]);
 //   printf("evt %i vec%i %.5g, %.5g, %.5g, %.5g\n", evtNum,3, vecs[12], vecs[13], vecs[14], vecs[15]);
 // // }
-    spin_function_ptr func = reinterpret_cast<spin_function_ptr>(device_function_table[functn_i]);
+    auto func = reinterpret_cast<spin_function_ptr>(device_function_table[functn_i]);
     fptype sf = (*func)(vecs, paramIndices+params_i);
 
     // printf("NormSF evt:%.5g, %.5g, %.5g, %.5g, %.5g\n", m12, m34, cos12, cos34, phi);

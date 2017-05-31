@@ -32,11 +32,11 @@ __device__ fptype device_ConvolvePdfs(fptype* evt, fptype* p, unsigned int* indi
     fptype x0      = evt[indices[2 + indices[0]]];
     int workSpaceIndex = indices[6];
 
-    int numbins = static_cast<int>( floor((hiBound - loBound) / step + 0.5));
+    auto numbins = static_cast<int>( floor((hiBound - loBound) / step + 0.5));
 
     fptype lowerBoundOffset = loBound / step;
     lowerBoundOffset -= floor(lowerBoundOffset);
-    int offsetInBins = static_cast<int>( floor(x0 / step - lowerBoundOffset));
+    auto offsetInBins = static_cast<int>( floor(x0 / step - lowerBoundOffset));
 
     // Brute-force calculate integral M(x) * R(x - x0) dx
     int offset = RO_CACHE(modelOffset[workSpaceIndex]);
@@ -63,11 +63,11 @@ __device__ fptype device_ConvolveSharedPdfs(fptype* evt, fptype* p, unsigned int
     unsigned int workSpaceIndex = indices[6];
     unsigned int numOthers = indices[7] + 1; // +1 for this PDF.
 
-    int numbins = static_cast<int>( floor((hiBound - loBound) / step + 0.5));
+    auto numbins = static_cast<int>( floor((hiBound - loBound) / step + 0.5));
 
     fptype lowerBoundOffset = loBound / step;
     lowerBoundOffset -= floor(lowerBoundOffset);
-    int offsetInBins = static_cast<int>( floor(x0 / step - lowerBoundOffset));
+    auto offsetInBins = static_cast<int>( floor(x0 / step - lowerBoundOffset));
 
     // Brute-force calculate integral M(x) * R(x - x0) dx
     __shared__ fptype modelCache[CONVOLUTION_CACHE_SIZE];
@@ -223,7 +223,7 @@ __host__ void ConvolutionPdf::setIntegrationConstants(fptype lo, fptype hi, fpty
         delete resolWorkSpace;
     }
 
-    int numbins = static_cast<int>( floor((host_iConsts[1] - host_iConsts[0]) / step + 0.5));
+    auto numbins = static_cast<int>( floor((host_iConsts[1] - host_iConsts[0]) / step + 0.5));
     // Different format for integration range!
     modelWorkSpace = new thrust::device_vector<fptype>(numbins);
 

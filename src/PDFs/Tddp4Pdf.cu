@@ -98,7 +98,7 @@ First entries are the starting points in array, necessary, because number of Lin
 __device__ fptype device_TDDP4(fptype* evt, fptype* p, unsigned int* indices) {
     //printf("DalitzPlot evt %i zero: %i %i %f (%f, %f).\n", evtNum, numResonances, effFunctionIdx, eff, totalAmp.real, totalAmp.imag);
 
-    int evtNum = static_cast<int>( floor(0.5 + evt[indices[7 + indices[0]]]));
+    auto evtNum = static_cast<int>( floor(0.5 + evt[indices[7 + indices[0]]]));
     //GOOFIT_TRACE("TDDP4: Number of events: {}", evtNum);
     
     unsigned int cacheToUse    = indices[2];
@@ -583,7 +583,7 @@ __host__ fptype TDDP4::normalize() const {
     // fprintf(stderr, "normalize after LS\n");
 
     // this is a little messy but it basically checks if the amplitude includes one of the recalculated lineshapes and if so recalculates that amplitude
-    std::map<std::string, std::pair<std::vector<unsigned int>, std::vector<unsigned int>>>::const_iterator AmpMapIt =
+    auto AmpMapIt =
         AmpMap.begin();
 
     for(int i = 0; i < AmpCalcs.size(); ++i) {
@@ -868,7 +868,7 @@ __device__ thrust::complex<fptype> SFCalculator_TD::operator()(thrust::tuple<int
     // printf("vec%i %f, %f, %f, %f\n",2, vecs[8], vecs[9], vecs[10], vecs[11]);
     // printf("vec%i %f, %f, %f, %f\n",3, vecs[12], vecs[13], vecs[14], vecs[15]);
 
-    spin_function_ptr func = reinterpret_cast<spin_function_ptr>(device_function_table[functn_i]);
+    auto func = reinterpret_cast<spin_function_ptr>(device_function_table[functn_i]);
     fptype sf = (*func)(vecs, paramIndices+params_i);
     // printf("SpinFactors %i : %.7g\n",_spinfactor_i, sf );
     return thrust::complex<fptype>(sf, 0);
@@ -903,7 +903,7 @@ const {
 //   printf("evt %i vec%i %.5g, %.5g, %.5g, %.5g\n", evtNum,2, vecs[8], vecs[9], vecs[10], vecs[11]);
 //   printf("evt %i vec%i %.5g, %.5g, %.5g, %.5g\n", evtNum,3, vecs[12], vecs[13], vecs[14], vecs[15]);
 // // }
-    spin_function_ptr func = reinterpret_cast<spin_function_ptr>(device_function_table[functn_i]);
+    auto func = reinterpret_cast<spin_function_ptr>(device_function_table[functn_i]);
     fptype sf = (*func)(vecs, paramIndices+params_i);
 
     // printf("NormSF evt:%.5g, %.5g, %.5g, %.5g, %.5g\n", m12, m34, cos12, cos34, phi);

@@ -62,7 +62,7 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, int, fptype*> t) co
     for(int i = 0; i < evtSize; ++i) {
         fptype lowerBound = thrust::get<2>(t)[3*i+0];
         fptype upperBound = thrust::get<2>(t)[3*i+1];
-        int numBins    = static_cast<int>( floor(thrust::get<2>(t)[3*i+2] + 0.5));
+        auto numBins    = static_cast<int>( floor(thrust::get<2>(t)[3*i+2] + 0.5));
         int localBin = binNumber % numBins;
 
         fptype x = upperBound - lowerBound;
@@ -85,7 +85,7 @@ MetricTaker::MetricTaker(PdfBase* dat, void* dev_functionPtr)
     , parameters(dat->getParameterIndex()) {
     //std::cout << "MetricTaker constructor with " << functionIdx << std::endl;
 
-    std::map<void*, int>::iterator localPos = functionAddressToDeviceIndexMap.find(dev_functionPtr);
+    auto localPos = functionAddressToDeviceIndexMap.find(dev_functionPtr);
 
     if(localPos != functionAddressToDeviceIndexMap.end()) {
         metricIndex = (*localPos).second;

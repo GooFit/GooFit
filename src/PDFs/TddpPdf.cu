@@ -88,7 +88,7 @@ __device__ inline int parIndexFromResIndex(int resIndex) {
 
 __device__ thrust::complex<fptype> getResonanceAmplitude(fptype m12, fptype m13, fptype m23,
         unsigned int functionIdx, unsigned int pIndex) {
-    resonance_function_ptr func = reinterpret_cast<resonance_function_ptr>(device_function_table[functionIdx]);
+    auto func = reinterpret_cast<resonance_function_ptr>(device_function_table[functionIdx]);
     return (*func)(m12, m13, m23, paramIndices + pIndex);
 }
 
@@ -149,7 +149,7 @@ __device__ fptype device_Tddp(fptype* evt, fptype* p, unsigned int* indices) {
     if(!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass))
         return 0;
 
-    int evtNum = static_cast<int>( floor(0.5 + RO_CACHE(evt[indices[6 + RO_CACHE(indices[0])]])));
+    auto evtNum = static_cast<int>( floor(0.5 + RO_CACHE(evt[indices[6 + RO_CACHE(indices[0])]])));
 
     thrust::complex<fptype> sumWavesA(0, 0);
     thrust::complex<fptype> sumWavesB(0, 0);
@@ -524,7 +524,7 @@ __host__ fptype TddpPdf::normalize() const {
     if(!dalitzNormRange) {
         gooMalloc((void**) &dalitzNormRange, 6*sizeof(fptype));
 
-        fptype* host_norms = new fptype[6];
+        auto* host_norms = new fptype[6];
         host_norms[0] = _m12->getLowerLimit();
         host_norms[1] = _m12->getUpperLimit();
         host_norms[2] = _m12->getNumBins();
@@ -686,7 +686,7 @@ __device__ ThreeComplex SpecialDalitzIntegrator::operator()(thrust::tuple<int, f
     int globalBinNumber  = thrust::get<0>(t);
     fptype lowerBoundM12 = thrust::get<1>(t)[0];
     fptype upperBoundM12 = thrust::get<1>(t)[1];
-    int numBinsM12       = static_cast<int>( floor(thrust::get<1>(t)[2] + 0.5));
+    auto numBinsM12       = static_cast<int>( floor(thrust::get<1>(t)[2] + 0.5));
     int binNumberM12     = globalBinNumber % numBinsM12;
     fptype binCenterM12  = upperBoundM12 - lowerBoundM12;
     binCenterM12        /= numBinsM12;
@@ -696,7 +696,7 @@ __device__ ThreeComplex SpecialDalitzIntegrator::operator()(thrust::tuple<int, f
     globalBinNumber     /= numBinsM12;
     fptype lowerBoundM13 = thrust::get<1>(t)[3];
     fptype upperBoundM13 = thrust::get<1>(t)[4];
-    int numBinsM13       = static_cast<int>( floor(thrust::get<1>(t)[5] + 0.5));
+    auto numBinsM13       = static_cast<int>( floor(thrust::get<1>(t)[5] + 0.5));
     fptype binCenterM13  = upperBoundM13 - lowerBoundM13;
     binCenterM13        /= numBinsM13;
     binCenterM13        *= (globalBinNumber + 0.5);

@@ -161,7 +161,7 @@ GooPdf::GooPdf(Variable* x, std::string n)
 
 __host__ int GooPdf::findFunctionIdx(void* dev_functionPtr) {
     // Code specific to function-pointer implementation
-    std::map<void*, int>::iterator localPos = functionAddressToDeviceIndexMap.find(dev_functionPtr);
+    auto localPos = functionAddressToDeviceIndexMap.find(dev_functionPtr);
 
     if(localPos != functionAddressToDeviceIndexMap.end()) {
         return (*localPos).second;

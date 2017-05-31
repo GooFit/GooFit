@@ -49,7 +49,7 @@ __device__ fptype device_InterHistogram(fptype* evt, fptype* p, unsigned int* in
         currVariable   -= lowerBound;
         currVariable   /= step;
 
-        int localBin    = static_cast<int>( floor(currVariable));
+        auto localBin    = static_cast<int>( floor(currVariable));
         binDistances[i] = currVariable - localBin - fptype(0.5);
         globalBin      += previous * localBin;
         previous       *= indices[lowerBoundIdx + 2];

@@ -39,7 +39,7 @@ __device__ fptype device_EvalHistogram(fptype* evt, fptype* p, unsigned int* ind
         currVariable /= step;
         //if (gpuDebug & 1) printf("[%i, %i] Smoothed: %i %i %f %f %f %f\n", BLOCKIDX, THREADIDX, i, varIndex, currVariable, lowerBound, step, evt[varIndex]);
 
-        int localBinNumber  = static_cast<int>( floor(currVariable));
+        auto localBinNumber  = static_cast<int>( floor(currVariable));
         globalBinNumber    += previous * localBinNumber;
         previous           *= indices[lowerBoundIdx + 2];
     }

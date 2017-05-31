@@ -104,7 +104,7 @@ __host__ void PdfBase::setData(std::vector<std::map<Variable*, fptype>>& data) {
     numEntries = data.size();
     numEvents = numEntries;
 
-    fptype* host_array = new fptype[data.size()*dimensions];
+    auto* host_array = new fptype[data.size()*dimensions];
 
     for(unsigned int i = 0; i < data.size(); ++i) {
         for(Variable*  v : observables) {
@@ -198,7 +198,7 @@ __host__ void PdfBase::setData(DataSet* data) {
 
     #endif
 
-        fptype* host_array = new fptype[numEntries*dimensions];
+        auto* host_array = new fptype[numEntries*dimensions];
 
     #ifdef GOOFIT_MPI
         //This is an array to track if we need to re-index the observable
@@ -289,7 +289,7 @@ __host__ void PdfBase::setData(DataSet* data) {
 
     #endif
 
-        fptype* host_array = new fptype[numEntries*dimensions];
+        auto* host_array = new fptype[numEntries*dimensions];
 
     #ifdef GOOFIT_MPI
         //This is an array to track if we need to re-index the observable
@@ -358,7 +358,7 @@ __host__ void PdfBase::generateNormRange() {
 
     gooMalloc(reinterpret_cast<void**>( &normRanges), 3*observables.size()*sizeof(fptype));
 
-    fptype* host_norms = new fptype[3*observables.size()];
+    auto* host_norms = new fptype[3*observables.size()];
     int counter = 0; // Don't use index in this case to allow for, eg,
 
     // a single observable whose index is 1; or two observables with indices

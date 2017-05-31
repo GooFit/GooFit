@@ -18,10 +18,10 @@ public:
     BinnedDataSet(std::vector<Variable*>& vars, std::string n = "");
     BinnedDataSet(std::set<Variable*>& vars, std::string n = "");
     BinnedDataSet(std::initializer_list<Variable*> vars, std::string n="");
-    virtual ~BinnedDataSet() = default;
+    ~BinnedDataSet() override = default;
 
-    virtual void addEvent() override;
-    virtual void addWeightedEvent(double weight) override;
+    void addEvent() override;
+    void addWeightedEvent(double weight) override;
 
     fptype getBinContent(size_t bin) const {
         return binvalues.at(bin);

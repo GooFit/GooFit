@@ -195,7 +195,7 @@ struct DecayMother
 		//-----> complete specification of event (Raubold-Lynch method)
 		//
 
-		daugters[0]->set(sqrt((GReal_t) pd[0] * pd[0] + fMasses[0] * fMasses[0]), 0.0,
+		daugters[0]->set(sqrt( pd[0] * pd[0] + fMasses[0] * fMasses[0]), 0.0,
 				pd[0], 0.0);
 
 		#pragma unroll 9

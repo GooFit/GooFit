@@ -39,7 +39,7 @@ __device__ fptype device_EvalHistogram(fptype* evt, fptype* p, unsigned int* ind
         currVariable /= step;
         //if (gpuDebug & 1) printf("[%i, %i] Smoothed: %i %i %f %f %f %f\n", BLOCKIDX, THREADIDX, i, varIndex, currVariable, lowerBound, step, evt[varIndex]);
 
-        int localBinNumber  = (int) floor(currVariable);
+        auto localBinNumber  = static_cast<int>( floor(currVariable));
         globalBinNumber    += previous * localBinNumber;
         previous           *= indices[lowerBoundIdx + 2];
     }
@@ -115,7 +115,7 @@ struct Smoother {
 __device__ device_function_ptr ptr_to_EvalHistogram = device_EvalHistogram;
 
 __host__ SmoothHistogramPdf::SmoothHistogramPdf(std::string n, BinnedDataSet* hist, Variable* smoothing)
-    : GooPdf(0, n) {
+    : GooPdf(nullptr, n) {
     int numVars = hist->numVariables();
     int numConstants = 2*numVars;
     registerConstants(numConstants);
@@ -191,8 +191,8 @@ __host__ void SmoothHistogramPdf::copyHistogramToDevice(thrust::host_vector<fpty
 
     int expectedBins = 1;
 
-    for(unsigned int varIndex = 0; varIndex < observables.size(); ++varIndex) {
-        expectedBins *= observables[varIndex]->getNumBins();
+    for(auto & observable : observables) {
+        expectedBins *= observable->getNumBins();
     }
 
     if(expectedBins != host_histogram.size()) {

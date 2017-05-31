@@ -87,7 +87,7 @@ __host__ TrigThresholdPdf::TrigThresholdPdf(std::string n, Variable* _x, Variabl
 
 __host__ TrigThresholdPdf::TrigThresholdPdf(std::string n, Variable* _x, Variable* _y, Variable* thresh,
         Variable* trigConst, Variable* linConst, Variable* massConstant, bool upper)
-    : GooPdf(0, n) {
+    : GooPdf(nullptr, n) {
     registerObservable(_x);
     registerObservable(_y);
 

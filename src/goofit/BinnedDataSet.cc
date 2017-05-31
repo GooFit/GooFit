@@ -1,7 +1,7 @@
 #include "goofit/BinnedDataSet.h"
-#include "goofit/Variable.h"
 #include "goofit/Error.h"
 #include "goofit/Log.h"
+#include "goofit/Variable.h"
 
 #include <functional>
 #include <numeric>
@@ -159,7 +159,7 @@ std::vector<size_t> BinnedDataSet::convertValuesToBins(const std::vector<fptype>
             GOOFIT_INFO("Warning: Value {} outside {} range [{},{}] - clamping to {}",
                         currval, variables[i]->getName(), variables[i]->getLowerLimit(),
                         variables[i]->getUpperLimit(), betval);
-        localBins.push_back( (size_t) floor((betval - variables[i]->getLowerLimit())/getBinSize(i)));
+        localBins.push_back( static_cast<size_t>( floor((betval - variables[i]->getLowerLimit())/getBinSize(i))));
     }
     
 

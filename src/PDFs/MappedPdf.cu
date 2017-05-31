@@ -10,7 +10,7 @@ __device__ fptype device_Mapped(fptype* evt, fptype* p, unsigned int* indices) {
     unsigned int mapFunction = RO_CACHE(indices[1]);
     // This is an index into the MappedPdf's list of functions
     //int targetFunction = (int) floor(0.5 + (*(reinterpret_cast<device_function_ptr>(device_function_table[mapFunction])))(evt, p, paramIndices + indices[2]));
-    int targetFunction = (int) floor(0.5 + callFunction(evt, mapFunction, RO_CACHE(indices[2])));
+    auto targetFunction = static_cast<int>( floor(0.5 + callFunction(evt, mapFunction, RO_CACHE(indices[2]))));
 
     targetFunction *= 2; // Because there are two pieces of information about each function
     targetFunction += 3; // Because first function information begins at index 3
@@ -27,7 +27,7 @@ __device__ fptype device_Mapped(fptype* evt, fptype* p, unsigned int* indices) {
 __device__ device_function_ptr ptr_to_Mapped = device_Mapped;
 
 __host__ MappedPdf::MappedPdf(std::string n, GooPdf* m, std::vector<GooPdf*>& t)
-    : GooPdf(0, n) {
+    : GooPdf(nullptr, n) {
     components.push_back(m);
     std::vector<unsigned int> pindices;
     pindices.push_back(m->getFunctionIndex());

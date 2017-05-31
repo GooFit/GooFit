@@ -10,6 +10,7 @@ Also right now it is the home to some helper functions needed and an implementat
 
 #include "goofit/PDFs/physics/LineshapesPdf.h"
 #include "goofit/PDFs/physics/SpinFactors.h"
+#include <utility>
 
 namespace GooFit {
 
@@ -444,7 +445,7 @@ Lineshape::Lineshape(std::string name,
                      FF FormFac,
                      fptype radius,
                      std::vector<Variable*> AdditionalVars)
-    : GooPdf(0, name), _mass(mass), _width(width), _L(L), _Mpair(Mpair), _kind(kind), _FormFac(FormFac) {
+    : GooPdf(nullptr, name), _mass(mass), _width(width), _L(L), _Mpair(Mpair), _kind(kind), _FormFac(FormFac) {
     std::vector<unsigned int> pindices;
     pindices.push_back(0);
     // Making room for index of decay-related constants. Assumption:
@@ -518,7 +519,7 @@ Lineshape::Lineshape(std::string name,
 
 
 Lineshape::Lineshape(std::string name)
-    : GooPdf(0, name) {
+    : GooPdf(nullptr, name) {
     std::vector<unsigned int> pindices;
     pindices.push_back(0);
     // Dummy index for constants - won't use it, but calling
@@ -529,11 +530,11 @@ Lineshape::Lineshape(std::string name)
 
 Amplitude::Amplitude(std::string uniqueDecayStr, Variable* ar, Variable* ai, std::vector<Lineshape*> LS,
                      std::vector<SpinFactor*> SF, unsigned int nPerm)
-    : _uniqueDecayStr(uniqueDecayStr),
+    : _uniqueDecayStr(std::move(uniqueDecayStr)),
       _ar(ar),
       _ai(ai),
-      _SF(SF),
-      _LS(LS),
+      _SF(std::move(SF)),
+      _LS(std::move(LS)),
       _nPerm(nPerm)
 {}
 

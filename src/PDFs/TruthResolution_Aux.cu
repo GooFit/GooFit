@@ -44,7 +44,7 @@ TruthResolution::TruthResolution()
     GET_FUNCTION_ADDR(ptr_to_calc_tau);
     setCalcTauIdx(GooPdf::findFunctionIdx(host_fcn_ptr));
 }
-TruthResolution::~TruthResolution() {}
+TruthResolution::~TruthResolution() = default;
 
 fptype TruthResolution::normalisation(fptype di1, fptype di2, fptype di3, fptype di4, fptype tau, fptype xmixing,
                                       fptype ymixing) const {

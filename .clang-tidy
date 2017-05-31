@@ -1,0 +1,6 @@
+#Checks: '-*,modernize*,llvm-namespace-comment,readability*'
+Checks: '-*,modernize*,-modernize-pass-by-value,-modernize-use-using,llvm-include-order'
+HeaderFilterRegex: '.*include/goofit.*h'
+CheckOptions:
+- key:             readability-braces-around-statements.ShortStatementLines
+  value:           '1'

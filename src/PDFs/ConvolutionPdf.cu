@@ -32,11 +32,11 @@ __device__ fptype device_ConvolvePdfs(fptype* evt, fptype* p, unsigned int* indi
     fptype x0      = evt[indices[2 + indices[0]]];
     int workSpaceIndex = indices[6];
 
-    int numbins = (int) floor((hiBound - loBound) / step + 0.5);
+    auto numbins = static_cast<int>( floor((hiBound - loBound) / step + 0.5));
 
     fptype lowerBoundOffset = loBound / step;
     lowerBoundOffset -= floor(lowerBoundOffset);
-    int offsetInBins = (int) floor(x0 / step - lowerBoundOffset);
+    auto offsetInBins = static_cast<int>( floor(x0 / step - lowerBoundOffset));
 
     // Brute-force calculate integral M(x) * R(x - x0) dx
     int offset = RO_CACHE(modelOffset[workSpaceIndex]);
@@ -63,11 +63,11 @@ __device__ fptype device_ConvolveSharedPdfs(fptype* evt, fptype* p, unsigned int
     unsigned int workSpaceIndex = indices[6];
     unsigned int numOthers = indices[7] + 1; // +1 for this PDF.
 
-    int numbins = (int) floor((hiBound - loBound) / step + 0.5);
+    auto numbins = static_cast<int>( floor((hiBound - loBound) / step + 0.5));
 
     fptype lowerBoundOffset = loBound / step;
     lowerBoundOffset -= floor(lowerBoundOffset);
-    int offsetInBins = (int) floor(x0 / step - lowerBoundOffset);
+    auto offsetInBins = static_cast<int>( floor(x0 / step - lowerBoundOffset));
 
     // Brute-force calculate integral M(x) * R(x - x0) dx
     __shared__ fptype modelCache[CONVOLUTION_CACHE_SIZE];
@@ -129,9 +129,9 @@ ConvolutionPdf::ConvolutionPdf(std::string n,
     : GooPdf(x, n)
     , model(m)
     , resolution(r)
-    , host_iConsts(0)
-    , modelWorkSpace(0)
-    , resolWorkSpace(0)
+    , host_iConsts(nullptr)
+    , modelWorkSpace(nullptr)
+    , resolWorkSpace(nullptr)
     , workSpaceIndex(0) {
     // Constructor for convolution without cooperative
     // loading of model cache. This is slow, but conceptually
@@ -161,9 +161,9 @@ ConvolutionPdf::ConvolutionPdf(std::string n,
     : GooPdf(x, n)
     , model(m)
     , resolution(r)
-    , host_iConsts(0)
-    , modelWorkSpace(0)
-    , resolWorkSpace(0)
+    , host_iConsts(nullptr)
+    , modelWorkSpace(nullptr)
+    , resolWorkSpace(nullptr)
     , workSpaceIndex(0) {
     // Constructor for the case when several convolutions
     // can run in parallel; for example, a map where the targets
@@ -210,7 +210,7 @@ ConvolutionPdf::ConvolutionPdf(std::string n,
 __host__ void ConvolutionPdf::setIntegrationConstants(fptype lo, fptype hi, fptype step) {
     if(!host_iConsts) {
         host_iConsts = new fptype[6];
-        gooMalloc((void**) &dev_iConsts, 6*sizeof(fptype));
+        gooMalloc(reinterpret_cast<void**>( &dev_iConsts), 6*sizeof(fptype));
     }
 
     host_iConsts[0] = lo;
@@ -223,7 +223,7 @@ __host__ void ConvolutionPdf::setIntegrationConstants(fptype lo, fptype hi, fpty
         delete resolWorkSpace;
     }
 
-    int numbins = (int) floor((host_iConsts[1] - host_iConsts[0]) / step + 0.5);
+    auto numbins = static_cast<int>( floor((host_iConsts[1] - host_iConsts[0]) / step + 0.5));
     // Different format for integration range!
     modelWorkSpace = new thrust::device_vector<fptype>(numbins);
 
@@ -239,7 +239,7 @@ __host__ void ConvolutionPdf::setIntegrationConstants(fptype lo, fptype hi, fpty
     host_iConsts[3] = (host_iConsts[0] - dependent->getUpperLimit());
     host_iConsts[4] = (host_iConsts[1] - dependent->getLowerLimit());
 
-    numbins = (int) floor((host_iConsts[4] - host_iConsts[3]) / step + 0.5);
+    numbins = static_cast<int>( floor((host_iConsts[4] - host_iConsts[3]) / step + 0.5));
     host_iConsts[5] = numbins;
     MEMCPY(dev_iConsts, host_iConsts, 6*sizeof(fptype), cudaMemcpyHostToDevice);
     resolWorkSpace = new thrust::device_vector<fptype>(numbins);

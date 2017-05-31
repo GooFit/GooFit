@@ -20,7 +20,7 @@ __device__ inline int parIndexFromResIndex_incoherent(int resIndex) {
 
 __device__ fptype device_incoherent(fptype* evt, fptype* p, unsigned int* indices) {
     // Calculates the incoherent sum over the resonances.
-    int evtNum = (int) floor(0.5 + evt[indices[4 + indices[0]]]);
+    auto evtNum = static_cast<int>( floor(0.5 + evt[indices[4 + indices[0]]]));
 
     fptype ret = 0;
     unsigned int numResonances = indices[2];
@@ -47,19 +47,19 @@ __device__ device_function_ptr ptr_to_incoherent = device_incoherent;
 
 __host__ IncoherentSumPdf::IncoherentSumPdf(std::string n, Variable* m12, Variable* m13, CountingVariable* eventNumber,
         DecayInfo* decay, GooPdf* eff)
-    : GooPdf(0, n)
+    : GooPdf(nullptr, n)
     , decayInfo(decay)
     , _m12(m12)
     , _m13(m13)
-    , dalitzNormRange(0)
-    , cachedResonances(0)
-    , integrals(0)
+    , dalitzNormRange(nullptr)
+    , cachedResonances(nullptr)
+    , integrals(nullptr)
     , forceRedoIntegrals(true)
     , totalEventSize(3) // Default 3 = m12, m13, evtNum. Will likely be overridden.
     , cacheToUse(0)
     , efficiency(eff)
-    , integrators(0)
-    , calculators(0) {
+    , integrators(nullptr)
+    , calculators(nullptr) {
     registerObservable(_m12);
     registerObservable(_m13);
     registerObservable(eventNumber);
@@ -79,15 +79,14 @@ __host__ IncoherentSumPdf::IncoherentSumPdf(std::string n, Variable* m12, Variab
     cacheToUse = cacheCount++;
     pindices.push_back(cacheToUse);
 
-    for(std::vector<ResonancePdf*>::iterator res = decayInfo->resonances.begin(); res != decayInfo->resonances.end();
-            ++res) {
-        pindices.push_back(registerParameter((*res)->amp_real));
-        pindices.push_back(registerParameter((*res)->amp_real));
+    for(auto & resonance : decayInfo->resonances) {
+        pindices.push_back(registerParameter(resonance->amp_real));
+        pindices.push_back(registerParameter(resonance->amp_real));
         // Not going to use amp_imag, but need a dummy index so the resonance size will be consistent.
-        pindices.push_back((*res)->getFunctionIndex());
-        pindices.push_back((*res)->getParameterIndex());
-        (*res)->setConstantIndex(cIndex);
-        components.push_back(*res);
+        pindices.push_back(resonance->getFunctionIndex());
+        pindices.push_back(resonance->getParameterIndex());
+        resonance->setConstantIndex(cIndex);
+        components.push_back(resonance);
     }
 
     pindices.push_back(efficiency->getFunctionIndex());
@@ -151,7 +150,7 @@ __host__ fptype IncoherentSumPdf::normalize() const {
     if(!dalitzNormRange) {
         gooMalloc((void**) &dalitzNormRange, 6*sizeof(fptype));
 
-        fptype* host_norms = new fptype[6];
+        auto* host_norms = new fptype[6];
         host_norms[0] = _m12->getLowerLimit();
         host_norms[1] = _m12->getUpperLimit();
         host_norms[2] = _m12->getNumBins();
@@ -224,7 +223,7 @@ __host__ fptype IncoherentSumPdf::normalize() const {
     ret *= binSizeFactor;
 
     host_normalisation[parameters] = 1.0/ret;
-    return (fptype) ret;
+    return ret;
 }
 
 SpecialIncoherentIntegrator::SpecialIncoherentIntegrator(int pIdx, unsigned int ri)
@@ -243,7 +242,7 @@ __device__ fptype SpecialIncoherentIntegrator::operator()(thrust::tuple<int, fpt
     int globalBinNumber  = thrust::get<0>(t);
     fptype lowerBoundM12 = thrust::get<1>(t)[0];
     fptype upperBoundM12 = thrust::get<1>(t)[1];
-    int numBinsM12       = (int) floor(thrust::get<1>(t)[2] + 0.5);
+    auto numBinsM12       = static_cast<int>( floor(thrust::get<1>(t)[2] + 0.5));
     int binNumberM12     = globalBinNumber % numBinsM12;
     fptype binCenterM12  = upperBoundM12 - lowerBoundM12;
     binCenterM12        /= numBinsM12;
@@ -253,7 +252,7 @@ __device__ fptype SpecialIncoherentIntegrator::operator()(thrust::tuple<int, fpt
     globalBinNumber     /= numBinsM12;
     fptype lowerBoundM13 = thrust::get<1>(t)[3];
     fptype upperBoundM13 = thrust::get<1>(t)[4];
-    int numBinsM13       = (int) floor(thrust::get<1>(t)[5] + 0.5);
+    auto numBinsM13       = static_cast<int>( floor(thrust::get<1>(t)[5] + 0.5));
     fptype binCenterM13  = upperBoundM13 - lowerBoundM13;
     binCenterM13        /= numBinsM13;
     binCenterM13        *= (globalBinNumber + 0.5);

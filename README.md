@@ -87,6 +87,7 @@ Advanced Options:
 * `-DGOOFIT_PYTHON=OFF`: Preliminary python bindings using [PyBind11].
 * `-DGOOFIT_MAXPAR=1800`: The maximum number of parameters to allow. May cause memory issues if too large.
 * You can enable sanitizers on non-CUDA builds with `-DSANITIZE_ADDRESS=ON`, `-DSANITIZE_MEMORY=ON`, `-DSANITIZE_THREAD=ON` or `-DSANITIZE_UNDEFINED=ON`.
+* If `clang-tidy` is available, it will automatically be used to check the source. If you set `-DGOOFIT_TIDY_FIX=ON`, fixes will be applied to the GooFit source (This must be passed on command line, will not be cached).
 
 Note for targeting Tesla P100 or any `arch=6.0` device:
 * Please use `-DGOOFIT_SEPARATE_COMP=ON` flags to compile.
@@ -94,7 +95,7 @@ Note for targeting Tesla P100 or any `arch=6.0` device:
 A few standard CMake tricks:
 
 * Use `make VERBOSE=1` to see the commands used to build the files.
-* Use `cmake .. -L` to list the CMake options.
+* Use `cmake .. -LH` to list the CMake options with help.
 * Use `ccmake` if available to see a curses (terminal) gui, or `cmake-gui` for a completely graphical interface.
 * Use `-G` and the name of a generator to use something other than `make`, like `Xcode` or `Ninja`.
 * Open the `CMakeLists.txt` with QtCreator to generate for that IDE.
@@ -104,7 +105,7 @@ A few standard CMake tricks:
 * CMake reruns when needed when you `make` unless you add a file that it globs for (like new `goofit_projects`).
 * Use `make -j12` to build with 12 cores (for example). You can set this as the `MAKEFLAGS` environment variable, too.
 * Use `CMake --build .` to build without referring to your specific build tool, like `make` or `ninja`.
-* If you are using the `llvm` tool-suite, you can use `-DCMAKE_EXPORT_COMPILE_COMMANDS=ON` to generate the .json file that the `clang-*` commands expect. For example, `run-clang-tidy.py` will display `clang-tidy` warnings. To run a fix on all files, you can do `run-clang-tidy.py -header-filter='.*' -checks='-*,modernize-use-default-member-init' -fix` (for example).
+* If you are using the `llvm` tool-suite, you can use `-DCMAKE_EXPORT_COMPILE_COMMANDS=ON` to generate the .json file that the `clang-*` commands expect.
 
 > Note: Running `make`, `make omp`, or `make cuda` in the main directory will make a build directory for you, and will run CMake and make.
 

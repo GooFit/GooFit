@@ -8,12 +8,12 @@ See *.cu file for more details
 
 #pragma once
 
+#include <tuple>
+#include <mcbooster/GContainers.h>
+#include <thrust/remove.h>
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/PDFs/physics/DalitzPlotHelpers.h"
 #include "goofit/PDFs/physics/SpinFactors.h"
-#include <mcbooster/GContainers.h>
-#include <tuple>
-#include <thrust/remove.h>
 #include "goofit/PDFs/physics/MixingTimeResolution_Aux.h"
 
 namespace GooFit {
@@ -32,7 +32,7 @@ public:
     // coherent sum. The caching method requires that it be done this way or the ProdPdf
     // normalisation will get *really* confused and give wrong answers.
 
-    __host__ virtual fptype normalize() const;
+    __host__ fptype normalize() const override;
 
     __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 8);
 

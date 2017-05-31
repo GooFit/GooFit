@@ -1,5 +1,5 @@
 #include "goofit/PDFs/physics/ThreeGaussResolution_Aux.h"
-#include <math.h>
+#include <cmath>
 
 namespace GooFit {
 
@@ -115,7 +115,7 @@ ThreeGaussResolution::ThreeGaussResolution(Variable* cf, Variable* tf, Variable*
     GET_FUNCTION_ADDR(ptr_to_threegauss);
     initIndex();
 }
-ThreeGaussResolution::~ThreeGaussResolution() {}
+ThreeGaussResolution::~ThreeGaussResolution() = default;
 
 void ThreeGaussResolution::createParameters(std::vector<unsigned int>& pindices, PdfBase* dis) {
     pindices.push_back(8);

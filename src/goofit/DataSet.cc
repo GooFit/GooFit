@@ -1,30 +1,31 @@
 #include "goofit/DataSet.h"
-#include "goofit/Variable.h"
 #include "goofit/Error.h"
+#include "goofit/Variable.h"
 
-#include <cstdlib>
 #include <climits>
+#include <cstdlib>
+#include <utility>
 
 namespace GooFit {
 
 
 DataSet::DataSet(Variable* var, std::string n)
-: name(n), variables({var}) {
+: name(std::move(n)), variables({var}) {
     generateName();
 }
 
 DataSet::DataSet(std::vector<Variable*>& vars, std::string n)
-    : name(n), variables(vars) {
+    : name(std::move(n)), variables(vars) {
      generateName();
 }
 
 DataSet::DataSet(std::set<Variable*>& vars, std::string n)
-: name(n), variables(std::begin(vars), std::end(vars)) {
+: name(std::move(n)), variables(std::begin(vars), std::end(vars)) {
     generateName();
 }
 
 DataSet::DataSet(std::initializer_list<Variable*> vars, std::string n) :
-    name(n), variables(vars) {
+    name(std::move(n)), variables(vars) {
     generateName();
 }
 

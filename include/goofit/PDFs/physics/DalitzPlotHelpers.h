@@ -12,8 +12,8 @@ See *.cu file for more details
 #include "goofit/PDFs/physics/ResonancePdf.h"
 #include "goofit/PDFs/physics/LineshapesPdf.h"
 
-#include <thrust/iterator/constant_iterator.h>
 #include <thrust/device_vector.h>
+#include <thrust/iterator/constant_iterator.h>
 
 namespace GooFit {
 

@@ -1,7 +1,7 @@
 #include "goofit/detail/Abort.h"
-#include "goofit/PdfBase.h"
-#include "goofit/Error.h"
 #include "goofit/Color.h"
+#include "goofit/Error.h"
+#include "goofit/PdfBase.h"
 #include "goofit/detail/Backtrace.h"
 
 namespace GooFit {
@@ -44,4 +44,4 @@ void abort(std::string file, int line, std::string reason, const PdfBase* pdf) {
     throw GooFit::GeneralError(reason);
 }
 
-}
+} // namespace GooFit

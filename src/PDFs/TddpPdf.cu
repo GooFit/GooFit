@@ -88,7 +88,7 @@ __device__ inline int parIndexFromResIndex(int resIndex) {
 
 __device__ thrust::complex<fptype> getResonanceAmplitude(fptype m12, fptype m13, fptype m23,
         unsigned int functionIdx, unsigned int pIndex) {
-    resonance_function_ptr func = reinterpret_cast<resonance_function_ptr>(device_function_table[functionIdx]);
+    auto func = reinterpret_cast<resonance_function_ptr>(device_function_table[functionIdx]);
     return (*func)(m12, m13, m23, paramIndices + pIndex);
 }
 
@@ -149,7 +149,7 @@ __device__ fptype device_Tddp(fptype* evt, fptype* p, unsigned int* indices) {
     if(!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass))
         return 0;
 
-    int evtNum = (int) floor(0.5 + RO_CACHE(evt[indices[6 + RO_CACHE(indices[0])]]));
+    auto evtNum = static_cast<int>( floor(0.5 + RO_CACHE(evt[indices[6 + RO_CACHE(indices[0])]])));
 
     thrust::complex<fptype> sumWavesA(0, 0);
     thrust::complex<fptype> sumWavesB(0, 0);
@@ -222,7 +222,7 @@ __device__ fptype device_Tddp(fptype* evt, fptype* p, unsigned int* indices) {
         fptype massd0 = RO_CACHE(evt[indices[7 + RO_CACHE(indices[0])]]);
         fptype minMass = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 6]);
         fptype md0Step = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 7]);
-        int res_to_use = (massd0 <= minMass) ? 0 : (int) floor((massd0 - minMass) / md0Step);
+        int res_to_use = (massd0 <= minMass) ? 0 : static_cast<int>( floor((massd0 - minMass) / md0Step));
         int maxFcn     = RO_CACHE(indices[2+effFunctionIdx]);
 
         if(res_to_use > maxFcn)
@@ -292,8 +292,8 @@ __host__ TddpPdf::TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Va
     registerObservable(_m13);
     registerObservable(eventNumber);
 
-    for(int i = 0; i < 16; i++)
-        cachedWaves[i] = 0;
+    for(auto & cachedWave : cachedWaves)
+        cachedWave = nullptr;
 
     fptype decayConstants[6];
     decayConstants[5] = 0;
@@ -318,21 +318,20 @@ __host__ TddpPdf::TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Va
     pindices.push_back(registerParameter(decayInfo->_ymixing));
     if(resolution->getDeviceFunction() < 0)
         throw GooFit::GeneralError("The resolution device function index {} must be more than 0", resolution->getDeviceFunction());
-    pindices.push_back((unsigned int) resolution->getDeviceFunction());
+    pindices.push_back(static_cast<unsigned int>( resolution->getDeviceFunction()));
     pindices.push_back(decayInfo->resonances.size());
 
     static int cacheCount = 0;
     cacheToUse = cacheCount++;
     pindices.push_back(cacheToUse);
 
-    for(std::vector<ResonancePdf*>::iterator res = decayInfo->resonances.begin(); res != decayInfo->resonances.end();
-            ++res) {
-        pindices.push_back(registerParameter((*res)->amp_real));
-        pindices.push_back(registerParameter((*res)->amp_imag));
-        pindices.push_back((*res)->getFunctionIndex());
-        pindices.push_back((*res)->getParameterIndex());
-        (*res)->setConstantIndex(cIndex);
-        components.push_back(*res);
+    for(auto & resonance : decayInfo->resonances) {
+        pindices.push_back(registerParameter(resonance->amp_real));
+        pindices.push_back(registerParameter(resonance->amp_imag));
+        pindices.push_back(resonance->getFunctionIndex());
+        pindices.push_back(resonance->getParameterIndex());
+        resonance->setConstantIndex(cIndex);
+        components.push_back(resonance);
     }
 
     pindices.push_back(efficiency->getFunctionIndex());
@@ -384,8 +383,8 @@ __host__ TddpPdf::TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Va
     registerObservable(eventNumber);
     registerObservable(md0);
 
-    for(int i = 0; i < 16; i++)
-        cachedWaves[i] = 0;
+    for(auto & cachedWave : cachedWaves)
+        cachedWave = nullptr;
 
     fptype decayConstants[8];
     decayConstants[5] = 0;
@@ -417,14 +416,13 @@ __host__ TddpPdf::TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Va
     cacheToUse = cacheCount++;
     pindices.push_back(cacheToUse);
 
-    for(std::vector<ResonancePdf*>::iterator res = decayInfo->resonances.begin(); res != decayInfo->resonances.end();
-            ++res) {
-        pindices.push_back(registerParameter((*res)->amp_real));
-        pindices.push_back(registerParameter((*res)->amp_imag));
-        pindices.push_back((*res)->getFunctionIndex());
-        pindices.push_back((*res)->getParameterIndex());
-        (*res)->setConstantIndex(cIndex);
-        components.push_back(*res);
+    for(auto & resonance : decayInfo->resonances) {
+        pindices.push_back(registerParameter(resonance->amp_real));
+        pindices.push_back(registerParameter(resonance->amp_imag));
+        pindices.push_back(resonance->getFunctionIndex());
+        pindices.push_back(resonance->getParameterIndex());
+        resonance->setConstantIndex(cIndex);
+        components.push_back(resonance);
     }
 
     pindices.push_back(efficiency->getFunctionIndex());
@@ -433,11 +431,11 @@ __host__ TddpPdf::TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Va
 
     pindices.push_back(r.size() - 1); // Highest index, not number of functions.
 
-    for(int i = 0; i < r.size(); ++i) {
-        if(r[i]->getDeviceFunction() < 0)
-            throw GooFit::GeneralError("Device function index {} must be more than 0", r[i]->getDeviceFunction());
-        pindices.push_back((unsigned int) r[i]->getDeviceFunction());
-        r[i]->createParameters(pindices, this);
+    for(auto & i : r) {
+        if(i->getDeviceFunction() < 0)
+            throw GooFit::GeneralError("Device function index {} must be more than 0", i->getDeviceFunction());
+        pindices.push_back(static_cast<unsigned int>( i->getDeviceFunction()));
+        i->createParameters(pindices, this);
     }
 
     GET_FUNCTION_ADDR(ptr_to_Tddp);
@@ -474,8 +472,8 @@ __host__ void TddpPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) 
         throw GooFit::GeneralError("totalEventSize {} must be 5 or more", totalEventSize);
 
     if(cachedWaves[0]) {
-        for(int i = 0; i < 16; i++)
-            delete cachedWaves[i];
+        for(auto & cachedWave : cachedWaves)
+            delete cachedWave;
     }
 
     numEntries = dataSize;
@@ -526,7 +524,7 @@ __host__ fptype TddpPdf::normalize() const {
     if(!dalitzNormRange) {
         gooMalloc((void**) &dalitzNormRange, 6*sizeof(fptype));
 
-        fptype* host_norms = new fptype[6];
+        auto* host_norms = new fptype[6];
         host_norms[0] = _m12->getLowerLimit();
         host_norms[1] = _m12->getUpperLimit();
         host_norms[2] = _m12->getNumBins();
@@ -670,7 +668,7 @@ __host__ fptype TddpPdf::normalize() const {
 
     host_normalisation[parameters] = 1.0/ret;
     //std::cout << "End of TDDP normalisation: " << ret << " " << host_normalisation[parameters] << " " << binSizeFactor << std::endl;
-    return (fptype) ret;
+    return ret;
 }
 //#endif
 
@@ -688,7 +686,7 @@ __device__ ThreeComplex SpecialDalitzIntegrator::operator()(thrust::tuple<int, f
     int globalBinNumber  = thrust::get<0>(t);
     fptype lowerBoundM12 = thrust::get<1>(t)[0];
     fptype upperBoundM12 = thrust::get<1>(t)[1];
-    int numBinsM12       = (int) floor(thrust::get<1>(t)[2] + 0.5);
+    auto numBinsM12       = static_cast<int>( floor(thrust::get<1>(t)[2] + 0.5));
     int binNumberM12     = globalBinNumber % numBinsM12;
     fptype binCenterM12  = upperBoundM12 - lowerBoundM12;
     binCenterM12        /= numBinsM12;
@@ -698,7 +696,7 @@ __device__ ThreeComplex SpecialDalitzIntegrator::operator()(thrust::tuple<int, f
     globalBinNumber     /= numBinsM12;
     fptype lowerBoundM13 = thrust::get<1>(t)[3];
     fptype upperBoundM13 = thrust::get<1>(t)[4];
-    int numBinsM13       = (int) floor(thrust::get<1>(t)[5] + 0.5);
+    auto numBinsM13       = static_cast<int>( floor(thrust::get<1>(t)[5] + 0.5));
     fptype binCenterM13  = upperBoundM13 - lowerBoundM13;
     binCenterM13        /= numBinsM13;
     binCenterM13        *= (globalBinNumber + 0.5);

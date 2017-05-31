@@ -73,7 +73,7 @@ __device__ fptype device_DalitzPlot(fptype* evt, fptype* p, unsigned int* indice
 
     fptype evtIndex = RO_CACHE(evt[RO_CACHE(indices[4 + RO_CACHE(indices[0])])]);
 
-    int evtNum = (int) floor(0.5 + evtIndex);
+    auto evtNum = static_cast<int>( floor(0.5 + evtIndex));
 
     thrust::complex<fptype> totalAmp(0, 0);
     unsigned int numResonances = RO_CACHE(indices[2]);
@@ -113,26 +113,26 @@ __host__ DalitzPlotPdf::DalitzPlotPdf(std::string n,
                                       CountingVariable* eventNumber,
                                       DecayInfo* decay,
                                       GooPdf* efficiency)
-    : GooPdf(0, n)
+    : GooPdf(nullptr, n)
     , decayInfo(decay)
     , _m12(m12)
     , _m13(m13)
-    , dalitzNormRange(0)
+    , dalitzNormRange(nullptr)
       //, cachedWaves(0)
-    , integrals(0)
+    , integrals(nullptr)
     , forceRedoIntegrals(true)
     , totalEventSize(3) // Default 3 = m12, m13, evtNum
     , cacheToUse(0)
-    , integrators(0)
-    , calculators(0) {
+    , integrators(nullptr)
+    , calculators(nullptr) {
     registerObservable(_m12);
     registerObservable(_m13);
     registerObservable(eventNumber);
 
     fptype decayConstants[5];
 
-    for(int j = 0; j < 16; j++)
-        cachedWaves[j] = 0;
+    for(auto & cachedWave : cachedWaves)
+        cachedWave = nullptr;
 
     std::vector<unsigned int> pindices;
     pindices.push_back(registerConstants(5));
@@ -148,14 +148,13 @@ __host__ DalitzPlotPdf::DalitzPlotPdf(std::string n,
     cacheToUse = cacheCount++;
     pindices.push_back(cacheToUse);
 
-    for(std::vector<ResonancePdf*>::iterator res = decayInfo->resonances.begin(); res != decayInfo->resonances.end();
-            ++res) {
-        pindices.push_back(registerParameter((*res)->amp_real));
-        pindices.push_back(registerParameter((*res)->amp_imag));
-        pindices.push_back((*res)->getFunctionIndex());
-        pindices.push_back((*res)->getParameterIndex());
-        (*res)->setConstantIndex(cIndex);
-        components.push_back(*res);
+    for(auto & resonance : decayInfo->resonances) {
+        pindices.push_back(registerParameter(resonance->amp_real));
+        pindices.push_back(registerParameter(resonance->amp_imag));
+        pindices.push_back(resonance->getFunctionIndex());
+        pindices.push_back(resonance->getParameterIndex());
+        resonance->setConstantIndex(cIndex);
+        components.push_back(resonance);
     }
 
     pindices.push_back(efficiency->getFunctionIndex());
@@ -197,8 +196,8 @@ __host__ void DalitzPlotPdf::setDataSize(unsigned int dataSize, unsigned int evt
 
     //if (cachedWaves) delete cachedWaves;
     if(cachedWaves[0]) {
-        for(int j = 0; j < 16; j++)
-            delete cachedWaves[j];
+        for(auto & cachedWave : cachedWaves)
+            delete cachedWave;
     }
 
     numEntries = dataSize;
@@ -230,7 +229,7 @@ __host__ fptype DalitzPlotPdf::normalize() const {
     if(!dalitzNormRange) {
         gooMalloc((void**) &dalitzNormRange, 6*sizeof(fptype));
 
-        fptype* host_norms = new fptype[6];
+        auto* host_norms = new fptype[6];
         host_norms[0] = _m12->getLowerLimit();
         host_norms[1] = _m12->getUpperLimit();
         host_norms[2] = _m12->getNumBins();
@@ -321,7 +320,7 @@ __host__ fptype DalitzPlotPdf::normalize() const {
 
     host_normalisation[parameters] = 1.0/ret;
     // printf("%f %f\n", ret, binSizeFactor);
-    return (fptype) ret;
+    return ret;
 }
 
 SpecialResonanceIntegrator::SpecialResonanceIntegrator(int pIdx, unsigned int ri, unsigned int rj)
@@ -338,7 +337,7 @@ __device__ thrust::complex<fptype> SpecialResonanceIntegrator::operator()(thrust
     int globalBinNumber  = thrust::get<0>(t);
     fptype lowerBoundM12 = thrust::get<1>(t)[0];
     fptype upperBoundM12 = thrust::get<1>(t)[1];
-    int numBinsM12       = (int) floor(thrust::get<1>(t)[2] + 0.5);
+    auto numBinsM12       = static_cast<int>( floor(thrust::get<1>(t)[2] + 0.5));
     int binNumberM12     = globalBinNumber % numBinsM12;
     fptype binCenterM12  = upperBoundM12 - lowerBoundM12;
     binCenterM12        /= numBinsM12;
@@ -348,7 +347,7 @@ __device__ thrust::complex<fptype> SpecialResonanceIntegrator::operator()(thrust
     globalBinNumber     /= numBinsM12;
     fptype lowerBoundM13 = thrust::get<1>(t)[3];
     fptype upperBoundM13 = thrust::get<1>(t)[4];
-    int numBinsM13       = (int) floor(thrust::get<1>(t)[5] + 0.5);
+    auto numBinsM13       = static_cast<int>( floor(thrust::get<1>(t)[5] + 0.5));
     fptype binCenterM13  = upperBoundM13 - lowerBoundM13;
     binCenterM13        /= numBinsM13;
     binCenterM13        *= (globalBinNumber + 0.5);

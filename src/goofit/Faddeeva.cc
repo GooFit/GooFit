@@ -1,7 +1,7 @@
 #include "goofit/Faddeeva.h"
 #include "goofit/Error.h"
 
-#include <math.h>
+#include <cmath>
 
 #include <thrust/complex.h>
 

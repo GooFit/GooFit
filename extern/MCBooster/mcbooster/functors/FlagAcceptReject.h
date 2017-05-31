@@ -80,7 +80,7 @@ struct FlagAcceptReject
         randEng.discard(idx+seed);
         GReal_t uni = uniDist(randEng);
         // printf("accRej idx %li seed%u  %.5g %.5g %s\n",idx, seed, uni, weight, (uni<weight) ? "true" : "false" );
-        GBool_t flag = ( uni < weight) ? 1 : 0;
+        GBool_t flag = ( uni < weight) ? true : false;
         return flag;
 
 	}

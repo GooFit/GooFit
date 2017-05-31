@@ -1,7 +1,7 @@
 #include "goofit/PdfBase.h"
-#include "goofit/fitting/Params.h"
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/Variable.h"
+#include "goofit/fitting/Params.h"
 
 namespace GooFit {
 
@@ -36,4 +36,4 @@ void Params::SetGooFitParams(const Minuit2::MnUserParameterState& input) {
     }
 }
     
-}
+} // namespace GooFit

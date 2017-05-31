@@ -2,20 +2,20 @@
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/detail/ThrustOverride.h"
 
-#include "goofit/Log.h"
-#include "goofit/Error.h"
-#include "goofit/Variable.h"
-#include "goofit/FitControl.h"
 #include "goofit/BinnedDataSet.h"
+#include "goofit/Error.h"
+#include "goofit/FitControl.h"
+#include "goofit/Log.h"
 #include "goofit/UnbinnedDataSet.h"
+#include "goofit/Variable.h"
 
-#include <thrust/transform_reduce.h>
-#include <thrust/transform.h>
-#include <thrust/host_vector.h>
 #include <thrust/device_vector.h>
-#include <thrust/sequence.h>
+#include <thrust/host_vector.h>
 #include <thrust/iterator/constant_iterator.h>
 #include <thrust/iterator/zip_iterator.h>
+#include <thrust/sequence.h>
+#include <thrust/transform.h>
+#include <thrust/transform_reduce.h>
 
 #ifdef ROOT_FOUND
 #include <TH1D.h>
@@ -133,11 +133,11 @@ __device__ device_metric_ptr ptr_to_BinAvg       = calculateBinAvg;
 __device__ device_metric_ptr ptr_to_BinWithError = calculateBinWithError;
 __device__ device_metric_ptr ptr_to_Chisq        = calculateChisq;
 
-void* host_fcn_ptr = 0;
+void* host_fcn_ptr = nullptr;
 
 void* getMetricPointer(std::string name) {
 #define CHOOSE_PTR(ptrname) if (name == #ptrname) GET_FUNCTION_ADDR(ptrname);
-    host_fcn_ptr = 0;
+    host_fcn_ptr = nullptr;
     CHOOSE_PTR(ptr_to_Eval);
     CHOOSE_PTR(ptr_to_NLL);
     CHOOSE_PTR(ptr_to_Prob);
@@ -161,7 +161,7 @@ GooPdf::GooPdf(Variable* x, std::string n)
 
 __host__ int GooPdf::findFunctionIdx(void* dev_functionPtr) {
     // Code specific to function-pointer implementation
-    std::map<void*, int>::iterator localPos = functionAddressToDeviceIndexMap.find(dev_functionPtr);
+    auto localPos = functionAddressToDeviceIndexMap.find(dev_functionPtr);
 
     if(localPos != functionAddressToDeviceIndexMap.end()) {
         return (*localPos).second;
@@ -483,7 +483,7 @@ __host__ fptype GooPdf::normalize() const {
 
     GOOFIT_TRACE("{}: Param {} integral is ~= {}", getName(), parameters, ret);
     host_normalisation[parameters] = 1.0/ret;
-    return (fptype) ret;
+    return ret;
 }
 
 #ifdef PROFILING
@@ -613,8 +613,8 @@ __host__ void GooPdf::transformGrid(fptype* host_output) {
 
 
 __host__ void GooPdf::setFitControl(FitControl* const fc, bool takeOwnerShip) {
-    for(unsigned int i = 0; i < components.size(); ++i) {
-        components[i]->setFitControl(fc, false);
+    for(auto & component : components) {
+        component->setFitControl(fc, false);
     }
 
     if((fitControl) && (fitControl->getOwner() == this)) {

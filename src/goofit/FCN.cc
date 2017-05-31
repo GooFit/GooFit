@@ -1,8 +1,8 @@
 #include "goofit/PdfBase.h"
-#include "goofit/fitting/FCN.h"
+#include "goofit/Log.h"
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/Variable.h"
-#include "goofit/Log.h"
+#include "goofit/fitting/FCN.h"
 
 namespace GooFit {
 
@@ -72,4 +72,4 @@ Params* FCN::GetParams() {
     return params_;
 }
     
-}
+} // namespace GooFit

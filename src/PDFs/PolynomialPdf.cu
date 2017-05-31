@@ -116,8 +116,8 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n, Variable* _x, std::vector<V
     std::vector<unsigned int> pindices;
     pindices.push_back(lowestDegree);
 
-    for(std::vector<Variable*>::iterator v = weights.begin(); v != weights.end(); ++v) {
-        pindices.push_back(registerParameter(*v));
+    for(auto & weight : weights) {
+        pindices.push_back(registerParameter(weight));
     }
 
     if(x0) {
@@ -133,7 +133,7 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n, Variable* _x, std::vector<V
 // Constructor for multivariate polynomial.
 __host__ PolynomialPdf::PolynomialPdf(std::string n, std::vector<Variable*> obses, std::vector<Variable*> coeffs,
                                       std::vector<Variable*> offsets, unsigned int maxDegree)
-    : GooPdf(0, n) {
+    : GooPdf(nullptr, n) {
     unsigned int numParameters = 1;
 
     // For 1 observable, equal to n = maxDegree + 1.
@@ -151,7 +151,7 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n, std::vector<Variable*> obse
 
     while(numParameters > coeffs.size()) {
         char varName[100];
-        sprintf(varName, "%s_extra_coeff_%i", getName().c_str(), (int) coeffs.size());
+        sprintf(varName, "%s_extra_coeff_%i", getName().c_str(), static_cast<int>( coeffs.size()));
 
         Variable* newTerm = new Variable(varName, 0);
         coeffs.push_back(newTerm);
@@ -163,7 +163,7 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n, std::vector<Variable*> obse
 
     while(offsets.size() < obses.size()) {
         char varName[100];
-        sprintf(varName, "%s_extra_offset_%i", getName().c_str(), (int) offsets.size());
+        sprintf(varName, "%s_extra_offset_%i", getName().c_str(), static_cast<int>( offsets.size()));
         Variable* newOffset = new Variable(varName, 0);
         offsets.push_back(newOffset);
     }
@@ -171,12 +171,12 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n, std::vector<Variable*> obse
     std::vector<unsigned int> pindices;
     pindices.push_back(maxDegree);
 
-    for(std::vector<Variable*>::iterator o = offsets.begin(); o != offsets.end(); ++o) {
-        pindices.push_back(registerParameter(*o));
+    for(auto & offset : offsets) {
+        pindices.push_back(registerParameter(offset));
     }
 
-    for(std::vector<Variable*>::iterator c = coeffs.begin(); c != coeffs.end(); ++c) {
-        pindices.push_back(registerParameter(*c));
+    for(auto & coeff : coeffs) {
+        pindices.push_back(registerParameter(coeff));
     }
 
     GET_FUNCTION_ADDR(ptr_to_MultiPolynomial);

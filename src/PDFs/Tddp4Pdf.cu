@@ -13,20 +13,18 @@ TODO:
   -For example the way Spinfactors are stored in the same array as the Lineshape values.
    Is this really worth the memory we lose by using a complex to store the SF?
 */
-#include <mcbooster/GTypes.h>
-#include <mcbooster/Vector4R.h>
-#include <mcbooster/Generate.h>
-#include <mcbooster/GContainers.h>
 #include <mcbooster/Evaluate.h>
 #include <mcbooster/EvaluateArray.h>
+#include <mcbooster/GContainers.h>
 #include <mcbooster/GFunctional.h>
-
-#include "goofit/Log.h"
+#include <mcbooster/GTypes.h>
+#include <mcbooster/Generate.h>
+#include <mcbooster/Vector4R.h>
 #include "goofit/Error.h"
 #include "goofit/PDFs/physics/Tddp4Pdf.h"
 #include "goofit/PDFs/physics/EvalVar.h"
 #include "goofit/PDFs/physics/DP4Pdf.h"
-
+#include "goofit/Log.h"
 #include <thrust/complex.h>
 
 namespace GooFit {
@@ -98,7 +96,7 @@ First entries are the starting points in array, necessary, because number of Lin
 __device__ fptype device_TDDP4(fptype* evt, fptype* p, unsigned int* indices) {
     //printf("DalitzPlot evt %i zero: %i %i %f (%f, %f).\n", evtNum, numResonances, effFunctionIdx, eff, totalAmp.real, totalAmp.imag);
 
-    int evtNum = (int) floor(0.5 + evt[indices[7 + indices[0]]]);
+    auto evtNum = static_cast<int>( floor(0.5 + evt[indices[7 + indices[0]]]));
     //GOOFIT_TRACE("TDDP4: Number of events: {}", evtNum);
     
     unsigned int cacheToUse    = indices[2];
@@ -182,24 +180,23 @@ __host__ TDDP4::TDDP4(std::string n,
                       GooPdf* efficiency,
                       Variable* mistag,
                       unsigned int MCeventsNorm)
-    : GooPdf(0, n)
+    : GooPdf(nullptr, n)
     , decayInfo(decay)
     , _observables(observables)
     , resolution(Tres)
     , totalEventSize(observables.size()+2) // number of observables plus eventnumber
     {
     // should include m12, m34, cos12, cos34, phi, eventnumber, dtime, sigmat. In this order!
-    for(std::vector<Variable*>::iterator obsIT = observables.begin(); obsIT != observables.end(); ++obsIT) {
-        registerObservable(*obsIT);
+    for(auto & observable : observables) {
+        registerObservable(observable);
     }
 
 
     std::vector<fptype>decayConstants;
     decayConstants.push_back(decayInfo->meson_radius);
 
-    for(std::vector<fptype>::iterator pmIT = decayInfo->particle_masses.begin(); pmIT != decayInfo->particle_masses.end();
-            ++pmIT) {
-        decayConstants.push_back(*pmIT);
+    for(double & particle_masse : decayInfo->particle_masses) {
+        decayConstants.push_back(particle_masse);
     }
 
     if(mistag) {
@@ -225,7 +222,7 @@ __host__ TDDP4::TDDP4(std::string n,
     pindices.push_back(registerParameter(decayInfo->_SqWStoRSrate));
     if(resolution->getDeviceFunction() < 0)
         throw GooFit::GeneralError("The resolution device function index {} must be more than 0", resolution->getDeviceFunction());
-    pindices.push_back((unsigned int) resolution->getDeviceFunction());
+    pindices.push_back(static_cast<unsigned int>( resolution->getDeviceFunction()));
 
     // This is the start of reading in the amplitudes and adding the lineshapes and Spinfactors to this PDF
     // This is done in this way so we don't have multiple copies of one lineshape in one pdf.
@@ -238,58 +235,58 @@ __host__ TDDP4::TDDP4(std::string n,
     std::vector<Amplitude*> AmpsA = decayInfo->amplitudes;
     std::vector<Amplitude*> AmpsB = decayInfo->amplitudes_B;
 
-    for(int i=0; i<AmpsA.size(); i++) {
+    for(auto & i : AmpsA) {
 
 
-        AmpMap[AmpsA[i]->_uniqueDecayStr] =  std::make_pair(std::vector<unsigned int>(0), std::vector<unsigned int>(0));
+        AmpMap[i->_uniqueDecayStr] =  std::make_pair(std::vector<unsigned int>(0), std::vector<unsigned int>(0));
 
         // printf("Adding Amplitde A:%s\n",AmpsA[i]->_uniqueDecayStr.c_str());
 
-        auto LSvec = AmpsA[i]->_LS;
+        auto LSvec = i->_LS;
 
-        for(auto LSIT = LSvec.begin(); LSIT != LSvec.end(); ++LSIT) {
-            auto found = std::find_if(components.begin(), components.end(), [LSIT](const PdfBase* L) {
-                return (**LSIT)== *(dynamic_cast<const Lineshape*>(L));
+        for(auto & LSIT : LSvec) {
+            auto found = std::find_if(components.begin(), components.end(), [&LSIT](const PdfBase* L) {
+                return (*LSIT)== *(dynamic_cast<const Lineshape*>(L));
             });
 
             if(found != components.end()) {
-                AmpMap[AmpsA[i]->_uniqueDecayStr].first.push_back(std::distance(components.begin(), found));
+                AmpMap[i->_uniqueDecayStr].first.push_back(std::distance(components.begin(), found));
                 // printf("LS %s found at %i\n",(*found)->getName().c_str(),std::distance(components.begin(), found));
             } else {
-                components.push_back(*LSIT);
-                AmpMap[AmpsA[i]->_uniqueDecayStr].first.push_back(components.size() - 1);
+                components.push_back(LSIT);
+                AmpMap[i->_uniqueDecayStr].first.push_back(components.size() - 1);
                 // printf("Adding LS %s\n",(*LSIT)->getName().c_str());
 
             }
         }
 
-        auto SFvec = AmpsA[i]->_SF;
+        auto SFvec = i->_SF;
 
-        for(auto SFIT = SFvec.begin(); SFIT != SFvec.end(); ++SFIT) {
-            auto found = std::find_if(SpinFactors.begin(), SpinFactors.end(), [SFIT](const SpinFactor* S) {
-                return (**SFIT) == (*S);
+        for(auto & SFIT : SFvec) {
+            auto found = std::find_if(SpinFactors.begin(), SpinFactors.end(), [&SFIT](const SpinFactor* S) {
+                return (*SFIT) == (*S);
             });
 
             if(found != SpinFactors.end()) {
-                AmpMap[AmpsA[i]->_uniqueDecayStr].second.push_back(std::distance(SpinFactors.begin(), found));
+                AmpMap[i->_uniqueDecayStr].second.push_back(std::distance(SpinFactors.begin(), found));
                 // printf("SF %s found at %i\n",(*found)->getName().c_str(), std::distance(SpinFactors.begin(), found));
             } else {
-                SpinFactors.push_back(*SFIT);
-                AmpMap[AmpsA[i]->_uniqueDecayStr].second.push_back(SpinFactors.size() - 1);
+                SpinFactors.push_back(SFIT);
+                AmpMap[i->_uniqueDecayStr].second.push_back(SpinFactors.size() - 1);
                 // printf("Adding SF %s\n",(*SFIT)->getName().c_str());
 
             }
         }
 
 
-        nPermVec.push_back(AmpsA[i]->_nPerm);
-        pindices.push_back(registerParameter(AmpsA[i]->_ar));
-        pindices.push_back(registerParameter(AmpsA[i]->_ai));
+        nPermVec.push_back(i->_nPerm);
+        pindices.push_back(registerParameter(i->_ar));
+        pindices.push_back(registerParameter(i->_ai));
         ++coeff_counter;
-        AmpBuffer.push_back(AmpsA[i]);
+        AmpBuffer.push_back(i);
         unsigned int flag = 0;
-        auto inB = std::find_if(AmpsB.begin(), AmpsB.end(), [AmpsA, i](const Amplitude* A) {
-            return *(AmpsA[i]) == (*A);
+        auto inB = std::find_if(AmpsB.begin(), AmpsB.end(), [AmpsA, &i](const Amplitude* A) {
+            return *i == (*A);
         });
 
         if(inB != AmpsB.end()) {
@@ -301,74 +298,74 @@ __host__ TDDP4::TDDP4(std::string n,
         }
 
         ampidxstart.push_back(ampidx.size());
-        std::vector<unsigned int> ls = AmpMap[AmpsA[i]->_uniqueDecayStr].first;
-        std::vector<unsigned int> sf = AmpMap[AmpsA[i]->_uniqueDecayStr].second;
+        std::vector<unsigned int> ls = AmpMap[i->_uniqueDecayStr].first;
+        std::vector<unsigned int> sf = AmpMap[i->_uniqueDecayStr].second;
         ampidx.push_back(ls.size());
         ampidx.push_back(sf.size());
-        ampidx.push_back(AmpsA[i]->_nPerm);
+        ampidx.push_back(i->_nPerm);
         ampidx.push_back(flag);
         ampidx.insert(ampidx.end(), ls.begin(), ls.end());
         ampidx.insert(ampidx.end(), sf.begin(), sf.end());
     }
 
 
-    for(int i=0; i<AmpsB.size(); i++) {
+    for(auto & i : AmpsB) {
 
         unsigned int flag = 1;
-        auto inB = std::find_if(AmpBuffer.begin(), AmpBuffer.end(), [AmpsB, i](const Amplitude* A) {
-            return *(AmpsB[i]) == (*A);
+        auto inB = std::find_if(AmpBuffer.begin(), AmpBuffer.end(), [AmpsB, &i](const Amplitude* A) {
+            return *i == (*A);
         });
 
         if(inB != AmpBuffer.end())
             continue;
 
-        AmpMap[AmpsB[i]->_uniqueDecayStr] =  std::make_pair(std::vector<unsigned int>(0), std::vector<unsigned int>(0));
+        AmpMap[i->_uniqueDecayStr] =  std::make_pair(std::vector<unsigned int>(0), std::vector<unsigned int>(0));
         // fprintf("Adding Amplitude B %s\n",AmpsB[i]->_uniqueDecayStr.c_str());
 
-        auto LSvec = AmpsB[i]->_LS;
+        auto LSvec = i->_LS;
 
-        for(auto LSIT = LSvec.begin(); LSIT != LSvec.end(); ++LSIT) {
-            auto found = std::find_if(components.begin(), components.end(), [LSIT](const PdfBase* L) {
-                return (**LSIT)== *(dynamic_cast<const Lineshape*>(L));
+        for(auto & LSIT : LSvec) {
+            auto found = std::find_if(components.begin(), components.end(), [&LSIT](const PdfBase* L) {
+                return (*LSIT)== *(dynamic_cast<const Lineshape*>(L));
             });
 
             if(found != components.end()) {
-                AmpMap[AmpsB[i]->_uniqueDecayStr].first.push_back(std::distance(components.begin(), found));
+                AmpMap[i->_uniqueDecayStr].first.push_back(std::distance(components.begin(), found));
                 // fprintf("LS %s found at %i\n",(*found)->getName().c_str(), std::distance(components.begin(), found));
             } else {
-                components.push_back(*LSIT);
-                AmpMap[AmpsB[i]->_uniqueDecayStr].first.push_back(components.size() - 1);
+                components.push_back(LSIT);
+                AmpMap[i->_uniqueDecayStr].first.push_back(components.size() - 1);
                 // fprintf("Adding LS %s\n",(*LSIT)->getName().c_str());
             }
         }
 
-        auto SFvec = AmpsB[i]->_SF;
+        auto SFvec = i->_SF;
 
-        for(auto SFIT = SFvec.begin(); SFIT != SFvec.end(); ++SFIT) {
-            auto found = std::find_if(SpinFactors.begin(), SpinFactors.end(), [SFIT](const SpinFactor* S) {
-                return (**SFIT) == (*S);
+        for(auto & SFIT : SFvec) {
+            auto found = std::find_if(SpinFactors.begin(), SpinFactors.end(), [&SFIT](const SpinFactor* S) {
+                return (*SFIT) == (*S);
             });
 
             if(found != SpinFactors.end()) {
-                AmpMap[AmpsB[i]->_uniqueDecayStr].second.push_back(std::distance(SpinFactors.begin(), found));
+                AmpMap[i->_uniqueDecayStr].second.push_back(std::distance(SpinFactors.begin(), found));
                 // fprintf("SF %s found at %i\n",(*found)->getName().c_str(), std::distance(SpinFactors.begin(), found));
             } else {
-                SpinFactors.push_back(*SFIT);
-                AmpMap[AmpsB[i]->_uniqueDecayStr].second.push_back(SpinFactors.size() - 1);
+                SpinFactors.push_back(SFIT);
+                AmpMap[i->_uniqueDecayStr].second.push_back(SpinFactors.size() - 1);
                 // fprintf("Adding SF %s\n",(*SFIT)->getName().c_str());
             }
         }
 
-        nPermVec.push_back(AmpsB[i]->_nPerm);
-        pindices.push_back(registerParameter(AmpsB[i]->_ar));
-        pindices.push_back(registerParameter(AmpsB[i]->_ai));
+        nPermVec.push_back(i->_nPerm);
+        pindices.push_back(registerParameter(i->_ar));
+        pindices.push_back(registerParameter(i->_ai));
         ++coeff_counter;
         ampidxstart.push_back(ampidx.size());
-        std::vector<unsigned int> ls = AmpMap[AmpsB[i]->_uniqueDecayStr].first;
-        std::vector<unsigned int> sf = AmpMap[AmpsB[i]->_uniqueDecayStr].second;
+        std::vector<unsigned int> ls = AmpMap[i->_uniqueDecayStr].first;
+        std::vector<unsigned int> sf = AmpMap[i->_uniqueDecayStr].second;
         ampidx.push_back(ls.size());
         ampidx.push_back(sf.size());
-        ampidx.push_back(AmpsB[i]->_nPerm);
+        ampidx.push_back(i->_nPerm);
         ampidx.push_back(flag);
         ampidx.insert(ampidx.end(), ls.begin(), ls.end());
         ampidx.insert(ampidx.end(), sf.begin(), sf.end());
@@ -384,17 +381,17 @@ __host__ TDDP4::TDDP4(std::string n,
     pindices[4] = AmpMap.size();
     pindices[5] = coeff_counter;
 
-    for(int i = 0; i<components.size(); i++) {
-        reinterpret_cast<Lineshape*>(components[i])->setConstantIndex(cIndex);
-        pindices.push_back(reinterpret_cast<Lineshape*>(components[i])->getFunctionIndex());
-        pindices.push_back(reinterpret_cast<Lineshape*>(components[i])->getParameterIndex());
+    for(auto & component : components) {
+        reinterpret_cast<Lineshape*>(component)->setConstantIndex(cIndex);
+        pindices.push_back(reinterpret_cast<Lineshape*>(component)->getFunctionIndex());
+        pindices.push_back(reinterpret_cast<Lineshape*>(component)->getParameterIndex());
 
     }
 
-    for(int i = 0; i < SpinFactors.size(); ++i) {
-        pindices.push_back(SpinFactors[i]->getFunctionIndex());
-        pindices.push_back(SpinFactors[i]->getParameterIndex());
-        SpinFactors[i]->setConstantIndex(cIndex);
+    for(auto & SpinFactor : SpinFactors) {
+        pindices.push_back(SpinFactor->getFunctionIndex());
+        pindices.push_back(SpinFactor->getParameterIndex());
+        SpinFactor->setConstantIndex(cIndex);
     }
 
 
@@ -584,15 +581,15 @@ __host__ fptype TDDP4::normalize() const {
     // fprintf(stderr, "normalize after LS\n");
 
     // this is a little messy but it basically checks if the amplitude includes one of the recalculated lineshapes and if so recalculates that amplitude
-    std::map<std::string, std::pair<std::vector<unsigned int>, std::vector<unsigned int>>>::const_iterator AmpMapIt =
+    auto AmpMapIt =
         AmpMap.begin();
 
     for(int i = 0; i < AmpCalcs.size(); ++i) {
         std::vector<unsigned int> redoidx((*AmpMapIt).second.first);
         bool redo = false;
 
-        for(int j = 0; j < redoidx.size(); ++j) {
-            if(!redoIntegral[redoidx[j]])
+        for(unsigned int j : redoidx) {
+            if(!redoIntegral[j])
                 continue;
 
             redo = true;
@@ -869,7 +866,7 @@ __device__ thrust::complex<fptype> SFCalculator_TD::operator()(thrust::tuple<int
     // printf("vec%i %f, %f, %f, %f\n",2, vecs[8], vecs[9], vecs[10], vecs[11]);
     // printf("vec%i %f, %f, %f, %f\n",3, vecs[12], vecs[13], vecs[14], vecs[15]);
 
-    spin_function_ptr func = reinterpret_cast<spin_function_ptr>(device_function_table[functn_i]);
+    auto func = reinterpret_cast<spin_function_ptr>(device_function_table[functn_i]);
     fptype sf = (*func)(vecs, paramIndices+params_i);
     // printf("SpinFactors %i : %.7g\n",_spinfactor_i, sf );
     return thrust::complex<fptype>(sf, 0);
@@ -904,7 +901,7 @@ const {
 //   printf("evt %i vec%i %.5g, %.5g, %.5g, %.5g\n", evtNum,2, vecs[8], vecs[9], vecs[10], vecs[11]);
 //   printf("evt %i vec%i %.5g, %.5g, %.5g, %.5g\n", evtNum,3, vecs[12], vecs[13], vecs[14], vecs[15]);
 // // }
-    spin_function_ptr func = reinterpret_cast<spin_function_ptr>(device_function_table[functn_i]);
+    auto func = reinterpret_cast<spin_function_ptr>(device_function_table[functn_i]);
     fptype sf = (*func)(vecs, paramIndices+params_i);
 
     // printf("NormSF evt:%.5g, %.5g, %.5g, %.5g, %.5g\n", m12, m34, cos12, cos34, phi);
@@ -1069,7 +1066,7 @@ __device__ thrust::complex<fptype> AmpCalc_TD::operator()(thrust::tuple<int, fpt
         returnVal += ret;
     }
 
-    returnVal *= (1/sqrt((fptype)(_nPerm)));
+    returnVal *= (1/sqrt(static_cast<fptype>(_nPerm)));
     // printf("Amplitude Value = (%.7g, %.7g)\n", returnVal.real, returnVal.imag);
     return  returnVal;
 }
@@ -1127,7 +1124,7 @@ __device__ thrust::tuple<fptype, fptype, fptype, fptype> NormIntegrator_TD::oper
             ret2 += ret;
         }
 
-        ret2 *= (1/sqrt((fptype)(nPerm)));
+        ret2 *= (1/sqrt(static_cast<fptype>(nPerm)));
         // printf("Result Amplitude %i, %i, %.5g, %.5g\n",flag, amp, ret2.real, ret2.imag);
 
         switch(flag) {

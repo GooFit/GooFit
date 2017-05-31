@@ -16,7 +16,7 @@ __device__ fptype device_BinTransform(fptype* evt, fptype* p, unsigned int* indi
         fptype binSize    = functorConstants[indices[i*3+2]];
         int numBins       = indices[i*3+3];
 
-        int localBin = (int) floor((obsValue - lowerLimit) / binSize);
+        auto localBin = static_cast<int>( floor((obsValue - lowerLimit) / binSize));
         ret += localBin * previousSize;
         previousSize *= numBins;
     }
@@ -31,10 +31,10 @@ __host__ BinTransformPdf::BinTransformPdf(std::string n, std::vector<Variable*> 
                                           std::vector<fptype> limits,
                                           std::vector<fptype> binSizes,
                                           std::vector<int> numBins)
-    : GooPdf(0, n) {
+    : GooPdf(nullptr, n) {
 
     cIndex = registerConstants(2*obses.size());
-    fptype* host_constants = new fptype[2*obses.size()];
+    auto* host_constants = new fptype[2*obses.size()];
     std::vector<unsigned int> pindices;
 
     for(unsigned int i = 0; i < obses.size(); ++i) {

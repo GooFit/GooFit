@@ -34,7 +34,7 @@ __device__ fptype device_Composite(fptype* evt, fptype* p, unsigned int* indices
 __device__ device_function_ptr ptr_to_Composite = device_Composite;
 
 __host__ CompositePdf::CompositePdf(std::string n, PdfBase* core, PdfBase* shell)
-    : GooPdf(0, n) {
+    : GooPdf(nullptr, n) {
     std::vector<unsigned int> pindices;
     pindices.push_back(core->getFunctionIndex());
     pindices.push_back(core->getParameterIndex());
@@ -67,8 +67,8 @@ __host__ fptype CompositePdf::normalize() const {
     // normalize them even though the information
     // may not be used.
 
-    for(std::vector<PdfBase*>::const_iterator c = components.begin(); c != components.end(); ++c) {
-        (*c)->normalize();
+    for(auto component : components) {
+        component->normalize();
     }
 
     // Normalize composite in the usual binned-integral way.

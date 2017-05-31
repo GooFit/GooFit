@@ -172,7 +172,7 @@ public:
         return _v[i];
     }
 
-    __device__ LorentzMatrix() {};
+    __device__ LorentzMatrix() = default;;
     __device__ LorentzMatrix(const gpuLVec p[4]) {
         for(int i=0; i<4; i++)
             _v[i] = p[i];
@@ -227,14 +227,14 @@ public:
         return *this;
     }
     __device__ LorentzMatrix& mult(fptype s) {
-        for(int i=0; i < 4; i++)
-            _v[i] *= s;
+        for(auto & i : _v)
+            i *= s;
 
         return *this;
     }
     __device__ LorentzMatrix& div(fptype s) {
-        for(int i=0; i < 4; i++)
-            _v[i] *= (1./s);
+        for(auto & i : _v)
+            i *= (1./s);
 
         return *this;
     }
@@ -344,8 +344,7 @@ public:
         E().SetZ(p.GetE() * p.GetZ());
         E().SetE(p.GetE() * p.GetE());
     }
-    __device__ SymmLorentzMatrix(const SymmLorentzMatrix& other)
-        : LorentzMatrix(other) {}
+    __device__ SymmLorentzMatrix(const SymmLorentzMatrix& other) = default;
 
     __device__ SymmLorentzMatrix& add(const SymmLorentzMatrix& other) {
         for(int i=0; i < 4; i++)
@@ -360,14 +359,14 @@ public:
         return *this;
     }
     __device__ SymmLorentzMatrix& mult(fptype s) {
-        for(int i=0; i < 4; i++)
-            _v[i] *= s;
+        for(auto & i : _v)
+            i *= s;
 
         return *this;
     }
     __device__ SymmLorentzMatrix& div(fptype s) {
-        for(int i=0; i < 4; i++)
-            _v[i] *= (1./s);
+        for(auto & i : _v)
+            i *= (1./s);
 
         return *this;
     }

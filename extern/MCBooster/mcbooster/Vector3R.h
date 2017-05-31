@@ -33,7 +33,7 @@
 #include <mcbooster/GTypes.h>
 #include <iosfwd>
 #include <iostream>
-#include <math.h>
+#include <cmath>
 
 using std::ostream;
 namespace mcbooster

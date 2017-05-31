@@ -2,9 +2,9 @@
 
 #include "goofit/DataSet.h"
 
+#include <initializer_list>
 #include <map>
 #include <vector>
-#include <initializer_list>
 
 namespace GooFit {
 
@@ -20,9 +20,9 @@ public:
     UnbinnedDataSet(std::set<Variable*>& vars, std::string n = "");
     UnbinnedDataSet(std::initializer_list<Variable*> vars, std::string n="");
     
-    virtual ~UnbinnedDataSet() = default;
+    ~UnbinnedDataSet() override = default;
 
-    virtual void addEvent() override;
+    void addEvent() override;
     
     /// Get the value at a specific variable and event number
     fptype getValue(Variable* var, size_t idx) const;

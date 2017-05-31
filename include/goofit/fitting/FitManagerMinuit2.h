@@ -1,7 +1,7 @@
 #pragma once
 
-#include <memory>
 #include <Minuit2/FunctionMinimum.h>
+#include <memory>
 
 #include "goofit/GlobalCudaDefines.h"
 #include "goofit/fitting/FCN.h"

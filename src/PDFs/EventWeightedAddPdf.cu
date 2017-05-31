@@ -62,7 +62,7 @@ __device__ device_function_ptr ptr_to_EventWeightedAddPdfs = device_EventWeighte
 __device__ device_function_ptr ptr_to_EventWeightedAddPdfsExt = device_EventWeightedAddPdfsExt;
 
 EventWeightedAddPdf::EventWeightedAddPdf(std::string n, std::vector<Variable*> weights, std::vector<PdfBase*> comps)
-    : GooPdf(0, n) {
+    : GooPdf(nullptr, n) {
     if(weights.size() != comps.size() && (weights.size()+1) != comps.size())
         throw GooFit::GeneralError("Size of weights {} (+1) != comps {}", weights.size(), comps.size());
 

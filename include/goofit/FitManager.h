@@ -7,7 +7,7 @@
 namespace GooFit {
 
 
-typedef GooFit::FitManagerMinuit2 FitManager;
+using FitManager = GooFit::FitManagerMinuit2;
 
 } // namespace GooFit
 

@@ -21,7 +21,7 @@
 #include <omp.h>
 #endif
 
-#include <signal.h>
+#include <csignal>
 
 
 
@@ -143,7 +143,7 @@ public:
     }
 
     /// Gets called in parse
-    virtual void pre_callback() override {
+    void pre_callback() override {
 
         set_device();
 

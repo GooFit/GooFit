@@ -16,7 +16,7 @@ endif()
 ### Require out-of-source builds
 file(TO_CMAKE_PATH "${PROJECT_BINARY_DIR}/CMakeLists.txt" LOC_PATH)
 if(EXISTS ${LOC_PATH})
-    message(FATAL_ERROR "You cannot build in a source directory (or any directory with a CMakeLists.txt file). Please make a build subdirectory.")
+    message(FATAL_ERROR "You cannot build in a source directory (or any directory with a CMakeLists.txt file). Please make a build subdirectory. Feel free to remove CMakeCache.txt and CMakeFiles.")
 endif()
 
 # Allow IDE's to group targets into folders
@@ -60,6 +60,24 @@ set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 # Add support for better CUDA behaviour in CMake < 3.7
 if(CMAKE_VERSION VERSION_LESS 3.7)
     set(CMAKE_MODULE_PATH  "${PROJECT_SOURCE_DIR}/extern/support_old_cmake" ${CMAKE_MODULE_PATH})
+endif()
+
+if(CMAKE_VERSION VERSION_GREATER 3.6)
+# Add clang-tidy if available
+option(GOOFIT_TIDY_FIX "Perform fixes for Clang-Tidy (resets to OFF)" OFF)
+    find_program(
+        CLANG_TIDY_EXE
+        NAMES "clang-tidy"
+        DOC "Path to clang-tidy executable"
+    )
+
+    if(CLANG_TIDY_EXE)
+        if(GOOFIT_TIDY_FIX)
+            set(DO_CLANG_TIDY "${CLANG_TIDY_EXE}" "-fix")
+        else()
+            set(DO_CLANG_TIDY "${CLANG_TIDY_EXE}")
+        endif()
+    endif()
 endif()
 
 # Add Sanatizers
@@ -325,6 +343,13 @@ function(goofit_add_library GNAME)
     endif()
 
     source_group("Source Files" REGULAR_EXPRESSION ".*\\.c[uc]")
+
+    if(CLANG_TIDY_EXE)
+        set_target_properties(
+            ${GNAME} PROPERTIES
+            CXX_CLANG_TIDY "${DO_CLANG_TIDY}"
+        )
+    endif()
 endfunction()
 
 function(goofit_add_executable NAMEEXE)
@@ -345,6 +370,13 @@ function(goofit_add_executable NAMEEXE)
     target_compile_options(${NAMEEXE} PUBLIC -x c++)
     set_target_properties(${NAMEEXE} PROPERTIES FOLDER projects)
     source_group("Source Files" REGULAR_EXPRESSION ".*\\.c[uc]")
+
+    if(CLANG_TIDY_EXE)
+        set_target_properties(
+            ${GNAME} PROPERTIES
+            CXX_CLANG_TIDY "${DO_CLANG_TIDY}"
+        )
+    endif()
 endfunction()
 
 function(goofit_add_link)
@@ -454,3 +486,4 @@ if(GOOFIT_TESTS)
     add_subdirectory(tests)
 endif()
 
+set(GOOFIT_TIDY_FIX OFF CACHE BOOL "Perform fixes for Clang-Tidy (resets to OFF)" FORCE)

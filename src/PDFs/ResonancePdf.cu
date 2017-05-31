@@ -334,7 +334,7 @@ ResonancePdf::ResonancePdf(std::string name,
                            Variable* width,
                            unsigned int sp,
                            unsigned int cyc)
-    : GooPdf(0, name)
+    : GooPdf(nullptr, name)
     , amp_real(ar)
     , amp_imag(ai) {
     std::vector<unsigned int> pindices;
@@ -360,7 +360,7 @@ ResonancePdf::ResonancePdf(std::string name,
                            Variable* mass,
                            Variable* width,
                            unsigned int cyc)
-    : GooPdf(0, name)
+    : GooPdf(nullptr, name)
     , amp_real(ar)
     , amp_imag(ai) {
     // Same as BW except for function pointed to.
@@ -383,7 +383,7 @@ ResonancePdf::ResonancePdf(std::string name,
                            unsigned int sp,
                            Variable* width,
                            unsigned int cyc)
-    : GooPdf(0, name)
+    : GooPdf(nullptr, name)
     , amp_real(ar)
     , amp_imag(ai) {
     // Same as BW except for function pointed to.
@@ -402,7 +402,7 @@ ResonancePdf::ResonancePdf(std::string name,
 ResonancePdf::ResonancePdf(std::string name,
                            Variable* ar,
                            Variable* ai)
-    : GooPdf(0, name)
+    : GooPdf(nullptr, name)
     , amp_real(ar)
     , amp_imag(ai) {
     std::vector<unsigned int> pindices;
@@ -419,7 +419,7 @@ ResonancePdf::ResonancePdf(std::string name,
                            Variable* mean,
                            Variable* sigma,
                            unsigned int cyc)
-    : GooPdf(0, name)
+    : GooPdf(nullptr, name)
     , amp_real(ar)
     , amp_imag(ai) {
     std::vector<unsigned int> pindices;

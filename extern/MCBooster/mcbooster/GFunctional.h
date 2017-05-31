@@ -53,9 +53,9 @@ struct IFunction
  */
 struct IFunctionArray
 {
-	GInt_t dim;
+	GInt_t dim{0};
 	IFunctionArray() :
-			dim(0)
+			
 	{	}
 
 	__host__ __device__ virtual void operator()(const GInt_t np,

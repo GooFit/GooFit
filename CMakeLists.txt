@@ -64,21 +64,18 @@ endif()
 
 if(CMAKE_VERSION VERSION_GREATER 3.6)
 # Add clang-tidy if available
-    option(GOOFIT_TIDY "Use Clang-Tidy if available" OFF)
-    if(GOOFIT_TIDY)
-        option(GOOFIT_TIDY_FIX "Perform fixes for Clang-Tidy" OFF)
-        find_program(
-            CLANG_TIDY_EXE
-            NAMES "clang-tidy"
-            DOC "Path to clang-tidy executable"
-        )
+option(GOOFIT_TIDY_FIX "Perform fixes for Clang-Tidy (resets to OFF)" OFF)
+    find_program(
+        CLANG_TIDY_EXE
+        NAMES "clang-tidy"
+        DOC "Path to clang-tidy executable"
+    )
 
-        if(CLANG_TIDY_EXE)
-            if(GOOFIT_TIDY_FIX)
-                set(DO_CLANG_TIDY "${CLANG_TIDY_EXE}" "-fix")
-            else()
-                set(DO_CLANG_TIDY "${CLANG_TIDY_EXE}")
-            endif()
+    if(CLANG_TIDY_EXE)
+        if(GOOFIT_TIDY_FIX)
+            set(DO_CLANG_TIDY "${CLANG_TIDY_EXE}" "-fix")
+        else()
+            set(DO_CLANG_TIDY "${CLANG_TIDY_EXE}")
         endif()
     endif()
 endif()
@@ -489,4 +486,4 @@ if(GOOFIT_TESTS)
     add_subdirectory(tests)
 endif()
 
-set(GOOFIT_TIDY_FIX OFF CACHE BOOL "Perform fixes for Clang-Tidy" FORCE)
+set(GOOFIT_TIDY_FIX OFF CACHE BOOL "Perform fixes for Clang-Tidy (resets to OFF)" FORCE)

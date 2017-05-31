@@ -172,7 +172,7 @@ public:
         return _v[i];
     }
 
-    __device__ LorentzMatrix() {};
+    __device__ LorentzMatrix() = default;;
     __device__ LorentzMatrix(const gpuLVec p[4]) {
         for(int i=0; i<4; i++)
             _v[i] = p[i];
@@ -345,7 +345,7 @@ public:
         E().SetE(p.GetE() * p.GetE());
     }
     __device__ SymmLorentzMatrix(const SymmLorentzMatrix& other)
-        : LorentzMatrix(other) {}
+        : = default;
 
     __device__ SymmLorentzMatrix& add(const SymmLorentzMatrix& other) {
         for(int i=0; i < 4; i++)

@@ -24,7 +24,7 @@ public:
     Indexable(Indexable &) = delete;
     Indexable& operator=(Indexable&) = delete;
     
-    virtual ~Indexable() {}
+    virtual ~Indexable() = default;
     
     /// Get the GooFit index
     int getIndex() const {return index;}
@@ -215,7 +215,7 @@ public:
     void operator=(const fptype& val) {setValue(val);}
 
     Constant(std::string n, fptype val) : Indexable(n, val) {}
-    ~Constant() override {}
+    ~Constant() override = default;
 };
 
 /// Get the max index of a variable from a list

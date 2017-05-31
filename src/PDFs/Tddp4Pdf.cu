@@ -659,7 +659,7 @@ __host__ fptype TDDP4::normalize() const {
     return ret;
 }
 
-__host__ std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h>
+__host__ std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::BoolVector_h>
 TDDP4::GenerateSig(unsigned int numEvents) {
 
     copyParams();
@@ -817,7 +817,7 @@ TDDP4::GenerateSig(unsigned int numEvents) {
     //thrust::counting_iterator<mcbooster::GLong_t> last = first + nAcc;
 
     // we do not want to copy the whole class to the GPU so capturing *this is not a great option
-    // therefor perpare local copies to capture the variables we need
+    // therefore perpare local copies to capture the variables we need
     unsigned int tmpoff = generation_offset;
     unsigned int tmpparam = parameters;
     wmax = maxWeight;

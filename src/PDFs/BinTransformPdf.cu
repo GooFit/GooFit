@@ -16,7 +16,7 @@ __device__ fptype device_BinTransform(fptype* evt, fptype* p, unsigned int* indi
         fptype binSize    = functorConstants[indices[i*3+2]];
         int numBins       = indices[i*3+3];
 
-        int localBin = (int) floor((obsValue - lowerLimit) / binSize);
+        int localBin = static_cast<int>( floor((obsValue - lowerLimit) / binSize));
         ret += localBin * previousSize;
         previousSize *= numBins;
     }

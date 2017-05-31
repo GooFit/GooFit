@@ -98,7 +98,7 @@ First entries are the starting points in array, necessary, because number of Lin
 __device__ fptype device_TDDP4(fptype* evt, fptype* p, unsigned int* indices) {
     //printf("DalitzPlot evt %i zero: %i %i %f (%f, %f).\n", evtNum, numResonances, effFunctionIdx, eff, totalAmp.real, totalAmp.imag);
 
-    int evtNum = (int) floor(0.5 + evt[indices[7 + indices[0]]]);
+    int evtNum = static_cast<int>( floor(0.5 + evt[indices[7 + indices[0]]]));
     //GOOFIT_TRACE("TDDP4: Number of events: {}", evtNum);
     
     unsigned int cacheToUse    = indices[2];
@@ -224,7 +224,7 @@ __host__ TDDP4::TDDP4(std::string n,
     pindices.push_back(registerParameter(decayInfo->_SqWStoRSrate));
     if(resolution->getDeviceFunction() < 0)
         throw GooFit::GeneralError("The resolution device function index {} must be more than 0", resolution->getDeviceFunction());
-    pindices.push_back((unsigned int) resolution->getDeviceFunction());
+    pindices.push_back(static_cast<unsigned int>( resolution->getDeviceFunction()));
 
     // This is the start of reading in the amplitudes and adding the lineshapes and Spinfactors to this PDF
     // This is done in this way so we don't have multiple copies of one lineshape in one pdf.
@@ -1068,7 +1068,7 @@ __device__ thrust::complex<fptype> AmpCalc_TD::operator()(thrust::tuple<int, fpt
         returnVal += ret;
     }
 
-    returnVal *= (1/sqrt((fptype)(_nPerm)));
+    returnVal *= (1/sqrt(static_cast<fptype>(_nPerm)));
     // printf("Amplitude Value = (%.7g, %.7g)\n", returnVal.real, returnVal.imag);
     return  returnVal;
 }
@@ -1126,7 +1126,7 @@ __device__ thrust::tuple<fptype, fptype, fptype, fptype> NormIntegrator_TD::oper
             ret2 += ret;
         }
 
-        ret2 *= (1/sqrt((fptype)(nPerm)));
+        ret2 *= (1/sqrt(static_cast<fptype>(nPerm)));
         // printf("Result Amplitude %i, %i, %.5g, %.5g\n",flag, amp, ret2.real, ret2.imag);
 
         switch(flag) {

@@ -151,7 +151,7 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n, std::vector<Variable*> obse
 
     while(numParameters > coeffs.size()) {
         char varName[100];
-        sprintf(varName, "%s_extra_coeff_%i", getName().c_str(), (int) coeffs.size());
+        sprintf(varName, "%s_extra_coeff_%i", getName().c_str(), static_cast<int>( coeffs.size()));
 
         Variable* newTerm = new Variable(varName, 0);
         coeffs.push_back(newTerm);
@@ -163,7 +163,7 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n, std::vector<Variable*> obse
 
     while(offsets.size() < obses.size()) {
         char varName[100];
-        sprintf(varName, "%s_extra_offset_%i", getName().c_str(), (int) offsets.size());
+        sprintf(varName, "%s_extra_offset_%i", getName().c_str(), static_cast<int>( offsets.size()));
         Variable* newOffset = new Variable(varName, 0);
         offsets.push_back(newOffset);
     }

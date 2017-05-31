@@ -483,7 +483,7 @@ __host__ fptype GooPdf::normalize() const {
 
     GOOFIT_TRACE("{}: Param {} integral is ~= {}", getName(), parameters, ret);
     host_normalisation[parameters] = 1.0/ret;
-    return (fptype) ret;
+    return ret;
 }
 
 #ifdef PROFILING

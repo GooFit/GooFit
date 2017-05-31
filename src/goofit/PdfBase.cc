@@ -53,7 +53,7 @@ __host__ unsigned int PdfBase::registerParameter(Variable* var) {
         throw GooFit::GeneralError("{}: Can not register a nullptr", getName());
 
     if(std::find(parameterList.begin(), parameterList.end(), var) != parameterList.end())
-        return (unsigned int) var->getIndex();
+        return static_cast<unsigned int>( var->getIndex());
 
     parameterList.push_back(var);
     variableRegistry[var].insert(this);
@@ -82,7 +82,7 @@ __host__ unsigned int PdfBase::registerParameter(Variable* var) {
         var->setIndex(unusedIndex);
     }
 
-    return (unsigned int) var->getIndex();
+    return static_cast<unsigned int>( var->getIndex());
 }
 
 __host__ void PdfBase::unregisterParameter(Variable* var) {

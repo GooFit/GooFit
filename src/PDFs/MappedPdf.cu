@@ -10,7 +10,7 @@ __device__ fptype device_Mapped(fptype* evt, fptype* p, unsigned int* indices) {
     unsigned int mapFunction = RO_CACHE(indices[1]);
     // This is an index into the MappedPdf's list of functions
     //int targetFunction = (int) floor(0.5 + (*(reinterpret_cast<device_function_ptr>(device_function_table[mapFunction])))(evt, p, paramIndices + indices[2]));
-    int targetFunction = (int) floor(0.5 + callFunction(evt, mapFunction, RO_CACHE(indices[2])));
+    int targetFunction = static_cast<int>( floor(0.5 + callFunction(evt, mapFunction, RO_CACHE(indices[2]))));
 
     targetFunction *= 2; // Because there are two pieces of information about each function
     targetFunction += 3; // Because first function information begins at index 3

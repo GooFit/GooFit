@@ -47,7 +47,7 @@ __constant__ unsigned int AmpIndices[500];
 __device__ fptype device_DP(fptype* evt, fptype* p, unsigned int* indices) {
     //printf("DalitzPlot evt %i zero: %i %i %f (%f, %f).\n", evtNum, numResonances, effFunctionIdx, eff, totalAmp.real, totalAmp.imag);
 
-    int evtNum = (int) floor(0.5 + evt[indices[7 + indices[0]]]);
+    int evtNum = static_cast<int>( floor(0.5 + evt[indices[7 + indices[0]]]));
     // printf("%i\n",evtNum );
     thrust::complex<fptype> totalAmp(0, 0);
     unsigned int cacheToUse    = indices[2];
@@ -232,7 +232,7 @@ __host__ DPPdf::DPPdf(std::string n,
     //auto zip_end = zip_begin + d1.size();
     //auto new_end = thrust::remove_if(zip_begin, zip_end, flags.begin(), thrust::logical_not<bool>());
 
-    printf("After accept-reject we will keep %.i Events for normalization.\n", (int)nAcc);
+    printf("After accept-reject we will keep %.i Events for normalization.\n", static_cast<int>(nAcc));
     d1.shrink_to_fit();
     d2.shrink_to_fit();
     d3.shrink_to_fit();
@@ -779,7 +779,7 @@ __device__ thrust::complex<fptype> AmpCalc::operator()(thrust::tuple<int, fptype
         returnVal += ret;
     }
 
-    returnVal *= (1/sqrt((fptype)(_nPerm)));
+    returnVal *= (1/sqrt(static_cast<fptype>(_nPerm)));
     // printf("Amplitude Value = (%.7g, %.7g)\n", returnVal.real, returnVal.imag);
     return  returnVal;
 }
@@ -831,7 +831,7 @@ __device__ fptype NormIntegrator::operator()(thrust::tuple<int, int, fptype*, th
         }
 
         thrust::complex<fptype> amp_C { cudaArray[indices[2*amp + 6]], cudaArray[indices[2*amp + 7]] };
-        ret2 *= (1/sqrt((fptype)(nPerm)));
+        ret2 *= (1/sqrt(static_cast<fptype>(nPerm)));
         // printf("Result Amplitude %i, %.5g, %.5g\n",amp, ret2.real, ret2.imag);
         returnVal += ret2 * amp_C;
     }

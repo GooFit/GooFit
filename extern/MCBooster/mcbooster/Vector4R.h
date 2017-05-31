@@ -29,7 +29,7 @@
 
 #include <mcbooster/Config.h>
 #include <mcbooster/GTypes.h>
-#include <math.h>
+#include <cmath>
 #include <iostream>
 #include <cmath>
 #include "mcbooster/Vector3R.h"

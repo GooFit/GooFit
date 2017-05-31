@@ -35,8 +35,8 @@
 #include <iostream>
 #include <ostream>
 #include <algorithm>
-#include <time.h>
-#include <stdio.h>
+#include <ctime>
+#include <cstdio>
 //#include <math.h>
 
 #include <mcbooster/Config.h>

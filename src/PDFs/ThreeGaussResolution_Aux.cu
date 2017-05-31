@@ -1,5 +1,5 @@
 #include "goofit/PDFs/ThreeGaussResolution_Aux.h"
-#include <math.h>
+#include <cmath>
 
 namespace GooFit {
 

@@ -21,7 +21,7 @@
 #include <omp.h>
 #endif
 
-#include <signal.h>
+#include <csignal>
 
 
 

@@ -12,8 +12,8 @@ class EventWeightedAddPdf : public GooPdf {
 public:
 
     EventWeightedAddPdf(std::string n, std::vector<Variable*> weights, std::vector<PdfBase*> comps);
-    __host__ virtual fptype normalize() const;
-    __host__ virtual bool hasAnalyticIntegral() const {
+    __host__ fptype normalize() const override;
+    __host__ bool hasAnalyticIntegral() const override {
         return false;
     }
 

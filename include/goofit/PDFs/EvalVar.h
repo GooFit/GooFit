@@ -100,7 +100,7 @@ struct Dim5: public mcbooster::IFunctionArray {
     }
 
     __host__ __device__
-    void operator()(const mcbooster::GInt_t n, mcbooster::Vector4R** particles, mcbooster::GReal_t* variables) {
+    void operator()(const mcbooster::GInt_t n, mcbooster::Vector4R** particles, mcbooster::GReal_t* variables) override {
         mcbooster::Vector4R ppip = *particles[0];
         mcbooster::Vector4R ppim    = *particles[1];
         mcbooster::Vector4R pK   = *particles[2];

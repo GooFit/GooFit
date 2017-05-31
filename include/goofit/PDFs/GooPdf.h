@@ -53,7 +53,7 @@ class GooPdf : public PdfBase {
 public:
 
     GooPdf(Variable* x, std::string n);
-    __host__ virtual double calculateNLL() const;
+    __host__ double calculateNLL() const override;
     
     /// NB: This does not project correctly in multidimensional datasets, because all observables
     /// other than 'var' will have, for every event, whatever value they happened to get set to last
@@ -63,7 +63,7 @@ public:
     __host__ std::vector<fptype> evaluateAtPoints(Variable* var);
 
     /// A normalize function. This fills in the host_normalize
-    __host__ virtual fptype normalize() const;
+    __host__ fptype normalize() const override;
    
     /// Just in case you are British and the previous spelling is offensive
     __host__ fptype normalise() const {return normalize();}
@@ -71,7 +71,7 @@ public:
     __host__ virtual fptype integrate(fptype lo, fptype hi) const {
         return 0;
     }
-    __host__ virtual bool hasAnalyticIntegral() const {
+    __host__ bool hasAnalyticIntegral() const override {
         return false;
     }
     __host__ fptype getValue();
@@ -84,7 +84,7 @@ public:
     
     __host__ void initialise(std::vector<unsigned int> pindices, void* dev_functionPtr = host_fcn_ptr);
     __host__ void scan(Variable* var, std::vector<fptype>& values);
-    __host__ virtual void setFitControl(FitControl* const fc, bool takeOwnerShip = true);
+    __host__ void setFitControl(FitControl* const fc, bool takeOwnerShip = true) override;
     __host__ virtual void setMetrics();
     __host__ void setParameterConstantness(bool constant = true);
 

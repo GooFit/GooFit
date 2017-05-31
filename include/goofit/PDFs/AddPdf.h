@@ -10,13 +10,13 @@ public:
 
     AddPdf(std::string n, std::vector<Variable*> weights, std::vector<PdfBase*> comps);
     AddPdf(std::string n, Variable* frac1, PdfBase* func1, PdfBase* func2);
-    __host__ virtual fptype normalize() const;
-    __host__ virtual bool hasAnalyticIntegral() const {
+    __host__ fptype normalize() const override;
+    __host__ bool hasAnalyticIntegral() const override {
         return false;
     }
 
 protected:
-    __host__ virtual double sumOfNll(int numVars) const;
+    __host__ double sumOfNll(int numVars) const override;
 
 private:
     bool extended;

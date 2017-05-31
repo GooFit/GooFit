@@ -119,7 +119,7 @@ public:
       , lowerlimit(dn) {}
     
     
-    virtual ~Variable() = default;
+    ~Variable() override = default;
     
     /// Get the error
     fptype getError() const {return error;}
@@ -196,7 +196,7 @@ class CountingVariable : public Variable {
 public:
 
     using Variable::Variable;
-    virtual ~CountingVariable() = default;
+    ~CountingVariable() override = default;
     // These classes can not be duplicated
     CountingVariable& operator=(CountingVariable&) = delete;
     /// Support var = 3
@@ -215,7 +215,7 @@ public:
     void operator=(const fptype& val) {setValue(val);}
 
     Constant(std::string n, fptype val) : Indexable(n, val) {}
-    virtual ~Constant() {}
+    ~Constant() override {}
 };
 
 /// Get the max index of a variable from a list

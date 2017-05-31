@@ -1,4 +1,4 @@
-#include "goofit/PDFs/CrystalBallPdf.h"
+#include "goofit/PDFs/basic/CrystalBallPdf.h"
 #include "goofit/Variable.h"
 
 namespace GooFit {
@@ -50,7 +50,7 @@ __host__ CrystalBallPdf::CrystalBallPdf(std::string n, Variable* _x, Variable* m
 
     pindices.push_back(registerParameter(power));
     GET_FUNCTION_ADDR(ptr_to_CrystalBall);
-    initialise(pindices);
+    initialize(pindices);
 }
 
 

@@ -3,7 +3,7 @@
 #include "goofit/fitting/Params.h"
 #include "goofit/fitting/FCN.h"
 #include "goofit/UnbinnedDataSet.h"
-#include "goofit/PDFs/ExpPdf.h"
+#include "goofit/PDFs/basic/ExpPdf.h"
 
 #include <Minuit2/MnUserParameters.h>
 #include <Minuit2/MnMigrad.h>

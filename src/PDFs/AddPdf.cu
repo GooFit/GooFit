@@ -1,4 +1,4 @@
-#include "goofit/PDFs/AddPdf.h"
+#include "goofit/PDFs/combine/AddPdf.h"
 #include "goofit/detail/ThrustOverride.h"
 #include "goofit/Error.h"
 
@@ -120,7 +120,7 @@ AddPdf::AddPdf(std::string n, std::vector<Variable*> weights, std::vector<PdfBas
     else
         GET_FUNCTION_ADDR(ptr_to_AddPdfs);
 
-    initialise(pindices);
+    initialize(pindices);
 }
 
 
@@ -142,7 +142,7 @@ AddPdf::AddPdf(std::string n, Variable* frac1, PdfBase* func1, PdfBase* func2)
 
     GET_FUNCTION_ADDR(ptr_to_AddPdfs);
 
-    initialise(pindices);
+    initialize(pindices);
 }
 
 __host__ fptype AddPdf::normalize() const {

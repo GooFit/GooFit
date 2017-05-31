@@ -1,4 +1,4 @@
-#include "goofit/PDFs/ExpPdf.h"
+#include "goofit/PDFs/basic/ExpPdf.h"
 #include "goofit/Error.h"
 
 namespace GooFit {
@@ -61,12 +61,12 @@ __host__ ExpPdf::ExpPdf(std::string n, Variable* _x, Variable* alpha, Variable* 
         pindices.push_back(registerParameter(offset));
         pindices.push_back(registerParameter(alpha));
         GET_FUNCTION_ADDR(ptr_to_ExpOffset);
-        initialise(pindices);
+        initialize(pindices);
     } else {
         pindices.push_back(registerParameter(alpha));
         GET_FUNCTION_ADDR(ptr_to_Exp);
         //host_fcn_ptr = (void*) ptr_to_Exp;
-        initialise(pindices);
+        initialize(pindices);
     }
 }
 
@@ -88,7 +88,7 @@ __host__ ExpPdf::ExpPdf(std::string n, Variable* _x, std::vector<Variable*>& wei
     else
         GET_FUNCTION_ADDR(ptr_to_ExpPoly);
 
-    initialise(pindices);
+    initialize(pindices);
 }
 
 __host__ fptype ExpPdf::integrate(fptype lo, fptype hi) const {

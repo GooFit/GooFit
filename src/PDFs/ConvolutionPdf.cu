@@ -1,4 +1,4 @@
-#include "goofit/PDFs/ConvolutionPdf.h"
+#include "goofit/PDFs/combine/ConvolutionPdf.h"
 #include "goofit/Variable.h"
 #include "goofit/Error.h"
 
@@ -149,7 +149,7 @@ ConvolutionPdf::ConvolutionPdf(std::string n,
     paramIndices.push_back(workSpaceIndex = totalConvolutions++);
 
     GET_FUNCTION_ADDR(ptr_to_ConvolvePdfs);
-    initialise(paramIndices);
+    initialize(paramIndices);
     setIntegrationConstants(-10, 10, 0.01);
 }
 
@@ -170,7 +170,7 @@ ConvolutionPdf::ConvolutionPdf(std::string n,
     // are convolutions. (Make sure that *all* the targets
     // are convolutions! Otherwise it will hang on the syncthreads
     // call.) In this case the cooperative loading needs
-    // to initialise all the shared memory workspaces, and needs to know
+    // to initialize all the shared memory workspaces, and needs to know
     // how many such workspaces there are, and which global workspaces
     // to draw on. NB! To use cooperative loading in the case of a
     // single function, just use numOthers = 0.
@@ -203,7 +203,7 @@ ConvolutionPdf::ConvolutionPdf(std::string n,
         throw GooFit::GeneralError("numOthers {} must be not be more than the cache size {}", numOthers, CONVOLUTION_CACHE_SIZE);
 
     GET_FUNCTION_ADDR(ptr_to_ConvolveSharedPdfs);
-    initialise(paramIndices);
+    initialize(paramIndices);
     setIntegrationConstants(-10, 10, 0.01);
 }
 
@@ -260,7 +260,7 @@ __host__ void ConvolutionPdf::registerOthers(std::vector<ConvolutionPdf*> others
     unsigned int numExpectedOthers = host_indices[parameters + 7] + 1;
 
     if(numExpectedOthers != others.size()) {
-        std::cout << "Problem: " << getName() << " initialised with " << others.size()
+        std::cout << "Problem: " << getName() << " initialized with " << others.size()
                   << " other PDFs, expected " << numExpectedOthers
                   << " (including itself). Returning without initialisation.\n";
         return;
@@ -279,7 +279,7 @@ __host__ void ConvolutionPdf::registerOthers(std::vector<ConvolutionPdf*> others
 
     if(!foundSelf) {
         std::cout << "Problem: " << getName() <<
-                  " initialised with list that did not include itself. Returning without initialisation.\n";
+                  " initialized with list that did not include itself. Returning without initialisation.\n";
         return;
     }
 

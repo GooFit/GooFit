@@ -1,5 +1,5 @@
-#include "goofit/PDFs/IncoherentSumPdf.h"
-#include "goofit/PDFs/ResonancePdf.h"
+#include "goofit/PDFs/physics/IncoherentSumPdf.h"
+#include "goofit/PDFs/physics/ResonancePdf.h"
 #include "goofit/Error.h"
 #include <thrust/complex.h>
 
@@ -95,7 +95,7 @@ __host__ IncoherentSumPdf::IncoherentSumPdf(std::string n, Variable* m12, Variab
     components.push_back(efficiency);
 
     GET_FUNCTION_ADDR(ptr_to_incoherent);
-    initialise(pindices);
+    initialize(pindices);
 
     redoIntegral = new bool[decayInfo->resonances.size()];
     cachedMasses = new fptype[decayInfo->resonances.size()];

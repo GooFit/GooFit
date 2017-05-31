@@ -5,7 +5,7 @@
 #include "goofit/UnbinnedDataSet.h"
 #include "goofit/FitControl.h"
 
-#include "goofit/PDFs/PolynomialPdf.h"
+#include "goofit/PDFs/basic/PolynomialPdf.h"
 #include "TMinuit.h"
 #include "TRandom.h"
 #include "TH1F.h"

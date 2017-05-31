@@ -8,7 +8,7 @@ This code is not sufficently tested yet and still under heavy development!
 
 #pragma once
 
-#include "goofit/PDFs/DalitzPlotHelpers.h"
+#include "goofit/PDFs/physics/DalitzPlotHelpers.h"
 
 namespace GooFit {
 

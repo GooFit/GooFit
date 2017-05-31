@@ -20,8 +20,8 @@ TODO:
 #include <mcbooster/Evaluate.h>
 #include <mcbooster/EvaluateArray.h>
 #include <mcbooster/GFunctional.h>
-#include "goofit/PDFs/DP4Pdf.h"
-#include "goofit/PDFs/EvalVar.h"
+#include "goofit/PDFs/physics/DP4Pdf.h"
+#include "goofit/PDFs/physics/EvalVar.h"
 #include "goofit/Error.h"
 
 namespace GooFit {
@@ -191,7 +191,7 @@ __host__ DPPdf::DPPdf(std::string n,
 
 
     GET_FUNCTION_ADDR(ptr_to_DP);
-    initialise(pindices);
+    initialize(pindices);
 
     Integrator =  new NormIntegrator(parameters);
     redoIntegral = new bool[components.size() - 1];

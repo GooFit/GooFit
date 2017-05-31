@@ -1,4 +1,4 @@
-#include "goofit/PDFs/PolynomialPdf.h"
+#include "goofit/PDFs/basic/PolynomialPdf.h"
 #include "goofit/Variable.h"
 
 namespace GooFit {
@@ -127,7 +127,7 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n, Variable* _x, std::vector<V
         GET_FUNCTION_ADDR(ptr_to_Polynomial);
     }
 
-    initialise(pindices);
+    initialize(pindices);
 }
 
 // Constructor for multivariate polynomial.
@@ -180,7 +180,7 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n, std::vector<Variable*> obse
     }
 
     GET_FUNCTION_ADDR(ptr_to_MultiPolynomial);
-    initialise(pindices);
+    initialize(pindices);
 }
 
 __host__ fptype PolynomialPdf::integrate(fptype lo, fptype hi) const {

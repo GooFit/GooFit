@@ -131,8 +131,8 @@ __host__ DalitzPlotPdf::DalitzPlotPdf(std::string n,
 
     fptype decayConstants[5];
 
-    for(int j = 0; j < 16; j++)
-        cachedWaves[j] = nullptr;
+    for(auto & cachedWave : cachedWaves)
+        cachedWave = nullptr;
 
     std::vector<unsigned int> pindices;
     pindices.push_back(registerConstants(5));
@@ -148,14 +148,13 @@ __host__ DalitzPlotPdf::DalitzPlotPdf(std::string n,
     cacheToUse = cacheCount++;
     pindices.push_back(cacheToUse);
 
-    for(std::vector<ResonancePdf*>::iterator res = decayInfo->resonances.begin(); res != decayInfo->resonances.end();
-            ++res) {
-        pindices.push_back(registerParameter((*res)->amp_real));
-        pindices.push_back(registerParameter((*res)->amp_imag));
-        pindices.push_back((*res)->getFunctionIndex());
-        pindices.push_back((*res)->getParameterIndex());
-        (*res)->setConstantIndex(cIndex);
-        components.push_back(*res);
+    for(auto & resonance : decayInfo->resonances) {
+        pindices.push_back(registerParameter(resonance->amp_real));
+        pindices.push_back(registerParameter(resonance->amp_imag));
+        pindices.push_back(resonance->getFunctionIndex());
+        pindices.push_back(resonance->getParameterIndex());
+        resonance->setConstantIndex(cIndex);
+        components.push_back(resonance);
     }
 
     pindices.push_back(efficiency->getFunctionIndex());
@@ -197,8 +196,8 @@ __host__ void DalitzPlotPdf::setDataSize(unsigned int dataSize, unsigned int evt
 
     //if (cachedWaves) delete cachedWaves;
     if(cachedWaves[0]) {
-        for(int j = 0; j < 16; j++)
-            delete cachedWaves[j];
+        for(auto & cachedWave : cachedWaves)
+            delete cachedWave;
     }
 
     numEntries = dataSize;

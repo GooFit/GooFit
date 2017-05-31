@@ -191,8 +191,8 @@ __host__ void SmoothHistogramPdf::copyHistogramToDevice(thrust::host_vector<fpty
 
     int expectedBins = 1;
 
-    for(unsigned int varIndex = 0; varIndex < observables.size(); ++varIndex) {
-        expectedBins *= observables[varIndex]->getNumBins();
+    for(auto & observable : observables) {
+        expectedBins *= observable->getNumBins();
     }
 
     if(expectedBins != host_histogram.size()) {

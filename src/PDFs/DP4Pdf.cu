@@ -83,8 +83,8 @@ __host__ DPPdf::DPPdf(std::string n,
     , _observables(observables)
     , totalEventSize(observables.size()) // number of observables plus eventnumber
     {
-    for(std::vector<Variable*>::iterator obsIT = observables.begin(); obsIT != observables.end(); ++obsIT) {
-        registerObservable(*obsIT);
+    for(auto & observable : observables) {
+        registerObservable(observable);
     }
 
     // registerObservable(eventNumber);
@@ -92,9 +92,8 @@ __host__ DPPdf::DPPdf(std::string n,
     std::vector<fptype>decayConstants;
     decayConstants.push_back(decayInfo->meson_radius);
 
-    for(std::vector<fptype>::iterator pmIT = decayInfo->particle_masses.begin(); pmIT != decayInfo->particle_masses.end();
-            ++pmIT) {
-        decayConstants.push_back(*pmIT);
+    for(double & particle_masse : decayInfo->particle_masses) {
+        decayConstants.push_back(particle_masse);
     }
 
     std::vector<unsigned int> pindices;
@@ -115,50 +114,50 @@ __host__ DPPdf::DPPdf(std::string n,
     std::vector<unsigned int> nPermVec;
     std::vector<unsigned int> ampidxstart;
 
-    for(int i=0; i<decayInfo->amplitudes.size(); i++) {
-        AmpMap[decayInfo->amplitudes[i]->_uniqueDecayStr] =  std::make_pair(std::vector<unsigned int>(0),
+    for(auto & amplitude : decayInfo->amplitudes) {
+        AmpMap[amplitude->_uniqueDecayStr] =  std::make_pair(std::vector<unsigned int>(0),
                 std::vector<unsigned int>(0));
 
-        auto LSvec = decayInfo->amplitudes[i]->_LS;
+        auto LSvec = amplitude->_LS;
 
-        for(auto LSIT = LSvec.begin(); LSIT != LSvec.end(); ++LSIT) {
-            auto found = std::find_if(components.begin(), components.end(), [LSIT](const PdfBase* L) {
-                return (**LSIT)== *(dynamic_cast<const Lineshape*>(L));
+        for(auto & LSIT : LSvec) {
+            auto found = std::find_if(components.begin(), components.end(), [&LSIT](const PdfBase* L) {
+                return (*LSIT)== *(dynamic_cast<const Lineshape*>(L));
             });
 
             if(found != components.end()) {
-                AmpMap[decayInfo->amplitudes[i]->_uniqueDecayStr].first.push_back(std::distance(components.begin(), found));
+                AmpMap[amplitude->_uniqueDecayStr].first.push_back(std::distance(components.begin(), found));
             } else {
-                components.push_back(*LSIT);
-                AmpMap[decayInfo->amplitudes[i]->_uniqueDecayStr].first.push_back(components.size() - 1);
+                components.push_back(LSIT);
+                AmpMap[amplitude->_uniqueDecayStr].first.push_back(components.size() - 1);
             }
         }
 
-        auto SFvec = decayInfo->amplitudes[i]->_SF;
+        auto SFvec = amplitude->_SF;
 
-        for(auto SFIT = SFvec.begin(); SFIT != SFvec.end(); ++SFIT) {
-            auto found = std::find_if(SpinFactors.begin(), SpinFactors.end(), [SFIT](const SpinFactor* S) {
-                return (**SFIT) == (*S);
+        for(auto & SFIT : SFvec) {
+            auto found = std::find_if(SpinFactors.begin(), SpinFactors.end(), [&SFIT](const SpinFactor* S) {
+                return (*SFIT) == (*S);
             });
 
             if(found != SpinFactors.end()) {
-                AmpMap[decayInfo->amplitudes[i]->_uniqueDecayStr].second.push_back(std::distance(SpinFactors.begin(), found));
+                AmpMap[amplitude->_uniqueDecayStr].second.push_back(std::distance(SpinFactors.begin(), found));
             } else {
-                SpinFactors.push_back(*SFIT);
-                AmpMap[decayInfo->amplitudes[i]->_uniqueDecayStr].second.push_back(SpinFactors.size() - 1);
+                SpinFactors.push_back(SFIT);
+                AmpMap[amplitude->_uniqueDecayStr].second.push_back(SpinFactors.size() - 1);
             }
         }
 
-        nPermVec.push_back(decayInfo->amplitudes[i]->_nPerm);
-        pindices.push_back(registerParameter(decayInfo->amplitudes[i]->_ar));
-        pindices.push_back(registerParameter(decayInfo->amplitudes[i]->_ai));
+        nPermVec.push_back(amplitude->_nPerm);
+        pindices.push_back(registerParameter(amplitude->_ar));
+        pindices.push_back(registerParameter(amplitude->_ai));
 
         ampidxstart.push_back(ampidx.size());
-        std::vector<unsigned int> ls = AmpMap[decayInfo->amplitudes[i]->_uniqueDecayStr].first;
-        std::vector<unsigned int> sf = AmpMap[decayInfo->amplitudes[i]->_uniqueDecayStr].second;
+        std::vector<unsigned int> ls = AmpMap[amplitude->_uniqueDecayStr].first;
+        std::vector<unsigned int> sf = AmpMap[amplitude->_uniqueDecayStr].second;
         ampidx.push_back(ls.size());
         ampidx.push_back(sf.size());
-        ampidx.push_back(decayInfo->amplitudes[i]->_nPerm);
+        ampidx.push_back(amplitude->_nPerm);
         ampidx.insert(ampidx.end(), ls.begin(), ls.end());
         ampidx.insert(ampidx.end(), sf.begin(), sf.end());
     }
@@ -171,17 +170,17 @@ __host__ DPPdf::DPPdf(std::string n,
     pindices[3] = SpinFactors.size();
     pindices[4] = AmpMap.size();
 
-    for(int i = 0; i<components.size(); i++) {
-        reinterpret_cast<Lineshape*>(components[i])->setConstantIndex(cIndex);
-        pindices.push_back(reinterpret_cast<Lineshape*>(components[i])->getFunctionIndex());
-        pindices.push_back(reinterpret_cast<Lineshape*>(components[i])->getParameterIndex());
+    for(auto & component : components) {
+        reinterpret_cast<Lineshape*>(component)->setConstantIndex(cIndex);
+        pindices.push_back(reinterpret_cast<Lineshape*>(component)->getFunctionIndex());
+        pindices.push_back(reinterpret_cast<Lineshape*>(component)->getParameterIndex());
 
     }
 
-    for(int i = 0; i < SpinFactors.size(); ++i) {
-        pindices.push_back(SpinFactors[i]->getFunctionIndex());
-        pindices.push_back(SpinFactors[i]->getParameterIndex());
-        SpinFactors[i]->setConstantIndex(cIndex);
+    for(auto & SpinFactor : SpinFactors) {
+        pindices.push_back(SpinFactor->getFunctionIndex());
+        pindices.push_back(SpinFactor->getParameterIndex());
+        SpinFactor->setConstantIndex(cIndex);
     }
 
 
@@ -374,8 +373,8 @@ __host__ fptype DPPdf::normalize() const {
         std::vector<unsigned int> redoidx((*AmpMapIt).second.first);
         bool redo = false;
 
-        for(int j = 0; j < redoidx.size(); ++j) {
-            if(!redoIntegral[redoidx[j]])
+        for(unsigned int j : redoidx) {
+            if(!redoIntegral[j])
                 continue;
 
             redo = true;

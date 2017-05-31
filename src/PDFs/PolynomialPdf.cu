@@ -116,8 +116,8 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n, Variable* _x, std::vector<V
     std::vector<unsigned int> pindices;
     pindices.push_back(lowestDegree);
 
-    for(std::vector<Variable*>::iterator v = weights.begin(); v != weights.end(); ++v) {
-        pindices.push_back(registerParameter(*v));
+    for(auto & weight : weights) {
+        pindices.push_back(registerParameter(weight));
     }
 
     if(x0) {
@@ -171,12 +171,12 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n, std::vector<Variable*> obse
     std::vector<unsigned int> pindices;
     pindices.push_back(maxDegree);
 
-    for(std::vector<Variable*>::iterator o = offsets.begin(); o != offsets.end(); ++o) {
-        pindices.push_back(registerParameter(*o));
+    for(auto & offset : offsets) {
+        pindices.push_back(registerParameter(offset));
     }
 
-    for(std::vector<Variable*>::iterator c = coeffs.begin(); c != coeffs.end(); ++c) {
-        pindices.push_back(registerParameter(*c));
+    for(auto & coeff : coeffs) {
+        pindices.push_back(registerParameter(coeff));
     }
 
     GET_FUNCTION_ADDR(ptr_to_MultiPolynomial);

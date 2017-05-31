@@ -613,8 +613,8 @@ __host__ void GooPdf::transformGrid(fptype* host_output) {
 
 
 __host__ void GooPdf::setFitControl(FitControl* const fc, bool takeOwnerShip) {
-    for(unsigned int i = 0; i < components.size(); ++i) {
-        components[i]->setFitControl(fc, false);
+    for(auto & component : components) {
+        component->setFitControl(fc, false);
     }
 
     if((fitControl) && (fitControl->getOwner() == this)) {

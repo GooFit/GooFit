@@ -227,14 +227,14 @@ public:
         return *this;
     }
     __device__ LorentzMatrix& mult(fptype s) {
-        for(int i=0; i < 4; i++)
-            _v[i] *= s;
+        for(auto & i : _v)
+            i *= s;
 
         return *this;
     }
     __device__ LorentzMatrix& div(fptype s) {
-        for(int i=0; i < 4; i++)
-            _v[i] *= (1./s);
+        for(auto & i : _v)
+            i *= (1./s);
 
         return *this;
     }
@@ -360,14 +360,14 @@ public:
         return *this;
     }
     __device__ SymmLorentzMatrix& mult(fptype s) {
-        for(int i=0; i < 4; i++)
-            _v[i] *= s;
+        for(auto & i : _v)
+            i *= s;
 
         return *this;
     }
     __device__ SymmLorentzMatrix& div(fptype s) {
-        for(int i=0; i < 4; i++)
-            _v[i] *= (1./s);
+        for(auto & i : _v)
+            i *= (1./s);
 
         return *this;
     }

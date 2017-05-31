@@ -292,8 +292,8 @@ __host__ TddpPdf::TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Va
     registerObservable(_m13);
     registerObservable(eventNumber);
 
-    for(int i = 0; i < 16; i++)
-        cachedWaves[i] = nullptr;
+    for(auto & cachedWave : cachedWaves)
+        cachedWave = nullptr;
 
     fptype decayConstants[6];
     decayConstants[5] = 0;
@@ -325,14 +325,13 @@ __host__ TddpPdf::TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Va
     cacheToUse = cacheCount++;
     pindices.push_back(cacheToUse);
 
-    for(std::vector<ResonancePdf*>::iterator res = decayInfo->resonances.begin(); res != decayInfo->resonances.end();
-            ++res) {
-        pindices.push_back(registerParameter((*res)->amp_real));
-        pindices.push_back(registerParameter((*res)->amp_imag));
-        pindices.push_back((*res)->getFunctionIndex());
-        pindices.push_back((*res)->getParameterIndex());
-        (*res)->setConstantIndex(cIndex);
-        components.push_back(*res);
+    for(auto & resonance : decayInfo->resonances) {
+        pindices.push_back(registerParameter(resonance->amp_real));
+        pindices.push_back(registerParameter(resonance->amp_imag));
+        pindices.push_back(resonance->getFunctionIndex());
+        pindices.push_back(resonance->getParameterIndex());
+        resonance->setConstantIndex(cIndex);
+        components.push_back(resonance);
     }
 
     pindices.push_back(efficiency->getFunctionIndex());
@@ -384,8 +383,8 @@ __host__ TddpPdf::TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Va
     registerObservable(eventNumber);
     registerObservable(md0);
 
-    for(int i = 0; i < 16; i++)
-        cachedWaves[i] = nullptr;
+    for(auto & cachedWave : cachedWaves)
+        cachedWave = nullptr;
 
     fptype decayConstants[8];
     decayConstants[5] = 0;
@@ -417,14 +416,13 @@ __host__ TddpPdf::TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Va
     cacheToUse = cacheCount++;
     pindices.push_back(cacheToUse);
 
-    for(std::vector<ResonancePdf*>::iterator res = decayInfo->resonances.begin(); res != decayInfo->resonances.end();
-            ++res) {
-        pindices.push_back(registerParameter((*res)->amp_real));
-        pindices.push_back(registerParameter((*res)->amp_imag));
-        pindices.push_back((*res)->getFunctionIndex());
-        pindices.push_back((*res)->getParameterIndex());
-        (*res)->setConstantIndex(cIndex);
-        components.push_back(*res);
+    for(auto & resonance : decayInfo->resonances) {
+        pindices.push_back(registerParameter(resonance->amp_real));
+        pindices.push_back(registerParameter(resonance->amp_imag));
+        pindices.push_back(resonance->getFunctionIndex());
+        pindices.push_back(resonance->getParameterIndex());
+        resonance->setConstantIndex(cIndex);
+        components.push_back(resonance);
     }
 
     pindices.push_back(efficiency->getFunctionIndex());
@@ -433,11 +431,11 @@ __host__ TddpPdf::TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Va
 
     pindices.push_back(r.size() - 1); // Highest index, not number of functions.
 
-    for(int i = 0; i < r.size(); ++i) {
-        if(r[i]->getDeviceFunction() < 0)
-            throw GooFit::GeneralError("Device function index {} must be more than 0", r[i]->getDeviceFunction());
-        pindices.push_back((unsigned int) r[i]->getDeviceFunction());
-        r[i]->createParameters(pindices, this);
+    for(auto & i : r) {
+        if(i->getDeviceFunction() < 0)
+            throw GooFit::GeneralError("Device function index {} must be more than 0", i->getDeviceFunction());
+        pindices.push_back((unsigned int) i->getDeviceFunction());
+        i->createParameters(pindices, this);
     }
 
     GET_FUNCTION_ADDR(ptr_to_Tddp);
@@ -474,8 +472,8 @@ __host__ void TddpPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) 
         throw GooFit::GeneralError("totalEventSize {} must be 5 or more", totalEventSize);
 
     if(cachedWaves[0]) {
-        for(int i = 0; i < 16; i++)
-            delete cachedWaves[i];
+        for(auto & cachedWave : cachedWaves)
+            delete cachedWave;
     }
 
     numEntries = dataSize;

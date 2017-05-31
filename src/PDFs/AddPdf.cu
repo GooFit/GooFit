@@ -177,8 +177,8 @@ __host__ fptype AddPdf::normalize() const {
         // instead of default
         // (f1 A / int A) + ((1-f1) B / int B).
 
-        for(unsigned int i = 0; i < components.size(); ++i) {
-            host_normalisation[components[i]->getParameterIndex()] = (1.0 / ret);
+        for(auto component : components) {
+            host_normalisation[component->getParameterIndex()] = (1.0 / ret);
         }
     }
 

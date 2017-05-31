@@ -47,10 +47,10 @@ __host__ DalitzVetoPdf::DalitzVetoPdf(std::string n, Variable* _x, Variable* _y,
 
     pindices.push_back(vetos.size());
 
-    for(std::vector<VetoInfo*>::iterator v = vetos.begin(); v != vetos.end(); ++v) {
-        pindices.push_back((*v)->cyclic_index);
-        pindices.push_back(registerParameter((*v)->minimum));
-        pindices.push_back(registerParameter((*v)->maximum));
+    for(auto & veto : vetos) {
+        pindices.push_back(veto->cyclic_index);
+        pindices.push_back(registerParameter(veto->minimum));
+        pindices.push_back(registerParameter(veto->maximum));
     }
 
     GET_FUNCTION_ADDR(ptr_to_DalitzVeto);

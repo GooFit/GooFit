@@ -67,8 +67,8 @@ __host__ fptype CompositePdf::normalize() const {
     // normalize them even though the information
     // may not be used.
 
-    for(std::vector<PdfBase*>::const_iterator c = components.begin(); c != components.end(); ++c) {
-        (*c)->normalize();
+    for(auto component : components) {
+        component->normalize();
     }
 
     // Normalize composite in the usual binned-integral way.

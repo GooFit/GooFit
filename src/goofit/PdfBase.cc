@@ -35,16 +35,16 @@ __host__ void PdfBase::checkInitStatus(std::vector<std::string>& unInited) const
     if(!properlyInitialised)
         unInited.push_back(getName());
 
-    for(unsigned int i = 0; i < components.size(); ++i) {
-        components[i]->checkInitStatus(unInited);
+    for(auto component : components) {
+        component->checkInitStatus(unInited);
     }
 }
 
 __host__ void PdfBase::recursiveSetNormalisation(fptype norm) const {
     host_normalisation[parameters] = norm;
 
-    for(unsigned int i = 0; i < components.size(); ++i) {
-        components[i]->recursiveSetNormalisation(norm);
+    for(auto component : components) {
+        component->recursiveSetNormalisation(norm);
     }
 }
 
@@ -64,8 +64,8 @@ __host__ unsigned int PdfBase::registerParameter(Variable* var) {
         while(true) {
             bool canUse = true;
 
-            for(std::map<Variable*, std::set<PdfBase*>>::iterator p = variableRegistry.begin(); p != variableRegistry.end(); ++p) {
-                if(unusedIndex != (*p).first->getIndex())
+            for(auto & p : variableRegistry) {
+                if(unusedIndex != p.first->getIndex())
                     continue;
 
                 canUse = false;
@@ -127,8 +127,8 @@ __host__ Variable* PdfBase::getParameterByName(std::string n) const {
             return p;
     }
 
-    for(unsigned int i = 0; i < components.size(); ++i) {
-        Variable* cand = components[i]->getParameterByName(n);
+    for(auto component : components) {
+        Variable* cand = component->getParameterByName(n);
 
         if(cand)
             return cand;

@@ -121,8 +121,8 @@ __host__ void PdfBase::setData(std::vector<std::map<Variable*, fptype>>& data) {
 }
 
 __host__ void PdfBase::recursiveSetIndices() {
-    for(unsigned int i = 0; i < components.size(); ++i) {
-        components[i]->recursiveSetIndices();
+    for(auto & component : components) {
+        component->recursiveSetIndices();
     }
 
     int numParams = host_indices[parameters];

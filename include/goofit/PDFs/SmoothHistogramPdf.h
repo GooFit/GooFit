@@ -1,7 +1,7 @@
 #pragma once
 
-#include "goofit/PDFs/GooPdf.h"
 #include "goofit/BinnedDataSet.h"
+#include "goofit/PDFs/GooPdf.h"
 
 #include <thrust/device_vector.h>
 #include <thrust/host_vector.h>

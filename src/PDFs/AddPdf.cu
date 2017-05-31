@@ -1,9 +1,9 @@
 #include "goofit/PDFs/AddPdf.h"
-#include "goofit/detail/ThrustOverride.h"
 #include "goofit/Error.h"
+#include "goofit/detail/ThrustOverride.h"
 
-#include <thrust/transform_reduce.h>
 #include <thrust/iterator/constant_iterator.h>
+#include <thrust/transform_reduce.h>
 
 #ifdef GOOFIT_MPI
 #include <mpi.h>

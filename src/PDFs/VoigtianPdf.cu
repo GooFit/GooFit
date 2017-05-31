@@ -1,6 +1,6 @@
 #include "goofit/PDFs/VoigtianPdf.h"
-#include <limits>
 #include "goofit/Faddeeva.h"
+#include <limits>
 #include <thrust/complex.h>
 
 namespace GooFit {

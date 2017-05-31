@@ -1,7 +1,7 @@
 #pragma once
 
-#include "goofit/PDFs/GooPdf.h"
 #include "goofit/PDFs/DalitzPlotHelpers.h"
+#include "goofit/PDFs/GooPdf.h"
 
 #include <thrust/complex.h>
 

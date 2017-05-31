@@ -1,4 +1,4 @@
-#include "goofit/PDFs/StepPdf.h"
+#include "goofit/PDFs/basic/StepPdf.h"
 
 namespace GooFit {
 
@@ -16,7 +16,7 @@ __host__ StepPdf::StepPdf(std::string n, Variable *_x, Variable *x0)
     std::vector<unsigned int> pindices;
     pindices.push_back(registerParameter(x0));
     GET_FUNCTION_ADDR(ptr_to_Step);
-    initialise(pindices);
+    initialize(pindices);
 }
 
 __host__ fptype StepPdf::integrate(fptype lo, fptype hi) const {

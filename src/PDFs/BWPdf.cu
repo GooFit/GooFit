@@ -1,4 +1,4 @@
-#include "goofit/PDFs/BWPdf.h"
+#include "goofit/PDFs/basic/BWPdf.h"
 
 namespace GooFit {
 
@@ -19,6 +19,6 @@ __host__ BWPdf::BWPdf(std::string n, Variable *_x, Variable *mean, Variable *wid
     pindices.push_back(registerParameter(mean));
     pindices.push_back(registerParameter(width));
     GET_FUNCTION_ADDR(ptr_to_BW);
-    initialise(pindices);
+    initialize(pindices);
 }
 } // namespace GooFit

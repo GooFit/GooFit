@@ -1,8 +1,8 @@
 #include "goofit/Application.h"
 #include "goofit/Variable.h"
-#include "goofit/PDFs/GaussianPdf.h"
-#include "goofit/PDFs/AddPdf.h"
-#include "goofit/PDFs/PolynomialPdf.h"
+#include "goofit/PDFs/basic/GaussianPdf.h"
+#include "goofit/PDFs/combine/AddPdf.h"
+#include "goofit/PDFs/basic/PolynomialPdf.h"
 #include "goofit/FitManager.h"
 #include "goofit/UnbinnedDataSet.h"
 

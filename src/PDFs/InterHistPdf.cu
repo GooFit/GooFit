@@ -1,4 +1,4 @@
-#include "goofit/PDFs/InterHistPdf.h"
+#include "goofit/PDFs/basic/InterHistPdf.h"
 #include "goofit/Variable.h"
 #include <algorithm>
 
@@ -190,7 +190,7 @@ __host__ InterHistPdf::InterHistPdf(std::string n,
     MEMCPY_TO_SYMBOL(
         dev_base_interhists, dev_address, sizeof(fptype *), totalHistograms * sizeof(fptype *), cudaMemcpyHostToDevice);
     GET_FUNCTION_ADDR(ptr_to_InterHistogram);
-    initialise(pindices);
+    initialize(pindices);
 
     totalHistograms++;
 }

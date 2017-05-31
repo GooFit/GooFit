@@ -2,9 +2,9 @@
 #include "goofit/Variable.h"
 #include "goofit/FitManager.h"
 #include "goofit/UnbinnedDataSet.h"
-#include "goofit/PDFs/BWPdf.h"
-#include "goofit/PDFs/GaussianPdf.h"
-#include "goofit/PDFs/ConvolutionPdf.h"
+#include "goofit/PDFs/basic/BWPdf.h"
+#include "goofit/PDFs/basic/GaussianPdf.h"
+#include "goofit/PDFs/combine/ConvolutionPdf.h"
 
 #include "TRandom.h"
 

@@ -1,4 +1,4 @@
-#include "goofit/PDFs/TrigThresholdPdf.h"
+#include "goofit/PDFs/basic/TrigThresholdPdf.h"
 
 namespace GooFit {
 
@@ -81,7 +81,7 @@ __host__ TrigThresholdPdf::TrigThresholdPdf(
     else
         GET_FUNCTION_ADDR(ptr_to_TrigThresholdLower);
 
-    initialise(pindices);
+    initialize(pindices);
 }
 
 __host__ TrigThresholdPdf::TrigThresholdPdf(std::string n,
@@ -107,6 +107,6 @@ __host__ TrigThresholdPdf::TrigThresholdPdf(std::string n,
     else
         GET_FUNCTION_ADDR(ptr_to_VerySpecialEpisodeTrigThresholdLower);
 
-    initialise(pindices);
+    initialize(pindices);
 }
 } // namespace GooFit

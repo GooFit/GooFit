@@ -1,4 +1,4 @@
-#include "goofit/PDFs/ThreeGaussResolution_Aux.h"
+#include "goofit/PDFs/physics/ThreeGaussResolution_Aux.h"
 #include <cmath>
 
 namespace GooFit {

@@ -1,7 +1,7 @@
 #include <pybind11/pybind11.h>
 
 #include <goofit/Variable.h>
-#include <goofit/PDFs/ExpPdf.h>
+#include <goofit/PDFs/basic/ExpPdf.h>
 
 using namespace GooFit;
 namespace py = pybind11;

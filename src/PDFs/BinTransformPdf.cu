@@ -1,4 +1,4 @@
-#include "goofit/PDFs/BinTransformPdf.h"
+#include "goofit/PDFs/basic/BinTransformPdf.h"
 
 namespace GooFit {
 
@@ -55,7 +55,7 @@ __host__ BinTransformPdf::BinTransformPdf(std::string n,
     delete[] host_constants;
 
     GET_FUNCTION_ADDR(ptr_to_BinTransform);
-    initialise(pindices);
+    initialize(pindices);
 }
 
 } // namespace GooFit

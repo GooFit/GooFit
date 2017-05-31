@@ -1,4 +1,4 @@
-#include "goofit/PDFs/ScaledGaussianPdf.h"
+#include "goofit/PDFs/basic/ScaledGaussianPdf.h"
 #include "goofit/Variable.h"
 
 //#include <limits>
@@ -30,7 +30,7 @@ __host__ ScaledGaussianPdf::ScaledGaussianPdf(
     pindices.push_back(delta->getIndex());
     pindices.push_back(epsilon->getIndex());
     GET_FUNCTION_ADDR(ptr_to_ScaledGaussian);
-    initialise(pindices);
+    initialize(pindices);
 }
 
 } // namespace GooFit

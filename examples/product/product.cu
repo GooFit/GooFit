@@ -2,8 +2,8 @@
 #include "goofit/Variable.h"
 #include "goofit/FitManager.h"
 #include "goofit/UnbinnedDataSet.h"
-#include "goofit/PDFs/ExpPdf.h"
-#include "goofit/PDFs/ProdPdf.h"
+#include "goofit/PDFs/basic/ExpPdf.h"
+#include "goofit/PDFs/combine/ProdPdf.h"
 
 using namespace std;
 using namespace GooFit;

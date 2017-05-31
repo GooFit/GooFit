@@ -1,4 +1,4 @@
-#include "goofit/PDFs/CompositePdf.h"
+#include "goofit/PDFs/combine/CompositePdf.h"
 
 namespace GooFit {
 
@@ -47,7 +47,7 @@ __host__ CompositePdf::CompositePdf(std::string n, PdfBase *core, PdfBase *shell
     components.push_back(shell);
 
     GET_FUNCTION_ADDR(ptr_to_Composite);
-    initialise(pindices);
+    initialize(pindices);
 }
 
 __host__ fptype CompositePdf::normalize() const {

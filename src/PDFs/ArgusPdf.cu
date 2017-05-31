@@ -1,4 +1,4 @@
-#include "goofit/PDFs/ArgusPdf.h"
+#include "goofit/PDFs/basic/ArgusPdf.h"
 #include "goofit/Variable.h"
 
 namespace GooFit {
@@ -72,7 +72,7 @@ __host__ ArgusPdf::ArgusPdf(std::string n, Variable *_x, Variable *m0, Variable 
     else
         GET_FUNCTION_ADDR(ptr_to_Argus_Lower);
 
-    initialise(pindices);
+    initialize(pindices);
 }
 
 fptype argus_lower_helper(fptype x, fptype m0, fptype slope, fptype power) {

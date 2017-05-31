@@ -1,7 +1,7 @@
 #pragma once
 
 #include "goofit/PDFs/GooPdf.h"
-#include "goofit/PDFs/TddpPdf.h"
+#include "goofit/PDFs/physics/TddpPdf.h"
 #include <thrust/complex.h>
 
 namespace GooFit {

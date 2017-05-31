@@ -1,4 +1,4 @@
-#include "goofit/PDFs/KinLimitBWPdf.h"
+#include "goofit/PDFs/basic/KinLimitBWPdf.h"
 #include "goofit/Variable.h"
 
 namespace GooFit {
@@ -61,7 +61,7 @@ __host__ KinLimitBWPdf::KinLimitBWPdf(std::string n, Variable *_x, Variable *mea
     pindices.push_back(registerConstants(2));
     setMasses(1.8645, 0.13957);
     GET_FUNCTION_ADDR(ptr_to_KinLimitBW);
-    initialise(pindices);
+    initialize(pindices);
 }
 
 __host__ void KinLimitBWPdf::setMasses(fptype bigM, fptype smallM) {

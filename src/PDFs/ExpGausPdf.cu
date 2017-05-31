@@ -1,4 +1,4 @@
-#include "goofit/PDFs/ExpGausPdf.h"
+#include "goofit/PDFs/basic/ExpGausPdf.h"
 
 namespace GooFit {
 
@@ -27,7 +27,7 @@ ExpGausPdf::ExpGausPdf(std::string n, Variable *_x, Variable *mean, Variable *si
     pindices.push_back(registerParameter(sigma));
     pindices.push_back(registerParameter(tau));
     GET_FUNCTION_ADDR(ptr_to_ExpGaus);
-    initialise(pindices);
+    initialize(pindices);
 }
 
 } // namespace GooFit

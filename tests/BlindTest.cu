@@ -4,7 +4,7 @@
 
 #include "goofit/Variable.h"
 #include "goofit/UnbinnedDataSet.h"
-#include "goofit/PDFs/GaussianPdf.h"
+#include "goofit/PDFs/basic/GaussianPdf.h"
 #include "goofit/FitManager.h"
 
 #ifdef ROOT_FOUND

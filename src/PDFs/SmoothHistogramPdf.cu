@@ -1,4 +1,4 @@
-#include "goofit/PDFs/SmoothHistogramPdf.h"
+#include "goofit/PDFs/basic/SmoothHistogramPdf.h"
 #include "goofit/Variable.h"
 
 namespace GooFit {
@@ -169,7 +169,7 @@ __host__ SmoothHistogramPdf::SmoothHistogramPdf(std::string n, BinnedDataSet *hi
                   << " not copied to device. Expect copyHistogramToDevice call later.\n";
 
     GET_FUNCTION_ADDR(ptr_to_EvalHistogram);
-    initialise(pindices);
+    initialize(pindices);
 }
 
 fptype *pointerToFirst(thrust::device_vector<fptype> *hist) { return (&((*hist)[0])).get(); }

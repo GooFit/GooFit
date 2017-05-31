@@ -1,4 +1,4 @@
-#include "goofit/PDFs/JohnsonSUPdf.h"
+#include "goofit/PDFs/basic/JohnsonSUPdf.h"
 
 namespace GooFit {
 
@@ -36,7 +36,7 @@ __host__ JohnsonSUPdf::JohnsonSUPdf(
     pindices.push_back(registerParameter(gamma));
     pindices.push_back(registerParameter(delta));
     GET_FUNCTION_ADDR(ptr_to_JohnsonSU);
-    initialise(pindices);
+    initialize(pindices);
 }
 
 __host__ fptype JohnsonSUPdf::integrate(fptype lo, fptype hi) const {

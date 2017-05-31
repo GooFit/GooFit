@@ -1,4 +1,4 @@
-#include "goofit/PDFs/ProdPdf.h"
+#include "goofit/PDFs/combine/ProdPdf.h"
 #include <algorithm>
 
 namespace GooFit {
@@ -83,7 +83,7 @@ ProdPdf::ProdPdf(std::string n, std::vector<PdfBase *> comps)
     }
 
     GET_FUNCTION_ADDR(ptr_to_ProdPdfs);
-    initialise(pindices);
+    initialize(pindices);
 }
 
 __host__ fptype ProdPdf::normalize() const {

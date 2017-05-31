@@ -1,6 +1,6 @@
-#include "goofit/PDFs/IncoherentSumPdf.h"
+#include "goofit/PDFs/physics/IncoherentSumPdf.h"
 #include "goofit/Error.h"
-#include "goofit/PDFs/ResonancePdf.h"
+#include "goofit/PDFs/physics/ResonancePdf.h"
 #include <thrust/complex.h>
 
 #include <thrust/transform_reduce.h>
@@ -94,7 +94,7 @@ __host__ IncoherentSumPdf::IncoherentSumPdf(
     components.push_back(efficiency);
 
     GET_FUNCTION_ADDR(ptr_to_incoherent);
-    initialise(pindices);
+    initialize(pindices);
 
     redoIntegral = new bool[decayInfo->resonances.size()];
     cachedMasses = new fptype[decayInfo->resonances.size()];

@@ -14,6 +14,11 @@ class.
   -For example the way Spinfactors are stored in the same array as the Lineshape values.
    Is this really worth the memory we lose by using a complex to store the SF?
 */
+#include "goofit/Error.h"
+#include "goofit/Log.h"
+#include "goofit/PDFs/physics/DP4Pdf.h"
+#include "goofit/PDFs/physics/EvalVar.h"
+#include "goofit/PDFs/physics/Tddp4Pdf.h"
 #include <mcbooster/Evaluate.h>
 #include <mcbooster/EvaluateArray.h>
 #include <mcbooster/GContainers.h>
@@ -21,13 +26,6 @@ class.
 #include <mcbooster/GTypes.h>
 #include <mcbooster/Generate.h>
 #include <mcbooster/Vector4R.h>
-
-#include "goofit/Error.h"
-#include "goofit/Log.h"
-#include "goofit/PDFs/DP4Pdf.h"
-#include "goofit/PDFs/EvalVar.h"
-#include "goofit/PDFs/Tddp4Pdf.h"
-
 #include <thrust/complex.h>
 
 namespace GooFit {
@@ -388,7 +386,7 @@ __host__ TDDP4::TDDP4(std::string n,
     // In case the resolution function needs parameters, this registers them.
     resolution->createParameters(pindices, this);
     GET_FUNCTION_ADDR(ptr_to_TDDP4);
-    initialise(pindices);
+    initialize(pindices);
 
     Integrator   = new NormIntegrator_TD(parameters);
     redoIntegral = new bool[components.size() - 1];

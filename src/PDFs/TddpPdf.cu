@@ -1,4 +1,4 @@
-#include "goofit/PDFs/TddpPdf.h"
+#include "goofit/PDFs/physics/TddpPdf.h"
 #include "goofit/Error.h"
 
 #include <thrust/transform_reduce.h>
@@ -372,7 +372,7 @@ __host__ TddpPdf::TddpPdf(std::string n,
 
     resolution->createParameters(pindices, this);
     GET_FUNCTION_ADDR(ptr_to_Tddp);
-    initialise(pindices);
+    initialize(pindices);
 
     redoIntegral = new bool[decayInfo->resonances.size()];
     cachedMasses = new fptype[decayInfo->resonances.size()];
@@ -481,7 +481,7 @@ __host__ TddpPdf::TddpPdf(std::string n,
     }
 
     GET_FUNCTION_ADDR(ptr_to_Tddp);
-    initialise(pindices);
+    initialize(pindices);
 
     redoIntegral = new bool[decayInfo->resonances.size()];
     cachedMasses = new fptype[decayInfo->resonances.size()];

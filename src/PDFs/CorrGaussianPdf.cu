@@ -1,4 +1,4 @@
-#include "goofit/PDFs/CorrGaussianPdf.h"
+#include "goofit/PDFs/basic/CorrGaussianPdf.h"
 
 namespace GooFit {
 
@@ -48,7 +48,7 @@ __host__ CorrGaussianPdf::CorrGaussianPdf(std::string n,
     pindices.push_back(registerParameter(correlation));
 
     GET_FUNCTION_ADDR(ptr_to_CorrGaussian);
-    initialise(pindices);
+    initialize(pindices);
 }
 
 } // namespace GooFit

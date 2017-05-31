@@ -14,9 +14,7 @@ class.
   -For example the way Spinfactors are stored in the same array as the Lineshape values.
    Is this really worth the memory we lose by using a complex to store the SF?
 */
-#include "goofit/Error.h"
-#include "goofit/PDFs/DP4Pdf.h"
-#include "goofit/PDFs/EvalVar.h"
+
 #include <mcbooster/Evaluate.h>
 #include <mcbooster/EvaluateArray.h>
 #include <mcbooster/GContainers.h>
@@ -24,6 +22,10 @@ class.
 #include <mcbooster/GTypes.h>
 #include <mcbooster/Generate.h>
 #include <mcbooster/Vector4R.h>
+
+#include "goofit/Error.h"
+#include "goofit/PDFs/physics/DP4Pdf.h"
+#include "goofit/PDFs/physics/EvalVar.h"
 
 namespace GooFit {
 
@@ -190,7 +192,7 @@ __host__ DPPdf::DPPdf(std::string n,
     components.push_back(efficiency);
 
     GET_FUNCTION_ADDR(ptr_to_DP);
-    initialise(pindices);
+    initialize(pindices);
 
     Integrator   = new NormIntegrator(parameters);
     redoIntegral = new bool[components.size() - 1];

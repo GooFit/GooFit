@@ -9,10 +9,9 @@ Also right now it is the home to some helper functions needed and an implementat
 on the GPU
 */
 
+#include "goofit/PDFs/physics/LineshapesPdf.h"
+#include "goofit/PDFs/physics/SpinFactors.h"
 #include <utility>
-
-#include "goofit/PDFs/LineshapesPdf.h"
-#include "goofit/PDFs/SpinFactors.h"
 
 namespace GooFit {
 
@@ -540,7 +539,7 @@ Lineshape::Lineshape(std::string name,
         exit(0);
     }
 
-    initialise(pindices);
+    initialize(pindices);
 }
 
 Lineshape::Lineshape(std::string name)
@@ -550,7 +549,7 @@ Lineshape::Lineshape(std::string name)
     // Dummy index for constants - won't use it, but calling
     // functions can't know that and will call setConstantIndex anyway.
     GET_FUNCTION_ADDR(ptr_to_NONRES_DP);
-    initialise(pindices);
+    initialize(pindices);
 }
 
 Amplitude::Amplitude(std::string uniqueDecayStr,

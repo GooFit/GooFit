@@ -1,6 +1,6 @@
 #pragma once
 
-#include "goofit/PDFs/MixingTimeResolution_Aux.h"
+#include "goofit/PDFs/physics/MixingTimeResolution_Aux.h"
 
 namespace GooFit {
 

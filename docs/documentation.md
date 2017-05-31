@@ -338,10 +338,10 @@ The index array is created by the constructor of a PDF class; in
 particular, the constructor should call `registerParameter` so as to
 obtain the global indices of its parameters, store these numbers in a
 `vector<unsigned int>` (conventionally called `pindices`), and pass this
-`vector` to `initialise`. The PDF constructor should also call
+`vector` to `initialize`. The PDF constructor should also call
 `registerObservable` on each of the event variables it depends on.
 
-The `initialise` method constructs the array that is used on the GPU
+The `initialize` method constructs the array that is used on the GPU
 side, which consists of four parts. First is stored the number of
 parameters, which is equal to the size of the `pindices vector`. Next
 come the indices of the parameters, in the order they were put into
@@ -364,7 +364,7 @@ GaussianPdf::GaussianPdf (std::string n,
   MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, 
                        ptr_to_Gaussian, 
                        sizeof(void*));
-  initialise(pindices); 
+  initialize(pindices); 
 }
 ```
 
@@ -484,7 +484,7 @@ __host__ GaussianPdf::GaussianPdf (std::string n,
                      cIndex*sizeof(fptype), cudaMemcpyHostToDevice); 
 
   MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_Gaussian, sizeof(void*));
-  initialise(pindices); 
+  initialize(pindices); 
 }
 ```
 
@@ -1593,7 +1593,7 @@ documentation, helpful.
 
 \anchor footnote4 4: You might ask, why not copy the function directly? The reason is
     that `cudaMemcpy` doesn’t like to get the address of a function, but
-    `nvcc` is perfectly happy to statically initialise a pointer. It’s a
+    `nvcc` is perfectly happy to statically initialize a pointer. It’s a
     workaround, in other words.
 
 \anchor footnote5 5: These are, respectively, ancient FORTRAN code translated

@@ -17,12 +17,12 @@
 #include "goofit/FitManager.h"
 #include "goofit/FitControl.h"
 
-#include "goofit/PDFs/KinLimitBWPdf.h"
-#include "goofit/PDFs/ConvolutionPdf.h"
-#include "goofit/PDFs/GaussianPdf.h"
-#include "goofit/PDFs/ScaledGaussianPdf.h"
-#include "goofit/PDFs/ArgusPdf.h"
-#include "goofit/PDFs/AddPdf.h"
+#include "goofit/PDFs/basic/KinLimitBWPdf.h"
+#include "goofit/PDFs/combine/ConvolutionPdf.h"
+#include "goofit/PDFs/basic/GaussianPdf.h"
+#include "goofit/PDFs/basic/ScaledGaussianPdf.h"
+#include "goofit/PDFs/basic/ArgusPdf.h"
+#include "goofit/PDFs/combine/AddPdf.h"
 
 #include <fmt/format.h>
 

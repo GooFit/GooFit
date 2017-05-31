@@ -183,12 +183,12 @@ __host__ int GooPdf::findFunctionIdx(void *dev_functionPtr) {
     return fIdx;
 }
 
-__host__ void GooPdf::initialise(std::vector<unsigned int> pindices, void *dev_functionPtr) {
+__host__ void GooPdf::initialize(std::vector<unsigned int> pindices, void *dev_functionPtr) {
     if(!fitControl)
         setFitControl(new UnbinnedNllFit());
 
     // MetricTaker must be created after PdfBase initialisation is done.
-    PdfBase::initialiseIndices(pindices);
+    PdfBase::initializeIndices(pindices);
 
     functionIdx = findFunctionIdx(dev_functionPtr);
     setMetrics();

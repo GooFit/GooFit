@@ -9,7 +9,7 @@ See *.cu file for more details
 #pragma once
 
 #include "goofit/PDFs/GooPdf.h"
-#include "goofit/PDFs/ResonancePdf.h"
+#include "goofit/PDFs/physics/ResonancePdf.h"
 #include "goofit/Variable.h"
 
 #include <thrust/complex.h>

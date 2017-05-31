@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# Use git grep -l "goofit/PDFs" | xargs ./scripts/ModernizeGooFit.py to run on all GooFit Source
+
 from __future__ import print_function
 import re
 try:
@@ -70,9 +72,6 @@ conversion = [
     ('["<]TruthResolution_Aux.hh?[">]', '"goofit/PDFs/TruthResolution_Aux.h"'),
     ('["<]VoigtianPdf.hh?[">]', '"goofit/PDFs/VoigtianPdf.h"'),
     ('["<]fakeTH1F.hh?[">]', '"TH1F.h"'),
-    ('["<]TMinuit.hh?[">]', '"TMinuit.h"'),
-    ('["<]TRandom.hh?[">]', '"TRandom.h"'),
-    ('["<]TRandom3.hh?[">]', '"TRandom3.h"'),
     (r'\bALIGN\b', '__align__'),
     (r'\bMEM_CONSTANT\b', '__constant__'),
     (r'\bMEM_DEVICE\b', '__device__'),
@@ -98,13 +97,56 @@ conversion = [
     (r'\bRSQRT\b', 'rsqrt'),
     (r'\bFLOOR\b', 'floor'),
     (r'\bCONST_PI\b', 'M_PI'),
-    (r'normalise', 'normalize'),
+    #(r'normalise', 'normalize'),
     (r'Normalise', 'Normalize'),
+    (r'initialise', 'initialize'),
+    (r'Initialize', 'Initialize'),
     (r'\bPdfBase::parCont\b', 'std::vector<Variable*>'),
     (r'\bPdfBase::obsCont\b', 'std::vector<Variable*>'),
     (r'\bobsCont\b', 'std::vector<Variable*>'),
     (r'\bparCont\b', 'std::vector<Variable*>'),
     (r'\babortWithCudaPrintFlush\b', 'GooFit::abort'),
+    (r'goofit/PDFs/ArgusPdf.h', 'goofit/PDFs/basic/ArgusPdf.h'),
+    (r'goofit/PDFs/BifurGaussPdf.h', 'goofit/PDFs/basic/BifurGaussPdf.h'),
+    (r'goofit/PDFs/BWPdf.h', 'goofit/PDFs/basic/BWPdf.h'),
+    (r'goofit/PDFs/BinTransformPdf.h', 'goofit/PDFs/basic/BinTransformPdf.h'),
+    (r'goofit/PDFs/CorrGaussianPdf.h', 'goofit/PDFs/basic/CorrGaussianPdf.h'),
+    (r'goofit/PDFs/CrystalBallPdf.h', 'goofit/PDFs/basic/CrystalBallPdf.h'),
+    (r'goofit/PDFs/ExpGausPdf.h', 'goofit/PDFs/basic/ExpGausPdf.h'),
+    (r'goofit/PDFs/ExpPdf.h', 'goofit/PDFs/basic/ExpPdf.h'),
+    (r'goofit/PDFs/GaussianPdf.h', 'goofit/PDFs/basic/GaussianPdf.h'),
+    (r'goofit/PDFs/InterHistPdf.h', 'goofit/PDFs/basic/InterHistPdf.h'),
+    (r'goofit/PDFs/JohnsonSUPdf.h', 'goofit/PDFs/basic/JohnsonSUPdf.h'),
+    (r'goofit/PDFs/KinLimitBWPdf.h', 'goofit/PDFs/basic/KinLimitBWPdf.h'),
+    (r'goofit/PDFs/LandauPdf.h', 'goofit/PDFs/basic/LandauPdf.h'),
+    (r'goofit/PDFs/NovosibirskPdf.h', 'goofit/PDFs/basic/NovosibirskPdf.h'),
+    (r'goofit/PDFs/PolynomialPdf.h', 'goofit/PDFs/basic/PolynomialPdf.h'),
+    (r'goofit/PDFs/ScaledGaussianPdf.h', 'goofit/PDFs/basic/ScaledGaussianPdf.h'),
+    (r'goofit/PDFs/SmoothHistogramPdf.h', 'goofit/PDFs/basic/SmoothHistogramPdf.h'),
+    (r'goofit/PDFs/StepPdf.h', 'goofit/PDFs/basic/StepPdf.h'),
+(r'goofit/PDFs/VoigtianPdf.h', 'goofit/PDFs/basic/VoigtianPdf.h'),
+(r'goofit/PDFs/TrigThresholdPdf.h', 'goofit/PDFs/basic/TrigThresholdPdf.h'),
+(r'goofit/PDFs/AddPdf.h', 'goofit/PDFs/combine/AddPdf.h'),
+    (r'goofit/PDFs/CompositePdf.h', 'goofit/PDFs/combine/CompositePdf.h'),
+    (r'goofit/PDFs/ConvolutionPdf.h', 'goofit/PDFs/combine/ConvolutionPdf.h'),
+    (r'goofit/PDFs/EventWeightedAddPdf.h', 'goofit/PDFs/combine/EventWeightedAddPdf.h'),
+    (r'goofit/PDFs/MappedPdf.h', 'goofit/PDFs/combine/MappedPdf.h'),
+    (r'goofit/PDFs/ProdPdf.h', 'goofit/PDFs/combine/ProdPdf.h'),
+    (r'goofit/PDFs/DalitzPlotHelpers.h', 'goofit/PDFs/physics/DalitzPlotHelpers.h'),
+    (r'goofit/PDFs/DalitzPlotPdf.h', 'goofit/PDFs/physics/DalitzPlotPdf.h'),
+    (r'goofit/PDFs/DalitzVetoPdf.h', 'goofit/PDFs/physics/DalitzVetoPdf.h'),
+    (r'goofit/PDFs/DP4Pdf.h', 'goofit/PDFs/physics/DP4Pdf.h'),
+    (r'goofit/PDFs/EvalVar.h', 'goofit/PDFs/physics/EvalVar.h'),
+    (r'goofit/PDFs/IncoherentSumPdf.h', 'goofit/PDFs/physics/IncoherentSumPdf.h'),
+    (r'goofit/PDFs/LineshapesPdf.h', 'goofit/PDFs/physics/LineshapesPdf.h'),
+    (r'goofit/PDFs/MixingTimeResolution_Aux.h', 'goofit/PDFs/physics/MixingTimeResolution_Aux.h'),
+    (r'goofit/PDFs/ResonancePdf.h', 'goofit/PDFs/physics/ResonancePdf.h'),
+    (r'goofit/PDFs/SpinFactors.h', 'goofit/PDFs/physics/SpinFactors.h'),
+    (r'goofit/PDFs/SpinHelper.h', 'goofit/PDFs/physics/SpinHelper.h'),
+    (r'goofit/PDFs/Tddp4Pdf.h', 'goofit/PDFs/physics/Tddp4Pdf.h'),
+    (r'goofit/PDFs/TddpPdf.h', 'goofit/PDFs/physics/TddpPdf.h'),
+    (r'goofit/PDFs/ThreeGaussResolution_Aux.h', 'goofit/PDFs/physics/ThreeGaussResolution_Aux.h'),
+    (r'goofit/PDFs/TruthResolution_Aux.h', 'goofit/PDFs/physics/TruthResolution_Aux.h')
 ]
 
 def fix_text(contents):
@@ -149,12 +191,15 @@ def fix_text(contents):
 
 def fix_files(src):
     for name in src:
-        print('Converting: {0}'.format(name))
+        if name == local.path(__file__):
+            continue
         with name.open('r') as f:
             contents = f.read()
-        contents = fix_text(contents)
-        with name.open('w') as f:
-            f.write(contents)
+        new_contents = fix_text(contents)
+        if contents != new_contents:
+            print('Converted: {0}'.format(name))
+            with name.open('w') as f:
+                f.write(new_contents)
 
 
 

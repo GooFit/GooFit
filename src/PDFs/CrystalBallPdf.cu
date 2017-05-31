@@ -1,4 +1,4 @@
-#include "goofit/PDFs/CrystalBallPdf.h"
+#include "goofit/PDFs/basic/CrystalBallPdf.h"
 #include "goofit/Variable.h"
 
 namespace GooFit {
@@ -50,7 +50,7 @@ __host__ CrystalBallPdf::CrystalBallPdf(
 
     pindices.push_back(registerParameter(power));
     GET_FUNCTION_ADDR(ptr_to_CrystalBall);
-    initialise(pindices);
+    initialize(pindices);
 }
 
 __host__ fptype CrystalBallPdf::integrate(fptype lo, fptype hi) const {

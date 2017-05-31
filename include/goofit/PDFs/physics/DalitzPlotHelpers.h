@@ -9,8 +9,8 @@ See *.cu file for more details
 #pragma once
 
 #include "goofit/PDFs/GooPdf.h"
-#include "goofit/PDFs/LineshapesPdf.h"
-#include "goofit/PDFs/ResonancePdf.h"
+#include "goofit/PDFs/physics/LineshapesPdf.h"
+#include "goofit/PDFs/physics/ResonancePdf.h"
 
 #include <thrust/device_vector.h>
 #include <thrust/iterator/constant_iterator.h>

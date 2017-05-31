@@ -1,4 +1,4 @@
-#include "goofit/PDFs/VoigtianPdf.h"
+#include "goofit/PDFs/basic/VoigtianPdf.h"
 #include <limits>
 #include "goofit/Faddeeva.h"
 #include <thrust/complex.h>
@@ -317,7 +317,7 @@ __host__ VoigtianPdf::VoigtianPdf(std::string n, Variable* _x, Variable* m, Vari
     pindices.push_back(registerParameter(s));
     pindices.push_back(registerParameter(w));
     GET_FUNCTION_ADDR(ptr_to_Voigtian);
-    initialise(pindices);
+    initialize(pindices);
 }
 
 } // namespace GooFit

@@ -1,4 +1,4 @@
-#include "goofit/PDFs/EventWeightedAddPdf.h"
+#include "goofit/PDFs/combine/EventWeightedAddPdf.h"
 #include "goofit/Error.h"
 #include "goofit/Log.h"
 
@@ -69,7 +69,7 @@ EventWeightedAddPdf::EventWeightedAddPdf(std::string n, std::vector<Variable*> w
     // Indices stores (function index)(function parameter index) doublet for each component.
     // Last component has no weight index unless function is extended. Notice that in this case, unlike
     // AddPdf, weight indices are into the event, not the parameter vector, hence they
-    // are not added to the pindices array at this stage, although 'initialise' will reserve space
+    // are not added to the pindices array at this stage, although 'initialize' will reserve space
     // for them.
     for(PdfBase* p : comps) {
         GOOFIT_TRACE("EventWeighted component: {}", p->getName());
@@ -106,7 +106,7 @@ EventWeightedAddPdf::EventWeightedAddPdf(std::string n, std::vector<Variable*> w
     else
         GET_FUNCTION_ADDR(ptr_to_EventWeightedAddPdfs);
 
-    initialise(pindices);
+    initialize(pindices);
 }
 
 __host__ fptype EventWeightedAddPdf::normalize() const {

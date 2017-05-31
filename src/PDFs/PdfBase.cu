@@ -57,7 +57,7 @@ __host__ void PdfBase::copyNormFactors() const {
     cudaDeviceSynchronize(); // Ensure normalisation integrals are finished
 }
 
-__host__ void PdfBase::initialiseIndices(std::vector<unsigned int> pindices) {
+__host__ void PdfBase::initializeIndices(std::vector<unsigned int> pindices) {
     // Structure of the individual index array: Number of parameters, then the indices
     // requested by the subclass (which will be interpreted by the subclass kernel),
     // then the number of observables, then the observable indices. Notice that the

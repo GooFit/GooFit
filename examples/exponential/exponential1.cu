@@ -2,7 +2,7 @@
 #include "goofit/Variable.h"
 #include "goofit/fitting/FitManagerMinuit1.h"
 #include "goofit/UnbinnedDataSet.h"
-#include "goofit/PDFs/ExpPdf.h"
+#include "goofit/PDFs/basic/ExpPdf.h"
 #include <iostream>
 
 using namespace std;

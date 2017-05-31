@@ -1,4 +1,4 @@
-#include "goofit/PDFs/NovosibirskPdf.h"
+#include "goofit/PDFs/basic/NovosibirskPdf.h"
 
 namespace GooFit {
 
@@ -44,7 +44,7 @@ __host__ NovosibirskPdf::NovosibirskPdf(std::string n, Variable* _x, Variable* m
     pindices.push_back(registerParameter(sigma));
     pindices.push_back(registerParameter(tail));
     GET_FUNCTION_ADDR(ptr_to_Novosibirsk);
-    initialise(pindices);
+    initialize(pindices);
 }
 
 } // namespace GooFit

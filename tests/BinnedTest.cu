@@ -2,8 +2,8 @@
 
 #include "goofit/FitManager.h"
 #include "goofit/BinnedDataSet.h"
-#include "goofit/PDFs/ExpPdf.h"
-#include "goofit/PDFs/ProdPdf.h"
+#include "goofit/PDFs/basic/ExpPdf.h"
+#include "goofit/PDFs/combine/ProdPdf.h"
 
 #include "goofit/Variable.h"
 

@@ -1,9 +1,9 @@
 #include "goofit/Application.h"
 #include "goofit/FitManager.h"
 #include "goofit/UnbinnedDataSet.h"
-#include "goofit/PDFs/LandauPdf.h"
-#include "goofit/PDFs/NovosibirskPdf.h"
-#include "goofit/PDFs/BifurGaussPdf.h"
+#include "goofit/PDFs/basic/LandauPdf.h"
+#include "goofit/PDFs/basic/NovosibirskPdf.h"
+#include "goofit/PDFs/basic/BifurGaussPdf.h"
 
 #include "goofit/Variable.h"
 #include "TH1F.h"

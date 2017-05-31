@@ -1,4 +1,4 @@
-#include "goofit/PDFs/MappedPdf.h"
+#include "goofit/PDFs/combine/MappedPdf.h"
 
 namespace GooFit {
 
@@ -50,7 +50,7 @@ __host__ MappedPdf::MappedPdf(std::string n, GooPdf* m, std::vector<GooPdf*>& t)
 
     observables = getObservables();
     GET_FUNCTION_ADDR(ptr_to_Mapped);
-    initialise(pindices);
+    initialize(pindices);
 }
 
 __host__ fptype MappedPdf::normalize() const {

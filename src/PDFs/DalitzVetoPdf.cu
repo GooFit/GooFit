@@ -1,5 +1,5 @@
-#include "goofit/PDFs/DalitzVetoPdf.h"
-#include "goofit/PDFs/DalitzPlotHelpers.h"
+#include "goofit/PDFs/physics/DalitzVetoPdf.h"
+#include "goofit/PDFs/physics/DalitzPlotHelpers.h"
 
 namespace GooFit {
 
@@ -54,7 +54,7 @@ __host__ DalitzVetoPdf::DalitzVetoPdf(std::string n, Variable* _x, Variable* _y,
     }
 
     GET_FUNCTION_ADDR(ptr_to_DalitzVeto);
-    initialise(pindices);
+    initialize(pindices);
 }
 } // namespace GooFit
 

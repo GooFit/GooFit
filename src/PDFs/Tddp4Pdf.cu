@@ -23,9 +23,9 @@ TODO:
 
 #include "goofit/Log.h"
 #include "goofit/Error.h"
-#include "goofit/PDFs/Tddp4Pdf.h"
-#include "goofit/PDFs/EvalVar.h"
-#include "goofit/PDFs/DP4Pdf.h"
+#include "goofit/PDFs/physics/Tddp4Pdf.h"
+#include "goofit/PDFs/physics/EvalVar.h"
+#include "goofit/PDFs/physics/DP4Pdf.h"
 
 #include <thrust/complex.h>
 
@@ -405,7 +405,7 @@ __host__ TDDP4::TDDP4(std::string n,
     // In case the resolution function needs parameters, this registers them.
     resolution->createParameters(pindices, this);
     GET_FUNCTION_ADDR(ptr_to_TDDP4);
-    initialise(pindices);
+    initialize(pindices);
 
     Integrator =  new NormIntegrator_TD(parameters);
     redoIntegral = new bool[components.size() - 1];

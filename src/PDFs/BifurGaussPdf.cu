@@ -1,4 +1,4 @@
-#include "goofit/PDFs/BifurGaussPdf.h"
+#include "goofit/PDFs/basic/BifurGaussPdf.h"
 
 namespace GooFit {
 
@@ -28,7 +28,7 @@ __host__ BifurGaussPdf::BifurGaussPdf(std::string n, Variable* _x, Variable* mea
     pindices.push_back(registerParameter(sigmaL));
     pindices.push_back(registerParameter(sigmaR));
     GET_FUNCTION_ADDR(ptr_to_BifurGauss);
-    initialise(pindices);
+    initialize(pindices);
 }
 
 // q: how shall the normalization of a bifurcated gaussian be calculated?

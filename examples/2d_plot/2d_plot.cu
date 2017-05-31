@@ -1,7 +1,7 @@
 #include "goofit/Application.h"
 #include "goofit/Variable.h"
-#include "goofit/PDFs/GaussianPdf.h"
-#include "goofit/PDFs/ProdPdf.h"
+#include "goofit/PDFs/basic/GaussianPdf.h"
+#include "goofit/PDFs/combine/ProdPdf.h"
 #include "goofit/FitManager.h"
 #include "goofit/UnbinnedDataSet.h"
 

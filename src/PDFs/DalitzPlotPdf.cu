@@ -1,4 +1,4 @@
-#include "goofit/PDFs/DalitzPlotPdf.h"
+#include "goofit/PDFs/physics/DalitzPlotPdf.h"
 #include "goofit/Error.h"
 
 #include <thrust/complex.h>
@@ -163,7 +163,7 @@ __host__ DalitzPlotPdf::DalitzPlotPdf(std::string n,
     components.push_back(efficiency);
 
     GET_FUNCTION_ADDR(ptr_to_DalitzPlot);
-    initialise(pindices);
+    initialize(pindices);
 
     redoIntegral = new bool[decayInfo->resonances.size()];
     cachedMasses = new fptype[decayInfo->resonances.size()];

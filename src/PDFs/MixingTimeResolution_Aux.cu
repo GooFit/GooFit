@@ -1,4 +1,4 @@
-#include "goofit/PDFs/MixingTimeResolution_Aux.h"
+#include "goofit/PDFs/physics/MixingTimeResolution_Aux.h"
 #include "goofit/PDFs/GooPdf.h"
 
 namespace GooFit {

@@ -1,5 +1,5 @@
-#include "goofit/PDFs/ResonancePdf.h"
-#include "goofit/PDFs/DalitzPlotHelpers.h"
+#include "goofit/PDFs/physics/ResonancePdf.h"
+#include "goofit/PDFs/physics/DalitzPlotHelpers.h"
 
 namespace GooFit {
 
@@ -350,7 +350,7 @@ ResonancePdf::ResonancePdf(std::string name,
     pindices.push_back(cyc);
 
     GET_FUNCTION_ADDR(ptr_to_RBW);
-    initialise(pindices);
+    initialize(pindices);
 }
 
 ResonancePdf::ResonancePdf(std::string name,
@@ -372,7 +372,7 @@ ResonancePdf::ResonancePdf(std::string name,
     pindices.push_back(cyc);
 
     GET_FUNCTION_ADDR(ptr_to_GOUSAK);
-    initialise(pindices);
+    initialize(pindices);
 }
 
 
@@ -395,7 +395,7 @@ ResonancePdf::ResonancePdf(std::string name,
     pindices.push_back(cyc);
 
     GET_FUNCTION_ADDR(ptr_to_LASS);
-    initialise(pindices);
+    initialize(pindices);
 }
 
 
@@ -410,7 +410,7 @@ ResonancePdf::ResonancePdf(std::string name,
     // Dummy index for constants - won't use it, but calling
     // functions can't know that and will call setConstantIndex anyway.
     GET_FUNCTION_ADDR(ptr_to_NONRES);
-    initialise(pindices);
+    initialize(pindices);
 }
 
 ResonancePdf::ResonancePdf(std::string name,
@@ -431,7 +431,7 @@ ResonancePdf::ResonancePdf(std::string name,
     pindices.push_back(cyc);
 
     GET_FUNCTION_ADDR(ptr_to_GAUSSIAN);
-    initialise(pindices);
+    initialize(pindices);
 
 }
 

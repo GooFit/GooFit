@@ -1,4 +1,4 @@
-#include "goofit/PDFs/LandauPdf.h"
+#include "goofit/PDFs/basic/LandauPdf.h"
 
 namespace GooFit {
 
@@ -86,7 +86,7 @@ __host__ LandauPdf::LandauPdf(std::string n, Variable* _x, Variable* mpv, Variab
     pindices.push_back(registerParameter(mpv));
     pindices.push_back(registerParameter(sigma));
     GET_FUNCTION_ADDR(ptr_to_Landau);
-    initialise(pindices);
+    initialize(pindices);
 }
 
 

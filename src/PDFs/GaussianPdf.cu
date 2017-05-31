@@ -1,4 +1,4 @@
-#include "goofit/PDFs/GaussianPdf.h"
+#include "goofit/PDFs/basic/GaussianPdf.h"
 
 namespace GooFit {
 
@@ -22,7 +22,7 @@ __host__ GaussianPdf::GaussianPdf(std::string n, Variable* _x, Variable* mean, V
     pindices.push_back(registerParameter(mean));
     pindices.push_back(registerParameter(sigma));
     GET_FUNCTION_ADDR(ptr_to_Gaussian);
-    initialise(pindices);
+    initialize(pindices);
 }
 
 __host__ fptype GaussianPdf::integrate(fptype lo, fptype hi) const {

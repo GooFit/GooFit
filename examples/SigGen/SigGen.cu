@@ -5,10 +5,10 @@
 // GooFit stuff
 #include "goofit/Application.h"
 #include "goofit/Variable.h"
-#include "goofit/PDFs/PolynomialPdf.h"
-#include "goofit/PDFs/AddPdf.h"
+#include "goofit/PDFs/basic/PolynomialPdf.h"
+#include "goofit/PDFs/combine/AddPdf.h"
 #include "goofit/UnbinnedDataSet.h"
-#include "goofit/PDFs/DP4Pdf.h"
+#include "goofit/PDFs/physics/DP4Pdf.h"
 
 #include <thrust/count.h>
 

@@ -196,7 +196,7 @@ def fix_files(src):
         if contents != new_contents:
             print('Converted: {0}'.format(name))
             with name.open('w') as f:
-                f.write(contents)
+                f.write(new_contents)
 
 
 

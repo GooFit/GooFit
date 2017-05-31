@@ -5,6 +5,7 @@
 #include "goofit/Variable.h"
 #include "goofit/Version.h"
 #include "goofit/detail/Abort.h"
+#include "goofit/Version.h"
 
 #include <map>
 #include <set>

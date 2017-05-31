@@ -104,6 +104,7 @@ A few standard CMake tricks:
 * CMake reruns when needed when you `make` unless you add a file that it globs for (like new `goofit_projects`).
 * Use `make -j12` to build with 12 cores (for example). You can set this as the `MAKEFLAGS` environment variable, too.
 * Use `CMake --build .` to build without referring to your specific build tool, like `make` or `ninja`.
+* If you are using the `llvm` tool-suite, you can use `-DCMAKE_EXPORT_COMPILE_COMMANDS=ON` to generate the .json file that the `clang-*` commands expect. For example, `run-clang-tidy.py` will display `clang-tidy` warnings.
 
 > Note: Running `make`, `make omp`, or `make cuda` in the main directory will make a build directory for you, and will run CMake and make.
 

@@ -52,7 +52,7 @@ public:
         maxWeight = wmax;
     }
 
-    __host__ std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h,  mcbooster::RealVector_h>
+    __host__ std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h,  mcbooster::BoolVector_h>
     GenerateSig(unsigned int numEvents);
 
 protected:

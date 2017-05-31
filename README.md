@@ -85,6 +85,7 @@ Advanced Options:
 * `-DGOOFIT_CUDA_OR_GROUPSIZE:INT=128`: This sets the group size that thrust will use for distributing the problem.  This parameter can be thought of as 'Threads per block'.  These will be used after running 'find_optimal.py' to figure out the optimal size.
 * `-DGOOFIT_CUDA_OR_GRAINSIZE:INT=7`: This is the grain size thrust uses for distributing the problem.  This parameter can be thought of as 'Items per thread'.
 * `-DGOOFIT_PYTHON=OFF`: Preliminary python bindings using [PyBind11].
+* `-DGOOFIT_MAXPAR=1800`: The maximum number of parameters to allow. May cause memory issues if too large.
 * You can enable sanitizers on non-CUDA builds with `-DSANITIZE_ADDRESS=ON`, `-DSANITIZE_MEMORY=ON`, `-DSANITIZE_THREAD=ON` or `-DSANITIZE_UNDEFINED=ON`.
 
 Note for targeting Tesla P100 or any `arch=6.0` device:
@@ -103,6 +104,7 @@ A few standard CMake tricks:
 * CMake reruns when needed when you `make` unless you add a file that it globs for (like new `goofit_projects`).
 * Use `make -j12` to build with 12 cores (for example). You can set this as the `MAKEFLAGS` environment variable, too.
 * Use `CMake --build .` to build without referring to your specific build tool, like `make` or `ninja`.
+* If you are using the `llvm` tool-suite, you can use `-DCMAKE_EXPORT_COMPILE_COMMANDS=ON` to generate the .json file that the `clang-*` commands expect. For example, `run-clang-tidy.py` will display `clang-tidy` warnings. To run a fix on all files, you can do `run-clang-tidy.py -header-filter='.*' -checks='-*,modernize-use-default-member-init' -fix` (for example).
 
 > Note: Running `make`, `make omp`, or `make cuda` in the main directory will make a build directory for you, and will run CMake and make.
 

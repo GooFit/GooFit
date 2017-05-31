@@ -66,6 +66,8 @@ endif()
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/extern/sanitizers/cmake" ${CMAKE_MODULE_PATH})
 find_package(Sanitizers)
 
+set(GOOFIT_MAXPAR "1800" CACHE STRING "The number of parameters to statically support, can be increased but should not be too large.") 
+
 # Output the current GooFit version
 configure_file (
     "${PROJECT_SOURCE_DIR}/include/goofit/Version.h.in"

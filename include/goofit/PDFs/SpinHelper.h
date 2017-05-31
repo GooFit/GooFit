@@ -344,8 +344,7 @@ public:
         E().SetZ(p.GetE() * p.GetZ());
         E().SetE(p.GetE() * p.GetE());
     }
-    __device__ SymmLorentzMatrix(const SymmLorentzMatrix& other)
-        : = default;
+    __device__ SymmLorentzMatrix(const SymmLorentzMatrix& other) = default;
 
     __device__ SymmLorentzMatrix& add(const SymmLorentzMatrix& other) {
         for(int i=0; i < 4; i++)

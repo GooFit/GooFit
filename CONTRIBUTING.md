@@ -4,6 +4,27 @@
 
 See [adding a package](doc/ADDING_EXTERN.md).
 
+## C++
+
+You should verify that the LLVM 4.0 based requirements pass. To fix the clang-tidy requirements:
+
+```bash
+cmake -DGOOFIT_TIDY_FIX=ON ..
+make -j1
+```
+
+To run `clang-format` to correct source code spacing:
+
+```bash
+git ls-files -- '*.cu' '*.cc' '*.h' '*.cpp' | xargs clang-format -i -style=file
+```
+
+The modernize script should also not make any changes:
+
+```bash
+git ls-files -- '*.cu' '*.cc' '*.h' '*.cpp' | xargs ModernizeGoofit.py
+```
+
 ## Git
 
 GooFit is hosted as a [git](http://git-scm.com) repository on [GitHub](https://github.com).
@@ -26,6 +47,7 @@ There's no point in repeating all that info specifically for GooFit here, we do 
 
 If you don't have time to learn about git and pull requests, we still do want your contribution to GooFit. In that case please make an issue on GitHub and link to your updated files or patches e.g. in [gists](https://gist.github.com).
 Note that this way you won't get credit for you contribution though in the commit history, so we prefer you make a GitHub pull request or ask for help in a GitHub issue on where you got stuck (fork -> clone -> branch -> edit -> commit -> push -> pull request) with making the pull request.
+
 
 ## Contact
 

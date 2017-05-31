@@ -96,7 +96,7 @@ __host__ void PdfBase::setData(std::vector<std::map<Variable*, fptype>>& data) {
 
     if(dev_event_array) {
         gooFree(dev_event_array);
-        dev_event_array = 0;
+        dev_event_array = nullptr;
     }
 
     setIndices();
@@ -159,7 +159,7 @@ __host__ void PdfBase::setData(DataSet* data) {
     if(dev_event_array) {
         gooFree(dev_event_array);
         cudaDeviceSynchronize();
-        dev_event_array = 0;
+        dev_event_array = nullptr;
         m_iEventsPerTask = 0;
     }
 
@@ -379,7 +379,7 @@ __host__ void PdfBase::generateNormRange() {
 void PdfBase::clearCurrentFit() {
     totalParams = 0;
     gooFree(dev_event_array);
-    dev_event_array = 0;
+    dev_event_array = nullptr;
 }
 
 __host__ void PdfBase::printProfileInfo(bool topLevel) {

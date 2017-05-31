@@ -134,7 +134,7 @@ __host__ Variable* PdfBase::getParameterByName(std::string n) const {
             return cand;
     }
 
-    return 0;
+    return nullptr;
 }
 
 __host__ std::vector<Variable*> PdfBase::getObservables() const {

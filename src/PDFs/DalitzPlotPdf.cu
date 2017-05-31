@@ -113,18 +113,18 @@ __host__ DalitzPlotPdf::DalitzPlotPdf(std::string n,
                                       CountingVariable* eventNumber,
                                       DecayInfo* decay,
                                       GooPdf* efficiency)
-    : GooPdf(0, n)
+    : GooPdf(nullptr, n)
     , decayInfo(decay)
     , _m12(m12)
     , _m13(m13)
-    , dalitzNormRange(0)
+    , dalitzNormRange(nullptr)
       //, cachedWaves(0)
-    , integrals(0)
+    , integrals(nullptr)
     , forceRedoIntegrals(true)
     , totalEventSize(3) // Default 3 = m12, m13, evtNum
     , cacheToUse(0)
-    , integrators(0)
-    , calculators(0) {
+    , integrators(nullptr)
+    , calculators(nullptr) {
     registerObservable(_m12);
     registerObservable(_m13);
     registerObservable(eventNumber);
@@ -132,7 +132,7 @@ __host__ DalitzPlotPdf::DalitzPlotPdf(std::string n,
     fptype decayConstants[5];
 
     for(int j = 0; j < 16; j++)
-        cachedWaves[j] = 0;
+        cachedWaves[j] = nullptr;
 
     std::vector<unsigned int> pindices;
     pindices.push_back(registerConstants(5));

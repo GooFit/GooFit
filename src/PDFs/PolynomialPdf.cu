@@ -133,7 +133,7 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n, Variable* _x, std::vector<V
 // Constructor for multivariate polynomial.
 __host__ PolynomialPdf::PolynomialPdf(std::string n, std::vector<Variable*> obses, std::vector<Variable*> coeffs,
                                       std::vector<Variable*> offsets, unsigned int maxDegree)
-    : GooPdf(0, n) {
+    : GooPdf(nullptr, n) {
     unsigned int numParameters = 1;
 
     // For 1 observable, equal to n = maxDegree + 1.

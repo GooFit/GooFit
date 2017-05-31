@@ -129,7 +129,7 @@ __host__ InterHistPdf::InterHistPdf(std::string n,
                                     BinnedDataSet* x,
                                     std::vector<Variable*> params,
                                     std::vector<Variable*> obses)
-    : GooPdf(0, n)
+    : GooPdf(nullptr, n)
     , numVars(x->numVariables()) {
     int numConstants = 2*numVars;
     registerConstants(numConstants);

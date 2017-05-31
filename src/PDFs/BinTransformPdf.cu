@@ -31,7 +31,7 @@ __host__ BinTransformPdf::BinTransformPdf(std::string n, std::vector<Variable*> 
                                           std::vector<fptype> limits,
                                           std::vector<fptype> binSizes,
                                           std::vector<int> numBins)
-    : GooPdf(0, n) {
+    : GooPdf(nullptr, n) {
 
     cIndex = registerConstants(2*obses.size());
     fptype* host_constants = new fptype[2*obses.size()];

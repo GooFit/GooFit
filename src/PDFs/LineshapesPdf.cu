@@ -444,7 +444,7 @@ Lineshape::Lineshape(std::string name,
                      FF FormFac,
                      fptype radius,
                      std::vector<Variable*> AdditionalVars)
-    : GooPdf(0, name), _mass(mass), _width(width), _L(L), _Mpair(Mpair), _kind(kind), _FormFac(FormFac) {
+    : GooPdf(nullptr, name), _mass(mass), _width(width), _L(L), _Mpair(Mpair), _kind(kind), _FormFac(FormFac) {
     std::vector<unsigned int> pindices;
     pindices.push_back(0);
     // Making room for index of decay-related constants. Assumption:
@@ -518,7 +518,7 @@ Lineshape::Lineshape(std::string name,
 
 
 Lineshape::Lineshape(std::string name)
-    : GooPdf(0, name) {
+    : GooPdf(nullptr, name) {
     std::vector<unsigned int> pindices;
     pindices.push_back(0);
     // Dummy index for constants - won't use it, but calling

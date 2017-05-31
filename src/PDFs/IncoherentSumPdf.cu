@@ -47,19 +47,19 @@ __device__ device_function_ptr ptr_to_incoherent = device_incoherent;
 
 __host__ IncoherentSumPdf::IncoherentSumPdf(std::string n, Variable* m12, Variable* m13, CountingVariable* eventNumber,
         DecayInfo* decay, GooPdf* eff)
-    : GooPdf(0, n)
+    : GooPdf(nullptr, n)
     , decayInfo(decay)
     , _m12(m12)
     , _m13(m13)
-    , dalitzNormRange(0)
-    , cachedResonances(0)
-    , integrals(0)
+    , dalitzNormRange(nullptr)
+    , cachedResonances(nullptr)
+    , integrals(nullptr)
     , forceRedoIntegrals(true)
     , totalEventSize(3) // Default 3 = m12, m13, evtNum. Will likely be overridden.
     , cacheToUse(0)
     , efficiency(eff)
-    , integrators(0)
-    , calculators(0) {
+    , integrators(nullptr)
+    , calculators(nullptr) {
     registerObservable(_m12);
     registerObservable(_m13);
     registerObservable(eventNumber);

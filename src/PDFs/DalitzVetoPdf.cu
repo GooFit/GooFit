@@ -35,7 +35,7 @@ __device__ device_function_ptr ptr_to_DalitzVeto = device_DalitzVeto;
 
 __host__ DalitzVetoPdf::DalitzVetoPdf(std::string n, Variable* _x, Variable* _y, Variable* motherM, Variable* d1m,
                                       Variable* d2m, Variable* d3m, std::vector<VetoInfo*> vetos)
-    : GooPdf(0, n) {
+    : GooPdf(nullptr, n) {
     registerObservable(_x);
     registerObservable(_y);
 

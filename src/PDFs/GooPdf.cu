@@ -133,11 +133,11 @@ __device__ device_metric_ptr ptr_to_BinAvg       = calculateBinAvg;
 __device__ device_metric_ptr ptr_to_BinWithError = calculateBinWithError;
 __device__ device_metric_ptr ptr_to_Chisq        = calculateChisq;
 
-void* host_fcn_ptr = 0;
+void* host_fcn_ptr = nullptr;
 
 void* getMetricPointer(std::string name) {
 #define CHOOSE_PTR(ptrname) if (name == #ptrname) GET_FUNCTION_ADDR(ptrname);
-    host_fcn_ptr = 0;
+    host_fcn_ptr = nullptr;
     CHOOSE_PTR(ptr_to_Eval);
     CHOOSE_PTR(ptr_to_NLL);
     CHOOSE_PTR(ptr_to_Prob);

@@ -129,9 +129,9 @@ ConvolutionPdf::ConvolutionPdf(std::string n,
     : GooPdf(x, n)
     , model(m)
     , resolution(r)
-    , host_iConsts(0)
-    , modelWorkSpace(0)
-    , resolWorkSpace(0)
+    , host_iConsts(nullptr)
+    , modelWorkSpace(nullptr)
+    , resolWorkSpace(nullptr)
     , workSpaceIndex(0) {
     // Constructor for convolution without cooperative
     // loading of model cache. This is slow, but conceptually
@@ -161,9 +161,9 @@ ConvolutionPdf::ConvolutionPdf(std::string n,
     : GooPdf(x, n)
     , model(m)
     , resolution(r)
-    , host_iConsts(0)
-    , modelWorkSpace(0)
-    , resolWorkSpace(0)
+    , host_iConsts(nullptr)
+    , modelWorkSpace(nullptr)
+    , resolWorkSpace(nullptr)
     , workSpaceIndex(0) {
     // Constructor for the case when several convolutions
     // can run in parallel; for example, a map where the targets

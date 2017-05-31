@@ -293,7 +293,7 @@ __host__ TddpPdf::TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Va
     registerObservable(eventNumber);
 
     for(int i = 0; i < 16; i++)
-        cachedWaves[i] = 0;
+        cachedWaves[i] = nullptr;
 
     fptype decayConstants[6];
     decayConstants[5] = 0;
@@ -385,7 +385,7 @@ __host__ TddpPdf::TddpPdf(std::string n, Variable* _dtime, Variable* _sigmat, Va
     registerObservable(md0);
 
     for(int i = 0; i < 16; i++)
-        cachedWaves[i] = 0;
+        cachedWaves[i] = nullptr;
 
     fptype decayConstants[8];
     decayConstants[5] = 0;

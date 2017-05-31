@@ -78,7 +78,7 @@ __host__ DPPdf::DPPdf(std::string n,
                       DecayInfo_DP* decay,
                       GooPdf* efficiency,
                       unsigned int MCeventsNorm)
-    : GooPdf(0, n)
+    : GooPdf(nullptr, n)
     , decayInfo(decay)
     , _observables(observables)
     , totalEventSize(observables.size()) // number of observables plus eventnumber

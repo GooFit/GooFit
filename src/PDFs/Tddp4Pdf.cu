@@ -182,7 +182,7 @@ __host__ TDDP4::TDDP4(std::string n,
                       GooPdf* efficiency,
                       Variable* mistag,
                       unsigned int MCeventsNorm)
-    : GooPdf(0, n)
+    : GooPdf(nullptr, n)
     , decayInfo(decay)
     , _observables(observables)
     , resolution(Tres)

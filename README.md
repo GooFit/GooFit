@@ -51,18 +51,10 @@ cmake ..
 make
 ```
 
-> If you don't have a modern CMake, Kitware provides installers for every OS. You can even get a copy using python: `pip install cmake` or locally with `pip install --user cmake`.
-> On a Mac, you can also use any package manager, such as Homebrew: `brew install cmake`
-> On Linux, you can manually get it using:
->
-> ```bash
-> mkdir cmake && wget -qO- "https://cmake.org/files/v3.7/cmake-3.7.2-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C cmake
-> export PATH=`pwd`/cmake/bin:$PATH
-> ```
->
-> The second line will need to be rerun whenever use a new shell. Feel free to make your updated CMake default; CMake is insanely backward compatible and will even "dumb itself down" when it sees a lower version in the `minimum_required` line in every `CMakeLists.txt`.
+If you don't have a modern CMake, Kitware provides installers for every OS. You can even get a copy using python: `pip install cmake` or locally with `pip install --user cmake`.
+On a Mac, you can also use any package manager, such as Homebrew: `brew install cmake`
 
-If you want to change compiler, set `CC` and `CXX` to appropriate defaults *before* you run CMake either inline or in your environment. You can also set `CMAKE_C_COMPILER` and `CMAKE_CXX_COMPILER` directly on the command line wiht `-D`. If you want to set the host and device backends, you can set those options. The defaults are:
+If you want to change compiler, set `CC` and `CXX` to appropriate defaults *before* you run CMake either inline or in your environment. You can also set `CMAKE_C_COMPILER` and `CMAKE_CXX_COMPILER` directly on the command line with `-D`. If you want to set the host and device backends, you can set those options. The defaults are:
 ```
 cmake .. -DGOOFIT_DEVICE=CUDA -DGOOFIT_HOST=CPP
 ```
@@ -168,15 +160,16 @@ The new `GooFit::Application`, which is not required but provides GooFit options
 
 ```cpp
 #include "GooFit/Application.h"
+using namespace GooFit;
 
 // Place this at the beginning of main
-GooFit::Application app{"Optional discription", argc, argv};
+Application app{"Optional discription", argc, argv};
 
 // Command line options can be added here.
 
 try {
     app.run();
-} catch(const GooFit::ParseError &e) {
+} catch(const ParseError &e) {
     return app.exit(e);
 }
 ```

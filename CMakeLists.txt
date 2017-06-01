@@ -51,6 +51,7 @@ endif()
 if(NOT EXISTS "${PROJECT_SOURCE_DIR}/cmake/FindThrust.cmake"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/CLI11/CMakeLists.txt"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/FeatureDetector/CMakeLists.txt"
+OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/MCBooster/CMakeLists.txt"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/thrust/README.md")
     message(FATAL_ERROR "The submodules were not downloaded! GOOFIT_SUBMODULE was turned off or failed. Please update submodules and try again.")
 endif()

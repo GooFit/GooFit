@@ -4,9 +4,9 @@ project(GOOFIT
     VERSION 2.0.0
     LANGUAGES CXX)
 
-set(GOOFIT_TAG "dev")
+#set(GOOFIT_TAG "dev")
 #set(GOOFIT_TAG "alpha")
-#set(GOOFIT_TAG "beta")
+set(GOOFIT_TAG "beta")
 #set(GOOFIT_TAG "release")
 
 if(NOT DEFINED CMAKE_SUPPRESS_DEVELOPER_WARNINGS AND NOT GOOFIT_TAG STREQUAL "dev")
@@ -51,6 +51,7 @@ endif()
 if(NOT EXISTS "${PROJECT_SOURCE_DIR}/cmake/FindThrust.cmake"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/CLI11/CMakeLists.txt"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/FeatureDetector/CMakeLists.txt"
+OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/MCBooster/CMakeLists.txt"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/thrust/README.md")
     message(FATAL_ERROR "The submodules were not downloaded! GOOFIT_SUBMODULE was turned off or failed. Please update submodules and try again.")
 endif()

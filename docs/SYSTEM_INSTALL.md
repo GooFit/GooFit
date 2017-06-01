@@ -76,3 +76,14 @@ If you'd like to add ROOT, add the following lines before running cmake:
 mkdir root-6 && curl https://root.cern.ch/download/root_v6.08.06.Linux-ubuntu16-x86_64-gcc5.4.tar.gz | tar --strip-components=1 -xz -C root-6
 source root-6/bin/thisroot.sh
 ```
+
+## Note on CMake install
+
+While other install paths, like `pip`, are easier, this way should always work. On Linux, you can manually get a version of CMake using:
+
+```bash
+mkdir cmake && wget -qO- "https://cmake.org/files/v3.8/cmake-3.8.1-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C cmake
+export PATH=`pwd`/cmake/bin:$PATH
+```
+
+The second line will need to be rerun whenever use a new shell. Feel free to make your updated CMake default; CMake is insanely backward compatible and will even "dumb itself down" when it sees a lower version in the `minimum_required` line in every `CMakeLists.txt`.

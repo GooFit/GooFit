@@ -128,7 +128,7 @@ class LorentzMatrix {
     __device__ const gpuLVec &v(int i) const { return _v[i]; }
 
     __device__ LorentzMatrix() = default;
-    ;
+
     __device__ LorentzMatrix(const gpuLVec p[4]) {
         for(int i = 0; i < 4; i++)
             _v[i] = p[i];

@@ -38,6 +38,8 @@
 #include <mcbooster/functors/Calculate.h>
 #include <mcbooster/strided_iterator.h>
 
+#include <thrust/execution_policy.h>
+
 namespace mcbooster {
 
 /** Template functor for calculate an array of variables over a given set of particles.

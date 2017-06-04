@@ -14,11 +14,12 @@ __device__ fptype device_Polynomial(fptype* evt, ParameterContainer &pc) {
     fptype x = evt[0];
     fptype ret = 0;
 
+    //unsure why this starts at i=2...
     for(int i = 0; i < numParams; ++i) {
-        ret += RO_CACHE(pc.parameters[pc.parameterIdx + i + 1]) * pow(x, lowestDegree + i - 2);
+        ret += RO_CACHE(pc.parameters[pc.parameterIdx + i]) * pow(x, lowestDegree + i);
     }
 
-    pc.incrementIndex (1, numParams + 1, 2, 1, 1);
+    pc.incrementIndex (1, numParams, 1, 0, 0);
 
     return ret;
 }
@@ -122,15 +123,11 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n, Variable* _x, std::vector<V
 
     for(std::vector<Variable*>::iterator v = weights.begin(); v != weights.end(); ++v) {
         pindices.push_back(registerParameter(*v));
-
-        //make sure this is added.
-        parametersList.push_back (*v);
     }
 
     if(x0) {
         polyType = 1;
         pindices.push_back(registerParameter(x0));
-        parametersList.push_back (x0);
         GET_FUNCTION_ADDR(ptr_to_OffsetPolynomial);
     } else {
         polyType = 0;

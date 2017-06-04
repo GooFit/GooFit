@@ -13,7 +13,8 @@ public:
         return true;
     }
 
-
+protected:
+    __host__ virtual void recursiveSetIndices ();
 
 private:
 

@@ -16,6 +16,7 @@ public:
     }
 
 protected:
+    __host__ virtual void recursiveSetIndices ();
     __host__ virtual double sumOfNll(int numVars) const;
 
 private:

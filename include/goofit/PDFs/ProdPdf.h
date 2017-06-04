@@ -14,6 +14,9 @@ public:
         return false;
     }
 
+protected:
+    __host__ virtual void recursiveSetIndices ();
+
 private:
     bool varOverlaps; // True if any components share an observable.
 };

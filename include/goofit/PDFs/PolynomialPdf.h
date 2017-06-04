@@ -15,8 +15,11 @@ public:
     //__host__ virtual bool hasAnalyticIntegral () const {return (1 == observables.size());}
     __host__ fptype getCoefficient(int coef) const;
 
+protected:
+    __host__ virtual void recursiveSetIndices ();
 
 private:
+    int polyType;
     Variable* center;
 };
 } // namespace GooFit

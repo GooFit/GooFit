@@ -19,14 +19,14 @@ void abort(std::string file, int line, std::string reason, const PdfBase* pdf) {
             if(0 > v->getIndex())
                 continue;
             
-            std::cout << "  " << v->getName() << " (" << v->getIndex() << ") :\t" << host_params[v->getIndex()] << std::endl;
+            std::cout << "  " << v->getName() << " (" << v->getIndex() << ") :\t" << host_parameters[v->getIndex()] << std::endl;
         }
     }
     
-    std::cout << "Parameters (" << totalParams << ") :\n";
+    std::cout << "Parameters (" << totalParameters << ") :\n";
     
-    for(int i = 0; i < totalParams; ++i) {
-        std::cout << host_params[i] << " ";
+    for(int i = 0; i < totalParameters; ++i) {
+        std::cout << host_parameters[i] << " ";
     }
     
     

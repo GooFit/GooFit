@@ -31,11 +31,18 @@ typedef thrust::zip_iterator<EventTuple> EventIterator;
 
 const int maxParams = GOOFIT_MAXPAR;
 extern fptype* dev_event_array;
-extern fptype host_normalisation[maxParams];
-extern fptype host_params[maxParams];
-extern unsigned int host_indices[maxParams];
-extern int totalParams;
+
+//
+extern fptype host_normalisations[maxParams];
+extern fptype host_parameters[maxParams];
+extern unsigned int host_constants[maxParams];
+extern fptype host_observables[maxParams];
+
+//
+extern int totalParameters;
 extern int totalConstants;
+extern int totalObservables;
+extern int totalNormalisations;
 
 class FitControl;
 
@@ -108,14 +115,22 @@ public:
     __host__ void SigGenSetIndices() {
         setIndices();
     }
+
 protected:
+    //use this function to populate the arrays generically.  
+    __host__ void populateArrays ();
+
+    __host__ virtual void setIndices();
+    __host__ virtual void recursiveSetIndices();
+
     fptype numEvents {0};         //< Non-integer to allow weighted events
     unsigned int numEntries {0};  //< Eg number of bins - not always the same as number of events, although it can be.
     fptype* normRanges {0};       //< This is specific to functor instead of variable so that MetricTaker::operator needn't use indices.
     unsigned int parameters {0};  //< Stores index, in 'paramIndices', where this functor's information begins.
     unsigned int cIndex {1};      //< Stores location of constants.
-    std::vector<Variable*> observables;
-    std::vector<Variable*> parameterList;
+    std::vector<Variable*> observablesList;
+    std::vector<Variable*> parametersList;
+    std::vector<unsigned int> constantsList;
     FitControl* fitControl {nullptr};
     std::vector<PdfBase*> components;
     int integrationBins {-1};
@@ -124,6 +139,12 @@ protected:
 
     unsigned int functionIdx; //< Stores index of device function pointer.
 
+    unsigned int parametersIdx;
+    unsigned int constantsIdx;
+    unsigned int observablesIdx;
+    unsigned int normalIdx;
+    
+
     int m_iEventsPerTask;
     
     /// This needs to be set before a call to setData.
@@ -131,9 +152,6 @@ protected:
 
 private:
     std::string name;
-
-    __host__ void recursiveSetIndices();
-    __host__ void setIndices();
 };
 
 

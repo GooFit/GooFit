@@ -180,10 +180,10 @@ __host__ void GooPdf::setIndices () {
 
     //copy all the device functions over:
     GOOFIT_DEBUG("Copying all host side parameters to device");
-    MEMCPY(device_function_table, host_function_table, num_device_functions*sizeof (fptype), cudaMemcpyHostToDevice);
-    MEMCPY(d_parameters, host_parameters, totalParameters*sizeof (fptype), cudaMemcpyHostToDevice);
-    MEMCPY(d_constants, host_constants, totalConstants*sizeof (unsigned int), cudaMemcpyHostToDevice);
-    MEMCPY(d_observables, host_observables, totalObservables*sizeof(fptype), cudaMemcpyHostToDevice);
+    //MEMCPY(device_function_table, host_function_table, num_device_functions*sizeof (fptype), cudaMemcpyHostToDevice);
+    //MEMCPY(d_parameters, host_parameters, totalParameters*sizeof (fptype), cudaMemcpyHostToDevice);
+    //MEMCPY(d_constants, host_constants, totalConstants*sizeof (unsigned int), cudaMemcpyHostToDevice);
+    //MEMCPY(d_observables, host_observables, totalObservables*sizeof(fptype), cudaMemcpyHostToDevice);
 
     //we are skipping normalisation copy, this is done after normalise call
     //MEMCPY(d_normalisations, host_normalisations, totalNormalisations*sizeof(fptype), 0, cudaMemcpyHostToDevice);
@@ -308,7 +308,7 @@ __host__ double GooPdf::calculateNLL() const {
     //std::cout << std::endl;
     //}
 
-    if(host_normalisations[normalIdx] <= 0)
+    if(host_normalisations[normalIdx + 1] <= 0)
         GooFit::abort(__FILE__, __LINE__, getName() + " non-positive normalisation", this);
 
     //MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalNormalisations*sizeof(fptype), 0, cudaMemcpyHostToDevice);
@@ -435,7 +435,7 @@ __host__ fptype GooPdf::normalize() const {
 
     if(!fitControl->metricIsPdf()) {
         GOOFIT_TRACE("{}: metricIsPdf, returning 1", getName());
-        host_normalisations[parameters] = 1.0;
+        host_normalisations[normalIdx + 1] = 1.0;
         return 1.0;
     }
 
@@ -448,7 +448,7 @@ __host__ fptype GooPdf::normalize() const {
             ret *= integrate(v->getLowerLimit(), v->getUpperLimit());
         }
 
-        host_normalisations[normalIdx] = 1.0/ret;
+        host_normalisations[normalIdx + 1] = 1.0/ret;
         GOOFIT_TRACE("{}: Param {} integral is = {}", getName(), parameters, ret);
         
         return ret;
@@ -472,7 +472,7 @@ __host__ fptype GooPdf::normalize() const {
     thrust::constant_iterator<fptype*> arrayAddress(normRanges);
     thrust::constant_iterator<int> eventSize(observablesList.size());
     thrust::counting_iterator<int> binIndex(0);
-    thrust::counting_iterator<int> funcIdx (functionIdx);
+    thrust::constant_iterator<int> funcIdx (functionIdx);
 
     fptype sum;
 #ifdef GOOFIT_MPI
@@ -498,14 +498,6 @@ __host__ fptype GooPdf::normalize() const {
                                    thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, eventSize, arrayAddress)),
                                    *logger, dummy, cudaPlus);
 #else
-    for (int i = 0; i < totalBins; i++)
-    {
-        GOOFIT_TRACE("normRanges[{}] = {}", i*3 + 0, normRanges[i*3 + 0]);
-        GOOFIT_TRACE("normRanges[{}] = {}", i*3 + 1, normRanges[i*3 + 1]);
-        GOOFIT_TRACE("normRanges[{}] = {}", i*3 + 2, normRanges[i*3 + 2]);
-    }
-
-    GOOFIT_TRACE("eventSize = {}, totalBins = {}", observablesList.size(), totalBins);
     sum = thrust::transform_reduce(
               thrust::make_zip_iterator(thrust::make_tuple(binIndex, funcIdx, arrayAddress)),
               thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, funcIdx, arrayAddress)),
@@ -527,8 +519,8 @@ __host__ fptype GooPdf::normalize() const {
     if(0 == ret)
         GooFit::abort(__FILE__, __LINE__, "Zero integral");
 
-    GOOFIT_TRACE("{}: Param {} integral is ~= {}", getName(), parameters, ret);
-    host_normalisations[parameters] = 1.0/ret;
+    GOOFIT_TRACE("{}: Param {} integral is ~= {}", getName(), normalIdx, ret);
+    host_normalisations[normalIdx + 1] = 1.0/ret;
     return (fptype) ret;
 }
 

@@ -24,7 +24,7 @@ __device__ fptype device_AddPdfs(fptype* evt, ParameterContainer &pc) {
 	fptype norm = pc.normalisations[pc.normalIdx + 1];
 
         //increment our container structure
-        pc.incrementIndex(1, numParameters, 1, 1, 2);
+        pc.incrementIndex(1, numParameters, 0, 0, 1);
 
         //call the first function to add in our PDF.
         fptype curr = callFunction(evt, pc);
@@ -186,7 +186,7 @@ __host__ fptype AddPdf::normalize() const {
     fptype totalWeight = 0;
 
     for(unsigned int i = 0; i < components.size()-1; ++i) {
-        fptype weight = host_parameters[parametersIdx + 3*(i+1)];
+        fptype weight = host_parameters[parametersIdx + 3*i + 1];
         totalWeight += weight;
         fptype curr = components[i]->normalize();
         ret += curr * weight;
@@ -203,7 +203,7 @@ __host__ fptype AddPdf::normalize() const {
         ret += (1 - totalWeight) * last;
     }
 
-    host_normalisations[normalIdx] = 1.0;
+    host_normalisations[normalIdx + 1] = 1.0;
 
     //TODO: Unsure of the exact location for this normalise...
     if(getSpecialMask() & PdfBase::ForceCommonNorm) {

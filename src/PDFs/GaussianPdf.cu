@@ -10,7 +10,7 @@ __device__ fptype device_Gaussian(fptype* evt, ParameterContainer &pc) {
     fptype mean = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
     fptype sigma = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
 
-    pc.incrementIndex (1, 3, 1, 1, 1);
+    pc.incrementIndex (1, 2, 0, 0, 0);
     fptype ret = exp(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
 
     return ret;
@@ -23,6 +23,7 @@ __host__ GaussianPdf::GaussianPdf(std::string n, Variable *_x, Variable *mean, V
     std::vector<unsigned int> pindices;
     pindices.push_back(registerParameter(mean));
     pindices.push_back(registerParameter(sigma));
+
     GET_FUNCTION_ADDR(ptr_to_Gaussian);
     initialize(pindices);
 }

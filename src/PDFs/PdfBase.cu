@@ -22,15 +22,24 @@ namespace GooFit {
 __host__ void PdfBase::copyParams(const std::vector<double> &pars) const {
     // copyParams method performs eponymous action!
 
-    for(unsigned int i = 0; i < pars.size(); ++i) {
-        host_parameters[i] = pars[i];
+    //for(unsigned int i = 0; i < pars.size(); ++i) {
+    //    host_parameters[parameterIdx + i + 1] = pars[i];
 
-        if(std::isnan(host_parameters[i])) {
-            std::cout << " agh, parameter is NaN, die " << i << std::endl;
-            GooFit::abort(__FILE__, __LINE__, "NaN in parameter");
-        }
+    //    if(std::isnan(host_parameters[i])) {
+    //        std::cout << " agh, parameter is NaN, die " << i << std::endl;
+    //        GooFit::abort(__FILE__, __LINE__, "NaN in parameter");
+    //    }
+    //}
+
+    for (int i = 0; i < parametersList.size (); i++)
+    {
+        GOOFIT_TRACE("fitter index {}", parametersList[i]->getFitterIndex());
+        host_parameters[parametersIdx + i + 1] = pars[parametersList[i]->getFitterIndex()];
     }
 
+    MEMCPY(d_parameters, host_parameters, totalParameters*sizeof(fptype), cudaMemcpyHostToDevice);
+
+    //recursiveSetIndices ();
     //MEMCPY_TO_SYMBOL(cudaArray, host_params, pars.size()*sizeof(fptype), 0, cudaMemcpyHostToDevice);
 }
 
@@ -39,16 +48,18 @@ __host__ void PdfBase::copyParams() {
     std::vector<Variable *> pars = getParameters();
     std::vector<double> values;
 
-    for(Variable *v : pars) {
-        int index = v->getIndex();
+    //for(Variable* v : pars) {
+    //    int index = v->getIndex();
 
-        if(index >= static_cast<int>(values.size()))
-            values.resize(index + 1);
+    //    if(index >= (int) values.size())
+    //        values.resize(index + 1);
 
-        values[index] = v->getValue();
-    }
+    //    values[index] = v->getValue();
+    //}
 
     copyParams(values);
+
+    updateParameters ();
 }
 
 __host__ void PdfBase::copyNormFactors() const {
@@ -78,45 +89,33 @@ __host__ void PdfBase::initializeIndices(std::vector<unsigned int> pindices) {
 
     //stick placeholders into our parameter array 
     host_parameters[totalParameters] = parametersList.size();
-    parametersIdx = totalParameters++;
-    for (int i = 0 ; i < parametersList.size (); i++)
-        host_parameters[totalParameters++] = parametersList[i]->getValue ();
+    parametersIdx = totalParameters; totalParameters++; 
+    for (int i = 0 ; i < parametersList.size (); i++) {
+        host_parameters[totalParameters] = parametersList[i]->getValue (); totalParameters++;
+    }
 
     //stick placeholders into our observable array
     host_observables[totalObservables] = observablesList.size ();
-    observablesIdx = totalObservables++;
-    for (int i = 0 ; i < observablesList.size (); i++)
-        host_observables[totalObservables++] = observablesList[i]->getValue ();
+    observablesIdx = totalObservables; totalObservables++;
+    for (int i = 0 ; i < observablesList.size (); i++) {
+        host_observables[totalObservables] = observablesList[i]->getValue (); totalObservables++;
+    }
 
     //stick placeholders into our constants array
     host_constants[totalConstants] = constantsList.size ();
-    constantsIdx = totalConstants++;
-    for (int i = 0 ; i < constantsList.size (); i++)
-        host_constants[totalConstants++] = constantsList[i];
+    constantsIdx = totalConstants; totalConstants++;
+    for (int i = 0 ; i < constantsList.size (); i++) {
+        host_constants[totalConstants] = constantsList[i]; totalConstants++;
+    }
 
     //stick placeholders into our normalisation array
     host_normalisations[totalNormalisations] = 1;
-    normalIdx = totalNormalisations++;
-    host_normalisations[totalNormalisations++] = 0;
+    normalIdx = totalNormalisations; totalNormalisations++; 
+    host_normalisations[totalNormalisations] = 0;
+    totalNormalisations++;
 
-/* Axe this section!
-    for(int i = 1; i <= host_indices[totalParams]; ++i) {
-        GOOFIT_DEBUG("Setting host index {} to {}", totalParams + i, i - 1);
-        host_indices[totalParams + i] = pindices[i - 1];
-    }
-
-    GOOFIT_DEBUG(
-        "Setting host index {} to the num of observables, {}", totalParams + pindices.size() + 1, observables.size());
-    host_indices[totalParams + pindices.size() + 1] = observables.size();
-
-    parameters = totalParams;
-    totalParams += (2 + pindices.size() + observables.size());
-    GOOFIT_DEBUG("New total parameters: {}", totalParams);
-*/
-    
     if(totalParameters >= maxParams)
-        throw GooFit::GeneralError("{}: Set too many parameters, GooFit array more than {}. Increase max at compile time with -DGOOFIT_MAXPAR=N.",
-                                   getName(), maxParams);
+        throw GooFit::GeneralError("{}: Set too many parameters, GooFit array more than {}. Increase max at compile time with -DGOOFIT_MAXPAR=N.", getName(), maxParams);
 
     //we rely on GooPdf::set to copy these values, this copyies every PDF which is unnecessary.
     //MEMCPY_TO_SYMBOL(paramIndices, host_indices, totalParams*sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
@@ -130,41 +129,55 @@ __host__ void PdfBase::recursiveSetIndices () {
     //populateArrays ();   
 }
 
+__host__ void PdfBase::updateParameters ()
+{
+    //GOOFIT_TRACE("Update parameters for {}", getName ());
+
+    for (int i = 0; i < parametersList.size (); i++)
+        host_parameters[parametersIdx + i + 1] = parametersList[i]->getValue () - parametersList[i]->blind;
+
+    for (int i = 0; i < components.size (); i++)
+        components[i]->updateParameters ();
+
+    //we need to memcpy to device.
+    MEMCPY(d_parameters, host_parameters, totalParameters*sizeof(fptype), cudaMemcpyHostToDevice);
+}
+
 __host__ void PdfBase::populateArrays () {
     //populate all the arrays 
-    GOOFIT_DEBUG("Populating Arrays for {}", getName());
-    GOOFIT_TRACE("host_parameters[{}] = {}", totalParameters, parametersList.size());
+    //GOOFIT_DEBUG("Populating Arrays for {}", getName());
+    //GOOFIT_TRACE("host_parameters[{}] = {}", totalParameters, parametersList.size());
     host_parameters[totalParameters] = parametersList.size ();
-    parametersIdx = totalParameters++;
+    parametersIdx = totalParameters; totalParameters++;
     for (int i = 0; i < parametersList.size (); i++)
     {
-        GOOFIT_TRACE("host_parameters[{}] = {}", totalParameters, parametersList[i]->getValue());
-        host_parameters[totalParameters++] = parametersList[i]->getValue ();
+        //GOOFIT_TRACE("host_parameters[{}] = {}", totalParameters, parametersList[i]->getValue());
+        host_parameters[totalParameters] = parametersList[i]->getValue (); totalParameters++;
     }
 
-    GOOFIT_TRACE("host_constants[{}] = {}", totalConstants, constantsList.size());
+    //GOOFIT_TRACE("host_constants[{}] = {}", totalConstants, constantsList.size());
     host_constants[totalConstants] = constantsList.size ();
-    constantsIdx = totalConstants++;
+    constantsIdx = totalConstants; totalConstants++;
     for (int i = 0; i < constantsList.size (); i++)
     {
-        GOOFIT_TRACE("host_constants[{}] = {}", totalConstants, constantsList[i]);
-        host_constants[totalConstants++] = constantsList[i];
+        //GOOFIT_TRACE("host_constants[{}] = {}", totalConstants, constantsList[i]);
+        host_constants[totalConstants] = constantsList[i]; totalConstants++;
     }
 
-    GOOFIT_TRACE("host_observables[{}] = {}", totalObservables, observablesList.size());
+    //GOOFIT_TRACE("host_observables[{}] = {}", totalObservables, observablesList.size());
     host_observables[totalObservables] = observablesList.size ();
-    observablesIdx = totalObservables++;
+    observablesIdx = totalObservables; totalObservables++;
     for (int i = 0; i < observablesList.size (); i++)
     {
-        GOOFIT_TRACE("host_observables[{}] = {}", totalObservables, observablesList[i]->getValue ());
-        host_observables[totalObservables++] = observablesList[i]->getValue ();
+        //GOOFIT_TRACE("host_observables[{}] = {}", totalObservables, observablesList[i]->getValue ());
+        host_observables[totalObservables] = observablesList[i]->getValue (); totalObservables++;
     }
 
-    GOOFIT_TRACE("host_normalisations[{}] = {}", totalNormalisations, 1);
+    //GOOFIT_TRACE("host_normalisations[{}] = {}", totalNormalisations, 1);
     host_normalisations[totalNormalisations] = 1;
     normalIdx = totalNormalisations++;
-    GOOFIT_TRACE("host_normalisations[{}] = {}", totalNormalisations, 0);
-    host_normalisations[totalNormalisations++] = 0;
+    //GOOFIT_TRACE("host_normalisations[{}] = {}", totalNormalisations, 0);
+    host_normalisations[totalNormalisations] = 0; totalNormalisations++;
 
     for (unsigned int i = 0; i < components.size (); i++)
         components[i]->recursiveSetIndices ();
@@ -228,14 +241,11 @@ __host__ void PdfBase::recursiveSetIndices() {
     totalNormalisations = 0;
     num_device_functions = 0;
 
+    //set all associated functions parameters, constants, etc.
+    recursiveSetIndices();
+
     if (checkParams != totalParameters)
         GOOFIT_DEBUG("Error!  checkParams({}) != totalParameters({})", checkParams, totalParameters);
-
-    //TODO: Make sure recursive performs GOOFIT_TRACE!
-    recursiveSetIndices();
-    //MEMCPY_TO_SYMBOL(paramIndices, host_indices, totalParams*sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
-
-    //test the parameters are the same
 }
 
 __host__ void PdfBase::setData(DataSet *data) {

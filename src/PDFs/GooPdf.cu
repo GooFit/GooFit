@@ -179,13 +179,10 @@ __host__ void GooPdf::setIndices () {
 
     //copy all the device functions over:
     GOOFIT_DEBUG("Copying all host side parameters to device");
-    //MEMCPY(device_function_table, host_function_table, num_device_functions*sizeof (fptype), cudaMemcpyHostToDevice);
-    //MEMCPY(d_parameters, host_parameters, totalParameters*sizeof (fptype), cudaMemcpyHostToDevice);
-    //MEMCPY(d_constants, host_constants, totalConstants*sizeof (unsigned int), cudaMemcpyHostToDevice);
-    //MEMCPY(d_observables, host_observables, totalObservables*sizeof(fptype), cudaMemcpyHostToDevice);
-
-    //we are skipping normalisation copy, this is done after normalise call
-    //MEMCPY(d_normalisations, host_normalisations, totalNormalisations*sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    MEMCPY(device_function_table, host_function_table, num_device_functions*sizeof (fptype), cudaMemcpyHostToDevice);
+    MEMCPY(d_parameters, host_parameters, totalParameters*sizeof (fptype), cudaMemcpyHostToDevice);
+    MEMCPY(d_constants, host_constants, totalConstants*sizeof (unsigned int), cudaMemcpyHostToDevice);
+    MEMCPY(d_observables, host_observables, totalObservables*sizeof(fptype), cudaMemcpyHostToDevice);
 }
 
 __host__ int GooPdf::findFunctionIdx(void* dev_functionPtr) {
@@ -319,9 +316,9 @@ __host__ double GooPdf::calculateNLL() const {
     if(host_normalisations[normalIdx + 1] <= 0)
         GooFit::abort(__FILE__, __LINE__, getName() + " non-positive normalisation", this);
 
-    //MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalNormalisations*sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    //make this memcpy async
     MEMCPY(d_normalisations, host_normalisations, totalNormalisations*sizeof(fptype), cudaMemcpyHostToDevice);
-    cudaDeviceSynchronize(); // Ensure normalisation integrals are finished
+    //cudaDeviceSynchronize(); // Ensure normalisation integrals are finished
 
     int numVars = observablesList.size();
 

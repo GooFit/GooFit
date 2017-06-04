@@ -35,13 +35,14 @@ struct ParameterContainer
     int funcIdx;
 
     //each function will need to specify how to increment these values.
-    void incrementIndex (const int funcs, const int vars, const int cons, const int obs, const int norms)
+    //
+    void incrementIndex (const int funcs, const int params, const int cons, const int obs, const int norms)
     {
         funcIdx += funcs;
-        parameterIdx += vars;
-        constantIdx += cons;
-        observableIdx += obs;
-        normalIdx += norms;
+        parameterIdx += params + 1;
+        constantIdx += cons + 1;
+        observableIdx += obs + 1;
+        normalIdx += norms + 1;
     }
 
     //slow version, avoid at all costs!
@@ -49,32 +50,32 @@ struct ParameterContainer
     {
         funcIdx ++;
 
-        parameterIdx = parameters[parameterIdx] + 1;
-        constantIdx = constants[constantIdx] + 1;
-        observableIdx = observables[observableIdx] + 1;
-        normalIdx = normalisations[normalIdx] + 1;
-    }
+        int np = parameters[parameterIdx];
+	int no = observables[observableIdx];
+	int nn = normalisations[normalIdx];
 
-    void print ()
-    {
-        GOOFIT_TRACE("ParameterContainer contents:");
-        GOOFIT_TRACE("Function Index {}", funcIdx);
-        GOOFIT_TRACE("Parameter Index {}", parameterIdx);
-        GOOFIT_TRACE("Constant Index {}", constantIdx);
-        GOOFIT_TRACE("Normalisation Index {}", normalIdx);
+        parameterIdx += np + 1;
+        constantIdx += constants[constantIdx] + 1;
+        observableIdx += no + 1;
+        normalIdx += nn + 1;
     }
 };
 
+extern __device__ fptype d_parameters[maxParams];
+extern __device__ unsigned int d_constants[maxParams];
+extern __device__ fptype d_observables[maxParams];
+extern __device__ fptype d_normalisations[maxParams];
+
 // Holds device-side fit parameters.
-extern __constant__ fptype cudaArray[maxParams];
+//extern __constant__ fptype cudaArray[maxParams];
 
 // Holds functor-specific indices into cudaArray. Also overloaded to hold integer constants (ie parameters that cannot vary.)
-extern __constant__ unsigned int paramIndices[maxParams];
+//extern __constant__ unsigned int paramIndices[maxParams];
 
 // Holds non-integer constants. Notice that first entry is number of events.
-extern __constant__ fptype functorConstants[maxParams];
+//extern __constant__ fptype functorConstants[maxParams];
 
-extern __constant__ fptype normalisationFactors[maxParams];
+//extern __constant__ fptype normalisationFactors[maxParams];
 
 extern __device__ void *device_function_table[200];
 extern void *host_function_table[200];

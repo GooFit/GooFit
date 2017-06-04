@@ -46,7 +46,7 @@ __host__ void PdfBase::checkInitStatus(std::vector<std::string> &unInited) const
 }
 
 __host__ void PdfBase::recursiveSetNormalisation(fptype norm) const {
-    host_normalisations[normalIdx] = norm;
+    host_normalisations[normalIdx + 1] = norm;
 
     for(auto component : components) {
         component->recursiveSetNormalisation(norm);
@@ -57,10 +57,13 @@ __host__ unsigned int PdfBase::registerParameter(Variable *var) {
     if(var == nullptr)
         throw GooFit::GeneralError("{}: Can not register a nullptr", getName());
 
-    if(std::find(parameterList.begin(), parameterList.end(), var) != parameterList.end())
-        return static_cast<unsigned int>(var->getIndex());
-
+    //we need to always add the variable to our internal parameter list
     parametersList.push_back(var);
+
+    if(std::find(parametersList.begin(), parametersList.end(), var) != parametersList.end())
+        return (unsigned int) var->getIndex();
+
+    //parametersList.push_back(var);
     variableRegistry[var].insert(this);
 
     if(0 > var->getIndex()) {

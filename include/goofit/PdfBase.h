@@ -103,6 +103,8 @@ class PdfBase {
         setIndices();
     }
 
+    __host__ void updateParameters ();
+
 protected:
     //use this function to populate the arrays generically.  
     __host__ void populateArrays ();

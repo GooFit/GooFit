@@ -8,9 +8,7 @@
 GooFit is a massively-parallel framework, written using Thrust for CUDA and OpenMP, for
 doing maximum-likelihood fits with a familiar syntax.
 
-* [Changelog](./CHANGELOG.md)
-* [Contributing](./CONTRIBUTING.md)
-* [API documentation]
+[What's new](./CHANGELOG.md) • [Tutorials] • [API documentation] • [Converting from older GooFit](./docs/CONVERTING20.md)
 
 ## Requirements
 
@@ -216,3 +214,4 @@ and do not necessarily reflect the views of the National Science Foundation.
 [CLI11]:             https://github.com/CLIUtils/CLI11
 [PyBind11]:          http://pybind11.readthedocs.io/en/master
 [ROOT]:              https://root.cern.ch
+[Tutorials]:         https://henryiii.gitbooks.io/goofit/content/

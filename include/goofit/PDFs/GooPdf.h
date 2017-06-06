@@ -5,6 +5,7 @@
 #include "goofit/PDFs/MetricTaker.h"
 #include "goofit/PdfBase.h"
 #include "goofit/UnbinnedDataSet.h"
+#include "goofit/Log.h"
 
 #ifdef ROOT_FOUND
 class TH1D;
@@ -17,14 +18,60 @@ namespace GooFit {
 
 #ifdef SEPARABLE
 
-/// Holds device-side fit parameters.
+struct ParameterContainer
+{
+    ParameterContainer (); 
+
+    fptype *parameters;
+    unsigned int *constants;
+    fptype *observables;
+    fptype *normalisations;
+
+    int parameterIdx;
+    int constantIdx;
+    int observableIdx;
+    int normalIdx;
+
+    int funcIdx;
+
+    //each function will need to specify how to increment these values.
+    void incrementIndex (const int funcs, const int vars, const int cons, const int obs, const int norms)
+    {
+        funcIdx += funcs;
+        parameterIdx += vars;
+        constantIdx += cons;
+        observableIdx += obs;
+        normalIdx += norms;
+    }
+
+    //slow version, avoid at all costs!
+    void incrementIndex ()
+    {
+        funcIdx ++;
+
+        parameterIdx = parameters[parameterIdx] + 1;
+        constantIdx = constants[constantIdx] + 1;
+        observableIdx = observables[observableIdx] + 1;
+        normalIdx = normalisations[normalIdx] + 1;
+    }
+
+    void print ()
+    {
+        GOOFIT_TRACE("ParameterContainer contents:");
+        GOOFIT_TRACE("Function Index {}", funcIdx);
+        GOOFIT_TRACE("Parameter Index {}", parameterIdx);
+        GOOFIT_TRACE("Constant Index {}", constantIdx);
+        GOOFIT_TRACE("Normalisation Index {}", normalIdx);
+    }
+};
+
+// Holds device-side fit parameters.
 extern __constant__ fptype cudaArray[maxParams];
 
-/// Holds functor-specific indices into cudaArray. Also overloaded to hold integer constants (ie parameters that cannot
-/// vary.)
+// Holds functor-specific indices into cudaArray. Also overloaded to hold integer constants (ie parameters that cannot vary.)
 extern __constant__ unsigned int paramIndices[maxParams];
 
-/// Holds non-integer constants. Notice that first entry is number of events.
+// Holds non-integer constants. Notice that first entry is number of events.
 extern __constant__ fptype functorConstants[maxParams];
 
 extern __constant__ fptype normalisationFactors[maxParams];
@@ -39,13 +86,13 @@ __device__ int dev_powi(int base, int exp); // Implemented in SmoothHistogramPdf
 void *getMetricPointer(std::string name);
 
 /// Pass event, parameters, index into parameters.
-typedef fptype (*device_function_ptr)(fptype *, fptype *, unsigned int *);
+typedef fptype(*device_function_ptr)(fptype*, ParameterContainer &);
 
-typedef fptype (*device_metric_ptr)(fptype, fptype *, unsigned int);
+typedef fptype(*device_metric_ptr)(fptype, fptype, fptype);
 
-extern void *host_fcn_ptr;
+extern void* host_fcn_ptr;
 
-__device__ fptype callFunction(fptype *eventAddress, unsigned int functionIdx, unsigned int paramIdx);
+__device__ fptype callFunction(fptype* eventAddress, ParameterContainer &pc);
 
 class GooPdf : public PdfBase {
   public:
@@ -91,6 +138,8 @@ class GooPdf : public PdfBase {
 #endif
 
   protected:
+    __host__ virtual void setIndices ();
+
     __host__ virtual double sumOfNll(int numVars) const;
     MetricTaker *logger;
 

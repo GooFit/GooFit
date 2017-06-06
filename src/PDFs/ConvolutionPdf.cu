@@ -23,12 +23,12 @@ __constant__ fptype *dev_resWorkSpace[100];
 // It is equal to the maximum possible value of x0, ie maxX, in bins.
 __constant__ int modelOffset[100];
 
-__device__ fptype device_ConvolvePdfs(fptype *evt, fptype *p, unsigned int *indices) {
-    fptype ret         = 0;
-    fptype loBound     = RO_CACHE(functorConstants[RO_CACHE(indices[5]) + 0]);
-    fptype hiBound     = RO_CACHE(functorConstants[RO_CACHE(indices[5]) + 1]);
-    fptype step        = RO_CACHE(functorConstants[RO_CACHE(indices[5]) + 2]);
-    fptype x0          = evt[indices[2 + indices[0]]];
+__device__ fptype device_ConvolvePdfs(fptype* evt, ParameterContainer &pc) {
+    fptype ret     = 0;
+    fptype loBound = RO_CACHE(pc.constants[1]);
+    fptype hiBound = RO_CACHE(pc.constants[2]);
+    fptype step    = RO_CACHE(pc.constants[3]);
+    fptype x0      = evt[0];
     int workSpaceIndex = indices[6];
 
     auto numbins = static_cast<int>(floor((hiBound - loBound) / step + 0.5));
@@ -53,12 +53,12 @@ __device__ fptype device_ConvolvePdfs(fptype *evt, fptype *p, unsigned int *indi
     return ret;
 }
 
-__device__ fptype device_ConvolveSharedPdfs(fptype *evt, fptype *p, unsigned int *indices) {
-    fptype ret                  = 0;
-    fptype loBound              = functorConstants[indices[5] + 0];
-    fptype hiBound              = functorConstants[indices[5] + 1];
-    fptype step                 = functorConstants[indices[5] + 2];
-    fptype x0                   = evt[indices[2 + indices[0]]];
+__device__ fptype device_ConvolveSharedPdfs(fptype* evt, ParameterContainer &pc) {
+    fptype ret     = 0;
+    fptype loBound = pc.constants[1];
+    fptype hiBound = pc.constants[2];
+    fptype step    = pc.constants[3];
+    fptype x0      = evt[0];
     unsigned int workSpaceIndex = indices[6];
     unsigned int numOthers      = indices[7] + 1; // +1 for this PDF.
 
@@ -141,12 +141,15 @@ ConvolutionPdf::ConvolutionPdf(std::string n, Variable *x, GooPdf *m, GooPdf *r)
 
     // Indices stores (function index)(parameter index) doublet for model and resolution function.
     std::vector<unsigned int> paramIndices;
-    paramIndices.push_back(model->getFunctionIndex());
-    paramIndices.push_back(model->getParameterIndex());
-    paramIndices.push_back(resolution->getFunctionIndex());
-    paramIndices.push_back(resolution->getParameterIndex());
-    paramIndices.push_back(registerConstants(3));
-    paramIndices.push_back(workSpaceIndex = totalConvolutions++);
+    //paramIndices.push_back(model->getFunctionIndex());
+    //paramIndices.push_back(model->getParameterIndex());
+    //paramIndices.push_back(resolution->getFunctionIndex());
+    //paramIndices.push_back(resolution->getParameterIndex());
+    //paramIndices.push_back(registerConstants(3));
+    //paramIndices.push_back(workSpaceIndex = totalConvolutions++);
+    constantsList.push_back (-10);
+    constantsList.push_back (10);
+    constantsList.push_back (0.01);
 
     GET_FUNCTION_ADDR(ptr_to_ConvolvePdfs);
     initialize(paramIndices);

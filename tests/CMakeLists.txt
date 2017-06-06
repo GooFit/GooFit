@@ -26,4 +26,6 @@ goofit_add_test(BlindTest)
 
 if(ROOT_FOUND)
     goofit_add_test(Minuit1Test)
+    goofit_add_test(GaussianTest)
+    goofit_add_test(ArgusTest)
 endif()

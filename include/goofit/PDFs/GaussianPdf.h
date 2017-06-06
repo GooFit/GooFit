@@ -16,8 +16,10 @@ public:
 protected:
     __host__ virtual void recursiveSetIndices ();
 
-private:
+    __host__ fptype integrate(fptype lo, fptype hi) const;
 
+private:
+    int ArgusType;
 };
 } // namespace GooFit
 

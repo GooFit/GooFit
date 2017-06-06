@@ -129,12 +129,22 @@ __host__ void PdfBase::recursiveSetIndices () {
     //populateArrays ();   
 }
 
+__host__ void PdfBase::updateVariable (Variable *var, fptype newValue)
+{
+    for (int i = 0; i < parametersList.size (); i++)
+    {
+        if (parametersList[i]->getName() == var->getName())
+            parametersList[i]->setValue (newValue);
+    }
+
+    for (int i = 0; i < components.size (); i++)
+        components[i]->updateVariable (var, newValue);
+}
+
 __host__ void PdfBase::updateParameters ()
 {
-    //GOOFIT_TRACE("Update parameters for {}", getName ());
-
     for (int i = 0; i < parametersList.size (); i++)
-        host_parameters[parametersIdx + i + 1] = parametersList[i]->getValue () - parametersList[i]->blind;
+        host_parameters[parametersIdx + i + 1] = parametersList[i]->getValue ();
 
     for (int i = 0; i < components.size (); i++)
         components[i]->updateParameters ();

@@ -103,6 +103,7 @@ class PdfBase {
         setIndices();
     }
 
+    __host__ void updateVariable(Variable *v, fptype newValue);
     __host__ void updateParameters ();
 
 protected:

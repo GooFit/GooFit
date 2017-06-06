@@ -23,6 +23,11 @@ double FCN::operator()(const std::vector<double> &pars) const {
     //    var->setChanged(var->getValue() != pars.at(var->getFitterIndex()));
     //    gooPars.at(var->getIndex()) = pars.at(var->getFitterIndex()) - var->blind;
     //}
+    for (Variable *var : params_->vars_)
+    {
+        var->setChanged(var->getValue () != pars.at(var->getFitterIndex ()));
+        params_->pdf_->updateVariable (var, pars.at(var->getFitterIndex()) - var->blind);
+    }
 
     //params_->pdf_->copyParams(gooPars);
     params_->pdf_->updateParameters ();
@@ -45,6 +50,11 @@ double FCN::operator()() const {
     //    var->setChanged(true);
     //    gooPars.at(var->getIndex()) = pars.at(var->getFitterIndex()) - var->blind;
     //}
+
+    for(Variable *var : params_->vars_) {
+        var->setChanged(true);
+        params_->pdf_->updateVariable (var, pars.at(var->getFitterIndex()) - var->blind);
+    }
     
     //params_->pdf_->copyParams(gooPars);
     params_->pdf_->updateParameters ();

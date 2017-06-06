@@ -15,7 +15,8 @@ __device__ fptype device_Polynomial(fptype* evt, ParameterContainer &pc) {
 
     //unsure why this starts at i=2...
     for(int i = 0; i < numParams; ++i) {
-        ret += RO_CACHE(pc.parameters[pc.parameterIdx + i]) * pow(x, lowestDegree + i);
+        fptype param = RO_CACHE(pc.parameters[pc.parameterIdx + i + 1]);
+        ret += param * pow(x, lowestDegree + i);
     }
 
     pc.incrementIndex (1, numParams, 1, 0, 1);

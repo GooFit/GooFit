@@ -341,8 +341,9 @@ __host__ double GooPdf::calculateNLL() const {
     return 2 * ret;
 }
 
-__host__ std::vector<fptype> GooPdf::evaluateAtPoints(Variable *var) {
-    copyParams();
+__host__ std::vector<fptype> GooPdf::evaluateAtPoints(Variable* var) {
+
+    //copyParams();
     normalize();
     //MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice);
     MEMCPY(d_normalisations, host_normalisations, totalNormalisations*sizeof(fptype), cudaMemcpyHostToDevice);

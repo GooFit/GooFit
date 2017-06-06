@@ -29,7 +29,7 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, fptype*, int> t) co
     int eventSize        = thrust::get<2>(t);
     fptype *eventAddress = thrust::get<1>(t) + (eventIndex * abs(eventSize));
 
-    fptype obs = eventAddress[2];
+    fptype obs = eventAddress[abs(eventSize) - 2];
     fptype norm = pc.normalisations[pc.normalIdx + 1];
 
     // Causes stack size to be statically undeterminable.

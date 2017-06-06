@@ -3,44 +3,48 @@
 
 namespace GooFit {
 
-__device__ fptype device_Exp(fptype *evt, fptype *p, unsigned int *indices) {
-    fptype x     = evt[indices[2 + indices[0]]];
-    fptype alpha = p[indices[1]];
+__device__ fptype device_Exp(fptype* evt, ParameterContainer &pc) {
+    fptype x = evt[0];
+    fptype alpha = pc.parameters[pc.parameterIdx + 1];
 
-    fptype ret = exp(alpha * x);
+    fptype ret = exp(alpha*x);
+
+    pc.incrementIndex (1, 2, 0, 0, 1);
     return ret;
 }
 
-__device__ fptype device_ExpOffset(fptype *evt, fptype *p, unsigned int *indices) {
-    fptype x = evt[indices[2 + indices[0]]];
-    x -= p[indices[1]];
-    fptype alpha = p[indices[2]];
+__device__ fptype device_ExpOffset(fptype* evt, ParameterContainer &pc) {
+    fptype x = evt[0];
+    x -= pc.parameters[pc.parameterIdx + 1];
+    fptype alpha = pc.parameters[pc.parameterIdx + 2];
 
-    fptype ret = exp(alpha * x);
+    fptype ret = exp(alpha*x);
+
+    pc.incrementIndex (1, 3, 0, 0, 1);
     return ret;
 }
 
-__device__ fptype device_ExpPoly(fptype *evt, fptype *p, unsigned int *indices) {
-    fptype x = evt[indices[2 + indices[0]]];
+__device__ fptype device_ExpPoly(fptype* evt, ParameterContainer &pc) {
+    fptype x = evt[0];
 
     fptype exparg = 0;
 
-    for(int i = 0; i <= indices[0]; ++i) {
-        exparg += pow(x, i) * p[indices[i + 1]];
+    for(int i = 0; i < pc.parameters[0]; ++i) {
+        exparg += pow(x, i) * pc.parameters[pc.parameterIdx + i + 1];
     }
 
     fptype ret = exp(exparg);
     return ret;
 }
 
-__device__ fptype device_ExpPolyOffset(fptype *evt, fptype *p, unsigned int *indices) {
-    fptype x = evt[indices[2 + indices[0]]];
-    x -= p[indices[1]];
+__device__ fptype device_ExpPolyOffset(fptype* evt, ParameterContainer &pc) {
+    fptype x = evt[0];
+    x -= pc.parameters[pc.parameterIdx + 1];
 
     fptype exparg = 0;
 
-    for(int i = 0; i <= indices[0]; ++i) {
-        exparg += pow(x, i) * p[indices[i + 2]];
+    for(int i = 1; i < pc.parameters[0]; ++i) {
+        exparg += pow(x, i) * pc.parameters[pc.parameterIdx + i + 1];
     }
 
     fptype ret = exp(exparg);
@@ -60,12 +64,14 @@ __host__ ExpPdf::ExpPdf(std::string n, Variable *_x, Variable *alpha, Variable *
         pindices.push_back(registerParameter(offset));
         pindices.push_back(registerParameter(alpha));
         GET_FUNCTION_ADDR(ptr_to_ExpOffset);
-        initialize(pindices);
+        ExpType = 1;
+        initialise(pindices);
     } else {
         pindices.push_back(registerParameter(alpha));
         GET_FUNCTION_ADDR(ptr_to_Exp);
-        // host_fcn_ptr = (void*) ptr_to_Exp;
-        initialize(pindices);
+        ExpType = 0;
+        //host_fcn_ptr = (void*) ptr_to_Exp;
+        initialise(pindices);
     }
 }
 
@@ -82,16 +88,44 @@ __host__ ExpPdf::ExpPdf(std::string n, Variable *_x, std::vector<Variable *> &we
     for(Variable *w : weights)
         pindices.push_back(registerParameter(w));
 
-    if(offset)
+    if(offset) {
         GET_FUNCTION_ADDR(ptr_to_ExpPolyOffset);
-    else
+        ExpType = 3;
+    }
+    else {
         GET_FUNCTION_ADDR(ptr_to_ExpPoly);
+        ExpType = 2;
+    }
 
     initialize(pindices);
 }
 
+__host__ void ExpPdf::recursiveSetIndices () {
+    if (ExpType == 0) {
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_Exp");
+        GET_FUNCTION_ADDR(ptr_to_Exp);
+    }
+    else if (ExpType == 1) {
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_ExpOffset");
+        GET_FUNCTION_ADDR(ptr_to_ExpOffset);
+    }
+    else if (ExpType == 2) {
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_ExpOffset");
+        GET_FUNCTION_ADDR(ptr_to_ExpOffset);
+    }
+    else if (ExpType == 3) {
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_ExpOffset");
+        GET_FUNCTION_ADDR(ptr_to_ExpOffset);
+    }
+
+    host_function_table[num_device_functions] = host_fcn_ptr;
+    functionIdx = num_device_functions; num_device_functions ++;
+
+    populateArrays ();
+}
+
 __host__ fptype ExpPdf::integrate(fptype lo, fptype hi) const {
-    fptype alpha = host_params[host_indices[parameters + 1]];
+    fptype alpha = host_parameters[parametersIdx + 1];
 
     if(0 == alpha) {
         // This gives a constant 1 all across the range

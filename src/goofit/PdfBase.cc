@@ -18,7 +18,7 @@ namespace GooFit {
 fptype* dev_event_array;
 fptype host_normalisations[maxParams];
 fptype host_parameters[maxParams];
-unsigned int host_constants[maxParams];
+fptype host_constants[maxParams];
 fptype host_observables[maxParams];
 
 int host_callnumber = 0;

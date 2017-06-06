@@ -36,7 +36,7 @@ extern fptype* dev_event_array;
 //
 extern fptype host_normalisations[maxParams];
 extern fptype host_parameters[maxParams];
-extern unsigned int host_constants[maxParams];
+extern fptype host_constants[maxParams];
 extern fptype host_observables[maxParams];
 
 //
@@ -120,7 +120,7 @@ protected:
     unsigned int cIndex {1};      //< Stores location of constants.
     std::vector<Variable*> observablesList;
     std::vector<Variable*> parametersList;
-    std::vector<unsigned int> constantsList;
+    std::vector<fptype> constantsList;
     FitControl* fitControl {nullptr};
     std::vector<PdfBase*> components;
     int integrationBins {-1};

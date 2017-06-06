@@ -23,7 +23,7 @@ struct ParameterContainer
     ParameterContainer (); 
 
     fptype *parameters;
-    unsigned int *constants;
+    fptype *constants;
     fptype *observables;
     fptype *normalisations;
 
@@ -51,18 +51,19 @@ struct ParameterContainer
         funcIdx ++;
 
         int np = parameters[parameterIdx];
+        int nc = constants[constantIdx];
 	int no = observables[observableIdx];
 	int nn = normalisations[normalIdx];
 
         parameterIdx += np + 1;
-        constantIdx += constants[constantIdx] + 1;
+        constantIdx += nc + 1;
         observableIdx += no + 1;
         normalIdx += nn + 1;
     }
 };
 
 extern __device__ fptype d_parameters[maxParams];
-extern __device__ unsigned int d_constants[maxParams];
+extern __device__ fptype d_constants[maxParams];
 extern __device__ fptype d_observables[maxParams];
 extern __device__ fptype d_normalisations[maxParams];
 

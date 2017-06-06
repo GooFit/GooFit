@@ -9,17 +9,15 @@ __device__ fptype device_ProdPdfs(fptype* evt, ParameterContainer &pc) {
     // Index structure is nP | F1 P1 | F2 P2 | ...
     // where nP is number of parameters, Fs are function indices, and Ps are parameter indices
 
-    int numParams = RO_CACHE(pc.parameters[0]);
+    int numConstants = RO_CACHE(pc.constants[1]);
     fptype ret = 1;
 
-    for(int i = 1; i < numParams; i += 2) {
-        pc.incrementIndex (1, numParams + 1, 1, 1, 1);
-
-        //fptype curr = (*(reinterpret_cast<device_function_ptr>(device_function_table[fcnIdx])))(evt, p, paramIndices + parIdx);
+    pc.incrementIndex (1, 0, 1, 0, 1);
+    for(int i = 0; i < numConstants; i ++) {
+        fptype norm = pc.normalisations[pc.normalIdx + 1];
         fptype curr = callFunction(evt, pc);
 
-	//TODO: Unsure where this will be located, but needs to be fetched either before or after...
-        //curr *= normalisationFactors[parIdx];
+        curr *= norm;
 
         ret *= curr;
     }
@@ -43,9 +41,13 @@ ProdPdf::ProdPdf(std::string n, std::vector<PdfBase *> comps)
     std::vector<Variable *> observableCheck; // Use to check for overlap in observables
 
     // Indices stores (function index)(function parameter index)(variable index) for each component.
-    for(PdfBase *p : comps) {
-        pindices.push_back(p->getFunctionIndex());
-        pindices.push_back(p->getParameterIndex());
+
+    //we push on the number of function arguments as constants
+    constantsList.push_back (components.size ());
+
+    for(PdfBase* p : comps) {
+        //pindices.push_back(p->getFunctionIndex());
+        //pindices.push_back(p->getParameterIndex());
 
         if(varOverlaps)
             continue; // Only need to establish this once.
@@ -77,7 +79,7 @@ ProdPdf::ProdPdf(std::string n, std::vector<PdfBase *> comps)
 __host__ void ProdPdf::recursiveSetIndices () {
     GET_FUNCTION_ADDR(ptr_to_ProdPdfs);
    
-    GOOFIT_TRACE("host_function_table[{}] = {}", num_device_functions, getName ());
+    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_ProdPdfs");
     host_function_table[num_device_functions] = host_fcn_ptr;
     functionIdx = num_device_functions++;
 
@@ -104,7 +106,7 @@ __host__ fptype ProdPdf::normalize() const {
         c->normalize();
     }
 
-    host_normalisations[normalIdx] = 1;
+    host_normalisations[normalIdx + 1] = 1;
     //MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
     return 1.0;

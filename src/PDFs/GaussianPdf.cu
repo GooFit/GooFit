@@ -6,11 +6,12 @@ namespace GooFit {
 
 
 __device__ fptype device_Gaussian(fptype* evt, ParameterContainer &pc) {
-    fptype x = evt[0];
+    int id = pc.constants[pc.constantIdx + 1];
     fptype mean = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
     fptype sigma = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
+    fptype x = evt[id];
 
-    pc.incrementIndex (1, 2, 0, 0, 1);
+    pc.incrementIndex (1, 2, 1, 0, 1);
     fptype ret = exp(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
 
     return ret;
@@ -18,11 +19,15 @@ __device__ fptype device_Gaussian(fptype* evt, ParameterContainer &pc) {
 
 __device__ device_function_ptr ptr_to_Gaussian = device_Gaussian;
 
-__host__ GaussianPdf::GaussianPdf(std::string n, Variable *_x, Variable *mean, Variable *sigma)
+static int numGausses = 0;
+__host__ GaussianPdf::GaussianPdf(std::string n, Variable* _x, Variable* mean, Variable* sigma)
     : GooPdf(_x, n) {
     std::vector<unsigned int> pindices;
     pindices.push_back(registerParameter(mean));
     pindices.push_back(registerParameter(sigma));
+
+    //this is the index into evt
+    constantsList.push_back (numGausses++);
 
     GET_FUNCTION_ADDR(ptr_to_Gaussian);
     initialize(pindices);

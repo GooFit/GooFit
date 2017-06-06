@@ -35,7 +35,7 @@ namespace GooFit {
 // The reason is that this will make it much more difficult to fetch memory, since
 // it has less memory to work with limiting the constant amount.
 __device__ fptype d_parameters[maxParams];
-__device__ unsigned int d_constants[maxParams];
+__device__ fptype d_constants[maxParams];
 __device__ fptype d_observables[maxParams];
 __device__ fptype d_normalisations[maxParams];
 
@@ -181,7 +181,7 @@ __host__ void GooPdf::setIndices () {
     GOOFIT_DEBUG("Copying all host side parameters to device");
     MEMCPY(device_function_table, host_function_table, num_device_functions*sizeof (fptype), cudaMemcpyHostToDevice);
     MEMCPY(d_parameters, host_parameters, totalParameters*sizeof (fptype), cudaMemcpyHostToDevice);
-    MEMCPY(d_constants, host_constants, totalConstants*sizeof (unsigned int), cudaMemcpyHostToDevice);
+    MEMCPY(d_constants, host_constants, totalConstants*sizeof (fptype), cudaMemcpyHostToDevice);
     MEMCPY(d_observables, host_observables, totalObservables*sizeof(fptype), cudaMemcpyHostToDevice);
 }
 
@@ -559,8 +559,8 @@ __device__ fptype callFunction(fptype* eventAddress, ParameterContainer &pc) {
 #endif
 
 __host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
-    copyParams();
-    // double overall =
+    //copyParams();
+    //double overall =
     normalize();
     MEMCPY(d_normalisations, host_normalisations, totalNormalisations*sizeof(fptype), cudaMemcpyHostToDevice);
 

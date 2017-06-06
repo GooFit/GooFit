@@ -29,6 +29,9 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, fptype*, int> t) co
     int eventSize        = thrust::get<2>(t);
     fptype *eventAddress = thrust::get<1>(t) + (eventIndex * abs(eventSize));
 
+    fptype obs = eventAddress[2];
+    fptype norm = pc.normalisations[pc.normalIdx + 1];
+
     // Causes stack size to be statically undeterminable.
     fptype ret = callFunction(eventAddress, pc);
 
@@ -36,8 +39,6 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, fptype*, int> t) co
     // in the metric, so it doesn't matter what it is. For binned fits it is assumed that
     // the structure of the event is (obs1 obs2... binentry binvolume), so that the array
     // passed to the metric consists of (binentry binvolume).
-    fptype obs = eventAddress[2];
-    fptype norm = pc.normalisations[pc.normalIdx + 1];
 
     ret = (*(reinterpret_cast<device_metric_ptr>(device_function_table[pc.funcIdx])))(ret, obs, norm);
     return ret;

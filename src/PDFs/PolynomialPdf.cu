@@ -18,7 +18,7 @@ __device__ fptype device_Polynomial(fptype* evt, ParameterContainer &pc) {
         ret += RO_CACHE(pc.parameters[pc.parameterIdx + i]) * pow(x, lowestDegree + i);
     }
 
-    pc.incrementIndex (1, numParams, 1, 0, 0);
+    pc.incrementIndex (1, numParams, 1, 0, 1);
 
     return ret;
 }
@@ -261,7 +261,7 @@ __host__ fptype PolynomialPdf::getCoefficient(int coef) const {
     fptype norm = normalize();
     norm        = (1.0 / norm);
 
-    fptype param = host_parameters[parametersIdx + 2 + coef - host_constants[constantsIdx + 1]];
+    fptype param = host_parameters[parametersIdx + 2 + coef - int(host_constants[constantsIdx + 1])];
     return norm*param;
 }
 } // namespace GooFit

@@ -10,7 +10,7 @@ __device__ fptype device_Gaussian(fptype* evt, ParameterContainer &pc) {
     fptype mean = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
     fptype sigma = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
 
-    pc.incrementIndex (1, 2, 0, 0, 0);
+    pc.incrementIndex (1, 2, 0, 0, 1);
     fptype ret = exp(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
 
     return ret;

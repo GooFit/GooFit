@@ -21,13 +21,15 @@ __device__ fptype device_AddPdfs(fptype* evt, ParameterContainer &pc) {
         //fetch our values from AddPdf
         fptype weight = pc.parameters[pc.parameterIdx + i + 1];
         totalWeight += weight;
-	fptype norm = pc.normalisations[pc.normalIdx + 1];
 
         //increment our container structure
         pc.incrementIndex(1, numParameters, 0, 0, 1);
 
+	fptype norm = pc.normalisations[pc.normalIdx + 1];
+
         //call the first function to add in our PDF.
         fptype curr = callFunction(evt, pc);
+
         ret += weight * curr * norm;
     }
 

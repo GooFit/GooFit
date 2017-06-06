@@ -11,6 +11,7 @@ public:
     ProdPdf(std::string n, std::vector<PdfBase*> comps);
     __host__ virtual fptype normalize() const;
     __host__ virtual bool hasAnalyticIntegral() const {
+        GOOFIT_TRACE("!hasAnalyticIntegral");
         return false;
     }
 

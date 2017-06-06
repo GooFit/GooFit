@@ -2,11 +2,11 @@
 
 namespace GooFit {
 
-__device__ fptype device_BifurGauss(fptype *evt, fptype *p, unsigned int *indices) {
-    fptype x          = evt[indices[2 + indices[0]]]; // why does indices recall itself?
-    fptype mean       = p[indices[1]];
-    fptype sigmaLeft  = p[indices[2]];
-    fptype sigmaRight = p[indices[3]];
+__device__ fptype device_BifurGauss(fptype* evt, ParameterContainer &pc) {
+    fptype x = evt[0]; // why does indices recall itself?
+    fptype mean = pc.parameters[1];
+    fptype sigmaLeft = pc.parameters[2];
+    fptype sigmaRight = pc.parameters[3];
 
     // how to calculate the value of a bifurcated gaussian?
     fptype sigma = sigmaLeft;
@@ -14,7 +14,9 @@ __device__ fptype device_BifurGauss(fptype *evt, fptype *p, unsigned int *indice
     if(x > mean)
         sigma = sigmaRight;
 
-    fptype ret = exp(-0.5 * (x - mean) * (x - mean) / (sigma * sigma));
+    pc.incrementIndex(1, 3, 0, 0, 1);
+
+    fptype ret = exp(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
     return ret;
 }
 
@@ -30,14 +32,22 @@ __host__ BifurGaussPdf::BifurGaussPdf(std::string n, Variable *_x, Variable *mea
     initialize(pindices);
 }
 
+__host__ void BifurGaussPdf::recursiveSetIndices () {
+    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_BifurGauss");
+    GET_FUNCTION_ADDR(ptr_to_BifurGauss);
+
+    host_function_table[num_device_functions] = host_fcn_ptr;
+    functionIdx = num_device_functions ++;
+
+    populateArrays ();
+}
+
 // q: how shall the normalization of a bifurcated gaussian be calculated?
 // a: a "sum" of two half-gaussians?
 __host__ fptype BifurGaussPdf::integrate(fptype lo, fptype hi) const {
-    unsigned int *indices
-        = host_indices + parameters; // look at the global indexes vector starting at the parameters of this function
 
-    fptype sL = host_params[indices[2]];
-    fptype sR = host_params[indices[3]];
+    fptype sL = host_parameters[parametersIdx + 2];
+    fptype sR = host_parameters[parametersIdx + 3];
 
     fptype normL = 1. / (sqrt(2 * M_PI) * sL);
     fptype normR = 1. / (sqrt(2 * M_PI) * sR);

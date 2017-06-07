@@ -22,12 +22,7 @@ Fit options can be viewed by using the `-h` option: `./zachFit -h`. The most imp
 
 | Datset (`-d`) | Description |
 | --- | --- |
-| 0 (simple) | Early testing sample for GooFit before nominal dataset was released.
-             MC resolution sample and data for channel `D*+ -> D0 pi+`; `D0 -> K- pi+`
-             Samples are composed of events that pass the majority of selection criteria, but
-             fail at least one of the stricter tracking cuts. The resulting resolution is worse
-             than in the events of the nominal samples used in the official analysis/publication
-             marked below as data set options "1" and "2".  |
+| 0 (simple) | Early testing sample for GooFit before nominal dataset was released. Resolution sample and MCdata for channel `D*+ -> D0 pi+`; `D0 -> K- pi+`. Samples are composed of events that pass the majority of selection criteria, but fail at least one of the stricter tracking cuts. The resulting resolution is worse than in the events of the nominal samples used in the official analysis/publication marked below as data set options "1" and "2".  |
 | 1 (kpi)  | Nominal MC resolution sample and data for channel `D*+ -> D0 pi+`; `D0 -> K- pi+`         |
 | 2 (k3pi) | Nominal MC resolution sample and data for channel `D*+ -> D0 pi+`; `D0 -> K- pi+ pi- pi+` |
 
@@ -36,7 +31,7 @@ Fit options can be viewed by using the `-h` option: `./zachFit -h`. The most imp
 The description of the fit stages paraphrases the information
 contained in the 2013 PRD publication of the analysis:
 
-* (Phys. Rev. D 88, 052003 [ERRATUM: Phys. Rev. D 88, 079902])[main-paper]
+* [Phys. Rev. D 88, 052003 [ERRATUM: Phys. Rev. D 88, 079902]][main-paper]
 * [arXiv link]
 
 [main-paper]: https://journals.aps.org/prd/abstract/10.1103/PhysRevD.88.052003

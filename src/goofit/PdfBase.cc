@@ -16,10 +16,10 @@
 namespace GooFit {
 
 fptype* dev_event_array;
-fptype host_normalisations[maxParams];
 fptype host_parameters[maxParams];
 fptype host_constants[maxParams];
 fptype host_observables[maxParams];
+fptype host_normalisations[maxParams];
 
 int host_callnumber = 0;
 
@@ -99,7 +99,7 @@ __host__ void PdfBase::unregisterParameter(Variable *var) {
 
     GOOFIT_DEBUG("{}: Removing {}", getName(), var->getName());
 
-    auto pos = std::find(parameterList.begin(), parameterList.end(), var);
+    auto pos = std::find(parametersList.begin(), parametersList.end(), var);
 
     if(pos != parametersList.end())
         parametersList.erase(pos);
@@ -115,7 +115,7 @@ __host__ void PdfBase::unregisterParameter(Variable *var) {
 }
 
 __host__ std::vector<Variable *> PdfBase::getParameters() const {
-    std::vector<Variable *> ret = parameterList;
+    std::vector<Variable *> ret = parametersList;
 
     for(const PdfBase* comp : components) {
         for(Variable* sub_comp : comp->getParameters())
@@ -127,7 +127,7 @@ __host__ std::vector<Variable *> PdfBase::getParameters() const {
 }
 
 __host__ Variable *PdfBase::getParameterByName(std::string n) const {
-    for(Variable *p : parameterList) {
+    for(Variable *p : parametersList) {
         if(p->getName() == n)
             return p;
     }

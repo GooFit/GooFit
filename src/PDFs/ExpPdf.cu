@@ -82,13 +82,13 @@ __host__ ExpPdf::ExpPdf(std::string n, Variable* _x, Variable* alpha, Variable* 
         pindices.push_back(registerParameter(alpha));
         GET_FUNCTION_ADDR(ptr_to_ExpOffset);
         ExpType = 1;
-        initialise(pindices);
+        initialize(pindices);
     } else {
         pindices.push_back(registerParameter(alpha));
         GET_FUNCTION_ADDR(ptr_to_Exp);
         ExpType = 0;
         //host_fcn_ptr = (void*) ptr_to_Exp;
-        initialise(pindices);
+        initialize(pindices);
     }
 }
 

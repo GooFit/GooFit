@@ -12,6 +12,7 @@ class ArgusPdf : public GooPdf {
 
     __host__ virtual void recursiveSetIndices ();
   private:
+    int ArgusType;
 };
 
 } // namespace GooFit

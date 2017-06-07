@@ -34,10 +34,10 @@ const int maxParams = GOOFIT_MAXPAR;
 extern fptype* dev_event_array;
 
 //
-extern fptype host_normalisations[maxParams];
 extern fptype host_parameters[maxParams];
 extern fptype host_constants[maxParams];
 extern fptype host_observables[maxParams];
+extern fptype host_normalisations[maxParams];
 
 //
 extern int totalParameters;

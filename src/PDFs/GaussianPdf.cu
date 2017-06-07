@@ -27,7 +27,7 @@ __host__ GaussianPdf::GaussianPdf(std::string n, Variable* _x, Variable* mean, V
     pindices.push_back(registerParameter(sigma));
 
     //this is the index into evt
-    constantsList.push_back (numGausses++);
+    constantsList.push_back (numGausses); numGausses++;
 
     GET_FUNCTION_ADDR(ptr_to_Gaussian);
     initialize(pindices);

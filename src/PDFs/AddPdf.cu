@@ -45,32 +45,6 @@ __device__ fptype device_AddPdfs(fptype* evt, ParameterContainer &pc) {
 
 __device__ fptype device_AddPdfsExt(fptype* evt, ParameterContainer &pc)
 {
-    // numParameters does not count itself. So the array structure for two functions is
-    // nP | F P w | F P w
-    // in which nP = 6.
-
-    int numParameters  = RO_CACHE(indices[0]);
-    fptype ret         = 0;
-    fptype totalWeight = 0;
-
-    for(int i = 1; i < numParameters; i += 3) {
-        // fptype curr = (*(reinterpret_cast<device_function_ptr>(device_function_table[indices[i]])))(evt, p,
-        // paramIndices + indices[i+1]);
-        fptype curr   = callFunction(evt, RO_CACHE(indices[i]), RO_CACHE(indices[i + 1]));
-        fptype weight = RO_CACHE(p[RO_CACHE(indices[i + 2])]);
-        ret += weight * curr * normalisationFactors[RO_CACHE(indices[i + 1])];
-
-        totalWeight += weight;
-        // if ((gpuDebug & 1) && (THREADIDX == 0) && (0 == BLOCKIDX))
-        // if ((1 > (int) floor(0.5 + evt[8])) && (gpuDebug & 1) && (paramIndices + debugParamIndex == indices))
-        // printf("AddExt: %i %E %f %f %f %f %f %f\n", i, curr, weight, ret, totalWeight,
-        // normalisationFactors[indices[i+1]], evt[0], evt[8]);
-    }
-
-    ret /= totalWeight;
-    // if ((1 > (int) floor(0.5 + evt[8])) && (gpuDebug & 1) && (paramIndices + debugParamIndex == indices))
-    // if ((gpuDebug & 1) && (THREADIDX == 0) && (0 == BLOCKIDX))
-    // printf("AddExt result: %f\n", ret);
     int numParameters = pc.parameters[pc.parameterIdx];
     fptype ret = 0;
     fptype totalWeight = 0;

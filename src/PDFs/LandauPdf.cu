@@ -89,8 +89,6 @@ __host__ LandauPdf::LandauPdf(std::string n, Variable *_x, Variable *mpv, Variab
     initialize(pindices);
 }
 
-<<<<<<< HEAD
-=======
 __host__ void LandauPdf::recursiveSetIndices () {
     GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_Landau");
     GET_FUNCTION_ADDR(ptr_to_Landau);
@@ -101,5 +99,4 @@ __host__ void LandauPdf::recursiveSetIndices () {
     populateArrays ();
 }
 
->>>>>>> Committing indexing changes for product example.
 } // namespace GooFit

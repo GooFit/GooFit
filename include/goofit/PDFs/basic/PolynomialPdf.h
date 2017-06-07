@@ -23,5 +23,6 @@ class PolynomialPdf : public GooPdf {
 
   private:
     Variable *center;
+    int polyType;
 };
 } // namespace GooFit

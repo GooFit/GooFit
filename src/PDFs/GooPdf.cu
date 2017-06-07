@@ -90,7 +90,7 @@ __device__ fptype calculateNLL(fptype rawPdf, fptype evtVal, fptype norm) {
     //if ((10 > callnumber) && (THREADIDX < 10) && (BLOCKIDX == 0)) cuPrintf("calculateNll %i %f %f %f\n", callnumber, rawPdf, normalisationFactors[par], rawPdf*normalisationFactors[par]);
     //if (THREADIDX < 50) printf("Thread %i %f %f\n", THREADIDX, rawPdf, normalisationFactors[par]);
     rawPdf *= norm;
-    return rawPdf > 0 ? -log(rawPdf) : 0;
+    return rawPdf > 0.0 ? -log(rawPdf) : 0.0;
 }
 
 __device__ fptype calculateProb(fptype rawPdf, fptype evtVal, fptype norm) {
@@ -330,7 +330,7 @@ __host__ double GooPdf::calculateNLL() const {
     GOOFIT_DEBUG("GooPdf::calculateNLL calling sumOfNll");
     fptype ret = sumOfNll(numVars);
 
-    if(0 == ret)
+    if(0.0 == ret)
         GooFit::abort(__FILE__, __LINE__, getName() + " zero NLL", this);
 
     // if (cpuDebug & 1) std::cout << "Full NLL " << host_callnumber << " : " << 2*ret << std::endl;
@@ -338,7 +338,7 @@ __host__ double GooPdf::calculateNLL() const {
 
     // if ((cpuDebug & 1) && (host_callnumber >= 1)) GooFit::abort(__FILE__, __LINE__, getName() + " debug abort",
     // this);
-    return 2 * ret;
+    return 2.0 * ret;
 }
 
 __host__ std::vector<fptype> GooPdf::evaluateAtPoints(Variable* var) {

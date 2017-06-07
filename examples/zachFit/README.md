@@ -11,7 +11,7 @@ compared to the pipipi0DPFit example.
 
 ## Fit options
 
-Fit options can be viewed by using the `-h` option: `./zachFit -h`. The most important options are:
+Fit options can be viewed by using the `-h` option: `./zachFit -h`. The `-p` option makes plots. The other options are:
 
 | Fit Mode (`-m`) | Description       |
 | --------------- | ----------------- |

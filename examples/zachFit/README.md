@@ -26,6 +26,10 @@ Fit options can be viewed by using the `-h` option: `./zachFit -h`. The `-p` opt
 | 1 (kpi)  | Nominal MC resolution sample and data for channel `D*+ -> D0 pi+`; `D0 -> K- pi+`         |
 | 2 (k3pi) | Nominal MC resolution sample and data for channel `D*+ -> D0 pi+`; `D0 -> K- pi+ pi- pi+` |
 
+## Data
+
+The data is stored in the GitHub releases mechinism and is available [here](https://github.com/GooFit/GooFit/releases/download/v1.0.0/dataFiles_zachFit.tgz).
+
 ## Fit stages
 
 The description of the fit stages paraphrases the information
@@ -41,7 +45,7 @@ contained in the 2013 PRD publication of the analysis:
 ### Stage 1
 
 The resolution is determined by fitting MC simulated events generated with an
-infinitesimal D*+ width.
+infinitesimal `D*+` width.
 
 The resolution function is composed of three Gaussian PDFs (independent means
 and widths) and a ARGUS background PDF with an extra parameter allowed to float.

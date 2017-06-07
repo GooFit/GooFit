@@ -5,6 +5,7 @@
 #include "goofit/PDFs/MetricTaker.h"
 #include "goofit/PdfBase.h"
 #include "goofit/UnbinnedDataSet.h"
+#include "goofit/PDFs/MetricTaker.h"
 #include "goofit/Log.h"
 
 #ifdef ROOT_FOUND

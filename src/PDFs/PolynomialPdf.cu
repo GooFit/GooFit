@@ -216,6 +216,30 @@ __host__ void PolynomialPdf::recursiveSetIndices () {
     populateArrays ();
 }
 
+__host__ void PolynomialPdf::recursiveSetIndices () {
+    if (polyType == 0)
+    {
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_Polynomial");
+        GET_FUNCTION_ADDR(ptr_to_Polynomial);
+    }
+    else if (polyType == 1)
+    {
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_OffsetPolynomia");
+        GET_FUNCTION_ADDR(ptr_to_OffsetPolynomial);
+    }
+    else if (polyType == 2)
+    {
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_MultiPolynomial");
+        GET_FUNCTION_ADDR(ptr_to_MultiPolynomial);
+    }
+
+    GOOFIT_TRACE("host_function_table[{}] = {}", num_device_functions, getName ());
+    host_function_table[num_device_functions] = host_fcn_ptr;
+    functionIdx = num_device_functions ++;
+
+    populateArrays ();
+}
+
 __host__ fptype PolynomialPdf::integrate(fptype lo, fptype hi) const {
     // This is *still* wrong. (13 Feb 2013.)
     fptype lowestDegree = host_constants[constantsIdx + 1];

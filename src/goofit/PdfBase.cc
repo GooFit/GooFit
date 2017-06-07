@@ -114,9 +114,10 @@ __host__ void PdfBase::unregisterParameter(Variable *var) {
     }
 }
 
-__host__ std::vector<Variable *> PdfBase::getParameters() const {
-    std::vector<Variable *> ret = parametersList;
-
+__host__ std::vector<Variable*> PdfBase::getParameters() const {
+    
+    std::vector<Variable*> ret = parametersList;
+    
     for(const PdfBase* comp : components) {
         for(Variable* sub_comp : comp->getParameters())
             if(std::find(std::begin(ret), std::end(ret), sub_comp)==std::end(ret))

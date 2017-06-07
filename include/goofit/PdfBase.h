@@ -133,7 +133,6 @@ protected:
     unsigned int constantsIdx;
     unsigned int observablesIdx;
     unsigned int normalIdx;
-    
 
     int m_iEventsPerTask;
 

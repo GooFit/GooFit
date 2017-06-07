@@ -64,7 +64,7 @@ __host__ void PdfBase::copyParams() {
 
 __host__ void PdfBase::copyNormFactors() const {
     //MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    //cudaDeviceSynchronize(); // Ensure normalisation integrals are finished
+    cudaDeviceSynchronize(); // Ensure normalisation integrals are finished
 }
 
 __host__ void PdfBase::initializeIndices(std::vector<unsigned int> pindices) {
@@ -211,7 +211,7 @@ __host__ void PdfBase::setData(std::vector<std::map<Variable *, fptype>> &data) 
     auto *host_array = new fptype[data.size() * dimensions];
 
     for(unsigned int i = 0; i < data.size(); ++i) {
-        for(Variable *v : observablesList) {
+        for(Variable*  v : observablesList) {
             if(data[i].find(v) == data[i].end())
                 throw GooFit::GeneralError("Variable {} not found", v->getName());
             host_array[i * dimensions + v->getIndex()] = data[i][v];

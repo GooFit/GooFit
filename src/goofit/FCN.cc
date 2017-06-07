@@ -50,7 +50,6 @@ double FCN::operator()() const {
     //    var->setChanged(true);
     //    gooPars.at(var->getIndex()) = pars.at(var->getFitterIndex()) - var->blind;
     //}
-
     for(Variable *var : params_->vars_) {
         var->setChanged(true);
         params_->pdf_->updateVariable (var, pars.at(var->getFitterIndex()) - var->blind);

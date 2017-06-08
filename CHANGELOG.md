@@ -1,6 +1,5 @@
 
 ## v2.0.0: CMake
-#### In progress
 
 The structure of GooFit and the build system have been completely revamped. The fake `nvcc` features have been removed, and the non-deterministic build failures from globbing have been eliminated (as has the globbing itself). The makefile system is much cleaner and nicer, but is also deprecated in favor of the new CMake builds. Many of the new features, like GooFit Packages, are not available unless using CMake. Several new examples and new PDFs have been added.
 

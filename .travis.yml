@@ -1,23 +1,20 @@
 language: cpp
 sudo: false
-
 cache:
   directories:
-    - ${TRAVIS_BUILD_DIR}/deps/cmake
-    - ${TRAVIS_BUILD_DIR}/deps/root
-    - ${TRAVIS_BUILD_DIR}/deps/doxygen
-
+  - ${TRAVIS_BUILD_DIR}/deps/cmake
+  - ${TRAVIS_BUILD_DIR}/deps/root
+  - ${TRAVIS_BUILD_DIR}/deps/doxygen
 branches:
   exclude:
-    - gh-pages
-
+  - gh-pages
 env:
   global:
   - CTEST_OUTPUT_ON_FAILURE: 1
   - OMP_NUM_THREADS: 2
   - COMPILER: 4.8
   - DOXYFILE: $TRAVIS_BUILD_DIR/docs/Doxyfile
-  - secure: "HG55IEO0TcUtuzfD/pfpPB3irKKBAH1wpBc1RxrtaSo08nohuEoc9Jl0z9k6nw7Kxk5AFQRXiFtXyQAzTm7fONjqST92h6zm+PL4QBPVIrlbQovRPI35GgzFLkUPabkEFjn/3Ojoj5NWSQbfu3tEuARu0qU8vn/2N/PM3qIMbGg="
+  - secure: UxIkC5evjPTPkh4tG9VIK4Hjy0+Wbm69qu54jde0EMjlP3FzLrvXCKr1gh/Y6ywzQYSWE2fAsDWwQGmfqaphAFpjjT1S3Bwpa6ojTikjBe16jaCgIKtRiVXBr9LsNl3W7W9pDrXs1Ue40mSEksZJm8a9G7H4Ibb7K3izrllkhuQ=
 addons:
   apt:
     packages:
@@ -33,28 +30,26 @@ addons:
     - python-numpy
     sources:
     - ubuntu-toolchain-r-test
-
 install:
-    - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
-    - cd "${TRAVIS_BUILD_DIR}" && . .ci/prepare_altern.sh 
-    - cd "${TRAVIS_BUILD_DIR}" && . .ci/build_cmake.sh 
-    - cd "${TRAVIS_BUILD_DIR}" && . .ci/build_root.sh 
-    - cd "${TRAVIS_BUILD_DIR}" && . .ci/build_doxygen.sh 
-    - cd "${TRAVIS_BUILD_DIR}" && . .ci/build_lcov.sh 
-    - pip install --user --upgrade pip
-    - pip install --user pytest
-
+- DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
+- cd "${TRAVIS_BUILD_DIR}" && . .ci/prepare_altern.sh
+- cd "${TRAVIS_BUILD_DIR}" && . .ci/build_cmake.sh
+- cd "${TRAVIS_BUILD_DIR}" && . .ci/build_root.sh
+- cd "${TRAVIS_BUILD_DIR}" && . .ci/build_doxygen.sh
+- cd "${TRAVIS_BUILD_DIR}" && . .ci/build_lcov.sh
+- pip install --user --upgrade pip
+- pip install --user pytest
 script:
-    - cd "${TRAVIS_BUILD_DIR}"
-    - .ci/travis.sh
-
+- cd "${TRAVIS_BUILD_DIR}"
+- .ci/travis.sh
 after_success:
 - echo "${TRAVIS_BRANCH}"
 - echo "${TRAVIS_PULL_REQUEST}"
-- if [[ "${TRAVIS_BRANCH}" == "master" && "${TRAVIS_PULL_REQUEST}" == "false" && -n "${TRAVIS_TAG}" ]] ; then echo "Updating docs" &&  cd "${TRAVIS_BUILD_DIR}" && .ci/build_docs.sh ; fi
-
+- if [[ "${TRAVIS_BRANCH}" == "master" && "${TRAVIS_PULL_REQUEST}" == "false" && -n
+  "${TRAVIS_TAG}" ]] ; then echo "Updating docs" &&  cd "${TRAVIS_BUILD_DIR}" && .ci/build_docs.sh
+  ; fi
 notifications:
   webhooks:
     urls:
-      - https://webhooks.gitter.im/e/3b44155c88d0eb365327
+    - https://webhooks.gitter.im/e/3b44155c88d0eb365327
     on_start: change

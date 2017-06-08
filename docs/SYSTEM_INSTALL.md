@@ -57,7 +57,7 @@ make
 
 ## Ubuntu 16.04
 
-Ubiquitous Ubuntu works also. Ubuntu was used for the NVidia docker solution due to better support from NVidia. The following example uses ninja-build instead of make, but make works if you perfer it. You should also be able to use this recipe with an [nvidia-docker Ubuntu image](https://hub.docker.com/r/nvidia/cuda/)
+Ubiquitous Ubuntu works also. Ubuntu was used for the NVidia docker solution due to better support from NVidia. The following example uses ninja-build instead of make, but make works if you perfer it. You should also be able to use this recipe with an [nvidia-docker Ubuntu image](https://hub.docker.com/r/nvidia/cuda/).
 
 ```bash
 docker run -it ubuntu

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['m_5f2pi',['M_2PI',['../_faddeeva_8cc.html#a4aa2c43b09c1300c334821f5507d6f71',1,'Faddeeva.cc']]]
+  ['invrootpi',['invRootPi',['../_global_cuda_defines_8h.html#ad8b702874d038de595e56f4e20de240d',1,'GlobalCudaDefines.h']]]
 ];

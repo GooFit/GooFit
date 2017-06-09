@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['error',['error',['../class_variable.html#acaf425a434c5afaf2d2618a10ed9b035',1,'Variable']]],
-  ['errorsonbins',['errorsOnBins',['../class_fit_control.html#a2be908a5befe80ddd65a1ba995ed9809',1,'FitControl']]]
+  ['error',['error',['../class_goo_fit_1_1_variable.html#a518dbaed4b5d8dee15007424300dcc9c',1,'GooFit::Variable']]],
+  ['errorsonbins',['errorsOnBins',['../class_goo_fit_1_1_fit_control.html#ade53e2ae3547242e282a4a76e56874a6',1,'GooFit::FitControl']]]
 ];

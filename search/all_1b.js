@@ -1,15 +1,7 @@
 var searchData=
 [
-  ['_7eapplication',['~Application',['../class_goo_fit_1_1_application.html#a90b6cec0ebbceeb9eecc57c9e280d65f',1,'GooFit::Application']]],
-  ['_7ebinneddataset',['~BinnedDataSet',['../class_binned_data_set.html#a103f92b624d07483688956ab1c42a06b',1,'BinnedDataSet']]],
-  ['_7econstant',['~Constant',['../class_constant.html#a4b86723505f8ec67176ddf5278646f96',1,'Constant']]],
-  ['_7ecountingvariable',['~CountingVariable',['../class_counting_variable.html#a3bba1586c3447910ff6c7025fda2ce16',1,'CountingVariable']]],
-  ['_7edataset',['~DataSet',['../class_data_set.html#af3a9ecd2425c5f2e59b4a58c38742798',1,'DataSet']]],
-  ['_7eindexable',['~Indexable',['../class_indexable.html#a3238424e0b148bdc98c71e77ff46ab12',1,'Indexable']]],
-  ['_7emixingtimeresolution',['~MixingTimeResolution',['../class_mixing_time_resolution.html#a1d8776afa705b8850cae9ad38d572ec4',1,'MixingTimeResolution']]],
-  ['_7epdfbase',['~PdfBase',['../class_pdf_base.html#ad318a19de54f21ac06fad044d58bd2f6',1,'PdfBase']]],
-  ['_7ethreegaussresolution',['~ThreeGaussResolution',['../class_three_gauss_resolution.html#a05d613f9938010b7fc5ea298f3ed47c0',1,'ThreeGaussResolution']]],
-  ['_7etruthresolution',['~TruthResolution',['../class_truth_resolution.html#af51c611cfef2a86c59fe70e8152df792',1,'TruthResolution']]],
-  ['_7eunbinneddataset',['~UnbinnedDataSet',['../class_unbinned_data_set.html#ac96f9699a9efd8787a184c4d8243521a',1,'UnbinnedDataSet']]],
-  ['_7evariable',['~Variable',['../class_variable.html#a3718b607e446cdcff8a0671b800127bb',1,'Variable']]]
+  ['z',['Z',['../class_goo_fit_1_1_lorentz_matrix.html#a056dd1ff2ef2e0bb14f75360213065b7',1,'GooFit::LorentzMatrix::Z() const'],['../class_goo_fit_1_1_lorentz_matrix.html#a8f72063a5df5717e4a1f53cd6f5d5d3a',1,'GooFit::LorentzMatrix::Z()']]],
+  ['zachfit_2ecu',['zachFit.cu',['../zach_fit_8cu.html',1,'']]],
+  ['ztspin1',['ZTspin1',['../class_goo_fit_1_1_z_tspin1.html',1,'GooFit::ZTspin1'],['../class_goo_fit_1_1_z_tspin1.html#a68407b7e809c476a812cc38ad4e63a13',1,'GooFit::ZTspin1::ZTspin1()']]],
+  ['ztspin2',['ZTspin2',['../class_goo_fit_1_1_z_tspin2.html',1,'GooFit::ZTspin2'],['../class_goo_fit_1_1_z_tspin2.html#ae6980fbe436a252004093680002f7a90',1,'GooFit::ZTspin2::ZTspin2()']]]
 ];

@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['lass',['Lass',['../_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3aeb60ec1beae3adf63350208615dc44c1',1,'LineshapesPdf.h']]],
-  ['lass_5fm3',['Lass_M3',['../_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3a281f928e14010b898799fbcffca5a839',1,'LineshapesPdf.h']]]
+  ['lass',['Lass',['../namespace_goo_fit.html#ae587603f507f8a46fdccd092e2d8bff5aeb60ec1beae3adf63350208615dc44c1',1,'GooFit']]],
+  ['lass_5fm3',['Lass_M3',['../namespace_goo_fit.html#ae587603f507f8a46fdccd092e2d8bff5a281f928e14010b898799fbcffca5a839',1,'GooFit']]]
 ];

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['countingiterator',['CountingIterator',['../classstrided__range.html#ad10967a0d606b67ef0c6b1d403099672',1,'strided_range']]]
+  ['countingiterator',['CountingIterator',['../class_goo_fit_1_1strided__range.html#a9f976994385821cd382e2bb9aea0dca3',1,'GooFit::strided_range']]]
 ];

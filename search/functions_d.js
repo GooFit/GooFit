@@ -1,14 +1,15 @@
 var searchData=
 [
-  ['main',['main',['../_gen_voigtian_8cc.html#a3c04138a5bfe5d72780bb7e82a18e627',1,'GenVoigtian.cc']]],
-  ['makegmunu',['makeGmunu',['../class_symm_lorentz_matrix.html#a250d4cedbe9e684944afab375cbd3d44',1,'SymmLorentzMatrix']]],
-  ['makegrid',['makeGrid',['../class_goo_pdf.html#af0d40bc12d5883bca813ebd45fe6684c',1,'GooPdf']]],
-  ['makezero',['makeZero',['../class_lorentz_matrix.html#a4f630cd97a1986c8d389140ac0843963',1,'LorentzMatrix::makeZero()'],['../class_symm_lorentz_matrix.html#afd4b64bbef5c97206757b94a730767c0',1,'SymmLorentzMatrix::makeZero()']]],
-  ['mappedpdf',['MappedPdf',['../class_mapped_pdf.html#a15a3125cacc194173cfd81112f5161b0',1,'MappedPdf']]],
-  ['max_5findex',['max_index',['../_variable_8h.html#a73090fea9852874689f3afd8cf278f2c',1,'Variable.h']]],
-  ['metricispdf',['metricIsPdf',['../class_fit_control.html#aedab1ae247c7840bf13faeb743f39b0c',1,'FitControl']]],
-  ['metrictaker',['MetricTaker',['../class_metric_taker.html#acc275ab80a2fc3e368dc364798f192f1',1,'MetricTaker::MetricTaker(PdfBase *dat, void *dev_functionPtr)'],['../class_metric_taker.html#afc52530cf5590b420599c7923a137e6d',1,'MetricTaker::MetricTaker(int fIdx, int pIdx)']]],
+  ['makegmunu',['makeGmunu',['../class_goo_fit_1_1_symm_lorentz_matrix.html#ab4237afdaf59aa70684c28b77e9dcea7',1,'GooFit::SymmLorentzMatrix']]],
+  ['makegrid',['makeGrid',['../class_goo_fit_1_1_goo_pdf.html#a1398038b6f85df0adef260e59e253139',1,'GooFit::GooPdf']]],
+  ['makepars',['makePars',['../class_goo_fit_1_1_f_c_n.html#a8119d3d437d04d1285dd783d6fddea3a',1,'GooFit::FCN']]],
+  ['makezero',['makeZero',['../class_goo_fit_1_1_lorentz_matrix.html#a144746fd9a1abb511d2b2337d06f6810',1,'GooFit::LorentzMatrix::makeZero()'],['../class_goo_fit_1_1_symm_lorentz_matrix.html#a8523971f88c106fd5109b47ea086f8fa',1,'GooFit::SymmLorentzMatrix::makeZero()']]],
+  ['mappedpdf',['MappedPdf',['../class_goo_fit_1_1_mapped_pdf.html#ad1f6b476484569bcbee1ac1cd83c3871',1,'GooFit::MappedPdf']]],
+  ['max_5ffitter_5findex',['max_fitter_index',['../namespace_goo_fit.html#af40edacaef55ceadf08bdef9e4385b33',1,'GooFit']]],
+  ['max_5findex',['max_index',['../namespace_goo_fit.html#a7add1d38b9bdf1266185fbe411f98ce1',1,'GooFit']]],
+  ['metricispdf',['metricIsPdf',['../class_goo_fit_1_1_fit_control.html#aafe2f5a6af9aaa6a5e167c9cb73ae221',1,'GooFit::FitControl']]],
+  ['metrictaker',['MetricTaker',['../class_goo_fit_1_1_metric_taker.html#a0179961c74a131af3d93ff7f633f0fc8',1,'GooFit::MetricTaker::MetricTaker(PdfBase *dat, void *dev_functionPtr)'],['../class_goo_fit_1_1_metric_taker.html#af659c6b2e92782df72cbcecf1741a013',1,'GooFit::MetricTaker::MetricTaker(int fIdx, int pIdx)']]],
   ['minuit1',['Minuit1',['../class_goo_fit_1_1_minuit1.html#a373ba240ef74832ead67ae84fee5321f',1,'GooFit::Minuit1']]],
-  ['mixingtimeresolution',['MixingTimeResolution',['../class_mixing_time_resolution.html#aa99f5fac6f6c7b095fd5d655f8d51843',1,'MixingTimeResolution']]],
-  ['mult',['mult',['../class_lorentz_matrix.html#a9cc3714bf305146a62dc2ebabdc1e9f6',1,'LorentzMatrix::mult()'],['../class_symm_lorentz_matrix.html#a83f7623acbcce2556a28afdd4658b119',1,'SymmLorentzMatrix::mult()']]]
+  ['mixingtimeresolution',['MixingTimeResolution',['../class_goo_fit_1_1_mixing_time_resolution.html#a21446af86635a4b5b6d87d264df3e4a7',1,'GooFit::MixingTimeResolution']]],
+  ['mult',['mult',['../class_goo_fit_1_1_lorentz_matrix.html#a7f3c5e1abed883c84349e246fce30b7e',1,'GooFit::LorentzMatrix::mult()'],['../class_goo_fit_1_1_symm_lorentz_matrix.html#ac1e65bab2a22634be4df6cff03940832',1,'GooFit::SymmLorentzMatrix::mult()']]]
 ];

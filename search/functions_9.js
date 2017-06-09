@@ -1,12 +1,13 @@
 var searchData=
 [
-  ['incoherentsumpdf',['IncoherentSumPdf',['../class_incoherent_sum_pdf.html#a32741c62b34dfe0e03cea460d78e1d1a',1,'IncoherentSumPdf']]],
-  ['indalitz',['inDalitz',['../_dalitz_plot_helpers_8h.html#a87dfaa7d884e836475c1307d17ee2d1f',1,'DalitzPlotHelpers.h']]],
-  ['indexable',['Indexable',['../class_indexable.html#aaf40fcbcf877ba654309f61ac98b2e6d',1,'Indexable']]],
-  ['indexofvariable',['indexOfVariable',['../class_data_set.html#a3de244bfc001515be083608c5ca80e7e',1,'DataSet']]],
-  ['initialise',['initialise',['../class_goo_pdf.html#a0182974de120e4f70ef0f2c16e1be25a',1,'GooPdf']]],
-  ['initialiseindices',['initialiseIndices',['../class_pdf_base.html#ab5ca8a46986f884f08e5b14c21c75683',1,'PdfBase']]],
-  ['initindex',['initIndex',['../class_mixing_time_resolution.html#a7ce30b228f85ee554170f34fdb5662a3',1,'MixingTimeResolution']]],
-  ['integrate',['integrate',['../class_argus_pdf.html#a5952164ba28d9b2e9c194f742e1630ef',1,'ArgusPdf::integrate()'],['../class_bifur_gauss_pdf.html#a16517341fb55bc19906200d0d004a59b',1,'BifurGaussPdf::integrate()'],['../class_crystal_ball_pdf.html#ac9ed0540ff5b368262933fcadb94d797',1,'CrystalBallPdf::integrate()'],['../class_exp_pdf.html#a1343a5bc372bc3a9d698b302f77bdb68',1,'ExpPdf::integrate()'],['../class_gaussian_pdf.html#a6cb3491c57fa2e8447b4f4c09db9b0ac',1,'GaussianPdf::integrate()'],['../class_goo_pdf.html#a44d6f3493444c079438fcb960a3099bb',1,'GooPdf::integrate()'],['../class_johnson_s_u_pdf.html#afba26c3e8dbc4b80fcdd8f47d9d00761',1,'JohnsonSUPdf::integrate()'],['../class_polynomial_pdf.html#a798a67b935f200c52aa1ac0534166144',1,'PolynomialPdf::integrate()'],['../class_step_pdf.html#a4a9d737dc8ef014b0db2f15f9effb1a2',1,'StepPdf::integrate()']]],
-  ['interhistpdf',['InterHistPdf',['../class_inter_hist_pdf.html#aea392acc7f9cb55425e8590fecae81b0',1,'InterHistPdf']]]
+  ['incoherentsumpdf',['IncoherentSumPdf',['../class_goo_fit_1_1_incoherent_sum_pdf.html#a54f6373f2e6d686456eebe3e3e9c60a6',1,'GooFit::IncoherentSumPdf']]],
+  ['indalitz',['inDalitz',['../namespace_goo_fit.html#a3e6826a12082ced9d79e931a1a717f61',1,'GooFit']]],
+  ['indexable',['Indexable',['../class_goo_fit_1_1_indexable.html#a1f3e525b9e70083bd2dd9c7f8e2d4e88',1,'GooFit::Indexable::Indexable(std::string n, fptype val=0)'],['../class_goo_fit_1_1_indexable.html#ab327d8c83fef78e9013be4f790d25f55',1,'GooFit::Indexable::Indexable(Indexable &amp;)=delete']]],
+  ['indexofvariable',['indexOfVariable',['../class_goo_fit_1_1_data_set.html#a5e318cef670ebed64cc090c85c216bad',1,'GooFit::DataSet']]],
+  ['initialize',['initialize',['../class_goo_fit_1_1_goo_pdf.html#aff76efcf81396fed330536ff982f6581',1,'GooFit::GooPdf']]],
+  ['initializeindices',['initializeIndices',['../class_goo_fit_1_1_pdf_base.html#a332ac6f81d9465093898e93c7980a99d',1,'GooFit::PdfBase']]],
+  ['initindex',['initIndex',['../class_goo_fit_1_1_mixing_time_resolution.html#a8dd00a744cc004fcae836781432892a3',1,'GooFit::MixingTimeResolution']]],
+  ['integrate',['integrate',['../class_goo_fit_1_1_argus_pdf.html#aa42b7f593e963b22a7611ccbedd2e95a',1,'GooFit::ArgusPdf::integrate()'],['../class_goo_fit_1_1_bifur_gauss_pdf.html#a26c65b71a4ffc36455740d9debdcca14',1,'GooFit::BifurGaussPdf::integrate()'],['../class_goo_fit_1_1_crystal_ball_pdf.html#a6449c5e33e141c56d66a93da443f3b1e',1,'GooFit::CrystalBallPdf::integrate()'],['../class_goo_fit_1_1_exp_pdf.html#a4c243b9bd5f60ec83bee0f7875f54fb0',1,'GooFit::ExpPdf::integrate()'],['../class_goo_fit_1_1_gaussian_pdf.html#a0ecc85de2f72a1ae59590322fcac2c9c',1,'GooFit::GaussianPdf::integrate()'],['../class_goo_fit_1_1_johnson_s_u_pdf.html#a67961828998bc3fdc287e1a4f4666259',1,'GooFit::JohnsonSUPdf::integrate()'],['../class_goo_fit_1_1_polynomial_pdf.html#aaaf0d3e3813efb43abf554bc84fa98d6',1,'GooFit::PolynomialPdf::integrate()'],['../class_goo_fit_1_1_step_pdf.html#a95a528fb56157f74b4c68278050245eb',1,'GooFit::StepPdf::integrate()'],['../class_goo_fit_1_1_goo_pdf.html#a11b9529ae0273d2ce8a2a4c7ad4d02dd',1,'GooFit::GooPdf::integrate()']]],
+  ['interhistpdf',['InterHistPdf',['../class_goo_fit_1_1_inter_hist_pdf.html#a41d93ff16b470b8959795ff78c5a0643',1,'GooFit::InterHistPdf']]],
+  ['isfixed',['IsFixed',['../class_goo_fit_1_1_variable.html#a15ccd0ff5bb5b139a9ff9746e5c9e4ec',1,'GooFit::Variable']]]
 ];

@@ -1,12 +1,11 @@
 var searchData=
 [
-  ['tddp4',['TDDP4',['../class_t_d_d_p4.html#a22cc6ddc6291dd299855e7254d12ffc9',1,'TDDP4']]],
-  ['tddppdf',['TddpPdf',['../class_tddp_pdf.html#a11a45c7cc46a47fa760f4ecbaa8c3555',1,'TddpPdf::TddpPdf(std::string n, Variable *_dtime, Variable *_sigmat, Variable *m12, Variable *m13, CountingVariable *eventNumber, DecayInfo *decay, MixingTimeResolution *r, GooPdf *eff, Variable *mistag=0)'],['../class_tddp_pdf.html#a71de48f9a3d28fb8c4439cf5db11c6a7',1,'TddpPdf::TddpPdf(std::string n, Variable *_dtime, Variable *_sigmat, Variable *m12, Variable *m13, CountingVariable *eventNumber, DecayInfo *decay, std::vector&lt; MixingTimeResolution *&gt; &amp;r, GooPdf *eff, Variable *md0, Variable *mistag=0)']]],
-  ['threegaussresolution',['ThreeGaussResolution',['../class_three_gauss_resolution.html#aa43efa5d18117f277f59b5335d4ccfbb',1,'ThreeGaussResolution']]],
-  ['toupper',['toUpper',['../_t_minuit_8cc.html#a475ebbd3c5e42793f821d27cf540d5ff',1,'TMinuit.cc']]],
+  ['tddp4',['TDDP4',['../class_goo_fit_1_1_t_d_d_p4.html#afcbb18d0a538f55f003edca944699f1e',1,'GooFit::TDDP4']]],
+  ['tddppdf',['TddpPdf',['../class_goo_fit_1_1_tddp_pdf.html#a98c6cecb4f6559daaed3b804c9099725',1,'GooFit::TddpPdf::TddpPdf(std::string n, Variable *_dtime, Variable *_sigmat, Variable *m12, Variable *m13, CountingVariable *eventNumber, DecayInfo *decay, MixingTimeResolution *r, GooPdf *eff, Variable *mistag=nullptr)'],['../class_goo_fit_1_1_tddp_pdf.html#a283fd0ea5859c277cced16110046d82c',1,'GooFit::TddpPdf::TddpPdf(std::string n, Variable *_dtime, Variable *_sigmat, Variable *m12, Variable *m13, CountingVariable *eventNumber, DecayInfo *decay, std::vector&lt; MixingTimeResolution *&gt; &amp;r, GooPdf *eff, Variable *md0, Variable *mistag=nullptr)']]],
+  ['threegaussresolution',['ThreeGaussResolution',['../class_goo_fit_1_1_three_gauss_resolution.html#a99fcc60af1f6e37ffcea8725cb6c81ec',1,'GooFit::ThreeGaussResolution']]],
   ['transform_5freduce',['transform_reduce',['../_thrust_override_8h.html#a5dd7e03e1d7dcd391fcfdb6397b3fd9a',1,'ThrustOverride.h']]],
-  ['transformgrid',['transformGrid',['../class_goo_pdf.html#ab088bfb0f86cc582774dfe786b157913',1,'GooPdf']]],
-  ['trigthresholdpdf',['TrigThresholdPdf',['../class_trig_threshold_pdf.html#ad8b7a97091c385ba118e33319f2e8e90',1,'TrigThresholdPdf::TrigThresholdPdf(std::string n, Variable *_x, Variable *thresh, Variable *trigConst, Variable *linConst, bool upper=true)'],['../class_trig_threshold_pdf.html#a18d1baa19c339004be86bec027cae972',1,'TrigThresholdPdf::TrigThresholdPdf(std::string n, Variable *_x, Variable *_y, Variable *thresh, Variable *trigConst, Variable *linConst, Variable *massConstant, bool upper)']]],
-  ['truthresolution',['TruthResolution',['../class_truth_resolution.html#a516a0dc62bba865a41b2a7ed2b584594',1,'TruthResolution']]],
-  ['twobodycmmom',['twoBodyCMmom',['../_resonance_pdf_8h.html#ada7dda35c80974f8c15e8babdb4b73ed',1,'ResonancePdf.h']]]
+  ['transformgrid',['transformGrid',['../class_goo_fit_1_1_goo_pdf.html#a9b452a6217498f4f62d94d4ee82df37c',1,'GooFit::GooPdf']]],
+  ['trigthresholdpdf',['TrigThresholdPdf',['../class_goo_fit_1_1_trig_threshold_pdf.html#ad7a3e647826521831f4eaec16b83232b',1,'GooFit::TrigThresholdPdf::TrigThresholdPdf(std::string n, Variable *_x, Variable *thresh, Variable *trigConst, Variable *linConst, bool upper=true)'],['../class_goo_fit_1_1_trig_threshold_pdf.html#a818471e75180d8d1cb87342eda2a0cb4',1,'GooFit::TrigThresholdPdf::TrigThresholdPdf(std::string n, Variable *_x, Variable *_y, Variable *thresh, Variable *trigConst, Variable *linConst, Variable *massConstant, bool upper)']]],
+  ['truthresolution',['TruthResolution',['../class_goo_fit_1_1_truth_resolution.html#a48f3819f4bbf2a2629e1958664ad28c6',1,'GooFit::TruthResolution']]],
+  ['twobodycmmom',['twoBodyCMmom',['../namespace_goo_fit.html#ad2cd20fdc6c61bda8ef9caf58e67ab2e',1,'GooFit']]]
 ];

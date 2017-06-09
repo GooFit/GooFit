@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>GooFit: /home/travis/build/GooFit/GooFit/include/goofit/PDFs/LineshapesPdf.h File Reference</title>
+<title>GooFit: /home/travis/build/GooFit/GooFit/include/goofit/PDFs/physics/LineshapesPdf.h File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -64,19 +64,20 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_903365f804b9421a35fb8b28c4adeb12.html">goofit</a></li><li class="navelem"><a class="el" href="dir_ca7b43fb45b0f0f5d1e3d6cc97eda354.html">PDFs</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_903365f804b9421a35fb8b28c4adeb12.html">goofit</a></li><li class="navelem"><a class="el" href="dir_ca7b43fb45b0f0f5d1e3d6cc97eda354.html">PDFs</a></li><li class="navelem"><a class="el" href="dir_3ee31b4492524ff4ff39e44118a359f4.html">physics</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#enum-members">Enumerations</a>  </div>
   <div class="headertitle">
 <div class="title">LineshapesPdf.h File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="_goo_pdf_8h_source.html">goofit/PDFs/GooPdf.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="_resonance_pdf_8h_source.html">goofit/PDFs/ResonancePdf.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_resonance_pdf_8h_source.html">goofit/PDFs/physics/ResonancePdf.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="_variable_8h_source.html">goofit/Variable.h</a>&quot;</code><br />
 <code>#include &lt;thrust/complex.h&gt;</code><br />
 </div>
@@ -84,118 +85,44 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_lineshape.html">Lineshape</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_lineshape.html">GooFit::Lineshape</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_amplitude.html">Amplitude</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_amplitude.html">GooFit::Amplitude</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespace_goo_fit"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html">GooFit</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:a46f99bceddf3cce00a0448f8d5bd5fe3"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3">LS</a> { <br />
-&#160;&#160;<a class="el" href="_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3abc21e6484530fc9d0313cb816b733396">LS::ONE</a>, 
-<a class="el" href="_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3a81043f8c681575bca3e4eff6afbd9db9">LS::BW</a>, 
-<a class="el" href="_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3aeb60ec1beae3adf63350208615dc44c1">LS::Lass</a>, 
-<a class="el" href="_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3a281f928e14010b898799fbcffca5a839">LS::Lass_M3</a>, 
+<tr class="memitem:ae587603f507f8a46fdccd092e2d8bff5"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#ae587603f507f8a46fdccd092e2d8bff5">GooFit::LS</a> { <br />
+&#160;&#160;<a class="el" href="namespace_goo_fit.html#ae587603f507f8a46fdccd092e2d8bff5abc21e6484530fc9d0313cb816b733396">GooFit::LS::ONE</a>, 
+<a class="el" href="namespace_goo_fit.html#ae587603f507f8a46fdccd092e2d8bff5a81043f8c681575bca3e4eff6afbd9db9">GooFit::LS::BW</a>, 
+<a class="el" href="namespace_goo_fit.html#ae587603f507f8a46fdccd092e2d8bff5aeb60ec1beae3adf63350208615dc44c1">GooFit::LS::Lass</a>, 
+<a class="el" href="namespace_goo_fit.html#ae587603f507f8a46fdccd092e2d8bff5a281f928e14010b898799fbcffca5a839">GooFit::LS::Lass_M3</a>, 
 <br />
-&#160;&#160;<a class="el" href="_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3a2398556ba32d5dcbf9d58f432382bcf8">LS::nonRes</a>, 
-<a class="el" href="_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3a4711158a0e494cdca45e673bb3af56b1">LS::Bugg</a>, 
-<a class="el" href="_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3a379568076564c4217b628ec8941ce9b0">LS::Bugg3</a>, 
-<a class="el" href="_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3a2609fc244129252b283c82842850816c">LS::Flatte</a>, 
+&#160;&#160;<a class="el" href="namespace_goo_fit.html#ae587603f507f8a46fdccd092e2d8bff5a2398556ba32d5dcbf9d58f432382bcf8">GooFit::LS::nonRes</a>, 
+<a class="el" href="namespace_goo_fit.html#ae587603f507f8a46fdccd092e2d8bff5a4711158a0e494cdca45e673bb3af56b1">GooFit::LS::Bugg</a>, 
+<a class="el" href="namespace_goo_fit.html#ae587603f507f8a46fdccd092e2d8bff5a379568076564c4217b628ec8941ce9b0">GooFit::LS::Bugg3</a>, 
+<a class="el" href="namespace_goo_fit.html#ae587603f507f8a46fdccd092e2d8bff5a2609fc244129252b283c82842850816c">GooFit::LS::Flatte</a>, 
 <br />
-&#160;&#160;<a class="el" href="_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3ab834163bcb314f88e180687aa98156f4">LS::SBW</a>
+&#160;&#160;<a class="el" href="namespace_goo_fit.html#ae587603f507f8a46fdccd092e2d8bff5ab834163bcb314f88e180687aa98156f4">GooFit::LS::SBW</a>
 <br />
  }</td></tr>
-<tr class="separator:a46f99bceddf3cce00a0448f8d5bd5fe3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac9ea339e5b9617e72d7a8b4042796027"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_lineshapes_pdf_8h.html#ac9ea339e5b9617e72d7a8b4042796027">FF</a> : unsigned int { <a class="el" href="_lineshapes_pdf_8h.html#ac9ea339e5b9617e72d7a8b4042796027a06c2cea18679d64399783748fa367bdd">FF::One</a> = 0, 
-<a class="el" href="_lineshapes_pdf_8h.html#ac9ea339e5b9617e72d7a8b4042796027aa6f5350f5a2b25a96d66757f761ce65c">FF::BL</a>, 
-<a class="el" href="_lineshapes_pdf_8h.html#ac9ea339e5b9617e72d7a8b4042796027ac29d73f0922a78500ae4bf1ba74ef293">FF::BL_Prime</a>, 
-<a class="el" href="_lineshapes_pdf_8h.html#ac9ea339e5b9617e72d7a8b4042796027a8c13a541ade512c7fe90516306fc96f4">FF::BL2</a>
+<tr class="separator:ae587603f507f8a46fdccd092e2d8bff5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a08ab8dd8ee4b25e849b5a5eecf6ee48b"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#a08ab8dd8ee4b25e849b5a5eecf6ee48b">GooFit::FF</a> : unsigned int { <a class="el" href="namespace_goo_fit.html#a08ab8dd8ee4b25e849b5a5eecf6ee48ba06c2cea18679d64399783748fa367bdd">GooFit::FF::One</a> = 0, 
+<a class="el" href="namespace_goo_fit.html#a08ab8dd8ee4b25e849b5a5eecf6ee48baa6f5350f5a2b25a96d66757f761ce65c">GooFit::FF::BL</a>, 
+<a class="el" href="namespace_goo_fit.html#a08ab8dd8ee4b25e849b5a5eecf6ee48bac29d73f0922a78500ae4bf1ba74ef293">GooFit::FF::BL_Prime</a>, 
+<a class="el" href="namespace_goo_fit.html#a08ab8dd8ee4b25e849b5a5eecf6ee48ba8c13a541ade512c7fe90516306fc96f4">GooFit::FF::BL2</a>
  }</td></tr>
-<tr class="separator:ac9ea339e5b9617e72d7a8b4042796027"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a08ab8dd8ee4b25e849b5a5eecf6ee48b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Enumeration Type Documentation</h2>
-<a id="ac9ea339e5b9617e72d7a8b4042796027"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac9ea339e5b9617e72d7a8b4042796027">&#9670;&nbsp;</a></span>FF</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum <a class="el" href="_lineshapes_pdf_8h.html#ac9ea339e5b9617e72d7a8b4042796027">FF</a> : unsigned int</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ac9ea339e5b9617e72d7a8b4042796027a06c2cea18679d64399783748fa367bdd"></a>One&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="ac9ea339e5b9617e72d7a8b4042796027aa6f5350f5a2b25a96d66757f761ce65c"></a>BL&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="ac9ea339e5b9617e72d7a8b4042796027ac29d73f0922a78500ae4bf1ba74ef293"></a>BL_Prime&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="ac9ea339e5b9617e72d7a8b4042796027a8c13a541ade512c7fe90516306fc96f4"></a>BL2&#160;</td><td class="fielddoc"></td></tr>
-</table>
-
-<p class="definition">Definition at line <a class="el" href="_lineshapes_pdf_8h_source.html#l00021">21</a> of file <a class="el" href="_lineshapes_pdf_8h_source.html">LineshapesPdf.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;: <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> {<a class="code" href="_lineshapes_pdf_8h.html#ac9ea339e5b9617e72d7a8b4042796027a06c2cea18679d64399783748fa367bdd">One</a> = 0, <a class="code" href="_lineshapes_pdf_8h.html#ac9ea339e5b9617e72d7a8b4042796027aa6f5350f5a2b25a96d66757f761ce65c">BL</a>, <a class="code" href="_lineshapes_pdf_8h.html#ac9ea339e5b9617e72d7a8b4042796027ac29d73f0922a78500ae4bf1ba74ef293">BL_Prime</a>, <a class="code" href="_lineshapes_pdf_8h.html#ac9ea339e5b9617e72d7a8b4042796027a8c13a541ade512c7fe90516306fc96f4">BL2</a>};</div><div class="ttc" id="_lineshapes_pdf_8h_html_ac9ea339e5b9617e72d7a8b4042796027a06c2cea18679d64399783748fa367bdd"><div class="ttname"><a href="_lineshapes_pdf_8h.html#ac9ea339e5b9617e72d7a8b4042796027a06c2cea18679d64399783748fa367bdd">FF::One</a></div></div>
-<div class="ttc" id="_lineshapes_pdf_8h_html_ac9ea339e5b9617e72d7a8b4042796027ac29d73f0922a78500ae4bf1ba74ef293"><div class="ttname"><a href="_lineshapes_pdf_8h.html#ac9ea339e5b9617e72d7a8b4042796027ac29d73f0922a78500ae4bf1ba74ef293">FF::BL_Prime</a></div></div>
-<div class="ttc" id="_lineshapes_pdf_8h_html_ac9ea339e5b9617e72d7a8b4042796027a8c13a541ade512c7fe90516306fc96f4"><div class="ttname"><a href="_lineshapes_pdf_8h.html#ac9ea339e5b9617e72d7a8b4042796027a8c13a541ade512c7fe90516306fc96f4">FF::BL2</a></div></div>
-<div class="ttc" id="_lineshapes_pdf_8h_html_ac9ea339e5b9617e72d7a8b4042796027aa6f5350f5a2b25a96d66757f761ce65c"><div class="ttname"><a href="_lineshapes_pdf_8h.html#ac9ea339e5b9617e72d7a8b4042796027aa6f5350f5a2b25a96d66757f761ce65c">FF::BL</a></div></div>
-</div><!-- fragment -->
-</div>
-</div>
-<a id="a46f99bceddf3cce00a0448f8d5bd5fe3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a46f99bceddf3cce00a0448f8d5bd5fe3">&#9670;&nbsp;</a></span>LS</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum <a class="el" href="_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3">LS</a></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a46f99bceddf3cce00a0448f8d5bd5fe3abc21e6484530fc9d0313cb816b733396"></a>ONE&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a46f99bceddf3cce00a0448f8d5bd5fe3a81043f8c681575bca3e4eff6afbd9db9"></a>BW&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a46f99bceddf3cce00a0448f8d5bd5fe3aeb60ec1beae3adf63350208615dc44c1"></a>Lass&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a46f99bceddf3cce00a0448f8d5bd5fe3a281f928e14010b898799fbcffca5a839"></a>Lass_M3&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a46f99bceddf3cce00a0448f8d5bd5fe3a2398556ba32d5dcbf9d58f432382bcf8"></a>nonRes&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a46f99bceddf3cce00a0448f8d5bd5fe3a4711158a0e494cdca45e673bb3af56b1"></a>Bugg&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a46f99bceddf3cce00a0448f8d5bd5fe3a379568076564c4217b628ec8941ce9b0"></a>Bugg3&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a46f99bceddf3cce00a0448f8d5bd5fe3a2609fc244129252b283c82842850816c"></a>Flatte&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a46f99bceddf3cce00a0448f8d5bd5fe3ab834163bcb314f88e180687aa98156f4"></a>SBW&#160;</td><td class="fielddoc"></td></tr>
-</table>
-
-<p class="definition">Definition at line <a class="el" href="_lineshapes_pdf_8h_source.html#l00019">19</a> of file <a class="el" href="_lineshapes_pdf_8h_source.html">LineshapesPdf.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;{<a class="code" href="_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3abc21e6484530fc9d0313cb816b733396">ONE</a>, <a class="code" href="_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3a81043f8c681575bca3e4eff6afbd9db9">BW</a>, <a class="code" href="_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3aeb60ec1beae3adf63350208615dc44c1">Lass</a>, <a class="code" href="_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3a281f928e14010b898799fbcffca5a839">Lass_M3</a>, <a class="code" href="_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3a2398556ba32d5dcbf9d58f432382bcf8">nonRes</a>, <a class="code" href="_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3a4711158a0e494cdca45e673bb3af56b1">Bugg</a>, <a class="code" href="_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3a379568076564c4217b628ec8941ce9b0">Bugg3</a>, <a class="code" href="_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3a2609fc244129252b283c82842850816c">Flatte</a>, <a class="code" href="_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3ab834163bcb314f88e180687aa98156f4">SBW</a>};</div><div class="ttc" id="_lineshapes_pdf_8h_html_a46f99bceddf3cce00a0448f8d5bd5fe3a4711158a0e494cdca45e673bb3af56b1"><div class="ttname"><a href="_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3a4711158a0e494cdca45e673bb3af56b1">LS::Bugg</a></div></div>
-<div class="ttc" id="_lineshapes_pdf_8h_html_a46f99bceddf3cce00a0448f8d5bd5fe3a2609fc244129252b283c82842850816c"><div class="ttname"><a href="_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3a2609fc244129252b283c82842850816c">LS::Flatte</a></div></div>
-<div class="ttc" id="_lineshapes_pdf_8h_html_a46f99bceddf3cce00a0448f8d5bd5fe3a281f928e14010b898799fbcffca5a839"><div class="ttname"><a href="_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3a281f928e14010b898799fbcffca5a839">LS::Lass_M3</a></div></div>
-<div class="ttc" id="_lineshapes_pdf_8h_html_a46f99bceddf3cce00a0448f8d5bd5fe3a81043f8c681575bca3e4eff6afbd9db9"><div class="ttname"><a href="_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3a81043f8c681575bca3e4eff6afbd9db9">LS::BW</a></div></div>
-<div class="ttc" id="_lineshapes_pdf_8h_html_a46f99bceddf3cce00a0448f8d5bd5fe3a2398556ba32d5dcbf9d58f432382bcf8"><div class="ttname"><a href="_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3a2398556ba32d5dcbf9d58f432382bcf8">LS::nonRes</a></div></div>
-<div class="ttc" id="_lineshapes_pdf_8h_html_a46f99bceddf3cce00a0448f8d5bd5fe3ab834163bcb314f88e180687aa98156f4"><div class="ttname"><a href="_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3ab834163bcb314f88e180687aa98156f4">LS::SBW</a></div></div>
-<div class="ttc" id="_lineshapes_pdf_8h_html_a46f99bceddf3cce00a0448f8d5bd5fe3a379568076564c4217b628ec8941ce9b0"><div class="ttname"><a href="_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3a379568076564c4217b628ec8941ce9b0">LS::Bugg3</a></div></div>
-<div class="ttc" id="_lineshapes_pdf_8h_html_a46f99bceddf3cce00a0448f8d5bd5fe3aeb60ec1beae3adf63350208615dc44c1"><div class="ttname"><a href="_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3aeb60ec1beae3adf63350208615dc44c1">LS::Lass</a></div></div>
-<div class="ttc" id="_lineshapes_pdf_8h_html_a46f99bceddf3cce00a0448f8d5bd5fe3abc21e6484530fc9d0313cb816b733396"><div class="ttname"><a href="_lineshapes_pdf_8h.html#a46f99bceddf3cce00a0448f8d5bd5fe3abc21e6484530fc9d0313cb816b733396">LS::ONE</a></div></div>
-</div><!-- fragment -->
-</div>
-</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed May 3 2017 15:14:58 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Jun 9 2017 01:14:10 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

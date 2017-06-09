@@ -1,11 +1,11 @@
 var searchData=
 [
-  ['_5fmr',['_mR',['../class_spin_sum_v.html#ae98b4d06d7d1cde7b79e3c56b881903b',1,'SpinSumV']]],
-  ['_5fp',['_p',['../class_spin_sum_v.html#a512787e05b1e6d78f66b922296a193b4',1,'SpinSumV']]],
-  ['_5fsqwstorsrate',['_SqWStoRSrate',['../struct_decay_info___d_p.html#aafdb748cd3c3c6e9966cc16ff462203e',1,'DecayInfo_DP']]],
-  ['_5fsv',['_sv',['../class_spin_sum_t.html#a75503cc7c2bc0887561280252571e35e',1,'SpinSumT']]],
-  ['_5ftau',['_tau',['../struct_decay_info.html#aaadda6b3bdbeb280dbcd6e8c8864265c',1,'DecayInfo::_tau()'],['../struct_decay_info___d_p.html#abf6e60d647503ed3c0fa89c55d1f8af9',1,'DecayInfo_DP::_tau()']]],
-  ['_5fv',['_v',['../class_lorentz_matrix.html#a76daf8c43faef42e8863dc0bf9d2160d',1,'LorentzMatrix']]],
-  ['_5fxmixing',['_xmixing',['../struct_decay_info.html#a90cc2f5b3199fcf8e3d32ccdc294a612',1,'DecayInfo::_xmixing()'],['../struct_decay_info___d_p.html#a9a97f3306807f4f92703d7bd2e041990',1,'DecayInfo_DP::_xmixing()']]],
-  ['_5fymixing',['_ymixing',['../struct_decay_info.html#a64d930ae3038e9c50ce9b7e92cbc98a8',1,'DecayInfo::_ymixing()'],['../struct_decay_info___d_p.html#aa964391cb89ebfc8882c26a2d1e01bac',1,'DecayInfo_DP::_ymixing()']]]
+  ['_5fmr',['_mR',['../class_goo_fit_1_1_spin_sum_v.html#aa2a237f61a4738e22300e19f6f255805',1,'GooFit::SpinSumV']]],
+  ['_5fp',['_p',['../class_goo_fit_1_1_spin_sum_v.html#aa8d48d808ae60e34614486cb0a1b55db',1,'GooFit::SpinSumV']]],
+  ['_5fsqwstorsrate',['_SqWStoRSrate',['../struct_goo_fit_1_1_decay_info___d_p.html#a52a2455180ac7743ba95fe7aa0a96f86',1,'GooFit::DecayInfo_DP']]],
+  ['_5fsv',['_sv',['../class_goo_fit_1_1_spin_sum_t.html#a230f0a22deef47abdf45b27482859aec',1,'GooFit::SpinSumT']]],
+  ['_5ftau',['_tau',['../struct_goo_fit_1_1_decay_info.html#ae356ff4bb297a7a69a983c2e1d4de8fc',1,'GooFit::DecayInfo::_tau()'],['../struct_goo_fit_1_1_decay_info___d_p.html#a9b85f88654a6f0382e24730477aeb536',1,'GooFit::DecayInfo_DP::_tau()']]],
+  ['_5fv',['_v',['../class_goo_fit_1_1_lorentz_matrix.html#a847abd37ebeb66d4c9b7ab0d106bad6c',1,'GooFit::LorentzMatrix']]],
+  ['_5fxmixing',['_xmixing',['../struct_goo_fit_1_1_decay_info.html#a3f805c5c5f623b3cf0bd64ce76947056',1,'GooFit::DecayInfo::_xmixing()'],['../struct_goo_fit_1_1_decay_info___d_p.html#a6df98dc006d7b58863f76fcb611e22a1',1,'GooFit::DecayInfo_DP::_xmixing()']]],
+  ['_5fymixing',['_ymixing',['../struct_goo_fit_1_1_decay_info.html#ab3c09b7cc14d67098b1176d955222018',1,'GooFit::DecayInfo::_ymixing()'],['../struct_goo_fit_1_1_decay_info___d_p.html#a76c2942aa06c1050070ba2fd0ba7bff1',1,'GooFit::DecayInfo_DP::_ymixing()']]]
 ];

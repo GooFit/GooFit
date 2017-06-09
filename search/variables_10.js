@@ -1,8 +1,7 @@
 var searchData=
 [
-  ['show_5fgpus_5f',['show_gpus_',['../class_goo_fit_1_1_application.html#a4177adf559cd546d9d77dbf8b397e636',1,'GooFit::Application']]],
-  ['show_5fthreads_5f',['show_threads_',['../class_goo_fit_1_1_application.html#aa0e9cd2b748e4ca023e0a7d8fd65e0d4',1,'GooFit::Application']]],
-  ['siginthandler',['sigIntHandler',['../class_goo_fit_1_1_application.html#af6584ca94a4df1feddd7e94c1fdf68d5',1,'GooFit::Application']]],
-  ['specialmask',['specialMask',['../class_pdf_base.html#a1f459f7a8b6e334131f8a60c44069ed5',1,'PdfBase']]],
-  ['stride',['stride',['../structstrided__range_1_1stride__functor.html#af0ea35fb2c7df023f805f70b90927148',1,'strided_range::stride_functor::stride()'],['../classstrided__range.html#af7c38531f9d2bb6048f3ec13a812ab2b',1,'strided_range::stride()']]]
+  ['red',['red',['../namespace_goo_fit.html#a7e27700e0a78d83f9533cf7667cd79ce',1,'GooFit']]],
+  ['reset',['reset',['../namespace_goo_fit.html#aa65eefd41f0c68192969ff3ede4f979e',1,'GooFit']]],
+  ['resonances',['resonances',['../struct_goo_fit_1_1_decay_info.html#af061c4ef1eb6480f9f0fad3158d0da4c',1,'GooFit::DecayInfo']]],
+  ['resonancesize',['resonanceSize',['../namespace_goo_fit.html#a3a6bbc228c6417c7bc445e572e9b1b38',1,'GooFit']]]
 ];

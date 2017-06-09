@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['z',['Z',['../class_lorentz_matrix.html#a8504593e5caefe7b683dcdd611ec5ef1',1,'LorentzMatrix::Z() const'],['../class_lorentz_matrix.html#ace877090edf20edcfd9dd2ec4624f141',1,'LorentzMatrix::Z()']]],
-  ['ztspin1',['ZTspin1',['../class_z_tspin1.html#ab986ec491ead7089ec7103ebe952c130',1,'ZTspin1']]],
-  ['ztspin2',['ZTspin2',['../class_z_tspin2.html#a1584ce50a53734be745dbbff3fab2bea',1,'ZTspin2']]]
+  ['z',['Z',['../class_goo_fit_1_1_lorentz_matrix.html#a056dd1ff2ef2e0bb14f75360213065b7',1,'GooFit::LorentzMatrix::Z() const'],['../class_goo_fit_1_1_lorentz_matrix.html#a8f72063a5df5717e4a1f53cd6f5d5d3a',1,'GooFit::LorentzMatrix::Z()']]],
+  ['ztspin1',['ZTspin1',['../class_goo_fit_1_1_z_tspin1.html#a68407b7e809c476a812cc38ad4e63a13',1,'GooFit::ZTspin1']]],
+  ['ztspin2',['ZTspin2',['../class_goo_fit_1_1_z_tspin2.html#ae6980fbe436a252004093680002f7a90',1,'GooFit::ZTspin2']]]
 ];

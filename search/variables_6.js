@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['first',['first',['../classstrided__range.html#ae9bf73514ea80846ab818cc547a1bef1',1,'strided_range']]],
-  ['fitcontrol',['fitControl',['../class_pdf_base.html#ab9b8fa066ac7e9a3a00e288dc60c85ea',1,'PdfBase']]],
-  ['fitter_5findex',['fitter_index',['../class_indexable.html#a1a800077af881da9aec688fd62508130',1,'Indexable']]],
-  ['fixed',['fixed',['../class_variable.html#ac2a9b9b63a71bbfb159a212325eeafde',1,'Variable']]],
-  ['functionidx',['functionIdx',['../class_pdf_base.html#a201930b5ce1146bec6dfdd7acfe14867',1,'PdfBase']]]
+  ['first',['first',['../class_goo_fit_1_1strided__range.html#a5015905a7d14f052d0c8b3395414b17b',1,'GooFit::strided_range']]],
+  ['fitcontrol',['fitControl',['../class_goo_fit_1_1_pdf_base.html#aa662b50e663de16f51ac2a6dc909d91b',1,'GooFit::PdfBase']]],
+  ['fitter_5findex',['fitter_index',['../class_goo_fit_1_1_indexable.html#afe6bd65124f2d8056affe5840537dfd3',1,'GooFit::Indexable']]],
+  ['fixed',['fixed',['../class_goo_fit_1_1_variable.html#a6d88e0de6efd362cb8754f8d692f4a5d',1,'GooFit::Variable']]],
+  ['functionidx',['functionIdx',['../class_goo_fit_1_1_pdf_base.html#a71d7d631a044ab871652c4cef44ff4ab',1,'GooFit::PdfBase']]]
 ];

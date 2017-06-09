@@ -8,7 +8,6 @@ var searchData=
   ['threegaussresolution_5faux_2ecu',['ThreeGaussResolution_Aux.cu',['../_three_gauss_resolution___aux_8cu.html',1,'']]],
   ['threegaussresolution_5faux_2eh',['ThreeGaussResolution_Aux.h',['../_three_gauss_resolution___aux_8h.html',1,'']]],
   ['thrustoverride_2eh',['ThrustOverride.h',['../_thrust_override_8h.html',1,'']]],
-  ['tminuit_2ecc',['TMinuit.cc',['../_t_minuit_8cc.html',1,'']]],
   ['trigthresholdpdf_2ecu',['TrigThresholdPdf.cu',['../_trig_threshold_pdf_8cu.html',1,'']]],
   ['trigthresholdpdf_2eh',['TrigThresholdPdf.h',['../_trig_threshold_pdf_8h.html',1,'']]],
   ['truthresolution_5faux_2ecu',['TruthResolution_Aux.cu',['../_truth_resolution___aux_8cu.html',1,'']]],

@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['pair_5f12',['PAIR_12',['../_dalitz_plot_helpers_8h.html#a105455728dce67dab0cd2b5c1dcd9342a5913cbc8d09c41915ee544cf8905f07e',1,'DalitzPlotHelpers.h']]],
-  ['pair_5f13',['PAIR_13',['../_dalitz_plot_helpers_8h.html#a105455728dce67dab0cd2b5c1dcd9342a312c9591f66eed049b2bf0ede98c907f',1,'DalitzPlotHelpers.h']]],
-  ['pair_5f23',['PAIR_23',['../_dalitz_plot_helpers_8h.html#a105455728dce67dab0cd2b5c1dcd9342a757fc17fdbbfee871d8998a00a30aa1b',1,'DalitzPlotHelpers.h']]]
+  ['pair_5f12',['PAIR_12',['../namespace_goo_fit.html#abc8117ef8b87f2a25c5db5190add7685a3389c1171722badf0dae23176416cb99',1,'GooFit']]],
+  ['pair_5f13',['PAIR_13',['../namespace_goo_fit.html#abc8117ef8b87f2a25c5db5190add7685acec70dc6efab3be9d9107b2490b4ef28',1,'GooFit']]],
+  ['pair_5f23',['PAIR_23',['../namespace_goo_fit.html#abc8117ef8b87f2a25c5db5190add7685a9e5c2a2fba87e3dc5fd7a2df622e5361',1,'GooFit']]]
 ];

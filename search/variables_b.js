@@ -1,10 +1,10 @@
 var searchData=
 [
-  ['m_5fieventspertask',['m_iEventsPerTask',['../class_pdf_base.html#ae0d4d6b6d8e7b5bc998e0dfd6ce2e878',1,'PdfBase']]],
+  ['m_5fieventspertask',['m_iEventsPerTask',['../class_goo_fit_1_1_pdf_base.html#a94c76d405a84904e3317b59ff7b97b66',1,'GooFit::PdfBase']]],
   ['magenta',['magenta',['../namespace_goo_fit.html#ad8ca018216ddb23824741aeeb8d5da56',1,'GooFit']]],
-  ['maximum',['maximum',['../struct_veto_info.html#a0869ec723a4629ee35a9eba068c176fa',1,'VetoInfo']]],
-  ['maxparams',['maxParams',['../_pdf_base_8h.html#a51204bb43a19d439e09ec85a8581ba03',1,'PdfBase.h']]],
-  ['meson_5fradius',['meson_radius',['../struct_decay_info.html#abfb45e6b8d2c2977bd9cfca7449c46d1',1,'DecayInfo::meson_radius()'],['../struct_decay_info___d_p.html#a4edb846f4bb40e7058bd20fed9b0caab',1,'DecayInfo_DP::meson_radius()']]],
-  ['minimum',['minimum',['../struct_veto_info.html#af62c27819586a151109923e3f5050e3e',1,'VetoInfo']]],
-  ['mothermass',['motherMass',['../struct_decay_info.html#a6026459c3530fc40a58250d53d1cc0ea',1,'DecayInfo']]]
+  ['maximum',['maximum',['../struct_goo_fit_1_1_veto_info.html#a85db8e9f33d97e3e4206a604bc895083',1,'GooFit::VetoInfo']]],
+  ['maxparams',['maxParams',['../namespace_goo_fit.html#a432d80bb6c2e4b59a718fec8b3eadda0',1,'GooFit']]],
+  ['meson_5fradius',['meson_radius',['../struct_goo_fit_1_1_decay_info.html#a5e07af7501c613c2844e2383027b6316',1,'GooFit::DecayInfo::meson_radius()'],['../struct_goo_fit_1_1_decay_info___d_p.html#a5ede38a7e9c5a8cb5a24587effcf8cfc',1,'GooFit::DecayInfo_DP::meson_radius()']]],
+  ['minimum',['minimum',['../struct_goo_fit_1_1_veto_info.html#aa8db3d1e85ae04e418e375575d627c0b',1,'GooFit::VetoInfo']]],
+  ['mothermass',['motherMass',['../struct_goo_fit_1_1_decay_info.html#acd1ea8f96e685ec79dae4bb0adc70b36',1,'GooFit::DecayInfo']]]
 ];

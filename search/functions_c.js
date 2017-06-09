@@ -1,11 +1,10 @@
 var searchData=
 [
-  ['landaupdf',['LandauPdf',['../class_landau_pdf.html#a18649317da6edf2ba1999951746c8434',1,'LandauPdf']]],
-  ['levicivita',['LeviCivita',['../_spin_helper_8h.html#a9bb317798b0120fb460679dee0144753',1,'LeviCivita(const gpuLVec &amp;p1, const gpuLVec &amp;p2, const gpuLVec &amp;p3, const gpuLVec &amp;p4):&#160;SpinHelper.h'],['../_spin_helper_8h.html#acf723b1c04ff9fa36ea7f691805740c5',1,'LeviCivita(const gpuLVec &amp;a, const gpuLVec &amp;b, const gpuLVec &amp;c):&#160;SpinHelper.h']]],
-  ['lineshape',['Lineshape',['../class_lineshape.html#a269a6c1c80c529c586d2d211e1ee2895',1,'Lineshape::Lineshape(std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, LS kind=LS::BW, FF FormFac=FF::BL_Prime, fptype radius=1.5, std::vector&lt; Variable *&gt; AdditionalVars=std::vector&lt; Variable *&gt;())'],['../class_lineshape.html#a2c8e3abbc7cdff3dae50ede6f0cebe28',1,'Lineshape::Lineshape(std::string name)']]],
-  ['loadevent',['loadEvent',['../class_unbinned_data_set.html#afcb8588e12c25f90b352ae507d63d3aa',1,'UnbinnedDataSet']]],
-  ['local_5fform',['local_Form',['../_t_minuit_8cc.html#aca6a8a8dba43cf28a81f75d5207a3e9a',1,'TMinuit.cc']]],
-  ['lorentzmatrix',['LorentzMatrix',['../class_lorentz_matrix.html#aa7ce8dd61574068d1a784ecbd902e0c4',1,'LorentzMatrix::LorentzMatrix()'],['../class_lorentz_matrix.html#acd8b1a351ea74eb5e99ebeae690b0d59',1,'LorentzMatrix::LorentzMatrix(const gpuLVec p[4])'],['../class_lorentz_matrix.html#afecf68cb8234e2725e8d7bbfa255b59d',1,'LorentzMatrix::LorentzMatrix(const LorentzMatrix &amp;other)']]],
-  ['lscalculator',['LSCalculator',['../class_l_s_calculator.html#a6df78f3d752f88982160d1327c7a9c9e',1,'LSCalculator']]],
-  ['lscalculator_5ftd',['LSCalculator_TD',['../class_l_s_calculator___t_d.html#a9ac67c1a14facace07b800f136acb892',1,'LSCalculator_TD']]]
+  ['landaupdf',['LandauPdf',['../class_goo_fit_1_1_landau_pdf.html#a1718e039e22a35c7f3798abde953f46a',1,'GooFit::LandauPdf']]],
+  ['levicivita',['LeviCivita',['../namespace_goo_fit.html#af8e5594cb2e63079d530d899cc90ffa2',1,'GooFit::LeviCivita(const gpuLVec &amp;p1, const gpuLVec &amp;p2, const gpuLVec &amp;p3, const gpuLVec &amp;p4)'],['../namespace_goo_fit.html#aaeecb13ff35836de8be43ab76dbedf37',1,'GooFit::LeviCivita(const gpuLVec &amp;a, const gpuLVec &amp;b, const gpuLVec &amp;c)']]],
+  ['lineshape',['Lineshape',['../class_goo_fit_1_1_lineshape.html#a15b94687dc3b21b7a932053792ae8474',1,'GooFit::Lineshape::Lineshape(std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, LS kind=LS::BW, FF FormFac=FF::BL_Prime, fptype radius=1.5, std::vector&lt; Variable *&gt; AdditionalVars=std::vector&lt; Variable *&gt;())'],['../class_goo_fit_1_1_lineshape.html#a0eefe78994d591fde77a3daa4cb7ef5a',1,'GooFit::Lineshape::Lineshape(std::string name)']]],
+  ['loadevent',['loadEvent',['../class_goo_fit_1_1_unbinned_data_set.html#a74c2d5e2885e7309b2e78c8d5b511767',1,'GooFit::UnbinnedDataSet']]],
+  ['lorentzmatrix',['LorentzMatrix',['../class_goo_fit_1_1_lorentz_matrix.html#a2c1a95b2de14b6f6c5c9e2b05011a323',1,'GooFit::LorentzMatrix::LorentzMatrix()=default'],['../class_goo_fit_1_1_lorentz_matrix.html#abd1f418cc4a6d414b69b35eea810ecec',1,'GooFit::LorentzMatrix::LorentzMatrix(const gpuLVec p[4])'],['../class_goo_fit_1_1_lorentz_matrix.html#a59265ce13cf1b705d2612f446d59525d',1,'GooFit::LorentzMatrix::LorentzMatrix(const LorentzMatrix &amp;other)']]],
+  ['lscalculator',['LSCalculator',['../class_goo_fit_1_1_l_s_calculator.html#ac083b1cd114053cd3474a6f8ea70d8ec',1,'GooFit::LSCalculator']]],
+  ['lscalculator_5ftd',['LSCalculator_TD',['../class_goo_fit_1_1_l_s_calculator___t_d.html#a1a292c93c8f1b7e3a221dc728eadab18',1,'GooFit::LSCalculator_TD']]]
 ];

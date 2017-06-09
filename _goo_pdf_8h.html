@@ -70,6 +70,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#typedef-members">Typedefs</a> &#124;
 <a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
@@ -78,6 +79,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;thrust/functional.h&gt;</code><br />
+<code>#include &quot;<a class="el" href="_metric_taker_8h_source.html">goofit/PDFs/MetricTaker.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="_pdf_base_8h_source.html">goofit/PdfBase.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="_unbinned_data_set_8h_source.html">goofit/UnbinnedDataSet.h</a>&quot;</code><br />
 </div>
@@ -85,167 +87,40 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_pdf.html">GooPdf</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_goo_pdf.html">GooFit::GooPdf</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_metric_taker.html">MetricTaker</a></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespace_goo_fit"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html">GooFit</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:a4d3ea45d9961aaa1fba6d99d13a7d485"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_goo_pdf_8h.html#a4d3ea45d9961aaa1fba6d99d13a7d485">device_function_ptr</a>) (<a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> *, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> *, unsigned int *)</td></tr>
-<tr class="separator:a4d3ea45d9961aaa1fba6d99d13a7d485"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad4373186534aee81ce1e876b2f25a9b4"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_goo_pdf_8h.html#ad4373186534aee81ce1e876b2f25a9b4">device_metric_ptr</a>) (<a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> *, unsigned int)</td></tr>
-<tr class="separator:ad4373186534aee81ce1e876b2f25a9b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8f86c4fba93f7f349ee9cea3569a7c7"><td class="memItemLeft" align="right" valign="top">typedef fptype(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#aa8f86c4fba93f7f349ee9cea3569a7c7">GooFit::device_function_ptr</a>) (fptype *, fptype *, unsigned int *)</td></tr>
+<tr class="memdesc:aa8f86c4fba93f7f349ee9cea3569a7c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pass event, parameters, index into parameters.  <a href="namespace_goo_fit.html#aa8f86c4fba93f7f349ee9cea3569a7c7">More...</a><br /></td></tr>
+<tr class="separator:aa8f86c4fba93f7f349ee9cea3569a7c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7ed84a17159e8a1112cffd0cd4b77c20"><td class="memItemLeft" align="right" valign="top">typedef fptype(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#a7ed84a17159e8a1112cffd0cd4b77c20">GooFit::device_metric_ptr</a>) (fptype, fptype *, unsigned int)</td></tr>
+<tr class="separator:a7ed84a17159e8a1112cffd0cd4b77c20"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a8a35f07d408b2bbe757a1ca880877b14"><td class="memItemLeft" align="right" valign="top">__device__ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_goo_pdf_8h.html#a8a35f07d408b2bbe757a1ca880877b14">dev_powi</a> (int base, int exp)</td></tr>
-<tr class="separator:a8a35f07d408b2bbe757a1ca880877b14"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab93d40cad13f7347d6114fffaca90e07"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_goo_pdf_8h.html#ab93d40cad13f7347d6114fffaca90e07">getMetricPointer</a> (std::string name)</td></tr>
-<tr class="separator:ab93d40cad13f7347d6114fffaca90e07"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab2454dfe972e4477a08b425432f13ac3"><td class="memItemLeft" align="right" valign="top">__device__ <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_goo_pdf_8h.html#ab2454dfe972e4477a08b425432f13ac3">callFunction</a> (<a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> *eventAddress, unsigned int functionIdx, unsigned int paramIdx)</td></tr>
-<tr class="separator:ab2454dfe972e4477a08b425432f13ac3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a948bcd324f45d08a455ced5189dfb894"><td class="memItemLeft" align="right" valign="top">__device__ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#a948bcd324f45d08a455ced5189dfb894">GooFit::dev_powi</a> (int base, int exp)</td></tr>
+<tr class="separator:a948bcd324f45d08a455ced5189dfb894"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47f6a0c98e9b8cdb05a0fa27a75ae206"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#a47f6a0c98e9b8cdb05a0fa27a75ae206">GooFit::getMetricPointer</a> (std::string name)</td></tr>
+<tr class="separator:a47f6a0c98e9b8cdb05a0fa27a75ae206"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a87a68afb2dc5f613178ac1dea8a9955f"><td class="memItemLeft" align="right" valign="top">__device__ fptype&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#a87a68afb2dc5f613178ac1dea8a9955f">GooFit::callFunction</a> (fptype *eventAddress, unsigned int functionIdx, unsigned int paramIdx)</td></tr>
+<tr class="separator:a87a68afb2dc5f613178ac1dea8a9955f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a2106f11c00570b6546f63c98afffbd0e"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_goo_pdf_8h.html#a2106f11c00570b6546f63c98afffbd0e">host_fcn_ptr</a></td></tr>
-<tr class="separator:a2106f11c00570b6546f63c98afffbd0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a629dda1cf456a097fd7834dd96f5ba71"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#a629dda1cf456a097fd7834dd96f5ba71">GooFit::host_fcn_ptr</a></td></tr>
+<tr class="separator:a629dda1cf456a097fd7834dd96f5ba71"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Typedef Documentation</h2>
-<a id="a4d3ea45d9961aaa1fba6d99d13a7d485"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4d3ea45d9961aaa1fba6d99d13a7d485">&#9670;&nbsp;</a></span>device_function_ptr</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>(* device_function_ptr) (<a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> *, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> *, unsigned int *)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="_goo_pdf_8h_source.html#l00028">28</a> of file <a class="el" href="_goo_pdf_8h_source.html">GooPdf.h</a>.</p>
-
-</div>
-</div>
-<a id="ad4373186534aee81ce1e876b2f25a9b4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad4373186534aee81ce1e876b2f25a9b4">&#9670;&nbsp;</a></span>device_metric_ptr</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>(* device_metric_ptr) (<a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> *, unsigned int)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="_goo_pdf_8h_source.html#l00030">30</a> of file <a class="el" href="_goo_pdf_8h_source.html">GooPdf.h</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Function Documentation</h2>
-<a id="ab2454dfe972e4477a08b425432f13ac3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab2454dfe972e4477a08b425432f13ac3">&#9670;&nbsp;</a></span>callFunction()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">__device__ <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> callFunction </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> *&#160;</td>
-          <td class="paramname"><em>eventAddress</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>functionIdx</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>paramIdx</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a8a35f07d408b2bbe757a1ca880877b14"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8a35f07d408b2bbe757a1ca880877b14">&#9670;&nbsp;</a></span>dev_powi()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">__device__ int dev_powi </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>base</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>exp</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ab93d40cad13f7347d6114fffaca90e07"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab93d40cad13f7347d6114fffaca90e07">&#9670;&nbsp;</a></span>getMetricPointer()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void* getMetricPointer </td>
-          <td>(</td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>name</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<h2 class="groupheader">Variable Documentation</h2>
-<a id="a2106f11c00570b6546f63c98afffbd0e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2106f11c00570b6546f63c98afffbd0e">&#9670;&nbsp;</a></span>host_fcn_ptr</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void* host_fcn_ptr</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="reference">Referenced by <a class="el" href="_goo_pdf_8h_source.html#l00051">GooPdf::hasAnalyticIntegral()</a>.</p>
-
-</div>
-</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed May 3 2017 15:14:58 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Jun 9 2017 01:14:10 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

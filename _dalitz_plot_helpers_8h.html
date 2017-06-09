@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>GooFit: /home/travis/build/GooFit/GooFit/include/goofit/PDFs/DalitzPlotHelpers.h File Reference</title>
+<title>GooFit: /home/travis/build/GooFit/GooFit/include/goofit/PDFs/physics/DalitzPlotHelpers.h File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -64,12 +64,13 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_903365f804b9421a35fb8b28c4adeb12.html">goofit</a></li><li class="navelem"><a class="el" href="dir_ca7b43fb45b0f0f5d1e3d6cc97eda354.html">PDFs</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_903365f804b9421a35fb8b28c4adeb12.html">goofit</a></li><li class="navelem"><a class="el" href="dir_ca7b43fb45b0f0f5d1e3d6cc97eda354.html">PDFs</a></li><li class="navelem"><a class="el" href="dir_3ee31b4492524ff4ff39e44118a359f4.html">physics</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
@@ -78,428 +79,86 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="_goo_pdf_8h_source.html">goofit/PDFs/GooPdf.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="_resonance_pdf_8h_source.html">goofit/PDFs/ResonancePdf.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="_lineshapes_pdf_8h_source.html">goofit/PDFs/LineshapesPdf.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_lineshapes_pdf_8h_source.html">goofit/PDFs/physics/LineshapesPdf.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_resonance_pdf_8h_source.html">goofit/PDFs/physics/ResonancePdf.h</a>&quot;</code><br />
+<code>#include &lt;thrust/device_vector.h&gt;</code><br />
+<code>#include &lt;thrust/iterator/constant_iterator.h&gt;</code><br />
 </div>
 <p><a href="_dalitz_plot_helpers_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_decay_info.html">DecayInfo</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_goo_fit_1_1_decay_info.html">GooFit::DecayInfo</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_decay_info___d_p.html">DecayInfo_DP</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_goo_fit_1_1_decay_info___d_p.html">GooFit::DecayInfo_DP</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstrided__range.html">strided_range&lt; Iterator &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1strided__range.html">GooFit::strided_range&lt; Iterator &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstrided__range_1_1stride__functor.html">strided_range&lt; Iterator &gt;::stride_functor</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_goo_fit_1_1strided__range_1_1stride__functor.html">GooFit::strided_range&lt; Iterator &gt;::stride_functor</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespace_goo_fit"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html">GooFit</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:a773b028bc801bbacf080e64cc9e2140d"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140d">DP4Pair</a> { <br />
-&#160;&#160;<a class="el" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140da3735533dba9635551c54625b8bc84535">M_12</a> = 0, 
-<a class="el" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140da13663624653359e52eb9400ba3a9cf57">M_34</a>, 
-<a class="el" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140dadd12469c26c341f08186ccc329e01598">M_13</a>, 
-<a class="el" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140da9fc14db61308350a84d0e5d8daaa247c">M_14</a>, 
+<tr class="memitem:ad43101d55f344c3bc53fedd1adb444aa"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#ad43101d55f344c3bc53fedd1adb444aa">GooFit::DP4Pair</a> { <br />
+&#160;&#160;<a class="el" href="namespace_goo_fit.html#ad43101d55f344c3bc53fedd1adb444aaa5a1638d15948b5fa7ba2660f6addbd63">GooFit::M_12</a> = 0, 
+<a class="el" href="namespace_goo_fit.html#ad43101d55f344c3bc53fedd1adb444aaa1a8c2ab33b49ec61e0b895f11af45026">GooFit::M_34</a>, 
+<a class="el" href="namespace_goo_fit.html#ad43101d55f344c3bc53fedd1adb444aaaeb8c01d3d1afbbe3d8835324536c4d18">GooFit::M_13</a>, 
+<a class="el" href="namespace_goo_fit.html#ad43101d55f344c3bc53fedd1adb444aaa6050364c07d2a2d6b35d2c56f46f825e">GooFit::M_14</a>, 
 <br />
-&#160;&#160;<a class="el" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140dac2ed3d4275f97360697654e1091e41e0">M_23</a>, 
-<a class="el" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140dad92542edf162c0a57fcd10fe6946a506">M_24</a>, 
-<a class="el" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140dac8cfc4e24eff16775eaf57a5c5c8cfcf">M_12_3</a>, 
-<a class="el" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140dad465e7e67cf4341f9a1d73935c42f2c0">M_13_2</a>, 
+&#160;&#160;<a class="el" href="namespace_goo_fit.html#ad43101d55f344c3bc53fedd1adb444aaa2d72caa2cc1002d629b04e6668547c89">GooFit::M_23</a>, 
+<a class="el" href="namespace_goo_fit.html#ad43101d55f344c3bc53fedd1adb444aaaa93d67d7da0e7f3c1918a73bfa22f755">GooFit::M_24</a>, 
+<a class="el" href="namespace_goo_fit.html#ad43101d55f344c3bc53fedd1adb444aaafc5e59d23626226eb7f90d949350ba63">GooFit::M_12_3</a>, 
+<a class="el" href="namespace_goo_fit.html#ad43101d55f344c3bc53fedd1adb444aaab68c4e519fc1705c3c82fa5fc3129695">GooFit::M_13_2</a>, 
 <br />
-&#160;&#160;<a class="el" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140da2f4eb41e2ab41bf367e7ccdce6b77540">M_23_1</a>, 
-<a class="el" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140dad49749234e0d3acff70cce2a4a6234f5">M_12_4</a>, 
-<a class="el" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140da4a6bd181671a9249e6c701c7539b8bdf">M_14_2</a>, 
-<a class="el" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140da5fbc8793f2fd541cf9619a995adf59f7">M_24_1</a>, 
+&#160;&#160;<a class="el" href="namespace_goo_fit.html#ad43101d55f344c3bc53fedd1adb444aaabe54ee31ace3c9e0bb3f68960d338acc">GooFit::M_23_1</a>, 
+<a class="el" href="namespace_goo_fit.html#ad43101d55f344c3bc53fedd1adb444aaade4d614440c566b6c32d20886487ea16">GooFit::M_12_4</a>, 
+<a class="el" href="namespace_goo_fit.html#ad43101d55f344c3bc53fedd1adb444aaaf2f08d6cc9de8d8061749097f5b66e96">GooFit::M_14_2</a>, 
+<a class="el" href="namespace_goo_fit.html#ad43101d55f344c3bc53fedd1adb444aaa991dd098636e2cce7281a75ef5292968">GooFit::M_24_1</a>, 
 <br />
-&#160;&#160;<a class="el" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140dabade6d5a94198da188b989a738f7f48a">M_13_4</a>, 
-<a class="el" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140da317e2c291c22d3ce99c6c8e488c6f4a0">M_14_3</a>, 
-<a class="el" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140da9b6eb12f44dba7a1dfc38a0d80efab9c">M_34_1</a>, 
-<a class="el" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140daa01a1391cca58ba2b6fa159d4881ba5f">M_23_4</a>, 
+&#160;&#160;<a class="el" href="namespace_goo_fit.html#ad43101d55f344c3bc53fedd1adb444aaaf19049f74581837449cb4b29913fa223">GooFit::M_13_4</a>, 
+<a class="el" href="namespace_goo_fit.html#ad43101d55f344c3bc53fedd1adb444aaa412ce2ffdb706eacbf0add33a2ef7580">GooFit::M_14_3</a>, 
+<a class="el" href="namespace_goo_fit.html#ad43101d55f344c3bc53fedd1adb444aaaa526036ae354d212e4ad9983ed8d68a8">GooFit::M_34_1</a>, 
+<a class="el" href="namespace_goo_fit.html#ad43101d55f344c3bc53fedd1adb444aaa1a2ef20db901cb58da123ea9f45392b4">GooFit::M_23_4</a>, 
 <br />
-&#160;&#160;<a class="el" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140da619e28e4e35d0227b1f9456a495a074c">M_24_3</a>, 
-<a class="el" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140dac32bacb80090ace74fefb5effc8ee736">M_34_2</a>
+&#160;&#160;<a class="el" href="namespace_goo_fit.html#ad43101d55f344c3bc53fedd1adb444aaae52a217a68c771dd8a54a72082570365">GooFit::M_24_3</a>, 
+<a class="el" href="namespace_goo_fit.html#ad43101d55f344c3bc53fedd1adb444aaab7adecf8bb40fab7482886df4d32b04e">GooFit::M_34_2</a>
 <br />
  }</td></tr>
-<tr class="separator:a773b028bc801bbacf080e64cc9e2140d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a105455728dce67dab0cd2b5c1dcd9342"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_dalitz_plot_helpers_8h.html#a105455728dce67dab0cd2b5c1dcd9342">DaughterPair</a> { <a class="el" href="_dalitz_plot_helpers_8h.html#a105455728dce67dab0cd2b5c1dcd9342a5913cbc8d09c41915ee544cf8905f07e">PAIR_12</a> = 0, 
-<a class="el" href="_dalitz_plot_helpers_8h.html#a105455728dce67dab0cd2b5c1dcd9342a312c9591f66eed049b2bf0ede98c907f">PAIR_13</a>, 
-<a class="el" href="_dalitz_plot_helpers_8h.html#a105455728dce67dab0cd2b5c1dcd9342a757fc17fdbbfee871d8998a00a30aa1b">PAIR_23</a>
+<tr class="separator:ad43101d55f344c3bc53fedd1adb444aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abc8117ef8b87f2a25c5db5190add7685"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#abc8117ef8b87f2a25c5db5190add7685">GooFit::DaughterPair</a> { <a class="el" href="namespace_goo_fit.html#abc8117ef8b87f2a25c5db5190add7685a3389c1171722badf0dae23176416cb99">GooFit::PAIR_12</a> = 0, 
+<a class="el" href="namespace_goo_fit.html#abc8117ef8b87f2a25c5db5190add7685acec70dc6efab3be9d9107b2490b4ef28">GooFit::PAIR_13</a>, 
+<a class="el" href="namespace_goo_fit.html#abc8117ef8b87f2a25c5db5190add7685a9e5c2a2fba87e3dc5fd7a2df622e5361">GooFit::PAIR_23</a>
  }</td></tr>
-<tr class="separator:a105455728dce67dab0cd2b5c1dcd9342"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:abc8117ef8b87f2a25c5db5190add7685"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a17ed9540c8489c150e57cf9a6b34f25d"><td class="memTemplParams" colspan="2">template&lt;typename E &gt; </td></tr>
-<tr class="memitem:a17ed9540c8489c150e57cf9a6b34f25d"><td class="memTemplItemLeft" align="right" valign="top">constexpr std::underlying_type&lt; E &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="_dalitz_plot_helpers_8h.html#a17ed9540c8489c150e57cf9a6b34f25d">enum_to_underlying</a> (E e)</td></tr>
-<tr class="separator:a17ed9540c8489c150e57cf9a6b34f25d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a87dfaa7d884e836475c1307d17ee2d1f"><td class="memItemLeft" align="right" valign="top">__device__ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_dalitz_plot_helpers_8h.html#a87dfaa7d884e836475c1307d17ee2d1f">inDalitz</a> (const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;m12, const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;m13, const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;bigM, const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;dm1, const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;dm2, const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;dm3)</td></tr>
-<tr class="separator:a87dfaa7d884e836475c1307d17ee2d1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac953afcf4d2d22a26509c97a3e666061"><td class="memItemLeft" align="right" valign="top">__device__ thrust::complex&lt; <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_dalitz_plot_helpers_8h.html#ac953afcf4d2d22a26509c97a3e666061">getResonanceAmplitude</a> (<a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> m12, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> m13, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> m23, unsigned int functionIdx, unsigned int pIndex)</td></tr>
-<tr class="separator:ac953afcf4d2d22a26509c97a3e666061"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adefffc5330b105d4394c44bca1a24632"><td class="memItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_dalitz_plot_helpers_8h.html#adefffc5330b105d4394c44bca1a24632">get4Vecs</a> (<a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> *Vecs, const unsigned int &amp;constants, const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;m12, const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;m34, const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;cos12, const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;cos34, const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;phi)</td></tr>
-<tr class="separator:adefffc5330b105d4394c44bca1a24632"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeb77739f6d5e29f11818a3c0f7de7ab9"><td class="memItemLeft" align="right" valign="top">__device__ <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_dalitz_plot_helpers_8h.html#aeb77739f6d5e29f11818a3c0f7de7ab9">getmass</a> (const unsigned int &amp;pair, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;d1, <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;d2, const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> *vecs, const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;m1, const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;m2, const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;m3, const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;m4)</td></tr>
-<tr class="separator:aeb77739f6d5e29f11818a3c0f7de7ab9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2a5d1a3c01483597044d740167bf2a6f"><td class="memTemplParams" colspan="2">template&lt;typename E &gt; </td></tr>
+<tr class="memitem:a2a5d1a3c01483597044d740167bf2a6f"><td class="memTemplItemLeft" align="right" valign="top">constexpr std::underlying_type&lt; E &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#a2a5d1a3c01483597044d740167bf2a6f">GooFit::enum_to_underlying</a> (E e)</td></tr>
+<tr class="separator:a2a5d1a3c01483597044d740167bf2a6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3e6826a12082ced9d79e931a1a717f61"><td class="memItemLeft" align="right" valign="top">__device__ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#a3e6826a12082ced9d79e931a1a717f61">GooFit::inDalitz</a> (const fptype &amp;m12, const fptype &amp;m13, const fptype &amp;bigM, const fptype &amp;dm1, const fptype &amp;dm2, const fptype &amp;dm3)</td></tr>
+<tr class="separator:a3e6826a12082ced9d79e931a1a717f61"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aabde398405436e8b76931ef940541f2b"><td class="memItemLeft" align="right" valign="top">__device__ thrust::complex&lt; fptype &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#aabde398405436e8b76931ef940541f2b">GooFit::getResonanceAmplitude</a> (fptype m12, fptype m13, fptype m23, unsigned int functionIdx, unsigned int pIndex)</td></tr>
+<tr class="separator:aabde398405436e8b76931ef940541f2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38601ad9248b99df601a6bb7df7dc5d8"><td class="memItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#a38601ad9248b99df601a6bb7df7dc5d8">GooFit::get4Vecs</a> (fptype *Vecs, const unsigned int &amp;constants, const fptype &amp;m12, const fptype &amp;m34, const fptype &amp;cos12, const fptype &amp;cos34, const fptype &amp;phi)</td></tr>
+<tr class="separator:a38601ad9248b99df601a6bb7df7dc5d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d7777baf864adc5fea03bc0fc027228"><td class="memItemLeft" align="right" valign="top">__device__ fptype&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#a8d7777baf864adc5fea03bc0fc027228">GooFit::getmass</a> (const unsigned int &amp;pair, fptype &amp;d1, fptype &amp;d2, const fptype *vecs, const fptype &amp;m1, const fptype &amp;m2, const fptype &amp;m3, const fptype &amp;m4)</td></tr>
+<tr class="separator:a8d7777baf864adc5fea03bc0fc027228"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a58bf7c1a720273175d4a60ed59394307"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_dalitz_plot_helpers_8h.html#a58bf7c1a720273175d4a60ed59394307">resonanceSize</a> = 4</td></tr>
-<tr class="separator:a58bf7c1a720273175d4a60ed59394307"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a6bbc228c6417c7bc445e572e9b1b38"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#a3a6bbc228c6417c7bc445e572e9b1b38">GooFit::resonanceSize</a> = 4</td></tr>
+<tr class="separator:a3a6bbc228c6417c7bc445e572e9b1b38"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Enumeration Type Documentation</h2>
-<a id="a105455728dce67dab0cd2b5c1dcd9342"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a105455728dce67dab0cd2b5c1dcd9342">&#9670;&nbsp;</a></span>DaughterPair</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum <a class="el" href="_dalitz_plot_helpers_8h.html#a105455728dce67dab0cd2b5c1dcd9342">DaughterPair</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a105455728dce67dab0cd2b5c1dcd9342a5913cbc8d09c41915ee544cf8905f07e"></a>PAIR_12&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a105455728dce67dab0cd2b5c1dcd9342a312c9591f66eed049b2bf0ede98c907f"></a>PAIR_13&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a105455728dce67dab0cd2b5c1dcd9342a757fc17fdbbfee871d8998a00a30aa1b"></a>PAIR_23&#160;</td><td class="fielddoc"></td></tr>
-</table>
-
-<p class="definition">Definition at line <a class="el" href="_dalitz_plot_helpers_8h_source.html#l00035">35</a> of file <a class="el" href="_dalitz_plot_helpers_8h_source.html">DalitzPlotHelpers.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;{<a class="code" href="_dalitz_plot_helpers_8h.html#a105455728dce67dab0cd2b5c1dcd9342a5913cbc8d09c41915ee544cf8905f07e">PAIR_12</a> = 0, <a class="code" href="_dalitz_plot_helpers_8h.html#a105455728dce67dab0cd2b5c1dcd9342a312c9591f66eed049b2bf0ede98c907f">PAIR_13</a>, <a class="code" href="_dalitz_plot_helpers_8h.html#a105455728dce67dab0cd2b5c1dcd9342a757fc17fdbbfee871d8998a00a30aa1b">PAIR_23</a>};</div><div class="ttc" id="_dalitz_plot_helpers_8h_html_a105455728dce67dab0cd2b5c1dcd9342a757fc17fdbbfee871d8998a00a30aa1b"><div class="ttname"><a href="_dalitz_plot_helpers_8h.html#a105455728dce67dab0cd2b5c1dcd9342a757fc17fdbbfee871d8998a00a30aa1b">PAIR_23</a></div><div class="ttdef"><b>Definition:</b> <a href="_dalitz_plot_helpers_8h_source.html#l00035">DalitzPlotHelpers.h:35</a></div></div>
-<div class="ttc" id="_dalitz_plot_helpers_8h_html_a105455728dce67dab0cd2b5c1dcd9342a312c9591f66eed049b2bf0ede98c907f"><div class="ttname"><a href="_dalitz_plot_helpers_8h.html#a105455728dce67dab0cd2b5c1dcd9342a312c9591f66eed049b2bf0ede98c907f">PAIR_13</a></div><div class="ttdef"><b>Definition:</b> <a href="_dalitz_plot_helpers_8h_source.html#l00035">DalitzPlotHelpers.h:35</a></div></div>
-<div class="ttc" id="_dalitz_plot_helpers_8h_html_a105455728dce67dab0cd2b5c1dcd9342a5913cbc8d09c41915ee544cf8905f07e"><div class="ttname"><a href="_dalitz_plot_helpers_8h.html#a105455728dce67dab0cd2b5c1dcd9342a5913cbc8d09c41915ee544cf8905f07e">PAIR_12</a></div><div class="ttdef"><b>Definition:</b> <a href="_dalitz_plot_helpers_8h_source.html#l00035">DalitzPlotHelpers.h:35</a></div></div>
-</div><!-- fragment -->
-</div>
-</div>
-<a id="a773b028bc801bbacf080e64cc9e2140d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a773b028bc801bbacf080e64cc9e2140d">&#9670;&nbsp;</a></span>DP4Pair</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum <a class="el" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140d">DP4Pair</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a773b028bc801bbacf080e64cc9e2140da3735533dba9635551c54625b8bc84535"></a>M_12&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a773b028bc801bbacf080e64cc9e2140da13663624653359e52eb9400ba3a9cf57"></a>M_34&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a773b028bc801bbacf080e64cc9e2140dadd12469c26c341f08186ccc329e01598"></a>M_13&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a773b028bc801bbacf080e64cc9e2140da9fc14db61308350a84d0e5d8daaa247c"></a>M_14&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a773b028bc801bbacf080e64cc9e2140dac2ed3d4275f97360697654e1091e41e0"></a>M_23&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a773b028bc801bbacf080e64cc9e2140dad92542edf162c0a57fcd10fe6946a506"></a>M_24&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a773b028bc801bbacf080e64cc9e2140dac8cfc4e24eff16775eaf57a5c5c8cfcf"></a>M_12_3&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a773b028bc801bbacf080e64cc9e2140dad465e7e67cf4341f9a1d73935c42f2c0"></a>M_13_2&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a773b028bc801bbacf080e64cc9e2140da2f4eb41e2ab41bf367e7ccdce6b77540"></a>M_23_1&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a773b028bc801bbacf080e64cc9e2140dad49749234e0d3acff70cce2a4a6234f5"></a>M_12_4&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a773b028bc801bbacf080e64cc9e2140da4a6bd181671a9249e6c701c7539b8bdf"></a>M_14_2&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a773b028bc801bbacf080e64cc9e2140da5fbc8793f2fd541cf9619a995adf59f7"></a>M_24_1&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a773b028bc801bbacf080e64cc9e2140dabade6d5a94198da188b989a738f7f48a"></a>M_13_4&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a773b028bc801bbacf080e64cc9e2140da317e2c291c22d3ce99c6c8e488c6f4a0"></a>M_14_3&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a773b028bc801bbacf080e64cc9e2140da9b6eb12f44dba7a1dfc38a0d80efab9c"></a>M_34_1&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a773b028bc801bbacf080e64cc9e2140daa01a1391cca58ba2b6fa159d4881ba5f"></a>M_23_4&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a773b028bc801bbacf080e64cc9e2140da619e28e4e35d0227b1f9456a495a074c"></a>M_24_3&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a773b028bc801bbacf080e64cc9e2140dac32bacb80090ace74fefb5effc8ee736"></a>M_34_2&#160;</td><td class="fielddoc"></td></tr>
-</table>
-
-<p class="definition">Definition at line <a class="el" href="_dalitz_plot_helpers_8h_source.html#l00034">34</a> of file <a class="el" href="_dalitz_plot_helpers_8h_source.html">DalitzPlotHelpers.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;{<a class="code" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140da3735533dba9635551c54625b8bc84535">M_12</a> = 0, <a class="code" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140da13663624653359e52eb9400ba3a9cf57">M_34</a>, <a class="code" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140dadd12469c26c341f08186ccc329e01598">M_13</a>, <a class="code" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140da9fc14db61308350a84d0e5d8daaa247c">M_14</a>, <a class="code" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140dac2ed3d4275f97360697654e1091e41e0">M_23</a>, <a class="code" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140dad92542edf162c0a57fcd10fe6946a506">M_24</a>, <a class="code" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140dac8cfc4e24eff16775eaf57a5c5c8cfcf">M_12_3</a>, <a class="code" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140dad465e7e67cf4341f9a1d73935c42f2c0">M_13_2</a>, <a class="code" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140da2f4eb41e2ab41bf367e7ccdce6b77540">M_23_1</a>, <a class="code" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140dad49749234e0d3acff70cce2a4a6234f5">M_12_4</a>, <a class="code" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140da4a6bd181671a9249e6c701c7539b8bdf">M_14_2</a>, <a class="code" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140da5fbc8793f2fd541cf9619a995adf59f7">M_24_1</a>, <a class="code" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140dabade6d5a94198da188b989a738f7f48a">M_13_4</a>, <a class="code" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140da317e2c291c22d3ce99c6c8e488c6f4a0">M_14_3</a>, <a class="code" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140da9b6eb12f44dba7a1dfc38a0d80efab9c">M_34_1</a>, <a class="code" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140daa01a1391cca58ba2b6fa159d4881ba5f">M_23_4</a>, <a class="code" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140da619e28e4e35d0227b1f9456a495a074c">M_24_3</a>, <a class="code" href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140dac32bacb80090ace74fefb5effc8ee736">M_34_2</a>};</div><div class="ttc" id="_dalitz_plot_helpers_8h_html_a773b028bc801bbacf080e64cc9e2140dad465e7e67cf4341f9a1d73935c42f2c0"><div class="ttname"><a href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140dad465e7e67cf4341f9a1d73935c42f2c0">M_13_2</a></div><div class="ttdef"><b>Definition:</b> <a href="_dalitz_plot_helpers_8h_source.html#l00034">DalitzPlotHelpers.h:34</a></div></div>
-<div class="ttc" id="_dalitz_plot_helpers_8h_html_a773b028bc801bbacf080e64cc9e2140da317e2c291c22d3ce99c6c8e488c6f4a0"><div class="ttname"><a href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140da317e2c291c22d3ce99c6c8e488c6f4a0">M_14_3</a></div><div class="ttdef"><b>Definition:</b> <a href="_dalitz_plot_helpers_8h_source.html#l00034">DalitzPlotHelpers.h:34</a></div></div>
-<div class="ttc" id="_dalitz_plot_helpers_8h_html_a773b028bc801bbacf080e64cc9e2140dac8cfc4e24eff16775eaf57a5c5c8cfcf"><div class="ttname"><a href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140dac8cfc4e24eff16775eaf57a5c5c8cfcf">M_12_3</a></div><div class="ttdef"><b>Definition:</b> <a href="_dalitz_plot_helpers_8h_source.html#l00034">DalitzPlotHelpers.h:34</a></div></div>
-<div class="ttc" id="_dalitz_plot_helpers_8h_html_a773b028bc801bbacf080e64cc9e2140dad49749234e0d3acff70cce2a4a6234f5"><div class="ttname"><a href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140dad49749234e0d3acff70cce2a4a6234f5">M_12_4</a></div><div class="ttdef"><b>Definition:</b> <a href="_dalitz_plot_helpers_8h_source.html#l00034">DalitzPlotHelpers.h:34</a></div></div>
-<div class="ttc" id="_dalitz_plot_helpers_8h_html_a773b028bc801bbacf080e64cc9e2140da619e28e4e35d0227b1f9456a495a074c"><div class="ttname"><a href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140da619e28e4e35d0227b1f9456a495a074c">M_24_3</a></div><div class="ttdef"><b>Definition:</b> <a href="_dalitz_plot_helpers_8h_source.html#l00034">DalitzPlotHelpers.h:34</a></div></div>
-<div class="ttc" id="_dalitz_plot_helpers_8h_html_a773b028bc801bbacf080e64cc9e2140da9b6eb12f44dba7a1dfc38a0d80efab9c"><div class="ttname"><a href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140da9b6eb12f44dba7a1dfc38a0d80efab9c">M_34_1</a></div><div class="ttdef"><b>Definition:</b> <a href="_dalitz_plot_helpers_8h_source.html#l00034">DalitzPlotHelpers.h:34</a></div></div>
-<div class="ttc" id="_dalitz_plot_helpers_8h_html_a773b028bc801bbacf080e64cc9e2140da2f4eb41e2ab41bf367e7ccdce6b77540"><div class="ttname"><a href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140da2f4eb41e2ab41bf367e7ccdce6b77540">M_23_1</a></div><div class="ttdef"><b>Definition:</b> <a href="_dalitz_plot_helpers_8h_source.html#l00034">DalitzPlotHelpers.h:34</a></div></div>
-<div class="ttc" id="_dalitz_plot_helpers_8h_html_a773b028bc801bbacf080e64cc9e2140da4a6bd181671a9249e6c701c7539b8bdf"><div class="ttname"><a href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140da4a6bd181671a9249e6c701c7539b8bdf">M_14_2</a></div><div class="ttdef"><b>Definition:</b> <a href="_dalitz_plot_helpers_8h_source.html#l00034">DalitzPlotHelpers.h:34</a></div></div>
-<div class="ttc" id="_dalitz_plot_helpers_8h_html_a773b028bc801bbacf080e64cc9e2140da9fc14db61308350a84d0e5d8daaa247c"><div class="ttname"><a href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140da9fc14db61308350a84d0e5d8daaa247c">M_14</a></div><div class="ttdef"><b>Definition:</b> <a href="_dalitz_plot_helpers_8h_source.html#l00034">DalitzPlotHelpers.h:34</a></div></div>
-<div class="ttc" id="_dalitz_plot_helpers_8h_html_a773b028bc801bbacf080e64cc9e2140daa01a1391cca58ba2b6fa159d4881ba5f"><div class="ttname"><a href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140daa01a1391cca58ba2b6fa159d4881ba5f">M_23_4</a></div><div class="ttdef"><b>Definition:</b> <a href="_dalitz_plot_helpers_8h_source.html#l00034">DalitzPlotHelpers.h:34</a></div></div>
-<div class="ttc" id="_dalitz_plot_helpers_8h_html_a773b028bc801bbacf080e64cc9e2140dac32bacb80090ace74fefb5effc8ee736"><div class="ttname"><a href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140dac32bacb80090ace74fefb5effc8ee736">M_34_2</a></div><div class="ttdef"><b>Definition:</b> <a href="_dalitz_plot_helpers_8h_source.html#l00034">DalitzPlotHelpers.h:34</a></div></div>
-<div class="ttc" id="_dalitz_plot_helpers_8h_html_a773b028bc801bbacf080e64cc9e2140da5fbc8793f2fd541cf9619a995adf59f7"><div class="ttname"><a href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140da5fbc8793f2fd541cf9619a995adf59f7">M_24_1</a></div><div class="ttdef"><b>Definition:</b> <a href="_dalitz_plot_helpers_8h_source.html#l00034">DalitzPlotHelpers.h:34</a></div></div>
-<div class="ttc" id="_dalitz_plot_helpers_8h_html_a773b028bc801bbacf080e64cc9e2140dabade6d5a94198da188b989a738f7f48a"><div class="ttname"><a href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140dabade6d5a94198da188b989a738f7f48a">M_13_4</a></div><div class="ttdef"><b>Definition:</b> <a href="_dalitz_plot_helpers_8h_source.html#l00034">DalitzPlotHelpers.h:34</a></div></div>
-<div class="ttc" id="_dalitz_plot_helpers_8h_html_a773b028bc801bbacf080e64cc9e2140da3735533dba9635551c54625b8bc84535"><div class="ttname"><a href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140da3735533dba9635551c54625b8bc84535">M_12</a></div><div class="ttdef"><b>Definition:</b> <a href="_dalitz_plot_helpers_8h_source.html#l00034">DalitzPlotHelpers.h:34</a></div></div>
-<div class="ttc" id="_dalitz_plot_helpers_8h_html_a773b028bc801bbacf080e64cc9e2140dadd12469c26c341f08186ccc329e01598"><div class="ttname"><a href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140dadd12469c26c341f08186ccc329e01598">M_13</a></div><div class="ttdef"><b>Definition:</b> <a href="_dalitz_plot_helpers_8h_source.html#l00034">DalitzPlotHelpers.h:34</a></div></div>
-<div class="ttc" id="_dalitz_plot_helpers_8h_html_a773b028bc801bbacf080e64cc9e2140dac2ed3d4275f97360697654e1091e41e0"><div class="ttname"><a href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140dac2ed3d4275f97360697654e1091e41e0">M_23</a></div><div class="ttdef"><b>Definition:</b> <a href="_dalitz_plot_helpers_8h_source.html#l00034">DalitzPlotHelpers.h:34</a></div></div>
-<div class="ttc" id="_dalitz_plot_helpers_8h_html_a773b028bc801bbacf080e64cc9e2140da13663624653359e52eb9400ba3a9cf57"><div class="ttname"><a href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140da13663624653359e52eb9400ba3a9cf57">M_34</a></div><div class="ttdef"><b>Definition:</b> <a href="_dalitz_plot_helpers_8h_source.html#l00034">DalitzPlotHelpers.h:34</a></div></div>
-<div class="ttc" id="_dalitz_plot_helpers_8h_html_a773b028bc801bbacf080e64cc9e2140dad92542edf162c0a57fcd10fe6946a506"><div class="ttname"><a href="_dalitz_plot_helpers_8h.html#a773b028bc801bbacf080e64cc9e2140dad92542edf162c0a57fcd10fe6946a506">M_24</a></div><div class="ttdef"><b>Definition:</b> <a href="_dalitz_plot_helpers_8h_source.html#l00034">DalitzPlotHelpers.h:34</a></div></div>
-</div><!-- fragment -->
-</div>
-</div>
-<h2 class="groupheader">Function Documentation</h2>
-<a id="a17ed9540c8489c150e57cf9a6b34f25d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a17ed9540c8489c150e57cf9a6b34f25d">&#9670;&nbsp;</a></span>enum_to_underlying()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename E &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">constexpr std::underlying_type&lt;E&gt;::type enum_to_underlying </td>
-          <td>(</td>
-          <td class="paramtype">E&#160;</td>
-          <td class="paramname"><em>e</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="_dalitz_plot_helpers_8h_source.html#l00016">16</a> of file <a class="el" href="_dalitz_plot_helpers_8h_source.html">DalitzPlotHelpers.h</a>.</p>
-
-<p class="reference">References <a class="el" href="_dalitz_plot_helpers_8h.html#adefffc5330b105d4394c44bca1a24632">get4Vecs()</a>, <a class="el" href="_dalitz_plot_helpers_8h.html#aeb77739f6d5e29f11818a3c0f7de7ab9">getmass()</a>, <a class="el" href="_dalitz_plot_helpers_8h.html#ac953afcf4d2d22a26509c97a3e666061">getResonanceAmplitude()</a>, and <a class="el" href="_dalitz_plot_helpers_8h.html#a87dfaa7d884e836475c1307d17ee2d1f">inDalitz()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;                                                                     {</div><div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span>typename std::underlying_type&lt;E&gt;::type<span class="keyword">&gt;</span>(e);</div><div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;}</div></div><!-- fragment -->
-</div>
-</div>
-<a id="adefffc5330b105d4394c44bca1a24632"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adefffc5330b105d4394c44bca1a24632">&#9670;&nbsp;</a></span>get4Vecs()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">__device__ void get4Vecs </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> *&#160;</td>
-          <td class="paramname"><em>Vecs</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const unsigned int &amp;&#160;</td>
-          <td class="paramname"><em>constants</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;&#160;</td>
-          <td class="paramname"><em>m12</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;&#160;</td>
-          <td class="paramname"><em>m34</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;&#160;</td>
-          <td class="paramname"><em>cos12</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;&#160;</td>
-          <td class="paramname"><em>cos34</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;&#160;</td>
-          <td class="paramname"><em>phi</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="reference">Referenced by <a class="el" href="_dalitz_plot_helpers_8h_source.html#l00016">enum_to_underlying()</a>.</p>
-
-</div>
-</div>
-<a id="aeb77739f6d5e29f11818a3c0f7de7ab9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aeb77739f6d5e29f11818a3c0f7de7ab9">&#9670;&nbsp;</a></span>getmass()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">__device__ <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> getmass </td>
-          <td>(</td>
-          <td class="paramtype">const unsigned int &amp;&#160;</td>
-          <td class="paramname"><em>pair</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;&#160;</td>
-          <td class="paramname"><em>d1</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;&#160;</td>
-          <td class="paramname"><em>d2</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> *&#160;</td>
-          <td class="paramname"><em>vecs</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;&#160;</td>
-          <td class="paramname"><em>m1</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;&#160;</td>
-          <td class="paramname"><em>m2</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;&#160;</td>
-          <td class="paramname"><em>m3</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;&#160;</td>
-          <td class="paramname"><em>m4</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="reference">Referenced by <a class="el" href="_dalitz_plot_helpers_8h_source.html#l00016">enum_to_underlying()</a>.</p>
-
-</div>
-</div>
-<a id="ac953afcf4d2d22a26509c97a3e666061"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac953afcf4d2d22a26509c97a3e666061">&#9670;&nbsp;</a></span>getResonanceAmplitude()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">__device__ thrust::complex&lt;<a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>&gt; getResonanceAmplitude </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>&#160;</td>
-          <td class="paramname"><em>m12</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>&#160;</td>
-          <td class="paramname"><em>m13</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a>&#160;</td>
-          <td class="paramname"><em>m23</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>functionIdx</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>pIndex</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="reference">Referenced by <a class="el" href="_dalitz_plot_helpers_8h_source.html#l00016">enum_to_underlying()</a>.</p>
-
-</div>
-</div>
-<a id="a87dfaa7d884e836475c1307d17ee2d1f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a87dfaa7d884e836475c1307d17ee2d1f">&#9670;&nbsp;</a></span>inDalitz()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">__device__ bool inDalitz </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;&#160;</td>
-          <td class="paramname"><em>m12</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;&#160;</td>
-          <td class="paramname"><em>m13</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;&#160;</td>
-          <td class="paramname"><em>bigM</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;&#160;</td>
-          <td class="paramname"><em>dm1</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;&#160;</td>
-          <td class="paramname"><em>dm2</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="_global_cuda_defines_8h.html#a913b5aaf78163d5e196b13cd79e7d43a">fptype</a> &amp;&#160;</td>
-          <td class="paramname"><em>dm3</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="reference">Referenced by <a class="el" href="_dalitz_plot_helpers_8h_source.html#l00016">enum_to_underlying()</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Variable Documentation</h2>
-<a id="a58bf7c1a720273175d4a60ed59394307"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a58bf7c1a720273175d4a60ed59394307">&#9670;&nbsp;</a></span>resonanceSize</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const int resonanceSize = 4</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="_dalitz_plot_helpers_8h_source.html#l00037">37</a> of file <a class="el" href="_dalitz_plot_helpers_8h_source.html">DalitzPlotHelpers.h</a>.</p>
-
-</div>
-</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed May 3 2017 15:14:58 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Jun 9 2017 01:14:10 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

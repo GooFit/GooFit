@@ -8,9 +8,7 @@
 GooFit is a massively-parallel framework, written using Thrust for CUDA and OpenMP, for
 doing maximum-likelihood fits with a familiar syntax.
 
-* [Changelog](./CHANGELOG.md)
-* [Contributing](./CONTRIBUTING.md)
-* [API documentation]
+[What's new](./CHANGELOG.md) • [Tutorials] • [API documentation] • [Converting from older GooFit](./docs/CONVERTING20.md)
 
 ## Requirements
 
@@ -51,18 +49,10 @@ cmake ..
 make
 ```
 
-> If you don't have a modern CMake, Kitware provides installers for every OS. You can even get a copy using python: `pip install cmake` or locally with `pip install --user cmake`.
-> On a Mac, you can also use any package manager, such as Homebrew: `brew install cmake`
-> On Linux, you can manually get it using:
->
-> ```bash
-> mkdir cmake && wget -qO- "https://cmake.org/files/v3.7/cmake-3.7.2-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C cmake
-> export PATH=`pwd`/cmake/bin:$PATH
-> ```
->
-> The second line will need to be rerun whenever use a new shell. Feel free to make your updated CMake default; CMake is insanely backward compatible and will even "dumb itself down" when it sees a lower version in the `minimum_required` line in every `CMakeLists.txt`.
+If you don't have a modern CMake, Kitware provides installers for every OS. You can even get a copy using python: `pip install cmake` or locally with `pip install --user cmake`.
+On a Mac, you can also use any package manager, such as Homebrew: `brew install cmake`
 
-If you want to change compiler, set `CC` and `CXX` to appropriate defaults *before* you run CMake either inline or in your environment. You can also set `CMAKE_C_COMPILER` and `CMAKE_CXX_COMPILER` directly on the command line wiht `-D`. If you want to set the host and device backends, you can set those options. The defaults are:
+If you want to change compiler, set `CC` and `CXX` to appropriate defaults *before* you run CMake either inline or in your environment. You can also set `CMAKE_C_COMPILER` and `CMAKE_CXX_COMPILER` directly on the command line with `-D`. If you want to set the host and device backends, you can set those options. The defaults are:
 ```
 cmake .. -DGOOFIT_DEVICE=CUDA -DGOOFIT_HOST=CPP
 ```
@@ -85,7 +75,9 @@ Advanced Options:
 * `-DGOOFIT_CUDA_OR_GROUPSIZE:INT=128`: This sets the group size that thrust will use for distributing the problem.  This parameter can be thought of as 'Threads per block'.  These will be used after running 'find_optimal.py' to figure out the optimal size.
 * `-DGOOFIT_CUDA_OR_GRAINSIZE:INT=7`: This is the grain size thrust uses for distributing the problem.  This parameter can be thought of as 'Items per thread'.
 * `-DGOOFIT_PYTHON=OFF`: Preliminary python bindings using [PyBind11].
+* `-DGOOFIT_MAXPAR=1800`: The maximum number of parameters to allow. May cause memory issues if too large.
 * You can enable sanitizers on non-CUDA builds with `-DSANITIZE_ADDRESS=ON`, `-DSANITIZE_MEMORY=ON`, `-DSANITIZE_THREAD=ON` or `-DSANITIZE_UNDEFINED=ON`.
+* If `clang-tidy` is available, it will automatically be used to check the source. If you set `-DGOOFIT_TIDY_FIX=ON`, fixes will be applied to the GooFit source.
 
 Note for targeting Tesla P100 or any `arch=6.0` device:
 * Please use `-DGOOFIT_SEPARATE_COMP=ON` flags to compile.
@@ -93,7 +85,7 @@ Note for targeting Tesla P100 or any `arch=6.0` device:
 A few standard CMake tricks:
 
 * Use `make VERBOSE=1` to see the commands used to build the files.
-* Use `cmake .. -L` to list the CMake options.
+* Use `cmake .. -LH` to list the CMake options with help.
 * Use `ccmake` if available to see a curses (terminal) gui, or `cmake-gui` for a completely graphical interface.
 * Use `-G` and the name of a generator to use something other than `make`, like `Xcode` or `Ninja`.
 * Open the `CMakeLists.txt` with QtCreator to generate for that IDE.
@@ -103,6 +95,7 @@ A few standard CMake tricks:
 * CMake reruns when needed when you `make` unless you add a file that it globs for (like new `goofit_projects`).
 * Use `make -j12` to build with 12 cores (for example). You can set this as the `MAKEFLAGS` environment variable, too.
 * Use `CMake --build .` to build without referring to your specific build tool, like `make` or `ninja`.
+* If you are using the `llvm` tool-suite, you can use `-DCMAKE_EXPORT_COMPILE_COMMANDS=ON` to generate the .json file that the `clang-*` commands expect.
 
 > Note: Running `make`, `make omp`, or `make cuda` in the main directory will make a build directory for you, and will run CMake and make.
 
@@ -165,15 +158,16 @@ The new `GooFit::Application`, which is not required but provides GooFit options
 
 ```cpp
 #include "GooFit/Application.h"
+using namespace GooFit;
 
 // Place this at the beginning of main
-GooFit::Application app{"Optional discription", argc, argv};
+Application app{"Optional discription", argc, argv};
 
 // Command line options can be added here.
 
 try {
     app.run();
-} catch(const GooFit::ParseError &e) {
+} catch(const ParseError &e) {
     return app.exit(e);
 }
 ```
@@ -220,3 +214,4 @@ and do not necessarily reflect the views of the National Science Foundation.
 [CLI11]:             https://github.com/CLIUtils/CLI11
 [PyBind11]:          http://pybind11.readthedocs.io/en/master
 [ROOT]:              https://root.cern.ch
+[Tutorials]:         https://henryiii.gitbooks.io/goofit/content/

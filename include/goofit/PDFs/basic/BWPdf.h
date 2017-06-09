@@ -4,13 +4,10 @@
 
 namespace GooFit {
 
-
 class BWPdf : public GooPdf {
+  public:
+    BWPdf(std::string n, Variable *_x, Variable *m, Variable *s);
 
-public:
-    BWPdf(std::string n, Variable* _x, Variable* m, Variable* s);
-private:
-
+  private:
 };
 } // namespace GooFit
-

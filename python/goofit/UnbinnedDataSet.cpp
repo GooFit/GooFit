@@ -8,9 +8,8 @@ using namespace GooFit;
 
 void init_UnbinnedDataSet(py::module &m) {
     py::class_<UnbinnedDataSet, DataSet>(m, "UnbinnedDataSet")
-        .def(py::init<Variable*>())
-        .def(py::init<Variable*, std::string>())
-        .def(py::init<std::vector<Variable*>&>())
-        .def(py::init<std::vector<Variable*>&, std::string>())
-        ;
+        .def(py::init<Variable *>())
+        .def(py::init<Variable *, std::string>())
+        .def(py::init<std::vector<Variable *> &>())
+        .def(py::init<std::vector<Variable *> &, std::string>());
 }

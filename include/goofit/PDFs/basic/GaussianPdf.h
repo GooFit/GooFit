@@ -4,19 +4,12 @@
 
 namespace GooFit {
 
-
 class GaussianPdf : public GooPdf {
-public:
-    GaussianPdf(std::string n, Variable* _x, Variable* m, Variable* s);
-    __host__ fptype integrate(fptype lo, fptype hi) const;
-    __host__ virtual bool hasAnalyticIntegral() const {
-        return true;
-    }
+  public:
+    GaussianPdf(std::string n, Variable *_x, Variable *m, Variable *s);
+    __host__ fptype integrate(fptype lo, fptype hi) const override;
+    __host__ bool hasAnalyticIntegral() const override { return true; }
 
-
-
-private:
-
+  private:
 };
 } // namespace GooFit
-

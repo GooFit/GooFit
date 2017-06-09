@@ -31,3 +31,6 @@
 [submodule "extern/sanitizers"]
 	path = extern/sanitizers
 	url = ../../arsenm/sanitizers-cmake.git
+[submodule "extern/MCBooster"]
+	path = extern/MCBooster
+	url = ../MCBooster.git

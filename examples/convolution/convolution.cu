@@ -13,17 +13,17 @@ using namespace GooFit;
 
 double cpu_bw(double x, double x0, double gamma) {
     double ret = gamma;
-    ret /= (2*sqrt(M_PI));
-    ret /= ((x-x0)*(x-x0) + 0.25*gamma*gamma);
+    ret /= (2 * sqrt(M_PI));
+    ret /= ((x - x0) * (x - x0) + 0.25 * gamma * gamma);
     return ret;
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
     GooFit::Application app("Convolution example", argc, argv);
 
     try {
         app.run();
-    } catch (const GooFit::ParseError &e) {
+    } catch(const GooFit::ParseError &e) {
         return app.exit(e);
     }
 
@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
         xvar.setValue(donram.Uniform(20) - 10);
 
         double bwvalue = cpu_bw(xvar.getValue(), x0.getValue(), gamma.getValue());
-        double roll = donram.Uniform() * (2.0 / (sqrt(M_PI)*gamma.getValue()));
+        double roll    = donram.Uniform() * (2.0 / (sqrt(M_PI) * gamma.getValue()));
 
         if(roll > bwvalue) {
             --i;

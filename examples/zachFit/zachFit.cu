@@ -29,8 +29,8 @@
 using namespace fmt::literals;
 using namespace GooFit;
 
-TH1D* getMCData(DataSet *data, Variable* var, std::string filename) {
-    TH1D* mchist = new TH1D{"mc_hist", "", 300, 0.1365, 0.1665};
+TH1D *getMCData(DataSet *data, Variable *var, std::string filename) {
+    TH1D *mchist = new TH1D{"mc_hist", "", 300, 0.1365, 0.1665};
     std::ifstream mcreader{filename};
 
     while(mcreader >> *var) {
@@ -50,8 +50,8 @@ TH1D* getMCData(DataSet *data, Variable* var, std::string filename) {
     return mchist;
 }
 
-TH1D* getData(DataSet* data, Variable *var, std::string filename) {
-    TH1D* data_hist = new TH1D("data_hist", "", 300, 0.1365, 0.1665);
+TH1D *getData(DataSet *data, Variable *var, std::string filename) {
+    TH1D *data_hist = new TH1D("data_hist", "", 300, 0.1365, 0.1665);
     std::ifstream datareader{filename};
 
     while(datareader >> *var) {
@@ -72,21 +72,32 @@ TH1D* getData(DataSet* data, Variable *var, std::string filename) {
     return data_hist;
 }
 
-
-int main(int argc, char** argv) {
-    GooFit::Application app{"Zach-Fit example", argc, argv};
+int main(int argc, char **argv) {
+    GooFit::Application app{
+        R"raw(This example performs a staged fit measuring the mass difference between the `D*(2010)+` and `D0` using D*+ -> D0 pi+ events recorded by the BaBar detector (approximately 477 inverse femtobarn).
     
-    int mode=0, data = 0;
+Dataset descriptions:
+0-simple   Early testing sample for GooFit before nominal dataset was released.
+           MC resolution sample and data for channel D*+ -> D0 pi+; D0 -> K- pi+
+           Samples are composed of events that pass the majority of selection criteria, but
+           fail at least one of the stricter tracking cuts. The resulting resolution is worse
+           than in the events of the nominal samples used in the official analysis/publication
+           marked below as data set options "1" and "2".
+1-kpi      Nominal MC resolution sample and data for channel D*+ -> D0 pi+; D0 -> K- pi+
+2-k3pi     Nominal MC resolution sample and data for channel D*+ -> D0 pi+; D0 -> K- pi+ pi- pi+
+)raw",
+        argc,
+        argv};
+
+    int mode = 0, data = 0;
     bool plot;
-    app.add_set("-m,--mode,mode", mode, {0,1,2},
-            "Program mode: 0-unbinned, 1-binned, 2-binned chisq");
-    app.add_set("-d,--data,data", data, {0,1,2},
-            "Dataset: 0-simple, 1-kpi, 2-k3pi");
+    app.add_set("-m,--mode,mode", mode, {0, 1, 2}, "Program mode: 0-unbinned, 1-binned, 2-binned chisq");
+    app.add_set("-d,--data,data", data, {0, 1, 2}, "Dataset: 0-simple, 1-kpi, 2-k3pi");
     app.add_flag("-p,--plot", plot, "Make and save plots of results");
 
     try {
         app.run();
-    } catch (const GooFit::ParseError &e) {
+    } catch(const GooFit::ParseError &e) {
         return app.exit(e);
     }
 
@@ -103,17 +114,16 @@ int main(int argc, char** argv) {
     gStyle->SetLineWidth(1);
     gStyle->SetLineColor(1);
     gStyle->SetPalette(1, 0);
-    
+
     TCanvas foo;
     foo.SetLogy(true);
 
-
     // Get the name of the files to use
     std::string mcfile, datafile;
-    if (data == 0) {
+    if(data == 0) {
         mcfile   = app.get_filename("dataFiles/dstwidth_kpi_resMC.dat", "examples/zachFit");
         datafile = app.get_filename("dataFiles/dstwidth_kpi_data.dat", "examples/zachFit");
-    } else if (data == 1) {
+    } else if(data == 1) {
         mcfile   = app.get_filename("dataFiles/DstarWidth_D0ToKpi_deltaM_MC.dat", "examples/zachFit");
         datafile = app.get_filename("dataFiles/DstarWidth_D0ToKpi_deltaM_Data.dat", "examples/zachFit");
     } else {
@@ -135,7 +145,7 @@ int main(int argc, char** argv) {
         data_dataset.reset(new BinnedDataSet{&dm});
     }
 
-    TH1D* mc_hist = getMCData(mc_dataset.get(), &dm, mcfile);
+    TH1D *mc_hist = getMCData(mc_dataset.get(), &dm, mcfile);
 
     Variable mean1("kpi_mc_mean1", 0.145402, 0.00001, 0.143, 0.148);
     Variable mean2("kpi_mc_mean2", 0.145465, 0.00001, 0.145, 0.1465);
@@ -157,13 +167,10 @@ int main(int argc, char** argv) {
     GaussianPdf gauss3("gauss3", &dm, &mean3, &sigma3);
     ArgusPdf argus("argus", &dm, &pimass, &aslope, false, &apower);
 
+    AddPdf resolution{"resolution", {&gfrac1, &gfrac2, &afrac}, {&gauss1, &gauss2, &argus, &gauss3}};
 
-    AddPdf resolution{"resolution",
-        {&gfrac1, &gfrac2, &afrac},
-        {&gauss1, &gauss2, &argus, &gauss3}};
-    
     resolution.setData(mc_dataset.get());
-  
+
     FitManager mcpdf{&resolution};
 
     GOOFIT_INFO("Done with collecting MC, starting minimisation");
@@ -174,15 +181,15 @@ int main(int argc, char** argv) {
         mc_hist->SetLineColor(kBlack);
         mc_hist->Draw("e");
 
-        double step = mc_hist->GetXaxis()->GetBinWidth(2);
-        auto tot_hist = resolution.plotToROOT(&dm, mc_dataset->getNumEvents()*step);
+        double step   = mc_hist->GetXaxis()->GetBinWidth(2);
+        auto tot_hist = resolution.plotToROOT(&dm, mc_dataset->getNumEvents() * step);
         tot_hist->SetLineColor(kGreen);
-        
+
         tot_hist->Draw("SAME");
 
         foo.SaveAs("MC_plot.png");
     }
-    
+
     // Locking the MC variables
     mean1.setFixed(true);
     mean2.setFixed(true);
@@ -218,27 +225,23 @@ int main(int argc, char** argv) {
     signal2.setIntegrationConstants(0.1395, 0.1665, 0.0000027);
     signal3.setIntegrationConstants(0.1395, 0.1665, 0.0000027);
 
-    AddPdf signal{"signal",
-        {&gfrac1, &gfrac2, &afrac},
-        {&signal1, &signal2, &argus, &signal3}};
+    AddPdf signal{"signal", {&gfrac1, &gfrac2, &afrac}, {&signal1, &signal2, &argus, &signal3}};
 
     Variable slope("kpi_rd_slope", -1.0, 0.1, -35.0, 25.0);
-    Variable* bpower = nullptr;
+    Variable *bpower = nullptr;
     ArgusPdf bkg("bkg", &dm, &pimass, &slope, false, bpower);
 
     Variable bkg_frac("kpi_rd_bkg_frac", 0.03, 0.0, 0.3);
 
-    TH1D* data_hist = getData(data_dataset.get(), &dm, datafile);
+    TH1D *data_hist = getData(data_dataset.get(), &dm, datafile);
 
-    AddPdf total("total",
-                 {&bkg_frac},
-                 {&bkg, &signal});
+    AddPdf total("total", {&bkg_frac}, {&bkg, &signal});
 
     total.setData(data_dataset.get());
 
     std::unique_ptr<BinnedChisqFit> chi_control;
     if(2 == mode) {
-        chi_control.reset(new BinnedChisqFit); 
+        chi_control.reset(new BinnedChisqFit);
         total.setFitControl(chi_control.get());
     }
 
@@ -247,18 +250,18 @@ int main(int argc, char** argv) {
     GOOFIT_INFO("Starting fit");
 
     datapdf.fit();
-    
+
     if(plot) {
         GOOFIT_INFO("Plotting results");
-        
+
         data_hist->SetLineColor(kBlack);
         data_hist->Draw("e");
-        
+
         double scale = data_hist->GetXaxis()->GetBinWidth(2) * data_dataset->getNumEvents();
 
-        auto sig_hist = signal.plotToROOT(&dm, (1 - bkg_frac.getValue())*scale);
+        auto sig_hist = signal.plotToROOT(&dm, (1 - bkg_frac.getValue()) * scale);
         sig_hist->SetLineColor(kBlue);
-        auto back_hist =bkg.plotToROOT(&dm, bkg_frac.getValue()*scale);
+        auto back_hist = bkg.plotToROOT(&dm, bkg_frac.getValue() * scale);
         back_hist->SetLineColor(kRed);
         auto tot_hist = total.plotToROOT(&dm, scale);
         tot_hist->SetLineColor(kGreen);
@@ -269,6 +272,6 @@ int main(int argc, char** argv) {
 
         foo.SaveAs("ResultFit.png");
     }
-    
+
     return datapdf;
 }

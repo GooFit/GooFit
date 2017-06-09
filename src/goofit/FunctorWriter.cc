@@ -1,38 +1,31 @@
 #include "goofit/FunctorWriter.h"
-#include <fstream>
-#include <map>
 #include "goofit/PdfBase.h"
 #include "goofit/Variable.h"
+#include <fstream>
+#include <map>
 
 namespace GooFit {
 
-
-void writeToFile(PdfBase* pdf, const char* fname) {
-    std::vector<Variable*> params = pdf->getParameters();
+void writeToFile(PdfBase *pdf, const char *fname) {
+    std::vector<Variable *> params = pdf->getParameters();
 
     std::ofstream writer;
     writer.open(fname);
 
-    for(Variable* p : params) {
-        writer << p->getName() << " "
-               << p->getValue() << " "
-               << p->getError() << " "
-               << p->getNumBins() << " "
-               << p->getLowerLimit() << " "
-               << p->getUpperLimit()
-               << std::endl;
+    for(Variable *p : params) {
+        writer << p->getName() << " " << p->getValue() << " " << p->getError() << " " << p->getNumBins() << " "
+               << p->getLowerLimit() << " " << p->getUpperLimit() << std::endl;
     }
 
     writer.close();
 }
 
+void readFromFile(PdfBase *pdf, const char *fname) {
+    std::vector<Variable *> params = pdf->getParameters();
 
-void readFromFile(PdfBase* pdf, const char* fname) {
-    std::vector<Variable*> params = pdf->getParameters();
+    std::map<std::string, Variable *> tempMap;
 
-    std::map<std::string, Variable*> tempMap;
-
-    for(Variable* p : params) {
+    for(Variable *p : params) {
         tempMap[p->getName()] = p;
     }
 
@@ -48,18 +41,14 @@ void readFromFile(PdfBase* pdf, const char* fname) {
         if(reader.eof())
             break;
 
-        Variable* var = tempMap[buffer];
-        
+        Variable *var = tempMap[buffer];
+
         fptype value, error, lowerlimit, upperlimit;
         size_t numbins;
 
         if(var) {
-            reader >> value
-                   >> error
-                   >> numbins
-                   >> lowerlimit
-                   >> upperlimit;
-            
+            reader >> value >> error >> numbins >> lowerlimit >> upperlimit;
+
             var->setValue(value);
             var->setError(error);
             var->setNumBins(numbins);
@@ -76,7 +65,7 @@ void readFromFile(PdfBase* pdf, const char* fname) {
     reader.close();
 }
 
-void readListOfNumbers(thrust::host_vector<fptype>& target, const char* fname) {
+void readListOfNumbers(thrust::host_vector<fptype> &target, const char *fname) {
     std::ifstream reader;
     reader.open(fname);
     fptype buffer = 0;
@@ -93,7 +82,7 @@ void readListOfNumbers(thrust::host_vector<fptype>& target, const char* fname) {
     reader.close();
 }
 
-void writeListOfNumbers(thrust::host_vector<fptype>& target, const char* fname) {
+void writeListOfNumbers(thrust::host_vector<fptype> &target, const char *fname) {
     std::ofstream writer;
     writer.open(fname);
 
@@ -104,4 +93,3 @@ void writeListOfNumbers(thrust::host_vector<fptype>& target, const char* fname) 
     writer.close();
 }
 } // namespace GooFit
-

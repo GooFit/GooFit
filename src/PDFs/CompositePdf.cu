@@ -2,19 +2,19 @@
 
 namespace GooFit {
 
-
-__device__ fptype device_Composite(fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_Composite(fptype *evt, fptype *p, unsigned int *indices) {
     unsigned int coreFcnIndex  = RO_CACHE(indices[1]);
     unsigned int coreParIndex  = RO_CACHE(indices[2]);
     unsigned int shellFcnIndex = RO_CACHE(indices[3]);
     unsigned int shellParIndex = RO_CACHE(indices[4]);
 
     // NB, not normalising core function, it is not being used as a PDF.
-    //fptype coreValue = (*(reinterpret_cast<device_function_ptr>(device_function_table[coreFcnIndex])))(evt, cudaArray, paramIndices+coreParIndex);
+    // fptype coreValue = (*(reinterpret_cast<device_function_ptr>(device_function_table[coreFcnIndex])))(evt,
+    // cudaArray, paramIndices+coreParIndex);
     fptype coreValue = callFunction(evt, coreFcnIndex, coreParIndex);
 
-    unsigned int* shellParams = paramIndices + shellParIndex;
-    unsigned int numShellPars = shellParams[0];
+    unsigned int *shellParams  = paramIndices + shellParIndex;
+    unsigned int numShellPars  = shellParams[0];
     unsigned int shellObsIndex = shellParams[2 + numShellPars];
 
     fptype fakeEvt[10]; // Allow plenty of space in case events are large.
@@ -22,19 +22,20 @@ __device__ fptype device_Composite(fptype* evt, fptype* p, unsigned int* indices
 
     // Don't normalize shell either, since we don't know what composite function is being used for.
     // It may not be a PDF. Normalising at this stage would be presumptuous.
-    //fptype ret = (*(reinterpret_cast<device_function_ptr>(device_function_table[shellFcnIndex])))(fakeEvt, cudaArray, shellParams);
+    // fptype ret = (*(reinterpret_cast<device_function_ptr>(device_function_table[shellFcnIndex])))(fakeEvt, cudaArray,
+    // shellParams);
     fptype ret = callFunction(fakeEvt, shellFcnIndex, shellParIndex);
 
-    //if (0 == THREADIDX)
-    //printf("Composite: %f %f %f %f %f %f\n", evt[4], evt[5], evt[6], evt[7], coreValue, ret);
+    // if (0 == THREADIDX)
+    // printf("Composite: %f %f %f %f %f %f\n", evt[4], evt[5], evt[6], evt[7], coreValue, ret);
 
     return ret;
 }
 
 __device__ device_function_ptr ptr_to_Composite = device_Composite;
 
-__host__ CompositePdf::CompositePdf(std::string n, PdfBase* core, PdfBase* shell)
-    : GooPdf(0, n) {
+__host__ CompositePdf::CompositePdf(std::string n, PdfBase *core, PdfBase *shell)
+    : GooPdf(nullptr, n) {
     std::vector<unsigned int> pindices;
     pindices.push_back(core->getFunctionIndex());
     pindices.push_back(core->getParameterIndex());
@@ -67,13 +68,11 @@ __host__ fptype CompositePdf::normalize() const {
     // normalize them even though the information
     // may not be used.
 
-    for(std::vector<PdfBase*>::const_iterator c = components.begin(); c != components.end(); ++c) {
-        (*c)->normalize();
+    for(auto component : components) {
+        component->normalize();
     }
 
     // Normalize composite in the usual binned-integral way.
     return GooPdf::normalize();
-
 }
 } // namespace GooFit
-

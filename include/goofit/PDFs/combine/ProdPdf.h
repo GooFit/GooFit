@@ -4,18 +4,13 @@
 
 namespace GooFit {
 
-
 class ProdPdf : public GooPdf {
-public:
+  public:
+    ProdPdf(std::string n, std::vector<PdfBase *> comps);
+    __host__ fptype normalize() const override;
+    __host__ bool hasAnalyticIntegral() const override { return false; }
 
-    ProdPdf(std::string n, std::vector<PdfBase*> comps);
-    __host__ virtual fptype normalize() const;
-    __host__ virtual bool hasAnalyticIntegral() const {
-        return false;
-    }
-
-private:
+  private:
     bool varOverlaps; // True if any components share an observable.
 };
 } // namespace GooFit
-

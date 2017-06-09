@@ -2,6 +2,7 @@
 [![Code Coverage][codecov-badge]][codecov-link]
 [![Join the chat at https://gitter.im/GooFit/Lobby][gitter-badge]][gitter-link]
 [![License: LGPL v3][license-badge]](./LICENSE)
+[![DOI][DOI-badge]][DOI-link]
 
 ![GooFit logo](./docs/GooFitLogo.png)
 
@@ -198,6 +199,8 @@ and was developed under grant number [1005530].
 Any opinions, findings, and conclusions or recommendations expressed in this material are those of the developers
 and do not necessarily reflect the views of the National Science Foundation.
 
+[DOI-badge]: https://zenodo.org/badge/9017446.svg
+[DOI-link]: [![DOI](https://zenodo.org/badge/9017446.svg)](https://zenodo.org/badge/latestdoi/9017446)
 [API documentation]: https://GooFit.github.io/GooFit
 [travis-badge]:      https://travis-ci.org/GooFit/GooFit.svg?branch=master
 [travis-link]:       https://travis-ci.org/GooFit/GooFit

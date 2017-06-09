@@ -6,8 +6,8 @@ project(GOOFIT
 
 #set(GOOFIT_TAG "dev")
 #set(GOOFIT_TAG "alpha")
-set(GOOFIT_TAG "beta")
-#set(GOOFIT_TAG "release")
+#set(GOOFIT_TAG "beta")
+set(GOOFIT_TAG "release")
 
 if(NOT DEFINED CMAKE_SUPPRESS_DEVELOPER_WARNINGS AND NOT GOOFIT_TAG STREQUAL "dev")
     set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE INTERNAL "No dev warnings")

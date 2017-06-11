@@ -1,5 +1,3 @@
-#include "gtest/gtest.h"
-
 #include "goofit/FitManager.h"
 #include "goofit/BinnedDataSet.h"
 #include "goofit/PDFs/basic/ExpPdf.h"
@@ -8,15 +6,16 @@
 
 #include "goofit/Variable.h"
 
-#include <sys/time.h>
-#include <sys/times.h>
 #include <iostream>
-
 #include <random>
+
+#include "catch.hpp"
 
 using namespace GooFit;
 
-TEST(UnbinnedFit, SimpleFit) {
+TEST_CASE("Simple unbinned exponential",
+          "[unbinned][exponential]") {
+
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> d(1.5);
@@ -46,12 +45,13 @@ TEST(UnbinnedFit, SimpleFit) {
     FitManager fitter{&exppdf};
     fitter.fit();
 
-    EXPECT_TRUE(fitter);
-    EXPECT_LT(alpha.getError(), .1);
-    EXPECT_NEAR(-1.5, alpha.getValue(), alpha.getError() * 3);
+    CHECK(fitter);
+    CHECK(alpha.getError() < .01);
+    CHECK(alpha == Approx(-1.5).margin(alpha.getError()*3));
 }
 
-TEST(UnbinnedFit, DualFit) {
+TEST_CASE("Dual unbinned exponential",
+          "[unbinned][exponential]") {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> dx(1.5);
@@ -89,14 +89,16 @@ TEST(UnbinnedFit, DualFit) {
     FitManager fitter{&totalpdf};
     fitter.fit();
 
-    EXPECT_TRUE(fitter);
-    EXPECT_LT(xalpha.getError(), .1);
-    EXPECT_LT(yalpha.getError(), .1);
-    EXPECT_NEAR(-1.5, xalpha.getValue(), xalpha.getError() * 3);
-    EXPECT_NEAR(-.75, yalpha.getValue(), yalpha.getError() * 3);
+    CHECK(fitter);
+    CHECK(xalpha.getError() < .1);
+    CHECK(yalpha.getError() < .1);
+    CHECK(xalpha == Approx(-1.5).margin(xalpha.getError()*3));
+    CHECK(yalpha == Approx(-.75).margin(yalpha.getError()*3));
 }
 
-TEST(UnbinnedFit, DifferentFitterVariable) {
+TEST_CASE("Dual unbinned exponential reversed variable",
+        "[unbinned][exponential]") {
+
     // Random number generation
     std::mt19937 gen(137);
     std::normal_distribution<> dx(1.5, .3);
@@ -134,14 +136,14 @@ TEST(UnbinnedFit, DifferentFitterVariable) {
     FitManager fitter{&totalpdf};
     fitter.fit();
 
-    EXPECT_TRUE(fitter);
-    EXPECT_LT(xalpha.getError(), .1);
-    EXPECT_LT(yalpha.getError(), .1);
-    EXPECT_LT(xsigma.getError(), .1);
-    EXPECT_LT(ysigma.getError(), .1);
+    CHECK(fitter);
+    CHECK(xalpha.getError() < .1);
+    CHECK(yalpha.getError() < .1);
+    CHECK(xsigma.getError() < .1);
+    CHECK(ysigma.getError() < .1);
 
-    EXPECT_NEAR(1.5, xalpha.getValue(), xalpha.getError() * 3);
-    EXPECT_NEAR(.75, yalpha.getValue(), yalpha.getError() * 3);
-    EXPECT_NEAR(.3, xsigma.getValue(), xsigma.getError() * 3);
-    EXPECT_NEAR(.5, ysigma.getValue(), ysigma.getError() * 3);
+    CHECK(xalpha == Approx(1.5).margin(xalpha.getError()*3));
+    CHECK(yalpha == Approx(.75).margin(yalpha.getError()*3));
+    CHECK(xsigma == Approx(.3).margin(xsigma.getError()*3));
+    CHECK(ysigma == Approx(.5).margin(ysigma.getError()*3));
 }

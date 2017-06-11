@@ -5,17 +5,16 @@
 
 #include "goofit/Variable.h"
 
-#include <sys/time.h>
-#include <sys/times.h>
 #include <iostream>
-
 #include <random>
 
 #include "catch.hpp"
 
 using namespace GooFit;
 
-TEST_CASE("Simple binned exponential", "[binned]") {
+TEST_CASE("Simple binned exponential",
+        "[binned][exponential]") {
+    
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> d(1.5);
@@ -50,7 +49,8 @@ TEST_CASE("Simple binned exponential", "[binned]") {
     CHECK(alpha == Approx(-1.5).margin(alpha.getError()*3));
 }
 
-TEST_CASE("Dual binned exponential", "[binned]") {
+TEST_CASE("Dual binned exponential",
+          "[binned][exponential]") {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> dx(1.5);
@@ -95,7 +95,8 @@ TEST_CASE("Dual binned exponential", "[binned]") {
     CHECK(yalpha == Approx(-.75).margin(yalpha.getError()*3));
 }
 
-TEST_CASE("Dual binned exponential reversed variable", "[binned]") {
+TEST_CASE("Dual binned exponential reversed variable",
+        "[binned][exponential]") {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> dx(1.5);

@@ -67,10 +67,10 @@ TEST_CASE("Fancy Add Event", "[simple]") {
 
     CHECK(2 == data.getNumEvents());
 
-    CHECK(data.getValue(&xvar, 0) == Approx(1));
-    CHECK(data.getValue(&yvar, 0) == Approx(2));
-    CHECK(data.getValue(&xvar, 1) == Approx(3));
-    CHECK(data.getValue(&yvar, 1) == Approx(4));
+    CHECK(data.getValue(&xvar, 0) == 1);
+    CHECK(data.getValue(&yvar, 0) == 2);
+    CHECK(data.getValue(&xvar, 1) == 3);
+    CHECK(data.getValue(&yvar, 1) == 4);
 
     CHECK_THROWS_AS(data.addEvent(1), GeneralError);
     CHECK_THROWS_AS(data.addEvent(1, 2, 3), GeneralError);

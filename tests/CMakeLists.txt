@@ -1,16 +1,17 @@
 
+if(ROOT_FOUND)
+    set(ROOT_LISTING Minuit1Test.cu)
+endif()
+
 goofit_add_executable(AllTests AllTests.cu
     BinnedTest.cu
     SimpleTest.cu
     UnbinnedTest.cu
+    BlindTest.cu
+    NormalizeTest.cu
+    ${ROOT_LISTING}
     )
+
 set_target_properties(AllTests PROPERTIES FOLDER tests)
-
-#NormalizeTest.cu
-#BlindTest.cu)
-
-if(ROOT_FOUND)
-    #    target_souces(AllTests PUBLIC Minuit1Test.cu)
-endif()
 
 add_test(AllTests AllTests)

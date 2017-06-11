@@ -1,5 +1,3 @@
-#include "gtest/gtest.h"
-
 #include "goofit/fitting/FitManagerMinuit1.h"
 #include "goofit/UnbinnedDataSet.h"
 #include "goofit/PDFs/basic/ExpPdf.h"
@@ -8,16 +6,15 @@
 
 #include "goofit/Variable.h"
 
-#include <sys/time.h>
-#include <sys/times.h>
 #include <iostream>
-
 #include <random>
+
+#include "catch.hpp"
 
 using namespace std;
 using namespace GooFit;
 
-TEST(Minuit1, SimpleFit) {
+TEST_CASE("Simple Fit for Minuit1") {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> d(1.5);
@@ -48,12 +45,12 @@ TEST(Minuit1, SimpleFit) {
     fitter.setVerbosity(2);
     fitter.fit();
 
-    EXPECT_TRUE(fitter);
-    EXPECT_LT(alpha.getError(), .1);
-    EXPECT_NEAR(-1.5, alpha.getValue(), alpha.getError() * 3);
+    CHECK(fitter);
+    CHECK(alpha.getError() < .1);
+    CHECK(alpha == Approx(-1.5).margin(alpha.getError()*3));
 }
 
-TEST(Minuit1, DualFit) {
+TEST_CASE("Dual Fit for Minuit1") {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> dx(1.5);
@@ -92,14 +89,14 @@ TEST(Minuit1, DualFit) {
     fitter.setVerbosity(0);
     fitter.fit();
 
-    EXPECT_TRUE(fitter);
-    EXPECT_LT(xalpha.getError(), .1);
-    EXPECT_LT(yalpha.getError(), .1);
-    EXPECT_NEAR(-1.5, xalpha.getValue(), xalpha.getError() * 3);
-    EXPECT_NEAR(-.75, yalpha.getValue(), yalpha.getError() * 3);
+    CHECK(fitter);
+    CHECK(xalpha.getError() < .1);
+    CHECK(yalpha.getError() < .1);
+    CHECK(xalpha == Approx(-1.5).margin(xalpha.getError()*3));
+    CHECK(yalpha == Approx(-.75).margin(yalpha.getError()*3));
 }
 
-TEST(Minuit1, DifferentFitterVariable) {
+TEST_CASE("Different Fitter Variable in Minuit1") {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> dx(1.5);
@@ -136,14 +133,14 @@ TEST(Minuit1, DifferentFitterVariable) {
     fitter.setVerbosity(2);
     fitter.fit();
 
-    EXPECT_TRUE(fitter);
-    EXPECT_LT(xalpha.getError(), .1);
-    EXPECT_LT(yalpha.getError(), .1);
-    EXPECT_NEAR(-1.5, xalpha.getValue(), xalpha.getError() * 3);
-    EXPECT_NEAR(-.75, yalpha.getValue(), yalpha.getError() * 3);
+    CHECK(fitter);
+    CHECK(xalpha.getError() < .1);
+    CHECK(yalpha.getError() < .1);
+    CHECK(xalpha == Approx(-1.5).margin(xalpha.getError()*3));
+    CHECK(yalpha == Approx(-.75).margin(yalpha.getError()*3));
 }
 
-TEST(Minuit1, FitterConstants) {
+TEST_CASE("Fitter Constants in Minuit1") {
     // Random number generation
     std::mt19937 gen(137);
     std::normal_distribution<> dx(1.5, .3);
@@ -184,11 +181,11 @@ TEST(Minuit1, FitterConstants) {
     fitter.setVerbosity(2);
     fitter.fit();
 
-    EXPECT_TRUE(fitter);
-    EXPECT_LT(xalpha.getError(), .1);
-    EXPECT_LT(yalpha.getError(), .1);
-    EXPECT_NEAR(1.5, xalpha.getValue(), xalpha.getError() * 3);
-    EXPECT_NEAR(-.75, yalpha.getValue(), yalpha.getError() * 3);
-    EXPECT_EQ(.2, xsigma.getValue());
-    EXPECT_EQ(.3, ysigma.getValue());
+    CHECK(fitter);
+    CHECK(xalpha.getError() < .1);
+    CHECK(yalpha.getError() < .1);
+    CHECK(xalpha == Approx(1.5).margin(xalpha.getError()*3));
+    CHECK(yalpha == Approx(-.75).margin(yalpha.getError()*3));
+    CHECK(xsigma == Approx(.2));
+    CHECK(ysigma == Approx(.3));
 }

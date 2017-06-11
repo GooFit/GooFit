@@ -47,7 +47,7 @@ TEST_CASE("Simple binned exponential", "[binned]") {
 
     CHECK(fitter);
     CHECK(alpha.getError() < .01);
-    CHECK(alpha.getValue() == Approx(-1.5).margin(alpha.getError()*3));
+    CHECK(alpha == Approx(-1.5).margin(alpha.getError()*3));
 }
 
 TEST_CASE("Dual binned exponential", "[binned]") {
@@ -91,8 +91,8 @@ TEST_CASE("Dual binned exponential", "[binned]") {
     CHECK(fitter);
     CHECK(xalpha.getError() < .1);
     CHECK(yalpha.getError() < .1);
-    CHECK(xalpha.getValue() == Approx(-1.5).margin(xalpha.getError()*3));
-    CHECK(yalpha.getValue() == Approx(-.75).margin(yalpha.getError()*3));
+    CHECK(xalpha == Approx(-1.5).margin(xalpha.getError()*3));
+    CHECK(yalpha == Approx(-.75).margin(yalpha.getError()*3));
 }
 
 TEST_CASE("Dual binned exponential reversed variable", "[binned]") {
@@ -136,6 +136,6 @@ TEST_CASE("Dual binned exponential reversed variable", "[binned]") {
     CHECK(fitter);
     CHECK(xalpha.getError() < .1);
     CHECK(yalpha.getError() < .1);
-    CHECK(xalpha.getValue() == Approx(-1.5).margin(xalpha.getError()*3));
-    CHECK(yalpha.getValue() == Approx(-.75).margin(yalpha.getError()*3));
+    CHECK(xalpha == Approx(-1.5).margin(xalpha.getError()*3));
+    CHECK(yalpha == Approx(-.75).margin(yalpha.getError()*3));
 }

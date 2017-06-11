@@ -10,7 +10,7 @@ macro(goofit_add_test TESTNAME)
 endmacro()
 
 goofit_add_test(BinnedTest)
-#SimpleTest.cu
+goofit_add_test(SimpleTest)
 #UnbinnedTest.cu
 #NormalizeTest.cu
 #BlindTest.cu)

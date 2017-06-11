@@ -118,6 +118,9 @@ __host__ PolynomialPdf::PolynomialPdf(
     , center(x0) {
     std::vector<unsigned int> pindices;
     pindices.push_back(lowestDegree);
+
+    //adding index for _x
+    constantsList.push_back (0);
     constantsList.push_back (lowestDegree);
 
     for(std::vector<Variable*>::iterator v = weights.begin(); v != weights.end(); ++v) {
@@ -190,30 +193,6 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n,
     polyType = 2;
     GET_FUNCTION_ADDR(ptr_to_MultiPolynomial);
     initialize(pindices);
-}
-
-__host__ void PolynomialPdf::recursiveSetIndices () {
-    if (polyType == 0)
-    {
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_Polynomial");
-        GET_FUNCTION_ADDR(ptr_to_Polynomial);
-    }
-    else if (polyType == 1)
-    {
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_OffsetPolynomia");
-        GET_FUNCTION_ADDR(ptr_to_OffsetPolynomial);
-    }
-    else if (polyType == 2)
-    {
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_MultiPolynomial");
-        GET_FUNCTION_ADDR(ptr_to_MultiPolynomial);
-    }
-
-    GOOFIT_TRACE("host_function_table[{}] = {}", num_device_functions, getName ());
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx = num_device_functions ++;
-
-    populateArrays ();
 }
 
 __host__ void PolynomialPdf::recursiveSetIndices () {

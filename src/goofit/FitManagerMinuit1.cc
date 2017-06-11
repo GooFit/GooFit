@@ -11,7 +11,8 @@
 namespace GooFit {
 
 Minuit1::Minuit1(PdfBase *pdfPointer)
-    : TMinuit(max_index(pdfPointer->getParameters()) + 1)
+    //: TMinuit(max_index(pdfPointer->getParameters()) + 1)
+    : TMinuit(pdfPointer->getParameters().size() + 1)
     , pdfPointer(pdfPointer)
     , vars(pdfPointer->getParameters()) {
     size_t counter = 0;
@@ -47,18 +48,20 @@ Int_t Minuit1::Eval(int npar, double *gin, double &fun, double *fp, int iflag) {
     std::vector<double> pars{fp, fp + GetNumPars()};
 
     std::vector<double> gooPars;
-    gooPars.resize(max_index(vars) + 1);
+    gooPars.resize(vars.size () + 1);
 
     for(Variable *var : vars) {
         if(std::isnan(pars.at(var->getFitterIndex())))
-            GOOFIT_WARN("Variable {} at {} is NaN", var->getName(), var->getIndex());
+            GOOFIT_WARN("Variable {} at {} is NaN", var->getName(), var->getFitterIndex());
 
         var->setChanged(var->getValue() != pars.at(var->getFitterIndex()));
         var->setValue(pars.at(var->getFitterIndex()));
-        gooPars.at(var->getIndex()) = var->getValue() - var->blind;
+        //TODO: fix this to reflect Minuit2 updateVariable. Actually not needed...
+        //gooPars.at(var->getIndex()) = var->getValue() - var->blind;
     }
 
-    pdfPointer->copyParams(gooPars);
+    //pdfPointer->copyParams(gooPars);
+    pdfPointer->updateParameters ();
 
     GOOFIT_TRACE("Calculating NLL");
     fun = pdfPointer->calculateNLL();

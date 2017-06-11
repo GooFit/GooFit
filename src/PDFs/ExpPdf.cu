@@ -10,7 +10,7 @@ __device__ fptype device_Exp(fptype* evt, ParameterContainer &pc) {
 
     fptype ret = exp(alpha*x);
 
-    pc.incrementIndex (1, 1, 1, 0, 1);
+    pc.incrementIndex (1, 1, nc, 0, 1);
 
     return ret;
 }
@@ -23,7 +23,7 @@ __device__ fptype device_ExpOffset(fptype* evt, ParameterContainer &pc) {
 
     fptype ret = exp(alpha*x);
 
-    pc.incrementIndex (1, 2, 1, 0, 1);
+    pc.incrementIndex (1, 2, nc, 0, 1);
 
     return ret;
 }
@@ -41,7 +41,7 @@ __device__ fptype device_ExpPoly(fptype* evt, ParameterContainer &pc) {
 
     fptype ret = exp(exparg);
 
-    pc.incrementIndex (1, np, 1, 0, 1);
+    pc.incrementIndex (1, np, nc, 0, 1);
 
     return ret;
 }

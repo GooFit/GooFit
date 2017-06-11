@@ -106,6 +106,8 @@ class PdfBase {
     __host__ void updateVariable(Variable *v, fptype newValue);
     __host__ void updateParameters ();
 
+    __host__ void setupObservables ();
+
 protected:
     //use this function to populate the arrays generically.  
     __host__ void populateArrays ();

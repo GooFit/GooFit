@@ -57,7 +57,7 @@ __host__ void PdfBase::copyParams() {
     //    values[index] = v->getValue();
     //}
 
-    copyParams(values);
+    //copyParams(values);
 
     updateParameters ();
 }
@@ -94,18 +94,18 @@ __host__ void PdfBase::initializeIndices(std::vector<unsigned int> pindices) {
         host_parameters[totalParameters] = parametersList[i]->getValue (); totalParameters++;
     }
 
-    //stick placeholders into our observable array
-    host_observables[totalObservables] = observablesList.size ();
-    observablesIdx = totalObservables; totalObservables++;
-    for (int i = 0 ; i < observablesList.size (); i++) {
-        host_observables[totalObservables] = observablesList[i]->getValue (); totalObservables++;
-    }
-
     //stick placeholders into our constants array
     host_constants[totalConstants] = constantsList.size ();
     constantsIdx = totalConstants; totalConstants++;
     for (int i = 0 ; i < constantsList.size (); i++) {
         host_constants[totalConstants] = constantsList[i]; totalConstants++;
+    }
+
+    //stick placeholders into our observable array
+    host_observables[totalObservables] = observablesList.size ();
+    observablesIdx = totalObservables; totalObservables++;
+    for (int i = 0 ; i < observablesList.size (); i++) {
+        host_observables[totalObservables] = observablesList[i]->getValue (); totalObservables++;
     }
 
     //stick placeholders into our normalisation array
@@ -155,38 +155,41 @@ __host__ void PdfBase::updateParameters ()
 
 __host__ void PdfBase::populateArrays () {
     //populate all the arrays 
-    //GOOFIT_DEBUG("Populating Arrays for {}", getName());
-    //GOOFIT_TRACE("host_parameters[{}] = {}", totalParameters, parametersList.size());
+    GOOFIT_DEBUG("Populating Arrays for {}", getName());
+
+    //reconfigure the host_parameters array with the new indexing scheme.
+    GOOFIT_TRACE("host_parameters[{}] = {}", totalParameters, parametersList.size());
     host_parameters[totalParameters] = parametersList.size ();
     parametersIdx = totalParameters; totalParameters++;
-    for (int i = 0; i < parametersList.size (); i++)
-    {
-        //GOOFIT_TRACE("host_parameters[{}] = {}", totalParameters, parametersList[i]->getValue());
+    for (int i = 0; i < parametersList.size (); i++) {
+        GOOFIT_TRACE("host_parameters[{}] = {}", totalParameters, parametersList[i]->getValue());
         host_parameters[totalParameters] = parametersList[i]->getValue (); totalParameters++;
     }
 
-    //GOOFIT_TRACE("host_constants[{}] = {}", totalConstants, constantsList.size());
+    GOOFIT_TRACE("host_constants[{}] = {}", totalConstants, constantsList.size());
     host_constants[totalConstants] = constantsList.size ();
     constantsIdx = totalConstants; totalConstants++;
-    for (int i = 0; i < constantsList.size (); i++)
-    {
-        //GOOFIT_TRACE("host_constants[{}] = {}", totalConstants, constantsList[i]);
+    for (int i = 0; i < observablesList.size (); i++) {
+        GOOFIT_TRACE("host_constants[{}] = {}", totalConstants, observablesList[i]->getObservableIndex ());
+        host_constants[totalConstants] = observablesList[i]->getObservableIndex (); totalConstants++;
+    }
+    for (int i = observablesList.size (); i < constantsList.size (); i++) {
+        GOOFIT_TRACE("host_constants[{}] = {}", totalConstants, constantsList[i]);
         host_constants[totalConstants] = constantsList[i]; totalConstants++;
     }
 
-    //GOOFIT_TRACE("host_observables[{}] = {}", totalObservables, observablesList.size());
+    GOOFIT_TRACE("host_observables[{}] = {}", totalObservables, observablesList.size());
     host_observables[totalObservables] = observablesList.size ();
     observablesIdx = totalObservables; totalObservables++;
-    for (int i = 0; i < observablesList.size (); i++)
-    {
-        //GOOFIT_TRACE("host_observables[{}] = {}", totalObservables, observablesList[i]->getValue ());
+    for (int i = 0; i < observablesList.size (); i++) {
+        GOOFIT_TRACE("host_observables[{}] = {}", totalObservables, observablesList[i]->getValue ());
         host_observables[totalObservables] = observablesList[i]->getValue (); totalObservables++;
     }
 
-    //GOOFIT_TRACE("host_normalisations[{}] = {}", totalNormalisations, 1);
+    GOOFIT_TRACE("host_normalisations[{}] = {}", totalNormalisations, 1);
     host_normalisations[totalNormalisations] = 1;
     normalIdx = totalNormalisations++;
-    //GOOFIT_TRACE("host_normalisations[{}] = {}", totalNormalisations, 0);
+    GOOFIT_TRACE("host_normalisations[{}] = {}", totalNormalisations, 0);
     host_normalisations[totalNormalisations] = 0; totalNormalisations++;
 
     for (unsigned int i = 0; i < components.size (); i++)
@@ -214,7 +217,7 @@ __host__ void PdfBase::setData(std::vector<std::map<Variable *, fptype>> &data) 
         for(Variable*  v : observablesList) {
             if(data[i].find(v) == data[i].end())
                 throw GooFit::GeneralError("Variable {} not found", v->getName());
-            host_array[i * dimensions + v->getIndex()] = data[i][v];
+            host_array[i * dimensions + v->getObservableIndex()] = data[i][v];
         }
     }
 
@@ -225,13 +228,6 @@ __host__ void PdfBase::setData(std::vector<std::map<Variable *, fptype>> &data) 
 }
 
 __host__ void PdfBase::setIndices() {
-    //for(auto &component : components) {
-    //    component->recursiveSetIndices();
-    //}
-
-    //int numParams = host_indices[parameters];
-    int counter   = 0;
-
     //for(Variable *v : observablesList) {
     //    host_parameters[parametersIdx + 2 + numParams + counter] = v->getIndex();
     //    GOOFIT_DEBUG("{} set index of {} to {} -> host {}",
@@ -267,6 +263,9 @@ __host__ void PdfBase::setData(DataSet *data) {
         m_iEventsPerTask = 0;
     }
 
+    //fine to set static integer value for variables (prod->gauss [somVar->getObservableIndex()]
+    //                                                    ->exp [someVar->getObservableIndex()]
+    setupObservables ();
     setIndices();
 
     UnbinnedDataSet *unbinned_data;
@@ -320,11 +319,9 @@ __host__ void PdfBase::setData(DataSet *data) {
 
         // Transfer into our whole buffer
         for(int i = 0; i < numEntries; ++i) {
-            int counter = 0;
             for(Variable* v : observablesList) {
                 fptype currVal = unbinned_data->getValue(v, i);
-                host_array[i*dimensions + counter] = currVal;
-                counter ++;
+                host_array[i*dimensions + v->getObservableIndex ()] = currVal;
             }
         }
 
@@ -409,9 +406,8 @@ __host__ void PdfBase::setData(DataSet *data) {
 #endif
 
         for(unsigned int i = 0; i < numEntries; ++i) {
-            int counter = 0;
             for(Variable* v : observablesList) {
-                host_array[i*dimensions + counter] = binned_data->getBinCenter(v, i); counter ++;
+                host_array[i*dimensions + v->getObservableIndex ()] = binned_data->getBinCenter(v, i);
             }
 
             host_array[i*dimensions + observablesList.size() + 0] = binned_data->getBinContent(i);

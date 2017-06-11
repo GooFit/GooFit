@@ -25,11 +25,11 @@ __constant__ int modelOffset[100];
 
 __device__ fptype device_ConvolvePdfs(fptype* evt, ParameterContainer &pc) {
     fptype ret     = 0;
-    fptype loBound = RO_CACHE(pc.constants[pc.constantIdx + 1]);
-    fptype hiBound = RO_CACHE(pc.constants[pc.constantIdx + 2]);
-    fptype step    = RO_CACHE(pc.constants[pc.constantIdx + 3]);
+    fptype loBound = RO_CACHE(pc.constants[pc.constantIdx + 2]);
+    fptype hiBound = RO_CACHE(pc.constants[pc.constantIdx + 3]);
+    fptype step    = RO_CACHE(pc.constants[pc.constantIdx + 4]);
     fptype x0      = evt[0];
-    int workSpaceIndex = pc.constants[pc.constantIdx + 4];
+    int workSpaceIndex = pc.constants[pc.constantIdx + 5];
 
     auto numbins = static_cast<int>(floor((hiBound - loBound) / step + 0.5));
 
@@ -47,8 +47,12 @@ __device__ fptype device_ConvolvePdfs(fptype* evt, ParameterContainer &pc) {
         ret += model * resol;
     }
 
-    ret *= pc.normalisations[pc.normalIdx + 1];
-    ret *= pc.normalisations[pc.normalIdx + 2];
+    fptype norm1 = pc.normalisations[pc.normalIdx + 3];
+    ret *= norm1;
+    fptype norm2 = pc.normalisations[pc.normalIdx + 5];
+    ret *= norm2;
+
+    pc.incrementIndex (1, 0, 5, 0, 2);
 
     return ret;
 }
@@ -147,6 +151,8 @@ ConvolutionPdf::ConvolutionPdf(std::string n, Variable *x, GooPdf *m, GooPdf *r)
     //paramIndices.push_back(resolution->getParameterIndex());
     //paramIndices.push_back(registerConstants(3));
     //paramIndices.push_back(workSpaceIndex = totalConvolutions++);
+    constantsList.push_back (0);
+
     constantsList.push_back (-10);
     constantsList.push_back (10);
     constantsList.push_back (0.01);
@@ -189,6 +195,8 @@ ConvolutionPdf::ConvolutionPdf(std::string n, Variable *x, GooPdf *m, GooPdf *r,
     //paramIndices.push_back(registerConstants(3));
     //paramIndices.push_back(workSpaceIndex = totalConvolutions++);
     //paramIndices.push_back(numOthers);
+    constantsList.push_back (0);
+
     constantsList.push_back (-10);
     constantsList.push_back (10);
     constantsList.push_back (0.01);
@@ -274,15 +282,13 @@ __host__ void ConvolutionPdf::setIntegrationConstants(fptype lo, fptype hi, fpty
 
     fptype *dev_address[1];
     dev_address[0] = (&((*modelWorkSpace)[0])).get();
-    MEMCPY_TO_SYMBOL(
-        dev_modWorkSpace, dev_address, sizeof(fptype *), workSpaceIndex * sizeof(fptype *), cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL( dev_modWorkSpace, dev_address, sizeof(fptype *), workSpaceIndex * sizeof(fptype *), cudaMemcpyHostToDevice);
     dev_address[0] = (&((*resolWorkSpace)[0])).get();
-    MEMCPY_TO_SYMBOL(
-        dev_resWorkSpace, dev_address, sizeof(fptype *), workSpaceIndex * sizeof(fptype *), cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL( dev_resWorkSpace, dev_address, sizeof(fptype *), workSpaceIndex * sizeof(fptype *), cudaMemcpyHostToDevice);
 }
 
 __host__ void ConvolutionPdf::registerOthers(std::vector<ConvolutionPdf *> others) {
-    unsigned int numExpectedOthers = constantsList[constantsIdx + 4] + 1;
+    unsigned int numExpectedOthers = constantsList[constantsIdx + 5] + 1;
 
     if(numExpectedOthers != others.size()) {
         std::cout << "Problem: " << getName() << " initialized with " << others.size() << " other PDFs, expected "
@@ -298,7 +304,7 @@ __host__ void ConvolutionPdf::registerOthers(std::vector<ConvolutionPdf *> other
         if(curr == this)
             foundSelf = true;
 
-        constantsList[4 + i] = curr->workSpaceIndex;
+        constantsList[5 + i] = curr->workSpaceIndex;
     }
 
     if(!foundSelf) {
@@ -311,11 +317,11 @@ __host__ void ConvolutionPdf::registerOthers(std::vector<ConvolutionPdf *> other
 }
 
 __host__ fptype ConvolutionPdf::normalize() const {
-    // if (cpuDebug & 1) std::cout << getName() << " entering normalisation\n";
-
     // First set normalisation factors to one so we can evaluate convolution without getting zeroes
     recursiveSetNormalisation(fptype(1.0));
-    //MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+
+    //we need to update the normal here, as values are used at this point.
+    MEMCPY(d_normalisations, host_normalisations, totalNormalisations*sizeof(fptype), cudaMemcpyHostToDevice);
 
     // Next recalculate functions at each point, in preparation for convolution integral
     thrust::constant_iterator<fptype *> arrayAddress(dev_iConsts);
@@ -331,29 +337,19 @@ __host__ fptype ConvolutionPdf::normalize() const {
             modelWorkSpace->begin(),
             modalor);
         cudaDeviceSynchronize();
-        /*
-        if ((cpuDebug & 1) && (5 == workSpaceIndex)) {
-          thrust::host_vector<fptype> hModel(*modelWorkSpace);
-          std::cout << "Model: ";
-          for (unsigned int i = 0; i < hModel.size(); ++i)
-        std::cout << hModel[i] << " ";
-          std::cout << std::endl;
-        }
-        */
     }
 
     if(resolution->parametersChanged()) {
         // Same for resolution function.
         thrust::constant_iterator<fptype *> arrayAddress2(dev_iConsts + 3);
+        thrust::constant_iterator<int> resFunc (resolution->getFunctionIndex ());
         MetricTaker resalor(resolution, getMetricPointer("ptr_to_Eval"));
         thrust::transform(
-            thrust::make_zip_iterator(thrust::make_tuple(binIndex, eventSize, arrayAddress2)),
-            thrust::make_zip_iterator(thrust::make_tuple(binIndex + resolWorkSpace->size(), eventSize, arrayAddress2)),
+            thrust::make_zip_iterator(thrust::make_tuple(binIndex, resFunc, arrayAddress2)),
+            thrust::make_zip_iterator(thrust::make_tuple(binIndex + resolWorkSpace->size(), resFunc, arrayAddress2)),
             resolWorkSpace->begin(),
             resalor);
     }
-
-    // cudaDeviceSynchronize();
 
     // Then return usual integral
     fptype ret = GooPdf::normalize();

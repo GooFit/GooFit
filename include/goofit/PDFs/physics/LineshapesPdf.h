@@ -70,7 +70,7 @@ class Lineshape : public GooPdf {
     }
     Lineshape(std::string name);
 
-    void setConstantIndex(unsigned int idx) { host_indices[parameters + 1] = idx; }
+    //void setConstantIndex(unsigned int idx) { host_indices[parameters + 1] = idx; }
 };
 
 class Amplitude {

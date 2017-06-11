@@ -23,7 +23,7 @@ __device__ fptype device_AddPdfs(fptype* evt, ParameterContainer &pc) {
         totalWeight += weight;
 
         //increment our container structure
-        pc.incrementIndex(1, numParameters, 0, 0, 1);
+        pc.incrementIndex(1, numParameters, 1, 0, 1);
 
 	fptype norm = pc.normalisations[pc.normalIdx + 1];
 
@@ -89,6 +89,8 @@ AddPdf::AddPdf(std::string n, std::vector<Variable *> weights, std::vector<PdfBa
     observablesList = getObservables();
 
     std::vector<unsigned int> pindices;
+
+    for (int i = 0; i < observablesList.size (); i++) constantsList.push_back (0);
 
     for(unsigned int w = 0; w < weights.size(); ++w) {
         if(components[w] == nullptr)

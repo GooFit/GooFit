@@ -68,7 +68,7 @@ class ResonancePdf : public GooPdf {
     ResonancePdf(std::string name, Variable *ar, Variable *ai, Variable *mean, Variable *sigma, unsigned int cyc);
 
   private:
-    void setConstantIndex(unsigned int idx) { parametersList[parametersIdx + 1] = idx; }
+    //void setConstantIndex(unsigned int idx) { parametersList[parametersIdx + 1] = idx; }
 
     Variable *amp_real;
     Variable *amp_imag;

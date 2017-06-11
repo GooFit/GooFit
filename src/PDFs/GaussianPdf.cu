@@ -6,7 +6,7 @@ namespace GooFit {
 
 
 __device__ fptype device_Gaussian(fptype* evt, ParameterContainer &pc) {
-    int id = pc.constants[pc.constantIdx + 1];
+    int id = int(pc.constants[pc.constantIdx + 1]);
     fptype mean = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
     fptype sigma = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
     fptype x = evt[id];
@@ -19,15 +19,14 @@ __device__ fptype device_Gaussian(fptype* evt, ParameterContainer &pc) {
 
 __device__ device_function_ptr ptr_to_Gaussian = device_Gaussian;
 
-static int numGausses = 0;
 __host__ GaussianPdf::GaussianPdf(std::string n, Variable* _x, Variable* mean, Variable* sigma)
     : GooPdf(_x, n) {
     std::vector<unsigned int> pindices;
     pindices.push_back(registerParameter(mean));
     pindices.push_back(registerParameter(sigma));
 
-    //this is the index into evt
-    constantsList.push_back (numGausses); numGausses++;
+    //this is a placeholder for the index into the evt, IE (_x)
+    constantsList.push_back (0);
 
     GET_FUNCTION_ADDR(ptr_to_Gaussian);
     initialize(pindices);

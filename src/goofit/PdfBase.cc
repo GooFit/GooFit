@@ -24,7 +24,7 @@ fptype host_normalisations[maxParams];
 int host_callnumber = 0;
 
 int totalParameters = 0;
-int totalConstants = 0; // First constant is reserved for number of events.
+int totalConstants = 0;
 int totalObservables = 0;
 int totalNormalisations = 0;
 
@@ -60,37 +60,40 @@ __host__ unsigned int PdfBase::registerParameter(Variable *var) {
     //we need to always add the variable to our internal parameter list
     parametersList.push_back(var);
 
+    //just return, these indices aren't used.
     if(std::find(parametersList.begin(), parametersList.end(), var) != parametersList.end())
-        return (unsigned int) var->getIndex();
+        return 0;
+    //    return (unsigned int) var->getIndex();
 
     //parametersList.push_back(var);
     variableRegistry[var].insert(this);
 
-    if(0 > var->getIndex()) {
-        unsigned int unusedIndex = 0;
+    //if(0 > var->getIndex()) {
+    //    unsigned int unusedIndex = 0;
 
-        while(true) {
-            bool canUse = true;
+    //    while(true) {
+    //        bool canUse = true;
 
-            for(auto &p : variableRegistry) {
-                if(unusedIndex != p.first->getIndex())
-                    continue;
+    //        for(auto &p : variableRegistry) {
+    //            if(unusedIndex != p.first->getIndex())
+    //                continue;
 
-                canUse = false;
-                break;
-            }
+    //            canUse = false;
+    //            break;
+    //        }
 
-            if(canUse)
-                break;
+    //        if(canUse)
+    //            break;
 
-            unusedIndex++;
-        }
+    //        unusedIndex++;
+    //    }
 
-        GOOFIT_DEBUG("{}: Registering {} for {}", getName(), unusedIndex, var->getName());
-        var->setIndex(unusedIndex);
-    }
+    //    GOOFIT_DEBUG("{}: Registering {} for {}", getName(), unusedIndex, var->getName());
+    //    var->setIndex(unusedIndex);
+    //}
 
-    return static_cast<unsigned int>(var->getIndex());
+    //return static_cast<unsigned int>(var->getIndex());
+    return 0;
 }
 
 __host__ void PdfBase::unregisterParameter(Variable *var) {
@@ -106,8 +109,8 @@ __host__ void PdfBase::unregisterParameter(Variable *var) {
 
     variableRegistry[var].erase(this);
 
-    if(0 == variableRegistry[var].size())
-        var->setIndex(-1);
+    //if(0 == variableRegistry[var].size())
+    //    var->setIndex(-1);
 
     for(PdfBase *comp : components) {
         comp->unregisterParameter(var);
@@ -172,6 +175,16 @@ void PdfBase::registerObservable(Variable *obs) {
         return;
 
     observablesList.push_back(obs);
+}
+
+void PdfBase::setupObservables () {
+    int counter = 0;
+    for (size_t i = 0; i < observablesList.size (); ++i) {
+        observablesList[i]->setObservableIndex (counter);
+        counter ++;
+    }
+
+    GOOFIT_DEBUG("SetupObservables {} ", counter);
 }
 
 __host__ void PdfBase::setIntegrationFineness(int i) {

@@ -6,13 +6,10 @@
 namespace GooFit {
 
 __device__ fptype device_ProdPdfs(fptype* evt, ParameterContainer &pc) {
-    // Index structure is nP | F1 P1 | F2 P2 | ...
-    // where nP is number of parameters, Fs are function indices, and Ps are parameter indices
-
-    int numConstants = RO_CACHE(pc.constants[1]);
+    int numConstants = int(RO_CACHE(pc.constants[pc.constantIdx]));
     fptype ret = 1;
 
-    pc.incrementIndex (1, 0, 1, 0, 1);
+    pc.incrementIndex (1, 0, numConstants, 0, 1);
     for(int i = 0; i < numConstants; i ++) {
         fptype norm = pc.normalisations[pc.normalIdx + 1];
         fptype curr = callFunction(evt, pc);
@@ -34,21 +31,16 @@ ProdPdf::ProdPdf(std::string n, std::vector<PdfBase *> comps)
 
     for(PdfBase *p : comps) {
         components.push_back(p);
+
+        //we push a placeholder that is used to indicate 
+        constantsList.push_back (0);
     }
 
     observablesList = getObservables(); // Gathers from components
 
     std::vector<Variable *> observableCheck; // Use to check for overlap in observables
 
-    // Indices stores (function index)(function parameter index)(variable index) for each component.
-
-    //we push on the number of function arguments as constants
-    constantsList.push_back (components.size ());
-
     for(PdfBase* p : comps) {
-        //pindices.push_back(p->getFunctionIndex());
-        //pindices.push_back(p->getParameterIndex());
-
         if(varOverlaps)
             continue; // Only need to establish this once.
 

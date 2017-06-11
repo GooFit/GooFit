@@ -5,10 +5,14 @@ namespace GooFit {
 
 
 __device__ fptype device_Argus_Upper(fptype* evt, ParameterContainer &pc) {
-    fptype x = evt[0];
+    int id = pc.constants[pc.constantIdx + 1];
+
+    fptype x = evt[id];
     fptype m0 = pc.parameters[pc.parameterIdx + 1];
 
     double t = x / m0;
+
+    pc.incrementIndex (1, 3, 1, 0, 1);
 
     if(t >= 1)
         return 0;
@@ -16,20 +20,19 @@ __device__ fptype device_Argus_Upper(fptype* evt, ParameterContainer &pc) {
     fptype slope = pc.parameters[pc.parameterIdx + 2];
     fptype power = pc.parameters[pc.parameterIdx + 3];
     t = 1 - t*t;
-    //printf("device_Argus_Upper %f %f %f %f %f\n", x, m0, slope, t, x * pow(t, power) * exp(slope * t));
 
     return x * pow(t, power) * exp(slope * t);
 }
 
 __device__ fptype device_Argus_Lower(fptype* evt, ParameterContainer &pc) {
-    fptype x = evt[0];
+    int id = pc.constants[pc.constantIdx + 1];
+
+    fptype x = evt[id];
     fptype m0 = pc.parameters[pc.parameterIdx + 1];
 
-    // printf("Argus: %i %i %f %f\n", indices[0], indices[2 + indices[0]], x, m0);
-    // printf("Argus: %i %i\n", indices[0], indices[2 + indices[0]]);
-    // return 1;
-
     fptype t = x / m0;
+
+    pc.incrementIndex (1, 3, 1, 0, 1);
 
     if(t <= 1)
         return 0;
@@ -40,11 +43,6 @@ __device__ fptype device_Argus_Lower(fptype* evt, ParameterContainer &pc) {
     fptype slope = pc.parameters[pc.parameterIdx + 2];
     fptype power = pc.parameters[pc.parameterIdx + 3];
     fptype ret = x * pow(t, power) * exp(slope * t);
-    //if ((0 == THREADIDX) && (0 == BLOCKIDX) && (callnumber < 1)) cuPrintf("device_Argus_Lower %i %i %f %f %f %f %f\n", indices[1], indices[2], x, m0, slope, t, ret);
-    //if (isnan(ret)) printf("NaN Argus: %f %f %f %f %f %f %f\n", x, m0, t, slope, power, pow(t, power), exp(slope*t));
-    //if ((0 == THREADIDX) && (0 == BLOCKIDX) && (gpuDebug & 1))
-    //printf("(%i, %i) device_Argus_Lower %f %f %f %f %f\n", BLOCKIDX, THREADIDX, x, m0, slope, t, x * pow(t, power) * exp(slope * t));
-
 
     return ret;
 }
@@ -57,15 +55,15 @@ __host__ ArgusPdf::ArgusPdf(std::string n, Variable *_x, Variable *m0, Variable 
     registerParameter(m0);
     registerParameter(slope);
 
+    //provide index for _x
+    constantsList.push_back (0);
+
     if(!power)
         power = new Variable(n + "powervar", 0.5);
 
     registerParameter(power);
 
     std::vector<unsigned int> pindices;
-    //pindices.push_back(m0->getIndex());
-    //pindices.push_back(slope->getIndex());
-    //pindices.push_back(power->getIndex());
 
     if(upper) {
         ArgusType = 1;

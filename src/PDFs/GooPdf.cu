@@ -185,22 +185,6 @@ __host__ void GooPdf::setIndices () {
     MEMCPY(d_observables, host_observables, totalObservables*sizeof(fptype), cudaMemcpyHostToDevice);
 }
 
-__host__ void GooPdf::setIndices () {
-    GOOFIT_DEBUG("GooPdf::setIndices!");
-    PdfBase::setIndices ();
-
-    GOOFIT_TRACE("host_function_table[{}] = {}", num_device_functions, fitControl->getMetric());
-    host_function_table[num_device_functions] = getMetricPointer (fitControl->getMetric ());
-    num_device_functions++;
-
-    //copy all the device functions over:
-    GOOFIT_DEBUG("Copying all host side parameters to device");
-    MEMCPY(device_function_table, host_function_table, num_device_functions*sizeof (fptype), cudaMemcpyHostToDevice);
-    MEMCPY(d_parameters, host_parameters, totalParameters*sizeof (fptype), cudaMemcpyHostToDevice);
-    MEMCPY(d_constants, host_constants, totalConstants*sizeof (unsigned int), cudaMemcpyHostToDevice);
-    MEMCPY(d_observables, host_observables, totalObservables*sizeof(fptype), cudaMemcpyHostToDevice);
-}
-
 __host__ int GooPdf::findFunctionIdx(void* dev_functionPtr) {
     // Code specific to function-pointer implementation
     auto localPos = functionAddressToDeviceIndexMap.find(dev_functionPtr);

@@ -17,7 +17,7 @@ FCN::FCN(Params &params)
 
 double FCN::operator()(const std::vector<double> &pars) const {
     // Translate from Minuit indexing to GooFit indexing
-    std::vector<double> gooPars(max_index(params_->vars_)+1);
+    std::vector<double> gooPars(params_->vars_.size() + 1);
    
     //for(Variable* var : params_->vars_) {
     //    var->setChanged(var->getValue() != pars.at(var->getFitterIndex()));
@@ -44,7 +44,7 @@ double FCN::operator()() const {
     std::vector<double> pars = makePars();
 
     // Translate from Minuit indexing to GooFit indexing
-    std::vector<double> gooPars(max_index(params_->vars_)+1);
+    std::vector<double> gooPars(params_->vars_.size() + 1);
     
     //for(Variable* var : params_->vars_) {
     //    var->setChanged(true);

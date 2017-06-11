@@ -1,7 +1,15 @@
-include(cmake/ParseAndAddCatchTests.cmake)
 
-set(TESTS
-BinnedTest.cu)
+goofit_add_library(AllTests AllTests.cu)
+set_target_properties(AllTests PROPERTIES FOLDER tests)
+
+macro(goofit_add_test TESTNAME)
+    goofit_add_executable(${TESTNAME} ${TESTNAME}.cu)
+    target_link_libraries(${TESTNAME} AllTests)
+    add_test(${TESTNAME} ${TESTNAME})
+    set_target_properties(${TESTNAME} PROPERTIES FOLDER tests)
+endmacro()
+
+goofit_add_test(BinnedTest)
 #SimpleTest.cu
 #UnbinnedTest.cu
 #NormalizeTest.cu
@@ -10,7 +18,3 @@ BinnedTest.cu)
 if(ROOT_FOUND)
     #    list(APPEND TESTS Minuit1Test.cu)
 endif()
-
-goofit_add_executable(AllTests AllTests.cu ${TESTS})
-ParseAndAddCatchTests(AllTests)
-set_target_properties(AllTests PROPERTIES FOLDER tests)

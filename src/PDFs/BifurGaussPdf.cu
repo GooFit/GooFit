@@ -3,10 +3,12 @@
 namespace GooFit {
 
 __device__ fptype device_BifurGauss(fptype* evt, ParameterContainer &pc) {
-    fptype x = evt[0]; // why does indices recall itself?
-    fptype mean = pc.parameters[1];
-    fptype sigmaLeft = pc.parameters[2];
-    fptype sigmaRight = pc.parameters[3];
+    int id = pc.constants[pc.constantIdx + 1];
+
+    fptype x = evt[id]; // why does indices recall itself?
+    fptype mean = pc.parameters[pc.parameterIdx + 1];
+    fptype sigmaLeft = pc.parameters[pc.parameterIdx + 2];
+    fptype sigmaRight = pc.parameters[pc.parameterIdx + 3];
 
     // how to calculate the value of a bifurcated gaussian?
     fptype sigma = sigmaLeft;
@@ -14,7 +16,7 @@ __device__ fptype device_BifurGauss(fptype* evt, ParameterContainer &pc) {
     if(x > mean)
         sigma = sigmaRight;
 
-    pc.incrementIndex(1, 3, 0, 0, 1);
+    pc.incrementIndex(1, 3, 1, 0, 1);
 
     fptype ret = exp(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
     return ret;
@@ -25,6 +27,10 @@ __device__ device_function_ptr ptr_to_BifurGauss = device_BifurGauss;
 __host__ BifurGaussPdf::BifurGaussPdf(std::string n, Variable *_x, Variable *mean, Variable *sigmaL, Variable *sigmaR)
     : GooPdf(_x, n) {
     std::vector<unsigned int> pindices;
+
+    //save room for _x index, this is set in populateArrays.
+    constantsList.push_back (0);
+
     pindices.push_back(registerParameter(mean));
     pindices.push_back(registerParameter(sigmaL));
     pindices.push_back(registerParameter(sigmaR));

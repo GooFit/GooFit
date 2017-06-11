@@ -2,7 +2,7 @@
 
 #include "goofit/fitting/FitManagerMinuit1.h"
 #include "goofit/UnbinnedDataSet.h"
-#include "goofit/PDFs/GaussianPdf.h"
+#include "goofit/PDFs/basic/GaussianPdf.h"
 
 #include "goofit/Variable.h"
 
@@ -21,7 +21,7 @@ TEST(Gaussian, SimpleFit) {
     std::exponential_distribution<> d(1.5);
 
     // Independent variable.
-    Variable xvar{"xvar", 0, 10};
+    Variable xvar{"xvar", -10, 10};
 
     // Data set
     UnbinnedDataSet data(&xvar);
@@ -36,12 +36,12 @@ TEST(Gaussian, SimpleFit) {
     }
 
     // Fit parameter
-    Variable alpha{"alpha", -2, 0.1, -10, 10};
+    Variable alpha{"alpha", 1, 0.1, -10, 10};
 
-    Variable beta{"alpha", -2, 0.1, -10, 10};
+    Variable sigma{"sigma", 1, 0, 3};
 
     // GooPdf object
-    GaussianPdf gausspdf{"exppdf", &xvar, &alpha, &beta};
+    GaussianPdf gausspdf{"gausspdf", &xvar, &alpha, &sigma};
     gausspdf.setData(&data);
 
     GooFit::FitManagerMinuit1 fitter{&gausspdf};
@@ -50,6 +50,6 @@ TEST(Gaussian, SimpleFit) {
 
     EXPECT_TRUE(fitter);
     EXPECT_LT(alpha.getError(), .1);
-    EXPECT_NEAR(-1.5, alpha.getValue(), alpha.getError() * 3);
+    EXPECT_NEAR(0.665178392, alpha.getValue(), alpha.getError() * 3);
 }
 

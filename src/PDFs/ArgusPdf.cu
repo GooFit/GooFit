@@ -12,13 +12,16 @@ __device__ fptype device_Argus_Upper(fptype* evt, ParameterContainer &pc) {
 
     double t = x / m0;
 
-    pc.incrementIndex (1, 3, 1, 0, 1);
-
-    if(t >= 1)
+    if(t >= 1) {
+        pc.incrementIndex (1, 3, 1, 0, 1);
         return 0;
+    }
 
     fptype slope = pc.parameters[pc.parameterIdx + 2];
     fptype power = pc.parameters[pc.parameterIdx + 3];
+
+    pc.incrementIndex (1, 3, 1, 0, 1);
+
     t = 1 - t*t;
 
     return x * pow(t, power) * exp(slope * t);
@@ -32,10 +35,11 @@ __device__ fptype device_Argus_Lower(fptype* evt, ParameterContainer &pc) {
 
     fptype t = x / m0;
 
-    pc.incrementIndex (1, 3, 1, 0, 1);
 
-    if(t <= 1)
+    if(t <= 1) {
+        pc.incrementIndex (1, 3, 1, 0, 1);
         return 0;
+    }
 
     t *= t;
     t -= 1;
@@ -43,6 +47,8 @@ __device__ fptype device_Argus_Lower(fptype* evt, ParameterContainer &pc) {
     fptype slope = pc.parameters[pc.parameterIdx + 2];
     fptype power = pc.parameters[pc.parameterIdx + 3];
     fptype ret = x * pow(t, power) * exp(slope * t);
+
+    pc.incrementIndex (1, 3, 1, 0, 1);
 
     return ret;
 }

@@ -2,7 +2,7 @@
 
 #include "goofit/fitting/FitManagerMinuit1.h"
 #include "goofit/UnbinnedDataSet.h"
-#include "goofit/PDFs/ArgusPdf.h"
+#include "goofit/PDFs/basic/ArgusPdf.h"
 
 #include "goofit/Variable.h"
 
@@ -36,9 +36,9 @@ TEST(ArgusUpper, SimpleFit) {
     }
 
     // Fit parameter
-    Variable alpha{"alpha", -2, 0.1, -10, 10};
+    Variable alpha{"alpha", 1, 0.1, -10, 10};
 
-    Variable beta{"beta", -2, 0.1, -10, 10};
+    Variable beta{"beta", 1, 0.1, -10, 10};
 
     // GooPdf object
     ArgusPdf arguspdf{"Arguspdf", &xvar, &alpha, &beta, false};
@@ -50,7 +50,7 @@ TEST(ArgusUpper, SimpleFit) {
 
     EXPECT_TRUE(fitter);
     EXPECT_LT(alpha.getError(), .1);
-    EXPECT_NEAR(-1.5, alpha.getValue(), alpha.getError() * 3);
+    EXPECT_NEAR(0.998854, alpha.getValue(), alpha.getError() * 3);
 }
 
 TEST(ArgusLower, SimpleFit) {
@@ -74,9 +74,9 @@ TEST(ArgusLower, SimpleFit) {
     }
 
     // Fit parameter
-    Variable alpha{"alpha", -2, 0.1, -10, 10};
+    Variable alpha{"alpha", 1, 0.1, -10, 10};
 
-    Variable beta{"beta", -2, 0.1, -10, 10};
+    Variable beta{"beta", 1, 0.1, -10, 10};
 
     // GooPdf object
     ArgusPdf arguspdf{"Arguspdf", &xvar, &alpha, &beta, true};
@@ -88,5 +88,5 @@ TEST(ArgusLower, SimpleFit) {
 
     EXPECT_TRUE(fitter);
     EXPECT_LT(alpha.getError(), .1);
-    EXPECT_NEAR(-1.5, alpha.getValue(), alpha.getError() * 3);
+    EXPECT_NEAR(1.0012696, alpha.getValue(), alpha.getError() * 3);
 }

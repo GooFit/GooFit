@@ -46,7 +46,7 @@ TEST_CASE("Simple unbinned exponential",
     fitter.fit();
 
     CHECK(fitter);
-    CHECK(alpha.getError() < .01);
+    CHECK(alpha.getError() < .1);
     CHECK(alpha == Approx(-1.5).margin(alpha.getError()*3));
 }
 

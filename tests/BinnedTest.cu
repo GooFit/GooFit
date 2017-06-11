@@ -42,6 +42,7 @@ TEST_CASE("Simple binned exponential",
     exppdf.setData(&data);
 
     FitManager fitter{&exppdf};
+    fitter.setVerbosity(0);
     fitter.fit();
 
     CHECK(fitter);
@@ -86,6 +87,7 @@ TEST_CASE("Dual binned exponential",
     totalpdf.setData(&data);
 
     FitManager fitter{&totalpdf};
+    fitter.setVerbosity(0);
     fitter.fit();
 
     CHECK(fitter);
@@ -132,6 +134,7 @@ TEST_CASE("Dual binned exponential reversed variable",
     totalpdf.setData(&data);
 
     FitManager fitter{&totalpdf};
+    fitter.setVerbosity(0);
     fitter.fit();
 
     CHECK(fitter);

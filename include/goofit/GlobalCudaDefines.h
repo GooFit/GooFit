@@ -97,7 +97,7 @@ typedef float fptype;
 
 #if !defined(__CUDA_ARCH__) || (__CUDA_ARCH__ < 350)
 template<typename T>
-T rsqrt(T val) {
+__host__ __device__ T rsqrt(T val) {
     return 1.0 / sqrt(val);
 }
 #endif
@@ -105,7 +105,7 @@ T rsqrt(T val) {
 // Fix for bug in pow(double,int) for CUDA 7 and 7.5
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA && __CUDACC_VER_MAJOR__ < 8
 template<typename T>
-T pow(T x, int y) {
+__host__ __device__ T pow(T x, int y) {
     return pow(x, (T)y);
 }
 #endif

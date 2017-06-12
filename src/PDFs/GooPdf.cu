@@ -479,7 +479,8 @@ __host__ fptype GooPdf::normalize() const {
     thrust::constant_iterator<fptype*> arrayAddress(normRanges);
     thrust::constant_iterator<int> eventSize(observablesList.size());
     thrust::counting_iterator<int> binIndex(0);
-    thrust::constant_iterator<int> funcIdx (functionIdx);
+    //thrust::constant_iterator<int> funcIdx (functionIdx);
+    logger->setFunctionIndex (functionIdx);
 
     fptype sum;
 #ifdef GOOFIT_MPI
@@ -494,8 +495,8 @@ __host__ fptype GooPdf::normalize() const {
         cudaPlus);
 #else
     fptype s = thrust::transform_reduce(
-                   thrust::make_zip_iterator(thrust::make_tuple(binIndex, funcIdx, eventSize, arrayAddress)),
-                   thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, funcIdx, eventSize, arrayAddress)),
+                   thrust::make_zip_iterator(thrust::make_tuple(binIndex, eventSize, arrayAddress)),
+                   thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, eventSize, arrayAddress)),
                    *logger, dummy, cudaPlus);
 #endif
 
@@ -512,8 +513,8 @@ __host__ fptype GooPdf::normalize() const {
         cudaPlus);
 #else
     sum = thrust::transform_reduce(
-              thrust::make_zip_iterator(thrust::make_tuple(binIndex, funcIdx, arrayAddress)),
-              thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, funcIdx, arrayAddress)),
+              thrust::make_zip_iterator(thrust::make_tuple(binIndex, eventSize, arrayAddress)),
+              thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, eventSize, arrayAddress)),
               *logger, dummy, cudaPlus);
 
     GOOFIT_TRACE("sum = {}", sum);

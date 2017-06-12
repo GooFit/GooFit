@@ -49,8 +49,10 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, int, fptype*> t) co
     ParameterContainer pc;
 
     // Bin index, event size, base address [lower, upper,getNumBins]
-    int funcIdx = thrust::get<1>(t);
-    int evtSize = 1; //hard coded for the moment, may need to memcpy to symbol?
+    int funcIdx = functionIdx; //thrust::get<1>(t);
+
+    //For any binned fit, we need to pass the function: which will include functionIndex
+    int evtSize = thrust::get<1>(t);
     int binNumber = thrust::get<0>(t);
 
     // Do not understand why this cannot be declared __shared__. Dynamically allocating shared memory is apparently

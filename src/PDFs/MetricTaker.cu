@@ -48,10 +48,6 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, fptype*, int> t) co
 __device__ fptype MetricTaker::operator()(thrust::tuple<int, int, fptype*> t) const {
     ParameterContainer pc;
 
-    // Bin index, event size, base address [lower, upper,getNumBins]
-    int funcIdx = functionIdx; //thrust::get<1>(t);
-
-    //For any binned fit, we need to pass the function: which will include functionIndex
     int evtSize = thrust::get<1>(t);
     int binNumber = thrust::get<0>(t);
 
@@ -79,7 +75,7 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, int, fptype*> t) co
     }
 
     //before we start, we need to progress ourselves based on the function we need to run
-    for (int i = 0; i < funcIdx; i++)
+    for (int i = 0; i < functionIdx; i++)
          pc.incrementIndex(); //need to use the slow version, since we are not starting from index 0.
 
     // Causes stack size to be statically undeterminable.

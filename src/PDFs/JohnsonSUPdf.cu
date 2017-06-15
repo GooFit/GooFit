@@ -4,7 +4,7 @@ namespace GooFit {
 
 const fptype SQRT2PI = 2.506628;
 
-__device__ fptype device_JohnsonSU(fptype *evt, fptype *p, unsigned int *indices) {
+__device__ fptype device_JohnsonSU(fptype *evt, ParameterContainer &pc) {
     fptype _Jm = p[indices[1]];
     fptype _Js = p[indices[2]];
     fptype _Jg = p[indices[3]];
@@ -37,6 +37,16 @@ __host__ JohnsonSUPdf::JohnsonSUPdf(
     pindices.push_back(registerParameter(delta));
     GET_FUNCTION_ADDR(ptr_to_JohnsonSU);
     initialize(pindices);
+}
+
+__host__ void JohnsonSUPdf::recursvieSetIndices () {
+    GET_FUNCTION_ADDR(ptr_to_JohnsonSU);
+
+    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_JohnsonSU");
+    host_function_table[num_device_functions] = host_fcn_ptr;
+    functionIdx = num_device_functions++;
+
+    populateArrays ();
 }
 
 __host__ fptype JohnsonSUPdf::integrate(fptype lo, fptype hi) const {

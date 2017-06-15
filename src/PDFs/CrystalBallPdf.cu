@@ -3,16 +3,17 @@
 
 namespace GooFit {
 
-__device__ fptype device_CrystalBall(fptype *evt, fptype *p, unsigned int *indices) {
+__device__ fptype device_CrystalBall(fptype *evt, ParameterContainer &pc) {
     // Left-hand tail if alpha is less than 0,
     // right-hand tail if greater, pure Gaussian if 0.
     // return 1;
+    int id = pc.constants[pc.constantIdx + 1];
 
-    fptype x     = evt[indices[2 + indices[0]]];
-    fptype mean  = p[indices[1]];
-    fptype sigma = p[indices[2]];
-    fptype alpha = p[indices[3]];
-    fptype power = p[indices[4]];
+    fptype x     = evt[id];
+    fptype mean  = pc.parameters[pc.parameterIdx + 1];
+    fptype sigma = pc.parameters[pc.parameterIdx + 2];
+    fptype alpha = pc.parameters[pc.parameterIdx + 3];
+    fptype power = pc.parameters[pc.parameterIdx + 4];
     fptype rx    = (sigma != 0) ? (x - mean) / sigma : 0;
     fptype ret   = 0;
 
@@ -40,6 +41,10 @@ __device__ device_function_ptr ptr_to_CrystalBall = device_CrystalBall;
 __host__ CrystalBallPdf::CrystalBallPdf(
     std::string n, Variable *_x, Variable *mean, Variable *sigma, Variable *alpha, Variable *power)
     : GooPdf(_x, n) {
+
+    //reserve spot for _x
+    constantsList.push_back (0);
+
     std::vector<unsigned int> pindices;
     pindices.push_back(registerParameter(mean));
     pindices.push_back(registerParameter(sigma));
@@ -53,6 +58,16 @@ __host__ CrystalBallPdf::CrystalBallPdf(
     initialize(pindices);
 }
 
+__host__ void CrystalBallPdf::recursiveSetIndices () {
+    GET_FUNCTION_ADDR(ptr_to_CrystalBall);
+
+    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_CrystalBall");
+    host_function_table[num_device_functions] = host_fcn_ptr;
+    functionIdx = num_device_functions++;
+
+    populateArrays ();
+}
+
 __host__ fptype CrystalBallPdf::integrate(fptype lo, fptype hi) const {
     static const fptype sqrtPiOver2 = 1.2533141373;
     static const fptype sqrt2       = 1.4142135624;
@@ -62,10 +77,10 @@ __host__ fptype CrystalBallPdf::integrate(fptype lo, fptype hi) const {
 
     unsigned int *indices = host_indices + parameters;
 
-    fptype mean  = host_params[indices[1]];
-    fptype sigma = host_params[indices[2]];
-    fptype alpha = host_params[indices[3]];
-    fptype power = host_params[indices[4]];
+    fptype mean  = parametersList[0];
+    fptype sigma = parametersList[1];
+    fptype alpha = parametersList[2];
+    fptype power = parametersList[3];
 
     if(fabs(power - 1.0) < 1.0e-05)
         useLog = true;

@@ -274,11 +274,12 @@ __device__ thrust::complex<fptype> device_Faddeeva_2(const thrust::complex<fptyp
 }
 #endif
 
-__device__ fptype device_Voigtian(fptype *evt, fptype *p, unsigned int *indices) {
-    fptype x = evt[0];
-    fptype m = p[indices[1]];
-    fptype w = p[indices[2]];
-    fptype s = p[indices[3]];
+__device__ fptype device_Voigtian(fptype *evt, ParameterContainer &pc) {
+    int id = pc.constants[pc.constantIdx + 1];
+    fptype x = evt[id];
+    fptype m = pc.parameters[pc.parameterIdx + 1];
+    fptype w = pc.parameters[pc.parameterIdx + 2];
+    fptype s = pc.parameters[pc.parameterIdx + 3];
 
     // return constant for zero width and sigma
     if((0 == s) && (0 == w))
@@ -316,12 +317,24 @@ __device__ device_function_ptr ptr_to_Voigtian = device_Voigtian;
 
 __host__ VoigtianPdf::VoigtianPdf(std::string n, Variable *_x, Variable *m, Variable *s, Variable *w)
     : GooPdf(_x, n) {
+    constantsList.push_back (0);
+
     std::vector<unsigned int> pindices;
     pindices.push_back(registerParameter(m));
     pindices.push_back(registerParameter(s));
     pindices.push_back(registerParameter(w));
     GET_FUNCTION_ADDR(ptr_to_Voigtian);
     initialize(pindices);
+}
+
+__host__ void VoigtianPdf;:recursiveSetIndices () {
+    GET_FUNCTION_ADDR(ptr_to_Voigtian);
+
+    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_Voigtian");
+    host_function_table[num_device_functions] = host_fcn_ptr;
+    functionIdx = num_device_functions++;
+
+    populateArrays ();
 }
 
 } // namespace GooFit

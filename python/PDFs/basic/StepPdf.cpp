@@ -8,7 +8,7 @@ namespace py = pybind11;
 
 void init_StepPdf(py::module &m) {
     py::class_<StepPdf, GooPdf>(m, "StepPdf")
-        .def(py::init<std::string, Variable* Variable*>())
+        .def(py::init<std::string, Variable *, Variable *>())
         ;
 }
 

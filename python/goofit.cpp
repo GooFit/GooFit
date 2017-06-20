@@ -15,6 +15,7 @@ void init_BWPdf(py::module &);
 void init_CorrGaussianPdf(py::module &);
 void init_CrystalBallPdf(py::module &);
 void init_ExpGausPdf(py::module &);
+void init_ExpPdf(py::module &);
 void init_GaussianPdf(py::module &);
 void init_InterHistPdf(py::module &);
 void init_JohnsonSUPdf(py::module &);

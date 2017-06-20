@@ -6,7 +6,26 @@ pybind11_add_module(goofit
     goofit/UnbinnedDataSet.cpp
     goofit/PdfBase.cpp
     PDFs/GooPdf.cpp
+    PDFs/basic/ArgusPdf.cpp
+    PDFs/basic/BifurGaussPdf.cpp
+    PDFs/basic/BinTransformPdf.cpp
+    PDFs/basic/BWPdf.cpp
+    PDFs/basic/CorrGaussianPdf.cpp
+    PDFs/basic/CrystalBallPdf.cpp
+    PDFs/basic/ExpGausPdf.cpp
     PDFs/basic/ExpPdf.cpp
+    PDFs/basic/GaussianPdf.cpp
+    PDFs/basic/InterHistPdf.cpp
+    PDFs/basic/JohnsonSUPdf.cpp
+    PDFs/basic/KinLimitBWPdf.cpp
+    PDFs/basic/LandauPdf.cpp
+    PDFs/basic/NovosibirskPdf.cpp
+    PDFs/basic/PolynomialPdf.cpp
+    PDFs/basic/ScaledGaussianPdf.cpp
+    PDFs/basic/SmoothHistogramPdf.cpp
+    PDFs/basic/StepPdf.cpp
+    PDFs/basic/TrigThresholdPdf.cpp
+    PDFs/basic/VoigtianPdf.cpp
     goofit/FitManager.cpp)
 
 if(GOOFIT_DEVICE STREQUAL CUDA)

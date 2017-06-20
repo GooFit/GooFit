@@ -26,6 +26,20 @@ pybind11_add_module(goofit
     PDFs/basic/StepPdf.cpp
     PDFs/basic/TrigThresholdPdf.cpp
     PDFs/basic/VoigtianPdf.cpp
+    PDFs/combine/AddPdf.cpp
+    PDFs/combine/CompositePdf.cpp
+    PDFs/combine/ConvolutionPdf.cpp
+    PDFs/combine/EventWeightedAddPdf.cpp
+    PDFs/combine/MappedPdf.cpp
+    PDFs/combine/ProdPdf.cpp
+    PDFs/physics/DalitzPlotPdf.cpp
+    PDFs/physics/DalitzVetoPdf.cpp
+    PDFs/physics/DP4Pdf.cpp
+    PDFs/physics/IncoherentSumPdf.cpp
+    PDFs/physics/LineshapesPdf.cpp
+    PDFs/physics/ResonancePdf.cpp
+    PDFs/physics/Tddp4Pdf.cpp
+    PDFs/physics/TddpPdf.cpp
     goofit/FitManager.cpp)
 
 if(GOOFIT_DEVICE STREQUAL CUDA)

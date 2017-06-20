@@ -28,6 +28,20 @@ void init_SmoothHistogramPdf(py::module &);
 void init_StepPdf(py::module &);
 void init_TrigThresholdPdf(py::module &);
 void init_VoigtianPdf(py::module &);
+void init_AddPdf(py::module &);
+void init_CompositePdf(py::module &);
+void init_ConvolutionPdf(py::module &);
+void init_EventWeightedPdf(py::module &);
+void init_MappedPdf(py::module &);
+void init_ProdPdf(py::module &);
+void init_DalitzPlotPdf(py::module &);
+void init_DalitzVetoPdf(py::module &);
+void init_DP4Pdf(py::module &);
+void init_IncoherentSumPdf(py::module &);
+void init_LineshapesPdf(py::module &);
+void init_ResonancePdf(py::module &);
+void init_Tddp4Pdf(py::module &);
+void init_TddpPdf(py::module &);
 void init_FitManager(py::module &);
 
 PYBIND11_PLUGIN(goofit) {

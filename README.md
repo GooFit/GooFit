@@ -67,6 +67,7 @@ Other custom options supported along with the defaults:
 * `-DGOOFIT_EXAMPLES=ON`: Build the examples
 * `-DGOOFIT_PACKAGES=ON`: Build any packages found with the name `goofit*`
 * `-DGOOFIT_DEBUG=ON` and `-DGOOFIT_TRACE=ON` will enable the matching printout macros
+* `-DGOOFIT_PYTHON=OFF` (`ON` in GooFit 2.1 if Python found): Preliminary python bindings using [PyBind11].
 
 Advanced Options:
 * `-DGOOFIT_HOST=Auto`: This is CPP unless device is `OMP`, in which case it is also `OMP`. This changes thrust::host_vector calculations, and is not fully supported when set to a non-default setting.
@@ -75,7 +76,6 @@ Advanced Options:
 * `-DGOOFIT_MPI=ON`: (OFF/ON.  With this feature on, GPU devices are selected automatically).  Tested with MVAPICH2/2.2 and OpenMPI.
 * `-DGOOFIT_CUDA_OR_GROUPSIZE:INT=128`: This sets the group size that thrust will use for distributing the problem.  This parameter can be thought of as 'Threads per block'.  These will be used after running 'find_optimal.py' to figure out the optimal size.
 * `-DGOOFIT_CUDA_OR_GRAINSIZE:INT=7`: This is the grain size thrust uses for distributing the problem.  This parameter can be thought of as 'Items per thread'.
-* `-DGOOFIT_PYTHON=OFF`: Preliminary python bindings using [PyBind11].
 * `-DGOOFIT_MAXPAR=1800`: The maximum number of parameters to allow. May cause memory issues if too large.
 * You can enable sanitizers on non-CUDA builds with `-DSANITIZE_ADDRESS=ON`, `-DSANITIZE_MEMORY=ON`, `-DSANITIZE_THREAD=ON` or `-DSANITIZE_UNDEFINED=ON`.
 * If `clang-tidy` is available, it will automatically be used to check the source. If you set `-DGOOFIT_TIDY_FIX=ON`, fixes will be applied to the GooFit source.
@@ -119,6 +119,7 @@ or
 
 If you want to run an individual example, those are in subdirectories in examples (built products are in your build directory, the source is in `/examples`).
 
+The tests can be run with `make test` or `ctest`. The python bindings, if built, can be tested with `pytest`, run from the main build directory. The python examples and tests folders are linked to the build directory with a `py` prefix.
 
 ## Adding a new example:
 

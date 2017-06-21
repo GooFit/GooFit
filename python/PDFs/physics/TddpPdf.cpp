@@ -3,7 +3,7 @@
 #include <goofit/Variable.h>
 #include <goofit/PDFs/physics/TddpPdf.h>
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
-#include "goofit/PDFs/physics/MixingTimeResolution_Aux.h>
+#include <goofit/PDFs/physics/MixingTimeResolution_Aux.h>
 
 using namespace GooFit;
 namespace py = pybind11;

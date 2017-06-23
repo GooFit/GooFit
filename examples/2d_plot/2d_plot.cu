@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
     gStyle->SetFuncWidth(1);
     gStyle->SetLineWidth(1);
     gStyle->SetLineColor(1);
-    gStyle->SetPalette(1, 0);
+    gStyle->SetPalette(kViridis, 0);
 
     Variable xvar{"xvar", -5, 5};
     Variable yvar{"yvar", -5, 5};

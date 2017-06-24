@@ -98,6 +98,8 @@ PYBIND11_PLUGIN(goofit) {
     init_IncoherentSumPdf(m);
     init_LineshapesPdf(m);
     init_ResonancePdf(m);
+    init_Tddp4Pdf(m);
+    init_TddpPdf(m);
 
     return m.ptr();
 }

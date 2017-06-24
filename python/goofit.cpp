@@ -47,6 +47,7 @@ void init_DP4Pdf(py::module &);
 void init_IncoherentSumPdf(py::module &);
 void init_LineshapesPdf(py::module &);
 void init_ResonancePdf(py::module &);
+void init_SpinFactors(py::module &);
 void init_Tddp4Pdf(py::module &);
 void init_TddpPdf(py::module &);
 
@@ -98,6 +99,7 @@ PYBIND11_PLUGIN(_goofit) {
     init_IncoherentSumPdf(m);
     init_LineshapesPdf(m);
     init_ResonancePdf(m);
+    init_SpinFactors(m);
     init_Tddp4Pdf(m);
     init_TddpPdf(m);
 

@@ -38,6 +38,7 @@ pybind11_add_module(_goofit
     PDFs/physics/IncoherentSumPdf.cpp
     PDFs/physics/LineshapesPdf.cpp
     PDFs/physics/ResonancePdf.cpp
+    PDFs/physics/SpinFactors.cpp
     PDFs/physics/Tddp4Pdf.cpp
     PDFs/physics/TddpPdf.cpp
     goofit/FitManager.cpp)

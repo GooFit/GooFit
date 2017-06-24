@@ -109,6 +109,7 @@ int main(int argc, char **argv) {
     ypdfHist.SetStats(false);
 
     UnbinnedDataSet grid                     = total.makeGrid();
+    total.setData(&grid);
     std::vector<std::vector<double>> pdfVals = total.getCompProbsAtDataPoints();
 
     TCanvas foo;

@@ -1,4 +1,4 @@
-pybind11_add_module(goofit
+pybind11_add_module(_goofit
     goofit.cpp
     goofit/Variable.cpp
     goofit/DataSet.cpp
@@ -43,14 +43,18 @@ pybind11_add_module(goofit
     goofit/FitManager.cpp)
 
 if(GOOFIT_DEVICE STREQUAL CUDA)
-    target_include_directories(goofit PUBLIC ${CUDA_INCLUDE_DIRS})
+    target_include_directories(_goofit PUBLIC ${CUDA_INCLUDE_DIRS})
 endif()
 
-target_link_libraries(goofit PUBLIC goofit_lib)
-set_target_properties(goofit PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
-set_target_properties(goofit PROPERTIES FOLDER python)
+target_link_libraries(_goofit PUBLIC goofit_lib)
+set_target_properties(_goofit PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
+set_target_properties(_goofit PROPERTIES FOLDER python)
 
-install(TARGETS goofit LIBRARY DESTINATION ".")
+install(TARGETS _goofit LIBRARY DESTINATION goofit)
+
+file(WRITE "${CMAKE_BINARY_DIR}/goofit/__init__.py" "from ._goofit import *")
+install(FILES "${CMAKE_BINARY_DIR}/goofit/__init__.py" DESTINATION "goofit")
+
 add_custom_target(pygoofit_tests ALL
     COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/tests ${PROJECT_BINARY_DIR}/pytests)
 set_target_properties(pygoofit_tests PROPERTIES FOLDER python)

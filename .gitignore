@@ -40,3 +40,5 @@ CMakeLists.txt.user
 
 
 goofit/__init__.py
+
+.cache/v/cache/lastfailed

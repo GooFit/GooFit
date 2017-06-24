@@ -2,7 +2,11 @@ import pytest
 import sys
 sys.path.append('.')
 
-from goofit import *
+try:
+    from goofit import *
+except ImportError:
+    from _goofit import *
+
 import numpy as np
 
 def test_exp():

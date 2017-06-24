@@ -50,8 +50,8 @@ void init_ResonancePdf(py::module &);
 void init_Tddp4Pdf(py::module &);
 void init_TddpPdf(py::module &);
 
-PYBIND11_PLUGIN(goofit) {
-    py::module m("goofit", "Python interface for GooFit");
+PYBIND11_PLUGIN(_goofit) {
+    py::module m("_goofit", "Python interface for GooFit");
 
     init_Variable(m);
     init_DataSet(m);

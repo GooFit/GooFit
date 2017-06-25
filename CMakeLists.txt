@@ -114,12 +114,10 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unknown-pragmas -Wno-long-long -Wno-attributes -Wno-sign-compare -Wno-unused-parameter")
-    # Helpful but irritating: -Wzero-as-null-pointer-constant
+    # Helpful but irritating: -Wzero-as-null-pointer-constant -Wsuggest-override 
     # no-sign-compare can be removed, but will take some work to clean up
     # Same is true for no-unused-parameter
-    if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5.0)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wsuggest-override")
-    endif()
+    # if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5.0)
 endif()
 
 if(NOT CMAKE_BUILD_TYPE)

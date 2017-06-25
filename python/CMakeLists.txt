@@ -43,12 +43,14 @@ pybind11_add_module(_goofit
     PDFs/physics/TddpPdf.cpp
     goofit/FitManager.cpp)
 
+# Only need to add CUDA incdir if build with CUDA
+# (Issue with pre-CMake 3.8 design)
 if(GOOFIT_DEVICE STREQUAL CUDA)
     target_include_directories(_goofit PUBLIC ${CUDA_INCLUDE_DIRS})
 endif()
 
 target_link_libraries(_goofit PUBLIC goofit_lib)
-set_target_properties(_goofit PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
+set_target_properties(_goofit PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/goofit)
 set_target_properties(_goofit PROPERTIES FOLDER python)
 
 install(TARGETS _goofit LIBRARY DESTINATION goofit)

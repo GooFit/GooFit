@@ -8,10 +8,15 @@ namespace py = pybind11;
 
 void init_BinnedDataSet(py::module &m) {
     py::class_<BinnedDataSet, DataSet>(m, "BinnedDataSet")
-        .def(py::init<Variable *>())
-        .def(py::init<Variable *, std::string>())
-        .def(py::init<std::vector<Variable *> &>())
-        .def(py::init<std::vector<Variable *> &, std::string>())
+        .def("__init__", [](BinnedDataSet &instance, py::args args, py::kwargs kwargs){
+            std::string name;
+            std::vector<Variable*> vars;
+            for(auto arg : args)
+                vars.push_back(arg.cast<Variable*>());
+            if(kwargs.contains("name"))
+                name = kwargs["name"].cast<std::string>();
+            new (&instance) BinnedDataSet(vars, name);
+        })
         .def("getBinCenter", (fptype(BinnedDataSet::*)(size_t, size_t) const) & BinnedDataSet::getBinCenter)
         .def("getBinNumber", &BinnedDataSet::getBinNumber)
         .def("getBinVolume", &BinnedDataSet::getBinVolume)

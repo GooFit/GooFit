@@ -14,9 +14,5 @@ class PyDataSet : public DataSetBase {
 
 void init_DataSet(py::module &m) {
     py::class_<DataSet, PyDataSet<>>(m, "DataSet")
-        .def(py::init<Variable *>())
-        .def(py::init<Variable *, std::string>())
-        .def(py::init<std::vector<Variable *> &>())
-        .def(py::init<std::vector<Variable *> &, std::string>())
         .def("addEvent", (void (DataSet::*)()) & DataSet::addEvent);
 }

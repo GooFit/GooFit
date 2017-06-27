@@ -50,6 +50,11 @@ void init_ResonancePdf(py::module &);
 void init_SpinFactors(py::module &);
 void init_Tddp4Pdf(py::module &);
 void init_TddpPdf(py::module &);
+void init_ThreeGaussResolution(py::module &);
+void init_TruthResolution(py::module &);
+
+// Utilities
+void init_MixingTimeResolution(py::module &);
 
 PYBIND11_PLUGIN(_goofit) {
     py::module m("_goofit", "Python interface for GooFit");
@@ -102,6 +107,11 @@ PYBIND11_PLUGIN(_goofit) {
     init_SpinFactors(m);
     init_Tddp4Pdf(m);
     init_TddpPdf(m);
+    init_ThreeGaussResolution(m);
+    init_TruthResolution(m);
+
+    // Utilities
+    init_MixingTimeResolution(m);
 
     return m.ptr();
 }

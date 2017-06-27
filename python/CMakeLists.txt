@@ -5,6 +5,7 @@ pybind11_add_module(_goofit
     goofit/BinnedDataSet.cpp
     goofit/UnbinnedDataSet.cpp
     goofit/PdfBase.cpp
+    utilities/MixingTimeResolution_Aux.cpp
     PDFs/GooPdf.cpp
     PDFs/basic/ArgusPdf.cpp
     PDFs/basic/BifurGaussPdf.cpp
@@ -41,6 +42,8 @@ pybind11_add_module(_goofit
     PDFs/physics/SpinFactors.cpp
     PDFs/physics/Tddp4Pdf.cpp
     PDFs/physics/TddpPdf.cpp
+    PDFs/physics/ThreeGaussResolution_Aux.cpp
+    PDFs/physics/TruthResolution_Aux.cpp
     goofit/FitManager.cpp)
 
 if(GOOFIT_DEVICE STREQUAL CUDA)

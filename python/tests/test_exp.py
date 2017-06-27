@@ -1,18 +1,16 @@
-import pytest
+# Only needed if run from plain CMake build
+# If installed with pip, this is not needed
 import sys
 sys.path.append('.')
 
-try:
-    from goofit import *
-except ImportError:
-    from _goofit import *
+from goofit import *
 
 import numpy as np
 
 def test_exp():
     xdata = np.random.exponential(size=100000)
-    xvar = Variable("xvar", 0, np.max(xdata) + 1);
-    data = UnbinnedDataSet(xvar);
+    xvar = Variable("xvar", 0, np.max(xdata) + 1)
+    data = UnbinnedDataSet(xvar)
 
     for v in xdata:
         xvar.value = v

@@ -20,7 +20,7 @@ data.from_numpy(xyarr)
 
 xmean = Variable("xmean", 0, 1, -10, 10)
 xsigm = Variable("xsigm", 1, 0.5, 1.5)
-xgauss = GaussianPdf("xgauss", xvar, xmean, xsigm);
+xgauss = GaussianPdf("xgauss", xvar, xmean, xsigm)
 
 ymean = Variable("ymean", 0, 1, -10, 10)
 ysigm = Variable("ysigm", 0.4, 0.1, 0.6)

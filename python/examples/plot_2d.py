@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from goofit import *
 import numpy as np
 

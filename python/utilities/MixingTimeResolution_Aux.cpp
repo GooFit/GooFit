@@ -8,7 +8,7 @@ namespace py = pybind11;
 
 void init_MixingTimeResolution(py::module &m) {
     py::class_<MixingTimeResolution>(m, "MixingTimeResolution")
-
+        .def("initIndex", &MixingTimeResolution::initIndex)
     ;
 }
 

@@ -2,7 +2,6 @@
 #include <pybind11/stl.h>
 
 #include <goofit/Variable.h>
-#include <goofit/PDFs/physics/MixingTimeResolution_Aux.h>
 #include <goofit/PDFs/physics/ThreeGaussResolution_Aux.h>
 
 using namespace GooFit;

@@ -40,7 +40,7 @@ __device__ fptype d_observables[maxParams];
 __device__ fptype d_normalisations[maxParams];
 
 //This has to be here, otherwise we can't initialize the pointers properly.
-ParameterContainer::ParameterContainer () : parameters(d_parameters), constants(d_constants), 
+__device__ __host__ ParameterContainer::ParameterContainer () : parameters(d_parameters), constants(d_constants), 
 	observables(d_observables), normalisations(d_normalisations), parameterIdx(0), 
 	constantIdx(0), observableIdx(0), normalIdx(0), funcIdx (0) { }
 
@@ -179,10 +179,10 @@ __host__ void GooPdf::setIndices () {
 
     //copy all the device functions over:
     GOOFIT_DEBUG("Copying all host side parameters to device");
-    MEMCPY(device_function_table, host_function_table, num_device_functions*sizeof (fptype), cudaMemcpyHostToDevice);
-    MEMCPY(d_parameters, host_parameters, totalParameters*sizeof (fptype), cudaMemcpyHostToDevice);
-    MEMCPY(d_constants, host_constants, totalConstants*sizeof (fptype), cudaMemcpyHostToDevice);
-    MEMCPY(d_observables, host_observables, totalObservables*sizeof(fptype), cudaMemcpyHostToDevice);
+    ERROR_CHECK(MEMCPY_TO_SYMBOL(device_function_table, &host_function_table, num_device_functions*sizeof (fptype), 0, cudaMemcpyHostToDevice));
+    ERROR_CHECK(MEMCPY_TO_SYMBOL(d_parameters, &host_parameters, totalParameters*sizeof (fptype), 0, cudaMemcpyHostToDevice));
+    ERROR_CHECK(MEMCPY_TO_SYMBOL(d_constants, &host_constants, totalConstants*sizeof (fptype), 0, cudaMemcpyHostToDevice));
+    ERROR_CHECK(MEMCPY_TO_SYMBOL(d_observables, &host_observables, totalObservables*sizeof(fptype), 0, cudaMemcpyHostToDevice));
 }
 
 __host__ int GooPdf::findFunctionIdx(void* dev_functionPtr) {
@@ -317,7 +317,7 @@ __host__ double GooPdf::calculateNLL() const {
         GooFit::abort(__FILE__, __LINE__, getName() + " non-positive normalisation", this);
 
     //make this memcpy async
-    MEMCPY(d_normalisations, host_normalisations, totalNormalisations*sizeof(fptype), cudaMemcpyHostToDevice);
+    ERROR_CHECK(MEMCPY_TO_SYMBOL(d_normalisations, host_normalisations, totalNormalisations*sizeof(fptype), 0, cudaMemcpyHostToDevice));
     //cudaDeviceSynchronize(); // Ensure normalisation integrals are finished
 
     int numVars = observablesList.size();

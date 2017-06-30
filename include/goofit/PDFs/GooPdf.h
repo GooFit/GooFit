@@ -21,7 +21,7 @@ namespace GooFit {
 
 struct ParameterContainer
 {
-    ParameterContainer (); 
+    __host__ __device__ ParameterContainer (); 
 
     fptype *parameters;
     fptype *constants;
@@ -37,7 +37,7 @@ struct ParameterContainer
 
     //each function will need to specify how to increment these values.
     //
-    void incrementIndex (const int funcs, const int params, const int cons, const int obs, const int norms)
+    __device__ void incrementIndex (const int funcs, const int params, const int cons, const int obs, const int norms)
     {
         funcIdx += funcs;
         parameterIdx += params + 1;
@@ -47,7 +47,7 @@ struct ParameterContainer
     }
 
     //slow version, avoid at all costs!
-    void incrementIndex ()
+    __device__ void incrementIndex ()
     {
         funcIdx ++;
 

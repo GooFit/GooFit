@@ -1,6 +1,7 @@
 #include "goofit/PDFs/combine/AddPdf.h"
 #include "goofit/Error.h"
 #include "goofit/Log.h"
+#include "goofit/detail/ThrustOverride.h"
 
 #include <thrust/iterator/constant_iterator.h>
 #include <thrust/transform_reduce.h>
@@ -16,22 +17,29 @@ __device__ fptype device_AddPdfs(fptype* evt, ParameterContainer &pc) {
     fptype ret = 0;
     fptype totalWeight = 0;
 
+    //make a copy of our parameter container
+    ParameterContainer pci = pc;
+
+    //We only call increment once we read our weight/norm for the first iteration.
+    pci.incrementIndex(1, numParameters, 1, 0, 1);
+
     for(int i = 0; i < numParameters; i++)
     {
         //fetch our values from AddPdf
         fptype weight = pc.parameters[pc.parameterIdx + i + 1];
         totalWeight += weight;
 
-        //increment our container structure
-        pc.incrementIndex(1, numParameters, 1, 0, 1);
-
-	fptype norm = pc.normalisations[pc.normalIdx + 1];
+        //This is the normal value for the 'callFunction' PDF, so we read from pci
+	fptype norm = pci.normalisations[pci.normalIdx + 1];
 
         //call the first function to add in our PDF.
-        fptype curr = callFunction(evt, pc);
+        fptype curr = callFunction(evt, pci);
 
         ret += weight * curr * norm;
     }
+
+    //restore our new parameter container object
+    pc = pci;
 
     //previous functions incremented the indices appropriately, so now we need to get the norm again
     //NOTE: this is the weight for the function about to be called.
@@ -164,7 +172,8 @@ __host__ fptype AddPdf::normalize() const {
     fptype totalWeight = 0;
 
     for(unsigned int i = 0; i < components.size()-1; ++i) {
-        fptype weight = host_parameters[parametersIdx + 3*i + 1];
+        //fptype weight = host_parameters[parametersIdx + 3*i + 1];
+        fptype weight = parametersList[i]->getValue ();
         totalWeight += weight;
         fptype curr = components[i]->normalize();
         ret += curr * weight;

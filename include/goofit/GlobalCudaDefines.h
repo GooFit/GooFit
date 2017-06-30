@@ -59,6 +59,12 @@ enum gooError { gooSuccess = 0, gooErrorMemoryAllocation };
 #define GET_FUNCTION_ADDR(fname) cudaMemcpyFromSymbol((void **)&host_fcn_ptr, fname, sizeof(void *))
 #define MEMCPY_FROM_SYMBOL(target, source, count, offset, direction)                                                   \
     cudaMemcpyFromSymbol(target, source, count, offset, direction)
+#define ERROR_CHECK(x) {\
+    cudaError_t err = x;\
+    if (err != cudaSuccess) {\
+      printf ("CUDA error %s at %s:%i (%s)\n", cudaGetErrorString (err), __FILE__, __LINE__, #x);\
+    }\
+  }
 
 // For CUDA case, just use existing errors, renamed
 #include <driver_types.h> // Needed for cudaError_t

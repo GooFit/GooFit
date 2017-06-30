@@ -48,7 +48,6 @@ __host__ void ScaledGaussianPdf::recursiveSetIndices () {
     functionIdx = num_device_functions++;
 
     populateArrays ();
-
 }
 
 } // namespace GooFit

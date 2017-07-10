@@ -3,10 +3,12 @@
 
 #include <goofit/Variable.h>
 #include <goofit/PDFs/physics/ThreeGaussResolution_Aux.h>
-#include<python/PDFs/physics/MixingTimeResolution_Aux.cpp>
+#include "MixingTimeResolution_Aux.h"
+
 
 using namespace GooFit;
 namespace py = pybind11;
+
 template<class ThreeGaussResolutionBase = ThreeGaussResolution> class PyThreeGaussResolution :
         public PyMixingTimeResolution<ThreeGaussResolutionBase> {
 

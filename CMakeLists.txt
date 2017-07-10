@@ -85,7 +85,7 @@ endif()
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/extern/sanitizers/cmake" ${CMAKE_MODULE_PATH})
 find_package(Sanitizers)
 
-set(GOOFIT_MAXPAR "1800" CACHE STRING "The number of parameters to statically support, can be increased but should not be too large.") 
+set(GOOFIT_MAXPAR "1800" CACHE STRING "The number of parameters to statically support, can be increased but should not be too large.")
 
 # Output the current GooFit version
 configure_file (
@@ -114,7 +114,7 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unknown-pragmas -Wno-long-long -Wno-attributes -Wno-sign-compare -Wno-unused-parameter")
-    # Helpful but irritating: -Wzero-as-null-pointer-constant -Wsuggest-override 
+    # Helpful but irritating: -Wzero-as-null-pointer-constant -Wsuggest-override
     # no-sign-compare can be removed, but will take some work to clean up
     # Same is true for no-unused-parameter
     # if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5.0)
@@ -268,7 +268,7 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
 
 endif()
 
-set(GOOFIT_CFLAGS "$<$<CONFIG:Release>:-march=native>$<$<CONFIG:RelWithDebInfo>:-march=native>" CACHE STRING "compiler flags")
+    set(GOOFIT_CFLAGS "$<$<CONFIG:Release>:-march=native>$<$<CONFIG:RelWithDebInfo>:-march=native>" CACHE STRING "compiler flags")
 add_compile_options("${GOOFIT_CFLAGS}")
 
 set(THRUST_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/extern/thrust")
@@ -340,6 +340,8 @@ function(goofit_add_library GNAME)
     target_link_libraries(${GNAME} rang CLI11 fmt goofit_mt)
     set_target_properties(${GNAME} PROPERTIES FOLDER core)
 
+    set_target_properties(${GNAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION 1)
+
     if(ROOT_FOUND)
         target_link_libraries(${GNAME} ROOT::ROOT)
     else()
@@ -374,6 +376,8 @@ function(goofit_add_executable NAMEEXE)
     target_compile_options(${NAMEEXE} PUBLIC -x c++)
     set_target_properties(${NAMEEXE} PROPERTIES FOLDER projects)
     source_group("Source Files" REGULAR_EXPRESSION ".*\\.c[uc]")
+
+    set_target_properties(${GNAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION 1)
 
     if(CLANG_TIDY_EXE)
         set_target_properties(

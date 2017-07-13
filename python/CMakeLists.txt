@@ -37,13 +37,13 @@ pybind11_add_module(_goofit
     PDFs/physics/DP4Pdf.cpp
     PDFs/physics/IncoherentSumPdf.cpp
     PDFs/physics/LineshapesPdf.cpp
+    PDFs/physics/MixingTimeResolution_Aux.cpp
     PDFs/physics/ResonancePdf.cpp
     PDFs/physics/SpinFactors.cpp
     PDFs/physics/Tddp4Pdf.cpp
     PDFs/physics/TddpPdf.cpp
     PDFs/physics/ThreeGaussResolution_Aux.cpp
     PDFs/physics/TruthResolution_Aux.cpp
-    PDFs/physics/MixingTimeResolution_Aux.h
     goofit/FitManager.cpp)
 
 # Only need to add CUDA incdir if build with CUDA

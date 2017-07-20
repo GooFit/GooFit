@@ -104,6 +104,7 @@ PYBIND11_PLUGIN(_goofit) {
     init_DP4Pdf(m);
     init_IncoherentSumPdf(m);
     init_LineshapesPdf(m);
+    init_MixingTimeResolution(m);
     init_ResonancePdf(m);
     init_SpinFactors(m);
     init_Tddp4Pdf(m);
@@ -112,7 +113,7 @@ PYBIND11_PLUGIN(_goofit) {
     init_TruthResolution(m);
 
     // Utilities
-    init_MixingTimeResolution(m);
+
 
     return m.ptr();
 }

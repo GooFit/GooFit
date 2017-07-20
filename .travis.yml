@@ -1,5 +1,6 @@
 language: cpp
 sudo: false
+dist: trusty
 cache:
   directories:
   - ${TRAVIS_BUILD_DIR}/deps/cmake

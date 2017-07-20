@@ -26,7 +26,8 @@ latex/
 *.toc
 *.root
 /work/*
-/goofit*
+/goofit_*
+/goofit.*
 */.ipynb_checkpoints/*
 *.pyc
 *__pycache__/*
@@ -37,3 +38,7 @@ Makefile
 cmake_install.cmake
 CMakeLists.txt.user
 
+
+goofit/__init__.py
+
+.cache/v/cache/lastfailed

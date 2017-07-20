@@ -1,9 +1,11 @@
+#!/usr/bin/env python
+
 from goofit import *
 import numpy as np
 
 xdata = np.random.exponential(size=100000)
-xvar = Variable("xvar", 0, np.max(xdata) + 1);
-data = UnbinnedDataSet(xvar);
+xvar = Variable("xvar", 0, np.max(xdata) + 1)
+data = UnbinnedDataSet(xvar)
 
 for v in xdata:
     xvar.value = v

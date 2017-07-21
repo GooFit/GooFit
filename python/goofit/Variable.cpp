@@ -33,5 +33,7 @@ void init_Variable(py::module &m) {
             std::stringstream os;
             os << v;
             return os.str();
-        });
+        })
+        .def("__bool__", &Variable::operator bool)
+    ;
 }

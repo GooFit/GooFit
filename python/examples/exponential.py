@@ -13,7 +13,9 @@ for v in xdata:
 
 alpha = Variable("alpha", -2, 0.1, -10, 10)
 exppdf = ExpPdf("exppdf", xvar, alpha)
-exppdf.setData(data)
 
-fitter = FitManager(exppdf)
-fitter.fit()
+exppdf.fitTo(data)
+
+#exppdf.setData(data)
+#fitter = FitManager(exppdf)
+#fitter.fit()

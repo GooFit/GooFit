@@ -94,35 +94,6 @@ __host__ void PdfBase::initializeIndices(std::vector<unsigned int> pindices) {
     MEMCPY_TO_SYMBOL(paramIndices, host_indices, totalParams * sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
 }
 
-__host__ void PdfBase::setData(std::vector<std::map<Variable *, fptype>> &data) {
-    // Old method retained for backwards compatibility
-
-    if(dev_event_array) {
-        gooFree(dev_event_array);
-        dev_event_array = nullptr;
-    }
-
-    setIndices();
-    int dimensions = observables.size();
-    numEntries     = data.size();
-    numEvents      = numEntries;
-
-    auto *host_array = new fptype[data.size() * dimensions];
-
-    for(unsigned int i = 0; i < data.size(); ++i) {
-        for(Variable *v : observables) {
-            if(data[i].find(v) == data[i].end())
-                throw GooFit::GeneralError("Variable {} not found", v->getName());
-            host_array[i * dimensions + v->getIndex()] = data[i][v];
-        }
-    }
-
-    gooMalloc(reinterpret_cast<void **>(&dev_event_array), dimensions * numEntries * sizeof(fptype));
-    MEMCPY(dev_event_array, host_array, dimensions * numEntries * sizeof(fptype), cudaMemcpyHostToDevice);
-    MEMCPY_TO_SYMBOL(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    delete[] host_array;
-}
-
 __host__ void PdfBase::recursiveSetIndices() {
     for(auto &component : components) {
         component->recursiveSetIndices();
@@ -161,13 +132,20 @@ __host__ void PdfBase::setIndices() {
     // std::cout << std::endl;
 }
 
+__host__ DataSet* PdfBase::getData() {
+    return data_;
+}
+
 __host__ void PdfBase::setData(DataSet *data) {
+
     if(dev_event_array) {
         gooFree(dev_event_array);
         cudaDeviceSynchronize();
         dev_event_array  = nullptr;
         m_iEventsPerTask = 0;
     }
+
+    data_ = data;
 
     setIndices();
 

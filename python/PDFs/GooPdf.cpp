@@ -11,7 +11,7 @@ void init_GooPdf(py::module &m) {
     py::class_<GooPdf, PdfBase>(m, "GooPdf")
         .def("makeGrid", &GooPdf::makeGrid)
         .def("evaluateAtPoints", &GooPdf::evaluateAtPoints)
-        .def("generate", [](GooPdf &self, Variable &var){
+        .def("evaluatePdf", [](GooPdf &self, Variable &var){
                 auto grid = self.makeGrid();
                 auto old_data = self.getData();
                 self.setData(&grid);

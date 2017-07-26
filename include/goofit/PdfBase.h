@@ -68,15 +68,13 @@ class PdfBase {
     __host__ int getSpecialMask() const { return specialMask; }
 
     __host__ void setData(DataSet *data);
-
-    /// This is the old style input, should be removed
-    __host__ void setData(std::vector<std::map<Variable *, fptype>> &data);
+    __host__ DataSet* getData();
 
     __host__ virtual void setFitControl(FitControl *const fc, bool takeOwnerShip = true) = 0;
     __host__ virtual bool hasAnalyticIntegral() const { return false; }
 
     /// RooFit style fitting shortcut
-    __host__ ROOT::Minuit2::FunctionMinimum fitTo(DataSet *data);
+    __host__ ROOT::Minuit2::FunctionMinimum fitTo(DataSet *data, int verbosity=3);
 
     __host__ unsigned int getFunctionIndex() const { return functionIdx; }
     __host__ unsigned int getParameterIndex() const { return parameters; }
@@ -95,6 +93,7 @@ class PdfBase {
     __host__ void SigGenSetIndices() { setIndices(); }
 
   protected:
+    DataSet* data_ = nullptr;  //< Remember the original dataset
     fptype numEvents{0};        //< Non-integer to allow weighted events
     unsigned int numEntries{0}; //< Eg number of bins - not always the same as number of events, although it can be.
     fptype *normRanges{

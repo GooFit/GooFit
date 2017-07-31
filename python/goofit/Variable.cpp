@@ -24,7 +24,8 @@ void init_Variable(py::module &m) {
         .def(py::init<std::string, fptype, fptype, fptype>())
         .def(py::init<std::string, fptype, fptype, fptype, fptype>())
         .def_property("error", &Variable::getError, &Variable::setError)
-        .def_property("upperlimit", &Variable::getError, &Variable::setError)
+        .def_property("upperlimit", &Variable::getUpperLimit, &Variable::setUpperLimit)
+        .def_property("lowerlimit", &Variable::getLowerLimit, &Variable::setLowerLimit)
         .def_property("getNumBins", &Variable::getNumBins, &Variable::setNumBins)
         .def_property("fixed", &Variable::IsFixed, &Variable::setFixed)
         //.def_property("blind", &Variable::b, &Variable::setBlind)
@@ -33,5 +34,7 @@ void init_Variable(py::module &m) {
             std::stringstream os;
             os << v;
             return os.str();
-        });
+        })
+        .def("__bool__", &Variable::operator bool)
+    ;
 }

@@ -1,4 +1,4 @@
-goofit_add_library(_goofit
+goofit_add_library(_goofit MODULE
     goofit.cu
     goofit/Variable.cu
     goofit/DataSet.cu
@@ -61,8 +61,7 @@ target_link_libraries(_goofit goofit_lib)
 set_target_properties(_goofit PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/goofit)
 set_target_properties(_goofit PROPERTIES FOLDER python)
 
-install(TARGETS _goofit LIBRARY DESTINATION goofit
-                        ARCHIVE DESTINATION goofit)
+install(TARGETS _goofit LIBRARY DESTINATION goofit)
 
 
 file(WRITE "${CMAKE_BINARY_DIR}/goofit/__init__.py" "from ._goofit import *")

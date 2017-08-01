@@ -55,6 +55,16 @@ cd GooFit
 make
 ```
 
+If you'd like to use the Python version:
+
+```bash
+docker run -it alpine
+apk add --no-cache python-dev cmake ninja g++ git libexecinfo-dev
+python -m ensurepip
+pip install scikit-build
+pip -v install git+https://github.com/GooFit/GooFit.git
+```
+
 ## Ubuntu 16.04
 
 Ubiquitous Ubuntu works also. Ubuntu was used for the NVidia docker solution due to better support from NVidia. The following example uses ninja-build instead of make, but make works if you perfer it. You should also be able to use this recipe with an [nvidia-docker Ubuntu image](https://hub.docker.com/r/nvidia/cuda/).
@@ -71,7 +81,7 @@ cmake --build .
 ctest
 ```
 
-If you'd like to add ROOT, add the following lines before running cmake:
+If you'd like to add ROOT, add the following lines before running CMake:
 ```bash
 mkdir root-6 && curl https://root.cern.ch/download/root_v6.08.06.Linux-ubuntu16-x86_64-gcc5.4.tar.gz | tar --strip-components=1 -xz -C root-6
 source root-6/bin/thisroot.sh

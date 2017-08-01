@@ -65,7 +65,7 @@ Other custom options supported along with the defaults:
 * `-DGOOFIT_DEVICE=Auto`: The device to use for computation (`CUDA`, `OMP`, `TBB`, or `CPP`). Default setting of `Auto` looks for CUDA first, then OpenMP, then CPP.
 * `-DGOOFIT_ARCH=Auto`: (`Auto`, `Common`, `All`, valid number(s) or name(s)): sets the compute architecture. See [CUDA_SELECT_NVCC_ARCH_FLAGS].
 * `-DGOOFIT_EXAMPLES=ON`: Build the examples
-* `-DGOOFIT_PACKAGES=ON`: Build any packages found with the name `goofit*`
+* `-DGOOFIT_PACKAGES=ON`: Build any packages found with the name `goofit_*`
 * `-DGOOFIT_DEBUG=ON` and `-DGOOFIT_TRACE=ON` will enable the matching printout macros
 * `-DGOOFIT_PYTHON=OFF` (`ON` in GooFit 2.1 if Python found): Preliminary python bindings using [PyBind11].
 

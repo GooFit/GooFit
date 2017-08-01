@@ -1,10 +1,10 @@
 goofit_add_library(_goofit MODULE
-    goofit.cu
-    goofit/Variable.cu
-    goofit/DataSet.cu
-    goofit/BinnedDataSet.cu
-    goofit/UnbinnedDataSet.cu
-    goofit/PdfBase.cu
+    goofit.cpp
+    goofit/Variable.cpp
+    goofit/DataSet.cpp
+    goofit/BinnedDataSet.cpp
+    goofit/UnbinnedDataSet.cpp
+    goofit/PdfBase.cpp
     PDFs/GooPdf.cu
     PDFs/basic/ArgusPdf.cu
     PDFs/basic/BifurGaussPdf.cu
@@ -44,7 +44,7 @@ goofit_add_library(_goofit MODULE
     PDFs/physics/TddpPdf.cu
     PDFs/physics/ThreeGaussResolution_Aux.cu
     PDFs/physics/TruthResolution_Aux.cu
-    goofit/FitManager.cu)
+    goofit/FitManager.cpp)
 
 target_link_libraries(_goofit pybind11::module)
 

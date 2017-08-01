@@ -1,4 +1,9 @@
-from skbuild import setup
+#!/usr/bin/env python
+try:
+    from skbuild import setup
+except ImportError:
+    print("Failed to find scikit-build, please run `pip install scikit-build cmake`)
+    raise
 
 setup(
         name='goofit',

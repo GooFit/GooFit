@@ -18,6 +18,22 @@ setup(
             '-DGOOFIT_PYTHON=ON',
             '-DGOOFIT_EXAMPLES=OFF'],
         license="LGPL 3.0",
-        packages=['goofit']
+        packages=['goofit'],
+        long_description='''\
+# GooFit for Python
+
+GooFit is a highly parallel fitting framework originally designed for High Energy Physics.
+
+## Installation
+
+This package can be installed with pip, but uses SciKit-Build, and is build, fully optimized, on your system. Because of this, there are a few caveats when running a pip install. Make sure you have SciKit-Build (`pip install scikit-build`) before you attempt an install. Also, if you don't have a recent version of CMake (3.8 or better recommended), also run `pip install cmake`. When you build, you should also use pip's `-v` flag, so that you can see it build (and observe the
+configuration options). Otherwise, you might wait a very long time without output (especially if CUDA was found).
+
+In practice, this looks like this:
+
+    pip install scikit-build cmake
+    pip install -v goofit
+
+'''
         )
 

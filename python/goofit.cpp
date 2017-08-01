@@ -46,6 +46,7 @@ void init_DalitzVetoPdf(py::module &);
 void init_DP4Pdf(py::module &);
 void init_IncoherentSumPdf(py::module &);
 void init_LineshapesPdf(py::module &);
+void init_MixingTimeResolution(py::module &);
 void init_ResonancePdf(py::module &);
 void init_SpinFactors(py::module &);
 void init_Tddp4Pdf(py::module &);
@@ -54,7 +55,7 @@ void init_ThreeGaussResolution(py::module &);
 void init_TruthResolution(py::module &);
 
 // Utilities
-void init_MixingTimeResolution(py::module &);
+
 
 PYBIND11_PLUGIN(_goofit) {
     py::module m("_goofit", "Python interface for GooFit");
@@ -103,6 +104,7 @@ PYBIND11_PLUGIN(_goofit) {
     init_DP4Pdf(m);
     init_IncoherentSumPdf(m);
     init_LineshapesPdf(m);
+    init_MixingTimeResolution(m);
     init_ResonancePdf(m);
     init_SpinFactors(m);
     init_Tddp4Pdf(m);
@@ -111,7 +113,7 @@ PYBIND11_PLUGIN(_goofit) {
     init_TruthResolution(m);
 
     // Utilities
-    init_MixingTimeResolution(m);
+
 
     return m.ptr();
 }

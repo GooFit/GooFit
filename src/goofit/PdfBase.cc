@@ -181,9 +181,10 @@ __host__ void PdfBase::setNumPerTask(PdfBase *p, const int &c) {
     m_iEventsPerTask = c;
 }
 
-__host__ ROOT::Minuit2::FunctionMinimum PdfBase::fitTo(DataSet *data) {
+__host__ ROOT::Minuit2::FunctionMinimum PdfBase::fitTo(DataSet *data, int verbosity) {
     setData(data);
     FitManager fitter{this};
+    fitter.setVerbosity(verbosity);
     return fitter.fit();
 }
 } // namespace GooFit

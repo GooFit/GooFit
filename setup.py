@@ -34,6 +34,18 @@ In practice, this looks like this:
     pip install scikit-build cmake
     pip install -v goofit
 
+
+## Building a source package from git
+
+For developers:
+
+To make a source package, start with a clean (such as new) git GooFit package with all submodules checked out.
+
+    git clone --branch=master --recursive --depth=10 git@github.com:GooFit/GooFit.git
+    cd goofit
+    python setup.py sdist
+    twine upload dist/*
+
 '''
         )
 

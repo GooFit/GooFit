@@ -34,3 +34,6 @@
 [submodule "extern/MCBooster"]
 	path = extern/MCBooster
 	url = ../MCBooster.git
+[submodule "extern/Eigen"]
+	path = extern/Eigen
+	url = ../../live-clones/Eigen.git

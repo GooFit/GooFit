@@ -26,7 +26,7 @@ var searchData=
   ['fitmanagerminuit2_2ecc',['FitManagerMinuit2.cc',['../_fit_manager_minuit2_8cc.html',1,'']]],
   ['fitmanagerminuit2_2eh',['FitManagerMinuit2.h',['../_fit_manager_minuit2_8h.html',1,'']]],
   ['fitter_5findex',['fitter_index',['../class_goo_fit_1_1_indexable.html#afe6bd65124f2d8056affe5840537dfd3',1,'GooFit::Indexable']]],
-  ['fitto',['fitTo',['../class_goo_fit_1_1_pdf_base.html#aec99bfa268e2f9422920f3a1734081b9',1,'GooFit::PdfBase']]],
+  ['fitto',['fitTo',['../class_goo_fit_1_1_pdf_base.html#af912e8fc22654d71e7a40169b08971bc',1,'GooFit::PdfBase']]],
   ['fixed',['fixed',['../class_goo_fit_1_1_variable.html#a6d88e0de6efd362cb8754f8d692f4a5d',1,'GooFit::Variable']]],
   ['flatte',['Flatte',['../namespace_goo_fit.html#ae587603f507f8a46fdccd092e2d8bff5a2609fc244129252b283c82842850816c',1,'GooFit']]],
   ['forcecommonnorm',['ForceCommonNorm',['../class_goo_fit_1_1_pdf_base.html#a17052593f19fc40ae018a204ce7361e4a124e2b2ef6b7296085ac63fab4acb42c',1,'GooFit::PdfBase']]],

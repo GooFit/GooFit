@@ -7,5 +7,5 @@ var searchData=
   ['fitcontrol',['FitControl',['../class_goo_fit_1_1_fit_control.html#a3abfb280c96ed8519434128ce6fc455d',1,'GooFit::FitControl']]],
   ['fitmanagerminuit1',['FitManagerMinuit1',['../class_goo_fit_1_1_fit_manager_minuit1.html#a155a82794093d1981282e0686d2be056',1,'GooFit::FitManagerMinuit1']]],
   ['fitmanagerminuit2',['FitManagerMinuit2',['../class_goo_fit_1_1_fit_manager_minuit2.html#ac594da38a8551a78af54f081572b0a29',1,'GooFit::FitManagerMinuit2']]],
-  ['fitto',['fitTo',['../class_goo_fit_1_1_pdf_base.html#aec99bfa268e2f9422920f3a1734081b9',1,'GooFit::PdfBase']]]
+  ['fitto',['fitTo',['../class_goo_fit_1_1_pdf_base.html#af912e8fc22654d71e7a40169b08971bc',1,'GooFit::PdfBase']]]
 ];

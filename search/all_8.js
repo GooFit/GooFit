@@ -20,6 +20,7 @@ var searchData=
   ['getcoefficient',['getCoefficient',['../class_goo_fit_1_1_polynomial_pdf.html#af1fc0b4bc63b6ecb061cab192dc21a5b',1,'GooFit::PolynomialPdf']]],
   ['getcompprobsatdatapoints',['getCompProbsAtDataPoints',['../class_goo_fit_1_1_goo_pdf.html#a7a0442151f4342b83dd7c297bf61177f',1,'GooFit::GooPdf']]],
   ['getcurrentvalues',['getCurrentValues',['../class_goo_fit_1_1_data_set.html#abce804c25325e7454e242eed1ca579ff',1,'GooFit::DataSet']]],
+  ['getdata',['getData',['../class_goo_fit_1_1_pdf_base.html#aabf3fa472f5389f8e0769081ceb9b94f',1,'GooFit::PdfBase']]],
   ['getdevicefunction',['getDeviceFunction',['../class_goo_fit_1_1_mixing_time_resolution.html#a0e7399e645bd342555342781468d5e52',1,'GooFit::MixingTimeResolution']]],
   ['geterror',['getError',['../class_goo_fit_1_1_variable.html#a772019547e074399d2383fc75acbc981',1,'GooFit::Variable']]],
   ['getfcn',['getFCN',['../class_goo_fit_1_1_fit_manager_minuit2.html#a08ab5f80ff9099129841c2a254d9d2fa',1,'GooFit::FitManagerMinuit2']]],

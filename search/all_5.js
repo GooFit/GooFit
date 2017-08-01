@@ -10,6 +10,7 @@ var searchData=
   ['dalitzvetopdf_2ecu',['DalitzVetoPdf.cu',['../_dalitz_veto_pdf_8cu.html',1,'']]],
   ['dalitzvetopdf_2eh',['DalitzVetoPdf.h',['../_dalitz_veto_pdf_8h.html',1,'']]],
   ['dampingfactorsquare',['dampingFactorSquare',['../namespace_goo_fit.html#ac6c264fc379e3040ac53d57553ea19ce',1,'GooFit']]],
+  ['data_5f',['data_',['../class_goo_fit_1_1_pdf_base.html#aca1c5779eadc97741ce00800f3841da9',1,'GooFit::PdfBase']]],
   ['dataset',['DataSet',['../class_goo_fit_1_1_data_set.html',1,'GooFit::DataSet'],['../class_goo_fit_1_1_data_set.html#aca2605c52b3e7ca92f855e3849550b4d',1,'GooFit::DataSet::DataSet(Variable *var, std::string n=&quot;&quot;)'],['../class_goo_fit_1_1_data_set.html#a37e1ebfdfb38df3e4a02c96713940839',1,'GooFit::DataSet::DataSet(std::vector&lt; Variable *&gt; &amp;vars, std::string n=&quot;&quot;)'],['../class_goo_fit_1_1_data_set.html#ae71df903d1939d753b215dc0985d3b65',1,'GooFit::DataSet::DataSet(std::set&lt; Variable *&gt; &amp;vars, std::string n=&quot;&quot;)'],['../class_goo_fit_1_1_data_set.html#a91535ad2ff18805083427720950d9fb7',1,'GooFit::DataSet::DataSet(std::initializer_list&lt; Variable *&gt; vars, std::string n=&quot;&quot;)']]],
   ['dataset_2ecc',['DataSet.cc',['../_data_set_8cc.html',1,'']]],
   ['dataset_2eh',['DataSet.h',['../_data_set_8h.html',1,'']]],

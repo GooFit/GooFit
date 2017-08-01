@@ -1,2 +1,8 @@
 graft cmake
 graft extern
+graft python
+graft include
+graft goofit
+graft src
+graft tests
+include CMakeLists.txt LICENSE CONTRIBUTING.md CHANGELOG.md requirements.txt README.md

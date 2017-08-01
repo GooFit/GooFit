@@ -27,7 +27,6 @@ addons:
     - libxft-dev
     - libxext-dev
     - python-pip
-    - python-numpy
     sources:
     - ubuntu-toolchain-r-test
 install:
@@ -38,7 +37,7 @@ install:
 - cd "${TRAVIS_BUILD_DIR}" && . .ci/build_doxygen.sh
 - cd "${TRAVIS_BUILD_DIR}" && . .ci/build_lcov.sh
 - pip install --user --upgrade pip
-- pip install --user pytest
+- pip install --user pytest numpy
 script:
 - cd "${TRAVIS_BUILD_DIR}"
 - .ci/travis.sh

@@ -25,7 +25,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Get the git command
 find_package(Git QUIET)
 
-if(GIT_FOUND)
+if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
 # Update submodules as needed
     option(GOOFIT_SUBMODULE "Check submodules during build" ON)
     if(GOOFIT_SUBMODULE)
@@ -85,7 +85,7 @@ endif()
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/extern/sanitizers/cmake" ${CMAKE_MODULE_PATH})
 find_package(Sanitizers)
 
-set(GOOFIT_MAXPAR "1800" CACHE STRING "The number of parameters to statically support, can be increased but should not be too large.") 
+set(GOOFIT_MAXPAR "1800" CACHE STRING "The number of parameters to statically support, can be increased but should not be too large.")
 
 # Output the current GooFit version
 configure_file (
@@ -114,7 +114,7 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unknown-pragmas -Wno-long-long -Wno-attributes -Wno-sign-compare -Wno-unused-parameter")
-    # Helpful but irritating: -Wzero-as-null-pointer-constant -Wsuggest-override 
+    # Helpful but irritating: -Wzero-as-null-pointer-constant -Wsuggest-override
     # no-sign-compare can be removed, but will take some work to clean up
     # Same is true for no-unused-parameter
     # if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5.0)

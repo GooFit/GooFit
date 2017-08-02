@@ -5,6 +5,7 @@ goofit_add_library(_goofit MODULE
     goofit/BinnedDataSet.cpp
     goofit/UnbinnedDataSet.cpp
     goofit/PdfBase.cpp
+    goofit/Version.cpp
     PDFs/GooPdf.cu
     PDFs/basic/ArgusPdf.cu
     PDFs/basic/BifurGaussPdf.cu

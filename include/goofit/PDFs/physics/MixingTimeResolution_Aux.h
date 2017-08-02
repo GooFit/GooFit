@@ -5,8 +5,7 @@
 
 namespace GooFit {
 
-typedef fptype (*device_resfunction_ptr)(
-    fptype, fptype, fptype, fptype, fptype, fptype, fptype, fptype, fptype, fptype *, unsigned int *);
+typedef fptype (*device_resfunction_ptr)( fptype, fptype, fptype, fptype, fptype, fptype, fptype, fptype, fptype, ParameterContainer &pc);
 typedef fptype (*device_calc_tau_fcn_ptr)(fptype, fptype, fptype, fptype, fptype, fptype, fptype);
 
 class MixingTimeResolution {

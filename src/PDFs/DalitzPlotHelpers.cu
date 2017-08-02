@@ -35,11 +35,11 @@ __device__ void get4Vecs(fptype *Vecs,
                          const fptype &cos12,
                          const fptype &cos34,
                          const fptype &phi) {
-    fptype M  = functorConstants[constants + 1];
-    fptype m1 = functorConstants[constants + 2];
-    fptype m2 = functorConstants[constants + 3];
-    fptype m3 = functorConstants[constants + 4];
-    fptype m4 = functorConstants[constants + 5];
+    fptype M  = 0.0;//functorConstants[constants + 1];
+    fptype m1 = 0.0;//functorConstants[constants + 2];
+    fptype m2 = 0.0;//functorConstants[constants + 3];
+    fptype m3 = 0.0;//functorConstants[constants + 4];
+    fptype m4 = 0.0;//functorConstants[constants + 5];
     // printf("g4v %f, %f, %f, %f, %f\n",M, m1, m2, m3, m4 );
     fptype E1     = (m12 * m12 + m1 * m1 - m2 * m2) / (2 * m12);
     fptype E2     = (m12 * m12 - m1 * m1 + m2 * m2) / (2 * m12);

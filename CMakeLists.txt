@@ -261,7 +261,7 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
 
 endif()
 
-set(GOOFIT_CFLAGS "$<$<CONFIG:Release>:-march=native>$<$<CONFIG:RelWithDebInfo>:-march=native>" CACHE STRING "compiler flags")
+    set(GOOFIT_CFLAGS "$<$<CONFIG:Release>:-march=native>$<$<CONFIG:RelWithDebInfo>:-march=native>" CACHE STRING "compiler flags")
 add_compile_options("${GOOFIT_CFLAGS}")
 
 set(THRUST_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/extern/thrust")
@@ -354,6 +354,8 @@ function(goofit_add_library GNAME)
     target_link_libraries(${GNAME} rang CLI11 fmt goofit_mt)
     set_target_properties(${GNAME} PROPERTIES FOLDER core)
 
+    set_target_properties(${GNAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION 1)
+
     if(ROOT_FOUND)
         target_link_libraries(${GNAME} ROOT::ROOT)
     else()
@@ -388,6 +390,8 @@ function(goofit_add_executable NAMEEXE)
     target_compile_options(${NAMEEXE} PUBLIC -x c++)
     set_target_properties(${NAMEEXE} PROPERTIES FOLDER projects)
     source_group("Source Files" REGULAR_EXPRESSION ".*\\.c[uc]")
+
+    set_target_properties(${GNAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION 1)
 
     if(CLANG_TIDY_EXE)
         set_target_properties(

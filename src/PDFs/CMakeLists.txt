@@ -42,6 +42,7 @@ set(GOOPDF_HEADERS
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/ThreeGaussResolution_Aux.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/EvalVar.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/SpinHelper.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/utility/VariableBinTransform1DPdf.h
 )
 
 get_property(goo_extra GLOBAL PROPERTY GOOFIT_EXTRA_PDFS)
@@ -90,6 +91,7 @@ if(GOOFIT_SEPARATE_COMP)
         MixingTimeResolution_Aux.cu
         TruthResolution_Aux.cu
         ThreeGaussResolution_Aux.cu
+        utility/VariableBinTransform1DPdf.cu
         ${GOOPDF_HEADERS}
         ${goo_extra})
 else()
@@ -98,7 +100,7 @@ else()
     endif()
 
     include_directories(${PROJECT_SOURCE_DIR}/src/PDFs)
-    
+
     goofit_add_library(PDFs AllPdfs.cu ${GOOPDF_HEADERS})
 
 endif()

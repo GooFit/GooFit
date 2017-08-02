@@ -45,6 +45,7 @@ goofit_add_library(_goofit MODULE
     PDFs/physics/TddpPdf.cu
     PDFs/physics/ThreeGaussResolution_Aux.cu
     PDFs/physics/TruthResolution_Aux.cu
+    PDFs/utility/VariableBinTransform1DPdf.cu
     goofit/FitManager.cpp)
 
 target_link_libraries(_goofit pybind11::module)

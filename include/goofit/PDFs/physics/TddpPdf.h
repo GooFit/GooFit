@@ -77,6 +77,8 @@ class TddpPdf : public GooPdf {
     __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 5);
     __host__ void setForceIntegrals(bool f = true) { forceRedoIntegrals = f; }
 
+    __host__ virtual void recursiveSetIndices();
+
   protected:
   private:
     DecayInfo *decayInfo;
@@ -95,16 +97,20 @@ class TddpPdf : public GooPdf {
     fptype *cachedWidths;
     MixingTimeResolution *resolution;
 
+    unsigned int efficiencyFunction;
+
     int totalEventSize;
     int cacheToUse{0};
     SpecialDalitzIntegrator ***integrators{nullptr};
     SpecialWaveCalculator **calculators{nullptr};
 };
 
-class SpecialDalitzIntegrator : public thrust::unary_function<thrust::tuple<int, fptype *>, ThreeComplex> {
+class SpecialDalitzIntegrator : public thrust::unary_function<thrust::tuple<int, fptype *, int>, ThreeComplex> {
   public:
     SpecialDalitzIntegrator(int pIdx, unsigned int ri, unsigned int rj);
-    __device__ ThreeComplex operator()(thrust::tuple<int, fptype *> t) const;
+    void setResonanceIndex (unsigned int id) { resonance_i = id; }
+    void setEfficiencyIndex (unsigned int id) { resonance_j = id; }
+    __device__ ThreeComplex operator()(thrust::tuple<int, fptype *, int> t) const;
 
   private:
     unsigned int resonance_i;
@@ -127,6 +133,7 @@ class SpecialComplexSum : public thrust::binary_function<ThreeComplex, ThreeComp
 class SpecialWaveCalculator : public thrust::unary_function<thrust::tuple<int, fptype *, int>, WaveHolder_s> {
   public:
     SpecialWaveCalculator(int pIdx, unsigned int res_idx);
+    void setResonanceIndex (unsigned int id) { resonance_i = id; }
     __device__ WaveHolder_s operator()(thrust::tuple<int, fptype *, int> t) const;
 
   private:

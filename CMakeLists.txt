@@ -25,7 +25,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Get the git command
 find_package(Git QUIET)
 
-if(GIT_FOUND)
+if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
 # Update submodules as needed
     option(GOOFIT_SUBMODULE "Check submodules during build" ON)
     if(GOOFIT_SUBMODULE)
@@ -87,13 +87,6 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/extern/sanitizers/cmake" ${CMAKE_MODU
 find_package(Sanitizers)
 
 set(GOOFIT_MAXPAR "1800" CACHE STRING "The number of parameters to statically support, can be increased but should not be too large.")
-
-# Output the current GooFit version
-configure_file (
-    "${PROJECT_SOURCE_DIR}/include/goofit/Version.h.in"
-    "${PROJECT_BINARY_DIR}/include/goofit/Version.h"
-)
-
 
 set(GOOFIT_CUDA_OR_GROUPSIZE "128" CACHE STRING "Overrides the default group distribution for Thrust's transform_reduce")
 set(GOOFIT_CUDA_OR_GRAINSIZE "7" CACHE STRING "Overrides the default grain size for Thrust's transform_reduce")
@@ -269,7 +262,7 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
 
 endif()
 
-set(GOOFIT_CFLAGS "$<$<CONFIG:Release>:-march=native>$<$<CONFIG:RelWithDebInfo>:-march=native>" CACHE STRING "compiler flags")
+    set(GOOFIT_CFLAGS "$<$<CONFIG:Release>:-march=native>$<$<CONFIG:RelWithDebInfo>:-march=native>" CACHE STRING "compiler flags")
 add_compile_options("${GOOFIT_CFLAGS}")
 
 set(THRUST_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/extern/thrust")
@@ -318,8 +311,16 @@ mark_as_advanced(FMT_CPPFORMAT FMT_DOC FMT_INSTALL FMT_PEDANTIC FMT_TEST FMT_USE
 add_library(rang INTERFACE)
 target_include_directories(rang INTERFACE "${PROJECT_SOURCE_DIR}/extern/rang/include")
 
+
 add_library(Eigen INTERFACE)
 target_include_directories(Eigen INTERFACE "${PROJECT_SOURCE_DIR}/extern/Eigen/Eigen")
+
+# Output the current GooFit version
+configure_file (
+    "${PROJECT_SOURCE_DIR}/include/goofit/Version.h.in"
+    "${PROJECT_BINARY_DIR}/include/goofit/Version.h"
+)
+
 
 function(goofit_add_library GNAME)
     set(options STATIC SHARED MODULE)
@@ -359,6 +360,8 @@ function(goofit_add_library GNAME)
     target_link_libraries(${GNAME} rang CLI11 fmt goofit_mt)
     set_target_properties(${GNAME} PROPERTIES FOLDER core)
 
+    set_target_properties(${GNAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION 1)
+
     if(ROOT_FOUND)
         target_link_libraries(${GNAME} ROOT::ROOT)
     else()
@@ -393,6 +396,8 @@ function(goofit_add_executable NAMEEXE)
     target_compile_options(${NAMEEXE} PUBLIC -x c++)
     set_target_properties(${NAMEEXE} PROPERTIES FOLDER projects)
     source_group("Source Files" REGULAR_EXPRESSION ".*\\.c[uc]")
+
+    set_target_properties(${GNAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION 1)
 
     if(CLANG_TIDY_EXE)
         set_target_properties(

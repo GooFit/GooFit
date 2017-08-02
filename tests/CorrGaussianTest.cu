@@ -32,11 +32,11 @@ TEST(Gaussian, SimpleFit) {
         double vx = d(gen);
         double vy = d(gen);
         
-        if(val < 10) {
+        //if(val < 10) {
             xvar.setValue(vx);
             yvar.setValue(vy);
             data.addEvent();
-        }
+        //}
     }
 
     // Fit parameter
@@ -59,6 +59,6 @@ TEST(Gaussian, SimpleFit) {
     EXPECT_LT(mean1.getError(), .1);
     EXPECT_NEAR(0.665178392, mean1.getValue(), mean1.getError() * 3);
     EXPECT_LT(mean2.getError(), .1);
-    EXPECT_NEAR(0.665178392, mean2.getValue(), mean2.getError() * 3);
+    EXPECT_NEAR(0.557435, mean2.getValue(), mean2.getError() * 3);
 }
 

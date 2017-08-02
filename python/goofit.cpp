@@ -9,6 +9,7 @@ void init_Variable(py::module &);
 void init_FitManager(py::module &);
 void init_PdfBase(py::module &);
 void init_GooPdf(py::module &);
+void init_Version(py::module &);
 
 // Basic
 void init_ArgusPdf(py::module &);
@@ -67,6 +68,7 @@ PYBIND11_PLUGIN(_goofit) {
     init_FitManager(m);
     init_PdfBase(m);
     init_GooPdf(m);
+    init_Version(m);
 
     // Basic
     init_ArgusPdf(m);

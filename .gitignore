@@ -44,3 +44,5 @@ goofit/__init__.py
 .cache/v/cache/lastfailed
 *.ipynb_checkpoints*
 *.pdf
+MANIFEST
+dist

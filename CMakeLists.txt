@@ -25,7 +25,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Get the git command
 find_package(Git QUIET)
 
-if(GIT_FOUND)
+if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
 # Update submodules as needed
     option(GOOFIT_SUBMODULE "Check submodules during build" ON)
     if(GOOFIT_SUBMODULE)

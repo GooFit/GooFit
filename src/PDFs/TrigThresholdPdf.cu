@@ -8,49 +8,64 @@ __device__ fptype threshCalc(fptype distance, fptype linConst) {
     return ret;
 }
 
-__device__ fptype device_TrigThresholdUpper(fptype *evt, fptype *p, unsigned int *indices) {
-    fptype x         = evt[indices[2 + indices[0]]];
-    fptype thresh    = p[indices[1]];
-    fptype trigConst = p[indices[2]];
-    fptype linConst  = p[indices[3]];
+__device__ fptype device_TrigThresholdUpper(fptype *evt, ParameterContainer &pc) {
+    int id = pc.constants[pc.constantIdx + 1];
+    fptype x         = evt[id];
+    fptype thresh    = pc.parameters[pc.parameterIdx + 1];
+    fptype trigConst = pc.parameters[pc.parameterIdx + 2];
+    fptype linConst  = pc.parameters[pc.parameterIdx + 3];
+
+    pc.incrementIndex (1, 1, 3, 0, 1);
 
     trigConst *= (thresh - x);
     return threshCalc(trigConst, linConst);
 }
 
-__device__ fptype device_TrigThresholdLower(fptype *evt, fptype *p, unsigned int *indices) {
-    fptype x         = evt[indices[2 + indices[0]]];
-    fptype thresh    = p[indices[1]];
-    fptype trigConst = p[indices[2]];
-    fptype linConst  = p[indices[3]];
+__device__ fptype device_TrigThresholdLower(fptype *evt, ParameterContainer &pc) {
+    int id = pc.constants[pc.constantIdx + 1];
+    fptype x         = evt[id];
+    fptype thresh    = pc.parameters[pc.parameterIdx + 1];
+    fptype trigConst = pc.parameters[pc.parameterIdx + 2];
+    fptype linConst  = pc.parameters[pc.parameterIdx + 3];
+
+    pc.incrementIndex (1, 1, 3, 0, 1);
 
     trigConst *= (x - thresh);
     return threshCalc(trigConst, linConst);
 }
 
-__device__ fptype device_VerySpecialEpisodeTrigThresholdUpper(fptype *evt, fptype *p, unsigned int *indices) {
+__device__ fptype device_VerySpecialEpisodeTrigThresholdUpper(fptype *evt, ParameterContainer &pc) {
     // Annoying special case for use with Mikhail's efficiency function across the Dalitz plot
+    int id_x = pc.constants[pc.constantIdx + 1];
+    int id_y = pc.constants[pc.constantIdx + 2];
 
-    fptype x = evt[indices[2 + indices[0] + 0]];
-    fptype y = evt[indices[2 + indices[0] + 1]];
+    fptype x = evt[id_x];
+    fptype y = evt[id_y];
 
-    fptype thresh    = p[indices[1]];
-    fptype trigConst = p[indices[2]];
-    fptype linConst  = p[indices[3]];
-    fptype z         = p[indices[4]] - x - y;
+    fptype thresh    = pc.parameters[pc.parameterIdx + 1];
+    fptype trigConst = pc.parameters[pc.parameterIdx + 2];
+    fptype linConst  = pc.parameters[pc.parameterIdx + 3];
+    fptype z         = pc.parameters[pc.parameterIdx + 4] - x - y;
+
+    pc.incrementIndex (1, 2, 4, 0, 1);
 
     trigConst *= (thresh - z);
     return threshCalc(trigConst, linConst);
 }
 
-__device__ fptype device_VerySpecialEpisodeTrigThresholdLower(fptype *evt, fptype *p, unsigned int *indices) {
-    fptype x = evt[indices[2 + indices[0] + 0]];
-    fptype y = evt[indices[2 + indices[0] + 1]];
+__device__ fptype device_VerySpecialEpisodeTrigThresholdLower(fptype *evt, ParameterContainer &pc) {
+    int id_x = pc.constants[pc.constantIdx + 1];
+    int id_y = pc.constants[pc.constantIdx + 2];
 
-    fptype thresh    = p[indices[1]];
-    fptype trigConst = p[indices[2]];
-    fptype linConst  = p[indices[3]];
-    fptype z         = p[indices[4]] - x - y;
+    fptype x = evt[id_x];
+    fptype y = evt[id_y];
+
+    fptype thresh    = pc.parameters[pc.parameterIdx + 1];
+    fptype trigConst = pc.parameters[pc.parameterIdx + 2];
+    fptype linConst  = pc.parameters[pc.parameterIdx + 3];
+    fptype z         = pc.parameters[pc.parameterIdx + 4] - x - y;
+
+    pc.incrementIndex (1, 2, 4, 0, 1);
 
     trigConst *= (z - thresh);
     fptype ret = threshCalc(trigConst, linConst);
@@ -76,10 +91,17 @@ __host__ TrigThresholdPdf::TrigThresholdPdf(
     pindices.push_back(registerParameter(trigConst));
     pindices.push_back(registerParameter(linConst));
 
-    if(upper)
+    //reserve _x index
+    constantsList.push_back (0);
+
+    if(upper) {
         GET_FUNCTION_ADDR(ptr_to_TrigThresholdUpper);
-    else
+        trigThreshType = 0;
+    }
+    else {
         GET_FUNCTION_ADDR(ptr_to_TrigThresholdLower);
+        trigThreshType = 1;
+    }
 
     initialize(pindices);
 }
@@ -96,17 +118,47 @@ __host__ TrigThresholdPdf::TrigThresholdPdf(std::string n,
     registerObservable(_x);
     registerObservable(_y);
 
+    //reserve _x,_y index
+    constantsList.push_back (0);
+    constantsList.push_back (0);
+
     std::vector<unsigned int> pindices;
     pindices.push_back(registerParameter(thresh));
     pindices.push_back(registerParameter(trigConst));
     pindices.push_back(registerParameter(linConst));
     pindices.push_back(registerParameter(massConstant));
 
-    if(upper)
+    if(upper) {
         GET_FUNCTION_ADDR(ptr_to_VerySpecialEpisodeTrigThresholdUpper);
-    else
+        trigThreshType = 2;
+    }
+    else {
         GET_FUNCTION_ADDR(ptr_to_VerySpecialEpisodeTrigThresholdLower);
+        trigThreshType = 3;
+    }
 
     initialize(pindices);
 }
+
+void TrigThresholdPdf::recursiveSetIndices () {
+    if (trigThreshType == 0) {
+        GET_FUNCTION_ADDR(ptr_to_TrigThresholdUpper);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_TrigThresholdUpper");
+    } else if (trigThreshType == 1) {
+        GET_FUNCTION_ADDR(ptr_to_TrigThresholdLower);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_TrigThresholdLower");
+    } else if (trigThreshType == 2) {
+        GET_FUNCTION_ADDR(ptr_to_VerySpecialEpisodeTrigThresholdUpper);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_VerySpecialEpisodeTrigThresholdUpper");
+    } else if (trigThreshType == 3) {
+        GET_FUNCTION_ADDR(ptr_to_VerySpecialEpisodeTrigThresholdLower);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_VerySpecialEpisodeTrigThresholdLower");
+    }
+
+    host_function_table[num_device_functions] = host_fcn_ptr;
+    functionIdx = num_device_functions++;
+
+    populateArrays();
+}
+
 } // namespace GooFit

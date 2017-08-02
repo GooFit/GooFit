@@ -29,7 +29,7 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, fptype*, int> t) co
     int eventSize        = thrust::get<2>(t);
     fptype *eventAddress = thrust::get<1>(t) + (eventIndex * abs(eventSize));
 
-    fptype obs = eventAddress[abs(eventSize) - 2];
+    fptype obs = RO_CACHE(eventAddress[abs(eventSize) - 2]);
     fptype norm = pc.normalisations[pc.normalIdx + 1];
 
     // Causes stack size to be statically undeterminable.
@@ -45,6 +45,9 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, fptype*, int> t) co
 }
 
 #define MAX_NUM_OBSERVABLES 5
+
+__device__ fptype binCenters[1024*MAX_NUM_OBSERVABLES];
+
 __device__ fptype MetricTaker::operator()(thrust::tuple<int, int, fptype*> t) const {
     ParameterContainer pc;
 
@@ -54,7 +57,7 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, int, fptype*> t) co
     // Do not understand why this cannot be declared __shared__. Dynamically allocating shared memory is apparently
     // complicated.
     // fptype* binCenters = (fptype*) malloc(evtSize * sizeof(fptype));
-    __shared__ fptype binCenters[1024 * MAX_NUM_OBSERVABLES];
+    //fptype binCenters[1024 * MAX_NUM_OBSERVABLES];
 
     // To convert global bin number to (x,y,z...) coordinates: For each dimension, take the mod
     // with the number of bins in that dimension. Then divide by the number of bins, in effect

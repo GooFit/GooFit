@@ -50,6 +50,7 @@ endif()
 
 if(NOT EXISTS "${PROJECT_SOURCE_DIR}/cmake/FindThrust.cmake"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/CLI11/CMakeLists.txt"
+OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/Eigen/CMakeLists.txt"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/FeatureDetector/CMakeLists.txt"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/MCBooster/CMakeLists.txt"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/thrust/README.md")
@@ -312,11 +313,16 @@ mark_as_advanced(FMT_CPPFORMAT FMT_DOC FMT_INSTALL FMT_PEDANTIC FMT_TEST FMT_USE
 add_library(rang INTERFACE)
 target_include_directories(rang INTERFACE "${PROJECT_SOURCE_DIR}/extern/rang/include")
 
+
+add_library(Eigen INTERFACE)
+target_include_directories(Eigen INTERFACE "${PROJECT_SOURCE_DIR}/extern/Eigen/Eigen")
+
 # Output the current GooFit version
 configure_file (
     "${PROJECT_SOURCE_DIR}/include/goofit/Version.h.in"
     "${PROJECT_BINARY_DIR}/include/goofit/Version.h"
 )
+
 
 function(goofit_add_library GNAME)
     set(options STATIC SHARED MODULE)

@@ -9,7 +9,12 @@
 GooFit is a massively-parallel framework, written using Thrust for CUDA and OpenMP, for
 doing maximum-likelihood fits with a familiar syntax.
 
-[What's new](./CHANGELOG.md) • [Tutorials] • [API documentation] • [Converting from older GooFit](./docs/CONVERTING20.md)
+[What's new](./CHANGELOG.md)
+• [Tutorials]
+• [API documentation]
+• [Converting from older GooFit](./docs/CONVERTING20.md)
+• [Build recipes](./docs/SYSTEM_INSTALL.md)
+• [Python (in progress)](https://pypi.python.org/pypi/goofit/)
 
 ## Requirements
 
@@ -28,6 +33,8 @@ doing maximum-likelihood fits with a familiar syntax.
 
 A list of exact commands required for several platforms is [available here](./docs/SYSTEM_INSTALL.md).
 
+There are also Python Bindings in the 2.1 development version. This requires Python (2 or 3), [NumPy](http://www.numpy.org), [SciKit-Build](http://scikit-build.readthedocs.io), and CMake. You can uses `pip install -v goofit`, or `pip install -v -e .` inside the repository. You can also direcly force the bindings from a normal build with `-DGOOFIT_PYTHON=ON`.
+
 ## Getting the files
 
 * Clone with git:
@@ -39,7 +46,7 @@ cd GooFit
 
 You can either checkout a tagged version, or stay on the master for the latest and greatest. There are often development branches available, too.
 
-## Building 
+## Building
 
 The build system uses CMake. The procedure is standard for CMake builds:
 

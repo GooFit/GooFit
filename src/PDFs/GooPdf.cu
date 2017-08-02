@@ -39,10 +39,25 @@ __device__ fptype d_constants[maxParams];
 __device__ fptype d_observables[maxParams];
 __device__ fptype d_normalisations[maxParams];
 
+__constant__ fptype c_motherMass;
+__constant__ fptype c_daug1Mass;
+__constant__ fptype c_daug2Mass;
+__constant__ fptype c_daug3Mass;
+__constant__ fptype c_meson_radius;
+
 //This has to be here, otherwise we can't initialize the pointers properly.
 __device__ __host__ ParameterContainer::ParameterContainer () : parameters(d_parameters), constants(d_constants), 
 	observables(d_observables), normalisations(d_normalisations), parameterIdx(0), 
 	constantIdx(0), observableIdx(0), normalIdx(0), funcIdx (0) { }
+
+__device__ __host__ ParameterContainer::ParameterContainer (const ParameterContainer &pc) : parameters(d_parameters), 
+	constants(d_constants), observables(d_observables), normalisations(d_normalisations) {
+    parameterIdx = pc.parameterIdx;
+    constantIdx = pc.constantIdx;
+    observableIdx = pc.observableIdx;
+    normalIdx = pc.normalIdx;
+    funcIdx = pc.funcIdx;
+}
 
 // For debugging
 

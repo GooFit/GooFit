@@ -67,18 +67,17 @@ __device__ fptype device_threegauss_resolution(fptype coshterm,
                                                fptype xmixing,
                                                fptype ymixing,
                                                fptype sigma,
-                                               fptype *p,
-                                               unsigned int *indices) {
-    fptype coreFraction = RO_CACHE(p[RO_CACHE(indices[1])]);
+                                               ParameterContainer &pc) {
+    fptype coreFraction = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
     // fptype tailFraction    = p[indices[2]];
-    fptype tailFraction    = (1 - coreFraction) * RO_CACHE(p[RO_CACHE(indices[2])]);
+    fptype tailFraction    = (1 - coreFraction) * RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
     fptype outlFraction    = 1 - coreFraction - tailFraction;
-    fptype coreBias        = RO_CACHE(p[RO_CACHE(indices[3])]);
-    fptype coreScaleFactor = RO_CACHE(p[RO_CACHE(indices[4])]);
-    fptype tailBias        = RO_CACHE(p[RO_CACHE(indices[5])]);
-    fptype tailScaleFactor = RO_CACHE(p[RO_CACHE(indices[6])]);
-    fptype outlBias        = RO_CACHE(p[RO_CACHE(indices[7])]);
-    fptype outlScaleFactor = RO_CACHE(p[RO_CACHE(indices[8])]);
+    fptype coreBias        = RO_CACHE(pc.parameters[pc.parameterIdx + 3]);
+    fptype coreScaleFactor = RO_CACHE(pc.parameters[pc.parameterIdx + 4]);
+    fptype tailBias        = RO_CACHE(pc.parameters[pc.parameterIdx + 5]);
+    fptype tailScaleFactor = RO_CACHE(pc.parameters[pc.parameterIdx + 6]);
+    fptype outlBias        = RO_CACHE(pc.parameters[pc.parameterIdx + 7]);
+    fptype outlScaleFactor = RO_CACHE(pc.parameters[pc.parameterIdx + 8]);
 
     fptype cp1 = 0;
     fptype cp2 = 0;

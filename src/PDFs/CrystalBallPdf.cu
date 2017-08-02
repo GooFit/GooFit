@@ -31,6 +31,8 @@ __device__ fptype device_CrystalBall(fptype *evt, ParameterContainer &pc) {
         ret                 = a * pow(d, power);
     }
 
+    pc.incrementIndex(1, 4, 1, 0, 1);
+
     // if ((0 == THREADIDX) && (0 == BLOCKIDX)) printf("device_CB: %f %f %f %f %f %f\n", x, mean, sigma, alpha, power,
     // ret);
     return ret;
@@ -75,12 +77,10 @@ __host__ fptype CrystalBallPdf::integrate(fptype lo, fptype hi) const {
     fptype result = 0.0;
     bool useLog   = false;
 
-    unsigned int *indices = host_indices + parameters;
-
-    fptype mean  = parametersList[0];
-    fptype sigma = parametersList[1];
-    fptype alpha = parametersList[2];
-    fptype power = parametersList[3];
+    fptype mean  = parametersList[0]->getValue ();
+    fptype sigma = parametersList[1]->getValue ();
+    fptype alpha = parametersList[2]->getValue ();
+    fptype power = parametersList[3]->getValue ();
 
     if(fabs(power - 1.0) < 1.0e-05)
         useLog = true;

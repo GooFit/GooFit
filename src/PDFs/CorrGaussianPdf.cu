@@ -26,6 +26,8 @@ __device__ fptype device_CorrGaussian(fptype *evt, ParameterContainer &pc) {
     // printf("CorrGauss: %i %i %i %f %f %f %f\n", indices[2 + indices[0]], indices[3 + indices[0]], indices[0], x, y,
     // mean1, mean2);
 
+    pc.incrementIndex (1, 2, 5, 0, 1);
+
     return ret;
 }
 

@@ -44,7 +44,7 @@ __device__ fptype device_MultiPolynomial(fptype* evt, ParameterContainer &pc) {
     // Structure is nP, maxDegree, offset1, offset2, ..., coeff1, coeff2, ..., nO, o1, o2, ...
 
     int numObservables = RO_CACHE(pc.observables[pc.observableIdx]);
-    int maxDegree = RO_CACHE(pc.constants[pc.constantIdx + 1]) + 1;
+    int maxDegree = RO_CACHE(pc.constants[pc.constantIdx + numObservables + 1]) + 1;
     // Only appears in construction (maxDegree + 1) or (x > maxDegree), so
     // may as well add the one and use >= instead.
 
@@ -56,9 +56,9 @@ __device__ fptype device_MultiPolynomial(fptype* evt, ParameterContainer &pc) {
     for(int i = 0; i < numObservables; ++i)
         numBoxes *= maxDegree;
 
-    int coeffNumber = 2 +
-                      numObservables; // Index of first coefficient is 2 + nO, not 1 + nO, due to maxDegree. (nO comes from offsets.)
-    fptype ret = RO_CACHE(pc.constants[coeffNumber++]); // Coefficient of constant term.
+    int coeffNumber = numObservables; // Index of first coefficient is 2 + nO, not 1 + nO, due to maxDegree. (nO comes from offsets.)
+    fptype ret = RO_CACHE(pc.constants[pc.constantIdx + 2 + coeffNumber]); // Coefficient of constant term.
+    coeffNumber;
 
     for(int i = 1; i < numBoxes;
         ++i) { // Notice skip of inmost 'box' in the pyramid, corresponding to all powers zero, already accounted for.
@@ -93,7 +93,8 @@ __device__ fptype device_MultiPolynomial(fptype* evt, ParameterContainer &pc) {
         if(sumOfIndices >= maxDegree)
             continue;
 
-        fptype coefficient = RO_CACHE(pc.parameters[pc.parameterIdx + coeffNumber++]); // Coefficient from MINUIT
+        fptype coefficient = RO_CACHE(pc.parameters[pc.parameterIdx + 2 + coeffNumber]); // Coefficient from MINUIT
+        coeffNumber++;
         //if ((gpuDebug & 1) && (THREADIDX == 50) && (BLOCKIDX == 3))
         //if ((BLOCKIDX == internalDebug1) && (THREADIDX == internalDebug2))
         //if ((1 > (int) floor(0.5 + evt[8])) && (gpuDebug & 1) && (paramIndices + debugParamIndex == indices))
@@ -102,7 +103,7 @@ __device__ fptype device_MultiPolynomial(fptype* evt, ParameterContainer &pc) {
         ret += currTerm;
     }
 
-    pc.incrementIndex (1, 2, pc.constants[pc.constantIdx], numObservables + 1, 1);
+    pc.incrementIndex (1, 2, pc.constants[pc.constantIdx], numObservables, 1);
 
     return ret;
 }
@@ -148,6 +149,12 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n,
     : GooPdf(nullptr, n) {
     unsigned int numParameters = 1;
 
+    //pad first for the registered observables
+    for (unsigned int i = 0; i < obses.size(); ++i)
+        constantsList.push_back(0);
+
+    constantsList.push_back(maxDegree);
+
     // For 1 observable, equal to n = maxDegree + 1.
     // For two, n*(n+1)/2, ie triangular number. This generalises:
     // 3: Pyramidal number n*(n+1)*(n+2)/(3*2)
@@ -156,6 +163,9 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n,
     for(unsigned int i = 0; i < obses.size(); ++i) {
         registerObservable(obses[i]);
         numParameters *= (maxDegree + 1 + i);
+
+        //we are 'padding' the list.
+        constantsList.push_back(maxDegree + 1 + i);
     }
 
     for(int i = observablesList.size(); i > 1; --i)

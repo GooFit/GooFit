@@ -5,11 +5,15 @@ namespace GooFit {
 const fptype SQRT2PI = 2.506628;
 
 __device__ fptype device_JohnsonSU(fptype *evt, ParameterContainer &pc) {
-    fptype _Jm = p[indices[1]];
-    fptype _Js = p[indices[2]];
-    fptype _Jg = p[indices[3]];
-    fptype _Jd = p[indices[4]];
-    fptype x   = evt[indices[2 + indices[0]]];
+    fptype _Jm = pc.parameters[pc.parameterIdx + 1];
+    fptype _Js = pc.parameters[pc.parameterIdx + 2];
+    fptype _Jg = pc.parameters[pc.parameterIdx + 3];
+    fptype _Jd = pc.parameters[pc.parameterIdx + 4];
+
+    //we are using index 0.  If we need a different idx, we need to pass that information along.
+    fptype x   = evt[0];
+
+    pc.incrementIndex (1, 0, 4, 0, 1);
 
     fptype px       = (x - _Jm) / _Js;
     fptype px2      = px * px;
@@ -39,7 +43,7 @@ __host__ JohnsonSUPdf::JohnsonSUPdf(
     initialize(pindices);
 }
 
-__host__ void JohnsonSUPdf::recursvieSetIndices () {
+__host__ void JohnsonSUPdf::recursiveSetIndices () {
     GET_FUNCTION_ADDR(ptr_to_JohnsonSU);
 
     GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_JohnsonSU");

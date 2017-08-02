@@ -7,18 +7,21 @@ __device__ fptype device_BinTransform(fptype *evt, ParameterContainer &pc) {
     int numObservables = pc.observables[pc.observableIdx];
     int ret            = 0;
     int previousSize   = 1;
+    printf ("numObservables:%i\n", numObservables);
 
     for(int i = 0; i < numObservables; ++i) {
-        int id = pc.observables[pc.observableIdx + i + 1];
+        int id = pc.observables[pc.constantIdx + i + 1];
         fptype obsValue   = evt[id];
-        fptype lowerLimit = pc.observables[pc.observableIdx + i*3 + 1];
-        fptype binSize    = pc.observables[pc.observableIdx + i*3 + 2];
-        int numBins       = pc.observables[pc.observableIdx + i*3 + 3];
+        fptype lowerLimit = pc.constants[pc.constantIdx + numObservables + 1 + i*3 + 0];
+        fptype binSize    = pc.constants[pc.constantIdx + numObservables + 1 + i*3 + 1];
+        int numBins       = pc.constants[pc.constantIdx + numObservables + 1 + i*3 + 2];
 
         auto localBin = static_cast<int>(floor((obsValue - lowerLimit) / binSize));
         ret += localBin * previousSize;
         previousSize *= numBins;
     }
+
+    pc.incrementIndex(1, 0, numObservables*4 + 1, numObservables, 1);
 
     return fptype(ret);
 }
@@ -42,23 +45,10 @@ __host__ BinTransformPdf::BinTransformPdf(std::string n,
         //reserve index for obses.
         constantsList.push_back (0);
 
-        //pindices.push_back(cIndex + 2 * i);
-        //pindices.push_back(cIndex + 2 * i + 1);
-        //pindices.push_back(numBins[i]);
-
-        //host_constants[2 * i]     = limits[i]; // cIndex will be accounted for by offset in memcpy
-        //host_constants[2 * i + 1] = binSizes[i];
         constantsList.push_back (limits[i]);
         constantsList.push_back (binSizes[i]);
         constantsList.push_back (numBins[i]);
     }
-
-    //MEMCPY_TO_SYMBOL(functorConstants,
-    //                 host_constants,
-    //                 2 * obses.size() * sizeof(fptype),
-    //                 cIndex * sizeof(fptype),
-    //                 cudaMemcpyHostToDevice);
-    //delete[] host_constants;
 
     GET_FUNCTION_ADDR(ptr_to_BinTransform);
     initialize(pindices);

@@ -56,6 +56,7 @@ void init_ThreeGaussResolution(py::module &);
 void init_TruthResolution(py::module &);
 
 // Utilities
+void init_VariableBinTransform1DPdf(py::module &);
 
 
 PYBIND11_PLUGIN(_goofit) {
@@ -115,6 +116,7 @@ PYBIND11_PLUGIN(_goofit) {
     init_TruthResolution(m);
 
     // Utilities
+    init_VariableBinTransform1DPdf(m);
 
 
     return m.ptr();

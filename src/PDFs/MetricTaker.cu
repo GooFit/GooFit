@@ -41,10 +41,11 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, fptype *, int> t) c
 
 #define MAX_NUM_OBSERVABLES 5
 
-__device__ fptype binCenters[1024*MAX_NUM_OBSERVABLES];
+//__device__ fptype binCenters[1024*MAX_NUM_OBSERVABLES];
 
 __device__ fptype MetricTaker::operator()(thrust::tuple<int, int, fptype*> t) const {
     // Bin index, event size, base address [lower, upper,getNumBins]
+    __shared__ fptype binCenters[1024*MAX_NUM_OBSERVABLES];
 
     int evtSize   = thrust::get<1>(t);
     int binNumber = thrust::get<0>(t);

@@ -5,10 +5,11 @@
 #include "goofit/FitManager.h"
 #include "goofit/UnbinnedDataSet.h"
 
-#include "TH1F.h"
-#include "TH2F.h"
-#include "TStyle.h"
-#include "TCanvas.h"
+#include <TH1F.h>
+#include <TH2F.h>
+#include <TStyle.h>
+#include <TCanvas.h>
+#include <RVersion.h>
 
 #include <sys/time.h>
 #include <sys/times.h>
@@ -43,7 +44,10 @@ int main(int argc, char **argv) {
     gStyle->SetFuncWidth(1);
     gStyle->SetLineWidth(1);
     gStyle->SetLineColor(1);
-    gStyle->SetPalette(kViridis, 0);
+    if(ROOT_VERSION_CODE < ROOT_VERSION(6,6,0))
+        gStyle->SetPalette(kRainBow, 0);
+    else
+        gStyle->SetPalette(kViridis, 0);
 
     Variable xvar{"xvar", -5, 5};
     Variable yvar{"yvar", -5, 5};

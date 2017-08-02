@@ -286,10 +286,12 @@ if(GOOFIT_DEVICE STREQUAL TBB OR GOOFIT_HOST STREQUAL TBB)
 endif()
 
 # Include directories are not picked up by FindCUDA
-find_package(ROOT 6 COMPONENTS Minuit Minuit2)
+find_package(ROOT 6 COMPONENTS Minuit)
 if(ROOT_FOUND)
     add_definitions("-DROOT_FOUND")
-else()
+endif()
+# If either ROOT not found or Minuit2 not included
+if(NOT ROOT_Minuit2_LIBRARY)
     add_subdirectory("extern/Minuit2")
     set_target_properties(Minuit2 PROPERTIES FOLDER extern)
     set_target_properties(Math PROPERTIES FOLDER extern)

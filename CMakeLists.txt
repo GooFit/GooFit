@@ -317,6 +317,9 @@ target_include_directories(rang INTERFACE "${PROJECT_SOURCE_DIR}/extern/rang/inc
 add_library(Eigen INTERFACE)
 target_include_directories(Eigen INTERFACE "${PROJECT_SOURCE_DIR}/extern/Eigen/Eigen")
 
+set(GOOFIT_ROOT_FOUND ROOT_FOUND)
+set(GOOFIT_ARCH_FLAGS ARCH_FLAGS)
+
 # Output the current GooFit version
 configure_file (
     "${PROJECT_SOURCE_DIR}/include/goofit/Version.h.in"

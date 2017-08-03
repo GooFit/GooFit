@@ -6,6 +6,8 @@
 #include <goofit/UnbinnedDataSet.h>
 #include <goofit/PdfBase.h>
 
+#include <Minuit2/FunctionMinimum.h>
+
 namespace py = pybind11;
 using namespace GooFit;
 using namespace pybind11::literals;

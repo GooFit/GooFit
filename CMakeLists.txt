@@ -495,7 +495,7 @@ endif()
 # This allows GOOFIT_PYTHON to be automatic
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/extern/pybind11/tools" ${CMAKE_MODULE_PATH})
 find_package(PythonLibsNew)
-if(PYTHONLIBS_FOUND)
+if(PYTHONLIBS_FOUND AND EXISTS PYTHON_LIBRARIES)
     option(GOOFIT_PYTHON "Python bindings for goofit" ON)
 else()
     option(GOOFIT_PYTHON "Python bindings for goofit" OFF)

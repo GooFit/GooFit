@@ -296,6 +296,7 @@ if(NOT ROOT_Minuit2_LIBRARY)
     add_subdirectory("extern/Minuit2")
     set_target_properties(Minuit2 PROPERTIES FOLDER extern)
     set_target_properties(Math PROPERTIES FOLDER extern)
+    add_library(ROOT::Minuit2 ALIAS Minuit2)
 endif()
 
 # Adding simple libraries

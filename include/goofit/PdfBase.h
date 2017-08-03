@@ -15,7 +15,11 @@
 class TH1D;
 #endif
 
-#include <Minuit2/FunctionMinimum.h>
+namespace ROOT {
+namespace Minuit2 {
+class FunctionMinimum;
+}
+}
 
 namespace GooFit {
 

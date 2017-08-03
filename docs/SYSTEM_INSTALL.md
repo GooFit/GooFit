@@ -87,6 +87,40 @@ mkdir root-6 && curl https://root.cern.ch/download/root_v6.08.06.Linux-ubuntu16-
 source root-6/bin/thisroot.sh
 ```
 
+## OpenSUSE
+
+If you use `make`, adding `-jN` where `N` is the number of cores will make builds much faster on multicore systems! `ninja` does this automatically.
+
+```bash
+docker run -it opensuse sh
+zypper install -y git cmake gcc-c++
+git clone --recursive https://github.com/GooFit/GooFit.git
+cd GooFit
+make
+```
+
+### Adding ROOT:
+
+As always, https://root.cern.ch/build-prerequisites#opensuse is a good resource, though `glu-devel` seems to now be required as well. I'm using `ninja` to build in parallel automatically (and it seems to be faster as well).
+
+```bash
+zypper install -y git bash cmake gcc-c++ gcc binutils xorg-x11-libX11-devel xorg-x11-libXpm-devel xorg-x11-devel xorg-x11-proto-devel xorg-x11-libXext-devel glu-devel
+zypper install -y ninja tar
+git clone --depth=1 --branch=v6-10-04 http://github.com/root-project/root.git root_git
+mkdir root_build
+cd root_build
+cmake ../root_git -GNinja -DCMAKE_INSTALL_PREFIX=/opt/root-6-10-04
+cmake --build . --target install
+```
+
+Then, you can activated that copy of root with:
+
+```bash
+source /opt/root-6-10-04/bin/thisroot.sh
+```
+
+You might want to add useful extra ROOT library: `-Droofit=ON -Dmathmore=ON -Dminuit2=ON`
+
 ## Note on CMake install
 
 While other install methods for cmake, like `pip`, are easier, this way should always work. On Linux, you can manually get a version of CMake using:

@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['minuit2',['Minuit2',['../namespace_r_o_o_t_1_1_minuit2.html',1,'ROOT']]],
   ['readfromfile',['readFromFile',['../namespace_goo_fit.html#a9b397dcab30d59057b23dec6da865bda',1,'GooFit']]],
   ['readlistofnumbers',['readListOfNumbers',['../namespace_goo_fit.html#aa124832d8f3db7469774f8b985340742',1,'GooFit']]],
   ['recursivesetnormalisation',['recursiveSetNormalisation',['../class_goo_fit_1_1_pdf_base.html#a6e644b78f7f436ff8a74a2412d9d0a60',1,'GooFit::PdfBase']]],
@@ -16,6 +17,7 @@ var searchData=
   ['resonancepdf_2eh',['ResonancePdf.h',['../_resonance_pdf_8h.html',1,'']]],
   ['resonances',['resonances',['../struct_goo_fit_1_1_decay_info.html#af061c4ef1eb6480f9f0fad3158d0da4c',1,'GooFit::DecayInfo']]],
   ['resonancesize',['resonanceSize',['../namespace_goo_fit.html#a3a6bbc228c6417c7bc445e572e9b1b38',1,'GooFit']]],
+  ['root',['ROOT',['../namespace_r_o_o_t.html',1,'']]],
   ['root2',['root2',['../_global_cuda_defines_8h.html#a73dc743cb2ae569c146a5018bd38e468',1,'GlobalCudaDefines.h']]],
   ['rsqrt',['rsqrt',['../_global_cuda_defines_8h.html#a52a60362b2be23ba4c8280e38e561b67',1,'GlobalCudaDefines.h']]],
   ['run',['run',['../class_goo_fit_1_1_application.html#a69289910ee9f552990c9c2b9ca253902',1,'GooFit::Application']]]

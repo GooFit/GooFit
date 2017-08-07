@@ -1,5 +1,19 @@
+## v2.1.0: Python
+#### (in development)
+
+
+GooFit now has working, fully supported Python bindings using PyBind11. All PDFs have been bound ([#92](https://github.com/GooFit/GooFit/pull/92)). Python bindings now build by default if Python development files are found ([#93](https://github.com/GooFit/GooFit/pull/93)). Pythonization additions, such as supporting the same shortcuts for Variables as C++, from/to numpy converters, and more, was added in ([#99](https://github.com/GooFit/GooFit/pull/99), [#109](https://github.com/GooFit/GooFit/pull/109)). Pip install is now supported using SciKit-Build, and source releases are being made on PyPI ([#107](https://github.com/GooFit/GooFit/pull/107)). The build will use CUDA if found, and OpenMP otherwise.
+
+Other changes include:
+
+* TravisCI now uses Trusty ([#98](https://github.com/GooFit/GooFit/pull/98)).
+* Minuit2 now can be missing from ROOT and GooFit will use it's own copy ([#102](https://github.com/GooFit/GooFit/pull/102), [#113](https://github.com/GooFit/GooFit/pull/113)).
+* Eigen is now included ([#104](https://github.com/GooFit/GooFit/pull/104))
+
+
 
 ## v2.0.0: C++11 and CMake
+#### June 9, 2017
 
 GooFit is now easy to build on a wide variety of Unix systems, and supports debuggers and IDEs. GooFit is faster, has unit tests, and working examples. More PDFs and examples have been added, as well as newly released example datasets that are downloaded automatically. GooFit now has built in support for MPI, and can use that to deploy to multiple graphics cards on the same machine. A new command line parser ([CLI11]) and drastically improved logging and errors have made code easier to write and debug. Usage of GooFit specific terminology is now reduced, using standard Thrust or CUDA terms when possible, lowering the barrier for new developers. A new Python script has been added to assist users converting from pre 2.0 code.
 

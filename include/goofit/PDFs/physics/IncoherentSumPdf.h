@@ -2,7 +2,7 @@
 
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/PDFs/physics/TddpPdf.h"
-#include <thrust/complex.h>
+#include "goofit/detail/Complex.h"
 
 namespace GooFit {
 
@@ -36,7 +36,7 @@ class IncoherentSumPdf : public GooPdf {
 
     // Following variables are useful if masses and widths, involved in difficult BW calculation,
     // change infrequently while amplitudes, only used in adding BW results together, change rapidly.
-    thrust::device_vector<thrust::complex<fptype>> *cachedResonances; // BW (and other) results for each event.
+    thrust::device_vector<fpcomplex> *cachedResonances; // BW (and other) results for each event.
     double *integrals; // Integrals of each BW resonance across the Daliz plot.
 
     bool *redoIntegral;
@@ -61,10 +61,10 @@ class SpecialIncoherentIntegrator : public thrust::unary_function<thrust::tuple<
 };
 
 class SpecialIncoherentResonanceCalculator
-    : public thrust::unary_function<thrust::tuple<int, fptype *, int>, thrust::complex<fptype>> {
+    : public thrust::unary_function<thrust::tuple<int, fptype *, int>, fpcomplex> {
   public:
     SpecialIncoherentResonanceCalculator(int pIdx, unsigned int res_idx);
-    __device__ thrust::complex<fptype> operator()(thrust::tuple<int, fptype *, int> t) const;
+    __device__ fpcomplex operator()(thrust::tuple<int, fptype *, int> t) const;
 
   private:
     unsigned int resonance_i;

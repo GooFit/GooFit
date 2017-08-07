@@ -48,6 +48,7 @@ goofit_add_library(PdfBase
     PdfBase.cc
     Abort.cc
     ${PROJECT_SOURCE_DIR}/include/goofit/detail/Abort.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/detail/Complex.h
     ${PROJECT_SOURCE_DIR}/include/goofit/detail/ThrustOverride.h
     ${PROJECT_BINARY_DIR}/include/goofit/detail/ThrustOverrideConfig.h
     ${PROJECT_BINARY_DIR}/include/goofit/detail/Backtrace.h

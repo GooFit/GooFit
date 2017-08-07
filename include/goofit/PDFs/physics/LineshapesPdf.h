@@ -12,7 +12,7 @@ See *.cu file for more details
 #include "goofit/PDFs/physics/ResonancePdf.h"
 #include "goofit/Variable.h"
 
-#include <thrust/complex.h>
+#include "goofit/detail/Complex.h"
 
 namespace GooFit {
 

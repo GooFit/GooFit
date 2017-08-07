@@ -1,11 +1,11 @@
 #pragma once
 
 #include "goofit/PDFs/GooPdf.h"
-#include <thrust/complex.h>
+#include "goofit/detail/Complex.h"
 
 namespace GooFit {
 
-typedef thrust::complex<fptype> (*resonance_function_ptr)(fptype, fptype, fptype, unsigned int *);
+typedef fpcomplex (*resonance_function_ptr)(fptype, fptype, fptype, unsigned int *);
 
 __device__ fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m);
 

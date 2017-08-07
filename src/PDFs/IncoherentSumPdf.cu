@@ -1,7 +1,6 @@
 #include "goofit/PDFs/physics/IncoherentSumPdf.h"
 #include "goofit/Error.h"
 #include "goofit/PDFs/physics/ResonancePdf.h"
-#include <thrust/complex.h>
 
 #include <thrust/transform_reduce.h>
 
@@ -11,7 +10,7 @@ const int resonanceOffset_incoherent = 4; // Offset of the first resonance into 
 // Notice that this is different from the TddpPdf case because there's no time information.
 // In particular the offset consists of nP, constant index, number of resonances, and cache index.
 
-__device__ thrust::complex<fptype> *cResonanceValues[10];
+__device__ fpcomplex *cResonanceValues[10];
 
 __device__ inline int parIndexFromResIndex_incoherent(int resIndex) {
     return resonanceOffset_incoherent + resIndex * resonanceSize;
@@ -29,7 +28,7 @@ __device__ fptype device_incoherent(fptype *evt, fptype *p, unsigned int *indice
         int paramIndex   = parIndexFromResIndex_incoherent(i);
         fptype amplitude = p[indices[paramIndex + 0]];
 
-        thrust::complex<fptype> matrixelement = cResonanceValues[cacheToUse][evtNum * numResonances + i];
+        fpcomplex matrixelement = cResonanceValues[cacheToUse][evtNum * numResonances + i];
         ret += amplitude * thrust::norm(matrixelement);
     }
 
@@ -130,12 +129,12 @@ __host__ void IncoherentSumPdf::setDataSize(unsigned int dataSize, unsigned int 
     }
 
     numEntries       = dataSize;
-    cachedResonances = new thrust::device_vector<thrust::complex<fptype>>(dataSize * decayInfo->resonances.size());
+    cachedResonances = new thrust::device_vector<fpcomplex>(dataSize * decayInfo->resonances.size());
     void *dummy      = thrust::raw_pointer_cast(cachedResonances->data());
     MEMCPY_TO_SYMBOL(cResonanceValues,
                      &dummy,
-                     sizeof(thrust::complex<fptype> *),
-                     cacheToUse * sizeof(thrust::complex<fptype> *),
+                     sizeof(fpcomplex *),
+                     cacheToUse * sizeof(fpcomplex *),
                      cudaMemcpyHostToDevice);
     setForceIntegrals();
 }
@@ -195,7 +194,7 @@ __host__ fptype IncoherentSumPdf::normalize() const {
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
-                strided_range<thrust::device_vector<thrust::complex<fptype>>::iterator>(
+                strided_range<thrust::device_vector<fpcomplex>::iterator>(
                     cachedResonances->begin() + i, cachedResonances->end(), decayInfo->resonances.size())
                     .begin(),
                 *(calculators[i]));
@@ -276,7 +275,7 @@ __device__ fptype SpecialIncoherentIntegrator::operator()(thrust::tuple<int, fpt
     unsigned int params_i = indices[parameter_i + 3];
     fptype m23 = motherMass * motherMass + daug1Mass * daug1Mass + daug2Mass * daug2Mass + daug3Mass * daug3Mass
                  - binCenterM12 - binCenterM13;
-    thrust::complex<fptype> ret = getResonanceAmplitude(binCenterM12, binCenterM13, m23, functn_i, params_i);
+    fpcomplex ret = getResonanceAmplitude(binCenterM12, binCenterM13, m23, functn_i, params_i);
 
     unsigned int numResonances = indices[2];
     fptype fakeEvt[10]; // Need room for many observables in case m12 or m13 were assigned a high index in an
@@ -293,7 +292,7 @@ SpecialIncoherentResonanceCalculator::SpecialIncoherentResonanceCalculator(int p
     : resonance_i(res_idx)
     , parameters(pIdx) {}
 
-__device__ thrust::complex<fptype> SpecialIncoherentResonanceCalculator::
+__device__ fpcomplex SpecialIncoherentResonanceCalculator::
 operator()(thrust::tuple<int, fptype *, int> t) const {
     // Returns the BW, or other resonance function, for a specific resonance.
     // Is special because the value is expected to change slowly, so it's
@@ -310,7 +309,7 @@ operator()(thrust::tuple<int, fptype *, int> t) const {
     fptype daug3Mass      = functorConstants[indices[1] + 3];
 
     if(!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass))
-        return thrust::complex<fptype>(0, 0);
+        return fpcomplex(0, 0);
 
     fptype m23
         = motherMass * motherMass + daug1Mass * daug1Mass + daug2Mass * daug2Mass + daug3Mass * daug3Mass - m12 - m13;
@@ -319,7 +318,7 @@ operator()(thrust::tuple<int, fptype *, int> t) const {
         = parIndexFromResIndex_incoherent(resonance_i); // Find position of this resonance relative to TDDP start
     unsigned int functn_i       = indices[parameter_i + 2];
     unsigned int params_i       = indices[parameter_i + 3];
-    thrust::complex<fptype> ret = getResonanceAmplitude(m12, m13, m23, functn_i, params_i);
+    fpcomplex ret = getResonanceAmplitude(m12, m13, m23, functn_i, params_i);
 
     return ret;
 }

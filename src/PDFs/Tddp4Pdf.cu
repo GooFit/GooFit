@@ -26,7 +26,7 @@ class.
 #include <mcbooster/GTypes.h>
 #include <mcbooster/Generate.h>
 #include <mcbooster/Vector4R.h>
-#include <thrust/complex.h>
+#include "goofit/detail/Complex.h"
 
 namespace GooFit {
 
@@ -75,8 +75,8 @@ struct exp_functor {
 // waves are recalculated when the corresponding resonance mass or width
 // changes. Note that in a multithread environment each thread needs its
 // own cache, hence the '10'. Ten threads should be enough for anyone!
-__device__ thrust::complex<fptype> *cResSF_TD[10];
-__device__ thrust::complex<fptype> *Amps_TD[10];
+__device__ fpcomplex *cResSF_TD[10];
+__device__ fpcomplex *Amps_TD[10];
 /*
 Constant memory array to hold specific info for amplitude calculation.
 First entries are the starting points in array, necessary, because number of Lineshapes(LS) or Spinfactors(SF) can vary
@@ -96,38 +96,38 @@ __device__ fptype device_TDDP4(fptype *evt, fptype *p, unsigned int *indices) {
     unsigned int cacheToUse = indices[2];
     unsigned int numAmps    = indices[5];
 
-    thrust::complex<fptype> AmpA(0, 0);
-    thrust::complex<fptype> AmpB(0, 0);
-    thrust::complex<fptype> amp_A, amp_B;
+    fpcomplex AmpA(0, 0);
+    fpcomplex AmpB(0, 0);
+    fpcomplex amp_A, amp_B;
 
     int k = 0;
 
     for(int i = 0; i < numAmps; ++i) {
         unsigned int start = AmpIndices[i];
         unsigned int flag  = AmpIndices[start + 3 + numAmps];
-        thrust::complex<fptype> temp;
+        fpcomplex temp;
 
         /*printf("flag:%i\n",flag);*/
         switch(flag) {
         case 0:
-            amp_A = thrust::complex<fptype>(p[indices[12 + 2 * (i + k)]], p[indices[13 + 2 * (i + k)]]);
+            amp_A = fpcomplex(p[indices[12 + 2 * (i + k)]], p[indices[13 + 2 * (i + k)]]);
             temp  = Amps_TD[cacheToUse][evtNum * numAmps + i];
             AmpA += temp * amp_A;
             break;
 
         case 1:
-            amp_B = thrust::complex<fptype>(p[indices[12 + 2 * (i + k)]], p[indices[13 + 2 * (i + k)]]);
+            amp_B = fpcomplex(p[indices[12 + 2 * (i + k)]], p[indices[13 + 2 * (i + k)]]);
             temp  = Amps_TD[cacheToUse][evtNum * numAmps + i];
             AmpB += temp * amp_B;
             break;
 
         case 2:
-            amp_A = thrust::complex<fptype>(p[indices[12 + 2 * (i + k)]], p[indices[13 + 2 * (i + k)]]);
+            amp_A = fpcomplex(p[indices[12 + 2 * (i + k)]], p[indices[13 + 2 * (i + k)]]);
             temp  = Amps_TD[cacheToUse][evtNum * numAmps + i];
             AmpA += temp * amp_A;
 
             ++k;
-            amp_B = thrust::complex<fptype>(p[indices[12 + 2 * (i + k)]], p[indices[13 + 2 * (i + k)]]);
+            amp_B = fpcomplex(p[indices[12 + 2 * (i + k)]], p[indices[13 + 2 * (i + k)]]);
             temp  = Amps_TD[cacheToUse][evtNum * numAmps + i];
             AmpB += temp * amp_B;
             break;
@@ -146,7 +146,7 @@ __device__ fptype device_TDDP4(fptype *evt, fptype *p, unsigned int *indices) {
 
     fptype term1                  = thrust::norm(AmpA) + thrust::norm(AmpB);
     fptype term2                  = thrust::norm(AmpA) - thrust::norm(AmpB);
-    thrust::complex<fptype> term3 = AmpA * thrust::conj(AmpB);
+    fpcomplex term3 = AmpA * thrust::conj(AmpB);
     // printf("%i dev %.7g %.7g %.7g %.7g\n", evtNum, norm2(AmpA), norm2(AmpB), term3.real, term3.imag);
 
     int effFunctionIdx = 12 + 2 * indices[3] + 2 * indices[4] + 2 * indices[6];
@@ -453,7 +453,7 @@ __host__ TDDP4::TDDP4(std::string n,
     mcbooster::EvaluateArray<Dim5>(eval, pset, VarSet);
 
     norm_SF  = mcbooster::RealVector_d(nAcc * SpinFactors.size());
-    norm_LS  = mcbooster::mc_device_vector<thrust::complex<fptype>>(nAcc * (components.size() - 1));
+    norm_LS  = mcbooster::mc_device_vector<fpcomplex>(nAcc * (components.size() - 1));
     MCevents = nAcc;
 
     addSpecialMask(PdfBase::ForceSeparateNorm);
@@ -477,21 +477,21 @@ __host__ void TDDP4::setDataSize(unsigned int dataSize, unsigned int evtSize) {
         delete cachedAMPs;
 
     numEntries  = dataSize;
-    cachedResSF = new thrust::device_vector<thrust::complex<fptype>>(
+    cachedResSF = new thrust::device_vector<fpcomplex>(
         dataSize * (components.size() + SpinFactors.size() - 1)); //   -1 because 1 component is efficiency
     void *dummy = thrust::raw_pointer_cast(cachedResSF->data());
     MEMCPY_TO_SYMBOL(cResSF_TD,
                      &dummy,
-                     sizeof(thrust::complex<fptype> *),
-                     cacheToUse * sizeof(thrust::complex<fptype> *),
+                     sizeof(fpcomplex *),
+                     cacheToUse * sizeof(fpcomplex *),
                      cudaMemcpyHostToDevice);
 
-    cachedAMPs   = new thrust::device_vector<thrust::complex<fptype>>(dataSize * (AmpCalcs.size()));
+    cachedAMPs   = new thrust::device_vector<fpcomplex>(dataSize * (AmpCalcs.size()));
     void *dummy2 = thrust::raw_pointer_cast(cachedAMPs->data());
     MEMCPY_TO_SYMBOL(Amps_TD,
                      &dummy2,
-                     sizeof(thrust::complex<fptype> *),
-                     cacheToUse * sizeof(thrust::complex<fptype> *),
+                     sizeof(fpcomplex *),
+                     cacheToUse * sizeof(fpcomplex *),
                      cudaMemcpyHostToDevice);
 
     setForceIntegrals();
@@ -534,7 +534,7 @@ __host__ fptype TDDP4::normalize() const {
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, dataArray, eventSize)),
-                strided_range<thrust::device_vector<thrust::complex<fptype>>::iterator>(
+                strided_range<thrust::device_vector<fpcomplex>::iterator>(
                     cachedResSF->begin() + offset + i, cachedResSF->end(), (components.size() + SpinFactors.size() - 1))
                     .begin(),
                 *(sfcalculators[i]));
@@ -565,7 +565,7 @@ __host__ fptype TDDP4::normalize() const {
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, dataArray, eventSize)),
-                strided_range<thrust::device_vector<thrust::complex<fptype>>::iterator>(
+                strided_range<thrust::device_vector<fpcomplex>::iterator>(
                     cachedResSF->begin() + i, cachedResSF->end(), (components.size() + SpinFactors.size() - 1))
                     .begin(),
                 *(lscalculators[i]));
@@ -593,7 +593,7 @@ __host__ fptype TDDP4::normalize() const {
         if(redo) {
             thrust::transform(eventIndex,
                               eventIndex + numEntries,
-                              strided_range<thrust::device_vector<thrust::complex<fptype>>::iterator>(
+                              strided_range<thrust::device_vector<fpcomplex>::iterator>(
                                   cachedAMPs->begin() + i, cachedAMPs->end(), AmpCalcs.size())
                                   .begin(),
                               *(AmpCalcs[i]));
@@ -622,7 +622,7 @@ __host__ fptype TDDP4::normalize() const {
     }
 
     thrust::constant_iterator<fptype *> normSFaddress(thrust::raw_pointer_cast(norm_SF.data()));
-    thrust::constant_iterator<thrust::complex<fptype> *> normLSaddress(thrust::raw_pointer_cast(norm_LS.data()));
+    thrust::constant_iterator<fpcomplex *> normLSaddress(thrust::raw_pointer_cast(norm_LS.data()));
     thrust::constant_iterator<int> NumNormEvents(MCevents);
 
     // this does the rest of the integration with the cached lineshape and spinfactor values for the normalization
@@ -846,7 +846,7 @@ SFCalculator_TD::SFCalculator_TD(int pIdx, unsigned int sf_idx)
     : _spinfactor_i(sf_idx)
     , _parameters(pIdx) {}
 
-__device__ thrust::complex<fptype> SFCalculator_TD::operator()(thrust::tuple<int, fptype *, int> t) const {
+__device__ fpcomplex SFCalculator_TD::operator()(thrust::tuple<int, fptype *, int> t) const {
     int evtNum  = thrust::get<0>(t);
     fptype *evt = thrust::get<1>(t) + (evtNum * thrust::get<2>(t));
 
@@ -873,7 +873,7 @@ __device__ thrust::complex<fptype> SFCalculator_TD::operator()(thrust::tuple<int
     auto func = reinterpret_cast<spin_function_ptr>(device_function_table[functn_i]);
     fptype sf = (*func)(vecs, paramIndices + params_i);
     // printf("SpinFactors %i : %.7g\n",_spinfactor_i, sf );
-    return thrust::complex<fptype>(sf, 0);
+    return fpcomplex(sf, 0);
 }
 
 NormSpinCalculator_TD::NormSpinCalculator_TD(int pIdx, unsigned int sf_idx)
@@ -916,9 +916,9 @@ LSCalculator_TD::LSCalculator_TD(int pIdx, unsigned int res_idx)
     : _resonance_i(res_idx)
     , _parameters(pIdx) {}
 
-__device__ thrust::complex<fptype> LSCalculator_TD::operator()(thrust::tuple<int, fptype *, int> t) const {
+__device__ fpcomplex LSCalculator_TD::operator()(thrust::tuple<int, fptype *, int> t) const {
     // Calculates the BW values for a specific resonance.
-    thrust::complex<fptype> ret;
+    fpcomplex ret;
 
     int evtNum  = thrust::get<0>(t);
     fptype *evt = thrust::get<1>(t) + (evtNum * thrust::get<2>(t));
@@ -970,11 +970,11 @@ NormLSCalculator_TD::NormLSCalculator_TD(int pIdx, unsigned int res_idx)
     : _resonance_i(res_idx)
     , _parameters(pIdx) {}
 
-__device__ thrust::complex<fptype> NormLSCalculator_TD::operator()(
+__device__ fpcomplex NormLSCalculator_TD::operator()(
     thrust::tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t)
     const {
     // Calculates the BW values for a specific resonance.
-    thrust::complex<fptype> ret;
+    fpcomplex ret;
 
     unsigned int *indices = paramIndices + _parameters; // Jump to DALITZPLOT position within parameters array
     int parameter_i
@@ -1022,7 +1022,7 @@ AmpCalc_TD::AmpCalc_TD(unsigned int AmpIdx, unsigned int pIdx, unsigned int nPer
     , _AmpIdx(AmpIdx)
     , _parameters(pIdx) {}
 
-__device__ thrust::complex<fptype> AmpCalc_TD::operator()(thrust::tuple<int, fptype *, int> t) const {
+__device__ fpcomplex AmpCalc_TD::operator()(thrust::tuple<int, fptype *, int> t) const {
     unsigned int *indices   = paramIndices + _parameters;
     unsigned int cacheToUse = indices[2];
     unsigned int totalLS    = indices[3];
@@ -1033,12 +1033,12 @@ __device__ thrust::complex<fptype> AmpCalc_TD::operator()(thrust::tuple<int, fpt
     unsigned int numSF      = AmpIndices[totalAMP + _AmpIdx + 1];
     unsigned int evtNum     = thrust::get<0>(t);
 
-    thrust::complex<fptype> returnVal(0, 0);
+    fpcomplex returnVal(0, 0);
     unsigned int SF_step = numSF / _nPerm;
     unsigned int LS_step = numLS / _nPerm;
 
     for(int i = 0; i < _nPerm; ++i) {
-        thrust::complex<fptype> ret(1, 0);
+        fpcomplex ret(1, 0);
 
         for(int j = i * LS_step; j < (i + 1) * LS_step; ++j) {
             ret *= (cResSF_TD[cacheToUse][evtNum * offset + AmpIndices[totalAMP + _AmpIdx + 4 + j]]);
@@ -1069,18 +1069,18 @@ NormIntegrator_TD::NormIntegrator_TD(unsigned int pIdx)
     : _parameters(pIdx) {}
 
 __device__ thrust::tuple<fptype, fptype, fptype, fptype> NormIntegrator_TD::
-operator()(thrust::tuple<int, int, fptype *, thrust::complex<fptype> *> t) const {
+operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const {
     unsigned int *indices = paramIndices + _parameters;
     unsigned int totalAMP = indices[5];
 
     unsigned int evtNum             = thrust::get<0>(t);
     unsigned int MCevents           = thrust::get<1>(t);
     fptype *SFnorm                  = thrust::get<2>(t) + evtNum;
-    thrust::complex<fptype> *LSnorm = thrust::get<3>(t) + evtNum;
+    fpcomplex *LSnorm = thrust::get<3>(t) + evtNum;
 
-    thrust::complex<fptype> AmpA(0, 0);
-    thrust::complex<fptype> AmpB(0, 0);
-    thrust::complex<fptype> amp_A, amp_B;
+    fpcomplex AmpA(0, 0);
+    fpcomplex AmpB(0, 0);
+    fpcomplex amp_A, amp_B;
 
     int k = 0;
 
@@ -1092,16 +1092,16 @@ operator()(thrust::tuple<int, int, fptype *, thrust::complex<fptype> *> t) const
         unsigned int flag    = AmpIndices[totalAMP + ampidx + 3];
         unsigned int SF_step = numSF / nPerm;
         unsigned int LS_step = numLS / nPerm;
-        thrust::complex<fptype> ret2(0, 0);
+        fpcomplex ret2(0, 0);
         // printf("%i, %i, %i, %i, %i, %i, %i, %i, %i, %f\n",ampidx, amp, numLS, numSF, nPerm,AmpIndices[totalAMP +
         // ampidx + 4 + 0], AmpIndices[totalAMP + ampidx + 4 + 1], AmpIndices[totalAMP + ampidx + 4 + 2],
         // AmpIndices[totalAMP + ampidx + 4 + 3], (1/sqrt((fptype)(nPerm))) );
 
         for(int j = 0; j < nPerm; ++j) {
-            thrust::complex<fptype> ret(1, 0);
+            fpcomplex ret(1, 0);
 
             for(int i = j * LS_step; i < (j + 1) * LS_step; ++i) {
-                thrust::complex<fptype> matrixelement(LSnorm[AmpIndices[totalAMP + ampidx + 4 + i] * MCevents]);
+                fpcomplex matrixelement(LSnorm[AmpIndices[totalAMP + ampidx + 4 + i] * MCevents]);
                 // printf("Norm BW %i, %.5g, %.5g\n",AmpIndices[totalAMP + ampidx + 4 + i] , matrixelement.real,
                 // matrixelement.imag);
                 ret *= matrixelement;
@@ -1121,23 +1121,23 @@ operator()(thrust::tuple<int, int, fptype *, thrust::complex<fptype> *> t) const
 
         switch(flag) {
         case 0:
-            amp_A = thrust::complex<fptype>(cudaArray[indices[12 + 2 * (amp + k)]],
+            amp_A = fpcomplex(cudaArray[indices[12 + 2 * (amp + k)]],
                                             cudaArray[indices[13 + 2 * (amp + k)]]);
             AmpA += ret2 * amp_A;
             break;
 
         case 1:
-            amp_B = thrust::complex<fptype>(cudaArray[indices[12 + 2 * (amp + k)]],
+            amp_B = fpcomplex(cudaArray[indices[12 + 2 * (amp + k)]],
                                             cudaArray[indices[13 + 2 * (amp + k)]]);
             AmpB += ret2 * amp_B;
             break;
 
         case 2:
-            amp_A = thrust::complex<fptype>(cudaArray[indices[12 + 2 * (amp + k)]],
+            amp_A = fpcomplex(cudaArray[indices[12 + 2 * (amp + k)]],
                                             cudaArray[indices[13 + 2 * (amp + k)]]);
             AmpA += ret2 * amp_A;
             ++k;
-            amp_B = thrust::complex<fptype>(cudaArray[indices[12 + 2 * (amp + k)]],
+            amp_B = fpcomplex(cudaArray[indices[12 + 2 * (amp + k)]],
                                             cudaArray[indices[13 + 2 * (amp + k)]]);
             AmpB += ret2 * amp_B;
             break;

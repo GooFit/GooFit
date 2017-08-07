@@ -3,7 +3,7 @@
 
 #include <cmath>
 
-#include <thrust/complex.h>
+#include "goofit/detail/Complex.h"
 
 namespace GooFit {
 
@@ -43,16 +43,16 @@ static fptype e2[12] = {0.7551038420890235,
 static fptype C[7] = {65536.0, -2885792.0, 69973904.0, -791494704.0, 8962513560.0, -32794651890.0, 175685635125.0};
 static fptype D[7] = {192192.0, 8648640.0, 183783600.0, 2329725600.0, 18332414100.0, 84329104860.0, 175685635125.0};
 
-thrust::complex<fptype> Faddeeva_2(const thrust::complex<fptype> &z) {
+fpcomplex Faddeeva_2(const fpcomplex &z) {
     fptype *n, *e, t, u, r, s, d, f, g, h;
-    thrust::complex<fptype> c, d2, v, w;
+    fpcomplex c, d2, v, w;
     int i;
 
     s = norm(z); // Actually the square of the norm. Don't ask me, I didn't name the function.
 
     if(s < 1e-7) {
         // use Pade approximation
-        thrust::complex<fptype> zz = z * z;
+        fpcomplex zz = z * z;
         v                          = exp(zz);
         c                          = C[0];
         d2                         = D[0];
@@ -62,7 +62,7 @@ thrust::complex<fptype> Faddeeva_2(const thrust::complex<fptype> &z) {
             d2 = d2 * zz + D[i];
         }
 
-        w = fptype(1.0) / v + thrust::complex<fptype>(0.0, M_2_SQRTPI) * c / d2 * z * v;
+        w = fptype(1.0) / v + fpcomplex(0.0, M_2_SQRTPI) * c / d2 * z * v;
         return w;
     }
 
@@ -100,7 +100,7 @@ thrust::complex<fptype> Faddeeva_2(const thrust::complex<fptype> &z) {
 
     u = 1 / s;
 
-    c = r * thrust::complex<fptype>(z.imag() * (u + 2.0 * g), z.real() * (u + 2.0 * h));
+    c = r * fpcomplex(z.imag() * (u + 2.0 * g), z.real() * (u + 2.0 * h));
 
     if(z.imag() < M_2PI) {
         s = 2.0 / r;
@@ -113,7 +113,7 @@ thrust::complex<fptype> Faddeeva_2(const thrust::complex<fptype> &z) {
         u = 2.0 * z.real() * z.imag();
         h = cos(u);
         t = sin(u);
-        c += g * thrust::complex<fptype>((h * f - t * s), -(h * s + t * f));
+        c += g * fpcomplex((h * f - t * s), -(h * s + t * f));
     }
 
     return c;
@@ -145,9 +145,9 @@ fptype cpuvoigtian(fptype x, fptype m, fptype w, fptype s) {
     fptype c = 1. / (sqrt(2) * s);
     fptype a = 0.5 * c * w;
     fptype u = c * arg;
-    thrust::complex<fptype> z(u, a);
+    fpcomplex z(u, a);
     // printf("Calling Faddeeva %f %f %f %f %f %f %f\n", x, m, s, w, c, a, u);
-    thrust::complex<fptype> v = Faddeeva_2(z);
+    fpcomplex v = Faddeeva_2(z);
 
     static const fptype rsqrtPi = 0.5641895835477563;
     return c * rsqrtPi * v.real();

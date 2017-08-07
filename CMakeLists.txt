@@ -296,6 +296,7 @@ if(NOT ROOT_Minuit2_LIBRARY)
     add_subdirectory("extern/Minuit2")
     set_target_properties(Minuit2 PROPERTIES FOLDER extern)
     set_target_properties(Math PROPERTIES FOLDER extern)
+    add_library(ROOT::Minuit2 ALIAS Minuit2)
 endif()
 
 # Adding simple libraries
@@ -316,6 +317,9 @@ target_include_directories(rang INTERFACE "${PROJECT_SOURCE_DIR}/extern/rang/inc
 
 add_library(Eigen INTERFACE)
 target_include_directories(Eigen INTERFACE "${PROJECT_SOURCE_DIR}/extern/Eigen/Eigen")
+
+set(GOOFIT_ROOT_FOUND ROOT_FOUND)
+set(GOOFIT_ARCH_FLAGS ARCH_FLAGS)
 
 # Output the current GooFit version
 configure_file (
@@ -492,7 +496,7 @@ endif()
 # This allows GOOFIT_PYTHON to be automatic
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/extern/pybind11/tools" ${CMAKE_MODULE_PATH})
 find_package(PythonLibsNew)
-if(PYTHONLIBS_FOUND)
+if(PYTHONLIBS_FOUND AND EXISTS PYTHON_LIBRARIES)
     option(GOOFIT_PYTHON "Python bindings for goofit" ON)
 else()
     option(GOOFIT_PYTHON "Python bindings for goofit" OFF)

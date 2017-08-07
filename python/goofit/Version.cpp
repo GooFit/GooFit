@@ -11,6 +11,6 @@ void init_Version(py::module &m) {
     m.attr("CMAKE_BUILD_TYPE")  = CMAKE_BUILD_TYPE;
     m.attr("GOOFIT_DEVICE")     = GOOFIT_DEVICE;
     m.attr("GOOFIT_HOST")       = GOOFIT_HOST;
-    m.attr("ARCH_FLAGS")        = ARCH_FLAGS;
-    m.attr("ROOT_FOUND")        = ROOT_FOUND;
+    m.attr("ARCH_FLAGS")        = GOOFIT_ARCH_FLAGS;
+    m.attr("ROOT_FOUND")        = GOOFIT_ROOT_FOUND;
 }

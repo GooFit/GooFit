@@ -13,6 +13,8 @@
 #include "goofit/FitManager.h"
 #include "goofit/UnbinnedDataSet.h"
 
+#include <Minuit2/FunctionMinimum.h>
+
 namespace GooFit {
 
 fptype *dev_event_array;

@@ -1,8 +1,11 @@
-#include "goofit/PDFs/physics/ResonancePdf.h"
-#include "goofit/PDFs/physics/DalitzPlotHelpers.h"
+#include <goofit/PDFs/physics/ResonancePdf.h>
+#include <goofit/PDFs/physics/DalitzPlotHelpers.h>
+#include <goofit/PDFs/detail/ComplexUtils.h>
 
 namespace GooFit {
-
+    
+__device__ fptype cDeriatives[2*MAXNKNOBS];
+    
 __device__ fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m) {
     // For A -> B + C, calculate momentum of B and C in rest frame of A.
     // PDG 38.16.
@@ -332,96 +335,291 @@ __device__ void getAmplitudeCoefficients(fpcomplex a1,
     a1a2real = a1.real();
     a1a2imag = a1.imag();
 }
+    
+__device__ fpcomplex flatte(fptype m12, fptype m13, fptype m23, unsigned int* indices) {
+    // indices[1] is unused constant index, for consistency with other function types.
+    fptype resmass                = cudaArray[indices[2]];
+    fptype g1                     = cudaArray[indices[3]];
+    fptype g2                     = cudaArray[indices[4]]*g1;
+    unsigned int cyclic_index     = indices[5];
+    unsigned int doSwap           = indices[6];
+    
+    fptype pipmass = 0.13957018;
+    fptype pi0mass = 0.1349766;
+    fptype kpmass = 0.493677;
+    fptype k0mass = 0.497614;
+    
+    fptype twopimasssq = 4*pipmass*pipmass;
+    fptype twopi0masssq = 4*pi0mass*pi0mass;
+    fptype twokmasssq = 4*kpmass*kpmass;
+    fptype twok0masssq = 4*k0mass*k0mass;
+    
+    fpcomplex ret(0., 0.);
+    for (int i=0;i<1+doSwap;i++){
+        
+        fptype rhopipi_real = 0, rhopipi_imag = 0;
+        fptype rhokk_real = 0, rhokk_imag = 0;
+        
+        fptype s = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
+        
+        if (s>=twopimasssq)
+            rhopipi_real += (2./3)*sqrt(1-twopimasssq/s);//Above pi+pi- threshold
+        else
+            rhopipi_imag += (2./3)*sqrt(-1+twopimasssq/s);
+        if (s>=twopi0masssq)
+            rhopipi_real += (1./3)*sqrt(1-twopi0masssq/s);//Above pi0pi0 threshold
+        else
+            rhopipi_imag += (1./3)*sqrt(-1+twopi0masssq/s);
+        if (s>=twokmasssq)
+            rhokk_real += 0.5*sqrt(1-twokmasssq/s);//Above K+K- threshold
+        else
+            rhokk_imag += 0.5*sqrt(-1+twokmasssq/s);
+        if (s>=twok0masssq)
+            rhokk_real += 0.5*sqrt(1-twok0masssq/s);//Above K0K0 threshold
+        else
+            rhokk_imag += 0.5*sqrt(-1+twok0masssq/s);
+        fptype A = (resmass*resmass - s) + resmass*(rhopipi_imag*g1+rhokk_imag*g2);
+        fptype B = resmass*(rhopipi_real*g1+rhokk_real*g2);
+        fptype C = 1.0 / (A*A + B*B); 
+        fpcomplex retur(A*C, B*C);
+        ret += retur;
+        if (doSwap) {
+            fptype swpmass = m12;
+            m12 = m13;
+            m13 = swpmass;
+        }
+    }
+    
+    return ret; 
+}
 
+
+__device__ fpcomplex cubicspline (fptype m12, fptype m13, fptype m23, unsigned int* indices) {
+    fpcomplex ret(0,0);
+    unsigned int cyclic_index     = indices[2];
+    unsigned int doSwap           = indices[3];
+    const unsigned int nKnobs = indices[4];
+    unsigned int idx = 5; // Next index
+    unsigned int i = 0;
+    const unsigned int pwa_coefs_idx  = idx;
+    idx += 2*nKnobs;
+    const fptype* mKKlimits = &(functorConstants[indices[idx]]);
+    fptype mAB = m12, mAC = m13, mBC = m23;
+    switch(cyclic_index) {
+        case PAIR_13:  mAB = m13; mAC = m12; break;
+        case PAIR_23:  mAB = m23; mAC = m12; mBC = m13; break;
+    }
+    
+    int khiAB = 0, khiAC = 0;
+    fptype dmKK, aa, bb, aa3, bb3;
+    unsigned int timestorun = 1+doSwap;
+    while(khiAB<nKnobs){
+        if (mAB<mKKlimits[khiAB]) break;
+        khiAB ++;
+    }
+    
+    if(khiAB <=0 || khiAB == nKnobs)
+        timestorun = 0;
+    while(khiAC<nKnobs){
+        if (mAC<mKKlimits[khiAC]) break;
+        khiAC ++;
+    }
+    
+    if (khiAC <=0 || khiAC == nKnobs)
+        timestorun = 0;
+    
+    for (i=0;i<timestorun;i++){
+        unsigned int kloAB = khiAB -1;//, kloAC = khiAC -1;
+        unsigned int twokloAB = kloAB + kloAB;
+        unsigned int twokhiAB = khiAB + khiAB;
+        fptype pwa_coefs_real_kloAB = cudaArray[indices[pwa_coefs_idx+twokloAB]];
+        fptype pwa_coefs_real_khiAB = cudaArray[indices[pwa_coefs_idx+twokhiAB]];
+        fptype pwa_coefs_imag_kloAB = cudaArray[indices[pwa_coefs_idx+twokloAB+1]];
+        fptype pwa_coefs_imag_khiAB = cudaArray[indices[pwa_coefs_idx+twokhiAB+1]];
+        fptype pwa_coefs_prime_real_kloAB = cDeriatives[twokloAB];
+        fptype pwa_coefs_prime_real_khiAB = cDeriatives[twokhiAB];
+        fptype pwa_coefs_prime_imag_kloAB = cDeriatives[twokloAB+1];
+        fptype pwa_coefs_prime_imag_khiAB = cDeriatives[twokhiAB+1];
+        //  printf("m12: %f: %f %f %f %f %f %f %d %d %d\n", mAB, mKKlimits[0], mKKlimits[nKnobs-1], pwa_coefs_real_khiAB, pwa_coefs_imag_khiAB, pwa_coefs_prime_real_khiAB, pwa_coefs_prime_imag_khiAB, khiAB, khiAC, timestorun );
+        
+        dmKK = mKKlimits[khiAB] - mKKlimits[kloAB];
+        aa = ( mKKlimits[khiAB] - mAB )/dmKK;
+        bb = 1 - aa;
+        aa3 = aa * aa * aa; bb3 = bb * bb * bb;
+        //  ret += aa * pwa_coefs[kloAB] + bb * pwa_coefs[khiAB] + ((aa3 - aa)*pwa_coefs_prime[kloAB] + (bb3 - bb) * pwa_coefs_prime[khiAB]) * (dmKK*dmKK)/6.0;
+        ret.real(ret.real() + aa * pwa_coefs_real_kloAB + bb * pwa_coefs_real_khiAB + ((aa3 - aa)*pwa_coefs_prime_real_kloAB + (bb3 - bb) * pwa_coefs_prime_real_khiAB) * (dmKK*dmKK)/6.0);
+        ret.imag(ret.imag() + aa * pwa_coefs_imag_kloAB + bb * pwa_coefs_imag_khiAB + ((aa3 - aa)*pwa_coefs_prime_imag_kloAB + (bb3 - bb) * pwa_coefs_prime_imag_khiAB) * (dmKK*dmKK)/6.0);
+        khiAB = khiAC;  mAB = mAC;
+    }
+    return ret;
+}
+    
+    
 __device__ resonance_function_ptr ptr_to_RBW      = plainBW;
 __device__ resonance_function_ptr ptr_to_GOUSAK   = gouSak;
 __device__ resonance_function_ptr ptr_to_GAUSSIAN = gaussian;
 __device__ resonance_function_ptr ptr_to_NONRES   = nonres;
 __device__ resonance_function_ptr ptr_to_LASS     = lass;
+__device__ resonance_function_ptr ptr_to_FLATTE   = flatte;
+__device__ resonance_function_ptr ptr_to_SPLINE   = cubicspline;
 
+
+// Constructor for regular BW,Gounaris-Sakurai,LASS
 ResonancePdf::ResonancePdf(
-    std::string name, Variable *ar, Variable *ai, Variable *mass, Variable *width, unsigned int sp, unsigned int cyc)
-    : GooPdf(nullptr, name)
-    , amp_real(ar)
-    , amp_imag(ai) {
-    std::vector<unsigned int> pindices;
-    pindices.push_back(0);
+                           std::string name,
+                           ResPdfType rpt,
+                           Variable *ar, Variable *ai, Variable *mass, Variable *width,
+                           unsigned int sp, unsigned int cyc,
+                           bool symmDP)
+: GooPdf(nullptr, name)
+, amp_real(ar)
+, amp_imag(ai)
+, rpt_(rpt) {
+    
     // Making room for index of decay-related constants. Assumption:
     // These are mother mass and three daughter masses in that order.
     // They will be registered by the object that uses this resonance,
     // which will tell this object where to find them by calling setConstantIndex.
-
+    
+    std::vector<unsigned int> pindices;
+    pindices.push_back(0);
     pindices.push_back(registerParameter(mass));
     pindices.push_back(registerParameter(width));
     pindices.push_back(sp);
     pindices.push_back(cyc);
+    pindices.push_back((unsigned int)symmDP);
+    
 
-    GET_FUNCTION_ADDR(ptr_to_RBW);
+    
+    if(rpt_ == ResPdfType::RBW) {
+        GET_FUNCTION_ADDR(ptr_to_RBW);
+    } else if(rpt_ == ResPdfType::GS) {
+        GET_FUNCTION_ADDR(ptr_to_GOUSAK);
+    } else if(rpt_ == ResPdfType::LASS) {
+        GET_FUNCTION_ADDR(ptr_to_LASS);
+    } else
+        throw GeneralError("Wrong constructor for the reqested ResPdfType, this is the RBW/GS/LASS constructor");
+    
+    
     initialize(pindices);
 }
 
 ResonancePdf::ResonancePdf(
-    std::string name, Variable *ar, Variable *ai, unsigned int sp, Variable *mass, Variable *width, unsigned int cyc)
+                           std::string name,
+                           ResPdfType rpt,
+                           Variable *ar, Variable *ai)
     : GooPdf(nullptr, name)
     , amp_real(ar)
-    , amp_imag(ai) {
-    // Same as BW except for function pointed to.
-    std::vector<unsigned int> pindices;
-    pindices.push_back(0);
-    pindices.push_back(registerParameter(mass));
-    pindices.push_back(registerParameter(width));
-    pindices.push_back(sp);
-    pindices.push_back(cyc);
-
-    GET_FUNCTION_ADDR(ptr_to_GOUSAK);
-    initialize(pindices);
-}
-
-ResonancePdf::ResonancePdf(
-    std::string name, Variable *ar, Variable *ai, Variable *mass, unsigned int sp, Variable *width, unsigned int cyc)
-    : GooPdf(nullptr, name)
-    , amp_real(ar)
-    , amp_imag(ai) {
-    // Same as BW except for function pointed to.
-    std::vector<unsigned int> pindices;
-    pindices.push_back(0);
-    pindices.push_back(registerParameter(mass));
-    pindices.push_back(registerParameter(width));
-    pindices.push_back(sp);
-    pindices.push_back(cyc);
-
-    GET_FUNCTION_ADDR(ptr_to_LASS);
-    initialize(pindices);
-}
-
-ResonancePdf::ResonancePdf(std::string name, Variable *ar, Variable *ai)
-    : GooPdf(nullptr, name)
-    , amp_real(ar)
-    , amp_imag(ai) {
-    std::vector<unsigned int> pindices;
-    pindices.push_back(0);
+    , amp_imag(ai)
+    , rpt_(rpt) {
+        
     // Dummy index for constants - won't use it, but calling
     // functions can't know that and will call setConstantIndex anyway.
-    GET_FUNCTION_ADDR(ptr_to_NONRES);
+    std::vector<unsigned int> pindices;
+    pindices.push_back(0);
+
+    if(rpt_ == ResPdfType::NONRES) {
+        GET_FUNCTION_ADDR(ptr_to_NONRES);
+    } else
+        throw GeneralError("Wrong constructor for the reqested ResPdfType, this is the NONRES constructor");
+
     initialize(pindices);
 }
 
 ResonancePdf::ResonancePdf(
-    std::string name, Variable *ar, Variable *ai, Variable *mean, Variable *sigma, unsigned int cyc)
-    : GooPdf(nullptr, name)
-    , amp_real(ar)
-    , amp_imag(ai) {
+                           std::string name,
+                           ResPdfType rpt,
+                           Variable *ar, Variable *ai,
+                           Variable* mean, Variable* g1, Variable* rg2og1,
+                           unsigned int cyc,
+                           bool symmDP)
+: GooPdf(nullptr, name)
+, amp_real(ar)
+, amp_imag(ai)
+, rpt_(rpt) {
+    
+    if(rpt_ != ResPdfType::FLATTE)
+        throw GeneralError("Wrong constructor for the reqested ResPdfType, this is the FLATTE constructor");
+    
     std::vector<unsigned int> pindices;
     pindices.push_back(0);
+    
     // Dummy index for constants - won't use it, but calling
     // functions can't know that and will call setConstantIndex anyway.
+    
     pindices.push_back(registerParameter(mean));
-    pindices.push_back(registerParameter(sigma));
+    pindices.push_back(registerParameter(g1));
+    pindices.push_back(registerParameter(rg2og1));
     pindices.push_back(cyc);
-
+    pindices.push_back((unsigned int)symmDP);
+    
     GET_FUNCTION_ADDR(ptr_to_GAUSSIAN);
-
+    
     initialize(pindices);
 }
+    
+ResonancePdf::ResonancePdf (std::string name,
+                            ResPdfType rpt,
+                            Variable* ar,
+                            Variable* ai,
+                            std::vector<fptype>& HH_bin_limits,
+                            std::vector<Variable*>& pwa_coefs_reals,
+                            std::vector<Variable*>& pwa_coefs_imags,
+                            unsigned int cyc, const bool symmDP)
+: GooPdf(0, name)
+, amp_real(ar)
+, amp_imag(ai)
+, rpt_(rpt) {
+    if(rpt_ != ResPdfType::SPLINE)
+        throw GeneralError("Wrong constructor for the reqested ResPdfType, this is the CUBIC constructor");
+    
+    std::vector<unsigned int> pindices;
+    const unsigned int nKnobs = HH_bin_limits.size();
+    host_constants.resize(nKnobs);
+    
+    pindices.push_back(0);
+    pindices.push_back(cyc);
+    pindices.push_back((unsigned int)symmDP);
+    pindices.push_back(nKnobs);
+    
+    for (int i=0;i<pwa_coefs_reals.size();i++){
+        host_constants[i] = HH_bin_limits[i];
+        pindices.push_back(registerParameter(pwa_coefs_reals[i]));
+        pindices.push_back(registerParameter(pwa_coefs_imags[i]));
+    }
+    pindices.push_back(registerConstants(nKnobs));
+    
+    MEMCPY_TO_SYMBOL(functorConstants,
+                     host_constants.data(),
+                     nKnobs*sizeof(fptype),
+                     cIndex*sizeof(fptype),
+                     cudaMemcpyHostToDevice);
+    
+    GET_FUNCTION_ADDR(ptr_to_SPLINE);
+    
+    initialize(pindices);
+}
+    
+__host__ void ResonancePdf::recalculateCache () const {
+    
+    if (rpt_ == ResPdfType::SPLINE){
+        auto  params = getParameters();
+        const unsigned nKnobs = params.size()/2;
+        std::vector<fpcomplex> y(nKnobs);
+        unsigned int i = 0;
+        for (auto v = params.begin(); v != params.end(); ++v,++i) {
+            unsigned int idx = i/2;
+            fptype value = host_params[(*v)->getIndex()];
+            if (i%2 == 0)
+                y[idx].real(value);
+            else
+                y[idx].imag(value);
+        }
+        std::vector<fptype> y2_flat = flatten(complex_derivative(host_constants, y));
 
+        MEMCPY_TO_SYMBOL(cDeriatives, y2_flat.data(), 2*nKnobs*sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    }
+}
+
+    
 } // namespace GooFit

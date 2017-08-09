@@ -9,7 +9,7 @@ namespace py = pybind11;
 using namespace pybind11::literals;
 
 void init_DalitzPlotHelpers(py::module &m) {
-    py::enum_<DaughterPair>(pet, "DaughterPair")
+    py::enum_<DaughterPair>(m, "DaughterPair")
         .value("PAIR_12", DaughterPair::PAIR_12)
         .value("PAIR_12", DaughterPair::PAIR_13)
         .value("PAIR_23", DaughterPair::PAIR_23)

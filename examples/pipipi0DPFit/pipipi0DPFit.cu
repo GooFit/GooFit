@@ -551,7 +551,7 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
     // ptr_to_xmix->fixed = true;
     // ptr_to_ymix->fixed = true;
 
-    ResonancePdf *rhop = new ResonancePdf("rhop",
+    ResonancePdf *rhop = new ResonancePdf("rhop", ResPdfType::RBW,
                                           new Variable("rhop_amp_real", 1),
                                           new Variable("rhop_amp_imag", 0),
                                           fixedRhoMass,
@@ -562,7 +562,7 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
     bool fixAmps = false;
 
     ResonancePdf *rhom = new ResonancePdf(
-        "rhom",
+        "rhom", ResPdfType::RBW,
         fixAmps ? new Variable("rhom_amp_real", 0.714) : new Variable("rhom_amp_real", 0.714, 0.001, 0, 0),
         fixAmps ? new Variable("rhom_amp_imag", -0.025) : new Variable("rhom_amp_imag", -0.025, 0.1, 0, 0),
         fixedRhoMass,
@@ -571,19 +571,19 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
         PAIR_13);
 
     ResonancePdf *rho0 = new ResonancePdf(
-        "rho0",
+        "rho0", ResPdfType::LASS,
         fixAmps ? new Variable("rho0_amp_real", 0.565) : new Variable("rho0_amp_real", 0.565, 0.001, 0, 0),
         fixAmps ? new Variable("rho0_amp_imag", 0.164) : new Variable("rho0_amp_imag", 0.164, 0.1, 0, 0),
-        1,
         fixedRhoMass,
         fixedRhoWidth,
+        1,
         PAIR_23);
 
     Variable *rho1450Mass  = new Variable("rhop_1450_mass", 1.465, 0.01, 1.0, 2.0);
     Variable *rho1450Width = new Variable("rhop_1450_width", 0.400, 0.01, 0.01, 5.0);
 
     ResonancePdf *rhop_1450 = new ResonancePdf(
-        "rhop_1450",
+        "rhop_1450", ResPdfType::RBW,
         fixAmps ? new Variable("rhop_1450_amp_real", -0.174) : new Variable("rhop_1450_amp_real", -0.174, 0.001, 0, 0),
         fixAmps ? new Variable("rhop_1450_amp_imag", -0.117) : new Variable("rhop_1450_amp_imag", -0.117, 0.1, 0, 0),
         rho1450Mass,
@@ -592,7 +592,7 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
         PAIR_12);
 
     ResonancePdf *rho0_1450 = new ResonancePdf(
-        "rho0_1450",
+        "rho0_1450", ResPdfType::RBW,
         fixAmps ? new Variable("rho0_1450_amp_real", 0.325) : new Variable("rho0_1450_amp_real", 0.325, 0.001, 0, 0),
         fixAmps ? new Variable("rho0_1450_amp_imag", 0.057) : new Variable("rho0_1450_amp_imag", 0.057, 0.1, 0, 0),
         rho1450Mass,
@@ -601,7 +601,7 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
         PAIR_23);
 
     ResonancePdf *rhom_1450 = new ResonancePdf(
-        "rhom_1450",
+        "rhom_1450", ResPdfType::RBW,
         fixAmps ? new Variable("rhom_1450_amp_real", 0.788) : new Variable("rhom_1450_amp_real", 0.788, 0.001, 0, 0),
         fixAmps ? new Variable("rhom_1450_amp_imag", 0.226) : new Variable("rhom_1450_amp_imag", 0.226, 0.1, 0, 0),
         rho1450Mass,
@@ -613,7 +613,7 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
     Variable *rho1700Width = new Variable("rhop_1700_width", 0.250, 0.01, 0.1, 1.0);
 
     ResonancePdf *rhop_1700 = new ResonancePdf(
-        "rhop_1700",
+        "rhop_1700", ResPdfType::RBW,
         fixAmps ? new Variable("rhop_1700_amp_real", 2.151) : new Variable("rhop_1700_amp_real", 2.151, 0.001, 0, 0),
         fixAmps ? new Variable("rhop_1700_amp_imag", -0.658) : new Variable("rhop_1700_amp_imag", -0.658, 0.1, 0, 0),
         rho1700Mass,
@@ -622,7 +622,7 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
         PAIR_12);
 
     ResonancePdf *rho0_1700 = new ResonancePdf(
-        "rho0_1700",
+        "rho0_1700", ResPdfType::RBW,
         fixAmps ? new Variable("rho0_1700_amp_real", 2.400) : new Variable("rho0_1700_amp_real", 2.400, 0.001, 0, 0),
         fixAmps ? new Variable("rho0_1700_amp_imag", -0.734) : new Variable("rho0_1700_amp_imag", -0.734, 0.1, 0, 0),
         rho1700Mass,
@@ -631,7 +631,7 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
         PAIR_23);
 
     ResonancePdf *rhom_1700 = new ResonancePdf(
-        "rhom_1700",
+        "rhom_1700", ResPdfType::RBW,
         fixAmps ? new Variable("rhom_1700_amp_real", 1.286) : new Variable("rhom_1700_amp_real", 1.286, 0.001, 0, 0),
         fixAmps ? new Variable("rhom_1700_amp_imag", -1.532) : new Variable("rhom_1700_amp_imag", -1.532, 0.1, 0, 0),
         rho1700Mass,
@@ -639,7 +639,7 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
         1,
         PAIR_13);
 
-    ResonancePdf *f0_980 = new ResonancePdf("f0_980",
+    ResonancePdf *f0_980 = new ResonancePdf("f0_980", ResPdfType::RBW,
                                             fixAmps ? new Variable("f0_980_amp_real", 0.008 * (-_mD02))
                                                     : new Variable("f0_980_amp_real", 0.008 * (-_mD02), 0.001, 0, 0),
                                             fixAmps ? new Variable("f0_980_amp_imag", -0.013 * (-_mD02))
@@ -649,7 +649,7 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
                                             0,
                                             PAIR_23);
 
-    ResonancePdf *f0_1370 = new ResonancePdf("f0_1370",
+    ResonancePdf *f0_1370 = new ResonancePdf("f0_1370", ResPdfType::RBW,
                                              fixAmps ? new Variable("f0_1370_amp_real", -0.058 * (-_mD02))
                                                      : new Variable("f0_1370_amp_real", -0.058 * (-_mD02), 0.001, 0, 0),
                                              fixAmps ? new Variable("f0_1370_amp_imag", 0.026 * (-_mD02))
@@ -659,7 +659,7 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
                                              0,
                                              PAIR_23);
 
-    ResonancePdf *f0_1500 = new ResonancePdf("f0_1500",
+    ResonancePdf *f0_1500 = new ResonancePdf("f0_1500", ResPdfType::RBW,
                                              fixAmps ? new Variable("f0_1500_amp_real", 0.057 * (-_mD02))
                                                      : new Variable("f0_1500_amp_real", 0.057 * (-_mD02), 0.001, 0, 0),
                                              fixAmps ? new Variable("f0_1500_amp_imag", 0.012 * (-_mD02))
@@ -669,7 +669,7 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
                                              0,
                                              PAIR_23);
 
-    ResonancePdf *f0_1710 = new ResonancePdf("f0_1710",
+    ResonancePdf *f0_1710 = new ResonancePdf("f0_1710", ResPdfType::RBW,
                                              fixAmps ? new Variable("f0_1710_amp_real", 0.070 * (-_mD02))
                                                      : new Variable("f0_1710_amp_real", 0.070 * (-_mD02), 0.001, 0, 0),
                                              fixAmps ? new Variable("f0_1710_amp_imag", 0.087 * (-_mD02))
@@ -680,7 +680,7 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
                                              PAIR_23);
 
     ResonancePdf *f2_1270
-        = new ResonancePdf("f2_1270",
+        = new ResonancePdf("f2_1270", ResPdfType::RBW,
                            fixAmps ? new Variable("f2_1270_amp_real", -1.027 * (-_mD02inv))
                                    : new Variable("f2_1270_amp_real", -1.027 * (-_mD02inv), 0.001, 0, 0),
                            fixAmps ? new Variable("f2_1270_amp_imag", -0.162 * (-_mD02inv))
@@ -690,7 +690,7 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
                            2,
                            PAIR_23);
 
-    ResonancePdf *f0_600 = new ResonancePdf("f0_600",
+    ResonancePdf *f0_600 = new ResonancePdf("f0_600", ResPdfType::RBW,
                                             fixAmps ? new Variable("f0_600_amp_real", 0.068 * (-_mD02))
                                                     : new Variable("f0_600_amp_real", 0.068 * (-_mD02), 0.001, 0, 0),
                                             fixAmps ? new Variable("f0_600_amp_imag", 0.010 * (-_mD02))
@@ -700,7 +700,7 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
                                             0,
                                             PAIR_23);
 
-    ResonancePdf *nonr = new ResonancePdf("nonr",
+    ResonancePdf *nonr = new ResonancePdf("nonr", ResPdfType::NONRES,
                                           fixAmps ? new Variable("nonr_amp_real", 0.5595 * (-1))
                                                   : new Variable("nonr_amp_real", 0.5595 * (-1), 0.001, 0, 0),
                                           fixAmps ? new Variable("nonr_amp_imag", -0.108761 * (-1))
@@ -3355,10 +3355,10 @@ GooPdf *makeBkg2DalitzPdf(bool fixem = true) {
         special_rho_decay->daug3Mass    = piPlusMass;
         special_rho_decay->meson_radius = 1.5;
 
-        ResonancePdf *bkg2_rho_ref
-            = new ResonancePdf("bkg2_rho_ref",
+        ResonancePdf *bkg2_rho_ref = new ResonancePdf(
+                               "bkg2_rho_ref", ResPdfType::GAUSS
                                new Variable("bkg2_rho_ref_amp", 0.00896 * weightOffset, 0.001, 0, 0.015 * weightOffset),
-                               0,
+                               nullptr,
                                new Variable("bkg2_rho_ref_mass", 0.53172),
                                new Variable("bkg2_rho_ref_width", 0.06426),
                                PAIR_13);
@@ -3388,9 +3388,9 @@ GooPdf *makeBkg2DalitzPdf(bool fixem = true) {
         incoherent_rho0s->meson_radius = 0; // Mikhail uses zero radius for incoherent resonances.
 
         ResonancePdf *bkg2_incRho0 = new ResonancePdf(
-            "bkg2_incRho0",
+            "bkg2_incRho0", ResPdfType::RBW
             new Variable("bkg2_incRho0_amp", 0.00304 * weightOffset, 0.001, 0.0, 0.006 * weightOffset),
-            0,
+            nullptr,
             fixedRhoMass,
             fixedRhoWidth,
             0, // Incoherent rho has effective spin 0.
@@ -3398,9 +3398,9 @@ GooPdf *makeBkg2DalitzPdf(bool fixem = true) {
         incoherent_rho0s->resonances.push_back(bkg2_incRho0);
 
         ResonancePdf *bkg2_incRhoP = new ResonancePdf(
-            "bkg2_incRhoP",
+            "bkg2_incRhoP", ResPdfType::RBW
             new Variable("bkg2_incRhoP_amp", 0.00586 * weightOffset, 0.001, 0.0, 0.012 * weightOffset),
-            0,
+            nullptr,
             fixedRhoMass,
             fixedRhoWidth,
             0,
@@ -3408,9 +3408,9 @@ GooPdf *makeBkg2DalitzPdf(bool fixem = true) {
         incoherent_rho0s->resonances.push_back(bkg2_incRhoP);
 
         ResonancePdf *bkg2_incRhoM = new ResonancePdf(
-            "bkg2_incRhoM",
+            "bkg2_incRhoM", ResPdfType::RBW
             new Variable("bkg2_incRhoM_amp", 0.00635 * weightOffset, 0.001, 0.0, 0.015 * weightOffset),
-            0,
+            nullptr,
             fixedRhoMass,
             fixedRhoWidth,
             0,
@@ -3746,9 +3746,9 @@ GooPdf *makeBackground3DalitzParam() {
     incoherent_rhos->meson_radius = 0; // Mikhail uses zero radius for incoherent resonances.
 
     ResonancePdf *bkg3_incRho0 = new ResonancePdf(
-        "bkg3_incRho0",
+        "bkg3_incRho0", ResPdfType::RBW
         new Variable("bkg3_incRho0_amp", 0.00807 * weightOffset, 0.01, 0.00 * weightOffset, 0.25 * weightOffset),
-        0,
+        nullptr,
         new Variable("bkg3_incRho0_mass", 0.800, 0.01, 0.6, 1.0),
         new Variable("bkg3_incRho0_width", 0.15, 0.01, 0.10, 0.40),
         1, // These rhos are spin 1, being bad signal.
@@ -3756,9 +3756,9 @@ GooPdf *makeBackground3DalitzParam() {
     incoherent_rhos->resonances.push_back(bkg3_incRho0);
 
     ResonancePdf *bkg3_incRhoP = new ResonancePdf(
-        "bkg3_incRhoP",
+        "bkg3_incRhoP", ResPdfType::RBW
         new Variable("bkg3_incRhoP_amp", 0.01683 * weightOffset, 0.01, 0.00 * weightOffset, 0.25 * weightOffset),
-        0,
+        nullptr,
         new Variable("bkg3_incRhoP_mass", 0.800, 0.01, 0.6, 1.0),
         new Variable("bkg3_incRhoP_width", 0.15, 0.01, 0.10, 0.40),
         1,
@@ -3766,9 +3766,9 @@ GooPdf *makeBackground3DalitzParam() {
     incoherent_rhos->resonances.push_back(bkg3_incRhoP);
 
     ResonancePdf *bkg3_incRhoM = new ResonancePdf(
-        "bkg3_incRhoM",
+        "bkg3_incRhoM", ResPdfType::RBW,
         new Variable("bkg3_incRhoM_amp", 0.01645 * weightOffset, 0.01, 0.00 * weightOffset, 0.25 * weightOffset),
-        0,
+        nullptr,
         new Variable("bkg3_incRhoM_mass", 0.900, 0.01, 0.6, 1.0),
         new Variable("bkg3_incRhoM_width", 0.35, 0.01, 0.10, 0.60),
         1,
@@ -3855,9 +3855,9 @@ GooPdf *makeBackground4DalitzParam() {
     special_pipi_decay->daug3Mass    = piPlusMass;
     special_pipi_decay->meson_radius = 1.5;
 
-    ResonancePdf *bkg4_pipi_ref = new ResonancePdf("bkg4_pipi_ref",
+    ResonancePdf *bkg4_pipi_ref = new ResonancePdf("bkg4_pipi_ref", ResPdfType::GAUSS,
                                                    new Variable("bkg4_pipi_ref_amp", 0.00147 * weightOffset),
-                                                   0,
+                                                   nullptr,
                                                    new Variable("bkg4_pipi_ref_mass", 1.32447),
                                                    new Variable("bkg4_pipi_ref_width", 0.04675),
                                                    PAIR_23);
@@ -3906,27 +3906,27 @@ GooPdf *makeBackground4DalitzParam() {
     incoherent_rho0s->daug3Mass    = piPlusMass;
     incoherent_rho0s->meson_radius = 0; // Mikhail uses zero radius for incoherent resonances.
 
-    ResonancePdf *bkg4_incRho0 = new ResonancePdf("bkg4_incRho0",
+    ResonancePdf *bkg4_incRho0 = new ResonancePdf("bkg4_incRho0", ResPdfType::RBW,
                                                   new Variable("bkg4_incRho0_amp", 0.00429 * weightOffset),
-                                                  0,
+                                                  nullptr,
                                                   fixedRhoMass,
                                                   fixedRhoWidth,
                                                   0, // These rhos are spin 0.
                                                   PAIR_23);
     incoherent_rho0s->resonances.push_back(bkg4_incRho0);
 
-    ResonancePdf *bkg4_incRhoP = new ResonancePdf("bkg4_incRhoP",
+    ResonancePdf *bkg4_incRhoP = new ResonancePdf("bkg4_incRhoP", ResPdfType::RBW,
                                                   new Variable("bkg4_incRhoP_amp", 0.00705 * weightOffset),
-                                                  0,
+                                                  nullptr,
                                                   fixedRhoMass,
                                                   fixedRhoWidth,
                                                   0,
                                                   PAIR_12);
     incoherent_rho0s->resonances.push_back(bkg4_incRhoP);
 
-    ResonancePdf *bkg4_incRhoM = new ResonancePdf("bkg4_incRhoM",
+    ResonancePdf *bkg4_incRhoM = new ResonancePdf("bkg4_incRhoM", ResPdfType::RBW,
                                                   new Variable("bkg4_incRhoM_amp", -0.00043 * weightOffset),
-                                                  0,
+                                                  nullptr,
                                                   fixedRhoMass,
                                                   fixedRhoWidth,
                                                   0,

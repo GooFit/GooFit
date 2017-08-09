@@ -43,6 +43,7 @@ set(GOOPDF_HEADERS
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/EvalVar.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/SpinHelper.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/utility/VariableBinTransform1DPdf.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/detail/ComplexUtils.h
 )
 
 get_property(goo_extra GLOBAL PROPERTY GOOFIT_EXTRA_PDFS)

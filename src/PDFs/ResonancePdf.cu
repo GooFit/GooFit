@@ -504,6 +504,38 @@ ResonancePdf::ResonancePdf(
     initialize(pindices);
 }
 
+// Constructor for regular BW,Gounaris-Sakurai,LASS
+ResonancePdf::ResonancePdf(
+                           std::string name,
+                           ResPdfType rpt,
+                           Variable *ar, Variable *ai, Variable *mass, Variable *width,
+                           unsigned int cyc)
+: GooPdf(nullptr, name)
+, amp_real(ar)
+, amp_imag(ai)
+, rpt_(rpt) {
+    
+    // Making room for index of decay-related constants. Assumption:
+    // These are mother mass and three daughter masses in that order.
+    // They will be registered by the object that uses this resonance,
+    // which will tell this object where to find them by calling setConstantIndex.
+    
+    std::vector<unsigned int> pindices;
+    pindices.push_back(0);
+    pindices.push_back(registerParameter(mass));
+    pindices.push_back(registerParameter(width));
+    pindices.push_back(cyc);
+    
+    
+    if(rpt_ == ResPdfType::GAUSS) {
+        GET_FUNCTION_ADDR(ptr_to_GAUSSIAN);
+    } else
+        throw GeneralError("Wrong constructor for the reqested ResPdfType, this is the GAUSS constructor");
+    
+    
+    initialize(pindices);
+}
+    
 ResonancePdf::ResonancePdf(
                            std::string name,
                            ResPdfType rpt,
@@ -553,7 +585,7 @@ ResonancePdf::ResonancePdf(
     pindices.push_back(cyc);
     pindices.push_back((unsigned int)symmDP);
     
-    GET_FUNCTION_ADDR(ptr_to_GAUSSIAN);
+    GET_FUNCTION_ADDR(ptr_to_FLATTE);
     
     initialize(pindices);
 }

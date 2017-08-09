@@ -327,6 +327,15 @@ configure_file (
     "${PROJECT_BINARY_DIR}/include/goofit/Version.h"
 )
 
+if(CMAKE_VERSION VERSION_LESS 3.9)
+    message(STATUS "CMake <3.9 will only enable IPO for Intel compilers on Linux")
+    set(SUPPORTS_IPO TRUE)
+else()
+    cmake_policy(SET CMP0069 NEW)
+    include(CheckIPOSupported)
+    check_ipo_supported(RESULT SUPPORTS_IPO)
+    message(STATUS "Compiler supports IPO: ${SUPPORTS_IPO}")
+endif()
 
 function(goofit_add_library GNAME)
     set(options STATIC SHARED MODULE)
@@ -366,7 +375,7 @@ function(goofit_add_library GNAME)
     target_link_libraries(${GNAME} rang CLI11 fmt goofit_mt)
     set_target_properties(${GNAME} PROPERTIES FOLDER core)
 
-    set_target_properties(${GNAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION 1)
+    set_target_properties(${GNAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION ${SUPPORTS_IPO})
 
     if(ROOT_FOUND)
         target_link_libraries(${GNAME} ROOT::ROOT)
@@ -403,7 +412,7 @@ function(goofit_add_executable NAMEEXE)
     set_target_properties(${NAMEEXE} PROPERTIES FOLDER projects)
     source_group("Source Files" REGULAR_EXPRESSION ".*\\.c[uc]")
 
-    set_target_properties(${GNAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION 1)
+    set_target_properties(${GNAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION ${SUPPORTS_IPO})
 
     if(CLANG_TIDY_EXE)
         set_target_properties(

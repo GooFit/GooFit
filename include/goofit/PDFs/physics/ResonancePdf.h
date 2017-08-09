@@ -72,8 +72,7 @@ class ResonancePdf : public GooPdf {
                  Variable *ai,
                  Variable *mean,
                  Variable *sigma,
-                 unsigned int cyc,
-                 bool symmDP = false);
+                 unsigned int cyc);
 
     // Flatte constructor (arXiv:1505.01710)
     ResonancePdf (std::string name,
@@ -84,7 +83,7 @@ class ResonancePdf : public GooPdf {
                   Variable* g1,
                   Variable* rg2og1,
                   unsigned int cyc,
-                  const bool symmDP = false );
+                  const bool symmDP);
     
     // Cubic spline constructor
     ResonancePdf (std::string name,

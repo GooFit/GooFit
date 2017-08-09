@@ -29,13 +29,13 @@ void init_ResonancePdf(py::module &m) {
             "Constructor for NONRES",
             "name"_a, "ResPdfType"_a, "ar"_a, "ai"_a)
     
-        .def(py::init<std::string, ResPdfType, Variable *, Variable *, Variable *, Variable *, unsigned int, bool>(),
+        .def(py::init<std::string, ResPdfType, Variable *, Variable *, Variable *, Variable *, unsigned int>(),
              "Constructor for regular GAUSS",
-             "name"_a, "ResPdfType"_a, "ar"_a, "ai"_a, "mean"_a, "sigma"_a, "cyc"_a, "symmDP"_a = false)
+             "name"_a, "ResPdfType"_a, "ar"_a, "ai"_a, "mean"_a, "sigma"_a, "cyc"_a)
         
         .def(py::init<std::string, ResPdfType, Variable *, Variable *, Variable *, Variable*, Variable *, unsigned int, bool>(),
              "Constructor for regular FLATTE",
-             "name"_a, "ResPdfType"_a, "ar"_a, "ai"_a, "mean"_a, "g1"_a, "rg2og1"_a, "cyc"_a, "symmDP"_a = false)
+             "name"_a, "ResPdfType"_a, "ar"_a, "ai"_a, "mean"_a, "g1"_a, "rg2og1"_a, "cyc"_a, "symmDP"_a)
         
         .def(py::init<std::string, ResPdfType, Variable *, Variable *, std::vector<fptype>&, std::vector<Variable*>&, std::vector<Variable*>&, unsigned int, bool>(),
              "Constructor for regular CUBIC spline",

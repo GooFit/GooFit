@@ -3356,7 +3356,7 @@ GooPdf *makeBkg2DalitzPdf(bool fixem = true) {
         special_rho_decay->meson_radius = 1.5;
 
         ResonancePdf *bkg2_rho_ref = new ResonancePdf(
-                               "bkg2_rho_ref", ResPdfType::GAUSS
+                               "bkg2_rho_ref", ResPdfType::GAUSS,
                                new Variable("bkg2_rho_ref_amp", 0.00896 * weightOffset, 0.001, 0, 0.015 * weightOffset),
                                nullptr,
                                new Variable("bkg2_rho_ref_mass", 0.53172),
@@ -3388,7 +3388,7 @@ GooPdf *makeBkg2DalitzPdf(bool fixem = true) {
         incoherent_rho0s->meson_radius = 0; // Mikhail uses zero radius for incoherent resonances.
 
         ResonancePdf *bkg2_incRho0 = new ResonancePdf(
-            "bkg2_incRho0", ResPdfType::RBW
+            "bkg2_incRho0", ResPdfType::RBW,
             new Variable("bkg2_incRho0_amp", 0.00304 * weightOffset, 0.001, 0.0, 0.006 * weightOffset),
             nullptr,
             fixedRhoMass,
@@ -3398,7 +3398,7 @@ GooPdf *makeBkg2DalitzPdf(bool fixem = true) {
         incoherent_rho0s->resonances.push_back(bkg2_incRho0);
 
         ResonancePdf *bkg2_incRhoP = new ResonancePdf(
-            "bkg2_incRhoP", ResPdfType::RBW
+            "bkg2_incRhoP", ResPdfType::RBW,
             new Variable("bkg2_incRhoP_amp", 0.00586 * weightOffset, 0.001, 0.0, 0.012 * weightOffset),
             nullptr,
             fixedRhoMass,
@@ -3408,7 +3408,7 @@ GooPdf *makeBkg2DalitzPdf(bool fixem = true) {
         incoherent_rho0s->resonances.push_back(bkg2_incRhoP);
 
         ResonancePdf *bkg2_incRhoM = new ResonancePdf(
-            "bkg2_incRhoM", ResPdfType::RBW
+            "bkg2_incRhoM", ResPdfType::RBW,
             new Variable("bkg2_incRhoM_amp", 0.00635 * weightOffset, 0.001, 0.0, 0.015 * weightOffset),
             nullptr,
             fixedRhoMass,
@@ -3694,9 +3694,9 @@ GooPdf *makeBackground3DalitzParam() {
     special_pi0_decay->meson_radius = 1.5;
 
     ResonancePdf *bkg3_pi0_ref = new ResonancePdf(
-        "bkg3_pi0_ref",
+        "bkg3_pi0_ref", ResPdfType::GAUSS,
         new Variable("bkg3_pi0_ref_amp", 0.01189 * weightOffset, 0.01, 0.00 * weightOffset, 0.25 * weightOffset),
-        0,
+        nullptr,
         new Variable("bkg3_pi0_ref_mass", 1.65766, 0.01, 1.4, 1.8),
         new Variable("bkg3_pi0_ref_width", 0.05018, 0.01, 0.02, 0.20),
         PAIR_23);
@@ -3746,7 +3746,7 @@ GooPdf *makeBackground3DalitzParam() {
     incoherent_rhos->meson_radius = 0; // Mikhail uses zero radius for incoherent resonances.
 
     ResonancePdf *bkg3_incRho0 = new ResonancePdf(
-        "bkg3_incRho0", ResPdfType::RBW
+        "bkg3_incRho0", ResPdfType::RBW,
         new Variable("bkg3_incRho0_amp", 0.00807 * weightOffset, 0.01, 0.00 * weightOffset, 0.25 * weightOffset),
         nullptr,
         new Variable("bkg3_incRho0_mass", 0.800, 0.01, 0.6, 1.0),
@@ -3756,7 +3756,7 @@ GooPdf *makeBackground3DalitzParam() {
     incoherent_rhos->resonances.push_back(bkg3_incRho0);
 
     ResonancePdf *bkg3_incRhoP = new ResonancePdf(
-        "bkg3_incRhoP", ResPdfType::RBW
+        "bkg3_incRhoP", ResPdfType::RBW,
         new Variable("bkg3_incRhoP_amp", 0.01683 * weightOffset, 0.01, 0.00 * weightOffset, 0.25 * weightOffset),
         nullptr,
         new Variable("bkg3_incRhoP_mass", 0.800, 0.01, 0.6, 1.0),

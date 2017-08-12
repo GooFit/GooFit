@@ -76,3 +76,10 @@ set_target_properties(pygoofit_tests PROPERTIES FOLDER python)
 add_custom_target(pygoofit_examples ALL
     COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/examples ${PROJECT_BINARY_DIR}/pyexamples)
 set_target_properties(pygoofit_examples PROPERTIES FOLDER python)
+
+if(NOT SKBUILD)
+    add_custom_command(TARGET _goofit POST_BUILD
+                       COMMAND ${CMAKE_COMMAND} -E cmake_echo_color --cyan
+                       "Built python bindings at ${PROJECT_BINARY_DIR}/goofit/_goofit.so")
+endif()
+

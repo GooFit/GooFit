@@ -42,6 +42,36 @@ using CLI::ExistingDirectory;
 using CLI::NonexistentPath;
 using CLI::ExitCodes;
 
+/// Optional print for splash (not used by default in Application for brevity)
+/// Slant Relief from http://patorjk.com/software/taag/#p=testall&f=Wavy&t=GooFit (tightened a bit)
+void print_splash(std::ostream &out) {
+    out << std::endl <<  reset << green << "                                     Welcome to";
+    std::string splash = R"raw(
+  _____/\\\\\\\\\\\\______________________________/\\\\\\\\\\\\____________________
+  ___/\\\//////////______________________________\/\\\/////////____________________
+  __/\\\_________________________________________\/\\\__________/\\\_____/\\\______
+  _\/\\\____/\\\\\\\_____/\\\\\________/\\\\\____\/\\\\\\\\\\__\////__/\\\\\\\\\\\_
+  _\/\\\___\/////\\\___/\\\///\\\____/\\\///\\\__\/\\\///////___/\\\_\////\\\////__
+  _\/\\\_______\/\\\__/\\\__\//\\\__/\\\__\//\\\_\/\\\_________\/\\\____\/\\\______
+  _\/\\\_______\/\\\_\//\\\__/\\\__\//\\\__/\\\__\/\\\_________\/\\\____\/\\\_/\\__
+  _\//\\\\\\\\\\\\/___\///\\\\\/____\///\\\\\/___\/\\\_________\/\\\____\//\\\\\___
+  __\////////////_______\/////________\/////_____\///__________\///______\/////____
+    )raw";
+    
+    out << reset << dim;
+    bool cur = false;
+    for(auto c : splash) {
+        if(c!='_' && !cur) {
+            out << reset << green;
+            cur = true;
+        } else if(c=='_' && cur) {
+            out << reset << dim;
+            cur = false;
+        }
+        out << c;
+    }
+    out << reset << std::flush;
+}
 class Application : public CLI::App {
   protected:
     int gpuDev_ = 0;

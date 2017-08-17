@@ -42,14 +42,15 @@ using CLI::ExistingDirectory;
 using CLI::NonexistentPath;
 using CLI::ExitCodes;
 
-/// Optional print for splash (not used by default in Application for brevity)
-/// Slant Relief from http://patorjk.com/software/taag/#p=testall&f=Wavy&t=GooFit (tightened a bit)
+/// Optional print for splash
+/// Orignal: Slant Relief from http://patorjk.com/software/taag/#p=testall&f=Wavy&t=GooFit (tightened a bit)
+/// New: Block letters
 void print_splash() {
     std::cout << std::endl <<  reset << green << "       Welcome to";
     std::string splash = R"raw(
-   ██████╗  ██████╗  ██████╗ ███████╗██╗████████╗
-  ██╔════╝ ██╔═══██╗██╔═══██╗██╔════╝██║╚══██╔══╝
-  ██║  ███╗██║   ██║██║   ██║█████╗  ██║   ██║
+   ██████╗                   ███████╗
+  ██╔════╝  ██████╗  ██████╗ ██╔════╝██╗████████╗
+  ██║  ███╗██╔═══██╗██╔═══██╗█████╗  ██║╚══██╔══╝
   ██║   ██║██║   ██║██║   ██║██╔══╝  ██║   ██║
   ╚██████╔╝╚██████╔╝╚██████╔╝██║     ██║   ██║
    ╚═════╝  ╚═════╝  ╚═════╝ ╚═╝     ╚═╝   ╚═╝

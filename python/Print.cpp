@@ -1,7 +1,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-// Based  on https://stackoverflow.com/questions/12826751/c-execute-function-any-time-a-stream-is-written-to
+// Based originally on https://stackoverflow.com/questions/12826751/c-execute-function-any-time-a-stream-is-written-to
 
 #include <streambuf>
 #include <ostream>
@@ -12,52 +12,65 @@
 namespace py = pybind11;
 using namespace py::literals;
 
-typedef std::function<void(std::string)> function_type;
 
-class functionbuf
-    : public std::streambuf {
+namespace pybind11 {
+    
+class pythonbuf : public std::streambuf {
 private:
     typedef std::streambuf::traits_type traits_type;
-    function_type d_function;
-    char          d_buffer[1024];
+    char d_buffer[1024];
+    std::string name_;
+    
     int overflow(int c) {
         if (!traits_type::eq_int_type(c, traits_type::eof())) {
             *this->pptr() = traits_type::to_char_type(c);
             this->pbump(1);
         }
-        return this->sync()? traits_type::not_eof(c): traits_type::eof();
+        return this->sync() ? traits_type::not_eof(c) : traits_type::eof();
     }
+    
     int sync() {
         if (this->pbase() != this->pptr()) {
-            this->d_function(std::string(this->pbase(), this->pptr()));
+            std::string line(this->pbase(), this->pptr());
+            
+            object file;
+            
+            try {
+                file = module::import("sys").attr(name_.c_str());
+            } catch (const error_already_set &) {
+                /* If print() is called from code that is executed as
+                 part of garbage collection during interpreter shutdown,
+                 importing 'sys' can fail. Give up rather than crashing the
+                 interpreter in this case. */
+                return 0;
+            }
+            
+            
+            auto write = file.attr("write");
+            write(line);
+            file.attr("flush")();
+            
             this->setp(this->pbase(), this->epptr());
         }
         return 0;
     }
 public:
-    functionbuf(function_type const& function)
-        : d_function(function) {
+    pythonbuf(std::string name = "stdout") : name_(name) {
         this->setp(this->d_buffer, this->d_buffer + sizeof(this->d_buffer) - 1);
     }
 };
 
-class ofunctionstream
-    : private virtual functionbuf
-    , public std::ostream {
+class opythonstream : private virtual pythonbuf, public std::ostream {
 public:
-    ofunctionstream(function_type const& function)
-        : functionbuf(function)
-        , std::ostream(static_cast<std::streambuf*>(this)) {
+    opythonstream(std::string name = "stdout")
+    : pythonbuf(name), std::ostream(static_cast<std::streambuf*>(this)) {
         // this->flags(std::ios_base::unitbuf);
     }
 };
-
-void py_print(std::string const& value) {
-    py::print(value, "end"_a = "");
 }
 
 // Global output
-ofunctionstream buffer(&py_print);
+py::opythonstream buffer;
 std::streambuf * old = nullptr;
 
 void init_Print(py::module &m) {
@@ -71,4 +84,3 @@ void init_Print(py::module &m) {
     });
 
 }
-

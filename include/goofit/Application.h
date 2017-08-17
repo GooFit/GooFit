@@ -48,12 +48,14 @@ using CLI::ExitCodes;
 void print_splash() {
     std::cout << std::endl <<  reset << green << "       Welcome to";
     std::string splash = R"raw(
-   ██████╗                   ███████╗
-  ██╔════╝  ██████╗  ██████╗ ██╔════╝██╗████████╗
-  ██║  ███╗██╔═══██╗██╔═══██╗█████╗  ██║╚══██╔══╝
-  ██║   ██║██║   ██║██║   ██║██╔══╝  ██║   ██║
-  ╚██████╔╝╚██████╔╝╚██████╔╝██║     ██║   ██║
-   ╚═════╝  ╚═════╝  ╚═════╝ ╚═╝     ╚═╝   ╚═╝
+   ██████╗                 ████████╗
+  ██╔════╝  █████╗  █████╗ ██╔═════╝  ██╗
+  ██║  ███╗██╔══██╗██╔══██╗█████╗██╗██████╗
+  ██║   ██║██║  ██║██║  ██║██╔══╝██║╚═██╔═╝
+  ╚██████╔╝╚█████╔╝╚█████╔╝██║   ██║  ██║
+   ╚═════╝  ╚════╝  ╚════╝ ╚═╝   ╚═╝  ██║
+                                 ███████║
+                                 ╚══════╝
 )raw";
     
     std::cout << reset << dim;
@@ -175,7 +177,6 @@ class Application : public CLI::App {
 
         if(!quiet_) {
             print_splash();
-            std::cout << std::endl;
             
             GOOFIT_INFO("GooFit: Version {} ({}) Commit: {}", GOOFIT_VERSION, GOOFIT_TAG, GOOFIT_GIT_VERSION);
 

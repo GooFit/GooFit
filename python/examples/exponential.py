@@ -3,7 +3,7 @@
 from goofit import *
 import numpy as np
 
-xdata = np.random.exponential(size=100000)
+xdata = np.random.exponential(size=1000000)
 xvar = Variable("xvar", 0, np.max(xdata) + 1)
 data = UnbinnedDataSet(xvar)
 

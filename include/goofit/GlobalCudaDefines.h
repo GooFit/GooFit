@@ -20,7 +20,7 @@ extern int host_callnumber;
 // Can't use void* because then the compiler doesn't know how to do pointer arithmetic.
 // This will fail if sizeof(char) is more than 1. But that should never happen, right?
 #define MEMCPY(target, source, count, direction) memcpy((char *)target, source, count)
-#define MEMCPY_TO_SYMBOL(target, source, count, offset, direction) memcpy(((char *)target) + offset, source, count)
+#define MEMCPY_TO_SYMBOL(target, source, count, offset, direction) memcpy(((char *)&target) + offset, source, count)
 #define MEMCPY_FROM_SYMBOL(target, source, count, offset, direction)                                                   \
     memcpy((char *)target, ((char *)source) + offset, count)
 #define GET_FUNCTION_ADDR(fname) host_fcn_ptr = (void *)fname
@@ -59,12 +59,13 @@ enum gooError { gooSuccess = 0, gooErrorMemoryAllocation };
 #define GET_FUNCTION_ADDR(fname) cudaMemcpyFromSymbol((void **)&host_fcn_ptr, fname, sizeof(void *))
 #define MEMCPY_FROM_SYMBOL(target, source, count, offset, direction)                                                   \
     cudaMemcpyFromSymbol(target, source, count, offset, direction)
-#define ERROR_CHECK(x) {\
-    cudaError_t err = x;\
-    if (err != cudaSuccess) {\
-      printf ("CUDA error %s at %s:%i (%s)\n", cudaGetErrorString (err), __FILE__, __LINE__, #x);\
-    }\
-  }
+
+#define ERROR_CHECK(x)\
+    {\
+        cudaError err = x;\
+        if (err != cudaSuccess)\
+            printf("CUDA Error: %s at %s:%i\n", cudaGetErrorString(err), __FILE__, __LINE__);\
+    }
 
 // For CUDA case, just use existing errors, renamed
 #include <driver_types.h> // Needed for cudaError_t

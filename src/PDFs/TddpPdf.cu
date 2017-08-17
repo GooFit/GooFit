@@ -365,11 +365,11 @@ __host__ TddpPdf::TddpPdf(std::string n,
     //MEMCPY_TO_SYMBOL(
     //    functorConstants, decayConstants, 6 * sizeof(fptype), cIndex * sizeof(fptype), cudaMemcpyHostToDevice);
 
-    MEMCPY_TO_SYMBOL(c_motherMass, &decayInfo->motherMass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    MEMCPY_TO_SYMBOL(c_daug1Mass, &decayInfo->daug1Mass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    MEMCPY_TO_SYMBOL(c_daug2Mass, &decayInfo->daug2Mass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    MEMCPY_TO_SYMBOL(c_daug3Mass, &decayInfo->daug3Mass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    MEMCPY_TO_SYMBOL(c_meson_radius, &decayInfo->meson_radius, sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(c_motherMass, &decayConstants[0], sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(c_daug1Mass, &decayConstants[1], sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(c_daug2Mass, &decayConstants[2], sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(c_daug3Mass, &decayConstants[3], sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(c_meson_radius, &decayConstants[4], sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
 
     pindices.push_back(registerParameter(decayInfo->_tau));
@@ -484,11 +484,11 @@ __host__ TddpPdf::TddpPdf(std::string n,
     //MEMCPY_TO_SYMBOL(
     //    functorConstants, decayConstants, 8 * sizeof(fptype), cIndex * sizeof(fptype), cudaMemcpyHostToDevice);
 
-    MEMCPY_TO_SYMBOL(c_motherMass, &decayInfo->motherMass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    MEMCPY_TO_SYMBOL(c_daug1Mass, &decayInfo->daug1Mass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    MEMCPY_TO_SYMBOL(c_daug2Mass, &decayInfo->daug2Mass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    MEMCPY_TO_SYMBOL(c_daug3Mass, &decayInfo->daug3Mass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    MEMCPY_TO_SYMBOL(c_meson_radius, &decayInfo->meson_radius, sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(c_motherMass, &decayConstants[0], sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(c_daug1Mass, &decayConstants[1], sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(c_daug2Mass, &decayConstants[2], sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(c_daug3Mass, &decayConstants[3], sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(c_meson_radius, &decayConstants[4], sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
     pindices.push_back(registerParameter(decayInfo->_tau));
     pindices.push_back(registerParameter(decayInfo->_xmixing));

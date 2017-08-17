@@ -150,7 +150,7 @@ __host__ void PdfBase::updateParameters ()
         components[i]->updateParameters ();
 
     //we need to memcpy to device.
-    ERROR_CHECK(MEMCPY_TO_SYMBOL(d_parameters, host_parameters, totalParameters*sizeof(fptype), 0, cudaMemcpyHostToDevice));
+    MEMCPY_TO_SYMBOL(d_parameters, host_parameters, totalParameters*sizeof(fptype), 0, cudaMemcpyHostToDevice);
 }
 
 __host__ void PdfBase::populateArrays () {

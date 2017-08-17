@@ -22,6 +22,7 @@ namespace GooFit {
 struct ParameterContainer
 {
     __host__ __device__ ParameterContainer (); 
+    __host__ __device__ ParameterContainer (const ParameterContainer &pc);
 
     fptype *parameters;
     fptype *constants;
@@ -35,8 +36,8 @@ struct ParameterContainer
 
     int funcIdx;
 
-    //each function will need to specify how to increment these values.
-    //
+    //each PDF needs to supply the amount of each array used.
+    //This function automatically adds +1 for the size.
     __device__ void incrementIndex (const int funcs, const int params, const int cons, const int obs, const int norms)
     {
         funcIdx += funcs;
@@ -67,6 +68,13 @@ extern __device__ fptype d_parameters[maxParams];
 extern __device__ fptype d_constants[maxParams];
 extern __device__ fptype d_observables[maxParams];
 extern __device__ fptype d_normalisations[maxParams];
+
+//a couple constants
+extern __constant__ fptype c_motherMass;
+extern __constant__ fptype c_daug1Mass;
+extern __constant__ fptype c_daug2Mass;
+extern __constant__ fptype c_daug3Mass;
+extern __constant__ fptype c_meson_radius;
 
 // Holds device-side fit parameters.
 //extern __constant__ fptype cudaArray[maxParams];

@@ -108,12 +108,13 @@ class PdfBase {
 
     __host__ void setupObservables ();
 
+    __host__ virtual void recursiveSetIndices();
+
 protected:
     //use this function to populate the arrays generically.  
     __host__ void populateArrays ();
 
     __host__ virtual void setIndices();
-    __host__ virtual void recursiveSetIndices();
 
     fptype numEvents {0};         //< Non-integer to allow weighted events
     unsigned int numEntries {0};  //< Eg number of bins - not always the same as number of events, although it can be.

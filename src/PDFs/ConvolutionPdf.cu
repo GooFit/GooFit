@@ -343,7 +343,7 @@ __host__ fptype ConvolutionPdf::normalize() const {
     recursiveSetNormalisation(fptype(1.0));
 
     //we need to update the normal here, as values are used at this point.
-    ERROR_CHECK(MEMCPY_TO_SYMBOL(d_normalisations, host_normalisations, totalNormalisations*sizeof(fptype), 0, cudaMemcpyHostToDevice));
+    MEMCPY_TO_SYMBOL(d_normalisations, host_normalisations, totalNormalisations*sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
     // Next recalculate functions at each point, in preparation for convolution integral
     thrust::constant_iterator<fptype *> arrayAddress(dev_iConsts);

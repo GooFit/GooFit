@@ -107,6 +107,16 @@ A few standard CMake tricks:
 
 > Note: Running `make`, `make omp`, or `make cuda` in the main directory will make a build directory for you, and will run CMake and make.
 
+## Using an IDE
+
+The following IDEs have been tested. Here `$SRC` refers to the source directory, and usually is `..` or `../GooFit`. You may want `-DCMAKE_BUILD_TYPE=Debug` and/or `-DGOOFIT_DEBUG=ON`.
+
+| Name | Platform | Setup | Notes |
+|------|----------|:------|:------|
+| Xcode | macOS | `cmake $SRC -GXcode` | Only CPP version, works well though |
+| Nsight-Eclipse | Linux | `cmake $SRC -G "Eclipse CDT4 - Unix Makefiles"` | Must be out-of-source, supports CUDA backend |
+| QtCreator | All | Open from QtCreator dialog | Requires CMake extension (usually present). Might be able to use CMake 3.7+ Server |
+
 
 ## Running the Examples
 

@@ -1,5 +1,7 @@
 
 #include <pybind11/pybind11.h>
+#include <pybind11/iostream.h>
+#include <iostream>
 
 #include <goofit/Variable.h>
 #include <goofit/BinnedDataSet.h>

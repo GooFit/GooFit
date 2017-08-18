@@ -7,7 +7,7 @@
 #include <string>
 #include <memory>
 
-NAMESPACE_BEGIN(PYBIND11_NAMESPACE)
+NAMESPACE_BEGIN(pybind11)
 
 NAMESPACE_BEGIN(detail)
 
@@ -93,4 +93,4 @@ public:
 };
 
 
-NAMESPACE_END(PYBIND11_NAMESPACE)
+NAMESPACE_END(pybind11)

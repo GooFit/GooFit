@@ -99,7 +99,7 @@ cd GooFit
 make
 ```
 
-### Adding ROOT:
+If you'd like to add ROOT:
 
 As always, https://root.cern.ch/build-prerequisites#opensuse is a good resource, though `glu-devel` seems to now be required as well. I'm using `ninja` to build in parallel automatically (and it seems to be faster as well).
 
@@ -121,9 +121,28 @@ source /opt/root-6-10-04/bin/thisroot.sh
 
 You might want to add useful extra ROOT library: `-Droofit=ON -Dmathmore=ON -Dminuit2=ON`
 
+## Docker
+
+If you are interested in actually running on Docker, you can use the official repositories:
+
+```bash
+docker run -it goofit/goofit-omp
+nvidia-docker run -it goofit/goofit-cuda
+```
+
+The CUDA version will need to build on your computer; the OMP version is prebuilt. You can also start with the ROOT Docker instance:
+
+```
+docker run -it rootproject/root-ubuntu16 bash
+cd
+git clone --recursive https://github.com/GooFit/GooFit.git
+cd GooFit
+make
+```
+
 ## Note on CMake install
 
-While other install methods for cmake, like `pip`, are easier, this way should always work. On Linux, you can manually get a version of CMake using:
+While other install methods for CMake, like `pip`, are easier, this way should always work. On Linux, you can manually get a version of CMake using:
 
 ```bash
 mkdir cmake && wget -qO- "https://cmake.org/files/v3.8/cmake-3.8.1-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C cmake

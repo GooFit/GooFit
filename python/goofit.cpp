@@ -2,8 +2,6 @@
 
 namespace py = pybind11;
 
-void init_Print(py::module &);
-
 void init_DataSet(py::module &);
 void init_BinnedDataSet(py::module &);
 void init_UnbinnedDataSet(py::module &);
@@ -64,8 +62,6 @@ void init_VariableBinTransform1DPdf(py::module &);
 PYBIND11_PLUGIN(_goofit) {
     py::module m("_goofit", "Python interface for GooFit");
 
-    init_Print(m);
-    
     init_Variable(m);
     init_DataSet(m);
     init_BinnedDataSet(m);

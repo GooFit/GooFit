@@ -386,6 +386,12 @@ function(goofit_add_library GNAME)
     endif()
 
     source_group("Source Files" REGULAR_EXPRESSION ".*\\.c[uc]")
+    source_group("Basic\\Header Files" REGULAR_EXPRESSION ".*PDFs/basic/.*\\.h")
+    source_group("Basic\\Source Files" REGULAR_EXPRESSION ".*PDFs/basic/.*\\.c[uc]")
+    source_group("Combine\\Header Files" REGULAR_EXPRESSION ".*PDFs/combine/.*\\.h")
+    source_group("Combine\\Source Files" REGULAR_EXPRESSION ".*PDFs/combine/.*\\.c[uc]")
+    source_group("Physics\\Header Files" REGULAR_EXPRESSION ".*PDFs/physics/.*\\.h")
+    source_group("Physics\\Source Files" REGULAR_EXPRESSION ".*PDFs/physics/.*\\.c[uc]")
 
     if(CLANG_TIDY_EXE)
         set_target_properties(

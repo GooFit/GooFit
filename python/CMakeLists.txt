@@ -67,7 +67,7 @@ set_target_properties(_goofit PROPERTIES FOLDER python)
 install(TARGETS _goofit LIBRARY DESTINATION goofit)
 
 
-file(WRITE "${CMAKE_BINARY_DIR}/goofit/__init__.py" "from ._goofit import *\nredirect_stdout(True)")
+file(WRITE "${CMAKE_BINARY_DIR}/goofit/__init__.py" "from ._goofit import *")
 install(FILES "${CMAKE_BINARY_DIR}/goofit/__init__.py" DESTINATION "goofit")
 
 add_custom_target(pygoofit_tests ALL

@@ -18,11 +18,13 @@ namespace GooFit {
 
 class SpinFactor;
 
-enum class LS { ONE, BW, Lass, Lass_M3, nonRes, Bugg, Bugg3, Flatte, SBW };
+enum class LS { ONE, BW, Lass, Lass_M3, nonRes, Bugg, Bugg3, Flatte, SBW, Spline };
 // PDG notation for FF
 enum class FF : unsigned int { One = 0, BL, BL_Prime, BL2 };
 
 class Lineshape : public GooPdf {
+    using spline_t = std::tuple<Variable *, Variable *, unsigned int>;
+    
     friend class DPPdf;
     friend class TDDP4;
     // Service class intended to hold parametrisations of
@@ -39,6 +41,9 @@ class Lineshape : public GooPdf {
     FF _FormFac;
     fptype _radius;
     std::vector<Variable *> _AdditionalVars;
+    
+    /// Min, Max, N for parametrization
+    spline_t _SplineInfo;
 
   public:
     Lineshape(std::string name,
@@ -49,7 +54,8 @@ class Lineshape : public GooPdf {
               LS kind                                = LS::BW,
               FF FormFac                             = FF::BL_Prime,
               fptype radius                          = 1.5,
-              std::vector<Variable *> AdditionalVars = std::vector<Variable *>());
+              std::vector<Variable *> AdditionalVars = std::vector<Variable *>(),
+              spline_t SpineInfo = spline_t(nullptr, nullptr, 0));
 
     bool operator==(const Lineshape &L) const {
         if(_AdditionalVars.size() != L._AdditionalVars.size())

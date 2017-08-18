@@ -1,11 +1,11 @@
 #pragma once
 
-#include "goofit/GlobalCudaDefines.h"
+#include <goofit/GlobalCudaDefines.h>
 
-#include "goofit/Variable.h"
-#include "goofit/Version.h"
-#include "goofit/Version.h"
-#include "goofit/detail/Abort.h"
+#include <goofit/Variable.h>
+#include <goofit/Version.h>
+#include <goofit/detail/Abort.h>
+#include <goofit/detail/Macros.h>
 
 #include <map>
 #include <set>

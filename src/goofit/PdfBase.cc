@@ -80,7 +80,7 @@ __host__ unsigned int PdfBase::registerParameter(Variable *var) {
             unusedIndex++;
         }
 
-        GOOFIT_DEBUG("{}: Registering {} for {}", getName(), unusedIndex, var->getName());
+        GOOFIT_DEBUG("{}: Registering p:{} for {}", getName(), unusedIndex, var->getName());
         var->setIndex(unusedIndex);
     }
 
@@ -164,6 +164,7 @@ void PdfBase::registerObservable(Variable *obs) {
     if(find(observables.begin(), observables.end(), obs) != observables.end())
         return;
 
+    GOOFIT_DEBUG("{}: Registering o:{} for {}", getName(), observables.size(), var->getName());
     observables.push_back(obs);
 }
 

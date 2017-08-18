@@ -430,6 +430,65 @@ __device__ fpcomplex Flatte_MINT(fptype Mpair, fptype m1, fptype m2, unsigned in
     return BW;
 }
 
+__device__ fpcomplex Spline_TDP(fptype Mpair, fptype m1, fptype m2, unsigned int *indices) {
+    
+    fpcomplex ret(0,0);
+
+    const unsigned int nKnobs = indices[4]; // orbital
+    
+    
+    unsigned int idx = 5; // Next index
+    unsigned int i = 0;
+    const unsigned int pwa_coefs_idx  = idx;
+    idx += 2*nKnobs;
+    const fptype* mKKlimits = &(functorConstants[indices[idx]]);
+    fptype mAB = Mpair, mAC = m1, mBC = m2;
+
+    
+    int khiAB = 0, khiAC = 0;
+    fptype dmKK, aa, bb, aa3, bb3;
+    unsigned int timestorun = 1; //+doSwap;
+    while(khiAB<nKnobs){
+        if (mAB<mKKlimits[khiAB]) break;
+        khiAB ++;
+    }
+    
+    if(khiAB <=0 || khiAB == nKnobs)
+        timestorun = 0;
+    while(khiAC<nKnobs){
+        if (mAC<mKKlimits[khiAC]) break;
+        khiAC ++;
+    }
+    
+    if (khiAC <=0 || khiAC == nKnobs)
+        timestorun = 0;
+    
+    for (i=0;i<timestorun;i++){
+        unsigned int kloAB = khiAB -1;//, kloAC = khiAC -1;
+        unsigned int twokloAB = kloAB + kloAB;
+        unsigned int twokhiAB = khiAB + khiAB;
+        fptype pwa_coefs_real_kloAB = cudaArray[indices[pwa_coefs_idx+twokloAB]];
+        fptype pwa_coefs_real_khiAB = cudaArray[indices[pwa_coefs_idx+twokhiAB]];
+        fptype pwa_coefs_imag_kloAB = cudaArray[indices[pwa_coefs_idx+twokloAB+1]];
+        fptype pwa_coefs_imag_khiAB = cudaArray[indices[pwa_coefs_idx+twokhiAB+1]];
+        fptype pwa_coefs_prime_real_kloAB = 0;// cDeriatives[twokloAB];
+        fptype pwa_coefs_prime_real_khiAB = 0;// cDeriatives[twokhiAB];
+        fptype pwa_coefs_prime_imag_kloAB = 0;// cDeriatives[twokloAB+1];
+        fptype pwa_coefs_prime_imag_khiAB = 0;// cDeriatives[twokhiAB+1];
+        //  printf("m12: %f: %f %f %f %f %f %f %d %d %d\n", mAB, mKKlimits[0], mKKlimits[nKnobs-1], pwa_coefs_real_khiAB, pwa_coefs_imag_khiAB, pwa_coefs_prime_real_khiAB, pwa_coefs_prime_imag_khiAB, khiAB, khiAC, timestorun );
+        
+        dmKK = mKKlimits[khiAB] - mKKlimits[kloAB];
+        aa = ( mKKlimits[khiAB] - mAB )/dmKK;
+        bb = 1 - aa;
+        aa3 = aa * aa * aa; bb3 = bb * bb * bb;
+        //  ret += aa * pwa_coefs[kloAB] + bb * pwa_coefs[khiAB] + ((aa3 - aa)*pwa_coefs_prime[kloAB] + (bb3 - bb) * pwa_coefs_prime[khiAB]) * (dmKK*dmKK)/6.0;
+        ret.real(ret.real() + aa * pwa_coefs_real_kloAB + bb * pwa_coefs_real_khiAB + ((aa3 - aa)*pwa_coefs_prime_real_kloAB + (bb3 - bb) * pwa_coefs_prime_real_khiAB) * (dmKK*dmKK)/6.0);
+        ret.imag(ret.imag() + aa * pwa_coefs_imag_kloAB + bb * pwa_coefs_imag_khiAB + ((aa3 - aa)*pwa_coefs_prime_imag_kloAB + (bb3 - bb) * pwa_coefs_prime_imag_khiAB) * (dmKK*dmKK)/6.0);
+        khiAB = khiAC;  mAB = mAC;
+    }
+    return ret;
+}
+    
 __device__ fpcomplex nonres_DP(fptype Mpair, fptype m1, fptype m2, unsigned int *indices) {
     fptype meson_radius  = functorConstants[indices[7]];
     unsigned int orbital = indices[4];
@@ -455,6 +514,7 @@ __device__ resonance_function_ptr ptr_to_bugg_MINT3 = bugg_MINT3;
 __device__ resonance_function_ptr ptr_to_SBW        = SBW;
 __device__ resonance_function_ptr ptr_to_NONRES_DP  = nonres_DP;
 __device__ resonance_function_ptr ptr_to_Flatte     = Flatte_MINT;
+__device__ resonance_function_ptr ptr_to_Spline     = Spline_TDP;
 
 Lineshape::Lineshape(std::string name,
                      Variable *mass,
@@ -464,14 +524,16 @@ Lineshape::Lineshape(std::string name,
                      LS kind,
                      FF FormFac,
                      fptype radius,
-                     std::vector<Variable *> AdditionalVars)
+                     std::vector<Variable *> AdditionalVars,
+                     spline_t SplineInfo)
     : GooPdf(nullptr, name)
     , _mass(mass)
     , _width(width)
     , _L(L)
     , _Mpair(Mpair)
     , _kind(kind)
-    , _FormFac(FormFac) {
+    , _FormFac(FormFac)
+    , _SplineInfo(SplineInfo){
     std::vector<unsigned int> pindices;
     pindices.push_back(0);
     // Making room for index of decay-related constants. Assumption:
@@ -532,6 +594,15 @@ Lineshape::Lineshape(std::string name,
 
     case LS::Flatte:
         GET_FUNCTION_ADDR(ptr_to_Flatte);
+        break;
+            
+    case LS::Spline:
+        for(auto& par : AdditionalVars)
+            pindices.push_back(registerParameter(par));
+            
+            
+        
+        GET_FUNCTION_ADDR(ptr_to_Spline);
         break;
 
     default:

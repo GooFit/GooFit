@@ -53,48 +53,50 @@ if(GOOFIT_SEPARATE_COMP)
         GooPdf.cu
         MetricTaker.cu
         PdfBase.cu
-        CrystalBallPdf.cu
-        BifurGaussPdf.cu
-        LineshapesPdf.cu
-        CorrGaussianPdf.cu
-        LandauPdf.cu
-        DP4Pdf.cu
-        GaussianPdf.cu
-        AddPdf.cu
-        VoigtianPdf.cu
-        MappedPdf.cu
-        Tddp4Pdf.cu
-        DalitzVetoPdf.cu
-        JohnsonSUPdf.cu
-        ProdPdf.cu
-        PolynomialPdf.cu
-        IncoherentSumPdf.cu
-        EventWeightedAddPdf.cu
-        ScaledGaussianPdf.cu
-        StepPdf.cu
-        KinLimitBWPdf.cu
-        NovosibirskPdf.cu
-        ResonancePdf.cu
-        BWPdf.cu
-        BinTransformPdf.cu
-        TrigThresholdPdf.cu
-        SmoothHistogramPdf.cu
-        ExpPdf.cu
-        InterHistPdf.cu
-        DalitzPlotPdf.cu
-        TddpPdf.cu
-        ArgusPdf.cu
-        ExpGausPdf.cu
-        CompositePdf.cu
-        ConvolutionPdf.cu
-        DalitzPlotHelpers.cu
-        SpinFactors.cu
-        MixingTimeResolution_Aux.cu
-        TruthResolution_Aux.cu
-        ThreeGaussResolution_Aux.cu
+        basic/CrystalBallPdf.cu
+        basic/BifurGaussPdf.cu
+        physics/LineshapesPdf.cu
+        basic/CorrGaussianPdf.cu
+        basic/LandauPdf.cu
+        physics/DP4Pdf.cu
+        basic/GaussianPdf.cu
+        combine/AddPdf.cu
+        basic/VoigtianPdf.cu
+        combine/MappedPdf.cu
+        physics/Tddp4Pdf.cu
+        physics/DalitzVetoPdf.cu
+        basic/JohnsonSUPdf.cu
+        combine/ProdPdf.cu
+        basic/PolynomialPdf.cu
+        physics/IncoherentSumPdf.cu
+        combine/EventWeightedAddPdf.cu
+        basic/ScaledGaussianPdf.cu
+        basic/StepPdf.cu
+        basic/KinLimitBWPdf.cu
+        basic/NovosibirskPdf.cu
+        physics/ResonancePdf.cu
+        basic/BWPdf.cu
+        basic/BinTransformPdf.cu
+        basic/TrigThresholdPdf.cu
+        basic/SmoothHistogramPdf.cu
+        basic/ExpPdf.cu
+        basic/InterHistPdf.cu
+        physics/DalitzPlotPdf.cu
+        physics/TddpPdf.cu
+        basic/ArgusPdf.cu
+        basic/ExpGausPdf.cu
+        combine/CompositePdf.cu
+        combine/ConvolutionPdf.cu
+        physics/DalitzPlotHelpers.cu
+        physics/SpinFactors.cu
+        physics/MixingTimeResolution_Aux.cu
+        physics/TruthResolution_Aux.cu
+        physics/ThreeGaussResolution_Aux.cu
         utility/VariableBinTransform1DPdf.cu
         ${GOOPDF_HEADERS}
-        ${goo_extra})
+        ${goo_extra}
+    )
+
 else()
     if(goo_extra)
         message(FATAL_ERROR "You must use separable compilation (GOOFIT_SEPARATE_COMP=ON) to add PDFs!)")

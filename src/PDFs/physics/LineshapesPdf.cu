@@ -13,6 +13,8 @@ on the GPU
 #include "goofit/PDFs/physics/SpinFactors.h"
 #include <utility>
 
+#include <goofit/detail/Macros.h>
+
 namespace GooFit {
 
 // Form factors as in pdg http://pdg.lbl.gov/2012/reviews/rpp2012-rev-dalitz-analysis-formalism.pdf
@@ -127,11 +129,19 @@ __device__ fpcomplex BW(fptype Mpair, fptype m1, fptype m2, unsigned int *indice
 
 // This function is modeled after SBW from the MINT package written by Jonas Rademacker.
 __device__ fpcomplex SBW(fptype Mpair, fptype m1, fptype m2, unsigned int *indices) {
-    fptype meson_radius  = functorConstants[indices[7]];
-    fptype resmass       = cudaArray[indices[2]];
-    fptype reswidth      = cudaArray[indices[3]];
-    unsigned int orbital = indices[4];
-    unsigned int FF      = indices[6];
+    fptype resmass = GOOFIT_GET_PARAM(2);
+    fptype reswidth = GOOFIT_GET_PARAM(3);
+    unsigned int orbital = GOOFIT_GET_INT(4);
+    // GOOFIT_GET_INT(5, Mpair, "Mpair");
+    unsigned int FF = GOOFIT_GET_INT(6);
+    fptype meson_radius = GOOFIT_GET_CONST(7);
+    
+    
+    //fptype meson_radius  = functorConstants[indices[7]];
+    //fptype resmass       = cudaArray[indices[2]];
+    //fptype reswidth      = cudaArray[indices[3]];
+    //unsigned int orbital = indices[4];
+    //unsigned int FF      = indices[6];
 
     fptype mass          = resmass;
     fptype width         = reswidth;
@@ -534,21 +544,35 @@ Lineshape::Lineshape(std::string name,
     , _kind(kind)
     , _FormFac(FormFac)
     , _SplineInfo(SplineInfo){
-    std::vector<unsigned int> pindices;
-    pindices.push_back(0);
+        
+    GOOFIT_START_PDF;
+
     // Making room for index of decay-related constants. Assumption:
     // These are mother mass and three daughter masses in that order.
     // They will be registered by the object that uses this resonance,
     // which will tell this object where to find them by calling setConstantIndex.
-    pindices.push_back(registerParameter(mass));
-    pindices.push_back(registerParameter(width));
-    pindices.push_back(L);
-    pindices.push_back(Mpair);
-    pindices.push_back(enum_to_underlying(FormFac));
-    pindices.push_back(registerConstants(1));
-    MEMCPY_TO_SYMBOL(functorConstants, &radius, sizeof(fptype), cIndex * sizeof(fptype), cudaMemcpyHostToDevice);
+        
+    GOOFIT_ADD_PARAM(2, mass, "mass");
+    GOOFIT_ADD_PARAM(3, width, "width");
+        
+    GOOFIT_ADD_INT(4, L, "L");
+    GOOFIT_ADD_INT(5, Mpair, "Mpair");
+    
+    GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
+    
+    GOOFIT_ADD_CONST(7, radius, "radius");
+        
+    // pindices.push_back(registerParameter(mass));
+    // pindices.push_back(registerParameter(width));
+    // pindices.push_back(L);
+    // pindices.push_back(Mpair);
+    // pindices.push_back(enum_to_underlying(FormFac));
+    
+    // pindices.push_back(registerConstants(1));
+    // MEMCPY_TO_SYMBOL(functorConstants, &radius, sizeof(fptype), cIndex * sizeof(fptype), cudaMemcpyHostToDevice);
 
     switch(kind) {
+            
     case LS::ONE:
         GET_FUNCTION_ADDR(ptr_to_LS_ONE);
         break;
@@ -569,8 +593,9 @@ Lineshape::Lineshape(std::string name,
             exit(0);
         }
 
-        for(int i = 0; i < 5; ++i) {
-            pindices.push_back(registerParameter(AdditionalVars[i]));
+        for(int i = 0; i < 5; i++) {
+            GOOFIT_ADD_PARAM(8+i, AdditionalVars[i], "LassVars");
+            // pindices.push_back(registerParameter(AdditionalVars[i]));
         }
 
         GET_FUNCTION_ADDR(ptr_to_glass3);
@@ -597,30 +622,33 @@ Lineshape::Lineshape(std::string name,
         break;
             
     case LS::Spline:
-        for(auto& par : AdditionalVars)
-            pindices.push_back(registerParameter(par));
-            
-            
+            if(std::get<2>(_SplineInfo) != AdditionalVars.size())
+                throw GeneralError("bins {} != vars {}", std::get<2>(_SplineInfo), AdditionalVars.size());
+            GOOFIT_ADD_CONST(8, std::get<0>(_SplineInfo), "MinSpline");
+            GOOFIT_ADD_CONST(9, std::get<1>(_SplineInfo), "MaxSpline");
+            GOOFIT_ADD_CONST(10, std::get<2>(_SplineInfo), "NSpline");
+        {
+            int i = 11;
+            for(auto& par : AdditionalVars) {
+                GOOFIT_ADD_PARAM(i++, par, "Knot");
+            }
+        }
+        
         
         GET_FUNCTION_ADDR(ptr_to_Spline);
         break;
 
     default:
-        fprintf(stderr, "It seems that the requested lineshape is not implemented yet. Check LineshapesPdf.cu");
-        exit(0);
+        throw GeneralError("It seems that the requested lineshape is not implemented yet. Check LineshapesPdf.cu");
     }
 
-    initialize(pindices);
+    GOOFIT_FINALIZE_PDF;
 }
 
-Lineshape::Lineshape(std::string name)
-    : GooPdf(nullptr, name) {
-    std::vector<unsigned int> pindices;
-    pindices.push_back(0);
-    // Dummy index for constants - won't use it, but calling
-    // functions can't know that and will call setConstantIndex anyway.
+Lineshape::Lineshape(std::string name) : GooPdf(nullptr, name) {
+    GOOFIT_START_PDF;
     GET_FUNCTION_ADDR(ptr_to_NONRES_DP);
-    initialize(pindices);
+    GOOFIT_FINALIZE_PDF;
 }
 
 Amplitude::Amplitude(std::string uniqueDecayStr,

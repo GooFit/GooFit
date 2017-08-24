@@ -82,10 +82,11 @@ __host__ ExpPdf::ExpPdf(std::string n, Variable *_x, std::vector<Variable *> &we
     for(Variable *w : weights)
         pindices.push_back(registerParameter(w));
 
-    if(offset)
+    if(offset) {
         GET_FUNCTION_ADDR(ptr_to_ExpPolyOffset);
-    else
+    } else {
         GET_FUNCTION_ADDR(ptr_to_ExpPoly);
+    }
 
     initialize(pindices);
 }

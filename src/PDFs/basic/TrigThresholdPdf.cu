@@ -76,10 +76,12 @@ __host__ TrigThresholdPdf::TrigThresholdPdf(
     pindices.push_back(registerParameter(trigConst));
     pindices.push_back(registerParameter(linConst));
 
-    if(upper)
+    if(upper) {
         GET_FUNCTION_ADDR(ptr_to_TrigThresholdUpper);
-    else
+    }
+    else {
         GET_FUNCTION_ADDR(ptr_to_TrigThresholdLower);
+    }
 
     initialize(pindices);
 }
@@ -102,10 +104,11 @@ __host__ TrigThresholdPdf::TrigThresholdPdf(std::string n,
     pindices.push_back(registerParameter(linConst));
     pindices.push_back(registerParameter(massConstant));
 
-    if(upper)
+    if(upper) {
         GET_FUNCTION_ADDR(ptr_to_VerySpecialEpisodeTrigThresholdUpper);
-    else
+    } else {
         GET_FUNCTION_ADDR(ptr_to_VerySpecialEpisodeTrigThresholdLower);
+    }
 
     initialize(pindices);
 }

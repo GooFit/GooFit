@@ -117,10 +117,11 @@ AddPdf::AddPdf(std::string n, std::vector<Variable *> weights, std::vector<PdfBa
         extended = false;
     }
 
-    if(extended)
+    if(extended) {
         GET_FUNCTION_ADDR(ptr_to_AddPdfsExt);
-    else
+    } else {
         GET_FUNCTION_ADDR(ptr_to_AddPdfs);
+    }
 
     initialize(pindices);
 }

@@ -21,17 +21,17 @@
 #define GOOFIT_ADD_CONST(i, par, name) { \
     pindices.push_back(registerConstants(1)); \
     MEMCPY_TO_SYMBOL(functorConstants, &(par), sizeof par, cIndex*sizeof par, cudaMemcpyHostToDevice); \
-    if((i) != cIndex) \
-        throw GooFit::GeneralError("{}: Param {} {} actually has number {}", \
-            getName(), (name), (i), cIndex); \
+    if((i) != pindices.size()) \
+        throw GooFit::GeneralError("{}: Const {} {} actually has number {}", \
+            getName(), (name), (i), pindices.size()); \
     GOOFIT_DEBUG("{}: Registered constant value {}={} at c:{}", getName(), (name), (par), pindices.size()); } 
 
 #define GOOFIT_ADD_INT(i, par, name) { \
     GOOFIT_DEBUG("{}: Registered integer {} at {}", getName(), (name),  (par), pindices.size()); \
     pindices.push_back((par)); \
-    if((i) != cIndex) \
-        throw GooFit::GeneralError("{}: Param {} {} actually has number {}", \
-            getName(), (name), (i), cIndex); } 
+    if((i) != pindices.size()) \
+        throw GooFit::GeneralError("{}: Int {} {} actually has number {}", \
+            getName(), (name), (i), pindices.size()); }
 
 #define GOOFIT_FINALIZE_PDF \
     initialize(pindices); \

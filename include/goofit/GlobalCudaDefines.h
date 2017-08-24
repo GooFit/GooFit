@@ -23,7 +23,9 @@ extern int host_callnumber;
 #define MEMCPY_TO_SYMBOL(target, source, count, offset, direction) memcpy(((char *)target) + offset, source, count)
 #define MEMCPY_FROM_SYMBOL(target, source, count, offset, direction)                                                   \
     memcpy((char *)target, ((char *)source) + offset, count)
-#define GET_FUNCTION_ADDR(fname) host_fcn_ptr = (void *)fname
+#define GET_FUNCTION_ADDR(fname) { \
+    host_fcn_ptr = (void *)fname; \
+    GOOFIT_DEBUG("Using function {} in {}, {}:{}", #fname, __func__,  __FILE__, __LINE__);}
 #define BLOCKIDX (1)
 inline void cudaDeviceSynchronize() {}
 // Create my own error type to avoid __host__ redefinition
@@ -56,7 +58,9 @@ enum gooError { gooSuccess = 0, gooErrorMemoryAllocation };
 // This automatically selects the correct CUDA arch and expands the intrinsic to work on arbitrary types
 #include <generics/ldg.h>
 #define RO_CACHE(x) __ldg(&x)
-#define GET_FUNCTION_ADDR(fname) cudaMemcpyFromSymbol((void **)&host_fcn_ptr, fname, sizeof(void *))
+#define GET_FUNCTION_ADDR(fname) { \
+    cudaMemcpyFromSymbol((void **)&host_fcn_ptr, fname, sizeof(void *)); \
+    GOOFIT_DEBUG("Using function {} in {}, {}:{}", #fname, __func__,  __FILE__, __LINE__);}
 #define MEMCPY_FROM_SYMBOL(target, source, count, offset, direction)                                                   \
     cudaMemcpyFromSymbol(target, source, count, offset, direction)
 

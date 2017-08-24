@@ -107,10 +107,11 @@ EventWeightedAddPdf::EventWeightedAddPdf(std::string n, std::vector<Variable *> 
     // weights are first.
     observables = getObservables();
 
-    if(extended)
+    if(extended) {
         GET_FUNCTION_ADDR(ptr_to_EventWeightedAddPdfsExt);
-    else
+    } else {
         GET_FUNCTION_ADDR(ptr_to_EventWeightedAddPdfs);
+    }
 
     initialize(pindices);
 }

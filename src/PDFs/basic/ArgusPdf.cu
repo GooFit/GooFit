@@ -67,10 +67,11 @@ __host__ ArgusPdf::ArgusPdf(std::string n, Variable *_x, Variable *m0, Variable 
     pindices.push_back(slope->getIndex());
     pindices.push_back(power->getIndex());
 
-    if(upper)
+    if(upper) {
         GET_FUNCTION_ADDR(ptr_to_Argus_Upper);
-    else
+    } else {
         GET_FUNCTION_ADDR(ptr_to_Argus_Lower);
+    }
 
     initialize(pindices);
 }

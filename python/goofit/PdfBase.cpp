@@ -20,9 +20,7 @@ void init_PdfBase(py::module &m) {
         .def("setData", (void (PdfBase::*)(std::vector<std::map<Variable *, fptype>> &)) & PdfBase::setData)
         //.def("fitTo", &PdfBase::fitTo) <- add Minuit bindings to make this work
         .def("fitTo", [](PdfBase& self, DataSet* data, int verbosity){
-                py::scoped_output_redirect redir(
-                    std::cout, py::module::import("sys").attr("stdout")
-                );
+                py::scoped_ostream_redirect redir;
                 self.fitTo(data, verbosity);
                 return;
             },

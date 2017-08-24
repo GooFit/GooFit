@@ -13,9 +13,7 @@ void init_FitManager(py::module &m) {
         .def(py::init<PdfBase *>())
         // Can't directly wrap becase we (currently) don't want the return value in python
         .def("fit", [](FitManager &self) {
-                py::scoped_output_redirect redir(
-                    std::cout, py::module::import("sys").attr("stdout")
-                );
+                py::scoped_ostream_redirect redir;
                 self.fit();
             });
 }

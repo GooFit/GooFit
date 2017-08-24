@@ -164,7 +164,7 @@ void PdfBase::registerObservable(Variable *obs) {
     if(find(observables.begin(), observables.end(), obs) != observables.end())
         return;
 
-    GOOFIT_DEBUG("{}: Registering o:{} for {}", getName(), observables.size(), var->getName());
+    GOOFIT_DEBUG("{}: Registering o:{} for {}", getName(), observables.size(), obs->getName());
     observables.push_back(obs);
 }
 

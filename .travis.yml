@@ -38,7 +38,7 @@ install:
 - cd "${TRAVIS_BUILD_DIR}" && . .ci/build_doxygen.sh
 - cd "${TRAVIS_BUILD_DIR}" && . .ci/build_lcov.sh
 - pip install --user --upgrade pip
-- pip install --user pytest numpy
+- pip install --user pytest numpy plumbum
 script:
 - cd "${TRAVIS_BUILD_DIR}"
 - .ci/travis.sh

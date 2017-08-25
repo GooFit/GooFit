@@ -571,7 +571,7 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
         PAIR_13);
 
     ResonancePdf *rho0 = new ResonancePdf(
-        "rho0", ResPdfType::LASS,
+        "rho0", ResPdfType::GS,
         fixAmps ? new Variable("rho0_amp_real", 0.565) : new Variable("rho0_amp_real", 0.565, 0.001, 0, 0),
         fixAmps ? new Variable("rho0_amp_imag", 0.164) : new Variable("rho0_amp_imag", 0.164, 0.1, 0, 0),
         fixedRhoMass,

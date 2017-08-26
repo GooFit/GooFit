@@ -83,6 +83,7 @@ class Application : public CLI::App {
     int gpuDev_ = 0;
     bool show_gpus_;
     bool quiet_;
+    bool splash_;
     int argc_;
     char **argv_;
 
@@ -148,7 +149,11 @@ class Application : public CLI::App {
 #endif
         add_flag("--show-gpus", show_gpus_, "Show the available GPU devices and exit")->group("GooFit");
 #endif
-        add_flag("-q,--quiet", quiet_, "Reduce the verbosity of the Application")->group("GooFit");
+        auto quiet = add_flag("-q,--quiet", quiet_, "Reduce the verbosity of the Application")->group("GooFit");
+
+        add_flag("--nosplash", splash_, "Do not print a splash")
+            ->group("GooFit")
+            ->excludes(quiet);
 
         add_config("--config", "config.ini", "An ini file with command line options in it")->group("GooFit");
 
@@ -176,7 +181,8 @@ class Application : public CLI::App {
         set_device();
 
         if(!quiet_) {
-            print_splash();
+            if(!splash_)
+                print_splash();
             
             GOOFIT_INFO("GooFit: Version {} ({}) Commit: {}", GOOFIT_VERSION, GOOFIT_TAG, GOOFIT_GIT_VERSION);
 

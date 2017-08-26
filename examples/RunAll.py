@@ -25,6 +25,7 @@ LOCAL_DIR = local.path(__file__).dirname
 
 def test(filename, *args):
     command = local[LOCAL_DIR / filename / filename]
+    command = command['--nosplash']
     for arg in args:
         command = command[arg]
     colors.info.print('Running', command)
@@ -54,10 +55,11 @@ def make_results(profile=False):
             ]
 
     if (LOCAL_DIR / 'zachFit/dataFiles/dstwidth_kpi_data.dat').exists():
-        results.append(test('zachFit', 0))
+        results.append(test('zachFit', 1, 0))
     if (LOCAL_DIR / 'pipipi0DPFit/dataFiles/toyPipipi0/dalitz_toyMC_000.txt').exists():
         results.append(test('pipipi0DPFit', 'toy', 0, 1))
-        results.append(test('pipipi0DPFit', 'canonical', 'dataFiles/cocktail_pp_0.txt', '--blindSeed=0'))
+        if(profile):
+            results.append(test('pipipi0DPFit', 'canonical', 'dataFiles/cocktail_pp_0.txt', '--blindSeed=0'))
     return results
 
 

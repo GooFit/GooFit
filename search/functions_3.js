@@ -5,6 +5,7 @@ var searchData=
   ['checkallvars',['checkAllVars',['../class_goo_fit_1_1_data_set.html#a7298e578fcb4ff2a4e3532e87334514d',1,'GooFit::DataSet']]],
   ['checkinitstatus',['checkInitStatus',['../class_goo_fit_1_1_pdf_base.html#add052f502b0a5f90f6f56b5ffef3c3bf',1,'GooFit::PdfBase']]],
   ['clearcurrentfit',['clearCurrentFit',['../class_goo_fit_1_1_pdf_base.html#a9fb19c954b5a3b73672b70cc54f2287a',1,'GooFit::PdfBase']]],
+  ['complex_5fderivative',['complex_derivative',['../namespace_goo_fit.html#ad346b846632b154440f2f21649eef3b6',1,'GooFit']]],
   ['compositepdf',['CompositePdf',['../class_goo_fit_1_1_composite_pdf.html#a7033e422a5d95e9742eaa1f78f929280',1,'GooFit::CompositePdf']]],
   ['constant',['Constant',['../class_goo_fit_1_1_constant.html#acc366f4a27d44f5194a65292caf59470',1,'GooFit::Constant::Constant(Constant &amp;)=delete'],['../class_goo_fit_1_1_constant.html#a5b53fb535c673b68966938201776dc90',1,'GooFit::Constant::Constant(std::string n, fptype val)']]],
   ['contract',['Contract',['../class_goo_fit_1_1_z_tspin1.html#ab3855e3e113185736e0490050b76333b',1,'GooFit::ZTspin1::Contract()'],['../class_goo_fit_1_1_symm_lorentz_matrix.html#ab6616a9aee29025d2dda27500efdee8a',1,'GooFit::SymmLorentzMatrix::Contract()']]],

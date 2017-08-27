@@ -42,7 +42,7 @@ var searchData=
   ['getparameterindex',['getParameterIndex',['../class_goo_fit_1_1_pdf_base.html#a93b11b3371a840cf5ea0bdf14338c87e',1,'GooFit::PdfBase']]],
   ['getparameters',['getParameters',['../class_goo_fit_1_1_pdf_base.html#a0936adbe20a9d249113ec734dbb1b16d',1,'GooFit::PdfBase']]],
   ['getparams',['getParams',['../class_goo_fit_1_1_fit_manager_minuit2.html#aaf00a5d3a273b066d7b2ec3fe1cc0a5a',1,'GooFit::FitManagerMinuit2::getParams()'],['../class_goo_fit_1_1_f_c_n.html#a8bfca0fb6268443355fdb448424ed68c',1,'GooFit::FCN::GetParams()']]],
-  ['getresonanceamplitude',['getResonanceAmplitude',['../namespace_goo_fit.html#aabde398405436e8b76931ef940541f2b',1,'GooFit']]],
+  ['getresonanceamplitude',['getResonanceAmplitude',['../namespace_goo_fit.html#a4e554df220226d193edfc7c67e2e968c',1,'GooFit']]],
   ['getspecialmask',['getSpecialMask',['../class_goo_fit_1_1_pdf_base.html#a59251e6cf381c427f3723e77ac4ec40f',1,'GooFit::PdfBase']]],
   ['getupperlimit',['getUpperLimit',['../class_goo_fit_1_1_variable.html#a81fb48bffdc587c1e4e4f29d3cf4f9d0',1,'GooFit::Variable']]],
   ['getvalue',['getValue',['../class_goo_fit_1_1_goo_pdf.html#aba6708908e3b332842c79b2d916d0c46',1,'GooFit::GooPdf::getValue()'],['../class_goo_fit_1_1_unbinned_data_set.html#af0534e69c67d8dac64ab00ce1b13ae6e',1,'GooFit::UnbinnedDataSet::getValue()'],['../class_goo_fit_1_1_indexable.html#a59a5ace515148ae5f29bbfb7c229da55',1,'GooFit::Indexable::getValue()']]],

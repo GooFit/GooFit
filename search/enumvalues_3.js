@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['invalid',['InValid',['../namespace_goo_fit.html#a145d35e8e46e921ed038de04120d4241a05fe242e96a3e233fc27654efe32c3a6',1,'GooFit']]]
+  ['gauss',['GAUSS',['../namespace_goo_fit.html#adb7023544943769d1aebd62a519b91d4a37a2f93fd56db2dd5f74780e8bca23b3',1,'GooFit']]],
+  ['gs',['GS',['../namespace_goo_fit.html#adb7023544943769d1aebd62a519b91d4a71a75a167c33c58bfb561764255c880a',1,'GooFit']]]
 ];

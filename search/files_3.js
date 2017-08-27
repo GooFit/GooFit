@@ -2,6 +2,8 @@ var searchData=
 [
   ['chisquare_2ecu',['chisquare.cu',['../chisquare_8cu.html',1,'']]],
   ['color_2eh',['Color.h',['../_color_8h.html',1,'']]],
+  ['complex_2eh',['Complex.h',['../_complex_8h.html',1,'']]],
+  ['complexutils_2eh',['ComplexUtils.h',['../_complex_utils_8h.html',1,'']]],
   ['compositepdf_2ecu',['CompositePdf.cu',['../_composite_pdf_8cu.html',1,'']]],
   ['compositepdf_2eh',['CompositePdf.h',['../_composite_pdf_8h.html',1,'']]],
   ['convolution_2ecu',['convolution.cu',['../convolution_8cu.html',1,'']]],

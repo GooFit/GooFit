@@ -7,6 +7,7 @@ var searchData=
   ['polynomialpdf',['PolynomialPdf',['../class_goo_fit_1_1_polynomial_pdf.html#a1ddeee3cf7710f3af7b7c1524aa5023d',1,'GooFit::PolynomialPdf::PolynomialPdf(std::string n, Variable *_x, std::vector&lt; Variable *&gt; weights, Variable *x0=nullptr, unsigned int lowestDegree=0)'],['../class_goo_fit_1_1_polynomial_pdf.html#a3936f338d8327b9cdafe0547ec76307f',1,'GooFit::PolynomialPdf::PolynomialPdf(std::string n, std::vector&lt; Variable *&gt; obses, std::vector&lt; Variable *&gt; coeffs, std::vector&lt; Variable *&gt; offsets, unsigned int maxDegree)']]],
   ['pow',['pow',['../_global_cuda_defines_8h.html#a3282a5cfe39f52044508cb8d8e62b9df',1,'GlobalCudaDefines.h']]],
   ['pre_5fcallback',['pre_callback',['../class_goo_fit_1_1_application.html#ae6b257440c81e8529bd15606e9eb5f30',1,'GooFit::Application']]],
+  ['print_5fsplash',['print_splash',['../namespace_goo_fit.html#afd0fb7f08a225be4ca1f9d9682970f08',1,'GooFit']]],
   ['printprofileinfo',['printProfileInfo',['../class_goo_fit_1_1_pdf_base.html#a4dd50cb70a4647f24975ffef59bfc437',1,'GooFit::PdfBase']]],
   ['prodpdf',['ProdPdf',['../class_goo_fit_1_1_prod_pdf.html#ab5ae4b5ac70799b6aad16ab52c5da719',1,'GooFit::ProdPdf']]]
 ];

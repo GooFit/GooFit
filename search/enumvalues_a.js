@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['valid',['Valid',['../namespace_goo_fit.html#a145d35e8e46e921ed038de04120d4241a3ac705f2acd51a4613f9188c05c91d0d',1,'GooFit']]]
+  ['rbw',['RBW',['../namespace_goo_fit.html#adb7023544943769d1aebd62a519b91d4affd5dc53fe5be8772884e8c28eb324b1',1,'GooFit']]]
 ];

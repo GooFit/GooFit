@@ -71,14 +71,16 @@ $(function() {
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
+<a href="#define-members">Macros</a> &#124;
 <a href="#typedef-members">Typedefs</a> &#124;
+<a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">ResonancePdf.h File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="_goo_pdf_8h_source.html">goofit/PDFs/GooPdf.h</a>&quot;</code><br />
-<code>#include &lt;thrust/complex.h&gt;</code><br />
+<code>#include &quot;<a class="el" href="_complex_8h_source.html">goofit/detail/Complex.h</a>&quot;</code><br />
 </div>
 <p><a href="_resonance_pdf_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -92,10 +94,30 @@ Namespaces</h2></td></tr>
 <tr class="memitem:namespace_goo_fit"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html">GooFit</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:ad895051d1c9026ba79bdca5017a63859"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_resonance_pdf_8h.html#ad895051d1c9026ba79bdca5017a63859">MAXNKNOBS</a>&#160;&#160;&#160;1000</td></tr>
+<tr class="separator:ad895051d1c9026ba79bdca5017a63859"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:a6ddba1265340d9ecef15167bdb18f27b"><td class="memItemLeft" align="right" valign="top">typedef thrust::complex&lt; fptype &gt;(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#a6ddba1265340d9ecef15167bdb18f27b">GooFit::resonance_function_ptr</a>) (fptype, fptype, fptype, unsigned int *)</td></tr>
-<tr class="separator:a6ddba1265340d9ecef15167bdb18f27b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7d2490de64dfaf29fa68194763a8e26"><td class="memItemLeft" align="right" valign="top">typedef fpcomplex(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#ab7d2490de64dfaf29fa68194763a8e26">GooFit::resonance_function_ptr</a>) (fptype, fptype, fptype, unsigned int *)</td></tr>
+<tr class="separator:ab7d2490de64dfaf29fa68194763a8e26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:adb7023544943769d1aebd62a519b91d4"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#adb7023544943769d1aebd62a519b91d4">GooFit::ResPdfType</a> { <br />
+&#160;&#160;<a class="el" href="namespace_goo_fit.html#adb7023544943769d1aebd62a519b91d4affd5dc53fe5be8772884e8c28eb324b1">GooFit::ResPdfType::RBW</a> = 0, 
+<a class="el" href="namespace_goo_fit.html#adb7023544943769d1aebd62a519b91d4a7a776250a65aa562e492433f3f064a59">GooFit::ResPdfType::LASS</a>, 
+<a class="el" href="namespace_goo_fit.html#adb7023544943769d1aebd62a519b91d4a71a75a167c33c58bfb561764255c880a">GooFit::ResPdfType::GS</a>, 
+<a class="el" href="namespace_goo_fit.html#adb7023544943769d1aebd62a519b91d4a4e73fefba15fbe943733ace61f9a7e09">GooFit::ResPdfType::FLATTE</a>, 
+<br />
+&#160;&#160;<a class="el" href="namespace_goo_fit.html#adb7023544943769d1aebd62a519b91d4a37a2f93fd56db2dd5f74780e8bca23b3">GooFit::ResPdfType::GAUSS</a>, 
+<a class="el" href="namespace_goo_fit.html#adb7023544943769d1aebd62a519b91d4add309e5586dd9ab277c7e1afa9c34bb6">GooFit::ResPdfType::SPLINE</a>, 
+<a class="el" href="namespace_goo_fit.html#adb7023544943769d1aebd62a519b91d4a0e88f4aa9d398e2d2772f69c406609f7">GooFit::ResPdfType::NONRES</a>
+<br />
+ }</td></tr>
+<tr class="separator:adb7023544943769d1aebd62a519b91d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
@@ -106,10 +128,27 @@ Functions</h2></td></tr>
 <tr class="memitem:a707adf7643d054c85158dbf8b6524fd4"><td class="memItemLeft" align="right" valign="top">__device__ fptype&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#a707adf7643d054c85158dbf8b6524fd4">GooFit::spinFactor</a> (unsigned int spin, fptype motherMass, fptype daug1Mass, fptype daug2Mass, fptype daug3Mass, fptype m12, fptype m13, fptype m23, unsigned int cyclic_index)</td></tr>
 <tr class="separator:a707adf7643d054c85158dbf8b6524fd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="ad895051d1c9026ba79bdca5017a63859"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad895051d1c9026ba79bdca5017a63859">&#9670;&nbsp;</a></span>MAXNKNOBS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MAXNKNOBS&#160;&#160;&#160;1000</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_resonance_pdf_8h_source.html#l00018">18</a> of file <a class="el" href="_resonance_pdf_8h_source.html">ResonancePdf.h</a>.</p>
+
+</div>
+</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Aug 18 2017 20:46:00 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun Aug 27 2017 05:34:12 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

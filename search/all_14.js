@@ -69,6 +69,8 @@ var searchData=
   ['spinhelper_2eh',['SpinHelper.h',['../_spin_helper_8h.html',1,'']]],
   ['spinsumt',['SpinSumT',['../class_goo_fit_1_1_spin_sum_t.html',1,'GooFit::SpinSumT'],['../class_goo_fit_1_1_spin_sum_t.html#a60a6cf5cdad1a0472ab449f420472ba9',1,'GooFit::SpinSumT::SpinSumT()']]],
   ['spinsumv',['SpinSumV',['../class_goo_fit_1_1_spin_sum_v.html',1,'GooFit::SpinSumV'],['../class_goo_fit_1_1_spin_sum_v.html#a0209ae80fca413fb45a582e9133f908c',1,'GooFit::SpinSumV::SpinSumV()']]],
+  ['splash_5f',['splash_',['../class_goo_fit_1_1_application.html#ab51f487281173b8784113359574f9ada',1,'GooFit::Application']]],
+  ['spline',['Spline',['../namespace_goo_fit.html#ae587603f507f8a46fdccd092e2d8bff5a4cff6afc4963881749f7742fbb4d1392',1,'GooFit::Spline()'],['../namespace_goo_fit.html#adb7023544943769d1aebd62a519b91d4add309e5586dd9ab277c7e1afa9c34bb6',1,'GooFit::SPLINE()']]],
   ['steppdf',['StepPdf',['../class_goo_fit_1_1_step_pdf.html',1,'GooFit::StepPdf'],['../class_goo_fit_1_1_step_pdf.html#a8aa4b20ae87b8fcac9365462f66292f7',1,'GooFit::StepPdf::StepPdf()']]],
   ['steppdf_2ecu',['StepPdf.cu',['../_step_pdf_8cu.html',1,'']]],
   ['steppdf_2eh',['StepPdf.h',['../_step_pdf_8h.html',1,'']]],

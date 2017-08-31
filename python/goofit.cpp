@@ -59,8 +59,8 @@ void init_TruthResolution(py::module &);
 void init_VariableBinTransform1DPdf(py::module &);
 
 
-PYBIND11_PLUGIN(_goofit) {
-    py::module m("_goofit", "Python interface for GooFit");
+PYBIND11_MODULE(_goofit, m) {
+    m.doc() = "Python interface for GooFit";
 
     init_Variable(m);
     init_DataSet(m);
@@ -117,7 +117,4 @@ PYBIND11_PLUGIN(_goofit) {
 
     // Utilities
     init_VariableBinTransform1DPdf(m);
-
-
-    return m.ptr();
 }

@@ -13,8 +13,8 @@ void init_TddpPdf(py::module &m) {
     py::class_<TddpPdf, GooPdf>(m, "TddpPdf")
         .def(py::init<std::string, Variable *, Variable *,Variable *, Variable *, CountingVariable *, DecayInfo *, MixingTimeResolution *, GooPdf *>())
         .def(py::init<std::string, Variable *, Variable *,Variable *, Variable *, CountingVariable *, DecayInfo *, MixingTimeResolution *, GooPdf *, Variable *>())
-        .def(py::init<std::string, Variable *, Variable *,Variable *, Variable *, CountingVariable *, DecayInfo *, std::vector<MixingTimeResolution *>, GooPdf *, Variable *>())
-        .def(py::init<std::string, Variable *, Variable *,Variable *, Variable *, CountingVariable *, DecayInfo *, std::vector<MixingTimeResolution *>, GooPdf *, Variable *, Variable *>())
+        .def(py::init<std::string, Variable *, Variable *,Variable *, Variable *, CountingVariable *, DecayInfo *, std::vector<MixingTimeResolution *>&, GooPdf *, Variable *>())
+        .def(py::init<std::string, Variable *, Variable *,Variable *, Variable *, CountingVariable *, DecayInfo *, std::vector<MixingTimeResolution *>&, GooPdf *, Variable *, Variable *>())
         ;
 }
 

@@ -12,6 +12,7 @@ else
     ln -s `which clang++-$COMPILER` clang++
     ln -s `which clang-format-$COMPILER` clang-format
     ln -s `which clang-tidy-$COMPILER` clang-tidy
+    export CXXFLAGS="-stdlib=libc++"
 fi
 
 export PATH="${DEPS_DIR}/extrabin":$PATH

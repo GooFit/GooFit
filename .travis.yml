@@ -18,11 +18,11 @@ matrix:
   include:
   - compiler: clang
     addons:
-    apt:
-      packages:
-      - clang-3.9
-      - clang-format-3.9
-      - clang-tidy-3.9
+      apt:
+        packages:
+        - clang-3.9
+        - clang-format-3.9
+        - clang-tidy-3.9
     env:
     - COMPILER=3.9
     - CHECK_STYLE=yes

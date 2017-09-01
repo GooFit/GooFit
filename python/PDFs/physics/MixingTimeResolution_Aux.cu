@@ -4,7 +4,7 @@
 using namespace GooFit;
 namespace py = pybind11;
 
-template<class Base = GooFit::MixingTimeResolution>
+template <class Base = GooFit::MixingTimeResolution>
 class PyMixingTimeResolution : public Base {
   public:
     using Base::Base;

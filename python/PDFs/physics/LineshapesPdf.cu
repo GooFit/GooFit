@@ -1,9 +1,9 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-#include <goofit/Variable.h>
 #include <goofit/PDFs/physics/LineshapesPdf.h>
 #include <goofit/PDFs/physics/ResonancePdf.h>
+#include <goofit/Variable.h>
 
 using namespace GooFit;
 namespace py = pybind11;

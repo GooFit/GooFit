@@ -1,9 +1,9 @@
-#include <pybind11/pybind11.h>
 #include <goofit/Variable.h>
+#include <pybind11/pybind11.h>
 
 #include <fmt/format.h>
-#include <string>
 #include <sstream>
+#include <string>
 
 namespace py = pybind11;
 using namespace fmt::literals;

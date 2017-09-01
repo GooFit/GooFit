@@ -1,6 +1,6 @@
-#include <goofit/PDFs/physics/ResonancePdf.h>
-#include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <goofit/PDFs/detail/ComplexUtils.h>
+#include <goofit/PDFs/physics/DalitzPlotHelpers.h>
+#include <goofit/PDFs/physics/ResonancePdf.h>
 
 namespace GooFit {
 
@@ -595,7 +595,7 @@ ResonancePdf::ResonancePdf(std::string name,
                            std::vector<Variable *> &pwa_coefs_imags,
                            unsigned int cyc,
                            const bool symmDP)
-    : GooPdf(0, name)
+    : GooPdf(nullptr, name)
     , amp_real(ar)
     , amp_imag(ai)
     , rpt_(rpt) {

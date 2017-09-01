@@ -1,12 +1,12 @@
 
-#include <pybind11/pybind11.h>
-#include <pybind11/iostream.h>
 #include <iostream>
+#include <pybind11/iostream.h>
+#include <pybind11/pybind11.h>
 
-#include <goofit/Variable.h>
 #include <goofit/BinnedDataSet.h>
-#include <goofit/UnbinnedDataSet.h>
 #include <goofit/PdfBase.h>
+#include <goofit/UnbinnedDataSet.h>
+#include <goofit/Variable.h>
 
 #include <Minuit2/FunctionMinimum.h>
 

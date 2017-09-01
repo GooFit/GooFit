@@ -1,8 +1,8 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-#include <goofit/Variable.h>
 #include <goofit/DataSet.h>
+#include <goofit/Variable.h>
 
 namespace py = pybind11;
 using namespace GooFit;

@@ -19,6 +19,7 @@ class.
 #include "goofit/PDFs/physics/DP4Pdf.h"
 #include "goofit/PDFs/physics/EvalVar.h"
 #include "goofit/PDFs/physics/Tddp4Pdf.h"
+#include "goofit/detail/Complex.h"
 #include <mcbooster/Evaluate.h>
 #include <mcbooster/EvaluateArray.h>
 #include <mcbooster/GContainers.h>
@@ -26,7 +27,6 @@ class.
 #include <mcbooster/GTypes.h>
 #include <mcbooster/Generate.h>
 #include <mcbooster/Vector4R.h>
-#include "goofit/detail/Complex.h"
 
 namespace GooFit {
 

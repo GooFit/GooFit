@@ -1,10 +1,10 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-#include <goofit/Variable.h>
 #include <goofit/PDFs/physics/DP4Pdf.h>
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <goofit/PDFs/physics/SpinFactors.h>
+#include <goofit/Variable.h>
 
 using namespace GooFit;
 namespace py = pybind11;

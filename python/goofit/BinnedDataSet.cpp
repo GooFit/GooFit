@@ -1,6 +1,6 @@
-#include <pybind11/pybind11.h>
-#include <goofit/Variable.h>
 #include <goofit/BinnedDataSet.h>
+#include <goofit/Variable.h>
+#include <pybind11/pybind11.h>
 
 using namespace GooFit;
 

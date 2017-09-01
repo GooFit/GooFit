@@ -1,8 +1,8 @@
 #include <pybind11/pybind11.h>
 
-#include <goofit/Variable.h>
 #include <goofit/BinnedDataSet.h>
 #include <goofit/PDFs/basic/SmoothHistogramPdf.h>
+#include <goofit/Variable.h>
 
 using namespace GooFit;
 namespace py = pybind11;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <goofit/Error.h>
 #include <goofit/detail/Complex.h>
 #include <vector>
 

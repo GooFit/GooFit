@@ -288,7 +288,7 @@ if(GOOFIT_DEVICE STREQUAL OMP OR GOOFIT_HOST STREQUAL OMP OR GOOFIT_DEVICE STREQ
         add_library(OpenMP::OpenMP_CXX ALIAS OpenMP_TARGET)
     endif()
 
-    target_compile_options(goofit_mt INTERFACE OpenMP::OpenMP_CXX)
+    target_link_libraries(goofit_mt INTERFACE OpenMP::OpenMP_CXX)
 endif()
 
 if(GOOFIT_DEVICE STREQUAL TBB OR GOOFIT_HOST STREQUAL TBB)

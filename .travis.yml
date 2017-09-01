@@ -28,8 +28,6 @@ addons:
     - libxft-dev
     - libxext-dev
     - python-pip
-    sources:
-    - ubuntu-toolchain-r-test
 install:
 - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
 - cd "${TRAVIS_BUILD_DIR}" && . .ci/prepare_altern.sh

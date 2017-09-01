@@ -9,14 +9,5 @@ namespace py = pybind11;
 
 void init_SmoothHistogramPdf(py::module &m) {
     py::class_<SmoothHistogramPdf, GooPdf>(m, "SmoothHistogramPdf")
-        .def(py::init<std::string, BinnedDataSet *, Variable *>())
-        ;
+        .def(py::init<std::string, BinnedDataSet *, Variable *>());
 }
-
-
-
-
-
-
-
-

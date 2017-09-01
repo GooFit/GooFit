@@ -44,8 +44,7 @@ class DalitzPlotPdf : public GooPdf {
     SpecialResonanceCalculator **calculators;
 };
 
-class SpecialResonanceIntegrator
-    : public thrust::unary_function<thrust::tuple<int, fptype *>, fpcomplex> {
+class SpecialResonanceIntegrator : public thrust::unary_function<thrust::tuple<int, fptype *>, fpcomplex> {
   public:
     // Class used to calculate integrals of terms BW_i * BW_j^*.
     SpecialResonanceIntegrator(int pIdx, unsigned int ri, unsigned int rj);
@@ -57,8 +56,7 @@ class SpecialResonanceIntegrator
     unsigned int parameters;
 };
 
-class SpecialResonanceCalculator
-    : public thrust::unary_function<thrust::tuple<int, fptype *, int>, fpcomplex> {
+class SpecialResonanceCalculator : public thrust::unary_function<thrust::tuple<int, fptype *, int>, fpcomplex> {
   public:
     // Used to create the cached BW values.
     SpecialResonanceCalculator(int pIdx, unsigned int res_idx);

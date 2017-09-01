@@ -9,12 +9,5 @@ namespace py = pybind11;
 
 void init_DalitzPlotPdf(py::module &m) {
     py::class_<DalitzPlotPdf, GooPdf>(m, "DalitzPlotPdf")
-        .def(py::init<std::string, Variable *, Variable *, CountingVariable *, DecayInfo *, GooPdf *>())
-        ;
+        .def(py::init<std::string, Variable *, Variable *, CountingVariable *, DecayInfo *, GooPdf *>());
 }
-
-
-
-
-
-

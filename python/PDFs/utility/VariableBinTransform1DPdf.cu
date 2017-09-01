@@ -9,6 +9,5 @@ namespace py = pybind11;
 
 void init_VariableBinTransform1DPdf(py::module &m) {
     py::class_<VariableBinTransform1DPdf, GooPdf>(m, "VariableBinTransform1DPdf")
-        .def(py::init<std::string, Variable *, std::vector<fptype>>())
-        ;
+        .def(py::init<std::string, Variable *, std::vector<fptype>>());
 }

@@ -24,8 +24,8 @@ void init_DalitzPlotHelpers(py::module &m) {
         .def_readwrite("_tau", &DecayInfo::_tau)
         .def_readwrite("_xmixing", &DecayInfo::_xmixing)
         .def_readwrite("_ymixing", &DecayInfo::_ymixing)
-        .def("add_resonance", [](DecayInfo &self, ResonancePdf* toadd){
-                self.resonances.push_back(toadd);
-                }, "Append a resonance", "resonance"_a)
-        ;
+        .def("add_resonance",
+             [](DecayInfo &self, ResonancePdf *toadd) { self.resonances.push_back(toadd); },
+             "Append a resonance",
+             "resonance"_a);
 }

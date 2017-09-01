@@ -19,12 +19,13 @@ void init_PdfBase(py::module &m) {
         .def("setData", (void (PdfBase::*)(DataSet *)) & PdfBase::setData)
         .def("setData", (void (PdfBase::*)(std::vector<std::map<Variable *, fptype>> &)) & PdfBase::setData)
         //.def("fitTo", &PdfBase::fitTo) <- add Minuit bindings to make this work
-        .def("fitTo", [](PdfBase& self, DataSet* data, int verbosity){
-                py::scoped_ostream_redirect redir;
-                self.fitTo(data, verbosity);
-                return;
-            },
-            "Quick way to fit a PDF. Use a FitManager for more control.", 
-            "data"_a, "verbosity"_a = 3)
-    ;
+        .def("fitTo",
+             [](PdfBase &self, DataSet *data, int verbosity) {
+                 py::scoped_ostream_redirect redir;
+                 self.fitTo(data, verbosity);
+                 return;
+             },
+             "Quick way to fit a PDF. Use a FitManager for more control.",
+             "data"_a,
+             "verbosity"_a = 3);
 }

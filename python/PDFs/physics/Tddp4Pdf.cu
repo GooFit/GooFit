@@ -12,15 +12,18 @@ namespace py = pybind11;
 
 void init_Tddp4Pdf(py::module &m) {
     py::class_<TDDP4, GooPdf>(m, "TDDP4")
-        .def(py::init<std::string, std::vector<Variable *>, DecayInfo_DP *, MixingTimeResolution *, GooPdf*>())
-        .def(py::init<std::string, std::vector<Variable *>, DecayInfo_DP *, MixingTimeResolution *, GooPdf*, Variable *>())
-        .def(py::init<std::string, std::vector<Variable *>, DecayInfo_DP *, MixingTimeResolution *, GooPdf*, Variable *, unsigned int>())
-        ;
+        .def(py::init<std::string, std::vector<Variable *>, DecayInfo_DP *, MixingTimeResolution *, GooPdf *>())
+        .def(py::init<std::string,
+                      std::vector<Variable *>,
+                      DecayInfo_DP *,
+                      MixingTimeResolution *,
+                      GooPdf *,
+                      Variable *>())
+        .def(py::init<std::string,
+                      std::vector<Variable *>,
+                      DecayInfo_DP *,
+                      MixingTimeResolution *,
+                      GooPdf *,
+                      Variable *,
+                      unsigned int>());
 }
-
-
-
-
-
-
-

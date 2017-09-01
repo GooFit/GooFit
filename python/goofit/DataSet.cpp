@@ -18,6 +18,5 @@ void init_DataSet(py::module &m) {
         .def("addEvent", (void (DataSet::*)()) & DataSet::addEvent)
         .def("__len__", &DataSet::getNumEvents)
         .def_property_readonly("name", &DataSet::getName)
-        .def_property_readonly("variables", &DataSet::getVariables)
-        ;
+        .def_property_readonly("variables", &DataSet::getVariables);
 }

@@ -12,7 +12,10 @@ void init_PolynomialPdf(py::module &m) {
         .def(py::init<std::string, Variable *, std::vector<Variable *>>())
         .def(py::init<std::string, Variable *, std::vector<Variable *>, Variable *>())
 
-        .def(py::init<std::string, Variable *, std::vector<Variable *>, Variable *, unsigned int >())
-        .def(py::init<std::string, std::vector<Variable *>, std::vector<Variable *>, std::vector<Variable *>, unsigned int>())
-        ;
+        .def(py::init<std::string, Variable *, std::vector<Variable *>, Variable *, unsigned int>())
+        .def(py::init<std::string,
+                      std::vector<Variable *>,
+                      std::vector<Variable *>,
+                      std::vector<Variable *>,
+                      unsigned int>());
 }

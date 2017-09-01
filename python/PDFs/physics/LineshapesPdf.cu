@@ -10,15 +10,15 @@ namespace py = pybind11;
 
 void init_LineshapesPdf(py::module &m) {
     py::class_<Lineshape, GooPdf>(m, "Lineshape")
-        .def(py::init<std::string, Variable *, Variable *, unsigned int, unsigned int, LS, FF, fptype, std::vector<Variable*>>())
+        .def(py::init<std::string,
+                      Variable *,
+                      Variable *,
+                      unsigned int,
+                      unsigned int,
+                      LS,
+                      FF,
+                      fptype,
+                      std::vector<Variable *>>())
 
         ;
 }
-
-
-
-
-
-
-
-

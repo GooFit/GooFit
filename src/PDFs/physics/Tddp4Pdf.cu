@@ -144,8 +144,8 @@ __device__ fptype device_TDDP4(fptype *evt, fptype *p, unsigned int *indices) {
     AmpA *= _SqWStoRSrate;
     /*printf("%i read time: %.5g x: %.5g y: %.5g \n",evtNum, _time, _xmixing, _ymixing);*/
 
-    fptype term1                  = thrust::norm(AmpA) + thrust::norm(AmpB);
-    fptype term2                  = thrust::norm(AmpA) - thrust::norm(AmpB);
+    fptype term1    = thrust::norm(AmpA) + thrust::norm(AmpB);
+    fptype term2    = thrust::norm(AmpA) - thrust::norm(AmpB);
     fpcomplex term3 = AmpA * thrust::conj(AmpB);
     // printf("%i dev %.7g %.7g %.7g %.7g\n", evtNum, norm2(AmpA), norm2(AmpB), term3.real, term3.imag);
 
@@ -480,19 +480,11 @@ __host__ void TDDP4::setDataSize(unsigned int dataSize, unsigned int evtSize) {
     cachedResSF = new thrust::device_vector<fpcomplex>(
         dataSize * (components.size() + SpinFactors.size() - 1)); //   -1 because 1 component is efficiency
     void *dummy = thrust::raw_pointer_cast(cachedResSF->data());
-    MEMCPY_TO_SYMBOL(cResSF_TD,
-                     &dummy,
-                     sizeof(fpcomplex *),
-                     cacheToUse * sizeof(fpcomplex *),
-                     cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(cResSF_TD, &dummy, sizeof(fpcomplex *), cacheToUse * sizeof(fpcomplex *), cudaMemcpyHostToDevice);
 
     cachedAMPs   = new thrust::device_vector<fpcomplex>(dataSize * (AmpCalcs.size()));
     void *dummy2 = thrust::raw_pointer_cast(cachedAMPs->data());
-    MEMCPY_TO_SYMBOL(Amps_TD,
-                     &dummy2,
-                     sizeof(fpcomplex *),
-                     cacheToUse * sizeof(fpcomplex *),
-                     cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(Amps_TD, &dummy2, sizeof(fpcomplex *), cacheToUse * sizeof(fpcomplex *), cudaMemcpyHostToDevice);
 
     setForceIntegrals();
 }
@@ -1073,10 +1065,10 @@ operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const {
     unsigned int *indices = paramIndices + _parameters;
     unsigned int totalAMP = indices[5];
 
-    unsigned int evtNum             = thrust::get<0>(t);
-    unsigned int MCevents           = thrust::get<1>(t);
-    fptype *SFnorm                  = thrust::get<2>(t) + evtNum;
-    fpcomplex *LSnorm = thrust::get<3>(t) + evtNum;
+    unsigned int evtNum   = thrust::get<0>(t);
+    unsigned int MCevents = thrust::get<1>(t);
+    fptype *SFnorm        = thrust::get<2>(t) + evtNum;
+    fpcomplex *LSnorm     = thrust::get<3>(t) + evtNum;
 
     fpcomplex AmpA(0, 0);
     fpcomplex AmpB(0, 0);
@@ -1121,24 +1113,20 @@ operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const {
 
         switch(flag) {
         case 0:
-            amp_A = fpcomplex(cudaArray[indices[12 + 2 * (amp + k)]],
-                                            cudaArray[indices[13 + 2 * (amp + k)]]);
+            amp_A = fpcomplex(cudaArray[indices[12 + 2 * (amp + k)]], cudaArray[indices[13 + 2 * (amp + k)]]);
             AmpA += ret2 * amp_A;
             break;
 
         case 1:
-            amp_B = fpcomplex(cudaArray[indices[12 + 2 * (amp + k)]],
-                                            cudaArray[indices[13 + 2 * (amp + k)]]);
+            amp_B = fpcomplex(cudaArray[indices[12 + 2 * (amp + k)]], cudaArray[indices[13 + 2 * (amp + k)]]);
             AmpB += ret2 * amp_B;
             break;
 
         case 2:
-            amp_A = fpcomplex(cudaArray[indices[12 + 2 * (amp + k)]],
-                                            cudaArray[indices[13 + 2 * (amp + k)]]);
+            amp_A = fpcomplex(cudaArray[indices[12 + 2 * (amp + k)]], cudaArray[indices[13 + 2 * (amp + k)]]);
             AmpA += ret2 * amp_A;
             ++k;
-            amp_B = fpcomplex(cudaArray[indices[12 + 2 * (amp + k)]],
-                                            cudaArray[indices[13 + 2 * (amp + k)]]);
+            amp_B = fpcomplex(cudaArray[indices[12 + 2 * (amp + k)]], cudaArray[indices[13 + 2 * (amp + k)]]);
             AmpB += ret2 * amp_B;
             break;
         }

@@ -30,11 +30,11 @@ void init_Variable(py::module &m) {
         .def_property("fixed", &Variable::IsFixed, &Variable::setFixed)
         //.def_property("blind", &Variable::b, &Variable::setBlind)
         .def("__repr__", [](const Variable &v) { return "<Variable: {}>"_format(v.getName()); })
-        .def("__str__", [](const Variable &v) {
-            std::stringstream os;
-            os << v;
-            return os.str();
-        })
-        .def("__bool__", &Variable::operator bool)
-    ;
+        .def("__str__",
+             [](const Variable &v) {
+                 std::stringstream os;
+                 os << v;
+                 return os.str();
+             })
+        .def("__bool__", &Variable::operator bool);
 }

@@ -78,8 +78,7 @@ __host__ TrigThresholdPdf::TrigThresholdPdf(
 
     if(upper) {
         GET_FUNCTION_ADDR(ptr_to_TrigThresholdUpper);
-    }
-    else {
+    } else {
         GET_FUNCTION_ADDR(ptr_to_TrigThresholdLower);
     }
 

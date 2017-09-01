@@ -8,15 +8,7 @@ namespace py = pybind11;
 
 void init_TrigThresholdPdf(py::module &m) {
     py::class_<TrigThresholdPdf, GooPdf>(m, "TrigThresholdPdf")
-        .def(py::init<std::string, Variable*, Variable*, Variable*, Variable*>())
-        .def(py::init<std::string, Variable*, Variable*, Variable*, Variable*,  bool>())
-        .def(py::init<std::string, Variable*, Variable*, Variable*, Variable*, Variable*, Variable*, bool>())
-        ;
+        .def(py::init<std::string, Variable *, Variable *, Variable *, Variable *>())
+        .def(py::init<std::string, Variable *, Variable *, Variable *, Variable *, bool>())
+        .def(py::init<std::string, Variable *, Variable *, Variable *, Variable *, Variable *, Variable *, bool>());
 }
-
-
-
-
-
-
-

@@ -74,9 +74,8 @@ class DPPdf : public GooPdf {
     int MCevents;
     // Following variables are useful if masses and widths, involved in difficult BW calculation,
     // change infrequently while amplitudes, only used in adding BW results together, change rapidly.
-    thrust::device_vector<fpcomplex> *cachedResSF{
-        nullptr}; // Caches the BW values and Spins for each event.
-    thrust::device_vector<fpcomplex> *cachedAMPs{nullptr}; // cache Amplitude values for each event.
+    thrust::device_vector<fpcomplex> *cachedResSF{nullptr}; // Caches the BW values and Spins for each event.
+    thrust::device_vector<fpcomplex> *cachedAMPs{nullptr};  // cache Amplitude values for each event.
 
     mutable bool generation_no_norm{false};
     mutable bool SpinsCalculated{false};
@@ -154,8 +153,7 @@ class AmpCalc : public thrust::unary_function<unsigned int, fpcomplex> {
     unsigned int _parameters;
 };
 
-class NormIntegrator
-    : public thrust::unary_function<thrust::tuple<int, int, fptype *, fpcomplex *>, fptype> {
+class NormIntegrator : public thrust::unary_function<thrust::tuple<int, int, fptype *, fpcomplex *>, fptype> {
   public:
     NormIntegrator(unsigned int pIdx);
     __device__ fptype operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const;

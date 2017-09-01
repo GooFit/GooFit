@@ -131,11 +131,8 @@ __host__ void IncoherentSumPdf::setDataSize(unsigned int dataSize, unsigned int 
     numEntries       = dataSize;
     cachedResonances = new thrust::device_vector<fpcomplex>(dataSize * decayInfo->resonances.size());
     void *dummy      = thrust::raw_pointer_cast(cachedResonances->data());
-    MEMCPY_TO_SYMBOL(cResonanceValues,
-                     &dummy,
-                     sizeof(fpcomplex *),
-                     cacheToUse * sizeof(fpcomplex *),
-                     cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(
+        cResonanceValues, &dummy, sizeof(fpcomplex *), cacheToUse * sizeof(fpcomplex *), cudaMemcpyHostToDevice);
     setForceIntegrals();
 }
 
@@ -292,8 +289,7 @@ SpecialIncoherentResonanceCalculator::SpecialIncoherentResonanceCalculator(int p
     : resonance_i(res_idx)
     , parameters(pIdx) {}
 
-__device__ fpcomplex SpecialIncoherentResonanceCalculator::
-operator()(thrust::tuple<int, fptype *, int> t) const {
+__device__ fpcomplex SpecialIncoherentResonanceCalculator::operator()(thrust::tuple<int, fptype *, int> t) const {
     // Returns the BW, or other resonance function, for a specific resonance.
     // Is special because the value is expected to change slowly, so it's
     // useful to cache the result.
@@ -316,9 +312,9 @@ operator()(thrust::tuple<int, fptype *, int> t) const {
 
     int parameter_i
         = parIndexFromResIndex_incoherent(resonance_i); // Find position of this resonance relative to TDDP start
-    unsigned int functn_i       = indices[parameter_i + 2];
-    unsigned int params_i       = indices[parameter_i + 3];
-    fpcomplex ret = getResonanceAmplitude(m12, m13, m23, functn_i, params_i);
+    unsigned int functn_i = indices[parameter_i + 2];
+    unsigned int params_i = indices[parameter_i + 3];
+    fpcomplex ret         = getResonanceAmplitude(m12, m13, m23, functn_i, params_i);
 
     return ret;
 }

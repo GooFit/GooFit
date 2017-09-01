@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
     gStyle->SetFuncWidth(1);
     gStyle->SetLineWidth(1);
     gStyle->SetLineColor(1);
-    if(ROOT_VERSION_CODE < ROOT_VERSION(6,6,0))
+    if(ROOT_VERSION_CODE < ROOT_VERSION(6, 6, 0))
         gStyle->SetPalette(kRainBow, 0);
     else
         gStyle->SetPalette(kViridis, 0);
@@ -112,7 +112,7 @@ int main(int argc, char **argv) {
     xpdfHist.SetStats(false);
     ypdfHist.SetStats(false);
 
-    UnbinnedDataSet grid                     = total.makeGrid();
+    UnbinnedDataSet grid = total.makeGrid();
     total.setData(&grid);
     std::vector<std::vector<double>> pdfVals = total.getCompProbsAtDataPoints();
 

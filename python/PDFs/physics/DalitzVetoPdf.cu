@@ -7,14 +7,4 @@
 using namespace GooFit;
 namespace py = pybind11;
 
-void init_DalitzVetoPdf(py::module &m) {
-    py::class_<DalitzVetoPdf, GooPdf>(m, "DalitzVetoPdf");
-
-}
-
-
-
-
-
-
-
+void init_DalitzVetoPdf(py::module &m) { py::class_<DalitzVetoPdf, GooPdf>(m, "DalitzVetoPdf"); }

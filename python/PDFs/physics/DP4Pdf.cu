@@ -12,13 +12,5 @@ namespace py = pybind11;
 void init_DP4Pdf(py::module &m) {
     py::class_<DPPdf, GooPdf>(m, "DPPdf")
         .def(py::init<std::string, std::vector<Variable *>, DecayInfo_DP *, GooPdf *>())
-        .def(py::init<std::string, std::vector<Variable *>, DecayInfo_DP *, GooPdf *, unsigned int>())
-        ;
+        .def(py::init<std::string, std::vector<Variable *>, DecayInfo_DP *, GooPdf *, unsigned int>());
 }
-
-
-
-
-
-
-

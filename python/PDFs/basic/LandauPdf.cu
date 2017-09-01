@@ -7,12 +7,5 @@ using namespace GooFit;
 namespace py = pybind11;
 
 void init_LandauPdf(py::module &m) {
-    py::class_<LandauPdf, GooPdf>(m, "LandauPdf")
-        .def(py::init<std::string, Variable*, Variable*, Variable*>())
-        ;
+    py::class_<LandauPdf, GooPdf>(m, "LandauPdf").def(py::init<std::string, Variable *, Variable *, Variable *>());
 }
-
-
-
-
-

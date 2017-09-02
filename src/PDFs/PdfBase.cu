@@ -132,12 +132,9 @@ __host__ void PdfBase::setIndices() {
     // std::cout << std::endl;
 }
 
-__host__ DataSet* PdfBase::getData() {
-    return data_;
-}
+__host__ DataSet *PdfBase::getData() { return data_; }
 
 __host__ void PdfBase::setData(DataSet *data) {
-
     if(dev_event_array) {
         gooFree(dev_event_array);
         cudaDeviceSynchronize();

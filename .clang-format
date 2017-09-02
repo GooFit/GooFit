@@ -71,7 +71,7 @@ KeepEmptyLinesAtTheStartOfBlocks: false
 # ReflowComments:  true
 SortIncludes:    false
 # SpaceAfterCStyleCast: false
-SpaceAfterTemplateKeyword: false
+# SpaceAfterTemplateKeyword: false
 # SpaceBeforeAssignmentOperators: true
 SpaceBeforeParens: Never
 # SpaceInEmptyParentheses: false

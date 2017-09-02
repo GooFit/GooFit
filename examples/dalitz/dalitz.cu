@@ -259,7 +259,8 @@ DalitzPlotPdf *makeSignalPdf(GooPdf *eff = 0) {
         1,
         PAIR_13);
 
-    ResonancePdf *f0_980 = new ResonancePdf("f0_980", ResPdfType::RBW,
+    ResonancePdf *f0_980 = new ResonancePdf("f0_980",
+                                            ResPdfType::RBW,
                                             fixAmps ? new Variable("f0_980_amp_real", 0.008 * (-_mD02))
                                                     : new Variable("f0_980_amp_real", 0.008 * (-_mD02), 0.001, 0, 0),
                                             fixAmps ? new Variable("f0_980_amp_imag", -0.013 * (-_mD02))
@@ -269,7 +270,8 @@ DalitzPlotPdf *makeSignalPdf(GooPdf *eff = 0) {
                                             0,
                                             PAIR_23);
 
-    ResonancePdf *f0_1370 = new ResonancePdf("f0_1370", ResPdfType::RBW,
+    ResonancePdf *f0_1370 = new ResonancePdf("f0_1370",
+                                             ResPdfType::RBW,
                                              fixAmps ? new Variable("f0_1370_amp_real", -0.058 * (-_mD02))
                                                      : new Variable("f0_1370_amp_real", -0.058 * (-_mD02), 0.001, 0, 0),
                                              fixAmps ? new Variable("f0_1370_amp_imag", 0.026 * (-_mD02))
@@ -279,7 +281,8 @@ DalitzPlotPdf *makeSignalPdf(GooPdf *eff = 0) {
                                              0,
                                              PAIR_23);
 
-    ResonancePdf *f0_1500 = new ResonancePdf("f0_1500", ResPdfType::RBW,
+    ResonancePdf *f0_1500 = new ResonancePdf("f0_1500",
+                                             ResPdfType::RBW,
                                              fixAmps ? new Variable("f0_1500_amp_real", 0.057 * (-_mD02))
                                                      : new Variable("f0_1500_amp_real", 0.057 * (-_mD02), 0.001, 0, 0),
                                              fixAmps ? new Variable("f0_1500_amp_imag", 0.012 * (-_mD02))
@@ -289,7 +292,8 @@ DalitzPlotPdf *makeSignalPdf(GooPdf *eff = 0) {
                                              0,
                                              PAIR_23);
 
-    ResonancePdf *f0_1710 = new ResonancePdf("f0_1710", ResPdfType::RBW,
+    ResonancePdf *f0_1710 = new ResonancePdf("f0_1710",
+                                             ResPdfType::RBW,
                                              fixAmps ? new Variable("f0_1710_amp_real", 0.070 * (-_mD02))
                                                      : new Variable("f0_1710_amp_real", 0.070 * (-_mD02), 0.001, 0, 0),
                                              fixAmps ? new Variable("f0_1710_amp_imag", 0.087 * (-_mD02))
@@ -300,7 +304,8 @@ DalitzPlotPdf *makeSignalPdf(GooPdf *eff = 0) {
                                              PAIR_23);
 
     ResonancePdf *f2_1270
-        = new ResonancePdf("f2_1270", ResPdfType::RBW,
+        = new ResonancePdf("f2_1270",
+                           ResPdfType::RBW,
                            fixAmps ? new Variable("f2_1270_amp_real", -1.027 * (-_mD02inv))
                                    : new Variable("f2_1270_amp_real", -1.027 * (-_mD02inv), 0.001, 0, 0),
                            fixAmps ? new Variable("f2_1270_amp_imag", -0.162 * (-_mD02inv))
@@ -310,7 +315,8 @@ DalitzPlotPdf *makeSignalPdf(GooPdf *eff = 0) {
                            2,
                            PAIR_23);
 
-    ResonancePdf *f0_600 = new ResonancePdf("f0_600", ResPdfType::RBW,
+    ResonancePdf *f0_600 = new ResonancePdf("f0_600",
+                                            ResPdfType::RBW,
                                             fixAmps ? new Variable("f0_600_amp_real", 0.068 * (-_mD02))
                                                     : new Variable("f0_600_amp_real", 0.068 * (-_mD02), 0.001, 0, 0),
                                             fixAmps ? new Variable("f0_600_amp_imag", 0.010 * (-_mD02))
@@ -320,7 +326,8 @@ DalitzPlotPdf *makeSignalPdf(GooPdf *eff = 0) {
                                             0,
                                             PAIR_23);
 
-    ResonancePdf *nonr = new ResonancePdf("nonr", ResPdfType::NONRES,
+    ResonancePdf *nonr = new ResonancePdf("nonr",
+                                          ResPdfType::NONRES,
                                           fixAmps ? new Variable("nonr_amp_real", 0.5595 * (-1))
                                                   : new Variable("nonr_amp_real", 0.5595 * (-1), 0.001, 0, 0),
                                           fixAmps ? new Variable("nonr_amp_imag", -0.108761 * (-1))

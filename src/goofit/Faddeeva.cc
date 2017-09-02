@@ -53,9 +53,9 @@ fpcomplex Faddeeva_2(const fpcomplex &z) {
     if(s < 1e-7) {
         // use Pade approximation
         fpcomplex zz = z * z;
-        v                          = exp(zz);
-        c                          = C[0];
-        d2                         = D[0];
+        v            = exp(zz);
+        c            = C[0];
+        d2           = D[0];
 
         for(i = 1; i <= 6; i++) {
             c  = c * zz + C[i];

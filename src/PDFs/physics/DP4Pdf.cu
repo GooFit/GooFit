@@ -58,7 +58,7 @@ __device__ fptype device_DP(fptype *evt, fptype *p, unsigned int *indices) {
         fpcomplex amp{p[indices[6 + 2 * i]], p[indices[7 + 2 * i]]};
 
         fpcomplex matrixelement((Amps_DP[cacheToUse][evtNum * numAmps + i]).real(),
-                                              (Amps_DP[cacheToUse][evtNum * numAmps + i]).imag());
+                                (Amps_DP[cacheToUse][evtNum * numAmps + i]).imag());
 
         totalAmp += matrixelement * amp;
     }
@@ -287,19 +287,11 @@ __host__ void DPPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) {
     cachedResSF = new thrust::device_vector<fpcomplex>(
         dataSize * (components.size() + SpinFactors.size() - 1)); //   -1 because 1 component is efficiency
     void *dummy = thrust::raw_pointer_cast(cachedResSF->data());
-    MEMCPY_TO_SYMBOL(cResSF,
-                     &dummy,
-                     sizeof(fpcomplex *),
-                     cacheToUse * sizeof(fpcomplex *),
-                     cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(cResSF, &dummy, sizeof(fpcomplex *), cacheToUse * sizeof(fpcomplex *), cudaMemcpyHostToDevice);
 
     cachedAMPs   = new thrust::device_vector<fpcomplex>(dataSize * (AmpCalcs.size()));
     void *dummy2 = thrust::raw_pointer_cast(cachedAMPs->data());
-    MEMCPY_TO_SYMBOL(Amps_DP,
-                     &dummy2,
-                     sizeof(fpcomplex *),
-                     cacheToUse * sizeof(fpcomplex *),
-                     cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(Amps_DP, &dummy2, sizeof(fpcomplex *), cacheToUse * sizeof(fpcomplex *), cudaMemcpyHostToDevice);
 
     setForceIntegrals();
 }
@@ -795,10 +787,10 @@ __device__ fptype NormIntegrator::operator()(thrust::tuple<int, int, fptype *, f
     unsigned int *indices = paramIndices + _parameters;
     unsigned int totalAMP = indices[5];
 
-    unsigned int evtNum             = thrust::get<0>(t);
-    unsigned int MCevents           = thrust::get<1>(t);
-    fptype *SFnorm                  = thrust::get<2>(t) + evtNum;
-    fpcomplex *LSnorm = thrust::get<3>(t) + evtNum;
+    unsigned int evtNum   = thrust::get<0>(t);
+    unsigned int MCevents = thrust::get<1>(t);
+    fptype *SFnorm        = thrust::get<2>(t) + evtNum;
+    fpcomplex *LSnorm     = thrust::get<3>(t) + evtNum;
 
     fpcomplex returnVal(0, 0);
 

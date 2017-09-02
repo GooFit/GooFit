@@ -58,7 +58,6 @@ void init_TruthResolution(py::module &);
 // Utilities
 void init_VariableBinTransform1DPdf(py::module &);
 
-
 PYBIND11_MODULE(_goofit, m) {
     m.doc() = "Python interface for GooFit";
 
@@ -92,7 +91,7 @@ PYBIND11_MODULE(_goofit, m) {
     init_StepPdf(m);
     init_TrigThresholdPdf(m);
     init_VoigtianPdf(m);
-    
+
     // Combine
     init_AddPdf(m);
     init_CompositePdf(m);
@@ -100,7 +99,7 @@ PYBIND11_MODULE(_goofit, m) {
     init_EventWeightedAddPdf(m);
     init_MappedPdf(m);
     init_ProdPdf(m);
-    
+
     // Physics
     init_DalitzPlotPdf(m);
     init_DalitzVetoPdf(m);

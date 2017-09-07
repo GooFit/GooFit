@@ -381,7 +381,9 @@ function(goofit_add_library GNAME)
         target_compile_options(${GNAME} PUBLIC -x c++)
     endif()
     target_link_libraries(${GNAME} rang CLI11 fmt goofit_mt)
-    set_target_properties(${GNAME} PROPERTIES FOLDER core)
+    if(NOT ${GNAME} STREQUAL PDFs)
+        set_target_properties(${GNAME} PROPERTIES FOLDER core)
+    endif()
 
     set_target_properties(${GNAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION ${SUPPORTS_IPO})
 

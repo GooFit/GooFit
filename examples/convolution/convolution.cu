@@ -7,6 +7,9 @@
 #include "goofit/PDFs/combine/ConvolutionPdf.h"
 
 #include "TRandom.h"
+#include "TCanvas.h"
+#include "TH1.h"
+#include "TFile.h"
 
 using namespace std;
 using namespace GooFit;
@@ -68,6 +71,11 @@ int main(int argc, char **argv) {
 
     FitManager fitter(&convolution);
     fitter.fit();
+
+    TFile f("output.root", "RECREATE");
+    auto toroot = convolution.plotToROOT(&xvar);
+    toroot->Write();
+    f.Write();
 
     return fitter;
 }

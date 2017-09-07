@@ -430,71 +430,73 @@ __device__ fpcomplex Flatte_MINT(fptype Mpair, fptype m1, fptype m2, unsigned in
     return BW;
 }
 
+__device__ __thrust_forceinline__ fptype Q2(fptype Msq, fptype M1sq, fptype M2sq) {
+    return (Msq / 4. - (M1sq + M2sq) / 2. + (M1sq - M2sq) * (M1sq - M2sq) / (4 * Msq));
+}
+
+__device__ __thrust_forceinline__ fptype BlattWeisskopf_Norm(const fptype z2, const fptype z02, unsigned int L) {
+    if(L == 0)
+        return 1;
+    else if(L == 1)
+        return (1 + z02) / (1 + z2);
+    else if(L == 2)
+        return (z02 * z02 + 3 * z02 + 9) / (z2 * z2 + 3 * z2 + 9);
+    else {
+        abort(__FILE__, __LINE__, "Wrong value of L");
+        return 0; // Can't reach
+    }
+}
+
+__device__ fptype getSpline(fptype x, unsigned int *indices) {
+    const fptype s_min       = GOOFIT_GET_CONST(8);
+    const fptype s_max       = GOOFIT_GET_CONST(9);
+    const unsigned int nBins = GOOFIT_GET_INT(10);
+
+    // 11 is the first spine knot, 11+nBins is the first curvature
+
+    if(x <= s_min)
+        return GOOFIT_GET_PARAM(11 + 0);
+    if(x >= s_max)
+        return GOOFIT_GET_PARAM(11 + nBins - 1);
+
+    fptype spacing = (s_max - s_min) / (nBins - 1.);
+    fptype dx      = fmod((x - s_min), spacing);
+
+    auto bin = static_cast<unsigned int>((x - s_min) / spacing);
+
+    fptype m_x_0  = GOOFIT_GET_PARAM(11 + bin);
+    fptype m_x_1  = GOOFIT_GET_PARAM(11 + bin + 1);
+    fptype m_xf_0 = GOOFIT_GET_PARAM(11 + bin + nBins);
+    fptype m_xf_1 = GOOFIT_GET_PARAM(11 + bin + nBins + 1);
+
+    return m_x_0 + dx * ((m_x_1 - m_x_0) / spacing - (m_xf_1 + 2 * m_xf_0) * spacing / 6) + dx * dx * m_xf_0
+           + dx * dx * dx * (m_xf_1 - m_xf_0) / (6 * spacing);
+}
+
+__device__ fptype kFactor(fptype mass, fptype width) {
+    fptype gamma = mass * sqrt(POW2(mass) + POW2(width));
+    fptype k     = 2 * sqrt(2) * mass * width * gamma / (M_PI * sqrt(POW2(mass) + gamma));
+    return sqrt(k);
+}
+
 __device__ fpcomplex Spline_TDP(fptype Mpair, fptype m1, fptype m2, unsigned int *indices) {
-    fpcomplex ret(0, 0);
+    const fptype mass    = GOOFIT_GET_PARAM(2);
+    const fptype width   = GOOFIT_GET_PARAM(3);
+    const unsigned int L = GOOFIT_GET_INT(4);
+    const fptype radius  = GOOFIT_GET_CONST(7);
 
-    const unsigned int nKnobs = indices[4]; // orbital
+    fptype s  = POW2(Mpair);
+    fptype s1 = POW2(m1);
+    fptype s2 = POW2(m2);
 
-    unsigned int idx                 = 5; // Next index
-    unsigned int i                   = 0;
-    const unsigned int pwa_coefs_idx = idx;
-    idx += 2 * nKnobs;
-    const fptype *mKKlimits = &(functorConstants[indices[idx]]);
-    fptype mAB = Mpair, mAC = m1, mBC = m2;
+    fptype q2             = fabs(Q2(s, s1, s2));
+    fptype BF             = BlattWeisskopf_Norm(q2 * POW2(radius), 0, L);
+    fptype runningWidthRe = width * getSpline(s, indices);
+    fptype norm           = kFactor(mass, width) * sqrt(BF);
+    fpcomplex iBW         = POW2(mass) - s - fpcomplex(0, mass) * runningWidthRe;
+    fpcomplex BW          = norm / iBW;
 
-    int khiAB = 0, khiAC = 0;
-    fptype dmKK, aa, bb, aa3, bb3;
-    unsigned int timestorun = 1; //+doSwap;
-    while(khiAB < nKnobs) {
-        if(mAB < mKKlimits[khiAB])
-            break;
-        khiAB++;
-    }
-
-    if(khiAB <= 0 || khiAB == nKnobs)
-        timestorun = 0;
-    while(khiAC < nKnobs) {
-        if(mAC < mKKlimits[khiAC])
-            break;
-        khiAC++;
-    }
-
-    if(khiAC <= 0 || khiAC == nKnobs)
-        timestorun = 0;
-
-    for(i = 0; i < timestorun; i++) {
-        unsigned int kloAB                = khiAB - 1; //, kloAC = khiAC -1;
-        unsigned int twokloAB             = kloAB + kloAB;
-        unsigned int twokhiAB             = khiAB + khiAB;
-        fptype pwa_coefs_real_kloAB       = cudaArray[indices[pwa_coefs_idx + twokloAB]];
-        fptype pwa_coefs_real_khiAB       = cudaArray[indices[pwa_coefs_idx + twokhiAB]];
-        fptype pwa_coefs_imag_kloAB       = cudaArray[indices[pwa_coefs_idx + twokloAB + 1]];
-        fptype pwa_coefs_imag_khiAB       = cudaArray[indices[pwa_coefs_idx + twokhiAB + 1]];
-        fptype pwa_coefs_prime_real_kloAB = 0; // cDeriatives[twokloAB];
-        fptype pwa_coefs_prime_real_khiAB = 0; // cDeriatives[twokhiAB];
-        fptype pwa_coefs_prime_imag_kloAB = 0; // cDeriatives[twokloAB+1];
-        fptype pwa_coefs_prime_imag_khiAB = 0; // cDeriatives[twokhiAB+1];
-        //  printf("m12: %f: %f %f %f %f %f %f %d %d %d\n", mAB, mKKlimits[0], mKKlimits[nKnobs-1],
-        //  pwa_coefs_real_khiAB, pwa_coefs_imag_khiAB, pwa_coefs_prime_real_khiAB, pwa_coefs_prime_imag_khiAB, khiAB,
-        //  khiAC, timestorun );
-
-        dmKK = mKKlimits[khiAB] - mKKlimits[kloAB];
-        aa   = (mKKlimits[khiAB] - mAB) / dmKK;
-        bb   = 1 - aa;
-        aa3  = aa * aa * aa;
-        bb3  = bb * bb * bb;
-        //  ret += aa * pwa_coefs[kloAB] + bb * pwa_coefs[khiAB] + ((aa3 - aa)*pwa_coefs_prime[kloAB] + (bb3 - bb) *
-        //  pwa_coefs_prime[khiAB]) * (dmKK*dmKK)/6.0;
-        ret.real(ret.real() + aa * pwa_coefs_real_kloAB + bb * pwa_coefs_real_khiAB
-                 + ((aa3 - aa) * pwa_coefs_prime_real_kloAB + (bb3 - bb) * pwa_coefs_prime_real_khiAB) * (dmKK * dmKK)
-                       / 6.0);
-        ret.imag(ret.imag() + aa * pwa_coefs_imag_kloAB + bb * pwa_coefs_imag_khiAB
-                 + ((aa3 - aa) * pwa_coefs_prime_imag_kloAB + (bb3 - bb) * pwa_coefs_prime_imag_khiAB) * (dmKK * dmKK)
-                       / 6.0);
-        khiAB = khiAC;
-        mAB   = mAC;
-    }
-    return ret;
+    return BW;
 }
 
 __device__ fpcomplex nonres_DP(fptype Mpair, fptype m1, fptype m2, unsigned int *indices) {
@@ -533,6 +535,7 @@ Lineshape::Lineshape(std::string name,
                      FF FormFac,
                      fptype radius,
                      std::vector<Variable *> AdditionalVars,
+                     std::vector<Variable *> Curvature,
                      spline_t SplineInfo)
     : GooPdf(nullptr, name)
     , _mass(mass)
@@ -541,6 +544,8 @@ Lineshape::Lineshape(std::string name,
     , _Mpair(Mpair)
     , _kind(kind)
     , _FormFac(FormFac)
+    , _AdditionalVars(AdditionalVars)
+    , _Curvature(Curvature)
     , _SplineInfo(SplineInfo) {
     GOOFIT_START_PDF;
 
@@ -620,13 +625,18 @@ Lineshape::Lineshape(std::string name,
     case LS::Spline:
         if(std::get<2>(_SplineInfo) != AdditionalVars.size())
             throw GeneralError("bins {} != vars {}", std::get<2>(_SplineInfo), AdditionalVars.size());
+        if(std::get<2>(_SplineInfo) != Curvature.size())
+            throw GeneralError("bins {} != vars {}", std::get<2>(_SplineInfo), Curvature.size());
         GOOFIT_ADD_CONST(8, std::get<0>(_SplineInfo), "MinSpline");
         GOOFIT_ADD_CONST(9, std::get<1>(_SplineInfo), "MaxSpline");
-        GOOFIT_ADD_CONST(10, std::get<2>(_SplineInfo), "NSpline");
+        GOOFIT_ADD_INT(10, std::get<2>(_SplineInfo), "NSpline");
         {
             int i = 11;
             for(auto &par : AdditionalVars) {
                 GOOFIT_ADD_PARAM(i++, par, "Knot");
+            }
+            for(auto &par : Curvature) {
+                GOOFIT_ADD_PARAM(i++, par, "CKnot");
             }
         }
 

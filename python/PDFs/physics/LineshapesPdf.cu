@@ -11,21 +11,21 @@ namespace py = pybind11;
 void init_LineshapesPdf(py::module &m) {
 
     py::enum_<LS>(m, "LS", py::arithmetic())
-            .value("", LS::ONE)
-            .value("", LS::BW)
-            .value("", LS::Lass)
-            .value("", LS::Lass_M3)
-            .value("", LS::nonRes)
-            .value("", LS::Bugg)
-            .value("", LS::Bugg3)
-            .value("", LS::Flatte)
-            .value("", LS::SBW);
+            .value("ONE", LS::ONE)
+            .value("BW", LS::BW)
+            .value("Lass", LS::Lass)
+            .value("Lass_M3", LS::Lass_M3)
+            .value("nonRes", LS::nonRes)
+            .value("Bugg", LS::Bugg)
+            .value("Bugg3", LS::Bugg3)
+            .value("Flatte", LS::Flatte)
+            .value("SBW", LS::SBW);
 
     py::enum_<FF>(m, "FF", py::arithmetic())
-            .value("", FF::One)
-            .value("", FF::BL)
-            .value("", FF::BL_Prime)
-            .value("", FF::BL2);
+            .value("One", FF::One)
+            .value("BL", FF::BL)
+            .value("BL_Prime", FF::BL_Prime)
+            .value("BL2", FF::BL2);
 
     py::class_<Lineshape, GooPdf>(m, "Lineshape")
         .def(py::init<std::string,

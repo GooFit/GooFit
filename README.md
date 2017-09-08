@@ -216,6 +216,8 @@ GooFit's development is supported by the National Science Foundation under grant
 and was developed under grant number [1005530]. 
 Any opinions, findings, and conclusions or recommendations expressed in this material are those of the developers
 and do not necessarily reflect the views of the National Science Foundation.
+In addition, we thank the nVidia GPU Grant Program for donating hardware used in developing this framework.
+
 
 [DOI-badge]:         https://zenodo.org/badge/9017446.svg
 [DOI-link]:          https://zenodo.org/badge/latestdoi/9017446

@@ -2,11 +2,13 @@
 #include <pybind11/stl.h>
 
 #include <goofit/PDFs/physics/LineshapesPdf.h>
+#include <goofit/PDFs/physics/SpinFactors.h>
 #include <goofit/PDFs/physics/ResonancePdf.h>
 #include <goofit/Variable.h>
 
 using namespace GooFit;
 namespace py = pybind11;
+using namespace pybind11::literals;
 
 void init_LineshapesPdf(py::module &m) {
 
@@ -36,7 +38,36 @@ void init_LineshapesPdf(py::module &m) {
                       LS,
                       FF,
                       fptype,
-                      std::vector<Variable *>>())
+                      std::vector<Variable *>,
+                      Lineshape::spline_t>(),
+             
 
+                "name"_a,
+                "mass"_a,
+                "width"_a,
+                "L"_a,
+                "Mpair"_a,
+                "kind"_a = LS::BW,
+                "FormFac"_a = FF::BL_Prime,
+                "radius"_a = 1.5,
+                "AdditionalVars"_a = std::vector<Variable *>(),
+                "SpineInfo"_a = Lineshape::spline_t(0.0, 0.0, 0))
         ;
+    
+    py::class_<Amplitude>(m, "Amplitude")
+        .def(py::init<std::string, Variable *, Variable *,
+                  std::vector<Lineshape *>,
+                  std::vector<SpinFactor *>,
+                  unsigned int>(),
+         "uniqueDecayStr"_a,
+         "ar"_a,
+         "ai"_a,
+         "LS"_a,
+         "SF"_a,
+         "nPerm"_a = 1,
+             py::keep_alive<1, 3>(),
+             py::keep_alive<1, 4>())
+    ;
+    
+    
 }

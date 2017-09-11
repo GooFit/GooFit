@@ -447,7 +447,7 @@ __device__ __thrust_forceinline__ fptype BlattWeisskopf_Norm(const fptype z2, co
     }
 }
 
-__device__ fptype getSpline(fptype x, unsigned int *indices) {
+__device__ fptype getSpline(fptype x, bool continued, unsigned int *indices) {
     const fptype s_min       = GOOFIT_GET_CONST(8);
     const fptype s_max       = GOOFIT_GET_CONST(9);
     const unsigned int nBins = GOOFIT_GET_INT(10);
@@ -455,9 +455,9 @@ __device__ fptype getSpline(fptype x, unsigned int *indices) {
     // 11 is the first spine knot, 11+nBins is the first curvature
 
     if(x <= s_min)
-        return GOOFIT_GET_PARAM(11 + 0);
+        return continued ? GOOFIT_GET_PARAM(11 + 0) : 0;
     if(x >= s_max)
-        return GOOFIT_GET_PARAM(11 + nBins - 1);
+        return continued ? GOOFIT_GET_PARAM(11 + nBins - 1) : 0;
 
     fptype spacing = (s_max - s_min) / (nBins - 1.);
     fptype dx      = fmod((x - s_min), spacing);
@@ -482,21 +482,28 @@ __device__ fptype kFactor(fptype mass, fptype width) {
 __device__ fpcomplex Spline_TDP(fptype Mpair, fptype m1, fptype m2, unsigned int *indices) {
     const fptype mass    = GOOFIT_GET_PARAM(2);
     const fptype width   = GOOFIT_GET_PARAM(3);
-    const unsigned int L = GOOFIT_GET_INT(4);
+    //const unsigned int L = GOOFIT_GET_INT(4);
     const fptype radius  = GOOFIT_GET_CONST(7);
 
     fptype s  = POW2(Mpair);
     fptype s1 = POW2(m1);
     fptype s2 = POW2(m2);
 
+    // This is GSpline.EFF in AmpGen
+    
     fptype q2             = fabs(Q2(s, s1, s2));
-    fptype BF             = BlattWeisskopf_Norm(q2 * POW2(radius), 0, L);
-    fptype runningWidthRe = width * getSpline(s, indices);
-    fptype norm           = kFactor(mass, width) * sqrt(BF);
-    fpcomplex iBW         = POW2(mass) - s - fpcomplex(0, mass) * runningWidthRe;
-    fpcomplex BW          = norm / iBW;
-
-    return BW;
+    
+    // Non-EFF
+    // fptype BF             = sqrt( BlattWeisskopf_Norm(q2 * POW2(radius), 0, L));
+    fptype BF = exp(-q2 * POW2(radius) / 2);
+    
+    fptype width_shape = width * getSpline(s, true, indices);
+    fptype width_norm = width * getSpline(POW2(mass), false, indices);
+    
+    fptype norm           = kFactor(mass, width) * BF;
+    fptype running_width  = width*width_shape/width_norm;
+    fpcomplex iBW         = fpcomplex(POW2(mass)-s, -mass*running_width);
+    return norm / iBW;
 }
 
 __device__ fpcomplex nonres_DP(fptype Mpair, fptype m1, fptype m2, unsigned int *indices) {

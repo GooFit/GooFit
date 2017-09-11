@@ -18,31 +18,118 @@ namespace GooFit {
 
 class SpinFactor;
 
-enum class LS { ONE, BW, Lass, Lass_M3, nonRes, Bugg, Bugg3, Flatte, SBW, Spline };
+enum class LS { ONE, BW, Lass, Lass_M3, nonRes, Bugg, Bugg3, Flatte, SBW, Spline, kMatrix};
+    
 // PDG notation for FF
 enum class FF : unsigned int { One = 0, BL, BL_Prime, BL2 };
 
-class Lineshape : public GooPdf {
+/// Service class intended to hold parametrisations of
+/// resonances on Dalitz plots. Don't try to use this
+/// as a standalone PDF! It should only be used as a
+/// component in one of the friend classes. It extends
+/// GooPdf so as to take advantage of the
+/// infrastructure, but will crash if used on its own.
     
-public:
-    using spline_t = std::tuple<fptype, fptype, unsigned int>;
-
-private:
+class Lineshape : public GooPdf {
+protected:
     friend class DPPdf;
     friend class TDDP4;
-    // Service class intended to hold parametrisations of
-    // resonances on Dalitz plots. Don't try to use this
-    // as a standalone PDF! It should only be used as a
-    // component in one of the friend classes. It extends
-    // GooPdf so as to take advantage of the
-    // infrastructure, but will crash if used on its own.
+    
     Variable *_mass;
     Variable *_width;
     unsigned int _L;
     unsigned int _Mpair;
+    
     LS _kind;
     FF _FormFac;
+    
     fptype _radius;
+    
+    std::vector<unsigned int> pindices {0};
+    
+    /// Protected constructor, only for subclasses to use
+    Lineshape(
+        Variable *,
+        std::string name,
+        Variable *mass,
+        Variable *width,
+        unsigned int L,
+        unsigned int Mpair,
+        LS kind,
+        FF FormFac,
+        fptype radius);
+    
+public:
+    /// Construct standard versions
+    Lineshape(std::string name,
+                  Variable *mass,
+                  Variable *width,
+                  unsigned int L,
+                  unsigned int Mpair,
+                  LS kind,
+                  FF FormFac = FF::BL_Prime,
+                  fptype radius = 1.5);
+
+    
+    virtual ~Lineshape() = default;
+    
+    void setConstantIndex(unsigned int idx) { host_indices[parameters + 1] = idx; }
+    
+    bool operator==(const Lineshape &L) const {
+        return  (L.getName() == getName() and L._mass->getValue() == _mass->getValue()
+                           and L._width->getValue() == _width->getValue()
+                           and L._L == _L
+                           and L._Mpair == _Mpair
+                           and L._kind == _kind
+                           and L._FormFac == _FormFac);
+    }
+
+};
+    
+namespace Lineshapes {
+using spline_t = std::tuple<fptype, fptype, unsigned int>;
+    
+class RBW : public Lineshape {
+    public:
+    
+    RBW(std::string name,
+              Variable *mass,
+              Variable *width,
+              unsigned int L,
+              unsigned int Mpair,
+              FF FormFac                             = FF::BL_Prime,
+              fptype radius                          = 1.5);
+    
+    virtual ~RBW() = default;
+        
+};
+    
+class LASS : public Lineshape {
+    
+    protected:
+        
+        
+        std::vector<Variable *> _AdditionalVars;
+        
+    public:
+        
+        LASS(std::string name,
+                Variable *mass,
+                Variable *width,
+                unsigned int L,
+                unsigned int Mpair,
+                FF FormFac,
+                fptype radius,
+                std::vector<Variable *> AdditionalVars);
+        
+        virtual ~LASS() = default;
+        
+    };
+
+class GSpline : public Lineshape {
+
+protected:
+
     std::vector<Variable *> _AdditionalVars;
     std::vector<Variable *> _Curvature;
     
@@ -51,39 +138,22 @@ private:
 
 public:
     
-    Lineshape(std::string name,
+    GSpline(std::string name,
               Variable *mass,
               Variable *width,
               unsigned int L,
               unsigned int Mpair,
-              LS kind                                = LS::BW,
-              FF FormFac                             = FF::BL_Prime,
-              fptype radius                          = 1.5,
-              std::vector<Variable *> AdditionalVars = std::vector<Variable *>(),
-              std::vector<Variable *> Curvatures     = std::vector<Variable *>(),
-              spline_t SplineInfo                     = spline_t(0.0, 0.0, 0));
+              FF FormFac,
+              fptype radius,
+              std::vector<Variable *> AdditionalVars,
+              std::vector<Variable *> Curvatures,
+              spline_t SplineInfo);
 
-    bool operator==(const Lineshape &L) const {
-        if(_AdditionalVars.size() != L._AdditionalVars.size())
-            return false;
-
-        bool addvar = true;
-
-        for(int i = 0; i < _AdditionalVars.size(); ++i) {
-            addvar = addvar and (L._AdditionalVars[i]->getValue() == _AdditionalVars[i]->getValue());
-        }
-
-        return addvar and (L.getName() == getName() and L._mass->getValue() == _mass->getValue()
-                           and L._width->getValue() == _width->getValue()
-                           and L._L == _L
-                           and L._Mpair == _Mpair
-                           and L._kind == _kind
-                           and L._FormFac == _FormFac);
-    }
-    Lineshape(std::string name);
-
-    void setConstantIndex(unsigned int idx) { host_indices[parameters + 1] = idx; }
+    virtual ~GSpline() = default;
+    
 };
+    
+}
 
 class Amplitude {
     friend class DPPdf;

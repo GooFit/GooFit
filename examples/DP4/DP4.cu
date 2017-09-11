@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
     GooFit::Application app("Dalitz 4 daughter example", argc, argv);
 
     // Set all host normalisation just to make sure no errors
-    for(int i                 = 0; i < maxParams; i++)
+    for(int i = 0; i < maxParams; i++)
         host_normalisation[i] = -7;
 
     GOOFIT_PARSE(app, argc, argv);

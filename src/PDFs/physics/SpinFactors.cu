@@ -323,10 +323,10 @@ __device__ fptype DtoAP1_AtoSP2_StoP3P4(fptype *Vecs, unsigned int *indices) {
     gpuLVec pD = pA + P1;
     gpuLVec qD = pA - P1;
 
-// printf("%f, %f, %f, %f\n",P1.GetX(), P1.GetY(), P1.GetZ(), P1.GetE() );
-// printf("%f, %f, %f, %f\n",P2.GetX(), P2.GetY(), P2.GetZ(), P2.GetE() );
-// printf("%f, %f, %f, %f\n",P3.GetX(), P3.GetY(), P3.GetZ(), P3.GetE() );
-// printf("%f, %f, %f, %f\n",P4.GetX(), P4.GetY(), P4.GetZ(), P4.GetE() );
+    // printf("%f, %f, %f, %f\n",P1.GetX(), P1.GetY(), P1.GetZ(), P1.GetE() );
+    // printf("%f, %f, %f, %f\n",P2.GetX(), P2.GetY(), P2.GetZ(), P2.GetE() );
+    // printf("%f, %f, %f, %f\n",P3.GetX(), P3.GetY(), P3.GetZ(), P3.GetE() );
+    // printf("%f, %f, %f, %f\n",P4.GetX(), P4.GetY(), P4.GetZ(), P4.GetE() );
 
 #ifdef ZEMACH
     ZTspin1 LD(qD, pD, pD.M());
@@ -432,7 +432,7 @@ __device__ fptype DtoTP1_TtoVP2_VtoP3P4(fptype *Vecs, unsigned int *indices) {
     ZTspin2 t2T(qT, pT, pT.M());
     ZTspin1 tV(qV, pV, pV.M());
 
-// gpuLVec DT(t2T.Contract(qD));
+    // gpuLVec DT(t2T.Contract(qD));
 
 #ifdef ZEMACH
     ZTspin1 tD(qD, pD, pD.M());

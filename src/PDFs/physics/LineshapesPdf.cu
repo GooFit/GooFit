@@ -17,6 +17,8 @@ on the GPU
 
 namespace GooFit {
 
+// Lineshape base
+
 // Form factors as in pdg http://pdg.lbl.gov/2012/reviews/rpp2012-rev-dalitz-analysis-formalism.pdf
 __device__ fptype BL_PRIME(fptype z2, fptype z02, int L) {
     if(0 == L)
@@ -480,29 +482,29 @@ __device__ fptype kFactor(fptype mass, fptype width) {
 }
 
 __device__ fpcomplex Spline_TDP(fptype Mpair, fptype m1, fptype m2, unsigned int *indices) {
-    const fptype mass    = GOOFIT_GET_PARAM(2);
-    const fptype width   = GOOFIT_GET_PARAM(3);
-    //const unsigned int L = GOOFIT_GET_INT(4);
-    const fptype radius  = GOOFIT_GET_CONST(7);
+    const fptype mass  = GOOFIT_GET_PARAM(2);
+    const fptype width = GOOFIT_GET_PARAM(3);
+    // const unsigned int L = GOOFIT_GET_INT(4);
+    const fptype radius = GOOFIT_GET_CONST(7);
 
     fptype s  = POW2(Mpair);
     fptype s1 = POW2(m1);
     fptype s2 = POW2(m2);
 
     // This is GSpline.EFF in AmpGen
-    
-    fptype q2             = fabs(Q2(s, s1, s2));
-    
+
+    fptype q2 = fabs(Q2(s, s1, s2));
+
     // Non-EFF
     // fptype BF             = sqrt( BlattWeisskopf_Norm(q2 * POW2(radius), 0, L));
     fptype BF = exp(-q2 * POW2(radius) / 2);
-    
+
     fptype width_shape = width * getSpline(s, true, indices);
-    fptype width_norm = width * getSpline(POW2(mass), false, indices);
-    
-    fptype norm           = kFactor(mass, width) * BF;
-    fptype running_width  = width*width_shape/width_norm;
-    fpcomplex iBW         = fpcomplex(POW2(mass)-s, -mass*running_width);
+    fptype width_norm  = width * getSpline(POW2(mass), false, indices);
+
+    fptype norm          = kFactor(mass, width) * BF;
+    fptype running_width = width * width_shape / width_norm;
+    fpcomplex iBW        = fpcomplex(POW2(mass) - s, -mass * running_width);
     return norm / iBW;
 }
 
@@ -522,6 +524,19 @@ __device__ fpcomplex nonres_DP(fptype Mpair, fptype m1, fptype m2, unsigned int 
     return fpcomplex(1, 0) * formfactor;
 }
 
+__device__ fpcomplex kMatrix(fptype Mpair, fptype m1, fptype m2, unsigned int *indices) {
+    const fptype mass  = GOOFIT_GET_PARAM(2);
+    const fptype width = GOOFIT_GET_PARAM(3);
+    // const unsigned int L = GOOFIT_GET_INT(4);
+    const fptype radius = GOOFIT_GET_CONST(7);
+
+    fptype s  = POW2(Mpair);
+    fptype s1 = POW2(m1);
+    fptype s2 = POW2(m2);
+
+    return {0., 0.};
+}
+
 __device__ resonance_function_ptr ptr_to_LS_ONE     = LS_ONE;
 __device__ resonance_function_ptr ptr_to_BW_DP4     = BW;
 __device__ resonance_function_ptr ptr_to_lass       = lass_MINT;
@@ -532,18 +547,18 @@ __device__ resonance_function_ptr ptr_to_SBW        = SBW;
 __device__ resonance_function_ptr ptr_to_NONRES_DP  = nonres_DP;
 __device__ resonance_function_ptr ptr_to_Flatte     = Flatte_MINT;
 __device__ resonance_function_ptr ptr_to_Spline     = Spline_TDP;
+__device__ resonance_function_ptr ptr_to_kMatrix    = kMatrix;
 
-Lineshape::Lineshape(std::string name,
+// This constructor is protected
+Lineshape::Lineshape(Variable *,
+                     std::string name,
                      Variable *mass,
                      Variable *width,
                      unsigned int L,
                      unsigned int Mpair,
                      LS kind,
                      FF FormFac,
-                     fptype radius,
-                     std::vector<Variable *> AdditionalVars,
-                     std::vector<Variable *> Curvature,
-                     spline_t SplineInfo)
+                     fptype radius)
     : GooPdf(nullptr, name)
     , _mass(mass)
     , _width(width)
@@ -551,11 +566,7 @@ Lineshape::Lineshape(std::string name,
     , _Mpair(Mpair)
     , _kind(kind)
     , _FormFac(FormFac)
-    , _AdditionalVars(AdditionalVars)
-    , _Curvature(Curvature)
-    , _SplineInfo(SplineInfo) {
-    GOOFIT_START_PDF;
-
+    , _radius(radius) {
     // Making room for index of decay-related constants. Assumption:
     // These are mother mass and three daughter masses in that order.
     // They will be registered by the object that uses this resonance,
@@ -570,16 +581,17 @@ Lineshape::Lineshape(std::string name,
     GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
 
     GOOFIT_ADD_CONST(7, radius, "radius");
+}
 
-    // pindices.push_back(registerParameter(mass));
-    // pindices.push_back(registerParameter(width));
-    // pindices.push_back(L);
-    // pindices.push_back(Mpair);
-    // pindices.push_back(enum_to_underlying(FormFac));
-
-    // pindices.push_back(registerConstants(1));
-    // MEMCPY_TO_SYMBOL(functorConstants, &radius, sizeof(fptype), cIndex * sizeof(fptype), cudaMemcpyHostToDevice);
-
+Lineshape::Lineshape(std::string name,
+                     Variable *mass,
+                     Variable *width,
+                     unsigned int L,
+                     unsigned int Mpair,
+                     LS kind,
+                     FF FormFac,
+                     fptype radius)
+    : Lineshape(nullptr, name, mass, width, L, Mpair, kind, FormFac, radius) {
     switch(kind) {
     case LS::ONE:
         GET_FUNCTION_ADDR(ptr_to_LS_ONE);
@@ -594,19 +606,7 @@ Lineshape::Lineshape(std::string name,
         break;
 
     case LS::Lass_M3:
-        if(5 != AdditionalVars.size()) {
-            fprintf(stderr,
-                    "It seems you forgot to provide the vector with the five necessary variables for GLASS, a, "
-                    "r, phiF, phiR and F (in that order)");
-            exit(0);
-        }
-
-        for(int i = 0; i < 5; i++) {
-            GOOFIT_ADD_PARAM(8 + i, AdditionalVars[i], "LassVars");
-            // pindices.push_back(registerParameter(AdditionalVars[i]));
-        }
-
-        GET_FUNCTION_ADDR(ptr_to_glass3);
+        throw GeneralError("Mint3 GLASS need to be constructed with Lineshapes::LASS");
         break;
 
     case LS::nonRes:
@@ -629,38 +629,85 @@ Lineshape::Lineshape(std::string name,
         GET_FUNCTION_ADDR(ptr_to_Flatte);
         break;
 
-    case LS::Spline:
-        if(std::get<2>(_SplineInfo) != AdditionalVars.size())
-            throw GeneralError("bins {} != vars {}", std::get<2>(_SplineInfo), AdditionalVars.size());
-        if(std::get<2>(_SplineInfo) != Curvature.size())
-            throw GeneralError("bins {} != vars {}", std::get<2>(_SplineInfo), Curvature.size());
-        GOOFIT_ADD_CONST(8, std::get<0>(_SplineInfo), "MinSpline");
-        GOOFIT_ADD_CONST(9, std::get<1>(_SplineInfo), "MaxSpline");
-        GOOFIT_ADD_INT(10, std::get<2>(_SplineInfo), "NSpline");
-        {
-            int i = 11;
-            for(auto &par : AdditionalVars) {
-                GOOFIT_ADD_PARAM(i++, par, "Knot");
-            }
-            for(auto &par : Curvature) {
-                GOOFIT_ADD_PARAM(i++, par, "CKnot");
-            }
-        }
-
-        GET_FUNCTION_ADDR(ptr_to_Spline);
+    case LS::kMatrix:
+        throw GeneralError("kMatricies need to be constructed with Lineshapes::kMatrix");
         break;
 
+    case LS::Spline:
+        throw GeneralError("Splines need to be constructed with Lineshapes::GSpline");
+
     default:
-        throw GeneralError("It seems that the requested lineshape is not implemented yet. Check LineshapesPdf.cu");
+        throw GeneralError(
+            "It seems that the requested lineshape is not part of the general Lineshape class. Check LineshapesPdf.cu");
     }
 
     GOOFIT_FINALIZE_PDF;
 }
 
-Lineshape::Lineshape(std::string name)
-    : GooPdf(nullptr, name) {
-    GOOFIT_START_PDF;
-    GET_FUNCTION_ADDR(ptr_to_NONRES_DP);
+Lineshapes::GSpline::GSpline(std::string name,
+                             Variable *mass,
+                             Variable *width,
+                             unsigned int L,
+                             unsigned int Mpair,
+                             FF FormFac,
+                             fptype radius,
+                             std::vector<Variable *> AdditionalVars,
+                             std::vector<Variable *> Curvature,
+                             spline_t SplineInfo)
+    : Lineshape(nullptr, name, mass, width, L, Mpair, LS::Spline, FormFac, radius)
+    , _AdditionalVars(AdditionalVars)
+    , _Curvature(Curvature)
+    , _SplineInfo(SplineInfo) {
+    if(std::get<2>(_SplineInfo) != AdditionalVars.size())
+        throw GeneralError("bins {} != vars {}", std::get<2>(_SplineInfo), AdditionalVars.size());
+    if(std::get<2>(_SplineInfo) != Curvature.size())
+        throw GeneralError("bins {} != vars {}", std::get<2>(_SplineInfo), Curvature.size());
+    GOOFIT_ADD_CONST(8, std::get<0>(_SplineInfo), "MinSpline");
+    GOOFIT_ADD_CONST(9, std::get<1>(_SplineInfo), "MaxSpline");
+    GOOFIT_ADD_INT(10, std::get<2>(_SplineInfo), "NSpline");
+
+    int i = 11;
+    for(auto &par : AdditionalVars) {
+        GOOFIT_ADD_PARAM(i++, par, "Knot");
+    }
+    for(auto &par : Curvature) {
+        GOOFIT_ADD_PARAM(i++, par, "CKnot");
+    }
+
+    GET_FUNCTION_ADDR(ptr_to_Spline);
+
+    GOOFIT_FINALIZE_PDF;
+}
+
+Lineshapes::LASS::LASS(std::string name,
+                       Variable *mass,
+                       Variable *width,
+                       unsigned int L,
+                       unsigned int Mpair,
+                       FF FormFac,
+                       fptype radius,
+                       std::vector<Variable *> AdditionalVars)
+    : Lineshape(nullptr, name, mass, width, L, Mpair, LS::Lass_M3, FormFac, radius)
+    , _AdditionalVars(AdditionalVars) {
+    if(5 != AdditionalVars.size()) {
+        throw GeneralError("It seems you forgot to provide the vector with the five necessary variables for GLASS, a, "
+                           "r, phiF, phiR and F (in that order)");
+    }
+
+    for(int i = 0; i < 5; i++) {
+        GOOFIT_ADD_PARAM(8 + i, AdditionalVars[i], "LassVars");
+    }
+
+    GET_FUNCTION_ADDR(ptr_to_glass3);
+
+    GOOFIT_FINALIZE_PDF;
+}
+
+Lineshapes::RBW::RBW(
+    std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
+    : Lineshape(nullptr, name, mass, width, L, Mpair, LS::BW, FormFac, radius) {
+    GET_FUNCTION_ADDR(ptr_to_BW_DP4);
+
     GOOFIT_FINALIZE_PDF;
 }
 

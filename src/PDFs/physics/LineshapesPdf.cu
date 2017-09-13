@@ -479,7 +479,7 @@ __device__ fptype getSpline(fptype x, bool continued, unsigned int *indices) {
 
 __device__ fptype kFactor(fptype mass, fptype width) {
     fptype gamma = mass * sqrt(POW2(mass) + POW2(width));
-    fptype k     = 2 * sqrt(2) * mass * width * gamma / (M_PI * sqrt(POW2(mass) + gamma));
+    fptype k     = 2 * sqrt(2.) * mass * width * gamma / (M_PI * sqrt(POW2(mass) + gamma));
     return sqrt(k);
 }
 

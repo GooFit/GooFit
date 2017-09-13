@@ -12,6 +12,8 @@ See *.cu file for more details
 #include "goofit/PDFs/physics/ResonancePdf.h"
 #include "goofit/Variable.h"
 
+#include <array>
+
 #include "goofit/detail/Complex.h"
 
 namespace GooFit {
@@ -102,6 +104,37 @@ class RBW : public Lineshape {
     
     virtual ~RBW() = default;
         
+};
+    
+class kMatrix : public Lineshape {
+public:
+    enum class Channels : unsigned int {
+        pipi=0, KK, pipipipi, EtaEta, EtapEta
+    };
+
+protected:
+    unsigned int pterm;
+    Channels channels;
+    
+public:
+    kMatrix(std::string name,
+        unsigned int pterm,
+        Channels chan,
+        Variable* sA0,
+        Variable* sA,
+        Variable* s0_prod,
+        Variable* s0_scatt,
+        std::array<Variable*, 5> f,
+        std::array<Variable*, 5*6> poles,
+        Variable *mass,
+        Variable *width,
+        unsigned int L,
+        unsigned int Mpair,
+        FF FormFac                             = FF::BL_Prime,
+        fptype radius                          = 1.5);
+    
+    virtual ~kMatrix() = default;
+    
 };
     
 class LASS : public Lineshape {

@@ -324,7 +324,7 @@ target_include_directories(rang INTERFACE "${PROJECT_SOURCE_DIR}/extern/rang/inc
 
 
 add_library(Eigen INTERFACE)
-target_include_directories(Eigen INTERFACE "${PROJECT_SOURCE_DIR}/extern/Eigen/Eigen")
+target_include_directories(Eigen INTERFACE "${PROJECT_SOURCE_DIR}/extern/Eigen")
 
 set(GOOFIT_ROOT_FOUND ROOT_FOUND)
 set(GOOFIT_ARCH_FLAGS ARCH_FLAGS)
@@ -380,7 +380,7 @@ function(goofit_add_library GNAME)
         add_sanitizers(${GNAME})
         target_compile_options(${GNAME} PUBLIC -x c++)
     endif()
-    target_link_libraries(${GNAME} rang CLI11 fmt goofit_mt)
+    target_link_libraries(${GNAME} rang CLI11 fmt goofit_mt Eigen)
     if(NOT ${GNAME} STREQUAL PDFs)
         set_target_properties(${GNAME} PROPERTIES FOLDER core)
     endif()

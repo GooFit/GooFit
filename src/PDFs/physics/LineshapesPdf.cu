@@ -629,7 +629,68 @@ __device__ fpcomplex kMatrixFunction(fptype Mpair, fptype m1, fptype m2, unsigne
         return F(0,pterm)*(1-s0_prod)/(s-s0_prod);
     }
 }
+    
+__device__ fptype phsp_FOCUS(fptype s, fptype m0, fptype m1) {
+    fptype mp = (m0+m1);
+    fptype mm = (m0-m1);
+    fptype a2 = ( 1.0 - mp*mp/s ) * ( 1.0 - mm*mm/s );
+    return sqrt(a2);
 
+}
+
+__device__ fpcomplex FOCUSFunction(fptype Mpair, fptype m1, fptype m2, unsigned int *indices) {
+    fptype s  = POW2(Mpair);
+    unsigned int mod = GOOFIT_GET_INT(8);
+    
+    // mKPlus, mPiPlus, mEtap
+    constexpr fptype sNorm = mKPlus*mKPlus + mPiPlus*mPiPlus;
+    constexpr fptype s12 = 0.23;
+    constexpr fptype s32 = .27;
+    
+    fptype I12_adler = (s - s12) / sNorm ;
+    fptype I32_adler = (s - s32) / sNorm ;
+    
+    fptype rho1 = phsp_FOCUS(s,mKPlus,mPiPlus);
+    fptype rho2 = phsp_FOCUS(s,mKPlus,mEtap);
+    
+    fptype pmass = 1.7919;
+    Eigen::Array<fptype, 2,1> coupling;
+    coupling << 0.31072, -0.02323;
+    fptype X = s/sNorm-1;
+    
+    // constructKMatrix
+    Eigen::Array<fptype, 2,2> kMatrix;
+    
+    kMatrix(0,0) = coupling(0) * coupling(0) / (pmass - s) + 0.79299 - 0.15099*X + 0.00811*POW2(X);
+    kMatrix(1,1) = coupling(1) * coupling(1) / (pmass - s) + 0.17054 - 0.0219*X  + 0.00085655*POW2(X);
+    kMatrix(1,0) = coupling(1) * coupling(0) / (pmass - s) + 0.15040 - 0.038266*X + 0.0022596*POW2(X);
+    kMatrix(0,1) = coupling(0) * coupling(1) / (pmass - s) + 0.15040 - 0.038266*X + 0.0022596*POW2(X);
+    
+    fptype K11 = I12_adler * kMatrix(0,0);
+    fptype K12 = I12_adler * kMatrix(0,1);
+    fptype K22 = I12_adler * kMatrix(1,1);
+    
+    fptype K32 = I32_adler * (-0.22147 + 0.026637*X - 0.00092057*POW2(X));
+    
+    fptype detK = K11*K22 - K12*K12;
+    fpcomplex del{1 - rho1*rho2*detK, -(rho1*K11 + rho2*K22)};
+    
+    fpcomplex T11{1., -rho2*K22};
+    fpcomplex T22{1., -rho1*K11};
+    fpcomplex T12{0., rho2*K12};
+    
+    fpcomplex T32 = 1. / fpcomplex( 1, - K32 * rho1 );
+
+    if(mod==static_cast<unsigned int>(Lineshapes::FOCUS::Mod::Kpi))
+        return fpcomplex(K11,-rho2*detK)/del;
+    else if(mod==static_cast<unsigned int>(Lineshapes::FOCUS::Mod::KEta))
+        return K12 / del;
+    else /*if(mod==Lineshapes::FOCUS::Mod::I32)*/
+        return T32;
+    
+    return {0.,0.};
+}
+    
 __device__ resonance_function_ptr ptr_to_LS_ONE     = LS_ONE;
 __device__ resonance_function_ptr ptr_to_BW_DP4     = BW;
 __device__ resonance_function_ptr ptr_to_lass       = lass_MINT;
@@ -641,6 +702,7 @@ __device__ resonance_function_ptr ptr_to_NONRES_DP  = nonres_DP;
 __device__ resonance_function_ptr ptr_to_Flatte     = Flatte_MINT;
 __device__ resonance_function_ptr ptr_to_Spline     = Spline_TDP;
 __device__ resonance_function_ptr ptr_to_kMatrix    = kMatrixFunction;
+__device__ resonance_function_ptr ptr_to_FOCUS      = FOCUSFunction;
 
 // This constructor is protected
 Lineshape::Lineshape(Variable *,
@@ -802,6 +864,24 @@ Lineshapes::RBW::RBW(
         
     GET_FUNCTION_ADDR(ptr_to_BW_DP4);
         
+    GOOFIT_FINALIZE_PDF;
+}
+    
+Lineshapes::FOCUS::FOCUS(
+                     std::string name,
+                         Mod mod,
+                         Variable *mass,
+                         Variable *width,
+                         unsigned int L,
+                         unsigned int Mpair,
+                         FF FormFac,
+                         fptype radius)
+: Lineshape(nullptr, name, mass, width, L, Mpair, LS::FOCUS, FormFac, radius), mod(mod) {
+    
+    GOOFIT_ADD_INT(8, static_cast<unsigned int>(mod), "Lineshape modifier");
+    
+    GET_FUNCTION_ADDR(ptr_to_FOCUS);
+    
     GOOFIT_FINALIZE_PDF;
 }
 

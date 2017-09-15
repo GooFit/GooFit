@@ -20,7 +20,7 @@ namespace GooFit {
 
 class SpinFactor;
 
-enum class LS { ONE, BW, Lass, Lass_M3, nonRes, Bugg, Bugg3, Flatte, SBW, Spline, kMatrix};
+enum class LS { ONE, BW, Lass, Lass_M3, nonRes, Bugg, Bugg3, Flatte, SBW, Spline, kMatrix, FOCUS};
     
 // PDG notation for FF
 enum class FF : unsigned int { One = 0, BL, BL_Prime, BL2 };
@@ -105,6 +105,28 @@ class RBW : public Lineshape {
     virtual ~RBW() = default;
         
 };
+    
+    
+class FOCUS : public Lineshape {
+public:
+    
+    enum class Mod {Kpi=0, KEta, I32};
+    
+    Mod mod;
+    
+    FOCUS(std::string name,
+        Mod mod,
+        Variable *mass,
+        Variable *width,
+        unsigned int L,
+        unsigned int Mpair,
+        FF FormFac                             = FF::BL_Prime,
+        fptype radius                          = 1.5);
+    
+    virtual ~FOCUS() = default;
+    
+};
+    
     
 class kMatrix : public Lineshape {
 public:

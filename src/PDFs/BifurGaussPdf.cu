@@ -3,7 +3,7 @@
 namespace GooFit {
 
 __device__ fptype device_BifurGauss(fptype* evt, ParameterContainer &pc) {
-    int id = pc.constants[pc.constantIdx + 1];
+    int id = pc.constants[pc.constantIdx + 2];
 
     fptype x = evt[id]; // why does indices recall itself?
     fptype mean = pc.parameters[pc.parameterIdx + 1];
@@ -16,7 +16,7 @@ __device__ fptype device_BifurGauss(fptype* evt, ParameterContainer &pc) {
     if(x > mean)
         sigma = sigmaRight;
 
-    pc.incrementIndex(1, 3, 1, 0, 1);
+    pc.incrementIndex(1, 3, 2, 0, 1);
 
     fptype ret = exp(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
     return ret;
@@ -29,6 +29,7 @@ __host__ BifurGaussPdf::BifurGaussPdf(std::string n, Variable *_x, Variable *mea
     std::vector<unsigned int> pindices;
 
     //save room for _x index, this is set in populateArrays.
+    constantsList.push_back(observablesList.size());
     constantsList.push_back (0);
 
     pindices.push_back(registerParameter(mean));

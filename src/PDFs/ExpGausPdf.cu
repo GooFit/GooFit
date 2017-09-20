@@ -3,7 +3,8 @@
 namespace GooFit {
 
 __device__ fptype device_ExpGaus(fptype *evt, ParameterContainer &pc) {
-    int id = pc.constants[pc.constantIdx + 1];
+    int id = pc.constants[pc.constantIdx + 2];
+
     fptype x     = evt[id];
     fptype mean  = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
     fptype sigma = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
@@ -16,7 +17,7 @@ __device__ fptype device_ExpGaus(fptype *evt, ParameterContainer &pc) {
     ret *= exp(exparg);
     ret *= erfc(erfarg);
 
-    pc.incrementIndex (1, 3, 1, 0, 1);
+    pc.incrementIndex (1, 3, 2, 0, 1);
 
     return ret;
 }
@@ -28,6 +29,7 @@ ExpGausPdf::ExpGausPdf(std::string n, Variable *_x, Variable *mean, Variable *si
     std::vector<unsigned int> pindices;
 
     //reserving index for _x    
+    constantsList.push_back (observablesList.size());
     constantsList.push_back (0);
 
     pindices.push_back(registerParameter(mean));

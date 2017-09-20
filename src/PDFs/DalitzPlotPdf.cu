@@ -62,9 +62,9 @@ __device__ thrust::complex<fptype> device_DalitzPlot_calcIntegrals(fptype m12, f
 }
 
 __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
-    int id_m12 = RO_CACHE(pc.constants[pc.constantIdx + 1]);
-    int id_m13 = RO_CACHE(pc.constants[pc.constantIdx + 2]);
-    int id_num = RO_CACHE(pc.constants[pc.constantIdx + 3]);
+    int id_m12 = RO_CACHE(pc.constants[pc.constantIdx + 2]);
+    int id_m13 = RO_CACHE(pc.constants[pc.constantIdx + 3]);
+    int id_num = RO_CACHE(pc.constants[pc.constantIdx + 4]);
 
     //fptype motherMass = c_motherMass;//RO_CACHE(pc.constants[pc.constantIdx + 4]);
     //fptype daug1Mass  = c_daug1Mass;//RO_CACHE(pc.constants[pc.constantIdx + 5]);
@@ -75,7 +75,7 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
     fptype m13 = RO_CACHE(evt[id_m13]);
 
     if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass)) {
-        pc.incrementIndex(1, 32, 5, 0, 1);
+        pc.incrementIndex(1, 32, 6, 0, 1);
         return 0;
     }
 
@@ -84,8 +84,8 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
     auto evtNum = static_cast<int>(floor(0.5 + evtIndex));
 
     thrust::complex<fptype> totalAmp(0, 0);
-    unsigned int numResonances = RO_CACHE(pc.constants[pc.constantIdx + 4]);
-    unsigned int cacheToUse    = RO_CACHE(pc.constants[pc.constantIdx + 5]);
+    unsigned int numResonances = RO_CACHE(pc.constants[pc.constantIdx + 5]);
+    unsigned int cacheToUse    = RO_CACHE(pc.constants[pc.constantIdx + 6]);
 
     for(int i = 0; i < numResonances; ++i) {
         //int paramIndex              = parIndexFromResIndex_DP(i);
@@ -114,11 +114,11 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
 
     fptype ret         = thrust::norm(totalAmp);
 
-    pc.incrementIndex(1, 32, 5, pc.observables[pc.observableIdx], 1);
+    pc.incrementIndex(1, 32, 6, pc.observables[pc.observableIdx], 1);
 
     //loop to efficiency idx
     for (int i = 0; i < numResonances; i++)
-        pc.incrementIndex (1, 2, 2, 0, 1);
+        pc.incrementIndex (1, 2, 3, 0, 1);
 
     fptype eff         = callFunction(evt, pc);
     ret *= eff;
@@ -147,6 +147,7 @@ __host__ DalitzPlotPdf::DalitzPlotPdf(
     registerObservable(eventNumber);
 
     //reserve 3 constants for observables
+    constantsList.push_back(observablesList.size());
     constantsList.push_back(0);
     constantsList.push_back(0);
     constantsList.push_back(0);
@@ -461,7 +462,7 @@ __device__ thrust::complex<fptype> SpecialResonanceCalculator::operator()(thrust
     fptype m12            = evt[0];
     fptype m13            = evt[1];
 
-    //This function will need to find the base dalitz function
+    //TODO: This function will need to find the base dalitz function
     ParameterContainer pc;
 
     fptype motherMass = c_motherMass;//pc.constants[pc.constantIdx + 4];

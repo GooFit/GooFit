@@ -6,7 +6,7 @@
 namespace GooFit {
 
 __device__ fptype device_ProdPdfs(fptype* evt, ParameterContainer &pc) {
-    int numConstants = int(RO_CACHE(pc.constants[pc.constantIdx]));
+    int numConstants = RO_CACHE(pc.constants[pc.constantIdx]);
     fptype ret = 1;
 
     pc.incrementIndex (1, 0, numConstants, 0, 1);

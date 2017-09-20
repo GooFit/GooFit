@@ -3,12 +3,14 @@
 namespace GooFit {
 
 __device__ fptype device_Novosibirsk(fptype* evt, ParameterContainer &pc) {
+    int id = pc.constants[pc.constantIdx + 2];
+
     fptype _Mean  = pc.parameters[1];
     fptype _Sigma = pc.parameters[2];
     fptype _Tail  = pc.parameters[3];
-    fptype x      = evt[0];
+    fptype x      = evt[id];
 
-    pc.incrementIndex (1, 3, 0, 0, 1);
+    pc.incrementIndex (1, 3, 2, 0, 1);
 
     fptype qa = 0;
     fptype qb = 0;
@@ -40,6 +42,9 @@ __device__ device_function_ptr ptr_to_Novosibirsk = device_Novosibirsk;
 
 __host__ NovosibirskPdf::NovosibirskPdf(std::string n, Variable *_x, Variable *mean, Variable *sigma, Variable *tail)
     : GooPdf(_x, n) {
+    constantsList.push_back(observablesList.size());
+    constantsList.push_back(0);
+
     std::vector<unsigned int> pindices;
     pindices.push_back(registerParameter(mean));
     pindices.push_back(registerParameter(sigma));

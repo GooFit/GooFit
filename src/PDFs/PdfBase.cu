@@ -169,11 +169,12 @@ __host__ void PdfBase::populateArrays () {
     GOOFIT_TRACE("host_constants[{}] = {}", totalConstants, constantsList.size());
     host_constants[totalConstants] = constantsList.size ();
     constantsIdx = totalConstants; totalConstants++;
+    //set observable indices into constants list
     for (int i = 0; i < observablesList.size (); i++) {
-        GOOFIT_TRACE("host_constants[{}] = {}", totalConstants, observablesList[i]->getObservableIndex ());
-        host_constants[totalConstants] = observablesList[i]->getObservableIndex (); totalConstants++;
+        constantsList[i + 1] = observablesList[i]->getObservableIndex();
     }
-    for (int i = observablesList.size (); i < constantsList.size (); i++) {
+    //copy over all our constant values
+    for (int i = 0; i < constantsList.size (); i++) {
         GOOFIT_TRACE("host_constants[{}] = {}", totalConstants, constantsList[i]);
         host_constants[totalConstants] = constantsList[i]; totalConstants++;
     }

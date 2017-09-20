@@ -3,7 +3,7 @@
 namespace GooFit {
 
 __device__ fptype device_BW(fptype *evt, ParameterContainer &pc) {
-    int id = pc.constants[pc.constantIdx + 1];
+    int id = pc.constants[pc.constantIdx + 2];
 
     fptype x      = evt[id];
     fptype mean   = pc.parameters[pc.parameterIdx + 1];
@@ -11,7 +11,7 @@ __device__ fptype device_BW(fptype *evt, ParameterContainer &pc) {
     fptype rootPi = -2. * atan2(-1.0, 0.0);
     fptype ret    = (gamma / ((x - mean) * (x - mean) + gamma * gamma / 4)) / (2 * rootPi);
 
-    pc.incrementIndex (1, 2, 1, 0, 1);
+    pc.incrementIndex (1, 2, 2, 0, 1);
 
     return ret;
 }
@@ -23,6 +23,7 @@ __host__ BWPdf::BWPdf(std::string n, Variable *_x, Variable *mean, Variable *wid
     std::vector<unsigned int> pindices;
 
     //
+    constantsList.push_back(observablesList.size());
     constantsList.push_back(0);
 
     pindices.push_back(registerParameter(mean));

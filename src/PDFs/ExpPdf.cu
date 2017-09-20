@@ -4,33 +4,33 @@
 namespace GooFit {
 
 __device__ fptype device_Exp(fptype* evt, ParameterContainer &pc) {
-    int nc = pc.constants[pc.constantIdx + 1];
+    int id = pc.constants[pc.constantIdx + 2];
     fptype alpha = pc.parameters[pc.parameterIdx + 1];
-    fptype x = evt[nc];
+    fptype x = evt[id];
 
     fptype ret = exp(alpha*x);
 
-    pc.incrementIndex (1, 1, nc, 0, 1);
+    pc.incrementIndex (1, 1, 2, 0, 1);
 
     return ret;
 }
 
 __device__ fptype device_ExpOffset(fptype* evt, ParameterContainer &pc) {
-    int nc = pc.constants[pc.constantIdx + 1];
-    fptype x = evt[nc];
+    int id = pc.constants[pc.constantIdx + 2];
+    fptype x = evt[id];
     x -= pc.parameters[pc.parameterIdx + 1];
     fptype alpha = pc.parameters[pc.parameterIdx + 2];
 
     fptype ret = exp(alpha*x);
 
-    pc.incrementIndex (1, 2, nc, 0, 1);
+    pc.incrementIndex (1, 2, 2, 0, 1);
 
     return ret;
 }
 
 __device__ fptype device_ExpPoly(fptype* evt, ParameterContainer &pc) {
-    int nc = pc.constants[pc.constantIdx + 1];
-    fptype x = evt[nc];
+    int id = pc.constants[pc.constantIdx + 2];
+    fptype x = evt[id];
 
     fptype exparg = 0;
 
@@ -41,14 +41,14 @@ __device__ fptype device_ExpPoly(fptype* evt, ParameterContainer &pc) {
 
     fptype ret = exp(exparg);
 
-    pc.incrementIndex (1, np, nc, 0, 1);
+    pc.incrementIndex (1, np, 2, 0, 1);
 
     return ret;
 }
 
 __device__ fptype device_ExpPolyOffset(fptype* evt, ParameterContainer &pc) {
-    int nc = pc.constants[pc.constantIdx + 1];
-    fptype x = evt[nc];
+    int id = pc.constants[pc.constantIdx + 2];
+    fptype x = evt[id];
     x -= pc.parameters[pc.parameterIdx + 1];
 
     fptype exparg = 0;
@@ -60,7 +60,7 @@ __device__ fptype device_ExpPolyOffset(fptype* evt, ParameterContainer &pc) {
 
     fptype ret = exp(exparg);
 
-    pc.incrementIndex (1, np, 1, 0, 1);
+    pc.incrementIndex (1, np, 2, 0, 1);
 
     return ret;
 }
@@ -70,12 +70,12 @@ __device__ device_function_ptr ptr_to_ExpPoly       = device_ExpPoly;
 __device__ device_function_ptr ptr_to_ExpOffset     = device_ExpOffset;
 __device__ device_function_ptr ptr_to_ExpPolyOffset = device_ExpPolyOffset;
 
-static int numExpPdfs = 0;
 __host__ ExpPdf::ExpPdf(std::string n, Variable* _x, Variable* alpha, Variable* offset)
     : GooPdf(_x, n) {
     std::vector<unsigned int> pindices;
 
-    constantsList.push_back (numExpPdfs); numExpPdfs ++;
+    constantsList.push_back (observablesList.size());
+    constantsList.push_back (0);
 
     if(offset) {
         pindices.push_back(registerParameter(offset));
@@ -96,7 +96,8 @@ __host__ ExpPdf::ExpPdf(std::string n, Variable *_x, std::vector<Variable *> &we
     : GooPdf(_x, n) {
     std::vector<unsigned int> pindices;
 
-    constantsList.push_back (numExpPdfs); numExpPdfs ++;
+    constantsList.push_back (observablesList.size());
+    constantsList.push_back (0);
 
     if(offset)
         pindices.push_back(registerParameter(offset));

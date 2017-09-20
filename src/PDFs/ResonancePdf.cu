@@ -99,8 +99,8 @@ __device__ thrust::complex<fptype> plainBW(fptype m12, fptype m13, fptype m23, P
     //fptype daug3Mass    = c_daug3Mass;//RO_CACHE(pc.constants[pc.constantIdx + 4]);
     //fptype meson_radius = c_meson_radius;//RO_CACHE(pc.constants[pc.constantIdx + 5]);
 
-    unsigned int spin         = RO_CACHE(pc.constants[pc.constantIdx + 1]);
-    unsigned int cyclic_index = RO_CACHE(pc.constants[pc.constantIdx + 2]);
+    unsigned int spin         = RO_CACHE(pc.constants[pc.constantIdx + 2]);
+    unsigned int cyclic_index = RO_CACHE(pc.constants[pc.constantIdx + 3]);
 
     fptype resmass            = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
     fptype reswidth           = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
@@ -132,7 +132,7 @@ __device__ thrust::complex<fptype> plainBW(fptype m12, fptype m13, fptype m23, P
     fptype spinF = spinFactor(spin, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass, m12, m13, m23, cyclic_index);
     ret *= spinF;
 
-    pc.incrementIndex (1, 2, 2, 0, 1);
+    pc.incrementIndex (1, 2, 3, 0, 1);
 
     // printf("%f, %f, %f, %f\n",ret.real, ret.imag, m12, m13);
     return ret;
@@ -143,7 +143,7 @@ __device__ thrust::complex<fptype> gaussian(fptype m12, fptype m13, fptype m23, 
     fptype resmass            = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
     fptype reswidth           = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
 
-    unsigned int cyclic_index = pc.constants[pc.constantIdx + 1];
+    unsigned int cyclic_index = pc.constants[pc.constantIdx + 2];
 
     // Notice sqrt - this function uses mass, not mass-squared like the other resonance types.
     fptype massToUse = sqrt(PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
@@ -152,7 +152,7 @@ __device__ thrust::complex<fptype> gaussian(fptype m12, fptype m13, fptype m23, 
     massToUse *= massToUse;
     fptype ret = exp(-0.5 * massToUse);
 
-    pc.incrementIndex (1, 2, 1, 0, 1);
+    pc.incrementIndex (1, 2, 3, 0, 1);
 
     // Ignore factor 1/sqrt(2pi).
     ret /= reswidth;
@@ -214,8 +214,8 @@ __device__ thrust::complex<fptype> gouSak(fptype m12, fptype m13, fptype m23, Pa
     //fptype daug3Mass    = c_daug3Mass;//RO_CACHE(pc.constants[pc.constantIdx + 4]);
     //fptype meson_radius = c_meson_radius;//RO_CACHE(pc.constants[pc.constantIdx + 5]);
 
-    unsigned int spin         = RO_CACHE(pc.constants[pc.constantIdx + 1]);
-    unsigned int cyclic_index = RO_CACHE(pc.constants[pc.constantIdx + 2]);
+    unsigned int spin         = RO_CACHE(pc.constants[pc.constantIdx + 2]);
+    unsigned int cyclic_index = RO_CACHE(pc.constants[pc.constantIdx + 3]);
 
     fptype resmass            = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
     fptype reswidth           = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
@@ -247,7 +247,7 @@ __device__ thrust::complex<fptype> gouSak(fptype m12, fptype m13, fptype m23, Pa
     retur *= sqrt(frFactor);
     retur *= spinFactor(spin, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass, m12, m13, m23, cyclic_index);
 
-    pc.incrementIndex (1, 2, 2, 0, 1);
+    pc.incrementIndex (1, 2, 3, 0, 1);
 
     return retur;
 }
@@ -259,8 +259,8 @@ __device__ thrust::complex<fptype> lass(fptype m12, fptype m13, fptype m23, Para
     //fptype daug3Mass    = c_daug3Mass;//RO_CACHE(pc.constants[pc.constantIdx + 4]);
     //fptype meson_radius = c_meson_radius;//RO_CACHE(pc.constants[pc.constantIdx + 5]);
 
-    unsigned int spin         = RO_CACHE(pc.constants[pc.constantIdx + 1]);
-    unsigned int cyclic_index = RO_CACHE(pc.constants[pc.constantIdx + 2]);
+    unsigned int spin         = RO_CACHE(pc.constants[pc.constantIdx + 2]);
+    unsigned int cyclic_index = RO_CACHE(pc.constants[pc.constantIdx + 3]);
 
     fptype resmass            = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
     fptype reswidth           = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
@@ -323,12 +323,13 @@ __device__ thrust::complex<fptype> lass(fptype m12, fptype m13, fptype m23, Para
     resT *= sqrt(frFactor);
     resT *= spinFactor(spin, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass, m12, m13, m23, cyclic_index);
 
-    pc.incrementIndex (1, 2, 2, 0, 1);
+    pc.incrementIndex (1, 2, 3, 0, 1);
 
     return resT;
 }
 
 __device__ thrust::complex<fptype> nonres(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) {
+    pc.incrementIndex (1, 2, 3, 0, 1);
     return thrust::complex<fptype>(1, 0);
 }
 
@@ -367,6 +368,7 @@ ResonancePdf::ResonancePdf(
     pindices.push_back(registerParameter(mass));
     pindices.push_back(registerParameter(width));
 
+    constantsList.push_back(0);
     constantsList.push_back(sp);
     constantsList.push_back(cyc);
 
@@ -386,6 +388,8 @@ ResonancePdf::ResonancePdf(
     pindices.push_back(0);
     pindices.push_back(registerParameter(mass));
     pindices.push_back(registerParameter(width));
+
+    constantsList.push_back(0);
     constantsList.push_back(sp);
     constantsList.push_back(cyc);
 
@@ -405,6 +409,8 @@ ResonancePdf::ResonancePdf(
     pindices.push_back(0);
     pindices.push_back(registerParameter(mass));
     pindices.push_back(registerParameter(width));
+
+    constantsList.push_back(0);
     constantsList.push_back(sp);
     constantsList.push_back(cyc);
 
@@ -423,11 +429,15 @@ ResonancePdf::ResonancePdf(std::string name, Variable *ar, Variable *ai)
     // Dummy index for constants - won't use it, but calling
     // functions can't know that and will call setConstantIndex anyway.
 
-    parametersList.push_back(ar);
-    parametersList.push_back(ai);
+    //parametersList.push_back(registerParameter(ar));
+    //parametersList.push_back(registerParameter(ai));
+    registerParameter(ar);
+    registerParameter(ai);
 
     constantsList.push_back(0);
     constantsList.push_back(0);
+    constantsList.push_back(0);
+
 
     resonanceType = 3;
 
@@ -446,6 +456,8 @@ ResonancePdf::ResonancePdf(
     // functions can't know that and will call setConstantIndex anyway.
     pindices.push_back(registerParameter(mean));
     pindices.push_back(registerParameter(sigma));
+
+    constantsList.push_back(0);
     constantsList.push_back(cyc);
     constantsList.push_back(0);
 

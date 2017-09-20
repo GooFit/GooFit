@@ -23,19 +23,20 @@ __device__ fptype bwFactor(const fptype &momentum) {
 }
 
 __device__ fptype device_KinLimitBW(fptype *evt, ParameterContainer &pc) {
-    int id = int(pc.constants[pc.constantIdx + 1]);
+    int id = RO_CACHE(pc.constants[pc.constantIdx + 2]);
+
     fptype x      = evt[id];
     fptype mean   = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
     fptype width  = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
-    fptype d0mass = RO_CACHE(pc.constants[pc.constantIdx + 2]);
-    fptype pimass = RO_CACHE(pc.constants[pc.constantIdx + 3]);
+    fptype d0mass = RO_CACHE(pc.constants[pc.constantIdx + 3]);
+    fptype pimass = RO_CACHE(pc.constants[pc.constantIdx + 4]);
 
     mean += d0mass;
     x += d0mass;
 
     fptype pUsingRealMass = getMomentum(mean, pimass, d0mass);
 
-    pc.incrementIndex (1, 2, 3, 0, 1);
+    pc.incrementIndex (1, 2, 4, 0, 1);
 
     if(0 >= pUsingRealMass)
         return 0;
@@ -56,6 +57,7 @@ __device__ device_function_ptr ptr_to_KinLimitBW = device_KinLimitBW;
 __host__ KinLimitBWPdf::KinLimitBWPdf(std::string n, Variable *_x, Variable *mean, Variable *width)
     : GooPdf(_x, n) {
     //reserve index for _x
+    constantsList.push_back(observablesList.size());
     constantsList.push_back (0);
 
     registerParameter(mean);

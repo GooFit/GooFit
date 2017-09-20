@@ -6,13 +6,14 @@
 namespace GooFit {
 
 __device__ fptype device_ScaledGaussian(fptype *evt, ParameterContainer &pc) {
-    int id = pc.constants[pc.constantIdx + 1];
+    int id = pc.constants[pc.constantIdx + 2];
+
     fptype x     = evt[id];
     fptype mean  = pc.parameters[pc.parameterIdx + 1] + pc.parameters[pc.parameterIdx + 3];
     fptype sigma = pc.parameters[pc.parameterIdx + 2] * (1 + pc.parameters[pc.parameterIdx + 4]);
     fptype ret   = exp(-0.5 * (x - mean) * (x - mean) / (sigma * sigma));
 
-    pc.incrementIndex (1, 4, 1, 0, 1);
+    pc.incrementIndex (1, 4, 2, 0, 1);
 
     return ret;
 }
@@ -24,6 +25,7 @@ __host__ ScaledGaussianPdf::ScaledGaussianPdf(
     : GooPdf(_x, n) {
 
     //placeholder for _x index
+    constantsList.push_back (observablesList.size());
     constantsList.push_back (0);
 
     registerParameter(mean);

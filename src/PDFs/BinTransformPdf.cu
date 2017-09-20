@@ -43,6 +43,7 @@ __host__ BinTransformPdf::BinTransformPdf(std::string n,
         registerObservable(obses[i]);
 
         //reserve index for obses.
+        constantsList.push_back(observablesList.size());
         constantsList.push_back (0);
 
         constantsList.push_back (limits[i]);

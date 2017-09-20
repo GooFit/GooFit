@@ -3,8 +3,8 @@
 namespace GooFit {
 
 __device__ fptype device_CorrGaussian(fptype *evt, ParameterContainer &pc) {
-    int idx = pc.constants[pc.constantIdx + 1];
-    int idy = pc.constants[pc.constantIdx + 2];
+    int idx = pc.constants[pc.constantIdx + 2];
+    int idy = pc.constants[pc.constantIdx + 3];
     fptype mean1  = pc.parameters[pc.parameterIdx + 1];
     fptype sigma1 = pc.parameters[pc.parameterIdx + 2];
     fptype mean2  = pc.parameters[pc.parameterIdx + 3];
@@ -26,7 +26,7 @@ __device__ fptype device_CorrGaussian(fptype *evt, ParameterContainer &pc) {
     // printf("CorrGauss: %i %i %i %f %f %f %f\n", indices[2 + indices[0]], indices[3 + indices[0]], indices[0], x, y,
     // mean1, mean2);
 
-    pc.incrementIndex (1, 2, 5, 0, 1);
+    pc.incrementIndex (1, 5, 3, 0, 1);
 
     return ret;
 }
@@ -46,6 +46,7 @@ __host__ CorrGaussianPdf::CorrGaussianPdf(std::string n,
     registerObservable(_y);
 
     // reserving space for _x and _y
+    constantsList.push_back(observablesList.size());
     constantsList.push_back (0);
     constantsList.push_back (0);
 

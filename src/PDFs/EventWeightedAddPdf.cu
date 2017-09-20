@@ -4,16 +4,26 @@
 
 namespace GooFit {
 
-__device__ fptype device_EventWeightedAddPdfs(fptype *evt, fptype *p, unsigned int *indices) {
-    int numParameters  = RO_CACHE(indices[0]);
+__device__ fptype device_EventWeightedAddPdfs(fptype *evt, ParameterContainer &pc) {
+    int numConstants = RO_CACHE(pc.constants[pc.constantIdx]);
+    int numObs = RO_CACHE(pc.constants[pc.constantIdx + 1]);
+
+    int itr = RO_CACHE(pc.constants[pc.constantIdx + numObs + 2]);
+
     fptype ret         = 0;
     fptype totalWeight = 0;
 
-    for(int i = 0; i < numParameters / 2 - 1; ++i) {
-        fptype weight = RO_CACHE(evt[RO_CACHE(indices[2 + numParameters + i])]);
+    ParameterContainer pci = pc;
+
+    pci.incrementIndex (1, 0, numConstants, numObs, 1);
+
+    for(int i = 0; i < itr; ++i) {
+        int id = pc.constants[pc.constantIdx + i + 2];
+        fptype weight = RO_CACHE(evt[id]);
         totalWeight += weight;
-        fptype curr = callFunction(evt, RO_CACHE(indices[2 * i + 1]), RO_CACHE(indices[2 * (i + 1)]));
-        ret += weight * curr * normalisationFactors[RO_CACHE(indices[2 * (i + 1)])];
+        fptype norm = pci.normalisations[pci.normalIdx + 1];
+        fptype curr = callFunction(evt, pci);
+        ret += weight * curr * norm;
     }
 
     // numParameters does not count itself. So the array structure for two functions is
@@ -22,26 +32,36 @@ __device__ fptype device_EventWeightedAddPdfs(fptype *evt, fptype *p, unsigned i
     // index is nP-1.
     // fptype last = (*(reinterpret_cast<device_function_ptr>(device_function_table[indices[numParameters-1]])))(evt, p,
     // paramIndices + indices[numParameters]);
-    fptype last = callFunction(evt, RO_CACHE(indices[numParameters - 1]), RO_CACHE(indices[numParameters]));
-    ret += (1 - totalWeight) * last * normalisationFactors[RO_CACHE(indices[numParameters])];
+
+    pc = pci;
+    fptype normFactor = pc.normalisations[pc.normalIdx + 1];
+
+    fptype last = callFunction(evt, pc);
+    ret += (1 - totalWeight) * last * normFactor;
 
     return ret;
 }
 
-__device__ fptype device_EventWeightedAddPdfsExt(fptype *evt, fptype *p, unsigned int *indices) {
+__device__ fptype device_EventWeightedAddPdfsExt(fptype *evt, ParameterContainer &pc) {
     // numParameters does not count itself. So the array structure for two functions is
     // nP | F P | F P | nO | o1 o2
     // in which nP = 4, nO = 2.
 
-    int numParameters  = RO_CACHE(indices[0]);
+    int numParameters  = RO_CACHE(pc.parameters[pc.parameterIdx]);
+    int numConstants = RO_CACHE(pc.constants[pc.constantIdx]);
     fptype ret         = 0;
     fptype totalWeight = 0;
 
-    for(int i = 0; i < numParameters / 2; ++i) {
-        fptype curr = callFunction(evt, RO_CACHE(indices[2 * i + 1]), RO_CACHE(indices[2 * (i + 1)]));
+    ParameterContainer pci = pc;
+    pci.incrementIndex (1, numParameters, numConstants, 0, 1);
+
+    for(int i = 0; i < numParameters; ++i) {
+        int id = pc.constants[pc.constantIdx + i + 1];
+        fptype norm = pc.normalisations[pc.normalIdx + 1];
+        fptype weight = RO_CACHE(evt[id]);
+        fptype curr = callFunction(evt, pci);
         // if ((0 == BLOCKIDX) && (THREADIDX < 5) && (isnan(curr))) printf("NaN component %i %i\n", i, THREADIDX);
-        fptype weight = RO_CACHE(evt[RO_CACHE(indices[2 + numParameters + i])]);
-        ret += weight * curr * normalisationFactors[RO_CACHE(indices[2 * (i + 1)])];
+        ret += weight * curr * norm;
         totalWeight += weight;
 
         // if ((gpuDebug & 1) && (0 == THREADIDX))
@@ -89,23 +109,34 @@ EventWeightedAddPdf::EventWeightedAddPdf(std::string n, std::vector<Variable *> 
     for(unsigned int w = 0; w < weights.size(); ++w) {
         if(components[w] == nullptr)
             throw GooFit::GeneralError("Invalid component");
-        pindices.push_back(components[w]->getFunctionIndex());
-        pindices.push_back(components[w]->getParameterIndex());
+        //pindices.push_back(components[w]->getFunctionIndex());
+        //pindices.push_back(components[w]->getParameterIndex());
+        //pindices.push_back(registerParameter(weights[w]));
         registerObservable(weights[w]);
+        //adding room for observable offset
     }
+
+    //Add the number of weights
+    constantsList.push_back(weights.size());
 
     if(components.back() == nullptr)
         throw GooFit::GeneralError("Invalid component");
 
     if(weights.size() < components.size()) {
-        pindices.push_back(components.back()->getFunctionIndex());
-        pindices.push_back(components.back()->getParameterIndex());
+        //pindices.push_back(components.back()->getFunctionIndex());
+        //pindices.push_back(components.back()->getParameterIndex());
         extended = false;
+        // TODO:adding componenents as parameters to get them to be used (for nwo)
+        //parametersList.push_back(0);
     }
 
     // This must occur after registering weights, or the indices will be off - the device functions assume that the
     // weights are first.
-    observables = getObservables();
+    observablesList = getObservables();
+
+    // we need to pad our constant list
+    constantsList.push_back (observablesList.size());
+    for (int i = 0; i < observablesList.size (); i++) constantsList.push_back(0); 
 
     if(extended)
         GET_FUNCTION_ADDR(ptr_to_EventWeightedAddPdfsExt);
@@ -124,9 +155,21 @@ __host__ fptype EventWeightedAddPdf::normalize() const {
     for(PdfBase *comp : components)
         comp->normalize();
 
-    host_normalisation[parameters] = 1.0;
+    host_normalisations[normalIdx + 1] = 1.0;
 
     return 1.0;
 }
 
-} // namespace GooFit
+__host__ void EventWeightedAddPdf::recursiveSetIndices () {
+
+    // TODO: Add support for Ext.
+    GET_FUNCTION_ADDR(ptr_to_EventWeightedAddPdfs);
+
+    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_EventWeightedAddPdfs");
+    host_function_table[num_device_functions] = host_fcn_ptr;
+    functionIdx = num_device_functions++;
+ 
+    populateArrays();
+}
+
+}

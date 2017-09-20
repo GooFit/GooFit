@@ -24,13 +24,14 @@ __constant__ fptype *dev_resWorkSpace[100];
 __constant__ int modelOffset[100];
 
 __device__ fptype device_ConvolvePdfs(fptype* evt, ParameterContainer &pc) {
-    int id = pc.constants[pc.constantIdx + 1];
+    int id = pc.constants[pc.constantIdx + 2];
+
     fptype ret     = 0;
-    fptype loBound = pc.constants[pc.constantIdx + 2];//RO_CACHE(pc.constants[pc.constantIdx + 2]);
-    fptype hiBound = pc.constants[pc.constantIdx + 3];//RO_CACHE(pc.constants[pc.constantIdx + 3]);
-    fptype step    = pc.constants[pc.constantIdx + 4];//RO_CACHE(pc.constants[pc.constantIdx + 4]);
+    fptype loBound = pc.constants[pc.constantIdx + 3];//RO_CACHE(pc.constants[pc.constantIdx + 2]);
+    fptype hiBound = pc.constants[pc.constantIdx + 4];//RO_CACHE(pc.constants[pc.constantIdx + 3]);
+    fptype step    = pc.constants[pc.constantIdx + 5];//RO_CACHE(pc.constants[pc.constantIdx + 4]);
     fptype x0      = evt[id];
-    int workSpaceIndex = pc.constants[pc.constantIdx + 5];
+    int workSpaceIndex = pc.constants[pc.constantIdx + 6];
 
     auto numbins = static_cast<int>(floor((hiBound - loBound) / step + 0.5));
 
@@ -52,7 +53,7 @@ __device__ fptype device_ConvolvePdfs(fptype* evt, ParameterContainer &pc) {
     //When the convolution is flattened, the model PDF and resolution PDF are maintained and linked.
     //These increments will skip the model & resolution PDF.  We will need to determine if we need a
     //skip all chilren also event.  to be determined...
-    pc.incrementIndex (1, 0, 5, 0, 1);
+    pc.incrementIndex (1, 0, 6, 0, 1);
 
     fptype norm1 = pc.normalisations[pc.normalIdx + 1];
     ret *= norm1;
@@ -152,6 +153,7 @@ ConvolutionPdf::ConvolutionPdf(std::string n, Variable *x, GooPdf *m, GooPdf *r)
     // simple.
 
     //reserving index for x
+    constantsList.push_back(observablesList.size());
     constantsList.push_back (0);
 
     components.push_back(model);
@@ -267,9 +269,9 @@ __host__ void ConvolutionPdf::setIntegrationConstants(fptype lo, fptype hi, fpty
     host_iConsts[1] = hi;
     host_iConsts[2] = step;
 
-    constantsList[1] = lo;
-    constantsList[2] = hi;
-    constantsList[3] = step;
+    constantsList[2] = lo;
+    constantsList[3] = hi;
+    constantsList[4] = step;
     //MEMCPY_TO_SYMBOL(functorConstants, host_iConsts, 3 * sizeof(fptype), cIndex * sizeof(fptype), cudaMemcpyHostToDevice);
 
     if(modelWorkSpace) {

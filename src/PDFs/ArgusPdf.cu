@@ -5,7 +5,7 @@ namespace GooFit {
 
 
 __device__ fptype device_Argus_Upper(fptype* evt, ParameterContainer &pc) {
-    int id = pc.constants[pc.constantIdx + 1];
+    int id = pc.constants[pc.constantIdx + 2];
 
     fptype x = evt[id];
     fptype m0 = pc.parameters[pc.parameterIdx + 1];
@@ -15,7 +15,7 @@ __device__ fptype device_Argus_Upper(fptype* evt, ParameterContainer &pc) {
     fptype slope = pc.parameters[pc.parameterIdx + 2];
     fptype power = pc.parameters[pc.parameterIdx + 3];
 
-    pc.incrementIndex (1, 3, 1, 0, 1);
+    pc.incrementIndex (1, 3, 2, 0, 1);
 
     if(t >= 1)
         return 0;
@@ -26,7 +26,7 @@ __device__ fptype device_Argus_Upper(fptype* evt, ParameterContainer &pc) {
 }
 
 __device__ fptype device_Argus_Lower(fptype* evt, ParameterContainer &pc) {
-    int id = pc.constants[pc.constantIdx + 1];
+    int id = pc.constants[pc.constantIdx + 2];
 
     fptype x = evt[id];
     fptype m0 = pc.parameters[pc.parameterIdx + 1];
@@ -36,7 +36,7 @@ __device__ fptype device_Argus_Lower(fptype* evt, ParameterContainer &pc) {
     fptype slope = pc.parameters[pc.parameterIdx + 2];
     fptype power = pc.parameters[pc.parameterIdx + 3];
 
-    pc.incrementIndex (1, 3, 1, 0, 1);
+    pc.incrementIndex (1, 3, 2, 0, 1);
 
     if(t <= 1)
         return 0;
@@ -58,6 +58,7 @@ __host__ ArgusPdf::ArgusPdf(std::string n, Variable *_x, Variable *m0, Variable 
     registerParameter(slope);
 
     //provide index for _x
+    constantsList.push_back(observablesList.size());     
     constantsList.push_back (0);
 
     if(!power)

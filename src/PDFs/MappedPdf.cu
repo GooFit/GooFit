@@ -2,24 +2,30 @@
 
 namespace GooFit {
 
-__device__ fptype device_Mapped(fptype *evt, fptype *p, unsigned int *indices) {
+__device__ fptype device_Mapped(fptype *evt, ParameterContainer &pc) {
     // Structure : nP mapFunctionIndex mapParamIndex functionIndex1 parameterIndex1 functionIndex2 parameterIndex2 ...
 
     // Find mapping between event variables and function to evaluate
-    unsigned int mapFunction = RO_CACHE(indices[1]);
+    unsigned int mapFunction = RO_CACHE(pc.constants[pc.constantIdx + 2]);
+
+    pc.incrementIndex (1, 0, 2, 0, 1);
+
     // This is an index into the MappedPdf's list of functions
     // int targetFunction = (int) floor(0.5 +
     // (*(reinterpret_cast<device_function_ptr>(device_function_table[mapFunction])))(evt, p, paramIndices +
     // indices[2]));
-    auto targetFunction = static_cast<int>(floor(0.5 + callFunction(evt, mapFunction, RO_CACHE(indices[2]))));
+    auto targetFunction = static_cast<int>(floor(0.5 + callFunction(evt, pc)));
 
-    targetFunction *= 2; // Because there are two pieces of information about each function
-    targetFunction += 3; // Because first function information begins at index 3
+    //targetFunction *= 2; // Because there are two pieces of information about each function
+    //targetFunction += 3; // Because first function information begins at index 3
+
+    while (pc.funcIdx < targetFunction)
+        pc.incrementIndex();
 
     // fptype ret = (*(reinterpret_cast<device_function_ptr>(device_function_table[indices[targetFunction]])))(evt, p,
     // paramIndices + indices[targetFunction + 1]);
-    fptype ret = callFunction(evt, RO_CACHE(indices[targetFunction]), RO_CACHE(indices[targetFunction + 1]));
-    ret *= normalisationFactors[RO_CACHE(indices[targetFunction + 1])];
+    fptype ret = callFunction(evt, pc);
+    ret *= RO_CACHE(pc.normalisations[pc.normalIdx + 1]);
     // if (gpuDebug & 1)
     // if ((gpuDebug & 1) && (0 == BLOCKIDX) && (0 == THREADIDX))
     // printf("[%i, %i] Mapped: %i (%f %f %f %f) %f\n", BLOCKIDX, THREADIDX, targetFunction, evt[0], evt[1], evt[2],
@@ -36,6 +42,10 @@ __host__ MappedPdf::MappedPdf(std::string n, GooPdf *m, std::vector<GooPdf *> &t
     pindices.push_back(m->getFunctionIndex());
     pindices.push_back(m->getParameterIndex());
 
+    //reserve an index for this 'm' functions IDX
+    constantsList.push_back (0);
+    constantsList.push_back (0);
+
     std::set<int> functionIndicesUsed;
 
     for(GooPdf *f : t) {
@@ -50,7 +60,7 @@ __host__ MappedPdf::MappedPdf(std::string n, GooPdf *m, std::vector<GooPdf *> &t
                   << " constructor. This may slow execution by causing sequential evaluations.\n";
     }
 
-    observables = getObservables();
+    observablesList = getObservables();
     GET_FUNCTION_ADDR(ptr_to_Mapped);
     initialize(pindices);
 }
@@ -64,7 +74,7 @@ __host__ fptype MappedPdf::normalize() const {
         ret += curr;
     }
 
-    host_normalisation[parameters] = 1.0;
+    host_normalisations[normalIdx + 1] = 1.0;
     return ret;
 }
 } // namespace GooFit

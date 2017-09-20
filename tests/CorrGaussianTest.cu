@@ -15,7 +15,7 @@
 using namespace std;
 using namespace GooFit;
 
-TEST(Gaussian, SimpleFit) {
+TEST(CorrGaussianPdf, SimpleFit) {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> d(1.5);

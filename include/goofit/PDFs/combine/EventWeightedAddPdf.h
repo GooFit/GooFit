@@ -13,6 +13,8 @@ class EventWeightedAddPdf : public GooPdf {
     __host__ fptype normalize() const override;
     __host__ bool hasAnalyticIntegral() const override { return false; }
 
+    __host__ virtual void recursiveSetIndices ();
+
   protected:
   private:
 };

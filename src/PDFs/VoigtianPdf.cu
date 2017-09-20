@@ -275,7 +275,8 @@ __device__ thrust::complex<fptype> device_Faddeeva_2(const thrust::complex<fptyp
 #endif
 
 __device__ fptype device_Voigtian(fptype *evt, ParameterContainer &pc) {
-    int id = pc.constants[pc.constantIdx + 1];
+    int id = pc.constants[pc.constantIdx + 2];
+
     fptype x = evt[id];
     fptype m = pc.parameters[pc.parameterIdx + 1];
     fptype w = pc.parameters[pc.parameterIdx + 2];
@@ -283,7 +284,7 @@ __device__ fptype device_Voigtian(fptype *evt, ParameterContainer &pc) {
 
     // return constant for zero width and sigma
     if((0 == s) && (0 == w)) {
-        pc.incrementIndex(1, 1, 3, 0, 1);
+        pc.incrementIndex(1, 3, 2, 0, 1);
         return 1;
     }
 
@@ -294,7 +295,7 @@ __device__ fptype device_Voigtian(fptype *evt, ParameterContainer &pc) {
 
     // Breit-Wigner for zero sigma
     if(0 == s) {
-        pc.incrementIndex(1, 1, 3, 0, 1);
+        pc.incrementIndex(1, 3, 2, 0, 1);
         return (1 / (arg * arg + 0.25 * w * w));
     }
 
@@ -302,11 +303,11 @@ __device__ fptype device_Voigtian(fptype *evt, ParameterContainer &pc) {
 
     // Gauss for zero width
     if(0 == w) {
-        pc.incrementIndex(1, 1, 3, 0, 1);
+        pc.incrementIndex(1, 3, 2, 0, 1);
         return exp(coef * arg * arg);
     }
 
-    pc.incrementIndex(1, 1, 3, 0, 1);
+    pc.incrementIndex(1, 3, 2, 0, 1);
 
     // actual Voigtian for non-trivial width and sigma
     // fptype c = 1./(ROOT2*s);
@@ -325,6 +326,7 @@ __device__ device_function_ptr ptr_to_Voigtian = device_Voigtian;
 
 __host__ VoigtianPdf::VoigtianPdf(std::string n, Variable *_x, Variable *m, Variable *s, Variable *w)
     : GooPdf(_x, n) {
+    constantsList.push_back (observablesList.size());
     constantsList.push_back (0);
 
     std::vector<unsigned int> pindices;

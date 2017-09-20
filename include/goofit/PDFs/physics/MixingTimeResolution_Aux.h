@@ -8,10 +8,10 @@ namespace GooFit {
 typedef fptype (*device_resfunction_ptr)( fptype, fptype, fptype, fptype, fptype, fptype, fptype, fptype, fptype, ParameterContainer &pc);
 typedef fptype (*device_calc_tau_fcn_ptr)(fptype, fptype, fptype, fptype, fptype, fptype, fptype);
 
-class MixingTimeResolution {
+class MixingTimeResolution : public GooPdf {
   public:
     MixingTimeResolution();
-    ~MixingTimeResolution();
+    virtual ~MixingTimeResolution();
 
     void initIndex(void *dev_fcn_ptr = host_fcn_ptr);
 
@@ -21,6 +21,8 @@ class MixingTimeResolution {
     int getDeviceFunction() const { return resFunctionIdx; }
     int getCalcTauIdx() const { return resCalcTauFcnIdx; }
     void setCalcTauIdx(int idx) { resCalcTauFcnIdx = idx; }
+
+    virtual void recursiveSetIndices();
 
   private:
     int resFunctionIdx;

@@ -9,26 +9,26 @@ __device__ fptype threshCalc(fptype distance, fptype linConst) {
 }
 
 __device__ fptype device_TrigThresholdUpper(fptype *evt, ParameterContainer &pc) {
-    int id = pc.constants[pc.constantIdx + 1];
+    int id = pc.constants[pc.constantIdx + 2];
     fptype x         = evt[id];
     fptype thresh    = pc.parameters[pc.parameterIdx + 1];
     fptype trigConst = pc.parameters[pc.parameterIdx + 2];
     fptype linConst  = pc.parameters[pc.parameterIdx + 3];
 
-    pc.incrementIndex (1, 1, 3, 0, 1);
+    pc.incrementIndex (1, 3, 2, 0, 1);
 
     trigConst *= (thresh - x);
     return threshCalc(trigConst, linConst);
 }
 
 __device__ fptype device_TrigThresholdLower(fptype *evt, ParameterContainer &pc) {
-    int id = pc.constants[pc.constantIdx + 1];
+    int id = pc.constants[pc.constantIdx + 2];
     fptype x         = evt[id];
     fptype thresh    = pc.parameters[pc.parameterIdx + 1];
     fptype trigConst = pc.parameters[pc.parameterIdx + 2];
     fptype linConst  = pc.parameters[pc.parameterIdx + 3];
 
-    pc.incrementIndex (1, 1, 3, 0, 1);
+    pc.incrementIndex (1, 3, 2, 0, 1);
 
     trigConst *= (x - thresh);
     return threshCalc(trigConst, linConst);
@@ -36,8 +36,8 @@ __device__ fptype device_TrigThresholdLower(fptype *evt, ParameterContainer &pc)
 
 __device__ fptype device_VerySpecialEpisodeTrigThresholdUpper(fptype *evt, ParameterContainer &pc) {
     // Annoying special case for use with Mikhail's efficiency function across the Dalitz plot
-    int id_x = pc.constants[pc.constantIdx + 1];
-    int id_y = pc.constants[pc.constantIdx + 2];
+    int id_x = pc.constants[pc.constantIdx + 2];
+    int id_y = pc.constants[pc.constantIdx + 3];
 
     fptype x = evt[id_x];
     fptype y = evt[id_y];
@@ -47,15 +47,15 @@ __device__ fptype device_VerySpecialEpisodeTrigThresholdUpper(fptype *evt, Param
     fptype linConst  = pc.parameters[pc.parameterIdx + 3];
     fptype z         = pc.parameters[pc.parameterIdx + 4] - x - y;
 
-    pc.incrementIndex (1, 2, 4, 0, 1);
+    pc.incrementIndex (1, 4, 3, 0, 1);
 
     trigConst *= (thresh - z);
     return threshCalc(trigConst, linConst);
 }
 
 __device__ fptype device_VerySpecialEpisodeTrigThresholdLower(fptype *evt, ParameterContainer &pc) {
-    int id_x = pc.constants[pc.constantIdx + 1];
-    int id_y = pc.constants[pc.constantIdx + 2];
+    int id_x = pc.constants[pc.constantIdx + 2];
+    int id_y = pc.constants[pc.constantIdx + 3];
 
     fptype x = evt[id_x];
     fptype y = evt[id_y];
@@ -65,7 +65,7 @@ __device__ fptype device_VerySpecialEpisodeTrigThresholdLower(fptype *evt, Param
     fptype linConst  = pc.parameters[pc.parameterIdx + 3];
     fptype z         = pc.parameters[pc.parameterIdx + 4] - x - y;
 
-    pc.incrementIndex (1, 2, 4, 0, 1);
+    pc.incrementIndex (1, 4, 3, 0, 1);
 
     trigConst *= (z - thresh);
     fptype ret = threshCalc(trigConst, linConst);
@@ -92,6 +92,7 @@ __host__ TrigThresholdPdf::TrigThresholdPdf(
     pindices.push_back(registerParameter(linConst));
 
     //reserve _x index
+    constantsList.push_back(observablesList.size());
     constantsList.push_back (0);
 
     if(upper) {
@@ -119,6 +120,7 @@ __host__ TrigThresholdPdf::TrigThresholdPdf(std::string n,
     registerObservable(_y);
 
     //reserve _x,_y index
+    constantsList.push_back (observablesList.size());
     constantsList.push_back (0);
     constantsList.push_back (0);
 

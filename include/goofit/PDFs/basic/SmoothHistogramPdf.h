@@ -15,6 +15,8 @@ class SmoothHistogramPdf : public GooPdf {
     __host__ void extractHistogram(thrust::host_vector<fptype> &host_hist) { host_hist = *dev_base_histogram; }
     __host__ void copyHistogramToDevice(thrust::host_vector<fptype> &host_histogram);
 
+    __host__ virtual void recursiveSetIndices ();
+
   private:
     thrust::device_vector<fptype> *dev_base_histogram;
     thrust::device_vector<fptype> *dev_smoothed_histogram;

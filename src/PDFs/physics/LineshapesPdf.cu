@@ -788,7 +788,7 @@ Lineshape::Lineshape(std::string name,
         throw GeneralError("kMatricies need to be constructed with Lineshapes::kMatrix");
         break;
 
-    case LS::Spline:
+    case LS::GSpline:
         throw GeneralError("Splines need to be constructed with Lineshapes::GSpline");
 
     default:
@@ -809,7 +809,7 @@ Lineshapes::GSpline::GSpline(std::string name,
                              std::vector<Variable *> AdditionalVars,
                              std::vector<Variable *> Curvature,
                              spline_t SplineInfo)
-    : Lineshape(nullptr, name, mass, width, L, Mpair, LS::Spline, FormFac, radius)
+    : Lineshape(nullptr, name, mass, width, L, Mpair, LS::GSpline, FormFac, radius)
     , _AdditionalVars(AdditionalVars)
     , _Curvature(Curvature)
     , _SplineInfo(SplineInfo) {

@@ -20,7 +20,7 @@ namespace GooFit {
 
 class SpinFactor;
 
-enum class LS { ONE, BW, Lass, Lass_M3, nonRes, Bugg, Bugg3, Flatte, SBW, Spline, kMatrix, FOCUS};
+enum class LS { ONE, BW, Lass, Lass_M3, nonRes, Bugg, Bugg3, Flatte, SBW, GSpline, kMatrix, FOCUS};
     
 // PDG notation for FF
 enum class FF : unsigned int { One = 0, BL, BL_Prime, BL2 };
@@ -180,7 +180,8 @@ class LASS : public Lineshape {
         virtual ~LASS() = default;
         
     };
-
+    
+/// A spline implementaiton for the width (Gamma = G)
 class GSpline : public Lineshape {
 
 protected:
@@ -193,6 +194,7 @@ protected:
 
 public:
     
+    /// The spline
     GSpline(std::string name,
               Variable *mass,
               Variable *width,
@@ -221,6 +223,7 @@ class Amplitude {
               std::vector<Lineshape *> LS,
               std::vector<SpinFactor *> SF,
               unsigned int nPerm = 1);
+    
     bool operator==(const Amplitude &A) const;
 
   private:

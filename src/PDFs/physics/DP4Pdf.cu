@@ -268,7 +268,7 @@ __host__ DPPdf::DPPdf(std::string n,
 
 // makes the arrays to chache the lineshape values and spinfactors in CachedResSF and the values of the amplitudes in
 // cachedAMPs
-// I made the choice to have spinfactors necxt to the values of the lineshape in memory. I waste memory by doing this
+// I made the choice to have spinfactors next to the values of the lineshape in memory. I waste memory by doing this
 // because a spinfactor is saved as complex
 // It would be nice to test if this is better than having the spinfactors stored seperately.
 __host__ void DPPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) {

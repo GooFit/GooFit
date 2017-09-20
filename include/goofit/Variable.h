@@ -23,6 +23,8 @@ class Indexable {
     // These classes can not be duplicated
     Indexable(Indexable &) = delete;
     Indexable &operator=(Indexable &) = delete;
+    
+    Indexable(Indexable &&) = default;
 
     virtual ~Indexable() = default;
 
@@ -85,6 +87,8 @@ class Variable : public Indexable {
     Variable(Variable &) = delete;
     Variable &operator=(Variable &) = delete;
 
+    Variable(Variable &&) = default;
+    
     /// Support var = 3
     void operator=(const fptype &val) { setValue(val); }
 
@@ -189,8 +193,11 @@ class CountingVariable : public Variable {
   public:
     using Variable::Variable;
     ~CountingVariable() override = default;
+    
     // These classes can not be duplicated
     CountingVariable &operator=(CountingVariable &) = delete;
+    
+    
     /// Support var = 3
     void operator=(const fptype &val) { setValue(val); }
 };

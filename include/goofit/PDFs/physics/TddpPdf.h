@@ -97,6 +97,7 @@ class TddpPdf : public GooPdf {
     fptype *cachedWidths;
     MixingTimeResolution *resolution;
 
+    unsigned int resolutionFunction;
     unsigned int efficiencyFunction;
 
     int totalEventSize;

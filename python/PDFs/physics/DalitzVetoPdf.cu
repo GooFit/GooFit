@@ -8,16 +8,14 @@ using namespace GooFit;
 namespace py = pybind11;
 
 void init_DalitzVetoPdf(py::module &m) {
-/*
+    /*
 
-    py::class_<VetoInfo>(m, "VetoInfo")
+        py::class_<VetoInfo>(m, "VetoInfo")
 
-            .def(py::init<const std::string&, Variable *>())
-            .def(py::init<const std::string&, Variable *>())
-            ;
+                .def(py::init<const std::string&, Variable *>())
+                .def(py::init<const std::string&, Variable *>())
+                ;
 
- */
+     */
     py::class_<DalitzVetoPdf, GooPdf>(m, "DalitzVetoPdf");
-
 }
-

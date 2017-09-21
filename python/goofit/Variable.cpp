@@ -16,8 +16,7 @@ void init_Variable(py::module &m) {
         .def_property_readonly("name", &Indexable::getName)
         .def_property("value", &Indexable::getValue, &Indexable::setValue)
         .def_property("index", &Indexable::getIndex, &Indexable::setIndex)
-        .def_property_readonly("fitterIndex", &Indexable::getFitterIndex)
-    ;
+        .def_property_readonly("fitterIndex", &Indexable::getFitterIndex);
 
     py::class_<Variable, Indexable>(m, "Variable")
         .def(py::init<std::string, fptype>())
@@ -37,11 +36,7 @@ void init_Variable(py::module &m) {
                  os << v;
                  return os.str();
              })
-        .def("__bool__", &Variable::operator bool)
-    ;
-    
-    py::class_<CountingVariable, Variable>(m, "CountingVariable")
-        .def(py::init<std::string, fptype, fptype>())
-    ;
+        .def("__bool__", &Variable::operator bool);
 
+    py::class_<CountingVariable, Variable>(m, "CountingVariable").def(py::init<std::string, fptype, fptype>());
 }

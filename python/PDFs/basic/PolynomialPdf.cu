@@ -14,13 +14,16 @@ void init_PolynomialPdf(py::module &m) {
              "n"_a,
              "_x"_a,
              "weights"_a,
-             "x0"_a = nullptr,
+             "x0"_a           = nullptr,
              "lowestDegree"_a = 0)
         .def(py::init<std::string,
                       std::vector<Variable *>,
                       std::vector<Variable *>,
                       std::vector<Variable *>,
                       unsigned int>(),
-             "n"_a, "obses"_a, "coeffs"_a, "offsets"_a, "maxDegree"_a)
-        ;
+             "n"_a,
+             "obses"_a,
+             "coeffs"_a,
+             "offsets"_a,
+             "maxDegree"_a);
 }

@@ -12,14 +12,14 @@ using namespace pybind11::literals;
 void init_UnbinnedDataSet(py::module &m) {
     py::class_<UnbinnedDataSet, DataSet>(m, "UnbinnedDataSet")
         .def(py::init([](py::args args, py::kwargs kwargs) {
-                 std::string name;
-                 std::vector<Variable *> vars;
-                 for(auto arg : args)
-                     vars.push_back(arg.cast<Variable *>());
-                 if(kwargs.contains("name"))
-                     name = kwargs["name"].cast<std::string>();
-                 return new UnbinnedDataSet(vars, name);
-             }))
+            std::string name;
+            std::vector<Variable *> vars;
+            for(auto arg : args)
+                vars.push_back(arg.cast<Variable *>());
+            if(kwargs.contains("name"))
+                name = kwargs["name"].cast<std::string>();
+            return new UnbinnedDataSet(vars, name);
+        }))
         .def("from_numpy",
              [](UnbinnedDataSet &instance,
                 py::array_t<fptype, py::array::c_style | py::array::forcecast> array,

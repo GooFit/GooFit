@@ -12,7 +12,7 @@ __device__ fptype device_VarBinTransform1D(fptype *evt, fptype *p, unsigned int 
     // evt[1]);
     fptype obsValue = evt[indices[2 + indices[0]]];
     if(obsValue < 0)
-        obsValue  = -obsValue;
+        obsValue = -obsValue;
     int numLimits = indices[1];
     for(int i = 0; i < numLimits; ++i) {
         fptype lowerLimit = functorConstants[indices[i + 2]];

@@ -1,10 +1,9 @@
 #pragma once
 
 #include <iostream>
-#include <string>
-
-#include <vector>
 #include <limits>
+#include <string>
+#include <vector>
 
 #include "goofit/GlobalCudaDefines.h"
 

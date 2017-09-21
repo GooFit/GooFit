@@ -275,18 +275,19 @@ __device__ fptype device_Tddp(fptype *evt, fptype *p, unsigned int *indices) {
         // of having the correct sign, given that we have a correctly reconstructed D meson.
         mistag = RO_CACHE(evt[RO_CACHE(indices[md0_offset + 7 + RO_CACHE(indices[0])])]);
         ret *= mistag;
-        ret += (1 - mistag) * (*(reinterpret_cast<device_resfunction_ptr>(device_function_table[resFunctionIdx])))(
-                                  term1,
-                                  -term2,
-                                  sumWavesA.real(),
-                                  -sumWavesA.imag(),
-                                  _tau,
-                                  _time,
-                                  _xmixing,
-                                  _ymixing,
-                                  _sigma,
-                                  p,
-                                  &(indices[resFunctionPar]));
+        ret += (1 - mistag)
+               * (*(reinterpret_cast<device_resfunction_ptr>(device_function_table[resFunctionIdx])))(
+                     term1,
+                     -term2,
+                     sumWavesA.real(),
+                     -sumWavesA.imag(),
+                     _tau,
+                     _time,
+                     _xmixing,
+                     _ymixing,
+                     _sigma,
+                     p,
+                     &(indices[resFunctionPar]));
     }
 
     fptype eff = callFunction(evt, RO_CACHE(indices[effFunctionIdx]), RO_CACHE(indices[effFunctionIdx + 1]));
@@ -529,7 +530,7 @@ __host__ void TddpPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) 
 
     int *counts = new int[numProcs];
 
-    for(int i     = 0; i < numProcs - 1; i++)
+    for(int i = 0; i < numProcs - 1; i++)
         counts[i] = perTask;
 
     counts[numProcs - 1] = numEntries - perTask * (numProcs - 1);

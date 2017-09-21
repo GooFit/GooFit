@@ -2,8 +2,8 @@
 #include <pybind11/stl.h>
 
 #include <goofit/PDFs/physics/LineshapesPdf.h>
-#include <goofit/PDFs/physics/SpinFactors.h>
 #include <goofit/PDFs/physics/ResonancePdf.h>
+#include <goofit/PDFs/physics/SpinFactors.h>
 #include <goofit/Variable.h>
 
 using namespace GooFit;

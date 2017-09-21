@@ -20,14 +20,14 @@ matrix:
     addons:
       apt:
         sources:
-        - llvm-toolchain-trusty-4.0
+        - llvm-toolchain-trusty-5.0
         packages:
-        - clang-4.0
-        - clang-format-4.0
-        - clang-tidy-4.0
+        - clang-5.0
+        - clang-format-5.0
+        - clang-tidy-5.0
         - libc++-dev
     env:
-    - COMPILER=4.0 CHECK_STYLE=yes CC=clang-4.0 CXX=clang++-4.0
+    - COMPILER=5.0 CHECK_STYLE=yes
     install:
     - |
       DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"

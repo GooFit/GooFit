@@ -17,7 +17,7 @@ void init_BinnedDataSet(py::module &m) {
                 name = kwargs["name"].cast<std::string>();
             return new BinnedDataSet(vars, name);
         }))
-        .def("getBinCenter", (fptype (BinnedDataSet::*)(size_t, size_t) const) & BinnedDataSet::getBinCenter)
+        .def("getBinCenter", (fptype(BinnedDataSet::*)(size_t, size_t) const) & BinnedDataSet::getBinCenter)
         .def("getBinNumber", &BinnedDataSet::getBinNumber)
         .def("getBinVolume", &BinnedDataSet::getBinVolume)
         .def("getBinError", &BinnedDataSet::getBinError)

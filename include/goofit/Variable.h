@@ -185,9 +185,12 @@ class Variable : public Indexable {
 
 /// This is used to track event number for MPI versions.
 /// A cast is done to know whether the values need to be fixed.
+/// Ugly hack because this internally stores a floating point number!
 class CountingVariable : public Variable {
   public:
     using Variable::Variable;
+    CountingVariable(std::string name) : CountingVariable(name, 0, INT_MAX) {}
+    
     ~CountingVariable() override = default;
     // These classes can not be duplicated
     CountingVariable &operator=(CountingVariable &) = delete;

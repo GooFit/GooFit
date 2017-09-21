@@ -257,8 +257,9 @@ int main(int argc, char **argv) {
     }
 
     // Time is in units of lifetime
-    decayTime = new Variable("decayTime", 100, 0, 10);
-    decayTime->setNumBins(numbins);
+    Variable decayTime {"decayTime", 100, 0, 10};
+    decayTime.setNumBins(numbins);
+    
     double rSubD = 0.03;
     double rBarD = 0.03;
     double delta = 0;
@@ -270,10 +271,10 @@ int main(int argc, char **argv) {
 
     int eventsToGenerate = 10000000;
 
-    vector<int> dZeroEvtsWS(decayTime->getNumBins());
-    vector<int> dZeroEvtsRS(decayTime->getNumBins());
-    vector<int> d0barEvtsWS(decayTime->getNumBins());
-    vector<int> d0barEvtsRS(decayTime->getNumBins());
+    vector<int> dZeroEvtsWS(decayTime.getNumBins());
+    vector<int> dZeroEvtsRS(decayTime.getNumBins());
+    vector<int> d0barEvtsWS(decayTime.getNumBins());
+    vector<int> d0barEvtsRS(decayTime.getNumBins());
 
     double dZeroLinearCoef = magPQ * sqrt(rSubD) * (y_mix * cos(delta + wpPhi) - x_mix * sin(delta + wpPhi));
     double d0barLinearCoef = magQP * sqrt(rBarD) * (y_mix * cos(delta - wpPhi) - x_mix * sin(delta - wpPhi));
@@ -281,16 +282,18 @@ int main(int argc, char **argv) {
     double dZeroSecondCoef = 0.25 * magPQ * magPQ * (x_mix * x_mix + y_mix * y_mix);
     double d0barSecondCoef = 0.25 * magQP * magQP * (x_mix * x_mix + y_mix * y_mix);
 
-    generateEvents(dZeroEvtsRS, dZeroEvtsWS, decayTime, rSubD, dZeroLinearCoef, dZeroSecondCoef, eventsToGenerate);
-    generateEvents(d0barEvtsRS, d0barEvtsWS, decayTime, rBarD, d0barLinearCoef, d0barSecondCoef, eventsToGenerate);
+    generateEvents(dZeroEvtsRS, dZeroEvtsWS, &decayTime, rSubD, dZeroLinearCoef, dZeroSecondCoef, eventsToGenerate);
+    generateEvents(d0barEvtsRS, d0barEvtsWS, &decayTime, rBarD, d0barLinearCoef, d0barSecondCoef, eventsToGenerate);
 
     double gpuTime = 0;
     double cpuTime = 0;
 
     int retval;
     retval = fitRatio(dZeroEvtsRS, dZeroEvtsWS, "dzeroEvtRatio.png");
+    
     if(retval != 0)
         return retval;
+    
     timersub(&stopTime, &startTime, &totalTime);
     gpuTime += totalTime.tv_sec + totalTime.tv_usec / 1000000.0;
     retval = fitRatio(d0barEvtsRS, d0barEvtsWS, "dzbarEvtRatio.png");

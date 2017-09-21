@@ -2,6 +2,11 @@
 
 from goofit import *
 import numpy as np
+import os
+
+GDIR = os.path.dirname(os.path.abspath(__file__))
+for i in range(2):
+    GDIR = os.path.dirname(GDIR) # up to goofit dir
 
 # Constants used in more than one PDF component.
 _mD0       = 1.8645
@@ -17,7 +22,7 @@ eventNumber = CountingVariable("eventNumber", 0, INT_MAX)
 
 currData = UnbinnedDataSet(m12, m34, cos12, cos34, phi, eventNumber)
 
-data = np.loadtxt("examples/DP4/ToyMC.txt")
+data = np.loadtxt(os.path.join(GDIR, "examples/DP4/ToyMC.txt"))
 print(data)
 currData.from_numpy(data.T)
 

@@ -48,4 +48,4 @@ __host__ VariableBinTransform1DPdf::VariableBinTransform1DPdf(std::string n, Var
     initialize(pindices);
 }
 
-} // GooFit
+} // namespace GooFit

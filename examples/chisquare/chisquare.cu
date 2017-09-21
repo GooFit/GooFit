@@ -257,9 +257,9 @@ int main(int argc, char **argv) {
     }
 
     // Time is in units of lifetime
-    Variable decayTime {"decayTime", 100, 0, 10};
+    Variable decayTime{"decayTime", 100, 0, 10};
     decayTime.setNumBins(numbins);
-    
+
     double rSubD = 0.03;
     double rBarD = 0.03;
     double delta = 0;
@@ -290,10 +290,10 @@ int main(int argc, char **argv) {
 
     int retval;
     retval = fitRatio(dZeroEvtsRS, dZeroEvtsWS, "dzeroEvtRatio.png");
-    
+
     if(retval != 0)
         return retval;
-    
+
     timersub(&stopTime, &startTime, &totalTime);
     gpuTime += totalTime.tv_sec + totalTime.tv_usec / 1000000.0;
     retval = fitRatio(d0barEvtsRS, d0barEvtsWS, "dzbarEvtRatio.png");

@@ -198,9 +198,8 @@ __device__ fptype bugg_Gamma_4pi(const fptype &s,
                                  const fptype &M,
                                  const fptype &lambda_4pi,
                                  const fptype &s0_4pi) {
-    fptype returnVal = (s < (16. * mpi * mpi)) ? 0
-                                               : g_4pi * (1. / (1 + exp(lambda_4pi * (s0_4pi - s))))
-                                                     / (1. / (1 + exp(lambda_4pi * (s0_4pi - M * M))));
+    fptype returnVal = (s < (16. * mpi * mpi)) ? 0 : g_4pi * (1. / (1 + exp(lambda_4pi * (s0_4pi - s))))
+                                                         / (1. / (1 + exp(lambda_4pi * (s0_4pi - M * M))));
     return returnVal;
 }
 

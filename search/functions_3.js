@@ -17,6 +17,7 @@ var searchData=
   ['copyparams',['copyParams',['../class_goo_fit_1_1_pdf_base.html#a64fbdf57c854f83ead4f9bb5f1b3d40a',1,'GooFit::PdfBase::copyParams(const std::vector&lt; double &gt; &amp;pars) const'],['../class_goo_fit_1_1_pdf_base.html#a39124a06e706a7cdf20a7033224b8c8f',1,'GooFit::PdfBase::copyParams()']]],
   ['corrgaussianpdf',['CorrGaussianPdf',['../class_goo_fit_1_1_corr_gaussian_pdf.html#a5046237bb70daca48c454df0a30f31fe',1,'GooFit::CorrGaussianPdf']]],
   ['coshelang',['cosHELANG',['../struct_goo_fit_1_1_dim5.html#a0c59b5c8fc0cc73702059e2fc04c4b3e',1,'GooFit::Dim5']]],
+  ['countingvariable',['CountingVariable',['../class_goo_fit_1_1_counting_variable.html#a9c93f6f82b238b5047efefee7d3031f2',1,'GooFit::CountingVariable']]],
   ['cpuvoigtian',['cpuvoigtian',['../namespace_goo_fit.html#a9ab99bf4b1a456d8de22d03d944e5e50',1,'GooFit']]],
   ['createparameters',['createParameters',['../class_goo_fit_1_1_mixing_time_resolution.html#a11550c959bdf03f163d96bb2699676cd',1,'GooFit::MixingTimeResolution::createParameters()'],['../class_goo_fit_1_1_three_gauss_resolution.html#abb2b6f57112f39931e7c1004b3df04a6',1,'GooFit::ThreeGaussResolution::createParameters()'],['../class_goo_fit_1_1_truth_resolution.html#a76d7463ae329db57529307a017da2ca4',1,'GooFit::TruthResolution::createParameters()']]],
   ['crystalballpdf',['CrystalBallPdf',['../class_goo_fit_1_1_crystal_ball_pdf.html#a08ccfecb81a4cfe9a67175cc4c08d61a',1,'GooFit::CrystalBallPdf']]]

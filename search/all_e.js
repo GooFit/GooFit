@@ -32,6 +32,7 @@ var searchData=
   ['max_5ffitter_5findex',['max_fitter_index',['../namespace_goo_fit.html#af40edacaef55ceadf08bdef9e4385b33',1,'GooFit']]],
   ['max_5findex',['max_index',['../namespace_goo_fit.html#a7add1d38b9bdf1266185fbe411f98ce1',1,'GooFit']]],
   ['maximum',['maximum',['../struct_goo_fit_1_1_veto_info.html#a85db8e9f33d97e3e4206a604bc895083',1,'GooFit::VetoInfo']]],
+  ['maxint',['maxint',['../class_goo_fit_1_1_counting_variable.html#a3e5497a160cc202e99ec227e82160157',1,'GooFit::CountingVariable']]],
   ['maxnknobs',['MAXNKNOBS',['../_resonance_pdf_8h.html#ad895051d1c9026ba79bdca5017a63859',1,'ResonancePdf.h']]],
   ['maxparams',['maxParams',['../namespace_goo_fit.html#a432d80bb6c2e4b59a718fec8b3eadda0',1,'GooFit']]],
   ['meson_5fradius',['meson_radius',['../struct_goo_fit_1_1_decay_info.html#a5e07af7501c613c2844e2383027b6316',1,'GooFit::DecayInfo::meson_radius()'],['../struct_goo_fit_1_1_decay_info___d_p.html#a5ede38a7e9c5a8cb5a24587effcf8cfc',1,'GooFit::DecayInfo_DP::meson_radius()']]],

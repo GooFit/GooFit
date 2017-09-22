@@ -70,6 +70,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="class_goo_fit_1_1_counting_variable-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">GooFit::CountingVariable Class Reference</div>  </div>
@@ -90,6 +91,8 @@ Inheritance diagram for GooFit::CountingVariable:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a9c93f6f82b238b5047efefee7d3031f2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_counting_variable.html#a9c93f6f82b238b5047efefee7d3031f2">CountingVariable</a> (std::string <a class="el" href="class_goo_fit_1_1_indexable.html#ad6e8fae30ed3673dd99891a657c3c101">name</a>)</td></tr>
+<tr class="separator:a9c93f6f82b238b5047efefee7d3031f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c076a443043d8c55d3e91779e1677c6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_counting_variable.html#a2c076a443043d8c55d3e91779e1677c6">~CountingVariable</a> () override=default</td></tr>
 <tr class="separator:a2c076a443043d8c55d3e91779e1677c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5233ad7b63b1783b1843777f4de4e0fb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_goo_fit_1_1_counting_variable.html">CountingVariable</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_counting_variable.html#a5233ad7b63b1783b1843777f4de4e0fb">operator=</a> (<a class="el" href="class_goo_fit_1_1_counting_variable.html">CountingVariable</a> &amp;)=delete</td></tr>
@@ -204,6 +207,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a8d436e14bfb18adaf1978e2007dcd815 inherit pub_methods_class_goo_fit_1_1_indexable"><td class="mdescLeft">&#160;</td><td class="mdescRight">Support fptype val = var.  <a href="class_goo_fit_1_1_indexable.html#a8d436e14bfb18adaf1978e2007dcd815">More...</a><br /></td></tr>
 <tr class="separator:a8d436e14bfb18adaf1978e2007dcd815 inherit pub_methods_class_goo_fit_1_1_indexable"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:a3e5497a160cc202e99ec227e82160157"><td class="memItemLeft" align="right" valign="top">static constexpr <a class="el" href="namespace_goo_fit.html#a6f9643fed3185c9bcdfb118b67bb1b16">fptype</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_counting_variable.html#a3e5497a160cc202e99ec227e82160157">maxint</a> {1L &lt;&lt; std::numeric_limits&lt;fptype&gt;::digits}</td></tr>
+<tr class="separator:a3e5497a160cc202e99ec227e82160157"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pro_attribs_class_goo_fit_1_1_variable"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_goo_fit_1_1_variable')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_goo_fit_1_1_variable.html">GooFit::Variable</a></td></tr>
@@ -243,10 +251,43 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:afe6bd65124f2d8056affe5840537dfd3 inherit pro_attribs_class_goo_fit_1_1_indexable"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>This is used to track event number for MPI versions. A cast is done to know whether the values need to be fixed. </p>
+<div class="textblock"><p>This is used to track event number for MPI versions. A cast is done to know whether the values need to be fixed. Ugly hack because this internally stores a floating point number! </p>
 
-<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00188">188</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00189">189</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a9c93f6f82b238b5047efefee7d3031f2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9c93f6f82b238b5047efefee7d3031f2">&#9670;&nbsp;</a></span>CountingVariable()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">GooFit::CountingVariable::CountingVariable </td>
+          <td>(</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>name</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00194">194</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+
+<p class="reference">References <a class="el" href="class_goo_fit_1_1_indexable.html#ae9d84f8c106acf404c4877e06b34bd89">GooFit::Indexable::operator=()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;: <a class="code" href="class_goo_fit_1_1_counting_variable.html#a9c93f6f82b238b5047efefee7d3031f2">CountingVariable</a>(<a class="code" href="class_goo_fit_1_1_indexable.html#ad6e8fae30ed3673dd99891a657c3c101">name</a>, 0, <a class="code" href="class_goo_fit_1_1_counting_variable.html#a3e5497a160cc202e99ec227e82160157">CountingVariable::maxint</a>) {}</div><div class="ttc" id="class_goo_fit_1_1_counting_variable_html_a9c93f6f82b238b5047efefee7d3031f2"><div class="ttname"><a href="class_goo_fit_1_1_counting_variable.html#a9c93f6f82b238b5047efefee7d3031f2">GooFit::CountingVariable::CountingVariable</a></div><div class="ttdeci">CountingVariable(std::string name)</div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00194">Variable.h:194</a></div></div>
+<div class="ttc" id="class_goo_fit_1_1_counting_variable_html_a3e5497a160cc202e99ec227e82160157"><div class="ttname"><a href="class_goo_fit_1_1_counting_variable.html#a3e5497a160cc202e99ec227e82160157">GooFit::CountingVariable::maxint</a></div><div class="ttdeci">static constexpr fptype maxint</div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00191">Variable.h:191</a></div></div>
+<div class="ttc" id="class_goo_fit_1_1_indexable_html_ad6e8fae30ed3673dd99891a657c3c101"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#ad6e8fae30ed3673dd99891a657c3c101">GooFit::Indexable::name</a></div><div class="ttdeci">std::string name</div><div class="ttdoc">Support for less than, etc. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00061">Variable.h:61</a></div></div>
+</div><!-- fragment -->
+</div>
+</div>
 <a id="a2c076a443043d8c55d3e91779e1677c6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2c076a443043d8c55d3e91779e1677c6">&#9670;&nbsp;</a></span>~CountingVariable()</h2>
 
@@ -325,11 +366,36 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Support var = 3. </p>
 
-<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00195">195</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00200">200</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
 
 <p class="reference">References <a class="el" href="_variable_8h_source.html#l00047">GooFit::Indexable::setValue()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;{ <a class="code" href="class_goo_fit_1_1_indexable.html#a964c5a2abef8873d6fed8a0d92d9548b">setValue</a>(val); }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a964c5a2abef8873d6fed8a0d92d9548b"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a964c5a2abef8873d6fed8a0d92d9548b">GooFit::Indexable::setValue</a></div><div class="ttdeci">void setValue(fptype val)</div><div class="ttdoc">Set the value. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00047">Variable.h:47</a></div></div>
+<div class="fragment"><div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;{ <a class="code" href="class_goo_fit_1_1_indexable.html#a964c5a2abef8873d6fed8a0d92d9548b">setValue</a>(val); }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a964c5a2abef8873d6fed8a0d92d9548b"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a964c5a2abef8873d6fed8a0d92d9548b">GooFit::Indexable::setValue</a></div><div class="ttdeci">void setValue(fptype val)</div><div class="ttdoc">Set the value. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00047">Variable.h:47</a></div></div>
 </div><!-- fragment -->
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="a3e5497a160cc202e99ec227e82160157"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3e5497a160cc202e99ec227e82160157">&#9670;&nbsp;</a></span>maxint</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr <a class="el" href="namespace_goo_fit.html#a6f9643fed3185c9bcdfb118b67bb1b16">fptype</a> GooFit::CountingVariable::maxint {1L &lt;&lt; std::numeric_limits&lt;fptype&gt;::digits}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00191">191</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
@@ -338,7 +404,7 @@ Additional Inherited Members</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Sep 8 2017 15:29:02 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Sep 22 2017 02:10:18 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

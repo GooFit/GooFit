@@ -13,4 +13,6 @@ void init_Version(py::module &m) {
     m.attr("GOOFIT_HOST")      = GOOFIT_HOST;
     m.attr("ARCH_FLAGS")       = GOOFIT_ARCH_FLAGS;
     m.attr("ROOT_FOUND")       = GOOFIT_ROOT_FOUND;
+
+    m.attr("INT_MAX") = INT_MAX;
 }

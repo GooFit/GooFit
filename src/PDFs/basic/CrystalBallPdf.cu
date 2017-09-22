@@ -17,9 +17,8 @@ __device__ fptype device_CrystalBall(fptype *evt, fptype *p, unsigned int *indic
     fptype ret   = 0;
 
     if((alpha > 0 && rx <= alpha) || // Right-hand tail, in Gaussian region
-       (alpha < 0 && rx >= alpha)
-       ||              // Left-hand tail, in Gaussian region
-       (alpha == 0)) { // Pure Gaussian
+       (alpha < 0 && rx >= alpha) || // Left-hand tail, in Gaussian region
+       (alpha == 0)) {               // Pure Gaussian
         ret = exp(-0.5 * rx * rx);
     } else { // Tail part
         fptype n_over_alpha = power / alpha;

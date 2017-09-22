@@ -1,5 +1,6 @@
 *.swp
 *~
+*.autosave
 *.so
 .project
 compile_commands.json

@@ -23,8 +23,9 @@ enum class LS { ONE, BW, Lass, Lass_M3, nonRes, Bugg, Bugg3, Flatte, SBW, Spline
 enum class FF : unsigned int { One = 0, BL, BL_Prime, BL2 };
 
 class Lineshape : public GooPdf {
+public:
     using spline_t = std::tuple<fptype, fptype, unsigned int>;
-
+private:
     friend class DPPdf;
     friend class TDDP4;
     // Service class intended to hold parametrisations of

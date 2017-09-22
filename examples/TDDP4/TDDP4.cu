@@ -37,18 +37,19 @@ int main(int argc, char **argv) {
         return app.exit(e);
     }
 
-    DecayInfo_DP *DK3P_DI = new DecayInfo_DP();
-    DK3P_DI->meson_radius = 1.5;
-    DK3P_DI->particle_masses.push_back(_mD0);
-    DK3P_DI->particle_masses.push_back(piPlusMass);
-    DK3P_DI->particle_masses.push_back(piPlusMass);
-    DK3P_DI->particle_masses.push_back(KmMass);
-    DK3P_DI->particle_masses.push_back(piPlusMass);
+    DecayInfo_DP DK3P_DI;
+    DK3P_DI.meson_radius = 1.5;
+    DK3P_DI.particle_masses.push_back(_mD0);
+    DK3P_DI.particle_masses.push_back(piPlusMass);
+    DK3P_DI.particle_masses.push_back(piPlusMass);
+    DK3P_DI.particle_masses.push_back(KmMass);
+    DK3P_DI.particle_masses.push_back(piPlusMass);
 
-    Variable *RhoMass  = new Variable("rho_mass", 0.77526, 0.01, 0.7, 0.8);
-    Variable *RhoWidth = new Variable("rho_width", 0.1478, 0.01, 0.1, 0.2);
-    Variable *KstarM   = new Variable("KstarM", 0.89581, 0.01, 0.9, 0.1);
-    Variable *KstarW   = new Variable("KstarW", 0.0474, 0.01, 0.1, 0.2);
+    Variable RhoMass{"rho_mass", 0.77526, 0.01, 0.7, 0.8};
+    Variable RhoWidth{"rho_width", 0.1478, 0.01, 0.1, 0.2};
+    Variable KstarM{"KstarM", 0.89581, 0.01, 0.9, 0.1};
+    Variable KstarW{"KstarW", 0.0474, 0.01, 0.1, 0.2};
+
     // Variable* f600M  = new Variable("f600M", 0.519, 0.01, 0.75, 0.85);
     // Variable* f600W  = new Variable("f600W", 0.454, 0.01, 0.75, 0.85);
     // Variable* a1M  = new Variable("a1M", 1.23, 0.01, 1.2, 1.3);
@@ -59,9 +60,8 @@ int main(int argc, char **argv) {
     // Variable* K1430W  = new Variable("K1430W", .29, 0.01, 0.25, 0.35);
 
     // Spin factors: we have two due to the bose symmetrization of the two pi+
-    std::vector<SpinFactor *> SFKRS;
-    SFKRS.push_back(new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_S, 0, 1, 2, 3));
-    SFKRS.push_back(new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_S, 3, 1, 2, 0));
+    std::vector<SpinFactor *> SFKRS = {new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_S, 0, 1, 2, 3),
+                                       new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_S, 3, 1, 2, 0)};
 
     std::vector<SpinFactor *> SFKRP;
     SFKRP.push_back(new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_P, 0, 1, 2, 3));
@@ -92,85 +92,70 @@ int main(int argc, char **argv) {
     SFA1RD.push_back(new SpinFactor("SF", SF_4Body::DtoAP1_AtoVP2Dwave_VtoP3P4, 2, 0, 3, 1));
 
     // Lineshapes, also for both pi+ configurations
-    std::vector<Lineshape *> LSKRS;
-    LSKRS.push_back(new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS::BW, FF::BL2));
-    LSKRS.push_back(new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_34, LS::BW, FF::BL2));
-    LSKRS.push_back(new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS::BW, FF::BL2));
-    LSKRS.push_back(new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_13, LS::BW, FF::BL2));
+    std::vector<Lineshape *> LSKRS = {new Lineshape("rho(770)", &RhoMass, &RhoWidth, 1, M_12, LS::BW, FF::BL2),
+                                      new Lineshape("K*(892)bar", &KstarM, &KstarW, 1, M_34, LS::BW, FF::BL2),
+                                      new Lineshape("rho(770)", &RhoMass, &RhoWidth, 1, M_24, LS::BW, FF::BL2),
+                                      new Lineshape("K*(892)bar", &KstarM, &KstarW, 1, M_13, LS::BW, FF::BL2)};
 
-    std::vector<Lineshape *> LSKRP;
-    LSKRP.push_back(new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS::BW, FF::BL2));
-    LSKRP.push_back(new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_34, LS::BW, FF::BL2));
-    LSKRP.push_back(new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS::BW, FF::BL2));
-    LSKRP.push_back(new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_13, LS::BW, FF::BL2));
+    std::vector<Lineshape *> LSKRP = {new Lineshape("rho(770)", &RhoMass, &RhoWidth, 1, M_12, LS::BW, FF::BL2),
+                                      new Lineshape("K*(892)bar", &KstarM, &KstarW, 1, M_34, LS::BW, FF::BL2),
+                                      new Lineshape("rho(770)", &RhoMass, &RhoWidth, 1, M_24, LS::BW, FF::BL2),
+                                      new Lineshape("K*(892)bar", &KstarM, &KstarW, 1, M_13, LS::BW, FF::BL2)};
 
-    std::vector<Lineshape *> LSKRD;
-    LSKRD.push_back(new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS::BW, FF::BL2));
-    LSKRD.push_back(new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_34, LS::BW, FF::BL2));
-    LSKRD.push_back(new Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS::BW, FF::BL2));
-    LSKRD.push_back(new Lineshape("K*(892)bar", KstarM, KstarW, 1, M_13, LS::BW, FF::BL2));
+    std::vector<Lineshape *> LSKRD = {new Lineshape("rho(770)", &RhoMass, &RhoWidth, 1, M_12, LS::BW, FF::BL2),
+                                      new Lineshape("K*(892)bar", &KstarM, &KstarW, 1, M_34, LS::BW, FF::BL2),
+                                      new Lineshape("rho(770)", &RhoMass, &RhoWidth, 1, M_24, LS::BW, FF::BL2),
+                                      new Lineshape("K*(892)bar", &KstarM, &KstarW, 1, M_13, LS::BW, FF::BL2)};
 
     // the very last parameter means that we have two permutations. so the first half of the Lineshapes
     // and the first half of the spinfactors are amplitude 1, rest is amplitude 2
-    // This means that it is important for symmetrized amplitueds that the spinfactors and lineshapes are in the "right"
+    // This means that it is important for symmetrized amplitudes that the spinfactors and lineshapes are in the "right"
     // order
-    Amplitude *Bose_symmetrized_AMP_S = new Amplitude(
-        "K*(892)rho(770)_S", new Variable("amp_real1", 1.0), new Variable("amp_imag1", 0.0), LSKRS, SFKRS, 2);
-    Amplitude *Bose_symmetrized_AMP_P = new Amplitude(
-        "K*(892)rho(770)_P", new Variable("amp_real2", 0.526), new Variable("amp_imag2", -0.626), LSKRP, SFKRP, 2);
-    Amplitude *Bose_symmetrized_AMP_D = new Amplitude(
-        "K*(892)rho(770)_D", new Variable("amp_real3", 26.537), new Variable("amp_imag3", 12.284), LSKRD, SFKRD, 2);
+    Amplitude Bose_symmetrized_AMP_S{
+        "K*(892)rho(770)_S", new Variable("amp_real1", 1.0), new Variable("amp_imag1", 0.0), LSKRS, SFKRS, 2};
+    Amplitude Bose_symmetrized_AMP_P{
+        "K*(892)rho(770)_P", new Variable("amp_real2", 0.526), new Variable("amp_imag2", -0.626), LSKRP, SFKRP, 2};
+    Amplitude Bose_symmetrized_AMP_D{
+        "K*(892)rho(770)_D", new Variable("amp_real3", 26.537), new Variable("amp_imag3", 12.284), LSKRD, SFKRD, 2};
 
-    Amplitude *Bose_symmetrized_AMP_S_B = new Amplitude(
-        "B_K*(892)rho(770)_S", new Variable("amp_real1", 1.0), new Variable("amp_imag1", 0), LSKRS, SFKRS, 2);
-    Amplitude *Bose_symmetrized_AMP_P_B = new Amplitude(
-        "B_K*(892)rho(770)_P", new Variable("amp_real2", -0.145), new Variable("amp_imag2", 0.86), LSKRP, SFKRP, 2);
-    Amplitude *Bose_symmetrized_AMP_D_B = new Amplitude(
-        "B_K*(892)rho(770)_D", new Variable("amp_real3", 24.343), new Variable("amp_imag3", 5.329), LSKRD, SFKRD, 2);
+    Amplitude Bose_symmetrized_AMP_S_B{
+        "B_K*(892)rho(770)_S", new Variable("amp_real1", 1.0), new Variable("amp_imag1", 0), LSKRS, SFKRS, 2};
+    Amplitude Bose_symmetrized_AMP_P_B{
+        "B_K*(892)rho(770)_P", new Variable("amp_real2", -0.145), new Variable("amp_imag2", 0.86), LSKRP, SFKRP, 2};
+    Amplitude Bose_symmetrized_AMP_D_B{
+        "B_K*(892)rho(770)_D", new Variable("amp_real3", 24.343), new Variable("amp_imag3", 5.329), LSKRD, SFKRD, 2};
 
-    DK3P_DI->amplitudes_B.push_back(Bose_symmetrized_AMP_S);
-    DK3P_DI->amplitudes_B.push_back(Bose_symmetrized_AMP_P);
-    DK3P_DI->amplitudes_B.push_back(Bose_symmetrized_AMP_D);
+    DK3P_DI.amplitudes_B.push_back(&Bose_symmetrized_AMP_S);
+    DK3P_DI.amplitudes_B.push_back(&Bose_symmetrized_AMP_P);
+    DK3P_DI.amplitudes_B.push_back(&Bose_symmetrized_AMP_D);
 
-    DK3P_DI->amplitudes.push_back(Bose_symmetrized_AMP_S_B);
-    DK3P_DI->amplitudes.push_back(Bose_symmetrized_AMP_P_B);
-    DK3P_DI->amplitudes.push_back(Bose_symmetrized_AMP_D_B);
+    DK3P_DI.amplitudes.push_back(&Bose_symmetrized_AMP_S_B);
+    DK3P_DI.amplitudes.push_back(&Bose_symmetrized_AMP_P_B);
+    DK3P_DI.amplitudes.push_back(&Bose_symmetrized_AMP_D_B);
 
-    DK3P_DI->_tau          = new Variable("tau", 0.4101, 0.001, 0.300, 0.500);
-    DK3P_DI->_xmixing      = new Variable("xmixing", 0.005, 0.001, 0, 0);
-    DK3P_DI->_ymixing      = new Variable("ymixing", 0.01, 0.001, 0, 0);
-    DK3P_DI->_SqWStoRSrate = new Variable("SqWStoRSrate", 1.0 / sqrt(300.0));
+    DK3P_DI._tau          = new Variable("tau", 0.4101, 0.001, 0.300, 0.500);
+    DK3P_DI._xmixing      = new Variable("xmixing", 0.005, 0.001, 0, 0);
+    DK3P_DI._ymixing      = new Variable("ymixing", 0.01, 0.001, 0, 0);
+    DK3P_DI._SqWStoRSrate = new Variable("SqWStoRSrate", 1.0 / sqrt(300.0));
 
-    Variable *m12                 = new Variable("m12", 0, 3);
-    Variable *m34                 = new Variable("m34", 0, 3);
-    Variable *cos12               = new Variable("cos12", -1, 1);
-    Variable *cos34               = new Variable("m12", -1, 1);
-    Variable *phi                 = new Variable("phi", -3.5, 3.5);
-    CountingVariable *eventNumber = new CountingVariable("eventNumber", 0, INT_MAX);
-    Variable *dtime               = new Variable("dtime", 0, 10);
-    Variable *sigmat              = new Variable("sigmat", -3, 3);
-    Variable *constantOne         = new Variable("constantOne", 1);
-    Variable *constantZero        = new Variable("constantZero", 0);
+    Variable m12{"m12", 0, 3};
+    Variable m34{"m34", 0, 3};
+    Variable cos12{"cos12", -1, 1};
+    Variable cos34{"m12", -1, 1};
+    Variable phi{"phi", -3.5, 3.5};
+    CountingVariable eventNumber{"eventNumber"};
+    Variable dtime{"dtime", 0, 10};
+    Variable sigmat{"sigmat", -3, 3};
+    Variable constantOne{"constantOne", 1};
+    Variable constantZero{"constantZero", 0};
 
-    vector<Variable *> observables;
-    vector<Variable *> coefficients;
-    vector<Variable *> offsets;
+    vector<Variable *> observables{&m12, &m34, &cos12, &cos34, &phi, &eventNumber, &dtime, &sigmat};
+    vector<Variable *> coefficients{&constantZero, &constantZero};
+    vector<Variable *> offsets{&constantOne};
 
-    observables.push_back(m12);
-    observables.push_back(m34);
-    observables.push_back(cos12);
-    observables.push_back(cos34);
-    observables.push_back(phi);
-    observables.push_back(eventNumber);
-    observables.push_back(dtime);
-    observables.push_back(sigmat);
-    offsets.push_back(constantZero);
-    offsets.push_back(constantZero);
-    coefficients.push_back(constantOne);
-
-    TruthResolution *dat = new TruthResolution();
-    PolynomialPdf *eff   = new PolynomialPdf("constantEff", observables, coefficients, offsets, 0);
-    TDDP4 *dp            = new TDDP4("test", observables, DK3P_DI, dat, eff, 0, 1);
+    TruthResolution dat;
+    PolynomialPdf eff{"constantEff", observables, coefficients, offsets, 0};
+    TDDP4 dp{"test", observables, &DK3P_DI, &dat, &eff, 0, 1};
 
     TFile *file = new TFile(output, "RECREATE");
     TTree *tree = new TTree("events", "events");
@@ -213,15 +198,18 @@ int main(int argc, char **argv) {
     tree->Branch("Piplus_pdg", &Piplus_pdg, "Piplus_pdg/I");
 
     for(int k = 0; k < trials; ++k) {
-        int numEvents = .8e6;
-        dp->setGenerationOffset(k * numEvents);
-        auto tuple = dp->GenerateSig(numEvents);
+        int numEvents = 800000;
+        dp.setGenerationOffset(k * numEvents);
 
-        auto particles = std::get<0>(tuple);
-        auto variables = std::get<1>(tuple);
-        auto weights   = std::get<2>(tuple);
-        auto flags     = std::get<3>(tuple);
-        int accepted   = thrust::count_if(flags.begin(), flags.end(), thrust::identity<bool>());
+        mcbooster::ParticlesSet_h particles; // typedef for std::vector<Particles_h *>
+        mcbooster::VariableSet_h variables;
+        mcbooster::RealVector_h weights;
+        mcbooster::BoolVector_h flags;
+
+        std::tie(particles, variables, weights, flags) = dp.GenerateSig(numEvents);
+
+        int accepted = thrust::count_if(flags.begin(), flags.end(), thrust::identity<bool>());
+
         GOOFIT_INFO(
             "Run #{}: Using accept-reject method would leave you with {} out of {} events", k, accepted, numEvents);
 

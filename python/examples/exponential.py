@@ -3,8 +3,14 @@
 from goofit import *
 import numpy as np
 
-xdata = np.random.exponential(size=1000000)
+'''
+what does Variable exactly do?
+
+
+'''
+xdata = np.random.exponential(size=100000)
 xvar = Variable("xvar", 0, np.max(xdata) + 1)
+
 data = UnbinnedDataSet(xvar)
 
 for v in xdata:

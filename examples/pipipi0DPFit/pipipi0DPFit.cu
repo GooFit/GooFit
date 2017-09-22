@@ -4196,11 +4196,6 @@ int runCanonicalFit(std::string fname, bool noPlots = true) {
         retval = datapdf;
     }
 
-        // ROOT::Minuit2::FunctionMinimum* min = datapdf.fit();
-        // overallSignal->setDebugMask(1);
-
-        // overallSignal->setDebugMask(0);
-
 #ifdef PROFILING
     overallPdf->printProfileInfo();
 #endif

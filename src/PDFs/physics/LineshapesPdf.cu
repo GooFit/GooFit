@@ -9,8 +9,9 @@ Also right now it is the home to some helper functions needed and an implementat
 on the GPU
 */
 
-#include "goofit/PDFs/physics/LineshapesPdf.h"
 #include "goofit/PDFs/physics/SpinFactors.h"
+#include "goofit/PDFs/physics/LineshapesPdf.h"
+
 #include <utility>
 
 #include <Eigen/Core>
@@ -525,172 +526,159 @@ __device__ fpcomplex nonres_DP(fptype Mpair, fptype m1, fptype m2, unsigned int 
     // m1,m2,meson_radius, orbital );
     return fpcomplex(1, 0) * formfactor;
 }
-   
-__device__ fptype phsp_twoBody(fptype s, fptype m0, fptype m1) {
-    return sqrt(1.-POW2(m0+m1)/s);
-}
-    
+
+__device__ fptype phsp_twoBody(fptype s, fptype m0, fptype m1) { return sqrt(1. - POW2(m0 + m1) / s); }
+
 __device__ fptype phsp_fourPi(fptype s) {
-    if(s>1)
-        return phsp_twoBody(s,2*mPiPlus,2*mPiPlus);
+    if(s > 1)
+        return phsp_twoBody(s, 2 * mPiPlus, 2 * mPiPlus);
     else
-        return 0.00051
-            + -0.01933*s
-            +  0.13851*s*s
-            + -0.20840*s*s*s
-            + -0.29744*s*s*s*s
-            +  0.13655*s*s*s*s*s
-            +  1.07885*s*s*s*s*s*s;
+        return 0.00051 + -0.01933 * s + 0.13851 * s * s + -0.20840 * s * s * s + -0.29744 * s * s * s * s
+               + 0.13655 * s * s * s * s * s + 1.07885 * s * s * s * s * s * s;
 }
-  
-__device__ Eigen::Array<fpcomplex, NCHANNELS,NCHANNELS> getPropagator(const Eigen::Array<fptype, NCHANNELS,NCHANNELS> &kMatrix,
-                                   const Eigen::Matrix<fptype, 5,1> &phaseSpace,
-                                   fptype adlerTerm) {
-    
-    Eigen::Array<fpcomplex, NCHANNELS,NCHANNELS> tMatrix;
-    
-    for(unsigned int i = 0 ; i < NCHANNELS ; ++i){
-        for(unsigned int j = 0 ; j < NCHANNELS ; ++j){
-            tMatrix(i,j) = (i==j?1.:0.) - fpcomplex(0,adlerTerm)*kMatrix(i,j)*phaseSpace(j) ;
+
+__device__ Eigen::Array<fpcomplex, NCHANNELS, NCHANNELS>
+getPropagator(const Eigen::Array<fptype, NCHANNELS, NCHANNELS> &kMatrix,
+              const Eigen::Matrix<fptype, 5, 1> &phaseSpace,
+              fptype adlerTerm) {
+    Eigen::Array<fpcomplex, NCHANNELS, NCHANNELS> tMatrix;
+
+    for(unsigned int i = 0; i < NCHANNELS; ++i) {
+        for(unsigned int j = 0; j < NCHANNELS; ++j) {
+            tMatrix(i, j) = (i == j ? 1. : 0.) - fpcomplex(0, adlerTerm) * kMatrix(i, j) * phaseSpace(j);
         }
     }
     return tMatrix.inverse();
 }
-    
+
 __device__ fpcomplex kMatrixFunction(fptype Mpair, fptype m1, fptype m2, unsigned int *indices) {
     const fptype mass  = GOOFIT_GET_PARAM(2);
     const fptype width = GOOFIT_GET_PARAM(3);
     // const unsigned int L = GOOFIT_GET_INT(4);
     const fptype radius = GOOFIT_GET_CONST(7);
 
-    //const fptype pTerm = GOOFIT_GET_INT();
-    
+    // const fptype pTerm = GOOFIT_GET_INT();
+
     unsigned int pterm = GOOFIT_GET_INT(8);
-    unsigned int chan = GOOFIT_GET_INT(9);
-    
-    fptype sA0 = GOOFIT_GET_PARAM(10);
-    fptype sA = GOOFIT_GET_PARAM(11);
-    fptype s0_prod = GOOFIT_GET_PARAM(12);
+    unsigned int chan  = GOOFIT_GET_INT(9);
+
+    fptype sA0      = GOOFIT_GET_PARAM(10);
+    fptype sA       = GOOFIT_GET_PARAM(11);
+    fptype s0_prod  = GOOFIT_GET_PARAM(12);
     fptype s0_scatt = GOOFIT_GET_PARAM(13);
-    
+
     Eigen::Array<fptype, NCHANNELS, 1> fscat;
     Eigen::Array<fptype, NPOLES, 1> pmasses;
     Eigen::Array<fptype, NPOLES, NPOLES> couplings;
-    
-    for(int i=0; i<NCHANNELS; i++) {
-        fscat(i) = GOOFIT_GET_PARAM(14+i);
+
+    for(int i = 0; i < NCHANNELS; i++) {
+        fscat(i) = GOOFIT_GET_PARAM(14 + i);
     }
-    
-    for(int i=0; i<NPOLES; i++) {
-        for(int j=0; j<NPOLES+1; j++)
-            couplings(i,j) = GOOFIT_GET_PARAM(14+NCHANNELS + i*(NPOLES+1) + j);
-        pmasses(i) = GOOFIT_GET_PARAM(14+NCHANNELS + i*(NPOLES+1) + NPOLES);
+
+    for(int i = 0; i < NPOLES; i++) {
+        for(int j = 0; j < NPOLES + 1; j++)
+            couplings(i, j) = GOOFIT_GET_PARAM(14 + NCHANNELS + i * (NPOLES + 1) + j);
+        pmasses(i) = GOOFIT_GET_PARAM(14 + NCHANNELS + i * (NPOLES + 1) + NPOLES);
     }
-    
-    fptype s  = POW2(Mpair);
-    
+
+    fptype s = POW2(Mpair);
+
     // constructKMatrix
-    
-    Eigen::Array<fptype, NCHANNELS,NCHANNELS> kMatrix;
+
+    Eigen::Array<fptype, NCHANNELS, NCHANNELS> kMatrix;
     kMatrix.setZero();
-    
+
     // TODO: Make sure the order (k,i,j) is correct
-    
-    for(int i=0; i<5; i++) {
-        for(int j=0; j<5; j++) {
-            for(int k=0; k<5; k++)
-                kMatrix(i,j) += couplings(k,i) * couplings(k,j) / (pmasses(k) - s);
-            if(i==0 || j==0) // Scattering term
-                kMatrix(i,j) += fscat(i+j) * (1-s0_scatt) / (s-s0_scatt);
+
+    for(int i = 0; i < 5; i++) {
+        for(int j = 0; j < 5; j++) {
+            for(int k = 0; k < 5; k++)
+                kMatrix(i, j) += couplings(k, i) * couplings(k, j) / (pmasses(k) - s);
+            if(i == 0 || j == 0) // Scattering term
+                kMatrix(i, j) += fscat(i + j) * (1 - s0_scatt) / (s - s0_scatt);
         }
-        
     }
-    
-    fptype adlerTerm = ( 1. - sA0 ) * ( s - sA*mPiPlus*mPiPlus/2 ) / ( s - sA0);
-    
-    Eigen::Matrix<fptype, 5,1> phaseSpace;
-    phaseSpace << phsp_twoBody(s,mPiPlus,mPiPlus),
-                  phsp_twoBody(s,mKPlus,mKPlus),
-                  phsp_fourPi( s ),
-                  phsp_twoBody(s,mEta,mEta),
-                  phsp_twoBody(s,mEta,mEtap);
-    
-    
-    Eigen::Array<fpcomplex, NCHANNELS,NCHANNELS> F = getPropagator(kMatrix, phaseSpace, adlerTerm);
-    
+
+    fptype adlerTerm = (1. - sA0) * (s - sA * mPiPlus * mPiPlus / 2) / (s - sA0);
+
+    Eigen::Matrix<fptype, 5, 1> phaseSpace;
+    phaseSpace << phsp_twoBody(s, mPiPlus, mPiPlus), phsp_twoBody(s, mKPlus, mKPlus), phsp_fourPi(s),
+        phsp_twoBody(s, mEta, mEta), phsp_twoBody(s, mEta, mEtap);
+
+    Eigen::Array<fpcomplex, NCHANNELS, NCHANNELS> F = getPropagator(kMatrix, phaseSpace, adlerTerm);
+
     if(true) { // pole
         fpcomplex M = 0;
-        for(int i=0; i<NCHANNELS; i++) {
-            fptype pole = couplings(i,pterm);
-            M += F(0,i) * pole;
+        for(int i = 0; i < NCHANNELS; i++) {
+            fptype pole = couplings(i, pterm);
+            M += F(0, i) * pole;
         }
-        return M / (POW2(pmasses(pterm))-s);
-    } else if (false) { // prod
-        return F(0,pterm)*(1-s0_prod)/(s-s0_prod);
+        return M / (POW2(pmasses(pterm)) - s);
+    } else if(false) { // prod
+        return F(0, pterm) * (1 - s0_prod) / (s - s0_prod);
     }
 }
-    
-__device__ fptype phsp_FOCUS(fptype s, fptype m0, fptype m1) {
-    fptype mp = (m0+m1);
-    fptype mm = (m0-m1);
-    fptype a2 = ( 1.0 - mp*mp/s ) * ( 1.0 - mm*mm/s );
-    return sqrt(a2);
 
+__device__ fptype phsp_FOCUS(fptype s, fptype m0, fptype m1) {
+    fptype mp = (m0 + m1);
+    fptype mm = (m0 - m1);
+    fptype a2 = (1.0 - mp * mp / s) * (1.0 - mm * mm / s);
+    return sqrt(a2);
 }
 
 __device__ fpcomplex FOCUSFunction(fptype Mpair, fptype m1, fptype m2, unsigned int *indices) {
-    fptype s  = POW2(Mpair);
+    fptype s         = POW2(Mpair);
     unsigned int mod = GOOFIT_GET_INT(8);
-    
-    // mKPlus, mPiPlus, mEtap
-    constexpr fptype sNorm = mKPlus*mKPlus + mPiPlus*mPiPlus;
-    constexpr fptype s12 = 0.23;
-    constexpr fptype s32 = .27;
-    
-    fptype I12_adler = (s - s12) / sNorm ;
-    fptype I32_adler = (s - s32) / sNorm ;
-    
-    fptype rho1 = phsp_FOCUS(s,mKPlus,mPiPlus);
-    fptype rho2 = phsp_FOCUS(s,mKPlus,mEtap);
-    
-    fptype pmass = 1.7919;
-    Eigen::Array<fptype, 2,1> coupling;
-    coupling << 0.31072, -0.02323;
-    fptype X = s/sNorm-1;
-    
-    // constructKMatrix
-    Eigen::Array<fptype, 2,2> kMatrix;
-    
-    kMatrix(0,0) = coupling(0) * coupling(0) / (pmass - s) + 0.79299 - 0.15099*X + 0.00811*POW2(X);
-    kMatrix(1,1) = coupling(1) * coupling(1) / (pmass - s) + 0.17054 - 0.0219*X  + 0.00085655*POW2(X);
-    kMatrix(1,0) = coupling(1) * coupling(0) / (pmass - s) + 0.15040 - 0.038266*X + 0.0022596*POW2(X);
-    kMatrix(0,1) = coupling(0) * coupling(1) / (pmass - s) + 0.15040 - 0.038266*X + 0.0022596*POW2(X);
-    
-    fptype K11 = I12_adler * kMatrix(0,0);
-    fptype K12 = I12_adler * kMatrix(0,1);
-    fptype K22 = I12_adler * kMatrix(1,1);
-    
-    fptype K32 = I32_adler * (-0.22147 + 0.026637*X - 0.00092057*POW2(X));
-    
-    fptype detK = K11*K22 - K12*K12;
-    fpcomplex del{1 - rho1*rho2*detK, -(rho1*K11 + rho2*K22)};
-    
-    fpcomplex T11{1., -rho2*K22};
-    fpcomplex T22{1., -rho1*K11};
-    fpcomplex T12{0., rho2*K12};
-    
-    fpcomplex T32 = 1. / fpcomplex( 1, - K32 * rho1 );
 
-    if(mod==static_cast<unsigned int>(Lineshapes::FOCUS::Mod::Kpi))
-        return fpcomplex(K11,-rho2*detK)/del;
-    else if(mod==static_cast<unsigned int>(Lineshapes::FOCUS::Mod::KEta))
+    // mKPlus, mPiPlus, mEtap
+    constexpr fptype sNorm = mKPlus * mKPlus + mPiPlus * mPiPlus;
+    constexpr fptype s12   = 0.23;
+    constexpr fptype s32   = .27;
+
+    fptype I12_adler = (s - s12) / sNorm;
+    fptype I32_adler = (s - s32) / sNorm;
+
+    fptype rho1 = phsp_FOCUS(s, mKPlus, mPiPlus);
+    fptype rho2 = phsp_FOCUS(s, mKPlus, mEtap);
+
+    fptype pmass = 1.7919;
+    Eigen::Array<fptype, 2, 1> coupling;
+    coupling << 0.31072, -0.02323;
+    fptype X = s / sNorm - 1;
+
+    // constructKMatrix
+    Eigen::Array<fptype, 2, 2> kMatrix;
+
+    kMatrix(0, 0) = coupling(0) * coupling(0) / (pmass - s) + 0.79299 - 0.15099 * X + 0.00811 * POW2(X);
+    kMatrix(1, 1) = coupling(1) * coupling(1) / (pmass - s) + 0.17054 - 0.0219 * X + 0.00085655 * POW2(X);
+    kMatrix(1, 0) = coupling(1) * coupling(0) / (pmass - s) + 0.15040 - 0.038266 * X + 0.0022596 * POW2(X);
+    kMatrix(0, 1) = coupling(0) * coupling(1) / (pmass - s) + 0.15040 - 0.038266 * X + 0.0022596 * POW2(X);
+
+    fptype K11 = I12_adler * kMatrix(0, 0);
+    fptype K12 = I12_adler * kMatrix(0, 1);
+    fptype K22 = I12_adler * kMatrix(1, 1);
+
+    fptype K32 = I32_adler * (-0.22147 + 0.026637 * X - 0.00092057 * POW2(X));
+
+    fptype detK = K11 * K22 - K12 * K12;
+    fpcomplex del{1 - rho1 * rho2 * detK, -(rho1 * K11 + rho2 * K22)};
+
+    fpcomplex T11{1., -rho2 * K22};
+    fpcomplex T22{1., -rho1 * K11};
+    fpcomplex T12{0., rho2 * K12};
+
+    fpcomplex T32 = 1. / fpcomplex(1, -K32 * rho1);
+
+    if(mod == static_cast<unsigned int>(Lineshapes::FOCUS::Mod::Kpi))
+        return fpcomplex(K11, -rho2 * detK) / del;
+    else if(mod == static_cast<unsigned int>(Lineshapes::FOCUS::Mod::KEta))
         return K12 / del;
     else /*if(mod==Lineshapes::FOCUS::Mod::I32)*/
         return T32;
-    
-    return {0.,0.};
+
+    return {0., 0.};
 }
-    
+
 __device__ resonance_function_ptr ptr_to_LS_ONE     = LS_ONE;
 __device__ resonance_function_ptr ptr_to_BW_DP4     = BW;
 __device__ resonance_function_ptr ptr_to_lass       = lass_MINT;
@@ -792,8 +780,7 @@ Lineshape::Lineshape(std::string name,
         throw GeneralError("Splines need to be constructed with Lineshapes::GSpline");
 
     default:
-        throw GeneralError(
-            "It seems that the requested lineshape has a custom constructor in Lineshapes instead");
+        throw GeneralError("It seems that the requested lineshape has a custom constructor in Lineshapes instead");
     }
 
     GOOFIT_FINALIZE_PDF;
@@ -861,14 +848,12 @@ Lineshapes::LASS::LASS(std::string name,
 Lineshapes::RBW::RBW(
     std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
     : Lineshape(nullptr, name, mass, width, L, Mpair, LS::BW, FormFac, radius) {
-        
     GET_FUNCTION_ADDR(ptr_to_BW_DP4);
-        
+
     GOOFIT_FINALIZE_PDF;
 }
-    
-Lineshapes::FOCUS::FOCUS(
-                     std::string name,
+
+Lineshapes::FOCUS::FOCUS(std::string name,
                          Mod mod,
                          Variable *mass,
                          Variable *width,
@@ -876,54 +861,54 @@ Lineshapes::FOCUS::FOCUS(
                          unsigned int Mpair,
                          FF FormFac,
                          fptype radius)
-: Lineshape(nullptr, name, mass, width, L, Mpair, LS::FOCUS, FormFac, radius), mod(mod) {
-    
+    : Lineshape(nullptr, name, mass, width, L, Mpair, LS::FOCUS, FormFac, radius)
+    , mod(mod) {
     GOOFIT_ADD_INT(8, static_cast<unsigned int>(mod), "Lineshape modifier");
-    
+
     GET_FUNCTION_ADDR(ptr_to_FOCUS);
-    
+
     GOOFIT_FINALIZE_PDF;
 }
 
-Lineshapes::kMatrix::kMatrix(
-                             std::string name,
+Lineshapes::kMatrix::kMatrix(std::string name,
                              unsigned int pterm,
                              Channels chan,
-                             Variable* sA0,
-                             Variable* sA,
-                             Variable* s0_prod,
-                             Variable* s0_scatt,
-                             std::array<Variable*, NCHANNELS> fscat,
-                             std::array<Variable*, NPOLES*(NPOLES+1)> poles,
+                             Variable *sA0,
+                             Variable *sA,
+                             Variable *s0_prod,
+                             Variable *s0_scatt,
+                             std::array<Variable *, NCHANNELS> fscat,
+                             std::array<Variable *, NPOLES *(NPOLES + 1)> poles,
                              Variable *mass,
                              Variable *width,
                              unsigned int L,
                              unsigned int Mpair,
                              FF FormFac,
                              fptype radius)
-    : Lineshape(nullptr, name, mass, width, L, Mpair, LS::BW, FormFac, radius), pterm(pterm), channels(chan) {
-        
+    : Lineshape(nullptr, name, mass, width, L, Mpair, LS::BW, FormFac, radius)
+    , pterm(pterm)
+    , channels(chan) {
     GOOFIT_ADD_INT(8, pterm, "pTerm");
     GOOFIT_ADD_INT(9, static_cast<unsigned int>(chan), "Channel");
-    
+
     GOOFIT_ADD_PARAM(10, sA0, "sA0");
     GOOFIT_ADD_PARAM(11, sA, "sA");
     GOOFIT_ADD_PARAM(12, s0_prod, "s0_prod");
     GOOFIT_ADD_PARAM(13, s0_scatt, "s0_scatt");
-        
-    for(int i=0; i<NCHANNELS; i++) {
-        GOOFIT_ADD_PARAM(14+i, fscat.at(i), "fscat");
+
+    for(int i = 0; i < NCHANNELS; i++) {
+        GOOFIT_ADD_PARAM(14 + i, fscat.at(i), "fscat");
     }
-        
-    for(int i=0; i<NPOLES*(NPOLES+1); i++) {
-        GOOFIT_ADD_PARAM(14+NCHANNELS+i, poles.at(i), "Poles");
+
+    for(int i = 0; i < NPOLES * (NPOLES + 1); i++) {
+        GOOFIT_ADD_PARAM(14 + NCHANNELS + i, poles.at(i), "Poles");
     }
-        
+
     GET_FUNCTION_ADDR(ptr_to_kMatrix);
-    
+
     GOOFIT_FINALIZE_PDF;
 }
-    
+
 Amplitude::Amplitude(std::string uniqueDecayStr,
                      Variable *ar,
                      Variable *ai,

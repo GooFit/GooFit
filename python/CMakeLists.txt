@@ -1,5 +1,6 @@
 goofit_add_library(_goofit MODULE
     goofit.cpp
+    Minuit2/FunctionMinimum.cpp
     goofit/Variable.cpp
     goofit/DataSet.cpp
     goofit/BinnedDataSet.cpp

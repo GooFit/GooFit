@@ -132,12 +132,9 @@ __host__ void PdfBase::setIndices() {
     // std::cout << std::endl;
 }
 
-__host__ DataSet* PdfBase::getData() {
-    return data_;
-}
+__host__ DataSet *PdfBase::getData() { return data_; }
 
 __host__ void PdfBase::setData(DataSet *data) {
-
     if(dev_event_array) {
         gooFree(dev_event_array);
         cudaDeviceSynchronize();
@@ -170,14 +167,14 @@ __host__ void PdfBase::setData(DataSet *data) {
         int *counts        = new int[numProcs];
         int *displacements = new int[numProcs];
 
-        for(int i     = 0; i < numProcs - 1; i++)
+        for(int i = 0; i < numProcs - 1; i++)
             counts[i] = perTask;
 
         counts[numProcs - 1] = numEntries - perTask * (numProcs - 1);
 
         displacements[0] = 0;
 
-        for(int i            = 1; i < numProcs; i++)
+        for(int i = 1; i < numProcs; i++)
             displacements[i] = displacements[i - 1] + counts[i - 1];
 
 #endif
@@ -262,14 +259,14 @@ __host__ void PdfBase::setData(DataSet *data) {
         int *counts        = new int[numProcs];
         int *displacements = new int[numProcs];
 
-        for(int i     = 0; i < numProcs - 1; i++)
+        for(int i = 0; i < numProcs - 1; i++)
             counts[i] = perTask;
 
         counts[numProcs - 1] = numEntries - perTask * (numProcs - 1);
 
         displacements[0] = 0;
 
-        for(int i            = 1; i < numProcs; i++)
+        for(int i = 1; i < numProcs; i++)
             displacements[i] = displacements[i - 1] + counts[i - 1];
 
 #endif

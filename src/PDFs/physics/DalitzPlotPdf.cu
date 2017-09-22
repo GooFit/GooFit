@@ -77,9 +77,9 @@ __device__ fptype device_DalitzPlot(fptype *evt, fptype *p, unsigned int *indice
     // unsigned int cacheToUse    = RO_CACHE(indices[3]);
 
     for(int i = 0; i < numResonances; ++i) {
-        int paramIndex              = parIndexFromResIndex_DP(i);
-        fpcomplex amp = fpcomplex(RO_CACHE(p[RO_CACHE(indices[paramIndex + 0])]),
-                                                              RO_CACHE(p[RO_CACHE(indices[paramIndex + 1])]));
+        int paramIndex = parIndexFromResIndex_DP(i);
+        fpcomplex amp
+            = fpcomplex(RO_CACHE(p[RO_CACHE(indices[paramIndex + 0])]), RO_CACHE(p[RO_CACHE(indices[paramIndex + 1])]));
 
         // potential performance improvement by
         // double2 me = RO_CACHE(reinterpret_cast<double2*> (cResonances[i][evtNum]));
@@ -204,11 +204,7 @@ __host__ void DalitzPlotPdf::setDataSize(unsigned int dataSize, unsigned int evt
         cachedWaves[i] = new thrust::device_vector<fpcomplex>(dataSize);
 #endif
         void *dummy = thrust::raw_pointer_cast(cachedWaves[i]->data());
-        MEMCPY_TO_SYMBOL(cResonances,
-                         &dummy,
-                         sizeof(fpcomplex *),
-                         i * sizeof(fpcomplex *),
-                         cudaMemcpyHostToDevice);
+        MEMCPY_TO_SYMBOL(cResonances, &dummy, sizeof(fpcomplex *), i * sizeof(fpcomplex *), cudaMemcpyHostToDevice);
     }
 
     setForceIntegrals();
@@ -305,8 +301,7 @@ __host__ fptype DalitzPlotPdf::normalize() const {
 
         for(unsigned int j = 0; j < decayInfo->resonances.size(); ++j) {
             int param_j = parameters + resonanceOffset_DP + resonanceSize * j;
-            fpcomplex amplitude_j(host_params[host_indices[param_j]],
-                                                -host_params[host_indices[param_j + 1]]);
+            fpcomplex amplitude_j(host_params[host_indices[param_j]], -host_params[host_indices[param_j + 1]]);
             // Notice complex conjugation
             // printf("%f %f %f %f %f %f\n", amplitude_i.real(), amplitude_i.imag(), amplitude_j.real(),
             // amplitude_j.imag(), (*(integrals[i][j])).real, (*(integrals[i][j])).imag );

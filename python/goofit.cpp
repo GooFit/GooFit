@@ -44,6 +44,7 @@ void init_MappedPdf(py::module &);
 void init_ProdPdf(py::module &);
 
 // Physics
+void init_DalitzPlotHelpers(py::module &);
 void init_DalitzPlotPdf(py::module &);
 void init_DalitzVetoPdf(py::module &);
 void init_DP4Pdf(py::module &);
@@ -60,9 +61,8 @@ void init_TruthResolution(py::module &);
 // Utilities
 void init_VariableBinTransform1DPdf(py::module &);
 
-
-PYBIND11_PLUGIN(_goofit) {
-    py::module m("_goofit", "Python interface for GooFit");
+PYBIND11_MODULE(_goofit, m) {
+    m.doc() = "Python interface for GooFit";
 
     init_FunctionMinimum(m);
 
@@ -96,7 +96,7 @@ PYBIND11_PLUGIN(_goofit) {
     init_StepPdf(m);
     init_TrigThresholdPdf(m);
     init_VoigtianPdf(m);
-    
+
     // Combine
     init_AddPdf(m);
     init_CompositePdf(m);
@@ -104,8 +104,9 @@ PYBIND11_PLUGIN(_goofit) {
     init_EventWeightedAddPdf(m);
     init_MappedPdf(m);
     init_ProdPdf(m);
-    
+
     // Physics
+    init_DalitzPlotHelpers(m);
     init_DalitzPlotPdf(m);
     init_DalitzVetoPdf(m);
     init_DP4Pdf(m);
@@ -121,7 +122,4 @@ PYBIND11_PLUGIN(_goofit) {
 
     // Utilities
     init_VariableBinTransform1DPdf(m);
-
-
-    return m.ptr();
 }

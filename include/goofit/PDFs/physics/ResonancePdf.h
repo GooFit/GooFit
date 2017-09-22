@@ -5,18 +5,10 @@
 
 namespace GooFit {
 
-enum class ResPdfType {
-    RBW = 0,
-    LASS,
-    GS,
-    FLATTE,
-    GAUSS,
-    SPLINE,
-    NONRES
-};
-    
+enum class ResPdfType { RBW = 0, LASS, GS, FLATTE, GAUSS, SPLINE, NONRES };
+
 #define MAXNKNOBS 1000
-    
+
 typedef fpcomplex (*resonance_function_ptr)(fptype, fptype, fptype, unsigned int *);
 
 __device__ fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m);
@@ -55,15 +47,10 @@ class ResonancePdf : public GooPdf {
                  Variable *width,
                  unsigned int sp,
                  unsigned int cyc,
-                 bool symmDP = false
-                 );
-    
+                 bool symmDP = false);
+
     // Constructor for NONRES
-    ResonancePdf(std::string name,
-                 ResPdfType rpt,
-                 Variable *ar,
-                 Variable *ai
-                 );
+    ResonancePdf(std::string name, ResPdfType rpt, Variable *ar, Variable *ai);
 
     // Gaussian constructor
     ResonancePdf(std::string name,
@@ -75,30 +62,29 @@ class ResonancePdf : public GooPdf {
                  unsigned int cyc);
 
     // Flatte constructor (arXiv:1505.01710)
-    ResonancePdf (std::string name,
-                  ResPdfType rpt,
-                  Variable* ar,
-                  Variable* ai,
-                  Variable* mean,
-                  Variable* g1,
-                  Variable* rg2og1,
-                  unsigned int cyc,
-                  const bool symmDP);
-    
+    ResonancePdf(std::string name,
+                 ResPdfType rpt,
+                 Variable *ar,
+                 Variable *ai,
+                 Variable *mean,
+                 Variable *g1,
+                 Variable *rg2og1,
+                 unsigned int cyc,
+                 const bool symmDP);
+
     // Cubic spline constructor
-    ResonancePdf (std::string name,
-                  ResPdfType rpt,
-                  Variable* ar,
-                  Variable* ai,
-                  std::vector<fptype>& HH_bin_limits,
-                  std::vector<Variable*>& pwa_coefs_reals,
-                  std::vector<Variable*>& pwa_coefs_imags,
-                  unsigned int cyc,
-                  const bool symmDP = false);
-    
-    
+    ResonancePdf(std::string name,
+                 ResPdfType rpt,
+                 Variable *ar,
+                 Variable *ai,
+                 std::vector<fptype> &HH_bin_limits,
+                 std::vector<Variable *> &pwa_coefs_reals,
+                 std::vector<Variable *> &pwa_coefs_imags,
+                 unsigned int cyc,
+                 const bool symmDP = false);
+
     __host__ void recalculateCache() const;
-    
+
   private:
     void setConstantIndex(unsigned int idx) { host_indices[parameters + 1] = idx; }
 
@@ -112,9 +98,9 @@ class ResonancePdf : public GooPdf {
     unsigned int eval_type;
     unsigned int resonance_type;
     */
-    
+
     std::vector<fptype> host_constants;
-    
+
     const ResPdfType rpt_;
 };
 

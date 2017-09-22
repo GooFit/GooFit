@@ -20,7 +20,7 @@ const fptype KmMass     = .493677;
 int main(int argc, char **argv) {
     GooFit::Application app("Dalitz 4 daughter example", argc, argv);
 
-    for(int i                 = 0; i < maxParams; i++)
+    for(int i = 0; i < maxParams; i++)
         host_normalisation[i] = -7;
 
     try {

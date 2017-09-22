@@ -9,8 +9,9 @@ Also right now it is the home to some helper functions needed and an implementat
 on the GPU
 */
 
-#include "goofit/PDFs/physics/LineshapesPdf.h"
 #include "goofit/PDFs/physics/SpinFactors.h"
+#include "goofit/PDFs/physics/LineshapesPdf.h"
+
 #include <utility>
 
 #include <goofit/detail/Macros.h>
@@ -63,9 +64,7 @@ __device__ fptype BL2(fptype z2, int L) {
     // Spin 3 and up not accounted for.
 }
 
-__device__ fpcomplex LS_ONE(fptype Mpair, fptype m1, fptype m2, unsigned int *indices) {
-    return fpcomplex(1, 0);
-}
+__device__ fpcomplex LS_ONE(fptype Mpair, fptype m1, fptype m2, unsigned int *indices) { return fpcomplex(1, 0); }
 
 // This function is modeled after BW_BW::getVal() in BW_BW.cpp from the MINT package written by Jonas Rademacker.
 __device__ fpcomplex BW(fptype Mpair, fptype m1, fptype m2, unsigned int *indices) {
@@ -129,19 +128,18 @@ __device__ fpcomplex BW(fptype Mpair, fptype m1, fptype m2, unsigned int *indice
 
 // This function is modeled after SBW from the MINT package written by Jonas Rademacker.
 __device__ fpcomplex SBW(fptype Mpair, fptype m1, fptype m2, unsigned int *indices) {
-    fptype resmass = GOOFIT_GET_PARAM(2);
-    fptype reswidth = GOOFIT_GET_PARAM(3);
+    fptype resmass       = GOOFIT_GET_PARAM(2);
+    fptype reswidth      = GOOFIT_GET_PARAM(3);
     unsigned int orbital = GOOFIT_GET_INT(4);
     // GOOFIT_GET_INT(5, Mpair, "Mpair");
-    unsigned int FF = GOOFIT_GET_INT(6);
+    unsigned int FF     = GOOFIT_GET_INT(6);
     fptype meson_radius = GOOFIT_GET_CONST(7);
-    
-    
-    //fptype meson_radius  = functorConstants[indices[7]];
-    //fptype resmass       = cudaArray[indices[2]];
-    //fptype reswidth      = cudaArray[indices[3]];
-    //unsigned int orbital = indices[4];
-    //unsigned int FF      = indices[6];
+
+    // fptype meson_radius  = functorConstants[indices[7]];
+    // fptype resmass       = cudaArray[indices[2]];
+    // fptype reswidth      = cudaArray[indices[3]];
+    // unsigned int orbital = indices[4];
+    // unsigned int FF      = indices[6];
 
     fptype mass          = resmass;
     fptype width         = reswidth;
@@ -181,10 +179,9 @@ __device__ fpcomplex SBW(fptype Mpair, fptype m1, fptype m2, unsigned int *indic
 }
 
 __device__ fpcomplex bugg_rho2(const fptype &s, const fptype m) {
-    fptype rho_squared = 1. - 4. * m * m / s;
-    fpcomplex returnVal
-        = (rho_squared >= 0) ? fpcomplex(1, 0) : fpcomplex(0, 1);
-    rho_squared = (rho_squared >= 0) ? sqrt(rho_squared) : sqrt(-rho_squared);
+    fptype rho_squared  = 1. - 4. * m * m / s;
+    fpcomplex returnVal = (rho_squared >= 0) ? fpcomplex(1, 0) : fpcomplex(0, 1);
+    rho_squared         = (rho_squared >= 0) ? sqrt(rho_squared) : sqrt(-rho_squared);
     return rho_squared * returnVal;
 }
 
@@ -232,21 +229,19 @@ __device__ fpcomplex bugg_MINT(fptype Mpair, fptype m1, fptype m2, unsigned int 
 
     fpcomplex gamma_2pi = fpcomplex(
         g1sq * (s - sA * mPiPlus * mPiPlus) / (M * M - sA * mPiPlus * mPiPlus) * bugg_rho2(s, mPiPlus).real(), 0);
-    fpcomplex gamma_2K
-        = g_2K * g1sq * s / (M * M) * exp((-1) * alpha * sqrt((s - 4. * mKPlus * mKPlus) * (s - 4. * mKPlus * mKPlus)))
-          * bugg_rho2(s, mKPlus);
+    fpcomplex gamma_2K = g_2K * g1sq * s / (M * M)
+                         * exp((-1) * alpha * sqrt((s - 4. * mKPlus * mKPlus) * (s - 4. * mKPlus * mKPlus)))
+                         * bugg_rho2(s, mKPlus);
     fpcomplex gamma_2eta = g_2eta * g1sq * s / (M * M)
-                                         * exp((-1) * alpha * sqrt((s - 4. * mEta * mEta) * (s - 4. * mEta * mEta)))
-                                         * bugg_rho2(s, mEta);
-    fpcomplex gamma_4pi
-        = fpcomplex(bugg_Gamma_4pi(s, mPiPlus, g_4pi, M, lambda_4pi, s0_4pi), 0);
+                           * exp((-1) * alpha * sqrt((s - 4. * mEta * mEta) * (s - 4. * mEta * mEta)))
+                           * bugg_rho2(s, mEta);
+    fpcomplex gamma_4pi = fpcomplex(bugg_Gamma_4pi(s, mPiPlus, g_4pi, M, lambda_4pi, s0_4pi), 0);
 
     fpcomplex Gamma_tot = gamma_2pi + gamma_2K + gamma_2eta + gamma_4pi;
 
     // fpcomplex num = M * gamma_2pi; //only for elastic scattering, not production
     fpcomplex den
-        = fpcomplex(
-              M * M - s - M * g1sq * (s - sA * mPiPlus * mPiPlus) / (M * M - sA * mPiPlus * mPiPlus) * z, 0)
+        = fpcomplex(M * M - s - M * g1sq * (s - sA * mPiPlus * mPiPlus) / (M * M - sA * mPiPlus * mPiPlus) * z, 0)
           - fpcomplex(0, 1) * M * Gamma_tot;
     fpcomplex returnVal = 1.0 / den;
     // printf("Bugg %.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g \n",gamma_2pi.real, gamma_2pi.imag, gamma_2K.real,
@@ -289,14 +284,12 @@ __device__ fpcomplex bugg_MINT3(fptype Mpair, fptype m1, fptype m2, unsigned int
     fpcomplex gamma_2pi  = fpcomplex(g1sq * adlerZero * bugg_rho2(s, mPiPlus).real(), 0);
     fpcomplex gamma_2K   = g_2K * g1sq * s / (M * M) * exp((-1) * alpha * tmp1) * bugg_rho2(s, mKPlus);
     fpcomplex gamma_2eta = g_2eta * g1sq * s / (M * M) * exp((-1) * alpha * tmp2) * bugg_rho2(s, mEta);
-    fpcomplex gamma_4pi
-        = fpcomplex(bugg_Gamma_4pi(s, mPiPlus, g_4pi, M, lambda_4pi, s0_4pi), 0);
+    fpcomplex gamma_4pi  = fpcomplex(bugg_Gamma_4pi(s, mPiPlus, g_4pi, M, lambda_4pi, s0_4pi), 0);
 
     fpcomplex Gamma_tot = gamma_2pi + gamma_2K + gamma_2eta + gamma_4pi;
 
     // fpcomplex num = M * gamma_2pi; //only for elastic scattering, not production
-    fpcomplex den
-        = fpcomplex(M * M - s - adlerZero * g1sq * z, 0) - fpcomplex(0, 1) * Gamma_tot;
+    fpcomplex den       = fpcomplex(M * M - s - adlerZero * g1sq * z, 0) - fpcomplex(0, 1) * Gamma_tot;
     fpcomplex returnVal = 1.0 / den;
     // printf("Bugg %.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g \n",gamma_2pi.real, gamma_2pi.imag, gamma_2K.real,
     // gamma_2K.imag, gamma_2eta.real, gamma_2eta.imag, gamma_4pi.real, gamma_4pi.imag);
@@ -325,11 +318,11 @@ __device__ fpcomplex lass_MINT(fptype Mpair, fptype m1, fptype m2, unsigned int 
     fptype x          = 2.0 + a * r * pABSq;
     fptype cotDeltaBg = x / y;
     fpcomplex phaseshift((cotDeltaBg * cotDeltaBg - 1) / (1 + cotDeltaBg * cotDeltaBg),
-                                       2 * cotDeltaBg / (1 + cotDeltaBg * cotDeltaBg));
+                         2 * cotDeltaBg / (1 + cotDeltaBg * cotDeltaBg));
     // (cotDeltaBg*cotDeltaBg-1)/(1+cotDeltaBg*cotDeltaBg) = cos(2*delta)     2*cotDeltaBg / ( 1 +
     // cotDeltaBg*cotDeltaBg) = sin(2*delta)
     fpcomplex den(sqrt(pABSq) * cotDeltaBg, (-1.) * sqrt(pABSq));
-    fptype SF                         = Mpair * sqrt(prSq) / (resmass * resmass * reswidth);
+    fptype SF           = Mpair * sqrt(prSq) / (resmass * resmass * reswidth);
     fpcomplex BG        = SF / den;
     fpcomplex returnVal = BG + phaseshift * BW(Mpair, m1, m2, indices);
     // printf("Lass: %.5g %.5g %.5g %.5g %.5g %.5g\n",BG.real, BG.imag, phaseshift.real, phaseshift.imag,
@@ -383,15 +376,15 @@ __device__ fpcomplex glass_MINT3(fptype Mpair, fptype m1, fptype m2, unsigned in
     fptype thisFR = BL_PRIME(pABSq * r2, prSq * r2, orbital);
     fptype GofM   = reswidth * pratio_to_2Jplus1 * mratio * thisFR;
 
-    fptype y                          = 2.0 * a * sqrt(pABSq);
-    fptype x                          = 2.0 + a * r * pABSq;
-    fptype scattphase                 = phiF + atan(y / x);
-    fptype resphase                   = phiR + atan(resmass * GofM / (resmass * resmass - rMass2));
-    fptype rho                        = 1.0 / sqrt(pABSq / rMass2);
-    fpcomplex returnVal = (F * sin(scattphase) * fpcomplex(cos(scattphase), sin(scattphase))
-                                         + R * sin(resphase) * fpcomplex(cos(resphase + 2 * scattphase),
-                                                                                       sin(resphase + 2 * scattphase)))
-                                        * rho;
+    fptype y          = 2.0 * a * sqrt(pABSq);
+    fptype x          = 2.0 + a * r * pABSq;
+    fptype scattphase = phiF + atan(y / x);
+    fptype resphase   = phiR + atan(resmass * GofM / (resmass * resmass - rMass2));
+    fptype rho        = 1.0 / sqrt(pABSq / rMass2);
+    fpcomplex returnVal
+        = (F * sin(scattphase) * fpcomplex(cos(scattphase), sin(scattphase))
+           + R * sin(resphase) * fpcomplex(cos(resphase + 2 * scattphase), sin(resphase + 2 * scattphase)))
+          * rho;
     // printf("GLass3: %.5g %.5g %.5g %.5g %.5g %.5g\n",rMass2, pABSq, rho, GofM, scattphase, resphase);
 
     // printf("GLass4: %.5g %.5g\n",returnVal.real, returnVal.imag);
@@ -399,9 +392,8 @@ __device__ fpcomplex glass_MINT3(fptype Mpair, fptype m1, fptype m2, unsigned in
 }
 
 __device__ fpcomplex aSqrtTerm(const fptype &m0, const fptype &m) {
-    fptype a2 = 1 - (2 * m0 / m) * (2 * m0 / m);
-    fpcomplex returnVal
-        = a2 > 0 ? fpcomplex(sqrt(a2), 0) : fpcomplex(0, sqrt(-a2));
+    fptype a2           = 1 - (2 * m0 / m) * (2 * m0 / m);
+    fpcomplex returnVal = a2 > 0 ? fpcomplex(sqrt(a2), 0) : fpcomplex(0, sqrt(-a2));
     return returnVal;
 }
 
@@ -434,71 +426,78 @@ __device__ fpcomplex Flatte_MINT(fptype Mpair, fptype m1, fptype m2, unsigned in
     // printf("%.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g \n",Gpipi.real, Gpipi.imag, GKK.real, GKK.imag, FlatteWidth.real,
     // FlatteWidth.imag, Mpair, pABSq);
 
-    frFactor                   = BL2(pABSq * meson_radius * meson_radius, orbital);
-    fpcomplex BW = sqrt(frFactor) / fpcomplex(resmass * resmass - rMass2, 0)
-                                 - fpcomplex(0, 1) * resmass * FlatteWidth;
+    frFactor     = BL2(pABSq * meson_radius * meson_radius, orbital);
+    fpcomplex BW = sqrt(frFactor) / fpcomplex(resmass * resmass - rMass2, 0) - fpcomplex(0, 1) * resmass * FlatteWidth;
     return BW;
 }
 
 __device__ fpcomplex Spline_TDP(fptype Mpair, fptype m1, fptype m2, unsigned int *indices) {
-    
-    fpcomplex ret(0,0);
+    fpcomplex ret(0, 0);
 
     const unsigned int nKnobs = indices[4]; // orbital
-    
-    
-    unsigned int idx = 5; // Next index
-    unsigned int i = 0;
-    const unsigned int pwa_coefs_idx  = idx;
-    idx += 2*nKnobs;
-    const fptype* mKKlimits = &(functorConstants[indices[idx]]);
+
+    unsigned int idx                 = 5; // Next index
+    unsigned int i                   = 0;
+    const unsigned int pwa_coefs_idx = idx;
+    idx += 2 * nKnobs;
+    const fptype *mKKlimits = &(functorConstants[indices[idx]]);
     fptype mAB = Mpair, mAC = m1, mBC = m2;
 
-    
     int khiAB = 0, khiAC = 0;
     fptype dmKK, aa, bb, aa3, bb3;
     unsigned int timestorun = 1; //+doSwap;
-    while(khiAB<nKnobs){
-        if (mAB<mKKlimits[khiAB]) break;
-        khiAB ++;
+    while(khiAB < nKnobs) {
+        if(mAB < mKKlimits[khiAB])
+            break;
+        khiAB++;
     }
-    
-    if(khiAB <=0 || khiAB == nKnobs)
+
+    if(khiAB <= 0 || khiAB == nKnobs)
         timestorun = 0;
-    while(khiAC<nKnobs){
-        if (mAC<mKKlimits[khiAC]) break;
-        khiAC ++;
+    while(khiAC < nKnobs) {
+        if(mAC < mKKlimits[khiAC])
+            break;
+        khiAC++;
     }
-    
-    if (khiAC <=0 || khiAC == nKnobs)
+
+    if(khiAC <= 0 || khiAC == nKnobs)
         timestorun = 0;
-    
-    for (i=0;i<timestorun;i++){
-        unsigned int kloAB = khiAB -1;//, kloAC = khiAC -1;
-        unsigned int twokloAB = kloAB + kloAB;
-        unsigned int twokhiAB = khiAB + khiAB;
-        fptype pwa_coefs_real_kloAB = cudaArray[indices[pwa_coefs_idx+twokloAB]];
-        fptype pwa_coefs_real_khiAB = cudaArray[indices[pwa_coefs_idx+twokhiAB]];
-        fptype pwa_coefs_imag_kloAB = cudaArray[indices[pwa_coefs_idx+twokloAB+1]];
-        fptype pwa_coefs_imag_khiAB = cudaArray[indices[pwa_coefs_idx+twokhiAB+1]];
-        fptype pwa_coefs_prime_real_kloAB = 0;// cDeriatives[twokloAB];
-        fptype pwa_coefs_prime_real_khiAB = 0;// cDeriatives[twokhiAB];
-        fptype pwa_coefs_prime_imag_kloAB = 0;// cDeriatives[twokloAB+1];
-        fptype pwa_coefs_prime_imag_khiAB = 0;// cDeriatives[twokhiAB+1];
-        //  printf("m12: %f: %f %f %f %f %f %f %d %d %d\n", mAB, mKKlimits[0], mKKlimits[nKnobs-1], pwa_coefs_real_khiAB, pwa_coefs_imag_khiAB, pwa_coefs_prime_real_khiAB, pwa_coefs_prime_imag_khiAB, khiAB, khiAC, timestorun );
-        
+
+    for(i = 0; i < timestorun; i++) {
+        unsigned int kloAB                = khiAB - 1; //, kloAC = khiAC -1;
+        unsigned int twokloAB             = kloAB + kloAB;
+        unsigned int twokhiAB             = khiAB + khiAB;
+        fptype pwa_coefs_real_kloAB       = cudaArray[indices[pwa_coefs_idx + twokloAB]];
+        fptype pwa_coefs_real_khiAB       = cudaArray[indices[pwa_coefs_idx + twokhiAB]];
+        fptype pwa_coefs_imag_kloAB       = cudaArray[indices[pwa_coefs_idx + twokloAB + 1]];
+        fptype pwa_coefs_imag_khiAB       = cudaArray[indices[pwa_coefs_idx + twokhiAB + 1]];
+        fptype pwa_coefs_prime_real_kloAB = 0; // cDeriatives[twokloAB];
+        fptype pwa_coefs_prime_real_khiAB = 0; // cDeriatives[twokhiAB];
+        fptype pwa_coefs_prime_imag_kloAB = 0; // cDeriatives[twokloAB+1];
+        fptype pwa_coefs_prime_imag_khiAB = 0; // cDeriatives[twokhiAB+1];
+        //  printf("m12: %f: %f %f %f %f %f %f %d %d %d\n", mAB, mKKlimits[0], mKKlimits[nKnobs-1],
+        //  pwa_coefs_real_khiAB, pwa_coefs_imag_khiAB, pwa_coefs_prime_real_khiAB, pwa_coefs_prime_imag_khiAB, khiAB,
+        //  khiAC, timestorun );
+
         dmKK = mKKlimits[khiAB] - mKKlimits[kloAB];
-        aa = ( mKKlimits[khiAB] - mAB )/dmKK;
-        bb = 1 - aa;
-        aa3 = aa * aa * aa; bb3 = bb * bb * bb;
-        //  ret += aa * pwa_coefs[kloAB] + bb * pwa_coefs[khiAB] + ((aa3 - aa)*pwa_coefs_prime[kloAB] + (bb3 - bb) * pwa_coefs_prime[khiAB]) * (dmKK*dmKK)/6.0;
-        ret.real(ret.real() + aa * pwa_coefs_real_kloAB + bb * pwa_coefs_real_khiAB + ((aa3 - aa)*pwa_coefs_prime_real_kloAB + (bb3 - bb) * pwa_coefs_prime_real_khiAB) * (dmKK*dmKK)/6.0);
-        ret.imag(ret.imag() + aa * pwa_coefs_imag_kloAB + bb * pwa_coefs_imag_khiAB + ((aa3 - aa)*pwa_coefs_prime_imag_kloAB + (bb3 - bb) * pwa_coefs_prime_imag_khiAB) * (dmKK*dmKK)/6.0);
-        khiAB = khiAC;  mAB = mAC;
+        aa   = (mKKlimits[khiAB] - mAB) / dmKK;
+        bb   = 1 - aa;
+        aa3  = aa * aa * aa;
+        bb3  = bb * bb * bb;
+        //  ret += aa * pwa_coefs[kloAB] + bb * pwa_coefs[khiAB] + ((aa3 - aa)*pwa_coefs_prime[kloAB] + (bb3 - bb) *
+        //  pwa_coefs_prime[khiAB]) * (dmKK*dmKK)/6.0;
+        ret.real(ret.real() + aa * pwa_coefs_real_kloAB + bb * pwa_coefs_real_khiAB
+                 + ((aa3 - aa) * pwa_coefs_prime_real_kloAB + (bb3 - bb) * pwa_coefs_prime_real_khiAB) * (dmKK * dmKK)
+                       / 6.0);
+        ret.imag(ret.imag() + aa * pwa_coefs_imag_kloAB + bb * pwa_coefs_imag_khiAB
+                 + ((aa3 - aa) * pwa_coefs_prime_imag_kloAB + (bb3 - bb) * pwa_coefs_prime_imag_khiAB) * (dmKK * dmKK)
+                       / 6.0);
+        khiAB = khiAC;
+        mAB   = mAC;
     }
     return ret;
 }
-    
+
 __device__ fpcomplex nonres_DP(fptype Mpair, fptype m1, fptype m2, unsigned int *indices) {
     fptype meson_radius  = functorConstants[indices[7]];
     unsigned int orbital = indices[4];
@@ -543,36 +542,34 @@ Lineshape::Lineshape(std::string name,
     , _Mpair(Mpair)
     , _kind(kind)
     , _FormFac(FormFac)
-    , _SplineInfo(SplineInfo){
-        
+    , _SplineInfo(SplineInfo) {
     GOOFIT_START_PDF;
 
     // Making room for index of decay-related constants. Assumption:
     // These are mother mass and three daughter masses in that order.
     // They will be registered by the object that uses this resonance,
     // which will tell this object where to find them by calling setConstantIndex.
-        
+
     GOOFIT_ADD_PARAM(2, mass, "mass");
     GOOFIT_ADD_PARAM(3, width, "width");
-        
+
     GOOFIT_ADD_INT(4, L, "L");
     GOOFIT_ADD_INT(5, Mpair, "Mpair");
-    
+
     GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
-    
+
     GOOFIT_ADD_CONST(7, radius, "radius");
-        
+
     // pindices.push_back(registerParameter(mass));
     // pindices.push_back(registerParameter(width));
     // pindices.push_back(L);
     // pindices.push_back(Mpair);
     // pindices.push_back(enum_to_underlying(FormFac));
-    
+
     // pindices.push_back(registerConstants(1));
     // MEMCPY_TO_SYMBOL(functorConstants, &radius, sizeof(fptype), cIndex * sizeof(fptype), cudaMemcpyHostToDevice);
 
     switch(kind) {
-            
     case LS::ONE:
         GET_FUNCTION_ADDR(ptr_to_LS_ONE);
         break;
@@ -594,7 +591,7 @@ Lineshape::Lineshape(std::string name,
         }
 
         for(int i = 0; i < 5; i++) {
-            GOOFIT_ADD_PARAM(8+i, AdditionalVars[i], "LassVars");
+            GOOFIT_ADD_PARAM(8 + i, AdditionalVars[i], "LassVars");
             // pindices.push_back(registerParameter(AdditionalVars[i]));
         }
 
@@ -620,21 +617,20 @@ Lineshape::Lineshape(std::string name,
     case LS::Flatte:
         GET_FUNCTION_ADDR(ptr_to_Flatte);
         break;
-            
+
     case LS::Spline:
-            if(std::get<2>(_SplineInfo) != AdditionalVars.size())
-                throw GeneralError("bins {} != vars {}", std::get<2>(_SplineInfo), AdditionalVars.size());
-            GOOFIT_ADD_CONST(8, std::get<0>(_SplineInfo), "MinSpline");
-            GOOFIT_ADD_CONST(9, std::get<1>(_SplineInfo), "MaxSpline");
-            GOOFIT_ADD_CONST(10, std::get<2>(_SplineInfo), "NSpline");
+        if(std::get<2>(_SplineInfo) != AdditionalVars.size())
+            throw GeneralError("bins {} != vars {}", std::get<2>(_SplineInfo), AdditionalVars.size());
+        GOOFIT_ADD_CONST(8, std::get<0>(_SplineInfo), "MinSpline");
+        GOOFIT_ADD_CONST(9, std::get<1>(_SplineInfo), "MaxSpline");
+        GOOFIT_ADD_CONST(10, std::get<2>(_SplineInfo), "NSpline");
         {
             int i = 11;
-            for(auto& par : AdditionalVars) {
+            for(auto &par : AdditionalVars) {
                 GOOFIT_ADD_PARAM(i++, par, "Knot");
             }
         }
-        
-        
+
         GET_FUNCTION_ADDR(ptr_to_Spline);
         break;
 
@@ -645,7 +641,8 @@ Lineshape::Lineshape(std::string name,
     GOOFIT_FINALIZE_PDF;
 }
 
-Lineshape::Lineshape(std::string name) : GooPdf(nullptr, name) {
+Lineshape::Lineshape(std::string name)
+    : GooPdf(nullptr, name) {
     GOOFIT_START_PDF;
     GET_FUNCTION_ADDR(ptr_to_NONRES_DP);
     GOOFIT_FINALIZE_PDF;

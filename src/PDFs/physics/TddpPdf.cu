@@ -126,15 +126,15 @@ device_Tddp_calcIntegrals(fptype m12, fptype m13, int res_i, int res_j, fptype *
 
     // fptype amp_real             = p[indices[parameter_i+0]];
     // fptype amp_imag             = p[indices[parameter_i+1]];
-    unsigned int functn_i      = RO_CACHE(indices[parameter_i + 2]);
-    unsigned int params_i      = RO_CACHE(indices[parameter_i + 3]);
-    fpcomplex ai = getResonanceAmplitude(m12, m13, m23, functn_i, params_i);
-    fpcomplex bi = getResonanceAmplitude(m13, m12, m23, functn_i, params_i);
+    unsigned int functn_i = RO_CACHE(indices[parameter_i + 2]);
+    unsigned int params_i = RO_CACHE(indices[parameter_i + 3]);
+    fpcomplex ai          = getResonanceAmplitude(m12, m13, m23, functn_i, params_i);
+    fpcomplex bi          = getResonanceAmplitude(m13, m12, m23, functn_i, params_i);
 
-    unsigned int functn_j      = RO_CACHE(indices[parameter_j + 2]);
-    unsigned int params_j      = RO_CACHE(indices[parameter_j + 3]);
-    fpcomplex aj = conj(getResonanceAmplitude(m12, m13, m23, functn_j, params_j));
-    fpcomplex bj = conj(getResonanceAmplitude(m13, m12, m23, functn_j, params_j));
+    unsigned int functn_j = RO_CACHE(indices[parameter_j + 2]);
+    unsigned int params_j = RO_CACHE(indices[parameter_j + 3]);
+    fpcomplex aj          = conj(getResonanceAmplitude(m12, m13, m23, functn_j, params_j));
+    fpcomplex bj          = conj(getResonanceAmplitude(m13, m12, m23, functn_j, params_j));
 
     ret = ThreeComplex(
         (ai * aj).real(), (ai * aj).imag(), (ai * bj).real(), (ai * bj).imag(), (bi * bj).real(), (bi * bj).imag());
@@ -166,8 +166,7 @@ __device__ fptype device_Tddp(fptype *evt, fptype *p, unsigned int *indices) {
 
     for(int i = 0; i < numResonances; ++i) {
         int paramIndex = parIndexFromResIndex(i);
-        fpcomplex amp{RO_CACHE(p[RO_CACHE(indices[paramIndex + 0])]),
-                                    RO_CACHE(p[RO_CACHE(indices[paramIndex + 1])])};
+        fpcomplex amp{RO_CACHE(p[RO_CACHE(indices[paramIndex + 0])]), RO_CACHE(p[RO_CACHE(indices[paramIndex + 1])])};
 
         // fpcomplex matrixelement(thrust::get<0>(cWaves[cacheToUse][evtNum*numResonances + i]),
         //				     thrust::get<1>(cWaves[cacheToUse][evtNum*numResonances + i]));
@@ -276,18 +275,19 @@ __device__ fptype device_Tddp(fptype *evt, fptype *p, unsigned int *indices) {
         // of having the correct sign, given that we have a correctly reconstructed D meson.
         mistag = RO_CACHE(evt[RO_CACHE(indices[md0_offset + 7 + RO_CACHE(indices[0])])]);
         ret *= mistag;
-        ret += (1 - mistag) * (*(reinterpret_cast<device_resfunction_ptr>(device_function_table[resFunctionIdx])))(
-                                  term1,
-                                  -term2,
-                                  sumWavesA.real(),
-                                  -sumWavesA.imag(),
-                                  _tau,
-                                  _time,
-                                  _xmixing,
-                                  _ymixing,
-                                  _sigma,
-                                  p,
-                                  &(indices[resFunctionPar]));
+        ret += (1 - mistag)
+               * (*(reinterpret_cast<device_resfunction_ptr>(device_function_table[resFunctionIdx])))(
+                     term1,
+                     -term2,
+                     sumWavesA.real(),
+                     -sumWavesA.imag(),
+                     _tau,
+                     _time,
+                     _xmixing,
+                     _ymixing,
+                     _sigma,
+                     p,
+                     &(indices[resFunctionPar]));
     }
 
     fptype eff = callFunction(evt, RO_CACHE(indices[effFunctionIdx]), RO_CACHE(indices[effFunctionIdx + 1]));
@@ -530,7 +530,7 @@ __host__ void TddpPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) 
 
     int *counts = new int[numProcs];
 
-    for(int i     = 0; i < numProcs - 1; i++)
+    for(int i = 0; i < numProcs - 1; i++)
         counts[i] = perTask;
 
     counts[numProcs - 1] = numEntries - perTask * (numProcs - 1);
@@ -662,14 +662,14 @@ __host__ fptype TddpPdf::normalize() const {
         for(unsigned int j = 0; j < decayInfo->resonances.size(); ++j) {
             int param_j = parameters + resonanceOffset + resonanceSize * j;
             fpcomplex amplitude_j(host_params[host_indices[param_j]],
-                                                -host_params[host_indices[param_j + 1]]); // Notice complex conjugation
+                                  -host_params[host_indices[param_j + 1]]); // Notice complex conjugation
 
-            integralA_2 += (amplitude_i * amplitude_j * fpcomplex(thrust::get<0>(*(integrals[i][j])),
-                                                                                thrust::get<1>(*(integrals[i][j]))));
-            integralABs += (amplitude_i * amplitude_j * fpcomplex(thrust::get<2>(*(integrals[i][j])),
-                                                                                thrust::get<3>(*(integrals[i][j]))));
-            integralB_2 += (amplitude_i * amplitude_j * fpcomplex(thrust::get<4>(*(integrals[i][j])),
-                                                                                thrust::get<5>(*(integrals[i][j]))));
+            integralA_2 += (amplitude_i * amplitude_j
+                            * fpcomplex(thrust::get<0>(*(integrals[i][j])), thrust::get<1>(*(integrals[i][j]))));
+            integralABs += (amplitude_i * amplitude_j
+                            * fpcomplex(thrust::get<2>(*(integrals[i][j])), thrust::get<3>(*(integrals[i][j]))));
+            integralB_2 += (amplitude_i * amplitude_j
+                            * fpcomplex(thrust::get<4>(*(integrals[i][j])), thrust::get<5>(*(integrals[i][j]))));
 
             /*
             if (cpuDebug & 1) {

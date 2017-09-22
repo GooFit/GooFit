@@ -1,4 +1,5 @@
 #include <pybind11/pybind11.h>
+
 #include <pybind11/functional.h>
 #include <pybind11/stl.h>
 
@@ -9,25 +10,17 @@ using namespace pybind11::literals;
 
 using namespace ROOT::Minuit2;
 
-
-void init_FunctionMinimum(py::module& m) {
-
+void init_FunctionMinimum(py::module &m) {
     py::class_<MnUserParameterState>(m, "MnUserParameterState")
-        .def("Value", (double (MnUserParameterState::*)(unsigned int) const) &MnUserParameterState::Value, "n"_a)
-        .def("Error", (double (MnUserParameterState::*)(unsigned int) const) &MnUserParameterState::Error, "n"_a)
-    ;
+        .def("Value", (double (MnUserParameterState::*)(unsigned int) const) & MnUserParameterState::Value, "n"_a)
+        .def("Error", (double (MnUserParameterState::*)(unsigned int) const) & MnUserParameterState::Error, "n"_a);
 
-    py::class_<MnUserParameters>(m, "MnUserParameters")
-    ;
+    py::class_<MnUserParameters>(m, "MnUserParameters");
 
-
-    py::class_<MnUserCovariance>(m, "MnUserCovariance")
-    ;
+    py::class_<MnUserCovariance>(m, "MnUserCovariance");
 
     py::class_<FunctionMinimum>(m, "FunctionMinimum")
         .def("UserState", &FunctionMinimum::UserState)
         .def("UserParameters", &FunctionMinimum::UserParameters)
-        .def("UserCovariance", &FunctionMinimum::UserCovariance)
-    ;
+        .def("UserCovariance", &FunctionMinimum::UserCovariance);
 }
-

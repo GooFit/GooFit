@@ -73,7 +73,7 @@ public:
                   fptype radius = 1.5);
 
     
-    virtual ~Lineshape() = default;
+    ~Lineshape() override = default;
     
     void setConstantIndex(unsigned int idx) { host_indices[parameters + 1] = idx; }
     
@@ -123,7 +123,7 @@ public:
         FF FormFac                             = FF::BL_Prime,
         fptype radius                          = 1.5);
     
-    virtual ~FOCUS() = default;
+    ~FOCUS() override = default;
     
 };
     
@@ -155,7 +155,7 @@ public:
         FF FormFac                             = FF::BL_Prime,
         fptype radius                          = 1.5);
     
-    virtual ~kMatrix() = default;
+    ~kMatrix() override = default;
     
 };
     
@@ -177,7 +177,7 @@ class LASS : public Lineshape {
                 fptype radius,
                 std::vector<Variable *> AdditionalVars);
         
-        virtual ~LASS() = default;
+        ~LASS() override = default;
         
     };
     
@@ -206,7 +206,7 @@ public:
               std::vector<Variable *> Curvatures,
               spline_t SplineInfo);
 
-    virtual ~GSpline() = default;
+    ~GSpline() override = default;
     
 };
     

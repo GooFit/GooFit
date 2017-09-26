@@ -154,6 +154,7 @@ int main(int argc, char **argv) {
                                                       LSKRD,
                                                       SFKRD,
                                                       2);
+
     Amplitude *Bose_symmetrized_KF = new Amplitude(
         "KF", new Variable("amp_real3", 0.0120787), new Variable("amp_imag3", -0.0332525), LSKF, SFKF, 2);
     Amplitude *Bose_symmetrized_KK = new Amplitude(

@@ -10,10 +10,8 @@ data = UnbinnedDataSet(xvar)
 
 totalData = 0
 
-i=-1
-
-while i < 100000:
-    i+=1
+i=0
+while i < 100000: 
     xvar.value = np.random.normal(0.2,1.1)
 
     if np.random.uniform() < 0.1:
@@ -24,9 +22,8 @@ while i < 100000:
         i-=1
         continue
 
-
     data.addEvent()
-
+    i+=1
 
 
 xmean = Variable("xmean", 0, 1, -10, 10)

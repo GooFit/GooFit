@@ -1,9 +1,9 @@
 #!/usr/bin/env sh
 set -evx
 
-clang-format --version
+clang-format-3.9 --version
 
-git ls-files -- '*.cpp' '*.hpp' '*.cu' '*.cc' | xargs clang-format -style=file -i
+git ls-files -- '*.cpp' '*.hpp' '*.cu' '*.cc' | xargs clang-format-3.9 -style=file -i
 
 git diff --exit-code --color
 

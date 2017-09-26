@@ -170,7 +170,7 @@ int main(int argc, char **argv) {
 
     TruthResolution *dat = new TruthResolution();
     PolynomialPdf *eff   = new PolynomialPdf("constantEff", observables, coefficients, offsets, 0);
-    TDDP4 *dp            = new TDDP4("test", observables, DK3P_DI, dat, eff, 0, 1);
+    TDDP4 *dp            = new TDDP4("test", observables, DK3P_DI, dat, eff, nullptr, 1);
 
     TFile *file = new TFile(output, "RECREATE");
     TTree *tree = new TTree("events", "events");

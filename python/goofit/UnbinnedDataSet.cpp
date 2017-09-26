@@ -14,31 +14,34 @@ void init_UnbinnedDataSet(py::module &m) {
         .def(py::init([](py::args args, py::kwargs kwargs) {
             std::string name;
             std::vector<Variable *> vars;
+
             for(auto arg : args)
                 vars.push_back(arg.cast<Variable *>());
+
             if(kwargs.contains("name"))
                 name = kwargs["name"].cast<std::string>();
+
             return new UnbinnedDataSet(vars, name);
-        }))
-        .def("from_numpy",
-             [](UnbinnedDataSet &instance,
-                py::array_t<fptype, py::array::c_style | py::array::forcecast> array,
-                bool filter) {
-                 auto vars = instance.getVariables();
-                 for(int j = 0; j < array.shape(1); j++) {
-                     for(int i = 0; i < array.shape(0); i++) {
-                         vars.at(i)->setValue(array.at(i, j));
-                     }
-                     if(!filter
-                        || std::all_of(std::begin(vars), std::end(vars), [](Variable *var) { return bool(*var); }))
-                         instance.addEvent();
-                 }
-             },
-             R"raw(
-            Convert a numpy array into data. Optional filter=True argument will remove values out of range.
-            )raw",
-             "array"_a,
-             "filter"_a = false)
+        }))            
+
+        .def("from_numpy",[](UnbinnedDataSet &instance,
+            py::array_t<fptype, py::array::c_style | py::array::forcecast> array,bool filter) {
+            auto vars = instance.getVariables();
+
+            for(int j = 0; j < array.shape(1); j++) {
+               for(int i = 0; i < array.shape(0); i++) {
+                  vars.at(i)->setValue(array.at(i, j));
+               }
+               if(!filter || std::all_of(std::begin(vars), std::end(vars), [](Variable *var) {
+                 return bool(*var);
+                }))
+
+               instance.addEvent();
+             }
+          },
+
+        R"raw(Convert a numpy array into data. Optional filter=True argument will remove values out of range.)raw", "array"_a,"filter"_a = false)
+
         .def("to_numpy", [](UnbinnedDataSet &instance) {
             size_t cols = instance.getVariables().size();
             size_t rows = instance.getNumEvents();

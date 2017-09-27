@@ -33,15 +33,21 @@ GooFit for Python
 
 GooFit is a highly parallel fitting framework originally designed for High Energy Physics.
 
+Installation basics
+===================
+
+This package can be installed with pip, but uses SciKit-Build, and is build, fully optimized, on your system. Because of this, there are a few caveats when running a pip install. Make sure you have SciKit-Build (``pip install scikit-build``) before you attempt an install. Also, if you don't have a recent version of CMake (3.8 or better recommended), also run ``pip install cmake``. When you build, you should also use pip's ``-v`` flag, so that you can see it build (and observe the
+configuration options). Otherwise, you might wait a very long time without output (especially if CUDA was found).
+
 Installation: pipenv
 ====================
 
-Best method for an install you don't expect to change!
 Use pipenv, the officially recommended method for managing installs, virtual environments, and dependencies.
 
 To install::
 
-    pipenv install goofit
+    pipenv install scikit-build cmake
+    pipenv install --verbose goofit
 
 To run a shell::
 
@@ -51,10 +57,7 @@ To run a shell::
 Installation: pip
 =================
 
-This package can be installed with pip, but uses SciKit-Build, and is build, fully optimized, on your system. Because of this, there are a few caveats when running a pip install. Make sure you have SciKit-Build (``pip install scikit-build``) before you attempt an install. Also, if you don't have a recent version of CMake (3.8 or better recommended), also run ``pip install cmake``. When you build, you should also use pip's ``-v`` flag, so that you can see it build (and observe the
-configuration options). Otherwise, you might wait a very long time without output (especially if CUDA was found).
-
-In practice, this looks like this::
+Traditional pip install::
 
     pip install scikit-build cmake
     pip install -v goofit
@@ -67,7 +70,7 @@ If you want to add PDFs to GooFit, or use GooFit pacakges, you should be working
 
     git clone --recursive git@github.com:GooFit/GooFit.git
     cd goofit
-    pipenv install --verbose -e .
+    pipenv install --verbose -e . --skip-lock
 
 And, to use::
 

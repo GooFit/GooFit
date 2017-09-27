@@ -11,7 +11,7 @@
 
 namespace GooFit {
 
-class FCN;
+class Params;
 class Minuit1;
 
 class Indexable {
@@ -50,7 +50,7 @@ class Indexable {
     // Utilities
 
     /// Support var = 3
-    void operator=(const fptype &val) { setValue(val); }
+    fptype operator=(const fptype &val) { setValue(val); return val; }
 
     /// Support fptype val = var
     operator fptype() const { return getValue(); }
@@ -76,8 +76,8 @@ class Indexable {
 /// data set. The index can refer either to cudaArray
 /// or to an event.
 class Variable : public Indexable {
-    friend GooFit::FCN;
-    friend GooFit::Minuit1;
+    friend Params;
+    friend Minuit1;
     friend std::ostream &operator<<(std::ostream &o, const Variable &var);
     friend std::istream &operator>>(std::istream &o, Variable &var);
 

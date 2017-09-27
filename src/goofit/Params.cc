@@ -35,5 +35,26 @@ void Params::SetGooFitParams(const Minuit2::MnUserParameterState &input) {
         SetError(counter, var->getError());
     }
 }
+    
+    
+std::vector<double> Params::make_minuit_vector() const {
+    std::vector<double> minuitPars(max_fitter_index(vars_) + 1);
+    for(Variable *var : vars_) {
+        minuitPars.at(var->getFitterIndex()) = var->getValue();
+    }
+    return minuitPars;
+}
+    
+void Params::from_minuit_vector(const std::vector<double> &values, bool force_changed) {
+    
+    std::vector<double> gooPars(max_index(vars_) + 1);
+    
+    for(Variable *var : vars_) {
+        var->setChanged(force_changed ? true : var->getValue() != values.at(var->getFitterIndex()));
+        gooPars.at(var->getIndex()) = values.at(var->getFitterIndex()) - var->blind;
+    }
+    
+    pdf_->copyParams(gooPars);
+}
 
 } // namespace GooFit

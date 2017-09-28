@@ -24,8 +24,12 @@ TEST(CorrGaussianPdf, SimpleFit) {
     Variable xvar{"xvar", -10, 10};
     Variable yvar{"yvar", -10, 10};
 
+    std::vector<Variable *> list;
+    list.push_back(&xvar);
+    list.push_back(&yvar);
+
     // Data set
-    UnbinnedDataSet data(&xvar);
+    UnbinnedDataSet data(list);
 
     // Generate toy events.
     for(int i = 0; i < 1000; ++i) {
@@ -59,6 +63,6 @@ TEST(CorrGaussianPdf, SimpleFit) {
     EXPECT_LT(mean1.getError(), .1);
     EXPECT_NEAR(0.665178392, mean1.getValue(), mean1.getError() * 3);
     EXPECT_LT(mean2.getError(), .1);
-    EXPECT_NEAR(0.557435, mean2.getValue(), mean2.getError() * 3);
+    EXPECT_NEAR(0.6837, mean2.getValue(), mean2.getError() * 3);
 }
 

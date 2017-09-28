@@ -66,7 +66,7 @@ __device__ fptype device_MultiPolynomial(fptype* evt, ParameterContainer &pc) {
         numBoxes *= maxDegree;
 
     int coeffNumber = num_observables; // Index of first coefficient is 2 + nO, not 1 + nO, due to maxDegree. (nO comes from offsets.)
-    fptype ret = RO_CACHE(pc.constants[pc.constantIdx + 3 + coeffNumber]); // Coefficient of constant term.
+    fptype ret = RO_CACHE(pc.parameters[pc.parameterIdx + 1 + coeffNumber]); // Coefficient of constant term.
     coeffNumber++;
 
     for(int i = 1; i < numBoxes;
@@ -81,8 +81,9 @@ __device__ fptype device_MultiPolynomial(fptype* evt, ParameterContainer &pc) {
         // printf("[%i, %i] Start box %i %f %f:\n", BLOCKIDX, THREADIDX, i, ret, evt[8]);
         for(int j = 0; j < num_observables; ++j) {
 	    //TODO:Need to debug these
-            fptype x = RO_CACHE(evt[1 + j]); // x, y, z...
-            fptype offset = RO_CACHE(pc.observables[pc.observableIdx + num_observables + 2 + j]); // x0, y0, z0...
+            int id = RO_CACHE(pc.constants[pc.constantIdx + 2 + j]);
+            fptype x = RO_CACHE(evt[id]); // x, y, z...
+            fptype offset = RO_CACHE(pc.parameters[pc.parameterIdx + 1 + j]); // x0, y0, z0...
             x -= offset;
             int currPower = currIndex % maxDegree;
             currIndex /= maxDegree;
@@ -102,7 +103,7 @@ __device__ fptype device_MultiPolynomial(fptype* evt, ParameterContainer &pc) {
         if(sumOfIndices >= maxDegree)
             continue;
 
-        fptype coefficient = RO_CACHE(pc.parameters[pc.parameterIdx + 3 + coeffNumber]); // Coefficient from MINUIT
+        fptype coefficient = RO_CACHE(pc.parameters[pc.parameterIdx + 1 + coeffNumber]); // Coefficient from MINUIT
         coeffNumber++;
         //if ((gpuDebug & 1) && (THREADIDX == 50) && (BLOCKIDX == 3))
         //if ((BLOCKIDX == internalDebug1) && (THREADIDX == internalDebug2))

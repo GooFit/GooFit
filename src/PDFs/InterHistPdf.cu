@@ -12,7 +12,7 @@ __constant__ fptype *dev_base_interhists[100]; // Multiple histograms for the ca
 
 // dev_powi is implemented in SmoothHistogramPdf.cu.
 
-__device__ fptype device_InterHistogram(fptype *evt, fptype *p, unsigned int *indices) {
+__device__ fptype device_InterHistogram(fptype *evt, ParameterContainer &pc) {
     // Structure is
     // nP totalHistograms (idx1 limit1 step1 bins1) (idx2 limit2 step2 bins2) nO o1 o2
     // where limit and step are indices into functorConstants.
@@ -178,11 +178,11 @@ __host__ InterHistPdf::InterHistPdf(std::string n,
         totalEvents += curr;
     }
 
-    MEMCPY_TO_SYMBOL(functorConstants,
-                     host_constants,
-                     numConstants * sizeof(fptype),
-                     cIndex * sizeof(fptype),
-                     cudaMemcpyHostToDevice);
+    //MEMCPY_TO_SYMBOL(functorConstants,
+    //                 host_constants,
+    //                 numConstants * sizeof(fptype),
+    //                 cIndex * sizeof(fptype),
+    //                 cudaMemcpyHostToDevice);
 
     dev_base_histogram = new thrust::device_vector<fptype>(host_histogram);
     static fptype *dev_address[1];

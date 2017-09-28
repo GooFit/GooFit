@@ -4,24 +4,24 @@ namespace GooFit {
 
 __device__ fptype device_BinTransform(fptype *evt, ParameterContainer &pc) {
     // Index structure: nP lim1 bin1 lim2 bin2 ... nO o1 o2
-    int numObservables = pc.observables[pc.observableIdx];
+    int numConstants = pc.constants[pc.constantIdx];
+    int numObservables = pc.constants[pc.constantIdx + 1];
     int ret            = 0;
     int previousSize   = 1;
-    printf ("numObservables:%i\n", numObservables);
 
     for(int i = 0; i < numObservables; ++i) {
-        int id = pc.observables[pc.constantIdx + i + 1];
+        int id = pc.constants[pc.constantIdx + numObservables + i*3 + 1];
         fptype obsValue   = evt[id];
-        fptype lowerLimit = pc.constants[pc.constantIdx + numObservables + 1 + i*3 + 0];
-        fptype binSize    = pc.constants[pc.constantIdx + numObservables + 1 + i*3 + 1];
-        int numBins       = pc.constants[pc.constantIdx + numObservables + 1 + i*3 + 2];
+        fptype lowerLimit = pc.constants[pc.constantIdx + numObservables + 2 + i*3 + 0];
+        fptype binSize    = pc.constants[pc.constantIdx + numObservables + 2 + i*3 + 1];
+        int numBins       = pc.constants[pc.constantIdx + numObservables + 2 + i*3 + 2];
 
         auto localBin = static_cast<int>(floor((obsValue - lowerLimit) / binSize));
         ret += localBin * previousSize;
         previousSize *= numBins;
     }
 
-    pc.incrementIndex(1, 0, numObservables*4 + 1, numObservables, 1);
+    pc.incrementIndex(1, 0, numConstants, 0, 1);
 
     return fptype(ret);
 }
@@ -39,13 +39,18 @@ __host__ BinTransformPdf::BinTransformPdf(std::string n,
     //auto *host_constants = new fptype[2 * obses.size()];
     std::vector<unsigned int> pindices;
 
-    for(unsigned int i = 0; i < obses.size(); ++i) {
+    //setup the observables
+    for(unsigned int i = 0; i < obses.size(); ++i)
         registerObservable(obses[i]);
 
-        //reserve index for obses.
-        constantsList.push_back(observablesList.size());
-        constantsList.push_back (0);
+    observablesList = getObservables ();
 
+    //Add padding for observables
+    constantsList.push_back(observablesList.size());
+    for (int i = 0; i < observablesList.size (); i++) constantsList.push_back (0);
+
+    //add limits for each observable (variable)
+    for(unsigned int i = 0; i < obses.size(); ++i) {
         constantsList.push_back (limits[i]);
         constantsList.push_back (binSizes[i]);
         constantsList.push_back (numBins[i]);

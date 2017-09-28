@@ -47,16 +47,19 @@ __device__ fptype device_EventWeightedAddPdfsExt(fptype *evt, ParameterContainer
     // nP | F P | F P | nO | o1 o2
     // in which nP = 4, nO = 2.
 
-    int numParameters  = RO_CACHE(pc.parameters[pc.parameterIdx]);
     int numConstants = RO_CACHE(pc.constants[pc.constantIdx]);
+    int numObs = RO_CACHE(pc.constants[pc.constantIdx + 1]);
+
+    int itr = RO_CACHE(pc.constants[pc.constantIdx + numObs + 2]);
+
     fptype ret         = 0;
     fptype totalWeight = 0;
 
     ParameterContainer pci = pc;
-    pci.incrementIndex (1, numParameters, numConstants, 0, 1);
+    pci.incrementIndex ();
 
-    for(int i = 0; i < numParameters; ++i) {
-        int id = pc.constants[pc.constantIdx + i + 1];
+    for(int i = 0; i < itr/2; ++i) {
+        int id = pc.constants[pc.constantIdx + i + 2];
         fptype norm = pc.normalisations[pc.normalIdx + 1];
         fptype weight = RO_CACHE(evt[id]);
         fptype curr = callFunction(evt, pci);
@@ -76,6 +79,9 @@ __device__ fptype device_EventWeightedAddPdfsExt(fptype *evt, ParameterContainer
     }
 
     ret /= totalWeight;
+
+    //update our pc structure.
+    pc = pci;
 
     // if (0 >= ret) printf("Zero sum %f %f %f %f %f %f %f %f %f %f\n", evt[0], evt[1], evt[2], evt[3], evt[4], evt[5],
     // evt[6], evt[7], evt[8], evt[9]);
@@ -103,7 +109,7 @@ EventWeightedAddPdf::EventWeightedAddPdf(std::string n, std::vector<Variable *> 
             throw GooFit::GeneralError("Invalid component");
     }
 
-    bool extended = true;
+    extended = true;
     std::vector<unsigned int> pindices;
 
     for(unsigned int w = 0; w < weights.size(); ++w) {
@@ -115,9 +121,6 @@ EventWeightedAddPdf::EventWeightedAddPdf(std::string n, std::vector<Variable *> 
         registerObservable(weights[w]);
         //adding room for observable offset
     }
-
-    //Add the number of weights
-    constantsList.push_back(weights.size());
 
     if(components.back() == nullptr)
         throw GooFit::GeneralError("Invalid component");
@@ -162,10 +165,15 @@ __host__ fptype EventWeightedAddPdf::normalize() const {
 
 __host__ void EventWeightedAddPdf::recursiveSetIndices () {
 
-    // TODO: Add support for Ext.
-    GET_FUNCTION_ADDR(ptr_to_EventWeightedAddPdfs);
+    if(extended) {
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_EventWeightedAddPdfsExt");
+        GET_FUNCTION_ADDR(ptr_to_EventWeightedAddPdfsExt);
+    }
+    else {
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_EventWeightedAddPdfs");
+        GET_FUNCTION_ADDR(ptr_to_EventWeightedAddPdfs);
+    }
 
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_EventWeightedAddPdfs");
     host_function_table[num_device_functions] = host_fcn_ptr;
     functionIdx = num_device_functions++;
  

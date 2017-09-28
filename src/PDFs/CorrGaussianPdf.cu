@@ -5,6 +5,7 @@ namespace GooFit {
 __device__ fptype device_CorrGaussian(fptype *evt, ParameterContainer &pc) {
     int idx = pc.constants[pc.constantIdx + 2];
     int idy = pc.constants[pc.constantIdx + 3];
+
     fptype mean1  = pc.parameters[pc.parameterIdx + 1];
     fptype sigma1 = pc.parameters[pc.parameterIdx + 2];
     fptype mean2  = pc.parameters[pc.parameterIdx + 3];

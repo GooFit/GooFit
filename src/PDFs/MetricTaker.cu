@@ -44,7 +44,7 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, fptype*, int> t) co
     return ret;
 }
 
-#define MAX_NUM_OBSERVABLES 5
+#define MAX_NUM_OBSERVABLES 10 
 
 __device__ fptype MetricTaker::operator()(thrust::tuple<int, int, fptype*> t) const {
     ParameterContainer pc;
@@ -61,6 +61,14 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, int, fptype*> t) co
     // with the number of bins in that dimension. Then divide by the number of bins, in effect
     // collapsing so the grid has one fewer dimension. Rinse and repeat.
 
+    //before we start, we need to progress ourselves based on the function we need to run
+    for (int i = 0; i < functionIdx; i++)
+         pc.incrementIndex(); //need to use the slow version, since we are not starting from index 0.
+
+    //put our index here...
+    int obs = pc.constants[pc.constantIdx + 1];
+    int id = pc.constants[pc.constantIdx + obs + 1];
+
     for(int i = 0; i < evtSize; ++i) {
         fptype lowerBound = thrust::get<2>(t)[3 * i + 0];
         fptype upperBound = thrust::get<2>(t)[3 * i + 1];
@@ -72,13 +80,9 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, int, fptype*> t) co
         x *= (localBin + 0.5);
         x += lowerBound;
         //binCenters[i + THREADIDX*MAX_NUM_OBSERVABLES] = x;
-        binCenters[i] = x;
+        binCenters[id] = x;
         binNumber /= numBins;
     }
-
-    //before we start, we need to progress ourselves based on the function we need to run
-    for (int i = 0; i < functionIdx; i++)
-         pc.incrementIndex(); //need to use the slow version, since we are not starting from index 0.
 
     // Causes stack size to be statically undeterminable.
     fptype ret = callFunction(binCenters, pc);

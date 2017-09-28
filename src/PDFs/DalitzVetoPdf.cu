@@ -31,7 +31,8 @@ __device__ fptype device_DalitzVeto(fptype *evt, ParameterContainer &pc) {
         ret *= ((currDalitzVar < maximum) && (currDalitzVar > minimum)) ? 0.0 : 1.0;
     }
 
-    pc.incrementIndex(1, 4, numConstants, 0, 1);
+    //pc.incrementIndex(1, 4, numConstants, 0, 1);
+    pc.incrementIndex ();
 
     return ret;
 }
@@ -76,6 +77,13 @@ __host__ DalitzVetoPdf::DalitzVetoPdf(std::string n,
 }
 
 void DalitzVetoPdf::recursiveSetIndices () {
+    GET_FUNCTION_ADDR(ptr_to_DalitzVeto);
+
+    GOOFIT_TRACE("host_function_table[{}]({})", num_device_functions, getName(), "ptr_to_DalitzVeto");
+    host_function_table[num_device_functions] = host_fcn_ptr;
+    functionIdx = num_device_functions++;
+
+    populateArrays();
 }
 
 } // namespace GooFit

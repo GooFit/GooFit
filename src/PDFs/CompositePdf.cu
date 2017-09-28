@@ -7,18 +7,21 @@ __device__ fptype device_Composite(fptype *evt, ParameterContainer &pc) {
     //unsigned int coreParIndex  = RO_CACHE(indices[2]);
     //unsigned int shellFcnIndex = RO_CACHE(indices[3]);
     //unsigned int shellParIndex = RO_CACHE(indices[4]);
-    pc.incrementIndex (1, 0, 0, 0, 0);
+    pc.incrementIndex ();
 
     // NB, not normalising core function, it is not being used as a PDF.
     // fptype coreValue = (*(reinterpret_cast<device_function_ptr>(device_function_table[coreFcnIndex])))(evt,
     // cudaArray, paramIndices+coreParIndex);
     fptype coreValue = callFunction(evt, pc);
 
-    unsigned int numShellPars  = pc.parameters[pc.parameterIdx];
-    unsigned int shellObsIndex = pc.parameters[pc.parameterIdx + 2];
+    //unsigned int numShellPars  = pc.parameters[pc.parameterIdx];
+    //unsigned int shellObsIndex = pc.parameters[pc.parameterIdx + 2];
+
+    int obs = pc.constants[pc.constantIdx + 1];
+    int id = pc.constants[pc.constantIdx + obs + 1];
 
     fptype fakeEvt[10]; // Allow plenty of space in case events are large.
-    fakeEvt[shellObsIndex] = coreValue;
+    fakeEvt[id] = coreValue;
 
     // Don't normalize shell either, since we don't know what composite function is being used for.
     // It may not be a PDF. Normalising at this stage would be presumptuous.
@@ -45,6 +48,12 @@ __host__ CompositePdf::CompositePdf(std::string n, PdfBase *core, PdfBase *shell
     // Add as components so that observables and parameters will be registered.
     components.push_back(core);
     components.push_back(shell);
+
+    observablesList = getObservables();
+
+    constantsList.push_back (observablesList.size ());
+    for (int i = 0; i < observablesList.size(); i++)
+        constantsList.push_back (0);
 
     GET_FUNCTION_ADDR(ptr_to_Composite);
     initialize(pindices);

@@ -16,6 +16,7 @@ class EventWeightedAddPdf : public GooPdf {
     __host__ virtual void recursiveSetIndices ();
 
   protected:
+    bool extended;
   private:
 };
 } // namespace GooFit

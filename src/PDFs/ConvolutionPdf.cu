@@ -152,6 +152,8 @@ ConvolutionPdf::ConvolutionPdf(std::string n, Variable *x, GooPdf *m, GooPdf *r)
     // loading of model cache. This is slow, but conceptually
     // simple.
 
+    observablesList = getObservables();
+
     //reserving index for x
     constantsList.push_back(observablesList.size());
     constantsList.push_back (0);

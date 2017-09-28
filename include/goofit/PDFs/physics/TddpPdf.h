@@ -109,11 +109,13 @@ class TddpPdf : public GooPdf {
 class SpecialDalitzIntegrator : public thrust::unary_function<thrust::tuple<int, fptype *, int>, ThreeComplex> {
   public:
     SpecialDalitzIntegrator(int pIdx, unsigned int ri, unsigned int rj);
+    void setTddpIndex(unsigned int id) { tddp = id; }
     void setResonanceIndex (unsigned int id) { resonance_i = id; }
     void setEfficiencyIndex (unsigned int id) { resonance_j = id; }
     __device__ ThreeComplex operator()(thrust::tuple<int, fptype *, int> t) const;
 
   private:
+    unsigned int tddp;
     unsigned int resonance_i;
     unsigned int resonance_j;
     unsigned int parameters;
@@ -134,10 +136,12 @@ class SpecialComplexSum : public thrust::binary_function<ThreeComplex, ThreeComp
 class SpecialWaveCalculator : public thrust::unary_function<thrust::tuple<int, fptype *, int>, WaveHolder_s> {
   public:
     SpecialWaveCalculator(int pIdx, unsigned int res_idx);
+    void setTddpIndex(unsigned int id) { tddp = id; }
     void setResonanceIndex (unsigned int id) { resonance_i = id; }
     __device__ WaveHolder_s operator()(thrust::tuple<int, fptype *, int> t) const;
 
   private:
+    unsigned int tddp;
     unsigned int resonance_i;
     unsigned int parameters;
 };

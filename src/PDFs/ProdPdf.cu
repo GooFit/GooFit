@@ -6,11 +6,14 @@
 namespace GooFit {
 
 __device__ fptype device_ProdPdfs(fptype* evt, ParameterContainer &pc) {
-    int numConstants = RO_CACHE(pc.constants[pc.constantIdx]);
+    int numCons = RO_CACHE(pc.constants[pc.constantIdx]);
+    int numObs = RO_CACHE(pc.constants[pc.constantIdx + 1]);
+    int numComps = RO_CACHE(pc.constants[pc.constantIdx + numObs + 2]);
     fptype ret = 1;
 
-    pc.incrementIndex (1, 0, numConstants, 0, 1);
-    for(int i = 0; i < numConstants; i ++) {
+    //pc.incrementIndex (1, 0, numCons, numObs, 1);
+    pc.incrementIndex();
+    for(int i = 0; i < numComps; i ++) {
         fptype norm = pc.normalisations[pc.normalIdx + 1];
         fptype curr = callFunction(evt, pc);
 
@@ -33,10 +36,13 @@ ProdPdf::ProdPdf(std::string n, std::vector<PdfBase *> comps)
         components.push_back(p);
 
         //we push a placeholder that is used to indicate 
-        constantsList.push_back (0);
+        //constantsList.push_back (0);
     }
 
     observablesList = getObservables(); // Gathers from components
+    constantsList.push_back (observablesList.size());
+    for (int i = 0; i < observablesList.size(); i++) constantsList.push_back(0);
+    constantsList.push_back (components.size ());
 
     std::vector<Variable *> observableCheck; // Use to check for overlap in observables
 
@@ -83,6 +89,7 @@ __host__ fptype ProdPdf::normalize() const {
         // Two or more components share an observable and cannot be separately
         // normalized, since \int A*B dx does not equal int A dx * int B dx.
         recursiveSetNormalisation(fptype(1.0));
+        MEMCPY_TO_SYMBOL(d_normalisations, host_normalisations, totalNormalisations*sizeof(fptype), 0, cudaMemcpyHostToDevice);
         //MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
         // Normalize numerically.

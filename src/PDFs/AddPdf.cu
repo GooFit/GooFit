@@ -21,7 +21,7 @@ __device__ fptype device_AddPdfs(fptype* evt, ParameterContainer &pc) {
     ParameterContainer pci = pc;
 
     //We only call increment once we read our weight/norm for the first iteration.
-    pci.incrementIndex(1, numParameters, 1, 0, 1);
+    pci.incrementIndex();
 
     for(int i = 0; i < numParameters; i++)
     {
@@ -57,20 +57,25 @@ __device__ fptype device_AddPdfsExt(fptype* evt, ParameterContainer &pc)
     fptype ret = 0;
     fptype totalWeight = 0;
 
-    for(int i = 1; i < numParameters; i += 3)
+    //make a copy of our parameter container
+    ParameterContainer pci = pc;
+
+    //We only call increment once we read our weight/norm for the first iteration.
+    pci.incrementIndex();
+
+    for(int i = 0; i < numParameters; i++)
     {
         //grab the weight value
-        fptype weight = pc.parameters[pc.parameterIdx + 1];
-        fptype normFactor = pc.normalisations[pc.normalIdx];
+        fptype weight = pci.parameters[pc.parameterIdx + 1 + i];
+        fptype normFactor = pci.normalisations[pci.normalIdx + 1];
 
-        //increment our structure
-        pc.incrementIndex (1, numParameters, 1, 1, 2);
-
-        fptype curr = callFunction(evt, pc);
+        fptype curr = callFunction(evt, pci);
         ret += weight * curr * normFactor;
 
         totalWeight += weight;
     }
+
+    pc = pci;
 
     ret /= totalWeight;
 
@@ -133,6 +138,7 @@ AddPdf::AddPdf(std::string n, Variable *frac1, PdfBase *func1, PdfBase *func2)
     components.push_back(func2);
 
     observablesList = getObservables();
+    for (int i = 0; i < observablesList.size (); i++) constantsList.push_back (0);
 
     std::vector<unsigned int> pindices;
     pindices.push_back(func1->getFunctionIndex());
@@ -182,7 +188,7 @@ __host__ fptype AddPdf::normalize() const {
     fptype last = components.back()->normalize();
 
     if(extended) {
-        fptype lastWeight = host_parameters[parametersIdx + 3*components.size()];
+        fptype lastWeight = host_parameters[parametersIdx + 2];
         totalWeight += lastWeight;
         ret += last * lastWeight;
         ret /= totalWeight;

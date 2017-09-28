@@ -3,7 +3,9 @@
 namespace GooFit {
 
 __device__ fptype device_ExpGaus(fptype *evt, ParameterContainer &pc) {
-    int id = pc.constants[pc.constantIdx + 2];
+    int cons = pc.constants[pc.constantIdx];
+    int obs = pc.constants[pc.constantIdx + 1];
+    int id = pc.constants[pc.constantIdx + obs + 1];
 
     fptype x     = evt[id];
     fptype mean  = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
@@ -17,7 +19,7 @@ __device__ fptype device_ExpGaus(fptype *evt, ParameterContainer &pc) {
     ret *= exp(exparg);
     ret *= erfc(erfarg);
 
-    pc.incrementIndex (1, 3, 2, 0, 1);
+    pc.incrementIndex (1, 3, cons, 0, 1);
 
     return ret;
 }

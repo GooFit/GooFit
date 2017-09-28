@@ -51,45 +51,45 @@ if(GOOFIT_SEPARATE_COMP)
         GooPdf.cu
         MetricTaker.cu
         PdfBase.cu
-        #CrystalBallPdf.cu
+        CrystalBallPdf.cu
         BifurGaussPdf.cu
         #LineshapesPdf.cu
-        #CorrGaussianPdf.cu
+        CorrGaussianPdf.cu
         LandauPdf.cu
         #DP4Pdf.cu
         GaussianPdf.cu
         AddPdf.cu
-        #VoigtianPdf.cu
-        #MappedPdf.cu
+        VoigtianPdf.cu
+        MappedPdf.cu
         #Tddp4Pdf.cu
-        #DalitzVetoPdf.cu
-        #JohnsonSUPdf.cu
+        DalitzVetoPdf.cu
+        JohnsonSUPdf.cu
         ProdPdf.cu
         PolynomialPdf.cu
-        #IncoherentSumPdf.cu
-        #EventWeightedAddPdf.cu
-        #ScaledGaussianPdf.cu
-        #StepPdf.cu
-        #KinLimitBWPdf.cu
+        IncoherentSumPdf.cu
+        EventWeightedAddPdf.cu
+        ScaledGaussianPdf.cu
+        StepPdf.cu
+        KinLimitBWPdf.cu
         NovosibirskPdf.cu
-        #ResonancePdf.cu
-        #BWPdf.cu
-        #BinTransformPdf.cu
-        #TrigThresholdPdf.cu
-        #SmoothHistogramPdf.cu
+        ResonancePdf.cu
+        BWPdf.cu
+        BinTransformPdf.cu
+        TrigThresholdPdf.cu
+        SmoothHistogramPdf.cu
         ExpPdf.cu
         #InterHistPdf.cu
-        #DalitzPlotPdf.cu
-        #TddpPdf.cu
+        DalitzPlotPdf.cu
+        TddpPdf.cu
         ArgusPdf.cu
-        #ExpGausPdf.cu
-        #CompositePdf.cu
-        #ConvolutionPdf.cu
-        #DalitzPlotHelpers.cu
+        ExpGausPdf.cu
+        CompositePdf.cu
+        ConvolutionPdf.cu
+        DalitzPlotHelpers.cu
         #SpinFactors.cu
-        #MixingTimeResolution_Aux.cu
-        #TruthResolution_Aux.cu
-        #ThreeGaussResolution_Aux.cu
+        MixingTimeResolution_Aux.cu
+        TruthResolution_Aux.cu
+        ThreeGaussResolution_Aux.cu
         ${GOOPDF_HEADERS}
         ${goo_extra})
 else()

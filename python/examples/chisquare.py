@@ -7,7 +7,7 @@ import numpy as np
 import math
 
 
-decayTime  = 0
+decayTime  = None
 constaCoef = 0
 linearCoef = 0
 secondCoef = 0
@@ -22,11 +22,13 @@ def integralExpSqu(lo, hi):
     return((lo * lo + 2 * lo + 2) * np.exp(-lo) - (hi * hi + 2 * hi + 2) * np.exp(-hi))
 
 def generateEvents(rsEvtVec, wsEvtVec,decayTime,conCoef,linCoef,squCoef,eventsToGenerate):
+    print("generateEvents")
     totalRSintegral = integralExpCon(0, 100)
     step            = (decayTime.upperlimit - decayTime.lowerlimit) / decayTime.numbins
 
     i=0
     while i < decayTime.numbins:
+
         binStart = i * step
         binStart += decayTime.lowerlimit
         binFinal = binStart + step
@@ -41,8 +43,8 @@ def generateEvents(rsEvtVec, wsEvtVec,decayTime,conCoef,linCoef,squCoef,eventsTo
 
         rsEvts  = np.random.poisson(expectedRSevts)
         wsEvts  = np.random.poisson(expectedWSevts)
-        rsEvtVec[i] = rsEvts
-        wsEvtVec[i] = wsEvts
+        rsEvtVec = np.append(rsEvtVec,rsEvts)
+        wsEvtVec = np.append(wsEvtVec,wsEvts)
 
         if 0 == (i % 10):
             print ("Events in bin",i,"i",rsEvts,"(",expectedRSevts,")",wsEvts," (",expectedWSevts,")\n")
@@ -51,7 +53,8 @@ def generateEvents(rsEvtVec, wsEvtVec,decayTime,conCoef,linCoef,squCoef,eventsTo
 
 
 def fitRatio(rsEvts, wsEvts, plotName = ""):
-    ratioHist = TH1D("ratioHist", "", decayTime.numbins, decayTime.lowerlimit, decayTime.upperlimit)
+    #ratioHist = TH1D("ratioHist", "", decayTime.numbins, decayTime.lowerlimit, decayTime.upperlimit)
+    print("fitRatio")
     ratioData = BinnedDataSet(decayTime)
 
     i=0
@@ -149,6 +152,7 @@ def fitRatio(rsEvts, wsEvts, plotName = ""):
 
 
 def cpvFitFcn(npar, gin, fun, fp, iflag):
+    print(cpvFitFcn)
     conCoef = fp[0]
     linCoef = fp[1]
     squCoef = fp[2]
@@ -167,6 +171,7 @@ def cpvFitFcn(npar, gin, fun, fp, iflag):
 
 
 def fitRatioCPU(rsEvts, wsEvts):
+    print("fitRatioCPU")
     ratioHist = TH1D("ratioHist", "", decayTime.numbins, decayTime.lowerlimit, decayTime.upperlimit)
 
     ratios.resize(wsEvts.size())
@@ -206,11 +211,11 @@ def fitRatioCPU(rsEvts, wsEvts):
     gettimeofday(stopTime, None)
 
 def main():
-
+    print("main")
     #Time is in units of lifetime
     decayTime = Variable("decayTime", 100, 0, 10)
-    numbins = 100
-    decayTime.numbins = numbins
+    num_bins = 100
+    decayTime.numbins = num_bins
     rSubD = 0.03
     rBarD = 0.03
     delta = 0
@@ -222,11 +227,10 @@ def main():
 
     eventsToGenerate = 10000000
 
-    dZeroEvtsWS = decayTime.numbins
-    dZeroEvtsRS = decayTime.numbins
-    d0barEvtsWS = decayTime.numbins
-    d0barEvtsRS = decayTime.numbins
-
+    dZeroEvtsWS = np.array([])
+    dZeroEvtsRS = np.array([])
+    d0barEvtsWS = np.array([])
+    d0barEvtsRS = np.array([])
 
     dZeroLinearCoef = magPQ * math.sqrt(rSubD) * (y_mix * math.cos(delta + wpPhi) - x_mix * math.sin(delta + wpPhi))
     d0barLinearCoef = magQP * math.sqrt(rBarD) * (y_mix * math.cos(delta - wpPhi) - x_mix * math.sin(delta - wpPhi))
@@ -263,6 +267,5 @@ def main():
 
     print( "GPU time [seconds] : ",gpuTime,"\nCPU time [seconds] : ",cpuTime)
     return 0;
-
 
 main()

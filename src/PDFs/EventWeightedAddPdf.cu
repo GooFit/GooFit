@@ -8,7 +8,7 @@ __device__ fptype device_EventWeightedAddPdfs(fptype *evt, ParameterContainer &p
     int numConstants = RO_CACHE(pc.constants[pc.constantIdx]);
     int numObs = RO_CACHE(pc.constants[pc.constantIdx + 1]);
 
-    int itr = RO_CACHE(pc.constants[pc.constantIdx + numObs + 2]);
+    int comps = RO_CACHE(pc.constants[pc.constantIdx + numObs + 2]);
 
     fptype ret         = 0;
     fptype totalWeight = 0;
@@ -17,7 +17,7 @@ __device__ fptype device_EventWeightedAddPdfs(fptype *evt, ParameterContainer &p
 
     pci.incrementIndex (1, 0, numConstants, numObs, 1);
 
-    for(int i = 0; i < itr; ++i) {
+    for(int i = 0; i < comps - 1; ++i) {
         int id = pc.constants[pc.constantIdx + i + 2];
         fptype weight = RO_CACHE(evt[id]);
         totalWeight += weight;
@@ -50,7 +50,7 @@ __device__ fptype device_EventWeightedAddPdfsExt(fptype *evt, ParameterContainer
     int numConstants = RO_CACHE(pc.constants[pc.constantIdx]);
     int numObs = RO_CACHE(pc.constants[pc.constantIdx + 1]);
 
-    int itr = RO_CACHE(pc.constants[pc.constantIdx + numObs + 2]);
+    int comps = RO_CACHE(pc.constants[pc.constantIdx + numObs + 2]);
 
     fptype ret         = 0;
     fptype totalWeight = 0;
@@ -58,7 +58,7 @@ __device__ fptype device_EventWeightedAddPdfsExt(fptype *evt, ParameterContainer
     ParameterContainer pci = pc;
     pci.incrementIndex ();
 
-    for(int i = 0; i < itr/2; ++i) {
+    for(int i = 0; i < comps/2; ++i) {
         int id = pc.constants[pc.constantIdx + i + 2];
         fptype norm = pc.normalisations[pc.normalIdx + 1];
         fptype weight = RO_CACHE(evt[id]);
@@ -139,7 +139,9 @@ EventWeightedAddPdf::EventWeightedAddPdf(std::string n, std::vector<Variable *> 
 
     // we need to pad our constant list
     constantsList.push_back (observablesList.size());
-    for (int i = 0; i < observablesList.size (); i++) constantsList.push_back(0); 
+    for (int i = 0; i < observablesList.size (); i++) constantsList.push_back(0);
+
+    constantsList.push_back (components.size ());
 
     if(extended)
         GET_FUNCTION_ADDR(ptr_to_EventWeightedAddPdfsExt);

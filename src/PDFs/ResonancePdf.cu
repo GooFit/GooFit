@@ -429,11 +429,6 @@ ResonancePdf::ResonancePdf(std::string name, Variable *ar, Variable *ai)
     // Dummy index for constants - won't use it, but calling
     // functions can't know that and will call setConstantIndex anyway.
 
-    //parametersList.push_back(registerParameter(ar));
-    //parametersList.push_back(registerParameter(ai));
-    registerParameter(ar);
-    registerParameter(ai);
-
     constantsList.push_back(0);
     constantsList.push_back(0);
     constantsList.push_back(0);

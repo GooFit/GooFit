@@ -105,7 +105,7 @@ __device__ fptype device_threegauss_resolution(fptype coshterm,
     ret -= 2 * sinhterm * _P3;
     ret -= 2 * sinterm * _P4; // Notice sign difference wrt to Mikhail's code, because I have AB* and he has A*B.
 
-    pc.incrementIndex (1, 8, 0, 0, 1);
+    //pc.incrementIndex (1, 8, 0, 0, 1);
 
     // cuPrintf("device_threegauss_resolution %f %f %f %f %f\n", coshterm, costerm, sinhterm, sinterm, dtime);
     return ret;

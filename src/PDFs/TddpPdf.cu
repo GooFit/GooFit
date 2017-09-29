@@ -165,6 +165,7 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
     int id_m12 = RO_CACHE(pc.constants[pc.constantIdx + 4]);
     int id_m13 = RO_CACHE(pc.constants[pc.constantIdx + 5]);
     int id_num = RO_CACHE(pc.constants[pc.constantIdx + 6]);
+    int id_mis = RO_CACHE(pc.constants[pc.constantIdx + 7]);
 
     fptype m12 = RO_CACHE(evt[id_m12]);
     fptype m13 = RO_CACHE(evt[id_m13]);
@@ -172,12 +173,12 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
     unsigned int numResonances = RO_CACHE(pc.constants[pc.constantIdx + num_observable_ids + 2]);
 
     if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass)) {
-        unsigned int endEfficiencyFunc = RO_CACHE(pc.constants[pc.constantIdx + num_observable_ids + 4]);
+        unsigned int endEfficiencyFunc = RO_CACHE(pc.constants[pc.constantIdx + num_observable_ids + 5]);
         pc.incrementIndex(1, num_parameters, num_constants, num_observables, 1);
 
         //increment the resonances
         for (int i = 0; i < numResonances; i++)
-            pc.incrementIndex(1, 2, 3, 0, 1);
+            pc.incrementIndex();
 
         //increment the resolution function
         pc.incrementIndex();
@@ -199,6 +200,7 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
     thrust::complex<fptype> sumRateBB(0, 0);
 
     unsigned int cacheToUse    = RO_CACHE(pc.constants[pc.constantIdx + num_observable_ids + 3]);
+    fptype mistag    = RO_CACHE(pc.constants[pc.constantIdx + num_observable_ids + 4]);
 
     for(int i = 0; i < numResonances; ++i) {
         int paramIndex = parIndexFromResIndex(i);
@@ -293,7 +295,7 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
 
     //increment over resonance functions here?
     for (int i = 0; i < numResonances; i++)
-        pc.incrementIndex(1, 2, 3, 0, 1);
+        pc.incrementIndex();
 
     ret = (*(reinterpret_cast<device_resfunction_ptr>(device_function_table[pc.funcIdx])))(term1,
                                                                                                term2,
@@ -315,25 +317,27 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
 
     //fptype mistag = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 5]);
 
-    //if(mistag > 0) { // This should be either true or false for all events, so no branch is caused.
+    if(mistag > 0) { // This should be either true or false for all events, so no branch is caused.
         
         // See header file for explanation of 'mistag' variable - it is actually the probability
         // of having the correct sign, given that we have a correctly reconstructed D meson.
-        //mistag = RO_CACHE(evt[RO_CACHE(indices[md0_offset + 7 + RO_CACHE(indices[0])])]);
-        //ret *= mistag;
-        //ret += (1 - mistag) * (*(reinterpret_cast<device_resfunction_ptr>(device_function_table[resFunctionIdx])))(
-        //                          term1,
-        //                          -term2,
-        //                          sumWavesA.real(),
-        //                          -sumWavesA.imag(),
-        //                          _tau,
-        //                          _time,
-        //                          _xmixing,
-        //                          _ymixing,
-        //                          _sigma,
-        //                          p,
-        //                          &(indices[resFunctionPar]));
-    //}
+        mistag = RO_CACHE(evt[id_mis]);
+        ret *= mistag;
+        ret += (1 - mistag) * (*(reinterpret_cast<device_resfunction_ptr>(device_function_table[pc.funcIdx])))(
+                                  term1,
+                                  -term2,
+                                  sumWavesA.real(),
+                                  -sumWavesA.imag(),
+                                  _tau,
+                                  _time,
+                                  _xmixing,
+                                  _ymixing,
+                                  _sigma,
+                                  pc);
+    }
+
+    //increment our resolution function
+    pc.incrementIndex ();
 
     fptype eff = callFunction(evt, pc);
     // internalDebug = 0;
@@ -374,7 +378,6 @@ __host__ TddpPdf::TddpPdf(std::string n,
     decayConstants[5] = 0;
 
     if(mistag) {
-        printf("Haven't implemented yet!\n");
         registerObservable(mistag);
         totalEventSize    = 6;
         decayConstants[5] = 1; // Flags existence of mistag
@@ -390,7 +393,7 @@ __host__ TddpPdf::TddpPdf(std::string n,
     constantsList.push_back(0);
     constantsList.push_back(0);
 
-    if (mistag) constantsList.push_back(0);
+    if(mistag) constantsList.push_back(0);
 
     std::vector<unsigned int> pindices;
     pindices.push_back(registerConstants(6));
@@ -424,6 +427,11 @@ __host__ TddpPdf::TddpPdf(std::string n,
     cacheToUse            = cacheCount++;
     pindices.push_back(cacheToUse);
     constantsList.push_back (cacheToUse);
+
+    if(mistag) 
+        constantsList.push_back(1);
+    else
+        constantsList.push_back(0);
 
     for(auto &resonance : decayInfo->resonances) {
         pindices.push_back(registerParameter(resonance->amp_real));
@@ -549,6 +557,11 @@ __host__ TddpPdf::TddpPdf(std::string n,
     cacheToUse            = cacheCount++;
     pindices.push_back(cacheToUse);
     constantsList.push_back(cacheToUse);
+
+    if(mistag) 
+        constantsList.push_back(1);
+    else
+        constantsList.push_back(0);
 
     for(auto &resonance : decayInfo->resonances) {
         pindices.push_back(registerParameter(resonance->amp_real));

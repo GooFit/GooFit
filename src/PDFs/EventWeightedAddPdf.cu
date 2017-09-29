@@ -58,7 +58,7 @@ __device__ fptype device_EventWeightedAddPdfsExt(fptype *evt, ParameterContainer
     ParameterContainer pci = pc;
     pci.incrementIndex ();
 
-    for(int i = 0; i < comps/2; ++i) {
+    for(int i = 0; i < comps; ++i) {
         int id = pc.constants[pc.constantIdx + i + 2];
         fptype norm = pc.normalisations[pc.normalIdx + 1];
         fptype weight = RO_CACHE(evt[id]);

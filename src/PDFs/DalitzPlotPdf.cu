@@ -76,6 +76,8 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
 
     if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass)) {
         pc.incrementIndex(1, 32, 6, 0, 1);
+
+        //TODO: loop over resonances and efficiency functions
         return 0;
     }
 
@@ -118,7 +120,7 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
 
     //loop to efficiency idx
     for (int i = 0; i < numResonances; i++)
-        pc.incrementIndex (1, 2, 3, 0, 1);
+        pc.incrementIndex ();
 
     fptype eff         = callFunction(evt, pc);
     ret *= eff;

@@ -1,5 +1,6 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <pybind11/numpy.h>
 
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <goofit/PDFs/physics/MixingTimeResolution_Aux.h>
@@ -29,5 +30,20 @@ void init_Tddp4Pdf(py::module &m) {
                       MixingTimeResolution *,
                       GooPdf *,
                       Variable *,
-                      unsigned int>());
+                      unsigned int>())
+        .def("setGenerationOffset", [](TDDP4& self, int off){})
+
+        .def("GenerateSig",[](TDDP4 &self, int numEvents){
+            mcbooster::ParticlesSet_h particles; // typedef for std::vector<Particles_h *>,
+            mcbooster::VariableSet_h variables;
+            mcbooster::RealVector_h weights;
+            mcbooster::BoolVector_h flags;
+
+            std::tie(particles, variables, weights, flags) = self.GenerateSig(numEvents);
+
+            return std::make_tuple(particles, variables, weights, flags);
+         }
+    );
 }
+
+

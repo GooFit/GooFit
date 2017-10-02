@@ -43,8 +43,9 @@ def getToyData(toyFileName):
                     m13.lowerlimit,
                     m13.upperlimit)
     '''
-    vars = Variable(m12,m13,eventNumber)
-    data = UnbinnedDataSet(vars)
+    vars = (m12,m13,eventNumber)
+    data = UnbinnedDataSet(m12,m13,eventNumber)
+
 
     #reader(toyFileName)
 
@@ -311,6 +312,7 @@ def runToyFit(toyFileName):
 
 def main():
     filename = "dalitz_toyMC_000.txt"
+    f= open(filename,"w+")
     return runToyFit(filename)
 
 main()

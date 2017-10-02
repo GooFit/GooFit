@@ -31,8 +31,8 @@ void init_Tddp4Pdf(py::module &m) {
                       GooPdf *,
                       Variable *,
                       unsigned int>())
-        .def("setGenerationOffset", [](TDDP4& self, int off){})
-
+        .def("setGenerationOffset", &TDDP4::setGenerationOffset, "off"_a)
+        /*
         .def("GenerateSig",[](TDDP4 &self, int numEvents){
             mcbooster::ParticlesSet_h particles; // typedef for std::vector<Particles_h *>,
             mcbooster::VariableSet_h variables;
@@ -43,7 +43,8 @@ void init_Tddp4Pdf(py::module &m) {
 
             return std::make_tuple(particles, variables, weights, flags);
          }
-    );
+    )*/
+    ;
 }
 
 

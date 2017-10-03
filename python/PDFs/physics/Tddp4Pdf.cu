@@ -11,6 +11,8 @@
 using namespace GooFit;
 namespace py = pybind11;
 
+using namespace pybind11::literals;
+
 void init_Tddp4Pdf(py::module &m) {
     py::class_<TDDP4, GooPdf>(m, "TDDP4")
         .def(py::init<std::string,
@@ -41,9 +43,16 @@ void init_Tddp4Pdf(py::module &m) {
 
             std::tie(particles, variables, weights, flags) = self.GenerateSig(numEvents);
 
-            return std::make_tuple(particles, variables, weights, flags);
-         }
-    )*/
+            py::array_t<fptype> pyparticles{{16, numEvents}};
+
+            for(int i = 0; i < particles.size()*4; i++)
+                for(int j = 0; j < numEvents; j++)
+                // (*(particles[i/4]))[j].get(i%4)
+                    result.mutable_at(i, j) = instance.getValue(instance.getVariables().at(i), j);
+
+            return std::make_tuple(pyparticles, pyvariables, pyweights, pyflags);
+         })
+         */
     ;
 }
 

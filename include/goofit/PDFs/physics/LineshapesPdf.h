@@ -129,19 +129,14 @@ public:
     
     
 class kMatrix : public Lineshape {
-public:
-    enum class Channels : unsigned int {
-        pipi=0, KK, pipipipi, EtaEta, EtapEta
-    };
 
 protected:
     unsigned int pterm;
-    Channels channels;
     
 public:
     kMatrix(std::string name,
-        unsigned int pterm,
-        Channels chan,
+        unsigned int pterm, //< 0 or 1
+        bool is_pole, //< False for prod
         Variable* sA0,
         Variable* sA,
         Variable* s0_prod,
@@ -203,7 +198,6 @@ public:
               FF FormFac,
               fptype radius,
               std::vector<Variable *> AdditionalVars,
-              std::vector<Variable *> Curvatures,
               spline_t SplineInfo);
 
     ~GSpline() override = default;

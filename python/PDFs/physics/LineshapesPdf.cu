@@ -84,7 +84,6 @@ void init_LineshapesPdf(py::module &m) {
                       FF,
                       fptype,
                       std::vector<Variable *>,
-                      std::vector<Variable *>,
                       Lineshapes::spline_t>(),
              "Create a LASS lineshape",
              "name"_a,
@@ -95,7 +94,6 @@ void init_LineshapesPdf(py::module &m) {
              "FormFac"_a        = FF::BL_Prime,
              "radius"_a         = 1.5,
              "AdditionalVars"_a = std::vector<Variable *>(),
-             "Curvatures"_a     = std::vector<Variable *>(),
              "SplineInfo"_a     = Lineshapes::spline_t(0.0, 0.0, 0));
 
     py::class_<Amplitude>(m, "Amplitude")

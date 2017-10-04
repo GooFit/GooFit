@@ -15,6 +15,7 @@ on the GPU
 #include <utility>
 
 #include <Eigen/Core>
+#include <Eigen/LU>
 
 #include <goofit/detail/Macros.h>
 
@@ -471,8 +472,8 @@ __device__ fptype getSpline(fptype x, bool continued, unsigned int *indices) {
 
     fptype m_x_0  = GOOFIT_GET_PARAM(11 + bin);
     fptype m_x_1  = GOOFIT_GET_PARAM(11 + bin + 1);
-    fptype m_xf_0 = GOOFIT_GET_PARAM(11 + bin + nBins);
-    fptype m_xf_1 = GOOFIT_GET_PARAM(11 + bin + nBins + 1);
+    fptype m_xf_0 = GOOFIT_GET_CONST(11 + bin + nBins);
+    fptype m_xf_1 = GOOFIT_GET_CONST(11 + bin + nBins + 1);
 
     return m_x_0 + dx * ((m_x_1 - m_x_0) / spacing - (m_xf_1 + 2 * m_xf_0) * spacing / 6) + dx * dx * m_xf_0
            + dx * dx * dx * (m_xf_1 - m_xf_0) / (6 * spacing);
@@ -552,15 +553,15 @@ getPropagator(const Eigen::Array<fptype, NCHANNELS, NCHANNELS> &kMatrix,
 }
 
 __device__ fpcomplex kMatrixFunction(fptype Mpair, fptype m1, fptype m2, unsigned int *indices) {
-    const fptype mass  = GOOFIT_GET_PARAM(2);
-    const fptype width = GOOFIT_GET_PARAM(3);
+    // const fptype mass  = GOOFIT_GET_PARAM(2);
+    // const fptype width = GOOFIT_GET_PARAM(3);
     // const unsigned int L = GOOFIT_GET_INT(4);
-    const fptype radius = GOOFIT_GET_CONST(7);
+    // const fptype radius = GOOFIT_GET_CONST(7);
 
     // const fptype pTerm = GOOFIT_GET_INT();
 
     unsigned int pterm = GOOFIT_GET_INT(8);
-    unsigned int chan  = GOOFIT_GET_INT(9);
+    bool is_pole = GOOFIT_GET_INT(9) == 1;
 
     fptype sA0      = GOOFIT_GET_PARAM(10);
     fptype sA       = GOOFIT_GET_PARAM(11);
@@ -607,14 +608,14 @@ __device__ fpcomplex kMatrixFunction(fptype Mpair, fptype m1, fptype m2, unsigne
 
     Eigen::Array<fpcomplex, NCHANNELS, NCHANNELS> F = getPropagator(kMatrix, phaseSpace, adlerTerm);
 
-    if(true) { // pole
+    if (is_pole) { // pole
         fpcomplex M = 0;
         for(int i = 0; i < NCHANNELS; i++) {
             fptype pole = couplings(i, pterm);
             M += F(0, i) * pole;
         }
         return M / (POW2(pmasses(pterm)) - s);
-    } else if(false) { // prod
+    } else { // prod
         return F(0, pterm) * (1 - s0_prod) / (s - s0_prod);
     }
 }
@@ -786,6 +787,32 @@ Lineshape::Lineshape(std::string name,
     GOOFIT_FINALIZE_PDF;
 }
 
+std::vector<fptype> make_spline_curvatures(std::vector<Variable*> vars, Lineshapes::spline_t SplineInfo) {
+    size_t size = std::get<2>(SplineInfo) - 2;
+    Eigen::Matrix<fptype, Eigen::Dynamic, Eigen::Dynamic> m(size, size);
+    for(size_t i=0; i<size; i++) {
+        m(i,i) = 4;
+        if(i != size - 1) {
+            m(i,i+1) = 1;
+            m(i+1,1) = 1;
+        }
+    }
+    m = m.inverse();
+    
+    Eigen::Matrix<fptype, 1, Eigen::Dynamic> L(size);
+    for (unsigned int i = 0 ; i < size; ++i)
+        L[i] = vars[i+2]->getValue() - 2*vars[i+1]->getValue() + vars[i]->getValue();
+    
+    auto mtv = m*L;
+    fptype spacing = (std::get<0>(SplineInfo) - std::get<1>(SplineInfo)) / std::get<2>(SplineInfo);
+    
+    std::vector<fptype> ret(0, vars.size());
+    for (unsigned int i = 0; i < size; ++i) {
+        ret.at(i+1) = 6*mtv(i)/POW2(spacing);
+    }
+    return ret;
+}
+    
 Lineshapes::GSpline::GSpline(std::string name,
                              Variable *mass,
                              Variable *width,
@@ -794,16 +821,12 @@ Lineshapes::GSpline::GSpline(std::string name,
                              FF FormFac,
                              fptype radius,
                              std::vector<Variable *> AdditionalVars,
-                             std::vector<Variable *> Curvature,
                              spline_t SplineInfo)
     : Lineshape(nullptr, name, mass, width, L, Mpair, LS::GSpline, FormFac, radius)
     , _AdditionalVars(AdditionalVars)
-    , _Curvature(Curvature)
     , _SplineInfo(SplineInfo) {
     if(std::get<2>(_SplineInfo) != AdditionalVars.size())
         throw GeneralError("bins {} != vars {}", std::get<2>(_SplineInfo), AdditionalVars.size());
-    if(std::get<2>(_SplineInfo) != Curvature.size())
-        throw GeneralError("bins {} != vars {}", std::get<2>(_SplineInfo), Curvature.size());
     GOOFIT_ADD_CONST(8, std::get<0>(_SplineInfo), "MinSpline");
     GOOFIT_ADD_CONST(9, std::get<1>(_SplineInfo), "MaxSpline");
     GOOFIT_ADD_INT(10, std::get<2>(_SplineInfo), "NSpline");
@@ -812,8 +835,12 @@ Lineshapes::GSpline::GSpline(std::string name,
     for(auto &par : AdditionalVars) {
         GOOFIT_ADD_PARAM(i++, par, "Knot");
     }
-    for(auto &par : Curvature) {
-        GOOFIT_ADD_PARAM(i++, par, "CKnot");
+        
+    std::vector<fptype> SplineCTerms = make_spline_curvatures(AdditionalVars, SplineInfo);
+        
+    for(auto &par : SplineCTerms) {
+        // Calc curve
+        GOOFIT_ADD_CONST(i++, par, "CKnot");
     }
 
     GET_FUNCTION_ADDR(ptr_to_Spline);
@@ -872,7 +899,7 @@ Lineshapes::FOCUS::FOCUS(std::string name,
 
 Lineshapes::kMatrix::kMatrix(std::string name,
                              unsigned int pterm,
-                             Channels chan,
+                             bool is_pole,
                              Variable *sA0,
                              Variable *sA,
                              Variable *s0_prod,
@@ -886,10 +913,10 @@ Lineshapes::kMatrix::kMatrix(std::string name,
                              FF FormFac,
                              fptype radius)
     : Lineshape(nullptr, name, mass, width, L, Mpair, LS::BW, FormFac, radius)
-    , pterm(pterm)
-    , channels(chan) {
+    , pterm(pterm) {
+        
     GOOFIT_ADD_INT(8, pterm, "pTerm");
-    GOOFIT_ADD_INT(9, static_cast<unsigned int>(chan), "Channel");
+    GOOFIT_ADD_INT(9, is_pole ? 1 : 0, "Channel");
 
     GOOFIT_ADD_PARAM(10, sA0, "sA0");
     GOOFIT_ADD_PARAM(11, sA, "sA");

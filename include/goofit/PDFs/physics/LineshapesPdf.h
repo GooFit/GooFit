@@ -37,29 +37,10 @@ protected:
     friend class DPPdf;
     friend class TDDP4;
     
-    Variable *_mass;
-    Variable *_width;
-    unsigned int _L;
-    unsigned int _Mpair;
-    
-    LS _kind;
-    FF _FormFac;
-    
-    fptype _radius;
-    
     std::vector<unsigned int> pindices {0};
     
     /// Protected constructor, only for subclasses to use
-    Lineshape(
-        Variable *,
-        std::string name,
-        Variable *mass,
-        Variable *width,
-        unsigned int L,
-        unsigned int Mpair,
-        LS kind,
-        FF FormFac,
-        fptype radius);
+    Lineshape(std::string name);
     
 public:
     /// Construct standard versions
@@ -78,17 +59,13 @@ public:
     void setConstantIndex(unsigned int idx) { host_indices[parameters + 1] = idx; }
     
     bool operator==(const Lineshape &L) const {
-        return  (L.getName() == getName() and L._mass->getValue() == _mass->getValue()
-                           and L._width->getValue() == _width->getValue()
-                           and L._L == _L
-                           and L._Mpair == _Mpair
-                           and L._kind == _kind
-                           and L._FormFac == _FormFac);
+        return  (L.getName() == getName());
     }
 
 };
     
 namespace Lineshapes {
+    
 using spline_t = std::tuple<fptype, fptype, unsigned int>;
     
 class RBW : public Lineshape {
@@ -112,8 +89,6 @@ public:
     
     enum class Mod {Kpi=0, KEta, I32};
     
-    Mod mod;
-    
     FOCUS(std::string name,
         Mod mod,
         Variable *mass,
@@ -130,9 +105,6 @@ public:
     
 class kMatrix : public Lineshape {
 
-protected:
-    unsigned int pterm;
-    
 public:
     kMatrix(std::string name,
         unsigned int pterm, //< 0 or 1
@@ -155,11 +127,6 @@ public:
 };
     
 class LASS : public Lineshape {
-    
-    protected:
-        
-        
-        std::vector<Variable *> _AdditionalVars;
         
     public:
         
@@ -178,14 +145,6 @@ class LASS : public Lineshape {
     
 /// A spline implementaiton for the width (Gamma = G)
 class GSpline : public Lineshape {
-
-protected:
-
-    std::vector<Variable *> _AdditionalVars;
-    std::vector<Variable *> _Curvature;
-    
-    /// Min, Max, N for parametrization
-    spline_t _SplineInfo;
 
 public:
     

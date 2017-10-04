@@ -694,37 +694,13 @@ __device__ resonance_function_ptr ptr_to_kMatrix    = kMatrixFunction;
 __device__ resonance_function_ptr ptr_to_FOCUS      = FOCUSFunction;
 
 // This constructor is protected
-Lineshape::Lineshape(Variable *,
-                     std::string name,
-                     Variable *mass,
-                     Variable *width,
-                     unsigned int L,
-                     unsigned int Mpair,
-                     LS kind,
-                     FF FormFac,
-                     fptype radius)
-    : GooPdf(nullptr, name)
-    , _mass(mass)
-    , _width(width)
-    , _L(L)
-    , _Mpair(Mpair)
-    , _kind(kind)
-    , _FormFac(FormFac)
-    , _radius(radius) {
+Lineshape::Lineshape(std::string name)
+    : GooPdf(nullptr, name) {
     // Making room for index of decay-related constants. Assumption:
     // These are mother mass and three daughter masses in that order.
     // They will be registered by the object that uses this resonance,
     // which will tell this object where to find them by calling setConstantIndex.
 
-    GOOFIT_ADD_PARAM(2, mass, "mass");
-    GOOFIT_ADD_PARAM(3, width, "width");
-
-    GOOFIT_ADD_INT(4, L, "L");
-    GOOFIT_ADD_INT(5, Mpair, "Mpair");
-
-    GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
-
-    GOOFIT_ADD_CONST(7, radius, "radius");
 }
 
 Lineshape::Lineshape(std::string name,
@@ -735,7 +711,18 @@ Lineshape::Lineshape(std::string name,
                      LS kind,
                      FF FormFac,
                      fptype radius)
-    : Lineshape(nullptr, name, mass, width, L, Mpair, kind, FormFac, radius) {
+    : Lineshape(name) {
+    
+    GOOFIT_ADD_PARAM(2, mass, "mass");
+    GOOFIT_ADD_PARAM(3, width, "width");
+    
+    GOOFIT_ADD_INT(4, L, "L");
+    GOOFIT_ADD_INT(5, Mpair, "Mpair");
+    
+    GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
+    
+    GOOFIT_ADD_CONST(7, radius, "radius");
+        
     switch(kind) {
     case LS::ONE:
         GET_FUNCTION_ADDR(ptr_to_LS_ONE);
@@ -822,14 +809,23 @@ Lineshapes::GSpline::GSpline(std::string name,
                              fptype radius,
                              std::vector<Variable *> AdditionalVars,
                              spline_t SplineInfo)
-    : Lineshape(nullptr, name, mass, width, L, Mpair, LS::GSpline, FormFac, radius)
-    , _AdditionalVars(AdditionalVars)
-    , _SplineInfo(SplineInfo) {
-    if(std::get<2>(_SplineInfo) != AdditionalVars.size())
-        throw GeneralError("bins {} != vars {}", std::get<2>(_SplineInfo), AdditionalVars.size());
-    GOOFIT_ADD_CONST(8, std::get<0>(_SplineInfo), "MinSpline");
-    GOOFIT_ADD_CONST(9, std::get<1>(_SplineInfo), "MaxSpline");
-    GOOFIT_ADD_INT(10, std::get<2>(_SplineInfo), "NSpline");
+    : Lineshape(name) {
+        
+    GOOFIT_ADD_PARAM(2, mass, "mass");
+    GOOFIT_ADD_PARAM(3, width, "width");
+    
+    GOOFIT_ADD_INT(4, L, "L");
+    GOOFIT_ADD_INT(5, Mpair, "Mpair");
+    
+    GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
+    
+    GOOFIT_ADD_CONST(7, radius, "radius");
+        
+    if(std::get<2>(SplineInfo) != AdditionalVars.size())
+        throw GeneralError("bins {} != vars {}", std::get<2>(SplineInfo), AdditionalVars.size());
+    GOOFIT_ADD_CONST(8, std::get<0>(SplineInfo), "MinSpline");
+    GOOFIT_ADD_CONST(9, std::get<1>(SplineInfo), "MaxSpline");
+    GOOFIT_ADD_INT(10, std::get<2>(SplineInfo), "NSpline");
 
     int i = 11;
     for(auto &par : AdditionalVars) {
@@ -856,8 +852,7 @@ Lineshapes::LASS::LASS(std::string name,
                        FF FormFac,
                        fptype radius,
                        std::vector<Variable *> AdditionalVars)
-    : Lineshape(nullptr, name, mass, width, L, Mpair, LS::Lass_M3, FormFac, radius)
-    , _AdditionalVars(AdditionalVars) {
+    : Lineshape(name) {
     if(5 != AdditionalVars.size()) {
         throw GeneralError("It seems you forgot to provide the vector with the five necessary variables for GLASS, a, "
                            "r, phiF, phiR and F (in that order)");
@@ -874,7 +869,18 @@ Lineshapes::LASS::LASS(std::string name,
 
 Lineshapes::RBW::RBW(
     std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
-    : Lineshape(nullptr, name, mass, width, L, Mpair, LS::BW, FormFac, radius) {
+    : Lineshape(name) {
+
+    GOOFIT_ADD_PARAM(2, mass, "mass");
+    GOOFIT_ADD_PARAM(3, width, "width");
+    
+    GOOFIT_ADD_INT(4, L, "L");
+    GOOFIT_ADD_INT(5, Mpair, "Mpair");
+    
+    GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
+    
+    GOOFIT_ADD_CONST(7, radius, "radius");
+        
     GET_FUNCTION_ADDR(ptr_to_BW_DP4);
 
     GOOFIT_FINALIZE_PDF;
@@ -888,8 +894,18 @@ Lineshapes::FOCUS::FOCUS(std::string name,
                          unsigned int Mpair,
                          FF FormFac,
                          fptype radius)
-    : Lineshape(nullptr, name, mass, width, L, Mpair, LS::FOCUS, FormFac, radius)
-    , mod(mod) {
+    : Lineshape(name){
+        
+    GOOFIT_ADD_PARAM(2, mass, "mass");
+    GOOFIT_ADD_PARAM(3, width, "width");
+    
+    GOOFIT_ADD_INT(4, L, "L");
+    GOOFIT_ADD_INT(5, Mpair, "Mpair");
+    
+    GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
+    
+    GOOFIT_ADD_CONST(7, radius, "radius");
+        
     GOOFIT_ADD_INT(8, static_cast<unsigned int>(mod), "Lineshape modifier");
 
     GET_FUNCTION_ADDR(ptr_to_FOCUS);
@@ -912,8 +928,17 @@ Lineshapes::kMatrix::kMatrix(std::string name,
                              unsigned int Mpair,
                              FF FormFac,
                              fptype radius)
-    : Lineshape(nullptr, name, mass, width, L, Mpair, LS::BW, FormFac, radius)
-    , pterm(pterm) {
+    : Lineshape(name) {
+        
+    GOOFIT_ADD_PARAM(2, mass, "mass");
+    GOOFIT_ADD_PARAM(3, width, "width");
+    
+    GOOFIT_ADD_INT(4, L, "L");
+    GOOFIT_ADD_INT(5, Mpair, "Mpair");
+    
+    GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
+    
+    GOOFIT_ADD_CONST(7, radius, "radius");
         
     GOOFIT_ADD_INT(8, pterm, "pTerm");
     GOOFIT_ADD_INT(9, is_pole ? 1 : 0, "Channel");

@@ -784,14 +784,14 @@ std::vector<fptype> make_spline_curvatures(std::vector<Variable *> vars, Linesha
     }
     m = m.inverse();
 
-    Eigen::Matrix<fptype, 1, Eigen::Dynamic> L(size);
+    Eigen::Matrix<fptype, Eigen::Dynamic, 1> L(size);
     for(unsigned int i = 0; i < size; ++i)
         L[i] = vars[i + 2]->getValue() - 2 * vars[i + 1]->getValue() + vars[i]->getValue();
 
     auto mtv       = m * L;
     fptype spacing = (std::get<0>(SplineInfo) - std::get<1>(SplineInfo)) / std::get<2>(SplineInfo);
 
-    std::vector<fptype> ret(0, vars.size());
+    std::vector<fptype> ret(vars.size(), 0);
     for(unsigned int i = 0; i < size; ++i) {
         ret.at(i + 1) = 6 * mtv(i) / POW2(spacing);
     }

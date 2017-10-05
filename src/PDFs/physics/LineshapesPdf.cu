@@ -577,7 +577,7 @@ __device__ fpcomplex kMatrixFunction(fptype Mpair, fptype m1, fptype m2, unsigne
     }
 
     for(int i = 0; i < NPOLES; i++) {
-        for(int j = 0; j < NPOLES + 1; j++)
+        for(int j = 0; j < NPOLES; j++)
             couplings(i, j) = GOOFIT_GET_PARAM(14 + NCHANNELS + i * (NPOLES + 1) + j);
         pmasses(i) = GOOFIT_GET_PARAM(14 + NCHANNELS + i * (NPOLES + 1) + NPOLES);
     }

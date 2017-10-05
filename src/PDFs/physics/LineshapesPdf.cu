@@ -561,7 +561,7 @@ __device__ fpcomplex kMatrixFunction(fptype Mpair, fptype m1, fptype m2, unsigne
     // const fptype pTerm = GOOFIT_GET_INT();
 
     unsigned int pterm = GOOFIT_GET_INT(8);
-    bool is_pole = GOOFIT_GET_INT(9) == 1;
+    bool is_pole       = GOOFIT_GET_INT(9) == 1;
 
     fptype sA0      = GOOFIT_GET_PARAM(10);
     fptype sA       = GOOFIT_GET_PARAM(11);
@@ -608,7 +608,7 @@ __device__ fpcomplex kMatrixFunction(fptype Mpair, fptype m1, fptype m2, unsigne
 
     Eigen::Array<fpcomplex, NCHANNELS, NCHANNELS> F = getPropagator(kMatrix, phaseSpace, adlerTerm);
 
-    if (is_pole) { // pole
+    if(is_pole) { // pole
         fpcomplex M = 0;
         for(int i = 0; i < NCHANNELS; i++) {
             fptype pole = couplings(i, pterm);
@@ -700,7 +700,6 @@ Lineshape::Lineshape(std::string name)
     // These are mother mass and three daughter masses in that order.
     // They will be registered by the object that uses this resonance,
     // which will tell this object where to find them by calling setConstantIndex.
-
 }
 
 Lineshape::Lineshape(std::string name,
@@ -712,17 +711,16 @@ Lineshape::Lineshape(std::string name,
                      FF FormFac,
                      fptype radius)
     : Lineshape(name) {
-    
     GOOFIT_ADD_PARAM(2, mass, "mass");
     GOOFIT_ADD_PARAM(3, width, "width");
-    
+
     GOOFIT_ADD_INT(4, L, "L");
     GOOFIT_ADD_INT(5, Mpair, "Mpair");
-    
+
     GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
-    
+
     GOOFIT_ADD_CONST(7, radius, "radius");
-        
+
     switch(kind) {
     case LS::ONE:
         GET_FUNCTION_ADDR(ptr_to_LS_ONE);
@@ -774,32 +772,32 @@ Lineshape::Lineshape(std::string name,
     GOOFIT_FINALIZE_PDF;
 }
 
-std::vector<fptype> make_spline_curvatures(std::vector<Variable*> vars, Lineshapes::spline_t SplineInfo) {
+std::vector<fptype> make_spline_curvatures(std::vector<Variable *> vars, Lineshapes::spline_t SplineInfo) {
     size_t size = std::get<2>(SplineInfo) - 2;
     Eigen::Matrix<fptype, Eigen::Dynamic, Eigen::Dynamic> m(size, size);
-    for(size_t i=0; i<size; i++) {
-        m(i,i) = 4;
+    for(size_t i = 0; i < size; i++) {
+        m(i, i) = 4;
         if(i != size - 1) {
-            m(i,i+1) = 1;
-            m(i+1,1) = 1;
+            m(i, i + 1) = 1;
+            m(i + 1, 1) = 1;
         }
     }
     m = m.inverse();
-    
+
     Eigen::Matrix<fptype, 1, Eigen::Dynamic> L(size);
-    for (unsigned int i = 0 ; i < size; ++i)
-        L[i] = vars[i+2]->getValue() - 2*vars[i+1]->getValue() + vars[i]->getValue();
-    
-    auto mtv = m*L;
+    for(unsigned int i = 0; i < size; ++i)
+        L[i] = vars[i + 2]->getValue() - 2 * vars[i + 1]->getValue() + vars[i]->getValue();
+
+    auto mtv       = m * L;
     fptype spacing = (std::get<0>(SplineInfo) - std::get<1>(SplineInfo)) / std::get<2>(SplineInfo);
-    
+
     std::vector<fptype> ret(0, vars.size());
-    for (unsigned int i = 0; i < size; ++i) {
-        ret.at(i+1) = 6*mtv(i)/POW2(spacing);
+    for(unsigned int i = 0; i < size; ++i) {
+        ret.at(i + 1) = 6 * mtv(i) / POW2(spacing);
     }
     return ret;
 }
-    
+
 Lineshapes::GSpline::GSpline(std::string name,
                              Variable *mass,
                              Variable *width,
@@ -810,17 +808,16 @@ Lineshapes::GSpline::GSpline(std::string name,
                              std::vector<Variable *> AdditionalVars,
                              spline_t SplineInfo)
     : Lineshape(name) {
-        
     GOOFIT_ADD_PARAM(2, mass, "mass");
     GOOFIT_ADD_PARAM(3, width, "width");
-    
+
     GOOFIT_ADD_INT(4, L, "L");
     GOOFIT_ADD_INT(5, Mpair, "Mpair");
-    
+
     GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
-    
+
     GOOFIT_ADD_CONST(7, radius, "radius");
-        
+
     if(std::get<2>(SplineInfo) != AdditionalVars.size())
         throw GeneralError("bins {} != vars {}", std::get<2>(SplineInfo), AdditionalVars.size());
     GOOFIT_ADD_CONST(8, std::get<0>(SplineInfo), "MinSpline");
@@ -831,9 +828,9 @@ Lineshapes::GSpline::GSpline(std::string name,
     for(auto &par : AdditionalVars) {
         GOOFIT_ADD_PARAM(i++, par, "Knot");
     }
-        
+
     std::vector<fptype> SplineCTerms = make_spline_curvatures(AdditionalVars, SplineInfo);
-        
+
     for(auto &par : SplineCTerms) {
         // Calc curve
         GOOFIT_ADD_CONST(i++, par, "CKnot");
@@ -870,17 +867,16 @@ Lineshapes::LASS::LASS(std::string name,
 Lineshapes::RBW::RBW(
     std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
     : Lineshape(name) {
-
     GOOFIT_ADD_PARAM(2, mass, "mass");
     GOOFIT_ADD_PARAM(3, width, "width");
-    
+
     GOOFIT_ADD_INT(4, L, "L");
     GOOFIT_ADD_INT(5, Mpair, "Mpair");
-    
+
     GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
-    
+
     GOOFIT_ADD_CONST(7, radius, "radius");
-        
+
     GET_FUNCTION_ADDR(ptr_to_BW_DP4);
 
     GOOFIT_FINALIZE_PDF;
@@ -894,18 +890,17 @@ Lineshapes::FOCUS::FOCUS(std::string name,
                          unsigned int Mpair,
                          FF FormFac,
                          fptype radius)
-    : Lineshape(name){
-        
+    : Lineshape(name) {
     GOOFIT_ADD_PARAM(2, mass, "mass");
     GOOFIT_ADD_PARAM(3, width, "width");
-    
+
     GOOFIT_ADD_INT(4, L, "L");
     GOOFIT_ADD_INT(5, Mpair, "Mpair");
-    
+
     GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
-    
+
     GOOFIT_ADD_CONST(7, radius, "radius");
-        
+
     GOOFIT_ADD_INT(8, static_cast<unsigned int>(mod), "Lineshape modifier");
 
     GET_FUNCTION_ADDR(ptr_to_FOCUS);
@@ -929,17 +924,16 @@ Lineshapes::kMatrix::kMatrix(std::string name,
                              FF FormFac,
                              fptype radius)
     : Lineshape(name) {
-        
     GOOFIT_ADD_PARAM(2, mass, "mass");
     GOOFIT_ADD_PARAM(3, width, "width");
-    
+
     GOOFIT_ADD_INT(4, L, "L");
     GOOFIT_ADD_INT(5, Mpair, "Mpair");
-    
+
     GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
-    
+
     GOOFIT_ADD_CONST(7, radius, "radius");
-        
+
     GOOFIT_ADD_INT(8, pterm, "pTerm");
     GOOFIT_ADD_INT(9, is_pole ? 1 : 0, "Channel");
 

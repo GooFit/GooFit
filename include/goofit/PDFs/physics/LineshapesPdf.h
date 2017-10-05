@@ -79,7 +79,7 @@ class RBW : public Lineshape {
               FF FormFac                             = FF::BL_Prime,
               fptype radius                          = 1.5);
     
-    virtual ~RBW() = default;
+    ~RBW() override = default;
         
 };
     

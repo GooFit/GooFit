@@ -28,7 +28,6 @@ double FCN::operator()(const std::vector<double> &pars) const {
 }
 
 double FCN::operator()() const {
-    
     // Make a vector of current values, then force the recalculation step
     std::vector<double> pars = params_->make_minuit_vector();
     params_->from_minuit_vector(pars, true);

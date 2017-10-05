@@ -150,8 +150,8 @@ int main(int argc, char **argv) {
     Variable constantZero{"constantZero", 0};
 
     vector<Variable *> observables{&m12, &m34, &cos12, &cos34, &phi, &eventNumber, &dtime, &sigmat};
-    vector<Variable *> coefficients{&constantZero, &constantZero};
-    vector<Variable *> offsets{&constantOne};
+    vector<Variable *> offsets{&constantZero, &constantZero};
+    vector<Variable *> coefficients{&constantOne};
 
     TruthResolution dat;
     PolynomialPdf eff{"constantEff", observables, coefficients, offsets, 0};
@@ -197,6 +197,8 @@ int main(int argc, char **argv) {
     tree->Branch("Piplus_Pz", &Piplus_Pz, "Piplus_Pz/D");
     tree->Branch("Piplus_pdg", &Piplus_pdg, "Piplus_pdg/I");
 
+    int total_accepted = 0;
+
     for(int k = 0; k < trials; ++k) {
         int numEvents = 800000;
         dp.setGenerationOffset(k * numEvents);
@@ -209,6 +211,7 @@ int main(int argc, char **argv) {
         std::tie(particles, variables, weights, flags) = dp.GenerateSig(numEvents);
 
         int accepted = thrust::count_if(flags.begin(), flags.end(), thrust::identity<bool>());
+        total_accepted += accepted;
 
         GOOFIT_INFO(
             "Run #{}: Using accept-reject method would leave you with {} out of {} events", k, accepted, numEvents);
@@ -268,5 +271,11 @@ int main(int argc, char **argv) {
 
     tree->Write();
     file->Close();
-    return 0;
+
+    if(total_accepted > 0)
+        return 0;
+    else {
+        GOOFIT_ERROR("Total accepted was 0! Something is wrong.");
+        return 1;
+    }
 }

@@ -5,11 +5,11 @@
 namespace GooFit {
 
 __device__ fptype device_Polynomial(fptype* evt, ParameterContainer &pc) {
-    int id = RO_CACHE(pc.constants[pc.constantIdx + 2]);
+    int id = RO_CACHE(pc.observables[pc.observableIdx + 1]);
     // Structure is nP lowestdegree c1 c2 c3 nO o1
 
     int numParams = RO_CACHE(pc.parameters[pc.parameterIdx]);
-    int lowestDegree = RO_CACHE(pc.constants[pc.constantIdx + 3]);
+    int lowestDegree = RO_CACHE(pc.constants[pc.constantIdx + 1]);
 
     fptype x = evt[id];
     fptype ret = 0;
@@ -20,16 +20,16 @@ __device__ fptype device_Polynomial(fptype* evt, ParameterContainer &pc) {
         ret += param * pow(x, lowestDegree + i);
     }
 
-    pc.incrementIndex (1, numParams, 3, 0, 1);
+    pc.incrementIndex (1, numParams, 3, 1, 1);
 
     return ret;
 }
 
 __device__ fptype device_OffsetPolynomial(fptype* evt, ParameterContainer &pc) {
-    int id = RO_CACHE(pc.constants[pc.constantIdx + 2]);
+    int id = RO_CACHE(pc.observables[pc.observableIdx + 1]);
 
     int numParams = RO_CACHE(pc.parameters[pc.parameterIdx]);
-    int lowestDegree = RO_CACHE(pc.constants[pc.constantIdx + 3]);
+    int lowestDegree = RO_CACHE(pc.constants[pc.constantIdx + 1]);
 
     fptype x = evt[id];
     //TODO: Not sure where this is pointing...
@@ -40,20 +40,19 @@ __device__ fptype device_OffsetPolynomial(fptype* evt, ParameterContainer &pc) {
         ret += RO_CACHE(pc.parameters[pc.parameterIdx + i]) * pow(x, lowestDegree + i - 2);
     }
 
-    pc.incrementIndex(1, numParams, 3, 0, 1);
+    pc.incrementIndex(1, numParams, 1, 1, 1);
 
     return ret;
 }
 
 __device__ fptype device_MultiPolynomial(fptype* evt, ParameterContainer &pc) {
     int num_constants = RO_CACHE(pc.constants[pc.constantIdx]);
-    int num_observables = RO_CACHE(pc.constants[pc.constantIdx + 1]);
     int num_parameters = RO_CACHE(pc.parameters[pc.parameterIdx]);
 
     // Structure is nP, maxDegree, offset1, offset2, ..., coeff1, coeff2, ..., nO, o1, o2, ...
 
-    //int numObservables = RO_CACHE(pc.observables[pc.observableIdx]);
-    int maxDegree = RO_CACHE(pc.constants[pc.constantIdx + num_observables + 2]) + 1;
+    int num_observables = RO_CACHE(pc.observables[pc.observableIdx]);
+    int maxDegree = RO_CACHE(pc.constants[pc.constantIdx + 1]) + 1;
     // Only appears in construction (maxDegree + 1) or (x > maxDegree), so
     // may as well add the one and use >= instead.
 
@@ -81,7 +80,7 @@ __device__ fptype device_MultiPolynomial(fptype* evt, ParameterContainer &pc) {
         // printf("[%i, %i] Start box %i %f %f:\n", BLOCKIDX, THREADIDX, i, ret, evt[8]);
         for(int j = 0; j < num_observables; ++j) {
 	    //TODO:Need to debug these
-            int id = RO_CACHE(pc.constants[pc.constantIdx + 2 + j]);
+            int id = RO_CACHE(pc.observables[pc.observableIdx + 1 + j]);
             fptype x = RO_CACHE(evt[id]); // x, y, z...
             fptype offset = RO_CACHE(pc.parameters[pc.parameterIdx + 1 + j]); // x0, y0, z0...
             x -= offset;
@@ -113,7 +112,7 @@ __device__ fptype device_MultiPolynomial(fptype* evt, ParameterContainer &pc) {
         ret += currTerm;
     }
 
-    pc.incrementIndex (1, num_parameters, num_constants, 0, 1);
+    pc.incrementIndex (1, num_parameters, num_constants, num_observables, 1);
 
     return ret;
 }
@@ -130,9 +129,6 @@ __host__ PolynomialPdf::PolynomialPdf(
     std::vector<unsigned int> pindices;
     pindices.push_back(lowestDegree);
 
-    //adding index for _x
-    constantsList.push_back (observablesList.size());
-    constantsList.push_back (0);
     constantsList.push_back (lowestDegree);
 
     for(std::vector<Variable*>::iterator v = weights.begin(); v != weights.end(); ++v) {
@@ -159,13 +155,6 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n,
                                       unsigned int maxDegree)
     : GooPdf(nullptr, n) {
     unsigned int numParameters = 1;
-
-    //number of observables
-    constantsList.push_back(obses.size());
-
-    //pad first for the registered observables
-    for (unsigned int i = 0; i < obses.size(); ++i)
-        constantsList.push_back(0);
 
     constantsList.push_back(maxDegree);
 
@@ -245,7 +234,7 @@ __host__ void PolynomialPdf::recursiveSetIndices () {
 
 __host__ fptype PolynomialPdf::integrate(fptype lo, fptype hi) const {
     // This is *still* wrong. (13 Feb 2013.)
-    fptype lowestDegree = host_constants[constantsIdx + 3];
+    fptype lowestDegree = host_constants[constantsIdx + 1];
 
     if(center) {
         hi -= host_observables[observablesIdx + 1];
@@ -280,16 +269,16 @@ __host__ fptype PolynomialPdf::getCoefficient(int coef) const {
     // equals one, which gives the same result.)
 
     // Structure is nP lowestdegree c1 c2 c3 nO o1
-    if(coef < host_constants[constantsIdx + 3])
+    if(coef < host_constants[constantsIdx + 1])
         return 0; // Less than least power.
 
-    if(coef > host_constants[constantsIdx + 3] + (host_parameters[parametersIdx] - 1))
+    if(coef > host_constants[constantsIdx + 1] + (host_parameters[parametersIdx] - 1))
         return 0; // Greater than max power.
 
     fptype norm = normalize();
     norm        = (1.0 / norm);
 
-    fptype param = host_parameters[parametersIdx + 2 + coef - int(host_constants[constantsIdx + 3])];
+    fptype param = host_parameters[parametersIdx + 2 + coef - int(host_constants[constantsIdx + 1])];
     return norm*param;
 }
 } // namespace GooFit

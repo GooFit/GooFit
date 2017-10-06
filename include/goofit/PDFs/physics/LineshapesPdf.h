@@ -70,6 +70,8 @@ class Lineshape : public GooPdf {
     }
     Lineshape(std::string name);
 
+    __host__ virtual void recursiveSetIndices ();
+
     //void setConstantIndex(unsigned int idx) { host_indices[parameters + 1] = idx; }
 };
 

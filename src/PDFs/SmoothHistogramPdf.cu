@@ -22,20 +22,21 @@ __device__ fptype device_EvalHistogram(fptype *evt, ParameterContainer &pc) {
     // where limit and step are indices into functorConstants.
 
     int numCons          = RO_CACHE(pc.constants[pc.constantIdx]);
-    int numObs           = RO_CACHE(pc.constants[pc.constantIdx + 1]);
-    int numVars          = RO_CACHE(pc.constants[pc.constantIdx + numObs + 3]);
+    int numObs           = RO_CACHE(pc.observables[pc.observableIdx]);
+    int numParms         = RO_CACHE(pc.parameters[pc.parameterIdx]);
+    int numVars          = RO_CACHE(pc.constants[pc.constantIdx + 1]);
     int globalBinNumber  = 0;
     int previous         = 1;
-    int myHistogramIndex = RO_CACHE(pc.constants[pc.constantIdx + numObs + 2]); // 1 only used for smoothing
+    int myHistogramIndex = RO_CACHE(pc.constants[pc.constantIdx + 2]); // 1 only used for smoothing
 
     for(int i = 0; i < numVars; ++i) {
-        int varIndex      = RO_CACHE(pc.constants[pc.constantIdx + 2 + i]);
+        int varIndex      = RO_CACHE(pc.observables[pc.observableIdx + 1 + i]);
         int lowerBoundIdx = 3 * (i + 1);
         // if (gpuDebug & 1) printf("[%i, %i] Smoothed: %i %i %i\n", BLOCKIDX, THREADIDX, i, varIndex,
         // indices[varIndex]);
         fptype currVariable = evt[varIndex];
-        fptype lowerBound   = RO_CACHE(pc.constants[pc.constantIdx + numObs + i*3 + 5]);
-        fptype step         = RO_CACHE(pc.constants[pc.constantIdx + numObs + i*3 + 6]);
+        fptype lowerBound   = RO_CACHE(pc.constants[pc.constantIdx + i*3 + 5]);
+        fptype step         = RO_CACHE(pc.constants[pc.constantIdx + i*3 + 6]);
 
         currVariable -= lowerBound;
         currVariable /= step;
@@ -46,14 +47,14 @@ __device__ fptype device_EvalHistogram(fptype *evt, ParameterContainer &pc) {
         globalBinNumber += previous * localBinNumber;
 
         //This is accessing too far ahead?
-        int offset = pc.constants[pc.constantIdx + numObs + lowerBoundIdx + 1];
+        int offset = pc.constants[pc.constantIdx + lowerBoundIdx + 1];
         previous *= offset;
     }
 
     fptype *myHistogram = dev_smoothed_histograms[myHistogramIndex];
     fptype ret          = myHistogram[globalBinNumber];
 
-    pc.incrementIndex();
+    pc.incrementIndex(1, numParms, numCons, numObs, 1);
 
     // if ((gpuDebug & 1) && (evt[8] < 0.5) && (paramIndices + debugParamIndex == indices)) printf("Smoothed: %f %f %f
     // %i %f\n", evt[6], evt[7], myHistogram[globalBinNumber], globalBinNumber,
@@ -75,12 +76,12 @@ struct Smoother {
         while (pc.funcIdx < funcIdx)
             pc.incrementIndex();
         
-        int numObs            = RO_CACHE(pc.constants[pc.constantIdx + 1]);
-        int numVars           = RO_CACHE(pc.constants[pc.constantIdx + numObs + 3]);
+        int numObs            = RO_CACHE(pc.observables[pc.observableIdx]);
+        int numVars           = RO_CACHE(pc.constants[pc.constantIdx + 1]);
         fptype smoothing      = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
         //int histIndex         = RO_CACHE(indices[2]);
         //brad: need to debug this variable.
-        int histIndex         = RO_CACHE(pc.constants[pc.constantIdx + numObs + 2]);
+        int histIndex         = RO_CACHE(pc.constants[pc.constantIdx + 2]);
         fptype *myHistogram   = dev_base_histograms[histIndex];
         fptype centralValue   = myHistogram[globalBin];
 
@@ -97,7 +98,7 @@ struct Smoother {
             for(int v = 0; v < numVars; ++v) {
                 // int lowerBoundIdx   = 3*(i+1);
                 // int localNumBins = indices[6 + v*4];
-                int localNumBins = RO_CACHE(pc.constants[pc.constantIdx + numObs + 3 * (v + 1) + 1]);
+                int localNumBins = RO_CACHE(pc.constants[pc.constantIdx + 3 * (v + 1) + 1]);
                 int offset       = ((i / dev_powi(3, v)) % 3) - 1;
 
                 currBin += offset * localPrevious;
@@ -150,8 +151,6 @@ __host__ SmoothHistogramPdf::SmoothHistogramPdf(std::string n, BinnedDataSet *hi
     int varIndex = 0;
 
     constantsList.push_back (hist->getVariables().size());
-    for (int i = 0; i < hist->getVariables().size(); i++)
-        constantsList.push_back(0);
     constantsList.push_back (totalHistograms);
     constantsList.push_back (numVars);
 
@@ -258,7 +257,7 @@ __host__ fptype SmoothHistogramPdf::normalize() const {
 
     int obs = constantsList[0];
     for(unsigned int varIndex = 0; varIndex < observablesList.size(); ++varIndex) {
-        fptype binSize = constantsList[obs + 2 + 3*varIndex + 3];
+        fptype binSize = constantsList[obs + 3*varIndex + 3];
         ret *= binSize; // Bin size cached by constructor.
     }
 

@@ -62,9 +62,10 @@ __device__ thrust::complex<fptype> device_DalitzPlot_calcIntegrals(fptype m12, f
 }
 
 __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
-    int id_m12 = RO_CACHE(pc.constants[pc.constantIdx + 2]);
-    int id_m13 = RO_CACHE(pc.constants[pc.constantIdx + 3]);
-    int id_num = RO_CACHE(pc.constants[pc.constantIdx + 4]);
+    int num_obs = RO_CACHE(pc.observables[pc.observableIdx]);
+    int id_m12 = RO_CACHE(pc.observables[pc.observableIdx + 1]);
+    int id_m13 = RO_CACHE(pc.observables[pc.observableIdx + 2]);
+    int id_num = RO_CACHE(pc.observables[pc.observableIdx + 3]);
 
     //fptype motherMass = c_motherMass;//RO_CACHE(pc.constants[pc.constantIdx + 4]);
     //fptype daug1Mass  = c_daug1Mass;//RO_CACHE(pc.constants[pc.constantIdx + 5]);
@@ -74,8 +75,11 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
     fptype m12 = RO_CACHE(evt[id_m12]);
     fptype m13 = RO_CACHE(evt[id_m13]);
 
+    unsigned int numResonances = RO_CACHE(pc.constants[pc.constantIdx + 1]);
+    unsigned int cacheToUse    = RO_CACHE(pc.constants[pc.constantIdx + 2]);
+
     if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass)) {
-        pc.incrementIndex(1, 32, 6, 0, 1);
+        pc.incrementIndex(1, numResonances*2, 2, num_obs, 1);
 
         //TODO: loop over resonances and efficiency functions
         return 0;
@@ -86,8 +90,6 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
     auto evtNum = static_cast<int>(floor(0.5 + evtIndex));
 
     thrust::complex<fptype> totalAmp(0, 0);
-    unsigned int numResonances = RO_CACHE(pc.constants[pc.constantIdx + 5]);
-    unsigned int cacheToUse    = RO_CACHE(pc.constants[pc.constantIdx + 6]);
 
     for(int i = 0; i < numResonances; ++i) {
         //int paramIndex              = parIndexFromResIndex_DP(i);
@@ -116,7 +118,7 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
 
     fptype ret         = thrust::norm(totalAmp);
 
-    pc.incrementIndex(1, 32, 6, pc.observables[pc.observableIdx], 1);
+    pc.incrementIndex(1, numResonances*2, 2, num_obs, 1);
 
     //loop to efficiency idx
     for (int i = 0; i < numResonances; i++)
@@ -147,12 +149,6 @@ __host__ DalitzPlotPdf::DalitzPlotPdf(
     registerObservable(_m12);
     registerObservable(_m13);
     registerObservable(eventNumber);
-
-    //reserve 3 constants for observables
-    constantsList.push_back(observablesList.size());
-    constantsList.push_back(0);
-    constantsList.push_back(0);
-    constantsList.push_back(0);
 
     fptype decayConstants[5];
 
@@ -426,6 +422,8 @@ __device__ thrust::complex<fptype> SpecialResonanceIntegrator::operator()(thrust
     ParameterContainer pc;
 
     thrust::complex<fptype> ret = device_DalitzPlot_calcIntegrals(binCenterM12, binCenterM13, resonance_i, resonance_j, pc);
+
+    //TODO: read id's in in order to set them for the fake event.
 
     fptype fakeEvt[10]; // Need room for many observables in case m12 or m13 were assigned a high index in an
                         // event-weighted fit.

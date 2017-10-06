@@ -7,11 +7,10 @@ namespace GooFit {
 
 __device__ fptype device_ProdPdfs(fptype* evt, ParameterContainer &pc) {
     int numCons = RO_CACHE(pc.constants[pc.constantIdx]);
-    int numObs = RO_CACHE(pc.constants[pc.constantIdx + 1]);
-    int numComps = RO_CACHE(pc.constants[pc.constantIdx + numObs + 2]);
+    int numComps = RO_CACHE(pc.constants[pc.constantIdx + 1]);
     fptype ret = 1;
 
-    //pc.incrementIndex (1, 0, numCons, numObs, 1);
+    //pc.incrementIndex (1, 0, numCons, 0, 1);
     pc.incrementIndex();
     for(int i = 0; i < numComps; i ++) {
         fptype norm = pc.normalisations[pc.normalIdx + 1];
@@ -40,9 +39,9 @@ ProdPdf::ProdPdf(std::string n, std::vector<PdfBase *> comps)
     }
 
     observablesList = getObservables(); // Gathers from components
-    constantsList.push_back (observablesList.size());
-    for (int i = 0; i < observablesList.size(); i++) constantsList.push_back(0);
-    constantsList.push_back (components.size ());
+
+    //Add that we have a components size
+    constantsList.push_back(components.size());
 
     std::vector<Variable *> observableCheck; // Use to check for overlap in observables
 

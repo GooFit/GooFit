@@ -5,7 +5,7 @@ namespace GooFit {
 const fptype SQRT2PI = 2.506628;
 
 __device__ fptype device_JohnsonSU(fptype *evt, ParameterContainer &pc) {
-    int id = RO_CACHE(pc.constants[pc.constantIdx + 2]);
+    int id = RO_CACHE(pc.observables[pc.observableIdx + 1]);
     fptype _Jm = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
     fptype _Js = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
     fptype _Jg = RO_CACHE(pc.parameters[pc.parameterIdx + 3]);
@@ -14,7 +14,7 @@ __device__ fptype device_JohnsonSU(fptype *evt, ParameterContainer &pc) {
     //we are using index 0.  If we need a different idx, we need to pass that information along.
     fptype x   = evt[id];
 
-    pc.incrementIndex (1, 4, 2, 0, 1);
+    pc.incrementIndex (1, 4, 0, 1, 1);
 
     fptype px       = (x - _Jm) / _Js;
     fptype px2      = px * px;
@@ -35,8 +35,6 @@ __device__ device_function_ptr ptr_to_JohnsonSU = device_JohnsonSU;
 __host__ JohnsonSUPdf::JohnsonSUPdf(
     std::string n, Variable *_x, Variable *mean, Variable *sigma, Variable *gamma, Variable *delta)
     : GooPdf(_x, n) {
-    constantsList.push_back(observablesList.size());
-    constantsList.push_back(0);
     std::vector<unsigned int> pindices;
     pindices.push_back(registerParameter(mean));
     pindices.push_back(registerParameter(sigma));

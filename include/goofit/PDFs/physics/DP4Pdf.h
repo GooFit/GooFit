@@ -46,6 +46,8 @@ class DPPdf : public GooPdf {
         tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h>
         GenerateSig(unsigned int numEvents);
 
+    __host__ virtual void recursiveSetIndices ();
+
   protected:
   private:
     std::map<std::string, std::pair<std::vector<unsigned int>, std::vector<unsigned int>>> AmpMap;
@@ -87,6 +89,8 @@ class DPPdf : public GooPdf {
     int totalEventSize;
     int cacheToUse{0};
     int generation_offset{0};
+
+    int efficiencyFunction;
 };
 
 class SFCalculator : public thrust::unary_function<thrust::tuple<int, fptype *, int>, thrust::complex<fptype>> {
@@ -96,6 +100,7 @@ class SFCalculator : public thrust::unary_function<thrust::tuple<int, fptype *, 
     __device__ thrust::complex<fptype> operator()(thrust::tuple<int, fptype *, int> t) const;
 
   private:
+    unsigned int dalitzFuncId;
     unsigned int _spinfactor_i;
     unsigned int _parameters;
 };
@@ -108,6 +113,7 @@ class NormSpinCalculator
     __device__ fptype operator()(thrust::tuple<fptype, fptype, fptype, fptype, fptype> t) const;
 
   private:
+    unsigned int dalitzFuncId;
     unsigned int _spinfactor_i;
     unsigned int _parameters;
 };
@@ -119,6 +125,7 @@ class LSCalculator : public thrust::unary_function<thrust::tuple<int, fptype *, 
     __device__ thrust::complex<fptype> operator()(thrust::tuple<int, fptype *, int> t) const;
 
   private:
+    unsigned int dalitzFuncId;
     unsigned int _resonance_i;
     unsigned int _parameters;
 };
@@ -138,6 +145,7 @@ class NormLSCalculator : public thrust::unary_function<thrust::tuple<mcbooster::
         const;
 
   private:
+    unsigned int dalitzFuncId;
     unsigned int _resonance_i;
     unsigned int _parameters;
 };
@@ -149,6 +157,7 @@ class AmpCalc : public thrust::unary_function<unsigned int, thrust::complex<fpty
     __device__ thrust::complex<fptype> operator()(thrust::tuple<int, fptype *, int> t) const;
 
   private:
+    unsigned int dalitzFuncId;
     unsigned int _nPerm;
     unsigned int _AmpIdx;
     unsigned int _parameters;
@@ -161,6 +170,7 @@ class NormIntegrator
     __device__ fptype operator()(thrust::tuple<int, int, fptype *, thrust::complex<fptype> *> t) const;
 
   private:
+    unsigned int dalitzFuncId;
     unsigned int _parameters;
 };
 

@@ -17,8 +17,8 @@ __device__ fptype device_Composite(fptype *evt, ParameterContainer &pc) {
     //unsigned int numShellPars  = pc.parameters[pc.parameterIdx];
     //unsigned int shellObsIndex = pc.parameters[pc.parameterIdx + 2];
 
-    int obs = pc.constants[pc.constantIdx + 1];
-    int id = pc.constants[pc.constantIdx + obs + 1];
+    //int obs = pc.constants[pc.constantIdx + 1];
+    int id = pc.observables[pc.observableIdx + 1];
 
     fptype fakeEvt[10]; // Allow plenty of space in case events are large.
     fakeEvt[id] = coreValue;
@@ -50,10 +50,6 @@ __host__ CompositePdf::CompositePdf(std::string n, PdfBase *core, PdfBase *shell
     components.push_back(shell);
 
     observablesList = getObservables();
-
-    constantsList.push_back (observablesList.size ());
-    for (int i = 0; i < observablesList.size(); i++)
-        constantsList.push_back (0);
 
     GET_FUNCTION_ADDR(ptr_to_Composite);
     initialize(pindices);

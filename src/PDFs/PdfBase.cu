@@ -169,11 +169,6 @@ __host__ void PdfBase::populateArrays () {
     GOOFIT_TRACE("host_constants[{}] = {}", totalConstants, constantsList.size());
     host_constants[totalConstants] = constantsList.size ();
     constantsIdx = totalConstants; totalConstants++;
-    //set observable indices into constants list
-    for (int i = 0; i < observablesList.size (); i++) {
-        constantsList[i + 1] = observablesList[i]->getObservableIndex();
-    }
-    //copy over all our constant values
     for (int i = 0; i < constantsList.size (); i++) {
         GOOFIT_TRACE("host_constants[{}] = {}", totalConstants, constantsList[i]);
         host_constants[totalConstants] = constantsList[i]; totalConstants++;
@@ -183,8 +178,8 @@ __host__ void PdfBase::populateArrays () {
     host_observables[totalObservables] = observablesList.size ();
     observablesIdx = totalObservables; totalObservables++;
     for (int i = 0; i < observablesList.size (); i++) {
-        GOOFIT_TRACE("host_observables[{}] = {}", totalObservables, observablesList[i]->getValue ());
-        host_observables[totalObservables] = observablesList[i]->getValue (); totalObservables++;
+        GOOFIT_TRACE("host_observables[{}] = {}", totalObservables, observablesList[i]->getObservableIndex ());
+        host_observables[totalObservables] = observablesList[i]->getObservableIndex (); totalObservables++;
     }
 
     GOOFIT_TRACE("host_normalisations[{}] = {}", totalNormalisations, 1);

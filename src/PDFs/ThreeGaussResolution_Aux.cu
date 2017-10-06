@@ -150,40 +150,7 @@ void ThreeGaussResolution::recursiveSetIndices () {
     //populate all the arrays
     GOOFIT_DEBUG("Populating Arrays for {}(three_gauss_resolution)", getName());
 
-    //reconfigure the host_parameters array with the new indexing scheme.
-    GOOFIT_TRACE("host_parameters[{}] = {}", totalParameters, parametersList.size());
-    host_parameters[totalParameters] = parametersList.size ();
-    parametersIdx = totalParameters; totalParameters++;
-    for (int i = 0; i < parametersList.size (); i++) {
-        GOOFIT_TRACE("host_parameters[{}] = {}", totalParameters, parametersList[i]->getValue());
-        host_parameters[totalParameters] = parametersList[i]->getValue (); totalParameters++;
-    }
-
-    GOOFIT_TRACE("host_constants[{}] = {}", totalConstants, constantsList.size());
-    host_constants[totalConstants] = constantsList.size ();
-    constantsIdx = totalConstants; totalConstants++;
-    for (int i = 0; i < observablesList.size (); i++) {
-        GOOFIT_TRACE("host_constants[{}] = {}", totalConstants, observablesList[i]->getObservableIndex ());
-        host_constants[totalConstants] = observablesList[i]->getObservableIndex (); totalConstants++;
-    }
-    for (int i = observablesList.size (); i < constantsList.size (); i++) {
-        GOOFIT_TRACE("host_constants[{}] = {}", totalConstants, constantsList[i]);
-        host_constants[totalConstants] = constantsList[i]; totalConstants++;
-    }
-
-    GOOFIT_TRACE("host_observables[{}] = {}", totalObservables, observablesList.size());
-    host_observables[totalObservables] = observablesList.size ();
-    observablesIdx = totalObservables; totalObservables++;
-    for (int i = 0; i < observablesList.size (); i++) {
-        GOOFIT_TRACE("host_observables[{}] = {}", totalObservables, observablesList[i]->getValue ());
-        host_observables[totalObservables] = observablesList[i]->getValue (); totalObservables++;
-    }
-
-    GOOFIT_TRACE("host_normalisations[{}] = {}", totalNormalisations, 1);
-    host_normalisations[totalNormalisations] = 1;
-    normalIdx = totalNormalisations++;
-    GOOFIT_TRACE("host_normalisations[{}] = {}", totalNormalisations, 0);
-    host_normalisations[totalNormalisations] = 0; totalNormalisations++;
+    populateArrays();
 }
 
 fptype ThreeGaussResolution::normalisation(

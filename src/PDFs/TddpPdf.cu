@@ -159,21 +159,22 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
 
     int num_parameters = RO_CACHE(pc.parameters[pc.parameterIdx]);
     int num_constants = RO_CACHE(pc.constants[pc.constantIdx]);
-    int num_observable_ids = RO_CACHE(pc.constants[pc.constantIdx + 1]);
     int num_observables = RO_CACHE(pc.observables[pc.observableIdx]);
 
-    int id_m12 = RO_CACHE(pc.constants[pc.constantIdx + 4]);
-    int id_m13 = RO_CACHE(pc.constants[pc.constantIdx + 5]);
-    int id_num = RO_CACHE(pc.constants[pc.constantIdx + 6]);
-    int id_mis = RO_CACHE(pc.constants[pc.constantIdx + 7]);
+    int id_m12 = RO_CACHE(pc.observables[pc.observableIdx + 3]);
+    int id_m13 = RO_CACHE(pc.observables[pc.observableIdx + 4]);
+    int id_num = RO_CACHE(pc.observables[pc.observableIdx + 5]);
+    int id_mis = 0;
+    if (num_observables > 5)
+        id_mis = RO_CACHE(pc.observables[pc.observableIdx + 6]);
 
     fptype m12 = RO_CACHE(evt[id_m12]);
     fptype m13 = RO_CACHE(evt[id_m13]);
 
-    unsigned int numResonances = RO_CACHE(pc.constants[pc.constantIdx + num_observable_ids + 2]);
+    unsigned int numResonances = RO_CACHE(pc.constants[pc.constantIdx + 1]);
 
     if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass)) {
-        unsigned int endEfficiencyFunc = RO_CACHE(pc.constants[pc.constantIdx + num_observable_ids + 5]);
+        unsigned int endEfficiencyFunc = RO_CACHE(pc.constants[pc.constantIdx + 4]);
         pc.incrementIndex(1, num_parameters, num_constants, num_observables, 1);
 
         //increment the resonances
@@ -199,8 +200,8 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
     thrust::complex<fptype> sumRateAB(0, 0);
     thrust::complex<fptype> sumRateBB(0, 0);
 
-    unsigned int cacheToUse    = RO_CACHE(pc.constants[pc.constantIdx + num_observable_ids + 3]);
-    fptype mistag    = RO_CACHE(pc.constants[pc.constantIdx + num_observable_ids + 4]);
+    unsigned int cacheToUse    = RO_CACHE(pc.constants[pc.constantIdx + 2]);
+    fptype mistag    = RO_CACHE(pc.constants[pc.constantIdx + 3]);
 
     for(int i = 0; i < numResonances; ++i) {
         int paramIndex = parIndexFromResIndex(i);
@@ -227,8 +228,8 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
     fptype _xmixing = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
     fptype _ymixing = RO_CACHE(pc.parameters[pc.parameterIdx + 3]);
 
-    int id_time = RO_CACHE(pc.constants[pc.constantIdx + 2]);
-    int id_sigma = RO_CACHE(pc.constants[pc.constantIdx + 3]);
+    int id_time = RO_CACHE(pc.observables[pc.observableIdx + 1]);
+    int id_sigma = RO_CACHE(pc.observables[pc.observableIdx + 2]);
 
     fptype _time  = RO_CACHE(evt[id_time]);
     fptype _sigma = RO_CACHE(evt[id_sigma]);
@@ -383,18 +384,6 @@ __host__ TddpPdf::TddpPdf(std::string n,
         decayConstants[5] = 1; // Flags existence of mistag
     }
 
-    //First is number of observable ID's, then list of observable IDs
-    constantsList.push_back(observablesList.size());
-
-    //registering 5 indices...
-    constantsList.push_back(0);
-    constantsList.push_back(0);
-    constantsList.push_back(0);
-    constantsList.push_back(0);
-    constantsList.push_back(0);
-
-    if(mistag) constantsList.push_back(0);
-
     std::vector<unsigned int> pindices;
     pindices.push_back(registerConstants(6));
     decayConstants[0] = decayInfo->motherMass;
@@ -504,14 +493,6 @@ __host__ TddpPdf::TddpPdf(std::string n,
     registerObservable(_m13);
     registerObservable(eventNumber);
     registerObservable(md0);
-
-    //First is number of observable ID's, then list of observable IDs
-    constantsList.push_back(0);
-    constantsList.push_back(0);
-    constantsList.push_back(0);
-    constantsList.push_back(0);
-    constantsList.push_back(0);
-    constantsList.push_back(0);
 
     for(auto &cachedWave : cachedWaves)
         cachedWave = nullptr;
@@ -641,10 +622,6 @@ void TddpPdf::recursiveSetIndices () {
     GOOFIT_TRACE("host_constants[{}] = {}", totalConstants, constantsList.size());
     host_constants[totalConstants] = constantsList.size ();
     constantsIdx = totalConstants; totalConstants++;
-    //set observable indices into constants list
-    for (int i = 0; i < observablesList.size (); i++) {
-        constantsList[i + 1] = observablesList[i]->getObservableIndex ();
-    }
     for (int i = 0; i < constantsList.size (); i++) {
         GOOFIT_TRACE("host_constants[{}] = {}", totalConstants, constantsList[i]);
         host_constants[totalConstants] = constantsList[i]; totalConstants++;
@@ -654,8 +631,8 @@ void TddpPdf::recursiveSetIndices () {
     host_observables[totalObservables] = observablesList.size ();
     observablesIdx = totalObservables; totalObservables++;
     for (int i = 0; i < observablesList.size (); i++) {
-        GOOFIT_TRACE("host_observables[{}] = {}", totalObservables, observablesList[i]->getValue ());
-        host_observables[totalObservables] = observablesList[i]->getValue (); totalObservables++;
+        GOOFIT_TRACE("host_observables[{}] = {}", totalObservables, observablesList[i]->getObservableIndex());
+        host_observables[totalObservables] = observablesList[i]->getObservableIndex (); totalObservables++;
     }
 
     GOOFIT_TRACE("host_normalisations[{}] = {}", totalNormalisations, 1);
@@ -679,7 +656,7 @@ void TddpPdf::recursiveSetIndices () {
     for (unsigned int i = numResonances + 1; i < components.size (); i++)
         components[i]->recursiveSetIndices ();
 
-    //recopy constants
+    //update constants
     constantsList[constantsList.size() - 1] = num_device_functions;
     GOOFIT_TRACE("Rewriting constants!");
     for (int i = 0; i < constantsList.size (); i++) {
@@ -954,8 +931,8 @@ __device__ ThreeComplex SpecialDalitzIntegrator::operator()(thrust::tuple<int, f
     while (pc.funcIdx < tddp)
         pc.incrementIndex ();
 
-    int id_m12 = RO_CACHE(pc.constants[pc.constantIdx + 4]);
-    int id_m13 = RO_CACHE(pc.constants[pc.constantIdx + 5]);
+    int id_m12 = RO_CACHE(pc.observables[pc.observableIdx + 3]);
+    int id_m13 = RO_CACHE(pc.observables[pc.observableIdx + 4]);
 
     // if (0 == THREADIDX) cuPrintf("%i %i %i %f %f operator\n", thrust::get<0>(t), thrust::get<0>(t) % numBinsM12,
     // globalBinNumber, binCenterM12, binCenterM13);
@@ -1022,8 +999,8 @@ __device__ WaveHolder_s SpecialWaveCalculator::operator()(thrust::tuple<int, fpt
     while (pc.funcIdx < tddp)
         pc.incrementIndex ();
 
-    int id_m12 = RO_CACHE(pc.constants[pc.constantIdx + 4]);
-    int id_m13 = RO_CACHE(pc.constants[pc.constantIdx + 5]);
+    int id_m12 = RO_CACHE(pc.observables[pc.observableIdx + 3]);
+    int id_m13 = RO_CACHE(pc.observables[pc.observableIdx + 4]);
 
     // Read these values as tddp.
     fptype m12            = RO_CACHE(evt[id_m12]);

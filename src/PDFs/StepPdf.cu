@@ -3,10 +3,10 @@
 namespace GooFit {
 
 __device__ fptype device_Step(fptype *evt, ParameterContainer &pc) {
-    int id = RO_CACHE(pc.constants[pc.constantIdx + 2]);
+    int id = RO_CACHE(pc.observables[pc.observableIdx + 1]);
     fptype x  = evt[id];
     fptype x0 = pc.parameters[pc.parameterIdx + 1];
-    pc.incrementIndex (1, 1, 2, 0, 1);
+    pc.incrementIndex (1, 1, 0, 1, 1);
     return (x > x0 ? 1 : 0);
 }
 
@@ -15,9 +15,6 @@ device_function_ptr hptr_to_Step           = device_Step;
 
 __host__ StepPdf::StepPdf(std::string n, Variable *_x, Variable *x0)
     : GooPdf(_x, n) {
-    constantsList.push_back(observablesList.size());
-    constantsList.push_back(0);
-
     std::vector<unsigned int> pindices;
     pindices.push_back(registerParameter(x0));
     GET_FUNCTION_ADDR(ptr_to_Step);

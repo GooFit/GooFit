@@ -148,6 +148,7 @@ __host__ InterHistPdf::InterHistPdf(std::string n,
 
     std::vector<unsigned int> pindices;
     pindices.push_back(totalHistograms);
+    constantLists.push_back(numVars);
 
     int varIndex = 0;
 
@@ -162,6 +163,9 @@ __host__ InterHistPdf::InterHistPdf(std::string n,
         pindices.push_back(cIndex + 2 * varIndex + 0);
         pindices.push_back(cIndex + 2 * varIndex + 1);
         pindices.push_back(var->getNumBins());
+
+        constantsList.push_back (var->getLowerLimit());
+        constantsList.push_back (var->getBinSize());
 
         // NB, do not put cIndex here, it is accounted for by the offset in MEMCPY_TO_SYMBOL below.
         host_constants[2 * varIndex + 0] = var->getLowerLimit();
@@ -194,4 +198,8 @@ __host__ InterHistPdf::InterHistPdf(std::string n,
 
     totalHistograms++;
 }
+
+void InterHistPdf::recursiveSetIndices() {
+}
+
 } // namespace GooFit

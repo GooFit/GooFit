@@ -4,63 +4,63 @@
 namespace GooFit {
 
 __device__ fptype device_Exp(fptype* evt, ParameterContainer &pc) {
-    int id = pc.constants[pc.constantIdx + 2];
+    int id = pc.observables[pc.observableIdx + 1];
     fptype alpha = pc.parameters[pc.parameterIdx + 1];
     fptype x = evt[id];
 
     fptype ret = exp(alpha*x);
 
-    pc.incrementIndex (1, 1, 2, 0, 1);
+    pc.incrementIndex (1, 1, 0, 1, 1);
 
     return ret;
 }
 
 __device__ fptype device_ExpOffset(fptype* evt, ParameterContainer &pc) {
-    int id = pc.constants[pc.constantIdx + 2];
+    int id = pc.observables[pc.observableIdx + 1];
     fptype x = evt[id];
     x -= pc.parameters[pc.parameterIdx + 1];
     fptype alpha = pc.parameters[pc.parameterIdx + 2];
 
     fptype ret = exp(alpha*x);
 
-    pc.incrementIndex (1, 2, 2, 0, 1);
+    pc.incrementIndex (1, 2, 0, 1, 1);
 
     return ret;
 }
 
 __device__ fptype device_ExpPoly(fptype* evt, ParameterContainer &pc) {
-    int id = pc.constants[pc.constantIdx + 2];
+    int id = pc.observables[pc.observableIdx + 1];
     fptype x = evt[id];
 
     fptype exparg = 0;
 
-    int np = pc.parameters[0];
+    int np = pc.parameters[pc.parameterIdx];
     for(int i = 0; i < np; ++i) {
         exparg += pow(x, i) * pc.parameters[pc.parameterIdx + i + 1];
     }
 
     fptype ret = exp(exparg);
 
-    pc.incrementIndex (1, np, 2, 0, 1);
+    pc.incrementIndex (1, np, 0, 1, 1);
 
     return ret;
 }
 
 __device__ fptype device_ExpPolyOffset(fptype* evt, ParameterContainer &pc) {
-    int id = pc.constants[pc.constantIdx + 2];
+    int id = pc.observables[pc.observableIdx + 1];
     fptype x = evt[id];
     x -= pc.parameters[pc.parameterIdx + 1];
 
     fptype exparg = 0;
 
-    int np = pc.parameters[0];
+    int np = pc.parameters[pc.parameterIdx];
     for(int i = 1; i < np; ++i) {
         exparg += pow(x, i) * pc.parameters[pc.parameterIdx + i + 1];
     }
 
     fptype ret = exp(exparg);
 
-    pc.incrementIndex (1, np, 2, 0, 1);
+    pc.incrementIndex (1, np, 0, 1, 1);
 
     return ret;
 }
@@ -73,9 +73,6 @@ __device__ device_function_ptr ptr_to_ExpPolyOffset = device_ExpPolyOffset;
 __host__ ExpPdf::ExpPdf(std::string n, Variable* _x, Variable* alpha, Variable* offset)
     : GooPdf(_x, n) {
     std::vector<unsigned int> pindices;
-
-    constantsList.push_back (observablesList.size());
-    constantsList.push_back (0);
 
     if(offset) {
         pindices.push_back(registerParameter(offset));
@@ -95,9 +92,6 @@ __host__ ExpPdf::ExpPdf(std::string n, Variable* _x, Variable* alpha, Variable* 
 __host__ ExpPdf::ExpPdf(std::string n, Variable *_x, std::vector<Variable *> &weights, Variable *offset)
     : GooPdf(_x, n) {
     std::vector<unsigned int> pindices;
-
-    constantsList.push_back (observablesList.size());
-    constantsList.push_back (0);
 
     if(offset)
         pindices.push_back(registerParameter(offset));

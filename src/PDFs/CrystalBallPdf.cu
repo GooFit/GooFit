@@ -7,7 +7,7 @@ __device__ fptype device_CrystalBall(fptype *evt, ParameterContainer &pc) {
     // Left-hand tail if alpha is less than 0,
     // right-hand tail if greater, pure Gaussian if 0.
     // return 1;
-    int id = pc.constants[pc.constantIdx + 2];
+    int id = pc.observables[pc.observableIdx + 1];
 
     fptype x     = evt[id];
     fptype mean  = pc.parameters[pc.parameterIdx + 1];
@@ -31,7 +31,7 @@ __device__ fptype device_CrystalBall(fptype *evt, ParameterContainer &pc) {
         ret                 = a * pow(d, power);
     }
 
-    pc.incrementIndex(1, 4, 2, 0, 1);
+    pc.incrementIndex(1, 4, 0, 1, 1);
 
     // if ((0 == THREADIDX) && (0 == BLOCKIDX)) printf("device_CB: %f %f %f %f %f %f\n", x, mean, sigma, alpha, power,
     // ret);
@@ -43,10 +43,6 @@ __device__ device_function_ptr ptr_to_CrystalBall = device_CrystalBall;
 __host__ CrystalBallPdf::CrystalBallPdf(
     std::string n, Variable *_x, Variable *mean, Variable *sigma, Variable *alpha, Variable *power)
     : GooPdf(_x, n) {
-
-    //reserve spot for _x
-    constantsList.push_back (observablesList.size());
-    constantsList.push_back (0);
 
     std::vector<unsigned int> pindices;
     pindices.push_back(registerParameter(mean));

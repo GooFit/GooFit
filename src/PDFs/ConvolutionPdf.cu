@@ -24,14 +24,14 @@ __constant__ fptype *dev_resWorkSpace[100];
 __constant__ int modelOffset[100];
 
 __device__ fptype device_ConvolvePdfs(fptype* evt, ParameterContainer &pc) {
-    int id = pc.constants[pc.constantIdx + 2];
+    int id = pc.observables[pc.observableIdx + 1];
 
     fptype ret     = 0;
-    fptype loBound = pc.constants[pc.constantIdx + 3];//RO_CACHE(pc.constants[pc.constantIdx + 2]);
-    fptype hiBound = pc.constants[pc.constantIdx + 4];//RO_CACHE(pc.constants[pc.constantIdx + 3]);
-    fptype step    = pc.constants[pc.constantIdx + 5];//RO_CACHE(pc.constants[pc.constantIdx + 4]);
+    fptype loBound = pc.constants[pc.constantIdx + 1];//RO_CACHE(pc.constants[pc.constantIdx + 2]);
+    fptype hiBound = pc.constants[pc.constantIdx + 2];//RO_CACHE(pc.constants[pc.constantIdx + 3]);
+    fptype step    = pc.constants[pc.constantIdx + 3];//RO_CACHE(pc.constants[pc.constantIdx + 4]);
     fptype x0      = evt[id];
-    int workSpaceIndex = pc.constants[pc.constantIdx + 6];
+    int workSpaceIndex = pc.constants[pc.constantIdx + 4];
 
     auto numbins = static_cast<int>(floor((hiBound - loBound) / step + 0.5));
 
@@ -49,11 +49,10 @@ __device__ fptype device_ConvolvePdfs(fptype* evt, ParameterContainer &pc) {
         ret += model * resol;
     }
 
-    //What the heck is this?
     //When the convolution is flattened, the model PDF and resolution PDF are maintained and linked.
     //These increments will skip the model & resolution PDF.  We will need to determine if we need a
     //skip all chilren also event.  to be determined...
-    pc.incrementIndex (1, 0, 6, 0, 1);
+    pc.incrementIndex (1, 0, 4, 1, 1);
 
     fptype norm1 = pc.normalisations[pc.normalIdx + 1];
     ret *= norm1;
@@ -69,13 +68,14 @@ __device__ fptype device_ConvolvePdfs(fptype* evt, ParameterContainer &pc) {
 }
 
 __device__ fptype device_ConvolveSharedPdfs(fptype* evt, ParameterContainer &pc) {
+    int id = pc.observables[pc.observableIdx + 1];
     fptype ret     = 0;
-    fptype loBound = pc.constants[pc.constantIdx + 3];
-    fptype hiBound = pc.constants[pc.constantIdx + 4];
-    fptype step    = pc.constants[pc.constantIdx + 5];
-    fptype x0      = evt[0];
-    unsigned int workSpaceIndex = pc.constants[pc.constantIdx + 1];
-    unsigned int numOthers      = pc.constants[pc.constantIdx + 2] + 1; // +1 for this PDF.
+    fptype loBound = pc.constants[pc.constantIdx + 1];
+    fptype hiBound = pc.constants[pc.constantIdx + 2];
+    fptype step    = pc.constants[pc.constantIdx + 3];
+    fptype x0      = evt[id];
+    unsigned int workSpaceIndex = pc.constants[pc.constantIdx + 4];
+    unsigned int numOthers      = pc.constants[pc.constantIdx + 5] + 1; // +1 for this PDF.
 
     auto numbins = static_cast<int>(floor((hiBound - loBound) / step + 0.5));
 
@@ -99,7 +99,7 @@ __device__ fptype device_ConvolveSharedPdfs(fptype* evt, ParameterContainer &pc)
 
         if(THREADIDX < numToLoad) {
             for(unsigned int w = 0; w < numOthers; ++w) {
-                unsigned int wIndex = pc.constants[pc.constantIdx + 5 + w];
+                unsigned int wIndex = pc.constants[pc.constantIdx + 6 + w];
                 modelCache[w * numToLoad + THREADIDX]
                     = (i + THREADIDX < numbins) ? dev_modWorkSpace[wIndex][i + THREADIDX] : 0;
             }
@@ -131,6 +131,8 @@ __device__ fptype device_ConvolveSharedPdfs(fptype* evt, ParameterContainer &pc)
         THREAD_SYNCH
     }
 
+    //TODO: add increment here
+
     ret *= pc.normalisations[pc.normalIdx + 1];
     ret *= pc.normalisations[pc.normalIdx + 2];
 
@@ -153,10 +155,6 @@ ConvolutionPdf::ConvolutionPdf(std::string n, Variable *x, GooPdf *m, GooPdf *r)
     // simple.
 
     observablesList = getObservables();
-
-    //reserving index for x
-    constantsList.push_back(observablesList.size());
-    constantsList.push_back (0);
 
     components.push_back(model);
     components.push_back(resolution);
@@ -200,9 +198,6 @@ ConvolutionPdf::ConvolutionPdf(std::string n, Variable *x, GooPdf *m, GooPdf *r,
     // to draw on. NB! To use cooperative loading in the case of a
     // single function, just use numOthers = 0.
 
-    //reserving index for x
-    constantsList.push_back (0);
-
     components.push_back(model);
     components.push_back(resolution);
 
@@ -215,7 +210,6 @@ ConvolutionPdf::ConvolutionPdf(std::string n, Variable *x, GooPdf *m, GooPdf *r,
     //paramIndices.push_back(registerConstants(3));
     //paramIndices.push_back(workSpaceIndex = totalConvolutions++);
     //paramIndices.push_back(numOthers);
-    constantsList.push_back (0);
 
     constantsList.push_back (-10);
     constantsList.push_back (10);
@@ -271,9 +265,9 @@ __host__ void ConvolutionPdf::setIntegrationConstants(fptype lo, fptype hi, fpty
     host_iConsts[1] = hi;
     host_iConsts[2] = step;
 
-    constantsList[2] = lo;
-    constantsList[3] = hi;
-    constantsList[4] = step;
+    constantsList[0] = lo;
+    constantsList[1] = hi;
+    constantsList[2] = step;
     //MEMCPY_TO_SYMBOL(functorConstants, host_iConsts, 3 * sizeof(fptype), cIndex * sizeof(fptype), cudaMemcpyHostToDevice);
 
     if(modelWorkSpace) {

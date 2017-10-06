@@ -3,9 +3,9 @@
 namespace GooFit {
 
 __device__ fptype device_BifurGauss(fptype* evt, ParameterContainer &pc) {
-    int id = pc.constants[pc.constantIdx + 2];
+    int id = pc.observables[pc.observableIdx + 2];
 
-    fptype x = evt[id]; // why does indices recall itself?
+    fptype x = evt[id];
     fptype mean = pc.parameters[pc.parameterIdx + 1];
     fptype sigmaLeft = pc.parameters[pc.parameterIdx + 2];
     fptype sigmaRight = pc.parameters[pc.parameterIdx + 3];
@@ -27,10 +27,6 @@ __device__ device_function_ptr ptr_to_BifurGauss = device_BifurGauss;
 __host__ BifurGaussPdf::BifurGaussPdf(std::string n, Variable *_x, Variable *mean, Variable *sigmaL, Variable *sigmaR)
     : GooPdf(_x, n) {
     std::vector<unsigned int> pindices;
-
-    //save room for _x index, this is set in populateArrays.
-    constantsList.push_back(observablesList.size());
-    constantsList.push_back (0);
 
     pindices.push_back(registerParameter(mean));
     pindices.push_back(registerParameter(sigmaL));

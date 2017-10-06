@@ -6,9 +6,9 @@ namespace GooFit {
 
 __device__ fptype device_EventWeightedAddPdfs(fptype *evt, ParameterContainer &pc) {
     int numConstants = RO_CACHE(pc.constants[pc.constantIdx]);
-    int numObs = RO_CACHE(pc.constants[pc.constantIdx + 1]);
+    int numObs = RO_CACHE(pc.observables[pc.observableIdx]);
 
-    int comps = RO_CACHE(pc.constants[pc.constantIdx + numObs + 2]);
+    int comps = RO_CACHE(pc.constants[pc.constantIdx + 1]);
 
     fptype ret         = 0;
     fptype totalWeight = 0;
@@ -18,7 +18,7 @@ __device__ fptype device_EventWeightedAddPdfs(fptype *evt, ParameterContainer &p
     pci.incrementIndex (1, 0, numConstants, numObs, 1);
 
     for(int i = 0; i < comps - 1; ++i) {
-        int id = pc.constants[pc.constantIdx + i + 2];
+        int id = pc.observables[pc.observableIdx + i + 1];
         fptype weight = RO_CACHE(evt[id]);
         totalWeight += weight;
         fptype norm = pci.normalisations[pci.normalIdx + 1];
@@ -48,18 +48,18 @@ __device__ fptype device_EventWeightedAddPdfsExt(fptype *evt, ParameterContainer
     // in which nP = 4, nO = 2.
 
     int numConstants = RO_CACHE(pc.constants[pc.constantIdx]);
-    int numObs = RO_CACHE(pc.constants[pc.constantIdx + 1]);
+    int numObs = RO_CACHE(pc.observables[pc.observableIdx]);
 
-    int comps = RO_CACHE(pc.constants[pc.constantIdx + numObs + 2]);
+    int comps = RO_CACHE(pc.constants[pc.constantIdx + 1]);
 
     fptype ret         = 0;
     fptype totalWeight = 0;
 
     ParameterContainer pci = pc;
-    pci.incrementIndex ();
+    pci.incrementIndex (1, 0, numConstants, numObs, 1);
 
     for(int i = 0; i < comps; ++i) {
-        int id = pc.constants[pc.constantIdx + i + 2];
+        int id = pc.observables[pc.observableIdx + i + 1];
         fptype norm = pc.normalisations[pc.normalIdx + 1];
         fptype weight = RO_CACHE(evt[id]);
         fptype curr = callFunction(evt, pci);
@@ -136,10 +136,6 @@ EventWeightedAddPdf::EventWeightedAddPdf(std::string n, std::vector<Variable *> 
     // This must occur after registering weights, or the indices will be off - the device functions assume that the
     // weights are first.
     observablesList = getObservables();
-
-    // we need to pad our constant list
-    constantsList.push_back (observablesList.size());
-    for (int i = 0; i < observablesList.size (); i++) constantsList.push_back(0);
 
     constantsList.push_back (components.size ());
 

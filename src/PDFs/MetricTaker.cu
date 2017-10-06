@@ -66,8 +66,7 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, int, fptype*> t) co
          pc.incrementIndex(); //need to use the slow version, since we are not starting from index 0.
 
     //put our index here...
-    int obs = pc.constants[pc.constantIdx + 1];
-    int id = pc.constants[pc.constantIdx + obs + 1];
+    int id = pc.observables[pc.observableIdx + 1];
 
     for(int i = 0; i < evtSize; ++i) {
         fptype lowerBound = thrust::get<2>(t)[3 * i + 0];

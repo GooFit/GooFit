@@ -12,7 +12,7 @@ See *.cu file for more details
 
 namespace GooFit {
 
-typedef fptype (*spin_function_ptr)(fptype *, unsigned int *);
+typedef fptype (*spin_function_ptr)(fptype *, ParameterContainer &);
 
 enum class SF_4Body {
     DtoPP1_PtoSP2_StoP3P4,
@@ -45,10 +45,14 @@ class SpinFactor : public GooPdf {
 
   public:
     SpinFactor(std::string name, SF_4Body SF, unsigned int P0, unsigned int P1, unsigned int P2, unsigned int P3);
-    void setConstantIndex(unsigned int idx) { host_indices[parameters + 1] = idx; }
+    void setConstantIndex(unsigned int idx) {
+        // host_indices[parameters + 1] = idx;
+    }
     bool operator==(const SpinFactor &S) const {
         return (S.getName() == getName() and S._SF == _SF and S._P0 == _P0 and S._P1 == _P1 and S._P2 == _P2
                 and S._P3 == _P3);
     }
+
+    __host__ virtual void recursiveSetIndices ();
 };
 } // namespace GooFit

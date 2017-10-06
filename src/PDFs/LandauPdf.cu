@@ -27,12 +27,12 @@ __constant__ fptype a1[3] = {0.04166666667, -0.01996527778, 0.02709538966};
 __constant__ fptype a2[2] = {-1.845568670, -4.284640743};
 
 __device__ fptype device_Landau(fptype* evt, ParameterContainer &pc) {
-    int id = pc.constants[pc.constantIdx + 2];
+    int id = pc.observables[pc.observableIdx + 1];
     fptype x     = evt[id];
-    fptype mpv   = pc.parameters[1];
-    fptype sigma = pc.parameters[2];
+    fptype mpv   = pc.parameters[pc.parameterIdx + 1];
+    fptype sigma = pc.parameters[pc.parameterIdx + 2];
 
-    pc.incrementIndex (1, 2, 0, 0, 1);
+    pc.incrementIndex (1, 2, 0, 1, 1);
 
     if(sigma <= 0)
         return 0;
@@ -83,9 +83,6 @@ __device__ device_function_ptr ptr_to_Landau = device_Landau;
 
 __host__ LandauPdf::LandauPdf(std::string n, Variable *_x, Variable *mpv, Variable *sigma)
     : GooPdf(_x, n) {
-    constantsList.push_back(observablesList.size());
-    constantsList.push_back(0);
-
     std::vector<unsigned int> pindices;
     pindices.push_back(registerParameter(mpv));
     pindices.push_back(registerParameter(sigma));

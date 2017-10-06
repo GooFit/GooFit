@@ -6,10 +6,10 @@ __device__ fptype device_Mapped(fptype *evt, ParameterContainer &pc) {
     // Structure : nP mapFunctionIndex mapParamIndex functionIndex1 parameterIndex1 functionIndex2 parameterIndex2 ...
 
     // Find mapping between event variables and function to evaluate
-    unsigned int numObs = RO_CACHE(pc.constants[pc.constantIdx + 1]);
-    unsigned int mapFunction = RO_CACHE(pc.constants[pc.constantIdx + 2]);
-    unsigned int numTargets = RO_CACHE(pc.constants[pc.constantIdx + numObs + 2]);
+    unsigned int numTargets = RO_CACHE(pc.constants[pc.constantIdx + 1]);
 
+    // Mapping PDF happens directly after, so just increment.
+    //pc.incrementIndex (1, 0, 1, 0, 1);
     pc.incrementIndex ();
 
     // This is an index into the MappedPdf's list of functions
@@ -57,10 +57,6 @@ __host__ MappedPdf::MappedPdf(std::string n, GooPdf *m, std::vector<GooPdf *> &t
     pindices.push_back(m->getFunctionIndex());
     pindices.push_back(m->getParameterIndex());
 
-    //reserve an index for this 'm' functions IDX
-    //constantsList.push_back (0);
-    //constantsList.push_back (0);
-
     std::set<int> functionIndicesUsed;
 
     for(GooPdf *f : t) {
@@ -77,8 +73,6 @@ __host__ MappedPdf::MappedPdf(std::string n, GooPdf *m, std::vector<GooPdf *> &t
 
     //This makes sure we have the appropriate amount of obs in our structure
     observablesList = getObservables();
-    constantsList.push_back(observablesList.size());
-    for (int i = 0; i < observablesList.size(); i++) constantsList.push_back(0);
 
     //add a constant value for the number of 't' functions, skipping 'm'.
     constantsList.push_back (components.size () - 1);

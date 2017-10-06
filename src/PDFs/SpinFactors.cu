@@ -12,16 +12,23 @@ namespace GooFit {
 
 #define ZEMACH 1
 
-__device__ fptype DtoPP1_PtoSP2_StoP3P4(fptype *Vecs, unsigned int *indices) { return 1.0; }
+__device__ fptype DtoPP1_PtoSP2_StoP3P4(fptype *Vecs, ParameterContainer &pc) { 
+    pc.incrementIndex ();
+    return 1.0;
+}
 
-__device__ fptype ONE(fptype *Vecs, unsigned int *indices) { return 1.0; }
+__device__ fptype ONE(fptype *Vecs, ParameterContainer &pc) { 
+    pc.incrementIndex ();
+    return 1.0;
+}
 
-__device__ fptype FF_12_34_L1(fptype *Vecs, unsigned int *indices) {
-    fptype mother_radius = functorConstants[indices[1]];
-    unsigned int p1      = indices[2];
-    unsigned int p2      = indices[3];
-    unsigned int p3      = indices[4];
-    unsigned int p4      = indices[5];
+__device__ fptype FF_12_34_L1(fptype *Vecs, ParameterContainer &pc) {
+    fptype mother_radius = pc.constants[pc.constantIdx + 1];
+    unsigned int p1      = pc.constants[pc.constantIdx + 1];
+    unsigned int p2      = pc.constants[pc.constantIdx + 2];
+    unsigned int p3      = pc.constants[pc.constantIdx + 3];
+    unsigned int p4      = pc.constants[pc.constantIdx + 4];
+
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
     gpuLVec P3(Vecs[0 + 4 * p3], Vecs[1 + 4 * p3], Vecs[2 + 4 * p3], Vecs[3 + 4 * p3]);
@@ -37,12 +44,13 @@ __device__ fptype FF_12_34_L1(fptype *Vecs, unsigned int *indices) {
     return sqrt(ff);
 }
 
-__device__ fptype FF_12_34_L2(fptype *Vecs, unsigned int *indices) {
-    fptype mother_radius = functorConstants[indices[1]];
-    unsigned int p1      = indices[2];
-    unsigned int p2      = indices[3];
-    unsigned int p3      = indices[4];
-    unsigned int p4      = indices[5];
+__device__ fptype FF_12_34_L2(fptype *Vecs, ParameterContainer &pc) {
+    fptype mother_radius = pc.constants[pc.constantIdx + 1];
+    unsigned int p1      = pc.constants[pc.constantIdx + 1];
+    unsigned int p2      = pc.constants[pc.constantIdx + 2];
+    unsigned int p3      = pc.constants[pc.constantIdx + 3];
+    unsigned int p4      = pc.constants[pc.constantIdx + 4];
+
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
     gpuLVec P3(Vecs[0 + 4 * p3], Vecs[1 + 4 * p3], Vecs[2 + 4 * p3], Vecs[3 + 4 * p3]);
@@ -58,12 +66,13 @@ __device__ fptype FF_12_34_L2(fptype *Vecs, unsigned int *indices) {
     return sqrt(ff);
 }
 
-__device__ fptype FF_123_4_L1(fptype *Vecs, unsigned int *indices) {
-    fptype mother_radius = functorConstants[indices[1]];
-    unsigned int p1      = indices[2];
-    unsigned int p2      = indices[3];
-    unsigned int p3      = indices[4];
-    unsigned int p4      = indices[5];
+__device__ fptype FF_123_4_L1(fptype *Vecs, ParameterContainer &pc) {
+    fptype mother_radius = pc.constants[pc.constantIdx + 1];
+    unsigned int p1      = pc.constants[pc.constantIdx + 1];
+    unsigned int p2      = pc.constants[pc.constantIdx + 2];
+    unsigned int p3      = pc.constants[pc.constantIdx + 3];
+    unsigned int p4      = pc.constants[pc.constantIdx + 4];
+
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
     gpuLVec P3(Vecs[0 + 4 * p3], Vecs[1 + 4 * p3], Vecs[2 + 4 * p3], Vecs[3 + 4 * p3]);
@@ -79,12 +88,13 @@ __device__ fptype FF_123_4_L1(fptype *Vecs, unsigned int *indices) {
     return sqrt(ff);
 }
 
-__device__ fptype FF_123_4_L2(fptype *Vecs, unsigned int *indices) {
-    fptype mother_radius = functorConstants[indices[1]];
-    unsigned int p1      = indices[2];
-    unsigned int p2      = indices[3];
-    unsigned int p3      = indices[4];
-    unsigned int p4      = indices[5];
+__device__ fptype FF_123_4_L2(fptype *Vecs, ParameterContainer &pc) {
+    fptype mother_radius = pc.constants[pc.constantIdx + 1];
+    unsigned int p1      = pc.constants[pc.constantIdx + 1];
+    unsigned int p2      = pc.constants[pc.constantIdx + 2];
+    unsigned int p3      = pc.constants[pc.constantIdx + 3];
+    unsigned int p4      = pc.constants[pc.constantIdx + 4];
+
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
     gpuLVec P3(Vecs[0 + 4 * p3], Vecs[1 + 4 * p3], Vecs[2 + 4 * p3], Vecs[3 + 4 * p3]);
@@ -100,11 +110,12 @@ __device__ fptype FF_123_4_L2(fptype *Vecs, unsigned int *indices) {
     return sqrt(ff);
 }
 
-__device__ fptype DtoPP1_PtoVP2_VtoP3P4(fptype *Vecs, unsigned int *indices) {
-    unsigned int p1 = indices[2];
-    unsigned int p2 = indices[3];
-    unsigned int p3 = indices[4];
-    unsigned int p4 = indices[5];
+__device__ fptype DtoPP1_PtoVP2_VtoP3P4(fptype *Vecs, ParameterContainer &pc) {
+    unsigned int p1      = pc.constants[pc.constantIdx + 1];
+    unsigned int p2      = pc.constants[pc.constantIdx + 2];
+    unsigned int p3      = pc.constants[pc.constantIdx + 3];
+    unsigned int p4      = pc.constants[pc.constantIdx + 4];
+
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
     gpuLVec P3(Vecs[0 + 4 * p3], Vecs[1 + 4 * p3], Vecs[2 + 4 * p3], Vecs[3 + 4 * p3]);
@@ -127,11 +138,12 @@ __device__ fptype DtoPP1_PtoVP2_VtoP3P4(fptype *Vecs, unsigned int *indices) {
 #endif
 }
 
-__device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_S(fptype *Vecs, unsigned int *indices) {
-    unsigned int p1 = indices[2];
-    unsigned int p2 = indices[3];
-    unsigned int p3 = indices[4];
-    unsigned int p4 = indices[5];
+__device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_S(fptype *Vecs, ParameterContainer &pc) {
+    unsigned int p1      = pc.constants[pc.constantIdx + 1];
+    unsigned int p2      = pc.constants[pc.constantIdx + 2];
+    unsigned int p3      = pc.constants[pc.constantIdx + 3];
+    unsigned int p4      = pc.constants[pc.constantIdx + 4];
+
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
     gpuLVec P3(Vecs[0 + 4 * p3], Vecs[1 + 4 * p3], Vecs[2 + 4 * p3], Vecs[3 + 4 * p3]);
@@ -157,11 +169,12 @@ __device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_S(fptype *Vecs, unsigned int *indice
     return returnVal;
 }
 
-__device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_P(fptype *Vecs, unsigned int *indices) {
-    unsigned int p1 = indices[2];
-    unsigned int p2 = indices[3];
-    unsigned int p3 = indices[4];
-    unsigned int p4 = indices[5];
+__device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_P(fptype *Vecs, ParameterContainer &pc) {
+    unsigned int p1      = pc.constants[pc.constantIdx + 1];
+    unsigned int p2      = pc.constants[pc.constantIdx + 2];
+    unsigned int p3      = pc.constants[pc.constantIdx + 3];
+    unsigned int p4      = pc.constants[pc.constantIdx + 4];
+
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
     gpuLVec P3(Vecs[0 + 4 * p3], Vecs[1 + 4 * p3], Vecs[2 + 4 * p3], Vecs[3 + 4 * p3]);
@@ -190,11 +203,12 @@ __device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_P(fptype *Vecs, unsigned int *indice
 #endif
 }
 
-__device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_D(fptype *Vecs, unsigned int *indices) {
-    unsigned int p1 = indices[2];
-    unsigned int p2 = indices[3];
-    unsigned int p3 = indices[4];
-    unsigned int p4 = indices[5];
+__device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_D(fptype *Vecs, ParameterContainer &pc) {
+    unsigned int p1      = pc.constants[pc.constantIdx + 1];
+    unsigned int p2      = pc.constants[pc.constantIdx + 2];
+    unsigned int p3      = pc.constants[pc.constantIdx + 3];
+    unsigned int p4      = pc.constants[pc.constantIdx + 4];
+
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
     gpuLVec P3(Vecs[0 + 4 * p3], Vecs[1 + 4 * p3], Vecs[2 + 4 * p3], Vecs[3 + 4 * p3]);
@@ -231,11 +245,12 @@ __device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_D(fptype *Vecs, unsigned int *indice
 #endif
 }
 
-__device__ fptype DtoV1P1_V1toV2P2_V2toP3P4(fptype *Vecs, unsigned int *indices) {
-    unsigned int p1 = indices[2];
-    unsigned int p2 = indices[3];
-    unsigned int p3 = indices[4];
-    unsigned int p4 = indices[5];
+__device__ fptype DtoV1P1_V1toV2P2_V2toP3P4(fptype *Vecs, ParameterContainer &pc) {
+    unsigned int p1      = pc.constants[pc.constantIdx + 1];
+    unsigned int p2      = pc.constants[pc.constantIdx + 2];
+    unsigned int p3      = pc.constants[pc.constantIdx + 3];
+    unsigned int p4      = pc.constants[pc.constantIdx + 4];
+
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
     gpuLVec P3(Vecs[0 + 4 * p3], Vecs[1 + 4 * p3], Vecs[2 + 4 * p3], Vecs[3 + 4 * p3]);
@@ -273,11 +288,12 @@ __device__ fptype DtoV1P1_V1toV2P2_V2toP3P4(fptype *Vecs, unsigned int *indices)
 #endif
 }
 
-__device__ fptype DtoVS_VtoP1P2_StoP3P4(fptype *Vecs, unsigned int *indices) {
-    unsigned int p1 = indices[2];
-    unsigned int p2 = indices[3];
-    unsigned int p3 = indices[4];
-    unsigned int p4 = indices[5];
+__device__ fptype DtoVS_VtoP1P2_StoP3P4(fptype *Vecs, ParameterContainer &pc) {
+    unsigned int p1      = pc.constants[pc.constantIdx + 1];
+    unsigned int p2      = pc.constants[pc.constantIdx + 2];
+    unsigned int p3      = pc.constants[pc.constantIdx + 3];
+    unsigned int p4      = pc.constants[pc.constantIdx + 4];
+
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
     gpuLVec P3(Vecs[0 + 4 * p3], Vecs[1 + 4 * p3], Vecs[2 + 4 * p3], Vecs[3 + 4 * p3]);
@@ -307,11 +323,12 @@ __device__ fptype DtoVS_VtoP1P2_StoP3P4(fptype *Vecs, unsigned int *indices) {
 #endif
 }
 
-__device__ fptype DtoAP1_AtoSP2_StoP3P4(fptype *Vecs, unsigned int *indices) {
-    unsigned int p1 = indices[2];
-    unsigned int p2 = indices[3];
-    unsigned int p3 = indices[4];
-    unsigned int p4 = indices[5];
+__device__ fptype DtoAP1_AtoSP2_StoP3P4(fptype *Vecs, ParameterContainer &pc) {
+    unsigned int p1      = pc.constants[pc.constantIdx + 1];
+    unsigned int p2      = pc.constants[pc.constantIdx + 2];
+    unsigned int p3      = pc.constants[pc.constantIdx + 3];
+    unsigned int p4      = pc.constants[pc.constantIdx + 4];
+
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
     gpuLVec P3(Vecs[0 + 4 * p3], Vecs[1 + 4 * p3], Vecs[2 + 4 * p3], Vecs[3 + 4 * p3]);
@@ -340,11 +357,12 @@ __device__ fptype DtoAP1_AtoSP2_StoP3P4(fptype *Vecs, unsigned int *indices) {
 #endif
 }
 
-__device__ fptype DtoAP1_AtoVP2_VtoP3P4(fptype *Vecs, unsigned int *indices) {
-    unsigned int p1 = indices[2];
-    unsigned int p2 = indices[3];
-    unsigned int p3 = indices[4];
-    unsigned int p4 = indices[5];
+__device__ fptype DtoAP1_AtoVP2_VtoP3P4(fptype *Vecs, ParameterContainer &pc) {
+    unsigned int p1      = pc.constants[pc.constantIdx + 1];
+    unsigned int p2      = pc.constants[pc.constantIdx + 2];
+    unsigned int p3      = pc.constants[pc.constantIdx + 3];
+    unsigned int p4      = pc.constants[pc.constantIdx + 4];
+
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
     gpuLVec P3(Vecs[0 + 4 * p3], Vecs[1 + 4 * p3], Vecs[2 + 4 * p3], Vecs[3 + 4 * p3]);
@@ -375,11 +393,12 @@ __device__ fptype DtoAP1_AtoVP2_VtoP3P4(fptype *Vecs, unsigned int *indices) {
 #endif
 }
 
-__device__ fptype DtoAP1_AtoVP2Dwave_VtoP3P4(fptype *Vecs, unsigned int *indices) {
-    unsigned int p1 = indices[2];
-    unsigned int p2 = indices[3];
-    unsigned int p3 = indices[4];
-    unsigned int p4 = indices[5];
+__device__ fptype DtoAP1_AtoVP2Dwave_VtoP3P4(fptype *Vecs, ParameterContainer &pc) {
+    unsigned int p1      = pc.constants[pc.constantIdx + 1];
+    unsigned int p2      = pc.constants[pc.constantIdx + 2];
+    unsigned int p3      = pc.constants[pc.constantIdx + 3];
+    unsigned int p4      = pc.constants[pc.constantIdx + 4];
+
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
     gpuLVec P3(Vecs[0 + 4 * p3], Vecs[1 + 4 * p3], Vecs[2 + 4 * p3], Vecs[3 + 4 * p3]);
@@ -412,11 +431,12 @@ __device__ fptype DtoAP1_AtoVP2Dwave_VtoP3P4(fptype *Vecs, unsigned int *indices
 #endif
 }
 
-__device__ fptype DtoTP1_TtoVP2_VtoP3P4(fptype *Vecs, unsigned int *indices) {
-    unsigned int p1 = indices[2];
-    unsigned int p2 = indices[3];
-    unsigned int p3 = indices[4];
-    unsigned int p4 = indices[5];
+__device__ fptype DtoTP1_TtoVP2_VtoP3P4(fptype *Vecs, ParameterContainer &pc) {
+    unsigned int p1      = pc.constants[pc.constantIdx + 1];
+    unsigned int p2      = pc.constants[pc.constantIdx + 2];
+    unsigned int p3      = pc.constants[pc.constantIdx + 3];
+    unsigned int p4      = pc.constants[pc.constantIdx + 4];
+
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
     gpuLVec P3(Vecs[0 + 4 * p3], Vecs[1 + 4 * p3], Vecs[2 + 4 * p3], Vecs[3 + 4 * p3]);
@@ -484,6 +504,11 @@ SpinFactor::SpinFactor(
     pindices.push_back(P1);
     pindices.push_back(P2);
     pindices.push_back(P3);
+
+    constantsList.push_back (P0);
+    constantsList.push_back (P1);
+    constantsList.push_back (P2);
+    constantsList.push_back (P3);
 
     switch(SF) {
     case SF_4Body::DtoPP1_PtoSP2_StoP3P4:
@@ -557,6 +582,10 @@ SpinFactor::SpinFactor(
     }
 
     initialize(pindices);
+}
+
+void SpinFactor::recursiveSetIndices () {
+    
 }
 
 } // namespace GooFit

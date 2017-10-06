@@ -5,23 +5,23 @@ namespace GooFit {
 __device__ fptype device_BinTransform(fptype *evt, ParameterContainer &pc) {
     // Index structure: nP lim1 bin1 lim2 bin2 ... nO o1 o2
     int numConstants = pc.constants[pc.constantIdx];
-    int numObservables = pc.constants[pc.constantIdx + 1];
+    int numObservables = pc.observables[pc.observableIdx];
     int ret            = 0;
     int previousSize   = 1;
 
     for(int i = 0; i < numObservables; ++i) {
-        int id = pc.constants[pc.constantIdx + numObservables + i*3 + 1];
+        int id = pc.observables[pc.observableIdx + i + 1];
         fptype obsValue   = evt[id];
-        fptype lowerLimit = pc.constants[pc.constantIdx + numObservables + 2 + i*3 + 0];
-        fptype binSize    = pc.constants[pc.constantIdx + numObservables + 2 + i*3 + 1];
-        int numBins       = pc.constants[pc.constantIdx + numObservables + 2 + i*3 + 2];
+        fptype lowerLimit = pc.constants[pc.constantIdx + i*3 + 1];
+        fptype binSize    = pc.constants[pc.constantIdx + i*3 + 2];
+        int numBins       = pc.constants[pc.constantIdx + i*3 + 3];
 
         auto localBin = static_cast<int>(floor((obsValue - lowerLimit) / binSize));
         ret += localBin * previousSize;
         previousSize *= numBins;
     }
 
-    pc.incrementIndex(1, 0, numConstants, 0, 1);
+    pc.incrementIndex(1, 0, numConstants, numObservables, 1);
 
     return fptype(ret);
 }
@@ -44,10 +44,6 @@ __host__ BinTransformPdf::BinTransformPdf(std::string n,
         registerObservable(obses[i]);
 
     observablesList = getObservables ();
-
-    //Add padding for observables
-    constantsList.push_back(observablesList.size());
-    for (int i = 0; i < observablesList.size (); i++) constantsList.push_back (0);
 
     //add limits for each observable (variable)
     for(unsigned int i = 0; i < obses.size(); ++i) {

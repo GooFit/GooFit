@@ -103,8 +103,6 @@ AddPdf::AddPdf(std::string n, std::vector<Variable *> weights, std::vector<PdfBa
 
     std::vector<unsigned int> pindices;
 
-    for (int i = 0; i < observablesList.size (); i++) constantsList.push_back (0);
-
     for(unsigned int w = 0; w < weights.size(); ++w) {
         if(components[w] == nullptr)
             throw GooFit::GeneralError("Invalid component");
@@ -138,7 +136,6 @@ AddPdf::AddPdf(std::string n, Variable *frac1, PdfBase *func1, PdfBase *func2)
     components.push_back(func2);
 
     observablesList = getObservables();
-    for (int i = 0; i < observablesList.size (); i++) constantsList.push_back (0);
 
     std::vector<unsigned int> pindices;
     pindices.push_back(func1->getFunctionIndex());

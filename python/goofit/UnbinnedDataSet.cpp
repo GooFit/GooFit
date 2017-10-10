@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/eigen.h>
 
 #include <goofit/UnbinnedDataSet.h>
 #include <goofit/Variable.h>
@@ -49,5 +50,9 @@ void init_UnbinnedDataSet(py::module &m) {
                     result.mutable_at(i, j) = instance.getValue(instance.getVariables().at(i), j);
 
             return result;
-        });
+        })
+        .def("to_matrix", &UnbinnedDataSet::to_matrix<Eigen::Matrix<fptype, Eigen::Dynamic, Eigen::Dynamic>>)
+        .def("from_matrix", &UnbinnedDataSet::from_matrix<Eigen::Matrix<fptype, Eigen::Dynamic, Eigen::Dynamic>>)
+        ;
+    
 }

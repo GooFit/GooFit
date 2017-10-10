@@ -41,6 +41,7 @@ set(GOOPDF_HEADERS
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/TruthResolution_Aux.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/ThreeGaussResolution_Aux.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/EvalVar.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/UserUtils.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/SpinHelper.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/utility/VariableBinTransform1DPdf.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/detail/ComplexUtils.h

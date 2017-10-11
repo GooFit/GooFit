@@ -58,3 +58,14 @@ def test_exp_eigen():
 
     assert(abs(alpha.value + 1) < .01)
     assert(alpha.error < .05)
+
+def test_exp_getitem():
+    xdata = np.array([[1.,3.,4.,5.,9.]])
+    xvar = Variable("xvar", 0, np.max(xdata) + 1)
+    data = UnbinnedDataSet(xvar)
+    data.from_matrix(xdata, False)
+
+    assert data[0,0] == 1.
+    assert data[0,1] == 3.
+    assert data[0,-1]== 9.
+    np.testing.assert_array_equal(xdata[0], data[0,:])

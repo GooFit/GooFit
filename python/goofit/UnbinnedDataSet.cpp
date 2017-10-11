@@ -21,6 +21,12 @@ void init_UnbinnedDataSet(py::module &m) {
                 name = kwargs["name"].cast<std::string>();
             return new UnbinnedDataSet(vars, name);
         }))
+        .def("__getitem__", [&m](const UnbinnedDataSet &instance, py::object value){
+            auto numpy = m.import("numpy");
+            auto matrix = instance.to_matrix<Eigen::Matrix<fptype, Eigen::Dynamic, Eigen::Dynamic>>();
+            auto pymatrix = py::cast(matrix);
+            return pymatrix.attr("__getitem__")(value);
+        })
         .def("from_numpy",
              [](UnbinnedDataSet &instance,
                 py::array_t<fptype, py::array::c_style | py::array::forcecast> array,
@@ -55,6 +61,7 @@ void init_UnbinnedDataSet(py::module &m) {
         .def("to_matrix", &UnbinnedDataSet::to_matrix<Eigen::Matrix<fptype, Eigen::Dynamic, Eigen::Dynamic>>)
         .def("from_matrix",
              &UnbinnedDataSet::from_matrix<Eigen::Matrix<fptype, Eigen::Dynamic, Eigen::Dynamic>>,
+             "Append a matrix to a dataset. The final parameter will be a count if the matrix is missing one row."
              "matrix"_a,
              "filter"_a = false);
 }

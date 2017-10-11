@@ -21,12 +21,13 @@ void init_UnbinnedDataSet(py::module &m) {
                 name = kwargs["name"].cast<std::string>();
             return new UnbinnedDataSet(vars, name);
         }))
-        .def("__getitem__", [&m](const UnbinnedDataSet &instance, py::object value){
-            auto numpy = m.import("numpy");
-            auto matrix = instance.to_matrix<Eigen::Matrix<fptype, Eigen::Dynamic, Eigen::Dynamic>>();
-            auto pymatrix = py::cast(matrix);
-            return pymatrix.attr("__getitem__")(value);
-        })
+        .def("__getitem__",
+             [&m](const UnbinnedDataSet &instance, py::object value) {
+                 auto numpy    = m.import("numpy");
+                 auto matrix   = instance.to_matrix<Eigen::Matrix<fptype, Eigen::Dynamic, Eigen::Dynamic>>();
+                 auto pymatrix = py::cast(matrix);
+                 return pymatrix.attr("__getitem__")(value);
+             })
         .def("from_numpy",
              [](UnbinnedDataSet &instance,
                 py::array_t<fptype, py::array::c_style | py::array::forcecast> array,

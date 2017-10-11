@@ -154,6 +154,8 @@ void *getMetricPointer(std::string name) {
 #undef CHOOSE_PTR
 }
 
+void *getMetricPointer(EvalFunc val) { return getMetricPointer(evalfunc_to_string(val)); }
+
 GooPdf::GooPdf(Variable *x, std::string n)
     : PdfBase(x, n)
     , logger(nullptr) {
@@ -326,6 +328,7 @@ __host__ std::vector<fptype> GooPdf::evaluateAtPoints(Variable *var) {
         tempdata.addEvent();
     }
 
+    auto old = getData();
     setData(&tempdata);
 
     thrust::counting_iterator<int> eventIndex(0);
@@ -357,6 +360,7 @@ __host__ std::vector<fptype> GooPdf::evaluateAtPoints(Variable *var) {
         res[i] = h_results[i] * host_normalisation[parameters];
     }
 
+    setData(old);
     return res;
 }
 
@@ -383,7 +387,7 @@ __host__ void GooPdf::setParameterConstantness(bool constant) {
     }
 }
 
-__host__ fptype GooPdf::getValue() {
+__host__ fptype GooPdf::getValue(EvalFunc evalfunc) {
     // Returns the value of the PDF at a single point.
     // Execute redundantly in all threads for OpenMP multiGPU case
     copyParams();
@@ -392,6 +396,7 @@ __host__ fptype GooPdf::getValue() {
 
     UnbinnedDataSet point(observables);
     point.addEvent();
+    auto old = getData();
     setData(&point);
 
     thrust::counting_iterator<int> eventIndex(0);
@@ -399,12 +404,13 @@ __host__ fptype GooPdf::getValue() {
     thrust::constant_iterator<fptype *> arrayAddress(dev_event_array);
     thrust::device_vector<fptype> results(1);
 
-    MetricTaker evalor(this, getMetricPointer("ptr_to_Eval"));
+    MetricTaker evalor(this, getMetricPointer(evalfunc));
     thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
                       thrust::make_zip_iterator(thrust::make_tuple(eventIndex + 1, arrayAddress, eventSize)),
                       results.begin(),
                       evalor);
 
+    setData(old);
     return results[0];
 }
 

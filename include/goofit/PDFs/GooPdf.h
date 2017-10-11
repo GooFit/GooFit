@@ -11,6 +11,27 @@ class TH1D;
 #endif
 
 namespace GooFit {
+    
+enum class EvalFunc : size_t {
+    Eval=0,
+    NLL,
+    Prob,
+    BinAvg,
+    BinWithError,
+    Chisq
+};
+    
+constexpr const char* evalfunc_vals[] = {"ptr_to_Eval",
+    "ptr_to_NLL",
+    "ptr_to_Prob",
+    "ptr_to_BinAvg",
+    "ptr_to_BinWithError",
+    "ptr_to_Chisq"
+};
+  
+constexpr const char* evalfunc_to_string(EvalFunc val) {
+    return evalfunc_vals[static_cast<size_t>(val)];
+}
 
 // TODO: Replace this with class MetricTaker;
 // And fill in the .cu files where needed
@@ -67,7 +88,7 @@ class GooPdf : public PdfBase {
 
     __host__ virtual fptype integrate(fptype lo, fptype hi) const { return 0; }
     __host__ bool hasAnalyticIntegral() const override { return false; }
-    __host__ fptype getValue();
+    __host__ fptype getValue(EvalFunc evalfunc = EvalFunc::Eval);
 
     /// Produce a list of probabilies at points
     __host__ std::vector<std::vector<fptype>> getCompProbsAtDataPoints();

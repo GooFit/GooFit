@@ -46,6 +46,7 @@ class DataSet {
     size_t getNumEvents() const { return numEventsAdded; }
 
     std::string getName() const { return name; }
+    
 
   protected:
     std::vector<fptype> getCurrentValues() const;

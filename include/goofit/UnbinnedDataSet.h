@@ -36,33 +36,37 @@ class UnbinnedDataSet : public DataSet {
     
     /// Input an eigen matrix
     template<typename M>
-    void from_matrix(const M& input) {
-        // Special override for counting variables (final param)
-        if (data.size() == input.cols()+1) {
-            size_t val = data[data.size()-1].size();
-            for(int i=0; i<input.rows(); i++) {
-                data[data.size()-1].push_back(val++);
+    void from_matrix(const M& input, bool filter = false) {
+        size_t optional_index = getNumEvents(); // Only used if index not included
+        
+        if (variables.size() != input.rows() || variables.size() == input.rows()+1)
+            throw GeneralError("The wrong number of rows, expected {}, but matrix had {}", data.size(), input.rows());
+        
+        
+        for(int i = 0; i < input.cols(); i++) { // Loop over events
+            for(int j = 0; j < input.rows(); j++) { // Loop over variables
+                variables.at(j)->setValue(input(j, i));
             }
             
-        } else if (data.size() != input.cols()) {
-            throw GeneralError("The wrong number of rows, was {}, but matrix had {}", data.size(), input.cols());
-        }
-        for(int i=0; i<input.cols(); i++) {
-            for(int j=0; j<input.rows(); j++) {
-                data[i].push_back(input(j,i));
-            }
+            // Special override for counting variables (final param)
+            if(variables.size() == input.rows()+1)
+                variables.at(input.rows())->setValue(optional_index++);
+            
+            if(!filter
+               || std::all_of(std::begin(variables), std::end(variables), [](Variable *var) { return bool(*var); }))
+                addEvent();
         }
     }
     
     /// Produce an eigen Matrix
     template<typename M>
     M to_matrix() const {
-        size_t rows = data.at(0).size();
-        size_t columns = data.size();
-        M mat(rows, columns);
-        for (int i = 0; i < columns; i++) {
-            for(int j=0; j<rows; j++)
-                mat(j,i) = data[i].at(j);
+        size_t rows = data.size();
+        size_t cols = data.at(0).size();
+        M mat(rows, cols);
+        for (int i=0; i<rows; i++) {
+            for(int j=0; j<cols; j++)
+                mat(i,j) = data[i].at(j);
         }
         return mat;
     }

@@ -40,19 +40,21 @@ void init_UnbinnedDataSet(py::module &m) {
             )raw",
              "array"_a,
              "filter"_a = false)
-        .def("to_numpy", [](UnbinnedDataSet &instance) {
-            size_t cols = instance.getVariables().size();
-            size_t rows = instance.getNumEvents();
-            py::array_t<fptype> result{{cols, rows}};
+        .def("to_numpy",
+             [](UnbinnedDataSet &instance) {
+                 size_t cols = instance.getVariables().size();
+                 size_t rows = instance.getNumEvents();
+                 py::array_t<fptype> result{{cols, rows}};
 
-            for(int i = 0; i < cols; i++)
-                for(int j = 0; j < rows; j++)
-                    result.mutable_at(i, j) = instance.getValue(instance.getVariables().at(i), j);
+                 for(int i = 0; i < cols; i++)
+                     for(int j = 0; j < rows; j++)
+                         result.mutable_at(i, j) = instance.getValue(instance.getVariables().at(i), j);
 
-            return result;
-        })
+                 return result;
+             })
         .def("to_matrix", &UnbinnedDataSet::to_matrix<Eigen::Matrix<fptype, Eigen::Dynamic, Eigen::Dynamic>>)
-        .def("from_matrix", &UnbinnedDataSet::from_matrix<Eigen::Matrix<fptype, Eigen::Dynamic, Eigen::Dynamic>>)
-        ;
-    
+        .def("from_matrix",
+             &UnbinnedDataSet::from_matrix<Eigen::Matrix<fptype, Eigen::Dynamic, Eigen::Dynamic>>,
+             "matrix"_a,
+             "filter"_a = false);
 }

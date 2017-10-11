@@ -553,7 +553,7 @@ __host__
     auto results_h = mcbooster::RealVector_h(results);
     auto flags_h   = mcbooster::BoolVector_h(flags);
     cudaDeviceSynchronize();
-    return std::make_tuple(ParSet, VarSet, weights_h, flags_h);
+    return {ParSet, VarSet, weights_h, flags_h};
 }
 
 SFCalculator::SFCalculator(int pIdx, unsigned int sf_idx)
@@ -587,7 +587,7 @@ __device__ fpcomplex SFCalculator::operator()(thrust::tuple<int, fptype *, int> 
     auto func = reinterpret_cast<spin_function_ptr>(device_function_table[functn_i]);
     fptype sf = (*func)(vecs, paramIndices + params_i);
     // printf("SpinFactors %i : %.7g\n",evtNum, sf );
-    return fpcomplex(sf, 0);
+    return {sf, 0.};
 }
 
 NormSpinCalculator::NormSpinCalculator(int pIdx, unsigned int sf_idx)

@@ -153,7 +153,7 @@ __device__ fpcomplex gaussian(fptype m12, fptype m13, fptype m23, unsigned int *
     // Ignore factor 1/sqrt(2pi).
     ret /= reswidth;
 
-    return fpcomplex(ret, 0);
+    return {ret, 0};
 }
 
 __device__ fptype hFun(double s, double daug2Mass, double daug3Mass) {
@@ -316,7 +316,7 @@ __device__ fpcomplex lass(fptype m12, fptype m13, fptype m23, unsigned int *indi
     return resT;
 }
 
-__device__ fpcomplex nonres(fptype m12, fptype m13, fptype m23, unsigned int *indices) { return fpcomplex(1, 0); }
+__device__ fpcomplex nonres(fptype m12, fptype m13, fptype m23, unsigned int *indices) { return {1., 0.}; }
 
 __device__ void
 getAmplitudeCoefficients(fpcomplex a1, fpcomplex a2, fptype &a1sq, fptype &a2sq, fptype &a1a2real, fptype &a1a2imag) {

@@ -1,7 +1,7 @@
 #include <algorithm>
+#include <pybind11/eigen.h>
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
-#include <pybind11/eigen.h>
 
 #include <goofit/UnbinnedDataSet.h>
 #include <goofit/Variable.h>

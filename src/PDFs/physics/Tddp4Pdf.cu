@@ -831,7 +831,7 @@ __host__
     auto flags_h   = mcbooster::BoolVector_h(flag2);
     cudaDeviceSynchronize();
 
-    return std::make_tuple(ParSet, VarSet, weights_h, flags_h);
+    return {ParSet, VarSet, weights_h, flags_h};
 }
 
 SFCalculator_TD::SFCalculator_TD(int pIdx, unsigned int sf_idx)
@@ -865,7 +865,7 @@ __device__ fpcomplex SFCalculator_TD::operator()(thrust::tuple<int, fptype *, in
     auto func = reinterpret_cast<spin_function_ptr>(device_function_table[functn_i]);
     fptype sf = (*func)(vecs, paramIndices + params_i);
     // printf("SpinFactors %i : %.7g\n",_spinfactor_i, sf );
-    return fpcomplex(sf, 0);
+    return {sf, 0.};
 }
 
 NormSpinCalculator_TD::NormSpinCalculator_TD(int pIdx, unsigned int sf_idx)
@@ -1136,8 +1136,7 @@ operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const {
     AmpA *= _SqWStoRSrate;
 
     auto AmpAB = AmpA * conj(AmpB);
-    return thrust::tuple<fptype, fptype, fptype, fptype>(
-        thrust::norm(AmpA), thrust::norm(AmpB), AmpAB.real(), AmpAB.imag());
+    return {thrust::norm(AmpA), thrust::norm(AmpB), AmpAB.real(), AmpAB.imag()};
 }
 
 } // namespace GooFit

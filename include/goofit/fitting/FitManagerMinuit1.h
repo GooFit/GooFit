@@ -15,7 +15,7 @@ class Minuit1 : public TMinuit {
   public:
     Minuit1(PdfBase *pdfPointer);
     /// Fit function for Minuit
-    virtual Int_t Eval(Int_t npar,     //< The number of parameters
+    Int_t Eval(Int_t npar,     //< The number of parameters
                        Double_t *grad, //< The derivatives can be stored here if flag is 2 (output)
                        Double_t &fval, //< The value of the function at this point (output)
                        Double_t *par,  //< The input parameters

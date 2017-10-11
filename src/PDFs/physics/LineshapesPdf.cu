@@ -77,7 +77,7 @@ __device__ fptype BL2(fptype z2, int L) {
     // Spin 3 and up not accounted for.
 }
 
-__device__ fpcomplex LS_ONE(fptype Mpair, fptype m1, fptype m2, unsigned int *indices) { return fpcomplex(1, 0); }
+__device__ fpcomplex LS_ONE(fptype Mpair, fptype m1, fptype m2, unsigned int *indices) { return {1., 0.}; }
 
 // This function is modeled after BW_BW::getVal() in BW_BW.cpp from the MINT package written by Jonas Rademacker.
 __device__ fpcomplex BW(fptype Mpair, fptype m1, fptype m2, unsigned int *indices) {
@@ -525,7 +525,7 @@ __device__ fpcomplex nonres_DP(fptype Mpair, fptype m1, fptype m2, unsigned int 
     fptype formfactor = sqrt(BL2(pABSq * meson_radius * meson_radius, orbital));
     // printf("NonRes q2:%.7g FF:%.7g, s %.7g m1 %.7g m2 %.7g r %.7g L %u \n",pABSq, formfactor, mumsRecoMass2,
     // m1,m2,meson_radius, orbital );
-    return fpcomplex(1, 0) * formfactor;
+    return fpcomplex(1., 0.) * formfactor;
 }
 
 __device__ fptype phsp_twoBody(fptype s, fptype m0, fptype m1) { return sqrt(1. - POW2(m0 + m1) / s); }

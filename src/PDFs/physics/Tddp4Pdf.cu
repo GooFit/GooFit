@@ -831,7 +831,7 @@ __host__
     auto flags_h   = mcbooster::BoolVector_h(flag2);
     cudaDeviceSynchronize();
 
-    return {ParSet, VarSet, weights_h, flags_h};
+    return std::make_tuple(ParSet, VarSet, weights_h, flags_h);
 }
 
 SFCalculator_TD::SFCalculator_TD(int pIdx, unsigned int sf_idx)

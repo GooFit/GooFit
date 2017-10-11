@@ -11,11 +11,11 @@ namespace literals {
 namespace complex_literals {
 
 inline fpcomplex operator"" _i (unsigned long long d) {
-    return {0.0, d};
+    return {0.0, static_cast<fptype>(d)};
 }
 
 inline fpcomplex operator"" _i (long double d) {
-    return {0.0, d};
+    return {0.0, static_cast<fptype>(d)};
 }
 
 }

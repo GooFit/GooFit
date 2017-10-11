@@ -188,6 +188,7 @@ TEST(PDFComps, OneDEval) {
 
     xvar = 1.2;
     EXPECT_FLOAT_EQ(gauss.getValue(EvalFunc::Prob), 0.15843208471746245);
+    // The default is to ignore the normalization factors, so I'm passing EvalFunc::Prob
 
     xvar = 7.2;
     EXPECT_FLOAT_EQ(gauss.getValue(EvalFunc::Prob), 0.0118618339389365);

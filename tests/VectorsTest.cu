@@ -8,9 +8,9 @@
 using namespace GooFit;
 
 TEST(Vectors, Convert5param4bodySpace) {
-    Eigen::Matrix<fptype, 10, 16> mat;
+    Eigen::Matrix<fptype, 10, 16> matI;
 
-    mat << -0.0200374, 0.246687, 0.410008, 0.687807, 0.203659, -0.0540155, 0.125961, 0.282384, -0.30315, -0.14159,
+    matI << -0.0200374, 0.246687, 0.410008, 0.687807, 0.203659, -0.0540155, 0.125961, 0.282384, -0.30315, -0.14159,
         -0.593475, 0.695442, 0.119529, -0.0510815, 0.057506, 0.199206, -0.533425, 0.24162, -0.34825, 0.841379, 0.467861,
         -0.190084, 0.0466843, 0.526008, 0.114051, 0.00314688, 0.287416, 0.339272, -0.0484866, -0.0546832, 0.0141501,
         0.158181, -0.0825251, 0.103312, 0.273959, 0.579875, 0.156211, 0.386267, -0.193338, 0.480066, 0.162955, -0.25586,
@@ -27,24 +27,27 @@ TEST(Vectors, Convert5param4bodySpace) {
         -0.208683, 0.648061, 0.118637, 0.115931, 0.270851, 0.58702, 0.431136, -0.0040225, -0.314793, 0.551787,
         -0.0572405, 0.0658558, -0.0581859, 0.174582, -0.492533, -0.177765, 0.102128, 0.551451;
 
-    Eigen::Matrix<fptype, 10, 5> finals;
+    Eigen::Matrix<fptype, 10, 5> finalsI;
 
-    finals << 0.763655, 0.665051, 0.109243, 0.913621, -3.07925, 1.33111, 0.386733, 0.536461, 0.836249, 1.16468,
+    finalsI << 0.763655, 0.665051, 0.109243, 0.913621, -3.07925, 1.33111, 0.386733, 0.536461, 0.836249, 1.16468,
         0.933733, 0.62948, -0.506615, -0.141132, 1.98515, 0.852672, 0.423044, -0.250731, -0.843664, -1.35136, 1.16108,
         0.374457, 0.328627, -0.61922, 1.3365, 0.680718, 1.02958, 0.226766, -0.875116, 0.818193, 0.851609, 0.797763,
         -0.60318, 0.755663, -0.194568, 0.739088, 0.644879, 0.779099, 0.0291094, 0.552592, 0.788588, 0.939335, -0.96629,
         -0.880504, 0.383515, 0.990039, 0.458714, -0.557693, -0.843915, -1.20109;
+
+    Eigen::Matrix<fptype, 16, 10> mat   = matI.transpose();
+    Eigen::Matrix<fptype, 5, 10> finals = finalsI.transpose();
 
     mcbooster::Particles_h h_p0(10);
     mcbooster::Particles_h h_p1(10);
     mcbooster::Particles_h h_p2(10);
     mcbooster::Particles_h h_p3(10);
 
-    for(int i = 0; i < 10; i++) {
-        h_p0[i].set(mat(i, 3), mat(i, 0), mat(i, 1), mat(i, 2));
-        h_p1[i].set(mat(i, 7), mat(i, 4), mat(i, 5), mat(i, 6));
-        h_p2[i].set(mat(i, 11), mat(i, 8), mat(i, 9), mat(i, 10));
-        h_p3[i].set(mat(i, 15), mat(i, 12), mat(i, 13), mat(i, 14));
+    for(int i = 0; i < mat.cols(); i++) {
+        h_p0[i].set(mat(3, i), mat(0, i), mat(1, i), mat(2, i));
+        h_p1[i].set(mat(7, i), mat(4, i), mat(5, i), mat(6, i));
+        h_p2[i].set(mat(11, i), mat(8, i), mat(9, i), mat(10, i));
+        h_p3[i].set(mat(15, i), mat(12, i), mat(13, i), mat(14, i));
     }
 
     mcbooster::Particles_d d_p0(h_p0.begin(), h_p0.end());
@@ -70,18 +73,18 @@ TEST(Vectors, Convert5param4bodySpace) {
     mcbooster::RealVector_h h_cos34(d_cos34.begin(), d_cos34.end());
     mcbooster::RealVector_h h_phi(d_phi.begin(), d_phi.end());
 
-    for(int i = 0; i < 10; i++) {
+    for(int i = 0; i < mat.cols(); i++) {
         SCOPED_TRACE("i = " + std::to_string(i));
-        ASSERT_NEAR(h_m12[i], finals(i, 0), .00001);
-        ASSERT_NEAR(h_m34[i], finals(i, 1), .00001);
-        ASSERT_NEAR(h_cos12[i], finals(i, 2), .00001);
-        ASSERT_NEAR(h_cos34[i], finals(i, 3), .00001);
-        ASSERT_NEAR(h_phi[i], finals(i, 4), .00001);
+        ASSERT_NEAR(h_m12[i], finals(0, i), .00001);
+        ASSERT_NEAR(h_m34[i], finals(1, i), .00001);
+        ASSERT_NEAR(h_cos12[i], finals(2, i), .00001);
+        ASSERT_NEAR(h_cos34[i], finals(3, i), .00001);
+        ASSERT_NEAR(h_phi[i], finals(4, i), .00001);
     }
 
     auto new_finals = to_5param(mat);
-    for(int i = 0; i < 10; i++) {
-        for(int j = 0; j < 5; j++) {
+    for(int i = 0; i < 5; i++) {
+        for(int j = 0; j < mat.cols(); j++) {
             SCOPED_TRACE("i = " + std::to_string(i) + ", j = " + std::to_string(j));
             ASSERT_NEAR(finals(i, j), new_finals(i, j), .00001);
         }

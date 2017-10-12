@@ -39,8 +39,8 @@ class UnbinnedDataSet : public DataSet {
     void from_matrix(const M& input, bool filter = false) {
         size_t optional_index = getNumEvents(); // Only used if index not included
         
-        if (variables.size() != input.rows() || variables.size() == input.rows()+1)
-            throw GeneralError("The wrong number of rows, expected {}, but matrix had {}", data.size(), input.rows());
+        if (variables.size() != input.rows() && variables.size() != input.rows()+1)
+            throw GeneralError("The wrong number of rows, expected {}, but matrix had {}", variables.size(), input.rows());
         
         
         for(int i = 0; i < input.cols(); i++) { // Loop over events

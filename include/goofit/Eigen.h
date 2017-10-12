@@ -29,7 +29,8 @@ M read_csv(std::string name, bool comma=true) {
         
         ++rows;
     }
-    return Map<const Matrix<typename M::Scalar, M::RowsAtCompileTime, M::ColsAtCompileTime, RowMajor>>(values.data(), rows, values.size()/rows);
+    return Map<const Matrix<typename M::Scalar, M::RowsAtCompileTime, M::ColsAtCompileTime, ColMajor>>(values.data(), values.size()/rows, rows);
+    
 };
 
 } // namespace GooFit

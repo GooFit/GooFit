@@ -18,7 +18,7 @@ doing maximum-likelihood fits with a familiar syntax.
 
 ## Requirements
 
-* A recent version of CMake is required. The minimum is 3.4, but tested primarily with 3.6 and newer. CMake is incredibly easy to install (see below). The minimum required version may change to 3.8 at some point, since that is the first version to support CUDA directly as a first class language.
+* A recent version of CMake is required. The minimum is 3.4, but tested primarily with 3.6 and newer. CMake is incredibly easy to install (see [the system install page](./docs/SYSTEM_INSTALL.md)). The minimum required version may change to 3.8 at some point, since that is the first version to support CUDA directly as a first class language.
   * With CMake, Thrust is downloaded automatically for OpenMP if not found
   * GoogleTest and all other small packages are downloaded automatically
 * A ROOT 6 build highly recommended -- GooFit will use the included Minuit2 submodule if ROOT is not found, and the Minuit1 based fitter will not be available.

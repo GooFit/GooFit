@@ -237,4 +237,4 @@ In addition, we thank the nVidia GPU Grant Program for donating hardware used in
 [CLI11]:             https://github.com/CLIUtils/CLI11
 [PyBind11]:          http://pybind11.readthedocs.io/en/master
 [ROOT]:              https://root.cern.ch
-[Tutorials]:         https://henryiii.gitbooks.io/goofit/content/
+[Tutorials]:         https://goofit.gitlab.io/Goo2Torial

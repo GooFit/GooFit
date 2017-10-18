@@ -1,4 +1,5 @@
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <goofit/PDFs/physics/DalitzPlotPdf.h>
@@ -9,5 +10,8 @@ namespace py = pybind11;
 
 void init_DalitzPlotPdf(py::module &m) {
     py::class_<DalitzPlotPdf, GooPdf>(m, "DalitzPlotPdf")
-        .def(py::init<std::string, Variable *, Variable *, CountingVariable *, DecayInfo *, GooPdf *>());
+        .def(py::init<std::string, Variable *, Variable *, CountingVariable *, DecayInfo *, GooPdf *>())
+        //.def("setDataSize", &DalitzPlotPdf::setDataSize, "dataSize", "evtSize"_a = 3 )
+
+        ;
 }

@@ -133,11 +133,15 @@ dp  = TDDP4("test", observables, DK3P_DI, dat, eff, None, 1)
 trials = 100
 k = 0
 while k<trials:
-    numEvents = 8
+    numEvents = 1
     dp.setGenerationOffset(k * numEvents)
     tuple = dp.GenerateSig(numEvents)
-    #print tuple
-    #del tuple
+    particles = tuple[0]
+    variables = tuple[1]
+    weights = tuple[2]
+
+    flags = tuple[3]
+    print(flags)
 
     k= k+1
 

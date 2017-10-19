@@ -1,5 +1,3 @@
-#include "gtest/gtest.h"
-
 #include "goofit/FitManager.h"
 #include "goofit/BinnedDataSet.h"
 #include "goofit/PDFs/basic/ExpPdf.h"
@@ -7,15 +5,16 @@
 
 #include "goofit/Variable.h"
 
-#include <sys/time.h>
-#include <sys/times.h>
 #include <iostream>
-
 #include <random>
+
+#include "catch.hpp"
 
 using namespace GooFit;
 
-TEST(BinnedFit, SimpleFit) {
+TEST_CASE("Simple binned exponential",
+        "[binned][exponential]") {
+    
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> d(1.5);
@@ -45,12 +44,13 @@ TEST(BinnedFit, SimpleFit) {
     FitManager fitter{&exppdf};
     fitter.fit();
 
-    EXPECT_TRUE(fitter);
-    EXPECT_LT(alpha.getError(), .01);
-    EXPECT_NEAR(-1.5, alpha.getValue(), alpha.getError() * 3);
+    CHECK(fitter);
+    CHECK(alpha.getError() < .01);
+    CHECK(alpha == Approx(-1.5).margin(alpha.getError()*3));
 }
 
-TEST(BinnedFit, DualFit) {
+TEST_CASE("Dual binned exponential",
+          "[binned][exponential]") {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> dx(1.5);
@@ -88,14 +88,15 @@ TEST(BinnedFit, DualFit) {
     FitManager fitter{&totalpdf};
     fitter.fit();
 
-    EXPECT_TRUE(fitter);
-    EXPECT_LT(xalpha.getError(), .1);
-    EXPECT_LT(yalpha.getError(), .1);
-    EXPECT_NEAR(-1.5, xalpha.getValue(), xalpha.getError() * 3);
-    EXPECT_NEAR(-.75, yalpha.getValue(), yalpha.getError() * 3);
+    CHECK(fitter);
+    CHECK(xalpha.getError() < .1);
+    CHECK(yalpha.getError() < .1);
+    CHECK(xalpha == Approx(-1.5).margin(xalpha.getError()*3));
+    CHECK(yalpha == Approx(-.75).margin(yalpha.getError()*3));
 }
 
-TEST(BinnedFit, DifferentFitterVariable) {
+TEST_CASE("Dual binned exponential reversed variable",
+        "[binned][exponential]") {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> dx(1.5);
@@ -133,9 +134,9 @@ TEST(BinnedFit, DifferentFitterVariable) {
     FitManager fitter{&totalpdf};
     fitter.fit();
 
-    EXPECT_TRUE(fitter);
-    EXPECT_LT(xalpha.getError(), .1);
-    EXPECT_LT(yalpha.getError(), .1);
-    EXPECT_NEAR(-1.5, xalpha.getValue(), xalpha.getError() * 3);
-    EXPECT_NEAR(-.75, yalpha.getValue(), yalpha.getError() * 3);
+    CHECK(fitter);
+    CHECK(xalpha.getError() < .1);
+    CHECK(yalpha.getError() < .1);
+    CHECK(xalpha == Approx(-1.5).margin(xalpha.getError()*3));
+    CHECK(yalpha == Approx(-.75).margin(yalpha.getError()*3));
 }

@@ -1,5 +1,3 @@
-#include "gtest/gtest.h"
-
 #include "goofit/FitManager.h"
 #include "goofit/UnbinnedDataSet.h"
 #include "goofit/PDFs/basic/ExpPdf.h"
@@ -7,15 +5,14 @@
 
 #include "goofit/Variable.h"
 
-#include <sys/time.h>
-#include <sys/times.h>
 #include <iostream>
-
 #include <random>
+
+#include "catch.hpp"
 
 using namespace GooFit;
 
-TEST(Normalize, Dual) {
+TEST_CASE("Dual normalize") {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> d(1.5);
@@ -49,8 +46,9 @@ TEST(Normalize, Dual) {
     fitter.setVerbosity(0);
     fitter.fit();
 
+    CHECK(fitter);
+
     std::cout << exppdf.normalize() << std::endl;
     std::cout << exppdf.normalise() << std::endl;
-
     std::cout << exppdf.integrate(0, 10) << std::endl;
 }

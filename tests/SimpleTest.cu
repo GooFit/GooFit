@@ -1,11 +1,12 @@
-#include <gtest/gtest.h>
-
 #include "goofit/Variable.h"
 #include "goofit/UnbinnedDataSet.h"
+#include "goofit/Error.h"
+
+#include "catch.hpp"
 
 using namespace GooFit;
 
-TEST(Simple, UnbinnedAdding) {
+TEST_CASE("Simple Unbinned Adding", "[simple]") {
     // Independent variable.
     Variable xvar{"xvar", 0, 10};
     Variable yvar{"yvar", 0, 10};
@@ -27,21 +28,21 @@ TEST(Simple, UnbinnedAdding) {
 
     data.loadEvent(0);
 
-    EXPECT_FLOAT_EQ(1, xvar.getValue());
-    EXPECT_FLOAT_EQ(2, yvar.getValue());
+    CHECK(1 == xvar.getValue());
+    CHECK(2 == yvar.getValue());
 
     data.loadEvent(1);
-    EXPECT_FLOAT_EQ(3, xvar.getValue());
-    EXPECT_FLOAT_EQ(4, yvar.getValue());
+    CHECK(3 == xvar.getValue());
+    CHECK(4 == yvar.getValue());
 
-    EXPECT_FLOAT_EQ(1, data.getValue(&xvar, 0));
-    EXPECT_FLOAT_EQ(2, data.getValue(&yvar, 0));
-    EXPECT_FLOAT_EQ(3, data.getValue(&xvar, 1));
-    EXPECT_FLOAT_EQ(4, data.getValue(&yvar, 1));
-    EXPECT_FLOAT_EQ(5, data.getValue(&xvar, 2));
-    EXPECT_FLOAT_EQ(6, data.getValue(&yvar, 2));
+    CHECK(1 == data.getValue(&xvar, 0));
+    CHECK(2 == data.getValue(&yvar, 0));
+    CHECK(3 == data.getValue(&xvar, 1));
+    CHECK(4 == data.getValue(&yvar, 1));
+    CHECK(5 == data.getValue(&xvar, 2));
+    CHECK(6 == data.getValue(&yvar, 2));
 }
-TEST(Simple, SettingAndGetting) {
+TEST_CASE("Simple Setting And Getting", "[simple]") {
     // Independent variable.
     Variable var{"var", 0, 10};
 
@@ -49,11 +50,11 @@ TEST(Simple, SettingAndGetting) {
 
     fptype val = var;
 
-    EXPECT_EQ(1.0, val);
-    EXPECT_EQ(1.0, var.getValue());
+    CHECK(1.0 == val);
+    CHECK(1.0 == var.getValue());
 }
 
-TEST(Simple, FancyAddEvent) {
+TEST_CASE("Fancy Add Event", "[simple]") {
     // Independent variable.
     Variable xvar{"xvar", 0, 10};
     Variable yvar{"yvar", 0, 10};
@@ -64,13 +65,13 @@ TEST(Simple, FancyAddEvent) {
     data.addEvent(1, 2);
     data.addEvent(3, 4);
 
-    EXPECT_EQ(2, data.getNumEvents());
+    CHECK(2 == data.getNumEvents());
 
-    EXPECT_FLOAT_EQ(1, data.getValue(&xvar, 0));
-    EXPECT_FLOAT_EQ(2, data.getValue(&yvar, 0));
-    EXPECT_FLOAT_EQ(3, data.getValue(&xvar, 1));
-    EXPECT_FLOAT_EQ(4, data.getValue(&yvar, 1));
+    CHECK(data.getValue(&xvar, 0) == 1);
+    CHECK(data.getValue(&yvar, 0) == 2);
+    CHECK(data.getValue(&xvar, 1) == 3);
+    CHECK(data.getValue(&yvar, 1) == 4);
 
-    EXPECT_THROW(data.addEvent(1), GooFit::GeneralError);
-    EXPECT_THROW(data.addEvent(1, 2, 3), GooFit::GeneralError);
+    CHECK_THROWS_AS(data.addEvent(1), GeneralError);
+    CHECK_THROWS_AS(data.addEvent(1, 2, 3), GeneralError);
 }

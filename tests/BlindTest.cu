@@ -1,5 +1,3 @@
-#include <gtest/gtest.h>
-
 #include <random>
 
 #include "goofit/Variable.h"
@@ -11,9 +9,11 @@
 #include "goofit/fitting/FitManagerMinuit1.h"
 #endif
 
+#include "catch.hpp"
+
 using namespace GooFit;
 
-TEST(Simple, NoBlind) {
+TEST_CASE("NoBlind", "[Gaussian]") {
     // Independent variable.
     Variable xvar{"xvar", 0, 10};
 
@@ -41,11 +41,11 @@ TEST(Simple, NoBlind) {
     GaussianPdf gausspdf{"gausspdf", &xvar, &alpha, &sigma};
     gausspdf.fitTo(&data);
 
-    EXPECT_LT(alpha.getError(), .01);
-    EXPECT_NEAR(1.5, alpha.getValue(), alpha.getError() * 3);
+    CHECK(alpha.getError() < .01);
+    CHECK(alpha == Approx(1.5).margin(alpha.getError()*3));
 }
 
-TEST(Simple, WithBlind) {
+TEST_CASE("WithBlind", "[Gaussian]") {
     // Independent variable.
     Variable xvar{"xvar", 0, 10};
 
@@ -76,11 +76,13 @@ TEST(Simple, WithBlind) {
     GaussianPdf gausspdf{"gausspdf", &xvar, &alpha, &sigma};
     gausspdf.fitTo(&data);
 
-    EXPECT_LT(alpha.getError(), .01);
-    EXPECT_NEAR(2.5, alpha.getValue(), alpha.getError() * 3);
+    CHECK(alpha.getError() < .01);
+    CHECK(alpha == Approx(2.5).margin(alpha.getError()*3));
 }
+
 #ifdef ROOT_FOUND
-TEST(Simple, Min1Blind) {
+
+TEST_CASE("Min1Blind", "[Gaussian]") {
     // Independent variable.
     Variable xvar{"xvar", 0, 10};
 
@@ -114,7 +116,7 @@ TEST(Simple, Min1Blind) {
     GooFit::FitManagerMinuit1 fitman{&gausspdf};
     fitman.fit();
 
-    EXPECT_LT(alpha.getError(), .01);
-    EXPECT_NEAR(2.5, alpha.getValue(), alpha.getError() * 3);
+    CHECK(alpha.getError() < .01);
+    CHECK(alpha == Approx(2.5).margin(alpha.getError()*3));
 }
 #endif

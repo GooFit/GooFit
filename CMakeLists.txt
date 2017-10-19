@@ -250,7 +250,7 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
         list(APPEND CUDA_NVCC_FLAGS ${MPI_CXX_COMPILE_FLAGS})
     endif()
 
-    list(APPEND CUDA_NVCC_FLAGS -std=c++11)
+    list(APPEND CUDA_NVCC_FLAGS -std=c++11 --expt-relaxed-constexpr)
 
     if(GOOFIT_SEPARATE_COMP)
         set(CUDA_SEPARABLE_COMPILATION ON)

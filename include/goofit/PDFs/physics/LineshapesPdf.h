@@ -19,8 +19,6 @@ See *.cu file for more details
 namespace GooFit {
 
 class SpinFactor;
-
-enum class LS { ONE, BW, Lass, Lass_M3, nonRes, Bugg, Bugg3, Flatte, SBW, GSpline, kMatrix, FOCUS};
     
 // PDG notation for FF
 enum class FF : unsigned int { One = 0, BL, BL_Prime, BL2 };
@@ -43,16 +41,6 @@ protected:
     Lineshape(std::string name);
     
 public:
-    /// Construct standard versions
-    Lineshape(std::string name,
-                  Variable *mass,
-                  Variable *width,
-                  unsigned int L,
-                  unsigned int Mpair,
-                  LS kind,
-                  FF FormFac = FF::BL_Prime,
-                  fptype radius = 1.5);
-
     
     ~Lineshape() override = default;
     
@@ -69,8 +57,7 @@ namespace Lineshapes {
 using spline_t = std::tuple<fptype, fptype, unsigned int>;
     
 class RBW : public Lineshape {
-    public:
-    
+public:
     RBW(std::string name,
               Variable *mass,
               Variable *width,
@@ -80,15 +67,102 @@ class RBW : public Lineshape {
               fptype radius                          = 1.5);
     
     ~RBW() override = default;
-        
 };
     
+class One : public Lineshape {
+public:
+    One(std::string name,
+        Variable *mass,
+        Variable *width,
+        unsigned int L,
+        unsigned int Mpair,
+        FF FormFac                             = FF::BL_Prime,
+        fptype radius                          = 1.5);
+    
+    ~One() override = default;
+};
+    
+class LASS : public Lineshape {
+public:
+    LASS(std::string name,
+        Variable *mass,
+        Variable *width,
+        unsigned int L,
+        unsigned int Mpair,
+        FF FormFac                             = FF::BL_Prime,
+        fptype radius                          = 1.5);
+    
+    ~LASS() override = default;
+};
+    
+class NonRes : public Lineshape {
+public:
+    NonRes(std::string name,
+         Variable *mass,
+         Variable *width,
+         unsigned int L,
+         unsigned int Mpair,
+         FF FormFac                             = FF::BL_Prime,
+         fptype radius                          = 1.5);
+    
+    ~NonRes() override = default;
+};
+    
+class Bugg : public Lineshape {
+public:
+    Bugg(std::string name,
+           Variable *mass,
+           Variable *width,
+           unsigned int L,
+           unsigned int Mpair,
+           FF FormFac                             = FF::BL_Prime,
+           fptype radius                          = 1.5);
+    
+    ~Bugg() override = default;
+};
+  
+class Bugg3 : public Lineshape {
+public:
+    Bugg3(std::string name,
+         Variable *mass,
+         Variable *width,
+         unsigned int L,
+         unsigned int Mpair,
+         FF FormFac                             = FF::BL_Prime,
+         fptype radius                          = 1.5);
+    
+    ~Bugg3() override = default;
+};
+    
+class Flatte : public Lineshape {
+public:
+    Flatte(std::string name,
+          Variable *mass,
+          Variable *width,
+          unsigned int L,
+          unsigned int Mpair,
+          FF FormFac                             = FF::BL_Prime,
+          fptype radius                          = 1.5);
+    
+    ~Flatte() override = default;
+};
+    
+class SBW : public Lineshape {
+public:
+    SBW(std::string name,
+           Variable *mass,
+           Variable *width,
+           unsigned int L,
+           unsigned int Mpair,
+           FF FormFac                             = FF::BL_Prime,
+           fptype radius                          = 1.5);
+    
+    ~SBW() override = default;
+};
     
 class FOCUS : public Lineshape {
 public:
-    
     enum class Mod {Kpi=0, KEta, I32};
-    
     FOCUS(std::string name,
         Mod mod,
         Variable *mass,
@@ -99,12 +173,10 @@ public:
         fptype radius                          = 1.5);
     
     ~FOCUS() override = default;
-    
 };
     
     
 class kMatrix : public Lineshape {
-
 public:
     kMatrix(std::string name,
         unsigned int pterm, //< 0 or 1
@@ -123,14 +195,11 @@ public:
         fptype radius                          = 1.5);
     
     ~kMatrix() override = default;
-    
 };
     
-class LASS : public Lineshape {
-        
+class GLASS : public Lineshape {
     public:
-        
-        LASS(std::string name,
+        GLASS(std::string name,
                 Variable *mass,
                 Variable *width,
                 unsigned int L,
@@ -139,15 +208,12 @@ class LASS : public Lineshape {
                 fptype radius,
                 std::vector<Variable *> AdditionalVars);
         
-        ~LASS() override = default;
-        
+        ~GLASS() override = default;
     };
     
 /// A spline implementaiton for the width (Gamma = G)
 class GSpline : public Lineshape {
-
 public:
-    
     /// The spline
     GSpline(std::string name,
               Variable *mass,
@@ -158,11 +224,9 @@ public:
               fptype radius,
               std::vector<Variable *> AdditionalVars,
               spline_t SplineInfo);
-
+    
     ~GSpline() override = default;
-    
 };
-    
 }
 
 class Amplitude {

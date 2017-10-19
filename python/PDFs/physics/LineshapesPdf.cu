@@ -13,16 +13,6 @@ using namespace pybind11::literals;
 using namespace pybind11::literals;
 
 void init_LineshapesPdf(py::module &m) {
-    py::enum_<LS>(m, "LS", py::arithmetic())
-        .value("ONE", LS::ONE)
-        .value("BW", LS::BW)
-        .value("Lass", LS::Lass)
-        .value("Lass_M3", LS::Lass_M3)
-        .value("nonRes", LS::nonRes)
-        .value("Bugg", LS::Bugg)
-        .value("Bugg3", LS::Bugg3)
-        .value("Flatte", LS::Flatte)
-        .value("SBW", LS::SBW);
 
     py::enum_<FF>(m, "FF", py::arithmetic())
         .value("One", FF::One)
@@ -30,19 +20,74 @@ void init_LineshapesPdf(py::module &m) {
         .value("BL_Prime", FF::BL_Prime)
         .value("BL2", FF::BL2);
 
-    py::class_<Lineshape, GooPdf>(m, "Lineshape")
-        .def(py::init<std::string, Variable *, Variable *, unsigned int, unsigned int, LS, FF, fptype>(),
-             "Create a lineshape",
-             "name"_a,
-             "mass"_a,
-             "width"_a,
-             "L"_a,
-             "Mpair"_a,
-             "kind"_a,
-             "FormFac"_a = FF::BL_Prime,
-             "radius"_a  = 1.5);
-
     auto m_ls = m.def_submodule("Lineshapes");
+    
+    py::class_<Lineshapes::One, Lineshape>(m_ls, "One")
+    .def(py::init<std::string, Variable *, Variable *, unsigned int, unsigned int, FF, fptype>(),
+         "Create a constant lineshape",
+         "name"_a,
+         "mass"_a,
+         "width"_a,
+         "L"_a,
+         "Mpair"_a,
+         "FormFac"_a = FF::BL_Prime,
+         "radius"_a  = 1.5);
+    
+    py::class_<Lineshapes::LASS, Lineshape>(m_ls, "LASS")
+    .def(py::init<std::string, Variable *, Variable *, unsigned int, unsigned int, FF, fptype>(),
+         "Create a LASS lineshape",
+         "name"_a,
+         "mass"_a,
+         "width"_a,
+         "L"_a,
+         "Mpair"_a,
+         "FormFac"_a = FF::BL_Prime,
+         "radius"_a  = 1.5);
+    
+    py::class_<Lineshapes::NonRes, Lineshape>(m_ls, "NonRes")
+    .def(py::init<std::string, Variable *, Variable *, unsigned int, unsigned int, FF, fptype>(),
+         "Create a Non Resonant lineshape",
+         "name"_a,
+         "mass"_a,
+         "width"_a,
+         "L"_a,
+         "Mpair"_a,
+         "FormFac"_a = FF::BL_Prime,
+         "radius"_a  = 1.5);
+    
+    py::class_<Lineshapes::Flatte, Lineshape>(m_ls, "Flatte")
+    .def(py::init<std::string, Variable *, Variable *, unsigned int, unsigned int, FF, fptype>(),
+         "Create a Flatte lineshape",
+         "name"_a,
+         "mass"_a,
+         "width"_a,
+         "L"_a,
+         "Mpair"_a,
+         "FormFac"_a = FF::BL_Prime,
+         "radius"_a  = 1.5);
+    
+    py::class_<Lineshapes::Bugg, Lineshape>(m_ls, "Bugg")
+    .def(py::init<std::string, Variable *, Variable *, unsigned int, unsigned int, FF, fptype>(),
+         "Create a constant lineshape",
+         "name"_a,
+         "mass"_a,
+         "width"_a,
+         "L"_a,
+         "Mpair"_a,
+         "FormFac"_a = FF::BL_Prime,
+         "radius"_a  = 1.5);
+    
+    py::class_<Lineshapes::Bugg3, Lineshape>(m_ls, "Bugg3")
+    .def(py::init<std::string, Variable *, Variable *, unsigned int, unsigned int, FF, fptype>(),
+         "Create a constant lineshape",
+         "name"_a,
+         "mass"_a,
+         "width"_a,
+         "L"_a,
+         "Mpair"_a,
+         "FormFac"_a = FF::BL_Prime,
+         "radius"_a  = 1.5);
+    
 
     py::class_<Lineshapes::RBW, Lineshape>(m_ls, "RBW")
         .def(py::init<std::string, Variable *, Variable *, unsigned int, unsigned int, FF, fptype>(),
@@ -54,8 +99,19 @@ void init_LineshapesPdf(py::module &m) {
              "Mpair"_a,
              "FormFac"_a = FF::BL_Prime,
              "radius"_a  = 1.5);
+    
+    py::class_<Lineshapes::SBW, Lineshape>(m_ls, "SBW")
+    .def(py::init<std::string, Variable *, Variable *, unsigned int, unsigned int, FF, fptype>(),
+         "Create a SBW lineshape",
+         "name"_a,
+         "mass"_a,
+         "width"_a,
+         "L"_a,
+         "Mpair"_a,
+         "FormFac"_a = FF::BL_Prime,
+         "radius"_a  = 1.5);
 
-    py::class_<Lineshapes::LASS, Lineshape>(m_ls, "LASS")
+    py::class_<Lineshapes::GLASS, Lineshape>(m_ls, "GLASS")
         .def(py::init<std::string,
                       Variable *,
                       Variable *,
@@ -64,7 +120,7 @@ void init_LineshapesPdf(py::module &m) {
                       FF,
                       fptype,
                       std::vector<Variable *>>(),
-             "Create a LASS lineshape",
+             "Create a G-LASS lineshape",
 
              "name"_a,
              "mass"_a,

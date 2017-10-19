@@ -93,45 +93,45 @@ int main(int argc, char **argv) {
                                         new SpinFactor("SF", SF_4Body::DtoAP1_AtoVP2Dwave_VtoP3P4, 2, 0, 3, 1)};
 
     // Lineshapes, also for both pi+ configurations
-    std::vector<Lineshape *> LSKRS = {new Lineshape("rho(770)", &RhoMass, &RhoWidth, 1, M_12, LS::BW),
-                                      new Lineshape("K*(892)bar", &KstarM, &KstarW, 1, M_34, LS::BW),
-                                      new Lineshape("rho(770)", &RhoMass, &RhoWidth, 1, M_24, LS::BW),
-                                      new Lineshape("K*(892)bar", &KstarM, &KstarW, 1, M_13, LS::BW)};
+    std::vector<Lineshape *> LSKRS = {new Lineshapes::RBW("rho(770)", &RhoMass, &RhoWidth, 1, M_12),
+                                      new Lineshapes::RBW("K*(892)bar", &KstarM, &KstarW, 1, M_34),
+                                      new Lineshapes::RBW("rho(770)", &RhoMass, &RhoWidth, 1, M_24),
+                                      new Lineshapes::RBW("K*(892)bar", &KstarM, &KstarW, 1, M_13)};
 
-    std::vector<Lineshape *> LSKRP = {new Lineshape("rho(770)", &RhoMass, &RhoWidth, 1, M_12, LS::BW),
-                                      new Lineshape("K*(892)bar", &KstarM, &KstarW, 1, M_34, LS::BW),
-                                      new Lineshape("rho(770)", &RhoMass, &RhoWidth, 1, M_24, LS::BW),
-                                      new Lineshape("K*(892)bar", &KstarM, &KstarW, 1, M_13, LS::BW)};
+    std::vector<Lineshape *> LSKRP = {new Lineshapes::RBW("rho(770)", &RhoMass, &RhoWidth, 1, M_12),
+                                      new Lineshapes::RBW("K*(892)bar", &KstarM, &KstarW, 1, M_34),
+                                      new Lineshapes::RBW("rho(770)", &RhoMass, &RhoWidth, 1, M_24),
+                                      new Lineshapes::RBW("K*(892)bar", &KstarM, &KstarW, 1, M_13)};
 
-    std::vector<Lineshape *> LSKRD = {new Lineshape("rho(770)", &RhoMass, &RhoWidth, 1, M_12, LS::BW),
-                                      new Lineshape("K*(892)bar", &KstarM, &KstarW, 1, M_34, LS::BW),
-                                      new Lineshape("rho(770)", &RhoMass, &RhoWidth, 1, M_24, LS::BW),
-                                      new Lineshape("K*(892)bar", &KstarM, &KstarW, 1, M_13, LS::BW)};
+    std::vector<Lineshape *> LSKRD = {new Lineshapes::RBW("rho(770)", &RhoMass, &RhoWidth, 1, M_12),
+                                      new Lineshapes::RBW("K*(892)bar", &KstarM, &KstarW, 1, M_34),
+                                      new Lineshapes::RBW("rho(770)", &RhoMass, &RhoWidth, 1, M_24),
+                                      new Lineshapes::RBW("K*(892)bar", &KstarM, &KstarW, 1, M_13)};
 
-    std::vector<Lineshape *> LSKF = {new Lineshape("K*(892)bar", &KstarM, &KstarW, 1, M_34, LS::BW),
-                                     new Lineshape("f600", &f600M, &f600W, 0, M_12, LS::Bugg),
-                                     new Lineshape("K*(892)bar", &KstarM, &KstarW, 1, M_13, LS::BW),
-                                     new Lineshape("f600", &f600M, &f600W, 0, M_24, LS::Bugg)};
+    std::vector<Lineshape *> LSKF = {new Lineshapes::RBW("K*(892)bar", &KstarM, &KstarW, 1, M_34),
+                                     new Lineshapes::Bugg("f600", &f600M, &f600W, 0, M_12),
+                                     new Lineshapes::RBW("K*(892)bar", &KstarM, &KstarW, 1, M_13),
+                                     new Lineshapes::Bugg("f600", &f600M, &f600W, 0, M_24)};
 
-    std::vector<Lineshape *> LSKK = {new Lineshape("K(1)(1270)bar", &K1M, &K1W, 1, M_34_2, LS::SBW),
-                                     new Lineshape("K(0)*(1430)bar", &K1430M, &K1430W, 0, M_34, LS::Lass),
-                                     new Lineshape("K(1)(1270)bar2", &K1M, &K1W, 1, M_13_2, LS::SBW),
-                                     new Lineshape("K(0)*(1430)bar2", &K1430M, &K1430W, 0, M_13, LS::Lass)};
+    std::vector<Lineshape *> LSKK = {new Lineshapes::SBW("K(1)(1270)bar", &K1M, &K1W, 1, M_34_2),
+                                     new Lineshapes::LASS("K(0)*(1430)bar", &K1430M, &K1430W, 0, M_34),
+                                     new Lineshapes::SBW("K(1)(1270)bar2", &K1M, &K1W, 1, M_13_2),
+                                     new Lineshapes::LASS("K(0)*(1430)bar2", &K1430M, &K1430W, 0, M_13)};
 
-    std::vector<Lineshape *> LSK1R = {new Lineshape("K(1)(1270)bar", &K1M, &K1W, 0, M_12_3, LS::SBW),
-                                      new Lineshape("rho(770)", &RhoMass, &RhoWidth, 1, M_12, LS::BW),
-                                      new Lineshape("K(1)(1270)bar", &K1M, &K1W, 0, M_24_3, LS::SBW),
-                                      new Lineshape("rho(770)", &RhoMass, &RhoWidth, 1, M_24, LS::BW)};
+    std::vector<Lineshape *> LSK1R = {new Lineshapes::SBW("K(1)(1270)bar", &K1M, &K1W, 0, M_12_3),
+                                      new Lineshapes::RBW("rho(770)", &RhoMass, &RhoWidth, 1, M_12),
+                                      new Lineshapes::SBW("K(1)(1270)bar", &K1M, &K1W, 0, M_24_3),
+                                      new Lineshapes::RBW("rho(770)", &RhoMass, &RhoWidth, 1, M_24)};
 
-    std::vector<Lineshape *> LSA1R = {new Lineshape("a(1)(1260)+", &a1M, &a1W, 0, M_12_4, LS::SBW),
-                                      new Lineshape("rho(770)", &RhoMass, &RhoWidth, 1, M_12, LS::BW),
-                                      new Lineshape("a(1)(1260)+", &a1M, &a1W, 0, M_24_1, LS::SBW),
-                                      new Lineshape("rho(770)", &RhoMass, &RhoWidth, 1, M_24, LS::BW)};
+    std::vector<Lineshape *> LSA1R = {new Lineshapes::SBW("a(1)(1260)+", &a1M, &a1W, 0, M_12_4),
+                                      new Lineshapes::RBW("rho(770)", &RhoMass, &RhoWidth, 1, M_12),
+                                      new Lineshapes::SBW("a(1)(1260)+", &a1M, &a1W, 0, M_24_1),
+                                      new Lineshapes::RBW("rho(770)", &RhoMass, &RhoWidth, 1, M_24)};
 
-    std::vector<Lineshape *> LSA1RD = {new Lineshape("a(1)(1260)+", &a1M, &a1W, 2, M_12_4, LS::SBW),
-                                       new Lineshape("rho(770)", &RhoMass, &RhoWidth, 1, M_12, LS::BW),
-                                       new Lineshape("a(1)(1260)+", &a1M, &a1W, 2, M_24_1, LS::SBW),
-                                       new Lineshape("rho(770)", &RhoMass, &RhoWidth, 1, M_24, LS::BW)};
+    std::vector<Lineshape *> LSA1RD = {new Lineshapes::SBW("a(1)(1260)+", &a1M, &a1W, 2, M_12_4),
+                                       new Lineshapes::RBW("rho(770)", &RhoMass, &RhoWidth, 1, M_12),
+                                       new Lineshapes::SBW("a(1)(1260)+", &a1M, &a1W, 2, M_24_1),
+                                       new Lineshapes::RBW("rho(770)", &RhoMass, &RhoWidth, 1, M_24)};
 
     // the very last parameter means that we have two permutations. so the first half of the Lineshapes
     // and the first half of the spinfactors are amplitude 1, rest is amplitude

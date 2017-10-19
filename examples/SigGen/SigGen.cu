@@ -86,27 +86,27 @@ int main(int argc, char **argv) {
     // Lineshapes, also for both pi+ configurations
     std::vector<Lineshape *> LSKRS;
     LSKRS.push_back(new Lineshapes::RBW("rho(770)", RhoMass, RhoWidth, 1, M_12));
-    LSKRS.push_back(new Lineshapes::RBW("K*(892)bar",  KstarM, KstarW, 1, M_34));
+    LSKRS.push_back(new Lineshapes::RBW("K*(892)bar", KstarM, KstarW, 1, M_34));
     LSKRS.push_back(new Lineshapes::RBW("rho(770)", RhoMass, RhoWidth, 1, M_24));
-    LSKRS.push_back(new Lineshapes::RBW("K*(892)bar",  KstarM, KstarW, 1, M_13));
+    LSKRS.push_back(new Lineshapes::RBW("K*(892)bar", KstarM, KstarW, 1, M_13));
 
     std::vector<Lineshape *> LSKRP;
     LSKRP.push_back(new Lineshapes::RBW("rho(770)", RhoMass, RhoWidth, 1, M_12));
-    LSKRP.push_back(new Lineshapes::RBW("K*(892)bar" , KstarM, KstarW, 1, M_34));
+    LSKRP.push_back(new Lineshapes::RBW("K*(892)bar", KstarM, KstarW, 1, M_34));
     LSKRP.push_back(new Lineshapes::RBW("rho(770)", RhoMass, RhoWidth, 1, M_24));
-    LSKRP.push_back(new Lineshapes::RBW("K*(892)bar",  KstarM, KstarW, 1, M_13));
+    LSKRP.push_back(new Lineshapes::RBW("K*(892)bar", KstarM, KstarW, 1, M_13));
 
     std::vector<Lineshape *> LSKRD;
     LSKRD.push_back(new Lineshapes::RBW("rho(770)", RhoMass, RhoWidth, 1, M_12));
-    LSKRD.push_back(new Lineshapes::RBW("K*(892)bar",  KstarM, KstarW, 1, M_34));
+    LSKRD.push_back(new Lineshapes::RBW("K*(892)bar", KstarM, KstarW, 1, M_34));
     LSKRD.push_back(new Lineshapes::RBW("rho(770)", RhoMass, RhoWidth, 1, M_24));
-    LSKRD.push_back(new Lineshapes::RBW("K*(892)bar",  KstarM, KstarW, 1, M_13));
+    LSKRD.push_back(new Lineshapes::RBW("K*(892)bar", KstarM, KstarW, 1, M_13));
 
     std::vector<Lineshape *> LSKF;
     LSKF.push_back(new Lineshapes::RBW("K*(892)bar", KstarM, KstarW, 1, M_34));
-    LSKF.push_back(new Lineshapes::Bugg("f600",         f600M, f600W, 0, M_12));
+    LSKF.push_back(new Lineshapes::Bugg("f600", f600M, f600W, 0, M_12));
     LSKF.push_back(new Lineshapes::RBW("K*(892)bar", KstarM, KstarW, 1, M_13));
-    LSKF.push_back(new Lineshapes::Bugg("f600",         f600M, f600W, 0, M_24));
+    LSKF.push_back(new Lineshapes::Bugg("f600", f600M, f600W, 0, M_24));
 
     std::vector<Lineshape *> LSKK;
     LSKK.push_back(new Lineshapes::SBW("K(1)(1270)bar", K1M, K1W, 1, M_34_2));

@@ -772,13 +772,13 @@ Lineshapes::GSpline::GSpline(std::string name,
 }
 
 Lineshapes::GLASS::GLASS(std::string name,
-                       Variable *mass,
-                       Variable *width,
-                       unsigned int L,
-                       unsigned int Mpair,
-                       FF FormFac,
-                       fptype radius,
-                       std::vector<Variable *> AdditionalVars)
+                         Variable *mass,
+                         Variable *width,
+                         unsigned int L,
+                         unsigned int Mpair,
+                         FF FormFac,
+                         fptype radius,
+                         std::vector<Variable *> AdditionalVars)
     : Lineshape(name) {
     if(5 != AdditionalVars.size()) {
         throw GeneralError("It seems you forgot to provide the vector with the five necessary variables for GLASS, a, "
@@ -795,23 +795,23 @@ Lineshapes::GLASS::GLASS(std::string name,
 }
 
 Lineshapes::One::One(
-                     std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
-: Lineshape(name) {
+    std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
+    : Lineshape(name) {
     GOOFIT_ADD_PARAM(2, mass, "mass");
     GOOFIT_ADD_PARAM(3, width, "width");
-    
+
     GOOFIT_ADD_INT(4, L, "L");
     GOOFIT_ADD_INT(5, Mpair, "Mpair");
-    
+
     GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
-    
+
     GOOFIT_ADD_CONST(7, radius, "radius");
-    
+
     GET_FUNCTION_ADDR(ptr_to_LS_ONE);
-    
+
     GOOFIT_FINALIZE_PDF;
 }
-    
+
 Lineshapes::RBW::RBW(
     std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
     : Lineshape(name) {
@@ -829,118 +829,115 @@ Lineshapes::RBW::RBW(
 
     GOOFIT_FINALIZE_PDF;
 }
-    
 
 Lineshapes::LASS::LASS(
-                         std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
+    std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
     : Lineshape(name) {
-        GOOFIT_ADD_PARAM(2, mass, "mass");
-        GOOFIT_ADD_PARAM(3, width, "width");
-        
-        GOOFIT_ADD_INT(4, L, "L");
-        GOOFIT_ADD_INT(5, Mpair, "Mpair");
-        
-        GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
-        
-        GOOFIT_ADD_CONST(7, radius, "radius");
-        
-        GET_FUNCTION_ADDR(ptr_to_BW_DP4);
-        
-        GOOFIT_FINALIZE_PDF;
-    }
+    GOOFIT_ADD_PARAM(2, mass, "mass");
+    GOOFIT_ADD_PARAM(3, width, "width");
+
+    GOOFIT_ADD_INT(4, L, "L");
+    GOOFIT_ADD_INT(5, Mpair, "Mpair");
+
+    GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
+
+    GOOFIT_ADD_CONST(7, radius, "radius");
+
+    GET_FUNCTION_ADDR(ptr_to_BW_DP4);
+
+    GOOFIT_FINALIZE_PDF;
+}
 
 Lineshapes::NonRes::NonRes(
-                           std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
+    std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
     : Lineshape(name) {
-        GOOFIT_ADD_PARAM(2, mass, "mass");
-        GOOFIT_ADD_PARAM(3, width, "width");
-        
-        GOOFIT_ADD_INT(4, L, "L");
-        GOOFIT_ADD_INT(5, Mpair, "Mpair");
-        
-        GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
-        
-        GOOFIT_ADD_CONST(7, radius, "radius");
-        
-        GET_FUNCTION_ADDR(ptr_to_NONRES_DP);
-        
-        GOOFIT_FINALIZE_PDF;
+    GOOFIT_ADD_PARAM(2, mass, "mass");
+    GOOFIT_ADD_PARAM(3, width, "width");
+
+    GOOFIT_ADD_INT(4, L, "L");
+    GOOFIT_ADD_INT(5, Mpair, "Mpair");
+
+    GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
+
+    GOOFIT_ADD_CONST(7, radius, "radius");
+
+    GET_FUNCTION_ADDR(ptr_to_NONRES_DP);
+
+    GOOFIT_FINALIZE_PDF;
 }
 
 Lineshapes::Bugg::Bugg(
-                           std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
+    std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
     : Lineshape(name) {
-        GOOFIT_ADD_PARAM(2, mass, "mass");
-        GOOFIT_ADD_PARAM(3, width, "width");
-        
-        GOOFIT_ADD_INT(4, L, "L");
-        GOOFIT_ADD_INT(5, Mpair, "Mpair");
-        
-        GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
-        
-        GOOFIT_ADD_CONST(7, radius, "radius");
-        
-        GET_FUNCTION_ADDR(ptr_to_bugg_MINT);
-        
-        GOOFIT_FINALIZE_PDF;
-    }
+    GOOFIT_ADD_PARAM(2, mass, "mass");
+    GOOFIT_ADD_PARAM(3, width, "width");
+
+    GOOFIT_ADD_INT(4, L, "L");
+    GOOFIT_ADD_INT(5, Mpair, "Mpair");
+
+    GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
+
+    GOOFIT_ADD_CONST(7, radius, "radius");
+
+    GET_FUNCTION_ADDR(ptr_to_bugg_MINT);
+
+    GOOFIT_FINALIZE_PDF;
+}
 
 Lineshapes::Bugg3::Bugg3(
-                           std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
+    std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
     : Lineshape(name) {
-        GOOFIT_ADD_PARAM(2, mass, "mass");
-        GOOFIT_ADD_PARAM(3, width, "width");
-        
-        GOOFIT_ADD_INT(4, L, "L");
-        GOOFIT_ADD_INT(5, Mpair, "Mpair");
-        
-        GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
-        
-        GOOFIT_ADD_CONST(7, radius, "radius");
-        
-        GET_FUNCTION_ADDR(ptr_to_bugg_MINT3);
-        
-        GOOFIT_FINALIZE_PDF;
-    }
+    GOOFIT_ADD_PARAM(2, mass, "mass");
+    GOOFIT_ADD_PARAM(3, width, "width");
+
+    GOOFIT_ADD_INT(4, L, "L");
+    GOOFIT_ADD_INT(5, Mpair, "Mpair");
+
+    GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
+
+    GOOFIT_ADD_CONST(7, radius, "radius");
+
+    GET_FUNCTION_ADDR(ptr_to_bugg_MINT3);
+
+    GOOFIT_FINALIZE_PDF;
+}
 
 Lineshapes::Flatte::Flatte(
-                           std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
+    std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
     : Lineshape(name) {
-        GOOFIT_ADD_PARAM(2, mass, "mass");
-        GOOFIT_ADD_PARAM(3, width, "width");
-        
-        GOOFIT_ADD_INT(4, L, "L");
-        GOOFIT_ADD_INT(5, Mpair, "Mpair");
-        
-        GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
-        
-        GOOFIT_ADD_CONST(7, radius, "radius");
-        
-        GET_FUNCTION_ADDR(ptr_to_Flatte);
-        
-        GOOFIT_FINALIZE_PDF;
-    }
+    GOOFIT_ADD_PARAM(2, mass, "mass");
+    GOOFIT_ADD_PARAM(3, width, "width");
+
+    GOOFIT_ADD_INT(4, L, "L");
+    GOOFIT_ADD_INT(5, Mpair, "Mpair");
+
+    GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
+
+    GOOFIT_ADD_CONST(7, radius, "radius");
+
+    GET_FUNCTION_ADDR(ptr_to_Flatte);
+
+    GOOFIT_FINALIZE_PDF;
+}
 
 Lineshapes::SBW::SBW(
-                               std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
+    std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
     : Lineshape(name) {
-        GOOFIT_ADD_PARAM(2, mass, "mass");
-        GOOFIT_ADD_PARAM(3, width, "width");
-        
-        GOOFIT_ADD_INT(4, L, "L");
-        GOOFIT_ADD_INT(5, Mpair, "Mpair");
-        
-        GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
-        
-        GOOFIT_ADD_CONST(7, radius, "radius");
-        
-        GET_FUNCTION_ADDR(ptr_to_SBW);
-        
-        GOOFIT_FINALIZE_PDF;
-    }
+    GOOFIT_ADD_PARAM(2, mass, "mass");
+    GOOFIT_ADD_PARAM(3, width, "width");
 
+    GOOFIT_ADD_INT(4, L, "L");
+    GOOFIT_ADD_INT(5, Mpair, "Mpair");
 
-    
+    GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
+
+    GOOFIT_ADD_CONST(7, radius, "radius");
+
+    GET_FUNCTION_ADDR(ptr_to_SBW);
+
+    GOOFIT_FINALIZE_PDF;
+}
+
 Lineshapes::FOCUS::FOCUS(std::string name,
                          Mod mod,
                          Variable *mass,

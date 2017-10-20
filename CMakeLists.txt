@@ -9,10 +9,6 @@ set(GOOFIT_TAG "dev")
 #set(GOOFIT_TAG "beta")
 #set(GOOFIT_TAG "release")
 
-if(NOT DEFINED CMAKE_SUPPRESS_DEVELOPER_WARNINGS AND NOT GOOFIT_TAG STREQUAL "dev")
-    set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE INTERNAL "No dev warnings")
-endif()
-
 ### Require out-of-source builds
 file(TO_CMAKE_PATH "${PROJECT_BINARY_DIR}/CMakeLists.txt" LOC_PATH)
 if(EXISTS "${LOC_PATH}")
@@ -245,6 +241,7 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
     if(NOT CUDA_FOUND)
         find_package(CUDA 7.0 REQUIRED)
     endif()
+    message(STATUS "Found CUDA ${CUDA_VERSION_STRING} at ${CUDA_TOOLKIT_ROOT_DIR}")
 
     if(GOOFIT_MPI)
         list(APPEND CUDA_NVCC_FLAGS ${MPI_CXX_COMPILE_FLAGS})
@@ -313,8 +310,14 @@ mark_as_advanced(CLI_EXAMPLES CLI_SINGLE_FILE CLI_SINGLE_FILE_TESTS CLI_TESTING)
 add_subdirectory("extern/FeatureDetector")
 set_target_properties(FeatureDetector PROPERTIES FOLDER extern)
 
-## Format
-add_subdirectory("extern/fmt")
+## format (warning suppesion only needed until next release)
+if(NOT DEFINED CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
+    set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE BOOL "")
+    add_subdirectory("extern/fmt")
+    unset(CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
+else()
+    add_subdirectory("extern/fmt")
+endif()
 set_target_properties(fmt PROPERTIES FOLDER extern)
 mark_as_advanced(FMT_CPPFORMAT FMT_DOC FMT_INSTALL FMT_PEDANTIC FMT_TEST FMT_USE_CPP11)
 

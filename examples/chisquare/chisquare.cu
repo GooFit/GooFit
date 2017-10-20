@@ -25,7 +25,7 @@ timeval startTime, stopTime, totalTime;
 using namespace std;
 using namespace GooFit;
 
-Variable *decayTime = 0;
+Variable *decayTime  = 0;
 Variable *constaCoef = 0;
 Variable *linearCoef = 0;
 Variable *secondCoef = 0;

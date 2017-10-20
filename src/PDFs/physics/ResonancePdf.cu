@@ -470,167 +470,150 @@ __device__ resonance_function_ptr ptr_to_LASS     = lass;
 __device__ resonance_function_ptr ptr_to_FLATTE   = flatte;
 __device__ resonance_function_ptr ptr_to_SPLINE   = cubicspline;
 
-    
 namespace Resonances {
 
-
 RBW::RBW(std::string name,
-                           Variable *ar,
-                           Variable *ai,
-                           Variable *mass,
-                           Variable *width,
-                           unsigned int sp,
-                           unsigned int cyc,
-                           bool symmDP)
-: ResonancePdf(name, ar, ai) {
-
-    
+         Variable *ar,
+         Variable *ai,
+         Variable *mass,
+         Variable *width,
+         unsigned int sp,
+         unsigned int cyc,
+         bool symmDP)
+    : ResonancePdf(name, ar, ai) {
     pindices.push_back(registerParameter(mass));
     pindices.push_back(registerParameter(width));
     pindices.push_back(sp);
     pindices.push_back(cyc);
     pindices.push_back((unsigned int)symmDP);
-    
+
     GET_FUNCTION_ADDR(ptr_to_RBW);
 
     initialize(pindices);
 }
-    
-    GS::GS(std::string name,
-             Variable *ar,
-             Variable *ai,
-             Variable *mass,
-             Variable *width,
-             unsigned int sp,
-             unsigned int cyc,
-             bool symmDP)
-    : ResonancePdf(name, ar, ai) {
-        
-        
-        pindices.push_back(registerParameter(mass));
-        pindices.push_back(registerParameter(width));
-        pindices.push_back(sp);
-        pindices.push_back(cyc);
-        pindices.push_back((unsigned int)symmDP);
-        
-        GET_FUNCTION_ADDR(ptr_to_GOUSAK);
-        
-        initialize(pindices);
-    }
-    
-    LASS::LASS(std::string name,
-             Variable *ar,
-             Variable *ai,
-             Variable *mass,
-             Variable *width,
-             unsigned int sp,
-             unsigned int cyc,
-             bool symmDP)
-    : ResonancePdf(name, ar, ai) {
-        
-        
-        pindices.push_back(registerParameter(mass));
-        pindices.push_back(registerParameter(width));
-        pindices.push_back(sp);
-        pindices.push_back(cyc);
-        pindices.push_back((unsigned int)symmDP);
-        
-        GET_FUNCTION_ADDR(ptr_to_LASS);
-        
-        initialize(pindices);
-    }
-    
-    
-// Constructor for regular BW,Gounaris-Sakurai,LASS
-    Gauss::Gauss(std::string name, Variable *ar, Variable *ai, Variable *mass, Variable *width, unsigned int cyc)
-    : ResonancePdf(name, ar, ai) {
-        // Making room for index of decay-related constants. Assumption:
-        // These are mother mass and three daughter masses in that order.
-        // They will be registered by the object that uses this resonance,
-        // which will tell this object where to find them by calling setConstantIndex.
-        
-        std::vector<unsigned int> pindices;
-        pindices.push_back(0);
-        pindices.push_back(registerParameter(mass));
-        pindices.push_back(registerParameter(width));
-        pindices.push_back(cyc);
-        
-        GET_FUNCTION_ADDR(ptr_to_GAUSSIAN);
-        
-        initialize(pindices);
-    }
-    
-    NonRes::NonRes(std::string name, Variable *ar, Variable *ai)
-    : ResonancePdf(name, ar, ai) {
- 
-        GET_FUNCTION_ADDR(ptr_to_NONRES);
-        
-        initialize(pindices);
-    }
-    
-    FLATTE::FLATTE(std::string name,
-                               Variable *ar,
-                               Variable *ai,
-                               Variable *mean,
-                               Variable *g1,
-                               Variable *rg2og1,
-                               unsigned int cyc,
-                               bool symmDP)
-    : ResonancePdf(name, ar, ai) {
-        
-        pindices.push_back(registerParameter(mean));
-        pindices.push_back(registerParameter(g1));
-        pindices.push_back(registerParameter(rg2og1));
-        pindices.push_back(cyc);
-        pindices.push_back((unsigned int)symmDP);
-        
-        GET_FUNCTION_ADDR(ptr_to_FLATTE);
-        
-        initialize(pindices);
-    }
-    
-    Spline::Spline(std::string name,
-                               Variable *ar,
-                               Variable *ai,
-                               std::vector<fptype> &HH_bin_limits,
-                               std::vector<Variable *> &pwa_coefs_reals,
-                               std::vector<Variable *> &pwa_coefs_imags,
-                               unsigned int cyc,
-                               const bool symmDP)
-    : ResonancePdf(name, ar, ai) {
-        
-        std::vector<unsigned int> pindices;
-        const unsigned int nKnobs = HH_bin_limits.size();
-        host_constants.resize(nKnobs);
-        
-        pindices.push_back(0);
-        pindices.push_back(cyc);
-        pindices.push_back((unsigned int)symmDP);
-        pindices.push_back(nKnobs);
-        
-        for(int i = 0; i < pwa_coefs_reals.size(); i++) {
-            host_constants[i] = HH_bin_limits[i];
-            pindices.push_back(registerParameter(pwa_coefs_reals[i]));
-            pindices.push_back(registerParameter(pwa_coefs_imags[i]));
-        }
-        pindices.push_back(registerConstants(nKnobs));
-        
-        MEMCPY_TO_SYMBOL(functorConstants,
-                         host_constants.data(),
-                         nKnobs * sizeof(fptype),
-                         cIndex * sizeof(fptype),
-                         cudaMemcpyHostToDevice);
-        
-        GET_FUNCTION_ADDR(ptr_to_SPLINE);
-        
-        initialize(pindices);
-    }
 
-    
-    
-    
-    
-    
+GS::GS(std::string name,
+       Variable *ar,
+       Variable *ai,
+       Variable *mass,
+       Variable *width,
+       unsigned int sp,
+       unsigned int cyc,
+       bool symmDP)
+    : ResonancePdf(name, ar, ai) {
+    pindices.push_back(registerParameter(mass));
+    pindices.push_back(registerParameter(width));
+    pindices.push_back(sp);
+    pindices.push_back(cyc);
+    pindices.push_back((unsigned int)symmDP);
+
+    GET_FUNCTION_ADDR(ptr_to_GOUSAK);
+
+    initialize(pindices);
+}
+
+LASS::LASS(std::string name,
+           Variable *ar,
+           Variable *ai,
+           Variable *mass,
+           Variable *width,
+           unsigned int sp,
+           unsigned int cyc,
+           bool symmDP)
+    : ResonancePdf(name, ar, ai) {
+    pindices.push_back(registerParameter(mass));
+    pindices.push_back(registerParameter(width));
+    pindices.push_back(sp);
+    pindices.push_back(cyc);
+    pindices.push_back((unsigned int)symmDP);
+
+    GET_FUNCTION_ADDR(ptr_to_LASS);
+
+    initialize(pindices);
+}
+
+// Constructor for regular BW,Gounaris-Sakurai,LASS
+Gauss::Gauss(std::string name, Variable *ar, Variable *ai, Variable *mass, Variable *width, unsigned int cyc)
+    : ResonancePdf(name, ar, ai) {
+    // Making room for index of decay-related constants. Assumption:
+    // These are mother mass and three daughter masses in that order.
+    // They will be registered by the object that uses this resonance,
+    // which will tell this object where to find them by calling setConstantIndex.
+
+    std::vector<unsigned int> pindices;
+    pindices.push_back(0);
+    pindices.push_back(registerParameter(mass));
+    pindices.push_back(registerParameter(width));
+    pindices.push_back(cyc);
+
+    GET_FUNCTION_ADDR(ptr_to_GAUSSIAN);
+
+    initialize(pindices);
+}
+
+NonRes::NonRes(std::string name, Variable *ar, Variable *ai)
+    : ResonancePdf(name, ar, ai) {
+    GET_FUNCTION_ADDR(ptr_to_NONRES);
+
+    initialize(pindices);
+}
+
+FLATTE::FLATTE(std::string name,
+               Variable *ar,
+               Variable *ai,
+               Variable *mean,
+               Variable *g1,
+               Variable *rg2og1,
+               unsigned int cyc,
+               bool symmDP)
+    : ResonancePdf(name, ar, ai) {
+    pindices.push_back(registerParameter(mean));
+    pindices.push_back(registerParameter(g1));
+    pindices.push_back(registerParameter(rg2og1));
+    pindices.push_back(cyc);
+    pindices.push_back((unsigned int)symmDP);
+
+    GET_FUNCTION_ADDR(ptr_to_FLATTE);
+
+    initialize(pindices);
+}
+
+Spline::Spline(std::string name,
+               Variable *ar,
+               Variable *ai,
+               std::vector<fptype> &HH_bin_limits,
+               std::vector<Variable *> &pwa_coefs_reals,
+               std::vector<Variable *> &pwa_coefs_imags,
+               unsigned int cyc,
+               const bool symmDP)
+    : ResonancePdf(name, ar, ai) {
+    std::vector<unsigned int> pindices;
+    const unsigned int nKnobs = HH_bin_limits.size();
+    host_constants.resize(nKnobs);
+
+    pindices.push_back(0);
+    pindices.push_back(cyc);
+    pindices.push_back((unsigned int)symmDP);
+    pindices.push_back(nKnobs);
+
+    for(int i = 0; i < pwa_coefs_reals.size(); i++) {
+        host_constants[i] = HH_bin_limits[i];
+        pindices.push_back(registerParameter(pwa_coefs_reals[i]));
+        pindices.push_back(registerParameter(pwa_coefs_imags[i]));
+    }
+    pindices.push_back(registerConstants(nKnobs));
+
+    MEMCPY_TO_SYMBOL(functorConstants,
+                     host_constants.data(),
+                     nKnobs * sizeof(fptype),
+                     cIndex * sizeof(fptype),
+                     cudaMemcpyHostToDevice);
+
+    GET_FUNCTION_ADDR(ptr_to_SPLINE);
+
+    initialize(pindices);
+}
+
 __host__ void Spline::recalculateCache() const {
     auto params           = getParameters();
     const unsigned nKnobs = params.size() / 2;
@@ -645,11 +628,10 @@ __host__ void Spline::recalculateCache() const {
             y[idx].imag(value);
     }
     std::vector<fptype> y2_flat = flatten(complex_derivative(host_constants, y));
-    
+
     MEMCPY_TO_SYMBOL(cDeriatives, y2_flat.data(), 2 * nKnobs * sizeof(fptype), 0, cudaMemcpyHostToDevice);
 }
 
-    
 } // namespace Resonances
 
 } // namespace GooFit

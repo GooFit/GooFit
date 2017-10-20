@@ -11,18 +11,11 @@ void init_ResonancePdf(py::module &m) {
     m.attr("MAXNKNOBS") = MAXNKNOBS;
 
     auto m_ls = m.def_submodule("Lineshapes");
-    
+
     py::class_<ResonancePdf, GooPdf>(m, "ResonancePdf");
-    
+
     py::class_<Resonances::RBW, ResonancePdf>(m_ls, "RBW")
-        .def(py::init<std::string,
-                      Variable *,
-                      Variable *,
-                      Variable *,
-                      Variable *,
-                      unsigned int,
-                      unsigned int,
-                      bool>(),
+        .def(py::init<std::string, Variable *, Variable *, Variable *, Variable *, unsigned int, unsigned int, bool>(),
              "Constructor for regular BW",
              "name"_a,
              "ar"_a,
@@ -31,55 +24,34 @@ void init_ResonancePdf(py::module &m) {
              "width"_a,
              "sp"_a,
              "cyc"_a,
-             "symmDP"_a = false)
-    ;
-    
-    py::class_<Resonances::GS, ResonancePdf>(m, "GS")
-    .def(py::init<std::string,
-         Variable *,
-         Variable *,
-         Variable *,
-         Variable *,
-         unsigned int,
-         unsigned int,
-         bool>(),
-         "Constructor for regular Gounaris-Sakurai",
-         "name"_a,
-         "ar"_a,
-         "ai"_a,
-         "mass"_a,
-         "width"_a,
-         "sp"_a,
-         "cyc"_a,
-         "symmDP"_a = false)
-    ;
+             "symmDP"_a = false);
 
-    py::class_<Resonances::LASS, ResonancePdf>(m, "LASS")
-    .def(py::init<std::string,
-         Variable *,
-         Variable *,
-         Variable *,
-         Variable *,
-         unsigned int,
-         unsigned int,
-         bool>(),
-         "Constructor for LASS",
-         "name"_a,
-         "ar"_a,
-         "ai"_a,
-         "mass"_a,
-         "width"_a,
-         "sp"_a,
-         "cyc"_a,
-         "symmDP"_a = false)
-    ;
-    
+    py::class_<Resonances::GS, ResonancePdf>(m, "GS").def(
+        py::init<std::string, Variable *, Variable *, Variable *, Variable *, unsigned int, unsigned int, bool>(),
+        "Constructor for regular Gounaris-Sakurai",
+        "name"_a,
+        "ar"_a,
+        "ai"_a,
+        "mass"_a,
+        "width"_a,
+        "sp"_a,
+        "cyc"_a,
+        "symmDP"_a = false);
+
+    py::class_<Resonances::LASS, ResonancePdf>(m, "LASS").def(
+        py::init<std::string, Variable *, Variable *, Variable *, Variable *, unsigned int, unsigned int, bool>(),
+        "Constructor for LASS",
+        "name"_a,
+        "ar"_a,
+        "ai"_a,
+        "mass"_a,
+        "width"_a,
+        "sp"_a,
+        "cyc"_a,
+        "symmDP"_a = false);
+
     py::class_<Resonances::NonRes, ResonancePdf>(m, "NonRes")
-        .def(py::init<std::string, Variable *, Variable *>(),
-             "Constructor for NonResonant",
-             "name"_a,
-             "ar"_a,
-             "ai"_a);
+        .def(py::init<std::string, Variable *, Variable *>(), "Constructor for NonResonant", "name"_a, "ar"_a, "ai"_a);
 
     py::class_<Resonances::Gauss, ResonancePdf>(m, "Gauss")
         .def(py::init<std::string, Variable *, Variable *, Variable *, Variable *, unsigned int>(),
@@ -92,14 +64,7 @@ void init_ResonancePdf(py::module &m) {
              "cyc"_a);
 
     py::class_<Resonances::FLATTE, ResonancePdf>(m, "FLATTE")
-        .def(py::init<std::string,
-                      Variable *,
-                      Variable *,
-                      Variable *,
-                      Variable *,
-                      Variable *,
-                      unsigned int,
-                      bool>(),
+        .def(py::init<std::string, Variable *, Variable *, Variable *, Variable *, Variable *, unsigned int, bool>(),
              "Constructor for regular FLATTE",
              "name"_a,
              "ar"_a,

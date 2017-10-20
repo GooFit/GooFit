@@ -163,12 +163,12 @@ DalitzPlotPdf *makeSignalPdf(GooPdf *eff = 0) {
     dtop0pp->meson_radius = 1.5;
 
     ResonancePdf *rhop = new Resonances::RBW("rhop",
-                                          new Variable("rhop_amp_real", 1),
-                                          new Variable("rhop_amp_imag", 0),
-                                          fixedRhoMass,
-                                          fixedRhoWidth,
-                                          1,
-                                          PAIR_12);
+                                             new Variable("rhop_amp_real", 1),
+                                             new Variable("rhop_amp_imag", 0),
+                                             fixedRhoMass,
+                                             fixedRhoWidth,
+                                             1,
+                                             PAIR_12);
 
     bool fixAmps = false;
 
@@ -251,71 +251,74 @@ DalitzPlotPdf *makeSignalPdf(GooPdf *eff = 0) {
         PAIR_13);
 
     ResonancePdf *f0_980 = new Resonances::RBW("f0_980",
-                                            fixAmps ? new Variable("f0_980_amp_real", 0.008 * (-_mD02))
-                                                    : new Variable("f0_980_amp_real", 0.008 * (-_mD02), 0.001, 0, 0),
-                                            fixAmps ? new Variable("f0_980_amp_imag", -0.013 * (-_mD02))
-                                                    : new Variable("f0_980_amp_imag", -0.013 * (-_mD02), 0.1, 0, 0),
-                                            new Variable("f0_980_mass", 0.980, 0.01, 0.8, 1.2),
-                                            new Variable("f0_980_width", 0.044, 0.001, 0.001, 0.08),
-                                            0,
-                                            PAIR_23);
+                                               fixAmps ? new Variable("f0_980_amp_real", 0.008 * (-_mD02))
+                                                       : new Variable("f0_980_amp_real", 0.008 * (-_mD02), 0.001, 0, 0),
+                                               fixAmps ? new Variable("f0_980_amp_imag", -0.013 * (-_mD02))
+                                                       : new Variable("f0_980_amp_imag", -0.013 * (-_mD02), 0.1, 0, 0),
+                                               new Variable("f0_980_mass", 0.980, 0.01, 0.8, 1.2),
+                                               new Variable("f0_980_width", 0.044, 0.001, 0.001, 0.08),
+                                               0,
+                                               PAIR_23);
 
-    ResonancePdf *f0_1370 = new Resonances::RBW("f0_1370",
-                                             fixAmps ? new Variable("f0_1370_amp_real", -0.058 * (-_mD02))
-                                                     : new Variable("f0_1370_amp_real", -0.058 * (-_mD02), 0.001, 0, 0),
-                                             fixAmps ? new Variable("f0_1370_amp_imag", 0.026 * (-_mD02))
-                                                     : new Variable("f0_1370_amp_imag", 0.026 * (-_mD02), 0.1, 0, 0),
-                                             new Variable("f0_1370_mass", 1.434, 0.01, 1.2, 1.6),
-                                             new Variable("f0_1370_width", 0.173, 0.01, 0.01, 0.4),
-                                             0,
-                                             PAIR_23);
+    ResonancePdf *f0_1370
+        = new Resonances::RBW("f0_1370",
+                              fixAmps ? new Variable("f0_1370_amp_real", -0.058 * (-_mD02))
+                                      : new Variable("f0_1370_amp_real", -0.058 * (-_mD02), 0.001, 0, 0),
+                              fixAmps ? new Variable("f0_1370_amp_imag", 0.026 * (-_mD02))
+                                      : new Variable("f0_1370_amp_imag", 0.026 * (-_mD02), 0.1, 0, 0),
+                              new Variable("f0_1370_mass", 1.434, 0.01, 1.2, 1.6),
+                              new Variable("f0_1370_width", 0.173, 0.01, 0.01, 0.4),
+                              0,
+                              PAIR_23);
 
-    ResonancePdf *f0_1500 = new Resonances::RBW("f0_1500",
-                                             fixAmps ? new Variable("f0_1500_amp_real", 0.057 * (-_mD02))
-                                                     : new Variable("f0_1500_amp_real", 0.057 * (-_mD02), 0.001, 0, 0),
-                                             fixAmps ? new Variable("f0_1500_amp_imag", 0.012 * (-_mD02))
-                                                     : new Variable("f0_1500_amp_imag", 0.012 * (-_mD02), 0.1, 0, 0),
-                                             new Variable("f0_1500_mass", 1.507, 0.01, 1.3, 1.7),
-                                             new Variable("f0_1500_width", 0.109, 0.01, 0.01, 0.3),
-                                             0,
-                                             PAIR_23);
+    ResonancePdf *f0_1500
+        = new Resonances::RBW("f0_1500",
+                              fixAmps ? new Variable("f0_1500_amp_real", 0.057 * (-_mD02))
+                                      : new Variable("f0_1500_amp_real", 0.057 * (-_mD02), 0.001, 0, 0),
+                              fixAmps ? new Variable("f0_1500_amp_imag", 0.012 * (-_mD02))
+                                      : new Variable("f0_1500_amp_imag", 0.012 * (-_mD02), 0.1, 0, 0),
+                              new Variable("f0_1500_mass", 1.507, 0.01, 1.3, 1.7),
+                              new Variable("f0_1500_width", 0.109, 0.01, 0.01, 0.3),
+                              0,
+                              PAIR_23);
 
-    ResonancePdf *f0_1710 = new Resonances::RBW("f0_1710",
-                                             fixAmps ? new Variable("f0_1710_amp_real", 0.070 * (-_mD02))
-                                                     : new Variable("f0_1710_amp_real", 0.070 * (-_mD02), 0.001, 0, 0),
-                                             fixAmps ? new Variable("f0_1710_amp_imag", 0.087 * (-_mD02))
-                                                     : new Variable("f0_1710_amp_imag", 0.087 * (-_mD02), 0.1, 0, 0),
-                                             new Variable("f0_1710_mass", 1.714, 0.01, 1.5, 2.9),
-                                             new Variable("f0_1710_width", 0.140, 0.01, 0.01, 0.5),
-                                             0,
-                                             PAIR_23);
+    ResonancePdf *f0_1710
+        = new Resonances::RBW("f0_1710",
+                              fixAmps ? new Variable("f0_1710_amp_real", 0.070 * (-_mD02))
+                                      : new Variable("f0_1710_amp_real", 0.070 * (-_mD02), 0.001, 0, 0),
+                              fixAmps ? new Variable("f0_1710_amp_imag", 0.087 * (-_mD02))
+                                      : new Variable("f0_1710_amp_imag", 0.087 * (-_mD02), 0.1, 0, 0),
+                              new Variable("f0_1710_mass", 1.714, 0.01, 1.5, 2.9),
+                              new Variable("f0_1710_width", 0.140, 0.01, 0.01, 0.5),
+                              0,
+                              PAIR_23);
 
     ResonancePdf *f2_1270
         = new Resonances::RBW("f2_1270",
-                           fixAmps ? new Variable("f2_1270_amp_real", -1.027 * (-_mD02inv))
-                                   : new Variable("f2_1270_amp_real", -1.027 * (-_mD02inv), 0.001, 0, 0),
-                           fixAmps ? new Variable("f2_1270_amp_imag", -0.162 * (-_mD02inv))
-                                   : new Variable("f2_1270_amp_imag", -0.162 * (-_mD02inv), 0.1, 0, 0),
-                           new Variable("f2_1270_mass", 1.2754, 0.01, 1.0, 1.5),
-                           new Variable("f2_1270_width", 0.1851, 0.01, 0.01, 0.4),
-                           2,
-                           PAIR_23);
+                              fixAmps ? new Variable("f2_1270_amp_real", -1.027 * (-_mD02inv))
+                                      : new Variable("f2_1270_amp_real", -1.027 * (-_mD02inv), 0.001, 0, 0),
+                              fixAmps ? new Variable("f2_1270_amp_imag", -0.162 * (-_mD02inv))
+                                      : new Variable("f2_1270_amp_imag", -0.162 * (-_mD02inv), 0.1, 0, 0),
+                              new Variable("f2_1270_mass", 1.2754, 0.01, 1.0, 1.5),
+                              new Variable("f2_1270_width", 0.1851, 0.01, 0.01, 0.4),
+                              2,
+                              PAIR_23);
 
     ResonancePdf *f0_600 = new Resonances::RBW("f0_600",
-                                            fixAmps ? new Variable("f0_600_amp_real", 0.068 * (-_mD02))
-                                                    : new Variable("f0_600_amp_real", 0.068 * (-_mD02), 0.001, 0, 0),
-                                            fixAmps ? new Variable("f0_600_amp_imag", 0.010 * (-_mD02))
-                                                    : new Variable("f0_600_amp_imag", 0.010 * (-_mD02), 0.1, 0, 0),
-                                            new Variable("f0_600_mass", 0.500, 0.01, 0.3, 0.7),
-                                            new Variable("f0_600_width", 0.400, 0.01, 0.2, 0.6),
-                                            0,
-                                            PAIR_23);
+                                               fixAmps ? new Variable("f0_600_amp_real", 0.068 * (-_mD02))
+                                                       : new Variable("f0_600_amp_real", 0.068 * (-_mD02), 0.001, 0, 0),
+                                               fixAmps ? new Variable("f0_600_amp_imag", 0.010 * (-_mD02))
+                                                       : new Variable("f0_600_amp_imag", 0.010 * (-_mD02), 0.1, 0, 0),
+                                               new Variable("f0_600_mass", 0.500, 0.01, 0.3, 0.7),
+                                               new Variable("f0_600_width", 0.400, 0.01, 0.2, 0.6),
+                                               0,
+                                               PAIR_23);
 
     ResonancePdf *nonr = new Resonances::NonRes("nonr",
-                                          fixAmps ? new Variable("nonr_amp_real", 0.5595 * (-1))
-                                                  : new Variable("nonr_amp_real", 0.5595 * (-1), 0.001, 0, 0),
-                                          fixAmps ? new Variable("nonr_amp_imag", -0.108761 * (-1))
-                                                  : new Variable("nonr_amp_imag", -0.108761 * (-1), 0.1, 0, 0));
+                                                fixAmps ? new Variable("nonr_amp_real", 0.5595 * (-1))
+                                                        : new Variable("nonr_amp_real", 0.5595 * (-1), 0.001, 0, 0),
+                                                fixAmps ? new Variable("nonr_amp_imag", -0.108761 * (-1))
+                                                        : new Variable("nonr_amp_imag", -0.108761 * (-1), 0.1, 0, 0));
 
     dtop0pp->resonances.push_back(nonr);
     dtop0pp->resonances.push_back(rhop);

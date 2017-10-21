@@ -26,7 +26,7 @@ void init_ResonancePdf(py::module &m) {
              "cyc"_a,
              "symmDP"_a = false);
 
-    py::class_<Resonances::GS, ResonancePdf>(m, "GS").def(
+    py::class_<Resonances::GS, ResonancePdf>(m_ls, "GS").def(
         py::init<std::string, Variable *, Variable *, Variable *, Variable *, unsigned int, unsigned int, bool>(),
         "Constructor for regular Gounaris-Sakurai",
         "name"_a,
@@ -38,7 +38,7 @@ void init_ResonancePdf(py::module &m) {
         "cyc"_a,
         "symmDP"_a = false);
 
-    py::class_<Resonances::LASS, ResonancePdf>(m, "LASS").def(
+    py::class_<Resonances::LASS, ResonancePdf>(m_ls, "LASS").def(
         py::init<std::string, Variable *, Variable *, Variable *, Variable *, unsigned int, unsigned int, bool>(),
         "Constructor for LASS",
         "name"_a,
@@ -50,10 +50,10 @@ void init_ResonancePdf(py::module &m) {
         "cyc"_a,
         "symmDP"_a = false);
 
-    py::class_<Resonances::NonRes, ResonancePdf>(m, "NonRes")
+    py::class_<Resonances::NonRes, ResonancePdf>(m_ls, "NonRes")
         .def(py::init<std::string, Variable *, Variable *>(), "Constructor for NonResonant", "name"_a, "ar"_a, "ai"_a);
 
-    py::class_<Resonances::Gauss, ResonancePdf>(m, "Gauss")
+    py::class_<Resonances::Gauss, ResonancePdf>(m_ls, "Gauss")
         .def(py::init<std::string, Variable *, Variable *, Variable *, Variable *, unsigned int>(),
              "Constructor for regular GAUSS",
              "name"_a,
@@ -63,7 +63,7 @@ void init_ResonancePdf(py::module &m) {
              "sigma"_a,
              "cyc"_a);
 
-    py::class_<Resonances::FLATTE, ResonancePdf>(m, "FLATTE")
+    py::class_<Resonances::FLATTE, ResonancePdf>(m_ls, "FLATTE")
         .def(py::init<std::string, Variable *, Variable *, Variable *, Variable *, Variable *, unsigned int, bool>(),
              "Constructor for regular FLATTE",
              "name"_a,
@@ -75,7 +75,7 @@ void init_ResonancePdf(py::module &m) {
              "cyc"_a,
              "symmDP"_a);
 
-    py::class_<Resonances::Spline, ResonancePdf>(m, "Spline")
+    py::class_<Resonances::Spline, ResonancePdf>(m_ls, "Spline")
         .def(py::init<std::string,
                       Variable *,
                       Variable *,

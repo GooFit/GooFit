@@ -36,51 +36,52 @@ def cpuGetM23(massPZ,massPM):
 def getToyData(toyFileName):
     print("getToyData")
     data = UnbinnedDataSet(m12,m13,eventNumber)
-    print("yay")
+
     buffer = ""
-    print("yay0")
+
     with open(toyFileName) as openfileobject:
-        print("yay1")
         for reader in openfileobject:
-            reader >> buffer
+
+            buffer = reader
 
             if buffer == "====":
                 break
 
             print(buffer)
 
-    print("yay")
     dummy = 0
 
     with open(toyFileName) as openfileobject:
+        print(openfileobject)
         for reader in openfileobject:
-            reader >> dummy
-            reader >> dummy # m23, m(pi+ pi-), called m12 in processToyRoot convention.
-            reader >> m12  # Already swapped according to D* charge. m12 = m(pi+pi0)
-            reader >> m13
+             dummy = reader
+             dummy = reader # m23, m(pi+ pi-), called m12 in processToyRoot convention.
+             m12 = reader  # Already swapped according to D* charge. m12 = m(pi+pi0)
+             m13 = reader
 
             # Errors on Dalitz variables
-            reader >> dummy
-            reader >> dummy
-            reader >> dummy
+             dummy = reader
+             dummy = reader
+             dummy = reader
 
-            reader >> dummy # Decay time
-            reader >> dummy # sigma_t
+             dummy = reader # Decay time
+             dummy = reader # sigma_t
 
-            reader >> dummy # Md0
-            reader >> dummy # deltaM
-            reader >> dummy # ProbSig
-            reader >> dummy # Dst charge
-            reader >> dummy # Run
-            reader >> dummy # Event
-            reader >> dummy # Signal and four bkg fractions.
-            reader >> dummy
-            reader >> dummy
-            reader >> dummy
-            reader >> dummy
+             dummy = reader # Md0
+             dummy = reader # deltaM
+             dummy = reader # ProbSig
+             dummy = reader # Dst charge
+             dummy = reader # Run
+             dummy = reader # Event
+             dummy = reader # Signal and four bkg fractions.
+             dummy = reader
+             dummy = reader
+             dummy = reader
+             dummy = reader
 
-            eventNumber.setValue(data.getNumEvents())
-            data.addEvent()
+             eventNumber.setValue(data.getNumEvents())
+             data.addEvent()
+
 
 
 
@@ -268,9 +269,8 @@ def makeSignalPdf(eff = 0):
         coefficients = (constantOne,)
         eff = PolynomialPdf("constantEff", observables, coefficients, offsets, 0)
 
-
-    return DalitzPlotPdf("signalPDF", m12, m13, eventNumber, dtop0pp, eff)
-
+    d = DalitzPlotPdf("signalPDF", m12, m13, eventNumber, dtop0pp, eff)
+    return d
 
 def runToyFit(toyFileName):
     print("runToyFit")
@@ -280,19 +280,21 @@ def runToyFit(toyFileName):
     m13.numbins = 240
     eventNumber = CountingVariable("eventNumber", 0, INT_MAX)
     getToyData(toyFileName)
-
     signal = makeSignalPdf()
     signal.setData(data)
     signal.setDataSize(data.getNumEvents())
+    print("yay")
     datapdf = FitManager(signal)
+
     datapdf.fit()
+
     return datapdf
 
 
 def main():
     print("main")
     filename = "dalitz_toyMC_000.txt"
-    f= open(filename,"w+")
+    f= open(filename,"r")
     return runToyFit(filename)
 
 main()

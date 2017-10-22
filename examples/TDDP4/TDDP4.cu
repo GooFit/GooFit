@@ -199,7 +199,7 @@ int main(int argc, char **argv) {
     tree->Branch("Piplus_pdg", &Piplus_pdg, "Piplus_pdg/I");
 
     for(int k = 0; k < trials; ++k) {
-        int numEvents = 800000;
+        int numEvents = 2;
         dp.setGenerationOffset(k * numEvents);
 
         mcbooster::ParticlesSet_h particles; // typedef for std::vector<Particles_h *>

@@ -7,10 +7,10 @@ import numpy as np
 import math
 
 
-decayTime  = None
-constaCoef = 0
-linearCoef = 0
-secondCoef = 0
+decayTime  = Variable("decayTime",0)
+constaCoef = Variable("constaCoef",0)
+linearCoef = Variable("linearCoef",0)
+secondCoef = Variable("secondCoef",0)
 
 def integralExpCon(lo, hi):
     return(np.exp(-lo) - np.exp(-hi))
@@ -58,7 +58,9 @@ def fitRatio(rsEvts, wsEvts, plotName = ""):
     ratioData = BinnedDataSet(decayTime)
 
     i=0
-    while i < wsEvts.size():
+    print("hi")
+    while i < wsEvts.size:
+
         ratio = wsEvts[i]
 
         if 0 == rsEvts[i]:
@@ -79,77 +81,29 @@ def fitRatio(rsEvts, wsEvts, plotName = ""):
         ratioHist.SetBinError(i + 1, error)
         i+=1
 
-
-    if 0 == constaCoef:
-        constaCoef = Variable("constaCoef", 0.03, 0.01, -1, 1)
-        constaCoef.setValue(0.03)
-        constaCoef.setError(0.01)
-        linearCoef = Variable("linearCoef", 0, 0.01, -1, 1)
-        linearCoef.setValue(0.00)
-        linearCoef.setError(0.01)
-        secondCoef = Variable("secondCoef", 0, 0.01, -1, 1)
-        secondCoef.setValue(0.00)
-        secondCoef.setError(0.01)
+    constaCoef = Variable("constaCoef", 0.03, 0.01, -1, 1)
+    constaCoef.value = 0.03
+    constaCoef.error=0.01
+    linearCoef = Variable("linearCoef", 0, 0.01, -1, 1)
+    linearCoef.value=0.00
+    linearCoef.error=0.01
+    secondCoef = Variable("secondCoef", 0, 0.01, -1, 1)
+    secondCoef.value=0.00
+    secondCoef.error=0.01
 
     weights = (constaCoef,linearCoef,secondCoef)
 
     poly = PolynomialPdf("poly", decayTime, weights)
-    poly.setFitControl = BinnedErrorFit()
-    poly.setData = ratioData
-    datapdf = FitManager(poly)
-
-    gettimeofday(startTime, None)
-    datapdf.fit()
-    gettimeofday(stopTime, None)
+    poly.setFitControl = BinnedErrorFit()#NEED TO BE BINDED
+    poly.setData(ratioData)
+    fitter = FitManager(poly)
+    fitter.fit()
 
     values = poly.evaluateAtPoints(decayTime)
     pdfHist = TH1D("pdfHist", "", decayTime.numbins, decayTime.lowerlimit, decayTime.upperlimit)
 
-    while i < values.size():
-        pdfHist.SetBinContent(i + 1, values[i])
-        i+=1
-
-    '''
-    ratioHist.SetMarkerStyle(8)
-    ratioHist.SetMarkerSize(0.5)
-    ratioHist.SetStats(false)
-    ratioHist.Draw("p")
-
-    char strbuffer[1000]
-    sprintf(
-        strbuffer, "Constant [10^{-2}] : %.3f #pm %.3f", 1e2 * constaCoef.getValue(), constaCoef.getError() * 1e2)
-    TLatex res1(0.14, 0.83, strbuffer)
-    res1.SetNDC(true)
-    sprintf(
-        strbuffer, "Linear [10^{-4}]   : %.3f #pm %.3f", 1e4 * linearCoef.getValue(), linearCoef.getError() * 1e4)
-    TLatex res2(0.14, 0.73, strbuffer)
-    res2.SetNDC(true)
-    sprintf(
-        strbuffer, "Quadratic [10^{-6}]: %.3f #pm %.3f", 1e6 * secondCoef.getValue(), secondCoef.getError() * 1e6)
-    TLatex res3(0.14, 0.63, strbuffer)
-    res3.SetNDC(true)
-
-    res1.Draw()
-    res2.Draw()
-    res3.Draw()
-
-    pdfHist.SetLineColor(kBlue)
-    pdfHist.SetLineWidth(3)
-    pdfHist.SetStats(false)
-    pdfHist.Draw("lsame")
-    foo.SaveAs(plotName.c_str())
-
-    print("Polynomial function: ",poly.getCoefficient(2)," * t^2 + ",poly.getCoefficient(1)," * t + ",poly.getCoefficient(0))
-
-    delete ratioHist
-    delete ratioData
-    delete poly
-    '''
 
     return datapdf
-
-
-
 
 def cpvFitFcn(npar, gin, fun, fp, iflag):
     print(cpvFitFcn)
@@ -198,17 +152,6 @@ def fitRatioCPU(rsEvts, wsEvts):
         ratioHist.SetBinContent(i + 1, ratio)
         ratioHist.SetBinError(i + 1, error)
         i+=1
-
-
-    minuit = TMinuit(3)
-    minuit.DefineParameter(0, "constaCoef", 0.03, 0.01, -1, 1)
-    minuit.DefineParameter(1, "linearCoef", 0, 0.01, -1, 1)
-    minuit.DefineParameter(2, "secondCoef", 0, 0.01, -1, 1)
-    minuit.SetFCN(cpvFitFcn)
-
-    gettimeofday(startTime, None)
-    minuit.Migrad()
-    gettimeofday(stopTime, None)
 
 def main():
     print("main")

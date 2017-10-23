@@ -187,21 +187,25 @@ endif()
 
 option(GOOFIT_SEPARATE_COMP "Enable separate compilation of PDFs" ON)
 
+# This is the common library that holds definitions, etc.
+add_library(GooFit_Common INTERFACE)
+add_library(GooFit::Common ALIAS GooFit_Common)
+
 if(GOOFIT_SEPARATE_COMP)
-    add_definitions("-DSEPARABLE")
+    target_compile_definitions(GooFit_Common INTERFACE "-DSEPARABLE")
 endif()
 
-add_definitions("-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_${GOOFIT_DEVICE}")
-add_definitions("-DMCBOOSTER_BACKEND=${GOOFIT_DEVICE}")
-add_definitions("-DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_${GOOFIT_HOST}")
+target_compile_definitions(GooFit_Common INTERFACE "-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_${GOOFIT_DEVICE}")
+target_compile_definitions(GooFit_Common INTERFACE "-DMCBOOSTER_BACKEND=${GOOFIT_DEVICE}")
+target_compile_definitions(GooFit_Common INTERFACE "-DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_${GOOFIT_HOST}")
 
 option(GOOFIT_DEBUG "Print debugging messages" OFF)
 option(GOOFIT_TRACE "Print messages to trace the behavior of GooFit" OFF)
 if(GOOFIT_DEBUG)
-    add_definitions("-DGOOFIT_DEBUG_FLAG=1")
+    target_compile_definitions(GooFit_Common INTERFACE "-DGOOFIT_DEBUG_FLAG=1")
 endif()
 if(GOOFIT_TRACE)
-    add_definitions("-DGOOFIT_TRACE_FLAG=1")
+    target_compile_definitions(GooFit_Common INTERFACE "-DGOOFIT_TRACE_FLAG=1")
 endif()
 
 # Adding backtrace (optional)
@@ -219,7 +223,9 @@ configure_file(
     "${PROJECT_BINARY_DIR}/include/goofit/detail/Backtrace.h"
 )
 
+
 set(GOOFIT_ARCH Auto CACHE STRING "The GPU Archetecture, can be Auto, All, Common, a number, or a name")
+
 
 option(GOOFIT_MPI "Turn on MPI for goofit" OFF)
 
@@ -227,11 +233,18 @@ option(GOOFIT_MPI "Turn on MPI for goofit" OFF)
 if(GOOFIT_MPI)
     find_package(MPI REQUIRED)
 
-    add_definitions("-DGOOFIT_MPI")
-    add_compile_options(${MPI_CXX_COMPILE_FLAGS})
-    include_directories(${MPI_CXX_INCLUDE_PATH})
-    list(APPEND CMAKE_EXE_LINKER_FLAGS ${MPI_CXX_LINK_FLAGS})
-    link_libraries(${MPI_CXX_LIBRARIES})
+    # Added in CMake 3.9
+    if(NOT TARGET MPI::MPI_CXX)
+        add_library(MPI_MPI_CXX INTERFACE)
+        add_library(MPI::MPI_CXX ALIAS MPI_MPI_CXX)
+        target_compile_definitions(MPI::MPI_CXX INTERFACE "-DGOOFIT_MPI")
+        target_add_compile_options(MPI::MPI_CXX INTERFACE ${MPI_CXX_COMPILE_FLAGS})
+        target_include_directories(MPI::MPI_CXX INTERFACE ${MPI_CXX_INCLUDE_PATH})
+        list(APPEND CMAKE_EXE_LINKER_FLAGS ${MPI_CXX_LINK_FLAGS})
+        target_link_libraries(MPI::MPI_CXX INTERFACE ${MPI_CXX_LIBRARIES})
+    endif()
+
+    target_link_libraries(GooFit_Common INTERFACE MPI::MPL_CXX)
 
     message(STATUS "MPI found. Use the following to run your program")
     message(STATUS "${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} PROCS ${MPIEXEC_PREFLAGS} EXECUTABLE ${MPIEXEC_POSTFLAGS} ARGS")
@@ -255,6 +268,9 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
     else()
         set(CUDA_SEPARABLE_COMPILATION OFF)
     endif()
+    
+    # Only needed to make FindCUDA provide nice flags
+    set(CUDA_LINK_LIBRARIES_KEYWORD PUBLIC)
 
     cuda_select_nvcc_arch_flags(ARCH_FLAGS ${GOOFIT_ARCH})
     list(APPEND CUDA_NVCC_FLAGS ${ARCH_FLAGS})
@@ -262,40 +278,40 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
 endif()
 
 set(GOOFIT_CFLAGS "$<$<CONFIG:Release>:-march=native>$<$<CONFIG:RelWithDebInfo>:-march=native>" CACHE STRING "compiler flags")
-add_compile_options("${GOOFIT_CFLAGS}")
+target_compile_options(GooFit_Common INTERFACE "${GOOFIT_CFLAGS}")
 
 set(THRUST_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/extern/thrust")
 find_package(Thrust 1.8 REQUIRED)
-include_directories(SYSTEM "${THRUST_INCLUDE_DIRS}")
-
-# This library provides an interface to openMP, etc for all libraries.
-add_library(goofit_mt INTERFACE)
+target_include_directories(GooFit_Common INTERFACE SYSTEM "${THRUST_INCLUDE_DIRS}")
 
 if(GOOFIT_DEVICE STREQUAL OMP OR GOOFIT_HOST STREQUAL OMP OR GOOFIT_DEVICE STREQUAL TBB OR GOOFIT_HOST STREQUAL TBB)
     find_package(OpenMP REQUIRED)
-    if(CMAKE_VERSION VERSION_LESS 3.9)
+    if(NOT TARGET OpenMP::OpenMP_CXX)
         add_library(OpenMP_TARGET INTERFACE)
+        add_library(OpenMP::OpenMP_CXX ALIAS OpenMP_TARGET)
         target_compile_options(OpenMP_TARGET INTERFACE ${OpenMP_CXX_FLAGS})
         find_package(Threads REQUIRED)
         target_link_libraries(OpenMP_TARGET INTERFACE Threads::Threads)
         target_link_libraries(OpenMP_TARGET INTERFACE ${OpenMP_CXX_FLAGS})
-        add_library(OpenMP::OpenMP_CXX ALIAS OpenMP_TARGET)
     endif()
 
-    target_link_libraries(goofit_mt INTERFACE OpenMP::OpenMP_CXX)
+    target_link_libraries(GooFit_Common INTERFACE OpenMP::OpenMP_CXX)
 endif()
 
 if(GOOFIT_DEVICE STREQUAL TBB OR GOOFIT_HOST STREQUAL TBB)
     find_package(TBB COMPONENTS tbbmalloc tbbmalloc_proxy tbb_preview)
     target_include_directories(goofit_mt INTERFACE SYSTEM "${TBB_INCLUDE_DIRS}")
-    target_link_libraries(goofit_mt INTERFACE ${TBB_LIBRARIES})
+    target_link_libraries(GooFit_Common INTERFACE ${TBB_LIBRARIES})
 endif()
+
 
 # Include directories are not picked up by FindCUDA
 find_package(ROOT 6 COMPONENTS Minuit)
 if(ROOT_FOUND)
-    add_definitions("-DROOT_FOUND")
+    target_compile_definitions(GooFit_Common INTERFACE "-DROOT_FOUND")
+    target_link_libraries(GooFit_Common INTERFACE ROOT::ROOT ROOT::Minuit)
 endif()
+
 # If either ROOT not found or Minuit2 not included
 if(NOT ROOT_Minuit2_LIBRARY)
     add_subdirectory("extern/Minuit2")
@@ -303,12 +319,16 @@ if(NOT ROOT_Minuit2_LIBRARY)
     set_target_properties(Math PROPERTIES FOLDER extern)
     add_library(ROOT::Minuit2 ALIAS Minuit2)
 endif()
+target_link_libraries(GooFit_Common INTERFACE ROOT::Minuit2)
 
 # Adding simple libraries
 add_subdirectory("extern/CLI11")
 mark_as_advanced(CLI_EXAMPLES CLI_SINGLE_FILE CLI_SINGLE_FILE_TESTS CLI_TESTING)
+target_link_libraries(GooFit_Common INTERFACE CLI11)
+
 add_subdirectory("extern/FeatureDetector")
 set_target_properties(FeatureDetector PROPERTIES FOLDER extern)
+target_link_libraries(GooFit_Common INTERFACE FeatureDetector)
 
 ## format (warning suppesion only needed until next release)
 if(NOT DEFINED CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
@@ -320,14 +340,17 @@ else()
 endif()
 set_target_properties(fmt PROPERTIES FOLDER extern)
 mark_as_advanced(FMT_CPPFORMAT FMT_DOC FMT_INSTALL FMT_PEDANTIC FMT_TEST FMT_USE_CPP11)
+target_link_libraries(GooFit_Common INTERFACE fmt)
 
 
 add_library(rang INTERFACE)
-target_include_directories(rang INTERFACE "${PROJECT_SOURCE_DIR}/extern/rang/include")
+target_include_directories(rang INTERFACE SYSTEM "${PROJECT_SOURCE_DIR}/extern/rang/include")
+target_link_libraries(GooFit_Common INTERFACE rang)
 
 
 add_library(Eigen INTERFACE)
-target_include_directories(Eigen INTERFACE "${PROJECT_SOURCE_DIR}/extern/Eigen")
+target_include_directories(Eigen INTERFACE SYSTEM "${PROJECT_SOURCE_DIR}/extern/Eigen")
+target_link_libraries(GooFit_Common INTERFACE Eigen)
 
 set(GOOFIT_ROOT_FOUND ROOT_FOUND)
 set(GOOFIT_ARCH_FLAGS ARCH_FLAGS)
@@ -371,6 +394,7 @@ function(goofit_add_library GNAME)
                 set_source_files_properties(${N} PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
             endif()
         endforeach()
+
         cuda_add_library(${GNAME} ${GOOFIT_LIB_TYPE} ${GOOFIT_LIB_UNPARSED_ARGUMENTS} OPTIONS "-Xcompiler=-fPIC")
     else()
         foreach(N ${GOOFIT_LIB_UNPARSED_ARGUMENTS})
@@ -383,18 +407,12 @@ function(goofit_add_library GNAME)
         add_sanitizers(${GNAME})
         target_compile_options(${GNAME} PUBLIC -x c++)
     endif()
-    target_link_libraries(${GNAME} rang CLI11 fmt goofit_mt Eigen)
+    target_link_libraries(${GNAME} PUBLIC GooFit::Common)
     if(NOT ${GNAME} STREQUAL PDFs)
         set_target_properties(${GNAME} PROPERTIES FOLDER core)
     endif()
 
     set_target_properties(${GNAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION ${SUPPORTS_IPO})
-
-    if(ROOT_FOUND)
-        target_link_libraries(${GNAME} ROOT::ROOT)
-    else()
-        target_link_libraries(${GNAME} Minuit2)
-    endif()
 
     source_group("Source Files" REGULAR_EXPRESSION ".*\\.c[uc]")
     source_group("Basic\\Header Files" REGULAR_EXPRESSION ".*PDFs/basic/.*\\.h")
@@ -415,7 +433,7 @@ endfunction()
 function(goofit_add_executable NAMEEXE)
     if(GOOFIT_DEVICE STREQUAL CUDA)
         cuda_add_executable(${NAMEEXE} ${ARGN})
-        link_libraries(${CUDA_LIBRARIES})
+        target_link_libraries(${NAMEEXE} PUBLIC ${CUDA_LIBRARIES})
     else()
         foreach(N ${ARGN})
             get_filename_component(NEXT ${N} EXT)
@@ -426,7 +444,7 @@ function(goofit_add_executable NAMEEXE)
         add_executable(${NAMEEXE} ${ARGN})
         add_sanitizers(${NAMEEXE})
     endif()
-    target_link_libraries(${NAMEEXE} goofit_lib)
+    target_link_libraries(${NAMEEXE} PUBLIC GooFit::GooFit)
     target_compile_options(${NAMEEXE} PUBLIC -x c++)
     set_target_properties(${NAMEEXE} PROPERTIES FOLDER projects)
     source_group("Source Files" REGULAR_EXPRESSION ".*\\.c[uc]")
@@ -495,13 +513,8 @@ include_directories(${PROJECT_SOURCE_DIR}/extern/generics)
 add_subdirectory(src)
 
 add_library(goofit_lib INTERFACE)
-target_link_libraries(goofit_lib INTERFACE goofit_base PDFs rang CLI11 FeatureDetector)
-
-if(ROOT_FOUND)
-    target_link_libraries(goofit_lib INTERFACE ROOT::ROOT ROOT::Minuit ROOT::Minuit2)
-else()
-    target_link_libraries(goofit_lib INTERFACE Minuit2)
-endif()
+target_link_libraries(goofit_lib INTERFACE goofit_base PDFs GooFit::Common)
+add_library(GooFit::GooFit ALIAS goofit_lib)
 
 
 option(GOOFIT_EXAMPLES "Build the example programs" ON)

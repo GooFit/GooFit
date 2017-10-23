@@ -22,7 +22,7 @@ set_target_properties(gmock_main PROPERTIES FOLDER extern)
 
 macro(goofit_add_test TESTNAME)
     goofit_add_executable(${TESTNAME} ${TESTNAME}.cu)
-    target_link_libraries(${TESTNAME} gtest gmock gtest_main)
+    target_link_libraries(${TESTNAME} PUBLIC gtest gmock gtest_main)
     add_test(${TESTNAME} ${TESTNAME})
     set_target_properties(${TESTNAME} PROPERTIES FOLDER tests)
 endmacro()

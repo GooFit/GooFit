@@ -47,6 +47,7 @@ endif()
 if(NOT EXISTS "${PROJECT_SOURCE_DIR}/cmake/FindThrust.cmake"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/CLI11/CMakeLists.txt"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/Eigen/CMakeLists.txt"
+OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/cuda_support/README.md"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/FeatureDetector/CMakeLists.txt"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/MCBooster/CMakeLists.txt"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/thrust/README.md")
@@ -55,9 +56,9 @@ endif()
 
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
-# Add support for better CUDA behaviour in CMake < 3.7
-if(CMAKE_VERSION VERSION_LESS 3.7)
-    set(CMAKE_MODULE_PATH  "${PROJECT_SOURCE_DIR}/extern/support_old_cmake" ${CMAKE_MODULE_PATH})
+# Add support for better CUDA behaviour in CMake < 3.9
+if(CMAKE_VERSION VERSION_LESS 3.9)
+    set(CMAKE_MODULE_PATH  "${PROJECT_SOURCE_DIR}/extern/cuda_support" ${CMAKE_MODULE_PATH})
 endif()
 
 if(CMAKE_VERSION VERSION_GREATER 3.6)
@@ -258,10 +259,9 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
     cuda_select_nvcc_arch_flags(ARCH_FLAGS ${GOOFIT_ARCH})
     list(APPEND CUDA_NVCC_FLAGS ${ARCH_FLAGS})
     message(STATUS "Compiling for GPU arch: ${ARCH_FLAGS}")
-
 endif()
 
-    set(GOOFIT_CFLAGS "$<$<CONFIG:Release>:-march=native>$<$<CONFIG:RelWithDebInfo>:-march=native>" CACHE STRING "compiler flags")
+set(GOOFIT_CFLAGS "$<$<CONFIG:Release>:-march=native>$<$<CONFIG:RelWithDebInfo>:-march=native>" CACHE STRING "compiler flags")
 add_compile_options("${GOOFIT_CFLAGS}")
 
 set(THRUST_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/extern/thrust")

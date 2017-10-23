@@ -37,3 +37,6 @@
 [submodule "extern/Eigen"]
 	path = extern/Eigen
 	url = ../../RLovelett/Eigen.git
+[submodule "extern/cuda_support"]
+	path = extern/cuda_support
+	url = git@github.com:CLIUtils/cuda_support.git

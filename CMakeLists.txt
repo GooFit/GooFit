@@ -93,8 +93,6 @@ configure_file (
     "${PROJECT_BINARY_DIR}/include/goofit/detail/ThrustOverrideConfig.h"
 )
 
-include_directories("${PROJECT_BINARY_DIR}/include")
-
 ### C++ settings ###
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -191,6 +189,9 @@ option(GOOFIT_SEPARATE_COMP "Enable separate compilation of PDFs" ON)
 add_library(GooFit_Common INTERFACE)
 add_library(GooFit::Common ALIAS GooFit_Common)
 
+target_include_directories(GooFit_Common INTERFACE include)
+target_include_directories(GooFit_Common INTERFACE "${PROJECT_BINARY_DIR}/include")
+
 if(GOOFIT_SEPARATE_COMP)
     target_compile_definitions(GooFit_Common INTERFACE "-DSEPARABLE")
 endif()
@@ -275,14 +276,20 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
     cuda_select_nvcc_arch_flags(ARCH_FLAGS ${GOOFIT_ARCH})
     list(APPEND CUDA_NVCC_FLAGS ${ARCH_FLAGS})
     message(STATUS "Compiling for GPU arch: ${ARCH_FLAGS}")
+
+    set(THRUST_INCLUDE_DIR "${CUDA_TOOLKIT_ROOT_DIR}/include")
 endif()
 
 set(GOOFIT_CFLAGS "$<$<CONFIG:Release>:-march=native>$<$<CONFIG:RelWithDebInfo>:-march=native>" CACHE STRING "compiler flags")
 target_compile_options(GooFit_Common INTERFACE "${GOOFIT_CFLAGS}")
 
-set(THRUST_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/extern/thrust")
-find_package(Thrust 1.8 REQUIRED)
-target_include_directories(GooFit_Common INTERFACE SYSTEM "${THRUST_INCLUDE_DIRS}")
+find_package(Thrust 1.8 QUIET)
+if(NOT THRUST_FOUND)
+    set(THRUST_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/extern/thrust")
+    find_package(Thrust 1.8 REQUIRED)
+endif()
+target_include_directories(GooFit_Common SYSTEM INTERFACE "${THRUST_INCLUDE_DIRS}")
+message(STATUS "Found Thrust ${THRUST_VERSION} at ${THRUST_INCLUDE_DIRS}")
 
 if(GOOFIT_DEVICE STREQUAL OMP OR GOOFIT_HOST STREQUAL OMP OR GOOFIT_DEVICE STREQUAL TBB OR GOOFIT_HOST STREQUAL TBB)
     find_package(OpenMP REQUIRED)
@@ -300,7 +307,7 @@ endif()
 
 if(GOOFIT_DEVICE STREQUAL TBB OR GOOFIT_HOST STREQUAL TBB)
     find_package(TBB COMPONENTS tbbmalloc tbbmalloc_proxy tbb_preview)
-    target_include_directories(goofit_mt INTERFACE SYSTEM "${TBB_INCLUDE_DIRS}")
+    target_include_directories(goofit_mt SYSTEM INTERFACE "${TBB_INCLUDE_DIRS}")
     target_link_libraries(GooFit_Common INTERFACE ${TBB_LIBRARIES})
 endif()
 
@@ -344,12 +351,12 @@ target_link_libraries(GooFit_Common INTERFACE fmt)
 
 
 add_library(rang INTERFACE)
-target_include_directories(rang INTERFACE SYSTEM "${PROJECT_SOURCE_DIR}/extern/rang/include")
+target_include_directories(rang SYSTEM INTERFACE "${PROJECT_SOURCE_DIR}/extern/rang/include")
 target_link_libraries(GooFit_Common INTERFACE rang)
 
 
 add_library(Eigen INTERFACE)
-target_include_directories(Eigen INTERFACE SYSTEM "${PROJECT_SOURCE_DIR}/extern/Eigen")
+target_include_directories(Eigen SYSTEM INTERFACE "${PROJECT_SOURCE_DIR}/extern/Eigen")
 target_link_libraries(GooFit_Common INTERFACE Eigen)
 
 set(GOOFIT_ROOT_FOUND ROOT_FOUND)
@@ -506,9 +513,8 @@ macro(goofit_add_pdf)
     endforeach()
 endmacro()
 
-include_directories(${PROJECT_SOURCE_DIR}/include)
-include_directories(${PROJECT_SOURCE_DIR}/extern/MCBooster)
-include_directories(${PROJECT_SOURCE_DIR}/extern/generics)
+target_include_directories(GooFit_Common INTERFACE extern/MCBooster)
+target_include_directories(GooFit_Common INTERFACE extern/generics)
 
 add_subdirectory(src)
 

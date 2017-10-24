@@ -10,7 +10,7 @@ using namespace pybind11::literals;
 void init_ResonancePdf(py::module &m) {
     m.attr("MAXNKNOBS") = MAXNKNOBS;
 
-    auto m_ls = m.def_submodule("Lineshapes");
+    auto m_ls = m.def_submodule("Resonances");
 
     py::class_<ResonancePdf, GooPdf>(m, "ResonancePdf");
 
@@ -26,29 +26,29 @@ void init_ResonancePdf(py::module &m) {
              "cyc"_a,
              "symmDP"_a = false);
 
-    py::class_<Resonances::GS, ResonancePdf>(m_ls, "GS").def(
-        py::init<std::string, Variable *, Variable *, Variable *, Variable *, unsigned int, unsigned int, bool>(),
-        "Constructor for regular Gounaris-Sakurai",
-        "name"_a,
-        "ar"_a,
-        "ai"_a,
-        "mass"_a,
-        "width"_a,
-        "sp"_a,
-        "cyc"_a,
-        "symmDP"_a = false);
+    py::class_<Resonances::GS, ResonancePdf>(m_ls, "GS")
+        .def(py::init<std::string, Variable *, Variable *, Variable *, Variable *, unsigned int, unsigned int, bool>(),
+             "Constructor for regular Gounaris-Sakurai",
+             "name"_a,
+             "ar"_a,
+             "ai"_a,
+             "mass"_a,
+             "width"_a,
+             "sp"_a,
+             "cyc"_a,
+             "symmDP"_a = false);
 
-    py::class_<Resonances::LASS, ResonancePdf>(m_ls, "LASS").def(
-        py::init<std::string, Variable *, Variable *, Variable *, Variable *, unsigned int, unsigned int, bool>(),
-        "Constructor for LASS",
-        "name"_a,
-        "ar"_a,
-        "ai"_a,
-        "mass"_a,
-        "width"_a,
-        "sp"_a,
-        "cyc"_a,
-        "symmDP"_a = false);
+    py::class_<Resonances::LASS, ResonancePdf>(m_ls, "LASS")
+        .def(py::init<std::string, Variable *, Variable *, Variable *, Variable *, unsigned int, unsigned int, bool>(),
+             "Constructor for LASS",
+             "name"_a,
+             "ar"_a,
+             "ai"_a,
+             "mass"_a,
+             "width"_a,
+             "sp"_a,
+             "cyc"_a,
+             "symmDP"_a = false);
 
     py::class_<Resonances::NonRes, ResonancePdf>(m_ls, "NonRes")
         .def(py::init<std::string, Variable *, Variable *>(), "Constructor for NonResonant", "name"_a, "ar"_a, "ai"_a);

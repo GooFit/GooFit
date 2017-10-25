@@ -252,6 +252,12 @@ if(GOOFIT_MPI)
     message(STATUS "where PROCS is the number of processors on which to execute the program, EXECUTABLE is the MPI program, and ARGS are the arguments to pass to the MPI program.")
 endif()
 
+if(CMAKE_VERSION VERSION_LESS 3.8)
+    set(NEW_CUDA OFF)
+else()
+    set(NEW_CUDA ON)
+endif()
+
 if(GOOFIT_DEVICE STREQUAL CUDA)
     if(NOT CUDA_FOUND)
         find_package(CUDA 7.0 REQUIRED)
@@ -261,31 +267,71 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
     if(NOT CUDA_VERSION VERSION_LESS 9.0)
         message(WARNING "You have a version of CUDA that is currently not supported by Eigen, build will fail")
     endif()
-
-    if(GOOFIT_MPI)
-        list(APPEND CUDA_NVCC_FLAGS ${MPI_CXX_COMPILE_FLAGS})
-    endif()
-
-    list(APPEND CUDA_NVCC_FLAGS -std=c++11 --expt-relaxed-constexpr)
-
-    if(GOOFIT_SEPARATE_COMP)
-        set(CUDA_SEPARABLE_COMPILATION ON)
-    else()
-        set(CUDA_SEPARABLE_COMPILATION OFF)
-    endif()
     
-    # Only needed to make FindCUDA provide nice flags
-    set(CUDA_LINK_LIBRARIES_KEYWORD PUBLIC)
+    # The old FindCUDA method
+    if(NOT NEW_CUDA)
+        if(GOOFIT_MPI)
+            list(APPEND CUDA_NVCC_FLAGS ${MPI_CXX_COMPILE_FLAGS})
+        endif()
 
-    cuda_select_nvcc_arch_flags(ARCH_FLAGS ${GOOFIT_ARCH})
-    list(APPEND CUDA_NVCC_FLAGS ${ARCH_FLAGS})
-    message(STATUS "Compiling for GPU arch: ${ARCH_FLAGS}")
+        list(APPEND CUDA_NVCC_FLAGS -std=c++11 --expt-relaxed-constexpr)
 
-    set(THRUST_INCLUDE_DIR "${CUDA_TOOLKIT_ROOT_DIR}/include")
+        if(GOOFIT_SEPARATE_COMP)
+            set(CUDA_SEPARABLE_COMPILATION ON)
+        else()
+            set(CUDA_SEPARABLE_COMPILATION OFF)
+        endif()
+        
+        # Only needed to make FindCUDA provide nice flags
+        set(CUDA_LINK_LIBRARIES_KEYWORD PUBLIC)
+
+        cuda_select_nvcc_arch_flags(ARCH_FLAGS ${GOOFIT_ARCH})
+        list(APPEND CUDA_NVCC_FLAGS ${ARCH_FLAGS})
+        message(STATUS "Compiling for GPU arch: ${ARCH_FLAGS}")
+
+        set(THRUST_INCLUDE_DIR "${CUDA_TOOLKIT_ROOT_DIR}/include")
+
+    # The new language support
+    else()
+        enable_language(CUDA)
+        include(CUDA)
+        
+        set(cuda_lang "$<COMPILE_LANGUAGE:CUDA>")
+
+        set(CMAKE_CUDA_STANDARD 11)
+        set(CMAKE_CUDA_STANDARD_REQUIRED ON)
+        set(CMAKE_CUDA_EXTENSIONS OFF)
+
+        string(APPEND CMAKE_CUDA_FLAGS " --expt-relaxed-constexpr")
+
+        #cuda_select_nvcc_arch_flags(ARCH_FLAGS ${GOOFIT_ARCH})
+        #string(REPLACE ";" " " SPACE_ARCH_FLAGS "${ARCH_FLAGS}")
+        cuda_detect_arch(${GOOFIT_ARCH} NVCC_FLAGS ARCH_FLAGS)
+        string(APPEND CMAKE_CUDA_FLAGS " ${ARCH_FLAGS}")
+        message(STATUS "Compiling for GPU arch: ${ARCH_FLAGS}")
+
+        set(THRUST_INCLUDE_DIR "${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}")
+    endif()
+
+
 endif()
 
-set(GOOFIT_CFLAGS "$<$<CONFIG:Release>:-march=native>$<$<CONFIG:RelWithDebInfo>:-march=native>" CACHE STRING "compiler flags")
-target_compile_options(GooFit_Common INTERFACE "${GOOFIT_CFLAGS}")
+if(NOT DEFINED cuda_lang)
+    set(cuda_lang False)
+endif()
+
+# Config helpers
+set(rel_mode "$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>")
+set(cxx_lang "$<COMPILE_LANGUAGE:CXX>")
+set(cxx_lang_rel "$<AND:${cxx_lang},${rel_mode}>")
+set(cuda_lang_rel "$<AND:${cuda_lang},${rel_mode}>")
+
+set(GOOFIT_OPTI "-march=native" CACHE STRING "compiler flags for optimized builds")
+string(REPLACE ";" "," GOOFIT_OPTI_CUDA "${GOOFIT_OPTI}")
+target_compile_options(GooFit_Common INTERFACE
+    $<${cxx_lang_rel}:$<BUILD_INTERFACE:${GOOFIT_OPTI}>>
+    $<${cuda_lang_rel}:$<BUILD_INTERFACE:-Xcompiler=${GOOFIT_OPTI_CUDA}>>
+    )
 
 find_package(Thrust 1.8 QUIET)
 if(NOT THRUST_FOUND)
@@ -403,14 +449,20 @@ function(goofit_add_library GNAME)
     endif()
 
     if(GOOFIT_DEVICE STREQUAL CUDA)
-        foreach(N ${GOOFIT_LIB_UNPARSED_ARGUMENTS})
-            get_filename_component(NEXT ${N} EXT)
-            if(NEXT STREQUAL ".cc" OR NEXT STREQUAL ".cpp" OR NEXT STREQUAL ".cxx")
-                set_source_files_properties(${N} PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
-            endif()
-        endforeach()
+        if(NOT NEW_CUDA)
+            foreach(N ${GOOFIT_LIB_UNPARSED_ARGUMENTS})
+                get_filename_component(NEXT ${N} EXT)
+                if(NEXT STREQUAL ".cc" OR NEXT STREQUAL ".cpp" OR NEXT STREQUAL ".cxx")
+                    set_source_files_properties(${N} PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
+                endif()
+            endforeach()
 
-        cuda_add_library(${GNAME} ${GOOFIT_LIB_TYPE} ${GOOFIT_LIB_UNPARSED_ARGUMENTS} OPTIONS "-Xcompiler=-fPIC")
+            cuda_add_library(${GNAME} ${GOOFIT_LIB_TYPE} ${GOOFIT_LIB_UNPARSED_ARGUMENTS} OPTIONS "-Xcompiler=-fPIC")
+        else()
+            add_library(${GNAME} ${GOOFIT_LIB_TYPE} ${GOOFIT_LIB_UNPARSED_ARGUMENTS})
+            set_target_properties(${GNAME} PROPERTIES
+                CUDA_SEPARABLE_COMPILATION ON)
+        endif()
     else()
         foreach(N ${GOOFIT_LIB_UNPARSED_ARGUMENTS})
             get_filename_component(NEXT ${N} EXT)
@@ -447,9 +499,13 @@ endfunction()
 
 function(goofit_add_executable NAMEEXE)
     if(GOOFIT_DEVICE STREQUAL CUDA)
-        set(CUDA_SEPARABLE_COMPILATION OFF)
-        cuda_add_executable(${NAMEEXE} ${ARGN})
-        set(CUDA_SEPARABLE_COMPILATION ON)
+        if(NOT NEW_CUDA)
+            set(CUDA_SEPARABLE_COMPILATION OFF)
+            cuda_add_executable(${NAMEEXE} ${ARGN})
+            set(CUDA_SEPARABLE_COMPILATION ON)
+        else()
+            add_executable(${NAMEEXE} ${ARGN})
+        endif()
     else()
         foreach(N ${ARGN})
             get_filename_component(NEXT ${N} EXT)
@@ -568,6 +624,9 @@ endif()
 if(GOOFIT_PYTHON)
     add_subdirectory("extern/pybind11")
     message(STATUS "Found Python at ${PYTHON_LIBRARIES}, building bindings")
+    if(NEW_CUDA)
+        cuda_convert_flags(module)
+    endif()
     add_subdirectory(python)
 endif()
 
@@ -576,4 +635,3 @@ if(GOOFIT_TESTS)
     enable_testing()
     add_subdirectory(tests)
 endif()
-

@@ -12,6 +12,10 @@ on the GPU
 #include "goofit/PDFs/physics/SpinFactors.h"
 #include "goofit/PDFs/physics/LineshapesPdf.h"
 
+#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
+#include "goofit/detail/compute_inverse5.h"
+#endif
+
 #include <utility>
 
 #include <Eigen/Core>
@@ -549,7 +553,37 @@ getPropagator(const Eigen::Array<fptype, NCHANNELS, NCHANNELS> &kMatrix,
             tMatrix(i, j) = (i == j ? 1. : 0.) - fpcomplex(0, adlerTerm) * kMatrix(i, j) * phaseSpace(j);
         }
     }
-    return tMatrix.inverse();
+
+#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
+    // Here we assume that some values are 0
+    return compute_inverse5<-1,
+                            -1,
+                            0,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            0,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1>(tMatrix);
+#else
+    return Eigen::inverse(tMatrix);
+#endif
 }
 
 __device__ fpcomplex kMatrixFunction(fptype Mpair, fptype m1, fptype m2, unsigned int *indices) {

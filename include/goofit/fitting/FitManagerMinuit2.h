@@ -44,4 +44,4 @@ class FitManagerMinuit2 {
     FitErrors retval_{FitErrors::NotRun};
     int verbosity{3};
 };
-}
+} // namespace GooFit

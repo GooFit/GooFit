@@ -23,7 +23,7 @@ class Indexable {
     // These classes can not be duplicated
     Indexable(const Indexable &) = delete;
     Indexable &operator=(const Indexable &) = delete;
-    Indexable(Indexable &&) = default;
+    Indexable(Indexable &&)                 = default;
 
     virtual ~Indexable() = default;
 
@@ -50,7 +50,10 @@ class Indexable {
     // Utilities
 
     /// Support var = 3
-    fptype operator=(const fptype &val) { setValue(val); return val; }
+    fptype operator=(const fptype &val) {
+        setValue(val);
+        return val;
+    }
 
     /// Support fptype val = var
     operator fptype() const { return getValue(); }
@@ -85,8 +88,8 @@ class Variable : public Indexable {
     // These classes can not be duplicated
     Variable(const Variable &) = delete;
     Variable &operator=(const Variable &) = delete;
-    Variable(Variable &&) = default;
-    
+    Variable(Variable &&)                 = default;
+
     /// Support var = 3
     void operator=(const fptype &val) { setValue(val); }
 
@@ -190,19 +193,19 @@ class Variable : public Indexable {
 /// Ugly hack because this internally stores a floating point number!
 class CountingVariable : public Variable {
   public:
-    static constexpr fptype maxint {1L << std::numeric_limits<fptype>::digits};
-    
+    static constexpr fptype maxint{1L << std::numeric_limits<fptype>::digits};
+
     using Variable::Variable;
-    CountingVariable(std::string name) : CountingVariable(name, 0, CountingVariable::maxint) {}
-    
+    CountingVariable(std::string name)
+        : CountingVariable(name, 0, CountingVariable::maxint) {}
+
     ~CountingVariable() override = default;
-    
+
     // These classes can not be duplicated
-    CountingVariable(const CountingVariable& ) = delete;
+    CountingVariable(const CountingVariable &) = delete;
     CountingVariable &operator=(const CountingVariable &) = delete;
-    CountingVariable(CountingVariable&&) = default;
-    
-    
+    CountingVariable(CountingVariable &&)                 = default;
+
     /// Support var = 3
     void operator=(const fptype &val) { setValue(val); }
 };
@@ -214,8 +217,8 @@ class Constant : public Indexable {
     // These classes can not be duplicated
     Constant(const Constant &) = delete;
     Constant &operator=(const Constant &) = delete;
-    Constant(Constant&&) = default;
-    
+    Constant(Constant &&)                 = default;
+
     /// Support var = 3
     void operator=(const fptype &val) { setValue(val); }
 
@@ -235,4 +238,4 @@ std::ostream &operator<<(std::ostream &o, const GooFit::Variable &var);
 
 /// Allow Variable to be read in
 std::istream &operator>>(std::istream &i, GooFit::Variable &var);
-}
+} // namespace GooFit

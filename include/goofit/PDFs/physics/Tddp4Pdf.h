@@ -128,12 +128,11 @@ class LSCalculator_TD : public thrust::unary_function<thrust::tuple<int, fptype 
     unsigned int _parameters;
 };
 
-class NormLSCalculator_TD : public thrust::unary_function<thrust::tuple<mcbooster::GReal_t,
-                                                                        mcbooster::GReal_t,
-                                                                        mcbooster::GReal_t,
-                                                                        mcbooster::GReal_t,
-                                                                        mcbooster::GReal_t>,
-                                                          fpcomplex> {
+class NormLSCalculator_TD
+    : public thrust::unary_function<
+          thrust::
+              tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t>,
+          fpcomplex> {
   public:
     // Used to create the cached BW values.
     NormLSCalculator_TD(int pIdx, unsigned int res_idx);

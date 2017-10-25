@@ -7,7 +7,7 @@
 namespace GooFit {
 
 /// Flatten a complex array into a standard one (1r, 1i, 2r, 2i, ...)
-template<typename T>
+template <typename T>
 std::vector<T> flatten(const std::vector<thrust::complex<T>> &input) {
     std::vector<T> output;
     for(auto val : input) {
@@ -92,4 +92,4 @@ std::vector<fpcomplex> complex_derivative(const std::vector<fptype> &x, const st
     return y2;
 }
 
-} // GooFit
+} // namespace GooFit

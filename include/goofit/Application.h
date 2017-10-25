@@ -21,12 +21,12 @@
 #include <omp.h>
 #endif
 
-#define GOOFIT_PARSE(app, argc, argv) \
-try { \
-app.run(); \
-} catch(const GooFit::ParseError &e) { \
-    return app.exit(e); \
-}
+#define GOOFIT_PARSE(app, argc, argv)                                                                                  \
+    try {                                                                                                              \
+        app.run();                                                                                                     \
+    } catch(const GooFit::ParseError &e) {                                                                             \
+        return app.exit(e);                                                                                            \
+    }
 
 #include <csignal>
 
@@ -307,4 +307,4 @@ class Application : public CLI::App {
         throw GooFit::FileError(input_str);
     }
 };
-}
+} // namespace GooFit

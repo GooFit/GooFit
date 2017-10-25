@@ -19,8 +19,8 @@ constexpr const char *evalfunc_vals[]
 
 constexpr const char *evalfunc_to_string(EvalFunc val) { return evalfunc_vals[static_cast<size_t>(val)]; }
 
-// TODO: Replace this with class MetricTaker;
-// And fill in the .cu files where needed
+ // TODO: Replace this with class MetricTaker;
+ // And fill in the .cu files where needed
 
 #ifdef SEPARABLE
 

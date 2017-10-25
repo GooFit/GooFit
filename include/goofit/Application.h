@@ -39,15 +39,15 @@ void signal_handler(int s) {
 }
 
 // Importing into the GooFit namespace the main classes from CLI11
-using CLI::ParseError;
-using CLI::FileError;
-using CLI::Success;
 using CLI::App;
-using CLI::Option;
-using CLI::ExistingFile;
 using CLI::ExistingDirectory;
-using CLI::NonexistentPath;
+using CLI::ExistingFile;
 using CLI::ExitCodes;
+using CLI::FileError;
+using CLI::NonexistentPath;
+using CLI::Option;
+using CLI::ParseError;
+using CLI::Success;
 
 /// Optional print for splash
 /// Orignal: Slant Relief from http://patorjk.com/software/taag/#p=testall&f=Wavy&t=GooFit (tightened a bit)

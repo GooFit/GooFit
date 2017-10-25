@@ -11,6 +11,7 @@ on the GPU
 
 #include "goofit/PDFs/physics/SpinFactors.h"
 #include "goofit/PDFs/physics/LineshapesPdf.h"
+#include "goofit/detail/compute_inverse5.h"
 
 #include <utility>
 
@@ -549,7 +550,32 @@ getPropagator(const Eigen::Array<fptype, NCHANNELS, NCHANNELS> &kMatrix,
             tMatrix(i, j) = (i == j ? 1. : 0.) - fpcomplex(0, adlerTerm) * kMatrix(i, j) * phaseSpace(j);
         }
     }
-    return tMatrix.inverse();
+    // Here we assume that some values are 0
+    return compute_inverse5<-1,
+                            -1,
+                            0,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            0,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1>(tMatrix);
 }
 
 __device__ fpcomplex kMatrixFunction(fptype Mpair, fptype m1, fptype m2, unsigned int *indices) {

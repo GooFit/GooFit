@@ -267,7 +267,7 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
     if(NOT CUDA_VERSION VERSION_LESS 9.0)
         message(WARNING "You have a version of CUDA that is currently not supported by Eigen, build will fail")
     endif()
-    
+
     # The old FindCUDA method
     if(NOT NEW_CUDA)
         if(GOOFIT_MPI)
@@ -281,7 +281,7 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
         else()
             set(CUDA_SEPARABLE_COMPILATION OFF)
         endif()
-        
+
         # Only needed to make FindCUDA provide nice flags
         set(CUDA_LINK_LIBRARIES_KEYWORD PUBLIC)
 
@@ -295,7 +295,7 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
     else()
         enable_language(CUDA)
         include(CUDA)
-        
+
         set(cuda_lang "$<COMPILE_LANGUAGE:CUDA>")
 
         set(CMAKE_CUDA_STANDARD 11)
@@ -317,7 +317,7 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
 endif()
 
 if(NOT DEFINED cuda_lang)
-    set(cuda_lang False)
+    set(cuda_lang 0)
 endif()
 
 # Config helpers
@@ -624,7 +624,7 @@ endif()
 if(GOOFIT_PYTHON)
     add_subdirectory("extern/pybind11")
     message(STATUS "Found Python at ${PYTHON_LIBRARIES}, building bindings")
-    if(NEW_CUDA)
+    if(NEW_CUDA AND GOOFIT_DEVICE STREQUAL CUDA)
         cuda_convert_flags(module)
     endif()
     add_subdirectory(python)

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "goofit/DataSet.h"
-
 #include <map>
 #include <vector>
+
+#include "goofit/DataSet.h"
 
 namespace GooFit {
 

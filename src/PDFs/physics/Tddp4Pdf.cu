@@ -491,6 +491,9 @@ __host__ void TDDP4::setDataSize(unsigned int dataSize, unsigned int evtSize) {
 
 // this is where the actual magic happens. This function does all the calculations!
 __host__ fptype TDDP4::normalize() const {
+    if(cachedResSF == nullptr)
+        throw GeneralError("You must call dp.setDataSize(currData.getNumEvents(), N) first!");
+
     // fprintf(stderr, "start normalize\n");
     recursiveSetNormalisation(1); // Not going to normalize efficiency,
     // so set normalisation factor to 1 so it doesn't get multiplied by zero.
@@ -865,7 +868,7 @@ __device__ fpcomplex SFCalculator_TD::operator()(thrust::tuple<int, fptype *, in
     auto func = reinterpret_cast<spin_function_ptr>(device_function_table[functn_i]);
     fptype sf = (*func)(vecs, paramIndices + params_i);
     // printf("SpinFactors %i : %.7g\n",_spinfactor_i, sf );
-    return fpcomplex(sf, 0);
+    return {sf, 0.};
 }
 
 NormSpinCalculator_TD::NormSpinCalculator_TD(int pIdx, unsigned int sf_idx)
@@ -1136,8 +1139,7 @@ operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const {
     AmpA *= _SqWStoRSrate;
 
     auto AmpAB = AmpA * conj(AmpB);
-    return thrust::tuple<fptype, fptype, fptype, fptype>(
-        thrust::norm(AmpA), thrust::norm(AmpB), AmpAB.real(), AmpAB.imag());
+    return {thrust::norm(AmpA), thrust::norm(AmpB), AmpAB.real(), AmpAB.imag()};
 }
 
 } // namespace GooFit

@@ -128,12 +128,11 @@ class LSCalculator_TD : public thrust::unary_function<thrust::tuple<int, fptype 
     unsigned int _parameters;
 };
 
-class NormLSCalculator_TD : public thrust::unary_function<thrust::tuple<mcbooster::GReal_t,
-                                                                        mcbooster::GReal_t,
-                                                                        mcbooster::GReal_t,
-                                                                        mcbooster::GReal_t,
-                                                                        mcbooster::GReal_t>,
-                                                          fpcomplex> {
+class NormLSCalculator_TD
+    : public thrust::unary_function<
+          thrust::
+              tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t>,
+          fpcomplex> {
   public:
     // Used to create the cached BW values.
     NormLSCalculator_TD(int pIdx, unsigned int res_idx);
@@ -175,10 +174,10 @@ class FourDblTupleAdd : public thrust::binary_function<thrust::tuple<fptype, fpt
   public:
     __host__ __device__ thrust::tuple<fptype, fptype, fptype, fptype>
     operator()(thrust::tuple<fptype, fptype, fptype, fptype> one, thrust::tuple<fptype, fptype, fptype, fptype> two) {
-        return thrust::tuple<fptype, fptype, fptype, fptype>(thrust::get<0>(one) + thrust::get<0>(two),
-                                                             thrust::get<1>(one) + thrust::get<1>(two),
-                                                             thrust::get<2>(one) + thrust::get<2>(two),
-                                                             thrust::get<3>(one) + thrust::get<3>(two));
+        return {thrust::get<0>(one) + thrust::get<0>(two),
+                thrust::get<1>(one) + thrust::get<1>(two),
+                thrust::get<2>(one) + thrust::get<2>(two),
+                thrust::get<3>(one) + thrust::get<3>(two)};
     }
 };
 } // namespace GooFit

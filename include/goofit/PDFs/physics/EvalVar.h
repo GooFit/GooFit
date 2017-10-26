@@ -1,9 +1,9 @@
 /*
 04/18/2016 Christoph Hasse
-DISCLAIMER:
 
-This code is not sufficently tested yet and still under heavy development!
-See *.cu file for more details
+This file includes a converter from 16 values (4 4-momenta) to (the common set of) 5 parameters.
+See UserUtils for a handy way to convert for tests.
+
 */
 
 #pragma once

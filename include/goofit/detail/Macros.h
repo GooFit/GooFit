@@ -44,3 +44,6 @@
 #define GOOFIT_GET_PARAM(i) cudaArray[indices[(i)]]
 #define GOOFIT_GET_INT(i) indices[(i)]
 #define GOOFIT_GET_CONST(i) functorConstants[indices[(i)]]
+
+#define GOOFIT_PDF_IMPL_1(n) __device__ fptype #n(fptype *evt, fptype *p, unsigned int *indices)
+#define GOOFIT_PDF_IMPL_3(n) __device__ fpcomplex #n(fptype Mpair, fptype m1, fptype m2, unsigned int *indices)

@@ -3,6 +3,8 @@
 #include "goofit/Log.h"
 #include "goofit/Variable.h"
 
+#include <Eigen/Dense>
+
 namespace GooFit {
 
 // Special constructor for one variable
@@ -60,4 +62,5 @@ void UnbinnedDataSet::addEvent() {
         data.at(i++).push_back(v->getValue());
     numEventsAdded++;
 }
+
 } // namespace GooFit

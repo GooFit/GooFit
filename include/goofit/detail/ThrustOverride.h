@@ -28,7 +28,7 @@
 // We are defining a new policy.  This will allow us to override the internal thread/block distribution
 struct goofit_policy : thrust::device_execution_policy<goofit_policy> {};
 
-template<typename InputIterator, typename UnaryFunction, typename OutputType, typename BinaryFunction>
+template <typename InputIterator, typename UnaryFunction, typename OutputType, typename BinaryFunction>
 __host__ __device__ OutputType transform_reduce(goofit_policy &exec,
                                                 InputIterator first,
                                                 InputIterator last,
@@ -42,7 +42,7 @@ __host__ __device__ OutputType transform_reduce(goofit_policy &exec,
     return thrust::reduce(exec, xfrm_first, xfrm_last, init, binary_op);
 } // end transform_reduce()
 
-template<typename InputIterator, typename OutputType, typename BinaryFunction>
+template <typename InputIterator, typename OutputType, typename BinaryFunction>
 __host__ __device__ OutputType
 reduce(goofit_policy &exec, InputIterator first, InputIterator last, OutputType init, BinaryFunction binary_op) {
     typedef typename thrust::iterator_difference<InputIterator>::type size_type;

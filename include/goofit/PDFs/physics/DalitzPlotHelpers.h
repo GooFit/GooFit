@@ -17,15 +17,17 @@ See *.cu file for more details
 
 namespace GooFit {
 
-template<typename E>
+template <typename E>
 constexpr typename std::underlying_type<E>::type enum_to_underlying(E e) {
     return static_cast<typename std::underlying_type<E>::type>(e);
 }
 
 __device__ bool inDalitz(
     const fptype &m12, const fptype &m13, const fptype &bigM, const fptype &dm1, const fptype &dm2, const fptype &dm3);
+
 __device__ fpcomplex
 getResonanceAmplitude(fptype m12, fptype m13, fptype m23, unsigned int functionIdx, unsigned int pIndex);
+
 __device__ void get4Vecs(fptype *Vecs,
                          const unsigned int &constants,
                          const fptype &m12,
@@ -33,6 +35,7 @@ __device__ void get4Vecs(fptype *Vecs,
                          const fptype &cos12,
                          const fptype &cos34,
                          const fptype &phi);
+
 __device__ fptype getmass(const unsigned int &pair,
                           fptype &d1,
                           fptype &d2,
@@ -99,7 +102,7 @@ struct DecayInfo_DP {
 // Copied from strided_range thrust example by Nathan Bell.
 // Iterator to move forward by a specified number of steps
 // in each iteration.
-template<typename Iterator>
+template <typename Iterator>
 class strided_range {
   public:
     typedef typename thrust::iterator_difference<Iterator>::type difference_type;

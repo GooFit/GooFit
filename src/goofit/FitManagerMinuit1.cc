@@ -1,12 +1,12 @@
 #include "goofit/PdfBase.h"
-#include "goofit/fitting/FitManagerMinuit1.h"
+#include "goofit/Log.h"
 #include "goofit/PDFs/GooPdf.h"
+#include "goofit/Variable.h"
+#include "goofit/fitting/FitManagerMinuit1.h"
 #include <cstdio>
 #include <limits>
-#include <typeinfo>
 #include <set>
-#include "goofit/Variable.h"
-#include "goofit/Log.h"
+#include <typeinfo>
 
 namespace GooFit {
 

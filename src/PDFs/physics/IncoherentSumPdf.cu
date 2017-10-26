@@ -305,7 +305,7 @@ __device__ fpcomplex SpecialIncoherentResonanceCalculator::operator()(thrust::tu
     fptype daug3Mass      = functorConstants[indices[1] + 3];
 
     if(!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass))
-        return fpcomplex(0, 0);
+        return {0., 0.};
 
     fptype m23
         = motherMass * motherMass + daug1Mass * daug1Mass + daug2Mass * daug2Mass + daug3Mass * daug3Mass - m12 - m13;

@@ -17,14 +17,7 @@ FCN::FCN(Params &params)
 
 double FCN::operator()(const std::vector<double> &pars) const {
     // Translate from Minuit indexing to GooFit indexing
-    std::vector<double> gooPars(max_index(params_->vars_) + 1);
-
-    for(Variable *var : params_->vars_) {
-        var->setChanged(var->getValue() != pars.at(var->getFitterIndex()));
-        gooPars.at(var->getIndex()) = pars.at(var->getFitterIndex()) - var->blind;
-    }
-
-    params_->pdf_->copyParams(gooPars);
+    params_->from_minuit_vector(pars);
 
     GOOFIT_TRACE("Calculating NLL");
     double nll = params_->pdf_->calculateNLL();
@@ -35,17 +28,9 @@ double FCN::operator()(const std::vector<double> &pars) const {
 }
 
 double FCN::operator()() const {
-    std::vector<double> pars = makePars();
-
-    // Translate from Minuit indexing to GooFit indexing
-    std::vector<double> gooPars(max_index(params_->vars_) + 1);
-
-    for(Variable *var : params_->vars_) {
-        var->setChanged(true);
-        gooPars.at(var->getIndex()) = pars.at(var->getFitterIndex()) - var->blind;
-    }
-
-    params_->pdf_->copyParams(gooPars);
+    // Make a vector of current values, then force the recalculation step
+    std::vector<double> pars = params_->make_minuit_vector();
+    params_->from_minuit_vector(pars, true);
 
     GOOFIT_TRACE("Calculating NLL");
     double nll = params_->pdf_->calculateNLL();
@@ -53,14 +38,6 @@ double FCN::operator()() const {
     host_callnumber++;
 
     return nll;
-}
-
-std::vector<double> FCN::makePars() const {
-    std::vector<double> minuitPars(max_fitter_index(params_->vars_) + 1);
-    for(Variable *var : params_->vars_) {
-        minuitPars.at(var->getFitterIndex()) = var->getValue();
-    }
-    return minuitPars;
 }
 
 // Get the number of variable parameters

@@ -36,4 +36,7 @@
 	url = ../MCBooster.git
 [submodule "extern/Eigen"]
 	path = extern/Eigen
-	url = ../../live-clones/Eigen.git
+	url = ../../RLovelett/Eigen.git
+[submodule "extern/cuda_support"]
+	path = extern/cuda_support
+	url = ../../CLIUtils/cuda_support.git

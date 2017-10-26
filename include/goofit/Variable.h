@@ -11,7 +11,7 @@
 
 namespace GooFit {
 
-class FCN;
+class Params;
 class Minuit1;
 
 class Indexable {
@@ -21,8 +21,9 @@ class Indexable {
         , value(val) {}
 
     // These classes can not be duplicated
-    Indexable(Indexable &) = delete;
-    Indexable &operator=(Indexable &) = delete;
+    Indexable(const Indexable &) = delete;
+    Indexable &operator=(const Indexable &) = delete;
+    Indexable(Indexable &&)                 = default;
 
     virtual ~Indexable() = default;
 
@@ -49,7 +50,10 @@ class Indexable {
     // Utilities
 
     /// Support var = 3
-    void operator=(const fptype &val) { setValue(val); }
+    fptype operator=(const fptype &val) {
+        setValue(val);
+        return val;
+    }
 
     /// Support fptype val = var
     operator fptype() const { return getValue(); }
@@ -75,15 +79,16 @@ class Indexable {
 /// data set. The index can refer either to cudaArray
 /// or to an event.
 class Variable : public Indexable {
-    friend GooFit::FCN;
-    friend GooFit::Minuit1;
+    friend Params;
+    friend Minuit1;
     friend std::ostream &operator<<(std::ostream &o, const Variable &var);
     friend std::istream &operator>>(std::istream &o, Variable &var);
 
   public:
     // These classes can not be duplicated
-    Variable(Variable &) = delete;
-    Variable &operator=(Variable &) = delete;
+    Variable(const Variable &) = delete;
+    Variable &operator=(const Variable &) = delete;
+    Variable(Variable &&)                 = default;
 
     /// Support var = 3
     void operator=(const fptype &val) { setValue(val); }
@@ -188,14 +193,19 @@ class Variable : public Indexable {
 /// Ugly hack because this internally stores a floating point number!
 class CountingVariable : public Variable {
   public:
-    static constexpr fptype maxint {1L << std::numeric_limits<fptype>::digits};
-    
+    static constexpr fptype maxint{1L << std::numeric_limits<fptype>::digits};
+
     using Variable::Variable;
-    CountingVariable(std::string name) : CountingVariable(name, 0, CountingVariable::maxint) {}
-    
+    CountingVariable(std::string name)
+        : CountingVariable(name, 0, CountingVariable::maxint) {}
+
     ~CountingVariable() override = default;
+
     // These classes can not be duplicated
-    CountingVariable &operator=(CountingVariable &) = delete;
+    CountingVariable(const CountingVariable &) = delete;
+    CountingVariable &operator=(const CountingVariable &) = delete;
+    CountingVariable(CountingVariable &&)                 = default;
+
     /// Support var = 3
     void operator=(const fptype &val) { setValue(val); }
 };
@@ -205,8 +215,10 @@ class CountingVariable : public Variable {
 class Constant : public Indexable {
   public:
     // These classes can not be duplicated
-    Constant(Constant &) = delete;
-    Constant &operator=(Constant &) = delete;
+    Constant(const Constant &) = delete;
+    Constant &operator=(const Constant &) = delete;
+    Constant(Constant &&)                 = default;
+
     /// Support var = 3
     void operator=(const fptype &val) { setValue(val); }
 
@@ -226,4 +238,4 @@ std::ostream &operator<<(std::ostream &o, const GooFit::Variable &var);
 
 /// Allow Variable to be read in
 std::istream &operator>>(std::istream &i, GooFit::Variable &var);
-}
+} // namespace GooFit

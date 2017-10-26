@@ -26,7 +26,7 @@ void init_Variable(py::module &m) {
         .def_property("error", &Variable::getError, &Variable::setError)
         .def_property("upperlimit", &Variable::getUpperLimit, &Variable::setUpperLimit)
         .def_property("lowerlimit", &Variable::getLowerLimit, &Variable::setLowerLimit)
-        .def_property("getNumBins", &Variable::getNumBins, &Variable::setNumBins)
+        .def_property("numbins", &Variable::getNumBins, &Variable::setNumBins)
         .def_property("fixed", &Variable::IsFixed, &Variable::setFixed)
         .def("setBlind", &Variable::setBlind)
         .def("__repr__", [](const Variable &v) { return "<Variable: {}>"_format(v.getName()); })

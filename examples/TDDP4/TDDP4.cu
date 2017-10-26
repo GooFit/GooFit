@@ -111,6 +111,7 @@ int main(int argc, char **argv) {
     // and the first half of the spinfactors are amplitude 1, rest is amplitude 2
     // This means that it is important for symmetrized amplitudes that the spinfactors and lineshapes are in the "right"
     // order
+
     Amplitude Bose_symmetrized_AMP_S{
         "K*(892)rho(770)_S", new Variable("amp_real1", 1.0), new Variable("amp_imag1", 0.0), LSKRS, SFKRS, 2};
     Amplitude Bose_symmetrized_AMP_P{
@@ -198,7 +199,11 @@ int main(int argc, char **argv) {
     tree->Branch("Piplus_pdg", &Piplus_pdg, "Piplus_pdg/I");
 
     for(int k = 0; k < trials; ++k) {
+<<<<<<< HEAD
         int numEvents = 800000;
+=======
+        int numEvents = 2;
+>>>>>>> a8365c7bfdb50a30a960be92a40995776f7edbaa
         dp.setGenerationOffset(k * numEvents);
 
         mcbooster::ParticlesSet_h particles; // typedef for std::vector<Particles_h *>

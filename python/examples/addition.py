@@ -10,6 +10,7 @@ data = UnbinnedDataSet(xvar)
 
 totalData = 0
 
+
 i=-1
 
 while i < 100000:
@@ -24,9 +25,7 @@ while i < 100000:
         i-=1
         continue
 
-
     data.addEvent()
-
 
 
 xmean = Variable("xmean", 0, 1, -10, 10)

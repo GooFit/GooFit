@@ -31,8 +31,8 @@ void init_DP4Pdf(py::module &m) {
 
                  std::tie(particles, variables, weights, flags) = self.GenerateSig(numEvents);
 
-                 py::array_t<fptype> pyparticles{{(size_t) 4, 4 * numEvents}};
-                 py::array_t<fptype> pyvariables{{(size_t) 6, numEvents}};
+                 py::array_t<fptype> pyparticles{{(size_t)4, 4 * numEvents}};
+                 py::array_t<fptype> pyvariables{{(size_t)6, numEvents}};
                  py::array_t<fptype> pyweights{numEvents};
                  py::array_t<fptype> pyflags{numEvents};
 

@@ -1,8 +1,8 @@
 var searchData=
 [
+  ['make_5fminuit_5fvector',['make_minuit_vector',['../class_goo_fit_1_1_params.html#ae25184da173af27dad0e9ea1c940d9bf',1,'GooFit::Params']]],
   ['makegmunu',['makeGmunu',['../class_goo_fit_1_1_symm_lorentz_matrix.html#ab4237afdaf59aa70684c28b77e9dcea7',1,'GooFit::SymmLorentzMatrix']]],
   ['makegrid',['makeGrid',['../class_goo_fit_1_1_goo_pdf.html#a1398038b6f85df0adef260e59e253139',1,'GooFit::GooPdf']]],
-  ['makepars',['makePars',['../class_goo_fit_1_1_f_c_n.html#a8119d3d437d04d1285dd783d6fddea3a',1,'GooFit::FCN']]],
   ['makezero',['makeZero',['../class_goo_fit_1_1_lorentz_matrix.html#a144746fd9a1abb511d2b2337d06f6810',1,'GooFit::LorentzMatrix::makeZero()'],['../class_goo_fit_1_1_symm_lorentz_matrix.html#a8523971f88c106fd5109b47ea086f8fa',1,'GooFit::SymmLorentzMatrix::makeZero()']]],
   ['mappedpdf',['MappedPdf',['../class_goo_fit_1_1_mapped_pdf.html#ad1f6b476484569bcbee1ac1cd83c3871',1,'GooFit::MappedPdf']]],
   ['max_5ffitter_5findex',['max_fitter_index',['../namespace_goo_fit.html#af40edacaef55ceadf08bdef9e4385b33',1,'GooFit']]],

@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['gauss',['Gauss',['../class_goo_fit_1_1_resonances_1_1_gauss.html#a8f091cce809c2df846ecede6aee16855',1,'GooFit::Resonances::Gauss']]],
   ['gaussianpdf',['GaussianPdf',['../class_goo_fit_1_1_gaussian_pdf.html#ac07393e0b15aeaa4b38db7bd777b5831',1,'GooFit::GaussianPdf']]],
   ['generalerror',['GeneralError',['../struct_goo_fit_1_1_general_error.html#a74b57a89981520157b3544077c84c0f1',1,'GooFit::GeneralError']]],
   ['generatenormrange',['generateNormRange',['../class_goo_fit_1_1_pdf_base.html#ad8ca458b257f212bb9d226e818517512',1,'GooFit::PdfBase']]],
@@ -45,11 +46,14 @@ var searchData=
   ['getresonanceamplitude',['getResonanceAmplitude',['../namespace_goo_fit.html#a4e554df220226d193edfc7c67e2e968c',1,'GooFit']]],
   ['getspecialmask',['getSpecialMask',['../class_goo_fit_1_1_pdf_base.html#a59251e6cf381c427f3723e77ac4ec40f',1,'GooFit::PdfBase']]],
   ['getupperlimit',['getUpperLimit',['../class_goo_fit_1_1_variable.html#a81fb48bffdc587c1e4e4f29d3cf4f9d0',1,'GooFit::Variable']]],
-  ['getvalue',['getValue',['../class_goo_fit_1_1_goo_pdf.html#aba6708908e3b332842c79b2d916d0c46',1,'GooFit::GooPdf::getValue()'],['../class_goo_fit_1_1_unbinned_data_set.html#af0534e69c67d8dac64ab00ce1b13ae6e',1,'GooFit::UnbinnedDataSet::getValue()'],['../class_goo_fit_1_1_indexable.html#a59a5ace515148ae5f29bbfb7c229da55',1,'GooFit::Indexable::getValue()']]],
+  ['getvalue',['getValue',['../class_goo_fit_1_1_goo_pdf.html#a014c0474eff2b98f194d5721f93f1434',1,'GooFit::GooPdf::getValue()'],['../class_goo_fit_1_1_unbinned_data_set.html#af0534e69c67d8dac64ab00ce1b13ae6e',1,'GooFit::UnbinnedDataSet::getValue()'],['../class_goo_fit_1_1_indexable.html#a59a5ace515148ae5f29bbfb7c229da55',1,'GooFit::Indexable::getValue()']]],
   ['getvaraibles',['getVaraibles',['../class_goo_fit_1_1_minuit1.html#a3bea3b44d7dece63f21e56e8806fcab8',1,'GooFit::Minuit1']]],
   ['getvariables',['getVariables',['../class_goo_fit_1_1_data_set.html#af89f0e382abf27d733aaababe9e2e8a3',1,'GooFit::DataSet']]],
+  ['glass',['GLASS',['../class_goo_fit_1_1_lineshapes_1_1_g_l_a_s_s.html#ab63124340577296e4648b4f47dd9cf72',1,'GooFit::Lineshapes::GLASS']]],
   ['gmunu',['gmunu',['../class_goo_fit_1_1_symm_lorentz_matrix.html#acbf721c93e85d8519262e25b670584fd',1,'GooFit::SymmLorentzMatrix']]],
   ['goofree',['gooFree',['../namespace_goo_fit.html#afcbdef1d35a4393540bcc91d58c183f8',1,'GooFit']]],
   ['goomalloc',['gooMalloc',['../namespace_goo_fit.html#af2bcb27f8446f3950037de6ce8681ee1',1,'GooFit']]],
-  ['goopdf',['GooPdf',['../class_goo_fit_1_1_goo_pdf.html#a72cc0a81a58166220460926a4e922502',1,'GooFit::GooPdf']]]
+  ['goopdf',['GooPdf',['../class_goo_fit_1_1_goo_pdf.html#a72cc0a81a58166220460926a4e922502',1,'GooFit::GooPdf']]],
+  ['gs',['GS',['../class_goo_fit_1_1_resonances_1_1_g_s.html#a58a83adc954e709752ff70db9a363604',1,'GooFit::Resonances::GS']]],
+  ['gspline',['GSpline',['../class_goo_fit_1_1_lineshapes_1_1_g_spline.html#a06dace9ded00eefe1ce7e29e4b836567',1,'GooFit::Lineshapes::GSpline']]]
 ];

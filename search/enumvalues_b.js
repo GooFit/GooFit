@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['sbw',['SBW',['../namespace_goo_fit.html#ae587603f507f8a46fdccd092e2d8bff5ab834163bcb314f88e180687aa98156f4',1,'GooFit']]],
-  ['spline',['Spline',['../namespace_goo_fit.html#ae587603f507f8a46fdccd092e2d8bff5a4cff6afc4963881749f7742fbb4d1392',1,'GooFit::Spline()'],['../namespace_goo_fit.html#adb7023544943769d1aebd62a519b91d4add309e5586dd9ab277c7e1afa9c34bb6',1,'GooFit::SPLINE()']]]
+  ['valid',['Valid',['../namespace_goo_fit.html#a145d35e8e46e921ed038de04120d4241a3ac705f2acd51a4613f9188c05c91d0d',1,'GooFit']]]
 ];

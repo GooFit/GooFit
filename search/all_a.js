@@ -1,11 +1,12 @@
 var searchData=
 [
+  ['i32',['I32',['../class_goo_fit_1_1_lineshapes_1_1_f_o_c_u_s.html#a583d8ec0813737ff9970fb1e6c5296aaad878ea6016bfe01729548bf442de5a8b',1,'GooFit::Lineshapes::FOCUS']]],
   ['incoherentsumpdf',['IncoherentSumPdf',['../class_goo_fit_1_1_incoherent_sum_pdf.html',1,'GooFit::IncoherentSumPdf'],['../class_goo_fit_1_1_resonance_pdf.html#a5d402d24c67c8237685fa6a4c908901a',1,'GooFit::ResonancePdf::IncoherentSumPdf()'],['../class_goo_fit_1_1_incoherent_sum_pdf.html#a54f6373f2e6d686456eebe3e3e9c60a6',1,'GooFit::IncoherentSumPdf::IncoherentSumPdf()']]],
   ['incoherentsumpdf_2ecu',['IncoherentSumPdf.cu',['../_incoherent_sum_pdf_8cu.html',1,'']]],
   ['incoherentsumpdf_2eh',['IncoherentSumPdf.h',['../_incoherent_sum_pdf_8h.html',1,'']]],
   ['indalitz',['inDalitz',['../namespace_goo_fit.html#a3e6826a12082ced9d79e931a1a717f61',1,'GooFit']]],
   ['index',['index',['../class_goo_fit_1_1_indexable.html#a94cc371aa4c3d210b574137394cef6d6',1,'GooFit::Indexable']]],
-  ['indexable',['Indexable',['../class_goo_fit_1_1_indexable.html',1,'GooFit::Indexable'],['../class_goo_fit_1_1_indexable.html#a1f3e525b9e70083bd2dd9c7f8e2d4e88',1,'GooFit::Indexable::Indexable(std::string n, fptype val=0)'],['../class_goo_fit_1_1_indexable.html#ab327d8c83fef78e9013be4f790d25f55',1,'GooFit::Indexable::Indexable(Indexable &amp;)=delete']]],
+  ['indexable',['Indexable',['../class_goo_fit_1_1_indexable.html',1,'GooFit::Indexable'],['../class_goo_fit_1_1_indexable.html#a1f3e525b9e70083bd2dd9c7f8e2d4e88',1,'GooFit::Indexable::Indexable(std::string n, fptype val=0)'],['../class_goo_fit_1_1_indexable.html#a60f44c79bf7ed89894570e8ece339ef2',1,'GooFit::Indexable::Indexable(const Indexable &amp;)=delete'],['../class_goo_fit_1_1_indexable.html#aa4693841a2a1d7629d697964bac2c09b',1,'GooFit::Indexable::Indexable(Indexable &amp;&amp;)=default']]],
   ['indexofvariable',['indexOfVariable',['../class_goo_fit_1_1_data_set.html#a5e318cef670ebed64cc090c85c216bad',1,'GooFit::DataSet']]],
   ['initialize',['initialize',['../class_goo_fit_1_1_goo_pdf.html#aff76efcf81396fed330536ff982f6581',1,'GooFit::GooPdf']]],
   ['initializeindices',['initializeIndices',['../class_goo_fit_1_1_pdf_base.html#a332ac6f81d9465093898e93c7980a99d',1,'GooFit::PdfBase']]],

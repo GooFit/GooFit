@@ -4,6 +4,7 @@ var searchData=
   ['end',['end',['../class_goo_fit_1_1strided__range.html#a5716b089ca4dda8c9106335c0968c92b',1,'GooFit::strided_range']]],
   ['enum_5fto_5funderlying',['enum_to_underlying',['../namespace_goo_fit.html#a2a5d1a3c01483597044d740167bf2a6f',1,'GooFit']]],
   ['eval',['Eval',['../class_goo_fit_1_1_minuit1.html#aea48147824733a095a7e4117b3e48206',1,'GooFit::Minuit1']]],
+  ['evalfunc_5fto_5fstring',['evalfunc_to_string',['../namespace_goo_fit.html#aca42c5a1d4a2f54ee6393263f61a034b',1,'GooFit']]],
   ['evaluateatpoints',['evaluateAtPoints',['../class_goo_fit_1_1_goo_pdf.html#ab678013213c1212c41eab92d42fe7550',1,'GooFit::GooPdf']]],
   ['eventweightedaddpdf',['EventWeightedAddPdf',['../class_goo_fit_1_1_event_weighted_add_pdf.html#a8fcbe5965d9d005868e4f9cd07ade539',1,'GooFit::EventWeightedAddPdf']]],
   ['exit',['exit',['../class_goo_fit_1_1_application.html#a71e0d2e61c0e873642a4a985dd1b8bb2',1,'GooFit::Application']]],

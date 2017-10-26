@@ -1,7 +1,6 @@
 var searchData=
 [
   ['abort',['abort',['../namespace_goo_fit.html#aff9f46a90d47aa752846f3acd5d211b6',1,'GooFit']]],
-  ['abortwithcudaprintflush',['abortWithCudaPrintFlush',['../_abort_8h.html#a02a0138d8d06178d317060454b44e687',1,'Abort.h']]],
   ['add',['add',['../class_goo_fit_1_1_lorentz_matrix.html#a9c6edf693270edb4ebda0b404f1bb56b',1,'GooFit::LorentzMatrix::add()'],['../class_goo_fit_1_1_symm_lorentz_matrix.html#a6dee880731c0b1eb999fb2ae4f5737da',1,'GooFit::SymmLorentzMatrix::add()']]],
   ['addevent',['addEvent',['../class_goo_fit_1_1_binned_data_set.html#a428fa5bfcdb00330ee128bf07ea45921',1,'GooFit::BinnedDataSet::addEvent()'],['../class_goo_fit_1_1_data_set.html#a5345115e401471631f66c11c2b5e5157',1,'GooFit::DataSet::addEvent()=0'],['../class_goo_fit_1_1_data_set.html#a85ab43f790e66ff4c6035a0329263ed5',1,'GooFit::DataSet::addEvent(fptype value, Args... args)'],['../class_goo_fit_1_1_unbinned_data_set.html#acf57e986f7b06f7dbf16bc1f2fa2fabb',1,'GooFit::UnbinnedDataSet::addEvent()']]],
   ['addpdf',['AddPdf',['../class_goo_fit_1_1_add_pdf.html#a26e7454038cb68495888349bc303d07e',1,'GooFit::AddPdf::AddPdf(std::string n, std::vector&lt; Variable *&gt; weights, std::vector&lt; PdfBase *&gt; comps)'],['../class_goo_fit_1_1_add_pdf.html#a84434e20f5498ba99963e6bd345349a1',1,'GooFit::AddPdf::AddPdf(std::string n, Variable *frac1, PdfBase *func1, PdfBase *func2)']]],

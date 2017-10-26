@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['gauss',['GAUSS',['../namespace_goo_fit.html#adb7023544943769d1aebd62a519b91d4a37a2f93fd56db2dd5f74780e8bca23b3',1,'GooFit']]],
+  ['complex_5fliterals',['complex_literals',['../namespace_goo_fit_1_1literals_1_1complex__literals.html',1,'GooFit::literals']]],
+  ['gauss',['Gauss',['../class_goo_fit_1_1_resonances_1_1_gauss.html',1,'GooFit::Resonances::Gauss'],['../class_goo_fit_1_1_resonances_1_1_gauss.html#a8f091cce809c2df846ecede6aee16855',1,'GooFit::Resonances::Gauss::Gauss()']]],
   ['gaussianpdf',['GaussianPdf',['../class_goo_fit_1_1_gaussian_pdf.html',1,'GooFit::GaussianPdf'],['../class_goo_fit_1_1_gaussian_pdf.html#ac07393e0b15aeaa4b38db7bd777b5831',1,'GooFit::GaussianPdf::GaussianPdf()']]],
   ['gaussianpdf_2ecu',['GaussianPdf.cu',['../_gaussian_pdf_8cu.html',1,'']]],
   ['gaussianpdf_2eh',['GaussianPdf.h',['../_gaussian_pdf_8h.html',1,'']]],
@@ -48,9 +49,10 @@ var searchData=
   ['getresonanceamplitude',['getResonanceAmplitude',['../namespace_goo_fit.html#a4e554df220226d193edfc7c67e2e968c',1,'GooFit']]],
   ['getspecialmask',['getSpecialMask',['../class_goo_fit_1_1_pdf_base.html#a59251e6cf381c427f3723e77ac4ec40f',1,'GooFit::PdfBase']]],
   ['getupperlimit',['getUpperLimit',['../class_goo_fit_1_1_variable.html#a81fb48bffdc587c1e4e4f29d3cf4f9d0',1,'GooFit::Variable']]],
-  ['getvalue',['getValue',['../class_goo_fit_1_1_goo_pdf.html#aba6708908e3b332842c79b2d916d0c46',1,'GooFit::GooPdf::getValue()'],['../class_goo_fit_1_1_unbinned_data_set.html#af0534e69c67d8dac64ab00ce1b13ae6e',1,'GooFit::UnbinnedDataSet::getValue()'],['../class_goo_fit_1_1_indexable.html#a59a5ace515148ae5f29bbfb7c229da55',1,'GooFit::Indexable::getValue()']]],
+  ['getvalue',['getValue',['../class_goo_fit_1_1_goo_pdf.html#a014c0474eff2b98f194d5721f93f1434',1,'GooFit::GooPdf::getValue()'],['../class_goo_fit_1_1_unbinned_data_set.html#af0534e69c67d8dac64ab00ce1b13ae6e',1,'GooFit::UnbinnedDataSet::getValue()'],['../class_goo_fit_1_1_indexable.html#a59a5ace515148ae5f29bbfb7c229da55',1,'GooFit::Indexable::getValue()']]],
   ['getvaraibles',['getVaraibles',['../class_goo_fit_1_1_minuit1.html#a3bea3b44d7dece63f21e56e8806fcab8',1,'GooFit::Minuit1']]],
   ['getvariables',['getVariables',['../class_goo_fit_1_1_data_set.html#af89f0e382abf27d733aaababe9e2e8a3',1,'GooFit::DataSet']]],
+  ['glass',['GLASS',['../class_goo_fit_1_1_lineshapes_1_1_g_l_a_s_s.html',1,'GooFit::Lineshapes::GLASS'],['../class_goo_fit_1_1_lineshapes_1_1_g_l_a_s_s.html#ab63124340577296e4648b4f47dd9cf72',1,'GooFit::Lineshapes::GLASS::GLASS()']]],
   ['globalcudadefines_2eh',['GlobalCudaDefines.h',['../_global_cuda_defines_8h.html',1,'']]],
   ['gmunu',['gmunu',['../class_goo_fit_1_1_symm_lorentz_matrix.html#acbf721c93e85d8519262e25b670584fd',1,'GooFit::SymmLorentzMatrix']]],
   ['goofit',['GooFit',['../namespace_goo_fit.html',1,'']]],
@@ -70,6 +72,9 @@ var searchData=
   ['goofit_5finfo_5fc',['GOOFIT_INFO_C',['../_log_8h.html#a60f7330c31e7e36f1e488b18802c7a2a',1,'Log.h']]],
   ['goofit_5finfo_5ff',['GOOFIT_INFO_F',['../_log_8h.html#ae5d32176fff899c748e73ca69535b237',1,'Log.h']]],
   ['goofit_5finfo_5ffc',['GOOFIT_INFO_FC',['../_log_8h.html#a20cabb168ec57f069bcdca1298924742',1,'Log.h']]],
+  ['goofit_5fparse',['GOOFIT_PARSE',['../_application_8h.html#a29f0bf0acd1e29feebc94f1cca47b36e',1,'Application.h']]],
+  ['goofit_5fpdf_5fimpl_5f1',['GOOFIT_PDF_IMPL_1',['../_macros_8h.html#aff506bb35a12c766b9ed2a591fc9190c',1,'Macros.h']]],
+  ['goofit_5fpdf_5fimpl_5f3',['GOOFIT_PDF_IMPL_3',['../_macros_8h.html#a4e04cb41ec4a07cac5b2b9fe3f6a598a',1,'Macros.h']]],
   ['goofit_5fpolicy',['goofit_policy',['../structgoofit__policy.html',1,'']]],
   ['goofit_5fstart_5fpdf',['GOOFIT_START_PDF',['../_macros_8h.html#a7006a837369345e6c3214f16bc0969e9',1,'Macros.h']]],
   ['goofit_5fstatus',['GOOFIT_STATUS',['../_log_8h.html#a98be4e7019e998db30b7d1d4eae0e9e2',1,'Log.h']]],
@@ -86,5 +91,9 @@ var searchData=
   ['gpudev_5f',['gpuDev_',['../class_goo_fit_1_1_application.html#a5608dff1e411d423eb319a8956372dee',1,'GooFit::Application']]],
   ['gray',['gray',['../namespace_goo_fit.html#a88ae3a0192c1e4d0fc1e88078d05c0a4',1,'GooFit']]],
   ['green',['green',['../namespace_goo_fit.html#acef7334d3b4902a01097779acea336fe',1,'GooFit']]],
-  ['gs',['GS',['../namespace_goo_fit.html#adb7023544943769d1aebd62a519b91d4a71a75a167c33c58bfb561764255c880a',1,'GooFit']]]
+  ['gs',['GS',['../class_goo_fit_1_1_resonances_1_1_g_s.html',1,'GooFit::Resonances::GS'],['../class_goo_fit_1_1_resonances_1_1_g_s.html#a58a83adc954e709752ff70db9a363604',1,'GooFit::Resonances::GS::GS()']]],
+  ['gspline',['GSpline',['../class_goo_fit_1_1_lineshapes_1_1_g_spline.html',1,'GooFit::Lineshapes::GSpline'],['../class_goo_fit_1_1_lineshapes_1_1_g_spline.html#a06dace9ded00eefe1ce7e29e4b836567',1,'GooFit::Lineshapes::GSpline::GSpline()']]],
+  ['lineshapes',['Lineshapes',['../namespace_goo_fit_1_1_lineshapes.html',1,'GooFit']]],
+  ['literals',['literals',['../namespace_goo_fit_1_1literals.html',1,'GooFit']]],
+  ['resonances',['Resonances',['../namespace_goo_fit_1_1_resonances.html',1,'GooFit']]]
 ];

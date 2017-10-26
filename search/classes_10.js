@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['sbw',['SBW',['../class_goo_fit_1_1_lineshapes_1_1_s_b_w.html',1,'GooFit::Lineshapes']]],
   ['scaledgaussianpdf',['ScaledGaussianPdf',['../class_goo_fit_1_1_scaled_gaussian_pdf.html',1,'GooFit']]],
   ['sfcalculator',['SFCalculator',['../class_goo_fit_1_1_s_f_calculator.html',1,'GooFit']]],
   ['sfcalculator_5ftd',['SFCalculator_TD',['../class_goo_fit_1_1_s_f_calculator___t_d.html',1,'GooFit']]],
@@ -14,6 +15,7 @@ var searchData=
   ['spinfactor',['SpinFactor',['../class_goo_fit_1_1_spin_factor.html',1,'GooFit']]],
   ['spinsumt',['SpinSumT',['../class_goo_fit_1_1_spin_sum_t.html',1,'GooFit']]],
   ['spinsumv',['SpinSumV',['../class_goo_fit_1_1_spin_sum_v.html',1,'GooFit']]],
+  ['spline',['Spline',['../class_goo_fit_1_1_resonances_1_1_spline.html',1,'GooFit::Resonances']]],
   ['steppdf',['StepPdf',['../class_goo_fit_1_1_step_pdf.html',1,'GooFit']]],
   ['stride_5ffunctor',['stride_functor',['../struct_goo_fit_1_1strided__range_1_1stride__functor.html',1,'GooFit::strided_range']]],
   ['strided_5frange',['strided_range',['../class_goo_fit_1_1strided__range.html',1,'GooFit']]],

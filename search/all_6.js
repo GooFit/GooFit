@@ -1,12 +1,16 @@
 var searchData=
 [
   ['e',['E',['../class_goo_fit_1_1_lorentz_matrix.html#a47c69afe81ba4575a4fd6f3b4db65187',1,'GooFit::LorentzMatrix::E() const'],['../class_goo_fit_1_1_lorentz_matrix.html#adc1dc6a443bbcede107880669d27c799',1,'GooFit::LorentzMatrix::E()']]],
+  ['eigen_2eh',['Eigen.h',['../_eigen_8h.html',1,'']]],
   ['end',['end',['../class_goo_fit_1_1strided__range.html#a5716b089ca4dda8c9106335c0968c92b',1,'GooFit::strided_range']]],
   ['enum_5fto_5funderlying',['enum_to_underlying',['../namespace_goo_fit.html#a2a5d1a3c01483597044d740167bf2a6f',1,'GooFit']]],
   ['error',['error',['../class_goo_fit_1_1_variable.html#a518dbaed4b5d8dee15007424300dcc9c',1,'GooFit::Variable']]],
   ['error_2eh',['Error.h',['../_error_8h.html',1,'']]],
   ['errorsonbins',['errorsOnBins',['../class_goo_fit_1_1_fit_control.html#ade53e2ae3547242e282a4a76e56874a6',1,'GooFit::FitControl']]],
-  ['eval',['Eval',['../class_goo_fit_1_1_minuit1.html#aea48147824733a095a7e4117b3e48206',1,'GooFit::Minuit1']]],
+  ['eval',['Eval',['../class_goo_fit_1_1_minuit1.html#aea48147824733a095a7e4117b3e48206',1,'GooFit::Minuit1::Eval()'],['../namespace_goo_fit.html#a0b857aa4b1d7ac8a7e399132ae38d517a34f8a10ae57ac230a48fc44908bd40ad',1,'GooFit::Eval()']]],
+  ['evalfunc',['EvalFunc',['../namespace_goo_fit.html#a0b857aa4b1d7ac8a7e399132ae38d517',1,'GooFit']]],
+  ['evalfunc_5fto_5fstring',['evalfunc_to_string',['../namespace_goo_fit.html#aca42c5a1d4a2f54ee6393263f61a034b',1,'GooFit']]],
+  ['evalfunc_5fvals',['evalfunc_vals',['../namespace_goo_fit.html#a5922da3c14f1dbb68721b0ab0d09ab15',1,'GooFit']]],
   ['evaluateatpoints',['evaluateAtPoints',['../class_goo_fit_1_1_goo_pdf.html#ab678013213c1212c41eab92d42fe7550',1,'GooFit::GooPdf']]],
   ['evalvar_2eh',['EvalVar.h',['../_eval_var_8h.html',1,'']]],
   ['eventweightedaddpdf',['EventWeightedAddPdf',['../class_goo_fit_1_1_event_weighted_add_pdf.html',1,'GooFit::EventWeightedAddPdf'],['../class_goo_fit_1_1_event_weighted_add_pdf.html#a8fcbe5965d9d005868e4f9cd07ade539',1,'GooFit::EventWeightedAddPdf::EventWeightedAddPdf()']]],

@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['gauss',['GAUSS',['../namespace_goo_fit.html#adb7023544943769d1aebd62a519b91d4a37a2f93fd56db2dd5f74780e8bca23b3',1,'GooFit']]],
-  ['gs',['GS',['../namespace_goo_fit.html#adb7023544943769d1aebd62a519b91d4a71a75a167c33c58bfb561764255c880a',1,'GooFit']]]
+  ['eval',['Eval',['../namespace_goo_fit.html#a0b857aa4b1d7ac8a7e399132ae38d517a34f8a10ae57ac230a48fc44908bd40ad',1,'GooFit']]]
 ];

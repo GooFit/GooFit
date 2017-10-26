@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['respdftype',['ResPdfType',['../namespace_goo_fit.html#adb7023544943769d1aebd62a519b91d4',1,'GooFit']]]
+  ['mod',['Mod',['../class_goo_fit_1_1_lineshapes_1_1_f_o_c_u_s.html#a583d8ec0813737ff9970fb1e6c5296aa',1,'GooFit::Lineshapes::FOCUS']]]
 ];

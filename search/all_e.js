@@ -22,9 +22,9 @@ var searchData=
   ['m_5fieventspertask',['m_iEventsPerTask',['../class_goo_fit_1_1_pdf_base.html#a94c76d405a84904e3317b59ff7b97b66',1,'GooFit::PdfBase']]],
   ['macros_2eh',['Macros.h',['../_macros_8h.html',1,'']]],
   ['magenta',['magenta',['../namespace_goo_fit.html#ad8ca018216ddb23824741aeeb8d5da56',1,'GooFit']]],
+  ['make_5fminuit_5fvector',['make_minuit_vector',['../class_goo_fit_1_1_params.html#ae25184da173af27dad0e9ea1c940d9bf',1,'GooFit::Params']]],
   ['makegmunu',['makeGmunu',['../class_goo_fit_1_1_symm_lorentz_matrix.html#ab4237afdaf59aa70684c28b77e9dcea7',1,'GooFit::SymmLorentzMatrix']]],
   ['makegrid',['makeGrid',['../class_goo_fit_1_1_goo_pdf.html#a1398038b6f85df0adef260e59e253139',1,'GooFit::GooPdf']]],
-  ['makepars',['makePars',['../class_goo_fit_1_1_f_c_n.html#a8119d3d437d04d1285dd783d6fddea3a',1,'GooFit::FCN']]],
   ['makezero',['makeZero',['../class_goo_fit_1_1_lorentz_matrix.html#a144746fd9a1abb511d2b2337d06f6810',1,'GooFit::LorentzMatrix::makeZero()'],['../class_goo_fit_1_1_symm_lorentz_matrix.html#a8523971f88c106fd5109b47ea086f8fa',1,'GooFit::SymmLorentzMatrix::makeZero()']]],
   ['mappedpdf',['MappedPdf',['../class_goo_fit_1_1_mapped_pdf.html',1,'GooFit::MappedPdf'],['../class_goo_fit_1_1_mapped_pdf.html#ad1f6b476484569bcbee1ac1cd83c3871',1,'GooFit::MappedPdf::MappedPdf()']]],
   ['mappedpdf_2ecu',['MappedPdf.cu',['../_mapped_pdf_8cu.html',1,'']]],
@@ -45,6 +45,7 @@ var searchData=
   ['mixingtimeresolution',['MixingTimeResolution',['../class_goo_fit_1_1_mixing_time_resolution.html',1,'GooFit::MixingTimeResolution'],['../class_goo_fit_1_1_mixing_time_resolution.html#a21446af86635a4b5b6d87d264df3e4a7',1,'GooFit::MixingTimeResolution::MixingTimeResolution()']]],
   ['mixingtimeresolution_5faux_2ecu',['MixingTimeResolution_Aux.cu',['../_mixing_time_resolution___aux_8cu.html',1,'']]],
   ['mixingtimeresolution_5faux_2eh',['MixingTimeResolution_Aux.h',['../_mixing_time_resolution___aux_8h.html',1,'']]],
+  ['mod',['Mod',['../class_goo_fit_1_1_lineshapes_1_1_f_o_c_u_s.html#a583d8ec0813737ff9970fb1e6c5296aa',1,'GooFit::Lineshapes::FOCUS']]],
   ['mothermass',['motherMass',['../struct_goo_fit_1_1_decay_info.html#acd1ea8f96e685ec79dae4bb0adc70b36',1,'GooFit::DecayInfo']]],
   ['mult',['mult',['../class_goo_fit_1_1_lorentz_matrix.html#a7f3c5e1abed883c84349e246fce30b7e',1,'GooFit::LorentzMatrix::mult()'],['../class_goo_fit_1_1_symm_lorentz_matrix.html#ac1e65bab2a22634be4df6cff03940832',1,'GooFit::SymmLorentzMatrix::mult()']]]
 ];

@@ -72,6 +72,7 @@ $(function() {
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
 <a href="#typedef-members">Typedefs</a> &#124;
+<a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
@@ -103,8 +104,24 @@ Typedefs</h2></td></tr>
 <tr class="memitem:a7ed84a17159e8a1112cffd0cd4b77c20"><td class="memItemLeft" align="right" valign="top">typedef fptype(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#a7ed84a17159e8a1112cffd0cd4b77c20">GooFit::device_metric_ptr</a>) (fptype, fptype *, unsigned int)</td></tr>
 <tr class="separator:a7ed84a17159e8a1112cffd0cd4b77c20"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:a0b857aa4b1d7ac8a7e399132ae38d517"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#a0b857aa4b1d7ac8a7e399132ae38d517">GooFit::EvalFunc</a> : size_t { <br />
+&#160;&#160;<a class="el" href="namespace_goo_fit.html#a0b857aa4b1d7ac8a7e399132ae38d517a34f8a10ae57ac230a48fc44908bd40ad">GooFit::EvalFunc::Eval</a> = 0, 
+<a class="el" href="namespace_goo_fit.html#a0b857aa4b1d7ac8a7e399132ae38d517a046970c46eb772cba48df3e7ae6b728b">GooFit::EvalFunc::NLL</a>, 
+<a class="el" href="namespace_goo_fit.html#a0b857aa4b1d7ac8a7e399132ae38d517ab6ccabb499827f639017c834d93d548d">GooFit::EvalFunc::Prob</a>, 
+<a class="el" href="namespace_goo_fit.html#a0b857aa4b1d7ac8a7e399132ae38d517a3abf08bcfcd8ded1ffaf543b1df7901b">GooFit::EvalFunc::BinAvg</a>, 
+<br />
+&#160;&#160;<a class="el" href="namespace_goo_fit.html#a0b857aa4b1d7ac8a7e399132ae38d517a429ad674277e10c4a3bec241f37951a1">GooFit::EvalFunc::BinWithError</a>, 
+<a class="el" href="namespace_goo_fit.html#a0b857aa4b1d7ac8a7e399132ae38d517aee727f8de59cda0c2bdd4b2bfa15150c">GooFit::EvalFunc::Chisq</a>
+<br />
+ }</td></tr>
+<tr class="separator:a0b857aa4b1d7ac8a7e399132ae38d517"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:aca42c5a1d4a2f54ee6393263f61a034b"><td class="memItemLeft" align="right" valign="top">constexpr const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#aca42c5a1d4a2f54ee6393263f61a034b">GooFit::evalfunc_to_string</a> (EvalFunc val)</td></tr>
+<tr class="separator:aca42c5a1d4a2f54ee6393263f61a034b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a948bcd324f45d08a455ced5189dfb894"><td class="memItemLeft" align="right" valign="top">__device__ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#a948bcd324f45d08a455ced5189dfb894">GooFit::dev_powi</a> (int base, int exp)</td></tr>
 <tr class="separator:a948bcd324f45d08a455ced5189dfb894"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a47f6a0c98e9b8cdb05a0fa27a75ae206"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#a47f6a0c98e9b8cdb05a0fa27a75ae206">GooFit::getMetricPointer</a> (std::string name)</td></tr>
@@ -114,13 +131,15 @@ Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
+<tr class="memitem:a5922da3c14f1dbb68721b0ab0d09ab15"><td class="memItemLeft" align="right" valign="top">constexpr const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#a5922da3c14f1dbb68721b0ab0d09ab15">GooFit::evalfunc_vals</a> [] = {&quot;ptr_to_Eval&quot;, &quot;ptr_to_NLL&quot;, &quot;ptr_to_Prob&quot;, &quot;ptr_to_BinAvg&quot;, &quot;ptr_to_BinWithError&quot;, &quot;ptr_to_Chisq&quot;}</td></tr>
+<tr class="separator:a5922da3c14f1dbb68721b0ab0d09ab15"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a629dda1cf456a097fd7834dd96f5ba71"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#a629dda1cf456a097fd7834dd96f5ba71">GooFit::host_fcn_ptr</a></td></tr>
 <tr class="separator:a629dda1cf456a097fd7834dd96f5ba71"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Oct 17 2017 02:47:54 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Oct 26 2017 16:52:35 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

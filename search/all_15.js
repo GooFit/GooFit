@@ -15,6 +15,8 @@ var searchData=
   ['threegaussresolution_5faux_2ecu',['ThreeGaussResolution_Aux.cu',['../_three_gauss_resolution___aux_8cu.html',1,'']]],
   ['threegaussresolution_5faux_2eh',['ThreeGaussResolution_Aux.h',['../_three_gauss_resolution___aux_8h.html',1,'']]],
   ['thrustoverride_2eh',['ThrustOverride.h',['../_thrust_override_8h.html',1,'']]],
+  ['to_5f5param',['to_5param',['../namespace_goo_fit.html#ac8125da6cff06d0edcdddd68e1aebd71',1,'GooFit']]],
+  ['to_5fmatrix',['to_matrix',['../class_goo_fit_1_1_unbinned_data_set.html#a639e4a240cdf57fc51ea72f29d0b118f',1,'GooFit::UnbinnedDataSet']]],
   ['totalconstants',['totalConstants',['../namespace_goo_fit.html#aa76572e7343a32cd76025322cf06dab2',1,'GooFit']]],
   ['totalparams',['totalParams',['../namespace_goo_fit.html#a15c3cf3204964ebc914af2e72f84f5c1',1,'GooFit']]],
   ['transform_5freduce',['transform_reduce',['../_thrust_override_8h.html#a5dd7e03e1d7dcd391fcfdb6397b3fd9a',1,'ThrustOverride.h']]],

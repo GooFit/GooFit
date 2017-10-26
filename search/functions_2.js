@@ -9,5 +9,7 @@ var searchData=
   ['binnedfit',['binnedFit',['../class_goo_fit_1_1_fit_control.html#a2463b30811cfb3b3284bd05ae57d8fb6',1,'GooFit::FitControl']]],
   ['binnednllfit',['BinnedNllFit',['../class_goo_fit_1_1_binned_nll_fit.html#adc26a46765e5add51c6774836bc42081',1,'GooFit::BinnedNllFit']]],
   ['bintransformpdf',['BinTransformPdf',['../class_goo_fit_1_1_bin_transform_pdf.html#a029552d198605372572edfdeb505508e',1,'GooFit::BinTransformPdf']]],
+  ['bugg',['Bugg',['../class_goo_fit_1_1_lineshapes_1_1_bugg.html#ae951deab991813d7b1d13fc3dca8ac64',1,'GooFit::Lineshapes::Bugg']]],
+  ['bugg3',['Bugg3',['../class_goo_fit_1_1_lineshapes_1_1_bugg3.html#a89e51f0fa443630789d1934191506ace',1,'GooFit::Lineshapes::Bugg3']]],
   ['bwpdf',['BWPdf',['../class_goo_fit_1_1_b_w_pdf.html#aa426890362f7c46409c0c49bb9052547',1,'GooFit::BWPdf']]]
 ];

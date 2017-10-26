@@ -71,6 +71,7 @@ $(function() {
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
 <a href="#enum-members">Enumerations</a>  </div>
   <div class="headertitle">
 <div class="title">LineshapesPdf.h File Reference</div>  </div>
@@ -79,6 +80,7 @@ $(function() {
 <div class="textblock"><code>#include &quot;<a class="el" href="_goo_pdf_8h_source.html">goofit/PDFs/GooPdf.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="_resonance_pdf_8h_source.html">goofit/PDFs/physics/ResonancePdf.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="_variable_8h_source.html">goofit/Variable.h</a>&quot;</code><br />
+<code>#include &lt;array&gt;</code><br />
 <code>#include &quot;<a class="el" href="_complex_8h_source.html">goofit/detail/Complex.h</a>&quot;</code><br />
 </div>
 <p><a href="_lineshapes_pdf_8h_source.html">Go to the source code of this file.</a></p>
@@ -87,6 +89,31 @@ $(function() {
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_lineshape.html">GooFit::Lineshape</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_lineshapes_1_1_r_b_w.html">GooFit::Lineshapes::RBW</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_lineshapes_1_1_one.html">GooFit::Lineshapes::One</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_lineshapes_1_1_l_a_s_s.html">GooFit::Lineshapes::LASS</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_lineshapes_1_1_non_res.html">GooFit::Lineshapes::NonRes</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_lineshapes_1_1_bugg.html">GooFit::Lineshapes::Bugg</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_lineshapes_1_1_bugg3.html">GooFit::Lineshapes::Bugg3</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_lineshapes_1_1_flatte.html">GooFit::Lineshapes::Flatte</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_lineshapes_1_1_s_b_w.html">GooFit::Lineshapes::SBW</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_lineshapes_1_1_f_o_c_u_s.html">GooFit::Lineshapes::FOCUS</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_lineshapes_1_1k_matrix.html">GooFit::Lineshapes::kMatrix</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_lineshapes_1_1_g_l_a_s_s.html">GooFit::Lineshapes::GLASS</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_lineshapes_1_1_g_spline.html">GooFit::Lineshapes::GSpline</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A spline implementaiton for the width (Gamma = G)  <a href="class_goo_fit_1_1_lineshapes_1_1_g_spline.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_amplitude.html">GooFit::Amplitude</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -94,25 +121,16 @@ Classes</h2></td></tr>
 Namespaces</h2></td></tr>
 <tr class="memitem:namespace_goo_fit"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html">GooFit</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespace_goo_fit_1_1_lineshapes"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit_1_1_lineshapes.html">GooFit::Lineshapes</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:a50bf28842be2e5fac0f30e9905675b8a"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit_1_1_lineshapes.html#a50bf28842be2e5fac0f30e9905675b8a">GooFit::Lineshapes::spline_t</a> = std::tuple&lt; fptype, fptype, unsigned int &gt;</td></tr>
+<tr class="separator:a50bf28842be2e5fac0f30e9905675b8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:ae587603f507f8a46fdccd092e2d8bff5"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#ae587603f507f8a46fdccd092e2d8bff5">GooFit::LS</a> { <br />
-&#160;&#160;<a class="el" href="namespace_goo_fit.html#ae587603f507f8a46fdccd092e2d8bff5abc21e6484530fc9d0313cb816b733396">GooFit::LS::ONE</a>, 
-<a class="el" href="namespace_goo_fit.html#ae587603f507f8a46fdccd092e2d8bff5a81043f8c681575bca3e4eff6afbd9db9">GooFit::LS::BW</a>, 
-<a class="el" href="namespace_goo_fit.html#ae587603f507f8a46fdccd092e2d8bff5aeb60ec1beae3adf63350208615dc44c1">GooFit::LS::Lass</a>, 
-<a class="el" href="namespace_goo_fit.html#ae587603f507f8a46fdccd092e2d8bff5a281f928e14010b898799fbcffca5a839">GooFit::LS::Lass_M3</a>, 
-<br />
-&#160;&#160;<a class="el" href="namespace_goo_fit.html#ae587603f507f8a46fdccd092e2d8bff5a2398556ba32d5dcbf9d58f432382bcf8">GooFit::LS::nonRes</a>, 
-<a class="el" href="namespace_goo_fit.html#ae587603f507f8a46fdccd092e2d8bff5a4711158a0e494cdca45e673bb3af56b1">GooFit::LS::Bugg</a>, 
-<a class="el" href="namespace_goo_fit.html#ae587603f507f8a46fdccd092e2d8bff5a379568076564c4217b628ec8941ce9b0">GooFit::LS::Bugg3</a>, 
-<a class="el" href="namespace_goo_fit.html#ae587603f507f8a46fdccd092e2d8bff5a2609fc244129252b283c82842850816c">GooFit::LS::Flatte</a>, 
-<br />
-&#160;&#160;<a class="el" href="namespace_goo_fit.html#ae587603f507f8a46fdccd092e2d8bff5ab834163bcb314f88e180687aa98156f4">GooFit::LS::SBW</a>, 
-<a class="el" href="namespace_goo_fit.html#ae587603f507f8a46fdccd092e2d8bff5a4cff6afc4963881749f7742fbb4d1392">GooFit::LS::Spline</a>
-<br />
- }</td></tr>
-<tr class="separator:ae587603f507f8a46fdccd092e2d8bff5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a08ab8dd8ee4b25e849b5a5eecf6ee48b"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#a08ab8dd8ee4b25e849b5a5eecf6ee48b">GooFit::FF</a> : unsigned int { <a class="el" href="namespace_goo_fit.html#a08ab8dd8ee4b25e849b5a5eecf6ee48ba06c2cea18679d64399783748fa367bdd">GooFit::FF::One</a> = 0, 
 <a class="el" href="namespace_goo_fit.html#a08ab8dd8ee4b25e849b5a5eecf6ee48baa6f5350f5a2b25a96d66757f761ce65c">GooFit::FF::BL</a>, 
 <a class="el" href="namespace_goo_fit.html#a08ab8dd8ee4b25e849b5a5eecf6ee48bac29d73f0922a78500ae4bf1ba74ef293">GooFit::FF::BL_Prime</a>, 
@@ -123,7 +141,7 @@ Enumerations</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Oct 17 2017 02:47:54 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Oct 26 2017 16:52:35 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

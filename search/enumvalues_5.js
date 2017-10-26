@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['lass',['Lass',['../namespace_goo_fit.html#ae587603f507f8a46fdccd092e2d8bff5aeb60ec1beae3adf63350208615dc44c1',1,'GooFit::Lass()'],['../namespace_goo_fit.html#adb7023544943769d1aebd62a519b91d4a7a776250a65aa562e492433f3f064a59',1,'GooFit::LASS()']]],
-  ['lass_5fm3',['Lass_M3',['../namespace_goo_fit.html#ae587603f507f8a46fdccd092e2d8bff5a281f928e14010b898799fbcffca5a839',1,'GooFit']]]
+  ['i32',['I32',['../class_goo_fit_1_1_lineshapes_1_1_f_o_c_u_s.html#a583d8ec0813737ff9970fb1e6c5296aaad878ea6016bfe01729548bf442de5a8b',1,'GooFit::Lineshapes::FOCUS']]],
+  ['invalid',['InValid',['../namespace_goo_fit.html#a145d35e8e46e921ed038de04120d4241a05fe242e96a3e233fc27654efe32c3a6',1,'GooFit']]]
 ];

@@ -12,11 +12,28 @@ on the GPU
 #include "goofit/PDFs/physics/SpinFactors.h"
 #include "goofit/PDFs/physics/LineshapesPdf.h"
 
+#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
+#include "goofit/detail/compute_inverse5.h"
+#endif
+
 #include <utility>
+
+#include <Eigen/Core>
+#include <Eigen/LU>
 
 #include <goofit/detail/Macros.h>
 
+#define NPOLES 5
+#define NCHANNELS 5
+
+#define mPiPlus 0.139570
+#define mKPlus 0.493677
+#define mEta 0.547862
+#define mEtap 0.96778
+
 namespace GooFit {
+
+// Lineshape base
 
 // Form factors as in pdg http://pdg.lbl.gov/2012/reviews/rpp2012-rev-dalitz-analysis-formalism.pdf
 __device__ fptype BL_PRIME(fptype z2, fptype z02, int L) {
@@ -64,7 +81,7 @@ __device__ fptype BL2(fptype z2, int L) {
     // Spin 3 and up not accounted for.
 }
 
-__device__ fpcomplex LS_ONE(fptype Mpair, fptype m1, fptype m2, unsigned int *indices) { return fpcomplex(1, 0); }
+__device__ fpcomplex LS_ONE(fptype Mpair, fptype m1, fptype m2, unsigned int *indices) { return {1., 0.}; }
 
 // This function is modeled after BW_BW::getVal() in BW_BW.cpp from the MINT package written by Jonas Rademacker.
 __device__ fpcomplex BW(fptype Mpair, fptype m1, fptype m2, unsigned int *indices) {
@@ -220,9 +237,6 @@ __device__ fpcomplex bugg_MINT(fptype Mpair, fptype m1, fptype m2, unsigned int 
     fptype sA         = 0.41;
     fptype s0_4pi     = 7.082 / 2.845;
     fptype lambda_4pi = 2.845;
-    fptype mPiPlus    = .13957018;
-    fptype mKPlus     = .493677;
-    fptype mEta       = .54751;
 
     fptype g1sq = (b1 + b2 * s) * exp(-(s - M * M) / A);
     fptype z    = bugg_j1(s, mPiPlus) - bugg_j1(M * M, mPiPlus);
@@ -267,9 +281,6 @@ __device__ fpcomplex bugg_MINT3(fptype Mpair, fptype m1, fptype m2, unsigned int
     fptype alpha      = 1.3;
     fptype s0_4pi     = 7.082 / 2.845;
     fptype lambda_4pi = 2.845;
-    fptype mPiPlus    = .13957018;
-    fptype mKPlus     = .493677;
-    fptype mEta       = .547862;
     fptype sA         = 0.41 * mPiPlus * mPiPlus;
 
     fptype g1sq      = M * (b1 + b2 * s) * exp(-(s - M * M) / A);
@@ -409,8 +420,6 @@ __device__ fpcomplex Flatte_MINT(fptype Mpair, fptype m1, fptype m2, unsigned in
     fptype gK_by_gPi = 4.21;
     fptype gK        = gPi * gK_by_gPi;
     fptype mPi0      = .1349766;
-    fptype mPiPlus   = .13957018;
-    fptype mKPlus    = .493677;
     fptype mK0       = .497648;
 
     fptype mpsq = (m1 + m2) * (m1 + m2);
@@ -431,71 +440,80 @@ __device__ fpcomplex Flatte_MINT(fptype Mpair, fptype m1, fptype m2, unsigned in
     return BW;
 }
 
+__device__ __thrust_forceinline__ fptype Q2(fptype Msq, fptype M1sq, fptype M2sq) {
+    return (Msq / 4. - (M1sq + M2sq) / 2. + (M1sq - M2sq) * (M1sq - M2sq) / (4 * Msq));
+}
+
+__device__ __thrust_forceinline__ fptype BlattWeisskopf_Norm(const fptype z2, const fptype z02, unsigned int L) {
+    if(L == 0)
+        return 1;
+    else if(L == 1)
+        return (1 + z02) / (1 + z2);
+    else if(L == 2)
+        return (z02 * z02 + 3 * z02 + 9) / (z2 * z2 + 3 * z2 + 9);
+    else {
+        abort(__FILE__, __LINE__, "Wrong value of L");
+        return 0; // Can't reach
+    }
+}
+
+__device__ fptype getSpline(fptype x, bool continued, unsigned int *indices) {
+    const fptype s_min       = GOOFIT_GET_CONST(8);
+    const fptype s_max       = GOOFIT_GET_CONST(9);
+    const unsigned int nBins = GOOFIT_GET_INT(10);
+
+    // 11 is the first spine knot, 11+nBins is the first curvature
+
+    if(x <= s_min)
+        return continued ? GOOFIT_GET_PARAM(11 + 0) : 0;
+    if(x >= s_max)
+        return continued ? GOOFIT_GET_PARAM(11 + nBins - 1) : 0;
+
+    fptype spacing = (s_max - s_min) / (nBins - 1.);
+    fptype dx      = fmod((x - s_min), spacing);
+
+    auto bin = static_cast<unsigned int>((x - s_min) / spacing);
+
+    fptype m_x_0  = GOOFIT_GET_PARAM(11 + bin);
+    fptype m_x_1  = GOOFIT_GET_PARAM(11 + bin + 1);
+    fptype m_xf_0 = GOOFIT_GET_CONST(11 + bin + nBins);
+    fptype m_xf_1 = GOOFIT_GET_CONST(11 + bin + nBins + 1);
+
+    return m_x_0 + dx * ((m_x_1 - m_x_0) / spacing - (m_xf_1 + 2 * m_xf_0) * spacing / 6) + dx * dx * m_xf_0
+           + dx * dx * dx * (m_xf_1 - m_xf_0) / (6 * spacing);
+}
+
+__device__ fptype kFactor(fptype mass, fptype width) {
+    fptype gamma = mass * sqrt(POW2(mass) + POW2(width));
+    fptype k     = 2 * sqrt(2.) * mass * width * gamma / (M_PI * sqrt(POW2(mass) + gamma));
+    return sqrt(k);
+}
+
 __device__ fpcomplex Spline_TDP(fptype Mpair, fptype m1, fptype m2, unsigned int *indices) {
-    fpcomplex ret(0, 0);
+    const fptype mass  = GOOFIT_GET_PARAM(2);
+    const fptype width = GOOFIT_GET_PARAM(3);
+    // const unsigned int L = GOOFIT_GET_INT(4);
+    const fptype radius = GOOFIT_GET_CONST(7);
 
-    const unsigned int nKnobs = indices[4]; // orbital
+    fptype s  = POW2(Mpair);
+    fptype s1 = POW2(m1);
+    fptype s2 = POW2(m2);
 
-    unsigned int idx                 = 5; // Next index
-    unsigned int i                   = 0;
-    const unsigned int pwa_coefs_idx = idx;
-    idx += 2 * nKnobs;
-    const fptype *mKKlimits = &(functorConstants[indices[idx]]);
-    fptype mAB = Mpair, mAC = m1, mBC = m2;
+    // This is GSpline.EFF in AmpGen
 
-    int khiAB = 0, khiAC = 0;
-    fptype dmKK, aa, bb, aa3, bb3;
-    unsigned int timestorun = 1; //+doSwap;
-    while(khiAB < nKnobs) {
-        if(mAB < mKKlimits[khiAB])
-            break;
-        khiAB++;
-    }
+    fptype q2 = fabs(Q2(s, s1, s2));
 
-    if(khiAB <= 0 || khiAB == nKnobs)
-        timestorun = 0;
-    while(khiAC < nKnobs) {
-        if(mAC < mKKlimits[khiAC])
-            break;
-        khiAC++;
-    }
+    // Non-EFF
+    // fptype BF             = sqrt( BlattWeisskopf_Norm(q2 * POW2(radius), 0, L));
+    fptype BF = exp(-q2 * POW2(radius) / 2);
 
-    if(khiAC <= 0 || khiAC == nKnobs)
-        timestorun = 0;
+    fptype width_shape = width * getSpline(s, true, indices);
+    fptype width_norm  = width * getSpline(POW2(mass), false, indices);
 
-    for(i = 0; i < timestorun; i++) {
-        unsigned int kloAB                = khiAB - 1; //, kloAC = khiAC -1;
-        unsigned int twokloAB             = kloAB + kloAB;
-        unsigned int twokhiAB             = khiAB + khiAB;
-        fptype pwa_coefs_real_kloAB       = cudaArray[indices[pwa_coefs_idx + twokloAB]];
-        fptype pwa_coefs_real_khiAB       = cudaArray[indices[pwa_coefs_idx + twokhiAB]];
-        fptype pwa_coefs_imag_kloAB       = cudaArray[indices[pwa_coefs_idx + twokloAB + 1]];
-        fptype pwa_coefs_imag_khiAB       = cudaArray[indices[pwa_coefs_idx + twokhiAB + 1]];
-        fptype pwa_coefs_prime_real_kloAB = 0; // cDeriatives[twokloAB];
-        fptype pwa_coefs_prime_real_khiAB = 0; // cDeriatives[twokhiAB];
-        fptype pwa_coefs_prime_imag_kloAB = 0; // cDeriatives[twokloAB+1];
-        fptype pwa_coefs_prime_imag_khiAB = 0; // cDeriatives[twokhiAB+1];
-        //  printf("m12: %f: %f %f %f %f %f %f %d %d %d\n", mAB, mKKlimits[0], mKKlimits[nKnobs-1],
-        //  pwa_coefs_real_khiAB, pwa_coefs_imag_khiAB, pwa_coefs_prime_real_khiAB, pwa_coefs_prime_imag_khiAB, khiAB,
-        //  khiAC, timestorun );
-
-        dmKK = mKKlimits[khiAB] - mKKlimits[kloAB];
-        aa   = (mKKlimits[khiAB] - mAB) / dmKK;
-        bb   = 1 - aa;
-        aa3  = aa * aa * aa;
-        bb3  = bb * bb * bb;
-        //  ret += aa * pwa_coefs[kloAB] + bb * pwa_coefs[khiAB] + ((aa3 - aa)*pwa_coefs_prime[kloAB] + (bb3 - bb) *
-        //  pwa_coefs_prime[khiAB]) * (dmKK*dmKK)/6.0;
-        ret.real(ret.real() + aa * pwa_coefs_real_kloAB + bb * pwa_coefs_real_khiAB
-                 + ((aa3 - aa) * pwa_coefs_prime_real_kloAB + (bb3 - bb) * pwa_coefs_prime_real_khiAB) * (dmKK * dmKK)
-                       / 6.0);
-        ret.imag(ret.imag() + aa * pwa_coefs_imag_kloAB + bb * pwa_coefs_imag_khiAB
-                 + ((aa3 - aa) * pwa_coefs_prime_imag_kloAB + (bb3 - bb) * pwa_coefs_prime_imag_khiAB) * (dmKK * dmKK)
-                       / 6.0);
-        khiAB = khiAC;
-        mAB   = mAC;
-    }
-    return ret;
+    fptype norm          = kFactor(mass, width) * BF;
+    fptype running_width = width * width_shape / width_norm;
+    fpcomplex iBW        = fpcomplex(POW2(mass) - s, -mass * running_width);
+    return norm / iBW;
 }
 
 __device__ fpcomplex nonres_DP(fptype Mpair, fptype m1, fptype m2, unsigned int *indices) {
@@ -511,7 +529,189 @@ __device__ fpcomplex nonres_DP(fptype Mpair, fptype m1, fptype m2, unsigned int 
     fptype formfactor = sqrt(BL2(pABSq * meson_radius * meson_radius, orbital));
     // printf("NonRes q2:%.7g FF:%.7g, s %.7g m1 %.7g m2 %.7g r %.7g L %u \n",pABSq, formfactor, mumsRecoMass2,
     // m1,m2,meson_radius, orbital );
-    return fpcomplex(1, 0) * formfactor;
+    return fpcomplex(1., 0.) * formfactor;
+}
+
+__device__ fptype phsp_twoBody(fptype s, fptype m0, fptype m1) { return sqrt(1. - POW2(m0 + m1) / s); }
+
+__device__ fptype phsp_fourPi(fptype s) {
+    if(s > 1)
+        return phsp_twoBody(s, 2 * mPiPlus, 2 * mPiPlus);
+    else
+        return 0.00051 + -0.01933 * s + 0.13851 * s * s + -0.20840 * s * s * s + -0.29744 * s * s * s * s
+               + 0.13655 * s * s * s * s * s + 1.07885 * s * s * s * s * s * s;
+}
+
+__device__ Eigen::Array<fpcomplex, NCHANNELS, NCHANNELS>
+getPropagator(const Eigen::Array<fptype, NCHANNELS, NCHANNELS> &kMatrix,
+              const Eigen::Matrix<fptype, 5, 1> &phaseSpace,
+              fptype adlerTerm) {
+    Eigen::Array<fpcomplex, NCHANNELS, NCHANNELS> tMatrix;
+
+    for(unsigned int i = 0; i < NCHANNELS; ++i) {
+        for(unsigned int j = 0; j < NCHANNELS; ++j) {
+            tMatrix(i, j) = (i == j ? 1. : 0.) - fpcomplex(0, adlerTerm) * kMatrix(i, j) * phaseSpace(j);
+        }
+    }
+
+#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
+    // Here we assume that some values are 0
+    return compute_inverse5<-1,
+                            -1,
+                            0,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            0,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1,
+                            -1>(tMatrix);
+#else
+    return Eigen::inverse(tMatrix);
+#endif
+}
+
+__device__ fpcomplex kMatrixFunction(fptype Mpair, fptype m1, fptype m2, unsigned int *indices) {
+    // const fptype mass  = GOOFIT_GET_PARAM(2);
+    // const fptype width = GOOFIT_GET_PARAM(3);
+    // const unsigned int L = GOOFIT_GET_INT(4);
+    // const fptype radius = GOOFIT_GET_CONST(7);
+
+    // const fptype pTerm = GOOFIT_GET_INT();
+
+    unsigned int pterm = GOOFIT_GET_INT(8);
+    bool is_pole       = GOOFIT_GET_INT(9) == 1;
+
+    fptype sA0      = GOOFIT_GET_PARAM(10);
+    fptype sA       = GOOFIT_GET_PARAM(11);
+    fptype s0_prod  = GOOFIT_GET_PARAM(12);
+    fptype s0_scatt = GOOFIT_GET_PARAM(13);
+
+    Eigen::Array<fptype, NCHANNELS, 1> fscat;
+    Eigen::Array<fptype, NPOLES, 1> pmasses;
+    Eigen::Array<fptype, NPOLES, NPOLES> couplings;
+
+    for(int i = 0; i < NCHANNELS; i++) {
+        fscat(i) = GOOFIT_GET_PARAM(14 + i);
+    }
+
+    for(int i = 0; i < NPOLES; i++) {
+        for(int j = 0; j < NPOLES; j++)
+            couplings(i, j) = GOOFIT_GET_PARAM(14 + NCHANNELS + i * (NPOLES + 1) + j);
+        pmasses(i) = GOOFIT_GET_PARAM(14 + NCHANNELS + i * (NPOLES + 1) + NPOLES);
+    }
+
+    fptype s = POW2(Mpair);
+
+    // constructKMatrix
+
+    Eigen::Array<fptype, NCHANNELS, NCHANNELS> kMatrix;
+    kMatrix.setZero();
+
+    // TODO: Make sure the order (k,i,j) is correct
+
+    for(int i = 0; i < 5; i++) {
+        for(int j = 0; j < 5; j++) {
+            for(int k = 0; k < 5; k++)
+                kMatrix(i, j) += couplings(k, i) * couplings(k, j) / (pmasses(k) - s);
+            if(i == 0 || j == 0) // Scattering term
+                kMatrix(i, j) += fscat(i + j) * (1 - s0_scatt) / (s - s0_scatt);
+        }
+    }
+
+    fptype adlerTerm = (1. - sA0) * (s - sA * mPiPlus * mPiPlus / 2) / (s - sA0);
+
+    Eigen::Matrix<fptype, 5, 1> phaseSpace;
+    phaseSpace << phsp_twoBody(s, mPiPlus, mPiPlus), phsp_twoBody(s, mKPlus, mKPlus), phsp_fourPi(s),
+        phsp_twoBody(s, mEta, mEta), phsp_twoBody(s, mEta, mEtap);
+
+    Eigen::Array<fpcomplex, NCHANNELS, NCHANNELS> F = getPropagator(kMatrix, phaseSpace, adlerTerm);
+
+    if(is_pole) { // pole
+        fpcomplex M = 0;
+        for(int i = 0; i < NCHANNELS; i++) {
+            fptype pole = couplings(i, pterm);
+            M += F(0, i) * pole;
+        }
+        return M / (POW2(pmasses(pterm)) - s);
+    } else { // prod
+        return F(0, pterm) * (1 - s0_prod) / (s - s0_prod);
+    }
+}
+
+__device__ fptype phsp_FOCUS(fptype s, fptype m0, fptype m1) {
+    fptype mp = (m0 + m1);
+    fptype mm = (m0 - m1);
+    fptype a2 = (1.0 - mp * mp / s) * (1.0 - mm * mm / s);
+    return sqrt(a2);
+}
+
+__device__ fpcomplex FOCUSFunction(fptype Mpair, fptype m1, fptype m2, unsigned int *indices) {
+    fptype s         = POW2(Mpair);
+    unsigned int mod = GOOFIT_GET_INT(8);
+
+    // mKPlus, mPiPlus, mEtap
+    constexpr fptype sNorm = mKPlus * mKPlus + mPiPlus * mPiPlus;
+    constexpr fptype s12   = 0.23;
+    constexpr fptype s32   = .27;
+
+    fptype I12_adler = (s - s12) / sNorm;
+    fptype I32_adler = (s - s32) / sNorm;
+
+    fptype rho1 = phsp_FOCUS(s, mKPlus, mPiPlus);
+    fptype rho2 = phsp_FOCUS(s, mKPlus, mEtap);
+
+    fptype pmass = 1.7919;
+    Eigen::Array<fptype, 2, 1> coupling;
+    coupling << 0.31072, -0.02323;
+    fptype X = s / sNorm - 1;
+
+    // constructKMatrix
+    Eigen::Array<fptype, 2, 2> kMatrix;
+
+    kMatrix(0, 0) = coupling(0) * coupling(0) / (pmass - s) + 0.79299 - 0.15099 * X + 0.00811 * POW2(X);
+    kMatrix(1, 1) = coupling(1) * coupling(1) / (pmass - s) + 0.17054 - 0.0219 * X + 0.00085655 * POW2(X);
+    kMatrix(1, 0) = coupling(1) * coupling(0) / (pmass - s) + 0.15040 - 0.038266 * X + 0.0022596 * POW2(X);
+    kMatrix(0, 1) = coupling(0) * coupling(1) / (pmass - s) + 0.15040 - 0.038266 * X + 0.0022596 * POW2(X);
+
+    fptype K11 = I12_adler * kMatrix(0, 0);
+    fptype K12 = I12_adler * kMatrix(0, 1);
+    fptype K22 = I12_adler * kMatrix(1, 1);
+
+    fptype K32 = I32_adler * (-0.22147 + 0.026637 * X - 0.00092057 * POW2(X));
+
+    fptype detK = K11 * K22 - K12 * K12;
+    fpcomplex del{1 - rho1 * rho2 * detK, -(rho1 * K11 + rho2 * K22)};
+
+    fpcomplex T11{1., -rho2 * K22};
+    fpcomplex T22{1., -rho1 * K11};
+    fpcomplex T12{0., rho2 * K12};
+
+    fpcomplex T32 = 1. / fpcomplex(1, -K32 * rho1);
+
+    if(mod == static_cast<unsigned int>(Lineshapes::FOCUS::Mod::Kpi))
+        return fpcomplex(K11, -rho2 * detK) / del;
+    else if(mod == static_cast<unsigned int>(Lineshapes::FOCUS::Mod::KEta))
+        return K12 / del;
+    else /*if(mod==Lineshapes::FOCUS::Mod::I32)*/
+        return T32;
+
+    return {0., 0.};
 }
 
 __device__ resonance_function_ptr ptr_to_LS_ONE     = LS_ONE;
@@ -524,32 +724,54 @@ __device__ resonance_function_ptr ptr_to_SBW        = SBW;
 __device__ resonance_function_ptr ptr_to_NONRES_DP  = nonres_DP;
 __device__ resonance_function_ptr ptr_to_Flatte     = Flatte_MINT;
 __device__ resonance_function_ptr ptr_to_Spline     = Spline_TDP;
+__device__ resonance_function_ptr ptr_to_kMatrix    = kMatrixFunction;
+__device__ resonance_function_ptr ptr_to_FOCUS      = FOCUSFunction;
 
-Lineshape::Lineshape(std::string name,
-                     Variable *mass,
-                     Variable *width,
-                     unsigned int L,
-                     unsigned int Mpair,
-                     LS kind,
-                     FF FormFac,
-                     fptype radius,
-                     std::vector<Variable *> AdditionalVars,
-                     spline_t SplineInfo)
-    : GooPdf(nullptr, name)
-    , _mass(mass)
-    , _width(width)
-    , _L(L)
-    , _Mpair(Mpair)
-    , _kind(kind)
-    , _FormFac(FormFac)
-    , _SplineInfo(SplineInfo) {
-    GOOFIT_START_PDF;
-
+// This constructor is protected
+Lineshape::Lineshape(std::string name)
+    : GooPdf(nullptr, name) {
     // Making room for index of decay-related constants. Assumption:
     // These are mother mass and three daughter masses in that order.
     // They will be registered by the object that uses this resonance,
     // which will tell this object where to find them by calling setConstantIndex.
+}
 
+std::vector<fptype> make_spline_curvatures(std::vector<Variable *> vars, Lineshapes::spline_t SplineInfo) {
+    size_t size = std::get<2>(SplineInfo) - 2;
+    Eigen::Matrix<fptype, Eigen::Dynamic, Eigen::Dynamic> m(size, size);
+    for(size_t i = 0; i < size; i++) {
+        m(i, i) = 4;
+        if(i != size - 1) {
+            m(i, i + 1) = 1;
+            m(i + 1, 1) = 1;
+        }
+    }
+    m = m.inverse();
+
+    Eigen::Matrix<fptype, Eigen::Dynamic, 1> L(size);
+    for(unsigned int i = 0; i < size; ++i)
+        L[i] = vars[i + 2]->getValue() - 2 * vars[i + 1]->getValue() + vars[i]->getValue();
+
+    auto mtv       = m * L;
+    fptype spacing = (std::get<0>(SplineInfo) - std::get<1>(SplineInfo)) / std::get<2>(SplineInfo);
+
+    std::vector<fptype> ret(vars.size(), 0);
+    for(unsigned int i = 0; i < size; ++i) {
+        ret.at(i + 1) = 6 * mtv(i) / POW2(spacing);
+    }
+    return ret;
+}
+
+Lineshapes::GSpline::GSpline(std::string name,
+                             Variable *mass,
+                             Variable *width,
+                             unsigned int L,
+                             unsigned int Mpair,
+                             FF FormFac,
+                             fptype radius,
+                             std::vector<Variable *> AdditionalVars,
+                             spline_t SplineInfo)
+    : Lineshape(name) {
     GOOFIT_ADD_PARAM(2, mass, "mass");
     GOOFIT_ADD_PARAM(3, width, "width");
 
@@ -560,91 +782,266 @@ Lineshape::Lineshape(std::string name,
 
     GOOFIT_ADD_CONST(7, radius, "radius");
 
-    // pindices.push_back(registerParameter(mass));
-    // pindices.push_back(registerParameter(width));
-    // pindices.push_back(L);
-    // pindices.push_back(Mpair);
-    // pindices.push_back(enum_to_underlying(FormFac));
+    if(std::get<2>(SplineInfo) != AdditionalVars.size())
+        throw GeneralError("bins {} != vars {}", std::get<2>(SplineInfo), AdditionalVars.size());
+    GOOFIT_ADD_CONST(8, std::get<0>(SplineInfo), "MinSpline");
+    GOOFIT_ADD_CONST(9, std::get<1>(SplineInfo), "MaxSpline");
+    GOOFIT_ADD_INT(10, std::get<2>(SplineInfo), "NSpline");
 
-    // pindices.push_back(registerConstants(1));
-    // MEMCPY_TO_SYMBOL(functorConstants, &radius, sizeof(fptype), cIndex * sizeof(fptype), cudaMemcpyHostToDevice);
-
-    switch(kind) {
-    case LS::ONE:
-        GET_FUNCTION_ADDR(ptr_to_LS_ONE);
-        break;
-
-    case LS::BW:
-        GET_FUNCTION_ADDR(ptr_to_BW_DP4);
-        break;
-
-    case LS::Lass:
-        GET_FUNCTION_ADDR(ptr_to_lass);
-        break;
-
-    case LS::Lass_M3:
-        if(5 != AdditionalVars.size()) {
-            fprintf(stderr,
-                    "It seems you forgot to provide the vector with the five necessary variables for GLASS, a, "
-                    "r, phiF, phiR and F (in that order)");
-            exit(0);
-        }
-
-        for(int i = 0; i < 5; i++) {
-            GOOFIT_ADD_PARAM(8 + i, AdditionalVars[i], "LassVars");
-            // pindices.push_back(registerParameter(AdditionalVars[i]));
-        }
-
-        GET_FUNCTION_ADDR(ptr_to_glass3);
-        break;
-
-    case LS::nonRes:
-        GET_FUNCTION_ADDR(ptr_to_NONRES_DP);
-        break;
-
-    case LS::Bugg:
-        GET_FUNCTION_ADDR(ptr_to_bugg_MINT);
-        break;
-
-    case LS::Bugg3:
-        GET_FUNCTION_ADDR(ptr_to_bugg_MINT3);
-        break;
-
-    case LS::SBW:
-        GET_FUNCTION_ADDR(ptr_to_SBW);
-        break;
-
-    case LS::Flatte:
-        GET_FUNCTION_ADDR(ptr_to_Flatte);
-        break;
-
-    case LS::Spline:
-        if(std::get<2>(_SplineInfo) != AdditionalVars.size())
-            throw GeneralError("bins {} != vars {}", std::get<2>(_SplineInfo), AdditionalVars.size());
-        GOOFIT_ADD_CONST(8, std::get<0>(_SplineInfo), "MinSpline");
-        GOOFIT_ADD_CONST(9, std::get<1>(_SplineInfo), "MaxSpline");
-        GOOFIT_ADD_CONST(10, std::get<2>(_SplineInfo), "NSpline");
-        {
-            int i = 11;
-            for(auto &par : AdditionalVars) {
-                GOOFIT_ADD_PARAM(i++, par, "Knot");
-            }
-        }
-
-        GET_FUNCTION_ADDR(ptr_to_Spline);
-        break;
-
-    default:
-        throw GeneralError("It seems that the requested lineshape is not implemented yet. Check LineshapesPdf.cu");
+    int i = 11;
+    for(auto &par : AdditionalVars) {
+        GOOFIT_ADD_PARAM(i++, par, "Knot");
     }
+
+    std::vector<fptype> SplineCTerms = make_spline_curvatures(AdditionalVars, SplineInfo);
+
+    for(auto &par : SplineCTerms) {
+        // Calc curve
+        GOOFIT_ADD_CONST(i++, par, "CKnot");
+    }
+
+    GET_FUNCTION_ADDR(ptr_to_Spline);
 
     GOOFIT_FINALIZE_PDF;
 }
 
-Lineshape::Lineshape(std::string name)
-    : GooPdf(nullptr, name) {
-    GOOFIT_START_PDF;
+Lineshapes::GLASS::GLASS(std::string name,
+                         Variable *mass,
+                         Variable *width,
+                         unsigned int L,
+                         unsigned int Mpair,
+                         FF FormFac,
+                         fptype radius,
+                         std::vector<Variable *> AdditionalVars)
+    : Lineshape(name) {
+    if(5 != AdditionalVars.size()) {
+        throw GeneralError("It seems you forgot to provide the vector with the five necessary variables for GLASS, a, "
+                           "r, phiF, phiR and F (in that order)");
+    }
+
+    for(int i = 0; i < 5; i++) {
+        GOOFIT_ADD_PARAM(8 + i, AdditionalVars[i], "LassVars");
+    }
+
+    GET_FUNCTION_ADDR(ptr_to_glass3);
+
+    GOOFIT_FINALIZE_PDF;
+}
+
+Lineshapes::One::One(
+    std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
+    : Lineshape(name) {
+    GOOFIT_ADD_PARAM(2, mass, "mass");
+    GOOFIT_ADD_PARAM(3, width, "width");
+
+    GOOFIT_ADD_INT(4, L, "L");
+    GOOFIT_ADD_INT(5, Mpair, "Mpair");
+
+    GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
+
+    GOOFIT_ADD_CONST(7, radius, "radius");
+
+    GET_FUNCTION_ADDR(ptr_to_LS_ONE);
+
+    GOOFIT_FINALIZE_PDF;
+}
+
+Lineshapes::RBW::RBW(
+    std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
+    : Lineshape(name) {
+    GOOFIT_ADD_PARAM(2, mass, "mass");
+    GOOFIT_ADD_PARAM(3, width, "width");
+
+    GOOFIT_ADD_INT(4, L, "L");
+    GOOFIT_ADD_INT(5, Mpair, "Mpair");
+
+    GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
+
+    GOOFIT_ADD_CONST(7, radius, "radius");
+
+    GET_FUNCTION_ADDR(ptr_to_BW_DP4);
+
+    GOOFIT_FINALIZE_PDF;
+}
+
+Lineshapes::LASS::LASS(
+    std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
+    : Lineshape(name) {
+    GOOFIT_ADD_PARAM(2, mass, "mass");
+    GOOFIT_ADD_PARAM(3, width, "width");
+
+    GOOFIT_ADD_INT(4, L, "L");
+    GOOFIT_ADD_INT(5, Mpair, "Mpair");
+
+    GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
+
+    GOOFIT_ADD_CONST(7, radius, "radius");
+
+    GET_FUNCTION_ADDR(ptr_to_BW_DP4);
+
+    GOOFIT_FINALIZE_PDF;
+}
+
+Lineshapes::NonRes::NonRes(
+    std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
+    : Lineshape(name) {
+    GOOFIT_ADD_PARAM(2, mass, "mass");
+    GOOFIT_ADD_PARAM(3, width, "width");
+
+    GOOFIT_ADD_INT(4, L, "L");
+    GOOFIT_ADD_INT(5, Mpair, "Mpair");
+
+    GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
+
+    GOOFIT_ADD_CONST(7, radius, "radius");
+
     GET_FUNCTION_ADDR(ptr_to_NONRES_DP);
+
+    GOOFIT_FINALIZE_PDF;
+}
+
+Lineshapes::Bugg::Bugg(
+    std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
+    : Lineshape(name) {
+    GOOFIT_ADD_PARAM(2, mass, "mass");
+    GOOFIT_ADD_PARAM(3, width, "width");
+
+    GOOFIT_ADD_INT(4, L, "L");
+    GOOFIT_ADD_INT(5, Mpair, "Mpair");
+
+    GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
+
+    GOOFIT_ADD_CONST(7, radius, "radius");
+
+    GET_FUNCTION_ADDR(ptr_to_bugg_MINT);
+
+    GOOFIT_FINALIZE_PDF;
+}
+
+Lineshapes::Bugg3::Bugg3(
+    std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
+    : Lineshape(name) {
+    GOOFIT_ADD_PARAM(2, mass, "mass");
+    GOOFIT_ADD_PARAM(3, width, "width");
+
+    GOOFIT_ADD_INT(4, L, "L");
+    GOOFIT_ADD_INT(5, Mpair, "Mpair");
+
+    GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
+
+    GOOFIT_ADD_CONST(7, radius, "radius");
+
+    GET_FUNCTION_ADDR(ptr_to_bugg_MINT3);
+
+    GOOFIT_FINALIZE_PDF;
+}
+
+Lineshapes::Flatte::Flatte(
+    std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
+    : Lineshape(name) {
+    GOOFIT_ADD_PARAM(2, mass, "mass");
+    GOOFIT_ADD_PARAM(3, width, "width");
+
+    GOOFIT_ADD_INT(4, L, "L");
+    GOOFIT_ADD_INT(5, Mpair, "Mpair");
+
+    GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
+
+    GOOFIT_ADD_CONST(7, radius, "radius");
+
+    GET_FUNCTION_ADDR(ptr_to_Flatte);
+
+    GOOFIT_FINALIZE_PDF;
+}
+
+Lineshapes::SBW::SBW(
+    std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
+    : Lineshape(name) {
+    GOOFIT_ADD_PARAM(2, mass, "mass");
+    GOOFIT_ADD_PARAM(3, width, "width");
+
+    GOOFIT_ADD_INT(4, L, "L");
+    GOOFIT_ADD_INT(5, Mpair, "Mpair");
+
+    GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
+
+    GOOFIT_ADD_CONST(7, radius, "radius");
+
+    GET_FUNCTION_ADDR(ptr_to_SBW);
+
+    GOOFIT_FINALIZE_PDF;
+}
+
+Lineshapes::FOCUS::FOCUS(std::string name,
+                         Mod mod,
+                         Variable *mass,
+                         Variable *width,
+                         unsigned int L,
+                         unsigned int Mpair,
+                         FF FormFac,
+                         fptype radius)
+    : Lineshape(name) {
+    GOOFIT_ADD_PARAM(2, mass, "mass");
+    GOOFIT_ADD_PARAM(3, width, "width");
+
+    GOOFIT_ADD_INT(4, L, "L");
+    GOOFIT_ADD_INT(5, Mpair, "Mpair");
+
+    GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
+
+    GOOFIT_ADD_CONST(7, radius, "radius");
+
+    GOOFIT_ADD_INT(8, static_cast<unsigned int>(mod), "Lineshape modifier");
+
+    GET_FUNCTION_ADDR(ptr_to_FOCUS);
+
+    GOOFIT_FINALIZE_PDF;
+}
+
+Lineshapes::kMatrix::kMatrix(std::string name,
+                             unsigned int pterm,
+                             bool is_pole,
+                             Variable *sA0,
+                             Variable *sA,
+                             Variable *s0_prod,
+                             Variable *s0_scatt,
+                             std::array<Variable *, NCHANNELS> fscat,
+                             std::array<Variable *, NPOLES *(NPOLES + 1)> poles,
+                             Variable *mass,
+                             Variable *width,
+                             unsigned int L,
+                             unsigned int Mpair,
+                             FF FormFac,
+                             fptype radius)
+    : Lineshape(name) {
+    GOOFIT_ADD_PARAM(2, mass, "mass");
+    GOOFIT_ADD_PARAM(3, width, "width");
+
+    GOOFIT_ADD_INT(4, L, "L");
+    GOOFIT_ADD_INT(5, Mpair, "Mpair");
+
+    GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
+
+    GOOFIT_ADD_CONST(7, radius, "radius");
+
+    GOOFIT_ADD_INT(8, pterm, "pTerm");
+    GOOFIT_ADD_INT(9, is_pole ? 1 : 0, "Channel");
+
+    GOOFIT_ADD_PARAM(10, sA0, "sA0");
+    GOOFIT_ADD_PARAM(11, sA, "sA");
+    GOOFIT_ADD_PARAM(12, s0_prod, "s0_prod");
+    GOOFIT_ADD_PARAM(13, s0_scatt, "s0_scatt");
+
+    for(int i = 0; i < NCHANNELS; i++) {
+        GOOFIT_ADD_PARAM(14 + i, fscat.at(i), "fscat");
+    }
+
+    for(int i = 0; i < NPOLES * (NPOLES + 1); i++) {
+        GOOFIT_ADD_PARAM(14 + NCHANNELS + i, poles.at(i), "Poles");
+    }
+
+    GET_FUNCTION_ADDR(ptr_to_kMatrix);
+
     GOOFIT_FINALIZE_PDF;
 }
 

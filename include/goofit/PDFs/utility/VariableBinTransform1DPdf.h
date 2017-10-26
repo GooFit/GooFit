@@ -11,4 +11,4 @@ class VariableBinTransform1DPdf : public GooPdf {
     VariableBinTransform1DPdf(std::string n, Variable *_x, std::vector<fptype> binlimits);
 };
 
-} // GooFit
+} // namespace GooFit

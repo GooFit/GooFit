@@ -27,7 +27,7 @@ class DataSet {
     virtual void addWeightedEvent(fptype weight);
 
     /// This is a helper that allows multiple values to be passed in instead of relying on the content of the Variables.
-    template<typename... Args>
+    template <typename... Args>
     void addEvent(fptype value, Args... args) {
         std::vector<fptype> values{value, static_cast<fptype>(args)...};
 

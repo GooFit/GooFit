@@ -92,20 +92,20 @@ int main(int argc, char **argv) {
     SFA1RD.push_back(new SpinFactor("SF", SF_4Body::DtoAP1_AtoVP2Dwave_VtoP3P4, 2, 0, 3, 1));
 
     // Lineshapes, also for both pi+ configurations
-    std::vector<Lineshape *> LSKRS = {new Lineshape("rho(770)", &RhoMass, &RhoWidth, 1, M_12, LS::BW, FF::BL2),
-                                      new Lineshape("K*(892)bar", &KstarM, &KstarW, 1, M_34, LS::BW, FF::BL2),
-                                      new Lineshape("rho(770)", &RhoMass, &RhoWidth, 1, M_24, LS::BW, FF::BL2),
-                                      new Lineshape("K*(892)bar", &KstarM, &KstarW, 1, M_13, LS::BW, FF::BL2)};
+    std::vector<Lineshape *> LSKRS = {new Lineshapes::RBW("rho(770)", &RhoMass, &RhoWidth, 1, M_12, FF::BL2),
+                                      new Lineshapes::RBW("K*(892)bar", &KstarM, &KstarW, 1, M_34, FF::BL2),
+                                      new Lineshapes::RBW("rho(770)", &RhoMass, &RhoWidth, 1, M_24, FF::BL2),
+                                      new Lineshapes::RBW("K*(892)bar", &KstarM, &KstarW, 1, M_13, FF::BL2)};
 
-    std::vector<Lineshape *> LSKRP = {new Lineshape("rho(770)", &RhoMass, &RhoWidth, 1, M_12, LS::BW, FF::BL2),
-                                      new Lineshape("K*(892)bar", &KstarM, &KstarW, 1, M_34, LS::BW, FF::BL2),
-                                      new Lineshape("rho(770)", &RhoMass, &RhoWidth, 1, M_24, LS::BW, FF::BL2),
-                                      new Lineshape("K*(892)bar", &KstarM, &KstarW, 1, M_13, LS::BW, FF::BL2)};
+    std::vector<Lineshape *> LSKRP = {new Lineshapes::RBW("rho(770)", &RhoMass, &RhoWidth, 1, M_12, FF::BL2),
+                                      new Lineshapes::RBW("K*(892)bar", &KstarM, &KstarW, 1, M_34, FF::BL2),
+                                      new Lineshapes::RBW("rho(770)", &RhoMass, &RhoWidth, 1, M_24, FF::BL2),
+                                      new Lineshapes::RBW("K*(892)bar", &KstarM, &KstarW, 1, M_13, FF::BL2)};
 
-    std::vector<Lineshape *> LSKRD = {new Lineshape("rho(770)", &RhoMass, &RhoWidth, 1, M_12, LS::BW, FF::BL2),
-                                      new Lineshape("K*(892)bar", &KstarM, &KstarW, 1, M_34, LS::BW, FF::BL2),
-                                      new Lineshape("rho(770)", &RhoMass, &RhoWidth, 1, M_24, LS::BW, FF::BL2),
-                                      new Lineshape("K*(892)bar", &KstarM, &KstarW, 1, M_13, LS::BW, FF::BL2)};
+    std::vector<Lineshape *> LSKRD = {new Lineshapes::RBW("rho(770)", &RhoMass, &RhoWidth, 1, M_12, FF::BL2),
+                                      new Lineshapes::RBW("K*(892)bar", &KstarM, &KstarW, 1, M_34, FF::BL2),
+                                      new Lineshapes::RBW("rho(770)", &RhoMass, &RhoWidth, 1, M_24, FF::BL2),
+                                      new Lineshapes::RBW("K*(892)bar", &KstarM, &KstarW, 1, M_13, FF::BL2)};
 
     // the very last parameter means that we have two permutations. so the first half of the Lineshapes
     // and the first half of the spinfactors are amplitude 1, rest is amplitude 2
@@ -151,8 +151,8 @@ int main(int argc, char **argv) {
     Variable constantZero{"constantZero", 0};
 
     vector<Variable *> observables{&m12, &m34, &cos12, &cos34, &phi, &eventNumber, &dtime, &sigmat};
-    vector<Variable *> coefficients{&constantZero, &constantZero};
-    vector<Variable *> offsets{&constantOne};
+    vector<Variable *> offsets{&constantZero, &constantZero};
+    vector<Variable *> coefficients{&constantOne};
 
     TruthResolution dat;
     PolynomialPdf eff{"constantEff", observables, coefficients, offsets, 0};
@@ -198,8 +198,10 @@ int main(int argc, char **argv) {
     tree->Branch("Piplus_Pz", &Piplus_Pz, "Piplus_Pz/D");
     tree->Branch("Piplus_pdg", &Piplus_pdg, "Piplus_pdg/I");
 
+    int total_accepted = 0;
+
     for(int k = 0; k < trials; ++k) {
-        int numEvents = 2;
+        int numEvents = 800000;
         dp.setGenerationOffset(k * numEvents);
 
         mcbooster::ParticlesSet_h particles; // typedef for std::vector<Particles_h *>
@@ -210,6 +212,7 @@ int main(int argc, char **argv) {
         std::tie(particles, variables, weights, flags) = dp.GenerateSig(numEvents);
 
         int accepted = thrust::count_if(flags.begin(), flags.end(), thrust::identity<bool>());
+        total_accepted += accepted;
 
         GOOFIT_INFO(
             "Run #{}: Using accept-reject method would leave you with {} out of {} events", k, accepted, numEvents);
@@ -269,5 +272,11 @@ int main(int argc, char **argv) {
 
     tree->Write();
     file->Close();
-    return 0;
+
+    if(total_accepted > 0)
+        return 0;
+    else {
+        GOOFIT_ERROR("Total accepted was 0! Something is wrong.");
+        return 1;
+    }
 }

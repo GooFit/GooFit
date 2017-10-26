@@ -16,8 +16,6 @@ goofit_add_library(FitManager2
     ${PROJECT_SOURCE_DIR}/include/goofit/fitting/Params.h
     )
 
-target_link_libraries(FitManager2 ROOT::Minuit2)
-
 goofit_add_library(Faddeeva
     Faddeeva.cc
     ${PROJECT_SOURCE_DIR}/include/goofit/Faddeeva.h
@@ -59,12 +57,13 @@ goofit_add_library(PdfBase
     ${PROJECT_SOURCE_DIR}/include/goofit/Application.h
     ${PROJECT_SOURCE_DIR}/include/goofit/Color.h
     ${PROJECT_SOURCE_DIR}/include/goofit/Log.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/Eigen.h
     ${PROJECT_SOURCE_DIR}/include/goofit/GlobalCudaDefines.h
     )
 
-target_link_libraries(PdfBase backtrace)
+target_link_libraries(PdfBase PUBLIC backtrace)
 # Safe to use ROOT::Minuit2 even if ROOT not found
-target_link_libraries(PdfBase ROOT::Minuit2)
+target_link_libraries(PdfBase PUBLIC ROOT::Minuit2)
 
 
 # Note: order is important on Linux, derived classes first

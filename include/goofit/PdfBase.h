@@ -19,7 +19,7 @@ namespace ROOT {
 namespace Minuit2 {
 class FunctionMinimum;
 }
-}
+} // namespace ROOT
 
 namespace GooFit {
 

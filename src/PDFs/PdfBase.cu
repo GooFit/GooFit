@@ -144,6 +144,10 @@ __host__ void PdfBase::setData(DataSet *data) {
 
     data_ = data;
 
+    // Do nothing if passed a nullptr (makes setData(getData()) safe)
+    if(data == nullptr)
+        return;
+
     setIndices();
 
     UnbinnedDataSet *unbinned_data;

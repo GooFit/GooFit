@@ -50,7 +50,7 @@ goofit_add_library(_goofit MODULE
     PDFs/utility/VariableBinTransform1DPdf.cu
     goofit/FitManager.cpp)
 
-target_link_libraries(_goofit pybind11::module)
+target_link_libraries(_goofit PUBLIC pybind11::module)
 
 set_target_properties(_goofit PROPERTIES PREFIX "${PYTHON_MODULE_PREFIX}"
                                          SUFFIX "${PYTHON_MODULE_EXTENSION}")
@@ -61,7 +61,7 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
     target_include_directories(_goofit PUBLIC ${CUDA_INCLUDE_DIRS})
 endif()
 
-target_link_libraries(_goofit goofit_lib)
+target_link_libraries(_goofit PUBLIC GooFit::GooFit)
 set_target_properties(_goofit PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/goofit)
 set_target_properties(_goofit PROPERTIES FOLDER python)
 

@@ -201,11 +201,7 @@ int main(int argc, char **argv) {
     int total_accepted = 0;
 
     for(int k = 0; k < trials; ++k) {
-<<<<<<< HEAD
         int numEvents = 800000;
-=======
-        int numEvents = 2;
->>>>>>> a8365c7bfdb50a30a960be92a40995776f7edbaa
         dp.setGenerationOffset(k * numEvents);
 
         mcbooster::ParticlesSet_h particles; // typedef for std::vector<Particles_h *>

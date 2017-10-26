@@ -13,8 +13,7 @@ using namespace pybind11::literals;
 void init_DalitzPlotPdf(py::module &m) {
     py::class_<DalitzPlotPdf, GooPdf>(m, "DalitzPlotPdf")
         .def(py::init<std::string, Variable *, Variable *, CountingVariable *, DecayInfo *, GooPdf *>())
-        .def("setDataSize", &DalitzPlotPdf::setDataSize, "dataSize"_a, "evtSize"_a = 3 )
+        .def("setDataSize", &DalitzPlotPdf::setDataSize, "dataSize"_a, "evtSize"_a = 3)
 
         ;
 }
-

@@ -285,7 +285,7 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
         else()
             set(CUDA_SEPARABLE_COMPILATION OFF)
         endif()
-        
+
         # Only needed to make FindCUDA provide nice flags
         set(CUDA_LINK_LIBRARIES_KEYWORD PUBLIC)
 
@@ -308,7 +308,7 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
         endif()
 
         include(CUDA)
-        
+
         set(cuda_lang "$<COMPILE_LANGUAGE:CUDA>")
 
         set(CMAKE_CUDA_STANDARD 11)
@@ -323,12 +323,10 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
 
         set(THRUST_INCLUDE_DIR "${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}")
     endif()
-
-
 endif()
 
 if(NOT DEFINED cuda_lang)
-    set(cuda_lang False)
+    set(cuda_lang 0)
 endif()
 
 # Config helpers
@@ -635,7 +633,7 @@ endif()
 if(GOOFIT_PYTHON)
     add_subdirectory("extern/pybind11")
     message(STATUS "Found Python at ${PYTHON_LIBRARIES}, building bindings")
-    if(NEW_CUDA)
+    if(NEW_CUDA AND GOOFIT_DEVICE STREQUAL CUDA)
         cuda_convert_flags(module)
     endif()
     add_subdirectory(python)

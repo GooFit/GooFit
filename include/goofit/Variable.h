@@ -13,39 +13,42 @@ namespace GooFit {
 
 class Params;
 class Minuit1;
-
+    
 class Indexable {
   public:
     Indexable(std::string n, fptype val = 0)
         : name(n)
-        , value(val) {}
+    , value(std::make_shared<fptype>(val)) {}
 
-    // These classes can not be duplicated
-    Indexable(const Indexable &) = delete;
-    Indexable &operator=(const Indexable &) = delete;
+    // These classes can now be duplicated safely. No pointers needed.
+    Indexable(const Indexable &)            = default;
+    Indexable &operator=(const Indexable &) = default;
     Indexable(Indexable &&)                 = default;
 
-    virtual ~Indexable() = default;
+    virtual ~Indexable()  {
+        std::cout << "Destroying Variable: " << name << std::endl;
+    }
 
     /// Get the GooFit index
-    int getIndex() const { return index; }
+    int getIndex() const { return *index; }
     /// Set the GooFit index
-    void setIndex(int value) { index = value; }
+    void setIndex(int value) { *index = value; }
 
     /// Get the index from the fitter
-    int getFitterIndex() const { return fitter_index; }
+    int getFitterIndex() const { return *fitter_index; }
     /// Set the index (should be done by the fitter)
-    void setFitterIndex(int value) { fitter_index = value; }
+    void setFitterIndex(int value) { *fitter_index = value; }
 
     /// Get the name
     const std::string &getName() const { return name; }
-    /// Set the name
-    void setName(const std::string &val) { name = val; }
+    
+    // The name cannot be changed
+    // void setName(const std::string &val) { name = val; }
 
     /// Get the value
-    fptype getValue() const { return value; }
+    fptype getValue() const { return *value; }
     /// Set the value
-    void setValue(fptype val) { value = val; }
+    void setValue(fptype val) { *value = val; }
 
     // Utilities
 
@@ -65,13 +68,13 @@ class Indexable {
     std::string name;
 
     /// The value of the variable
-    fptype value;
+    std::shared_ptr<fptype> value;
 
     /// The goofit index, -1 if unset
-    int index{-1};
+    std::shared_ptr<int> index{std::make_shared<int>(-1)};
 
     /// The fitter index, -1 if unset
-    int fitter_index{-1};
+    std::shared_ptr<int> fitter_index{std::make_shared<int>(-1)};
 };
 
 /// Contains information about a parameter allowed
@@ -79,15 +82,25 @@ class Indexable {
 /// data set. The index can refer either to cudaArray
 /// or to an event.
 class Variable : public Indexable {
-    friend Params;
-    friend Minuit1;
+    
     friend std::ostream &operator<<(std::ostream &o, const Variable &var);
     friend std::istream &operator>>(std::istream &o, Variable &var);
 
   public:
-    // These classes can not be duplicated
-    Variable(const Variable &) = delete;
-    Variable &operator=(const Variable &) = delete;
+    
+    /// This provides a key for some special classes to access blind info (passkey)
+    class Key {
+        friend Params;
+        friend Minuit1;
+        
+        /// Private constructor
+        Key() = default;
+    };
+    
+    
+    // These classes can now be duplicated safely. No pointers needed.
+    Variable(const Variable &) = default;
+    Variable &operator=(const Variable &) = default;
     Variable(Variable &&)                 = default;
 
     /// Support var = 3
@@ -96,96 +109,101 @@ class Variable : public Indexable {
     /// This is a constant varaible
     Variable(std::string n, fptype v)
         : Indexable(n, v)
-        , error(0.002)
-        , upperlimit(v + 0.01)
-        , lowerlimit(v - 0.01)
-        , fixed(true) {}
+        , error(std::make_shared<fptype>(0.002))
+        , upperlimit(std::make_shared<fptype>(v + 0.01))
+        , lowerlimit(std::make_shared<fptype>(v - 0.01)) {
+         *fixed = true;
+         
+     }
 
     /// This is an independent variable
     Variable(std::string n, fptype dn, fptype up)
         : Indexable(n)
-        , upperlimit(up)
-        , lowerlimit(dn) {}
+        , upperlimit(std::make_shared<fptype>(up))
+        , lowerlimit(std::make_shared<fptype>(dn)) {}
 
     /// This is a normal variable, with value and upper/lower limits
     Variable(std::string n, fptype v, fptype dn, fptype up)
         : Indexable(n, v)
-        , error(0.1 * (up - dn))
-        , upperlimit(up)
-        , lowerlimit(dn) {}
+        , error(std::make_shared<fptype>(0.1 * (up - dn)))
+        , upperlimit(std::make_shared<fptype>(up))
+        , lowerlimit(std::make_shared<fptype>(dn)) {}
 
     /// This is a full varaible with error scale as well
     Variable(std::string n, fptype v, fptype e, fptype dn, fptype up)
         : Indexable(n, v)
-        , error(e)
-        , upperlimit(up)
-        , lowerlimit(dn) {}
+        , error(std::make_shared<fptype>(e))
+        , upperlimit(std::make_shared<fptype>(up))
+        , lowerlimit(std::make_shared<fptype>(dn)) {}
 
     ~Variable() override = default;
 
     /// Get the error
-    fptype getError() const { return error; }
+    fptype getError() const { return *error; }
     /// Set the error
-    void setError(fptype val) { error = val; }
+    void setError(fptype val) { *error = val; }
 
     /// Get the upper limit
-    fptype getUpperLimit() const { return upperlimit; }
+    fptype getUpperLimit() const { return *upperlimit; }
     /// Set the upper limit
-    void setUpperLimit(fptype val) { upperlimit = val; }
+    void setUpperLimit(fptype val) { *upperlimit = val; }
 
     /// Get the lower limit
-    fptype getLowerLimit() const { return lowerlimit; }
+    fptype getLowerLimit() const { return *lowerlimit; }
     /// Set the lower limit
-    void setLowerLimit(fptype val) { lowerlimit = val; }
+    void setLowerLimit(fptype val) { *lowerlimit = val; }
 
     /// Check to see if the value has changed this iteration (always true the first time)
-    bool getChanged() const { return changed_; }
+    bool getChanged() const { return *changed_; }
 
     /// Set the number of bins
-    void setNumBins(size_t num) { numbins = num; }
+    void setNumBins(size_t num) { *numbins = num; }
 
     /// Get the number of bins
-    size_t getNumBins() const { return numbins; }
+    size_t getNumBins() const { return *numbins; }
 
     /// Check to see if this is a constant
-    bool IsFixed() const { return fixed; }
+    bool IsFixed() const { return *fixed; }
 
     /// Set the fixedness of a variable
-    void setFixed(bool fix) { fixed = fix; }
+    void setFixed(bool fix) { *fixed = fix; }
 
     /// Check to see if this has been changed since last iteration
-    void setChanged(bool val = true) { changed_ = val; }
+    void setChanged(bool val = true) { *changed_ = val; }
 
     /// Get the bin size, (upper-lower) / bins
     fptype getBinSize() const { return (getUpperLimit() - getLowerLimit()) / getNumBins(); }
 
     /// Hides the number; the real value is the result minus this value. Cannot be retreived once set.
-    void setBlind(fptype val) { blind = val; }
+    void setBlind(fptype val) { *blind = val; }
+    
+    /// Protected by special locked key, only a few classes have access to create a Key
+    fptype getBlind(const Key &) {return *blind;}
 
     /// Check to see if in range
     operator bool() const { return getValue() <= getUpperLimit() && getValue() >= getLowerLimit(); }
 
   protected:
     /// The error
-    fptype error;
+    std::shared_ptr<fptype> error;
 
     /// The upper limit
-    fptype upperlimit;
+    std::shared_ptr<fptype> upperlimit;
 
     /// The lower limit
-    fptype lowerlimit;
+    std::shared_ptr<fptype> lowerlimit;
 
     /// A blinding value to add
-    fptype blind{0};
+    std::shared_ptr<fptype> blind{std::make_shared<fptype>(0)};
 
     /// The number of bins (mostly for BinnedData, or plotting help)
-    size_t numbins{100};
+    std::shared_ptr<size_t> numbins{std::make_shared<size_t>(100)};
 
     /// True if the value was unchanged since the last iteration
-    bool changed_{true};
+    std::shared_ptr<bool> changed_{std::make_shared<bool>(true)};
 
     /// This "fixes" the variable (constant)
-    bool fixed{false};
+    std::shared_ptr<bool> fixed{std::make_shared<bool>(false)};
 };
 
 /// This is used to track event number for MPI versions.
@@ -201,9 +219,8 @@ class CountingVariable : public Variable {
 
     ~CountingVariable() override = default;
 
-    // These classes can not be duplicated
-    CountingVariable(const CountingVariable &) = delete;
-    CountingVariable &operator=(const CountingVariable &) = delete;
+    CountingVariable(const CountingVariable &)            = default;
+    CountingVariable &operator=(const CountingVariable &) = default;
     CountingVariable(CountingVariable &&)                 = default;
 
     /// Support var = 3
@@ -215,8 +232,8 @@ class CountingVariable : public Variable {
 class Constant : public Indexable {
   public:
     // These classes can not be duplicated
-    Constant(const Constant &) = delete;
-    Constant &operator=(const Constant &) = delete;
+    Constant(const Constant &)            = default;
+    Constant &operator=(const Constant &) = default;
     Constant(Constant &&)                 = default;
 
     /// Support var = 3

@@ -55,7 +55,7 @@ Int_t Minuit1::Eval(int npar, double *gin, double &fun, double *fp, int iflag) {
 
         var->setChanged(var->getValue() != pars.at(var->getFitterIndex()));
         var->setValue(pars.at(var->getFitterIndex()));
-        gooPars.at(var->getIndex()) = var->getValue() - var->blind;
+        gooPars.at(var->getIndex()) = var->getValue() - var->getBlind(Variable::Key());
     }
 
     pdfPointer->copyParams(gooPars);

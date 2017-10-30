@@ -49,7 +49,7 @@ void Params::from_minuit_vector(const std::vector<double> &values, bool force_ch
 
     for(Variable *var : vars_) {
         var->setChanged(force_changed ? true : var->getValue() != values.at(var->getFitterIndex()));
-        gooPars.at(var->getIndex()) = values.at(var->getFitterIndex()) - var->blind;
+        gooPars.at(var->getIndex()) = values.at(var->getFitterIndex()) - var->getBlind(Variable::Key());
     }
 
     pdf_->copyParams(gooPars);

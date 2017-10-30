@@ -28,8 +28,7 @@ void init_ResonancePdf(py::module &m) {
              py::keep_alive<1, 3>(),
              py::keep_alive<1, 4>(),
              py::keep_alive<1, 5>(),
-             py::keep_alive<1, 6>()
-             );
+             py::keep_alive<1, 6>());
 
     py::class_<Resonances::GS, ResonancePdf>(m_ls, "GS")
         .def(py::init<std::string, Variable *, Variable *, Variable *, Variable *, unsigned int, unsigned int, bool>(),
@@ -56,11 +55,13 @@ void init_ResonancePdf(py::module &m) {
              "symmDP"_a = false);
 
     py::class_<Resonances::NonRes, ResonancePdf>(m_ls, "NonRes")
-    .def(py::init<std::string, Variable *, Variable *>(),
-         "Constructor for NonResonant",
-         "name"_a, "ar"_a, "ai"_a,
-         py::keep_alive<1, 3>(),
-         py::keep_alive<1, 4>());
+        .def(py::init<std::string, Variable *, Variable *>(),
+             "Constructor for NonResonant",
+             "name"_a,
+             "ar"_a,
+             "ai"_a,
+             py::keep_alive<1, 3>(),
+             py::keep_alive<1, 4>());
 
     py::class_<Resonances::Gauss, ResonancePdf>(m_ls, "Gauss")
         .def(py::init<std::string, Variable *, Variable *, Variable *, Variable *, unsigned int>(),

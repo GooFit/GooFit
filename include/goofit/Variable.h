@@ -175,7 +175,7 @@ class Variable : public Indexable {
     /// The lower limit
     fptype lowerlimit;
 
-    /// A blinding value to add (disabled at the moment, TODO)
+    /// A blinding value to add
     fptype blind{0};
 
     /// The number of bins (mostly for BinnedData, or plotting help)

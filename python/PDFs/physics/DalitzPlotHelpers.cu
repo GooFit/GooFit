@@ -46,7 +46,9 @@ void init_DalitzPlotHelpers(py::module &m) {
         .def_readwrite("_tau", &DecayInfo::_tau)
         .def_readwrite("_xmixing", &DecayInfo::_xmixing)
         .def_readwrite("_ymixing", &DecayInfo::_ymixing)
-        .def_readwrite("resonances", &DecayInfo::resonances)
+    .def_property("resonances", [](DecayInfo &self){return self.resonances;},
+                  py::cpp_function([](DecayInfo &self, std::vector<ResonancePdf*> val){self.resonances = val;},
+                                   py::keep_alive<1,2>()))
         .def("add_resonance",
              [](DecayInfo &self, ResonancePdf *toadd) { self.resonances.push_back(toadd); },
              "Append a resonance",

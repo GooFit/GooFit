@@ -41,6 +41,5 @@ void init_Variable(py::module &m) {
     py::class_<CountingVariable, Variable>(m, "CountingVariable")
         .def(py::init<std::string>())
         .def(py::init<std::string, fptype, fptype>())
-        .def_property_readonly_static("maxint", [](py::object){return CountingVariable::maxint;})
-        ;
+        .def_property_readonly_static("maxint", [](py::object) { return CountingVariable::maxint; });
 }

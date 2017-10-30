@@ -17,6 +17,7 @@ void init_PolynomialPdf(py::module &m) {
              "x0"_a           = nullptr,
              "lowestDegree"_a = 0,
              py::keep_alive<1, 3>(),
+             py::keep_alive<1, 4>(),
              py::keep_alive<1, 5>())
         .def(py::init<std::string,
                       std::vector<Variable *>,
@@ -27,6 +28,8 @@ void init_PolynomialPdf(py::module &m) {
              "obses"_a,
              "coeffs"_a,
              "offsets"_a,
-             "maxDegree"_a)
-        ;
+             "maxDegree"_a,
+             py::keep_alive<1, 3>(),
+             py::keep_alive<1, 4>(),
+             py::keep_alive<1, 5>());
 }

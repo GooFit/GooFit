@@ -7,6 +7,8 @@
 using namespace GooFit;
 namespace py = pybind11;
 
+using namespace pybind11::literals;
+
 void init_GooPdf(py::module &m) {
     py::class_<GooPdf, PdfBase>(m, "GooPdf")
         .def("makeGrid", &GooPdf::makeGrid)
@@ -24,5 +26,6 @@ void init_GooPdf(py::module &m) {
              },
              R"raw(
                 Run makeGrid, set data, evaluateAtPoints, then recover original data.
-                )raw");
+                )raw")
+        .def("setFitControl", &GooPdf::setFitControl, "fc"_a, "takeOwnerShip"_a = true);
 }

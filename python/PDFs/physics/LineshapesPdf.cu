@@ -162,5 +162,7 @@ void init_LineshapesPdf(py::module &m) {
              "SF"_a,
              "nPerm"_a = 1,
              py::keep_alive<1, 3>(),
-             py::keep_alive<1, 4>());
+             py::keep_alive<1, 4>(),
+             py::keep_alive<1, 5>(),
+             py::keep_alive<1, 6>());
 }

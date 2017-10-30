@@ -8,5 +8,7 @@ using namespace GooFit;
 namespace py = pybind11;
 
 void init_MappedPdf(py::module &m) {
-    py::class_<MappedPdf, GooPdf>(m, "MappedPdf").def(py::init<std::string, GooPdf *, std::vector<GooPdf *> &>());
+    py::class_<MappedPdf, GooPdf>(m, "MappedPdf")
+            .def(py::init<std::string, GooPdf *, std::vector<GooPdf *> &>(),
+                 py::keep_alive<1,3>());
 }

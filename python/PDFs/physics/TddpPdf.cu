@@ -19,7 +19,10 @@ void init_TddpPdf(py::module &m) {
                       CountingVariable *,
                       DecayInfo *,
                       MixingTimeResolution *,
-                      GooPdf *>())
+                      GooPdf *>(),
+             py::keep_alive<1,8>(),
+             py::keep_alive<1,9>(),
+             py::keep_alive<1,10>())
         .def(py::init<std::string,
                       Variable *,
                       Variable *,
@@ -29,7 +32,10 @@ void init_TddpPdf(py::module &m) {
                       DecayInfo *,
                       MixingTimeResolution *,
                       GooPdf *,
-                      Variable *>())
+                      Variable *>(),
+             py::keep_alive<1,8>(),
+             py::keep_alive<1,9>(),
+             py::keep_alive<1,10>())
         .def(py::init<std::string,
                       Variable *,
                       Variable *,
@@ -39,7 +45,9 @@ void init_TddpPdf(py::module &m) {
                       DecayInfo *,
                       std::vector<MixingTimeResolution *> &,
                       GooPdf *,
-                      Variable *>())
+                      Variable *>(),
+             py::keep_alive<1,8>(),
+             py::keep_alive<1,10>())
         .def(py::init<std::string,
                       Variable *,
                       Variable *,
@@ -50,5 +58,7 @@ void init_TddpPdf(py::module &m) {
                       std::vector<MixingTimeResolution *> &,
                       GooPdf *,
                       Variable *,
-                      Variable *>());
+                      Variable *>(),
+             py::keep_alive<1,8>(),
+             py::keep_alive<1,10>());
 }

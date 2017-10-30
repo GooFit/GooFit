@@ -16,20 +16,29 @@ using namespace pybind11::literals;
 
 void init_Tddp4Pdf(py::module &m) {
     py::class_<TDDP4, GooPdf>(m, "TDDP4")
-        .def(py::init<std::string, std::vector<Variable *>, DecayInfo_DP *, MixingTimeResolution *, GooPdf *>())
+        .def(py::init<std::string, std::vector<Variable *>, DecayInfo_DP *, MixingTimeResolution *, GooPdf *>(),
+             py::keep_alive<1,4>(),
+             py::keep_alive<1,5>(),
+             py::keep_alive<1,6>())
         .def(py::init<std::string,
                       std::vector<Variable *>,
                       DecayInfo_DP *,
                       MixingTimeResolution *,
                       GooPdf *,
-                      Variable *>())
+                      Variable *>(),
+             py::keep_alive<1,4>(),
+             py::keep_alive<1,5>(),
+             py::keep_alive<1,6>())
         .def(py::init<std::string,
                       std::vector<Variable *>,
                       DecayInfo_DP *,
                       MixingTimeResolution *,
                       GooPdf *,
                       Variable *,
-                      unsigned int>())
+                      unsigned int>(),
+             py::keep_alive<1,4>(),
+             py::keep_alive<1,5>(),
+             py::keep_alive<1,6>())
         .def("setGenerationOffset", &TDDP4::setGenerationOffset, "off"_a)
 
         .def("GenerateSig",

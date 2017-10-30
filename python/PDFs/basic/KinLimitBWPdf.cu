@@ -8,5 +8,8 @@ namespace py = pybind11;
 
 void init_KinLimitBWPdf(py::module &m) {
     py::class_<KinLimitBWPdf, GooPdf>(m, "KinLimitBWPdf")
-        .def(py::init<std::string, Variable *, Variable *, Variable *>());
+        .def(py::init<std::string, Variable *, Variable *, Variable *>(),
+             py::keep_alive<1,3>(),
+             py::keep_alive<1,4>(),
+             py::keep_alive<1,5>());
 }

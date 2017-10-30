@@ -20,6 +20,11 @@ void init_TddpPdf(py::module &m) {
                       DecayInfo *,
                       MixingTimeResolution *,
                       GooPdf *>(),
+             py::keep_alive<1,3>(),
+             py::keep_alive<1,4>(),
+             py::keep_alive<1,5>(),
+             py::keep_alive<1,6>(),
+             py::keep_alive<1,7>(),
              py::keep_alive<1,8>(),
              py::keep_alive<1,9>(),
              py::keep_alive<1,10>())
@@ -33,9 +38,15 @@ void init_TddpPdf(py::module &m) {
                       MixingTimeResolution *,
                       GooPdf *,
                       Variable *>(),
+             py::keep_alive<1,3>(),
+             py::keep_alive<1,4>(),
+             py::keep_alive<1,5>(),
+             py::keep_alive<1,6>(),
+             py::keep_alive<1,7>(),
              py::keep_alive<1,8>(),
              py::keep_alive<1,9>(),
-             py::keep_alive<1,10>())
+             py::keep_alive<1,10>(),
+             py::keep_alive<1,11>())
         .def(py::init<std::string,
                       Variable *,
                       Variable *,
@@ -46,8 +57,15 @@ void init_TddpPdf(py::module &m) {
                       std::vector<MixingTimeResolution *> &,
                       GooPdf *,
                       Variable *>(),
+             py::keep_alive<1,3>(),
+             py::keep_alive<1,4>(),
+             py::keep_alive<1,5>(),
+             py::keep_alive<1,6>(),
+             py::keep_alive<1,7>(),
              py::keep_alive<1,8>(),
-             py::keep_alive<1,10>())
+             py::keep_alive<1,9>(),
+             py::keep_alive<1,10>(),
+             py::keep_alive<1,11>())
         .def(py::init<std::string,
                       Variable *,
                       Variable *,
@@ -59,6 +77,14 @@ void init_TddpPdf(py::module &m) {
                       GooPdf *,
                       Variable *,
                       Variable *>(),
+             py::keep_alive<1,3>(),
+             py::keep_alive<1,4>(),
+             py::keep_alive<1,5>(),
+             py::keep_alive<1,6>(),
+             py::keep_alive<1,7>(),
              py::keep_alive<1,8>(),
-             py::keep_alive<1,10>());
+             py::keep_alive<1,9>(),
+             py::keep_alive<1,10>(),
+             py::keep_alive<1,11>(),
+             py::keep_alive<1,12>());
 }

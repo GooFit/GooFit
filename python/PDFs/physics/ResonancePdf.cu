@@ -40,7 +40,11 @@ void init_ResonancePdf(py::module &m) {
              "width"_a,
              "sp"_a,
              "cyc"_a,
-             "symmDP"_a = false);
+             "symmDP"_a = false,
+             py::keep_alive<1, 3>(),
+             py::keep_alive<1, 4>(),
+             py::keep_alive<1, 5>(),
+             py::keep_alive<1, 6>());
 
     py::class_<Resonances::LASS, ResonancePdf>(m_ls, "LASS")
         .def(py::init<std::string, Variable *, Variable *, Variable *, Variable *, unsigned int, unsigned int, bool>(),
@@ -52,7 +56,11 @@ void init_ResonancePdf(py::module &m) {
              "width"_a,
              "sp"_a,
              "cyc"_a,
-             "symmDP"_a = false);
+             "symmDP"_a = false,
+             py::keep_alive<1, 3>(),
+             py::keep_alive<1, 4>(),
+             py::keep_alive<1, 5>(),
+             py::keep_alive<1, 6>());
 
     py::class_<Resonances::NonRes, ResonancePdf>(m_ls, "NonRes")
         .def(py::init<std::string, Variable *, Variable *>(),
@@ -71,7 +79,11 @@ void init_ResonancePdf(py::module &m) {
              "ai"_a,
              "mean"_a,
              "sigma"_a,
-             "cyc"_a);
+             "cyc"_a,
+             py::keep_alive<1, 3>(),
+             py::keep_alive<1, 4>(),
+             py::keep_alive<1, 5>(),
+             py::keep_alive<1, 6>());
 
     py::class_<Resonances::FLATTE, ResonancePdf>(m_ls, "FLATTE")
         .def(py::init<std::string, Variable *, Variable *, Variable *, Variable *, Variable *, unsigned int, bool>(),
@@ -83,7 +95,12 @@ void init_ResonancePdf(py::module &m) {
              "g1"_a,
              "rg2og1"_a,
              "cyc"_a,
-             "symmDP"_a);
+             "symmDP"_a,
+             py::keep_alive<1, 3>(),
+             py::keep_alive<1, 4>(),
+             py::keep_alive<1, 5>(),
+             py::keep_alive<1, 6>(),
+             py::keep_alive<1, 7>());
 
     py::class_<Resonances::Spline, ResonancePdf>(m_ls, "Spline")
         .def(py::init<std::string,
@@ -102,5 +119,7 @@ void init_ResonancePdf(py::module &m) {
              "pwa_coefs_reals"_a,
              "pwa_coefs_imags"_a,
              "cyc"_a,
-             "symmDP"_a = false);
+             "symmDP"_a = false,
+             py::keep_alive<1, 3>(),
+             py::keep_alive<1, 4>());
 }

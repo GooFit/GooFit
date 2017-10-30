@@ -28,7 +28,8 @@ void init_Tddp4Pdf(py::module &m) {
                       Variable *>(),
              py::keep_alive<1,4>(),
              py::keep_alive<1,5>(),
-             py::keep_alive<1,6>())
+             py::keep_alive<1,6>(),
+             py::keep_alive<1,7>())
         .def(py::init<std::string,
                       std::vector<Variable *>,
                       DecayInfo_DP *,
@@ -38,7 +39,8 @@ void init_Tddp4Pdf(py::module &m) {
                       unsigned int>(),
              py::keep_alive<1,4>(),
              py::keep_alive<1,5>(),
-             py::keep_alive<1,6>())
+             py::keep_alive<1,6>(),
+             py::keep_alive<1,7>())
         .def("setGenerationOffset", &TDDP4::setGenerationOffset, "off"_a)
 
         .def("GenerateSig",

@@ -38,5 +38,9 @@ void init_Variable(py::module &m) {
              })
         .def("__bool__", &Variable::operator bool);
 
-    py::class_<CountingVariable, Variable>(m, "CountingVariable").def(py::init<std::string, fptype, fptype>());
+    py::class_<CountingVariable, Variable>(m, "CountingVariable")
+        .def(py::init<std::string>())
+        .def(py::init<std::string, fptype, fptype>())
+        .def_property_readonly_static("maxint", [](py::object){return CountingVariable::maxint;})
+        ;
 }

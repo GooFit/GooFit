@@ -1,12 +1,12 @@
+#include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
-#include <pybind11/numpy.h>
 
+#include <goofit/DataSet.h>
 #include <goofit/PDFs/physics/DP4Pdf.h>
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <goofit/PDFs/physics/SpinFactors.h>
 #include <goofit/Variable.h>
-#include <goofit/DataSet.h>
 
 using namespace GooFit;
 namespace py = pybind11;
@@ -23,7 +23,7 @@ void init_DP4Pdf(py::module &m) {
         .def("getMCevents", &DPPdf::getMCevents)
         .def("setGenerationOffset", &DPPdf::setGenerationOffset, "off"_a)
         .def("GenerateSig",
-             [](DPPdf &self, int numEvents) {
+             [](DPPdf &self, size_t numEvents) {
                  mcbooster::ParticlesSet_h particles; // typedef for std::vector<Particles_h *>,
                  mcbooster::VariableSet_h variables;
                  mcbooster::RealVector_h weights;
@@ -31,8 +31,8 @@ void init_DP4Pdf(py::module &m) {
 
                  std::tie(particles, variables, weights, flags) = self.GenerateSig(numEvents);
 
-                 py::array_t<fptype> pyparticles{{4, 4 * numEvents}};
-                 py::array_t<fptype> pyvariables{{6, numEvents}};
+                 py::array_t<fptype> pyparticles{{(size_t)4, 4 * numEvents}};
+                 py::array_t<fptype> pyvariables{{(size_t)6, numEvents}};
                  py::array_t<fptype> pyweights{numEvents};
                  py::array_t<fptype> pyflags{numEvents};
 

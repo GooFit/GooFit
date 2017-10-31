@@ -29,8 +29,8 @@ void init_LineshapesPdf(py::module &m) {
              "Mpair"_a,
              "FormFac"_a = FF::BL_Prime,
              "radius"_a  = 1.5,
-             py::keep_alive<1,3>(),
-             py::keep_alive<1,4>());
+             py::keep_alive<1, 3>(),
+             py::keep_alive<1, 4>());
 
     py::class_<Lineshapes::LASS>(m_ls, "LASS")
         .def(py::init<std::string, Variable *, Variable *, unsigned int, unsigned int, FF, fptype>(),
@@ -42,8 +42,8 @@ void init_LineshapesPdf(py::module &m) {
              "Mpair"_a,
              "FormFac"_a = FF::BL_Prime,
              "radius"_a  = 1.5,
-             py::keep_alive<1,3>(),
-             py::keep_alive<1,4>());
+             py::keep_alive<1, 3>(),
+             py::keep_alive<1, 4>());
 
     py::class_<Lineshapes::NonRes>(m_ls, "NonRes")
         .def(py::init<std::string, Variable *, Variable *, unsigned int, unsigned int, FF, fptype>(),
@@ -55,8 +55,8 @@ void init_LineshapesPdf(py::module &m) {
              "Mpair"_a,
              "FormFac"_a = FF::BL_Prime,
              "radius"_a  = 1.5,
-             py::keep_alive<1,3>(),
-             py::keep_alive<1,4>());
+             py::keep_alive<1, 3>(),
+             py::keep_alive<1, 4>());
 
     py::class_<Lineshapes::Flatte>(m_ls, "Flatte")
         .def(py::init<std::string, Variable *, Variable *, unsigned int, unsigned int, FF, fptype>(),
@@ -68,8 +68,8 @@ void init_LineshapesPdf(py::module &m) {
              "Mpair"_a,
              "FormFac"_a = FF::BL_Prime,
              "radius"_a  = 1.5,
-             py::keep_alive<1,3>(),
-             py::keep_alive<1,4>());
+             py::keep_alive<1, 3>(),
+             py::keep_alive<1, 4>());
 
     py::class_<Lineshapes::Bugg>(m_ls, "Bugg")
         .def(py::init<std::string, Variable *, Variable *, unsigned int, unsigned int, FF, fptype>(),
@@ -81,8 +81,8 @@ void init_LineshapesPdf(py::module &m) {
              "Mpair"_a,
              "FormFac"_a = FF::BL_Prime,
              "radius"_a  = 1.5,
-             py::keep_alive<1,3>(),
-             py::keep_alive<1,4>());
+             py::keep_alive<1, 3>(),
+             py::keep_alive<1, 4>());
 
     py::class_<Lineshapes::Bugg3>(m_ls, "Bugg3")
         .def(py::init<std::string, Variable *, Variable *, unsigned int, unsigned int, FF, fptype>(),
@@ -94,8 +94,8 @@ void init_LineshapesPdf(py::module &m) {
              "Mpair"_a,
              "FormFac"_a = FF::BL_Prime,
              "radius"_a  = 1.5,
-             py::keep_alive<1,3>(),
-             py::keep_alive<1,4>());
+             py::keep_alive<1, 3>(),
+             py::keep_alive<1, 4>());
 
     py::class_<Lineshapes::RBW>(m_ls, "RBW")
         .def(py::init<std::string, Variable *, Variable *, unsigned int, unsigned int, FF, fptype>(),
@@ -107,8 +107,8 @@ void init_LineshapesPdf(py::module &m) {
              "Mpair"_a,
              "FormFac"_a = FF::BL_Prime,
              "radius"_a  = 1.5,
-             py::keep_alive<1,3>(),
-             py::keep_alive<1,4>());
+             py::keep_alive<1, 3>(),
+             py::keep_alive<1, 4>());
 
     py::class_<Lineshapes::SBW>(m_ls, "SBW")
         .def(py::init<std::string, Variable *, Variable *, unsigned int, unsigned int, FF, fptype>(),
@@ -120,9 +120,8 @@ void init_LineshapesPdf(py::module &m) {
              "Mpair"_a,
              "FormFac"_a = FF::BL_Prime,
              "radius"_a  = 1.5,
-             py::keep_alive<1,3>(),
-             py::keep_alive<1,4>()
-            );
+             py::keep_alive<1, 3>(),
+             py::keep_alive<1, 4>());
 
     py::class_<Lineshapes::GLASS>(m_ls, "GLASS")
         .def(py::init<std::string,
@@ -143,8 +142,8 @@ void init_LineshapesPdf(py::module &m) {
              "FormFac"_a        = FF::BL_Prime,
              "radius"_a         = 1.5,
              "AdditionalVars"_a = std::vector<Variable *>(),
-             py::keep_alive<1,3>(),
-             py::keep_alive<1,4>());
+             py::keep_alive<1, 3>(),
+             py::keep_alive<1, 4>());
 
     py::class_<Lineshapes::GSpline>(m_ls, "GSpline")
         .def(py::init<std::string,
@@ -166,8 +165,8 @@ void init_LineshapesPdf(py::module &m) {
              "radius"_a         = 1.5,
              "AdditionalVars"_a = std::vector<Variable *>(),
              "SplineInfo"_a     = Lineshapes::spline_t(0.0, 0.0, 0),
-             py::keep_alive<1,3>(),
-             py::keep_alive<1,4>());
+             py::keep_alive<1, 3>(),
+             py::keep_alive<1, 4>());
 
     py::class_<Amplitude>(m, "Amplitude")
         .def(py::init<std::string,

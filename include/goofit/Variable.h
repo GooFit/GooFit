@@ -14,21 +14,19 @@ namespace GooFit {
 
 class Params;
 class Minuit1;
-    
+
 class Indexable {
   public:
     Indexable(std::string n, fptype val = 0)
         : name(n)
-    , value(std::make_shared<fptype>(val)) {}
+        , value(std::make_shared<fptype>(val)) {}
 
     // These classes can now be duplicated safely. No pointers needed.
-    Indexable(const Indexable &)            = default;
+    Indexable(const Indexable &) = default;
     Indexable &operator=(const Indexable &) = default;
     Indexable(Indexable &&)                 = default;
 
-    virtual ~Indexable()  {
-        std::cout << "Destroying Variable: " << name << std::endl;
-    }
+    virtual ~Indexable() { std::cout << "Destroying Variable: " << name << std::endl; }
 
     /// Get the GooFit index
     int getIndex() const { return *index; }
@@ -42,7 +40,7 @@ class Indexable {
 
     /// Get the name
     const std::string &getName() const { return name; }
-    
+
     // The name cannot be changed
     // void setName(const std::string &val) { name = val; }
 
@@ -83,22 +81,19 @@ class Indexable {
 /// data set. The index can refer either to cudaArray
 /// or to an event.
 class Variable : public Indexable {
-    
     friend std::ostream &operator<<(std::ostream &o, const Variable &var);
     friend std::istream &operator>>(std::istream &o, Variable &var);
 
   public:
-    
     /// This provides a key for some special classes to access blind info (passkey)
     class Key {
         friend Params;
         friend Minuit1;
-        
+
         /// Private constructor
         Key() = default;
     };
-    
-    
+
     // These classes can now be duplicated safely. No pointers needed.
     Variable(const Variable &) = default;
     Variable &operator=(const Variable &) = default;
@@ -113,9 +108,8 @@ class Variable : public Indexable {
         , error(std::make_shared<fptype>(0.002))
         , upperlimit(std::make_shared<fptype>(v + 0.01))
         , lowerlimit(std::make_shared<fptype>(v - 0.01)) {
-         *fixed = true;
-         
-     }
+        *fixed = true;
+    }
 
     /// This is an independent variable
     Variable(std::string n, fptype dn, fptype up)
@@ -177,9 +171,9 @@ class Variable : public Indexable {
 
     /// Hides the number; the real value is the result minus this value. Cannot be retreived once set.
     void setBlind(fptype val) { *blind = val; }
-    
+
     /// Protected by special locked key, only a few classes have access to create a Key
-    fptype getBlind(const Key &) {return *blind;}
+    fptype getBlind(const Key &) { return *blind; }
 
     /// Check to see if in range
     operator bool() const { return getValue() <= getUpperLimit() && getValue() >= getLowerLimit(); }
@@ -220,7 +214,7 @@ class CountingVariable : public Variable {
 
     ~CountingVariable() override = default;
 
-    CountingVariable(const CountingVariable &)            = default;
+    CountingVariable(const CountingVariable &) = default;
     CountingVariable &operator=(const CountingVariable &) = default;
     CountingVariable(CountingVariable &&)                 = default;
 
@@ -233,7 +227,7 @@ class CountingVariable : public Variable {
 class Constant : public Indexable {
   public:
     // These classes can not be duplicated
-    Constant(const Constant &)            = default;
+    Constant(const Constant &) = default;
     Constant &operator=(const Constant &) = default;
     Constant(Constant &&)                 = default;
 

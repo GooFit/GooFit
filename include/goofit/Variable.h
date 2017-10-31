@@ -4,6 +4,7 @@
 #include <limits>
 #include <string>
 #include <vector>
+#include <memory>
 
 #include "goofit/GlobalCudaDefines.h"
 

@@ -25,7 +25,6 @@ unsigned int host_indices[maxParams];
 int host_callnumber = 0;
 int totalParams     = 0;
 int totalConstants  = 1; // First constant is reserved for number of events.
-std::map<Variable *, std::set<PdfBase *>> variableRegistry;
 
 PdfBase::PdfBase(Variable *x, std::string n)
     : name(std::move(n)) { // Special-case PDFs should set to false.
@@ -57,33 +56,18 @@ __host__ unsigned int PdfBase::registerParameter(Variable *var) {
     if(std::find(parameterList.begin(), parameterList.end(), var) != parameterList.end())
         return static_cast<unsigned int>(var->getIndex());
 
-    parameterList.push_back(var);
-    variableRegistry[var].insert(this);
-
     if(0 > var->getIndex()) {
         unsigned int unusedIndex = 0;
 
-        while(true) {
-            bool canUse = true;
-
-            for(auto &p : variableRegistry) {
-                if(unusedIndex != p.first->getIndex())
-                    continue;
-
-                canUse = false;
-                break;
-            }
-
-            if(canUse)
-                break;
-
-            unusedIndex++;
-        }
+        auto params = getParameters();
+        for(const Variable* param : params)
+            unusedIndex = static_cast<unsigned int>(std::max(static_cast<int>(unusedIndex), var->getIndex()));
 
         GOOFIT_DEBUG("{}: Registering p:{} for {}", getName(), unusedIndex, var->getName());
         var->setIndex(unusedIndex);
     }
-
+    
+    parameterList.push_back(var);
     return static_cast<unsigned int>(var->getIndex());
 }
 
@@ -93,19 +77,13 @@ __host__ void PdfBase::unregisterParameter(Variable *var) {
 
     GOOFIT_DEBUG("{}: Removing {}", getName(), var->getName());
 
-    auto pos = std::find(parameterList.begin(), parameterList.end(), var);
-
-    if(pos != parameterList.end())
-        parameterList.erase(pos);
-
-    variableRegistry[var].erase(this);
-
-    if(0 == variableRegistry[var].size())
-        var->setIndex(-1);
-
     for(PdfBase *comp : components) {
         comp->unregisterParameter(var);
     }
+    
+    var->setIndex(-1);
+    // Once copies are used, this might able to be unregistred from a lower PDF only
+    // For now, it gets completely cleared.
 }
 
 __host__ std::vector<Variable *> PdfBase::getParameters() const {

@@ -63,7 +63,16 @@ class Indexable {
     /// Support fptype val = var
     operator fptype() const { return getValue(); }
 
-    /// Support for less than, etc.
+    /// Support for using as key in map - Notice this does NOT sort by index!
+    bool operator <(const Indexable& other) const {
+        return value.get() < other.value.get();
+    }
+    
+    /// Support for comparison
+    bool operator ==(const Indexable& other) const {
+        return value.get() == other.value.get();
+    }
+    
 
   protected:
     /// The variable name. Should be unique

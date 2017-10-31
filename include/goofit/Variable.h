@@ -7,6 +7,7 @@
 #include <memory>
 
 #include "goofit/GlobalCudaDefines.h"
+#include <goofit/Log.h>
 
 // Declaring friends
 
@@ -26,7 +27,9 @@ class Indexable {
     Indexable &operator=(const Indexable &) = default;
     Indexable(Indexable &&)                 = default;
 
-    virtual ~Indexable() { std::cout << "Destroying Variable: " << name << std::endl; }
+    virtual ~Indexable() {
+        GOOFIT_DEBUG("Destroying Variable: {}", name);
+    }
 
     /// Get the GooFit index
     int getIndex() const { return *index; }

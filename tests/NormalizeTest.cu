@@ -29,9 +29,8 @@ TEST(PDFComps, KnownNormalize) {
 
     // Generate toy events.
     for(int i = 0; i < 1000; ++i) {
-        double val = d(gen);
-        if(val < 10) {
-            xvar.setValue(val);
+        xvar = d(gen);
+        if(xvar) {
             data.addEvent();
         }
     }

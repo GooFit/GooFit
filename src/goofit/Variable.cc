@@ -7,6 +7,8 @@ namespace GooFit {
 
 template<>
 int max_index<Indexable>(const std::vector<Indexable *> &vars) {
+    if(vars.empty())
+        return -1;
     const Indexable *max_ind_ptr
         = *std::max_element(std::begin(vars), std::end(vars), [](const Indexable *a, const Indexable *b) {
               return a->getIndex() < b->getIndex();

@@ -56,12 +56,9 @@ __host__ unsigned int PdfBase::registerParameter(Variable *var) {
     if(std::find(parameterList.begin(), parameterList.end(), var) != parameterList.end())
         return static_cast<unsigned int>(var->getIndex());
 
-    if(0 > var->getIndex()) {
-        unsigned int unusedIndex = 0;
-
-        auto params = getParameters();
-        for(const Variable *param : params)
-            unusedIndex = static_cast<unsigned int>(std::max(static_cast<int>(unusedIndex), param->getIndex()));
+    if(var->getIndex() < 0) {
+        
+        int unusedIndex = max_index(getParameters()) + 1;
 
         GOOFIT_DEBUG("{}: Registering p:{} for {}", getName(), unusedIndex, var->getName());
         var->setIndex(unusedIndex);

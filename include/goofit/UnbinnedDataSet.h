@@ -39,21 +39,21 @@ class UnbinnedDataSet : public DataSet {
     void from_matrix(const M &input, bool filter = false) {
         size_t optional_index = getNumEvents(); // Only used if index not included
 
-        if(variables.size() != input.rows() && variables.size() != input.rows() + 1)
+        if(observables.size() != input.rows() && observables.size() != input.rows() + 1)
             throw GeneralError(
-                "The wrong number of rows, expected {}, but matrix had {}", variables.size(), input.rows());
+                "The wrong number of rows, expected {}, but matrix had {}", observables.size(), input.rows());
 
         for(int i = 0; i < input.cols(); i++) {     // Loop over events
             for(int j = 0; j < input.rows(); j++) { // Loop over variables
-                variables.at(j)->setValue(input(j, i));
+                observables.at(j)->setValue(input(j, i));
             }
 
             // Special override for counting variables (final param)
-            if(variables.size() == input.rows() + 1)
-                variables.at(input.rows())->setValue(optional_index++);
+            if(observables.size() == input.rows() + 1)
+                observables.at(input.rows())->setValue(optional_index++);
 
             if(!filter
-               || std::all_of(std::begin(variables), std::end(variables), [](Observable *var) { return bool(*var); }))
+               || std::all_of(std::begin(observables), std::end(observables), [](Observable *var) { return bool(*var); }))
                 addEvent();
         }
     }

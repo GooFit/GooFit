@@ -43,7 +43,7 @@ fptype UnbinnedDataSet::getValue(Observable *var, size_t idx) const {
 
 void UnbinnedDataSet::loadEvent(size_t idx) {
     size_t i = 0;
-    for(Observable *v : variables) {
+    for(Observable *v : observables) {
         v->setValue(data.at(i++).at(idx));
     }
 }
@@ -58,7 +58,7 @@ void UnbinnedDataSet::setValueForAllEvents(Observable *var) {
 void UnbinnedDataSet::addEvent() {
     checkAllVars();
     size_t i = 0;
-    for(Observable *v : variables)
+    for(Observable *v : observables)
         data.at(i++).push_back(v->getValue());
     numEventsAdded++;
 }

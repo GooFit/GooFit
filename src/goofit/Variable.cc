@@ -5,9 +5,10 @@
 
 namespace GooFit {
 
-int max_index(const std::vector<Variable *> &vars) {
-    const Variable *max_ind_ptr
-        = *std::max_element(std::begin(vars), std::end(vars), [](const Variable *a, const Variable *b) {
+template<>
+int max_index<Indexable>(const std::vector<Indexable *> &vars) {
+    const Indexable *max_ind_ptr
+        = *std::max_element(std::begin(vars), std::end(vars), [](const Indexable *a, const Indexable *b) {
               return a->getIndex() < b->getIndex();
           });
     return max_ind_ptr->getIndex();
@@ -44,6 +45,6 @@ std::ostream &operator<<(std::ostream &o, const GooFit::Observable &var) {
     return o;
 }
 
-std::istream &operator>>(std::istream &i, GooFit::Observable &var) { return i >> var.value; }
+std::istream &operator>>(std::istream &i, GooFit::Observable &var) { return i >> *var.value; }
 
 } // namespace GooFit

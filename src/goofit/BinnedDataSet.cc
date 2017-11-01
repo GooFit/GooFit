@@ -51,7 +51,7 @@ void BinnedDataSet::collectBins() {
     // Not really intended to be run multiple times, but just in case
     binsizes.clear();
 
-    for(Observable *var : variables)
+    for(Observable *var : observables)
         binsizes.push_back(var->getNumBins());
 }
 
@@ -65,7 +65,7 @@ size_t BinnedDataSet::localToGlobal(const std::vector<size_t> &locals) const {
     unsigned int priorMatrixSize = 1;
     unsigned int ret             = 0;
 
-    for(size_t i = 0; i < variables.size(); i++) {
+    for(size_t i = 0; i < observables.size(); i++) {
         unsigned int localBin = locals[i];
         ret += localBin * priorMatrixSize;
         priorMatrixSize *= binsizes[i];
@@ -81,7 +81,7 @@ std::vector<size_t> BinnedDataSet::globalToLocal(size_t global) const {
     // with the number of bins in that dimension. Then divide by the number of bins, in effect
     // collapsing so the grid has one fewer dimension. Rinse and repeat.
 
-    for(size_t i = 0; i < variables.size(); i++) {
+    for(size_t i = 0; i < observables.size(); i++) {
         int localBin = global % binsizes[i];
         locals.push_back(localBin);
         global /= binsizes[i];
@@ -95,7 +95,7 @@ fptype BinnedDataSet::getBinCenter(size_t ivar, size_t bin) const {
 
     fptype ret = getBinSize(ivar);
     ret *= (localBin + 0.5);
-    ret += variables[ivar]->getLowerLimit();
+    ret += observables[ivar]->getLowerLimit();
     return ret;
 }
 
@@ -105,13 +105,13 @@ fptype BinnedDataSet::getBinCenter(Observable *var, size_t bin) const {
 }
 
 fptype BinnedDataSet::getBinSize(size_t ivar) const {
-    return (variables.at(ivar)->getUpperLimit() - variables[ivar]->getLowerLimit()) / binsizes[ivar];
+    return (observables.at(ivar)->getUpperLimit() - observables[ivar]->getLowerLimit()) / binsizes[ivar];
 }
 
 fptype BinnedDataSet::getBinVolume(size_t bin) const {
     fptype ret = 1;
 
-    for(size_t i = 0; i < variables.size(); i++) {
+    for(size_t i = 0; i < observables.size(); i++) {
         ret *= getBinSize(i);
     }
 
@@ -141,21 +141,21 @@ fptype BinnedDataSet::getNumWeightedEvents() const {
 }
 
 std::vector<size_t> BinnedDataSet::convertValuesToBins(const std::vector<fptype> &vals) const {
-    if(vals.size() != variables.size())
-        throw GooFit::GeneralError("Incorrect number of bins {} for {} variables", vals.size(), variables.size());
+    if(vals.size() != observables.size())
+        throw GooFit::GeneralError("Incorrect number of bins {} for {} variables", vals.size(), observables.size());
 
     std::vector<size_t> localBins;
-    for(size_t i = 0; i < variables.size(); i++) {
+    for(size_t i = 0; i < observables.size(); i++) {
         fptype currval = vals[i];
-        fptype betval  = std::min(std::max(currval, variables[i]->getLowerLimit()), variables[i]->getUpperLimit());
+        fptype betval  = std::min(std::max(currval, observables[i]->getLowerLimit()), observables[i]->getUpperLimit());
         if(currval != betval)
             GOOFIT_INFO("Warning: Value {} outside {} range [{},{}] - clamping to {}",
                         currval,
-                        variables[i]->getName(),
-                        variables[i]->getLowerLimit(),
-                        variables[i]->getUpperLimit(),
+                        observables[i]->getName(),
+                        observables[i]->getLowerLimit(),
+                        observables[i]->getUpperLimit(),
                         betval);
-        localBins.push_back(static_cast<size_t>(floor((betval - variables[i]->getLowerLimit()) / getBinSize(i))));
+        localBins.push_back(static_cast<size_t>(floor((betval - observables[i]->getLowerLimit()) / getBinSize(i))));
     }
 
     return localBins;

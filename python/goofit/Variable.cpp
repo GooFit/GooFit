@@ -10,13 +10,25 @@ using namespace fmt::literals;
 using namespace GooFit;
 
 void init_Variable(py::module &m) {
-    py::class_<Observable>(m, "Observable")
-        .def(py::init<std::string, fptype, fptype>())
-        .def_property_readonly("name", &Observable::getName)
-        .def_property("value", &Observable::getValue, &Observable::setValue)
-        .def_property("index", &Observable::getIndex, &Observable::setIndex)
-        .def_property("upperlimit", &Observable::getUpperLimit, &Observable::setUpperLimit)
-        .def_property("lowerlimit", &Observable::getLowerLimit, &Observable::setLowerLimit)
+    
+    py::class_<Indexable>(m, "Indexable")
+        .def(py::init<std::string, fptype>(),
+             "name"_a, "value"_a=0.)
+        .def(py::init<std::string, fptype, fptype, fptype>(),
+             "name"_a, "value"_a, "min"_a, "max"_a)
+        .def_property_readonly("name", &Indexable::getName)
+        .def_property("value", &Indexable::getValue, &Indexable::setValue)
+        .def_property("index", &Indexable::getIndex, &Indexable::setIndex)
+        .def_property("upperlimit", &Indexable::getUpperLimit, &Indexable::setUpperLimit)
+        .def_property("lowerlimit", &Indexable::getLowerLimit, &Indexable::setLowerLimit)
+        .def_property_readonly("fitterIndex", &Indexable::getFitterIndex)
+        .def("__repr__", [](const Indexable &v) { return "<Indexable: {}>"_format(v.getName()); })
+        .def("__bool__", &Indexable::operator bool)
+    ;
+
+    py::class_<Observable, Indexable>(m, "Observable")
+        .def(py::init<std::string, fptype, fptype>(),
+             "name"_a, "min"_a, "max"_a)
         .def_property("numbins", &Observable::getNumBins, &Observable::setNumBins)
         .def("__repr__", [](const Observable &v) { return "<Observable: {}>"_format(v.getName()); })
         .def("__str__",
@@ -25,23 +37,13 @@ void init_Variable(py::module &m) {
                  os << v;
                  return os.str();
              })
-        .def("__bool__", &Observable::operator bool);
-
-    py::class_<Indexable>(m, "Indexable")
-        .def(py::init<std::string>())
-        .def(py::init<std::string, fptype>())
-        .def_property_readonly("name", &Indexable::getName)
-        .def_property("value", &Indexable::getValue, &Indexable::setValue)
-        .def_property("index", &Indexable::getIndex, &Indexable::setIndex)
-        .def_property_readonly("fitterIndex", &Indexable::getFitterIndex);
-
+        ;
+    
     py::class_<Variable, Indexable>(m, "Variable")
         .def(py::init<std::string, fptype>())
         .def(py::init<std::string, fptype, fptype, fptype>())
         .def(py::init<std::string, fptype, fptype, fptype, fptype>())
         .def_property("error", &Variable::getError, &Variable::setError)
-        .def_property("upperlimit", &Variable::getUpperLimit, &Variable::setUpperLimit)
-        .def_property("lowerlimit", &Variable::getLowerLimit, &Variable::setLowerLimit)
         .def_property("fixed", &Variable::IsFixed, &Variable::setFixed)
         .def("setBlind", &Variable::setBlind)
         .def("__repr__", [](const Variable &v) { return "<Variable: {}>"_format(v.getName()); })
@@ -51,11 +53,11 @@ void init_Variable(py::module &m) {
                  os << v;
                  return os.str();
              })
-        .def("__bool__", &Variable::operator bool);
+        ;
 
     py::class_<EventNumber, Observable>(m, "EventNumber")
-        .def(py::init<std::string>())
-        .def(py::init<std::string, fptype, fptype>())
+        .def(py::init<std::string, fptype, fptype>(),
+             "name"_a, "min"_a = 0., "max"_a = EventNumber::maxint)
         .def_property_readonly_static("maxint", [](py::object) { return EventNumber::maxint; })
         .def("__repr__", [](const EventNumber &v) { return "<EventNumber: {}>"_format(v.getName()); });
 }

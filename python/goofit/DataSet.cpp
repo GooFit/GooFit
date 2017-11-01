@@ -19,5 +19,5 @@ void init_DataSet(py::module &m) {
         .def("getNumEvents", &DataSet::getNumEvents)
         .def("__len__", &DataSet::getNumEvents) // Shortcut
         .def_property_readonly("name", &DataSet::getName)
-        .def_property_readonly("variables", &DataSet::getVariables);
+        .def_property_readonly("variables", &DataSet::getObservables);
 }

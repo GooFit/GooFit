@@ -151,7 +151,7 @@ __host__ InterHistPdf::InterHistPdf(std::string n,
 
     int varIndex = 0;
 
-    for(Observable *var : x->getVariables()) {
+    for(Observable *var : x->getObservables()) {
         if(std::find(obses.begin(), obses.end(), var) != obses.end()) {
             registerObservable(var);
             pindices.push_back(OBS_CODE);

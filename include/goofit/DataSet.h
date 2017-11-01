@@ -31,17 +31,17 @@ class DataSet {
     void addEvent(fptype value, Args... args) {
         std::vector<fptype> values{value, static_cast<fptype>(args)...};
 
-        if(values.size() != variables.size())
-            throw GooFit::GeneralError("You must pass the correct number of values ({}) to addEvent", variables.size());
+        if(values.size() != observables.size())
+            throw GooFit::GeneralError("You must pass the correct number of values ({}) to addEvent", observables.size());
 
         for(size_t i = 0; i < values.size(); i++)
-            variables[i]->setValue(values[i]);
+            observables[i]->setValue(values[i]);
         addEvent();
     }
 
-    const std::vector<Observable *> &getVariables() const;
+    const std::vector<Observable *> &getObservables() const;
 
-    size_t numVariables() const { return variables.size(); }
+    size_t numVariables() const { return observables.size(); }
 
     size_t getNumEvents() const { return numEventsAdded; }
 
@@ -62,7 +62,7 @@ class DataSet {
     std::string name;
 
   protected:
-    std::vector<Observable *> variables;
+    std::vector<Observable *> observables;
 };
 
 } // namespace GooFit

@@ -2,9 +2,9 @@
 
 #include <iostream>
 #include <limits>
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
 
 #include "goofit/GlobalCudaDefines.h"
 #include <goofit/Log.h>

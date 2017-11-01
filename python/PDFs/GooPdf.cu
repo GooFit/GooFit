@@ -2,8 +2,8 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-#include <goofit/PDFs/GooPdf.h>
 #include <goofit/FitControl.h>
+#include <goofit/PDFs/GooPdf.h>
 
 using namespace GooFit;
 namespace py = pybind11;

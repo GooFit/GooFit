@@ -18,6 +18,8 @@ class Minuit1;
 
 /// Special class for observables. Used in DataSets.
 class Observable {
+    friend std::istream &operator>>(std::istream &o, Observable &var);
+    
 protected:
     /// The name, just used for labels
     std::string name;
@@ -172,7 +174,6 @@ class Indexable {
 /// or to an event.
 class Variable : public Indexable {
     friend std::ostream &operator<<(std::ostream &o, const Variable &var);
-    friend std::istream &operator>>(std::istream &o, Variable &var);
 
   public:
     /// This provides a key for some special classes to access blind info (passkey)
@@ -325,6 +326,9 @@ int max_fitter_index(const std::vector<Variable*> &vars);
 /// Nice print of Variable
 std::ostream &operator<<(std::ostream &o, const GooFit::Variable &var);
 
-/// Allow Variable to be read in
-std::istream &operator>>(std::istream &i, GooFit::Variable &var);
+/// Nice print of Variable
+std::ostream &operator<<(std::ostream &o, const GooFit::Observable &var);
+        
+/// Allow Observable to be read in
+std::istream &operator>>(std::istream &i, GooFit::Observable &var);
 } // namespace GooFit

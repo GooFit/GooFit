@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
     gStyle->SetLineColor(1);
     gStyle->SetPalette(1, 0);
 
-    Variable xvar{"xvar", -5, 5};
+    Observable xvar{"xvar", -5, 5};
 
     UnbinnedDataSet data(&xvar);
 

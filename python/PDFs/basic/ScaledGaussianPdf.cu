@@ -8,7 +8,7 @@ namespace py = pybind11;
 
 void init_ScaledGaussianPdf(py::module &m) {
     py::class_<ScaledGaussianPdf, GooPdf>(m, "ScaledGaussianPdf")
-        .def(py::init<std::string, Variable *, Variable *, Variable *, Variable *, Variable *>(),
+        .def(py::init<std::string, Observable *, Variable *, Variable *, Variable *, Variable *>(),
              py::keep_alive<1, 3>(),
              py::keep_alive<1, 4>(),
              py::keep_alive<1, 5>(),

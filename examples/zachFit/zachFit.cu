@@ -29,7 +29,7 @@
 using namespace fmt::literals;
 using namespace GooFit;
 
-TH1D *getMCData(DataSet *data, Variable *var, std::string filename) {
+TH1D *getMCData(DataSet *data, Observable *var, std::string filename) {
     TH1D *mchist = new TH1D{"mc_hist", "", 300, 0.1365, 0.1665};
     std::ifstream mcreader{filename};
 
@@ -50,7 +50,7 @@ TH1D *getMCData(DataSet *data, Variable *var, std::string filename) {
     return mchist;
 }
 
-TH1D *getData(DataSet *data, Variable *var, std::string filename) {
+TH1D *getData(DataSet *data, Observable *var, std::string filename) {
     TH1D *data_hist = new TH1D("data_hist", "", 300, 0.1365, 0.1665);
     std::ifstream datareader{filename};
 
@@ -131,7 +131,7 @@ Dataset descriptions:
         datafile = app.get_filename("dataFiles/DstarWidth_D0ToK3pi_deltaM_Data.dat", "examples/zachFit");
     }
 
-    Variable dm{"dm", 0.1395, 0.1665};
+    Observable dm{"dm", 0.1395, 0.1665};
     dm.setNumBins(2700);
 
     // This would be clearer with std::optional from C++17

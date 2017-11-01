@@ -21,7 +21,7 @@ TEST(BinnedFit, SimpleFit) {
     std::exponential_distribution<> d(1.5);
 
     // Independent variable.
-    Variable xvar{"xvar", 0, 10};
+    Observable xvar{"xvar", 0, 10};
 
     // Data set
     BinnedDataSet data(&xvar);
@@ -57,8 +57,8 @@ TEST(BinnedFit, DualFit) {
     std::exponential_distribution<> dy(.75);
 
     // Independent variable.
-    Variable xvar{"xvar", 0, 10};
-    Variable yvar{"yvar", 0, 10};
+    Observable xvar{"xvar", 0, 10};
+    Observable yvar{"yvar", 0, 10};
 
     // Data set
     BinnedDataSet data{{&xvar, &yvar}};
@@ -102,8 +102,8 @@ TEST(BinnedFit, DifferentFitterVariable) {
     std::exponential_distribution<> dy(.75);
 
     // Independent variable.
-    Variable xvar{"xvar", 0, 10};
-    Variable yvar{"yvar", 0, 10};
+    Observable xvar{"xvar", 0, 10};
+    Observable yvar{"yvar", 0, 10};
 
     // Data set
     BinnedDataSet data{{&xvar, &yvar}, "Some name"};

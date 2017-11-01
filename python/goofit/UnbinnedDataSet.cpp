@@ -14,9 +14,9 @@ void init_UnbinnedDataSet(py::module &m) {
     py::class_<UnbinnedDataSet, DataSet>(m, "UnbinnedDataSet")
         .def(py::init([](py::args args, py::kwargs kwargs) {
             std::string name;
-            std::vector<Variable *> vars;
+            std::vector<Observable *> vars;
             for(auto arg : args)
-                vars.push_back(arg.cast<Variable *>());
+                vars.push_back(arg.cast<Observable *>());
             if(kwargs.contains("name"))
                 name = kwargs["name"].cast<std::string>();
             return new UnbinnedDataSet(vars, name);
@@ -38,7 +38,7 @@ void init_UnbinnedDataSet(py::module &m) {
                          vars.at(i)->setValue(array.at(i, j));
                      }
                      if(!filter
-                        || std::all_of(std::begin(vars), std::end(vars), [](Variable *var) { return bool(*var); }))
+                        || std::all_of(std::begin(vars), std::end(vars), [](Observable *var) { return bool(*var); }))
                          instance.addEvent();
                  }
              },

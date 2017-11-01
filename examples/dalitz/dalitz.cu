@@ -35,9 +35,9 @@ TCanvas *foo;
 TCanvas *foodal;
 UnbinnedDataSet *data = 0;
 
-Variable *m12                 = 0;
-Variable *m13                 = 0;
-CountingVariable *eventNumber = 0;
+Observable *m12                 = 0;
+Observable *m13                 = 0;
+EventNumber *eventNumber = 0;
 bool fitMasses                = false;
 Variable *fixedRhoMass        = new Variable("rho_mass", 0.7758, 0.01, 0.7, 0.8);
 Variable *fixedRhoWidth       = new Variable("rho_width", 0.1503, 0.01, 0.1, 0.2);
@@ -74,7 +74,7 @@ void getToyData(std::string toyFileName, GooFit::Application &app) {
                     m13->getNumBins(),
                     m13->getLowerLimit(),
                     m13->getUpperLimit());
-    std::vector<Variable *> vars;
+    std::vector<Observable *> vars;
     vars.push_back(m12);
     vars.push_back(m13);
     vars.push_back(eventNumber);
@@ -347,7 +347,7 @@ DalitzPlotPdf *makeSignalPdf(GooPdf *eff = 0) {
     if(!eff) {
         // By default create a constant efficiency.
         vector<Variable *> offsets;
-        vector<Variable *> observables;
+        vector<Observable *> observables;
         vector<Variable *> coefficients;
 
         observables.push_back(m12);
@@ -362,11 +362,11 @@ DalitzPlotPdf *makeSignalPdf(GooPdf *eff = 0) {
 }
 
 int runToyFit(std::string toyFileName, GooFit::Application &app) {
-    m12 = new Variable("m12", 0, 3);
-    m13 = new Variable("m13", 0, 3);
+    m12 = new Observable("m12", 0, 3);
+    m13 = new Observable("m13", 0, 3);
     m12->setNumBins(240);
     m13->setNumBins(240);
-    eventNumber = new CountingVariable("eventNumber", 0, INT_MAX);
+    eventNumber = new EventNumber("eventNumber", 0, INT_MAX);
     getToyData(toyFileName, app);
 
     // EXERCISE 1 (real part): Create a PolynomialPdf which models

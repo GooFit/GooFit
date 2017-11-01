@@ -22,7 +22,7 @@ TEST(PDFComps, KnownNormalize) {
     std::exponential_distribution<> d(1.5);
 
     // Independent variable.
-    Variable xvar{"xvar", 0, 10};
+    Observable xvar{"xvar", 0, 10};
 
     // Data set
     UnbinnedDataSet data(&xvar);
@@ -67,7 +67,7 @@ TEST(PDFComps, KnownNormalize) {
 
 TEST(PDFComps, OneDGrid) {
     // Independent variable.
-    Variable xvar{"xvar", -5, 10};
+    Observable xvar{"xvar", -5, 10};
 
     // Fit parameter
     Variable mean{"mean", 1.5};
@@ -118,8 +118,8 @@ TEST(PDFComps, OneDGrid) {
 
 TEST(PDFComps, TwoDGrid) {
     // Independent variable.
-    Variable xvar{"xvar", -5, 10};
-    Variable yvar{"yvar", -5, 10};
+    Observable xvar{"xvar", -5, 10};
+    Observable yvar{"yvar", -5, 10};
 
     // Fit parameter
     Variable mean1{"mean1", 1.5};
@@ -168,7 +168,7 @@ TEST(PDFComps, TwoDGrid) {
 
 TEST(PDFComps, OneDEval) {
     // Independent variable.
-    Variable xvar{"xvar", -5, 10};
+    Observable xvar{"xvar", -5, 10};
 
     // Fit parameter
     Variable mean{"mean", 1.5};
@@ -196,8 +196,8 @@ TEST(PDFComps, OneDEval) {
 
 TEST(PDFComps, TwoDEval) {
     // Independent variable.
-    Variable xvar{"xvar", -5, 10};
-    Variable yvar{"yvar", -5, 10};
+    Observable xvar{"xvar", -5, 10};
+    Observable yvar{"yvar", -5, 10};
 
     // Fit parameter
     Variable mean1{"mean1", 1.5};

@@ -15,7 +15,7 @@ using namespace GooFit;
 
 TEST(Simple, NoBlind) {
     // Independent variable.
-    Variable xvar{"xvar", 0, 10};
+    Observable xvar{"xvar", 0, 10};
 
     // Data set
     UnbinnedDataSet data{&xvar};
@@ -47,7 +47,7 @@ TEST(Simple, NoBlind) {
 
 TEST(Simple, WithBlind) {
     // Independent variable.
-    Variable xvar{"xvar", 0, 10};
+    Observable xvar{"xvar", 0, 10};
 
     // Data set
     UnbinnedDataSet data{&xvar};
@@ -82,7 +82,7 @@ TEST(Simple, WithBlind) {
 #ifdef ROOT_FOUND
 TEST(Simple, Min1Blind) {
     // Independent variable.
-    Variable xvar{"xvar", 0, 10};
+    Observable xvar{"xvar", 0, 10};
 
     // Data set
     UnbinnedDataSet data{&xvar};

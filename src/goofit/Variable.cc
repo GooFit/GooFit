@@ -34,7 +34,16 @@ std::ostream &operator<<(std::ostream &o, const GooFit::Variable &var) {
 
     return o;
 }
+    
+std::ostream &operator<<(std::ostream &o, const GooFit::Observable &var) {
+    o << var.getName() << ": " << var.getValue() << " (" << var.getNumBins() << " bins)";
+    o << " [" << var.getLowerLimit() << ", " << var.getUpperLimit() << "]";
+    if(var.getIndex() >= 0)
+        o << " GooFit index: " << var.getIndex();
+    
+    return o;
+}
 
-std::istream &operator>>(std::istream &i, GooFit::Variable &var) { return i >> *var.value; }
+std::istream &operator>>(std::istream &i, GooFit::Observable &var) { return i >> var.value; }
 
 } // namespace GooFit

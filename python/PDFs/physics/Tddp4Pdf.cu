@@ -16,27 +16,14 @@ using namespace pybind11::literals;
 
 void init_Tddp4Pdf(py::module &m) {
     py::class_<TDDP4, GooPdf>(m, "TDDP4")
-        .def(py::init<std::string, std::vector<Variable *>, DecayInfo_DP *, MixingTimeResolution *, GooPdf *>(),
-             py::keep_alive<1, 4>(),
-             py::keep_alive<1, 5>(),
-             py::keep_alive<1, 6>())
         .def(py::init<std::string,
-                      std::vector<Variable *>,
+                      std::vector<Observable *>,
                       DecayInfo_DP *,
                       MixingTimeResolution *,
                       GooPdf *,
-                      Variable *>(),
-             py::keep_alive<1, 4>(),
-             py::keep_alive<1, 5>(),
-             py::keep_alive<1, 6>(),
-             py::keep_alive<1, 7>())
-        .def(py::init<std::string,
-                      std::vector<Variable *>,
-                      DecayInfo_DP *,
-                      MixingTimeResolution *,
-                      GooPdf *,
-                      Variable *,
+                      Observable *,
                       unsigned int>(),
+             "n"_a, "observables"_a, "decay"_a, "r"_a, "eff"_a, "mistag"_a = nullptr, "MCeventsNorm"_a = 5e6,
              py::keep_alive<1, 4>(),
              py::keep_alive<1, 5>(),
              py::keep_alive<1, 6>(),

@@ -45,7 +45,7 @@ double novosib(double x, double peak, double width, double tail) {
 
 TCanvas *foo = 0;
 
-void fitAndPlot(GooPdf *total, UnbinnedDataSet *data, TH1F &dataHist, Variable *xvar, const char *fname) {
+void fitAndPlot(GooPdf *total, UnbinnedDataSet *data, TH1F &dataHist, Observable *xvar, const char *fname) {
     total->setData(data);
     FitManager fitter(total);
     fitter.fit();
@@ -118,7 +118,7 @@ int main(int argc, char **argv) {
     gStyle->SetPalette(1, 0);
 
     // Independent variable.
-    Variable *xvar = new Variable("xvar", -100, 100);
+    auto xvar = new Observable("xvar", -100, 100);
     xvar->setNumBins(1000); // For such a large range, want more bins for better accuracy in normalisation.
 
     // Data sets for the three fits.

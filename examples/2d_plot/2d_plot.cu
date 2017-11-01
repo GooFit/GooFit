@@ -49,8 +49,8 @@ int main(int argc, char **argv) {
     else
         gStyle->SetPalette(kViridis, 0);
 
-    Variable xvar{"xvar", -5, 5};
-    Variable yvar{"yvar", -5, 5};
+    Observable xvar{"xvar", -5, 5};
+    Observable yvar{"yvar", -5, 5};
     UnbinnedDataSet data({&xvar, &yvar});
 
     TH2F dataHist("dataHist",

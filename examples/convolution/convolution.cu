@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
     }
 
     // Independent variable.
-    Variable xvar{"xvar", -10, 10};
+    Observable xvar{"xvar", -10, 10};
 
     Variable gamma{"gamma", 2, 0.1, 0.1, 5};
     Variable sigma{"sigma", 1.5, 0.1, 0.1, 5};

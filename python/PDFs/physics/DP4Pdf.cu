@@ -14,10 +14,10 @@ using namespace pybind11::literals;
 
 void init_DP4Pdf(py::module &m) {
     py::class_<DPPdf, GooPdf>(m, "DPPdf")
-        .def(py::init<std::string, std::vector<Variable *>, DecayInfo_DP *, GooPdf *>(),
+        .def(py::init<std::string, std::vector<Observable *>, DecayInfo_DP *, GooPdf *>(),
              py::keep_alive<1, 4>(),
              py::keep_alive<1, 5>())
-        .def(py::init<std::string, std::vector<Variable *>, DecayInfo_DP *, GooPdf *, unsigned int>(),
+        .def(py::init<std::string, std::vector<Observable *>, DecayInfo_DP *, GooPdf *, unsigned int>(),
              py::keep_alive<1, 4>(),
              py::keep_alive<1, 5>())
         .def("normalize", &DPPdf::normalize)

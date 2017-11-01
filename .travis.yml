@@ -35,7 +35,7 @@ matrix:
       cd "${TRAVIS_BUILD_DIR}" && . .ci/prepare_altern.sh
       cd "${TRAVIS_BUILD_DIR}" && . .ci/build_cmake.sh
     script:
-    - cd "${TRAVIS_BUILD_DIR}" && .ci/check_style.sh
+    - cd "${TRAVIS_BUILD_DIR}" && scripts/check_style.sh
     - cd "${TRAVIS_BUILD_DIR}" && .ci/check_tidy.sh
   - compiler: gcc
     addons:

@@ -26,7 +26,7 @@ TEST(Minuit1, SimpleFit) {
     Observable xvar{"xvar", 0, 10};
 
     // Data set
-    UnbinnedDataSet data(&xvar);
+    UnbinnedDataSet data(xvar);
 
     // Generate toy events.
     for(int i = 0; i < 1000; ++i) {
@@ -64,7 +64,7 @@ TEST(Minuit1, DualFit) {
     Observable yvar{"yvar", 0, 10};
 
     // Data set
-    UnbinnedDataSet data{{&xvar, &yvar}};
+    UnbinnedDataSet data{{xvar, yvar}};
 
     // Generate toy events.
     for(int i = 0; i < 20000; ++i) {
@@ -110,7 +110,7 @@ TEST(Minuit1, DifferentFitterVariable) {
     Observable yvar{"yvar", 0, 10};
 
     // Data set
-    UnbinnedDataSet data{{&xvar, &yvar}, "Some name"};
+    UnbinnedDataSet data{{xvar, yvar}, "Some name"};
 
     // Generate toy events.
     for(int i = 0; i < 20000; ++i) {
@@ -154,7 +154,7 @@ TEST(Minuit1, FitterConstants) {
     Observable yvar{"yvar", -5, 5};
 
     // Data set
-    UnbinnedDataSet data{{&xvar, &yvar}, "Some name"};
+    UnbinnedDataSet data{{xvar, yvar}, "Some name"};
 
     // Generate toy events.
     for(int i = 0; i < 20000; ++i) {

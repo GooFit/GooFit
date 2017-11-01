@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
 
     Observable xvar{"xvar", 0, log(1 + RAND_MAX / 2)};
     Observable yvar{"yvar", 0, log(1 + RAND_MAX / 2)};
-    vector<Observable *> varList = {&xvar, &yvar};
+    vector<Observable> varList = {xvar, yvar};
     UnbinnedDataSet data{varList};
 
     for(int i = 0; i < 100000; ++i) {

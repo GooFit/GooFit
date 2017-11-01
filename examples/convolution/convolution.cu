@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
 
     TRandom donram(42);
     // Data set
-    UnbinnedDataSet data(&xvar);
+    UnbinnedDataSet data(xvar);
 
     // Generate toy events.
     for(int i = 0; i < 100000; ++i) {

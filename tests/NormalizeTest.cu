@@ -25,7 +25,7 @@ TEST(PDFComps, KnownNormalize) {
     Observable xvar{"xvar", 0, 10};
 
     // Data set
-    UnbinnedDataSet data(&xvar);
+    UnbinnedDataSet data(xvar);
 
     // Generate toy events.
     for(int i = 0; i < 1000; ++i) {
@@ -79,10 +79,10 @@ TEST(PDFComps, OneDGrid) {
     auto dataset = gausspdf.makeGrid();
     gausspdf.setData(&dataset);
 
-    EXPECT_FLOAT_EQ(dataset.getValue(&xvar, 0), -4.925);
-    EXPECT_FLOAT_EQ(dataset.getValue(&xvar, 20), -1.925);
-    EXPECT_FLOAT_EQ(dataset.getValue(&xvar, 40), 1.075);
-    EXPECT_FLOAT_EQ(dataset.getValue(&xvar, 60), 4.075);
+    EXPECT_FLOAT_EQ(dataset.getValue(xvar, 0), -4.925);
+    EXPECT_FLOAT_EQ(dataset.getValue(xvar, 20), -1.925);
+    EXPECT_FLOAT_EQ(dataset.getValue(xvar, 40), 1.075);
+    EXPECT_FLOAT_EQ(dataset.getValue(xvar, 60), 4.075);
 
     // Compute probabilities at points
     auto vv = gausspdf.getCompProbsAtDataPoints();
@@ -136,15 +136,15 @@ TEST(PDFComps, TwoDGrid) {
     auto dataset = product.makeGrid();
     product.setData(&dataset);
 
-    EXPECT_FLOAT_EQ(dataset.getValue(&xvar, 0), -4.925);
-    EXPECT_FLOAT_EQ(dataset.getValue(&xvar, 20), -1.925);
-    EXPECT_FLOAT_EQ(dataset.getValue(&xvar, 40), 1.075);
-    EXPECT_FLOAT_EQ(dataset.getValue(&xvar, 60), 4.075);
+    EXPECT_FLOAT_EQ(dataset.getValue(xvar, 0), -4.925);
+    EXPECT_FLOAT_EQ(dataset.getValue(xvar, 20), -1.925);
+    EXPECT_FLOAT_EQ(dataset.getValue(xvar, 40), 1.075);
+    EXPECT_FLOAT_EQ(dataset.getValue(xvar, 60), 4.075);
 
-    EXPECT_FLOAT_EQ(dataset.getValue(&yvar, 100 * 0), -4.925);
-    EXPECT_FLOAT_EQ(dataset.getValue(&yvar, 100 * 20), -1.925);
-    EXPECT_FLOAT_EQ(dataset.getValue(&yvar, 100 * 40), 1.075);
-    EXPECT_FLOAT_EQ(dataset.getValue(&yvar, 100 * 60), 4.075);
+    EXPECT_FLOAT_EQ(dataset.getValue(yvar, 100 * 0), -4.925);
+    EXPECT_FLOAT_EQ(dataset.getValue(yvar, 100 * 20), -1.925);
+    EXPECT_FLOAT_EQ(dataset.getValue(yvar, 100 * 40), 1.075);
+    EXPECT_FLOAT_EQ(dataset.getValue(yvar, 100 * 60), 4.075);
 
     // Compute probabilities at points
     auto vv = product.getCompProbsAtDataPoints();

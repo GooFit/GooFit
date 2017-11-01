@@ -18,7 +18,7 @@ TEST(Simple, NoBlind) {
     Observable xvar{"xvar", 0, 10};
 
     // Data set
-    UnbinnedDataSet data{&xvar};
+    UnbinnedDataSet data{xvar};
 
     // Random number generation
     std::mt19937 gen(137);
@@ -50,7 +50,7 @@ TEST(Simple, WithBlind) {
     Observable xvar{"xvar", 0, 10};
 
     // Data set
-    UnbinnedDataSet data{&xvar};
+    UnbinnedDataSet data{xvar};
 
     // Random number generation
     std::mt19937 gen(137);
@@ -85,7 +85,7 @@ TEST(Simple, Min1Blind) {
     Observable xvar{"xvar", 0, 10};
 
     // Data set
-    UnbinnedDataSet data{&xvar};
+    UnbinnedDataSet data{xvar};
 
     // Random number generation
     std::mt19937 gen(137);

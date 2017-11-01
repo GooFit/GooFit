@@ -76,7 +76,7 @@ int fitRatio(vector<int> &rsEvts, vector<int> &wsEvts, std::string plotName = ""
     TH1D *ratioHist
         = new TH1D("ratioHist", "", decayTime->getNumBins(), decayTime->getLowerLimit(), decayTime->getUpperLimit());
 
-    BinnedDataSet *ratioData = new BinnedDataSet(decayTime);
+    BinnedDataSet *ratioData = new BinnedDataSet(*decayTime);
 
     for(unsigned int i = 0; i < wsEvts.size(); ++i) {
         double ratio = wsEvts[i];

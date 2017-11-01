@@ -380,10 +380,10 @@ __host__ void GooPdf::scan(Observable *var, std::vector<fptype> &values) {
 
 // TODO: is this needed?
 __host__ void GooPdf::setParameterConstantness(bool constant) {
-    std::vector<Variable *> pars = getParameters();
+    std::vector<Variable> pars = getParameters();
 
-    for(Variable *p : pars) {
-        p->setFixed(constant);
+    for(Variable &p : pars) {
+        p.setFixed(constant);
     }
 }
 
@@ -425,9 +425,9 @@ __host__ fptype GooPdf::normalize() const {
 
     if(hasAnalyticIntegral()) {
         // Loop goes only over observables of this PDF.
-        for(Observable *v : observables) {
-            GOOFIT_TRACE("{}: Analytically integrating over {}", getName(), v->getName());
-            ret *= integrate(v->getLowerLimit(), v->getUpperLimit());
+        for(const Observable &v : observables) {
+            GOOFIT_TRACE("{}: Analytically integrating over {}", getName(), v.getName());
+            ret *= integrate(v.getLowerLimit(), v.getUpperLimit());
         }
 
         host_normalisation[parameters] = 1.0 / ret;
@@ -440,11 +440,11 @@ __host__ fptype GooPdf::normalize() const {
 
     int totalBins = 1;
 
-    for(Observable *v : observables) {
-        ret *= v->getUpperLimit() - v->getLowerLimit();
-        totalBins *= integrationBins > 0 ? integrationBins : v->getNumBins();
+    for(const Observable &v : observables) {
+        ret *= v.getUpperLimit() - v.getLowerLimit();
+        totalBins *= integrationBins > 0 ? integrationBins : v.getNumBins();
 
-        GOOFIT_TRACE("Total bins {} due to {} {} {}", totalBins, v->getName(), integrationBins, v->getNumBins());
+        GOOFIT_TRACE("Total bins {} due to {} {} {}", totalBins, v.getName(), integrationBins, v.getNumBins());
     }
 
     ret /= totalBins;
@@ -584,24 +584,24 @@ __host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
 }
 
 // Utility function to make a grid of any dimisinion
-__host__ void make_a_grid(std::vector<Observable *> ret, UnbinnedDataSet &grid) {
+__host__ void make_a_grid(std::vector<Observable> ret, UnbinnedDataSet &grid) {
     if(ret.empty()) {
         grid.addEvent();
         return;
     }
 
-    Observable *var = ret.back();
+    Observable var = ret.back();
     ret.pop_back(); // safe because this is a copy
 
-    for(int i = 0; i < var->getNumBins(); ++i) {
-        double step = (var->getUpperLimit() - var->getLowerLimit()) / var->getNumBins();
-        var->setValue(var->getLowerLimit() + (i + 0.5) * step);
+    for(int i = 0; i < var.getNumBins(); ++i) {
+        double step = (var.getUpperLimit() - var.getLowerLimit()) / var.getNumBins();
+        var.setValue(var.getLowerLimit() + (i + 0.5) * step);
         make_a_grid(ret, grid);
     }
 }
 
 __host__ UnbinnedDataSet GooPdf::makeGrid() {
-    std::vector<Observable *> ret = getObservables();
+    std::vector<Observable> ret = getObservables();
 
     UnbinnedDataSet grid{ret};
 
@@ -616,8 +616,8 @@ __host__ void GooPdf::transformGrid(fptype *host_output) {
     // normalize();
     int totalBins = 1;
 
-    for(Observable *v : observables) {
-        totalBins *= v->getNumBins();
+    for(const Observable &v : observables) {
+        totalBins *= v.getNumBins();
     }
 
     thrust::constant_iterator<fptype *> arrayAddress(normRanges);

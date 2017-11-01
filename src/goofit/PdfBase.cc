@@ -15,6 +15,25 @@
 
 #include <Minuit2/FunctionMinimum.h>
 
+namespace {
+template<typename T>
+bool find_in(std::vector<T*> list, T* item) {
+    return std::find_if(std::begin(list), std::end(list), [item](T* p){return *p == *item;}) != std::end(list);
+}
+template<typename T>
+bool find_in(std::vector<T> list, T* item) {
+    return std::find_if(std::begin(list), std::end(list), [item](T& p){return p == *item;}) != std::end(list);
+}
+template<typename T>
+bool find_in(std::vector<T*> list, T item) {
+    return std::find_if(std::begin(list), std::end(list), [item](T* p){return *p == item;}) != std::end(list);
+}
+template<typename T>
+bool find_in(std::vector<T> list, T item) {
+    return std::find_if(std::begin(list), std::end(list), [item](T p){return p == item;}) != std::end(list);
+}
+} // namespace
+
 namespace GooFit {
 
 fptype *dev_event_array;
@@ -55,7 +74,7 @@ __host__ unsigned int PdfBase::registerParameter(Variable *var) {
     if(var == nullptr)
         throw GooFit::GeneralError("{}: Can not register a nullptr", getName());
 
-    if(std::find(parameterList.begin(), parameterList.end(), var) != parameterList.end())
+    if(find_in(parameterList, var))
         return static_cast<unsigned int>(var->getIndex());
 
     if(var->getIndex() < 0) {
@@ -63,7 +82,7 @@ __host__ unsigned int PdfBase::registerParameter(Variable *var) {
         var->setIndex(unique_param++);
     }
 
-    parameterList.push_back(var);
+    parameterList.push_back(*var);
     return static_cast<unsigned int>(var->getIndex());
 }
 
@@ -82,40 +101,44 @@ __host__ void PdfBase::unregisterParameter(Variable *var) {
     // For now, it gets completely cleared.
 }
 
-__host__ std::vector<Variable *> PdfBase::getParameters() const {
-    std::vector<Variable *> ret = parameterList;
+__host__ std::vector<Variable> PdfBase::getParameters() const {
+    std::vector<Variable> ret;
+    for(const Variable& param :  parameterList)
+        ret.push_back(param);
 
     for(const PdfBase *comp : components) {
-        for(Variable *sub_comp : comp->getParameters())
-            if(std::find(std::begin(ret), std::end(ret), sub_comp) == std::end(ret))
+        for(const Variable &sub_comp : comp->getParameters())
+            if(!find_in(ret, sub_comp))
                 ret.push_back(sub_comp);
     }
 
     return ret;
 }
 
-__host__ Variable *PdfBase::getParameterByName(std::string n) const {
-    for(Variable *p : parameterList) {
-        if(p->getName() == n)
-            return p;
+__host__ Variable* PdfBase::getParameterByName(std::string n) {
+    for(Variable &p : parameterList) {
+        if(p.getName() == n)
+            return &p;
     }
 
     for(auto component : components) {
-        Variable *cand = component->getParameterByName(n);
+        Variable* cand = component->getParameterByName(n);
 
         if(cand)
             return cand;
     }
-
+    
     return nullptr;
 }
 
-__host__ std::vector<Observable *> PdfBase::getObservables() const {
-    std::vector<Observable *> ret = observables;
+__host__ std::vector<Observable> PdfBase::getObservables() const {
+    std::vector<Observable> ret;
+    for(const Observable &obs : observables)
+        ret.push_back(obs);
 
     for(const PdfBase *comp : components) {
-        for(Observable *sub_comp : comp->getObservables())
-            if(std::find(std::begin(ret), std::end(ret), sub_comp) == std::end(ret))
+        for(const Observable &sub_comp : comp->getObservables())
+            if(!find_in(ret, sub_comp))
                 ret.push_back(sub_comp);
     }
 
@@ -135,11 +158,11 @@ void PdfBase::registerObservable(Observable *obs) {
     if(!obs)
         return;
 
-    if(find(observables.begin(), observables.end(), obs) != observables.end())
+    if(find_in(observables, obs))
         return;
 
     GOOFIT_DEBUG("{}: Registering o:{} for {}", getName(), observables.size(), obs->getName());
-    observables.push_back(obs);
+    observables.push_back(*obs);
 }
 
 __host__ void PdfBase::setIntegrationFineness(int i) {
@@ -148,7 +171,7 @@ __host__ void PdfBase::setIntegrationFineness(int i) {
 }
 
 __host__ bool PdfBase::parametersChanged() const {
-    return std::any_of(std::begin(parameterList), std::end(parameterList), [](Variable *v) { return v->getChanged(); });
+    return std::any_of(std::begin(parameterList), std::end(parameterList), [](const Variable &v) { return v.getChanged(); });
 }
 
 __host__ void PdfBase::setNumPerTask(PdfBase *p, const int &c) {

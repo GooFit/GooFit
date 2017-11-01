@@ -146,7 +146,7 @@ Variable *minDalitzZ       = new Variable("minDalitzZ", pow(piPlusMass + piPlusM
 Variable *maxDalitzZ       = new Variable("maxDalitzZ", pow(_mD0 - piZeroMass, 2));
 
 std::vector<Variable *> weights;
-std::vector<Observable *> obsweights;
+std::vector<Observable> obsweights;
 
 std::vector<PdfBase *> comps;
 TH1F *dataTimePlot        = nullptr;
@@ -292,7 +292,7 @@ void plotFit(Observable *var, UnbinnedDataSet *dat, GooPdf *fit) {
         (var->getName() + "_dathist").c_str(), "", var->getNumBins(), var->getLowerLimit(), var->getUpperLimit());
 
     for(int i = 0; i < numEvents; ++i) {
-        dat_hist->Fill(dat->getValue(var, i));
+        dat_hist->Fill(dat->getValue(*var, i));
     }
 
     TH1F *pdf_hist = new TH1F(
@@ -335,13 +335,13 @@ bool readWrapper(std::ifstream &reader, std::string fname = strbuffer) {
 
 void getToyData(float sigweight = 0.9) {
     if(!data) {
-        std::vector<Observable *> vars;
-        vars.push_back(m12);
-        vars.push_back(m13);
-        vars.push_back(dtime);
-        vars.push_back(sigma);
-        vars.push_back(eventNumber);
-        vars.push_back(wSig0);
+        std::vector<Observable> vars;
+        vars.push_back(*m12);
+        vars.push_back(*m13);
+        vars.push_back(*dtime);
+        vars.push_back(*sigma);
+        vars.push_back(*eventNumber);
+        vars.push_back(*wSig0);
         //  vars.push_back(wBkg1);
         //  vars.push_back(wBkg2);
         data = new UnbinnedDataSet(vars);
@@ -954,20 +954,20 @@ void loadDataFile(std::string fname, UnbinnedDataSet **setToFill, int effSkip) {
     if(!setToFill)
         setToFill = &data;
 
-    std::vector<Observable *> vars;
-    vars.push_back(m12);
-    vars.push_back(m13);
-    vars.push_back(dtime);
-    vars.push_back(sigma);
-    vars.push_back(eventNumber);
-    vars.push_back(wSig0);
-    vars.push_back(wBkg1);
-    vars.push_back(wBkg2);
-    vars.push_back(wBkg3);
-    vars.push_back(wBkg4);
+    std::vector<Observable> vars;
+    vars.push_back(*m12);
+    vars.push_back(*m13);
+    vars.push_back(*dtime);
+    vars.push_back(*sigma);
+    vars.push_back(*eventNumber);
+    vars.push_back(*wSig0);
+    vars.push_back(*wBkg1);
+    vars.push_back(*wBkg2);
+    vars.push_back(*wBkg3);
+    vars.push_back(*wBkg4);
 
     if(massd0)
-        vars.push_back(massd0);
+        vars.push_back(*massd0);
 
     (*setToFill) = new UnbinnedDataSet(vars);
     std::ifstream reader;
@@ -1291,8 +1291,8 @@ GooPdf *makeSigmaMap() {
     sigma_pdf_hists = new TH1F *[numSigmaBins];
     sigma_data      = new UnbinnedDataSet *[numSigmaBins];
 
-    std::vector<Observable *> vars;
-    vars.push_back(sigma);
+    std::vector<Observable> vars;
+    vars.push_back(*sigma);
 
     for(int i = 0; i < numSigmaBins; ++i) {
         sprintf(strbuffer, "sigma_data_hist_%i", i);
@@ -1314,9 +1314,9 @@ GooPdf *makeSigmaMap() {
     int numEvents = data->getNumEvents();
 
     for(int i = 0; i < numEvents; ++i) {
-        m12->setValue(data->getValue(m12, i));
-        m13->setValue(data->getValue(m13, i));
-        sigma->setValue(data->getValue(sigma, i));
+        m12->setValue(data->getValue(*m12, i));
+        m13->setValue(data->getValue(*m13, i));
+        sigma->setValue(data->getValue(*sigma, i));
 
         int xbin       = (int)floor(m12->getValue() / 0.5);
         int ybin       = (int)floor(m13->getValue() / 0.5);
@@ -1379,8 +1379,8 @@ GooPdf *make1BinSigmaMap() {
     sigma_pdf_hists = new TH1F *[1];
     sigma_data      = new UnbinnedDataSet *[1];
 
-    std::vector<Observable *> vars;
-    vars.push_back(sigma);
+    std::vector<Observable> vars;
+    vars.push_back(*sigma);
 
     for(int i = 0; i < 1; ++i) {
         sprintf(strbuffer, "sigma_data_hist_%i", i);
@@ -1402,9 +1402,9 @@ GooPdf *make1BinSigmaMap() {
     int numEvents = data->getNumEvents();
 
     for(int i = 0; i < numEvents; ++i) {
-        m12->setValue(data->getValue(m12, i));
-        m13->setValue(data->getValue(m13, i));
-        sigma->setValue(data->getValue(sigma, i));
+        m12->setValue(data->getValue(*m12, i));
+        m13->setValue(data->getValue(*m13, i));
+        sigma->setValue(data->getValue(*sigma, i));
 
         int overallbin = 0;
         sigma_dat_hists[overallbin]->Fill(sigma->getValue());
@@ -1456,8 +1456,8 @@ GooPdf *make4BinSigmaMap() {
     sigma_pdf_hists = new TH1F *[4];
     sigma_data      = new UnbinnedDataSet *[4];
 
-    std::vector<Observable *> vars;
-    vars.push_back(sigma);
+    std::vector<Observable> vars;
+    vars.push_back(*sigma);
 
     for(int i = 0; i < 4; ++i) {
         sprintf(strbuffer, "sigma_data_hist_%i", i);
@@ -1479,9 +1479,9 @@ GooPdf *make4BinSigmaMap() {
     int numEvents = data->getNumEvents();
 
     for(int i = 0; i < numEvents; ++i) {
-        m12->setValue(data->getValue(m12, i));
-        m13->setValue(data->getValue(m13, i));
-        sigma->setValue(data->getValue(sigma, i));
+        m12->setValue(data->getValue(*m12, i));
+        m13->setValue(data->getValue(*m13, i));
+        sigma->setValue(data->getValue(*sigma, i));
 
         int xbin       = (int)floor(m12->getValue() / 1.5);
         int ybin       = (int)floor(m13->getValue() / 1.5);
@@ -1803,21 +1803,21 @@ void makeToyDalitzPlots(GooPdf *overallSignal, std::string plotdir) {
     double totalBGProb  = 0;
 
     for(unsigned int evt = 0; evt < data->getNumEvents(); ++evt) {
-        double currTime = data->getValue(dtime, evt);
+        double currTime = data->getValue(*dtime, evt);
         dtime_dat_hist.Fill(currTime);
-        totalSigProb += data->getValue(wSig0, evt);
-        totalBGProb += 1 - data->getValue(wSig0, evt);
+        totalSigProb += data->getValue(*wSig0, evt);
+        totalBGProb += 1 - data->getValue(*wSig0, evt);
         totalDat++;
     }
 
     std::cout << "totalData = " << totalDat << ", totalSigProb = " << totalSigProb << std::endl;
-    std::vector<Observable *> vars;
-    vars.push_back(m12);
-    vars.push_back(m13);
-    vars.push_back(dtime);
-    vars.push_back(sigma);
-    vars.push_back(eventNumber);
-    vars.push_back(wSig0);
+    std::vector<Observable> vars;
+    vars.push_back(*m12);
+    vars.push_back(*m13);
+    vars.push_back(*dtime);
+    vars.push_back(*sigma);
+    vars.push_back(*eventNumber);
+    vars.push_back(*wSig0);
     UnbinnedDataSet currData(vars);
     sigma->setValue(0.1);
     wSig0->setValue(totalSigProb / totalDat);
@@ -1851,7 +1851,7 @@ void makeToyDalitzPlots(GooPdf *overallSignal, std::string plotdir) {
     std::vector<std::vector<double>> pdfValues = overallSignal->getCompProbsAtDataPoints();
 
     for(unsigned int j = 0; j < pdfValues[0].size(); ++j) {
-        double currTime = currData.getValue(dtime, j);
+        double currTime = currData.getValue(*dtime, j);
         dtime_sig_hist.Fill(currTime, pdfValues[1][j]);
         dtime_bg_hist.Fill(currTime, pdfValues[2][j]);
         totalPdf += pdfValues[0][j];
@@ -2031,16 +2031,16 @@ void makeDalitzPlots(GooPdf *overallSignal, std::string plotdir = "./plots_from_
     double totalDat = 0;
 
     for(unsigned int evt = 0; evt < data->getNumEvents(); ++evt) {
-        double currTime = data->getValue(dtime, evt);
+        double currTime = data->getValue(*dtime, evt);
         dtime_dat_hist.Fill(currTime);
 
-        double currSigma = data->getValue(sigma, evt);
+        double currSigma = data->getValue(*sigma, evt);
         sigma_dat_hist.Fill(currSigma);
 
-        double currm12 = data->getValue(m12, evt);
+        double currm12 = data->getValue(*m12, evt);
         m12_dat_hist.Fill(currm12);
 
-        double currm13 = data->getValue(m13, evt);
+        double currm13 = data->getValue(*m13, evt);
         m13_dat_hist.Fill(currm13);
 
         dalitzpm_dat_hist.Fill(currm12, currm13);
@@ -2078,9 +2078,9 @@ void makeDalitzPlots(GooPdf *overallSignal, std::string plotdir = "./plots_from_
     std::cout << "Max bin content: " << maxBinContent << " (" << bestI << ", " << bestJ << ")\n";
 
     bool dependsOnSigma             = true;
-    std::vector<Observable *> obses = overallSignal->getObservables();
+    std::vector<Observable> obses = overallSignal->getObservables();
 
-    if(std::find(obses.begin(), obses.end(), sigma) == obses.end())
+    if(std::find(obses.begin(), obses.end(), *sigma) == obses.end())
         dependsOnSigma = false;
 
     // overallSignal->setDebugMask(1);
@@ -2089,13 +2089,13 @@ void makeDalitzPlots(GooPdf *overallSignal, std::string plotdir = "./plots_from_
     const int division = 2;
 
     for(int half = 0; half < division; ++half) {
-        std::vector<Observable *> vars;
-        vars.push_back(m12);
-        vars.push_back(m13);
-        vars.push_back(dtime);
-        vars.push_back(sigma);
-        vars.push_back(eventNumber);
-        vars.push_back(wBkg1);
+        std::vector<Observable> vars;
+        vars.push_back(*m12);
+        vars.push_back(*m13);
+        vars.push_back(*dtime);
+        vars.push_back(*sigma);
+        vars.push_back(*eventNumber);
+        vars.push_back(*wBkg1);
 
         UnbinnedDataSet currData(vars);
 
@@ -2131,7 +2131,7 @@ void makeDalitzPlots(GooPdf *overallSignal, std::string plotdir = "./plots_from_
             if(0 == k % 10)
                 std::cout << "sigma iteration " << half << " " << k << std::endl;
 
-            currData.setValueForAllEvents(sigma);
+            currData.setValueForAllEvents(*sigma);
             overallSignal->setData(&currData);
 
             if(0 == k) {
@@ -2160,17 +2160,17 @@ void makeDalitzPlots(GooPdf *overallSignal, std::string plotdir = "./plots_from_
             std::vector<std::vector<double>> pdfValues = overallSignal->getCompProbsAtDataPoints();
 
             for(unsigned int j = 0; j < pdfValues[0].size(); ++j) {
-                double currTime = currData.getValue(dtime, j);
+                double currTime = currData.getValue(*dtime, j);
                 dtime_pdf_hist.Fill(currTime, pdfValues[0][j]);
 
-                double currSigma = currData.getValue(sigma, j);
+                double currSigma = currData.getValue(*sigma, j);
                 sigma_pdf_hist.Fill(currSigma, pdfValues[0][j]);
 
                 // Um... these two are switched? Weirdness...
-                double currm12 = currData.getValue(m13, j);
+                double currm12 = currData.getValue(*m13, j);
                 m12_pdf_hist.Fill(currm12, pdfValues[0][j]);
 
-                double currm13 = currData.getValue(m12, j);
+                double currm13 = currData.getValue(*m12, j);
                 m13_pdf_hist.Fill(currm13, pdfValues[0][j]);
                 dalitzpm_pdf_hist.Fill(currm12, currm13, pdfValues[0][j]);
 
@@ -2536,7 +2536,7 @@ GooPdf *makeSigmaHists() {
     std::vector<std::unique_ptr<BinnedDataSet>> sigmaHists;
 
     for(int i = 0; i < m23Slices; ++i)
-        sigmaHists.emplace_back(new BinnedDataSet(sigma));
+        sigmaHists.emplace_back(new BinnedDataSet(*sigma));
 
     std::ifstream reader;
     std::string fname = app_ptr->get_filename("./dataFiles/signalMC_truth_mm_0.txt", "examples/pipipi0DPFit");
@@ -2689,9 +2689,9 @@ GooPdf *makeOverallSignal() {
     // Too fine a binning here leads to bad results due to fluctuations.
     m12->setNumBins(120);
     m13->setNumBins(120);
-    vector<Observable *> lvars;
-    lvars.push_back(m12);
-    lvars.push_back(m13);
+    vector<Observable> lvars;
+    lvars.push_back(*m12);
+    lvars.push_back(*m13);
     binEffData = new BinnedDataSet(lvars);
     createWeightHistogram();
     std::cout << "Loading efficiency data" << std::endl;
@@ -2825,7 +2825,7 @@ int runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
     loadDataFile(fname);
 
     TRandom donram(42);
-    std::vector<Observable *> vars = data->getObservables();
+    std::vector<Observable> vars = data->getObservables();
     UnbinnedDataSet *smearedData   = new UnbinnedDataSet(vars);
 
     if(0 != genResolutions) {
@@ -2938,9 +2938,9 @@ int runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
     weightHistogram->Draw("colz");
     foodal->SaveAs("./plots_from_mixfit/efficiency_weights.png");
 
-    vector<Observable *> lvars;
-    lvars.push_back(m12);
-    lvars.push_back(m13);
+    vector<Observable> lvars;
+    lvars.push_back(*m12);
+    lvars.push_back(*m13);
     binEffData = new BinnedDataSet(lvars);
     fname      = app_ptr->get_filename("dataFiles/efficiency_gen.txt", "examples/pipipi0DPFit");
     loadDataFile(fname, &effdata, 1);
@@ -3502,8 +3502,8 @@ GooPdf *makeBkg3Eff() {
     // Only 4500 events, so use large bins.
 
     obsweights.clear();
-    obsweights.push_back(m12);
-    obsweights.push_back(m13);
+    obsweights.push_back(*m12);
+    obsweights.push_back(*m13);
 
     int m12bins = m12->getNumBins();
     int m13bins = m13->getNumBins();
@@ -3575,8 +3575,8 @@ SmoothHistogramPdf *makeBackgroundHistogram(int bkgnum, std::string overridename
     }
 
     obsweights.clear();
-    obsweights.push_back(m12);
-    obsweights.push_back(m13);
+    obsweights.push_back(*m12);
+    obsweights.push_back(*m13);
     BinnedDataSet *bkg_binned_data = new BinnedDataSet(obsweights);
 
     double dummy = 0;
@@ -4249,10 +4249,10 @@ int runSigmaFit(const char *fname) {
     foo->cd();
     plotLoHiSigma();
 
-    std::vector<Observable *> gridvars;
-    gridvars.push_back(m12);
-    gridvars.push_back(m13);
-    gridvars.push_back(sigma);
+    std::vector<Observable> gridvars;
+    gridvars.push_back(*m12);
+    gridvars.push_back(*m13);
+    gridvars.push_back(*sigma);
     UnbinnedDataSet grid(gridvars);
 
     TH1F *sigma_pdfs[6];
@@ -4284,9 +4284,9 @@ int runSigmaFit(const char *fname) {
     double totalDat = 0;
 
     for(unsigned int evt = 0; evt < data->getNumEvents(); ++evt) {
-        double currSigma = data->getValue(sigma, evt);
-        double currm12   = data->getValue(m12, evt);
-        double currm13   = data->getValue(m13, evt);
+        double currSigma = data->getValue(*sigma, evt);
+        double currm12   = data->getValue(*m12, evt);
+        double currm13   = data->getValue(*m13, evt);
         double currm23   = cpuGetM23(currm12, currm13);
         int m23bin       = (int)floor(currm23 / 0.5);
         sigma_data[m23bin]->Fill(currSigma);
@@ -4315,9 +4315,9 @@ int runSigmaFit(const char *fname) {
     std::vector<std::vector<double>> pdfValues = jsu_gg->getCompProbsAtDataPoints();
 
     for(unsigned int j = 0; j < pdfValues[0].size(); ++j) {
-        double currM12   = grid.getValue(m12, j);
-        double currM13   = grid.getValue(m13, j);
-        double currSigma = grid.getValue(sigma, j);
+        double currM12   = grid.getValue(*m12, j);
+        double currM13   = grid.getValue(*m13, j);
+        double currSigma = grid.getValue(*sigma, j);
         double currm23   = cpuGetM23(currM12, currM13);
         int m23bin       = (int)floor(currm23 / 0.5);
         sigma_pdfs[m23bin]->Fill(currSigma, pdfValues[0][j]);
@@ -4461,17 +4461,17 @@ int runEfficiencyFit(int which) {
     double totalDat = 0;
 
     for(unsigned int evt = 0; evt < data->getNumEvents(); ++evt) {
-        double currval = data->getValue(m12, evt);
+        double currval = data->getValue(*m12, evt);
         // m12_dat_hist.Fill(currval);
-        double currval2 = data->getValue(m13, evt);
+        double currval2 = data->getValue(*m13, evt);
         // m13_dat_hist.Fill(currval2);
         dalitz_dat_hist.Fill(currval, currval2);
         totalDat++;
     }
 
-    std::vector<Observable *> nvars;
-    nvars.push_back(m12);
-    nvars.push_back(m13);
+    std::vector<Observable> nvars;
+    nvars.push_back(*m12);
+    nvars.push_back(*m13);
     UnbinnedDataSet currData(nvars);
 
     for(int i = 0; i < m12->getNumBins(); ++i) {
@@ -4493,9 +4493,9 @@ int runEfficiencyFit(int which) {
     std::vector<std::vector<double>> pdfValues = eff->getCompProbsAtDataPoints();
 
     for(unsigned int j = 0; j < pdfValues[0].size(); ++j) {
-        double currVal = currData.getValue(m12, j);
+        double currVal = currData.getValue(*m12, j);
         // m12_pdf_hist.Fill(currVal, pdfValues[0][j]);
-        double currVal2 = currData.getValue(m13, j);
+        double currVal2 = currData.getValue(*m13, j);
         // m13_pdf_hist.Fill(currVal, pdfValues[0][j]);
         dalitz_pdf_hist.Fill(currVal, currVal2, pdfValues[0][j]);
 

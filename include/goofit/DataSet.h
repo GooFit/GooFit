@@ -14,11 +14,11 @@ namespace GooFit {
 
 class DataSet {
   public:
-    DataSet(Observable *var, std::string n = "");
+    DataSet(const Observable &var, std::string n = "");
 
-    DataSet(std::vector<Observable *> &vars, std::string n = "");
-    DataSet(std::set<Observable *> &vars, std::string n = "");
-    DataSet(std::initializer_list<Observable *> vars, std::string n = "");
+    DataSet(const std::vector<Observable> &vars, std::string n = "");
+    DataSet(const std::set<Observable> &vars, std::string n = "");
+    DataSet(std::initializer_list<Observable> vars, std::string n = "");
 
     virtual ~DataSet() = default;
 
@@ -36,11 +36,11 @@ class DataSet {
                                        observables.size());
 
         for(size_t i = 0; i < values.size(); i++)
-            observables[i]->setValue(values[i]);
+            observables[i].setValue(values[i]);
         addEvent();
     }
 
-    const std::vector<Observable *> &getObservables() const;
+    const std::vector<Observable>& getObservables() const;
 
     size_t numVariables() const { return observables.size(); }
 
@@ -50,7 +50,7 @@ class DataSet {
 
   protected:
     std::vector<fptype> getCurrentValues() const;
-    size_t indexOfVariable(Observable *var) const;
+    size_t indexOfVariable(const Observable& var) const;
     size_t numEventsAdded{0};
 
     /// Throw an error if any variables are out of range, call in addEvent
@@ -63,7 +63,7 @@ class DataSet {
     std::string name;
 
   protected:
-    std::vector<Observable *> observables;
+    std::vector<Observable> observables;
 };
 
 } // namespace GooFit

@@ -24,7 +24,7 @@ TEST(BinnedFit, SimpleFit) {
     Observable xvar{"xvar", 0, 10};
 
     // Data set
-    BinnedDataSet data(&xvar);
+    BinnedDataSet data(xvar);
 
     // Generate toy events.
     for(int i = 0; i < 100000; ++i) {
@@ -61,7 +61,7 @@ TEST(BinnedFit, DualFit) {
     Observable yvar{"yvar", 0, 10};
 
     // Data set
-    BinnedDataSet data{{&xvar, &yvar}};
+    BinnedDataSet data{{xvar, yvar}};
 
     // Generate toy events.
     for(int i = 0; i < 200000; ++i) {
@@ -106,7 +106,7 @@ TEST(BinnedFit, DifferentFitterVariable) {
     Observable yvar{"yvar", 0, 10};
 
     // Data set
-    BinnedDataSet data{{&xvar, &yvar}, "Some name"};
+    BinnedDataSet data{{xvar, yvar}, "Some name"};
 
     // Generate toy events.
     for(int i = 0; i < 200000; ++i) {

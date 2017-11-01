@@ -9,25 +9,25 @@
 namespace GooFit {
 
 // Special constructor for one variable
-BinnedDataSet::BinnedDataSet(Observable *var, std::string n)
+BinnedDataSet::BinnedDataSet(const Observable &var, std::string n)
     : DataSet(var, n) {
     collectBins();
     binvalues.resize(getNumBins());
 }
 
-BinnedDataSet::BinnedDataSet(std::vector<Observable *> &vars, std::string n)
+BinnedDataSet::BinnedDataSet(const std::vector<Observable> &vars, std::string n)
     : DataSet(vars, n) {
     collectBins();
     binvalues.resize(getNumBins());
 }
 
-BinnedDataSet::BinnedDataSet(std::set<Observable *> &vars, std::string n)
+BinnedDataSet::BinnedDataSet(const std::set<Observable> &vars, std::string n)
     : DataSet(vars, n) {
     collectBins();
     binvalues.resize(getNumBins());
 }
 
-BinnedDataSet::BinnedDataSet(std::initializer_list<Observable *> vars, std::string n)
+BinnedDataSet::BinnedDataSet(std::initializer_list<Observable> vars, std::string n)
     : DataSet(vars, n) {
     collectBins();
     binvalues.resize(getNumBins());
@@ -51,8 +51,8 @@ void BinnedDataSet::collectBins() {
     // Not really intended to be run multiple times, but just in case
     binsizes.clear();
 
-    for(Observable *var : observables)
-        binsizes.push_back(var->getNumBins());
+    for(const Observable &var : observables)
+        binsizes.push_back(var.getNumBins());
 }
 
 size_t BinnedDataSet::getBinNumber() const {
@@ -95,17 +95,17 @@ fptype BinnedDataSet::getBinCenter(size_t ivar, size_t bin) const {
 
     fptype ret = getBinSize(ivar);
     ret *= (localBin + 0.5);
-    ret += observables[ivar]->getLowerLimit();
+    ret += observables[ivar].getLowerLimit();
     return ret;
 }
 
-fptype BinnedDataSet::getBinCenter(Observable *var, size_t bin) const {
+fptype BinnedDataSet::getBinCenter(const Observable& var, size_t bin) const {
     size_t ivar = indexOfVariable(var);
     return getBinCenter(ivar, bin);
 }
 
 fptype BinnedDataSet::getBinSize(size_t ivar) const {
-    return (observables.at(ivar)->getUpperLimit() - observables[ivar]->getLowerLimit()) / binsizes[ivar];
+    return (observables.at(ivar).getUpperLimit() - observables[ivar].getLowerLimit()) / binsizes[ivar];
 }
 
 fptype BinnedDataSet::getBinVolume(size_t bin) const {
@@ -147,15 +147,15 @@ std::vector<size_t> BinnedDataSet::convertValuesToBins(const std::vector<fptype>
     std::vector<size_t> localBins;
     for(size_t i = 0; i < observables.size(); i++) {
         fptype currval = vals[i];
-        fptype betval  = std::min(std::max(currval, observables[i]->getLowerLimit()), observables[i]->getUpperLimit());
+        fptype betval  = std::min(std::max(currval, observables[i].getLowerLimit()), observables[i].getUpperLimit());
         if(currval != betval)
             GOOFIT_INFO("Warning: Value {} outside {} range [{},{}] - clamping to {}",
                         currval,
-                        observables[i]->getName(),
-                        observables[i]->getLowerLimit(),
-                        observables[i]->getUpperLimit(),
+                        observables[i].getName(),
+                        observables[i].getLowerLimit(),
+                        observables[i].getUpperLimit(),
                         betval);
-        localBins.push_back(static_cast<size_t>(floor((betval - observables[i]->getLowerLimit()) / getBinSize(i))));
+        localBins.push_back(static_cast<size_t>(floor((betval - observables[i].getLowerLimit()) / getBinSize(i))));
     }
 
     return localBins;

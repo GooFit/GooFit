@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
 
     Observable xvar{"xvar", -5, 5};
     Observable yvar{"yvar", -5, 5};
-    UnbinnedDataSet data({&xvar, &yvar});
+    UnbinnedDataSet data({xvar, yvar});
 
     TH2F dataHist("dataHist",
                   "",

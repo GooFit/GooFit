@@ -29,15 +29,15 @@
 using namespace fmt::literals;
 using namespace GooFit;
 
-TH1D *getMCData(DataSet *data, Observable *var, std::string filename) {
+TH1D *getMCData(DataSet *data, Observable var, std::string filename) {
     TH1D *mchist = new TH1D{"mc_hist", "", 300, 0.1365, 0.1665};
     std::ifstream mcreader{filename};
 
-    while(mcreader >> *var) {
-        if(!*var)
+    while(mcreader >> var) {
+        if(!var)
             continue;
         data->addEvent();
-        mchist->Fill(var->getValue());
+        mchist->Fill(var.getValue());
     }
 
     mchist->SetStats(false);
@@ -50,15 +50,15 @@ TH1D *getMCData(DataSet *data, Observable *var, std::string filename) {
     return mchist;
 }
 
-TH1D *getData(DataSet *data, Observable *var, std::string filename) {
+TH1D *getData(DataSet *data, Observable var, std::string filename) {
     TH1D *data_hist = new TH1D("data_hist", "", 300, 0.1365, 0.1665);
     std::ifstream datareader{filename};
 
-    while(datareader >> *var) {
-        if(!*var)
+    while(datareader >> var) {
+        if(!var)
             continue;
         data->addEvent();
-        data_hist->Fill(var->getValue());
+        data_hist->Fill(var.getValue());
     }
 
     data_hist->SetStats(false);
@@ -138,14 +138,14 @@ Dataset descriptions:
     std::unique_ptr<DataSet> mc_dataset, data_dataset;
 
     if(mode == 0) {
-        mc_dataset.reset(new UnbinnedDataSet{&dm});
-        data_dataset.reset(new UnbinnedDataSet{&dm});
+        mc_dataset.reset(new UnbinnedDataSet{dm});
+        data_dataset.reset(new UnbinnedDataSet{dm});
     } else {
-        mc_dataset.reset(new BinnedDataSet{&dm});
-        data_dataset.reset(new BinnedDataSet{&dm});
+        mc_dataset.reset(new BinnedDataSet{dm});
+        data_dataset.reset(new BinnedDataSet{dm});
     }
 
-    TH1D *mc_hist = getMCData(mc_dataset.get(), &dm, mcfile);
+    TH1D *mc_hist = getMCData(mc_dataset.get(), dm, mcfile);
 
     Variable mean1("kpi_mc_mean1", 0.145402, 0.00001, 0.143, 0.148);
     Variable mean2("kpi_mc_mean2", 0.145465, 0.00001, 0.145, 0.1465);
@@ -233,7 +233,7 @@ Dataset descriptions:
 
     Variable bkg_frac("kpi_rd_bkg_frac", 0.03, 0.0, 0.3);
 
-    TH1D *data_hist = getData(data_dataset.get(), &dm, datafile);
+    TH1D *data_hist = getData(data_dataset.get(), dm, datafile);
 
     AddPdf total("total", {&bkg_frac}, {&bkg, &signal});
 

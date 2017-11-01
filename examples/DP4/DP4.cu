@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
     Observable phi{"phi", -3.5, 3.5};
     EventNumber eventNumber{"eventNumber", 0, INT_MAX};
 
-    UnbinnedDataSet currData{&m12, &m34, &cos12, &cos34, &phi, &eventNumber};
+    UnbinnedDataSet currData{m12, m34, cos12, cos34, phi, eventNumber};
 
     unsigned int MCevents = 0;
 

@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
 
     Observable xvar{"xvar", -5, 5};
 
-    UnbinnedDataSet data(&xvar);
+    UnbinnedDataSet data(xvar);
 
     TH1F xvarHist("xvarHist", "", xvar.getNumBins(), xvar.getLowerLimit(), xvar.getUpperLimit());
 
@@ -91,7 +91,7 @@ int main(int argc, char **argv) {
     sigHist.SetStats(false);
     bkgHist.SetStats(false);
 
-    UnbinnedDataSet grid(&xvar);
+    UnbinnedDataSet grid(xvar);
 
     for(int i = 0; i < xvar.getNumBins(); ++i) {
         double step = (xvar.getUpperLimit() - xvar.getLowerLimit()) / xvar.getNumBins();

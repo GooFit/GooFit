@@ -66,9 +66,10 @@ class PdfBase {
     __host__ void generateNormRange();
     __host__ std::string getName() const { return name; }
 
-    __host__ virtual std::vector<Observable *> getObservables() const;
-    __host__ virtual std::vector<Variable *> getParameters() const;
-    __host__ Variable *getParameterByName(std::string n) const;
+    __host__ virtual std::vector<Observable> getObservables() const;
+    __host__ virtual std::vector<Variable> getParameters() const;
+    
+    __host__ Variable* getParameterByName(std::string n);
     __host__ int getSpecialMask() const { return specialMask; }
 
     __host__ void setData(DataSet *data);
@@ -104,8 +105,8 @@ class PdfBase {
         nullptr}; //< This is specific to functor instead of variable so that MetricTaker::operator needn't use indices.
     unsigned int parameters{0}; //< Stores index, in 'paramIndices', where this functor's information begins.
     unsigned int cIndex{1};     //< Stores location of constants.
-    std::vector<Observable *> observables;
-    std::vector<Variable *> parameterList;
+    std::vector<Observable> observables;
+    std::vector<Variable> parameterList;
     FitControl *fitControl{nullptr};
     std::vector<PdfBase *> components;
     int integrationBins{-1};

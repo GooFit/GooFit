@@ -231,18 +231,18 @@ __host__ void ConvolutionPdf::setIntegrationConstants(fptype lo, fptype hi, fpty
     // x2-minX, and the min and max are given by the dependent variable.
     // However, the step must be the same as for the model, or the binning
     // will get out of sync.
-    Observable *dependent = *(observables.begin());
+    Observable dependent = *(observables.begin());
 
     host_iConsts[2] = numbins;
-    host_iConsts[3] = (host_iConsts[0] - dependent->getUpperLimit());
-    host_iConsts[4] = (host_iConsts[1] - dependent->getLowerLimit());
+    host_iConsts[3] = (host_iConsts[0] - dependent.getUpperLimit());
+    host_iConsts[4] = (host_iConsts[1] - dependent.getLowerLimit());
 
     numbins         = static_cast<int>(floor((host_iConsts[4] - host_iConsts[3]) / step + 0.5));
     host_iConsts[5] = numbins;
     MEMCPY(dev_iConsts, host_iConsts, 6 * sizeof(fptype), cudaMemcpyHostToDevice);
     resolWorkSpace = new thrust::device_vector<fptype>(numbins);
 
-    int offset = dependent->getUpperLimit() / step;
+    int offset = dependent.getUpperLimit() / step;
     MEMCPY_TO_SYMBOL(modelOffset, &offset, sizeof(int), workSpaceIndex * sizeof(int), cudaMemcpyHostToDevice);
 
     fptype *dev_address[1];

@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
     Observable xvar{"xvar", 0, log(1 + RAND_MAX / 2)};
 
     // Data set
-    UnbinnedDataSet data(&xvar);
+    UnbinnedDataSet data(xvar);
 
     // Generate toy events.
     for(int i = 0; i < 100000; ++i) {

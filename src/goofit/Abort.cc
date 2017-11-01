@@ -13,14 +13,14 @@ void abort(std::string file, int line, std::string reason, const PdfBase *pdf) {
               << reason << std::endl;
 
     if(pdf) {
-        std::vector<Variable *> pars = pdf->getParameters();
+        std::vector<Variable> pars = pdf->getParameters();
         std::cout << "Parameters of " << pdf->getName() << " : \n";
 
-        for(Variable *v : pars) {
-            if(0 > v->getIndex())
+        for(const Variable &v : pars) {
+            if(0 > v.getIndex())
                 continue;
 
-            std::cout << "  " << v->getName() << " (" << v->getIndex() << ") :\t" << host_params[v->getIndex()]
+            std::cout << "  " << v.getName() << " (" << v.getIndex() << ") :\t" << host_params[v.getIndex()]
                       << std::endl;
         }
     }

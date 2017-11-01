@@ -621,7 +621,7 @@ __host__ void Spline::recalculateCache() const {
     unsigned int i = 0;
     for(auto v = params.begin(); v != params.end(); ++v, ++i) {
         unsigned int idx = i / 2;
-        fptype value     = host_params[(*v)->getIndex()];
+        fptype value     = host_params[v->getIndex()];
         if(i % 2 == 0)
             y[idx].real(value);
         else

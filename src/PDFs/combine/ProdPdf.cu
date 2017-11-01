@@ -52,7 +52,7 @@ ProdPdf::ProdPdf(std::string n, std::vector<PdfBase *> comps)
 
     observables = getObservables(); // Gathers from components
 
-    std::vector<Observable *> observableCheck; // Use to check for overlap in observables
+    std::vector<Observable> observableCheck; // Use to check for overlap in observables
 
     // Indices stores (function index)(function parameter index)(variable index) for each component.
     for(PdfBase *p : comps) {
@@ -62,9 +62,9 @@ ProdPdf::ProdPdf(std::string n, std::vector<PdfBase *> comps)
         if(varOverlaps)
             continue; // Only need to establish this once.
 
-        std::vector<Observable *> currObses = p->getObservables();
+        std::vector<Observable> currObses = p->getObservables();
 
-        for(Observable *o : currObses) {
+        for(Observable &o : currObses) {
             if(find(observableCheck.begin(), observableCheck.end(), o) == observableCheck.end())
                 continue;
 

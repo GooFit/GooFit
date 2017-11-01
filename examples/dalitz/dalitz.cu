@@ -74,10 +74,10 @@ void getToyData(std::string toyFileName, GooFit::Application &app) {
                     m13->getNumBins(),
                     m13->getLowerLimit(),
                     m13->getUpperLimit());
-    std::vector<Observable *> vars;
-    vars.push_back(m12);
-    vars.push_back(m13);
-    vars.push_back(eventNumber);
+    std::vector<Observable> vars;
+    vars.push_back(*m12);
+    vars.push_back(*m13);
+    vars.push_back(*eventNumber);
     data = new UnbinnedDataSet(vars);
 
     std::ifstream reader(toyFileName);

@@ -151,19 +151,19 @@ __host__ InterHistPdf::InterHistPdf(std::string n,
 
     int varIndex = 0;
 
-    for(Observable *var : x->getObservables()) {
-        if(std::find(obses.begin(), obses.end(), var) != obses.end()) {
-            registerObservable(var);
+    for(Observable var : x->getObservables()) {
+        if(std::find_if(obses.begin(), obses.end(), [var](Observable *ob){return *ob == var;}) != obses.end()) {
+            registerObservable(&var);
             pindices.push_back(OBS_CODE);
         }
 
         pindices.push_back(cIndex + 2 * varIndex + 0);
         pindices.push_back(cIndex + 2 * varIndex + 1);
-        pindices.push_back(var->getNumBins());
+        pindices.push_back(var.getNumBins());
 
         // NB, do not put cIndex here, it is accounted for by the offset in MEMCPY_TO_SYMBOL below.
-        host_constants[2 * varIndex + 0] = var->getLowerLimit();
-        host_constants[2 * varIndex + 1] = var->getBinSize();
+        host_constants[2 * varIndex + 0] = var.getLowerLimit();
+        host_constants[2 * varIndex + 1] = var.getBinSize();
         varIndex++;
     }
 

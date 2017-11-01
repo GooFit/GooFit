@@ -10,7 +10,7 @@ class PdfBase;
 
 class Minuit1 : public TMinuit {
     PdfBase *pdfPointer;
-    std::vector<Variable *> vars;
+    std::vector<Variable> vars;
 
   public:
     Minuit1(PdfBase *pdfPointer);
@@ -24,7 +24,7 @@ class Minuit1 : public TMinuit {
                ) override;
 
     // Get a copy of the list of variables
-    std::vector<Variable *> getVaraibles() const { return vars; };
+    std::vector<Variable> getVaraibles() const { return vars; };
 };
 
 class FitManagerMinuit1 {

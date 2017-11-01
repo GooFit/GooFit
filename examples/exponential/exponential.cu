@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
     GooFit::Observable xvar{"xvar", 0, log(1 + RAND_MAX / 2)};
 
     // Data set
-    GooFit::UnbinnedDataSet data(&xvar);
+    GooFit::UnbinnedDataSet data(xvar);
 
     // Generate toy events.
 

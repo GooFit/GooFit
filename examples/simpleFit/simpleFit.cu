@@ -56,7 +56,7 @@ void fitAndPlot(GooPdf *total, UnbinnedDataSet *data, TH1F &dataHist, Observable
     TH1F pdfHist("pdfHist", "", xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
     pdfHist.SetStats(false);
 
-    UnbinnedDataSet grid(xvar);
+    UnbinnedDataSet grid(*xvar);
     double step = (xvar->getUpperLimit() - xvar->getLowerLimit()) / xvar->getNumBins();
 
     for(int i = 0; i < xvar->getNumBins(); ++i) {
@@ -122,9 +122,9 @@ int main(int argc, char **argv) {
     xvar->setNumBins(1000); // For such a large range, want more bins for better accuracy in normalisation.
 
     // Data sets for the three fits.
-    UnbinnedDataSet landdata(xvar);
-    UnbinnedDataSet bifgdata(xvar);
-    UnbinnedDataSet novodata(xvar);
+    UnbinnedDataSet landdata(*xvar);
+    UnbinnedDataSet bifgdata(*xvar);
+    UnbinnedDataSet novodata(*xvar);
 
     // Histograms for showing the fit.
     TH1F landHist("landHist", "", xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());

@@ -65,22 +65,22 @@ TH2F *underlyingBins      = nullptr;
 GooFit::Application *app_ptr;
 bool minuit1;
 
-Observable *m12                 = nullptr;
-Observable *m13                 = nullptr;
-EventNumber *eventNumber        = nullptr;
-Observable *massd0              = nullptr;
-Observable *deltam              = nullptr;
-Observable *dtime               = nullptr;
-Observable *sigma               = nullptr;
-Observable *wSig0               = nullptr;
-Observable *wBkg1               = nullptr;
-Observable *wBkg2               = nullptr;
-Observable *wBkg3               = nullptr;
-Observable *wBkg4               = nullptr;
+Observable *m12          = nullptr;
+Observable *m13          = nullptr;
+EventNumber *eventNumber = nullptr;
+Observable *massd0       = nullptr;
+Observable *deltam       = nullptr;
+Observable *dtime        = nullptr;
+Observable *sigma        = nullptr;
+Observable *wSig0        = nullptr;
+Observable *wBkg1        = nullptr;
+Observable *wBkg2        = nullptr;
+Observable *wBkg3        = nullptr;
+Observable *wBkg4        = nullptr;
 
-bool fitMasses                = false;
-Variable *fixedRhoMass        = new Variable("rho_mass", 0.7758, 0.01, 0.7, 0.8);
-Variable *fixedRhoWidth       = new Variable("rho_width", 0.1503, 0.01, 0.1, 0.2);
+bool fitMasses          = false;
+Variable *fixedRhoMass  = new Variable("rho_mass", 0.7758, 0.01, 0.7, 0.8);
+Variable *fixedRhoWidth = new Variable("rho_width", 0.1503, 0.01, 0.1, 0.2);
 
 // Systematic variables
 double luckyFrac           = 0.5;
@@ -2077,7 +2077,7 @@ void makeDalitzPlots(GooPdf *overallSignal, std::string plotdir = "./plots_from_
 
     std::cout << "Max bin content: " << maxBinContent << " (" << bestI << ", " << bestJ << ")\n";
 
-    bool dependsOnSigma           = true;
+    bool dependsOnSigma             = true;
     std::vector<Observable *> obses = overallSignal->getObservables();
 
     if(std::find(obses.begin(), obses.end(), sigma) == obses.end())
@@ -2826,7 +2826,7 @@ int runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
 
     TRandom donram(42);
     std::vector<Observable *> vars = data->getVariables();
-    UnbinnedDataSet *smearedData = new UnbinnedDataSet(vars);
+    UnbinnedDataSet *smearedData   = new UnbinnedDataSet(vars);
 
     if(0 != genResolutions) {
         int numEvents = data->getNumEvents();

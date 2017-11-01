@@ -35,12 +35,12 @@ TCanvas *foo;
 TCanvas *foodal;
 UnbinnedDataSet *data = 0;
 
-Observable *m12                 = 0;
-Observable *m13                 = 0;
+Observable *m12          = 0;
+Observable *m13          = 0;
 EventNumber *eventNumber = 0;
-bool fitMasses                = false;
-Variable *fixedRhoMass        = new Variable("rho_mass", 0.7758, 0.01, 0.7, 0.8);
-Variable *fixedRhoWidth       = new Variable("rho_width", 0.1503, 0.01, 0.1, 0.2);
+bool fitMasses           = false;
+Variable *fixedRhoMass   = new Variable("rho_mass", 0.7758, 0.01, 0.7, 0.8);
+Variable *fixedRhoWidth  = new Variable("rho_width", 0.1503, 0.01, 0.1, 0.2);
 
 const fptype _mD0       = 1.86484;
 const fptype _mD02      = _mD0 * _mD0;

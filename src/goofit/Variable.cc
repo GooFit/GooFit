@@ -34,13 +34,13 @@ std::ostream &operator<<(std::ostream &o, const GooFit::Variable &var) {
 
     return o;
 }
-    
+
 std::ostream &operator<<(std::ostream &o, const GooFit::Observable &var) {
     o << var.getName() << ": " << var.getValue() << " (" << var.getNumBins() << " bins)";
     o << " [" << var.getLowerLimit() << ", " << var.getUpperLimit() << "]";
     if(var.getIndex() >= 0)
         o << " GooFit index: " << var.getIndex();
-    
+
     return o;
 }
 

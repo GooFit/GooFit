@@ -215,9 +215,9 @@ int main(int argc, char **argv) {
     Variable constantOne{"constantOne", 1};
     Variable constantZero{"constantZero", 0};
 
-    vector<Observable *> observables  = {&m12, &m34, &cos12, &cos34, &phi, &eventNumber};
-    vector<Variable *> coefficients = {&constantOne};
-    vector<Variable *> offsets      = {&constantZero, &constantZero};
+    vector<Observable *> observables = {&m12, &m34, &cos12, &cos34, &phi, &eventNumber};
+    vector<Variable *> coefficients  = {&constantOne};
+    vector<Variable *> offsets       = {&constantZero, &constantZero};
 
     PolynomialPdf eff{"constantEff", observables, coefficients, offsets, 0};
     DPPdf dp{"test", observables, &DK3P_DI, &eff, 1000000};

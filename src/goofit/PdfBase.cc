@@ -60,13 +60,13 @@ __host__ unsigned int PdfBase::registerParameter(Variable *var) {
         unsigned int unusedIndex = 0;
 
         auto params = getParameters();
-        for(const Variable* param : params)
+        for(const Variable *param : params)
             unusedIndex = static_cast<unsigned int>(std::max(static_cast<int>(unusedIndex), param->getIndex()));
 
         GOOFIT_DEBUG("{}: Registering p:{} for {}", getName(), unusedIndex, var->getName());
         var->setIndex(unusedIndex);
     }
-    
+
     parameterList.push_back(var);
     return static_cast<unsigned int>(var->getIndex());
 }
@@ -80,7 +80,7 @@ __host__ void PdfBase::unregisterParameter(Variable *var) {
     for(PdfBase *comp : components) {
         comp->unregisterParameter(var);
     }
-    
+
     var->setIndex(-1);
     // Once copies are used, this might able to be unregistred from a lower PDF only
     // For now, it gets completely cleared.

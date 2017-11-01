@@ -25,10 +25,10 @@ timeval startTime, stopTime, totalTime;
 using namespace std;
 using namespace GooFit;
 
-Observable *decayTime  = nullptr;
-Variable *constaCoef = nullptr;
-Variable *linearCoef = nullptr;
-Variable *secondCoef = nullptr;
+Observable *decayTime = nullptr;
+Variable *constaCoef  = nullptr;
+Variable *linearCoef  = nullptr;
+Variable *secondCoef  = nullptr;
 
 double integralExpCon(double lo, double hi) { return (exp(-lo) - exp(-hi)); }
 

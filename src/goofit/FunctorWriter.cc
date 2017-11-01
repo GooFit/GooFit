@@ -13,8 +13,8 @@ void writeToFile(PdfBase *pdf, const char *fname) {
     writer.open(fname);
 
     for(Variable *p : params) {
-        writer << p->getName() << " " << p->getValue() << " " << p->getError() << " "
-               << p->getLowerLimit() << " " << p->getUpperLimit() << std::endl;
+        writer << p->getName() << " " << p->getValue() << " " << p->getError() << " " << p->getLowerLimit() << " "
+               << p->getUpperLimit() << std::endl;
     }
 
     writer.close();

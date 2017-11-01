@@ -87,6 +87,6 @@ void init_TddpPdf(py::module &m) {
              py::keep_alive<1, 10>(),
              py::keep_alive<1, 11>(),
              py::keep_alive<1, 12>());
-    
+
     // TODO: Please use annotations and defaults here!
 }

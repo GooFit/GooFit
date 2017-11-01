@@ -19,83 +19,85 @@ class Minuit1;
 /// Special class for observables. Used in DataSets.
 class Observable {
     friend std::istream &operator>>(std::istream &o, Observable &var);
-    
-protected:
+
+  protected:
     /// The name, just used for labels
     std::string name;
-    
+
     /// The upper limit
     fptype upperlimit;
-    
+
     /// The lower limit
     fptype lowerlimit;
-    
+
     /// The value, a quick placeholder for adding events
-    fptype value {0.};
-    
+    fptype value{0.};
+
     /// The index
-    int index {-1};
-    
+    int index{-1};
+
     /// The number of bins (mostly for BinnedData, or plotting help)
     ssize_t numbins{100};
-    
-public:
-    Observable(std::string name, fptype upperlimit, fptype lowerlimit) :
-    name(name), upperlimit(upperlimit), lowerlimit(lowerlimit) {}
-    
+
+  public:
+    Observable(std::string name, fptype upperlimit, fptype lowerlimit)
+        : name(name)
+        , upperlimit(upperlimit)
+        , lowerlimit(lowerlimit) {}
+
     // This class cannot be duplicated
     Observable(const Observable &) = delete;
     Observable &operator=(const Observable &) = delete;
     Observable(Observable &&)                 = default;
-    
+
     virtual ~Observable() = default;
-    
+
     // Get the name
     const std::string &getName() const { return name; }
-    
+
     /// Get the value
     fptype getValue() const { return value; }
     /// Set the value
     void setValue(fptype val) { value = val; }
-    
+
     /// Get the upper limit
     fptype getUpperLimit() const { return upperlimit; }
     /// Set the upper limit
     void setUpperLimit(fptype val) { upperlimit = val; }
-    
+
     /// Get the lower limit
     fptype getLowerLimit() const { return lowerlimit; }
     /// Set the lower limit
     void setLowerLimit(fptype val) { lowerlimit = val; }
-    
+
     /// Get the GooFit index
     int getIndex() const { return index; }
     /// Set the GooFit index
     void setIndex(int value) { index = value; }
-    
+
     /// Set the number of bins
     void setNumBins(size_t num) { numbins = num; }
     /// Get the number of bins
     size_t getNumBins() const { return numbins; }
-    
+
     /// Get the bin size, (upper-lower) / bins
     fptype getBinSize() const { return (getUpperLimit() - getLowerLimit()) / getNumBins(); }
-    
+
     // Utilities
-    
+
     /// Support obs = 3
     fptype operator=(const fptype &val) {
         setValue(val);
         return val;
     }
-    
+
     /// Support fptype val = obs
     operator fptype() const { return getValue(); }
 
     /// Check to see if in range
     operator bool() const { return getValue() <= getUpperLimit() && getValue() >= getLowerLimit(); }
 };
-    
+
 class Indexable {
   public:
     Indexable(std::string n, fptype val = 0)
@@ -107,9 +109,7 @@ class Indexable {
     Indexable &operator=(const Indexable &) = default;
     Indexable(Indexable &&)                 = default;
 
-    virtual ~Indexable() {
-        GOOFIT_DEBUG("Destroying Variable: {}", name);
-    }
+    virtual ~Indexable() { GOOFIT_DEBUG("Destroying Variable: {}", name); }
 
     /// Get the GooFit index
     int getIndex() const { return *index; }
@@ -144,15 +144,10 @@ class Indexable {
     operator fptype() const { return getValue(); }
 
     /// Support for using as key in map - Notice this does NOT sort by index!
-    bool operator <(const Indexable& other) const {
-        return value.get() < other.value.get();
-    }
-    
+    bool operator<(const Indexable &other) const { return value.get() < other.value.get(); }
+
     /// Support for comparison
-    bool operator ==(const Indexable& other) const {
-        return value.get() == other.value.get();
-    }
-    
+    bool operator==(const Indexable &other) const { return value.get() == other.value.get(); }
 
   protected:
     /// The variable name. Should be unique
@@ -287,7 +282,7 @@ class EventNumber : public Observable {
   public:
     static constexpr fptype maxint{1L << std::numeric_limits<fptype>::digits};
 
-    EventNumber(std::string name, fptype min=0, fptype max=EventNumber::maxint)
+    EventNumber(std::string name, fptype min = 0, fptype max = EventNumber::maxint)
         : GooFit::Observable(name, min, max) {}
 
     ~EventNumber() override = default;
@@ -318,17 +313,17 @@ class Constant : public Indexable {
 };
 
 /// Get the max index of a variable from a list
-int max_index(const std::vector<Variable*> &vars);
+int max_index(const std::vector<Variable *> &vars);
 
 /// Get the max fitter index of a variable from a list
-int max_fitter_index(const std::vector<Variable*> &vars);
+int max_fitter_index(const std::vector<Variable *> &vars);
 
 /// Nice print of Variable
 std::ostream &operator<<(std::ostream &o, const GooFit::Variable &var);
 
 /// Nice print of Variable
 std::ostream &operator<<(std::ostream &o, const GooFit::Observable &var);
-        
+
 /// Allow Observable to be read in
 std::istream &operator>>(std::istream &i, GooFit::Observable &var);
 } // namespace GooFit

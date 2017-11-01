@@ -175,14 +175,14 @@ int main(int argc, char **argv) {
     DK3P_DI->amplitudes.push_back(Bose_symmetrized_A1R);
     DK3P_DI->amplitudes.push_back(Bose_symmetrized_A1RD);
 
-    Observable *m12                 = new Observable("m12", 0, 3);
-    Observable *m34                 = new Observable("m34", 0, 3);
-    Observable *cos12               = new Observable("cos12", -1, 1);
-    Observable *cos34               = new Observable("m12", -1, 1);
-    Observable *phi                 = new Observable("phi", -3.5, 3.5);
-    EventNumber *eventNumber        = new EventNumber("eventNumber", 0, INT_MAX);
-    Variable *constantOne           = new Variable("constantOne", 1);
-    Variable *constantZero          = new Variable("constantZero", 0);
+    Observable *m12          = new Observable("m12", 0, 3);
+    Observable *m34          = new Observable("m34", 0, 3);
+    Observable *cos12        = new Observable("cos12", -1, 1);
+    Observable *cos34        = new Observable("m12", -1, 1);
+    Observable *phi          = new Observable("phi", -3.5, 3.5);
+    EventNumber *eventNumber = new EventNumber("eventNumber", 0, INT_MAX);
+    Variable *constantOne    = new Variable("constantOne", 1);
+    Variable *constantZero   = new Variable("constantZero", 0);
 
     vector<Observable *> observables;
     vector<Variable *> coefficients;

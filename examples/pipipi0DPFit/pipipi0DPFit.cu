@@ -2825,7 +2825,7 @@ int runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
     loadDataFile(fname);
 
     TRandom donram(42);
-    std::vector<Observable *> vars = data->getVariables();
+    std::vector<Observable *> vars = data->getObservables();
     UnbinnedDataSet *smearedData   = new UnbinnedDataSet(vars);
 
     if(0 != genResolutions) {

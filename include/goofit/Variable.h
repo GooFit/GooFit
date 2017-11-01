@@ -15,37 +15,37 @@ namespace GooFit {
 
 class Params;
 class Minuit1;
-    
+
 /// This class is specifically for any indexable quanity: Observables or Variables.
 /// It contains the idea of a limited quanity (min==max means no limit).
 /// It can also take a value.
 class Indexable {
-protected:
+  protected:
     /// The variable name. Should be unique
     std::string name;
-    
+
     /// The value of the variable
     std::shared_ptr<fptype> value;
-    
+
     /// The lower limit
     std::shared_ptr<fptype> lowerlimit{std::make_shared<fptype>(0)};
-    
+
     /// The upper limit
     std::shared_ptr<fptype> upperlimit{std::make_shared<fptype>(0)};
-    
+
     /// The goofit index, -1 if unset
     std::shared_ptr<int> index{std::make_shared<int>(-1)};
-    
+
   public:
     Indexable(std::string n, fptype val = 0)
         : name(n)
         , value(std::make_shared<fptype>(val)) {}
-    
+
     Indexable(std::string n, fptype val, fptype lowerlimit, fptype upperlimit)
-    : name(n)
-    , value(std::make_shared<fptype>(val))
-    , lowerlimit(std::make_shared<fptype>(lowerlimit))
-    , upperlimit(std::make_shared<fptype>(upperlimit)) {}
+        : name(n)
+        , value(std::make_shared<fptype>(val))
+        , lowerlimit(std::make_shared<fptype>(lowerlimit))
+        , upperlimit(std::make_shared<fptype>(upperlimit)) {}
 
     virtual ~Indexable() { GOOFIT_DEBUG("Destroying Indexable: {}", name); }
 
@@ -63,25 +63,25 @@ protected:
     fptype getValue() const { return *value; }
     /// Set the value
     void setValue(fptype val) { *value = val; }
-    
+
     /// Get the upper limit
     fptype getUpperLimit() const { return *upperlimit; }
     /// Set the upper limit
     void setUpperLimit(fptype val) { *upperlimit = val; }
-    
+
     /// Get the lower limit
     fptype getLowerLimit() const { return *lowerlimit; }
     /// Set the lower limit
     void setLowerLimit(fptype val) { *lowerlimit = val; }
 
     /// Support var = 3
-    const Indexable& operator=(const fptype &val) {
+    const Indexable &operator=(const fptype &val) {
         setValue(val);
         return *this;
     }
-    
+
     // Utilities
-    
+
     /// Support fptype val = var
     operator fptype() const { return getValue(); }
 
@@ -90,43 +90,40 @@ protected:
 
     /// Support for comparison - only if really the same object, not just the same value
     bool operator==(const Indexable &other) const { return value.get() == other.value.get(); }
-    
+
     /// Check to see if in range
     operator bool() const {
         return getUpperLimit() == getLowerLimit() || (getValue() <= getUpperLimit() && getValue() >= getLowerLimit());
     }
 };
-    
-    
+
 /// Special class for observables. Used in DataSets.
 class Observable : public Indexable {
     friend std::istream &operator>>(std::istream &o, Observable &var);
-    
-protected:
-    
+
+  protected:
     /// The number of bins (mostly for BinnedData, or plotting help)
     std::shared_ptr<size_t> numbins{std::make_shared<size_t>(100)};
-    
-public:
+
+  public:
     Observable(std::string name, fptype lowerlimit, fptype upperlimit)
-    : GooFit::Indexable(name, 0, lowerlimit, upperlimit) {}
-    
+        : GooFit::Indexable(name, 0, lowerlimit, upperlimit) {}
+
     ~Observable() override = default;
-    
+
     /// Set the number of bins
     void setNumBins(size_t num) { *numbins = num; }
     /// Get the number of bins
     size_t getNumBins() const { return *numbins; }
-    
+
     /// Get the bin size, (upper-lower) / bins
     fptype getBinSize() const { return (getUpperLimit() - getLowerLimit()) / getNumBins(); }
-    
+
     /// Support var = 3
-    const Observable& operator=(const fptype &val) {
+    const Observable &operator=(const fptype &val) {
         setValue(val);
         return *this;
     }
-   
 };
 
 /// Contains information about a parameter allowed
@@ -174,7 +171,7 @@ class Variable : public Indexable {
     fptype getError() const { return *error; }
     /// Set the error
     void setError(fptype val) { *error = val; }
-    
+
     /// Get the index from the fitter
     int getFitterIndex() const { return *fitter_index; }
     /// Set the index (should be done by the fitter)
@@ -197,9 +194,9 @@ class Variable : public Indexable {
 
     /// Protected by special locked key, only a few classes have access to create a Key
     fptype getBlind(const Key &) { return *blind; }
-    
+
     /// Support var = 3
-    const Variable& operator=(const fptype &val) {
+    const Variable &operator=(const fptype &val) {
         setValue(val);
         return *this;
     }
@@ -207,7 +204,7 @@ class Variable : public Indexable {
   protected:
     /// The error
     std::shared_ptr<fptype> error;
-    
+
     /// A blinding value to add
     std::shared_ptr<fptype> blind{std::make_shared<fptype>(0)};
 
@@ -216,7 +213,7 @@ class Variable : public Indexable {
 
     /// This "fixes" the variable (constant)
     std::shared_ptr<bool> fixed{std::make_shared<bool>(false)};
-    
+
     /// The fitter index, -1 if unset
     std::shared_ptr<int> fitter_index{std::make_shared<int>(-1)};
 };
@@ -232,28 +229,27 @@ class EventNumber : public Observable {
         : GooFit::Observable(name, min, max) {}
 
     ~EventNumber() override = default;
-        
+
     /// Support var = 3
-    const EventNumber& operator=(const fptype &val) {
+    const EventNumber &operator=(const fptype &val) {
         setValue(val);
         return *this;
     }
 };
 
-        
 /// Get the max index of a variable from a list
-template<typename T>
+template <typename T>
 int max_index(const std::vector<T *> &vars) {
-    std::vector<Indexable*> nvars;
+    std::vector<Indexable *> nvars;
     for(auto v : vars)
         nvars.push_back(v);
     return max_index(nvars);
 }
 
 /// Get the max index of a variable from a list
-template<>
+template <>
 int max_index<Indexable>(const std::vector<Indexable *> &vars);
-        
+
 /// Get the max fitter index of a variable from a list
 int max_fitter_index(const std::vector<Variable *> &vars);
 

@@ -32,7 +32,8 @@ class DataSet {
         std::vector<fptype> values{value, static_cast<fptype>(args)...};
 
         if(values.size() != observables.size())
-            throw GooFit::GeneralError("You must pass the correct number of values ({}) to addEvent", observables.size());
+            throw GooFit::GeneralError("You must pass the correct number of values ({}) to addEvent",
+                                       observables.size());
 
         for(size_t i = 0; i < values.size(); i++)
             observables[i]->setValue(values[i]);

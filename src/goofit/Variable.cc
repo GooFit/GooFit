@@ -5,7 +5,7 @@
 
 namespace GooFit {
 
-template<>
+template <>
 int max_index<Indexable>(const std::vector<Indexable *> &vars) {
     if(vars.empty())
         return -1;

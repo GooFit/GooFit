@@ -51,7 +51,7 @@ __host__ void PdfBase::recursiveSetNormalisation(fptype norm) const {
 
 __host__ unsigned int PdfBase::registerParameter(Variable *var) {
     static int unique_param = 0;
-    
+
     if(var == nullptr)
         throw GooFit::GeneralError("{}: Can not register a nullptr", getName());
 

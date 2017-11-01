@@ -52,8 +52,9 @@ class UnbinnedDataSet : public DataSet {
             if(observables.size() == input.rows() + 1)
                 observables.at(input.rows())->setValue(optional_index++);
 
-            if(!filter
-               || std::all_of(std::begin(observables), std::end(observables), [](Observable *var) { return bool(*var); }))
+            if(!filter || std::all_of(std::begin(observables), std::end(observables), [](Observable *var) {
+                   return bool(*var);
+               }))
                 addEvent();
         }
     }

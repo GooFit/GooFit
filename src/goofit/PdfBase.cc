@@ -50,6 +50,8 @@ __host__ void PdfBase::recursiveSetNormalisation(fptype norm) const {
 }
 
 __host__ unsigned int PdfBase::registerParameter(Variable *var) {
+    static int unique_param = 0;
+    
     if(var == nullptr)
         throw GooFit::GeneralError("{}: Can not register a nullptr", getName());
 
@@ -57,11 +59,8 @@ __host__ unsigned int PdfBase::registerParameter(Variable *var) {
         return static_cast<unsigned int>(var->getIndex());
 
     if(var->getIndex() < 0) {
-        
-        int unusedIndex = max_index(getParameters()) + 1;
-
         GOOFIT_DEBUG("{}: Registering p:{} for {}", getName(), unusedIndex, var->getName());
-        var->setIndex(unusedIndex);
+        var->setIndex(unique_param++);
     }
 
     parameterList.push_back(var);

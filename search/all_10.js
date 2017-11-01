@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['observable',['Observable',['../namespace_goo_fit.html#a2c2f0ee8099f209454e4feb2c0d291a6',1,'GooFit']]],
   ['observables',['observables',['../class_goo_fit_1_1_pdf_base.html#a71412144677693fa5490c63ebc2576d8',1,'GooFit::PdfBase']]],
   ['one',['One',['../class_goo_fit_1_1_lineshapes_1_1_one.html',1,'GooFit::Lineshapes::One'],['../class_goo_fit_1_1_lineshapes_1_1_one.html#af8ef6fa09d9249a461a2b76326a9c1a9',1,'GooFit::Lineshapes::One::One()'],['../namespace_goo_fit.html#afa87269656057f9a7bea45cfeae4dd03abc21e6484530fc9d0313cb816b733396',1,'GooFit::ONE()'],['../namespace_goo_fit.html#a08ab8dd8ee4b25e849b5a5eecf6ee48ba06c2cea18679d64399783748fa367bdd',1,'GooFit::One()']]],
   ['operator_20bool',['operator bool',['../class_goo_fit_1_1_fit_manager_minuit1.html#a0097415be7724091299c43b07d5c6104',1,'GooFit::FitManagerMinuit1::operator bool()'],['../class_goo_fit_1_1_fit_manager_minuit2.html#a41d30e4d84951e73ac94d6605cac63ec',1,'GooFit::FitManagerMinuit2::operator bool()'],['../class_goo_fit_1_1_variable.html#a4afe0b74c9a196cacbd64624ee32f19d',1,'GooFit::Variable::operator bool()']]],

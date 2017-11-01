@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['resonance_5ffunction_5fptr',['resonance_function_ptr',['../namespace_goo_fit.html#ab7d2490de64dfaf29fa68194763a8e26',1,'GooFit']]]
+  ['permutationiterator',['PermutationIterator',['../class_goo_fit_1_1strided__range.html#a1518f6a6cf44dc648413df301e86a21e',1,'GooFit::strided_range']]]
 ];

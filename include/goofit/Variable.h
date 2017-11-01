@@ -188,6 +188,8 @@ class Variable : public Indexable {
     bool fixed{false};
 };
 
+using Observable = Variable;
+
 /// This is used to track event number for MPI versions.
 /// A cast is done to know whether the values need to be fixed.
 /// Ugly hack because this internally stores a floating point number!

@@ -106,7 +106,7 @@ __device__ fptype device_DalitzPlot(fptype *evt, fptype *p, unsigned int *indice
 __device__ device_function_ptr ptr_to_DalitzPlot = device_DalitzPlot;
 
 __host__ DalitzPlotPdf::DalitzPlotPdf(
-    std::string n, Variable *m12, Variable *m13, CountingVariable *eventNumber, DecayInfo *decay, GooPdf *efficiency)
+    std::string n, Observable *m12, Observable *m13, EventNumber *eventNumber, DecayInfo *decay, GooPdf *efficiency)
     : GooPdf(nullptr, n)
     , decayInfo(decay)
     , _m12(m12)

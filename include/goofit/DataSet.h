@@ -14,11 +14,11 @@ namespace GooFit {
 
 class DataSet {
   public:
-    DataSet(Variable *var, std::string n = "");
+    DataSet(Observable *var, std::string n = "");
 
-    DataSet(std::vector<Variable *> &vars, std::string n = "");
-    DataSet(std::set<Variable *> &vars, std::string n = "");
-    DataSet(std::initializer_list<Variable *> vars, std::string n = "");
+    DataSet(std::vector<Observable *> &vars, std::string n = "");
+    DataSet(std::set<Observable *> &vars, std::string n = "");
+    DataSet(std::initializer_list<Observable *> vars, std::string n = "");
 
     virtual ~DataSet() = default;
 
@@ -39,7 +39,7 @@ class DataSet {
         addEvent();
     }
 
-    const std::vector<Variable *> &getVariables() const;
+    const std::vector<Observable *> &getVariables() const;
 
     size_t numVariables() const { return variables.size(); }
 
@@ -49,7 +49,7 @@ class DataSet {
 
   protected:
     std::vector<fptype> getCurrentValues() const;
-    size_t indexOfVariable(Variable *var) const;
+    size_t indexOfVariable(Observable *var) const;
     size_t numEventsAdded{0};
 
     /// Throw an error if any variables are out of range, call in addEvent
@@ -62,7 +62,7 @@ class DataSet {
     std::string name;
 
   protected:
-    std::vector<Variable *> variables;
+    std::vector<Observable *> variables;
 };
 
 } // namespace GooFit

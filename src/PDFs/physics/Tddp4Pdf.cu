@@ -165,11 +165,11 @@ __device__ fptype device_TDDP4(fptype *evt, fptype *p, unsigned int *indices) {
 __device__ device_function_ptr ptr_to_TDDP4 = device_TDDP4;
 
 __host__ TDDP4::TDDP4(std::string n,
-                      std::vector<Variable *> observables,
+                      std::vector<Observable *> observables,
                       DecayInfo_DP *decay,
                       MixingTimeResolution *Tres,
                       GooPdf *efficiency,
-                      Variable *mistag,
+                      Observable *mistag,
                       unsigned int MCeventsNorm)
     : GooPdf(nullptr, n)
     , decayInfo(decay)

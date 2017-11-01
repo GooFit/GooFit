@@ -8,27 +8,27 @@
 namespace GooFit {
 
 // Special constructor for one variable
-UnbinnedDataSet::UnbinnedDataSet(Variable *var, std::string n)
+UnbinnedDataSet::UnbinnedDataSet(Observable *var, std::string n)
     : DataSet(var, n) {
     data.resize(1);
 }
 
-UnbinnedDataSet::UnbinnedDataSet(std::vector<Variable *> &vars, std::string n)
+UnbinnedDataSet::UnbinnedDataSet(std::vector<Observable *> &vars, std::string n)
     : DataSet(vars, n) {
     data.resize(vars.size());
 }
 
-UnbinnedDataSet::UnbinnedDataSet(std::set<Variable *> &vars, std::string n)
+UnbinnedDataSet::UnbinnedDataSet(std::set<Observable *> &vars, std::string n)
     : DataSet(vars, n) {
     data.resize(vars.size());
 }
 
-UnbinnedDataSet::UnbinnedDataSet(std::initializer_list<Variable *> vars, std::string n)
+UnbinnedDataSet::UnbinnedDataSet(std::initializer_list<Observable *> vars, std::string n)
     : DataSet(vars, n) {
     data.resize(vars.size());
 }
 
-fptype UnbinnedDataSet::getValue(Variable *var, size_t idx) const {
+fptype UnbinnedDataSet::getValue(Observable *var, size_t idx) const {
     if(idx >= getNumEvents()) {
         throw GooFit::GeneralError("UnbinnedDataSet: Attepted to find {} in event {} when only {} events exits",
                                    var->getName(),
@@ -43,12 +43,12 @@ fptype UnbinnedDataSet::getValue(Variable *var, size_t idx) const {
 
 void UnbinnedDataSet::loadEvent(size_t idx) {
     size_t i = 0;
-    for(Variable *v : variables) {
+    for(Observable *v : variables) {
         v->setValue(data.at(i++).at(idx));
     }
 }
 
-void UnbinnedDataSet::setValueForAllEvents(Variable *var) {
+void UnbinnedDataSet::setValueForAllEvents(Observable *var) {
     size_t ivar = indexOfVariable(var);
     for(size_t i = 0; i < getNumEvents(); i++) {
         data[ivar][i] = var->getValue();
@@ -58,7 +58,7 @@ void UnbinnedDataSet::setValueForAllEvents(Variable *var) {
 void UnbinnedDataSet::addEvent() {
     checkAllVars();
     size_t i = 0;
-    for(Variable *v : variables)
+    for(Observable *v : variables)
         data.at(i++).push_back(v->getValue());
     numEventsAdded++;
 }

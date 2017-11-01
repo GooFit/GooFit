@@ -26,7 +26,7 @@ int host_callnumber = 0;
 int totalParams     = 0;
 int totalConstants  = 1; // First constant is reserved for number of events.
 
-PdfBase::PdfBase(Variable *x, std::string n)
+PdfBase::PdfBase(Observable *x, std::string n)
     : name(std::move(n)) { // Special-case PDFs should set to false.
     if(x)
         registerObservable(x);
@@ -114,11 +114,11 @@ __host__ Variable *PdfBase::getParameterByName(std::string n) const {
     return nullptr;
 }
 
-__host__ std::vector<Variable *> PdfBase::getObservables() const {
-    std::vector<Variable *> ret = observables;
+__host__ std::vector<Observable *> PdfBase::getObservables() const {
+    std::vector<Observable *> ret = observables;
 
     for(const PdfBase *comp : components) {
-        for(Variable *sub_comp : comp->getObservables())
+        for(Observable *sub_comp : comp->getObservables())
             if(std::find(std::begin(ret), std::end(ret), sub_comp) == std::end(ret))
                 ret.push_back(sub_comp);
     }
@@ -135,7 +135,7 @@ __host__ unsigned int PdfBase::registerConstants(unsigned int amount) {
     return cIndex;
 }
 
-void PdfBase::registerObservable(Variable *obs) {
+void PdfBase::registerObservable(Observable *obs) {
     if(!obs)
         return;
 

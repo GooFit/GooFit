@@ -134,7 +134,7 @@ __host__ SmoothHistogramPdf::SmoothHistogramPdf(std::string n, BinnedDataSet *hi
 
     int varIndex = 0;
 
-    for(Variable *var : hist->getVariables()) {
+    for(Observable *var : hist->getVariables()) {
         registerObservable(var);
         // pindices.push_back((*var)->index);
         pindices.push_back(cIndex + 2 * varIndex + 0);

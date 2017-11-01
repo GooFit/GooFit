@@ -9,25 +9,25 @@
 namespace GooFit {
 
 // Special constructor for one variable
-BinnedDataSet::BinnedDataSet(Variable *var, std::string n)
+BinnedDataSet::BinnedDataSet(Observable *var, std::string n)
     : DataSet(var, n) {
     collectBins();
     binvalues.resize(getNumBins());
 }
 
-BinnedDataSet::BinnedDataSet(std::vector<Variable *> &vars, std::string n)
+BinnedDataSet::BinnedDataSet(std::vector<Observable *> &vars, std::string n)
     : DataSet(vars, n) {
     collectBins();
     binvalues.resize(getNumBins());
 }
 
-BinnedDataSet::BinnedDataSet(std::set<Variable *> &vars, std::string n)
+BinnedDataSet::BinnedDataSet(std::set<Observable *> &vars, std::string n)
     : DataSet(vars, n) {
     collectBins();
     binvalues.resize(getNumBins());
 }
 
-BinnedDataSet::BinnedDataSet(std::initializer_list<Variable *> vars, std::string n)
+BinnedDataSet::BinnedDataSet(std::initializer_list<Observable *> vars, std::string n)
     : DataSet(vars, n) {
     collectBins();
     binvalues.resize(getNumBins());
@@ -51,7 +51,7 @@ void BinnedDataSet::collectBins() {
     // Not really intended to be run multiple times, but just in case
     binsizes.clear();
 
-    for(Variable *var : variables)
+    for(Observable *var : variables)
         binsizes.push_back(var->getNumBins());
 }
 
@@ -99,7 +99,7 @@ fptype BinnedDataSet::getBinCenter(size_t ivar, size_t bin) const {
     return ret;
 }
 
-fptype BinnedDataSet::getBinCenter(Variable *var, size_t bin) const {
+fptype BinnedDataSet::getBinCenter(Observable *var, size_t bin) const {
     size_t ivar = indexOfVariable(var);
     return getBinCenter(ivar, bin);
 }

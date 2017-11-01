@@ -125,7 +125,7 @@ __device__ fptype device_ConvolveSharedPdfs(fptype *evt, fptype *p, unsigned int
 __device__ device_function_ptr ptr_to_ConvolvePdfs       = device_ConvolvePdfs;
 __device__ device_function_ptr ptr_to_ConvolveSharedPdfs = device_ConvolveSharedPdfs;
 
-ConvolutionPdf::ConvolutionPdf(std::string n, Variable *x, GooPdf *m, GooPdf *r)
+ConvolutionPdf::ConvolutionPdf(std::string n, Observable *x, GooPdf *m, GooPdf *r)
     : GooPdf(x, n)
     , model(m)
     , resolution(r)
@@ -153,7 +153,7 @@ ConvolutionPdf::ConvolutionPdf(std::string n, Variable *x, GooPdf *m, GooPdf *r)
     setIntegrationConstants(-10, 10, 0.01);
 }
 
-ConvolutionPdf::ConvolutionPdf(std::string n, Variable *x, GooPdf *m, GooPdf *r, unsigned int numOthers)
+ConvolutionPdf::ConvolutionPdf(std::string n, Observable *x, GooPdf *m, GooPdf *r, unsigned int numOthers)
     : GooPdf(x, n)
     , model(m)
     , resolution(r)
@@ -231,7 +231,7 @@ __host__ void ConvolutionPdf::setIntegrationConstants(fptype lo, fptype hi, fpty
     // x2-minX, and the min and max are given by the dependent variable.
     // However, the step must be the same as for the model, or the binning
     // will get out of sync.
-    Variable *dependent = *(observables.begin());
+    Observable *dependent = *(observables.begin());
 
     host_iConsts[2] = numbins;
     host_iConsts[3] = (host_iConsts[0] - dependent->getUpperLimit());

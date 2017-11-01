@@ -16,6 +16,84 @@ namespace GooFit {
 class Params;
 class Minuit1;
 
+/// Special class for observables. Used in DataSets.
+class Observable {
+protected:
+    /// The name, just used for labels
+    std::string name;
+    
+    /// The upper limit
+    fptype upperlimit;
+    
+    /// The lower limit
+    fptype lowerlimit;
+    
+    /// The value, a quick placeholder for adding events
+    fptype value {0.};
+    
+    /// The index
+    int index {-1};
+    
+    /// The number of bins (mostly for BinnedData, or plotting help)
+    ssize_t numbins{100};
+    
+public:
+    Observable(std::string name, fptype upperlimit, fptype lowerlimit) :
+    name(name), upperlimit(upperlimit), lowerlimit(lowerlimit) {}
+    
+    // This class cannot be duplicated
+    Observable(const Observable &) = delete;
+    Observable &operator=(const Observable &) = delete;
+    Observable(Observable &&)                 = default;
+    
+    virtual ~Observable() = default;
+    
+    // Get the name
+    const std::string &getName() const { return name; }
+    
+    /// Get the value
+    fptype getValue() const { return value; }
+    /// Set the value
+    void setValue(fptype val) { value = val; }
+    
+    /// Get the upper limit
+    fptype getUpperLimit() const { return upperlimit; }
+    /// Set the upper limit
+    void setUpperLimit(fptype val) { upperlimit = val; }
+    
+    /// Get the lower limit
+    fptype getLowerLimit() const { return lowerlimit; }
+    /// Set the lower limit
+    void setLowerLimit(fptype val) { lowerlimit = val; }
+    
+    /// Get the GooFit index
+    int getIndex() const { return index; }
+    /// Set the GooFit index
+    void setIndex(int value) { index = value; }
+    
+    /// Set the number of bins
+    void setNumBins(size_t num) { numbins = num; }
+    /// Get the number of bins
+    size_t getNumBins() const { return numbins; }
+    
+    /// Get the bin size, (upper-lower) / bins
+    fptype getBinSize() const { return (getUpperLimit() - getLowerLimit()) / getNumBins(); }
+    
+    // Utilities
+    
+    /// Support obs = 3
+    fptype operator=(const fptype &val) {
+        setValue(val);
+        return val;
+    }
+    
+    /// Support fptype val = obs
+    operator fptype() const { return getValue(); }
+
+    /// Check to see if in range
+    operator bool() const { return getValue() <= getUpperLimit() && getValue() >= getLowerLimit(); }
+};
+    
 class Indexable {
   public:
     Indexable(std::string n, fptype val = 0)
@@ -163,12 +241,6 @@ class Variable : public Indexable {
     /// Check to see if the value has changed this iteration (always true the first time)
     bool getChanged() const { return *changed_; }
 
-    /// Set the number of bins
-    void setNumBins(size_t num) { *numbins = num; }
-
-    /// Get the number of bins
-    size_t getNumBins() const { return *numbins; }
-
     /// Check to see if this is a constant
     bool IsFixed() const { return *fixed; }
 
@@ -177,9 +249,6 @@ class Variable : public Indexable {
 
     /// Check to see if this has been changed since last iteration
     void setChanged(bool val = true) { *changed_ = val; }
-
-    /// Get the bin size, (upper-lower) / bins
-    fptype getBinSize() const { return (getUpperLimit() - getLowerLimit()) / getNumBins(); }
 
     /// Hides the number; the real value is the result minus this value. Cannot be retreived once set.
     void setBlind(fptype val) { *blind = val; }
@@ -203,9 +272,6 @@ class Variable : public Indexable {
     /// A blinding value to add
     std::shared_ptr<fptype> blind{std::make_shared<fptype>(0)};
 
-    /// The number of bins (mostly for BinnedData, or plotting help)
-    std::shared_ptr<size_t> numbins{std::make_shared<size_t>(100)};
-
     /// True if the value was unchanged since the last iteration
     std::shared_ptr<bool> changed_{std::make_shared<bool>(true)};
 
@@ -216,19 +282,18 @@ class Variable : public Indexable {
 /// This is used to track event number for MPI versions.
 /// A cast is done to know whether the values need to be fixed.
 /// Ugly hack because this internally stores a floating point number!
-class CountingVariable : public Variable {
+class EventNumber : public Observable {
   public:
     static constexpr fptype maxint{1L << std::numeric_limits<fptype>::digits};
 
-    using Variable::Variable;
-    CountingVariable(std::string name)
-        : CountingVariable(name, 0, CountingVariable::maxint) {}
+    EventNumber(std::string name, fptype min=0, fptype max=EventNumber::maxint)
+        : GooFit::Observable(name, min, max) {}
 
-    ~CountingVariable() override = default;
+    ~EventNumber() override = default;
 
-    CountingVariable(const CountingVariable &) = default;
-    CountingVariable &operator=(const CountingVariable &) = default;
-    CountingVariable(CountingVariable &&)                 = default;
+    EventNumber(const EventNumber &) = delete;
+    EventNumber &operator=(const EventNumber &) = delete;
+    EventNumber(EventNumber &&)                 = default;
 
     /// Support var = 3
     void operator=(const fptype &val) { setValue(val); }
@@ -252,10 +317,10 @@ class Constant : public Indexable {
 };
 
 /// Get the max index of a variable from a list
-int max_index(const std::vector<Variable *> &vars);
+int max_index(const std::vector<Variable*> &vars);
 
 /// Get the max fitter index of a variable from a list
-int max_fitter_index(const std::vector<Variable *> &vars);
+int max_fitter_index(const std::vector<Variable*> &vars);
 
 /// Nice print of Variable
 std::ostream &operator<<(std::ostream &o, const GooFit::Variable &var);

@@ -16,23 +16,23 @@ class UnbinnedDataSet : public DataSet {
   public:
     using DataSet::addEvent;
 
-    UnbinnedDataSet(Variable *var, std::string n = "");
-    UnbinnedDataSet(std::vector<Variable *> &vars, std::string n = "");
-    UnbinnedDataSet(std::set<Variable *> &vars, std::string n = "");
-    UnbinnedDataSet(std::initializer_list<Variable *> vars, std::string n = "");
+    UnbinnedDataSet(Observable *var, std::string n = "");
+    UnbinnedDataSet(std::vector<Observable *> &vars, std::string n = "");
+    UnbinnedDataSet(std::set<Observable *> &vars, std::string n = "");
+    UnbinnedDataSet(std::initializer_list<Observable *> vars, std::string n = "");
 
     ~UnbinnedDataSet() override = default;
 
     void addEvent() override;
 
     /// Get the value at a specific variable and event number
-    fptype getValue(Variable *var, size_t idx) const;
+    fptype getValue(Observable *var, size_t idx) const;
 
     /// Set all the variables to the current event values
     void loadEvent(size_t idx);
 
     /// Set all entries to a constant value (note: this is kind of ugly)
-    void setValueForAllEvents(Variable *var);
+    void setValueForAllEvents(Observable *var);
 
     /// Input an eigen matrix
     template <typename M>

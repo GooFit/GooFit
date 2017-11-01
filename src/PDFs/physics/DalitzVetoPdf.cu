@@ -33,8 +33,8 @@ __device__ fptype device_DalitzVeto(fptype *evt, fptype *p, unsigned int *indice
 __device__ device_function_ptr ptr_to_DalitzVeto = device_DalitzVeto;
 
 __host__ DalitzVetoPdf::DalitzVetoPdf(std::string n,
-                                      Variable *_x,
-                                      Variable *_y,
+                                      Observable *_x,
+                                      Observable *_y,
                                       Variable *motherM,
                                       Variable *d1m,
                                       Variable *d2m,

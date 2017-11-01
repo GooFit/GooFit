@@ -14,8 +14,8 @@ struct VetoInfo {
 class DalitzVetoPdf : public GooPdf {
   public:
     __host__ DalitzVetoPdf(std::string n,
-                           Variable *_x,
-                           Variable *_y,
+                           Observable *_x,
+                           Observable *_y,
                            Variable *motherM,
                            Variable *d1m,
                            Variable *d2m,

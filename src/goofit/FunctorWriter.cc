@@ -13,7 +13,7 @@ void writeToFile(PdfBase *pdf, const char *fname) {
     writer.open(fname);
 
     for(Variable *p : params) {
-        writer << p->getName() << " " << p->getValue() << " " << p->getError() << " " << p->getNumBins() << " "
+        writer << p->getName() << " " << p->getValue() << " " << p->getError() << " "
                << p->getLowerLimit() << " " << p->getUpperLimit() << std::endl;
     }
 
@@ -51,7 +51,6 @@ void readFromFile(PdfBase *pdf, const char *fname) {
 
             var->setValue(value);
             var->setError(error);
-            var->setNumBins(numbins);
             var->setLowerLimit(lowerlimit);
             var->setUpperLimit(upperlimit);
 

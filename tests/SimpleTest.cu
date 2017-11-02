@@ -7,8 +7,8 @@ using namespace GooFit;
 
 TEST(Simple, UnbinnedAdding) {
     // Independent variable.
-    Variable xvar{"xvar", 0, 10};
-    Variable yvar{"yvar", 0, 10};
+    Observable xvar{"xvar", 0, 10};
+    Observable yvar{"yvar", 0, 10};
 
     // Data set
     UnbinnedDataSet data{{&xvar, &yvar}};
@@ -43,7 +43,7 @@ TEST(Simple, UnbinnedAdding) {
 }
 TEST(Simple, SettingAndGetting) {
     // Independent variable.
-    Variable var{"var", 0, 10};
+    Observable var{"var", 0, 10};
 
     var = 1.0;
 
@@ -55,8 +55,8 @@ TEST(Simple, SettingAndGetting) {
 
 TEST(Simple, FancyAddEvent) {
     // Independent variable.
-    Variable xvar{"xvar", 0, 10};
-    Variable yvar{"yvar", 0, 10};
+    Observable xvar{"xvar", 0, 10};
+    Observable yvar{"yvar", 0, 10};
 
     // Data set
     UnbinnedDataSet data{{&xvar, &yvar}};

@@ -26,12 +26,12 @@ int main(int argc, char **argv) {
 
     GOOFIT_PARSE(app, argc, argv);
 
-    Variable m12{"m12", 0, 3};
-    Variable m34{"m34", 0, 3};
-    Variable cos12{"cos12", -1, 1};
-    Variable cos34{"m12", -1, 1};
-    Variable phi{"phi", -3.5, 3.5};
-    CountingVariable eventNumber{"eventNumber", 0, INT_MAX};
+    Observable m12{"m12", 0, 3};
+    Observable m34{"m34", 0, 3};
+    Observable cos12{"cos12", -1, 1};
+    Observable cos34{"m12", -1, 1};
+    Observable phi{"phi", -3.5, 3.5};
+    EventNumber eventNumber{"eventNumber", 0, INT_MAX};
 
     UnbinnedDataSet currData{&m12, &m34, &cos12, &cos34, &phi, &eventNumber};
 
@@ -215,9 +215,9 @@ int main(int argc, char **argv) {
     Variable constantOne{"constantOne", 1};
     Variable constantZero{"constantZero", 0};
 
-    vector<Variable *> observables  = {&m12, &m34, &cos12, &cos34, &phi, &eventNumber};
-    vector<Variable *> coefficients = {&constantOne};
-    vector<Variable *> offsets      = {&constantZero, &constantZero};
+    vector<Observable *> observables = {&m12, &m34, &cos12, &cos34, &phi, &eventNumber};
+    vector<Variable *> coefficients  = {&constantOne};
+    vector<Variable *> offsets       = {&constantZero, &constantZero};
 
     PolynomialPdf eff{"constantEff", observables, coefficients, offsets, 0};
     DPPdf dp{"test", observables, &DK3P_DI, &eff, 1000000};

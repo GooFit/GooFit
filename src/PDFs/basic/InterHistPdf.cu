@@ -137,7 +137,7 @@ __device__ device_function_ptr ptr_to_InterHistogram = device_InterHistogram;
 __host__ InterHistPdf::InterHistPdf(std::string n,
                                     BinnedDataSet *x,
                                     std::vector<Variable *> params,
-                                    std::vector<Variable *> obses)
+                                    std::vector<Observable *> obses)
     : GooPdf(nullptr, n)
     , numVars(x->numVariables()) {
     int numConstants = 2 * numVars;
@@ -151,12 +151,10 @@ __host__ InterHistPdf::InterHistPdf(std::string n,
 
     int varIndex = 0;
 
-    for(Variable *var : x->getVariables()) {
+    for(Observable *var : x->getObservables()) {
         if(std::find(obses.begin(), obses.end(), var) != obses.end()) {
             registerObservable(var);
             pindices.push_back(OBS_CODE);
-        } else {
-            pindices.push_back(registerParameter(var));
         }
 
         pindices.push_back(cIndex + 2 * varIndex + 0);

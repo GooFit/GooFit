@@ -53,7 +53,7 @@ __device__ fptype callFunction(fptype *eventAddress, unsigned int functionIdx, u
 
 class GooPdf : public PdfBase {
   public:
-    GooPdf(Variable *x, std::string n);
+    GooPdf(Observable *x, std::string n);
     __host__ double calculateNLL() const override;
 
     /// NB: This does not project correctly in multidimensional datasets, because all observables
@@ -61,7 +61,7 @@ class GooPdf : public PdfBase {
     /// time they were set. This is likely to be the value from the last event in whatever dataset
     /// you were fitting to, but at any rate you don't get the probability-weighted integral over
     /// the other observables.
-    __host__ std::vector<fptype> evaluateAtPoints(Variable *var);
+    __host__ std::vector<fptype> evaluateAtPoints(Observable *var);
 
     /// A normalize function. This fills in the host_normalize
     __host__ fptype normalize() const override;
@@ -80,7 +80,7 @@ class GooPdf : public PdfBase {
     __host__ UnbinnedDataSet makeGrid();
 
     __host__ void initialize(std::vector<unsigned int> pindices, void *dev_functionPtr = host_fcn_ptr);
-    __host__ void scan(Variable *var, std::vector<fptype> &values);
+    __host__ void scan(Observable *var, std::vector<fptype> &values);
     __host__ void setFitControl(FitControl *const fc, bool takeOwnerShip = true) override;
     __host__ virtual void setMetrics();
     __host__ void setParameterConstantness(bool constant = true);
@@ -91,7 +91,7 @@ class GooPdf : public PdfBase {
 
 #ifdef ROOT_FOUND
     /// Plot a PDF to a ROOT histogram
-    __host__ TH1D *plotToROOT(Variable *var, double normFactor = 1, std::string name = "");
+    __host__ TH1D *plotToROOT(Observable *var, double normFactor = 1, std::string name = "");
 #endif
 
   protected:

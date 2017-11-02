@@ -25,10 +25,10 @@ timeval startTime, stopTime, totalTime;
 using namespace std;
 using namespace GooFit;
 
-Variable *decayTime  = 0;
-Variable *constaCoef = 0;
-Variable *linearCoef = 0;
-Variable *secondCoef = 0;
+Observable *decayTime = nullptr;
+Variable *constaCoef  = nullptr;
+Variable *linearCoef  = nullptr;
+Variable *secondCoef  = nullptr;
 
 double integralExpCon(double lo, double hi) { return (exp(-lo) - exp(-hi)); }
 
@@ -256,7 +256,8 @@ int main(int argc, char **argv) {
     }
 
     // Time is in units of lifetime
-    decayTime = new Variable{"decayTime", 100, 0, 10};
+    decayTime = new Observable{"decayTime", 0, 10};
+    decayTime->setValue(100.);
     decayTime->setNumBins(numbins);
 
     double rSubD = 0.03;

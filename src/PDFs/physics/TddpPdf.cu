@@ -300,15 +300,15 @@ __device__ fptype device_Tddp(fptype *evt, fptype *p, unsigned int *indices) {
 __device__ device_function_ptr ptr_to_Tddp = device_Tddp;
 
 __host__ TddpPdf::TddpPdf(std::string n,
-                          Variable *_dtime,
-                          Variable *_sigmat,
-                          Variable *m12,
-                          Variable *m13,
-                          CountingVariable *eventNumber,
+                          Observable *_dtime,
+                          Observable *_sigmat,
+                          Observable *m12,
+                          Observable *m13,
+                          EventNumber *eventNumber,
                           DecayInfo *decay,
                           MixingTimeResolution *r,
                           GooPdf *efficiency,
-                          Variable *mistag)
+                          Observable *mistag)
     : GooPdf(_dtime, n)
     , decayInfo(decay)
     , _m12(m12)
@@ -399,16 +399,16 @@ __host__ TddpPdf::TddpPdf(std::string n,
 }
 
 __host__ TddpPdf::TddpPdf(std::string n,
-                          Variable *_dtime,
-                          Variable *_sigmat,
-                          Variable *m12,
-                          Variable *m13,
-                          CountingVariable *eventNumber,
+                          Observable *_dtime,
+                          Observable *_sigmat,
+                          Observable *m12,
+                          Observable *m13,
+                          EventNumber *eventNumber,
                           DecayInfo *decay,
                           std::vector<MixingTimeResolution *> &r,
                           GooPdf *efficiency,
-                          Variable *md0,
-                          Variable *mistag)
+                          Observable *md0,
+                          Observable *mistag)
     : GooPdf(_dtime, n)
     , decayInfo(decay)
     , _m12(m12)

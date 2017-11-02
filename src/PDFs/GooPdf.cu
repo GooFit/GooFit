@@ -156,7 +156,7 @@ void *getMetricPointer(std::string name) {
 
 void *getMetricPointer(EvalFunc val) { return getMetricPointer(evalfunc_to_string(val)); }
 
-GooPdf::GooPdf(Variable *x, std::string n)
+GooPdf::GooPdf(Observable *x, std::string n)
     : PdfBase(x, n)
     , logger(nullptr) {
     // std::cout << "Created " << n << std::endl;
@@ -315,7 +315,7 @@ __host__ double GooPdf::calculateNLL() const {
     return 2 * ret;
 }
 
-__host__ std::vector<fptype> GooPdf::evaluateAtPoints(Variable *var) {
+__host__ std::vector<fptype> GooPdf::evaluateAtPoints(Observable *var) {
     copyParams();
     normalize();
     MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams * sizeof(fptype), 0, cudaMemcpyHostToDevice);
@@ -364,7 +364,7 @@ __host__ std::vector<fptype> GooPdf::evaluateAtPoints(Variable *var) {
     return res;
 }
 
-__host__ void GooPdf::scan(Variable *var, std::vector<fptype> &values) {
+__host__ void GooPdf::scan(Observable *var, std::vector<fptype> &values) {
     fptype step = var->getUpperLimit();
     step -= var->getLowerLimit();
     step /= var->getNumBins();
@@ -425,7 +425,7 @@ __host__ fptype GooPdf::normalize() const {
 
     if(hasAnalyticIntegral()) {
         // Loop goes only over observables of this PDF.
-        for(Variable *v : observables) {
+        for(Observable *v : observables) {
             GOOFIT_TRACE("{}: Analytically integrating over {}", getName(), v->getName());
             ret *= integrate(v->getLowerLimit(), v->getUpperLimit());
         }
@@ -440,7 +440,7 @@ __host__ fptype GooPdf::normalize() const {
 
     int totalBins = 1;
 
-    for(Variable *v : observables) {
+    for(Observable *v : observables) {
         ret *= v->getUpperLimit() - v->getLowerLimit();
         totalBins *= integrationBins > 0 ? integrationBins : v->getNumBins();
 
@@ -584,13 +584,13 @@ __host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
 }
 
 // Utility function to make a grid of any dimisinion
-__host__ void make_a_grid(std::vector<Variable *> ret, UnbinnedDataSet &grid) {
+__host__ void make_a_grid(std::vector<Observable *> ret, UnbinnedDataSet &grid) {
     if(ret.empty()) {
         grid.addEvent();
         return;
     }
 
-    Variable *var = ret.back();
+    Observable *var = ret.back();
     ret.pop_back(); // safe because this is a copy
 
     for(int i = 0; i < var->getNumBins(); ++i) {
@@ -601,7 +601,7 @@ __host__ void make_a_grid(std::vector<Variable *> ret, UnbinnedDataSet &grid) {
 }
 
 __host__ UnbinnedDataSet GooPdf::makeGrid() {
-    std::vector<Variable *> ret = getObservables();
+    std::vector<Observable *> ret = getObservables();
 
     UnbinnedDataSet grid{ret};
 
@@ -616,7 +616,7 @@ __host__ void GooPdf::transformGrid(fptype *host_output) {
     // normalize();
     int totalBins = 1;
 
-    for(Variable *v : observables) {
+    for(Observable *v : observables) {
         totalBins *= v->getNumBins();
     }
 
@@ -656,7 +656,7 @@ __host__ void GooPdf::setFitControl(FitControl *const fc, bool takeOwnerShip) {
 }
 
 #ifdef ROOT_FOUND
-__host__ TH1D *GooPdf::plotToROOT(Variable *var, double normFactor, std::string name) {
+__host__ TH1D *GooPdf::plotToROOT(Observable *var, double normFactor, std::string name) {
     if(name.empty())
         name = getName() + "_hist";
 

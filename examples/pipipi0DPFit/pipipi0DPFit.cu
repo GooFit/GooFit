@@ -55,31 +55,32 @@ using namespace GooFit;
 TCanvas *foo;
 TCanvas *foodal;
 
-UnbinnedDataSet *data     = 0;
-UnbinnedDataSet *effdata  = 0;
-BinnedDataSet *binEffData = 0;
-TH2F *weightHistogram     = 0;
-TH2F *underlyingBins      = 0;
+UnbinnedDataSet *data     = nullptr;
+UnbinnedDataSet *effdata  = nullptr;
+BinnedDataSet *binEffData = nullptr;
+TH2F *weightHistogram     = nullptr;
+TH2F *underlyingBins      = nullptr;
 
 // I hate having to use globals, but this is the best way for now
 GooFit::Application *app_ptr;
 bool minuit1;
 
-Variable *m12                 = 0;
-Variable *m13                 = 0;
-CountingVariable *eventNumber = 0;
-Variable *massd0              = 0;
-Variable *deltam              = 0;
-Variable *dtime               = 0;
-Variable *sigma               = 0;
-Variable *wSig0               = 0;
-Variable *wBkg1               = 0;
-Variable *wBkg2               = 0;
-Variable *wBkg3               = 0;
-Variable *wBkg4               = 0;
-bool fitMasses                = false;
-Variable *fixedRhoMass        = new Variable("rho_mass", 0.7758, 0.01, 0.7, 0.8);
-Variable *fixedRhoWidth       = new Variable("rho_width", 0.1503, 0.01, 0.1, 0.2);
+Observable *m12          = nullptr;
+Observable *m13          = nullptr;
+EventNumber *eventNumber = nullptr;
+Observable *massd0       = nullptr;
+Observable *deltam       = nullptr;
+Observable *dtime        = nullptr;
+Observable *sigma        = nullptr;
+Observable *wSig0        = nullptr;
+Observable *wBkg1        = nullptr;
+Observable *wBkg2        = nullptr;
+Observable *wBkg3        = nullptr;
+Observable *wBkg4        = nullptr;
+
+bool fitMasses          = false;
+Variable *fixedRhoMass  = new Variable("rho_mass", 0.7758, 0.01, 0.7, 0.8);
+Variable *fixedRhoWidth = new Variable("rho_width", 0.1503, 0.01, 0.1, 0.2);
 
 // Systematic variables
 double luckyFrac           = 0.5;
@@ -145,6 +146,8 @@ Variable *minDalitzZ       = new Variable("minDalitzZ", pow(piPlusMass + piPlusM
 Variable *maxDalitzZ       = new Variable("maxDalitzZ", pow(_mD0 - piZeroMass, 2));
 
 std::vector<Variable *> weights;
+std::vector<Observable *> obsweights;
+
 std::vector<PdfBase *> comps;
 TH1F *dataTimePlot        = nullptr;
 TH1F *loM23Sigma          = nullptr;
@@ -283,7 +286,7 @@ void plotLoHiSigma() {
     foo->SaveAs("./plots_from_mixfit/sigmacomp.png");
 }
 
-void plotFit(Variable *var, UnbinnedDataSet *dat, GooPdf *fit) {
+void plotFit(Observable *var, UnbinnedDataSet *dat, GooPdf *fit) {
     int numEvents  = dat->getNumEvents();
     TH1F *dat_hist = new TH1F(
         (var->getName() + "_dathist").c_str(), "", var->getNumBins(), var->getLowerLimit(), var->getUpperLimit());
@@ -332,7 +335,7 @@ bool readWrapper(std::ifstream &reader, std::string fname = strbuffer) {
 
 void getToyData(float sigweight = 0.9) {
     if(!data) {
-        std::vector<Variable *> vars;
+        std::vector<Observable *> vars;
         vars.push_back(m12);
         vars.push_back(m13);
         vars.push_back(dtime);
@@ -463,7 +466,7 @@ GooPdf *makeEfficiencyPoly() {
         makeKzeroVeto();
 
     vector<Variable *> offsets;
-    vector<Variable *> observables;
+    vector<Observable *> observables;
     vector<Variable *> coefficients;
     offsets.push_back(constantOne);
     offsets.push_back(constantOne);
@@ -753,7 +756,7 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
 
     if(!eff) {
         vector<Variable *> offsets;
-        vector<Variable *> observables;
+        vector<Observable *> observables;
         vector<Variable *> coefficients;
 
         observables.push_back(m12);
@@ -841,7 +844,7 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
 
 GooPdf *makeFlatBkgDalitzPdf(bool fixem = true) {
     vector<Variable *> offsets;
-    vector<Variable *> observables;
+    vector<Observable *> observables;
     vector<Variable *> coefficients;
     offsets.push_back(constantZero);
     offsets.push_back(constantZero);
@@ -870,19 +873,19 @@ int runToyFit(int ifile, int nfile, bool noPlots = true) {
 
     doToyStudy = true;
     //  dtime = new Variable("dtime", lowerTime, upperTime);
-    dtime = new Variable("dtime", -3, 5);
+    dtime = new Observable("dtime", -3, 5);
     dtime->setNumBins(floor((upperTime - lowerTime) / 0.05 + 0.5));
     // dtime->getNumBins() = 200;
     // sigma = new Variable("sigma", 0, 0.8);
-    sigma = new Variable("sigma", 0.099, 0.101);
+    sigma = new Observable("sigma", 0.099, 0.101);
     sigma->setNumBins(1);
     // Cheating way to avoid Punzi effect for toy MC. The normalisation integral is now a delta function!
-    m12 = new Variable("m12", 0, 3);
+    m12 = new Observable("m12", 0, 3);
     m12->setNumBins(240);
-    m13 = new Variable("m13", 0, 3);
+    m13 = new Observable("m13", 0, 3);
     m13->setNumBins(240);
-    eventNumber = new CountingVariable("eventNumber", 0, INT_MAX);
-    wSig0       = new Variable("wSig0", 0, 1);
+    eventNumber = new EventNumber("eventNumber", 0, INT_MAX);
+    wSig0       = new Observable("wSig0", 0, 1);
 
     for(int i = 0; i < nfile; i++) {
         //      sprintf(strbuffer, "dataFiles/toyPipipi0/dalitz_toyMC_%03d.txt", (i+ifile)%100);
@@ -907,7 +910,7 @@ int runToyFit(int ifile, int nfile, bool noPlots = true) {
     GooPdf *bkgPdf = makeFlatBkgDalitzPdf();
     bkgPdf->setParameterConstantness(true);
 
-    std::vector<Variable *> evtWeights;
+    std::vector<Observable *> evtWeights;
     evtWeights.push_back(wSig0);
     //  evtWeights.push_back(wBkg2);
     std::vector<PdfBase *> components;
@@ -951,7 +954,7 @@ void loadDataFile(std::string fname, UnbinnedDataSet **setToFill, int effSkip) {
     if(!setToFill)
         setToFill = &data;
 
-    std::vector<Variable *> vars;
+    std::vector<Observable *> vars;
     vars.push_back(m12);
     vars.push_back(m13);
     vars.push_back(dtime);
@@ -1133,20 +1136,20 @@ void makeFullFitVariables() {
 
     exists = true;
 
-    dtime = new Variable("dtime", lowerTime, upperTime);
+    dtime = new Observable("dtime", lowerTime, upperTime);
     dtime->setNumBins(floor((upperTime - lowerTime) / 0.05 + 0.5));
-    sigma = new Variable("sigma", 0, maxSigma);
+    sigma = new Observable("sigma", 0, maxSigma);
     sigma->setNumBins(floor((maxSigma / 0.01) + 0.5));
-    m12 = new Variable("m12", 0, 3);
-    m13 = new Variable("m13", 0, 3);
+    m12 = new Observable("m12", 0, 3);
+    m13 = new Observable("m13", 0, 3);
     m12->setNumBins(normBinning);
     m13->setNumBins(normBinning);
-    eventNumber = new CountingVariable("eventNumber", 0, INT_MAX);
-    wSig0       = new Variable("wSig0", 0, 1);
-    wBkg1       = new Variable("wBkg1", 0, 1);
-    wBkg2       = new Variable("wBkg2", 0, 1);
-    wBkg3       = new Variable("wBkg3", 0, 1);
-    wBkg4       = new Variable("wBkg4", 0, 1);
+    eventNumber = new EventNumber("eventNumber", 0, INT_MAX);
+    wSig0       = new Observable("wSig0", 0, 1);
+    wBkg1       = new Observable("wBkg1", 0, 1);
+    wBkg2       = new Observable("wBkg2", 0, 1);
+    wBkg3       = new Observable("wBkg3", 0, 1);
+    wBkg4       = new Observable("wBkg4", 0, 1);
 }
 
 GooPdf *makeSignalJSU_gg(int idx, bool fixem = true) {
@@ -1288,7 +1291,7 @@ GooPdf *makeSigmaMap() {
     sigma_pdf_hists = new TH1F *[numSigmaBins];
     sigma_data      = new UnbinnedDataSet *[numSigmaBins];
 
-    std::vector<Variable *> vars;
+    std::vector<Observable *> vars;
     vars.push_back(sigma);
 
     for(int i = 0; i < numSigmaBins; ++i) {
@@ -1354,7 +1357,7 @@ GooPdf *makeSigmaMap() {
         }
     }
 
-    vector<Variable *> obses;
+    vector<Observable *> obses;
     obses.push_back(m12);
     obses.push_back(m13);
     vector<double> limits;
@@ -1376,7 +1379,7 @@ GooPdf *make1BinSigmaMap() {
     sigma_pdf_hists = new TH1F *[1];
     sigma_data      = new UnbinnedDataSet *[1];
 
-    std::vector<Variable *> vars;
+    std::vector<Observable *> vars;
     vars.push_back(sigma);
 
     for(int i = 0; i < 1; ++i) {
@@ -1431,7 +1434,7 @@ GooPdf *make1BinSigmaMap() {
         }
     }
 
-    vector<Variable *> obses;
+    vector<Observable *> obses;
     obses.push_back(m12);
     obses.push_back(m13);
     vector<double> limits;
@@ -1453,7 +1456,7 @@ GooPdf *make4BinSigmaMap() {
     sigma_pdf_hists = new TH1F *[4];
     sigma_data      = new UnbinnedDataSet *[4];
 
-    std::vector<Variable *> vars;
+    std::vector<Observable *> vars;
     vars.push_back(sigma);
 
     for(int i = 0; i < 4; ++i) {
@@ -1510,7 +1513,7 @@ GooPdf *make4BinSigmaMap() {
         }
     }
 
-    vector<Variable *> obses;
+    vector<Observable *> obses;
     obses.push_back(m12);
     obses.push_back(m13);
     vector<double> limits;
@@ -1808,7 +1811,7 @@ void makeToyDalitzPlots(GooPdf *overallSignal, std::string plotdir) {
     }
 
     std::cout << "totalData = " << totalDat << ", totalSigProb = " << totalSigProb << std::endl;
-    std::vector<Variable *> vars;
+    std::vector<Observable *> vars;
     vars.push_back(m12);
     vars.push_back(m13);
     vars.push_back(dtime);
@@ -2074,8 +2077,8 @@ void makeDalitzPlots(GooPdf *overallSignal, std::string plotdir = "./plots_from_
 
     std::cout << "Max bin content: " << maxBinContent << " (" << bestI << ", " << bestJ << ")\n";
 
-    bool dependsOnSigma           = true;
-    std::vector<Variable *> obses = overallSignal->getObservables();
+    bool dependsOnSigma             = true;
+    std::vector<Observable *> obses = overallSignal->getObservables();
 
     if(std::find(obses.begin(), obses.end(), sigma) == obses.end())
         dependsOnSigma = false;
@@ -2086,7 +2089,7 @@ void makeDalitzPlots(GooPdf *overallSignal, std::string plotdir = "./plots_from_
     const int division = 2;
 
     for(int half = 0; half < division; ++half) {
-        std::vector<Variable *> vars;
+        std::vector<Observable *> vars;
         vars.push_back(m12);
         vars.push_back(m13);
         vars.push_back(dtime);
@@ -2494,7 +2497,7 @@ GooPdf *make_m23_transform() {
     // Finally I need a transform from bin number to function. Keep the tongue straight
     // in the mouth, now!
 
-    vector<Variable *> obses;
+    vector<Observable *> obses;
     vector<Variable *> offsets;
     vector<Variable *> coefficients;
     vector<PdfBase *> components;
@@ -2686,7 +2689,7 @@ GooPdf *makeOverallSignal() {
     // Too fine a binning here leads to bad results due to fluctuations.
     m12->setNumBins(120);
     m13->setNumBins(120);
-    vector<Variable *> lvars;
+    vector<Observable *> lvars;
     lvars.push_back(m12);
     lvars.push_back(m13);
     binEffData = new BinnedDataSet(lvars);
@@ -2822,8 +2825,8 @@ int runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
     loadDataFile(fname);
 
     TRandom donram(42);
-    std::vector<Variable *> vars = data->getVariables();
-    UnbinnedDataSet *smearedData = new UnbinnedDataSet(vars);
+    std::vector<Observable *> vars = data->getObservables();
+    UnbinnedDataSet *smearedData   = new UnbinnedDataSet(vars);
 
     if(0 != genResolutions) {
         int numEvents = data->getNumEvents();
@@ -2935,7 +2938,7 @@ int runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
     weightHistogram->Draw("colz");
     foodal->SaveAs("./plots_from_mixfit/efficiency_weights.png");
 
-    vector<Variable *> lvars;
+    vector<Observable *> lvars;
     lvars.push_back(m12);
     lvars.push_back(m13);
     binEffData = new BinnedDataSet(lvars);
@@ -3305,7 +3308,7 @@ GooPdf *makeBkg2DalitzPdf(bool fixem = true) {
         comps.clear();
 
         vector<Variable *> offsets;
-        vector<Variable *> observables;
+        vector<Observable *> observables;
         vector<Variable *> coefficients;
         offsets.push_back(constantOne);
         offsets.push_back(constantOne);
@@ -3498,16 +3501,16 @@ GooPdf *makeBkg3Eff() {
     // Smoothed histogram from flat-file data.
     // Only 4500 events, so use large bins.
 
-    weights.clear();
-    weights.push_back(m12);
-    weights.push_back(m13);
+    obsweights.clear();
+    obsweights.push_back(m12);
+    obsweights.push_back(m13);
 
     int m12bins = m12->getNumBins();
     int m13bins = m13->getNumBins();
 
     m12->setNumBins(30);
     m13->setNumBins(30);
-    BinnedDataSet *bkg3_eff_data = new BinnedDataSet(weights);
+    BinnedDataSet *bkg3_eff_data = new BinnedDataSet(obsweights);
     std::ifstream reader;
     std::string fname = app_ptr->get_filename("dataFiles/efficiency_bkg3_flat.txt", "examples/pipipi0DPFit");
     readWrapper(reader, fname);
@@ -3571,10 +3574,10 @@ SmoothHistogramPdf *makeBackgroundHistogram(int bkgnum, std::string overridename
         std::cout << buffer;
     }
 
-    weights.clear();
-    weights.push_back(m12);
-    weights.push_back(m13);
-    BinnedDataSet *bkg_binned_data = new BinnedDataSet(weights);
+    obsweights.clear();
+    obsweights.push_back(m12);
+    obsweights.push_back(m13);
+    BinnedDataSet *bkg_binned_data = new BinnedDataSet(obsweights);
 
     double dummy = 0;
 
@@ -3630,7 +3633,7 @@ GooPdf *makeBackground3DalitzParam() {
     weights.clear();
 
     vector<Variable *> offsets;
-    vector<Variable *> observables;
+    vector<Observable *> observables;
     vector<Variable *> coefficients;
     offsets.push_back(constantOne);
     offsets.push_back(constantOne);
@@ -3803,7 +3806,7 @@ GooPdf *makeBackground3DalitzParam() {
 
 GooPdf *makeBackground4DalitzParam() {
     vector<Variable *> offsets;
-    vector<Variable *> observables;
+    vector<Observable *> observables;
     vector<Variable *> coefficients;
     offsets.push_back(constantOne);
     offsets.push_back(constantOne);
@@ -4059,7 +4062,7 @@ int runCanonicalFit(std::string fname, bool noPlots = true) {
     makeFullFitVariables();
 
     if(mdslices > 1)
-        massd0 = new Variable(
+        massd0 = new Observable(
             "massd0", 1.8654 + 0.0075 * md0_lower_window + md0offset, 1.8654 + 0.0075 * md0_upper_window + md0offset);
 
     std::cout << "Loading events from " << fname << std::endl;
@@ -4131,7 +4134,7 @@ int runCanonicalFit(std::string fname, bool noPlots = true) {
         incsum6->setDataSize(data->getNumEvents(), eventSize);
 
     std::cout << "Creating overall PDF\n";
-    std::vector<Variable *> evtWeights;
+    std::vector<Observable *> evtWeights;
     evtWeights.push_back(wSig0);
     evtWeights.push_back(wBkg2);
     evtWeights.push_back(wBkg3);
@@ -4246,7 +4249,7 @@ int runSigmaFit(const char *fname) {
     foo->cd();
     plotLoHiSigma();
 
-    std::vector<Variable *> gridvars;
+    std::vector<Observable *> gridvars;
     gridvars.push_back(m12);
     gridvars.push_back(m13);
     gridvars.push_back(sigma);
@@ -4393,7 +4396,7 @@ int runEfficiencyFit(int which) {
         m13->setNumBins(m13->getNumBins() / 8);
     }
 
-    vector<Variable *> lvars;
+    vector<Observable *> lvars;
     lvars.push_back(m12);
     lvars.push_back(m13);
     // binEffData = new BinnedDataSet(lvars);
@@ -4466,7 +4469,7 @@ int runEfficiencyFit(int which) {
         totalDat++;
     }
 
-    std::vector<Variable *> nvars;
+    std::vector<Observable *> nvars;
     nvars.push_back(m12);
     nvars.push_back(m13);
     UnbinnedDataSet currData(nvars);
@@ -4709,7 +4712,7 @@ void getBackgroundFile(int bkgType) {
 
 void makeTimePlots(std::string fname) {
     makeFullFitVariables();
-    massd0 = new Variable("massd0", 1.8654 + 0.0075 * md0_lower_window, 1.8654 + 0.0075 * md0_upper_window);
+    massd0 = new Observable("massd0", 1.8654 + 0.0075 * md0_lower_window, 1.8654 + 0.0075 * md0_upper_window);
     massd0->setNumBins(180);
     std::cout << "Loading MC data from " << fname << std::endl;
     loadDataFile(fname);

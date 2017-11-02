@@ -102,7 +102,7 @@ __host__ void PdfBase::recursiveSetIndices() {
     int numParams = host_indices[parameters];
     int counter   = 0;
 
-    for(Variable *v : observables) {
+    for(Observable *v : observables) {
         host_indices[parameters + 2 + numParams + counter] = v->getIndex();
         GOOFIT_DEBUG("{} set index of {} to {} -> host {}",
                      getName(),
@@ -118,7 +118,7 @@ __host__ void PdfBase::recursiveSetIndices() {
 __host__ void PdfBase::setIndices() {
     int counter = 0;
 
-    for(Variable *v : observables) {
+    for(Observable *v : observables) {
         v->setIndex(counter++);
     }
 
@@ -203,7 +203,7 @@ __host__ void PdfBase::setData(DataSet *data) {
 
         // Transfer into our whole buffer
         for(int i = 0; i < numEntries; ++i) {
-            for(Variable *v : observables) {
+            for(Observable *v : observables) {
                 fptype currVal                             = unbinned_data->getValue(v, i);
                 host_array[i * dimensions + v->getIndex()] = currVal;
             }
@@ -294,7 +294,7 @@ __host__ void PdfBase::setData(DataSet *data) {
 #endif
 
         for(unsigned int i = 0; i < numEntries; ++i) {
-            for(Variable *v : observables) {
+            for(Observable *v : observables) {
                 host_array[i * dimensions + v->getIndex()] = binned_data->getBinCenter(v, i);
             }
 
@@ -355,7 +355,7 @@ __host__ void PdfBase::generateNormRange() {
     // 0 and 2. Make one array per functor, as opposed to variable, to make
     // it easy to pass MetricTaker a range without worrying about which parts
     // to use.
-    for(Variable *v : observables) {
+    for(Observable *v : observables) {
         host_norms[3 * counter + 0] = v->getLowerLimit();
         host_norms[3 * counter + 1] = v->getUpperLimit();
         host_norms[3 * counter + 2] = integrationBins > 0 ? integrationBins : v->getNumBins();

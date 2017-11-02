@@ -29,8 +29,8 @@ __device__ fptype device_CorrGaussian(fptype *evt, fptype *p, unsigned int *indi
 __device__ device_function_ptr ptr_to_CorrGaussian = device_CorrGaussian;
 
 __host__ CorrGaussianPdf::CorrGaussianPdf(std::string n,
-                                          Variable *_x,
-                                          Variable *_y,
+                                          Observable *_x,
+                                          Observable *_y,
                                           Variable *mean1,
                                           Variable *sigma1,
                                           Variable *mean2,

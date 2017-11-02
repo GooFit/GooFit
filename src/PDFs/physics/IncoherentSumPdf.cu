@@ -44,7 +44,7 @@ __device__ fptype device_incoherent(fptype *evt, fptype *p, unsigned int *indice
 __device__ device_function_ptr ptr_to_incoherent = device_incoherent;
 
 __host__ IncoherentSumPdf::IncoherentSumPdf(
-    std::string n, Variable *m12, Variable *m13, CountingVariable *eventNumber, DecayInfo *decay, GooPdf *eff)
+    std::string n, Observable *m12, Observable *m13, EventNumber *eventNumber, DecayInfo *decay, GooPdf *eff)
     : GooPdf(nullptr, n)
     , decayInfo(decay)
     , _m12(m12)

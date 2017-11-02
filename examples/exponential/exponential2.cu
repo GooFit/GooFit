@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
     Minuit2::MnPrint::SetLevel(3);
 
     // Independent variable.
-    Variable xvar{"xvar", 0, log(1 + RAND_MAX / 2)};
+    Observable xvar{"xvar", 0, log(1 + RAND_MAX / 2)};
 
     // Data set
     UnbinnedDataSet data(&xvar);

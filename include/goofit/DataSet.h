@@ -14,11 +14,11 @@ namespace GooFit {
 
 class DataSet {
   public:
-    DataSet(Variable *var, std::string n = "");
+    DataSet(Observable *var, std::string n = "");
 
-    DataSet(std::vector<Variable *> &vars, std::string n = "");
-    DataSet(std::set<Variable *> &vars, std::string n = "");
-    DataSet(std::initializer_list<Variable *> vars, std::string n = "");
+    DataSet(std::vector<Observable *> &vars, std::string n = "");
+    DataSet(std::set<Observable *> &vars, std::string n = "");
+    DataSet(std::initializer_list<Observable *> vars, std::string n = "");
 
     virtual ~DataSet() = default;
 
@@ -31,17 +31,18 @@ class DataSet {
     void addEvent(fptype value, Args... args) {
         std::vector<fptype> values{value, static_cast<fptype>(args)...};
 
-        if(values.size() != variables.size())
-            throw GooFit::GeneralError("You must pass the correct number of values ({}) to addEvent", variables.size());
+        if(values.size() != observables.size())
+            throw GooFit::GeneralError("You must pass the correct number of values ({}) to addEvent",
+                                       observables.size());
 
         for(size_t i = 0; i < values.size(); i++)
-            variables[i]->setValue(values[i]);
+            observables[i]->setValue(values[i]);
         addEvent();
     }
 
-    const std::vector<Variable *> &getVariables() const;
+    const std::vector<Observable *> &getObservables() const;
 
-    size_t numVariables() const { return variables.size(); }
+    size_t numVariables() const { return observables.size(); }
 
     size_t getNumEvents() const { return numEventsAdded; }
 
@@ -49,7 +50,7 @@ class DataSet {
 
   protected:
     std::vector<fptype> getCurrentValues() const;
-    size_t indexOfVariable(Variable *var) const;
+    size_t indexOfVariable(Observable *var) const;
     size_t numEventsAdded{0};
 
     /// Throw an error if any variables are out of range, call in addEvent
@@ -62,7 +63,7 @@ class DataSet {
     std::string name;
 
   protected:
-    std::vector<Variable *> variables;
+    std::vector<Observable *> observables;
 };
 
 } // namespace GooFit

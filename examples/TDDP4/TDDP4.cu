@@ -139,18 +139,18 @@ int main(int argc, char **argv) {
     DK3P_DI._ymixing      = new Variable("ymixing", 0.01, 0.001, 0, 0);
     DK3P_DI._SqWStoRSrate = new Variable("SqWStoRSrate", 1.0 / sqrt(300.0));
 
-    Variable m12{"m12", 0, 3};
-    Variable m34{"m34", 0, 3};
-    Variable cos12{"cos12", -1, 1};
-    Variable cos34{"m12", -1, 1};
-    Variable phi{"phi", -3.5, 3.5};
-    CountingVariable eventNumber{"eventNumber"};
-    Variable dtime{"dtime", 0, 10};
-    Variable sigmat{"sigmat", -3, 3};
+    Observable m12{"m12", 0, 3};
+    Observable m34{"m34", 0, 3};
+    Observable cos12{"cos12", -1, 1};
+    Observable cos34{"m12", -1, 1};
+    Observable phi{"phi", -3.5, 3.5};
+    EventNumber eventNumber{"eventNumber"};
+    Observable dtime{"dtime", 0, 10};
+    Observable sigmat{"sigmat", -3, 3};
     Variable constantOne{"constantOne", 1};
     Variable constantZero{"constantZero", 0};
 
-    vector<Variable *> observables{&m12, &m34, &cos12, &cos34, &phi, &eventNumber, &dtime, &sigmat};
+    vector<Observable *> observables{&m12, &m34, &cos12, &cos34, &phi, &eventNumber, &dtime, &sigmat};
     vector<Variable *> offsets{&constantZero, &constantZero};
     vector<Variable *> coefficients{&constantOne};
 

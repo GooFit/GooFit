@@ -20,7 +20,7 @@ __device__ fptype device_BifurGauss(fptype *evt, fptype *p, unsigned int *indice
 
 __device__ device_function_ptr ptr_to_BifurGauss = device_BifurGauss;
 
-__host__ BifurGaussPdf::BifurGaussPdf(std::string n, Variable *_x, Variable *mean, Variable *sigmaL, Variable *sigmaR)
+__host__ BifurGaussPdf::BifurGaussPdf(std::string n, Observable *_x, Variable *mean, Variable *sigmaL, Variable *sigmaR)
     : GooPdf(_x, n) {
     std::vector<unsigned int> pindices;
     pindices.push_back(registerParameter(mean));

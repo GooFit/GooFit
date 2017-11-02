@@ -22,7 +22,7 @@ TEST(UnbinnedFit, SimpleFit) {
     std::exponential_distribution<> d(1.5);
 
     // Independent variable.
-    Variable xvar{"xvar", 0, 10};
+    Observable xvar{"xvar", 0, 10};
 
     // Data set
     UnbinnedDataSet data(&xvar);
@@ -58,8 +58,8 @@ TEST(UnbinnedFit, DualFit) {
     std::exponential_distribution<> dy(.75);
 
     // Independent variable.
-    Variable xvar{"xvar", 0, 10};
-    Variable yvar{"yvar", 0, 10};
+    Observable xvar{"xvar", 0, 10};
+    Observable yvar{"yvar", 0, 10};
 
     // Data set
     UnbinnedDataSet data{{&xvar, &yvar}};
@@ -103,8 +103,8 @@ TEST(UnbinnedFit, DifferentFitterVariable) {
     std::normal_distribution<> dy(.75, .5);
 
     // Independent variable.
-    Variable xvar{"xvar", -10, 10};
-    Variable yvar{"yvar", -10, 10};
+    Observable xvar{"xvar", -10, 10};
+    Observable yvar{"yvar", -10, 10};
 
     // Data set
     UnbinnedDataSet data{{&xvar, &yvar}, "Some name"};

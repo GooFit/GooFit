@@ -12,7 +12,7 @@ using namespace pybind11::literals;
 
 void init_DalitzPlotPdf(py::module &m) {
     py::class_<DalitzPlotPdf, GooPdf>(m, "DalitzPlotPdf")
-        .def(py::init<std::string, Variable *, Variable *, CountingVariable *, DecayInfo *, GooPdf *>(),
+        .def(py::init<std::string, Observable *, Observable *, EventNumber *, DecayInfo *, GooPdf *>(),
              py::keep_alive<1, 3>(),
              py::keep_alive<1, 4>(),
              py::keep_alive<1, 5>(),

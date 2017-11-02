@@ -5,9 +5,12 @@
 
 namespace GooFit {
 
-int max_index(const std::vector<Variable *> &vars) {
-    const Variable *max_ind_ptr
-        = *std::max_element(std::begin(vars), std::end(vars), [](const Variable *a, const Variable *b) {
+template <>
+int max_index<Indexable>(const std::vector<Indexable *> &vars) {
+    if(vars.empty())
+        return -1;
+    const Indexable *max_ind_ptr
+        = *std::max_element(std::begin(vars), std::end(vars), [](const Indexable *a, const Indexable *b) {
               return a->getIndex() < b->getIndex();
           });
     return max_ind_ptr->getIndex();
@@ -35,6 +38,15 @@ std::ostream &operator<<(std::ostream &o, const GooFit::Variable &var) {
     return o;
 }
 
-std::istream &operator>>(std::istream &i, GooFit::Variable &var) { return i >> *var.value; }
+std::ostream &operator<<(std::ostream &o, const GooFit::Observable &var) {
+    o << var.getName() << ": " << var.getValue() << " (" << var.getNumBins() << " bins)";
+    o << " [" << var.getLowerLimit() << ", " << var.getUpperLimit() << "]";
+    if(var.getIndex() >= 0)
+        o << " GooFit index: " << var.getIndex();
+
+    return o;
+}
+
+std::istream &operator>>(std::istream &i, GooFit::Observable &var) { return i >> *var.value; }
 
 } // namespace GooFit

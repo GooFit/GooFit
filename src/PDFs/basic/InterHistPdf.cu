@@ -134,10 +134,8 @@ __device__ fptype device_InterHistogram(fptype *evt, fptype *p, unsigned int *in
 
 __device__ device_function_ptr ptr_to_InterHistogram = device_InterHistogram;
 
-__host__ InterHistPdf::InterHistPdf(std::string n,
-                                    BinnedDataSet *x,
-                                    std::vector<Variable> params,
-                                    std::vector<Observable> obses)
+__host__
+InterHistPdf::InterHistPdf(std::string n, BinnedDataSet *x, std::vector<Variable> params, std::vector<Observable> obses)
     : GooPdf(n)
     , numVars(x->numVariables()) {
     int numConstants = 2 * numVars;

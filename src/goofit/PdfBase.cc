@@ -16,21 +16,21 @@
 #include <Minuit2/FunctionMinimum.h>
 
 namespace {
-template<typename T>
-bool find_in(std::vector<T*> list, T* item) {
-    return std::find_if(std::begin(list), std::end(list), [item](T* p){return *p == *item;}) != std::end(list);
+template <typename T>
+bool find_in(std::vector<T *> list, T *item) {
+    return std::find_if(std::begin(list), std::end(list), [item](T *p) { return *p == *item; }) != std::end(list);
 }
-template<typename T>
-bool find_in(std::vector<T> list, T* item) {
-    return std::find_if(std::begin(list), std::end(list), [item](T& p){return p == *item;}) != std::end(list);
+template <typename T>
+bool find_in(std::vector<T> list, T *item) {
+    return std::find_if(std::begin(list), std::end(list), [item](T &p) { return p == *item; }) != std::end(list);
 }
-template<typename T>
-bool find_in(std::vector<T*> list, T item) {
-    return std::find_if(std::begin(list), std::end(list), [item](T* p){return *p == item;}) != std::end(list);
+template <typename T>
+bool find_in(std::vector<T *> list, T item) {
+    return std::find_if(std::begin(list), std::end(list), [item](T *p) { return *p == item; }) != std::end(list);
 }
-template<typename T>
+template <typename T>
 bool find_in(std::vector<T> list, T item) {
-    return std::find_if(std::begin(list), std::end(list), [item](T p){return p == item;}) != std::end(list);
+    return std::find_if(std::begin(list), std::end(list), [item](T p) { return p == item; }) != std::end(list);
 }
 } // namespace
 
@@ -47,8 +47,9 @@ int totalConstants  = 1; // First constant is reserved for number of events.
 
 PdfBase::PdfBase(std::string n)
     : name(std::move(n)) {}
-    
-PdfBase::PdfBase(const Observable &x, std::string n) : PdfBase(n) {
+
+PdfBase::PdfBase(const Observable &x, std::string n)
+    : PdfBase(n) {
     registerObservable(x);
 }
 
@@ -98,7 +99,7 @@ __host__ void PdfBase::unregisterParameter(Variable var) {
 
 __host__ std::vector<Variable> PdfBase::getParameters() const {
     std::vector<Variable> ret;
-    for(const Variable& param :  parameterList)
+    for(const Variable &param : parameterList)
         ret.push_back(param);
 
     for(const PdfBase *comp : components) {
@@ -110,19 +111,19 @@ __host__ std::vector<Variable> PdfBase::getParameters() const {
     return ret;
 }
 
-__host__ Variable* PdfBase::getParameterByName(std::string n) {
+__host__ Variable *PdfBase::getParameterByName(std::string n) {
     for(Variable &p : parameterList) {
         if(p.getName() == n)
             return &p;
     }
 
     for(auto component : components) {
-        Variable* cand = component->getParameterByName(n);
+        Variable *cand = component->getParameterByName(n);
 
         if(cand)
             return cand;
     }
-    
+
     return nullptr;
 }
 
@@ -166,7 +167,8 @@ __host__ void PdfBase::setIntegrationFineness(int i) {
 }
 
 __host__ bool PdfBase::parametersChanged() const {
-    return std::any_of(std::begin(parameterList), std::end(parameterList), [](const Variable &v) { return v.getChanged(); });
+    return std::any_of(
+        std::begin(parameterList), std::end(parameterList), [](const Variable &v) { return v.getChanged(); });
 }
 
 __host__ void PdfBase::setNumPerTask(PdfBase *p, const int &c) {

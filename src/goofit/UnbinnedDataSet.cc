@@ -8,7 +8,7 @@
 namespace GooFit {
 
 // Special constructor for one variable
-UnbinnedDataSet::UnbinnedDataSet(const Observable& var, std::string n)
+UnbinnedDataSet::UnbinnedDataSet(const Observable &var, std::string n)
     : DataSet(var, n) {
     data.resize(1);
 }

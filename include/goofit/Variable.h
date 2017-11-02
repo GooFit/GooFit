@@ -93,7 +93,7 @@ class Indexable {
 
     /// Support for comparison - only if really the same object, not just the same value
     bool operator!=(const Indexable &other) const { return value.get() != other.value.get(); }
-    
+
     /// Check to see if in range
     operator bool() const {
         return getUpperLimit() == getLowerLimit() || (getValue() <= getUpperLimit() && getValue() >= getLowerLimit());
@@ -248,7 +248,7 @@ int max_index(const std::vector<T *> &vars) {
         nvars.push_back(v);
     return max_index(nvars);
 }
-        
+
 template <typename T>
 int max_index(const std::vector<T> &vars) {
     std::vector<Indexable *> nvars;
@@ -264,8 +264,7 @@ int max_index<Indexable>(const std::vector<Indexable *> &vars);
 /// Get the max fitter index of a variable from a list
 int max_fitter_index(const std::vector<Variable *> &vars);
 int max_fitter_index(const std::vector<Variable> &vars);
-        
-        
+
 /// Nice print of Variable
 std::ostream &operator<<(std::ostream &o, const GooFit::Variable &var);
 

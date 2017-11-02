@@ -38,9 +38,9 @@ UnbinnedDataSet *data = 0;
 Observable m12("m12", 0, 3);
 Observable m13("m13", 0, 3);
 EventNumber eventNumber("eventNumber");
-bool fitMasses           = false;
-Variable fixedRhoMass   ("rho_mass", 0.7758, 0.01, 0.7, 0.8);
-Variable fixedRhoWidth  ("rho_width", 0.1503, 0.01, 0.1, 0.2);
+bool fitMasses = false;
+Variable fixedRhoMass("rho_mass", 0.7758, 0.01, 0.7, 0.8);
+Variable fixedRhoWidth("rho_width", 0.1503, 0.01, 0.1, 0.2);
 
 const fptype _mD0       = 1.86484;
 const fptype _mD02      = _mD0 * _mD0;
@@ -96,7 +96,7 @@ void getToyData(std::string toyFileName, GooFit::Application &app) {
     while(!reader.eof()) {
         reader >> dummy;
         reader >> dummy; // m23, m(pi+ pi-), called m12 in processToyRoot convention.
-        reader >> m12;  // Already swapped according to D* charge. m12 = m(pi+pi0)
+        reader >> m12;   // Already swapped according to D* charge. m12 = m(pi+pi0)
         reader >> m13;
 
         // Errors on Dalitz variables
@@ -143,7 +143,7 @@ GooPdf *makeKzeroVeto() {
     if(kzero_veto)
         return kzero_veto;
 
-    VetoInfo kVetoInfo {Variable("veto_min", 0.475 * 0.475), Variable("veto_max", 0.505 * 0.505), PAIR_23};
+    VetoInfo kVetoInfo{Variable("veto_min", 0.475 * 0.475), Variable("veto_max", 0.505 * 0.505), PAIR_23};
 
     vector<VetoInfo> vetos;
     vetos.push_back(kVetoInfo);
@@ -159,13 +159,8 @@ DalitzPlotPdf *makeSignalPdf(GooPdf *eff = 0) {
     dtop0pp.daug3Mass    = piPlusMass;
     dtop0pp.meson_radius = 1.5;
 
-    ResonancePdf *rhop = new Resonances::RBW("rhop",
-                                             Variable("rhop_amp_real", 1),
-                                             Variable("rhop_amp_imag", 0),
-                                             fixedRhoMass,
-                                             fixedRhoWidth,
-                                             1,
-                                             PAIR_12);
+    ResonancePdf *rhop = new Resonances::RBW(
+        "rhop", Variable("rhop_amp_real", 1), Variable("rhop_amp_imag", 0), fixedRhoMass, fixedRhoWidth, 1, PAIR_12);
 
     bool fixAmps = false;
 
@@ -187,8 +182,8 @@ DalitzPlotPdf *makeSignalPdf(GooPdf *eff = 0) {
         1,
         PAIR_23);
 
-    Variable sharedMass ("rhop_1450_mass", 1.465, 0.01, 1.0, 2.0);
-    Variable shareWidth ("rhop_1450_width", 0.400, 0.01, 0.01, 5.0);
+    Variable sharedMass("rhop_1450_mass", 1.465, 0.01, 1.0, 2.0);
+    Variable shareWidth("rhop_1450_width", 0.400, 0.01, 0.01, 5.0);
 
     ResonancePdf *rhop_1450 = new Resonances::RBW(
         "rhop_1450",
@@ -217,8 +212,8 @@ DalitzPlotPdf *makeSignalPdf(GooPdf *eff = 0) {
         1,
         PAIR_13);
 
-     Variable sharedMass2("rhop_1700_mass", 1.720, 0.01, 1.6, 1.9);
-     Variable shareWidth2("rhop_1700_width", 0.250, 0.01, 0.1, 1.0);
+    Variable sharedMass2("rhop_1700_mass", 1.720, 0.01, 1.6, 1.9);
+    Variable shareWidth2("rhop_1700_width", 0.250, 0.01, 0.1, 1.0);
 
     ResonancePdf *rhop_1700 = new Resonances::RBW(
         "rhop_1700",
@@ -257,38 +252,35 @@ DalitzPlotPdf *makeSignalPdf(GooPdf *eff = 0) {
                                                0,
                                                PAIR_23);
 
-    ResonancePdf *f0_1370
-        = new Resonances::RBW("f0_1370",
-                              fixAmps ? Variable("f0_1370_amp_real", -0.058 * (-_mD02))
-                                      : Variable("f0_1370_amp_real", -0.058 * (-_mD02), 0.001, 0, 0),
-                              fixAmps ? Variable("f0_1370_amp_imag", 0.026 * (-_mD02))
-                                      : Variable("f0_1370_amp_imag", 0.026 * (-_mD02), 0.1, 0, 0),
-                              Variable("f0_1370_mass", 1.434, 0.01, 1.2, 1.6),
-                              Variable("f0_1370_width", 0.173, 0.01, 0.01, 0.4),
-                              0,
-                              PAIR_23);
+    ResonancePdf *f0_1370 = new Resonances::RBW("f0_1370",
+                                                fixAmps ? Variable("f0_1370_amp_real", -0.058 * (-_mD02))
+                                                        : Variable("f0_1370_amp_real", -0.058 * (-_mD02), 0.001, 0, 0),
+                                                fixAmps ? Variable("f0_1370_amp_imag", 0.026 * (-_mD02))
+                                                        : Variable("f0_1370_amp_imag", 0.026 * (-_mD02), 0.1, 0, 0),
+                                                Variable("f0_1370_mass", 1.434, 0.01, 1.2, 1.6),
+                                                Variable("f0_1370_width", 0.173, 0.01, 0.01, 0.4),
+                                                0,
+                                                PAIR_23);
 
-    ResonancePdf *f0_1500
-        = new Resonances::RBW("f0_1500",
-                              fixAmps ? Variable("f0_1500_amp_real", 0.057 * (-_mD02))
-                                      : Variable("f0_1500_amp_real", 0.057 * (-_mD02), 0.001, 0, 0),
-                              fixAmps ? Variable("f0_1500_amp_imag", 0.012 * (-_mD02))
-                                      : Variable("f0_1500_amp_imag", 0.012 * (-_mD02), 0.1, 0, 0),
-                              Variable("f0_1500_mass", 1.507, 0.01, 1.3, 1.7),
-                              Variable("f0_1500_width", 0.109, 0.01, 0.01, 0.3),
-                              0,
-                              PAIR_23);
+    ResonancePdf *f0_1500 = new Resonances::RBW("f0_1500",
+                                                fixAmps ? Variable("f0_1500_amp_real", 0.057 * (-_mD02))
+                                                        : Variable("f0_1500_amp_real", 0.057 * (-_mD02), 0.001, 0, 0),
+                                                fixAmps ? Variable("f0_1500_amp_imag", 0.012 * (-_mD02))
+                                                        : Variable("f0_1500_amp_imag", 0.012 * (-_mD02), 0.1, 0, 0),
+                                                Variable("f0_1500_mass", 1.507, 0.01, 1.3, 1.7),
+                                                Variable("f0_1500_width", 0.109, 0.01, 0.01, 0.3),
+                                                0,
+                                                PAIR_23);
 
-    ResonancePdf *f0_1710
-        = new Resonances::RBW("f0_1710",
-                              fixAmps ? Variable("f0_1710_amp_real", 0.070 * (-_mD02))
-                                      : Variable("f0_1710_amp_real", 0.070 * (-_mD02), 0.001, 0, 0),
-                              fixAmps ? Variable("f0_1710_amp_imag", 0.087 * (-_mD02))
-                                      : Variable("f0_1710_amp_imag", 0.087 * (-_mD02), 0.1, 0, 0),
-                              Variable("f0_1710_mass", 1.714, 0.01, 1.5, 2.9),
-                              Variable("f0_1710_width", 0.140, 0.01, 0.01, 0.5),
-                              0,
-                              PAIR_23);
+    ResonancePdf *f0_1710 = new Resonances::RBW("f0_1710",
+                                                fixAmps ? Variable("f0_1710_amp_real", 0.070 * (-_mD02))
+                                                        : Variable("f0_1710_amp_real", 0.070 * (-_mD02), 0.001, 0, 0),
+                                                fixAmps ? Variable("f0_1710_amp_imag", 0.087 * (-_mD02))
+                                                        : Variable("f0_1710_amp_imag", 0.087 * (-_mD02), 0.1, 0, 0),
+                                                Variable("f0_1710_mass", 1.714, 0.01, 1.5, 2.9),
+                                                Variable("f0_1710_width", 0.140, 0.01, 0.01, 0.5),
+                                                0,
+                                                PAIR_23);
 
     ResonancePdf *f2_1270
         = new Resonances::RBW("f2_1270",
@@ -311,11 +303,10 @@ DalitzPlotPdf *makeSignalPdf(GooPdf *eff = 0) {
                                                0,
                                                PAIR_23);
 
-    ResonancePdf *nonr = new Resonances::NonRes("nonr",
-                                                fixAmps ? Variable("nonr_amp_real", 0.5595 * (-1))
-                                                        : Variable("nonr_amp_real", 0.5595 * (-1), 0.001, 0, 0),
-                                                fixAmps ? Variable("nonr_amp_imag", -0.108761 * (-1))
-                                                        : Variable("nonr_amp_imag", -0.108761 * (-1), 0.1, 0, 0));
+    ResonancePdf *nonr = new Resonances::NonRes(
+        "nonr",
+        fixAmps ? Variable("nonr_amp_real", 0.5595 * (-1)) : Variable("nonr_amp_real", 0.5595 * (-1), 0.001, 0, 0),
+        fixAmps ? Variable("nonr_amp_imag", -0.108761 * (-1)) : Variable("nonr_amp_imag", -0.108761 * (-1), 0.1, 0, 0));
 
     dtop0pp.resonances.push_back(nonr);
     dtop0pp.resonances.push_back(rhop);
@@ -335,8 +326,7 @@ DalitzPlotPdf *makeSignalPdf(GooPdf *eff = 0) {
     dtop0pp.resonances.push_back(f0_600);
 
     if(!fitMasses) {
-        for(vector<ResonancePdf *>::iterator res = dtop0pp.resonances.begin(); res != dtop0pp.resonances.end();
-            ++res) {
+        for(vector<ResonancePdf *>::iterator res = dtop0pp.resonances.begin(); res != dtop0pp.resonances.end(); ++res) {
             (*res)->setParameterConstantness(true);
         }
     }
@@ -359,7 +349,6 @@ DalitzPlotPdf *makeSignalPdf(GooPdf *eff = 0) {
 }
 
 int runToyFit(std::string toyFileName, GooFit::Application &app) {
-
     m12.setNumBins(240);
     m13.setNumBins(240);
     getToyData(toyFileName, app);

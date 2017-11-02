@@ -23,7 +23,7 @@
 
 #ifdef GOOFIT_MPI
 #include <mpi.h>
-#endif 
+#endif
 
 namespace GooFit {
 

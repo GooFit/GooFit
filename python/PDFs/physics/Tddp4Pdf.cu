@@ -28,7 +28,7 @@ void init_Tddp4Pdf(py::module &m) {
              "decay"_a,
              "r"_a,
              "eff"_a,
-             "mistag"_a = nullptr,
+             "mistag"_a       = nullptr,
              "MCeventsNorm"_a = 5e6,
              py::keep_alive<1, 5>(),
              py::keep_alive<1, 6>(),

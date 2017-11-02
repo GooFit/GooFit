@@ -27,7 +27,7 @@ using namespace GooFit;
 
 vector<double> ratios;
 vector<double> errors;
-Observable* globalDecayTime = nullptr;
+Observable *globalDecayTime = nullptr;
 
 double integralExpCon(double lo, double hi) { return (exp(-lo) - exp(-hi)); }
 
@@ -74,7 +74,8 @@ void generateEvents(Observable decayTime,
 
 int fitRatio(Observable decayTime,
              vector<Variable> weights,
-             vector<int> &rsEvts, vector<int> &wsEvts,
+             vector<int> &rsEvts,
+             vector<int> &wsEvts,
              std::string plotName = "") {
     TH1D *ratioHist
         = new TH1D("ratioHist", "", decayTime.getNumBins(), decayTime.getLowerLimit(), decayTime.getUpperLimit());
@@ -102,7 +103,6 @@ int fitRatio(Observable decayTime,
         ratioHist->SetBinError(i + 1, error);
     }
 
-
     PolynomialPdf *poly = new PolynomialPdf("poly", decayTime, weights);
     poly->setFitControl(new BinnedErrorFit());
     poly->setData(ratioData);
@@ -125,16 +125,13 @@ int fitRatio(Observable decayTime,
     ratioHist->Draw("p");
 
     char strbuffer[1000];
-    sprintf(
-        strbuffer, "Constant [10^{-2}] : %.3f #pm %.3f", 1e2 * weights[0].getValue(), weights[0].getError() * 1e2);
+    sprintf(strbuffer, "Constant [10^{-2}] : %.3f #pm %.3f", 1e2 * weights[0].getValue(), weights[0].getError() * 1e2);
     TLatex res1(0.14, 0.83, strbuffer);
     res1.SetNDC(true);
-    sprintf(
-        strbuffer, "Linear [10^{-4}]   : %.3f #pm %.3f", 1e4 * weights[1].getValue(), weights[1].getError() * 1e4);
+    sprintf(strbuffer, "Linear [10^{-4}]   : %.3f #pm %.3f", 1e4 * weights[1].getValue(), weights[1].getError() * 1e4);
     TLatex res2(0.14, 0.73, strbuffer);
     res2.SetNDC(true);
-    sprintf(
-        strbuffer, "Quadratic [10^{-6}]: %.3f #pm %.3f", 1e6 * weights[2].getValue(), weights[2].getError() * 1e6);
+    sprintf(strbuffer, "Quadratic [10^{-6}]: %.3f #pm %.3f", 1e6 * weights[2].getValue(), weights[2].getError() * 1e6);
     TLatex res3(0.14, 0.63, strbuffer);
     res3.SetNDC(true);
 
@@ -158,16 +155,13 @@ int fitRatio(Observable decayTime,
     return datapdf;
 }
 
-
-
-
 void cpvFitFcn(int &npar, double *gin, double &fun, double *fp, int iflag) {
     double conCoef = fp[0];
     double linCoef = fp[1];
     double squCoef = fp[2];
 
     double chisq = 0;
-    double step  = (globalDecayTime->getUpperLimit() - globalDecayTime->getLowerLimit()) / globalDecayTime->getNumBins();
+    double step = (globalDecayTime->getUpperLimit() - globalDecayTime->getLowerLimit()) / globalDecayTime->getNumBins();
 
     for(unsigned int i = 0; i < ratios.size(); ++i) {
         double currDTime = globalDecayTime->getLowerLimit() + (i + 0.5) * step;
@@ -231,10 +225,10 @@ int main(int argc, char **argv) {
 
     // Time is in units of lifetime
     Observable decayTime{"decayTime", 0, 10};
-    
+
     // Hack for Minuit 1
     globalDecayTime = &decayTime;
-    
+
     decayTime.setValue(100.);
     decayTime.setNumBins(numbins);
 
@@ -269,9 +263,9 @@ int main(int argc, char **argv) {
     Variable constaCoef("constaCoef", 0.03, 0.01, -1, 1);
     Variable linearCoef("linearCoef", 0, 0.01, -1, 1);
     Variable secondCoef("secondCoef", 0, 0.01, -1, 1);
-    
+
     vector<Variable> weights = {constaCoef, linearCoef, secondCoef};
-    
+
     int retval;
     retval = fitRatio(decayTime, weights, dZeroEvtsRS, dZeroEvtsWS, "dzeroEvtRatio.png");
 

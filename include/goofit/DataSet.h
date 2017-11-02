@@ -40,7 +40,7 @@ class DataSet {
         addEvent();
     }
 
-    const std::vector<Observable>& getObservables() const;
+    const std::vector<Observable> &getObservables() const;
 
     size_t numVariables() const { return observables.size(); }
 
@@ -50,7 +50,7 @@ class DataSet {
 
   protected:
     std::vector<fptype> getCurrentValues() const;
-    size_t indexOfVariable(const Observable& var) const;
+    size_t indexOfVariable(const Observable &var) const;
     size_t numEventsAdded{0};
 
     /// Throw an error if any variables are out of range, call in addEvent

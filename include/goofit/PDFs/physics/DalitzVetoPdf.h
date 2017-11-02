@@ -9,10 +9,10 @@ struct VetoInfo {
     Variable minimum;
     Variable maximum;
     DaughterPair cyclic_index;
-    VetoInfo(Variable minimum,
-             Variable maximum,
-             DaughterPair cyclic_index)
-    : minimum(minimum), maximum(maximum), cyclic_index(cyclic_index) {}
+    VetoInfo(Variable minimum, Variable maximum, DaughterPair cyclic_index)
+        : minimum(minimum)
+        , maximum(maximum)
+        , cyclic_index(cyclic_index) {}
 };
 
 class DalitzVetoPdf : public GooPdf {

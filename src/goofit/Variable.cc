@@ -23,12 +23,12 @@ int max_fitter_index(const std::vector<Variable *> &vars) {
           });
     return max_ind_ptr->getFitterIndex();
 }
-    
+
 int max_fitter_index(const std::vector<Variable> &vars) {
     const Variable max_ind_ptr
-    = *std::max_element(std::begin(vars), std::end(vars), [](const Variable &a, const Variable &b) {
-        return a.getFitterIndex() < b.getFitterIndex();
-    });
+        = *std::max_element(std::begin(vars), std::end(vars), [](const Variable &a, const Variable &b) {
+              return a.getFitterIndex() < b.getFitterIndex();
+          });
     return max_ind_ptr.getFitterIndex();
 }
 

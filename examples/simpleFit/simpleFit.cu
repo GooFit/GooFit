@@ -201,21 +201,21 @@ int main(int argc, char **argv) {
 
     foo = new TCanvas();
 
-    Variable mpv  ("mpv", 40, 0, 150);
+    Variable mpv("mpv", 40, 0, 150);
     Variable sigma("sigma", 5, 0, 30);
-    GooPdf *landau  = new LandauPdf("landau", xvar, mpv, sigma);
+    GooPdf *landau = new LandauPdf("landau", xvar, mpv, sigma);
     fitAndPlot(landau, &landdata, landHist, xvar, "landau.png");
 
-    Variable nmean ("nmean", 0.4, -10.0, 10.0);
-    Variable nsigm ("nsigm", 0.6, 0.0, 1.0);
-    Variable ntail ("ntail", 1.1, 0.1, 0.0, 3.0);
-    GooPdf *novo    = new NovosibirskPdf("novo", xvar, nmean, nsigm, ntail);
+    Variable nmean("nmean", 0.4, -10.0, 10.0);
+    Variable nsigm("nsigm", 0.6, 0.0, 1.0);
+    Variable ntail("ntail", 1.1, 0.1, 0.0, 3.0);
+    GooPdf *novo = new NovosibirskPdf("novo", xvar, nmean, nsigm, ntail);
     fitAndPlot(novo, &novodata, novoHist, xvar, "novo.png");
 
-    Variable gmean ("gmean", 3.0, 1, -15, 15);
-    Variable lsigm ("lsigm", 10, 1, 10, 20);
-    Variable rsigm ("rsigm", 20, 1, 10, 40);
-    GooPdf *bifur   = new BifurGaussPdf("bifur", xvar, gmean, lsigm, rsigm);
+    Variable gmean("gmean", 3.0, 1, -15, 15);
+    Variable lsigm("lsigm", 10, 1, 10, 20);
+    Variable rsigm("rsigm", 20, 1, 10, 40);
+    GooPdf *bifur = new BifurGaussPdf("bifur", xvar, gmean, lsigm, rsigm);
     fitAndPlot(bifur, &bifgdata, bifgHist, xvar, "bifur.png");
 
     return 0;

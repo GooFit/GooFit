@@ -99,7 +99,7 @@ fptype BinnedDataSet::getBinCenter(size_t ivar, size_t bin) const {
     return ret;
 }
 
-fptype BinnedDataSet::getBinCenter(const Observable& var, size_t bin) const {
+fptype BinnedDataSet::getBinCenter(const Observable &var, size_t bin) const {
     size_t ivar = indexOfVariable(var);
     return getBinCenter(ivar, bin);
 }

@@ -124,14 +124,7 @@ void init_LineshapesPdf(py::module &m) {
              py::keep_alive<1, 4>());
 
     py::class_<Lineshapes::GLASS>(m_ls, "GLASS")
-        .def(py::init<std::string,
-                      Variable,
-                      Variable,
-                      unsigned int,
-                      unsigned int,
-                      FF,
-                      fptype,
-                      std::vector<Variable>>(),
+        .def(py::init<std::string, Variable, Variable, unsigned int, unsigned int, FF, fptype, std::vector<Variable>>(),
              "Create a G-LASS lineshape",
 
              "name"_a,

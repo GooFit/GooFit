@@ -70,7 +70,7 @@ class DPPdf : public GooPdf {
     mutable mcbooster::mc_device_vector<fpcomplex> norm_LS;
 
     DecayInfo4 decayInfo;
-    
+
     int MCevents;
     // Following variables are useful if masses and widths, involved in difficult BW calculation,
     // change infrequently while amplitudes, only used in adding BW results together, change rapidly.

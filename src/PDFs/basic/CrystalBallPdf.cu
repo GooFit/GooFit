@@ -38,7 +38,7 @@ __device__ device_function_ptr ptr_to_CrystalBall = device_CrystalBall;
 
 __host__ CrystalBallPdf::CrystalBallPdf(std::string n, Observable _x, Variable mean, Variable sigma, Variable alpha)
     : CrystalBallPdf(n, _x, mean, sigma, alpha, Variable(n + "_n", 2)) {}
-    
+
 __host__ CrystalBallPdf::CrystalBallPdf(
     std::string n, Observable _x, Variable mean, Variable sigma, Variable alpha, Variable power)
     : GooPdf(_x, n) {

@@ -55,22 +55,21 @@ __device__ device_function_ptr ptr_to_ExpPolyOffset = device_ExpPolyOffset;
 __host__ ExpPdf::ExpPdf(std::string n, Observable _x, Variable alpha)
     : GooPdf(_x, n) {
     std::vector<unsigned int> pindices;
-        
+
     pindices.push_back(registerParameter(alpha));
     GET_FUNCTION_ADDR(ptr_to_Exp);
     initialize(pindices);
-    
 }
-    
+
 __host__ ExpPdf::ExpPdf(std::string n, Observable _x, Variable alpha, Variable offset)
     : GooPdf(_x, n) {
     std::vector<unsigned int> pindices;
-    
+
     pindices.push_back(registerParameter(offset));
     pindices.push_back(registerParameter(alpha));
     GET_FUNCTION_ADDR(ptr_to_ExpOffset);
     initialize(pindices);
-    }
+}
 
 __host__ ExpPdf::ExpPdf(std::string n, Observable _x, std::vector<Variable> &weights)
     : GooPdf(_x, n) {
@@ -86,21 +85,21 @@ __host__ ExpPdf::ExpPdf(std::string n, Observable _x, std::vector<Variable> &wei
 
     initialize(pindices);
 }
-    
+
 __host__ ExpPdf::ExpPdf(std::string n, Observable _x, std::vector<Variable> &weights, Variable offset)
-: GooPdf(_x, n) {
+    : GooPdf(_x, n) {
     std::vector<unsigned int> pindices;
-    
+
     pindices.push_back(registerParameter(offset));
-    
+
     if(weights.empty())
         throw GooFit::GeneralError("Weights are empty!");
-    
+
     for(Variable &w : weights)
         pindices.push_back(registerParameter(w));
-    
+
     GET_FUNCTION_ADDR(ptr_to_ExpPolyOffset);
-    
+
     initialize(pindices);
 }
 

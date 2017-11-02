@@ -204,7 +204,7 @@ __host__ void PdfBase::setData(DataSet *data) {
         // Transfer into our whole buffer
         for(int i = 0; i < numEntries; ++i) {
             for(const Observable &v : observables) {
-                fptype currVal                             = unbinned_data->getValue(v, i);
+                fptype currVal                            = unbinned_data->getValue(v, i);
                 host_array[i * dimensions + v.getIndex()] = currVal;
             }
         }

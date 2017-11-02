@@ -37,12 +37,11 @@ int main(int argc, char **argv) {
         return app.exit(e);
     }
 
-    DecayInfo4t DK3P_DI {
-        Variable("tau", 0.4101, 0.001, 0.300, 0.500),
-        Variable("xmixing", 0.005, 0.001, 0, 0),
-        Variable("ymixing", 0.01, 0.001, 0, 0),
-        Variable("SqWStoRSrate", 1.0 / sqrt(300.0))};
-    
+    DecayInfo4t DK3P_DI{Variable("tau", 0.4101, 0.001, 0.300, 0.500),
+                        Variable("xmixing", 0.005, 0.001, 0, 0),
+                        Variable("ymixing", 0.01, 0.001, 0, 0),
+                        Variable("SqWStoRSrate", 1.0 / sqrt(300.0))};
+
     DK3P_DI.meson_radius = 1.5;
     DK3P_DI.particle_masses.push_back(_mD0);
     DK3P_DI.particle_masses.push_back(piPlusMass);
@@ -118,18 +117,18 @@ int main(int argc, char **argv) {
     // order
 
     Amplitude Bose_symmetrized_AMP_S{
-        "K*(892)rho(770)_S",  Variable("amp_real1", 1.0),  Variable("amp_imag1", 0.0), LSKRS, SFKRS, 2};
+        "K*(892)rho(770)_S", Variable("amp_real1", 1.0), Variable("amp_imag1", 0.0), LSKRS, SFKRS, 2};
     Amplitude Bose_symmetrized_AMP_P{
-        "K*(892)rho(770)_P",  Variable("amp_real2", 0.526),  Variable("amp_imag2", -0.626), LSKRP, SFKRP, 2};
+        "K*(892)rho(770)_P", Variable("amp_real2", 0.526), Variable("amp_imag2", -0.626), LSKRP, SFKRP, 2};
     Amplitude Bose_symmetrized_AMP_D{
-        "K*(892)rho(770)_D",  Variable("amp_real3", 26.537),  Variable("amp_imag3", 12.284), LSKRD, SFKRD, 2};
+        "K*(892)rho(770)_D", Variable("amp_real3", 26.537), Variable("amp_imag3", 12.284), LSKRD, SFKRD, 2};
 
     Amplitude Bose_symmetrized_AMP_S_B{
-        "B_K*(892)rho(770)_S",  Variable("amp_real1", 1.0),  Variable("amp_imag1", 0), LSKRS, SFKRS, 2};
+        "B_K*(892)rho(770)_S", Variable("amp_real1", 1.0), Variable("amp_imag1", 0), LSKRS, SFKRS, 2};
     Amplitude Bose_symmetrized_AMP_P_B{
-        "B_K*(892)rho(770)_P",  Variable("amp_real2", -0.145),  Variable("amp_imag2", 0.86), LSKRP, SFKRP, 2};
+        "B_K*(892)rho(770)_P", Variable("amp_real2", -0.145), Variable("amp_imag2", 0.86), LSKRP, SFKRP, 2};
     Amplitude Bose_symmetrized_AMP_D_B{
-        "B_K*(892)rho(770)_D",  Variable("amp_real3", 24.343),  Variable("amp_imag3", 5.329), LSKRD, SFKRD, 2};
+        "B_K*(892)rho(770)_D", Variable("amp_real3", 24.343), Variable("amp_imag3", 5.329), LSKRD, SFKRD, 2};
 
     DK3P_DI.amplitudes_B.push_back(&Bose_symmetrized_AMP_S);
     DK3P_DI.amplitudes_B.push_back(&Bose_symmetrized_AMP_P);

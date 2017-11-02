@@ -19,12 +19,8 @@ Minuit1::Minuit1(PdfBase *pdfPointer)
     for(Variable &var : vars) {
         var.setFitterIndex(counter);
 
-        Int_t err = DefineParameter(counter,
-                                    var.getName().c_str(),
-                                    var.getValue(),
-                                    var.getError(),
-                                    var.getLowerLimit(),
-                                    var.getUpperLimit());
+        Int_t err = DefineParameter(
+            counter, var.getName().c_str(), var.getValue(), var.getError(), var.getLowerLimit(), var.getUpperLimit());
 
         if(GetNumPars() != counter + 1)
             throw GooFit::GeneralError(

@@ -23,9 +23,9 @@ void writeToFile(PdfBase *pdf, const char *fname) {
 void readFromFile(PdfBase *pdf, const char *fname) {
     std::vector<Variable> params = pdf->getParameters();
 
-    std::map<std::string, Variable*> tempMap;
+    std::map<std::string, Variable *> tempMap;
 
-    for(Variable& p : params) {
+    for(Variable &p : params) {
         tempMap[p.getName()] = &p;
     }
 

@@ -69,8 +69,8 @@ class PdfBase {
 
     __host__ virtual std::vector<Observable> getObservables() const;
     __host__ virtual std::vector<Variable> getParameters() const;
-    
-    __host__ Variable* getParameterByName(std::string n);
+
+    __host__ Variable *getParameterByName(std::string n);
     __host__ int getSpecialMask() const { return specialMask; }
 
     __host__ void setData(DataSet *data);

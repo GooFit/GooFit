@@ -48,7 +48,7 @@ std::vector<fptype> DataSet::getCurrentValues() const {
 
 const std::vector<Observable> &DataSet::getObservables() const { return observables; }
 
-size_t DataSet::indexOfVariable(const Observable& var) const {
+size_t DataSet::indexOfVariable(const Observable &var) const {
     for(size_t i = 0; i < observables.size(); ++i)
         if(var == observables[i])
             return i;

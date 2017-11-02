@@ -10,7 +10,7 @@ using namespace pybind11::literals;
 
 void init_PolynomialPdf(py::module &m) {
     py::class_<PolynomialPdf, GooPdf>(m, "PolynomialPdf")
-        .def(py::init<std::string, Observable, std::vector<Variable>, Variable , unsigned int>(),
+        .def(py::init<std::string, Observable, std::vector<Variable>, Variable, unsigned int>(),
              "n"_a,
              "x"_a,
              "weights"_a,

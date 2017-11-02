@@ -174,8 +174,7 @@ int main(int argc, char **argv) {
         "LSKK", Variable("amp_real5", 0.0109033), Variable("amp_imag5", -0.00186219), LSKK, SFKK, 2};
     Amplitude Bose_symmetrized_K1R{
         "LSK1R", Variable("amp_real6", -0.10728), Variable("amp_imag6", -0.130213), LSK1R, SFK1R, 2};
-    Amplitude Bose_symmetrized_A1R{
-        "LSA1R", Variable("amp_real7", 1.0), Variable("amp_imag7", 0.0), LSA1R, SFA1R, 2};
+    Amplitude Bose_symmetrized_A1R{"LSA1R", Variable("amp_real7", 1.0), Variable("amp_imag7", 0.0), LSA1R, SFA1R, 2};
     Amplitude Bose_symmetrized_A1RD{
         "LSA1RD", Variable("amp_real8", -0.94921), Variable("amp_imag8", -1.73407), LSA1RD, SFA1RD, 2};
 

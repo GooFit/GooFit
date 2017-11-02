@@ -6,15 +6,9 @@ namespace GooFit {
 
 class PolynomialPdf : public GooPdf {
   public:
-    PolynomialPdf(std::string n,
-                  Observable _x,
-                  std::vector<Variable> weights,
-                  unsigned int lowestDegree = 0);
-    PolynomialPdf(std::string n,
-                  Observable _x,
-                  std::vector<Variable> weights,
-                  Variable x0,
-                  unsigned int lowestDegree = 0);
+    PolynomialPdf(std::string n, Observable _x, std::vector<Variable> weights, unsigned int lowestDegree = 0);
+    PolynomialPdf(
+        std::string n, Observable _x, std::vector<Variable> weights, Variable x0, unsigned int lowestDegree = 0);
     PolynomialPdf(std::string n,
                   std::vector<Observable> obses,
                   std::vector<Variable> coeffs,

@@ -31,7 +31,7 @@ void init_TddpPdf(py::module &m) {
                       DecayInfo3t,
                       MixingTimeResolution *,
                       GooPdf *,
-                      Observable*>(),
+                      Observable *>(),
              py::keep_alive<1, 8>(),
              py::keep_alive<1, 9>(),
              py::keep_alive<1, 10>(),

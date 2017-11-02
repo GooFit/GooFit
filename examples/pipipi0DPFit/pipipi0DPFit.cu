@@ -78,8 +78,8 @@ Observable *wBkg2        = nullptr;
 Observable *wBkg3        = nullptr;
 Observable *wBkg4        = nullptr;
 
-bool fitMasses          = false;
-Variable fixedRhoMass ("rho_mass", 0.7758, 0.01, 0.7, 0.8);
+bool fitMasses = false;
+Variable fixedRhoMass("rho_mass", 0.7758, 0.01, 0.7, 0.8);
 Variable fixedRhoWidth("rho_width", 0.1503, 0.01, 0.1, 0.2);
 
 // Systematic variables
@@ -128,22 +128,22 @@ const fptype piPlusMass = 0.13957018;
 const fptype piZeroMass = 0.1349766;
 enum Resolutions { DplotRes = 1, TimeRes = 2, Efficiency = 4 };
 
-Variable motherM      ("motherM", 1.86484);
-Variable chargeM      ("chargeM", 0.13957018);
-Variable neutrlM      ("neutrlM", 0.1349766);
-Variable constantBigM ("constantBigM", _mD02 + 2 * piPlusMass * piPlusMass + piZeroMass * piZeroMass);
+Variable motherM("motherM", 1.86484);
+Variable chargeM("chargeM", 0.13957018);
+Variable neutrlM("neutrlM", 0.1349766);
+Variable constantBigM("constantBigM", _mD02 + 2 * piPlusMass * piPlusMass + piZeroMass * piZeroMass);
 
 // Constants used in more than one PDF component.
-Variable constantOne     ("constantOne", 1);
-Variable constantTwo     ("constantTwo", 2);
-Variable constantZero    ("constantZero", 0);
+Variable constantOne("constantOne", 1);
+Variable constantTwo("constantTwo", 2);
+Variable constantZero("constantZero", 0);
 Variable constantMinusOne("constantMinusOne", -1);
-Variable minDalitzX      ("minDalitzX", pow(piPlusMass + piZeroMass, 2));
-Variable maxDalitzX      ("maxDalitzX", pow(_mD0 - piPlusMass, 2));
-Variable minDalitzY      ("minDalitzY", pow(piPlusMass + piZeroMass, 2));
-Variable maxDalitzY      ("maxDalitzY", pow(_mD0 - piPlusMass, 2));
-Variable minDalitzZ      ("minDalitzZ", pow(piPlusMass + piPlusMass, 2));
-Variable maxDalitzZ      ("maxDalitzZ", pow(_mD0 - piZeroMass, 2));
+Variable minDalitzX("minDalitzX", pow(piPlusMass + piZeroMass, 2));
+Variable maxDalitzX("maxDalitzX", pow(_mD0 - piPlusMass, 2));
+Variable minDalitzY("minDalitzY", pow(piPlusMass + piZeroMass, 2));
+Variable maxDalitzY("maxDalitzY", pow(_mD0 - piPlusMass, 2));
+Variable minDalitzZ("minDalitzZ", pow(piPlusMass + piPlusMass, 2));
+Variable maxDalitzZ("maxDalitzZ", pow(_mD0 - piZeroMass, 2));
 
 std::vector<Variable> weights;
 std::vector<Observable> obsweights;
@@ -163,7 +163,7 @@ GooPdf *sig0_jsugg        = nullptr;
 GooPdf *bkg2_jsugg        = nullptr;
 GooPdf *bkg3_jsugg        = nullptr;
 GooPdf *bkg4_jsugg        = nullptr;
-Variable massSum ("massSum", _mD0 *_mD0 + 2 * piPlusMass * piPlusMass + piZeroMass * piZeroMass); // = 3.53481
+Variable massSum("massSum", _mD0 *_mD0 + 2 * piPlusMass * piPlusMass + piZeroMass * piZeroMass); // = 3.53481
 GooPdf *kzero_veto = nullptr;
 
 bool doToyStudy            = false;
@@ -450,12 +450,8 @@ GooPdf *makeKzeroVeto() {
     if(kzero_veto)
         return kzero_veto;
 
-    VetoInfo kVetoInfo(
-           Variable("veto_min", 0.475 * 0.475),
-           Variable("veto_max", 0.505 * 0.505),
-           PAIR_23
-   );
-    
+    VetoInfo kVetoInfo(Variable("veto_min", 0.475 * 0.475), Variable("veto_max", 0.505 * 0.505), PAIR_23);
+
     vector<VetoInfo> vetos;
     vetos.push_back(kVetoInfo);
     kzero_veto = new DalitzVetoPdf("kzero_veto", *m12, *m13, motherM, neutrlM, chargeM, chargeM, vetos);
@@ -489,18 +485,18 @@ GooPdf *makeEfficiencyPoly() {
     PolynomialPdf *poly = new PolynomialPdf("efficiency", observables, coefficients, offsets, 3);
     poly->setParameterConstantness(true);
 
-    Variable decXmin ("decXmin", 6.22596);
-    Variable decYmin ("decYmin", 6.30722);
-    Variable decZmin ("decZmin", 10.82390);
-    Variable conXmin ("conXmin", 0.65621);
-    Variable conYmin ("conYmin", 0.69527);
-    Variable conZmin ("conZmin", 0.31764);
-    Variable decXmax ("decXmax", 0.79181);
-    Variable decYmax ("decYmax", 5.91211);
-    Variable decZmax ("decZmax", 1.52031);
-    Variable conXmax ("conXmax", 0.80918);
-    Variable conYmax ("conYmax", 0.22158);
-    Variable conZmax ("conZmax", 0.41866);
+    Variable decXmin("decXmin", 6.22596);
+    Variable decYmin("decYmin", 6.30722);
+    Variable decZmin("decZmin", 10.82390);
+    Variable conXmin("conXmin", 0.65621);
+    Variable conYmin("conYmin", 0.69527);
+    Variable conZmin("conZmin", 0.31764);
+    Variable decXmax("decXmax", 0.79181);
+    Variable decYmax("decYmax", 5.91211);
+    Variable decZmax("decZmax", 1.52031);
+    Variable conXmax("conXmax", 0.80918);
+    Variable conYmax("conYmax", 0.22158);
+    Variable conZmax("conZmax", 0.41866);
 
     TrigThresholdPdf *loX = new TrigThresholdPdf("loX", *m12, minDalitzX, decXmin, conXmin, false);
     TrigThresholdPdf *hiX = new TrigThresholdPdf("hiX", *m12, maxDalitzX, decXmax, conXmax, true);
@@ -531,12 +527,10 @@ Variable *ptr_to_ymix = nullptr;
 Variable *ptr_to_dtau = nullptr;
 
 TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
-    DecayInfo3t dtop0pp{
-        Variable("tau", 0.4101, 0.001, 0.300, 0.500),
-        Variable("xmixing", 0.0016, 0.001, 0, 0),
-        Variable("ymixing", 0.0055, 0.001, 0, 0)
-    };
-    
+    DecayInfo3t dtop0pp{Variable("tau", 0.4101, 0.001, 0.300, 0.500),
+                        Variable("xmixing", 0.0016, 0.001, 0, 0),
+                        Variable("ymixing", 0.0055, 0.001, 0, 0)};
+
     dtop0pp.motherMass   = _mD0;
     dtop0pp.daug1Mass    = piZeroMass;
     dtop0pp.daug2Mass    = piPlusMass;
@@ -548,7 +542,6 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
     // dtop0pp._xmixing = new Variable("xmixing", 0.01, 0.001, -0.05, 0.05);
     // dtop0pp._ymixing = new Variable("ymixing", 0.01, 0.001, -0.05, 0.05);
 
-
     ptr_to_xmix = &dtop0pp._xmixing;
     ptr_to_ymix = &dtop0pp._ymixing;
     ptr_to_dtau = &dtop0pp._tau;
@@ -557,13 +550,8 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
     // ptr_to_xmix->fixed = true;
     // ptr_to_ymix->fixed = true;
 
-    ResonancePdf *rhop = new Resonances::RBW("rhop",
-                                             Variable("rhop_amp_real", 1),
-                                             Variable("rhop_amp_imag", 0),
-                                             fixedRhoMass,
-                                             fixedRhoWidth,
-                                             1,
-                                             PAIR_12);
+    ResonancePdf *rhop = new Resonances::RBW(
+        "rhop", Variable("rhop_amp_real", 1), Variable("rhop_amp_imag", 0), fixedRhoMass, fixedRhoWidth, 1, PAIR_12);
 
     bool fixAmps = false;
 
@@ -576,17 +564,17 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
         1,
         PAIR_13);
 
-    ResonancePdf *rho0 = new Resonances::GS(
-        "rho0",
-        fixAmps ? Variable("rho0_amp_real", 0.565) : Variable("rho0_amp_real", 0.565, 0.001, 0, 0),
-        fixAmps ? Variable("rho0_amp_imag", 0.164) : Variable("rho0_amp_imag", 0.164, 0.1, 0, 0),
-        fixedRhoMass,
-        fixedRhoWidth,
-        1,
-        PAIR_23);
+    ResonancePdf *rho0
+        = new Resonances::GS("rho0",
+                             fixAmps ? Variable("rho0_amp_real", 0.565) : Variable("rho0_amp_real", 0.565, 0.001, 0, 0),
+                             fixAmps ? Variable("rho0_amp_imag", 0.164) : Variable("rho0_amp_imag", 0.164, 0.1, 0, 0),
+                             fixedRhoMass,
+                             fixedRhoWidth,
+                             1,
+                             PAIR_23);
 
-    Variable rho1450Mass  ("rhop_1450_mass", 1.465, 0.01, 1.0, 2.0);
-    Variable rho1450Width ("rhop_1450_width", 0.400, 0.01, 0.01, 5.0);
+    Variable rho1450Mass("rhop_1450_mass", 1.465, 0.01, 1.0, 2.0);
+    Variable rho1450Width("rhop_1450_width", 0.400, 0.01, 0.01, 5.0);
 
     ResonancePdf *rhop_1450 = new Resonances::RBW(
         "rhop_1450",
@@ -615,8 +603,8 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
         1,
         PAIR_13);
 
-    Variable rho1700Mass  ("rhop_1700_mass", 1.720, 0.01, 1.6, 1.9);
-    Variable rho1700Width ("rhop_1700_width", 0.250, 0.01, 0.1, 1.0);
+    Variable rho1700Mass("rhop_1700_mass", 1.720, 0.01, 1.6, 1.9);
+    Variable rho1700Width("rhop_1700_width", 0.250, 0.01, 0.1, 1.0);
 
     ResonancePdf *rhop_1700 = new Resonances::RBW(
         "rhop_1700",
@@ -655,38 +643,35 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
                                                0,
                                                PAIR_23);
 
-    ResonancePdf *f0_1370
-        = new Resonances::RBW("f0_1370",
-                              fixAmps ? Variable("f0_1370_amp_real", -0.058 * (-_mD02))
-                                      : Variable("f0_1370_amp_real", -0.058 * (-_mD02), 0.001, 0, 0),
-                              fixAmps ? Variable("f0_1370_amp_imag", 0.026 * (-_mD02))
-                                      : Variable("f0_1370_amp_imag", 0.026 * (-_mD02), 0.1, 0, 0),
-                              Variable("f0_1370_mass", 1.434, 0.01, 1.2, 1.6),
-                              Variable("f0_1370_width", 0.173, 0.01, 0.01, 0.4),
-                              0,
-                              PAIR_23);
+    ResonancePdf *f0_1370 = new Resonances::RBW("f0_1370",
+                                                fixAmps ? Variable("f0_1370_amp_real", -0.058 * (-_mD02))
+                                                        : Variable("f0_1370_amp_real", -0.058 * (-_mD02), 0.001, 0, 0),
+                                                fixAmps ? Variable("f0_1370_amp_imag", 0.026 * (-_mD02))
+                                                        : Variable("f0_1370_amp_imag", 0.026 * (-_mD02), 0.1, 0, 0),
+                                                Variable("f0_1370_mass", 1.434, 0.01, 1.2, 1.6),
+                                                Variable("f0_1370_width", 0.173, 0.01, 0.01, 0.4),
+                                                0,
+                                                PAIR_23);
 
-    ResonancePdf *f0_1500
-        = new Resonances::RBW("f0_1500",
-                              fixAmps ? Variable("f0_1500_amp_real", 0.057 * (-_mD02))
-                                      : Variable("f0_1500_amp_real", 0.057 * (-_mD02), 0.001, 0, 0),
-                              fixAmps ? Variable("f0_1500_amp_imag", 0.012 * (-_mD02))
-                                      : Variable("f0_1500_amp_imag", 0.012 * (-_mD02), 0.1, 0, 0),
-                              Variable("f0_1500_mass", 1.507, 0.01, 1.3, 1.7),
-                              Variable("f0_1500_width", 0.109, 0.01, 0.01, 0.3),
-                              0,
-                              PAIR_23);
+    ResonancePdf *f0_1500 = new Resonances::RBW("f0_1500",
+                                                fixAmps ? Variable("f0_1500_amp_real", 0.057 * (-_mD02))
+                                                        : Variable("f0_1500_amp_real", 0.057 * (-_mD02), 0.001, 0, 0),
+                                                fixAmps ? Variable("f0_1500_amp_imag", 0.012 * (-_mD02))
+                                                        : Variable("f0_1500_amp_imag", 0.012 * (-_mD02), 0.1, 0, 0),
+                                                Variable("f0_1500_mass", 1.507, 0.01, 1.3, 1.7),
+                                                Variable("f0_1500_width", 0.109, 0.01, 0.01, 0.3),
+                                                0,
+                                                PAIR_23);
 
-    ResonancePdf *f0_1710
-        = new Resonances::RBW("f0_1710",
-                              fixAmps ? Variable("f0_1710_amp_real", 0.070 * (-_mD02))
-                                      : Variable("f0_1710_amp_real", 0.070 * (-_mD02), 0.001, 0, 0),
-                              fixAmps ? Variable("f0_1710_amp_imag", 0.087 * (-_mD02))
-                                      : Variable("f0_1710_amp_imag", 0.087 * (-_mD02), 0.1, 0, 0),
-                              Variable("f0_1710_mass", 1.714, 0.01, 1.5, 2.9),
-                              Variable("f0_1710_width", 0.140, 0.01, 0.01, 0.5),
-                              0,
-                              PAIR_23);
+    ResonancePdf *f0_1710 = new Resonances::RBW("f0_1710",
+                                                fixAmps ? Variable("f0_1710_amp_real", 0.070 * (-_mD02))
+                                                        : Variable("f0_1710_amp_real", 0.070 * (-_mD02), 0.001, 0, 0),
+                                                fixAmps ? Variable("f0_1710_amp_imag", 0.087 * (-_mD02))
+                                                        : Variable("f0_1710_amp_imag", 0.087 * (-_mD02), 0.1, 0, 0),
+                                                Variable("f0_1710_mass", 1.714, 0.01, 1.5, 2.9),
+                                                Variable("f0_1710_width", 0.140, 0.01, 0.01, 0.5),
+                                                0,
+                                                PAIR_23);
 
     ResonancePdf *f2_1270
         = new Resonances::RBW("f2_1270",
@@ -709,11 +694,10 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
                                                0,
                                                PAIR_23);
 
-    ResonancePdf *nonr = new Resonances::NonRes("nonr",
-                                                fixAmps ? Variable("nonr_amp_real", 0.5595 * (-1))
-                                                        : Variable("nonr_amp_real", 0.5595 * (-1), 0.001, 0, 0),
-                                                fixAmps ? Variable("nonr_amp_imag", -0.108761 * (-1))
-                                                        : Variable("nonr_amp_imag", -0.108761 * (-1), 0.1, 0, 0));
+    ResonancePdf *nonr = new Resonances::NonRes(
+        "nonr",
+        fixAmps ? Variable("nonr_amp_real", 0.5595 * (-1)) : Variable("nonr_amp_real", 0.5595 * (-1), 0.001, 0, 0),
+        fixAmps ? Variable("nonr_amp_imag", -0.108761 * (-1)) : Variable("nonr_amp_imag", -0.108761 * (-1), 0.1, 0, 0));
 
     dtop0pp.resonances.push_back(nonr);
     dtop0pp.resonances.push_back(rhop);
@@ -751,8 +735,7 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
         dtop0pp.resonances.push_back(f0_600);
 
     if(!fitMasses) {
-        for(vector<ResonancePdf *>::iterator res = dtop0pp.resonances.begin(); res != dtop0pp.resonances.end();
-            ++res) {
+        for(vector<ResonancePdf *>::iterator res = dtop0pp.resonances.begin(); res != dtop0pp.resonances.end(); ++res) {
             (*res)->setParameterConstantness(true);
         }
     }
@@ -776,7 +759,7 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
         if(massd0) {
             for(int i = 0; i < mdslices; ++i) {
                 sprintf(strbuffer, "coreFrac_%i", i);
-                Variable coreFrac (strbuffer, 0.90, 0.001, 0.55, 0.999);
+                Variable coreFrac(strbuffer, 0.90, 0.001, 0.55, 0.999);
                 sprintf(strbuffer, "coreBias_%i", i);
                 //	Variable* coreBias = new Variable(strbuffer, 0.1, 0.001, -0.20, 0.30);
                 Variable coreBias(strbuffer, -0.1, 0.001, -0.20, 0.30);
@@ -784,7 +767,7 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
                 Variable coreScaleFactor(strbuffer, 0.96, 0.001, 0.20, 1.50);
                 sprintf(strbuffer, "tailScaleFactor_%i", i);
                 Variable tailScaleFactor(strbuffer, 1.63, 0.001, 0.90, 6.00);
-                resolution                = new ThreeGaussResolution(coreFrac,
+                resolution = new ThreeGaussResolution(coreFrac,
                                                       constantOne,
                                                       coreBias,
                                                       coreScaleFactor,
@@ -795,9 +778,9 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
                 resList.push_back(resolution);
             }
         } else {
-            Variable coreFrac ("coreFrac", 0.90, 0.001, 0.35, 0.999);
+            Variable coreFrac("coreFrac", 0.90, 0.001, 0.35, 0.999);
             // Variable* tailFrac = new Variable("tailFrac", 0.90, 0.001, 0.80, 1.00);
-            Variable coreBias       ("coreBias", 0.0, 0.001, -0.20, 0.30);
+            Variable coreBias("coreBias", 0.0, 0.001, -0.20, 0.30);
             Variable coreScaleFactor("coreScaleFactor", 0.96, 0.001, 0.20, 1.50);
             // Variable* tailBias = new Variable("tailBias", 0);
             Variable tailScaleFactor("tailScaleFactor", 1.63, 0.001, 0.90, 6.00);
@@ -856,9 +839,9 @@ GooPdf *makeFlatBkgDalitzPdf(bool fixem = true) {
     coefficients.push_back(constantOne);
 
     PolynomialPdf *poly = new PolynomialPdf("flatbkgPdf", observables, coefficients, offsets, 0);
-    Variable g_mean ("g_mean", toyBkgTimeMean, 0.01, -0.2, 0.5);
+    Variable g_mean("g_mean", toyBkgTimeMean, 0.01, -0.2, 0.5);
     Variable g_sigma("g_sigma", toyBkgTimeRMS, 0.01, 0.15, 1.5);
-    GooPdf *gt          = new GaussianPdf("flatbkg_timepdf", *dtime, g_mean, g_sigma);
+    GooPdf *gt = new GaussianPdf("flatbkg_timepdf", *dtime, g_mean, g_sigma);
     comps.clear();
     comps.push_back(poly);
     comps.push_back(gt);
@@ -2080,7 +2063,7 @@ void makeDalitzPlots(GooPdf *overallSignal, std::string plotdir = "./plots_from_
 
     std::cout << "Max bin content: " << maxBinContent << " (" << bestI << ", " << bestJ << ")\n";
 
-    bool dependsOnSigma             = true;
+    bool dependsOnSigma           = true;
     std::vector<Observable> obses = overallSignal->getObservables();
 
     if(std::find(obses.begin(), obses.end(), *sigma) == obses.end())
@@ -2524,7 +2507,7 @@ GooPdf *make_m23_transform() {
     obses.clear();
     coefficients.clear();
     obses.push_back(*m12); // Fake dependence; CompositePdf will create a fake event using this index.
-    limits.push_back(0);  // Bins of m23 start at 0.
+    limits.push_back(0);   // Bins of m23 start at 0.
     binSizes.push_back(3.0 / m23Slices);
     numBins.push_back(m23Slices);
     BinTransformPdf *m23_binMap = new BinTransformPdf("m23_binMap", obses, limits, binSizes, numBins);
@@ -2829,7 +2812,7 @@ int runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
 
     TRandom donram(42);
     std::vector<Observable> vars = data->getObservables();
-    UnbinnedDataSet *smearedData   = new UnbinnedDataSet(vars);
+    UnbinnedDataSet *smearedData = new UnbinnedDataSet(vars);
 
     if(0 != genResolutions) {
         int numEvents = data->getNumEvents();
@@ -3065,10 +3048,10 @@ GooPdf *makeBkg2_sigma() {
     // JohnsonSUPdf* bkg2_sigma_js = new JohnsonSUPdf("bkg2_sigma_js", sigma, bkg2_sigma_js_meana, bkg2_sigma_js_sigma,
     // bkg2_sigma_js_gamma, bkg2_sigma_js_delta);
 
-    Variable bkg2_sigma_js_meana ("bkg2_sigma_js_meana", 0.35, 0.01, 0.00, 0.60);
-    Variable bkg2_sigma_js_sigma ("bkg2_sigma_js_sigma", 0.09, 0.01, 0, 0.4);
-    Variable bkg2_sigma_js_gamma ("bkg2_sigma_js_gamma", 2.00, 0.10, 0, 10);
-    Variable bkg2_sigma_js_delta ("bkg2_sigma_js_delta", 2);
+    Variable bkg2_sigma_js_meana("bkg2_sigma_js_meana", 0.35, 0.01, 0.00, 0.60);
+    Variable bkg2_sigma_js_sigma("bkg2_sigma_js_sigma", 0.09, 0.01, 0, 0.4);
+    Variable bkg2_sigma_js_gamma("bkg2_sigma_js_gamma", 2.00, 0.10, 0, 10);
+    Variable bkg2_sigma_js_delta("bkg2_sigma_js_delta", 2);
     CrystalBallPdf *bkg2_sigma_js = new CrystalBallPdf(
         "bkg2_sigma_js", *sigma, bkg2_sigma_js_meana, bkg2_sigma_js_sigma, bkg2_sigma_js_gamma, bkg2_sigma_js_delta);
 
@@ -3101,10 +3084,10 @@ GooPdf *makeBkg4_sigma() {
     Variable bkg4_sigma_num_ga1("bkg4_sigma_num_ga1", 2400, 200, 500, 7000);
     Variable bkg4_sigma_num_ga2("bkg4_sigma_num_ga2", 2900, 200, 500, 7000);
 
-    Variable bkg4_sigma_g1_meana ("bkg4_sigma_g1_meana", 0.35, 0.01, 0.10, 0.50);
-    Variable bkg4_sigma_g1_sigma ("bkg4_sigma_g1_sigma", 0.30, 0.01, 0.05, 0.55);
-    Variable bkg4_sigma_g2_meana ("bkg4_sigma_g2_meana", 0.80, 0.01, 0.01, 1.50);
-    Variable bkg4_sigma_g2_sigma ("bkg4_sigma_g2_sigma", 0.90, 0.01, 0.01, 2.75);
+    Variable bkg4_sigma_g1_meana("bkg4_sigma_g1_meana", 0.35, 0.01, 0.10, 0.50);
+    Variable bkg4_sigma_g1_sigma("bkg4_sigma_g1_sigma", 0.30, 0.01, 0.05, 0.55);
+    Variable bkg4_sigma_g2_meana("bkg4_sigma_g2_meana", 0.80, 0.01, 0.01, 1.50);
+    Variable bkg4_sigma_g2_sigma("bkg4_sigma_g2_sigma", 0.90, 0.01, 0.01, 2.75);
     // JohnsonSUPdf* bkg4_sigma_js = new JohnsonSUPdf("bkg4_sigma_js", sigma, bkg4_sigma_js_meana, bkg4_sigma_js_sigma,
     // bkg4_sigma_js_gamma, bkg4_sigma_js_delta);
 
@@ -3136,30 +3119,30 @@ GooPdf *makeBkg3_sigma() {
     // Variable* bkg3_sigma_js_sigma = new Variable("bkg3_sigma_js_sigma", 0.013, 0.01, 0, 0.2);
     // Variable* bkg3_sigma_js_gamma = new Variable("bkg3_sigma_js_gamma",-6.00, 1.00, -30, 0);
     // Variable* bkg3_sigma_js_delta = new Variable("bkg3_sigma_js_delta", 1.99, 0.10, 0.50, 5.00);
-    Variable bkg3_sigma_frac_jsu ("bkg3_sigma_frac_jsu", 0.50, 0.01, 0.01, 1.00);
-    Variable bkg3_sigma_frac_ga1 ("bkg3_sigma_frac_ga1", 0.04, 0.01, 0.01, 0.20);
+    Variable bkg3_sigma_frac_jsu("bkg3_sigma_frac_jsu", 0.50, 0.01, 0.01, 1.00);
+    Variable bkg3_sigma_frac_ga1("bkg3_sigma_frac_ga1", 0.04, 0.01, 0.01, 0.20);
 
     // Variable* bkg3_sigma_num_jsu = new Variable("bkg3_sigma_num_jsu", 11000, 200, 1000, 35000);
     // Variable* bkg3_sigma_num_ga1 = new Variable("bkg3_sigma_num_ga1", 9400, 200, 500, 10000);
     // Variable* bkg3_sigma_num_ga2 = new Variable("bkg3_sigma_num_ga2", 3900, 200, 500, 17000);
     // Variable* bkg3_sigma_num_ga3 = new Variable("bkg3_sigma_num_ga3", 3900, 200, 500, 7000);
 
-    Variable bkg3_sigma_g1_meana ("bkg3_sigma_g1_meana", 0.35, 0.01, 0.10, 0.50);
-    Variable bkg3_sigma_g1_sigma ("bkg3_sigma_g1_sigma", 0.10, 0.01, 0.01, 0.55);
-    Variable bkg3_sigma_g2_meana ("bkg3_sigma_g2_meana", 0.20, 0.01, 0.01, 1.50);
-    Variable bkg3_sigma_g2_sigma ("bkg3_sigma_g2_sigma", 0.10, 0.01, 0.001, 0.15);
-    Variable bkg3_sigma_g2_gamma ("bkg3_sigma_g2_gamma", -2.00, 1.00, -10, 10);
-    Variable bkg3_sigma_g2_delta ("bkg3_sigma_g2_delta", 2, 0.10, 0.50, 5.00);
+    Variable bkg3_sigma_g1_meana("bkg3_sigma_g1_meana", 0.35, 0.01, 0.10, 0.50);
+    Variable bkg3_sigma_g1_sigma("bkg3_sigma_g1_sigma", 0.10, 0.01, 0.01, 0.55);
+    Variable bkg3_sigma_g2_meana("bkg3_sigma_g2_meana", 0.20, 0.01, 0.01, 1.50);
+    Variable bkg3_sigma_g2_sigma("bkg3_sigma_g2_sigma", 0.10, 0.01, 0.001, 0.15);
+    Variable bkg3_sigma_g2_gamma("bkg3_sigma_g2_gamma", -2.00, 1.00, -10, 10);
+    Variable bkg3_sigma_g2_delta("bkg3_sigma_g2_delta", 2, 0.10, 0.50, 5.00);
     // Variable* bkg3_sigma_g3_meana = new Variable("bkg3_sigma_g3_meana", 0.20, 0.01, 0.01, 1.50);
     // Variable* bkg3_sigma_g3_sigma = new Variable("bkg3_sigma_g3_sigma", 0.20, 0.01, 0.01, 0.75);
     // Variable* bkg3_sigma_g2_width = new Variable("bkg3_sigma_g2_width", 0.10, 0.01, 0.01, 0.75);
     // JohnsonSUPdf* bkg3_sigma_js = new JohnsonSUPdf("bkg3_sigma_js", sigma, bkg3_sigma_js_meana, bkg3_sigma_js_sigma,
     // bkg3_sigma_js_gamma, bkg3_sigma_js_delta);
 
-    Variable bkg3_sigma_js_meana ("bkg3_sigma_js_meana", 0.35, 0.01, 0.00, 0.60);
-    Variable bkg3_sigma_js_sigma ("bkg3_sigma_js_sigma", 0.09, 0.01, 0, 0.40);
-    Variable bkg3_sigma_js_gamma ("bkg3_sigma_js_gamma", 2.00, 0.10, 0, 10);
-    Variable bkg3_sigma_js_delta ("bkg3_sigma_js_delta", 2);
+    Variable bkg3_sigma_js_meana("bkg3_sigma_js_meana", 0.35, 0.01, 0.00, 0.60);
+    Variable bkg3_sigma_js_sigma("bkg3_sigma_js_sigma", 0.09, 0.01, 0, 0.40);
+    Variable bkg3_sigma_js_gamma("bkg3_sigma_js_gamma", 2.00, 0.10, 0, 10);
+    Variable bkg3_sigma_js_delta("bkg3_sigma_js_delta", 2);
     CrystalBallPdf *bkg3_sigma_js = new CrystalBallPdf(
         "bkg3_sigma_js", *sigma, bkg3_sigma_js_meana, bkg3_sigma_js_sigma, bkg3_sigma_js_gamma, bkg3_sigma_js_delta);
     // JohnsonSUPdf* bkg3_sigma_js = new JohnsonSUPdf("bkg3_sigma_js", sigma, bkg3_sigma_js_meana, bkg3_sigma_js_sigma,
@@ -3294,7 +3277,7 @@ GooPdf *makeExpGausTimePdf(int bkg) {
     ExpGausPdf *exp1 = new ExpGausPdf((bkgname + "_exp1"), *dtime, g1_mean, g1_sigm, e1_alph);
     ExpGausPdf *exp2 = new ExpGausPdf((bkgname + "_exp2"), *dtime, g2_mean, g2_sigm, e2_alph);
 
-    Variable frac1 ((bkgname + "_dtime_frac1"), 0.1, 0.01, 0, 0.8);
+    Variable frac1((bkgname + "_dtime_frac1"), 0.1, 0.01, 0, 0.8);
 
     GooPdf *ret = new AddPdf((bkgname + "_dtime"), frac1, exp1, exp2);
 
@@ -3321,28 +3304,28 @@ GooPdf *makeBkg2DalitzPdf(bool fixem = true) {
         // Recurring factor 3 offsets division by total weight in AddPdf.
         coefficients.push_back(Variable("bkg2_x0y0", 1.0 * weightOffset));
         coefficients.push_back(
-             Variable("bkg2_x1y0", 0.13184 * weightOffset, 0.01, 0.01 * weightOffset, 0.18 * weightOffset));
+            Variable("bkg2_x1y0", 0.13184 * weightOffset, 0.01, 0.01 * weightOffset, 0.18 * weightOffset));
         coefficients.push_back(
-             Variable("bkg2_x2y0", 0.02062 * weightOffset, 0.01, 0.00 * weightOffset, 0.17 * weightOffset));
+            Variable("bkg2_x2y0", 0.02062 * weightOffset, 0.01, 0.00 * weightOffset, 0.17 * weightOffset));
         coefficients.push_back(
-             Variable("bkg2_x3y0", 0.04688 * weightOffset, 0.01, 0.00 * weightOffset, 0.08 * weightOffset));
+            Variable("bkg2_x3y0", 0.04688 * weightOffset, 0.01, 0.00 * weightOffset, 0.08 * weightOffset));
         coefficients.push_back(
-             Variable("bkg2_x0y1", -0.02568 * weightOffset, 0.01, -0.15 * weightOffset, 0.04 * weightOffset));
+            Variable("bkg2_x0y1", -0.02568 * weightOffset, 0.01, -0.15 * weightOffset, 0.04 * weightOffset));
         coefficients.push_back(
-             Variable("bkg2_x1y1", 0.06805 * weightOffset, 0.01, 0.02 * weightOffset, 0.10 * weightOffset));
+            Variable("bkg2_x1y1", 0.06805 * weightOffset, 0.01, 0.02 * weightOffset, 0.10 * weightOffset));
         coefficients.push_back(
-             Variable("bkg2_x2y1", 0.38557 * weightOffset, 0.01, 0.30 * weightOffset, 0.50 * weightOffset));
+            Variable("bkg2_x2y1", 0.38557 * weightOffset, 0.01, 0.30 * weightOffset, 0.50 * weightOffset));
         coefficients.push_back(
-             Variable("bkg2_x0y2", 0.11252 * weightOffset, 0.01, 0.05 * weightOffset, 0.20 * weightOffset));
+            Variable("bkg2_x0y2", 0.11252 * weightOffset, 0.01, 0.05 * weightOffset, 0.20 * weightOffset));
         coefficients.push_back(
-             Variable("bkg2_x1y2", 0.24896 * weightOffset, 0.01, 0.20 * weightOffset, 0.50 * weightOffset));
+            Variable("bkg2_x1y2", 0.24896 * weightOffset, 0.01, 0.20 * weightOffset, 0.50 * weightOffset));
         coefficients.push_back(
-             Variable("bkg2_x0y3", 0.05605 * weightOffset, 0.01, -0.05 * weightOffset, 0.15 * weightOffset));
+            Variable("bkg2_x0y3", 0.05605 * weightOffset, 0.01, -0.05 * weightOffset, 0.15 * weightOffset));
 
         PolynomialPdf *poly = new PolynomialPdf("bkg2Pdf", observables, coefficients, offsets, 3);
 
-        Variable bkg2_decZmin ("bkg2_decZmin", 3.30411);
-        Variable bkg2_conZmin ("bkg2_conZmin", 0.29909);
+        Variable bkg2_decZmin("bkg2_decZmin", 3.30411);
+        Variable bkg2_conZmin("bkg2_conZmin", 0.29909);
         TrigThresholdPdf *bkg2_loZ
             = new TrigThresholdPdf("bkg2_loZ", *m12, *m13, minDalitzZ, bkg2_decZmin, bkg2_conZmin, massSum, false);
         // bkg2_loZ->setDebugMask(1);
@@ -3357,7 +3340,7 @@ GooPdf *makeBkg2DalitzPdf(bool fixem = true) {
 
         // One omega->pipipi0 reflection.
         // Factor 3 in amplitudes is to offset division by total weight in AddPdf.
-        DecayInfo3 special_rho_decay ;
+        DecayInfo3 special_rho_decay;
         special_rho_decay.motherMass   = _mD0;
         special_rho_decay.daug1Mass    = piZeroMass;
         special_rho_decay.daug2Mass    = piPlusMass;
@@ -3373,9 +3356,9 @@ GooPdf *makeBkg2DalitzPdf(bool fixem = true) {
             PAIR_13);
         special_rho_decay.resonances.push_back(bkg2_rho_ref);
 
-        Variable bkg2_rho_poly_offset ("bkg2_rho_poly_offset", 1.64254);
-        Variable bkg2_rho_poly_linear ("bkg2_rho_poly_linear", 0);
-        Variable bkg2_rho_poly_second ("bkg2_rho_poly_second", -0.48166);
+        Variable bkg2_rho_poly_offset("bkg2_rho_poly_offset", 1.64254);
+        Variable bkg2_rho_poly_linear("bkg2_rho_poly_linear", 0);
+        Variable bkg2_rho_poly_second("bkg2_rho_poly_second", -0.48166);
         weights.clear();
         weights.push_back(constantOne);
         weights.push_back(bkg2_rho_poly_linear);
@@ -3652,17 +3635,17 @@ GooPdf *makeBackground3DalitzParam() {
     coefficients.push_back(
         Variable("bkg3_x1y0", -0.36937 * weightOffset, 0.01, -1.50 * weightOffset, 0.00 * weightOffset));
     coefficients.push_back(
-         Variable("bkg3_x2y0", 1.36184 * weightOffset, 0.01, -0.10 * weightOffset, 1.60 * weightOffset));
+        Variable("bkg3_x2y0", 1.36184 * weightOffset, 0.01, -0.10 * weightOffset, 1.60 * weightOffset));
     // coefficients.push_back(new Variable("bkg3_x3y0", -0.43177 * weightOffset, 0.01,-1.60*weightOffset,
     // 0.60*weightOffset));
     coefficients.push_back(
-         Variable("bkg3_x0y1", -0.27691 * weightOffset, 0.01, -1.50 * weightOffset, 0.00 * weightOffset));
+        Variable("bkg3_x0y1", -0.27691 * weightOffset, 0.01, -1.50 * weightOffset, 0.00 * weightOffset));
     coefficients.push_back(
-         Variable("bkg3_x1y1", 2.16029 * weightOffset, 0.01, 0.30 * weightOffset, 4.50 * weightOffset));
+        Variable("bkg3_x1y1", 2.16029 * weightOffset, 0.01, 0.30 * weightOffset, 4.50 * weightOffset));
     // coefficients.push_back(new Variable("bkg3_x2y1", -2.04133 * weightOffset, 0.01,-2.50*weightOffset,
     // 1.50*weightOffset));
     coefficients.push_back(
-         Variable("bkg3_x0y2", 1.33100 * weightOffset, 0.01, 1.00 * weightOffset, 2.00 * weightOffset));
+        Variable("bkg3_x0y2", 1.33100 * weightOffset, 0.01, 1.00 * weightOffset, 2.00 * weightOffset));
     // coefficients.push_back(new Variable("bkg3_x1y2", -1.88226 * weightOffset, 0.01,-2.20*weightOffset,
     // 1.00*weightOffset));
     // coefficients.push_back(new Variable("bkg3_x0y3", -0.58920 * weightOffset, 0.01,-1.00*weightOffset,
@@ -3758,28 +3741,28 @@ GooPdf *makeBackground3DalitzParam() {
         "bkg3_incRho0",
         Variable("bkg3_incRho0_amp", 0.00807 * weightOffset, 0.01, 0.00 * weightOffset, 0.25 * weightOffset),
         constantZero,
-         Variable("bkg3_incRho0_mass", 0.800, 0.01, 0.6, 1.0),
-         Variable("bkg3_incRho0_width", 0.15, 0.01, 0.10, 0.40),
+        Variable("bkg3_incRho0_mass", 0.800, 0.01, 0.6, 1.0),
+        Variable("bkg3_incRho0_width", 0.15, 0.01, 0.10, 0.40),
         1, // These rhos are spin 1, being bad signal.
         PAIR_23);
     incoherent_rhos.resonances.push_back(bkg3_incRho0);
 
     ResonancePdf *bkg3_incRhoP = new Resonances::RBW(
         "bkg3_incRhoP",
-         Variable("bkg3_incRhoP_amp", 0.01683 * weightOffset, 0.01, 0.00 * weightOffset, 0.25 * weightOffset),
+        Variable("bkg3_incRhoP_amp", 0.01683 * weightOffset, 0.01, 0.00 * weightOffset, 0.25 * weightOffset),
         constantZero,
-         Variable("bkg3_incRhoP_mass", 0.800, 0.01, 0.6, 1.0),
-         Variable("bkg3_incRhoP_width", 0.15, 0.01, 0.10, 0.40),
+        Variable("bkg3_incRhoP_mass", 0.800, 0.01, 0.6, 1.0),
+        Variable("bkg3_incRhoP_width", 0.15, 0.01, 0.10, 0.40),
         1,
         PAIR_12);
     incoherent_rhos.resonances.push_back(bkg3_incRhoP);
 
     ResonancePdf *bkg3_incRhoM = new Resonances::RBW(
         "bkg3_incRhoM",
-         Variable("bkg3_incRhoM_amp", 0.01645 * weightOffset, 0.01, 0.00 * weightOffset, 0.25 * weightOffset),
+        Variable("bkg3_incRhoM_amp", 0.01645 * weightOffset, 0.01, 0.00 * weightOffset, 0.25 * weightOffset),
         constantZero,
-         Variable("bkg3_incRhoM_mass", 0.900, 0.01, 0.6, 1.0),
-         Variable("bkg3_incRhoM_width", 0.35, 0.01, 0.10, 0.60),
+        Variable("bkg3_incRhoM_mass", 0.900, 0.01, 0.6, 1.0),
+        Variable("bkg3_incRhoM_width", 0.35, 0.01, 0.10, 0.60),
         1,
         PAIR_13);
     incoherent_rhos.resonances.push_back(bkg3_incRhoM);
@@ -3821,30 +3804,30 @@ GooPdf *makeBackground4DalitzParam() {
     double weightOffset = 3;
     // coefficients.push_back(new Variable("bkg4_x0y0",  1.0 * weightOffset, 0.01, 0.50*weightOffset,
     // 1.50*weightOffset));
-    coefficients.push_back( Variable("bkg4_x0y0", 1.0 * weightOffset));
+    coefficients.push_back(Variable("bkg4_x0y0", 1.0 * weightOffset));
     coefficients.push_back(
-         Variable("bkg4_x1y0", -0.18594 * weightOffset, 0.01, -0.50 * weightOffset, 0.50 * weightOffset));
+        Variable("bkg4_x1y0", -0.18594 * weightOffset, 0.01, -0.50 * weightOffset, 0.50 * weightOffset));
     coefficients.push_back(
-         Variable("bkg4_x2y0", 0.45459 * weightOffset, 0.01, 0.25 * weightOffset, 0.75 * weightOffset));
+        Variable("bkg4_x2y0", 0.45459 * weightOffset, 0.01, 0.25 * weightOffset, 0.75 * weightOffset));
     coefficients.push_back(
-         Variable("bkg4_x3y0", -0.20869 * weightOffset, 0.01, -0.50 * weightOffset, 0.50 * weightOffset));
+        Variable("bkg4_x3y0", -0.20869 * weightOffset, 0.01, -0.50 * weightOffset, 0.50 * weightOffset));
     coefficients.push_back(
-         Variable("bkg4_x0y1", -0.65061 * weightOffset, 0.01, -1.50 * weightOffset, 0.50 * weightOffset));
+        Variable("bkg4_x0y1", -0.65061 * weightOffset, 0.01, -1.50 * weightOffset, 0.50 * weightOffset));
     coefficients.push_back(
-         Variable("bkg4_x1y1", 0.11000 * weightOffset, 0.01, 0.00 * weightOffset, 0.50 * weightOffset));
+        Variable("bkg4_x1y1", 0.11000 * weightOffset, 0.01, 0.00 * weightOffset, 0.50 * weightOffset));
     coefficients.push_back(
-         Variable("bkg4_x2y1", 0.42009 * weightOffset, 0.01, 0.25 * weightOffset, 1.00 * weightOffset));
+        Variable("bkg4_x2y1", 0.42009 * weightOffset, 0.01, 0.25 * weightOffset, 1.00 * weightOffset));
     coefficients.push_back(
-         Variable("bkg4_x0y2", -0.06151 * weightOffset, 0.01, -0.50 * weightOffset, 0.50 * weightOffset));
+        Variable("bkg4_x0y2", -0.06151 * weightOffset, 0.01, -0.50 * weightOffset, 0.50 * weightOffset));
     coefficients.push_back(
-         Variable("bkg4_x1y2", 0.58508 * weightOffset, 0.01, 0.20 * weightOffset, 1.50 * weightOffset));
+        Variable("bkg4_x1y2", 0.58508 * weightOffset, 0.01, 0.20 * weightOffset, 1.50 * weightOffset));
     coefficients.push_back(
-         Variable("bkg4_x0y3", 0.54740 * weightOffset, 0.01, 0.20 * weightOffset, 1.50 * weightOffset));
+        Variable("bkg4_x0y3", 0.54740 * weightOffset, 0.01, 0.20 * weightOffset, 1.50 * weightOffset));
 
     PolynomialPdf *poly = new PolynomialPdf("bkg4Pdf", observables, coefficients, offsets, 3);
 
-    Variable bkg4_decZmin ("bkg4_decZmin", 2.77576);
-    Variable bkg4_conZmin ("bkg4_conZmin", 0.23328);
+    Variable bkg4_decZmin("bkg4_decZmin", 2.77576);
+    Variable bkg4_conZmin("bkg4_conZmin", 0.23328);
     TrigThresholdPdf *bkg4_loZ
         = new TrigThresholdPdf("bkg4_loZ", *m12, *m13, minDalitzZ, bkg4_decZmin, bkg4_conZmin, massSum, false);
 
@@ -3865,10 +3848,10 @@ GooPdf *makeBackground4DalitzParam() {
     special_pipi_decay.meson_radius = 1.5;
 
     ResonancePdf *bkg4_pipi_ref = new Resonances::Gauss("bkg4_pipi_ref",
-                                                         Variable("bkg4_pipi_ref_amp", 0.00147 * weightOffset),
+                                                        Variable("bkg4_pipi_ref_amp", 0.00147 * weightOffset),
                                                         constantZero,
-                                                         Variable("bkg4_pipi_ref_mass", 1.32447),
-                                                         Variable("bkg4_pipi_ref_width", 0.04675),
+                                                        Variable("bkg4_pipi_ref_mass", 1.32447),
+                                                        Variable("bkg4_pipi_ref_width", 0.04675),
                                                         PAIR_23);
     special_pipi_decay.resonances.push_back(bkg4_pipi_ref);
 
@@ -3916,7 +3899,7 @@ GooPdf *makeBackground4DalitzParam() {
     incoherent_rho0s.meson_radius = 0; // Mikhail uses zero radius for incoherent resonances.
 
     ResonancePdf *bkg4_incRho0 = new Resonances::RBW("bkg4_incRho0",
-                                                      Variable("bkg4_incRho0_amp", 0.00429 * weightOffset),
+                                                     Variable("bkg4_incRho0_amp", 0.00429 * weightOffset),
                                                      constantZero,
                                                      fixedRhoMass,
                                                      fixedRhoWidth,
@@ -3925,7 +3908,7 @@ GooPdf *makeBackground4DalitzParam() {
     incoherent_rho0s.resonances.push_back(bkg4_incRho0);
 
     ResonancePdf *bkg4_incRhoP = new Resonances::RBW("bkg4_incRhoP",
-                                                      Variable("bkg4_incRhoP_amp", 0.00705 * weightOffset),
+                                                     Variable("bkg4_incRhoP_amp", 0.00705 * weightOffset),
                                                      constantZero,
                                                      fixedRhoMass,
                                                      fixedRhoWidth,
@@ -3934,7 +3917,7 @@ GooPdf *makeBackground4DalitzParam() {
     incoherent_rho0s.resonances.push_back(bkg4_incRhoP);
 
     ResonancePdf *bkg4_incRhoM = new Resonances::RBW("bkg4_incRhoM",
-                                                      Variable("bkg4_incRhoM_amp", -0.00043 * weightOffset),
+                                                     Variable("bkg4_incRhoM_amp", -0.00043 * weightOffset),
                                                      constantZero,
                                                      fixedRhoMass,
                                                      fixedRhoWidth,

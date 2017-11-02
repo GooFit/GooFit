@@ -55,8 +55,8 @@ using spline_t = std::tuple<fptype, fptype, unsigned int>;
 class RBW : public Lineshape {
   public:
     RBW(std::string name,
-        Variable *mass,
-        Variable *width,
+        Variable mass,
+        Variable width,
         unsigned int L,
         unsigned int Mpair,
         FF FormFac    = FF::BL_Prime,
@@ -68,8 +68,8 @@ class RBW : public Lineshape {
 class One : public Lineshape {
   public:
     One(std::string name,
-        Variable *mass,
-        Variable *width,
+        Variable mass,
+        Variable width,
         unsigned int L,
         unsigned int Mpair,
         FF FormFac    = FF::BL_Prime,
@@ -81,8 +81,8 @@ class One : public Lineshape {
 class LASS : public Lineshape {
   public:
     LASS(std::string name,
-         Variable *mass,
-         Variable *width,
+         Variable mass,
+         Variable width,
          unsigned int L,
          unsigned int Mpair,
          FF FormFac    = FF::BL_Prime,
@@ -94,8 +94,8 @@ class LASS : public Lineshape {
 class NonRes : public Lineshape {
   public:
     NonRes(std::string name,
-           Variable *mass,
-           Variable *width,
+           Variable mass,
+           Variable width,
            unsigned int L,
            unsigned int Mpair,
            FF FormFac    = FF::BL_Prime,
@@ -107,8 +107,8 @@ class NonRes : public Lineshape {
 class Bugg : public Lineshape {
   public:
     Bugg(std::string name,
-         Variable *mass,
-         Variable *width,
+         Variable mass,
+         Variable width,
          unsigned int L,
          unsigned int Mpair,
          FF FormFac    = FF::BL_Prime,
@@ -120,8 +120,8 @@ class Bugg : public Lineshape {
 class Bugg3 : public Lineshape {
   public:
     Bugg3(std::string name,
-          Variable *mass,
-          Variable *width,
+          Variable mass,
+          Variable width,
           unsigned int L,
           unsigned int Mpair,
           FF FormFac    = FF::BL_Prime,
@@ -133,8 +133,8 @@ class Bugg3 : public Lineshape {
 class Flatte : public Lineshape {
   public:
     Flatte(std::string name,
-           Variable *mass,
-           Variable *width,
+           Variable mass,
+           Variable width,
            unsigned int L,
            unsigned int Mpair,
            FF FormFac    = FF::BL_Prime,
@@ -146,8 +146,8 @@ class Flatte : public Lineshape {
 class SBW : public Lineshape {
   public:
     SBW(std::string name,
-        Variable *mass,
-        Variable *width,
+        Variable mass,
+        Variable width,
         unsigned int L,
         unsigned int Mpair,
         FF FormFac    = FF::BL_Prime,
@@ -161,8 +161,8 @@ class FOCUS : public Lineshape {
     enum class Mod { Kpi = 0, KEta, I32 };
     FOCUS(std::string name,
           Mod mod,
-          Variable *mass,
-          Variable *width,
+          Variable mass,
+          Variable width,
           unsigned int L,
           unsigned int Mpair,
           FF FormFac    = FF::BL_Prime,
@@ -176,14 +176,14 @@ class kMatrix : public Lineshape {
     kMatrix(std::string name,
             unsigned int pterm, //< 0 or 1
             bool is_pole,       //< False for prod
-            Variable *sA0,
-            Variable *sA,
-            Variable *s0_prod,
-            Variable *s0_scatt,
-            std::array<Variable *, 5> f,
-            std::array<Variable *, 5 * 6> poles,
-            Variable *mass,
-            Variable *width,
+            Variable sA0,
+            Variable sA,
+            Variable s0_prod,
+            Variable s0_scatt,
+            std::array<Variable, 5> f,
+            std::array<Variable, 5 * 6> poles,
+            Variable mass,
+            Variable width,
             unsigned int L,
             unsigned int Mpair,
             FF FormFac    = FF::BL_Prime,
@@ -195,13 +195,13 @@ class kMatrix : public Lineshape {
 class GLASS : public Lineshape {
   public:
     GLASS(std::string name,
-          Variable *mass,
-          Variable *width,
+          Variable mass,
+          Variable width,
           unsigned int L,
           unsigned int Mpair,
           FF FormFac,
           fptype radius,
-          std::vector<Variable *> AdditionalVars);
+          std::vector<Variable> AdditionalVars);
 
     ~GLASS() override = default;
 };
@@ -211,13 +211,13 @@ class GSpline : public Lineshape {
   public:
     /// The spline
     GSpline(std::string name,
-            Variable *mass,
-            Variable *width,
+            Variable mass,
+            Variable width,
             unsigned int L,
             unsigned int Mpair,
             FF FormFac,
             fptype radius,
-            std::vector<Variable *> AdditionalVars,
+            std::vector<Variable> AdditionalVars,
             spline_t SplineInfo);
 
     ~GSpline() override = default;
@@ -230,8 +230,8 @@ class Amplitude {
 
   public:
     Amplitude(std::string uniqueDecayStr,
-              Variable *ar,
-              Variable *ai,
+              Variable ar,
+              Variable ai,
               std::vector<Lineshape *> LS,
               std::vector<SpinFactor *> SF,
               unsigned int nPerm = 1);
@@ -240,8 +240,8 @@ class Amplitude {
 
   private:
     std::string _uniqueDecayStr;
-    Variable *_ar;
-    Variable *_ai;
+    Variable _ar;
+    Variable _ai;
     std::vector<SpinFactor *> _SF;
     std::vector<Lineshape *> _LS;
     unsigned int _nPerm;

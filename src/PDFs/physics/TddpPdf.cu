@@ -300,11 +300,11 @@ __device__ fptype device_Tddp(fptype *evt, fptype *p, unsigned int *indices) {
 __device__ device_function_ptr ptr_to_Tddp = device_Tddp;
 
 __host__ TddpPdf::TddpPdf(std::string n,
-                          Observable *_dtime,
-                          Observable *_sigmat,
-                          Observable *m12,
-                          Observable *m13,
-                          EventNumber *eventNumber,
+                          Observable _dtime,
+                          Observable _sigmat,
+                          Observable m12,
+                          Observable m13,
+                          EventNumber eventNumber,
                           DecayInfo *decay,
                           MixingTimeResolution *r,
                           GooPdf *efficiency,
@@ -329,7 +329,7 @@ __host__ TddpPdf::TddpPdf(std::string n,
     decayConstants[5] = 0;
 
     if(mistag) {
-        registerObservable(mistag);
+        registerObservable(*mistag);
         totalEventSize    = 6;
         decayConstants[5] = 1; // Flags existence of mistag
     }
@@ -399,15 +399,15 @@ __host__ TddpPdf::TddpPdf(std::string n,
 }
 
 __host__ TddpPdf::TddpPdf(std::string n,
-                          Observable *_dtime,
-                          Observable *_sigmat,
-                          Observable *m12,
-                          Observable *m13,
-                          EventNumber *eventNumber,
+                          Observable _dtime,
+                          Observable _sigmat,
+                          Observable m12,
+                          Observable m13,
+                          EventNumber eventNumber,
                           DecayInfo *decay,
                           std::vector<MixingTimeResolution *> &r,
                           GooPdf *efficiency,
-                          Observable *md0,
+                          Observable md0,
                           Observable *mistag)
     : GooPdf(_dtime, n)
     , decayInfo(decay)
@@ -429,11 +429,11 @@ __host__ TddpPdf::TddpPdf(std::string n,
 
     fptype decayConstants[8];
     decayConstants[5] = 0;
-    decayConstants[6] = md0->getLowerLimit();
-    decayConstants[7] = (md0->getUpperLimit() - md0->getLowerLimit()) / r.size();
+    decayConstants[6] = md0.getLowerLimit();
+    decayConstants[7] = (md0.getUpperLimit() - md0.getLowerLimit()) / r.size();
 
     if(mistag) {
-        registerObservable(mistag);
+        registerObservable(*mistag);
         totalEventSize++;
         decayConstants[5] = 1; // Flags existence of mistag
     }
@@ -561,18 +561,18 @@ __host__ fptype TddpPdf::normalize() const {
     MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams * sizeof(fptype), 0, cudaMemcpyHostToDevice);
     // std::cout << "TDDP normalisation " << getName() << std::endl;
 
-    int totalBins = _m12->getNumBins() * _m13->getNumBins();
+    int totalBins = _m12.getNumBins() * _m13.getNumBins();
 
     if(!dalitzNormRange) {
         gooMalloc((void **)&dalitzNormRange, 6 * sizeof(fptype));
 
         auto *host_norms = new fptype[6];
-        host_norms[0]    = _m12->getLowerLimit();
-        host_norms[1]    = _m12->getUpperLimit();
-        host_norms[2]    = _m12->getNumBins();
-        host_norms[3]    = _m13->getLowerLimit();
-        host_norms[4]    = _m13->getUpperLimit();
-        host_norms[5]    = _m13->getNumBins();
+        host_norms[0]    = _m12.getLowerLimit();
+        host_norms[1]    = _m12.getUpperLimit();
+        host_norms[2]    = _m12.getNumBins();
+        host_norms[3]    = _m13.getLowerLimit();
+        host_norms[4]    = _m13.getUpperLimit();
+        host_norms[5]    = _m13.getNumBins();
         MEMCPY(dalitzNormRange, host_norms, 6 * sizeof(fptype), cudaMemcpyHostToDevice);
         delete[] host_norms;
     }
@@ -716,8 +716,8 @@ __host__ fptype TddpPdf::normalize() const {
         dalitzIntegralOne, dalitzIntegralTwo, dalitzIntegralThr, dalitzIntegralFou, tau, xmixing, ymixing);
 
     double binSizeFactor = 1;
-    binSizeFactor *= ((_m12->getUpperLimit() - _m12->getLowerLimit()) / _m12->getNumBins());
-    binSizeFactor *= ((_m13->getUpperLimit() - _m13->getLowerLimit()) / _m13->getNumBins());
+    binSizeFactor *= ((_m12.getUpperLimit() - _m12.getLowerLimit()) / _m12.getNumBins());
+    binSizeFactor *= ((_m13.getUpperLimit() - _m13.getLowerLimit()) / _m13.getNumBins());
     ret *= binSizeFactor;
 
     host_normalisation[parameters] = 1.0 / ret;

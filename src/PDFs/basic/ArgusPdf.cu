@@ -52,20 +52,20 @@ __device__ fptype device_Argus_Lower(fptype *evt, fptype *p, unsigned int *indic
 __device__ device_function_ptr ptr_to_Argus_Upper = device_Argus_Upper;
 __device__ device_function_ptr ptr_to_Argus_Lower = device_Argus_Lower;
 
-__host__ ArgusPdf::ArgusPdf(std::string n, Observable *_x, Variable *m0, Variable *slope, bool upper, Variable *power)
+__host__ ArgusPdf::ArgusPdf(std::string n, Observable _x, Variable m0, Variable slope, bool upper) :
+    ArgusPdf(n, _x, m0, slope, upper, Variable(n + "powervar", 0.5)) {
+}
+    
+__host__ ArgusPdf::ArgusPdf(std::string n, Observable _x, Variable m0, Variable slope, bool upper, Variable power)
     : GooPdf(_x, n) {
     registerParameter(m0);
     registerParameter(slope);
-
-    if(!power)
-        power = new Variable(n + "powervar", 0.5);
-
     registerParameter(power);
 
     std::vector<unsigned int> pindices;
-    pindices.push_back(m0->getIndex());
-    pindices.push_back(slope->getIndex());
-    pindices.push_back(power->getIndex());
+    pindices.push_back(m0.getIndex());
+    pindices.push_back(slope.getIndex());
+    pindices.push_back(power.getIndex());
 
     if(upper) {
         GET_FUNCTION_ADDR(ptr_to_Argus_Upper);

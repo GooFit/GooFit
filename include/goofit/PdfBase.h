@@ -50,7 +50,8 @@ class UnbinnedDataSet;
 
 class PdfBase {
   public:
-    PdfBase(Observable *x, std::string n);
+    PdfBase(std::string n);
+    PdfBase(const Observable &x, std::string n);
     virtual ~PdfBase() = default;
 
     enum Specials { ForceSeparateNorm = 1, ForceCommonNorm = 2 };
@@ -73,6 +74,7 @@ class PdfBase {
     __host__ int getSpecialMask() const { return specialMask; }
 
     __host__ void setData(DataSet *data);
+    __host__ void setData(DataSet &data) {return setData(&data);}
     __host__ DataSet *getData();
 
     __host__ virtual void setFitControl(FitControl *const fc, bool takeOwnerShip = true) = 0;
@@ -83,11 +85,11 @@ class PdfBase {
 
     __host__ unsigned int getFunctionIndex() const { return functionIdx; }
     __host__ unsigned int getParameterIndex() const { return parameters; }
-    __host__ unsigned int registerParameter(Variable *var);
+    __host__ unsigned int registerParameter(Variable var);
     __host__ unsigned int registerConstants(unsigned int amount);
     __host__ virtual void recursiveSetNormalisation(fptype norm = 1) const;
-    __host__ void unregisterParameter(Variable *var);
-    __host__ void registerObservable(Observable *obs);
+    __host__ void unregisterParameter(Variable var);
+    __host__ void registerObservable(Observable obs);
     __host__ void setIntegrationFineness(int i);
     __host__ void printProfileInfo(bool topLevel = true);
 

@@ -473,10 +473,10 @@ __device__ resonance_function_ptr ptr_to_SPLINE   = cubicspline;
 namespace Resonances {
 
 RBW::RBW(std::string name,
-         Variable *ar,
-         Variable *ai,
-         Variable *mass,
-         Variable *width,
+         Variable ar,
+         Variable ai,
+         Variable mass,
+         Variable width,
          unsigned int sp,
          unsigned int cyc,
          bool symmDP)
@@ -493,10 +493,10 @@ RBW::RBW(std::string name,
 }
 
 GS::GS(std::string name,
-       Variable *ar,
-       Variable *ai,
-       Variable *mass,
-       Variable *width,
+       Variable ar,
+       Variable ai,
+       Variable mass,
+       Variable width,
        unsigned int sp,
        unsigned int cyc,
        bool symmDP)
@@ -513,10 +513,10 @@ GS::GS(std::string name,
 }
 
 LASS::LASS(std::string name,
-           Variable *ar,
-           Variable *ai,
-           Variable *mass,
-           Variable *width,
+           Variable ar,
+           Variable ai,
+           Variable mass,
+           Variable width,
            unsigned int sp,
            unsigned int cyc,
            bool symmDP)
@@ -533,7 +533,7 @@ LASS::LASS(std::string name,
 }
 
 // Constructor for regular BW,Gounaris-Sakurai,LASS
-Gauss::Gauss(std::string name, Variable *ar, Variable *ai, Variable *mass, Variable *width, unsigned int cyc)
+Gauss::Gauss(std::string name, Variable ar, Variable ai, Variable mass, Variable width, unsigned int cyc)
     : ResonancePdf(name, ar, ai) {
     // Making room for index of decay-related constants. Assumption:
     // These are mother mass and three daughter masses in that order.
@@ -551,7 +551,7 @@ Gauss::Gauss(std::string name, Variable *ar, Variable *ai, Variable *mass, Varia
     initialize(pindices);
 }
 
-NonRes::NonRes(std::string name, Variable *ar, Variable *ai)
+NonRes::NonRes(std::string name, Variable ar, Variable ai)
     : ResonancePdf(name, ar, ai) {
     GET_FUNCTION_ADDR(ptr_to_NONRES);
 
@@ -559,11 +559,11 @@ NonRes::NonRes(std::string name, Variable *ar, Variable *ai)
 }
 
 FLATTE::FLATTE(std::string name,
-               Variable *ar,
-               Variable *ai,
-               Variable *mean,
-               Variable *g1,
-               Variable *rg2og1,
+               Variable ar,
+               Variable ai,
+               Variable mean,
+               Variable g1,
+               Variable rg2og1,
                unsigned int cyc,
                bool symmDP)
     : ResonancePdf(name, ar, ai) {
@@ -579,11 +579,11 @@ FLATTE::FLATTE(std::string name,
 }
 
 Spline::Spline(std::string name,
-               Variable *ar,
-               Variable *ai,
+               Variable ar,
+               Variable ai,
                std::vector<fptype> &HH_bin_limits,
-               std::vector<Variable *> &pwa_coefs_reals,
-               std::vector<Variable *> &pwa_coefs_imags,
+               std::vector<Variable> &pwa_coefs_reals,
+               std::vector<Variable> &pwa_coefs_imags,
                unsigned int cyc,
                const bool symmDP)
     : ResonancePdf(name, ar, ai) {

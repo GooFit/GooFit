@@ -75,13 +75,12 @@ __device__ fptype device_DP(fptype *evt, fptype *p, unsigned int *indices) {
 __device__ device_function_ptr ptr_to_DP = device_DP;
 
 __host__ DPPdf::DPPdf(std::string n,
-                      std::vector<Observable *> observables,
+                      std::vector<Observable> observables,
                       DecayInfo_DP *decay,
                       GooPdf *efficiency,
                       unsigned int MCeventsNorm)
-    : GooPdf(nullptr, n)
+    : GooPdf(n)
     , decayInfo(decay)
-    , _observables(observables)
     , totalEventSize(observables.size()) // number of observables plus eventnumber
 {
     for(auto &observable : observables) {

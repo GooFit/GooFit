@@ -50,14 +50,14 @@ __device__ fptype device_KinLimitBW(fptype *evt, fptype *p, unsigned int *indice
 
 __device__ device_function_ptr ptr_to_KinLimitBW = device_KinLimitBW;
 
-__host__ KinLimitBWPdf::KinLimitBWPdf(std::string n, Observable *_x, Variable *mean, Variable *width)
+__host__ KinLimitBWPdf::KinLimitBWPdf(std::string n, Observable _x, Variable mean, Variable width)
     : GooPdf(_x, n) {
     registerParameter(mean);
     registerParameter(width);
 
     std::vector<unsigned int> pindices;
-    pindices.push_back(mean->getIndex());
-    pindices.push_back(width->getIndex());
+    pindices.push_back(mean.getIndex());
+    pindices.push_back(width.getIndex());
     pindices.push_back(registerConstants(2));
     setMasses(1.8645, 0.13957);
     GET_FUNCTION_ADDR(ptr_to_KinLimitBW);

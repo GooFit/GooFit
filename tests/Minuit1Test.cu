@@ -41,10 +41,10 @@ TEST(Minuit1, SimpleFit) {
     Variable alpha{"alpha", -2, 0.1, -10, 10};
 
     // GooPdf object
-    ExpPdf exppdf{"exppdf", &xvar, &alpha};
-    exppdf.setData(&data);
+    ExpPdf exppdf{"exppdf", xvar, alpha};
+    exppdf.setData(data);
 
-    GooFit::FitManagerMinuit1 fitter{&exppdf};
+    GooFit::FitManagerMinuit1 fitter{exppdf};
     fitter.setVerbosity(2);
     fitter.fit();
 
@@ -83,12 +83,12 @@ TEST(Minuit1, DualFit) {
     Variable yalpha{"yalpha", -2, 0.1, -10, 10};
 
     // GooPdf object
-    ExpPdf xpdf{"xpdf", &xvar, &xalpha};
-    ExpPdf ypdf{"ypdf", &yvar, &yalpha};
+    ExpPdf xpdf{"xpdf", xvar, xalpha};
+    ExpPdf ypdf{"ypdf", yvar, yalpha};
     ProdPdf totalpdf{"totalpdf", {&xpdf, &ypdf}};
     totalpdf.setData(&data);
 
-    GooFit::FitManagerMinuit1 fitter{&totalpdf};
+    GooFit::FitManagerMinuit1 fitter{totalpdf};
     fitter.setVerbosity(0);
     fitter.fit();
 
@@ -127,12 +127,12 @@ TEST(Minuit1, DifferentFitterVariable) {
     Variable yalpha{"yalpha", -2, 0.1, -10, 10};
 
     // GooPdf object
-    ExpPdf ypdf{"ypdf", &yvar, &yalpha};
-    ExpPdf xpdf{"xpdf", &xvar, &xalpha};
+    ExpPdf ypdf{"ypdf", yvar, yalpha};
+    ExpPdf xpdf{"xpdf", xvar, xalpha};
     ProdPdf totalpdf{"totalpdf", {&xpdf, &ypdf}};
     totalpdf.setData(&data);
 
-    GooFit::FitManagerMinuit1 fitter{&totalpdf};
+    GooFit::FitManagerMinuit1 fitter{totalpdf};
     fitter.setVerbosity(2);
     fitter.fit();
 
@@ -175,12 +175,12 @@ TEST(Minuit1, FitterConstants) {
     Variable ysigma{"ysigma", .3};
 
     // GooPdf object
-    GaussianPdf xpdf{"xpdf", &xvar, &xalpha, &xsigma};
-    GaussianPdf ypdf{"ypdf", &yvar, &yalpha, &ysigma};
+    GaussianPdf xpdf{"xpdf", xvar, xalpha, xsigma};
+    GaussianPdf ypdf{"ypdf", yvar, yalpha, ysigma};
     ProdPdf totalpdf{"totalpdf", {&xpdf, &ypdf}};
-    totalpdf.setData(&data);
+    totalpdf.setData(data);
 
-    GooFit::FitManagerMinuit1 fitter{&totalpdf};
+    GooFit::FitManagerMinuit1 fitter{totalpdf};
     fitter.setVerbosity(2);
     fitter.fit();
 

@@ -120,9 +120,9 @@ struct Smoother {
 
 __device__ device_function_ptr ptr_to_EvalHistogram = device_EvalHistogram;
 
-__host__ SmoothHistogramPdf::SmoothHistogramPdf(std::string n, BinnedDataSet *hist, Variable *smoothing)
-    : GooPdf(nullptr, n) {
-    int numVars      = hist->numVariables();
+__host__ SmoothHistogramPdf::SmoothHistogramPdf(std::string n, BinnedDataSet &hist, Variable smoothing)
+    : GooPdf(n) {
+    int numVars      = hist.numVariables();
     int numConstants = 2 * numVars;
     registerConstants(numConstants);
     host_constants = new fptype[numConstants];
@@ -134,8 +134,8 @@ __host__ SmoothHistogramPdf::SmoothHistogramPdf(std::string n, BinnedDataSet *hi
 
     int varIndex = 0;
 
-    for(Observable var : hist->getObservables()) {
-        registerObservable(&var);
+    for(Observable var : hist.getObservables()) {
+        registerObservable(var);
         // pindices.push_back((*var)->index);
         pindices.push_back(cIndex + 2 * varIndex + 0);
         pindices.push_back(cIndex + 2 * varIndex + 1);
@@ -147,11 +147,11 @@ __host__ SmoothHistogramPdf::SmoothHistogramPdf(std::string n, BinnedDataSet *hi
         varIndex++;
     }
 
-    unsigned int numbins = hist->getNumBins();
+    unsigned int numbins = hist.getNumBins();
     thrust::host_vector<fptype> host_histogram;
 
     for(unsigned int i = 0; i < numbins; ++i) {
-        fptype curr = hist->getBinContent(i);
+        fptype curr = hist.getBinContent(i);
         host_histogram.push_back(curr);
         totalEvents += curr;
     }

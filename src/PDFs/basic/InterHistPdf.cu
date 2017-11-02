@@ -135,11 +135,11 @@ __device__ fptype device_InterHistogram(fptype *evt, fptype *p, unsigned int *in
 __device__ device_function_ptr ptr_to_InterHistogram = device_InterHistogram;
 
 __host__ InterHistPdf::InterHistPdf(std::string n,
-                                    BinnedDataSet *x,
-                                    std::vector<Variable *> params,
-                                    std::vector<Observable *> obses)
-    : GooPdf(nullptr, n)
-    , numVars(x->numVariables()) {
+                                    BinnedDataSet &x,
+                                    std::vector<Variable> params,
+                                    std::vector<Observable> obses)
+    : GooPdf(n)
+    , numVars(x.numVariables()) {
     int numConstants = 2 * numVars;
     registerConstants(numConstants);
     static unsigned int totalHistograms = 0;
@@ -151,9 +151,9 @@ __host__ InterHistPdf::InterHistPdf(std::string n,
 
     int varIndex = 0;
 
-    for(Observable var : x->getObservables()) {
-        if(std::find_if(obses.begin(), obses.end(), [var](Observable *ob){return *ob == var;}) != obses.end()) {
-            registerObservable(&var);
+    for(Observable var : x.getObservables()) {
+        if(std::find(obses.begin(), obses.end(), var) != obses.end()) {
+            registerObservable(var);
             pindices.push_back(OBS_CODE);
         }
 
@@ -167,11 +167,11 @@ __host__ InterHistPdf::InterHistPdf(std::string n,
         varIndex++;
     }
 
-    unsigned int numbins = x->getNumBins();
+    unsigned int numbins = x.getNumBins();
     thrust::host_vector<fptype> host_histogram;
 
     for(unsigned int i = 0; i < numbins; ++i) {
-        fptype curr = x->getBinContent(i);
+        fptype curr = x.getBinContent(i);
         host_histogram.push_back(curr);
         totalEvents += curr;
     }

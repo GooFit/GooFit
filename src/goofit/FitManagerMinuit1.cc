@@ -10,10 +10,10 @@
 
 namespace GooFit {
 
-Minuit1::Minuit1(PdfBase *pdfPointer)
-    : TMinuit(max_index(pdfPointer->getParameters()) + 1)
+Minuit1::Minuit1(PdfBase &pdfPointer)
+    : TMinuit(max_index(pdfPointer.getParameters()) + 1)
     , pdfPointer(pdfPointer)
-    , vars(pdfPointer->getParameters()) {
+    , vars(pdfPointer.getParameters()) {
     size_t counter = 0;
 
     for(Variable &var : vars) {
@@ -40,7 +40,7 @@ Minuit1::Minuit1(PdfBase *pdfPointer)
         counter++;
     }
 
-    pdfPointer->copyParams();
+    pdfPointer.copyParams();
 }
 
 Int_t Minuit1::Eval(int npar, double *gin, double &fun, double *fp, int iflag) {
@@ -58,10 +58,10 @@ Int_t Minuit1::Eval(int npar, double *gin, double &fun, double *fp, int iflag) {
         gooPars.at(var.getIndex()) = var.getValue() - var.getBlind(Variable::Key());
     }
 
-    pdfPointer->copyParams(gooPars);
+    pdfPointer.copyParams(gooPars);
 
     GOOFIT_TRACE("Calculating NLL");
-    fun = pdfPointer->calculateNLL();
+    fun = pdfPointer.calculateNLL();
     host_callnumber++;
     return 0;
 }

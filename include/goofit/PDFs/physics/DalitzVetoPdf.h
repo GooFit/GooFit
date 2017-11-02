@@ -14,13 +14,13 @@ struct VetoInfo {
 class DalitzVetoPdf : public GooPdf {
   public:
     __host__ DalitzVetoPdf(std::string n,
-                           Observable *_x,
-                           Observable *_y,
-                           Variable *motherM,
-                           Variable *d1m,
-                           Variable *d2m,
-                           Variable *d3m,
-                           std::vector<VetoInfo *> vetos);
+                           Observable _x,
+                           Observable _y,
+                           Variable motherM,
+                           Variable d1m,
+                           Variable d2m,
+                           Variable d3m,
+                           std::vector<VetoInfo*> vetos);
 
   private:
 };

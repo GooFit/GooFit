@@ -45,10 +45,11 @@ int host_callnumber = 0;
 int totalParams     = 0;
 int totalConstants  = 1; // First constant is reserved for number of events.
 
-PdfBase::PdfBase(Observable *x, std::string n)
-    : name(std::move(n)) { // Special-case PDFs should set to false.
-    if(x)
-        registerObservable(x);
+PdfBase::PdfBase(std::string n)
+    : name(std::move(n)) {}
+    
+PdfBase::PdfBase(const Observable &x, std::string n) : PdfBase(n) {
+    registerObservable(x);
 }
 
 __host__ void PdfBase::checkInitStatus(std::vector<std::string> &unInited) const {
@@ -68,35 +69,29 @@ __host__ void PdfBase::recursiveSetNormalisation(fptype norm) const {
     }
 }
 
-__host__ unsigned int PdfBase::registerParameter(Variable *var) {
+__host__ unsigned int PdfBase::registerParameter(Variable var) {
     static int unique_param = 0;
 
-    if(var == nullptr)
-        throw GooFit::GeneralError("{}: Can not register a nullptr", getName());
-
     if(find_in(parameterList, var))
-        return static_cast<unsigned int>(var->getIndex());
+        return static_cast<unsigned int>(var.getIndex());
 
-    if(var->getIndex() < 0) {
-        GOOFIT_DEBUG("{}: Registering p:{} for {}", getName(), unusedIndex, var->getName());
-        var->setIndex(unique_param++);
+    if(var.getIndex() < 0) {
+        GOOFIT_DEBUG("{}: Registering p:{} for {}", getName(), unusedIndex, var.getName());
+        var.setIndex(unique_param++);
     }
 
-    parameterList.push_back(*var);
-    return static_cast<unsigned int>(var->getIndex());
+    parameterList.push_back(var);
+    return static_cast<unsigned int>(var.getIndex());
 }
 
-__host__ void PdfBase::unregisterParameter(Variable *var) {
-    if(var == nullptr)
-        return;
-
-    GOOFIT_DEBUG("{}: Removing {}", getName(), var->getName());
+__host__ void PdfBase::unregisterParameter(Variable var) {
+    GOOFIT_DEBUG("{}: Removing {}", getName(), var.getName());
 
     for(PdfBase *comp : components) {
         comp->unregisterParameter(var);
     }
 
-    var->setIndex(-1);
+    var.setIndex(-1);
     // Once copies are used, this might able to be unregistred from a lower PDF only
     // For now, it gets completely cleared.
 }
@@ -154,7 +149,7 @@ __host__ unsigned int PdfBase::registerConstants(unsigned int amount) {
     return cIndex;
 }
 
-void PdfBase::registerObservable(Observable *obs) {
+void PdfBase::registerObservable(Observable obs) {
     if(!obs)
         return;
 
@@ -162,7 +157,7 @@ void PdfBase::registerObservable(Observable *obs) {
         return;
 
     GOOFIT_DEBUG("{}: Registering o:{} for {}", getName(), observables.size(), obs->getName());
-    observables.push_back(*obs);
+    observables.push_back(obs);
 }
 
 __host__ void PdfBase::setIntegrationFineness(int i) {

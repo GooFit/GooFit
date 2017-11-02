@@ -29,7 +29,7 @@ class NormIntegrator;
 class DPPdf : public GooPdf {
   public:
     DPPdf(std::string n,
-          std::vector<Observable *> observables,
+          std::vector<Observable> observables,
           DecayInfo_DP *decay,
           GooPdf *eff,
           unsigned int MCeventsNorm = 5e6);
@@ -70,7 +70,6 @@ class DPPdf : public GooPdf {
     mutable mcbooster::mc_device_vector<fpcomplex> norm_LS;
 
     DecayInfo_DP *decayInfo;
-    std::vector<Observable *> _observables;
     int MCevents;
     // Following variables are useful if masses and widths, involved in difficult BW calculation,
     // change infrequently while amplitudes, only used in adding BW results together, change rapidly.

@@ -23,7 +23,7 @@
 
 #ifdef GOOFIT_MPI
 #include <mpi.h>
-#endif
+#endif 
 
 namespace GooFit {
 
@@ -155,12 +155,6 @@ void *getMetricPointer(std::string name) {
 }
 
 void *getMetricPointer(EvalFunc val) { return getMetricPointer(evalfunc_to_string(val)); }
-
-GooPdf::GooPdf(Observable *x, std::string n)
-    : PdfBase(x, n)
-    , logger(nullptr) {
-    // std::cout << "Created " << n << std::endl;
-}
 
 __host__ int GooPdf::findFunctionIdx(void *dev_functionPtr) {
     // Code specific to function-pointer implementation
@@ -315,16 +309,16 @@ __host__ double GooPdf::calculateNLL() const {
     return 2 * ret;
 }
 
-__host__ std::vector<fptype> GooPdf::evaluateAtPoints(Observable *var) {
+__host__ std::vector<fptype> GooPdf::evaluateAtPoints(Observable var) {
     copyParams();
     normalize();
     MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams * sizeof(fptype), 0, cudaMemcpyHostToDevice);
     UnbinnedDataSet tempdata(observables);
 
-    double step = var->getBinSize();
+    double step = var.getBinSize();
 
-    for(int i = 0; i < var->getNumBins(); ++i) {
-        var->setValue(var->getLowerLimit() + (i + 0.5) * step);
+    for(int i = 0; i < var.getNumBins(); ++i) {
+        var.setValue(var.getLowerLimit() + (i + 0.5) * step);
         tempdata.addEvent();
     }
 
@@ -334,7 +328,7 @@ __host__ std::vector<fptype> GooPdf::evaluateAtPoints(Observable *var) {
     thrust::counting_iterator<int> eventIndex(0);
     thrust::constant_iterator<int> eventSize(observables.size());
     thrust::constant_iterator<fptype *> arrayAddress(dev_event_array);
-    thrust::device_vector<fptype> results(var->getNumBins());
+    thrust::device_vector<fptype> results(var.getNumBins());
 
     MetricTaker evalor(this, getMetricPointer("ptr_to_Eval"));
 #ifdef GOOFIT_MPI
@@ -354,9 +348,9 @@ __host__ std::vector<fptype> GooPdf::evaluateAtPoints(Observable *var) {
     // then we can do the rest.
     thrust::host_vector<fptype> h_results = results;
     std::vector<fptype> res;
-    res.resize(var->getNumBins());
+    res.resize(var.getNumBins());
 
-    for(int i = 0; i < var->getNumBins(); ++i) {
+    for(int i = 0; i < var.getNumBins(); ++i) {
         res[i] = h_results[i] * host_normalisation[parameters];
     }
 
@@ -364,14 +358,14 @@ __host__ std::vector<fptype> GooPdf::evaluateAtPoints(Observable *var) {
     return res;
 }
 
-__host__ void GooPdf::scan(Observable *var, std::vector<fptype> &values) {
-    fptype step = var->getUpperLimit();
-    step -= var->getLowerLimit();
-    step /= var->getNumBins();
+__host__ void GooPdf::scan(Observable var, std::vector<fptype> &values) {
+    fptype step = var.getUpperLimit();
+    step -= var.getLowerLimit();
+    step /= var.getNumBins();
     values.clear();
 
-    for(fptype v = var->getLowerLimit() + 0.5 * step; v < var->getUpperLimit(); v += step) {
-        var->setValue(v);
+    for(fptype v = var.getLowerLimit() + 0.5 * step; v < var.getUpperLimit(); v += step) {
+        var.setValue(v);
         copyParams();
         fptype curr = calculateNLL();
         values.push_back(curr);
@@ -656,21 +650,21 @@ __host__ void GooPdf::setFitControl(FitControl *const fc, bool takeOwnerShip) {
 }
 
 #ifdef ROOT_FOUND
-__host__ TH1D *GooPdf::plotToROOT(Observable *var, double normFactor, std::string name) {
+__host__ TH1D *GooPdf::plotToROOT(Observable var, double normFactor, std::string name) {
     if(name.empty())
         name = getName() + "_hist";
 
-    auto ret = new TH1D(name.c_str(), "", var->getNumBins(), var->getLowerLimit(), var->getUpperLimit());
+    auto ret = new TH1D(name.c_str(), "", var.getNumBins(), var.getLowerLimit(), var.getUpperLimit());
     std::vector<fptype> binValues = evaluateAtPoints(var);
 
     double pdf_int = 0;
 
-    for(int i = 0; i < var->getNumBins(); ++i) {
+    for(int i = 0; i < var.getNumBins(); ++i) {
         pdf_int += binValues[i];
     }
 
-    for(int i = 0; i < var->getNumBins(); ++i)
-        ret->SetBinContent(i + 1, binValues[i] * normFactor / pdf_int / var->getBinSize());
+    for(int i = 0; i < var.getNumBins(); ++i)
+        ret->SetBinContent(i + 1, binValues[i] * normFactor / pdf_int / var.getBinSize());
     return ret;
 }
 #endif

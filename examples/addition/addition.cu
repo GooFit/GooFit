@@ -70,14 +70,14 @@ int main(int argc, char **argv) {
 
     Variable xmean{"xmean", 0, 1, -10, 10};
     Variable xsigm{"xsigm", 1, 0.5, 1.5};
-    GaussianPdf signal{"signal", &xvar, &xmean, &xsigm};
+    GaussianPdf signal{"signal", xvar, xmean, xsigm};
 
     Variable constant{"constant", 1.0};
-    PolynomialPdf backgr{"backgr", &xvar, {&constant}};
+    PolynomialPdf backgr{"backgr", xvar, {constant}};
 
     Variable sigFrac{"sigFrac", 0.9, 0.75, 1.00};
 
-    AddPdf total{"total", {&sigFrac}, {&signal, &backgr}};
+    AddPdf total{"total", {sigFrac}, {&signal, &backgr}};
 
     total.setData(&data);
     FitManager fitter(&total);

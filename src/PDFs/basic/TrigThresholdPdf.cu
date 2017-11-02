@@ -69,7 +69,7 @@ __device__ device_function_ptr ptr_to_VerySpecialEpisodeTrigThresholdLower
     = device_VerySpecialEpisodeTrigThresholdLower;
 
 __host__ TrigThresholdPdf::TrigThresholdPdf(
-    std::string n, Observable *_x, Variable *thresh, Variable *trigConst, Variable *linConst, bool upper)
+    std::string n, Observable _x, Variable thresh, Variable trigConst, Variable linConst, bool upper)
     : GooPdf(_x, n) {
     std::vector<unsigned int> pindices;
     pindices.push_back(registerParameter(thresh));
@@ -86,14 +86,14 @@ __host__ TrigThresholdPdf::TrigThresholdPdf(
 }
 
 __host__ TrigThresholdPdf::TrigThresholdPdf(std::string n,
-                                            Observable *_x,
-                                            Observable *_y,
-                                            Variable *thresh,
-                                            Variable *trigConst,
-                                            Variable *linConst,
-                                            Variable *massConstant,
+                                            Observable _x,
+                                            Observable _y,
+                                            Variable thresh,
+                                            Variable trigConst,
+                                            Variable linConst,
+                                            Variable massConstant,
                                             bool upper)
-    : GooPdf(nullptr, n) {
+    : GooPdf(n) {
     registerObservable(_x);
     registerObservable(_y);
 

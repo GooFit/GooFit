@@ -165,15 +165,14 @@ __device__ fptype device_TDDP4(fptype *evt, fptype *p, unsigned int *indices) {
 __device__ device_function_ptr ptr_to_TDDP4 = device_TDDP4;
 
 __host__ TDDP4::TDDP4(std::string n,
-                      std::vector<Observable *> observables,
+                      std::vector<Observable> observables,
                       DecayInfo_DP *decay,
                       MixingTimeResolution *Tres,
                       GooPdf *efficiency,
                       Observable *mistag,
                       unsigned int MCeventsNorm)
-    : GooPdf(nullptr, n)
+    : GooPdf(n)
     , decayInfo(decay)
-    , _observables(observables)
     , resolution(Tres)
     , totalEventSize(observables.size() + 2) // number of observables plus eventnumber
 {
@@ -190,7 +189,7 @@ __host__ TDDP4::TDDP4(std::string n,
     }
 
     if(mistag) {
-        registerObservable(mistag);
+        registerObservable(*mistag);
         totalEventSize = 9;
         decayConstants.push_back(1); // Flags existence of mistag
     }

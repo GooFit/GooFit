@@ -42,7 +42,7 @@ __device__ fptype device_ProdPdfs(fptype *evt, fptype *p, unsigned int *indices)
 __device__ device_function_ptr ptr_to_ProdPdfs = device_ProdPdfs;
 
 ProdPdf::ProdPdf(std::string n, std::vector<PdfBase *> comps)
-    : GooPdf(nullptr, n)
+    : GooPdf(n)
     , varOverlaps(false) {
     std::vector<unsigned int> pindices;
 

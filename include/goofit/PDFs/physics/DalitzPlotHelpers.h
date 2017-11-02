@@ -80,23 +80,34 @@ struct DecayInfo {
     fptype daug3Mass;
     fptype meson_radius;
 
-    Variable *_tau;
-    Variable *_xmixing;
-    Variable *_ymixing;
+    Variable _tau;
+    Variable _xmixing;
+    Variable _ymixing;
     std::vector<ResonancePdf *> resonances;
+    
+    DecayInfo (Variable _tau,
+                  Variable _xmixing,
+                  Variable _ymixing)
+    : _tau(_tau), _xmixing(_xmixing), _ymixing(_ymixing) {}
 };
 
 struct DecayInfo_DP {
+    Variable _tau;
+    Variable _xmixing;
+    Variable _ymixing;
+    Variable _SqWStoRSrate;
+    
     std::vector<fptype> particle_masses;
     fptype meson_radius;
 
     std::vector<Amplitude *> amplitudes;
     std::vector<Amplitude *> amplitudes_B;
-
-    Variable *_tau;
-    Variable *_xmixing;
-    Variable *_ymixing;
-    Variable *_SqWStoRSrate;
+    
+    DecayInfo_DP (Variable _tau,
+                  Variable _xmixing,
+                  Variable _ymixing,
+                  Variable _SqWStoRSrate)
+    : _tau(_tau), _xmixing(_xmixing), _ymixing(_ymixing), _SqWStoRSrate(_SqWStoRSrate) {}
 };
 
 // Copied from strided_range thrust example by Nathan Bell.

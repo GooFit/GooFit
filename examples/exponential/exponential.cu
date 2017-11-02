@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
     // Fit parameter
     GooFit::Variable alpha{"alpha", -2, 0.1, -10, 10};
     // GooPdf object
-    GooFit::ExpPdf exppdf{"exppdf", &xvar, &alpha};
+    GooFit::ExpPdf exppdf{"exppdf", xvar, alpha};
     exppdf.setData(&data);
 
     GooFit::FitManager fitter{&exppdf};

@@ -64,16 +64,16 @@ int main(int argc, char **argv) {
         data.addEvent();
     }
 
-    BWPdf breit{"breit", &xvar, &x0, &gamma};
-    GaussianPdf gauss{"gauss", &xvar, &zero, &sigma};
-    ConvolutionPdf convolution{"convolution", &xvar, &breit, &gauss};
+    BWPdf breit{"breit", xvar, x0, gamma};
+    GaussianPdf gauss{"gauss", xvar, zero, sigma};
+    ConvolutionPdf convolution{"convolution", xvar, &breit, &gauss};
     convolution.setData(&data);
 
     FitManager fitter(&convolution);
     fitter.fit();
 
     TFile f("output.root", "RECREATE");
-    auto toroot = convolution.plotToROOT(&xvar);
+    auto toroot = convolution.plotToROOT(xvar);
     toroot->Write();
     f.Write();
 

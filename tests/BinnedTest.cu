@@ -39,7 +39,7 @@ TEST(BinnedFit, SimpleFit) {
     Variable alpha{"alpha", -2, 0.1, -10, 10};
 
     // GooPdf object
-    ExpPdf exppdf{"exppdf", &xvar, &alpha};
+    ExpPdf exppdf{"exppdf", xvar, alpha};
     exppdf.setData(&data);
 
     FitManager fitter{&exppdf};
@@ -80,8 +80,8 @@ TEST(BinnedFit, DualFit) {
     Variable yalpha{"yalpha", -2, 0.1, -10, 10};
 
     // GooPdf object
-    ExpPdf xpdf{"xpdf", &xvar, &xalpha};
-    ExpPdf ypdf{"ypdf", &yvar, &yalpha};
+    ExpPdf xpdf{"xpdf", xvar, xalpha};
+    ExpPdf ypdf{"ypdf", yvar, yalpha};
     ProdPdf totalpdf{"totalpdf", {&xpdf, &ypdf}};
     totalpdf.setData(&data);
 
@@ -125,8 +125,8 @@ TEST(BinnedFit, DifferentFitterVariable) {
     Variable yalpha{"yalpha", -2, 0.1, -10, 10};
 
     // GooPdf object
-    ExpPdf ypdf{"ypdf", &yvar, &yalpha};
-    ExpPdf xpdf{"xpdf", &xvar, &xalpha};
+    ExpPdf ypdf{"ypdf", yvar, yalpha};
+    ExpPdf xpdf{"xpdf", xvar, xalpha};
     ProdPdf totalpdf{"totalpdf", {&xpdf, &ypdf}};
     totalpdf.setData(&data);
 

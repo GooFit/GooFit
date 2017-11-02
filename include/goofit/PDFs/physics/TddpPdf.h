@@ -29,7 +29,7 @@ class TddpPdf : public GooPdf {
             Observable m12,
             Observable m13,
             EventNumber eventNumber,
-            DecayInfo *decay,
+            DecayInfo3t decay,
             MixingTimeResolution *r,
             GooPdf *eff,
             Observable *mistag = nullptr);
@@ -39,7 +39,7 @@ class TddpPdf : public GooPdf {
             Observable m12,
             Observable m13,
             EventNumber eventNumber,
-            DecayInfo *decay,
+            DecayInfo3t decay,
             std::vector<MixingTimeResolution *> &r,
             GooPdf *eff,
             Observable md0,
@@ -79,7 +79,7 @@ class TddpPdf : public GooPdf {
 
   protected:
   private:
-    DecayInfo *decayInfo;
+    DecayInfo3t decayInfo;
     Observable _m12;
     Observable _m13;
     fptype *dalitzNormRange{nullptr};

@@ -39,7 +39,7 @@ TEST(PDFComps, KnownNormalize) {
     Variable alpha{"alpha", -2, 0.1, -10, 10};
 
     // GooPdf object
-    ExpPdf exppdf{"exppdf", &xvar, &alpha};
+    ExpPdf exppdf{"exppdf", xvar, alpha};
     exppdf.setData(&data);
 
     EXPECT_FLOAT_EQ(exppdf.normalize(), 10);
@@ -73,7 +73,7 @@ TEST(PDFComps, OneDGrid) {
     Variable sigma{"sigma", 2.5};
 
     // GooPdf object
-    GaussianPdf gausspdf{"gausspdf", &xvar, &mean, &sigma};
+    GaussianPdf gausspdf{"gausspdf", xvar, mean, sigma};
 
     // Make a grid and use it
     auto dataset = gausspdf.makeGrid();
@@ -127,8 +127,8 @@ TEST(PDFComps, TwoDGrid) {
     Variable sigma2{"sigma2", 0.5};
 
     // GooPdf object
-    GaussianPdf gausspdf1{"gausspdf1", &xvar, &mean1, &sigma1};
-    GaussianPdf gausspdf2{"gausspdf2", &yvar, &mean2, &sigma2};
+    GaussianPdf gausspdf1{"gausspdf1", xvar, mean1, sigma1};
+    GaussianPdf gausspdf2{"gausspdf2", yvar, mean2, sigma2};
 
     ProdPdf product("product", {&gausspdf1, &gausspdf2});
 
@@ -174,9 +174,9 @@ TEST(PDFComps, OneDEval) {
     Variable sigma{"sigma", 2.5};
 
     // GooPdf object
-    GaussianPdf gauss{"gausspdf", &xvar, &mean, &sigma};
+    GaussianPdf gauss{"gausspdf", xvar, mean, sigma};
 
-    auto v = gauss.evaluateAtPoints(&xvar);
+    auto v = gauss.evaluateAtPoints(xvar);
 
     EXPECT_FLOAT_EQ(v[0], 0.00587129964482);
     EXPECT_FLOAT_EQ(v[20], 0.0624318782242);
@@ -205,8 +205,8 @@ TEST(PDFComps, TwoDEval) {
     Variable sigma2{"sigma2", 0.5};
 
     // GooPdf object
-    GaussianPdf gausspdf1{"gausspdf1", &xvar, &mean1, &sigma1};
-    GaussianPdf gausspdf2{"gausspdf2", &yvar, &mean2, &sigma2};
+    GaussianPdf gausspdf1{"gausspdf1", xvar, mean1, sigma1};
+    GaussianPdf gausspdf2{"gausspdf2", yvar, mean2, sigma2};
 
     ProdPdf product("product", {&gausspdf1, &gausspdf2});
 

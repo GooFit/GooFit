@@ -9,11 +9,11 @@ namespace GooFit {
 class PdfBase;
 
 class Minuit1 : public TMinuit {
-    PdfBase &pdfPointer;
+    PdfBase *pdfPointer;
     std::vector<Variable> vars;
 
   public:
-    Minuit1(PdfBase &pdfPointer);
+    Minuit1(PdfBase *pdfPointer);
     /// Fit function for Minuit
     Int_t Eval(Int_t npar,     //< The number of parameters
                Double_t *grad, //< The derivatives can be stored here if flag is 2 (output)
@@ -29,7 +29,7 @@ class Minuit1 : public TMinuit {
 
 class FitManagerMinuit1 {
   public:
-    FitManagerMinuit1(PdfBase &dat)
+    FitManagerMinuit1(PdfBase *dat)
         : minuit_(dat) {}
 
     void setMaxCalls(double mxc) { overrideCallLimit = mxc; }

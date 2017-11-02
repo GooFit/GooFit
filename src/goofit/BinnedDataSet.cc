@@ -66,7 +66,7 @@ size_t BinnedDataSet::localToGlobal(const std::vector<size_t> &locals) const {
     unsigned int ret             = 0;
 
     for(size_t i = 0; i < observables.size(); i++) {
-        unsigned int localBin = locals[i];
+        size_t localBin = locals[i];
         ret += localBin * priorMatrixSize;
         priorMatrixSize *= binsizes[i];
     }
@@ -82,7 +82,7 @@ std::vector<size_t> BinnedDataSet::globalToLocal(size_t global) const {
     // collapsing so the grid has one fewer dimension. Rinse and repeat.
 
     for(size_t i = 0; i < observables.size(); i++) {
-        int localBin = global % binsizes[i];
+        size_t localBin = global % binsizes[i];
         locals.push_back(localBin);
         global /= binsizes[i];
     }

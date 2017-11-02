@@ -74,7 +74,6 @@ class PdfBase {
     __host__ int getSpecialMask() const { return specialMask; }
 
     __host__ void setData(DataSet *data);
-    __host__ void setData(DataSet &data) {return setData(&data);}
     __host__ DataSet *getData();
 
     __host__ virtual void setFitControl(FitControl *const fc, bool takeOwnerShip = true) = 0;

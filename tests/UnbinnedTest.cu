@@ -40,7 +40,7 @@ TEST(UnbinnedFit, SimpleFit) {
     Variable alpha{"alpha", -2, 0.1, -10, 10};
 
     // GooPdf object
-    ExpPdf exppdf{"exppdf", &xvar, &alpha};
+    ExpPdf exppdf{"exppdf", xvar, alpha};
     exppdf.setData(&data);
 
     FitManager fitter{&exppdf};
@@ -81,8 +81,8 @@ TEST(UnbinnedFit, DualFit) {
     Variable yalpha{"yalpha", -2, 0.1, -10, 10};
 
     // GooPdf object
-    ExpPdf xpdf{"xpdf", &xvar, &xalpha};
-    ExpPdf ypdf{"ypdf", &yvar, &yalpha};
+    ExpPdf xpdf{"xpdf", xvar, xalpha};
+    ExpPdf ypdf{"ypdf", yvar, yalpha};
     ProdPdf totalpdf{"totalpdf", {&xpdf, &ypdf}};
     totalpdf.setData(&data);
 
@@ -126,8 +126,8 @@ TEST(UnbinnedFit, DifferentFitterVariable) {
     Variable yalpha{"yalpha", 0, 0.1, -10, 10};
 
     // GooPdf object
-    GaussianPdf ypdf{"ypdf", &yvar, &yalpha, &ysigma};
-    GaussianPdf xpdf{"xpdf", &xvar, &xalpha, &xsigma};
+    GaussianPdf ypdf{"ypdf", yvar, yalpha, ysigma};
+    GaussianPdf xpdf{"xpdf", xvar, xalpha, xsigma};
     ProdPdf totalpdf{"totalpdf", {&xpdf, &ypdf}};
     totalpdf.setData(&data);
 

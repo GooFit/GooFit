@@ -42,9 +42,9 @@ TEST(Minuit1, SimpleFit) {
 
     // GooPdf object
     ExpPdf exppdf{"exppdf", xvar, alpha};
-    exppdf.setData(data);
+    exppdf.setData(&data);
 
-    GooFit::FitManagerMinuit1 fitter{exppdf};
+    GooFit::FitManagerMinuit1 fitter{&exppdf};
     fitter.setVerbosity(2);
     fitter.fit();
 
@@ -88,7 +88,7 @@ TEST(Minuit1, DualFit) {
     ProdPdf totalpdf{"totalpdf", {&xpdf, &ypdf}};
     totalpdf.setData(&data);
 
-    GooFit::FitManagerMinuit1 fitter{totalpdf};
+    GooFit::FitManagerMinuit1 fitter{&totalpdf};
     fitter.setVerbosity(0);
     fitter.fit();
 
@@ -132,7 +132,7 @@ TEST(Minuit1, DifferentFitterVariable) {
     ProdPdf totalpdf{"totalpdf", {&xpdf, &ypdf}};
     totalpdf.setData(&data);
 
-    GooFit::FitManagerMinuit1 fitter{totalpdf};
+    GooFit::FitManagerMinuit1 fitter{&totalpdf};
     fitter.setVerbosity(2);
     fitter.fit();
 
@@ -178,9 +178,9 @@ TEST(Minuit1, FitterConstants) {
     GaussianPdf xpdf{"xpdf", xvar, xalpha, xsigma};
     GaussianPdf ypdf{"ypdf", yvar, yalpha, ysigma};
     ProdPdf totalpdf{"totalpdf", {&xpdf, &ypdf}};
-    totalpdf.setData(data);
+    totalpdf.setData(&data);
 
-    GooFit::FitManagerMinuit1 fitter{totalpdf};
+    GooFit::FitManagerMinuit1 fitter{&totalpdf};
     fitter.setVerbosity(2);
     fitter.fit();
 

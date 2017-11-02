@@ -28,7 +28,7 @@ extern int host_callnumber;
         host_fcn_ptr = (void *)fname;                                                                                  \
         GOOFIT_DEBUG("Using function {} in {}, {}:{}", #fname, __func__, __FILE__, __LINE__);                          \
     }
-#define BLOCKIDX (1)
+#define BLOCKIDX (0)
 inline void cudaDeviceSynchronize() {}
 // Create my own error type to avoid __host__ redefinition
 // conflict in Thrust from including driver_types.h
@@ -45,7 +45,7 @@ enum gooError { gooSuccess = 0, gooErrorMemoryAllocation };
 
 #elif THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CPP
 
-#define THREADIDX (1)
+#define THREADIDX (0)
 #define BLOCKDIM (1)
 #define THREAD_SYNCH
 

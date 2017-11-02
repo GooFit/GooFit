@@ -6,9 +6,13 @@
 namespace GooFit {
 
 struct VetoInfo {
+    Variable minimum;
+    Variable maximum;
     DaughterPair cyclic_index;
-    Variable *minimum;
-    Variable *maximum;
+    VetoInfo(Variable minimum,
+             Variable maximum,
+             DaughterPair cyclic_index)
+    : minimum(minimum), maximum(maximum), cyclic_index(cyclic_index) {}
 };
 
 class DalitzVetoPdf : public GooPdf {
@@ -20,7 +24,7 @@ class DalitzVetoPdf : public GooPdf {
                            Variable d1m,
                            Variable d2m,
                            Variable d3m,
-                           std::vector<VetoInfo*> vetos);
+                           std::vector<VetoInfo> vetos);
 
   private:
 };

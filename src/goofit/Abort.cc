@@ -34,7 +34,7 @@ void abort(std::string file, int line, std::string reason, const PdfBase *pdf) {
 #if Backtrace_FOUND
     std::cout << GooFit::bold << std::endl;
     // get void* pointers for all entries on the stack
-    size_t size = backtrace(stackarray, 20);
+    int size = backtrace(stackarray, 20);
     // print out all the frames to stderr
     backtrace_symbols_fd(stackarray, size, 2);
 #endif

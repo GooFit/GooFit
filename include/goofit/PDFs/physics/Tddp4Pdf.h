@@ -27,7 +27,7 @@ class TDDP4 : public GooPdf {
   public:
     TDDP4(std::string n,
           std::vector<Observable> observables,
-          DecayInfo_DP *decay,
+          DecayInfo4t decay,
           MixingTimeResolution *r,
           GooPdf *eff,
           Observable *mistag        = nullptr,
@@ -74,7 +74,7 @@ class TDDP4 : public GooPdf {
     mutable mcbooster::RealVector_d norm_SF;
     mutable mcbooster::mc_device_vector<fpcomplex> norm_LS;
 
-    DecayInfo_DP *decayInfo;
+    DecayInfo4t decayInfo;
     MixingTimeResolution *resolution;
     int MCevents;
     // Following variables are useful if masses and widths, involved in difficult BW calculation,

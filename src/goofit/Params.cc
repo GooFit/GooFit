@@ -28,7 +28,7 @@ Params::Params(PdfBase &pdf)
 
 void Params::SetGooFitParams(const Minuit2::MnUserParameterState &input) {
     for(Variable &var : vars_) {
-        size_t counter = var.getFitterIndex();
+        int counter = var.getFitterIndex();
         var.setValue(input.Value(counter));
         var.setError(input.Error(counter));
         SetValue(counter, var.getValue());

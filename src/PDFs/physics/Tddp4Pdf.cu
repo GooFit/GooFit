@@ -166,7 +166,7 @@ __device__ device_function_ptr ptr_to_TDDP4 = device_TDDP4;
 
 __host__ TDDP4::TDDP4(std::string n,
                       std::vector<Observable> observables,
-                      DecayInfo_DP *decay,
+                      DecayInfo4t decay,
                       MixingTimeResolution *Tres,
                       GooPdf *efficiency,
                       Observable *mistag,
@@ -182,9 +182,9 @@ __host__ TDDP4::TDDP4(std::string n,
     }
 
     std::vector<fptype> decayConstants;
-    decayConstants.push_back(decayInfo->meson_radius);
+    decayConstants.push_back(decayInfo.meson_radius);
 
-    for(double &particle_masse : decayInfo->particle_masses) {
+    for(double &particle_masse : decayInfo.particle_masses) {
         decayConstants.push_back(particle_masse);
     }
 
@@ -208,10 +208,10 @@ __host__ TDDP4::TDDP4(std::string n,
     pindices.push_back(0); //#SF
     pindices.push_back(0); //#AMP
     pindices.push_back(0); // number of coefficients, because its not necessary to be equal to number of Amps.
-    pindices.push_back(registerParameter(decayInfo->_tau));
-    pindices.push_back(registerParameter(decayInfo->_xmixing));
-    pindices.push_back(registerParameter(decayInfo->_ymixing));
-    pindices.push_back(registerParameter(decayInfo->_SqWStoRSrate));
+    pindices.push_back(registerParameter(decayInfo._tau));
+    pindices.push_back(registerParameter(decayInfo._xmixing));
+    pindices.push_back(registerParameter(decayInfo._ymixing));
+    pindices.push_back(registerParameter(decayInfo._SqWStoRSrate));
     if(resolution->getDeviceFunction() < 0)
         throw GooFit::GeneralError("The resolution device function index {} must be more than 0",
                                    resolution->getDeviceFunction());
@@ -225,8 +225,8 @@ __host__ TDDP4::TDDP4(std::string n,
     unsigned int coeff_counter = 0;
     std::vector<Amplitude *> AmpBuffer;
 
-    std::vector<Amplitude *> AmpsA = decayInfo->amplitudes;
-    std::vector<Amplitude *> AmpsB = decayInfo->amplitudes_B;
+    std::vector<Amplitude *> AmpsA = decayInfo.amplitudes;
+    std::vector<Amplitude *> AmpsB = decayInfo.amplitudes_B;
 
     for(auto &i : AmpsA) {
         AmpMap[i->_uniqueDecayStr] = std::make_pair(std::vector<unsigned int>(0), std::vector<unsigned int>(0));
@@ -409,9 +409,9 @@ __host__ TDDP4::TDDP4(std::string n,
 
     // fprintf(stderr,"#Amp's %i, #LS %i, #SF %i \n", AmpMap.size(), components.size()-1, SpinFactors.size() );
 
-    std::vector<mcbooster::GReal_t> masses(decayInfo->particle_masses.begin() + 1, decayInfo->particle_masses.end());
-    mcbooster::PhaseSpace phsp(decayInfo->particle_masses[0], masses, MCeventsNorm, generation_offset);
-    phsp.Generate(mcbooster::Vector4R(decayInfo->particle_masses[0], 0.0, 0.0, 0.0));
+    std::vector<mcbooster::GReal_t> masses(decayInfo.particle_masses.begin() + 1, decayInfo.particle_masses.end());
+    mcbooster::PhaseSpace phsp(decayInfo.particle_masses[0], masses, MCeventsNorm, generation_offset);
+    phsp.Generate(mcbooster::Vector4R(decayInfo.particle_masses[0], 0.0, 0.0, 0.0));
     phsp.Unweight();
 
     auto nAcc                     = phsp.GetNAccepted();
@@ -443,7 +443,8 @@ __host__ TDDP4::TDDP4(std::string n,
     norm_phi        = mcbooster::RealVector_d(nAcc);
 
     mcbooster::VariableSet_d VarSet(5);
-    VarSet[0] = &norm_M12, VarSet[1] = &norm_M34;
+    VarSet[0] = &norm_M12;
+    VarSet[1] = &norm_M34;
     VarSet[2] = &norm_CosTheta12;
     VarSet[3] = &norm_CosTheta34;
     VarSet[4] = &norm_phi;
@@ -663,9 +664,9 @@ __host__
     TDDP4::GenerateSig(unsigned int numEvents) {
     copyParams();
 
-    std::vector<mcbooster::GReal_t> masses(decayInfo->particle_masses.begin() + 1, decayInfo->particle_masses.end());
-    mcbooster::PhaseSpace phsp(decayInfo->particle_masses[0], masses, numEvents, generation_offset);
-    phsp.Generate(mcbooster::Vector4R(decayInfo->particle_masses[0], 0.0, 0.0, 0.0));
+    std::vector<mcbooster::GReal_t> masses(decayInfo.particle_masses.begin() + 1, decayInfo.particle_masses.end());
+    mcbooster::PhaseSpace phsp(decayInfo.particle_masses[0], masses, numEvents, generation_offset);
+    phsp.Generate(mcbooster::Vector4R(decayInfo.particle_masses[0], 0.0, 0.0, 0.0));
 
     phsp.Unweight();
 
@@ -711,7 +712,8 @@ __host__
         index_sequence_begin, index_sequence_begin + nAcc, dtime_d.begin(), genExp(generation_offset, gammamin));
 
     mcbooster::VariableSet_d VarSet_d(5);
-    VarSet_d[0] = &SigGen_M12_d, VarSet_d[1] = &SigGen_M34_d;
+    VarSet_d[0] = &SigGen_M12_d;
+    VarSet_d[1] = &SigGen_M34_d;
     VarSet_d[2] = &SigGen_CosTheta12_d;
     VarSet_d[3] = &SigGen_CosTheta34_d;
     VarSet_d[4] = &SigGen_phi_d;

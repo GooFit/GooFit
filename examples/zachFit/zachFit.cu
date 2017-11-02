@@ -162,12 +162,12 @@ Dataset descriptions:
     Variable gfrac2("kpi_mc_gfrac2", 0.02, 0.001, 0.0, 0.12);
     Variable afrac("kpi_mc_afrac", 0.005, 0.003, 0.0, 0.1);
 
-    GaussianPdf gauss1("gauss1", &dm, &mean1, &sigma1);
-    GaussianPdf gauss2("gauss2", &dm, &mean2, &sigma2);
-    GaussianPdf gauss3("gauss3", &dm, &mean3, &sigma3);
-    ArgusPdf argus("argus", &dm, &pimass, &aslope, false, &apower);
+    GaussianPdf gauss1("gauss1", dm, mean1, sigma1);
+    GaussianPdf gauss2("gauss2", dm, mean2, sigma2);
+    GaussianPdf gauss3("gauss3", dm, mean3, sigma3);
+    ArgusPdf argus("argus", dm, pimass, aslope, false, apower);
 
-    AddPdf resolution{"resolution", {&gfrac1, &gfrac2, &afrac}, {&gauss1, &gauss2, &argus, &gauss3}};
+    AddPdf resolution{"resolution", {gfrac1, gfrac2, afrac}, {&gauss1, &gauss2, &argus, &gauss3}};
 
     resolution.setData(mc_dataset.get());
 
@@ -182,7 +182,7 @@ Dataset descriptions:
         mc_hist->Draw("e");
 
         double step   = mc_hist->GetXaxis()->GetBinWidth(2);
-        auto tot_hist = resolution.plotToROOT(&dm, mc_dataset->getNumEvents() * step);
+        auto tot_hist = resolution.plotToROOT(dm, mc_dataset->getNumEvents() * step);
         tot_hist->SetLineColor(kGreen);
 
         tot_hist->Draw("SAME");
@@ -208,34 +208,33 @@ Dataset descriptions:
     Variable delta("kpi_rd_delta", 0.000002, -0.00005, 0.00005);
     Variable epsilon("kpi_rd_epsilon", 0.05, -0.1, 0.2);
 
-    ScaledGaussianPdf resolution1("resolution1", &dm, &dummyzero, &sigma1, &delta, &epsilon);
-    ScaledGaussianPdf resolution2("resolution2", &dm, &dummyzero, &sigma2, &delta, &epsilon);
-    ScaledGaussianPdf resolution3("resolution3", &dm, &dummyzero, &sigma3, &delta, &epsilon);
+    ScaledGaussianPdf resolution1("resolution1", dm, dummyzero, sigma1, delta, epsilon);
+    ScaledGaussianPdf resolution2("resolution2", dm, dummyzero, sigma2, delta, epsilon);
+    ScaledGaussianPdf resolution3("resolution3", dm, dummyzero, sigma3, delta, epsilon);
 
     Variable width_bw("kpi_rd_width_bw", 0.0001, 0.00001, 0.0005);
-    KinLimitBWPdf rbw1("rbw1", &dm, &mean1, &width_bw);
-    KinLimitBWPdf rbw2("rbw2", &dm, &mean2, &width_bw);
-    KinLimitBWPdf rbw3("rbw3", &dm, &mean3, &width_bw);
+    KinLimitBWPdf rbw1("rbw1", dm, mean1, width_bw);
+    KinLimitBWPdf rbw2("rbw2", dm, mean2, width_bw);
+    KinLimitBWPdf rbw3("rbw3", dm, mean3, width_bw);
 
-    ConvolutionPdf signal1{"signal1", &dm, &rbw1, &resolution1};
-    ConvolutionPdf signal2{"signal2", &dm, &rbw2, &resolution2};
-    ConvolutionPdf signal3{"signal3", &dm, &rbw3, &resolution3};
+    ConvolutionPdf signal1{"signal1", dm, &rbw1, &resolution1};
+    ConvolutionPdf signal2{"signal2", dm, &rbw2, &resolution2};
+    ConvolutionPdf signal3{"signal3", dm, &rbw3, &resolution3};
 
     signal1.setIntegrationConstants(0.1395, 0.1665, 0.0000027);
     signal2.setIntegrationConstants(0.1395, 0.1665, 0.0000027);
     signal3.setIntegrationConstants(0.1395, 0.1665, 0.0000027);
 
-    AddPdf signal{"signal", {&gfrac1, &gfrac2, &afrac}, {&signal1, &signal2, &argus, &signal3}};
+    AddPdf signal{"signal", {gfrac1, gfrac2, afrac}, {&signal1, &signal2, &argus, &signal3}};
 
     Variable slope("kpi_rd_slope", -1.0, 0.1, -35.0, 25.0);
-    Variable *bpower = nullptr;
-    ArgusPdf bkg("bkg", &dm, &pimass, &slope, false, bpower);
+    ArgusPdf bkg("bkg", dm, pimass, slope, false);
 
     Variable bkg_frac("kpi_rd_bkg_frac", 0.03, 0.0, 0.3);
 
     TH1D *data_hist = getData(data_dataset.get(), dm, datafile);
 
-    AddPdf total("total", {&bkg_frac}, {&bkg, &signal});
+    AddPdf total("total", {bkg_frac}, {&bkg, &signal});
 
     total.setData(data_dataset.get());
 
@@ -259,11 +258,11 @@ Dataset descriptions:
 
         double scale = data_hist->GetXaxis()->GetBinWidth(2) * data_dataset->getNumEvents();
 
-        auto sig_hist = signal.plotToROOT(&dm, (1 - bkg_frac.getValue()) * scale);
+        auto sig_hist = signal.plotToROOT(dm, (1 - bkg_frac.getValue()) * scale);
         sig_hist->SetLineColor(kBlue);
-        auto back_hist = bkg.plotToROOT(&dm, bkg_frac.getValue() * scale);
+        auto back_hist = bkg.plotToROOT(dm, bkg_frac.getValue() * scale);
         back_hist->SetLineColor(kRed);
-        auto tot_hist = total.plotToROOT(&dm, scale);
+        auto tot_hist = total.plotToROOT(dm, scale);
         tot_hist->SetLineColor(kGreen);
 
         tot_hist->Draw("SAME");

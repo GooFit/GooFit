@@ -39,7 +39,7 @@ __host__ DalitzVetoPdf::DalitzVetoPdf(std::string n,
                                       Variable d1m,
                                       Variable d2m,
                                       Variable d3m,
-                                      std::vector<VetoInfo *> vetos)
+                                      std::vector<VetoInfo> vetos)
     : GooPdf(n) {
     registerObservable(_x);
     registerObservable(_y);
@@ -53,9 +53,9 @@ __host__ DalitzVetoPdf::DalitzVetoPdf(std::string n,
     pindices.push_back(vetos.size());
 
     for(auto &veto : vetos) {
-        pindices.push_back(veto->cyclic_index);
-        pindices.push_back(registerParameter(*veto->minimum));
-        pindices.push_back(registerParameter(*veto->maximum));
+        pindices.push_back(veto.cyclic_index);
+        pindices.push_back(registerParameter(veto.minimum));
+        pindices.push_back(registerParameter(veto.maximum));
     }
 
     GET_FUNCTION_ADDR(ptr_to_DalitzVeto);

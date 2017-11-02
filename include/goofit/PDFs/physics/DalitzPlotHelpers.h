@@ -73,42 +73,49 @@ const int resonanceSize = 4; // Number of parameters to describe one resonance.
 // keyword (and 'extern' as well) interacts badly with some nvcc versions when the
 // variable is used in device code.
 
-struct DecayInfo {
+struct DecayInfo3 {
     fptype motherMass;
     fptype daug1Mass;
     fptype daug2Mass;
     fptype daug3Mass;
     fptype meson_radius;
-
-    Variable _tau;
-    Variable _xmixing;
-    Variable _ymixing;
-    std::vector<ResonancePdf *> resonances;
     
-    DecayInfo (Variable _tau,
+    std::vector<ResonancePdf *> resonances;
+};
+    
+struct DecayInfo3t : public DecayInfo3 {
+        Variable _tau;
+        Variable _xmixing;
+        Variable _ymixing;
+    
+    DecayInfo3t (   Variable _tau,
                   Variable _xmixing,
                   Variable _ymixing)
     : _tau(_tau), _xmixing(_xmixing), _ymixing(_ymixing) {}
 };
 
-struct DecayInfo_DP {
-    Variable _tau;
-    Variable _xmixing;
-    Variable _ymixing;
-    Variable _SqWStoRSrate;
-    
+struct DecayInfo4 {
+
     std::vector<fptype> particle_masses;
     fptype meson_radius;
 
     std::vector<Amplitude *> amplitudes;
     std::vector<Amplitude *> amplitudes_B;
+};
     
-    DecayInfo_DP (Variable _tau,
+struct DecayInfo4t : public DecayInfo4 {
+    Variable _tau;
+    Variable _xmixing;
+    Variable _ymixing;
+    Variable _SqWStoRSrate;
+    
+    DecayInfo4t (Variable _tau,
                   Variable _xmixing,
                   Variable _ymixing,
                   Variable _SqWStoRSrate)
     : _tau(_tau), _xmixing(_xmixing), _ymixing(_ymixing), _SqWStoRSrate(_SqWStoRSrate) {}
 };
+
 
 // Copied from strided_range thrust example by Nathan Bell.
 // Iterator to move forward by a specified number of steps

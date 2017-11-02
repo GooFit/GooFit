@@ -44,7 +44,7 @@ __device__ fptype device_incoherent(fptype *evt, fptype *p, unsigned int *indice
 __device__ device_function_ptr ptr_to_incoherent = device_incoherent;
 
 __host__ IncoherentSumPdf::IncoherentSumPdf(
-    std::string n, Observable m12, Observable m13, EventNumber eventNumber, DecayInfo *decay, GooPdf *eff)
+    std::string n, Observable m12, Observable m13, EventNumber eventNumber, DecayInfo3 decay, GooPdf *eff)
     : GooPdf(n)
     , decayInfo(decay)
     , _m12(m12)
@@ -65,20 +65,20 @@ __host__ IncoherentSumPdf::IncoherentSumPdf(
     std::vector<unsigned int> pindices;
     pindices.push_back(registerConstants(5));
     fptype decayConstants[5];
-    decayConstants[0] = decayInfo->motherMass;
-    decayConstants[1] = decayInfo->daug1Mass;
-    decayConstants[2] = decayInfo->daug2Mass;
-    decayConstants[3] = decayInfo->daug3Mass;
-    decayConstants[4] = decayInfo->meson_radius;
+    decayConstants[0] = decayInfo.motherMass;
+    decayConstants[1] = decayInfo.daug1Mass;
+    decayConstants[2] = decayInfo.daug2Mass;
+    decayConstants[3] = decayInfo.daug3Mass;
+    decayConstants[4] = decayInfo.meson_radius;
     MEMCPY_TO_SYMBOL(
         functorConstants, decayConstants, 5 * sizeof(fptype), cIndex * sizeof(fptype), cudaMemcpyHostToDevice);
 
-    pindices.push_back(decayInfo->resonances.size());
+    pindices.push_back(decayInfo.resonances.size());
     static int cacheCount = 0;
     cacheToUse            = cacheCount++;
     pindices.push_back(cacheToUse);
 
-    for(auto &resonance : decayInfo->resonances) {
+    for(auto &resonance : decayInfo.resonances) {
         pindices.push_back(registerParameter(resonance->amp_real));
         pindices.push_back(registerParameter(resonance->amp_real));
         // Not going to use amp_imag, but need a dummy index so the resonance size will be consistent.
@@ -95,22 +95,22 @@ __host__ IncoherentSumPdf::IncoherentSumPdf(
     GET_FUNCTION_ADDR(ptr_to_incoherent);
     initialize(pindices);
 
-    redoIntegral = new bool[decayInfo->resonances.size()];
-    cachedMasses = new fptype[decayInfo->resonances.size()];
-    cachedWidths = new fptype[decayInfo->resonances.size()];
-    integrals    = new double[decayInfo->resonances.size()];
+    redoIntegral = new bool[decayInfo.resonances.size()];
+    cachedMasses = new fptype[decayInfo.resonances.size()];
+    cachedWidths = new fptype[decayInfo.resonances.size()];
+    integrals    = new double[decayInfo.resonances.size()];
 
-    for(int i = 0; i < decayInfo->resonances.size(); ++i) {
+    for(int i = 0; i < decayInfo.resonances.size(); ++i) {
         redoIntegral[i] = true;
         cachedMasses[i] = -1;
         cachedWidths[i] = -1;
         integrals[i]    = 0;
     }
 
-    integrators = new SpecialIncoherentIntegrator *[decayInfo->resonances.size()];
-    calculators = new SpecialIncoherentResonanceCalculator *[decayInfo->resonances.size()];
+    integrators = new SpecialIncoherentIntegrator *[decayInfo.resonances.size()];
+    calculators = new SpecialIncoherentResonanceCalculator *[decayInfo.resonances.size()];
 
-    for(int i = 0; i < decayInfo->resonances.size(); ++i) {
+    for(int i = 0; i < decayInfo.resonances.size(); ++i) {
         integrators[i] = new SpecialIncoherentIntegrator(parameters, i);
         calculators[i] = new SpecialIncoherentResonanceCalculator(parameters, i);
     }
@@ -129,7 +129,7 @@ __host__ void IncoherentSumPdf::setDataSize(unsigned int dataSize, unsigned int 
     }
 
     numEntries       = dataSize;
-    cachedResonances = new thrust::device_vector<fpcomplex>(dataSize * decayInfo->resonances.size());
+    cachedResonances = new thrust::device_vector<fpcomplex>(dataSize * decayInfo.resonances.size());
     void *dummy      = thrust::raw_pointer_cast(cachedResonances->data());
     MEMCPY_TO_SYMBOL(
         cResonanceValues, &dummy, sizeof(fpcomplex *), cacheToUse * sizeof(fpcomplex *), cudaMemcpyHostToDevice);
@@ -165,10 +165,10 @@ __host__ fptype IncoherentSumPdf::normalize() const {
     }
 
     // Check for changed masses or forced integral redo.
-    for(unsigned int i = 0; i < decayInfo->resonances.size(); ++i) {
+    for(unsigned int i = 0; i < decayInfo.resonances.size(); ++i) {
         redoIntegral[i] = forceRedoIntegrals;
 
-        if(!(decayInfo->resonances[i]->parametersChanged()))
+        if(!(decayInfo.resonances[i]->parametersChanged()))
             continue;
 
         redoIntegral[i] = true;
@@ -186,13 +186,13 @@ __host__ fptype IncoherentSumPdf::normalize() const {
     thrust::constant_iterator<int> eventSize(totalEventSize);
     thrust::counting_iterator<int> eventIndex(0);
 
-    for(int i = 0; i < decayInfo->resonances.size(); ++i) {
+    for(int i = 0; i < decayInfo.resonances.size(); ++i) {
         if(redoIntegral[i]) {
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
                 strided_range<thrust::device_vector<fpcomplex>::iterator>(
-                    cachedResonances->begin() + i, cachedResonances->end(), decayInfo->resonances.size())
+                    cachedResonances->begin() + i, cachedResonances->end(), decayInfo.resonances.size())
                     .begin(),
                 *(calculators[i]));
 
@@ -211,7 +211,7 @@ __host__ fptype IncoherentSumPdf::normalize() const {
 
     fptype ret = 0;
 
-    for(unsigned int i = 0; i < decayInfo->resonances.size(); ++i) {
+    for(unsigned int i = 0; i < decayInfo.resonances.size(); ++i) {
         int param_i      = parameters + resonanceOffset_incoherent + resonanceSize * i;
         fptype amplitude = host_params[host_indices[param_i]];
         ret += amplitude * integrals[i];

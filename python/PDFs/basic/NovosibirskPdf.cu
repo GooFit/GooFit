@@ -8,7 +8,7 @@ namespace py = pybind11;
 
 void init_NovosibirskPdf(py::module &m) {
     py::class_<NovosibirskPdf, GooPdf>(m, "NovosibirskPdf")
-        .def(py::init<std::string, Observable *, Variable *, Variable *, Variable *>(),
+        .def(py::init<std::string, Observable, Variable, Variable, Variable>(),
              py::keep_alive<1, 3>(),
              py::keep_alive<1, 4>(),
              py::keep_alive<1, 5>(),

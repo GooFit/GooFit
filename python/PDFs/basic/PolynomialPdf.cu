@@ -16,7 +16,7 @@ void init_PolynomialPdf(py::module &m) {
              "weights"_a,
              "x0"_a,
              "lowestDegree"_a = 0)
-        .def(py::init<std::string, Observable, std::vector<Variable>, Variable , unsigned int>(),
+        .def(py::init<std::string, Observable, std::vector<Variable>, unsigned int>(),
              "n"_a,
              "x"_a,
              "weights"_a,

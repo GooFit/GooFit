@@ -80,5 +80,5 @@ void init_DalitzPlotHelpers(py::module &m) {
         .def_readwrite("_tau", &DecayInfo4t::_tau)
         .def_readwrite("_xmixing", &DecayInfo4t::_xmixing)
         .def_readwrite("_ymixing", &DecayInfo4t::_ymixing)
-        .def_readwrite("_SqWStoRSrate", &DecayInfo4t::_SqWStoRSrate)
+        .def_readwrite("_SqWStoRSrate", &DecayInfo4t::_SqWStoRSrate);
 }

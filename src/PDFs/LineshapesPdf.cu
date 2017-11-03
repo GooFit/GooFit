@@ -67,13 +67,12 @@ __device__ thrust::complex<fptype> LS_ONE(fptype Mpair, fptype m1, fptype m2, Pa
 
 // This function is modeled after BW_BW::getVal() in BW_BW.cpp from the MINT package written by Jonas Rademacker.
 __device__ thrust::complex<fptype> BW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
-    fptype meson_radius  = c_meson_radius;
-    fptype resmass       = pc.parameters[pc.parameterIdx + 1];
-    fptype reswidth      = pc.parameters[pc.parameterIdx + 2];
+    fptype resmass       = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
+    fptype reswidth      = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
 
-    int numObs = pc.constants[pc.constantIdx + 1];
-    unsigned int orbital = pc.constants[pc.constantIdx + numObs + 2];
-    unsigned int FF      = pc.constants[pc.constantIdx + numObs + 3];
+    fptype meson_radius  = RO_CACHE(pc.constants[pc.constantIdx + 1]);
+    unsigned int orbital = RO_CACHE(pc.constants[pc.constantIdx + 2]);
+    unsigned int FF      = RO_CACHE(pc.constants[pc.constantIdx + 3]);
 
     const unsigned int to2Lplus1 = 2 * orbital + 1;
 
@@ -129,13 +128,12 @@ __device__ thrust::complex<fptype> BW(fptype Mpair, fptype m1, fptype m2, Parame
 
 // This function is modeled after SBW from the MINT package written by Jonas Rademacker.
 __device__ thrust::complex<fptype> SBW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
-    fptype meson_radius  = c_meson_radius;
-    fptype resmass       = pc.parameters[pc.parameterIdx + 1];
-    fptype reswidth      = pc.parameters[pc.parameterIdx + 2];
+    fptype resmass       = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
+    fptype reswidth      = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
 
-    int numObs = pc.constants[pc.constantIdx + 1];
-    unsigned int orbital = pc.constants[pc.constantIdx + numObs + 2];
-    unsigned int FF      = pc.constants[pc.constantIdx + numObs + 3];
+    fptype meson_radius  = RO_CACHE(pc.constants[pc.constantIdx + 1]);
+    unsigned int orbital = RO_CACHE(pc.constants[pc.constantIdx + 2]);
+    unsigned int FF      = RO_CACHE(pc.constants[pc.constantIdx + 3]);
 
     fptype mass          = resmass;
     fptype width         = reswidth;
@@ -301,8 +299,8 @@ __device__ thrust::complex<fptype> bugg_MINT3(fptype Mpair, fptype m1, fptype m2
 }
 
 __device__ thrust::complex<fptype> lass_MINT(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
-    fptype resmass  = pc.parameters[pc.parameterIdx + 1];
-    fptype reswidth = pc.parameters[pc.parameterIdx + 2];
+    fptype resmass  = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
+    fptype reswidth = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
     fptype rMass2   = Mpair * Mpair;
 
     fptype a = 2.07;
@@ -337,11 +335,10 @@ __device__ thrust::complex<fptype> lass_MINT(fptype Mpair, fptype m1, fptype m2,
 // The difference between this and lass mint is not quite clear to me. need to get back to this later.
 __device__ thrust::complex<fptype> glass_MINT3(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
     fptype meson_radius  = c_meson_radius;
-    fptype resmass       = pc.parameters[pc.parameterIdx + 1];
-    fptype reswidth      = pc.parameters[pc.parameterIdx + 2];
+    fptype resmass       = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
+    fptype reswidth      = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
 
-    int numObs = pc.constants[pc.constantIdx + 1];
-    unsigned int orbital = pc.constants[pc.constantIdx + numObs + 2];
+    unsigned int orbital = RO_CACHE(pc.constants[pc.constantIdx + 2]);
 
     fptype rMass2        = Mpair * Mpair;
 
@@ -350,11 +347,11 @@ __device__ thrust::complex<fptype> glass_MINT3(fptype Mpair, fptype m1, fptype m
     // fptype phiF = 0.0;
     // fptype phiR = 0.0;
     // fptype F = 1.0;
-    fptype a    = pc.parameters[pc.parameterIdx + 3];
-    fptype r    = pc.parameters[pc.parameterIdx + 4];
-    fptype phiF = pc.parameters[pc.parameterIdx + 5];
-    fptype phiR = pc.parameters[pc.parameterIdx + 6];
-    fptype F    = pc.parameters[pc.parameterIdx + 7];
+    fptype a    = RO_CACHE(pc.parameters[pc.parameterIdx + 3]);
+    fptype r    = RO_CACHE(pc.parameters[pc.parameterIdx + 4]);
+    fptype phiF = RO_CACHE(pc.parameters[pc.parameterIdx + 5]);
+    fptype phiR = RO_CACHE(pc.parameters[pc.parameterIdx + 6]);
+    fptype F    = RO_CACHE(pc.parameters[pc.parameterIdx + 7]);
 
     fptype R = 1.0;
     // printf("GLass: %.5g %.5g %.5g %.5g %.5g %.5g\n",a, r, phiF, phiR, F, R);
@@ -403,11 +400,10 @@ __device__ thrust::complex<fptype> aSqrtTerm(const fptype &m0, const fptype &m) 
 }
 
 __device__ thrust::complex<fptype> Flatte_MINT(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
-    fptype meson_radius  = c_meson_radius;
-    fptype resmass       = pc.parameters[pc.parameterIdx + 1];
+    fptype resmass       = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
 
-    int numObs = pc.constants[pc.constantIdx + 1];
-    unsigned int orbital = pc.constants[pc.constantIdx + numObs + 2];
+    fptype meson_radius  = RO_CACHE(pc.constants[pc.constantIdx + 1]);
+    unsigned int orbital = RO_CACHE(pc.constants[pc.constantIdx + 2]);
 
     fptype frFactor      = 1;
     fptype rMass2        = Mpair * Mpair;
@@ -441,10 +437,8 @@ __device__ thrust::complex<fptype> Flatte_MINT(fptype Mpair, fptype m1, fptype m
 }
 
 __device__ thrust::complex<fptype> nonres_DP(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
-    fptype meson_radius  = c_meson_radius;
-
-    int numObs = pc.constants[pc.constantIdx + 1];
-    unsigned int orbital = pc.constants[pc.constantIdx + numObs + 2];
+    fptype meson_radius = RO_CACHE(pc.constants[pc.constantIdx + 1]);
+    unsigned int orbital = RO_CACHE(pc.constants[pc.constantIdx + 2]);
 
     fptype mumsRecoMass2 = Mpair * Mpair;
 
@@ -498,6 +492,7 @@ Lineshape::Lineshape(std::string name,
     pindices.push_back(registerConstants(1));
     //MEMCPY_TO_SYMBOL(functorConstants, &radius, sizeof(fptype), cIndex * sizeof(fptype), cudaMemcpyHostToDevice);
 
+    constantsList.push_back (radius);
     constantsList.push_back (L);
     constantsList.push_back (Mpair);
     //constantsList.push_back (enum_to_underlying(FormFac));

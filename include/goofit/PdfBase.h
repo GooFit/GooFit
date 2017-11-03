@@ -51,12 +51,14 @@ class UnbinnedDataSet;
 
 namespace {
 /// Utility to filter and pick out observables and variables
-void filter_arguments(std::vector<Observable> &oblist) { std::reverse(std::begin(oblist), std::end(oblist)); }
+void filter_arguments(std::vector<Observable> &oblist) {}
+
 template <typename... Args>
 void filter_arguments(std::vector<Observable> &oblist, const Observable &obs, Args... args) {
     oblist.push_back(obs);
     return filter_arguments(oblist, args...);
 }
+
 template <typename... Args>
 void filter_arguments(std::vector<Observable> &oblist, const EventNumber &obs, Args... args) {
     oblist.push_back(obs);

@@ -51,7 +51,7 @@ class UnbinnedDataSet;
 class PdfBase {
   public:
     PdfBase(std::string n);
-    PdfBase(const Observable &x, std::string n);
+    PdfBase(std::string n, const Observable &x);
     virtual ~PdfBase() = default;
 
     enum Specials { ForceSeparateNorm = 1, ForceCommonNorm = 2 };

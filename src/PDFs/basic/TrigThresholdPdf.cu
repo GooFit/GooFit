@@ -70,7 +70,7 @@ __device__ device_function_ptr ptr_to_VerySpecialEpisodeTrigThresholdLower
 
 __host__ TrigThresholdPdf::TrigThresholdPdf(
     std::string n, Observable _x, Variable thresh, Variable trigConst, Variable linConst, bool upper)
-    : GooPdf(_x, n) {
+    : GooPdf(n, _x) {
     std::vector<unsigned int> pindices;
     pindices.push_back(registerParameter(thresh));
     pindices.push_back(registerParameter(trigConst));

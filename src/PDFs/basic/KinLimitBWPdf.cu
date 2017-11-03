@@ -51,7 +51,7 @@ __device__ fptype device_KinLimitBW(fptype *evt, fptype *p, unsigned int *indice
 __device__ device_function_ptr ptr_to_KinLimitBW = device_KinLimitBW;
 
 __host__ KinLimitBWPdf::KinLimitBWPdf(std::string n, Observable _x, Variable mean, Variable width)
-    : GooPdf(_x, n) {
+    : GooPdf(n, _x) {
     registerParameter(mean);
     registerParameter(width);
 

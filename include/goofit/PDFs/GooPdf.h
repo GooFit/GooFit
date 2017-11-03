@@ -55,7 +55,7 @@ class GooPdf : public PdfBase {
   public:
     using PdfBase::PdfBase;
 
-    __host__ double calculateNLL() const override;
+    double calculateNLL() const override;
 
     /// NB: This does not project correctly in multidimensional datasets, because all observables
     /// other than 'var' will have, for every event, whatever value they happened to get set to last

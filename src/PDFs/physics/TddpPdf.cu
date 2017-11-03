@@ -309,7 +309,7 @@ __host__ TddpPdf::TddpPdf(std::string n,
                           MixingTimeResolution *r,
                           GooPdf *efficiency,
                           Observable *mistag)
-    : GooPdf(_dtime, n)
+    : GooPdf(n, _dtime)
     , decayInfo(decay)
     , _m12(m12)
     , _m13(m13)
@@ -409,7 +409,7 @@ __host__ TddpPdf::TddpPdf(std::string n,
                           GooPdf *efficiency,
                           Observable md0,
                           Observable *mistag)
-    : GooPdf(_dtime, n)
+    : GooPdf(n, _dtime)
     , decayInfo(decay)
     , _m12(m12)
     , _m13(m13)

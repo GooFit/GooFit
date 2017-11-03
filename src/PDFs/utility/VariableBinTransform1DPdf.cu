@@ -28,7 +28,7 @@ __device__ device_function_ptr ptr_to_VarBinTransform1D = device_VarBinTransform
 
 // Notice that bin sizes and limits can be different, for this purpose, than what's implied by the Variable members.
 __host__ VariableBinTransform1DPdf::VariableBinTransform1DPdf(std::string n, Observable _x, vector<fptype> binlimits)
-    : GooPdf(_x, n) {
+    : GooPdf(n, _x) {
     unsigned int numLimits = binlimits.size(); // Excluding the min & max values for _x
     cIndex                 = registerConstants(numLimits);
     std::vector<fptype> host_constants;

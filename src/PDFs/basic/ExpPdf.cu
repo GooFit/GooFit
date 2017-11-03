@@ -53,7 +53,7 @@ __device__ device_function_ptr ptr_to_ExpOffset     = device_ExpOffset;
 __device__ device_function_ptr ptr_to_ExpPolyOffset = device_ExpPolyOffset;
 
 __host__ ExpPdf::ExpPdf(std::string n, Observable _x, Variable alpha)
-    : GooPdf(_x, n) {
+    : GooPdf(n, _x) {
     std::vector<unsigned int> pindices;
 
     pindices.push_back(registerParameter(alpha));
@@ -62,7 +62,7 @@ __host__ ExpPdf::ExpPdf(std::string n, Observable _x, Variable alpha)
 }
 
 __host__ ExpPdf::ExpPdf(std::string n, Observable _x, Variable alpha, Variable offset)
-    : GooPdf(_x, n) {
+    : GooPdf(n, _x) {
     std::vector<unsigned int> pindices;
 
     pindices.push_back(registerParameter(offset));
@@ -72,7 +72,7 @@ __host__ ExpPdf::ExpPdf(std::string n, Observable _x, Variable alpha, Variable o
 }
 
 __host__ ExpPdf::ExpPdf(std::string n, Observable _x, std::vector<Variable> &weights)
-    : GooPdf(_x, n) {
+    : GooPdf(n, _x) {
     std::vector<unsigned int> pindices;
 
     if(weights.empty())
@@ -87,7 +87,7 @@ __host__ ExpPdf::ExpPdf(std::string n, Observable _x, std::vector<Variable> &wei
 }
 
 __host__ ExpPdf::ExpPdf(std::string n, Observable _x, std::vector<Variable> &weights, Variable offset)
-    : GooPdf(_x, n) {
+    : GooPdf(n, _x) {
     std::vector<unsigned int> pindices;
 
     pindices.push_back(registerParameter(offset));

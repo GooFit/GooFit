@@ -110,7 +110,7 @@ __device__ device_function_ptr ptr_to_MultiPolynomial  = device_MultiPolynomial;
 // Constructor for single-variate polynomial, with optional zero point.
 __host__
 PolynomialPdf::PolynomialPdf(std::string n, Observable _x, std::vector<Variable> weights, unsigned int lowestDegree)
-    : GooPdf(_x, n) {
+    : GooPdf(n, _x) {
     std::vector<unsigned int> pindices;
     pindices.push_back(lowestDegree);
 
@@ -126,7 +126,7 @@ PolynomialPdf::PolynomialPdf(std::string n, Observable _x, std::vector<Variable>
 // Constructor for single-variate polynomial, with optional zero point.
 __host__ PolynomialPdf::PolynomialPdf(
     std::string n, Observable _x, std::vector<Variable> weights, Variable x0, unsigned int lowestDegree)
-    : GooPdf(_x, n)
+    : GooPdf(n, _x)
     , center(new Variable(x0)) {
     std::vector<unsigned int> pindices;
     pindices.push_back(lowestDegree);

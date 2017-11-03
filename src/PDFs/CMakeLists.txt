@@ -53,10 +53,10 @@ if(GOOFIT_SEPARATE_COMP)
         PdfBase.cu
         CrystalBallPdf.cu
         BifurGaussPdf.cu
-        #LineshapesPdf.cu
+        LineshapesPdf.cu
         CorrGaussianPdf.cu
         LandauPdf.cu
-        #DP4Pdf.cu
+        DP4Pdf.cu
         GaussianPdf.cu
         AddPdf.cu
         VoigtianPdf.cu
@@ -78,7 +78,7 @@ if(GOOFIT_SEPARATE_COMP)
         TrigThresholdPdf.cu
         SmoothHistogramPdf.cu
         ExpPdf.cu
-        #InterHistPdf.cu
+        InterHistPdf.cu
         DalitzPlotPdf.cu
         TddpPdf.cu
         ArgusPdf.cu
@@ -86,7 +86,7 @@ if(GOOFIT_SEPARATE_COMP)
         CompositePdf.cu
         ConvolutionPdf.cu
         DalitzPlotHelpers.cu
-        #SpinFactors.cu
+        SpinFactors.cu
         MixingTimeResolution_Aux.cu
         TruthResolution_Aux.cu
         ThreeGaussResolution_Aux.cu

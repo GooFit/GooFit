@@ -16,18 +16,7 @@
 #include <Minuit2/FunctionMinimum.h>
 
 namespace {
-template <typename T>
-bool find_in(std::vector<T *> list, T *item) {
-    return std::find_if(std::begin(list), std::end(list), [item](T *p) { return *p == *item; }) != std::end(list);
-}
-template <typename T>
-bool find_in(std::vector<T> list, T *item) {
-    return std::find_if(std::begin(list), std::end(list), [item](T &p) { return p == *item; }) != std::end(list);
-}
-template <typename T>
-bool find_in(std::vector<T *> list, T item) {
-    return std::find_if(std::begin(list), std::end(list), [item](T *p) { return *p == item; }) != std::end(list);
-}
+
 template <typename T>
 bool find_in(std::vector<T> list, T item) {
     return std::find_if(std::begin(list), std::end(list), [item](T p) { return p == item; }) != std::end(list);
@@ -151,9 +140,6 @@ __host__ unsigned int PdfBase::registerConstants(unsigned int amount) {
 }
 
 void PdfBase::registerObservable(Observable obs) {
-    if(!obs)
-        return;
-
     if(find_in(observables, obs))
         return;
 

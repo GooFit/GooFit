@@ -167,7 +167,7 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n,
         char varName[100];
         sprintf(varName, "%s_extra_coeff_%i", getName().c_str(), static_cast<int>(coeffs.size()));
 
-        coeffs.push_back(Variable(varName, 0));
+        coeffs.emplace_back(varName, 0);
 
         std::cout << "Warning: " << getName() << " created dummy variable " << varName
                   << " (fixed at zero) to account for all terms.\n";
@@ -176,7 +176,7 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n,
     while(offsets.size() < obses.size()) {
         char varName[100];
         sprintf(varName, "%s_extra_offset_%i", getName().c_str(), static_cast<int>(offsets.size()));
-        offsets.push_back(Variable(varName, 0));
+        offsets.emplace_back(varName, 0);
     }
 
     std::vector<unsigned int> pindices;

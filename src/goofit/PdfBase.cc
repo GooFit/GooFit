@@ -109,7 +109,7 @@ __host__ Variable *PdfBase::getParameterByName(std::string n) {
     for(auto component : components) {
         Variable *cand = component->getParameterByName(n);
 
-        if(cand)
+        if(cand != nullptr)
             return cand;
     }
 
@@ -158,7 +158,7 @@ __host__ bool PdfBase::parametersChanged() const {
 }
 
 __host__ void PdfBase::setNumPerTask(PdfBase *p, const int &c) {
-    if(!p)
+    if(p == nullptr)
         return;
 
     m_iEventsPerTask = c;

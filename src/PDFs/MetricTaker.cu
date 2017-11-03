@@ -29,11 +29,21 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, fptype*, int> t) co
     int eventSize        = thrust::get<2>(t);
     fptype *eventAddress = thrust::get<1>(t) + (eventIndex * abs(eventSize));
 
-    fptype obs = RO_CACHE(eventAddress[abs(eventSize) - 2]);
-    fptype norm = pc.normalisations[pc.normalIdx + 1];
+    fptype events[10];
+
+    //pack our events into the event shared memory.
+#pragma unroll
+    for (int i = 0; i < abs(eventSize); i++)
+        events[i] = eventAddress[i];
+
+    int idx = abs(eventSize - 2);
+    if (idx < 0)
+        idx = 0;
+    fptype obs = events[idx];
+    fptype norm = RO_CACHE(pc.normalisations[pc.normalIdx + 1]);
 
     // Causes stack size to be statically undeterminable.
-    fptype ret = callFunction(eventAddress, pc);
+    fptype ret = callFunction(events, pc);
 
     // Notice assumption here! For unbinned fits the 'eventAddress' pointer won't be used
     // in the metric, so it doesn't matter what it is. For binned fits it is assumed that
@@ -52,10 +62,15 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, int, fptype*> t) co
     int evtSize = thrust::get<1>(t);
     int binNumber = thrust::get<0>(t);
 
+    fptype events[10];
+
+    //for (int i = 0; i < evtSize; i++)
+    //    pc.events[i] = 
+
     // Do not understand why this cannot be declared __shared__. Dynamically allocating shared memory is apparently
     // complicated.
     // fptype* binCenters = (fptype*) malloc(evtSize * sizeof(fptype));
-    fptype binCenters[MAX_NUM_OBSERVABLES];
+    //fptype binCenters[MAX_NUM_OBSERVABLES];
 
     // To convert global bin number to (x,y,z...) coordinates: For each dimension, take the mod
     // with the number of bins in that dimension. Then divide by the number of bins, in effect
@@ -66,7 +81,7 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, int, fptype*> t) co
          pc.incrementIndex(); //need to use the slow version, since we are not starting from index 0.
 
     //put our index here...
-    int id = pc.observables[pc.observableIdx + 1];
+    int id = RO_CACHE(pc.observables[pc.observableIdx + 1]);
 
     for(int i = 0; i < evtSize; ++i) {
         fptype lowerBound = thrust::get<2>(t)[3 * i + 0];
@@ -79,12 +94,12 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, int, fptype*> t) co
         x *= (localBin + 0.5);
         x += lowerBound;
         //binCenters[i + THREADIDX*MAX_NUM_OBSERVABLES] = x;
-        binCenters[id] = x;
+        events[id] = x;
         binNumber /= numBins;
     }
 
     // Causes stack size to be statically undeterminable.
-    fptype ret = callFunction(binCenters, pc);
+    fptype ret = callFunction(events, pc);
     return ret;
 }
 

@@ -160,12 +160,12 @@ class Variable : public Indexable {
 
     /// This is a normal variable, with value and upper/lower limits
     Variable(std::string n, fptype v, fptype dn, fptype up)
-        : Indexable(n, v, up, dn)
+        : Indexable(n, v, dn, up)
         , error(std::make_shared<fptype>(0.1 * (up - dn))) {}
 
     /// This is a full varaible with error scale as well
     Variable(std::string n, fptype v, fptype e, fptype dn, fptype up)
-        : Indexable(n, v, up, dn)
+        : Indexable(n, v, dn, up)
         , error(std::make_shared<fptype>(e)) {}
 
     ~Variable() override = default;

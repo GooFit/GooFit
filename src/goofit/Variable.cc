@@ -19,9 +19,9 @@ int max_index(const std::vector<Observable> &vars) {
     if(vars.empty())
         return -1;
     const Observable &max_ind_ptr
-    = *std::max_element(std::begin(vars), std::end(vars), [](const Observable &a, const Observable &b) {
-        return a.getIndex() < b.getIndex();
-    });
+        = *std::max_element(std::begin(vars), std::end(vars), [](const Observable &a, const Observable &b) {
+              return a.getIndex() < b.getIndex();
+          });
     return max_ind_ptr.getIndex();
 }
 

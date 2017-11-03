@@ -29,13 +29,9 @@ vector<double> errors;
 
 Observable decayTime{"decayTime", 0, 10};
 
-double integralExpCon(double lo, double hi) {
-    return (exp(-lo) - exp(-hi));
-}
+double integralExpCon(double lo, double hi) { return (exp(-lo) - exp(-hi)); }
 
-double integralExpLin(double lo, double hi) {
-    return ((lo + 1) * exp(-lo) - (hi + 1) * exp(-hi));
-}
+double integralExpLin(double lo, double hi) { return ((lo + 1) * exp(-lo) - (hi + 1) * exp(-hi)); }
 
 double integralExpSqu(double lo, double hi) {
     return ((lo * lo + 2 * lo + 2) * exp(-lo) - (hi * hi + 2 * hi + 2) * exp(-hi));
@@ -76,13 +72,11 @@ void generateEvents(Observable decayTime,
     }
 }
 
-std::tuple<int, std::string>
-    fitRatio(Observable decayTime,
-             vector<Variable> weights,
-             vector<int> &rsEvts,
-             vector<int> &wsEvts,
-             std::string plotName = "") {
-    
+std::tuple<int, std::string> fitRatio(Observable decayTime,
+                                      vector<Variable> weights,
+                                      vector<int> &rsEvts,
+                                      vector<int> &wsEvts,
+                                      std::string plotName = "") {
     TH1D *ratioHist
         = new TH1D("ratioHist", "", decayTime.getNumBins(), decayTime.getLowerLimit(), decayTime.getUpperLimit());
 
@@ -167,7 +161,7 @@ void cpvFitFcn(int &npar, double *gin, double &fun, double *fp, int iflag) {
     double squCoef = fp[2];
 
     double chisq = 0;
-    double step = (decayTime.getUpperLimit() - decayTime.getLowerLimit()) / decayTime.getNumBins();
+    double step  = (decayTime.getUpperLimit() - decayTime.getLowerLimit()) / decayTime.getNumBins();
 
     for(unsigned int i = 0; i < ratios.size(); ++i) {
         double currDTime = decayTime.getLowerLimit() + (i + 0.5) * step;
@@ -223,7 +217,7 @@ int main(int argc, char **argv) {
 
     int eventsToGenerate = 10000000;
     app.add_option("-e,--events", eventsToGenerate, "Events to generate", true);
-    
+
     try {
         app.run();
     } catch(const GooFit::ParseError &e) {
@@ -274,9 +268,9 @@ int main(int argc, char **argv) {
     fitRatioCPU(decayTime, d0barEvtsRS, d0barEvtsWS);
     std::string cpu_string = timer_cpu.to_string();
 
-    std::cout << fit1 << "\n" << fit2 << "\n" <<cpu_string << std::endl;
-    
+    std::cout << fit1 << "\n" << fit2 << "\n" << cpu_string << std::endl;
+
     fmt::print("Exit codes (should be 0): {} and {}\n", retval1, retval2);
-    
+
     return retval1 + retval2;
 }

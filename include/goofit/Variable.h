@@ -241,28 +241,10 @@ class EventNumber : public Observable {
 };
 
 /// Get the max index of a variable from a list
-template <typename T>
-int max_index(const std::vector<T *> &vars) {
-    std::vector<Indexable *> nvars;
-    for(auto v : vars)
-        nvars.push_back(v);
-    return max_index(nvars);
-}
-
-template <typename T>
-int max_index(const std::vector<T> &vars) {
-    std::vector<Indexable *> nvars;
-    for(auto v : vars)
-        nvars.push_back(&v);
-    return max_index(nvars);
-}
-
-/// Get the max index of a variable from a list
-template <>
-int max_index<Indexable>(const std::vector<Indexable *> &vars);
-
+int max_index(const std::vector<Variable> &vars);
+int max_index(const std::vector<Observable> &vars);
+        
 /// Get the max fitter index of a variable from a list
-int max_fitter_index(const std::vector<Variable *> &vars);
 int max_fitter_index(const std::vector<Variable> &vars);
 
 /// Nice print of Variable

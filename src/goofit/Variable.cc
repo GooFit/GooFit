@@ -5,23 +5,24 @@
 
 namespace GooFit {
 
-template <>
-int max_index<Indexable>(const std::vector<Indexable *> &vars) {
+int max_index(const std::vector<Variable> &vars) {
     if(vars.empty())
         return -1;
-    const Indexable *max_ind_ptr
-        = *std::max_element(std::begin(vars), std::end(vars), [](const Indexable *a, const Indexable *b) {
-              return a->getIndex() < b->getIndex();
+    const Variable &max_ind_ptr
+        = *std::max_element(std::begin(vars), std::end(vars), [](const Variable &a, const Variable &b) {
+              return a.getIndex() < b.getIndex();
           });
-    return max_ind_ptr->getIndex();
+    return max_ind_ptr.getIndex();
 }
 
-int max_fitter_index(const std::vector<Variable *> &vars) {
-    const Variable *max_ind_ptr
-        = *std::max_element(std::begin(vars), std::end(vars), [](const Variable *a, const Variable *b) {
-              return a->getFitterIndex() < b->getFitterIndex();
-          });
-    return max_ind_ptr->getFitterIndex();
+int max_index(const std::vector<Observable> &vars) {
+    if(vars.empty())
+        return -1;
+    const Observable &max_ind_ptr
+    = *std::max_element(std::begin(vars), std::end(vars), [](const Observable &a, const Observable &b) {
+        return a.getIndex() < b.getIndex();
+    });
+    return max_ind_ptr.getIndex();
 }
 
 int max_fitter_index(const std::vector<Variable> &vars) {

@@ -10,6 +10,7 @@
 #include <map>
 #include <set>
 #include <vector>
+#include <algorithm>
 
 #ifdef ROOT_FOUND
 class TH1D;
@@ -48,10 +49,32 @@ class DataSet;
 class BinnedDataSet;
 class UnbinnedDataSet;
 
+namespace {
+/// Utility to filter and pick out observables and variables
+void filter_arguments(std::vector<Observable> &oblist) { std::reverse(std::begin(oblist), std::end(oblist)); }
+template <typename... Args>
+void filter_arguments(std::vector<Observable> &oblist, const Observable &obs, Args... args) {
+    oblist.push_back(obs);
+    return filter_arguments(oblist, args...);
+}
+template <typename... Args>
+void filter_arguments(std::vector<Observable> &oblist, const EventNumber &obs, Args... args) {
+    oblist.push_back(obs);
+    return filter_arguments(oblist, args...);
+}
+} // namespace
+
 class PdfBase {
   public:
-    PdfBase(std::string n);
-    PdfBase(std::string n, const Observable &x);
+    template <typename... Args>
+    explicit PdfBase(std::string n, Args... args)
+        : name(std::move(n)) {
+        std::vector<Observable> obs;
+        filter_arguments(obs, args...);
+        for(auto &ob : obs)
+            registerObservable(ob);
+    }
+
     virtual ~PdfBase() = default;
 
     enum Specials { ForceSeparateNorm = 1, ForceCommonNorm = 2 };
@@ -114,9 +137,9 @@ class PdfBase {
     int specialMask{0}; //< For storing information unique to PDFs, eg "Normalize me separately" for TddpPdf.
     bool properlyInitialised{true}; //< Allows checking for required extra steps in, eg, Tddp and Convolution.
 
-    unsigned int functionIdx; //< Stores index of device function pointer.
+    unsigned int functionIdx{0}; //< Stores index of device function pointer.
 
-    int m_iEventsPerTask;
+    int m_iEventsPerTask{0};
 
     /// This needs to be set before a call to setData.
     void setNumPerTask(PdfBase *p, const int &c);

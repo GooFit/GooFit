@@ -93,10 +93,7 @@ __host__ TrigThresholdPdf::TrigThresholdPdf(std::string n,
                                             Variable linConst,
                                             Variable massConstant,
                                             bool upper)
-    : GooPdf(n) {
-    registerObservable(_x);
-    registerObservable(_y);
-
+    : GooPdf(n, _x, _y) {
     std::vector<unsigned int> pindices;
     pindices.push_back(registerParameter(thresh));
     pindices.push_back(registerParameter(trigConst));

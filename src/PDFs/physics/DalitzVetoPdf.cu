@@ -40,10 +40,7 @@ __host__ DalitzVetoPdf::DalitzVetoPdf(std::string n,
                                       Variable d2m,
                                       Variable d3m,
                                       std::vector<VetoInfo> vetos)
-    : GooPdf(n) {
-    registerObservable(_x);
-    registerObservable(_y);
-
+    : GooPdf(n, _x, _y) {
     std::vector<unsigned int> pindices;
     pindices.push_back(registerParameter(motherM));
     pindices.push_back(registerParameter(d1m));

@@ -309,19 +309,13 @@ __host__ TddpPdf::TddpPdf(std::string n,
                           MixingTimeResolution *r,
                           GooPdf *efficiency,
                           Observable *mistag)
-    : GooPdf(n, _dtime)
+    : GooPdf(n, _dtime, _sigmat, m12, m13, eventNumber)
     , decayInfo(decay)
     , _m12(m12)
     , _m13(m13)
     , resolution(r)
     , totalEventSize(5) // Default 5 = m12, m13, time, sigma_t, evtNum
 {
-    // NB, _dtime already registered!
-    registerObservable(_sigmat);
-    registerObservable(_m12);
-    registerObservable(_m13);
-    registerObservable(eventNumber);
-
     for(auto &cachedWave : cachedWaves)
         cachedWave = nullptr;
 
@@ -409,7 +403,7 @@ __host__ TddpPdf::TddpPdf(std::string n,
                           GooPdf *efficiency,
                           Observable md0,
                           Observable *mistag)
-    : GooPdf(n, _dtime)
+    : GooPdf(n, _dtime, _sigmat, m12, m13, eventNumber, md0)
     , decayInfo(decay)
     , _m12(m12)
     , _m13(m13)
@@ -417,13 +411,6 @@ __host__ TddpPdf::TddpPdf(std::string n,
           r[0]) // Only used for normalisation, which only depends on x and y - it doesn't matter which one we use.
     , totalEventSize(6) // This case adds the D0 mass by default.
 {
-    // NB, _dtime already registered!
-    registerObservable(_sigmat);
-    registerObservable(_m12);
-    registerObservable(_m13);
-    registerObservable(eventNumber);
-    registerObservable(md0);
-
     for(auto &cachedWave : cachedWaves)
         cachedWave = nullptr;
 

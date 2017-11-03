@@ -107,7 +107,7 @@ __device__ device_function_ptr ptr_to_DalitzPlot = device_DalitzPlot;
 
 __host__ DalitzPlotPdf::DalitzPlotPdf(
     std::string n, Observable m12, Observable m13, EventNumber eventNumber, DecayInfo3 decay, GooPdf *efficiency)
-    : GooPdf(n)
+    : GooPdf(n, m12, m13, eventNumber)
     , decayInfo(decay)
     , _m12(m12)
     , _m13(m13)
@@ -119,10 +119,6 @@ __host__ DalitzPlotPdf::DalitzPlotPdf(
     , cacheToUse(0)
     , integrators(nullptr)
     , calculators(nullptr) {
-    registerObservable(_m12);
-    registerObservable(_m13);
-    registerObservable(eventNumber);
-
     fptype decayConstants[5];
 
     for(auto &cachedWave : cachedWaves)

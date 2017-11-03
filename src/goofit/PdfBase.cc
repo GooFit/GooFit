@@ -34,14 +34,6 @@ int host_callnumber = 0;
 int totalParams     = 0;
 int totalConstants  = 1; // First constant is reserved for number of events.
 
-PdfBase::PdfBase(std::string n)
-    : name(std::move(n)) {}
-
-PdfBase::PdfBase(std::string n, const Observable &x)
-    : PdfBase(n) {
-    registerObservable(x);
-}
-
 __host__ void PdfBase::checkInitStatus(std::vector<std::string> &unInited) const {
     if(!properlyInitialised)
         unInited.push_back(getName());

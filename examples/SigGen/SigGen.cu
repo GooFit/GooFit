@@ -209,7 +209,8 @@ int main(int argc, char **argv) {
         auto weights   = std::get<2>(tuple);
         auto flags     = std::get<3>(tuple);
         long accepted  = thrust::count_if(flags.begin(), flags.end(), thrust::identity<bool>());
-        fprintf(stderr, "Using accept-reject method would leave you with %i out of %i events\n", accepted, numEvents);
+        fmt::print(
+            stderr, "Using accept-reject method would leave you with {} out of {} events\n", accepted, numEvents);
 
         for(int i = 0; i < weights.size(); ++i) {
             if(flags[i] == 1) {

@@ -45,7 +45,7 @@ __device__ device_function_ptr ptr_to_incoherent = device_incoherent;
 
 __host__ IncoherentSumPdf::IncoherentSumPdf(
     std::string n, Observable m12, Observable m13, EventNumber eventNumber, DecayInfo3 decay, GooPdf *eff)
-    : GooPdf(n)
+    : GooPdf(n, m12, m13, eventNumber)
     , decayInfo(decay)
     , _m12(m12)
     , _m13(m13)
@@ -58,10 +58,6 @@ __host__ IncoherentSumPdf::IncoherentSumPdf(
     , efficiency(eff)
     , integrators(nullptr)
     , calculators(nullptr) {
-    registerObservable(_m12);
-    registerObservable(_m13);
-    registerObservable(eventNumber);
-
     std::vector<unsigned int> pindices;
     pindices.push_back(registerConstants(5));
     fptype decayConstants[5];

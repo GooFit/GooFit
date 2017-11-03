@@ -36,9 +36,9 @@ __host__ CorrGaussianPdf::CorrGaussianPdf(std::string n,
                                           Variable mean2,
                                           Variable sigma2,
                                           Variable correlation)
-    : GooPdf(n) {
+    : GooPdf(n, _x, _y) {
     // registerObservable(_x);
-    registerObservable(_y);
+    // registerObservable(_y);
 
     std::vector<unsigned int> pindices;
     pindices.push_back(registerParameter(mean1));

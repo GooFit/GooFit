@@ -44,7 +44,7 @@ class SpinFactor : public GooPdf {
     unsigned int _P3;
 
   public:
-    SpinFactor(std::string name, SF_4Body SF, unsigned int P0, unsigned int P1, unsigned int P2, unsigned int P3);
+    SpinFactor(std::string name, SF_4Body SF, const fptype &mother_radius, unsigned int P0, unsigned int P1, unsigned int P2, unsigned int P3);
     void setConstantIndex(unsigned int idx) {
         // host_indices[parameters + 1] = idx;
     }

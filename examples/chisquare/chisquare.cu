@@ -5,6 +5,8 @@
 #include "goofit/UnbinnedDataSet.h"
 #include "goofit/FitControl.h"
 
+#include <CLI/Timer.hpp>
+
 #include "goofit/PDFs/basic/PolynomialPdf.h"
 #include "TMinuit.h"
 #include "TRandom.h"
@@ -12,26 +14,28 @@
 #include "TCanvas.h"
 #include "TLatex.h"
 
-#include <sys/time.h>
-#include <sys/times.h>
-
 #include <iostream>
 #include <string>
+#include <tuple>
 #include <vector>
 
 TCanvas foo;
-timeval startTime, stopTime, totalTime;
 
 using namespace std;
 using namespace GooFit;
 
 vector<double> ratios;
 vector<double> errors;
-Observable *globalDecayTime = nullptr;
 
-double integralExpCon(double lo, double hi) { return (exp(-lo) - exp(-hi)); }
+Observable decayTime{"decayTime", 0, 10};
 
-double integralExpLin(double lo, double hi) { return ((lo + 1) * exp(-lo) - (hi + 1) * exp(-hi)); }
+double integralExpCon(double lo, double hi) {
+    return (exp(-lo) - exp(-hi));
+}
+
+double integralExpLin(double lo, double hi) {
+    return ((lo + 1) * exp(-lo) - (hi + 1) * exp(-hi));
+}
 
 double integralExpSqu(double lo, double hi) {
     return ((lo * lo + 2 * lo + 2) * exp(-lo) - (hi * hi + 2 * hi + 2) * exp(-hi));
@@ -72,11 +76,13 @@ void generateEvents(Observable decayTime,
     }
 }
 
-int fitRatio(Observable decayTime,
+std::tuple<int, std::string>
+    fitRatio(Observable decayTime,
              vector<Variable> weights,
              vector<int> &rsEvts,
              vector<int> &wsEvts,
              std::string plotName = "") {
+    
     TH1D *ratioHist
         = new TH1D("ratioHist", "", decayTime.getNumBins(), decayTime.getLowerLimit(), decayTime.getUpperLimit());
 
@@ -108,9 +114,9 @@ int fitRatio(Observable decayTime,
     poly->setData(ratioData);
     FitManager datapdf{poly};
 
-    gettimeofday(&startTime, nullptr);
+    CLI::Timer timer_cpu{"GPU"};
     datapdf.fit();
-    gettimeofday(&stopTime, nullptr);
+    std::string timer_str = timer_cpu.to_string();
 
     vector<fptype> values = poly->evaluateAtPoints(decayTime);
     TH1D pdfHist("pdfHist", "", decayTime.getNumBins(), decayTime.getLowerLimit(), decayTime.getUpperLimit());
@@ -152,7 +158,7 @@ int fitRatio(Observable decayTime,
     delete ratioData;
     delete poly;
 
-    return datapdf;
+    return {datapdf, timer_str};
 }
 
 void cpvFitFcn(int &npar, double *gin, double &fun, double *fp, int iflag) {
@@ -161,10 +167,10 @@ void cpvFitFcn(int &npar, double *gin, double &fun, double *fp, int iflag) {
     double squCoef = fp[2];
 
     double chisq = 0;
-    double step = (globalDecayTime->getUpperLimit() - globalDecayTime->getLowerLimit()) / globalDecayTime->getNumBins();
+    double step = (decayTime.getUpperLimit() - decayTime.getLowerLimit()) / decayTime.getNumBins();
 
     for(unsigned int i = 0; i < ratios.size(); ++i) {
-        double currDTime = globalDecayTime->getLowerLimit() + (i + 0.5) * step;
+        double currDTime = decayTime.getLowerLimit() + (i + 0.5) * step;
         double pdfval    = conCoef + linCoef * currDTime + squCoef * currDTime * currDTime;
         chisq += pow((pdfval - ratios[i]) / errors[i], 2);
     }
@@ -206,9 +212,7 @@ void fitRatioCPU(Observable decayTime, vector<int> &rsEvts, vector<int> &wsEvts)
     minuit->DefineParameter(2, "secondCoef", 0, 0.01, -1, 1);
     minuit->SetFCN(cpvFitFcn);
 
-    gettimeofday(&startTime, nullptr);
     minuit->Migrad();
-    gettimeofday(&stopTime, nullptr);
 }
 
 int main(int argc, char **argv) {
@@ -217,6 +221,9 @@ int main(int argc, char **argv) {
     int numbins = 100;
     app.add_option("-n,--numbins", numbins, "Number of bins", true);
 
+    int eventsToGenerate = 10000000;
+    app.add_option("-e,--events", eventsToGenerate, "Events to generate", true);
+    
     try {
         app.run();
     } catch(const GooFit::ParseError &e) {
@@ -224,10 +231,6 @@ int main(int argc, char **argv) {
     }
 
     // Time is in units of lifetime
-    Observable decayTime{"decayTime", 0, 10};
-
-    // Hack for Minuit 1
-    globalDecayTime = &decayTime;
 
     decayTime.setValue(100.);
     decayTime.setNumBins(numbins);
@@ -240,8 +243,6 @@ int main(int argc, char **argv) {
     double y_mix = 0.0055;
     double magPQ = 1.0;
     double magQP = 1.0 / magPQ;
-
-    int eventsToGenerate = 10000000;
 
     vector<int> dZeroEvtsWS(decayTime.getNumBins());
     vector<int> dZeroEvtsRS(decayTime.getNumBins());
@@ -257,37 +258,25 @@ int main(int argc, char **argv) {
     generateEvents(decayTime, dZeroEvtsRS, dZeroEvtsWS, rSubD, dZeroLinearCoef, dZeroSecondCoef, eventsToGenerate);
     generateEvents(decayTime, d0barEvtsRS, d0barEvtsWS, rBarD, d0barLinearCoef, d0barSecondCoef, eventsToGenerate);
 
-    double gpuTime = 0;
-    double cpuTime = 0;
-
     Variable constaCoef("constaCoef", 0.03, 0.01, -1, 1);
     Variable linearCoef("linearCoef", 0, 0.01, -1, 1);
     Variable secondCoef("secondCoef", 0, 0.01, -1, 1);
 
     vector<Variable> weights = {constaCoef, linearCoef, secondCoef};
 
-    int retval;
-    retval = fitRatio(decayTime, weights, dZeroEvtsRS, dZeroEvtsWS, "dzeroEvtRatio.png");
+    int retval1, retval2;
+    std::string fit1, fit2;
+    std::tie(retval1, fit1) = fitRatio(decayTime, weights, dZeroEvtsRS, dZeroEvtsWS, "dzeroEvtRatio.png");
+    std::tie(retval2, fit2) = fitRatio(decayTime, weights, d0barEvtsRS, d0barEvtsWS, "dzbarEvtRatio.png");
 
-    if(retval != 0)
-        return retval;
-
-    timersub(&stopTime, &startTime, &totalTime);
-    gpuTime += totalTime.tv_sec + totalTime.tv_usec / 1000000.0;
-    retval = fitRatio(decayTime, weights, d0barEvtsRS, d0barEvtsWS, "dzbarEvtRatio.png");
-    if(retval != 0)
-        return retval;
-    timersub(&stopTime, &startTime, &totalTime);
-    gpuTime += totalTime.tv_sec + totalTime.tv_usec / 1000000.0;
-
+    CLI::Timer timer_cpu{"Total CPU (2x fits)"};
     fitRatioCPU(decayTime, dZeroEvtsRS, dZeroEvtsWS);
-    timersub(&stopTime, &startTime, &totalTime);
-    cpuTime += totalTime.tv_sec + totalTime.tv_usec / 1000000.0;
     fitRatioCPU(decayTime, d0barEvtsRS, d0barEvtsWS);
-    timersub(&stopTime, &startTime, &totalTime);
-    cpuTime += totalTime.tv_sec + totalTime.tv_usec / 1000000.0;
+    std::string cpu_string = timer_cpu.to_string();
 
-    std::cout << "GPU time [seconds] : " << gpuTime << "\nCPU time [seconds] : " << cpuTime << std::endl;
-
-    return 0;
+    std::cout << fit1 << "\n" << fit2 << "\n" <<cpu_string << std::endl;
+    
+    fmt::print("Exit codes (should be 0): {} and {}\n", retval1, retval2);
+    
+    return retval1 + retval2;
 }

@@ -24,14 +24,14 @@ __constant__ fptype *dev_resWorkSpace[100];
 __constant__ int modelOffset[100];
 
 __device__ fptype device_ConvolvePdfs(fptype* evt, ParameterContainer &pc) {
-    int id = pc.observables[pc.observableIdx + 1];
+    int id = RO_CACHE(pc.observables[pc.observableIdx + 1]);
 
     fptype ret     = 0;
-    fptype loBound = pc.constants[pc.constantIdx + 1];//RO_CACHE(pc.constants[pc.constantIdx + 2]);
-    fptype hiBound = pc.constants[pc.constantIdx + 2];//RO_CACHE(pc.constants[pc.constantIdx + 3]);
-    fptype step    = pc.constants[pc.constantIdx + 3];//RO_CACHE(pc.constants[pc.constantIdx + 4]);
+    fptype loBound = RO_CACHE(pc.constants[pc.constantIdx + 1]);//RO_CACHE(pc.constants[pc.constantIdx + 2]);
+    fptype hiBound = RO_CACHE(pc.constants[pc.constantIdx + 2]);//RO_CACHE(pc.constants[pc.constantIdx + 3]);
+    fptype step    = RO_CACHE(pc.constants[pc.constantIdx + 3]);//RO_CACHE(pc.constants[pc.constantIdx + 4]);
     fptype x0      = evt[id];
-    int workSpaceIndex = pc.constants[pc.constantIdx + 4];
+    int workSpaceIndex = RO_CACHE(pc.constants[pc.constantIdx + 4]);
 
     auto numbins = static_cast<int>(floor((hiBound - loBound) / step + 0.5));
 
@@ -54,12 +54,12 @@ __device__ fptype device_ConvolvePdfs(fptype* evt, ParameterContainer &pc) {
     //skip all chilren also event.  to be determined...
     pc.incrementIndex (1, 0, 4, 1, 1);
 
-    fptype norm1 = pc.normalisations[pc.normalIdx + 1];
+    fptype norm1 = RO_CACHE(pc.normalisations[pc.normalIdx + 1]);
     ret *= norm1;
 
     pc.incrementIndex ();
 
-    fptype norm2 = pc.normalisations[pc.normalIdx + 1];
+    fptype norm2 = RO_CACHE(pc.normalisations[pc.normalIdx + 1]);
     ret *= norm2;
 
     pc.incrementIndex ();

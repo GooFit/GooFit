@@ -5,15 +5,15 @@ namespace GooFit {
 
 
 __device__ fptype device_Argus_Upper(fptype* evt, ParameterContainer &pc) {
-    int id = pc.observables[pc.observableIdx + 1];
+    int id = RO_CACHE(pc.observables[pc.observableIdx + 1]);
 
     fptype x = evt[id];
-    fptype m0 = pc.parameters[pc.parameterIdx + 1];
+    fptype m0 = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
 
     double t = x / m0;
 
-    fptype slope = pc.parameters[pc.parameterIdx + 2];
-    fptype power = pc.parameters[pc.parameterIdx + 3];
+    fptype slope = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
+    fptype power = RO_CACHE(pc.parameters[pc.parameterIdx + 3]);
 
     pc.incrementIndex (1, 3, 0, 1, 1);
 
@@ -26,15 +26,15 @@ __device__ fptype device_Argus_Upper(fptype* evt, ParameterContainer &pc) {
 }
 
 __device__ fptype device_Argus_Lower(fptype* evt, ParameterContainer &pc) {
-    int id = pc.observables[pc.observableIdx + 1];
+    int id = RO_CACHE(pc.observables[pc.observableIdx + 1]);
 
     fptype x = evt[id];
-    fptype m0 = pc.parameters[pc.parameterIdx + 1];
+    fptype m0 = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
 
     fptype t = x / m0;
 
-    fptype slope = pc.parameters[pc.parameterIdx + 2];
-    fptype power = pc.parameters[pc.parameterIdx + 3];
+    fptype slope = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
+    fptype power = RO_CACHE(pc.parameters[pc.parameterIdx + 3]);
 
     pc.incrementIndex (1, 3, 0, 1, 1);
 

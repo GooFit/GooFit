@@ -9,11 +9,11 @@ __device__ fptype threshCalc(fptype distance, fptype linConst) {
 }
 
 __device__ fptype device_TrigThresholdUpper(fptype *evt, ParameterContainer &pc) {
-    int id = pc.observables[pc.observableIdx + 1];
+    int id = RO_CACHE(pc.observables[pc.observableIdx + 1]);
     fptype x         = evt[id];
-    fptype thresh    = pc.parameters[pc.parameterIdx + 1];
-    fptype trigConst = pc.parameters[pc.parameterIdx + 2];
-    fptype linConst  = pc.parameters[pc.parameterIdx + 3];
+    fptype thresh    = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
+    fptype trigConst = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
+    fptype linConst  = RO_CACHE(pc.parameters[pc.parameterIdx + 3]);
 
     pc.incrementIndex (1, 3, 0, 1, 1);
 
@@ -22,11 +22,11 @@ __device__ fptype device_TrigThresholdUpper(fptype *evt, ParameterContainer &pc)
 }
 
 __device__ fptype device_TrigThresholdLower(fptype *evt, ParameterContainer &pc) {
-    int id = pc.observables[pc.observableIdx + 2];
+    int id = RO_CACHE(pc.observables[pc.observableIdx + 2]);
     fptype x         = evt[id];
-    fptype thresh    = pc.parameters[pc.parameterIdx + 1];
-    fptype trigConst = pc.parameters[pc.parameterIdx + 2];
-    fptype linConst  = pc.parameters[pc.parameterIdx + 3];
+    fptype thresh    = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
+    fptype trigConst = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
+    fptype linConst  = RO_CACHE(pc.parameters[pc.parameterIdx + 3]);
 
     pc.incrementIndex (1, 3, 0, 1, 1);
 
@@ -36,16 +36,16 @@ __device__ fptype device_TrigThresholdLower(fptype *evt, ParameterContainer &pc)
 
 __device__ fptype device_VerySpecialEpisodeTrigThresholdUpper(fptype *evt, ParameterContainer &pc) {
     // Annoying special case for use with Mikhail's efficiency function across the Dalitz plot
-    int id_x = pc.observables[pc.observableIdx + 1];
-    int id_y = pc.observables[pc.observableIdx + 2];
+    int id_x = RO_CACHE(pc.observables[pc.observableIdx + 1]);
+    int id_y = RO_CACHE(pc.observables[pc.observableIdx + 2]);
 
     fptype x = evt[id_x];
     fptype y = evt[id_y];
 
-    fptype thresh    = pc.parameters[pc.parameterIdx + 1];
-    fptype trigConst = pc.parameters[pc.parameterIdx + 2];
-    fptype linConst  = pc.parameters[pc.parameterIdx + 3];
-    fptype z         = pc.parameters[pc.parameterIdx + 4] - x - y;
+    fptype thresh    = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
+    fptype trigConst = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
+    fptype linConst  = RO_CACHE(pc.parameters[pc.parameterIdx + 3]);
+    fptype z         = RO_CACHE(pc.parameters[pc.parameterIdx + 4]) - x - y;
 
     pc.incrementIndex (1, 4, 0, 2, 1);
 
@@ -54,16 +54,16 @@ __device__ fptype device_VerySpecialEpisodeTrigThresholdUpper(fptype *evt, Param
 }
 
 __device__ fptype device_VerySpecialEpisodeTrigThresholdLower(fptype *evt, ParameterContainer &pc) {
-    int id_x = pc.observables[pc.observableIdx + 1];
-    int id_y = pc.observables[pc.observableIdx + 2];
+    int id_x = RO_CACHE(pc.observables[pc.observableIdx + 1]);
+    int id_y = RO_CACHE(pc.observables[pc.observableIdx + 2]);
 
     fptype x = evt[id_x];
     fptype y = evt[id_y];
 
-    fptype thresh    = pc.parameters[pc.parameterIdx + 1];
-    fptype trigConst = pc.parameters[pc.parameterIdx + 2];
-    fptype linConst  = pc.parameters[pc.parameterIdx + 3];
-    fptype z         = pc.parameters[pc.parameterIdx + 4] - x - y;
+    fptype thresh    = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
+    fptype trigConst = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
+    fptype linConst  = RO_CACHE(pc.parameters[pc.parameterIdx + 3]);
+    fptype z         = RO_CACHE(pc.parameters[pc.parameterIdx + 4]) - x - y;
 
     pc.incrementIndex (1, 4, 0, 2, 1);
 

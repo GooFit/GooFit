@@ -3,7 +3,7 @@
 namespace GooFit {
 
 __device__ fptype device_ExpGaus(fptype *evt, ParameterContainer &pc) {
-    int id = pc.observables[pc.observableIdx + 1];
+    int id = RO_CACHE(pc.observables[pc.observableIdx + 1]);
 
     fptype x     = evt[id];
     fptype mean  = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);

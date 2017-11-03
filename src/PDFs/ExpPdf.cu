@@ -4,8 +4,8 @@
 namespace GooFit {
 
 __device__ fptype device_Exp(fptype* evt, ParameterContainer &pc) {
-    int id = pc.observables[pc.observableIdx + 1];
-    fptype alpha = pc.parameters[pc.parameterIdx + 1];
+    int id = RO_CACHE(pc.observables[pc.observableIdx + 1]);
+    fptype alpha = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
     fptype x = evt[id];
 
     fptype ret = exp(alpha*x);
@@ -16,10 +16,10 @@ __device__ fptype device_Exp(fptype* evt, ParameterContainer &pc) {
 }
 
 __device__ fptype device_ExpOffset(fptype* evt, ParameterContainer &pc) {
-    int id = pc.observables[pc.observableIdx + 1];
+    int id = RO_CACHE(pc.observables[pc.observableIdx + 1]);
     fptype x = evt[id];
-    x -= pc.parameters[pc.parameterIdx + 1];
-    fptype alpha = pc.parameters[pc.parameterIdx + 2];
+    x -= RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
+    fptype alpha = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
 
     fptype ret = exp(alpha*x);
 
@@ -29,14 +29,14 @@ __device__ fptype device_ExpOffset(fptype* evt, ParameterContainer &pc) {
 }
 
 __device__ fptype device_ExpPoly(fptype* evt, ParameterContainer &pc) {
-    int id = pc.observables[pc.observableIdx + 1];
+    int id = RO_CACHE(pc.observables[pc.observableIdx + 1]);
     fptype x = evt[id];
 
     fptype exparg = 0;
 
-    int np = pc.parameters[pc.parameterIdx];
+    int np = RO_CACHE(pc.parameters[pc.parameterIdx]);
     for(int i = 0; i < np; ++i) {
-        exparg += pow(x, i) * pc.parameters[pc.parameterIdx + i + 1];
+        exparg += pow(x, i) * RO_CACHE(pc.parameters[pc.parameterIdx + i + 1]);
     }
 
     fptype ret = exp(exparg);
@@ -47,15 +47,15 @@ __device__ fptype device_ExpPoly(fptype* evt, ParameterContainer &pc) {
 }
 
 __device__ fptype device_ExpPolyOffset(fptype* evt, ParameterContainer &pc) {
-    int id = pc.observables[pc.observableIdx + 1];
+    int id = RO_CACHE(pc.observables[pc.observableIdx + 1]);
     fptype x = evt[id];
-    x -= pc.parameters[pc.parameterIdx + 1];
+    x -= RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
 
     fptype exparg = 0;
 
-    int np = pc.parameters[pc.parameterIdx];
+    int np = RO_CACHE(pc.parameters[pc.parameterIdx]);
     for(int i = 1; i < np; ++i) {
-        exparg += pow(x, i) * pc.parameters[pc.parameterIdx + i + 1];
+        exparg += pow(x, i) * RO_CACHE(pc.parameters[pc.parameterIdx + i + 1]);
     }
 
     fptype ret = exp(exparg);

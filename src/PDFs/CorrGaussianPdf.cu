@@ -3,14 +3,14 @@
 namespace GooFit {
 
 __device__ fptype device_CorrGaussian(fptype *evt, ParameterContainer &pc) {
-    int idx = pc.observables[pc.observableIdx + 1];
-    int idy = pc.observables[pc.observableIdx + 2];
+    int idx = RO_CACHE(pc.observables[pc.observableIdx + 1]);
+    int idy = RO_CACHE(pc.observables[pc.observableIdx + 2]);
 
-    fptype mean1  = pc.parameters[pc.parameterIdx + 1];
-    fptype sigma1 = pc.parameters[pc.parameterIdx + 2];
-    fptype mean2  = pc.parameters[pc.parameterIdx + 3];
-    fptype sigma2 = pc.parameters[pc.parameterIdx + 4];
-    fptype corr   = pc.parameters[pc.parameterIdx + 5];
+    fptype mean1  = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
+    fptype sigma1 = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
+    fptype mean2  = RO_CACHE(pc.parameters[pc.parameterIdx + 3]);
+    fptype sigma2 = RO_CACHE(pc.parameters[pc.parameterIdx + 4]);
+    fptype corr   = RO_CACHE(pc.parameters[pc.parameterIdx + 5]);
 
     fptype x      = evt[idx];
     fptype y      = evt[idy];

@@ -143,7 +143,7 @@ __device__ thrust::complex<fptype> gaussian(fptype m12, fptype m13, fptype m23, 
     fptype resmass            = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
     fptype reswidth           = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
 
-    unsigned int cyclic_index = pc.constants[pc.constantIdx + 1];
+    unsigned int cyclic_index = RO_CACHE(pc.constants[pc.constantIdx + 1]);
 
     // Notice sqrt - this function uses mass, not mass-squared like the other resonance types.
     fptype massToUse = sqrt(PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
@@ -425,6 +425,9 @@ ResonancePdf::ResonancePdf(std::string name, Variable *ar, Variable *ai)
     pindices.push_back(0);
     // Dummy index for constants - won't use it, but calling
     // functions can't know that and will call setConstantIndex anyway.
+
+    //parametersList.push_back(0);
+    //parametersList.push_back(0);
 
     resonanceType = 3;
 

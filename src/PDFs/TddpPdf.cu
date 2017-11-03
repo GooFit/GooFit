@@ -168,8 +168,8 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
     if (num_observables > 5)
         id_mis = RO_CACHE(pc.observables[pc.observableIdx + 6]);
 
-    fptype m12 = RO_CACHE(evt[id_m12]);
-    fptype m13 = RO_CACHE(evt[id_m13]);
+    fptype m12 = evt[id_m12];
+    fptype m13 = evt[id_m13];
 
     unsigned int numResonances = RO_CACHE(pc.constants[pc.constantIdx + 1]);
 
@@ -192,7 +192,7 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
         return 0;
     }
 
-    auto evtNum = static_cast<int>(floor(0.5 + RO_CACHE(evt[id_num])));
+    auto evtNum = static_cast<int>(floor(0.5 + evt[id_num]));
 
     thrust::complex<fptype> sumWavesA(0, 0);
     thrust::complex<fptype> sumWavesB(0, 0);
@@ -231,8 +231,8 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
     int id_time = RO_CACHE(pc.observables[pc.observableIdx + 1]);
     int id_sigma = RO_CACHE(pc.observables[pc.observableIdx + 2]);
 
-    fptype _time  = RO_CACHE(evt[id_time]);
-    fptype _sigma = RO_CACHE(evt[id_sigma]);
+    fptype _time  = evt[id_time];
+    fptype _sigma = evt[id_sigma];
 
     // if ((gpuDebug & 1) && (0 == BLOCKIDX) && (0 == THREADIDX))
     // if (0 == evtNum) printf("TDDP: (%f, %f) (%f, %f)\n", sumWavesA.real, sumWavesA.imag, sumWavesB.real,
@@ -322,7 +322,7 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
         
         // See header file for explanation of 'mistag' variable - it is actually the probability
         // of having the correct sign, given that we have a correctly reconstructed D meson.
-        mistag = RO_CACHE(evt[id_mis]);
+        mistag = evt[id_mis];
         ret *= mistag;
         ret += (1 - mistag) * (*(reinterpret_cast<device_resfunction_ptr>(device_function_table[pc.funcIdx])))(
                                   term1,
@@ -927,6 +927,8 @@ __device__ ThreeComplex SpecialDalitzIntegrator::operator()(thrust::tuple<int, f
 
     ParameterContainer pc;
 
+    fptype events[10];
+
     //increment until we are at tddp index
     while (pc.funcIdx < tddp)
         pc.incrementIndex ();
@@ -939,11 +941,11 @@ __device__ ThreeComplex SpecialDalitzIntegrator::operator()(thrust::tuple<int, f
     ThreeComplex ret
         = device_Tddp_calcIntegrals(binCenterM12, binCenterM13, resonance_i, resonance_j, pc);
 
-    fptype fakeEvt[10]; // Need room for many observables in case m12 or m13 were assigned a high index in an
+    //fptype fakeEvt[10]; // Need room for many observables in case m12 or m13 were assigned a high index in an
                         // event-weighted fit.
-    fakeEvt[0] = 2;
-    fakeEvt[id_m12] = binCenterM12;
-    fakeEvt[id_m13] = binCenterM13;
+    events[0] = 2;
+    events[id_m12] = binCenterM12;
+    events[id_m13] = binCenterM13;
     //unsigned int numResonances                               = indices[6];
     //int effFunctionIdx                                       = parIndexFromResIndex(numResonances);
     // if (thrust::get<0>(t) == 19840) {internalDebug1 = BLOCKIDX; internalDebug2 = THREADIDX;}
@@ -953,7 +955,7 @@ __device__ ThreeComplex SpecialDalitzIntegrator::operator()(thrust::tuple<int, f
     while (pc.funcIdx < thrust::get<2>(t))
         pc.incrementIndex ();
 
-    fptype eff = callFunction(fakeEvt, pc);
+    fptype eff = callFunction(events, pc);
     // if (thrust::get<0>(t) == 19840) {
     // internalDebug1 = -1;
     // internalDebug2 = -1;
@@ -991,9 +993,15 @@ __device__ WaveHolder_s SpecialWaveCalculator::operator()(thrust::tuple<int, fpt
     ret.bi_imag = 0.0;
 
     int evtNum  = thrust::get<0>(t);
-    fptype *evt = thrust::get<1>(t) + (evtNum * thrust::get<2>(t));
+    int evtSize = thrust::get<2>(t);
+    fptype *evt = thrust::get<1>(t) + (evtNum * evtSize);
 
     ParameterContainer pc;
+
+    fptype events[10];
+
+    for (int i = 0; i < evtSize; i++)
+        events[i] = evt[i];
 
     //increment until we are at tddp index
     while (pc.funcIdx < tddp)
@@ -1003,8 +1011,8 @@ __device__ WaveHolder_s SpecialWaveCalculator::operator()(thrust::tuple<int, fpt
     int id_m13 = RO_CACHE(pc.observables[pc.observableIdx + 4]);
 
     // Read these values as tddp.
-    fptype m12            = RO_CACHE(evt[id_m12]);
-    fptype m13            = RO_CACHE(evt[id_m13]);
+    fptype m12            = events[id_m12];
+    fptype m13            = events[id_m13];
 
     if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass))
         return ret;

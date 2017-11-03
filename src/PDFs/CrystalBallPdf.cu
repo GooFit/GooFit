@@ -7,13 +7,13 @@ __device__ fptype device_CrystalBall(fptype *evt, ParameterContainer &pc) {
     // Left-hand tail if alpha is less than 0,
     // right-hand tail if greater, pure Gaussian if 0.
     // return 1;
-    int id = pc.observables[pc.observableIdx + 1];
+    int id = RO_CACHE(pc.observables[pc.observableIdx + 1]);
 
     fptype x     = evt[id];
-    fptype mean  = pc.parameters[pc.parameterIdx + 1];
-    fptype sigma = pc.parameters[pc.parameterIdx + 2];
-    fptype alpha = pc.parameters[pc.parameterIdx + 3];
-    fptype power = pc.parameters[pc.parameterIdx + 4];
+    fptype mean  = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
+    fptype sigma = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
+    fptype alpha = RO_CACHE(pc.parameters[pc.parameterIdx + 3]);
+    fptype power = RO_CACHE(pc.parameters[pc.parameterIdx + 4]);
     fptype rx    = (sigma != 0) ? (x - mean) / sigma : 0;
     fptype ret   = 0;
 

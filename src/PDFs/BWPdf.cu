@@ -3,11 +3,11 @@
 namespace GooFit {
 
 __device__ fptype device_BW(fptype *evt, ParameterContainer &pc) {
-    int id = pc.observables[pc.observableIdx + 1];
+    int id = RO_CACHE(pc.observables[pc.observableIdx + 1]);
 
     fptype x      = evt[id];
-    fptype mean   = pc.parameters[pc.parameterIdx + 1];
-    fptype gamma  = pc.parameters[pc.parameterIdx + 2];
+    fptype mean   = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
+    fptype gamma  = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
     fptype rootPi = -2. * atan2(-1.0, 0.0);
     fptype ret    = (gamma / ((x - mean) * (x - mean) + gamma * gamma / 4)) / (2 * rootPi);
 

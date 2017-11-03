@@ -4,17 +4,17 @@ namespace GooFit {
 
 __device__ fptype device_BinTransform(fptype *evt, ParameterContainer &pc) {
     // Index structure: nP lim1 bin1 lim2 bin2 ... nO o1 o2
-    int numConstants = pc.constants[pc.constantIdx];
-    int numObservables = pc.observables[pc.observableIdx];
+    int numConstants = RO_CACHE(pc.constants[pc.constantIdx]);
+    int numObservables = RO_CACHE(pc.observables[pc.observableIdx]);
     int ret            = 0;
     int previousSize   = 1;
 
     for(int i = 0; i < numObservables; ++i) {
-        int id = pc.observables[pc.observableIdx + i + 1];
+        int id = RO_CACHE(pc.observables[pc.observableIdx + i + 1]);
         fptype obsValue   = evt[id];
-        fptype lowerLimit = pc.constants[pc.constantIdx + i*3 + 1];
-        fptype binSize    = pc.constants[pc.constantIdx + i*3 + 2];
-        int numBins       = pc.constants[pc.constantIdx + i*3 + 3];
+        fptype lowerLimit = RO_CACHE(pc.constants[pc.constantIdx + i*3 + 1]);
+        fptype binSize    = RO_CACHE(pc.constants[pc.constantIdx + i*3 + 2]);
+        int numBins       = RO_CACHE(pc.constants[pc.constantIdx + i*3 + 3]);
 
         auto localBin = static_cast<int>(floor((obsValue - lowerLimit) / binSize));
         ret += localBin * previousSize;

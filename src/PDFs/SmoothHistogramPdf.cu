@@ -47,7 +47,7 @@ __device__ fptype device_EvalHistogram(fptype *evt, ParameterContainer &pc) {
         globalBinNumber += previous * localBinNumber;
 
         //This is accessing too far ahead?
-        int offset = pc.constants[pc.constantIdx + lowerBoundIdx + 1];
+        int offset = RO_CACHE(pc.constants[pc.constantIdx + lowerBoundIdx + 1]);
         previous *= offset;
     }
 

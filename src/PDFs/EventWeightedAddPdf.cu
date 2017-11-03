@@ -18,10 +18,10 @@ __device__ fptype device_EventWeightedAddPdfs(fptype *evt, ParameterContainer &p
     pci.incrementIndex (1, 0, numConstants, numObs, 1);
 
     for(int i = 0; i < comps - 1; ++i) {
-        int id = pc.observables[pc.observableIdx + i + 1];
-        fptype weight = RO_CACHE(evt[id]);
+        int id = RO_CACHE(pc.observables[pc.observableIdx + i + 1]);
+        fptype weight = evt[id];
         totalWeight += weight;
-        fptype norm = pci.normalisations[pci.normalIdx + 1];
+        fptype norm = RO_CACHE(pci.normalisations[pci.normalIdx + 1]);
         fptype curr = callFunction(evt, pci);
         ret += weight * curr * norm;
     }
@@ -34,7 +34,7 @@ __device__ fptype device_EventWeightedAddPdfs(fptype *evt, ParameterContainer &p
     // paramIndices + indices[numParameters]);
 
     pc = pci;
-    fptype normFactor = pc.normalisations[pc.normalIdx + 1];
+    fptype normFactor = RO_CACHE(pc.normalisations[pc.normalIdx + 1]);
 
     fptype last = callFunction(evt, pc);
     ret += (1 - totalWeight) * last * normFactor;
@@ -59,9 +59,9 @@ __device__ fptype device_EventWeightedAddPdfsExt(fptype *evt, ParameterContainer
     pci.incrementIndex (1, 0, numConstants, numObs, 1);
 
     for(int i = 0; i < comps; ++i) {
-        int id = pc.observables[pc.observableIdx + i + 1];
-        fptype norm = pc.normalisations[pc.normalIdx + 1];
-        fptype weight = RO_CACHE(evt[id]);
+        int id = RO_CACHE(pc.observables[pc.observableIdx + i + 1]);
+        fptype norm = RO_CACHE(pc.normalisations[pc.normalIdx + 1]);
+        fptype weight = evt[id];
         fptype curr = callFunction(evt, pci);
         // if ((0 == BLOCKIDX) && (THREADIDX < 5) && (isnan(curr))) printf("NaN component %i %i\n", i, THREADIDX);
         ret += weight * curr * norm;

@@ -275,12 +275,12 @@ __device__ thrust::complex<fptype> device_Faddeeva_2(const thrust::complex<fptyp
 #endif
 
 __device__ fptype device_Voigtian(fptype *evt, ParameterContainer &pc) {
-    int id = pc.observables[pc.observableIdx + 1];
+    int id = RO_CACHE(pc.observables[pc.observableIdx + 1]);
 
     fptype x = evt[id];
-    fptype m = pc.parameters[pc.parameterIdx + 1];
-    fptype w = pc.parameters[pc.parameterIdx + 2];
-    fptype s = pc.parameters[pc.parameterIdx + 3];
+    fptype m = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
+    fptype w = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
+    fptype s = RO_CACHE(pc.parameters[pc.parameterIdx + 3]);
 
     // return constant for zero width and sigma
     if((0 == s) && (0 == w)) {

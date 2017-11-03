@@ -72,8 +72,8 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
     //fptype daug2Mass  = c_daug2Mass;//RO_CACHE(pc.constants[pc.constantIdx + 6]);
     //fptype daug3Mass  = c_daug3Mass;//RO_CACHE(pc.constants[pc.constantIdx + 7]);
 
-    fptype m12 = RO_CACHE(evt[id_m12]);
-    fptype m13 = RO_CACHE(evt[id_m13]);
+    fptype m12 = evt[id_m12];
+    fptype m13 = evt[id_m13];
 
     unsigned int numResonances = RO_CACHE(pc.constants[pc.constantIdx + 1]);
     unsigned int cacheToUse    = RO_CACHE(pc.constants[pc.constantIdx + 2]);
@@ -81,11 +81,17 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
     if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass)) {
         pc.incrementIndex(1, numResonances*2, 2, num_obs, 1);
 
-        //TODO: loop over resonances and efficiency functions
+        // loop over resonances and efficiency functions
+        for (int i = 0; i < numResonances; i++)
+            pc.incrementIndex();
+
+        // increment the efficiency function
+        pc.incrementIndex ();
+
         return 0;
     }
 
-    fptype evtIndex = RO_CACHE(evt[id_num]);
+    fptype evtIndex = evt[id_num];
 
     auto evtNum = static_cast<int>(floor(0.5 + evtIndex));
 
@@ -121,8 +127,10 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
     pc.incrementIndex(1, numResonances*2, 2, num_obs, 1);
 
     //loop to efficiency idx
+#pragma unroll
     for (int i = 0; i < numResonances; i++)
         pc.incrementIndex ();
+    //pc.incrementIndex (16, 45, 45, 15, 31);
 
     fptype eff         = callFunction(evt, pc);
     ret *= eff;
@@ -315,7 +323,7 @@ __host__ fptype DalitzPlotPdf::normalize() const {
     for(int i = 0; i < decayInfo->resonances.size(); ++i) {
 	//grab the index for this resonance.
         calculators[i]->setResonanceIndex (decayInfo->resonances[i]->getFunctionIndex ());
-        //calculators[i]->setEfficiencyIndex (efficiencyFunction);
+        calculators[i]->setDalitzIndex (getFunctionIndex());
         if(redoIntegral[i]) {
 #ifdef GOOFIT_MPI
             thrust::transform(
@@ -339,6 +347,7 @@ __host__ fptype DalitzPlotPdf::normalize() const {
             if((!redoIntegral[i]) && (!redoIntegral[j]))
                 continue;
 
+            integrators[i][j]->setDalitzIndex(getFunctionIndex());
             integrators[i][j]->setResonanceIndex(decayInfo->resonances[i]->getFunctionIndex());
             //integrators[i][j]->setEfficiencyIndex(efficiencyFunction);
             integrators[i][j]->setEfficiencyIndex(decayInfo->resonances[j]->getFunctionIndex());
@@ -421,15 +430,27 @@ __device__ thrust::complex<fptype> SpecialResonanceIntegrator::operator()(thrust
 
     ParameterContainer pc;
 
+    fptype events[10];
+
+    while (pc.funcIdx < dalitz_i)
+        pc.incrementIndex ();
+
     thrust::complex<fptype> ret = device_DalitzPlot_calcIntegrals(binCenterM12, binCenterM13, resonance_i, resonance_j, pc);
 
     //TODO: read id's in in order to set them for the fake event.
 
-    fptype fakeEvt[10]; // Need room for many observables in case m12 or m13 were assigned a high index in an
+    int id_m12 = pc.observables[pc.observableIdx + 1];
+    int id_m13 = pc.observables[pc.observableIdx + 2];
+
+    //fptype fakeEvt[10]; // Need room for many observables in case m12 or m13 were assigned a high index in an
                         // event-weighted fit.
-    fakeEvt[0] = 2;
-    fakeEvt[1] = binCenterM12;
-    fakeEvt[2] = binCenterM13;
+    //fakeEvt[0] = 2;
+    //fakeEvt[id_m12] = binCenterM12;
+    //fakeEvt[id_m13] = binCenterM13;
+
+    events[0] = 2;
+    events[id_m12] = binCenterM12;
+    events[id_m13] = binCenterM13;
 
     // unsigned int numResonances           = indices[2];
     // int effFunctionIdx                   = parIndexFromResIndex_DP(numResonances);
@@ -438,7 +459,7 @@ __device__ thrust::complex<fptype> SpecialResonanceIntegrator::operator()(thrust
     while (pc.funcIdx < thrust::get<2>(t))
         pc.incrementIndex ();
 
-    fptype eff = callFunction(fakeEvt, pc);
+    fptype eff = callFunction(events, pc);
 
     // Multiplication by eff, not sqrt(eff), is correct:
     // These complex numbers will not be squared when they
@@ -457,13 +478,19 @@ __device__ thrust::complex<fptype> SpecialResonanceCalculator::operator()(thrust
     // Calculates the BW values for a specific resonance.
     thrust::complex<fptype> ret;
     int evtNum  = thrust::get<0>(t);
+    int evtSize = thrust::get<2>(t);
     fptype *evt = thrust::get<1>(t) + (evtNum * thrust::get<2>(t));
 
-    fptype m12            = evt[0];
-    fptype m13            = evt[1];
-
-    //TODO: This function will need to find the base dalitz function
     ParameterContainer pc;
+
+    while (pc.funcIdx < dalitz_i)
+        pc.incrementIndex ();
+
+    int id_m12 = pc.observables[pc.observableIdx + 1];
+    int id_m13 = pc.observables[pc.observableIdx + 1];
+
+    fptype m12            = evt[id_m12];
+    fptype m13            = evt[id_m13];
 
     fptype motherMass = c_motherMass;//pc.constants[pc.constantIdx + 4];
     fptype daug1Mass  = c_daug1Mass;//pc.constants[pc.constantIdx + 5];

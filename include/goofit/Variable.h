@@ -47,7 +47,10 @@ class Indexable {
         , lowerlimit(std::make_shared<fptype>(lowerlimit))
         , upperlimit(std::make_shared<fptype>(upperlimit)) {}
 
-    virtual ~Indexable() { GOOFIT_DEBUG("Destroying Indexable: {}", name); }
+    virtual ~Indexable() {
+        if(value.use_count() == 1)
+            GOOFIT_DEBUG("Destroying Indexable: {}", name);
+    }
 
     /// Get the GooFit index
     int getIndex() const { return *index; }

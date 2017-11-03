@@ -158,7 +158,7 @@ std::tuple<int, std::string>
     delete ratioData;
     delete poly;
 
-    return {datapdf, timer_str};
+    return make_tuple(int(datapdf), timer_str);
 }
 
 void cpvFitFcn(int &npar, double *gin, double &fun, double *fp, int iflag) {

@@ -56,10 +56,12 @@ class IncoherentSumPdf : public GooPdf {
 class SpecialIncoherentIntegrator : public thrust::unary_function<thrust::tuple<int, fptype *>, fptype> {
   public:
     SpecialIncoherentIntegrator(int pIdx, unsigned int ri);
+    void setIncoherentIndex (const unsigned int idx) { incoherentSum = idx; }
     void setResonanceIndex (const unsigned int res) { resonance_i = res; }
     __device__ fptype operator()(thrust::tuple<int, fptype *> t) const;
 
   private:
+    unsigned int incoherentSum;
     unsigned int resonance_i;
     unsigned int parameters;
 };
@@ -68,10 +70,12 @@ class SpecialIncoherentResonanceCalculator
     : public thrust::unary_function<thrust::tuple<int, fptype *, int>, thrust::complex<fptype>> {
   public:
     SpecialIncoherentResonanceCalculator(int pIdx, unsigned int res_idx);
+    void setIncoherentIndex (const unsigned int idx) { incoherentSum = idx; }
     void setResonanceIndex (const unsigned int res) { resonance_i = res; }
     __device__ thrust::complex<fptype> operator()(thrust::tuple<int, fptype *, int> t) const;
 
   private:
+    unsigned int incoherentSum;
     unsigned int resonance_i;
     unsigned int parameters;
 };

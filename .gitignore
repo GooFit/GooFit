@@ -47,3 +47,5 @@ goofit/__init__.py
 *.pdf
 MANIFEST
 dist
+
+.idea/*

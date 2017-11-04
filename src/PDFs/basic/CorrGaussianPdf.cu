@@ -29,16 +29,16 @@ __device__ fptype device_CorrGaussian(fptype *evt, fptype *p, unsigned int *indi
 __device__ device_function_ptr ptr_to_CorrGaussian = device_CorrGaussian;
 
 __host__ CorrGaussianPdf::CorrGaussianPdf(std::string n,
-                                          Observable *_x,
-                                          Observable *_y,
-                                          Variable *mean1,
-                                          Variable *sigma1,
-                                          Variable *mean2,
-                                          Variable *sigma2,
-                                          Variable *correlation)
-    : GooPdf(_x, n) {
+                                          Observable _x,
+                                          Observable _y,
+                                          Variable mean1,
+                                          Variable sigma1,
+                                          Variable mean2,
+                                          Variable sigma2,
+                                          Variable correlation)
+    : GooPdf(n, _x, _y) {
     // registerObservable(_x);
-    registerObservable(_y);
+    // registerObservable(_y);
 
     std::vector<unsigned int> pindices;
     pindices.push_back(registerParameter(mean1));

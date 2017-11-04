@@ -47,7 +47,10 @@ class Indexable {
         , lowerlimit(std::make_shared<fptype>(lowerlimit))
         , upperlimit(std::make_shared<fptype>(upperlimit)) {}
 
-    virtual ~Indexable() { GOOFIT_DEBUG("Destroying Indexable: {}", name); }
+    virtual ~Indexable() {
+        if(value.use_count() == 1)
+            GOOFIT_DEBUG("Destroying Indexable: {}", name);
+    }
 
     /// Get the GooFit index
     int getIndex() const { return *index; }
@@ -90,6 +93,9 @@ class Indexable {
 
     /// Support for comparison - only if really the same object, not just the same value
     bool operator==(const Indexable &other) const { return value.get() == other.value.get(); }
+
+    /// Support for comparison - only if really the same object, not just the same value
+    bool operator!=(const Indexable &other) const { return value.get() != other.value.get(); }
 
     /// Check to see if in range
     operator bool() const {
@@ -157,12 +163,12 @@ class Variable : public Indexable {
 
     /// This is a normal variable, with value and upper/lower limits
     Variable(std::string n, fptype v, fptype dn, fptype up)
-        : Indexable(n, v, up, dn)
+        : Indexable(n, v, dn, up)
         , error(std::make_shared<fptype>(0.1 * (up - dn))) {}
 
     /// This is a full varaible with error scale as well
     Variable(std::string n, fptype v, fptype e, fptype dn, fptype up)
-        : Indexable(n, v, up, dn)
+        : Indexable(n, v, dn, up)
         , error(std::make_shared<fptype>(e)) {}
 
     ~Variable() override = default;
@@ -238,20 +244,11 @@ class EventNumber : public Observable {
 };
 
 /// Get the max index of a variable from a list
-template <typename T>
-int max_index(const std::vector<T *> &vars) {
-    std::vector<Indexable *> nvars;
-    for(auto v : vars)
-        nvars.push_back(v);
-    return max_index(nvars);
-}
-
-/// Get the max index of a variable from a list
-template <>
-int max_index<Indexable>(const std::vector<Indexable *> &vars);
+int max_index(const std::vector<Variable> &vars);
+int max_index(const std::vector<Observable> &vars);
 
 /// Get the max fitter index of a variable from a list
-int max_fitter_index(const std::vector<Variable *> &vars);
+int max_fitter_index(const std::vector<Variable> &vars);
 
 /// Nice print of Variable
 std::ostream &operator<<(std::ostream &o, const GooFit::Variable &var);

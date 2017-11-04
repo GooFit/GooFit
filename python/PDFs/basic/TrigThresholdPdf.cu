@@ -9,7 +9,7 @@ using namespace pybind11::literals;
 
 void init_TrigThresholdPdf(py::module &m) {
     py::class_<TrigThresholdPdf, GooPdf>(m, "TrigThresholdPdf")
-        .def(py::init<std::string, Observable *, Variable *, Variable *, Variable *, bool>(),
+        .def(py::init<std::string, Observable, Variable, Variable, Variable, bool>(),
              "n"_a,
              "x"_a,
              "thresh"_a,
@@ -20,7 +20,7 @@ void init_TrigThresholdPdf(py::module &m) {
              py::keep_alive<1, 4>(),
              py::keep_alive<1, 5>(),
              py::keep_alive<1, 6>())
-        .def(py::init<std::string, Observable *, Observable *, Variable *, Variable *, Variable *, Variable *, bool>(),
+        .def(py::init<std::string, Observable, Observable, Variable, Variable, Variable, Variable, bool>(),
              "n"_a,
              "x"_a,
              "y"_a,

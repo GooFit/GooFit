@@ -1,8 +1,11 @@
 #pragma once
 
+#include <goofit/Variable.h>
+
 #include <Minuit2/FCNBase.h>
 #include <Minuit2/MnUserParameterState.h>
 #include <Minuit2/MnUserParameters.h>
+
 #include <vector>
 
 namespace Minuit2 = ROOT::Minuit2;
@@ -10,14 +13,13 @@ namespace Minuit2 = ROOT::Minuit2;
 namespace GooFit {
 
 class PdfBase;
-class Variable;
 class FCN;
 
 class Params : public Minuit2::MnUserParameters {
     friend FCN;
 
   protected:
-    std::vector<Variable *> vars_;
+    std::vector<Variable> vars_;
     PdfBase *pdf_;
     size_t num_;
 

@@ -6,7 +6,7 @@ namespace GooFit {
 
 class LandauPdf : public GooPdf {
   public:
-    LandauPdf(std::string n, Observable *_x, Variable *mpv, Variable *sigma);
+    LandauPdf(std::string n, Observable _x, Variable mpv, Variable sigma);
 
   private:
 };

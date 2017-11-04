@@ -36,8 +36,8 @@ __device__ fptype device_Novosibirsk(fptype *evt, fptype *p, unsigned int *indic
 
 __device__ device_function_ptr ptr_to_Novosibirsk = device_Novosibirsk;
 
-__host__ NovosibirskPdf::NovosibirskPdf(std::string n, Observable *_x, Variable *mean, Variable *sigma, Variable *tail)
-    : GooPdf(_x, n) {
+__host__ NovosibirskPdf::NovosibirskPdf(std::string n, Observable _x, Variable mean, Variable sigma, Variable tail)
+    : GooPdf(n, _x) {
     std::vector<unsigned int> pindices;
     pindices.push_back(registerParameter(mean));
     pindices.push_back(registerParameter(sigma));

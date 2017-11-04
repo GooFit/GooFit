@@ -26,11 +26,11 @@ class NormIntegrator_TD;
 class TDDP4 : public GooPdf {
   public:
     TDDP4(std::string n,
-          std::vector<Observable *> observables,
-          DecayInfo_DP *decay,
+          std::vector<Observable> observables,
+          DecayInfo4t decay,
           MixingTimeResolution *r,
           GooPdf *eff,
-          Observable *mistag        = nullptr,
+          Observable *mistag,
           unsigned int MCeventsNorm = 5e6);
     // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the
     // coherent sum. The caching method requires that it be done this way or the ProdPdf
@@ -74,8 +74,7 @@ class TDDP4 : public GooPdf {
     mutable mcbooster::RealVector_d norm_SF;
     mutable mcbooster::mc_device_vector<fpcomplex> norm_LS;
 
-    DecayInfo_DP *decayInfo;
-    std::vector<Observable *> _observables;
+    DecayInfo4t decayInfo;
     MixingTimeResolution *resolution;
     int MCevents;
     // Following variables are useful if masses and widths, involved in difficult BW calculation,

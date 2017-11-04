@@ -7,26 +7,26 @@
 namespace GooFit {
 
 void writeToFile(PdfBase *pdf, const char *fname) {
-    std::vector<Variable *> params = pdf->getParameters();
+    std::vector<Variable> params = pdf->getParameters();
 
     std::ofstream writer;
     writer.open(fname);
 
-    for(Variable *p : params) {
-        writer << p->getName() << " " << p->getValue() << " " << p->getError() << " " << p->getLowerLimit() << " "
-               << p->getUpperLimit() << std::endl;
+    for(const Variable &p : params) {
+        writer << p.getName() << " " << p.getValue() << " " << p.getError() << " " << p.getLowerLimit() << " "
+               << p.getUpperLimit() << std::endl;
     }
 
     writer.close();
 }
 
 void readFromFile(PdfBase *pdf, const char *fname) {
-    std::vector<Variable *> params = pdf->getParameters();
+    std::vector<Variable> params = pdf->getParameters();
 
     std::map<std::string, Variable *> tempMap;
 
-    for(Variable *p : params) {
-        tempMap[p->getName()] = p;
+    for(Variable &p : params) {
+        tempMap[p.getName()] = &p;
     }
 
     std::ifstream reader;

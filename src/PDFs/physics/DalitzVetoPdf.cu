@@ -33,17 +33,14 @@ __device__ fptype device_DalitzVeto(fptype *evt, fptype *p, unsigned int *indice
 __device__ device_function_ptr ptr_to_DalitzVeto = device_DalitzVeto;
 
 __host__ DalitzVetoPdf::DalitzVetoPdf(std::string n,
-                                      Observable *_x,
-                                      Observable *_y,
-                                      Variable *motherM,
-                                      Variable *d1m,
-                                      Variable *d2m,
-                                      Variable *d3m,
-                                      std::vector<VetoInfo *> vetos)
-    : GooPdf(nullptr, n) {
-    registerObservable(_x);
-    registerObservable(_y);
-
+                                      Observable _x,
+                                      Observable _y,
+                                      Variable motherM,
+                                      Variable d1m,
+                                      Variable d2m,
+                                      Variable d3m,
+                                      std::vector<VetoInfo> vetos)
+    : GooPdf(n, _x, _y) {
     std::vector<unsigned int> pindices;
     pindices.push_back(registerParameter(motherM));
     pindices.push_back(registerParameter(d1m));
@@ -53,9 +50,9 @@ __host__ DalitzVetoPdf::DalitzVetoPdf(std::string n,
     pindices.push_back(vetos.size());
 
     for(auto &veto : vetos) {
-        pindices.push_back(veto->cyclic_index);
-        pindices.push_back(registerParameter(veto->minimum));
-        pindices.push_back(registerParameter(veto->maximum));
+        pindices.push_back(veto.cyclic_index);
+        pindices.push_back(registerParameter(veto.minimum));
+        pindices.push_back(registerParameter(veto.maximum));
     }
 
     GET_FUNCTION_ADDR(ptr_to_DalitzVeto);

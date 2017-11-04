@@ -6,7 +6,7 @@ namespace GooFit {
 
 class BWPdf : public GooPdf {
   public:
-    BWPdf(std::string n, Observable *_x, Variable *m, Variable *s);
+    BWPdf(std::string n, Observable _x, Variable m, Variable s);
 
   private:
 };

@@ -9,10 +9,6 @@ namespace py = pybind11;
 
 void init_IncoherentSumPdf(py::module &m) {
     py::class_<IncoherentSumPdf, GooPdf>(m, "IncoherentSumPdf")
-        .def(py::init<std::string, Observable *, Observable *, EventNumber *, DecayInfo *, GooPdf *>(),
-             py::keep_alive<1, 3>(),
-             py::keep_alive<1, 4>(),
-             py::keep_alive<1, 5>(),
-             py::keep_alive<1, 6>(),
+        .def(py::init<std::string, Observable, Observable, EventNumber, DecayInfo3, GooPdf *>(),
              py::keep_alive<1, 7>());
 }

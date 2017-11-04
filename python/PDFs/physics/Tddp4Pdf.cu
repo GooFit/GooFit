@@ -17,8 +17,8 @@ using namespace pybind11::literals;
 void init_Tddp4Pdf(py::module &m) {
     py::class_<TDDP4, GooPdf>(m, "TDDP4")
         .def(py::init<std::string,
-                      std::vector<Observable *>,
-                      DecayInfo_DP *,
+                      std::vector<Observable>,
+                      DecayInfo4t,
                       MixingTimeResolution *,
                       GooPdf *,
                       Observable *,
@@ -30,11 +30,9 @@ void init_Tddp4Pdf(py::module &m) {
              "eff"_a,
              "mistag"_a       = nullptr,
              "MCeventsNorm"_a = 5e6,
-             py::keep_alive<1, 4>(),
              py::keep_alive<1, 5>(),
              py::keep_alive<1, 6>(),
              py::keep_alive<1, 7>())
-        .def("setGenerationOffset", &TDDP4::setGenerationOffset, "off"_a)
 
         .def("GenerateSig",
              [](TDDP4 &self, size_t numEvents) {

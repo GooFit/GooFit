@@ -729,14 +729,14 @@ __device__ resonance_function_ptr ptr_to_FOCUS      = FOCUSFunction;
 
 // This constructor is protected
 Lineshape::Lineshape(std::string name)
-    : GooPdf(nullptr, name) {
+    : GooPdf(name) {
     // Making room for index of decay-related constants. Assumption:
     // These are mother mass and three daughter masses in that order.
     // They will be registered by the object that uses this resonance,
     // which will tell this object where to find them by calling setConstantIndex.
 }
 
-std::vector<fptype> make_spline_curvatures(std::vector<Variable *> vars, Lineshapes::spline_t SplineInfo) {
+std::vector<fptype> make_spline_curvatures(std::vector<Variable> vars, Lineshapes::spline_t SplineInfo) {
     size_t size = std::get<2>(SplineInfo) - 2;
     Eigen::Matrix<fptype, Eigen::Dynamic, Eigen::Dynamic> m(size, size);
     for(size_t i = 0; i < size; i++) {
@@ -750,7 +750,7 @@ std::vector<fptype> make_spline_curvatures(std::vector<Variable *> vars, Linesha
 
     Eigen::Matrix<fptype, Eigen::Dynamic, 1> L(size);
     for(unsigned int i = 0; i < size; ++i)
-        L[i] = vars[i + 2]->getValue() - 2 * vars[i + 1]->getValue() + vars[i]->getValue();
+        L[i] = vars[i + 2].getValue() - 2 * vars[i + 1].getValue() + vars[i].getValue();
 
     auto mtv       = m * L;
     fptype spacing = (std::get<0>(SplineInfo) - std::get<1>(SplineInfo)) / std::get<2>(SplineInfo);
@@ -763,13 +763,13 @@ std::vector<fptype> make_spline_curvatures(std::vector<Variable *> vars, Linesha
 }
 
 Lineshapes::GSpline::GSpline(std::string name,
-                             Variable *mass,
-                             Variable *width,
+                             Variable mass,
+                             Variable width,
                              unsigned int L,
                              unsigned int Mpair,
                              FF FormFac,
                              fptype radius,
-                             std::vector<Variable *> AdditionalVars,
+                             std::vector<Variable> AdditionalVars,
                              spline_t SplineInfo)
     : Lineshape(name) {
     GOOFIT_ADD_PARAM(2, mass, "mass");
@@ -806,13 +806,13 @@ Lineshapes::GSpline::GSpline(std::string name,
 }
 
 Lineshapes::GLASS::GLASS(std::string name,
-                         Variable *mass,
-                         Variable *width,
+                         Variable mass,
+                         Variable width,
                          unsigned int L,
                          unsigned int Mpair,
                          FF FormFac,
                          fptype radius,
-                         std::vector<Variable *> AdditionalVars)
+                         std::vector<Variable> AdditionalVars)
     : Lineshape(name) {
     if(5 != AdditionalVars.size()) {
         throw GeneralError("It seems you forgot to provide the vector with the five necessary variables for GLASS, a, "
@@ -829,7 +829,7 @@ Lineshapes::GLASS::GLASS(std::string name,
 }
 
 Lineshapes::One::One(
-    std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
+    std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
     : Lineshape(name) {
     GOOFIT_ADD_PARAM(2, mass, "mass");
     GOOFIT_ADD_PARAM(3, width, "width");
@@ -847,7 +847,7 @@ Lineshapes::One::One(
 }
 
 Lineshapes::RBW::RBW(
-    std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
+    std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
     : Lineshape(name) {
     GOOFIT_ADD_PARAM(2, mass, "mass");
     GOOFIT_ADD_PARAM(3, width, "width");
@@ -865,7 +865,7 @@ Lineshapes::RBW::RBW(
 }
 
 Lineshapes::LASS::LASS(
-    std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
+    std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
     : Lineshape(name) {
     GOOFIT_ADD_PARAM(2, mass, "mass");
     GOOFIT_ADD_PARAM(3, width, "width");
@@ -883,7 +883,7 @@ Lineshapes::LASS::LASS(
 }
 
 Lineshapes::NonRes::NonRes(
-    std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
+    std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
     : Lineshape(name) {
     GOOFIT_ADD_PARAM(2, mass, "mass");
     GOOFIT_ADD_PARAM(3, width, "width");
@@ -901,7 +901,7 @@ Lineshapes::NonRes::NonRes(
 }
 
 Lineshapes::Bugg::Bugg(
-    std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
+    std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
     : Lineshape(name) {
     GOOFIT_ADD_PARAM(2, mass, "mass");
     GOOFIT_ADD_PARAM(3, width, "width");
@@ -919,7 +919,7 @@ Lineshapes::Bugg::Bugg(
 }
 
 Lineshapes::Bugg3::Bugg3(
-    std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
+    std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
     : Lineshape(name) {
     GOOFIT_ADD_PARAM(2, mass, "mass");
     GOOFIT_ADD_PARAM(3, width, "width");
@@ -937,7 +937,7 @@ Lineshapes::Bugg3::Bugg3(
 }
 
 Lineshapes::Flatte::Flatte(
-    std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
+    std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
     : Lineshape(name) {
     GOOFIT_ADD_PARAM(2, mass, "mass");
     GOOFIT_ADD_PARAM(3, width, "width");
@@ -955,7 +955,7 @@ Lineshapes::Flatte::Flatte(
 }
 
 Lineshapes::SBW::SBW(
-    std::string name, Variable *mass, Variable *width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
+    std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
     : Lineshape(name) {
     GOOFIT_ADD_PARAM(2, mass, "mass");
     GOOFIT_ADD_PARAM(3, width, "width");
@@ -974,8 +974,8 @@ Lineshapes::SBW::SBW(
 
 Lineshapes::FOCUS::FOCUS(std::string name,
                          Mod mod,
-                         Variable *mass,
-                         Variable *width,
+                         Variable mass,
+                         Variable width,
                          unsigned int L,
                          unsigned int Mpair,
                          FF FormFac,
@@ -1001,14 +1001,14 @@ Lineshapes::FOCUS::FOCUS(std::string name,
 Lineshapes::kMatrix::kMatrix(std::string name,
                              unsigned int pterm,
                              bool is_pole,
-                             Variable *sA0,
-                             Variable *sA,
-                             Variable *s0_prod,
-                             Variable *s0_scatt,
-                             std::array<Variable *, NCHANNELS> fscat,
-                             std::array<Variable *, NPOLES *(NPOLES + 1)> poles,
-                             Variable *mass,
-                             Variable *width,
+                             Variable sA0,
+                             Variable sA,
+                             Variable s0_prod,
+                             Variable s0_scatt,
+                             std::array<Variable, NCHANNELS> fscat,
+                             std::array<Variable, NPOLES *(NPOLES + 1)> poles,
+                             Variable mass,
+                             Variable width,
                              unsigned int L,
                              unsigned int Mpair,
                              FF FormFac,
@@ -1046,8 +1046,8 @@ Lineshapes::kMatrix::kMatrix(std::string name,
 }
 
 Amplitude::Amplitude(std::string uniqueDecayStr,
-                     Variable *ar,
-                     Variable *ai,
+                     Variable ar,
+                     Variable ai,
                      std::vector<Lineshape *> LS,
                      std::vector<SpinFactor *> SF,
                      unsigned int nPerm)

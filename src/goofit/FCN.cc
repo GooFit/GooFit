@@ -11,8 +11,8 @@ FCN::FCN(Params &params)
     host_callnumber = 0;
 
     // Verify that all varaibles need to be recached
-    for(Variable *var : params_->vars_)
-        var->setChanged(true);
+    for(Variable &var : params_->vars_)
+        var.setChanged(true);
 }
 
 double FCN::operator()(const std::vector<double> &pars) const {

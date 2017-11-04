@@ -18,7 +18,7 @@ TEST(Simple, NoBlind) {
     Observable xvar{"xvar", 0, 10};
 
     // Data set
-    UnbinnedDataSet data{&xvar};
+    UnbinnedDataSet data{xvar};
 
     // Random number generation
     std::mt19937 gen(137);
@@ -38,7 +38,7 @@ TEST(Simple, NoBlind) {
     Variable sigma{"sigma", 1, 0, 3};
 
     // GooPdf object
-    GaussianPdf gausspdf{"gausspdf", &xvar, &alpha, &sigma};
+    GaussianPdf gausspdf{"gausspdf", xvar, alpha, sigma};
     gausspdf.fitTo(&data);
 
     EXPECT_LT(alpha.getError(), .01);
@@ -50,7 +50,7 @@ TEST(Simple, WithBlind) {
     Observable xvar{"xvar", 0, 10};
 
     // Data set
-    UnbinnedDataSet data{&xvar};
+    UnbinnedDataSet data{xvar};
 
     // Random number generation
     std::mt19937 gen(137);
@@ -73,7 +73,7 @@ TEST(Simple, WithBlind) {
     alpha.setBlind(1);
 
     // GooPdf object
-    GaussianPdf gausspdf{"gausspdf", &xvar, &alpha, &sigma};
+    GaussianPdf gausspdf{"gausspdf", xvar, alpha, sigma};
     gausspdf.fitTo(&data);
 
     EXPECT_LT(alpha.getError(), .01);
@@ -85,7 +85,7 @@ TEST(Simple, Min1Blind) {
     Observable xvar{"xvar", 0, 10};
 
     // Data set
-    UnbinnedDataSet data{&xvar};
+    UnbinnedDataSet data{xvar};
 
     // Random number generation
     std::mt19937 gen(137);
@@ -108,7 +108,7 @@ TEST(Simple, Min1Blind) {
     alpha.setBlind(1);
 
     // GooPdf object
-    GaussianPdf gausspdf{"gausspdf", &xvar, &alpha, &sigma};
+    GaussianPdf gausspdf{"gausspdf", xvar, alpha, sigma};
     gausspdf.setData(&data);
 
     GooFit::FitManagerMinuit1 fitman{&gausspdf};

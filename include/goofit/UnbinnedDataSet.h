@@ -16,23 +16,23 @@ class UnbinnedDataSet : public DataSet {
   public:
     using DataSet::addEvent;
 
-    UnbinnedDataSet(Observable *var, std::string n = "");
-    UnbinnedDataSet(std::vector<Observable *> &vars, std::string n = "");
-    UnbinnedDataSet(std::set<Observable *> &vars, std::string n = "");
-    UnbinnedDataSet(std::initializer_list<Observable *> vars, std::string n = "");
+    UnbinnedDataSet(const Observable &var, std::string n = "");
+    UnbinnedDataSet(const std::vector<Observable> &vars, std::string n = "");
+    UnbinnedDataSet(const std::set<Observable> &vars, std::string n = "");
+    UnbinnedDataSet(std::initializer_list<Observable> vars, std::string n = "");
 
     ~UnbinnedDataSet() override = default;
 
     void addEvent() override;
 
     /// Get the value at a specific variable and event number
-    fptype getValue(Observable *var, size_t idx) const;
+    fptype getValue(const Observable &var, size_t idx) const;
 
     /// Set all the variables to the current event values
     void loadEvent(size_t idx);
 
     /// Set all entries to a constant value (note: this is kind of ugly)
-    void setValueForAllEvents(Observable *var);
+    void setValueForAllEvents(const Observable &var);
 
     /// Input an eigen matrix
     template <typename M>
@@ -45,16 +45,15 @@ class UnbinnedDataSet : public DataSet {
 
         for(int i = 0; i < input.cols(); i++) {     // Loop over events
             for(int j = 0; j < input.rows(); j++) { // Loop over variables
-                observables.at(j)->setValue(input(j, i));
+                observables.at(j).setValue(input(j, i));
             }
 
             // Special override for counting variables (final param)
             if(observables.size() == input.rows() + 1)
-                observables.at(input.rows())->setValue(optional_index++);
+                observables.at(input.rows()).setValue(optional_index++);
 
-            if(!filter || std::all_of(std::begin(observables), std::end(observables), [](Observable *var) {
-                   return bool(*var);
-               }))
+            if(!filter
+               || std::all_of(std::begin(observables), std::end(observables), [](Observable var) { return bool(var); }))
                 addEvent();
         }
     }

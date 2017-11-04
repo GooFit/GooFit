@@ -27,9 +27,9 @@ __device__ fptype device_JohnsonSU(fptype *evt, fptype *p, unsigned int *indices
 
 __device__ device_function_ptr ptr_to_JohnsonSU = device_JohnsonSU;
 
-__host__ JohnsonSUPdf::JohnsonSUPdf(
-    std::string n, Observable *_x, Variable *mean, Variable *sigma, Variable *gamma, Variable *delta)
-    : GooPdf(_x, n) {
+__host__
+JohnsonSUPdf::JohnsonSUPdf(std::string n, Observable _x, Variable mean, Variable sigma, Variable gamma, Variable delta)
+    : GooPdf(n, _x) {
     std::vector<unsigned int> pindices;
     pindices.push_back(registerParameter(mean));
     pindices.push_back(registerParameter(sigma));

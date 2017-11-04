@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
 
     Observable xvar{"xvar", 0, log(1 + RAND_MAX / 2)};
     Observable yvar{"yvar", 0, log(1 + RAND_MAX / 2)};
-    vector<Observable *> varList = {&xvar, &yvar};
+    vector<Observable> varList = {xvar, yvar};
     UnbinnedDataSet data{varList};
 
     for(int i = 0; i < 100000; ++i) {
@@ -31,8 +31,8 @@ int main(int argc, char **argv) {
     Variable alpha_x{"alpha_x", -2.4, 0.1, -10, 10};
     Variable alpha_y{"alpha_y", -1.1, 0.1, -10, 10};
 
-    ExpPdf exp_x{"exp_x", &xvar, &alpha_x};
-    ExpPdf exp_y{"exp_y", &yvar, &alpha_y};
+    ExpPdf exp_x{"exp_x", xvar, alpha_x};
+    ExpPdf exp_y{"exp_y", yvar, alpha_y};
     ProdPdf product{"product", {&exp_x, &exp_y}};
 
     product.setData(&data);

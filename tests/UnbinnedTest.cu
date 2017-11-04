@@ -25,7 +25,7 @@ TEST(UnbinnedFit, SimpleFit) {
     Observable xvar{"xvar", 0, 10};
 
     // Data set
-    UnbinnedDataSet data(&xvar);
+    UnbinnedDataSet data(xvar);
 
     // Generate toy events.
     for(int i = 0; i < 1000; ++i) {
@@ -40,7 +40,7 @@ TEST(UnbinnedFit, SimpleFit) {
     Variable alpha{"alpha", -2, 0.1, -10, 10};
 
     // GooPdf object
-    ExpPdf exppdf{"exppdf", &xvar, &alpha};
+    ExpPdf exppdf{"exppdf", xvar, alpha};
     exppdf.setData(&data);
 
     FitManager fitter{&exppdf};
@@ -62,7 +62,7 @@ TEST(UnbinnedFit, DualFit) {
     Observable yvar{"yvar", 0, 10};
 
     // Data set
-    UnbinnedDataSet data{{&xvar, &yvar}};
+    UnbinnedDataSet data{{xvar, yvar}};
 
     // Generate toy events.
     for(int i = 0; i < 20000; ++i) {
@@ -81,8 +81,8 @@ TEST(UnbinnedFit, DualFit) {
     Variable yalpha{"yalpha", -2, 0.1, -10, 10};
 
     // GooPdf object
-    ExpPdf xpdf{"xpdf", &xvar, &xalpha};
-    ExpPdf ypdf{"ypdf", &yvar, &yalpha};
+    ExpPdf xpdf{"xpdf", xvar, xalpha};
+    ExpPdf ypdf{"ypdf", yvar, yalpha};
     ProdPdf totalpdf{"totalpdf", {&xpdf, &ypdf}};
     totalpdf.setData(&data);
 
@@ -107,7 +107,7 @@ TEST(UnbinnedFit, DifferentFitterVariable) {
     Observable yvar{"yvar", -10, 10};
 
     // Data set
-    UnbinnedDataSet data{{&xvar, &yvar}, "Some name"};
+    UnbinnedDataSet data{{xvar, yvar}, "Some name"};
 
     // Generate toy events.
     for(int i = 0; i < 20000; ++i) {
@@ -126,8 +126,8 @@ TEST(UnbinnedFit, DifferentFitterVariable) {
     Variable yalpha{"yalpha", 0, 0.1, -10, 10};
 
     // GooPdf object
-    GaussianPdf ypdf{"ypdf", &yvar, &yalpha, &ysigma};
-    GaussianPdf xpdf{"xpdf", &xvar, &xalpha, &xsigma};
+    GaussianPdf ypdf{"ypdf", yvar, yalpha, ysigma};
+    GaussianPdf xpdf{"xpdf", xvar, xalpha, xsigma};
     ProdPdf totalpdf{"totalpdf", {&xpdf, &ypdf}};
     totalpdf.setData(&data);
 

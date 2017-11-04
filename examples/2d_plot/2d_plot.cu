@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
 
     Observable xvar{"xvar", -5, 5};
     Observable yvar{"yvar", -5, 5};
-    UnbinnedDataSet data({&xvar, &yvar});
+    UnbinnedDataSet data({xvar, yvar});
 
     TH2F dataHist("dataHist",
                   "",
@@ -85,11 +85,11 @@ int main(int argc, char **argv) {
 
     Variable xmean{"xmean", 0, 1, -10, 10};
     Variable xsigm{"xsigm", 1, 0.5, 1.5};
-    GaussianPdf xgauss{"xgauss", &xvar, &xmean, &xsigm};
+    GaussianPdf xgauss{"xgauss", xvar, xmean, xsigm};
 
     Variable ymean{"ymean", 0, 1, -10, 10};
     Variable ysigm{"ysigm", 0.4, 0.1, 0.6};
-    GaussianPdf ygauss{"ygauss", &yvar, &ymean, &ysigm};
+    GaussianPdf ygauss{"ygauss", yvar, ymean, ysigm};
 
     ProdPdf total("total", {&xgauss, &ygauss});
     total.setData(&data);

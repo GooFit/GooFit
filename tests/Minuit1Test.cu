@@ -26,7 +26,7 @@ TEST(Minuit1, SimpleFit) {
     Observable xvar{"xvar", 0, 10};
 
     // Data set
-    UnbinnedDataSet data(&xvar);
+    UnbinnedDataSet data(xvar);
 
     // Generate toy events.
     for(int i = 0; i < 1000; ++i) {
@@ -41,7 +41,7 @@ TEST(Minuit1, SimpleFit) {
     Variable alpha{"alpha", -2, 0.1, -10, 10};
 
     // GooPdf object
-    ExpPdf exppdf{"exppdf", &xvar, &alpha};
+    ExpPdf exppdf{"exppdf", xvar, alpha};
     exppdf.setData(&data);
 
     GooFit::FitManagerMinuit1 fitter{&exppdf};
@@ -64,7 +64,7 @@ TEST(Minuit1, DualFit) {
     Observable yvar{"yvar", 0, 10};
 
     // Data set
-    UnbinnedDataSet data{{&xvar, &yvar}};
+    UnbinnedDataSet data{{xvar, yvar}};
 
     // Generate toy events.
     for(int i = 0; i < 20000; ++i) {
@@ -83,8 +83,8 @@ TEST(Minuit1, DualFit) {
     Variable yalpha{"yalpha", -2, 0.1, -10, 10};
 
     // GooPdf object
-    ExpPdf xpdf{"xpdf", &xvar, &xalpha};
-    ExpPdf ypdf{"ypdf", &yvar, &yalpha};
+    ExpPdf xpdf{"xpdf", xvar, xalpha};
+    ExpPdf ypdf{"ypdf", yvar, yalpha};
     ProdPdf totalpdf{"totalpdf", {&xpdf, &ypdf}};
     totalpdf.setData(&data);
 
@@ -110,7 +110,7 @@ TEST(Minuit1, DifferentFitterVariable) {
     Observable yvar{"yvar", 0, 10};
 
     // Data set
-    UnbinnedDataSet data{{&xvar, &yvar}, "Some name"};
+    UnbinnedDataSet data{{xvar, yvar}, "Some name"};
 
     // Generate toy events.
     for(int i = 0; i < 20000; ++i) {
@@ -127,8 +127,8 @@ TEST(Minuit1, DifferentFitterVariable) {
     Variable yalpha{"yalpha", -2, 0.1, -10, 10};
 
     // GooPdf object
-    ExpPdf ypdf{"ypdf", &yvar, &yalpha};
-    ExpPdf xpdf{"xpdf", &xvar, &xalpha};
+    ExpPdf ypdf{"ypdf", yvar, yalpha};
+    ExpPdf xpdf{"xpdf", xvar, xalpha};
     ProdPdf totalpdf{"totalpdf", {&xpdf, &ypdf}};
     totalpdf.setData(&data);
 
@@ -154,7 +154,7 @@ TEST(Minuit1, FitterConstants) {
     Observable yvar{"yvar", -5, 5};
 
     // Data set
-    UnbinnedDataSet data{{&xvar, &yvar}, "Some name"};
+    UnbinnedDataSet data{{xvar, yvar}, "Some name"};
 
     // Generate toy events.
     for(int i = 0; i < 20000; ++i) {
@@ -175,8 +175,8 @@ TEST(Minuit1, FitterConstants) {
     Variable ysigma{"ysigma", .3};
 
     // GooPdf object
-    GaussianPdf xpdf{"xpdf", &xvar, &xalpha, &xsigma};
-    GaussianPdf ypdf{"ypdf", &yvar, &yalpha, &ysigma};
+    GaussianPdf xpdf{"xpdf", xvar, xalpha, xsigma};
+    GaussianPdf ypdf{"ypdf", yvar, yalpha, ysigma};
     ProdPdf totalpdf{"totalpdf", {&xpdf, &ypdf}};
     totalpdf.setData(&data);
 

@@ -57,4 +57,3 @@ TEST(Composite, SimpleFit) {
     EXPECT_LT(alpha1.getError(), .1);
     EXPECT_NEAR(1.8, alpha1.getValue(), alpha1.getError() * 3);
 }
-

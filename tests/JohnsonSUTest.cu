@@ -53,4 +53,3 @@ TEST(JohnsonSU, SimpleFit) {
     EXPECT_LT(m.getError(), .1);
     EXPECT_NEAR(0.5, m.getValue(), m.getError() * 3);
 }
-

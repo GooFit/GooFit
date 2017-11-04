@@ -18,9 +18,8 @@ __device__ fptype device_CrystalBall(fptype *evt, ParameterContainer &pc) {
     fptype ret   = 0;
 
     if((alpha > 0 && rx <= alpha) || // Right-hand tail, in Gaussian region
-       (alpha < 0 && rx >= alpha)
-       ||              // Left-hand tail, in Gaussian region
-       (alpha == 0)) { // Pure Gaussian
+       (alpha < 0 && rx >= alpha) || // Left-hand tail, in Gaussian region
+       (alpha == 0)) {               // Pure Gaussian
         ret = exp(-0.5 * rx * rx);
     } else { // Tail part
         fptype n_over_alpha = power / alpha;
@@ -43,7 +42,6 @@ __device__ device_function_ptr ptr_to_CrystalBall = device_CrystalBall;
 __host__ CrystalBallPdf::CrystalBallPdf(
     std::string n, Variable *_x, Variable *mean, Variable *sigma, Variable *alpha, Variable *power)
     : GooPdf(_x, n) {
-
     std::vector<unsigned int> pindices;
     pindices.push_back(registerParameter(mean));
     pindices.push_back(registerParameter(sigma));
@@ -57,14 +55,14 @@ __host__ CrystalBallPdf::CrystalBallPdf(
     initialize(pindices);
 }
 
-__host__ void CrystalBallPdf::recursiveSetIndices () {
+__host__ void CrystalBallPdf::recursiveSetIndices() {
     GET_FUNCTION_ADDR(ptr_to_CrystalBall);
 
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_CrystalBall");
+    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_CrystalBall");
     host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx = num_device_functions++;
+    functionIdx                               = num_device_functions++;
 
-    populateArrays ();
+    populateArrays();
 }
 
 __host__ fptype CrystalBallPdf::integrate(fptype lo, fptype hi) const {
@@ -74,10 +72,10 @@ __host__ fptype CrystalBallPdf::integrate(fptype lo, fptype hi) const {
     fptype result = 0.0;
     bool useLog   = false;
 
-    fptype mean  = parametersList[0]->getValue ();
-    fptype sigma = parametersList[1]->getValue ();
-    fptype alpha = parametersList[2]->getValue ();
-    fptype power = parametersList[3]->getValue ();
+    fptype mean  = parametersList[0]->getValue();
+    fptype sigma = parametersList[1]->getValue();
+    fptype alpha = parametersList[2]->getValue();
+    fptype power = parametersList[3]->getValue();
 
     if(fabs(power - 1.0) < 1.0e-05)
         useLog = true;

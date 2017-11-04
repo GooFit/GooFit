@@ -67,8 +67,8 @@ __device__ thrust::complex<fptype> LS_ONE(fptype Mpair, fptype m1, fptype m2, Pa
 
 // This function is modeled after BW_BW::getVal() in BW_BW.cpp from the MINT package written by Jonas Rademacker.
 __device__ thrust::complex<fptype> BW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
-    fptype resmass       = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
-    fptype reswidth      = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
+    fptype resmass  = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
+    fptype reswidth = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
 
     fptype meson_radius  = RO_CACHE(pc.constants[pc.constantIdx + 1]);
     unsigned int orbital = RO_CACHE(pc.constants[pc.constantIdx + 2]);
@@ -128,8 +128,8 @@ __device__ thrust::complex<fptype> BW(fptype Mpair, fptype m1, fptype m2, Parame
 
 // This function is modeled after SBW from the MINT package written by Jonas Rademacker.
 __device__ thrust::complex<fptype> SBW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
-    fptype resmass       = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
-    fptype reswidth      = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
+    fptype resmass  = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
+    fptype reswidth = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
 
     fptype meson_radius  = RO_CACHE(pc.constants[pc.constantIdx + 1]);
     unsigned int orbital = RO_CACHE(pc.constants[pc.constantIdx + 2]);
@@ -334,13 +334,13 @@ __device__ thrust::complex<fptype> lass_MINT(fptype Mpair, fptype m1, fptype m2,
 // lass as implemented in Mint3.
 // The difference between this and lass mint is not quite clear to me. need to get back to this later.
 __device__ thrust::complex<fptype> glass_MINT3(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
-    fptype meson_radius  = c_meson_radius;
-    fptype resmass       = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
-    fptype reswidth      = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
+    fptype meson_radius = c_meson_radius;
+    fptype resmass      = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
+    fptype reswidth     = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
 
     unsigned int orbital = RO_CACHE(pc.constants[pc.constantIdx + 2]);
 
-    fptype rMass2        = Mpair * Mpair;
+    fptype rMass2 = Mpair * Mpair;
 
     // fptype a = 2.07;
     // fptype r = 3.32;
@@ -377,15 +377,16 @@ __device__ thrust::complex<fptype> glass_MINT3(fptype Mpair, fptype m1, fptype m
     fptype thisFR = BL_PRIME(pABSq * r2, prSq * r2, orbital);
     fptype GofM   = reswidth * pratio_to_2Jplus1 * mratio * thisFR;
 
-    fptype y                          = 2.0 * a * sqrt(pABSq);
-    fptype x                          = 2.0 + a * r * pABSq;
-    fptype scattphase                 = phiF + atan(y / x);
-    fptype resphase                   = phiR + atan(resmass * GofM / (resmass * resmass - rMass2));
-    fptype rho                        = 1.0 / sqrt(pABSq / rMass2);
-    thrust::complex<fptype> returnVal = (F * sin(scattphase) * thrust::complex<fptype>(cos(scattphase), sin(scattphase))
-                                         + R * sin(resphase) * thrust::complex<fptype>(cos(resphase + 2 * scattphase),
-                                                                                       sin(resphase + 2 * scattphase)))
-                                        * rho;
+    fptype y          = 2.0 * a * sqrt(pABSq);
+    fptype x          = 2.0 + a * r * pABSq;
+    fptype scattphase = phiF + atan(y / x);
+    fptype resphase   = phiR + atan(resmass * GofM / (resmass * resmass - rMass2));
+    fptype rho        = 1.0 / sqrt(pABSq / rMass2);
+    thrust::complex<fptype> returnVal
+        = (F * sin(scattphase) * thrust::complex<fptype>(cos(scattphase), sin(scattphase))
+           + R * sin(resphase)
+                 * thrust::complex<fptype>(cos(resphase + 2 * scattphase), sin(resphase + 2 * scattphase)))
+          * rho;
     // printf("GLass3: %.5g %.5g %.5g %.5g %.5g %.5g\n",rMass2, pABSq, rho, GofM, scattphase, resphase);
 
     // printf("GLass4: %.5g %.5g\n",returnVal.real, returnVal.imag);
@@ -400,13 +401,13 @@ __device__ thrust::complex<fptype> aSqrtTerm(const fptype &m0, const fptype &m) 
 }
 
 __device__ thrust::complex<fptype> Flatte_MINT(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
-    fptype resmass       = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
+    fptype resmass = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
 
     fptype meson_radius  = RO_CACHE(pc.constants[pc.constantIdx + 1]);
     unsigned int orbital = RO_CACHE(pc.constants[pc.constantIdx + 2]);
 
-    fptype frFactor      = 1;
-    fptype rMass2        = Mpair * Mpair;
+    fptype frFactor = 1;
+    fptype rMass2   = Mpair * Mpair;
 
     // As far as I understand, this is only valid for the f980
     fptype gPi       = .165;
@@ -437,7 +438,7 @@ __device__ thrust::complex<fptype> Flatte_MINT(fptype Mpair, fptype m1, fptype m
 }
 
 __device__ thrust::complex<fptype> nonres_DP(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
-    fptype meson_radius = RO_CACHE(pc.constants[pc.constantIdx + 1]);
+    fptype meson_radius  = RO_CACHE(pc.constants[pc.constantIdx + 1]);
     unsigned int orbital = RO_CACHE(pc.constants[pc.constantIdx + 2]);
 
     fptype mumsRecoMass2 = Mpair * Mpair;
@@ -490,12 +491,12 @@ Lineshape::Lineshape(std::string name,
     pindices.push_back(Mpair);
     pindices.push_back(enum_to_underlying(FormFac));
     pindices.push_back(registerConstants(1));
-    //MEMCPY_TO_SYMBOL(functorConstants, &radius, sizeof(fptype), cIndex * sizeof(fptype), cudaMemcpyHostToDevice);
+    // MEMCPY_TO_SYMBOL(functorConstants, &radius, sizeof(fptype), cIndex * sizeof(fptype), cudaMemcpyHostToDevice);
 
-    constantsList.push_back (radius);
-    constantsList.push_back (L);
-    constantsList.push_back (Mpair);
-    //constantsList.push_back (enum_to_underlying(FormFac));
+    constantsList.push_back(radius);
+    constantsList.push_back(L);
+    constantsList.push_back(Mpair);
+    // constantsList.push_back (enum_to_underlying(FormFac));
 
     switch(kind) {
     case LS::ONE:
@@ -563,8 +564,7 @@ Lineshape::Lineshape(std::string name)
     initialize(pindices);
 }
 
-void Lineshape::recursiveSetIndices () {
-}
+void Lineshape::recursiveSetIndices() {}
 
 Amplitude::Amplitude(std::string uniqueDecayStr,
                      Variable *ar,

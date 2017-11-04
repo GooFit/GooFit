@@ -17,7 +17,7 @@ __device__ fptype device_ExpGaus(fptype *evt, ParameterContainer &pc) {
     ret *= exp(exparg);
     ret *= erfc(erfarg);
 
-    pc.incrementIndex (1, 3, 0, 1, 1);
+    pc.incrementIndex(1, 3, 0, 1, 1);
 
     return ret;
 }
@@ -35,15 +35,14 @@ ExpGausPdf::ExpGausPdf(std::string n, Variable *_x, Variable *mean, Variable *si
     initialize(pindices);
 }
 
-__host__ void ExpGausPdf::recursiveSetIndices () {
+__host__ void ExpGausPdf::recursiveSetIndices() {
     GET_FUNCTION_ADDR(ptr_to_ExpGaus);
 
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_ExpGaus");
+    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_ExpGaus");
     host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx = num_device_functions++;
+    functionIdx                               = num_device_functions++;
 
-    populateArrays ();
- 
+    populateArrays();
 }
 
 } // namespace GooFit

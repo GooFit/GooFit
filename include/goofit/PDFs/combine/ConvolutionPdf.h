@@ -12,7 +12,7 @@ class ConvolutionPdf : public GooPdf {
     __host__ fptype normalize() const override;
     __host__ void setIntegrationConstants(fptype lo, fptype hi, fptype step);
     __host__ void registerOthers(std::vector<ConvolutionPdf *> others);
-    __host__ virtual void recursiveSetIndices ();
+    __host__ virtual void recursiveSetIndices();
 
   private:
     GooPdf *model;

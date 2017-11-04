@@ -70,7 +70,7 @@ class ResonancePdf : public GooPdf {
     virtual void recursiveSetIndices();
 
   private:
-    //void setConstantIndex(unsigned int idx) { parametersList[parametersIdx + 1] = idx; }
+    // void setConstantIndex(unsigned int idx) { parametersList[parametersIdx + 1] = idx; }
 
     Variable *amp_real;
     Variable *amp_imag;

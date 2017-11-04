@@ -48,9 +48,9 @@ TEST(Mapped, SimpleFit) {
     GaussianPdf g2{"gauss2", &xvar, &a2, &s2};
     GaussianPdf g3{"gauss3", &xvar, &a3, &s3};
 
-    std::vector<GooPdf*> list;
-    list.push_back (&g2);
-    list.push_back (&g3);
+    std::vector<GooPdf *> list;
+    list.push_back(&g2);
+    list.push_back(&g3);
 
     // GooPdf object
     MappedPdf pdf{"mappedpdf", &g1, list};
@@ -61,7 +61,6 @@ TEST(Mapped, SimpleFit) {
     fitter.fit();
 
     EXPECT_TRUE(fitter);
-    //EXPECT_LT(alpha.getError(), .1);
-    //EXPECT_NEAR(0.665178392, alpha.getValue(), alpha.getError() * 3);
+    // EXPECT_LT(alpha.getError(), .1);
+    // EXPECT_NEAR(0.665178392, alpha.getValue(), alpha.getError() * 3);
 }
-

@@ -27,12 +27,12 @@ TEST(InterHistPdf, SimpleFit) {
     Variable b1{"a1", 0.1, -10, 10};
     Variable c1{"a1", 0.1, -10, 10};
 
-    std::vector<Variable*> var_list;
-    var_list.push_back (&a1);
-    var_list.push_back (&b1);
-    var_list.push_back (&c1);
+    std::vector<Variable *> var_list;
+    var_list.push_back(&a1);
+    var_list.push_back(&b1);
+    var_list.push_back(&c1);
 
-    std::vector<Variable*> obs_list;
+    std::vector<Variable *> obs_list;
     obs_list.push_back(&xvar);
 
     // Data set
@@ -55,8 +55,7 @@ TEST(InterHistPdf, SimpleFit) {
     fitter.setVerbosity(2);
     fitter.fit();
 
-    //EXPECT_TRUE(fitter);
-    //EXPECT_LT(alpha.getError(), .1);
-    //EXPECT_NEAR(0.665178392, alpha.getValue(), alpha.getError() * 3);
+    // EXPECT_TRUE(fitter);
+    // EXPECT_LT(alpha.getError(), .1);
+    // EXPECT_NEAR(0.665178392, alpha.getValue(), alpha.getError() * 3);
 }
-

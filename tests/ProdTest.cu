@@ -59,4 +59,3 @@ TEST(Prod, SimpleFit) {
 
     EXPECT_TRUE(fitter);
 }
-

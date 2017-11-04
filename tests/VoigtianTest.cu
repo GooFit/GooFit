@@ -56,4 +56,3 @@ TEST(Voigtian, SimpleFit) {
     EXPECT_LT(w.getError(), .1);
     EXPECT_NEAR(0.4343, w.getValue(), w.getError() * 3);
 }
-

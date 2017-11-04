@@ -6,7 +6,7 @@
 namespace py = pybind11;
 using namespace GooFit;
 
-template<class DataSetBase = DataSet>
+template <class DataSetBase = DataSet>
 class PyDataSet : public DataSetBase {
     using DataSetBase::DataSetBase;
     void addEvent() override { PYBIND11_OVERLOAD_PURE(void, DataSetBase, addEvent); };

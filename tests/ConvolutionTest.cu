@@ -59,4 +59,3 @@ TEST(Convolution, SimpleFit) {
     EXPECT_LT(a2.getError(), .1);
     EXPECT_NEAR(0.665178392, a2.getValue(), a2.getError() * 3);
 }
-

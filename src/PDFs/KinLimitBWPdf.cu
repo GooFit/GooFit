@@ -36,7 +36,7 @@ __device__ fptype device_KinLimitBW(fptype *evt, ParameterContainer &pc) {
 
     fptype pUsingRealMass = getMomentum(mean, pimass, d0mass);
 
-    pc.incrementIndex (1, 2, 2, 1, 1);
+    pc.incrementIndex(1, 2, 2, 1, 1);
 
     if(0 >= pUsingRealMass)
         return 0;
@@ -60,31 +60,32 @@ __host__ KinLimitBWPdf::KinLimitBWPdf(std::string n, Variable *_x, Variable *mea
     registerParameter(width);
 
     std::vector<unsigned int> pindices;
-    //pindices.push_back(mean->getIndex());
-    //pindices.push_back(width->getIndex());
-    //pindices.push_back(registerConstants(2));
-    //setMasses(1.8645, 0.13957);
-    constantsList.push_back (1.8645);
-    constantsList.push_back (0.13957);
+    // pindices.push_back(mean->getIndex());
+    // pindices.push_back(width->getIndex());
+    // pindices.push_back(registerConstants(2));
+    // setMasses(1.8645, 0.13957);
+    constantsList.push_back(1.8645);
+    constantsList.push_back(0.13957);
 
     GET_FUNCTION_ADDR(ptr_to_KinLimitBW);
 
     initialize(pindices);
 }
 
-__host__ void KinLimitBWPdf::recursiveSetIndices () { 
+__host__ void KinLimitBWPdf::recursiveSetIndices() {
     GET_FUNCTION_ADDR(ptr_to_KinLimitBW);
 
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_KinLimitBW");
+    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_KinLimitBW");
     host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx = num_device_functions++;
+    functionIdx                               = num_device_functions++;
 
-    populateArrays ();
+    populateArrays();
 }
 
 __host__ void KinLimitBWPdf::setMasses(fptype bigM, fptype smallM) {
     constantsList[0] = bigM;
     constantsList[1] = smallM;
-    //MEMCPY_TO_SYMBOL(functorConstants, constants, 2 * sizeof(fptype), cIndex * sizeof(fptype), cudaMemcpyHostToDevice);
+    // MEMCPY_TO_SYMBOL(functorConstants, constants, 2 * sizeof(fptype), cIndex * sizeof(fptype),
+    // cudaMemcpyHostToDevice);
 }
 } // namespace GooFit

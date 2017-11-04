@@ -11,7 +11,8 @@ class ExpPdf : public GooPdf {
     __host__ fptype integrate(fptype lo, fptype hi) const override;
     __host__ bool hasAnalyticIntegral() const override { return (1 == host_parameters[parametersIdx]); }
 
-    __host__ virtual void recursiveSetIndices ();
+    __host__ virtual void recursiveSetIndices();
+
   private:
     int ExpType;
 };

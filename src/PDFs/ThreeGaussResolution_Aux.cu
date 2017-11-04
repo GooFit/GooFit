@@ -68,7 +68,7 @@ __device__ fptype device_threegauss_resolution(fptype coshterm,
                                                fptype ymixing,
                                                fptype sigma,
                                                ParameterContainer &pc) {
-    fptype coreFraction = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
+    fptype coreFraction    = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
     fptype tailFraction    = (1 - coreFraction) * RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
     fptype outlFraction    = 1 - coreFraction - tailFraction;
     fptype coreBias        = RO_CACHE(pc.parameters[pc.parameterIdx + 3]);
@@ -105,7 +105,7 @@ __device__ fptype device_threegauss_resolution(fptype coshterm,
     ret -= 2 * sinhterm * _P3;
     ret -= 2 * sinterm * _P4; // Notice sign difference wrt to Mikhail's code, because I have AB* and he has A*B.
 
-    //pc.incrementIndex (1, 8, 0, 0, 1);
+    // pc.incrementIndex (1, 8, 0, 0, 1);
 
     // cuPrintf("device_threegauss_resolution %f %f %f %f %f\n", coshterm, costerm, sinhterm, sinterm, dtime);
     return ret;
@@ -141,13 +141,13 @@ void ThreeGaussResolution::createParameters(std::vector<unsigned int> &pindices,
     pindices.push_back(registerParameter(outScaleFactor));
 }
 
-void ThreeGaussResolution::recursiveSetIndices () { 
+void ThreeGaussResolution::recursiveSetIndices() {
     GET_FUNCTION_ADDR(ptr_to_threegauss);
     host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx = num_device_functions;
+    functionIdx                               = num_device_functions;
     num_device_functions++;
 
-    //populate all the arrays
+    // populate all the arrays
     GOOFIT_DEBUG("Populating Arrays for {}(three_gauss_resolution)", getName());
 
     populateArrays();

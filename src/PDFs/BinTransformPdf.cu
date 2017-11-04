@@ -4,17 +4,17 @@ namespace GooFit {
 
 __device__ fptype device_BinTransform(fptype *evt, ParameterContainer &pc) {
     // Index structure: nP lim1 bin1 lim2 bin2 ... nO o1 o2
-    int numConstants = RO_CACHE(pc.constants[pc.constantIdx]);
+    int numConstants   = RO_CACHE(pc.constants[pc.constantIdx]);
     int numObservables = RO_CACHE(pc.observables[pc.observableIdx]);
     int ret            = 0;
     int previousSize   = 1;
 
     for(int i = 0; i < numObservables; ++i) {
-        int id = RO_CACHE(pc.observables[pc.observableIdx + i + 1]);
+        int id            = RO_CACHE(pc.observables[pc.observableIdx + i + 1]);
         fptype obsValue   = evt[id];
-        fptype lowerLimit = RO_CACHE(pc.constants[pc.constantIdx + i*3 + 1]);
-        fptype binSize    = RO_CACHE(pc.constants[pc.constantIdx + i*3 + 2]);
-        int numBins       = RO_CACHE(pc.constants[pc.constantIdx + i*3 + 3]);
+        fptype lowerLimit = RO_CACHE(pc.constants[pc.constantIdx + i * 3 + 1]);
+        fptype binSize    = RO_CACHE(pc.constants[pc.constantIdx + i * 3 + 2]);
+        int numBins       = RO_CACHE(pc.constants[pc.constantIdx + i * 3 + 3]);
 
         auto localBin = static_cast<int>(floor((obsValue - lowerLimit) / binSize));
         ret += localBin * previousSize;
@@ -35,35 +35,35 @@ __host__ BinTransformPdf::BinTransformPdf(std::string n,
                                           std::vector<fptype> binSizes,
                                           std::vector<int> numBins)
     : GooPdf(nullptr, n) {
-    //cIndex               = registerConstants(2 * obses.size());
-    //auto *host_constants = new fptype[2 * obses.size()];
+    // cIndex               = registerConstants(2 * obses.size());
+    // auto *host_constants = new fptype[2 * obses.size()];
     std::vector<unsigned int> pindices;
 
-    //setup the observables
+    // setup the observables
     for(unsigned int i = 0; i < obses.size(); ++i)
         registerObservable(obses[i]);
 
-    observablesList = getObservables ();
+    observablesList = getObservables();
 
-    //add limits for each observable (variable)
+    // add limits for each observable (variable)
     for(unsigned int i = 0; i < obses.size(); ++i) {
-        constantsList.push_back (limits[i]);
-        constantsList.push_back (binSizes[i]);
-        constantsList.push_back (numBins[i]);
+        constantsList.push_back(limits[i]);
+        constantsList.push_back(binSizes[i]);
+        constantsList.push_back(numBins[i]);
     }
 
     GET_FUNCTION_ADDR(ptr_to_BinTransform);
     initialize(pindices);
 }
 
-__host__ void BinTransformPdf::recursiveSetIndices () {
+__host__ void BinTransformPdf::recursiveSetIndices() {
     GET_FUNCTION_ADDR(ptr_to_BinTransform);
 
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_BinTransform");
+    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_BinTransform");
     host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx = num_device_functions++;
+    functionIdx                               = num_device_functions++;
 
-    populateArrays ();
+    populateArrays();
 }
 
 } // namespace GooFit

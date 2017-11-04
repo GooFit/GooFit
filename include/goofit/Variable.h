@@ -211,7 +211,7 @@ class Constant : public Indexable {
 };
 
 /// Get the max index of a variable from a list
-//int max_index(const std::vector<Variable *> &vars);
+// int max_index(const std::vector<Variable *> &vars);
 
 /// Get the max fitter index of a variable from a list
 int max_fitter_index(const std::vector<Variable *> &vars);
@@ -221,4 +221,4 @@ std::ostream &operator<<(std::ostream &o, const GooFit::Variable &var);
 
 /// Allow Variable to be read in
 std::istream &operator>>(std::istream &i, GooFit::Variable &var);
-}
+} // namespace GooFit

@@ -58,14 +58,14 @@ struct exp_functor {
         , wmax(wmax) {}
 
     __device__ fptype operator()(thrust::tuple<unsigned int, fptype, fptype *, unsigned int> t) {
-        int evtNum            = thrust::get<0>(t);
-        fptype *evt           = thrust::get<2>(t) + (evtNum * thrust::get<3>(t));
-        //unsigned int *indices = paramIndices + tmpparam;
+        int evtNum  = thrust::get<0>(t);
+        fptype *evt = thrust::get<2>(t) + (evtNum * thrust::get<3>(t));
+        // unsigned int *indices = paramIndices + tmpparam;
 
         ParameterContainer &pc;
 
         while
-        fptype time           = evt[indices[8 + indices[0]]];
+            fptype time = evt[indices[8 + indices[0]]];
 
         thrust::random::minstd_rand0 rand(1431655765);
         thrust::uniform_real_distribution<fptype> dist(0, 1);

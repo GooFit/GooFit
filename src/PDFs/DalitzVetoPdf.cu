@@ -4,7 +4,7 @@
 namespace GooFit {
 
 __device__ fptype device_DalitzVeto(fptype *evt, ParameterContainer &pc) {
-    int numConstants = RO_CACHE(pc.constants[pc.constantIdx]);
+    int numConstants   = RO_CACHE(pc.constants[pc.constantIdx]);
     int numObservables = RO_CACHE(pc.observables[pc.observableIdx]);
 
     int idx1 = RO_CACHE(pc.observables[pc.observableIdx + 1]);
@@ -33,9 +33,9 @@ __device__ fptype device_DalitzVeto(fptype *evt, ParameterContainer &pc) {
         ret *= ((currDalitzVar < maximum) && (currDalitzVar > minimum)) ? 0.0 : 1.0;
     }
 
-    //TODO: Prefer this function, not incrementIndex();
-    //pc.incrementIndex(1, numVetos*2 + 4, numConstants, numObservables, 1);
-    pc.incrementIndex ();
+    // TODO: Prefer this function, not incrementIndex();
+    // pc.incrementIndex(1, numVetos*2 + 4, numConstants, numObservables, 1);
+    pc.incrementIndex();
 
     return ret;
 }
@@ -51,7 +51,6 @@ __host__ DalitzVetoPdf::DalitzVetoPdf(std::string n,
                                       Variable *d3m,
                                       std::vector<VetoInfo *> vetos)
     : GooPdf(nullptr, n) {
-
     registerObservable(_x);
     registerObservable(_y);
 
@@ -62,25 +61,25 @@ __host__ DalitzVetoPdf::DalitzVetoPdf(std::string n,
     pindices.push_back(registerParameter(d3m));
 
     pindices.push_back(vetos.size());
-    constantsList.push_back (vetos.size());
+    constantsList.push_back(vetos.size());
 
     for(auto &veto : vetos) {
         pindices.push_back(veto->cyclic_index);
         pindices.push_back(registerParameter(veto->minimum));
         pindices.push_back(registerParameter(veto->maximum));
-        constantsList.push_back (veto->cyclic_index);
+        constantsList.push_back(veto->cyclic_index);
     }
 
     GET_FUNCTION_ADDR(ptr_to_DalitzVeto);
     initialize(pindices);
 }
 
-void DalitzVetoPdf::recursiveSetIndices () {
+void DalitzVetoPdf::recursiveSetIndices() {
     GET_FUNCTION_ADDR(ptr_to_DalitzVeto);
 
     GOOFIT_TRACE("host_function_table[{}]({})", num_device_functions, getName(), "ptr_to_DalitzVeto");
     host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx = num_device_functions++;
+    functionIdx                               = num_device_functions++;
 
     populateArrays();
 }

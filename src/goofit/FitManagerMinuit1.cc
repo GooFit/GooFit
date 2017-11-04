@@ -48,7 +48,7 @@ Int_t Minuit1::Eval(int npar, double *gin, double &fun, double *fp, int iflag) {
     std::vector<double> pars{fp, fp + GetNumPars()};
 
     std::vector<double> gooPars;
-    gooPars.resize(vars.size () + 1);
+    gooPars.resize(vars.size() + 1);
 
     for(Variable *var : vars) {
         if(std::isnan(pars.at(var->getFitterIndex())))
@@ -56,12 +56,12 @@ Int_t Minuit1::Eval(int npar, double *gin, double &fun, double *fp, int iflag) {
 
         var->setChanged(var->getValue() != pars.at(var->getFitterIndex()));
         var->setValue(pars.at(var->getFitterIndex()));
-        //TODO: fix this to reflect Minuit2 updateVariable. Actually not needed...
-        //gooPars.at(var->getIndex()) = var->getValue() - var->blind;
+        // TODO: fix this to reflect Minuit2 updateVariable. Actually not needed...
+        // gooPars.at(var->getIndex()) = var->getValue() - var->blind;
     }
 
-    //pdfPointer->copyParams(gooPars);
-    pdfPointer->updateParameters ();
+    // pdfPointer->copyParams(gooPars);
+    pdfPointer->updateParameters();
 
     GOOFIT_TRACE("Calculating NLL");
     fun = pdfPointer->calculateNLL();
@@ -114,4 +114,4 @@ void FitManagerMinuit1::getMinuitStatus(
     std::cout << "mnstat(fmin = " << fmin << ", fedm = " << fedm << ", errdef = " << errdef << ", npari = " << npari
               << ", nparx = " << nparx << ", istat = " << istat << ")" << std::endl;
 }
-}
+} // namespace GooFit

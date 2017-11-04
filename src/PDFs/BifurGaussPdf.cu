@@ -2,12 +2,12 @@
 
 namespace GooFit {
 
-__device__ fptype device_BifurGauss(fptype* evt, ParameterContainer &pc) {
+__device__ fptype device_BifurGauss(fptype *evt, ParameterContainer &pc) {
     int id = RO_CACHE(pc.observables[pc.observableIdx + 2]);
 
-    fptype x = evt[id];
-    fptype mean = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
-    fptype sigmaLeft = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
+    fptype x          = evt[id];
+    fptype mean       = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
+    fptype sigmaLeft  = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
     fptype sigmaRight = RO_CACHE(pc.parameters[pc.parameterIdx + 3]);
 
     // how to calculate the value of a bifurcated gaussian?
@@ -18,7 +18,7 @@ __device__ fptype device_BifurGauss(fptype* evt, ParameterContainer &pc) {
 
     pc.incrementIndex(1, 3, 2, 0, 1);
 
-    fptype ret = exp(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
+    fptype ret = exp(-0.5 * (x - mean) * (x - mean) / (sigma * sigma));
     return ret;
 }
 
@@ -35,20 +35,19 @@ __host__ BifurGaussPdf::BifurGaussPdf(std::string n, Variable *_x, Variable *mea
     initialize(pindices);
 }
 
-__host__ void BifurGaussPdf::recursiveSetIndices () {
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_BifurGauss");
+__host__ void BifurGaussPdf::recursiveSetIndices() {
+    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_BifurGauss");
     GET_FUNCTION_ADDR(ptr_to_BifurGauss);
 
     host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx = num_device_functions ++;
+    functionIdx                               = num_device_functions++;
 
-    populateArrays ();
+    populateArrays();
 }
 
 // q: how shall the normalization of a bifurcated gaussian be calculated?
 // a: a "sum" of two half-gaussians?
 __host__ fptype BifurGaussPdf::integrate(fptype lo, fptype hi) const {
-
     fptype sL = host_parameters[parametersIdx + 2];
     fptype sR = host_parameters[parametersIdx + 3];
 

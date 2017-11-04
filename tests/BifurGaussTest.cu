@@ -53,4 +53,3 @@ TEST(BifurGaussian, SimpleFit) {
     EXPECT_LT(alpha.getError(), .1);
     EXPECT_NEAR(0.665178392, alpha.getValue(), alpha.getError() * 3);
 }
-

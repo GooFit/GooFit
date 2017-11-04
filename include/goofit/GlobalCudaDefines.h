@@ -60,11 +60,11 @@ enum gooError { gooSuccess = 0, gooErrorMemoryAllocation };
 #define MEMCPY_FROM_SYMBOL(target, source, count, offset, direction)                                                   \
     cudaMemcpyFromSymbol(target, source, count, offset, direction)
 
-#define ERROR_CHECK(x)\
-    {\
-        cudaError err = x;\
-        if (err != cudaSuccess)\
-            printf("CUDA Error: %s at %s:%i\n", cudaGetErrorString(err), __FILE__, __LINE__);\
+#define ERROR_CHECK(x)                                                                                                 \
+    {                                                                                                                  \
+        cudaError err = x;                                                                                             \
+        if(err != cudaSuccess)                                                                                         \
+            printf("CUDA Error: %s at %s:%i\n", cudaGetErrorString(err), __FILE__, __LINE__);                          \
     }
 
 // For CUDA case, just use existing errors, renamed
@@ -96,14 +96,14 @@ typedef float fptype;
 #define invRootPi 0.5641895835477563f
 
 #endif
-}
+} // namespace GooFit
 
 // Often faster than pow, and works with ints on CUDA<8
 #define POW2(x) ((x) * (x))
 #define POW3(x) ((x) * (x) * (x))
 
 #if !defined(__CUDA_ARCH__) || (__CUDA_ARCH__ < 350)
-template<typename T>
+template <typename T>
 __host__ __device__ T rsqrt(T val) {
     return 1.0 / sqrt(val);
 }
@@ -111,7 +111,7 @@ __host__ __device__ T rsqrt(T val) {
 
 // Fix for bug in pow(double,int) for CUDA 7 and 7.5
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA && __CUDACC_VER_MAJOR__ < 8
-template<typename T>
+template <typename T>
 __host__ __device__ T pow(T x, int y) {
     return pow(x, (T)y);
 }

@@ -48,4 +48,3 @@ TEST(Step, SimpleFit) {
 
     EXPECT_TRUE(fitter);
 }
-

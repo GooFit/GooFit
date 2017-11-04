@@ -3,21 +3,21 @@
 namespace GooFit {
 
 __device__ fptype device_Composite(fptype *evt, ParameterContainer &pc) {
-    //unsigned int coreFcnIndex  = RO_CACHE(indices[1]);
-    //unsigned int coreParIndex  = RO_CACHE(indices[2]);
-    //unsigned int shellFcnIndex = RO_CACHE(indices[3]);
-    //unsigned int shellParIndex = RO_CACHE(indices[4]);
-    pc.incrementIndex ();
+    // unsigned int coreFcnIndex  = RO_CACHE(indices[1]);
+    // unsigned int coreParIndex  = RO_CACHE(indices[2]);
+    // unsigned int shellFcnIndex = RO_CACHE(indices[3]);
+    // unsigned int shellParIndex = RO_CACHE(indices[4]);
+    pc.incrementIndex();
 
     // NB, not normalising core function, it is not being used as a PDF.
     // fptype coreValue = (*(reinterpret_cast<device_function_ptr>(device_function_table[coreFcnIndex])))(evt,
     // cudaArray, paramIndices+coreParIndex);
     fptype coreValue = callFunction(evt, pc);
 
-    //unsigned int numShellPars  = pc.parameters[pc.parameterIdx];
-    //unsigned int shellObsIndex = pc.parameters[pc.parameterIdx + 2];
+    // unsigned int numShellPars  = pc.parameters[pc.parameterIdx];
+    // unsigned int shellObsIndex = pc.parameters[pc.parameterIdx + 2];
 
-    //int obs = pc.constants[pc.constantIdx + 1];
+    // int obs = pc.constants[pc.constantIdx + 1];
     int id = pc.observables[pc.observableIdx + 1];
 
     fptype fakeEvt[10]; // Allow plenty of space in case events are large.
@@ -40,10 +40,10 @@ __device__ device_function_ptr ptr_to_Composite = device_Composite;
 __host__ CompositePdf::CompositePdf(std::string n, PdfBase *core, PdfBase *shell)
     : GooPdf(nullptr, n) {
     std::vector<unsigned int> pindices;
-    //pindices.push_back(core->getFunctionIndex());
-    //pindices.push_back(core->getParameterIndex());
-    //pindices.push_back(shell->getFunctionIndex());
-    //pindices.push_back(shell->getParameterIndex());
+    // pindices.push_back(core->getFunctionIndex());
+    // pindices.push_back(core->getParameterIndex());
+    // pindices.push_back(shell->getFunctionIndex());
+    // pindices.push_back(shell->getParameterIndex());
 
     // Add as components so that observables and parameters will be registered.
     components.push_back(core);
@@ -55,14 +55,14 @@ __host__ CompositePdf::CompositePdf(std::string n, PdfBase *core, PdfBase *shell
     initialize(pindices);
 }
 
-__host__ void CompositePdf::recursiveSetIndices () {
+__host__ void CompositePdf::recursiveSetIndices() {
     GET_FUNCTION_ADDR(ptr_to_Composite);
 
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_Composite");
+    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Composite");
     host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx = num_device_functions++;
+    functionIdx                               = num_device_functions++;
 
-    populateArrays ();
+    populateArrays();
 }
 
 __host__ fptype CompositePdf::normalize() const {

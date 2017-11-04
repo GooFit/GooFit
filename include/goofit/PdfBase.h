@@ -31,7 +31,7 @@ typedef thrust::zip_iterator<EventTuple> EventIterator;
 */
 
 const int maxParams = GOOFIT_MAXPAR;
-extern fptype* dev_event_array;
+extern fptype *dev_event_array;
 
 //
 extern fptype host_parameters[maxParams];
@@ -99,36 +99,35 @@ class PdfBase {
 
     __host__ void checkInitStatus(std::vector<std::string> &unInited) const;
     void clearCurrentFit();
-    __host__ void SigGenSetIndices() {
-        setIndices();
-    }
+    __host__ void SigGenSetIndices() { setIndices(); }
 
     __host__ void updateVariable(Variable *v, fptype newValue);
-    __host__ void updateParameters ();
+    __host__ void updateParameters();
 
-    __host__ void setupObservables ();
+    __host__ void setupObservables();
 
     __host__ virtual void recursiveSetIndices();
 
-protected:
-    //use this function to populate the arrays generically.  
-    __host__ void populateArrays ();
+  protected:
+    // use this function to populate the arrays generically.
+    __host__ void populateArrays();
 
     __host__ virtual void setIndices();
 
-    fptype numEvents {0};         //< Non-integer to allow weighted events
-    unsigned int numEntries {0};  //< Eg number of bins - not always the same as number of events, although it can be.
-    fptype* normRanges {0};       //< This is specific to functor instead of variable so that MetricTaker::operator needn't use indices.
-    unsigned int parameters {0};  //< Stores index, in 'paramIndices', where this functor's information begins.
-    unsigned int cIndex {1};      //< Stores location of constants.
-    std::vector<Variable*> observablesList;
-    std::vector<Variable*> parametersList;
+    fptype numEvents{0};        //< Non-integer to allow weighted events
+    unsigned int numEntries{0}; //< Eg number of bins - not always the same as number of events, although it can be.
+    fptype *normRanges{
+        0}; //< This is specific to functor instead of variable so that MetricTaker::operator needn't use indices.
+    unsigned int parameters{0}; //< Stores index, in 'paramIndices', where this functor's information begins.
+    unsigned int cIndex{1};     //< Stores location of constants.
+    std::vector<Variable *> observablesList;
+    std::vector<Variable *> parametersList;
     std::vector<fptype> constantsList;
-    FitControl* fitControl {nullptr};
-    std::vector<PdfBase*> components;
-    int integrationBins {-1};
-    int specialMask {0}; //< For storing information unique to PDFs, eg "Normalize me separately" for TddpPdf.
-    bool properlyInitialised {true}; //< Allows checking for required extra steps in, eg, Tddp and Convolution.
+    FitControl *fitControl{nullptr};
+    std::vector<PdfBase *> components;
+    int integrationBins{-1};
+    int specialMask{0}; //< For storing information unique to PDFs, eg "Normalize me separately" for TddpPdf.
+    bool properlyInitialised{true}; //< Allows checking for required extra steps in, eg, Tddp and Convolution.
 
     unsigned int functionIdx; //< Stores index of device function pointer.
 

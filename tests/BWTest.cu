@@ -52,4 +52,3 @@ TEST(BWTest, SimpleFit) {
     EXPECT_LT(alpha.getError(), .1);
     EXPECT_NEAR(0.42, alpha.getValue(), alpha.getError() * 3);
 }
-

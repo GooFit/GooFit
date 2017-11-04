@@ -107,43 +107,43 @@ device_Tddp_calcIntegrals(fptype m12, fptype m13, int res_i, int res_j, Paramete
     // cWaves. No need to cache the values at individual
     // grid points - we only care about totals.
 
-    //fptype motherMass = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 0]);
-    //fptype daug1Mass  = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 1]);
-    //fptype daug2Mass  = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 2]);
-    //fptype daug3Mass  = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 3]);
+    // fptype motherMass = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 0]);
+    // fptype daug1Mass  = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 1]);
+    // fptype daug2Mass  = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 2]);
+    // fptype daug3Mass  = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 3]);
 
     ThreeComplex ret;
 
     if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass))
         return ret;
 
-    fptype m23
-        = c_motherMass * c_motherMass + c_daug1Mass * c_daug1Mass + c_daug2Mass * c_daug2Mass + c_daug3Mass * c_daug3Mass - m12 - m13;
+    fptype m23 = c_motherMass * c_motherMass + c_daug1Mass * c_daug1Mass + c_daug2Mass * c_daug2Mass
+                 + c_daug3Mass * c_daug3Mass - m12 - m13;
 
     int parameter_i = parIndexFromResIndex(res_i);
     int parameter_j = parIndexFromResIndex(res_j);
 
     // fptype amp_real             = p[indices[parameter_i+0]];
     // fptype amp_imag             = p[indices[parameter_i+1]];
-    //unsigned int functn_i      = RO_CACHE(indices[parameter_i + 2]);
-    //unsigned int params_i      = RO_CACHE(indices[parameter_i + 3]);
+    // unsigned int functn_i      = RO_CACHE(indices[parameter_i + 2]);
+    // unsigned int params_i      = RO_CACHE(indices[parameter_i + 3]);
     ParameterContainer ipc = pc;
-    while (ipc.funcIdx < res_i)
+    while(ipc.funcIdx < res_i)
         ipc.incrementIndex();
 
-    ParameterContainer t = ipc;
+    ParameterContainer t       = ipc;
     thrust::complex<fptype> ai = getResonanceAmplitude(m12, m13, m23, t);
-    t = ipc;
+    t                          = ipc;
     thrust::complex<fptype> bi = getResonanceAmplitude(m13, m12, m23, t);
 
     ParameterContainer jpc = pc;
-    while (jpc.funcIdx < res_j)
-        jpc.incrementIndex ();
-    //unsigned int functn_j      = RO_CACHE(indices[parameter_j + 2]);
-    //unsigned int params_j      = RO_CACHE(indices[parameter_j + 3]);
-    t = jpc;
+    while(jpc.funcIdx < res_j)
+        jpc.incrementIndex();
+    // unsigned int functn_j      = RO_CACHE(indices[parameter_j + 2]);
+    // unsigned int params_j      = RO_CACHE(indices[parameter_j + 3]);
+    t                          = jpc;
     thrust::complex<fptype> aj = conj(getResonanceAmplitude(m12, m13, m23, t));
-    t = jpc;
+    t                          = jpc;
     thrust::complex<fptype> bj = conj(getResonanceAmplitude(m13, m12, m23, t));
 
     ret = ThreeComplex(
@@ -152,20 +152,20 @@ device_Tddp_calcIntegrals(fptype m12, fptype m13, int res_i, int res_j, Paramete
 }
 
 __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
-    //fptype motherMass = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 0]);
-    //fptype daug1Mass  = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 1]);
-    //fptype daug2Mass  = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 2]);
-    //fptype daug3Mass  = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 3]);
+    // fptype motherMass = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 0]);
+    // fptype daug1Mass  = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 1]);
+    // fptype daug2Mass  = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 2]);
+    // fptype daug3Mass  = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 3]);
 
-    int num_parameters = RO_CACHE(pc.parameters[pc.parameterIdx]);
-    int num_constants = RO_CACHE(pc.constants[pc.constantIdx]);
+    int num_parameters  = RO_CACHE(pc.parameters[pc.parameterIdx]);
+    int num_constants   = RO_CACHE(pc.constants[pc.constantIdx]);
     int num_observables = RO_CACHE(pc.observables[pc.observableIdx]);
 
     int id_m12 = RO_CACHE(pc.observables[pc.observableIdx + 3]);
     int id_m13 = RO_CACHE(pc.observables[pc.observableIdx + 4]);
     int id_num = RO_CACHE(pc.observables[pc.observableIdx + 5]);
     int id_mis = 0;
-    if (num_observables > 5)
+    if(num_observables > 5)
         id_mis = RO_CACHE(pc.observables[pc.observableIdx + 6]);
 
     fptype m12 = evt[id_m12];
@@ -177,17 +177,17 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
         unsigned int endEfficiencyFunc = RO_CACHE(pc.constants[pc.constantIdx + 4]);
         pc.incrementIndex(1, num_parameters, num_constants, num_observables, 1);
 
-        //increment the resonances
-        for (int i = 0; i < numResonances; i++)
+        // increment the resonances
+        for(int i = 0; i < numResonances; i++)
             pc.incrementIndex();
 
-        //increment the resolution function
+        // increment the resolution function
         pc.incrementIndex();
 
-        //increment our efficiency function
-        //pc.incrementIndex();
-        while (pc.funcIdx < endEfficiencyFunc)
-            pc.incrementIndex ();
+        // increment our efficiency function
+        // pc.incrementIndex();
+        while(pc.funcIdx < endEfficiencyFunc)
+            pc.incrementIndex();
 
         return 0;
     }
@@ -200,13 +200,13 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
     thrust::complex<fptype> sumRateAB(0, 0);
     thrust::complex<fptype> sumRateBB(0, 0);
 
-    unsigned int cacheToUse    = RO_CACHE(pc.constants[pc.constantIdx + 2]);
-    fptype mistag    = RO_CACHE(pc.constants[pc.constantIdx + 3]);
+    unsigned int cacheToUse = RO_CACHE(pc.constants[pc.constantIdx + 2]);
+    fptype mistag           = RO_CACHE(pc.constants[pc.constantIdx + 3]);
 
     for(int i = 0; i < numResonances; ++i) {
         int paramIndex = parIndexFromResIndex(i);
-        thrust::complex<fptype> amp{RO_CACHE(pc.parameters[pc.parameterIdx + i*2 + 4]),
-                                    RO_CACHE(pc.parameters[pc.parameterIdx + i*2 + 5])};
+        thrust::complex<fptype> amp{RO_CACHE(pc.parameters[pc.parameterIdx + i * 2 + 4]),
+                                    RO_CACHE(pc.parameters[pc.parameterIdx + i * 2 + 5])};
 
         // thrust::complex<fptype> matrixelement(thrust::get<0>(cWaves[cacheToUse][evtNum*numResonances + i]),
         //				     thrust::get<1>(cWaves[cacheToUse][evtNum*numResonances + i]));
@@ -228,7 +228,7 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
     fptype _xmixing = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
     fptype _ymixing = RO_CACHE(pc.parameters[pc.parameterIdx + 3]);
 
-    int id_time = RO_CACHE(pc.observables[pc.observableIdx + 1]);
+    int id_time  = RO_CACHE(pc.observables[pc.observableIdx + 1]);
     int id_sigma = RO_CACHE(pc.observables[pc.observableIdx + 2]);
 
     fptype _time  = evt[id_time];
@@ -257,57 +257,49 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
     // sumWavesA.imag, m12, m13, _tau);
 
     // Cannot use callFunction on resolution function.
-    //int effFunctionIdx = parIndexFromResIndex(numResonances);
-    //int resFunctionIdx = RO_CACHE(indices[5]);
-    //int resFunctionPar = 2 + effFunctionIdx;
-    fptype ret         = 0;
-    //int md0_offset     = 0;
+    // int effFunctionIdx = parIndexFromResIndex(numResonances);
+    // int resFunctionIdx = RO_CACHE(indices[5]);
+    // int resFunctionPar = 2 + effFunctionIdx;
+    fptype ret = 0;
+    // int md0_offset     = 0;
 
-    //if(resFunctionIdx == SPECIAL_RESOLUTION_FLAG) {
-        // In this case there are multiple resolution functions, they are stored after the efficiency function,
-        // and which one we use depends on the measured mother-particle mass.
+    // if(resFunctionIdx == SPECIAL_RESOLUTION_FLAG) {
+    // In this case there are multiple resolution functions, they are stored after the efficiency function,
+    // and which one we use depends on the measured mother-particle mass.
     //    md0_offset     = 1;
-        //int id_massd0 = pc.constants[pc.constantIdx + 6];
-        //fptype massd0  = RO_CACHE(evt[id_massd0]);
-        //fptype minMass = RO_CACHE(pc.constants[pc.constantIdx + 7]);
-        //fptype md0Step = RO_CACHE(pc.constants[pc.constantIdx + 8]);
-        //int res_to_use = (massd0 <= minMass) ? 0 : static_cast<int>(floor((massd0 - minMass) / md0Step));
-        //int maxFcn     = RO_CACHE(indices[2 + effFunctionIdx]);
+    // int id_massd0 = pc.constants[pc.constantIdx + 6];
+    // fptype massd0  = RO_CACHE(evt[id_massd0]);
+    // fptype minMass = RO_CACHE(pc.constants[pc.constantIdx + 7]);
+    // fptype md0Step = RO_CACHE(pc.constants[pc.constantIdx + 8]);
+    // int res_to_use = (massd0 <= minMass) ? 0 : static_cast<int>(floor((massd0 - minMass) / md0Step));
+    // int maxFcn     = RO_CACHE(indices[2 + effFunctionIdx]);
 
     //    if(res_to_use > maxFcn)
     //        res_to_use = maxFcn;
 
-        // Now calculate index of resolution function.
-        // At the end of the array are indices efficiency_function, efficiency_parameters, maxFcn, res_function_1,
-        // res_function_1_nP, par1, par2 ... res_function_2, res_function_2_nP, ...
-        //res_to_use = 3 + effFunctionIdx + res_to_use * (2 + RO_CACHE(indices[effFunctionIdx + 4]));
-        // NB this assumes all resolution functions have the same number of parameters. The number
-        // of parameters in the first resolution function is stored in effFunctionIdx+3; add one to
-        // account for the index of the resolution function itself in the device function table, one
-        // to account for the number-of-parameters index, and this is the space taken up by each
-        // resolution function. Multiply by res_to_use to get the number of spaces to skip to get to
-        // the one we want.
+    // Now calculate index of resolution function.
+    // At the end of the array are indices efficiency_function, efficiency_parameters, maxFcn, res_function_1,
+    // res_function_1_nP, par1, par2 ... res_function_2, res_function_2_nP, ...
+    // res_to_use = 3 + effFunctionIdx + res_to_use * (2 + RO_CACHE(indices[effFunctionIdx + 4]));
+    // NB this assumes all resolution functions have the same number of parameters. The number
+    // of parameters in the first resolution function is stored in effFunctionIdx+3; add one to
+    // account for the index of the resolution function itself in the device function table, one
+    // to account for the number-of-parameters index, and this is the space taken up by each
+    // resolution function. Multiply by res_to_use to get the number of spaces to skip to get to
+    // the one we want.
 
-        //resFunctionIdx = RO_CACHE(indices[res_to_use]);
-        //resFunctionPar = res_to_use + 1;
+    // resFunctionIdx = RO_CACHE(indices[res_to_use]);
+    // resFunctionPar = res_to_use + 1;
     //}
 
     pc.incrementIndex(1, num_parameters, num_constants, num_observables, 1);
 
-    //increment over resonance functions here?
-    for (int i = 0; i < numResonances; i++)
+    // increment over resonance functions here?
+    for(int i = 0; i < numResonances; i++)
         pc.incrementIndex();
 
-    ret = (*(reinterpret_cast<device_resfunction_ptr>(device_function_table[pc.funcIdx])))(term1,
-                                                                                               term2,
-                                                                                               sumWavesA.real(),
-                                                                                               sumWavesA.imag(),
-                                                                                               _tau,
-                                                                                               _time,
-                                                                                               _xmixing,
-                                                                                               _ymixing,
-                                                                                               _sigma,
-                                                                                               pc);
+    ret = (*(reinterpret_cast<device_resfunction_ptr>(device_function_table[pc.funcIdx])))(
+        term1, term2, sumWavesA.real(), sumWavesA.imag(), _tau, _time, _xmixing, _ymixing, _sigma, pc);
 
     // For the reversed (mistagged) fraction, we make the
     // interchange A <-> B. So term1 stays the same,
@@ -316,29 +308,21 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
     // because it depends on the momenta of the pi+ and pi-,
     // which don't change even though we tagged a D0 as D0bar.
 
-    //fptype mistag = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 5]);
+    // fptype mistag = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 5]);
 
     if(mistag > 0) { // This should be either true or false for all events, so no branch is caused.
-        
+
         // See header file for explanation of 'mistag' variable - it is actually the probability
         // of having the correct sign, given that we have a correctly reconstructed D meson.
         mistag = evt[id_mis];
         ret *= mistag;
-        ret += (1 - mistag) * (*(reinterpret_cast<device_resfunction_ptr>(device_function_table[pc.funcIdx])))(
-                                  term1,
-                                  -term2,
-                                  sumWavesA.real(),
-                                  -sumWavesA.imag(),
-                                  _tau,
-                                  _time,
-                                  _xmixing,
-                                  _ymixing,
-                                  _sigma,
-                                  pc);
+        ret += (1 - mistag)
+               * (*(reinterpret_cast<device_resfunction_ptr>(device_function_table[pc.funcIdx])))(
+                     term1, -term2, sumWavesA.real(), -sumWavesA.imag(), _tau, _time, _xmixing, _ymixing, _sigma, pc);
     }
 
-    //increment our resolution function
-    pc.incrementIndex ();
+    // increment our resolution function
+    pc.incrementIndex();
 
     fptype eff = callFunction(evt, pc);
     // internalDebug = 0;
@@ -391,7 +375,7 @@ __host__ TddpPdf::TddpPdf(std::string n,
     decayConstants[2] = decayInfo->daug2Mass;
     decayConstants[3] = decayInfo->daug3Mass;
     decayConstants[4] = decayInfo->meson_radius;
-    //MEMCPY_TO_SYMBOL(
+    // MEMCPY_TO_SYMBOL(
     //    functorConstants, decayConstants, 6 * sizeof(fptype), cIndex * sizeof(fptype), cudaMemcpyHostToDevice);
 
     MEMCPY_TO_SYMBOL(c_motherMass, &decayConstants[0], sizeof(fptype), 0, cudaMemcpyHostToDevice);
@@ -409,15 +393,15 @@ __host__ TddpPdf::TddpPdf(std::string n,
                                    resolution->getDeviceFunction());
     pindices.push_back(static_cast<unsigned int>(resolution->getDeviceFunction()));
     pindices.push_back(decayInfo->resonances.size());
-    //This is the flag to handle multiple resolutions
-    constantsList.push_back (decayInfo->resonances.size ());
+    // This is the flag to handle multiple resolutions
+    constantsList.push_back(decayInfo->resonances.size());
 
     static int cacheCount = 0;
     cacheToUse            = cacheCount++;
     pindices.push_back(cacheToUse);
-    constantsList.push_back (cacheToUse);
+    constantsList.push_back(cacheToUse);
 
-    if(mistag) 
+    if(mistag)
         constantsList.push_back(1);
     else
         constantsList.push_back(0);
@@ -425,9 +409,9 @@ __host__ TddpPdf::TddpPdf(std::string n,
     for(auto &resonance : decayInfo->resonances) {
         pindices.push_back(registerParameter(resonance->amp_real));
         pindices.push_back(registerParameter(resonance->amp_imag));
-        //pindices.push_back(resonance->getFunctionIndex());
-        //pindices.push_back(resonance->getParameterIndex());
-        //resonance->setConstantIndex(cIndex);
+        // pindices.push_back(resonance->getFunctionIndex());
+        // pindices.push_back(resonance->getParameterIndex());
+        // resonance->setConstantIndex(cIndex);
         components.push_back(resonance);
     }
 
@@ -436,8 +420,8 @@ __host__ TddpPdf::TddpPdf(std::string n,
 
     components.push_back(resolution);
     components.push_back(efficiency);
- 
-    //this is the funcID after the efficiency routine
+
+    // this is the funcID after the efficiency routine
     constantsList.push_back(0);
 
     resolution->createParameters(pindices, this);
@@ -515,7 +499,7 @@ __host__ TddpPdf::TddpPdf(std::string n,
     decayConstants[2] = decayInfo->daug2Mass;
     decayConstants[3] = decayInfo->daug3Mass;
     decayConstants[4] = decayInfo->meson_radius;
-    //MEMCPY_TO_SYMBOL(
+    // MEMCPY_TO_SYMBOL(
     //    functorConstants, decayConstants, 8 * sizeof(fptype), cIndex * sizeof(fptype), cudaMemcpyHostToDevice);
 
     MEMCPY_TO_SYMBOL(c_motherMass, &decayConstants[0], sizeof(fptype), 0, cudaMemcpyHostToDevice);
@@ -539,7 +523,7 @@ __host__ TddpPdf::TddpPdf(std::string n,
     pindices.push_back(cacheToUse);
     constantsList.push_back(cacheToUse);
 
-    if(mistag) 
+    if(mistag)
         constantsList.push_back(1);
     else
         constantsList.push_back(0);
@@ -547,9 +531,9 @@ __host__ TddpPdf::TddpPdf(std::string n,
     for(auto &resonance : decayInfo->resonances) {
         pindices.push_back(registerParameter(resonance->amp_real));
         pindices.push_back(registerParameter(resonance->amp_imag));
-        //pindices.push_back(resonance->getFunctionIndex());
-        //pindices.push_back(resonance->getParameterIndex());
-        //resonance->setConstantIndex(cIndex);
+        // pindices.push_back(resonance->getFunctionIndex());
+        // pindices.push_back(resonance->getParameterIndex());
+        // resonance->setConstantIndex(cIndex);
         components.push_back(resonance);
     }
 
@@ -567,7 +551,7 @@ __host__ TddpPdf::TddpPdf(std::string n,
         i->createParameters(pindices, this);
     }
 
-    //this is the funcID after the efficiency routine
+    // this is the funcID after the efficiency routine
     constantsList.push_back(0);
 
     GET_FUNCTION_ADDR(ptr_to_Tddp);
@@ -597,69 +581,76 @@ __host__ TddpPdf::TddpPdf(std::string n,
     addSpecialMask(PdfBase::ForceSeparateNorm);
 }
 
-void TddpPdf::recursiveSetIndices () {
+void TddpPdf::recursiveSetIndices() {
     GET_FUNCTION_ADDR(ptr_to_Tddp);
 
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_DalitzPlot");
+    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_DalitzPlot");
     host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx = num_device_functions++;
+    functionIdx                               = num_device_functions++;
 
-    //Note: We need to manually populate the arrays so we can track the efficiency function!
-    //populateArrays();
+    // Note: We need to manually populate the arrays so we can track the efficiency function!
+    // populateArrays();
 
-    //populate all the arrays
+    // populate all the arrays
     GOOFIT_DEBUG("Populating Arrays for {}", getName());
 
-    //reconfigure the host_parameters array with the new indexing scheme.
+    // reconfigure the host_parameters array with the new indexing scheme.
     GOOFIT_TRACE("host_parameters[{}] = {}", totalParameters, parametersList.size());
-    host_parameters[totalParameters] = parametersList.size ();
-    parametersIdx = totalParameters; totalParameters++;
-    for (int i = 0; i < parametersList.size (); i++) {
+    host_parameters[totalParameters] = parametersList.size();
+    parametersIdx                    = totalParameters;
+    totalParameters++;
+    for(int i = 0; i < parametersList.size(); i++) {
         GOOFIT_TRACE("host_parameters[{}] = {}", totalParameters, parametersList[i]->getValue());
-        host_parameters[totalParameters] = parametersList[i]->getValue (); totalParameters++;
+        host_parameters[totalParameters] = parametersList[i]->getValue();
+        totalParameters++;
     }
 
     GOOFIT_TRACE("host_constants[{}] = {}", totalConstants, constantsList.size());
-    host_constants[totalConstants] = constantsList.size ();
-    constantsIdx = totalConstants; totalConstants++;
-    for (int i = 0; i < constantsList.size (); i++) {
+    host_constants[totalConstants] = constantsList.size();
+    constantsIdx                   = totalConstants;
+    totalConstants++;
+    for(int i = 0; i < constantsList.size(); i++) {
         GOOFIT_TRACE("host_constants[{}] = {}", totalConstants, constantsList[i]);
-        host_constants[totalConstants] = constantsList[i]; totalConstants++;
+        host_constants[totalConstants] = constantsList[i];
+        totalConstants++;
     }
 
     GOOFIT_TRACE("host_observables[{}] = {}", totalObservables, observablesList.size());
-    host_observables[totalObservables] = observablesList.size ();
-    observablesIdx = totalObservables; totalObservables++;
-    for (int i = 0; i < observablesList.size (); i++) {
+    host_observables[totalObservables] = observablesList.size();
+    observablesIdx                     = totalObservables;
+    totalObservables++;
+    for(int i = 0; i < observablesList.size(); i++) {
         GOOFIT_TRACE("host_observables[{}] = {}", totalObservables, observablesList[i]->getObservableIndex());
-        host_observables[totalObservables] = observablesList[i]->getObservableIndex (); totalObservables++;
+        host_observables[totalObservables] = observablesList[i]->getObservableIndex();
+        totalObservables++;
     }
 
     GOOFIT_TRACE("host_normalisations[{}] = {}", totalNormalisations, 1);
     host_normalisations[totalNormalisations] = 1;
-    normalIdx = totalNormalisations++;
+    normalIdx                                = totalNormalisations++;
     GOOFIT_TRACE("host_normalisations[{}] = {}", totalNormalisations, 0);
-    host_normalisations[totalNormalisations] = 0; totalNormalisations++;
+    host_normalisations[totalNormalisations] = 0;
+    totalNormalisations++;
 
-    int numResonances = decayInfo->resonances.size ();
+    int numResonances = decayInfo->resonances.size();
 
     // add our resonance functions
-    for (unsigned int i = 0; i < numResonances; i++)
-        components[i]->recursiveSetIndices ();
+    for(unsigned int i = 0; i < numResonances; i++)
+        components[i]->recursiveSetIndices();
 
-    //TODO: Add resolution function here 
+    // TODO: Add resolution function here
     resolutionFunction = num_device_functions;
     components[numResonances]->recursiveSetIndices();
 
-    //Next index starts our efficiency function  
+    // Next index starts our efficiency function
     efficiencyFunction = num_device_functions;
-    for (unsigned int i = numResonances + 1; i < components.size (); i++)
-        components[i]->recursiveSetIndices ();
+    for(unsigned int i = numResonances + 1; i < components.size(); i++)
+        components[i]->recursiveSetIndices();
 
-    //update constants
+    // update constants
     constantsList[constantsList.size() - 1] = num_device_functions;
     GOOFIT_TRACE("Rewriting constants!");
-    for (int i = 0; i < constantsList.size (); i++) {
+    for(int i = 0; i < constantsList.size(); i++) {
         GOOFIT_TRACE("host_constants[{}] = {}", constantsIdx, constantsList[i]);
         host_constants[constantsIdx + 1 + i] = constantsList[i];
     }
@@ -688,7 +679,7 @@ __host__ void TddpPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) 
 
     int *counts = new int[numProcs];
 
-    for(int i     = 0; i < numProcs - 1; i++)
+    for(int i = 0; i < numProcs - 1; i++)
         counts[i] = perTask;
 
     counts[numProcs - 1] = numEntries - perTask * (numProcs - 1);
@@ -716,7 +707,8 @@ __host__ fptype TddpPdf::normalize() const {
     // so set normalisation factor to 1 so it doesn't get multiplied by zero.
     // Copy at this time to ensure that the SpecialWaveCalculators, which need the efficiency,
     // don't get zeroes through multiplying by the normFactor.
-    MEMCPY_TO_SYMBOL(d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(
+        d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
     // std::cout << "TDDP normalisation " << getName() << std::endl;
 
     int totalBins = _m12->getNumBins() * _m13->getNumBins();
@@ -761,9 +753,9 @@ __host__ fptype TddpPdf::normalize() const {
     normCall++;
 
     for(int i = 0; i < decayInfo->resonances.size(); ++i) {
-        //printf("calculate i=%i, res_i=%i\n", i, decayInfo->resonances[i]->getFunctionIndex());
+        // printf("calculate i=%i, res_i=%i\n", i, decayInfo->resonances[i]->getFunctionIndex());
         calculators[i]->setTddpIndex(getFunctionIndex());
-        calculators[i]->setResonanceIndex (decayInfo->resonances[i]->getFunctionIndex ());
+        calculators[i]->setResonanceIndex(decayInfo->resonances[i]->getFunctionIndex());
         if(redoIntegral[i]) {
 #ifdef GOOFIT_MPI
             thrust::transform(
@@ -791,11 +783,11 @@ __host__ fptype TddpPdf::normalize() const {
                 continue;
 
             integrators[i][j]->setTddpIndex(getFunctionIndex());
-            integrators[i][j]->setResonanceIndex (decayInfo->resonances[i]->getFunctionIndex ());
-            integrators[i][j]->setEfficiencyIndex (decayInfo->resonances[j]->getFunctionIndex ());
+            integrators[i][j]->setResonanceIndex(decayInfo->resonances[i]->getFunctionIndex());
+            integrators[i][j]->setEfficiencyIndex(decayInfo->resonances[j]->getFunctionIndex());
 
-            //printf("integrate i=%i j=%i, res_i=%i res_j=%i\n", i, j, decayInfo->resonances[i]->getFunctionIndex (),
-	    //    decayInfo->resonances[j]->getFunctionIndex ());
+            // printf("integrate i=%i j=%i, res_i=%i res_j=%i\n", i, j, decayInfo->resonances[i]->getFunctionIndex (),
+            //    decayInfo->resonances[j]->getFunctionIndex ());
 
             ThreeComplex dummy(0, 0, 0, 0, 0, 0);
             SpecialComplexSum complexSum;
@@ -825,20 +817,25 @@ __host__ fptype TddpPdf::normalize() const {
     thrust::complex<fptype> integralABs(0, 0);
 
     for(unsigned int i = 0; i < decayInfo->resonances.size(); ++i) {
-        //int param_i = parameters + resonanceOffset + resonanceSize * i;
-        thrust::complex<fptype> amplitude_i(host_parameters[parametersIdx + i*2 + 4], host_parameters[parametersIdx + i*2 + 5]);
+        // int param_i = parameters + resonanceOffset + resonanceSize * i;
+        thrust::complex<fptype> amplitude_i(host_parameters[parametersIdx + i * 2 + 4],
+                                            host_parameters[parametersIdx + i * 2 + 5]);
 
         for(unsigned int j = 0; j < decayInfo->resonances.size(); ++j) {
-            //int param_j = parameters + resonanceOffset + resonanceSize * j;
-            thrust::complex<fptype> amplitude_j(host_parameters[parametersIdx + j*2 + 4],
-                                                -host_parameters[parametersIdx + j*2 + 5]); // Notice complex conjugation
+            // int param_j = parameters + resonanceOffset + resonanceSize * j;
+            thrust::complex<fptype> amplitude_j(
+                host_parameters[parametersIdx + j * 2 + 4],
+                -host_parameters[parametersIdx + j * 2 + 5]); // Notice complex conjugation
 
-            integralA_2 += (amplitude_i * amplitude_j * thrust::complex<fptype>(thrust::get<0>(*(integrals[i][j])),
-                                                                                thrust::get<1>(*(integrals[i][j]))));
-            integralABs += (amplitude_i * amplitude_j * thrust::complex<fptype>(thrust::get<2>(*(integrals[i][j])),
-                                                                                thrust::get<3>(*(integrals[i][j]))));
-            integralB_2 += (amplitude_i * amplitude_j * thrust::complex<fptype>(thrust::get<4>(*(integrals[i][j])),
-                                                                                thrust::get<5>(*(integrals[i][j]))));
+            integralA_2
+                += (amplitude_i * amplitude_j
+                    * thrust::complex<fptype>(thrust::get<0>(*(integrals[i][j])), thrust::get<1>(*(integrals[i][j]))));
+            integralABs
+                += (amplitude_i * amplitude_j
+                    * thrust::complex<fptype>(thrust::get<2>(*(integrals[i][j])), thrust::get<3>(*(integrals[i][j]))));
+            integralB_2
+                += (amplitude_i * amplitude_j
+                    * thrust::complex<fptype>(thrust::get<4>(*(integrals[i][j])), thrust::get<5>(*(integrals[i][j]))));
 
             /*
             if (cpuDebug & 1) {
@@ -929,31 +926,30 @@ __device__ ThreeComplex SpecialDalitzIntegrator::operator()(thrust::tuple<int, f
 
     fptype events[10];
 
-    //increment until we are at tddp index
-    while (pc.funcIdx < tddp)
-        pc.incrementIndex ();
+    // increment until we are at tddp index
+    while(pc.funcIdx < tddp)
+        pc.incrementIndex();
 
     int id_m12 = RO_CACHE(pc.observables[pc.observableIdx + 3]);
     int id_m13 = RO_CACHE(pc.observables[pc.observableIdx + 4]);
 
     // if (0 == THREADIDX) cuPrintf("%i %i %i %f %f operator\n", thrust::get<0>(t), thrust::get<0>(t) % numBinsM12,
     // globalBinNumber, binCenterM12, binCenterM13);
-    ThreeComplex ret
-        = device_Tddp_calcIntegrals(binCenterM12, binCenterM13, resonance_i, resonance_j, pc);
+    ThreeComplex ret = device_Tddp_calcIntegrals(binCenterM12, binCenterM13, resonance_i, resonance_j, pc);
 
-    //fptype fakeEvt[10]; // Need room for many observables in case m12 or m13 were assigned a high index in an
-                        // event-weighted fit.
-    events[0] = 2;
+    // fptype fakeEvt[10]; // Need room for many observables in case m12 or m13 were assigned a high index in an
+    // event-weighted fit.
+    events[0]      = 2;
     events[id_m12] = binCenterM12;
     events[id_m13] = binCenterM13;
-    //unsigned int numResonances                               = indices[6];
-    //int effFunctionIdx                                       = parIndexFromResIndex(numResonances);
+    // unsigned int numResonances                               = indices[6];
+    // int effFunctionIdx                                       = parIndexFromResIndex(numResonances);
     // if (thrust::get<0>(t) == 19840) {internalDebug1 = BLOCKIDX; internalDebug2 = THREADIDX;}
     // fptype eff = (*(reinterpret_cast<device_function_ptr>(device_function_table[indices[effFunctionIdx]])))(fakeEvt,
     // cudaArray, paramIndices + indices[effFunctionIdx + 1]);
 
-    while (pc.funcIdx < thrust::get<2>(t))
-        pc.incrementIndex ();
+    while(pc.funcIdx < thrust::get<2>(t))
+        pc.incrementIndex();
 
     fptype eff = callFunction(events, pc);
     // if (thrust::get<0>(t) == 19840) {
@@ -1000,36 +996,35 @@ __device__ WaveHolder_s SpecialWaveCalculator::operator()(thrust::tuple<int, fpt
 
     fptype events[10];
 
-    for (int i = 0; i < evtSize; i++)
+    for(int i = 0; i < evtSize; i++)
         events[i] = evt[i];
 
-    //increment until we are at tddp index
-    while (pc.funcIdx < tddp)
-        pc.incrementIndex ();
+    // increment until we are at tddp index
+    while(pc.funcIdx < tddp)
+        pc.incrementIndex();
 
     int id_m12 = RO_CACHE(pc.observables[pc.observableIdx + 3]);
     int id_m13 = RO_CACHE(pc.observables[pc.observableIdx + 4]);
 
     // Read these values as tddp.
-    fptype m12            = events[id_m12];
-    fptype m13            = events[id_m13];
+    fptype m12 = events[id_m12];
+    fptype m13 = events[id_m13];
 
     if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass))
         return ret;
 
-    fptype m23
-        = c_motherMass * c_motherMass + c_daug1Mass * c_daug1Mass + c_daug2Mass * c_daug2Mass + c_daug3Mass * c_daug3Mass - m12 - m13;
+    fptype m23 = c_motherMass * c_motherMass + c_daug1Mass * c_daug1Mass + c_daug2Mass * c_daug2Mass
+                 + c_daug3Mass * c_daug3Mass - m12 - m13;
 
-    //int parameter_i       = parIndexFromResIndex(resonance_i); // Find position of this resonance relative to TDDP start
-    //unsigned int functn_i = indices[parameter_i + 2];
-    //unsigned int params_i = indices[parameter_i + 3];
+    // int parameter_i       = parIndexFromResIndex(resonance_i); // Find position of this resonance relative to TDDP
+    // start  unsigned int functn_i = indices[parameter_i + 2];  unsigned int params_i = indices[parameter_i + 3];
 
-    while (pc.funcIdx < resonance_i)
-        pc.incrementIndex ();
+    while(pc.funcIdx < resonance_i)
+        pc.incrementIndex();
 
-    ParameterContainer tmp = pc;
+    ParameterContainer tmp     = pc;
     thrust::complex<fptype> ai = getResonanceAmplitude(m12, m13, m23, tmp);
-    tmp = pc;
+    tmp                        = pc;
     thrust::complex<fptype> bi = getResonanceAmplitude(m13, m12, m23, tmp);
 
     // printf("Amplitudes %f, %f => (%f %f) (%f %f)\n", m12, m13, ai.real, ai.imag, bi.real, bi.imag);

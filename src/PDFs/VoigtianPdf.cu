@@ -334,14 +334,14 @@ __host__ VoigtianPdf::VoigtianPdf(std::string n, Variable *_x, Variable *m, Vari
     initialize(pindices);
 }
 
-__host__ void VoigtianPdf::recursiveSetIndices () {
+__host__ void VoigtianPdf::recursiveSetIndices() {
     GET_FUNCTION_ADDR(ptr_to_Voigtian);
 
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_Voigtian");
+    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Voigtian");
     host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx = num_device_functions++;
+    functionIdx                               = num_device_functions++;
 
-    populateArrays ();
+    populateArrays();
 }
 
 } // namespace GooFit

@@ -32,4 +32,4 @@ class Params : public Minuit2::MnUserParameters {
     // Get the number of params in the fit
     size_t size() const { return vars_.size(); };
 };
-}
+} // namespace GooFit

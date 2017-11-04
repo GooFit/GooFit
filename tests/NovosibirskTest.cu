@@ -56,4 +56,3 @@ TEST(Novosibirsk, SimpleFit) {
     EXPECT_LT(t.getError(), .1);
     EXPECT_NEAR(0.8626, t.getValue(), t.getError() * 3);
 }
-

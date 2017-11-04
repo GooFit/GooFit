@@ -18,20 +18,19 @@ FCN::FCN(Params &params)
 double FCN::operator()(const std::vector<double> &pars) const {
     // Translate from Minuit indexing to GooFit indexing
     std::vector<double> gooPars(params_->vars_.size() + 1);
-   
-    //for(Variable* var : params_->vars_) {
+
+    // for(Variable* var : params_->vars_) {
     //    var->setChanged(var->getValue() != pars.at(var->getFitterIndex()));
     //    gooPars.at(var->getIndex()) = pars.at(var->getFitterIndex()) - var->blind;
     //}
-    for (Variable *var : params_->vars_)
-    {
-        var->setChanged(var->getValue () != pars.at(var->getFitterIndex ()));
-        params_->pdf_->updateVariable (var, pars.at(var->getFitterIndex()) - var->blind);
+    for(Variable *var : params_->vars_) {
+        var->setChanged(var->getValue() != pars.at(var->getFitterIndex()));
+        params_->pdf_->updateVariable(var, pars.at(var->getFitterIndex()) - var->blind);
     }
 
-    //params_->pdf_->copyParams(gooPars);
-    params_->pdf_->updateParameters ();
-   
+    // params_->pdf_->copyParams(gooPars);
+    params_->pdf_->updateParameters();
+
     GOOFIT_TRACE("Calculating NLL");
     double nll = params_->pdf_->calculateNLL();
 
@@ -45,19 +44,19 @@ double FCN::operator()() const {
 
     // Translate from Minuit indexing to GooFit indexing
     std::vector<double> gooPars(params_->vars_.size() + 1);
-    
-    //for(Variable* var : params_->vars_) {
+
+    // for(Variable* var : params_->vars_) {
     //    var->setChanged(true);
     //    gooPars.at(var->getIndex()) = pars.at(var->getFitterIndex()) - var->blind;
     //}
     for(Variable *var : params_->vars_) {
         var->setChanged(true);
-        params_->pdf_->updateVariable (var, pars.at(var->getFitterIndex()) - var->blind);
+        params_->pdf_->updateVariable(var, pars.at(var->getFitterIndex()) - var->blind);
     }
-    
-    //params_->pdf_->copyParams(gooPars);
-    params_->pdf_->updateParameters ();
-    
+
+    // params_->pdf_->copyParams(gooPars);
+    params_->pdf_->updateParameters();
+
     GOOFIT_TRACE("Calculating NLL");
     double nll = params_->pdf_->calculateNLL();
 

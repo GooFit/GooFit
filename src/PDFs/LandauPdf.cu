@@ -26,13 +26,13 @@ __constant__ fptype q6[5] = {1.0, 651.4101098, 56974.73333, 165917.4725, -281575
 __constant__ fptype a1[3] = {0.04166666667, -0.01996527778, 0.02709538966};
 __constant__ fptype a2[2] = {-1.845568670, -4.284640743};
 
-__device__ fptype device_Landau(fptype* evt, ParameterContainer &pc) {
-    int id = RO_CACHE(pc.observables[pc.observableIdx + 1]);
+__device__ fptype device_Landau(fptype *evt, ParameterContainer &pc) {
+    int id       = RO_CACHE(pc.observables[pc.observableIdx + 1]);
     fptype x     = evt[id];
     fptype mpv   = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
     fptype sigma = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
 
-    pc.incrementIndex (1, 2, 0, 1, 1);
+    pc.incrementIndex(1, 2, 0, 1, 1);
 
     if(sigma <= 0)
         return 0;
@@ -90,14 +90,14 @@ __host__ LandauPdf::LandauPdf(std::string n, Variable *_x, Variable *mpv, Variab
     initialize(pindices);
 }
 
-__host__ void LandauPdf::recursiveSetIndices () {
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_Landau");
+__host__ void LandauPdf::recursiveSetIndices() {
+    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Landau");
     GET_FUNCTION_ADDR(ptr_to_Landau);
 
     host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx = num_device_functions++;
+    functionIdx                               = num_device_functions++;
 
-    populateArrays ();
+    populateArrays();
 }
 
 } // namespace GooFit

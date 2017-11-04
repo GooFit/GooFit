@@ -25,10 +25,9 @@ TEST(EventWeightedAdd, SimpleFit) {
     Variable w1{"w1", 1, 0.1, -10, 10};
     Variable w2{"w2", 1, 0.1, -10, 10};
 
-    std::vector<Variable*> weights;
+    std::vector<Variable *> weights;
     weights.push_back(&w1);
     weights.push_back(&w2);
-
 
     // Data set
     UnbinnedDataSet data(weights);
@@ -52,9 +51,9 @@ TEST(EventWeightedAdd, SimpleFit) {
     Variable s2{"s2", 1, 0, 3};
     GaussianPdf gauss2{"gauss2", &w2, &a2, &s2};
 
-    std::vector<PdfBase*> pdfs;
-    pdfs.push_back (&gauss1);
-    pdfs.push_back (&gauss2);
+    std::vector<PdfBase *> pdfs;
+    pdfs.push_back(&gauss1);
+    pdfs.push_back(&gauss2);
 
     // GooPdf object
     EventWeightedAddPdf eventpdf{"eventweightedaddpdf", weights, pdfs};
@@ -70,4 +69,3 @@ TEST(EventWeightedAdd, SimpleFit) {
     EXPECT_LT(w2.getError(), .11);
     EXPECT_NEAR(0.1, w2.getValue(), w2.getError() * 3);
 }
-

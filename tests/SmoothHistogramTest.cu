@@ -50,4 +50,3 @@ TEST(SmoothHistogram, SimpleFit) {
     EXPECT_LT(smoothing.getError(), .9);
     EXPECT_NEAR(0.9, smoothing.getValue(), smoothing.getError() * 3);
 }
-

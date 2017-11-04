@@ -12,13 +12,13 @@ namespace GooFit {
 
 #define ZEMACH 1
 
-__device__ fptype DtoPP1_PtoSP2_StoP3P4(fptype *Vecs, ParameterContainer &pc) { 
-    pc.incrementIndex ();
+__device__ fptype DtoPP1_PtoSP2_StoP3P4(fptype *Vecs, ParameterContainer &pc) {
+    pc.incrementIndex();
     return 1.0;
 }
 
-__device__ fptype ONE(fptype *Vecs, ParameterContainer &pc) { 
-    pc.incrementIndex ();
+__device__ fptype ONE(fptype *Vecs, ParameterContainer &pc) {
+    pc.incrementIndex();
     return 1.0;
 }
 
@@ -41,7 +41,7 @@ __device__ fptype FF_12_34_L1(fptype *Vecs, ParameterContainer &pc) {
     fptype z2 = q2 * mother_radius * mother_radius;
     fptype ff = 1.0 / (1 + z2);
 
-    pc.incrementIndex (1, 0, 5, 0, 1);
+    pc.incrementIndex(1, 0, 5, 0, 1);
 
     // printf("%.5g, %.5g, %.5g, %.5g\n",s,m1,m2,sqrt(ff) );
     return sqrt(ff);
@@ -66,7 +66,7 @@ __device__ fptype FF_12_34_L2(fptype *Vecs, ParameterContainer &pc) {
     fptype z2 = q2 * mother_radius * mother_radius;
     fptype ff = 1.0 / (z2 * z2 + 3 * z2 + 9);
 
-    pc.incrementIndex (1, 0, 5, 0, 1);
+    pc.incrementIndex(1, 0, 5, 0, 1);
 
     return sqrt(ff);
 }
@@ -90,7 +90,7 @@ __device__ fptype FF_123_4_L1(fptype *Vecs, ParameterContainer &pc) {
     fptype z2 = q2 * mother_radius * mother_radius;
     fptype ff = 1.0 / (1 + z2);
 
-    pc.incrementIndex (1, 0, 5, 0, 1);
+    pc.incrementIndex(1, 0, 5, 0, 1);
 
     return sqrt(ff);
 }
@@ -114,16 +114,16 @@ __device__ fptype FF_123_4_L2(fptype *Vecs, ParameterContainer &pc) {
     fptype z2 = q2 * mother_radius * mother_radius;
     fptype ff = 1.0 / (z2 * z2 + 3 * z2 + 9);
 
-    pc.incrementIndex (1, 0, 5, 0, 1);
+    pc.incrementIndex(1, 0, 5, 0, 1);
 
     return sqrt(ff);
 }
 
 __device__ fptype DtoPP1_PtoVP2_VtoP3P4(fptype *Vecs, ParameterContainer &pc) {
-    unsigned int p1      = pc.constants[pc.constantIdx + 2];
-    unsigned int p2      = pc.constants[pc.constantIdx + 3];
-    unsigned int p3      = pc.constants[pc.constantIdx + 4];
-    unsigned int p4      = pc.constants[pc.constantIdx + 5];
+    unsigned int p1 = pc.constants[pc.constantIdx + 2];
+    unsigned int p2 = pc.constants[pc.constantIdx + 3];
+    unsigned int p3 = pc.constants[pc.constantIdx + 4];
+    unsigned int p4 = pc.constants[pc.constantIdx + 5];
 
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
@@ -133,7 +133,7 @@ __device__ fptype DtoPP1_PtoVP2_VtoP3P4(fptype *Vecs, ParameterContainer &pc) {
     gpuLVec pV = P3 + P4;
     gpuLVec qV = P3 - P4;
 
-    pc.incrementIndex (1, 0, 5, 0, 1);
+    pc.incrementIndex(1, 0, 5, 0, 1);
 
 #ifdef ZEMACH
     gpuLVec pP = pV + P2;
@@ -150,10 +150,10 @@ __device__ fptype DtoPP1_PtoVP2_VtoP3P4(fptype *Vecs, ParameterContainer &pc) {
 }
 
 __device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_S(fptype *Vecs, ParameterContainer &pc) {
-    unsigned int p1      = pc.constants[pc.constantIdx + 2];
-    unsigned int p2      = pc.constants[pc.constantIdx + 3];
-    unsigned int p3      = pc.constants[pc.constantIdx + 4];
-    unsigned int p4      = pc.constants[pc.constantIdx + 5];
+    unsigned int p1 = pc.constants[pc.constantIdx + 2];
+    unsigned int p2 = pc.constants[pc.constantIdx + 3];
+    unsigned int p3 = pc.constants[pc.constantIdx + 4];
+    unsigned int p4 = pc.constants[pc.constantIdx + 5];
 
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
@@ -173,7 +173,7 @@ __device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_S(fptype *Vecs, ParameterContainer &
     fptype MV1 = sqrt(pV1.Dot(pV1));
     fptype MV2 = sqrt(pV2.Dot(pV2));
 
-    pc.incrementIndex (1, 0, 5, 0, 1);
+    pc.incrementIndex(1, 0, 5, 0, 1);
 
     fptype returnVal
         = (qV1.Dot(qV2) - qV1.Dot(pV1) * pV1.Dot(qV2) / (MV1 * MV1) - qV1.Dot(pV2) * pV2.Dot(qV2) / (MV2 * MV2)
@@ -183,10 +183,10 @@ __device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_S(fptype *Vecs, ParameterContainer &
 }
 
 __device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_P(fptype *Vecs, ParameterContainer &pc) {
-    unsigned int p1      = pc.constants[pc.constantIdx + 2];
-    unsigned int p2      = pc.constants[pc.constantIdx + 3];
-    unsigned int p3      = pc.constants[pc.constantIdx + 4];
-    unsigned int p4      = pc.constants[pc.constantIdx + 5];
+    unsigned int p1 = pc.constants[pc.constantIdx + 2];
+    unsigned int p2 = pc.constants[pc.constantIdx + 3];
+    unsigned int p3 = pc.constants[pc.constantIdx + 4];
+    unsigned int p4 = pc.constants[pc.constantIdx + 5];
 
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
@@ -201,7 +201,7 @@ __device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_P(fptype *Vecs, ParameterContainer &
     gpuLVec pD = pV1 + pV2;
     gpuLVec qD = pV1 - pV2;
 
-    pc.incrementIndex (1, 0, 5, 0, 1);
+    pc.incrementIndex(1, 0, 5, 0, 1);
 
 #ifdef ZEMACH
     fptype MV1 = sqrt(pV1.Dot(pV1));
@@ -219,10 +219,10 @@ __device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_P(fptype *Vecs, ParameterContainer &
 }
 
 __device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_D(fptype *Vecs, ParameterContainer &pc) {
-    unsigned int p1      = pc.constants[pc.constantIdx + 2];
-    unsigned int p2      = pc.constants[pc.constantIdx + 3];
-    unsigned int p3      = pc.constants[pc.constantIdx + 4];
-    unsigned int p4      = pc.constants[pc.constantIdx + 5];
+    unsigned int p1 = pc.constants[pc.constantIdx + 2];
+    unsigned int p2 = pc.constants[pc.constantIdx + 3];
+    unsigned int p3 = pc.constants[pc.constantIdx + 4];
+    unsigned int p4 = pc.constants[pc.constantIdx + 5];
 
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
@@ -234,7 +234,7 @@ __device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_D(fptype *Vecs, ParameterContainer &
     gpuLVec pV2 = P3 + P4;
     gpuLVec qV2 = P3 - P4;
 
-    pc.incrementIndex (1, 0, 5, 0, 1);
+    pc.incrementIndex(1, 0, 5, 0, 1);
 
 #ifdef ZEMACH
     gpuLVec pD = pV1 + pV2;
@@ -263,10 +263,10 @@ __device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_D(fptype *Vecs, ParameterContainer &
 }
 
 __device__ fptype DtoV1P1_V1toV2P2_V2toP3P4(fptype *Vecs, ParameterContainer &pc) {
-    unsigned int p1      = pc.constants[pc.constantIdx + 2];
-    unsigned int p2      = pc.constants[pc.constantIdx + 3];
-    unsigned int p3      = pc.constants[pc.constantIdx + 4];
-    unsigned int p4      = pc.constants[pc.constantIdx + 5];
+    unsigned int p1 = pc.constants[pc.constantIdx + 2];
+    unsigned int p2 = pc.constants[pc.constantIdx + 3];
+    unsigned int p3 = pc.constants[pc.constantIdx + 4];
+    unsigned int p4 = pc.constants[pc.constantIdx + 5];
 
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
@@ -278,7 +278,7 @@ __device__ fptype DtoV1P1_V1toV2P2_V2toP3P4(fptype *Vecs, ParameterContainer &pc
     gpuLVec qV1 = (P3 + P4) - P2;
     gpuLVec qV2 = P3 - P4;
 
-    pc.incrementIndex (1, 0, 5, 0, 1);
+    pc.incrementIndex(1, 0, 5, 0, 1);
 
 #ifdef ZEMACH
     double MV1 = pV1.M();
@@ -308,10 +308,10 @@ __device__ fptype DtoV1P1_V1toV2P2_V2toP3P4(fptype *Vecs, ParameterContainer &pc
 }
 
 __device__ fptype DtoVS_VtoP1P2_StoP3P4(fptype *Vecs, ParameterContainer &pc) {
-    unsigned int p1      = pc.constants[pc.constantIdx + 2];
-    unsigned int p2      = pc.constants[pc.constantIdx + 3];
-    unsigned int p3      = pc.constants[pc.constantIdx + 4];
-    unsigned int p4      = pc.constants[pc.constantIdx + 5];
+    unsigned int p1 = pc.constants[pc.constantIdx + 2];
+    unsigned int p2 = pc.constants[pc.constantIdx + 3];
+    unsigned int p3 = pc.constants[pc.constantIdx + 4];
+    unsigned int p4 = pc.constants[pc.constantIdx + 5];
 
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
@@ -322,7 +322,7 @@ __device__ fptype DtoVS_VtoP1P2_StoP3P4(fptype *Vecs, ParameterContainer &pc) {
     gpuLVec pV = P1 + P2;
     gpuLVec qV = P1 - P2;
 
-    pc.incrementIndex (1, 0, 5, 0, 1);
+    pc.incrementIndex(1, 0, 5, 0, 1);
 
 #ifdef ZEMACH
     gpuLVec pD = pV + pS;
@@ -345,10 +345,10 @@ __device__ fptype DtoVS_VtoP1P2_StoP3P4(fptype *Vecs, ParameterContainer &pc) {
 }
 
 __device__ fptype DtoAP1_AtoSP2_StoP3P4(fptype *Vecs, ParameterContainer &pc) {
-    unsigned int p1      = pc.constants[pc.constantIdx + 2];
-    unsigned int p2      = pc.constants[pc.constantIdx + 3];
-    unsigned int p3      = pc.constants[pc.constantIdx + 4];
-    unsigned int p4      = pc.constants[pc.constantIdx + 5];
+    unsigned int p1 = pc.constants[pc.constantIdx + 2];
+    unsigned int p2 = pc.constants[pc.constantIdx + 3];
+    unsigned int p3 = pc.constants[pc.constantIdx + 4];
+    unsigned int p4 = pc.constants[pc.constantIdx + 5];
 
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
@@ -361,7 +361,7 @@ __device__ fptype DtoAP1_AtoSP2_StoP3P4(fptype *Vecs, ParameterContainer &pc) {
     gpuLVec pD = pA + P1;
     gpuLVec qD = pA - P1;
 
-    pc.incrementIndex (1, 0, 5, 0, 1);
+    pc.incrementIndex(1, 0, 5, 0, 1);
 
 // printf("%f, %f, %f, %f\n",P1.GetX(), P1.GetY(), P1.GetZ(), P1.GetE() );
 // printf("%f, %f, %f, %f\n",P2.GetX(), P2.GetY(), P2.GetZ(), P2.GetE() );
@@ -381,10 +381,10 @@ __device__ fptype DtoAP1_AtoSP2_StoP3P4(fptype *Vecs, ParameterContainer &pc) {
 }
 
 __device__ fptype DtoAP1_AtoVP2_VtoP3P4(fptype *Vecs, ParameterContainer &pc) {
-    unsigned int p1      = pc.constants[pc.constantIdx + 2];
-    unsigned int p2      = pc.constants[pc.constantIdx + 3];
-    unsigned int p3      = pc.constants[pc.constantIdx + 4];
-    unsigned int p4      = pc.constants[pc.constantIdx + 5];
+    unsigned int p1 = pc.constants[pc.constantIdx + 2];
+    unsigned int p2 = pc.constants[pc.constantIdx + 3];
+    unsigned int p3 = pc.constants[pc.constantIdx + 4];
+    unsigned int p4 = pc.constants[pc.constantIdx + 5];
 
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
@@ -397,7 +397,7 @@ __device__ fptype DtoAP1_AtoVP2_VtoP3P4(fptype *Vecs, ParameterContainer &pc) {
     gpuLVec pD = P1 + pA;
     gpuLVec qD = pA - P1;
 
-    pc.incrementIndex (1, 0, 5, 0, 1);
+    pc.incrementIndex(1, 0, 5, 0, 1);
 
 #ifdef ZEMACH
     ZTspin1 LB(qD, pD, pD.M());
@@ -419,10 +419,10 @@ __device__ fptype DtoAP1_AtoVP2_VtoP3P4(fptype *Vecs, ParameterContainer &pc) {
 }
 
 __device__ fptype DtoAP1_AtoVP2Dwave_VtoP3P4(fptype *Vecs, ParameterContainer &pc) {
-    unsigned int p1      = pc.constants[pc.constantIdx + 2];
-    unsigned int p2      = pc.constants[pc.constantIdx + 3];
-    unsigned int p3      = pc.constants[pc.constantIdx + 4];
-    unsigned int p4      = pc.constants[pc.constantIdx + 5];
+    unsigned int p1 = pc.constants[pc.constantIdx + 2];
+    unsigned int p2 = pc.constants[pc.constantIdx + 3];
+    unsigned int p3 = pc.constants[pc.constantIdx + 4];
+    unsigned int p4 = pc.constants[pc.constantIdx + 5];
 
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
@@ -436,7 +436,7 @@ __device__ fptype DtoAP1_AtoVP2Dwave_VtoP3P4(fptype *Vecs, ParameterContainer &p
     gpuLVec pD = P1 + pA;
     gpuLVec qD = pA - P1;
 
-    pc.incrementIndex (1, 0, 5, 0, 1);
+    pc.incrementIndex(1, 0, 5, 0, 1);
 
 #ifdef ZEMACH
     ZTspin1 LD(qD, pD, pD.M());
@@ -459,10 +459,10 @@ __device__ fptype DtoAP1_AtoVP2Dwave_VtoP3P4(fptype *Vecs, ParameterContainer &p
 }
 
 __device__ fptype DtoTP1_TtoVP2_VtoP3P4(fptype *Vecs, ParameterContainer &pc) {
-    unsigned int p1      = pc.constants[pc.constantIdx + 2];
-    unsigned int p2      = pc.constants[pc.constantIdx + 3];
-    unsigned int p3      = pc.constants[pc.constantIdx + 4];
-    unsigned int p4      = pc.constants[pc.constantIdx + 5];
+    unsigned int p1 = pc.constants[pc.constantIdx + 2];
+    unsigned int p2 = pc.constants[pc.constantIdx + 3];
+    unsigned int p3 = pc.constants[pc.constantIdx + 4];
+    unsigned int p4 = pc.constants[pc.constantIdx + 5];
 
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
@@ -479,7 +479,7 @@ __device__ fptype DtoTP1_TtoVP2_VtoP3P4(fptype *Vecs, ParameterContainer &pc) {
     ZTspin2 t2T(qT, pT, pT.M());
     ZTspin1 tV(qV, pV, pV.M());
 
-    pc.incrementIndex (1, 0, 5, 0, 1);
+    pc.incrementIndex(1, 0, 5, 0, 1);
 // gpuLVec DT(t2T.Contract(qD));
 
 #ifdef ZEMACH
@@ -518,8 +518,13 @@ __device__ spin_function_ptr ptr_to_FF_123_4_L1 = FF_123_4_L1;
 __device__ spin_function_ptr ptr_to_FF_123_4_L2 = FF_123_4_L2;
 __device__ spin_function_ptr ptr_to_ONE         = ONE;
 
-SpinFactor::SpinFactor(
-    std::string name, SF_4Body SF, const fptype &mother_radius, unsigned int P0, unsigned int P1, unsigned int P2, unsigned int P3)
+SpinFactor::SpinFactor(std::string name,
+                       SF_4Body SF,
+                       const fptype &mother_radius,
+                       unsigned int P0,
+                       unsigned int P1,
+                       unsigned int P2,
+                       unsigned int P3)
     : GooPdf(nullptr, name)
     , _SF(SF)
     , _P0(P0)
@@ -533,11 +538,11 @@ SpinFactor::SpinFactor(
     pindices.push_back(P2);
     pindices.push_back(P3);
 
-    constantsList.push_back (mother_radius);
-    constantsList.push_back (P0);
-    constantsList.push_back (P1);
-    constantsList.push_back (P2);
-    constantsList.push_back (P3);
+    constantsList.push_back(mother_radius);
+    constantsList.push_back(P0);
+    constantsList.push_back(P1);
+    constantsList.push_back(P2);
+    constantsList.push_back(P3);
 
     switch(SF) {
     case SF_4Body::DtoPP1_PtoSP2_StoP3P4:
@@ -613,8 +618,6 @@ SpinFactor::SpinFactor(
     initialize(pindices);
 }
 
-void SpinFactor::recursiveSetIndices () {
-    
-}
+void SpinFactor::recursiveSetIndices() {}
 
 } // namespace GooFit

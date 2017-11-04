@@ -55,4 +55,3 @@ TEST(ScaledGaussian, SimpleFit) {
     EXPECT_LT(alpha.getError(), .1);
     EXPECT_NEAR(-0.33, alpha.getValue(), alpha.getError() * 3);
 }
-

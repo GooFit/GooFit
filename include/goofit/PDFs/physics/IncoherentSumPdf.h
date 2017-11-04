@@ -27,7 +27,7 @@ class IncoherentSumPdf : public GooPdf {
     __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 3);
     __host__ void setForceIntegrals(bool f = true) { forceRedoIntegrals = f; }
 
-    __host__ virtual void recursiveSetIndices ();
+    __host__ virtual void recursiveSetIndices();
 
   protected:
   private:
@@ -56,8 +56,8 @@ class IncoherentSumPdf : public GooPdf {
 class SpecialIncoherentIntegrator : public thrust::unary_function<thrust::tuple<int, fptype *>, fptype> {
   public:
     SpecialIncoherentIntegrator(int pIdx, unsigned int ri);
-    void setIncoherentIndex (const unsigned int idx) { incoherentSum = idx; }
-    void setResonanceIndex (const unsigned int res) { resonance_i = res; }
+    void setIncoherentIndex(const unsigned int idx) { incoherentSum = idx; }
+    void setResonanceIndex(const unsigned int res) { resonance_i = res; }
     __device__ fptype operator()(thrust::tuple<int, fptype *> t) const;
 
   private:
@@ -70,8 +70,8 @@ class SpecialIncoherentResonanceCalculator
     : public thrust::unary_function<thrust::tuple<int, fptype *, int>, thrust::complex<fptype>> {
   public:
     SpecialIncoherentResonanceCalculator(int pIdx, unsigned int res_idx);
-    void setIncoherentIndex (const unsigned int idx) { incoherentSum = idx; }
-    void setResonanceIndex (const unsigned int res) { resonance_i = res; }
+    void setIncoherentIndex(const unsigned int idx) { incoherentSum = idx; }
+    void setResonanceIndex(const unsigned int res) { resonance_i = res; }
     __device__ thrust::complex<fptype> operator()(thrust::tuple<int, fptype *, int> t) const;
 
   private:

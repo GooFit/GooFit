@@ -257,4 +257,4 @@ class Application : public CLI::App {
         throw GooFit::FileError(input_str);
     }
 };
-}
+} // namespace GooFit

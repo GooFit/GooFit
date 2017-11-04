@@ -52,4 +52,3 @@ TEST(Landau, SimpleFit) {
     EXPECT_LT(alpha.getError(), .1);
     EXPECT_NEAR(0.259, alpha.getValue(), alpha.getError() * 3);
 }
-

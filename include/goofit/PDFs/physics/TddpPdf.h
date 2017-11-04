@@ -110,8 +110,8 @@ class SpecialDalitzIntegrator : public thrust::unary_function<thrust::tuple<int,
   public:
     SpecialDalitzIntegrator(int pIdx, unsigned int ri, unsigned int rj);
     void setTddpIndex(unsigned int id) { tddp = id; }
-    void setResonanceIndex (unsigned int id) { resonance_i = id; }
-    void setEfficiencyIndex (unsigned int id) { resonance_j = id; }
+    void setResonanceIndex(unsigned int id) { resonance_i = id; }
+    void setEfficiencyIndex(unsigned int id) { resonance_j = id; }
     __device__ ThreeComplex operator()(thrust::tuple<int, fptype *, int> t) const;
 
   private:
@@ -137,7 +137,7 @@ class SpecialWaveCalculator : public thrust::unary_function<thrust::tuple<int, f
   public:
     SpecialWaveCalculator(int pIdx, unsigned int res_idx);
     void setTddpIndex(unsigned int id) { tddp = id; }
-    void setResonanceIndex (unsigned int id) { resonance_i = id; }
+    void setResonanceIndex(unsigned int id) { resonance_i = id; }
     __device__ WaveHolder_s operator()(thrust::tuple<int, fptype *, int> t) const;
 
   private:

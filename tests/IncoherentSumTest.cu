@@ -17,8 +17,8 @@ using namespace std;
 using namespace GooFit;
 
 TEST(IncoherentSumPdf, SimpleFit) {
-    const double _mD0 = 1.86484;
-    const double _mD02 = _mD0 * _mD0;
+    const double _mD0     = 1.86484;
+    const double _mD02    = _mD0 * _mD0;
     const double _mD02inv = 1.0 / _mD02;
 
     // Random number generation
@@ -30,10 +30,10 @@ TEST(IncoherentSumPdf, SimpleFit) {
     Variable m13{"m13", 1, 0.1, -10, 10};
     CountingVariable evtNum{"evtNum", 0, INT_MAX};
 
-    std::vector<Variable*> var_list;
-    var_list.push_back (&m12);
-    var_list.push_back (&m13);
-    var_list.push_back (&evtNum);
+    std::vector<Variable *> var_list;
+    var_list.push_back(&m12);
+    var_list.push_back(&m13);
+    var_list.push_back(&evtNum);
 
     // Data set
     UnbinnedDataSet data(var_list);
@@ -42,32 +42,32 @@ TEST(IncoherentSumPdf, SimpleFit) {
     for(int i = 0; i < 1000; ++i) {
         double m12_val = d(gen);
         double m13_val = d(gen);
-        
-        //if(val < 10) {
-            m12.setValue(m12_val);
-            m13.setValue(m13_val);
-            evtNum.setValue(data.getNumEvents());
-            data.addEvent();
+
+        // if(val < 10) {
+        m12.setValue(m12_val);
+        m13.setValue(m13_val);
+        evtNum.setValue(data.getNumEvents());
+        data.addEvent();
         //}
     }
 
     // Fit parameter
     DecayInfo di;
-    di.motherMass = 1.86484;
-    di.daug1Mass = 0.1349766;
-    di.daug2Mass = 0.13957018;
-    di.daug3Mass = 0.13957018;
+    di.motherMass   = 1.86484;
+    di.daug1Mass    = 0.1349766;
+    di.daug2Mass    = 0.13957018;
+    di.daug3Mass    = 0.13957018;
     di.meson_radius = 1.5;
 
     Variable tau{"tau", 1, 0.1, -1, 1};
     Variable xmix{"xmix", 1, 0.1, -1, 1};
     Variable ymix{"ymix", 1, 0.1, -1, 1};
 
-    di._tau = &tau;
+    di._tau     = &tau;
     di._xmixing = &xmix;
     di._ymixing = &ymix;
 
-    //All variables
+    // All variables
     Variable fixedRhoMass{"rho_mass", 0.7758, 0.01, 0.7, 0.8};
     Variable fixedRhoWidth{"rho_width", 0.1503, 0.01, 0.1, 0.2};
 
@@ -143,18 +143,24 @@ TEST(IncoherentSumPdf, SimpleFit) {
     Variable nonr_amp_real{"nonr_amp_real", 0.5595 * (-1), 0.001, 0, 0};
     Variable nonr_amp_imag{"nonr_amp_imag", -0.108761 * (-1), 0.1, 0, 0};
 
-    //Create resonances here
+    // Create resonances here
     ResonancePdf rhop{"rhop", &rhop_amp_real, &rhop_amp_imag, &fixedRhoMass, &fixedRhoWidth, 1, PAIR_12};
     ResonancePdf rhom{"rhom", &rhom_amp_real, &rhom_amp_imag, &fixedRhoMass, &fixedRhoWidth, 1, PAIR_13};
     ResonancePdf rho0{"rho0", &rho0_amp_real, &rho0_amp_imag, &fixedRhoMass, &fixedRhoWidth, 1, PAIR_23};
 
-    ResonancePdf rhop_1450{"rhop_1450", &rhop_1450_real, &rhop_1450_imag, &shared_1450_mass, &shared_1450_width, 1, PAIR_12};
-    ResonancePdf rho0_1450{"rho0_1450", &rho0_1450_real, &rho0_1450_imag, &shared_1450_mass, &shared_1450_width, 1, PAIR_23};
-    ResonancePdf rhom_1450{"rhom_1450", &rhom_1450_real, &rhom_1450_imag, &shared_1450_mass, &shared_1450_width, 1, PAIR_13};
+    ResonancePdf rhop_1450{
+        "rhop_1450", &rhop_1450_real, &rhop_1450_imag, &shared_1450_mass, &shared_1450_width, 1, PAIR_12};
+    ResonancePdf rho0_1450{
+        "rho0_1450", &rho0_1450_real, &rho0_1450_imag, &shared_1450_mass, &shared_1450_width, 1, PAIR_23};
+    ResonancePdf rhom_1450{
+        "rhom_1450", &rhom_1450_real, &rhom_1450_imag, &shared_1450_mass, &shared_1450_width, 1, PAIR_13};
 
-    ResonancePdf rhop_1700{"rhop_1700", &rhop_1700_real, &rhop_1700_imag, &shared_1700_mass, &shared_1700_width, 1, PAIR_12};
-    ResonancePdf rho0_1700{"rho0_1700", &rho0_1700_real, &rho0_1700_imag, &shared_1700_mass, &shared_1700_width, 1, PAIR_23};
-    ResonancePdf rhom_1700{"rhom_1700", &rhom_1700_real, &rhom_1700_imag, &shared_1700_mass, &shared_1700_width, 1, PAIR_13};
+    ResonancePdf rhop_1700{
+        "rhop_1700", &rhop_1700_real, &rhop_1700_imag, &shared_1700_mass, &shared_1700_width, 1, PAIR_12};
+    ResonancePdf rho0_1700{
+        "rho0_1700", &rho0_1700_real, &rho0_1700_imag, &shared_1700_mass, &shared_1700_width, 1, PAIR_23};
+    ResonancePdf rhom_1700{
+        "rhom_1700", &rhom_1700_real, &rhom_1700_imag, &shared_1700_mass, &shared_1700_width, 1, PAIR_13};
 
     ResonancePdf f0_980{"f0_980", &f0_980_real, &f0_980_imag, &f0_980_mass, &f0_980_width, 0, PAIR_23};
 
@@ -170,7 +176,7 @@ TEST(IncoherentSumPdf, SimpleFit) {
 
     ResonancePdf nonr{"f0_600", &nonr_amp_real, &nonr_amp_imag};
 
-    //Add resonances to Decay structure
+    // Add resonances to Decay structure
     di.resonances.push_back(&nonr);
     di.resonances.push_back(&rhop);
     di.resonances.push_back(&rho0);
@@ -210,7 +216,6 @@ TEST(IncoherentSumPdf, SimpleFit) {
     fitter.fit();
 
     EXPECT_TRUE(fitter);
-    //EXPECT_LT(alpha.getError(), .1);
-    //EXPECT_NEAR(0.665178392, alpha.getValue(), alpha.getError() * 3);
+    // EXPECT_LT(alpha.getError(), .1);
+    // EXPECT_NEAR(0.665178392, alpha.getValue(), alpha.getError() * 3);
 }
-

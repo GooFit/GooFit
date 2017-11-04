@@ -19,7 +19,7 @@ class PolynomialPdf : public GooPdf {
     __host__ fptype integrate(fptype lo, fptype hi) const override;
     //__host__ virtual bool hasAnalyticIntegral () const {return (1 == observables.size());}
     __host__ fptype getCoefficient(int coef) const;
-    __host__ virtual void recursiveSetIndices ();
+    __host__ virtual void recursiveSetIndices();
 
   private:
     Variable *center;

@@ -96,7 +96,7 @@ TEST(TrigThresholdVeryUpper, SimpleFit) {
     Variable xvar{"xvar", -10, 10};
     Variable yvar{"yvar", -10, 10};
 
-    std::vector<Variable*> list;
+    std::vector<Variable *> list;
     list.push_back(&xvar);
     list.push_back(&yvar);
 
@@ -139,9 +139,9 @@ TEST(TrigThresholdVeryLower, SimpleFit) {
     Variable xvar{"xvar", -10, 10};
     Variable yvar{"yvar", -10, 10};
 
-    std::vector<Variable*> list;
-    list.push_back (&xvar);
-    list.push_back (&yvar);
+    std::vector<Variable *> list;
+    list.push_back(&xvar);
+    list.push_back(&yvar);
 
     // Data set
     UnbinnedDataSet data(list);
@@ -172,4 +172,3 @@ TEST(TrigThresholdVeryLower, SimpleFit) {
 
     EXPECT_TRUE(fitter);
 }
-

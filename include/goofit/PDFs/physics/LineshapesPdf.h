@@ -61,18 +61,16 @@ class Lineshape : public GooPdf {
             addvar = addvar and (L._AdditionalVars[i]->getValue() == _AdditionalVars[i]->getValue());
         }
 
-        return addvar and (L.getName() == getName() and L._mass->getValue() == _mass->getValue()
-                           and L._width->getValue() == _width->getValue()
-                           and L._L == _L
-                           and L._Mpair == _Mpair
-                           and L._kind == _kind
-                           and L._FormFac == _FormFac);
+        return addvar
+               and (L.getName() == getName() and L._mass->getValue() == _mass->getValue()
+                    and L._width->getValue() == _width->getValue() and L._L == _L and L._Mpair == _Mpair
+                    and L._kind == _kind and L._FormFac == _FormFac);
     }
     Lineshape(std::string name);
 
-    __host__ virtual void recursiveSetIndices ();
+    __host__ virtual void recursiveSetIndices();
 
-    //void setConstantIndex(unsigned int idx) { host_indices[parameters + 1] = idx; }
+    // void setConstantIndex(unsigned int idx) { host_indices[parameters + 1] = idx; }
 };
 
 class Amplitude {

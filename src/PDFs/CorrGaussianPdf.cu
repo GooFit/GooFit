@@ -12,8 +12,8 @@ __device__ fptype device_CorrGaussian(fptype *evt, ParameterContainer &pc) {
     fptype sigma2 = RO_CACHE(pc.parameters[pc.parameterIdx + 4]);
     fptype corr   = RO_CACHE(pc.parameters[pc.parameterIdx + 5]);
 
-    fptype x      = evt[idx];
-    fptype y      = evt[idy];
+    fptype x = evt[idx];
+    fptype y = evt[idy];
 
     fptype x_dist = (x - mean1) / sigma1;
     sigma2 *= (1 + corr * x_dist * x_dist);
@@ -27,7 +27,7 @@ __device__ fptype device_CorrGaussian(fptype *evt, ParameterContainer &pc) {
     // printf("CorrGauss: %i %i %i %f %f %f %f\n", indices[2 + indices[0]], indices[3 + indices[0]], indices[0], x, y,
     // mean1, mean2);
 
-    pc.incrementIndex (1, 5, 0, 2, 1);
+    pc.incrementIndex(1, 5, 0, 2, 1);
 
     return ret;
 }
@@ -57,14 +57,14 @@ __host__ CorrGaussianPdf::CorrGaussianPdf(std::string n,
     initialize(pindices);
 }
 
-__host__ void CorrGaussianPdf::recursiveSetIndices () {
+__host__ void CorrGaussianPdf::recursiveSetIndices() {
     GET_FUNCTION_ADDR(ptr_to_CorrGaussian);
 
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName (), "ptr_to_CorrGaussian");
+    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_CorrGaussian");
     host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx = num_device_functions++;
+    functionIdx                               = num_device_functions++;
 
-    populateArrays ();
+    populateArrays();
 }
 
 } // namespace GooFit

@@ -54,4 +54,3 @@ TEST(ExpGausPdf, SimpleFit) {
     EXPECT_LT(alpha.getError(), 12.84);
     EXPECT_NEAR(12.8379, alpha.getValue(), alpha.getError() * 3);
 }
-

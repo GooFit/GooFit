@@ -522,15 +522,11 @@ GooPdf *makeEfficiencyPoly() {
     return ret;
 }
 
-Variable *ptr_to_xmix = nullptr;
-Variable *ptr_to_ymix = nullptr;
-Variable *ptr_to_dtau = nullptr;
+DecayInfo3t dtop0pp{Variable("tau", 0.4101, 0.001, 0.300, 0.500),
+                    Variable("xmixing", 0.0016, 0.001, 0, 0),
+                    Variable("ymixing", 0.0055, 0.001, 0, 0)};
 
 TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
-    DecayInfo3t dtop0pp{Variable("tau", 0.4101, 0.001, 0.300, 0.500),
-                        Variable("xmixing", 0.0016, 0.001, 0, 0),
-                        Variable("ymixing", 0.0055, 0.001, 0, 0)};
-
     dtop0pp.motherMass   = _mD0;
     dtop0pp.daug1Mass    = piZeroMass;
     dtop0pp.daug2Mass    = piPlusMass;
@@ -542,13 +538,9 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
     // dtop0pp._xmixing = new Variable("xmixing", 0.01, 0.001, -0.05, 0.05);
     // dtop0pp._ymixing = new Variable("ymixing", 0.01, 0.001, -0.05, 0.05);
 
-    ptr_to_xmix = &dtop0pp._xmixing;
-    ptr_to_ymix = &dtop0pp._ymixing;
-    ptr_to_dtau = &dtop0pp._tau;
-
-    // ptr_to_dtau->fixed = true;
-    // ptr_to_xmix->fixed = true;
-    // ptr_to_ymix->fixed = true;
+    // dtop0pp._tau.fixed = true;
+    // dtop0pp._xmixing.fixed = true;
+    // dtop0pp._ymixing.fixed = true;
 
     ResonancePdf *rhop = new Resonances::RBW(
         "rhop", Variable("rhop_amp_real", 1), Variable("rhop_amp_imag", 0), fixedRhoMass, fixedRhoWidth, 1, PAIR_12);
@@ -922,12 +914,12 @@ int runToyFit(int ifile, int nfile, bool noPlots = true) {
 
     printf(
         "Fit results:\ntau    : (%.3f $\\pm$ %.3f) fs\nxmixing: (%.3f $\\pm$ %.3f)%%\nymixing: (%.3f $\\pm$ %.3f)%%\n",
-        1000 * ptr_to_dtau->getValue(),
-        1000 * ptr_to_dtau->getError(),
-        100 * ptr_to_xmix->getValue(),
-        100 * ptr_to_xmix->getError(),
-        100 * ptr_to_ymix->getValue(),
-        100 * ptr_to_ymix->getError());
+        1000 * dtop0pp._tau.getValue(),
+        1000 * dtop0pp._tau.getError(),
+        100 * dtop0pp._xmixing.getValue(),
+        100 * dtop0pp._xmixing.getError(),
+        100 * dtop0pp._ymixing.getValue(),
+        100 * dtop0pp._ymixing.getError());
 
     if(!noPlots)
         makeToyDalitzPlots(mixPdf);
@@ -2791,9 +2783,11 @@ int runTruthMCFit(std::string fname, bool noPlots = true) {
     // overallSignal->setDebugMask(0);
 
     std::cout << "Fit results: \n"
-              << "tau    : " << ptr_to_dtau->getValue() << " $\\pm$ " << ptr_to_dtau->getError() << "\n"
-              << "xmixing: (" << 100 * ptr_to_xmix->getValue() << " $\\pm$ " << 100 * ptr_to_xmix->getError() << ")%\n"
-              << "ymixing: (" << 100 * ptr_to_ymix->getValue() << " $\\pm$ " << 100 * ptr_to_ymix->getError() << ")%\n";
+              << "tau    : " << dtop0pp._tau.getValue() << " $\\pm$ " << dtop0pp._tau.getError() << "\n"
+              << "xmixing: (" << 100 * dtop0pp._xmixing.getValue() << " $\\pm$ " << 100 * dtop0pp._xmixing.getError()
+              << ")%\n"
+              << "ymixing: (" << 100 * dtop0pp._ymixing.getValue() << " $\\pm$ " << 100 * dtop0pp._ymixing.getError()
+              << ")%\n";
 
     if(noPlots)
         return retval;
@@ -2989,9 +2983,11 @@ int runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
     }
 
     std::cout << "Fit results: \n"
-              << "tau    : " << ptr_to_dtau->getValue() << " $\\pm$ " << ptr_to_dtau->getError() << "\n"
-              << "xmixing: (" << 100 * ptr_to_xmix->getValue() << " $\\pm$ " << 100 * ptr_to_xmix->getError() << ")%\n"
-              << "ymixing: (" << 100 * ptr_to_ymix->getValue() << " $\\pm$ " << 100 * ptr_to_ymix->getError() << ")%\n";
+              << "tau    : " << dtop0pp._tau.getValue() << " $\\pm$ " << dtop0pp._tau.getError() << "\n"
+              << "xmixing: (" << 100 * dtop0pp._xmixing.getValue() << " $\\pm$ " << 100 * dtop0pp._xmixing.getError()
+              << ")%\n"
+              << "ymixing: (" << 100 * dtop0pp._ymixing.getValue() << " $\\pm$ " << 100 * dtop0pp._ymixing.getError()
+              << ")%\n";
 
     // All this relies on exact formatting of the input data files; it's fragile.
     double inputx              = 1;
@@ -3021,8 +3017,9 @@ int runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
     sprintf(strbuffer, "result_%s_%f", ident.c_str(), dplotres);
     ofstream writer;
     writer.open(strbuffer);
-    writer << inputx << " " << 100 * ptr_to_xmix->getValue() << " " << 100 * ptr_to_xmix->getError() << " " << inputy
-           << " " << 100 * ptr_to_ymix->getValue() << " " << 100 * ptr_to_ymix->getError() << std::endl;
+    writer << inputx << " " << 100 * dtop0pp._xmixing.getValue() << " " << 100 * dtop0pp._xmixing.getError() << " "
+           << inputy << " " << 100 * dtop0pp._ymixing.getValue() << " " << 100 * dtop0pp._ymixing.getError()
+           << std::endl;
     writer.close();
 
     return retval;
@@ -4060,8 +4057,8 @@ int runCanonicalFit(std::string fname, bool noPlots = true) {
     TRandom donram(blindSeed); // The rain and the sun!
 
     if(0 != blindSeed) {
-        ptr_to_xmix->setBlind(donram.Gaus(0, 0.005));
-        ptr_to_ymix->setBlind(donram.Gaus(0, 0.005));
+        dtop0pp._xmixing.setBlind(donram.Gaus(0, 0.005));
+        dtop0pp._ymixing.setBlind(donram.Gaus(0, 0.005));
     }
 
     // overallSignal->setDebugMask(1);
@@ -4166,27 +4163,27 @@ int runCanonicalFit(std::string fname, bool noPlots = true) {
 
     printf(
         "Fit results:\ntau    : (%.3f $\\pm$ %.3f) fs\nxmixing: (%.3f $\\pm$ %.3f)%%\nymixing: (%.3f $\\pm$ %.3f)%%\n",
-        1000 * ptr_to_dtau->getValue(),
-        1000 * ptr_to_dtau->getError(),
-        100 * ptr_to_xmix->getValue(),
-        100 * ptr_to_xmix->getError(),
-        100 * ptr_to_ymix->getValue(),
-        100 * ptr_to_ymix->getError());
+        1000 * dtop0pp._tau.getValue(),
+        1000 * dtop0pp._tau.getError(),
+        100 * dtop0pp._xmixing.getValue(),
+        100 * dtop0pp._xmixing.getError(),
+        100 * dtop0pp._ymixing.getValue(),
+        100 * dtop0pp._ymixing.getError());
 
     /*
     std::cout << "Fit results: \n"
-        << "tau    : (" << 1000*ptr_to_dtau->getValue() << " $\\pm$ " << 1000*ptr_to_dtau->getError() << ") fs\n"
-        << "xmixing: (" << 100*ptr_to_xmix->getValue() << " $\\pm$ " << 100*ptr_to_xmix->getError() << ")%\n"
-        << "ymixing: (" << 100*ptr_to_ymix->getValue() << " $\\pm$ " << 100*ptr_to_ymix->getError() << ")%\n";
+        << "tau    : (" << 1000*dtop0pp._tau.getValue() << " $\\pm$ " << 1000*dtop0pp._tau.getError() << ") fs\n"
+        << "xmixing: (" << 100*dtop0pp._xmixing.getValue() << " $\\pm$ " << 100*dtop0pp._xmixing.getError() << ")%\n"
+        << "ymixing: (" << 100*dtop0pp._ymixing.getValue() << " $\\pm$ " << 100*dtop0pp._ymixing.getError() << ")%\n";
     */
 
     /*
-    double fitx = ptr_to_xmix->getValue();
+    double fitx = dtop0pp._xmixing.getValue();
     TH1F xscan("xscan", "", 200, fitx - 0.0001 - 0.0000005, fitx + 0.0001 - 0.0000005);
     xscan.SetStats(false);
-    //double fity = ptr_to_ymix->getValue();
+    //double fity = dtop0pp._ymixing.getValue();
     for (int i = 0; i < 200; ++i) {
-      ptr_to_xmix->getValue() = fitx - 0.0001 + 0.000001*i;
+      dtop0pp._xmixing.getValue() = fitx - 0.0001 + 0.000001*i;
       overallPdf->copyParams();
       double nll = overallPdf->calculateNLL();
       printf("%i: %.10f\n", i, nll);

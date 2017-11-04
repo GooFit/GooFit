@@ -25,7 +25,7 @@ goofit_add_pdf(MyPdf.cu MyPdf.h)
 
 ## Renames and moves
 
-The folders that were introduced to keep the includes structured require modifications of source code, converting lines like `#include "Variable.hh"` to `#include "goofit/Variable.h"`. This modification can be done for you by running the provided script, `scripts/ModernizeGooFit.py` on your source files (requires Python and [Plumbum](https://github.com/tomerfiliba/plumbum)). For example:
+The folders that were introduced to keep the includes structured require modifications of source code, converting lines like `#include "Variable.hh"` to `#include "goofit/Variable.h"`. This modification can be done for you by running the provided script, `scripts/ModernizeGooFit.py` on your source files (requires Python and [Plumbum]). For example:
 
 ```bash
 ./scripts/ModernizeGooFit.py goofit_mypackage/*.cu
@@ -50,7 +50,7 @@ try {
 }
 ```
 
-See [CLI11] for more details. The [pipipi0](./examples/pipipi0DPFit) example has an example of a complex set of options.
+See [CLI11] for more details. The [pipipi0](../examples/pipipi0DPFit) example has an example of a complex set of options.
 
 ## Variable
 
@@ -78,3 +78,5 @@ The other values do not provide shortcut access. Copying a variable is explicitl
 
 GooFit no longer leaks the `std::` namespace, and all of GooFit is now inside the GooFit namespace. You can add `using namespace GooFit;` at the top of your code.
 
+[CLI11]:   https://github.com/CLIUtils/CLI11
+[Plumbum]: https://github.com/tomerfiliba/plumbum

@@ -27,9 +27,9 @@ class Indexable {
     virtual ~Indexable() = default;
 
     /// Get the GooFit index
-    int getIndex() const { return index; }
+    int getObservableIndex() const { return index; }
     /// Set the GooFit index
-    void setIndex(int value) { index = value; }
+    void setObservableIndex(int value) { index = value; }
 
     /// Get the index from the fitter
     int getFitterIndex() const { return fitter_index; }
@@ -211,7 +211,7 @@ class Constant : public Indexable {
 };
 
 /// Get the max index of a variable from a list
-int max_index(const std::vector<Variable *> &vars);
+// int max_index(const std::vector<Variable *> &vars);
 
 /// Get the max fitter index of a variable from a list
 int max_fitter_index(const std::vector<Variable *> &vars);
@@ -221,4 +221,4 @@ std::ostream &operator<<(std::ostream &o, const GooFit::Variable &var);
 
 /// Allow Variable to be read in
 std::istream &operator>>(std::istream &i, GooFit::Variable &var);
-}
+} // namespace GooFit

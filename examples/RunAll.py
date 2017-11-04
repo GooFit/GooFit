@@ -40,21 +40,21 @@ def test(filename, *args):
 
 def make_results(profile=False):
     results = [
-        test('DP4'),
-        test('SigGen'),
+#        test('DP4'),
+#        test('SigGen'),
         test('2d_plot'),
         test('dalitz'),
         test('convolution'),
         test('addition'),
         test('exponential'),
-        test('TDDP4', '-t', 100 if profile else 5),
+#        test('TDDP4', '-t', 100 if profile else 5),
         test('product'),
         test('simpleFit'),
         test('chisquare'),
             ]
 
     if (LOCAL_DIR / 'zachFit/dataFiles/dstwidth_kpi_data.dat').exists():
-        results.append(test('zachFit', 0))
+        results.append(test('zachFit', 1, 0))
     if (LOCAL_DIR / 'pipipi0DPFit/dataFiles/toyPipipi0/dalitz_toyMC_000.txt').exists():
         results.append(test('pipipi0DPFit', 'toy', 0, 1))
         results.append(test('pipipi0DPFit', 'canonical', 'dataFiles/cocktail_pp_0.txt', '--blindSeed=0'))

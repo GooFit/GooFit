@@ -17,14 +17,19 @@ FCN::FCN(Params &params)
 
 double FCN::operator()(const std::vector<double> &pars) const {
     // Translate from Minuit indexing to GooFit indexing
-    std::vector<double> gooPars(max_index(params_->vars_) + 1);
+    std::vector<double> gooPars(params_->vars_.size() + 1);
 
+    // for(Variable* var : params_->vars_) {
+    //    var->setChanged(var->getValue() != pars.at(var->getFitterIndex()));
+    //    gooPars.at(var->getIndex()) = pars.at(var->getFitterIndex()) - var->blind;
+    //}
     for(Variable *var : params_->vars_) {
         var->setChanged(var->getValue() != pars.at(var->getFitterIndex()));
-        gooPars.at(var->getIndex()) = pars.at(var->getFitterIndex()) - var->blind;
+        params_->pdf_->updateVariable(var, pars.at(var->getFitterIndex()) - var->blind);
     }
 
-    params_->pdf_->copyParams(gooPars);
+    // params_->pdf_->copyParams(gooPars);
+    params_->pdf_->updateParameters();
 
     GOOFIT_TRACE("Calculating NLL");
     double nll = params_->pdf_->calculateNLL();
@@ -38,14 +43,19 @@ double FCN::operator()() const {
     std::vector<double> pars = makePars();
 
     // Translate from Minuit indexing to GooFit indexing
-    std::vector<double> gooPars(max_index(params_->vars_) + 1);
+    std::vector<double> gooPars(params_->vars_.size() + 1);
 
+    // for(Variable* var : params_->vars_) {
+    //    var->setChanged(true);
+    //    gooPars.at(var->getIndex()) = pars.at(var->getFitterIndex()) - var->blind;
+    //}
     for(Variable *var : params_->vars_) {
         var->setChanged(true);
-        gooPars.at(var->getIndex()) = pars.at(var->getFitterIndex()) - var->blind;
+        params_->pdf_->updateVariable(var, pars.at(var->getFitterIndex()) - var->blind);
     }
 
-    params_->pdf_->copyParams(gooPars);
+    // params_->pdf_->copyParams(gooPars);
+    params_->pdf_->updateParameters();
 
     GOOFIT_TRACE("Calculating NLL");
     double nll = params_->pdf_->calculateNLL();

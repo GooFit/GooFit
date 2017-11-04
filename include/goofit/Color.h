@@ -17,4 +17,4 @@ constexpr rang::style const reset  = rang::style::reset;
 constexpr rang::style const bold   = rang::style::bold;
 constexpr rang::style const dim    = rang::style::dim;
 constexpr rang::style const italic = rang::style::italic;
-}
+} // namespace GooFit

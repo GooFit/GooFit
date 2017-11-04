@@ -61,7 +61,7 @@ if(GOOFIT_SEPARATE_COMP)
         AddPdf.cu
         VoigtianPdf.cu
         MappedPdf.cu
-        Tddp4Pdf.cu
+        #Tddp4Pdf.cu
         DalitzVetoPdf.cu
         JohnsonSUPdf.cu
         ProdPdf.cu

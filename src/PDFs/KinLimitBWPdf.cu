@@ -22,17 +22,21 @@ __device__ fptype bwFactor(const fptype &momentum) {
     return 1 / sqrt(1.0 + 2.56 * momentum * momentum);
 }
 
-__device__ fptype device_KinLimitBW(fptype *evt, fptype *p, unsigned int *indices) {
-    fptype x      = evt[RO_CACHE(indices[2 + RO_CACHE(indices[0])])];
-    fptype mean   = RO_CACHE(p[RO_CACHE(indices[1])]);
-    fptype width  = RO_CACHE(p[RO_CACHE(indices[2])]);
-    fptype d0mass = RO_CACHE(functorConstants[RO_CACHE(indices[3]) + 0]);
-    fptype pimass = RO_CACHE(functorConstants[RO_CACHE(indices[3]) + 1]);
+__device__ fptype device_KinLimitBW(fptype *evt, ParameterContainer &pc) {
+    int id = RO_CACHE(pc.observables[pc.observableIdx + 1]);
+
+    fptype x      = evt[id];
+    fptype mean   = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
+    fptype width  = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
+    fptype d0mass = RO_CACHE(pc.constants[pc.constantIdx + 1]);
+    fptype pimass = RO_CACHE(pc.constants[pc.constantIdx + 2]);
 
     mean += d0mass;
     x += d0mass;
 
     fptype pUsingRealMass = getMomentum(mean, pimass, d0mass);
+
+    pc.incrementIndex(1, 2, 2, 1, 1);
 
     if(0 >= pUsingRealMass)
         return 0;
@@ -56,18 +60,32 @@ __host__ KinLimitBWPdf::KinLimitBWPdf(std::string n, Variable *_x, Variable *mea
     registerParameter(width);
 
     std::vector<unsigned int> pindices;
-    pindices.push_back(mean->getIndex());
-    pindices.push_back(width->getIndex());
-    pindices.push_back(registerConstants(2));
-    setMasses(1.8645, 0.13957);
+    // pindices.push_back(mean->getIndex());
+    // pindices.push_back(width->getIndex());
+    // pindices.push_back(registerConstants(2));
+    // setMasses(1.8645, 0.13957);
+    constantsList.push_back(1.8645);
+    constantsList.push_back(0.13957);
+
     GET_FUNCTION_ADDR(ptr_to_KinLimitBW);
+
     initialize(pindices);
 }
 
+__host__ void KinLimitBWPdf::recursiveSetIndices() {
+    GET_FUNCTION_ADDR(ptr_to_KinLimitBW);
+
+    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_KinLimitBW");
+    host_function_table[num_device_functions] = host_fcn_ptr;
+    functionIdx                               = num_device_functions++;
+
+    populateArrays();
+}
+
 __host__ void KinLimitBWPdf::setMasses(fptype bigM, fptype smallM) {
-    fptype constants[2];
-    constants[0] = bigM;
-    constants[1] = smallM;
-    MEMCPY_TO_SYMBOL(functorConstants, constants, 2 * sizeof(fptype), cIndex * sizeof(fptype), cudaMemcpyHostToDevice);
+    constantsList[0] = bigM;
+    constantsList[1] = smallM;
+    // MEMCPY_TO_SYMBOL(functorConstants, constants, 2 * sizeof(fptype), cIndex * sizeof(fptype),
+    // cudaMemcpyHostToDevice);
 }
 } // namespace GooFit

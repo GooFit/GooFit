@@ -22,6 +22,8 @@ class DalitzVetoPdf : public GooPdf {
                            Variable *d3m,
                            std::vector<VetoInfo *> vetos);
 
+    __host__ virtual void recursiveSetIndices();
+
   private:
 };
 } // namespace GooFit

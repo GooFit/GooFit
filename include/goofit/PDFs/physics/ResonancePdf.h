@@ -5,7 +5,7 @@
 
 namespace GooFit {
 
-typedef thrust::complex<fptype> (*resonance_function_ptr)(fptype, fptype, fptype, unsigned int *);
+typedef thrust::complex<fptype> (*resonance_function_ptr)(fptype, fptype, fptype, ParameterContainer &pc);
 
 __device__ fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m);
 
@@ -67,11 +67,14 @@ class ResonancePdf : public GooPdf {
     // Gaussian constructor
     ResonancePdf(std::string name, Variable *ar, Variable *ai, Variable *mean, Variable *sigma, unsigned int cyc);
 
+    virtual void recursiveSetIndices();
+
   private:
-    void setConstantIndex(unsigned int idx) { host_indices[parameters + 1] = idx; }
+    // void setConstantIndex(unsigned int idx) { parametersList[parametersIdx + 1] = idx; }
 
     Variable *amp_real;
     Variable *amp_imag;
+    int resonanceType;
     /*
     Variable* mass;
     Variable* width;

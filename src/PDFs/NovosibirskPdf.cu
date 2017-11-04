@@ -2,11 +2,15 @@
 
 namespace GooFit {
 
-__device__ fptype device_Novosibirsk(fptype *evt, fptype *p, unsigned int *indices) {
-    fptype _Mean  = p[indices[1]];
-    fptype _Sigma = p[indices[2]];
-    fptype _Tail  = p[indices[3]];
-    fptype x      = evt[indices[2 + indices[0]]];
+__device__ fptype device_Novosibirsk(fptype *evt, ParameterContainer &pc) {
+    int id = RO_CACHE(pc.observables[pc.observableIdx + 1]);
+
+    fptype _Mean  = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
+    fptype _Sigma = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
+    fptype _Tail  = RO_CACHE(pc.parameters[pc.parameterIdx + 3]);
+    fptype x      = evt[id];
+
+    pc.incrementIndex(1, 3, 0, 1, 1);
 
     fptype qa = 0;
     fptype qb = 0;
@@ -44,6 +48,16 @@ __host__ NovosibirskPdf::NovosibirskPdf(std::string n, Variable *_x, Variable *m
     pindices.push_back(registerParameter(tail));
     GET_FUNCTION_ADDR(ptr_to_Novosibirsk);
     initialize(pindices);
+}
+
+__host__ void NovosibirskPdf::recursiveSetIndices() {
+    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Novosibirsk");
+    GET_FUNCTION_ADDR(ptr_to_Novosibirsk);
+
+    host_function_table[num_device_functions] = host_fcn_ptr;
+    functionIdx                               = num_device_functions++;
+
+    populateArrays();
 }
 
 } // namespace GooFit

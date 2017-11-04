@@ -11,8 +11,7 @@ __device__ fptype device_truth_resolution(fptype coshterm,
                                           fptype xmixing,
                                           fptype ymixing,
                                           fptype /*sigma*/,
-                                          fptype * /*p*/,
-                                          unsigned int * /*indices*/) {
+                                          ParameterContainer &pc) {
     fptype ret = 0;
     dtime /= tau;
     ret += coshterm * cosh(ymixing * dtime);

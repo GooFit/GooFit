@@ -14,6 +14,8 @@ class ThreeGaussResolution : public MixingTimeResolution {
         fptype di1, fptype di2, fptype di3, fptype di4, fptype tau, fptype xmixing, fptype ymixing) const override;
     void createParameters(std::vector<unsigned int> &pindices, PdfBase *dis) override;
 
+    virtual void recursiveSetIndices();
+
   private:
     Variable *coreFraction;
     Variable *tailFraction;

@@ -31,4 +31,4 @@ class FCN : public Minuit2::FCNBase {
     /// Get a pointer to the parameters
     Params *GetParams();
 };
-}
+} // namespace GooFit

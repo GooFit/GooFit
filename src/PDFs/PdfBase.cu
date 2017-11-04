@@ -22,16 +22,24 @@ namespace GooFit {
 __host__ void PdfBase::copyParams(const std::vector<double> &pars) const {
     // copyParams method performs eponymous action!
 
-    for(unsigned int i = 0; i < pars.size(); ++i) {
-        host_params[i] = pars[i];
+    // for(unsigned int i = 0; i < pars.size(); ++i) {
+    //    host_parameters[parameterIdx + i + 1] = pars[i];
 
-        if(std::isnan(host_params[i])) {
-            std::cout << " agh, parameter is NaN, die " << i << std::endl;
-            GooFit::abort(__FILE__, __LINE__, "NaN in parameter");
-        }
+    //    if(std::isnan(host_parameters[i])) {
+    //        std::cout << " agh, parameter is NaN, die " << i << std::endl;
+    //        GooFit::abort(__FILE__, __LINE__, "NaN in parameter");
+    //    }
+    //}
+
+    for(int i = 0; i < parametersList.size(); i++) {
+        GOOFIT_TRACE("fitter index {}", parametersList[i]->getFitterIndex());
+        host_parameters[parametersIdx + i + 1] = pars[parametersList[i]->getFitterIndex()];
     }
 
-    MEMCPY_TO_SYMBOL(cudaArray, host_params, pars.size() * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    MEMCPY(d_parameters, host_parameters, totalParameters * sizeof(fptype), cudaMemcpyHostToDevice);
+
+    // recursiveSetIndices ();
+    // MEMCPY_TO_SYMBOL(cudaArray, host_params, pars.size()*sizeof(fptype), 0, cudaMemcpyHostToDevice);
 }
 
 __host__ void PdfBase::copyParams() {
@@ -39,20 +47,23 @@ __host__ void PdfBase::copyParams() {
     std::vector<Variable *> pars = getParameters();
     std::vector<double> values;
 
-    for(Variable *v : pars) {
-        int index = v->getIndex();
+    // for(Variable* v : pars) {
+    //    int index = v->getIndex();
 
-        if(index >= static_cast<int>(values.size()))
-            values.resize(index + 1);
+    //    if(index >= (int) values.size())
+    //        values.resize(index + 1);
 
-        values[index] = v->getValue();
-    }
+    //    values[index] = v->getValue();
+    //}
 
-    copyParams(values);
+    // copyParams(values);
+
+    updateParameters();
 }
 
 __host__ void PdfBase::copyNormFactors() const {
-    MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    // MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0,
+    // cudaMemcpyHostToDevice);
     cudaDeviceSynchronize(); // Ensure normalisation integrals are finished
 }
 
@@ -67,31 +78,134 @@ __host__ void PdfBase::initializeIndices(std::vector<unsigned int> pindices) {
 
     GOOFIT_DEBUG("Adding space for {} indices for {}", pindices.size(), getName());
 
-    if(totalParams + pindices.size() >= maxParams)
+    // TODO:We need to check parameters, constants, observables, and norms
+    if(totalParameters + pindices.size() >= maxParams)
         throw GooFit::GeneralError(
-            "totalParams {} + pindices {} must be less than {}", totalParams, pindices.size(), maxParams);
-    host_indices[totalParams] = pindices.size();
+            "totalParams {} + pindices {} must be less than {}", totalParameters, pindices.size(), maxParams);
 
-    for(int i = 1; i <= host_indices[totalParams]; ++i) {
-        GOOFIT_DEBUG("Setting host index {} to {}", totalParams + i, i - 1);
-        host_indices[totalParams + i] = pindices[i - 1];
+    // We are formulating the four buffers.  We first populate the lists based on what is currently in the appropriate
+    // PDF buffers.  NOTE: This is not the actual buffer layout!!!!!!!  We are allocating placeholders for each PDF, but
+    // they will be re-arranged when the tree is flattened.  Please follow  recursiveSetIndices()
+
+    // stick placeholders into our parameter array
+    host_parameters[totalParameters] = parametersList.size();
+    parametersIdx                    = totalParameters;
+    totalParameters++;
+    for(int i = 0; i < parametersList.size(); i++) {
+        host_parameters[totalParameters] = parametersList[i]->getValue();
+        totalParameters++;
     }
 
-    GOOFIT_DEBUG(
-        "Setting host index {} to the num of observables, {}", totalParams + pindices.size() + 1, observables.size());
-    host_indices[totalParams + pindices.size() + 1] = observables.size();
+    // stick placeholders into our constants array
+    host_constants[totalConstants] = constantsList.size();
+    constantsIdx                   = totalConstants;
+    totalConstants++;
+    for(int i = 0; i < constantsList.size(); i++) {
+        host_constants[totalConstants] = constantsList[i];
+        totalConstants++;
+    }
 
-    parameters = totalParams;
-    totalParams += (2 + pindices.size() + observables.size());
-    GOOFIT_DEBUG("New total parameters: {}", totalParams);
+    // stick placeholders into our observable array
+    host_observables[totalObservables] = observablesList.size();
+    observablesIdx                     = totalObservables;
+    totalObservables++;
+    for(int i = 0; i < observablesList.size(); i++) {
+        host_observables[totalObservables] = observablesList[i]->getValue();
+        totalObservables++;
+    }
 
-    if(totalParams >= maxParams)
+    // stick placeholders into our normalisation array
+    host_normalisations[totalNormalisations] = 1;
+    normalIdx                                = totalNormalisations;
+    totalNormalisations++;
+    host_normalisations[totalNormalisations] = 0;
+    totalNormalisations++;
+
+    if(totalParameters >= maxParams)
         throw GooFit::GeneralError("{}: Set too many parameters, GooFit array more than {}. Increase max at compile "
                                    "time with -DGOOFIT_MAXPAR=N.",
                                    getName(),
                                    maxParams);
 
-    MEMCPY_TO_SYMBOL(paramIndices, host_indices, totalParams * sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
+    // we rely on GooPdf::set to copy these values, this copyies every PDF which is unnecessary.
+    // MEMCPY_TO_SYMBOL(paramIndices, host_indices, totalParams*sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
+}
+
+__host__ void PdfBase::recursiveSetIndices() {
+    // This function always needs to be overloaded.  The key component missing is assigning the function pointer, which
+    // is only available  in each source file.  Otherwise, we will set the values as follows:
+
+    // This is a helper function if the routine does nothing special.
+    // populateArrays ();
+}
+
+__host__ void PdfBase::updateVariable(Variable *var, fptype newValue) {
+    for(int i = 0; i < parametersList.size(); i++) {
+        if(parametersList[i]->getName() == var->getName())
+            parametersList[i]->setValue(newValue);
+    }
+
+    for(int i = 0; i < components.size(); i++)
+        components[i]->updateVariable(var, newValue);
+}
+
+__host__ void PdfBase::updateParameters() {
+    for(int i = 0; i < parametersList.size(); i++)
+        host_parameters[parametersIdx + i + 1] = parametersList[i]->getValue();
+
+    for(int i = 0; i < components.size(); i++)
+        components[i]->updateParameters();
+
+    // we need to memcpy to device.
+    MEMCPY_TO_SYMBOL(d_parameters, host_parameters, totalParameters * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+}
+
+__host__ void PdfBase::populateArrays() {
+    // populate all the arrays
+    GOOFIT_DEBUG("Populating Arrays for {}", getName());
+
+    // reconfigure the host_parameters array with the new indexing scheme.
+    GOOFIT_TRACE("host_parameters[{}] = {}", totalParameters, parametersList.size());
+    host_parameters[totalParameters] = parametersList.size();
+    parametersIdx                    = totalParameters;
+    totalParameters++;
+    for(int i = 0; i < parametersList.size(); i++) {
+        GOOFIT_TRACE("host_parameters[{}] = {}", totalParameters, parametersList[i]->getValue());
+        host_parameters[totalParameters] = parametersList[i]->getValue();
+        totalParameters++;
+    }
+
+    GOOFIT_TRACE("host_constants[{}] = {}", totalConstants, constantsList.size());
+    host_constants[totalConstants] = constantsList.size();
+    constantsIdx                   = totalConstants;
+    totalConstants++;
+    for(int i = 0; i < constantsList.size(); i++) {
+        GOOFIT_TRACE("host_constants[{}] = {}", totalConstants, constantsList[i]);
+        host_constants[totalConstants] = constantsList[i];
+        totalConstants++;
+    }
+
+    GOOFIT_TRACE("host_observables[{}] = {}", totalObservables, observablesList.size());
+    host_observables[totalObservables] = observablesList.size();
+    observablesIdx                     = totalObservables;
+    totalObservables++;
+    for(int i = 0; i < observablesList.size(); i++) {
+        GOOFIT_TRACE("host_observables[{}] = {}", totalObservables, observablesList[i]->getObservableIndex());
+        host_observables[totalObservables] = observablesList[i]->getObservableIndex();
+        totalObservables++;
+    }
+
+    GOOFIT_TRACE("host_normalisations[{}] = {}", totalNormalisations, 1);
+    host_normalisations[totalNormalisations] = 1;
+    normalIdx                                = totalNormalisations++;
+    GOOFIT_TRACE("host_normalisations[{}] = {}", totalNormalisations, 0);
+    host_normalisations[totalNormalisations] = 0;
+    totalNormalisations++;
+
+    for(unsigned int i = 0; i < components.size(); i++)
+        components[i]->recursiveSetIndices();
+
+    generateNormRange();
 }
 
 __host__ void PdfBase::setData(std::vector<std::map<Variable *, fptype>> &data) {
@@ -103,62 +217,52 @@ __host__ void PdfBase::setData(std::vector<std::map<Variable *, fptype>> &data) 
     }
 
     setIndices();
-    int dimensions = observables.size();
+    int dimensions = observablesList.size();
     numEntries     = data.size();
     numEvents      = numEntries;
 
     auto *host_array = new fptype[data.size() * dimensions];
 
     for(unsigned int i = 0; i < data.size(); ++i) {
-        for(Variable *v : observables) {
+        for(Variable *v : observablesList) {
             if(data[i].find(v) == data[i].end())
                 throw GooFit::GeneralError("Variable {} not found", v->getName());
-            host_array[i * dimensions + v->getIndex()] = data[i][v];
+            host_array[i * dimensions + v->getObservableIndex()] = data[i][v];
         }
     }
 
     gooMalloc(reinterpret_cast<void **>(&dev_event_array), dimensions * numEntries * sizeof(fptype));
     MEMCPY(dev_event_array, host_array, dimensions * numEntries * sizeof(fptype), cudaMemcpyHostToDevice);
-    MEMCPY_TO_SYMBOL(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    // MEMCPY_TO_SYMBOL(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice);
     delete[] host_array;
 }
 
-__host__ void PdfBase::recursiveSetIndices() {
-    for(auto &component : components) {
-        component->recursiveSetIndices();
-    }
-
-    int numParams = host_indices[parameters];
-    int counter   = 0;
-
-    for(Variable *v : observables) {
-        host_indices[parameters + 2 + numParams + counter] = v->getIndex();
-        GOOFIT_DEBUG("{} set index of {} to {} -> host {}",
-                     getName(),
-                     v->getName(),
-                     v->getIndex(),
-                     parameters + 2 + numParams + counter)
-        counter++;
-    }
-
-    generateNormRange();
-}
-
 __host__ void PdfBase::setIndices() {
-    int counter = 0;
-
-    for(Variable *v : observables) {
-        v->setIndex(counter++);
-    }
-
-    recursiveSetIndices();
-    MEMCPY_TO_SYMBOL(paramIndices, host_indices, totalParams * sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
-
-    // std::cout << "host_indices after " << getName() << " observable setIndices : ";
-    // for (int i = 0; i < totalParams; ++i) {
-    // std::cout << host_indices[i] << " ";
+    // for(Variable *v : observablesList) {
+    //    host_parameters[parametersIdx + 2 + numParams + counter] = v->getIndex();
+    //    GOOFIT_DEBUG("{} set index of {} to {} -> host {}",
+    //                 getName(),
+    //                 v->getName(),
+    //                 v->getIndex(),
+    //                 parameters + 2 + numParams + counter)
+    //    counter++;
     //}
-    // std::cout << std::endl;
+
+    // we should get the same amount after we flatten the tree!
+    int checkParams = totalParameters;
+
+    // Flatten the tree by re-running through the whole PDF with everything zero'd.
+    totalParameters      = 0;
+    totalConstants       = 0;
+    totalObservables     = 0;
+    totalNormalisations  = 0;
+    num_device_functions = 0;
+
+    // set all associated functions parameters, constants, etc.
+    recursiveSetIndices();
+
+    if(checkParams != totalParameters)
+        GOOFIT_DEBUG("Error!  checkParams({}) != totalParameters({})", checkParams, totalParameters);
 }
 
 __host__ void PdfBase::setData(DataSet *data) {
@@ -169,6 +273,9 @@ __host__ void PdfBase::setData(DataSet *data) {
         m_iEventsPerTask = 0;
     }
 
+    // fine to set static integer value for variables (prod->gauss [somVar->getObservableIndex()]
+    //                                                    ->exp [someVar->getObservableIndex()]
+    setupObservables();
     setIndices();
 
     UnbinnedDataSet *unbinned_data;
@@ -178,7 +285,7 @@ __host__ void PdfBase::setData(DataSet *data) {
         numEntries = data->getNumEvents();
         numEvents  = numEntries;
 
-        int dimensions = observables.size();
+        int dimensions = observablesList.size();
 
 #ifdef GOOFIT_MPI
         // This fetches our rank and the total number of processes in the MPI call
@@ -192,46 +299,43 @@ __host__ void PdfBase::setData(DataSet *data) {
         int *counts        = new int[numProcs];
         int *displacements = new int[numProcs];
 
-        for(int i     = 0; i < numProcs - 1; i++)
+        for(int i = 0; i < numProcs - 1; i++)
             counts[i] = perTask;
 
         counts[numProcs - 1] = numEntries - perTask * (numProcs - 1);
 
         displacements[0] = 0;
 
-        for(int i            = 1; i < numProcs; i++)
+        for(int i = 1; i < numProcs; i++)
             displacements[i] = displacements[i - 1] + counts[i - 1];
-
 #endif
 
         auto *host_array = new fptype[numEntries * dimensions];
 
 #ifdef GOOFIT_MPI
         // This is an array to track if we need to re-index the observable
-        int fixme[observables.size()];
-        memset(fixme, 0, sizeof(int) * observables.size());
+        int fixme[observablesList.size()];
+        memset(fixme, 0, sizeof(int) * observablesList.size());
 
         for(int i = 0; i < observables.size(); i++) {
             // We are casting the observable to a CountVariable
-            CountingVariable *c = dynamic_cast<CountingVariable *>(observables[i]);
+            CountingVariable *c = dynamic_cast<CountingVariable *>(observablesList[i]);
 
             // if it is true re-index
             if(c)
                 fixme[i] = 1;
         }
-
 #endif
 
         // Transfer into our whole buffer
         for(int i = 0; i < numEntries; ++i) {
-            for(Variable *v : observables) {
-                fptype currVal                             = unbinned_data->getValue(v, i);
-                host_array[i * dimensions + v->getIndex()] = currVal;
+            for(Variable *v : observablesList) {
+                fptype currVal                                       = unbinned_data->getValue(v, i);
+                host_array[i * dimensions + v->getObservableIndex()] = currVal;
             }
         }
 
 #ifdef GOOFIT_MPI
-
         // We will go through all of the events and re-index if appropriate
         for(int i = 1; i < numProcs; i++) {
             for(int j = 0; j < counts[i]; j++) {
@@ -251,7 +355,7 @@ __host__ void PdfBase::setData(DataSet *data) {
                host_array + mystart * dimensions,
                dimensions * mycount * sizeof(fptype),
                cudaMemcpyHostToDevice);
-        MEMCPY_TO_SYMBOL(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice);
+        // MEMCPY_TO_SYMBOL(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice);
         delete[] host_array;
 
         setNumPerTask(this, mycount);
@@ -259,15 +363,15 @@ __host__ void PdfBase::setData(DataSet *data) {
         delete[] counts;
         delete[] displacements;
 #else
-        gooMalloc(reinterpret_cast<void **>(&dev_event_array), dimensions * numEntries * sizeof(fptype));
+        gooMalloc((void **)&dev_event_array, dimensions * numEntries * sizeof(fptype));
         MEMCPY(dev_event_array, host_array, dimensions * numEntries * sizeof(fptype), cudaMemcpyHostToDevice);
-        MEMCPY_TO_SYMBOL(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice);
+        // MEMCPY_TO_SYMBOL(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice);
         delete[] host_array;
 #endif
     } else if((binned_data = dynamic_cast<BinnedDataSet *>(data))) {
         numEvents      = 0;
         numEntries     = binned_data->getNumBins();
-        int dimensions = 2 + observables.size(); // Bin center (x,y, ...), bin value, and bin volume.
+        int dimensions = 2 + observablesList.size(); // Bin center (x,y, ...), bin value, and bin volume.
 
         if(!fitControl->binnedFit())
             setFitControl(new BinnedNllFit());
@@ -284,49 +388,46 @@ __host__ void PdfBase::setData(DataSet *data) {
         int *counts        = new int[numProcs];
         int *displacements = new int[numProcs];
 
-        for(int i     = 0; i < numProcs - 1; i++)
+        for(int i = 0; i < numProcs - 1; i++)
             counts[i] = perTask;
 
         counts[numProcs - 1] = numEntries - perTask * (numProcs - 1);
 
         displacements[0] = 0;
 
-        for(int i            = 1; i < numProcs; i++)
+        for(int i = 1; i < numProcs; i++)
             displacements[i] = displacements[i - 1] + counts[i - 1];
-
 #endif
 
-        auto *host_array = new fptype[numEntries * dimensions];
+        fptype *host_array = new fptype[numEntries * dimensions];
 
 #ifdef GOOFIT_MPI
         // This is an array to track if we need to re-index the observable
         int fixme[observables.size()];
-        memset(fixme, 0, sizeof(int) * observables.size());
+        memset(fixme, 0, sizeof(int) * observablesList.size());
 
-        for(int i = 0; i < observables.size(); i++) {
+        for(int i = 0; i < observablesList.size(); i++) {
             // We are casting the observable to a CountVariable
-            CountingVariable *c = dynamic_cast<CountingVariable *>(observables[i]);
+            CountingVariable *c = dynamic_cast<CountingVariable *>(observablesList[i]);
 
             // if it is true re-index
             if(c)
                 fixme[i] = 1;
         }
-
 #endif
 
         for(unsigned int i = 0; i < numEntries; ++i) {
-            for(Variable *v : observables) {
-                host_array[i * dimensions + v->getIndex()] = binned_data->getBinCenter(v, i);
+            for(Variable *v : observablesList) {
+                host_array[i * dimensions + v->getObservableIndex()] = binned_data->getBinCenter(v, i);
             }
 
-            host_array[i * dimensions + observables.size() + 0] = binned_data->getBinContent(i);
-            host_array[i * dimensions + observables.size() + 1]
+            host_array[i * dimensions + observablesList.size() + 0] = binned_data->getBinContent(i);
+            host_array[i * dimensions + observablesList.size() + 1]
                 = fitControl->binErrors() ? binned_data->getBinError(i) : binned_data->getBinVolume(i);
             numEvents += binned_data->getBinContent(i);
         }
 
 #ifdef GOOFIT_MPI
-
         // We will go through all of the events and re-index if appropriate
         for(int i = 1; i < numProcs; i++) {
             for(int j = 0; j < counts[j]; j++) {
@@ -346,7 +447,7 @@ __host__ void PdfBase::setData(DataSet *data) {
                host_array + mystart * dimensions,
                dimensions * mycount * sizeof(fptype),
                cudaMemcpyHostToDevice);
-        MEMCPY_TO_SYMBOL(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice);
+        // MEMCPY_TO_SYMBOL(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice);
         delete[] host_array;
 
         setNumPerTask(this, mycount);
@@ -354,9 +455,9 @@ __host__ void PdfBase::setData(DataSet *data) {
         delete[] counts;
         delete[] displacements;
 #else
-        gooMalloc(reinterpret_cast<void **>(&dev_event_array), dimensions * numEntries * sizeof(fptype));
+        gooMalloc((void **)&dev_event_array, dimensions * numEntries * sizeof(fptype));
         MEMCPY(dev_event_array, host_array, dimensions * numEntries * sizeof(fptype), cudaMemcpyHostToDevice);
-        MEMCPY_TO_SYMBOL(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice);
+        // MEMCPY_TO_SYMBOL(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice);
         delete[] host_array;
 #endif
     } else
@@ -367,28 +468,31 @@ __host__ void PdfBase::generateNormRange() {
     if(normRanges)
         gooFree(normRanges);
 
-    gooMalloc(reinterpret_cast<void **>(&normRanges), 3 * observables.size() * sizeof(fptype));
+    gooMalloc(reinterpret_cast<void **>(&normRanges), 3 * observablesList.size() * sizeof(fptype));
 
-    auto *host_norms = new fptype[3 * observables.size()];
+    auto *host_norms = new fptype[3 * observablesList.size()];
     int counter      = 0; // Don't use index in this case to allow for, eg,
 
     // a single observable whose index is 1; or two observables with indices
     // 0 and 2. Make one array per functor, as opposed to variable, to make
     // it easy to pass MetricTaker a range without worrying about which parts
     // to use.
-    for(Variable *v : observables) {
+    for(Variable *v : observablesList) {
         host_norms[3 * counter + 0] = v->getLowerLimit();
         host_norms[3 * counter + 1] = v->getUpperLimit();
         host_norms[3 * counter + 2] = integrationBins > 0 ? integrationBins : v->getNumBins();
+        GOOFIT_TRACE("host_norms[{}] = {}", 3 * counter + 0, host_norms[3 * counter + 0]);
+        GOOFIT_TRACE("host_norms[{}] = {}", 3 * counter + 1, host_norms[3 * counter + 1]);
+        GOOFIT_TRACE("host_norms[{}] = {}", 3 * counter + 2, host_norms[3 * counter + 2]);
         counter++;
     }
 
-    MEMCPY(normRanges, host_norms, 3 * observables.size() * sizeof(fptype), cudaMemcpyHostToDevice);
+    MEMCPY(normRanges, host_norms, 3 * observablesList.size() * sizeof(fptype), cudaMemcpyHostToDevice);
     delete[] host_norms;
 }
 
 void PdfBase::clearCurrentFit() {
-    totalParams = 0;
+    totalParameters = 0;
     gooFree(dev_event_array);
     dev_event_array = nullptr;
 }

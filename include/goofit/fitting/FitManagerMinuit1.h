@@ -58,4 +58,4 @@ class FitManagerMinuit1 {
 
     Minuit1 minuit_;
 };
-}
+} // namespace GooFit

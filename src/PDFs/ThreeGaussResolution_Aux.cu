@@ -67,18 +67,16 @@ __device__ fptype device_threegauss_resolution(fptype coshterm,
                                                fptype xmixing,
                                                fptype ymixing,
                                                fptype sigma,
-                                               fptype *p,
-                                               unsigned int *indices) {
-    fptype coreFraction = RO_CACHE(p[RO_CACHE(indices[1])]);
-    // fptype tailFraction    = p[indices[2]];
-    fptype tailFraction    = (1 - coreFraction) * RO_CACHE(p[RO_CACHE(indices[2])]);
+                                               ParameterContainer &pc) {
+    fptype coreFraction    = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
+    fptype tailFraction    = (1 - coreFraction) * RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
     fptype outlFraction    = 1 - coreFraction - tailFraction;
-    fptype coreBias        = RO_CACHE(p[RO_CACHE(indices[3])]);
-    fptype coreScaleFactor = RO_CACHE(p[RO_CACHE(indices[4])]);
-    fptype tailBias        = RO_CACHE(p[RO_CACHE(indices[5])]);
-    fptype tailScaleFactor = RO_CACHE(p[RO_CACHE(indices[6])]);
-    fptype outlBias        = RO_CACHE(p[RO_CACHE(indices[7])]);
-    fptype outlScaleFactor = RO_CACHE(p[RO_CACHE(indices[8])]);
+    fptype coreBias        = RO_CACHE(pc.parameters[pc.parameterIdx + 3]);
+    fptype coreScaleFactor = RO_CACHE(pc.parameters[pc.parameterIdx + 4]);
+    fptype tailBias        = RO_CACHE(pc.parameters[pc.parameterIdx + 5]);
+    fptype tailScaleFactor = RO_CACHE(pc.parameters[pc.parameterIdx + 6]);
+    fptype outlBias        = RO_CACHE(pc.parameters[pc.parameterIdx + 7]);
+    fptype outlScaleFactor = RO_CACHE(pc.parameters[pc.parameterIdx + 8]);
 
     fptype cp1 = 0;
     fptype cp2 = 0;
@@ -107,6 +105,8 @@ __device__ fptype device_threegauss_resolution(fptype coshterm,
     ret -= 2 * sinhterm * _P3;
     ret -= 2 * sinterm * _P4; // Notice sign difference wrt to Mikhail's code, because I have AB* and he has A*B.
 
+    // pc.incrementIndex (1, 8, 0, 0, 1);
+
     // cuPrintf("device_threegauss_resolution %f %f %f %f %f\n", coshterm, costerm, sinhterm, sinterm, dtime);
     return ret;
 }
@@ -131,14 +131,26 @@ ThreeGaussResolution::~ThreeGaussResolution() = default;
 
 void ThreeGaussResolution::createParameters(std::vector<unsigned int> &pindices, PdfBase *dis) {
     pindices.push_back(8);
-    pindices.push_back(dis->registerParameter(coreFraction));
-    pindices.push_back(dis->registerParameter(tailFraction));
-    pindices.push_back(dis->registerParameter(coreBias));
-    pindices.push_back(dis->registerParameter(coreScaleFactor));
-    pindices.push_back(dis->registerParameter(tailBias));
-    pindices.push_back(dis->registerParameter(tailScaleFactor));
-    pindices.push_back(dis->registerParameter(outBias));
-    pindices.push_back(dis->registerParameter(outScaleFactor));
+    pindices.push_back(registerParameter(coreFraction));
+    pindices.push_back(registerParameter(tailFraction));
+    pindices.push_back(registerParameter(coreBias));
+    pindices.push_back(registerParameter(coreScaleFactor));
+    pindices.push_back(registerParameter(tailBias));
+    pindices.push_back(registerParameter(tailScaleFactor));
+    pindices.push_back(registerParameter(outBias));
+    pindices.push_back(registerParameter(outScaleFactor));
+}
+
+void ThreeGaussResolution::recursiveSetIndices() {
+    GET_FUNCTION_ADDR(ptr_to_threegauss);
+    host_function_table[num_device_functions] = host_fcn_ptr;
+    functionIdx                               = num_device_functions;
+    num_device_functions++;
+
+    // populate all the arrays
+    GOOFIT_DEBUG("Populating Arrays for {}(three_gauss_resolution)", getName());
+
+    populateArrays();
 }
 
 fptype ThreeGaussResolution::normalisation(

@@ -22,6 +22,8 @@ class DalitzPlotPdf : public GooPdf {
     __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 3);
     __host__ void setForceIntegrals(bool f = true) { forceRedoIntegrals = f; }
 
+    __host__ virtual void recursiveSetIndices();
+
   protected:
   private:
     DecayInfo *decayInfo;
@@ -42,16 +44,22 @@ class DalitzPlotPdf : public GooPdf {
     int cacheToUse;
     SpecialResonanceIntegrator ***integrators;
     SpecialResonanceCalculator **calculators;
+
+    unsigned int efficiencyFunction;
 };
 
 class SpecialResonanceIntegrator
-    : public thrust::unary_function<thrust::tuple<int, fptype *>, thrust::complex<fptype>> {
+    : public thrust::unary_function<thrust::tuple<int, fptype *, int>, thrust::complex<fptype>> {
   public:
     // Class used to calculate integrals of terms BW_i * BW_j^*.
     SpecialResonanceIntegrator(int pIdx, unsigned int ri, unsigned int rj);
-    __device__ thrust::complex<fptype> operator()(thrust::tuple<int, fptype *> t) const;
+    void setDalitzIndex(unsigned int id) { dalitz_i = id; }
+    void setResonanceIndex(unsigned int id) { resonance_i = id; }
+    void setEfficiencyIndex(unsigned int id) { resonance_j = id; }
+    __device__ thrust::complex<fptype> operator()(thrust::tuple<int, fptype *, int> t) const;
 
   private:
+    unsigned int dalitz_i;
     unsigned int resonance_i;
     unsigned int resonance_j;
     unsigned int parameters;
@@ -62,9 +70,12 @@ class SpecialResonanceCalculator
   public:
     // Used to create the cached BW values.
     SpecialResonanceCalculator(int pIdx, unsigned int res_idx);
+    void setDalitzIndex(unsigned int id) { dalitz_i = id; }
+    void setResonanceIndex(unsigned int id) { resonance_i = id; }
     __device__ thrust::complex<fptype> operator()(thrust::tuple<int, fptype *, int> t) const;
 
   private:
+    unsigned int dalitz_i;
     unsigned int resonance_i;
     unsigned int parameters;
 };

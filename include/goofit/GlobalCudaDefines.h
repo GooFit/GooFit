@@ -20,7 +20,7 @@ extern int host_callnumber;
 // Can't use void* because then the compiler doesn't know how to do pointer arithmetic.
 // This will fail if sizeof(char) is more than 1. But that should never happen, right?
 #define MEMCPY(target, source, count, direction) memcpy((char *)target, source, count)
-#define MEMCPY_TO_SYMBOL(target, source, count, offset, direction) memcpy(((char *)target) + offset, source, count)
+#define MEMCPY_TO_SYMBOL(target, source, count, offset, direction) memcpy(((char *)&target) + offset, source, count)
 #define MEMCPY_FROM_SYMBOL(target, source, count, offset, direction)                                                   \
     memcpy((char *)target, ((char *)source) + offset, count)
 #define GET_FUNCTION_ADDR(fname) host_fcn_ptr = (void *)fname
@@ -60,6 +60,13 @@ enum gooError { gooSuccess = 0, gooErrorMemoryAllocation };
 #define MEMCPY_FROM_SYMBOL(target, source, count, offset, direction)                                                   \
     cudaMemcpyFromSymbol(target, source, count, offset, direction)
 
+#define ERROR_CHECK(x)                                                                                                 \
+    {                                                                                                                  \
+        cudaError err = x;                                                                                             \
+        if(err != cudaSuccess)                                                                                         \
+            printf("CUDA Error: %s at %s:%i\n", cudaGetErrorString(err), __FILE__, __LINE__);                          \
+    }
+
 // For CUDA case, just use existing errors, renamed
 #include <driver_types.h> // Needed for cudaError_t
 
@@ -89,23 +96,23 @@ typedef float fptype;
 #define invRootPi 0.5641895835477563f
 
 #endif
-}
+} // namespace GooFit
 
 // Often faster than pow, and works with ints on CUDA<8
 #define POW2(x) ((x) * (x))
 #define POW3(x) ((x) * (x) * (x))
 
 #if !defined(__CUDA_ARCH__) || (__CUDA_ARCH__ < 350)
-template<typename T>
-T rsqrt(T val) {
+template <typename T>
+__host__ __device__ T rsqrt(T val) {
     return 1.0 / sqrt(val);
 }
 #endif
 
 // Fix for bug in pow(double,int) for CUDA 7 and 7.5
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA && __CUDACC_VER_MAJOR__ < 8
-template<typename T>
-T pow(T x, int y) {
+template <typename T>
+__host__ __device__ T pow(T x, int y) {
     return pow(x, (T)y);
 }
 #endif

@@ -10,6 +10,8 @@ class InterHistPdf : public GooPdf {
   public:
     InterHistPdf(std::string n, BinnedDataSet *x, std::vector<Variable *> params, std::vector<Variable *> obses);
     //__host__ virtual fptype normalize () const;
+    //
+    virtual void recursiveSetIndices();
 
   private:
     thrust::device_vector<fptype> *dev_base_histogram;

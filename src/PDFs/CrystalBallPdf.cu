@@ -3,23 +3,23 @@
 
 namespace GooFit {
 
-__device__ fptype device_CrystalBall(fptype *evt, fptype *p, unsigned int *indices) {
+__device__ fptype device_CrystalBall(fptype *evt, ParameterContainer &pc) {
     // Left-hand tail if alpha is less than 0,
     // right-hand tail if greater, pure Gaussian if 0.
     // return 1;
+    int id = RO_CACHE(pc.observables[pc.observableIdx + 1]);
 
-    fptype x     = evt[indices[2 + indices[0]]];
-    fptype mean  = p[indices[1]];
-    fptype sigma = p[indices[2]];
-    fptype alpha = p[indices[3]];
-    fptype power = p[indices[4]];
+    fptype x     = evt[id];
+    fptype mean  = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
+    fptype sigma = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
+    fptype alpha = RO_CACHE(pc.parameters[pc.parameterIdx + 3]);
+    fptype power = RO_CACHE(pc.parameters[pc.parameterIdx + 4]);
     fptype rx    = (sigma != 0) ? (x - mean) / sigma : 0;
     fptype ret   = 0;
 
     if((alpha > 0 && rx <= alpha) || // Right-hand tail, in Gaussian region
-       (alpha < 0 && rx >= alpha)
-       ||              // Left-hand tail, in Gaussian region
-       (alpha == 0)) { // Pure Gaussian
+       (alpha < 0 && rx >= alpha) || // Left-hand tail, in Gaussian region
+       (alpha == 0)) {               // Pure Gaussian
         ret = exp(-0.5 * rx * rx);
     } else { // Tail part
         fptype n_over_alpha = power / alpha;
@@ -29,6 +29,8 @@ __device__ fptype device_CrystalBall(fptype *evt, fptype *p, unsigned int *indic
         d                   = (d != 0) ? n_over_alpha / d : 0;
         ret                 = a * pow(d, power);
     }
+
+    pc.incrementIndex(1, 4, 0, 1, 1);
 
     // if ((0 == THREADIDX) && (0 == BLOCKIDX)) printf("device_CB: %f %f %f %f %f %f\n", x, mean, sigma, alpha, power,
     // ret);
@@ -53,6 +55,16 @@ __host__ CrystalBallPdf::CrystalBallPdf(
     initialize(pindices);
 }
 
+__host__ void CrystalBallPdf::recursiveSetIndices() {
+    GET_FUNCTION_ADDR(ptr_to_CrystalBall);
+
+    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_CrystalBall");
+    host_function_table[num_device_functions] = host_fcn_ptr;
+    functionIdx                               = num_device_functions++;
+
+    populateArrays();
+}
+
 __host__ fptype CrystalBallPdf::integrate(fptype lo, fptype hi) const {
     static const fptype sqrtPiOver2 = 1.2533141373;
     static const fptype sqrt2       = 1.4142135624;
@@ -60,12 +72,10 @@ __host__ fptype CrystalBallPdf::integrate(fptype lo, fptype hi) const {
     fptype result = 0.0;
     bool useLog   = false;
 
-    unsigned int *indices = host_indices + parameters;
-
-    fptype mean  = host_params[indices[1]];
-    fptype sigma = host_params[indices[2]];
-    fptype alpha = host_params[indices[3]];
-    fptype power = host_params[indices[4]];
+    fptype mean  = parametersList[0]->getValue();
+    fptype sigma = parametersList[1]->getValue();
+    fptype alpha = parametersList[2]->getValue();
+    fptype power = parametersList[3]->getValue();
 
     if(fabs(power - 1.0) < 1.0e-05)
         useLog = true;

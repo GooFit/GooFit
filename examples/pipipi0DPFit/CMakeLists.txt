@@ -8,10 +8,11 @@ if(NOT EXISTS ${DATA_FILE})
         https://github.com/GooFit/GooFit/releases/download/v1.0.0/alltxtfiles4pipipi0DPFit.tgz
         ${DATA_FILE}
         EXPECTED_HASH SHA256=7c1a2ad656772d31fee9f6a43590e47574c9bdc32afce820820f30efca13803d
+        SHOW_PROGRESS
         )
 endif()
 
-if(NOT EXISTS 
+if(NOT EXISTS
         "${CMAKE_CURRENT_SOURCE_DIR}/signal_sigma_2slices_pdf.txt"
         )
     execute_process(

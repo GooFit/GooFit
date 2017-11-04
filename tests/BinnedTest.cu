@@ -21,10 +21,10 @@ TEST(BinnedFit, SimpleFit) {
     std::exponential_distribution<> d(1.5);
 
     // Independent variable.
-    Variable xvar{"xvar", 0, 10};
+    Observable xvar{"xvar", 0, 10};
 
     // Data set
-    BinnedDataSet data(&xvar);
+    BinnedDataSet data(xvar);
 
     // Generate toy events.
     for(int i = 0; i < 100000; ++i) {
@@ -39,7 +39,7 @@ TEST(BinnedFit, SimpleFit) {
     Variable alpha{"alpha", -2, 0.1, -10, 10};
 
     // GooPdf object
-    ExpPdf exppdf{"exppdf", &xvar, &alpha};
+    ExpPdf exppdf{"exppdf", xvar, alpha};
     exppdf.setData(&data);
 
     FitManager fitter{&exppdf};
@@ -57,11 +57,11 @@ TEST(BinnedFit, DualFit) {
     std::exponential_distribution<> dy(.75);
 
     // Independent variable.
-    Variable xvar{"xvar", 0, 10};
-    Variable yvar{"yvar", 0, 10};
+    Observable xvar{"xvar", 0, 10};
+    Observable yvar{"yvar", 0, 10};
 
     // Data set
-    BinnedDataSet data{{&xvar, &yvar}};
+    BinnedDataSet data{{xvar, yvar}};
 
     // Generate toy events.
     for(int i = 0; i < 200000; ++i) {
@@ -80,8 +80,8 @@ TEST(BinnedFit, DualFit) {
     Variable yalpha{"yalpha", -2, 0.1, -10, 10};
 
     // GooPdf object
-    ExpPdf xpdf{"xpdf", &xvar, &xalpha};
-    ExpPdf ypdf{"ypdf", &yvar, &yalpha};
+    ExpPdf xpdf{"xpdf", xvar, xalpha};
+    ExpPdf ypdf{"ypdf", yvar, yalpha};
     ProdPdf totalpdf{"totalpdf", {&xpdf, &ypdf}};
     totalpdf.setData(&data);
 
@@ -102,11 +102,11 @@ TEST(BinnedFit, DifferentFitterVariable) {
     std::exponential_distribution<> dy(.75);
 
     // Independent variable.
-    Variable xvar{"xvar", 0, 10};
-    Variable yvar{"yvar", 0, 10};
+    Observable xvar{"xvar", 0, 10};
+    Observable yvar{"yvar", 0, 10};
 
     // Data set
-    BinnedDataSet data{{&xvar, &yvar}, "Some name"};
+    BinnedDataSet data{{xvar, yvar}, "Some name"};
 
     // Generate toy events.
     for(int i = 0; i < 200000; ++i) {
@@ -125,8 +125,8 @@ TEST(BinnedFit, DifferentFitterVariable) {
     Variable yalpha{"yalpha", -2, 0.1, -10, 10};
 
     // GooPdf object
-    ExpPdf ypdf{"ypdf", &yvar, &yalpha};
-    ExpPdf xpdf{"xpdf", &xvar, &xalpha};
+    ExpPdf ypdf{"ypdf", yvar, yalpha};
+    ExpPdf xpdf{"xpdf", xvar, xalpha};
     ProdPdf totalpdf{"totalpdf", {&xpdf, &ypdf}};
     totalpdf.setData(&data);
 

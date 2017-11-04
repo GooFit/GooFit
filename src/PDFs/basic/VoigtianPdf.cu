@@ -314,8 +314,8 @@ __device__ fptype device_Voigtian(fptype *evt, fptype *p, unsigned int *indices)
 
 __device__ device_function_ptr ptr_to_Voigtian = device_Voigtian;
 
-__host__ VoigtianPdf::VoigtianPdf(std::string n, Variable *_x, Variable *m, Variable *s, Variable *w)
-    : GooPdf(_x, n) {
+__host__ VoigtianPdf::VoigtianPdf(std::string n, Observable _x, Variable m, Variable s, Variable w)
+    : GooPdf(n, _x) {
     std::vector<unsigned int> pindices;
     pindices.push_back(registerParameter(m));
     pindices.push_back(registerParameter(s));

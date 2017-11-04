@@ -36,17 +36,16 @@ __device__ fptype device_CrystalBall(fptype *evt, fptype *p, unsigned int *indic
 
 __device__ device_function_ptr ptr_to_CrystalBall = device_CrystalBall;
 
+__host__ CrystalBallPdf::CrystalBallPdf(std::string n, Observable _x, Variable mean, Variable sigma, Variable alpha)
+    : CrystalBallPdf(n, _x, mean, sigma, alpha, Variable(n + "_n", 2)) {}
+
 __host__ CrystalBallPdf::CrystalBallPdf(
-    std::string n, Variable *_x, Variable *mean, Variable *sigma, Variable *alpha, Variable *power)
-    : GooPdf(_x, n) {
+    std::string n, Observable _x, Variable mean, Variable sigma, Variable alpha, Variable power)
+    : GooPdf(n, _x) {
     std::vector<unsigned int> pindices;
     pindices.push_back(registerParameter(mean));
     pindices.push_back(registerParameter(sigma));
     pindices.push_back(registerParameter(alpha));
-
-    if(!power)
-        power = new Variable(n + "_n", 2);
-
     pindices.push_back(registerParameter(power));
     GET_FUNCTION_ADDR(ptr_to_CrystalBall);
     initialize(pindices);

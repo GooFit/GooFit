@@ -61,9 +61,9 @@ if(CMAKE_VERSION VERSION_LESS 3.9)
     set(CMAKE_MODULE_PATH  "${PROJECT_SOURCE_DIR}/extern/cuda_support" ${CMAKE_MODULE_PATH})
 endif()
 
-if(CMAKE_VERSION VERSION_GREATER 3.6)
 # Add clang-tidy if available
-option(GOOFIT_TIDY_FIX "Perform fixes for Clang-Tidy - changes source inplace" OFF)
+if(CMAKE_VERSION VERSION_GREATER 3.6)
+    option(GOOFIT_TIDY_FIX "Perform fixes for Clang-Tidy - changes source inplace" OFF)
     find_program(
         CLANG_TIDY_EXE
         NAMES "clang-tidy"

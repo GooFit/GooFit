@@ -10,9 +10,9 @@ void init_BinnedDataSet(py::module &m) {
     py::class_<BinnedDataSet, DataSet>(m, "BinnedDataSet")
         .def(py::init([](py::args args, py::kwargs kwargs) {
             std::string name;
-            std::vector<Variable *> vars;
+            std::vector<Observable> vars;
             for(auto arg : args)
-                vars.push_back(arg.cast<Variable *>());
+                vars.push_back(arg.cast<Observable>());
             if(kwargs.contains("name"))
                 name = kwargs["name"].cast<std::string>();
             return new BinnedDataSet(vars, name);

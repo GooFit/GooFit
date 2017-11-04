@@ -41,8 +41,8 @@ class ResonancePdf : public GooPdf {
 
   protected:
     /// Special constructor that subclasses use
-    ResonancePdf(std::string name, Variable *ar, Variable *ai)
-        : GooPdf(nullptr, name)
+    ResonancePdf(std::string name, Variable ar, Variable ai)
+        : GooPdf(name)
         , amp_real(ar)
         , amp_imag(ai) {
         // Dummy index for constants - won't use it, but calling
@@ -52,8 +52,8 @@ class ResonancePdf : public GooPdf {
 
     void setConstantIndex(unsigned int idx) { host_indices[parameters + 1] = idx; }
 
-    Variable *amp_real;
-    Variable *amp_imag;
+    Variable amp_real;
+    Variable amp_imag;
 
     std::vector<unsigned int> pindices;
 
@@ -65,10 +65,10 @@ namespace Resonances {
 class RBW : public ResonancePdf {
   public:
     RBW(std::string name,
-        Variable *ar,
-        Variable *ai,
-        Variable *mass,
-        Variable *width,
+        Variable ar,
+        Variable ai,
+        Variable mass,
+        Variable width,
         unsigned int sp,
         unsigned int cyc,
         bool symmDP = false);
@@ -79,10 +79,10 @@ class RBW : public ResonancePdf {
 class LASS : public ResonancePdf {
   public:
     LASS(std::string name,
-         Variable *ar,
-         Variable *ai,
-         Variable *mass,
-         Variable *width,
+         Variable ar,
+         Variable ai,
+         Variable mass,
+         Variable width,
          unsigned int sp,
          unsigned int cyc,
          bool symmDP = false);
@@ -93,10 +93,10 @@ class LASS : public ResonancePdf {
 class GS : public ResonancePdf {
   public:
     GS(std::string name,
-       Variable *ar,
-       Variable *ai,
-       Variable *mass,
-       Variable *width,
+       Variable ar,
+       Variable ai,
+       Variable mass,
+       Variable width,
        unsigned int sp,
        unsigned int cyc,
        bool symmDP = false);
@@ -107,11 +107,11 @@ class GS : public ResonancePdf {
 class FLATTE : public ResonancePdf {
   public:
     FLATTE(std::string name,
-           Variable *ar,
-           Variable *ai,
-           Variable *mean,
-           Variable *g1,
-           Variable *rg2og1,
+           Variable ar,
+           Variable ai,
+           Variable mean,
+           Variable g1,
+           Variable rg2og1,
            unsigned int cyc,
            const bool symmDP);
     ~FLATTE() override = default;
@@ -120,14 +120,14 @@ class FLATTE : public ResonancePdf {
 /// Gaussian constructor
 class Gauss : public ResonancePdf {
   public:
-    Gauss(std::string name, Variable *ar, Variable *ai, Variable *mean, Variable *sigma, unsigned int cyc);
+    Gauss(std::string name, Variable ar, Variable ai, Variable mean, Variable sigma, unsigned int cyc);
     ~Gauss() override = default;
 };
 
 /// Nonresonant constructor
 class NonRes : public ResonancePdf {
   public:
-    NonRes(std::string name, Variable *ar, Variable *ai);
+    NonRes(std::string name, Variable ar, Variable ai);
     ~NonRes() override = default;
 };
 
@@ -135,11 +135,11 @@ class NonRes : public ResonancePdf {
 class Spline : public ResonancePdf {
   public:
     Spline(std::string name,
-           Variable *ar,
-           Variable *ai,
+           Variable ar,
+           Variable ai,
            std::vector<fptype> &HH_bin_limits,
-           std::vector<Variable *> &pwa_coefs_reals,
-           std::vector<Variable *> &pwa_coefs_imags,
+           std::vector<Variable> &pwa_coefs_reals,
+           std::vector<Variable> &pwa_coefs_imags,
            unsigned int cyc,
            const bool symmDP = false);
     ~Spline() override = default;

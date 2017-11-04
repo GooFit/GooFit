@@ -45,7 +45,7 @@ double novosib(double x, double peak, double width, double tail) {
 
 TCanvas *foo = 0;
 
-void fitAndPlot(GooPdf *total, UnbinnedDataSet *data, TH1F &dataHist, Variable *xvar, const char *fname) {
+void fitAndPlot(GooPdf *total, UnbinnedDataSet *data, TH1F &dataHist, Observable xvar, const char *fname) {
     total->setData(data);
     FitManager fitter(total);
     fitter.fit();
@@ -53,14 +53,14 @@ void fitAndPlot(GooPdf *total, UnbinnedDataSet *data, TH1F &dataHist, Variable *
     if(!fitter)
         std::exit(fitter);
 
-    TH1F pdfHist("pdfHist", "", xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
+    TH1F pdfHist("pdfHist", "", xvar.getNumBins(), xvar.getLowerLimit(), xvar.getUpperLimit());
     pdfHist.SetStats(false);
 
     UnbinnedDataSet grid(xvar);
-    double step = (xvar->getUpperLimit() - xvar->getLowerLimit()) / xvar->getNumBins();
+    double step = (xvar.getUpperLimit() - xvar.getLowerLimit()) / xvar.getNumBins();
 
-    for(int i = 0; i < xvar->getNumBins(); ++i) {
-        xvar->setValue(xvar->getLowerLimit() + (i + 0.5) * step);
+    for(int i = 0; i < xvar.getNumBins(); ++i) {
+        xvar.setValue(xvar.getLowerLimit() + (i + 0.5) * step);
         grid.addEvent();
     }
 
@@ -71,11 +71,11 @@ void fitAndPlot(GooPdf *total, UnbinnedDataSet *data, TH1F &dataHist, Variable *
 
     for(int i = 0; i < grid.getNumEvents(); ++i) {
         grid.loadEvent(i);
-        pdfHist.Fill(xvar->getValue(), pdfVals[0][i]);
+        pdfHist.Fill(xvar.getValue(), pdfVals[0][i]);
         totalPdf += pdfVals[0][i];
     }
 
-    for(int i = 0; i < xvar->getNumBins(); ++i) {
+    for(int i = 0; i < xvar.getNumBins(); ++i) {
         double val = pdfHist.GetBinContent(i + 1);
         val /= totalPdf;
         val *= data->getNumEvents();
@@ -118,8 +118,8 @@ int main(int argc, char **argv) {
     gStyle->SetPalette(1, 0);
 
     // Independent variable.
-    Variable *xvar = new Variable("xvar", -100, 100);
-    xvar->setNumBins(1000); // For such a large range, want more bins for better accuracy in normalisation.
+    Observable xvar("xvar", -100, 100);
+    xvar.setNumBins(1000); // For such a large range, want more bins for better accuracy in normalisation.
 
     // Data sets for the three fits.
     UnbinnedDataSet landdata(xvar);
@@ -127,9 +127,9 @@ int main(int argc, char **argv) {
     UnbinnedDataSet novodata(xvar);
 
     // Histograms for showing the fit.
-    TH1F landHist("landHist", "", xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
-    TH1F bifgHist("bifgHist", "", xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
-    TH1F novoHist("novoHist", "", xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
+    TH1F landHist("landHist", "", xvar.getNumBins(), xvar.getLowerLimit(), xvar.getUpperLimit());
+    TH1F bifgHist("bifgHist", "", xvar.getNumBins(), xvar.getLowerLimit(), xvar.getUpperLimit());
+    TH1F novoHist("novoHist", "", xvar.getNumBins(), xvar.getLowerLimit(), xvar.getUpperLimit());
     landHist.SetStats(false);
     bifgHist.SetStats(false);
     novoHist.SetStats(false);
@@ -138,7 +138,7 @@ int main(int argc, char **argv) {
 
     double maxNovo = 0;
 
-    for(double x = xvar->getLowerLimit(); x < xvar->getUpperLimit(); x += 0.01) {
+    for(double x = xvar.getLowerLimit(); x < xvar.getUpperLimit(); x += 0.01) {
         double curr = novosib(x, 0.3, 0.5, 1.0);
 
         if(curr < maxNovo)
@@ -158,9 +158,9 @@ int main(int argc, char **argv) {
     while(landdata.getNumEvents() < numevents) {
         // Landau
         try {
-            xvar->setValue(donram.Landau(20, 1));
+            xvar.setValue(donram.Landau(20, 1));
             landdata.addEvent();
-            landHist.Fill(xvar->getValue());
+            landHist.Fill(xvar.getValue());
         } catch(const GooFit::OutOfRange &) {
         }
     }
@@ -171,51 +171,51 @@ int main(int argc, char **argv) {
         if(donram.Uniform() < (leftIntegral / totalIntegral)) {
             do {
                 val = donram.Gaus(bifpoint, rightSigma);
-            } while(val < bifpoint || val > xvar->getUpperLimit());
-            xvar->setValue(val);
+            } while(val < bifpoint || val > xvar.getUpperLimit());
+            xvar.setValue(val);
 
         } else {
             do {
                 val = donram.Gaus(bifpoint, leftSigma);
-            } while(val > bifpoint || val < xvar->getLowerLimit());
-            xvar->setValue(val);
+            } while(val > bifpoint || val < xvar.getLowerLimit());
+            xvar.setValue(val);
         }
 
         bifgdata.addEvent();
-        bifgHist.Fill(xvar->getValue());
+        bifgHist.Fill(xvar.getValue());
     }
 
     while(novodata.getNumEvents() < numevents) {
         // And Novosibirsk.
         while(true) {
-            xvar->setValue(donram.Uniform(xvar->getLowerLimit(), xvar->getUpperLimit()));
+            xvar.setValue(donram.Uniform(xvar.getLowerLimit(), xvar.getUpperLimit()));
             double y = donram.Uniform(0, maxNovo);
 
-            if(y < novosib(xvar->getValue(), 0.3, 0.5, 1.0))
+            if(y < novosib(xvar.getValue(), 0.3, 0.5, 1.0))
                 break;
         }
 
         novodata.addEvent();
-        novoHist.Fill(xvar->getValue());
+        novoHist.Fill(xvar.getValue());
     }
 
     foo = new TCanvas();
 
-    Variable *mpv   = new Variable("mpv", 40, 0, 150);
-    Variable *sigma = new Variable("sigma", 5, 0, 30);
-    GooPdf *landau  = new LandauPdf("landau", xvar, mpv, sigma);
+    Variable mpv("mpv", 40, 0, 150);
+    Variable sigma("sigma", 5, 0, 30);
+    GooPdf *landau = new LandauPdf("landau", xvar, mpv, sigma);
     fitAndPlot(landau, &landdata, landHist, xvar, "landau.png");
 
-    Variable *nmean = new Variable("nmean", 0.4, -10.0, 10.0);
-    Variable *nsigm = new Variable("nsigm", 0.6, 0.0, 1.0);
-    Variable *ntail = new Variable("ntail", 1.1, 0.1, 0.0, 3.0);
-    GooPdf *novo    = new NovosibirskPdf("novo", xvar, nmean, nsigm, ntail);
+    Variable nmean("nmean", 0.4, -10.0, 10.0);
+    Variable nsigm("nsigm", 0.6, 0.0, 1.0);
+    Variable ntail("ntail", 1.1, 0.1, 0.0, 3.0);
+    GooPdf *novo = new NovosibirskPdf("novo", xvar, nmean, nsigm, ntail);
     fitAndPlot(novo, &novodata, novoHist, xvar, "novo.png");
 
-    Variable *gmean = new Variable("gmean", 3.0, 1, -15, 15);
-    Variable *lsigm = new Variable("lsigm", 10, 1, 10, 20);
-    Variable *rsigm = new Variable("rsigm", 20, 1, 10, 40);
-    GooPdf *bifur   = new BifurGaussPdf("bifur", xvar, gmean, lsigm, rsigm);
+    Variable gmean("gmean", 3.0, 1, -15, 15);
+    Variable lsigm("lsigm", 10, 1, 10, 20);
+    Variable rsigm("rsigm", 20, 1, 10, 40);
+    GooPdf *bifur = new BifurGaussPdf("bifur", xvar, gmean, lsigm, rsigm);
     fitAndPlot(bifur, &bifgdata, bifgHist, xvar, "bifur.png");
 
     return 0;

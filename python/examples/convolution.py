@@ -9,7 +9,7 @@ def cpu_bw(x, x0, gamma):
     ret /= ((x - x0) * (x - x0) + 0.25 * gamma * gamma)
     return ret
 
-xvar = Variable("xvar", -10, 10)
+xvar = Observable("xvar", -10, 10)
 gamma = Variable("gamma", 2, 0.1, 0.1, 5)
 sigma = Variable("sigma", 1.5, 0.1, 0.1, 5)
 x0 = Variable("x0", 0.2, 0.05, -1, 1)

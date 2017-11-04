@@ -7,10 +7,10 @@
 #include <goofit/detail/Abort.h>
 #include <goofit/detail/Macros.h>
 
+#include <algorithm>
 #include <map>
 #include <set>
 #include <vector>
-#include <algorithm>
 
 #ifdef ROOT_FOUND
 class TH1D;

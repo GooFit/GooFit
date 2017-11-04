@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['observable',['Observable',['../namespace_goo_fit.html#a2c2f0ee8099f209454e4feb2c0d291a6',1,'GooFit']]]
+  ['permutationiterator',['PermutationIterator',['../class_goo_fit_1_1strided__range.html#a1518f6a6cf44dc648413df301e86a21e',1,'GooFit::strided_range']]]
 ];

@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['nonres',['NonRes',['../class_goo_fit_1_1_resonances_1_1_non_res.html',1,'GooFit::Resonances::NonRes'],['../class_goo_fit_1_1_lineshapes_1_1_non_res.html',1,'GooFit::Lineshapes::NonRes']]],
+  ['nonres',['NonRes',['../class_goo_fit_1_1_lineshapes_1_1_non_res.html',1,'GooFit::Lineshapes::NonRes'],['../class_goo_fit_1_1_resonances_1_1_non_res.html',1,'GooFit::Resonances::NonRes']]],
   ['normintegrator',['NormIntegrator',['../class_goo_fit_1_1_norm_integrator.html',1,'GooFit']]],
   ['normintegrator_5ftd',['NormIntegrator_TD',['../class_goo_fit_1_1_norm_integrator___t_d.html',1,'GooFit']]],
   ['normlscalculator',['NormLSCalculator',['../class_goo_fit_1_1_norm_l_s_calculator.html',1,'GooFit']]],

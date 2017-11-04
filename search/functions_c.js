@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['landaupdf',['LandauPdf',['../class_goo_fit_1_1_landau_pdf.html#a1718e039e22a35c7f3798abde953f46a',1,'GooFit::LandauPdf']]],
-  ['lass',['LASS',['../class_goo_fit_1_1_lineshapes_1_1_l_a_s_s.html#a17f9cfb709dc72e2332244e00ed96d8e',1,'GooFit::Lineshapes::LASS::LASS()'],['../class_goo_fit_1_1_resonances_1_1_l_a_s_s.html#aeeba55b3bd95b5cb7eb338e74ff44668',1,'GooFit::Resonances::LASS::LASS()']]],
+  ['landaupdf',['LandauPdf',['../class_goo_fit_1_1_landau_pdf.html#a0a9e6cc5483865bd47b75634b1d8afdd',1,'GooFit::LandauPdf']]],
+  ['lass',['LASS',['../class_goo_fit_1_1_lineshapes_1_1_l_a_s_s.html#aa8ebcf91d7cf0f8045957dd8a21cff2f',1,'GooFit::Lineshapes::LASS::LASS()'],['../class_goo_fit_1_1_resonances_1_1_l_a_s_s.html#a4f8833d25420320a40d47697d4a38ad3',1,'GooFit::Resonances::LASS::LASS()']]],
   ['levicivita',['LeviCivita',['../namespace_goo_fit.html#af8e5594cb2e63079d530d899cc90ffa2',1,'GooFit::LeviCivita(const gpuLVec &amp;p1, const gpuLVec &amp;p2, const gpuLVec &amp;p3, const gpuLVec &amp;p4)'],['../namespace_goo_fit.html#aaeecb13ff35836de8be43ab76dbedf37',1,'GooFit::LeviCivita(const gpuLVec &amp;a, const gpuLVec &amp;b, const gpuLVec &amp;c)']]],
   ['lineshape',['Lineshape',['../class_goo_fit_1_1_lineshape.html#a0eefe78994d591fde77a3daa4cb7ef5a',1,'GooFit::Lineshape']]],
   ['loadevent',['loadEvent',['../class_goo_fit_1_1_unbinned_data_set.html#a74c2d5e2885e7309b2e78c8d5b511767',1,'GooFit::UnbinnedDataSet']]],

@@ -21,7 +21,6 @@ var menudata={children:[
 {text:"r",url:"namespacemembers.html#index_r"},
 {text:"s",url:"namespacemembers.html#index_s"},
 {text:"t",url:"namespacemembers.html#index_t"},
-{text:"v",url:"namespacemembers.html#index_v"},
 {text:"w",url:"namespacemembers.html#index_w"},
 {text:"y",url:"namespacemembers.html#index_y"}]},
 {text:"Functions",url:"namespacemembers_func.html",children:[

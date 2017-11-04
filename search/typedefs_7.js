@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['spin_5ffunction_5fptr',['spin_function_ptr',['../namespace_goo_fit.html#af3613be9d4d0ac6e4c1be19876527861',1,'GooFit']]],
-  ['spline_5ft',['spline_t',['../namespace_goo_fit_1_1_lineshapes.html#a50bf28842be2e5fac0f30e9905675b8a',1,'GooFit::Lineshapes']]]
+  ['threecomplex',['ThreeComplex',['../namespace_goo_fit.html#a33b5940aec0fb0bc697cf2c02ad6a34a',1,'GooFit']]],
+  ['transformiterator',['TransformIterator',['../class_goo_fit_1_1strided__range.html#a50c8278c79ddae1a390b32ca46aecc9b',1,'GooFit::strided_range']]]
 ];

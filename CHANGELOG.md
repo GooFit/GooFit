@@ -3,16 +3,21 @@
 
 
 GooFit now has working, fully supported Python bindings using PyBind11. All PDFs have been bound ([#92]). Python bindings now build by default if Python development files are found ([#93]). Pythonization additions, such as supporting the same shortcuts for Variables as C++, from/to numpy converters, and more, was added in ([#99], [#109]). Pip install is now supported using SciKit-Build, and source releases are being made on PyPI ([#107]). The build will use CUDA if found, and OpenMP otherwise.
-Many examples converted ([#118])
+Many examples converted ([#118], [#120])
 
 Other Python additions:
 * Live printout in Python Notebooks ([#114])
 * Minuit2 wrapper started ([#115])
 
+Major changes:
+* `Observable`s are now their own class, and `CountingVariable` is now `EventNumber` ([#123])
+* Variables are now passed by copy everywhere, handling smart pointers internally ([#124])
+* DecayInfo renamed and split ([#124])
+* Resonances and Lineshapes are now classes instead of using enums or ordering ([#119])
+
 
 Other changes include:
 
-* Resonances and Lineshapes are now classes instead of using enums or ordering ([#119])
 * New `ResonancePDF` types ([#114])
 * Spline, KMatrix, FOCUS Lineshapes added, untested ([#119])
 * TravisCI now uses Trusty ([#98]), performs style checks ([#117]), and runs all examples ([#114]).
@@ -40,7 +45,10 @@ Other changes include:
 [#117]: https://github.com/GooFit/GooFit/pull/117
 [#118]: https://github.com/GooFit/GooFit/pull/118
 [#119]: https://github.com/GooFit/GooFit/pull/119
+[#120]: https://github.com/GooFit/GooFit/pull/120
 [#122]: https://github.com/GooFit/GooFit/pull/122
+[#123]: https://github.com/GooFit/GooFit/pull/123
+[#124]: https://github.com/GooFit/GooFit/pull/124
 
 
 ## v2.0.0: C++11 and CMake

@@ -4,7 +4,7 @@ from goofit import *
 import numpy as np
 
 
-xvar = Variable("xvar", -5, 5)
+xvar = Observable("xvar", -5, 5)
 
 data = UnbinnedDataSet(xvar)
 

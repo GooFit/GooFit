@@ -7,7 +7,7 @@ import numpy as np
 import math
 
 
-decayTime  = Variable("decayTime",0)
+decayTime  = Observable("decayTime",0,10)
 constaCoef = Variable("constaCoef",0)
 linearCoef = Variable("linearCoef",0)
 secondCoef = Variable("secondCoef",0)
@@ -155,10 +155,6 @@ def fitRatioCPU(rsEvts, wsEvts):
 
 def main():
     print("main")
-    #Time is in units of lifetime
-    decayTime = Variable("decayTime", 100, 0, 10)
-    num_bins = 100
-    decayTime.numbins = num_bins
     rSubD = 0.03
     rBarD = 0.03
     delta = 0

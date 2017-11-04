@@ -80,15 +80,13 @@ def main():
     numevents = 100000
 
     # Independent variable.
-    xvar = Variable("xvar", -100, 100)
+    xvar = Observable("xvar", -100, 100)
     xvar.numbins = 1000  # For such a large range, want more bins for better accuracy in normalisation.
 
     # Data sets for the three fits.
     landdata = UnbinnedDataSet(xvar)
     bifgdata = UnbinnedDataSet(xvar)
     novodata = UnbinnedDataSet(xvar)
-
-
 
     maxNovo = 0
     x = xvar.lowerlimit

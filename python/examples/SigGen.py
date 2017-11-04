@@ -8,7 +8,7 @@ _mD0       = 1.8645
 piPlusMass = 0.13957018
 KmMass     =.493677
 
-DK3P_DI = DecayInfo_DP()
+DK3P_DI = DecayInfo4()
 DK3P_DI.meson_radius = 1.5
 DK3P_DI.particle_masses = (_mD0,piPlusMass,piPlusMass,KmMass,piPlusMass)
 
@@ -98,12 +98,12 @@ Bose_symmetrized_A1RD = Amplitude(
 
 DK3P_DI.amplitudes = (Bose_symmetrized_KF,Bose_symmetrized_AMP_S,Bose_symmetrized_AMP_P,Bose_symmetrized_AMP_D,Bose_symmetrized_KK,Bose_symmetrized_K1R,Bose_symmetrized_A1R,Bose_symmetrized_A1RD)
 
-m12                 = Variable("m12", 0, 3)
-m34                 = Variable("m34", 0, 3)
-cos12               = Variable("cos12", -1, 1)
-cos34               = Variable("m12", -1, 1)
-phi                 = Variable("phi", -3.5, 3.5)
-eventNumber         = CountingVariable("eventNumber", 0, INT_MAX)
+m12                 = Observable("m12", 0, 3)
+m34                 = Observable("m34", 0, 3)
+cos12               = Observable("cos12", -1, 1)
+cos34               = Observable("m12", -1, 1)
+phi                 = Observable("phi", -3.5, 3.5)
+eventNumber         = EventNumber("eventNumber", 0, INT_MAX)
 constantOne         = Variable("constantOne", 1)
 constantZero        = Variable("constantZero", 0)
 

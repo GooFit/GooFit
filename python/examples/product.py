@@ -7,10 +7,10 @@ import math
 from random import *
 
 xdata = np.random.exponential(size=100000)
-xvar = Variable("xvar", 0, np.max(xdata) + 1)
+xvar = Observable("xvar", 0, np.max(xdata) + 1)
 
 ydata = np.random.exponential(size=100000)
-yvar = Variable("yvar", 0, np.max(ydata) + 1)
+yvar = Observable("yvar", 0, np.max(ydata) + 1)
 
 varList = (xvar,yvar)
 

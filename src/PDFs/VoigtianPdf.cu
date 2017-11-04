@@ -47,16 +47,16 @@ __constant__ fptype e2[12] = {0.7551038420890235,
                               1.733038792213266e-15,
                               2.709954036083074e-18};
 
-__device__ thrust::complex<fptype> device_Faddeeva_2(const thrust::complex<fptype> &z) {
+__device__ fpcomplex device_Faddeeva_2(const fpcomplex &z) {
     fptype *n, *e, t, u, r, s, d, f, g, h;
-    thrust::complex<fptype> c, d2, v;
+    fpcomplex c, d2, v;
     int i;
 
     s = thrust::norm(z); // NB: norm2 is correct although CPU version calls the function 'norm'.
 
     if(s < 1e-7) {
         // use Pade approximation
-        thrust::complex<fptype> zz = z * z;
+        fpcomplex zz = z * z;
         v = exp(zz); // Note lower-case! This is our own already-templated exp function for thrust::complex, no need for
                      // float/double define.
         c  = C[0];
@@ -67,7 +67,7 @@ __device__ thrust::complex<fptype> device_Faddeeva_2(const thrust::complex<fptyp
             d2 = d2 * zz + D[i];
         }
 
-        return fptype(1.0) / v + thrust::complex<fptype>(0.0, M_2_SQRTPI) * c / d2 * z * v;
+        return fptype(1.0) / v + fpcomplex(0.0, M_2_SQRTPI) * c / d2 * z * v;
     }
 
     // use trapezoid rule
@@ -105,7 +105,7 @@ __device__ thrust::complex<fptype> device_Faddeeva_2(const thrust::complex<fptyp
 
     u = 1 / s;
 
-    c = r * thrust::complex<fptype>(z.imag() * (u + 2.0 * g), z.real() * (u + 2.0 * h));
+    c = r * fpcomplex(z.imag() * (u + 2.0 * g), z.real() * (u + 2.0 * h));
 
     if(z.imag() < M_2PI) {
         s = 2.0 / r;
@@ -118,22 +118,22 @@ __device__ thrust::complex<fptype> device_Faddeeva_2(const thrust::complex<fptyp
         u = 2.0 * z.real() * z.imag();
         h = cos(u);
         t = sin(u);
-        c += g * thrust::complex<fptype>((h * f - t * s), -(h * s + t * f));
+        c += g * fpcomplex((h * f - t * s), -(h * s + t * f));
     }
 
     return c;
 }
 
 #else
-__device__ thrust::complex<fptype> device_Faddeeva_2(const thrust::complex<fptype> &z) {
+__device__ fpcomplex device_Faddeeva_2(const fpcomplex &z) {
     fptype u, s, d, f, g, h;
-    thrust::complex<fptype> c, d2, v;
+    fpcomplex c, d2, v;
 
     s = norm2(z); // NB: norm2 is correct although CPU version calls the function 'norm'.
 
     if(s < 1e-7) {
         // use Pade approximation
-        thrust::complex<fptype> zz = z * z;
+        fpcomplex zz = z * z;
         v = exp(zz); // Note lower-case! This is our own already-templated exp function for thrust::complex, no need for
                      // float/double define.
         c  = C[0];
@@ -144,7 +144,7 @@ __device__ thrust::complex<fptype> device_Faddeeva_2(const thrust::complex<fptyp
             d2 = d2 * zz + D[i];
         }
 
-        return fptype(1.0) / v + thrust::complex<fptype>(0.0, M_2_SQRTPI) * c / d2 * z * v;
+        return fptype(1.0) / v + fpcomplex(0.0, M_2_SQRTPI) * c / d2 * z * v;
     }
 
     // use trapezoid rule
@@ -254,7 +254,7 @@ __device__ thrust::complex<fptype> device_Faddeeva_2(const thrust::complex<fptyp
     h += (s - currentN) * u;
 
     u = 1 / s;
-    c = r * thrust::complex<fptype>(z.imag * (u + 2.0 * g), z.real * (u + 2.0 * h));
+    c = r * fpcomplex(z.imag * (u + 2.0 * g), z.real * (u + 2.0 * h));
 
     if(z.imag < M_2PI) {
         s = 2.0 / r;
@@ -267,7 +267,7 @@ __device__ thrust::complex<fptype> device_Faddeeva_2(const thrust::complex<fptyp
         u = 2.0 * z.real * z.imag;
         h = cos(u);
         t = sin(u);
-        c += g * thrust::complex<fptype>((h * f - t * s), -(h * s + t * f));
+        c += g * fpcomplex((h * f - t * s), -(h * s + t * f));
     }
 
     return c;
@@ -315,8 +315,8 @@ __device__ fptype device_Voigtian(fptype *evt, ParameterContainer &pc) {
     c /= s;
     fptype a = 0.5 * c * w;
     fptype u = c * arg;
-    thrust::complex<fptype> z(u, a);
-    thrust::complex<fptype> v = device_Faddeeva_2(z);
+    fpcomplex z(u, a);
+    fpcomplex v = device_Faddeeva_2(z);
 
 #define rsqrtPi 0.5641895835477563
     return c * rsqrtPi * v.real();

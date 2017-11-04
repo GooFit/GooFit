@@ -28,7 +28,7 @@ TEST(IncoherentSumPdf, SimpleFit) {
     // Independent variable.
     Variable m12{"m12", 1, 0.1, -10, 10};
     Variable m13{"m13", 1, 0.1, -10, 10};
-    CountingVariable evtNum{"evtNum", 0, INT_MAX};
+    EventNumber evtNum{"evtNum", 0, INT_MAX};
 
     std::vector<Variable *> var_list;
     var_list.push_back(&m12);
@@ -52,7 +52,7 @@ TEST(IncoherentSumPdf, SimpleFit) {
     }
 
     // Fit parameter
-    DecayInfo di;
+    DecayInfo3 di;
     di.motherMass   = 1.86484;
     di.daug1Mass    = 0.1349766;
     di.daug2Mass    = 0.13957018;

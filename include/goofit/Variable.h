@@ -185,12 +185,12 @@ class Variable : public Indexable {
 
 /// This is used to track event number for MPI versions.
 /// A cast is done to know whether the values need to be fixed.
-class CountingVariable : public Variable {
+class EventNumber : public Variable {
   public:
     using Variable::Variable;
-    ~CountingVariable() override = default;
+    ~EventNumber() override = default;
     // These classes can not be duplicated
-    CountingVariable &operator=(CountingVariable &) = delete;
+    EventNumber &operator=(EventNumber &) = delete;
     /// Support var = 3
     void operator=(const fptype &val) { setValue(val); }
 };

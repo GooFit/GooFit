@@ -19,7 +19,7 @@ class SpecialIncoherentResonanceCalculator;
 class IncoherentSumPdf : public GooPdf {
   public:
     IncoherentSumPdf(
-        std::string n, Variable *m12, Variable *m13, CountingVariable *eventNumber, DecayInfo *decay, GooPdf *eff);
+        std::string n, Variable *m12, Variable *m13, EventNumber *eventNumber, DecayInfo3 *decay, GooPdf *eff);
     // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the
     // incoherent sum. The caching method requires that it be done this way or the ProdPdf
     // normalisation will get *really* confused and give wrong answers.
@@ -31,14 +31,14 @@ class IncoherentSumPdf : public GooPdf {
 
   protected:
   private:
-    DecayInfo *decayInfo;
+    DecayInfo3 *decayInfo;
     Variable *_m12;
     Variable *_m13;
     fptype *dalitzNormRange;
 
     // Following variables are useful if masses and widths, involved in difficult BW calculation,
     // change infrequently while amplitudes, only used in adding BW results together, change rapidly.
-    thrust::device_vector<thrust::complex<fptype>> *cachedResonances; // BW (and other) results for each event.
+    thrust::device_vector<fpcomplex> *cachedResonances; // BW (and other) results for each event.
     double *integrals; // Integrals of each BW resonance across the Daliz plot.
 
     bool *redoIntegral;
@@ -67,12 +67,12 @@ class SpecialIncoherentIntegrator : public thrust::unary_function<thrust::tuple<
 };
 
 class SpecialIncoherentResonanceCalculator
-    : public thrust::unary_function<thrust::tuple<int, fptype *, int>, thrust::complex<fptype>> {
+    : public thrust::unary_function<thrust::tuple<int, fptype *, int>, fpcomplex> {
   public:
     SpecialIncoherentResonanceCalculator(int pIdx, unsigned int res_idx);
     void setIncoherentIndex(const unsigned int idx) { incoherentSum = idx; }
     void setResonanceIndex(const unsigned int res) { resonance_i = res; }
-    __device__ thrust::complex<fptype> operator()(thrust::tuple<int, fptype *, int> t) const;
+    __device__ fpcomplex operator()(thrust::tuple<int, fptype *, int> t) const;
 
   private:
     unsigned int incoherentSum;

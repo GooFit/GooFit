@@ -5,7 +5,7 @@
 
 namespace GooFit {
 
-typedef thrust::complex<fptype> (*resonance_function_ptr)(fptype, fptype, fptype, ParameterContainer &pc);
+typedef fpcomplex (*resonance_function_ptr)(fptype, fptype, fptype, ParameterContainer &pc);
 
 __device__ fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m);
 

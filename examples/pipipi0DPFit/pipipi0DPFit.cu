@@ -67,7 +67,7 @@ bool minuit1;
 
 Variable *m12                 = 0;
 Variable *m13                 = 0;
-CountingVariable *eventNumber = 0;
+EventNumber *eventNumber = 0;
 Variable *massd0              = 0;
 Variable *deltam              = 0;
 Variable *dtime               = 0;
@@ -527,7 +527,7 @@ Variable *ptr_to_ymix = 0;
 Variable *ptr_to_dtau = 0;
 
 TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
-    DecayInfo *dtop0pp    = new DecayInfo();
+    DecayInfo3 *dtop0pp    = new DecayInfo3();
     dtop0pp->motherMass   = _mD0;
     dtop0pp->daug1Mass    = piZeroMass;
     dtop0pp->daug2Mass    = piPlusMass;
@@ -878,7 +878,7 @@ int runToyFit(int ifile, int nfile, bool noPlots = true) {
     m12->setNumBins(240);
     m13 = new Variable("m13", 0, 3);
     m13->setNumBins(240);
-    eventNumber = new CountingVariable("eventNumber", 0, INT_MAX);
+    eventNumber = new EventNumber("eventNumber", 0, INT_MAX);
     wSig0       = new Variable("wSig0", 0, 1);
 
     for(int i = 0; i < nfile; i++) {
@@ -1138,7 +1138,7 @@ void makeFullFitVariables() {
     m13 = new Variable("m13", 0, 3);
     m12->setNumBins(normBinning);
     m13->setNumBins(normBinning);
-    eventNumber = new CountingVariable("eventNumber", 0, INT_MAX);
+    eventNumber = new EventNumber("eventNumber", 0, INT_MAX);
     wSig0       = new Variable("wSig0", 0, 1);
     wBkg1       = new Variable("wBkg1", 0, 1);
     wBkg2       = new Variable("wBkg2", 0, 1);
@@ -3348,7 +3348,7 @@ GooPdf *makeBkg2DalitzPdf(bool fixem = true) {
 
         // One omega->pipipi0 reflection.
         // Factor 3 in amplitudes is to offset division by total weight in AddPdf.
-        DecayInfo *special_rho_decay    = new DecayInfo();
+        DecayInfo3 *special_rho_decay    = new DecayInfo3();
         special_rho_decay->motherMass   = _mD0;
         special_rho_decay->daug1Mass    = piZeroMass;
         special_rho_decay->daug2Mass    = piPlusMass;
@@ -3380,7 +3380,7 @@ GooPdf *makeBkg2DalitzPdf(bool fixem = true) {
         incsum1 = new IncoherentSumPdf("incsum1", m12, m13, eventNumber, special_rho_decay, bkg2_rho_mods);
 
         // Three spin-0 rho resonances to be added incoherently.
-        DecayInfo *incoherent_rho0s    = new DecayInfo();
+        DecayInfo3 *incoherent_rho0s    = new DecayInfo3();
         incoherent_rho0s->motherMass   = _mD0;
         incoherent_rho0s->daug1Mass    = piZeroMass;
         incoherent_rho0s->daug2Mass    = piPlusMass;
@@ -3686,7 +3686,7 @@ GooPdf *makeBackground3DalitzParam() {
 
     // One misIDpi0.
     // Factor 3 in amplitudes is to offset division by total weight in AddPdf.
-    DecayInfo *special_pi0_decay    = new DecayInfo();
+    DecayInfo3 *special_pi0_decay    = new DecayInfo3();
     special_pi0_decay->motherMass   = _mD0;
     special_pi0_decay->daug1Mass    = piZeroMass;
     special_pi0_decay->daug2Mass    = piPlusMass;
@@ -3738,7 +3738,7 @@ GooPdf *makeBackground3DalitzParam() {
     // incsum3 = new IncoherentSumPdf("incsum3", m12, m13, eventNumber, special_pi0_decay, bkg3_pi0_mods);
 
     // Three spin-1 rho resonances to be added incoherently.
-    DecayInfo *incoherent_rhos    = new DecayInfo();
+    DecayInfo3 *incoherent_rhos    = new DecayInfo3();
     incoherent_rhos->motherMass   = _mD0;
     incoherent_rhos->daug1Mass    = piZeroMass;
     incoherent_rhos->daug2Mass    = piPlusMass;
@@ -3848,7 +3848,7 @@ GooPdf *makeBackground4DalitzParam() {
 
     // One pipi bump.
     // Factor 3 in amplitudes is to offset division by total weight in AddPdf.
-    DecayInfo *special_pipi_decay    = new DecayInfo();
+    DecayInfo3 *special_pipi_decay    = new DecayInfo3();
     special_pipi_decay->motherMass   = _mD0;
     special_pipi_decay->daug1Mass    = piZeroMass;
     special_pipi_decay->daug2Mass    = piPlusMass;
@@ -3899,7 +3899,7 @@ GooPdf *makeBackground4DalitzParam() {
     incsum5 = new IncoherentSumPdf("incsum5", m12, m13, eventNumber, special_pipi_decay, bkg4_pipi_mods);
 
     // Three spin-0 rho resonances to be added incoherently.
-    DecayInfo *incoherent_rho0s    = new DecayInfo();
+    DecayInfo3 *incoherent_rho0s    = new DecayInfo3();
     incoherent_rho0s->motherMass   = _mD0;
     incoherent_rho0s->daug1Mass    = piZeroMass;
     incoherent_rho0s->daug2Mass    = piPlusMass;

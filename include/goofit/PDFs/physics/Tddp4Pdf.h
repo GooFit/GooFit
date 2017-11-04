@@ -27,7 +27,7 @@ class TDDP4 : public GooPdf {
   public:
     TDDP4(std::string n,
           std::vector<Variable *> observables,
-          DecayInfo_DP *decay,
+          DecayInfo3_DP *decay,
           MixingTimeResolution *r,
           GooPdf *eff,
           Variable *mistag          = nullptr,
@@ -72,17 +72,17 @@ class TDDP4 : public GooPdf {
     mcbooster::RealVector_d norm_phi;
     // store spin and lineshape values for normalization
     mutable mcbooster::RealVector_d norm_SF;
-    mutable mcbooster::mc_device_vector<thrust::complex<fptype>> norm_LS;
+    mutable mcbooster::mc_device_vector<fpcomplex> norm_LS;
 
-    DecayInfo_DP *decayInfo;
+    DecayInfo3_DP *decayInfo;
     std::vector<Variable *> _observables;
     MixingTimeResolution *resolution;
     int MCevents;
     // Following variables are useful if masses and widths, involved in difficult BW calculation,
     // change infrequently while amplitudes, only used in adding BW results together, change rapidly.
-    thrust::device_vector<thrust::complex<fptype>> *cachedResSF{
+    thrust::device_vector<fpcomplex> *cachedResSF{
         nullptr}; // Caches the BW values and Spins for each event.
-    thrust::device_vector<thrust::complex<fptype>> *cachedAMPs{nullptr}; // cache Amplitude values for each event.
+    thrust::device_vector<fpcomplex> *cachedAMPs{nullptr}; // cache Amplitude values for each event.
     mutable bool generation_no_norm{false};
     mutable bool SpinsCalculated{false};
     bool *redoIntegral;
@@ -95,11 +95,11 @@ class TDDP4 : public GooPdf {
     double maxWeight;
 };
 
-class SFCalculator_TD : public thrust::unary_function<thrust::tuple<int, fptype *, int>, thrust::complex<fptype>> {
+class SFCalculator_TD : public thrust::unary_function<thrust::tuple<int, fptype *, int>, fpcomplex> {
   public:
     // Used to create the cached BW values.
     SFCalculator_TD(int pIdx, unsigned int sf_idx);
-    __device__ thrust::complex<fptype> operator()(thrust::tuple<int, fptype *, int> t) const;
+    __device__ fpcomplex operator()(thrust::tuple<int, fptype *, int> t) const;
 
   private:
     unsigned int _spinfactor_i;
@@ -118,11 +118,11 @@ class NormSpinCalculator_TD
     unsigned int _parameters;
 };
 
-class LSCalculator_TD : public thrust::unary_function<thrust::tuple<int, fptype *, int>, thrust::complex<fptype>> {
+class LSCalculator_TD : public thrust::unary_function<thrust::tuple<int, fptype *, int>, fpcomplex> {
   public:
     // Used to create the cached BW values.
     LSCalculator_TD(int pIdx, unsigned int res_idx);
-    __device__ thrust::complex<fptype> operator()(thrust::tuple<int, fptype *, int> t) const;
+    __device__ fpcomplex operator()(thrust::tuple<int, fptype *, int> t) const;
 
   private:
     unsigned int _resonance_i;
@@ -133,11 +133,11 @@ class NormLSCalculator_TD
     : public thrust::unary_function<
           thrust::
               tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t>,
-          thrust::complex<fptype>> {
+          fpcomplex> {
   public:
     // Used to create the cached BW values.
     NormLSCalculator_TD(int pIdx, unsigned int res_idx);
-    __device__ thrust::complex<fptype> operator()(
+    __device__ fpcomplex operator()(
         thrust::
             tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t)
         const;
@@ -147,11 +147,11 @@ class NormLSCalculator_TD
     unsigned int _parameters;
 };
 
-class AmpCalc_TD : public thrust::unary_function<unsigned int, thrust::complex<fptype>> {
+class AmpCalc_TD : public thrust::unary_function<unsigned int, fpcomplex> {
   public:
     AmpCalc_TD(unsigned int AmpIdx, unsigned int pIdx, unsigned int nPerm);
     // void setpIdx(unsigned int pIdx){_parameters = pIdx;}
-    __device__ thrust::complex<fptype> operator()(thrust::tuple<int, fptype *, int> t) const;
+    __device__ fpcomplex operator()(thrust::tuple<int, fptype *, int> t) const;
 
   private:
     unsigned int _nPerm;
@@ -160,11 +160,11 @@ class AmpCalc_TD : public thrust::unary_function<unsigned int, thrust::complex<f
 };
 
 class NormIntegrator_TD
-    : public thrust::unary_function<thrust::tuple<int, int, fptype *, thrust::complex<fptype> *>, fptype> {
+    : public thrust::unary_function<thrust::tuple<int, int, fptype *, fpcomplex *>, fptype> {
   public:
     NormIntegrator_TD(unsigned int pIdx);
     __device__ thrust::tuple<fptype, fptype, fptype, fptype>
-    operator()(thrust::tuple<int, int, fptype *, thrust::complex<fptype> *> t) const;
+    operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const;
 
   private:
     unsigned int _parameters;

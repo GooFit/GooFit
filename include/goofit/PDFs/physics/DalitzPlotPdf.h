@@ -13,7 +13,7 @@ class SpecialResonanceCalculator;
 class DalitzPlotPdf : public GooPdf {
   public:
     DalitzPlotPdf(
-        std::string n, Variable *m12, Variable *m13, CountingVariable *eventNumber, DecayInfo *decay, GooPdf *eff);
+        std::string n, Variable *m12, Variable *m13, EventNumber *eventNumber, DecayInfo3 *decay, GooPdf *eff);
     // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the
     // coherent sum. The caching method requires that it be done this way or the ProdPdf
     // normalisation will get *really* confused and give wrong answers.
@@ -26,15 +26,15 @@ class DalitzPlotPdf : public GooPdf {
 
   protected:
   private:
-    DecayInfo *decayInfo;
+    DecayInfo3 *decayInfo;
     Variable *_m12;
     Variable *_m13;
     fptype *dalitzNormRange;
 
     // Following variables are useful if masses and widths, involved in difficult BW calculation,
     // change infrequently while amplitudes, only used in adding BW results together, change rapidly.
-    thrust::device_vector<thrust::complex<fptype>> *cachedWaves[16]; // Caches the BW values for each event.
-    thrust::complex<fptype> ***integrals; // Caches the integrals of the BW waves for each combination of resonances.
+    thrust::device_vector<fpcomplex> *cachedWaves[16]; // Caches the BW values for each event.
+    fpcomplex ***integrals; // Caches the integrals of the BW waves for each combination of resonances.
 
     bool *redoIntegral;
     mutable bool forceRedoIntegrals;
@@ -49,14 +49,14 @@ class DalitzPlotPdf : public GooPdf {
 };
 
 class SpecialResonanceIntegrator
-    : public thrust::unary_function<thrust::tuple<int, fptype *, int>, thrust::complex<fptype>> {
+    : public thrust::unary_function<thrust::tuple<int, fptype *, int>, fpcomplex> {
   public:
     // Class used to calculate integrals of terms BW_i * BW_j^*.
     SpecialResonanceIntegrator(int pIdx, unsigned int ri, unsigned int rj);
     void setDalitzIndex(unsigned int id) { dalitz_i = id; }
     void setResonanceIndex(unsigned int id) { resonance_i = id; }
     void setEfficiencyIndex(unsigned int id) { resonance_j = id; }
-    __device__ thrust::complex<fptype> operator()(thrust::tuple<int, fptype *, int> t) const;
+    __device__ fpcomplex operator()(thrust::tuple<int, fptype *, int> t) const;
 
   private:
     unsigned int dalitz_i;
@@ -66,13 +66,13 @@ class SpecialResonanceIntegrator
 };
 
 class SpecialResonanceCalculator
-    : public thrust::unary_function<thrust::tuple<int, fptype *, int>, thrust::complex<fptype>> {
+    : public thrust::unary_function<thrust::tuple<int, fptype *, int>, fpcomplex> {
   public:
     // Used to create the cached BW values.
     SpecialResonanceCalculator(int pIdx, unsigned int res_idx);
     void setDalitzIndex(unsigned int id) { dalitz_i = id; }
     void setResonanceIndex(unsigned int id) { resonance_i = id; }
-    __device__ thrust::complex<fptype> operator()(thrust::tuple<int, fptype *, int> t) const;
+    __device__ fpcomplex operator()(thrust::tuple<int, fptype *, int> t) const;
 
   private:
     unsigned int dalitz_i;

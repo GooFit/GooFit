@@ -30,7 +30,7 @@ class DPPdf : public GooPdf {
   public:
     DPPdf(std::string n,
           std::vector<Variable *> observables,
-          DecayInfo_DP *decay,
+          DecayInfo3_DP *decay,
           GooPdf *eff,
           unsigned int MCeventsNorm = 5e6);
     // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the
@@ -69,16 +69,16 @@ class DPPdf : public GooPdf {
 
     // store spin and lineshape values for normalization
     mutable mcbooster::RealVector_d norm_SF;
-    mutable mcbooster::mc_device_vector<thrust::complex<fptype>> norm_LS;
+    mutable mcbooster::mc_device_vector<fpcomplex> norm_LS;
 
-    DecayInfo_DP *decayInfo;
+    DecayInfo3_DP *decayInfo;
     std::vector<Variable *> _observables;
     int MCevents;
     // Following variables are useful if masses and widths, involved in difficult BW calculation,
     // change infrequently while amplitudes, only used in adding BW results together, change rapidly.
-    thrust::device_vector<thrust::complex<fptype>> *cachedResSF{
+    thrust::device_vector<fpcomplex> *cachedResSF{
         nullptr}; // Caches the BW values and Spins for each event.
-    thrust::device_vector<thrust::complex<fptype>> *cachedAMPs{nullptr}; // cache Amplitude values for each event.
+    thrust::device_vector<fpcomplex> *cachedAMPs{nullptr}; // cache Amplitude values for each event.
 
     mutable bool generation_no_norm{false};
     mutable bool SpinsCalculated{false};
@@ -93,13 +93,13 @@ class DPPdf : public GooPdf {
     int efficiencyFunction;
 };
 
-class SFCalculator : public thrust::unary_function<thrust::tuple<int, fptype *, int>, thrust::complex<fptype>> {
+class SFCalculator : public thrust::unary_function<thrust::tuple<int, fptype *, int>, fpcomplex> {
   public:
     // Used to create the cached BW values.
     SFCalculator(int pIdx, unsigned int sf_idx);
     void setDalitzId(int idx) { dalitzFuncId = idx; }
     void setSpinFactorId(int idx) { _spinfactor_i = idx; }
-    __device__ thrust::complex<fptype> operator()(thrust::tuple<int, fptype *, int> t) const;
+    __device__ fpcomplex operator()(thrust::tuple<int, fptype *, int> t) const;
 
   private:
     unsigned int dalitzFuncId;
@@ -122,13 +122,13 @@ class NormSpinCalculator
     unsigned int _parameters;
 };
 
-class LSCalculator : public thrust::unary_function<thrust::tuple<int, fptype *, int>, thrust::complex<fptype>> {
+class LSCalculator : public thrust::unary_function<thrust::tuple<int, fptype *, int>, fpcomplex> {
   public:
     // Used to create the cached BW values.
     LSCalculator(int pIdx, unsigned int res_idx);
     void setDalitzId(int idx) { dalitzFuncId = idx; }
     void setResonanceId(int idx) { _resonance_i = idx; }
-    __device__ thrust::complex<fptype> operator()(thrust::tuple<int, fptype *, int> t) const;
+    __device__ fpcomplex operator()(thrust::tuple<int, fptype *, int> t) const;
 
   private:
     unsigned int dalitzFuncId;
@@ -140,13 +140,13 @@ class NormLSCalculator
     : public thrust::unary_function<
           thrust::
               tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t>,
-          thrust::complex<fptype>> {
+          fpcomplex> {
   public:
     // Used to create the cached BW values.
     NormLSCalculator(int pIdx, unsigned int res_idx);
     void setDalitzId(int idx) { dalitzFuncId = idx; }
     void setResonanceId(int idx) { _resonance_i = idx; }
-    __device__ thrust::complex<fptype> operator()(
+    __device__ fpcomplex operator()(
         thrust::
             tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t)
         const;
@@ -157,13 +157,13 @@ class NormLSCalculator
     unsigned int _parameters;
 };
 
-class AmpCalc : public thrust::unary_function<unsigned int, thrust::complex<fptype>> {
+class AmpCalc : public thrust::unary_function<unsigned int, fpcomplex> {
   public:
     AmpCalc(unsigned int AmpIdx, unsigned int pIdx, unsigned int nPerm);
     // void setpIdx(unsigned int pIdx){_parameters = pIdx;}
     void setDalitzId(int idx) { dalitzFuncId = idx; }
     void setAmplitudeId(int idx) { _AmpIdx = idx; }
-    __device__ thrust::complex<fptype> operator()(thrust::tuple<int, fptype *, int> t) const;
+    __device__ fpcomplex operator()(thrust::tuple<int, fptype *, int> t) const;
 
   private:
     unsigned int dalitzFuncId;
@@ -173,11 +173,11 @@ class AmpCalc : public thrust::unary_function<unsigned int, thrust::complex<fpty
 };
 
 class NormIntegrator
-    : public thrust::unary_function<thrust::tuple<int, int, fptype *, thrust::complex<fptype> *>, fptype> {
+    : public thrust::unary_function<thrust::tuple<int, int, fptype *, fpcomplex *>, fptype> {
   public:
     NormIntegrator(unsigned int pIdx);
     void setDalitzId(int idx) { dalitzFuncId = idx; }
-    __device__ fptype operator()(thrust::tuple<int, int, fptype *, thrust::complex<fptype> *> t) const;
+    __device__ fptype operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const;
 
   private:
     unsigned int dalitzFuncId;

@@ -28,8 +28,8 @@ class TddpPdf : public GooPdf {
             Variable *_sigmat,
             Variable *m12,
             Variable *m13,
-            CountingVariable *eventNumber,
-            DecayInfo *decay,
+            EventNumber *eventNumber,
+            DecayInfo3 *decay,
             MixingTimeResolution *r,
             GooPdf *eff,
             Variable *mistag = nullptr);
@@ -38,8 +38,8 @@ class TddpPdf : public GooPdf {
             Variable *_sigmat,
             Variable *m12,
             Variable *m13,
-            CountingVariable *eventNumber,
-            DecayInfo *decay,
+            EventNumber *eventNumber,
+            DecayInfo3 *decay,
             std::vector<MixingTimeResolution *> &r,
             GooPdf *eff,
             Variable *md0,
@@ -81,7 +81,7 @@ class TddpPdf : public GooPdf {
 
   protected:
   private:
-    DecayInfo *decayInfo;
+    DecayInfo3 *decayInfo;
     Variable *_m12;
     Variable *_m13;
     fptype *dalitzNormRange{nullptr};

@@ -37,7 +37,7 @@ UnbinnedDataSet *data = 0;
 
 Variable *m12                 = 0;
 Variable *m13                 = 0;
-CountingVariable *eventNumber = 0;
+EventNumber *eventNumber = 0;
 bool fitMasses                = false;
 Variable *fixedRhoMass        = new Variable("rho_mass", 0.7758, 0.01, 0.7, 0.8);
 Variable *fixedRhoWidth       = new Variable("rho_width", 0.1503, 0.01, 0.1, 0.2);
@@ -155,7 +155,7 @@ GooPdf *makeKzeroVeto() {
 }
 
 DalitzPlotPdf *makeSignalPdf(GooPdf *eff = 0) {
-    DecayInfo *dtop0pp    = new DecayInfo();
+    DecayInfo3 *dtop0pp    = new DecayInfo3();
     dtop0pp->motherMass   = _mD0;
     dtop0pp->daug1Mass    = piZeroMass;
     dtop0pp->daug2Mass    = piPlusMass;
@@ -363,7 +363,7 @@ int runToyFit(std::string toyFileName, GooFit::Application &app) {
     m13 = new Variable("m13", 0, 3);
     m12->setNumBins(240);
     m13->setNumBins(240);
-    eventNumber = new CountingVariable("eventNumber", 0, INT_MAX);
+    eventNumber = new EventNumber("eventNumber", 0, INT_MAX);
     getToyData(toyFileName, app);
 
     // EXERCISE 1 (real part): Create a PolynomialPdf which models

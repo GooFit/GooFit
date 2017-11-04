@@ -17,11 +17,11 @@ const int resonanceOffset_DP = 4; // Offset of the first resonance into the para
 // own cache, hence the '10'. Ten threads should be enough for anyone!
 
 // NOTE: This is does not support ten instances (ten threads) of resoncances now, only one set of resonances.
-__device__ thrust::complex<fptype> *cResonances[16];
+__device__ fpcomplex *cResonances[16];
 
 __device__ inline int parIndexFromResIndex_DP(int resIndex) { return resonanceOffset_DP + resIndex * resonanceSize; }
 
-__device__ thrust::complex<fptype>
+__device__ fpcomplex
 device_DalitzPlot_calcIntegrals(fptype m12, fptype m13, int res_i, int res_j, ParameterContainer &pc) {
     // Calculates BW_i(m12, m13) * BW_j^*(m12, m13).
     // This calculation is in a separate function so
@@ -35,7 +35,7 @@ device_DalitzPlot_calcIntegrals(fptype m12, fptype m13, int res_i, int res_j, Pa
     fptype daug2Mass = c_daug2Mass;   // RO_CACHE(pc.constants[pc.constantIdx + 6]);
     fptype daug3Mass = c_daug3Mass;   // RO_CACHE(pc.constants[pc.constantIdx + 7]);
 
-    thrust::complex<fptype> ret;
+    fpcomplex ret;
 
     if(!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass))
         return ret;
@@ -97,18 +97,18 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
 
     auto evtNum = static_cast<int>(floor(0.5 + evtIndex));
 
-    thrust::complex<fptype> totalAmp(0, 0);
+    fpcomplex totalAmp(0, 0);
 
     for(int i = 0; i < numResonances; ++i) {
         // int paramIndex              = parIndexFromResIndex_DP(i);
         // double2 *resPtr = reinterpret_cast<double2*> (cResonances[i]);
-        thrust::complex<fptype> amp = thrust::complex<fptype>(RO_CACHE(pc.parameters[pc.parameterIdx + i * 2 + 1]),
+        fpcomplex amp = fpcomplex(RO_CACHE(pc.parameters[pc.parameterIdx + i * 2 + 1]),
                                                               RO_CACHE(pc.parameters[pc.parameterIdx + i * 2 + 2]));
 
         // potential performance improvement by
         // double2 *t = RO_CACHE(reinterpret_cast<double2*> (&(cResonances[i][evtNum])));
-        // thrust::complex<fptype> me(t->x, t->y);
-        // thrust::complex<fptype> me = RO_CACHE(cResonances[i][evtNum]);
+        // fpcomplex me(t->x, t->y);
+        // fpcomplex me = RO_CACHE(cResonances[i][evtNum]);
 
         // double2 *ptr = reinterpret_cast<double2*> (cResonances[i][evtNum]);
 
@@ -116,10 +116,10 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
 
         // fptype me_real = cResonances[i][evtNum].real();
         // fptype me_imag = cResonances[i][evtNum].imag();
-        // thrust::complex<fptype> me = cResonances[i][evtNum];
-        // thrust::complex<fptype> me (me_real, me_imag);
-        thrust::complex<fptype> me = RO_CACHE(cResonances[i][evtNum]);
-        // thrust::complex<fptype> me (v.x, v.y);
+        // fpcomplex me = cResonances[i][evtNum];
+        // fpcomplex me (me_real, me_imag);
+        fpcomplex me = RO_CACHE(cResonances[i][evtNum]);
+        // fpcomplex me (v.x, v.y);
 
         totalAmp += amp * me;
     }
@@ -143,7 +143,7 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
 __device__ device_function_ptr ptr_to_DalitzPlot = device_DalitzPlot;
 
 __host__ DalitzPlotPdf::DalitzPlotPdf(
-    std::string n, Variable *m12, Variable *m13, CountingVariable *eventNumber, DecayInfo *decay, GooPdf *efficiency)
+    std::string n, Variable *m12, Variable *m13, EventNumber *eventNumber, DecayInfo3 *decay, GooPdf *efficiency)
     : GooPdf(nullptr, n)
     , decayInfo(decay)
     , _m12(m12)
@@ -211,7 +211,7 @@ __host__ DalitzPlotPdf::DalitzPlotPdf(
     redoIntegral = new bool[decayInfo->resonances.size()];
     cachedMasses = new fptype[decayInfo->resonances.size()];
     cachedWidths = new fptype[decayInfo->resonances.size()];
-    integrals    = new thrust::complex<fptype> **[decayInfo->resonances.size()];
+    integrals    = new fpcomplex **[decayInfo->resonances.size()];
     integrators  = new SpecialResonanceIntegrator **[decayInfo->resonances.size()];
     calculators  = new SpecialResonanceCalculator *[decayInfo->resonances.size()];
 
@@ -221,10 +221,10 @@ __host__ DalitzPlotPdf::DalitzPlotPdf(
         cachedWidths[i] = -1;
         integrators[i]  = new SpecialResonanceIntegrator *[decayInfo->resonances.size()];
         calculators[i]  = new SpecialResonanceCalculator(parameters, i);
-        integrals[i]    = new thrust::complex<fptype> *[decayInfo->resonances.size()];
+        integrals[i]    = new fpcomplex *[decayInfo->resonances.size()];
 
         for(int j = 0; j < decayInfo->resonances.size(); ++j) {
-            integrals[i][j]   = new thrust::complex<fptype>(0, 0);
+            integrals[i][j]   = new fpcomplex(0, 0);
             integrators[i][j] = new SpecialResonanceIntegrator(parameters, i, j);
         }
     }
@@ -261,15 +261,15 @@ __host__ void DalitzPlotPdf::setDataSize(unsigned int dataSize, unsigned int evt
 
     for(int i = 0; i < 16; i++) {
 #ifdef GOOFIT_MPI
-        cachedWaves[i] = new thrust::device_vector<thrust::complex<fptype>>(m_iEventsPerTask);
+        cachedWaves[i] = new thrust::device_vector<fpcomplex>(m_iEventsPerTask);
 #else
-        cachedWaves[i] = new thrust::device_vector<thrust::complex<fptype>>(dataSize);
+        cachedWaves[i] = new thrust::device_vector<fpcomplex>(dataSize);
 #endif
         void *dummy = thrust::raw_pointer_cast(cachedWaves[i]->data());
         MEMCPY_TO_SYMBOL(cResonances,
                          &dummy,
-                         sizeof(thrust::complex<fptype> *),
-                         i * sizeof(thrust::complex<fptype> *),
+                         sizeof(fpcomplex *),
+                         i * sizeof(fpcomplex *),
                          cudaMemcpyHostToDevice);
     }
 
@@ -332,7 +332,7 @@ __host__ fptype DalitzPlotPdf::normalize() const {
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, arrayAddress, eventSize)),
-                strided_range<thrust::device_vector<thrust::complex<fptype>>::iterator>(
+                strided_range<thrust::device_vector<fpcomplex>::iterator>(
                     cachedWaves[i]->begin(), cachedWaves[i]->end(), 1)
                     .begin(),
                 *(calculators[i]));
@@ -340,7 +340,7 @@ __host__ fptype DalitzPlotPdf::normalize() const {
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
-                strided_range<thrust::device_vector<thrust::complex<fptype>>::iterator>(
+                strided_range<thrust::device_vector<fpcomplex>::iterator>(
                     cachedWaves[i]->begin(), cachedWaves[i]->end(), 1)
                     .begin(),
                 *(calculators[i]));
@@ -358,8 +358,8 @@ __host__ fptype DalitzPlotPdf::normalize() const {
             integrators[i][j]->setEfficiencyIndex(decayInfo->resonances[j]->getFunctionIndex());
             thrust::constant_iterator<int> effFunc(efficiencyFunction);
 
-            thrust::complex<fptype> dummy(0, 0);
-            thrust::plus<thrust::complex<fptype>> complexSum;
+            fpcomplex dummy(0, 0);
+            thrust::plus<fpcomplex> complexSum;
             (*(integrals[i][j])) = thrust::transform_reduce(
                 thrust::make_zip_iterator(thrust::make_tuple(binIndex, arrayAddress, effFunc)),
                 thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, arrayAddress, effFunc)),
@@ -370,18 +370,18 @@ __host__ fptype DalitzPlotPdf::normalize() const {
     }
 
     // End of time-consuming integrals.
-    thrust::complex<fptype> sumIntegral(0, 0);
+    fpcomplex sumIntegral(0, 0);
 
     for(unsigned int i = 0; i < decayInfo->resonances.size(); ++i) {
         // int param_i = parameters + resonanceOffset_DP + resonanceSize * i;
-        thrust::complex<fptype> amplitude_i(host_parameters[parametersIdx + i * 2 + 1],
+        fpcomplex amplitude_i(host_parameters[parametersIdx + i * 2 + 1],
                                             host_parameters[parametersIdx + i * 2 + 2]);
 
         // printf("i:%i - %f,%f\n", i, amplitude_i.real(), amplitude_i.imag());
 
         for(unsigned int j = 0; j < decayInfo->resonances.size(); ++j) {
             // int param_j = parameters + resonanceOffset_DP + resonanceSize * j;
-            thrust::complex<fptype> amplitude_j(host_parameters[parametersIdx + j * 2 + 1],
+            fpcomplex amplitude_j(host_parameters[parametersIdx + j * 2 + 1],
                                                 -host_parameters[parametersIdx + j * 2 + 2]);
 
             // printf("j:%i - %f,%f\n", j, amplitude_j.real(), amplitude_j.imag());
@@ -408,7 +408,7 @@ SpecialResonanceIntegrator::SpecialResonanceIntegrator(int pIdx, unsigned int ri
     , resonance_j(rj)
     , parameters(pIdx) {}
 
-__device__ thrust::complex<fptype> SpecialResonanceIntegrator::operator()(thrust::tuple<int, fptype *, int> t) const {
+__device__ fpcomplex SpecialResonanceIntegrator::operator()(thrust::tuple<int, fptype *, int> t) const {
     //(brad): new indexing plan: bin number, function id, parameter id (not required), fptype with actual
     //bins(needed???)
 
@@ -443,7 +443,7 @@ __device__ thrust::complex<fptype> SpecialResonanceIntegrator::operator()(thrust
     while(pc.funcIdx < dalitz_i)
         pc.incrementIndex();
 
-    thrust::complex<fptype> ret
+    fpcomplex ret
         = device_DalitzPlot_calcIntegrals(binCenterM12, binCenterM13, resonance_i, resonance_j, pc);
 
     // TODO: read id's in in order to set them for the fake event.
@@ -483,9 +483,9 @@ SpecialResonanceCalculator::SpecialResonanceCalculator(int pIdx, unsigned int re
     : resonance_i(res_idx)
     , parameters(pIdx) {}
 
-__device__ thrust::complex<fptype> SpecialResonanceCalculator::operator()(thrust::tuple<int, fptype *, int> t) const {
+__device__ fpcomplex SpecialResonanceCalculator::operator()(thrust::tuple<int, fptype *, int> t) const {
     // Calculates the BW values for a specific resonance.
-    thrust::complex<fptype> ret;
+    fpcomplex ret;
     int evtNum  = thrust::get<0>(t);
     int evtSize = thrust::get<2>(t);
     fptype *evt = thrust::get<1>(t) + (evtNum * thrust::get<2>(t));

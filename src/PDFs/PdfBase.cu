@@ -319,7 +319,7 @@ __host__ void PdfBase::setData(DataSet *data) {
 
         for(int i = 0; i < observables.size(); i++) {
             // We are casting the observable to a CountVariable
-            CountingVariable *c = dynamic_cast<CountingVariable *>(observablesList[i]);
+            EventNumber *c = dynamic_cast<EventNumber *>(observablesList[i]);
 
             // if it is true re-index
             if(c)
@@ -408,7 +408,7 @@ __host__ void PdfBase::setData(DataSet *data) {
 
         for(int i = 0; i < observablesList.size(); i++) {
             // We are casting the observable to a CountVariable
-            CountingVariable *c = dynamic_cast<CountingVariable *>(observablesList[i]);
+            EventNumber *c = dynamic_cast<EventNumber *>(observablesList[i]);
 
             // if it is true re-index
             if(c)

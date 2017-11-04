@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
         return app.exit(e);
     }
 
-    DecayInfo_DP *DK3P_DI = new DecayInfo_DP();
+    DecayInfo3_DP *DK3P_DI = new DecayInfo3_DP();
     DK3P_DI->meson_radius = 1.5;
     DK3P_DI->particle_masses.push_back(_mD0);
     DK3P_DI->particle_masses.push_back(piPlusMass);
@@ -146,7 +146,7 @@ int main(int argc, char **argv) {
     Variable *cos12               = new Variable("cos12", -1, 1);
     Variable *cos34               = new Variable("m12", -1, 1);
     Variable *phi                 = new Variable("phi", -3.5, 3.5);
-    CountingVariable *eventNumber = new CountingVariable("eventNumber", 0, INT_MAX);
+    EventNumber *eventNumber = new EventNumber("eventNumber", 0, INT_MAX);
     Variable *dtime               = new Variable("dtime", 0, 10);
     Variable *sigmat              = new Variable("sigmat", -3, 3);
     Variable *constantOne         = new Variable("constantOne", 1);

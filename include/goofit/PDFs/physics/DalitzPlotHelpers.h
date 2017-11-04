@@ -25,7 +25,7 @@ constexpr typename std::underlying_type<E>::type enum_to_underlying(E e) {
 __device__ bool inDalitz(
     const fptype &m12, const fptype &m13, const fptype &bigM, const fptype &dm1, const fptype &dm2, const fptype &dm3);
 
-__device__ thrust::complex<fptype> getResonanceAmplitude(fptype m12, fptype m13, fptype m23, ParameterContainer &pc);
+__device__ fpcomplex getResonanceAmplitude(fptype m12, fptype m13, fptype m23, ParameterContainer &pc);
 
 __device__ void get4Vecs(fptype *Vecs,
                          const unsigned int &constants,
@@ -71,7 +71,7 @@ const int resonanceSize = 4; // Number of parameters to describe one resonance.
 // keyword (and 'extern' as well) interacts badly with some nvcc versions when the
 // variable is used in device code.
 
-struct DecayInfo {
+struct DecayInfo3 {
     fptype motherMass;
     fptype daug1Mass;
     fptype daug2Mass;
@@ -84,7 +84,7 @@ struct DecayInfo {
     std::vector<ResonancePdf *> resonances;
 };
 
-struct DecayInfo_DP {
+struct DecayInfo3_DP {
     std::vector<fptype> particle_masses;
     fptype meson_radius;
 

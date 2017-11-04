@@ -61,12 +61,12 @@ __device__ fptype BL2(fptype z2, int L) {
     // Spin 3 and up not accounted for.
 }
 
-__device__ thrust::complex<fptype> LS_ONE(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
-    return thrust::complex<fptype>(1, 0);
+__device__ fpcomplex LS_ONE(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
+    return fpcomplex(1, 0);
 }
 
 // This function is modeled after BW_BW::getVal() in BW_BW.cpp from the MINT package written by Jonas Rademacker.
-__device__ thrust::complex<fptype> BW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
+__device__ fpcomplex BW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
     fptype resmass  = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
     fptype reswidth = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
 
@@ -114,10 +114,10 @@ __device__ thrust::complex<fptype> BW(fptype Mpair, fptype m1, fptype m2, Parame
                / sqrt(mass * mass + gamma); // Note added additional factor of 2*sqrt(2)/PI here so results are
                                             // comparable to MINT3. MINT2 doesn't have include this.
 
-    thrust::complex<fptype> BW(mass * mass - mumsRecoMass2, mass * GofM);
+    fpcomplex BW(mass * mass - mumsRecoMass2, mass * GofM);
     fptype den = (mass * mass - mumsRecoMass2) * (mass * mass - mumsRecoMass2) + mass * GofM * mass * GofM;
 
-    thrust::complex<fptype> ret = (sqrt(k * frFactor)) / den * BW;
+    fpcomplex ret = (sqrt(k * frFactor)) / den * BW;
     // printf("m1, m2, Mpair, to2Lplus1, GofM, thisFR, pratio, mratio, pABSq , prSqForGofM, FF, ret.real, ret.imag\n");
     // printf("BW %.7g, %.7g, %.7g, %i, %i, %i, %i\n",meson_radius, resmass, reswidth, orbital, FF, indices[2],
     // indices[3]);
@@ -127,7 +127,7 @@ __device__ thrust::complex<fptype> BW(fptype Mpair, fptype m1, fptype m2, Parame
 }
 
 // This function is modeled after SBW from the MINT package written by Jonas Rademacker.
-__device__ thrust::complex<fptype> SBW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
+__device__ fpcomplex SBW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
     fptype resmass  = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
     fptype reswidth = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
 
@@ -161,10 +161,10 @@ __device__ thrust::complex<fptype> SBW(fptype Mpair, fptype m1, fptype m2, Param
     fptype gamma = sqrt(mass * mass * (mass * mass + width * width));
     fptype k     = mass * width * gamma / sqrt(mass * mass + gamma);
 
-    thrust::complex<fptype> BW(mass * mass - mumsRecoMass2, mass * GofM);
+    fpcomplex BW(mass * mass - mumsRecoMass2, mass * GofM);
     fptype den = (mass * mass - mumsRecoMass2) * (mass * mass - mumsRecoMass2) + mass * GofM * mass * GofM;
 
-    thrust::complex<fptype> ret = (sqrt(k * frFactor)) / den * BW;
+    fpcomplex ret = (sqrt(k * frFactor)) / den * BW;
 
     // printf("m1, m2, Mpair, GofM, pABSq , prSq, FF, ret.real, ret.imag\n");
     // printf("SBW %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g\n", m1, m2, Mpair, GofM, pABSq, prSq, frFactor,
@@ -172,10 +172,10 @@ __device__ thrust::complex<fptype> SBW(fptype Mpair, fptype m1, fptype m2, Param
     return ret;
 }
 
-__device__ thrust::complex<fptype> bugg_rho2(const fptype &s, const fptype m) {
+__device__ fpcomplex bugg_rho2(const fptype &s, const fptype m) {
     fptype rho_squared = 1. - 4. * m * m / s;
-    thrust::complex<fptype> returnVal
-        = (rho_squared >= 0) ? thrust::complex<fptype>(1, 0) : thrust::complex<fptype>(0, 1);
+    fpcomplex returnVal
+        = (rho_squared >= 0) ? fpcomplex(1, 0) : fpcomplex(0, 1);
     rho_squared = (rho_squared >= 0) ? sqrt(rho_squared) : sqrt(-rho_squared);
     return rho_squared * returnVal;
 }
@@ -201,7 +201,7 @@ __device__ fptype bugg_Gamma_4pi(const fptype &s,
 
 // This function is an adaptation from the bugg lineshape implemented in the MINT package written by Jonas Rademacker.
 // this lineshape is not tested yet!
-__device__ thrust::complex<fptype> bugg_MINT(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
+__device__ fpcomplex bugg_MINT(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
     fptype s = Mpair * Mpair;
 
     fptype M          = 0.953;
@@ -222,25 +222,25 @@ __device__ thrust::complex<fptype> bugg_MINT(fptype Mpair, fptype m1, fptype m2,
     fptype g1sq = (b1 + b2 * s) * exp(-(s - M * M) / A);
     fptype z    = bugg_j1(s, mPiPlus) - bugg_j1(M * M, mPiPlus);
 
-    thrust::complex<fptype> gamma_2pi = thrust::complex<fptype>(
+    fpcomplex gamma_2pi = fpcomplex(
         g1sq * (s - sA * mPiPlus * mPiPlus) / (M * M - sA * mPiPlus * mPiPlus) * bugg_rho2(s, mPiPlus).real(), 0);
-    thrust::complex<fptype> gamma_2K
+    fpcomplex gamma_2K
         = g_2K * g1sq * s / (M * M) * exp((-1) * alpha * sqrt((s - 4. * mKPlus * mKPlus) * (s - 4. * mKPlus * mKPlus)))
           * bugg_rho2(s, mKPlus);
-    thrust::complex<fptype> gamma_2eta = g_2eta * g1sq * s / (M * M)
+    fpcomplex gamma_2eta = g_2eta * g1sq * s / (M * M)
                                          * exp((-1) * alpha * sqrt((s - 4. * mEta * mEta) * (s - 4. * mEta * mEta)))
                                          * bugg_rho2(s, mEta);
-    thrust::complex<fptype> gamma_4pi
-        = thrust::complex<fptype>(bugg_Gamma_4pi(s, mPiPlus, g_4pi, M, lambda_4pi, s0_4pi), 0);
+    fpcomplex gamma_4pi
+        = fpcomplex(bugg_Gamma_4pi(s, mPiPlus, g_4pi, M, lambda_4pi, s0_4pi), 0);
 
-    thrust::complex<fptype> Gamma_tot = gamma_2pi + gamma_2K + gamma_2eta + gamma_4pi;
+    fpcomplex Gamma_tot = gamma_2pi + gamma_2K + gamma_2eta + gamma_4pi;
 
-    // thrust::complex<fptype> num = M * gamma_2pi; //only for elastic scattering, not production
-    thrust::complex<fptype> den
-        = thrust::complex<fptype>(
+    // fpcomplex num = M * gamma_2pi; //only for elastic scattering, not production
+    fpcomplex den
+        = fpcomplex(
               M * M - s - M * g1sq * (s - sA * mPiPlus * mPiPlus) / (M * M - sA * mPiPlus * mPiPlus) * z, 0)
-          - thrust::complex<fptype>(0, 1) * M * Gamma_tot;
-    thrust::complex<fptype> returnVal = 1.0 / den;
+          - fpcomplex(0, 1) * M * Gamma_tot;
+    fpcomplex returnVal = 1.0 / den;
     // printf("Bugg %.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g \n",gamma_2pi.real, gamma_2pi.imag, gamma_2K.real,
     // gamma_2K.imag, gamma_2eta.real, gamma_2eta.imag, gamma_4pi.real, gamma_4pi.imag);
     // printf("Bugg %.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g \n",Mpair, Gamma_tot.real, Gamma_tot.imag, g1sq, z,
@@ -252,7 +252,7 @@ __device__ thrust::complex<fptype> bugg_MINT(fptype Mpair, fptype m1, fptype m2,
     return returnVal * sqrt(1000.0);
 }
 
-__device__ thrust::complex<fptype> bugg_MINT3(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
+__device__ fpcomplex bugg_MINT3(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
     fptype s          = Mpair * Mpair;
     fptype M          = 0.953;
     fptype b1         = 1.302;
@@ -278,18 +278,18 @@ __device__ thrust::complex<fptype> bugg_MINT3(fptype Mpair, fptype m1, fptype m2
     fptype tmp1 = s > mk4 ? s - mk4 : mk4 - s;
     fptype tmp2 = s > me4 ? s - me4 : me4 - s;
 
-    thrust::complex<fptype> gamma_2pi  = thrust::complex<fptype>(g1sq * adlerZero * bugg_rho2(s, mPiPlus).real(), 0);
-    thrust::complex<fptype> gamma_2K   = g_2K * g1sq * s / (M * M) * exp((-1) * alpha * tmp1) * bugg_rho2(s, mKPlus);
-    thrust::complex<fptype> gamma_2eta = g_2eta * g1sq * s / (M * M) * exp((-1) * alpha * tmp2) * bugg_rho2(s, mEta);
-    thrust::complex<fptype> gamma_4pi
-        = thrust::complex<fptype>(bugg_Gamma_4pi(s, mPiPlus, g_4pi, M, lambda_4pi, s0_4pi), 0);
+    fpcomplex gamma_2pi  = fpcomplex(g1sq * adlerZero * bugg_rho2(s, mPiPlus).real(), 0);
+    fpcomplex gamma_2K   = g_2K * g1sq * s / (M * M) * exp((-1) * alpha * tmp1) * bugg_rho2(s, mKPlus);
+    fpcomplex gamma_2eta = g_2eta * g1sq * s / (M * M) * exp((-1) * alpha * tmp2) * bugg_rho2(s, mEta);
+    fpcomplex gamma_4pi
+        = fpcomplex(bugg_Gamma_4pi(s, mPiPlus, g_4pi, M, lambda_4pi, s0_4pi), 0);
 
-    thrust::complex<fptype> Gamma_tot = gamma_2pi + gamma_2K + gamma_2eta + gamma_4pi;
+    fpcomplex Gamma_tot = gamma_2pi + gamma_2K + gamma_2eta + gamma_4pi;
 
-    // thrust::complex<fptype> num = M * gamma_2pi; //only for elastic scattering, not production
-    thrust::complex<fptype> den
-        = thrust::complex<fptype>(M * M - s - adlerZero * g1sq * z, 0) - thrust::complex<fptype>(0, 1) * Gamma_tot;
-    thrust::complex<fptype> returnVal = 1.0 / den;
+    // fpcomplex num = M * gamma_2pi; //only for elastic scattering, not production
+    fpcomplex den
+        = fpcomplex(M * M - s - adlerZero * g1sq * z, 0) - fpcomplex(0, 1) * Gamma_tot;
+    fpcomplex returnVal = 1.0 / den;
     // printf("Bugg %.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g \n",gamma_2pi.real, gamma_2pi.imag, gamma_2K.real,
     // gamma_2K.imag, gamma_2eta.real, gamma_2eta.imag, gamma_4pi.real, gamma_4pi.imag);
     // printf("Bugg %.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g \n",Mpair, Gamma_tot.real, Gamma_tot.imag, g1sq, z,
@@ -298,7 +298,7 @@ __device__ thrust::complex<fptype> bugg_MINT3(fptype Mpair, fptype m1, fptype m2
     return returnVal;
 }
 
-__device__ thrust::complex<fptype> lass_MINT(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
+__device__ fpcomplex lass_MINT(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
     fptype resmass  = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
     fptype reswidth = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
     fptype rMass2   = Mpair * Mpair;
@@ -316,14 +316,14 @@ __device__ thrust::complex<fptype> lass_MINT(fptype Mpair, fptype m1, fptype m2,
     fptype y          = 2.0 * a * sqrt(pABSq);
     fptype x          = 2.0 + a * r * pABSq;
     fptype cotDeltaBg = x / y;
-    thrust::complex<fptype> phaseshift((cotDeltaBg * cotDeltaBg - 1) / (1 + cotDeltaBg * cotDeltaBg),
+    fpcomplex phaseshift((cotDeltaBg * cotDeltaBg - 1) / (1 + cotDeltaBg * cotDeltaBg),
                                        2 * cotDeltaBg / (1 + cotDeltaBg * cotDeltaBg));
     // (cotDeltaBg*cotDeltaBg-1)/(1+cotDeltaBg*cotDeltaBg) = cos(2*delta)     2*cotDeltaBg / ( 1 +
     // cotDeltaBg*cotDeltaBg) = sin(2*delta)
-    thrust::complex<fptype> den(sqrt(pABSq) * cotDeltaBg, (-1.) * sqrt(pABSq));
+    fpcomplex den(sqrt(pABSq) * cotDeltaBg, (-1.) * sqrt(pABSq));
     fptype SF                         = Mpair * sqrt(prSq) / (resmass * resmass * reswidth);
-    thrust::complex<fptype> BG        = SF / den;
-    thrust::complex<fptype> returnVal = BG + phaseshift * BW(Mpair, m1, m2, pc);
+    fpcomplex BG        = SF / den;
+    fpcomplex returnVal = BG + phaseshift * BW(Mpair, m1, m2, pc);
     // printf("Lass: %.5g %.5g %.5g %.5g %.5g %.5g\n",BG.real, BG.imag, phaseshift.real, phaseshift.imag,
     // returnVal.real, returnVal.imag);
 
@@ -333,7 +333,7 @@ __device__ thrust::complex<fptype> lass_MINT(fptype Mpair, fptype m1, fptype m2,
 // generalized lass lineshape as implemented in MINT3 by Tim Evans. if F=R=1 and phiF=phiR=0 this is equal to normal
 // lass as implemented in Mint3.
 // The difference between this and lass mint is not quite clear to me. need to get back to this later.
-__device__ thrust::complex<fptype> glass_MINT3(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
+__device__ fpcomplex glass_MINT3(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
     fptype meson_radius = c_meson_radius;
     fptype resmass      = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
     fptype reswidth     = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
@@ -382,10 +382,10 @@ __device__ thrust::complex<fptype> glass_MINT3(fptype Mpair, fptype m1, fptype m
     fptype scattphase = phiF + atan(y / x);
     fptype resphase   = phiR + atan(resmass * GofM / (resmass * resmass - rMass2));
     fptype rho        = 1.0 / sqrt(pABSq / rMass2);
-    thrust::complex<fptype> returnVal
-        = (F * sin(scattphase) * thrust::complex<fptype>(cos(scattphase), sin(scattphase))
+    fpcomplex returnVal
+        = (F * sin(scattphase) * fpcomplex(cos(scattphase), sin(scattphase))
            + R * sin(resphase)
-                 * thrust::complex<fptype>(cos(resphase + 2 * scattphase), sin(resphase + 2 * scattphase)))
+                 * fpcomplex(cos(resphase + 2 * scattphase), sin(resphase + 2 * scattphase)))
           * rho;
     // printf("GLass3: %.5g %.5g %.5g %.5g %.5g %.5g\n",rMass2, pABSq, rho, GofM, scattphase, resphase);
 
@@ -393,14 +393,14 @@ __device__ thrust::complex<fptype> glass_MINT3(fptype Mpair, fptype m1, fptype m
     return returnVal;
 }
 
-__device__ thrust::complex<fptype> aSqrtTerm(const fptype &m0, const fptype &m) {
+__device__ fpcomplex aSqrtTerm(const fptype &m0, const fptype &m) {
     fptype a2 = 1 - (2 * m0 / m) * (2 * m0 / m);
-    thrust::complex<fptype> returnVal
-        = a2 > 0 ? thrust::complex<fptype>(sqrt(a2), 0) : thrust::complex<fptype>(0, sqrt(-a2));
+    fpcomplex returnVal
+        = a2 > 0 ? fpcomplex(sqrt(a2), 0) : fpcomplex(0, sqrt(-a2));
     return returnVal;
 }
 
-__device__ thrust::complex<fptype> Flatte_MINT(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
+__device__ fpcomplex Flatte_MINT(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
     fptype resmass = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
 
     fptype meson_radius  = RO_CACHE(pc.constants[pc.constantIdx + 1]);
@@ -425,19 +425,19 @@ __device__ thrust::complex<fptype> Flatte_MINT(fptype Mpair, fptype m1, fptype m
     fptype pABSq = num / (4 * rMass2);
     // fptype prSq = fabs(num2/(4*resmass*resmass));
 
-    thrust::complex<fptype> Gpipi       = (1. / 3.) * aSqrtTerm(mPi0, Mpair) + (2. / 3.) * aSqrtTerm(mPiPlus, Mpair);
-    thrust::complex<fptype> GKK         = (1. / 2.) * aSqrtTerm(mK0, Mpair) + (1. / 2.) * aSqrtTerm(mKPlus, Mpair);
-    thrust::complex<fptype> FlatteWidth = gPi * Gpipi + gK * GKK;
+    fpcomplex Gpipi       = (1. / 3.) * aSqrtTerm(mPi0, Mpair) + (2. / 3.) * aSqrtTerm(mPiPlus, Mpair);
+    fpcomplex GKK         = (1. / 2.) * aSqrtTerm(mK0, Mpair) + (1. / 2.) * aSqrtTerm(mKPlus, Mpair);
+    fpcomplex FlatteWidth = gPi * Gpipi + gK * GKK;
     // printf("%.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g \n",Gpipi.real, Gpipi.imag, GKK.real, GKK.imag, FlatteWidth.real,
     // FlatteWidth.imag, Mpair, pABSq);
 
     frFactor                   = BL2(pABSq * meson_radius * meson_radius, orbital);
-    thrust::complex<fptype> BW = sqrt(frFactor) / thrust::complex<fptype>(resmass * resmass - rMass2, 0)
-                                 - thrust::complex<fptype>(0, 1) * resmass * FlatteWidth;
+    fpcomplex BW = sqrt(frFactor) / fpcomplex(resmass * resmass - rMass2, 0)
+                                 - fpcomplex(0, 1) * resmass * FlatteWidth;
     return BW;
 }
 
-__device__ thrust::complex<fptype> nonres_DP(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
+__device__ fpcomplex nonres_DP(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
     fptype meson_radius  = RO_CACHE(pc.constants[pc.constantIdx + 1]);
     unsigned int orbital = RO_CACHE(pc.constants[pc.constantIdx + 2]);
 
@@ -450,7 +450,7 @@ __device__ thrust::complex<fptype> nonres_DP(fptype Mpair, fptype m1, fptype m2,
     fptype formfactor = sqrt(BL2(pABSq * meson_radius * meson_radius, orbital));
     // printf("NonRes q2:%.7g FF:%.7g, s %.7g m1 %.7g m2 %.7g r %.7g L %u \n",pABSq, formfactor, mumsRecoMass2,
     // m1,m2,meson_radius, orbital );
-    return thrust::complex<fptype>(1, 0) * formfactor;
+    return fpcomplex(1, 0) * formfactor;
 }
 
 __device__ resonance_function_ptr ptr_to_LS_ONE     = LS_ONE;

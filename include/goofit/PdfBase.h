@@ -1,12 +1,13 @@
 #pragma once
 
-#include "goofit/GlobalCudaDefines.h"
+#include <goofit/GlobalCudaDefines.h>
 
-#include "goofit/Variable.h"
-#include "goofit/Version.h"
-#include "goofit/Version.h"
-#include "goofit/detail/Abort.h"
+#include <goofit/Variable.h>
+#include <goofit/Version.h>
+#include <goofit/detail/Abort.h>
+#include <goofit/detail/Macros.h>
 
+#include <algorithm>
 #include <map>
 #include <set>
 #include <vector>
@@ -15,7 +16,11 @@
 class TH1D;
 #endif
 
-#include <Minuit2/FunctionMinimum.h>
+namespace ROOT {
+namespace Minuit2 {
+class FunctionMinimum;
+}
+} // namespace ROOT
 
 namespace GooFit {
 
@@ -51,9 +56,34 @@ class DataSet;
 class BinnedDataSet;
 class UnbinnedDataSet;
 
+namespace {
+/// Utility to filter and pick out observables and variables
+void filter_arguments(std::vector<Observable> &oblist) {}
+
+template <typename... Args>
+void filter_arguments(std::vector<Observable> &oblist, const Observable &obs, Args... args) {
+    oblist.push_back(obs);
+    return filter_arguments(oblist, args...);
+}
+
+template <typename... Args>
+void filter_arguments(std::vector<Observable> &oblist, const EventNumber &obs, Args... args) {
+    oblist.push_back(obs);
+    return filter_arguments(oblist, args...);
+}
+} // namespace
+
 class PdfBase {
   public:
-    PdfBase(Variable *x, std::string n);
+    template <typename... Args>
+    explicit PdfBase(std::string n, Args... args)
+        : name(std::move(n)) {
+        std::vector<Observable> obs;
+        filter_arguments(obs, args...);
+        for(auto &ob : obs)
+            registerObservable(ob);
+    }
+
     virtual ~PdfBase() = default;
 
     enum Specials { ForceSeparateNorm = 1, ForceCommonNorm = 2 };
@@ -69,29 +99,28 @@ class PdfBase {
     __host__ void generateNormRange();
     __host__ std::string getName() const { return name; }
 
-    __host__ virtual std::vector<Variable *> getObservables() const;
-    __host__ virtual std::vector<Variable *> getParameters() const;
-    __host__ Variable *getParameterByName(std::string n) const;
+    __host__ virtual std::vector<Observable> getObservables() const;
+    __host__ virtual std::vector<Variable> getParameters() const;
+
+    __host__ Variable *getParameterByName(std::string n);
     __host__ int getSpecialMask() const { return specialMask; }
 
     __host__ void setData(DataSet *data);
-
-    /// This is the old style input, should be removed
-    __host__ void setData(std::vector<std::map<Variable *, fptype>> &data);
+    __host__ DataSet *getData();
 
     __host__ virtual void setFitControl(FitControl *const fc, bool takeOwnerShip = true) = 0;
     __host__ virtual bool hasAnalyticIntegral() const { return false; }
 
     /// RooFit style fitting shortcut
-    __host__ ROOT::Minuit2::FunctionMinimum fitTo(DataSet *data);
+    __host__ ROOT::Minuit2::FunctionMinimum fitTo(DataSet *data, int verbosity = 3);
 
     __host__ unsigned int getFunctionIndex() const { return functionIdx; }
     __host__ unsigned int getParameterIndex() const { return parameters; }
-    __host__ unsigned int registerParameter(Variable *var);
+    __host__ unsigned int registerParameter(Variable var);
     __host__ unsigned int registerConstants(unsigned int amount);
     __host__ virtual void recursiveSetNormalisation(fptype norm = 1) const;
-    __host__ void unregisterParameter(Variable *var);
-    __host__ void registerObservable(Variable *obs);
+    __host__ void unregisterParameter(Variable var);
+    __host__ void registerObservable(Observable obs);
     __host__ void setIntegrationFineness(int i);
     __host__ void printProfileInfo(bool topLevel = true);
 
@@ -101,7 +130,7 @@ class PdfBase {
     void clearCurrentFit();
     __host__ void SigGenSetIndices() { setIndices(); }
 
-    __host__ void updateVariable(Variable *v, fptype newValue);
+    __host__ void updateVariable(Variable v, fptype newValue);
     __host__ void updateParameters();
 
     __host__ void setupObservables();
@@ -109,6 +138,7 @@ class PdfBase {
     __host__ virtual void recursiveSetIndices();
 
   protected:
+    DataSet *data_ = nullptr; //< Remember the original dataset
     // use this function to populate the arrays generically.
     __host__ void populateArrays();
 
@@ -117,11 +147,11 @@ class PdfBase {
     fptype numEvents{0};        //< Non-integer to allow weighted events
     unsigned int numEntries{0}; //< Eg number of bins - not always the same as number of events, although it can be.
     fptype *normRanges{
-        0}; //< This is specific to functor instead of variable so that MetricTaker::operator needn't use indices.
+        nullptr}; //< This is specific to functor instead of variable so that MetricTaker::operator needn't use indices.
     unsigned int parameters{0}; //< Stores index, in 'paramIndices', where this functor's information begins.
     unsigned int cIndex{1};     //< Stores location of constants.
-    std::vector<Variable *> observablesList;
-    std::vector<Variable *> parametersList;
+    std::vector<Observable> observables;
+    std::vector<Variable> parameterList;
     std::vector<fptype> constantsList;
     FitControl *fitControl{nullptr};
     std::vector<PdfBase *> components;
@@ -129,14 +159,14 @@ class PdfBase {
     int specialMask{0}; //< For storing information unique to PDFs, eg "Normalize me separately" for TddpPdf.
     bool properlyInitialised{true}; //< Allows checking for required extra steps in, eg, Tddp and Convolution.
 
-    unsigned int functionIdx; //< Stores index of device function pointer.
+    unsigned int functionIdx{0}; //< Stores index of device function pointer.
 
-    unsigned int parametersIdx;
-    unsigned int constantsIdx;
-    unsigned int observablesIdx;
-    unsigned int normalIdx;
+    unsigned int parametersIdx{0};
+    unsigned int constantsIdx{0};
+    unsigned int observablesIdx{0};
+    unsigned int normalIdx{0};
 
-    int m_iEventsPerTask;
+    int m_iEventsPerTask{0};
 
     /// This needs to be set before a call to setData.
     void setNumPerTask(PdfBase *p, const int &c);

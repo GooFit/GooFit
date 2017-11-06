@@ -14,8 +14,12 @@ class TH1D;
 
 namespace GooFit {
 
-// TODO: Replace this with class MetricTaker;
-// And fill in the .cu files where needed
+enum class EvalFunc : size_t { Eval = 0, NLL, Prob, BinAvg, BinWithError, Chisq };
+
+constexpr const char *evalfunc_vals[]
+    = {"ptr_to_Eval", "ptr_to_NLL", "ptr_to_Prob", "ptr_to_BinAvg", "ptr_to_BinWithError", "ptr_to_Chisq"};
+
+constexpr const char *evalfunc_to_string(EvalFunc val) { return evalfunc_vals[static_cast<size_t>(val)]; }
 
 #ifdef SEPARABLE
 
@@ -105,15 +109,16 @@ __device__ fptype callFunction(fptype *eventAddress, ParameterContainer &pc);
 
 class GooPdf : public PdfBase {
   public:
-    GooPdf(Variable *x, std::string n);
-    __host__ double calculateNLL() const override;
+    using PdfBase::PdfBase;
+
+    double calculateNLL() const override;
 
     /// NB: This does not project correctly in multidimensional datasets, because all observables
     /// other than 'var' will have, for every event, whatever value they happened to get set to last
     /// time they were set. This is likely to be the value from the last event in whatever dataset
     /// you were fitting to, but at any rate you don't get the probability-weighted integral over
     /// the other observables.
-    __host__ std::vector<fptype> evaluateAtPoints(Variable *var);
+    __host__ std::vector<fptype> evaluateAtPoints(Observable var);
 
     /// A normalize function. This fills in the host_normalize
     __host__ fptype normalize() const override;
@@ -123,7 +128,7 @@ class GooPdf : public PdfBase {
 
     __host__ virtual fptype integrate(fptype lo, fptype hi) const { return 0; }
     __host__ bool hasAnalyticIntegral() const override { return false; }
-    __host__ fptype getValue();
+    __host__ fptype getValue(EvalFunc evalfunc = EvalFunc::Eval);
 
     /// Produce a list of probabilies at points
     __host__ std::vector<std::vector<fptype>> getCompProbsAtDataPoints();
@@ -132,7 +137,7 @@ class GooPdf : public PdfBase {
     __host__ UnbinnedDataSet makeGrid();
 
     __host__ void initialize(std::vector<unsigned int> pindices, void *dev_functionPtr = host_fcn_ptr);
-    __host__ void scan(Variable *var, std::vector<fptype> &values);
+    __host__ void scan(Observable var, std::vector<fptype> &values);
     __host__ void setFitControl(FitControl *const fc, bool takeOwnerShip = true) override;
     __host__ virtual void setMetrics();
     __host__ void setParameterConstantness(bool constant = true);
@@ -143,14 +148,14 @@ class GooPdf : public PdfBase {
 
 #ifdef ROOT_FOUND
     /// Plot a PDF to a ROOT histogram
-    __host__ TH1D *plotToROOT(Variable *var, double normFactor = 1, std::string name = "");
+    __host__ TH1D *plotToROOT(Observable var, double normFactor = 1, std::string name = "");
 #endif
 
   protected:
     __host__ virtual void setIndices();
 
     __host__ virtual double sumOfNll(int numVars) const;
-    MetricTaker *logger;
+    MetricTaker *logger = nullptr;
 
   private:
 };

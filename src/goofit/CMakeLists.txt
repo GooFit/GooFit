@@ -46,19 +46,24 @@ goofit_add_library(PdfBase
     PdfBase.cc
     Abort.cc
     ${PROJECT_SOURCE_DIR}/include/goofit/detail/Abort.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/detail/Complex.h
     ${PROJECT_SOURCE_DIR}/include/goofit/detail/ThrustOverride.h
     ${PROJECT_BINARY_DIR}/include/goofit/detail/ThrustOverrideConfig.h
     ${PROJECT_BINARY_DIR}/include/goofit/detail/Backtrace.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/detail/Macros.h
     ${PROJECT_SOURCE_DIR}/include/goofit/Error.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PdfBase.h
     ${PROJECT_SOURCE_DIR}/include/goofit/FitControl.h
     ${PROJECT_SOURCE_DIR}/include/goofit/Application.h
     ${PROJECT_SOURCE_DIR}/include/goofit/Color.h
     ${PROJECT_SOURCE_DIR}/include/goofit/Log.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/Eigen.h
     ${PROJECT_SOURCE_DIR}/include/goofit/GlobalCudaDefines.h
     )
 
-target_link_libraries(PdfBase backtrace)
+target_link_libraries(PdfBase PUBLIC backtrace)
+# Safe to use ROOT::Minuit2 even if ROOT not found
+target_link_libraries(PdfBase PUBLIC ROOT::Minuit2)
 
 
 # Note: order is important on Linux, derived classes first

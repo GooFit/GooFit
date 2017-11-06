@@ -1,7 +1,7 @@
 #pragma once
 
 #include "goofit/PDFs/GooPdf.h"
-#include <thrust/complex.h>
+#include "goofit/detail/Complex.h"
 
 namespace GooFit {
 
@@ -21,68 +21,132 @@ __device__ fptype spinFactor(unsigned int spin,
                              fptype m23,
                              unsigned int cyclic_index);
 
+/// Service class intended to hold parametrisations of
+/// resonances on Dalitz plots. Don't try to use this
+/// as a standalone PDF! It should only be used as a
+/// component in one of the friend classes. It extends
+/// GooPdf so as to take advantage of the
+/// infrastructure, but will crash if used on its own.
 class ResonancePdf : public GooPdf {
-    // Service class intended to hold parametrisations of
-    // resonances on Dalitz plots. Don't try to use this
-    // as a standalone PDF! It should only be used as a
-    // component in one of the friend classes. It extends
-    // GooPdf so as to take advantage of the
-    // infrastructure, but will crash if used on its own.
-
     friend class TddpPdf;
     friend class DalitzPlotPdf;
     friend class IncoherentSumPdf;
 
   public:
-    // Constructor for regular BW
-    ResonancePdf(std::string name,
-                 Variable *ar,
-                 Variable *ai,
-                 Variable *mass,
-                 Variable *width,
-                 unsigned int sp,
-                 unsigned int cyc);
+    ~ResonancePdf() override = default;
 
-    // Gounaris-Sakurai
-    ResonancePdf(std::string name,
-                 Variable *ar,
-                 Variable *ai,
-                 unsigned int sp,
-                 Variable *mass,
-                 Variable *width,
-                 unsigned int cyc);
-
-    // LASS constructor
-    ResonancePdf(std::string name,
-                 Variable *ar,
-                 Variable *ai,
-                 Variable *mass,
-                 unsigned int sp,
-                 Variable *width,
-                 unsigned int cyc);
-
-    // Nonresonant constructor
-    ResonancePdf(std::string name, Variable *ar, Variable *ai);
-
-    // Gaussian constructor
-    ResonancePdf(std::string name, Variable *ar, Variable *ai, Variable *mean, Variable *sigma, unsigned int cyc);
+    __host__ virtual void recalculateCache() const {}
 
     virtual void recursiveSetIndices();
 
-  private:
-    // void setConstantIndex(unsigned int idx) { parametersList[parametersIdx + 1] = idx; }
+  protected:
+    /// Special constructor that subclasses use
+    ResonancePdf(std::string name, Variable ar, Variable ai)
+        : GooPdf(name)
+        , amp_real(ar)
+        , amp_imag(ai) {
+        // Dummy index for constants - won't use it, but calling
+        // functions can't know that and will call setConstantIndex anyway.
+        pindices.push_back(0);
+    }
 
-    Variable *amp_real;
-    Variable *amp_imag;
-    int resonanceType;
-    /*
-    Variable* mass;
-    Variable* width;
-    unsigned int spin;
-    unsigned int cyclic_index;
-    unsigned int eval_type;
-    unsigned int resonance_type;
-    */
+    void setConstantIndex(unsigned int idx) { host_indices[parameters + 1] = idx; }
+
+    Variable amp_real;
+    Variable amp_imag;
+
+    std::vector<unsigned int> pindices;
+
+    std::vector<fptype> host_constants;
 };
+
+namespace Resonances {
+/// Relativistic Breit-Wigner
+class RBW : public ResonancePdf {
+  public:
+    RBW(std::string name,
+        Variable ar,
+        Variable ai,
+        Variable mass,
+        Variable width,
+        unsigned int sp,
+        unsigned int cyc,
+        bool symmDP = false);
+    ~RBW() override = default;
+};
+
+/// LASS
+class LASS : public ResonancePdf {
+  public:
+    LASS(std::string name,
+         Variable ar,
+         Variable ai,
+         Variable mass,
+         Variable width,
+         unsigned int sp,
+         unsigned int cyc,
+         bool symmDP = false);
+    ~LASS() override = default;
+};
+
+/// Gounaris-Sakurai
+class GS : public ResonancePdf {
+  public:
+    GS(std::string name,
+       Variable ar,
+       Variable ai,
+       Variable mass,
+       Variable width,
+       unsigned int sp,
+       unsigned int cyc,
+       bool symmDP = false);
+    ~GS() override = default;
+};
+
+/// FLATTE constructor
+class FLATTE : public ResonancePdf {
+  public:
+    FLATTE(std::string name,
+           Variable ar,
+           Variable ai,
+           Variable mean,
+           Variable g1,
+           Variable rg2og1,
+           unsigned int cyc,
+           const bool symmDP);
+    ~FLATTE() override = default;
+};
+
+/// Gaussian constructor
+class Gauss : public ResonancePdf {
+  public:
+    Gauss(std::string name, Variable ar, Variable ai, Variable mean, Variable sigma, unsigned int cyc);
+    ~Gauss() override = default;
+};
+
+/// Nonresonant constructor
+class NonRes : public ResonancePdf {
+  public:
+    NonRes(std::string name, Variable ar, Variable ai);
+    ~NonRes() override = default;
+};
+
+/// Cubic spline constructor
+class Spline : public ResonancePdf {
+  public:
+    Spline(std::string name,
+           Variable ar,
+           Variable ai,
+           std::vector<fptype> &HH_bin_limits,
+           std::vector<Variable> &pwa_coefs_reals,
+           std::vector<Variable> &pwa_coefs_imags,
+           unsigned int cyc,
+           const bool symmDP = false);
+    ~Spline() override = default;
+
+    /// Recacluate the CACHE values before running
+    __host__ void recalculateCache() const override;
+};
+} // namespace Resonances
 
 } // namespace GooFit

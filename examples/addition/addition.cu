@@ -41,12 +41,11 @@ int main(int argc, char **argv) {
     gStyle->SetLineColor(1);
     gStyle->SetPalette(1, 0);
 
-    vector<Variable *> vars;
-    Variable *xvar = new Variable("xvar", -5, 5);
-    vars.push_back(xvar);
-    UnbinnedDataSet data(vars);
+    Observable xvar{"xvar", -5, 5};
 
-    TH1F xvarHist("xvarHist", "", xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
+    UnbinnedDataSet data(xvar);
+
+    TH1F xvarHist("xvarHist", "", xvar.getNumBins(), xvar.getLowerLimit(), xvar.getUpperLimit());
 
     xvarHist.SetStats(false);
 
@@ -54,46 +53,39 @@ int main(int argc, char **argv) {
     double totalData = 0;
 
     for(int i = 0; i < 100000; ++i) {
-        xvar->setValue(donram.Gaus(0.2, 1.1));
+        xvar.setValue(donram.Gaus(0.2, 1.1));
 
         if(donram.Uniform() < 0.1)
-            xvar->setValue(donram.Uniform(xvar->getLowerLimit(), xvar->getUpperLimit()));
+            xvar.setValue(donram.Uniform(xvar.getLowerLimit(), xvar.getUpperLimit()));
 
-        if(fabs(xvar->getValue()) > 5) {
+        if(fabs(xvar.getValue()) > 5) {
             --i;
             continue;
         }
 
         data.addEvent();
-        xvarHist.Fill(xvar->getValue());
+        xvarHist.Fill(xvar.getValue());
         totalData++;
     }
 
-    Variable *xmean = new Variable("xmean", 0, 1, -10, 10);
-    Variable *xsigm = new Variable("xsigm", 1, 0.5, 1.5);
-    GaussianPdf signal("signal", xvar, xmean, xsigm);
+    Variable xmean{"xmean", 0, 1, -10, 10};
+    Variable xsigm{"xsigm", 1, 0.5, 1.5};
+    GaussianPdf signal{"signal", xvar, xmean, xsigm};
 
-    vars.clear();
-    Variable *constant = new Variable("constant", 1.0);
-    vars.push_back(constant);
-    PolynomialPdf backgr("backgr", xvar, vars);
+    Variable constant{"constant", 1.0};
+    PolynomialPdf backgr{"backgr", xvar, {constant}};
 
-    vector<PdfBase *> comps;
-    comps.push_back(&signal);
-    comps.push_back(&backgr);
+    Variable sigFrac{"sigFrac", 0.9, 0.75, 1.00};
 
-    vars.clear();
-    Variable *sigFrac = new Variable("sigFrac", 0.9, 0.75, 1.00);
-    vars.push_back(sigFrac);
+    AddPdf total{"total", {sigFrac}, {&signal, &backgr}};
 
-    AddPdf total("total", vars, comps);
     total.setData(&data);
     FitManager fitter(&total);
     fitter.fit();
 
-    TH1F pdfHist("pdfHist", "", xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
-    TH1F sigHist("sigHist", "", xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
-    TH1F bkgHist("bkgHist", "", xvar->getNumBins(), xvar->getLowerLimit(), xvar->getUpperLimit());
+    TH1F pdfHist("pdfHist", "", xvar.getNumBins(), xvar.getLowerLimit(), xvar.getUpperLimit());
+    TH1F sigHist("sigHist", "", xvar.getNumBins(), xvar.getLowerLimit(), xvar.getUpperLimit());
+    TH1F bkgHist("bkgHist", "", xvar.getNumBins(), xvar.getLowerLimit(), xvar.getUpperLimit());
 
     pdfHist.SetStats(false);
     sigHist.SetStats(false);
@@ -101,9 +93,9 @@ int main(int argc, char **argv) {
 
     UnbinnedDataSet grid(xvar);
 
-    for(int i = 0; i < xvar->getNumBins(); ++i) {
-        double step = (xvar->getUpperLimit() - xvar->getLowerLimit()) / xvar->getNumBins();
-        xvar->setValue(xvar->getLowerLimit() + (i + 0.5) * step);
+    for(int i = 0; i < xvar.getNumBins(); ++i) {
+        double step = (xvar.getUpperLimit() - xvar.getLowerLimit()) / xvar.getNumBins();
+        xvar.setValue(xvar.getLowerLimit() + (i + 0.5) * step);
         grid.addEvent();
     }
 
@@ -116,25 +108,25 @@ int main(int argc, char **argv) {
 
     for(int i = 0; i < grid.getNumEvents(); ++i) {
         grid.loadEvent(i);
-        pdfHist.Fill(xvar->getValue(), pdfVals[0][i]);
-        sigHist.Fill(xvar->getValue(), pdfVals[1][i]);
-        bkgHist.Fill(xvar->getValue(), pdfVals[2][i]);
+        pdfHist.Fill(xvar.getValue(), pdfVals[0][i]);
+        sigHist.Fill(xvar.getValue(), pdfVals[1][i]);
+        bkgHist.Fill(xvar.getValue(), pdfVals[2][i]);
         totalPdf += pdfVals[0][i];
     }
 
-    for(int i = 0; i < xvar->getNumBins(); ++i) {
+    for(int i = 0; i < xvar.getNumBins(); ++i) {
         double val = pdfHist.GetBinContent(i + 1);
         val /= totalPdf;
         val *= totalData;
         pdfHist.SetBinContent(i + 1, val);
         val = sigHist.GetBinContent(i + 1);
         val /= totalPdf;
-        val *= sigFrac->getValue();
+        val *= sigFrac.getValue();
         val *= totalData;
         sigHist.SetBinContent(i + 1, val);
         val = bkgHist.GetBinContent(i + 1);
         val /= totalPdf;
-        val *= (1.0 - sigFrac->getValue());
+        val *= (1.0 - sigFrac.getValue());
         val *= totalData;
         bkgHist.SetBinContent(i + 1, val);
     }
@@ -154,5 +146,5 @@ int main(int argc, char **argv) {
     bkgHist.Draw("lsame");
     foo.SaveAs("xhist.png");
 
-    return 0;
+    return fitter;
 }

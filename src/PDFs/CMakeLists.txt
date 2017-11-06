@@ -41,7 +41,10 @@ set(GOOPDF_HEADERS
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/TruthResolution_Aux.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/ThreeGaussResolution_Aux.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/EvalVar.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/UserUtils.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/SpinHelper.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/utility/VariableBinTransform1DPdf.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/detail/ComplexUtils.h
 )
 
 get_property(goo_extra GLOBAL PROPERTY GOOFIT_EXTRA_PDFS)
@@ -51,57 +54,60 @@ if(GOOFIT_SEPARATE_COMP)
         GooPdf.cu
         MetricTaker.cu
         PdfBase.cu
-        CrystalBallPdf.cu
-        BifurGaussPdf.cu
-        LineshapesPdf.cu
-        CorrGaussianPdf.cu
-        LandauPdf.cu
-        DP4Pdf.cu
-        GaussianPdf.cu
-        AddPdf.cu
-        VoigtianPdf.cu
-        MappedPdf.cu
-        #Tddp4Pdf.cu
-        DalitzVetoPdf.cu
-        JohnsonSUPdf.cu
-        ProdPdf.cu
-        PolynomialPdf.cu
-        IncoherentSumPdf.cu
-        EventWeightedAddPdf.cu
-        ScaledGaussianPdf.cu
-        StepPdf.cu
-        KinLimitBWPdf.cu
-        NovosibirskPdf.cu
-        ResonancePdf.cu
-        BWPdf.cu
-        BinTransformPdf.cu
-        TrigThresholdPdf.cu
-        SmoothHistogramPdf.cu
-        ExpPdf.cu
-        InterHistPdf.cu
-        DalitzPlotPdf.cu
-        TddpPdf.cu
-        ArgusPdf.cu
-        ExpGausPdf.cu
-        CompositePdf.cu
-        ConvolutionPdf.cu
-        DalitzPlotHelpers.cu
-        SpinFactors.cu
-        MixingTimeResolution_Aux.cu
-        TruthResolution_Aux.cu
-        ThreeGaussResolution_Aux.cu
+        basic/CrystalBallPdf.cu
+        basic/BifurGaussPdf.cu
+        physics/LineshapesPdf.cu
+        basic/CorrGaussianPdf.cu
+        basic/LandauPdf.cu
+        physics/DP4Pdf.cu
+        basic/GaussianPdf.cu
+        combine/AddPdf.cu
+        basic/VoigtianPdf.cu
+        combine/MappedPdf.cu
+        physics/Tddp4Pdf.cu
+        physics/DalitzVetoPdf.cu
+        basic/JohnsonSUPdf.cu
+        combine/ProdPdf.cu
+        basic/PolynomialPdf.cu
+        physics/IncoherentSumPdf.cu
+        combine/EventWeightedAddPdf.cu
+        basic/ScaledGaussianPdf.cu
+        basic/StepPdf.cu
+        basic/KinLimitBWPdf.cu
+        basic/NovosibirskPdf.cu
+        physics/ResonancePdf.cu
+        basic/BWPdf.cu
+        basic/BinTransformPdf.cu
+        basic/TrigThresholdPdf.cu
+        basic/SmoothHistogramPdf.cu
+        basic/ExpPdf.cu
+        basic/InterHistPdf.cu
+        physics/DalitzPlotPdf.cu
+        physics/TddpPdf.cu
+        basic/ArgusPdf.cu
+        basic/ExpGausPdf.cu
+        combine/CompositePdf.cu
+        combine/ConvolutionPdf.cu
+        physics/DalitzPlotHelpers.cu
+        physics/SpinFactors.cu
+        physics/MixingTimeResolution_Aux.cu
+        physics/TruthResolution_Aux.cu
+        physics/ThreeGaussResolution_Aux.cu
+        utility/VariableBinTransform1DPdf.cu
         ${GOOPDF_HEADERS}
-        ${goo_extra})
+        ${goo_extra}
+    )
+
 else()
     if(goo_extra)
         message(FATAL_ERROR "You must use separable compilation (GOOFIT_SEPARATE_COMP=ON) to add PDFs!)")
     endif()
 
-    include_directories(${PROJECT_SOURCE_DIR}/src/PDFs)
+    target_include_directories(PDFs PUBLIC ${PROJECT_SOURCE_DIR}/src/PDFs)
     
     goofit_add_library(PDFs AllPdfs.cu ${GOOPDF_HEADERS})
 
 endif()
 
 
-target_link_libraries(PDFs goofit_base)
+target_link_libraries(PDFs PUBLIC goofit_base)

@@ -8,7 +8,7 @@ namespace GooFit {
 
 class InterHistPdf : public GooPdf {
   public:
-    InterHistPdf(std::string n, BinnedDataSet *x, std::vector<Variable *> params, std::vector<Variable *> obses);
+    InterHistPdf(std::string n, BinnedDataSet *x, std::vector<Variable> params, std::vector<Observable> obses);
     //__host__ virtual fptype normalize () const;
     //
     virtual void recursiveSetIndices();

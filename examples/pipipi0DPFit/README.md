@@ -1,51 +1,78 @@
 This example is to perform a Dalitz-plot for $D^0\to \pi^+\pi^-\pi^0$.
-You need to make the current project by building GooFit with `-DGOOFIT_EXAMPLES=ON` (default).
 
-Before running a Dalitz plot fit with command "pipipi0DPFit" for the first time, 
-a bunch of ascii files containing data events (beefy ones) or pdf descriptions need to be downloaded from the following URL:
 
-https://github.com/GooFit/GooFit/releases/download/v1.0.0/alltxtfiles4pipipi0DPFit.tgz
-(Size: ~50 MB, ~144 MB after unpacking)
+## Setup details:
 
-> Note:
-> Previously from https://github.com/GooFit/GooFit/releases/download/v1.0.0/alltxtfiles4pipipi0DPFit.tgz
+All of the data files are downloaded automatically by the CMake build system. 
 
-You then need to unpack the downloaded tar ball file in the current "pipipi0DPFit" directory via:
+
+## Running the fits
+
+You can see the options with:
 
 ```
-$ tar zxvf alltxtfiles4pipipi0DPFit.tgz
-bkg_2_pdf_sideband_6slices.txt
-bkg_3_pdf.txt
-bkg_4_pdf.txt
-signal_sigma_2slices_pdf.txt
-signal_sigma_3slices_pdf.txt
-signal_sigma_4slices_pdf.txt
-signal_sigma_5slices_pdf.txt
-signal_sigma_6slices_pdf.txt
-signal_sigma_7slices_pdf.txt
-signal_sigma_8slices_pdf.txt
-dataFiles/
-dataFiles/cocktail_pp_0.txt
-dataFiles/bkgDalitz_4.txt
-dataFiles/sideband1.txt
-dataFiles/bkgDalitz_2.txt
-dataFiles/efficiency_flat.txt
-dataFiles/bkgDalitz_3.txt
-dataFiles/sideband2.txt
+$ ./pipipi0DPFit -h
+pipipi0 Dalitz fit example
+Usage: ./examples/pipipi0DPFit/pipipi0DPFit [OPTIONS] SUBCOMMAND
+
+GooFit:
+  -q,--quiet                  Reduce the verbosity of the Application
+  --nosplash Excludes: -q,--quiet
+                              Do not print a splash
+  --config TEXT=config.ini    An ini file with command line options in it
+
+Options:
+  -h,--help                   Print this help message and exit
+  --minuit1                   Use Minuit 1 instead of Minuit 2
+
+Subcommands:
+  toy                         Toy MC Performance evaluation
+  truth                       Truth Monte Carlo fit
+  sigma                       Run sigma fit
+  efficiency                  Run efficiency fit
+  canonical                   Run the canonical fit
+  background_dalitz           Run the background Dalitz fit
+  background_sigma            Run background sigma fit
+  background_histograms       Write background histograms
+  run_gen_mc                  Run generated Monte Carlo fit
+  make_time_plots             Make time plots
 ```
 
-For the executable "pipipi0DPFit", it takes several command-line arguments, and will fail if the arguments are not properly given. Now only for the demonstration of Dalitz plot fits, you just run:
+### Toy MC
+
+All of the subcommands also have help. For example:
 
 ```
-$ ./pipipi0DPFit 4 dataFiles/cocktail_pp_0.txt blindSeed=0
-```
+$ ./pipipi0DPFit toy -h
+Toy MC Performance evaluation
+Usage: ./examples/pipipi0DPFit/pipipi0DPFit toy [OPTIONS] [sample] [load]
 
-The first argument is 4, which calls for a "canonical" DP fit over the given "data" stored in "dataFiles/cocktail_pp_0.txt" as the third argument. The last argument is to disable the blinding of mixing parameters x and y which is only necessary for real data. The "data" in "dataFiles/cocktail_pp_0.txt" is completely from the simulation (MC cocktails of signals / different background sources). The included signals events are simulated with the input of x = y = +1%. The statistics of this sample is comparable to that of real data.
+Positionals:
+  sample INT=0                Sample number to use
+  load INT=1                  Number of times to load
+
+Options:
+  -h,--help                   Print this help message and exit
+  -s,--sample INT=0           Sample number to use
+  -l,--load INT=1             Number of times to load
+  -p,--plot                   Also make plots
+```
 
 Toy MC study is added here for the purpose of performance evaluation. The command to execute toy fits is:
 
 ```
-$./pipipi0DPFit 0 0 1
+$./pipipi0DPFit toy 0 1
 ```
 
-The first argument is to call for the toy fit function, and the second points to the zeroth toy sample file "dataFiles/toyPipipi0/dalitz_toyMC_000.txt". The third and last argument is the number of times this toy sample is to be loaded. That is to say, the larger this number is, the longer the fitting procedure takes to complete. Roughly, for N times the toy sample file is loaded, the mixing fit would last N x 20 seconds @ Cerberus. 
+The first argument is to call for the toy fit function, and the second points to the zeroth toy sample file "dataFiles/toyPipipi0/dalitz_toyMC_000.txt". The third and last argument is the number of times this toy sample is to be loaded. That is to say, the larger this number is, the longer the fitting procedure takes to complete. Roughly, for N times the toy sample file is loaded, the mixing fit would last N x 20 seconds on one computer tested.
+
+### Canoncial
+
+For the executable "pipipi0DPFit", it takes several command-line arguments, and will fail if the arguments are not properly given. Now only for the demonstration of Dalitz plot fits, you just run:
+
+```
+$ ./pipipi0DPFit canonical dataFiles/cocktail_pp_0.txt --blindSeed=0
+```
+
+The canonical subcommand calls for a "canonical" DP fit over the given "data" stored in "dataFiles/cocktail_pp_0.txt" as the third argument. The last argument is to disable the blinding of mixing parameters x and y which is only necessary for real data. The "data" in "dataFiles/cocktail_pp_0.txt" is completely from the simulation (MC cocktails of signals / different background sources). The included signals events are simulated with the input of x = y = +1%. The statistics of this sample is comparable to that of real data.
+

@@ -308,6 +308,7 @@ __host__ void PdfBase::setData(DataSet *data) {
 
         for(int i = 1; i < numProcs; i++)
             displacements[i] = displacements[i - 1] + counts[i - 1];
+
 #endif
 
         auto *host_array = new fptype[numEntries * dimensions];
@@ -325,17 +326,19 @@ __host__ void PdfBase::setData(DataSet *data) {
             if(c)
                 fixme[i] = 1;
         }
+
 #endif
 
         // Transfer into our whole buffer
         for(int i = 0; i < numEntries; ++i) {
-            for(Variable *v : observablesList) {
-                fptype currVal                                       = unbinned_data->getValue(v, i);
-                host_array[i * dimensions + v->getObservableIndex()] = currVal;
+            for(const Observable &v : observables) {
+                fptype currVal                                      = unbinned_data->getValue(v, i);
+                host_array[i * dimensions + v.getObservableIndex()] = currVal;
             }
         }
 
 #ifdef GOOFIT_MPI
+
         // We will go through all of the events and re-index if appropriate
         for(int i = 1; i < numProcs; i++) {
             for(int j = 0; j < counts[i]; j++) {

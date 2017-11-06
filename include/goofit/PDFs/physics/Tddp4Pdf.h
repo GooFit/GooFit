@@ -26,11 +26,11 @@ class NormIntegrator_TD;
 class TDDP4 : public GooPdf {
   public:
     TDDP4(std::string n,
-          std::vector<Variable *> observables,
-          DecayInfo3_DP *decay,
+          std::vector<Observable> observables,
+          DecayInfo4t decay,
           MixingTimeResolution *r,
           GooPdf *eff,
-          Variable *mistag          = nullptr,
+          Observable *mistag,
           unsigned int MCeventsNorm = 5e6);
     // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the
     // coherent sum. The caching method requires that it be done this way or the ProdPdf
@@ -74,15 +74,13 @@ class TDDP4 : public GooPdf {
     mutable mcbooster::RealVector_d norm_SF;
     mutable mcbooster::mc_device_vector<fpcomplex> norm_LS;
 
-    DecayInfo3_DP *decayInfo;
-    std::vector<Variable *> _observables;
+    DecayInfo4t decayInfo;
     MixingTimeResolution *resolution;
     int MCevents;
     // Following variables are useful if masses and widths, involved in difficult BW calculation,
     // change infrequently while amplitudes, only used in adding BW results together, change rapidly.
-    thrust::device_vector<fpcomplex> *cachedResSF{
-        nullptr}; // Caches the BW values and Spins for each event.
-    thrust::device_vector<fpcomplex> *cachedAMPs{nullptr}; // cache Amplitude values for each event.
+    thrust::device_vector<fpcomplex> *cachedResSF{nullptr}; // Caches the BW values and Spins for each event.
+    thrust::device_vector<fpcomplex> *cachedAMPs{nullptr};  // cache Amplitude values for each event.
     mutable bool generation_no_norm{false};
     mutable bool SpinsCalculated{false};
     bool *redoIntegral;
@@ -159,8 +157,7 @@ class AmpCalc_TD : public thrust::unary_function<unsigned int, fpcomplex> {
     unsigned int _parameters;
 };
 
-class NormIntegrator_TD
-    : public thrust::unary_function<thrust::tuple<int, int, fptype *, fpcomplex *>, fptype> {
+class NormIntegrator_TD : public thrust::unary_function<thrust::tuple<int, int, fptype *, fpcomplex *>, fptype> {
   public:
     NormIntegrator_TD(unsigned int pIdx);
     __device__ thrust::tuple<fptype, fptype, fptype, fptype>

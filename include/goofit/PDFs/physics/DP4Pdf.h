@@ -29,8 +29,8 @@ class NormIntegrator;
 class DPPdf : public GooPdf {
   public:
     DPPdf(std::string n,
-          std::vector<Variable *> observables,
-          DecayInfo3_DP *decay,
+          std::vector<Observable> observables,
+          DecayInfo4 decay,
           GooPdf *eff,
           unsigned int MCeventsNorm = 5e6);
     // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the
@@ -71,14 +71,13 @@ class DPPdf : public GooPdf {
     mutable mcbooster::RealVector_d norm_SF;
     mutable mcbooster::mc_device_vector<fpcomplex> norm_LS;
 
-    DecayInfo3_DP *decayInfo;
-    std::vector<Variable *> _observables;
+    DecayInfo4 decayInfo;
+
     int MCevents;
     // Following variables are useful if masses and widths, involved in difficult BW calculation,
     // change infrequently while amplitudes, only used in adding BW results together, change rapidly.
-    thrust::device_vector<fpcomplex> *cachedResSF{
-        nullptr}; // Caches the BW values and Spins for each event.
-    thrust::device_vector<fpcomplex> *cachedAMPs{nullptr}; // cache Amplitude values for each event.
+    thrust::device_vector<fpcomplex> *cachedResSF{nullptr}; // Caches the BW values and Spins for each event.
+    thrust::device_vector<fpcomplex> *cachedAMPs{nullptr};  // cache Amplitude values for each event.
 
     mutable bool generation_no_norm{false};
     mutable bool SpinsCalculated{false};
@@ -172,8 +171,7 @@ class AmpCalc : public thrust::unary_function<unsigned int, fpcomplex> {
     unsigned int _parameters;
 };
 
-class NormIntegrator
-    : public thrust::unary_function<thrust::tuple<int, int, fptype *, fpcomplex *>, fptype> {
+class NormIntegrator : public thrust::unary_function<thrust::tuple<int, int, fptype *, fpcomplex *>, fptype> {
   public:
     NormIntegrator(unsigned int pIdx);
     void setDalitzId(int idx) { dalitzFuncId = idx; }

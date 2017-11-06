@@ -1,5 +1,58 @@
+## v2.1.0: Python
+#### (in development)
+
+
+GooFit now has working, fully supported Python bindings using PyBind11. All PDFs have been bound ([#92]). Python bindings now build by default if Python development files are found ([#93]). Pythonization additions, such as supporting the same shortcuts for Variables as C++, from/to numpy converters, and more, was added in ([#99], [#109]). Pip install is now supported using SciKit-Build, and source releases are being made on PyPI ([#107]). The build will use CUDA if found, and OpenMP otherwise.
+Many examples converted ([#118], [#120])
+
+Other Python additions:
+* Live printout in Python Notebooks ([#114])
+* Minuit2 wrapper started ([#115])
+
+Major changes:
+* `Observable`s are now their own class, and `CountingVariable` is now `EventNumber` ([#123])
+* Variables are now passed by copy everywhere, handling smart pointers internally ([#124])
+* DecayInfo renamed and split ([#124])
+* Resonances and Lineshapes are now classes instead of using enums or ordering ([#119])
+
+
+Other changes include:
+
+* New `ResonancePDF` types ([#114])
+* Spline, KMatrix, FOCUS Lineshapes added, untested ([#119])
+* TravisCI now uses Trusty ([#98]), performs style checks ([#117]), and runs all examples ([#114]).
+* Minuit2 now can be missing from ROOT and GooFit will use its own copy ([#102], [#113]).
+* Eigen is now included ([#104]), helper functions added ([#119])
+* Large updates to CMake, including CUDA as a language ([#122]), CMake 3.9 FindCUDA backport, fully target-based build ([#119])
+* Initial CMake IPO support ([#114])
+* Better folder structure for PDF source files ([#114])
+* `fpcomplex` shortcut ([#114])
+* IDE support improvements ([#114]))
+* Splash screen ([#114])
+* Macros to help setup PDFs ([#119])
+* CCache support
+
+[#92]: https://github.com/GooFit/GooFit/pull/92
+[#93]: https://github.com/GooFit/GooFit/pull/93
+[#98]: https://github.com/GooFit/GooFit/pull/98
+[#99]: https://github.com/GooFit/GooFit/pull/99
+[#102]: https://github.com/GooFit/GooFit/pull/102
+[#109]: https://github.com/GooFit/GooFit/pull/106
+[#107]: https://github.com/GooFit/GooFit/pull/107
+[#113]: https://github.com/GooFit/GooFit/pull/113
+[#114]: https://github.com/GooFit/GooFit/pull/114
+[#115]: https://github.com/GooFit/GooFit/pull/115
+[#117]: https://github.com/GooFit/GooFit/pull/117
+[#118]: https://github.com/GooFit/GooFit/pull/118
+[#119]: https://github.com/GooFit/GooFit/pull/119
+[#120]: https://github.com/GooFit/GooFit/pull/120
+[#122]: https://github.com/GooFit/GooFit/pull/122
+[#123]: https://github.com/GooFit/GooFit/pull/123
+[#124]: https://github.com/GooFit/GooFit/pull/124
+
 
 ## v2.0.0: C++11 and CMake
+#### June 9, 2017
 
 GooFit is now easy to build on a wide variety of Unix systems, and supports debuggers and IDEs. GooFit is faster, has unit tests, and working examples. More PDFs and examples have been added, as well as newly released example datasets that are downloaded automatically. GooFit now has built in support for MPI, and can use that to deploy to multiple graphics cards on the same machine. A new command line parser ([CLI11]) and drastically improved logging and errors have made code easier to write and debug. Usage of GooFit specific terminology is now reduced, using standard Thrust or CUDA terms when possible, lowering the barrier for new developers. A new Python script has been added to assist users converting from pre 2.0 code.
 

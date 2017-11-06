@@ -34,6 +34,7 @@ __device__ void get4Vecs(fptype *Vecs,
                          const fptype &cos12,
                          const fptype &cos34,
                          const fptype &phi);
+
 __device__ fptype getmass(const unsigned int &pair,
                           fptype &d1,
                           fptype &d2,
@@ -78,23 +79,39 @@ struct DecayInfo3 {
     fptype daug3Mass;
     fptype meson_radius;
 
-    Variable *_tau;
-    Variable *_xmixing;
-    Variable *_ymixing;
     std::vector<ResonancePdf *> resonances;
 };
 
-struct DecayInfo3_DP {
+struct DecayInfo3t : public DecayInfo3 {
+    Variable _tau;
+    Variable _xmixing;
+    Variable _ymixing;
+
+    DecayInfo3t(Variable _tau, Variable _xmixing, Variable _ymixing)
+        : _tau(_tau)
+        , _xmixing(_xmixing)
+        , _ymixing(_ymixing) {}
+};
+
+struct DecayInfo4 {
     std::vector<fptype> particle_masses;
     fptype meson_radius;
 
     std::vector<Amplitude *> amplitudes;
     std::vector<Amplitude *> amplitudes_B;
+};
 
-    Variable *_tau;
-    Variable *_xmixing;
-    Variable *_ymixing;
-    Variable *_SqWStoRSrate;
+struct DecayInfo4t : public DecayInfo4 {
+    Variable _tau;
+    Variable _xmixing;
+    Variable _ymixing;
+    Variable _SqWStoRSrate;
+
+    DecayInfo4t(Variable _tau, Variable _xmixing, Variable _ymixing, Variable _SqWStoRSrate)
+        : _tau(_tau)
+        , _xmixing(_xmixing)
+        , _ymixing(_ymixing)
+        , _SqWStoRSrate(_SqWStoRSrate) {}
 };
 
 // Copied from strided_range thrust example by Nathan Bell.

@@ -3,7 +3,7 @@
 #include "goofit/PDFs/GooPdf.h"
 #include "goofit/PDFs/physics/DalitzPlotHelpers.h"
 
-#include <thrust/complex.h>
+#include "goofit/detail/Complex.h"
 
 namespace GooFit {
 
@@ -13,7 +13,7 @@ class SpecialResonanceCalculator;
 class DalitzPlotPdf : public GooPdf {
   public:
     DalitzPlotPdf(
-        std::string n, Variable *m12, Variable *m13, EventNumber *eventNumber, DecayInfo3 *decay, GooPdf *eff);
+        std::string n, Observable m12, Observable m13, EventNumber eventNumber, DecayInfo3 decay, GooPdf *eff);
     // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the
     // coherent sum. The caching method requires that it be done this way or the ProdPdf
     // normalisation will get *really* confused and give wrong answers.
@@ -26,9 +26,9 @@ class DalitzPlotPdf : public GooPdf {
 
   protected:
   private:
-    DecayInfo3 *decayInfo;
-    Variable *_m12;
-    Variable *_m13;
+    DecayInfo3 decayInfo;
+    Observable _m12;
+    Observable _m13;
     fptype *dalitzNormRange;
 
     // Following variables are useful if masses and widths, involved in difficult BW calculation,
@@ -48,8 +48,7 @@ class DalitzPlotPdf : public GooPdf {
     unsigned int efficiencyFunction;
 };
 
-class SpecialResonanceIntegrator
-    : public thrust::unary_function<thrust::tuple<int, fptype *, int>, fpcomplex> {
+class SpecialResonanceIntegrator : public thrust::unary_function<thrust::tuple<int, fptype *, int>, fpcomplex> {
   public:
     // Class used to calculate integrals of terms BW_i * BW_j^*.
     SpecialResonanceIntegrator(int pIdx, unsigned int ri, unsigned int rj);
@@ -65,8 +64,7 @@ class SpecialResonanceIntegrator
     unsigned int parameters;
 };
 
-class SpecialResonanceCalculator
-    : public thrust::unary_function<thrust::tuple<int, fptype *, int>, fpcomplex> {
+class SpecialResonanceCalculator : public thrust::unary_function<thrust::tuple<int, fptype *, int>, fpcomplex> {
   public:
     // Used to create the cached BW values.
     SpecialResonanceCalculator(int pIdx, unsigned int res_idx);

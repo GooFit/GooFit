@@ -24,26 +24,26 @@ class SpecialWaveCalculator;
 class TddpPdf : public GooPdf {
   public:
     TddpPdf(std::string n,
-            Variable *_dtime,
-            Variable *_sigmat,
-            Variable *m12,
-            Variable *m13,
-            EventNumber *eventNumber,
-            DecayInfo3 *decay,
+            Observable _dtime,
+            Observable _sigmat,
+            Observable m12,
+            Observable m13,
+            EventNumber eventNumber,
+            DecayInfo3t decay,
             MixingTimeResolution *r,
             GooPdf *eff,
-            Variable *mistag = nullptr);
+            Observable *mistag = nullptr);
     TddpPdf(std::string n,
-            Variable *_dtime,
-            Variable *_sigmat,
-            Variable *m12,
-            Variable *m13,
-            EventNumber *eventNumber,
-            DecayInfo3 *decay,
+            Observable _dtime,
+            Observable _sigmat,
+            Observable m12,
+            Observable m13,
+            EventNumber eventNumber,
+            DecayInfo3t decay,
             std::vector<MixingTimeResolution *> &r,
             GooPdf *eff,
-            Variable *md0,
-            Variable *mistag = nullptr);
+            Observable md0,
+            Observable *mistag = nullptr);
     // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the
     // coherent sum. The caching method requires that it be done this way or the ProdPdf
     // normalisation will get *really* confused and give wrong answers.
@@ -81,9 +81,9 @@ class TddpPdf : public GooPdf {
 
   protected:
   private:
-    DecayInfo3 *decayInfo;
-    Variable *_m12;
-    Variable *_m13;
+    DecayInfo3t decayInfo;
+    Observable _m12;
+    Observable _m13;
     fptype *dalitzNormRange{nullptr};
 
     // Following variables are useful if masses and widths, involved in difficult BW calculation,

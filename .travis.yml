@@ -1,5 +1,6 @@
 language: cpp
 sudo: false
+dist: trusty
 cache:
   directories:
   - ${TRAVIS_BUILD_DIR}/deps/cmake
@@ -12,41 +13,62 @@ env:
   global:
   - CTEST_OUTPUT_ON_FAILURE: 1
   - OMP_NUM_THREADS: 2
-  - COMPILER: 4.8
-  - DOXYFILE: $TRAVIS_BUILD_DIR/docs/Doxyfile
   - secure: UxIkC5evjPTPkh4tG9VIK4Hjy0+Wbm69qu54jde0EMjlP3FzLrvXCKr1gh/Y6ywzQYSWE2fAsDWwQGmfqaphAFpjjT1S3Bwpa6ojTikjBe16jaCgIKtRiVXBr9LsNl3W7W9pDrXs1Ue40mSEksZJm8a9G7H4Ibb7K3izrllkhuQ=
-addons:
-  apt:
-    packages:
-    - doxygen-latex
-    - graphviz
-    - g++-4.8
-    - gcc-4.8
-    - libx11-dev
-    - libxpm-dev
-    - libxft-dev
-    - libxext-dev
-    - python-pip
-    - python-numpy
-    sources:
-    - ubuntu-toolchain-r-test
+matrix:
+  include:
+  - compiler: clang
+    addons:
+      apt:
+        sources:
+        - llvm-toolchain-trusty-5.0
+        - ubuntu-toolchain-r-test
+        packages:
+        - clang-5.0
+        - clang-format-5.0
+        - clang-tidy-5.0
+        - libc++-dev
+    env:
+    - COMPILER=5.0 CHECK_STYLE=yes
+    install:
+    - |
+      DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
+      cd "${TRAVIS_BUILD_DIR}" && . .ci/prepare_altern.sh
+      cd "${TRAVIS_BUILD_DIR}" && . .ci/build_cmake.sh
+    script:
+    - cd "${TRAVIS_BUILD_DIR}" && scripts/check_style.sh
+    - cd "${TRAVIS_BUILD_DIR}" && .ci/check_tidy.sh
+  - compiler: gcc
+    addons:
+      apt:
+        packages:
+        - doxygen-latex
+        - graphviz
+        - g++-4.8
+        - gcc-4.8
+        - libx11-dev
+        - libxpm-dev
+        - libxft-dev
+        - libxext-dev
+        - python-pip
+    env:
+    - COMPILER=4.8 DOXYFILE=$TRAVIS_BUILD_DIR/docs/Doxyfile
+    script:
+    - cd "${TRAVIS_BUILD_DIR}" && .ci/travis.sh
+    after_success:
+    - echo "${TRAVIS_BRANCH} ${TRAVIS_PULL_REQUEST}"
+    - if [[ "${TRAVIS_BRANCH}" == "master" && "${TRAVIS_PULL_REQUEST}" == "false" ]] ; then echo "Updating docs" &&  cd "${TRAVIS_BUILD_DIR}" && .ci/build_docs.sh ; fi
+
 install:
-- DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
-- cd "${TRAVIS_BUILD_DIR}" && . .ci/prepare_altern.sh
-- cd "${TRAVIS_BUILD_DIR}" && . .ci/build_cmake.sh
-- cd "${TRAVIS_BUILD_DIR}" && . .ci/build_root.sh
-- cd "${TRAVIS_BUILD_DIR}" && . .ci/build_doxygen.sh
-- cd "${TRAVIS_BUILD_DIR}" && . .ci/build_lcov.sh
-- pip install --user --upgrade pip
-- pip install --user pytest
-script:
-- cd "${TRAVIS_BUILD_DIR}"
-- .ci/travis.sh
-after_success:
-- echo "${TRAVIS_BRANCH}"
-- echo "${TRAVIS_PULL_REQUEST}"
-- if [[ "${TRAVIS_BRANCH}" == "master" && "${TRAVIS_PULL_REQUEST}" == "false" ]] ; then echo "Updating docs" &&  cd "${TRAVIS_BUILD_DIR}" && .ci/build_docs.sh
-  ; fi
+- |
+    DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
+    cd "${TRAVIS_BUILD_DIR}" && . .ci/prepare_altern.sh
+    cd "${TRAVIS_BUILD_DIR}" && . .ci/build_cmake.sh
+    cd "${TRAVIS_BUILD_DIR}" && . .ci/build_root.sh
+    cd "${TRAVIS_BUILD_DIR}" && . .ci/build_doxygen.sh
+    cd "${TRAVIS_BUILD_DIR}" && . .ci/build_lcov.sh
+    pip install --user --upgrade pip
+    pip install --user pytest numpy plumbum
+
 notifications:
   webhooks:
     urls:

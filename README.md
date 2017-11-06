@@ -9,11 +9,16 @@
 GooFit is a massively-parallel framework, written using Thrust for CUDA and OpenMP, for
 doing maximum-likelihood fits with a familiar syntax.
 
-[What's new](./CHANGELOG.md) • [Tutorials] • [API documentation] • [Converting from older GooFit](./docs/CONVERTING20.md)
+[What's new](./CHANGELOG.md)
+• [Tutorials]
+• [API documentation]
+• [Converting from older GooFit](./docs/CONVERTING20.md)
+• [Build recipes](./docs/SYSTEM_INSTALL.md)
+• [Python (in progress)](https://pypi.python.org/pypi/goofit/)
 
 ## Requirements
 
-* A recent version of CMake is required. The minimum is 3.4, but tested primarily with 3.6 and newer. CMake is incredibly easy to install (see below). The minimum required version may change to 3.8 at some point, since that is the first version to support CUDA directly as a first class language.
+* A recent version of CMake is required. The minimum is 3.4, but tested primarily with 3.6 and newer. CMake is incredibly easy to install (see [the system install page](./docs/SYSTEM_INSTALL.md)). The minimum required version may change to 3.8 at some point, since that is the first version to support CUDA directly as a first class language.
   * With CMake, Thrust is downloaded automatically for OpenMP if not found
   * GoogleTest and all other small packages are downloaded automatically
 * A ROOT 6 build highly recommended -- GooFit will use the included Minuit2 submodule if ROOT is not found, and the Minuit1 based fitter will not be available.
@@ -28,6 +33,8 @@ doing maximum-likelihood fits with a familiar syntax.
 
 A list of exact commands required for several platforms is [available here](./docs/SYSTEM_INSTALL.md).
 
+There are also Python Bindings in the 2.1 development version. This requires Python (2 or 3), [NumPy](http://www.numpy.org), [SciKit-Build](http://scikit-build.readthedocs.io), and CMake. You can uses `pip install -v goofit`, or `pip install -v -e .` inside the repository. You can also direcly force the bindings from a normal build with `-DGOOFIT_PYTHON=ON`.
+
 ## Getting the files
 
 * Clone with git:
@@ -39,7 +46,7 @@ cd GooFit
 
 You can either checkout a tagged version, or stay on the master for the latest and greatest. There are often development branches available, too.
 
-## Building 
+## Building
 
 The build system uses CMake. The procedure is standard for CMake builds:
 
@@ -65,8 +72,9 @@ Other custom options supported along with the defaults:
 * `-DGOOFIT_DEVICE=Auto`: The device to use for computation (`CUDA`, `OMP`, `TBB`, or `CPP`). Default setting of `Auto` looks for CUDA first, then OpenMP, then CPP.
 * `-DGOOFIT_ARCH=Auto`: (`Auto`, `Common`, `All`, valid number(s) or name(s)): sets the compute architecture. See [CUDA_SELECT_NVCC_ARCH_FLAGS].
 * `-DGOOFIT_EXAMPLES=ON`: Build the examples
-* `-DGOOFIT_PACKAGES=ON`: Build any packages found with the name `goofit*`
+* `-DGOOFIT_PACKAGES=ON`: Build any packages found with the name `goofit_*`
 * `-DGOOFIT_DEBUG=ON` and `-DGOOFIT_TRACE=ON` will enable the matching printout macros
+* `-DGOOFIT_PYTHON=OFF` (`ON` in GooFit 2.1 if Python found): Preliminary python bindings using [PyBind11].
 
 Advanced Options:
 * `-DGOOFIT_HOST=Auto`: This is CPP unless device is `OMP`, in which case it is also `OMP`. This changes thrust::host_vector calculations, and is not fully supported when set to a non-default setting.
@@ -75,7 +83,6 @@ Advanced Options:
 * `-DGOOFIT_MPI=ON`: (OFF/ON.  With this feature on, GPU devices are selected automatically).  Tested with MVAPICH2/2.2 and OpenMPI.
 * `-DGOOFIT_CUDA_OR_GROUPSIZE:INT=128`: This sets the group size that thrust will use for distributing the problem.  This parameter can be thought of as 'Threads per block'.  These will be used after running 'find_optimal.py' to figure out the optimal size.
 * `-DGOOFIT_CUDA_OR_GRAINSIZE:INT=7`: This is the grain size thrust uses for distributing the problem.  This parameter can be thought of as 'Items per thread'.
-* `-DGOOFIT_PYTHON=OFF`: Preliminary python bindings using [PyBind11].
 * `-DGOOFIT_MAXPAR=1800`: The maximum number of parameters to allow. May cause memory issues if too large.
 * You can enable sanitizers on non-CUDA builds with `-DSANITIZE_ADDRESS=ON`, `-DSANITIZE_MEMORY=ON`, `-DSANITIZE_THREAD=ON` or `-DSANITIZE_UNDEFINED=ON`.
 * If `clang-tidy` is available, it will automatically be used to check the source. If you set `-DGOOFIT_TIDY_FIX=ON`, fixes will be applied to the GooFit source.
@@ -100,6 +107,16 @@ A few standard CMake tricks:
 
 > Note: Running `make`, `make omp`, or `make cuda` in the main directory will make a build directory for you, and will run CMake and make.
 
+## Using an IDE
+
+The following IDEs have been tested. Here `$SRC` refers to the source directory, and usually is `..` or `../GooFit`. You may want `-DCMAKE_BUILD_TYPE=Debug` and/or `-DGOOFIT_DEBUG=ON`.
+
+| Name | Platform | Setup | Notes |
+|------|----------|:------|:------|
+| Xcode | macOS | `cmake $SRC -GXcode` | Only CPP version, works well though |
+| Nsight-Eclipse | Linux | `cmake $SRC -G "Eclipse CDT4 - Unix Makefiles"` | Must be out-of-source, supports CUDA backend |
+| QtCreator | All | Open from QtCreator dialog | Requires CMake extension (usually present). Might be able to use CMake 3.7+ Server |
+
 
 ## Running the Examples
 
@@ -119,6 +136,7 @@ or
 
 If you want to run an individual example, those are in subdirectories in examples (built products are in your build directory, the source is in `/examples`).
 
+The tests can be run with `make test` or `ctest`. The python bindings, if built, can be tested with `pytest`, run from the main build directory. The python examples and tests folders are linked to the build directory with a `py` prefix.
 
 ## Adding a new example:
 
@@ -198,9 +216,11 @@ GooFit's development is supported by the National Science Foundation under grant
 and was developed under grant number [1005530]. 
 Any opinions, findings, and conclusions or recommendations expressed in this material are those of the developers
 and do not necessarily reflect the views of the National Science Foundation.
+In addition, we thank the nVidia GPU Grant Program for donating hardware used in developing this framework.
 
-[DOI-badge]: https://zenodo.org/badge/9017446.svg
-[DOI-link]: [![DOI](https://zenodo.org/badge/9017446.svg)](https://zenodo.org/badge/latestdoi/9017446)
+
+[DOI-badge]:         https://zenodo.org/badge/9017446.svg
+[DOI-link]:          https://zenodo.org/badge/latestdoi/9017446
 [API documentation]: https://GooFit.github.io/GooFit
 [travis-badge]:      https://travis-ci.org/GooFit/GooFit.svg?branch=master
 [travis-link]:       https://travis-ci.org/GooFit/GooFit
@@ -217,4 +237,4 @@ and do not necessarily reflect the views of the National Science Foundation.
 [CLI11]:             https://github.com/CLIUtils/CLI11
 [PyBind11]:          http://pybind11.readthedocs.io/en/master
 [ROOT]:              https://root.cern.ch
-[Tutorials]:         https://henryiii.gitbooks.io/goofit/content/
+[Tutorials]:         https://goofit.gitlab.io/Goo2Torial

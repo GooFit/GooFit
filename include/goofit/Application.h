@@ -21,6 +21,13 @@
 #include <omp.h>
 #endif
 
+#define GOOFIT_PARSE(app, argc, argv)                                                                                  \
+    try {                                                                                                              \
+        app.run();                                                                                                     \
+    } catch(const GooFit::ParseError &e) {                                                                             \
+        return app.exit(e);                                                                                            \
+    }
+
 #include <csignal>
 
 namespace GooFit {
@@ -32,21 +39,59 @@ void signal_handler(int s) {
 }
 
 // Importing into the GooFit namespace the main classes from CLI11
-using CLI::ParseError;
-using CLI::FileError;
-using CLI::Success;
 using CLI::App;
-using CLI::Option;
-using CLI::ExistingFile;
 using CLI::ExistingDirectory;
-using CLI::NonexistentPath;
+using CLI::ExistingFile;
 using CLI::ExitCodes;
+using CLI::FileError;
+using CLI::NonexistentPath;
+using CLI::Option;
+using CLI::ParseError;
+using CLI::Success;
+
+/// Optional print for splash
+/// Orignal: Slant Relief from http://patorjk.com/software/taag/#p=testall&f=Wavy&t=GooFit (tightened a bit)
+/// New: Block letters
+void print_splash() {
+    std::cout << std::endl << reset << green << "       Welcome to";
+    std::string splash = R"raw(
+   ██████╗                 ████████╗
+  ██╔════╝  █████╗  █████╗ ██╔═════╝  ██╗
+  ██║  ███╗██╔══██╗██╔══██╗█████╗██╗██████╗
+  ██║   ██║██║  ██║██║  ██║██╔══╝██║╚═██╔═╝
+  ╚██████╔╝╚█████╔╝╚█████╔╝██║   ██║  ██║
+   ╚═════╝  ╚════╝  ╚════╝ ╚═╝   ╚═╝  ██║
+                                 ███████║
+                                 ╚══════╝
+)raw";
+
+    std::cout << reset << dim;
+    bool cur_green = false;
+    for(int i = 0; i < splash.size(); i++) {
+        std::string letter = splash.substr(i, 3);
+        bool is_edge
+            = letter == "╚" || letter == "╝" || letter == "╗" || letter == "╔" || letter == "║" || letter == "═";
+        bool is_block = letter == "█";
+
+        if(is_block && !cur_green) {
+            std::cout << reset << green;
+            cur_green = true;
+        } else if(is_edge && cur_green) {
+            std::cout << reset << dim;
+            cur_green = false;
+        }
+        std::cout << splash[i];
+    }
+
+    std::cout << reset << std::flush;
+}
 
 class Application : public CLI::App {
   protected:
     int gpuDev_ = 0;
     bool show_gpus_;
     bool quiet_;
+    bool splash_;
     int argc_;
     char **argv_;
 
@@ -112,7 +157,9 @@ class Application : public CLI::App {
 #endif
         add_flag("--show-gpus", show_gpus_, "Show the available GPU devices and exit")->group("GooFit");
 #endif
-        add_flag("-q,--quiet", quiet_, "Reduce the verbosity of the Application")->group("GooFit");
+        auto quiet = add_flag("-q,--quiet", quiet_, "Reduce the verbosity of the Application")->group("GooFit");
+
+        add_flag("--nosplash", splash_, "Do not print a splash")->group("GooFit")->excludes(quiet);
 
         add_config("--config", "config.ini", "An ini file with command line options in it")->group("GooFit");
 
@@ -140,6 +187,9 @@ class Application : public CLI::App {
         set_device();
 
         if(!quiet_) {
+            if(!splash_)
+                print_splash();
+
             GOOFIT_INFO("GooFit: Version {} ({}) Commit: {}", GOOFIT_VERSION, GOOFIT_TAG, GOOFIT_GIT_VERSION);
 
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA

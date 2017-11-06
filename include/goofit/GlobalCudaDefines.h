@@ -23,8 +23,12 @@ extern int host_callnumber;
 #define MEMCPY_TO_SYMBOL(target, source, count, offset, direction) memcpy(((char *)&target) + offset, source, count)
 #define MEMCPY_FROM_SYMBOL(target, source, count, offset, direction)                                                   \
     memcpy((char *)target, ((char *)source) + offset, count)
-#define GET_FUNCTION_ADDR(fname) host_fcn_ptr = (void *)fname
-#define BLOCKIDX (1)
+#define GET_FUNCTION_ADDR(fname)                                                                                       \
+    {                                                                                                                  \
+        host_fcn_ptr = (void *)fname;                                                                                  \
+        GOOFIT_DEBUG("Using function {} in {}, {}:{}", #fname, __func__, __FILE__, __LINE__);                          \
+    }
+#define BLOCKIDX (0)
 inline void cudaDeviceSynchronize() {}
 // Create my own error type to avoid __host__ redefinition
 // conflict in Thrust from including driver_types.h
@@ -41,7 +45,7 @@ enum gooError { gooSuccess = 0, gooErrorMemoryAllocation };
 
 #elif THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CPP
 
-#define THREADIDX (1)
+#define THREADIDX (0)
 #define BLOCKDIM (1)
 #define THREAD_SYNCH
 
@@ -54,9 +58,15 @@ enum gooError { gooSuccess = 0, gooErrorMemoryAllocation };
     cudaMemcpyToSymbol(target, source, count, offset, direction)
 
 // This automatically selects the correct CUDA arch and expands the intrinsic to work on arbitrary types
+#ifdef __CUDACC__
 #include <generics/ldg.h>
+#endif
 #define RO_CACHE(x) __ldg(&x)
-#define GET_FUNCTION_ADDR(fname) cudaMemcpyFromSymbol((void **)&host_fcn_ptr, fname, sizeof(void *))
+#define GET_FUNCTION_ADDR(fname)                                                                                       \
+    {                                                                                                                  \
+        cudaMemcpyFromSymbol((void **)&host_fcn_ptr, fname, sizeof(void *));                                           \
+        GOOFIT_DEBUG("Using function {} in {}, {}:{}", #fname, __func__, __FILE__, __LINE__);                          \
+    }
 #define MEMCPY_FROM_SYMBOL(target, source, count, offset, direction)                                                   \
     cudaMemcpyFromSymbol(target, source, count, offset, direction)
 

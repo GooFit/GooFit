@@ -8,7 +8,6 @@ namespace py = pybind11;
 
 void init_ArgusPdf(py::module &m) {
     py::class_<ArgusPdf, GooPdf>(m, "ArgusPdf")
-<<<<<<< HEAD
         .def(py::init<std::string, Variable *, Variable *, Variable *, bool>(),
              "n",
              "_x",
@@ -28,8 +27,5 @@ void init_ArgusPdf(py::module &m) {
              py::keep_alive<1, 3>(),
              py::keep_alive<1, 4>(),
              py::keep_alive<1, 5>());
-=======
-        .def(py::init<std::string, Observable, Variable, Variable, bool>())
-        .def(py::init<std::string, Observable, Variable, Variable, bool, Variable>());
->>>>>>> 3121d83c81449ab03f57f2444d77409085bdb7ea
+
 }

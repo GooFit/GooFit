@@ -180,8 +180,8 @@ ConvolutionPdf::ConvolutionPdf(std::string n, Observable x, GooPdf *m, GooPdf *r
     ConvolveType = 0;
 }
 
-ConvolutionPdf::ConvolutionPdf(std::string n, Variable *x, GooPdf *m, GooPdf *r, unsigned int numOthers)
-    : GooPdf(x, n)
+ConvolutionPdf::ConvolutionPdf(std::string n, Observable x, GooPdf *m, GooPdf *r, unsigned int numOthers)
+    : GooPdf(n, x)
     , model(m)
     , resolution(r)
     , host_iConsts(nullptr)
@@ -203,13 +203,6 @@ ConvolutionPdf::ConvolutionPdf(std::string n, Variable *x, GooPdf *m, GooPdf *r,
 
     // Indices stores (function index)(parameter index) doublet for model and resolution function.
     std::vector<unsigned int> paramIndices;
-    // paramIndices.push_back(model->getFunctionIndex());
-    // paramIndices.push_back(model->getParameterIndex());
-    // paramIndices.push_back(resolution->getFunctionIndex());
-    // paramIndices.push_back(resolution->getParameterIndex());
-    // paramIndices.push_back(registerConstants(3));
-    // paramIndices.push_back(workSpaceIndex = totalConvolutions++);
-    // paramIndices.push_back(numOthers);
 
     constantsList.push_back(-10);
     constantsList.push_back(10);
@@ -284,11 +277,11 @@ __host__ void ConvolutionPdf::setIntegrationConstants(fptype lo, fptype hi, fpty
     // x2-minX, and the min and max are given by the dependent variable.
     // However, the step must be the same as for the model, or the binning
     // will get out of sync.
-    Variable *dependent = *(observablesList.begin());
+    Observable dependent = *(observablesList.begin());
 
     host_iConsts[2] = numbins;
-    host_iConsts[3] = (host_iConsts[0] - dependent->getUpperLimit());
-    host_iConsts[4] = (host_iConsts[1] - dependent->getLowerLimit());
+    host_iConsts[3] = (host_iConsts[0] - dependent.getUpperLimit());
+    host_iConsts[4] = (host_iConsts[1] - dependent.getLowerLimit());
 
     numbins         = static_cast<int>(floor((host_iConsts[4] - host_iConsts[3]) / step + 0.5));
     host_iConsts[5] = numbins;
@@ -296,7 +289,7 @@ __host__ void ConvolutionPdf::setIntegrationConstants(fptype lo, fptype hi, fpty
     // MEMCPY(convolutionConstants, host_iConsts, 6 * sizeof(fptype), cudaMemcpyHostToDevice);
     resolWorkSpace = new thrust::device_vector<fptype>(numbins);
 
-    int offset = dependent->getUpperLimit() / step;
+    int offset = dependent.getUpperLimit() / step;
     MEMCPY_TO_SYMBOL(modelOffset, &offset, sizeof(int), workSpaceIndex * sizeof(int), cudaMemcpyHostToDevice);
 
     fptype *dev_address[1];

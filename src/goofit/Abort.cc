@@ -17,10 +17,7 @@ void abort(std::string file, int line, std::string reason, const PdfBase *pdf) {
         std::cout << "Parameters of " << pdf->getName() << " : \n";
 
         for(const Variable &v : pars) {
-            //    if(0 > v->getIndex())
-            //        continue;
-
-            std::cout << "  " << v.getName() << " (" << v.getObservableIndex() << ") :\t" << v->getFitterIndex()
+            std::cout << "  " << v.getName() << " (" << v.getIndex() << ") :\t" << v.getFitterIndex()
                       << std::endl;
         }
     }

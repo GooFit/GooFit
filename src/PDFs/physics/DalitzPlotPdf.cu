@@ -161,13 +161,11 @@ __host__ DalitzPlotPdf::DalitzPlotPdf(
 
     std::vector<unsigned int> pindices;
     pindices.push_back(registerConstants(5));
-    decayConstants[0] = decayInfo->motherMass;
-    decayConstants[1] = decayInfo->daug1Mass;
-    decayConstants[2] = decayInfo->daug2Mass;
-    decayConstants[3] = decayInfo->daug3Mass;
-    decayConstants[4] = decayInfo->meson_radius;
-    // MEMCPY_TO_SYMBOL(functorConstants, decayConstants, 5 * sizeof(fptype), cIndex * sizeof(fptype),
-    // cudaMemcpyHostToDevice);
+    decayConstants[0] = decayInfo.motherMass;
+    decayConstants[1] = decayInfo.daug1Mass;
+    decayConstants[2] = decayInfo.daug2Mass;
+    decayConstants[3] = decayInfo.daug3Mass;
+    decayConstants[4] = decayInfo.meson_radius;
 
     // Passing values to the defined constants.  Rather than push into list, which means each resonance
     // 1. duplicates 5 fptypes
@@ -179,19 +177,16 @@ __host__ DalitzPlotPdf::DalitzPlotPdf(
     MEMCPY_TO_SYMBOL(c_daug3Mass, &decayConstants[3], sizeof(fptype), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(c_meson_radius, &decayConstants[4], sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
-    pindices.push_back(decayInfo->resonances.size());
-    constantsList.push_back(decayInfo->resonances.size());
+    pindices.push_back(decayInfo.resonances.size());
+    constantsList.push_back(decayInfo.resonances.size());
     static int cacheCount = 0;
     cacheToUse            = cacheCount++;
     pindices.push_back(cacheToUse);
     constantsList.push_back(cacheToUse);
 
-    for(auto &resonance : decayInfo->resonances) {
+    for(auto &resonance : decayInfo.resonances) {
         pindices.push_back(registerParameter(resonance->amp_real));
         pindices.push_back(registerParameter(resonance->amp_imag));
-        // pindices.push_back(resonance->getFunctionIndex());
-        // pindices.push_back(resonance->getParameterIndex());
-        // resonance->setConstantIndex(cIndex);
         components.push_back(resonance);
     }
 
@@ -202,22 +197,22 @@ __host__ DalitzPlotPdf::DalitzPlotPdf(
     GET_FUNCTION_ADDR(ptr_to_DalitzPlot);
     initialize(pindices);
 
-    redoIntegral = new bool[decayInfo->resonances.size()];
-    cachedMasses = new fptype[decayInfo->resonances.size()];
-    cachedWidths = new fptype[decayInfo->resonances.size()];
-    integrals    = new fpcomplex **[decayInfo->resonances.size()];
-    integrators  = new SpecialResonanceIntegrator **[decayInfo->resonances.size()];
-    calculators  = new SpecialResonanceCalculator *[decayInfo->resonances.size()];
+    redoIntegral = new bool[decayInfo.resonances.size()];
+    cachedMasses = new fptype[decayInfo.resonances.size()];
+    cachedWidths = new fptype[decayInfo.resonances.size()];
+    integrals    = new fpcomplex **[decayInfo.resonances.size()];
+    integrators  = new SpecialResonanceIntegrator **[decayInfo.resonances.size()];
+    calculators  = new SpecialResonanceCalculator *[decayInfo.resonances.size()];
 
-    for(int i = 0; i < decayInfo->resonances.size(); ++i) {
+    for(int i = 0; i < decayInfo.resonances.size(); ++i) {
         redoIntegral[i] = true;
         cachedMasses[i] = -1;
         cachedWidths[i] = -1;
-        integrators[i]  = new SpecialResonanceIntegrator *[decayInfo->resonances.size()];
+        integrators[i]  = new SpecialResonanceIntegrator *[decayInfo.resonances.size()];
         calculators[i]  = new SpecialResonanceCalculator(parameters, i);
-        integrals[i]    = new fpcomplex *[decayInfo->resonances.size()];
+        integrals[i]    = new fpcomplex *[decayInfo.resonances.size()];
 
-        for(int j = 0; j < decayInfo->resonances.size(); ++j) {
+        for(int j = 0; j < decayInfo.resonances.size(); ++j) {
             integrals[i][j]   = new fpcomplex(0, 0);
             integrators[i][j] = new SpecialResonanceIntegrator(parameters, i, j);
         }
@@ -274,26 +269,26 @@ __host__ fptype DalitzPlotPdf::normalize() const {
     MEMCPY_TO_SYMBOL(
         d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
-    int totalBins = _m12->getNumBins() * _m13->getNumBins();
+    int totalBins = _m12.getNumBins() * _m13.getNumBins();
 
     if(!dalitzNormRange) {
         gooMalloc((void **)&dalitzNormRange, 6 * sizeof(fptype));
 
         auto *host_norms = new fptype[6];
-        host_norms[0]    = _m12->getLowerLimit();
-        host_norms[1]    = _m12->getUpperLimit();
-        host_norms[2]    = _m12->getNumBins();
-        host_norms[3]    = _m13->getLowerLimit();
-        host_norms[4]    = _m13->getUpperLimit();
-        host_norms[5]    = _m13->getNumBins();
+        host_norms[0]    = _m12.getLowerLimit();
+        host_norms[1]    = _m12.getUpperLimit();
+        host_norms[2]    = _m12.getNumBins();
+        host_norms[3]    = _m13.getLowerLimit();
+        host_norms[4]    = _m13.getUpperLimit();
+        host_norms[5]    = _m13.getNumBins();
         MEMCPY(dalitzNormRange, host_norms, 6 * sizeof(fptype), cudaMemcpyHostToDevice);
         delete[] host_norms;
     }
 
-    for(unsigned int i = 0; i < decayInfo->resonances.size(); ++i) {
+    for(unsigned int i = 0; i < decayInfo.resonances.size(); ++i) {
         redoIntegral[i] = forceRedoIntegrals;
 
-        if(!(decayInfo->resonances[i]->parametersChanged()))
+        if(!(decayInfo.resonances[i]->parametersChanged()))
             continue;
 
         redoIntegral[i] = true;
@@ -312,9 +307,9 @@ __host__ fptype DalitzPlotPdf::normalize() const {
     thrust::constant_iterator<int> eventSize(totalEventSize);
     thrust::counting_iterator<int> eventIndex(0);
 
-    for(int i = 0; i < decayInfo->resonances.size(); ++i) {
+    for(int i = 0; i < decayInfo.resonances.size(); ++i) {
         // grab the index for this resonance.
-        calculators[i]->setResonanceIndex(decayInfo->resonances[i]->getFunctionIndex());
+        calculators[i]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
         calculators[i]->setDalitzIndex(getFunctionIndex());
         if(redoIntegral[i]) {
 #ifdef GOOFIT_MPI
@@ -337,14 +332,14 @@ __host__ fptype DalitzPlotPdf::normalize() const {
         }
 
         // Possibly this can be done more efficiently by exploiting symmetry?
-        for(int j = 0; j < decayInfo->resonances.size(); ++j) {
+        for(int j = 0; j < decayInfo.resonances.size(); ++j) {
             if((!redoIntegral[i]) && (!redoIntegral[j]))
                 continue;
 
             integrators[i][j]->setDalitzIndex(getFunctionIndex());
-            integrators[i][j]->setResonanceIndex(decayInfo->resonances[i]->getFunctionIndex());
+            integrators[i][j]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
             // integrators[i][j]->setEfficiencyIndex(efficiencyFunction);
-            integrators[i][j]->setEfficiencyIndex(decayInfo->resonances[j]->getFunctionIndex());
+            integrators[i][j]->setEfficiencyIndex(decayInfo.resonances[j]->getFunctionIndex());
             thrust::constant_iterator<int> effFunc(efficiencyFunction);
 
             fpcomplex dummy(0, 0);
@@ -361,13 +356,13 @@ __host__ fptype DalitzPlotPdf::normalize() const {
     // End of time-consuming integrals.
     fpcomplex sumIntegral(0, 0);
 
-    for(unsigned int i = 0; i < decayInfo->resonances.size(); ++i) {
+    for(unsigned int i = 0; i < decayInfo.resonances.size(); ++i) {
         // int param_i = parameters + resonanceOffset_DP + resonanceSize * i;
         fpcomplex amplitude_i(host_parameters[parametersIdx + i * 2 + 1], host_parameters[parametersIdx + i * 2 + 2]);
 
         // printf("i:%i - %f,%f\n", i, amplitude_i.real(), amplitude_i.imag());
 
-        for(unsigned int j = 0; j < decayInfo->resonances.size(); ++j) {
+        for(unsigned int j = 0; j < decayInfo.resonances.size(); ++j) {
             // int param_j = parameters + resonanceOffset_DP + resonanceSize * j;
             fpcomplex amplitude_j(host_parameters[parametersIdx + j * 2 + 1],
                                   -host_parameters[parametersIdx + j * 2 + 2]);
@@ -382,8 +377,8 @@ __host__ fptype DalitzPlotPdf::normalize() const {
 
     fptype ret           = sumIntegral.real(); // That complex number is a square, so it's fully real
     double binSizeFactor = 1;
-    binSizeFactor *= _m12->getBinSize();
-    binSizeFactor *= _m13->getBinSize();
+    binSizeFactor *= _m12.getBinSize();
+    binSizeFactor *= _m13.getBinSize();
     ret *= binSizeFactor;
 
     host_normalisations[normalIdx + 1] = 1.0 / ret;

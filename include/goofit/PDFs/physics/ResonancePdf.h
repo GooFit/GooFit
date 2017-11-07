@@ -50,8 +50,6 @@ class ResonancePdf : public GooPdf {
         pindices.push_back(0);
     }
 
-    void setConstantIndex(unsigned int idx) { host_indices[parameters + 1] = idx; }
-
     Variable amp_real;
     Variable amp_imag;
 

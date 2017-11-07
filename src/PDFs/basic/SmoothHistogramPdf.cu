@@ -32,16 +32,13 @@ __device__ fptype device_EvalHistogram(fptype *evt, ParameterContainer &pc) {
     for(int i = 0; i < numVars; ++i) {
         int varIndex      = RO_CACHE(pc.observables[pc.observableIdx + 1 + i]);
         int lowerBoundIdx = 3 * (i + 1);
-        // if (gpuDebug & 1) printf("[%i, %i] Smoothed: %i %i %i\n", BLOCKIDX, THREADIDX, i, varIndex,
-        // indices[varIndex]);
+
         fptype currVariable = evt[varIndex];
         fptype lowerBound   = RO_CACHE(pc.constants[pc.constantIdx + i * 3 + 5]);
         fptype step         = RO_CACHE(pc.constants[pc.constantIdx + i * 3 + 6]);
 
         currVariable -= lowerBound;
         currVariable /= step;
-        // if (gpuDebug & 1) printf("[%i, %i] Smoothed: %i %i %f %f %f %f\n", BLOCKIDX, THREADIDX, i, varIndex,
-        // currVariable, lowerBound, step, evt[varIndex]);
 
         auto localBinNumber = static_cast<int>(floor(currVariable));
         globalBinNumber += previous * localBinNumber;
@@ -56,13 +53,6 @@ __device__ fptype device_EvalHistogram(fptype *evt, ParameterContainer &pc) {
 
     pc.incrementIndex(1, numParms, numCons, numObs, 1);
 
-    // if ((gpuDebug & 1) && (evt[8] < 0.5) && (paramIndices + debugParamIndex == indices)) printf("Smoothed: %f %f %f
-    // %i %f\n", evt[6], evt[7], myHistogram[globalBinNumber], globalBinNumber,
-    // dev_base_histograms[myHistogramIndex][globalBinNumber]);
-    // if (gpuDebug & 1) printf("Smoothed: %f %f %f %i %f\n", evt[0], evt[1], myHistogram[globalBinNumber],
-    // globalBinNumber, dev_base_histograms[myHistogramIndex][globalBinNumber]);
-    // if (gpuDebug & 1) printf("Smoothed: %f %f %f %i %f %f\n", evt[0], evt[1], ret, globalBinNumber,
-    // dev_base_histograms[myHistogramIndex][globalBinNumber], p[indices[1]]);
     return ret;
 }
 
@@ -70,7 +60,6 @@ struct Smoother {
     int funcIdx;
 
     __device__ fptype operator()(int globalBin) {
-        // unsigned int *indices = paramIndices + parameters;
         ParameterContainer pc;
 
         while(pc.funcIdx < funcIdx)
@@ -96,8 +85,6 @@ struct Smoother {
             bool offSomeAxis  = false;
 
             for(int v = 0; v < numVars; ++v) {
-                // int lowerBoundIdx   = 3*(i+1);
-                // int localNumBins = indices[6 + v*4];
                 int localNumBins = RO_CACHE(pc.constants[pc.constantIdx + 3 * (v + 1) + 1]);
                 int offset       = ((i / dev_powi(3, v)) % 3) - 1;
 
@@ -127,9 +114,6 @@ struct Smoother {
 
         centralValue += otherBinsTotal * smoothing;
         centralValue /= (1 + numSurroundingBins * smoothing);
-
-        // if (7010 == globalBin) printf("Smoothing: %f %f %f %i %f\n", myHistogram[globalBin], otherBinsTotal,
-        // smoothing, numSurroundingBins, centralValue);
         return centralValue;
     }
 };
@@ -139,9 +123,6 @@ __device__ device_function_ptr ptr_to_EvalHistogram = device_EvalHistogram;
 __host__ SmoothHistogramPdf::SmoothHistogramPdf(std::string n, BinnedDataSet *hist, Variable smoothing)
     : GooPdf(n) {
     int numVars = hist->numVariables();
-    // int numConstants = 2 * numVars;
-    // registerConstants(numConstants);
-    // host_constants = new fptype[numConstants];
     totalEvents = 0;
 
     std::vector<unsigned int> pindices;
@@ -150,25 +131,19 @@ __host__ SmoothHistogramPdf::SmoothHistogramPdf(std::string n, BinnedDataSet *hi
 
     int varIndex = 0;
 
-    constantsList.push_back(hist->getVariables().size());
+    constantsList.push_back(hist->getObservables().size());
     constantsList.push_back(totalHistograms);
     constantsList.push_back(numVars);
 
-    for(Variable *var : hist->getVariables()) {
+    for(const Observable &var : hist->getObservables()) {
         registerObservable(var);
-        // pindices.push_back((*var)->index);
-        // pindices.push_back(cIndex + 2 * varIndex + 0);
-        // pindices.push_back(cIndex + 2 * varIndex + 1);
-        // pindices.push_back(var->getNumBins());
-        constantsList.push_back(var->getNumBins());
-        // constantsList.push_back (varIndex);
-        constantsList.push_back(var->getLowerLimit());
-        constantsList.push_back(var->getBinSize());
+        constantsList.push_back(var.getNumBins());
+        constantsList.push_back(var.getLowerLimit());
+        constantsList.push_back(var.getBinSize());
 
         // host_constants[2 * varIndex + 0] = var->getLowerLimit(); // NB, do not put cIndex here, it is accounted for
         // by
         // the offset in MEMCPY_TO_SYMBOL below.
-        // host_constants[2 * varIndex + 1] = var->getBinSize();
         varIndex++;
     }
 
@@ -180,12 +155,6 @@ __host__ SmoothHistogramPdf::SmoothHistogramPdf(std::string n, BinnedDataSet *hi
         host_histogram.push_back(curr);
         totalEvents += curr;
     }
-
-    // MEMCPY_TO_SYMBOL(functorConstants,
-    //                 host_constants,
-    //                 numConstants * sizeof(fptype),
-    //                 cIndex * sizeof(fptype),
-    //                 cudaMemcpyHostToDevice);
 
     if(totalEvents > 0)
         copyHistogramToDevice(host_histogram);

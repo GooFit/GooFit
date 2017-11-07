@@ -50,8 +50,8 @@ Int_t Minuit1::Eval(int npar, double *gin, double &fun, double *fp, int iflag) {
         if(std::isnan(pars.at(var.getFitterIndex())))
             GOOFIT_WARN("Variable {} at {} is NaN", var.getName(), var.getIndex());
 
-        var->setChanged(var->getValue() != pars.at(var->getFitterIndex()));
-        var->setValue(pars.at(var->getFitterIndex()));
+        var.setChanged(var.getValue() != pars.at(var.getFitterIndex()));
+        var.setValue(pars.at(var.getFitterIndex()));
         // TODO: fix this to reflect Minuit2 updateVariable. Actually not needed...
         // gooPars.at(var->getIndex()) = var->getValue() - var->blind;
     }

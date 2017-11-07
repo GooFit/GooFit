@@ -90,9 +90,9 @@ __host__ DPPdf::DPPdf(
     // registerObservable(eventNumber);
 
     std::vector<fptype> decayConstants;
-    decayConstants.push_back(decayInfo->meson_radius);
+    decayConstants.push_back(decayInfo.meson_radius);
 
-    for(double &particle_masse : decayInfo->particle_masses) {
+    for(double &particle_masse : decayInfo.particle_masses) {
         decayConstants.push_back(particle_masse);
         constantsList.push_back(particle_masse);
     }
@@ -102,7 +102,7 @@ __host__ DPPdf::DPPdf(
     // MEMCPY_TO_SYMBOL(c_daug1Mass, &decayConstants[2], sizeof(fptype), 0, cudaMemcpyHostToDevice);
     // MEMCPY_TO_SYMBOL(c_daug2Mass, &decayConstants[3], sizeof(fptype), 0, cudaMemcpyHostToDevice);
     // MEMCPY_TO_SYMBOL(c_daug3Mass, &decayConstants[4], sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    MEMCPY_TO_SYMBOL(c_meson_radius, &decayInfo->meson_radius, sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(c_meson_radius, &decayInfo.meson_radius, sizeof(fptype), 0, cudaMemcpyHostToDevice);
     std::vector<unsigned int> pindices;
     pindices.push_back(registerConstants(decayConstants.size()));
     // MEMCPY_TO_SYMBOL(functorConstants,
@@ -127,7 +127,7 @@ __host__ DPPdf::DPPdf(
     std::vector<unsigned int> nPermVec;
     std::vector<unsigned int> ampidxstart;
 
-    for(auto &amplitude : decayInfo->amplitudes) {
+    for(auto &amplitude : decayInfo.amplitudes) {
         AmpMap[amplitude->_uniqueDecayStr] = std::make_pair(std::vector<unsigned int>(0), std::vector<unsigned int>(0));
 
         auto LSvec = amplitude->_LS;
@@ -234,9 +234,9 @@ __host__ DPPdf::DPPdf(
 
     // fprintf(stderr,"#Amp's %i, #LS %i, #SF %i \n", AmpMap.size(), components.size()-1, SpinFactors.size() );
 
-    std::vector<mcbooster::GReal_t> masses(decayInfo->particle_masses.begin() + 1, decayInfo->particle_masses.end());
-    mcbooster::PhaseSpace phsp(decayInfo->particle_masses[0], masses, MCeventsNorm);
-    phsp.Generate(mcbooster::Vector4R(decayInfo->particle_masses[0], 0.0, 0.0, 0.0));
+    std::vector<mcbooster::GReal_t> masses(decayInfo.particle_masses.begin() + 1, decayInfo.particle_masses.end());
+    mcbooster::PhaseSpace phsp(decayInfo.particle_masses[0], masses, MCeventsNorm);
+    phsp.Generate(mcbooster::Vector4R(decayInfo.particle_masses[0], 0.0, 0.0, 0.0));
     phsp.Unweight();
 
     auto nAcc                     = phsp.GetNAccepted();
@@ -489,9 +489,9 @@ __host__ fptype DPPdf::normalize() const {
 __host__
     std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h>
     DPPdf::GenerateSig(unsigned int numEvents) {
-    std::vector<mcbooster::GReal_t> masses(decayInfo->particle_masses.begin() + 1, decayInfo->particle_masses.end());
-    mcbooster::PhaseSpace phsp(decayInfo->particle_masses[0], masses, numEvents, generation_offset);
-    phsp.Generate(mcbooster::Vector4R(decayInfo->particle_masses[0], 0.0, 0.0, 0.0));
+    std::vector<mcbooster::GReal_t> masses(decayInfo.particle_masses.begin() + 1, decayInfo.particle_masses.end());
+    mcbooster::PhaseSpace phsp(decayInfo.particle_masses[0], masses, numEvents, generation_offset);
+    phsp.Generate(mcbooster::Vector4R(decayInfo.particle_masses[0], 0.0, 0.0, 0.0));
 
     auto d1 = phsp.GetDaughters(0);
     auto d2 = phsp.GetDaughters(1);

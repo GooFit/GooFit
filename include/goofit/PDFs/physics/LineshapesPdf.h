@@ -41,8 +41,6 @@ class Lineshape : public GooPdf {
   public:
     ~Lineshape() override = default;
 
-    void setConstantIndex(unsigned int idx) { host_indices[parameters + 1] = idx; }
-
     bool operator==(const Lineshape &L) const { return (L.getName() == getName()); }
 };
 

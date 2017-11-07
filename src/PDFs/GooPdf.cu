@@ -170,7 +170,7 @@ __device__ device_metric_ptr ptr_to_BinWithError = calculateBinWithError;
 __device__ device_metric_ptr ptr_to_Chisq        = calculateChisq;
 
 void *host_fcn_ptr = nullptr;
-
+    
 void *getMetricPointer(std::string name) {
 #define CHOOSE_PTR(ptrname)                                                                                            \
     if(name == #ptrname)                                                                                               \
@@ -318,22 +318,9 @@ __host__ double GooPdf::sumOfNll(int numVars) const {
 }
 
 __host__ double GooPdf::calculateNLL() const {
-    // if (cpuDebug & 1) std::cout << getName() << " entering calculateNLL (" << host_callnumber << ")" << std::endl;
 
-    // MEMCPY_TO_SYMBOL(callnumber, &host_callnumber, sizeof(int));
-    // int oldMask = cpuDebug;
-    // if (0 == host_callnumber) setDebugMask(0, false);
-    // std::cout << "Start norm " << getName() << std::endl;
     GOOFIT_DEBUG("GooPdf::calculateNLL calling normalize");
     normalize();
-    // std::cout << "Norm done\n";
-    // if ((0 == host_callnumber) && (1 == oldMask)) setDebugMask(1, false);
-
-    // if (cpuDebug & 1) {
-    // std::cout << "Norm factors: ";
-    // for (int i = 0; i < totalParams; ++i) std::cout << host_normalisation[i] << " ";
-    // std::cout << std::endl;
-    //}
 
     if(host_normalisations[normalIdx + 1] <= 0)
         GooFit::abort(__FILE__, __LINE__, getName() + " non-positive normalisation", this);
@@ -355,19 +342,13 @@ __host__ double GooPdf::calculateNLL() const {
 
     if(0.0 == ret)
         GooFit::abort(__FILE__, __LINE__, getName() + " zero NLL", this);
-
-    // if (cpuDebug & 1) std::cout << "Full NLL " << host_callnumber << " : " << 2*ret << std::endl;
-    // setDebugMask(0);
-
-    // if ((cpuDebug & 1) && (host_callnumber >= 1)) GooFit::abort(__FILE__, __LINE__, getName() + " debug abort",
-    // this);
+    
     return 2.0 * ret;
 }
 
 __host__ std::vector<fptype> GooPdf::evaluateAtPoints(Observable var) {
     normalize();
-    // MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0,
-    // cudaMemcpyHostToDevice);
+
     MEMCPY(d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), cudaMemcpyHostToDevice);
     UnbinnedDataSet tempdata(observablesList);
 
@@ -378,12 +359,13 @@ __host__ std::vector<fptype> GooPdf::evaluateAtPoints(Observable var) {
         tempdata.addEvent();
     }
 
+    auto old = getData();
     setData(&tempdata);
 
     thrust::counting_iterator<int> eventIndex(0);
     thrust::constant_iterator<int> eventSize(observablesList.size());
     thrust::constant_iterator<fptype *> arrayAddress(dev_event_array);
-    thrust::device_vector<fptype> results(var->getNumBins());
+    thrust::device_vector<fptype> results(var.getNumBins());
 
     MetricTaker evalor(this, getMetricPointer("ptr_to_Eval"));
 #ifdef GOOFIT_MPI
@@ -476,7 +458,7 @@ __host__ fptype GooPdf::normalize() const {
 
     if(hasAnalyticIntegral()) {
         // Loop goes only over observables of this PDF.
-        for(const Observable &v : observables) {
+        for(const Observable &v : observablesList) {
             GOOFIT_TRACE("{}: Analytically integrating over {}", getName(), v.getName());
             ret *= integrate(v.getLowerLimit(), v.getUpperLimit());
         }
@@ -491,7 +473,7 @@ __host__ fptype GooPdf::normalize() const {
 
     int totalBins = 1;
 
-    for(const Observable &v : observables) {
+    for(const Observable &v : observablesList) {
         ret *= v.getUpperLimit() - v.getLowerLimit();
         totalBins *= integrationBins > 0 ? integrationBins : v.getNumBins();
 

@@ -46,52 +46,21 @@ __host__ void PdfBase::checkInitStatus(std::vector<std::string> &unInited) const
 }
 
 __host__ void PdfBase::recursiveSetNormalisation(fptype norm) const {
-    host_normalisation[parameters] = norm;
+    host_normalisations[normalIdx + 1] = norm;
 
     for(auto component : components) {
         component->recursiveSetNormalisation(norm);
     }
 }
 
-__host__ unsigned int PdfBase::registerParameter(Variable *var) {
-    if(var == nullptr)
-        throw GooFit::GeneralError("{}: Can not register a nullptr", getName());
-
+__host__ unsigned int PdfBase::registerParameter(Variable var) {
     // we need to always add the variable to our internal parameter list
     parametersList.push_back(var);
 
     // just return, these indices aren't used.
     if(std::find(parametersList.begin(), parametersList.end(), var) != parametersList.end())
         return 0;
-    //    return (unsigned int) var->getIndex();
-
-    // parametersList.push_back(var);
-
-    // if(0 > var->getIndex()) {
-    //    unsigned int unusedIndex = 0;
-
-    //    while(true) {
-    //        bool canUse = true;
-
-    //        for(auto &p : variableRegistry) {
-    //            if(unusedIndex != p.first->getIndex())
-    //                continue;
-
-    //            canUse = false;
-    //            break;
-    //        }
-
-    //        if(canUse)
-    //            break;
-
-    //        unusedIndex++;
-    //    }
-
-    //    GOOFIT_DEBUG("{}: Registering {} for {}", getName(), unusedIndex, var->getName());
-    //    var->setIndex(unusedIndex);
-    //}
-
-    // return static_cast<unsigned int>(var->getIndex());
+    
     return 0;
 }
 
@@ -102,9 +71,6 @@ __host__ void PdfBase::unregisterParameter(Variable var) {
 
     if(pos != parametersList.end())
         parametersList.erase(pos);
-
-    // if(0 == variableRegistry[var].size())
-    //    var->setIndex(-1);
 
     for(PdfBase *comp : components) {
         comp->unregisterParameter(var);
@@ -125,10 +91,10 @@ __host__ std::vector<Variable> PdfBase::getParameters() const {
     return ret;
 }
 
-__host__ Variable *PdfBase::getParameterByName(std::string n) const {
-    for(Variable *p : parametersList) {
-        if(p->getName() == n)
-            return p;
+__host__ Variable *PdfBase::getParameterByName(std::string n) {
+    for(Variable &p : parametersList) {
+        if(p.getName() == n)
+            return &p;
     }
 
     for(auto component : components) {
@@ -143,7 +109,7 @@ __host__ Variable *PdfBase::getParameterByName(std::string n) const {
 
 __host__ std::vector<Observable> PdfBase::getObservables() const {
     std::vector<Observable> ret;
-    for(const Observable &obs : observableList)
+    for(const Observable &obs : observablesList)
         ret.push_back(obs);
 
     for(const PdfBase *comp : components) {
@@ -165,7 +131,7 @@ __host__ unsigned int PdfBase::registerConstants(unsigned int amount) {
 }
 
 void PdfBase::registerObservable(Observable obs) {
-    if(find_in(observables, obs))
+    if(find_in(observablesList, obs))
         return;
 
     observablesList.push_back(obs);
@@ -174,7 +140,7 @@ void PdfBase::registerObservable(Observable obs) {
 void PdfBase::setupObservables() {
     int counter = 0;
     for(size_t i = 0; i < observablesList.size(); ++i) {
-        observablesList[i]->setObservableIndex(counter);
+        observablesList[i].setIndex(counter);
         counter++;
     }
 
@@ -188,7 +154,7 @@ __host__ void PdfBase::setIntegrationFineness(int i) {
 
 __host__ bool PdfBase::parametersChanged() const {
     return std::any_of(
-        std::begin(parametersList), std::end(parametersList), [](Variable *v) { return v->getChanged(); });
+        std::begin(parametersList), std::end(parametersList), [](const Variable &v) { return v.getChanged(); });
 }
 
 __host__ void PdfBase::setNumPerTask(PdfBase *p, const int &c) {

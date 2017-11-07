@@ -214,8 +214,6 @@ int main(int argc, char **argv) {
 
         for(int i = 0; i < weights.size(); ++i) {
             if(flags[i] == 1) {
-                // printf("%.5g %.5g %.5g %.5g %.5g %.5g %.5g\n", (*(variables[0]))[i], (*(variables[1]))[i],
-                // (*(variables[2]))[i], (*(variables[3]))[i], (*(variables[4]))[i], weights[i], flags[i]);
                 tm12 = (*(variables[0]))[i];
                 tm34 = (*(variables[1]))[i];
                 tc12 = (*(variables[2]))[i];

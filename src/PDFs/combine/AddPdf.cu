@@ -171,7 +171,7 @@ __host__ fptype AddPdf::normalize() const {
 
     for(unsigned int i = 0; i < components.size() - 1; ++i) {
         // fptype weight = host_parameters[parametersIdx + 3*i + 1];
-        fptype weight = parametersList[i]->getValue();
+        fptype weight = parametersList[i].getValue();
         totalWeight += weight;
         fptype curr = components[i]->normalize();
         ret += curr * weight;

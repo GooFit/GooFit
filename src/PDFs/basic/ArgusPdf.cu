@@ -59,9 +59,6 @@ __host__ ArgusPdf::ArgusPdf(std::string n, Observable _x, Variable m0, Variable 
     registerParameter(m0);
     registerParameter(slope);
 
-    if(!power)
-        power = new Variable(n + "powervar", 0.5);
-
     registerParameter(power);
 
     std::vector<unsigned int> pindices;

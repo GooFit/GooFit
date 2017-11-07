@@ -23,7 +23,7 @@ __host__ StepPdf::StepPdf(std::string n, Observable _x, Variable x0)
 
 __host__ fptype StepPdf::integrate(fptype lo, fptype hi) const {
     // unsigned int *indices = host_indices + parameters;
-    fptype x0 = parametersList[0]->getValue();
+    fptype x0 = parametersList[0].getValue();
     return (hi - x0);
 }
 

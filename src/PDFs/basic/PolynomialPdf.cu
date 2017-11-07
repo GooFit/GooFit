@@ -125,27 +125,39 @@ __device__ device_function_ptr ptr_to_MultiPolynomial  = device_MultiPolynomial;
 
 // Constructor for single-variate polynomial, with optional zero point.
 __host__ PolynomialPdf::PolynomialPdf(
-    std::string n, Variable *_x, std::vector<Variable *> weights, Variable *x0, unsigned int lowestDegree)
-    : GooPdf(_x, n)
-    , center(x0) {
+    std::string n, Observable _x, std::vector<Variable> weights, unsigned int lowestDegree)
+    : GooPdf(n, _x) {
     std::vector<unsigned int> pindices;
     pindices.push_back(lowestDegree);
 
     constantsList.push_back(lowestDegree);
 
-    for(std::vector<Variable *>::iterator v = weights.begin(); v != weights.end(); ++v) {
-        pindices.push_back(registerParameter(*v));
+    for(Variable & v : weights) {
+        pindices.push_back(registerParameter(v));
     }
 
-    if(x0) {
-        polyType = 1;
-        pindices.push_back(registerParameter(x0));
-        GET_FUNCTION_ADDR(ptr_to_OffsetPolynomial);
-    } else {
-        polyType = 0;
-        GET_FUNCTION_ADDR(ptr_to_Polynomial);
+    polyType = 0;
+    GET_FUNCTION_ADDR(ptr_to_Polynomial);
+
+    initialize(pindices);
+}
+__host__ PolynomialPdf::PolynomialPdf(
+    std::string n, Observable _x, std::vector<Variable> weights, Variable x0, unsigned int lowestDegree)
+ : GooPdf(n, _x)
+    , center(new Variable(x0)) {
+    std::vector<unsigned int> pindices;
+    pindices.push_back(lowestDegree);
+    
+    constantsList.push_back(lowestDegree);
+    
+    for(Variable & v : weights) {
+        pindices.push_back(registerParameter(v));
     }
 
+    polyType = 1;
+    pindices.push_back(registerParameter(x0));
+    GET_FUNCTION_ADDR(ptr_to_OffsetPolynomial);
+  
     initialize(pindices);
 }
 
@@ -180,7 +192,7 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n,
         char varName[100];
         sprintf(varName, "%s_extra_coeff_%i", getName().c_str(), static_cast<int>(coeffs.size()));
 
-        Variable *newTerm = new Variable(varName, 0);
+        Variable newTerm(varName, 0);
         coeffs.push_back(newTerm);
 
         std::cout << "Warning: " << getName() << " created dummy variable " << varName
@@ -190,7 +202,7 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n,
     while(offsets.size() < obses.size()) {
         char varName[100];
         sprintf(varName, "%s_extra_offset_%i", getName().c_str(), static_cast<int>(offsets.size()));
-        Variable *newOffset = new Variable(varName, 0);
+        Variable newOffset(varName, 0);
         offsets.push_back(newOffset);
     }
 

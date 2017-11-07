@@ -127,7 +127,7 @@ class PdfBase {
     __host__ bool parametersChanged() const;
 
     __host__ void checkInitStatus(std::vector<std::string> &unInited) const;
-    void clearCurrentFit();
+    __host__ void clearCurrentFit();
     __host__ void SigGenSetIndices() { setIndices(); }
 
     __host__ void updateVariable(Variable v, fptype newValue);
@@ -150,9 +150,11 @@ class PdfBase {
         nullptr}; //< This is specific to functor instead of variable so that MetricTaker::operator needn't use indices.
     unsigned int parameters{0}; //< Stores index, in 'paramIndices', where this functor's information begins.
     unsigned int cIndex{1};     //< Stores location of constants.
-    std::vector<Observable> observables;
-    std::vector<Variable> parameterList;
+    
+    std::vector<Observable> observablesList;
+    std::vector<Variable> parametersList;
     std::vector<fptype> constantsList;
+    
     FitControl *fitControl{nullptr};
     std::vector<PdfBase *> components;
     int integrationBins{-1};

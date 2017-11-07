@@ -128,9 +128,6 @@ __device__ fptype device_InterHistogram(fptype *evt, ParameterContainer &pc) {
                 "Adding bin content %i %f with weight %f for total %f.\n", currBin, currentEntry, currentWeight, ret);
     }
 
-    // if(0 == THREADIDX + BLOCKIDX)
-    //    printf("%f %f %f %i %f\n", ret, totalWeight, evt[0], indices[6], p[indices[6]]);
-
     ret /= totalWeight;
     return ret;
 }
@@ -142,9 +139,7 @@ InterHistPdf::InterHistPdf(std::string n, BinnedDataSet *x, std::vector<Variable
     : GooPdf(n)
     , numVars(x->numVariables()) {
     int numConstants = 2 * numVars;
-    // registerConstants(numConstants);
     static unsigned int totalHistograms = 0;
-    // host_constants                      = new fptype[numConstants];
     totalEvents = 0;
 
     std::vector<unsigned int> pindices;
@@ -157,26 +152,20 @@ InterHistPdf::InterHistPdf(std::string n, BinnedDataSet *x, std::vector<Variable
     int varIndex = 0;
 
     for(Observable var : x->getObservables()) {
-        if(std::find(obses.begin(), obses.end(), var) != obses.end()) {
-            registerObservable(var);
-            pindices.push_back(OBS_CODE);
-            constantsList.push_back(OBS_CODE);
-        } else {
-            pindices.push_back(registerParameter(var));
-            constantsList.push_back(parametersList.size() - 1);
-        }
+        
+        registerObservable(var);
+        pindices.push_back(OBS_CODE);
+        constantsList.push_back(OBS_CODE);
 
         pindices.push_back(cIndex + 2 * varIndex + 0);
         pindices.push_back(cIndex + 2 * varIndex + 1);
-        pindices.push_back(var->getNumBins());
+        pindices.push_back(var.getNumBins());
 
-        constantsList.push_back(var->getLowerLimit());
-        constantsList.push_back(var->getBinSize());
-        constantsList.push_back(var->getNumBins());
+        constantsList.push_back(var.getLowerLimit());
+        constantsList.push_back(var.getBinSize());
+        constantsList.push_back(var.getNumBins());
 
         // NB, do not put cIndex here, it is accounted for by the offset in MEMCPY_TO_SYMBOL below.
-        // host_constants[2 * varIndex + 0] = var->getLowerLimit();
-        // host_constants[2 * varIndex + 1] = var->getBinSize();
         varIndex++;
     }
 
@@ -188,12 +177,6 @@ InterHistPdf::InterHistPdf(std::string n, BinnedDataSet *x, std::vector<Variable
         host_histogram.push_back(curr);
         totalEvents += curr;
     }
-
-    // MEMCPY_TO_SYMBOL(functorConstants,
-    //                 host_constants,
-    //                 numConstants * sizeof(fptype),
-    //                 cIndex * sizeof(fptype),
-    //                 cudaMemcpyHostToDevice);
 
     dev_base_histogram = new thrust::device_vector<fptype>(host_histogram);
     static fptype *dev_address[1];

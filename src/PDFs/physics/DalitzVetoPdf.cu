@@ -60,10 +60,10 @@ __host__ DalitzVetoPdf::DalitzVetoPdf(std::string n,
     constantsList.push_back(vetos.size());
 
     for(auto &veto : vetos) {
-        pindices.push_back(veto->cyclic_index);
-        pindices.push_back(registerParameter(veto->minimum));
-        pindices.push_back(registerParameter(veto->maximum));
-        constantsList.push_back(veto->cyclic_index);
+        pindices.push_back(veto.cyclic_index);
+        pindices.push_back(registerParameter(veto.minimum));
+        pindices.push_back(registerParameter(veto.maximum));
+        constantsList.push_back(veto.cyclic_index);
     }
 
     GET_FUNCTION_ADDR(ptr_to_DalitzVeto);

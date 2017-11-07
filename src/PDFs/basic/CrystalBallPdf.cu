@@ -71,10 +71,10 @@ __host__ fptype CrystalBallPdf::integrate(fptype lo, fptype hi) const {
     fptype result = 0.0;
     bool useLog   = false;
 
-    fptype mean  = parametersList[0]->getValue();
-    fptype sigma = parametersList[1]->getValue();
-    fptype alpha = parametersList[2]->getValue();
-    fptype power = parametersList[3]->getValue();
+    fptype mean  = parametersList[0].getValue();
+    fptype sigma = parametersList[1].getValue();
+    fptype alpha = parametersList[2].getValue();
+    fptype power = parametersList[3].getValue();
 
     if(fabs(power - 1.0) < 1.0e-05)
         useLog = true;

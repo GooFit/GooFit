@@ -5,7 +5,6 @@
 #include "goofit/PDFs/MetricTaker.h"
 #include "goofit/PdfBase.h"
 #include "goofit/UnbinnedDataSet.h"
-#include "goofit/PDFs/MetricTaker.h"
 #include "goofit/Log.h"
 
 #ifdef ROOT_FOUND
@@ -21,6 +20,9 @@ constexpr const char *evalfunc_vals[]
 
 constexpr const char *evalfunc_to_string(EvalFunc val) { return evalfunc_vals[static_cast<size_t>(val)]; }
 
+void *getMetricPointer(std::string name);
+void *getMetricPointer(EvalFunc val) { return getMetricPointer(evalfunc_to_string(val)); }
+    
 #ifdef SEPARABLE
 
 struct ParameterContainer {

@@ -10,7 +10,12 @@ _mD0       = 1.8645
 piPlusMass = 0.13957018
 KmMass     = .493677
 def main():
-    DK3P_DI = DecayInfo_DP()
+    DK3P_DI = DecayInfo4t(
+        Variable("tau", 0.4101, 0.001, 0.300, 0.500),
+        Variable("xmixing", 0.005, 0.001, 0, 0),
+        Variable("ymixing", 0.01, 0.001, 0, 0),
+        Variable("SqWStoRSrate", 1.0 / math.sqrt(300.0))
+        )
     DK3P_DI.meson_radius = 1.5
     DK3P_DI.particle_masses = (_mD0,piPlusMass,piPlusMass,KmMass,piPlusMass)
 
@@ -99,19 +104,15 @@ def main():
                             Bose_symmetrized_AMP_D_B)
 
 
-    DK3P_DI._tau          = Variable("tau", 0.4101, 0.001, 0.300, 0.500)
-    DK3P_DI._xmixing      = Variable("xmixing", 0.005, 0.001, 0, 0)
-    DK3P_DI._ymixing      = Variable("ymixing", 0.01, 0.001, 0, 0)
-    DK3P_DI._SqWStoRSrate = Variable("SqWStoRSrate", 1.0 / math.sqrt(300.0))
 
-    m12                 = Variable("m12", 0, 3)
-    m34                 = Variable("m34", 0, 3)
-    cos12               = Variable("cos12", -1, 1)
-    cos34               = Variable("m12", -1, 1)
-    phi                 = Variable("phi", -3.5, 3.5)
-    eventNumber         = CountingVariable("eventNumber", 0, INT_MAX)
-    dtime               = Variable("dtime", 0, 10)
-    sigmat              = Variable("sigmat", -3, 3)
+    m12                 = Observable("m12", 0, 3)
+    m34                 = Observable("m34", 0, 3)
+    cos12               = Observable("cos12", -1, 1)
+    cos34               = Observable("m12", -1, 1)
+    phi                 = Observable("phi", -3.5, 3.5)
+    eventNumber         = EventNumber("eventNumber")
+    dtime               = Observable("dtime", 0, 10)
+    sigmat              = Observable("sigmat", -3, 3)
     constantOne         = Variable("constantOne", 1)
     constantZero        = Variable("constantZero", 0)
 
@@ -139,3 +140,6 @@ def main():
         flags = tuple[3]
 
     return 0
+
+if __name__ == "__main__":
+    main()

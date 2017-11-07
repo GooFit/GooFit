@@ -23,10 +23,10 @@ TEST(Minuit1, SimpleFit) {
     std::exponential_distribution<> d(1.5);
 
     // Independent variable.
-    Variable xvar{"xvar", 0, 10};
+    Observable xvar{"xvar", 0, 10};
 
     // Data set
-    UnbinnedDataSet data(&xvar);
+    UnbinnedDataSet data(xvar);
 
     // Generate toy events.
     for(int i = 0; i < 1000; ++i) {
@@ -41,7 +41,7 @@ TEST(Minuit1, SimpleFit) {
     Variable alpha{"alpha", -2, 0.1, -10, 10};
 
     // GooPdf object
-    ExpPdf exppdf{"exppdf", &xvar, &alpha};
+    ExpPdf exppdf{"exppdf", xvar, alpha};
     exppdf.setData(&data);
 
     GooFit::FitManagerMinuit1 fitter{&exppdf};
@@ -59,12 +59,12 @@ TEST(Minuit1, DualFit) {
     std::exponential_distribution<> dx(1.5);
     std::exponential_distribution<> dy(.75);
 
-    // Independent variable.
-    Variable xvar{"xvar", 0, 10};
-    Variable yvar{"yvar", 0, 10};
+    // Independent variables.
+    Observable xvar{"xvar", 0, 10};
+    Observable yvar{"yvar", 0, 10};
 
     // Data set
-    UnbinnedDataSet data{{&xvar, &yvar}};
+    UnbinnedDataSet data{{xvar, yvar}};
 
     // Generate toy events.
     for(int i = 0; i < 20000; ++i) {
@@ -83,8 +83,8 @@ TEST(Minuit1, DualFit) {
     Variable yalpha{"yalpha", -2, 0.1, -10, 10};
 
     // GooPdf object
-    ExpPdf xpdf{"xpdf", &xvar, &xalpha};
-    ExpPdf ypdf{"ypdf", &yvar, &yalpha};
+    ExpPdf xpdf{"xpdf", xvar, xalpha};
+    ExpPdf ypdf{"ypdf", yvar, yalpha};
     ProdPdf totalpdf{"totalpdf", {&xpdf, &ypdf}};
     totalpdf.setData(&data);
 
@@ -106,11 +106,11 @@ TEST(Minuit1, DifferentFitterVariable) {
     std::exponential_distribution<> dy(.75);
 
     // Independent variable.
-    Variable xvar{"xvar", 0, 10};
-    Variable yvar{"yvar", 0, 10};
+    Observable xvar{"xvar", 0, 10};
+    Observable yvar{"yvar", 0, 10};
 
     // Data set
-    UnbinnedDataSet data{{&xvar, &yvar}, "Some name"};
+    UnbinnedDataSet data{{xvar, yvar}, "Some name"};
 
     // Generate toy events.
     for(int i = 0; i < 20000; ++i) {
@@ -127,8 +127,8 @@ TEST(Minuit1, DifferentFitterVariable) {
     Variable yalpha{"yalpha", -2, 0.1, -10, 10};
 
     // GooPdf object
-    ExpPdf ypdf{"ypdf", &yvar, &yalpha};
-    ExpPdf xpdf{"xpdf", &xvar, &xalpha};
+    ExpPdf ypdf{"ypdf", yvar, yalpha};
+    ExpPdf xpdf{"xpdf", xvar, xalpha};
     ProdPdf totalpdf{"totalpdf", {&xpdf, &ypdf}};
     totalpdf.setData(&data);
 
@@ -150,11 +150,11 @@ TEST(Minuit1, FitterConstants) {
     std::normal_distribution<> dy(-.75, .2);
 
     // Independent variable.
-    Variable xvar{"xvar", -5, 5};
-    Variable yvar{"yvar", -5, 5};
+    Observable xvar{"xvar", -5, 5};
+    Observable yvar{"yvar", -5, 5};
 
     // Data set
-    UnbinnedDataSet data{{&xvar, &yvar}, "Some name"};
+    UnbinnedDataSet data{{xvar, yvar}, "Some name"};
 
     // Generate toy events.
     for(int i = 0; i < 20000; ++i) {
@@ -175,8 +175,8 @@ TEST(Minuit1, FitterConstants) {
     Variable ysigma{"ysigma", .3};
 
     // GooPdf object
-    GaussianPdf xpdf{"xpdf", &xvar, &xalpha, &xsigma};
-    GaussianPdf ypdf{"ypdf", &yvar, &yalpha, &ysigma};
+    GaussianPdf xpdf{"xpdf", xvar, xalpha, xsigma};
+    GaussianPdf ypdf{"ypdf", yvar, yalpha, ysigma};
     ProdPdf totalpdf{"totalpdf", {&xpdf, &ypdf}};
     totalpdf.setData(&data);
 

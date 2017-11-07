@@ -15,6 +15,14 @@
 
 #include <Minuit2/FunctionMinimum.h>
 
+namespace {
+
+template <typename T>
+bool find_in(std::vector<T> list, T item) {
+    return std::find_if(std::begin(list), std::end(list), [item](T p) { return p == item; }) != std::end(list);
+}
+} // namespace
+
 namespace GooFit {
 
 fptype *dev_event_array;
@@ -25,13 +33,6 @@ unsigned int host_indices[maxParams];
 int host_callnumber = 0;
 int totalParams     = 0;
 int totalConstants  = 1; // First constant is reserved for number of events.
-std::map<Variable *, std::set<PdfBase *>> variableRegistry;
-
-PdfBase::PdfBase(Variable *x, std::string n)
-    : name(std::move(n)) { // Special-case PDFs should set to false.
-    if(x)
-        registerObservable(x);
-}
 
 __host__ void PdfBase::checkInitStatus(std::vector<std::string> &unInited) const {
     if(!properlyInitialised)
@@ -50,98 +51,71 @@ __host__ void PdfBase::recursiveSetNormalisation(fptype norm) const {
     }
 }
 
-__host__ unsigned int PdfBase::registerParameter(Variable *var) {
-    if(var == nullptr)
-        throw GooFit::GeneralError("{}: Can not register a nullptr", getName());
+__host__ unsigned int PdfBase::registerParameter(Variable var) {
+    static int unique_param = 0;
 
-    if(std::find(parameterList.begin(), parameterList.end(), var) != parameterList.end())
-        return static_cast<unsigned int>(var->getIndex());
+    if(find_in(parameterList, var))
+        return static_cast<unsigned int>(var.getIndex());
 
-    parameterList.push_back(var);
-    variableRegistry[var].insert(this);
-
-    if(0 > var->getIndex()) {
-        unsigned int unusedIndex = 0;
-
-        while(true) {
-            bool canUse = true;
-
-            for(auto &p : variableRegistry) {
-                if(unusedIndex != p.first->getIndex())
-                    continue;
-
-                canUse = false;
-                break;
-            }
-
-            if(canUse)
-                break;
-
-            unusedIndex++;
-        }
-
-        GOOFIT_DEBUG("{}: Registering p:{} for {}", getName(), unusedIndex, var->getName());
-        var->setIndex(unusedIndex);
+    if(var.getIndex() < 0) {
+        GOOFIT_DEBUG("{}: Registering p:{} for {}", getName(), unique_param, var.getName());
+        var.setIndex(unique_param++);
     }
 
-    return static_cast<unsigned int>(var->getIndex());
+    parameterList.push_back(var);
+    return static_cast<unsigned int>(var.getIndex());
 }
 
-__host__ void PdfBase::unregisterParameter(Variable *var) {
-    if(var == nullptr)
-        return;
-
-    GOOFIT_DEBUG("{}: Removing {}", getName(), var->getName());
-
-    auto pos = std::find(parameterList.begin(), parameterList.end(), var);
-
-    if(pos != parameterList.end())
-        parameterList.erase(pos);
-
-    variableRegistry[var].erase(this);
-
-    if(0 == variableRegistry[var].size())
-        var->setIndex(-1);
+__host__ void PdfBase::unregisterParameter(Variable var) {
+    GOOFIT_DEBUG("{}: Removing {}", getName(), var.getName());
 
     for(PdfBase *comp : components) {
         comp->unregisterParameter(var);
     }
+
+    var.setIndex(-1);
+    // Once copies are used, this might able to be unregistred from a lower PDF only
+    // For now, it gets completely cleared.
 }
 
-__host__ std::vector<Variable *> PdfBase::getParameters() const {
-    std::vector<Variable *> ret = parameterList;
+__host__ std::vector<Variable> PdfBase::getParameters() const {
+    std::vector<Variable> ret;
+    for(const Variable &param : parameterList)
+        ret.push_back(param);
 
     for(const PdfBase *comp : components) {
-        for(Variable *sub_comp : comp->getParameters())
-            if(std::find(std::begin(ret), std::end(ret), sub_comp) == std::end(ret))
+        for(const Variable &sub_comp : comp->getParameters())
+            if(!find_in(ret, sub_comp))
                 ret.push_back(sub_comp);
     }
 
     return ret;
 }
 
-__host__ Variable *PdfBase::getParameterByName(std::string n) const {
-    for(Variable *p : parameterList) {
-        if(p->getName() == n)
-            return p;
+__host__ Variable *PdfBase::getParameterByName(std::string n) {
+    for(Variable &p : parameterList) {
+        if(p.getName() == n)
+            return &p;
     }
 
     for(auto component : components) {
         Variable *cand = component->getParameterByName(n);
 
-        if(cand)
+        if(cand != nullptr)
             return cand;
     }
 
     return nullptr;
 }
 
-__host__ std::vector<Variable *> PdfBase::getObservables() const {
-    std::vector<Variable *> ret = observables;
+__host__ std::vector<Observable> PdfBase::getObservables() const {
+    std::vector<Observable> ret;
+    for(const Observable &obs : observables)
+        ret.push_back(obs);
 
     for(const PdfBase *comp : components) {
-        for(Variable *sub_comp : comp->getObservables())
-            if(std::find(std::begin(ret), std::end(ret), sub_comp) == std::end(ret))
+        for(const Observable &sub_comp : comp->getObservables())
+            if(!find_in(ret, sub_comp))
                 ret.push_back(sub_comp);
     }
 
@@ -157,14 +131,11 @@ __host__ unsigned int PdfBase::registerConstants(unsigned int amount) {
     return cIndex;
 }
 
-void PdfBase::registerObservable(Variable *obs) {
-    if(!obs)
+void PdfBase::registerObservable(Observable obs) {
+    if(find_in(observables, obs))
         return;
 
-    if(find(observables.begin(), observables.end(), obs) != observables.end())
-        return;
-
-    GOOFIT_DEBUG("{}: Registering o:{} for {}", getName(), observables.size(), obs->getName());
+    GOOFIT_DEBUG("{}: Registering o:{} for {}", getName(), observables.size(), obs.getName());
     observables.push_back(obs);
 }
 
@@ -174,11 +145,12 @@ __host__ void PdfBase::setIntegrationFineness(int i) {
 }
 
 __host__ bool PdfBase::parametersChanged() const {
-    return std::any_of(std::begin(parameterList), std::end(parameterList), [](Variable *v) { return v->getChanged(); });
+    return std::any_of(
+        std::begin(parameterList), std::end(parameterList), [](const Variable &v) { return v.getChanged(); });
 }
 
 __host__ void PdfBase::setNumPerTask(PdfBase *p, const int &c) {
-    if(!p)
+    if(p == nullptr)
         return;
 
     m_iEventsPerTask = c;

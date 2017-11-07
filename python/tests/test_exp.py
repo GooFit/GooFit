@@ -9,7 +9,7 @@ import numpy as np
 
 def test_exp():
     xdata = np.random.exponential(size=100000)
-    xvar = Variable("xvar", 0, np.max(xdata) + 1)
+    xvar = Observable("xvar", 0, np.max(xdata) + 1)
     data = UnbinnedDataSet(xvar)
 
     for v in xdata:
@@ -28,7 +28,7 @@ def test_exp():
 
 def test_exp_simple():
     xdata = np.random.exponential(size=100000)
-    xvar = Variable("xvar", 0, np.max(xdata) + 1)
+    xvar = Observable("xvar", 0, np.max(xdata) + 1)
     data = UnbinnedDataSet(xvar)
     data.from_numpy(xdata.reshape(1,-1))
 
@@ -42,7 +42,7 @@ def test_exp_simple():
 
 def test_exp_eigen():
     xdata = np.random.exponential(size=100000).reshape([1,-1])
-    xvar = Variable("xvar", 0, np.max(xdata) + 1)
+    xvar = Observable("xvar", 0, np.max(xdata) + 1)
     data = UnbinnedDataSet(xvar)
     data.from_matrix(xdata, False)
     new_mat = data.to_matrix()
@@ -61,7 +61,7 @@ def test_exp_eigen():
 
 def test_exp_getitem():
     xdata = np.array([[1.,3.,4.,5.,9.]])
-    xvar = Variable("xvar", 0, np.max(xdata) + 1)
+    xvar = Observable("xvar", 0, np.max(xdata) + 1)
     data = UnbinnedDataSet(xvar)
     data.from_matrix(xdata, False)
 

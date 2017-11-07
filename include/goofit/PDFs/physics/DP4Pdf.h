@@ -29,8 +29,8 @@ class NormIntegrator;
 class DPPdf : public GooPdf {
   public:
     DPPdf(std::string n,
-          std::vector<Variable *> observables,
-          DecayInfo_DP *decay,
+          std::vector<Observable> observables,
+          DecayInfo4 decay,
           GooPdf *eff,
           unsigned int MCeventsNorm = 5e6);
     // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the
@@ -69,8 +69,8 @@ class DPPdf : public GooPdf {
     mutable mcbooster::RealVector_d norm_SF;
     mutable mcbooster::mc_device_vector<fpcomplex> norm_LS;
 
-    DecayInfo_DP *decayInfo;
-    std::vector<Variable *> _observables;
+    DecayInfo4 decayInfo;
+
     int MCevents;
     // Following variables are useful if masses and widths, involved in difficult BW calculation,
     // change infrequently while amplitudes, only used in adding BW results together, change rapidly.

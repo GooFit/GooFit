@@ -28,11 +28,11 @@ def getToyData(toyFileName):
     out['vals'] = out.index
     print("Read in", len(out.index), "lines of data")
 
-    m12 = Variable("m12", 0, 3)
-    m13 = Variable("m13", 0, 3)
+    m12 = Observable("m12", 0, 3)
+    m13 = Observable("m13", 0, 3)
     m12.numbins = 240
     m13.numbins = 240
-    eventNumber = CountingVariable("eventNumber")
+    eventNumber = EventNumber("eventNumber")
 
     data = UnbinnedDataSet(m12, m13, eventNumber)
     data.from_matrix(out[['m12','m13','vals']].T)
@@ -69,7 +69,7 @@ def makeSignalPdf(m12, m13, eventNumber, eff = None, fitMasses = False):
     fixedRhoMass = Variable("rho_mass", 0.7758, 0.01, 0.7, 0.8)
     fixedRhoWidth = Variable("rho_width", 0.1503, 0.01, 0.1, 0.2)
 
-    dtop0pp = DecayInfo()
+    dtop0pp = DecayInfo3()
     dtop0pp.motherMass   = _mD0
     dtop0pp.daug1Mass    = piZeroMass
     dtop0pp.daug2Mass    = piPlusMass

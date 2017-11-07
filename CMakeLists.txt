@@ -147,8 +147,12 @@ endif()
 
 # Auto device selection
 if(GOOFIT_DEVICE STREQUAL Auto)
-    find_package(CUDA 7.0)
-    if(CUDA_FOUND)
+    if(NEW_CUDA)
+        check_language(CUDA)
+    else()
+        find_package(CUDA 7.0)
+    endif()
+    if(CUDA_FOUND OR CMAKE_CUDA_COMPILER)
         set(GOOFIT_DEVICE CUDA)
     else()
         find_package(OpenMP QUIET)
@@ -259,17 +263,17 @@ else()
 endif()
 
 if(GOOFIT_DEVICE STREQUAL CUDA)
-    if(NOT CUDA_FOUND)
-        find_package(CUDA 7.0 REQUIRED)
-    endif()
-    message(STATUS "Found CUDA ${CUDA_VERSION_STRING} at ${CUDA_TOOLKIT_ROOT_DIR}")
-
-    if(NOT CUDA_VERSION VERSION_LESS 9.0)
-        message(WARNING "You have a version of CUDA that is currently not supported by Eigen, build will fail")
-    endif()
-
     # The old FindCUDA method
     if(NOT NEW_CUDA)
+        if(NOT CUDA_FOUND)
+            find_package(CUDA 7.0 REQUIRED)
+        endif()
+        message(STATUS "Found CUDA ${CUDA_VERSION_STRING} at ${CUDA_TOOLKIT_ROOT_DIR}")
+
+        if(NOT CUDA_VERSION VERSION_LESS 9.0)
+            message(WARNING "You have a version of CUDA that is currently not supported by Eigen, build will fail")
+        endif()
+    
         if(GOOFIT_MPI)
             list(APPEND CUDA_NVCC_FLAGS ${MPI_CXX_COMPILE_FLAGS})
         endif()
@@ -294,6 +298,15 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
     # The new language support
     else()
         enable_language(CUDA)
+
+        if(CMAKE_CUDA_COMPILER_VERSION VERSION_LESS 7.0)
+            message(FATAL_ERROR "CUDA 7.0 or better required!")
+        elseif(NOT CMAKE_CUDA_COMPILER_VERSION VERSION_LESS 9.0)
+            message(WARNING "You have a version of CUDA that is currently not supported by Eigen, build will fail")
+        else()
+            message(STATUS "Found CUDA ${CMAKE_CUDA_COMPILER_VERSION} at ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}")
+        endif()
+
         include(CUDA)
 
         set(cuda_lang "$<COMPILE_LANGUAGE:CUDA>")
@@ -304,16 +317,12 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
 
         string(APPEND CMAKE_CUDA_FLAGS " --expt-relaxed-constexpr")
 
-        #cuda_select_nvcc_arch_flags(ARCH_FLAGS ${GOOFIT_ARCH})
-        #string(REPLACE ";" " " SPACE_ARCH_FLAGS "${ARCH_FLAGS}")
         cuda_detect_arch(${GOOFIT_ARCH} NVCC_FLAGS ARCH_FLAGS)
         string(APPEND CMAKE_CUDA_FLAGS " ${ARCH_FLAGS}")
         message(STATUS "Compiling for GPU arch: ${ARCH_FLAGS}")
 
         set(THRUST_INCLUDE_DIR "${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}")
     endif()
-
-
 endif()
 
 if(NOT DEFINED cuda_lang)

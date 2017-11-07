@@ -29,26 +29,26 @@ int main(int argc, char **argv) {
         return app.exit(e);
     }
 
-    DecayInfo_DP *DK3P_DI = new DecayInfo_DP();
-    DK3P_DI->meson_radius = 1.5;
-    DK3P_DI->particle_masses.push_back(_mD0);
-    DK3P_DI->particle_masses.push_back(piPlusMass);
-    DK3P_DI->particle_masses.push_back(piPlusMass);
-    DK3P_DI->particle_masses.push_back(KmMass);
-    DK3P_DI->particle_masses.push_back(piPlusMass);
+    DecayInfo4 DK3P_DI;
+    DK3P_DI.meson_radius = 1.5;
+    DK3P_DI.particle_masses.push_back(_mD0);
+    DK3P_DI.particle_masses.push_back(piPlusMass);
+    DK3P_DI.particle_masses.push_back(piPlusMass);
+    DK3P_DI.particle_masses.push_back(KmMass);
+    DK3P_DI.particle_masses.push_back(piPlusMass);
 
-    Variable *RhoMass  = new Variable("rho_mass", 0.77526, 0.01, 0.7, 0.8);
-    Variable *RhoWidth = new Variable("rho_width", 0.1478, 0.01, 0.1, 0.2);
-    Variable *KstarM   = new Variable("KstarM", 0.89581, 0.01, 0.9, 0.1);
-    Variable *KstarW   = new Variable("KstarW", 0.0474, 0.01, 0.1, 0.2);
-    Variable *f600M    = new Variable("f600M", 0.519, 0.01, 0.75, 0.85);
-    Variable *f600W    = new Variable("f600W", 0.454, 0.01, 0.75, 0.85);
-    Variable *a1M      = new Variable("a1M", 1.23, 0.01, 1.2, 1.3);
-    Variable *a1W      = new Variable("a1W", 0.42, 0.01, 0.37, 0.47);
-    Variable *K1M      = new Variable("K1M", 1.272, 0.01, 1.2, 1.3);
-    Variable *K1W      = new Variable("K1W", 0.09, 0.01, 0.08, 0.1);
-    Variable *K1430M   = new Variable("K1430M", 1.414, 0.01, 1.4, 1.5);
-    Variable *K1430W   = new Variable("K1430W", .29, 0.01, 0.25, 0.35);
+    Variable RhoMass("rho_mass", 0.77526, 0.01, 0.7, 0.8);
+    Variable RhoWidth("rho_width", 0.1478, 0.01, 0.1, 0.2);
+    Variable KstarM("KstarM", 0.89581, 0.01, 0.9, 0.1);
+    Variable KstarW("KstarW", 0.0474, 0.01, 0.1, 0.2);
+    Variable f600M("f600M", 0.519, 0.01, 0.75, 0.85);
+    Variable f600W("f600W", 0.454, 0.01, 0.75, 0.85);
+    Variable a1M("a1M", 1.23, 0.01, 1.2, 1.3);
+    Variable a1W("a1W", 0.42, 0.01, 0.37, 0.47);
+    Variable K1M("K1M", 1.272, 0.01, 1.2, 1.3);
+    Variable K1W("K1W", 0.09, 0.01, 0.08, 0.1);
+    Variable K1430M("K1430M", 1.414, 0.01, 1.4, 1.5);
+    Variable K1430W("K1430W", .29, 0.01, 0.25, 0.35);
 
     // Spin factors: we have two due to the bose symmetrization of the two pi+
     std::vector<SpinFactor *> SFKRS;
@@ -136,57 +136,45 @@ int main(int argc, char **argv) {
     // and the first half of the spinfactors are amplitude 1, rest is amplitude 2
     // This means that it is important for symmetrized amplitueds that the spinfactors and lineshapes are in the "right"
     // order
-    Amplitude *Bose_symmetrized_AMP_S = new Amplitude("K*(892)rho(770)_S",
-                                                      new Variable("amp_real1", -0.115177),
-                                                      new Variable("amp_imag1", 0.153976),
-                                                      LSKRS,
-                                                      SFKRS,
-                                                      2);
-    Amplitude *Bose_symmetrized_AMP_P = new Amplitude("K*(892)rho(770)_P",
-                                                      new Variable("amp_real2", -0.0298697),
-                                                      new Variable("amp_imag2", -0.0722874),
-                                                      LSKRP,
-                                                      SFKRP,
-                                                      2);
-    Amplitude *Bose_symmetrized_AMP_D = new Amplitude("K*(892)rho(770)_D",
-                                                      new Variable("amp_real3", -0.452212),
-                                                      new Variable("amp_imag3", 0.426521),
-                                                      LSKRD,
-                                                      SFKRD,
-                                                      2);
+    Amplitude *Bose_symmetrized_AMP_S = new Amplitude(
+        "K*(892)rho(770)_S", Variable("amp_real1", -0.115177), Variable("amp_imag1", 0.153976), LSKRS, SFKRS, 2);
+    Amplitude *Bose_symmetrized_AMP_P = new Amplitude(
+        "K*(892)rho(770)_P", Variable("amp_real2", -0.0298697), Variable("amp_imag2", -0.0722874), LSKRP, SFKRP, 2);
+    Amplitude *Bose_symmetrized_AMP_D = new Amplitude(
+        "K*(892)rho(770)_D", Variable("amp_real3", -0.452212), Variable("amp_imag3", 0.426521), LSKRD, SFKRD, 2);
 
-    Amplitude *Bose_symmetrized_KF = new Amplitude(
-        "KF", new Variable("amp_real3", 0.0120787), new Variable("amp_imag3", -0.0332525), LSKF, SFKF, 2);
-    Amplitude *Bose_symmetrized_KK = new Amplitude(
-        "LSKK", new Variable("amp_real3", 0.0109033), new Variable("amp_imag3", -0.00186219), LSKK, SFKK, 2);
-    Amplitude *Bose_symmetrized_K1R = new Amplitude(
-        "LSK1R", new Variable("amp_real3", -0.10728), new Variable("amp_imag3", -0.130213), LSK1R, SFK1R, 2);
+    Amplitude *Bose_symmetrized_KF
+        = new Amplitude("KF", Variable("amp_real3", 0.0120787), Variable("amp_imag3", -0.0332525), LSKF, SFKF, 2);
+    Amplitude *Bose_symmetrized_KK
+        = new Amplitude("LSKK", Variable("amp_real3", 0.0109033), Variable("amp_imag3", -0.00186219), LSKK, SFKK, 2);
+    Amplitude *Bose_symmetrized_K1R
+        = new Amplitude("LSK1R", Variable("amp_real3", -0.10728), Variable("amp_imag3", -0.130213), LSK1R, SFK1R, 2);
     Amplitude *Bose_symmetrized_A1R
-        = new Amplitude("LSA1R", new Variable("amp_real3", 1.0), new Variable("amp_imag3", 0.0), LSA1R, SFA1R, 2);
-    Amplitude *Bose_symmetrized_A1RD = new Amplitude(
-        "LSA1RD", new Variable("amp_real3", -0.94921), new Variable("amp_imag3", -1.73407), LSA1RD, SFA1RD, 2);
+        = new Amplitude("LSA1R", Variable("amp_real3", 1.0), Variable("amp_imag3", 0.0), LSA1R, SFA1R, 2);
+    Amplitude *Bose_symmetrized_A1RD
+        = new Amplitude("LSA1RD", Variable("amp_real3", -0.94921), Variable("amp_imag3", -1.73407), LSA1RD, SFA1RD, 2);
 
-    DK3P_DI->amplitudes.push_back(Bose_symmetrized_KF);
-    DK3P_DI->amplitudes.push_back(Bose_symmetrized_AMP_S);
-    DK3P_DI->amplitudes.push_back(Bose_symmetrized_AMP_P);
-    DK3P_DI->amplitudes.push_back(Bose_symmetrized_AMP_D);
-    DK3P_DI->amplitudes.push_back(Bose_symmetrized_KK);
-    DK3P_DI->amplitudes.push_back(Bose_symmetrized_K1R);
-    DK3P_DI->amplitudes.push_back(Bose_symmetrized_A1R);
-    DK3P_DI->amplitudes.push_back(Bose_symmetrized_A1RD);
+    DK3P_DI.amplitudes.push_back(Bose_symmetrized_KF);
+    DK3P_DI.amplitudes.push_back(Bose_symmetrized_AMP_S);
+    DK3P_DI.amplitudes.push_back(Bose_symmetrized_AMP_P);
+    DK3P_DI.amplitudes.push_back(Bose_symmetrized_AMP_D);
+    DK3P_DI.amplitudes.push_back(Bose_symmetrized_KK);
+    DK3P_DI.amplitudes.push_back(Bose_symmetrized_K1R);
+    DK3P_DI.amplitudes.push_back(Bose_symmetrized_A1R);
+    DK3P_DI.amplitudes.push_back(Bose_symmetrized_A1RD);
 
-    Variable *m12                 = new Variable("m12", 0, 3);
-    Variable *m34                 = new Variable("m34", 0, 3);
-    Variable *cos12               = new Variable("cos12", -1, 1);
-    Variable *cos34               = new Variable("m12", -1, 1);
-    Variable *phi                 = new Variable("phi", -3.5, 3.5);
-    CountingVariable *eventNumber = new CountingVariable("eventNumber", 0, INT_MAX);
-    Variable *constantOne         = new Variable("constantOne", 1);
-    Variable *constantZero        = new Variable("constantZero", 0);
+    Observable m12("m12", 0, 3);
+    Observable m34("m34", 0, 3);
+    Observable cos12("cos12", -1, 1);
+    Observable cos34("m12", -1, 1);
+    Observable phi("phi", -3.5, 3.5);
+    EventNumber eventNumber("eventNumber");
+    Variable constantOne("constantOne", 1);
+    Variable constantZero("constantZero", 0);
 
-    vector<Variable *> observables;
-    vector<Variable *> coefficients;
-    vector<Variable *> offsets;
+    vector<Observable> observables;
+    vector<Variable> coefficients;
+    vector<Variable> offsets;
 
     observables.push_back(m12);
     observables.push_back(m34);
@@ -220,8 +208,9 @@ int main(int argc, char **argv) {
         auto variables = std::get<1>(tuple);
         auto weights   = std::get<2>(tuple);
         auto flags     = std::get<3>(tuple);
-        int accepted   = thrust::count_if(flags.begin(), flags.end(), thrust::identity<bool>());
-        fprintf(stderr, "Using accept-reject method would leave you with %i out of %i events\n", accepted, numEvents);
+        long accepted  = thrust::count_if(flags.begin(), flags.end(), thrust::identity<bool>());
+        fmt::print(
+            stderr, "Using accept-reject method would leave you with {} out of {} events\n", accepted, numEvents);
 
         for(int i = 0; i < weights.size(); ++i) {
             if(flags[i] == 1) {

@@ -26,14 +26,14 @@ int main(int argc, char **argv) {
 
     GOOFIT_PARSE(app, argc, argv);
 
-    Variable m12{"m12", 0, 3};
-    Variable m34{"m34", 0, 3};
-    Variable cos12{"cos12", -1, 1};
-    Variable cos34{"m12", -1, 1};
-    Variable phi{"phi", -3.5, 3.5};
-    CountingVariable eventNumber{"eventNumber", 0, INT_MAX};
+    Observable m12{"m12", 0, 3};
+    Observable m34{"m34", 0, 3};
+    Observable cos12{"cos12", -1, 1};
+    Observable cos34{"m12", -1, 1};
+    Observable phi{"phi", -3.5, 3.5};
+    EventNumber eventNumber{"eventNumber", 0, INT_MAX};
 
-    UnbinnedDataSet currData{&m12, &m34, &cos12, &cos34, &phi, &eventNumber};
+    UnbinnedDataSet currData{m12, m34, cos12, cos34, phi, eventNumber};
 
     unsigned int MCevents = 0;
 
@@ -50,7 +50,7 @@ int main(int argc, char **argv) {
 
     GOOFIT_INFO("Read in {} events", MCevents);
 
-    DecayInfo_DP DK3P_DI;
+    DecayInfo4 DK3P_DI;
     DK3P_DI.meson_radius    = 1.5;
     DK3P_DI.particle_masses = {_mD0, piPlusMass, piPlusMass, KmMass, piPlusMass};
 
@@ -93,45 +93,45 @@ int main(int argc, char **argv) {
                                         new SpinFactor("SF", SF_4Body::DtoAP1_AtoVP2Dwave_VtoP3P4, 2, 0, 3, 1)};
 
     // Lineshapes, also for both pi+ configurations
-    std::vector<Lineshape *> LSKRS = {new Lineshapes::RBW("rho(770)", &RhoMass, &RhoWidth, 1, M_12),
-                                      new Lineshapes::RBW("K*(892)bar", &KstarM, &KstarW, 1, M_34),
-                                      new Lineshapes::RBW("rho(770)", &RhoMass, &RhoWidth, 1, M_24),
-                                      new Lineshapes::RBW("K*(892)bar", &KstarM, &KstarW, 1, M_13)};
+    std::vector<Lineshape *> LSKRS = {new Lineshapes::RBW("rho(770)", RhoMass, RhoWidth, 1, M_12),
+                                      new Lineshapes::RBW("K*(892)bar", KstarM, KstarW, 1, M_34),
+                                      new Lineshapes::RBW("rho(770)", RhoMass, RhoWidth, 1, M_24),
+                                      new Lineshapes::RBW("K*(892)bar", KstarM, KstarW, 1, M_13)};
 
-    std::vector<Lineshape *> LSKRP = {new Lineshapes::RBW("rho(770)", &RhoMass, &RhoWidth, 1, M_12),
-                                      new Lineshapes::RBW("K*(892)bar", &KstarM, &KstarW, 1, M_34),
-                                      new Lineshapes::RBW("rho(770)", &RhoMass, &RhoWidth, 1, M_24),
-                                      new Lineshapes::RBW("K*(892)bar", &KstarM, &KstarW, 1, M_13)};
+    std::vector<Lineshape *> LSKRP = {new Lineshapes::RBW("rho(770)", RhoMass, RhoWidth, 1, M_12),
+                                      new Lineshapes::RBW("K*(892)bar", KstarM, KstarW, 1, M_34),
+                                      new Lineshapes::RBW("rho(770)", RhoMass, RhoWidth, 1, M_24),
+                                      new Lineshapes::RBW("K*(892)bar", KstarM, KstarW, 1, M_13)};
 
-    std::vector<Lineshape *> LSKRD = {new Lineshapes::RBW("rho(770)", &RhoMass, &RhoWidth, 1, M_12),
-                                      new Lineshapes::RBW("K*(892)bar", &KstarM, &KstarW, 1, M_34),
-                                      new Lineshapes::RBW("rho(770)", &RhoMass, &RhoWidth, 1, M_24),
-                                      new Lineshapes::RBW("K*(892)bar", &KstarM, &KstarW, 1, M_13)};
+    std::vector<Lineshape *> LSKRD = {new Lineshapes::RBW("rho(770)", RhoMass, RhoWidth, 1, M_12),
+                                      new Lineshapes::RBW("K*(892)bar", KstarM, KstarW, 1, M_34),
+                                      new Lineshapes::RBW("rho(770)", RhoMass, RhoWidth, 1, M_24),
+                                      new Lineshapes::RBW("K*(892)bar", KstarM, KstarW, 1, M_13)};
 
-    std::vector<Lineshape *> LSKF = {new Lineshapes::RBW("K*(892)bar", &KstarM, &KstarW, 1, M_34),
-                                     new Lineshapes::Bugg("f600", &f600M, &f600W, 0, M_12),
-                                     new Lineshapes::RBW("K*(892)bar", &KstarM, &KstarW, 1, M_13),
-                                     new Lineshapes::Bugg("f600", &f600M, &f600W, 0, M_24)};
+    std::vector<Lineshape *> LSKF = {new Lineshapes::RBW("K*(892)bar", KstarM, KstarW, 1, M_34),
+                                     new Lineshapes::Bugg("f600", f600M, f600W, 0, M_12),
+                                     new Lineshapes::RBW("K*(892)bar", KstarM, KstarW, 1, M_13),
+                                     new Lineshapes::Bugg("f600", f600M, f600W, 0, M_24)};
 
-    std::vector<Lineshape *> LSKK = {new Lineshapes::SBW("K(1)(1270)bar", &K1M, &K1W, 1, M_34_2),
-                                     new Lineshapes::LASS("K(0)*(1430)bar", &K1430M, &K1430W, 0, M_34),
-                                     new Lineshapes::SBW("K(1)(1270)bar2", &K1M, &K1W, 1, M_13_2),
-                                     new Lineshapes::LASS("K(0)*(1430)bar2", &K1430M, &K1430W, 0, M_13)};
+    std::vector<Lineshape *> LSKK = {new Lineshapes::SBW("K(1)(1270)bar", K1M, K1W, 1, M_34_2),
+                                     new Lineshapes::LASS("K(0)*(1430)bar", K1430M, K1430W, 0, M_34),
+                                     new Lineshapes::SBW("K(1)(1270)bar2", K1M, K1W, 1, M_13_2),
+                                     new Lineshapes::LASS("K(0)*(1430)bar2", K1430M, K1430W, 0, M_13)};
 
-    std::vector<Lineshape *> LSK1R = {new Lineshapes::SBW("K(1)(1270)bar", &K1M, &K1W, 0, M_12_3),
-                                      new Lineshapes::RBW("rho(770)", &RhoMass, &RhoWidth, 1, M_12),
-                                      new Lineshapes::SBW("K(1)(1270)bar", &K1M, &K1W, 0, M_24_3),
-                                      new Lineshapes::RBW("rho(770)", &RhoMass, &RhoWidth, 1, M_24)};
+    std::vector<Lineshape *> LSK1R = {new Lineshapes::SBW("K(1)(1270)bar", K1M, K1W, 0, M_12_3),
+                                      new Lineshapes::RBW("rho(770)", RhoMass, RhoWidth, 1, M_12),
+                                      new Lineshapes::SBW("K(1)(1270)bar", K1M, K1W, 0, M_24_3),
+                                      new Lineshapes::RBW("rho(770)", RhoMass, RhoWidth, 1, M_24)};
 
-    std::vector<Lineshape *> LSA1R = {new Lineshapes::SBW("a(1)(1260)+", &a1M, &a1W, 0, M_12_4),
-                                      new Lineshapes::RBW("rho(770)", &RhoMass, &RhoWidth, 1, M_12),
-                                      new Lineshapes::SBW("a(1)(1260)+", &a1M, &a1W, 0, M_24_1),
-                                      new Lineshapes::RBW("rho(770)", &RhoMass, &RhoWidth, 1, M_24)};
+    std::vector<Lineshape *> LSA1R = {new Lineshapes::SBW("a(1)(1260)+", a1M, a1W, 0, M_12_4),
+                                      new Lineshapes::RBW("rho(770)", RhoMass, RhoWidth, 1, M_12),
+                                      new Lineshapes::SBW("a(1)(1260)+", a1M, a1W, 0, M_24_1),
+                                      new Lineshapes::RBW("rho(770)", RhoMass, RhoWidth, 1, M_24)};
 
-    std::vector<Lineshape *> LSA1RD = {new Lineshapes::SBW("a(1)(1260)+", &a1M, &a1W, 2, M_12_4),
-                                       new Lineshapes::RBW("rho(770)", &RhoMass, &RhoWidth, 1, M_12),
-                                       new Lineshapes::SBW("a(1)(1260)+", &a1M, &a1W, 2, M_24_1),
-                                       new Lineshapes::RBW("rho(770)", &RhoMass, &RhoWidth, 1, M_24)};
+    std::vector<Lineshape *> LSA1RD = {new Lineshapes::SBW("a(1)(1260)+", a1M, a1W, 2, M_12_4),
+                                       new Lineshapes::RBW("rho(770)", RhoMass, RhoWidth, 1, M_12),
+                                       new Lineshapes::SBW("a(1)(1260)+", a1M, a1W, 2, M_24_1),
+                                       new Lineshapes::RBW("rho(770)", RhoMass, RhoWidth, 1, M_24)};
 
     // the very last parameter means that we have two permutations. so the first half of the Lineshapes
     // and the first half of the spinfactors are amplitude 1, rest is amplitude
@@ -149,35 +149,34 @@ int main(int argc, char **argv) {
     // Amplitudes with floating slightly different values to be fitted.
 
     Amplitude Bose_symmetrized_AMP_S{"K*(892)rho(770)_S",
-                                     new Variable("amp_real1", -0.1, 0.001, 0, 0),
-                                     new Variable("amp_imag1", 0.1, 0.001, 0, 0),
+                                     Variable("amp_real1", -0.1, 0.001, 0, 0),
+                                     Variable("amp_imag1", 0.1, 0.001, 0, 0),
                                      LSKRS,
                                      SFKRS,
                                      2};
 
     Amplitude Bose_symmetrized_AMP_P{"K*(892)rho(770)_P",
-                                     new Variable("amp_real2", -0.02, 0.001, 0, 0),
-                                     new Variable("amp_imag2", -0.07, 0.001, 0, 0),
+                                     Variable("amp_real2", -0.02, 0.001, 0, 0),
+                                     Variable("amp_imag2", -0.07, 0.001, 0, 0),
                                      LSKRP,
                                      SFKRP,
                                      2};
     Amplitude Bose_symmetrized_AMP_D{"K*(892)rho(770)_D",
-                                     new Variable("amp_real3", -0.4, 0.001, 0, 0),
-                                     new Variable("amp_imag3", 0.4, 0.001, 0, 0),
+                                     Variable("amp_real3", -0.4, 0.001, 0, 0),
+                                     Variable("amp_imag3", 0.4, 0.001, 0, 0),
                                      LSKRD,
                                      SFKRD,
                                      2};
 
     Amplitude Bose_symmetrized_KF{
-        "KF", new Variable("amp_real4", 0.0120787), new Variable("amp_imag4", -0.0332525), LSKF, SFKF, 2};
+        "KF", Variable("amp_real4", 0.0120787), Variable("amp_imag4", -0.0332525), LSKF, SFKF, 2};
     Amplitude Bose_symmetrized_KK{
-        "LSKK", new Variable("amp_real5", 0.0109033), new Variable("amp_imag5", -0.00186219), LSKK, SFKK, 2};
+        "LSKK", Variable("amp_real5", 0.0109033), Variable("amp_imag5", -0.00186219), LSKK, SFKK, 2};
     Amplitude Bose_symmetrized_K1R{
-        "LSK1R", new Variable("amp_real6", -0.10728), new Variable("amp_imag6", -0.130213), LSK1R, SFK1R, 2};
-    Amplitude Bose_symmetrized_A1R{
-        "LSA1R", new Variable("amp_real7", 1.0), new Variable("amp_imag7", 0.0), LSA1R, SFA1R, 2};
+        "LSK1R", Variable("amp_real6", -0.10728), Variable("amp_imag6", -0.130213), LSK1R, SFK1R, 2};
+    Amplitude Bose_symmetrized_A1R{"LSA1R", Variable("amp_real7", 1.0), Variable("amp_imag7", 0.0), LSA1R, SFA1R, 2};
     Amplitude Bose_symmetrized_A1RD{
-        "LSA1RD", new Variable("amp_real8", -0.94921), new Variable("amp_imag8", -1.73407), LSA1RD, SFA1RD, 2};
+        "LSA1RD", Variable("amp_real8", -0.94921), Variable("amp_imag8", -1.73407), LSA1RD, SFA1RD, 2};
 
     DK3P_DI.amplitudes = {&Bose_symmetrized_KF,
                           &Bose_symmetrized_AMP_S,
@@ -215,17 +214,17 @@ int main(int argc, char **argv) {
     Variable constantOne{"constantOne", 1};
     Variable constantZero{"constantZero", 0};
 
-    vector<Variable *> observables  = {&m12, &m34, &cos12, &cos34, &phi, &eventNumber};
-    vector<Variable *> coefficients = {&constantOne};
-    vector<Variable *> offsets      = {&constantZero, &constantZero};
+    vector<Observable> observables = {m12, m34, cos12, cos34, phi, eventNumber};
+    vector<Variable> coefficients  = {constantOne};
+    vector<Variable> offsets       = {constantZero, constantZero};
 
     PolynomialPdf eff{"constantEff", observables, coefficients, offsets, 0};
-    DPPdf dp{"test", observables, &DK3P_DI, &eff, 1000000};
+    DPPdf dp{"test", observables, DK3P_DI, &eff, 1000000};
 
     Variable constant{"constant", 0.1};
     Variable constant2{"constant2", 1.0};
-    PolynomialPdf backgr{"backgr", &m12, {&constant}};
-    AddPdf signal{"signal", &constant2, &dp, &backgr};
+    PolynomialPdf backgr{"backgr", m12, {constant}};
+    AddPdf signal{"signal", constant2, &dp, &backgr};
 
     signal.setData(&currData);
 

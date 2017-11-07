@@ -19,12 +19,12 @@ _mD0       = 1.8645
 piPlusMass = 0.13957018
 KmMass     = .493677
 
-m12 = Variable("m12", 0, 3)
-m34 = Variable("m34", 0, 3)
-cos12 = Variable("cos12", -1, 1)
-cos34 = Variable("m12", -1, 1)
-phi = Variable("phi", -3.5, 3.5)
-eventNumber = CountingVariable("eventNumber", 0, INT_MAX)
+m12 = Observable("m12", 0, 3)
+m34 = Observable("m34", 0, 3)
+cos12 = Observable("cos12", -1, 1)
+cos34 = Observable("m12", -1, 1)
+phi = Observable("phi", -3.5, 3.5)
+eventNumber = EventNumber("eventNumber", 0, INT_MAX)
 
 currData = UnbinnedDataSet(m12, m34, cos12, cos34, phi, eventNumber)
 
@@ -34,7 +34,7 @@ currData.from_numpy(data.T)
 
 print("Read in {} events".format(len(currData)))
 
-DK3P_DI = DecayInfo_DP()
+DK3P_DI = DecayInfo4()
 DK3P_DI.meson_radius    = 1.5
 DK3P_DI.particle_masses = (_mD0, piPlusMass, piPlusMass, KmMass, piPlusMass)
 

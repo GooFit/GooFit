@@ -25,6 +25,8 @@ void *getMetricPointer(EvalFunc val) { return getMetricPointer(evalfunc_to_strin
     
 #ifdef SEPARABLE
 
+/// This is a container that is used to communicate to the device PDF functions
+/// Could eventually be made class with private members?
 struct ParameterContainer {
     __host__ __device__ ParameterContainer();
     __host__ __device__ ParameterContainer(const ParameterContainer &pc);
@@ -41,6 +43,38 @@ struct ParameterContainer {
 
     int funcIdx;
 
+    inline __device__ fptype getParameter(const int i) {
+        return RO_CACHE(parameters[parameterIdx + i + 1]);
+    }
+
+    inline __device__ fptype getConstant(const int i) {
+        return RO_CACHE(constants[constantIdx + i + 1]);
+    }
+
+    inline __device__ fptype getObservable(const int i) {
+        return RO_CACHE(observable[observablesIdx + i + 1]);
+    }
+
+    inline __device__ fptype getNormalisation(const int i) {
+        return RO_CACHE(normalisations[normalIdx + i + 1]);
+    }
+
+    inline __device__ int getNumParameterss() {
+        return (int) RO_CACHE(parameters[parameterIdx]);
+    }
+
+    inline __device__ int getNumConstants() {
+        return (int) RO_CACHE(constants[constantIdx]);
+    }
+
+    inline __device__ int getNumObservables() {
+        return (int) RO_CACHE(observable[observablesIdx]);
+    }
+
+    inline __device__ int getNumNormalisations() {
+        return (int) RO_CACHE(normalisations[normalIdx]);
+    }
+
     // each PDF needs to supply the amount of each array used.
     // This function automatically adds +1 for the size.
     __device__ void incrementIndex(const int funcs, const int params, const int cons, const int obs, const int norms) {
@@ -51,10 +85,6 @@ struct ParameterContainer {
         normalIdx += norms + 1;
     }
 
-    inline __device__ fptype getParameter(const int i) {
-        return RO_CACHE(parameters[parameterIdx + i + 1]);
-    }
-    
     // slow version, avoid at all costs!
     __device__ void incrementIndex() {
         funcIdx++;

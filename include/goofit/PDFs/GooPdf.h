@@ -52,7 +52,7 @@ struct ParameterContainer {
     }
 
     inline __device__ fptype getObservable(const int i) {
-        return RO_CACHE(observable[observablesIdx + i + 1]);
+        return RO_CACHE(observables[observableIdx + i + 1]);
     }
 
     inline __device__ fptype getNormalisation(const int i) {
@@ -68,7 +68,7 @@ struct ParameterContainer {
     }
 
     inline __device__ int getNumObservables() {
-        return (int) RO_CACHE(observable[observablesIdx]);
+        return (int) RO_CACHE(observables[observableIdx]);
     }
 
     inline __device__ int getNumNormalisations() {

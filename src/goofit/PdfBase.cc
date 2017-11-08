@@ -13,6 +13,8 @@
 #include "goofit/FitManager.h"
 #include "goofit/UnbinnedDataSet.h"
 
+#include <goofit/detail/CompilerFeatures.h>
+
 #include <Minuit2/FunctionMinimum.h>
 
 namespace {
@@ -60,6 +62,11 @@ __host__ unsigned int PdfBase::registerParameter(Variable var) {
     parametersList.push_back(var);
 
     return 0; // TODO: Make void
+}
+    
+__host__ unsigned int PdfBase::registerConstant(fptype value) {
+    constantsList.push_back(value);
+    return constantsList.size();
 }
 
 __host__ void PdfBase::unregisterParameter(Variable var) {
@@ -119,7 +126,7 @@ __host__ std::vector<Observable> PdfBase::getObservables() const {
     return ret;
 }
 
-__host__ unsigned int PdfBase::registerConstants(unsigned int amount) {
+ GOOFIT_DEPRECATED __host__ unsigned int PdfBase::registerConstants(unsigned int amount) {
     if(totalConstants + amount >= maxParams)
         throw GooFit::GeneralError(
             "totalConstants {} + amount {} can not be more than {}", totalConstants, amount, maxParams);

@@ -116,7 +116,14 @@ class PdfBase {
 
     __host__ unsigned int getFunctionIndex() const { return functionIdx; }
     __host__ unsigned int getParameterIndex() const { return parameters; }
+
+    // TODO: Make the return value void to find and cleanup old style access
+    /// This adds a parameter. The number returned should only be used for checking
     __host__ unsigned int registerParameter(Variable var);
+    
+    /// The int value returned here is the constant number, for checking
+    __host__ unsigned int registerConstant(fptype value);
+    
     __host__ unsigned int registerConstants(unsigned int amount);
     __host__ virtual void recursiveSetNormalisation(fptype norm = 1) const;
     __host__ void unregisterParameter(Variable var);

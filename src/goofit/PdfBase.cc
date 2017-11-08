@@ -54,14 +54,12 @@ __host__ void PdfBase::recursiveSetNormalisation(fptype norm) const {
 }
 
 __host__ unsigned int PdfBase::registerParameter(Variable var) {
-    // we need to always add the variable to our internal parameter list
+    if(find_in(parametersList, var))
+        throw GeneralError("This var {} was registered twice", var.getName());
+    
     parametersList.push_back(var);
 
-    // just return, these indices aren't used.
-    if(std::find(parametersList.begin(), parametersList.end(), var) != parametersList.end())
-        return 0;
-    
-    return 0;
+    return 0; // TODO: Make void
 }
 
 __host__ void PdfBase::unregisterParameter(Variable var) {

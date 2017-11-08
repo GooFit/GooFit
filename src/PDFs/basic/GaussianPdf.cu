@@ -19,12 +19,8 @@ __device__ device_function_ptr ptr_to_Gaussian = device_Gaussian;
 
 __host__ GaussianPdf::GaussianPdf(std::string n, Observable _x, Variable mean, Variable sigma)
     : GooPdf(n, _x) {
-    std::vector<unsigned int> pindices;
-    pindices.push_back(registerParameter(mean));
-    pindices.push_back(registerParameter(sigma));
-
-    GET_FUNCTION_ADDR(ptr_to_Gaussian);
-    initialize(pindices);
+    registerParameter(mean);
+    registerParameter(sigma);
 }
 
 __host__ void GaussianPdf::recursiveSetIndices() {

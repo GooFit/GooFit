@@ -51,6 +51,10 @@ struct ParameterContainer {
         normalIdx += norms + 1;
     }
 
+    inline __device__ fptype getParameter(const int i) {
+        return RO_CACHE(parameters[parameterIdx + i + 1]);
+    }
+    
     // slow version, avoid at all costs!
     __device__ void incrementIndex() {
         funcIdx++;

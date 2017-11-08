@@ -45,9 +45,6 @@ class ResonancePdf : public GooPdf {
         : GooPdf(name)
         , amp_real(ar)
         , amp_imag(ai) {
-        // Dummy index for constants - won't use it, but calling
-        // functions can't know that and will call setConstantIndex anyway.
-        pindices.push_back(0);
     }
 
     Variable amp_real;
@@ -56,6 +53,8 @@ class ResonancePdf : public GooPdf {
     std::vector<unsigned int> pindices;
 
     std::vector<fptype> host_constants;
+
+    int resonanceType;
 };
 
 namespace Resonances {

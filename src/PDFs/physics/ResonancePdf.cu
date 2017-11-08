@@ -3,6 +3,8 @@
 
 namespace GooFit {
 
+//__device__ fpcomplex cDerivaties[1000];
+
 __device__ fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m) {
     // For A -> B + C, calculate momentum of B and C in rest frame of A.
     // PDG 38.16.
@@ -344,13 +346,13 @@ getAmplitudeCoefficients(fpcomplex a1, fpcomplex a2, fptype &a1sq, fptype &a2sq,
     a1a2imag = a1.imag();
 }
 
-__device__ fpcomplex flatte(fptype m12, fptype m13, fptype m23, unsigned int *indices) {
+__device__ fpcomplex flatte(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) {
     // indices[1] is unused constant index, for consistency with other function types.
-    fptype resmass            = cudaArray[indices[2]];
-    fptype g1                 = cudaArray[indices[3]];
-    fptype g2                 = cudaArray[indices[4]] * g1;
-    unsigned int cyclic_index = indices[5];
-    unsigned int doSwap       = indices[6];
+    fptype resmass            = pc.parameters[pc.parameterIdx + 1];
+    fptype g1                 = pc.parameters[pc.parameterIdx + 2];
+    fptype g2                 = pc.parameters[pc.parameterIdx + 3] * g1;
+    unsigned int cyclic_index = pc.constants[pc.constantIdx + 1];
+    unsigned int doSwap       = pc.constants[pc.constantIdx + 2];
 
     fptype pipmass = 0.13957018;
     fptype pi0mass = 0.1349766;
@@ -397,19 +399,21 @@ __device__ fpcomplex flatte(fptype m12, fptype m13, fptype m23, unsigned int *in
         }
     }
 
+    pc.incrementIndex (1, 3, 2, 0, 1);
+
     return ret;
 }
 
-__device__ fpcomplex cubicspline(fptype m12, fptype m13, fptype m23, unsigned int *indices) {
+__device__ fpcomplex cubicspline(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) {
     fpcomplex ret(0, 0);
-    unsigned int cyclic_index        = indices[2];
-    unsigned int doSwap              = indices[3];
-    const unsigned int nKnobs        = indices[4];
+    unsigned int cyclic_index        = pc.constants[pc.constantIdx + 2];
+    unsigned int doSwap              = pc.constants[pc.constantIdx + 3];
+    const unsigned int nKnobs        = pc.constants[pc.constantIdx + 4];
     unsigned int idx                 = 5; // Next index
     unsigned int i                   = 0;
     const unsigned int pwa_coefs_idx = idx;
     idx += 2 * nKnobs;
-    const fptype *mKKlimits = &(functorConstants[indices[idx]]);
+    //const fptype *mKKlimits = &(functorConstants[indices[idx]]);
     fptype mAB = m12, mAC = m13, mBC = m23;
     switch(cyclic_index) {
     case PAIR_13:
@@ -427,7 +431,7 @@ __device__ fpcomplex cubicspline(fptype m12, fptype m13, fptype m23, unsigned in
     fptype dmKK, aa, bb, aa3, bb3;
     unsigned int timestorun = 1 + doSwap;
     while(khiAB < nKnobs) {
-        if(mAB < mKKlimits[khiAB])
+        if(mAB < pc.constants[pc.constantIdx + khiAB])
             break;
         khiAB++;
     }
@@ -435,7 +439,7 @@ __device__ fpcomplex cubicspline(fptype m12, fptype m13, fptype m23, unsigned in
     if(khiAB <= 0 || khiAB == nKnobs)
         timestorun = 0;
     while(khiAC < nKnobs) {
-        if(mAC < mKKlimits[khiAC])
+        if(mAC < pc.constants[pc.constantIdx + khiAC])
             break;
         khiAC++;
     }
@@ -447,20 +451,24 @@ __device__ fpcomplex cubicspline(fptype m12, fptype m13, fptype m23, unsigned in
         unsigned int kloAB                = khiAB - 1; //, kloAC = khiAC -1;
         unsigned int twokloAB             = kloAB + kloAB;
         unsigned int twokhiAB             = khiAB + khiAB;
-        fptype pwa_coefs_real_kloAB       = cudaArray[indices[pwa_coefs_idx + twokloAB]];
-        fptype pwa_coefs_real_khiAB       = cudaArray[indices[pwa_coefs_idx + twokhiAB]];
-        fptype pwa_coefs_imag_kloAB       = cudaArray[indices[pwa_coefs_idx + twokloAB + 1]];
-        fptype pwa_coefs_imag_khiAB       = cudaArray[indices[pwa_coefs_idx + twokhiAB + 1]];
-        fptype pwa_coefs_prime_real_kloAB = cDeriatives[twokloAB];
-        fptype pwa_coefs_prime_real_khiAB = cDeriatives[twokhiAB];
-        fptype pwa_coefs_prime_imag_kloAB = cDeriatives[twokloAB + 1];
-        fptype pwa_coefs_prime_imag_khiAB = cDeriatives[twokhiAB + 1];
+        fptype pwa_coefs_real_kloAB       = pc.parameters[pc.parameterIdx + pwa_coefs_idx + twokloAB];
+        fptype pwa_coefs_real_khiAB       = pc.parameters[pc.parameterIdx + pwa_coefs_idx + twokhiAB];
+        fptype pwa_coefs_imag_kloAB       = pc.parameters[pc.parameterIdx + pwa_coefs_idx + twokloAB + 1];
+        fptype pwa_coefs_imag_khiAB       = pc.parameters[pc.parameterIdx + pwa_coefs_idx + twokhiAB + 1];
+        //fptype pwa_coefs_prime_real_kloAB = cDeriatives[twokloAB];
+        fptype pwa_coefs_prime_real_kloAB = 1.0;
+        fptype pwa_coefs_prime_real_khiAB = 1.0;
+        fptype pwa_coefs_prime_imag_kloAB = 1.0;
+        fptype pwa_coefs_prime_imag_khiAB = 1.0;
+        //fptype pwa_coefs_prime_real_khiAB = cDeriatives[twokhiAB];
+        //fptype pwa_coefs_prime_imag_kloAB = cDeriatives[twokloAB + 1];
+        //fptype pwa_coefs_prime_imag_khiAB = cDeriatives[twokhiAB + 1];
         //  printf("m12: %f: %f %f %f %f %f %f %d %d %d\n", mAB, mKKlimits[0], mKKlimits[nKnobs-1],
         //  pwa_coefs_real_khiAB, pwa_coefs_imag_khiAB, pwa_coefs_prime_real_khiAB, pwa_coefs_prime_imag_khiAB, khiAB,
         //  khiAC, timestorun );
 
-        dmKK = mKKlimits[khiAB] - mKKlimits[kloAB];
-        aa   = (mKKlimits[khiAB] - mAB) / dmKK;
+        dmKK = pc.constants[pc.constantIdx + khiAB] - pc.constants[pc.constantIdx + kloAB];
+        aa   = (pc.constants[pc.constantIdx + khiAB] - mAB) / dmKK;
         bb   = 1 - aa;
         aa3  = aa * aa * aa;
         bb3  = bb * bb * bb;
@@ -488,17 +496,24 @@ __device__ resonance_function_ptr ptr_to_SPLINE   = cubicspline;
 
 namespace Resonances {
 
-pindices.push_back(registerParameter(mass));
-pindices.push_back(registerParameter(width));
-pindices.push_back(sp);
-pindices.push_back(cyc);
-pindices.push_back((unsigned int)symmDP);
+RBW::RBW(std::string name,
+        Variable ar,
+        Variable ai,
+        Variable mass,
+        Variable width,
+        unsigned int sp,
+        unsigned int cyc,
+        bool symmDP) : ResonancePdf(name, ar, ai) {
+    registerParameter(mass);
+    registerParameter(width);
 
-GET_FUNCTION_ADDR(ptr_to_RBW);
+    constantsList.push_back(sp);
+    constantsList.push_back(cyc);
+    constantsList.push_back(symmDP);
 
-GET_FUNCTION_ADDR(ptr_to_RBW);
-initialize(pindices);
-} // namespace Resonances
+    resonanceType = 0;
+}
+ 
 
 GS::GS(std::string name,
        Variable ar,
@@ -509,14 +524,14 @@ GS::GS(std::string name,
        unsigned int cyc,
        bool symmDP)
     : ResonancePdf(name, ar, ai) {
-    pindices.push_back(registerParameter(mass));
-    pindices.push_back(registerParameter(width));
-    pindices.push_back(sp);
-    pindices.push_back(cyc);
-    pindices.push_back((unsigned int)symmDP);
+    registerParameter(mass);
+    registerParameter(width);
 
-    GET_FUNCTION_ADDR(ptr_to_GOUSAK);
-    initialize(pindices);
+    constantsList.push_back(sp);
+    constantsList.push_back(cyc);
+    constantsList.push_back(symmDP);
+
+    resonanceType = 1;
 }
 
 LASS::LASS(std::string name,
@@ -528,14 +543,14 @@ LASS::LASS(std::string name,
            unsigned int cyc,
            bool symmDP)
     : ResonancePdf(name, ar, ai) {
-    pindices.push_back(registerParameter(mass));
-    pindices.push_back(registerParameter(width));
-    pindices.push_back(sp);
-    pindices.push_back(cyc);
-    pindices.push_back((unsigned int)symmDP);
+    registerParameter(mass);
+    registerParameter(width);
 
-    GET_FUNCTION_ADDR(ptr_to_LASS);
-    initialize(pindices);
+    constantsList.push_back(sp);
+    constantsList.push_back(cyc);
+    constantsList.push_back(symmDP);
+
+    resonanceType = 2;
 }
 
 // Constructor for regular BW,Gounaris-Sakurai,LASS
@@ -545,21 +560,17 @@ Gauss::Gauss(std::string name, Variable ar, Variable ai, Variable mass, Variable
     // These are mother mass and three daughter masses in that order.
     // They will be registered by the object that uses this resonance,
     // which will tell this object where to find them by calling setConstantIndex.
-    std::vector<unsigned int> pindices;
-    pindices.push_back(0);
-    pindices.push_back(registerParameter(mass));
-    pindices.push_back(registerParameter(width));
-    pindices.push_back(cyc);
+    registerParameter(mass);
+    registerParameter(width);
 
-    GET_FUNCTION_ADDR(ptr_to_GAUSSIAN);
+    constantsList.push_back(cyc);
 
-    initialize(pindices);
+    resonanceType = 3;
 }
 
 NonRes::NonRes(std::string name, Variable ar, Variable ai)
     : ResonancePdf(name, ar, ai) {
-    GET_FUNCTION_ADDR(ptr_to_NONRES);
-    initialize(pindices);
+    resonanceType = 4;
 }
 
 FLATTE::FLATTE(std::string name,
@@ -571,15 +582,14 @@ FLATTE::FLATTE(std::string name,
                unsigned int cyc,
                bool symmDP)
     : ResonancePdf(name, ar, ai) {
-    pindices.push_back(registerParameter(mean));
-    pindices.push_back(registerParameter(g1));
-    pindices.push_back(registerParameter(rg2og1));
-    pindices.push_back(cyc);
-    pindices.push_back((unsigned int)symmDP);
+    registerParameter(mean);
+    registerParameter(g1);
+    registerParameter(rg2og1);
 
-    GET_FUNCTION_ADDR(ptr_to_FLATTE);
+    constantsList.push_back(cyc);
+    constantsList.push_back(symmDP);
 
-    initialize(pindices);
+    resonanceType = 5;
 }
 
 Spline::Spline(std::string name,
@@ -591,31 +601,39 @@ Spline::Spline(std::string name,
                unsigned int cyc,
                const bool symmDP)
     : ResonancePdf(name, ar, ai) {
-    std::vector<unsigned int> pindices;
     const unsigned int nKnobs = HH_bin_limits.size();
-    host_constants.resize(nKnobs);
 
-    pindices.push_back(0);
-    pindices.push_back(cyc);
-    pindices.push_back((unsigned int)symmDP);
-    pindices.push_back(nKnobs);
+    constantsList.push_back(cyc);
+    constantsList.push_back(symmDP);
+    constantsList.push_back(nKnobs);
 
     for(int i = 0; i < pwa_coefs_reals.size(); i++) {
-        host_constants[i] = HH_bin_limits[i];
-        pindices.push_back(registerParameter(pwa_coefs_reals[i]));
-        pindices.push_back(registerParameter(pwa_coefs_imags[i]));
+        constantsList.push_back(HH_bin_limits[i]);
+        registerParameter(pwa_coefs_reals[i]);
+        registerParameter(pwa_coefs_imags[i]);
     }
-    pindices.push_back(registerConstants(nKnobs));
 
-    MEMCPY_TO_SYMBOL(functorConstants,
-                     host_constants.data(),
-                     nKnobs * sizeof(fptype),
-                     cIndex * sizeof(fptype),
-                     cudaMemcpyHostToDevice);
+    resonanceType = 6;
+}
 
-    GET_FUNCTION_ADDR(ptr_to_SPLINE);
+__host__ void Spline::recalculateCache() const {
+    auto params           = getParameters();
+    const unsigned nKnobs = params.size() / 2;
+    std::vector<fpcomplex> y(nKnobs);
+    unsigned int i = 0;
+    for(auto v = params.begin(); v != params.end(); ++v, ++i) {
+        unsigned int idx = i / 2;
+        fptype value     = parametersList[i];
+        if(i % 2 == 0)
+            y[idx].real(value);
+        else
+            y[idx].imag(value);
+    }
+    //std::vector<fptype> y2_flat = flatten(complex_derivative(constantsList, y));
 
-    initialize(pindices);
+    //MEMCPY_TO_SYMBOL(cDeriatives, y2_flat.data(), 2 * nKnobs * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+}
+
 }
 
 void ResonancePdf::recursiveSetIndices() {
@@ -641,25 +659,5 @@ void ResonancePdf::recursiveSetIndices() {
 
     populateArrays();
 }
-
-__host__ void Spline::recalculateCache() const {
-    auto params           = getParameters();
-    const unsigned nKnobs = params.size() / 2;
-    std::vector<fpcomplex> y(nKnobs);
-    unsigned int i = 0;
-    for(auto v = params.begin(); v != params.end(); ++v, ++i) {
-        unsigned int idx = i / 2;
-        fptype value     = host_params[v->getIndex()];
-        if(i % 2 == 0)
-            y[idx].real(value);
-        else
-            y[idx].imag(value);
-    }
-    std::vector<fptype> y2_flat = flatten(complex_derivative(host_constants, y));
-
-    MEMCPY_TO_SYMBOL(cDeriatives, y2_flat.data(), 2 * nKnobs * sizeof(fptype), 0, cudaMemcpyHostToDevice);
-}
-
-} // namespace GooFit
 
 } // namespace GooFit

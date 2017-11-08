@@ -62,10 +62,15 @@ struct exp_functor {
         fptype *evt = thrust::get<2>(t) + (evtNum * thrust::get<3>(t));
         // unsigned int *indices = paramIndices + tmpparam;
 
-        ParameterContainer &pc;
+        ParameterContainer pc;
 
-        while
-            fptype time = evt[indices[8 + indices[0]]];
+        //TODO: loop to this object's location.
+
+        //while
+        //    fptype time = evt[indices[8 + indices[0]]];
+
+        int id = pc.observables[pc.observableIdx + 1];
+        fptype time = evt[id];
 
         thrust::random::minstd_rand0 rand(1431655765);
         thrust::uniform_real_distribution<fptype> dist(0, 1);
@@ -90,15 +95,17 @@ First entries are the starting points in array, necessary, because number of Lin
 // __constant__ unsigned int AmpIndices_TD[100];
 
 // This function gets called by the GooFit framework to get the value of the PDF.
-__device__ fptype device_TDDP4(fptype *evt, fptype *p, unsigned int *indices) {
+__device__ fptype device_TDDP4(fptype *evt, ParameterContainer &pc) {
     // printf("DalitzPlot evt %i zero: %i %i %f (%f, %f).\n", evtNum, numResonances, effFunctionIdx, eff, totalAmp.real,
     // totalAmp.imag);
 
-    auto evtNum = static_cast<int>(floor(0.5 + evt[indices[7 + indices[0]]]));
+    int id_evt = pc.observables[pc.observableIdx + 3];
+
+    auto evtNum = static_cast<int>(floor(0.5 + evt[id_evt]));
     // GOOFIT_TRACE("TDDP4: Number of events: {}", evtNum);
 
-    unsigned int cacheToUse = indices[2];
-    unsigned int numAmps    = indices[5];
+    unsigned int cacheToUse = pc.constants[pc.constantIdx + 1];
+    unsigned int numAmps    = pc.constants[pc.constantIdx + 2];
 
     fpcomplex AmpA(0, 0);
     fpcomplex AmpB(0, 0);
@@ -114,36 +121,39 @@ __device__ fptype device_TDDP4(fptype *evt, fptype *p, unsigned int *indices) {
         /*printf("flag:%i\n",flag);*/
         switch(flag) {
         case 0:
-            amp_A = fpcomplex(p[indices[12 + 2 * (i + k)]], p[indices[13 + 2 * (i + k)]]);
+            amp_A = fpcomplex(pc.parameters[pc.parameterIdx + 12 + 2 * (i + k)], pc.parameters[pc.parameterIdx + 13 + 2 * (i + k)]);
             temp  = Amps_TD[cacheToUse][evtNum * numAmps + i];
             AmpA += temp * amp_A;
             break;
 
         case 1:
-            amp_B = fpcomplex(p[indices[12 + 2 * (i + k)]], p[indices[13 + 2 * (i + k)]]);
+            amp_B = fpcomplex(pc.parameters[pc.parameterIdx + 12 + 2 * (i + k)], pc.parameters[pc.parameterIdx + 13 + 2 * (i + k)]);
             temp  = Amps_TD[cacheToUse][evtNum * numAmps + i];
             AmpB += temp * amp_B;
             break;
 
         case 2:
-            amp_A = fpcomplex(p[indices[12 + 2 * (i + k)]], p[indices[13 + 2 * (i + k)]]);
+            amp_A = fpcomplex(pc.parameters[pc.parameterIdx + 12 + 2 * (i + k)], pc.parameters[pc.parameterIdx + 13 + 2 * (i + k)]);
             temp  = Amps_TD[cacheToUse][evtNum * numAmps + i];
             AmpA += temp * amp_A;
 
             ++k;
-            amp_B = fpcomplex(p[indices[12 + 2 * (i + k)]], p[indices[13 + 2 * (i + k)]]);
+            amp_B = fpcomplex(pc.parameters[pc.parameterIdx + 12 + 2 * (i + k)], pc.parameters[pc.parameterIdx + 13 + 2 * (i + k)]);
             temp  = Amps_TD[cacheToUse][evtNum * numAmps + i];
             AmpB += temp * amp_B;
             break;
         }
     }
 
-    fptype _tau          = p[indices[7]];
-    fptype _xmixing      = p[indices[8]];
-    fptype _ymixing      = p[indices[9]];
-    fptype _SqWStoRSrate = p[indices[10]];
-    fptype _time         = evt[indices[8 + indices[0]]];
-    fptype _sigma        = evt[indices[9 + indices[0]]];
+    int id_time = pc.observables[pc.observableIdx + 1];
+    int id_sigma = pc.observables[pc.observableIdx + 2];
+
+    fptype _tau          = pc.parameters[pc.parameterIdx + 7];
+    fptype _xmixing      = pc.parameters[pc.parameterIdx + 8];
+    fptype _ymixing      = pc.parameters[pc.parameterIdx + 9];
+    fptype _SqWStoRSrate = pc.parameters[pc.parameterIdx + 10];
+    fptype _time         = evt[id_time];
+    fptype _sigma        = evt[id_sigma];
 
     AmpA *= _SqWStoRSrate;
     /*printf("%i read time: %.5g x: %.5g y: %.5g \n",evtNum, _time, _xmixing, _ymixing);*/
@@ -153,14 +163,23 @@ __device__ fptype device_TDDP4(fptype *evt, fptype *p, unsigned int *indices) {
     fpcomplex term3 = AmpA * thrust::conj(AmpB);
     // printf("%i dev %.7g %.7g %.7g %.7g\n", evtNum, norm2(AmpA), norm2(AmpB), term3.real, term3.imag);
 
-    int effFunctionIdx = 12 + 2 * indices[3] + 2 * indices[4] + 2 * indices[6];
-    int resfctidx      = indices[11];
-    int resfctpar      = effFunctionIdx + 2;
+    //increment Index
+    pc.incrementIndex();
 
-    fptype ret = (*(reinterpret_cast<device_resfunction_ptr>(device_function_table[resfctidx])))(
-        term1, term2, term3.real(), term3.imag(), _tau, _time, _xmixing, _ymixing, _sigma, p, indices + resfctpar);
-    fptype eff = callFunction(evt, indices[effFunctionIdx], indices[effFunctionIdx + 1]);
+    //int effFunctionIdx = 12 + 2 * indices[3] + 2 * indices[4] + 2 * indices[6];
+    //int resfctidx      = indices[11];
+    //int resfctpar      = effFunctionIdx + 2;
+
+    //resolution function?
+    fptype ret = (*(reinterpret_cast<device_resfunction_ptr>(device_function_table[pc.funcIdx])))(
+        term1, term2, term3.real(), term3.imag(), _tau, _time, _xmixing, _ymixing, _sigma, pc);
+
+    pc.incrementIndex ();
+
+    //efficiency function?
+    fptype eff = callFunction(evt, pc);
     /*printf("%i result %.7g, eff %.7g\n",evtNum, ret, eff);*/
+
     ret *= eff;
     /*printf("in prob: %f\n", ret);*/
     return ret;
@@ -185,26 +204,19 @@ __host__ TDDP4::TDDP4(std::string n,
         registerObservable(observable);
     }
 
-    std::vector<fptype> decayConstants;
-    decayConstants.push_back(decayInfo.meson_radius);
+    constantsList.push_back(decayInfo.meson_radius);
 
     for(double &particle_masse : decayInfo.particle_masses) {
-        decayConstants.push_back(particle_masse);
+        constantsList.push_back(particle_masse);
     }
 
     if(mistag) {
         registerObservable(*mistag);
         totalEventSize = 9;
-        decayConstants.push_back(1); // Flags existence of mistag
+        constantsList.push_back(1); // Flags existence of mistag
     }
 
     std::vector<unsigned int> pindices;
-    pindices.push_back(registerConstants(decayConstants.size()));
-    MEMCPY_TO_SYMBOL(functorConstants,
-                     &decayConstants[0],
-                     decayConstants.size() * sizeof(fptype),
-                     cIndex * sizeof(fptype),
-                     cudaMemcpyHostToDevice);
     static int cacheCount = 0;
     cacheToUse            = cacheCount++;
     pindices.push_back(cacheToUse);
@@ -220,6 +232,13 @@ __host__ TDDP4::TDDP4(std::string n,
         throw GooFit::GeneralError("The resolution device function index {} must be more than 0",
                                    resolution->getDeviceFunction());
     pindices.push_back(static_cast<unsigned int>(resolution->getDeviceFunction()));
+
+    constantsList.push_back (cacheToUse);
+    constantsList.push_back (0);
+    constantsList.push_back (0);
+    constantsList.push_back (0);
+    constantsList.push_back (0);
+    
 
     // This is the start of reading in the amplitudes and adding the lineshapes and Spinfactors to this PDF
     // This is done in this way so we don't have multiple copies of one lineshape in one pdf.
@@ -371,7 +390,7 @@ __host__ TDDP4::TDDP4(std::string n,
     pindices[5] = coeff_counter;
 
     for(auto &component : components) {
-        reinterpret_cast<Lineshape *>(component)->setConstantIndex(cIndex);
+        //reinterpret_cast<Lineshape *>(component)->setConstantIndex(cIndex);
         pindices.push_back(reinterpret_cast<Lineshape *>(component)->getFunctionIndex());
         pindices.push_back(reinterpret_cast<Lineshape *>(component)->getParameterIndex());
     }
@@ -502,7 +521,7 @@ __host__ fptype TDDP4::normalize() const {
     // so set normalisation factor to 1 so it doesn't get multiplied by zero.
     // Copy at this time to ensure that the SpecialResonanceCalculators, which need the efficiency,
     // don't get zeroes through multiplying by the normFactor.
-    MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
     // check if MINUIT changed any parameters and if so remember that so we know
     // we need to recalculate that lineshape and every amp, that uses that lineshape
@@ -641,9 +660,9 @@ __host__ fptype TDDP4::normalize() const {
 
         // printf("normalize A2/#evts , B2/#evts: %.5g, %.5g\n",thrust::get<0>(sumIntegral)/MCevents,
         // thrust::get<1>(sumIntegral)/MCevents);
-        fptype tau     = host_params[host_indices[parameters + 7]];
-        fptype xmixing = host_params[host_indices[parameters + 8]];
-        fptype ymixing = host_params[host_indices[parameters + 9]];
+        fptype tau     = parametersList[5];
+        fptype xmixing = parametersList[8];
+        fptype ymixing = parametersList[9];
 
         ret = resolution->normalisation(thrust::get<0>(sumIntegral),
                                         thrust::get<1>(sumIntegral),
@@ -657,7 +676,7 @@ __host__ fptype TDDP4::normalize() const {
         ret /= MCevents;
     }
 
-    host_normalisation[parameters] = 1.0 / ret;
+    host_normalisations[parameters] = 1.0 / ret;
     // printf("end of normalize %f\n", ret);
     return ret;
 }
@@ -706,8 +725,8 @@ __host__
 
     thrust::counting_iterator<unsigned int> index_sequence_begin(0);
 
-    fptype tau      = host_params[host_indices[parameters + 7]];
-    fptype ymixing  = host_params[host_indices[parameters + 9]];
+    fptype tau      = parametersList[7];
+    fptype ymixing  = parametersList[9];
     fptype gammamin = 1.0 / tau - fabs(ymixing) / tau;
     /*printf("hostparams: %f, %f", tau, ymixing);*/
 
@@ -775,7 +794,7 @@ __host__
     SigGenSetIndices();
     normalize();
     setForceIntegrals();
-    MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
     thrust::device_vector<fptype> weights(nAcc);
     thrust::constant_iterator<int> eventSize(8);
@@ -849,28 +868,44 @@ __device__ fpcomplex SFCalculator_TD::operator()(thrust::tuple<int, fptype *, in
     int evtNum  = thrust::get<0>(t);
     fptype *evt = thrust::get<1>(t) + (evtNum * thrust::get<2>(t));
 
-    unsigned int *indices = paramIndices + _parameters; // Jump to DALITZPLOT position within parameters array
-    int parameter_i       = 12 + (2 * indices[6]) + (indices[3] * 2)
-                      + (_spinfactor_i * 2); // Find position of this resonance relative to DALITZPLOT start
-    unsigned int functn_i = indices[parameter_i];
-    unsigned int params_i = indices[parameter_i + 1];
+    //unsigned int *indices = paramIndices + _parameters; // Jump to DALITZPLOT position within parameters array
+    //int parameter_i       = 12 + (2 * indices[6]) + (indices[3] * 2)
+    //                  + (_spinfactor_i * 2); // Find position of this resonance relative to DALITZPLOT start
+    //unsigned int functn_i = indices[parameter_i];
+    //unsigned int params_i = indices[parameter_i + 1];
 
-    fptype m12   = evt[indices[2 + indices[0]]];
-    fptype m34   = evt[indices[3 + indices[0]]];
-    fptype cos12 = evt[indices[4 + indices[0]]];
-    fptype cos34 = evt[indices[5 + indices[0]]];
-    fptype phi   = evt[indices[6 + indices[0]]];
+    ParameterContainer pc;
+
+    //TODO:
+    //while (pc.funcIdx < funcIdx)
+    // pc.incrementIndex();
+
+    int id_m12   = pc.observables[pc.observableIdx + 1];
+    int id_m34   = pc.observables[pc.observableIdx + 2];
+    int id_cos12 = pc.observables[pc.observableIdx + 3];
+    int id_cos34 = pc.observables[pc.observableIdx + 4];
+    int id_phi   = pc.observables[pc.observableIdx + 5];
+
+    fptype m12   = evt[id_m12];
+    fptype m34   = evt[id_m34];
+    fptype cos12 = evt[id_cos12];
+    fptype cos34 = evt[id_cos34];
+    fptype phi   = evt[id_phi];
 
     fptype vecs[16];
-    get4Vecs(vecs, indices[1], m12, m34, cos12, cos34, phi);
+    get4Vecs(vecs, pc.constants[pc.constantIdx + 1], m12, m34, cos12, cos34, phi);
     // printf("%i, %i, %f, %f, %f, %f, %f \n",evtNum, thrust::get<2>(t), m12, m34, cos12, cos34, phi );
     // printf("vec%i %f, %f, %f, %f\n",0, vecs[0], vecs[1], vecs[2], vecs[3]);
     // printf("vec%i %f, %f, %f, %f\n",1, vecs[4], vecs[5], vecs[6], vecs[7]);
     // printf("vec%i %f, %f, %f, %f\n",2, vecs[8], vecs[9], vecs[10], vecs[11]);
     // printf("vec%i %f, %f, %f, %f\n",3, vecs[12], vecs[13], vecs[14], vecs[15]);
 
-    auto func = reinterpret_cast<spin_function_ptr>(device_function_table[functn_i]);
-    fptype sf = (*func)(vecs, paramIndices + params_i);
+    //TODO:
+    // while(pc.funcIdx < spinFactor)
+    // pc.incrementIndex ();
+
+    auto func = reinterpret_cast<spin_function_ptr>(device_function_table[pc.funcIdx]);
+    fptype sf = (*func)(vecs, pc);
     // printf("SpinFactors %i : %.7g\n",_spinfactor_i, sf );
     return fpcomplex(sf, 0);
 }
@@ -882,11 +917,11 @@ NormSpinCalculator_TD::NormSpinCalculator_TD(int pIdx, unsigned int sf_idx)
 __device__ fptype NormSpinCalculator_TD::operator()(
     thrust::tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t)
     const {
-    unsigned int *indices = paramIndices + _parameters; // Jump to DALITZPLOT position within parameters array
-    int parameter_i       = 12 + (2 * indices[6]) + (indices[3] * 2)
-                      + (_spinfactor_i * 2); // Find position of this resonance relative to DALITZPLOT start
-    unsigned int functn_i = indices[parameter_i];
-    unsigned int params_i = indices[parameter_i + 1];
+    //unsigned int *indices = paramIndices + _parameters; // Jump to DALITZPLOT position within parameters array
+    //int parameter_i       = 12 + (2 * indices[6]) + (indices[3] * 2)
+    //                  + (_spinfactor_i * 2); // Find position of this resonance relative to DALITZPLOT start
+    //unsigned int functn_i = indices[parameter_i];
+    //unsigned int params_i = indices[parameter_i + 1];
 
     fptype m12   = (thrust::get<0>(t));
     fptype m34   = (thrust::get<1>(t));
@@ -894,16 +929,27 @@ __device__ fptype NormSpinCalculator_TD::operator()(
     fptype cos34 = (thrust::get<3>(t));
     fptype phi   = (thrust::get<4>(t));
 
+    ParameterContainer pc;
+
+    //TODO:
+    // while(pc.funcIdx < funcIdx)
+    //  pc.incrementIndex ();
+
     fptype vecs[16];
-    get4Vecs(vecs, indices[1], m12, m34, cos12, cos34, phi);
+    get4Vecs(vecs, pc.constants[pc.constantIdx + 1], m12, m34, cos12, cos34, phi);
 
     //   printf("evt %i vec%i %.5g, %.5g, %.5g, %.5g\n", evtNum,0, vecs[0], vecs[1], vecs[2], vecs[3]);
     //   printf("evt %i vec%i %.5g, %.5g, %.5g, %.5g\n", evtNum,1, vecs[4], vecs[5], vecs[6], vecs[7]);
     //   printf("evt %i vec%i %.5g, %.5g, %.5g, %.5g\n", evtNum,2, vecs[8], vecs[9], vecs[10], vecs[11]);
     //   printf("evt %i vec%i %.5g, %.5g, %.5g, %.5g\n", evtNum,3, vecs[12], vecs[13], vecs[14], vecs[15]);
     // // }
-    auto func = reinterpret_cast<spin_function_ptr>(device_function_table[functn_i]);
-    fptype sf = (*func)(vecs, paramIndices + params_i);
+
+    //TODO:
+    // while(pc.funcIdx < spinFactor)
+    // pc.incrementIndex ();
+
+    auto func = reinterpret_cast<spin_function_ptr>(device_function_table[pc.funcIdx]);
+    fptype sf = (*func)(vecs, pc);
 
     // printf("NormSF evt:%.5g, %.5g, %.5g, %.5g, %.5g\n", m12, m34, cos12, cos34, phi);
     // printf("NormSF %i, %.7g\n",_spinfactor_i, sf );
@@ -922,36 +968,54 @@ __device__ fpcomplex LSCalculator_TD::operator()(thrust::tuple<int, fptype *, in
     int evtNum  = thrust::get<0>(t);
     fptype *evt = thrust::get<1>(t) + (evtNum * thrust::get<2>(t));
 
-    unsigned int *indices = paramIndices + _parameters; // Jump to DALITZPLOT position within parameters array
-    int parameter_i
-        = 12 + (2 * indices[6]) + (_resonance_i * 2); // Find position of this resonance relative to DALITZPLOT start
-    unsigned int functn_i = indices[parameter_i];
-    unsigned int params_i = indices[parameter_i + 1];
-    unsigned int pair     = (paramIndices + params_i)[5];
+    //unsigned int *indices = paramIndices + _parameters; // Jump to DALITZPLOT position within parameters array
+    //int parameter_i
+    //    = 12 + (2 * indices[6]) + (_resonance_i * 2); // Find position of this resonance relative to DALITZPLOT start
+    //unsigned int functn_i = indices[parameter_i];
+    //unsigned int params_i = indices[parameter_i + 1];
+    //unsigned int pair     = (paramIndices + params_i)[5];
 
-    fptype m1 = functorConstants[indices[1] + 2];
-    fptype m2 = functorConstants[indices[1] + 3];
-    fptype m3 = functorConstants[indices[1] + 4];
-    fptype m4 = functorConstants[indices[1] + 5];
+    ParameterContainer pc;
 
-    fptype m12   = evt[indices[2 + indices[0]]];
-    fptype m34   = evt[indices[3 + indices[0]]];
-    fptype cos12 = evt[indices[4 + indices[0]]];
-    fptype cos34 = evt[indices[5 + indices[0]]];
-    fptype phi   = evt[indices[6 + indices[0]]];
+    //TODO:
+    //while(pc.funcIdx < funcIdx)
+    //pc.incrementIndex();
+
+    fptype m1 = pc.constants[pc.constantIdx + 2];
+    fptype m2 = pc.constants[pc.constantIdx + 3];
+    fptype m3 = pc.constants[pc.constantIdx + 4];
+    fptype m4 = pc.constants[pc.constantIdx + 5];
+
+    unsigned int pair = pc.constants[pc.constantIdx + 6];
+
+    int id_m12   = pc.observables[pc.observableIdx + 1];
+    int id_m34   = pc.observables[pc.observableIdx + 2];
+    int id_cos12 = pc.observables[pc.observableIdx + 3];
+    int id_cos34 = pc.observables[pc.observableIdx + 4];
+    int id_phi   = pc.observables[pc.observableIdx + 5];
+
+    fptype m12   = evt[id_m12];
+    fptype m34   = evt[id_m34];
+    fptype cos12 = evt[id_cos12];
+    fptype cos34 = evt[id_cos34];
+    fptype phi   = evt[id_phi];
+
+    //TODO:
+    //while(pc.funcIdx < resonanceFunc)
+    //pc.incrementIndex();
 
     if(pair < 2) {
         fptype mres = pair == 0 ? m12 : m34;
         fptype d1   = pair == 0 ? m1 : m3;
         fptype d2   = pair == 0 ? m2 : m4;
-        ret         = getResonanceAmplitude(mres, d1, d2, functn_i, params_i);
+        ret         = getResonanceAmplitude(mres, d1, d2, pc);
         // printf("LS_nt %i: mass:%f, %f i%f\n",_resonance_i, mres, ret.real, ret.imag );
     } else {
         fptype vecs[16];
-        get4Vecs(vecs, indices[1], m12, m34, cos12, cos34, phi);
+        get4Vecs(vecs, pc.constants[pc.constantIdx + 1], m12, m34, cos12, cos34, phi);
         fptype d1, d2;
         fptype mres = getmass(pair, d1, d2, vecs, m1, m2, m3, m4);
-        ret         = getResonanceAmplitude(mres, d1, d2, functn_i, params_i);
+        ret         = getResonanceAmplitude(mres, d1, d2, pc);
         // printf("LS %i: mass:%f, %f i%f\n",_resonance_i, mres, ret.real, ret.imag );
     }
 
@@ -975,17 +1039,25 @@ __device__ fpcomplex NormLSCalculator_TD::operator()(
     // Calculates the BW values for a specific resonance.
     fpcomplex ret;
 
-    unsigned int *indices = paramIndices + _parameters; // Jump to DALITZPLOT position within parameters array
-    int parameter_i
-        = 12 + (2 * indices[6]) + (_resonance_i * 2); // Find position of this resonance relative to DALITZPLOT start
-    unsigned int functn_i = indices[parameter_i];
-    unsigned int params_i = indices[parameter_i + 1];
-    unsigned int pair     = (paramIndices + params_i)[5];
+    //unsigned int *indices = paramIndices + _parameters; // Jump to DALITZPLOT position within parameters array
+    //int parameter_i
+    //    = 12 + (2 * indices[6]) + (_resonance_i * 2); // Find position of this resonance relative to DALITZPLOT start
+    //unsigned int functn_i = indices[parameter_i];
+    //unsigned int params_i = indices[parameter_i + 1];
+    //unsigned int pair     = (paramIndices + params_i)[5];
 
-    fptype m1 = functorConstants[indices[1] + 2];
-    fptype m2 = functorConstants[indices[1] + 3];
-    fptype m3 = functorConstants[indices[1] + 4];
-    fptype m4 = functorConstants[indices[1] + 5];
+    ParameterContainer pc;
+
+    //TODO:
+    //while(pc.funcIdx < funcIdx)
+    //  pc.incrementIndex ();
+
+    fptype m1 = pc.constants[pc.constantIdx + 2];
+    fptype m2 = pc.constants[pc.constantIdx + 3];
+    fptype m3 = pc.constants[pc.constantIdx + 4];
+    fptype m4 = pc.constants[pc.constantIdx + 5];
+
+    unsigned int pair = pc.constants[pc.constantIdx + 6];
 
     fptype m12   = (thrust::get<0>(t));
     fptype m34   = (thrust::get<1>(t));
@@ -997,13 +1069,13 @@ __device__ fpcomplex NormLSCalculator_TD::operator()(
         fptype mres = pair == 0 ? m12 : m34;
         fptype d1   = pair == 0 ? m1 : m3;
         fptype d2   = pair == 0 ? m2 : m4;
-        ret         = getResonanceAmplitude(mres, d1, d2, functn_i, params_i);
+        ret         = getResonanceAmplitude(mres, d1, d2, pc);
     } else {
         fptype vecs[16];
-        get4Vecs(vecs, indices[1], m12, m34, cos12, cos34, phi);
+        get4Vecs(vecs, pc.constants[pc.constantIdx + 1], m12, m34, cos12, cos34, phi);
         fptype d1, d2;
         fptype mres = getmass(pair, d1, d2, vecs, m1, m2, m3, m4);
-        ret         = getResonanceAmplitude(mres, d1, d2, functn_i, params_i);
+        ret         = getResonanceAmplitude(mres, d1, d2, pc);
     }
 
     // printf("NormLS %f, %f, %f, %f, %f \n",m12, m34, cos12, cos34, phi );
@@ -1022,11 +1094,16 @@ AmpCalc_TD::AmpCalc_TD(unsigned int AmpIdx, unsigned int pIdx, unsigned int nPer
     , _parameters(pIdx) {}
 
 __device__ fpcomplex AmpCalc_TD::operator()(thrust::tuple<int, fptype *, int> t) const {
-    unsigned int *indices   = paramIndices + _parameters;
-    unsigned int cacheToUse = indices[2];
-    unsigned int totalLS    = indices[3];
-    unsigned int totalSF    = indices[4];
-    unsigned int totalAMP   = indices[5];
+    ParameterContainer pc;
+
+    //TODO:
+    //while(pc.funcIdx < funcIdx)
+    // pc.incrementIndex();
+    //unsigned int *indices   = paramIndices + _parameters;
+    unsigned int cacheToUse = pc.constants[pc.constantIdx + 2];
+    unsigned int totalLS    = pc.constants[pc.constantIdx + 3];
+    unsigned int totalSF    = pc.constants[pc.constantIdx + 4];
+    unsigned int totalAMP   = pc.constants[pc.constantIdx + 5];
     unsigned int offset     = totalLS + totalSF;
     unsigned int numLS      = AmpIndices[totalAMP + _AmpIdx];
     unsigned int numSF      = AmpIndices[totalAMP + _AmpIdx + 1];
@@ -1069,8 +1146,16 @@ NormIntegrator_TD::NormIntegrator_TD(unsigned int pIdx)
 
 __device__ thrust::tuple<fptype, fptype, fptype, fptype> NormIntegrator_TD::
 operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const {
-    unsigned int *indices = paramIndices + _parameters;
-    unsigned int totalAMP = indices[5];
+    //unsigned int *indices = paramIndices + _parameters;
+    //unsigned int totalAMP = indices[5];
+
+    ParameterContainer pc;
+
+    //TODO:
+    //while(pc.funcIdx < funcIdx)
+    //  pc.incrementIndex ();
+
+    unsigned int totalAMP = pc.constants[pc.constantIdx + 1];
 
     unsigned int evtNum   = thrust::get<0>(t);
     unsigned int MCevents = thrust::get<1>(t);
@@ -1120,26 +1205,26 @@ operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const {
 
         switch(flag) {
         case 0:
-            amp_A = fpcomplex(cudaArray[indices[12 + 2 * (amp + k)]], cudaArray[indices[13 + 2 * (amp + k)]]);
+            amp_A = fpcomplex(pc.parameters[pc.parameterIdx + 12 + 2 * (amp + k)], pc.parameters[pc.parameterIdx + 13 + 2 * (amp + k)]);
             AmpA += ret2 * amp_A;
             break;
 
         case 1:
-            amp_B = fpcomplex(cudaArray[indices[12 + 2 * (amp + k)]], cudaArray[indices[13 + 2 * (amp + k)]]);
+            amp_B = fpcomplex(pc.parameters[pc.parameterIdx + 12 + 2 * (amp + k)], pc.parameters[pc.parameterIdx + 13 + 2 * (amp + k)]);
             AmpB += ret2 * amp_B;
             break;
 
         case 2:
-            amp_A = fpcomplex(cudaArray[indices[12 + 2 * (amp + k)]], cudaArray[indices[13 + 2 * (amp + k)]]);
+            amp_A = fpcomplex(pc.parameters[pc.parameterIdx + 12 + 2 * (amp + k)], pc.parameters[pc.parameterIdx + 13 + 2 * (amp + k)]);
             AmpA += ret2 * amp_A;
             ++k;
-            amp_B = fpcomplex(cudaArray[indices[12 + 2 * (amp + k)]], cudaArray[indices[13 + 2 * (amp + k)]]);
+            amp_B = fpcomplex(pc.parameters[pc.parameterIdx + 12 + 2 * (amp + k)], pc.parameters[pc.parameterIdx + 13 + 2 * (amp + k)]);
             AmpB += ret2 * amp_B;
             break;
         }
     }
 
-    fptype _SqWStoRSrate = cudaArray[indices[10]];
+    fptype _SqWStoRSrate = pc.parameters[pc.parameterIdx + 10];
     AmpA *= _SqWStoRSrate;
 
     auto AmpAB = AmpA * conj(AmpB);

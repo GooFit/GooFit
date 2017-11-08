@@ -47,7 +47,7 @@ std::vector<double> Params::make_minuit_vector() const {
 void Params::from_minuit_vector(const std::vector<double> &values, bool force_changed) {
     for(Variable &var : vars_) {
         var.setChanged(force_changed ? true : var.getValue() != values.at(var.getFitterIndex()));
-        pdf_->updateVariable(var, pars.at(var->getFitterIndex()) - var->getBlind(Variable::Key()));
+        pdf_->updateVariable(var, values.at(var.getFitterIndex()) - var.getBlind(Variable::Key()));
     }
 
     pdf_->updateParameters();

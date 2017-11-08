@@ -152,10 +152,6 @@ device_Tddp_calcIntegrals(fptype m12, fptype m13, int res_i, int res_j, Paramete
 }
 
 __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
-    // fptype motherMass = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 0]);
-    // fptype daug1Mass  = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 1]);
-    // fptype daug2Mass  = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 2]);
-    // fptype daug3Mass  = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 3]);
 
     int num_parameters  = RO_CACHE(pc.parameters[pc.parameterIdx]);
     int num_constants   = RO_CACHE(pc.constants[pc.constantIdx]);

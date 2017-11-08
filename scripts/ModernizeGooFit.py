@@ -10,7 +10,8 @@ except ImportError:
     print("This file uses the plumbum library. Install with pip or conda (user directory or virtual environment OK).")
     raise
 
-conversion = [
+conversion = dict()
+conversion['2.0'] = [
     ('["<]cuda_runtime_api.hh?[">]', r'\\\\ Fake cuda has been removed (cuda_runtime_api.h requested)'),
     ('["<]driver_types.hh?[">]', r'\\\\ Fake cuda has been removed (driver_types.h requested)'),
     ('["<]host_defines.hh?[">]', r'\\\\ Fake cuda has been removed (host_defines.h requested)'),
@@ -148,8 +149,14 @@ conversion = [
     (r'goofit/PDFs/ThreeGaussResolution_Aux.h', 'goofit/PDFs/physics/ThreeGaussResolution_Aux.h'),
     (r'goofit/PDFs/TruthResolution_Aux.h', 'goofit/PDFs/physics/TruthResolution_Aux.h')
 ]
+conversion['2.1'] = [
+    (r'thrust::complex<fptype>', 'fpcomplex'),
+    (r'CountingVariable', 'EventNumber'),
+    (r'DecayInfo', 'DecayInfo3'), # Might need a t if time dependent
+    (r'DecayInfo_DP', 'DecayInfo4') # Might need a t if time dependent
+]
 
-def fix_text(contents):
+def fix_text(contents, version='2.0'):
     r"""
     >>> text = '''
     ... #include "Variable.h"
@@ -181,7 +188,7 @@ def fix_text(contents):
     THREAD_SYNCH();
     """
 
-    for r in conversion:
+    for r in conversion[version]:
         after = r[1]
         before = re.compile(r[0])
         if before.search(contents):
@@ -189,13 +196,13 @@ def fix_text(contents):
             contents = before.sub(after,contents)
     return contents
 
-def fix_files(src):
+def fix_files(src, version):
     for name in src:
         if name == local.path(__file__):
             continue
         with name.open('r') as f:
             contents = f.read()
-        new_contents = fix_text(contents)
+        new_contents = fix_text(contents, version)
         if contents != new_contents:
             print('Converted: {0}'.format(name))
             with name.open('w') as f:
@@ -204,10 +211,11 @@ def fix_files(src):
 
 
 class ModernizeGooFit(cli.Application):
+    set_version = cli.SwitchAttr(['-s','--set-version'], cli.Set(*conversion), default='2.0', help='The version to pick')
 
     @cli.positional(cli.ExistingFile)
     def main(self, *src):
-        fix_files(src)
+        fix_files(src, self.set_version)
 
 
 if __name__ == '__main__':

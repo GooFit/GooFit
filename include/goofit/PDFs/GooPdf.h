@@ -21,7 +21,7 @@ constexpr const char *evalfunc_vals[]
 constexpr const char *evalfunc_to_string(EvalFunc val) { return evalfunc_vals[static_cast<size_t>(val)]; }
 
 void *getMetricPointer(std::string name);
-void *getMetricPointer(EvalFunc val) { return getMetricPointer(evalfunc_to_string(val)); }
+void *getMetricPointer(EvalFunc val);
     
 #ifdef SEPARABLE
 

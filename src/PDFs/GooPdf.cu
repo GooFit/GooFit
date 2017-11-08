@@ -190,6 +190,10 @@ void *getMetricPointer(std::string name) {
 #undef CHOOSE_PTR
 }
 
+void *getMetricPointer(EvalFunc val) {
+    return getMetricPointer(evalfunc_to_string(val));
+}
+
 __host__ void GooPdf::setIndices() {
     GOOFIT_DEBUG("GooPdf::setIndices!");
     PdfBase::setIndices();

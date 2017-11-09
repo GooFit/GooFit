@@ -22,10 +22,10 @@ TEST(Composite, SimpleFit) {
     std::exponential_distribution<> d(1.5);
 
     // Independent variable.
-    Variable xvar{"xvar", 1, 10};
+    Observable xvar{"xvar", 1, 10};
 
     // Data set
-    UnbinnedDataSet data(&xvar);
+    UnbinnedDataSet data(xvar);
 
     // Generate toy events.
     for(int i = 0; i < 1000; ++i) {
@@ -39,11 +39,11 @@ TEST(Composite, SimpleFit) {
     // Fit parameter
     Variable alpha1{"alpha1", 2, 0.1, 1, 10};
     Variable sigma1{"sigma1", 2, 1, 3};
-    GaussianPdf gauss1{"gauss1", &xvar, &alpha1, &sigma1};
+    GaussianPdf gauss1{"gauss1", xvar, alpha1, sigma1};
 
     Variable alpha2{"alpha2", 2, 0.1, 1, 10};
     Variable sigma2{"sigma2", 2, 1, 3};
-    GaussianPdf gauss2{"gauss2", &xvar, &alpha1, &sigma1};
+    GaussianPdf gauss2{"gauss2", xvar, alpha1, sigma1};
 
     // GooPdf object
     CompositePdf compositepdf{"compositepdf", &gauss1, &gauss2};

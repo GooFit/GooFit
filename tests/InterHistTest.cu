@@ -21,22 +21,22 @@ TEST(InterHistPdf, SimpleFit) {
     std::exponential_distribution<> d(1.5);
 
     // Independent variable.
-    Variable xvar{"xvar", -10, 10};
+    Observable xvar{"xvar", -10, 10};
 
     Variable a1{"a1", 0.1, -10, 10};
     Variable b1{"a1", 0.1, -10, 10};
     Variable c1{"a1", 0.1, -10, 10};
 
-    std::vector<Variable *> var_list;
-    var_list.push_back(&a1);
-    var_list.push_back(&b1);
-    var_list.push_back(&c1);
+    std::vector<Variable> var_list;
+    var_list.push_back(a1);
+    var_list.push_back(b1);
+    var_list.push_back(c1);
 
-    std::vector<Variable *> obs_list;
-    obs_list.push_back(&xvar);
+    std::vector<Observable> obs_list;
+    obs_list.push_back(xvar);
 
     // Data set
-    BinnedDataSet data(&xvar);
+    BinnedDataSet data(xvar);
 
     // Generate toy events.
     for(int i = 0; i < 10000; ++i) {

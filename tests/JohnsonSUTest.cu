@@ -21,10 +21,10 @@ TEST(JohnsonSU, SimpleFit) {
     std::exponential_distribution<> d(1.5);
 
     // Independent variable.
-    Variable xvar{"xvar", -10, 10};
+    Observable xvar{"xvar", -10, 10};
 
     // Data set
-    UnbinnedDataSet data(&xvar);
+    UnbinnedDataSet data(xvar);
 
     // Generate toy events.
     for(int i = 0; i < 1000; ++i) {
@@ -42,7 +42,7 @@ TEST(JohnsonSU, SimpleFit) {
     Variable e{"e", 1, 0, 3};
 
     // GooPdf object
-    JohnsonSUPdf johnsonpdf{"johnsonpdf", &xvar, &m, &s, &g, &e};
+    JohnsonSUPdf johnsonpdf{"johnsonpdf", xvar, m, s, g, e};
     johnsonpdf.setData(&data);
 
     GooFit::FitManagerMinuit1 fitter{&johnsonpdf};

@@ -21,10 +21,10 @@ TEST(SmoothHistogram, SimpleFit) {
     std::exponential_distribution<> d(1.5);
 
     // Independent variable.
-    Variable xvar{"xvar", 0, 10};
+    Observable xvar{"xvar", 0, 10};
 
     // Data set
-    BinnedDataSet data(&xvar);
+    BinnedDataSet data(xvar);
 
     // Generate toy events.
     for(int i = 0; i < 10000; ++i) {
@@ -39,7 +39,7 @@ TEST(SmoothHistogram, SimpleFit) {
     Variable smoothing{"smooth", 1, 0, 3};
 
     // GooPdf object
-    SmoothHistogramPdf pdf{"smoothhistogram", &data, &smoothing};
+    SmoothHistogramPdf pdf{"smoothhistogram", &data, smoothing};
     pdf.setData(&data);
 
     GooFit::FitManagerMinuit1 fitter{&pdf};

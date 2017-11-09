@@ -21,10 +21,10 @@ TEST(ScaledGaussian, SimpleFit) {
     std::exponential_distribution<> d(1.5);
 
     // Independent variable.
-    Variable xvar{"xvar", -10, 10};
+    Observable xvar{"xvar", -10, 10};
 
     // Data set
-    UnbinnedDataSet data(&xvar);
+    UnbinnedDataSet data(xvar);
 
     // Generate toy events.
     for(int i = 0; i < 1000; ++i) {
@@ -44,7 +44,7 @@ TEST(ScaledGaussian, SimpleFit) {
     Variable scale2{"scale2", 1, 1, 5};
 
     // GooPdf object
-    ScaledGaussianPdf scaledgausspdf{"scaledgausspdf", &xvar, &alpha, &sigma, &scale1, &scale2};
+    ScaledGaussianPdf scaledgausspdf{"scaledgausspdf", xvar, alpha, sigma, scale1, scale2};
     scaledgausspdf.setData(&data);
 
     GooFit::FitManagerMinuit1 fitter{&scaledgausspdf};

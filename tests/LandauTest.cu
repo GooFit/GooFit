@@ -21,10 +21,10 @@ TEST(Landau, SimpleFit) {
     std::exponential_distribution<> d(1.5);
 
     // Independent variable.
-    Variable xvar{"xvar", -10, 10};
+    Observable xvar{"xvar", -10, 10};
 
     // Data set
-    UnbinnedDataSet data(&xvar);
+    UnbinnedDataSet data(xvar);
 
     // Generate toy events.
     for(int i = 0; i < 1000; ++i) {
@@ -41,7 +41,7 @@ TEST(Landau, SimpleFit) {
     Variable sigma{"sigma", 1, 0, 3};
 
     // GooPdf object
-    LandauPdf landaupdf{"landaupdf", &xvar, &alpha, &sigma};
+    LandauPdf landaupdf{"landaupdf", xvar, alpha, sigma};
     landaupdf.setData(&data);
 
     GooFit::FitManagerMinuit1 fitter{&landaupdf};

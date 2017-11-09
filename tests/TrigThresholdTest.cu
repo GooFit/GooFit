@@ -21,10 +21,10 @@ TEST(TrigThresholdUpper, SimpleFit) {
     std::exponential_distribution<> d(1.5);
 
     // Independent variable.
-    Variable xvar{"xvar", -10, 10};
+    Observable xvar{"xvar", -10, 10};
 
     // Data set
-    UnbinnedDataSet data(&xvar);
+    UnbinnedDataSet data(xvar);
 
     // Generate toy events.
     for(int i = 0; i < 1000; ++i) {
@@ -41,7 +41,7 @@ TEST(TrigThresholdUpper, SimpleFit) {
     Variable linCons{"w", 1, 0, 3};
 
     // GooPdf object
-    TrigThresholdPdf pdf{"trigthresholdpdf", &xvar, &thres, &trig, &linCons, true};
+    TrigThresholdPdf pdf{"trigthresholdpdf", xvar, thres, trig, linCons, true};
     pdf.setData(&data);
 
     GooFit::FitManagerMinuit1 fitter{&pdf};
@@ -57,10 +57,10 @@ TEST(TrigThresholdLower, SimpleFit) {
     std::exponential_distribution<> d(1.5);
 
     // Independent variable.
-    Variable xvar{"xvar", -10, 10};
+    Observable xvar{"xvar", -10, 10};
 
     // Data set
-    UnbinnedDataSet data(&xvar);
+    UnbinnedDataSet data(xvar);
 
     // Generate toy events.
     for(int i = 0; i < 1000; ++i) {
@@ -77,7 +77,7 @@ TEST(TrigThresholdLower, SimpleFit) {
     Variable linCons{"w", 1, 0, 3};
 
     // GooPdf object
-    TrigThresholdPdf pdf{"trigthresholdpdf", &xvar, &thres, &trig, &linCons, false};
+    TrigThresholdPdf pdf{"trigthresholdpdf", xvar, thres, trig, linCons, false};
     pdf.setData(&data);
 
     GooFit::FitManagerMinuit1 fitter{&pdf};
@@ -93,15 +93,11 @@ TEST(TrigThresholdVeryUpper, SimpleFit) {
     std::exponential_distribution<> d(1.5);
 
     // Independent variable.
-    Variable xvar{"xvar", -10, 10};
-    Variable yvar{"yvar", -10, 10};
-
-    std::vector<Variable *> list;
-    list.push_back(&xvar);
-    list.push_back(&yvar);
+    Observable xvar{"xvar", -10, 10};
+    Observable yvar{"yvar", -10, 10};
 
     // Data set
-    UnbinnedDataSet data(list);
+    UnbinnedDataSet data{{xvar, yvar}};
 
     // Generate toy events.
     for(int i = 0; i < 100000; ++i) {
@@ -120,7 +116,7 @@ TEST(TrigThresholdVeryUpper, SimpleFit) {
     Variable mass{"mass", 1, 0, 3};
 
     // GooPdf object
-    TrigThresholdPdf pdf{"trigthresholdpdf", &xvar, &yvar, &thres, &trig, &linCons, &mass, true};
+    TrigThresholdPdf pdf{"trigthresholdpdf", xvar, yvar, thres, trig, linCons, mass, true};
     pdf.setData(&data);
 
     GooFit::FitManagerMinuit1 fitter{&pdf};
@@ -136,15 +132,11 @@ TEST(TrigThresholdVeryLower, SimpleFit) {
     std::exponential_distribution<> d(1.5);
 
     // Independent variable.
-    Variable xvar{"xvar", -10, 10};
-    Variable yvar{"yvar", -10, 10};
-
-    std::vector<Variable *> list;
-    list.push_back(&xvar);
-    list.push_back(&yvar);
+    Observable xvar{"xvar", -10, 10};
+    Observable yvar{"yvar", -10, 10};
 
     // Data set
-    UnbinnedDataSet data(list);
+    UnbinnedDataSet data{{xvar, yvar}};
 
     // Generate toy events.
     for(int i = 0; i < 100000; ++i) {
@@ -163,7 +155,7 @@ TEST(TrigThresholdVeryLower, SimpleFit) {
     Variable mass{"mass", 1, 0, 3};
 
     // GooPdf object
-    TrigThresholdPdf pdf{"trigthresholdpdf", &xvar, &yvar, &thres, &trig, &linCons, &mass, false};
+    TrigThresholdPdf pdf{"trigthresholdpdf", xvar, yvar, thres, trig, linCons, mass, false};
     pdf.setData(&data);
 
     GooFit::FitManagerMinuit1 fitter{&pdf};

@@ -22,10 +22,10 @@ TEST(Mapped, SimpleFit) {
     std::exponential_distribution<> d(1.5);
 
     // Independent variable.
-    Variable xvar{"xvar", -10, 10};
+    Observable xvar{"xvar", -10, 10};
 
     // Data set
-    UnbinnedDataSet data(&xvar);
+    UnbinnedDataSet data(xvar);
 
     // Generate toy events.
     for(int i = 0; i < 1000; ++i) {
@@ -44,9 +44,9 @@ TEST(Mapped, SimpleFit) {
     Variable a3{"a3", 1, 0.1, 1, 10};
     Variable s3{"s3", 1, 0, 3};
 
-    GaussianPdf g1{"gauss1", &xvar, &a1, &s1};
-    GaussianPdf g2{"gauss2", &xvar, &a2, &s2};
-    GaussianPdf g3{"gauss3", &xvar, &a3, &s3};
+    GaussianPdf g1{"gauss1", xvar, a1, s1};
+    GaussianPdf g2{"gauss2", xvar, a2, s2};
+    GaussianPdf g3{"gauss3", xvar, a3, s3};
 
     std::vector<GooPdf *> list;
     list.push_back(&g2);

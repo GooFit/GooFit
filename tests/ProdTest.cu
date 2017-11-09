@@ -22,10 +22,10 @@ TEST(Prod, SimpleFit) {
     std::exponential_distribution<> d(1.5);
 
     // Independent variable.
-    Variable xvar{"xvar", 1, 10};
+    Observable xvar{"xvar", 1, 10};
 
     // Data set
-    UnbinnedDataSet data(&xvar);
+    UnbinnedDataSet data(xvar);
 
     // Generate toy events.
     for(int i = 0; i < 10000; ++i) {
@@ -42,8 +42,8 @@ TEST(Prod, SimpleFit) {
     Variable a2{"alpha2", 1, 0.1, -10, 10};
     Variable s2{"sigma2", 1, 0, 3};
 
-    GaussianPdf gauss1{"gauss1", &xvar, &a1, &s1};
-    GaussianPdf gauss2{"gauss1", &xvar, &a2, &s2};
+    GaussianPdf gauss1{"gauss1", xvar, a1, s1};
+    GaussianPdf gauss2{"gauss1", xvar, a2, s2};
 
     std::vector<PdfBase *> list;
     list.push_back(&gauss1);

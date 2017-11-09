@@ -21,15 +21,11 @@ TEST(BinTransformTest, SimpleFit) {
     std::exponential_distribution<> d(1.5);
 
     // Independent variable.
-    Variable bt_1{"bt_1", 2.0, 0.0, 10.0};
-    Variable bt_2{"bt_2", 3.0, 0.0, 10.0};
-
-    std::vector<Variable *> varlist;
-    varlist.push_back(&bt_1);
-    varlist.push_back(&bt_2);
+    Observable bt_1{"bt_1", 0.0, 10.0};
+    Observable bt_2{"bt_2", 0.0, 10.0};
 
     // Data set
-    BinnedDataSet data(varlist);
+    BinnedDataSet data{{bt_1, bt_2}};
 
     // Generate toy events.
     for(int i = 0; i < 100000; ++i) {
@@ -54,8 +50,12 @@ TEST(BinTransformTest, SimpleFit) {
     listindex.push_back(100);
     listindex.push_back(100);
 
+    std::vector<Observable> obslist;
+    obslist.push_back(bt_1);
+    obslist.push_back(bt_2);
+
     // GooPdf object
-    BinTransformPdf bintransformpdf{"binlistindex", varlist, list1, list2, listindex};
+    BinTransformPdf bintransformpdf{"binlistindex", obslist, list1, list2, listindex};
     bintransformpdf.setData(&data);
 
     GooFit::FitManagerMinuit1 fitter{&bintransformpdf};
@@ -63,6 +63,6 @@ TEST(BinTransformTest, SimpleFit) {
     fitter.fit();
 
     EXPECT_TRUE(fitter);
-    EXPECT_LT(bt_1.getError(), 1.01);
-    EXPECT_NEAR(2.01, bt_1.getValue(), bt_1.getError() * 3);
+    //EXPECT_LT(bt_1.getError(), 1.01);
+    //EXPECT_NEAR(2.01, bt_1.getValue(), bt_1.getError() * 3);
 }

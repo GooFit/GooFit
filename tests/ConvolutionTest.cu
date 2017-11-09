@@ -22,10 +22,10 @@ TEST(Convolution, SimpleFit) {
     std::exponential_distribution<> d(1.5);
 
     // Independent variable.
-    Variable xvar{"xvar", 0, 10};
+    Observable xvar{"xvar", 0, 10};
 
     // Data set
-    UnbinnedDataSet data(&xvar);
+    UnbinnedDataSet data(xvar);
 
     // Generate toy events.
     for(int i = 0; i < 1000; ++i) {
@@ -42,11 +42,11 @@ TEST(Convolution, SimpleFit) {
     Variable a2{"alpha2", 1, 0.1, -10, 10};
     Variable s2{"sigma2", 1, 0.1, 3};
 
-    GaussianPdf m{"gauss1", &xvar, &a1, &s1};
-    GaussianPdf r{"gauss2", &xvar, &a2, &s2};
+    GaussianPdf m{"gauss1", xvar, a1, s1};
+    GaussianPdf r{"gauss2", xvar, a2, s2};
 
     // GooPdf object
-    ConvolutionPdf pdf{"convolutionpdf", &xvar, &m, &r};
+    ConvolutionPdf pdf{"convolutionpdf", xvar, &m, &r};
     pdf.setData(&data);
 
     GooFit::FitManagerMinuit1 fitter{&pdf};

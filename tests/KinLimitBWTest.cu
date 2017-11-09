@@ -21,10 +21,10 @@ TEST(Gaussian, SimpleFit) {
     std::exponential_distribution<> d(1.5);
 
     // Independent variable.
-    Variable xvar{"xvar", -10, 10};
+    Observable xvar{"xvar", -10, 10};
 
     // Data set
-    UnbinnedDataSet data(&xvar);
+    UnbinnedDataSet data(xvar);
 
     // Generate toy events.
     for(int i = 0; i < 1000; ++i) {
@@ -40,7 +40,7 @@ TEST(Gaussian, SimpleFit) {
     Variable sigma{"sigma", 1, 1, 3};
 
     // GooPdf object
-    KinLimitBWPdf kinlimitbwpdf{"kinlimitbwpdf", &xvar, &alpha, &sigma};
+    KinLimitBWPdf kinlimitbwpdf{"kinlimitbwpdf", xvar, alpha, sigma};
     kinlimitbwpdf.setData(&data);
 
     GooFit::FitManagerMinuit1 fitter{&kinlimitbwpdf};

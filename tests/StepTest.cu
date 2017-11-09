@@ -21,10 +21,10 @@ TEST(Step, SimpleFit) {
     std::exponential_distribution<> d(1.5);
 
     // Independent variable.
-    Variable xvar{"xvar", 1, 10};
+    Observable xvar{"xvar", 1, 10};
 
     // Data set
-    UnbinnedDataSet data(&xvar);
+    UnbinnedDataSet data(xvar);
 
     // Generate toy events.
     for(int i = 0; i < 1000; ++i) {
@@ -39,7 +39,7 @@ TEST(Step, SimpleFit) {
     Variable x0{"x0", 1, 0.1, 1, 10};
 
     // GooPdf object
-    StepPdf pdf{"steppdf", &xvar, &x0};
+    StepPdf pdf{"steppdf", xvar, x0};
     pdf.setData(&data);
 
     GooFit::FitManagerMinuit1 fitter{&pdf};

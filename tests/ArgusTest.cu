@@ -21,10 +21,10 @@ TEST(ArgusUpper, SimpleFit) {
     std::exponential_distribution<> d(1.5);
 
     // Independent variable.
-    Variable xvar{"xvar", 0, 10};
+    Observable xvar{"xvar", 0, 10};
 
     // Data set
-    UnbinnedDataSet data(&xvar);
+    UnbinnedDataSet data(xvar);
 
     // Generate toy events.
     for(int i = 0; i < 1000; ++i) {
@@ -41,7 +41,7 @@ TEST(ArgusUpper, SimpleFit) {
     Variable beta{"beta", 1, 0.1, -10, 10};
 
     // GooPdf object
-    ArgusPdf arguspdf{"Arguspdf", &xvar, &alpha, &beta, false};
+    ArgusPdf arguspdf{"Arguspdf", xvar, alpha, beta, false};
     arguspdf.setData(&data);
 
     GooFit::FitManagerMinuit1 fitter{&arguspdf};
@@ -59,10 +59,10 @@ TEST(ArgusLower, SimpleFit) {
     std::exponential_distribution<> d(1.5);
 
     // Independent variable.
-    Variable xvar{"xvar", 0, 10};
+    Observable xvar{"xvar", 0, 10};
 
     // Data set
-    UnbinnedDataSet data(&xvar);
+    UnbinnedDataSet data(xvar);
 
     // Generate toy events.
     for(int i = 0; i < 1000; ++i) {
@@ -79,7 +79,7 @@ TEST(ArgusLower, SimpleFit) {
     Variable beta{"beta", 1, 0.1, -10, 10};
 
     // GooPdf object
-    ArgusPdf arguspdf{"Arguspdf", &xvar, &alpha, &beta, true};
+    ArgusPdf arguspdf{"Arguspdf", xvar, alpha, beta, true};
     arguspdf.setData(&data);
 
     GooFit::FitManagerMinuit1 fitter{&arguspdf};

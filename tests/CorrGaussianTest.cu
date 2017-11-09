@@ -21,15 +21,11 @@ TEST(CorrGaussianPdf, SimpleFit) {
     std::exponential_distribution<> d(1.5);
 
     // Independent variable.
-    Variable xvar{"xvar", -10, 10};
-    Variable yvar{"yvar", -10, 10};
-
-    std::vector<Variable *> list;
-    list.push_back(&xvar);
-    list.push_back(&yvar);
+    Observable xvar{"xvar", -10, 10};
+    Observable yvar{"yvar", -10, 10};
 
     // Data set
-    UnbinnedDataSet data(list);
+    UnbinnedDataSet data{{xvar, yvar}};
 
     // Generate toy events.
     for(int i = 0; i < 1000; ++i) {
@@ -52,7 +48,7 @@ TEST(CorrGaussianPdf, SimpleFit) {
     Variable correlation{"correlation", 1, 0, 3};
 
     // GooPdf object
-    CorrGaussianPdf corrgausspdf{"corrgausspdf", &xvar, &yvar, &mean1, &sigma1, &mean2, &sigma2, &correlation};
+    CorrGaussianPdf corrgausspdf{"corrgausspdf", xvar, yvar, mean1, sigma1, mean2, sigma2, correlation};
     corrgausspdf.setData(&data);
 
     GooFit::FitManagerMinuit1 fitter{&corrgausspdf};

@@ -16,12 +16,6 @@ void init_CorrGaussianPdf(py::module &m) {
              "sigma1",
              "mean2",
              "sigma2",
-             "correlation",
-             py::keep_alive<1, 3>(),
-             py::keep_alive<1, 4>(),
-             py::keep_alive<1, 5>(),
-             py::keep_alive<1, 6>(),
-             py::keep_alive<1, 7>(),
-             py::keep_alive<1, 8>(),
-             py::keep_alive<1, 9>());
+             "correlation"
+             );
 }

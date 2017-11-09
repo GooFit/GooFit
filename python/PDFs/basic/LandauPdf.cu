@@ -12,8 +12,6 @@ void init_LandauPdf(py::module &m) {
              "n",
              "_x",
              "mpv",
-             "sigma",
-             py::keep_alive<1, 3>(),
-             py::keep_alive<1, 4>(),
-             py::keep_alive<1, 5>());
+             "sigma"
+            );
 }

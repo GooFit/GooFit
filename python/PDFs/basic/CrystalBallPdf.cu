@@ -13,11 +13,8 @@ void init_CrystalBallPdf(py::module &m) {
              "_x",
              "m",
              "s",
-             "a",
-             py::keep_alive<1, 3>(),
-             py::keep_alive<1, 4>(),
-             py::keep_alive<1, 5>(),
-             py::keep_alive<1, 6>())
+             "a"
+             )
         .def(py::init<std::string, Observable, Variable, Variable, Variable, Variable>(),
              "n",
              "_x",

@@ -14,10 +14,6 @@ void init_JohnsonSUPdf(py::module &m) {
              "m",
              "s",
              "g",
-             "d",
-             py::keep_alive<1, 3>(),
-             py::keep_alive<1, 4>(),
-             py::keep_alive<1, 5>(),
-             py::keep_alive<1, 6>(),
-             py::keep_alive<1, 7>());
+             "d"
+             );
 }

@@ -15,11 +15,8 @@ void init_TrigThresholdPdf(py::module &m) {
              "thresh"_a,
              "trigConst"_a,
              "linConst"_a,
-             "upper"_a = true,
-             py::keep_alive<1, 3>(),
-             py::keep_alive<1, 4>(),
-             py::keep_alive<1, 5>(),
-             py::keep_alive<1, 6>())
+             "upper"_a = true
+             )
         .def(py::init<std::string, Observable, Observable, Variable, Variable, Variable, Variable, bool>(),
              "n"_a,
              "x"_a,
@@ -28,11 +25,6 @@ void init_TrigThresholdPdf(py::module &m) {
              "trigConst"_a,
              "linConst"_a,
              "massConstant"_a,
-             "upper"_a,
-             py::keep_alive<1, 3>(),
-             py::keep_alive<1, 4>(),
-             py::keep_alive<1, 5>(),
-             py::keep_alive<1, 6>(),
-             py::keep_alive<1, 7>(),
-             py::keep_alive<1, 8>());
+             "upper"_a
+            );
 }

@@ -13,9 +13,6 @@ void init_ExpGausPdf(py::module &m) {
              "_x",
              "m",
              "s",
-             "t",
-             py::keep_alive<1, 3>(),
-             py::keep_alive<1, 4>(),
-             py::keep_alive<1, 5>(),
-             py::keep_alive<1, 6>());
+             "t"
+             );
 }

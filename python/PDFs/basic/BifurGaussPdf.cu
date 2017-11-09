@@ -13,9 +13,6 @@ void init_BifurGaussPdf(py::module &m) {
              "_x",
              "m",
              "sL",
-             "sR",
-             py::keep_alive<1, 3>(),
-             py::keep_alive<1, 4>(),
-             py::keep_alive<1, 5>(),
-             py::keep_alive<1, 6>());
+             "sR"
+             );
 }

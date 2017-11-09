@@ -9,5 +9,10 @@ namespace py = pybind11;
 
 void init_MappedPdf(py::module &m) {
     py::class_<MappedPdf, GooPdf>(m, "MappedPdf")
-        .def(py::init<std::string, GooPdf *, std::vector<GooPdf *> &>(), py::keep_alive<1, 3>());
+        .def(py::init<std::string, GooPdf *, std::vector<GooPdf *> &>(),
+             "n",
+             "m",
+             "t",
+             py::keep_alive<1, 3>(),
+             py::keep_alive<1, 4>());
 }

@@ -9,6 +9,14 @@ namespace py = pybind11;
 void init_CorrGaussianPdf(py::module &m) {
     py::class_<CorrGaussianPdf, GooPdf>(m, "CorrGaussianPdf")
         .def(py::init<std::string, Observable, Observable, Variable, Variable, Variable, Variable, Variable>(),
+             "n",
+             "_x",
+             "_y",
+             "mean1",
+             "sigma1",
+             "mean2",
+             "sigma2",
+             "correlation",
              py::keep_alive<1, 3>(),
              py::keep_alive<1, 4>(),
              py::keep_alive<1, 5>(),

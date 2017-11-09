@@ -9,6 +9,10 @@ namespace py = pybind11;
 void init_LandauPdf(py::module &m) {
     py::class_<LandauPdf, GooPdf>(m, "LandauPdf")
         .def(py::init<std::string, Observable, Variable, Variable>(),
+             "n",
+             "_x",
+             "mpv",
+             "sigma",
              py::keep_alive<1, 3>(),
              py::keep_alive<1, 4>(),
              py::keep_alive<1, 5>());

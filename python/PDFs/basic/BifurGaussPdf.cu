@@ -9,6 +9,11 @@ namespace py = pybind11;
 void init_BifurGaussPdf(py::module &m) {
     py::class_<BifurGaussPdf, GooPdf>(m, "BifurGaussPdf")
         .def(py::init<std::string, Observable, Variable, Variable, Variable>(),
+             "n",
+             "_x",
+             "m",
+             "sL",
+             "sR",
              py::keep_alive<1, 3>(),
              py::keep_alive<1, 4>(),
              py::keep_alive<1, 5>(),

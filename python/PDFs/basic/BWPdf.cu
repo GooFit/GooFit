@@ -9,6 +9,10 @@ namespace py = pybind11;
 void init_BWPdf(py::module &m) {
     py::class_<BWPdf, GooPdf>(m, "BWPdf")
         .def(py::init<std::string, Observable, Variable, Variable>(),
+             "n",
+             "_x",
+             "m",
+             "s",
              py::keep_alive<1, 3>(),
              py::keep_alive<1, 4>(),
              py::keep_alive<1, 5>());

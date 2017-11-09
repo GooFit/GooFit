@@ -8,9 +8,19 @@ namespace py = pybind11;
 
 void init_ExpPdf(py::module &m) {
     py::class_<ExpPdf, GooPdf>(m, "ExpPdf")
-        .def(py::init<std::string, Observable, Variable>(), py::keep_alive<1, 3>(), py::keep_alive<1, 4>())
+        .def(py::init<std::string, Observable, Variable>(),
+             "n",
+             "_x",
+             "alpha",
+             py::keep_alive<1, 3>(),
+             py::keep_alive<1, 4>())
         .def(py::init<std::string, Observable, Variable, Variable>(),
+             "n",
+             "_x",
+             "alpha",
+             "offset",
              py::keep_alive<1, 4>(),
              py::keep_alive<1, 5>(),
-             py::keep_alive<1, 3>());
+             py::keep_alive<1, 3>())
+       ;
 }

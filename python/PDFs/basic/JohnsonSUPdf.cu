@@ -9,6 +9,12 @@ namespace py = pybind11;
 void init_JohnsonSUPdf(py::module &m) {
     py::class_<JohnsonSUPdf, GooPdf>(m, "JohnsonSUPdf")
         .def(py::init<std::string, Observable, Variable, Variable, Variable, Variable>(),
+             "n",
+             "_x",
+             "m",
+             "s",
+             "g",
+             "d",
              py::keep_alive<1, 3>(),
              py::keep_alive<1, 4>(),
              py::keep_alive<1, 5>(),

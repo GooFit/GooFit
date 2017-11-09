@@ -94,7 +94,7 @@ def fitRatio(rsEvts, wsEvts, plotName = ""):
     weights = (constaCoef,linearCoef,secondCoef)
 
     poly = PolynomialPdf("poly", decayTime, weights)
-    poly.setFitControl = BinnedErrorFit()#NEED TO BE BINDED
+    poly.setFitControl(BinnedErrorFit())
     poly.setData(ratioData)
     fitter = FitManager(poly)
     fitter.fit()
@@ -155,6 +155,11 @@ def fitRatioCPU(rsEvts, wsEvts):
 
 def main():
     print("main")
+    numbins = 100
+
+    decayTime.value = 100
+    decayTime.numbins = numbins
+
     rSubD = 0.03
     rBarD = 0.03
     delta = 0

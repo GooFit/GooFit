@@ -8,9 +8,6 @@ import math
 
 
 decayTime  = Observable("decayTime",0,10)
-constaCoef = Variable("constaCoef",0)
-linearCoef = Variable("linearCoef",0)
-secondCoef = Variable("secondCoef",0)
 
 def integralExpCon(lo, hi):
     return(np.exp(-lo) - np.exp(-hi))
@@ -21,7 +18,7 @@ def integralExpLin(lo, hi):
 def integralExpSqu(lo, hi):
     return((lo * lo + 2 * lo + 2) * np.exp(-lo) - (hi * hi + 2 * hi + 2) * np.exp(-hi))
 
-def generateEvents(rsEvtVec, wsEvtVec,decayTime,conCoef,linCoef,squCoef,eventsToGenerate):
+def generateEvents(decayTime, rsEvtVec, wsEvtVec,conCoef,linCoef,squCoef,eventsToGenerate):
     print("generateEvents")
     totalRSintegral = integralExpCon(0, 100)
     step            = (decayTime.upperlimit - decayTime.lowerlimit) / decayTime.numbins
@@ -52,13 +49,12 @@ def generateEvents(rsEvtVec, wsEvtVec,decayTime,conCoef,linCoef,squCoef,eventsTo
         i+=1
 
 
-def fitRatio(rsEvts, wsEvts, plotName = ""):
-    #ratioHist = TH1D("ratioHist", "", decayTime.numbins, decayTime.lowerlimit, decayTime.upperlimit)
+def fitRatio(decayTime, weights, rsEvts, wsEvts, plotName = ""):
+
     print("fitRatio")
     ratioData = BinnedDataSet(decayTime)
 
     i=0
-    print("hi")
     while i < wsEvts.size:
 
         ratio = wsEvts[i]
@@ -81,6 +77,7 @@ def fitRatio(rsEvts, wsEvts, plotName = ""):
         ratioHist.SetBinError(i + 1, error)
         i+=1
 
+    '''
     constaCoef = Variable("constaCoef", 0.03, 0.01, -1, 1)
     constaCoef.value = 0.03
     constaCoef.error=0.01
@@ -91,7 +88,9 @@ def fitRatio(rsEvts, wsEvts, plotName = ""):
     secondCoef.value=0.00
     secondCoef.error=0.01
 
+
     weights = (constaCoef,linearCoef,secondCoef)
+    '''
 
     poly = PolynomialPdf("poly", decayTime, weights)
     poly.setFitControl(BinnedErrorFit())
@@ -100,7 +99,7 @@ def fitRatio(rsEvts, wsEvts, plotName = ""):
     fitter.fit()
 
     values = poly.evaluateAtPoints(decayTime)
-    pdfHist = TH1D("pdfHist", "", decayTime.numbins, decayTime.lowerlimit, decayTime.upperlimit)
+    #pdfHist = TH1D("pdfHist", "", decayTime.numbins, decayTime.lowerlimit, decayTime.upperlimit)
 
 
     return datapdf
@@ -124,7 +123,7 @@ def cpvFitFcn(npar, gin, fun, fp, iflag):
     fun = chisq
 
 
-def fitRatioCPU(rsEvts, wsEvts):
+def fitRatioCPU(decayTime, rsEvts, wsEvts):
     print("fitRatioCPU")
     ratioHist = TH1D("ratioHist", "", decayTime.numbins, decayTime.lowerlimit, decayTime.upperlimit)
 
@@ -182,9 +181,31 @@ def main():
     dZeroSecondCoef = 0.25 * magPQ * magPQ * (x_mix * x_mix + y_mix * y_mix)
     d0barSecondCoef = 0.25 * magQP * magQP * (x_mix * x_mix + y_mix * y_mix)
 
-    generateEvents(dZeroEvtsRS, dZeroEvtsWS, decayTime, rSubD, dZeroLinearCoef, dZeroSecondCoef, eventsToGenerate)
-    generateEvents(d0barEvtsRS, d0barEvtsWS, decayTime, rBarD, d0barLinearCoef, d0barSecondCoef, eventsToGenerate)
+    generateEvents(decayTime, dZeroEvtsRS, dZeroEvtsWS,rSubD, dZeroLinearCoef, dZeroSecondCoef, eventsToGenerate)
+    generateEvents(decayTime, d0barEvtsRS, d0barEvtsWS,rBarD, d0barLinearCoef, d0barSecondCoef, eventsToGenerate)
 
+    constaCoef = Variable("constaCoef",0.03, 0.01, -1, 1)
+    linearCoef = Variable("linearCoef",0, 0.01, -1, 1)
+    secondCoef = Variable("secondCoef",0, 0.01, -1, 1)
+
+    weights = (constaCoef, linearCoef, secondCoef)
+
+    (retval1, fit1) = fitRatio(decayTime, weights, dZeroEvtsRS, dZeroEvtsWS, "dzeroEvtRatio.png")
+    (retval2, fit2) = fitRatio(decayTime, weights, d0barEvtsRS, d0barEvtsWS, "dzbarEvtRatio.png")
+
+    #CLI::Timer timer_cpu{"Total CPU (2x fits)"}
+    fitRatioCPU(decayTime, dZeroEvtsRS, dZeroEvtsWS)
+    fitRatioCPU(decayTime, d0barEvtsRS, d0barEvtsWS)
+    cpu_string = timer_cpu.to_string();
+
+    print (fit1, "\n", fit2, "\n", cpu_string)
+
+    print("Exit codes (should be 0): {} and {}\n", retval1, retval2)
+
+    return (retval1 + retval2)
+
+
+    '''
     gpuTime = 0
     cpuTime = 0
 
@@ -211,5 +232,6 @@ def main():
 
     print( "GPU time [seconds] : ",gpuTime,"\nCPU time [seconds] : ",cpuTime)
     return 0;
+    '''
 
 main()

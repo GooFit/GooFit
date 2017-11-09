@@ -215,6 +215,9 @@ __host__ void PdfBase::setData(DataSet *data) {
     setupObservables();
     setIndices();
 
+    //Tracking the data structure
+    data_ = data;
+
     UnbinnedDataSet *unbinned_data;
     BinnedDataSet *binned_data;
 

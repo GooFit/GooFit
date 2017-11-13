@@ -28,5 +28,9 @@ void init_GooPdf(py::module &m) {
              R"raw(
                 Run makeGrid, set data, evaluateAtPoints, then recover original data.
                 )raw")
-        .def("setFitControl", &GooPdf::setFitControl, "fc"_a, "takeOwnerShip"_a = true);
+        .def("setFitControl",
+             [](GooPdf &self, FitControl *fc) { self.setFitControl(fc, false); },
+             "Set a fit control. You cannot instruct GooFit to take ownership, because Python owns the object."
+             "fit_control"_a,
+             py::keep_alive<1, 2>());
 }

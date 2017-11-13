@@ -14,6 +14,7 @@ Major changes:
 * Variables are now passed by copy everywhere, handling smart pointers internally ([#124])
 * DecayInfo renamed and split ([#124])
 * Resonances and Lineshapes are now classes instead of using enums or ordering ([#119])
+* OpenMP now supported on macOS Apple Clang on High Sierra with Homebrew, using `brew install cliutils/apple/libomp`
 
 
 Other changes include:

@@ -18,7 +18,7 @@ void init_LineshapesPdf(py::module &m) {
         .value("BL2", FF::BL2);
 
     auto m_ls = m.def_submodule("Lineshapes");
-    
+
     py::class_<Lineshape, GooPdf>(m, "Lineshape");
 
     py::class_<Lineshapes::One, Lineshape>(m_ls, "One")

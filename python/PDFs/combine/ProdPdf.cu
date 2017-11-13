@@ -8,8 +8,5 @@ using namespace GooFit;
 namespace py = pybind11;
 
 void init_ProdPdf(py::module &m) {
-    py::class_<ProdPdf, GooPdf>(m, "ProdPdf")
-            .def(py::init<std::string, std::vector<PdfBase *>>(),
-                 "n",
-                 "comps");
+    py::class_<ProdPdf, GooPdf>(m, "ProdPdf").def(py::init<std::string, std::vector<PdfBase *>>(), "n", "comps");
 }

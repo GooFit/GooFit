@@ -13,13 +13,11 @@ using namespace pybind11::literals;
 
 void init_FitControl(py::module &m) {
     py::class_<FitControl>(m, "FitControl")
-             .def("binnedFit", &FitControl::binnedFit)
-             .def("binErrors", &FitControl::binErrors)
-             .def("metricIsPdf", &FitControl::metricIsPdf)
-             .def("getMetric", &FitControl::getMetric);
-             //.def_property("owner", &FitControl::getOwner, &FitControl::setOwner);
+        .def("binnedFit", &FitControl::binnedFit)
+        .def("binErrors", &FitControl::binErrors)
+        .def("metricIsPdf", &FitControl::metricIsPdf)
+        .def("getMetric", &FitControl::getMetric);
+    //.def_property("owner", &FitControl::getOwner, &FitControl::setOwner);
 
-    py::class_<BinnedErrorFit,FitControl>(m, "BinnedErrorFit")
-             .def(py::init<>());
-
+    py::class_<BinnedErrorFit, FitControl>(m, "BinnedErrorFit").def(py::init<>());
 }

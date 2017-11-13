@@ -16,6 +16,5 @@ void init_CorrGaussianPdf(py::module &m) {
              "sigma1",
              "mean2",
              "sigma2",
-             "correlation"
-             );
+             "correlation");
 }

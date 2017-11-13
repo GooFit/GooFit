@@ -9,8 +9,5 @@ namespace py = pybind11;
 
 void init_EventWeightedAddPdf(py::module &m) {
     py::class_<EventWeightedAddPdf, GooPdf>(m, "EventWeightedAddPdf")
-        .def(py::init<std::string, std::vector<Observable>, std::vector<PdfBase *>>(),
-             "n",
-             "weights",
-             "comps");
+        .def(py::init<std::string, std::vector<Observable>, std::vector<PdfBase *>>(), "n", "weights", "comps");
 }

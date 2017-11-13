@@ -86,6 +86,5 @@ void init_Tddp4Pdf(py::module &m) {
 
                  return std::make_tuple(pyparticles, pyvariables, pyweights, pyflags);
              })
-
-        ;
+        .def("setGenerationOffset", &TDDP4::setGenerationOffset, "off"_a);
 }

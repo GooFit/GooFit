@@ -8,8 +8,7 @@ using namespace GooFit;
 namespace py = pybind11;
 
 void init_TruthResolution(py::module &m) {
-    py::class_<TruthResolution, MixingTimeResolution>(m, "TruthResolution")
-            .def(py::init<>())
+    py::class_<TruthResolution, MixingTimeResolution>(m, "TruthResolution").def(py::init<>())
 
         ;
 }

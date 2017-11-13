@@ -8,10 +8,5 @@ namespace py = pybind11;
 
 void init_VoigtianPdf(py::module &m) {
     py::class_<VoigtianPdf, GooPdf>(m, "VoigtianPdf")
-        .def(py::init<std::string, Observable, Variable, Variable, Variable>(),
-             "n",
-             "_x",
-             "m",
-             "s",
-             "w");
+        .def(py::init<std::string, Observable, Variable, Variable, Variable>(), "n", "_x", "m", "s", "w");
 }

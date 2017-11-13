@@ -87,7 +87,7 @@ __host__ IncoherentSumPdf::IncoherentSumPdf(
 
         for(auto &resonance : decayInfo.resonances) {
         pindices.push_back(registerParameter(resonance->amp_real));
-        pindices.push_back(registerParameter(resonance->amp_real));
+        pindices.push_back(registerParameter(resonance->amp_imag));
         // Not going to use amp_imag, but need a dummy index so the resonance size will be consistent.
         // pindices.push_back(resonance->getFunctionIndex());
         // pindices.push_back(resonance->getParameterIndex());

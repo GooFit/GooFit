@@ -23,7 +23,7 @@ __host__ void PdfBase::copyParams(const std::vector<double> &pars) const {
     // copyParams method performs eponymous action!
 
     for(int i = 0; i < parametersList.size(); i++) {
-        GOOFIT_TRACE("fitter index {}", parametersList[i]->getFitterIndex());
+        GOOFIT_TRACE("fitter index {}", parametersList[i].getFitterIndex());
         host_parameters[parametersIdx + i + 1] = pars[parametersList[i].getFitterIndex()];
     }
 
@@ -145,7 +145,7 @@ __host__ void PdfBase::populateArrays() {
     parametersIdx                    = totalParameters;
     totalParameters++;
     for(int i = 0; i < parametersList.size(); i++) {
-        GOOFIT_TRACE("host_parameters[{}] = {}", totalParameters, parametersList[i]->getValue());
+        GOOFIT_TRACE("host_parameters[{}] = {}", totalParameters, parametersList[i].getValue());
         host_parameters[totalParameters] = parametersList[i].getValue();
         totalParameters++;
     }
@@ -165,7 +165,7 @@ __host__ void PdfBase::populateArrays() {
     observablesIdx                     = totalObservables;
     totalObservables++;
     for(int i = 0; i < observablesList.size(); i++) {
-        GOOFIT_TRACE("host_observables[{}] = {}", totalObservables, observablesList[i]->getObservableIndex());
+        GOOFIT_TRACE("host_observables[{}] = {}", totalObservables, observablesList[i].getIndex());
         host_observables[totalObservables] = observablesList[i].getIndex();
         totalObservables++;
     }

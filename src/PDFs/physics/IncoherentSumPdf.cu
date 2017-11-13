@@ -19,12 +19,13 @@ __device__ inline int parIndexFromResIndex_incoherent(int resIndex) {
 
 __device__ fptype device_incoherent(fptype *evt, ParameterContainer &pc) {
     // Calculates the incoherent sum over the resonances.
+    int numObs  = RO_CACHE(pc.observables[pc.observableIdx]);
     int evtId   = RO_CACHE(pc.observables[pc.observableIdx + 3]);
     auto evtNum = static_cast<int>(floor(0.5 + evt[evtId]));
 
     fptype ret                 = 0;
-    unsigned int numResonances = RO_CACHE(pc.constants[pc.constantIdx + 1]);
-    unsigned int cacheToUse    = RO_CACHE(pc.constants[pc.constantIdx + 2]);
+    unsigned int numResonances = RO_CACHE(pc.constants[pc.constantIdx + 5]);
+    unsigned int cacheToUse    = RO_CACHE(pc.constants[pc.constantIdx + 6]);
 
     for(int i = 0; i < numResonances; ++i) {
         // int paramIndex   = parIndexFromResIndex_incoherent(i);
@@ -35,7 +36,13 @@ __device__ fptype device_incoherent(fptype *evt, ParameterContainer &pc) {
         ret += amplitude * thrust::norm(matrixelement);
     }
 
-    pc.incrementIndex(1, numResonances, 2, 0, 1);
+    //pc.incrementIndex(1, numResonances, 2, numObs, 1);
+    pc.incrementIndex();
+
+    //increment through resonances
+    for (int i = 0; i < numResonances; i++)
+        pc.incrementIndex();
+
     // Multiply by efficiency
     // int effFunctionIdx = parIndexFromResIndex_incoherent(numResonances);
     fptype eff = callFunction(evt, pc);
@@ -66,28 +73,20 @@ __host__ IncoherentSumPdf::IncoherentSumPdf(
     constantsList.push_back(0);
     constantsList.push_back(0);
     constantsList.push_back(0);
-    std::vector<unsigned int> pindices;
-    pindices.push_back(registerConstants(5));
-    fptype decayConstants[5];
-    decayConstants[0] = decayInfo.motherMass;
-    decayConstants[1] = decayInfo.daug1Mass;
-    decayConstants[2] = decayInfo.daug2Mass;
-    decayConstants[3] = decayInfo.daug3Mass;
-    decayConstants[4] = decayInfo.meson_radius;
-    // MEMCPY_TO_SYMBOL(
-    //    functorConstants, decayConstants, 5 * sizeof(fptype), cIndex * sizeof(fptype), cudaMemcpyHostToDevice);
 
-    pindices.push_back(decayInfo.resonances.size());
+    MEMCPY_TO_SYMBOL(c_motherMass, &decayInfo.motherMass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(c_daug1Mass, &decayInfo.daug1Mass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(c_daug2Mass, &decayInfo.daug2Mass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(c_daug3Mass, &decayInfo.daug3Mass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(c_meson_radius, &decayInfo.meson_radius, sizeof(fptype), 0, cudaMemcpyHostToDevice);
+
     static int cacheCount = 0;
     cacheToUse            = cacheCount++;
-    pindices.push_back(cacheToUse);
 
-        constantsList.push_back(decayInfo.resonances.size());
+    constantsList.push_back(decayInfo.resonances.size());
     constantsList.push_back(cacheToUse);
 
-        for(auto &resonance : decayInfo.resonances) {
-        pindices.push_back(registerParameter(resonance->amp_real));
-        pindices.push_back(registerParameter(resonance->amp_imag));
+    for(auto &resonance : decayInfo.resonances) {
         // Not going to use amp_imag, but need a dummy index so the resonance size will be consistent.
         // pindices.push_back(resonance->getFunctionIndex());
         // pindices.push_back(resonance->getParameterIndex());
@@ -95,26 +94,21 @@ __host__ IncoherentSumPdf::IncoherentSumPdf(
         components.push_back(resonance);
     }
 
-    pindices.push_back(efficiency->getFunctionIndex());
-    pindices.push_back(efficiency->getParameterIndex());
     components.push_back(efficiency);
 
-    GET_FUNCTION_ADDR(ptr_to_incoherent);
-    initialize(pindices);
+    redoIntegral = new bool[decayInfo.resonances.size()];
+    cachedMasses = new fptype[decayInfo.resonances.size()];
+    cachedWidths = new fptype[decayInfo.resonances.size()];
+    integrals    = new double[decayInfo.resonances.size()];
 
-        redoIntegral = new bool[decayInfo.resonances.size()];
-        cachedMasses = new fptype[decayInfo.resonances.size()];
-        cachedWidths = new fptype[decayInfo.resonances.size()];
-        integrals    = new double[decayInfo.resonances.size()];
-
-        for(int i = 0; i < decayInfo.resonances.size(); ++i) {
+    for(int i = 0; i < decayInfo.resonances.size(); ++i) {
         redoIntegral[i] = true;
         cachedMasses[i] = -1;
         cachedWidths[i] = -1;
         integrals[i]    = 0;
     }
 
-        integrators = new SpecialIncoherentIntegrator *[decayInfo.resonances.size()];
+    integrators = new SpecialIncoherentIntegrator *[decayInfo.resonances.size()];
     calculators = new SpecialIncoherentResonanceCalculator *[decayInfo.resonances.size()];
 
     for(int i = 0; i < decayInfo.resonances.size(); ++i) {
@@ -219,6 +213,7 @@ __host__ fptype IncoherentSumPdf::normalize() const {
                 *(calculators[i]));
 
             integrators[i]->setIncoherentIndex(getFunctionIndex());
+            integrators[i]->setEfficiencyIndex(efficiencyFunction);
             integrators[i]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
             fptype dummy = 0;
             static thrust::plus<fptype> cudaPlus;
@@ -292,7 +287,7 @@ __device__ fptype SpecialIncoherentIntegrator::operator()(thrust::tuple<int, fpt
     int id_m12 = RO_CACHE(pc.observables[pc.observableIdx + 1]);
     int id_m13 = RO_CACHE(pc.observables[pc.observableIdx + 2]);
 
-    int num_res = RO_CACHE(pc.constants[pc.constantIdx + 1]);
+    int num_res = RO_CACHE(pc.constants[pc.constantIdx + 5]);
 
     // int parameter_i
     //    = parIndexFromResIndex_incoherent(resonance_i); // Find position of this resonance relative to TDDP start
@@ -300,9 +295,13 @@ __device__ fptype SpecialIncoherentIntegrator::operator()(thrust::tuple<int, fpt
     // unsigned int params_i = indices[parameter_i + 3];
     fptype m23 = c_motherMass * c_motherMass + c_daug1Mass * c_daug1Mass + c_daug2Mass * c_daug2Mass
                  + c_daug3Mass * c_daug3Mass - binCenterM12 - binCenterM13;
-    fpcomplex ret = getResonanceAmplitude(binCenterM12, binCenterM13, m23, pc);
 
     while(pc.funcIdx < num_res)
+        pc.incrementIndex();
+
+    fpcomplex ret = getResonanceAmplitude(binCenterM12, binCenterM13, m23, pc);
+
+    while (pc.funcIdx < efficiency)
         pc.incrementIndex();
 
     // unsigned int numResonances = indices[2];

@@ -27,8 +27,8 @@ TEST(IncoherentSumPdf, SimpleFit) {
     std::exponential_distribution<> d(1.5);
 
     // Independent variable.
-    Observable m12{"m12", -10, 10};
-    Observable m13{"m13", -10, 10};
+    Observable m12{"m12", 0, 10};
+    Observable m13{"m13", 0, 10};
     EventNumber evtNum{"evtNum", 0, INT_MAX};
 
     std::vector<Observable> var_list;
@@ -40,16 +40,16 @@ TEST(IncoherentSumPdf, SimpleFit) {
     UnbinnedDataSet data(var_list);
 
     // Generate toy events.
-    for(int i = 0; i < 1000; ++i) {
+    for(int i = 0; i < 100000; ++i) {
         double m12_val = d(gen);
         double m13_val = d(gen);
 
-        // if(val < 10) {
-        m12.setValue(m12_val);
-        m13.setValue(m13_val);
-        evtNum.setValue(data.getNumEvents());
-        data.addEvent();
-        //}
+        if(m12_val > 0 && m12_val < 10 && m13_val > 0 && m13_val < 10) {
+            m12.setValue(m12_val);
+            m13.setValue(m13_val);
+            evtNum.setValue(data.getNumEvents());
+            data.addEvent();
+        }
     }
 
     // Fit parameter
@@ -167,7 +167,7 @@ TEST(IncoherentSumPdf, SimpleFit) {
 
     ResonancePdf *f0_600 = new Resonances::RBW("f0_600", f0_600_real, f0_600_imag, f0_600_mass, f0_600_width, 0, PAIR_23);
 
-    ResonancePdf *nonr = new Resonances::NonRes("f0_600", nonr_amp_real, nonr_amp_imag);
+    ResonancePdf *nonr = new Resonances::NonRes("nonr", nonr_amp_real, nonr_amp_imag);
 
     // Add resonances to Decay structure
     di.resonances.push_back(nonr);

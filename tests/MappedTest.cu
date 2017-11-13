@@ -22,15 +22,15 @@ TEST(Mapped, SimpleFit) {
     std::exponential_distribution<> d(1.5);
 
     // Independent variable.
-    Observable xvar{"xvar", -10, 10};
+    Observable xvar{"xvar", 0, 10};
 
     // Data set
     UnbinnedDataSet data(xvar);
 
     // Generate toy events.
-    for(int i = 0; i < 1000; ++i) {
+    for(int i = 0; i < 100000; ++i) {
         double val = d(gen);
-        if(val < 10) {
+        if(val < 10 && val > 0) {
             xvar.setValue(val);
             data.addEvent();
         }

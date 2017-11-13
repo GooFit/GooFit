@@ -36,7 +36,7 @@ TEST(Step, SimpleFit) {
     }
 
     // Fit parameter
-    Variable x0{"x0", 1, 0.1, 1, 10};
+    Variable x0{"x0", 1, 0, 2};
 
     // GooPdf object
     StepPdf pdf{"steppdf", xvar, x0};

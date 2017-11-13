@@ -82,6 +82,6 @@ set_target_properties(pygoofit_examples PROPERTIES FOLDER python)
 if(NOT SKBUILD)
     add_custom_command(TARGET _goofit POST_BUILD
                        COMMAND ${CMAKE_COMMAND} -E cmake_echo_color --cyan
-                       "Built python bindings at ${PROJECT_BINARY_DIR}/goofit/_goofit.so")
+                       "Python bindings built, run \\\"export PYTHONPATH=${PROJECT_BINARY_DIR}\\\" to use")
 endif()
 

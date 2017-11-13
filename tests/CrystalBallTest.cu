@@ -2,7 +2,7 @@
 
 #include "goofit/fitting/FitManagerMinuit1.h"
 #include "goofit/UnbinnedDataSet.h"
-#include "goofit/PDFs/basic/GaussianPdf.h"
+#include "goofit/PDFs/basic/CrystalBallPdf.h"
 
 #include "goofit/Variable.h"
 
@@ -15,7 +15,7 @@
 using namespace std;
 using namespace GooFit;
 
-TEST(Gaussian, SimpleFit) {
+TEST(Crystalball, SimpleFit) {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> d(1.5);
@@ -36,19 +36,20 @@ TEST(Gaussian, SimpleFit) {
     }
 
     // Fit parameter
-    Variable alpha{"alpha", 1, 0.1, -10, 10};
-
+    Variable mean{"alpha", 1, 0.1, -10, 10};
     Variable sigma{"sigma", 1, 0, 3};
+    Variable alpha{"sigma", 1, 0, 3};
+    Variable power{"sigma", 1, 1, 3};
 
     // GooPdf object
-    GaussianPdf gausspdf{"gausspdf", xvar, alpha, sigma};
-    gausspdf.setData(&data);
+    CrystalBallPdf pdf{"crystalballpdf", xvar, mean, sigma, alpha, power};
+    pdf.setData(&data);
 
-    GooFit::FitManagerMinuit1 fitter{&gausspdf};
+    GooFit::FitManagerMinuit1 fitter{&pdf};
     fitter.setVerbosity(2);
     fitter.fit();
 
     EXPECT_TRUE(fitter);
-    EXPECT_LT(alpha.getError(), .1);
-    EXPECT_NEAR(0.665178392, alpha.getValue(), alpha.getError() * 3);
+    //EXPECT_LT(alpha.getError(), .1);
+    //EXPECT_NEAR(0.665178392, alpha.getValue(), alpha.getError() * 3);
 }

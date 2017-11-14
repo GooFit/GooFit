@@ -104,7 +104,7 @@ std::tuple<int, std::string> fitRatio(Observable decayTime,
     }
 
     PolynomialPdf *poly = new PolynomialPdf("poly", decayTime, weights);
-    poly->setFitControl(new BinnedErrorFit());
+    poly->setFitControl(std::make_shared<BinnedErrorFit>());
     poly->setData(ratioData);
     FitManager datapdf{poly};
 

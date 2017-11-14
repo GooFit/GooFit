@@ -82,7 +82,7 @@ class GooPdf : public PdfBase {
 
     __host__ void initialize(std::vector<unsigned int> pindices, void *dev_functionPtr = host_fcn_ptr);
     __host__ void scan(Observable var, std::vector<fptype> &values);
-    __host__ void setFitControl(FitControl *const fc, bool takeOwnerShip = true) override;
+    __host__ void setFitControl(std::shared_ptr<FitControl> fc) override;
     __host__ virtual void setMetrics();
     __host__ void setParameterConstantness(bool constant = true);
 
@@ -97,7 +97,7 @@ class GooPdf : public PdfBase {
 
   protected:
     __host__ virtual double sumOfNll(int numVars) const;
-    MetricTaker *logger = nullptr;
+    std::shared_ptr<MetricTaker> logger;
 
   private:
 };

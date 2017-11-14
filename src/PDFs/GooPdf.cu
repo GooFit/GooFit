@@ -181,7 +181,7 @@ __host__ int GooPdf::findFunctionIdx(void *dev_functionPtr) {
 
 __host__ void GooPdf::initialize(std::vector<unsigned int> pindices, void *dev_functionPtr) {
     if(!fitControl)
-        setFitControl(new UnbinnedNllFit());
+        setFitControl(std::make_shared<UnbinnedNllFit>());
 
     // MetricTaker must be created after PdfBase initialisation is done.
     PdfBase::initializeIndices(pindices);
@@ -208,10 +208,7 @@ __host__ void GooPdf::setDebugMask(int mask, bool setSpecific) const {
 }
 
 __host__ void GooPdf::setMetrics() {
-    if(logger)
-        delete logger;
-
-    logger = new MetricTaker(this, getMetricPointer(fitControl->getMetric()));
+    logger = std::make_shared<MetricTaker>(this, getMetricPointer(fitControl->getMetric()));
 }
 
 __host__ double GooPdf::sumOfNll(int numVars) const {
@@ -631,20 +628,12 @@ __host__ void GooPdf::transformGrid(fptype *host_output) {
         host_output[i] = h_vec[i];
 }
 
-__host__ void GooPdf::setFitControl(FitControl *const fc, bool takeOwnerShip) {
+    __host__ void GooPdf::setFitControl(std::shared_ptr<FitControl> fc) {
     for(auto &component : components) {
-        component->setFitControl(fc, false);
+        component->setFitControl(fc);
     }
-
-    if((fitControl) && (fitControl->getOwner() == this)) {
-        delete fitControl;
-    }
-
+        
     fitControl = fc;
-
-    if(takeOwnerShip) {
-        fitControl->setOwner(this);
-    }
 
     setMetrics();
 }

@@ -238,10 +238,10 @@ Dataset descriptions:
 
     total.setData(data_dataset.get());
 
-    std::unique_ptr<BinnedChisqFit> chi_control;
+    std::shared_ptr<BinnedChisqFit> chi_control;
     if(2 == mode) {
         chi_control.reset(new BinnedChisqFit);
-        total.setFitControl(chi_control.get());
+        total.setFitControl(chi_control);
     }
 
     FitManager datapdf{&total};

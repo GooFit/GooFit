@@ -819,6 +819,16 @@ Lineshapes::GLASS::GLASS(std::string name,
                            "r, phiF, phiR and F (in that order)");
     }
 
+    GOOFIT_ADD_PARAM(2, mass, "mass");
+    GOOFIT_ADD_PARAM(3, width, "width");
+    
+    GOOFIT_ADD_INT(4, L, "L");
+    GOOFIT_ADD_INT(5, Mpair, "Mpair");
+    
+    GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
+    
+    GOOFIT_ADD_CONST(7, radius, "radius");
+        
     for(int i = 0; i < 5; i++) {
         GOOFIT_ADD_PARAM(8 + i, AdditionalVars[i], "LassVars");
     }

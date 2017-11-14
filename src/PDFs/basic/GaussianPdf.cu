@@ -21,6 +21,8 @@ __host__ GaussianPdf::GaussianPdf(std::string n, Observable _x, Variable mean, V
     : GooPdf(n, _x) {
     registerParameter(mean);
     registerParameter(sigma);
+
+    initialize();
 }
 
 __host__ void GaussianPdf::recursiveSetIndices() {

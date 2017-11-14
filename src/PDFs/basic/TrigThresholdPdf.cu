@@ -86,20 +86,17 @@ __device__ device_function_ptr ptr_to_VerySpecialEpisodeTrigThresholdLower
 __host__ TrigThresholdPdf::TrigThresholdPdf(
     std::string n, Observable _x, Variable thresh, Variable trigConst, Variable linConst, bool upper)
     : GooPdf(n, _x) {
-    std::vector<unsigned int> pindices;
-    pindices.push_back(registerParameter(thresh));
-    pindices.push_back(registerParameter(trigConst));
-    pindices.push_back(registerParameter(linConst));
+    registerParameter(thresh);
+    registerParameter(trigConst);
+    registerParameter(linConst);
 
     if(upper) {
-        GET_FUNCTION_ADDR(ptr_to_TrigThresholdUpper);
         trigThreshType = 0;
     } else {
-        GET_FUNCTION_ADDR(ptr_to_TrigThresholdLower);
         trigThreshType = 1;
     }
 
-    initialize(pindices);
+    initialize();
 }
 
 __host__ TrigThresholdPdf::TrigThresholdPdf(std::string n,
@@ -111,21 +108,18 @@ __host__ TrigThresholdPdf::TrigThresholdPdf(std::string n,
                                             Variable massConstant,
                                             bool upper)
     : GooPdf(n, _x, _y) {
-    std::vector<unsigned int> pindices;
-    pindices.push_back(registerParameter(thresh));
-    pindices.push_back(registerParameter(trigConst));
-    pindices.push_back(registerParameter(linConst));
-    pindices.push_back(registerParameter(massConstant));
+    registerParameter(thresh);
+    registerParameter(trigConst);
+    registerParameter(linConst);
+    registerParameter(massConstant);
 
     if(upper) {
-        GET_FUNCTION_ADDR(ptr_to_VerySpecialEpisodeTrigThresholdUpper);
         trigThreshType = 2;
     } else {
-        GET_FUNCTION_ADDR(ptr_to_VerySpecialEpisodeTrigThresholdLower);
         trigThreshType = 3;
     }
 
-    initialize(pindices);
+    initialize();
 }
 
 void TrigThresholdPdf::recursiveSetIndices() {

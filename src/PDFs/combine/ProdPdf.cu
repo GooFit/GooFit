@@ -30,8 +30,6 @@ __device__ device_function_ptr ptr_to_ProdPdfs = device_ProdPdfs;
 ProdPdf::ProdPdf(std::string n, std::vector<PdfBase *> comps)
     : GooPdf(n)
     , varOverlaps(false) {
-    std::vector<unsigned int> pindices;
-
     for(PdfBase *p : comps) {
         components.push_back(p);
 
@@ -42,7 +40,7 @@ ProdPdf::ProdPdf(std::string n, std::vector<PdfBase *> comps)
     observablesList = getObservables(); // Gathers from components
 
     // Add that we have a components size
-    constantsList.push_back(components.size());
+    registerConstant(components.size());
 
     std::vector<Observable> observableCheck; // Use to check for overlap in observables
 
@@ -70,8 +68,7 @@ ProdPdf::ProdPdf(std::string n, std::vector<PdfBase *> comps)
         }
     }
 
-    GET_FUNCTION_ADDR(ptr_to_ProdPdfs);
-    initialize(pindices);
+    initialize();
 }
 
 __host__ void ProdPdf::recursiveSetIndices() {

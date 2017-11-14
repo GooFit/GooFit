@@ -37,7 +37,6 @@ __host__ BinTransformPdf::BinTransformPdf(std::string n,
     : GooPdf(n) {
     // cIndex               = registerConstants(2 * obses.size());
     // auto *host_constants = new fptype[2 * obses.size()];
-    std::vector<unsigned int> pindices;
 
     // setup the observables
     for(unsigned int i = 0; i < obses.size(); ++i)
@@ -52,8 +51,7 @@ __host__ BinTransformPdf::BinTransformPdf(std::string n,
         constantsList.push_back(numBins[i]);
     }
 
-    GET_FUNCTION_ADDR(ptr_to_BinTransform);
-    initialize(pindices);
+    initialize();
 }
 
 __host__ void BinTransformPdf::recursiveSetIndices() {

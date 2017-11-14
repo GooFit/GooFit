@@ -110,14 +110,10 @@ EventWeightedAddPdf::EventWeightedAddPdf(std::string n, std::vector<Observable> 
     }
 
     extended = true;
-    std::vector<unsigned int> pindices;
 
     for(unsigned int w = 0; w < weights.size(); ++w) {
         if(components[w] == nullptr)
             throw GooFit::GeneralError("Invalid component");
-        // pindices.push_back(components[w]->getFunctionIndex());
-        // pindices.push_back(components[w]->getParameterIndex());
-        // pindices.push_back(registerParameter(weights[w]));
         registerObservable(weights[w]);
         // adding room for observable offset
     }
@@ -126,8 +122,6 @@ EventWeightedAddPdf::EventWeightedAddPdf(std::string n, std::vector<Observable> 
         throw GooFit::GeneralError("Invalid component");
 
     if(weights.size() < components.size()) {
-        // pindices.push_back(components.back()->getFunctionIndex());
-        // pindices.push_back(components.back()->getParameterIndex());
         extended = false;
         // TODO:adding componenents as parameters to get them to be used (for nwo)
         // parametersList.push_back(0);
@@ -137,15 +131,9 @@ EventWeightedAddPdf::EventWeightedAddPdf(std::string n, std::vector<Observable> 
     // weights are first.
     observablesList = getObservables();
 
-    constantsList.push_back(components.size());
+    registerConstant(components.size());
 
-    if(extended) {
-        GET_FUNCTION_ADDR(ptr_to_EventWeightedAddPdfsExt);
-    } else {
-        GET_FUNCTION_ADDR(ptr_to_EventWeightedAddPdfs);
-    }
-
-    initialize(pindices);
+    initialize();
 }
 
 __host__ fptype EventWeightedAddPdf::normalize() const {

@@ -365,16 +365,16 @@ __host__ TddpPdf::TddpPdf(std::string n,
         throw GooFit::GeneralError("The resolution device function index {} must be more than 0",
                                    resolution->getDeviceFunction());
 
-    constantsList.push_back(decay.resonances.size());
+    registerConstant(decay.resonances.size());
 
     static int cacheCount = 0;
     cacheToUse            = cacheCount++;
-    constantsList.push_back(cacheToUse);
+    registerConstant(cacheToUse);
 
     if(mistag == nullptr)
-        constantsList.push_back(1);
+        registerConstant(1);
     else
-        constantsList.push_back(0);
+        registerConstant(0);
 
     for(auto &resonance : decay.resonances) {
         registerParameter(resonance->amp_real);
@@ -389,10 +389,12 @@ __host__ TddpPdf::TddpPdf(std::string n,
     components.push_back(efficiency);
 
     // this is the funcID after the efficiency routine
-    constantsList.push_back(0);
+    registerConstant(0);
 
     //TODO: Figure out what this needs?
     //resolution->createParameters(this);
+
+    initialize();
 
     redoIntegral = new bool[decay.resonances.size()];
     cachedMasses = new fptype[decay.resonances.size()];
@@ -459,17 +461,17 @@ __host__ TddpPdf::TddpPdf(std::string n,
     registerParameter(decay._ymixing);
     printf("Multiple resolution functions not supported yet!\n");
 
-    constantsList.push_back(SPECIAL_RESOLUTION_FLAG);
-    constantsList.push_back(decayInfo.resonances.size());
+    registerConstant(SPECIAL_RESOLUTION_FLAG);
+    registerConstant(decayInfo.resonances.size());
 
     static int cacheCount = 0;
     cacheToUse            = cacheCount++;
-    constantsList.push_back(cacheToUse);
+    registerConstant(cacheToUse);
 
     if(mistag)
-        constantsList.push_back(1);
+        registerConstant(1);
     else
-        constantsList.push_back(0);
+        registerConstant(0);
 
     for(auto &resonance : decayInfo.resonances) {
         registerParameter(resonance->amp_real);
@@ -490,8 +492,10 @@ __host__ TddpPdf::TddpPdf(std::string n,
         //i->createParameters(pindices, this);
     }
 
+    initialize();
+
     // this is the funcID after the efficiency routine
-    constantsList.push_back(0);
+    registerConstant(0);
 
     redoIntegral = new bool[decay.resonances.size()];
     cachedMasses = new fptype[decay.resonances.size()];

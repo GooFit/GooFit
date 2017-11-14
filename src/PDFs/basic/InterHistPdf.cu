@@ -142,9 +142,6 @@ InterHistPdf::InterHistPdf(std::string n, BinnedDataSet *x, std::vector<Variable
     static unsigned int totalHistograms = 0;
     totalEvents = 0;
 
-    std::vector<unsigned int> pindices;
-    pindices.push_back(totalHistograms);
-
     // push on the histogram index and number of variables.
     constantsList.push_back(totalHistograms);
     constantsList.push_back(numVars);
@@ -154,12 +151,7 @@ InterHistPdf::InterHistPdf(std::string n, BinnedDataSet *x, std::vector<Variable
     for(Observable var : x->getObservables()) {
         
         registerObservable(var);
-        pindices.push_back(OBS_CODE);
         constantsList.push_back(OBS_CODE);
-
-        pindices.push_back(cIndex + 2 * varIndex + 0);
-        pindices.push_back(cIndex + 2 * varIndex + 1);
-        pindices.push_back(var.getNumBins());
 
         constantsList.push_back(var.getLowerLimit());
         constantsList.push_back(var.getBinSize());
@@ -183,8 +175,8 @@ InterHistPdf::InterHistPdf(std::string n, BinnedDataSet *x, std::vector<Variable
     dev_address[0] = (&((*dev_base_histogram)[0])).get();
     MEMCPY_TO_SYMBOL(
         dev_base_interhists, dev_address, sizeof(fptype *), totalHistograms * sizeof(fptype *), cudaMemcpyHostToDevice);
-    GET_FUNCTION_ADDR(ptr_to_InterHistogram);
-    initialize(pindices);
+
+    initialize();
 
     totalHistograms++;
 }

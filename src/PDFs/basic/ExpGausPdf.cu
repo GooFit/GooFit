@@ -26,13 +26,11 @@ __device__ device_function_ptr ptr_to_ExpGaus = device_ExpGaus;
 
 ExpGausPdf::ExpGausPdf(std::string n, Observable _x, Variable mean, Variable sigma, Variable tau)
     : GooPdf(n, _x) {
-    std::vector<unsigned int> pindices;
+    registerParameter(mean);
+    registerParameter(sigma);
+    registerParameter(tau);
 
-    pindices.push_back(registerParameter(mean));
-    pindices.push_back(registerParameter(sigma));
-    pindices.push_back(registerParameter(tau));
-    GET_FUNCTION_ADDR(ptr_to_ExpGaus);
-    initialize(pindices);
+    initialize();
 }
 
 __host__ void ExpGausPdf::recursiveSetIndices() {

@@ -61,8 +61,6 @@ __host__ ArgusPdf::ArgusPdf(std::string n, Observable _x, Variable m0, Variable 
 
     registerParameter(power);
 
-    std::vector<unsigned int> pindices;
-
     if(upper) {
         ArgusType = 1;
         GET_FUNCTION_ADDR(ptr_to_Argus_Upper);
@@ -71,7 +69,7 @@ __host__ ArgusPdf::ArgusPdf(std::string n, Observable _x, Variable m0, Variable 
         GET_FUNCTION_ADDR(ptr_to_Argus_Lower);
     }
 
-    initialize(pindices);
+    initialize();
 }
 
 __host__ void ArgusPdf::recursiveSetIndices() {

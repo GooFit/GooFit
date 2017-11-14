@@ -83,11 +83,10 @@ __device__ device_function_ptr ptr_to_Landau = device_Landau;
 
 __host__ LandauPdf::LandauPdf(std::string n, Observable _x, Variable mpv, Variable sigma)
     : GooPdf(n, _x) {
-    std::vector<unsigned int> pindices;
-    pindices.push_back(registerParameter(mpv));
-    pindices.push_back(registerParameter(sigma));
-    GET_FUNCTION_ADDR(ptr_to_Landau);
-    initialize(pindices);
+    registerParameter(mpv);
+    registerParameter(sigma);
+
+    initialize();
 }
 
 __host__ void LandauPdf::recursiveSetIndices() {

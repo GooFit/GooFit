@@ -59,17 +59,10 @@ __host__ KinLimitBWPdf::KinLimitBWPdf(std::string n, Observable _x, Variable mea
     registerParameter(mean);
     registerParameter(width);
 
-    std::vector<unsigned int> pindices;
-    // pindices.push_back(mean->getIndex());
-    // pindices.push_back(width->getIndex());
-    // pindices.push_back(registerConstants(2));
-    // setMasses(1.8645, 0.13957);
-    constantsList.push_back(1.8645);
-    constantsList.push_back(0.13957);
+    registerConstant(1.8645);
+    registerConstant(0.13957);
 
-    GET_FUNCTION_ADDR(ptr_to_KinLimitBW);
-
-    initialize(pindices);
+    initialize();
 }
 
 __host__ void KinLimitBWPdf::recursiveSetIndices() {

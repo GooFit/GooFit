@@ -20,12 +20,10 @@ __device__ device_function_ptr ptr_to_BW = device_BW;
 
 __host__ BWPdf::BWPdf(std::string n, Observable _x, Variable mean, Variable width)
     : GooPdf(n, _x) {
-    std::vector<unsigned int> pindices;
+    registerParameter(mean);
+    registerParameter(width);
 
-    pindices.push_back(registerParameter(mean));
-    pindices.push_back(registerParameter(width));
-    GET_FUNCTION_ADDR(ptr_to_BW);
-    initialize(pindices);
+    initialize();
 }
 
 __host__ void BWPdf::recursiveSetIndices() {

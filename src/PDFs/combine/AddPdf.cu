@@ -98,32 +98,21 @@ AddPdf::AddPdf(std::string n, std::vector<Variable> weights, std::vector<PdfBase
 
     observablesList = getObservables();
 
-    std::vector<unsigned int> pindices;
-
     for(unsigned int w = 0; w < weights.size(); ++w) {
         if(components[w] == nullptr)
             throw GooFit::GeneralError("Invalid component");
-        // pindices.push_back(components[w]->getFunctionIndex());
-        // pindices.push_back(components[w]->getParameterIndex());
-        pindices.push_back(registerParameter(weights[w]));
+
+        registerParameter(weights[w]);
     }
 
     if(components.back() == nullptr)
         throw GooFit::GeneralError("Invalid component");
 
     if(weights.size() < components.size()) {
-        // pindices.push_back(components.back()->getFunctionIndex());
-        // pindices.push_back(components.back()->getParameterIndex());
         extended = false;
     }
 
-    if(extended) {
-        GET_FUNCTION_ADDR(ptr_to_AddPdfsExt);
-    } else {
-        GET_FUNCTION_ADDR(ptr_to_AddPdfs);
-    }
-
-    initialize(pindices);
+    initialize();
 }
 
 AddPdf::AddPdf(std::string n, Variable frac1, PdfBase *func1, PdfBase *func2)
@@ -135,17 +124,9 @@ AddPdf::AddPdf(std::string n, Variable frac1, PdfBase *func1, PdfBase *func2)
 
     observablesList = getObservables();
 
-    std::vector<unsigned int> pindices;
-    pindices.push_back(func1->getFunctionIndex());
-    pindices.push_back(func1->getParameterIndex());
-    pindices.push_back(registerParameter(frac1));
+    registerParameter(frac1);
 
-    pindices.push_back(func2->getFunctionIndex());
-    pindices.push_back(func2->getParameterIndex());
-
-    GET_FUNCTION_ADDR(ptr_to_AddPdfs);
-
-    initialize(pindices);
+    initialize();
 }
 
 __host__ void AddPdf::recursiveSetIndices() {

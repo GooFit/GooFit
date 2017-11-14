@@ -507,9 +507,9 @@ RBW::RBW(std::string name,
     registerParameter(mass);
     registerParameter(width);
 
-    constantsList.push_back(sp);
-    constantsList.push_back(cyc);
-    constantsList.push_back(symmDP);
+    registerConstant(sp);
+    registerConstant(cyc);
+    registerConstant(symmDP);
 
     resonanceType = 0;
 }
@@ -527,9 +527,9 @@ GS::GS(std::string name,
     registerParameter(mass);
     registerParameter(width);
 
-    constantsList.push_back(sp);
-    constantsList.push_back(cyc);
-    constantsList.push_back(symmDP);
+    registerConstant(sp);
+    registerConstant(cyc);
+    registerConstant(symmDP);
 
     resonanceType = 1;
 }
@@ -546,9 +546,9 @@ LASS::LASS(std::string name,
     registerParameter(mass);
     registerParameter(width);
 
-    constantsList.push_back(sp);
-    constantsList.push_back(cyc);
-    constantsList.push_back(symmDP);
+    registerConstant(sp);
+    registerConstant(cyc);
+    registerConstant(symmDP);
 
     resonanceType = 2;
 }
@@ -563,7 +563,7 @@ Gauss::Gauss(std::string name, Variable ar, Variable ai, Variable mass, Variable
     registerParameter(mass);
     registerParameter(width);
 
-    constantsList.push_back(cyc);
+    registerConstant(cyc);
 
     resonanceType = 3;
 }
@@ -586,8 +586,8 @@ FLATTE::FLATTE(std::string name,
     registerParameter(g1);
     registerParameter(rg2og1);
 
-    constantsList.push_back(cyc);
-    constantsList.push_back(symmDP);
+    registerConstant(cyc);
+    registerConstant(symmDP);
 
     resonanceType = 5;
 }
@@ -603,12 +603,12 @@ Spline::Spline(std::string name,
     : ResonancePdf(name, ar, ai) {
     const unsigned int nKnobs = HH_bin_limits.size();
 
-    constantsList.push_back(cyc);
-    constantsList.push_back(symmDP);
-    constantsList.push_back(nKnobs);
+    registerConstant(cyc);
+    registerConstant(symmDP);
+    registerConstant(nKnobs);
 
     for(int i = 0; i < pwa_coefs_reals.size(); i++) {
-        constantsList.push_back(HH_bin_limits[i]);
+        registerConstant(HH_bin_limits[i]);
         registerParameter(pwa_coefs_reals[i]);
         registerParameter(pwa_coefs_imags[i]);
     }

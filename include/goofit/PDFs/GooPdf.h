@@ -172,7 +172,7 @@ class GooPdf : public PdfBase {
     /// Set an equidistant grid based on the stored variable binning
     __host__ UnbinnedDataSet makeGrid();
 
-    __host__ void initialize(std::vector<unsigned int> pindices, void *dev_functionPtr = host_fcn_ptr);
+    __host__ void initialize();
     __host__ void scan(Observable var, std::vector<fptype> &values);
     __host__ void setFitControl(FitControl *const fc, bool takeOwnerShip = true) override;
     __host__ virtual void setMetrics();

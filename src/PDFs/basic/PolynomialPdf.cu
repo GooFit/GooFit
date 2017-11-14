@@ -127,38 +127,30 @@ __device__ device_function_ptr ptr_to_MultiPolynomial  = device_MultiPolynomial;
 __host__ PolynomialPdf::PolynomialPdf(
     std::string n, Observable _x, std::vector<Variable> weights, unsigned int lowestDegree)
     : GooPdf(n, _x) {
-    std::vector<unsigned int> pindices;
-    pindices.push_back(lowestDegree);
-
-    constantsList.push_back(lowestDegree);
+    registerConstant(lowestDegree);
 
     for(Variable & v : weights) {
-        pindices.push_back(registerParameter(v));
+        registerParameter(v);
     }
 
     polyType = 0;
-    GET_FUNCTION_ADDR(ptr_to_Polynomial);
 
-    initialize(pindices);
+    initialize();
 }
 __host__ PolynomialPdf::PolynomialPdf(
     std::string n, Observable _x, std::vector<Variable> weights, Variable x0, unsigned int lowestDegree)
  : GooPdf(n, _x)
     , center(new Variable(x0)) {
-    std::vector<unsigned int> pindices;
-    pindices.push_back(lowestDegree);
-    
-    constantsList.push_back(lowestDegree);
+    registerConstant(lowestDegree);
     
     for(Variable & v : weights) {
-        pindices.push_back(registerParameter(v));
+        registerParameter(v);
     }
 
     polyType = 1;
-    pindices.push_back(registerParameter(x0));
-    GET_FUNCTION_ADDR(ptr_to_OffsetPolynomial);
+    registerParameter(x0);
   
-    initialize(pindices);
+    initialize();
 }
 
 // Constructor for multivariate polynomial.
@@ -182,7 +174,7 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n,
         numParameters *= (maxDegree + 1 + i);
 
         // we are 'padding' the list.
-        constantsList.push_back(maxDegree + 1 + i);
+        registerConstant(maxDegree + 1 + i);
     }
 
     for(int i = observablesList.size(); i > 1; --i)
@@ -206,20 +198,16 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n,
         offsets.push_back(newOffset);
     }
 
-    std::vector<unsigned int> pindices;
-    pindices.push_back(maxDegree);
-
     for(auto &offset : offsets) {
-        pindices.push_back(registerParameter(offset));
+        registerParameter(offset);
     }
 
     for(auto &coeff : coeffs) {
-        pindices.push_back(registerParameter(coeff));
+        registerParameter(coeff);
     }
 
     polyType = 2;
-    GET_FUNCTION_ADDR(ptr_to_MultiPolynomial);
-    initialize(pindices);
+    initialize();
 }
 
 __host__ void PolynomialPdf::recursiveSetIndices() {

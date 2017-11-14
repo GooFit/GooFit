@@ -90,7 +90,7 @@ class PdfBase {
 
     __host__ virtual double calculateNLL() const = 0;
     __host__ virtual fptype normalize() const    = 0;
-    __host__ void initializeIndices(std::vector<unsigned int> pindices);
+    __host__ void initializeIndices();
 
     __host__ void addSpecialMask(int m) { specialMask |= m; }
     __host__ void copyParams(const std::vector<double> &pars) const;

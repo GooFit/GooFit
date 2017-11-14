@@ -53,9 +53,6 @@ __device__ device_function_ptr ptr_to_Mapped = device_Mapped;
 __host__ MappedPdf::MappedPdf(std::string n, GooPdf *m, std::vector<GooPdf *> &t)
     : GooPdf(n) {
     components.push_back(m);
-    std::vector<unsigned int> pindices;
-    pindices.push_back(m->getFunctionIndex());
-    pindices.push_back(m->getParameterIndex());
 
     std::set<int> functionIndicesUsed;
 
@@ -75,10 +72,9 @@ __host__ MappedPdf::MappedPdf(std::string n, GooPdf *m, std::vector<GooPdf *> &t
     observablesList = getObservables();
 
     // add a constant value for the number of 't' functions, skipping 'm'.
-    constantsList.push_back(components.size() - 1);
+    registerConstant(components.size() - 1);
 
-    GET_FUNCTION_ADDR(ptr_to_Mapped);
-    initialize(pindices);
+    initialize();
 }
 
 __host__ void MappedPdf::recursiveSetIndices() {

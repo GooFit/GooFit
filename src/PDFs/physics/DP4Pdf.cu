@@ -87,14 +87,10 @@ __host__ DPPdf::DPPdf(
         registerObservable(observable);
     }
 
-    // registerObservable(eventNumber);
-
-    std::vector<fptype> decayConstants;
-    decayConstants.push_back(decayInfo.meson_radius);
+    //registerConstant(decayInfo.meson_radius);
 
     for(double &particle_masse : decayInfo.particle_masses) {
-        decayConstants.push_back(particle_masse);
-        constantsList.push_back(particle_masse);
+        registerConstant(particle_masse);
     }
 
     // TODO: Are these the same as Dalitz?
@@ -103,24 +99,14 @@ __host__ DPPdf::DPPdf(
     // MEMCPY_TO_SYMBOL(c_daug2Mass, &decayConstants[3], sizeof(fptype), 0, cudaMemcpyHostToDevice);
     // MEMCPY_TO_SYMBOL(c_daug3Mass, &decayConstants[4], sizeof(fptype), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(c_meson_radius, &decayInfo.meson_radius, sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    std::vector<unsigned int> pindices;
-    pindices.push_back(registerConstants(decayConstants.size()));
-    // MEMCPY_TO_SYMBOL(functorConstants,
-    //                 &decayConstants[0],
-    //                 decayConstants.size() * sizeof(fptype),
-    //                 cIndex * sizeof(fptype),
-    //                 cudaMemcpyHostToDevice);
+
     static int cacheCount = 0;
     cacheToUse            = cacheCount++;
-    pindices.push_back(cacheToUse);
-    pindices.push_back(0); //#LS
-    pindices.push_back(0); //#SF
-    pindices.push_back(0); //#AMP
-
-    constantsList.push_back(cacheToUse);
-    constantsList.push_back(0); //#LS
-    constantsList.push_back(0); //#SF
-    constantsList.push_back(0); //#AMP
+    
+    registerConstant(cacheToUse);
+    registerConstant(0); //#LS
+    registerConstant(0); //#SF
+    registerConstant(0); //#AMP
     // This is the start of reading in the amplitudes and adding the lineshapes and Spinfactors to this PDF
     // This is done in this way so we don't have multiple copies of one lineshape in one pdf.
     std::vector<unsigned int> ampidx;
@@ -164,8 +150,8 @@ __host__ DPPdf::DPPdf(
         }
 
         nPermVec.push_back(amplitude->_nPerm);
-        pindices.push_back(registerParameter(amplitude->_ar));
-        pindices.push_back(registerParameter(amplitude->_ai));
+        registerParameter(amplitude->_ar);
+        registerParameter(amplitude->_ai);
 
         ampidxstart.push_back(ampidx.size());
         std::vector<unsigned int> ls = AmpMap[amplitude->_uniqueDecayStr].first;
@@ -185,10 +171,6 @@ __host__ DPPdf::DPPdf(
     //                 ampidxstart.size() * sizeof(unsigned int),
     //                 cudaMemcpyHostToDevice);
 
-    pindices[2] = components.size();
-    pindices[3] = SpinFactors.size();
-    pindices[4] = AmpMap.size();
-
     constantsList[2] = components.size();
     constantsList[3] = SpinFactors.size();
     constantsList[4] = AmpMap.size();
@@ -205,12 +187,9 @@ __host__ DPPdf::DPPdf(
     //    SpinFactor->setConstantIndex(cIndex);
     //}
 
-    pindices.push_back(efficiency->getFunctionIndex());
-    pindices.push_back(efficiency->getParameterIndex());
     components.push_back(efficiency);
 
-    GET_FUNCTION_ADDR(ptr_to_DP);
-    initialize(pindices);
+    initialize();
 
     Integrator   = new NormIntegrator(parameters);
     redoIntegral = new bool[components.size() - 1];

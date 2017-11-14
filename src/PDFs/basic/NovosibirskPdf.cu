@@ -42,12 +42,11 @@ __device__ device_function_ptr ptr_to_Novosibirsk = device_Novosibirsk;
 
 __host__ NovosibirskPdf::NovosibirskPdf(std::string n, Observable _x, Variable mean, Variable sigma, Variable tail)
     : GooPdf(n, _x) {
-    std::vector<unsigned int> pindices;
-    pindices.push_back(registerParameter(mean));
-    pindices.push_back(registerParameter(sigma));
-    pindices.push_back(registerParameter(tail));
-    GET_FUNCTION_ADDR(ptr_to_Novosibirsk);
-    initialize(pindices);
+    registerParameter(mean);
+    registerParameter(sigma);
+    registerParameter(tail);
+
+    initialize();
 }
 
 __host__ void NovosibirskPdf::recursiveSetIndices() {

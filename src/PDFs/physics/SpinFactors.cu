@@ -504,81 +504,58 @@ SpinFactor::SpinFactor(std::string name,
     , _P1(P1)
     , _P2(P2)
     , _P3(P3) {
-    std::vector<unsigned int> pindices;
-    pindices.push_back(0); // dummy for index to constants.
-    pindices.push_back(P0);
-    pindices.push_back(P1);
-    pindices.push_back(P2);
-    pindices.push_back(P3);
-
-    constantsList.push_back(mother_radius);
-    constantsList.push_back(P0);
-    constantsList.push_back(P1);
-    constantsList.push_back(P2);
-    constantsList.push_back(P3);
+    registerConstant(mother_radius);
+    registerConstant(P0);
+    registerConstant(P1);
+    registerConstant(P2);
+    registerConstant(P3);
     switch(SF) {
     case SF_4Body::DtoPP1_PtoSP2_StoP3P4:
-        GET_FUNCTION_ADDR(ptr_to_DtoPP1_PtoSP2_StoP3P4);
         break;
 
     case SF_4Body::DtoPP1_PtoVP2_VtoP3P4:
-        GET_FUNCTION_ADDR(ptr_to_DtoPP1_PtoVP2_VtoP3P4);
         break;
 
     case SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_S:
-        GET_FUNCTION_ADDR(ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_S);
         break;
 
     case SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_P:
-        GET_FUNCTION_ADDR(ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_P);
         break;
 
     case SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_D:
-        GET_FUNCTION_ADDR(ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_D);
         break;
 
     case SF_4Body::DtoAP1_AtoVP2_VtoP3P4:
-        GET_FUNCTION_ADDR(ptr_to_DtoAP1_AtoVP2_VtoP3P4);
         break;
 
     case SF_4Body::DtoAP1_AtoVP2Dwave_VtoP3P4:
-        GET_FUNCTION_ADDR(ptr_to_DtoAP1_AtoVP2Dwave_VtoP3P4);
         break;
 
     case SF_4Body::DtoVS_VtoP1P2_StoP3P4:
-        GET_FUNCTION_ADDR(ptr_to_DtoVS_VtoP1P2_StoP3P4);
         break;
 
     case SF_4Body::DtoV1P1_V1toV2P2_V2toP3P4:
-        GET_FUNCTION_ADDR(ptr_to_DtoV1P1_V1toV2P2_V2toP3P4);
         break;
 
     case SF_4Body::DtoAP1_AtoSP2_StoP3P4:
-        GET_FUNCTION_ADDR(ptr_to_DtoAP1_AtoSP2_StoP3P4);
         break;
 
     case SF_4Body::DtoTP1_TtoVP2_VtoP3P4:
-        GET_FUNCTION_ADDR(ptr_to_DtoTP1_TtoVP2_VtoP3P4);
         break;
 
     case SF_4Body::FF_12_34_L1:
-        GET_FUNCTION_ADDR(ptr_to_FF_12_34_L1);
         break;
 
     case SF_4Body::FF_12_34_L2:
-        GET_FUNCTION_ADDR(ptr_to_FF_12_34_L2);
         break;
 
     case SF_4Body::FF_123_4_L1:
-        GET_FUNCTION_ADDR(ptr_to_FF_123_4_L1);
         break;
 
     case SF_4Body::FF_123_4_L2:
-        GET_FUNCTION_ADDR(ptr_to_FF_123_4_L2);
         break;
 
     case SF_4Body::ONE:
-        GET_FUNCTION_ADDR(ptr_to_ONE);
         break;
 
     default:
@@ -587,7 +564,7 @@ SpinFactor::SpinFactor(std::string name,
         break;
     }
 
-    initialize(pindices);
+    initialize();
 }
 void SpinFactor::recursiveSetIndices() {}
 

@@ -42,7 +42,7 @@ __host__ void PdfBase::copyNormFactors() const {
     cudaDeviceSynchronize(); // Ensure normalisation integrals are finished
 }
 
-__host__ void PdfBase::initializeIndices(std::vector<unsigned int> pindices) {
+__host__ void PdfBase::initializeIndices() {
     // Structure of the individual index array: Number of parameters, then the indices
     // requested by the subclass (which will be interpreted by the subclass kernel),
     // then the number of observables, then the observable indices. Notice that the
@@ -51,12 +51,7 @@ __host__ void PdfBase::initializeIndices(std::vector<unsigned int> pindices) {
     // This is to allow index sharing between PDFs - all the PDFs must be constructed
     // before we know what observables exist.
 
-    GOOFIT_DEBUG("Adding space for {} indices for {}", pindices.size(), getName());
-
-    // TODO:We need to check parameters, constants, observables, and norms
-    if(totalParameters + pindices.size() >= maxParams)
-        throw GooFit::GeneralError(
-            "totalParams {} + pindices {} must be less than {}", totalParameters, pindices.size(), maxParams);
+    GOOFIT_DEBUG("Initializing {}", getName());
 
     // We are formulating the four buffers.  We first populate the lists based on what is currently in the appropriate
     // PDF buffers.  NOTE: This is not the actual buffer layout!!!!!!!  We are allocating placeholders for each PDF, but

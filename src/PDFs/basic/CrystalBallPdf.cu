@@ -45,13 +45,12 @@ __host__ CrystalBallPdf::CrystalBallPdf(std::string n, Observable _x, Variable m
 __host__ CrystalBallPdf::CrystalBallPdf(
     std::string n, Observable _x, Variable mean, Variable sigma, Variable alpha, Variable power)
     : GooPdf(n, _x) {
-    std::vector<unsigned int> pindices;
-    pindices.push_back(registerParameter(mean));
-    pindices.push_back(registerParameter(sigma));
-    pindices.push_back(registerParameter(alpha));
-    pindices.push_back(registerParameter(power));
-    GET_FUNCTION_ADDR(ptr_to_CrystalBall);
-    initialize(pindices);
+    registerParameter(mean);
+    registerParameter(sigma);
+    registerParameter(alpha);
+    registerParameter(power);
+
+    initialize();
 }
 
 __host__ void CrystalBallPdf::recursiveSetIndices() {

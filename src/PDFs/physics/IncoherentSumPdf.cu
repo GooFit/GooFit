@@ -69,10 +69,10 @@ __host__ IncoherentSumPdf::IncoherentSumPdf(
     , efficiency(eff)
     , integrators(nullptr)
     , calculators(nullptr) {
-    constantsList.push_back(observablesList.size());
-    constantsList.push_back(0);
-    constantsList.push_back(0);
-    constantsList.push_back(0);
+    registerConstant(observablesList.size());
+    registerConstant(0);
+    registerConstant(0);
+    registerConstant(0);
 
     MEMCPY_TO_SYMBOL(c_motherMass, &decayInfo.motherMass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(c_daug1Mass, &decayInfo.daug1Mass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
@@ -83,8 +83,8 @@ __host__ IncoherentSumPdf::IncoherentSumPdf(
     static int cacheCount = 0;
     cacheToUse            = cacheCount++;
 
-    constantsList.push_back(decayInfo.resonances.size());
-    constantsList.push_back(cacheToUse);
+    registerConstant(decayInfo.resonances.size());
+    registerConstant(cacheToUse);
 
     for(auto &resonance : decayInfo.resonances) {
         // Not going to use amp_imag, but need a dummy index so the resonance size will be consistent.
@@ -95,6 +95,8 @@ __host__ IncoherentSumPdf::IncoherentSumPdf(
     }
 
     components.push_back(efficiency);
+
+    initialize();
 
     redoIntegral = new bool[decayInfo.resonances.size()];
     cachedMasses = new fptype[decayInfo.resonances.size()];

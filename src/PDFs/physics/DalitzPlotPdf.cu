@@ -159,43 +159,30 @@ __host__ DalitzPlotPdf::DalitzPlotPdf(
     for(auto &cachedWave : cachedWaves)
         cachedWave = nullptr;
 
-    std::vector<unsigned int> pindices;
-    pindices.push_back(registerConstants(5));
-    decayConstants[0] = decayInfo.motherMass;
-    decayConstants[1] = decayInfo.daug1Mass;
-    decayConstants[2] = decayInfo.daug2Mass;
-    decayConstants[3] = decayInfo.daug3Mass;
-    decayConstants[4] = decayInfo.meson_radius;
-
     // Passing values to the defined constants.  Rather than push into list, which means each resonance
     // 1. duplicates 5 fptypes
     // 2. also has to index into the array
     // we instead just have a define.
-    MEMCPY_TO_SYMBOL(c_motherMass, &decayConstants[0], sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    MEMCPY_TO_SYMBOL(c_daug1Mass, &decayConstants[1], sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    MEMCPY_TO_SYMBOL(c_daug2Mass, &decayConstants[2], sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    MEMCPY_TO_SYMBOL(c_daug3Mass, &decayConstants[3], sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    MEMCPY_TO_SYMBOL(c_meson_radius, &decayConstants[4], sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(c_motherMass, &decay.motherMass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(c_daug1Mass, &decay.daug1Mass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(c_daug2Mass, &decay.daug2Mass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(c_daug3Mass, &decay.daug3Mass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(c_meson_radius, &decay.meson_radius, sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
-    pindices.push_back(decayInfo.resonances.size());
-    constantsList.push_back(decayInfo.resonances.size());
+    registerConstant(decayInfo.resonances.size());
     static int cacheCount = 0;
     cacheToUse            = cacheCount++;
-    pindices.push_back(cacheToUse);
-    constantsList.push_back(cacheToUse);
+    registerConstant(cacheToUse);
 
     for(auto &resonance : decayInfo.resonances) {
-        pindices.push_back(registerParameter(resonance->amp_real));
-        pindices.push_back(registerParameter(resonance->amp_imag));
+        registerParameter(resonance->amp_real);
+        registerParameter(resonance->amp_imag);
         components.push_back(resonance);
     }
 
-    pindices.push_back(efficiency->getFunctionIndex());
-    pindices.push_back(efficiency->getParameterIndex());
     components.push_back(efficiency);
 
-    GET_FUNCTION_ADDR(ptr_to_DalitzPlot);
-    initialize(pindices);
+    initialize();
 
     redoIntegral = new bool[decayInfo.resonances.size()];
     cachedMasses = new fptype[decayInfo.resonances.size()];

@@ -207,31 +207,26 @@ __host__ TDDP4::TDDP4(std::string n,
     constantsList.push_back(decayInfo.meson_radius);
 
     for(double &particle_masse : decayInfo.particle_masses) {
-        constantsList.push_back(particle_masse);
+        registerConstant(particle_masse);
     }
 
     if(mistag) {
         registerObservable(*mistag);
         totalEventSize = 9;
-        constantsList.push_back(1); // Flags existence of mistag
+        //TODO: This needs to be registered later!
+        registerConstant(1); // Flags existence of mistag
     }
 
-    std::vector<unsigned int> pindices;
     static int cacheCount = 0;
     cacheToUse            = cacheCount++;
-    pindices.push_back(cacheToUse);
-    pindices.push_back(0); //#LS
-    pindices.push_back(0); //#SF
-    pindices.push_back(0); //#AMP
-    pindices.push_back(0); // number of coefficients, because its not necessary to be equal to number of Amps.
-    pindices.push_back(registerParameter(decayInfo._tau));
-    pindices.push_back(registerParameter(decayInfo._xmixing));
-    pindices.push_back(registerParameter(decayInfo._ymixing));
-    pindices.push_back(registerParameter(decayInfo._SqWStoRSrate));
+    registerParameter(decayInfo._tau);
+    registerParameter(decayInfo._xmixing);
+    registerParameter(decayInfo._ymixing);
+    registerParameter(decayInfo._SqWStoRSrate);
+
     if(resolution->getDeviceFunction() < 0)
         throw GooFit::GeneralError("The resolution device function index {} must be more than 0",
                                    resolution->getDeviceFunction());
-    pindices.push_back(static_cast<unsigned int>(resolution->getDeviceFunction()));
 
     constantsList.push_back (cacheToUse);
     constantsList.push_back (0);
@@ -290,8 +285,8 @@ __host__ TDDP4::TDDP4(std::string n,
         }
 
         nPermVec.push_back(i->_nPerm);
-        pindices.push_back(registerParameter(i->_ar));
-        pindices.push_back(registerParameter(i->_ai));
+        registerParameter(i->_ar);
+        registerParameter(i->_ai);
         ++coeff_counter;
         AmpBuffer.push_back(i);
         unsigned int flag = 0;
@@ -300,8 +295,8 @@ __host__ TDDP4::TDDP4(std::string n,
         if(inB != AmpsB.end()) {
             // printf("Found in AmpsB as well: %s\n", (*inB)->_uniqueDecayStr.c_str());
             flag = 2;
-            pindices.push_back(registerParameter((*inB)->_ar));
-            pindices.push_back(registerParameter((*inB)->_ai));
+            registerParameter((*inB)->_ar);
+            registerParameter((*inB)->_ai);
             ++coeff_counter;
         }
 
@@ -362,8 +357,8 @@ __host__ TDDP4::TDDP4(std::string n,
         }
 
         nPermVec.push_back(i->_nPerm);
-        pindices.push_back(registerParameter(i->_ar));
-        pindices.push_back(registerParameter(i->_ai));
+        registerParameter(i->_ar);
+        registerParameter(i->_ai);
         ++coeff_counter;
         ampidxstart.push_back(ampidx.size());
         std::vector<unsigned int> ls = AmpMap[i->_uniqueDecayStr].first;
@@ -384,31 +379,16 @@ __host__ TDDP4::TDDP4(std::string n,
                      ampidxstart.size() * sizeof(unsigned int),
                      cudaMemcpyHostToDevice);
 
-    pindices[2] = components.size();
-    pindices[3] = SpinFactors.size();
-    pindices[4] = AmpMap.size();
-    pindices[5] = coeff_counter;
-
-    for(auto &component : components) {
-        //reinterpret_cast<Lineshape *>(component)->setConstantIndex(cIndex);
-        pindices.push_back(reinterpret_cast<Lineshape *>(component)->getFunctionIndex());
-        pindices.push_back(reinterpret_cast<Lineshape *>(component)->getParameterIndex());
-    }
-
     for(auto &SpinFactor : SpinFactors) {
-        pindices.push_back(SpinFactor->getFunctionIndex());
-        pindices.push_back(SpinFactor->getParameterIndex());
         SpinFactor->setConstantIndex(cIndex);
     }
 
-    pindices.push_back(efficiency->getFunctionIndex());
-    pindices.push_back(efficiency->getParameterIndex());
     components.push_back(efficiency);
 
     // In case the resolution function needs parameters, this registers them.
-    resolution->createParameters(pindices, this);
-    GET_FUNCTION_ADDR(ptr_to_TDDP4);
-    initialize(pindices);
+    //resolution->createParameters(pindices, this);
+
+    initialize();
 
     Integrator   = new NormIntegrator_TD(parameters);
     redoIntegral = new bool[components.size() - 1];

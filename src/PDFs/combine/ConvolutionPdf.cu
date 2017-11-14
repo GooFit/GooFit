@@ -159,22 +159,13 @@ ConvolutionPdf::ConvolutionPdf(std::string n, Observable x, GooPdf *m, GooPdf *r
     components.push_back(model);
     components.push_back(resolution);
 
-    // Indices stores (function index)(parameter index) doublet for model and resolution function.
-    std::vector<unsigned int> paramIndices;
-    // paramIndices.push_back(model->getFunctionIndex());
-    // paramIndices.push_back(model->getParameterIndex());
-    // paramIndices.push_back(resolution->getFunctionIndex());
-    // paramIndices.push_back(resolution->getParameterIndex());
-    // paramIndices.push_back(registerConstants(3));
-    // paramIndices.push_back(workSpaceIndex = totalConvolutions++);
+    registerConstant(-10);
+    registerConstant(10);
+    registerConstant(0.01);
+    registerConstant(workSpaceIndex = totalConvolutions++);
 
-    constantsList.push_back(-10);
-    constantsList.push_back(10);
-    constantsList.push_back(0.01);
-    constantsList.push_back(workSpaceIndex = totalConvolutions++);
+    initialize();
 
-    GET_FUNCTION_ADDR(ptr_to_ConvolvePdfs);
-    initialize(paramIndices);
     setIntegrationConstants(-10, 10, 0.01);
 
     ConvolveType = 0;
@@ -202,21 +193,19 @@ ConvolutionPdf::ConvolutionPdf(std::string n, Observable x, GooPdf *m, GooPdf *r
     components.push_back(resolution);
 
     // Indices stores (function index)(parameter index) doublet for model and resolution function.
-    std::vector<unsigned int> paramIndices;
-
-    constantsList.push_back(-10);
-    constantsList.push_back(10);
-    constantsList.push_back(0.01);
-    constantsList.push_back(workSpaceIndex = totalConvolutions++);
+    registerConstant(-10);
+    registerConstant(10);
+    registerConstant(0.01);
+    registerConstant(workSpaceIndex = totalConvolutions++);
 
     if(0 == numOthers)
-        constantsList.push_back(workSpaceIndex);
+        registerConstant(workSpaceIndex);
     else {
         properlyInitialised = false;
 
         for(unsigned int i = 0; i < numOthers + 1; ++i) { // Notice extra space for this PDF's index.
             // Fill in later - must be done before setData call.
-            constantsList.push_back(0);
+            registerConstant(0);
         }
     }
 
@@ -224,8 +213,7 @@ ConvolutionPdf::ConvolutionPdf(std::string n, Observable x, GooPdf *m, GooPdf *r
         throw GooFit::GeneralError(
             "numOthers {} must be not be more than the cache size {}", numOthers, CONVOLUTION_CACHE_SIZE);
 
-    GET_FUNCTION_ADDR(ptr_to_ConvolveSharedPdfs);
-    initialize(paramIndices);
+    initialize();
     setIntegrationConstants(-10, 10, 0.01);
 
     ConvolveType = 1;

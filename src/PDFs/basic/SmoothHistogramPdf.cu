@@ -125,21 +125,19 @@ __host__ SmoothHistogramPdf::SmoothHistogramPdf(std::string n, BinnedDataSet *hi
     int numVars = hist->numVariables();
     totalEvents = 0;
 
-    std::vector<unsigned int> pindices;
-    pindices.push_back(registerParameter(smoothing));
-    pindices.push_back(totalHistograms);
+    registerParameter(smoothing);
 
     int varIndex = 0;
 
-    constantsList.push_back(hist->getObservables().size());
-    constantsList.push_back(totalHistograms);
-    constantsList.push_back(numVars);
+    registerConstant(hist->getObservables().size());
+    registerConstant(totalHistograms);
+    registerConstant(numVars);
 
     for(const Observable &var : hist->getObservables()) {
         registerObservable(var);
-        constantsList.push_back(var.getNumBins());
-        constantsList.push_back(var.getLowerLimit());
-        constantsList.push_back(var.getBinSize());
+        registerConstant(var.getNumBins());
+        registerConstant(var.getLowerLimit());
+        registerConstant(var.getBinSize());
 
         // host_constants[2 * varIndex + 0] = var->getLowerLimit(); // NB, do not put cIndex here, it is accounted for
         // by
@@ -162,8 +160,7 @@ __host__ SmoothHistogramPdf::SmoothHistogramPdf(std::string n, BinnedDataSet *hi
         std::cout << "Warning: Empty histogram supplied to " << getName()
                   << " not copied to device. Expect copyHistogramToDevice call later.\n";
 
-    GET_FUNCTION_ADDR(ptr_to_EvalHistogram);
-    initialize(pindices);
+    initialize();
 }
 
 void SmoothHistogramPdf::recursiveSetIndices() {

@@ -50,24 +50,20 @@ __host__ DalitzVetoPdf::DalitzVetoPdf(std::string n,
                                       Variable d3m,
                                       std::vector<VetoInfo> vetos)
     : GooPdf(n, _x, _y) {
-    std::vector<unsigned int> pindices;
-    pindices.push_back(registerParameter(motherM));
-    pindices.push_back(registerParameter(d1m));
-    pindices.push_back(registerParameter(d2m));
-    pindices.push_back(registerParameter(d3m));
+    registerParameter(motherM);
+    registerParameter(d1m);
+    registerParameter(d2m);
+    registerParameter(d3m);
 
-    pindices.push_back(vetos.size());
-    constantsList.push_back(vetos.size());
+    registerConstant(vetos.size());
 
     for(auto &veto : vetos) {
-        pindices.push_back(veto.cyclic_index);
-        pindices.push_back(registerParameter(veto.minimum));
-        pindices.push_back(registerParameter(veto.maximum));
-        constantsList.push_back(veto.cyclic_index);
+        registerParameter(veto.minimum);
+        registerParameter(veto.maximum);
+        registerConstant(veto.cyclic_index);
     }
 
-    GET_FUNCTION_ADDR(ptr_to_DalitzVeto);
-    initialize(pindices);
+    initialize();
 }
 
 void DalitzVetoPdf::recursiveSetIndices() {

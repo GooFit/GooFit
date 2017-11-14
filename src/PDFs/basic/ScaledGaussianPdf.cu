@@ -28,13 +28,7 @@ __host__ ScaledGaussianPdf::ScaledGaussianPdf(
     registerParameter(delta);
     registerParameter(epsilon);
 
-    std::vector<unsigned int> pindices;
-    // pindices.push_back(mean->getIndex());
-    // pindices.push_back(sigma->getIndex());
-    // pindices.push_back(delta->getIndex());
-    // pindices.push_back(epsilon->getIndex());
-    GET_FUNCTION_ADDR(ptr_to_ScaledGaussian);
-    initialize(pindices);
+    initialize();
 }
 
 __host__ void ScaledGaussianPdf::recursiveSetIndices() {

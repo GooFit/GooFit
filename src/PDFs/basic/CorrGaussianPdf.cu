@@ -46,15 +46,13 @@ __host__ CorrGaussianPdf::CorrGaussianPdf(std::string n,
     // registerObservable(_x);
     // registerObservable(_y);
 
-    std::vector<unsigned int> pindices;
-    pindices.push_back(registerParameter(mean1));
-    pindices.push_back(registerParameter(sigma1));
-    pindices.push_back(registerParameter(mean2));
-    pindices.push_back(registerParameter(sigma2));
-    pindices.push_back(registerParameter(correlation));
+    registerParameter(mean1);
+    registerParameter(sigma1);
+    registerParameter(mean2);
+    registerParameter(sigma2);
+    registerParameter(correlation);
 
-    GET_FUNCTION_ADDR(ptr_to_CorrGaussian);
-    initialize(pindices);
+    initialize();
 }
 
 __host__ void CorrGaussianPdf::recursiveSetIndices() {

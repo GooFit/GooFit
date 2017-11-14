@@ -39,20 +39,13 @@ __device__ device_function_ptr ptr_to_Composite = device_Composite;
 
 __host__ CompositePdf::CompositePdf(std::string n, PdfBase *core, PdfBase *shell)
     : GooPdf(n) {
-    std::vector<unsigned int> pindices;
-    // pindices.push_back(core->getFunctionIndex());
-    // pindices.push_back(core->getParameterIndex());
-    // pindices.push_back(shell->getFunctionIndex());
-    // pindices.push_back(shell->getParameterIndex());
-
     // Add as components so that observables and parameters will be registered.
     components.push_back(core);
     components.push_back(shell);
 
     observablesList = getObservables();
 
-    GET_FUNCTION_ADDR(ptr_to_Composite);
-    initialize(pindices);
+    initialize();
 }
 
 __host__ void CompositePdf::recursiveSetIndices() {

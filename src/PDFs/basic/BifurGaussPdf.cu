@@ -26,13 +26,11 @@ __device__ device_function_ptr ptr_to_BifurGauss = device_BifurGauss;
 
 __host__ BifurGaussPdf::BifurGaussPdf(std::string n, Observable _x, Variable mean, Variable sigmaL, Variable sigmaR)
     : GooPdf(n, _x) {
-    std::vector<unsigned int> pindices;
+    registerParameter(mean);
+    registerParameter(sigmaL);
+    registerParameter(sigmaR);
 
-    pindices.push_back(registerParameter(mean));
-    pindices.push_back(registerParameter(sigmaL));
-    pindices.push_back(registerParameter(sigmaR));
-    GET_FUNCTION_ADDR(ptr_to_BifurGauss);
-    initialize(pindices);
+    initialize();
 }
 
 __host__ void BifurGaussPdf::recursiveSetIndices() {

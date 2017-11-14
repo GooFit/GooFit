@@ -154,7 +154,7 @@ class Variable : public Indexable {
     Variable &operator=(const Variable &) = default;
     Variable(Variable &&)                 = default;
 
-    /// This is a constant varaible
+    /// This is a constant variable
     Variable(std::string n, fptype v)
         : Indexable(n, v, v + 0.01, v - 0.01)
         , error(std::make_shared<fptype>(0.002)) {
@@ -165,11 +165,12 @@ class Variable : public Indexable {
     Variable(std::string n, fptype v, fptype dn, fptype up)
         : Indexable(n, v, dn, up)
         , error(std::make_shared<fptype>(0.1 * (up - dn))) {}
-
-    /// This is a full varaible with error scale as well
-    Variable(std::string n, fptype v, fptype e, fptype dn, fptype up)
+    
+    /// This is a full variable with error scale as well (Fix added to allow single interface to fixed/free vars)
+    Variable(std::string n, fptype v, fptype e, fptype dn, fptype up, bool fix=false)
         : Indexable(n, v, dn, up)
-        , error(std::make_shared<fptype>(e)) {}
+        , error(std::make_shared<fptype>(e))
+        , fixed(std::make_shared<bool>(fix)) {}
 
     ~Variable() override = default;
 

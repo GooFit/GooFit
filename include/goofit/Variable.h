@@ -165,9 +165,9 @@ class Variable : public Indexable {
     Variable(std::string n, fptype v, fptype dn, fptype up)
         : Indexable(n, v, dn, up)
         , error(std::make_shared<fptype>(0.1 * (up - dn))) {}
-    
+
     /// This is a full variable with error scale as well (Fix added to allow single interface to fixed/free vars)
-    Variable(std::string n, fptype v, fptype e, fptype dn, fptype up, bool fix=false)
+    Variable(std::string n, fptype v, fptype e, fptype dn, fptype up, bool fix = false)
         : Indexable(n, v, dn, up)
         , error(std::make_shared<fptype>(e))
         , fixed(std::make_shared<bool>(fix)) {}

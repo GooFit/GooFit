@@ -34,7 +34,7 @@ void init_Variable(py::module &m) {
         .def(py::init<std::string, fptype, fptype, fptype>())
         .def(py::init<std::string, fptype, fptype, fptype, fptype>())
         .def(py::init<std::string, fptype, fptype, fptype, fptype, bool>())
-                // "name"_a, "value"_a, "error"_a, "min"_a, "max"_a, "fixed"_a=false)
+        // "name"_a, "value"_a, "error"_a, "min"_a, "max"_a, "fixed"_a=false)
         .def_property("error", &Variable::getError, &Variable::setError)
         .def_property("fixed", &Variable::IsFixed, &Variable::setFixed)
         .def_property_readonly("fitterIndex", &Variable::getFitterIndex)

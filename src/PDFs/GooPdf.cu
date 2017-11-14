@@ -628,11 +628,11 @@ __host__ void GooPdf::transformGrid(fptype *host_output) {
         host_output[i] = h_vec[i];
 }
 
-    __host__ void GooPdf::setFitControl(std::shared_ptr<FitControl> fc) {
+__host__ void GooPdf::setFitControl(std::shared_ptr<FitControl> fc) {
     for(auto &component : components) {
         component->setFitControl(fc);
     }
-        
+
     fitControl = fc;
 
     setMetrics();

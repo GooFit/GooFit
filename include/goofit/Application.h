@@ -21,7 +21,7 @@
 #include <omp.h>
 #endif
 
-#define GOOFIT_PARSE(app, argc, argv)                                                                                  \
+#define GOOFIT_PARSE(app, ...)                                                                                         \
     try {                                                                                                              \
         app.run();                                                                                                     \
     } catch(const GooFit::ParseError &e) {                                                                             \

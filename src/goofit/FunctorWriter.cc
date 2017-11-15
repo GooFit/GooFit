@@ -1,7 +1,7 @@
+#include <fstream>
 #include <goofit/FunctorWriter.h>
 #include <goofit/PdfBase.h>
 #include <goofit/Variable.h>
-#include <fstream>
 #include <map>
 
 namespace GooFit {

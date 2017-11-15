@@ -1,8 +1,8 @@
-#include <goofit/fitting/FCN.h>
 #include <goofit/Log.h>
 #include <goofit/PDFs/GooPdf.h>
 #include <goofit/PdfBase.h>
 #include <goofit/Variable.h>
+#include <goofit/fitting/FCN.h>
 
 namespace GooFit {
 

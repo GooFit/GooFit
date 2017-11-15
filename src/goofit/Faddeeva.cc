@@ -1,5 +1,5 @@
-#include <goofit/Faddeeva.h>
 #include <goofit/Error.h>
+#include <goofit/Faddeeva.h>
 
 #include <cmath>
 

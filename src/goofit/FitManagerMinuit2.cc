@@ -2,9 +2,9 @@
 
 #include <goofit/Color.h>
 
-#include <Minuit2/MnPrint.h>
 #include <Minuit2/FunctionMinimum.h>
 #include <Minuit2/MnMigrad.h>
+#include <Minuit2/MnPrint.h>
 #include <Minuit2/MnUserParameterState.h>
 #include <Minuit2/MnUserParameters.h>
 

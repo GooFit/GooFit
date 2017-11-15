@@ -1,6 +1,6 @@
-#include <goofit/UnbinnedDataSet.h>
 #include <goofit/Error.h>
 #include <goofit/Log.h>
+#include <goofit/UnbinnedDataSet.h>
 #include <goofit/Variable.h>
 
 #include <Eigen/Dense>

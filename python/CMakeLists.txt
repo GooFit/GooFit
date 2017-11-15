@@ -8,7 +8,7 @@ goofit_add_library(_goofit MODULE
     goofit/PdfBase.cpp
     goofit/Version.cpp
     goofit/FitControl.cpp
-    goofit/Application.cpp
+    goofit/Application.cu
     PDFs/GooPdf.cu
     PDFs/basic/ArgusPdf.cu
     PDFs/basic/BifurGaussPdf.cu

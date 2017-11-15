@@ -19,7 +19,7 @@ void init_Application(py::module &m) {
         cudaDeviceProp devProp;
         cudaGetDeviceProperties(&devProp, gpuDev_);
 
-        GOOFIT_INFO("CUDA: Device {}: {}", get_device(), devProp.name);
+        GOOFIT_INFO("CUDA: Device {}: {}", gpuDev_, devProp.name);
 
         GOOFIT_INFO("CUDA: Compute {}.{}", devProp.major, devProp.minor);
         GOOFIT_INFO("CUDA: Total global memory: {} GB", devProp.totalGlobalMem / 1.0e9);

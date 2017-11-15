@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-# Use git grep -l "goofit/PDFs" | xargs ./scripts/ModernizeGooFit.py to run on all GooFit Source
-
 from __future__ import print_function
 import re
 try:
@@ -10,11 +8,16 @@ except ImportError:
     print("This file uses the plumbum library. Install with pip or conda (user directory or virtual environment OK).")
     raise
 
+DIR = local.path(__file__).dirname
+
 conversion = dict()
+conversion['brackets'] = [
+    (r'^#include\s+"(\S+)"', r'#include <\1>'),
+]
 conversion['2.0'] = [
-    ('["<]cuda_runtime_api.hh?[">]', r'\\\\ Fake cuda has been removed (cuda_runtime_api.h requested)'),
-    ('["<]driver_types.hh?[">]', r'\\\\ Fake cuda has been removed (driver_types.h requested)'),
-    ('["<]host_defines.hh?[">]', r'\\\\ Fake cuda has been removed (host_defines.h requested)'),
+    (r'^#include\s+["<]cuda_runtime_api.hh?[">]\s*$', r'// Fake cuda has been removed (cuda_runtime_api.h requested)'),
+    (r'^#include\s+["<]driver_types.hh?[">]\s*$', r'// Fake cuda has been removed (driver_types.h requested)'),
+    (r'^#include\s+["<]host_defines.hh?[">]\s*$', r'// Fake cuda has been removed (host_defines.h requested)'),
     ('["<]Application.hh?[">]', '<goofit/Application.h>'),
     ('["<]BinnedDataSet.hh?[">]', '<goofit/BinnedDataSet.h>'),
     ('["<]DataSet.hh?[">]', '<goofit/DataSet.h>'),
@@ -23,7 +26,7 @@ conversion['2.0'] = [
     ('["<]FitManager.hh?[">]', '<goofit/FitManager.h>'),
     ('["<]FitManagerMinuit1.hh?[">]', '<goofit/fitting/FitManagerMinuit1.h>'),
     ('["<]FitManagerMinuit2.hh?[">]', '<goofit/fitting/FitManagerMinuit2.h>'),
-    ('#include ["<]FitManagerMinuit3.hh?[">]', r'\\\\ Fit Manager 3 removed'),
+    ('#include ["<]FitManagerMinuit3.hh?[">]', r'// Fit Manager 3 removed'),
     ('["<]FunctorWriter.hh?[">]', '<goofit/FunctorWriter.h>'),
     ('["<]GlobalCudaDefines.hh?[">]', '<goofit/GlobalCudaDefines.h>'),
     ('["<]PdfBase.hh?[">]', '<goofit/PdfBase.h>'),
@@ -150,10 +153,13 @@ conversion['2.0'] = [
     (r'goofit/PDFs/TruthResolution_Aux.h', 'goofit/PDFs/physics/TruthResolution_Aux.h')
 ]
 conversion['2.1'] = [
-    (r'thrust::complex<fptype>', 'fpcomplex'),
-    (r'CountingVariable', 'EventNumber'),
-    (r'DecayInfo', 'DecayInfo3'), # Might need a t if time dependent
-    (r'DecayInfo_DP', 'DecayInfo4') # Might need a t if time dependent
+    (r'thrust::complex<fptype>', r'fpcomplex'),
+    (r'CountingVariable', r'EventNumber'),
+    (r'\bDecayInfo\b\s*\*', r'DecayInfo3'), # Might need a t if time dependent
+    (r'\bDecayInfo_DP\b\s*\*', r'DecayInfo4'), # Might need a t if time dependent
+    (r'Variable\s*\*\s*(\w+)\s*=\s*new\s+Variable', r'Variable \1'),
+    (r'new\s+Variable', r'Variable'),
+    (r'Variable(\s*)\*', r'Variable\1'),
 ]
 
 def fix_text(contents, version='2.0'):
@@ -190,7 +196,7 @@ def fix_text(contents, version='2.0'):
 
     for r in conversion[version]:
         after = r[1]
-        before = re.compile(r[0])
+        before = re.compile(r[0], re.MULTILINE)
         if before.search(contents):
             print('  Converting {0} -> {1}'.format(r[0], after))
             contents = before.sub(after,contents)
@@ -198,8 +204,6 @@ def fix_text(contents, version='2.0'):
 
 def fix_files(src, version):
     for name in src:
-        if name == local.path(__file__):
-            continue
         with name.open('r') as f:
             contents = f.read()
         new_contents = fix_text(contents, version)
@@ -211,11 +215,19 @@ def fix_files(src, version):
 
 
 class ModernizeGooFit(cli.Application):
-    set_version = cli.SwitchAttr(['-s','--set-version'], cli.Set(*conversion), default='2.0', help='The version to pick')
+    set_version = cli.SwitchAttr(['-v','--version'], cli.Set(*conversion), default='2.0', help='The version to convert')
+    source = cli.Flag(['--source'], help="Run on the GooFit Source", mandatory=True)
 
     @cli.positional(cli.ExistingFile)
     def main(self, *src):
+        if not src:
+            assert self.source, "You must use the --source flag to run over GooFit's source"
+            git = local['git']
+            with local.cwd(DIR / '../'):
+                src = [local.path(n) for n in
+                        git('ls-files', '--', '*.cpp', '*.h', '*.cu', '*.cc').splitlines()]
         fix_files(src, self.set_version)
+
 
 
 if __name__ == '__main__':

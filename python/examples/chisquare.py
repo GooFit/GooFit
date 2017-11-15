@@ -93,9 +93,13 @@ def fitRatio(decayTime, weights, rsEvts, wsEvts, plotName = ""):
     '''
 
     poly = PolynomialPdf("poly", decayTime, weights)
+    print("Setting binned error fit")
     poly.setFitControl(BinnedErrorFit())
+    print("Setting data")
     poly.setData(ratioData)
+    print("Setting FitManager")
     fitter = FitManager(poly)
+    print("Fitting")
     fitter.fit()
 
     values = poly.evaluateAtPoints(decayTime)

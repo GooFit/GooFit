@@ -56,14 +56,12 @@ void init_Tddp4Pdf(py::module &m) {
                          pyparticles.mutable_at(i * 4 + 3, j) = (*(particles[i]))[j].get(3);
                      }
                  }
-                 std::cout << "1";
 
                  for(int i = 0; i < 6; i++) {
                      for(int j = 0; j < weights.size(); j++) {
                          pyvariables.mutable_at(i, j) = (*(variables[i]))[j];
                      }
                  }
-                 std::cout << "2";
 
                  for(int i = 0; i < weights.size(); i++) {
                      pyweights.mutable_at(i) = weights[i];

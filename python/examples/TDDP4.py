@@ -137,20 +137,13 @@ def main():
     dp  = TDDP4("test", observables, DK3P_DI, dat, eff, None, 1)
 
 
-    trials = 100
-    k = 0
-    while k<trials:
+    for k in range(10):
         numEvents = 800000
 
         dp.setGenerationOffset(k * numEvents)
-        tuple = dp.GenerateSig(numEvents)
-
-        particles = tuple[0]
-        variables = tuple[1]
-        weights = tuple[2]
-        flags = tuple[3]
+        particles, variables, weights, flags = dp.GenerateSig(numEvents)
 
     return 0
 
 if __name__ == "__main__":
-    main()
+    assert main() == 0

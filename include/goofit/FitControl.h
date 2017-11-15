@@ -1,7 +1,7 @@
 #pragma once
 
-#include "goofit/Error.h"
-#include "goofit/GlobalCudaDefines.h"
+#include <goofit/Error.h>
+#include <goofit/GlobalCudaDefines.h>
 
 #include <string>
 #include <vector>

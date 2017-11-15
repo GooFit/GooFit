@@ -1,18 +1,18 @@
-#include "goofit/Application.h"
-#include "goofit/BinnedDataSet.h"
-#include "goofit/FitControl.h"
-#include "goofit/FitManager.h"
-#include "goofit/UnbinnedDataSet.h"
-#include "goofit/Variable.h"
+#include <goofit/Application.h>
+#include <goofit/BinnedDataSet.h>
+#include <goofit/FitControl.h>
+#include <goofit/FitManager.h>
+#include <goofit/UnbinnedDataSet.h>
+#include <goofit/Variable.h>
 
 #include <CLI/Timer.hpp>
 
-#include "TCanvas.h"
-#include "TH1F.h"
-#include "TLatex.h"
-#include "TMinuit.h"
-#include "TRandom.h"
-#include "goofit/PDFs/basic/PolynomialPdf.h"
+#include <TCanvas.h>
+#include <TH1F.h>
+#include <TLatex.h>
+#include <TMinuit.h>
+#include <TRandom.h>
+#include <goofit/PDFs/basic/PolynomialPdf.h>
 
 #include <iostream>
 #include <string>

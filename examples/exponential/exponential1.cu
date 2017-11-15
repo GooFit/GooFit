@@ -1,8 +1,8 @@
-#include "goofit/Application.h"
-#include "goofit/PDFs/basic/ExpPdf.h"
-#include "goofit/UnbinnedDataSet.h"
-#include "goofit/Variable.h"
-#include "goofit/fitting/FitManagerMinuit1.h"
+#include <goofit/Application.h>
+#include <goofit/PDFs/basic/ExpPdf.h>
+#include <goofit/UnbinnedDataSet.h>
+#include <goofit/Variable.h>
+#include <goofit/fitting/FitManagerMinuit1.h>
 #include <iostream>
 
 using namespace std;

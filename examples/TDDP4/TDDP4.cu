@@ -3,14 +3,14 @@
 #include <TTree.h>
 
 // GooFit stuff
-#include "goofit/Application.h"
-#include "goofit/PDFs/basic/PolynomialPdf.h"
-#include "goofit/PDFs/combine/AddPdf.h"
-#include "goofit/PDFs/physics/DP4Pdf.h"
-#include "goofit/PDFs/physics/Tddp4Pdf.h"
-#include "goofit/PDFs/physics/TruthResolution_Aux.h"
-#include "goofit/UnbinnedDataSet.h"
-#include "goofit/Variable.h"
+#include <goofit/Application.h>
+#include <goofit/PDFs/basic/PolynomialPdf.h>
+#include <goofit/PDFs/combine/AddPdf.h>
+#include <goofit/PDFs/physics/DP4Pdf.h>
+#include <goofit/PDFs/physics/Tddp4Pdf.h>
+#include <goofit/PDFs/physics/TruthResolution_Aux.h>
+#include <goofit/UnbinnedDataSet.h>
+#include <goofit/Variable.h>
 #include <fstream>
 #include <thrust/count.h>
 

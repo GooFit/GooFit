@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include "goofit/GlobalCudaDefines.h"
+#include <goofit/GlobalCudaDefines.h>
 #include <goofit/Log.h>
 
 // Declaring friends

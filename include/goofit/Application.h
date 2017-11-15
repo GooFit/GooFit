@@ -1,9 +1,9 @@
 #pragma once
 
-#include "goofit/Color.h"
-#include "goofit/Error.h"
-#include "goofit/Log.h"
-#include "goofit/Version.h"
+#include <goofit/Color.h>
+#include <goofit/Error.h>
+#include <goofit/Log.h>
+#include <goofit/Version.h>
 #include <CLI/CLI.hpp>
 
 #include <thrust/detail/config/device_system.h>

@@ -4,8 +4,8 @@
 
 #include <memory>
 
-#include "goofit/GlobalCudaDefines.h"
-#include "goofit/fitting/FCN.h"
+#include <goofit/GlobalCudaDefines.h>
+#include <goofit/fitting/FCN.h>
 
 namespace GooFit {
 

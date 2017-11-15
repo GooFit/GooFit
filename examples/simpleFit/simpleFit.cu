@@ -1,15 +1,15 @@
-#include "goofit/Application.h"
-#include "goofit/FitManager.h"
-#include "goofit/PDFs/basic/BifurGaussPdf.h"
-#include "goofit/PDFs/basic/LandauPdf.h"
-#include "goofit/PDFs/basic/NovosibirskPdf.h"
-#include "goofit/UnbinnedDataSet.h"
+#include <goofit/Application.h>
+#include <goofit/FitManager.h>
+#include <goofit/PDFs/basic/BifurGaussPdf.h>
+#include <goofit/PDFs/basic/LandauPdf.h>
+#include <goofit/PDFs/basic/NovosibirskPdf.h>
+#include <goofit/UnbinnedDataSet.h>
 
-#include "TCanvas.h"
-#include "TH1F.h"
-#include "TRandom.h"
-#include "TStyle.h"
-#include "goofit/Variable.h"
+#include <TCanvas.h>
+#include <TH1F.h>
+#include <TRandom.h>
+#include <TStyle.h>
+#include <goofit/Variable.h>
 
 #include <iostream>
 #include <sys/time.h>

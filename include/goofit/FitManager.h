@@ -2,7 +2,7 @@
 
 // Glue class that talks to MINUIT
 
-#include "goofit/fitting/FitManagerMinuit2.h"
+#include <goofit/fitting/FitManagerMinuit2.h>
 
 namespace GooFit {
 

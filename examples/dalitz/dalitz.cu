@@ -1,14 +1,14 @@
 // ROOT stuff
-#include "TCanvas.h"
-#include "TFile.h"
-#include "TH1F.h"
-#include "TH2F.h"
-#include "TLegend.h"
-#include "TLine.h"
-#include "TRandom.h"
-#include "TRandom3.h"
-#include "TStyle.h"
-#include "TText.h"
+#include <TCanvas.h>
+#include <TFile.h>
+#include <TH1F.h>
+#include <TH2F.h>
+#include <TLegend.h>
+#include <TLine.h>
+#include <TRandom.h>
+#include <TRandom3.h>
+#include <TStyle.h>
+#include <TText.h>
 
 // System stuff
 #include <fstream>
@@ -16,17 +16,17 @@
 #include <sys/times.h>
 
 // GooFit stuff
-#include "goofit/Application.h"
-#include "goofit/FitManager.h"
-#include "goofit/PDFs/GooPdf.h"
-#include "goofit/PDFs/basic/PolynomialPdf.h"
-#include "goofit/PDFs/combine/AddPdf.h"
-#include "goofit/PDFs/combine/ProdPdf.h"
-#include "goofit/PDFs/physics/DalitzPlotPdf.h"
-#include "goofit/PDFs/physics/DalitzVetoPdf.h"
-#include "goofit/PDFs/physics/ResonancePdf.h"
-#include "goofit/UnbinnedDataSet.h"
-#include "goofit/Variable.h"
+#include <goofit/Application.h>
+#include <goofit/FitManager.h>
+#include <goofit/PDFs/GooPdf.h>
+#include <goofit/PDFs/basic/PolynomialPdf.h>
+#include <goofit/PDFs/combine/AddPdf.h>
+#include <goofit/PDFs/combine/ProdPdf.h>
+#include <goofit/PDFs/physics/DalitzPlotPdf.h>
+#include <goofit/PDFs/physics/DalitzVetoPdf.h>
+#include <goofit/PDFs/physics/ResonancePdf.h>
+#include <goofit/UnbinnedDataSet.h>
+#include <goofit/Variable.h>
 
 using namespace std;
 using namespace GooFit;

@@ -9,11 +9,11 @@ Also right now it is the home to some helper functions needed and an implementat
 on the GPU
 */
 
-#include "goofit/PDFs/physics/LineshapesPdf.h"
-#include "goofit/PDFs/physics/SpinFactors.h"
+#include <goofit/PDFs/physics/LineshapesPdf.h>
+#include <goofit/PDFs/physics/SpinFactors.h>
 
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-#include "goofit/detail/compute_inverse5.h"
+#include <goofit/detail/compute_inverse5.h>
 #endif
 
 #include <utility>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "goofit/Color.h"
+#include <goofit/Color.h>
 #include <fmt/format.h>
 
 #include <iostream>

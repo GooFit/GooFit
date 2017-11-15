@@ -15,7 +15,7 @@
 
 #include <thrust/system/cuda/detail/bulk.h>
 
-#include "goofit/detail/ThrustOverrideConfig.h"
+#include <goofit/detail/ThrustOverrideConfig.h>
 
 #ifndef OR_GROUPSIZE
 #define OR_GROUPSIZE 128

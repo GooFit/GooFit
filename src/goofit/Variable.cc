@@ -1,5 +1,5 @@
-#include "goofit/Variable.h"
-#include "goofit/Error.h"
+#include <goofit/Variable.h>
+#include <goofit/Error.h>
 
 #include <algorithm>
 

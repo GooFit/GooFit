@@ -1,14 +1,14 @@
 #pragma once
 
-#include "goofit/GlobalCudaDefines.h"
+#include <goofit/GlobalCudaDefines.h>
 
 #include <initializer_list>
 #include <set>
 #include <string>
 #include <vector>
 
-#include "goofit/Error.h"
-#include "goofit/Variable.h"
+#include <goofit/Error.h>
+#include <goofit/Variable.h>
 
 namespace GooFit {
 

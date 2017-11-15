@@ -1,4 +1,4 @@
-#include "goofit/PDFs/basic/NovosibirskPdf.h"
+#include <goofit/PDFs/basic/NovosibirskPdf.h>
 
 namespace GooFit {
 

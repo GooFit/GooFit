@@ -1,9 +1,9 @@
-#include "goofit/Application.h"
-#include "goofit/FitManager.h"
-#include "goofit/PDFs/basic/GaussianPdf.h"
-#include "goofit/PDFs/combine/ProdPdf.h"
-#include "goofit/UnbinnedDataSet.h"
-#include "goofit/Variable.h"
+#include <goofit/Application.h>
+#include <goofit/FitManager.h>
+#include <goofit/PDFs/basic/GaussianPdf.h>
+#include <goofit/PDFs/combine/ProdPdf.h>
+#include <goofit/UnbinnedDataSet.h>
+#include <goofit/Variable.h>
 
 #include <RVersion.h>
 #include <TCanvas.h>

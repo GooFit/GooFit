@@ -1,4 +1,4 @@
-#include "goofit/PDFs/basic/ExpGausPdf.h"
+#include <goofit/PDFs/basic/ExpGausPdf.h>
 
 namespace GooFit {
 

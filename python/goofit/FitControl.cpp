@@ -5,6 +5,7 @@
 #include <pybind11/stl.h>
 
 #include <goofit/FitControl.h>
+
 #include <Minuit2/FunctionMinimum.h>
 
 namespace py = pybind11;

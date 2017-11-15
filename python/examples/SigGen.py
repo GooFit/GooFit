@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
 from goofit import *
+import numpy as np
+
+print_goofit_info()
 
 # Constants used in more than one PDF component.
 _mD0       = 1.8645
@@ -170,11 +174,11 @@ coefficients = (constantOne,)
 eff = PolynomialPdf("constantEff", observables, coefficients, offsets, 0)
 dp  = DPPdf("test", observables, DK3P_DI, eff, 5)
 
-k=0
-while k < 4:
+for k in range(4):
     numEvents = 1000000
     dp.setGenerationOffset(k * numEvents)
-    tuple = dp.GenerateSig(numEvents)
-    k+=1
+    particles, variables, weights, flags = dp.GenerateSig(numEvents)
+    accepted = int(np.sum(flags))
+    print("Using accept-reject method would leave you with", accepted, "out of", numEvents, "events")
 
 

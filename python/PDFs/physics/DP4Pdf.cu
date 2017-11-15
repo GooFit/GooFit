@@ -42,7 +42,7 @@ void init_DP4Pdf(py::module &m) {
                  std::tie(particles, variables, weights, flags) = self.GenerateSig(numEvents);
 
                  py::array_t<fptype> pyparticles{{(size_t)4, 4 * numEvents}};
-                 py::array_t<fptype> pyvariables{{(size_t)6, numEvents}};
+                 py::array_t<fptype> pyvariables{{(size_t)5, numEvents}};
                  py::array_t<fptype> pyweights{numEvents};
                  py::array_t<fptype> pyflags{numEvents};
 
@@ -55,7 +55,7 @@ void init_DP4Pdf(py::module &m) {
                      }
                  }
 
-                 for(int i = 0; i < 6; i++) {
+                 for(int i = 0; i < 5; i++) {
                      for(int j = 0; j < numEvents; j++) {
                          pyvariables.mutable_at(i, j) = (*(variables[i]))[j];
                      }

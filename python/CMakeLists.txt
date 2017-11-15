@@ -73,6 +73,9 @@ install(TARGETS _goofit LIBRARY DESTINATION goofit)
 file(WRITE "${CMAKE_BINARY_DIR}/goofit/__init__.py" "from ._goofit import *")
 install(FILES "${CMAKE_BINARY_DIR}/goofit/__init__.py" DESTINATION "goofit")
 
+file(WRITE "${CMAKE_BINARY_DIR}/goofit/__main__.py" "from ._goofit import print_goofit_info; print_goofit_info()")
+install(FILES "${CMAKE_BINARY_DIR}/goofit/__main__.py" DESTINATION "goofit")
+
 add_custom_target(pygoofit_tests ALL
     COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/tests ${PROJECT_BINARY_DIR}/pytests)
 set_target_properties(pygoofit_tests PROPERTIES FOLDER python)

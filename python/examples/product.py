@@ -17,15 +17,7 @@ yvar = Observable("yvar", 0, np.max(ydata) + 1)
 varList = (xvar,yvar)
 
 data = UnbinnedDataSet(xvar,yvar)
-
-i = 0
-while i < 100000:
-
-    xvar.value = xvar.upperlimit - np.log(1+random()/2)
-    yvar.value = yvar.upperlimit - np.log(1+random()/2)
-
-    data.addEvent()
-    i+=1
+data.from_matrix([xdata, ydata])
 
 alpha_x = Variable("alpha_x", -2.4, 0.1, -10, 10)
 alpha_y = Variable("alpha_y", -1.1, 0.1, -10, 10)

@@ -1,14 +1,13 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from __future__ import print_function, division
 
 from goofit import *
 import numpy as np
 import os
 
-GDIR = os.path.dirname(os.path.abspath(__file__))
-for i in range(2):
-    GDIR = os.path.dirname(GDIR) # up to goofit dir
-
-import os
+print_goofit_info()
 
 GDIR = os.path.dirname(os.path.abspath(__file__))
 for i in range(2):

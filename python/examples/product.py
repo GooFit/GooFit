@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function, division
+
 from goofit import *
 import numpy as np
-import math
-from random import *
+
+print_goofit_info()
 
 xdata = np.random.exponential(size=100000)
 xvar = Observable("xvar", 0, np.max(xdata) + 1)
@@ -19,8 +21,8 @@ data = UnbinnedDataSet(xvar,yvar)
 i = 0
 while i < 100000:
 
-    xvar.value = xvar.upperlimit - math.log(1+random()/2)
-    yvar.value = yvar.upperlimit - math.log(1+random()/2)
+    xvar.value = xvar.upperlimit - np.log(1+random()/2)
+    yvar.value = yvar.upperlimit - np.log(1+random()/2)
 
     data.addEvent()
     i+=1

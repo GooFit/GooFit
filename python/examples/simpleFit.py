@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function, division
+
 from goofit import *
-import math
 import numpy as np
 import pylandau
+
+print_goofit_info()
 
 # CPU-side Novosibirsk evaluation for use in generating toy MC.
 def novosib(x,peak,width,tail):
@@ -14,24 +17,24 @@ def novosib(x,peak,width,tail):
     qx = 0
     qy = 0
 
-    if abs(tail) < math.pow(10,-7):
-        qc = 0.5 * math.pow(((x - peak) / width), 2)
+    if abs(tail) < np.pow(10,-7):
+        qc = 0.5 * np.pow(((x - peak) / width), 2)
     else:
-        qa = tail * math.sqrt(math.log(4.))
-        qb = math.sinh(qa) / qa
+        qa = tail * np.sqrt(np.log(4.))
+        qb = np.sinh(qa) / qa
         qx = (x - peak) / width * qb
         qy = 1. + tail * qx
 
         #---- Cutting curve from right side
 
-        if qy > math.pow(10,-7):
-            qc = 0.5 * (math.pow((math.log(qy) / tail), 2) + tail * tail)
+        if qy > np.pow(10,-7):
+            qc = 0.5 * (np.pow((np.log(qy) / tail), 2) + tail * tail)
         else:
             qc = 15.0
 
     #---- Normalize the result
 
-    return math.exp(-qc)
+    return np.exp(-qc)
 
 
 
@@ -98,8 +101,8 @@ def main():
 
     leftSigma     = 13
     rightSigma    = 29
-    leftIntegral  = 0.5 / (leftSigma * math.sqrt(2 * math.pi))
-    rightIntegral = 0.5 / (rightSigma * math.sqrt(2 * math.pi))
+    leftIntegral  = 0.5 / (leftSigma * np.sqrt(2 * np.pi))
+    rightIntegral = 0.5 / (rightSigma * np.sqrt(2 * np.pi))
     totalIntegral = leftIntegral + rightIntegral
     bifpoint      = -10
 

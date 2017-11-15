@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from goofit import *
+from __future__ import print_function, division
 
-import math
+from goofit import *
 import numpy as np
+
+print_goofit_info()
 
 _mD0       = 1.8645
 piPlusMass = 0.13957018
@@ -14,7 +16,7 @@ def main():
         Variable("tau", 0.4101, 0.001, 0.300, 0.500),
         Variable("xmixing", 0.005, 0.001, 0, 0),
         Variable("ymixing", 0.01, 0.001, 0, 0),
-        Variable("SqWStoRSrate", 1.0 / math.sqrt(300.0))
+        Variable("SqWStoRSrate", 1.0 / np.sqrt(300.0))
         )
     DK3P_DI.meson_radius = 1.5
     DK3P_DI.particle_masses = (_mD0,piPlusMass,piPlusMass,KmMass,piPlusMass)

@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function, division
+
 from goofit import *
-
 import numpy as np
-import math
 
+print_goofit_info()
 
 decayTime  = Observable("decayTime",0,10)
 
@@ -69,7 +70,7 @@ def fitRatio(decayTime, weights, rsEvts, wsEvts, plotName = ""):
 
         error = wsEvts[i] / pow(rsEvts[i], 2)
         error += pow(wsEvts[i], 2) / pow(rsEvts[i], 3)
-        error = math.sqrt(error)
+        error = np.sqrt(error)
 
         ratioData.setBinContent(i, ratio)
         ratioData.setBinError(i, error)
@@ -179,8 +180,8 @@ def main():
     d0barEvtsWS = np.array([])
     d0barEvtsRS = np.array([])
 
-    dZeroLinearCoef = magPQ * math.sqrt(rSubD) * (y_mix * math.cos(delta + wpPhi) - x_mix * math.sin(delta + wpPhi))
-    d0barLinearCoef = magQP * math.sqrt(rBarD) * (y_mix * math.cos(delta - wpPhi) - x_mix * math.sin(delta - wpPhi))
+    dZeroLinearCoef = magPQ * np.sqrt(rSubD) * (y_mix * np.cos(delta + wpPhi) - x_mix * np.sin(delta + wpPhi))
+    d0barLinearCoef = magQP * np.sqrt(rBarD) * (y_mix * np.cos(delta - wpPhi) - x_mix * np.sin(delta - wpPhi))
 
     dZeroSecondCoef = 0.25 * magPQ * magPQ * (x_mix * x_mix + y_mix * y_mix)
     d0barSecondCoef = 0.25 * magQP * magQP * (x_mix * x_mix + y_mix * y_mix)

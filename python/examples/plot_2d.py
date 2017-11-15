@@ -1,7 +1,12 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from __future__ import print_function, division
 
 from goofit import *
 import numpy as np
+
+print_goofit_info()
 
 # Create random data
 xarr = np.random.normal(.2, 1.1, size=100000)

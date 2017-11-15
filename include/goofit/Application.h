@@ -274,6 +274,7 @@ class Application : public CLI::App {
 
     /// Cleanup MPI
     ~Application() {
+// Intentionally empty, comment needed to avoid clang warning about = default
 #ifdef GOOFIT_MPI
         MPI_Finalize();
 #endif

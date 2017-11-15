@@ -53,7 +53,7 @@ using CLI::Success;
 /// Orignal: Slant Relief from http://patorjk.com/software/taag/#p=testall&f=Wavy&t=GooFit (tightened a bit)
 /// New: Block letters
 void print_splash() {
-    std::cout << std::endl << reset << green << "       Welcome to";
+    std::cout << reset << green << "       Welcome to";
     std::string splash = R"raw(
    ██████╗                 ████████╗
   ██╔════╝  █████╗  █████╗ ██╔═════╝  ██╗
@@ -81,6 +81,8 @@ void print_splash() {
             cur_green = false;
         }
         std::cout << splash[i];
+        if(splash[i] == '\n')
+            std::cout << std::flush;
     }
 
     std::cout << reset << std::flush;
@@ -215,6 +217,8 @@ class Application : public CLI::App {
 #elif THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CPP
             GOOFIT_INFO("CPP: Single threaded mode");
 #endif
+
+            GOOFIT_INFO("ROOT: {}", GOOFIT_ROOT_FOUND ? "Found" : "Not found");
 
             // Print out warnings if not fully optimized
             std::cout << red;

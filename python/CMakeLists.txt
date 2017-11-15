@@ -8,6 +8,7 @@ goofit_add_library(_goofit MODULE
     goofit/PdfBase.cpp
     goofit/Version.cpp
     goofit/FitControl.cpp
+    goofit/Application.cpp
     PDFs/GooPdf.cu
     PDFs/basic/ArgusPdf.cu
     PDFs/basic/BifurGaussPdf.cu
@@ -82,6 +83,6 @@ set_target_properties(pygoofit_examples PROPERTIES FOLDER python)
 if(NOT SKBUILD)
     add_custom_command(TARGET _goofit POST_BUILD
                        COMMAND ${CMAKE_COMMAND} -E cmake_echo_color --cyan
-                       "Python bindings built, run \\\"export PYTHONPATH=${PROJECT_BINARY_DIR}\\\" to use")
+                       "Python bindings built, use 'export PYTHONPATH=${PROJECT_BINARY_DIR}'")
 endif()
 

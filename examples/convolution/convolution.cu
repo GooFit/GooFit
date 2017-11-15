@@ -1,15 +1,15 @@
 #include "goofit/Application.h"
-#include "goofit/Variable.h"
 #include "goofit/FitManager.h"
-#include "goofit/UnbinnedDataSet.h"
 #include "goofit/PDFs/basic/BWPdf.h"
 #include "goofit/PDFs/basic/GaussianPdf.h"
 #include "goofit/PDFs/combine/ConvolutionPdf.h"
+#include "goofit/UnbinnedDataSet.h"
+#include "goofit/Variable.h"
 
-#include "TRandom.h"
 #include "TCanvas.h"
-#include "TH1.h"
 #include "TFile.h"
+#include "TH1.h"
+#include "TRandom.h"
 
 using namespace std;
 using namespace GooFit;

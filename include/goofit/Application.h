@@ -1,10 +1,10 @@
 #pragma once
 
-#include <CLI/CLI.hpp>
-#include "goofit/Version.h"
-#include "goofit/Error.h"
 #include "goofit/Color.h"
+#include "goofit/Error.h"
 #include "goofit/Log.h"
+#include "goofit/Version.h"
+#include <CLI/CLI.hpp>
 
 #include <thrust/detail/config/device_system.h>
 #include <x86/cpu_x86.h>

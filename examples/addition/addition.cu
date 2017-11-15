@@ -1,20 +1,20 @@
 #include "goofit/Application.h"
-#include "goofit/Variable.h"
-#include "goofit/PDFs/basic/GaussianPdf.h"
-#include "goofit/PDFs/combine/AddPdf.h"
-#include "goofit/PDFs/basic/PolynomialPdf.h"
 #include "goofit/FitManager.h"
+#include "goofit/PDFs/basic/GaussianPdf.h"
+#include "goofit/PDFs/basic/PolynomialPdf.h"
+#include "goofit/PDFs/combine/AddPdf.h"
 #include "goofit/UnbinnedDataSet.h"
+#include "goofit/Variable.h"
 
-#include "TRandom.h"
+#include "TCanvas.h"
 #include "TH1F.h"
 #include "TH2F.h"
+#include "TRandom.h"
 #include "TStyle.h"
-#include "TCanvas.h"
 
+#include <iostream>
 #include <sys/time.h>
 #include <sys/times.h>
-#include <iostream>
 
 using namespace std;
 using namespace GooFit;

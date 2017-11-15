@@ -1,20 +1,20 @@
 #include "goofit/Application.h"
-#include "goofit/Variable.h"
+#include "goofit/FitManager.h"
 #include "goofit/PDFs/basic/GaussianPdf.h"
 #include "goofit/PDFs/combine/ProdPdf.h"
-#include "goofit/FitManager.h"
 #include "goofit/UnbinnedDataSet.h"
+#include "goofit/Variable.h"
 
+#include <RVersion.h>
+#include <TCanvas.h>
 #include <TH1F.h>
 #include <TH2F.h>
 #include <TStyle.h>
-#include <TCanvas.h>
-#include <RVersion.h>
 
-#include <sys/time.h>
-#include <sys/times.h>
 #include <iostream>
 #include <random>
+#include <sys/time.h>
+#include <sys/times.h>
 
 using namespace std;
 using namespace GooFit;

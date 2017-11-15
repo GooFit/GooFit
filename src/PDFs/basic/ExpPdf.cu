@@ -1,5 +1,5 @@
-#include "goofit/PDFs/basic/ExpPdf.h"
 #include "goofit/Error.h"
+#include "goofit/PDFs/basic/ExpPdf.h"
 
 namespace GooFit {
 

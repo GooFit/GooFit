@@ -1,6 +1,6 @@
 
-#include <cmath>
 #include <Eigen/Core>
+#include <cmath>
 #include <goofit/detail/Complex.h>
 
 namespace GooFit {

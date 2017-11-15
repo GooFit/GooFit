@@ -1,5 +1,5 @@
-#include "goofit/PDFs/basic/VoigtianPdf.h"
 #include "goofit/Faddeeva.h"
+#include "goofit/PDFs/basic/VoigtianPdf.h"
 #include "goofit/detail/Complex.h"
 #include <limits>
 

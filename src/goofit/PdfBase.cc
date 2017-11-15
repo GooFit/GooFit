@@ -1,8 +1,8 @@
-#include "goofit/GlobalCudaDefines.h"
+#include "goofit/PdfBase.h"
 #include "goofit/Color.h"
 #include "goofit/Error.h"
+#include "goofit/GlobalCudaDefines.h"
 #include "goofit/Log.h"
-#include "goofit/PdfBase.h"
 #include "goofit/Variable.h"
 
 #include <algorithm>

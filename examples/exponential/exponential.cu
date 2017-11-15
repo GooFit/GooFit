@@ -1,8 +1,8 @@
 #include "goofit/Application.h"
-#include "goofit/Variable.h"
 #include "goofit/FitManager.h"
-#include "goofit/UnbinnedDataSet.h"
 #include "goofit/PDFs/basic/ExpPdf.h"
+#include "goofit/UnbinnedDataSet.h"
+#include "goofit/Variable.h"
 #include <CLI/Timer.hpp>
 #include <iostream>
 

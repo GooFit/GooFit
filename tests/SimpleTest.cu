@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
-#include "goofit/Variable.h"
 #include "goofit/UnbinnedDataSet.h"
+#include "goofit/Variable.h"
 
 using namespace GooFit;
 

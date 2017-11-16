@@ -15,7 +15,7 @@ lcov --list coverage.info #debug info
 # Uploading report to CodeCov
 bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
 
-cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DGOOFIT_PYTHON=ON ..
+cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DGOOFIT_PYTHON=ON -DGOOFIT_SPLASH=OFF ..
 make -j2
 
 ./examples/RunAll.py

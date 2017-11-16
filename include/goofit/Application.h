@@ -54,6 +54,7 @@ using CLI::Success;
 /// New: Block letters
 void print_splash() {
     std::cout << reset << green << "       Welcome to";
+#if GOOFIT_SPLASH
     std::string splash = R"raw(
    ██████╗                 ████████╗
   ██╔════╝  █████╗  █████╗ ██╔═════╝  ██╗
@@ -84,6 +85,9 @@ void print_splash() {
         if(splash[i] == '\n')
             std::cout << std::flush;
     }
+#else
+    std::cout << " GooFit\n";
+#endif
 
     std::cout << reset << std::flush;
 }

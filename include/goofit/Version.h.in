@@ -19,5 +19,7 @@
 #define GOOFIT_HOST "@GOOFIT_HOST@"
 
 #define GOOFIT_ARCH_FLAGS "@GOOFIT_ARCH_FLAGS@"
+
 #cmakedefine01 GOOFIT_ROOT_FOUND
+#cmakedefine01 GOOFIT_SPLASH
 

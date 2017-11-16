@@ -427,6 +427,8 @@ target_link_libraries(GooFit_Common INTERFACE Eigen)
 set(GOOFIT_ROOT_FOUND ROOT_FOUND)
 set(GOOFIT_ARCH_FLAGS ARCH_FLAGS)
 
+option(GOOFIT_SPLASH "Show a unicode splash or a small plain text one" ON)
+
 # Output the current GooFit version
 configure_file (
     "${PROJECT_SOURCE_DIR}/include/goofit/Version.h.in"

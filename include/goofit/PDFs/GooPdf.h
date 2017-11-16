@@ -59,7 +59,7 @@ struct ParameterContainer {
         return RO_CACHE(normalisations[normalIdx + i + 1]);
     }
 
-    inline __device__ int getNumParameterss() {
+    inline __device__ int getNumParameters() {
         return (int) RO_CACHE(parameters[parameterIdx]);
     }
 

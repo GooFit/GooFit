@@ -5,6 +5,7 @@ from __future__ import print_function, division
 
 from goofit import *
 import numpy as np
+import sys
 
 print_goofit_info()
 
@@ -29,3 +30,5 @@ product = ProdPdf("product", (exp_x, exp_y))
 product.setData(data)
 fitter = FitManager(product)
 fitter.fit()
+
+sys.exit(int(int(fitter)))

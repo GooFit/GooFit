@@ -218,7 +218,11 @@ class Application : public CLI::App {
             GOOFIT_INFO("CPP: Single threaded mode");
 #endif
 
-            GOOFIT_INFO("ROOT: {}", GOOFIT_ROOT_FOUND ? "Found" : "Not found");
+#if GOOFIT_ROOT_FOUND
+            GOOFIT_INFO("ROOT: Found");
+#else
+            GOOFIT_INFO("ROOT: Not found");
+#endif
 
             // Print out warnings if not fully optimized
             std::cout << red;

@@ -20,6 +20,8 @@ make -j2
 
 ./examples/RunAll.py
 
+export PYTHONPATH=`pwd`
+
 pytest
 ./pyexamples/RunAll.sh
 

@@ -1,7 +1,8 @@
 #pragma once
 
-#include <goofit/PDFs/GooPdf.h>
 #include <vector>
+
+#include <goofit/PDFs/GooPdf.h>
 
 namespace GooFit {
 

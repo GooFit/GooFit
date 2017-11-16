@@ -30,6 +30,7 @@ void init_Tddp4Pdf(py::module &m) {
              "eff"_a,
              "mistag"_a       = nullptr,
              "MCeventsNorm"_a = 5e6,
+             py::keep_alive<1, 4>(),
              py::keep_alive<1, 5>(),
              py::keep_alive<1, 6>(),
              py::keep_alive<1, 7>())

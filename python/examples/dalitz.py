@@ -245,4 +245,4 @@ def main():
     filename = GOOFIT_SOURCE_DIR + "/examples/dalitz/dalitz_toyMC_000.txt"
     return runToyFit(filename)
 
-sys.exit(int(main()))
+sys.exit(int(int(main())))

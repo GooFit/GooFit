@@ -29,6 +29,7 @@ void init_TddpPdf(py::module &m) {
              "decay",
              "r",
              "eff",
+             py::keep_alive<1, 8>(),
              py::keep_alive<1, 9>(),
              py::keep_alive<1, 10>())
         .def(py::init<std::string,
@@ -51,6 +52,7 @@ void init_TddpPdf(py::module &m) {
              "r",
              "eff",
              "mistag",
+             py::keep_alive<1, 7>(),
              py::keep_alive<1, 8>(),
              py::keep_alive<1, 9>(),
              py::keep_alive<1, 10>(),
@@ -75,6 +77,7 @@ void init_TddpPdf(py::module &m) {
              "r",
              "eff",
              "md0",
+             py::keep_alive<1, 7>(),
              py::keep_alive<1, 9>(),
              py::keep_alive<1, 10>())
         .def(py::init<std::string,
@@ -99,9 +102,9 @@ void init_TddpPdf(py::module &m) {
              "eff",
              "md0"
              "mistag",
+             py::keep_alive<1, 7>(),
              py::keep_alive<1, 8>(),
              py::keep_alive<1, 9>(),
              py::keep_alive<1, 10>(),
              py::keep_alive<1, 11>());
-    // TODO: Please use annotations and defaults here!
 }

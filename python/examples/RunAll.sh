@@ -12,8 +12,8 @@ time python DP4.py
 time python product.py
 time python TDDP4.py
 time python SigGen.py
-#time python chisquare.py
-#time python dalitz.py
+time python chisquare.py
+time python dalitz.py
 #time python simpleFit.py
 #time python zachFit.py
 #time python pipipi0.py

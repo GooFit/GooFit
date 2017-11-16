@@ -16,5 +16,6 @@ void init_IncoherentSumPdf(py::module &m) {
              "eventNumber",
              "decay",
              "eff",
+             py::keep_alive<1, 6>(),
              py::keep_alive<1, 7>());
 }

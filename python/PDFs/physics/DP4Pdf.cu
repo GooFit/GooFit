@@ -19,6 +19,7 @@ void init_DP4Pdf(py::module &m) {
              "observables",
              "decay",
              "eff",
+             py::keep_alive<1, 4>(),
              py::keep_alive<1, 5>())
         .def(py::init<std::string, std::vector<Observable>, DecayInfo4, GooPdf *, unsigned int>(),
              "n",
@@ -26,6 +27,7 @@ void init_DP4Pdf(py::module &m) {
              "decay",
              "eff",
              "MCeventsNorm",
+             py::keep_alive<1, 4>(),
              py::keep_alive<1, 5>())
         .def("normalize", &DPPdf::normalize)
         .def("setDataSize", &DPPdf::setDataSize, "dataSize"_a, "evtSize"_a = 6)

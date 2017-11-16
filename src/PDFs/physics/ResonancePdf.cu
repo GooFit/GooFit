@@ -101,11 +101,11 @@ __device__ fpcomplex plainBW(fptype m12, fptype m13, fptype m23, ParameterContai
     // fptype daug3Mass    = c_daug3Mass;//RO_CACHE(pc.constants[pc.constantIdx + 4]);
     // fptype meson_radius = c_meson_radius;//RO_CACHE(pc.constants[pc.constantIdx + 5]);
 
-    unsigned int spin         = RO_CACHE(pc.constants[pc.constantIdx + 1]);
-    unsigned int cyclic_index = RO_CACHE(pc.constants[pc.constantIdx + 2]);
+    unsigned int spin         = pc.getConstant(0);
+    unsigned int cyclic_index = pc.getConstant(1);
 
-    fptype resmass  = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
-    fptype reswidth = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
+    fptype resmass  = pc.getParameter(0);
+    fptype reswidth = pc.getParameter(1);
 
     fptype rMassSq  = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
     fptype frFactor = 1;
@@ -135,17 +135,17 @@ __device__ fpcomplex plainBW(fptype m12, fptype m13, fptype m23, ParameterContai
     ret *= sqrt(frFactor);
     fptype spinF = spinFactor(spin, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass, m12, m13, m23, cyclic_index);
     ret *= spinF;
-    pc.incrementIndex(1, 2, 2, 0, 1);
+    pc.incrementIndex(1, 2, 3, 0, 1);
     // printf("%f, %f, %f, %f\n",ret.real, ret.imag, m12, m13);
     return ret;
 }
 
 __device__ fpcomplex gaussian(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) {
     // indices[1] is unused constant index, for consistency with other function types.
-    fptype resmass  = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
-    fptype reswidth = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
+    fptype resmass  = pc.getParameter(0);
+    fptype reswidth = pc.getParameter(1);
 
-    unsigned int cyclic_index = RO_CACHE(pc.constants[pc.constantIdx + 1]);
+    unsigned int cyclic_index = pc.getConstant(0);
 
     // Notice sqrt - this function uses mass, not mass-squared like the other resonance types.
     fptype massToUse = sqrt(PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
@@ -215,11 +215,11 @@ __device__ fpcomplex gouSak(fptype m12, fptype m13, fptype m23, ParameterContain
     // fptype daug3Mass    = c_daug3Mass;//RO_CACHE(pc.constants[pc.constantIdx + 4]);
     // fptype meson_radius = c_meson_radius;//RO_CACHE(pc.constants[pc.constantIdx + 5]);
 
-    unsigned int spin         = RO_CACHE(pc.constants[pc.constantIdx + 1]);
-    unsigned int cyclic_index = RO_CACHE(pc.constants[pc.constantIdx + 2]);
+    unsigned int spin         = pc.getConstant(0);
+    unsigned int cyclic_index = pc.getConstant(1);
 
-    fptype resmass  = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
-    fptype reswidth = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
+    fptype resmass  = pc.getParameter(0);
+    fptype reswidth = pc.getParameter(1);
 
     fptype rMassSq  = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
     fptype frFactor = 1;
@@ -250,7 +250,7 @@ __device__ fpcomplex gouSak(fptype m12, fptype m13, fptype m23, ParameterContain
     retur *= sqrt(frFactor);
     retur *= spinFactor(spin, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass, m12, m13, m23, cyclic_index);
 
-    pc.incrementIndex(1, 2, 2, 0, 1);
+    pc.incrementIndex(1, 2, 3, 0, 1);
 
     return retur;
 }
@@ -262,11 +262,11 @@ __device__ fpcomplex lass(fptype m12, fptype m13, fptype m23, ParameterContainer
     // fptype daug3Mass    = c_daug3Mass;//RO_CACHE(pc.constants[pc.constantIdx + 4]);
     // fptype meson_radius = c_meson_radius;//RO_CACHE(pc.constants[pc.constantIdx + 5]);
 
-    unsigned int spin         = RO_CACHE(pc.constants[pc.constantIdx + 1]);
-    unsigned int cyclic_index = RO_CACHE(pc.constants[pc.constantIdx + 2]);
+    unsigned int spin         = pc.getConstant(0);
+    unsigned int cyclic_index = pc.getConstant(1);
 
-    fptype resmass  = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
-    fptype reswidth = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
+    fptype resmass  = pc.getParameter(0);
+    fptype reswidth = pc.getParameter(1);
 
     fptype rMassSq  = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
     fptype frFactor = 1;
@@ -326,7 +326,7 @@ __device__ fpcomplex lass(fptype m12, fptype m13, fptype m23, ParameterContainer
     resT *= sqrt(frFactor);
     resT *= spinFactor(spin, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass, m12, m13, m23, cyclic_index);
 
-    pc.incrementIndex(1, 2, 2, 0, 1);
+    pc.incrementIndex(1, 2, 3, 0, 1);
 
     return resT;
 }
@@ -348,11 +348,11 @@ getAmplitudeCoefficients(fpcomplex a1, fpcomplex a2, fptype &a1sq, fptype &a2sq,
 
 __device__ fpcomplex flatte(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) {
     // indices[1] is unused constant index, for consistency with other function types.
-    fptype resmass            = pc.parameters[pc.parameterIdx + 1];
-    fptype g1                 = pc.parameters[pc.parameterIdx + 2];
-    fptype g2                 = pc.parameters[pc.parameterIdx + 3] * g1;
-    unsigned int cyclic_index = pc.constants[pc.constantIdx + 1];
-    unsigned int doSwap       = pc.constants[pc.constantIdx + 2];
+    fptype resmass            = pc.getParameter(0);
+    fptype g1                 = pc.getParameter(1);
+    fptype g2                 = pc.getParameter(2) * g1;
+    unsigned int cyclic_index = pc.getConstant(0);
+    unsigned int doSwap       = pc.getConstant(1);
 
     fptype pipmass = 0.13957018;
     fptype pi0mass = 0.1349766;
@@ -406,9 +406,9 @@ __device__ fpcomplex flatte(fptype m12, fptype m13, fptype m23, ParameterContain
 
 __device__ fpcomplex cubicspline(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) {
     fpcomplex ret(0, 0);
-    unsigned int cyclic_index        = pc.constants[pc.constantIdx + 2];
-    unsigned int doSwap              = pc.constants[pc.constantIdx + 3];
-    const unsigned int nKnobs        = pc.constants[pc.constantIdx + 4];
+    unsigned int cyclic_index        = pc.getConstant(1);
+    unsigned int doSwap              = pc.getConstant(2);
+    const unsigned int nKnobs        = pc.getConstant(3);
     unsigned int idx                 = 5; // Next index
     unsigned int i                   = 0;
     const unsigned int pwa_coefs_idx = idx;
@@ -451,10 +451,10 @@ __device__ fpcomplex cubicspline(fptype m12, fptype m13, fptype m23, ParameterCo
         unsigned int kloAB                = khiAB - 1; //, kloAC = khiAC -1;
         unsigned int twokloAB             = kloAB + kloAB;
         unsigned int twokhiAB             = khiAB + khiAB;
-        fptype pwa_coefs_real_kloAB       = pc.parameters[pc.parameterIdx + pwa_coefs_idx + twokloAB];
-        fptype pwa_coefs_real_khiAB       = pc.parameters[pc.parameterIdx + pwa_coefs_idx + twokhiAB];
-        fptype pwa_coefs_imag_kloAB       = pc.parameters[pc.parameterIdx + pwa_coefs_idx + twokloAB + 1];
-        fptype pwa_coefs_imag_khiAB       = pc.parameters[pc.parameterIdx + pwa_coefs_idx + twokhiAB + 1];
+        fptype pwa_coefs_real_kloAB       = pc.getParameter(pwa_coefs_idx + twokloAB);
+        fptype pwa_coefs_real_khiAB       = pc.getParameter(pwa_coefs_idx + twokhiAB);
+        fptype pwa_coefs_imag_kloAB       = pc.getParameter(pwa_coefs_idx + twokloAB + 1);
+        fptype pwa_coefs_imag_khiAB       = pc.getParameter(pwa_coefs_idx + twokhiAB + 1);
         //fptype pwa_coefs_prime_real_kloAB = cDeriatives[twokloAB];
         fptype pwa_coefs_prime_real_kloAB = 1.0;
         fptype pwa_coefs_prime_real_khiAB = 1.0;
@@ -467,8 +467,8 @@ __device__ fpcomplex cubicspline(fptype m12, fptype m13, fptype m23, ParameterCo
         //  pwa_coefs_real_khiAB, pwa_coefs_imag_khiAB, pwa_coefs_prime_real_khiAB, pwa_coefs_prime_imag_khiAB, khiAB,
         //  khiAC, timestorun );
 
-        dmKK = pc.constants[pc.constantIdx + khiAB] - pc.constants[pc.constantIdx + kloAB];
-        aa   = (pc.constants[pc.constantIdx + khiAB] - mAB) / dmKK;
+        dmKK = pc.getConstant(pc.constantIdx + khiAB) - pc.getConstant(pc.constantIdx + kloAB);
+        aa   = (pc.getConstant(pc.constantIdx + khiAB) - mAB) / dmKK;
         bb   = 1 - aa;
         aa3  = aa * aa * aa;
         bb3  = bb * bb * bb;
@@ -647,11 +647,11 @@ void ResonancePdf::recursiveSetIndices() {
         GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_LASS");
         GET_FUNCTION_ADDR(ptr_to_LASS);
     } else if(resonanceType == 3) {
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_NONRES");
-        GET_FUNCTION_ADDR(ptr_to_NONRES);
-    } else if(resonanceType == 4) {
         GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_GAUSSIAN");
         GET_FUNCTION_ADDR(ptr_to_GAUSSIAN);
+    } else if(resonanceType == 4) {
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_NONRES");
+        GET_FUNCTION_ADDR(ptr_to_NONRES);
     }
 
     host_function_table[num_device_functions] = host_fcn_ptr;

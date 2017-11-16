@@ -69,7 +69,7 @@ struct exp_functor {
         //while
         //    fptype time = evt[indices[8 + indices[0]]];
 
-        int id = pc.observables[pc.observableIdx + 1];
+        int id = pc.getObservable(0);
         fptype time = evt[id];
 
         thrust::random::minstd_rand0 rand(1431655765);
@@ -99,13 +99,13 @@ __device__ fptype device_TDDP4(fptype *evt, ParameterContainer &pc) {
     // printf("DalitzPlot evt %i zero: %i %i %f (%f, %f).\n", evtNum, numResonances, effFunctionIdx, eff, totalAmp.real,
     // totalAmp.imag);
 
-    int id_evt = pc.observables[pc.observableIdx + 3];
+    int id_evt = pc.getObservable(2);
 
     auto evtNum = static_cast<int>(floor(0.5 + evt[id_evt]));
     // GOOFIT_TRACE("TDDP4: Number of events: {}", evtNum);
 
-    unsigned int cacheToUse = pc.constants[pc.constantIdx + 1];
-    unsigned int numAmps    = pc.constants[pc.constantIdx + 2];
+    unsigned int cacheToUse = pc.getConstant(0);
+    unsigned int numAmps    = pc.getConstant(1);
 
     fpcomplex AmpA(0, 0);
     fpcomplex AmpB(0, 0);
@@ -121,37 +121,37 @@ __device__ fptype device_TDDP4(fptype *evt, ParameterContainer &pc) {
         /*printf("flag:%i\n",flag);*/
         switch(flag) {
         case 0:
-            amp_A = fpcomplex(pc.parameters[pc.parameterIdx + 12 + 2 * (i + k)], pc.parameters[pc.parameterIdx + 13 + 2 * (i + k)]);
+            amp_A = fpcomplex(pc.getParameter(11 + 2 * (i + k)), pc.getParameter(12 + 2 * (i + k)));
             temp  = Amps_TD[cacheToUse][evtNum * numAmps + i];
             AmpA += temp * amp_A;
             break;
 
         case 1:
-            amp_B = fpcomplex(pc.parameters[pc.parameterIdx + 12 + 2 * (i + k)], pc.parameters[pc.parameterIdx + 13 + 2 * (i + k)]);
+            amp_B = fpcomplex(pc.getParameter(11 + 2 * (i + k)), pc.getParameter(12 + 2 * (i + k)));
             temp  = Amps_TD[cacheToUse][evtNum * numAmps + i];
             AmpB += temp * amp_B;
             break;
 
         case 2:
-            amp_A = fpcomplex(pc.parameters[pc.parameterIdx + 12 + 2 * (i + k)], pc.parameters[pc.parameterIdx + 13 + 2 * (i + k)]);
+            amp_A = fpcomplex(pc.getParameter(11 + 2 * (i + k)), pc.getParameter(12 + 2 * (i + k)));
             temp  = Amps_TD[cacheToUse][evtNum * numAmps + i];
             AmpA += temp * amp_A;
 
             ++k;
-            amp_B = fpcomplex(pc.parameters[pc.parameterIdx + 12 + 2 * (i + k)], pc.parameters[pc.parameterIdx + 13 + 2 * (i + k)]);
+            amp_B = fpcomplex(pc.getParameter(11 + 2 * (i + k)), pc.getParameter(12 + 2 * (i + k)));
             temp  = Amps_TD[cacheToUse][evtNum * numAmps + i];
             AmpB += temp * amp_B;
             break;
         }
     }
 
-    int id_time = pc.observables[pc.observableIdx + 1];
-    int id_sigma = pc.observables[pc.observableIdx + 2];
+    int id_time = pc.getObservable(0);
+    int id_sigma = pc.getObservable(1);
 
-    fptype _tau          = pc.parameters[pc.parameterIdx + 7];
-    fptype _xmixing      = pc.parameters[pc.parameterIdx + 8];
-    fptype _ymixing      = pc.parameters[pc.parameterIdx + 9];
-    fptype _SqWStoRSrate = pc.parameters[pc.parameterIdx + 10];
+    fptype _tau          = pc.getParameter(6);
+    fptype _xmixing      = pc.getParameter(7);
+    fptype _ymixing      = pc.getParameter(8);
+    fptype _SqWStoRSrate = pc.getParameter(9);
     fptype _time         = evt[id_time];
     fptype _sigma        = evt[id_sigma];
 

@@ -275,12 +275,12 @@ __device__ fpcomplex device_Faddeeva_2(const fpcomplex &z) {
 #endif
 
 __device__ fptype device_Voigtian(fptype *evt, ParameterContainer &pc) {
-    int id = RO_CACHE(pc.observables[pc.observableIdx + 1]);
+    int id = pc.getObservable(0);
 
     fptype x = evt[id];
-    fptype m = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
-    fptype w = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
-    fptype s = RO_CACHE(pc.parameters[pc.parameterIdx + 3]);
+    fptype m = pc.getParameter(0);
+    fptype w = pc.getParameter(1);
+    fptype s = pc.getParameter(2);
 
     // return constant for zero width and sigma
     if((0 == s) && (0 == w)) {

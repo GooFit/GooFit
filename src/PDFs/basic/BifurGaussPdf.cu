@@ -3,12 +3,12 @@
 namespace GooFit {
 
 __device__ fptype device_BifurGauss(fptype *evt, ParameterContainer &pc) {
-    int id = RO_CACHE(pc.observables[pc.observableIdx + 2]);
+    int id = pc.getObservable(0);
 
     fptype x          = evt[id];
-    fptype mean       = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
-    fptype sigmaLeft  = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
-    fptype sigmaRight = RO_CACHE(pc.parameters[pc.parameterIdx + 3]);
+    fptype mean       = pc.getParameter(0);
+    fptype sigmaLeft  = pc.getParameter(1);
+    fptype sigmaRight = pc.getParameter(2);
 
     // how to calculate the value of a bifurcated gaussian?
     fptype sigma = sigmaLeft;

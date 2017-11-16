@@ -5,10 +5,10 @@
 namespace GooFit {
 
 __device__ fptype device_EventWeightedAddPdfs(fptype *evt, ParameterContainer &pc) {
-    int numConstants = RO_CACHE(pc.constants[pc.constantIdx]);
-    int numObs       = RO_CACHE(pc.observables[pc.observableIdx]);
+    int numConstants = pc.getNumConstants();
+    int numObs       = pc.getNumObservables();
 
-    int comps = RO_CACHE(pc.constants[pc.constantIdx + 1]);
+    int comps = pc.getConstant(0);
 
     fptype ret         = 0;
     fptype totalWeight = 0;
@@ -18,10 +18,10 @@ __device__ fptype device_EventWeightedAddPdfs(fptype *evt, ParameterContainer &p
     pci.incrementIndex(1, 0, numConstants, numObs, 1);
 
     for(int i = 0; i < comps - 1; ++i) {
-        int id        = RO_CACHE(pc.observables[pc.observableIdx + i + 1]);
+        int id        = pc.getObservable(i);
         fptype weight = evt[id];
         totalWeight += weight;
-        fptype norm = RO_CACHE(pci.normalisations[pci.normalIdx + 1]);
+        fptype norm = pci.getNormalisation(0);
         fptype curr = callFunction(evt, pci);
         ret += weight * curr * norm;
     }
@@ -34,7 +34,7 @@ __device__ fptype device_EventWeightedAddPdfs(fptype *evt, ParameterContainer &p
     // paramIndices + indices[numParameters]);
 
     pc                = pci;
-    fptype normFactor = RO_CACHE(pc.normalisations[pc.normalIdx + 1]);
+    fptype normFactor = pc.getNormalisation(0);
 
     fptype last = callFunction(evt, pc);
     ret += (1 - totalWeight) * last * normFactor;
@@ -47,10 +47,10 @@ __device__ fptype device_EventWeightedAddPdfsExt(fptype *evt, ParameterContainer
     // nP | F P | F P | nO | o1 o2
     // in which nP = 4, nO = 2.
 
-    int numConstants = RO_CACHE(pc.constants[pc.constantIdx]);
-    int numObs       = RO_CACHE(pc.observables[pc.observableIdx]);
+    int numConstants = pc.getNumConstants();
+    int numObs       = pc.getNumObservables();
 
-    int comps = RO_CACHE(pc.constants[pc.constantIdx + 1]);
+    int comps = pc.getConstant(0);
 
     fptype ret         = 0;
     fptype totalWeight = 0;
@@ -59,8 +59,8 @@ __device__ fptype device_EventWeightedAddPdfsExt(fptype *evt, ParameterContainer
     pci.incrementIndex(1, 0, numConstants, numObs, 1);
 
     for(int i = 0; i < comps; ++i) {
-        int id        = RO_CACHE(pc.observables[pc.observableIdx + i + 1]);
-        fptype norm   = RO_CACHE(pc.normalisations[pc.normalIdx + 1]);
+        int id        = pc.getObservable(i);
+        fptype norm   = pc.getNormalisation(0);
         fptype weight = evt[id];
         fptype curr   = callFunction(evt, pci);
         // if ((0 == BLOCKIDX) && (THREADIDX < 5) && (isnan(curr))) printf("NaN component %i %i\n", i, THREADIDX);

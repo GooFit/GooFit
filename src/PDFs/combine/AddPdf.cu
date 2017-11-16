@@ -13,7 +13,7 @@
 namespace GooFit {
 
 __device__ fptype device_AddPdfs(fptype *evt, ParameterContainer &pc) {
-    int numParameters  = RO_CACHE(pc.parameters[pc.parameterIdx]);
+    int numParameters  = pc.getNumParameters();
     fptype ret         = 0;
     fptype totalWeight = 0;
 
@@ -25,11 +25,11 @@ __device__ fptype device_AddPdfs(fptype *evt, ParameterContainer &pc) {
 
     for(int i = 0; i < numParameters; i++) {
         // fetch our values from AddPdf
-        fptype weight = RO_CACHE(pc.parameters[pc.parameterIdx + i + 1]);
+        fptype weight = pc.getParameter(i);
         totalWeight += weight;
 
         // This is the normal value for the 'callFunction' PDF, so we read from pci
-        fptype norm = RO_CACHE(pci.normalisations[pci.normalIdx + 1]);
+        fptype norm = pci.getNormalisation(0);
 
         // call the first function to add in our PDF.
         fptype curr = callFunction(evt, pci);
@@ -42,7 +42,7 @@ __device__ fptype device_AddPdfs(fptype *evt, ParameterContainer &pc) {
 
     // previous functions incremented the indices appropriately, so now we need to get the norm again
     // NOTE: this is the weight for the function about to be called.
-    fptype normFactor = RO_CACHE(pc.normalisations[pc.normalIdx + 1]);
+    fptype normFactor = pc.getNormalisation(0);
 
     fptype last = callFunction(evt, pc);
     ret += (1 - totalWeight) * last * normFactor;
@@ -51,7 +51,7 @@ __device__ fptype device_AddPdfs(fptype *evt, ParameterContainer &pc) {
 }
 
 __device__ fptype device_AddPdfsExt(fptype *evt, ParameterContainer &pc) {
-    int numParameters  = RO_CACHE(pc.parameters[pc.parameterIdx]);
+    int numParameters  = pc.getNumParameters();
     fptype ret         = 0;
     fptype totalWeight = 0;
 
@@ -63,8 +63,8 @@ __device__ fptype device_AddPdfsExt(fptype *evt, ParameterContainer &pc) {
 
     for(int i = 0; i < numParameters; i++) {
         // grab the weight value
-        fptype weight     = RO_CACHE(pci.parameters[pc.parameterIdx + 1 + i]);
-        fptype normFactor = RO_CACHE(pci.normalisations[pci.normalIdx + 1]);
+        fptype weight     = pci.getParameter(i);
+        fptype normFactor = pci.getNormalisation(0);
 
         fptype curr = callFunction(evt, pci);
         ret += weight * curr * normFactor;

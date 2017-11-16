@@ -18,7 +18,7 @@ __device__ fptype device_Composite(fptype *evt, ParameterContainer &pc) {
     // unsigned int shellObsIndex = pc.parameters[pc.parameterIdx + 2];
 
     // int obs = pc.constants[pc.constantIdx + 1];
-    int id = pc.observables[pc.observableIdx + 1];
+    int id = pc.getObservable(0);
 
     fptype fakeEvt[10]; // Allow plenty of space in case events are large.
     fakeEvt[id] = coreValue;

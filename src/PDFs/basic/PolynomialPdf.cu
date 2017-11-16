@@ -5,31 +5,31 @@
 namespace GooFit {
 
 __device__ fptype device_Polynomial(fptype *evt, ParameterContainer &pc) {
-    int id = RO_CACHE(pc.observables[pc.observableIdx + 1]);
+    int id = pc.getObservable(0);
     // Structure is nP lowestdegree c1 c2 c3 nO o1
 
-    int numParams    = RO_CACHE(pc.parameters[pc.parameterIdx]);
-    int lowestDegree = RO_CACHE(pc.constants[pc.constantIdx + 1]);
+    int numParams    = pc.getNumParameters();
+    int lowestDegree = pc.getConstant(0);
 
     fptype x   = evt[id];
     fptype ret = 0;
 
     // unsure why this starts at i=2...
     for(int i = 0; i < numParams; ++i) {
-        fptype param = RO_CACHE(pc.parameters[pc.parameterIdx + i + 1]);
+        fptype param = pc.getParameter(i);
         ret += param * pow(x, lowestDegree + i);
     }
 
-    pc.incrementIndex(1, numParams, 3, 1, 1);
+    pc.incrementIndex(1, numParams, 1, 1, 1);
 
     return ret;
 }
 
 __device__ fptype device_OffsetPolynomial(fptype *evt, ParameterContainer &pc) {
-    int id = RO_CACHE(pc.observables[pc.observableIdx + 1]);
+    int id = pc.getObservable(0);
 
-    int numParams    = RO_CACHE(pc.parameters[pc.parameterIdx]);
-    int lowestDegree = RO_CACHE(pc.constants[pc.constantIdx + 1]);
+    int numParams    = pc.getNumParameters();
+    int lowestDegree = pc.getConstant(0);
 
     fptype x = evt[id];
     // TODO: Not sure where this is pointing...
@@ -37,7 +37,7 @@ __device__ fptype device_OffsetPolynomial(fptype *evt, ParameterContainer &pc) {
     fptype ret = 0;
 
     for(int i = 2; i < numParams; ++i) {
-        ret += RO_CACHE(pc.parameters[pc.parameterIdx + i]) * pow(x, lowestDegree + i - 2);
+        ret += pc.getParameter(i) * pow(x, lowestDegree + i - 2);
     }
 
     pc.incrementIndex(1, numParams, 1, 1, 1);
@@ -46,13 +46,13 @@ __device__ fptype device_OffsetPolynomial(fptype *evt, ParameterContainer &pc) {
 }
 
 __device__ fptype device_MultiPolynomial(fptype *evt, ParameterContainer &pc) {
-    int num_constants  = RO_CACHE(pc.constants[pc.constantIdx]);
-    int num_parameters = RO_CACHE(pc.parameters[pc.parameterIdx]);
+    int num_constants  = pc.getNumConstants();
+    int num_parameters = pc.getNumParameters();
 
     // Structure is nP, maxDegree, offset1, offset2, ..., coeff1, coeff2, ..., nO, o1, o2, ...
 
-    int num_observables = RO_CACHE(pc.observables[pc.observableIdx]);
-    int maxDegree       = RO_CACHE(pc.constants[pc.constantIdx + 1]) + 1;
+    int num_observables = pc.getNumObservables();
+    int maxDegree       = pc.getConstant(0) + 1;
     // Only appears in construction (maxDegree + 1) or (x > maxDegree), so
     // may as well add the one and use >= instead.
 
@@ -66,7 +66,7 @@ __device__ fptype device_MultiPolynomial(fptype *evt, ParameterContainer &pc) {
 
     int coeffNumber = num_observables; // Index of first coefficient is 2 + nO, not 1 + nO, due to maxDegree. (nO comes
                                        // from offsets.)
-    fptype ret = RO_CACHE(pc.parameters[pc.parameterIdx + 1 + coeffNumber]); // Coefficient of constant term.
+    fptype ret = pc.getParameter(coeffNumber); // Coefficient of constant term.
     coeffNumber++;
 
     for(int i = 1; i < numBoxes;
@@ -81,9 +81,9 @@ __device__ fptype device_MultiPolynomial(fptype *evt, ParameterContainer &pc) {
         // printf("[%i, %i] Start box %i %f %f:\n", BLOCKIDX, THREADIDX, i, ret, evt[8]);
         for(int j = 0; j < num_observables; ++j) {
             // TODO:Need to debug these
-            int id        = RO_CACHE(pc.observables[pc.observableIdx + 1 + j]);
+            int id        = pc.getObservable(j);
             fptype x      = evt[id];                                          // x, y, z...
-            fptype offset = RO_CACHE(pc.parameters[pc.parameterIdx + 1 + j]); // x0, y0, z0...
+            fptype offset = pc.getParameter(j); // x0, y0, z0...
             x -= offset;
             int currPower = currIndex % maxDegree;
             currIndex /= maxDegree;
@@ -103,7 +103,7 @@ __device__ fptype device_MultiPolynomial(fptype *evt, ParameterContainer &pc) {
         if(sumOfIndices >= maxDegree)
             continue;
 
-        fptype coefficient = RO_CACHE(pc.parameters[pc.parameterIdx + 1 + coeffNumber]); // Coefficient from MINUIT
+        fptype coefficient = pc.getParameter(coeffNumber); // Coefficient from MINUIT
         coeffNumber++;
         // if ((gpuDebug & 1) && (THREADIDX == 50) && (BLOCKIDX == 3))
         // if ((BLOCKIDX == internalDebug1) && (THREADIDX == internalDebug2))
@@ -162,7 +162,7 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n,
     : GooPdf(n) {
     unsigned int numParameters = 1;
 
-    constantsList.push_back(maxDegree);
+    registerConstant(maxDegree);
 
     // For 1 observable, equal to n = maxDegree + 1.
     // For two, n*(n+1)/2, ie triangular number. This generalises:

@@ -17,10 +17,10 @@ __device__ fptype device_InterHistogram(fptype *evt, ParameterContainer &pc) {
     // nP totalHistograms (idx1 limit1 step1 bins1) (idx2 limit2 step2 bins2) nO o1 o2
     // where limit and step are indices into functorConstants.
 
-    int numVars          = int(RO_CACHE(pc.constants[pc.constantIdx + 2]) - 1) / 4; //(indices[0] - 1) / 4;
+    int numVars          = int(pc.getConstant(1) - 1) / 4; //(indices[0] - 1) / 4;
     int globalBin        = 0;
     int previous         = 1;
-    int myHistogramIndex = RO_CACHE(pc.constants[pc.constantIdx + 1]); // indices[1];
+    int myHistogramIndex = pc.getConstant(0); // indices[1];
     fptype binDistances[10];                                           // Ten dimensions should be more than enough!
     // Distance from bin center in units of bin width in each dimension.
 
@@ -28,7 +28,7 @@ __device__ fptype device_InterHistogram(fptype *evt, ParameterContainer &pc) {
 
     for(int i = 0; i < numVars; ++i) {
         fptype currVariable   = 0;
-        unsigned int varIndex = RO_CACHE(pc.constants[pc.constantIdx + 3 + i * 4]); // constantindices[2 + 4 * i];
+        unsigned int varIndex = pc.getConstant(2 + i * 4); // constantindices[2 + 4 * i];
 
         // check where we get our value
         if(varIndex == OBS_CODE) {
@@ -36,17 +36,17 @@ __device__ fptype device_InterHistogram(fptype *evt, ParameterContainer &pc) {
             // Notice that this if does not cause a fork
             // - all threads will hit the same index and
             // make the same decision.
-            int id       = pc.observables[pc.observableIdx + 1 + i];
+            int id       = pc.getObservable(i);
             currVariable = evt[id]; // evt[indices[indices[0] + 2 + observablesSeen++]];
         } else {
             // Interpret as parameter index.
-            currVariable = pc.parameters[pc.parameterIdx + 1 + varIndex];
+            currVariable = pc.getParameter(varIndex);
         }
 
         int lowerBoundIdx = 3 + 4 * i;
         fptype lowerBound
-            = pc.parameters[pc.parameterIdx + 3 + i * 4 + 1];         // functorConstants[indices[lowerBoundIdx + 0]];
-        fptype step = pc.parameters[pc.parameterIdx + 3 + i * 4 + 2]; // functorConstants[indices[lowerBoundIdx + 1]];
+            = pc.getParameter(3 + i * 4);         // functorConstants[indices[lowerBoundIdx + 0]];
+        fptype step = pc.getParameter(4 + i * 4 + 2); // functorConstants[indices[lowerBoundIdx + 1]];
 
         currVariable -= lowerBound;
         currVariable /= step;
@@ -54,7 +54,7 @@ __device__ fptype device_InterHistogram(fptype *evt, ParameterContainer &pc) {
         auto localBin   = static_cast<int>(floor(currVariable));
         binDistances[i] = currVariable - localBin - fptype(0.5);
         globalBin += previous * localBin;
-        previous *= pc.constants[pc.constantIdx + lowerBoundIdx + 1]; // indices[lowerBoundIdx + 2];
+        previous *= pc.getConstant(lowerBoundIdx + 1); // indices[lowerBoundIdx + 2];
 
         if(0 == THREADIDX + BLOCKIDX)
             printf("Variable %i: %f %f %i\n", i, currVariable, currVariable * step + lowerBound, localBin);
@@ -143,19 +143,19 @@ InterHistPdf::InterHistPdf(std::string n, BinnedDataSet *x, std::vector<Variable
     totalEvents = 0;
 
     // push on the histogram index and number of variables.
-    constantsList.push_back(totalHistograms);
-    constantsList.push_back(numVars);
+    registerConstant(totalHistograms);
+    registerConstant(numVars);
 
     int varIndex = 0;
 
     for(Observable var : x->getObservables()) {
         
         registerObservable(var);
-        constantsList.push_back(OBS_CODE);
+        registerConstant(OBS_CODE);
 
-        constantsList.push_back(var.getLowerLimit());
-        constantsList.push_back(var.getBinSize());
-        constantsList.push_back(var.getNumBins());
+        registerConstant(var.getLowerLimit());
+        registerConstant(var.getBinSize());
+        registerConstant(var.getNumBins());
 
         // NB, do not put cIndex here, it is accounted for by the offset in MEMCPY_TO_SYMBOL below.
         varIndex++;

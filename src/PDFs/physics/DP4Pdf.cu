@@ -49,15 +49,15 @@ __device__ fptype device_DP(fptype *evt, ParameterContainer &pc) {
     // totalAmp.imag);
 
     // TODO: Figure out the offset for the event number observable.
-    int id_num  = pc.observables[pc.observableIdx + 6];
+    int id_num  = pc.getObservable(5);
     auto evtNum = static_cast<int>(floor(0.5 + evt[id_num]));
     // printf("%i\n",evtNum );
     fpcomplex totalAmp(0, 0);
-    unsigned int cacheToUse = pc.constants[pc.constantIdx + 1];
-    unsigned int numAmps    = pc.constants[pc.constantIdx + 4];
+    unsigned int cacheToUse = pc.getConstant(0);
+    unsigned int numAmps    = pc.getConstant(3);
 
     for(int i = 0; i < numAmps; ++i) {
-        fpcomplex amp{pc.parameters[pc.parameterIdx + 2 * i + 1], pc.parameters[pc.parameterIdx + 2 * i + 2]};
+        fpcomplex amp{pc.getParameter(2 * i), pc.getParameter(2 * i + 1)};
 
         fpcomplex matrixelement((Amps_DP[cacheToUse][evtNum * numAmps + i]).real(),
                                 (Amps_DP[cacheToUse][evtNum * numAmps + i]).imag());

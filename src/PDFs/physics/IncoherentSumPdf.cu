@@ -19,18 +19,18 @@ __device__ inline int parIndexFromResIndex_incoherent(int resIndex) {
 
 __device__ fptype device_incoherent(fptype *evt, ParameterContainer &pc) {
     // Calculates the incoherent sum over the resonances.
-    int numObs  = RO_CACHE(pc.observables[pc.observableIdx]);
-    int evtId   = RO_CACHE(pc.observables[pc.observableIdx + 3]);
+    int numObs  = pc.getNumObservables();
+    int evtId   = pc.getObservable(2);
     auto evtNum = static_cast<int>(floor(0.5 + evt[evtId]));
 
     fptype ret                 = 0;
-    unsigned int numResonances = RO_CACHE(pc.constants[pc.constantIdx + 5]);
-    unsigned int cacheToUse    = RO_CACHE(pc.constants[pc.constantIdx + 6]);
+    unsigned int numResonances = pc.getConstant(4);
+    unsigned int cacheToUse    = pc.getConstant(5);
 
     for(int i = 0; i < numResonances; ++i) {
         // int paramIndex   = parIndexFromResIndex_incoherent(i);
         // fptype amplitude = p[indices[paramIndex + 0]];
-        fptype amplitude = RO_CACHE(pc.parameters[pc.parameterIdx + i + 1]);
+        fptype amplitude = pc.getParameter(i);
 
         fpcomplex matrixelement = cResonanceValues[cacheToUse][evtNum * numResonances + i];
         ret += amplitude * thrust::norm(matrixelement);

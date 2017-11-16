@@ -68,15 +68,15 @@ __device__ fptype device_threegauss_resolution(fptype coshterm,
                                                fptype ymixing,
                                                fptype sigma,
                                                ParameterContainer &pc) {
-    fptype coreFraction    = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
-    fptype tailFraction    = (1 - coreFraction) * RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
+    fptype coreFraction    = pc.getParameter(0);
+    fptype tailFraction    = (1 - coreFraction) * pc.getParameter(1);
     fptype outlFraction    = 1 - coreFraction - tailFraction;
-    fptype coreBias        = RO_CACHE(pc.parameters[pc.parameterIdx + 3]);
-    fptype coreScaleFactor = RO_CACHE(pc.parameters[pc.parameterIdx + 4]);
-    fptype tailBias        = RO_CACHE(pc.parameters[pc.parameterIdx + 5]);
-    fptype tailScaleFactor = RO_CACHE(pc.parameters[pc.parameterIdx + 6]);
-    fptype outlBias        = RO_CACHE(pc.parameters[pc.parameterIdx + 7]);
-    fptype outlScaleFactor = RO_CACHE(pc.parameters[pc.parameterIdx + 8]);
+    fptype coreBias        = pc.getParameter(2);
+    fptype coreScaleFactor = pc.getParameter(3);
+    fptype tailBias        = pc.getParameter(4);
+    fptype tailScaleFactor = pc.getParameter(5);
+    fptype outlBias        = pc.getParameter(6);
+    fptype outlScaleFactor = pc.getParameter(7);
 
     fptype cp1 = 0;
     fptype cp2 = 0;
@@ -124,21 +124,19 @@ ThreeGaussResolution::ThreeGaussResolution(
     , tailScaleFactor(ts)
     , outBias(ob)
     , outScaleFactor(os) {
-    GET_FUNCTION_ADDR(ptr_to_threegauss);
     initIndex();
 }
 ThreeGaussResolution::~ThreeGaussResolution() = default;
 
-void ThreeGaussResolution::createParameters(std::vector<unsigned int> &pindices, PdfBase *dis) {
-    pindices.push_back(8);
-    pindices.push_back(registerParameter(coreFraction));
-    pindices.push_back(registerParameter(tailFraction));
-    pindices.push_back(registerParameter(coreBias));
-    pindices.push_back(registerParameter(coreScaleFactor));
-    pindices.push_back(registerParameter(tailBias));
-    pindices.push_back(registerParameter(tailScaleFactor));
-    pindices.push_back(registerParameter(outBias));
-    pindices.push_back(registerParameter(outScaleFactor));
+void ThreeGaussResolution::createParameters(PdfBase *dis) {
+    registerParameter(coreFraction);
+    registerParameter(tailFraction);
+    registerParameter(coreBias);
+    registerParameter(coreScaleFactor);
+    registerParameter(tailBias);
+    registerParameter(tailScaleFactor);
+    registerParameter(outBias);
+    registerParameter(outScaleFactor);
 }
 
 void ThreeGaussResolution::recursiveSetIndices() {

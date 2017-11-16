@@ -3,11 +3,11 @@
 namespace GooFit {
 
 __device__ fptype device_Novosibirsk(fptype *evt, ParameterContainer &pc) {
-    int id = RO_CACHE(pc.observables[pc.observableIdx + 1]);
+    int id = pc.getObservable(0);
 
-    fptype _Mean  = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
-    fptype _Sigma = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
-    fptype _Tail  = RO_CACHE(pc.parameters[pc.parameterIdx + 3]);
+    fptype _Mean  = pc.getParameter(0);
+    fptype _Sigma = pc.getParameter(1);
+    fptype _Tail  = pc.getParameter(2);
     fptype x      = evt[id];
 
     pc.incrementIndex(1, 3, 0, 1, 1);

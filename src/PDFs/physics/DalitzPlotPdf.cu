@@ -64,10 +64,10 @@ device_DalitzPlot_calcIntegrals(fptype m12, fptype m13, int res_i, int res_j, Pa
 }
 
 __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
-    int num_obs = RO_CACHE(pc.observables[pc.observableIdx]);
-    int id_m12  = RO_CACHE(pc.observables[pc.observableIdx + 1]);
-    int id_m13  = RO_CACHE(pc.observables[pc.observableIdx + 2]);
-    int id_num  = RO_CACHE(pc.observables[pc.observableIdx + 3]);
+    int num_obs = pc.getNumObservables();
+    int id_m12  = pc.getObservable(0);
+    int id_m13  = pc.getObservable(1);
+    int id_num  = pc.getObservable(2);
 
     // fptype motherMass = c_motherMass;//RO_CACHE(pc.constants[pc.constantIdx + 4]);
     // fptype daug1Mass  = c_daug1Mass;//RO_CACHE(pc.constants[pc.constantIdx + 5]);
@@ -77,8 +77,8 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
     fptype m12 = evt[id_m12];
     fptype m13 = evt[id_m13];
 
-    unsigned int numResonances = RO_CACHE(pc.constants[pc.constantIdx + 1]);
-    unsigned int cacheToUse    = RO_CACHE(pc.constants[pc.constantIdx + 2]);
+    unsigned int numResonances = pc.getConstant(0);
+    unsigned int cacheToUse    = pc.getConstant(1);
 
     if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass)) {
         pc.incrementIndex(1, numResonances * 2, 2, num_obs, 1);
@@ -101,8 +101,7 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
     for(int i = 0; i < numResonances; ++i) {
         // int paramIndex              = parIndexFromResIndex_DP(i);
         // double2 *resPtr = reinterpret_cast<double2*> (cResonances[i]);
-        fpcomplex amp = fpcomplex(RO_CACHE(pc.parameters[pc.parameterIdx + i * 2 + 1]),
-                                  RO_CACHE(pc.parameters[pc.parameterIdx + i * 2 + 2]));
+        fpcomplex amp = fpcomplex(pc.getParameter(i * 2), pc.getParameter(i * 2 + 1));
 
         // potential performance improvement by
         // double2 *t = RO_CACHE(reinterpret_cast<double2*> (&(cResonances[i][evtNum])));
@@ -126,8 +125,7 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
     fptype ret = thrust::norm(totalAmp);
     pc.incrementIndex(1, numResonances * 2, 2, num_obs, 1);
 
-// loop to efficiency idx
-#pragma unroll
+    // loop to efficiency idx
     for(int i = 0; i < numResonances; i++)
         pc.incrementIndex();
     // pc.incrementIndex (16, 45, 45, 15, 31);
@@ -154,27 +152,27 @@ __host__ DalitzPlotPdf::DalitzPlotPdf(
     , cacheToUse(0)
     , integrators(nullptr)
     , calculators(nullptr) {
-    fptype decayConstants[5];
-
     for(auto &cachedWave : cachedWaves)
         cachedWave = nullptr;
 
     // Passing values to the defined constants.  Rather than push into list, which means each resonance
-    // 1. duplicates 5 fptypes
-    // 2. also has to index into the array
-    // we instead just have a define.
     MEMCPY_TO_SYMBOL(c_motherMass, &decay.motherMass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(c_daug1Mass, &decay.daug1Mass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(c_daug2Mass, &decay.daug2Mass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(c_daug3Mass, &decay.daug3Mass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(c_meson_radius, &decay.meson_radius, sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
+    // registered to 0 position
     registerConstant(decayInfo.resonances.size());
+
     static int cacheCount = 0;
     cacheToUse            = cacheCount++;
+
+    //registered to 1 position
     registerConstant(cacheToUse);
 
     for(auto &resonance : decayInfo.resonances) {
+        //registering 2 parameters
         registerParameter(resonance->amp_real);
         registerParameter(resonance->amp_imag);
         components.push_back(resonance);
@@ -415,8 +413,8 @@ __device__ fpcomplex SpecialResonanceIntegrator::operator()(thrust::tuple<int, f
 
     // TODO: read id's in in order to set them for the fake event.
 
-    int id_m12 = pc.observables[pc.observableIdx + 1];
-    int id_m13 = pc.observables[pc.observableIdx + 2];
+    int id_m12 = pc.getObservable(0);
+    int id_m13 = pc.getObservable(1);
 
     // fptype fakeEvt[10]; // Need room for many observables in case m12 or m13 were assigned a high index in an
     // event-weighted fit.
@@ -462,8 +460,8 @@ __device__ fpcomplex SpecialResonanceCalculator::operator()(thrust::tuple<int, f
     while(pc.funcIdx < dalitz_i)
         pc.incrementIndex();
 
-    int id_m12 = pc.observables[pc.observableIdx + 1];
-    int id_m13 = pc.observables[pc.observableIdx + 1];
+    int id_m12 = pc.getObservable(0);
+    int id_m13 = pc.getObservable(1);
 
     fptype m12 = evt[id_m12];
     fptype m13 = evt[id_m13];

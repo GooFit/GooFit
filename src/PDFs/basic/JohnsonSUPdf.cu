@@ -5,11 +5,11 @@ namespace GooFit {
 const fptype SQRT2PI = 2.506628;
 
 __device__ fptype device_JohnsonSU(fptype *evt, ParameterContainer &pc) {
-    int id     = RO_CACHE(pc.observables[pc.observableIdx + 1]);
-    fptype _Jm = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
-    fptype _Js = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
-    fptype _Jg = RO_CACHE(pc.parameters[pc.parameterIdx + 3]);
-    fptype _Jd = RO_CACHE(pc.parameters[pc.parameterIdx + 4]);
+    int id     = pc.getObservable(0);
+    fptype _Jm = pc.getParameter(0);
+    fptype _Js = pc.getParameter(1);
+    fptype _Jg = pc.getParameter(2);
+    fptype _Jd = pc.getParameter(3);
 
     // we are using index 0.  If we need a different idx, we need to pass that information along.
     fptype x = evt[id];

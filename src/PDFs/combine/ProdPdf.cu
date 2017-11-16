@@ -6,15 +6,15 @@
 namespace GooFit {
 
 __device__ fptype device_ProdPdfs(fptype *evt, ParameterContainer &pc) {
-    int numCons  = RO_CACHE(pc.constants[pc.constantIdx]);
-    int numComps = RO_CACHE(pc.constants[pc.constantIdx + 1]);
-    int numObs   = RO_CACHE(pc.observables[pc.observableIdx]);
+    int numCons  = pc.getNumConstants();
+    int numComps = pc.getConstant(0);
+    int numObs   = pc.getNumObservables();
     fptype ret   = 1;
 
     pc.incrementIndex(1, 0, numCons, numObs, 1);
     // pc.incrementIndex();
     for(int i = 0; i < numComps; i++) {
-        fptype norm = RO_CACHE(pc.normalisations[pc.normalIdx + 1]);
+        fptype norm = pc.getNormalisation(0);
         fptype curr = callFunction(evt, pc);
 
         curr *= norm;

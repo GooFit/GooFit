@@ -4,17 +4,17 @@ namespace GooFit {
 
 __device__ fptype device_BinTransform(fptype *evt, ParameterContainer &pc) {
     // Index structure: nP lim1 bin1 lim2 bin2 ... nO o1 o2
-    int numConstants   = RO_CACHE(pc.constants[pc.constantIdx]);
-    int numObservables = RO_CACHE(pc.observables[pc.observableIdx]);
+    int numConstants   = pc.getNumConstants();
+    int numObservables = pc.getNumObservables();
     int ret            = 0;
     int previousSize   = 1;
 
     for(int i = 0; i < numObservables; ++i) {
-        int id            = RO_CACHE(pc.observables[pc.observableIdx + i + 1]);
+        int id            = pc.getObservable(i);
         fptype obsValue   = evt[id];
-        fptype lowerLimit = RO_CACHE(pc.constants[pc.constantIdx + i * 3 + 1]);
-        fptype binSize    = RO_CACHE(pc.constants[pc.constantIdx + i * 3 + 2]);
-        int numBins       = RO_CACHE(pc.constants[pc.constantIdx + i * 3 + 3]);
+        fptype lowerLimit = pc.getConstant(i * 3);
+        fptype binSize    = pc.getConstant(i * 3 + 1);
+        int numBins       = pc.getConstant(i * 3 + 2);
 
         auto localBin = static_cast<int>(floor((obsValue - lowerLimit) / binSize));
         ret += localBin * previousSize;
@@ -46,9 +46,9 @@ __host__ BinTransformPdf::BinTransformPdf(std::string n,
 
     // add limits for each observable (variable)
     for(unsigned int i = 0; i < obses.size(); ++i) {
-        constantsList.push_back(limits[i]);
-        constantsList.push_back(binSizes[i]);
-        constantsList.push_back(numBins[i]);
+        registerConstant(limits[i]);
+        registerConstant(binSizes[i]);
+        registerConstant(numBins[i]);
     }
 
     initialize();

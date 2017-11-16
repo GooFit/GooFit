@@ -6,7 +6,7 @@ __device__ fptype device_Mapped(fptype *evt, ParameterContainer &pc) {
     // Structure : nP mapFunctionIndex mapParamIndex functionIndex1 parameterIndex1 functionIndex2 parameterIndex2 ...
 
     // Find mapping between event variables and function to evaluate
-    unsigned int numTargets = RO_CACHE(pc.constants[pc.constantIdx + 1]);
+    unsigned int numTargets = pc.getConstant(0);
 
     // Mapping PDF happens directly after, so just increment.
     // pc.incrementIndex (1, 0, 1, 0, 1);
@@ -33,7 +33,7 @@ __device__ fptype device_Mapped(fptype *evt, ParameterContainer &pc) {
 
     // fptype ret = (*(reinterpret_cast<device_function_ptr>(device_function_table[indices[targetFunction]])))(evt, p,
     // paramIndices + indices[targetFunction + 1]);
-    fptype norm = RO_CACHE(pc.normalisations[pc.normalIdx + 1]);
+    fptype norm = pc.getNormalisation(0);
     fptype ret  = callFunction(evt, pc);
     ret *= norm;
 

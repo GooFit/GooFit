@@ -4,16 +4,16 @@
 namespace GooFit {
 
 __device__ fptype device_DalitzVeto(fptype *evt, ParameterContainer &pc) {
-    int numConstants   = RO_CACHE(pc.constants[pc.constantIdx]);
-    int numObservables = RO_CACHE(pc.observables[pc.observableIdx]);
+    int numConstants   = pc.getNumConstants();
+    int numObservables = pc.getNumObservables();
 
-    int idx1 = RO_CACHE(pc.observables[pc.observableIdx + 1]);
-    int idx2 = RO_CACHE(pc.observables[pc.observableIdx + 2]);
+    int idx1 = pc.getObservable(0);
+    int idx2 = pc.getObservable(1);
 
-    fptype motherM = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
-    fptype d1m     = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
-    fptype d2m     = RO_CACHE(pc.parameters[pc.parameterIdx + 3]);
-    fptype d3m     = RO_CACHE(pc.parameters[pc.parameterIdx + 4]);
+    fptype motherM = pc.getParameter(0);
+    fptype d1m     = pc.getParameter(1);
+    fptype d2m     = pc.getParameter(2);
+    fptype d3m     = pc.getParameter(3);
 
     fptype x = evt[idx1];
     fptype y = evt[idx2];
@@ -22,12 +22,12 @@ __device__ fptype device_DalitzVeto(fptype *evt, ParameterContainer &pc) {
     fptype z       = massSum - x - y;
 
     fptype ret            = inDalitz(x, y, motherM, d1m, d2m, d3m) ? 1.0 : 0.0;
-    unsigned int numVetos = RO_CACHE(pc.constants[pc.constantIdx + 1]);
+    unsigned int numVetos = pc.getConstant(0);
 
     for(int i = 0; i < numVetos; ++i) {
-        unsigned int varIndex = pc.constants[pc.constantIdx + 2 + i];
-        fptype minimum        = RO_CACHE(pc.parameters[pc.parameterIdx + 5 + i * 2]);
-        fptype maximum        = RO_CACHE(pc.parameters[pc.parameterIdx + 5 + i * 2 + 1]);
+        unsigned int varIndex = pc.getConstant(1 + i);
+        fptype minimum        = pc.getParameter(4 + i * 2);
+        fptype maximum        = pc.getParameter(4 + i * 2 + 1);
         fptype currDalitzVar  = (PAIR_12 == varIndex ? x : PAIR_13 == varIndex ? y : z);
 
         ret *= ((currDalitzVar < maximum) && (currDalitzVar > minimum)) ? 0.0 : 1.0;

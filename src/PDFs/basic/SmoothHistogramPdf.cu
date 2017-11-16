@@ -21,21 +21,21 @@ __device__ fptype device_EvalHistogram(fptype *evt, ParameterContainer &pc) {
     // nP smoothingIndex totalHistograms (limit1 step1 bins1) (limit2 step2 bins2) nO o1 o2
     // where limit and step are indices into functorConstants.
 
-    int numCons          = RO_CACHE(pc.constants[pc.constantIdx]);
-    int numObs           = RO_CACHE(pc.observables[pc.observableIdx]);
-    int numParms         = RO_CACHE(pc.parameters[pc.parameterIdx]);
-    int numVars          = RO_CACHE(pc.constants[pc.constantIdx + 1]);
+    int numCons          = pc.getNumConstants();
+    int numObs           = pc.getNumObservables();
+    int numParms         = pc.getNumParameters();
+    int numVars          = pc.getConstant(0);
     int globalBinNumber  = 0;
     int previous         = 1;
-    int myHistogramIndex = RO_CACHE(pc.constants[pc.constantIdx + 2]); // 1 only used for smoothing
+    int myHistogramIndex = pc.getConstant(1); // 1 only used for smoothing
 
     for(int i = 0; i < numVars; ++i) {
-        int varIndex      = RO_CACHE(pc.observables[pc.observableIdx + 1 + i]);
+        int varIndex      = pc.getObservable(i);
         int lowerBoundIdx = 3 * (i + 1);
 
         fptype currVariable = evt[varIndex];
-        fptype lowerBound   = RO_CACHE(pc.constants[pc.constantIdx + i * 3 + 5]);
-        fptype step         = RO_CACHE(pc.constants[pc.constantIdx + i * 3 + 6]);
+        fptype lowerBound   = pc.getConstant(i * 3 + 4);
+        fptype step         = pc.getConstant(i * 3 + 5);
 
         currVariable -= lowerBound;
         currVariable /= step;
@@ -44,7 +44,7 @@ __device__ fptype device_EvalHistogram(fptype *evt, ParameterContainer &pc) {
         globalBinNumber += previous * localBinNumber;
 
         // This is accessing too far ahead?
-        int offset = RO_CACHE(pc.constants[pc.constantIdx + lowerBoundIdx + 1]);
+        int offset = pc.getConstant(lowerBoundIdx);
         previous *= offset;
     }
 
@@ -65,12 +65,12 @@ struct Smoother {
         while(pc.funcIdx < funcIdx)
             pc.incrementIndex();
 
-        int numObs       = RO_CACHE(pc.observables[pc.observableIdx]);
-        int numVars      = RO_CACHE(pc.constants[pc.constantIdx + 1]);
-        fptype smoothing = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
+        int numObs       = pc.getNumObservables();
+        int numVars      = pc.getConstant(0);
+        fptype smoothing = pc.getParameter(0);
         // int histIndex         = RO_CACHE(indices[2]);
         // brad: need to debug this variable.
-        int histIndex       = RO_CACHE(pc.constants[pc.constantIdx + 2]);
+        int histIndex       = pc.getConstant(1);
         fptype *myHistogram = dev_base_histograms[histIndex];
         fptype centralValue = myHistogram[globalBin];
 
@@ -85,7 +85,7 @@ struct Smoother {
             bool offSomeAxis  = false;
 
             for(int v = 0; v < numVars; ++v) {
-                int localNumBins = RO_CACHE(pc.constants[pc.constantIdx + 3 * (v + 1) + 1]);
+                int localNumBins = pc.getConstant(3 * (v + 1));
                 int offset       = ((i / dev_powi(3, v)) % 3) - 1;
 
                 currBin += offset * localPrevious;

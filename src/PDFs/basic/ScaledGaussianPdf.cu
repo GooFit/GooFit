@@ -6,11 +6,11 @@
 namespace GooFit {
 
 __device__ fptype device_ScaledGaussian(fptype *evt, ParameterContainer &pc) {
-    int id = RO_CACHE(pc.observables[pc.observableIdx + 1]);
+    int id = pc.getObservable(0);
 
     fptype x     = evt[id];
-    fptype mean  = RO_CACHE(pc.parameters[pc.parameterIdx + 1]) + RO_CACHE(pc.parameters[pc.parameterIdx + 3]);
-    fptype sigma = RO_CACHE(pc.parameters[pc.parameterIdx + 2]) * (1 + RO_CACHE(pc.parameters[pc.parameterIdx + 4]));
+    fptype mean  = pc.getParameter(0) + pc.getParameter(2);
+    fptype sigma = pc.getParameter(1) * (1 + pc.getParameter(3));
     fptype ret   = exp(-0.5 * (x - mean) * (x - mean) / (sigma * sigma));
 
     pc.incrementIndex(1, 4, 0, 1, 1);

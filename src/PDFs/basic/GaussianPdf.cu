@@ -4,9 +4,9 @@
 namespace GooFit {
 
 __device__ fptype device_Gaussian(fptype *evt, ParameterContainer &pc) {
-    int id       = RO_CACHE(pc.observables[pc.observableIdx + 1]);
-    fptype mean  = RO_CACHE(pc.parameters[pc.parameterIdx + 1]);
-    fptype sigma = RO_CACHE(pc.parameters[pc.parameterIdx + 2]);
+    int id       = pc.getObservable(0);
+    fptype mean  = pc.getParameter(0);
+    fptype sigma = pc.getParameter(1);
     fptype x     = evt[id];
 
     pc.incrementIndex(1, 2, 0, 1, 1);

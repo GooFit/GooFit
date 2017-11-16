@@ -65,6 +65,8 @@ endif()
 
 target_link_libraries(_goofit PUBLIC GooFit::GooFit)
 set_target_properties(_goofit PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/goofit)
+set_target_properties(_goofit PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG ${PROJECT_BINARY_DIR}/goofit)
+set_target_properties(_goofit PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE ${PROJECT_BINARY_DIR}/goofit)
 set_target_properties(_goofit PROPERTIES FOLDER python)
 
 install(TARGETS _goofit LIBRARY DESTINATION goofit)

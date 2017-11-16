@@ -19,13 +19,16 @@ def integralExpLin(lo, hi):
 def integralExpSqu(lo, hi):
     return((lo * lo + 2 * lo + 2) * np.exp(-lo) - (hi * hi + 2 * hi + 2) * np.exp(-hi))
 
-def generateEvents(decayTime, rsEvtVec, wsEvtVec,conCoef,linCoef,squCoef,eventsToGenerate):
-    print("generateEvents")
+def generateEvents(decayTime, conCoef, linCoef, squCoef, eventsToGenerate):
+
     totalRSintegral = integralExpCon(0, 100)
     step            = (decayTime.upperlimit - decayTime.lowerlimit) / decayTime.numbins
 
-    i=0
-    while i < decayTime.numbins:
+
+    rsEvtVec = np.array([])
+    wsEvtVect = np.array([])
+
+    for i in range(decayTime.numbins):
 
         binStart = i * step
         binStart += decayTime.lowerlimit
@@ -39,15 +42,11 @@ def generateEvents(decayTime, rsEvtVec, wsEvtVec,conCoef,linCoef,squCoef,eventsT
         expectedRSevts = eventsToGenerate * rsIntegral / totalRSintegral
         expectedWSevts = eventsToGenerate * wsIntegral / totalRSintegral
 
-        rsEvts  = np.random.poisson(expectedRSevts)
-        wsEvts  = np.random.poisson(expectedWSevts)
-        rsEvtVec = np.append(rsEvtVec,rsEvts)
-        wsEvtVec = np.append(wsEvtVec,wsEvts)
+        rsEvtVec[i] = np.random.poisson(expectedRSevts)
+        wsEvtVec[i] = np.random.poisson(expectedWSevts)
 
-        if 0 == (i % 10):
-            print ("Events in bin",i,"i",rsEvts,"(",expectedRSevts,")",wsEvts," (",expectedWSevts,")\n")
 
-        i+=1
+    return rsEvtVec, wsEvtVec
 
 
 def fitRatio(decayTime, weights, rsEvts, wsEvts, plotName = ""):
@@ -175,19 +174,14 @@ def main():
 
     eventsToGenerate = 10000000
 
-    dZeroEvtsWS = np.array([])
-    dZeroEvtsRS = np.array([])
-    d0barEvtsWS = np.array([])
-    d0barEvtsRS = np.array([])
-
     dZeroLinearCoef = magPQ * np.sqrt(rSubD) * (y_mix * np.cos(delta + wpPhi) - x_mix * np.sin(delta + wpPhi))
     d0barLinearCoef = magQP * np.sqrt(rBarD) * (y_mix * np.cos(delta - wpPhi) - x_mix * np.sin(delta - wpPhi))
 
     dZeroSecondCoef = 0.25 * magPQ * magPQ * (x_mix * x_mix + y_mix * y_mix)
     d0barSecondCoef = 0.25 * magQP * magQP * (x_mix * x_mix + y_mix * y_mix)
 
-    generateEvents(decayTime, dZeroEvtsRS, dZeroEvtsWS,rSubD, dZeroLinearCoef, dZeroSecondCoef, eventsToGenerate)
-    generateEvents(decayTime, d0barEvtsRS, d0barEvtsWS,rBarD, d0barLinearCoef, d0barSecondCoef, eventsToGenerate)
+    dZeroEvtsRS, dZeroEvtsWS = generateEvents(decayTime, rSubD, dZeroLinearCoef, dZeroSecondCoef, eventsToGenerate)
+    d0barEvtsRS, d0barEvtsWS = generateEvents(decayTime, rBarD, d0barLinearCoef, d0barSecondCoef, eventsToGenerate)
 
     constaCoef = Variable("constaCoef",0.03, 0.01, -1, 1)
     linearCoef = Variable("linearCoef",0, 0.01, -1, 1)

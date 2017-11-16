@@ -54,7 +54,8 @@ Variable chargeM("chargeM", piPlusMass);
 Variable neutrlM("neutrlM", piZeroMass);
 Variable massSum("massSum", _mD0 *_mD0 + 2 * piPlusMass * piPlusMass + piZeroMass * piZeroMass); // = 3.53481
 Variable constantOne("constantOne", 1);
-Variable constantZero("constantZero", 0);
+Variable constantZero1("constantZero1", 0);
+Variable constantZero2("constantZero2", 0);
 
 GooPdf *kzero_veto = 0;
 
@@ -339,8 +340,8 @@ DalitzPlotPdf *makeSignalPdf(GooPdf *eff = 0) {
 
         observables.push_back(m12);
         observables.push_back(m13);
-        offsets.push_back(constantZero);
-        offsets.push_back(constantZero);
+        offsets.push_back(constantZero1);
+        offsets.push_back(constantZero2);
         coefficients.push_back(constantOne);
         eff = new PolynomialPdf("constantEff", observables, coefficients, offsets, 0);
     }

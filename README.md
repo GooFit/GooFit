@@ -12,7 +12,8 @@ doing maximum-likelihood fits with a familiar syntax.
 [What's new](./CHANGELOG.md)
 • [Tutorials]
 • [API documentation]
-• [Converting from older GooFit](./docs/CONVERTING20.md)
+• [2.0 upgrade](./docs/CONVERTING20.md)
+• [2.1 upgrade](./docs/CONVERTING21.md)
 • [Build recipes](./docs/SYSTEM_INSTALL.md)
 • [Python (in progress)](https://pypi.python.org/pypi/goofit/)
 

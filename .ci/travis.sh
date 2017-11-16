@@ -18,7 +18,9 @@ bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverag
 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DGOOFIT_PYTHON=ON ..
 make -j2
 
-pytest
 ./examples/RunAll.py
+
+pytest
+./pyexamples/RunAll.sh
 
 set +evx

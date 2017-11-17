@@ -154,8 +154,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aff76efcf81396fed330536ff982f6581"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4bf13dd0561c0d3cc7804104a1f77533"><td class="memItemLeft" align="right" valign="top">__host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_goo_pdf.html#a4bf13dd0561c0d3cc7804104a1f77533">scan</a> (<a class="el" href="class_goo_fit_1_1_observable.html">Observable</a> var, std::vector&lt; <a class="el" href="namespace_goo_fit.html#a6f9643fed3185c9bcdfb118b67bb1b16">fptype</a> &gt; &amp;values)</td></tr>
 <tr class="separator:a4bf13dd0561c0d3cc7804104a1f77533"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab05fd074290fb5b1d15baba0323019c9"><td class="memItemLeft" align="right" valign="top">__host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_goo_pdf.html#ab05fd074290fb5b1d15baba0323019c9">setFitControl</a> (<a class="el" href="class_goo_fit_1_1_fit_control.html">FitControl</a> *const fc, bool takeOwnerShip=true) override</td></tr>
-<tr class="separator:ab05fd074290fb5b1d15baba0323019c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad85db69eb73d7c4eafac23189d90ecfa"><td class="memItemLeft" align="right" valign="top">__host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_goo_pdf.html#ad85db69eb73d7c4eafac23189d90ecfa">setFitControl</a> (std::shared_ptr&lt; <a class="el" href="class_goo_fit_1_1_fit_control.html">FitControl</a> &gt; fc) override</td></tr>
+<tr class="separator:ad85db69eb73d7c4eafac23189d90ecfa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4d50a6106275d2de4f9d518559aecc7f"><td class="memItemLeft" align="right" valign="top">virtual __host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_goo_pdf.html#a4d50a6106275d2de4f9d518559aecc7f">setMetrics</a> ()</td></tr>
 <tr class="separator:a4d50a6106275d2de4f9d518559aecc7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7aadac18a28a5f4b129a92b4deaa3c66"><td class="memItemLeft" align="right" valign="top">__host__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_goo_pdf.html#a7aadac18a28a5f4b129a92b4deaa3c66">setParameterConstantness</a> (bool constant=true)</td></tr>
@@ -242,8 +242,8 @@ Protected Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:a977631039f4ce8c54af6a91ffb87941f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_goo_fit_1_1_metric_taker.html">MetricTaker</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_goo_pdf.html#a977631039f4ce8c54af6a91ffb87941f">logger</a> = nullptr</td></tr>
-<tr class="separator:a977631039f4ce8c54af6a91ffb87941f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c703c843e911380d8e86cb5444ba3ec"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="class_goo_fit_1_1_metric_taker.html">MetricTaker</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_goo_pdf.html#a4c703c843e911380d8e86cb5444ba3ec">logger</a></td></tr>
+<tr class="separator:a4c703c843e911380d8e86cb5444ba3ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_class_goo_fit_1_1_pdf_base"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_goo_fit_1_1_pdf_base')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_goo_fit_1_1_pdf_base.html">GooFit::PdfBase</a></td></tr>
 <tr class="memitem:aca1c5779eadc97741ce00800f3841da9 inherit pro_attribs_class_goo_fit_1_1_pdf_base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_goo_fit_1_1_data_set.html">DataSet</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_pdf_base.html#aca1c5779eadc97741ce00800f3841da9">data_</a> = nullptr</td></tr>
 <tr class="separator:aca1c5779eadc97741ce00800f3841da9 inherit pro_attribs_class_goo_fit_1_1_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -261,8 +261,8 @@ Protected Attributes</h2></td></tr>
 <tr class="separator:ab8c36343b25b0546aa5b935d26bd88c7 inherit pro_attribs_class_goo_fit_1_1_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a55ba84252863282787af60f9194d130f inherit pro_attribs_class_goo_fit_1_1_pdf_base"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="class_goo_fit_1_1_variable.html">Variable</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_pdf_base.html#a55ba84252863282787af60f9194d130f">parameterList</a></td></tr>
 <tr class="separator:a55ba84252863282787af60f9194d130f inherit pro_attribs_class_goo_fit_1_1_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa662b50e663de16f51ac2a6dc909d91b inherit pro_attribs_class_goo_fit_1_1_pdf_base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_goo_fit_1_1_fit_control.html">FitControl</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_pdf_base.html#aa662b50e663de16f51ac2a6dc909d91b">fitControl</a> {nullptr}</td></tr>
-<tr class="separator:aa662b50e663de16f51ac2a6dc909d91b inherit pro_attribs_class_goo_fit_1_1_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c2cdd6f4e70632a9ead0fbecd5f8ea7 inherit pro_attribs_class_goo_fit_1_1_pdf_base"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="class_goo_fit_1_1_fit_control.html">FitControl</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_pdf_base.html#a1c2cdd6f4e70632a9ead0fbecd5f8ea7">fitControl</a></td></tr>
+<tr class="separator:a1c2cdd6f4e70632a9ead0fbecd5f8ea7 inherit pro_attribs_class_goo_fit_1_1_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaac1db3a59ea9acd91c6064dfc2e473f inherit pro_attribs_class_goo_fit_1_1_pdf_base"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="class_goo_fit_1_1_pdf_base.html">PdfBase</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_pdf_base.html#aaac1db3a59ea9acd91c6064dfc2e473f">components</a></td></tr>
 <tr class="separator:aaac1db3a59ea9acd91c6064dfc2e473f inherit pro_attribs_class_goo_fit_1_1_pdf_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acd93b462edeca2eb94758cb5c8104afc inherit pro_attribs_class_goo_fit_1_1_pdf_base"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_pdf_base.html#acd93b462edeca2eb94758cb5c8104afc">integrationBins</a> {-1}</td></tr>
@@ -632,8 +632,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="ab05fd074290fb5b1d15baba0323019c9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab05fd074290fb5b1d15baba0323019c9">&#9670;&nbsp;</a></span>setFitControl()</h2>
+<a id="ad85db69eb73d7c4eafac23189d90ecfa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad85db69eb73d7c4eafac23189d90ecfa">&#9670;&nbsp;</a></span>setFitControl()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -644,19 +644,9 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">__host__ void GooFit::GooPdf::setFitControl </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_goo_fit_1_1_fit_control.html">FitControl</a> *const&#160;</td>
-          <td class="paramname"><em>fc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="class_goo_fit_1_1_fit_control.html">FitControl</a> &gt;&#160;</td>
+          <td class="paramname"><em>fc</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>takeOwnerShip</em> = <code>true</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -666,7 +656,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="class_goo_fit_1_1_pdf_base.html#a5621e7cded8422a9fd0434cb76cd5e18">GooFit::PdfBase</a>.</p>
+<p>Implements <a class="el" href="class_goo_fit_1_1_pdf_base.html#aece9d57cccba8caeb82e83d30f38e65f">GooFit::PdfBase</a>.</p>
 
 </div>
 </div>
@@ -768,8 +758,8 @@ Additional Inherited Members</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a977631039f4ce8c54af6a91ffb87941f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a977631039f4ce8c54af6a91ffb87941f">&#9670;&nbsp;</a></span>logger</h2>
+<a id="a4c703c843e911380d8e86cb5444ba3ec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4c703c843e911380d8e86cb5444ba3ec">&#9670;&nbsp;</a></span>logger</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -778,7 +768,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_goo_fit_1_1_metric_taker.html">MetricTaker</a>* GooFit::GooPdf::logger = nullptr</td>
+          <td class="memname">std::shared_ptr&lt;<a class="el" href="class_goo_fit_1_1_metric_taker.html">MetricTaker</a>&gt; GooFit::GooPdf::logger</td>
         </tr>
       </table>
   </td>
@@ -798,7 +788,7 @@ Additional Inherited Members</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Nov 9 2017 16:38:56 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Nov 17 2017 01:22:29 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

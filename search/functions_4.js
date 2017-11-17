@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['dalitzplotpdf',['DalitzPlotPdf',['../class_goo_fit_1_1_dalitz_plot_pdf.html#a61c50feaaf79db0ef792e9dd24b6aef4',1,'GooFit::DalitzPlotPdf']]],
+  ['dalitzplotpdf',['DalitzPlotPdf',['../class_goo_fit_1_1_dalitz_plot_pdf.html#a0dc13acbe4c2bfa8f13bed1425d209f3',1,'GooFit::DalitzPlotPdf']]],
   ['dalitzvetopdf',['DalitzVetoPdf',['../class_goo_fit_1_1_dalitz_veto_pdf.html#a47c5f58bed35dc9e0d8eddda2aa6040e',1,'GooFit::DalitzVetoPdf']]],
   ['dampingfactorsquare',['dampingFactorSquare',['../namespace_goo_fit.html#ac6c264fc379e3040ac53d57553ea19ce',1,'GooFit']]],
   ['dataset',['DataSet',['../class_goo_fit_1_1_data_set.html#aff1102ff8005f711738c30c086e5262c',1,'GooFit::DataSet::DataSet(const Observable &amp;var, std::string n=&quot;&quot;)'],['../class_goo_fit_1_1_data_set.html#affaa0b1fe09989e0b695a071d49cc5d0',1,'GooFit::DataSet::DataSet(const std::vector&lt; Observable &gt; &amp;vars, std::string n=&quot;&quot;)'],['../class_goo_fit_1_1_data_set.html#afd62690d1eef2f999371a7ba82d9a12b',1,'GooFit::DataSet::DataSet(const std::set&lt; Observable &gt; &amp;vars, std::string n=&quot;&quot;)'],['../class_goo_fit_1_1_data_set.html#a4b330b09473cfffca17da5ae0f9d9da5',1,'GooFit::DataSet::DataSet(std::initializer_list&lt; Observable &gt; vars, std::string n=&quot;&quot;)']]],

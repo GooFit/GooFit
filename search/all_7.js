@@ -14,7 +14,7 @@ var searchData=
   ['findfunctionidx',['findFunctionIdx',['../class_goo_fit_1_1_goo_pdf.html#a3499e8807ca75fd3aee9bea74048899b',1,'GooFit::GooPdf']]],
   ['first',['first',['../class_goo_fit_1_1strided__range.html#a5015905a7d14f052d0c8b3395414b17b',1,'GooFit::strided_range']]],
   ['fit',['fit',['../class_goo_fit_1_1_fit_manager_minuit1.html#a04ac2082ecea8bf609a07809c73c28b3',1,'GooFit::FitManagerMinuit1::fit()'],['../class_goo_fit_1_1_fit_manager_minuit2.html#a027d883752759da2435dabb2396670b1',1,'GooFit::FitManagerMinuit2::fit()']]],
-  ['fitcontrol',['FitControl',['../class_goo_fit_1_1_fit_control.html',1,'GooFit::FitControl'],['../class_goo_fit_1_1_pdf_base.html#aa662b50e663de16f51ac2a6dc909d91b',1,'GooFit::PdfBase::fitControl()'],['../class_goo_fit_1_1_fit_control.html#a3abfb280c96ed8519434128ce6fc455d',1,'GooFit::FitControl::FitControl()']]],
+  ['fitcontrol',['FitControl',['../class_goo_fit_1_1_fit_control.html',1,'GooFit::FitControl'],['../class_goo_fit_1_1_pdf_base.html#a1c2cdd6f4e70632a9ead0fbecd5f8ea7',1,'GooFit::PdfBase::fitControl()'],['../class_goo_fit_1_1_fit_control.html#a3abfb280c96ed8519434128ce6fc455d',1,'GooFit::FitControl::FitControl()']]],
   ['fitcontrol_2eh',['FitControl.h',['../_fit_control_8h.html',1,'']]],
   ['fiterrors',['FitErrors',['../namespace_goo_fit.html#a145d35e8e46e921ed038de04120d4241',1,'GooFit']]],
   ['fitmanager',['FitManager',['../namespace_goo_fit.html#a70f7cd945b885cb3e7fe175e45e3b668',1,'GooFit']]],

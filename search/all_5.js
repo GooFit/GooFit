@@ -3,7 +3,7 @@ var searchData=
   ['dalitz_2ecu',['dalitz.cu',['../dalitz_8cu.html',1,'']]],
   ['dalitzplothelpers_2ecu',['DalitzPlotHelpers.cu',['../_dalitz_plot_helpers_8cu.html',1,'']]],
   ['dalitzplothelpers_2eh',['DalitzPlotHelpers.h',['../_dalitz_plot_helpers_8h.html',1,'']]],
-  ['dalitzplotpdf',['DalitzPlotPdf',['../class_goo_fit_1_1_dalitz_plot_pdf.html',1,'GooFit::DalitzPlotPdf'],['../class_goo_fit_1_1_resonance_pdf.html#a5a8c21f81d8a30585289f677d70c08e4',1,'GooFit::ResonancePdf::DalitzPlotPdf()'],['../class_goo_fit_1_1_dalitz_plot_pdf.html#a61c50feaaf79db0ef792e9dd24b6aef4',1,'GooFit::DalitzPlotPdf::DalitzPlotPdf()']]],
+  ['dalitzplotpdf',['DalitzPlotPdf',['../class_goo_fit_1_1_dalitz_plot_pdf.html',1,'GooFit::DalitzPlotPdf'],['../class_goo_fit_1_1_resonance_pdf.html#a5a8c21f81d8a30585289f677d70c08e4',1,'GooFit::ResonancePdf::DalitzPlotPdf()'],['../class_goo_fit_1_1_dalitz_plot_pdf.html#a0dc13acbe4c2bfa8f13bed1425d209f3',1,'GooFit::DalitzPlotPdf::DalitzPlotPdf()']]],
   ['dalitzplotpdf_2ecu',['DalitzPlotPdf.cu',['../_dalitz_plot_pdf_8cu.html',1,'']]],
   ['dalitzplotpdf_2eh',['DalitzPlotPdf.h',['../_dalitz_plot_pdf_8h.html',1,'']]],
   ['dalitzvetopdf',['DalitzVetoPdf',['../class_goo_fit_1_1_dalitz_veto_pdf.html',1,'GooFit::DalitzVetoPdf'],['../class_goo_fit_1_1_dalitz_veto_pdf.html#a47c5f58bed35dc9e0d8eddda2aa6040e',1,'GooFit::DalitzVetoPdf::DalitzVetoPdf()']]],

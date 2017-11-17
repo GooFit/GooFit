@@ -224,7 +224,7 @@ class ModernizeGooFit(cli.Application):
             git = local['git']
             with local.cwd(DIR / '../'):
                 src = [local.path(n) for n in
-                        git('ls-files', '--', '*.cpp', '*.h', '*.cu', '*.cc').splitlines()]
+                        git('ls-files', '--', '*.cpp', '*.h', '*.cu').splitlines()]
         fix_files(src, self.set_version)
 
 

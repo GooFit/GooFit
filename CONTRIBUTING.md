@@ -16,13 +16,7 @@ make -j1
 To run `clang-format` to correct source code spacing:
 
 ```bash
-git ls-files -- '*.cu' '*.cc' '*.h' '*.cpp' | xargs clang-format -i -style=file
-```
-
-The modernize script should also not make any changes:
-
-```bash
-git ls-files -- '*.cu' '*.cc' '*.h' '*.cpp' | xargs ModernizeGoofit.py
+./scripts/check_style.sh
 ```
 
 ## Git

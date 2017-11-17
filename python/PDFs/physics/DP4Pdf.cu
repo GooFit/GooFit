@@ -14,8 +14,20 @@ using namespace pybind11::literals;
 
 void init_DP4Pdf(py::module &m) {
     py::class_<DPPdf, GooPdf>(m, "DPPdf")
-        .def(py::init<std::string, std::vector<Observable>, DecayInfo4, GooPdf *>(), py::keep_alive<1, 5>())
+        .def(py::init<std::string, std::vector<Observable>, DecayInfo4, GooPdf *>(),
+             "n",
+             "observables",
+             "decay",
+             "eff",
+             py::keep_alive<1, 4>(),
+             py::keep_alive<1, 5>())
         .def(py::init<std::string, std::vector<Observable>, DecayInfo4, GooPdf *, unsigned int>(),
+             "n",
+             "observables",
+             "decay",
+             "eff",
+             "MCeventsNorm",
+             py::keep_alive<1, 4>(),
              py::keep_alive<1, 5>())
         .def("normalize", &DPPdf::normalize)
         .def("setDataSize", &DPPdf::setDataSize, "dataSize"_a, "evtSize"_a = 6)
@@ -32,7 +44,7 @@ void init_DP4Pdf(py::module &m) {
                  std::tie(particles, variables, weights, flags) = self.GenerateSig(numEvents);
 
                  py::array_t<fptype> pyparticles{{(size_t)4, 4 * numEvents}};
-                 py::array_t<fptype> pyvariables{{(size_t)6, numEvents}};
+                 py::array_t<fptype> pyvariables{{(size_t)5, numEvents}};
                  py::array_t<fptype> pyweights{numEvents};
                  py::array_t<fptype> pyflags{numEvents};
 
@@ -45,7 +57,7 @@ void init_DP4Pdf(py::module &m) {
                      }
                  }
 
-                 for(int i = 0; i < 6; i++) {
+                 for(int i = 0; i < 5; i++) {
                      for(int j = 0; j < numEvents; j++) {
                          pyvariables.mutable_at(i, j) = (*(variables[i]))[j];
                      }

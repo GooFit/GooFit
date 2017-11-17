@@ -1,9 +1,9 @@
-#include "goofit/Faddeeva.h"
-#include "goofit/Error.h"
+#include <goofit/Error.h>
+#include <goofit/Faddeeva.h>
 
 #include <cmath>
 
-#include "goofit/detail/Complex.h"
+#include <goofit/detail/Complex.h>
 
 namespace GooFit {
 

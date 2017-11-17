@@ -4,7 +4,7 @@
 
 #include <vector>
 
-#include "goofit/fitting/Params.h"
+#include <goofit/fitting/Params.h>
 
 namespace GooFit {
 

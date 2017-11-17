@@ -27,5 +27,11 @@ void init_SpinFactors(py::module &m) {
         .value("ONE", SF_4Body::ONE);
 
     py::class_<SpinFactor, GooPdf>(m, "SpinFactor")
-        .def(py::init<std::string, SF_4Body, unsigned int, unsigned int, unsigned int, unsigned int>());
+        .def(py::init<std::string, SF_4Body, unsigned int, unsigned int, unsigned int, unsigned int>(),
+             "name",
+             "SF",
+             "P0",
+             "P1",
+             "P2",
+             "P3");
 }

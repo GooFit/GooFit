@@ -50,7 +50,8 @@ void init_DalitzPlotHelpers(py::module &m) {
         .def("add_resonance",
              [](DecayInfo3 &self, ResonancePdf *toadd) { self.resonances.push_back(toadd); },
              "Append a resonance",
-             "resonance"_a);
+             "resonance"_a,
+             py::keep_alive<1, 2>());
 
     py::class_<DecayInfo3t, DecayInfo3>(m, "DecayInfo3t")
         .def(py::init<Variable, Variable, Variable>(), "tau"_a, "xmixing"_a, "ymixing"_a)

@@ -1,4 +1,4 @@
-#include "goofit/PDFs/basic/BifurGaussPdf.h"
+#include <goofit/PDFs/basic/BifurGaussPdf.h>
 
 namespace GooFit {
 

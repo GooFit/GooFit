@@ -8,13 +8,13 @@ See *.cu file for more details
 
 #pragma once
 
-#include "goofit/PDFs/GooPdf.h"
-#include "goofit/PDFs/physics/ResonancePdf.h"
-#include "goofit/Variable.h"
+#include <goofit/PDFs/GooPdf.h>
+#include <goofit/PDFs/physics/ResonancePdf.h>
+#include <goofit/Variable.h>
 
 #include <array>
 
-#include "goofit/detail/Complex.h"
+#include <goofit/detail/Complex.h>
 
 namespace GooFit {
 

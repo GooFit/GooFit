@@ -1,18 +1,18 @@
-#include "goofit/Application.h"
-#include "goofit/Variable.h"
-#include "goofit/FitManager.h"
-#include "goofit/BinnedDataSet.h"
-#include "goofit/UnbinnedDataSet.h"
-#include "goofit/FitControl.h"
+#include <goofit/Application.h>
+#include <goofit/BinnedDataSet.h>
+#include <goofit/FitControl.h>
+#include <goofit/FitManager.h>
+#include <goofit/UnbinnedDataSet.h>
+#include <goofit/Variable.h>
 
 #include <CLI/Timer.hpp>
 
-#include "goofit/PDFs/basic/PolynomialPdf.h"
-#include "TMinuit.h"
-#include "TRandom.h"
-#include "TH1F.h"
-#include "TCanvas.h"
-#include "TLatex.h"
+#include <TCanvas.h>
+#include <TH1F.h>
+#include <TLatex.h>
+#include <TMinuit.h>
+#include <TRandom.h>
+#include <goofit/PDFs/basic/PolynomialPdf.h>
 
 #include <iostream>
 #include <string>
@@ -104,7 +104,7 @@ std::tuple<int, std::string> fitRatio(Observable decayTime,
     }
 
     PolynomialPdf *poly = new PolynomialPdf("poly", decayTime, weights);
-    poly->setFitControl(new BinnedErrorFit());
+    poly->setFitControl(std::make_shared<BinnedErrorFit>());
     poly->setData(ratioData);
     FitManager datapdf{poly};
 

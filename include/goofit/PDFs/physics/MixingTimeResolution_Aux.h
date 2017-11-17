@@ -1,7 +1,7 @@
 #pragma once
 
-#include "goofit/GlobalCudaDefines.h"
-#include "goofit/PDFs/GooPdf.h"
+#include <goofit/GlobalCudaDefines.h>
+#include <goofit/PDFs/GooPdf.h>
 
 namespace GooFit {
 

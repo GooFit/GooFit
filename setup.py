@@ -19,6 +19,14 @@ setup(
             '-DGOOFIT_EXAMPLES=OFF'],
         license="LGPL 3.0",
         packages=['goofit'],
+            extras_require={
+            'dev': [
+                'pytest',
+                'pylandau'
+            ]
+        }
+    }
+
         long_description='''\
 GooFit for Python
 -----------------

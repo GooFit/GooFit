@@ -1,9 +1,9 @@
-#include "goofit/PdfBase.h"
-#include "goofit/Log.h"
-#include "goofit/PDFs/GooPdf.h"
-#include "goofit/Variable.h"
-#include "goofit/fitting/FitManagerMinuit1.h"
 #include <cstdio>
+#include <goofit/Log.h>
+#include <goofit/PDFs/GooPdf.h>
+#include <goofit/PdfBase.h>
+#include <goofit/Variable.h>
+#include <goofit/fitting/FitManagerMinuit1.h>
 #include <limits>
 #include <set>
 #include <typeinfo>

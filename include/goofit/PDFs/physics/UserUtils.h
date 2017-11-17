@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EvalVar.h"
+#include <goofit/PDFs/physics/EvalVar.h>
 
 #include <Eigen/Dense>
 #include <mcbooster/EvaluateArray.h>

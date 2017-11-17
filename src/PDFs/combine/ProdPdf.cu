@@ -1,5 +1,5 @@
-#include "goofit/PDFs/combine/ProdPdf.h"
 #include <algorithm>
+#include <goofit/PDFs/combine/ProdPdf.h>
 
 namespace GooFit {
 

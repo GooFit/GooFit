@@ -394,7 +394,7 @@ __device__ fpcomplex cubicspline(fptype m12, fptype m13, fptype m23, unsigned in
     const unsigned int pwa_coefs_idx = idx;
     idx += 2 * nKnobs;
     const fptype *mKKlimits = &(functorConstants[indices[idx]]);
-    fptype mAB = m12, mAC = m13, mBC = m23;
+    fptype mAB = m12, mAC = m13;
     switch(cyclic_index) {
     case PAIR_13:
         mAB = m13;
@@ -403,7 +403,6 @@ __device__ fpcomplex cubicspline(fptype m12, fptype m13, fptype m23, unsigned in
     case PAIR_23:
         mAB = m23;
         mAC = m12;
-        mBC = m13;
         break;
     }
 

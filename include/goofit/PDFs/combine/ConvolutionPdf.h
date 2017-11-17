@@ -1,6 +1,6 @@
 #pragma once
 
-#include "goofit/PDFs/GooPdf.h"
+#include <goofit/PDFs/GooPdf.h>
 #include <thrust/device_vector.h>
 
 namespace GooFit {

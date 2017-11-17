@@ -1,6 +1,6 @@
-#include "goofit/PDFs/basic/InterHistPdf.h"
-#include "goofit/Variable.h"
 #include <algorithm>
+#include <goofit/PDFs/basic/InterHistPdf.h>
+#include <goofit/Variable.h>
 
 namespace GooFit {
 

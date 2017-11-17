@@ -1,6 +1,6 @@
-#include "goofit/PDFs/combine/AddPdf.h"
-#include "goofit/Error.h"
-#include "goofit/detail/ThrustOverride.h"
+#include <goofit/Error.h>
+#include <goofit/PDFs/combine/AddPdf.h>
+#include <goofit/detail/ThrustOverride.h>
 
 #include <thrust/iterator/constant_iterator.h>
 #include <thrust/transform_reduce.h>

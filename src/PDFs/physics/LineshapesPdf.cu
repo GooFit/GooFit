@@ -9,11 +9,11 @@ Also right now it is the home to some helper functions needed and an implementat
 on the GPU
 */
 
-#include "goofit/PDFs/physics/SpinFactors.h"
-#include "goofit/PDFs/physics/LineshapesPdf.h"
+#include <goofit/PDFs/physics/LineshapesPdf.h>
+#include <goofit/PDFs/physics/SpinFactors.h>
 
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-#include "goofit/detail/compute_inverse5.h"
+#include <goofit/detail/compute_inverse5.h>
 #endif
 
 #include <utility>
@@ -818,6 +818,16 @@ Lineshapes::GLASS::GLASS(std::string name,
         throw GeneralError("It seems you forgot to provide the vector with the five necessary variables for GLASS, a, "
                            "r, phiF, phiR and F (in that order)");
     }
+
+    GOOFIT_ADD_PARAM(2, mass, "mass");
+    GOOFIT_ADD_PARAM(3, width, "width");
+
+    GOOFIT_ADD_INT(4, L, "L");
+    GOOFIT_ADD_INT(5, Mpair, "Mpair");
+
+    GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
+
+    GOOFIT_ADD_CONST(7, radius, "radius");
 
     for(int i = 0; i < 5; i++) {
         GOOFIT_ADD_PARAM(8 + i, AdditionalVars[i], "LassVars");

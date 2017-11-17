@@ -1,16 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function, division
+
 from goofit import *
-
 import numpy as np
-import math
 
+print_goofit_info()
 
 decayTime  = Observable("decayTime",0,10)
-constaCoef = Variable("constaCoef",0)
-linearCoef = Variable("linearCoef",0)
-secondCoef = Variable("secondCoef",0)
 
 def integralExpCon(lo, hi):
     return(np.exp(-lo) - np.exp(-hi))
@@ -21,13 +19,16 @@ def integralExpLin(lo, hi):
 def integralExpSqu(lo, hi):
     return((lo * lo + 2 * lo + 2) * np.exp(-lo) - (hi * hi + 2 * hi + 2) * np.exp(-hi))
 
-def generateEvents(rsEvtVec, wsEvtVec,decayTime,conCoef,linCoef,squCoef,eventsToGenerate):
-    print("generateEvents")
+def generateEvents(decayTime, conCoef, linCoef, squCoef, eventsToGenerate):
+
     totalRSintegral = integralExpCon(0, 100)
     step            = (decayTime.upperlimit - decayTime.lowerlimit) / decayTime.numbins
 
-    i=0
-    while i < decayTime.numbins:
+
+    rsEvtVec = np.array([])
+    wsEvtVect = np.array([])
+
+    for i in range(decayTime.numbins):
 
         binStart = i * step
         binStart += decayTime.lowerlimit
@@ -41,24 +42,19 @@ def generateEvents(rsEvtVec, wsEvtVec,decayTime,conCoef,linCoef,squCoef,eventsTo
         expectedRSevts = eventsToGenerate * rsIntegral / totalRSintegral
         expectedWSevts = eventsToGenerate * wsIntegral / totalRSintegral
 
-        rsEvts  = np.random.poisson(expectedRSevts)
-        wsEvts  = np.random.poisson(expectedWSevts)
-        rsEvtVec = np.append(rsEvtVec,rsEvts)
-        wsEvtVec = np.append(wsEvtVec,wsEvts)
-
-        if 0 == (i % 10):
-            print ("Events in bin",i,"i",rsEvts,"(",expectedRSevts,")",wsEvts," (",expectedWSevts,")\n")
-
-        i+=1
+        rsEvtVec[i] = np.random.poisson(expectedRSevts)
+        wsEvtVec[i] = np.random.poisson(expectedWSevts)
 
 
-def fitRatio(rsEvts, wsEvts, plotName = ""):
-    #ratioHist = TH1D("ratioHist", "", decayTime.numbins, decayTime.lowerlimit, decayTime.upperlimit)
+    return rsEvtVec, wsEvtVec
+
+
+def fitRatio(decayTime, weights, rsEvts, wsEvts, plotName = ""):
+
     print("fitRatio")
     ratioData = BinnedDataSet(decayTime)
 
     i=0
-    print("hi")
     while i < wsEvts.size:
 
         ratio = wsEvts[i]
@@ -73,7 +69,7 @@ def fitRatio(rsEvts, wsEvts, plotName = ""):
 
         error = wsEvts[i] / pow(rsEvts[i], 2)
         error += pow(wsEvts[i], 2) / pow(rsEvts[i], 3)
-        error = math.sqrt(error)
+        error = np.sqrt(error)
 
         ratioData.setBinContent(i, ratio)
         ratioData.setBinError(i, error)
@@ -81,6 +77,7 @@ def fitRatio(rsEvts, wsEvts, plotName = ""):
         ratioHist.SetBinError(i + 1, error)
         i+=1
 
+    '''
     constaCoef = Variable("constaCoef", 0.03, 0.01, -1, 1)
     constaCoef.value = 0.03
     constaCoef.error=0.01
@@ -91,16 +88,22 @@ def fitRatio(rsEvts, wsEvts, plotName = ""):
     secondCoef.value=0.00
     secondCoef.error=0.01
 
+
     weights = (constaCoef,linearCoef,secondCoef)
+    '''
 
     poly = PolynomialPdf("poly", decayTime, weights)
-    poly.setFitControl = BinnedErrorFit()#NEED TO BE BINDED
+    print("Setting binned error fit")
+    poly.setFitControl(BinnedErrorFit())
+    print("Setting data")
     poly.setData(ratioData)
+    print("Setting FitManager")
     fitter = FitManager(poly)
+    print("Fitting")
     fitter.fit()
 
     values = poly.evaluateAtPoints(decayTime)
-    pdfHist = TH1D("pdfHist", "", decayTime.numbins, decayTime.lowerlimit, decayTime.upperlimit)
+    #pdfHist = TH1D("pdfHist", "", decayTime.numbins, decayTime.lowerlimit, decayTime.upperlimit)
 
 
     return datapdf
@@ -124,7 +127,7 @@ def cpvFitFcn(npar, gin, fun, fp, iflag):
     fun = chisq
 
 
-def fitRatioCPU(rsEvts, wsEvts):
+def fitRatioCPU(decayTime, rsEvts, wsEvts):
     print("fitRatioCPU")
     ratioHist = TH1D("ratioHist", "", decayTime.numbins, decayTime.lowerlimit, decayTime.upperlimit)
 
@@ -155,6 +158,11 @@ def fitRatioCPU(rsEvts, wsEvts):
 
 def main():
     print("main")
+    numbins = 100
+
+    decayTime.value = 100
+    decayTime.numbins = numbins
+
     rSubD = 0.03
     rBarD = 0.03
     delta = 0
@@ -166,20 +174,37 @@ def main():
 
     eventsToGenerate = 10000000
 
-    dZeroEvtsWS = np.array([])
-    dZeroEvtsRS = np.array([])
-    d0barEvtsWS = np.array([])
-    d0barEvtsRS = np.array([])
-
-    dZeroLinearCoef = magPQ * math.sqrt(rSubD) * (y_mix * math.cos(delta + wpPhi) - x_mix * math.sin(delta + wpPhi))
-    d0barLinearCoef = magQP * math.sqrt(rBarD) * (y_mix * math.cos(delta - wpPhi) - x_mix * math.sin(delta - wpPhi))
+    dZeroLinearCoef = magPQ * np.sqrt(rSubD) * (y_mix * np.cos(delta + wpPhi) - x_mix * np.sin(delta + wpPhi))
+    d0barLinearCoef = magQP * np.sqrt(rBarD) * (y_mix * np.cos(delta - wpPhi) - x_mix * np.sin(delta - wpPhi))
 
     dZeroSecondCoef = 0.25 * magPQ * magPQ * (x_mix * x_mix + y_mix * y_mix)
     d0barSecondCoef = 0.25 * magQP * magQP * (x_mix * x_mix + y_mix * y_mix)
 
-    generateEvents(dZeroEvtsRS, dZeroEvtsWS, decayTime, rSubD, dZeroLinearCoef, dZeroSecondCoef, eventsToGenerate)
-    generateEvents(d0barEvtsRS, d0barEvtsWS, decayTime, rBarD, d0barLinearCoef, d0barSecondCoef, eventsToGenerate)
+    dZeroEvtsRS, dZeroEvtsWS = generateEvents(decayTime, rSubD, dZeroLinearCoef, dZeroSecondCoef, eventsToGenerate)
+    d0barEvtsRS, d0barEvtsWS = generateEvents(decayTime, rBarD, d0barLinearCoef, d0barSecondCoef, eventsToGenerate)
 
+    constaCoef = Variable("constaCoef",0.03, 0.01, -1, 1)
+    linearCoef = Variable("linearCoef",0, 0.01, -1, 1)
+    secondCoef = Variable("secondCoef",0, 0.01, -1, 1)
+
+    weights = (constaCoef, linearCoef, secondCoef)
+
+    (retval1, fit1) = fitRatio(decayTime, weights, dZeroEvtsRS, dZeroEvtsWS, "dzeroEvtRatio.png")
+    (retval2, fit2) = fitRatio(decayTime, weights, d0barEvtsRS, d0barEvtsWS, "dzbarEvtRatio.png")
+
+    #CLI::Timer timer_cpu{"Total CPU (2x fits)"}
+    fitRatioCPU(decayTime, dZeroEvtsRS, dZeroEvtsWS)
+    fitRatioCPU(decayTime, d0barEvtsRS, d0barEvtsWS)
+    cpu_string = timer_cpu.to_string();
+
+    print (fit1, "\n", fit2, "\n", cpu_string)
+
+    print("Exit codes (should be 0): {} and {}\n", retval1, retval2)
+
+    return (retval1 + retval2)
+
+
+    '''
     gpuTime = 0
     cpuTime = 0
 
@@ -206,5 +231,6 @@ def main():
 
     print( "GPU time [seconds] : ",gpuTime,"\nCPU time [seconds] : ",cpuTime)
     return 0;
+    '''
 
 main()

@@ -1,5 +1,5 @@
-#include "goofit/PDFs/basic/SmoothHistogramPdf.h"
-#include "goofit/Variable.h"
+#include <goofit/PDFs/basic/SmoothHistogramPdf.h>
+#include <goofit/Variable.h>
 
 namespace GooFit {
 

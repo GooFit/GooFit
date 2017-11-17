@@ -1,5 +1,5 @@
-#include "goofit/PDFs/basic/ScaledGaussianPdf.h"
-#include "goofit/Variable.h"
+#include <goofit/PDFs/basic/ScaledGaussianPdf.h>
+#include <goofit/Variable.h>
 
 //#include <limits>
 

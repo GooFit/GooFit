@@ -1,10 +1,10 @@
-#include "goofit/GlobalCudaDefines.h"
-#include "goofit/BinnedDataSet.h"
-#include "goofit/Error.h"
-#include "goofit/FitControl.h"
-#include "goofit/Log.h"
-#include "goofit/PDFs/GooPdf.h"
-#include "goofit/PdfBase.h"
+#include <goofit/BinnedDataSet.h>
+#include <goofit/Error.h>
+#include <goofit/FitControl.h>
+#include <goofit/GlobalCudaDefines.h>
+#include <goofit/Log.h>
+#include <goofit/PDFs/GooPdf.h>
+#include <goofit/PdfBase.h>
 
 #ifdef GOOFIT_MPI
 #include <mpi.h>
@@ -249,7 +249,7 @@ __host__ void PdfBase::setData(DataSet *data) {
         int dimensions = 2 + observables.size(); // Bin center (x,y, ...), bin value, and bin volume.
 
         if(!fitControl->binnedFit())
-            setFitControl(new BinnedNllFit());
+            setFitControl(std::make_shared<BinnedNllFit>());
 
 #ifdef GOOFIT_MPI
         // This fetches our rank and the total number of processes in the MPI call

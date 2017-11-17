@@ -14,12 +14,12 @@ class.
   -For example the way Spinfactors are stored in the same array as the Lineshape values.
    Is this really worth the memory we lose by using a complex to store the SF?
 */
-#include "goofit/Error.h"
-#include "goofit/Log.h"
-#include "goofit/PDFs/physics/DP4Pdf.h"
-#include "goofit/PDFs/physics/EvalVar.h"
-#include "goofit/PDFs/physics/Tddp4Pdf.h"
-#include "goofit/detail/Complex.h"
+#include <goofit/Error.h>
+#include <goofit/Log.h>
+#include <goofit/PDFs/physics/DP4Pdf.h>
+#include <goofit/PDFs/physics/EvalVar.h>
+#include <goofit/PDFs/physics/Tddp4Pdf.h>
+#include <goofit/detail/Complex.h>
 #include <mcbooster/Evaluate.h>
 #include <mcbooster/EvaluateArray.h>
 #include <mcbooster/GContainers.h>

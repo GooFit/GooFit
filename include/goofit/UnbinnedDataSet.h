@@ -1,6 +1,6 @@
 #pragma once
 
-#include "goofit/DataSet.h"
+#include <goofit/DataSet.h>
 
 #include <initializer_list>
 #include <map>

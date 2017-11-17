@@ -1,15 +1,15 @@
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
-#include "goofit/FitManager.h"
-#include "goofit/BinnedDataSet.h"
-#include "goofit/PDFs/basic/ExpPdf.h"
-#include "goofit/PDFs/combine/ProdPdf.h"
+#include <goofit/BinnedDataSet.h>
+#include <goofit/FitManager.h>
+#include <goofit/PDFs/basic/ExpPdf.h>
+#include <goofit/PDFs/combine/ProdPdf.h>
 
-#include "goofit/Variable.h"
+#include <goofit/Variable.h>
 
+#include <iostream>
 #include <sys/time.h>
 #include <sys/times.h>
-#include <iostream>
 
 #include <random>
 

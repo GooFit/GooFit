@@ -1,11 +1,16 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+from __future__ import print_function, division
 
 from goofit import *
 import pandas as pd
 import sys
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
+print_goofit_info()
 
 # Basic constants
 _mD0       = 1.86484
@@ -240,4 +245,4 @@ def main():
     filename = GOOFIT_SOURCE_DIR + "/examples/dalitz/dalitz_toyMC_000.txt"
     return runToyFit(filename)
 
-sys.exit(int(main()))
+sys.exit(int(int(main())))

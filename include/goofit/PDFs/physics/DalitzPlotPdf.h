@@ -1,9 +1,9 @@
 #pragma once
 
-#include "goofit/PDFs/GooPdf.h"
-#include "goofit/PDFs/physics/DalitzPlotHelpers.h"
+#include <goofit/PDFs/GooPdf.h>
+#include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 
-#include "goofit/detail/Complex.h"
+#include <goofit/detail/Complex.h>
 
 namespace GooFit {
 
@@ -12,8 +12,12 @@ class SpecialResonanceCalculator;
 
 class DalitzPlotPdf : public GooPdf {
   public:
-    DalitzPlotPdf(
-        std::string n, Observable m12, Observable m13, EventNumber eventNumber, DecayInfo3 decay, GooPdf *eff);
+    DalitzPlotPdf(std::string n,
+                  Observable m12,
+                  Observable m13,
+                  EventNumber eventNumber,
+                  DecayInfo3 decay,
+                  GooPdf *eff = nullptr);
     // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the
     // coherent sum. The caching method requires that it be done this way or the ProdPdf
     // normalisation will get *really* confused and give wrong answers.

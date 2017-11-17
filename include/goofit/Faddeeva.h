@@ -1,6 +1,6 @@
 #pragma once
 
-#include "goofit/GlobalCudaDefines.h"
+#include <goofit/GlobalCudaDefines.h>
 
 namespace GooFit {
 

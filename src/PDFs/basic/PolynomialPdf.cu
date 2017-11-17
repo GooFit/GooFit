@@ -1,5 +1,5 @@
-#include "goofit/PDFs/basic/PolynomialPdf.h"
-#include "goofit/Variable.h"
+#include <goofit/PDFs/basic/PolynomialPdf.h>
+#include <goofit/Variable.h>
 
 namespace GooFit {
 

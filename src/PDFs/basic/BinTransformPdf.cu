@@ -1,4 +1,4 @@
-#include "goofit/PDFs/basic/BinTransformPdf.h"
+#include <goofit/PDFs/basic/BinTransformPdf.h>
 
 namespace GooFit {
 

@@ -8,7 +8,7 @@ See *.cu file for more details
 
 #pragma once
 
-#include "goofit/PDFs/physics/DalitzPlotHelpers.h"
+#include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 
 namespace GooFit {
 

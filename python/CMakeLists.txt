@@ -7,6 +7,8 @@ goofit_add_library(_goofit MODULE
     goofit/UnbinnedDataSet.cpp
     goofit/PdfBase.cpp
     goofit/Version.cpp
+    goofit/FitControl.cpp
+    goofit/Application.cu
     PDFs/GooPdf.cu
     PDFs/basic/ArgusPdf.cu
     PDFs/basic/BifurGaussPdf.cu
@@ -63,6 +65,8 @@ endif()
 
 target_link_libraries(_goofit PUBLIC GooFit::GooFit)
 set_target_properties(_goofit PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/goofit)
+set_target_properties(_goofit PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG ${PROJECT_BINARY_DIR}/goofit)
+set_target_properties(_goofit PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE ${PROJECT_BINARY_DIR}/goofit)
 set_target_properties(_goofit PROPERTIES FOLDER python)
 
 install(TARGETS _goofit LIBRARY DESTINATION goofit)
@@ -70,6 +74,9 @@ install(TARGETS _goofit LIBRARY DESTINATION goofit)
 
 file(WRITE "${CMAKE_BINARY_DIR}/goofit/__init__.py" "from ._goofit import *")
 install(FILES "${CMAKE_BINARY_DIR}/goofit/__init__.py" DESTINATION "goofit")
+
+file(WRITE "${CMAKE_BINARY_DIR}/goofit/__main__.py" "from ._goofit import print_goofit_info; print_goofit_info()")
+install(FILES "${CMAKE_BINARY_DIR}/goofit/__main__.py" DESTINATION "goofit")
 
 add_custom_target(pygoofit_tests ALL
     COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/tests ${PROJECT_BINARY_DIR}/pytests)
@@ -81,6 +88,6 @@ set_target_properties(pygoofit_examples PROPERTIES FOLDER python)
 if(NOT SKBUILD)
     add_custom_command(TARGET _goofit POST_BUILD
                        COMMAND ${CMAKE_COMMAND} -E cmake_echo_color --cyan
-                       "Built python bindings at ${PROJECT_BINARY_DIR}/goofit/_goofit.so")
+                       "Python bindings built, use: export PYTHONPATH=${PROJECT_BINARY_DIR}")
 endif()
 

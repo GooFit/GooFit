@@ -25,8 +25,8 @@ class FunctionMinimum;
 namespace GooFit {
 
 /* Future use, apperently:
-#include <thrust/iterator/constant_iterator.h>
 #include <thrust/device_vector.h>
+#include <thrust/iterator/constant_iterator.h>
 
 typedef thrust::counting_iterator<int> IndexIterator;
 typedef thrust::constant_iterator<fptype*> DataIterator;
@@ -101,7 +101,7 @@ class PdfBase {
     __host__ void setData(DataSet *data);
     __host__ DataSet *getData();
 
-    __host__ virtual void setFitControl(FitControl *const fc, bool takeOwnerShip = true) = 0;
+    __host__ virtual void setFitControl(std::shared_ptr<FitControl>) = 0;
     __host__ virtual bool hasAnalyticIntegral() const { return false; }
 
     /// RooFit style fitting shortcut
@@ -133,7 +133,7 @@ class PdfBase {
     unsigned int cIndex{1};     //< Stores location of constants.
     std::vector<Observable> observables;
     std::vector<Variable> parameterList;
-    FitControl *fitControl{nullptr};
+    std::shared_ptr<FitControl> fitControl;
     std::vector<PdfBase *> components;
     int integrationBins{-1};
     int specialMask{0}; //< For storing information unique to PDFs, eg "Normalize me separately" for TddpPdf.

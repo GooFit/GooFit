@@ -1,6 +1,6 @@
-#include "goofit/PDFs/combine/ConvolutionPdf.h"
-#include "goofit/Error.h"
-#include "goofit/Variable.h"
+#include <goofit/Error.h>
+#include <goofit/PDFs/combine/ConvolutionPdf.h>
+#include <goofit/Variable.h>
 
 #include <thrust/iterator/constant_iterator.h>
 #include <thrust/iterator/counting_iterator.h>

@@ -1,6 +1,6 @@
-#include "goofit/PDFs/physics/IncoherentSumPdf.h"
-#include "goofit/Error.h"
-#include "goofit/PDFs/physics/ResonancePdf.h"
+#include <goofit/Error.h>
+#include <goofit/PDFs/physics/IncoherentSumPdf.h>
+#include <goofit/PDFs/physics/ResonancePdf.h>
 
 #include <thrust/transform_reduce.h>
 

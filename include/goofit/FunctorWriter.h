@@ -2,7 +2,7 @@
 
 #include <thrust/host_vector.h>
 
-#include "goofit/GlobalCudaDefines.h" // Need this for 'fptype'
+#include <goofit/GlobalCudaDefines.h> // Need this for 'fptype'
 
 namespace GooFit {
 

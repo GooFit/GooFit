@@ -1,13 +1,13 @@
 #include <fstream>
 
 // GooFit stuff
-#include "goofit/Application.h"
-#include "goofit/FitManager.h"
-#include "goofit/Variable.h"
-#include "goofit/PDFs/basic/PolynomialPdf.h"
-#include "goofit/PDFs/combine/AddPdf.h"
-#include "goofit/UnbinnedDataSet.h"
-#include "goofit/PDFs/physics/DP4Pdf.h"
+#include <goofit/Application.h>
+#include <goofit/FitManager.h>
+#include <goofit/PDFs/basic/PolynomialPdf.h>
+#include <goofit/PDFs/combine/AddPdf.h>
+#include <goofit/PDFs/physics/DP4Pdf.h>
+#include <goofit/UnbinnedDataSet.h>
+#include <goofit/Variable.h>
 
 using namespace std;
 using namespace GooFit;

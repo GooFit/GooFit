@@ -15,7 +15,7 @@ var searchData=
   ['m_5f24',['M_24',['../namespace_goo_fit.html#ad43101d55f344c3bc53fedd1adb444aaaa93d67d7da0e7f3c1918a73bfa22f755',1,'GooFit']]],
   ['m_5f24_5f1',['M_24_1',['../namespace_goo_fit.html#ad43101d55f344c3bc53fedd1adb444aaa991dd098636e2cce7281a75ef5292968',1,'GooFit']]],
   ['m_5f24_5f3',['M_24_3',['../namespace_goo_fit.html#ad43101d55f344c3bc53fedd1adb444aaae52a217a68c771dd8a54a72082570365',1,'GooFit']]],
-  ['m_5f2pi',['M_2PI',['../_faddeeva_8cc.html#a4aa2c43b09c1300c334821f5507d6f71',1,'Faddeeva.cc']]],
+  ['m_5f2pi',['M_2PI',['../_faddeeva_8cpp.html#a4aa2c43b09c1300c334821f5507d6f71',1,'Faddeeva.cpp']]],
   ['m_5f34',['M_34',['../namespace_goo_fit.html#ad43101d55f344c3bc53fedd1adb444aaa1a8c2ab33b49ec61e0b895f11af45026',1,'GooFit']]],
   ['m_5f34_5f1',['M_34_1',['../namespace_goo_fit.html#ad43101d55f344c3bc53fedd1adb444aaaa526036ae354d212e4ad9983ed8d68a8',1,'GooFit']]],
   ['m_5f34_5f2',['M_34_2',['../namespace_goo_fit.html#ad43101d55f344c3bc53fedd1adb444aaab7adecf8bb40fab7482886df4d32b04e',1,'GooFit']]],

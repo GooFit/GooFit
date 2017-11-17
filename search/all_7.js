@@ -1,10 +1,10 @@
 var searchData=
 [
-  ['faddeeva_2ecc',['Faddeeva.cc',['../_faddeeva_8cc.html',1,'']]],
+  ['faddeeva_2ecpp',['Faddeeva.cpp',['../_faddeeva_8cpp.html',1,'']]],
   ['faddeeva_2eh',['Faddeeva.h',['../_faddeeva_8h.html',1,'']]],
   ['faddeeva_5f2',['Faddeeva_2',['../namespace_goo_fit.html#a9d138e1a70f5ca599b90248bc91b228a',1,'GooFit']]],
   ['fcn',['FCN',['../class_goo_fit_1_1_f_c_n.html',1,'GooFit::FCN'],['../class_goo_fit_1_1_f_c_n.html#a9cf98b9478720501f194728c1f5aa553',1,'GooFit::FCN::FCN()']]],
-  ['fcn_2ecc',['FCN.cc',['../_f_c_n_8cc.html',1,'']]],
+  ['fcn_2ecpp',['FCN.cpp',['../_f_c_n_8cpp.html',1,'']]],
   ['fcn_2eh',['FCN.h',['../_f_c_n_8h.html',1,'']]],
   ['ff',['FF',['../namespace_goo_fit.html#a08ab8dd8ee4b25e849b5a5eecf6ee48b',1,'GooFit']]],
   ['ff_5f123_5f4_5fl1',['FF_123_4_L1',['../namespace_goo_fit.html#afa87269656057f9a7bea45cfeae4dd03a8ddf307ed46f83596d9d9f07092692c4',1,'GooFit']]],
@@ -20,10 +20,10 @@ var searchData=
   ['fitmanager',['FitManager',['../namespace_goo_fit.html#a70f7cd945b885cb3e7fe175e45e3b668',1,'GooFit']]],
   ['fitmanager_2eh',['FitManager.h',['../_fit_manager_8h.html',1,'']]],
   ['fitmanagerminuit1',['FitManagerMinuit1',['../class_goo_fit_1_1_fit_manager_minuit1.html',1,'GooFit::FitManagerMinuit1'],['../class_goo_fit_1_1_fit_manager_minuit1.html#a155a82794093d1981282e0686d2be056',1,'GooFit::FitManagerMinuit1::FitManagerMinuit1()']]],
-  ['fitmanagerminuit1_2ecc',['FitManagerMinuit1.cc',['../_fit_manager_minuit1_8cc.html',1,'']]],
+  ['fitmanagerminuit1_2ecpp',['FitManagerMinuit1.cpp',['../_fit_manager_minuit1_8cpp.html',1,'']]],
   ['fitmanagerminuit1_2eh',['FitManagerMinuit1.h',['../_fit_manager_minuit1_8h.html',1,'']]],
   ['fitmanagerminuit2',['FitManagerMinuit2',['../class_goo_fit_1_1_fit_manager_minuit2.html',1,'GooFit::FitManagerMinuit2'],['../class_goo_fit_1_1_fit_manager_minuit2.html#ac594da38a8551a78af54f081572b0a29',1,'GooFit::FitManagerMinuit2::FitManagerMinuit2()']]],
-  ['fitmanagerminuit2_2ecc',['FitManagerMinuit2.cc',['../_fit_manager_minuit2_8cc.html',1,'']]],
+  ['fitmanagerminuit2_2ecpp',['FitManagerMinuit2.cpp',['../_fit_manager_minuit2_8cpp.html',1,'']]],
   ['fitmanagerminuit2_2eh',['FitManagerMinuit2.h',['../_fit_manager_minuit2_8h.html',1,'']]],
   ['fitter_5findex',['fitter_index',['../class_goo_fit_1_1_variable.html#a9e61b60cc0ae0277695e4f3f2d5593f3',1,'GooFit::Variable']]],
   ['fitto',['fitTo',['../class_goo_fit_1_1_pdf_base.html#af912e8fc22654d71e7a40169b08971bc',1,'GooFit::PdfBase']]],
@@ -39,6 +39,6 @@ var searchData=
   ['from_5fmatrix',['from_matrix',['../class_goo_fit_1_1_unbinned_data_set.html#ad888d7841faece21564a7d58d148ae3c',1,'GooFit::UnbinnedDataSet']]],
   ['from_5fminuit_5fvector',['from_minuit_vector',['../class_goo_fit_1_1_params.html#a8250f36a7b6b8981191c063eb5673bc7',1,'GooFit::Params']]],
   ['functionidx',['functionIdx',['../class_goo_fit_1_1_pdf_base.html#a71d7d631a044ab871652c4cef44ff4ab',1,'GooFit::PdfBase']]],
-  ['functorwriter_2ecc',['FunctorWriter.cc',['../_functor_writer_8cc.html',1,'']]],
+  ['functorwriter_2ecpp',['FunctorWriter.cpp',['../_functor_writer_8cpp.html',1,'']]],
   ['functorwriter_2eh',['FunctorWriter.h',['../_functor_writer_8h.html',1,'']]]
 ];

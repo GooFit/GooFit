@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>GooFit: /home/travis/build/GooFit/GooFit/src/goofit/Faddeeva.cc File Reference</title>
+<title>GooFit: /home/travis/build/GooFit/GooFit/src/goofit/DataSet.cpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -69,60 +69,29 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#namespaces">Namespaces</a> &#124;
-<a href="#define-members">Macros</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#namespaces">Namespaces</a>  </div>
   <div class="headertitle">
-<div class="title">Faddeeva.cc File Reference</div>  </div>
+<div class="title">DataSet.cpp File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;<a class="el" href="_error_8h_source.html">goofit/Error.h</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="_faddeeva_8h_source.html">goofit/Faddeeva.h</a>&gt;</code><br />
-<code>#include &lt;cmath&gt;</code><br />
-<code>#include &lt;<a class="el" href="_complex_8h_source.html">goofit/detail/Complex.h</a>&gt;</code><br />
+<div class="textblock"><code>#include &lt;<a class="el" href="_data_set_8h_source.html">goofit/DataSet.h</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="_error_8h_source.html">goofit/Error.h</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="_variable_8h_source.html">goofit/Variable.h</a>&gt;</code><br />
+<code>#include &lt;climits&gt;</code><br />
+<code>#include &lt;cstdlib&gt;</code><br />
+<code>#include &lt;utility&gt;</code><br />
 </div>
-<p><a href="_faddeeva_8cc_source.html">Go to the source code of this file.</a></p>
+<p><a href="_data_set_8cpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:namespace_goo_fit"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html">GooFit</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
-Macros</h2></td></tr>
-<tr class="memitem:a4aa2c43b09c1300c334821f5507d6f71"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_faddeeva_8cc.html#a4aa2c43b09c1300c334821f5507d6f71">M_2PI</a>&#160;&#160;&#160;6.28318530717958</td></tr>
-<tr class="separator:a4aa2c43b09c1300c334821f5507d6f71"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
-Functions</h2></td></tr>
-<tr class="memitem:a9d138e1a70f5ca599b90248bc91b228a"><td class="memItemLeft" align="right" valign="top">fpcomplex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#a9d138e1a70f5ca599b90248bc91b228a">GooFit::Faddeeva_2</a> (const fpcomplex &amp;z)</td></tr>
-<tr class="separator:a9d138e1a70f5ca599b90248bc91b228a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ab99bf4b1a456d8de22d03d944e5e50"><td class="memItemLeft" align="right" valign="top">fptype&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#a9ab99bf4b1a456d8de22d03d944e5e50">GooFit::cpuvoigtian</a> (fptype x, fptype m, fptype w, fptype s)</td></tr>
-<tr class="separator:a9ab99bf4b1a456d8de22d03d944e5e50"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Macro Definition Documentation</h2>
-<a id="a4aa2c43b09c1300c334821f5507d6f71"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4aa2c43b09c1300c334821f5507d6f71">&#9670;&nbsp;</a></span>M_2PI</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define M_2PI&#160;&#160;&#160;6.28318530717958</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="_faddeeva_8cc_source.html#l00010">10</a> of file <a class="el" href="_faddeeva_8cc_source.html">Faddeeva.cc</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="_faddeeva_8cc_source.html#l00046">GooFit::Faddeeva_2()</a>.</p>
-
-</div>
-</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Nov 17 2017 01:22:29 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Nov 17 2017 18:36:45 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

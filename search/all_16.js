@@ -1,7 +1,7 @@
 var searchData=
 [
   ['unbinneddataset',['UnbinnedDataSet',['../class_goo_fit_1_1_unbinned_data_set.html',1,'GooFit::UnbinnedDataSet'],['../class_goo_fit_1_1_unbinned_data_set.html#a1359a158d45cdc2fcaf85874aabf8719',1,'GooFit::UnbinnedDataSet::UnbinnedDataSet(const Observable &amp;var, std::string n=&quot;&quot;)'],['../class_goo_fit_1_1_unbinned_data_set.html#a5f89f098578bee55cce014396095e75b',1,'GooFit::UnbinnedDataSet::UnbinnedDataSet(const std::vector&lt; Observable &gt; &amp;vars, std::string n=&quot;&quot;)'],['../class_goo_fit_1_1_unbinned_data_set.html#a78df8a04758018c697ed2238d394983d',1,'GooFit::UnbinnedDataSet::UnbinnedDataSet(const std::set&lt; Observable &gt; &amp;vars, std::string n=&quot;&quot;)'],['../class_goo_fit_1_1_unbinned_data_set.html#a5659cc0cd18b029351c8ae99286b2de4',1,'GooFit::UnbinnedDataSet::UnbinnedDataSet(std::initializer_list&lt; Observable &gt; vars, std::string n=&quot;&quot;)']]],
-  ['unbinneddataset_2ecc',['UnbinnedDataSet.cc',['../_unbinned_data_set_8cc.html',1,'']]],
+  ['unbinneddataset_2ecpp',['UnbinnedDataSet.cpp',['../_unbinned_data_set_8cpp.html',1,'']]],
   ['unbinneddataset_2eh',['UnbinnedDataSet.h',['../_unbinned_data_set_8h.html',1,'']]],
   ['unbinnednllfit',['UnbinnedNllFit',['../class_goo_fit_1_1_unbinned_nll_fit.html',1,'GooFit::UnbinnedNllFit'],['../class_goo_fit_1_1_unbinned_nll_fit.html#a34c5abf0ba27a574e971207350be9dc8',1,'GooFit::UnbinnedNllFit::UnbinnedNllFit()']]],
   ['unregisterparameter',['unregisterParameter',['../class_goo_fit_1_1_pdf_base.html#af9c630e8c59819a874c96d50bca0a0d9',1,'GooFit::PdfBase']]],

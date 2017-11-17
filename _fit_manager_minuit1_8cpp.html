@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>GooFit: /home/travis/build/GooFit/GooFit/src/goofit/Abort.cc File Reference</title>
+<title>GooFit: /home/travis/build/GooFit/GooFit/src/goofit/FitManagerMinuit1.cpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -69,35 +69,32 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#namespaces">Namespaces</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#namespaces">Namespaces</a>  </div>
   <div class="headertitle">
-<div class="title">Abort.cc File Reference</div>  </div>
+<div class="title">FitManagerMinuit1.cpp File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;<a class="el" href="_color_8h_source.html">goofit/Color.h</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="_error_8h_source.html">goofit/Error.h</a>&gt;</code><br />
+<div class="textblock"><code>#include &lt;cstdio&gt;</code><br />
+<code>#include &lt;<a class="el" href="_log_8h_source.html">goofit/Log.h</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="_goo_pdf_8h_source.html">goofit/PDFs/GooPdf.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="_pdf_base_8h_source.html">goofit/PdfBase.h</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="_abort_8h_source.html">goofit/detail/Abort.h</a>&gt;</code><br />
-<code>#include &lt;goofit/detail/Backtrace.h&gt;</code><br />
+<code>#include &lt;<a class="el" href="_variable_8h_source.html">goofit/Variable.h</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="_fit_manager_minuit1_8h_source.html">goofit/fitting/FitManagerMinuit1.h</a>&gt;</code><br />
+<code>#include &lt;limits&gt;</code><br />
+<code>#include &lt;set&gt;</code><br />
+<code>#include &lt;typeinfo&gt;</code><br />
 </div>
-<p><a href="_abort_8cc_source.html">Go to the source code of this file.</a></p>
+<p><a href="_fit_manager_minuit1_8cpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:namespace_goo_fit"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html">GooFit</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
-Functions</h2></td></tr>
-<tr class="memitem:aff9f46a90d47aa752846f3acd5d211b6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#aff9f46a90d47aa752846f3acd5d211b6">GooFit::abort</a> (std::string file, int line, std::string reason, const PdfBase *pdf=nullptr)</td></tr>
-<tr class="memdesc:aff9f46a90d47aa752846f3acd5d211b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Smart abort that includes the file name and location, and prints a stack trace if possible.  <a href="namespace_goo_fit.html#aff9f46a90d47aa752846f3acd5d211b6">More...</a><br /></td></tr>
-<tr class="separator:aff9f46a90d47aa752846f3acd5d211b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Nov 17 2017 01:22:29 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Nov 17 2017 18:36:45 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

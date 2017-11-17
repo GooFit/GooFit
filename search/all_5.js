@@ -12,7 +12,7 @@ var searchData=
   ['dampingfactorsquare',['dampingFactorSquare',['../namespace_goo_fit.html#ac6c264fc379e3040ac53d57553ea19ce',1,'GooFit']]],
   ['data_5f',['data_',['../class_goo_fit_1_1_pdf_base.html#aca1c5779eadc97741ce00800f3841da9',1,'GooFit::PdfBase']]],
   ['dataset',['DataSet',['../class_goo_fit_1_1_data_set.html',1,'GooFit::DataSet'],['../class_goo_fit_1_1_data_set.html#aff1102ff8005f711738c30c086e5262c',1,'GooFit::DataSet::DataSet(const Observable &amp;var, std::string n=&quot;&quot;)'],['../class_goo_fit_1_1_data_set.html#affaa0b1fe09989e0b695a071d49cc5d0',1,'GooFit::DataSet::DataSet(const std::vector&lt; Observable &gt; &amp;vars, std::string n=&quot;&quot;)'],['../class_goo_fit_1_1_data_set.html#afd62690d1eef2f999371a7ba82d9a12b',1,'GooFit::DataSet::DataSet(const std::set&lt; Observable &gt; &amp;vars, std::string n=&quot;&quot;)'],['../class_goo_fit_1_1_data_set.html#a4b330b09473cfffca17da5ae0f9d9da5',1,'GooFit::DataSet::DataSet(std::initializer_list&lt; Observable &gt; vars, std::string n=&quot;&quot;)']]],
-  ['dataset_2ecc',['DataSet.cc',['../_data_set_8cc.html',1,'']]],
+  ['dataset_2ecpp',['DataSet.cpp',['../_data_set_8cpp.html',1,'']]],
   ['dataset_2eh',['DataSet.h',['../_data_set_8h.html',1,'']]],
   ['daug1mass',['daug1Mass',['../struct_goo_fit_1_1_decay_info3.html#a987442a6aa7ce4e37ec5fb6d9ff7ba41',1,'GooFit::DecayInfo3']]],
   ['daug2mass',['daug2Mass',['../struct_goo_fit_1_1_decay_info3.html#a5cc6db416412d5578a1392f008ae0ed3',1,'GooFit::DecayInfo3']]],

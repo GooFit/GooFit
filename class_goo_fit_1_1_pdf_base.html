@@ -307,7 +307,7 @@ template&lt;typename... Args&gt; </div>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00072">72</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        : name(std::move(n)) {</div><div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        std::vector&lt;Observable&gt; obs;</div><div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        filter_arguments(obs, args...);</div><div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <span class="keywordflow">for</span>(<span class="keyword">auto</span> &amp;ob : obs)</div><div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;            <a class="code" href="class_goo_fit_1_1_pdf_base.html#ad70a9ea5d275b2129d695a164bbc47d8">registerObservable</a>(ob);</div><div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    }</div><div class="ttc" id="class_goo_fit_1_1_pdf_base_html_ad70a9ea5d275b2129d695a164bbc47d8"><div class="ttname"><a href="class_goo_fit_1_1_pdf_base.html#ad70a9ea5d275b2129d695a164bbc47d8">GooFit::PdfBase::registerObservable</a></div><div class="ttdeci">__host__ void registerObservable(Observable obs)</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8cc_source.html#l00134">PdfBase.cc:134</a></div></div>
+<div class="fragment"><div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        : name(std::move(n)) {</div><div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        std::vector&lt;Observable&gt; obs;</div><div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        filter_arguments(obs, args...);</div><div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <span class="keywordflow">for</span>(<span class="keyword">auto</span> &amp;ob : obs)</div><div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;            <a class="code" href="class_goo_fit_1_1_pdf_base.html#ad70a9ea5d275b2129d695a164bbc47d8">registerObservable</a>(ob);</div><div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    }</div><div class="ttc" id="class_goo_fit_1_1_pdf_base_html_ad70a9ea5d275b2129d695a164bbc47d8"><div class="ttname"><a href="class_goo_fit_1_1_pdf_base.html#ad70a9ea5d275b2129d695a164bbc47d8">GooFit::PdfBase::registerObservable</a></div><div class="ttdeci">__host__ void registerObservable(Observable obs)</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8cpp_source.html#l00134">PdfBase.cpp:134</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -391,7 +391,7 @@ template&lt;typename... Args&gt; </div>
 
 <p>Implemented in <a class="el" href="class_goo_fit_1_1_goo_pdf.html#a21cf7134aad33e891913d18fa6ea146e">GooFit::GooPdf</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00042">GooFit::Minuit1::Eval()</a>, and <a class="el" href="_f_c_n_8cc_source.html#l00018">GooFit::FCN::operator()()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_fit_manager_minuit1_8cpp_source.html#l00042">GooFit::Minuit1::Eval()</a>, and <a class="el" href="_f_c_n_8cpp_source.html#l00018">GooFit::FCN::operator()()</a>.</p>
 
 </div>
 </div>
@@ -411,7 +411,7 @@ template&lt;typename... Args&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00037">37</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cpp_source.html#l00037">37</a> of file <a class="el" href="_pdf_base_8cpp_source.html">PdfBase.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00137">components</a>, <a class="el" href="_pdf_base_8h_source.html#l00093">getName()</a>, and <a class="el" href="_pdf_base_8h_source.html#l00140">properlyInitialised</a>.</p>
 <div class="fragment"><div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;                                                                           {</div><div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keywordflow">if</span>(!<a class="code" href="class_goo_fit_1_1_pdf_base.html#a85a7352c6055f837458ba20c57e0ee71">properlyInitialised</a>)</div><div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        unInited.push_back(<a class="code" href="class_goo_fit_1_1_pdf_base.html#a4eb977ab3d1eefbc835c3b90a617c7ec">getName</a>());</div><div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div><div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="keywordflow">for</span>(<span class="keyword">auto</span> component : <a class="code" href="class_goo_fit_1_1_pdf_base.html#aaac1db3a59ea9acd91c6064dfc2e473f">components</a>) {</div><div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        component-&gt;checkInitStatus(unInited);</div><div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    }</div><div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;}</div><div class="ttc" id="class_goo_fit_1_1_pdf_base_html_aaac1db3a59ea9acd91c6064dfc2e473f"><div class="ttname"><a href="class_goo_fit_1_1_pdf_base.html#aaac1db3a59ea9acd91c6064dfc2e473f">GooFit::PdfBase::components</a></div><div class="ttdeci">std::vector&lt; PdfBase * &gt; components</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00137">PdfBase.h:137</a></div></div>
@@ -470,7 +470,7 @@ template&lt;typename... Args&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="reference">Referenced by <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00042">GooFit::Minuit1::Eval()</a>, <a class="el" href="_params_8cc_source.html#l00047">GooFit::Params::from_minuit_vector()</a>, and <a class="el" href="_fit_manager_minuit1_8cc_source.html#l00013">GooFit::Minuit1::Minuit1()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_fit_manager_minuit1_8cpp_source.html#l00042">GooFit::Minuit1::Eval()</a>, <a class="el" href="_params_8cpp_source.html#l00047">GooFit::Params::from_minuit_vector()</a>, and <a class="el" href="_fit_manager_minuit1_8cpp_source.html#l00013">GooFit::Minuit1::Minuit1()</a>.</p>
 
 </div>
 </div>
@@ -519,7 +519,7 @@ template&lt;typename... Args&gt; </div>
 
 <p>RooFit style fitting shortcut. </p>
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00159">159</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cpp_source.html#l00159">159</a> of file <a class="el" href="_pdf_base_8cpp_source.html">PdfBase.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="class_goo_fit_1_1_pdf_base.html#a66f4263c6f999d60594ac13320092525">setData()</a>, and <a class="el" href="_fit_manager_minuit2_8h_source.html#l00039">GooFit::FitManagerMinuit2::setVerbosity()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;                                                                               {</div><div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    <a class="code" href="class_goo_fit_1_1_pdf_base.html#a66f4263c6f999d60594ac13320092525">setData</a>(data);</div><div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    <a class="code" href="namespace_goo_fit.html#a70f7cd945b885cb3e7fe175e45e3b668">FitManager</a> fitter{<span class="keyword">this</span>};</div><div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    fitter.<a class="code" href="class_goo_fit_1_1_fit_manager_minuit2.html#a3abb39d1333244d3687ef8bdc4cb4ed2">setVerbosity</a>(verbosity);</div><div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    <span class="keywordflow">return</span> fitter.fit();</div><div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;}</div><div class="ttc" id="class_goo_fit_1_1_fit_manager_minuit2_html_a3abb39d1333244d3687ef8bdc4cb4ed2"><div class="ttname"><a href="class_goo_fit_1_1_fit_manager_minuit2.html#a3abb39d1333244d3687ef8bdc4cb4ed2">GooFit::FitManagerMinuit2::setVerbosity</a></div><div class="ttdeci">void setVerbosity(int value)</div><div class="ttdoc">Set the fitting verbosity. </div><div class="ttdef"><b>Definition:</b> <a href="_fit_manager_minuit2_8h_source.html#l00039">FitManagerMinuit2.h:39</a></div></div>
@@ -543,7 +543,7 @@ template&lt;typename... Args&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00142">setIntegrationFineness()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cpp_source.html#l00142">setIntegrationFineness()</a>.</p>
 
 </div>
 </div>
@@ -617,7 +617,7 @@ template&lt;typename... Args&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00093">93</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_abort_8cc_source.html#l00009">GooFit::abort()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00037">checkInitStatus()</a>, <a class="el" href="_lineshapes_pdf_8h_source.html#l00048">GooFit::Lineshape::operator==()</a>, <a class="el" href="_spin_factors_8h_source.html#l00049">GooFit::SpinFactor::operator==()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00134">registerObservable()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00054">registerParameter()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00069">unregisterParameter()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_abort_8cpp_source.html#l00009">GooFit::abort()</a>, <a class="el" href="_pdf_base_8cpp_source.html#l00037">checkInitStatus()</a>, <a class="el" href="_lineshapes_pdf_8h_source.html#l00048">GooFit::Lineshape::operator==()</a>, <a class="el" href="_spin_factors_8h_source.html#l00049">GooFit::SpinFactor::operator==()</a>, <a class="el" href="_pdf_base_8cpp_source.html#l00134">registerObservable()</a>, <a class="el" href="_pdf_base_8cpp_source.html#l00054">registerParameter()</a>, and <a class="el" href="_pdf_base_8cpp_source.html#l00069">unregisterParameter()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;{ <span class="keywordflow">return</span> name; }</div></div><!-- fragment -->
 </div>
 </div>
@@ -644,7 +644,7 @@ template&lt;typename... Args&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00111">111</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cpp_source.html#l00111">111</a> of file <a class="el" href="_pdf_base_8cpp_source.html">PdfBase.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00137">components</a>, and <a class="el" href="_pdf_base_8h_source.html#l00134">observables</a>.</p>
 <div class="fragment"><div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;                                                             {</div><div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    std::vector&lt;Observable&gt; ret;</div><div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="keywordflow">for</span>(<span class="keyword">const</span> Observable &amp;obs : <a class="code" href="class_goo_fit_1_1_pdf_base.html#ab8c36343b25b0546aa5b935d26bd88c7">observables</a>)</div><div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;        ret.push_back(obs);</div><div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;</div><div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    <span class="keywordflow">for</span>(<span class="keyword">const</span> <a class="code" href="class_goo_fit_1_1_pdf_base.html#a6f57a4994c00d8d62e360f83c2570a86">PdfBase</a> *comp : <a class="code" href="class_goo_fit_1_1_pdf_base.html#aaac1db3a59ea9acd91c6064dfc2e473f">components</a>) {</div><div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;        <span class="keywordflow">for</span>(<span class="keyword">const</span> Observable &amp;sub_comp : comp-&gt;getObservables())</div><div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;            <span class="keywordflow">if</span>(!find_in(ret, sub_comp))</div><div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;                ret.push_back(sub_comp);</div><div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    }</div><div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;</div><div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    <span class="keywordflow">return</span> ret;</div><div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;}</div><div class="ttc" id="class_goo_fit_1_1_pdf_base_html_ab8c36343b25b0546aa5b935d26bd88c7"><div class="ttname"><a href="class_goo_fit_1_1_pdf_base.html#ab8c36343b25b0546aa5b935d26bd88c7">GooFit::PdfBase::observables</a></div><div class="ttdeci">std::vector&lt; Observable &gt; observables</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00134">PdfBase.h:134</a></div></div>
@@ -669,7 +669,7 @@ template&lt;typename... Args&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00095">95</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cpp_source.html#l00095">95</a> of file <a class="el" href="_pdf_base_8cpp_source.html">PdfBase.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00137">components</a>, and <a class="el" href="_pdf_base_8h_source.html#l00135">parameterList</a>.</p>
 <div class="fragment"><div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;                                                          {</div><div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keywordflow">for</span>(Variable &amp;p : <a class="code" href="class_goo_fit_1_1_pdf_base.html#a55ba84252863282787af60f9194d130f">parameterList</a>) {</div><div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        <span class="keywordflow">if</span>(p.getName() == n)</div><div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;            <span class="keywordflow">return</span> &amp;p;</div><div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    }</div><div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;</div><div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keywordflow">for</span>(<span class="keyword">auto</span> component : <a class="code" href="class_goo_fit_1_1_pdf_base.html#aaac1db3a59ea9acd91c6064dfc2e473f">components</a>) {</div><div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        Variable *cand = component-&gt;getParameterByName(n);</div><div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;</div><div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        <span class="keywordflow">if</span>(cand != <span class="keyword">nullptr</span>)</div><div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;            <span class="keywordflow">return</span> cand;</div><div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    }</div><div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;</div><div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">nullptr</span>;</div><div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;}</div><div class="ttc" id="class_goo_fit_1_1_pdf_base_html_aaac1db3a59ea9acd91c6064dfc2e473f"><div class="ttname"><a href="class_goo_fit_1_1_pdf_base.html#aaac1db3a59ea9acd91c6064dfc2e473f">GooFit::PdfBase::components</a></div><div class="ttdeci">std::vector&lt; PdfBase * &gt; components</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00137">PdfBase.h:137</a></div></div>
@@ -728,11 +728,11 @@ template&lt;typename... Args&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00081">81</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cpp_source.html#l00081">81</a> of file <a class="el" href="_pdf_base_8cpp_source.html">PdfBase.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00137">components</a>, and <a class="el" href="_pdf_base_8h_source.html#l00135">parameterList</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_abort_8cc_source.html#l00009">GooFit::abort()</a>, <a class="el" href="_params_8cc_source.html#l00008">GooFit::Params::Params()</a>, <a class="el" href="_functor_writer_8cc_source.html#l00023">GooFit::readFromFile()</a>, and <a class="el" href="_functor_writer_8cc_source.html#l00009">GooFit::writeToFile()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_abort_8cpp_source.html#l00009">GooFit::abort()</a>, <a class="el" href="_params_8cpp_source.html#l00008">GooFit::Params::Params()</a>, <a class="el" href="_functor_writer_8cpp_source.html#l00023">GooFit::readFromFile()</a>, and <a class="el" href="_functor_writer_8cpp_source.html#l00009">GooFit::writeToFile()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;                                                          {</div><div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    std::vector&lt;Variable&gt; ret;</div><div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keywordflow">for</span>(<span class="keyword">const</span> Variable &amp;param : <a class="code" href="class_goo_fit_1_1_pdf_base.html#a55ba84252863282787af60f9194d130f">parameterList</a>)</div><div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        ret.push_back(param);</div><div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;</div><div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keywordflow">for</span>(<span class="keyword">const</span> <a class="code" href="class_goo_fit_1_1_pdf_base.html#a6f57a4994c00d8d62e360f83c2570a86">PdfBase</a> *comp : <a class="code" href="class_goo_fit_1_1_pdf_base.html#aaac1db3a59ea9acd91c6064dfc2e473f">components</a>) {</div><div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        <span class="keywordflow">for</span>(<span class="keyword">const</span> Variable &amp;sub_comp : comp-&gt;getParameters())</div><div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;            <span class="keywordflow">if</span>(!find_in(ret, sub_comp))</div><div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;                ret.push_back(sub_comp);</div><div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    }</div><div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;</div><div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keywordflow">return</span> ret;</div><div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;}</div><div class="ttc" id="class_goo_fit_1_1_pdf_base_html_aaac1db3a59ea9acd91c6064dfc2e473f"><div class="ttname"><a href="class_goo_fit_1_1_pdf_base.html#aaac1db3a59ea9acd91c6064dfc2e473f">GooFit::PdfBase::components</a></div><div class="ttdeci">std::vector&lt; PdfBase * &gt; components</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00137">PdfBase.h:137</a></div></div>
 <div class="ttc" id="class_goo_fit_1_1_pdf_base_html_a55ba84252863282787af60f9194d130f"><div class="ttname"><a href="class_goo_fit_1_1_pdf_base.html#a55ba84252863282787af60f9194d130f">GooFit::PdfBase::parameterList</a></div><div class="ttdeci">std::vector&lt; Variable &gt; parameterList</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00135">PdfBase.h:135</a></div></div>
 <div class="ttc" id="class_goo_fit_1_1_pdf_base_html_a6f57a4994c00d8d62e360f83c2570a86"><div class="ttname"><a href="class_goo_fit_1_1_pdf_base.html#a6f57a4994c00d8d62e360f83c2570a86">GooFit::PdfBase::PdfBase</a></div><div class="ttdeci">PdfBase(std::string n, Args... args)</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00072">PdfBase.h:72</a></div></div>
@@ -856,7 +856,7 @@ template&lt;typename... Args&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00147">147</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cpp_source.html#l00147">147</a> of file <a class="el" href="_pdf_base_8cpp_source.html">PdfBase.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="_variable_8h_source.html#l00188">GooFit::Variable::getChanged()</a>, and <a class="el" href="_pdf_base_8h_source.html#l00135">parameterList</a>.</p>
 <div class="fragment"><div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;                                               {</div><div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    <span class="keywordflow">return</span> std::any_of(</div><div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;        std::begin(<a class="code" href="class_goo_fit_1_1_pdf_base.html#a55ba84252863282787af60f9194d130f">parameterList</a>), std::end(<a class="code" href="class_goo_fit_1_1_pdf_base.html#a55ba84252863282787af60f9194d130f">parameterList</a>), [](<span class="keyword">const</span> Variable &amp;v) { <span class="keywordflow">return</span> v.getChanged(); });</div><div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;}</div><div class="ttc" id="class_goo_fit_1_1_pdf_base_html_a55ba84252863282787af60f9194d130f"><div class="ttname"><a href="class_goo_fit_1_1_pdf_base.html#a55ba84252863282787af60f9194d130f">GooFit::PdfBase::parameterList</a></div><div class="ttdeci">std::vector&lt; Variable &gt; parameterList</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00135">PdfBase.h:135</a></div></div>
@@ -905,12 +905,12 @@ template&lt;typename... Args&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00046">46</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cpp_source.html#l00046">46</a> of file <a class="el" href="_pdf_base_8cpp_source.html">PdfBase.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00137">components</a>, and <a class="el" href="_pdf_base_8h_source.html#l00132">parameters</a>.</p>
 <div class="fragment"><div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;                                                                  {</div><div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <a class="code" href="namespace_goo_fit.html#a441ec672e8f866c31265d55da4d79200">host_normalisation</a>[<a class="code" href="class_goo_fit_1_1_pdf_base.html#aa04fef12fb0792b8372317a35ab82b48">parameters</a>] = norm;</div><div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div><div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keywordflow">for</span>(<span class="keyword">auto</span> component : <a class="code" href="class_goo_fit_1_1_pdf_base.html#aaac1db3a59ea9acd91c6064dfc2e473f">components</a>) {</div><div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        component-&gt;recursiveSetNormalisation(norm);</div><div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    }</div><div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;}</div><div class="ttc" id="class_goo_fit_1_1_pdf_base_html_aaac1db3a59ea9acd91c6064dfc2e473f"><div class="ttname"><a href="class_goo_fit_1_1_pdf_base.html#aaac1db3a59ea9acd91c6064dfc2e473f">GooFit::PdfBase::components</a></div><div class="ttdeci">std::vector&lt; PdfBase * &gt; components</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00137">PdfBase.h:137</a></div></div>
 <div class="ttc" id="class_goo_fit_1_1_pdf_base_html_aa04fef12fb0792b8372317a35ab82b48"><div class="ttname"><a href="class_goo_fit_1_1_pdf_base.html#aa04fef12fb0792b8372317a35ab82b48">GooFit::PdfBase::parameters</a></div><div class="ttdeci">unsigned int parameters</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00132">PdfBase.h:132</a></div></div>
-<div class="ttc" id="namespace_goo_fit_html_a441ec672e8f866c31265d55da4d79200"><div class="ttname"><a href="namespace_goo_fit.html#a441ec672e8f866c31265d55da4d79200">GooFit::host_normalisation</a></div><div class="ttdeci">fptype host_normalisation[maxParams]</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8cc_source.html#l00029">PdfBase.cc:29</a></div></div>
+<div class="ttc" id="namespace_goo_fit_html_a441ec672e8f866c31265d55da4d79200"><div class="ttname"><a href="namespace_goo_fit.html#a441ec672e8f866c31265d55da4d79200">GooFit::host_normalisation</a></div><div class="ttdeci">fptype host_normalisation[maxParams]</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8cpp_source.html#l00029">PdfBase.cpp:29</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -930,11 +930,11 @@ template&lt;typename... Args&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00125">125</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cpp_source.html#l00125">125</a> of file <a class="el" href="_pdf_base_8cpp_source.html">PdfBase.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00133">cIndex</a>, <a class="el" href="_pdf_base_8h_source.html#l00038">GooFit::maxParams</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00035">GooFit::totalConstants</a>.</p>
+<p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00133">cIndex</a>, <a class="el" href="_pdf_base_8h_source.html#l00038">GooFit::maxParams</a>, and <a class="el" href="_pdf_base_8cpp_source.html#l00035">GooFit::totalConstants</a>.</p>
 <div class="fragment"><div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;                                                                    {</div><div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    <span class="keywordflow">if</span>(<a class="code" href="namespace_goo_fit.html#aa76572e7343a32cd76025322cf06dab2">totalConstants</a> + amount &gt;= <a class="code" href="namespace_goo_fit.html#a432d80bb6c2e4b59a718fec8b3eadda0">maxParams</a>)</div><div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="struct_goo_fit_1_1_general_error.html">GooFit::GeneralError</a>(</div><div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;            <span class="stringliteral">&quot;totalConstants {} + amount {} can not be more than {}&quot;</span>, <a class="code" href="namespace_goo_fit.html#aa76572e7343a32cd76025322cf06dab2">totalConstants</a>, amount, <a class="code" href="namespace_goo_fit.html#a432d80bb6c2e4b59a718fec8b3eadda0">maxParams</a>);</div><div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <a class="code" href="class_goo_fit_1_1_pdf_base.html#ae344beb581b552bbc066f47a6f0b10a5">cIndex</a> = <a class="code" href="namespace_goo_fit.html#aa76572e7343a32cd76025322cf06dab2">totalConstants</a>;</div><div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    <a class="code" href="namespace_goo_fit.html#aa76572e7343a32cd76025322cf06dab2">totalConstants</a> += amount;</div><div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="class_goo_fit_1_1_pdf_base.html#ae344beb581b552bbc066f47a6f0b10a5">cIndex</a>;</div><div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;}</div><div class="ttc" id="struct_goo_fit_1_1_general_error_html"><div class="ttname"><a href="struct_goo_fit_1_1_general_error.html">GooFit::GeneralError</a></div><div class="ttdoc">Thrown when a general error is encountered. </div><div class="ttdef"><b>Definition:</b> <a href="_error_8h_source.html#l00010">Error.h:10</a></div></div>
-<div class="ttc" id="namespace_goo_fit_html_aa76572e7343a32cd76025322cf06dab2"><div class="ttname"><a href="namespace_goo_fit.html#aa76572e7343a32cd76025322cf06dab2">GooFit::totalConstants</a></div><div class="ttdeci">int totalConstants</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8cc_source.html#l00035">PdfBase.cc:35</a></div></div>
+<div class="ttc" id="namespace_goo_fit_html_aa76572e7343a32cd76025322cf06dab2"><div class="ttname"><a href="namespace_goo_fit.html#aa76572e7343a32cd76025322cf06dab2">GooFit::totalConstants</a></div><div class="ttdeci">int totalConstants</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8cpp_source.html#l00035">PdfBase.cpp:35</a></div></div>
 <div class="ttc" id="class_goo_fit_1_1_pdf_base_html_ae344beb581b552bbc066f47a6f0b10a5"><div class="ttname"><a href="class_goo_fit_1_1_pdf_base.html#ae344beb581b552bbc066f47a6f0b10a5">GooFit::PdfBase::cIndex</a></div><div class="ttdeci">unsigned int cIndex</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00133">PdfBase.h:133</a></div></div>
 <div class="ttc" id="namespace_goo_fit_html_a432d80bb6c2e4b59a718fec8b3eadda0"><div class="ttname"><a href="namespace_goo_fit.html#a432d80bb6c2e4b59a718fec8b3eadda0">GooFit::maxParams</a></div><div class="ttdeci">const int maxParams</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00038">PdfBase.h:38</a></div></div>
 </div><!-- fragment -->
@@ -956,7 +956,7 @@ template&lt;typename... Args&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00134">134</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cpp_source.html#l00134">134</a> of file <a class="el" href="_pdf_base_8cpp_source.html">PdfBase.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="_variable_8h_source.html#l00061">GooFit::Indexable::getName()</a>, <a class="el" href="_pdf_base_8h_source.html#l00093">getName()</a>, <a class="el" href="_log_8h_source.html#l00096">GOOFIT_DEBUG</a>, and <a class="el" href="_pdf_base_8h_source.html#l00134">observables</a>.</p>
 <div class="fragment"><div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;                                               {</div><div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    <span class="keywordflow">if</span>(find_in(<a class="code" href="class_goo_fit_1_1_pdf_base.html#ab8c36343b25b0546aa5b935d26bd88c7">observables</a>, obs))</div><div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;        <span class="keywordflow">return</span>;</div><div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;</div><div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    <a class="code" href="_log_8h.html#a2f7aa24073791136d223fdb553c0ae71">GOOFIT_DEBUG</a>(<span class="stringliteral">&quot;{}: Registering o:{} for {}&quot;</span>, <a class="code" href="class_goo_fit_1_1_pdf_base.html#a4eb977ab3d1eefbc835c3b90a617c7ec">getName</a>(), <a class="code" href="class_goo_fit_1_1_pdf_base.html#ab8c36343b25b0546aa5b935d26bd88c7">observables</a>.size(), obs.getName());</div><div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    <a class="code" href="class_goo_fit_1_1_pdf_base.html#ab8c36343b25b0546aa5b935d26bd88c7">observables</a>.push_back(obs);</div><div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;}</div><div class="ttc" id="class_goo_fit_1_1_pdf_base_html_ab8c36343b25b0546aa5b935d26bd88c7"><div class="ttname"><a href="class_goo_fit_1_1_pdf_base.html#ab8c36343b25b0546aa5b935d26bd88c7">GooFit::PdfBase::observables</a></div><div class="ttdeci">std::vector&lt; Observable &gt; observables</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00134">PdfBase.h:134</a></div></div>
@@ -981,7 +981,7 @@ template&lt;typename... Args&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00054">54</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cpp_source.html#l00054">54</a> of file <a class="el" href="_pdf_base_8cpp_source.html">PdfBase.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="_variable_8h_source.html#l00056">GooFit::Indexable::getIndex()</a>, <a class="el" href="_variable_8h_source.html#l00061">GooFit::Indexable::getName()</a>, <a class="el" href="_pdf_base_8h_source.html#l00093">getName()</a>, <a class="el" href="_log_8h_source.html#l00096">GOOFIT_DEBUG</a>, <a class="el" href="_pdf_base_8h_source.html#l00135">parameterList</a>, and <a class="el" href="_variable_8h_source.html#l00058">GooFit::Indexable::setIndex()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;                                                             {</div><div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">int</span> unique_param = 0;</div><div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div><div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keywordflow">if</span>(find_in(<a class="code" href="class_goo_fit_1_1_pdf_base.html#a55ba84252863282787af60f9194d130f">parameterList</a>, var))</div><div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">int</span><span class="keyword">&gt;</span>(var.getIndex());</div><div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div><div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="keywordflow">if</span>(var.getIndex() &lt; 0) {</div><div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <a class="code" href="_log_8h.html#a2f7aa24073791136d223fdb553c0ae71">GOOFIT_DEBUG</a>(<span class="stringliteral">&quot;{}: Registering p:{} for {}&quot;</span>, <a class="code" href="class_goo_fit_1_1_pdf_base.html#a4eb977ab3d1eefbc835c3b90a617c7ec">getName</a>(), unique_param, var.getName());</div><div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        var.setIndex(unique_param++);</div><div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    }</div><div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div><div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <a class="code" href="class_goo_fit_1_1_pdf_base.html#a55ba84252863282787af60f9194d130f">parameterList</a>.push_back(var);</div><div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">int</span><span class="keyword">&gt;</span>(var.getIndex());</div><div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;}</div><div class="ttc" id="class_goo_fit_1_1_pdf_base_html_a55ba84252863282787af60f9194d130f"><div class="ttname"><a href="class_goo_fit_1_1_pdf_base.html#a55ba84252863282787af60f9194d130f">GooFit::PdfBase::parameterList</a></div><div class="ttdeci">std::vector&lt; Variable &gt; parameterList</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00135">PdfBase.h:135</a></div></div>
@@ -1006,7 +1006,7 @@ template&lt;typename... Args&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00159">fitTo()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cpp_source.html#l00159">fitTo()</a>.</p>
 
 </div>
 </div>
@@ -1054,7 +1054,7 @@ template&lt;typename... Args&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00142">142</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cpp_source.html#l00142">142</a> of file <a class="el" href="_pdf_base_8cpp_source.html">PdfBase.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="class_goo_fit_1_1_pdf_base.html#ad8ca458b257f212bb9d226e818517512">generateNormRange()</a>, and <a class="el" href="_pdf_base_8h_source.html#l00138">integrationBins</a>.</p>
 <div class="fragment"><div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;                                                   {</div><div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;    <a class="code" href="class_goo_fit_1_1_pdf_base.html#acd93b462edeca2eb94758cb5c8104afc">integrationBins</a> = i;</div><div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    <a class="code" href="class_goo_fit_1_1_pdf_base.html#ad8ca458b257f212bb9d226e818517512">generateNormRange</a>();</div><div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;}</div><div class="ttc" id="class_goo_fit_1_1_pdf_base_html_acd93b462edeca2eb94758cb5c8104afc"><div class="ttname"><a href="class_goo_fit_1_1_pdf_base.html#acd93b462edeca2eb94758cb5c8104afc">GooFit::PdfBase::integrationBins</a></div><div class="ttdeci">int integrationBins</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00138">PdfBase.h:138</a></div></div>
@@ -1098,7 +1098,7 @@ template&lt;typename... Args&gt; </div>
 
 <p>This needs to be set before a call to setData. </p>
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00152">152</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cpp_source.html#l00152">152</a> of file <a class="el" href="_pdf_base_8cpp_source.html">PdfBase.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00144">m_iEventsPerTask</a>.</p>
 <div class="fragment"><div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;                                                             {</div><div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    <span class="keywordflow">if</span>(p == <span class="keyword">nullptr</span>)</div><div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;        <span class="keywordflow">return</span>;</div><div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;</div><div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    <a class="code" href="class_goo_fit_1_1_pdf_base.html#a94c76d405a84904e3317b59ff7b97b66">m_iEventsPerTask</a> = c;</div><div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;}</div><div class="ttc" id="class_goo_fit_1_1_pdf_base_html_a94c76d405a84904e3317b59ff7b97b66"><div class="ttname"><a href="class_goo_fit_1_1_pdf_base.html#a94c76d405a84904e3317b59ff7b97b66">GooFit::PdfBase::m_iEventsPerTask</a></div><div class="ttdeci">int m_iEventsPerTask</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00144">PdfBase.h:144</a></div></div>
@@ -1148,7 +1148,7 @@ template&lt;typename... Args&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_pdf_base_8cc_source.html#l00069">69</a> of file <a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_pdf_base_8cpp_source.html#l00069">69</a> of file <a class="el" href="_pdf_base_8cpp_source.html">PdfBase.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="_pdf_base_8h_source.html#l00137">components</a>, <a class="el" href="_variable_8h_source.html#l00061">GooFit::Indexable::getName()</a>, <a class="el" href="_pdf_base_8h_source.html#l00093">getName()</a>, <a class="el" href="_log_8h_source.html#l00096">GOOFIT_DEBUG</a>, and <a class="el" href="_variable_8h_source.html#l00058">GooFit::Indexable::setIndex()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;                                                       {</div><div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <a class="code" href="_log_8h.html#a2f7aa24073791136d223fdb553c0ae71">GOOFIT_DEBUG</a>(<span class="stringliteral">&quot;{}: Removing {}&quot;</span>, <a class="code" href="class_goo_fit_1_1_pdf_base.html#a4eb977ab3d1eefbc835c3b90a617c7ec">getName</a>(), var.getName());</div><div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div><div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordflow">for</span>(<a class="code" href="class_goo_fit_1_1_pdf_base.html#a6f57a4994c00d8d62e360f83c2570a86">PdfBase</a> *comp : <a class="code" href="class_goo_fit_1_1_pdf_base.html#aaac1db3a59ea9acd91c6064dfc2e473f">components</a>) {</div><div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        comp-&gt;unregisterParameter(var);</div><div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    }</div><div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div><div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    var.setIndex(-1);</div><div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="comment">// Once copies are used, this might able to be unregistred from a lower PDF only</span></div><div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="comment">// For now, it gets completely cleared.</span></div><div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;}</div><div class="ttc" id="class_goo_fit_1_1_pdf_base_html_aaac1db3a59ea9acd91c6064dfc2e473f"><div class="ttname"><a href="class_goo_fit_1_1_pdf_base.html#aaac1db3a59ea9acd91c6064dfc2e473f">GooFit::PdfBase::components</a></div><div class="ttdeci">std::vector&lt; PdfBase * &gt; components</div><div class="ttdef"><b>Definition:</b> <a href="_pdf_base_8h_source.html#l00137">PdfBase.h:137</a></div></div>
@@ -1181,7 +1181,7 @@ template&lt;typename... Args&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00133">133</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00125">registerConstants()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cpp_source.html#l00125">registerConstants()</a>.</p>
 
 </div>
 </div>
@@ -1207,7 +1207,7 @@ template&lt;typename... Args&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00137">137</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00037">checkInitStatus()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00111">getObservables()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00095">getParameterByName()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00081">getParameters()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00046">recursiveSetNormalisation()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00069">unregisterParameter()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cpp_source.html#l00037">checkInitStatus()</a>, <a class="el" href="_pdf_base_8cpp_source.html#l00111">getObservables()</a>, <a class="el" href="_pdf_base_8cpp_source.html#l00095">getParameterByName()</a>, <a class="el" href="_pdf_base_8cpp_source.html#l00081">getParameters()</a>, <a class="el" href="_pdf_base_8cpp_source.html#l00046">recursiveSetNormalisation()</a>, and <a class="el" href="_pdf_base_8cpp_source.html#l00069">unregisterParameter()</a>.</p>
 
 </div>
 </div>
@@ -1305,7 +1305,7 @@ template&lt;typename... Args&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00138">138</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00142">setIntegrationFineness()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cpp_source.html#l00142">setIntegrationFineness()</a>.</p>
 
 </div>
 </div>
@@ -1331,7 +1331,7 @@ template&lt;typename... Args&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00144">144</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00152">setNumPerTask()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cpp_source.html#l00152">setNumPerTask()</a>.</p>
 
 </div>
 </div>
@@ -1431,7 +1431,7 @@ template&lt;typename... Args&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00134">134</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00111">getObservables()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00134">registerObservable()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cpp_source.html#l00111">getObservables()</a>, and <a class="el" href="_pdf_base_8cpp_source.html#l00134">registerObservable()</a>.</p>
 
 </div>
 </div>
@@ -1457,7 +1457,7 @@ template&lt;typename... Args&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00135">135</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00095">getParameterByName()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00081">getParameters()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00147">parametersChanged()</a>, and <a class="el" href="_pdf_base_8cc_source.html#l00054">registerParameter()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cpp_source.html#l00095">getParameterByName()</a>, <a class="el" href="_pdf_base_8cpp_source.html#l00081">getParameters()</a>, <a class="el" href="_pdf_base_8cpp_source.html#l00147">parametersChanged()</a>, and <a class="el" href="_pdf_base_8cpp_source.html#l00054">registerParameter()</a>.</p>
 
 </div>
 </div>
@@ -1483,7 +1483,7 @@ template&lt;typename... Args&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00132">132</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_exp_pdf_8h_source.html#l00014">GooFit::ExpPdf::hasAnalyticIntegral()</a>, <a class="el" href="_pdf_base_8cc_source.html#l00046">recursiveSetNormalisation()</a>, and <a class="el" href="_resonance_pdf_8h_source.html#l00053">GooFit::ResonancePdf::setConstantIndex()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_exp_pdf_8h_source.html#l00014">GooFit::ExpPdf::hasAnalyticIntegral()</a>, <a class="el" href="_pdf_base_8cpp_source.html#l00046">recursiveSetNormalisation()</a>, and <a class="el" href="_resonance_pdf_8h_source.html#l00053">GooFit::ResonancePdf::setConstantIndex()</a>.</p>
 
 </div>
 </div>
@@ -1509,7 +1509,7 @@ template&lt;typename... Args&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="_pdf_base_8h_source.html#l00140">140</a> of file <a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_pdf_base_8cc_source.html#l00037">checkInitStatus()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_pdf_base_8cpp_source.html#l00037">checkInitStatus()</a>.</p>
 
 </div>
 </div>
@@ -1539,12 +1539,12 @@ template&lt;typename... Args&gt; </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>/home/travis/build/GooFit/GooFit/include/goofit/<a class="el" href="_pdf_base_8h_source.html">PdfBase.h</a></li>
-<li>/home/travis/build/GooFit/GooFit/src/goofit/<a class="el" href="_pdf_base_8cc_source.html">PdfBase.cc</a></li>
+<li>/home/travis/build/GooFit/GooFit/src/goofit/<a class="el" href="_pdf_base_8cpp_source.html">PdfBase.cpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Nov 17 2017 01:22:30 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Nov 17 2017 18:36:46 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

@@ -7,7 +7,7 @@ except ImportError:
 
 setup(
         name='goofit',
-        version='2.1.0.beta1',
+        version='2.1.0.beta2',
         description='GooFit fitting package',
         author='Henry Schreiner',
         author_email='hschrein@cern.ch',
@@ -80,7 +80,7 @@ You can set the ``PIP_INSTALL_OPTIONS`` variable to pass through build command, 
 
     PIP_INSTALL_OPTIONS="-- -DGOOFIT_PACKAGES=OFF" pipenv install --verbose -e .
 
-You can also install development requirements with the ``--dev`` flag.
+You can also install development requirements with the ``--dev`` flag. Note that the current version of PyLandau requires numpy tp be installed first, so you might need to run ``pipenv install numpy`` first.
 
 Building a source package from git
 ==================================

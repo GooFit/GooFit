@@ -22,7 +22,9 @@ setup(
             extras_require={
             'dev': [
                 'pytest',
-                'pylandau'
+                'numpy',
+                'matplotlib',
+                'pandas'
             ]
         }
     }

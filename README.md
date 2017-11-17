@@ -34,7 +34,7 @@ doing maximum-likelihood fits with a familiar syntax.
 
 A list of exact commands required for several platforms is [available here](./docs/SYSTEM_INSTALL.md).
 
-There are also Python Bindings in the 2.1 development version. This requires Python (2 or 3), [NumPy](http://www.numpy.org), [SciKit-Build](http://scikit-build.readthedocs.io), and CMake. You can uses `pip install -v goofit`, or `pip install -v -e .` inside the repository. You can also direcly force the bindings from a normal build with `-DGOOFIT_PYTHON=ON`. You can check your install with `python -m goofit`. You can debug a goofit file named `python_script.py` with gcc using `gdb -ex r --args python python_script.py`.
+There are also Python Bindings. This requires Python (2 or 3), [NumPy](http://www.numpy.org), [SciKit-Build](http://scikit-build.readthedocs.io), and CMake. You can uses `pip install -v goofit`, or `pip install -v -e .` inside the repository. You can also direcly force the bindings from a normal build with `-DGOOFIT_PYTHON=ON`. You can check your install with `python -m goofit`. You can debug a goofit file named `python_script.py` with gcc using `gdb -ex r --args python python_script.py`.
 
 ## Getting the files
 
@@ -75,21 +75,19 @@ Other custom options supported along with the defaults:
 * `-DGOOFIT_EXAMPLES=ON`: Build the examples
 * `-DGOOFIT_PACKAGES=ON`: Build any packages found with the name `goofit_*`
 * `-DGOOFIT_DEBUG=ON` and `-DGOOFIT_TRACE=ON` will enable the matching printout macros
-* `-DGOOFIT_PYTHON=OFF` (`ON` in GooFit 2.1 if Python found): Preliminary python bindings using [PyBind11].
+* `-DGOOFIT_PYTHON=ON`: Include the python bindings using [PyBind11] if Python found.
 
 Advanced Options:
-* `-DGOOFIT_HOST=Auto`: This is CPP unless device is `OMP`, in which case it is also `OMP`. This changes thrust::host_vector calculations, and is not fully supported when set to a non-default setting.
+* `-DGOOFIT_HOST=Auto`: This is CPP unless device is `OMP`, in which case it is also `OMP`. This changes `thrust::host_vector` calculations, and is not fully supported when set to a non-default setting.
 * `-DGOOFIT_TESTS=ON`: Build the GooFit tests
-* `-DGOOFIT_SEPARATE_COMP=ON`: Enable separable compilation of PDFs. Single core CUDA builds are faster with this off.
+* `-DGOOFIT_SEPARATE_COMP=ON`: Enable separable compilation of PDFs. Single core CUDA builds are faster with this off. The off mode is not well supported, especially on newer cards.
 * `-DGOOFIT_MPI=ON`: (OFF/ON.  With this feature on, GPU devices are selected automatically).  Tested with MVAPICH2/2.2 and OpenMPI.
 * `-DGOOFIT_CUDA_OR_GROUPSIZE:INT=128`: This sets the group size that thrust will use for distributing the problem.  This parameter can be thought of as 'Threads per block'.  These will be used after running 'find_optimal.py' to figure out the optimal size.
 * `-DGOOFIT_CUDA_OR_GRAINSIZE:INT=7`: This is the grain size thrust uses for distributing the problem.  This parameter can be thought of as 'Items per thread'.
 * `-DGOOFIT_MAXPAR=1800`: The maximum number of parameters to allow. May cause memory issues if too large.
 * You can enable sanitizers on non-CUDA builds with `-DSANITIZE_ADDRESS=ON`, `-DSANITIZE_MEMORY=ON`, `-DSANITIZE_THREAD=ON` or `-DSANITIZE_UNDEFINED=ON`.
 * If `clang-tidy` is available, it will automatically be used to check the source. If you set `-DGOOFIT_TIDY_FIX=ON`, fixes will be applied to the GooFit source.
-
-Note for targeting Tesla P100 or any `arch=6.0` device:
-* Please use `-DGOOFIT_SEPARATE_COMP=ON` flags to compile.
+* `-DGOOFIT_SPLASH=ON`: Controls the unicode splash at the beginning.
 
 A few standard CMake tricks:
 
@@ -117,6 +115,7 @@ The following IDEs have been tested. Here `$SRC` refers to the source directory,
 | Xcode | macOS | `cmake $SRC -GXcode` | Only CPP version, works well though |
 | Nsight-Eclipse | Linux | `cmake $SRC -G "Eclipse CDT4 - Unix Makefiles"` | Must be out-of-source, supports CUDA backend |
 | QtCreator | All | Open from QtCreator dialog | Requires CMake extension (usually present). Might be able to use CMake 3.7+ Server |
+| CLion | All | Open from CLion menu | Young but promising |
 
 
 ## Running the Examples
@@ -125,6 +124,7 @@ The following IDEs have been tested. Here `$SRC` refers to the source directory,
 
 ```bash
 ./examples/RunAll.py
+./pyexamples/RunAll.sh # Python
 ```
 
 or
@@ -185,18 +185,14 @@ Application app{"Optional discription", argc, argv};
 
 // Command line options can be added here.
 
-try {
-    app.run();
-} catch(const ParseError &e) {
-    return app.exit(e);
-}
+GOOFIT_PARSE(app);
 ```
 
 See [CLI11] for more details. The [pipipi0](./examples/pipipi0DPFit) example has an example of a complex set of options.
 
 The other key differences in code are the addition of the `GooFit` namespace (`using namespace GooFit` allows fast conversion), and the removal of direct access to members of `Variable` (using getters/setters, or directly treat the variable like its value).
 
-See [Converting to GooFit 2.0](./docs/CONVERTING20.md) and the [Changelog](./CHANGELOG.md).
+See Converting to [GooFit 2.0](./docs/CONVERTING20.md), [GooFit 2.1](./docs/CONVERTING21.md), and the [Changelog](./CHANGELOG.md).
 
 ## Improving Performance with MPI
 

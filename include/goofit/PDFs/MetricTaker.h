@@ -2,7 +2,7 @@
 
 #include <thrust/functional.h>
 
-#include "goofit/PdfBase.h"
+#include <goofit/PdfBase.h>
 
 namespace GooFit {
 

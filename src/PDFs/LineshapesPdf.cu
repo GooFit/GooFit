@@ -9,8 +9,8 @@ Also right now it is the home to some helper functions needed and an implementat
 on the GPU
 */
 
-#include "goofit/PDFs/physics/LineshapesPdf.h"
-#include "goofit/PDFs/physics/SpinFactors.h"
+#include <goofit/PDFs/physics/LineshapesPdf.h>
+#include <goofit/PDFs/physics/SpinFactors.h>
 #include <utility>
 
 namespace GooFit {

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "goofit/Color.h"
-#include <fmt/format.h>
-
 #include <iostream>
+
+#include <fmt/format.h>
+#include <goofit/Color.h>
 
 namespace GooFit {
 

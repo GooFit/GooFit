@@ -1,4 +1,4 @@
-#include "goofit/PDFs/basic/CorrGaussianPdf.h"
+#include <goofit/PDFs/basic/CorrGaussianPdf.h>
 
 namespace GooFit {
 

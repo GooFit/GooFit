@@ -1,7 +1,7 @@
-#include "goofit/PDFs/physics/DalitzPlotPdf.h"
-#include "goofit/Error.h"
+#include <goofit/Error.h>
+#include <goofit/PDFs/physics/DalitzPlotPdf.h>
 
-#include <thrust/complex.h>
+#include <goofit/detail/Complex.h>
 #include <thrust/transform_reduce.h>
 
 namespace GooFit {
@@ -117,12 +117,13 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
         // fpcomplex me = cResonances[i][evtNum];
         // fpcomplex me (me_real, me_imag);
         fpcomplex me = RO_CACHE(cResonances[i][evtNum]);
+
         // fpcomplex me (v.x, v.y);
 
         totalAmp += amp * me;
     }
 
-    fptype ret = thrust::norm(totalAmp);
+    fptype ret         = thrust::norm(totalAmp);
     pc.incrementIndex(1, numResonances * 2, 2, num_obs, 1);
 
     // loop to efficiency idx
@@ -132,6 +133,7 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
 
     fptype eff = callFunction(evt, pc);
     ret *= eff;
+
 
     return ret;
 }
@@ -152,6 +154,7 @@ __host__ DalitzPlotPdf::DalitzPlotPdf(
     , cacheToUse(0)
     , integrators(nullptr)
     , calculators(nullptr) {
+
     for(auto &cachedWave : cachedWaves)
         cachedWave = nullptr;
 
@@ -164,10 +167,8 @@ __host__ DalitzPlotPdf::DalitzPlotPdf(
 
     // registered to 0 position
     registerConstant(decayInfo.resonances.size());
-
     static int cacheCount = 0;
     cacheToUse            = cacheCount++;
-
     //registered to 1 position
     registerConstant(cacheToUse);
 
@@ -326,7 +327,6 @@ __host__ fptype DalitzPlotPdf::normalize() const {
             // integrators[i][j]->setEfficiencyIndex(efficiencyFunction);
             integrators[i][j]->setEfficiencyIndex(decayInfo.resonances[j]->getFunctionIndex());
             thrust::constant_iterator<int> effFunc(efficiencyFunction);
-
             fpcomplex dummy(0, 0);
             thrust::plus<fpcomplex> complexSum;
             (*(integrals[i][j])) = thrust::transform_reduce(
@@ -417,7 +417,7 @@ __device__ fpcomplex SpecialResonanceIntegrator::operator()(thrust::tuple<int, f
     int id_m13 = pc.getObservable(1);
 
     // fptype fakeEvt[10]; // Need room for many observables in case m12 or m13 were assigned a high index in an
-    // event-weighted fit.
+                        // event-weighted fit.
     // fakeEvt[0] = 2;
     // fakeEvt[id_m12] = binCenterM12;
     // fakeEvt[id_m13] = binCenterM13;

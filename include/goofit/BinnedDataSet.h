@@ -3,7 +3,7 @@
 #include <map>
 #include <vector>
 
-#include "goofit/DataSet.h"
+#include <goofit/DataSet.h>
 
 namespace GooFit {
 

@@ -1,4 +1,4 @@
-#include "goofit/PDFs/combine/CompositePdf.h"
+#include <goofit/PDFs/combine/CompositePdf.h>
 
 namespace GooFit {
 

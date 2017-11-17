@@ -1,6 +1,6 @@
-#include "goofit/PDFs/basic/PolynomialPdf.h"
-#include "goofit/Variable.h"
-#include "goofit/Log.h"
+#include <goofit/PDFs/basic/PolynomialPdf.h>
+#include <goofit/Variable.h>
+#include <goofit/Log.h>
 
 namespace GooFit {
 
@@ -21,7 +21,6 @@ __device__ fptype device_Polynomial(fptype *evt, ParameterContainer &pc) {
     }
 
     pc.incrementIndex(1, numParams, 1, 1, 1);
-
     return ret;
 }
 
@@ -41,14 +40,12 @@ __device__ fptype device_OffsetPolynomial(fptype *evt, ParameterContainer &pc) {
     }
 
     pc.incrementIndex(1, numParams, 1, 1, 1);
-
     return ret;
 }
 
 __device__ fptype device_MultiPolynomial(fptype *evt, ParameterContainer &pc) {
     int num_constants  = pc.getNumConstants();
     int num_parameters = pc.getNumParameters();
-
     // Structure is nP, maxDegree, offset1, offset2, ..., coeff1, coeff2, ..., nO, o1, o2, ...
 
     int num_observables = pc.getNumObservables();
@@ -137,19 +134,20 @@ __host__ PolynomialPdf::PolynomialPdf(
 
     initialize();
 }
+
 __host__ PolynomialPdf::PolynomialPdf(
     std::string n, Observable _x, std::vector<Variable> weights, Variable x0, unsigned int lowestDegree)
- : GooPdf(n, _x)
+    : GooPdf(n, _x)
     , center(new Variable(x0)) {
     registerConstant(lowestDegree);
-    
+
     for(Variable & v : weights) {
         registerParameter(v);
     }
 
     polyType = 1;
     registerParameter(x0);
-  
+
     initialize();
 }
 
@@ -163,7 +161,6 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n,
     unsigned int numParameters = 1;
 
     registerConstant(maxDegree);
-
     // For 1 observable, equal to n = maxDegree + 1.
     // For two, n*(n+1)/2, ie triangular number. This generalises:
     // 3: Pyramidal number n*(n+1)*(n+2)/(3*2)
@@ -172,7 +169,6 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n,
     for(unsigned int i = 0; i < obses.size(); ++i) {
         registerObservable(obses[i]);
         numParameters *= (maxDegree + 1 + i);
-
         // we are 'padding' the list.
         registerConstant(maxDegree + 1 + i);
     }
@@ -198,6 +194,7 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n,
         offsets.push_back(newOffset);
     }
 
+
     for(auto &offset : offsets) {
         registerParameter(offset);
     }
@@ -219,7 +216,7 @@ __host__ void PolynomialPdf::recursiveSetIndices() {
         GET_FUNCTION_ADDR(ptr_to_OffsetPolynomial);
     } else if(polyType == 2) {
         GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_MultiPolynomial");
-        GET_FUNCTION_ADDR(ptr_to_MultiPolynomial);
+    GET_FUNCTION_ADDR(ptr_to_MultiPolynomial);
     }
 
     GOOFIT_TRACE("host_function_table[{}] = {}", num_device_functions, getName());
@@ -258,6 +255,7 @@ __host__ fptype PolynomialPdf::getCoefficient(int coef) const {
                      "polynomials. Returning zero, which is very likely wrong.\n";
         return 0;
     }
+
 
     // True function is, say, ax^2 + bx + c.
     // We express this as (a'x^2 + b'x + c')*N.

@@ -1,53 +1,53 @@
 // ROOT stuff
-#include "TRandom.h"
-#include "TCanvas.h"
-#include "TFile.h"
-#include "TH1F.h"
-#include "TH2F.h"
-#include "TStyle.h"
-#include "TRandom3.h"
-#include "TLegend.h"
-#include "TText.h"
-#include "TLine.h"
+#include <TCanvas.h>
+#include <TFile.h>
+#include <TH1F.h>
+#include <TH2F.h>
+#include <TLegend.h>
+#include <TLine.h>
+#include <TRandom.h>
+#include <TRandom3.h>
+#include <TStyle.h>
+#include <TText.h>
 
 // System stuff
+#include <cassert>
 #include <climits>
 #include <fstream>
-#include <cassert>
 
 // GooFit stuff
-#include "goofit/Application.h"
-#include "goofit/Variable.h"
-#include "goofit/PDFs/physics/TruthResolution_Aux.h"
-#include "goofit/PDFs/physics/ThreeGaussResolution_Aux.h"
-#include "goofit/PDFs/physics/TddpPdf.h"
-#include "goofit/PDFs/basic/CrystalBallPdf.h"
-#include "goofit/PDFs/physics/IncoherentSumPdf.h"
-#include "goofit/PDFs/physics/ResonancePdf.h"
-#include "goofit/PDFs/physics/DalitzVetoPdf.h"
-#include "goofit/PDFs/basic/JohnsonSUPdf.h"
-#include "goofit/PDFs/basic/GaussianPdf.h"
-#include "goofit/PDFs/combine/ConvolutionPdf.h"
-#include "goofit/PDFs/basic/StepPdf.h"
-#include "goofit/PDFs/basic/ExpPdf.h"
-#include "goofit/PDFs/basic/ExpGausPdf.h"
-#include "goofit/PDFs/basic/VoigtianPdf.h"
-#include "goofit/PDFs/combine/AddPdf.h"
-#include "goofit/PDFs/combine/ProdPdf.h"
-#include "goofit/PDFs/basic/BinTransformPdf.h"
-#include "goofit/PDFs/combine/MappedPdf.h"
-#include "goofit/PDFs/basic/PolynomialPdf.h"
-#include "goofit/PDFs/combine/EventWeightedAddPdf.h"
-#include "goofit/PDFs/basic/SmoothHistogramPdf.h"
-#include "goofit/PDFs/basic/TrigThresholdPdf.h"
-#include "goofit/PDFs/GooPdf.h"
+#include <goofit/Application.h>
+#include <goofit/PDFs/GooPdf.h>
+#include <goofit/PDFs/basic/BinTransformPdf.h>
+#include <goofit/PDFs/basic/CrystalBallPdf.h>
+#include <goofit/PDFs/basic/ExpGausPdf.h>
+#include <goofit/PDFs/basic/ExpPdf.h>
+#include <goofit/PDFs/basic/GaussianPdf.h>
+#include <goofit/PDFs/basic/JohnsonSUPdf.h>
+#include <goofit/PDFs/basic/PolynomialPdf.h>
+#include <goofit/PDFs/basic/SmoothHistogramPdf.h>
+#include <goofit/PDFs/basic/StepPdf.h>
+#include <goofit/PDFs/basic/TrigThresholdPdf.h>
+#include <goofit/PDFs/basic/VoigtianPdf.h>
+#include <goofit/PDFs/combine/AddPdf.h>
+#include <goofit/PDFs/combine/ConvolutionPdf.h>
+#include <goofit/PDFs/combine/EventWeightedAddPdf.h>
+#include <goofit/PDFs/combine/MappedPdf.h>
+#include <goofit/PDFs/combine/ProdPdf.h>
+#include <goofit/PDFs/physics/DalitzVetoPdf.h>
+#include <goofit/PDFs/physics/IncoherentSumPdf.h>
+#include <goofit/PDFs/physics/ResonancePdf.h>
+#include <goofit/PDFs/physics/TddpPdf.h>
+#include <goofit/PDFs/physics/ThreeGaussResolution_Aux.h>
+#include <goofit/PDFs/physics/TruthResolution_Aux.h>
+#include <goofit/Variable.h>
 
-#include "goofit/fitting/FitManagerMinuit1.h"
-#include "goofit/fitting/FitManagerMinuit2.h"
+#include <goofit/fitting/FitManagerMinuit1.h>
+#include <goofit/fitting/FitManagerMinuit2.h>
 
-#include "goofit/UnbinnedDataSet.h"
-#include "goofit/PDFs/combine/CompositePdf.h"
-#include "goofit/FunctorWriter.h"
+#include <goofit/FunctorWriter.h>
+#include <goofit/PDFs/combine/CompositePdf.h>
+#include <goofit/UnbinnedDataSet.h>
 
 using namespace std;
 using namespace GooFit;

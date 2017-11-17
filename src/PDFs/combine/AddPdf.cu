@@ -1,7 +1,7 @@
-#include "goofit/PDFs/combine/AddPdf.h"
-#include "goofit/Error.h"
-#include "goofit/Log.h"
-#include "goofit/detail/ThrustOverride.h"
+#include <goofit/Error.h>
+#include <goofit/PDFs/combine/AddPdf.h>
+#include <goofit/detail/ThrustOverride.h>
+#include <goofit/Log.h>
 
 #include <thrust/iterator/constant_iterator.h>
 #include <thrust/transform_reduce.h>
@@ -73,7 +73,6 @@ __device__ fptype device_AddPdfsExt(fptype *evt, ParameterContainer &pc) {
     }
 
     pc = pci;
-
     ret /= totalWeight;
 
     return ret;
@@ -101,7 +100,6 @@ AddPdf::AddPdf(std::string n, std::vector<Variable> weights, std::vector<PdfBase
     for(unsigned int w = 0; w < weights.size(); ++w) {
         if(components[w] == nullptr)
             throw GooFit::GeneralError("Invalid component");
-
         registerParameter(weights[w]);
     }
 
@@ -135,7 +133,7 @@ __host__ void AddPdf::recursiveSetIndices() {
         GET_FUNCTION_ADDR(ptr_to_AddPdfsExt);
     } else {
         GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_AddPdfs");
-        GET_FUNCTION_ADDR(ptr_to_AddPdfs);
+    GET_FUNCTION_ADDR(ptr_to_AddPdfs);
     }
 
     host_function_table[num_device_functions] = host_fcn_ptr;

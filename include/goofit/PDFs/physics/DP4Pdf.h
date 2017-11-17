@@ -8,9 +8,9 @@ See *.cu file for more details
 
 #pragma once
 
-#include "goofit/PDFs/GooPdf.h"
-#include "goofit/PDFs/physics/DalitzPlotHelpers.h"
-#include "goofit/PDFs/physics/SpinFactors.h"
+#include <goofit/PDFs/GooPdf.h>
+#include <goofit/PDFs/physics/DalitzPlotHelpers.h>
+#include <goofit/PDFs/physics/SpinFactors.h>
 #include <mcbooster/GContainers.h>
 #include <thrust/remove.h>
 #include <tuple>

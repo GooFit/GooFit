@@ -1,4 +1,4 @@
-#include "goofit/PDFs/basic/JohnsonSUPdf.h"
+#include <goofit/PDFs/basic/JohnsonSUPdf.h>
 
 namespace GooFit {
 

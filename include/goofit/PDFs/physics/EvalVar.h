@@ -8,7 +8,7 @@ See UserUtils for a handy way to convert for tests.
 
 #pragma once
 
-#include "goofit/PDFs/physics/DalitzPlotHelpers.h"
+#include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <mcbooster/GContainers.h>
 #include <mcbooster/GFunctional.h>
 #include <mcbooster/GTypes.h>

@@ -1,4 +1,4 @@
-#include "goofit/PDFs/physics/TruthResolution_Aux.h"
+#include <goofit/PDFs/physics/TruthResolution_Aux.h>
 
 namespace GooFit {
 

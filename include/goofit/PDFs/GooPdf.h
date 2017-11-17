@@ -2,10 +2,10 @@
 
 #include <thrust/functional.h>
 
-#include "goofit/PDFs/MetricTaker.h"
-#include "goofit/PdfBase.h"
-#include "goofit/UnbinnedDataSet.h"
-#include "goofit/Log.h"
+#include <goofit/PDFs/MetricTaker.h>
+#include <goofit/PdfBase.h>
+#include <goofit/UnbinnedDataSet.h>
+#include <goofit/Log.h>
 
 #ifdef ROOT_FOUND
 class TH1D;
@@ -22,7 +22,6 @@ constexpr const char *evalfunc_to_string(EvalFunc val) { return evalfunc_vals[st
 
 void *getMetricPointer(std::string name);
 void *getMetricPointer(EvalFunc val);
-    
 #ifdef SEPARABLE
 
 /// This is a container that is used to communicate to the device PDF functions
@@ -174,7 +173,7 @@ class GooPdf : public PdfBase {
 
     __host__ void initialize();
     __host__ void scan(Observable var, std::vector<fptype> &values);
-    __host__ void setFitControl(FitControl *const fc, bool takeOwnerShip = true) override;
+    __host__ void setFitControl(std::shared_ptr<FitControl> fc) override;
     __host__ virtual void setMetrics();
     __host__ void setParameterConstantness(bool constant = true);
 
@@ -189,9 +188,8 @@ class GooPdf : public PdfBase {
 
   protected:
     __host__ virtual void setIndices();
-
     __host__ virtual double sumOfNll(int numVars) const;
-    MetricTaker *logger = nullptr;
+    std::shared_ptr<MetricTaker> logger;
 
   private:
 };

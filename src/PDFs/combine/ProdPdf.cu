@@ -1,5 +1,5 @@
-#include "goofit/PDFs/combine/ProdPdf.h"
-#include "goofit/Log.h"
+#include <goofit/PDFs/combine/ProdPdf.h>
+#include <goofit/Log.h>
 
 #include <algorithm>
 
@@ -9,7 +9,7 @@ __device__ fptype device_ProdPdfs(fptype *evt, ParameterContainer &pc) {
     int numCons  = pc.getNumConstants();
     int numComps = pc.getConstant(0);
     int numObs   = pc.getNumObservables();
-    fptype ret   = 1;
+    fptype ret    = 1;
 
     pc.incrementIndex(1, 0, numCons, numObs, 1);
     // pc.incrementIndex();
@@ -18,8 +18,8 @@ __device__ fptype device_ProdPdfs(fptype *evt, ParameterContainer &pc) {
         fptype curr = callFunction(evt, pc);
 
         curr *= norm;
-
         ret *= curr;
+
     }
 
     return ret;
@@ -30,9 +30,9 @@ __device__ device_function_ptr ptr_to_ProdPdfs = device_ProdPdfs;
 ProdPdf::ProdPdf(std::string n, std::vector<PdfBase *> comps)
     : GooPdf(n)
     , varOverlaps(false) {
+
     for(PdfBase *p : comps) {
         components.push_back(p);
-
         // we push a placeholder that is used to indicate
         // constantsList.push_back (0);
     }
@@ -45,6 +45,7 @@ ProdPdf::ProdPdf(std::string n, std::vector<PdfBase *> comps)
     std::vector<Observable> observableCheck; // Use to check for overlap in observables
 
     for(PdfBase *p : comps) {
+
         if(varOverlaps)
             continue; // Only need to establish this once.
 
@@ -73,7 +74,6 @@ ProdPdf::ProdPdf(std::string n, std::vector<PdfBase *> comps)
 
 __host__ void ProdPdf::recursiveSetIndices() {
     GET_FUNCTION_ADDR(ptr_to_ProdPdfs);
-
     GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_ProdPdfs");
     host_function_table[num_device_functions] = host_fcn_ptr;
     functionIdx                               = num_device_functions++;

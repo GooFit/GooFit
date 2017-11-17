@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Log.h"
+#include <goofit/Log.h>
 
 // The following macros help with registering new values
 

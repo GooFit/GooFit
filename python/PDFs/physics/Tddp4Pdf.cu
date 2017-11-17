@@ -30,6 +30,7 @@ void init_Tddp4Pdf(py::module &m) {
              "eff"_a,
              "mistag"_a       = nullptr,
              "MCeventsNorm"_a = 5e6,
+             py::keep_alive<1, 4>(),
              py::keep_alive<1, 5>(),
              py::keep_alive<1, 6>(),
              py::keep_alive<1, 7>())
@@ -56,14 +57,12 @@ void init_Tddp4Pdf(py::module &m) {
                          pyparticles.mutable_at(i * 4 + 3, j) = (*(particles[i]))[j].get(3);
                      }
                  }
-                 std::cout << "1";
 
                  for(int i = 0; i < 6; i++) {
                      for(int j = 0; j < weights.size(); j++) {
                          pyvariables.mutable_at(i, j) = (*(variables[i]))[j];
                      }
                  }
-                 std::cout << "2";
 
                  for(int i = 0; i < weights.size(); i++) {
                      pyweights.mutable_at(i) = weights[i];
@@ -86,6 +85,5 @@ void init_Tddp4Pdf(py::module &m) {
 
                  return std::make_tuple(pyparticles, pyvariables, pyweights, pyflags);
              })
-
-        ;
+        .def("setGenerationOffset", &TDDP4::setGenerationOffset, "off"_a);
 }

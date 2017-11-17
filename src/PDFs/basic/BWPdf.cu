@@ -1,4 +1,4 @@
-#include "goofit/PDFs/basic/BWPdf.h"
+#include <goofit/PDFs/basic/BWPdf.h>
 
 namespace GooFit {
 

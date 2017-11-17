@@ -1,14 +1,14 @@
-#include "goofit/Application.h"
-#include "goofit/Variable.h"
-#include "goofit/fitting/Params.h"
-#include "goofit/fitting/FCN.h"
-#include "goofit/UnbinnedDataSet.h"
-#include "goofit/PDFs/basic/ExpPdf.h"
+#include <goofit/Application.h>
+#include <goofit/PDFs/basic/ExpPdf.h>
+#include <goofit/UnbinnedDataSet.h>
+#include <goofit/Variable.h>
+#include <goofit/fitting/FCN.h>
+#include <goofit/fitting/Params.h>
 
-#include <Minuit2/MnUserParameters.h>
-#include <Minuit2/MnMigrad.h>
 #include <Minuit2/FunctionMinimum.h>
-#include "Minuit2/MnPrint.h"
+#include <Minuit2/MnMigrad.h>
+#include <Minuit2/MnPrint.h>
+#include <Minuit2/MnUserParameters.h>
 
 #include <iostream>
 

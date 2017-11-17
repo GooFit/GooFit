@@ -1,4 +1,4 @@
-#include "goofit/PDFs/basic/StepPdf.h"
+#include <goofit/PDFs/basic/StepPdf.h>
 
 namespace GooFit {
 

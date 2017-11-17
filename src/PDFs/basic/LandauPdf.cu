@@ -1,4 +1,4 @@
-#include "goofit/PDFs/basic/LandauPdf.h"
+#include <goofit/PDFs/basic/LandauPdf.h>
 
 namespace GooFit {
 

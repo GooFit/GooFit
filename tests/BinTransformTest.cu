@@ -1,10 +1,10 @@
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
-#include "goofit/fitting/FitManagerMinuit1.h"
-#include "goofit/BinnedDataSet.h"
-#include "goofit/PDFs/basic/BinTransformPdf.h"
+#include <goofit/fitting/FitManagerMinuit1.h>
+#include <goofit/BinnedDataSet.h>
+#include <goofit/PDFs/basic/BinTransformPdf.h>
 
-#include "goofit/Variable.h"
+#include <goofit/Variable.h>
 
 #include <sys/time.h>
 #include <sys/times.h>

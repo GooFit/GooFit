@@ -13,5 +13,10 @@ void init_BinTransformPdf(py::module &m) {
                       std::vector<Observable>,
                       std::vector<fptype>,
                       std::vector<fptype>,
-                      std::vector<int>>());
+                      std::vector<int>>(),
+             "n",
+             "obses",
+             "limits",
+             "binSizes",
+             "numBins");
 }

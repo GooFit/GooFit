@@ -154,6 +154,8 @@ if(NOT ${GOOFIT_HOST} IN_LIST HOST_LISTING)
     message(FATAL_ERROR "You must select a host from ${HOST_LISTING}, not ${HOST_DEVICE}")
 endif()
 
+include(PatchOpenMPApple)
+
 # Auto device selection
 if(GOOFIT_DEVICE STREQUAL Auto)
     if(NEW_CUDA)
@@ -433,6 +435,8 @@ target_link_libraries(GooFit_Common INTERFACE Eigen)
 
 set(GOOFIT_ROOT_FOUND ROOT_FOUND)
 set(GOOFIT_ARCH_FLAGS ARCH_FLAGS)
+
+option(GOOFIT_SPLASH "Show a unicode splash or a small plain text one" ON)
 
 # Output the current GooFit version
 configure_file (

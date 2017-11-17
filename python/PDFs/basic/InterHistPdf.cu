@@ -10,5 +10,9 @@ namespace py = pybind11;
 void init_InterHistPdf(py::module &m) {
     py::class_<InterHistPdf, GooPdf>(m, "InterHistPdf")
         .def(py::init<std::string, BinnedDataSet *, std::vector<Variable>, std::vector<Observable>>(),
+             "n",
+             "x",
+             "params",
+             "obses",
              py::keep_alive<1, 3>());
 }

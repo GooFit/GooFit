@@ -1,11 +1,11 @@
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
-#include "goofit/fitting/FitManagerMinuit1.h"
-#include "goofit/UnbinnedDataSet.h"
-#include "goofit/PDFs/combine/CompositePdf.h"
-#include "goofit/PDFs/basic/GaussianPdf.h"
+#include <goofit/fitting/FitManagerMinuit1.h>
+#include <goofit/UnbinnedDataSet.h>
+#include <goofit/PDFs/combine/CompositePdf.h>
+#include <goofit/PDFs/basic/GaussianPdf.h>
 
-#include "goofit/Variable.h"
+#include <goofit/Variable.h>
 
 #include <sys/time.h>
 #include <sys/times.h>

@@ -2,13 +2,13 @@
 
 #include <random>
 
-#include "goofit/Variable.h"
-#include "goofit/UnbinnedDataSet.h"
-#include "goofit/PDFs/basic/GaussianPdf.h"
-#include "goofit/FitManager.h"
+#include <goofit/FitManager.h>
+#include <goofit/PDFs/basic/GaussianPdf.h>
+#include <goofit/UnbinnedDataSet.h>
+#include <goofit/Variable.h>
 
 #ifdef ROOT_FOUND
-#include "goofit/fitting/FitManagerMinuit1.h"
+#include <goofit/fitting/FitManagerMinuit1.h>
 #endif
 
 using namespace GooFit;

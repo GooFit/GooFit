@@ -1,6 +1,6 @@
-#include "goofit/PDFs/physics/IncoherentSumPdf.h"
-#include "goofit/Error.h"
-#include "goofit/PDFs/physics/ResonancePdf.h"
+#include <goofit/PDFs/physics/IncoherentSumPdf.h>
+#include <goofit/Error.h>
+#include <goofit/PDFs/physics/ResonancePdf.h>
 #include <thrust/complex.h>
 
 #include <thrust/transform_reduce.h>
@@ -42,7 +42,6 @@ __device__ fptype device_incoherent(fptype *evt, ParameterContainer &pc) {
     //increment through resonances
     for (int i = 0; i < numResonances; i++)
         pc.incrementIndex();
-
     // Multiply by efficiency
     // int effFunctionIdx = parIndexFromResIndex_incoherent(numResonances);
     fptype eff = callFunction(evt, pc);
@@ -79,10 +78,8 @@ __host__ IncoherentSumPdf::IncoherentSumPdf(
     MEMCPY_TO_SYMBOL(c_daug2Mass, &decayInfo.daug2Mass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(c_daug3Mass, &decayInfo.daug3Mass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(c_meson_radius, &decayInfo.meson_radius, sizeof(fptype), 0, cudaMemcpyHostToDevice);
-
     static int cacheCount = 0;
     cacheToUse            = cacheCount++;
-
     registerConstant(decayInfo.resonances.size());
     registerConstant(cacheToUse);
 
@@ -210,7 +207,7 @@ __host__ fptype IncoherentSumPdf::normalize() const {
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
                 strided_range<thrust::device_vector<fpcomplex>::iterator>(
-                                                                          cachedResonances->begin() + i, cachedResonances->end(), decayInfo.resonances.size())
+                    cachedResonances->begin() + i, cachedResonances->end(), decayInfo.resonances.size())
                     .begin(),
                 *(calculators[i]));
 

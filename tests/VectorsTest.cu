@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
 
 #include <Eigen/Dense>
-#include <mcbooster/EvaluateArray.h>
 #include <goofit/PDFs/physics/EvalVar.h>
 #include <goofit/PDFs/physics/UserUtils.h>
+#include <mcbooster/EvaluateArray.h>
 
 using namespace GooFit;
 

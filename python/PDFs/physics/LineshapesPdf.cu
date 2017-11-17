@@ -19,7 +19,9 @@ void init_LineshapesPdf(py::module &m) {
 
     auto m_ls = m.def_submodule("Lineshapes");
 
-    py::class_<Lineshapes::One>(m_ls, "One")
+    py::class_<Lineshape, GooPdf>(m, "Lineshape");
+
+    py::class_<Lineshapes::One, Lineshape>(m_ls, "One")
         .def(py::init<std::string, Variable, Variable, unsigned int, unsigned int, FF, fptype>(),
              "Create a constant lineshape",
              "name"_a,
@@ -32,7 +34,7 @@ void init_LineshapesPdf(py::module &m) {
              py::keep_alive<1, 3>(),
              py::keep_alive<1, 4>());
 
-    py::class_<Lineshapes::LASS>(m_ls, "LASS")
+    py::class_<Lineshapes::LASS, Lineshape>(m_ls, "LASS")
         .def(py::init<std::string, Variable, Variable, unsigned int, unsigned int, FF, fptype>(),
              "Create a LASS lineshape",
              "name"_a,
@@ -45,7 +47,7 @@ void init_LineshapesPdf(py::module &m) {
              py::keep_alive<1, 3>(),
              py::keep_alive<1, 4>());
 
-    py::class_<Lineshapes::NonRes>(m_ls, "NonRes")
+    py::class_<Lineshapes::NonRes, Lineshape>(m_ls, "NonRes")
         .def(py::init<std::string, Variable, Variable, unsigned int, unsigned int, FF, fptype>(),
              "Create a Non Resonant lineshape",
              "name"_a,
@@ -58,7 +60,7 @@ void init_LineshapesPdf(py::module &m) {
              py::keep_alive<1, 3>(),
              py::keep_alive<1, 4>());
 
-    py::class_<Lineshapes::Flatte>(m_ls, "Flatte")
+    py::class_<Lineshapes::Flatte, Lineshape>(m_ls, "Flatte")
         .def(py::init<std::string, Variable, Variable, unsigned int, unsigned int, FF, fptype>(),
              "Create a Flatte lineshape",
              "name"_a,
@@ -71,7 +73,7 @@ void init_LineshapesPdf(py::module &m) {
              py::keep_alive<1, 3>(),
              py::keep_alive<1, 4>());
 
-    py::class_<Lineshapes::Bugg>(m_ls, "Bugg")
+    py::class_<Lineshapes::Bugg, Lineshape>(m_ls, "Bugg")
         .def(py::init<std::string, Variable, Variable, unsigned int, unsigned int, FF, fptype>(),
              "Create a constant lineshape",
              "name"_a,
@@ -84,7 +86,7 @@ void init_LineshapesPdf(py::module &m) {
              py::keep_alive<1, 3>(),
              py::keep_alive<1, 4>());
 
-    py::class_<Lineshapes::Bugg3>(m_ls, "Bugg3")
+    py::class_<Lineshapes::Bugg3, Lineshape>(m_ls, "Bugg3")
         .def(py::init<std::string, Variable, Variable, unsigned int, unsigned int, FF, fptype>(),
              "Create a constant lineshape",
              "name"_a,
@@ -97,7 +99,7 @@ void init_LineshapesPdf(py::module &m) {
              py::keep_alive<1, 3>(),
              py::keep_alive<1, 4>());
 
-    py::class_<Lineshapes::RBW>(m_ls, "RBW")
+    py::class_<Lineshapes::RBW, Lineshape>(m_ls, "RBW")
         .def(py::init<std::string, Variable, Variable, unsigned int, unsigned int, FF, fptype>(),
              "Create a RBW lineshape",
              "name"_a,
@@ -110,7 +112,7 @@ void init_LineshapesPdf(py::module &m) {
              py::keep_alive<1, 3>(),
              py::keep_alive<1, 4>());
 
-    py::class_<Lineshapes::SBW>(m_ls, "SBW")
+    py::class_<Lineshapes::SBW, Lineshape>(m_ls, "SBW")
         .def(py::init<std::string, Variable, Variable, unsigned int, unsigned int, FF, fptype>(),
              "Create a SBW lineshape",
              "name"_a,
@@ -123,7 +125,7 @@ void init_LineshapesPdf(py::module &m) {
              py::keep_alive<1, 3>(),
              py::keep_alive<1, 4>());
 
-    py::class_<Lineshapes::GLASS>(m_ls, "GLASS")
+    py::class_<Lineshapes::GLASS, Lineshape>(m_ls, "GLASS")
         .def(py::init<std::string, Variable, Variable, unsigned int, unsigned int, FF, fptype, std::vector<Variable>>(),
              "Create a G-LASS lineshape",
 
@@ -138,7 +140,7 @@ void init_LineshapesPdf(py::module &m) {
              py::keep_alive<1, 3>(),
              py::keep_alive<1, 4>());
 
-    py::class_<Lineshapes::GSpline>(m_ls, "GSpline")
+    py::class_<Lineshapes::GSpline, Lineshape>(m_ls, "GSpline")
         .def(py::init<std::string,
                       Variable,
                       Variable,

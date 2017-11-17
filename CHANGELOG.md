@@ -3,17 +3,23 @@
 
 
 GooFit now has working, fully supported Python bindings using PyBind11. All PDFs have been bound ([#92]). Python bindings now build by default if Python development files are found ([#93]). Pythonization additions, such as supporting the same shortcuts for Variables as C++, from/to numpy converters, and more, was added in ([#99], [#109]). Pip install is now supported using SciKit-Build, and source releases are being made on PyPI ([#107]). The build will use CUDA if found, and OpenMP otherwise.
-Many examples converted ([#118], [#120])
+Many examples converted ([#118], [#120], [#126])
+
 
 Other Python additions:
 * Live printout in Python Notebooks ([#114])
 * Minuit2 wrapper started ([#115])
+* `print_goofit_info` (and `print_splash`) added to Python  ([#126])
+* `pyexamples/RunAll.sh` added to run all examples, run by Travis ([#126])
+
 
 Major changes:
 * `Observable`s are now their own class, and `CountingVariable` is now `EventNumber` ([#123])
 * Variables are now passed by copy everywhere, handling smart pointers internally ([#124])
 * DecayInfo renamed and split ([#124])
+* FitControl is now explicitly a `std::shared_ptr` ([#126])
 * Resonances and Lineshapes are now classes instead of using enums or ordering ([#119])
+* OpenMP now supported on macOS Apple Clang on High Sierra with Homebrew, using `brew install cliutils/apple/libomp` ([#126])
 
 
 Other changes include:
@@ -31,6 +37,9 @@ Other changes include:
 * Splash screen ([#114])
 * Macros to help setup PDFs ([#119])
 * CCache support
+* `argc, argv` no longer required in `GOOFIT_PARSE` ([#126])
+* The include order is now checked by the clang-format run ([#126])
+* The ModernizeGooFit script supports 2.1 and more ([#126])
 
 [#92]: https://github.com/GooFit/GooFit/pull/92
 [#93]: https://github.com/GooFit/GooFit/pull/93
@@ -49,6 +58,7 @@ Other changes include:
 [#122]: https://github.com/GooFit/GooFit/pull/122
 [#123]: https://github.com/GooFit/GooFit/pull/123
 [#124]: https://github.com/GooFit/GooFit/pull/124
+[#126]: https://github.com/GooFit/GooFit/pull/126
 
 
 ## v2.0.0: C++11 and CMake

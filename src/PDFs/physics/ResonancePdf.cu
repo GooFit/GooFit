@@ -1,9 +1,7 @@
-#include "goofit/PDFs/physics/ResonancePdf.h"
-#include "goofit/PDFs/physics/DalitzPlotHelpers.h"
+#include <goofit/PDFs/physics/ResonancePdf.h>
+#include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 
 namespace GooFit {
-
-//__device__ fpcomplex cDerivaties[1000];
 
 __device__ fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m) {
     // For A -> B + C, calculate momentum of B and C in rest frame of A.
@@ -95,11 +93,6 @@ __device__ fptype spinFactor(unsigned int spin,
 }
 
 __device__ fpcomplex plainBW(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) {
-    // fptype motherMass   = c_motherMass;//RO_CACHE(pc.constants[pc.constantIdx + 1]);
-    // fptype daug1Mass    = c_daug1Mass;//RO_CACHE(pc.constants[pc.constantIdx + 2]);
-    // fptype daug2Mass    = c_daug2Mass;//RO_CACHE(pc.constants[pc.constantIdx + 3]);
-    // fptype daug3Mass    = c_daug3Mass;//RO_CACHE(pc.constants[pc.constantIdx + 4]);
-    // fptype meson_radius = c_meson_radius;//RO_CACHE(pc.constants[pc.constantIdx + 5]);
 
     unsigned int spin         = pc.getConstant(0);
     unsigned int cyclic_index = pc.getConstant(1);
@@ -400,7 +393,6 @@ __device__ fpcomplex flatte(fptype m12, fptype m13, fptype m23, ParameterContain
     }
 
     pc.incrementIndex (1, 3, 2, 0, 1);
-
     return ret;
 }
 
@@ -497,12 +489,12 @@ __device__ resonance_function_ptr ptr_to_SPLINE   = cubicspline;
 namespace Resonances {
 
 RBW::RBW(std::string name,
-        Variable ar,
-        Variable ai,
-        Variable mass,
-        Variable width,
-        unsigned int sp,
-        unsigned int cyc,
+         Variable ar,
+         Variable ai,
+         Variable mass,
+         Variable width,
+         unsigned int sp,
+         unsigned int cyc,
         bool symmDP) : ResonancePdf(name, ar, ai) {
     registerParameter(mass);
     registerParameter(width);
@@ -513,7 +505,6 @@ RBW::RBW(std::string name,
 
     resonanceType = 0;
 }
- 
 
 GS::GS(std::string name,
        Variable ar,

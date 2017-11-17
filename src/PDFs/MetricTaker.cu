@@ -1,15 +1,15 @@
-#include "goofit/PDFs/MetricTaker.h"
+#include <goofit/PDFs/MetricTaker.h>
 
-#include "goofit/GlobalCudaDefines.h"
-#include "goofit/PDFs/GooPdf.h"
-#include "goofit/detail/ThrustOverride.h"
+#include <goofit/GlobalCudaDefines.h>
+#include <goofit/PDFs/GooPdf.h>
+#include <goofit/detail/ThrustOverride.h>
 
-#include "goofit/BinnedDataSet.h"
-#include "goofit/Error.h"
-#include "goofit/FitControl.h"
-#include "goofit/Log.h"
-#include "goofit/UnbinnedDataSet.h"
-#include "goofit/Variable.h"
+#include <goofit/BinnedDataSet.h>
+#include <goofit/Error.h>
+#include <goofit/FitControl.h>
+#include <goofit/Log.h>
+#include <goofit/UnbinnedDataSet.h>
+#include <goofit/Variable.h>
 
 #include <thrust/device_vector.h>
 #include <thrust/host_vector.h>

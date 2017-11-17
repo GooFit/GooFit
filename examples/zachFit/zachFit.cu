@@ -1,28 +1,28 @@
 // ROOT stuff
-#include "TRandom.h"
-#include "TCanvas.h"
-#include "TFile.h"
-#include "TH1F.h"
-#include "TStyle.h"
+#include <TCanvas.h>
+#include <TFile.h>
+#include <TH1F.h>
+#include <TRandom.h>
+#include <TStyle.h>
 
 // System stuff
 #include <fstream>
 
 // GooFit stuff
-#include "goofit/Log.h"
-#include "goofit/Application.h"
-#include "goofit/Variable.h"
-#include "goofit/UnbinnedDataSet.h"
-#include "goofit/BinnedDataSet.h"
-#include "goofit/FitManager.h"
-#include "goofit/FitControl.h"
+#include <goofit/Application.h>
+#include <goofit/BinnedDataSet.h>
+#include <goofit/FitControl.h>
+#include <goofit/FitManager.h>
+#include <goofit/Log.h>
+#include <goofit/UnbinnedDataSet.h>
+#include <goofit/Variable.h>
 
-#include "goofit/PDFs/basic/KinLimitBWPdf.h"
-#include "goofit/PDFs/combine/ConvolutionPdf.h"
-#include "goofit/PDFs/basic/GaussianPdf.h"
-#include "goofit/PDFs/basic/ScaledGaussianPdf.h"
-#include "goofit/PDFs/basic/ArgusPdf.h"
-#include "goofit/PDFs/combine/AddPdf.h"
+#include <goofit/PDFs/basic/ArgusPdf.h>
+#include <goofit/PDFs/basic/GaussianPdf.h>
+#include <goofit/PDFs/basic/KinLimitBWPdf.h>
+#include <goofit/PDFs/basic/ScaledGaussianPdf.h>
+#include <goofit/PDFs/combine/AddPdf.h>
+#include <goofit/PDFs/combine/ConvolutionPdf.h>
 
 #include <fmt/format.h>
 
@@ -238,10 +238,10 @@ Dataset descriptions:
 
     total.setData(data_dataset.get());
 
-    std::unique_ptr<BinnedChisqFit> chi_control;
+    std::shared_ptr<BinnedChisqFit> chi_control;
     if(2 == mode) {
         chi_control.reset(new BinnedChisqFit);
-        total.setFitControl(chi_control.get());
+        total.setFitControl(chi_control);
     }
 
     FitManager datapdf{&total};

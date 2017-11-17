@@ -2,20 +2,20 @@
 
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
 
-#include <thrust/execution_policy.h>
 #include <thrust/detail/config.h>
-#include <thrust/reduce.h>
 #include <thrust/detail/seq.h>
 #include <thrust/detail/temporary_array.h>
+#include <thrust/detail/type_traits.h>
+#include <thrust/execution_policy.h>
+#include <thrust/reduce.h>
 #include <thrust/system/cuda/detail/bulk.h>
 #include <thrust/system/cuda/detail/decomposition.h>
-#include <thrust/system/cuda/detail/execution_policy.h>
 #include <thrust/system/cuda/detail/execute_on_stream.h>
-#include <thrust/detail/type_traits.h>
+#include <thrust/system/cuda/detail/execution_policy.h>
 
 #include <thrust/system/cuda/detail/bulk.h>
 
-#include "goofit/detail/ThrustOverrideConfig.h"
+#include <goofit/detail/ThrustOverrideConfig.h>
 
 #ifndef OR_GROUPSIZE
 #define OR_GROUPSIZE 128

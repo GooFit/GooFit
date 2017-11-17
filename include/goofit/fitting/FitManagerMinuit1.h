@@ -1,8 +1,8 @@
 #pragma once
 
-#include "goofit/GlobalCudaDefines.h"
-#include "goofit/Variable.h"
 #include <TMinuit.h>
+#include <goofit/GlobalCudaDefines.h>
+#include <goofit/Variable.h>
 
 namespace GooFit {
 

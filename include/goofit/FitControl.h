@@ -1,7 +1,7 @@
 #pragma once
 
-#include "goofit/Error.h"
-#include "goofit/GlobalCudaDefines.h"
+#include <goofit/Error.h>
+#include <goofit/GlobalCudaDefines.h>
 
 #include <string>
 #include <vector>
@@ -20,12 +20,6 @@ class FitControl {
     inline bool binErrors() const { return errorsOnBins; }
     inline bool metricIsPdf() const { return !errorsOnBins; }
     inline std::string getMetric() const { return metricName; }
-    inline PdfBase *getOwner() const { return owner; }
-    void setOwner(PdfBase *dat) {
-        if(dat == nullptr)
-            throw GooFit::GeneralError("Owner will be nullptr");
-        owner = dat;
-    }
 
   protected:
     bool errorsOnBins{false};
@@ -33,7 +27,6 @@ class FitControl {
   private:
     bool binned;
     std::string metricName;
-    PdfBase *owner{nullptr};
 };
 
 class UnbinnedNllFit : public FitControl {

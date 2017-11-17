@@ -8,10 +8,10 @@ See *.cu file for more details
 
 #pragma once
 
-#include "goofit/detail/Complex.h"
-#include "goofit/PDFs/GooPdf.h"
-#include "goofit/PDFs/physics/ResonancePdf.h"
-#include "goofit/Variable.h"
+#include <goofit/detail/Complex.h>
+#include <goofit/PDFs/GooPdf.h>
+#include <goofit/PDFs/physics/ResonancePdf.h>
+#include <goofit/Variable.h>
 
 #include <array>
 
@@ -41,6 +41,7 @@ class Lineshape : public GooPdf {
 
   public:
     ~Lineshape() override = default;
+
 
     bool operator==(const Lineshape &L) const { return (L.getName() == getName()); }
 };

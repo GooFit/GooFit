@@ -1,5 +1,5 @@
-#include "goofit/PDFs/basic/GaussianPdf.h"
-#include "goofit/Log.h"
+#include <goofit/PDFs/basic/GaussianPdf.h>
+#include <goofit/Log.h>
 
 namespace GooFit {
 
@@ -27,7 +27,6 @@ __host__ GaussianPdf::GaussianPdf(std::string n, Observable _x, Variable mean, V
 
 __host__ void GaussianPdf::recursiveSetIndices() {
     GET_FUNCTION_ADDR(ptr_to_Gaussian);
-
     GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Gaussian");
     host_function_table[num_device_functions] = host_fcn_ptr;
     functionIdx                               = num_device_functions++;
@@ -37,6 +36,7 @@ __host__ void GaussianPdf::recursiveSetIndices() {
 
 __host__ fptype GaussianPdf::integrate(fptype lo, fptype hi) const {
     static const fptype rootPi = sqrt(atan2(0.0, -1.0));
+
 
     // Integral over all R.
     fptype sigma = host_parameters[parametersIdx + 2];

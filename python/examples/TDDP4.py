@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from goofit import *
+from __future__ import print_function, division
 
-import math
+from goofit import *
 import numpy as np
+
+print_goofit_info()
 
 _mD0       = 1.8645
 piPlusMass = 0.13957018
@@ -14,7 +16,7 @@ def main():
         Variable("tau", 0.4101, 0.001, 0.300, 0.500),
         Variable("xmixing", 0.005, 0.001, 0, 0),
         Variable("ymixing", 0.01, 0.001, 0, 0),
-        Variable("SqWStoRSrate", 1.0 / math.sqrt(300.0))
+        Variable("SqWStoRSrate", 1.0 / np.sqrt(300.0))
         )
     DK3P_DI.meson_radius = 1.5
     DK3P_DI.particle_masses = (_mD0,piPlusMass,piPlusMass,KmMass,piPlusMass)
@@ -50,9 +52,20 @@ def main():
     SFA1RD = (SpinFactor("SF", SF_4Body .DtoAP1_AtoVP2Dwave_VtoP3P4, 2, 3, 0, 1),
               SpinFactor("SF", SF_4Body .DtoAP1_AtoVP2Dwave_VtoP3P4, 2, 0, 3, 1))
 
-    LSKRS = (Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS .BW, FF .BL2),Lineshape("K*(892)bar", KstarM, KstarW, 1, M_34, LS .BW, FF .BL2),Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS .BW, FF .BL2),Lineshape("K*(892)bar", KstarM, KstarW, 1, M_13, LS .BW, FF .BL2))
-    LSKRP = (Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS .BW, FF .BL2),Lineshape("K*(892)bar", KstarM, KstarW, 1, M_34, LS .BW, FF .BL2),Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS .BW, FF .BL2),Lineshape("K*(892)bar", KstarM, KstarW, 1, M_13, LS .BW, FF .BL2))
-    LSKRD = (Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS .BW, FF .BL2),Lineshape("K*(892)bar", KstarM, KstarW, 1, M_34, LS .BW, FF .BL2),Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS .BW, FF .BL2),Lineshape("K*(892)bar", KstarM, KstarW, 1, M_13, LS .BW, FF .BL2))
+    LSKRS = (Lineshapes.RBW("rho(770)",RhoMass, RhoWidth, 1, M_12, FF .BL2),
+             Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_34, FF .BL2),
+             Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_24, FF .BL2),
+             Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_13, FF .BL2))
+
+    LSKRP = (Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_12, FF .BL2),
+             Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_34, FF .BL2),
+             Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_24, FF .BL2),
+             Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_13, FF .BL2))
+
+    LSKRD = (Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_12, FF .BL2),
+             Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_34, FF .BL2),
+             Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_24, FF .BL2),
+             Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_13, FF .BL2))
 
     Bose_symmetrized_AMP_S = Amplitude("K*(892)rho(770)_S",
                                         Variable("amp_real1", 1.0),
@@ -126,20 +139,13 @@ def main():
     dp  = TDDP4("test", observables, DK3P_DI, dat, eff, None, 1)
 
 
-    trials = 100
-    k = 0
-    while k<trials:
+    for k in range(10):
         numEvents = 800000
 
         dp.setGenerationOffset(k * numEvents)
-        tuple = dp.GenerateSig(numEvents)
-
-        particles = tuple[0]
-        variables = tuple[1]
-        weights = tuple[2]
-        flags = tuple[3]
+        particles, variables, weights, flags = dp.GenerateSig(numEvents)
 
     return 0
 
 if __name__ == "__main__":
-    main()
+    assert main() == 0

@@ -5,4 +5,4 @@ graft include
 graft goofit
 graft src
 graft tests
-include CMakeLists.txt LICENSE CONTRIBUTING.md CHANGELOG.md Pipfile Pipfile.lock requirements.txt README.md
+include CMakeLists.txt LICENSE CONTRIBUTING.md CHANGELOG.md Pipfile requirements.txt README.md

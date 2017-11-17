@@ -4,7 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-
 "scikit-build" = "*"
 cmake = "*"
 numpy = "*"
@@ -12,3 +11,6 @@ numpy = "*"
 
 [dev-packages]
 pytest = "*"
+matplotlib = "*"
+pandas = "*"
+pylandau = "*"

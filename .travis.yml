@@ -21,6 +21,7 @@ matrix:
       apt:
         sources:
         - llvm-toolchain-trusty-5.0
+        - ubuntu-toolchain-r-test
         packages:
         - clang-5.0
         - clang-format-5.0
@@ -34,7 +35,8 @@ matrix:
       cd "${TRAVIS_BUILD_DIR}" && . .ci/prepare_altern.sh
       cd "${TRAVIS_BUILD_DIR}" && . .ci/build_cmake.sh
     script:
-    - cd "${TRAVIS_BUILD_DIR}" && .ci/check_style.sh
+    - cd "${TRAVIS_BUILD_DIR}" && scripts/check_style.sh
+    - cd "${TRAVIS_BUILD_DIR}" && .ci/check_tidy.sh
   - compiler: gcc
     addons:
       apt:
@@ -65,7 +67,8 @@ install:
     cd "${TRAVIS_BUILD_DIR}" && . .ci/build_doxygen.sh
     cd "${TRAVIS_BUILD_DIR}" && . .ci/build_lcov.sh
     pip install --user --upgrade pip
-    pip install --user pytest numpy plumbum
+    pip install --user pytest numpy plumbum pandas matplotlib
+    pip install --user  pylandau
 
 notifications:
   webhooks:

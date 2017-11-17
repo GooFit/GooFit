@@ -1,9 +1,9 @@
 #pragma once
 
-#include "goofit/Color.h"
-#include <fmt/format.h>
-
 #include <iostream>
+
+#include <fmt/format.h>
+#include <goofit/Color.h>
 
 namespace GooFit {
 
@@ -83,7 +83,8 @@ namespace GooFit {
         std::cout << GooFit::reset << std::endl;                                                                       \
     }
 #else
-#define GOOFIT_DEBUG(...)
+#define GOOFIT_DEBUG(...)                                                                                              \
+    {}
 #define GOOFIT_DEBUG_F(...)                                                                                            \
     {                                                                                                                  \
         if(blockId.x == 0 && blockId.y == 0 && threadId.x == 0 && threadId.y == 0) {                                   \
@@ -92,8 +93,10 @@ namespace GooFit {
     }
 #endif
 #else
-#define GOOFIT_DEBUG(...)
-#define GOOFIT_DEBUG_F(...)
+#define GOOFIT_DEBUG(...)                                                                                              \
+    {}
+#define GOOFIT_DEBUG_F(...)                                                                                            \
+    {}
 #endif
 #ifdef GOOFIT_TRACE_FLAG
 #ifndef __CUDA_ARCH__
@@ -110,7 +113,8 @@ namespace GooFit {
         std::cout << GooFit::reset << std::endl;                                                                       \
     }
 #else
-#define GOOFIT_TRACE(...)
+#define GOOFIT_TRACE(...)                                                                                              \
+    {}
 #define GOOFIT_TRACE_F(...)                                                                                            \
     {                                                                                                                  \
         if(blockId.x == 0 && blockId.y == 0 && threadId.x == 0 && threadId.y == 0) {                                   \
@@ -119,8 +123,10 @@ namespace GooFit {
     }
 #endif
 #else
-#define GOOFIT_TRACE(...)
-#define GOOFIT_TRACE_F(...)
+#define GOOFIT_TRACE(...)                                                                                              \
+    {}
+#define GOOFIT_TRACE_F(...)                                                                                            \
+    {}
 #endif
 
 } // namespace GooFit

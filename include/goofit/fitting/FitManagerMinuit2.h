@@ -1,10 +1,11 @@
 #pragma once
 
 #include <Minuit2/FunctionMinimum.h>
+
 #include <memory>
 
-#include "goofit/GlobalCudaDefines.h"
-#include "goofit/fitting/FCN.h"
+#include <goofit/GlobalCudaDefines.h>
+#include <goofit/fitting/FCN.h>
 
 namespace GooFit {
 
@@ -44,4 +45,4 @@ class FitManagerMinuit2 {
     FitErrors retval_{FitErrors::NotRun};
     int verbosity{3};
 };
-}
+} // namespace GooFit

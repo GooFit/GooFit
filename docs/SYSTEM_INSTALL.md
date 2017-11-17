@@ -145,8 +145,14 @@ make
 While other install methods for CMake, like `pip`, are easier, this way should always work. On Linux, you can manually get a version of CMake using:
 
 ```bash
-mkdir cmake && wget -qO- "https://cmake.org/files/v3.8/cmake-3.8.1-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C cmake
+mkdir cmake && wget -qO- "https://cmake.org/files/v3.9/cmake-3.9.4-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C cmake
 export PATH=`pwd`/cmake/bin:$PATH
 ```
 
 The second line will need to be rerun whenever use a new shell. Feel free to make your updated CMake default; CMake is insanely backward compatible and will even "dumb itself down" when it sees a lower version in the `minimum_required` line in  `CMakeLists.txt`.
+
+If you are a fan of using `~/.local` and already have `~/.local/bin` in your path, you can instead use:
+
+```bash
+wget -qO- "https://cmake.org/files/v3.9/cmake-3.9.4-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C ~/.local
+```

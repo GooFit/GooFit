@@ -1,4 +1,4 @@
-#include "goofit/PDFs/basic/GaussianPdf.h"
+#include <goofit/PDFs/basic/GaussianPdf.h>
 
 namespace GooFit {
 
@@ -14,8 +14,8 @@ __device__ fptype device_Gaussian(fptype *evt, fptype *p, unsigned int *indices)
 
 __device__ device_function_ptr ptr_to_Gaussian = device_Gaussian;
 
-__host__ GaussianPdf::GaussianPdf(std::string n, Variable *_x, Variable *mean, Variable *sigma)
-    : GooPdf(_x, n) {
+__host__ GaussianPdf::GaussianPdf(std::string n, Observable _x, Variable mean, Variable sigma)
+    : GooPdf(n, _x) {
     std::vector<unsigned int> pindices;
     pindices.push_back(registerParameter(mean));
     pindices.push_back(registerParameter(sigma));

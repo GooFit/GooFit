@@ -1,8 +1,8 @@
 #pragma once
 
-#include "goofit/PDFs/GooPdf.h"
-#include "goofit/PDFs/physics/TddpPdf.h"
-#include "goofit/detail/Complex.h"
+#include <goofit/PDFs/GooPdf.h>
+#include <goofit/PDFs/physics/TddpPdf.h>
+#include <goofit/detail/Complex.h>
 
 namespace GooFit {
 
@@ -19,7 +19,7 @@ class SpecialIncoherentResonanceCalculator;
 class IncoherentSumPdf : public GooPdf {
   public:
     IncoherentSumPdf(
-        std::string n, Variable *m12, Variable *m13, CountingVariable *eventNumber, DecayInfo *decay, GooPdf *eff);
+        std::string n, Observable m12, Observable m13, EventNumber eventNumber, DecayInfo3 decay, GooPdf *eff);
     // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the
     // incoherent sum. The caching method requires that it be done this way or the ProdPdf
     // normalisation will get *really* confused and give wrong answers.
@@ -29,9 +29,9 @@ class IncoherentSumPdf : public GooPdf {
 
   protected:
   private:
-    DecayInfo *decayInfo;
-    Variable *_m12;
-    Variable *_m13;
+    DecayInfo3 decayInfo;
+    Observable _m12;
+    Observable _m13;
     fptype *dalitzNormRange;
 
     // Following variables are useful if masses and widths, involved in difficult BW calculation,

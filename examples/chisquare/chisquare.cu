@@ -1,34 +1,33 @@
-#include "goofit/Application.h"
-#include "goofit/Variable.h"
-#include "goofit/FitManager.h"
-#include "goofit/BinnedDataSet.h"
-#include "goofit/UnbinnedDataSet.h"
-#include "goofit/FitControl.h"
+#include <goofit/Application.h>
+#include <goofit/BinnedDataSet.h>
+#include <goofit/FitControl.h>
+#include <goofit/FitManager.h>
+#include <goofit/UnbinnedDataSet.h>
+#include <goofit/Variable.h>
 
-#include "goofit/PDFs/basic/PolynomialPdf.h"
-#include "TMinuit.h"
-#include "TRandom.h"
-#include "TH1F.h"
-#include "TCanvas.h"
-#include "TLatex.h"
+#include <CLI/Timer.hpp>
 
-#include <sys/time.h>
-#include <sys/times.h>
+#include <TCanvas.h>
+#include <TH1F.h>
+#include <TLatex.h>
+#include <TMinuit.h>
+#include <TRandom.h>
+#include <goofit/PDFs/basic/PolynomialPdf.h>
 
-TCanvas foo;
-timeval startTime, stopTime, totalTime;
-
-#include <vector>
 #include <iostream>
 #include <string>
+#include <tuple>
+#include <vector>
+
+TCanvas foo;
 
 using namespace std;
 using namespace GooFit;
 
-Variable *decayTime  = 0;
-Variable *constaCoef = 0;
-Variable *linearCoef = 0;
-Variable *secondCoef = 0;
+vector<double> ratios;
+vector<double> errors;
+
+Observable decayTime{"decayTime", 0, 10};
 
 double integralExpCon(double lo, double hi) { return (exp(-lo) - exp(-hi)); }
 
@@ -38,20 +37,20 @@ double integralExpSqu(double lo, double hi) {
     return ((lo * lo + 2 * lo + 2) * exp(-lo) - (hi * hi + 2 * hi + 2) * exp(-hi));
 }
 
-void generateEvents(vector<int> &rsEvtVec,
+void generateEvents(Observable decayTime,
+                    vector<int> &rsEvtVec,
                     vector<int> &wsEvtVec,
-                    Variable const *const decayTime,
                     double conCoef,
                     double linCoef,
                     double squCoef,
                     int eventsToGenerate) {
     static TRandom donram(24);
     double totalRSintegral = integralExpCon(0, 100);
-    double step            = (decayTime->getUpperLimit() - decayTime->getLowerLimit()) / decayTime->getNumBins();
+    double step            = (decayTime.getUpperLimit() - decayTime.getLowerLimit()) / decayTime.getNumBins();
 
-    for(int i = 0; i < decayTime->getNumBins(); ++i) {
+    for(int i = 0; i < decayTime.getNumBins(); ++i) {
         double binStart = i * step;
-        binStart += decayTime->getLowerLimit();
+        binStart += decayTime.getLowerLimit();
         double binFinal = binStart + step;
 
         double rsIntegral = integralExpCon(binStart, binFinal);
@@ -73,9 +72,13 @@ void generateEvents(vector<int> &rsEvtVec,
     }
 }
 
-int fitRatio(vector<int> &rsEvts, vector<int> &wsEvts, std::string plotName = "") {
+std::tuple<int, std::string> fitRatio(Observable decayTime,
+                                      vector<Variable> weights,
+                                      vector<int> &rsEvts,
+                                      vector<int> &wsEvts,
+                                      std::string plotName = "") {
     TH1D *ratioHist
-        = new TH1D("ratioHist", "", decayTime->getNumBins(), decayTime->getLowerLimit(), decayTime->getUpperLimit());
+        = new TH1D("ratioHist", "", decayTime.getNumBins(), decayTime.getLowerLimit(), decayTime.getUpperLimit());
 
     BinnedDataSet *ratioData = new BinnedDataSet(decayTime);
 
@@ -100,34 +103,17 @@ int fitRatio(vector<int> &rsEvts, vector<int> &wsEvts, std::string plotName = ""
         ratioHist->SetBinError(i + 1, error);
     }
 
-    if(0 == constaCoef) {
-        constaCoef = new Variable("constaCoef", 0.03, 0.01, -1, 1);
-        constaCoef->setValue(0.03);
-        constaCoef->setError(0.01);
-        linearCoef = new Variable("linearCoef", 0, 0.01, -1, 1);
-        linearCoef->setValue(0.00);
-        linearCoef->setError(0.01);
-        secondCoef = new Variable("secondCoef", 0, 0.01, -1, 1);
-        secondCoef->setValue(0.00);
-        secondCoef->setError(0.01);
-    }
-
-    vector<Variable *> weights;
-    weights.push_back(constaCoef);
-    weights.push_back(linearCoef);
-    weights.push_back(secondCoef);
-
     PolynomialPdf *poly = new PolynomialPdf("poly", decayTime, weights);
-    poly->setFitControl(new BinnedErrorFit());
+    poly->setFitControl(std::make_shared<BinnedErrorFit>());
     poly->setData(ratioData);
     FitManager datapdf{poly};
 
-    gettimeofday(&startTime, nullptr);
+    CLI::Timer timer_cpu{"GPU"};
     datapdf.fit();
-    gettimeofday(&stopTime, nullptr);
+    std::string timer_str = timer_cpu.to_string();
 
     vector<fptype> values = poly->evaluateAtPoints(decayTime);
-    TH1D pdfHist("pdfHist", "", decayTime->getNumBins(), decayTime->getLowerLimit(), decayTime->getUpperLimit());
+    TH1D pdfHist("pdfHist", "", decayTime.getNumBins(), decayTime.getLowerLimit(), decayTime.getUpperLimit());
 
     for(int i = 0; i < values.size(); ++i) {
         pdfHist.SetBinContent(i + 1, values[i]);
@@ -139,16 +125,13 @@ int fitRatio(vector<int> &rsEvts, vector<int> &wsEvts, std::string plotName = ""
     ratioHist->Draw("p");
 
     char strbuffer[1000];
-    sprintf(
-        strbuffer, "Constant [10^{-2}] : %.3f #pm %.3f", 1e2 * constaCoef->getValue(), constaCoef->getError() * 1e2);
+    sprintf(strbuffer, "Constant [10^{-2}] : %.3f #pm %.3f", 1e2 * weights[0].getValue(), weights[0].getError() * 1e2);
     TLatex res1(0.14, 0.83, strbuffer);
     res1.SetNDC(true);
-    sprintf(
-        strbuffer, "Linear [10^{-4}]   : %.3f #pm %.3f", 1e4 * linearCoef->getValue(), linearCoef->getError() * 1e4);
+    sprintf(strbuffer, "Linear [10^{-4}]   : %.3f #pm %.3f", 1e4 * weights[1].getValue(), weights[1].getError() * 1e4);
     TLatex res2(0.14, 0.73, strbuffer);
     res2.SetNDC(true);
-    sprintf(
-        strbuffer, "Quadratic [10^{-6}]: %.3f #pm %.3f", 1e6 * secondCoef->getValue(), secondCoef->getError() * 1e6);
+    sprintf(strbuffer, "Quadratic [10^{-6}]: %.3f #pm %.3f", 1e6 * weights[2].getValue(), weights[2].getError() * 1e6);
     TLatex res3(0.14, 0.63, strbuffer);
     res3.SetNDC(true);
 
@@ -169,24 +152,8 @@ int fitRatio(vector<int> &rsEvts, vector<int> &wsEvts, std::string plotName = ""
     delete ratioData;
     delete poly;
 
-    return datapdf;
+    return make_tuple(int(datapdf), timer_str);
 }
-
-double dzero_con     = 0;
-double dzero_lin     = 0;
-double dzero_qua     = 0;
-double dzero_con_err = 0;
-double dzero_lin_err = 0;
-double dzero_qua_err = 0;
-double d0bar_con     = 0;
-double d0bar_lin     = 0;
-double d0bar_qua     = 0;
-double d0bar_con_err = 0;
-double d0bar_lin_err = 0;
-double d0bar_qua_err = 0;
-
-vector<double> ratios;
-vector<double> errors;
 
 void cpvFitFcn(int &npar, double *gin, double &fun, double *fp, int iflag) {
     double conCoef = fp[0];
@@ -194,10 +161,10 @@ void cpvFitFcn(int &npar, double *gin, double &fun, double *fp, int iflag) {
     double squCoef = fp[2];
 
     double chisq = 0;
-    double step  = (decayTime->getUpperLimit() - decayTime->getLowerLimit()) / decayTime->getNumBins();
+    double step  = (decayTime.getUpperLimit() - decayTime.getLowerLimit()) / decayTime.getNumBins();
 
     for(unsigned int i = 0; i < ratios.size(); ++i) {
-        double currDTime = decayTime->getLowerLimit() + (i + 0.5) * step;
+        double currDTime = decayTime.getLowerLimit() + (i + 0.5) * step;
         double pdfval    = conCoef + linCoef * currDTime + squCoef * currDTime * currDTime;
         chisq += pow((pdfval - ratios[i]) / errors[i], 2);
     }
@@ -205,9 +172,9 @@ void cpvFitFcn(int &npar, double *gin, double &fun, double *fp, int iflag) {
     fun = chisq;
 }
 
-void fitRatioCPU(vector<int> &rsEvts, vector<int> &wsEvts) {
+void fitRatioCPU(Observable decayTime, vector<int> &rsEvts, vector<int> &wsEvts) {
     TH1D *ratioHist
-        = new TH1D("ratioHist", "", decayTime->getNumBins(), decayTime->getLowerLimit(), decayTime->getUpperLimit());
+        = new TH1D("ratioHist", "", decayTime.getNumBins(), decayTime.getLowerLimit(), decayTime.getUpperLimit());
 
     ratios.resize(wsEvts.size());
     errors.resize(wsEvts.size());
@@ -239,9 +206,7 @@ void fitRatioCPU(vector<int> &rsEvts, vector<int> &wsEvts) {
     minuit->DefineParameter(2, "secondCoef", 0, 0.01, -1, 1);
     minuit->SetFCN(cpvFitFcn);
 
-    gettimeofday(&startTime, nullptr);
     minuit->Migrad();
-    gettimeofday(&stopTime, nullptr);
 }
 
 int main(int argc, char **argv) {
@@ -250,6 +215,9 @@ int main(int argc, char **argv) {
     int numbins = 100;
     app.add_option("-n,--numbins", numbins, "Number of bins", true);
 
+    int eventsToGenerate = 10000000;
+    app.add_option("-e,--events", eventsToGenerate, "Events to generate", true);
+
     try {
         app.run();
     } catch(const GooFit::ParseError &e) {
@@ -257,7 +225,8 @@ int main(int argc, char **argv) {
     }
 
     // Time is in units of lifetime
-    Variable decayTime{"decayTime", 100, 0, 10};
+
+    decayTime.setValue(100.);
     decayTime.setNumBins(numbins);
 
     double rSubD = 0.03;
@@ -268,8 +237,6 @@ int main(int argc, char **argv) {
     double y_mix = 0.0055;
     double magPQ = 1.0;
     double magQP = 1.0 / magPQ;
-
-    int eventsToGenerate = 10000000;
 
     vector<int> dZeroEvtsWS(decayTime.getNumBins());
     vector<int> dZeroEvtsRS(decayTime.getNumBins());
@@ -282,34 +249,28 @@ int main(int argc, char **argv) {
     double dZeroSecondCoef = 0.25 * magPQ * magPQ * (x_mix * x_mix + y_mix * y_mix);
     double d0barSecondCoef = 0.25 * magQP * magQP * (x_mix * x_mix + y_mix * y_mix);
 
-    generateEvents(dZeroEvtsRS, dZeroEvtsWS, &decayTime, rSubD, dZeroLinearCoef, dZeroSecondCoef, eventsToGenerate);
-    generateEvents(d0barEvtsRS, d0barEvtsWS, &decayTime, rBarD, d0barLinearCoef, d0barSecondCoef, eventsToGenerate);
+    generateEvents(decayTime, dZeroEvtsRS, dZeroEvtsWS, rSubD, dZeroLinearCoef, dZeroSecondCoef, eventsToGenerate);
+    generateEvents(decayTime, d0barEvtsRS, d0barEvtsWS, rBarD, d0barLinearCoef, d0barSecondCoef, eventsToGenerate);
 
-    double gpuTime = 0;
-    double cpuTime = 0;
+    Variable constaCoef("constaCoef", 0.03, 0.01, -1, 1);
+    Variable linearCoef("linearCoef", 0, 0.01, -1, 1);
+    Variable secondCoef("secondCoef", 0, 0.01, -1, 1);
 
-    int retval;
-    retval = fitRatio(dZeroEvtsRS, dZeroEvtsWS, "dzeroEvtRatio.png");
+    vector<Variable> weights = {constaCoef, linearCoef, secondCoef};
 
-    if(retval != 0)
-        return retval;
+    int retval1, retval2;
+    std::string fit1, fit2;
+    std::tie(retval1, fit1) = fitRatio(decayTime, weights, dZeroEvtsRS, dZeroEvtsWS, "dzeroEvtRatio.png");
+    std::tie(retval2, fit2) = fitRatio(decayTime, weights, d0barEvtsRS, d0barEvtsWS, "dzbarEvtRatio.png");
 
-    timersub(&stopTime, &startTime, &totalTime);
-    gpuTime += totalTime.tv_sec + totalTime.tv_usec / 1000000.0;
-    retval = fitRatio(d0barEvtsRS, d0barEvtsWS, "dzbarEvtRatio.png");
-    if(retval != 0)
-        return retval;
-    timersub(&stopTime, &startTime, &totalTime);
-    gpuTime += totalTime.tv_sec + totalTime.tv_usec / 1000000.0;
+    CLI::Timer timer_cpu{"Total CPU (2x fits)"};
+    fitRatioCPU(decayTime, dZeroEvtsRS, dZeroEvtsWS);
+    fitRatioCPU(decayTime, d0barEvtsRS, d0barEvtsWS);
+    std::string cpu_string = timer_cpu.to_string();
 
-    fitRatioCPU(dZeroEvtsRS, dZeroEvtsWS);
-    timersub(&stopTime, &startTime, &totalTime);
-    cpuTime += totalTime.tv_sec + totalTime.tv_usec / 1000000.0;
-    fitRatioCPU(d0barEvtsRS, d0barEvtsWS);
-    timersub(&stopTime, &startTime, &totalTime);
-    cpuTime += totalTime.tv_sec + totalTime.tv_usec / 1000000.0;
+    std::cout << fit1 << "\n" << fit2 << "\n" << cpu_string << std::endl;
 
-    std::cout << "GPU time [seconds] : " << gpuTime << "\nCPU time [seconds] : " << cpuTime << std::endl;
+    fmt::print("Exit codes (should be 0): {} and {}\n", retval1, retval2);
 
-    return 0;
+    return retval1 + retval2;
 }

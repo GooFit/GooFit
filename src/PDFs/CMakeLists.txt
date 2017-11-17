@@ -41,6 +41,7 @@ set(GOOPDF_HEADERS
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/TruthResolution_Aux.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/ThreeGaussResolution_Aux.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/EvalVar.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/UserUtils.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/SpinHelper.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/utility/VariableBinTransform1DPdf.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/detail/ComplexUtils.h
@@ -102,11 +103,11 @@ else()
         message(FATAL_ERROR "You must use separable compilation (GOOFIT_SEPARATE_COMP=ON) to add PDFs!)")
     endif()
 
-    include_directories(${PROJECT_SOURCE_DIR}/src/PDFs)
+    target_include_directories(PDFs PUBLIC ${PROJECT_SOURCE_DIR}/src/PDFs)
 
     goofit_add_library(PDFs AllPdfs.cu ${GOOPDF_HEADERS})
 
 endif()
 
 
-target_link_libraries(PDFs goofit_base)
+target_link_libraries(PDFs PUBLIC goofit_base)

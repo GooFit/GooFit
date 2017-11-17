@@ -1,5 +1,5 @@
-#include "goofit/PDFs/physics/TddpPdf.h"
-#include "goofit/Error.h"
+#include <goofit/Error.h>
+#include <goofit/PDFs/physics/TddpPdf.h>
 
 #include <thrust/transform_reduce.h>
 
@@ -300,28 +300,22 @@ __device__ fptype device_Tddp(fptype *evt, fptype *p, unsigned int *indices) {
 __device__ device_function_ptr ptr_to_Tddp = device_Tddp;
 
 __host__ TddpPdf::TddpPdf(std::string n,
-                          Variable *_dtime,
-                          Variable *_sigmat,
-                          Variable *m12,
-                          Variable *m13,
-                          CountingVariable *eventNumber,
-                          DecayInfo *decay,
+                          Observable _dtime,
+                          Observable _sigmat,
+                          Observable m12,
+                          Observable m13,
+                          EventNumber eventNumber,
+                          DecayInfo3t decay,
                           MixingTimeResolution *r,
                           GooPdf *efficiency,
-                          Variable *mistag)
-    : GooPdf(_dtime, n)
+                          Observable *mistag)
+    : GooPdf(n, _dtime, _sigmat, m12, m13, eventNumber)
     , decayInfo(decay)
     , _m12(m12)
     , _m13(m13)
     , resolution(r)
     , totalEventSize(5) // Default 5 = m12, m13, time, sigma_t, evtNum
 {
-    // NB, _dtime already registered!
-    registerObservable(_sigmat);
-    registerObservable(_m12);
-    registerObservable(_m13);
-    registerObservable(eventNumber);
-
     for(auto &cachedWave : cachedWaves)
         cachedWave = nullptr;
 
@@ -329,35 +323,35 @@ __host__ TddpPdf::TddpPdf(std::string n,
     decayConstants[5] = 0;
 
     if(mistag) {
-        registerObservable(mistag);
+        registerObservable(*mistag);
         totalEventSize    = 6;
         decayConstants[5] = 1; // Flags existence of mistag
     }
 
     std::vector<unsigned int> pindices;
     pindices.push_back(registerConstants(6));
-    decayConstants[0] = decayInfo->motherMass;
-    decayConstants[1] = decayInfo->daug1Mass;
-    decayConstants[2] = decayInfo->daug2Mass;
-    decayConstants[3] = decayInfo->daug3Mass;
-    decayConstants[4] = decayInfo->meson_radius;
+    decayConstants[0] = decayInfo.motherMass;
+    decayConstants[1] = decayInfo.daug1Mass;
+    decayConstants[2] = decayInfo.daug2Mass;
+    decayConstants[3] = decayInfo.daug3Mass;
+    decayConstants[4] = decayInfo.meson_radius;
     MEMCPY_TO_SYMBOL(
         functorConstants, decayConstants, 6 * sizeof(fptype), cIndex * sizeof(fptype), cudaMemcpyHostToDevice);
 
-    pindices.push_back(registerParameter(decayInfo->_tau));
-    pindices.push_back(registerParameter(decayInfo->_xmixing));
-    pindices.push_back(registerParameter(decayInfo->_ymixing));
+    pindices.push_back(registerParameter(decayInfo._tau));
+    pindices.push_back(registerParameter(decayInfo._xmixing));
+    pindices.push_back(registerParameter(decayInfo._ymixing));
     if(resolution->getDeviceFunction() < 0)
         throw GooFit::GeneralError("The resolution device function index {} must be more than 0",
                                    resolution->getDeviceFunction());
     pindices.push_back(static_cast<unsigned int>(resolution->getDeviceFunction()));
-    pindices.push_back(decayInfo->resonances.size());
+    pindices.push_back(decayInfo.resonances.size());
 
     static int cacheCount = 0;
     cacheToUse            = cacheCount++;
     pindices.push_back(cacheToUse);
 
-    for(auto &resonance : decayInfo->resonances) {
+    for(auto &resonance : decayInfo.resonances) {
         pindices.push_back(registerParameter(resonance->amp_real));
         pindices.push_back(registerParameter(resonance->amp_imag));
         pindices.push_back(resonance->getFunctionIndex());
@@ -374,22 +368,22 @@ __host__ TddpPdf::TddpPdf(std::string n,
     GET_FUNCTION_ADDR(ptr_to_Tddp);
     initialize(pindices);
 
-    redoIntegral = new bool[decayInfo->resonances.size()];
-    cachedMasses = new fptype[decayInfo->resonances.size()];
-    cachedWidths = new fptype[decayInfo->resonances.size()];
-    integrals    = new ThreeComplex **[decayInfo->resonances.size()];
-    integrators  = new SpecialDalitzIntegrator **[decayInfo->resonances.size()];
-    calculators  = new SpecialWaveCalculator *[decayInfo->resonances.size()];
+    redoIntegral = new bool[decayInfo.resonances.size()];
+    cachedMasses = new fptype[decayInfo.resonances.size()];
+    cachedWidths = new fptype[decayInfo.resonances.size()];
+    integrals    = new ThreeComplex **[decayInfo.resonances.size()];
+    integrators  = new SpecialDalitzIntegrator **[decayInfo.resonances.size()];
+    calculators  = new SpecialWaveCalculator *[decayInfo.resonances.size()];
 
-    for(int i = 0; i < decayInfo->resonances.size(); ++i) {
+    for(int i = 0; i < decayInfo.resonances.size(); ++i) {
         redoIntegral[i] = true;
         cachedMasses[i] = -1;
         cachedWidths[i] = -1;
-        integrators[i]  = new SpecialDalitzIntegrator *[decayInfo->resonances.size()];
+        integrators[i]  = new SpecialDalitzIntegrator *[decayInfo.resonances.size()];
         calculators[i]  = new SpecialWaveCalculator(parameters, i);
-        integrals[i]    = new ThreeComplex *[decayInfo->resonances.size()];
+        integrals[i]    = new ThreeComplex *[decayInfo.resonances.size()];
 
-        for(int j = 0; j < decayInfo->resonances.size(); ++j) {
+        for(int j = 0; j < decayInfo.resonances.size(); ++j) {
             integrals[i][j]   = new ThreeComplex(0, 0, 0, 0, 0, 0);
             integrators[i][j] = new SpecialDalitzIntegrator(parameters, i, j);
         }
@@ -399,17 +393,17 @@ __host__ TddpPdf::TddpPdf(std::string n,
 }
 
 __host__ TddpPdf::TddpPdf(std::string n,
-                          Variable *_dtime,
-                          Variable *_sigmat,
-                          Variable *m12,
-                          Variable *m13,
-                          CountingVariable *eventNumber,
-                          DecayInfo *decay,
+                          Observable _dtime,
+                          Observable _sigmat,
+                          Observable m12,
+                          Observable m13,
+                          EventNumber eventNumber,
+                          DecayInfo3t decay,
                           std::vector<MixingTimeResolution *> &r,
                           GooPdf *efficiency,
-                          Variable *md0,
-                          Variable *mistag)
-    : GooPdf(_dtime, n)
+                          Observable md0,
+                          Observable *mistag)
+    : GooPdf(n, _dtime, _sigmat, m12, m13, eventNumber, md0)
     , decayInfo(decay)
     , _m12(m12)
     , _m13(m13)
@@ -417,48 +411,41 @@ __host__ TddpPdf::TddpPdf(std::string n,
           r[0]) // Only used for normalisation, which only depends on x and y - it doesn't matter which one we use.
     , totalEventSize(6) // This case adds the D0 mass by default.
 {
-    // NB, _dtime already registered!
-    registerObservable(_sigmat);
-    registerObservable(_m12);
-    registerObservable(_m13);
-    registerObservable(eventNumber);
-    registerObservable(md0);
-
     for(auto &cachedWave : cachedWaves)
         cachedWave = nullptr;
 
     fptype decayConstants[8];
     decayConstants[5] = 0;
-    decayConstants[6] = md0->getLowerLimit();
-    decayConstants[7] = (md0->getUpperLimit() - md0->getLowerLimit()) / r.size();
+    decayConstants[6] = md0.getLowerLimit();
+    decayConstants[7] = (md0.getUpperLimit() - md0.getLowerLimit()) / r.size();
 
     if(mistag) {
-        registerObservable(mistag);
+        registerObservable(*mistag);
         totalEventSize++;
         decayConstants[5] = 1; // Flags existence of mistag
     }
 
     std::vector<unsigned int> pindices;
     pindices.push_back(registerConstants(8));
-    decayConstants[0] = decayInfo->motherMass;
-    decayConstants[1] = decayInfo->daug1Mass;
-    decayConstants[2] = decayInfo->daug2Mass;
-    decayConstants[3] = decayInfo->daug3Mass;
-    decayConstants[4] = decayInfo->meson_radius;
+    decayConstants[0] = decayInfo.motherMass;
+    decayConstants[1] = decayInfo.daug1Mass;
+    decayConstants[2] = decayInfo.daug2Mass;
+    decayConstants[3] = decayInfo.daug3Mass;
+    decayConstants[4] = decayInfo.meson_radius;
     MEMCPY_TO_SYMBOL(
         functorConstants, decayConstants, 8 * sizeof(fptype), cIndex * sizeof(fptype), cudaMemcpyHostToDevice);
 
-    pindices.push_back(registerParameter(decayInfo->_tau));
-    pindices.push_back(registerParameter(decayInfo->_xmixing));
-    pindices.push_back(registerParameter(decayInfo->_ymixing));
+    pindices.push_back(registerParameter(decayInfo._tau));
+    pindices.push_back(registerParameter(decayInfo._xmixing));
+    pindices.push_back(registerParameter(decayInfo._ymixing));
     pindices.push_back(SPECIAL_RESOLUTION_FLAG); // Flag existence of multiple resolution functions.
-    pindices.push_back(decayInfo->resonances.size());
+    pindices.push_back(decayInfo.resonances.size());
 
     static int cacheCount = 0;
     cacheToUse            = cacheCount++;
     pindices.push_back(cacheToUse);
 
-    for(auto &resonance : decayInfo->resonances) {
+    for(auto &resonance : decayInfo.resonances) {
         pindices.push_back(registerParameter(resonance->amp_real));
         pindices.push_back(registerParameter(resonance->amp_imag));
         pindices.push_back(resonance->getFunctionIndex());
@@ -483,22 +470,22 @@ __host__ TddpPdf::TddpPdf(std::string n,
     GET_FUNCTION_ADDR(ptr_to_Tddp);
     initialize(pindices);
 
-    redoIntegral = new bool[decayInfo->resonances.size()];
-    cachedMasses = new fptype[decayInfo->resonances.size()];
-    cachedWidths = new fptype[decayInfo->resonances.size()];
-    integrals    = new ThreeComplex **[decayInfo->resonances.size()];
-    integrators  = new SpecialDalitzIntegrator **[decayInfo->resonances.size()];
-    calculators  = new SpecialWaveCalculator *[decayInfo->resonances.size()];
+    redoIntegral = new bool[decayInfo.resonances.size()];
+    cachedMasses = new fptype[decayInfo.resonances.size()];
+    cachedWidths = new fptype[decayInfo.resonances.size()];
+    integrals    = new ThreeComplex **[decayInfo.resonances.size()];
+    integrators  = new SpecialDalitzIntegrator **[decayInfo.resonances.size()];
+    calculators  = new SpecialWaveCalculator *[decayInfo.resonances.size()];
 
-    for(int i = 0; i < decayInfo->resonances.size(); ++i) {
+    for(int i = 0; i < decayInfo.resonances.size(); ++i) {
         redoIntegral[i] = true;
         cachedMasses[i] = -1;
         cachedWidths[i] = -1;
-        integrators[i]  = new SpecialDalitzIntegrator *[decayInfo->resonances.size()];
+        integrators[i]  = new SpecialDalitzIntegrator *[decayInfo.resonances.size()];
         calculators[i]  = new SpecialWaveCalculator(parameters, i);
-        integrals[i]    = new ThreeComplex *[decayInfo->resonances.size()];
+        integrals[i]    = new ThreeComplex *[decayInfo.resonances.size()];
 
-        for(int j = 0; j < decayInfo->resonances.size(); ++j) {
+        for(int j = 0; j < decayInfo.resonances.size(); ++j) {
             integrals[i][j]   = new ThreeComplex(0, 0, 0, 0, 0, 0);
             integrators[i][j] = new SpecialDalitzIntegrator(parameters, i, j);
         }
@@ -561,26 +548,26 @@ __host__ fptype TddpPdf::normalize() const {
     MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams * sizeof(fptype), 0, cudaMemcpyHostToDevice);
     // std::cout << "TDDP normalisation " << getName() << std::endl;
 
-    int totalBins = _m12->getNumBins() * _m13->getNumBins();
+    int totalBins = _m12.getNumBins() * _m13.getNumBins();
 
     if(!dalitzNormRange) {
         gooMalloc((void **)&dalitzNormRange, 6 * sizeof(fptype));
 
         auto *host_norms = new fptype[6];
-        host_norms[0]    = _m12->getLowerLimit();
-        host_norms[1]    = _m12->getUpperLimit();
-        host_norms[2]    = _m12->getNumBins();
-        host_norms[3]    = _m13->getLowerLimit();
-        host_norms[4]    = _m13->getUpperLimit();
-        host_norms[5]    = _m13->getNumBins();
+        host_norms[0]    = _m12.getLowerLimit();
+        host_norms[1]    = _m12.getUpperLimit();
+        host_norms[2]    = _m12.getNumBins();
+        host_norms[3]    = _m13.getLowerLimit();
+        host_norms[4]    = _m13.getUpperLimit();
+        host_norms[5]    = _m13.getNumBins();
         MEMCPY(dalitzNormRange, host_norms, 6 * sizeof(fptype), cudaMemcpyHostToDevice);
         delete[] host_norms;
     }
 
-    for(unsigned int i = 0; i < decayInfo->resonances.size(); ++i) {
+    for(unsigned int i = 0; i < decayInfo.resonances.size(); ++i) {
         redoIntegral[i] = forceRedoIntegrals;
 
-        if(!(decayInfo->resonances[i]->parametersChanged()))
+        if(!(decayInfo.resonances[i]->parametersChanged()))
             continue;
 
         redoIntegral[i] = true;
@@ -602,7 +589,7 @@ __host__ fptype TddpPdf::normalize() const {
     static int normCall = 0;
     normCall++;
 
-    for(int i = 0; i < decayInfo->resonances.size(); ++i) {
+    for(int i = 0; i < decayInfo.resonances.size(); ++i) {
         if(redoIntegral[i]) {
 #ifdef GOOFIT_MPI
             thrust::transform(
@@ -625,7 +612,7 @@ __host__ fptype TddpPdf::normalize() const {
         }
 
         // Possibly this can be done more efficiently by exploiting symmetry?
-        for(int j = 0; j < decayInfo->resonances.size(); ++j) {
+        for(int j = 0; j < decayInfo.resonances.size(); ++j) {
             if((!redoIntegral[i]) && (!redoIntegral[j]))
                 continue;
 
@@ -655,11 +642,11 @@ __host__ fptype TddpPdf::normalize() const {
     fpcomplex integralB_2(0, 0);
     fpcomplex integralABs(0, 0);
 
-    for(unsigned int i = 0; i < decayInfo->resonances.size(); ++i) {
+    for(unsigned int i = 0; i < decayInfo.resonances.size(); ++i) {
         int param_i = parameters + resonanceOffset + resonanceSize * i;
         fpcomplex amplitude_i(host_params[host_indices[param_i]], host_params[host_indices[param_i + 1]]);
 
-        for(unsigned int j = 0; j < decayInfo->resonances.size(); ++j) {
+        for(unsigned int j = 0; j < decayInfo.resonances.size(); ++j) {
             int param_j = parameters + resonanceOffset + resonanceSize * j;
             fpcomplex amplitude_j(host_params[host_indices[param_j]],
                                   -host_params[host_indices[param_j + 1]]); // Notice complex conjugation
@@ -673,7 +660,7 @@ __host__ fptype TddpPdf::normalize() const {
 
             /*
             if (cpuDebug & 1) {
-            int idx = i * decayInfo->resonances.size() + j;
+            int idx = i * decayInfo.resonances.size() + j;
             if (0 == host_callnumber) std::cout << "Integral contribution " << i << ", " << j << " " << idx << " : "
                                 << amplitude_i << " "
                                 << amplitude_j << " ("
@@ -716,8 +703,8 @@ __host__ fptype TddpPdf::normalize() const {
         dalitzIntegralOne, dalitzIntegralTwo, dalitzIntegralThr, dalitzIntegralFou, tau, xmixing, ymixing);
 
     double binSizeFactor = 1;
-    binSizeFactor *= ((_m12->getUpperLimit() - _m12->getLowerLimit()) / _m12->getNumBins());
-    binSizeFactor *= ((_m13->getUpperLimit() - _m13->getLowerLimit()) / _m13->getNumBins());
+    binSizeFactor *= ((_m12.getUpperLimit() - _m12.getLowerLimit()) / _m12.getNumBins());
+    binSizeFactor *= ((_m13.getUpperLimit() - _m13.getLowerLimit()) / _m13.getNumBins());
     ret *= binSizeFactor;
 
     host_normalisation[parameters] = 1.0 / ret;

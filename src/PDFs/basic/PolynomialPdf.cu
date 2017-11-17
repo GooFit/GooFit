@@ -1,5 +1,5 @@
-#include "goofit/PDFs/basic/PolynomialPdf.h"
-#include "goofit/Variable.h"
+#include <goofit/PDFs/basic/PolynomialPdf.h>
+#include <goofit/Variable.h>
 
 namespace GooFit {
 
@@ -108,10 +108,9 @@ __device__ device_function_ptr ptr_to_OffsetPolynomial = device_OffsetPolynomial
 __device__ device_function_ptr ptr_to_MultiPolynomial  = device_MultiPolynomial;
 
 // Constructor for single-variate polynomial, with optional zero point.
-__host__ PolynomialPdf::PolynomialPdf(
-    std::string n, Variable *_x, std::vector<Variable *> weights, Variable *x0, unsigned int lowestDegree)
-    : GooPdf(_x, n)
-    , center(x0) {
+__host__
+PolynomialPdf::PolynomialPdf(std::string n, Observable _x, std::vector<Variable> weights, unsigned int lowestDegree)
+    : GooPdf(n, _x) {
     std::vector<unsigned int> pindices;
     pindices.push_back(lowestDegree);
 
@@ -119,23 +118,36 @@ __host__ PolynomialPdf::PolynomialPdf(
         pindices.push_back(registerParameter(weight));
     }
 
-    if(x0) {
-        pindices.push_back(registerParameter(x0));
-        GET_FUNCTION_ADDR(ptr_to_OffsetPolynomial);
-    } else {
-        GET_FUNCTION_ADDR(ptr_to_Polynomial);
+    GET_FUNCTION_ADDR(ptr_to_Polynomial);
+
+    initialize(pindices);
+}
+
+// Constructor for single-variate polynomial, with optional zero point.
+__host__ PolynomialPdf::PolynomialPdf(
+    std::string n, Observable _x, std::vector<Variable> weights, Variable x0, unsigned int lowestDegree)
+    : GooPdf(n, _x)
+    , center(new Variable(x0)) {
+    std::vector<unsigned int> pindices;
+    pindices.push_back(lowestDegree);
+
+    for(auto &weight : weights) {
+        pindices.push_back(registerParameter(weight));
     }
+
+    pindices.push_back(registerParameter(x0));
+    GET_FUNCTION_ADDR(ptr_to_OffsetPolynomial);
 
     initialize(pindices);
 }
 
 // Constructor for multivariate polynomial.
 __host__ PolynomialPdf::PolynomialPdf(std::string n,
-                                      std::vector<Variable *> obses,
-                                      std::vector<Variable *> coeffs,
-                                      std::vector<Variable *> offsets,
+                                      std::vector<Observable> obses,
+                                      std::vector<Variable> coeffs,
+                                      std::vector<Variable> offsets,
                                       unsigned int maxDegree)
-    : GooPdf(nullptr, n) {
+    : GooPdf(n) {
     unsigned int numParameters = 1;
 
     // For 1 observable, equal to n = maxDegree + 1.
@@ -155,8 +167,7 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n,
         char varName[100];
         sprintf(varName, "%s_extra_coeff_%i", getName().c_str(), static_cast<int>(coeffs.size()));
 
-        Variable *newTerm = new Variable(varName, 0);
-        coeffs.push_back(newTerm);
+        coeffs.emplace_back(varName, 0);
 
         std::cout << "Warning: " << getName() << " created dummy variable " << varName
                   << " (fixed at zero) to account for all terms.\n";
@@ -165,8 +176,7 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n,
     while(offsets.size() < obses.size()) {
         char varName[100];
         sprintf(varName, "%s_extra_offset_%i", getName().c_str(), static_cast<int>(offsets.size()));
-        Variable *newOffset = new Variable(varName, 0);
-        offsets.push_back(newOffset);
+        offsets.emplace_back(varName, 0);
     }
 
     std::vector<unsigned int> pindices;

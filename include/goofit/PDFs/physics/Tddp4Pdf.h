@@ -8,10 +8,10 @@ See *.cu file for more details
 
 #pragma once
 
-#include "goofit/PDFs/GooPdf.h"
-#include "goofit/PDFs/physics/DalitzPlotHelpers.h"
-#include "goofit/PDFs/physics/MixingTimeResolution_Aux.h"
-#include "goofit/PDFs/physics/SpinFactors.h"
+#include <goofit/PDFs/GooPdf.h>
+#include <goofit/PDFs/physics/DalitzPlotHelpers.h>
+#include <goofit/PDFs/physics/MixingTimeResolution_Aux.h>
+#include <goofit/PDFs/physics/SpinFactors.h>
 #include <mcbooster/GContainers.h>
 #include <thrust/remove.h>
 #include <tuple>
@@ -26,11 +26,11 @@ class NormIntegrator_TD;
 class TDDP4 : public GooPdf {
   public:
     TDDP4(std::string n,
-          std::vector<Variable *> observables,
-          DecayInfo_DP *decay,
+          std::vector<Observable> observables,
+          DecayInfo4t decay,
           MixingTimeResolution *r,
           GooPdf *eff,
-          Variable *mistag          = nullptr,
+          Observable *mistag,
           unsigned int MCeventsNorm = 5e6);
     // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the
     // coherent sum. The caching method requires that it be done this way or the ProdPdf
@@ -74,8 +74,7 @@ class TDDP4 : public GooPdf {
     mutable mcbooster::RealVector_d norm_SF;
     mutable mcbooster::mc_device_vector<fpcomplex> norm_LS;
 
-    DecayInfo_DP *decayInfo;
-    std::vector<Variable *> _observables;
+    DecayInfo4t decayInfo;
     MixingTimeResolution *resolution;
     int MCevents;
     // Following variables are useful if masses and widths, involved in difficult BW calculation,
@@ -128,12 +127,11 @@ class LSCalculator_TD : public thrust::unary_function<thrust::tuple<int, fptype 
     unsigned int _parameters;
 };
 
-class NormLSCalculator_TD : public thrust::unary_function<thrust::tuple<mcbooster::GReal_t,
-                                                                        mcbooster::GReal_t,
-                                                                        mcbooster::GReal_t,
-                                                                        mcbooster::GReal_t,
-                                                                        mcbooster::GReal_t>,
-                                                          fpcomplex> {
+class NormLSCalculator_TD
+    : public thrust::unary_function<
+          thrust::
+              tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t>,
+          fpcomplex> {
   public:
     // Used to create the cached BW values.
     NormLSCalculator_TD(int pIdx, unsigned int res_idx);
@@ -175,10 +173,10 @@ class FourDblTupleAdd : public thrust::binary_function<thrust::tuple<fptype, fpt
   public:
     __host__ __device__ thrust::tuple<fptype, fptype, fptype, fptype>
     operator()(thrust::tuple<fptype, fptype, fptype, fptype> one, thrust::tuple<fptype, fptype, fptype, fptype> two) {
-        return thrust::tuple<fptype, fptype, fptype, fptype>(thrust::get<0>(one) + thrust::get<0>(two),
-                                                             thrust::get<1>(one) + thrust::get<1>(two),
-                                                             thrust::get<2>(one) + thrust::get<2>(two),
-                                                             thrust::get<3>(one) + thrust::get<3>(two));
+        return {thrust::get<0>(one) + thrust::get<0>(two),
+                thrust::get<1>(one) + thrust::get<1>(two),
+                thrust::get<2>(one) + thrust::get<2>(two),
+                thrust::get<3>(one) + thrust::get<3>(two)};
     }
 };
 } // namespace GooFit

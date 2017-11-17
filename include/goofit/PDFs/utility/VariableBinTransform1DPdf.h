@@ -1,14 +1,15 @@
 #pragma once
 
-#include <goofit/PDFs/GooPdf.h>
 #include <vector>
+
+#include <goofit/PDFs/GooPdf.h>
 
 namespace GooFit {
 
 // Transforms ND coordinates into a single bin number.
 class VariableBinTransform1DPdf : public GooPdf {
   public:
-    VariableBinTransform1DPdf(std::string n, Variable *_x, std::vector<fptype> binlimits);
+    VariableBinTransform1DPdf(std::string n, Observable _x, std::vector<fptype> binlimits);
 };
 
-} // GooFit
+} // namespace GooFit

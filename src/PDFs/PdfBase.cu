@@ -1,10 +1,10 @@
-#include "goofit/GlobalCudaDefines.h"
-#include "goofit/BinnedDataSet.h"
-#include "goofit/Error.h"
-#include "goofit/FitControl.h"
-#include "goofit/Log.h"
-#include "goofit/PDFs/GooPdf.h"
-#include "goofit/PdfBase.h"
+#include <goofit/BinnedDataSet.h>
+#include <goofit/Error.h>
+#include <goofit/FitControl.h>
+#include <goofit/GlobalCudaDefines.h>
+#include <goofit/Log.h>
+#include <goofit/PDFs/GooPdf.h>
+#include <goofit/PdfBase.h>
 
 #ifdef GOOFIT_MPI
 #include <mpi.h>
@@ -36,16 +36,16 @@ __host__ void PdfBase::copyParams(const std::vector<double> &pars) const {
 
 __host__ void PdfBase::copyParams() {
     // Copies values of Variable objects
-    std::vector<Variable *> pars = getParameters();
+    std::vector<Variable> pars = getParameters();
     std::vector<double> values;
 
-    for(Variable *v : pars) {
-        int index = v->getIndex();
+    for(const Variable &v : pars) {
+        int index = v.getIndex();
 
         if(index >= static_cast<int>(values.size()))
             values.resize(index + 1);
 
-        values[index] = v->getValue();
+        values[index] = v.getValue();
     }
 
     copyParams(values);
@@ -102,12 +102,12 @@ __host__ void PdfBase::recursiveSetIndices() {
     int numParams = host_indices[parameters];
     int counter   = 0;
 
-    for(Variable *v : observables) {
-        host_indices[parameters + 2 + numParams + counter] = v->getIndex();
+    for(const Observable &v : observables) {
+        host_indices[parameters + 2 + numParams + counter] = v.getIndex();
         GOOFIT_DEBUG("{} set index of {} to {} -> host {}",
                      getName(),
-                     v->getName(),
-                     v->getIndex(),
+                     v.getName(),
+                     v.getIndex(),
                      parameters + 2 + numParams + counter)
         counter++;
     }
@@ -118,8 +118,8 @@ __host__ void PdfBase::recursiveSetIndices() {
 __host__ void PdfBase::setIndices() {
     int counter = 0;
 
-    for(Variable *v : observables) {
-        v->setIndex(counter++);
+    for(Observable &v : observables) {
+        v.setIndex(counter++);
     }
 
     recursiveSetIndices();
@@ -143,6 +143,10 @@ __host__ void PdfBase::setData(DataSet *data) {
     }
 
     data_ = data;
+
+    // Do nothing if passed a nullptr (makes setData(getData()) safe)
+    if(data == nullptr)
+        return;
 
     setIndices();
 
@@ -199,9 +203,9 @@ __host__ void PdfBase::setData(DataSet *data) {
 
         // Transfer into our whole buffer
         for(int i = 0; i < numEntries; ++i) {
-            for(Variable *v : observables) {
-                fptype currVal                             = unbinned_data->getValue(v, i);
-                host_array[i * dimensions + v->getIndex()] = currVal;
+            for(const Observable &v : observables) {
+                fptype currVal                            = unbinned_data->getValue(v, i);
+                host_array[i * dimensions + v.getIndex()] = currVal;
             }
         }
 
@@ -245,7 +249,7 @@ __host__ void PdfBase::setData(DataSet *data) {
         int dimensions = 2 + observables.size(); // Bin center (x,y, ...), bin value, and bin volume.
 
         if(!fitControl->binnedFit())
-            setFitControl(new BinnedNllFit());
+            setFitControl(std::make_shared<BinnedNllFit>());
 
 #ifdef GOOFIT_MPI
         // This fetches our rank and the total number of processes in the MPI call
@@ -290,8 +294,8 @@ __host__ void PdfBase::setData(DataSet *data) {
 #endif
 
         for(unsigned int i = 0; i < numEntries; ++i) {
-            for(Variable *v : observables) {
-                host_array[i * dimensions + v->getIndex()] = binned_data->getBinCenter(v, i);
+            for(const Observable &v : observables) {
+                host_array[i * dimensions + v.getIndex()] = binned_data->getBinCenter(v, i);
             }
 
             host_array[i * dimensions + observables.size() + 0] = binned_data->getBinContent(i);
@@ -351,10 +355,10 @@ __host__ void PdfBase::generateNormRange() {
     // 0 and 2. Make one array per functor, as opposed to variable, to make
     // it easy to pass MetricTaker a range without worrying about which parts
     // to use.
-    for(Variable *v : observables) {
-        host_norms[3 * counter + 0] = v->getLowerLimit();
-        host_norms[3 * counter + 1] = v->getUpperLimit();
-        host_norms[3 * counter + 2] = integrationBins > 0 ? integrationBins : v->getNumBins();
+    for(Observable &v : observables) {
+        host_norms[3 * counter + 0] = v.getLowerLimit();
+        host_norms[3 * counter + 1] = v.getUpperLimit();
+        host_norms[3 * counter + 2] = integrationBins > 0 ? integrationBins : v.getNumBins();
         counter++;
     }
 

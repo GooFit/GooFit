@@ -1,19 +1,24 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from __future__ import print_function, division
 
 from goofit import *
 import numpy as np
+
+print_goofit_info()
 
 # Create random data
 xarr = np.random.normal(.2, 1.1, size=100000)
 yarr = np.random.normal(.5, .3, size=100000)
 xyarr = np.array([xarr, yarr])
 
-xvar = Variable("xvar", -5, 5)
-yvar = Variable("yvar", -5, 5)
+xvar = Observable("xvar", -5, 5)
+yvar = Observable("yvar", -5, 5)
 
 data = UnbinnedDataSet(xvar, yvar)
 
-data.from_numpy(xyarr)
+data.from_numpy(xyarr, filter=True)
 
 #for x,y in zip(xarr, yarr):
 #    xvar.value = x

@@ -10,8 +10,13 @@ namespace py = pybind11;
 void init_BinTransformPdf(py::module &m) {
     py::class_<BinTransformPdf, GooPdf>(m, "BinTransformPdf")
         .def(py::init<std::string,
-                      std::vector<Variable *>,
+                      std::vector<Observable>,
                       std::vector<fptype>,
                       std::vector<fptype>,
-                      std::vector<int>>());
+                      std::vector<int>>(),
+             "n",
+             "obses",
+             "limits",
+             "binSizes",
+             "numBins");
 }

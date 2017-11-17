@@ -12,13 +12,14 @@ doing maximum-likelihood fits with a familiar syntax.
 [What's new](./CHANGELOG.md)
 • [Tutorials]
 • [API documentation]
-• [Converting from older GooFit](./docs/CONVERTING20.md)
+• [2.0 upgrade](./docs/CONVERTING20.md)
+• [2.1 upgrade](./docs/CONVERTING21.md)
 • [Build recipes](./docs/SYSTEM_INSTALL.md)
 • [Python (in progress)](https://pypi.python.org/pypi/goofit/)
 
 ## Requirements
 
-* A recent version of CMake is required. The minimum is 3.4, but tested primarily with 3.6 and newer. CMake is incredibly easy to install (see below). The minimum required version may change to 3.8 at some point, since that is the first version to support CUDA directly as a first class language.
+* A recent version of CMake is required. The minimum is 3.4, but tested primarily with 3.6 and newer. CMake is incredibly easy to install (see [the system install page](./docs/SYSTEM_INSTALL.md)). The minimum required version may change to 3.8 at some point, since that is the first version to support CUDA directly as a first class language.
   * With CMake, Thrust is downloaded automatically for OpenMP if not found
   * GoogleTest and all other small packages are downloaded automatically
 * A ROOT 6 build highly recommended -- GooFit will use the included Minuit2 submodule if ROOT is not found, and the Minuit1 based fitter will not be available.
@@ -33,7 +34,7 @@ doing maximum-likelihood fits with a familiar syntax.
 
 A list of exact commands required for several platforms is [available here](./docs/SYSTEM_INSTALL.md).
 
-There are also Python Bindings in the 2.1 development version. This requires Python (2 or 3), [NumPy](http://www.numpy.org), [SciKit-Build](http://scikit-build.readthedocs.io), and CMake. You can uses `pip install -v goofit`, or `pip install -v -e .` inside the repository. You can also direcly force the bindings from a normal build with `-DGOOFIT_PYTHON=ON`.
+There are also Python Bindings in the 2.1 development version. This requires Python (2 or 3), [NumPy](http://www.numpy.org), [SciKit-Build](http://scikit-build.readthedocs.io), and CMake. You can uses `pip install -v goofit`, or `pip install -v -e .` inside the repository. You can also direcly force the bindings from a normal build with `-DGOOFIT_PYTHON=ON`. You can check your install with `python -m goofit`. You can debug a goofit file named `python_script.py` with gcc using `gdb -ex r --args python python_script.py`.
 
 ## Getting the files
 
@@ -237,4 +238,4 @@ In addition, we thank the nVidia GPU Grant Program for donating hardware used in
 [CLI11]:             https://github.com/CLIUtils/CLI11
 [PyBind11]:          http://pybind11.readthedocs.io/en/master
 [ROOT]:              https://root.cern.ch
-[Tutorials]:         https://henryiii.gitbooks.io/goofit/content/
+[Tutorials]:         https://goofit.gitlab.io/Goo2Torial

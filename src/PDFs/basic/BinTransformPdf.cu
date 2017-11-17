@@ -1,4 +1,4 @@
-#include "goofit/PDFs/basic/BinTransformPdf.h"
+#include <goofit/PDFs/basic/BinTransformPdf.h>
 
 namespace GooFit {
 
@@ -28,11 +28,11 @@ __device__ device_function_ptr ptr_to_BinTransform = device_BinTransform;
 
 // Notice that bin sizes and limits can be different, for this purpose, than what's implied by the Variable members.
 __host__ BinTransformPdf::BinTransformPdf(std::string n,
-                                          std::vector<Variable *> obses,
+                                          std::vector<Observable> obses,
                                           std::vector<fptype> limits,
                                           std::vector<fptype> binSizes,
                                           std::vector<int> numBins)
-    : GooPdf(nullptr, n) {
+    : GooPdf(n) {
     cIndex               = registerConstants(2 * obses.size());
     auto *host_constants = new fptype[2 * obses.size()];
     std::vector<unsigned int> pindices;

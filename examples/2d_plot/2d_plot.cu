@@ -1,20 +1,20 @@
-#include "goofit/Application.h"
-#include "goofit/Variable.h"
-#include "goofit/PDFs/basic/GaussianPdf.h"
-#include "goofit/PDFs/combine/ProdPdf.h"
-#include "goofit/FitManager.h"
-#include "goofit/UnbinnedDataSet.h"
+#include <goofit/Application.h>
+#include <goofit/FitManager.h>
+#include <goofit/PDFs/basic/GaussianPdf.h>
+#include <goofit/PDFs/combine/ProdPdf.h>
+#include <goofit/UnbinnedDataSet.h>
+#include <goofit/Variable.h>
 
+#include <RVersion.h>
+#include <TCanvas.h>
 #include <TH1F.h>
 #include <TH2F.h>
 #include <TStyle.h>
-#include <TCanvas.h>
-#include <RVersion.h>
 
-#include <sys/time.h>
-#include <sys/times.h>
 #include <iostream>
 #include <random>
+#include <sys/time.h>
+#include <sys/times.h>
 
 using namespace std;
 using namespace GooFit;
@@ -49,9 +49,9 @@ int main(int argc, char **argv) {
     else
         gStyle->SetPalette(kViridis, 0);
 
-    Variable xvar{"xvar", -5, 5};
-    Variable yvar{"yvar", -5, 5};
-    UnbinnedDataSet data({&xvar, &yvar});
+    Observable xvar{"xvar", -5, 5};
+    Observable yvar{"yvar", -5, 5};
+    UnbinnedDataSet data({xvar, yvar});
 
     TH2F dataHist("dataHist",
                   "",
@@ -85,11 +85,11 @@ int main(int argc, char **argv) {
 
     Variable xmean{"xmean", 0, 1, -10, 10};
     Variable xsigm{"xsigm", 1, 0.5, 1.5};
-    GaussianPdf xgauss{"xgauss", &xvar, &xmean, &xsigm};
+    GaussianPdf xgauss{"xgauss", xvar, xmean, xsigm};
 
     Variable ymean{"ymean", 0, 1, -10, 10};
     Variable ysigm{"ysigm", 0.4, 0.1, 0.6};
-    GaussianPdf ygauss{"ygauss", &yvar, &ymean, &ysigm};
+    GaussianPdf ygauss{"ygauss", yvar, ymean, ysigm};
 
     ProdPdf total("total", {&xgauss, &ygauss});
     total.setData(&data);

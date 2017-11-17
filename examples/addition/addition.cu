@@ -1,20 +1,20 @@
-#include "goofit/Application.h"
-#include "goofit/Variable.h"
-#include "goofit/PDFs/basic/GaussianPdf.h"
-#include "goofit/PDFs/combine/AddPdf.h"
-#include "goofit/PDFs/basic/PolynomialPdf.h"
-#include "goofit/FitManager.h"
-#include "goofit/UnbinnedDataSet.h"
+#include <goofit/Application.h>
+#include <goofit/FitManager.h>
+#include <goofit/PDFs/basic/GaussianPdf.h>
+#include <goofit/PDFs/basic/PolynomialPdf.h>
+#include <goofit/PDFs/combine/AddPdf.h>
+#include <goofit/UnbinnedDataSet.h>
+#include <goofit/Variable.h>
 
-#include "TRandom.h"
-#include "TH1F.h"
-#include "TH2F.h"
-#include "TStyle.h"
-#include "TCanvas.h"
+#include <TCanvas.h>
+#include <TH1F.h>
+#include <TH2F.h>
+#include <TRandom.h>
+#include <TStyle.h>
 
+#include <iostream>
 #include <sys/time.h>
 #include <sys/times.h>
-#include <iostream>
 
 using namespace std;
 using namespace GooFit;
@@ -41,9 +41,9 @@ int main(int argc, char **argv) {
     gStyle->SetLineColor(1);
     gStyle->SetPalette(1, 0);
 
-    Variable xvar{"xvar", -5, 5};
+    Observable xvar{"xvar", -5, 5};
 
-    UnbinnedDataSet data(&xvar);
+    UnbinnedDataSet data(xvar);
 
     TH1F xvarHist("xvarHist", "", xvar.getNumBins(), xvar.getLowerLimit(), xvar.getUpperLimit());
 
@@ -70,14 +70,14 @@ int main(int argc, char **argv) {
 
     Variable xmean{"xmean", 0, 1, -10, 10};
     Variable xsigm{"xsigm", 1, 0.5, 1.5};
-    GaussianPdf signal{"signal", &xvar, &xmean, &xsigm};
+    GaussianPdf signal{"signal", xvar, xmean, xsigm};
 
     Variable constant{"constant", 1.0};
-    PolynomialPdf backgr{"backgr", &xvar, {&constant}};
+    PolynomialPdf backgr{"backgr", xvar, {constant}};
 
     Variable sigFrac{"sigFrac", 0.9, 0.75, 1.00};
 
-    AddPdf total{"total", {&sigFrac}, {&signal, &backgr}};
+    AddPdf total{"total", {sigFrac}, {&signal, &backgr}};
 
     total.setData(&data);
     FitManager fitter(&total);
@@ -91,7 +91,7 @@ int main(int argc, char **argv) {
     sigHist.SetStats(false);
     bkgHist.SetStats(false);
 
-    UnbinnedDataSet grid(&xvar);
+    UnbinnedDataSet grid(xvar);
 
     for(int i = 0; i < xvar.getNumBins(); ++i) {
         double step = (xvar.getUpperLimit() - xvar.getLowerLimit()) / xvar.getNumBins();

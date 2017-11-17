@@ -1,4 +1,4 @@
-#include "goofit/PDFs/basic/TrigThresholdPdf.h"
+#include <goofit/PDFs/basic/TrigThresholdPdf.h>
 
 namespace GooFit {
 
@@ -69,8 +69,8 @@ __device__ device_function_ptr ptr_to_VerySpecialEpisodeTrigThresholdLower
     = device_VerySpecialEpisodeTrigThresholdLower;
 
 __host__ TrigThresholdPdf::TrigThresholdPdf(
-    std::string n, Variable *_x, Variable *thresh, Variable *trigConst, Variable *linConst, bool upper)
-    : GooPdf(_x, n) {
+    std::string n, Observable _x, Variable thresh, Variable trigConst, Variable linConst, bool upper)
+    : GooPdf(n, _x) {
     std::vector<unsigned int> pindices;
     pindices.push_back(registerParameter(thresh));
     pindices.push_back(registerParameter(trigConst));
@@ -86,17 +86,14 @@ __host__ TrigThresholdPdf::TrigThresholdPdf(
 }
 
 __host__ TrigThresholdPdf::TrigThresholdPdf(std::string n,
-                                            Variable *_x,
-                                            Variable *_y,
-                                            Variable *thresh,
-                                            Variable *trigConst,
-                                            Variable *linConst,
-                                            Variable *massConstant,
+                                            Observable _x,
+                                            Observable _y,
+                                            Variable thresh,
+                                            Variable trigConst,
+                                            Variable linConst,
+                                            Variable massConstant,
                                             bool upper)
-    : GooPdf(nullptr, n) {
-    registerObservable(_x);
-    registerObservable(_y);
-
+    : GooPdf(n, _x, _y) {
     std::vector<unsigned int> pindices;
     pindices.push_back(registerParameter(thresh));
     pindices.push_back(registerParameter(trigConst));

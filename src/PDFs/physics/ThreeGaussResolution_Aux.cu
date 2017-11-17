@@ -1,5 +1,5 @@
-#include "goofit/PDFs/physics/ThreeGaussResolution_Aux.h"
 #include <cmath>
+#include <goofit/PDFs/physics/ThreeGaussResolution_Aux.h>
 
 namespace GooFit {
 
@@ -114,7 +114,7 @@ __device__ fptype device_threegauss_resolution(fptype coshterm,
 __device__ device_resfunction_ptr ptr_to_threegauss = device_threegauss_resolution;
 
 ThreeGaussResolution::ThreeGaussResolution(
-    Variable *cf, Variable *tf, Variable *cb, Variable *cs, Variable *tb, Variable *ts, Variable *ob, Variable *os)
+    Variable cf, Variable tf, Variable cb, Variable cs, Variable tb, Variable ts, Variable ob, Variable os)
     : MixingTimeResolution()
     , coreFraction(cf)
     , tailFraction(tf)

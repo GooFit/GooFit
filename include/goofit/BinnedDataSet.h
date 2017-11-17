@@ -1,9 +1,9 @@
 #pragma once
 
-#include "goofit/DataSet.h"
-
 #include <map>
 #include <vector>
+
+#include <goofit/DataSet.h>
 
 namespace GooFit {
 
@@ -13,10 +13,10 @@ class BinnedDataSet : public DataSet {
   public:
     using DataSet::addEvent;
 
-    BinnedDataSet(Variable *var, std::string n = "");
-    BinnedDataSet(std::vector<Variable *> &vars, std::string n = "");
-    BinnedDataSet(std::set<Variable *> &vars, std::string n = "");
-    BinnedDataSet(std::initializer_list<Variable *> vars, std::string n = "");
+    BinnedDataSet(const Observable &var, std::string n = "");
+    BinnedDataSet(const std::vector<Observable> &vars, std::string n = "");
+    BinnedDataSet(const std::set<Observable> &vars, std::string n = "");
+    BinnedDataSet(std::initializer_list<Observable> vars, std::string n = "");
     ~BinnedDataSet() override = default;
 
     void addEvent() override;
@@ -24,7 +24,7 @@ class BinnedDataSet : public DataSet {
 
     fptype getBinContent(size_t bin) const { return binvalues.at(bin); }
     fptype getBinCenter(size_t ivar, size_t bin) const;
-    fptype getBinCenter(Variable *var, size_t bin) const;
+    fptype getBinCenter(const Observable &var, size_t bin) const;
     fptype getBinSize(size_t ivar) const;
 
     size_t getBinNumber() const;

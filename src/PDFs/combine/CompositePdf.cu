@@ -1,4 +1,4 @@
-#include "goofit/PDFs/combine/CompositePdf.h"
+#include <goofit/PDFs/combine/CompositePdf.h>
 
 namespace GooFit {
 
@@ -35,7 +35,7 @@ __device__ fptype device_Composite(fptype *evt, fptype *p, unsigned int *indices
 __device__ device_function_ptr ptr_to_Composite = device_Composite;
 
 __host__ CompositePdf::CompositePdf(std::string n, PdfBase *core, PdfBase *shell)
-    : GooPdf(nullptr, n) {
+    : GooPdf(n) {
     std::vector<unsigned int> pindices;
     pindices.push_back(core->getFunctionIndex());
     pindices.push_back(core->getParameterIndex());

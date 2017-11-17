@@ -1,8 +1,13 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from __future__ import print_function, division
 
 from goofit import *
 import numpy as np
 import os
+
+print_goofit_info()
 
 GDIR = os.path.dirname(os.path.abspath(__file__))
 for i in range(2):
@@ -13,12 +18,12 @@ _mD0       = 1.8645
 piPlusMass = 0.13957018
 KmMass     = .493677
 
-m12 = Variable("m12", 0, 3)
-m34 = Variable("m34", 0, 3)
-cos12 = Variable("cos12", -1, 1)
-cos34 = Variable("m12", -1, 1)
-phi = Variable("phi", -3.5, 3.5)
-eventNumber = CountingVariable("eventNumber", 0, INT_MAX)
+m12 = Observable("m12", 0, 3)
+m34 = Observable("m34", 0, 3)
+cos12 = Observable("cos12", -1, 1)
+cos34 = Observable("m12", -1, 1)
+phi = Observable("phi", -3.5, 3.5)
+eventNumber = EventNumber("eventNumber", 0, INT_MAX)
 
 currData = UnbinnedDataSet(m12, m34, cos12, cos34, phi, eventNumber)
 
@@ -28,7 +33,7 @@ currData.from_numpy(data.T)
 
 print("Read in {} events".format(len(currData)))
 
-DK3P_DI = DecayInfo_DP()
+DK3P_DI = DecayInfo4()
 DK3P_DI.meson_radius    = 1.5
 DK3P_DI.particle_masses = (_mD0, piPlusMass, piPlusMass, KmMass, piPlusMass)
 
@@ -71,45 +76,45 @@ SFA1RD = (SpinFactor("SF", SF_4Body.DtoAP1_AtoVP2Dwave_VtoP3P4, 2, 3, 0, 1),
           SpinFactor("SF", SF_4Body.DtoAP1_AtoVP2Dwave_VtoP3P4, 2, 0, 3, 1))
 
 # Lineshapes, also for both pi+ configurations
-LSKRS = (Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS.BW),
-         Lineshape("K*(892)bar", KstarM, KstarW, 1, M_34, LS.BW),
-         Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS.BW),
-         Lineshape("K*(892)bar", KstarM, KstarW, 1, M_13, LS.BW))
+LSKRS = (Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_12),
+         Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_34),
+         Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_24),
+         Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_13))
 
-LSKRP = (Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS.BW),
-         Lineshape("K*(892)bar", KstarM, KstarW, 1, M_34, LS.BW),
-         Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS.BW),
-         Lineshape("K*(892)bar", KstarM, KstarW, 1, M_13, LS.BW))
+LSKRP = (Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_12),
+         Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_34),
+         Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_24),
+         Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_13))
 
-LSKRD = (Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS.BW),
-         Lineshape("K*(892)bar", KstarM, KstarW, 1, M_34, LS.BW),
-         Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS.BW),
-         Lineshape("K*(892)bar", KstarM, KstarW, 1, M_13, LS.BW))
+LSKRD = (Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_12),
+         Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_34),
+         Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_24),
+         Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_13))
 
-LSKF = (Lineshape("K*(892)bar", KstarM, KstarW, 1, M_34, LS.BW),
-        Lineshape("f600", f600M, f600W, 0, M_12, LS.Bugg),
-        Lineshape("K*(892)bar", KstarM, KstarW, 1, M_13, LS.BW),
-        Lineshape("f600", f600M, f600W, 0, M_24, LS.Bugg))
+LSKF = (Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_34),
+        Lineshapes.Bugg("f600", f600M, f600W, 0, M_12),
+        Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_13),
+        Lineshapes.Bugg("f600", f600M, f600W, 0, M_24))
 
-LSKK = (Lineshape("K(1)(1270)bar", K1M, K1W, 1, M_34_2, LS.SBW),
-        Lineshape("K(0)*(1430)bar", K1430M, K1430W, 0, M_34, LS.Lass),
-        Lineshape("K(1)(1270)bar2", K1M, K1W, 1, M_13_2, LS.SBW),
-        Lineshape("K(0)*(1430)bar2", K1430M, K1430W, 0, M_13, LS.Lass))
+LSKK = (Lineshapes.SBW("K(1)(1270)bar", K1M, K1W, 1, M_34_2),
+        Lineshapes.LASS("K(0)*(1430)bar", K1430M, K1430W, 0, M_34),
+        Lineshapes.SBW("K(1)(1270)bar2", K1M, K1W, 1, M_13_2),
+        Lineshapes.LASS("K(0)*(1430)bar2", K1430M, K1430W, 0, M_13))
 
-LSK1R = (Lineshape("K(1)(1270)bar", K1M, K1W, 0, M_12_3, LS.SBW),
-         Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS.BW),
-         Lineshape("K(1)(1270)bar", K1M, K1W, 0, M_24_3, LS.SBW),
-         Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS.BW))
+LSK1R = (Lineshapes.SBW("K(1)(1270)bar", K1M, K1W, 0, M_12_3),
+         Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_12),
+         Lineshapes.SBW("K(1)(1270)bar", K1M, K1W, 0, M_24_3),
+         Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_24))
 
-LSA1R = (Lineshape("a(1)(1260)+", a1M, a1W, 0, M_12_4, LS.SBW),
-         Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS.BW),
-         Lineshape("a(1)(1260)+", a1M, a1W, 0, M_24_1, LS.SBW),
-         Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS.BW))
+LSA1R = (Lineshapes.SBW("a(1)(1260)+", a1M, a1W, 0, M_12_4),
+         Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_12),
+         Lineshapes.SBW("a(1)(1260)+", a1M, a1W, 0, M_24_1),
+         Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_24))
 
-LSA1RD = (Lineshape("a(1)(1260)+", a1M, a1W, 2, M_12_4, LS.SBW),
-          Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_12, LS.BW),
-          Lineshape("a(1)(1260)+", a1M, a1W, 2, M_24_1, LS.SBW),
-          Lineshape("rho(770)", RhoMass, RhoWidth, 1, M_24, LS.BW))
+LSA1RD = (Lineshapes.SBW("a(1)(1260)+", a1M, a1W, 2, M_12_4),
+          Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_12),
+          Lineshapes.SBW("a(1)(1260)+", a1M, a1W, 2, M_24_1),
+          Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_24))
 
 # the very last parameter means that we have two permutations. so the first half of the Lineshapes
 # and the first half of the spinfactors are amplitude 1, rest is amplitude
@@ -146,16 +151,40 @@ Bose_symmetrized_AMP_D = Amplitude("K*(892)rho(770)_D",
                                  SFKRD,
                                  2)
 
-Bose_symmetrized_KF = Amplitude(
-    "KF", Variable("amp_real4", 0.0120787), Variable("amp_imag4", -0.0332525), LSKF, SFKF, 2)
-Bose_symmetrized_KK = Amplitude(
-    "LSKK", Variable("amp_real5", 0.0109033), Variable("amp_imag5", -0.00186219), LSKK, SFKK, 2)
-Bose_symmetrized_K1R = Amplitude(
-    "LSK1R", Variable("amp_real6", -0.10728), Variable("amp_imag6", -0.130213), LSK1R, SFK1R, 2)
-Bose_symmetrized_A1R = Amplitude(
-    "LSA1R", Variable("amp_real7", 1.0), Variable("amp_imag7", 0.0), LSA1R, SFA1R, 2)
-Bose_symmetrized_A1RD = Amplitude(
-    "LSA1RD", Variable("amp_real8", -0.94921), Variable("amp_imag8", -1.73407), LSA1RD, SFA1RD, 2)
+Bose_symmetrized_KF = Amplitude("KF",
+                              Variable("amp_real4", 0.0120787),
+                              Variable("amp_imag4", -0.0332525),
+                              LSKF,
+                              SFKF,
+                              2)
+
+Bose_symmetrized_KK = Amplitude("LSKK",
+                              Variable("amp_real5", 0.0109033),
+                              Variable("amp_imag5", -0.00186219),
+                              LSKK,
+                              SFKK,
+                              2)
+
+Bose_symmetrized_K1R = Amplitude("LSK1R",
+                               Variable("amp_real6", -0.10728),
+                               Variable("amp_imag6", -0.130213),
+                               LSK1R,
+                               SFK1R,
+                               2)
+
+Bose_symmetrized_A1R = Amplitude("LSA1R",
+                               Variable("amp_real7", 1.0),
+                               Variable("amp_imag7", 0.0),
+                               LSA1R,
+                               SFA1R,
+                               2)
+
+Bose_symmetrized_A1RD = Amplitude("LSA1RD",
+                                Variable("amp_real8", -0.94921),
+                                Variable("amp_imag8", -1.73407),
+                                LSA1RD,
+                                SFA1RD,
+                                2)
 
 DK3P_DI.amplitudes = (Bose_symmetrized_KF,
                       Bose_symmetrized_AMP_S,

@@ -1,12 +1,12 @@
 #pragma once
 
-#include "goofit/PDFs/GooPdf.h"
+#include <goofit/PDFs/GooPdf.h>
 
 namespace GooFit {
 
 class LandauPdf : public GooPdf {
   public:
-    LandauPdf(std::string n, Variable *_x, Variable *mpv, Variable *sigma);
+    LandauPdf(std::string n, Observable _x, Variable mpv, Variable sigma);
 
   private:
 };

@@ -7,5 +7,6 @@ using namespace GooFit;
 namespace py = pybind11;
 
 void init_BWPdf(py::module &m) {
-    py::class_<BWPdf, GooPdf>(m, "BWPdf").def(py::init<std::string, Variable *, Variable *, Variable *>());
+    py::class_<BWPdf, GooPdf>(m, "BWPdf")
+        .def(py::init<std::string, Observable, Variable, Variable>(), "n", "_x", "m", "s");
 }

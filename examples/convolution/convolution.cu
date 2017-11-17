@@ -1,12 +1,15 @@
-#include "goofit/Application.h"
-#include "goofit/Variable.h"
-#include "goofit/FitManager.h"
-#include "goofit/UnbinnedDataSet.h"
-#include "goofit/PDFs/basic/BWPdf.h"
-#include "goofit/PDFs/basic/GaussianPdf.h"
-#include "goofit/PDFs/combine/ConvolutionPdf.h"
+#include <goofit/Application.h>
+#include <goofit/FitManager.h>
+#include <goofit/PDFs/basic/BWPdf.h>
+#include <goofit/PDFs/basic/GaussianPdf.h>
+#include <goofit/PDFs/combine/ConvolutionPdf.h>
+#include <goofit/UnbinnedDataSet.h>
+#include <goofit/Variable.h>
 
-#include "TRandom.h"
+#include <TCanvas.h>
+#include <TFile.h>
+#include <TH1.h>
+#include <TRandom.h>
 
 using namespace std;
 using namespace GooFit;
@@ -28,7 +31,7 @@ int main(int argc, char **argv) {
     }
 
     // Independent variable.
-    Variable xvar{"xvar", -10, 10};
+    Observable xvar{"xvar", -10, 10};
 
     Variable gamma{"gamma", 2, 0.1, 0.1, 5};
     Variable sigma{"sigma", 1.5, 0.1, 0.1, 5};
@@ -37,7 +40,7 @@ int main(int argc, char **argv) {
 
     TRandom donram(42);
     // Data set
-    UnbinnedDataSet data(&xvar);
+    UnbinnedDataSet data(xvar);
 
     // Generate toy events.
     for(int i = 0; i < 100000; ++i) {
@@ -61,13 +64,18 @@ int main(int argc, char **argv) {
         data.addEvent();
     }
 
-    BWPdf breit{"breit", &xvar, &x0, &gamma};
-    GaussianPdf gauss{"gauss", &xvar, &zero, &sigma};
-    ConvolutionPdf convolution{"convolution", &xvar, &breit, &gauss};
+    BWPdf breit{"breit", xvar, x0, gamma};
+    GaussianPdf gauss{"gauss", xvar, zero, sigma};
+    ConvolutionPdf convolution{"convolution", xvar, &breit, &gauss};
     convolution.setData(&data);
 
     FitManager fitter(&convolution);
     fitter.fit();
+
+    TFile f("output.root", "RECREATE");
+    auto toroot = convolution.plotToROOT(xvar);
+    toroot->Write();
+    f.Write();
 
     return fitter;
 }

@@ -23,9 +23,9 @@ class.
 #include <mcbooster/Generate.h>
 #include <mcbooster/Vector4R.h>
 
-#include "goofit/Error.h"
-#include "goofit/PDFs/physics/DP4Pdf.h"
-#include "goofit/PDFs/physics/EvalVar.h"
+#include <goofit/Error.h>
+#include <goofit/PDFs/physics/DP4Pdf.h>
+#include <goofit/PDFs/physics/EvalVar.h>
 
 namespace GooFit {
 
@@ -74,14 +74,10 @@ __device__ fptype device_DP(fptype *evt, fptype *p, unsigned int *indices) {
 
 __device__ device_function_ptr ptr_to_DP = device_DP;
 
-__host__ DPPdf::DPPdf(std::string n,
-                      std::vector<Variable *> observables,
-                      DecayInfo_DP *decay,
-                      GooPdf *efficiency,
-                      unsigned int MCeventsNorm)
-    : GooPdf(nullptr, n)
+__host__ DPPdf::DPPdf(
+    std::string n, std::vector<Observable> observables, DecayInfo4 decay, GooPdf *efficiency, unsigned int MCeventsNorm)
+    : GooPdf(n)
     , decayInfo(decay)
-    , _observables(observables)
     , totalEventSize(observables.size()) // number of observables plus eventnumber
 {
     for(auto &observable : observables) {
@@ -91,9 +87,9 @@ __host__ DPPdf::DPPdf(std::string n,
     // registerObservable(eventNumber);
 
     std::vector<fptype> decayConstants;
-    decayConstants.push_back(decayInfo->meson_radius);
+    decayConstants.push_back(decayInfo.meson_radius);
 
-    for(double &particle_masse : decayInfo->particle_masses) {
+    for(double &particle_masse : decayInfo.particle_masses) {
         decayConstants.push_back(particle_masse);
     }
 
@@ -117,7 +113,7 @@ __host__ DPPdf::DPPdf(std::string n,
     std::vector<unsigned int> nPermVec;
     std::vector<unsigned int> ampidxstart;
 
-    for(auto &amplitude : decayInfo->amplitudes) {
+    for(auto &amplitude : decayInfo.amplitudes) {
         AmpMap[amplitude->_uniqueDecayStr] = std::make_pair(std::vector<unsigned int>(0), std::vector<unsigned int>(0));
 
         auto LSvec = amplitude->_LS;
@@ -216,9 +212,9 @@ __host__ DPPdf::DPPdf(std::string n,
 
     // fprintf(stderr,"#Amp's %i, #LS %i, #SF %i \n", AmpMap.size(), components.size()-1, SpinFactors.size() );
 
-    std::vector<mcbooster::GReal_t> masses(decayInfo->particle_masses.begin() + 1, decayInfo->particle_masses.end());
-    mcbooster::PhaseSpace phsp(decayInfo->particle_masses[0], masses, MCeventsNorm);
-    phsp.Generate(mcbooster::Vector4R(decayInfo->particle_masses[0], 0.0, 0.0, 0.0));
+    std::vector<mcbooster::GReal_t> masses(decayInfo.particle_masses.begin() + 1, decayInfo.particle_masses.end());
+    mcbooster::PhaseSpace phsp(decayInfo.particle_masses[0], masses, MCeventsNorm);
+    phsp.Generate(mcbooster::Vector4R(decayInfo.particle_masses[0], 0.0, 0.0, 0.0));
     phsp.Unweight();
 
     auto nAcc                     = phsp.GetNAccepted();
@@ -251,7 +247,8 @@ __host__ DPPdf::DPPdf(std::string n,
     norm_phi        = mcbooster::RealVector_d(nAcc);
 
     mcbooster::VariableSet_d VarSet(5);
-    VarSet[0] = &norm_M12, VarSet[1] = &norm_M34;
+    VarSet[0] = &norm_M12;
+    VarSet[1] = &norm_M34;
     VarSet[2] = &norm_CosTheta12;
     VarSet[3] = &norm_CosTheta34;
     VarSet[4] = &norm_phi;
@@ -268,7 +265,7 @@ __host__ DPPdf::DPPdf(std::string n,
 
 // makes the arrays to chache the lineshape values and spinfactors in CachedResSF and the values of the amplitudes in
 // cachedAMPs
-// I made the choice to have spinfactors necxt to the values of the lineshape in memory. I waste memory by doing this
+// I made the choice to have spinfactors next to the values of the lineshape in memory. I waste memory by doing this
 // because a spinfactor is saved as complex
 // It would be nice to test if this is better than having the spinfactors stored seperately.
 __host__ void DPPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) {
@@ -447,9 +444,9 @@ __host__ fptype DPPdf::normalize() const {
 __host__
     std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h>
     DPPdf::GenerateSig(unsigned int numEvents) {
-    std::vector<mcbooster::GReal_t> masses(decayInfo->particle_masses.begin() + 1, decayInfo->particle_masses.end());
-    mcbooster::PhaseSpace phsp(decayInfo->particle_masses[0], masses, numEvents, generation_offset);
-    phsp.Generate(mcbooster::Vector4R(decayInfo->particle_masses[0], 0.0, 0.0, 0.0));
+    std::vector<mcbooster::GReal_t> masses(decayInfo.particle_masses.begin() + 1, decayInfo.particle_masses.end());
+    mcbooster::PhaseSpace phsp(decayInfo.particle_masses[0], masses, numEvents, generation_offset);
+    phsp.Generate(mcbooster::Vector4R(decayInfo.particle_masses[0], 0.0, 0.0, 0.0));
 
     auto d1 = phsp.GetDaughters(0);
     auto d2 = phsp.GetDaughters(1);
@@ -469,7 +466,8 @@ __host__
     auto SigGen_phi_d        = mcbooster::RealVector_d(numEvents);
 
     mcbooster::VariableSet_d VarSet_d(5);
-    VarSet_d[0] = &SigGen_M12_d, VarSet_d[1] = &SigGen_M34_d;
+    VarSet_d[0] = &SigGen_M12_d;
+    VarSet_d[1] = &SigGen_M34_d;
     VarSet_d[2] = &SigGen_CosTheta12_d;
     VarSet_d[3] = &SigGen_CosTheta34_d;
     VarSet_d[4] = &SigGen_phi_d;
@@ -495,7 +493,8 @@ __host__
     auto SigGen_phi_h        = new mcbooster::RealVector_h(SigGen_phi_d);
 
     mcbooster::VariableSet_h VarSet(5);
-    VarSet[0] = SigGen_M12_h, VarSet[1] = SigGen_M34_h;
+    VarSet[0] = SigGen_M12_h;
+    VarSet[1] = SigGen_M34_h;
     VarSet[2] = SigGen_CosTheta12_h;
     VarSet[3] = SigGen_CosTheta34_h;
     VarSet[4] = SigGen_phi_h;
@@ -553,6 +552,7 @@ __host__
     auto results_h = mcbooster::RealVector_h(results);
     auto flags_h   = mcbooster::BoolVector_h(flags);
     cudaDeviceSynchronize();
+
     return std::make_tuple(ParSet, VarSet, weights_h, flags_h);
 }
 
@@ -587,7 +587,7 @@ __device__ fpcomplex SFCalculator::operator()(thrust::tuple<int, fptype *, int> 
     auto func = reinterpret_cast<spin_function_ptr>(device_function_table[functn_i]);
     fptype sf = (*func)(vecs, paramIndices + params_i);
     // printf("SpinFactors %i : %.7g\n",evtNum, sf );
-    return fpcomplex(sf, 0);
+    return {sf, 0.};
 }
 
 NormSpinCalculator::NormSpinCalculator(int pIdx, unsigned int sf_idx)

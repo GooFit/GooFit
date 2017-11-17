@@ -8,24 +8,26 @@ See *.cu file for more details
 
 #pragma once
 
-#include "goofit/PDFs/GooPdf.h"
-#include "goofit/PDFs/physics/LineshapesPdf.h"
-#include "goofit/PDFs/physics/ResonancePdf.h"
+#include <goofit/PDFs/GooPdf.h>
+#include <goofit/PDFs/physics/LineshapesPdf.h>
+#include <goofit/PDFs/physics/ResonancePdf.h>
 
 #include <thrust/device_vector.h>
 #include <thrust/iterator/constant_iterator.h>
 
 namespace GooFit {
 
-template<typename E>
+template <typename E>
 constexpr typename std::underlying_type<E>::type enum_to_underlying(E e) {
     return static_cast<typename std::underlying_type<E>::type>(e);
 }
 
 __device__ bool inDalitz(
     const fptype &m12, const fptype &m13, const fptype &bigM, const fptype &dm1, const fptype &dm2, const fptype &dm3);
+
 __device__ fpcomplex
 getResonanceAmplitude(fptype m12, fptype m13, fptype m23, unsigned int functionIdx, unsigned int pIndex);
+
 __device__ void get4Vecs(fptype *Vecs,
                          const unsigned int &constants,
                          const fptype &m12,
@@ -33,6 +35,7 @@ __device__ void get4Vecs(fptype *Vecs,
                          const fptype &cos12,
                          const fptype &cos34,
                          const fptype &phi);
+
 __device__ fptype getmass(const unsigned int &pair,
                           fptype &d1,
                           fptype &d2,
@@ -70,36 +73,52 @@ const int resonanceSize = 4; // Number of parameters to describe one resonance.
 // keyword (and 'extern' as well) interacts badly with some nvcc versions when the
 // variable is used in device code.
 
-struct DecayInfo {
+struct DecayInfo3 {
     fptype motherMass;
     fptype daug1Mass;
     fptype daug2Mass;
     fptype daug3Mass;
     fptype meson_radius;
 
-    Variable *_tau;
-    Variable *_xmixing;
-    Variable *_ymixing;
     std::vector<ResonancePdf *> resonances;
 };
 
-struct DecayInfo_DP {
+struct DecayInfo3t : public DecayInfo3 {
+    Variable _tau;
+    Variable _xmixing;
+    Variable _ymixing;
+
+    DecayInfo3t(Variable _tau, Variable _xmixing, Variable _ymixing)
+        : _tau(_tau)
+        , _xmixing(_xmixing)
+        , _ymixing(_ymixing) {}
+};
+
+struct DecayInfo4 {
     std::vector<fptype> particle_masses;
     fptype meson_radius;
 
     std::vector<Amplitude *> amplitudes;
     std::vector<Amplitude *> amplitudes_B;
+};
 
-    Variable *_tau;
-    Variable *_xmixing;
-    Variable *_ymixing;
-    Variable *_SqWStoRSrate;
+struct DecayInfo4t : public DecayInfo4 {
+    Variable _tau;
+    Variable _xmixing;
+    Variable _ymixing;
+    Variable _SqWStoRSrate;
+
+    DecayInfo4t(Variable _tau, Variable _xmixing, Variable _ymixing, Variable _SqWStoRSrate)
+        : _tau(_tau)
+        , _xmixing(_xmixing)
+        , _ymixing(_ymixing)
+        , _SqWStoRSrate(_SqWStoRSrate) {}
 };
 
 // Copied from strided_range thrust example by Nathan Bell.
 // Iterator to move forward by a specified number of steps
 // in each iteration.
-template<typename Iterator>
+template <typename Iterator>
 class strided_range {
   public:
     typedef typename thrust::iterator_difference<Iterator>::type difference_type;

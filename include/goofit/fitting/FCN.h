@@ -4,7 +4,7 @@
 
 #include <vector>
 
-#include "goofit/fitting/Params.h"
+#include <goofit/fitting/Params.h>
 
 namespace GooFit {
 
@@ -15,9 +15,6 @@ class FCN : public Minuit2::FCNBase {
   public:
     /// Create an FCN given parameters (PDF reference is inside params)
     FCN(Params &params);
-
-    /// Make a parameter array with the current variable values
-    std::vector<double> makePars() const;
 
     /// Run the fit (used by Minuit2 class)
     double operator()(const std::vector<double> &pars) const override;
@@ -31,4 +28,4 @@ class FCN : public Minuit2::FCNBase {
     /// Get a pointer to the parameters
     Params *GetParams();
 };
-}
+} // namespace GooFit

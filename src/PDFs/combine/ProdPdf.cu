@@ -1,5 +1,5 @@
-#include "goofit/PDFs/combine/ProdPdf.h"
 #include <algorithm>
+#include <goofit/PDFs/combine/ProdPdf.h>
 
 namespace GooFit {
 
@@ -42,7 +42,7 @@ __device__ fptype device_ProdPdfs(fptype *evt, fptype *p, unsigned int *indices)
 __device__ device_function_ptr ptr_to_ProdPdfs = device_ProdPdfs;
 
 ProdPdf::ProdPdf(std::string n, std::vector<PdfBase *> comps)
-    : GooPdf(nullptr, n)
+    : GooPdf(n)
     , varOverlaps(false) {
     std::vector<unsigned int> pindices;
 
@@ -52,7 +52,7 @@ ProdPdf::ProdPdf(std::string n, std::vector<PdfBase *> comps)
 
     observables = getObservables(); // Gathers from components
 
-    std::vector<Variable *> observableCheck; // Use to check for overlap in observables
+    std::vector<Observable> observableCheck; // Use to check for overlap in observables
 
     // Indices stores (function index)(function parameter index)(variable index) for each component.
     for(PdfBase *p : comps) {
@@ -62,9 +62,9 @@ ProdPdf::ProdPdf(std::string n, std::vector<PdfBase *> comps)
         if(varOverlaps)
             continue; // Only need to establish this once.
 
-        std::vector<Variable *> currObses = p->getObservables();
+        std::vector<Observable> currObses = p->getObservables();
 
-        for(Variable *o : currObses) {
+        for(Observable &o : currObses) {
             if(find(observableCheck.begin(), observableCheck.end(), o) == observableCheck.end())
                 continue;
 

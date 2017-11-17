@@ -1,6 +1,6 @@
 #pragma once
 
-#include "goofit/PDFs/GooPdf.h"
+#include <goofit/PDFs/GooPdf.h>
 
 namespace GooFit {
 
@@ -9,7 +9,7 @@ namespace GooFit {
 // in the fit.
 class EventWeightedAddPdf : public GooPdf {
   public:
-    EventWeightedAddPdf(std::string n, std::vector<Variable *> weights, std::vector<PdfBase *> comps);
+    EventWeightedAddPdf(std::string n, std::vector<Observable> weights, std::vector<PdfBase *> comps);
     __host__ fptype normalize() const override;
     __host__ bool hasAnalyticIntegral() const override { return false; }
 

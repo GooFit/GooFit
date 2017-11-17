@@ -1,10 +1,10 @@
 #pragma once
 
 #include <CLI/CLI.hpp>
-#include "goofit/Version.h"
-#include "goofit/Error.h"
-#include "goofit/Color.h"
-#include "goofit/Log.h"
+#include <goofit/Color.h>
+#include <goofit/Error.h>
+#include <goofit/Log.h>
+#include <goofit/Version.h>
 
 #include <thrust/detail/config/device_system.h>
 #include <x86/cpu_x86.h>
@@ -21,6 +21,13 @@
 #include <omp.h>
 #endif
 
+#define GOOFIT_PARSE(app, ...)                                                                                         \
+    try {                                                                                                              \
+        app.run();                                                                                                     \
+    } catch(const GooFit::ParseError &e) {                                                                             \
+        return app.exit(e);                                                                                            \
+    }
+
 #include <csignal>
 
 namespace GooFit {
@@ -32,21 +39,22 @@ void signal_handler(int s) {
 }
 
 // Importing into the GooFit namespace the main classes from CLI11
-using CLI::ParseError;
-using CLI::FileError;
-using CLI::Success;
 using CLI::App;
-using CLI::Option;
-using CLI::ExistingFile;
 using CLI::ExistingDirectory;
-using CLI::NonexistentPath;
+using CLI::ExistingFile;
 using CLI::ExitCodes;
+using CLI::FileError;
+using CLI::NonexistentPath;
+using CLI::Option;
+using CLI::ParseError;
+using CLI::Success;
 
 /// Optional print for splash
 /// Orignal: Slant Relief from http://patorjk.com/software/taag/#p=testall&f=Wavy&t=GooFit (tightened a bit)
 /// New: Block letters
 void print_splash() {
-    std::cout << std::endl << reset << green << "       Welcome to";
+    std::cout << reset << green << "       Welcome to";
+#if GOOFIT_SPLASH
     std::string splash = R"raw(
    ██████╗                 ████████╗
   ██╔════╝  █████╗  █████╗ ██╔═════╝  ██╗
@@ -74,7 +82,12 @@ void print_splash() {
             cur_green = false;
         }
         std::cout << splash[i];
+        if(splash[i] == '\n')
+            std::cout << std::flush;
     }
+#else
+    std::cout << " GooFit\n";
+#endif
 
     std::cout << reset << std::flush;
 }
@@ -209,6 +222,12 @@ class Application : public CLI::App {
             GOOFIT_INFO("CPP: Single threaded mode");
 #endif
 
+#if GOOFIT_ROOT_FOUND
+            GOOFIT_INFO("ROOT: Found");
+#else
+            GOOFIT_INFO("ROOT: Not found");
+#endif
+
             // Print out warnings if not fully optimized
             std::cout << red;
             FeatureDetector::cpu_x86::print_warnings();
@@ -263,6 +282,7 @@ class Application : public CLI::App {
 
     /// Cleanup MPI
     ~Application() {
+// Intentionally empty, comment needed to avoid clang warning about = default
 #ifdef GOOFIT_MPI
         MPI_Finalize();
 #endif
@@ -300,4 +320,4 @@ class Application : public CLI::App {
         throw GooFit::FileError(input_str);
     }
 };
-}
+} // namespace GooFit

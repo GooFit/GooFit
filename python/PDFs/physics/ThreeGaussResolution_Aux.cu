@@ -9,6 +9,13 @@ namespace py = pybind11;
 
 void init_ThreeGaussResolution(py::module &m) {
     py::class_<ThreeGaussResolution, MixingTimeResolution>(m, "ThreeGaussResolution")
-        .def(
-            py::init<Variable *, Variable *, Variable *, Variable *, Variable *, Variable *, Variable *, Variable *>());
+        .def(py::init<Variable, Variable, Variable, Variable, Variable, Variable, Variable, Variable>(),
+             "cf",
+             "tf",
+             "cb",
+             "cs",
+             "tb",
+             "ts",
+             "ob",
+             "os");
 }

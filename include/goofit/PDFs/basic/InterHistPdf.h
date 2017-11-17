@@ -1,14 +1,14 @@
 #pragma once
 
-#include "goofit/BinnedDataSet.h"
-#include "goofit/PDFs/GooPdf.h"
+#include <goofit/BinnedDataSet.h>
+#include <goofit/PDFs/GooPdf.h>
 #include <thrust/device_vector.h>
 
 namespace GooFit {
 
 class InterHistPdf : public GooPdf {
   public:
-    InterHistPdf(std::string n, BinnedDataSet *x, std::vector<Variable *> params, std::vector<Variable *> obses);
+    InterHistPdf(std::string n, BinnedDataSet *x, std::vector<Variable> params, std::vector<Observable> obses);
     //__host__ virtual fptype normalize () const;
 
   private:

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "goofit/PDFs/GooPdf.h"
-#include "goofit/PDFs/physics/DalitzPlotHelpers.h"
-#include "goofit/PDFs/physics/MixingTimeResolution_Aux.h"
+#include <goofit/PDFs/GooPdf.h>
+#include <goofit/PDFs/physics/DalitzPlotHelpers.h>
+#include <goofit/PDFs/physics/MixingTimeResolution_Aux.h>
 
 namespace GooFit {
 
@@ -24,26 +24,26 @@ class SpecialWaveCalculator;
 class TddpPdf : public GooPdf {
   public:
     TddpPdf(std::string n,
-            Variable *_dtime,
-            Variable *_sigmat,
-            Variable *m12,
-            Variable *m13,
-            CountingVariable *eventNumber,
-            DecayInfo *decay,
+            Observable _dtime,
+            Observable _sigmat,
+            Observable m12,
+            Observable m13,
+            EventNumber eventNumber,
+            DecayInfo3t decay,
             MixingTimeResolution *r,
             GooPdf *eff,
-            Variable *mistag = nullptr);
+            Observable *mistag = nullptr);
     TddpPdf(std::string n,
-            Variable *_dtime,
-            Variable *_sigmat,
-            Variable *m12,
-            Variable *m13,
-            CountingVariable *eventNumber,
-            DecayInfo *decay,
+            Observable _dtime,
+            Observable _sigmat,
+            Observable m12,
+            Observable m13,
+            EventNumber eventNumber,
+            DecayInfo3t decay,
             std::vector<MixingTimeResolution *> &r,
             GooPdf *eff,
-            Variable *md0,
-            Variable *mistag = nullptr);
+            Observable md0,
+            Observable *mistag = nullptr);
     // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the
     // coherent sum. The caching method requires that it be done this way or the ProdPdf
     // normalisation will get *really* confused and give wrong answers.
@@ -79,9 +79,9 @@ class TddpPdf : public GooPdf {
 
   protected:
   private:
-    DecayInfo *decayInfo;
-    Variable *_m12;
-    Variable *_m13;
+    DecayInfo3t decayInfo;
+    Observable _m12;
+    Observable _m13;
     fptype *dalitzNormRange{nullptr};
 
     // Following variables are useful if masses and widths, involved in difficult BW calculation,
@@ -115,12 +115,12 @@ class SpecialDalitzIntegrator : public thrust::unary_function<thrust::tuple<int,
 class SpecialComplexSum : public thrust::binary_function<ThreeComplex, ThreeComplex, ThreeComplex> {
   public:
     __host__ __device__ ThreeComplex operator()(ThreeComplex one, ThreeComplex two) {
-        return ThreeComplex(thrust::get<0>(one) + thrust::get<0>(two),
-                            thrust::get<1>(one) + thrust::get<1>(two),
-                            thrust::get<2>(one) + thrust::get<2>(two),
-                            thrust::get<3>(one) + thrust::get<3>(two),
-                            thrust::get<4>(one) + thrust::get<4>(two),
-                            thrust::get<5>(one) + thrust::get<5>(two));
+        return {thrust::get<0>(one) + thrust::get<0>(two),
+                thrust::get<1>(one) + thrust::get<1>(two),
+                thrust::get<2>(one) + thrust::get<2>(two),
+                thrust::get<3>(one) + thrust::get<3>(two),
+                thrust::get<4>(one) + thrust::get<4>(two),
+                thrust::get<5>(one) + thrust::get<5>(two)};
     }
 };
 

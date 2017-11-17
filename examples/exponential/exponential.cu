@@ -1,9 +1,9 @@
-#include "goofit/Application.h"
-#include "goofit/Variable.h"
-#include "goofit/FitManager.h"
-#include "goofit/UnbinnedDataSet.h"
-#include "goofit/PDFs/basic/ExpPdf.h"
 #include <CLI/Timer.hpp>
+#include <goofit/Application.h>
+#include <goofit/FitManager.h>
+#include <goofit/PDFs/basic/ExpPdf.h>
+#include <goofit/UnbinnedDataSet.h>
+#include <goofit/Variable.h>
 #include <iostream>
 
 int main(int argc, char **argv) {
@@ -16,10 +16,10 @@ int main(int argc, char **argv) {
     }
 
     // Independent variable.
-    GooFit::Variable xvar{"xvar", 0, log(1 + RAND_MAX / 2)};
+    GooFit::Observable xvar{"xvar", 0, log(1 + RAND_MAX / 2)};
 
     // Data set
-    GooFit::UnbinnedDataSet data(&xvar);
+    GooFit::UnbinnedDataSet data(xvar);
 
     // Generate toy events.
 
@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
     // Fit parameter
     GooFit::Variable alpha{"alpha", -2, 0.1, -10, 10};
     // GooPdf object
-    GooFit::ExpPdf exppdf{"exppdf", &xvar, &alpha};
+    GooFit::ExpPdf exppdf{"exppdf", xvar, alpha};
     exppdf.setData(&data);
 
     GooFit::FitManager fitter{&exppdf};

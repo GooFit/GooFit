@@ -1,14 +1,19 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from __future__ import print_function, division
 
 from goofit import *
 import numpy as np
 
+print_goofit_info()
 
-xvar = Variable("xvar", -5, 5)
+xvar = Observable("xvar", -5, 5)
 
 data = UnbinnedDataSet(xvar)
 
 totalData = 0
+
 
 i=-1
 
@@ -24,9 +29,7 @@ while i < 100000:
         i-=1
         continue
 
-
     data.addEvent()
-
 
 
 xmean = Variable("xmean", 0, 1, -10, 10)

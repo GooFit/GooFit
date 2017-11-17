@@ -1,15 +1,15 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from __future__ import print_function, division
 
 from goofit import *
 import numpy as np
 
-'''
-what does Variable exactly do?
+print_goofit_info()
 
-
-'''
 xdata = np.random.exponential(size=100000)
-xvar = Variable("xvar", 0, np.max(xdata) + 1)
+xvar = Observable("xvar", 0, np.max(xdata) + 1)
 
 data = UnbinnedDataSet(xvar)
 

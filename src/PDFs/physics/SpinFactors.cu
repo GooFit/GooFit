@@ -5,8 +5,8 @@ The Spinfactors are an adaptation from the MINT implementation, by Jonas Rademac
 DISCLAIMER:
 This code is not sufficently tested yet and still under heavy development!
 */
-#include "goofit/PDFs/physics/SpinFactors.h"
-#include "goofit/PDFs/physics/SpinHelper.h"
+#include <goofit/PDFs/physics/SpinFactors.h>
+#include <goofit/PDFs/physics/SpinHelper.h>
 
 namespace GooFit {
 
@@ -465,7 +465,7 @@ __device__ spin_function_ptr ptr_to_ONE         = ONE;
 
 SpinFactor::SpinFactor(
     std::string name, SF_4Body SF, unsigned int P0, unsigned int P1, unsigned int P2, unsigned int P3)
-    : GooPdf(nullptr, name)
+    : GooPdf(name)
     , _SF(SF)
     , _P0(P0)
     , _P1(P1)

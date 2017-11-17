@@ -1,10 +1,10 @@
-#include "goofit/fitting/FitManagerMinuit2.h"
+#include <goofit/fitting/FitManagerMinuit2.h>
 
-#include "goofit/Color.h"
+#include <goofit/Color.h>
 
-#include "Minuit2/MnPrint.h"
 #include <Minuit2/FunctionMinimum.h>
 #include <Minuit2/MnMigrad.h>
+#include <Minuit2/MnPrint.h>
 #include <Minuit2/MnUserParameterState.h>
 #include <Minuit2/MnUserParameters.h>
 
@@ -38,8 +38,8 @@ Minuit2::FunctionMinimum FitManagerMinuit2::fit() {
     if(verbosity > 0) {
         std::cout << GooFit::reset << (min.IsValid() ? GooFit::green : GooFit::red);
         std::cout << min << GooFit::reset;
-        std::cout << GooFit::magenta << timer << GooFit::reset << std::endl;
-        std::cout << avetimer / min.NFcn() << std::endl;
+        std::cout << GooFit::magenta << timer.to_string() << GooFit::reset << std::endl;
+        std::cout << (avetimer / min.NFcn()).to_string() << std::endl;
     }
 
     if(min.IsValid()) {

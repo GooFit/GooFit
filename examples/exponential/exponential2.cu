@@ -1,14 +1,14 @@
-#include "goofit/Application.h"
-#include "goofit/Variable.h"
-#include "goofit/fitting/Params.h"
-#include "goofit/fitting/FCN.h"
-#include "goofit/UnbinnedDataSet.h"
-#include "goofit/PDFs/basic/ExpPdf.h"
+#include <goofit/Application.h>
+#include <goofit/PDFs/basic/ExpPdf.h>
+#include <goofit/UnbinnedDataSet.h>
+#include <goofit/Variable.h>
+#include <goofit/fitting/FCN.h>
+#include <goofit/fitting/Params.h>
 
-#include <Minuit2/MnUserParameters.h>
-#include <Minuit2/MnMigrad.h>
 #include <Minuit2/FunctionMinimum.h>
-#include "Minuit2/MnPrint.h"
+#include <Minuit2/MnMigrad.h>
+#include <Minuit2/MnPrint.h>
+#include <Minuit2/MnUserParameters.h>
 
 #include <iostream>
 
@@ -27,10 +27,10 @@ int main(int argc, char **argv) {
     Minuit2::MnPrint::SetLevel(3);
 
     // Independent variable.
-    Variable xvar{"xvar", 0, log(1 + RAND_MAX / 2)};
+    Observable xvar{"xvar", 0, log(1 + RAND_MAX / 2)};
 
     // Data set
-    UnbinnedDataSet data(&xvar);
+    UnbinnedDataSet data(xvar);
 
     // Generate toy events.
     for(int i = 0; i < 100000; ++i) {
@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
     // Fit parameter
     Variable alpha{"alpha", -2, 0.1, -10, 10};
     // GooPdf object
-    ExpPdf exppdf{"exppdf", &xvar, &alpha};
+    ExpPdf exppdf{"exppdf", xvar, alpha};
     exppdf.setData(&data);
 
     GooFit::Params upar{exppdf};

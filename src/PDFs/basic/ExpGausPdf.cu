@@ -1,4 +1,4 @@
-#include "goofit/PDFs/basic/ExpGausPdf.h"
+#include <goofit/PDFs/basic/ExpGausPdf.h>
 
 namespace GooFit {
 
@@ -20,8 +20,8 @@ __device__ fptype device_ExpGaus(fptype *evt, fptype *p, unsigned int *indices) 
 
 __device__ device_function_ptr ptr_to_ExpGaus = device_ExpGaus;
 
-ExpGausPdf::ExpGausPdf(std::string n, Variable *_x, Variable *mean, Variable *sigma, Variable *tau)
-    : GooPdf(_x, n) {
+ExpGausPdf::ExpGausPdf(std::string n, Observable _x, Variable mean, Variable sigma, Variable tau)
+    : GooPdf(n, _x) {
     std::vector<unsigned int> pindices;
     pindices.push_back(registerParameter(mean));
     pindices.push_back(registerParameter(sigma));

@@ -1,15 +1,15 @@
 
 if(ROOT_FOUND)
 goofit_add_library(FitManager1
-    FitManagerMinuit1.cc
+    FitManagerMinuit1.cpp
     ${PROJECT_SOURCE_DIR}/include/goofit/fitting/FitManagerMinuit1.h
     )
 endif()
 
 goofit_add_library(FitManager2
-    Params.cc
-    FCN.cc
-    FitManagerMinuit2.cc
+    Params.cpp
+    FCN.cpp
+    FitManagerMinuit2.cpp
     ${PROJECT_SOURCE_DIR}/include/goofit/FitManager.h
     ${PROJECT_SOURCE_DIR}/include/goofit/fitting/FitManagerMinuit2.h
     ${PROJECT_SOURCE_DIR}/include/goofit/fitting/FCN.h
@@ -17,14 +17,14 @@ goofit_add_library(FitManager2
     )
 
 goofit_add_library(Faddeeva
-    Faddeeva.cc
+    Faddeeva.cpp
     ${PROJECT_SOURCE_DIR}/include/goofit/Faddeeva.h
     )
 
 goofit_add_library(DataSet
-    DataSet.cc
-    BinnedDataSet.cc
-    UnbinnedDataSet.cc
+    DataSet.cpp
+    BinnedDataSet.cpp
+    UnbinnedDataSet.cpp
     ${PROJECT_SOURCE_DIR}/include/goofit/DataSet.h
     ${PROJECT_SOURCE_DIR}/include/goofit/BinnedDataSet.h
     ${PROJECT_SOURCE_DIR}/include/goofit/UnbinnedDataSet.h
@@ -32,19 +32,19 @@ goofit_add_library(DataSet
 
 
 goofit_add_library(Variable
-    Variable.cc
+    Variable.cpp
     ${PROJECT_SOURCE_DIR}/include/goofit/Variable.h
     )
 
 goofit_add_library(FunctorWriter
-    FunctorWriter.cc
+    FunctorWriter.cpp
     ${PROJECT_SOURCE_DIR}/include/goofit/FunctorWriter.h
     )
 
 
 goofit_add_library(PdfBase
-    PdfBase.cc
-    Abort.cc
+    PdfBase.cpp
+    Abort.cpp
     ${PROJECT_SOURCE_DIR}/include/goofit/detail/Abort.h
     ${PROJECT_SOURCE_DIR}/include/goofit/detail/Complex.h
     ${PROJECT_SOURCE_DIR}/include/goofit/detail/ThrustOverride.h

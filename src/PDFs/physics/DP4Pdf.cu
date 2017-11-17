@@ -87,7 +87,7 @@ __host__ DPPdf::DPPdf(
         registerObservable(observable);
     }
 
-    //registerConstant(decayInfo.meson_radius);
+    // registerConstant(decayInfo.meson_radius);
 
     for(double &particle_masse : decayInfo.particle_masses) {
         registerConstant(particle_masse);
@@ -102,7 +102,7 @@ __host__ DPPdf::DPPdf(
 
     static int cacheCount = 0;
     cacheToUse            = cacheCount++;
-    
+
     registerConstant(cacheToUse);
     registerConstant(0); //#LS
     registerConstant(0); //#SF

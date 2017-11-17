@@ -170,7 +170,7 @@ __device__ device_metric_ptr ptr_to_BinWithError = calculateBinWithError;
 __device__ device_metric_ptr ptr_to_Chisq        = calculateChisq;
 
 void *host_fcn_ptr = nullptr;
-    
+
 void *getMetricPointer(std::string name) {
 #define CHOOSE_PTR(ptrname)                                                                                            \
     if(name == #ptrname)                                                                                               \
@@ -190,12 +190,10 @@ void *getMetricPointer(std::string name) {
 #undef CHOOSE_PTR
 }
 
-void *getMetricPointer(EvalFunc val) {
-    return getMetricPointer(evalfunc_to_string(val));
-}
+void *getMetricPointer(EvalFunc val) { return getMetricPointer(evalfunc_to_string(val)); }
 
 __host__ void GooPdf::setIndices() {
-    //If not set, perform unbinned Nll fit!
+    // If not set, perform unbinned Nll fit!
     if(!fitControl)
         setFitControl(new UnbinnedNllFit());
 
@@ -322,7 +320,6 @@ __host__ double GooPdf::sumOfNll(int numVars) const {
 }
 
 __host__ double GooPdf::calculateNLL() const {
-
     GOOFIT_DEBUG("GooPdf::calculateNLL calling normalize");
     normalize();
 
@@ -346,7 +343,7 @@ __host__ double GooPdf::calculateNLL() const {
 
     if(0.0 == ret)
         GooFit::abort(__FILE__, __LINE__, getName() + " zero NLL", this);
-    
+
     return 2.0 * ret;
 }
 

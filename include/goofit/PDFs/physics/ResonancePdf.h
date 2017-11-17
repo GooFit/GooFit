@@ -44,8 +44,7 @@ class ResonancePdf : public GooPdf {
     ResonancePdf(std::string name, Variable ar, Variable ai)
         : GooPdf(name)
         , amp_real(ar)
-        , amp_imag(ai) {
-    }
+        , amp_imag(ai) {}
 
     Variable amp_real;
     Variable amp_imag;

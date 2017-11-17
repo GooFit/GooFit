@@ -179,7 +179,6 @@ __host__ void PdfBase::populateArrays() {
 }
 
 __host__ void PdfBase::setIndices() {
-
     // we should get the same amount after we flatten the tree!
     int checkParams = totalParameters;
 
@@ -210,7 +209,7 @@ __host__ void PdfBase::setData(DataSet *data) {
     setupObservables();
     setIndices();
 
-    //Tracking the data structure
+    // Tracking the data structure
     data_ = data;
 
     UnbinnedDataSet *unbinned_data;
@@ -267,7 +266,7 @@ __host__ void PdfBase::setData(DataSet *data) {
         // Transfer into our whole buffer
         for(int i = 0; i < numEntries; ++i) {
             for(const Observable &v : observablesList) {
-                fptype currVal                                      = unbinned_data->getValue(v, i);
+                fptype currVal                            = unbinned_data->getValue(v, i);
                 host_array[i * dimensions + v.getIndex()] = currVal;
             }
         }

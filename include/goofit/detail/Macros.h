@@ -4,7 +4,7 @@
 
 // The following macros help with registering new values
 
-#define GOOFIT_START_PDF                                                                                               
+#define GOOFIT_START_PDF
 
 #define GOOFIT_ADD_PARAM(i, par, name)                                                                                 \
     {                                                                                                                  \
@@ -36,7 +36,7 @@
     }
 
 #define GOOFIT_FINALIZE_PDF                                                                                            \
-    initialize();                                                                                              \
+    initialize();                                                                                                      \
     GOOFIT_DEBUG("{}: Initializing indices", getName());
 
 #define GOOFIT_GET_PARAM(i) cudaArray[indices[(i)]]

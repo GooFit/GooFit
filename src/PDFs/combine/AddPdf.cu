@@ -1,7 +1,7 @@
 #include <goofit/Error.h>
+#include <goofit/Log.h>
 #include <goofit/PDFs/combine/AddPdf.h>
 #include <goofit/detail/ThrustOverride.h>
-#include <goofit/Log.h>
 
 #include <thrust/iterator/constant_iterator.h>
 #include <thrust/transform_reduce.h>
@@ -133,7 +133,7 @@ __host__ void AddPdf::recursiveSetIndices() {
         GET_FUNCTION_ADDR(ptr_to_AddPdfsExt);
     } else {
         GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_AddPdfs");
-    GET_FUNCTION_ADDR(ptr_to_AddPdfs);
+        GET_FUNCTION_ADDR(ptr_to_AddPdfs);
     }
 
     host_function_table[num_device_functions] = host_fcn_ptr;

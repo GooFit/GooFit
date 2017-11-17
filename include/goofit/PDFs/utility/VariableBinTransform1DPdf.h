@@ -10,7 +10,7 @@ namespace GooFit {
 class VariableBinTransform1DPdf : public GooPdf {
   public:
     VariableBinTransform1DPdf(std::string n, Observable _x, std::vector<fptype> binlimits);
-    __host__ virtual void recursiveSetIndices ();
+    __host__ virtual void recursiveSetIndices();
 };
 
 } // namespace GooFit

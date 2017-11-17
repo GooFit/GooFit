@@ -21,7 +21,7 @@ __device__ fptype device_InterHistogram(fptype *evt, ParameterContainer &pc) {
     int globalBin        = 0;
     int previous         = 1;
     int myHistogramIndex = pc.getConstant(0); // indices[1];
-    fptype binDistances[10];                                           // Ten dimensions should be more than enough!
+    fptype binDistances[10];                  // Ten dimensions should be more than enough!
     // Distance from bin center in units of bin width in each dimension.
 
     unsigned int observablesSeen = 0;
@@ -44,9 +44,8 @@ __device__ fptype device_InterHistogram(fptype *evt, ParameterContainer &pc) {
         }
 
         int lowerBoundIdx = 3 + 4 * i;
-        fptype lowerBound
-            = pc.getParameter(3 + i * 4);         // functorConstants[indices[lowerBoundIdx + 0]];
-        fptype step = pc.getParameter(4 + i * 4 + 2); // functorConstants[indices[lowerBoundIdx + 1]];
+        fptype lowerBound = pc.getParameter(3 + i * 4);     // functorConstants[indices[lowerBoundIdx + 0]];
+        fptype step       = pc.getParameter(4 + i * 4 + 2); // functorConstants[indices[lowerBoundIdx + 1]];
 
         currVariable -= lowerBound;
         currVariable /= step;
@@ -138,9 +137,9 @@ __host__
 InterHistPdf::InterHistPdf(std::string n, BinnedDataSet *x, std::vector<Variable> params, std::vector<Observable> obses)
     : GooPdf(n)
     , numVars(x->numVariables()) {
-    int numConstants = 2 * numVars;
+    int numConstants                    = 2 * numVars;
     static unsigned int totalHistograms = 0;
-    totalEvents = 0;
+    totalEvents                         = 0;
 
     // push on the histogram index and number of variables.
     registerConstant(totalHistograms);
@@ -149,7 +148,6 @@ InterHistPdf::InterHistPdf(std::string n, BinnedDataSet *x, std::vector<Variable
     int varIndex = 0;
 
     for(Observable var : x->getObservables()) {
-        
         registerObservable(var);
         registerConstant(OBS_CODE);
 

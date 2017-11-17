@@ -136,7 +136,7 @@ __device__ fpcomplex BW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &
 
     fpcomplex ret = (sqrt(k * frFactor)) / den * BW;
 
-    pc.incrementIndex (1, 2, 3, 0, 1);
+    pc.incrementIndex(1, 2, 3, 0, 1);
     // printf("m1, m2, Mpair, to2Lplus1, GofM, thisFR, pratio, mratio, pABSq , prSqForGofM, FF, ret.real, ret.imag\n");
     // printf("BW %.7g, %.7g, %.7g, %i, %i, %i, %i\n",meson_radius, resmass, reswidth, orbital, FF, indices[2],
     // indices[3]);
@@ -191,7 +191,7 @@ __device__ fpcomplex SBW(fptype Mpair, fptype m1, fptype m2, ParameterContainer 
 
     fpcomplex ret = (sqrt(k * frFactor)) / den * BW;
 
-    pc.incrementIndex (1, 2, 3, 0, 1);
+    pc.incrementIndex(1, 2, 3, 0, 1);
 
     // printf("m1, m2, Mpair, GofM, pABSq , prSq, FF, ret.real, ret.imag\n");
     // printf("SBW %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g\n", m1, m2, Mpair, GofM, pABSq, prSq, frFactor,
@@ -263,7 +263,7 @@ __device__ fpcomplex bugg_MINT(fptype Mpair, fptype m1, fptype m2, ParameterCont
           - fpcomplex(0, 1) * M * Gamma_tot;
     fpcomplex returnVal = 1.0 / den;
 
-    pc.incrementIndex (1, 0, 0, 0, 1);
+    pc.incrementIndex(1, 0, 0, 0, 1);
     // printf("Bugg %.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g \n",gamma_2pi.real, gamma_2pi.imag, gamma_2K.real,
     // gamma_2K.imag, gamma_2eta.real, gamma_2eta.imag, gamma_4pi.real, gamma_4pi.imag);
     // printf("Bugg %.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g \n",Mpair, Gamma_tot.real, Gamma_tot.imag, g1sq, z,
@@ -309,7 +309,7 @@ __device__ fpcomplex bugg_MINT3(fptype Mpair, fptype m1, fptype m2, ParameterCon
     fpcomplex den       = fpcomplex(M * M - s - adlerZero * g1sq * z, 0) - fpcomplex(0, 1) * Gamma_tot;
     fpcomplex returnVal = 1.0 / den;
 
-    pc.incrementIndex (1, 0, 0, 0, 1);
+    pc.incrementIndex(1, 0, 0, 0, 1);
     // printf("Bugg %.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g \n",gamma_2pi.real, gamma_2pi.imag, gamma_2K.real,
     // gamma_2K.imag, gamma_2eta.real, gamma_2eta.imag, gamma_4pi.real, gamma_4pi.imag);
     // printf("Bugg %.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g \n",Mpair, Gamma_tot.real, Gamma_tot.imag, g1sq, z,
@@ -345,7 +345,7 @@ __device__ fpcomplex lass_MINT(fptype Mpair, fptype m1, fptype m2, ParameterCont
     fpcomplex BG        = SF / den;
     fpcomplex returnVal = BG + phaseshift * BW(Mpair, m1, m2, pc);
 
-    pc.incrementIndex (1, 2, 0, 0, 1);
+    pc.incrementIndex(1, 2, 0, 0, 1);
     // printf("Lass: %.5g %.5g %.5g %.5g %.5g %.5g\n",BG.real, BG.imag, phaseshift.real, phaseshift.imag,
     // returnVal.real, returnVal.imag);
 
@@ -407,7 +407,7 @@ __device__ fpcomplex glass_MINT3(fptype Mpair, fptype m1, fptype m2, ParameterCo
            + R * sin(resphase) * fpcomplex(cos(resphase + 2 * scattphase), sin(resphase + 2 * scattphase)))
           * rho;
 
-    pc.incrementIndex (1, 7, 2, 0, 1);
+    pc.incrementIndex(1, 7, 2, 0, 1);
     // printf("GLass3: %.5g %.5g %.5g %.5g %.5g %.5g\n",rMass2, pABSq, rho, GofM, scattphase, resphase);
 
     // printf("GLass4: %.5g %.5g\n",returnVal.real, returnVal.imag);
@@ -492,8 +492,8 @@ __device__ fptype getSpline(fptype x, bool continued, ParameterContainer &pc) {
     fptype m_xf_0 = pc.constants[pc.constantIdx + 11 + bin + nBins];
     fptype m_xf_1 = pc.constants[pc.constantIdx + 11 + bin + nBins + 1];
 
-    //TODO: try to calculate this.
-    pc.incrementIndex ();
+    // TODO: try to calculate this.
+    pc.incrementIndex();
 
     return m_x_0 + dx * ((m_x_1 - m_x_0) / spacing - (m_xf_1 + 2 * m_xf_0) * spacing / 6) + dx * dx * m_xf_0
            + dx * dx * dx * (m_xf_1 - m_xf_0) / (6 * spacing);
@@ -523,7 +523,7 @@ __device__ fpcomplex Spline_TDP(fptype Mpair, fptype m1, fptype m2, ParameterCon
     // fptype BF             = sqrt( BlattWeisskopf_Norm(q2 * POW2(radius), 0, L));
     fptype BF = exp(-q2 * POW2(radius) / 2);
 
-    pc.incrementIndex (1, 2, 1, 0, 1);
+    pc.incrementIndex(1, 2, 1, 0, 1);
 
     fptype width_shape = width * getSpline(s, true, pc);
     fptype width_norm  = width * getSpline(POW2(mass), false, pc);
@@ -547,7 +547,7 @@ __device__ fpcomplex nonres_DP(fptype Mpair, fptype m1, fptype m2, ParameterCont
     fptype pABSq      = num / (4 * mumsRecoMass2);
     fptype formfactor = sqrt(BL2(pABSq * meson_radius * meson_radius, orbital));
 
-    pc.incrementIndex (1, 0, 2, 0, 1);
+    pc.incrementIndex(1, 0, 2, 0, 1);
     // printf("NonRes q2:%.7g FF:%.7g, s %.7g m1 %.7g m2 %.7g r %.7g L %u \n",pABSq, formfactor, mumsRecoMass2,
     // m1,m2,meson_radius, orbital );
     return fpcomplex(1., 0.) * formfactor;

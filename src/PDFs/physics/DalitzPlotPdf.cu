@@ -123,7 +123,7 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
         totalAmp += amp * me;
     }
 
-    fptype ret         = thrust::norm(totalAmp);
+    fptype ret = thrust::norm(totalAmp);
     pc.incrementIndex(1, numResonances * 2, 2, num_obs, 1);
 
     // loop to efficiency idx
@@ -133,7 +133,6 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
 
     fptype eff = callFunction(evt, pc);
     ret *= eff;
-
 
     return ret;
 }
@@ -154,7 +153,6 @@ __host__ DalitzPlotPdf::DalitzPlotPdf(
     , cacheToUse(0)
     , integrators(nullptr)
     , calculators(nullptr) {
-
     for(auto &cachedWave : cachedWaves)
         cachedWave = nullptr;
 
@@ -169,11 +167,11 @@ __host__ DalitzPlotPdf::DalitzPlotPdf(
     registerConstant(decayInfo.resonances.size());
     static int cacheCount = 0;
     cacheToUse            = cacheCount++;
-    //registered to 1 position
+    // registered to 1 position
     registerConstant(cacheToUse);
 
     for(auto &resonance : decayInfo.resonances) {
-        //registering 2 parameters
+        // registering 2 parameters
         registerParameter(resonance->amp_real);
         registerParameter(resonance->amp_imag);
         components.push_back(resonance);
@@ -417,7 +415,7 @@ __device__ fpcomplex SpecialResonanceIntegrator::operator()(thrust::tuple<int, f
     int id_m13 = pc.getObservable(1);
 
     // fptype fakeEvt[10]; // Need room for many observables in case m12 or m13 were assigned a high index in an
-                        // event-weighted fit.
+    // event-weighted fit.
     // fakeEvt[0] = 2;
     // fakeEvt[id_m12] = binCenterM12;
     // fakeEvt[id_m13] = binCenterM13;

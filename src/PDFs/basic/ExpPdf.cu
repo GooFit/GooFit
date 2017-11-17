@@ -79,9 +79,9 @@ __host__ ExpPdf::ExpPdf(std::string n, Observable _x, Variable alpha, Variable o
 
     initialize();
 }
-    
+
 __host__ ExpPdf::ExpPdf(std::string n, Observable _x, Variable alpha)
-        : GooPdf(n, _x) {
+    : GooPdf(n, _x) {
     registerParameter(alpha);
 
     ExpType = 0;
@@ -100,20 +100,20 @@ __host__ ExpPdf::ExpPdf(std::string n, Observable _x, std::vector<Variable> &wei
         registerParameter(w);
 
     ExpType = 3;
-        
+
     initialize();
 }
 
 __host__ ExpPdf::ExpPdf(std::string n, Observable _x, std::vector<Variable> &weights)
-: GooPdf(n, _x) {
+    : GooPdf(n, _x) {
     if(weights.empty())
         throw GooFit::GeneralError("Weights are empty!");
-    
+
     for(Variable &w : weights)
         registerParameter(w);
- 
+
     ExpType = 2;
-    
+
     initialize();
 }
 

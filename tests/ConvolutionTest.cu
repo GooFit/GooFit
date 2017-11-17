@@ -1,15 +1,15 @@
 #include <gtest/gtest.h>
 
-#include <goofit/fitting/FitManagerMinuit1.h>
-#include <goofit/UnbinnedDataSet.h>
-#include <goofit/PDFs/combine/ConvolutionPdf.h>
 #include <goofit/PDFs/basic/GaussianPdf.h>
+#include <goofit/PDFs/combine/ConvolutionPdf.h>
+#include <goofit/UnbinnedDataSet.h>
+#include <goofit/fitting/FitManagerMinuit1.h>
 
 #include <goofit/Variable.h>
 
+#include <iostream>
 #include <sys/time.h>
 #include <sys/times.h>
-#include <iostream>
 
 #include <random>
 
@@ -54,8 +54,8 @@ TEST(Convolution, SimpleFit) {
     fitter.fit();
 
     EXPECT_TRUE(fitter);
-    //EXPECT_LT(a1.getError(), .1);
-    //EXPECT_NEAR(0.665178392, a1.getValue(), a1.getError() * 3);
-    //EXPECT_LT(a2.getError(), .1);
-    //EXPECT_NEAR(0.665178392, a2.getValue(), a2.getError() * 3);
+    // EXPECT_LT(a1.getError(), .1);
+    // EXPECT_NEAR(0.665178392, a1.getValue(), a1.getError() * 3);
+    // EXPECT_LT(a2.getError(), .1);
+    // EXPECT_NEAR(0.665178392, a2.getValue(), a2.getError() * 3);
 }

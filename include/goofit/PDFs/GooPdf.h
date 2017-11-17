@@ -2,10 +2,10 @@
 
 #include <thrust/functional.h>
 
+#include <goofit/Log.h>
 #include <goofit/PDFs/MetricTaker.h>
 #include <goofit/PdfBase.h>
 #include <goofit/UnbinnedDataSet.h>
-#include <goofit/Log.h>
 
 #ifdef ROOT_FOUND
 class TH1D;
@@ -42,37 +42,21 @@ struct ParameterContainer {
 
     int funcIdx;
 
-    inline __device__ fptype getParameter(const int i) {
-        return RO_CACHE(parameters[parameterIdx + i + 1]);
-    }
+    inline __device__ fptype getParameter(const int i) { return RO_CACHE(parameters[parameterIdx + i + 1]); }
 
-    inline __device__ fptype getConstant(const int i) {
-        return RO_CACHE(constants[constantIdx + i + 1]);
-    }
+    inline __device__ fptype getConstant(const int i) { return RO_CACHE(constants[constantIdx + i + 1]); }
 
-    inline __device__ fptype getObservable(const int i) {
-        return RO_CACHE(observables[observableIdx + i + 1]);
-    }
+    inline __device__ fptype getObservable(const int i) { return RO_CACHE(observables[observableIdx + i + 1]); }
 
-    inline __device__ fptype getNormalisation(const int i) {
-        return RO_CACHE(normalisations[normalIdx + i + 1]);
-    }
+    inline __device__ fptype getNormalisation(const int i) { return RO_CACHE(normalisations[normalIdx + i + 1]); }
 
-    inline __device__ int getNumParameters() {
-        return (int) RO_CACHE(parameters[parameterIdx]);
-    }
+    inline __device__ int getNumParameters() { return (int)RO_CACHE(parameters[parameterIdx]); }
 
-    inline __device__ int getNumConstants() {
-        return (int) RO_CACHE(constants[constantIdx]);
-    }
+    inline __device__ int getNumConstants() { return (int)RO_CACHE(constants[constantIdx]); }
 
-    inline __device__ int getNumObservables() {
-        return (int) RO_CACHE(observables[observableIdx]);
-    }
+    inline __device__ int getNumObservables() { return (int)RO_CACHE(observables[observableIdx]); }
 
-    inline __device__ int getNumNormalisations() {
-        return (int) RO_CACHE(normalisations[normalIdx]);
-    }
+    inline __device__ int getNumNormalisations() { return (int)RO_CACHE(normalisations[normalIdx]); }
 
     // each PDF needs to supply the amount of each array used.
     // This function automatically adds +1 for the size.

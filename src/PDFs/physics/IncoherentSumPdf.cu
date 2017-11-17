@@ -1,5 +1,5 @@
-#include <goofit/PDFs/physics/IncoherentSumPdf.h>
 #include <goofit/Error.h>
+#include <goofit/PDFs/physics/IncoherentSumPdf.h>
 #include <goofit/PDFs/physics/ResonancePdf.h>
 #include <thrust/complex.h>
 
@@ -36,11 +36,11 @@ __device__ fptype device_incoherent(fptype *evt, ParameterContainer &pc) {
         ret += amplitude * thrust::norm(matrixelement);
     }
 
-    //pc.incrementIndex(1, numResonances, 2, numObs, 1);
+    // pc.incrementIndex(1, numResonances, 2, numObs, 1);
     pc.incrementIndex();
 
-    //increment through resonances
-    for (int i = 0; i < numResonances; i++)
+    // increment through resonances
+    for(int i = 0; i < numResonances; i++)
         pc.incrementIndex();
     // Multiply by efficiency
     // int effFunctionIdx = parIndexFromResIndex_incoherent(numResonances);
@@ -300,7 +300,7 @@ __device__ fptype SpecialIncoherentIntegrator::operator()(thrust::tuple<int, fpt
 
     fpcomplex ret = getResonanceAmplitude(binCenterM12, binCenterM13, m23, pc);
 
-    while (pc.funcIdx < efficiency)
+    while(pc.funcIdx < efficiency)
         pc.incrementIndex();
 
     // unsigned int numResonances = indices[2];

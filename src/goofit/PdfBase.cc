@@ -58,12 +58,12 @@ __host__ void PdfBase::recursiveSetNormalisation(fptype norm) const {
 __host__ unsigned int PdfBase::registerParameter(Variable var) {
     if(find_in(parametersList, var))
         throw GeneralError("This var {} was registered twice", var.getName());
-    
+
     parametersList.push_back(var);
 
     return 0; // TODO: Make void
 }
-    
+
 __host__ unsigned int PdfBase::registerConstant(fptype value) {
     constantsList.push_back(value);
     return constantsList.size();
@@ -126,7 +126,7 @@ __host__ std::vector<Observable> PdfBase::getObservables() const {
     return ret;
 }
 
- GOOFIT_DEPRECATED __host__ unsigned int PdfBase::registerConstants(unsigned int amount) {
+GOOFIT_DEPRECATED __host__ unsigned int PdfBase::registerConstants(unsigned int amount) {
     if(totalConstants + amount >= maxParams)
         throw GooFit::GeneralError(
             "totalConstants {} + amount {} can not be more than {}", totalConstants, amount, maxParams);

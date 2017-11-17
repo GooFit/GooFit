@@ -1,14 +1,14 @@
 #include <gtest/gtest.h>
 
-#include <goofit/fitting/FitManagerMinuit1.h>
-#include <goofit/UnbinnedDataSet.h>
 #include <goofit/PDFs/basic/SmoothHistogramPdf.h>
+#include <goofit/UnbinnedDataSet.h>
+#include <goofit/fitting/FitManagerMinuit1.h>
 
 #include <goofit/Variable.h>
 
+#include <iostream>
 #include <sys/time.h>
 #include <sys/times.h>
-#include <iostream>
 
 #include <random>
 
@@ -47,6 +47,6 @@ TEST(SmoothHistogram, SimpleFit) {
     fitter.fit();
 
     EXPECT_TRUE(fitter);
-    //EXPECT_LT(smoothing.getError(), .9);
-    //EXPECT_NEAR(0.9, smoothing.getValue(), smoothing.getError() * 3);
+    // EXPECT_LT(smoothing.getError(), .9);
+    // EXPECT_NEAR(0.9, smoothing.getValue(), smoothing.getError() * 3);
 }

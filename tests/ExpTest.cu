@@ -1,14 +1,14 @@
 #include <gtest/gtest.h>
 
-#include <goofit/fitting/FitManagerMinuit1.h>
-#include <goofit/UnbinnedDataSet.h>
 #include <goofit/PDFs/basic/ExpPdf.h>
+#include <goofit/UnbinnedDataSet.h>
+#include <goofit/fitting/FitManagerMinuit1.h>
 
 #include <goofit/Variable.h>
 
+#include <iostream>
 #include <sys/time.h>
 #include <sys/times.h>
-#include <iostream>
 
 #include <random>
 
@@ -49,8 +49,8 @@ TEST(Exp, SimpleFit) {
     fitter.fit();
 
     EXPECT_TRUE(fitter);
-    //EXPECT_LT(alpha.getError(), .1);
-    //EXPECT_NEAR(0.665178392, alpha.getValue(), alpha.getError() * 3);
+    // EXPECT_LT(alpha.getError(), .1);
+    // EXPECT_NEAR(0.665178392, alpha.getValue(), alpha.getError() * 3);
 }
 
 TEST(ExpPoly, SimpleFit) {
@@ -74,14 +74,14 @@ TEST(ExpPoly, SimpleFit) {
     }
 
     // Fit parameter
-    std::vector <Variable> weights;
+    std::vector<Variable> weights;
     Variable alpha{"alpha", 1, 0.1, -10, 10};
     Variable sigma{"sigma", 1, 0, 3};
 
     weights.push_back(alpha);
     weights.push_back(sigma);
 
-    //Variable offset{"sigma", 1, 0, 3};
+    // Variable offset{"sigma", 1, 0, 3};
 
     // GooPdf object
     ExpPdf exppdf{"exppdf", xvar, weights};
@@ -92,7 +92,7 @@ TEST(ExpPoly, SimpleFit) {
     fitter.fit();
 
     EXPECT_TRUE(fitter);
-    //EXPECT_LT(alpha.getError(), .1);
+    // EXPECT_LT(alpha.getError(), .1);
 }
 
 TEST(ExpOffset, SimpleFit) {
@@ -171,4 +171,3 @@ TEST(ExpPolyOffset, SimpleFit) {
 
     EXPECT_TRUE(fitter);
 }
-

@@ -24,7 +24,6 @@ class FunctionMinimum;
 
 namespace GooFit {
 
-
 const int maxParams = GOOFIT_MAXPAR;
 extern fptype *dev_event_array;
 
@@ -128,8 +127,9 @@ class PdfBase {
     __host__ void setupObservables();
 
     __host__ virtual void recursiveSetIndices();
+
   protected:
-    DataSet *data_ = nullptr;   //< Remember the original dataset
+    DataSet *data_ = nullptr; //< Remember the original dataset
     // use this function to populate the arrays generically.
     __host__ void populateArrays();
 
@@ -162,7 +162,6 @@ class PdfBase {
 
   private:
     std::string name;
-
 };
 
 } // namespace GooFit

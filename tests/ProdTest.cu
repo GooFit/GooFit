@@ -1,15 +1,15 @@
 #include <gtest/gtest.h>
 
-#include <goofit/fitting/FitManagerMinuit1.h>
-#include <goofit/UnbinnedDataSet.h>
 #include <goofit/PDFs/basic/GaussianPdf.h>
 #include <goofit/PDFs/combine/ProdPdf.h>
+#include <goofit/UnbinnedDataSet.h>
+#include <goofit/fitting/FitManagerMinuit1.h>
 
 #include <goofit/Variable.h>
 
+#include <iostream>
 #include <sys/time.h>
 #include <sys/times.h>
-#include <iostream>
 
 #include <random>
 

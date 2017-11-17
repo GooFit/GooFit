@@ -1,15 +1,15 @@
 #include <gtest/gtest.h>
 
-#include <goofit/fitting/FitManagerMinuit1.h>
-#include <goofit/UnbinnedDataSet.h>
-#include <goofit/PDFs/combine/EventWeightedAddPdf.h>
 #include <goofit/PDFs/basic/GaussianPdf.h>
+#include <goofit/PDFs/combine/EventWeightedAddPdf.h>
+#include <goofit/UnbinnedDataSet.h>
+#include <goofit/fitting/FitManagerMinuit1.h>
 
 #include <goofit/Variable.h>
 
+#include <iostream>
 #include <sys/time.h>
 #include <sys/times.h>
-#include <iostream>
 
 #include <random>
 
@@ -64,8 +64,8 @@ TEST(EventWeightedAdd, SimpleFit) {
     fitter.fit();
 
     EXPECT_TRUE(fitter);
-    //EXPECT_LT(w1.getError(), .11);
-    //EXPECT_NEAR(0.1, w1.getValue(), w1.getError() * 3);
-    //EXPECT_LT(w2.getError(), .11);
-    //EXPECT_NEAR(0.1, w2.getValue(), w2.getError() * 3);
+    // EXPECT_LT(w1.getError(), .11);
+    // EXPECT_NEAR(0.1, w1.getValue(), w1.getError() * 3);
+    // EXPECT_LT(w2.getError(), .11);
+    // EXPECT_NEAR(0.1, w2.getValue(), w2.getError() * 3);
 }

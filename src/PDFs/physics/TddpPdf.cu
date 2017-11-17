@@ -139,7 +139,6 @@ device_Tddp_calcIntegrals(fptype m12, fptype m13, int res_i, int res_j, Paramete
 }
 
 __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
-
     int num_parameters  = pc.getNumParameters();
     int num_constants   = pc.getNumConstants();
     int num_observables = pc.getNumObservables();
@@ -187,8 +186,7 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
 
     for(int i = 0; i < numResonances; ++i) {
         int paramIndex = parIndexFromResIndex(i);
-        fpcomplex amp{pc.getParameter(i * 2 + 3),
-                      pc.getParameter(i * 2 + 4)};
+        fpcomplex amp{pc.getParameter(i * 2 + 3), pc.getParameter(i * 2 + 4)};
 
         // fpcomplex matrixelement(thrust::get<0>(cWaves[cacheToUse][evtNum*numResonances + i]),
         //				     thrust::get<1>(cWaves[cacheToUse][evtNum*numResonances + i]));
@@ -216,8 +214,8 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
     fptype _time  = evt[id_time];
     fptype _sigma = evt[id_sigma];
 
-    //TODO: Test that we have a special flag by comparing size of numconstants?
-    //fptype special_flag = pc.getConstant(3);
+    // TODO: Test that we have a special flag by comparing size of numconstants?
+    // fptype special_flag = pc.getConstant(3);
 
     // if ((gpuDebug & 1) && (0 == BLOCKIDX) && (0 == THREADIDX))
     // if (0 == evtNum) printf("TDDP: (%f, %f) (%f, %f)\n", sumWavesA.real, sumWavesA.imag, sumWavesB.real,
@@ -339,7 +337,7 @@ __host__ TddpPdf::TddpPdf(std::string n,
 
     if(mistag) {
         registerObservable(*mistag);
-        totalEventSize    = 6;
+        totalEventSize = 6;
     }
 
     MEMCPY_TO_SYMBOL(c_motherMass, &decay.motherMass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
@@ -379,7 +377,7 @@ __host__ TddpPdf::TddpPdf(std::string n,
     // this is the funcID after the efficiency routine
     registerConstant(0);
 
-    //TODO: Figure out what this needs?
+    // TODO: Figure out what this needs?
     resolution->createParameters(this);
 
     initialize();
@@ -423,7 +421,8 @@ __host__ TddpPdf::TddpPdf(std::string n,
     , decayInfo(decay)
     , _m12(m12)
     , _m13(m13)
-    , resolution(r[0]) // Only used for normalisation, which only depends on x and y - it doesn't matter which one we use.
+    , resolution(
+          r[0]) // Only used for normalisation, which only depends on x and y - it doesn't matter which one we use.
     , totalEventSize(6) // This case adds the D0 mass by default.
 {
     for(auto &cachedWave : cachedWaves)
@@ -458,7 +457,7 @@ __host__ TddpPdf::TddpPdf(std::string n,
 
     registerConstant(SPECIAL_RESOLUTION_FLAG);
 
-    //TODO: Do these need to be set as constants?
+    // TODO: Do these need to be set as constants?
     registerConstant(md0.getLowerLimit());
     registerConstant((md0.getUpperLimit() - md0.getLowerLimit()) / r.size());
 
@@ -469,13 +468,13 @@ __host__ TddpPdf::TddpPdf(std::string n,
         components.push_back(resonance);
     }
 
-    //components.push_back(resolution);
+    // components.push_back(resolution);
 
     for(auto &i : r) {
         if(i->getDeviceFunction() < 0)
             throw GooFit::GeneralError("Device function index {} must be more than 0", i->getDeviceFunction());
 
-        //TODO:
+        // TODO:
         i->createParameters(this);
 
         components.push_back(i);

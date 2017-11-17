@@ -1,14 +1,14 @@
 #include <gtest/gtest.h>
 
-#include <goofit/fitting/FitManagerMinuit1.h>
-#include <goofit/UnbinnedDataSet.h>
 #include <goofit/PDFs/basic/CorrGaussianPdf.h>
+#include <goofit/UnbinnedDataSet.h>
+#include <goofit/fitting/FitManagerMinuit1.h>
 
 #include <goofit/Variable.h>
 
+#include <iostream>
 #include <sys/time.h>
 #include <sys/times.h>
-#include <iostream>
 
 #include <random>
 
@@ -30,7 +30,7 @@ TEST(CorrGaussianPdf, SimpleFit) {
     // Generate toy events.
     for(int i = 0; i < 10000; ++i) {
         double v = d(gen);
-        //double vy = d(gen);
+        // double vy = d(gen);
 
         if(v > 0 && v < 10) {
             xvar.setValue(v);
@@ -56,8 +56,8 @@ TEST(CorrGaussianPdf, SimpleFit) {
     fitter.fit();
 
     EXPECT_TRUE(fitter);
-    //EXPECT_LT(mean1.getError(), .1);
-    //EXPECT_NEAR(0.665178392, mean1.getValue(), mean1.getError() * 3);
-    //EXPECT_LT(mean2.getError(), .1);
-    //EXPECT_NEAR(0.6837, mean2.getValue(), mean2.getError() * 3);
+    // EXPECT_LT(mean1.getError(), .1);
+    // EXPECT_NEAR(0.665178392, mean1.getValue(), mean1.getError() * 3);
+    // EXPECT_LT(mean2.getError(), .1);
+    // EXPECT_NEAR(0.6837, mean2.getValue(), mean2.getError() * 3);
 }

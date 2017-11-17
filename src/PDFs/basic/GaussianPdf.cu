@@ -1,5 +1,5 @@
-#include <goofit/PDFs/basic/GaussianPdf.h>
 #include <goofit/Log.h>
+#include <goofit/PDFs/basic/GaussianPdf.h>
 
 namespace GooFit {
 
@@ -36,7 +36,6 @@ __host__ void GaussianPdf::recursiveSetIndices() {
 
 __host__ fptype GaussianPdf::integrate(fptype lo, fptype hi) const {
     static const fptype rootPi = sqrt(atan2(0.0, -1.0));
-
 
     // Integral over all R.
     fptype sigma = host_parameters[parametersIdx + 2];

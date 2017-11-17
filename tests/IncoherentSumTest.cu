@@ -1,16 +1,16 @@
 #include <gtest/gtest.h>
 
-#include <goofit/fitting/FitManagerMinuit1.h>
-#include <goofit/UnbinnedDataSet.h>
 #include <goofit/PDFs/basic/GaussianPdf.h>
 #include <goofit/PDFs/physics/IncoherentSumPdf.h>
 #include <goofit/PDFs/physics/ResonancePdf.h>
+#include <goofit/UnbinnedDataSet.h>
+#include <goofit/fitting/FitManagerMinuit1.h>
 
 #include <goofit/Variable.h>
 
+#include <iostream>
 #include <sys/time.h>
 #include <sys/times.h>
-#include <iostream>
 
 #include <random>
 
@@ -137,9 +137,12 @@ TEST(IncoherentSumPdf, SimpleFit) {
     Variable nonr_amp_imag{"nonr_amp_imag", -0.108761 * (-1), 0.1, 0, 0};
 
     // Create resonances here
-    ResonancePdf *rhop = new Resonances::RBW("rhop", rhop_amp_real, rhop_amp_imag, fixedRhoMass, fixedRhoWidth, 1, PAIR_12);
-    ResonancePdf *rhom = new Resonances::RBW("rhom", rhom_amp_real, rhom_amp_imag, fixedRhoMass, fixedRhoWidth, 1, PAIR_13);
-    ResonancePdf *rho0 = new Resonances::RBW("rho0", rho0_amp_real, rho0_amp_imag, fixedRhoMass, fixedRhoWidth, 1, PAIR_23);
+    ResonancePdf *rhop
+        = new Resonances::RBW("rhop", rhop_amp_real, rhop_amp_imag, fixedRhoMass, fixedRhoWidth, 1, PAIR_12);
+    ResonancePdf *rhom
+        = new Resonances::RBW("rhom", rhom_amp_real, rhom_amp_imag, fixedRhoMass, fixedRhoWidth, 1, PAIR_13);
+    ResonancePdf *rho0
+        = new Resonances::RBW("rho0", rho0_amp_real, rho0_amp_imag, fixedRhoMass, fixedRhoWidth, 1, PAIR_23);
 
     ResonancePdf *rhop_1450 = new Resonances::RBW(
         "rhop_1450", rhop_1450_real, rhop_1450_imag, shared_1450_mass, shared_1450_width, 1, PAIR_12);
@@ -155,17 +158,23 @@ TEST(IncoherentSumPdf, SimpleFit) {
     ResonancePdf *rhom_1700 = new Resonances::RBW(
         "rhom_1700", rhom_1700_real, rhom_1700_imag, shared_1700_mass, shared_1700_width, 1, PAIR_13);
 
-    ResonancePdf *f0_980 = new Resonances::RBW("f0_980", f0_980_real, f0_980_imag, f0_980_mass, f0_980_width, 0, PAIR_23);
+    ResonancePdf *f0_980
+        = new Resonances::RBW("f0_980", f0_980_real, f0_980_imag, f0_980_mass, f0_980_width, 0, PAIR_23);
 
-    ResonancePdf *f0_1370 = new Resonances::RBW("f0_1370", f0_1370_real, f0_1370_imag, f0_1370_mass, f0_1370_width, 0, PAIR_23);
+    ResonancePdf *f0_1370
+        = new Resonances::RBW("f0_1370", f0_1370_real, f0_1370_imag, f0_1370_mass, f0_1370_width, 0, PAIR_23);
 
-    ResonancePdf *f0_1500 = new Resonances::RBW("f0_1500", f0_1500_real, f0_1500_imag, f0_1500_mass, f0_1500_width, 0, PAIR_23);
+    ResonancePdf *f0_1500
+        = new Resonances::RBW("f0_1500", f0_1500_real, f0_1500_imag, f0_1500_mass, f0_1500_width, 0, PAIR_23);
 
-    ResonancePdf *f0_1710 = new Resonances::RBW("f0_1710", f0_1710_real, f0_1710_imag, f0_1710_mass, f0_1710_width, 0, PAIR_23);
+    ResonancePdf *f0_1710
+        = new Resonances::RBW("f0_1710", f0_1710_real, f0_1710_imag, f0_1710_mass, f0_1710_width, 0, PAIR_23);
 
-    ResonancePdf *f0_1270 = new Resonances::RBW("f0_1270", f0_1270_real, f0_1270_imag, f0_1270_mass, f0_1270_width, 2, PAIR_23);
+    ResonancePdf *f0_1270
+        = new Resonances::RBW("f0_1270", f0_1270_real, f0_1270_imag, f0_1270_mass, f0_1270_width, 2, PAIR_23);
 
-    ResonancePdf *f0_600 = new Resonances::RBW("f0_600", f0_600_real, f0_600_imag, f0_600_mass, f0_600_width, 0, PAIR_23);
+    ResonancePdf *f0_600
+        = new Resonances::RBW("f0_600", f0_600_real, f0_600_imag, f0_600_mass, f0_600_width, 0, PAIR_23);
 
     ResonancePdf *nonr = new Resonances::NonRes("nonr", nonr_amp_real, nonr_amp_imag);
 

@@ -1,5 +1,5 @@
-#include <goofit/PDFs/combine/ProdPdf.h>
 #include <goofit/Log.h>
+#include <goofit/PDFs/combine/ProdPdf.h>
 
 #include <algorithm>
 
@@ -9,7 +9,7 @@ __device__ fptype device_ProdPdfs(fptype *evt, ParameterContainer &pc) {
     int numCons  = pc.getNumConstants();
     int numComps = pc.getConstant(0);
     int numObs   = pc.getNumObservables();
-    fptype ret    = 1;
+    fptype ret   = 1;
 
     pc.incrementIndex(1, 0, numCons, numObs, 1);
     // pc.incrementIndex();
@@ -19,7 +19,6 @@ __device__ fptype device_ProdPdfs(fptype *evt, ParameterContainer &pc) {
 
         curr *= norm;
         ret *= curr;
-
     }
 
     return ret;
@@ -30,7 +29,6 @@ __device__ device_function_ptr ptr_to_ProdPdfs = device_ProdPdfs;
 ProdPdf::ProdPdf(std::string n, std::vector<PdfBase *> comps)
     : GooPdf(n)
     , varOverlaps(false) {
-
     for(PdfBase *p : comps) {
         components.push_back(p);
         // we push a placeholder that is used to indicate
@@ -45,7 +43,6 @@ ProdPdf::ProdPdf(std::string n, std::vector<PdfBase *> comps)
     std::vector<Observable> observableCheck; // Use to check for overlap in observables
 
     for(PdfBase *p : comps) {
-
         if(varOverlaps)
             continue; // Only need to establish this once.
 

@@ -1,6 +1,6 @@
+#include <goofit/Log.h>
 #include <goofit/PDFs/basic/PolynomialPdf.h>
 #include <goofit/Variable.h>
-#include <goofit/Log.h>
 
 namespace GooFit {
 
@@ -79,7 +79,7 @@ __device__ fptype device_MultiPolynomial(fptype *evt, ParameterContainer &pc) {
         for(int j = 0; j < num_observables; ++j) {
             // TODO:Need to debug these
             int id        = pc.getObservable(j);
-            fptype x      = evt[id];                                          // x, y, z...
+            fptype x      = evt[id];            // x, y, z...
             fptype offset = pc.getParameter(j); // x0, y0, z0...
             x -= offset;
             int currPower = currIndex % maxDegree;
@@ -121,12 +121,12 @@ __device__ device_function_ptr ptr_to_OffsetPolynomial = device_OffsetPolynomial
 __device__ device_function_ptr ptr_to_MultiPolynomial  = device_MultiPolynomial;
 
 // Constructor for single-variate polynomial, with optional zero point.
-__host__ PolynomialPdf::PolynomialPdf(
-    std::string n, Observable _x, std::vector<Variable> weights, unsigned int lowestDegree)
+__host__
+PolynomialPdf::PolynomialPdf(std::string n, Observable _x, std::vector<Variable> weights, unsigned int lowestDegree)
     : GooPdf(n, _x) {
     registerConstant(lowestDegree);
 
-    for(Variable & v : weights) {
+    for(Variable &v : weights) {
         registerParameter(v);
     }
 
@@ -141,7 +141,7 @@ __host__ PolynomialPdf::PolynomialPdf(
     , center(new Variable(x0)) {
     registerConstant(lowestDegree);
 
-    for(Variable & v : weights) {
+    for(Variable &v : weights) {
         registerParameter(v);
     }
 
@@ -194,7 +194,6 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n,
         offsets.push_back(newOffset);
     }
 
-
     for(auto &offset : offsets) {
         registerParameter(offset);
     }
@@ -216,7 +215,7 @@ __host__ void PolynomialPdf::recursiveSetIndices() {
         GET_FUNCTION_ADDR(ptr_to_OffsetPolynomial);
     } else if(polyType == 2) {
         GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_MultiPolynomial");
-    GET_FUNCTION_ADDR(ptr_to_MultiPolynomial);
+        GET_FUNCTION_ADDR(ptr_to_MultiPolynomial);
     }
 
     GOOFIT_TRACE("host_function_table[{}] = {}", num_device_functions, getName());
@@ -255,7 +254,6 @@ __host__ fptype PolynomialPdf::getCoefficient(int coef) const {
                      "polynomials. Returning zero, which is very likely wrong.\n";
         return 0;
     }
-
 
     // True function is, say, ax^2 + bx + c.
     // We express this as (a'x^2 + b'x + c')*N.

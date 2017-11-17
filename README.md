@@ -15,20 +15,20 @@ doing maximum-likelihood fits with a familiar syntax.
 • [2.0 upgrade](./docs/CONVERTING20.md)
 • [2.1 upgrade](./docs/CONVERTING21.md)
 • [Build recipes](./docs/SYSTEM_INSTALL.md)
-• [Python (in progress)](https://pypi.python.org/pypi/goofit/)
+• [Python](https://pypi.python.org/pypi/goofit/)
 
 ## Requirements
 
-* A recent version of CMake is required. The minimum is 3.4, but tested primarily with 3.6 and newer. CMake is incredibly easy to install (see [the system install page](./docs/SYSTEM_INSTALL.md)). The minimum required version may change to 3.8 at some point, since that is the first version to support CUDA directly as a first class language.
-  * With CMake, Thrust is downloaded automatically for OpenMP if not found
-  * GoogleTest and all other small packages are downloaded automatically
+* A recent version of CMake is required. The minimum is 3.4, but tested primarily with 3.6 and newer. CMake is incredibly easy to install (see [the system install page](./docs/SYSTEM_INSTALL.md)).
 * A ROOT 6 build highly recommended -- GooFit will use the included Minuit2 submodule if ROOT is not found, and the Minuit1 based fitter will not be available.
 * If using CUDA:
+  * CMake 3.8+ highly recommended, but not required (yet)
   * CUDA 7.0+
   * An nVidia GPU supporting compute capability at least 2.0 (3.5+ recommended)
 * If using OpenMP:
   * A compiler supporting OpenMP and C++11 (GCC 4.8+, Clang, and Intel 17 tested, GCC 4.7 not supported)
   * Note that TBB is also available as a backend, but it still requires OpenMP to be present.
+  * On macOS, this backend requires `brew install cliutils/apple/libomp` or a custom compiler
 * If using CPP:
   * Single threaded builds are available for debugging and development (such as on the default Clang on macOS)
 

@@ -19,6 +19,7 @@ using namespace pybind11::literals;
 void init_PdfBase(py::module &m) {
     py::class_<PdfBase>(m, "PdfBase")
         .def("setData", (void (PdfBase::*)(DataSet *)) & PdfBase::setData)
+
         .def("getParameters", &PdfBase::getParameters)
         .def("getParameterByName", &PdfBase::getParameterByName)
         .def("getObservables", &PdfBase::getObservables)

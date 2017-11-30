@@ -45,6 +45,7 @@ doing maximum-likelihood fits with a familiar syntax.
 
 </p></details>
 
+<br/>
 
 A list of exact commands required for several platforms is [available here](./docs/SYSTEM_INSTALL.md).
 
@@ -62,6 +63,8 @@ cd GooFit
 You can either checkout a tagged version, or stay on the master for the latest and greatest. There are often development branches available, too.
 
 ## Building
+
+If you just want to get started as fast as possible, running `make`, `make omp`, or `make cuda` in the main directory will make a build directory for you, and will run CMake and make. It is recommended that you instead direcly use the CMake powered build system as discribed below, so that you will have a better understanding of what you are doing and more flexibility.
 
 The build system uses CMake. The procedure is standard for CMake builds:
 
@@ -124,8 +127,6 @@ Other custom options supported along with the defaults:
 </p></details>
 
 
-> Note: Running `make`, `make omp`, or `make cuda` in the main directory will make a build directory for you, and will run CMake and make.
-
 
 ## Running the examples and tests
 
@@ -134,12 +135,6 @@ Other custom options supported along with the defaults:
 ```bash
 ./examples/RunAll.py
 ./pyexamples/RunAll.sh # Python
-```
-
-or
-
-```bash
-./examples/RunAll.py --profile
 ```
 
 (This requires the [Plumbum] library, install with `pip install plumbum`, `pip install --user plumbum`, or `conda -c conda-forge plumbum`.)

@@ -2,6 +2,7 @@ var searchData=
 [
   ['gauss',['Gauss',['../class_goo_fit_1_1_resonances_1_1_gauss.html#a5a76ca0c068af7bae0f6090057531cc1',1,'GooFit::Resonances::Gauss']]],
   ['gaussianpdf',['GaussianPdf',['../class_goo_fit_1_1_gaussian_pdf.html#ab46d39655437c6111275fecdc2d12846',1,'GooFit::GaussianPdf']]],
+  ['gausspdf',['gaussPDF',['../landau_8h.html#a177434d7b9e484e2fcf6c25a5adfb100',1,'landau.h']]],
   ['generalerror',['GeneralError',['../struct_goo_fit_1_1_general_error.html#a74b57a89981520157b3544077c84c0f1',1,'GooFit::GeneralError']]],
   ['generatenormrange',['generateNormRange',['../class_goo_fit_1_1_pdf_base.html#ad8ca458b257f212bb9d226e818517512',1,'GooFit::PdfBase']]],
   ['generatesig',['GenerateSig',['../class_goo_fit_1_1_d_p_pdf.html#a119102e74df66b8cf871e8069aa38c68',1,'GooFit::DPPdf::GenerateSig()'],['../class_goo_fit_1_1_t_d_d_p4.html#af56c13d59b72f2ec886a83b66e599e6f',1,'GooFit::TDDP4::GenerateSig()']]],

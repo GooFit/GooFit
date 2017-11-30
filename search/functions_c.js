@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['landaupdf',['LandauPdf',['../class_goo_fit_1_1_landau_pdf.html#a0a9e6cc5483865bd47b75634b1d8afdd',1,'GooFit::LandauPdf']]],
+  ['landaugausspdf',['landauGaussPDF',['../landau_8h.html#ac41627e69812331dfd3da1f746c5690a',1,'landau.h']]],
+  ['landaupdf',['LandauPdf',['../class_goo_fit_1_1_landau_pdf.html#a0a9e6cc5483865bd47b75634b1d8afdd',1,'GooFit::LandauPdf::LandauPdf()'],['../landau_8h.html#a8faa48409f59a870fa14d9db661304e2',1,'landauPDF():&#160;landau.h']]],
   ['lass',['LASS',['../class_goo_fit_1_1_lineshapes_1_1_l_a_s_s.html#aa8ebcf91d7cf0f8045957dd8a21cff2f',1,'GooFit::Lineshapes::LASS::LASS()'],['../class_goo_fit_1_1_resonances_1_1_l_a_s_s.html#a4f8833d25420320a40d47697d4a38ad3',1,'GooFit::Resonances::LASS::LASS()']]],
   ['levicivita',['LeviCivita',['../namespace_goo_fit.html#af8e5594cb2e63079d530d899cc90ffa2',1,'GooFit::LeviCivita(const gpuLVec &amp;p1, const gpuLVec &amp;p2, const gpuLVec &amp;p3, const gpuLVec &amp;p4)'],['../namespace_goo_fit.html#aaeecb13ff35836de8be43ab76dbedf37',1,'GooFit::LeviCivita(const gpuLVec &amp;a, const gpuLVec &amp;b, const gpuLVec &amp;c)']]],
   ['lineshape',['Lineshape',['../class_goo_fit_1_1_lineshape.html#a0eefe78994d591fde77a3daa4cb7ef5a',1,'GooFit::Lineshape']]],

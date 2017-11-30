@@ -7,7 +7,7 @@ except ImportError:
 
 setup(
         name='goofit',
-        version='2.1.0.beta2',
+        version='2.1.0.beta3',
         description='GooFit fitting package',
         author='Henry Schreiner',
         author_email='hschrein@cern.ch',
@@ -19,16 +19,14 @@ setup(
             '-DGOOFIT_EXAMPLES=OFF'],
         license="LGPL 3.0",
         packages=['goofit'],
-            extras_require={
+        extras_require={
             'dev': [
                 'pytest',
                 'numpy',
                 'matplotlib',
                 'pandas'
             ]
-        }
-    }
-
+        },
         long_description='''\
 GooFit for Python
 -----------------
@@ -72,6 +70,19 @@ If you want to add PDFs to GooFit, or use GooFit pacakges, you should be working
 
     git clone --recursive git@github.com:GooFit/GooFit.git
     cd goofit
+
+Local Pip
+~~~~~~~~~
+
+If you use pip::
+
+    pip install -v -e .
+
+Local Pipenv
+~~~~~~~~~~~~
+
+Or, if you use pipenv::
+
     pipenv install --verbose -e . --skip-lock
 
 And, to use::

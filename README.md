@@ -1,5 +1,6 @@
 [![Build Status][travis-badge]][travis-link]
 [![Code Coverage][codecov-badge]][codecov-link]
+[![PyPI Status][pypi-status]][pypi-link]
 [![Join the chat at https://gitter.im/GooFit/Lobby][gitter-badge]][gitter-link]
 [![License: LGPL v3][license-badge]](./LICENSE)
 [![DOI][DOI-badge]][DOI-link]
@@ -272,3 +273,5 @@ In addition, we thank the nVidia GPU Grant Program for donating hardware used in
 [PyBind11]:          http://pybind11.readthedocs.io/en/master
 [ROOT]:              https://root.cern.ch
 [Tutorials]:         https://goofit.gitlab.io/Goo2Torial
+[pypi-status]:       https://img.shields.io/pypi/v/goofit.svg
+[pypi-link]:         https://pypi.python.org/pypi/goofit/

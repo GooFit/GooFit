@@ -167,7 +167,7 @@ class Application : public CLI::App {
 
         add_flag("--nosplash", splash_, "Do not print a splash")->group("GooFit")->excludes(quiet);
 
-        add_config("--config", "config.ini", "An ini file with command line options in it")->group("GooFit");
+        set_config("--config", "config.ini", "An ini file with command line options in it")->group("GooFit");
 
         // Reset color on exit (but not control-c)
         std::atexit([]() { std::cout << GooFit::reset; });
@@ -292,7 +292,7 @@ class Application : public CLI::App {
     /// Base gives a relative path from the source directory
     std::string get_filename(const std::string &input_str, std::string base = "") const {
         // Run from current directory
-        if(CLI::ExistingFile(input_str))
+        if(CLI::ExistingFile(input_str).empty())
             return input_str;
 
         // Run from a different directory
@@ -301,7 +301,7 @@ class Application : public CLI::App {
         if(loc != std::string::npos) {
             std::string cdir = prog_name.substr(0, loc);
             std::string new_input{cdir + "/" + input_str};
-            if(CLI::ExistingFile(new_input)) {
+            if(CLI::ExistingFile(new_input).empty()) {
                 std::cout << "Found file at " << new_input << std::endl;
                 return new_input;
             }
@@ -310,7 +310,7 @@ class Application : public CLI::App {
         // If all else fails, try to get file from source directory (if base is specified)
         if(base.size() > 0) {
             std::string new_input = std::string(GOOFIT_SOURCE_DIR) + "/" + base + "/" + input_str;
-            if(CLI::ExistingFile(new_input)) {
+            if(CLI::ExistingFile(new_input).empty()) {
                 std::cout << "Found file at " << new_input << std::endl;
                 return new_input;
             }

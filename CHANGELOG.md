@@ -41,6 +41,7 @@ Other changes include:
 * The include order is now checked by the clang-format run ([#126])
 * The ModernizeGooFit script supports 2.1 and more ([#126])
 * `.cpp` is used everywhere, instead of `.cc` and `.cpp` mix
+* CLI11 has been updated to 1.3
 
 [#92]: https://github.com/GooFit/GooFit/pull/92
 [#93]: https://github.com/GooFit/GooFit/pull/93

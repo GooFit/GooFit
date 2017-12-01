@@ -1,9 +1,9 @@
 [![Build Status][travis-badge]][travis-link]
 [![Code Coverage][codecov-badge]][codecov-link]
-[![PyPI Status][pypi-status]][pypi-link]
 [![Join the chat at https://gitter.im/GooFit/Lobby][gitter-badge]][gitter-link]
 [![License: LGPL v3][license-badge]](./LICENSE)
 [![Latest release][releases-badge]][releases-link]
+[![PyPI Status][pypi-status]][pypi-link]
 [![DOI][DOI-badge]][DOI-link]
 
 ![GooFit logo](./docs/GooFitLogo.png)

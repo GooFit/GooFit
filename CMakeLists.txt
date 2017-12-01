@@ -6,8 +6,8 @@ project(GOOFIT
 
 #set(GOOFIT_TAG "dev")
 #set(GOOFIT_TAG "alpha")
-set(GOOFIT_TAG "beta")
-#set(GOOFIT_TAG "release")
+#set(GOOFIT_TAG "beta")
+set(GOOFIT_TAG "release")
 
 ### Require out-of-source builds
 file(TO_CMAKE_PATH "${PROJECT_BINARY_DIR}/CMakeLists.txt" LOC_PATH)

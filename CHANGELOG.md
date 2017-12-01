@@ -1,5 +1,5 @@
-## v2.1.0: Python
-#### (in development)
+## v2.1.0: Python bindings
+#### December 1, 2017
 
 
 GooFit now has working, fully supported Python bindings using PyBind11. All PDFs have been bound ([#92]). Python bindings now build by default if Python development files are found ([#93]). Pythonization additions, such as supporting the same shortcuts for Variables as C++, from/to numpy converters, and more, was added in ([#99], [#109]). Pip install is now supported using SciKit-Build, and source releases are being made on PyPI ([#107]). The build will use CUDA if found, and OpenMP otherwise.
@@ -8,7 +8,7 @@ Many examples converted ([#118], [#120], [#126])
 
 Other Python additions:
 * Live printout in Python Notebooks ([#114])
-* Minuit2 wrapper started ([#115])
+* Minuit2 wrapper started ([#115], [#128])
 * `print_goofit_info` (and `print_splash`) added to Python  ([#126])
 * `pyexamples/RunAll.sh` added to run all examples, run by Travis ([#126])
 
@@ -41,7 +41,7 @@ Other changes include:
 * The include order is now checked by the clang-format run ([#126])
 * The ModernizeGooFit script supports 2.1 and more ([#126])
 * `.cpp` is used everywhere, instead of `.cc` and `.cpp` mix
-* CLI11 has been updated to 1.3
+* CLI11 has been updated to 1.3 ([#130])
 
 [#92]: https://github.com/GooFit/GooFit/pull/92
 [#93]: https://github.com/GooFit/GooFit/pull/93
@@ -61,6 +61,8 @@ Other changes include:
 [#123]: https://github.com/GooFit/GooFit/pull/123
 [#124]: https://github.com/GooFit/GooFit/pull/124
 [#126]: https://github.com/GooFit/GooFit/pull/126
+[#128]: https://github.com/GooFit/GooFit/pull/128
+[#130]: https://github.com/GooFit/GooFit/pull/130
 
 
 ## v2.0.0: C++11 and CMake

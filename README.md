@@ -3,6 +3,7 @@
 [![PyPI Status][pypi-status]][pypi-link]
 [![Join the chat at https://gitter.im/GooFit/Lobby][gitter-badge]][gitter-link]
 [![License: LGPL v3][license-badge]](./LICENSE)
+[![Latest release][releases-badge]][releases-link]
 [![DOI][DOI-badge]][DOI-link]
 
 ![GooFit logo](./docs/GooFitLogo.png)
@@ -275,3 +276,5 @@ In addition, we thank the nVidia GPU Grant Program for donating hardware used in
 [Tutorials]:         https://goofit.gitlab.io/Goo2Torial
 [pypi-status]:       https://img.shields.io/pypi/v/goofit.svg
 [pypi-link]:         https://pypi.python.org/pypi/goofit/
+[releases-badge]:    https://img.shields.io/github/release/GooFit/GooFit.svg 
+[releases-link]:     https://github.com/GooFit/GooFit/releases

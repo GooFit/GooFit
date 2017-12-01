@@ -1,3 +1,24 @@
+# Function to make adding a pybind_module easy and language agnostic
+function(process_pybind_module LNAME)
+    target_link_libraries(${LNAME} PUBLIC pybind11::module)
+
+    set_target_properties(${LNAME} PROPERTIES PREFIX "${PYTHON_MODULE_PREFIX}"
+                                             SUFFIX "${PYTHON_MODULE_EXTENSION}")
+
+    set_target_properties(${LNAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/goofit)
+    set_target_properties(${LNAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG ${PROJECT_BINARY_DIR}/goofit)
+    set_target_properties(${LNAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE ${PROJECT_BINARY_DIR}/goofit)
+    set_target_properties(${LNAME} PROPERTIES FOLDER python)
+
+    install(TARGETS ${LNAME} LIBRARY DESTINATION goofit)
+endfunction()
+
+# Adding the Landau helper
+
+add_library(landau MODULE extras/landau.cpp)
+process_pybind_module(landau)
+target_include_directories(landau PUBLIC ../include)
+
 goofit_add_library(_goofit MODULE
     goofit.cpp
     Minuit2/FunctionMinimum.cpp
@@ -52,31 +73,24 @@ goofit_add_library(_goofit MODULE
     PDFs/utility/VariableBinTransform1DPdf.cu
     goofit/FitManager.cpp)
 
-target_link_libraries(_goofit PUBLIC pybind11::module)
+process_pybind_module(_goofit)
+target_link_libraries(_goofit PUBLIC GooFit::GooFit)
 
-set_target_properties(_goofit PROPERTIES PREFIX "${PYTHON_MODULE_PREFIX}"
-                                         SUFFIX "${PYTHON_MODULE_EXTENSION}")
+# Only need to add CUDA incdir if built with FindCUDA
 
-# Only need to add CUDA incdir if build with CUDA
-# (Issue with pre-CMake 3.8 design)
-if(GOOFIT_DEVICE STREQUAL CUDA)
+if(GOOFIT_DEVICE STREQUAL CUDA AND NOT NEW_CUDA)
     target_include_directories(_goofit PUBLIC ${CUDA_INCLUDE_DIRS})
 endif()
 
-target_link_libraries(_goofit PUBLIC GooFit::GooFit)
-set_target_properties(_goofit PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/goofit)
-set_target_properties(_goofit PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG ${PROJECT_BINARY_DIR}/goofit)
-set_target_properties(_goofit PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE ${PROJECT_BINARY_DIR}/goofit)
-set_target_properties(_goofit PROPERTIES FOLDER python)
-
-install(TARGETS _goofit LIBRARY DESTINATION goofit)
-
+# Create files in the python directory
 
 file(WRITE "${CMAKE_BINARY_DIR}/goofit/__init__.py" "from ._goofit import *")
 install(FILES "${CMAKE_BINARY_DIR}/goofit/__init__.py" DESTINATION "goofit")
 
 file(WRITE "${CMAKE_BINARY_DIR}/goofit/__main__.py" "from ._goofit import print_goofit_info; print_goofit_info()")
 install(FILES "${CMAKE_BINARY_DIR}/goofit/__main__.py" DESTINATION "goofit")
+
+# Adding links to files for simplicity of running
 
 add_custom_target(pygoofit_tests ALL
     COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/tests ${PROJECT_BINARY_DIR}/pytests)
@@ -86,6 +100,7 @@ add_custom_target(pygoofit_examples ALL
 set_target_properties(pygoofit_examples PROPERTIES FOLDER python)
 
 if(NOT SKBUILD)
+    # Add a message about the PYTHON_PATH
     add_custom_command(TARGET _goofit POST_BUILD
                        COMMAND ${CMAKE_COMMAND} -E cmake_echo_color --cyan
                        "Python bindings built, use: export PYTHONPATH=${PROJECT_BINARY_DIR}")

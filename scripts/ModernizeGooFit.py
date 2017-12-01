@@ -26,7 +26,7 @@ conversion['2.0'] = [
     ('["<]FitManager.hh?[">]', '<goofit/FitManager.h>'),
     ('["<]FitManagerMinuit1.hh?[">]', '<goofit/fitting/FitManagerMinuit1.h>'),
     ('["<]FitManagerMinuit2.hh?[">]', '<goofit/fitting/FitManagerMinuit2.h>'),
-    ('#include ["<]FitManagerMinuit3.hh?[">]', r'// Fit Manager 3 removed'),
+    ('#include\ ["<]FitManagerMinuit3.hh?[">]', r'// Fit Manager 3 removed'),
     ('["<]FunctorWriter.hh?[">]', '<goofit/FunctorWriter.h>'),
     ('["<]GlobalCudaDefines.hh?[">]', '<goofit/GlobalCudaDefines.h>'),
     ('["<]PdfBase.hh?[">]', '<goofit/PdfBase.h>'),
@@ -160,6 +160,36 @@ conversion['2.1'] = [
     (r'Variable\s*\*\s*(\w+)\s*=\s*new\s+Variable', r'Variable \1'),
     (r'new\s+Variable', r'Variable'),
     (r'Variable(\s*)\*', r'Variable\1'),
+    (r'ResonancePDF\((.*?)$', r'Resonances::RBW(\1 // Could also be LASS, GS, FLATTE, Gauss, NonRes'),
+    (r'LS::BW', r'LS::RBW'),
+    (r'LS::ONE', r'LS::One'),
+    (r'LS::nonRes', r'LS::NonRes'),
+    (r'LS::Lass', r'LS::LASS'),
+    (r'LS::Lass_M3', r'LS::GLASS'), # No change to Bugg, Bugg3, Flatte, SBW
+    (r'''Variable\s+\w+\s*\(
+        ([^,^)]+),
+        ([^,^)]+),
+        ([^,^)]+)
+        \)''', r'Observable(\1,\2,\3)'),
+    (r'''Lineshape\s*\(
+        ([^,]+),
+        ([^,^)]+),
+        ([^,^)]+),
+        ([^,^)]+),
+        ([^,^)]+),
+        \s*LS::(\w+)\s*,
+        ([^)]+)     \)
+    ''', r'Lineshapes::\6(\1,\2,\3,\4,\5,\7)'),
+    (r'''Lineshape\s*\(
+        ([^,]+),
+        (\s*Variable\([^)]+\)),
+        (\s*Variable\([^)]+\)),
+        ([^,^)]+),
+        ([^,^)]+),
+        \s*LS::(\w+)\s*,
+        ([^)]+)     \)
+    ''', r'Lineshapes::\6(\1,\2,\3,\4,\5,\7)'),
+    (r'vector<Variable>\s*observable', r'vector<Observable> observable'), # Common pattern
 ]
 
 def fix_text(contents, version='2.0'):
@@ -196,7 +226,7 @@ def fix_text(contents, version='2.0'):
 
     for r in conversion[version]:
         after = r[1]
-        before = re.compile(r[0], re.MULTILINE)
+        before = re.compile(r[0], re.MULTILINE | re.VERBOSE)
         if before.search(contents):
             print('  Converting {0} -> {1}'.format(r[0], after))
             contents = before.sub(after,contents)
@@ -216,7 +246,7 @@ def fix_files(src, version):
 
 class ModernizeGooFit(cli.Application):
     set_version = cli.SwitchAttr(['-v','--version'], cli.Set(*conversion), default='2.0', help='The version to convert')
-    source = cli.Flag(['--source'], help="Run on the GooFit Source", mandatory=True)
+    source = cli.Flag(['--source'], help="Run on the GooFit Source")
 
     @cli.positional(cli.ExistingFile)
     def main(self, *src):

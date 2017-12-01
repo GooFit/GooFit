@@ -5,7 +5,7 @@ from __future__ import print_function, division
 
 from goofit import *
 import numpy as np
-import pylandau
+from goofit.landau import landau
 
 print_goofit_info()
 
@@ -108,7 +108,7 @@ def main():
 
 
     x = np.random.normal(20,1, size=numevents)
-    y_landau = pylandau.landau(x)
+    y_landau = landau(x)
     landdata.from_matrix(y_landau[np.newaxis,:])
 
 

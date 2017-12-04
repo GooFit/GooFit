@@ -11,11 +11,7 @@ using namespace GooFit;
 int main(int argc, char **argv) {
     GooFit::Application app("Product example", argc, argv);
 
-    try {
-        app.run();
-    } catch(const GooFit::ParseError &e) {
-        return app.exit(e);
-    }
+    GOOFIT_PARSE(app);
 
     Observable xvar{"xvar", 0, log(1 + RAND_MAX / 2)};
     Observable yvar{"yvar", 0, log(1 + RAND_MAX / 2)};

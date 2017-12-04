@@ -98,11 +98,7 @@ int main(int argc, char **argv) {
     size_t numevents = 100000;
     app.add_option("-n,--num", numevents, "Number of events", true);
 
-    try {
-        app.run();
-    } catch(const GooFit::ParseError &e) {
-        return app.exit(e);
-    }
+    GOOFIT_PARSE(app);
 
     gStyle->SetCanvasBorderMode(0);
     gStyle->SetCanvasColor(10);

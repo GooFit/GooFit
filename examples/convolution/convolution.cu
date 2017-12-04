@@ -24,11 +24,7 @@ double cpu_bw(double x, double x0, double gamma) {
 int main(int argc, char **argv) {
     GooFit::Application app("Convolution example", argc, argv);
 
-    try {
-        app.run();
-    } catch(const GooFit::ParseError &e) {
-        return app.exit(e);
-    }
+    GOOFIT_PARSE(app);
 
     // Independent variable.
     Observable xvar{"xvar", -10, 10};

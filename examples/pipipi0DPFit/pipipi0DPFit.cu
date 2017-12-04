@@ -5015,11 +5015,7 @@ int main(int argc, char **argv) {
     make_time_plots->add_option("-d,--data,data", data, "Data to use")->required()->check(GooFit::ExistingFile);
     make_time_plots->set_callback([&]() { makeTimePlots(data); });
 
-    try {
-        app.run();
-    } catch(const GooFit::ParseError &e) {
-        return app.exit(e);
-    }
+    GOOFIT_PARSE(app);
 
     return retval;
 }

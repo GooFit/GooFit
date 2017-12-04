@@ -95,11 +95,7 @@ Dataset descriptions:
     app.add_set("-d,--data,data", data, {0, 1, 2}, "Dataset: 0-simple, 1-kpi, 2-k3pi");
     app.add_flag("-p,--plot", plot, "Make and save plots of results");
 
-    try {
-        app.run();
-    } catch(const GooFit::ParseError &e) {
-        return app.exit(e);
-    }
+    GOOFIT_PARSE(app);
 
     // Style
     gStyle->SetCanvasBorderMode(0);

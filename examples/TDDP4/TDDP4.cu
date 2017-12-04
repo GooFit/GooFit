@@ -31,11 +31,7 @@ int main(int argc, char **argv) {
     int trials = 100;
     app.add_option("-t,--trials,output", trials, "Number of trials", true);
 
-    try {
-        app.run();
-    } catch(const GooFit::ParseError &e) {
-        return app.exit(e);
-    }
+    GOOFIT_PARSE(app);
 
     DecayInfo4t DK3P_DI{Variable("tau", 0.4101, 0.001, 0.300, 0.500),
                         Variable("xmixing", 0.005, 0.001, 0, 0),

@@ -1,5 +1,5 @@
 ## v2.1.0: Python bindings
-#### December 1, 2017
+#### December 4, 2017
 
 
 GooFit now has working, fully supported Python bindings using PyBind11. All PDFs have been bound ([#92]). Python bindings now build by default if Python development files are found ([#93]). Pythonization additions, such as supporting the same shortcuts for Variables as C++, from/to numpy converters, and more, was added in ([#99], [#109]). Pip install is now supported using SciKit-Build, and source releases are being made on PyPI ([#107]). The build will use CUDA if found, and OpenMP otherwise.
@@ -48,6 +48,7 @@ Other changes include:
 [#98]: https://github.com/GooFit/GooFit/pull/98
 [#99]: https://github.com/GooFit/GooFit/pull/99
 [#102]: https://github.com/GooFit/GooFit/pull/102
+[#104]: https://github.com/GooFit/GooFit/pull/104
 [#109]: https://github.com/GooFit/GooFit/pull/106
 [#107]: https://github.com/GooFit/GooFit/pull/107
 [#113]: https://github.com/GooFit/GooFit/pull/113

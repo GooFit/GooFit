@@ -34,15 +34,22 @@ class Lineshape : public GooPdf {
     friend class DPPdf;
     friend class TDDP4;
 
-    std::vector<unsigned int> pindices{0};
-
     /// Protected constructor, only for subclasses to use
-    Lineshape(std::string name);
+    Lineshape(std::string name, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius);
+
+    __host__ virtual void recursiveSetIndices();
+
+    unsigned int _L;
+    unsigned int _Mpair;
+    FF _FormFac;
+    fptype _radius;
 
   public:
     ~Lineshape() override = default;
 
-    bool operator==(const Lineshape &L) const { return (L.getName() == getName()); }
+    bool operator==(const Lineshape &L) const { return (L.getName() == getName() && L._L == _L && L._Mpair == _Mpair && L._FormFac == _FormFac); }
+
+    int lineShapeType;
 };
 
 namespace Lineshapes {
@@ -221,7 +228,7 @@ class GSpline : public Lineshape {
 };
 } // namespace Lineshapes
 
-class Amplitude {
+class Amplitude : public GooPdf {
     friend class DPPdf;
     friend class TDDP4;
 
@@ -234,6 +241,11 @@ class Amplitude {
               unsigned int nPerm = 1);
 
     bool operator==(const Amplitude &A) const;
+
+    __host__ virtual void recursiveSetIndices();
+
+    std::vector<SpinFactor *> getSpinFactors() { return _SF; }
+    std::vector<Lineshape *> getLineShapes() { return _LS; }
 
   private:
     std::string _uniqueDecayStr;

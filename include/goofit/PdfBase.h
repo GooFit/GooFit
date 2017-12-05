@@ -119,7 +119,7 @@ class PdfBase {
 
     __host__ void checkInitStatus(std::vector<std::string> &unInited) const;
     __host__ void clearCurrentFit();
-    __host__ void SigGenSetIndices() { setIndices(); }
+    __host__ void SigGenSetIndices() { setupObservables(); setIndices(); }
 
     __host__ void updateVariable(Variable v, fptype newValue);
     __host__ void updateParameters();

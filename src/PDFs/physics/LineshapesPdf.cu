@@ -26,9 +26,10 @@ on the GPU
 #define NPOLES 5
 #define NCHANNELS 5
 
-#define mPiPlus 0.139570
+//TODO: These aren't the same as GooFit 2.0
+#define mPiPlus 0.13957018
 #define mKPlus 0.493677
-#define mEta 0.547862
+#define mEta 0.54751
 #define mEtap 0.96778
 
 namespace GooFit {
@@ -85,11 +86,11 @@ __device__ fpcomplex LS_ONE(fptype Mpair, fptype m1, fptype m2, ParameterContain
 
 // This function is modeled after BW_BW::getVal() in BW_BW.cpp from the MINT package written by Jonas Rademacker.
 __device__ fpcomplex BW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
-    fptype resmass       = pc.parameters[pc.parameterIdx + 1];
-    fptype reswidth      = pc.parameters[pc.parameterIdx + 2];
-    fptype meson_radius  = pc.constants[pc.constantIdx + 1];
-    unsigned int orbital = pc.constants[pc.constantIdx + 2];
-    unsigned int FF      = pc.constants[pc.constantIdx + 3];
+    fptype resmass       = pc.getParameter(0);
+    fptype reswidth      = pc.getParameter(1);
+    fptype meson_radius  = pc.getConstant(0);
+    unsigned int orbital = pc.getConstant(1);
+    unsigned int FF      = pc.getConstant(3);
 
     const unsigned int to2Lplus1 = 2 * orbital + 1;
 
@@ -147,12 +148,11 @@ __device__ fpcomplex BW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &
 
 // This function is modeled after SBW from the MINT package written by Jonas Rademacker.
 __device__ fpcomplex SBW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
-    fptype resmass       = pc.parameters[pc.parameterIdx + 1];
-    fptype reswidth      = pc.parameters[pc.parameterIdx + 2];
-    unsigned int orbital = pc.constants[pc.constantIdx + 1];
-    // GOOFIT_GET_INT(5, Mpair, "Mpair");
-    unsigned int FF     = pc.constants[pc.constantIdx + 2];
-    fptype meson_radius = pc.constants[pc.constantIdx + 3];
+    fptype resmass       = pc.getParameter(0);
+    fptype reswidth      = pc.getParameter(1);
+    fptype meson_radius  = pc.getConstant(0);
+    unsigned int orbital = pc.getConstant(1);
+    unsigned int FF      = pc.getConstant(3);
 
     // fptype meson_radius  = functorConstants[indices[7]];
     // fptype resmass       = cudaArray[indices[2]];
@@ -319,8 +319,8 @@ __device__ fpcomplex bugg_MINT3(fptype Mpair, fptype m1, fptype m2, ParameterCon
 }
 
 __device__ fpcomplex lass_MINT(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
-    fptype resmass  = pc.parameters[pc.parameterIdx + 1];
-    fptype reswidth = pc.parameters[pc.parameterIdx + 2];
+    fptype resmass  = pc.getParameter(0);
+    fptype reswidth = pc.getParameter(1);
     fptype rMass2   = Mpair * Mpair;
 
     fptype a = 2.07;
@@ -345,7 +345,7 @@ __device__ fpcomplex lass_MINT(fptype Mpair, fptype m1, fptype m2, ParameterCont
     fpcomplex BG        = SF / den;
     fpcomplex returnVal = BG + phaseshift * BW(Mpair, m1, m2, pc);
 
-    pc.incrementIndex(1, 2, 0, 0, 1);
+    pc.incrementIndex(1, 2, 3, 0, 1);
     // printf("Lass: %.5g %.5g %.5g %.5g %.5g %.5g\n",BG.real, BG.imag, phaseshift.real, phaseshift.imag,
     // returnVal.real, returnVal.imag);
 
@@ -356,10 +356,10 @@ __device__ fpcomplex lass_MINT(fptype Mpair, fptype m1, fptype m2, ParameterCont
 // lass as implemented in Mint3.
 // The difference between this and lass mint is not quite clear to me. need to get back to this later.
 __device__ fpcomplex glass_MINT3(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
-    fptype meson_radius  = pc.constants[pc.constantIdx + 1];
-    fptype resmass       = pc.parameters[pc.parameterIdx + 1];
-    fptype reswidth      = pc.parameters[pc.parameterIdx + 2];
-    unsigned int orbital = pc.constants[pc.constantIdx + 2];
+    fptype meson_radius  = pc.getConstant(0);
+    unsigned int orbital = pc.getConstant(1);
+    fptype resmass       = pc.getParameter(0);
+    fptype reswidth      = pc.getParameter(1);
     fptype rMass2        = Mpair * Mpair;
 
     // fptype a = 2.07;
@@ -367,11 +367,11 @@ __device__ fpcomplex glass_MINT3(fptype Mpair, fptype m1, fptype m2, ParameterCo
     // fptype phiF = 0.0;
     // fptype phiR = 0.0;
     // fptype F = 1.0;
-    fptype a    = pc.parameters[pc.parameterIdx + 3];
-    fptype r    = pc.parameters[pc.parameterIdx + 4];
-    fptype phiF = pc.parameters[pc.parameterIdx + 5];
-    fptype phiR = pc.parameters[pc.parameterIdx + 6];
-    fptype F    = pc.parameters[pc.parameterIdx + 7];
+    fptype a    = pc.getParameter(2);
+    fptype r    = pc.getParameter(3);
+    fptype phiF = pc.getParameter(4);
+    fptype phiR = pc.getParameter(5);
+    fptype F    = pc.getParameter(6);
 
     fptype R = 1.0;
     // printf("GLass: %.5g %.5g %.5g %.5g %.5g %.5g\n",a, r, phiF, phiR, F, R);
@@ -407,7 +407,7 @@ __device__ fpcomplex glass_MINT3(fptype Mpair, fptype m1, fptype m2, ParameterCo
            + R * sin(resphase) * fpcomplex(cos(resphase + 2 * scattphase), sin(resphase + 2 * scattphase)))
           * rho;
 
-    pc.incrementIndex(1, 7, 2, 0, 1);
+    pc.incrementIndex(1, 7, 3, 0, 1);
     // printf("GLass3: %.5g %.5g %.5g %.5g %.5g %.5g\n",rMass2, pABSq, rho, GofM, scattphase, resphase);
 
     // printf("GLass4: %.5g %.5g\n",returnVal.real, returnVal.imag);
@@ -421,9 +421,9 @@ __device__ fpcomplex aSqrtTerm(const fptype &m0, const fptype &m) {
 }
 
 __device__ fpcomplex Flatte_MINT(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
-    fptype meson_radius  = pc.constants[pc.constantIdx + 1];
-    fptype resmass       = pc.parameters[pc.parameterIdx + 1];
-    unsigned int orbital = pc.constants[pc.constantIdx + 2];
+    fptype meson_radius  = pc.getConstant(0);
+    unsigned int orbital = pc.getConstant(1);
+    fptype resmass       = pc.getParameter(0);
     fptype frFactor      = 1;
     fptype rMass2        = Mpair * Mpair;
 
@@ -449,7 +449,7 @@ __device__ fpcomplex Flatte_MINT(fptype Mpair, fptype m1, fptype m2, ParameterCo
 
     frFactor     = BL2(pABSq * meson_radius * meson_radius, orbital);
     fpcomplex BW = sqrt(frFactor) / fpcomplex(resmass * resmass - rMass2, 0) - fpcomplex(0, 1) * resmass * FlatteWidth;
-    pc.incrementIndex(1, 1, 2, 0, 1);
+    pc.incrementIndex(1, 2, 3, 0, 1);
     return BW;
 }
 
@@ -471,26 +471,26 @@ __device__ __thrust_forceinline__ fptype BlattWeisskopf_Norm(const fptype z2, co
 }
 
 __device__ fptype getSpline(fptype x, bool continued, ParameterContainer &pc) {
-    const fptype s_min       = pc.constants[pc.constantIdx + 1];
-    const fptype s_max       = pc.constants[pc.constantIdx + 2];
-    const unsigned int nBins = pc.constants[pc.constantIdx + 3];
+    const fptype s_min       = pc.getConstant(0);
+    const fptype s_max       = pc.getConstant(1);
+    const unsigned int nBins = pc.getConstant(2);
 
     // 11 is the first spine knot, 11+nBins is the first curvature
 
     if(x <= s_min)
-        return continued ? pc.constants[pc.constantIdx + 11 + 0] : 0;
+        return continued ? pc.getConstant(10 + 0) : 0;
     if(x >= s_max)
-        return continued ? pc.constants[pc.constantIdx + 11 + nBins - 1] : 0;
+        return continued ? pc.getConstant(10 + nBins - 1) : 0;
 
     fptype spacing = (s_max - s_min) / (nBins - 1.);
     fptype dx      = fmod((x - s_min), spacing);
 
     auto bin = static_cast<unsigned int>((x - s_min) / spacing);
 
-    fptype m_x_0  = pc.constants[pc.constantIdx + 11 + bin];
-    fptype m_x_1  = pc.constants[pc.constantIdx + 11 + bin + 1];
-    fptype m_xf_0 = pc.constants[pc.constantIdx + 11 + bin + nBins];
-    fptype m_xf_1 = pc.constants[pc.constantIdx + 11 + bin + nBins + 1];
+    fptype m_x_0  = pc.getConstant(10 + bin);
+    fptype m_x_1  = pc.getConstant(10 + bin + 1);
+    fptype m_xf_0 = pc.getConstant(10 + bin + nBins);
+    fptype m_xf_1 = pc.getConstant(10 + bin + nBins + 1);
 
     // TODO: try to calculate this.
     pc.incrementIndex();
@@ -506,10 +506,10 @@ __device__ fptype kFactor(fptype mass, fptype width) {
 }
 
 __device__ fpcomplex Spline_TDP(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
-    const fptype mass  = pc.parameters[pc.parameterIdx + 1];
-    const fptype width = pc.parameters[pc.parameterIdx + 2];
+    const fptype mass  = pc.getParameter(0);
+    const fptype width = pc.getParameter(1);
     // const unsigned int L = GOOFIT_GET_INT(4);
-    const fptype radius = pc.constants[pc.constantIdx + 1];
+    const fptype radius = pc.getConstant(0);
 
     fptype s  = POW2(Mpair);
     fptype s1 = POW2(m1);
@@ -523,8 +523,6 @@ __device__ fpcomplex Spline_TDP(fptype Mpair, fptype m1, fptype m2, ParameterCon
     // fptype BF             = sqrt( BlattWeisskopf_Norm(q2 * POW2(radius), 0, L));
     fptype BF = exp(-q2 * POW2(radius) / 2);
 
-    pc.incrementIndex(1, 2, 1, 0, 1);
-
     fptype width_shape = width * getSpline(s, true, pc);
     fptype width_norm  = width * getSpline(POW2(mass), false, pc);
 
@@ -532,12 +530,14 @@ __device__ fpcomplex Spline_TDP(fptype Mpair, fptype m1, fptype m2, ParameterCon
     fptype running_width = width * width_shape / width_norm;
     fpcomplex iBW        = fpcomplex(POW2(mass) - s, -mass * running_width);
 
+    pc.incrementIndex(1, 2, 3, 0, 1);
+
     return norm / iBW;
 }
 
 __device__ fpcomplex nonres_DP(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
-    fptype meson_radius  = pc.constants[pc.constantIdx + 1];
-    unsigned int orbital = pc.constants[pc.constantIdx + 2];
+    fptype meson_radius  = pc.getConstant(0);
+    unsigned int orbital = pc.getConstant(1);
 
     fptype mumsRecoMass2 = Mpair * Mpair;
 
@@ -547,7 +547,7 @@ __device__ fpcomplex nonres_DP(fptype Mpair, fptype m1, fptype m2, ParameterCont
     fptype pABSq      = num / (4 * mumsRecoMass2);
     fptype formfactor = sqrt(BL2(pABSq * meson_radius * meson_radius, orbital));
 
-    pc.incrementIndex(1, 0, 2, 0, 1);
+    pc.incrementIndex(1, 2, 3, 0, 1);
     // printf("NonRes q2:%.7g FF:%.7g, s %.7g m1 %.7g m2 %.7g r %.7g L %u \n",pABSq, formfactor, mumsRecoMass2,
     // m1,m2,meson_radius, orbital );
     return fpcomplex(1., 0.) * formfactor;
@@ -615,13 +615,13 @@ __device__ fpcomplex kMatrixFunction(fptype Mpair, fptype m1, fptype m2, Paramet
 
     // const fptype pTerm = GOOFIT_GET_INT();
 
-    unsigned int pterm = pc.constants[pc.constantIdx + 1];
-    bool is_pole       = pc.constants[pc.constantIdx + 2] == 1;
+    unsigned int pterm = pc.getConstant(0);
+    bool is_pole       = pc.getConstant(1) == 1;
 
-    fptype sA0      = pc.constants[pc.constantIdx + 3];
-    fptype sA       = pc.constants[pc.constantIdx + 4];
-    fptype s0_prod  = pc.constants[pc.constantIdx + 5];
-    fptype s0_scatt = pc.constants[pc.constantIdx + 6];
+    fptype sA0      = pc.getConstant(2);
+    fptype sA       = pc.getConstant(3);
+    fptype s0_prod  = pc.getConstant(4);
+    fptype s0_scatt = pc.getConstant(5);
 
     Eigen::Array<fptype, NCHANNELS, 1> fscat;
     Eigen::Array<fptype, NPOLES, 1> pmasses;
@@ -633,8 +633,8 @@ __device__ fpcomplex kMatrixFunction(fptype Mpair, fptype m1, fptype m2, Paramet
 
     for(int i = 0; i < NPOLES; i++) {
         for(int j = 0; j < NPOLES; j++)
-            couplings(i, j) = pc.constants[pc.constantIdx + 14 + NCHANNELS + i * (NPOLES + 1) + j];
-        pmasses(i) = pc.constants[pc.constantIdx + 14 + NCHANNELS + i * (NPOLES + 1) + NPOLES];
+            couplings(i, j) = pc.getConstant(13 + NCHANNELS + i * (NPOLES + 1) + j);
+        pmasses(i) = pc.getConstant(pc.constantIdx + 13 + NCHANNELS + i * (NPOLES + 1) + NPOLES);
     }
 
     fptype s = POW2(Mpair);
@@ -663,6 +663,9 @@ __device__ fpcomplex kMatrixFunction(fptype Mpair, fptype m1, fptype m2, Paramet
 
     Eigen::Array<fpcomplex, NCHANNELS, NCHANNELS> F = getPropagator(kMatrix, phaseSpace, adlerTerm);
 
+    // TODO: calculate out
+    pc.incrementIndex();
+
     if(is_pole) { // pole
         fpcomplex M = 0;
         for(int i = 0; i < NCHANNELS; i++) {
@@ -684,7 +687,7 @@ __device__ fptype phsp_FOCUS(fptype s, fptype m0, fptype m1) {
 
 __device__ fpcomplex FOCUSFunction(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
     fptype s         = POW2(Mpair);
-    unsigned int mod = pc.constants[pc.constantIdx + 1];
+    unsigned int mod = pc.getConstant(0);
 
     // mKPlus, mPiPlus, mEtap
     constexpr fptype sNorm = mKPlus * mKPlus + mPiPlus * mPiPlus;
@@ -725,6 +728,8 @@ __device__ fpcomplex FOCUSFunction(fptype Mpair, fptype m1, fptype m2, Parameter
 
     fpcomplex T32 = 1. / fpcomplex(1, -K32 * rho1);
 
+    pc.incrementIndex(1, 2, 3, 0, 1);
+
     if(mod == static_cast<unsigned int>(Lineshapes::FOCUS::Mod::Kpi))
         return fpcomplex(K11, -rho2 * detK) / del;
     else if(mod == static_cast<unsigned int>(Lineshapes::FOCUS::Mod::KEta))
@@ -749,12 +754,81 @@ __device__ resonance_function_ptr ptr_to_kMatrix    = kMatrixFunction;
 __device__ resonance_function_ptr ptr_to_FOCUS      = FOCUSFunction;
 
 // This constructor is protected
-Lineshape::Lineshape(std::string name)
-    : GooPdf(name) {
+Lineshape::Lineshape(std::string name, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
+    : GooPdf(name), _L(L), _Mpair(Mpair), _FormFac(FormFac), _radius(radius) {
     // Making room for index of decay-related constants. Assumption:
     // These are mother mass and three daughter masses in that order.
     // They will be registered by the object that uses this resonance,
     // which will tell this object where to find them by calling setConstantIndex.
+}
+
+void Lineshape::recursiveSetIndices() { 
+    switch(lineShapeType) {
+        case 1:
+            GET_FUNCTION_ADDR(LS_ONE);
+            GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_LS_ONE");
+            break;
+
+        case 2:
+            GET_FUNCTION_ADDR(BW);
+            GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_BW_DP4");
+            break;
+
+        case 3:
+            GET_FUNCTION_ADDR(lass_MINT);
+            GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_lass");
+            break;
+
+        case 4:
+            GET_FUNCTION_ADDR(glass_MINT3);
+            GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_glass3");
+            break;
+
+        case 5:
+            GET_FUNCTION_ADDR(bugg_MINT);
+            GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_bugg_MINT");
+            break;
+
+        case 6:
+            GET_FUNCTION_ADDR(bugg_MINT3);
+            GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_bugg_MINT3");
+            break;
+
+        case 7:
+            GET_FUNCTION_ADDR(SBW);
+            GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_SBW");
+            break;
+
+        case 8:
+            GET_FUNCTION_ADDR(nonres_DP);
+            GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_NONRES_DP");
+            break;
+
+        case 9:
+            GET_FUNCTION_ADDR(Flatte_MINT);
+            GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Flatte");
+            break;
+
+        case 10:
+            GET_FUNCTION_ADDR(Spline_TDP);
+            GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Spline");
+            break;
+
+        case 11:
+            GET_FUNCTION_ADDR(kMatrixFunction);
+            GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_kMatrix");
+            break;
+
+        case 12:
+            GET_FUNCTION_ADDR(FOCUSFunction);
+            GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_FOCUS");
+            break;
+    }
+
+    host_function_table[num_device_functions] = host_fcn_ptr;
+    functionIdx                               = num_device_functions++;
+
+    populateArrays();
 }
 
 std::vector<fptype> make_spline_curvatures(std::vector<Variable> vars, Lineshapes::spline_t SplineInfo) {
@@ -792,21 +866,23 @@ Lineshapes::GSpline::GSpline(std::string name,
                              fptype radius,
                              std::vector<Variable> AdditionalVars,
                              spline_t SplineInfo)
-    : Lineshape(name) {
+    : Lineshape(name, L, Mpair, FormFac, radius) {
     registerParameter(mass);
     registerParameter(width);
 
-    constantsList.push_back(radius);
-    constantsList.push_back(L);
-    constantsList.push_back(Mpair);
+    registerConstant(radius);
+    registerConstant(L);
+    registerConstant(Mpair);
 
-    constantsList.push_back(enum_to_underlying(FormFac));
+    registerConstant(enum_to_underlying(FormFac));
+
+    lineShapeType = 10;
 
     if(std::get<2>(SplineInfo) != AdditionalVars.size())
         throw GeneralError("bins {} != vars {}", std::get<2>(SplineInfo), AdditionalVars.size());
-    constantsList.push_back(std::get<0>(SplineInfo));
-    constantsList.push_back(std::get<1>(SplineInfo));
-    constantsList.push_back(std::get<2>(SplineInfo));
+    registerConstant(std::get<0>(SplineInfo));
+    registerConstant(std::get<1>(SplineInfo));
+    registerConstant(std::get<2>(SplineInfo));
 
     int i = 11;
     for(auto &par : AdditionalVars) {
@@ -817,12 +893,10 @@ Lineshapes::GSpline::GSpline(std::string name,
 
     for(auto &par : SplineCTerms) {
         // Calc curve
-        constantsList.push_back(par);
+        registerConstant(par);
     }
 
-    GET_FUNCTION_ADDR(ptr_to_Spline);
-
-    GOOFIT_FINALIZE_PDF;
+    initialize();
 }
 
 Lineshapes::GLASS::GLASS(std::string name,
@@ -833,70 +907,70 @@ Lineshapes::GLASS::GLASS(std::string name,
                          FF FormFac,
                          fptype radius,
                          std::vector<Variable> AdditionalVars)
-    : Lineshape(name) {
+    : Lineshape(name, L, Mpair, FormFac, radius) {
     if(5 != AdditionalVars.size()) {
         throw GeneralError("It seems you forgot to provide the vector with the five necessary variables for GLASS, a, "
                            "r, phiF, phiR and F (in that order)");
     }
 
-    GOOFIT_ADD_PARAM(2, mass, "mass");
-    GOOFIT_ADD_PARAM(3, width, "width");
+    registerParameter(mass);
+    registerParameter(width);
 
-    GOOFIT_ADD_INT(4, L, "L");
-    GOOFIT_ADD_INT(5, Mpair, "Mpair");
+    registerConstant(radius);
 
-    GOOFIT_ADD_INT(6, enum_to_underlying(FormFac), "FormFac");
+    registerConstant(L);
+    registerConstant(Mpair);
 
-    GOOFIT_ADD_CONST(7, radius, "radius");
+    registerConstant(enum_to_underlying(FormFac));
+
+    lineShapeType = 4;
 
     for(int i = 0; i < 5; i++) {
         registerParameter(AdditionalVars[i]);
     }
 
-    GET_FUNCTION_ADDR(ptr_to_glass3);
-
-    GOOFIT_FINALIZE_PDF;
+    initialize();
 }
 
 Lineshapes::One::One(
     std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
-    : Lineshape(name) {
+    : Lineshape(name, L, Mpair, FormFac, radius) {
     registerParameter(mass);
     registerParameter(width);
 
-    constantsList.push_back(radius);
+    registerConstant(radius);
 
-    constantsList.push_back(L);
-    constantsList.push_back(Mpair);
+    registerConstant(L);
+    registerConstant(Mpair);
 
-    constantsList.push_back(enum_to_underlying(FormFac));
+    registerConstant(enum_to_underlying(FormFac));
 
-    GET_FUNCTION_ADDR(ptr_to_LS_ONE);
+    lineShapeType = 1;
 
-    GOOFIT_FINALIZE_PDF;
+    initialize();
 }
 
 Lineshapes::RBW::RBW(
     std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
-    : Lineshape(name) {
+    : Lineshape(name, L, Mpair, FormFac, radius) {
     registerParameter(mass);
     registerParameter(width);
 
-    constantsList.push_back(radius);
+    registerConstant(radius);
 
-    constantsList.push_back(L);
-    constantsList.push_back(Mpair);
+    registerConstant(L);
+    registerConstant(Mpair);
 
-    constantsList.push_back(enum_to_underlying(FormFac));
+    registerConstant(enum_to_underlying(FormFac));
 
-    GET_FUNCTION_ADDR(ptr_to_BW_DP4);
+    lineShapeType = 2;
 
-    GOOFIT_FINALIZE_PDF;
+    initialize();
 }
 
 Lineshapes::LASS::LASS(
     std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
-    : Lineshape(name) {
+    : Lineshape(name, L, Mpair, FormFac, radius) {
     registerParameter(mass);
     registerParameter(width);
 
@@ -907,101 +981,99 @@ Lineshapes::LASS::LASS(
 
     constantsList.push_back(enum_to_underlying(FormFac));
 
-    GET_FUNCTION_ADDR(ptr_to_BW_DP4);
+    lineShapeType = 3;
 
-    GOOFIT_FINALIZE_PDF;
+    initialize();
 }
 
 Lineshapes::NonRes::NonRes(
     std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
-    : Lineshape(name) {
+    : Lineshape(name, L, Mpair, FormFac, radius) {
     registerParameter(mass);
     registerParameter(width);
 
-    constantsList.push_back(radius);
+    registerConstant(radius);
 
-    constantsList.push_back(L);
-    constantsList.push_back(Mpair);
+    registerConstant(L);
+    registerConstant(Mpair);
 
-    constantsList.push_back(enum_to_underlying(FormFac));
+    registerConstant(enum_to_underlying(FormFac));
 
-    constantsList.push_back(radius);
+    lineShapeType = 8;
 
-    GET_FUNCTION_ADDR(ptr_to_NONRES_DP);
-
-    GOOFIT_FINALIZE_PDF;
+    initialize();
 }
 
 Lineshapes::Bugg::Bugg(
     std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
-    : Lineshape(name) {
+    : Lineshape(name, L, Mpair, FormFac, radius) {
     registerParameter(mass);
     registerParameter(width);
 
-    constantsList.push_back(radius);
+    registerConstant(radius);
 
-    constantsList.push_back(L);
-    constantsList.push_back(Mpair);
+    registerConstant(L);
+    registerConstant(Mpair);
 
-    constantsList.push_back(enum_to_underlying(FormFac));
+    registerConstant(enum_to_underlying(FormFac));
 
-    GET_FUNCTION_ADDR(ptr_to_bugg_MINT);
+    lineShapeType = 5;
 
-    GOOFIT_FINALIZE_PDF;
+    initialize();
 }
 
 Lineshapes::Bugg3::Bugg3(
     std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
-    : Lineshape(name) {
+    : Lineshape(name, L, Mpair, FormFac, radius) {
     registerParameter(mass);
     registerParameter(width);
 
-    constantsList.push_back(radius);
+    registerConstant(radius);
 
-    constantsList.push_back(L);
-    constantsList.push_back(Mpair);
+    registerConstant(L);
+    registerConstant(Mpair);
 
-    constantsList.push_back(enum_to_underlying(FormFac));
+    registerConstant(enum_to_underlying(FormFac));
 
-    GET_FUNCTION_ADDR(ptr_to_bugg_MINT3);
+    lineShapeType = 6;
 
-    GOOFIT_FINALIZE_PDF;
+    initialize();
 }
 
 Lineshapes::Flatte::Flatte(
     std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
-    : Lineshape(name) {
+    : Lineshape(name, L, Mpair, FormFac, radius) {
     registerParameter(mass);
     registerParameter(width);
 
-    constantsList.push_back(radius);
+    registerConstant(radius);
 
-    constantsList.push_back(L);
-    constantsList.push_back(Mpair);
+    registerConstant(L);
+    registerConstant(Mpair);
 
-    constantsList.push_back(enum_to_underlying(FormFac));
+    registerConstant(enum_to_underlying(FormFac));
 
-    GET_FUNCTION_ADDR(ptr_to_Flatte);
+    lineShapeType = 9;
 
-    GOOFIT_FINALIZE_PDF;
+    initialize();
 }
 
 Lineshapes::SBW::SBW(
     std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
-    : Lineshape(name) {
+    : Lineshape(name, L, Mpair, FormFac, radius) {
     registerParameter(mass);
     registerParameter(width);
 
-    constantsList.push_back(radius);
+    registerConstant(radius);
 
-    constantsList.push_back(L);
-    constantsList.push_back(Mpair);
+    registerConstant(L);
+    registerConstant(Mpair);
 
-    constantsList.push_back(enum_to_underlying(FormFac));
+    registerConstant(enum_to_underlying(FormFac));
 
-    GET_FUNCTION_ADDR(ptr_to_SBW);
+    lineShapeType = 7;
 
-    GOOFIT_FINALIZE_PDF;
+    initialize();
 }
 
 Lineshapes::FOCUS::FOCUS(std::string name,
@@ -1012,22 +1084,22 @@ Lineshapes::FOCUS::FOCUS(std::string name,
                          unsigned int Mpair,
                          FF FormFac,
                          fptype radius)
-    : Lineshape(name) {
+    : Lineshape(name, L, Mpair, FormFac, radius) {
     registerParameter(mass);
     registerParameter(width);
 
-    constantsList.push_back(radius);
+    registerConstant(radius);
 
-    constantsList.push_back(L);
-    constantsList.push_back(Mpair);
+    registerConstant(L);
+    registerConstant(Mpair);
 
-    constantsList.push_back(enum_to_underlying(FormFac));
+    registerConstant(enum_to_underlying(FormFac));
 
-    constantsList.push_back(static_cast<unsigned int>(mod));
+    registerConstant(static_cast<unsigned int>(mod));
 
-    GET_FUNCTION_ADDR(ptr_to_FOCUS);
+    lineShapeType = 12;
 
-    GOOFIT_FINALIZE_PDF;
+    initialize();
 }
 
 Lineshapes::kMatrix::kMatrix(std::string name,
@@ -1045,19 +1117,19 @@ Lineshapes::kMatrix::kMatrix(std::string name,
                              unsigned int Mpair,
                              FF FormFac,
                              fptype radius)
-    : Lineshape(name) {
+    : Lineshape(name, L, Mpair, FormFac, radius) {
     registerParameter(mass);
     registerParameter(width);
 
-    constantsList.push_back(radius);
+    registerConstant(radius);
 
-    constantsList.push_back(L);
-    constantsList.push_back(Mpair);
+    registerConstant(L);
+    registerConstant(Mpair);
 
-    constantsList.push_back(enum_to_underlying(FormFac));
+    registerConstant(enum_to_underlying(FormFac));
 
-    constantsList.push_back(pterm);
-    constantsList.push_back(is_pole ? 1 : 0);
+    registerConstant(pterm);
+    registerConstant(is_pole ? 1 : 0);
 
     registerParameter(sA0);
     registerParameter(sA);
@@ -1072,9 +1144,9 @@ Lineshapes::kMatrix::kMatrix(std::string name,
         registerParameter(poles.at(i));
     }
 
-    GET_FUNCTION_ADDR(ptr_to_kMatrix);
+    lineShapeType = 11;
 
-    GOOFIT_FINALIZE_PDF;
+    initialize();
 }
 
 Amplitude::Amplitude(std::string uniqueDecayStr,
@@ -1082,13 +1154,35 @@ Amplitude::Amplitude(std::string uniqueDecayStr,
                      Variable ai,
                      std::vector<Lineshape *> LS,
                      std::vector<SpinFactor *> SF,
-                     unsigned int nPerm)
-    : _uniqueDecayStr(std::move(uniqueDecayStr))
+                     unsigned int nPerm) : GooPdf(uniqueDecayStr)
     , _ar(ar)
     , _ai(ai)
     , _SF(std::move(SF))
     , _LS(std::move(LS))
-    , _nPerm(nPerm) {}
+    , _nPerm(nPerm) {
+
+    //registerParameter(ar);
+    //registerParameter(ai);
+
+    //registerConstant(_LS.size());
+    //registerConstant(_SF.size());
+
+    for (auto &lineshape : _LS)
+        components.push_back(lineshape);
+
+    for (auto &spinfactor : _SF)
+        components.push_back(spinfactor);
+
+    initialize();
+
+}
+
+void Amplitude::recursiveSetIndices() {
+
+    //There isn't a device function, should there be one?
+    for (auto &component : components)
+        component->recursiveSetIndices();
+}
 
 bool Amplitude::operator==(const Amplitude &A) const {
     return _uniqueDecayStr == A._uniqueDecayStr and _ar == A._ar and _ai == A._ai and _LS == A._LS and _SF == A._SF

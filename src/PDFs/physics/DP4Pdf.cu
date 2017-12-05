@@ -33,6 +33,7 @@ namespace GooFit {
 // waves are recalculated when the corresponding resonance mass or width
 // changes. Note that in a multithread environment each thread needs its
 // own cache, hence the '10'. Ten threads should be enough for anyone!
+
 __device__ fpcomplex *cResSF[10];
 __device__ fpcomplex *Amps_DP[10];
 /*
@@ -53,8 +54,8 @@ __device__ fptype device_DP(fptype *evt, ParameterContainer &pc) {
     auto evtNum = static_cast<int>(floor(0.5 + evt[id_num]));
     // printf("%i\n",evtNum );
     fpcomplex totalAmp(0, 0);
-    unsigned int cacheToUse = pc.getConstant(0);
-    unsigned int numAmps    = pc.getConstant(3);
+    unsigned int cacheToUse = pc.getConstant(5);
+    unsigned int numAmps    = pc.getConstant(8);
 
     for(int i = 0; i < numAmps; ++i) {
         fpcomplex amp{pc.getParameter(2 * i), pc.getParameter(2 * i + 1)};
@@ -66,8 +67,15 @@ __device__ fptype device_DP(fptype *evt, ParameterContainer &pc) {
     }
 
     fptype ret = thrust::norm(totalAmp);
-    // we have increment through all our amps, so no need to find efficiency function
-    // int effFunctionIdx = 6 + 2 * indices[3] + 2 * indices[4] + 2 * indices[5];
+    
+    // TODO: we have increment through all our amps, so no need to find efficiency function
+
+    pc.incrementIndex(1, numAmps*2, 9, 6, 1);
+
+    //Skip our line shapes and spin factors...
+    for (int i = 0; i < numAmps*4 + numAmps*2; i++)
+        pc.incrementIndex();
+
     fptype eff = callFunction(evt, pc);
     ret *= eff;
 
@@ -93,122 +101,117 @@ __host__ DPPdf::DPPdf(
         registerConstant(particle_masse);
     }
 
-    // TODO: Are these the same as Dalitz?
-    // MEMCPY_TO_SYMBOL(c_motherMass, &decayConstants[1], sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    // MEMCPY_TO_SYMBOL(c_daug1Mass, &decayConstants[2], sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    // MEMCPY_TO_SYMBOL(c_daug2Mass, &decayConstants[3], sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    // MEMCPY_TO_SYMBOL(c_daug3Mass, &decayConstants[4], sizeof(fptype), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(c_meson_radius, &decayInfo.meson_radius, sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
     static int cacheCount = 0;
     cacheToUse            = cacheCount++;
 
     registerConstant(cacheToUse);
-    registerConstant(0); //#LS
-    registerConstant(0); //#SF
-    registerConstant(0); //#AMP
+    int lsidx  = registerConstant(0); //#LS
+    int sfidx  = registerConstant(0); //#SF
+    int ampidx = registerConstant(0); //#AMP
+
     // This is the start of reading in the amplitudes and adding the lineshapes and Spinfactors to this PDF
     // This is done in this way so we don't have multiple copies of one lineshape in one pdf.
-    std::vector<unsigned int> ampidx;
-    std::vector<unsigned int> nPermVec;
-    std::vector<unsigned int> ampidxstart;
-
     for(auto &amplitude : decayInfo.amplitudes) {
-        AmpMap[amplitude->_uniqueDecayStr] = std::make_pair(std::vector<unsigned int>(0), std::vector<unsigned int>(0));
+        components.push_back(amplitude);
+
+        //register the parameters from the amplitudes here
+        registerParameter(amplitude->_ar);
+        registerParameter(amplitude->_ai);
 
         auto LSvec = amplitude->_LS;
 
-        // components.push_back(amplitude);
-        for(auto &LSIT : LSvec) {
-            components.push_back(LSIT);
-            // auto found = std::find_if(components.begin(), components.end(), [&LSIT](const PdfBase *L) {
-            //    return (*LSIT) == *(dynamic_cast<const Lineshape *>(L));
-            //});
+        for (auto &LSIT : LSvec) {
+            auto found = std::find_if(LineShapes.begin(), LineShapes.end(), [&LSIT](const Lineshape *L) {
+                return (*LSIT) == (*L); });
 
-            // if(found != components.end()) {
-            //    AmpMap[amplitude->_uniqueDecayStr].first.push_back(std::distance(components.begin(), found));
-            //} else {
-            //    components.push_back(LSIT);
-            //    AmpMap[amplitude->_uniqueDecayStr].first.push_back(components.size() - 1);
-            //}
+            if(found == LineShapes.end())
+                LineShapes.push_back(LSIT);
         }
 
         auto SFvec = amplitude->_SF;
 
-        for(auto &SFIT : SFvec) {
-            components.push_back(SFIT);
-            SpinFactors.push_back(SFIT);
-            // auto found = std::find_if(
-            //    SpinFactors.begin(), SpinFactors.end(), [&SFIT](const SpinFactor *S) { return (*SFIT) == (*S); });
+        for (auto &spinfactor : SFvec) {
+            auto found = std::find_if(SpinFactors.begin(), SpinFactors.end(), [&spinfactor](const SpinFactor *S) {
+                return (*spinfactor) == (*S); });
 
-            // if(found != SpinFactors.end()) {
-            //    AmpMap[amplitude->_uniqueDecayStr].second.push_back(std::distance(SpinFactors.begin(), found));
-            //} else {
-            //    SpinFactors.push_back(SFIT);
-            //    AmpMap[amplitude->_uniqueDecayStr].second.push_back(SpinFactors.size() - 1);
-            //}
+            if(found == SpinFactors.end())
+                SpinFactors.push_back(spinfactor);
         }
-
-        nPermVec.push_back(amplitude->_nPerm);
-        registerParameter(amplitude->_ar);
-        registerParameter(amplitude->_ai);
-
-        ampidxstart.push_back(ampidx.size());
-        std::vector<unsigned int> ls = AmpMap[amplitude->_uniqueDecayStr].first;
-        std::vector<unsigned int> sf = AmpMap[amplitude->_uniqueDecayStr].second;
-        ampidx.push_back(ls.size());
-        ampidx.push_back(sf.size());
-        ampidx.push_back(amplitude->_nPerm);
-        ampidx.insert(ampidx.end(), ls.begin(), ls.end());
-        ampidx.insert(ampidx.end(), sf.begin(), sf.end());
     }
 
-    // MEMCPY_TO_SYMBOL(
-    //    AmpIndices, &(ampidxstart[0]), ampidxstart.size() * sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
-    // MEMCPY_TO_SYMBOL(AmpIndices,
-    //                 &(ampidx[0]),
-    //                 ampidx.size() * sizeof(unsigned int),
-    //                 ampidxstart.size() * sizeof(unsigned int),
-    //                 cudaMemcpyHostToDevice);
-
-    constantsList[2] = components.size();
-    constantsList[3] = SpinFactors.size();
-    constantsList[4] = AmpMap.size();
-
-    // for(auto &component : components) {
-    // reinterpret_cast<Lineshape *>(component)->setConstantIndex(cIndex);
-    //    pindices.push_back(reinterpret_cast<Lineshape *>(component)->getFunctionIndex());
-    //    pindices.push_back(reinterpret_cast<Lineshape *>(component)->getParameterIndex());
-    //}
-
-    // for(auto &SpinFactor : SpinFactors) {
-    //    pindices.push_back(SpinFactor->getFunctionIndex());
-    //    pindices.push_back(SpinFactor->getParameterIndex());
-    //    SpinFactor->setConstantIndex(cIndex);
-    //}
+    constantsList[lsidx]  = SpinFactors.size();
+    constantsList[sfidx]  = SpinFactors.size();
+    constantsList[ampidx] = components.size();
 
     components.push_back(efficiency);
 
     initialize();
 
-    Integrator   = new NormIntegrator(parameters);
+    Integrator   = new NormIntegrator();
     redoIntegral = new bool[components.size() - 1];
     cachedMasses = new fptype[components.size() - 1];
     cachedWidths = new fptype[components.size() - 1];
 
+    std::vector<unsigned int> amp_idx;
+    std::vector<unsigned int> amp_idx_start;
+    std::vector<unsigned int> nPermVec;
+  
+    for(auto &lineshape : LineShapes) {
+        lscalculators.push_back(new LSCalculator());
+    }
+
     for(int i = 0; i < components.size() - 1; ++i) {
+        Amplitude *amp = dynamic_cast <Amplitude*> (components[i]);
         redoIntegral[i] = true;
         cachedMasses[i] = -1;
         cachedWidths[i] = -1;
-        lscalculators.push_back(new LSCalculator(parameters, i));
+
+        std::vector<Lineshape*> lineshapes = amp->getLineShapes();
+        std::vector<SpinFactor*> spinfactors = amp->getSpinFactors();
+
+        // No reason for amp index?
+        amp_idx_start.push_back(amp_idx.size());
+
+        amp_idx.push_back(lineshapes.size());
+        amp_idx.push_back(spinfactors.size());
+        amp_idx.push_back(amp->_nPerm);
+
+        nPermVec.push_back(amp->_nPerm);
+
+        for (auto &LSIT : lineshapes) {
+            auto found = std::find_if(LineShapes.begin(), LineShapes.end(), [&LSIT](const Lineshape *L) {
+                return (*LSIT) == (*L); });
+            if(found != LineShapes.end()) {
+                amp_idx.push_back(std::distance(LineShapes.begin(), found));
+            }
+            else
+                printf("Shouldn't happen, could not find lineshape in array!\n");
+        }
+
+        for (auto &SFIT : spinfactors) {
+            auto found = std::find_if(SpinFactors.begin(), SpinFactors.end(), [&SFIT](const SpinFactor *S) { return (*SFIT) == (*S); });
+            if (found != SpinFactors.end()) {
+                amp_idx.push_back(std::distance(SpinFactors.begin(), found));
+            }
+            else
+                printf("Shouldn't happen, could not find spin factor in array!\n");
+        }
     }
+
+    //copy over amp information
+    MEMCPY_TO_SYMBOL(AmpIndices, &(amp_idx_start[0]), amp_idx_start.size() * sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
+
+    //copy over indexes?
+    MEMCPY_TO_SYMBOL(AmpIndices, &(amp_idx[0]), amp_idx.size() * sizeof(unsigned int), amp_idx_start.size() * sizeof(unsigned int), cudaMemcpyHostToDevice);
 
     for(int i = 0; i < SpinFactors.size(); ++i) {
-        sfcalculators.push_back(new SFCalculator(parameters, i));
+        sfcalculators.push_back(new SFCalculator());
     }
 
-    for(int i = 0; i < AmpMap.size(); ++i) {
-        AmpCalcs.push_back(new AmpCalc(ampidxstart[i], parameters, nPermVec[i]));
+    for(int i = 0; i < components.size() - 1; ++i) {
+        AmpCalcs.push_back(new AmpCalc(amp_idx_start[i], nPermVec[i]));
     }
 
     // fprintf(stderr,"#Amp's %i, #LS %i, #SF %i \n", AmpMap.size(), components.size()-1, SpinFactors.size() );
@@ -257,7 +260,7 @@ __host__ DPPdf::DPPdf(
     mcbooster::EvaluateArray<Dim5>(eval, pset, VarSet);
 
     norm_SF  = mcbooster::RealVector_d(nAcc * SpinFactors.size());
-    norm_LS  = mcbooster::mc_device_vector<fpcomplex>(nAcc * (components.size() - 1));
+    norm_LS  = mcbooster::mc_device_vector<fpcomplex>(nAcc * (LineShapes.size()));
     MCevents = nAcc;
 
     addSpecialMask(PdfBase::ForceSeparateNorm);
@@ -266,13 +269,51 @@ __host__ DPPdf::DPPdf(
 void DPPdf::recursiveSetIndices() {
     GET_FUNCTION_ADDR(ptr_to_DP);
 
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_DalitzPlot");
+    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_DP");
     host_function_table[num_device_functions] = host_fcn_ptr;
     functionIdx                               = num_device_functions++;
 
     populateArrays();
 
     // save our efficiency function.  Resonance's are saved first, then the efficiency function.
+
+    //go over our amplitudes and actually set index values, update.
+    std::vector<unsigned int> amp_idx;
+    std::vector<unsigned int> amp_idx_start;
+
+    for(int i = 0; i < components.size() - 1; ++i) {
+        Amplitude *amp = dynamic_cast <Amplitude*> (components[i]);
+
+        std::vector<Lineshape*> lineshapes = amp->getLineShapes();
+        std::vector<SpinFactor*> spinfactors = amp->getSpinFactors();
+
+        amp_idx_start.push_back(amp_idx.size());
+
+        amp_idx.push_back(lineshapes.size());
+        amp_idx.push_back(spinfactors.size());
+        amp_idx.push_back(amp->_nPerm);
+
+        for (auto &LSIT : lineshapes) {
+            auto found = std::find_if(LineShapes.begin(), LineShapes.end(), [&LSIT](const Lineshape *L) {
+                return (*LSIT) == (*L); });
+            if(found != LineShapes.end()) {
+                amp_idx.push_back(std::distance(LineShapes.begin(), found));
+            }
+            else
+                printf("Shouldn't happen, could not find lineshape in array!\n");
+        }
+
+        for (auto &SFIT : spinfactors) {
+            auto found = std::find_if(SpinFactors.begin(), SpinFactors.end(), [&SFIT](const SpinFactor *S) { return (*SFIT) == (*S); });
+            if (found != SpinFactors.end()) {
+                amp_idx.push_back(std::distance(SpinFactors.begin(), found));
+            }
+            else
+                printf("Shouldn't happen, could not find spin factor in array!\n");
+        }
+    }
+
+    MEMCPY_TO_SYMBOL(AmpIndices, &(amp_idx[0]), amp_idx_start.size() * sizeof(unsigned int), amp_idx_start.size() * sizeof(unsigned int), cudaMemcpyHostToDevice);
 
     // TODO: We need to expand populateArrays so we handle components correctly!
     efficiencyFunction = num_device_functions - 1;
@@ -295,8 +336,7 @@ __host__ void DPPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) {
         delete cachedAMPs;
 
     numEntries  = dataSize;
-    cachedResSF = new thrust::device_vector<fpcomplex>(
-        dataSize * (components.size() + SpinFactors.size() - 1)); //   -1 because 1 component is efficiency
+    cachedResSF = new thrust::device_vector<fpcomplex>(dataSize * (components.size() + SpinFactors.size() - 1)); //   -1 because 1 component is efficiency
     void *dummy = thrust::raw_pointer_cast(cachedResSF->data());
     MEMCPY_TO_SYMBOL(cResSF, &dummy, sizeof(fpcomplex *), cacheToUse * sizeof(fpcomplex *), cudaMemcpyHostToDevice);
 
@@ -319,14 +359,16 @@ __host__ fptype DPPdf::normalize() const {
 
     // check if MINUIT changed any parameters and if so remember that so we know
     // we need to recalculate that lineshape and every amp, that uses that lineshape
-    for(unsigned int i = 0; i < components.size() - 1; ++i) {
+    for(unsigned int i = 0; i < LineShapes.size(); ++i) {
         redoIntegral[i] = forceRedoIntegrals;
 
-        if(!(components[i]->parametersChanged()))
+        if(!(LineShapes[i]->parametersChanged()))
             continue;
 
         redoIntegral[i] = true;
     }
+
+    //SigGenSetIndices();
 
     SpinsCalculated    = !forceRedoIntegrals;
     forceRedoIntegrals = false;
@@ -341,19 +383,19 @@ __host__ fptype DPPdf::normalize() const {
     // it basically goes through the array by increasing the pointer by a certain amount instead of just one step.
     if(!SpinsCalculated) {
         for(int i = 0; i < SpinFactors.size(); ++i) {
-            unsigned int offset = components.size() - 1;
+            unsigned int offset = SpinFactors.size();
             sfcalculators[i]->setDalitzId(getFunctionIndex());
             sfcalculators[i]->setSpinFactorId(SpinFactors[i]->getFunctionIndex());
+            unsigned int stride = 2*SpinFactors.size ();
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, dataArray, eventSize)),
                 strided_range<thrust::device_vector<fpcomplex>::iterator>(
-                    cachedResSF->begin() + offset + i, cachedResSF->end(), (components.size() + SpinFactors.size() - 1))
-                    .begin(),
+                    cachedResSF->begin() + offset + i, cachedResSF->end(), stride).begin(),
                 *(sfcalculators[i]));
 
             if(!generation_no_norm) {
-                NormSpinCalculator nsc = NormSpinCalculator(parameters, i);
+                NormSpinCalculator nsc = NormSpinCalculator();
                 nsc.setDalitzId(getFunctionIndex());
                 nsc.setSpinFactorId(SpinFactors[i]->getFunctionIndex());
                 thrust::transform(
@@ -374,64 +416,65 @@ __host__ fptype DPPdf::normalize() const {
 
     // this calculates the values of the lineshapes and stores them in the array. It is recalculated every time
     // parameters change.
-    for(int i = 0; i < components.size() - 1; ++i) {
+    for(int i = 0; i < LineShapes.size(); ++i) {
         if(redoIntegral[i]) {
             lscalculators[i]->setDalitzId(getFunctionIndex());
-            lscalculators[i]->setResonanceId(SpinFactors[i]->getFunctionIndex());
+            lscalculators[i]->setResonanceId(LineShapes[i]->getFunctionIndex());
+
+            int stride = LineShapes.size()*2;
+
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, dataArray, eventSize)),
                 strided_range<thrust::device_vector<fpcomplex>::iterator>(
-                    cachedResSF->begin() + i, cachedResSF->end(), (components.size() + SpinFactors.size() - 1))
-                    .begin(),
+                    cachedResSF->begin() + i, cachedResSF->end(), stride).begin(),
                 *(lscalculators[i]));
         }
     }
 
     // this is a little messy but it basically checks if the amplitude includes one of the recalculated lineshapes and
     // if so recalculates that amplitude
-    auto AmpMapIt = AmpMap.begin();
+    //auto AmpMapIt = AmpMap.begin();
 
-    for(int i = 0; i < AmpCalcs.size(); ++i) {
-        std::vector<unsigned int> redoidx((*AmpMapIt).second.first);
-        bool redo = false;
+    for(int i = 0; i < components.size() - 1; ++i) {
+        Amplitude *amp = dynamic_cast<Amplitude*>(components[i]);
 
-        for(unsigned int j : redoidx) {
-            if(!redoIntegral[j])
-                continue;
+        if(!redoIntegral[i])
+            continue;
 
-            redo = true;
-            break;
-        }
-
-        if(redo) {
-            AmpCalcs[i]->setDalitzId(getFunctionIndex());
-            // AmpCalcs[i]->setAmplitudeId (AmpMapIt.first->getFunctionIndex ());
-            thrust::transform(eventIndex,
-                              eventIndex + numEntries,
-                              strided_range<thrust::device_vector<fpcomplex>::iterator>(
-                                  cachedAMPs->begin() + i, cachedAMPs->end(), AmpCalcs.size())
-                                  .begin(),
-                              *(AmpCalcs[i]));
-        }
+        AmpCalcs[i]->setDalitzId(getFunctionIndex());
+        //AmpCalcs[i]->setAmplitudeId (amp->getFuncionIndex ());
+        thrust::transform(eventIndex,
+                          eventIndex + numEntries,
+                          strided_range<thrust::device_vector<fpcomplex>::iterator>(
+                              cachedAMPs->begin() + i, cachedAMPs->end(), AmpCalcs.size()).begin(),
+                          *(AmpCalcs[i]));
     }
 
     // lineshape value calculation for the normalisation, also recalculated every time parameter change
     if(!generation_no_norm) {
-        for(int i = 0; i < components.size() - 1; ++i) {
+        for(int i = 0; i < LineShapes.size(); ++i) {
             if(!redoIntegral[i])
                 continue;
 
+            NormLSCalculator ns;
+            ns.setDalitzId (getFunctionIndex ());
+            ns.setResonanceId (LineShapes[i]->getFunctionIndex ());
+
             thrust::transform(
-                thrust::make_zip_iterator(thrust::make_tuple(norm_M12.begin(),
-                                                             norm_M34.begin(),
-                                                             norm_CosTheta12.begin(),
-                                                             norm_CosTheta34.begin(),
-                                                             norm_phi.begin())),
-                thrust::make_zip_iterator(thrust::make_tuple(
-                    norm_M12.end(), norm_M34.end(), norm_CosTheta12.end(), norm_CosTheta34.end(), norm_phi.end())),
-                (norm_LS.begin() + (i * MCevents)),
-                NormLSCalculator(parameters, i));
+                thrust::make_zip_iterator(
+                    thrust::make_tuple(norm_M12.begin(),
+                                       norm_M34.begin(),
+                                       norm_CosTheta12.begin(),
+                                       norm_CosTheta34.begin(),
+                                       norm_phi.begin())),
+                    thrust::make_zip_iterator(thrust::make_tuple(
+                                       norm_M12.end(),
+                                       norm_M34.end(),
+                                       norm_CosTheta12.end(),
+                                       norm_CosTheta34.end(),
+                                       norm_phi.end())),
+                    (norm_LS.begin() + (i * MCevents)), ns);
         }
     }
 
@@ -445,6 +488,7 @@ __host__ fptype DPPdf::normalize() const {
 
     if(!generation_no_norm) {
         fptype sumIntegral = 0;
+        Integrator->setDalitzId(getFunctionIndex());
         sumIntegral += thrust::transform_reduce(
             thrust::make_zip_iterator(thrust::make_tuple(eventIndex, NumNormEvents, normSFaddress, normLSaddress)),
             thrust::make_zip_iterator(
@@ -460,7 +504,7 @@ __host__ fptype DPPdf::normalize() const {
     if(std::isnan(ret))
         GooFit::abort(__FILE__, __LINE__, getName() + " NAN normalization in DPPdf", this);
 
-    host_normalisations[parameters] = 1.0 / ret;
+    host_normalisations[normalIdx + 1] = 1.0 / ret;
     // printf("end of normalize %f\n", ret);
     return ret;
 }
@@ -468,6 +512,11 @@ __host__ fptype DPPdf::normalize() const {
 __host__
     std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h>
     DPPdf::GenerateSig(unsigned int numEvents) {
+
+    //Must configure our functions before any calculations!
+    //setupObservables();
+    //setIndices();
+
     std::vector<mcbooster::GReal_t> masses(decayInfo.particle_masses.begin() + 1, decayInfo.particle_masses.end());
     mcbooster::PhaseSpace phsp(decayInfo.particle_masses[0], masses, numEvents, generation_offset);
     phsp.Generate(mcbooster::Vector4R(decayInfo.particle_masses[0], 0.0, 0.0, 0.0));
@@ -545,8 +594,7 @@ __host__
     copyParams();
     normalize();
     setForceIntegrals();
-    MEMCPY_TO_SYMBOL(
-        d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
     thrust::device_vector<fptype> results(numEvents);
     thrust::constant_iterator<int> eventSize(6);
@@ -578,9 +626,8 @@ __host__
     return std::make_tuple(ParSet, VarSet, weights_h, flags_h);
 }
 
-SFCalculator::SFCalculator(int pIdx, unsigned int sf_idx)
-    : _spinfactor_i(sf_idx)
-    , _parameters(pIdx) {}
+SFCalculator::SFCalculator()
+    : _spinfactor_i(0) {}
 
 __device__ fpcomplex SFCalculator::operator()(thrust::tuple<int, fptype *, int> t) const {
     int evtNum  = thrust::get<0>(t);
@@ -598,13 +645,13 @@ __device__ fpcomplex SFCalculator::operator()(thrust::tuple<int, fptype *, int> 
     while(pc.funcIdx < dalitzFuncId)
         pc.incrementIndex();
 
-    int numObs = pc.observables[pc.observableIdx];
+    int numObs = pc.getNumObservables();
 
-    int id_m12   = pc.observables[pc.observableIdx + 1];
-    int id_m34   = pc.observables[pc.observableIdx + 2];
-    int id_cos12 = pc.observables[pc.observableIdx + 3];
-    int id_cos34 = pc.observables[pc.observableIdx + 4];
-    int id_phi   = pc.observables[pc.observableIdx + 5];
+    int id_m12   = pc.getObservable(0);
+    int id_m34   = pc.getObservable(1);
+    int id_cos12 = pc.getObservable(2);
+    int id_cos34 = pc.getObservable(3);
+    int id_phi   = pc.getObservable(4);
 
     fptype m12   = evt[id_m12];
     fptype m34   = evt[id_m34];
@@ -612,8 +659,14 @@ __device__ fpcomplex SFCalculator::operator()(thrust::tuple<int, fptype *, int> 
     fptype cos34 = evt[id_cos34];
     fptype phi   = evt[id_phi];
 
+    fptype M  = pc.getConstant(0);
+    fptype m1 = pc.getConstant(1);
+    fptype m2 = pc.getConstant(2);
+    fptype m3 = pc.getConstant(3);
+    fptype m4 = pc.getConstant(4);
+
     fptype vecs[16];
-    get4Vecs(vecs, pc.constants[pc.constantIdx + 1], m12, m34, cos12, cos34, phi);
+    get4Vecs(vecs, m12, m34, cos12, cos34, phi, M, m1, m2, m3, m4);
     // printf("%i, %i, %f, %f, %f, %f, %f \n",evtNum, thrust::get<2>(t), m12, m34, cos12, cos34, phi );
     // printf("vec%i %f, %f, %f, %f\n",0, vecs[0], vecs[1], vecs[2], vecs[3]);
     // printf("vec%i %f, %f, %f, %f\n",1, vecs[4], vecs[5], vecs[6], vecs[7]);
@@ -630,9 +683,8 @@ __device__ fpcomplex SFCalculator::operator()(thrust::tuple<int, fptype *, int> 
     return fpcomplex(sf, 0);
 }
 
-NormSpinCalculator::NormSpinCalculator(int pIdx, unsigned int sf_idx)
-    : _spinfactor_i(sf_idx)
-    , _parameters(pIdx) {}
+NormSpinCalculator::NormSpinCalculator()
+    : _spinfactor_i(0) {}
 
 __device__ fptype NormSpinCalculator::operator()(
     thrust::tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t)
@@ -656,9 +708,16 @@ __device__ fptype NormSpinCalculator::operator()(
     while(pc.funcIdx < dalitzFuncId)
         pc.incrementIndex();
 
-    int numObs = pc.constants[pc.constantIdx + 1];
+    fptype M  = pc.getConstant(0);
+    fptype m1 = pc.getConstant(1);
+    fptype m2 = pc.getConstant(2);
+    fptype m3 = pc.getConstant(3);
+    fptype m4 = pc.getConstant(4);
+
+    int numObs = pc.getNumObservables();
+
     fptype vecs[16];
-    get4Vecs(vecs, pc.constants[pc.constantIdx + numObs + 3], m12, m34, cos12, cos34, phi);
+    get4Vecs(vecs, m12, m34, cos12, cos34, phi, M, m1, m2, m3, m4);
 
     //   printf("evt %i vec%i %.5g, %.5g, %.5g, %.5g\n", evtNum,0, vecs[0], vecs[1], vecs[2], vecs[3]);
     //   printf("evt %i vec%i %.5g, %.5g, %.5g, %.5g\n", evtNum,1, vecs[4], vecs[5], vecs[6], vecs[7]);
@@ -677,9 +736,8 @@ __device__ fptype NormSpinCalculator::operator()(
     return sf;
 }
 
-LSCalculator::LSCalculator(int pIdx, unsigned int res_idx)
-    : _resonance_i(res_idx)
-    , _parameters(pIdx) {}
+LSCalculator::LSCalculator()
+    : _resonance_i(0) {}
 
 __device__ fpcomplex LSCalculator::operator()(thrust::tuple<int, fptype *, int> t) const {
     // Calculates the BW values for a specific resonance.
@@ -688,39 +746,36 @@ __device__ fpcomplex LSCalculator::operator()(thrust::tuple<int, fptype *, int> 
     int evtNum  = thrust::get<0>(t);
     fptype *evt = thrust::get<1>(t) + (evtNum * thrust::get<2>(t));
 
-    // unsigned int *indices = paramIndices + _parameters; // Jump to DALITZPLOT position within parameters array
-    // int parameter_i
-    //    = 6 + (2 * indices[5]) + (_resonance_i * 2); // Find position of this resonance relative to DALITZPLOT start
-    // unsigned int functn_i = indices[parameter_i];
-    // unsigned int params_i = indices[parameter_i + 1];
-    // unsigned int pair     = (paramIndices + params_i)[5];
-
     ParameterContainer pc;
 
     // Increment to DP
     while(pc.funcIdx < dalitzFuncId)
         pc.incrementIndex();
 
-    int numObs = pc.constants[pc.constantIdx + 1];
+    int numObs = pc.getNumObservables();
 
-    fptype m1 = c_motherMass; // functorConstants[indices[1] + 2];
-    fptype m2 = c_daug1Mass;  // functorConstants[indices[1] + 3];
-    fptype m3 = c_daug2Mass;  // functorConstants[indices[1] + 4];
-    fptype m4 = c_daug3Mass;  // functorConstants[indices[1] + 5];
-
-    int id_m12   = pc.constants[pc.constantIdx + 2];
-    int id_m34   = pc.constants[pc.constantIdx + 3];
-    int id_cos12 = pc.constants[pc.constantIdx + 4];
-    int id_cos34 = pc.constants[pc.constantIdx + 5];
-    int id_phi   = pc.constants[pc.constantIdx + 6];
-
-    unsigned int pair = pc.constants[pc.constantIdx + numObs + 3];
+    int id_m12   = pc.getObservable(0);
+    int id_m34   = pc.getObservable(1);
+    int id_cos12 = pc.getObservable(2);
+    int id_cos34 = pc.getObservable(3);
+    int id_phi   = pc.getObservable(4);
 
     fptype m12   = evt[id_m12];
     fptype m34   = evt[id_m34];
     fptype cos12 = evt[id_cos12];
     fptype cos34 = evt[id_cos34];
     fptype phi   = evt[id_phi];
+
+    fptype M  = pc.getConstant(0);
+    fptype m1 = pc.getConstant(1);
+    fptype m2 = pc.getConstant(2);
+    fptype m3 = pc.getConstant(3);
+    fptype m4 = pc.getConstant(4);
+
+    while (pc.funcIdx < _resonance_i)
+        pc.incrementIndex();
+
+    unsigned int pair = pc.getConstant(2);
 
     if(pair < 2) {
         fptype mres = pair == 0 ? m12 : m34;
@@ -730,7 +785,7 @@ __device__ fpcomplex LSCalculator::operator()(thrust::tuple<int, fptype *, int> 
         // printf("LS %i: mass:%f, %f i%f\n",_resonance_i, mres, ret.real, ret.imag );
     } else {
         fptype vecs[16];
-        get4Vecs(vecs, pc.constants[pc.constantIdx + numObs + 2], m12, m34, cos12, cos34, phi);
+        get4Vecs(vecs, m12, m34, cos12, cos34, phi, M, m1, m2, m3, m4);
         fptype d1, d2;
         fptype mres = getmass(pair, d1, d2, vecs, m1, m2, m3, m4);
         ret         = getResonanceAmplitude(mres, d1, d2, pc);
@@ -745,9 +800,8 @@ __device__ fpcomplex LSCalculator::operator()(thrust::tuple<int, fptype *, int> 
     return ret;
 }
 
-NormLSCalculator::NormLSCalculator(int pIdx, unsigned int res_idx)
-    : _resonance_i(res_idx)
-    , _parameters(pIdx) {}
+NormLSCalculator::NormLSCalculator()
+    : _resonance_i(0) {}
 
 __device__ fpcomplex NormLSCalculator::operator()(
     thrust::tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t)
@@ -760,35 +814,24 @@ __device__ fpcomplex NormLSCalculator::operator()(
     while(pc.funcIdx < dalitzFuncId)
         pc.incrementIndex();
 
-    // unsigned int *indices = paramIndices + _parameters; // Jump to DALITZPLOT position within parameters array
-    // unsigned int numAmps  = indices[5];
-    // int parameter_i
-    //    = 6 + (2 * numAmps) + (_resonance_i * 2); // Find position of this resonance relative to DALITZPLOT start
-    // unsigned int functn_i = indices[parameter_i];
-    // unsigned int params_i = indices[parameter_i + 1];
-    // unsigned int pair     = (paramIndices + params_i)[5];
-
-    // fptype m1 = functorConstants[indices[1] + 2];
-    // fptype m2 = functorConstants[indices[1] + 3];
-    // fptype m3 = functorConstants[indices[1] + 4];
-    // fptype m4 = functorConstants[indices[1] + 5];
-
-    fptype m1 = c_motherMass;
-    fptype m2 = c_daug1Mass;
-    fptype m3 = c_daug2Mass;
-    fptype m4 = c_daug3Mass;
-
     fptype m12   = (thrust::get<0>(t));
     fptype m34   = (thrust::get<1>(t));
     fptype cos12 = (thrust::get<2>(t));
     fptype cos34 = (thrust::get<3>(t));
     fptype phi   = (thrust::get<4>(t));
 
-    unsigned int pair = pc.constants[pc.constantIdx + 1];
+    fptype M  = pc.getConstant(0);
+    fptype m1 = pc.getConstant(1);
+    fptype m2 = pc.getConstant(2);
+    fptype m3 = pc.getConstant(3);
+    fptype m4 = pc.getConstant(4);
 
     // skip to our resonance function
     while(pc.funcIdx < _resonance_i)
         pc.incrementIndex();
+
+    unsigned int pair = pc.getConstant(2);
+
     if(pair < 2) {
         fptype mres = pair == 0 ? m12 : m34;
         fptype d1   = pair == 0 ? m1 : m3;
@@ -796,8 +839,8 @@ __device__ fpcomplex NormLSCalculator::operator()(
         ret         = getResonanceAmplitude(mres, d1, d2, pc);
     } else {
         fptype vecs[16];
-        // TODO: What the heck is indices[1]?
-        get4Vecs(vecs, pc.constants[pc.constantIdx + 1], m12, m34, cos12, cos34, phi);
+        // TODO: What is indices[1]?
+        get4Vecs(vecs, m12, m34, cos12, cos34, phi, M, m1, m2, m3, m4);
         fptype d1, d2;
         fptype mres = getmass(pair, d1, d2, vecs, m1, m2, m3, m4);
         ret         = getResonanceAmplitude(mres, d1, d2, pc);
@@ -813,23 +856,20 @@ __device__ fpcomplex NormLSCalculator::operator()(
     return ret;
 }
 
-AmpCalc::AmpCalc(unsigned int AmpIdx, unsigned int pIdx, unsigned int nPerm)
+AmpCalc::AmpCalc(unsigned int amp, unsigned int nPerm)
     : _nPerm(nPerm)
-    , _AmpIdx(AmpIdx)
-    , _parameters(pIdx) {}
+    , _AmpIdx(amp) {}
 
 __device__ fpcomplex AmpCalc::operator()(thrust::tuple<int, fptype *, int> t) const {
-    // unsigned int *indices   = paramIndices + _parameters;
-
     ParameterContainer pc;
 
     while(pc.funcIdx < dalitzFuncId)
         pc.incrementIndex();
 
-    unsigned int cacheToUse = pc.constants[pc.constantIdx + 1];
-    unsigned int totalLS    = pc.constants[pc.constantIdx + 2];
-    unsigned int totalSF    = pc.constants[pc.constantIdx + 3];
-    unsigned int totalAMP   = pc.constants[pc.constantIdx + 4];
+    unsigned int cacheToUse = pc.getConstant(5);
+    unsigned int totalLS    = pc.getConstant(6);
+    unsigned int totalSF    = pc.getConstant(7);
+    unsigned int totalAMP   = pc.getConstant(8);
     unsigned int offset     = totalLS + totalSF;
     unsigned int numLS      = AmpIndices[totalAMP + _AmpIdx];
     unsigned int numSF      = AmpIndices[totalAMP + _AmpIdx + 1];
@@ -844,14 +884,16 @@ __device__ fpcomplex AmpCalc::operator()(thrust::tuple<int, fptype *, int> t) co
         fpcomplex tmp(1, 0);
 
         for(int j = i * LS_step; j < (i + 1) * LS_step; ++j) {
-            tmp = (cResSF[cacheToUse][evtNum * offset + AmpIndices[totalAMP + _AmpIdx + 3 + j]]);
+            int idx = AmpIndices[totalAMP + _AmpIdx + 3 + j];
+            tmp = (cResSF[cacheToUse][evtNum * offset + idx]);
             ret *= tmp;
             // printf("Lineshape = (%.7g, %.7g)\n", tmp.real, tmp.imag);
         }
 
         // printf("Lineshape Product = (%.7g, %.7g)\n", ret.real, ret.imag);
         for(int j = i * SF_step; j < (i + 1) * SF_step; ++j) {
-            tmp = (cResSF[cacheToUse][evtNum * offset + totalLS + AmpIndices[totalAMP + _AmpIdx + 3 + numLS + j]]
+            int idx = AmpIndices[totalAMP + _AmpIdx + 3 + numLS + j];
+            tmp = (cResSF[cacheToUse][evtNum * offset + totalLS + idx]
                        .real());
             ret *= tmp;
             // printf("SF = (%.7g, %.7g)\n", tmp.real, tmp.imag);
@@ -867,19 +909,15 @@ __device__ fpcomplex AmpCalc::operator()(thrust::tuple<int, fptype *, int> t) co
     return returnVal;
 }
 
-NormIntegrator::NormIntegrator(unsigned int pIdx)
-    : _parameters(pIdx) {}
+NormIntegrator::NormIntegrator() {}
 
 __device__ fptype NormIntegrator::operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const {
-    // unsigned int *indices = paramIndices + _parameters;
-    // unsigned int totalAMP = indices[5];
-
     ParameterContainer pc;
 
     while(pc.funcIdx < dalitzFuncId)
         pc.incrementIndex();
 
-    unsigned int totalAMP = pc.constants[pc.constantIdx + 4];
+    unsigned int totalAMP  = pc.getConstant(8);
 
     unsigned int evtNum   = thrust::get<0>(t);
     unsigned int MCevents = thrust::get<1>(t);
@@ -919,7 +957,7 @@ __device__ fptype NormIntegrator::operator()(thrust::tuple<int, int, fptype *, f
             ret2 += ret;
         }
 
-        fpcomplex amp_C{pc.parameters[pc.parameterIdx + 2 * amp + 1], pc.parameters[pc.parameterIdx + 2 * amp + 2]};
+        fpcomplex amp_C{pc.getParameter(2 * amp + 0), pc.getParameter(2 * amp + 1)};
         ret2 *= (1 / sqrt(static_cast<fptype>(nPerm)));
         // printf("Result Amplitude %i, %.5g, %.5g\n",amp, ret2.real, ret2.imag);
         returnVal += ret2 * amp_C;

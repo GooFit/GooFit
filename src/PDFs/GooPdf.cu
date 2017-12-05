@@ -195,7 +195,7 @@ void *getMetricPointer(EvalFunc val) { return getMetricPointer(evalfunc_to_strin
 __host__ void GooPdf::setIndices() {
     // If not set, perform unbinned Nll fit!
     if(!fitControl)
-        setFitControl(new UnbinnedNllFit());
+        setFitControl(std::make_shared<UnbinnedNllFit>());
 
     GOOFIT_DEBUG("GooPdf::setIndices!");
     PdfBase::setIndices();

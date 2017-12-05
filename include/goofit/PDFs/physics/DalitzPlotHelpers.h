@@ -28,12 +28,11 @@ __device__ bool inDalitz(
 __device__ fpcomplex getResonanceAmplitude(fptype m12, fptype m13, fptype m23, ParameterContainer &pc);
 
 __device__ void get4Vecs(fptype *Vecs,
-                         const unsigned int &constants,
                          const fptype &m12,
                          const fptype &m34,
                          const fptype &cos12,
                          const fptype &cos34,
-                         const fptype &phi);
+                         const fptype &phi, const fptype M, const fptype m1, const fptype m2, const fptype m3, const fptype m4);
 
 __device__ fptype getmass(const unsigned int &pair,
                           fptype &d1,

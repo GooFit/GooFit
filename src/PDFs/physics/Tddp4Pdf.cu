@@ -861,11 +861,11 @@ __device__ fpcomplex SFCalculator_TD::operator()(thrust::tuple<int, fptype *, in
     // while (pc.funcIdx < funcIdx)
     // pc.incrementIndex();
 
-    int id_m12   = pc.observables[pc.observableIdx + 1];
-    int id_m34   = pc.observables[pc.observableIdx + 2];
-    int id_cos12 = pc.observables[pc.observableIdx + 3];
-    int id_cos34 = pc.observables[pc.observableIdx + 4];
-    int id_phi   = pc.observables[pc.observableIdx + 5];
+    int id_m12   = pc.getObservable(1);
+    int id_m34   = pc.getObservable(2);
+    int id_cos12 = pc.getObservable(3);
+    int id_cos34 = pc.getObservable(4);
+    int id_phi   = pc.getObservable(5);
 
     fptype m12   = evt[id_m12];
     fptype m34   = evt[id_m34];
@@ -873,8 +873,14 @@ __device__ fpcomplex SFCalculator_TD::operator()(thrust::tuple<int, fptype *, in
     fptype cos34 = evt[id_cos34];
     fptype phi   = evt[id_phi];
 
+    fptype M  = pc.getConstant(0);
+    fptype m1 = pc.getConstant(1);
+    fptype m2 = pc.getConstant(2);
+    fptype m3 = pc.getConstant(3);
+    fptype m4 = pc.getConstant(4);
+
     fptype vecs[16];
-    get4Vecs(vecs, pc.constants[pc.constantIdx + 1], m12, m34, cos12, cos34, phi);
+    get4Vecs(vecs, m12, m34, cos12, cos34, phi, M, m1, m2, m3, m4);
     // printf("%i, %i, %f, %f, %f, %f, %f \n",evtNum, thrust::get<2>(t), m12, m34, cos12, cos34, phi );
     // printf("vec%i %f, %f, %f, %f\n",0, vecs[0], vecs[1], vecs[2], vecs[3]);
     // printf("vec%i %f, %f, %f, %f\n",1, vecs[4], vecs[5], vecs[6], vecs[7]);
@@ -912,12 +918,18 @@ __device__ fptype NormSpinCalculator_TD::operator()(
 
     ParameterContainer pc;
 
+    fptype M  = pc.getConstant(0);
+    fptype m1 = pc.getConstant(1);
+    fptype m2 = pc.getConstant(2);
+    fptype m3 = pc.getConstant(3);
+    fptype m4 = pc.getConstant(4);
+
     // TODO:
     // while(pc.funcIdx < funcIdx)
     //  pc.incrementIndex ();
 
     fptype vecs[16];
-    get4Vecs(vecs, pc.constants[pc.constantIdx + 1], m12, m34, cos12, cos34, phi);
+    get4Vecs(vecs, m12, m34, cos12, cos34, phi, M, m1, m2, m3, m4);
 
     //   printf("evt %i vec%i %.5g, %.5g, %.5g, %.5g\n", evtNum,0, vecs[0], vecs[1], vecs[2], vecs[3]);
     //   printf("evt %i vec%i %.5g, %.5g, %.5g, %.5g\n", evtNum,1, vecs[4], vecs[5], vecs[6], vecs[7]);
@@ -962,11 +974,6 @@ __device__ fpcomplex LSCalculator_TD::operator()(thrust::tuple<int, fptype *, in
     // while(pc.funcIdx < funcIdx)
     // pc.incrementIndex();
 
-    fptype m1 = pc.constants[pc.constantIdx + 2];
-    fptype m2 = pc.constants[pc.constantIdx + 3];
-    fptype m3 = pc.constants[pc.constantIdx + 4];
-    fptype m4 = pc.constants[pc.constantIdx + 5];
-
     unsigned int pair = pc.constants[pc.constantIdx + 6];
 
     int id_m12   = pc.observables[pc.observableIdx + 1];
@@ -981,6 +988,12 @@ __device__ fpcomplex LSCalculator_TD::operator()(thrust::tuple<int, fptype *, in
     fptype cos34 = evt[id_cos34];
     fptype phi   = evt[id_phi];
 
+    fptype M  = pc.getConstant(0);
+    fptype m1 = pc.getConstant(1);
+    fptype m2 = pc.getConstant(2);
+    fptype m3 = pc.getConstant(3);
+    fptype m4 = pc.getConstant(4);
+
     // TODO:
     // while(pc.funcIdx < resonanceFunc)
     // pc.incrementIndex();
@@ -993,7 +1006,7 @@ __device__ fpcomplex LSCalculator_TD::operator()(thrust::tuple<int, fptype *, in
         // printf("LS_nt %i: mass:%f, %f i%f\n",_resonance_i, mres, ret.real, ret.imag );
     } else {
         fptype vecs[16];
-        get4Vecs(vecs, pc.constants[pc.constantIdx + 1], m12, m34, cos12, cos34, phi);
+        get4Vecs(vecs, m12, m34, cos12, cos34, phi, M, m1, m2, m3, m4);
         fptype d1, d2;
         fptype mres = getmass(pair, d1, d2, vecs, m1, m2, m3, m4);
         ret         = getResonanceAmplitude(mres, d1, d2, pc);
@@ -1033,11 +1046,6 @@ __device__ fpcomplex NormLSCalculator_TD::operator()(
     // while(pc.funcIdx < funcIdx)
     //  pc.incrementIndex ();
 
-    fptype m1 = pc.constants[pc.constantIdx + 2];
-    fptype m2 = pc.constants[pc.constantIdx + 3];
-    fptype m3 = pc.constants[pc.constantIdx + 4];
-    fptype m4 = pc.constants[pc.constantIdx + 5];
-
     unsigned int pair = pc.constants[pc.constantIdx + 6];
 
     fptype m12   = (thrust::get<0>(t));
@@ -1046,6 +1054,12 @@ __device__ fpcomplex NormLSCalculator_TD::operator()(
     fptype cos34 = (thrust::get<3>(t));
     fptype phi   = (thrust::get<4>(t));
 
+    fptype M  = pc.getConstant(0);
+    fptype m1 = pc.getConstant(1);
+    fptype m2 = pc.getConstant(2);
+    fptype m3 = pc.getConstant(3);
+    fptype m4 = pc.getConstant(4);
+
     if(pair < 2) {
         fptype mres = pair == 0 ? m12 : m34;
         fptype d1   = pair == 0 ? m1 : m3;
@@ -1053,7 +1067,7 @@ __device__ fpcomplex NormLSCalculator_TD::operator()(
         ret         = getResonanceAmplitude(mres, d1, d2, pc);
     } else {
         fptype vecs[16];
-        get4Vecs(vecs, pc.constants[pc.constantIdx + 1], m12, m34, cos12, cos34, phi);
+        get4Vecs(vecs, m12, m34, cos12, cos34, phi, M, m1, m2, m3, m4);
         fptype d1, d2;
         fptype mres = getmass(pair, d1, d2, vecs, m1, m2, m3, m4);
         ret         = getResonanceAmplitude(mres, d1, d2, pc);

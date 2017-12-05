@@ -28,6 +28,7 @@ __device__ fptype FF_12_34_L1(fptype *Vecs, ParameterContainer &pc) {
     unsigned int p2      = pc.getConstant(2);
     unsigned int p3      = pc.getConstant(3);
     unsigned int p4      = pc.getConstant(4);
+
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
     gpuLVec P3(Vecs[0 + 4 * p3], Vecs[1 + 4 * p3], Vecs[2 + 4 * p3], Vecs[3 + 4 * p3]);
@@ -39,7 +40,9 @@ __device__ fptype FF_12_34_L1(fptype *Vecs, ParameterContainer &pc) {
     fptype q2 = s / 4. - (m1 + m2) / 2. + (m1 - m2) * (m1 - m2) / (4 * s);
     fptype z2 = q2 * mother_radius * mother_radius;
     fptype ff = 1.0 / (1 + z2);
+
     pc.incrementIndex(1, 0, 5, 0, 1);
+
     // printf("%.5g, %.5g, %.5g, %.5g\n",s,m1,m2,sqrt(ff) );
     return sqrt(ff);
 }
@@ -50,6 +53,7 @@ __device__ fptype FF_12_34_L2(fptype *Vecs, ParameterContainer &pc) {
     unsigned int p2      = pc.getConstant(2);
     unsigned int p3      = pc.getConstant(3);
     unsigned int p4      = pc.getConstant(4);
+
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
     gpuLVec P3(Vecs[0 + 4 * p3], Vecs[1 + 4 * p3], Vecs[2 + 4 * p3], Vecs[3 + 4 * p3]);
@@ -63,6 +67,7 @@ __device__ fptype FF_12_34_L2(fptype *Vecs, ParameterContainer &pc) {
     fptype ff = 1.0 / (z2 * z2 + 3 * z2 + 9);
 
     pc.incrementIndex(1, 0, 5, 0, 1);
+
     return sqrt(ff);
 }
 
@@ -72,6 +77,7 @@ __device__ fptype FF_123_4_L1(fptype *Vecs, ParameterContainer &pc) {
     unsigned int p2      = pc.getConstant(2);
     unsigned int p3      = pc.getConstant(3);
     unsigned int p4      = pc.getConstant(4);
+
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
     gpuLVec P3(Vecs[0 + 4 * p3], Vecs[1 + 4 * p3], Vecs[2 + 4 * p3], Vecs[3 + 4 * p3]);
@@ -85,6 +91,7 @@ __device__ fptype FF_123_4_L1(fptype *Vecs, ParameterContainer &pc) {
     fptype ff = 1.0 / (1 + z2);
 
     pc.incrementIndex(1, 0, 5, 0, 1);
+
     return sqrt(ff);
 }
 
@@ -94,6 +101,7 @@ __device__ fptype FF_123_4_L2(fptype *Vecs, ParameterContainer &pc) {
     unsigned int p2      = pc.getConstant(2);
     unsigned int p3      = pc.getConstant(3);
     unsigned int p4      = pc.getConstant(4);
+
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
     gpuLVec P3(Vecs[0 + 4 * p3], Vecs[1 + 4 * p3], Vecs[2 + 4 * p3], Vecs[3 + 4 * p3]);
@@ -107,14 +115,16 @@ __device__ fptype FF_123_4_L2(fptype *Vecs, ParameterContainer &pc) {
     fptype ff = 1.0 / (z2 * z2 + 3 * z2 + 9);
 
     pc.incrementIndex(1, 0, 5, 0, 1);
+
     return sqrt(ff);
 }
 
 __device__ fptype DtoPP1_PtoVP2_VtoP3P4(fptype *Vecs, ParameterContainer &pc) {
-    unsigned int p1 = pc.getConstant(pc.constantIdx + 1);
-    unsigned int p2 = pc.getConstant(pc.constantIdx + 2);
-    unsigned int p3 = pc.getConstant(pc.constantIdx + 3);
-    unsigned int p4 = pc.getConstant(pc.constantIdx + 4);
+    unsigned int p1 = pc.getConstant(1);
+    unsigned int p2 = pc.getConstant(2);
+    unsigned int p3 = pc.getConstant(3);
+    unsigned int p4 = pc.getConstant(4);
+
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
     gpuLVec P3(Vecs[0 + 4 * p3], Vecs[1 + 4 * p3], Vecs[2 + 4 * p3], Vecs[3 + 4 * p3]);
@@ -124,6 +134,7 @@ __device__ fptype DtoPP1_PtoVP2_VtoP3P4(fptype *Vecs, ParameterContainer &pc) {
     gpuLVec qV = P3 - P4;
 
     pc.incrementIndex(1, 0, 5, 0, 1);
+
 #ifdef ZEMACH
     gpuLVec pP = pV + P2;
     gpuLVec qP = pV - P2;
@@ -162,6 +173,7 @@ __device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_S(fptype *Vecs, ParameterContainer &
     fptype MV2 = sqrt(pV2.Dot(pV2));
 
     pc.incrementIndex(1, 0, 5, 0, 1);
+
     fptype returnVal
         = (qV1.Dot(qV2) - qV1.Dot(pV1) * pV1.Dot(qV2) / (MV1 * MV1) - qV1.Dot(pV2) * pV2.Dot(qV2) / (MV2 * MV2)
            + qV1.Dot(pV1) * pV1.Dot(pV2) * pV2.Dot(qV2) / (MV1 * MV1 * MV2 * MV2));
@@ -174,6 +186,7 @@ __device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_P(fptype *Vecs, ParameterContainer &
     unsigned int p2 = pc.getConstant(2);
     unsigned int p3 = pc.getConstant(3);
     unsigned int p4 = pc.getConstant(4);
+
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
     gpuLVec P3(Vecs[0 + 4 * p3], Vecs[1 + 4 * p3], Vecs[2 + 4 * p3], Vecs[3 + 4 * p3]);
@@ -188,6 +201,7 @@ __device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_P(fptype *Vecs, ParameterContainer &
     gpuLVec qD = pV1 - pV2;
 
     pc.incrementIndex(1, 0, 5, 0, 1);
+
 #ifdef ZEMACH
     fptype MV1 = sqrt(pV1.Dot(pV1));
     fptype MV2 = sqrt(pV2.Dot(pV2));
@@ -208,6 +222,7 @@ __device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_D(fptype *Vecs, ParameterContainer &
     unsigned int p2 = pc.getConstant(2);
     unsigned int p3 = pc.getConstant(3);
     unsigned int p4 = pc.getConstant(4);
+
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
     gpuLVec P3(Vecs[0 + 4 * p3], Vecs[1 + 4 * p3], Vecs[2 + 4 * p3], Vecs[3 + 4 * p3]);
@@ -219,6 +234,7 @@ __device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_D(fptype *Vecs, ParameterContainer &
     gpuLVec qV2 = P3 - P4;
 
     pc.incrementIndex(1, 0, 5, 0, 1);
+
 #ifdef ZEMACH
     gpuLVec pD = pV1 + pV2;
     gpuLVec qD = pV1 - pV2;
@@ -250,6 +266,7 @@ __device__ fptype DtoV1P1_V1toV2P2_V2toP3P4(fptype *Vecs, ParameterContainer &pc
     unsigned int p2 = pc.getConstant(2);
     unsigned int p3 = pc.getConstant(3);
     unsigned int p4 = pc.getConstant(4);
+
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
     gpuLVec P3(Vecs[0 + 4 * p3], Vecs[1 + 4 * p3], Vecs[2 + 4 * p3], Vecs[3 + 4 * p3]);
@@ -261,6 +278,7 @@ __device__ fptype DtoV1P1_V1toV2P2_V2toP3P4(fptype *Vecs, ParameterContainer &pc
     gpuLVec qV2 = P3 - P4;
 
     pc.incrementIndex(1, 0, 5, 0, 1);
+
 #ifdef ZEMACH
     double MV1 = pV1.M();
     double MV2 = pV2.M();
@@ -293,6 +311,7 @@ __device__ fptype DtoVS_VtoP1P2_StoP3P4(fptype *Vecs, ParameterContainer &pc) {
     unsigned int p2 = pc.getConstant(2);
     unsigned int p3 = pc.getConstant(3);
     unsigned int p4 = pc.getConstant(4);
+
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
     gpuLVec P3(Vecs[0 + 4 * p3], Vecs[1 + 4 * p3], Vecs[2 + 4 * p3], Vecs[3 + 4 * p3]);
@@ -303,6 +322,7 @@ __device__ fptype DtoVS_VtoP1P2_StoP3P4(fptype *Vecs, ParameterContainer &pc) {
     gpuLVec qV = P1 - P2;
 
     pc.incrementIndex(1, 0, 5, 0, 1);
+
 #ifdef ZEMACH
     gpuLVec pD = pV + pS;
     gpuLVec qD = pV - pS;
@@ -328,6 +348,7 @@ __device__ fptype DtoAP1_AtoSP2_StoP3P4(fptype *Vecs, ParameterContainer &pc) {
     unsigned int p2 = pc.getConstant(2);
     unsigned int p3 = pc.getConstant(3);
     unsigned int p4 = pc.getConstant(4);
+
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
     gpuLVec P3(Vecs[0 + 4 * p3], Vecs[1 + 4 * p3], Vecs[2 + 4 * p3], Vecs[3 + 4 * p3]);
@@ -363,6 +384,7 @@ __device__ fptype DtoAP1_AtoVP2_VtoP3P4(fptype *Vecs, ParameterContainer &pc) {
     unsigned int p2 = pc.getConstant(2);
     unsigned int p3 = pc.getConstant(3);
     unsigned int p4 = pc.getConstant(4);
+
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
     gpuLVec P3(Vecs[0 + 4 * p3], Vecs[1 + 4 * p3], Vecs[2 + 4 * p3], Vecs[3 + 4 * p3]);
@@ -375,6 +397,7 @@ __device__ fptype DtoAP1_AtoVP2_VtoP3P4(fptype *Vecs, ParameterContainer &pc) {
     gpuLVec qD = pA - P1;
 
     pc.incrementIndex(1, 0, 5, 0, 1);
+
 #ifdef ZEMACH
     ZTspin1 LB(qD, pD, pD.M());
     ZTspin1 LV(qV, pV, pV.M());
@@ -399,6 +422,7 @@ __device__ fptype DtoAP1_AtoVP2Dwave_VtoP3P4(fptype *Vecs, ParameterContainer &p
     unsigned int p2 = pc.getConstant(2);
     unsigned int p3 = pc.getConstant(3);
     unsigned int p4 = pc.getConstant(4);
+
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
     gpuLVec P3(Vecs[0 + 4 * p3], Vecs[1 + 4 * p3], Vecs[2 + 4 * p3], Vecs[3 + 4 * p3]);
@@ -412,6 +436,7 @@ __device__ fptype DtoAP1_AtoVP2Dwave_VtoP3P4(fptype *Vecs, ParameterContainer &p
     gpuLVec qD = pA - P1;
 
     pc.incrementIndex(1, 0, 5, 0, 1);
+
 #ifdef ZEMACH
     ZTspin1 LD(qD, pD, pD.M());
     ZTspin1 LV(qV, pV, pV.M());
@@ -437,6 +462,7 @@ __device__ fptype DtoTP1_TtoVP2_VtoP3P4(fptype *Vecs, ParameterContainer &pc) {
     unsigned int p2 = pc.getConstant(2);
     unsigned int p3 = pc.getConstant(3);
     unsigned int p4 = pc.getConstant(4);
+
     gpuLVec P1(Vecs[0 + 4 * p1], Vecs[1 + 4 * p1], Vecs[2 + 4 * p1], Vecs[3 + 4 * p1]);
     gpuLVec P2(Vecs[0 + 4 * p2], Vecs[1 + 4 * p2], Vecs[2 + 4 * p2], Vecs[3 + 4 * p2]);
     gpuLVec P3(Vecs[0 + 4 * p3], Vecs[1 + 4 * p3], Vecs[2 + 4 * p3], Vecs[3 + 4 * p3]);
@@ -498,7 +524,7 @@ SpinFactor::SpinFactor(std::string name,
                        unsigned int P1,
                        unsigned int P2,
                        unsigned int P3)
-    : GooPdf(nullptr, name)
+    : GooPdf(name)
     , _SF(SF)
     , _P0(P0)
     , _P1(P1)
@@ -566,6 +592,93 @@ SpinFactor::SpinFactor(std::string name,
 
     initialize();
 }
-void SpinFactor::recursiveSetIndices() {}
+void SpinFactor::recursiveSetIndices() {
+    switch(_SF) {
+    case SF_4Body::DtoPP1_PtoSP2_StoP3P4:
+        GET_FUNCTION_ADDR(ptr_to_DtoPP1_PtoSP2_StoP3P4);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_DtoPP1_PtoSP2_StoP3P4");
+        break;
+
+    case SF_4Body::DtoPP1_PtoVP2_VtoP3P4:
+        GET_FUNCTION_ADDR(ptr_to_DtoPP1_PtoVP2_VtoP3P4);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_DtoPP1_PtoSP2_StoP3P4");
+        break;
+
+    case SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_S:
+        GET_FUNCTION_ADDR(ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_S);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_S");
+        break;
+
+    case SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_P:
+        GET_FUNCTION_ADDR(ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_P);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_P");
+        break;
+
+    case SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_D:
+        GET_FUNCTION_ADDR(ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_D);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_D");
+        break;
+
+    case SF_4Body::DtoAP1_AtoVP2_VtoP3P4:
+        GET_FUNCTION_ADDR(ptr_to_DtoAP1_AtoVP2_VtoP3P4);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_DtoAP1_AtoVP2_VtoP3P4");
+        break;
+
+    case SF_4Body::DtoAP1_AtoVP2Dwave_VtoP3P4:
+        GET_FUNCTION_ADDR(ptr_to_DtoAP1_AtoVP2Dwave_VtoP3P4);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_DtoAP1_AtoVP2Dwave_VtoP3P4");
+        break;
+
+    case SF_4Body::DtoVS_VtoP1P2_StoP3P4:
+        GET_FUNCTION_ADDR(ptr_to_DtoVS_VtoP1P2_StoP3P4);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_DtoVS_VtoP1P2_StoP3P4");
+        break;
+
+    case SF_4Body::DtoV1P1_V1toV2P2_V2toP3P4:
+        GET_FUNCTION_ADDR(ptr_to_DtoV1P1_V1toV2P2_V2toP3P4);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_DtoV1P1_V1toV2P2_V2toP3P4");
+        break;
+
+    case SF_4Body::DtoAP1_AtoSP2_StoP3P4:
+        GET_FUNCTION_ADDR(ptr_to_DtoAP1_AtoSP2_StoP3P4);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_DtoAP1_AtoSP2_StoP3P4");
+        break;
+
+    case SF_4Body::DtoTP1_TtoVP2_VtoP3P4:
+        GET_FUNCTION_ADDR(ptr_to_DtoTP1_TtoVP2_VtoP3P4);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_DtoTP1_TtoVP2_VtoP3P4");
+        break;
+
+    case SF_4Body::FF_12_34_L1:
+        GET_FUNCTION_ADDR(ptr_to_FF_12_34_L1);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_FF_12_34_L1");
+        break;
+
+    case SF_4Body::FF_12_34_L2:
+        GET_FUNCTION_ADDR(ptr_to_FF_12_34_L2);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_FF_12_34_L2");
+        break;
+
+    case SF_4Body::FF_123_4_L1:
+        GET_FUNCTION_ADDR(ptr_to_FF_123_4_L1);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_FF_123_4_L1");
+        break;
+
+    case SF_4Body::FF_123_4_L2:
+        GET_FUNCTION_ADDR(ptr_to_FF_123_4_L2);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_FF_123_4_L2");
+        break;
+
+    case SF_4Body::ONE:
+        GET_FUNCTION_ADDR(ptr_to_ONE);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_ONE");
+        break;
+    }
+
+    host_function_table[num_device_functions] = host_fcn_ptr;
+    functionIdx                               = num_device_functions++;
+
+    populateArrays();
+}
 
 } // namespace GooFit

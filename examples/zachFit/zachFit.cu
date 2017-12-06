@@ -74,9 +74,14 @@ TH1D *getData(DataSet *data, Observable var, std::string filename) {
 
 int main(int argc, char **argv) {
     GooFit::Application app{
-        R"raw(This example performs a staged fit measuring the mass difference between the `D*(2010)+` and `D0` using D*+ -> D0 pi+ events recorded by the BaBar detector (approximately 477 inverse femtobarn).
-    
-Dataset descriptions:
+        R"raw(This example performs a staged fit measuring the mass difference between the `D*(2010)+`
+and `D0` using D*+ -> D0 pi+ events recorded by the BaBar detector (approximately 477
+inverse femtobarn).
+)raw",
+        argc,
+        argv};
+
+    app.set_footer(R"raw(Dataset descriptions:
 0-simple   Early testing sample for GooFit before nominal dataset was released.
            MC resolution sample and data for channel D*+ -> D0 pi+; D0 -> K- pi+
            Samples are composed of events that pass the majority of selection criteria, but
@@ -84,10 +89,7 @@ Dataset descriptions:
            than in the events of the nominal samples used in the official analysis/publication
            marked below as data set options "1" and "2".
 1-kpi      Nominal MC resolution sample and data for channel D*+ -> D0 pi+; D0 -> K- pi+
-2-k3pi     Nominal MC resolution sample and data for channel D*+ -> D0 pi+; D0 -> K- pi+ pi- pi+
-)raw",
-        argc,
-        argv};
+2-k3pi     Nominal MC resolution sample and data for channel D*+ -> D0 pi+; D0 -> K- pi+ pi- pi+)raw");
 
     int mode = 0, data = 0;
     bool plot;

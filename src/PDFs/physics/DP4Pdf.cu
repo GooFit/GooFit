@@ -27,6 +27,32 @@ class.
 #include <goofit/PDFs/physics/DP4Pdf.h>
 #include <goofit/PDFs/physics/EvalVar.h>
 
+#include <stdarg.h>
+
+std::string format(const char *fmt, ...) {
+    va_list args;
+
+    char buffer[2048];
+    memset (buffer, 0, 2048);
+		
+    va_start (args, fmt);
+
+    vsnprintf (buffer, sizeof (buffer), fmt, args);
+
+    va_end (args);
+
+    return std::string (buffer);
+}
+
+#define LOG(str,y)\
+{\
+    thrust::host_vector<fpcomplex> ptr = y;\
+    FILE *f = fopen(str.c_str(), "w");\
+    for (int i = 0; i < ptr.size(); i++)\
+        fprintf(f, "%i = %f, %f\n", i, ptr[i].real(), ptr[i].imag());\
+    fclose(f);\
+}
+
 namespace GooFit {
 
 // The function of this array is to hold all the cached waves; specific
@@ -336,7 +362,7 @@ __host__ void DPPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) {
         delete cachedAMPs;
 
     numEntries  = dataSize;
-    cachedResSF = new thrust::device_vector<fpcomplex>(dataSize * (components.size() + SpinFactors.size() - 1)); //   -1 because 1 component is efficiency
+    cachedResSF = new thrust::device_vector<fpcomplex>(dataSize * (2 * (components.size() - 1) + SpinFactors.size())); //   -1 because 1 component is efficiency
     void *dummy = thrust::raw_pointer_cast(cachedResSF->data());
     MEMCPY_TO_SYMBOL(cResSF, &dummy, sizeof(fpcomplex *), cacheToUse * sizeof(fpcomplex *), cudaMemcpyHostToDevice);
 
@@ -394,6 +420,8 @@ __host__ fptype DPPdf::normalize() const {
                     cachedResSF->begin() + offset + i, cachedResSF->end(), stride).begin(),
                 *(sfcalculators[i]));
 
+            LOG(format("SFCalculators_%i", i), *cachedResSF);
+
             if(!generation_no_norm) {
                 NormSpinCalculator nsc = NormSpinCalculator();
                 nsc.setDalitzId(getFunctionIndex());
@@ -408,6 +436,8 @@ __host__ fptype DPPdf::normalize() const {
                         norm_M12.end(), norm_M34.end(), norm_CosTheta12.end(), norm_CosTheta34.end(), norm_phi.end())),
                     (norm_SF.begin() + (i * MCevents)),
                     nsc);
+
+                LOG(format("nsc_%i", i), norm_SF);
             }
         }
 
@@ -429,6 +459,8 @@ __host__ fptype DPPdf::normalize() const {
                 strided_range<thrust::device_vector<fpcomplex>::iterator>(
                     cachedResSF->begin() + i, cachedResSF->end(), stride).begin(),
                 *(lscalculators[i]));
+
+            LOG(format("LSCalculators_%i", i), *cachedResSF);
         }
     }
 
@@ -449,6 +481,8 @@ __host__ fptype DPPdf::normalize() const {
                           strided_range<thrust::device_vector<fpcomplex>::iterator>(
                               cachedAMPs->begin() + i, cachedAMPs->end(), AmpCalcs.size()).begin(),
                           *(AmpCalcs[i]));
+
+        LOG(format("AmpCalcs_%i", i), *cachedAMPs);
     }
 
     // lineshape value calculation for the normalisation, also recalculated every time parameter change
@@ -475,6 +509,8 @@ __host__ fptype DPPdf::normalize() const {
                                        norm_CosTheta34.end(),
                                        norm_phi.end())),
                     (norm_LS.begin() + (i * MCevents)), ns);
+
+            LOG(format("ns_%i", i), norm_LS);
         }
     }
 
@@ -496,6 +532,8 @@ __host__ fptype DPPdf::normalize() const {
             *Integrator,
             0.,
             thrust::plus<fptype>());
+
+        GOOFIT_TRACE("sumIntegral={}", sumIntegral);
         // MCevents is the number of normalisation events.
         sumIntegral /= MCevents;
         ret = sumIntegral;

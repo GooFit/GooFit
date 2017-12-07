@@ -13,11 +13,9 @@ using namespace GooFit;
 
 void init_Variable(py::module &m) {
     py::class_<Indexable>(m, "Indexable")
-        .def_property_readonly("name", &Indexable::getName)
-        ADD_PROP(value, getValue, setValue, Indexable)
-        ADD_PROP(index, getIndex, setIndex, Indexable)
-        ADD_PROP(upperlimit, getUpperLimit, setUpperLimit, Indexable)
-        ADD_PROP(lowerlimit, getLowerLimit, setLowerLimit, Indexable)
+        .def_property_readonly("name", &Indexable::getName) ADD_PROP(value, getValue, setValue, Indexable)
+            ADD_PROP(index, getIndex, setIndex, Indexable) ADD_PROP(upperlimit, getUpperLimit, setUpperLimit, Indexable)
+                ADD_PROP(lowerlimit, getLowerLimit, setLowerLimit, Indexable)
         .def("__repr__", [](const Indexable &v) { return "<Indexable: {}>"_format(v.getName()); })
         .def("__bool__", &Indexable::operator bool);
 
@@ -37,10 +35,8 @@ void init_Variable(py::module &m) {
         .def(py::init<std::string, fptype, fptype, fptype, fptype>())
         .def(py::init<std::string, fptype, fptype, fptype, fptype, bool>())
         // "name"_a, "value"_a, "error"_a, "min"_a, "max"_a, "fixed"_a=false)
-        ADD_PROP(error, getError, setError, Variable)
-        ADD_PROP(fixed, IsFixed, setFixed, Variable)
-        ADD_PROP_RO(fitterIndex, getFitterIndex, Variable)
-        ADD_PROP_WO(blind, setBlind, Variable)
+        ADD_PROP(error, getError, setError, Variable) ADD_PROP(fixed, IsFixed, setFixed, Variable)
+            ADD_PROP_RO(fitterIndex, getFitterIndex, Variable) ADD_PROP_WO(blind, setBlind, Variable)
         .def("__repr__", [](const Variable &v) { return "<Variable: {}>"_format(v.getName()); })
         .def("__str__", [](const Variable &v) {
             std::stringstream os;

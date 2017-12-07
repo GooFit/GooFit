@@ -22,6 +22,7 @@ target_include_directories(landau PUBLIC ../include)
 goofit_add_library(_goofit MODULE
     goofit.cpp
     Minuit2/FunctionMinimum.cpp
+    goofit/props.h
     goofit/Variable.cpp
     goofit/DataSet.cpp
     goofit/BinnedDataSet.cpp

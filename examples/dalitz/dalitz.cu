@@ -368,6 +368,12 @@ int runToyFit(std::string toyFileName, GooFit::Application &app) {
     FitManager datapdf(signal);
 
     datapdf.fit();
+
+    // Segfault
+    // UnbinnedDataSet grid = signal->makeGrid();
+    // signal->setData(&grid);
+    // auto vecvec = signal->getCompProbsAtDataPoints();
+
     return datapdf;
 }
 

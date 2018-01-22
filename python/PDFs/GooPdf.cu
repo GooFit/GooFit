@@ -29,6 +29,8 @@ void init_GooPdf(py::module &m) {
                 Run makeGrid, set data, evaluateAtPoints, then recover original data.
                 )raw")
         .def("setFitControl", &GooPdf::setFitControl, "Set a fit control.", "fit_control"_a)
-        .def("getCompProbsAtDataPoints", &GooPdf::getCompProbsAtDataPoints, "Returns the probability at the current data points, supports multidimensional datasets.");
+        .def("getCompProbsAtDataPoints",
+             &GooPdf::getCompProbsAtDataPoints,
+             "Returns the probability at the current data points, supports multidimensional datasets.");
     ;
 }

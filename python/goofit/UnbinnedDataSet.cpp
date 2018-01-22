@@ -64,5 +64,7 @@ void init_UnbinnedDataSet(py::module &m) {
              &UnbinnedDataSet::from_matrix<Eigen::Matrix<fptype, Eigen::Dynamic, Eigen::Dynamic>>,
              "Append a matrix to a dataset. The final parameter will be a count if the matrix is missing one row."
              "matrix"_a,
-             "filter"_a = false);
+             "filter"_a = false)
+        .def("loadEvent", &UnbinnedDataSet::loadEvent, "Load an event into the observables", "event_number"_a)
+    ;
 }

@@ -66,7 +66,7 @@ void getToyData(std::string toyFileName, GooFit::Application &app) {
     toyFileName = app.get_filename(toyFileName, "examples/dalitz");
 
     TH2F dalitzplot("dalitzplot",
-                    "",
+                    "Original Data",
                     m12.getNumBins(),
                     m12.getLowerLimit(),
                     m12.getUpperLimit(),
@@ -369,10 +369,33 @@ int runToyFit(std::string toyFileName, GooFit::Application &app) {
 
     datapdf.fit();
 
-    // Segfault
-    // UnbinnedDataSet grid = signal->makeGrid();
-    // signal->setData(&grid);
-    // auto vecvec = signal->getCompProbsAtDataPoints();
+    eventNumber.setValue(0);
+    UnbinnedDataSet grid(signal->getObservables());
+    grid.fillWithGrid();
+
+    signal->setData(&grid);
+    signal->setDataSize(grid.getNumEvents());
+    auto vecvec = signal->getCompProbsAtDataPoints();
+
+    TH2F resultplot("resultplot",
+                    "Result PDF",
+                    m12.getNumBins(),
+                    m12.getLowerLimit(),
+                    m12.getUpperLimit(),
+                    m13.getNumBins(),
+                    m13.getLowerLimit(),
+                    m13.getUpperLimit());
+
+    for(size_t x = 0; x < m12.getNumBins(); x++) {
+        for(size_t y = 0; y < m13.getNumBins(); y++) {
+            size_t val = x + y * m12.getNumBins();
+            resultplot.SetBinContent(x + 1, y + 1, vecvec[0].at(val));
+        }
+    }
+    foo->cd();
+    resultplot.SetStats(false);
+    resultplot.Draw("colz");
+    foo->SaveAs("resultplot.png");
 
     return datapdf;
 }
@@ -397,7 +420,8 @@ int main(int argc, char **argv) {
     gStyle->SetLineWidth(1);
     gStyle->SetLineColor(1);
     gStyle->SetPalette(1, 0);
-    foo    = new TCanvas();
+    foo = new TCanvas();
+    foo->Size(10, 10);
     foodal = new TCanvas();
     foodal->Size(10, 10);
 

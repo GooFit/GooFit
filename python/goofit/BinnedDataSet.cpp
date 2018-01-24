@@ -2,6 +2,8 @@
 #include <goofit/Variable.h>
 #include <pybind11/pybind11.h>
 
+#include "props.h"
+
 using namespace GooFit;
 
 namespace py = pybind11;
@@ -17,10 +19,12 @@ void init_BinnedDataSet(py::module &m) {
                 name = kwargs["name"].cast<std::string>();
             return new BinnedDataSet(vars, name);
         }))
+
         .def("getBinCenter", (fptype(BinnedDataSet::*)(size_t, size_t) const) & BinnedDataSet::getBinCenter)
-        .def("getBinNumber", &BinnedDataSet::getBinNumber)
-        .def("getBinVolume", &BinnedDataSet::getBinVolume)
-        .def("getBinError", &BinnedDataSet::getBinError)
-        .def("getNumBins", &BinnedDataSet::getNumBins)
-        .def("getNumEvents", &BinnedDataSet::getNumEvents);
+        .def_property_readonly("bin_center",
+                               (fptype(BinnedDataSet::*)(size_t, size_t) const) & BinnedDataSet::getBinCenter)
+
+            ADD_PROP_RO(bin_number, getBinNumber, BinnedDataSet) ADD_PROP_RO(bin_volume, getBinVolume, BinnedDataSet)
+                ADD_PROP_RO(bin_error, getBinError, BinnedDataSet) ADD_PROP_RO(num_bins, getNumBins, BinnedDataSet)
+                    ADD_PROP_RO(num_events, getNumEvents, BinnedDataSet);
 }

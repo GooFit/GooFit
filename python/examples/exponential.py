@@ -8,18 +8,28 @@ import numpy as np
 
 print_goofit_info()
 
-xdata = np.random.exponential(size=100000)
-xvar = Observable("xvar", 0, np.max(xdata) + 1)
+# Independent variable.
+xvar = Observable("xvar", 0, 10)
 
+# Data set
 data = UnbinnedDataSet(xvar)
 
-for v in xdata:
-    xvar.value = v
-    data.addEvent()
+# Generate toy events
+xdata = np.random.exponential(size=100000)
+data.from_matrix(xdata[np.newaxis, :], filter=True)
 
+# Also would work
+#for v in xdata:
+#    xvar.value = v
+#    data.addEvent()
+
+# Fit parameter
 alpha = Variable("alpha", -2, 0.1, -10, 10)
+
+# PDF object
 exppdf = ExpPdf("exppdf", xvar, alpha)
 
+# Do the fit
 exppdf.fitTo(data)
 
 #exppdf.setData(data)

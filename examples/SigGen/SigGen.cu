@@ -23,11 +23,7 @@ const fptype KmMass     = .493677;
 int main(int argc, char **argv) {
     GooFit::Application app("Signal Generator Example", argc, argv);
 
-    try {
-        app.run();
-    } catch(const GooFit::ParseError &e) {
-        return app.exit(e);
-    }
+    GOOFIT_PARSE(app);
 
     DecayInfo4 DK3P_DI;
     DK3P_DI.meson_radius = 1.5;

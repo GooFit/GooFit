@@ -6,6 +6,10 @@ from __future__ import print_function, division
 from goofit import *
 import numpy as np
 
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
 print_goofit_info()
 
 # Create random data
@@ -44,7 +48,25 @@ print(xsigm)
 print(ymean)
 print(ysigm)
 
-print(data.to_numpy())
 grid = total.makeGrid()
-print(grid.to_numpy())
 total.setData(grid)
+
+val = total.getCompProbsAtDataPoints()
+
+mat = np.array(val[0]).reshape([xvar.numbins, yvar.numbins])
+
+fig, axs = plt.subplots(1, 2, figsize=(10,5))
+
+axs[0].hist2d(xyarr[0], xyarr[1], bins=(100,100), range=((xvar.lowerlimit, xvar.upperlimit), (yvar.lowerlimit, yvar.upperlimit)))
+axs[1].imshow(mat, extent=(xvar.lowerlimit, xvar.upperlimit, yvar.lowerlimit, yvar.upperlimit), origin='lower')
+
+for ax in axs:
+    ax.set_xlabel("x")
+    ax.set_ylabel("y")
+    ax.axis("equal")
+
+axs[0].set_title("Original input (histogram)")
+axs[1].set_title("Fitted function")
+
+fig.savefig("plot_2d.png")
+

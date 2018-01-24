@@ -18,11 +18,7 @@ using namespace GooFit;
 int main(int argc, char **argv) {
     GooFit::Application app("Exponential example", argc, argv);
 
-    try {
-        app.run();
-    } catch(const GooFit::ParseError &e) {
-        return app.exit(e);
-    }
+    GOOFIT_PARSE(app);
 
     Minuit2::MnPrint::SetLevel(3);
 

@@ -22,11 +22,7 @@ using namespace GooFit;
 int main(int argc, char **argv) {
     GooFit::Application app("2D plot example", argc, argv);
 
-    try {
-        app.run();
-    } catch(const GooFit::ParseError &e) {
-        return app.exit(e);
-    }
+    GOOFIT_PARSE(app);
 
     // In real code, use a random device here
     std::mt19937 gen(137);

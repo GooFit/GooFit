@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.4)
 
 project(GOOFIT
-    VERSION 2.1.0
+    VERSION 2.1.1
     LANGUAGES CXX)
 
 set(GOOFIT_TAG "dev")
@@ -503,13 +503,13 @@ function(goofit_add_library GNAME)
 
     set_target_properties(${GNAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION ${SUPPORTS_IPO})
 
-    source_group("Source Files" REGULAR_EXPRESSION ".*\\.c[uc]")
+    source_group("Source Files" REGULAR_EXPRESSION ".*\\.c[ucp]p?")
     source_group("Basic\\Header Files" REGULAR_EXPRESSION ".*PDFs/basic/.*\\.h")
-    source_group("Basic\\Source Files" REGULAR_EXPRESSION ".*PDFs/basic/.*\\.c[uc]")
+    source_group("Basic\\Source Files" REGULAR_EXPRESSION ".*PDFs/basic/.*\\.c[ucp]p?")
     source_group("Combine\\Header Files" REGULAR_EXPRESSION ".*PDFs/combine/.*\\.h")
-    source_group("Combine\\Source Files" REGULAR_EXPRESSION ".*PDFs/combine/.*\\.c[uc]")
+    source_group("Combine\\Source Files" REGULAR_EXPRESSION ".*PDFs/combine/.*\\.c[ucp]p?")
     source_group("Physics\\Header Files" REGULAR_EXPRESSION ".*PDFs/physics/.*\\.h")
-    source_group("Physics\\Source Files" REGULAR_EXPRESSION ".*PDFs/physics/.*\\.c[uc]")
+    source_group("Physics\\Source Files" REGULAR_EXPRESSION ".*PDFs/physics/.*\\.c[ucp]p?")
 
     if(CLANG_TIDY_EXE)
         set_target_properties(

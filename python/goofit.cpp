@@ -48,6 +48,7 @@ void init_ProdPdf(py::module &);
 // Physics
 void init_DalitzPlotHelpers(py::module &);
 void init_DalitzPlotPdf(py::module &);
+void init_DalitzPlotter(py::module &);
 void init_DalitzVetoPdf(py::module &);
 void init_DP4Pdf(py::module &);
 void init_IncoherentSumPdf(py::module &);

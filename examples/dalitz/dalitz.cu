@@ -23,6 +23,7 @@
 #include <goofit/PDFs/combine/AddPdf.h>
 #include <goofit/PDFs/combine/ProdPdf.h>
 #include <goofit/PDFs/physics/DalitzPlotPdf.h>
+#include <goofit/PDFs/physics/DalitzPlotter.h>
 #include <goofit/PDFs/physics/DalitzVetoPdf.h>
 #include <goofit/PDFs/physics/ResonancePdf.h>
 #include <goofit/UnbinnedDataSet.h>
@@ -369,10 +370,32 @@ int runToyFit(std::string toyFileName, GooFit::Application &app) {
 
     datapdf.fit();
 
-    // Segfault
-    // UnbinnedDataSet grid = signal->makeGrid();
-    // signal->setData(&grid);
-    // auto vecvec = signal->getCompProbsAtDataPoints();
+    TH2F dalitzplot("dalitzplot",
+                    "",
+                    m12.getNumBins(),
+                    m12.getLowerLimit(),
+                    m12.getUpperLimit(),
+                    m13.getNumBins(),
+                    m13.getLowerLimit(),
+                    m13.getUpperLimit());
+
+    /* Still segfaults for unknown reasons.
+    DalitzPlotter plotter(signal, signal);
+
+    for (unsigned int j = 0; j < plotter.getNumEvents(); ++j) {
+
+        double currm12 = plotter.getXval(j);
+        double currm13 = plotter.getYval(j);
+        double currm23 = plotter.getZval(j);
+        double val = plotter.getVal(j);
+
+        dalitzplot.Fill(currm12, currm13, val);
+    }
+
+    dalitzplot.SetStats(false);
+    dalitzplot.Draw("colz");
+    foodal->SaveAs("dalitzpdf.png");
+    */
 
     return datapdf;
 }

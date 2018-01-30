@@ -22,11 +22,7 @@ using namespace GooFit;
 int main(int argc, char **argv) {
     GooFit::Application app("Addition example", argc, argv);
 
-    try {
-        app.run();
-    } catch(const GooFit::ParseError &e) {
-        return app.exit(e);
-    }
+    GOOFIT_PARSE(app);
 
     gStyle->SetCanvasBorderMode(0);
     gStyle->SetCanvasColor(10);

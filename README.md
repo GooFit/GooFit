@@ -2,6 +2,8 @@
 [![Code Coverage][codecov-badge]][codecov-link]
 [![Join the chat at https://gitter.im/GooFit/Lobby][gitter-badge]][gitter-link]
 [![License: LGPL v3][license-badge]](./LICENSE)
+[![Latest release][releases-badge]][releases-link]
+[![PyPI Status][pypi-status]][pypi-link]
 [![DOI][DOI-badge]][DOI-link]
 
 ![GooFit logo](./docs/GooFitLogo.png)
@@ -21,16 +23,31 @@ doing maximum-likelihood fits with a familiar syntax.
 
 * A recent version of CMake is required. The minimum is 3.4, but tested primarily with 3.6 and newer. CMake is incredibly easy to install (see [the system install page](./docs/SYSTEM_INSTALL.md)).
 * A ROOT 6 build highly recommended -- GooFit will use the included Minuit2 submodule if ROOT is not found, and the Minuit1 based fitter will not be available.
-* If using CUDA:
-  * CMake 3.8+ highly recommended, but not required (yet)
-  * CUDA 7.0+
-  * An nVidia GPU supporting compute capability at least 2.0 (3.5+ recommended)
-* If using OpenMP:
-  * A compiler supporting OpenMP and C++11 (GCC 4.8+, Clang, and Intel 17 tested, GCC 4.7 not supported)
-  * Note that TBB is also available as a backend, but it still requires OpenMP to be present.
-  * On macOS, this backend requires `brew install cliutils/apple/libomp` or a custom compiler
-* If using CPP:
-  * Single threaded builds are available for debugging and development (such as on the default Clang on macOS)
+
+<details><summary>If using CUDA: (click to expand)</summary><p>
+
+* CMake 3.8+ highly recommended, but not required (yet)
+* CUDA 7.0+
+* An nVidia GPU supporting compute capability at least 2.0 (3.5+ recommended)
+
+</p></details>
+
+<details><summary>If using OpenMP: (click to expand)</summary><p>
+  
+* A compiler supporting OpenMP and C++11 (GCC 4.8+, Clang, and Intel 17 tested, GCC 4.7 not supported)
+* Note that TBB is also available as a backend, but it still requires OpenMP to be present.
+* On macOS, this backend requires `brew install cliutils/apple/libomp` or a custom compiler
+  
+</p></details>
+  
+
+<details><summary>If using CPP: (click to expand)</summary><p>
+
+* Single threaded builds are available for debugging and development (such as on the default Clang on macOS)
+
+</p></details>
+
+<br/>
 
 A list of exact commands required for several platforms is [available here](./docs/SYSTEM_INSTALL.md).
 
@@ -49,6 +66,8 @@ You can either checkout a tagged version, or stay on the master for the latest a
 
 ## Building
 
+If you just want to get started as fast as possible, running `make`, `make omp`, or `make cuda` in the main directory will make a build directory for you, and will run CMake and make. It is recommended that you instead direcly use the CMake powered build system as discribed below, so that you will have a better understanding of what you are doing and more flexibility.
+
 The build system uses CMake. The procedure is standard for CMake builds:
 
 ```bash
@@ -59,7 +78,7 @@ make
 ```
 
 If you don't have a modern CMake, Kitware provides installers for every OS. You can even get a copy using python: `pip install cmake` or locally with `pip install --user cmake`.
-On a Mac, you can also use any package manager, such as Homebrew: `brew install cmake`
+On a Mac, you can also use any package manager, such as Homebrew: `brew install cmake`.
 
 If you want to change compiler, set `CC` and `CXX` to appropriate defaults *before* you run CMake either inline or in your environment. You can also set `CMAKE_C_COMPILER` and `CMAKE_CXX_COMPILER` directly on the command line with `-D`. If you want to set the host and device backends, you can set those options. The defaults are:
 ```
@@ -77,7 +96,8 @@ Other custom options supported along with the defaults:
 * `-DGOOFIT_DEBUG=ON` and `-DGOOFIT_TRACE=ON` will enable the matching printout macros
 * `-DGOOFIT_PYTHON=ON`: Include the python bindings using [PyBind11] if Python found.
 
-Advanced Options:
+<details><summary>Advanced Options: (click to expand)</summary><p>
+
 * `-DGOOFIT_HOST=Auto`: This is CPP unless device is `OMP`, in which case it is also `OMP`. This changes `thrust::host_vector` calculations, and is not fully supported when set to a non-default setting.
 * `-DGOOFIT_TESTS=ON`: Build the GooFit tests
 * `-DGOOFIT_SEPARATE_COMP=ON`: Enable separable compilation of PDFs. Single core CUDA builds are faster with this off. The off mode is not well supported, especially on newer cards.
@@ -89,7 +109,9 @@ Advanced Options:
 * If `clang-tidy` is available, it will automatically be used to check the source. If you set `-DGOOFIT_TIDY_FIX=ON`, fixes will be applied to the GooFit source.
 * `-DGOOFIT_SPLASH=ON`: Controls the unicode splash at the beginning.
 
-A few standard CMake tricks:
+</p></details>
+
+<details><summary>A few standard CMake tricks: (click to expand)</summary><p>
 
 * Use `make VERBOSE=1` to see the commands used to build the files.
 * Use `cmake .. -LH` to list the CMake options with help.
@@ -104,21 +126,11 @@ A few standard CMake tricks:
 * Use `CMake --build .` to build without referring to your specific build tool, like `make` or `ninja`.
 * If you are using the `llvm` tool-suite, you can use `-DCMAKE_EXPORT_COMPILE_COMMANDS=ON` to generate the .json file that the `clang-*` commands expect.
 
-> Note: Running `make`, `make omp`, or `make cuda` in the main directory will make a build directory for you, and will run CMake and make.
-
-## Using an IDE
-
-The following IDEs have been tested. Here `$SRC` refers to the source directory, and usually is `..` or `../GooFit`. You may want `-DCMAKE_BUILD_TYPE=Debug` and/or `-DGOOFIT_DEBUG=ON`.
-
-| Name | Platform | Setup | Notes |
-|------|----------|:------|:------|
-| Xcode | macOS | `cmake $SRC -GXcode` | Only CPP version, works well though |
-| Nsight-Eclipse | Linux | `cmake $SRC -G "Eclipse CDT4 - Unix Makefiles"` | Must be out-of-source, supports CUDA backend |
-| QtCreator | All | Open from QtCreator dialog | Requires CMake extension (usually present). Might be able to use CMake 3.7+ Server |
-| CLion | All | Open from CLion menu | Young but promising |
+</p></details>
 
 
-## Running the Examples
+
+## Running the examples and tests
 
 * To run all the examples, with timing information, use:
 
@@ -127,19 +139,15 @@ The following IDEs have been tested. Here `$SRC` refers to the source directory,
 ./pyexamples/RunAll.sh # Python
 ```
 
-or
-
-```bash
-./examples/RunAll.py --profile
-```
-
 (This requires the [Plumbum] library, install with `pip install plumbum`, `pip install --user plumbum`, or `conda -c conda-forge plumbum`.)
 
 If you want to run an individual example, those are in subdirectories in examples (built products are in your build directory, the source is in `/examples`).
 
 The tests can be run with `make test` or `ctest`. The python bindings, if built, can be tested with `pytest`, run from the main build directory. The python examples and tests folders are linked to the build directory with a `py` prefix.
 
-## Adding a new example:
+## Other topics
+
+<details><summary>Adding a new example: (click to expand)</summary><p>
 
 The examples are designed to be easy to add to. Make a new directory, then add a new CMakeLists.txt in your directory with one or more of the following two lines:
 
@@ -162,15 +170,36 @@ find_package(Boost 1.49 REQUIRED COMPONENTS filesystem)
 
 goofit_add_executable(K3Pi K3Pi.cu)
 target_link_libraries(MyNewExample Boost::filesystem ROOT::TreePlayer)
-
 ```
 
-## Adding a new project
+</p></details>
+
+
+<details><summary>Adding a new project: (click to expand)</summary><p>
 
 If you'd like to make a separate GooFit project, you can do so. Simply checkout your project inside GooFit, with the name `work` or `GooFit`+something. CMake will automatically pick up those directories and build them, and GooFit's git will ignore them. Otherwise, they act just like the example directory. If you add a new directory, you will need to explicitly rerun CMake, as that cannot be picked up by the makefile. The automatic search can be turned off with the `GOOFIT_PROJECTS` option.
 
-## Converting from older GooFit code
- 
+</p></details>
+
+
+
+
+<details><summary style="font-size: 1.5em; margin-top: 24px; font-weight: 600; border-bottom: 1px solid #eaecef; line-height: 1.25">Using an IDE: (click to expand)</summary><p>
+
+The following IDEs have been tested. Here `$SRC` refers to the source directory, and usually is `..` or `../GooFit`. You may want `-DCMAKE_BUILD_TYPE=Debug` and/or `-DGOOFIT_DEBUG=ON`.
+
+| Name | Platform | Setup | Notes |
+|------|----------|:------|:------|
+| Xcode | macOS | `cmake $SRC -GXcode` | Only CPP version, works well though |
+| Nsight-Eclipse | Linux | `cmake $SRC -G "Eclipse CDT4 - Unix Makefiles"` | Must be out-of-source, supports CUDA backend |
+| QtCreator | All | Open from QtCreator dialog | Requires CMake extension (usually present). Might be able to use CMake 3.7+ Server |
+| CLion | All | Open from CLion menu | Young but promising |
+
+</p></details>
+
+
+<details><summary>Converting from older GooFit Code: (click to expand)</summary><p>
+
 The build system underwent a major upgrade in the move to CMake. The folders that were introduced to keep the includes structured require modifications of source code, converting lines like `#include "Variable.hh"` to `#include "GooFit/Variable.h"`. This modification can be done for you by running the provided script, `scripts/ModernizeGooFit.py` on your source files (requires Python and [Plumbum](https://github.com/tomerfiliba/plumbum)). You should remove your old Makefiles and use the new `CMakeFiles.txt` files provided in examples - this should require
 writing two lines of code instead of the 50 or so previously needed. You should also add a GooFit Application to your code. (2 lines of CMake)
 
@@ -194,18 +223,28 @@ The other key differences in code are the addition of the `GooFit` namespace (`u
 
 See Converting to [GooFit 2.0](./docs/CONVERTING20.md), [GooFit 2.1](./docs/CONVERTING21.md), and the [Changelog](./CHANGELOG.md).
 
-## Improving Performance with MPI
+</p></details>
+
+
+<details><summary>Improving performance with MPI: (click to expand)</summary><p>
 
 Using the MPI version with an appropriate environment setup will allow for multiple GPU's to be used, and/or allow for multiple nodes.  To use this feature simply turn the flag on with CMake `-DGOOFIT_MPI=ON`.  This will divide the dataset by the number of processes involved.  For instance, if you have two nodes that will be involved in the calculation, the data will be split in half.  Currently, each node will load the entire buffer from disk, then load partitioned data it will work on.  It is highly recommended not to use more than one process per node for MPI+OpenMP versions.
 
 A few notes about using the MPI version:
+
 * You will need to use the `CountingVariable` for any event numbers used or referenced within the code, or anything that counts with the events.
 * Please call `setDataSize` after `setData`.  If you do not, `setDataSize` doesn't have `m_iEventsPerTask`, which will need to be recalculated.
 
-## Configuring Group Size & Grain Size
+</p></details>
+
+
+<details><summary>Configuring group size and grain size: (click to expand)</summary><p>
 
 This advanced option is for GPU devices only. The script `scripts/find_optimal.py` will search a programmable group and grain space in order to find the optimal configuration for the particular PDFs.  This should be run after an example has been developed and tested.  Please look at `scripts/find_optimal.py` to see how to formulate a particular script.  Depending on the searchable space, this can take hours to days to compute.  
 The script will loop over the space and configure each parameter, then recompile and run the example a number of times.  A spreadsheet is calculated to help notice patterns, and the fastest version is printed to the user.
+
+</p></details>
+
 
 ## Acknowledgement
 
@@ -235,3 +274,7 @@ In addition, we thank the nVidia GPU Grant Program for donating hardware used in
 [PyBind11]:          http://pybind11.readthedocs.io/en/master
 [ROOT]:              https://root.cern.ch
 [Tutorials]:         https://goofit.gitlab.io/Goo2Torial
+[pypi-status]:       https://img.shields.io/pypi/v/goofit.svg
+[pypi-link]:         https://pypi.python.org/pypi/goofit/
+[releases-badge]:    https://img.shields.io/github/release/GooFit/GooFit.svg 
+[releases-link]:     https://github.com/GooFit/GooFit/releases

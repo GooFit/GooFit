@@ -218,11 +218,7 @@ int main(int argc, char **argv) {
     int eventsToGenerate = 10000000;
     app.add_option("-e,--events", eventsToGenerate, "Events to generate", true);
 
-    try {
-        app.run();
-    } catch(const GooFit::ParseError &e) {
-        return app.exit(e);
-    }
+    GOOFIT_PARSE(app);
 
     // Time is in units of lifetime
 

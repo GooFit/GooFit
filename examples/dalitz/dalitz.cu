@@ -369,6 +369,12 @@ int runToyFit(std::string toyFileName, GooFit::Application &app) {
     FitManager datapdf(signal);
 
     datapdf.fit();
+
+    // Segfault
+    // UnbinnedDataSet grid = signal->makeGrid();
+    // signal->setData(&grid);
+    // auto vecvec = signal->getCompProbsAtDataPoints();
+
     return datapdf;
 }
 
@@ -378,11 +384,7 @@ int main(int argc, char **argv) {
     std::string filename = "dalitz_toyMC_000.txt";
     app.add_option("-f,--filename,filename", filename, "File to read in", true)->check(GooFit::ExistingFile);
 
-    try {
-        app.run();
-    } catch(const GooFit::ParseError &e) {
-        return app.exit(e);
-    }
+    GOOFIT_PARSE(app);
 
     gStyle->SetCanvasBorderMode(0);
     gStyle->SetCanvasColor(10);

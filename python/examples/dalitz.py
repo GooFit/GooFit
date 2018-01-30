@@ -26,6 +26,7 @@ def cpuGetM23(massPZ,massPM):
 
 
 def getToyData(toyFileName):
+    print("Reading {} ...".format(toyFileName))
     out = pd.read_csv(toyFileName,
             delim_whitespace=True,
             comment='=',
@@ -234,15 +235,28 @@ def runToyFit(toyFileName):
     signal = makeSignalPdf(m12, m13, eventNumber)
     signal.setData(data)
     signal.setDataSize(data.getNumEvents())
-    datapdf = FitManager(signal)
+    fitman = FitManager(signal)
 
-    datapdf.fit()
-    return datapdf
-
+    fitman.fit()
+    return fitman, signal, m12, m13
 
 def main():
-    print("main")
     filename = GOOFIT_SOURCE_DIR + "/examples/dalitz/dalitz_toyMC_000.txt"
-    return runToyFit(filename)
+    fitman, signal, m12, m23 =  runToyFit(filename)
+    
+    # Make a grid and evaluate over it
+    grid = signal.makeGrid()
+    signal.setData(grid)
+    # Segfault here:
+    #val = signal.getCompProbsAtDataPoints()
+    
+    
+    #for i in range(len(grid)):
+    #    grid.loadEvent(i)
+    #    print(m12, m13, val[0][i])
+    
+    # Double int's needed here since int may return a long and sys.exit needs a real int for Python2
+    return int(int(fitman))
 
-sys.exit(int(int(main())))
+if __name__ == '__main__':
+    sys.exit(main())

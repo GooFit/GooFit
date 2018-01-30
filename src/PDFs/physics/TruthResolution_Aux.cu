@@ -47,10 +47,10 @@ __device__ device_calc_tau_fcn_ptr ptr_to_calc_tau = device_truth_resolution_ave
 
 TruthResolution::TruthResolution()
     : MixingTimeResolution() {
-    GET_FUNCTION_ADDR(ptr_to_truth);
+    //GET_FUNCTION_ADDR(ptr_to_truth);
     initIndex();
-    GET_FUNCTION_ADDR(ptr_to_calc_tau);
-    setCalcTauIdx(GooPdf::findFunctionIdx(host_fcn_ptr));
+    //GET_FUNCTION_ADDR(ptr_to_calc_tau);
+    //setCalcTauIdx(GooPdf::findFunctionIdx(host_fcn_ptr));
 }
 TruthResolution::~TruthResolution() = default;
 
@@ -67,6 +67,18 @@ fptype TruthResolution::normalisation(
     ret -= 2 * timeIntegralFou * di4;
 
     return ret;
+}
+
+void TruthResolution::recursiveSetIndices () {
+    GET_FUNCTION_ADDR(ptr_to_truth);
+    //GET_FUNCTION_ADDR(ptr_to_calc_tau);
+    host_function_table[num_device_functions] = host_fcn_ptr;
+    functionIdx = num_device_functions;
+    num_device_functions++;
+
+    GOOFIT_DEBUG("Populating Arrays for {}(ptr_to_truth)", getName());
+
+    populateArrays();
 }
 
 } // namespace GooFit

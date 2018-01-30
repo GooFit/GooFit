@@ -12,5 +12,7 @@ class TruthResolution : public MixingTimeResolution {
     fptype normalisation(
         fptype di1, fptype di2, fptype di3, fptype di4, fptype tau, fptype xmixing, fptype ymixing) const override;
     void createParameters(PdfBase *dis) override {}
+
+    virtual void recursiveSetIndices();
 };
 } // namespace GooFit

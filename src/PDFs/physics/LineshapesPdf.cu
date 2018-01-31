@@ -765,62 +765,62 @@ Lineshape::Lineshape(std::string name, unsigned int L, unsigned int Mpair, FF Fo
 void Lineshape::recursiveSetIndices() { 
     switch(lineShapeType) {
         case 1:
-            GET_FUNCTION_ADDR(LS_ONE);
+            GET_FUNCTION_ADDR(ptr_to_LS_ONE);
             GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_LS_ONE");
             break;
 
         case 2:
-            GET_FUNCTION_ADDR(BW);
+            GET_FUNCTION_ADDR(ptr_to_BW_DP4);
             GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_BW_DP4");
             break;
 
         case 3:
-            GET_FUNCTION_ADDR(lass_MINT);
+            GET_FUNCTION_ADDR(ptr_to_lass);
             GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_lass");
             break;
 
         case 4:
-            GET_FUNCTION_ADDR(glass_MINT3);
+            GET_FUNCTION_ADDR(ptr_to_glass3);
             GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_glass3");
             break;
 
         case 5:
-            GET_FUNCTION_ADDR(bugg_MINT);
+            GET_FUNCTION_ADDR(ptr_to_bugg_MINT);
             GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_bugg_MINT");
             break;
 
         case 6:
-            GET_FUNCTION_ADDR(bugg_MINT3);
+            GET_FUNCTION_ADDR(ptr_to_bugg_MINT3);
             GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_bugg_MINT3");
             break;
 
         case 7:
-            GET_FUNCTION_ADDR(SBW);
+            GET_FUNCTION_ADDR(ptr_to_SBW);
             GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_SBW");
             break;
 
         case 8:
-            GET_FUNCTION_ADDR(nonres_DP);
+            GET_FUNCTION_ADDR(ptr_to_NONRES_DP);
             GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_NONRES_DP");
             break;
 
         case 9:
-            GET_FUNCTION_ADDR(Flatte_MINT);
+            GET_FUNCTION_ADDR(ptr_to_Flatte);
             GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Flatte");
             break;
 
         case 10:
-            GET_FUNCTION_ADDR(Spline_TDP);
+            GET_FUNCTION_ADDR(ptr_to_Spline);
             GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Spline");
             break;
 
         case 11:
-            GET_FUNCTION_ADDR(kMatrixFunction);
+            GET_FUNCTION_ADDR(ptr_to_kMatrix);
             GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_kMatrix");
             break;
 
         case 12:
-            GET_FUNCTION_ADDR(FOCUSFunction);
+            GET_FUNCTION_ADDR(ptr_to_FOCUS);
             GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_FOCUS");
             break;
     }

@@ -7,8 +7,6 @@
 #include <TLine.h>
 #include <TRandom.h>
 #include <TRandom3.h>
-#include <TStyle.h>
-#include <TText.h>
 
 // System stuff
 #include <fstream>
@@ -28,6 +26,7 @@
 #include <goofit/PDFs/physics/ResonancePdf.h>
 #include <goofit/UnbinnedDataSet.h>
 #include <goofit/Variable.h>
+#include <goofit/detail/Style.h>
 
 using namespace std;
 using namespace GooFit;
@@ -370,32 +369,14 @@ int runToyFit(std::string toyFileName, GooFit::Application &app) {
 
     datapdf.fit();
 
-    TH2F dalitzplot("dalitzplot",
-                    "",
-                    m12.getNumBins(),
-                    m12.getLowerLimit(),
-                    m12.getUpperLimit(),
-                    m13.getNumBins(),
-                    m13.getLowerLimit(),
-                    m13.getUpperLimit());
+    ProdPdf prodpdf{"prodpdf", {signal}};
 
-    /* Still segfaults for unknown reasons.
-    DalitzPlotter plotter(signal, signal);
+    DalitzPlotter plotter(&prodpdf, signal);
 
-    for (unsigned int j = 0; j < plotter.getNumEvents(); ++j) {
+    TH2F* dalitzplot = plotter.make2D();
+    dalitzplot->Draw("colz");
 
-        double currm12 = plotter.getXval(j);
-        double currm13 = plotter.getYval(j);
-        double currm23 = plotter.getZval(j);
-        double val = plotter.getVal(j);
-
-        dalitzplot.Fill(currm12, currm13, val);
-    }
-
-    dalitzplot.SetStats(false);
-    dalitzplot.Draw("colz");
     foodal->SaveAs("dalitzpdf.png");
-    */
 
     return datapdf;
 }
@@ -408,18 +389,8 @@ int main(int argc, char **argv) {
 
     GOOFIT_PARSE(app);
 
-    gStyle->SetCanvasBorderMode(0);
-    gStyle->SetCanvasColor(10);
-    gStyle->SetFrameFillColor(10);
-    gStyle->SetFrameBorderMode(0);
-    gStyle->SetPadColor(0);
-    gStyle->SetTitleColor(1);
-    gStyle->SetStatColor(0);
-    gStyle->SetFillColor(0);
-    gStyle->SetFuncWidth(1);
-    gStyle->SetLineWidth(1);
-    gStyle->SetLineColor(1);
-    gStyle->SetPalette(1, 0);
+    GooFit::setROOTStyle();
+
     foo    = new TCanvas();
     foodal = new TCanvas();
     foodal->Size(10, 10);

@@ -1,17 +1,13 @@
-/*
-04/05/2016 Christoph Hasse
-DISCLAIMER:
-
-This code is not sufficently tested yet and still under heavy development!
-See *.cu file for more details
-*/
-
 #pragma once
 
+#include <goofit/Version.h>
 #include <goofit/PDFs/GooPdf.h>
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <goofit/PDFs/physics/DalitzPlotPdf.h>
 
+#if GOOFIT_ROOT_FOUND
+#include <TH2.h>
+#endif
 
 namespace GooFit {
 
@@ -43,8 +39,8 @@ public:
                             signalDalitz->decayInfo.daug1Mass,
                             signalDalitz->decayInfo.daug2Mass,
                             signalDalitz->decayInfo.daug3Mass)) {
-                    xbins.push_back(m12.getValue());
-                    ybins.push_back(m13.getValue());
+                    xbins.push_back(i);
+                    ybins.push_back(j);
                     data.addEvent();
                     eventNumber.setValue(eventNumber.getValue() + 1);
                 }
@@ -88,6 +84,33 @@ public:
     UnbinnedDataSet* getDataSet() {
         return &data;
     }
+
+#if GOOFIT_ROOT_FOUND
+    TH2F* make2D(std::string name="dalitzplot", std::string title="") {
+       TH2F* dalitzplot = new TH2F(
+               name.c_str(),
+               title.c_str(),
+               m12.getNumBins(),
+               m12.getLowerLimit(),
+               m12.getUpperLimit(),
+               m13.getNumBins(),
+               m13.getLowerLimit(),
+               m13.getUpperLimit()
+            );
+
+    
+        for (unsigned int j = 0; j < getNumEvents(); ++j) {
+            size_t currm12 = getX(j);
+            size_t currm13 = getY(j);
+            double val = getVal(j);
+
+            dalitzplot->SetBinContent(1+currm12, 1+currm13, val);
+        }
+    
+    return dalitzplot;
+ 
+    }
+#endif
 };
 
 } // namespace GooFit

@@ -4,12 +4,12 @@
 #include <goofit/PDFs/combine/ProdPdf.h>
 #include <goofit/UnbinnedDataSet.h>
 #include <goofit/Variable.h>
+#include <goofit/detail/Style.h>
 
 #include <RVersion.h>
 #include <TCanvas.h>
 #include <TH1F.h>
 #include <TH2F.h>
-#include <TStyle.h>
 
 #include <iostream>
 #include <random>
@@ -29,21 +29,7 @@ int main(int argc, char **argv) {
     std::normal_distribution<> dx(0.2, 1.1);
     std::normal_distribution<> dy(0.5, 0.3);
 
-    gStyle->SetCanvasBorderMode(0);
-    gStyle->SetCanvasColor(10);
-    gStyle->SetFrameFillColor(10);
-    gStyle->SetFrameBorderMode(0);
-    gStyle->SetPadColor(0);
-    gStyle->SetTitleColor(1);
-    gStyle->SetStatColor(0);
-    gStyle->SetFillColor(0);
-    gStyle->SetFuncWidth(1);
-    gStyle->SetLineWidth(1);
-    gStyle->SetLineColor(1);
-    if(ROOT_VERSION_CODE < ROOT_VERSION(6, 6, 0))
-        gStyle->SetPalette(kRainBow, 0);
-    else
-        gStyle->SetPalette(kViridis, 0);
+    GooFit::setROOTStyle();
 
     Observable xvar{"xvar", -5, 5};
     Observable yvar{"yvar", -5, 5};

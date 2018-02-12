@@ -46,8 +46,8 @@ def getToyData(toyFileName):
     # Add figure/subplot
     fig, ax = plt.subplots()
     ax.hist2d(out.m12, out.m13, bins=[100,100])
-    fig.savefig("dalitzplot.png")
-    print("Original data plot:", "dalitzplot.png")
+    fig.savefig("dalitz_data_plot.png")
+    print("Original data plot:", "dalitz_data_plot.png")
 
     return m12, m13, eventNumber, data
 
@@ -243,18 +243,20 @@ def runToyFit(toyFileName):
 def main():
     filename = GOOFIT_SOURCE_DIR + "/examples/dalitz/dalitz_toyMC_000.txt"
     fitman, signal, m12, m23 =  runToyFit(filename)
-    
-    # Make a grid and evaluate over it
-    grid = signal.makeGrid()
-    signal.setData(grid)
-    # Segfault here:
-    #val = signal.getCompProbsAtDataPoints()
-    
-    
-    #for i in range(len(grid)):
-    #    grid.loadEvent(i)
-    #    print(m12, m13, val[0][i])
-    
+
+    # A wrapper to avoid segfaulting when accessing a complex component
+    prodpdf = ProdPdf("prodpdf", [signal])
+
+    # Add nice tool for making data or plotting
+    dplotter = DalitzPlotter(prodpdf, signal)
+
+    arr = dplotter.make2D()
+    extent = dplotter.getExtent()
+    plt.imshow(arr, extent=extent, origin='lower')
+
+    plt.savefig("dalitz_pdf_plot.png")
+    print("Fit PDF plot:", "dalitz_pdf_plot.png")
+
     # Double int's needed here since int may return a long and sys.exit needs a real int for Python2
     return int(int(fitman))
 

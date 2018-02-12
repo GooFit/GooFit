@@ -111,6 +111,7 @@ __host__ DalitzPlotPdf::DalitzPlotPdf(
     , decayInfo(decay)
     , _m12(m12)
     , _m13(m13)
+    , _eventNumber(eventNumber)
     , dalitzNormRange(nullptr)
     //, cachedWaves(0)
     , integrals(nullptr)

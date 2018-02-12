@@ -1,6 +1,11 @@
 var searchData=
 [
+  ['cachedmasses',['cachedMasses',['../class_goo_fit_1_1_dalitz_plot_pdf.html#a4e4d933d21adb0c7b63553ae1d5c0576',1,'GooFit::DalitzPlotPdf']]],
+  ['cachedwaves',['cachedWaves',['../class_goo_fit_1_1_dalitz_plot_pdf.html#adcb125dbc7326f809febb43111a037c0',1,'GooFit::DalitzPlotPdf']]],
+  ['cachedwidths',['cachedWidths',['../class_goo_fit_1_1_dalitz_plot_pdf.html#a198533392c5ee959628c88133331e01f',1,'GooFit::DalitzPlotPdf']]],
+  ['cachetouse',['cacheToUse',['../class_goo_fit_1_1_dalitz_plot_pdf.html#a6cab97cb5ff8488b3a892dbeaddc58b7',1,'GooFit::DalitzPlotPdf']]],
   ['calculatenll',['calculateNLL',['../class_goo_fit_1_1_pdf_base.html#a84949c194544b1e7090c1620cc4a2273',1,'GooFit::PdfBase::calculateNLL()'],['../class_goo_fit_1_1_goo_pdf.html#a21cf7134aad33e891913d18fa6ea146e',1,'GooFit::GooPdf::calculateNLL()']]],
+  ['calculators',['calculators',['../class_goo_fit_1_1_dalitz_plot_pdf.html#a7ca9fb81f2ba0c4f42ecf0129db8456c',1,'GooFit::DalitzPlotPdf']]],
   ['callfunction',['callFunction',['../namespace_goo_fit.html#a87a68afb2dc5f613178ac1dea8a9955f',1,'GooFit']]],
   ['changed_5f',['changed_',['../class_goo_fit_1_1_variable.html#a190d3354c0a02b08a3a3b1cc1888ef83',1,'GooFit::Variable']]],
   ['checkallvars',['checkAllVars',['../class_goo_fit_1_1_data_set.html#a7298e578fcb4ff2a4e3532e87334514d',1,'GooFit::DataSet']]],

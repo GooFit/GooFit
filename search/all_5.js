@@ -1,11 +1,14 @@
 var searchData=
 [
   ['dalitz_2ecu',['dalitz.cu',['../dalitz_8cu.html',1,'']]],
+  ['dalitznormrange',['dalitzNormRange',['../class_goo_fit_1_1_dalitz_plot_pdf.html#a6ca4795f98286d27a141da087f532026',1,'GooFit::DalitzPlotPdf']]],
   ['dalitzplothelpers_2ecu',['DalitzPlotHelpers.cu',['../_dalitz_plot_helpers_8cu.html',1,'']]],
   ['dalitzplothelpers_2eh',['DalitzPlotHelpers.h',['../_dalitz_plot_helpers_8h.html',1,'']]],
   ['dalitzplotpdf',['DalitzPlotPdf',['../class_goo_fit_1_1_dalitz_plot_pdf.html',1,'GooFit::DalitzPlotPdf'],['../class_goo_fit_1_1_resonance_pdf.html#a5a8c21f81d8a30585289f677d70c08e4',1,'GooFit::ResonancePdf::DalitzPlotPdf()'],['../class_goo_fit_1_1_dalitz_plot_pdf.html#a0dc13acbe4c2bfa8f13bed1425d209f3',1,'GooFit::DalitzPlotPdf::DalitzPlotPdf()']]],
   ['dalitzplotpdf_2ecu',['DalitzPlotPdf.cu',['../_dalitz_plot_pdf_8cu.html',1,'']]],
   ['dalitzplotpdf_2eh',['DalitzPlotPdf.h',['../_dalitz_plot_pdf_8h.html',1,'']]],
+  ['dalitzplotter',['DalitzPlotter',['../class_goo_fit_1_1_dalitz_plotter.html',1,'GooFit::DalitzPlotter'],['../class_goo_fit_1_1_dalitz_plot_pdf.html#ae93f234afe01e9004a583305d18709a6',1,'GooFit::DalitzPlotPdf::DalitzPlotter()'],['../class_goo_fit_1_1_dalitz_plotter.html#a87e10e217eb8fbbfdfe06e719f1606b1',1,'GooFit::DalitzPlotter::DalitzPlotter()']]],
+  ['dalitzplotter_2eh',['DalitzPlotter.h',['../_dalitz_plotter_8h.html',1,'']]],
   ['dalitzvetopdf',['DalitzVetoPdf',['../class_goo_fit_1_1_dalitz_veto_pdf.html',1,'GooFit::DalitzVetoPdf'],['../class_goo_fit_1_1_dalitz_veto_pdf.html#a47c5f58bed35dc9e0d8eddda2aa6040e',1,'GooFit::DalitzVetoPdf::DalitzVetoPdf()']]],
   ['dalitzvetopdf_2ecu',['DalitzVetoPdf.cu',['../_dalitz_veto_pdf_8cu.html',1,'']]],
   ['dalitzvetopdf_2eh',['DalitzVetoPdf.h',['../_dalitz_veto_pdf_8h.html',1,'']]],
@@ -18,6 +21,7 @@ var searchData=
   ['daug2mass',['daug2Mass',['../struct_goo_fit_1_1_decay_info3.html#a5cc6db416412d5578a1392f008ae0ed3',1,'GooFit::DecayInfo3']]],
   ['daug3mass',['daug3Mass',['../struct_goo_fit_1_1_decay_info3.html#a3fbe729bfdd8c719ab0c24dc4a787c9c',1,'GooFit::DecayInfo3']]],
   ['daughterpair',['DaughterPair',['../namespace_goo_fit.html#abc8117ef8b87f2a25c5db5190add7685',1,'GooFit']]],
+  ['decayinfo',['decayInfo',['../class_goo_fit_1_1_dalitz_plot_pdf.html#a364121a06f72ce319be01843599ff030',1,'GooFit::DalitzPlotPdf']]],
   ['decayinfo3',['DecayInfo3',['../struct_goo_fit_1_1_decay_info3.html',1,'GooFit']]],
   ['decayinfo3t',['DecayInfo3t',['../struct_goo_fit_1_1_decay_info3t.html',1,'GooFit::DecayInfo3t'],['../struct_goo_fit_1_1_decay_info3t.html#a30110b66ca4a3a59376ced8b99af67bd',1,'GooFit::DecayInfo3t::DecayInfo3t()']]],
   ['decayinfo4',['DecayInfo4',['../struct_goo_fit_1_1_decay_info4.html',1,'GooFit']]],

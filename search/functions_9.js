@@ -1,7 +1,7 @@
 var searchData=
 [
   ['incoherentsumpdf',['IncoherentSumPdf',['../class_goo_fit_1_1_incoherent_sum_pdf.html#a4159e25c53cf3031cb1dc825bc17bf3c',1,'GooFit::IncoherentSumPdf']]],
-  ['indalitz',['inDalitz',['../namespace_goo_fit.html#a3e6826a12082ced9d79e931a1a717f61',1,'GooFit']]],
+  ['indalitz',['inDalitz',['../namespace_goo_fit.html#a35834c6bed5cb87cf67f407045b25614',1,'GooFit']]],
   ['indexable',['Indexable',['../class_goo_fit_1_1_indexable.html#a1f3e525b9e70083bd2dd9c7f8e2d4e88',1,'GooFit::Indexable::Indexable(std::string n, fptype val=0)'],['../class_goo_fit_1_1_indexable.html#a0427355d815553526631100ff5c440ce',1,'GooFit::Indexable::Indexable(std::string n, fptype val, fptype lowerlimit, fptype upperlimit)']]],
   ['indexofvariable',['indexOfVariable',['../class_goo_fit_1_1_data_set.html#a72bd2df9e8f352df6d56e2c42299e7d3',1,'GooFit::DataSet']]],
   ['initialize',['initialize',['../class_goo_fit_1_1_goo_pdf.html#aff76efcf81396fed330536ff982f6581',1,'GooFit::GooPdf']]],

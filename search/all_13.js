@@ -8,6 +8,7 @@ var searchData=
   ['recalculatecache',['recalculateCache',['../class_goo_fit_1_1_resonance_pdf.html#a82fc3750f58a527d41113d4740b1860b',1,'GooFit::ResonancePdf::recalculateCache()'],['../class_goo_fit_1_1_resonances_1_1_spline.html#ab52663e5a47ee98d1424950d765c184b',1,'GooFit::Resonances::Spline::recalculateCache()']]],
   ['recursivesetnormalisation',['recursiveSetNormalisation',['../class_goo_fit_1_1_pdf_base.html#a6e644b78f7f436ff8a74a2412d9d0a60',1,'GooFit::PdfBase']]],
   ['red',['red',['../namespace_goo_fit.html#a7e27700e0a78d83f9533cf7667cd79ce',1,'GooFit']]],
+  ['redointegral',['redoIntegral',['../class_goo_fit_1_1_dalitz_plot_pdf.html#ae3ef756e05a6b936d2dda690661eecf2',1,'GooFit::DalitzPlotPdf']]],
   ['reduce',['reduce',['../_thrust_override_8h.html#a078913f6f445899c342ef21d4b1a78cb',1,'ThrustOverride.h']]],
   ['registerconstants',['registerConstants',['../class_goo_fit_1_1_pdf_base.html#a7615d57d7b632ccad089d68b33757707',1,'GooFit::PdfBase']]],
   ['registerobservable',['registerObservable',['../class_goo_fit_1_1_pdf_base.html#ad70a9ea5d275b2129d695a164bbc47d8',1,'GooFit::PdfBase']]],

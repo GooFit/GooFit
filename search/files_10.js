@@ -10,5 +10,6 @@ var searchData=
   ['spinfactors_2eh',['SpinFactors.h',['../_spin_factors_8h.html',1,'']]],
   ['spinhelper_2eh',['SpinHelper.h',['../_spin_helper_8h.html',1,'']]],
   ['steppdf_2ecu',['StepPdf.cu',['../_step_pdf_8cu.html',1,'']]],
-  ['steppdf_2eh',['StepPdf.h',['../_step_pdf_8h.html',1,'']]]
+  ['steppdf_2eh',['StepPdf.h',['../_step_pdf_8h.html',1,'']]],
+  ['style_2eh',['Style.h',['../_style_8h.html',1,'']]]
 ];

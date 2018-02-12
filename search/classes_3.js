@@ -1,6 +1,7 @@
 var searchData=
 [
   ['dalitzplotpdf',['DalitzPlotPdf',['../class_goo_fit_1_1_dalitz_plot_pdf.html',1,'GooFit']]],
+  ['dalitzplotter',['DalitzPlotter',['../class_goo_fit_1_1_dalitz_plotter.html',1,'GooFit']]],
   ['dalitzvetopdf',['DalitzVetoPdf',['../class_goo_fit_1_1_dalitz_veto_pdf.html',1,'GooFit']]],
   ['dataset',['DataSet',['../class_goo_fit_1_1_data_set.html',1,'GooFit']]],
   ['decayinfo3',['DecayInfo3',['../struct_goo_fit_1_1_decay_info3.html',1,'GooFit']]],

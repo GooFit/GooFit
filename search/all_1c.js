@@ -1,12 +1,12 @@
 var searchData=
 [
-  ['_7eapplication',['~Application',['../class_goo_fit_1_1_application.html#a90b6cec0ebbceeb9eecc57c9e280d65f',1,'GooFit::Application']]],
+  ['_7eapplication',['~Application',['../class_goo_fit_1_1_application.html#a152fbec97149b3d163bf5b705ac298b3',1,'GooFit::Application']]],
   ['_7ebinneddataset',['~BinnedDataSet',['../class_goo_fit_1_1_binned_data_set.html#a486d017260289ca6a6c20acabe171be8',1,'GooFit::BinnedDataSet']]],
   ['_7ebugg',['~Bugg',['../class_goo_fit_1_1_lineshapes_1_1_bugg.html#af3ee22e18c6eb978ab5f0f8b714cd93f',1,'GooFit::Lineshapes::Bugg']]],
   ['_7ebugg3',['~Bugg3',['../class_goo_fit_1_1_lineshapes_1_1_bugg3.html#af8cf4ac1e005f116e5812771b1d3c64a',1,'GooFit::Lineshapes::Bugg3']]],
   ['_7edataset',['~DataSet',['../class_goo_fit_1_1_data_set.html#af363275d7603ed65b6c63dc72d5ad77e',1,'GooFit::DataSet']]],
   ['_7eeventnumber',['~EventNumber',['../class_goo_fit_1_1_event_number.html#a71554a70749e0b87ce50d122ffb04ada',1,'GooFit::EventNumber']]],
-  ['_7eflatte',['~Flatte',['../class_goo_fit_1_1_lineshapes_1_1_flatte.html#a9986684a5181b14b46bfbcff3673d6cc',1,'GooFit::Lineshapes::Flatte::~Flatte()'],['../class_goo_fit_1_1_resonances_1_1_f_l_a_t_t_e.html#a73d7908944cd53bb1ec213b2d41d2ba1',1,'GooFit::Resonances::FLATTE::~FLATTE()']]],
+  ['_7eflatte',['~FLATTE',['../class_goo_fit_1_1_resonances_1_1_f_l_a_t_t_e.html#a73d7908944cd53bb1ec213b2d41d2ba1',1,'GooFit::Resonances::FLATTE::~FLATTE()'],['../class_goo_fit_1_1_lineshapes_1_1_flatte.html#a9986684a5181b14b46bfbcff3673d6cc',1,'GooFit::Lineshapes::Flatte::~Flatte()']]],
   ['_7efocus',['~FOCUS',['../class_goo_fit_1_1_lineshapes_1_1_f_o_c_u_s.html#ac68439b599371a97c4fc68ab2f2dcb65',1,'GooFit::Lineshapes::FOCUS']]],
   ['_7egauss',['~Gauss',['../class_goo_fit_1_1_resonances_1_1_gauss.html#a5bf2412afd838e5bd4a384593f2bb7f1',1,'GooFit::Resonances::Gauss']]],
   ['_7eglass',['~GLASS',['../class_goo_fit_1_1_lineshapes_1_1_g_l_a_s_s.html#a8a94af9d5dba889450de6bd794b04004',1,'GooFit::Lineshapes::GLASS']]],

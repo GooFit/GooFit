@@ -5,6 +5,7 @@ var searchData=
   ['dalitzplothelpers_2eh',['DalitzPlotHelpers.h',['../_dalitz_plot_helpers_8h.html',1,'']]],
   ['dalitzplotpdf_2ecu',['DalitzPlotPdf.cu',['../_dalitz_plot_pdf_8cu.html',1,'']]],
   ['dalitzplotpdf_2eh',['DalitzPlotPdf.h',['../_dalitz_plot_pdf_8h.html',1,'']]],
+  ['dalitzplotter_2eh',['DalitzPlotter.h',['../_dalitz_plotter_8h.html',1,'']]],
   ['dalitzvetopdf_2ecu',['DalitzVetoPdf.cu',['../_dalitz_veto_pdf_8cu.html',1,'']]],
   ['dalitzvetopdf_2eh',['DalitzVetoPdf.h',['../_dalitz_veto_pdf_8h.html',1,'']]],
   ['dataset_2ecpp',['DataSet.cpp',['../_data_set_8cpp.html',1,'']]],

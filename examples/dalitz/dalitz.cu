@@ -55,11 +55,11 @@ fptype cpuGetM23(fptype massPZ, fptype massPM) {
 void getToyData(std::string toyFileName, GooFit::Application &app, DataSet &data) {
     toyFileName = app.get_filename(toyFileName, "examples/dalitz");
 
-    auto obs = data.getObservables();
-    Observable m12 = obs.at(0);
-    Observable m13 = obs.at(1);
+    auto obs               = data.getObservables();
+    Observable m12         = obs.at(0);
+    Observable m13         = obs.at(1);
     Observable eventNumber = obs.at(2);
-    
+
     TH2F dalitzplot("dalitzplot",
                     "",
                     m12.getNumBins(),
@@ -134,11 +134,7 @@ void getToyData(std::string toyFileName, GooFit::Application &app, DataSet &data
     foo.SaveAs("dalitzplot.png");
 }
 
-void makeToyData(DalitzPlotter &dplotter, UnbinnedDataSet &data) {
-
-    
-}
-
+void makeToyData(DalitzPlotter &dplotter, UnbinnedDataSet &data) {}
 
 DalitzPlotPdf *makeSignalPdf(Observable m12, Observable m13, EventNumber eventNumber, GooPdf *eff = 0) {
     DecayInfo3 dtop0pp;
@@ -314,8 +310,8 @@ DalitzPlotPdf *makeSignalPdf(Observable m12, Observable m13, EventNumber eventNu
     dtop0pp.resonances.push_back(f2_1270);
     dtop0pp.resonances.push_back(f0_600);
 
-    bool fitMasses = true;
-    
+    bool fitMasses = false;
+
     if(!fitMasses) {
         for(vector<ResonancePdf *>::iterator res = dtop0pp.resonances.begin(); res != dtop0pp.resonances.end(); ++res) {
             (*res)->setParameterConstantness(true);
@@ -339,8 +335,7 @@ DalitzPlotPdf *makeSignalPdf(Observable m12, Observable m13, EventNumber eventNu
     return new DalitzPlotPdf("signalPDF", m12, m13, eventNumber, dtop0pp, eff);
 }
 
-int runToyFit(DalitzPlotPdf* signal, UnbinnedDataSet* data) {
-
+int runToyFit(DalitzPlotPdf *signal, UnbinnedDataSet *data) {
     // EXERCISE 1 (real part): Create a PolynomialPdf which models
     // the efficiency you imposed in the preliminary, and use it in constructing
     // the signal PDF.
@@ -361,7 +356,7 @@ int runToyFit(DalitzPlotPdf* signal, UnbinnedDataSet* data) {
     DalitzPlotter plotter(&prodpdf, signal);
 
     TCanvas foo;
-    TH2F* dalitzplot = plotter.make2D();
+    TH2F *dalitzplot = plotter.make2D();
     dalitzplot->Draw("colz");
 
     foo.SaveAs("dalitzpdf.png");

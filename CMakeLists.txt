@@ -402,6 +402,10 @@ add_subdirectory("extern/FeatureDetector")
 set_target_properties(FeatureDetector PROPERTIES FOLDER extern)
 target_link_libraries(GooFit_Common INTERFACE FeatureDetector)
 
+target_compile_options(FeatureDetector PRIVATE
+    $<BUILD_INTERFACE:${GOOFIT_OPTI}>
+    )
+
 ## format (warning suppesion only needed until next release)
 if(NOT DEFINED CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
     set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE BOOL "")

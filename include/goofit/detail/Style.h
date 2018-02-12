@@ -1,15 +1,14 @@
-#pragma once 
+#pragma once
 
 #include <goofit/Version.h>
 
 #if GOOFIT_ROOT_FOUND
 
-#include <TCanvas.h>
 #include <RVersion.h>
+#include <TCanvas.h>
 #include <TStyle.h>
 
 #endif
-
 
 namespace GooFit {
 
@@ -38,6 +37,5 @@ void setROOTStyle() {
 }
 
 #endif
-
 
 } // namepspace GooFit

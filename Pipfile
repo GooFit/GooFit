@@ -1,15 +1,20 @@
 [[source]]
+
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
+
 [packages]
-"scikit-build" = "*"
+
+scikit-build = "*"
 cmake = "*"
 numpy = "*"
 
 
 [dev-packages]
+
+"e1839a8" = {path = ".", editable = true}
 pytest = "*"
 matplotlib = "*"
 pandas = "*"

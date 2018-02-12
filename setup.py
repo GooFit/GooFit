@@ -63,6 +63,11 @@ Traditional pip install::
     pip install -v goofit
 
 
+If you want to send commands to CMake through PIP, use (for example)::
+
+    PIP_INSTALL_OPTIONS="-- -DGOOFIT_PACKAGES=OFF" pip install -v goofit
+
+
 Installation: local
 ===================
 

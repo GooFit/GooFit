@@ -5,6 +5,10 @@
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <goofit/PDFs/physics/DalitzPlotPdf.h>
 
+#include <random>
+#include <numeric>
+#include <algorithm>
+
 #if GOOFIT_ROOT_FOUND
 #include <TH2.h>
 #endif
@@ -22,7 +26,6 @@ class DalitzPlotter {
     EventNumber eventNumber;
     UnbinnedDataSet data;
     fptype mother;
-    
 
 public:
     DalitzPlotter(GooPdf* overallSignal, DalitzPlotPdf* signalDalitz)
@@ -51,6 +54,60 @@ public:
         signalDalitz->setDataSize(data.getNumEvents());
 
         pdfValues = overallSignal->getCompProbsAtDataPoints();
+    }
+
+    /// Fill a dataset with MC events
+    void fillDataSetMC(UnbinnedDataSet& dataset, size_t nTotal) {
+        size_t num_cells = pdfValues[0].size();
+
+        // Setup random numbers
+        std::random_device rd;
+        std::mt19937 gen(rd());
+
+        // Poisson distribution
+        std::poisson_distribution<> d(nTotal);
+        size_t num_events = d(gen);
+
+        // Uniform distribution
+        std::uniform_real_distribution<> uni(-.5,.5);
+
+        // CumSum in other languages
+        std::vector<double> integral(num_cells);
+        std::partial_sum(pdfValues[0].begin(), pdfValues[0].end(), integral.begin());
+
+        // Make this a 0-1 fraction by dividing by the end value
+        std::for_each(integral.begin(), integral.end(), [&integral](double &val){val /= integral.back();});
+
+        for(size_t i=0; i<num_events; i++) {
+            double r = uni(gen);
+            
+            // Binary search for integral[cell-1] < r < integral[cell]
+            size_t lo = 0;
+            size_t mid = 0;
+            size_t hi = num_cells-1;
+
+            while(lo <= hi){
+                mid = lo + (hi-lo)/2;
+                if( r<=integral[mid] && (mid==0 || r > integral[mid-1]))
+                    break;
+                else if (r > integral[mid] )
+                    lo = mid+1;
+                else hi = mid-1;
+            }
+            size_t j = mid;
+
+            assert(j == std::lower_bound(integral.begin(), integral.end(), r)-integral.begin());
+
+            // Fill in the grid square randomly
+            double currm12 = data.getValue(m12, j);
+            currm12 += (m12.getUpperLimit() - m12.getLowerLimit())*(uni(gen)) / m12.getNumBins();
+            double currm13 = data.getValue(m13, j);
+            currm13 += (m13.getUpperLimit() - m13.getLowerLimit())*(uni(gen)) / m13.getNumBins();
+            
+
+            eventNumber.setValue(i);
+            data.addEvent();
+        }
     }
 
     size_t getNumEvents() const {
@@ -86,6 +143,7 @@ public:
     }
 
 #if GOOFIT_ROOT_FOUND
+    /// Produce a TH2F over the contained evaluation
     TH2F* make2D(std::string name="dalitzplot", std::string title="") {
        TH2F* dalitzplot = new TH2F(
                name.c_str(),

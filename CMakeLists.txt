@@ -4,9 +4,9 @@ project(GOOFIT
     VERSION 2.1.1
     LANGUAGES CXX)
 
-set(GOOFIT_TAG "dev")
+#set(GOOFIT_TAG "dev")
 #set(GOOFIT_TAG "alpha")
-#set(GOOFIT_TAG "beta")
+set(GOOFIT_TAG "beta")
 #set(GOOFIT_TAG "release")
 
 ### Require out-of-source builds
@@ -428,7 +428,11 @@ add_library(Eigen INTERFACE)
 target_include_directories(Eigen SYSTEM INTERFACE "${PROJECT_SOURCE_DIR}/extern/Eigen")
 target_link_libraries(GooFit_Common INTERFACE Eigen)
 
-set(GOOFIT_ROOT_FOUND ROOT_FOUND)
+# This if(ROUND_FOUND) wrapper in theory should not be needed
+# But for some reason FALSE is not "falsy" to the define command
+if(ROOT_FOUND)
+    set(GOOFIT_ROOT_FOUND ROOT_FOUND)
+endif()
 set(GOOFIT_ARCH_FLAGS ARCH_FLAGS)
 
 option(GOOFIT_SPLASH "Show a unicode splash or a small plain text one" ON)

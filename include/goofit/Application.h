@@ -280,13 +280,12 @@ class Application : public CLI::App {
 #endif
     }
 
-    /// Cleanup MPI
-    ~Application() {
-// Intentionally empty, comment needed to avoid clang warning about = default
+/// Cleanup MPI
 #ifdef GOOFIT_MPI
-        MPI_Finalize();
+    ~Application() { MPI_Finalize(); }
+#else
+    ~Application() = default;
 #endif
-    }
 
     /// Get a file from the current directory, looks up one and in the true current directory
     /// Base gives a relative path from the source directory

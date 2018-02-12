@@ -7,13 +7,30 @@ except ImportError:
 
 setup(
         name='goofit',
-        version='2.1.0',
+        version='2.1.1',
         description='GooFit fitting package',
         author='Henry Schreiner',
         author_email='hschrein@cern.ch',
         url='https://goofit.github.io',
         platforms = ["POSIX"],
         provides = ["goofit"],
+        classifiers = [
+            "Development Status :: 5 - Production/Stable",
+            "Intended Audience :: Science/Research",
+            "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+            "Natural Language :: English",
+            "Operating System :: Unix",
+            "Programming Language :: C++",
+            "Programming Language :: Python",
+            "Programming Language :: Python :: 2",
+            "Programming Language :: Python :: 2.7",
+            "Programming Language :: Python :: 3",
+            "Programming Language :: Python :: 3.4",
+            "Programming Language :: Python :: 3.5",
+            "Programming Language :: Python :: 3.6",
+            "Programming Language :: Python :: 3.7",
+            "Topic :: Scientific/Engineering :: Physics"
+        ]
         cmake_args=[
             '-DGOOFIT_PYTHON=ON',
             '-DGOOFIT_EXAMPLES=OFF'],
@@ -88,7 +105,7 @@ Local Pipenv
 
 Or, if you use pipenv::
 
-    pipenv install --verbose -e . --skip-lock
+    pipenv install --verbose --dev
 
 And, to use::
 
@@ -98,7 +115,6 @@ You can set the ``PIP_INSTALL_OPTIONS`` variable to pass through build command, 
 
     PIP_INSTALL_OPTIONS="-- -DGOOFIT_PACKAGES=OFF" pipenv install --verbose -e .
 
-You can also install development requirements with the ``--dev`` flag. Note that the current version of PyLandau requires numpy tp be installed first, so you might need to run ``pipenv install numpy`` first.
 
 Building a source package from git
 ==================================

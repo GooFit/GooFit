@@ -30,7 +30,7 @@ setup(
             "Programming Language :: Python :: 3.6",
             "Programming Language :: Python :: 3.7",
             "Topic :: Scientific/Engineering :: Physics"
-        ]
+        ],
         cmake_args=[
             '-DGOOFIT_PYTHON=ON',
             '-DGOOFIT_EXAMPLES=OFF'],
@@ -56,20 +56,6 @@ Installation basics
 This package can be installed with pip, but uses SciKit-Build, and is build, fully optimized, on your system. Because of this, there are a few caveats when running a pip install. Make sure you have SciKit-Build (``pip install scikit-build``) before you attempt an install. Also, if you don't have a recent version of CMake (3.8 or better recommended), also run ``pip install cmake``. When you build, you should also use pip's ``-v`` flag, so that you can see it build (and observe the
 configuration options). Otherwise, you might wait a very long time without output (especially if CUDA was found).
 
-Installation: pipenv
-====================
-
-Use pipenv, the officially recommended method for managing installs, virtual environments, and dependencies.
-
-To install::
-
-    pipenv install scikit-build cmake
-    pipenv install --verbose goofit
-
-To run a shell::
-
-    pipenv shell
-
 
 Installation: pip
 =================
@@ -93,27 +79,28 @@ If you want to add PDFs to GooFit, or use GooFit pacakges, you should be working
     git clone --recursive git@github.com:GooFit/GooFit.git
     cd goofit
 
-Local Pip
-~~~~~~~~~
+Pipenv
+~~~~~~
 
-If you use pip::
+You can set up a quick environment using pipenv::
 
-    pip install -v -e .
+    pipenv install --dev
 
-Local Pipenv
-~~~~~~~~~~~~
-
-Or, if you use pipenv::
-
-    pipenv install --verbose --dev
-
-And, to use::
+Then activate that environment::
 
     pipenv shell
 
+Local pip
+~~~~~~~~~
+
+The normal install here works, though as usual you should include verbose output::
+
+    pip install -v .
+
+
 You can set the ``PIP_INSTALL_OPTIONS`` variable to pass through build command, for example::
 
-    PIP_INSTALL_OPTIONS="-- -DGOOFIT_PACKAGES=OFF" pipenv install --verbose -e .
+    PIP_INSTALL_OPTIONS="-- -DGOOFIT_PACKAGES=OFF" pip install -v .
 
 
 Building a source package from git

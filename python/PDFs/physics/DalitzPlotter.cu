@@ -1,5 +1,9 @@
 #include <goofit/PDFs/physics/DalitzPlotter.h>
+#include <goofit/Variable.h>
+#include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+#include <vector>
 
 using namespace GooFit;
 namespace py = pybind11;
@@ -15,5 +19,29 @@ void init_DalitzPlotter(py::module &m) {
         .def("getYval", &DalitzPlotter::getYval, "event"_a)
         .def("getZval", &DalitzPlotter::getZval, "event"_a)
         .def("getVal", &DalitzPlotter::getVal, "event"_a, "num"_a = 0)
-        .def("getDataSet", &DalitzPlotter::getDataSet);
+        .def("getDataSet", &DalitzPlotter::getDataSet)
+        .def("make2D",
+             [](const DalitzPlotter &self) {
+                 py::array_t<fptype> result{{self.getM12().getNumBins(), self.getM13().getNumBins()}};
+
+                 for(unsigned int j = 0; j < self.getNumEvents(); ++j) {
+                     size_t currm12                      = self.getX(j);
+                     size_t currm13                      = self.getY(j);
+                     double val                          = self.getVal(j);
+                     result.mutable_at(currm12, currm13) = val;
+                 }
+                 return result;
+             },
+             "Make a 2D array for plotting")
+        .def("getExtent",
+             [](const DalitzPlotter &self) {
+                 std::vector<double> extents = {
+                     self.getM12().getLowerLimit(),
+                     self.getM12().getUpperLimit(),
+                     self.getM13().getLowerLimit(),
+                     self.getM13().getUpperLimit(),
+                 };
+                 return extents;
+             },
+             "Get the extents for plotting");
 }

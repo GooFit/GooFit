@@ -130,6 +130,9 @@ class DalitzPlotter {
 
     UnbinnedDataSet *getDataSet() { return &data; }
 
+    const Observable &getM12() const { return m12; }
+    const Observable &getM13() const { return m13; }
+
 #if GOOFIT_ROOT_FOUND
     /// Produce a TH2F over the contained evaluation
     TH2F *make2D(std::string name = "dalitzplot", std::string title = "") {

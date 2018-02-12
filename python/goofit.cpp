@@ -112,6 +112,7 @@ PYBIND11_MODULE(_goofit, m) {
 
     // Physics
     init_DalitzPlotHelpers(m);
+    init_DalitzPlotter(m);
     init_DalitzPlotPdf(m);
     init_DalitzVetoPdf(m);
     init_DP4Pdf(m);

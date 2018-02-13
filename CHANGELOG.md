@@ -1,6 +1,6 @@
 
 ## v2.1.1: Better Python
-#### (in progress)
+#### February 12, 2018
 
 GooFit has received a few bugfixes that needed to be made available before the 2.2 merge. These include:
 

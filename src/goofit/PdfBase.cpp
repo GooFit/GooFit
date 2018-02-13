@@ -66,7 +66,7 @@ __host__ unsigned int PdfBase::registerParameter(Variable var) {
 
 __host__ unsigned int PdfBase::registerConstant(fptype value) {
     constantsList.push_back(value);
-    //Return the index that this variable is stored at, not the total!
+    // Return the index that this variable is stored at, not the total!
     return constantsList.size() - 1;
 }
 

@@ -72,7 +72,12 @@ __device__ void get4Vecs(fptype *Vecs,
                          const fptype &m34,
                          const fptype &cos12,
                          const fptype &cos34,
-                         const fptype &phi, const fptype M, const fptype m1, const fptype m2, const fptype m3, const fptype m4) {
+                         const fptype &phi,
+                         const fptype M,
+                         const fptype m1,
+                         const fptype m2,
+                         const fptype m3,
+                         const fptype m4) {
     // printf("g4v %f, %f, %f, %f, %f\n",M, m1, m2, m3, m4 );
     fptype E1     = (m12 * m12 + m1 * m1 - m2 * m2) / (2 * m12);
     fptype E2     = (m12 * m12 - m1 * m1 + m2 * m2) / (2 * m12);

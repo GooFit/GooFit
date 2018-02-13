@@ -47,7 +47,9 @@ class Lineshape : public GooPdf {
   public:
     ~Lineshape() override = default;
 
-    bool operator==(const Lineshape &L) const { return (L.getName() == getName() && L._L == _L && L._Mpair == _Mpair && L._FormFac == _FormFac); }
+    bool operator==(const Lineshape &L) const {
+        return (L.getName() == getName() && L._L == _L && L._Mpair == _Mpair && L._FormFac == _FormFac);
+    }
 
     int lineShapeType;
 };

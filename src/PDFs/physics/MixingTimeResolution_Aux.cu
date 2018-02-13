@@ -9,7 +9,7 @@ MixingTimeResolution::~MixingTimeResolution() = default;
 
 void MixingTimeResolution::initIndex(void *dev_fcn_ptr) { resFunctionIdx = GooPdf::findFunctionIdx(dev_fcn_ptr); }
 
-void MixingTimeResolution::createParameters(GooFit::PdfBase*) {}
+void MixingTimeResolution::createParameters(GooFit::PdfBase *) {}
 
 void MixingTimeResolution::recursiveSetIndices() {}
 } // namespace GooFit

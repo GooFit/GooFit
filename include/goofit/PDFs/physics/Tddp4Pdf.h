@@ -52,7 +52,7 @@ class TDDP4 : public GooPdf {
         tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::BoolVector_h>
         GenerateSig(unsigned int numEvents);
 
-    __host__ virtual void recursiveSetIndices ();
+    __host__ virtual void recursiveSetIndices();
 
   protected:
   private:

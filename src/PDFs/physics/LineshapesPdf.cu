@@ -26,7 +26,7 @@ on the GPU
 #define NPOLES 5
 #define NCHANNELS 5
 
-//TODO: These aren't the same as GooFit 2.0
+// TODO: These aren't the same as GooFit 2.0
 #define mPiPlus 0.13957018
 #define mKPlus 0.493677
 #define mEta 0.54751
@@ -755,74 +755,78 @@ __device__ resonance_function_ptr ptr_to_FOCUS      = FOCUSFunction;
 
 // This constructor is protected
 Lineshape::Lineshape(std::string name, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
-    : GooPdf(name), _L(L), _Mpair(Mpair), _FormFac(FormFac), _radius(radius) {
+    : GooPdf(name)
+    , _L(L)
+    , _Mpair(Mpair)
+    , _FormFac(FormFac)
+    , _radius(radius) {
     // Making room for index of decay-related constants. Assumption:
     // These are mother mass and three daughter masses in that order.
     // They will be registered by the object that uses this resonance,
     // which will tell this object where to find them by calling setConstantIndex.
 }
 
-void Lineshape::recursiveSetIndices() { 
+void Lineshape::recursiveSetIndices() {
     switch(lineShapeType) {
-        case 1:
-            GET_FUNCTION_ADDR(ptr_to_LS_ONE);
-            GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_LS_ONE");
-            break;
+    case 1:
+        GET_FUNCTION_ADDR(ptr_to_LS_ONE);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_LS_ONE");
+        break;
 
-        case 2:
-            GET_FUNCTION_ADDR(ptr_to_BW_DP4);
-            GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_BW_DP4");
-            break;
+    case 2:
+        GET_FUNCTION_ADDR(ptr_to_BW_DP4);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_BW_DP4");
+        break;
 
-        case 3:
-            GET_FUNCTION_ADDR(ptr_to_lass);
-            GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_lass");
-            break;
+    case 3:
+        GET_FUNCTION_ADDR(ptr_to_lass);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_lass");
+        break;
 
-        case 4:
-            GET_FUNCTION_ADDR(ptr_to_glass3);
-            GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_glass3");
-            break;
+    case 4:
+        GET_FUNCTION_ADDR(ptr_to_glass3);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_glass3");
+        break;
 
-        case 5:
-            GET_FUNCTION_ADDR(ptr_to_bugg_MINT);
-            GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_bugg_MINT");
-            break;
+    case 5:
+        GET_FUNCTION_ADDR(ptr_to_bugg_MINT);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_bugg_MINT");
+        break;
 
-        case 6:
-            GET_FUNCTION_ADDR(ptr_to_bugg_MINT3);
-            GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_bugg_MINT3");
-            break;
+    case 6:
+        GET_FUNCTION_ADDR(ptr_to_bugg_MINT3);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_bugg_MINT3");
+        break;
 
-        case 7:
-            GET_FUNCTION_ADDR(ptr_to_SBW);
-            GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_SBW");
-            break;
+    case 7:
+        GET_FUNCTION_ADDR(ptr_to_SBW);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_SBW");
+        break;
 
-        case 8:
-            GET_FUNCTION_ADDR(ptr_to_NONRES_DP);
-            GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_NONRES_DP");
-            break;
+    case 8:
+        GET_FUNCTION_ADDR(ptr_to_NONRES_DP);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_NONRES_DP");
+        break;
 
-        case 9:
-            GET_FUNCTION_ADDR(ptr_to_Flatte);
-            GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Flatte");
-            break;
+    case 9:
+        GET_FUNCTION_ADDR(ptr_to_Flatte);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Flatte");
+        break;
 
-        case 10:
-            GET_FUNCTION_ADDR(ptr_to_Spline);
-            GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Spline");
-            break;
+    case 10:
+        GET_FUNCTION_ADDR(ptr_to_Spline);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Spline");
+        break;
 
-        case 11:
-            GET_FUNCTION_ADDR(ptr_to_kMatrix);
-            GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_kMatrix");
-            break;
+    case 11:
+        GET_FUNCTION_ADDR(ptr_to_kMatrix);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_kMatrix");
+        break;
 
-        case 12:
-            GET_FUNCTION_ADDR(ptr_to_FOCUS);
-            GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_FOCUS");
-            break;
+    case 12:
+        GET_FUNCTION_ADDR(ptr_to_FOCUS);
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_FOCUS");
+        break;
     }
 
     host_function_table[num_device_functions] = host_fcn_ptr;
@@ -1154,33 +1158,31 @@ Amplitude::Amplitude(std::string uniqueDecayStr,
                      Variable ai,
                      std::vector<Lineshape *> LS,
                      std::vector<SpinFactor *> SF,
-                     unsigned int nPerm) : GooPdf(uniqueDecayStr)
+                     unsigned int nPerm)
+    : GooPdf(uniqueDecayStr)
     , _ar(ar)
     , _ai(ai)
     , _SF(std::move(SF))
     , _LS(std::move(LS))
     , _nPerm(nPerm) {
+    // registerParameter(ar);
+    // registerParameter(ai);
 
-    //registerParameter(ar);
-    //registerParameter(ai);
+    // registerConstant(_LS.size());
+    // registerConstant(_SF.size());
 
-    //registerConstant(_LS.size());
-    //registerConstant(_SF.size());
-
-    for (auto &lineshape : _LS)
+    for(auto &lineshape : _LS)
         components.push_back(lineshape);
 
-    for (auto &spinfactor : _SF)
+    for(auto &spinfactor : _SF)
         components.push_back(spinfactor);
 
     initialize();
-
 }
 
 void Amplitude::recursiveSetIndices() {
-
-    //There isn't a device function, should there be one?
-    for (auto &component : components)
+    // There isn't a device function, should there be one?
+    for(auto &component : components)
         component->recursiveSetIndices();
 }
 

@@ -61,6 +61,7 @@ goofit_add_library(_goofit MODULE
     PDFs/physics/DalitzPlotPdf.cu
     PDFs/physics/DalitzVetoPdf.cu
     PDFs/physics/DalitzPlotHelpers.cu
+    PDFs/physics/DalitzPlotter.cu
     PDFs/physics/DP4Pdf.cu
     PDFs/physics/IncoherentSumPdf.cu
     PDFs/physics/LineshapesPdf.cu

@@ -9,6 +9,7 @@ namespace GooFit {
 
 class SpecialResonanceIntegrator;
 class SpecialResonanceCalculator;
+class DalitzPlotter;
 
 class DalitzPlotPdf : public GooPdf {
   public:
@@ -28,11 +29,13 @@ class DalitzPlotPdf : public GooPdf {
 
     __host__ virtual void recursiveSetIndices();
 
+    friend DalitzPlotter;
+
   protected:
-  private:
     DecayInfo3 decayInfo;
     Observable _m12;
     Observable _m13;
+    EventNumber _eventNumber;
     fptype *dalitzNormRange;
 
     // Following variables are useful if masses and widths, involved in difficult BW calculation,

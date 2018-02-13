@@ -1,15 +1,13 @@
 # Installing GooFit on different systems
 
-The Docker command for each system is listed at the beginning of each command, to show setup from scratch. Ignore that line if you are not using Docker.
+The following commands show you how to get a *minimal* install of GooFit on a vanilla system; you will probably want to add ROOT for your system, and possibly CUDA if you have a graphics card. If you do not have ROOT, some functionality, such as the Minuit1 version of the fitter, will not be available, and most of the examples will not be included in the build. Since ROOT is such a common addition, some of the system also have a note on installing ROOT.
 
-The following commands show you how to get a *minimal* install of GooFit on a vanilla system; you will probably want to add ROOT for your system, and possibly CUDA if you have a graphics card. If you do not have ROOT, some functionality, such as the Minuit1 version of the fitter, will not be available, and most of the examples will not be included in the build.
+<details><summary>CentOS 7: (click to expand)</summary><p>
 
-## CentOS 7
-
-For simplicity, this uses EPEL to get access to `python-pip`, and uses the pip version of CMake. Feel free to download CMake directly from Kitware instead. You can also use this recipe with an [nvidia-docker CentOS image](https://hub.docker.com/r/nvidia/cuda/).
+For simplicity, this uses EPEL to get access to `python-pip`, and uses the pip version of CMake. Feel free to download CMake directly from Kitware instead. If you want to use Docker, you can start with `docker run -it centos`.
+You can also use this recipe with an [nvidia-docker CentOS image](https://hub.docker.com/r/nvidia/cuda/).
 
 ```bash
-docker run -it centos
 yum install epel-release -y
 yum install python-pip git gcc-c++ make -y
 pip install cmake plumbum
@@ -28,10 +26,11 @@ If you'd like to add ROOT, add the following lines before running CMake:
 mkdir root-6 && curl https://root.cern.ch/download/root_v6.08.06.Linux-centos7-x86_64-gcc4.8.tar.gz | tar --strip-components=1 -xz -C root-6
 source root-6/bin/thisroot.sh
 ```
+</p></details>
 
-## Alpine Linux 3.5
+<details><summary>Alpine Linux 3.6: (click to expand)</summary><p>
 
-A truly minimal system, Alpine gives you a working Docker system under 3 MB.
+A truly minimal system, Alpine gives you a working Docker system under 3 MB. Since it is unlikely that you'll be running Alpine outside of Docker, the Docker command is included.
 
 ```bash
 docker run -it alpine
@@ -65,12 +64,14 @@ pip install scikit-build
 pip -v install git+https://github.com/GooFit/GooFit.git
 ```
 
-## Ubuntu 16.04
+</p></details>
 
-Ubiquitous Ubuntu works also. Ubuntu was used for the NVidia docker solution due to better support from NVidia. The following example uses ninja-build instead of make, but make works if you perfer it. You should also be able to use this recipe with an [nvidia-docker Ubuntu image](https://hub.docker.com/r/nvidia/cuda/).
+<details><summary>Ubuntu 16.04 (click to expand)</summary><p>
+
+Ubiquitous Ubuntu works also. Ubuntu was used for the NVidia Docker solution due to better support from NVidia. The following example uses `ninja-build` instead of make, but make works if you prefer it. You should also be able to use this recipe with  `docker run -it ubuntu` or
+an [nvidia-docker Ubuntu image](https://hub.docker.com/r/nvidia/cuda/) if you don't have Ubuntu installed.
 
 ```bash
-docker run -it ubuntu
 apt-get update && apt-get install -y git cmake ninja-build g++
 git clone --recursive https://github.com/GooFit/GooFit.git
 cd GooFit
@@ -87,12 +88,16 @@ mkdir root-6 && curl https://root.cern.ch/download/root_v6.08.06.Linux-ubuntu16-
 source root-6/bin/thisroot.sh
 ```
 
-## OpenSUSE
+</p></details>
+
+<details><summary>OpenSUSE (click to expand)</summary><p>
 
 If you use `make`, adding `-jN` where `N` is the number of cores will make builds much faster on multicore systems! `ninja` does this automatically.
+If you'd like to use Docker to provide an OpenSUSE environment, add
+`docker run -it opensuse sh`
+to the beginning of these commands.
 
 ```bash
-docker run -it opensuse sh
 zypper install -y git cmake gcc-c++
 git clone --recursive https://github.com/GooFit/GooFit.git
 cd GooFit
@@ -121,9 +126,11 @@ source /opt/root-6-10-04/bin/thisroot.sh
 
 You might want to add useful extra ROOT library: `-Droofit=ON -Dmathmore=ON -Dminuit2=ON`
 
-## Docker
+</p></details>
 
-If you are interested in actually running on Docker, you can use the official repositories:
+<details><summary>Docker (click to expand)</summary><p>
+
+If you are interested in actually running on Docker, you can use the official GooFit Docker images:
 
 ```bash
 docker run -it goofit/goofit-omp
@@ -140,7 +147,9 @@ cd GooFit
 make
 ```
 
-## Note on CMake install
+</p></details>
+
+<details><summary>Note about installing CMake: (click to expand)</summary><p>
 
 While other install methods for CMake, like `pip`, are easier, this way should always work. On Linux, you can manually get a version of CMake using:
 
@@ -156,3 +165,5 @@ If you are a fan of using `~/.local` and already have `~/.local/bin` in your pat
 ```bash
 wget -qO- "https://cmake.org/files/v3.9/cmake-3.9.4-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C ~/.local
 ```
+
+</p></details>

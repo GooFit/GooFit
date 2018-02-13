@@ -1,3 +1,16 @@
+
+## v2.1.1: Better Python
+#### February 12, 2018
+
+GooFit has received a few bugfixes that needed to be made available before the 2.2 merge. These include:
+
+* More complete Python examples ([2437af9], [#131])
+* DalitzPlotter helpers ([#131])
+* Regression fix: FeatureDetector now respects current compilation options ([#131])
+
+[#131]: https://github.com/GooFit/GooFit/pull/131
+[2437af9]: https://github.com/GooFit/GooFit/commit/2437af9958e8534aa299b754a4e4361ae18d5301
+
 ## v2.1.0: Python bindings
 #### December 7, 2017
 

@@ -36,6 +36,7 @@ set(GOOPDF_HEADERS
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/combine/CompositePdf.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/combine/ConvolutionPdf.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/DalitzPlotHelpers.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/DalitzPlotter.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/SpinFactors.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/MixingTimeResolution_Aux.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/TruthResolution_Aux.h

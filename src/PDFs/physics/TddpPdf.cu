@@ -24,68 +24,6 @@ const unsigned int SPECIAL_RESOLUTION_FLAG = 999999999;
 // NOTE: only one set of wave holders is supported currently.
 __device__ WaveHolder_s *cWaves[16];
 
-/*
-__device__ bool inDalitz (const fptype &m12, const fptype &m13, const fptype &bigM, const fptype &dm1, const fptype
-&dm2, const fptype &dm3) {
-  if (m12 < pow(dm1 + dm2, 2)) return false; // This m12 cannot exist, it's less than the square of the (1,2) particle
-mass.
-  if (m12 > pow(bigM - dm3, 2)) return false;   // This doesn't work either, there's no room for an at-rest 3 daughter.
-
-  // Calculate energies of 1 and 3 particles in m12 rest frame.
-  fptype e1star = 0.5 * (m12 - dm2*dm2 + dm1*dm1) / sqrt(m12);
-  fptype e3star = 0.5 * (bigM*bigM - m12 - dm3*dm3) / sqrt(m12);
-
-  // Bounds for m13 at this value of m12.
-  fptype minimum = pow(e1star + e3star, 2) - pow(sqrt(e1star*e1star - dm1*dm1) + sqrt(e3star*e3star - dm3*dm3), 2);
-  if (m13 < minimum) return false;
-  fptype maximum = pow(e1star + e3star, 2) - pow(sqrt(e1star*e1star - dm1*dm1) - sqrt(e3star*e3star - dm3*dm3), 2);
-  if (m13 > maximum) return false;
-
-  return true;
-}
-*/
-
-__device__ bool inDalitz(
-    const fptype &m12, const fptype &m13, const fptype &bigM, const fptype &dm1, const fptype &dm2, const fptype &dm3) {
-    fptype dm1pdm2  = dm1 + dm2;
-    fptype bigMmdm3 = bigM - dm3;
-
-    bool m12less = (m12 < dm1pdm2 * dm1pdm2) ? false : true;
-    // if (m12 < dm1pdm2*dm1pdm2) return false; // This m12 cannot exist, it's less than the square of the (1,2)
-    // particle mass.
-    bool m12grea = (m12 > bigMmdm3 * bigMmdm3) ? false : true;
-    // if (m12 > bigMmdm3*bigMmdm3) return false;   // This doesn't work either, there's no room for an at-rest 3
-    // daughter.
-
-    fptype sqrtM12 = sqrt(m12);
-    fptype dm11    = dm1 * dm1;
-    fptype dm22    = dm2 * dm2;
-    fptype dm33    = dm3 * dm3;
-
-    // Calculate energies of 1 and 3 particles in m12 rest frame.
-    // fptype e1star = 0.5 * (m12 - dm2*dm2 + dm1*dm1) / sqrt(m12);
-    fptype e1star = 0.5 * (m12 - dm22 + dm11) / sqrtM12;
-    // fptype e3star = 0.5 * (bigM*bigM - m12 - dm3*dm3) / sqrt(m12);
-    fptype e3star = 0.5 * (bigM * bigM - m12 - dm33) / sqrtM12;
-
-    fptype rte1mdm11 = sqrt(e1star * e1star - dm11);
-    fptype rte3mdm33 = sqrt(e3star * e3star - dm33);
-
-    // Bounds for m13 at this value of m12.
-    // fptype minimum = (e1star + e3star)*(e1star + e3star) - pow(sqrt(e1star1 - dm11) + sqrt(e3star*e3star - dm33), 2);
-    fptype minimum = (e1star + e3star) * (e1star + e3star) - (rte1mdm11 + rte3mdm33) * (rte1mdm11 + rte3mdm33);
-
-    bool m13less = (m13 < minimum) ? false : true;
-    // if (m13 < minimum) return false;
-
-    // fptype maximum = pow(e1star + e3star, 2) - pow(sqrt(e1star*e1star - dm1*dm1) - sqrt(e3star*e3star - dm3*dm3), 2);
-    fptype maximum = (e1star + e3star) * (e1star + e3star) - (rte1mdm11 - rte3mdm33) * (rte1mdm11 - rte3mdm33);
-    bool m13grea   = (m13 > maximum) ? false : true;
-    // if (m13 > maximum) return false;
-
-    return m12less && m12grea && m13less && m13grea;
-}
-
 __device__ inline int parIndexFromResIndex(int resIndex) { return resonanceOffset + resIndex * resonanceSize; }
 
 __device__ fpcomplex

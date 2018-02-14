@@ -4,6 +4,7 @@
 #include <goofit/PDFs/basic/LandauPdf.h>
 #include <goofit/PDFs/basic/NovosibirskPdf.h>
 #include <goofit/UnbinnedDataSet.h>
+#include <goofit/detail/Style.h>
 
 #include <TCanvas.h>
 #include <TH1F.h>
@@ -31,7 +32,6 @@ double novosib(double x, double peak, double width, double tail) {
         qy = 1. + tail * qx;
 
         //---- Cutting curve from right side
-
         if(qy > 1.E-7)
             qc = 0.5 * (pow((log(qy) / tail), 2) + tail * tail);
         else
@@ -39,7 +39,6 @@ double novosib(double x, double peak, double width, double tail) {
     }
 
     //---- Normalize the result
-
     return exp(-qc);
 }
 
@@ -56,14 +55,7 @@ void fitAndPlot(GooPdf *total, UnbinnedDataSet *data, TH1F &dataHist, Observable
     TH1F pdfHist("pdfHist", "", xvar.getNumBins(), xvar.getLowerLimit(), xvar.getUpperLimit());
     pdfHist.SetStats(false);
 
-    UnbinnedDataSet grid(xvar);
-    double step = (xvar.getUpperLimit() - xvar.getLowerLimit()) / xvar.getNumBins();
-
-    for(int i = 0; i < xvar.getNumBins(); ++i) {
-        xvar.setValue(xvar.getLowerLimit() + (i + 0.5) * step);
-        grid.addEvent();
-    }
-
+    UnbinnedDataSet grid = total->makeGrid();
     total->setData(&grid);
     std::vector<std::vector<double>> pdfVals = total->getCompProbsAtDataPoints();
 
@@ -100,18 +92,7 @@ int main(int argc, char **argv) {
 
     GOOFIT_PARSE(app);
 
-    gStyle->SetCanvasBorderMode(0);
-    gStyle->SetCanvasColor(10);
-    gStyle->SetFrameFillColor(10);
-    gStyle->SetFrameBorderMode(0);
-    gStyle->SetPadColor(0);
-    gStyle->SetTitleColor(1);
-    gStyle->SetStatColor(0);
-    gStyle->SetFillColor(0);
-    gStyle->SetFuncWidth(1);
-    gStyle->SetLineWidth(1);
-    gStyle->SetLineColor(1);
-    gStyle->SetPalette(1, 0);
+    GooFit::setROOTStyle();
 
     // Independent variable.
     Observable xvar("xvar", -100, 100);
@@ -200,19 +181,19 @@ int main(int argc, char **argv) {
     Variable mpv("mpv", 40, 0, 150);
     Variable sigma("sigma", 5, 0, 30);
     GooPdf *landau = new LandauPdf("landau", xvar, mpv, sigma);
-    fitAndPlot(landau, &landdata, landHist, xvar, "landau.png");
+    fitAndPlot(landau, &landdata, landHist, xvar, "simple_fit_cpp_landau.png");
 
     Variable nmean("nmean", 0.4, -10.0, 10.0);
     Variable nsigm("nsigm", 0.6, 0.0, 1.0);
     Variable ntail("ntail", 1.1, 0.1, 0.0, 3.0);
     GooPdf *novo = new NovosibirskPdf("novo", xvar, nmean, nsigm, ntail);
-    fitAndPlot(novo, &novodata, novoHist, xvar, "novo.png");
+    fitAndPlot(novo, &novodata, novoHist, xvar, "simple_fit_cpp_novo.png");
 
     Variable gmean("gmean", 3.0, 1, -15, 15);
     Variable lsigm("lsigm", 10, 1, 10, 20);
     Variable rsigm("rsigm", 20, 1, 10, 40);
     GooPdf *bifur = new BifurGaussPdf("bifur", xvar, gmean, lsigm, rsigm);
-    fitAndPlot(bifur, &bifgdata, bifgHist, xvar, "bifur.png");
+    fitAndPlot(bifur, &bifgdata, bifgHist, xvar, "simple_fit_cpp_bifur.png");
 
     return 0;
 }

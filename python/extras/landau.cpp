@@ -12,4 +12,8 @@ PYBIND11_MODULE(landau, m) {
     m.def("gaussPDF", py::vectorize(gaussPDF), "x"_a, "mu"_a = 0., "sigma"_a = 1.);
 
     m.def("landauGaussPDF", py::vectorize(landauGaussPDF), "x"_a, "mu"_a = 0., "eta"_a = 1., "sigma"_a = 1.);
+
+    m.def("landau_quantile", py::vectorize(landau_quantile), "z"_a, "xi"_a = 1.0);
+
+    m.def("landau_quantile_c", py::vectorize(landau_quantile_c), "z"_a, "xi"_a = 1.0);
 }

@@ -38,4 +38,4 @@ void setROOTStyle() {
 
 #endif
 
-} // namepspace GooFit
+} // namespace GooFit

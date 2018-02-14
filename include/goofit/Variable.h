@@ -111,6 +111,9 @@ class Observable : public Indexable {
     /// The number of bins (mostly for BinnedData, or plotting help)
     std::shared_ptr<size_t> numbins{std::make_shared<size_t>(100)};
 
+    /// This identifies this as an EventNumber if copies are made
+    bool is_event_number{false};
+
   public:
     Observable(std::string name, fptype lowerlimit, fptype upperlimit)
         : GooFit::Indexable(name, 0, lowerlimit, upperlimit) {}
@@ -124,6 +127,9 @@ class Observable : public Indexable {
 
     /// Get the bin size, (upper-lower) / bins
     fptype getBinSize() const { return (getUpperLimit() - getLowerLimit()) / getNumBins(); }
+
+    /// Check to see if this is an event number
+    bool isEventNumber() const { return is_event_number; }
 
     /// Support var = 3
     const Observable &operator=(const fptype &val) {
@@ -233,7 +239,10 @@ class EventNumber : public Observable {
     static constexpr fptype maxint{1L << std::numeric_limits<fptype>::digits};
 
     EventNumber(std::string name, fptype min = 0, fptype max = EventNumber::maxint)
-        : GooFit::Observable(name, min, max) {}
+        : GooFit::Observable(name, min, max) {
+        is_event_number = true;
+        *value          = 0; // Start with 0 event number by default
+    }
 
     ~EventNumber() override = default;
 

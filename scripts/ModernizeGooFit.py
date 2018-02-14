@@ -15,9 +15,9 @@ conversion['brackets'] = [
     (r'^#include\s+"(\S+)"', r'#include <\1>'),
 ]
 conversion['2.0'] = [
-    (r'^#include\s+["<]cuda_runtime_api.hh?[">]\s*$', r'// Fake cuda has been removed (cuda_runtime_api.h requested)'),
-    (r'^#include\s+["<]driver_types.hh?[">]\s*$', r'// Fake cuda has been removed (driver_types.h requested)'),
-    (r'^#include\s+["<]host_defines.hh?[">]\s*$', r'// Fake cuda has been removed (host_defines.h requested)'),
+    #(r'^#include\s+["<]cuda_runtime_api.hh?[">]\s*$', r'// Fake cuda has been removed (cuda_runtime_api.h requested)'),
+    #(r'^#include\s+["<]driver_types.hh?[">]\s*$', r'// Fake cuda has been removed (driver_types.h requested)'),
+    #(r'^#include\s+["<]host_defines.hh?[">]\s*$', r'// Fake cuda has been removed (host_defines.h requested)'),
     ('["<]Application.hh?[">]', '<goofit/Application.h>'),
     ('["<]BinnedDataSet.hh?[">]', '<goofit/BinnedDataSet.h>'),
     ('["<]DataSet.hh?[">]', '<goofit/DataSet.h>'),
@@ -26,7 +26,7 @@ conversion['2.0'] = [
     ('["<]FitManager.hh?[">]', '<goofit/FitManager.h>'),
     ('["<]FitManagerMinuit1.hh?[">]', '<goofit/fitting/FitManagerMinuit1.h>'),
     ('["<]FitManagerMinuit2.hh?[">]', '<goofit/fitting/FitManagerMinuit2.h>'),
-    ('#include\ ["<]FitManagerMinuit3.hh?[">]', r'// Fit Manager 3 removed'),
+    #(r'^#include\ ["<]FitManagerMinuit3.hh?[">]', r'// Fit Manager 3 removed'),
     ('["<]FunctorWriter.hh?[">]', '<goofit/FunctorWriter.h>'),
     ('["<]GlobalCudaDefines.hh?[">]', '<goofit/GlobalCudaDefines.h>'),
     ('["<]PdfBase.hh?[">]', '<goofit/PdfBase.h>'),

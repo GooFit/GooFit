@@ -53,7 +53,7 @@ def integralExpSqu(lo, hi):
     return((lo * lo + 2 * lo + 2) * np.exp(-lo) - (hi * hi + 2 * hi + 2) * np.exp(-hi))
 
 @jit(nopython=True)
-def generateEvents(lowerlimit, upperlimit, numbins, conCoef, linCoef, squCoef, eventsToGenerate):
+def generateEvents(numbins, lowerlimit, upperlimit, conCoef, linCoef, squCoef, eventsToGenerate):
 
     totalRSintegral = integralExpCon(0, 100)
     step            = (upperlimit - lowerlimit) / numbins
@@ -82,48 +82,23 @@ def generateEvents(lowerlimit, upperlimit, numbins, conCoef, linCoef, squCoef, e
     return rsEvtVec, wsEvtVec
 
 
+def produce_hist(rsEvts, wsEvents):
+    ratio = wsEvts
+
+    if rsEvts[0rsEvts == 0] = 1 # Cheating to avoid div by zero.
+    ratio /= rsEvts
+    wsEvts[wsEvts == 0] = 1 # Avoid zero errors
+
+    error = np.sqrt(wsEvts / rsEvts**2 +  wsEvts**2 / rsEvts**3)
+    return ratio, error
+
+
 def fitRatio(decayTime, weights, rsEvts, wsEvts, plotName = ""):
 
-    print("fitRatio")
     ratioData = BinnedDataSet(decayTime)
 
-    i=0
-    while i < wsEvts.size:
+    ratio, error = produce_hist(rsEvts, wsEvts)
 
-        ratio = wsEvts[i]
-
-        if 0 == rsEvts[i]:
-            rsEvts[i] = 1 #Cheating to avoid div by zero.
-
-        ratio /= rsEvts[i]
-
-        if 0 == wsEvts[i]:
-            wsEvts[i] = 1 #Avoid zero errors
-
-        error = wsEvts[i] / pow(rsEvts[i], 2)
-        error += pow(wsEvts[i], 2) / pow(rsEvts[i], 3)
-        error = np.sqrt(error)
-
-        ratioData.setBinContent(i, ratio)
-        ratioData.setBinError(i, error)
-        ratioHist.SetBinContent(i + 1, ratio)
-        ratioHist.SetBinError(i + 1, error)
-        i+=1
-
-    '''
-    constaCoef = Variable("constaCoef", 0.03, 0.01, -1, 1)
-    constaCoef.value = 0.03
-    constaCoef.error=0.01
-    linearCoef = Variable("linearCoef", 0, 0.01, -1, 1)
-    linearCoef.value=0.00
-    linearCoef.error=0.01
-    secondCoef = Variable("secondCoef", 0, 0.01, -1, 1)
-    secondCoef.value=0.00
-    secondCoef.error=0.01
-
-
-    weights = (constaCoef,linearCoef,secondCoef)
-    '''
 
     poly = PolynomialPdf("poly", decayTime, weights)
     print("Setting binned error fit")
@@ -135,9 +110,14 @@ def fitRatio(decayTime, weights, rsEvts, wsEvts, plotName = ""):
     print("Fitting")
     fitter.fit()
 
-    values = poly.evaluateAtPoints(decayTime)
-    #pdfHist = TH1D("pdfHist", "", decayTime.numbins, decayTime.lowerlimit, decayTime.upperlimit)
 
+    if plotname:
+        values = poly.evaluateAtPoints(decayTime)
+        xvals = decayTime.bin_centers
+        fig, ax = plt.subplots()
+        ax.errorbar(xvals, ratio, error)
+        ax.plot(xvals, values)
+        fig.savefig(plotname)
 
     return datapdf
 

@@ -23,8 +23,11 @@ void init_BinnedDataSet(py::module &m) {
         .def("getBinCenter", (fptype(BinnedDataSet::*)(size_t, size_t) const) & BinnedDataSet::getBinCenter)
         .def_property_readonly("bin_center",
                                (fptype(BinnedDataSet::*)(size_t, size_t) const) & BinnedDataSet::getBinCenter)
-
-            ADD_PROP_RO(bin_number, getBinNumber, BinnedDataSet) ADD_PROP_RO(bin_volume, getBinVolume, BinnedDataSet)
-                ADD_PROP_RO(bin_error, getBinError, BinnedDataSet) ADD_PROP_RO(num_bins, getNumBins, BinnedDataSet)
-                    ADD_PROP_RO(num_events, getNumEvents, BinnedDataSet);
+        // clang-format off
+            ADD_PROP_RO(bin_number, getBinNumber, BinnedDataSet)
+            ADD_PROP_RO(bin_volume, getBinVolume, BinnedDataSet)
+            ADD_PROP_RO(bin_error, getBinError, BinnedDataSet)
+            ADD_PROP_RO(num_bins, getNumBins, BinnedDataSet)
+            ADD_PROP_RO(num_events, getNumEvents, BinnedDataSet);
+    // clang-format on
 }

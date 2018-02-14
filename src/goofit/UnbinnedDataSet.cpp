@@ -63,4 +63,45 @@ void UnbinnedDataSet::addEvent() {
     numEventsAdded++;
 }
 
+// Utility function to make a grid of any dimisinion
+void make_a_grid(std::vector<Observable> ret, UnbinnedDataSet *grid, Observable *eventNum) {
+    if(ret.empty()) {
+        grid->addEvent();
+
+        if(eventNum != nullptr)
+            eventNum->setValue(eventNum->getValue() + 1);
+
+        return;
+    }
+
+    Observable var = ret.back();
+    ret.pop_back(); // safe because this is a copy
+
+    if(var.isEventNumber()) { // Skip
+        make_a_grid(ret, grid, eventNum);
+    } else {
+        for(int i = 0; i < var.getNumBins(); ++i) {
+            double step = (var.getUpperLimit() - var.getLowerLimit()) / var.getNumBins();
+            var.setValue(var.getLowerLimit() + (i + 0.5) * step);
+            make_a_grid(ret, grid, eventNum);
+        }
+    }
+}
+
+void UnbinnedDataSet::fillWithGrid() {
+    for(const auto &dat : data)
+        if(!dat.empty())
+            throw GeneralError("The dataset must be empty to fill with grid!");
+
+    std::vector<Observable> ret = getObservables();
+
+    Observable *evt_num = nullptr;
+
+    for(Observable &val : ret)
+        if(val.isEventNumber())
+            evt_num = &val;
+
+    make_a_grid(ret, this, evt_num);
+}
+
 } // namespace GooFit

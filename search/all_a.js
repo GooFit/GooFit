@@ -21,6 +21,8 @@ var searchData=
   ['invalid',['InValid',['../namespace_goo_fit.html#a145d35e8e46e921ed038de04120d4241a05fe242e96a3e233fc27654efe32c3a6',1,'GooFit']]],
   ['invrootpi',['invRootPi',['../_global_cuda_defines_8h.html#ad8b702874d038de595e56f4e20de240d',1,'GlobalCudaDefines.h']]],
   ['invsq2pi',['invsq2pi',['../landau_8h.html#a1f436de4a3225187f31c759ba2027350',1,'landau.h']]],
+  ['is_5fevent_5fnumber',['is_event_number',['../class_goo_fit_1_1_observable.html#a8bcb1e4cce033389d422d9b1212c58b6',1,'GooFit::Observable']]],
+  ['iseventnumber',['isEventNumber',['../class_goo_fit_1_1_observable.html#ac29c79e57d5b6ba79c0774ed8c96e581',1,'GooFit::Observable']]],
   ['isfixed',['IsFixed',['../class_goo_fit_1_1_variable.html#a15ccd0ff5bb5b139a9ff9746e5c9e4ec',1,'GooFit::Variable']]],
   ['italic',['italic',['../namespace_goo_fit.html#ae1df94cec5a2325951dc5627b1be68ae',1,'GooFit']]],
   ['iterator',['iterator',['../class_goo_fit_1_1strided__range.html#aac2001b0f7625487969170eefb33e9c0',1,'GooFit::strided_range']]]

@@ -22,6 +22,7 @@ var searchData=
   ['m_5fieventspertask',['m_iEventsPerTask',['../class_goo_fit_1_1_pdf_base.html#a94c76d405a84904e3317b59ff7b97b66',1,'GooFit::PdfBase']]],
   ['macros_2eh',['Macros.h',['../_macros_8h.html',1,'']]],
   ['magenta',['magenta',['../namespace_goo_fit.html#ad8ca018216ddb23824741aeeb8d5da56',1,'GooFit']]],
+  ['make_5fa_5fgrid',['make_a_grid',['../namespace_goo_fit.html#a17a659a2f0b6668fd53811966a006d77',1,'GooFit']]],
   ['make_5fminuit_5fvector',['make_minuit_vector',['../class_goo_fit_1_1_params.html#ae25184da173af27dad0e9ea1c940d9bf',1,'GooFit::Params']]],
   ['makegmunu',['makeGmunu',['../class_goo_fit_1_1_symm_lorentz_matrix.html#ab4237afdaf59aa70684c28b77e9dcea7',1,'GooFit::SymmLorentzMatrix']]],
   ['makegrid',['makeGrid',['../class_goo_fit_1_1_goo_pdf.html#a1398038b6f85df0adef260e59e253139',1,'GooFit::GooPdf']]],

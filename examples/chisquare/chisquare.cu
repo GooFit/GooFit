@@ -27,6 +27,7 @@ using namespace GooFit;
 vector<double> ratios;
 vector<double> errors;
 
+// Global needed to put it in the fit function for ROOT
 Observable decayTime{"decayTime", 0, 10};
 
 double integralExpCon(double lo, double hi) { return (exp(-lo) - exp(-hi)); }
@@ -77,10 +78,9 @@ std::tuple<int, std::string> fitRatio(Observable decayTime,
                                       vector<int> &rsEvts,
                                       vector<int> &wsEvts,
                                       std::string plotName = "") {
-    TH1D *ratioHist
-        = new TH1D("ratioHist", "", decayTime.getNumBins(), decayTime.getLowerLimit(), decayTime.getUpperLimit());
+    TH1D ratioHist("ratioHist", "", decayTime.getNumBins(), decayTime.getLowerLimit(), decayTime.getUpperLimit());
 
-    BinnedDataSet *ratioData = new BinnedDataSet(decayTime);
+    BinnedDataSet ratioData(decayTime);
 
     for(unsigned int i = 0; i < wsEvts.size(); ++i) {
         double ratio = wsEvts[i];
@@ -97,60 +97,62 @@ std::tuple<int, std::string> fitRatio(Observable decayTime,
         error += pow(wsEvts[i], 2) / pow(rsEvts[i], 3);
         error = sqrt(error);
 
-        ratioData->setBinContent(i, ratio);
-        ratioData->setBinError(i, error);
-        ratioHist->SetBinContent(i + 1, ratio);
-        ratioHist->SetBinError(i + 1, error);
+        ratioData.setBinContent(i, ratio);
+        ratioData.setBinError(i, error);
+        ratioHist.SetBinContent(i + 1, ratio);
+        ratioHist.SetBinError(i + 1, error);
     }
 
-    PolynomialPdf *poly = new PolynomialPdf("poly", decayTime, weights);
-    poly->setFitControl(std::make_shared<BinnedErrorFit>());
-    poly->setData(ratioData);
-    FitManager datapdf{poly};
+    PolynomialPdf poly("poly", decayTime, weights);
+    poly.setFitControl(std::make_shared<BinnedErrorFit>());
+    poly.setData(&ratioData);
+    FitManager datapdf{&poly};
 
     CLI::Timer timer_cpu{"GPU"};
     datapdf.fit();
     std::string timer_str = timer_cpu.to_string();
 
-    vector<fptype> values = poly->evaluateAtPoints(decayTime);
-    TH1D pdfHist("pdfHist", "", decayTime.getNumBins(), decayTime.getLowerLimit(), decayTime.getUpperLimit());
+    if(!plotName.empty()) {
+        vector<fptype> values = poly.evaluateAtPoints(decayTime);
+        TH1D pdfHist("pdfHist", "", decayTime.getNumBins(), decayTime.getLowerLimit(), decayTime.getUpperLimit());
 
-    for(int i = 0; i < values.size(); ++i) {
-        pdfHist.SetBinContent(i + 1, values[i]);
+        for(int i = 0; i < values.size(); ++i) {
+            pdfHist.SetBinContent(i + 1, values[i]);
+        }
+
+        ratioHist.SetMarkerStyle(8);
+        ratioHist.SetMarkerSize(0.5);
+        ratioHist.SetStats(false);
+        ratioHist.Draw("p");
+
+        TString str1 = fmt::format(
+            "Constant [10^{{-2}}] : {:.3} #pm {:.3}", weights[0].getValue() * 1e2, weights[0].getError() * 1e2);
+        TLatex res1(0.14, 0.83, str1);
+        res1.SetNDC(true);
+
+        TString str2 = fmt::format(
+            "Linear [10^{{-4}}] : {:.3} #pm {:.3}", weights[1].getValue() * 1e4, weights[1].getError() * 1e4);
+        TLatex res2(0.14, 0.73, str2);
+        res2.SetNDC(true);
+
+        TString str3 = fmt::format(
+            "Quadratic [10^{{-6}}]: {:.3} #pm {:.3}", weights[2].getValue() * 1e6, weights[2].getError() * 1e6);
+        TLatex res3(0.14, 0.63, str3);
+        res3.SetNDC(true);
+
+        res1.Draw();
+        res2.Draw();
+        res3.Draw();
+
+        pdfHist.SetLineColor(kBlue);
+        pdfHist.SetLineWidth(3);
+        pdfHist.SetStats(false);
+        pdfHist.Draw("lsame");
+        foo.SaveAs(plotName.c_str());
     }
 
-    ratioHist->SetMarkerStyle(8);
-    ratioHist->SetMarkerSize(0.5);
-    ratioHist->SetStats(false);
-    ratioHist->Draw("p");
-
-    char strbuffer[1000];
-    sprintf(strbuffer, "Constant [10^{-2}] : %.3f #pm %.3f", 1e2 * weights[0].getValue(), weights[0].getError() * 1e2);
-    TLatex res1(0.14, 0.83, strbuffer);
-    res1.SetNDC(true);
-    sprintf(strbuffer, "Linear [10^{-4}]   : %.3f #pm %.3f", 1e4 * weights[1].getValue(), weights[1].getError() * 1e4);
-    TLatex res2(0.14, 0.73, strbuffer);
-    res2.SetNDC(true);
-    sprintf(strbuffer, "Quadratic [10^{-6}]: %.3f #pm %.3f", 1e6 * weights[2].getValue(), weights[2].getError() * 1e6);
-    TLatex res3(0.14, 0.63, strbuffer);
-    res3.SetNDC(true);
-
-    res1.Draw();
-    res2.Draw();
-    res3.Draw();
-
-    pdfHist.SetLineColor(kBlue);
-    pdfHist.SetLineWidth(3);
-    pdfHist.SetStats(false);
-    pdfHist.Draw("lsame");
-    foo.SaveAs(plotName.c_str());
-
-    std::cout << "Polynomial function: " << poly->getCoefficient(2) << " * t^2 + " << poly->getCoefficient(1)
-              << " * t + " << poly->getCoefficient(0) << std::endl;
-
-    delete ratioHist;
-    delete ratioData;
-    delete poly;
+    std::cout << "Polynomial function: " << poly.getCoefficient(2) << " * t^2 + " << poly.getCoefficient(1) << " * t + "
+              << poly.getCoefficient(0) << std::endl;
 
     return make_tuple(int(datapdf), timer_str);
 }
@@ -256,8 +258,8 @@ int main(int argc, char **argv) {
 
     int retval1, retval2;
     std::string fit1, fit2;
-    std::tie(retval1, fit1) = fitRatio(decayTime, weights, dZeroEvtsRS, dZeroEvtsWS, "dzeroEvtRatio.png");
-    std::tie(retval2, fit2) = fitRatio(decayTime, weights, d0barEvtsRS, d0barEvtsWS, "dzbarEvtRatio.png");
+    std::tie(retval1, fit1) = fitRatio(decayTime, weights, dZeroEvtsRS, dZeroEvtsWS, "chisquare_cpp_dzeroEvtRatio.png");
+    std::tie(retval2, fit2) = fitRatio(decayTime, weights, d0barEvtsRS, d0barEvtsWS, "chisquare_cpp_dzbarEvtRatio.png");
 
     CLI::Timer timer_cpu{"Total CPU (2x fits)"};
     fitRatioCPU(decayTime, dZeroEvtsRS, dZeroEvtsWS);

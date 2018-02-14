@@ -3,35 +3,69 @@
 
 from __future__ import print_function, division
 
+# Standard library stuff
+import sys
+import warnings
+from time import time
+from contextlib import contextmanager
+
+# GooFit package
 from goofit import *
+
 import numpy as np
 
-print_goofit_info()
+# Protect the matplotlib call for systems with no graphics
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 
-decayTime  = Observable("decayTime",0,10)
+# Optional import of numba, if available
+# Make code much faster if found!
+try:
+    from numba import jit
+except ImportError:
+    def jit(*args, **kargs):
+        def copyf(function):
+            return function
+        return copyf
+    warnings.warn("Numba not found, will be 100x slower", RuntimeWarning)
 
+
+@contextmanager
+def timed(msg):
+    start = time()
+    try:
+        yield
+    finally:
+        end = time()
+        print(msg, end - start, "s")
+
+@jit(nopython=True)
 def integralExpCon(lo, hi):
     return(np.exp(-lo) - np.exp(-hi))
 
+@jit(nopython=True)
 def integralExpLin(lo, hi):
     return((lo + 1) * np.exp(-lo) - (hi + 1) * np.exp(-hi))
 
+@jit(nopython=True)
 def integralExpSqu(lo, hi):
     return((lo * lo + 2 * lo + 2) * np.exp(-lo) - (hi * hi + 2 * hi + 2) * np.exp(-hi))
 
-def generateEvents(decayTime, conCoef, linCoef, squCoef, eventsToGenerate):
+@jit(nopython=True)
+def generateEvents(lowerlimit, upperlimit, numbins, conCoef, linCoef, squCoef, eventsToGenerate):
 
     totalRSintegral = integralExpCon(0, 100)
-    step            = (decayTime.upperlimit - decayTime.lowerlimit) / decayTime.numbins
+    step            = (upperlimit - lowerlimit) / numbins
 
 
-    rsEvtVec = np.array([])
-    wsEvtVect = np.array([])
+    rsEvtVec = np.empty(numbins)
+    wsEvtVect = np.empty(numbins)
 
-    for i in range(decayTime.numbins):
+    for i in range(numbins):
 
         binStart = i * step
-        binStart += decayTime.lowerlimit
+        binStart += lowerlimit
         binFinal = binStart + step
 
         rsIntegral = integralExpCon(binStart, binFinal)
@@ -44,7 +78,6 @@ def generateEvents(decayTime, conCoef, linCoef, squCoef, eventsToGenerate):
 
         rsEvtVec[i] = np.random.poisson(expectedRSevts)
         wsEvtVec[i] = np.random.poisson(expectedWSevts)
-
 
     return rsEvtVec, wsEvtVec
 
@@ -108,34 +141,31 @@ def fitRatio(decayTime, weights, rsEvts, wsEvts, plotName = ""):
 
     return datapdf
 
-def cpvFitFcn(npar, gin, fun, fp, iflag):
+def cpvFitFcn(numbins, lowerlimit, upperlimit, npar, gin, fun, fp, iflag):
     print(cpvFitFcn)
     conCoef = fp[0]
     linCoef = fp[1]
     squCoef = fp[2]
 
     chisq = 0
-    step  = (decayTime.upperlimit - decayTime.lowerlimit) / decayTime.numbins
+    step  = (upperlimit - lowerlimit) / numbins
 
     i=0
     while i < ratios.size():
-        currDTime = decayTime.lowerlimit + (i + 0.5) * step
+        currDTime = lowerlimit + (i + 0.5) * step
         pdfval    = conCoef + linCoef * currDTime + squCoef * currDTime * currDTime
         chisq += pow((pdfval - ratios[i]) / errors[i], 2)
         i+=1
 
     fun = chisq
 
+@jit(nopython=True)
+def fitRatioCPU(numbins, lowerlimit, upperlimit, rsEvts, wsEvts):
 
-def fitRatioCPU(decayTime, rsEvts, wsEvts):
-    print("fitRatioCPU")
-    ratioHist = TH1D("ratioHist", "", decayTime.numbins, decayTime.lowerlimit, decayTime.upperlimit)
+    ratios.empty_like(wsEvts)
+    errors.empty_like(wsEvts)
 
-    ratios.resize(wsEvts.size())
-    errors.resize(wsEvts.size())
-
-    i=0
-    while i < wsEvts.size():
+    for i in range(len(wsEvts)):
         ratio = wsEvts[i]
 
         if 0 == rsEvts[i]:
@@ -146,18 +176,19 @@ def fitRatioCPU(decayTime, rsEvts, wsEvts):
         if 0 == wsEvts[i]:
             wsEvts[i] = 1 # Avoid zero errors
 
-        error = wsEvts[i] / pow(rsEvts[i], 2)
-        error += pow(wsEvts[i], 2) / pow(rsEvts[i], 3)
-        error = sqrt(error)
+        error = wsEvts[i] / rsEvts[i]**2
+        error += wsEvts[i]**2 / rsEvts[i]**3
+        error = np.sqrt(error)
 
         ratios[i] = ratio
         errors[i] = error
-        ratioHist.SetBinContent(i + 1, ratio)
-        ratioHist.SetBinError(i + 1, error)
-        i+=1
+
+    return ratios, errors
+
 
 def main():
-    print("main")
+    decayTime = Observable("decayTime", 0, 10)
+
     numbins = 100
 
     decayTime.value = 100
@@ -180,57 +211,38 @@ def main():
     dZeroSecondCoef = 0.25 * magPQ * magPQ * (x_mix * x_mix + y_mix * y_mix)
     d0barSecondCoef = 0.25 * magQP * magQP * (x_mix * x_mix + y_mix * y_mix)
 
-    dZeroEvtsRS, dZeroEvtsWS = generateEvents(decayTime, rSubD, dZeroLinearCoef, dZeroSecondCoef, eventsToGenerate)
-    d0barEvtsRS, d0barEvtsWS = generateEvents(decayTime, rBarD, d0barLinearCoef, d0barSecondCoef, eventsToGenerate)
+    dZeroEvtsRS, dZeroEvtsWS = generateEvents(
+            decayTime.lowerlimit, decayTime.upperlimit, decayTime.numbins,
+            rSubD, dZeroLinearCoef, dZeroSecondCoef, eventsToGenerate)
 
-    constaCoef = Variable("constaCoef",0.03, 0.01, -1, 1)
-    linearCoef = Variable("linearCoef",0, 0.01, -1, 1)
-    secondCoef = Variable("secondCoef",0, 0.01, -1, 1)
+    d0barEvtsRS, d0barEvtsWS = generateEvents(
+            decayTime.lowerlimit, decayTime.upperlimit, decayTime.numbins,
+            rBarD, d0barLinearCoef, d0barSecondCoef, eventsToGenerate)
+
+    constaCoef = Variable("constaCoef", 0.03, 0.01, -1, 1)
+    linearCoef = Variable("linearCoef", 0, 0.01, -1, 1)
+    secondCoef = Variable("secondCoef", 0, 0.01, -1, 1)
 
     weights = (constaCoef, linearCoef, secondCoef)
 
     (retval1, fit1) = fitRatio(decayTime, weights, dZeroEvtsRS, dZeroEvtsWS, "dzeroEvtRatio.png")
     (retval2, fit2) = fitRatio(decayTime, weights, d0barEvtsRS, d0barEvtsWS, "dzbarEvtRatio.png")
 
-    #CLI::Timer timer_cpu{"Total CPU (2x fits)"}
-    fitRatioCPU(decayTime, dZeroEvtsRS, dZeroEvtsWS)
-    fitRatioCPU(decayTime, d0barEvtsRS, d0barEvtsWS)
-    cpu_string = timer_cpu.to_string();
+    with timed("Total CPU (2x fits)"):
+        fitRatioCPU(decayTime, dZeroEvtsRS, dZeroEvtsWS)
+        fitRatioCPU(decayTime, d0barEvtsRS, d0barEvtsWS)
 
-    print (fit1, "\n", fit2, "\n", cpu_string)
-
-    print("Exit codes (should be 0): {} and {}\n", retval1, retval2)
+    print(fit1)
+    print(fit2)
+    print("Exit codes (should be 0):", retval1, "and", retval2)
 
     return (retval1 + retval2)
 
 
-    '''
-    gpuTime = 0
-    cpuTime = 0
 
-    retval = fitRatio(dZeroEvtsRS, dZeroEvtsWS, "dzeroEvtRatio.png")
-    if retval != 0:
-        return retval
+if __name__ == "__main__":
+    # Print info about your system and GooFit
+    print_goofit_info()
 
-    timersub(stopTime, startTime, totalTime)
-    gpuTime += totalTime.tv_sec + totalTime.tv_usec / 1000000.0
-    retval = fitRatio(d0barEvtsRS, d0barEvtsWS, "dzbarEvtRatio.png")
-    if retval != 0:
-        return retval
-
-    timersub(stopTime, startTime, totalTime)
-    gpuTime += totalTime.tv_sec + totalTime.tv_usec / 1000000.0
-
-    fitRatioCPU(dZeroEvtsRS, dZeroEvtsWS)
-    timersub(stopTime, startTime, totalTime)
-    cpuTime += totalTime.tv_sec + totalTime.tv_usec / 1000000.0
-    fitRatioCPU(d0barEvtsRS, d0barEvtsWS)
-    timersub(stopTime, startTime, totalTime)
-    cpuTime += totalTime.tv_sec + totalTime.tv_usec / 1000000.0
-
-
-    print( "GPU time [seconds] : ",gpuTime,"\nCPU time [seconds] : ",cpuTime)
-    return 0;
-    '''
-
-main()
+    # Run the main program
+    main()

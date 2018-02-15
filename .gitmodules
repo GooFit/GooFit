@@ -36,7 +36,7 @@
 	url = ../MCBooster.git
 [submodule "extern/Eigen"]
 	path = extern/Eigen
-	url = ../../RLovelett/Eigen.git
+	url = ../../eigenteam/eigen-git-mirror.git
 [submodule "extern/cuda_support"]
 	path = extern/cuda_support
 	url = ../../CLIUtils/cuda_support.git

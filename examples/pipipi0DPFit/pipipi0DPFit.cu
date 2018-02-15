@@ -129,7 +129,8 @@ const fptype piZeroMass = 0.1349766;
 enum Resolutions { DplotRes = 1, TimeRes = 2, Efficiency = 4 };
 
 Variable motherM("motherM", 1.86484);
-Variable chargeM("chargeM", 0.13957018);
+Variable chargeM1("chargeM1", 0.13957018);
+Variable chargeM2("chargeM2", 0.13957018);
 Variable neutrlM("neutrlM", 0.1349766);
 Variable constantBigM("constantBigM", _mD02 + 2 * piPlusMass * piPlusMass + piZeroMass * piZeroMass);
 
@@ -458,7 +459,7 @@ GooPdf *makeKzeroVeto() {
 
     vector<VetoInfo> vetos;
     vetos.push_back(kVetoInfo);
-    kzero_veto = new DalitzVetoPdf("kzero_veto", *m12, *m13, motherM, neutrlM, chargeM, chargeM, vetos);
+    kzero_veto = new DalitzVetoPdf("kzero_veto", *m12, *m13, motherM, neutrlM, chargeM1, chargeM2, vetos);
     return kzero_veto;
 }
 

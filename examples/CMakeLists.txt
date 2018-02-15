@@ -9,7 +9,7 @@ if(ROOT_FOUND)
     add_subdirectory(product)
     add_subdirectory(SigGen)
     add_subdirectory(simpleFit)
-    #add_subdirectory(TDDP4)
+    add_subdirectory(TDDP4)
     add_subdirectory(zachFit)
 endif()
 

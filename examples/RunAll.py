@@ -41,14 +41,14 @@ def test(filename, *args):
 
 def make_results(profile=False):
     results = [
-#        test('DP4'),
-#        test('SigGen'),
-        test('2d_plot'),
+        test('DP4'),
+        test('SigGen'),
+#        test('2d_plot'),
         test('dalitz'),
         test('convolution'),
         test('addition'),
         test('exponential'),
-#        test('TDDP4', '-t', 100 if profile else 5),
+        test('TDDP4', '-t', 100 if profile else 5),
         test('product'),
         test('simpleFit'),
         test('chisquare'),

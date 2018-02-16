@@ -1,6 +1,8 @@
 var searchData=
 [
   ['landau_2eh',['landau.h',['../landau_8h.html',1,'']]],
+  ['landau_5fquantile',['landau_quantile',['../landau_8h.html#af9e41d27f8327985e94b54e6fc45d5e0',1,'landau.h']]],
+  ['landau_5fquantile_5fc',['landau_quantile_c',['../landau_8h.html#ac10bde455644b4c7616531dcd0cb4efb',1,'landau.h']]],
   ['landaugausspdf',['landauGaussPDF',['../landau_8h.html#ac41627e69812331dfd3da1f746c5690a',1,'landau.h']]],
   ['landaupdf',['LandauPdf',['../class_goo_fit_1_1_landau_pdf.html',1,'GooFit::LandauPdf'],['../class_goo_fit_1_1_landau_pdf.html#a0a9e6cc5483865bd47b75634b1d8afdd',1,'GooFit::LandauPdf::LandauPdf()'],['../landau_8h.html#a8faa48409f59a870fa14d9db661304e2',1,'landauPDF():&#160;landau.h']]],
   ['landaupdf_2ecu',['LandauPdf.cu',['../_landau_pdf_8cu.html',1,'']]],

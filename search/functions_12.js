@@ -6,7 +6,7 @@ var searchData=
   ['scan',['scan',['../class_goo_fit_1_1_goo_pdf.html#a4bf13dd0561c0d3cc7804104a1f77533',1,'GooFit::GooPdf']]],
   ['set_5fdevice',['set_device',['../class_goo_fit_1_1_application.html#af3c0ae28c31017e3aa715b6343b1c603',1,'GooFit::Application']]],
   ['setbincontent',['setBinContent',['../class_goo_fit_1_1_binned_data_set.html#a07d77884d01b8d008bfa468fb2d2943a',1,'GooFit::BinnedDataSet']]],
-  ['setbinerror',['setBinError',['../class_goo_fit_1_1_binned_data_set.html#a5eb39c9028dcc59cb45df7ee4db6f0dd',1,'GooFit::BinnedDataSet']]],
+  ['setbinerror',['setBinError',['../class_goo_fit_1_1_binned_data_set.html#adaa83d2caad2113b6e589e167e4f3757',1,'GooFit::BinnedDataSet']]],
   ['setblind',['setBlind',['../class_goo_fit_1_1_variable.html#ae4fa039e4045f6b6c2b72b88eee5e0fe',1,'GooFit::Variable']]],
   ['setcalctauidx',['setCalcTauIdx',['../class_goo_fit_1_1_mixing_time_resolution.html#af711bdb427c0345bbe49dec407b21ade',1,'GooFit::MixingTimeResolution']]],
   ['setchanged',['setChanged',['../class_goo_fit_1_1_variable.html#abb2de8fa7b0aa1bc7b253b68e5e5d2d3',1,'GooFit::Variable']]],

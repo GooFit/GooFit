@@ -106,10 +106,10 @@ std::tuple<int, std::string> fitRatio(Observable decayTime,
     PolynomialPdf poly("poly", decayTime, weights);
     poly.setFitControl(std::make_shared<BinnedErrorFit>());
     poly.setData(&ratioData);
-    FitManager datapdf{&poly};
+    FitManager fitter{&poly};
 
     CLI::Timer timer_cpu{"GPU"};
-    datapdf.fit();
+    fitter.fit();
     std::string timer_str = timer_cpu.to_string();
 
     if(!plotName.empty()) {
@@ -154,7 +154,7 @@ std::tuple<int, std::string> fitRatio(Observable decayTime,
     std::cout << "Polynomial function: " << poly.getCoefficient(2) << " * t^2 + " << poly.getCoefficient(1) << " * t + "
               << poly.getCoefficient(0) << std::endl;
 
-    return make_tuple(int(datapdf), timer_str);
+    return make_tuple(int(fitter), timer_str);
 }
 
 void cpvFitFcn(int &npar, double *gin, double &fun, double *fp, int iflag) {
@@ -182,12 +182,10 @@ void fitRatioCPU(Observable decayTime, vector<int> &rsEvts, vector<int> &wsEvts)
     errors.resize(wsEvts.size());
 
     for(unsigned int i = 0; i < wsEvts.size(); ++i) {
-        double ratio = wsEvts[i];
-
         if(0 == rsEvts[i])
             rsEvts[i] = 1; // Cheating to avoid div by zero.
 
-        ratio /= rsEvts[i];
+        fptype ratio = wsEvts[i] / rsEvts[i];
 
         if(0 == wsEvts[i])
             wsEvts[i] = 1; // Avoid zero errors

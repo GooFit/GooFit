@@ -38,6 +38,9 @@ class FitManagerMinuit2 {
     /// Set the fitting verbosity
     void setVerbosity(int value) { verbosity = value; }
 
+    /// Get the fitting verbosity
+    int getVerbosity() const { return verbosity; }
+
   private:
     Params upar_;
     FCN fcn_;

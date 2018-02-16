@@ -1,3 +1,16 @@
+## v2.1.2: Even more Python
+#### In progress
+
+GooFit has received even more Pythonization with the conversion of two more examples, ChiSquare and SimpleFit.
+
+* Grids can now be produced from DataSets with event numbers  ([#133])
+* Correlation matrices can now be accessed from Python ([#134])
+* Some examples use numba for high-speed calculation of CPU code ([#134])
+* Binned dataset access in Python improved ([#134])
+* Travis timeouts reduced by separating codecov run
+
+[#133]: https://github.com/GooFit/GooFit/pull/133
+[#134]: https://github.com/GooFit/GooFit/pull/134
 
 ## v2.1.1: Better Python
 #### February 12, 2018

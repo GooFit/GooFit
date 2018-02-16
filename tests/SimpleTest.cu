@@ -74,3 +74,51 @@ TEST(Simple, FancyAddEvent) {
     EXPECT_THROW(data.addEvent(1), GooFit::GeneralError);
     EXPECT_THROW(data.addEvent(1, 2, 3), GooFit::GeneralError);
 }
+
+TEST(Simple, MakeAGrid) {
+    Observable xvar{"xvar", 0, 10};
+    Observable yvar{"yvar", 0, 10};
+
+    UnbinnedDataSet data{{xvar, yvar}};
+    data.fillWithGrid();
+
+    ASSERT_EQ(data.getNumEvents(), 100 * 100);
+
+    data.loadEvent(0);
+    EXPECT_FLOAT_EQ(0.05, xvar.getValue());
+    EXPECT_FLOAT_EQ(0.05, yvar.getValue());
+
+    data.loadEvent(1);
+    EXPECT_FLOAT_EQ(0.15, xvar.getValue());
+    EXPECT_FLOAT_EQ(0.05, yvar.getValue());
+
+    data.loadEvent(100);
+    EXPECT_FLOAT_EQ(0.05, xvar.getValue());
+    EXPECT_FLOAT_EQ(0.15, yvar.getValue());
+}
+
+TEST(Simple, MakeAGridEventNum) {
+    Observable xvar{"xvar", 0, 10};
+    Observable yvar{"yvar", 0, 10};
+    EventNumber eventNumber{"eventNumber"};
+
+    UnbinnedDataSet data{{xvar, yvar, eventNumber}};
+    data.fillWithGrid();
+
+    ASSERT_EQ(data.getNumEvents(), 100 * 100);
+
+    data.loadEvent(0);
+    EXPECT_FLOAT_EQ(0.05, xvar.getValue());
+    EXPECT_FLOAT_EQ(0.05, yvar.getValue());
+    EXPECT_FLOAT_EQ(0, eventNumber.getValue());
+
+    data.loadEvent(1);
+    EXPECT_FLOAT_EQ(0.15, xvar.getValue());
+    EXPECT_FLOAT_EQ(0.05, yvar.getValue());
+    EXPECT_FLOAT_EQ(1, eventNumber.getValue());
+
+    data.loadEvent(100);
+    EXPECT_FLOAT_EQ(0.05, xvar.getValue());
+    EXPECT_FLOAT_EQ(0.15, yvar.getValue());
+    EXPECT_FLOAT_EQ(100, eventNumber.getValue());
+}

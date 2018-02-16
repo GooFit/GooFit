@@ -25,6 +25,9 @@ class UnbinnedDataSet : public DataSet {
 
     void addEvent() override;
 
+    /// Replace the current dataset with a grid
+    void fillWithGrid();
+
     /// Get the value at a specific variable and event number
     fptype getValue(const Observable &var, size_t idx) const;
 

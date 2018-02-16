@@ -41,6 +41,7 @@ CMakeLists.txt.user
 
 
 goofit/__init__.py
+goofit/__main__.py
 
 .cache/v/cache/lastfailed
 *.ipynb_checkpoints*

@@ -7,13 +7,30 @@ except ImportError:
 
 setup(
         name='goofit',
-        version='2.1.0',
+        version='2.1.1',
         description='GooFit fitting package',
         author='Henry Schreiner',
         author_email='hschrein@cern.ch',
         url='https://goofit.github.io',
         platforms = ["POSIX"],
         provides = ["goofit"],
+        classifiers = [
+            "Development Status :: 5 - Production/Stable",
+            "Intended Audience :: Science/Research",
+            "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+            "Natural Language :: English",
+            "Operating System :: Unix",
+            "Programming Language :: C++",
+            "Programming Language :: Python",
+            "Programming Language :: Python :: 2",
+            "Programming Language :: Python :: 2.7",
+            "Programming Language :: Python :: 3",
+            "Programming Language :: Python :: 3.4",
+            "Programming Language :: Python :: 3.5",
+            "Programming Language :: Python :: 3.6",
+            "Programming Language :: Python :: 3.7",
+            "Topic :: Scientific/Engineering :: Physics"
+        ],
         cmake_args=[
             '-DGOOFIT_PYTHON=ON',
             '-DGOOFIT_EXAMPLES=OFF'],
@@ -39,20 +56,6 @@ Installation basics
 This package can be installed with pip, but uses SciKit-Build, and is build, fully optimized, on your system. Because of this, there are a few caveats when running a pip install. Make sure you have SciKit-Build (``pip install scikit-build``) before you attempt an install. Also, if you don't have a recent version of CMake (3.8 or better recommended), also run ``pip install cmake``. When you build, you should also use pip's ``-v`` flag, so that you can see it build (and observe the
 configuration options). Otherwise, you might wait a very long time without output (especially if CUDA was found).
 
-Installation: pipenv
-====================
-
-Use pipenv, the officially recommended method for managing installs, virtual environments, and dependencies.
-
-To install::
-
-    pipenv install scikit-build cmake
-    pipenv install --verbose goofit
-
-To run a shell::
-
-    pipenv shell
-
 
 Installation: pip
 =================
@@ -63,6 +66,11 @@ Traditional pip install::
     pip install -v goofit
 
 
+If you want to send commands to CMake through PIP, use (for example)::
+
+    PIP_INSTALL_OPTIONS="-- -DGOOFIT_PACKAGES=OFF" pip install -v goofit
+
+
 Installation: local
 ===================
 
@@ -71,29 +79,29 @@ If you want to add PDFs to GooFit, or use GooFit pacakges, you should be working
     git clone --recursive git@github.com:GooFit/GooFit.git
     cd goofit
 
-Local Pip
-~~~~~~~~~
+Pipenv
+~~~~~~
 
-If you use pip::
+You can set up a quick environment using pipenv::
 
-    pip install -v -e .
+    pipenv install --dev
 
-Local Pipenv
-~~~~~~~~~~~~
-
-Or, if you use pipenv::
-
-    pipenv install --verbose -e . --skip-lock
-
-And, to use::
+Then activate that environment::
 
     pipenv shell
 
+Local pip
+~~~~~~~~~
+
+The normal install here works, though as usual you should include verbose output::
+
+    pip install -v .
+
+
 You can set the ``PIP_INSTALL_OPTIONS`` variable to pass through build command, for example::
 
-    PIP_INSTALL_OPTIONS="-- -DGOOFIT_PACKAGES=OFF" pipenv install --verbose -e .
+    PIP_INSTALL_OPTIONS="-- -DGOOFIT_PACKAGES=OFF" pip install -v .
 
-You can also install development requirements with the ``--dev`` flag. Note that the current version of PyLandau requires numpy tp be installed first, so you might need to run ``pipenv install numpy`` first.
 
 Building a source package from git
 ==================================

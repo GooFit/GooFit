@@ -7,8 +7,6 @@
 #include <TLine.h>
 #include <TRandom.h>
 #include <TRandom3.h>
-#include <TStyle.h>
-#include <TText.h>
 
 // System stuff
 #include <fstream>
@@ -23,22 +21,16 @@
 #include <goofit/PDFs/combine/AddPdf.h>
 #include <goofit/PDFs/combine/ProdPdf.h>
 #include <goofit/PDFs/physics/DalitzPlotPdf.h>
+#include <goofit/PDFs/physics/DalitzPlotter.h>
 #include <goofit/PDFs/physics/DalitzVetoPdf.h>
 #include <goofit/PDFs/physics/ResonancePdf.h>
 #include <goofit/UnbinnedDataSet.h>
 #include <goofit/Variable.h>
+#include <goofit/detail/Style.h>
 
 using namespace std;
 using namespace GooFit;
 
-TCanvas *foo;
-TCanvas *foodal;
-UnbinnedDataSet *data = 0;
-
-Observable m12("m12", 0, 3);
-Observable m13("m13", 0, 3);
-EventNumber eventNumber("eventNumber");
-bool fitMasses = false;
 Variable fixedRhoMass("rho_mass", 0.7758, 0.01, 0.7, 0.8);
 Variable fixedRhoWidth("rho_width", 0.1503, 0.01, 0.1, 0.2);
 
@@ -57,14 +49,17 @@ Variable constantOne("constantOne", 1);
 Variable constantZero1("constantZero1", 0);
 Variable constantZero2("constantZero2", 0);
 
-GooPdf *kzero_veto = 0;
-
 fptype cpuGetM23(fptype massPZ, fptype massPM) {
     return (_mD02 + piZeroMass * piZeroMass + piPlusMass * piPlusMass + piPlusMass * piPlusMass - massPZ - massPM);
 }
 
-void getToyData(std::string toyFileName, GooFit::Application &app) {
+void getToyData(std::string toyFileName, GooFit::Application &app, DataSet &data) {
     toyFileName = app.get_filename(toyFileName, "examples/dalitz");
+
+    auto obs               = data.getObservables();
+    Observable m12         = obs.at(0);
+    Observable m13         = obs.at(1);
+    Observable eventNumber = obs.at(2);
 
     TH2F dalitzplot("dalitzplot",
                     "",
@@ -78,7 +73,6 @@ void getToyData(std::string toyFileName, GooFit::Application &app) {
     vars.push_back(m12);
     vars.push_back(m13);
     vars.push_back(eventNumber);
-    data = new UnbinnedDataSet(vars);
 
     std::ifstream reader(toyFileName);
     std::string buffer;
@@ -129,30 +123,21 @@ void getToyData(std::string toyFileName, GooFit::Application &app) {
 
         // EXERCISE 3: Use both the above.
 
-        eventNumber.setValue(data->getNumEvents());
-        data->addEvent();
+        eventNumber.setValue(data.getNumEvents());
+        data.addEvent();
 
         dalitzplot.Fill(m12.getValue(), m13.getValue());
     }
 
+    TCanvas foo;
     dalitzplot.SetStats(false);
     dalitzplot.Draw("colz");
-    foodal->SaveAs("dalitzplot.png");
+    foo.SaveAs("dalitzplot.png");
 }
 
-GooPdf *makeKzeroVeto() {
-    if(kzero_veto)
-        return kzero_veto;
+void makeToyData(DalitzPlotter &dplotter, UnbinnedDataSet &data) {}
 
-    VetoInfo kVetoInfo{Variable("veto_min", 0.475 * 0.475), Variable("veto_max", 0.505 * 0.505), PAIR_23};
-
-    vector<VetoInfo> vetos;
-    vetos.push_back(kVetoInfo);
-    kzero_veto = new DalitzVetoPdf("kzero_veto", m12, m13, motherM, neutrlM, chargeM, chargeM, vetos);
-    return kzero_veto;
-}
-
-DalitzPlotPdf *makeSignalPdf(GooPdf *eff = 0) {
+DalitzPlotPdf *makeSignalPdf(Observable m12, Observable m13, EventNumber eventNumber, GooPdf *eff = 0) {
     DecayInfo3 dtop0pp;
     dtop0pp.motherMass   = _mD0;
     dtop0pp.daug1Mass    = piZeroMass;
@@ -163,7 +148,7 @@ DalitzPlotPdf *makeSignalPdf(GooPdf *eff = 0) {
     ResonancePdf *rhop = new Resonances::RBW(
         "rhop", Variable("rhop_amp_real", 1), Variable("rhop_amp_imag", 0), fixedRhoMass, fixedRhoWidth, 1, PAIR_12);
 
-    bool fixAmps = false;
+    bool fixAmps = false; // Takes ~400x longer
 
     ResonancePdf *rhom = new Resonances::RBW(
         "rhom",
@@ -326,6 +311,8 @@ DalitzPlotPdf *makeSignalPdf(GooPdf *eff = 0) {
     dtop0pp.resonances.push_back(f2_1270);
     dtop0pp.resonances.push_back(f0_600);
 
+    bool fitMasses = false;
+
     if(!fitMasses) {
         for(vector<ResonancePdf *>::iterator res = dtop0pp.resonances.begin(); res != dtop0pp.resonances.end(); ++res) {
             (*res)->setParameterConstantness(true);
@@ -349,11 +336,7 @@ DalitzPlotPdf *makeSignalPdf(GooPdf *eff = 0) {
     return new DalitzPlotPdf("signalPDF", m12, m13, eventNumber, dtop0pp, eff);
 }
 
-int runToyFit(std::string toyFileName, GooFit::Application &app) {
-    m12.setNumBins(240);
-    m13.setNumBins(240);
-    getToyData(toyFileName, app);
-
+int runToyFit(DalitzPlotPdf *signal, UnbinnedDataSet *data) {
     // EXERCISE 1 (real part): Create a PolynomialPdf which models
     // the efficiency you imposed in the preliminary, and use it in constructing
     // the signal PDF.
@@ -363,17 +346,21 @@ int runToyFit(std::string toyFileName, GooFit::Application &app) {
     // EXERCISE 3: Make the efficiency a product of the two functions
     // from the previous exercises.
 
-    DalitzPlotPdf *signal = makeSignalPdf();
     signal->setData(data);
     signal->setDataSize(data->getNumEvents());
     FitManager datapdf(signal);
 
     datapdf.fit();
 
-    // Segfault
-    // UnbinnedDataSet grid = signal->makeGrid();
-    // signal->setData(&grid);
-    // auto vecvec = signal->getCompProbsAtDataPoints();
+    ProdPdf prodpdf{"prodpdf", {signal}};
+
+    DalitzPlotter plotter(&prodpdf, signal);
+
+    TCanvas foo;
+    TH2F *dalitzplot = plotter.make2D();
+    dalitzplot->Draw("colz");
+
+    foo.SaveAs("dalitzpdf.png");
 
     return datapdf;
 }
@@ -384,26 +371,41 @@ int main(int argc, char **argv) {
     std::string filename = "dalitz_toyMC_000.txt";
     app.add_option("-f,--filename,filename", filename, "File to read in", true)->check(GooFit::ExistingFile);
 
+    bool make_toy;
+    app.add_flag("-m,--make-toy", make_toy, "Make a toy instead of reading a file in");
+
     GOOFIT_PARSE(app);
 
-    gStyle->SetCanvasBorderMode(0);
-    gStyle->SetCanvasColor(10);
-    gStyle->SetFrameFillColor(10);
-    gStyle->SetFrameBorderMode(0);
-    gStyle->SetPadColor(0);
-    gStyle->SetTitleColor(1);
-    gStyle->SetStatColor(0);
-    gStyle->SetFillColor(0);
-    gStyle->SetFuncWidth(1);
-    gStyle->SetLineWidth(1);
-    gStyle->SetLineColor(1);
-    gStyle->SetPalette(1, 0);
-    foo    = new TCanvas();
-    foodal = new TCanvas();
-    foodal->Size(10, 10);
+    GooFit::setROOTStyle();
+
+    // Observables setup
+    Observable m12("m12", 0, 3);
+    Observable m13("m13", 0, 3);
+    EventNumber eventNumber("eventNumber");
+    m12.setNumBins(240);
+    m13.setNumBins(240);
+
+    // Prepare the data
+    UnbinnedDataSet data({m12, m13, eventNumber});
+
+    // Set up the model
+    DalitzPlotPdf *signal = makeSignalPdf(m12, m13, eventNumber);
+
+    // A wrapper for plotting without complex number segfault
+    ProdPdf prodpdf{"prodpdf", {signal}};
+
+    // Add nice tool for making data or plotting
+    DalitzPlotter dplotter{&prodpdf, signal};
+
+    // Read in data
+    if(make_toy) {
+        dplotter.fillDataSetMC(data, 1000000);
+    } else {
+        getToyData(filename, app, data);
+    }
 
     try {
-        return runToyFit(filename, app);
+        return runToyFit(signal, &data);
     } catch(const std::runtime_error &e) {
         std::cerr << e.what() << std::endl;
         return 7;

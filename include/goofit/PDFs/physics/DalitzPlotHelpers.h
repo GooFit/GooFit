@@ -22,7 +22,7 @@ constexpr typename std::underlying_type<E>::type enum_to_underlying(E e) {
     return static_cast<typename std::underlying_type<E>::type>(e);
 }
 
-__device__ bool inDalitz(
+__host__ __device__ bool inDalitz(
     const fptype &m12, const fptype &m13, const fptype &bigM, const fptype &dm1, const fptype &dm2, const fptype &dm3);
 
 __device__ fpcomplex getResonanceAmplitude(fptype m12, fptype m13, fptype m23, ParameterContainer &pc);
@@ -32,7 +32,12 @@ __device__ void get4Vecs(fptype *Vecs,
                          const fptype &m34,
                          const fptype &cos12,
                          const fptype &cos34,
-                         const fptype &phi, const fptype M, const fptype m1, const fptype m2, const fptype m3, const fptype m4);
+                         const fptype &phi,
+                         const fptype M,
+                         const fptype m1,
+                         const fptype m2,
+                         const fptype m3,
+                         const fptype m4);
 
 __device__ fptype getmass(const unsigned int &pair,
                           fptype &d1,

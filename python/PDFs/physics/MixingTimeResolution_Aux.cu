@@ -19,8 +19,8 @@ class PyMixingTimeResolution : public Base {
         PYBIND11_OVERLOAD_PURE(GooFit::fptype, Base, normalisation, di1, di2, di3, di4, tau, xmixing, ymixing);
     }
 
-    void createParameters(std::vector<unsigned int> &pindices, GooFit::PdfBase *dis) override {
-        PYBIND11_OVERLOAD_PURE(void, Base, createParameters, pindices, dis);
+    void createParameters(GooFit::PdfBase *dis) override {
+        PYBIND11_OVERLOAD_PURE(void, Base, createParameters, dis);
     }
 };
 

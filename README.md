@@ -1,5 +1,5 @@
 [![Build Status][travis-badge]][travis-link]
-<!-- [![Code Coverage][codecov-badge]][codecov-link] -->
+[![Code Coverage][codecov-badge]][codecov-link]
 [![Join the chat at https://gitter.im/GooFit/Lobby][gitter-badge]][gitter-link]
 [![License: LGPL v3][license-badge]](./LICENSE)
 [![Latest release][releases-badge]][releases-link]

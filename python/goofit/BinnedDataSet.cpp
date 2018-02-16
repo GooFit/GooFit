@@ -1,10 +1,12 @@
 #include <goofit/BinnedDataSet.h>
 #include <goofit/Variable.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 #include "props.h"
 
 using namespace GooFit;
+using namespace pybind11::literals;
 
 namespace py = pybind11;
 
@@ -24,7 +26,19 @@ void init_BinnedDataSet(py::module &m) {
         .def_property_readonly("bin_center",
                                (fptype(BinnedDataSet::*)(size_t, size_t) const) & BinnedDataSet::getBinCenter)
 
-            ADD_PROP_RO(bin_number, getBinNumber, BinnedDataSet) ADD_PROP_RO(bin_volume, getBinVolume, BinnedDataSet)
-                ADD_PROP_RO(bin_error, getBinError, BinnedDataSet) ADD_PROP_RO(num_bins, getNumBins, BinnedDataSet)
-                    ADD_PROP_RO(num_events, getNumEvents, BinnedDataSet);
+        // clang-format off
+        ADD_PROP_RO(bin_number, getBinNumber, BinnedDataSet)
+        ADD_PROP_RO(bin_volume, getBinVolume, BinnedDataSet)
+        ADD_PROP_RO(bin_error, getBinError, BinnedDataSet)
+        ADD_PROP_RO(num_bins, getNumBins, BinnedDataSet)
+        ADD_PROP_RO(num_events, getNumEvents, BinnedDataSet)
+        ADD_PROP_RO(diminsions, getDiminsions, BinnedDataSet)
+        // clang-format on
+
+        .def("getBinContent", &BinnedDataSet::getBinContent, "Get the content of a bin", "bin"_a)
+        .def("setBinContent", &BinnedDataSet::setBinContent, "Get the error of a bin", "bin"_a, "value"_a)
+        .def("getBinError", &BinnedDataSet::getBinError, "Get the content of a bin", "bin"_a)
+        .def("setBinError", &BinnedDataSet::setBinError, "Get the error of a bin", "bin"_a, "value"_a)
+        .def("getBinSize", &BinnedDataSet::getBinSize, "Get the size of a variable", "ivar"_a)
+        .def("getNumWeightedEvents", &BinnedDataSet::getNumWeightedEvents, "Get then number of weighted events");
 }

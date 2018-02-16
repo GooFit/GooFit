@@ -22,14 +22,20 @@ class BinnedDataSet : public DataSet {
     void addEvent() override;
     void addWeightedEvent(double weight) override;
 
+    /// Get the content of a bin
     fptype getBinContent(size_t bin) const { return binvalues.at(bin); }
     fptype getBinCenter(size_t ivar, size_t bin) const;
     fptype getBinCenter(const Observable &var, size_t bin) const;
+
+    /// Get the size of a bin
     fptype getBinSize(size_t ivar) const;
 
     size_t getBinNumber() const;
     fptype getBinVolume(size_t bin) const;
     fptype getBinError(size_t bin) const;
+
+    /// Get the size of each diminsion
+    std::vector<size_t> getDiminsions() const { return binsizes; }
 
     size_t getNumBins() const;
 
@@ -37,7 +43,7 @@ class BinnedDataSet : public DataSet {
     fptype getNumWeightedEvents() const;
 
     void setBinContent(unsigned int bin, fptype value) { binvalues.at(bin) = value; }
-    void setBinError(unsigned int bin, fptype error);
+    void setBinError(unsigned int bin, fptype value);
 
   private:
     std::vector<size_t> convertValuesToBins(const std::vector<fptype> &vals) const;

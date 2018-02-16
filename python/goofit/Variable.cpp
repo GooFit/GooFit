@@ -34,7 +34,7 @@ void init_Variable(py::module &m) {
                                [](Observable &self) {
                                    std::vector<double> centers(self.getNumBins());
                                    for(size_t i = 0; i < self.getNumBins(); i++)
-                                       centers[i] = self.getLowerLimit() + i * self.getBinSize() / 2;
+                                       centers[i] = self.getLowerLimit() + (i + 0.5) * self.getBinSize();
                                    return centers;
                                    ;
                                })

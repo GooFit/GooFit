@@ -29,6 +29,15 @@ __device__ fptype twoBodyCMmom(fptype rMassSq, fptype d1m, fptype d2m) {
     return 0.5 * sqrt(rMassSq) * kin1 * kin2;
 }
 
+__device__ fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m, fptype mR) {
+    fptype x = rMassSq;
+    fptype y = d1m * d1m;
+    fptype z = d2m * d2m;
+    double l = POW2(x - y - z) - 4 * y * z;
+
+    return sqrt(l) / (2 * mR);
+}
+
 __device__ fptype dampingFactorSquare(const fptype &cmmom, const int &spin, const fptype &mRadius) {
     fptype square = mRadius * mRadius * cmmom * cmmom;
     fptype dfsq   = 1 + square; // This accounts for spin 1
@@ -98,6 +107,7 @@ __device__ fptype spinFactor(unsigned int spin,
     return sFactor;
 }
 
+template <int I>
 __device__ fpcomplex plainBW(fptype m12, fptype m13, fptype m23, unsigned int *indices) {
     fptype motherMass   = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 0]);
     fptype daug1Mass    = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 1]);
@@ -112,8 +122,10 @@ __device__ fpcomplex plainBW(fptype m12, fptype m13, fptype m23, unsigned int *i
     unsigned int symmDP       = RO_CACHE(indices[6]);
 
     fpcomplex ret(0., 0.);
-    fptype resmassSq = resmass * resmass;
-    for(int i = 0; i < 1 + symmDP; i++) {
+    fptype resmassSq = POW2(resmass);
+
+#pragma unroll
+    for(int i = 0; i < I; i++) {
         fptype rMassSq  = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
         fptype rMass    = sqrt(rMassSq);
         fptype frFactor = 1;
@@ -165,7 +177,7 @@ __device__ fpcomplex plainBW(fptype m12, fptype m13, fptype m23, unsigned int *i
         //  resmass);
         retur *= spinF;
         ret += retur;
-        if(symmDP) {
+        if(I != 0) {
             fptype swpmass = m12;
             m12            = m13;
             m13            = swpmass;
@@ -494,7 +506,8 @@ __device__ fpcomplex cubicspline(fptype m12, fptype m13, fptype m23, unsigned in
     return ret;
 }
 
-__device__ resonance_function_ptr ptr_to_RBW      = plainBW;
+__device__ resonance_function_ptr ptr_to_RBW      = plainBW<1>;
+__device__ resonance_function_ptr ptr_to_RBW_SYM  = plainBW<2>;
 __device__ resonance_function_ptr ptr_to_GOUSAK   = gouSak;
 __device__ resonance_function_ptr ptr_to_GAUSSIAN = gaussian;
 __device__ resonance_function_ptr ptr_to_NONRES   = nonres;
@@ -519,7 +532,11 @@ RBW::RBW(std::string name,
     pindices.push_back(cyc);
     pindices.push_back(symmDP);
 
-    GET_FUNCTION_ADDR(ptr_to_RBW);
+    if(symmDP) {
+        GET_FUNCTION_ADDR(ptr_to_RBW_SYM);
+    } else {
+        GET_FUNCTION_ADDR(ptr_to_RBW);
+    }
 
     initialize(pindices);
 }

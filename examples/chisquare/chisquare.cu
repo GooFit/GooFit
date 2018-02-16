@@ -256,8 +256,10 @@ int main(int argc, char **argv) {
 
     int retval1, retval2;
     std::string fit1, fit2;
-    std::tie(retval1, fit1) = fitRatio(decayTime, weights, dZeroEvtsRS, dZeroEvtsWS, "chisquare_cpp_dzeroEvtRatio.png");
-    std::tie(retval2, fit2) = fitRatio(decayTime, weights, d0barEvtsRS, d0barEvtsWS, "chisquare_cpp_dzbarEvtRatio.png");
+    std::tie(retval1, fit1)
+        = fitRatio(decayTime, weights, dZeroEvtsRS, dZeroEvtsWS, "chisquare_dzeroEvtRatio_goo_cpp.png");
+    std::tie(retval2, fit2)
+        = fitRatio(decayTime, weights, d0barEvtsRS, d0barEvtsWS, "chisquare_dzbarEvtRatio_goo_cpp.png");
 
     CLI::Timer timer_cpu{"Total CPU (2x fits)"};
     fitRatioCPU(decayTime, dZeroEvtsRS, dZeroEvtsWS);

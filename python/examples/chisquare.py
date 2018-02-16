@@ -4,7 +4,7 @@
 from __future__ import print_function, division
 
 # Standard library stuff
-import sys
+import re
 import warnings
 from time import time
 from contextlib import contextmanager
@@ -19,6 +19,14 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
+
+try:
+    import uncertainties as unc
+    from uncertainties import unumpy
+except ImportError:
+    unc = None
+    warnings.warn("uncertainties not found, no unc on plot", RuntimeWarning)
+
 # Optional import of numba, if available
 # Make code much faster if found!
 try:
@@ -28,9 +36,9 @@ except ImportError:
         def copyf(function):
             return function
         return copyf
-    warnings.warn("Numba not found, will be 100x slower", RuntimeWarning)
+    warnings.warn("Numba not found, will be 100x slower. Try `pip install numba` to install.", RuntimeWarning)
 
-
+# Simple timer in a context manager
 @contextmanager
 def timed(msg):
     start = time()
@@ -58,9 +66,8 @@ def generateEvents(numbins, lowerlimit, upperlimit, conCoef, linCoef, squCoef, e
     totalRSintegral = integralExpCon(0, 100)
     step            = (upperlimit - lowerlimit) / numbins
 
-
     rsEvtVec = np.empty(numbins)
-    wsEvtVect = np.empty(numbins)
+    wsEvtVec = np.empty(numbins)
 
     for i in range(numbins):
 
@@ -82,88 +89,80 @@ def generateEvents(numbins, lowerlimit, upperlimit, conCoef, linCoef, squCoef, e
     return rsEvtVec, wsEvtVec
 
 
-def produce_hist(rsEvts, wsEvents):
-    ratio = wsEvts
+def produce_hist(rsEvts, wsEvts):
 
-    if rsEvts[0rsEvts == 0] = 1 # Cheating to avoid div by zero.
-    ratio /= rsEvts
+    rsEvts[rsEvts == 0] = 1 # Cheating to avoid div by zero.
+    ratio = wsEvts / rsEvts
     wsEvts[wsEvts == 0] = 1 # Avoid zero errors
 
     error = np.sqrt(wsEvts / rsEvts**2 +  wsEvts**2 / rsEvts**3)
     return ratio, error
 
 
-def fitRatio(decayTime, weights, rsEvts, wsEvts, plotName = ""):
+def fitRatio(decayTime, weights, rsEvts, wsEvts, plotname=None):
 
     ratioData = BinnedDataSet(decayTime)
 
     ratio, error = produce_hist(rsEvts, wsEvts)
 
+    for i in range(len(ratio)):
+        ratioData.setBinContent(i, ratio[i])
+        ratioData.setBinError(i, error[i])
 
     poly = PolynomialPdf("poly", decayTime, weights)
-    print("Setting binned error fit")
     poly.setFitControl(BinnedErrorFit())
-    print("Setting data")
     poly.setData(ratioData)
-    print("Setting FitManager")
     fitter = FitManager(poly)
-    print("Fitting")
-    fitter.fit()
+    fitter.verbosity = 0
+    mn_func_min = fitter.fit()
+    mn_cov = mn_func_min.UserCovariance()
+    cov = mn_cov.to_matrix()
+    print(cov)
 
+    xvals = np.array(decayTime.bin_centers)
+    p = [w.value for w in reversed(weights)]
+    print("GooFit fit:", end=' ')
+    plot_ratio(xvals, ratio, error, p, plotname, cov)
+
+    # This would work just fine, too
+    # values = poly.evaluateAtPoints(decayTime)
+    # plot.plot(xvals, values)
+
+    return fitter
+
+
+def fitRatioCPU(decayTime, rsEvts, wsEvts, plotname=None):
+    ratio, error = produce_hist(rsEvts, wsEvts)
+    xvals = np.array(decayTime.bin_centers)
+
+    p, cov = np.polyfit(xvals, ratio, 2, w=1/error, cov=True)
+
+    print("CPU Fit:", end=' ')
+    plot_ratio(xvals, ratio, error, p, plotname, cov)
+
+def plot_ratio(xvals, ratio, error, p, plotname, cov=None):
+    result = "{:.2e} t^2 + {:.2e} t + {:.2e}".format(*p)
+    result = result.replace('e-0','e-')
+    print("Fit result:", result)
 
     if plotname:
-        values = poly.evaluateAtPoints(decayTime)
-        xvals = decayTime.bin_centers
+        result = re.sub(r'e(\S+?)(\s|$)', r' \\times {10}^{\1} ', result)
         fig, ax = plt.subplots()
-        ax.errorbar(xvals, ratio, error)
-        ax.plot(xvals, values)
+        ax.errorbar(xvals, ratio, yerr=error, fmt='k.')
+        ax.plot(xvals, np.polyval(p, xvals))
+        ax.text(.1, .85, "${}$".format(result),
+                transform=ax.transAxes, fontsize=16)
+
+        if cov is not None and unc is not None:
+
+            p_unc = unc.correlated_values(p, cov)
+            y = np.polyval(p_unc, xvals)
+            ax.fill_between(xvals,
+                     unumpy.nominal_values(y)-unumpy.std_devs(y),
+                     unumpy.nominal_values(y)+unumpy.std_devs(y),
+                     alpha=.5, facecolor='b')
+
         fig.savefig(plotname)
-
-    return datapdf
-
-def cpvFitFcn(numbins, lowerlimit, upperlimit, npar, gin, fun, fp, iflag):
-    print(cpvFitFcn)
-    conCoef = fp[0]
-    linCoef = fp[1]
-    squCoef = fp[2]
-
-    chisq = 0
-    step  = (upperlimit - lowerlimit) / numbins
-
-    i=0
-    while i < ratios.size():
-        currDTime = lowerlimit + (i + 0.5) * step
-        pdfval    = conCoef + linCoef * currDTime + squCoef * currDTime * currDTime
-        chisq += pow((pdfval - ratios[i]) / errors[i], 2)
-        i+=1
-
-    fun = chisq
-
-@jit(nopython=True)
-def fitRatioCPU(numbins, lowerlimit, upperlimit, rsEvts, wsEvts):
-
-    ratios.empty_like(wsEvts)
-    errors.empty_like(wsEvts)
-
-    for i in range(len(wsEvts)):
-        ratio = wsEvts[i]
-
-        if 0 == rsEvts[i]:
-            rsEvts[i] = 1 # Cheating to avoid div by zero.
-
-        ratio /= rsEvts[i]
-
-        if 0 == wsEvts[i]:
-            wsEvts[i] = 1 # Avoid zero errors
-
-        error = wsEvts[i] / rsEvts[i]**2
-        error += wsEvts[i]**2 / rsEvts[i]**3
-        error = np.sqrt(error)
-
-        ratios[i] = ratio
-        errors[i] = error
-
-    return ratios, errors
 
 
 def main():
@@ -192,11 +191,11 @@ def main():
     d0barSecondCoef = 0.25 * magQP * magQP * (x_mix * x_mix + y_mix * y_mix)
 
     dZeroEvtsRS, dZeroEvtsWS = generateEvents(
-            decayTime.lowerlimit, decayTime.upperlimit, decayTime.numbins,
+            decayTime.numbins, decayTime.lowerlimit, decayTime.upperlimit,
             rSubD, dZeroLinearCoef, dZeroSecondCoef, eventsToGenerate)
 
     d0barEvtsRS, d0barEvtsWS = generateEvents(
-            decayTime.lowerlimit, decayTime.upperlimit, decayTime.numbins,
+            decayTime.numbins, decayTime.lowerlimit, decayTime.upperlimit,
             rBarD, d0barLinearCoef, d0barSecondCoef, eventsToGenerate)
 
     constaCoef = Variable("constaCoef", 0.03, 0.01, -1, 1)
@@ -205,18 +204,16 @@ def main():
 
     weights = (constaCoef, linearCoef, secondCoef)
 
-    (retval1, fit1) = fitRatio(decayTime, weights, dZeroEvtsRS, dZeroEvtsWS, "dzeroEvtRatio.png")
-    (retval2, fit2) = fitRatio(decayTime, weights, d0barEvtsRS, d0barEvtsWS, "dzbarEvtRatio.png")
+    retval1 = fitRatio(decayTime, weights, dZeroEvtsRS, dZeroEvtsWS, "chisquare_dzeroEvtRatio_goo_python.png")
+    retval2 = fitRatio(decayTime, weights, d0barEvtsRS, d0barEvtsWS, "chisquare_dzbarEvtRatio_goo_python.png")
 
     with timed("Total CPU (2x fits)"):
-        fitRatioCPU(decayTime, dZeroEvtsRS, dZeroEvtsWS)
-        fitRatioCPU(decayTime, d0barEvtsRS, d0barEvtsWS)
+        fitRatioCPU(decayTime, dZeroEvtsRS, dZeroEvtsWS, "chisquare_dzeroEvtRatio_cpu_python.png")
+        fitRatioCPU(decayTime, d0barEvtsRS, d0barEvtsWS, "chisquare_dzbarEvtRatio_cpu_python.png")
 
-    print(fit1)
-    print(fit2)
-    print("Exit codes (should be 0):", retval1, "and", retval2)
+    print("Exit codes (should be 0):", int(retval1), "and", int(retval2))
 
-    return (retval1 + retval2)
+    return (int(retval1) + int(retval2))
 
 
 

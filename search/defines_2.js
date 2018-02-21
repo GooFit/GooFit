@@ -1,4 +1,29 @@
 var searchData=
 [
-  ['invrootpi',['invRootPi',['../_global_cuda_defines_8h.html#ad8b702874d038de595e56f4e20de240d',1,'GlobalCudaDefines.h']]]
+  ['goofit_5fadd_5fconst',['GOOFIT_ADD_CONST',['../_macros_8h.html#a4ed8fbdc71885bd7f6a2098eb19a21e8',1,'Macros.h']]],
+  ['goofit_5fadd_5fint',['GOOFIT_ADD_INT',['../_macros_8h.html#a55cab493222b32aa320652be6f2a5428',1,'Macros.h']]],
+  ['goofit_5fadd_5fobs',['GOOFIT_ADD_OBS',['../_macros_8h.html#a0326a31020506abacac4c73140699cda',1,'Macros.h']]],
+  ['goofit_5fadd_5fparam',['GOOFIT_ADD_PARAM',['../_macros_8h.html#ad884fc4701f00653b09332570db1cea5',1,'Macros.h']]],
+  ['goofit_5fdebug',['GOOFIT_DEBUG',['../_log_8h.html#a2f7aa24073791136d223fdb553c0ae71',1,'Log.h']]],
+  ['goofit_5fdebug_5ff',['GOOFIT_DEBUG_F',['../_log_8h.html#a0f026669a963380fd275832defc22e21',1,'Log.h']]],
+  ['goofit_5ferror',['GOOFIT_ERROR',['../_log_8h.html#a3a6ab1fe6c424638bc9e4435215aed3e',1,'Log.h']]],
+  ['goofit_5ferror_5ff',['GOOFIT_ERROR_F',['../_log_8h.html#aa24b9e3d36729bd1b58d867fef25b05c',1,'Log.h']]],
+  ['goofit_5ffinalize_5fpdf',['GOOFIT_FINALIZE_PDF',['../_macros_8h.html#aa36739b3952652505d239a81da8fd815',1,'Macros.h']]],
+  ['goofit_5fget_5fconst',['GOOFIT_GET_CONST',['../_macros_8h.html#a0a38c0b408924e01b70d14c79515242d',1,'Macros.h']]],
+  ['goofit_5fget_5fint',['GOOFIT_GET_INT',['../_macros_8h.html#a345314a461640a04889a4dc7845321b0',1,'Macros.h']]],
+  ['goofit_5fget_5fparam',['GOOFIT_GET_PARAM',['../_macros_8h.html#a112fff0fe5a09b08ab1b4ecae6b3285d',1,'Macros.h']]],
+  ['goofit_5finfo',['GOOFIT_INFO',['../_log_8h.html#a3a350b611ec32fe05dbde1e39179521a',1,'Log.h']]],
+  ['goofit_5finfo_5fc',['GOOFIT_INFO_C',['../_log_8h.html#a60f7330c31e7e36f1e488b18802c7a2a',1,'Log.h']]],
+  ['goofit_5finfo_5ff',['GOOFIT_INFO_F',['../_log_8h.html#ae5d32176fff899c748e73ca69535b237',1,'Log.h']]],
+  ['goofit_5finfo_5ffc',['GOOFIT_INFO_FC',['../_log_8h.html#a20cabb168ec57f069bcdca1298924742',1,'Log.h']]],
+  ['goofit_5fparse',['GOOFIT_PARSE',['../_application_8h.html#a77f34f717a475204ede19f284c6b16c7',1,'Application.h']]],
+  ['goofit_5fpdf_5fimpl_5f1',['GOOFIT_PDF_IMPL_1',['../_macros_8h.html#aff506bb35a12c766b9ed2a591fc9190c',1,'Macros.h']]],
+  ['goofit_5fpdf_5fimpl_5f3',['GOOFIT_PDF_IMPL_3',['../_macros_8h.html#a4e04cb41ec4a07cac5b2b9fe3f6a598a',1,'Macros.h']]],
+  ['goofit_5fstart_5fpdf',['GOOFIT_START_PDF',['../_macros_8h.html#a7006a837369345e6c3214f16bc0969e9',1,'Macros.h']]],
+  ['goofit_5fstatus',['GOOFIT_STATUS',['../_log_8h.html#a98be4e7019e998db30b7d1d4eae0e9e2',1,'Log.h']]],
+  ['goofit_5fstatus_5ff',['GOOFIT_STATUS_F',['../_log_8h.html#a68706116d2818fc6e1c308a58504cdc7',1,'Log.h']]],
+  ['goofit_5ftrace',['GOOFIT_TRACE',['../_log_8h.html#ad1975cef1be24827dea9ab7081ab889d',1,'Log.h']]],
+  ['goofit_5ftrace_5ff',['GOOFIT_TRACE_F',['../_log_8h.html#ade27dce1e043bd62f2b2d9f4cacfd74d',1,'Log.h']]],
+  ['goofit_5fwarn',['GOOFIT_WARN',['../_log_8h.html#ade9a3ca02665c9b67ce97fbc593f6739',1,'Log.h']]],
+  ['goofit_5fwarn_5ff',['GOOFIT_WARN_F',['../_log_8h.html#afc2dc2d3ab78a763d40835fd24a44e7e',1,'Log.h']]]
 ];

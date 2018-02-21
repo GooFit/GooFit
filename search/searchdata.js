@@ -10,7 +10,7 @@ var indexSectionsWithContent =
   7: "defms",
   8: "bcdefikmnopv",
   9: "diot",
-  10: "bgimoprt",
+  10: "_bgimoprt",
   11: "t"
 };
 

@@ -7,7 +7,10 @@
 #include <goofit/Version.h>
 
 #include <thrust/detail/config/device_system.h>
+
+#ifndef _MSC_VER
 #include <x86/cpu_x86.h>
+#endif
 
 #ifdef GOOFIT_MPI
 #include <mpi.h>
@@ -172,10 +175,12 @@ class Application : public CLI::App {
         // Reset color on exit (but not control-c)
         std::atexit([]() { std::cout << GooFit::reset; });
 
+#ifndef _MSC_VER
         sigIntHandler.sa_handler = signal_handler;
         sigemptyset(&sigIntHandler.sa_mask);
         sigIntHandler.sa_flags = 0;
         sigaction(SIGINT, &sigIntHandler, nullptr);
+#endif
     }
 
     /// Shortcut for the lazy

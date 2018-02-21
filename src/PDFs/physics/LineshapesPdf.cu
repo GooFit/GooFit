@@ -119,7 +119,7 @@ __device__ fpcomplex BW(fptype Mpair, fptype m1, fptype m2, unsigned int *indice
     fptype thisFR   = BL_PRIME(pABSq * r2, prSqForGofM * r2, orbital);
     fptype frFactor = 1;
 
-    if(0 != orbital and 0 != FF) {
+    if(0 != orbital && 0 != FF) {
         frFactor = (FF == 1 ? BL(pABSq * r2, orbital) : BL_PRIME(pABSq * r2, prSq2 * r2, orbital));
         frFactor = (FF == 3 ? BL2(pABSq * r2, orbital) : frFactor);
     }
@@ -174,7 +174,7 @@ __device__ fpcomplex SBW(fptype Mpair, fptype m1, fptype m2, unsigned int *indic
     fptype r2       = meson_radius * meson_radius;
     fptype frFactor = 1;
 
-    if(0 != orbital and 0 != FF) {
+    if(0 != orbital && 0 != FF) {
         frFactor = (FF == 1 ? BL(pABSq * r2, orbital) : BL_PRIME(pABSq * r2, prSq2 * r2, orbital));
         frFactor = (FF == 3 ? BL2(pABSq * r2, orbital) : frFactor);
     }
@@ -1069,7 +1069,7 @@ Amplitude::Amplitude(std::string uniqueDecayStr,
     , _nPerm(nPerm) {}
 
 bool Amplitude::operator==(const Amplitude &A) const {
-    return _uniqueDecayStr == A._uniqueDecayStr and _ar == A._ar and _ai == A._ai and _LS == A._LS and _SF == A._SF
+    return _uniqueDecayStr == A._uniqueDecayStr && _ar == A._ar && _ai == A._ai && _LS == A._LS && _SF == A._SF
            and _nPerm == A._nPerm;
 }
 

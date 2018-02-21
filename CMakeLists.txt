@@ -205,6 +205,7 @@ endif()
 target_compile_definitions(GooFit_Common INTERFACE "-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_${GOOFIT_DEVICE}")
 target_compile_definitions(GooFit_Common INTERFACE "-DMCBOOSTER_BACKEND=${GOOFIT_DEVICE}")
 target_compile_definitions(GooFit_Common INTERFACE "-DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_${GOOFIT_HOST}")
+# target_compile_definitions(GooFit_Common INTERFACE _USE_MATH_DEFINES)
 
 option(GOOFIT_DEBUG "Print debugging messages" OFF)
 option(GOOFIT_TRACE "Print messages to trace the behavior of GooFit" OFF)

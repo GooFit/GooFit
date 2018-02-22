@@ -3,12 +3,17 @@
 #include <thrust/detail/config.h> // __host__, __device__ defines
 #include <thrust/system_error.h>  // Error types
 
+#define _USE_MATH_DEFINES
 #include <cmath>
 #include <string>
 
 namespace GooFit {
 extern int host_callnumber;
 }
+
+#ifdef _MSC_VER
+#define _Pragma(x) __pragma(x)
+#endif
 
 //  Non-cuda defines
 #if THRUST_DEVICE_SYSTEM != THRUST_DEVICE_SYSTEM_CUDA

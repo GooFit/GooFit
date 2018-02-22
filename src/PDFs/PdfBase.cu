@@ -219,7 +219,7 @@ __host__ void PdfBase::setData(DataSet *data) {
         numEntries = data->getNumEvents();
         numEvents  = numEntries;
 
-        int dimensions = observablesList.size();
+        size_t dimensions = observablesList.size();
 
 #ifdef GOOFIT_MPI
         // This fetches our rank and the total number of processes in the MPI call

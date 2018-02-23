@@ -2,13 +2,13 @@
 
 #include <goofit/PDFs/basic/KinLimitBWPdf.h>
 #include <goofit/UnbinnedDataSet.h>
-#include <goofit/fitting/FitManagerMinuit1.h>
+#include "testhelpers.h"
 
 #include <goofit/Variable.h>
 
-#include <iostream>
-#include <sys/time.h>
-#include <sys/times.h>
+
+
+
 
 #include <random>
 
@@ -43,9 +43,9 @@ TEST(Gaussian, SimpleFit) {
     KinLimitBWPdf kinlimitbwpdf{"kinlimitbwpdf", xvar, alpha, sigma};
     kinlimitbwpdf.setData(&data);
 
-    GooFit::FitManagerMinuit1 fitter{&kinlimitbwpdf};
-    fitter.setVerbosity(2);
-    fitter.fit();
+    bool fitter = test_fitter(&kinlimitbwpdf);
+    
+    
 
     EXPECT_TRUE(fitter);
     EXPECT_LT(alpha.getError(), .1);

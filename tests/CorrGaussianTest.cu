@@ -2,13 +2,13 @@
 
 #include <goofit/PDFs/basic/CorrGaussianPdf.h>
 #include <goofit/UnbinnedDataSet.h>
-#include <goofit/fitting/FitManagerMinuit1.h>
+#include "testhelpers.h"
 
 #include <goofit/Variable.h>
 
-#include <iostream>
-#include <sys/time.h>
-#include <sys/times.h>
+
+
+
 
 #include <random>
 
@@ -51,9 +51,9 @@ TEST(CorrGaussianPdf, SimpleFit) {
     CorrGaussianPdf corrgausspdf{"corrgausspdf", xvar, yvar, mean1, sigma1, mean2, sigma2, correlation};
     corrgausspdf.setData(&data);
 
-    GooFit::FitManagerMinuit1 fitter{&corrgausspdf};
-    fitter.setVerbosity(2);
-    fitter.fit();
+    bool fitter = test_fitter(&corrgausspdf);
+    
+    
 
     EXPECT_TRUE(fitter);
     // EXPECT_LT(mean1.getError(), .1);

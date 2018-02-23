@@ -2,13 +2,13 @@
 
 #include <goofit/PDFs/basic/LandauPdf.h>
 #include <goofit/UnbinnedDataSet.h>
-#include <goofit/fitting/FitManagerMinuit1.h>
+#include "testhelpers.h"
 
 #include <goofit/Variable.h>
 
-#include <iostream>
-#include <sys/time.h>
-#include <sys/times.h>
+
+
+
 
 #include <random>
 
@@ -44,9 +44,9 @@ TEST(Landau, SimpleFit) {
     LandauPdf landaupdf{"landaupdf", xvar, alpha, sigma};
     landaupdf.setData(&data);
 
-    GooFit::FitManagerMinuit1 fitter{&landaupdf};
-    fitter.setVerbosity(2);
-    fitter.fit();
+    bool fitter = test_fitter(&landaupdf);
+    
+    
 
     EXPECT_TRUE(fitter);
     EXPECT_LT(alpha.getError(), .1);

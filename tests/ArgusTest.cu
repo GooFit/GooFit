@@ -2,13 +2,13 @@
 
 #include <goofit/PDFs/basic/ArgusPdf.h>
 #include <goofit/UnbinnedDataSet.h>
-#include <goofit/fitting/FitManagerMinuit1.h>
+#include "testhelpers.h"
 
 #include <goofit/Variable.h>
 
-#include <iostream>
-#include <sys/time.h>
-#include <sys/times.h>
+
+
+
 
 #include <random>
 
@@ -44,9 +44,9 @@ TEST(ArgusUpper, SimpleFit) {
     ArgusPdf arguspdf{"Arguspdf", xvar, alpha, beta, false};
     arguspdf.setData(&data);
 
-    GooFit::FitManagerMinuit1 fitter{&arguspdf};
-    fitter.setVerbosity(2);
-    fitter.fit();
+    bool fitter = test_fitter(&arguspdf);
+    
+    
 
     EXPECT_TRUE(fitter);
     EXPECT_LT(alpha.getError(), .1);
@@ -82,9 +82,9 @@ TEST(ArgusLower, SimpleFit) {
     ArgusPdf arguspdf{"Arguspdf", xvar, alpha, beta, true};
     arguspdf.setData(&data);
 
-    GooFit::FitManagerMinuit1 fitter{&arguspdf};
-    fitter.setVerbosity(2);
-    fitter.fit();
+    bool fitter = test_fitter(&arguspdf);
+    
+    
 
     EXPECT_TRUE(fitter);
     EXPECT_LT(alpha.getError(), .1);

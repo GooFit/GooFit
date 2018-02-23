@@ -3,13 +3,13 @@
 #include <goofit/PDFs/basic/GaussianPdf.h>
 #include <goofit/PDFs/combine/EventWeightedAddPdf.h>
 #include <goofit/UnbinnedDataSet.h>
-#include <goofit/fitting/FitManagerMinuit1.h>
+#include "testhelpers.h"
 
 #include <goofit/Variable.h>
 
-#include <iostream>
-#include <sys/time.h>
-#include <sys/times.h>
+
+
+
 
 #include <random>
 
@@ -59,9 +59,9 @@ TEST(EventWeightedAdd, SimpleFit) {
     EventWeightedAddPdf eventpdf{"eventweightedaddpdf", weights, pdfs};
     eventpdf.setData(&data);
 
-    GooFit::FitManagerMinuit1 fitter{&eventpdf};
-    fitter.setVerbosity(2);
-    fitter.fit();
+    bool fitter = test_fitter(&eventpdf);
+    
+    
 
     EXPECT_TRUE(fitter);
     // EXPECT_LT(w1.getError(), .11);

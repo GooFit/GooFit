@@ -2,13 +2,13 @@
 
 #include <goofit/PDFs/basic/TrigThresholdPdf.h>
 #include <goofit/UnbinnedDataSet.h>
-#include <goofit/fitting/FitManagerMinuit1.h>
+#include "testhelpers.h"
 
 #include <goofit/Variable.h>
 
-#include <iostream>
-#include <sys/time.h>
-#include <sys/times.h>
+
+
+
 
 #include <random>
 
@@ -44,9 +44,9 @@ TEST(TrigThresholdUpper, SimpleFit) {
     TrigThresholdPdf pdf{"trigthresholdpdf", xvar, thres, trig, linCons, true};
     pdf.setData(&data);
 
-    GooFit::FitManagerMinuit1 fitter{&pdf};
-    fitter.setVerbosity(2);
-    fitter.fit();
+    bool fitter = test_fitter(&pdf);
+    
+    
 
     EXPECT_TRUE(fitter);
 }
@@ -80,9 +80,9 @@ TEST(TrigThresholdLower, SimpleFit) {
     TrigThresholdPdf pdf{"trigthresholdpdf", xvar, thres, trig, linCons, false};
     pdf.setData(&data);
 
-    GooFit::FitManagerMinuit1 fitter{&pdf};
-    fitter.setVerbosity(2);
-    fitter.fit();
+    bool fitter = test_fitter(&pdf);
+    
+    
 
     EXPECT_TRUE(fitter);
 }
@@ -119,9 +119,9 @@ TEST(TrigThresholdVeryUpper, SimpleFit) {
     TrigThresholdPdf pdf{"trigthresholdpdf", xvar, yvar, thres, trig, linCons, mass, true};
     pdf.setData(&data);
 
-    GooFit::FitManagerMinuit1 fitter{&pdf};
-    fitter.setVerbosity(2);
-    fitter.fit();
+    bool fitter = test_fitter(&pdf);
+    
+    
 
     EXPECT_TRUE(fitter);
 }
@@ -158,9 +158,9 @@ TEST(TrigThresholdVeryLower, SimpleFit) {
     TrigThresholdPdf pdf{"trigthresholdpdf", xvar, yvar, thres, trig, linCons, mass, false};
     pdf.setData(&data);
 
-    GooFit::FitManagerMinuit1 fitter{&pdf};
-    fitter.setVerbosity(2);
-    fitter.fit();
+    bool fitter = test_fitter(&pdf);
+    
+    
 
     EXPECT_TRUE(fitter);
 }

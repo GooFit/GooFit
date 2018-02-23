@@ -8,9 +8,9 @@
 
 #include <goofit/Variable.h>
 
-#include <iostream>
-#include <sys/time.h>
-#include <sys/times.h>
+
+
+
 
 #include <random>
 
@@ -47,7 +47,7 @@ TEST(PDFComps, KnownNormalize) {
 
     FitManager fitter{&exppdf};
     fitter.setVerbosity(0);
-    fitter.fit();
+    
 
     EXPECT_FLOAT_EQ(exppdf.normalize(), 0.665099);
     EXPECT_FLOAT_EQ(exppdf.normalize(), 0.665099);

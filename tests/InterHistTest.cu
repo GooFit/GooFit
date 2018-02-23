@@ -2,13 +2,13 @@
 
 #include <goofit/PDFs/basic/InterHistPdf.h>
 #include <goofit/UnbinnedDataSet.h>
-#include <goofit/fitting/FitManagerMinuit1.h>
+#include "testhelpers.h"
 
 #include <goofit/Variable.h>
 
-#include <iostream>
-#include <sys/time.h>
-#include <sys/times.h>
+
+
+
 
 #include <random>
 
@@ -51,9 +51,9 @@ TEST(InterHistPdf, SimpleFit) {
     InterHistPdf pdf{"InterHistPdf", &data, var_list, obs_list};
     pdf.setData(&data);
 
-    GooFit::FitManagerMinuit1 fitter{&pdf};
-    fitter.setVerbosity(2);
-    fitter.fit();
+    bool fitter = test_fitter(&pdf);
+    
+    
 
     // EXPECT_TRUE(fitter);
     // EXPECT_LT(alpha.getError(), .1);

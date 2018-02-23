@@ -96,6 +96,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a1f3e525b9e70083bd2dd9c7f8e2d4e88"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0427355d815553526631100ff5c440ce"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_indexable.html#a0427355d815553526631100ff5c440ce">Indexable</a> (std::string n, <a class="el" href="namespace_goo_fit.html#a6f9643fed3185c9bcdfb118b67bb1b16">fptype</a> val, <a class="el" href="namespace_goo_fit.html#a6f9643fed3185c9bcdfb118b67bb1b16">fptype</a> <a class="el" href="class_goo_fit_1_1_indexable.html#a2bb2b837ee0fbf5bc41185be9e735c93">lowerlimit</a>, <a class="el" href="namespace_goo_fit.html#a6f9643fed3185c9bcdfb118b67bb1b16">fptype</a> <a class="el" href="class_goo_fit_1_1_indexable.html#a4031e5bb09413b84520a58c9793fdd97">upperlimit</a>)</td></tr>
 <tr class="separator:a0427355d815553526631100ff5c440ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a254aa5598fea2691b102769a293bcdc4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_goo_fit_1_1_indexable.html">Indexable</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_indexable.html#a254aa5598fea2691b102769a293bcdc4">operator=</a> (const <a class="el" href="class_goo_fit_1_1_indexable.html">Indexable</a> &amp;)=delete</td></tr>
+<tr class="separator:a254aa5598fea2691b102769a293bcdc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a954522283523caa2fd23469c6c86b264"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_indexable.html#a954522283523caa2fd23469c6c86b264">~Indexable</a> ()</td></tr>
 <tr class="separator:a954522283523caa2fd23469c6c86b264"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abfafa2088d589c1b9083dbb1bf77d551"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_indexable.html#abfafa2088d589c1b9083dbb1bf77d551">getIndex</a> () const</td></tr>
@@ -254,6 +256,8 @@ Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00044">44</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+
+<p class="reference">References <a class="el" href="class_goo_fit_1_1_indexable.html#a254aa5598fea2691b102769a293bcdc4">operator=()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        : <a class="code" href="class_goo_fit_1_1_indexable.html#ad6e8fae30ed3673dd99891a657c3c101">name</a>(n)</div><div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        , <a class="code" href="class_goo_fit_1_1_indexable.html#a0ceeff8d04de3868ee6c4a467aae6323">value</a>(std::make_shared&lt;fptype&gt;(val))</div><div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        , <a class="code" href="class_goo_fit_1_1_indexable.html#a2bb2b837ee0fbf5bc41185be9e735c93">lowerlimit</a>(std::make_shared&lt;fptype&gt;(<a class="code" href="class_goo_fit_1_1_indexable.html#a2bb2b837ee0fbf5bc41185be9e735c93">lowerlimit</a>))</div><div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        , <a class="code" href="class_goo_fit_1_1_indexable.html#a4031e5bb09413b84520a58c9793fdd97">upperlimit</a>(std::make_shared&lt;fptype&gt;(<a class="code" href="class_goo_fit_1_1_indexable.html#a4031e5bb09413b84520a58c9793fdd97">upperlimit</a>)) {}</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a0ceeff8d04de3868ee6c4a467aae6323"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a0ceeff8d04de3868ee6c4a467aae6323">GooFit::Indexable::value</a></div><div class="ttdeci">std::shared_ptr&lt; fptype &gt; value</div><div class="ttdoc">The value of the variable. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00028">Variable.h:28</a></div></div>
 <div class="ttc" id="class_goo_fit_1_1_indexable_html_a2bb2b837ee0fbf5bc41185be9e735c93"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a2bb2b837ee0fbf5bc41185be9e735c93">GooFit::Indexable::lowerlimit</a></div><div class="ttdeci">std::shared_ptr&lt; fptype &gt; lowerlimit</div><div class="ttdoc">The lower limit. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00031">Variable.h:31</a></div></div>
 <div class="ttc" id="class_goo_fit_1_1_indexable_html_ad6e8fae30ed3673dd99891a657c3c101"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#ad6e8fae30ed3673dd99891a657c3c101">GooFit::Indexable::name</a></div><div class="ttdeci">std::string name</div><div class="ttdoc">The variable name. Should be unique. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00025">Variable.h:25</a></div></div>
@@ -284,10 +288,10 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00050">50</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00052">52</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
 
 <p class="reference">References <a class="el" href="_log_8h_source.html#l00096">GOOFIT_DEBUG</a>.</p>
-<div class="fragment"><div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;                         {</div><div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="keywordflow">if</span>(<a class="code" href="class_goo_fit_1_1_indexable.html#a0ceeff8d04de3868ee6c4a467aae6323">value</a>.use_count() == 1)</div><div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;            <a class="code" href="_log_8h.html#a2f7aa24073791136d223fdb553c0ae71">GOOFIT_DEBUG</a>(<span class="stringliteral">&quot;Destroying Indexable: {}&quot;</span>, <a class="code" href="class_goo_fit_1_1_indexable.html#ad6e8fae30ed3673dd99891a657c3c101">name</a>);</div><div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a0ceeff8d04de3868ee6c4a467aae6323"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a0ceeff8d04de3868ee6c4a467aae6323">GooFit::Indexable::value</a></div><div class="ttdeci">std::shared_ptr&lt; fptype &gt; value</div><div class="ttdoc">The value of the variable. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00028">Variable.h:28</a></div></div>
+<div class="fragment"><div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;                         {</div><div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <span class="keywordflow">if</span>(<a class="code" href="class_goo_fit_1_1_indexable.html#a0ceeff8d04de3868ee6c4a467aae6323">value</a>.use_count() == 1)</div><div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;            <a class="code" href="_log_8h.html#a2f7aa24073791136d223fdb553c0ae71">GOOFIT_DEBUG</a>(<span class="stringliteral">&quot;Destroying Indexable: {}&quot;</span>, <a class="code" href="class_goo_fit_1_1_indexable.html#ad6e8fae30ed3673dd99891a657c3c101">name</a>);</div><div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a0ceeff8d04de3868ee6c4a467aae6323"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a0ceeff8d04de3868ee6c4a467aae6323">GooFit::Indexable::value</a></div><div class="ttdeci">std::shared_ptr&lt; fptype &gt; value</div><div class="ttdoc">The value of the variable. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00028">Variable.h:28</a></div></div>
 <div class="ttc" id="class_goo_fit_1_1_indexable_html_ad6e8fae30ed3673dd99891a657c3c101"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#ad6e8fae30ed3673dd99891a657c3c101">GooFit::Indexable::name</a></div><div class="ttdeci">std::string name</div><div class="ttdoc">The variable name. Should be unique. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00025">Variable.h:25</a></div></div>
 <div class="ttc" id="_log_8h_html_a2f7aa24073791136d223fdb553c0ae71"><div class="ttname"><a href="_log_8h.html#a2f7aa24073791136d223fdb553c0ae71">GOOFIT_DEBUG</a></div><div class="ttdeci">#define GOOFIT_DEBUG(...)</div><div class="ttdef"><b>Definition:</b> <a href="_log_8h_source.html#l00096">Log.h:96</a></div></div>
 </div><!-- fragment -->
@@ -319,12 +323,12 @@ Protected Attributes</h2></td></tr>
 
 <p>Get the <a class="el" href="namespace_goo_fit.html">GooFit</a> index. </p>
 
-<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00056">56</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00058">58</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
 
 <p class="reference">References <a class="el" href="_variable_8h_source.html#l00037">index</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="_variable_8cpp_source.html#l00008">GooFit::max_index()</a>, <a class="el" href="_variable_8cpp_source.html#l00036">GooFit::operator&lt;&lt;()</a>, and <a class="el" href="_pdf_base_8cpp_source.html#l00054">GooFit::PdfBase::registerParameter()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;{ <span class="keywordflow">return</span> *<a class="code" href="class_goo_fit_1_1_indexable.html#a2fb396ae1cffa096329de13f4dd9a41b">index</a>; }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a2fb396ae1cffa096329de13f4dd9a41b"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a2fb396ae1cffa096329de13f4dd9a41b">GooFit::Indexable::index</a></div><div class="ttdeci">std::shared_ptr&lt; int &gt; index</div><div class="ttdoc">The goofit index, -1 if unset. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00037">Variable.h:37</a></div></div>
+<div class="fragment"><div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;{ <span class="keywordflow">return</span> *<a class="code" href="class_goo_fit_1_1_indexable.html#a2fb396ae1cffa096329de13f4dd9a41b">index</a>; }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a2fb396ae1cffa096329de13f4dd9a41b"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a2fb396ae1cffa096329de13f4dd9a41b">GooFit::Indexable::index</a></div><div class="ttdeci">std::shared_ptr&lt; int &gt; index</div><div class="ttdoc">The goofit index, -1 if unset. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00037">Variable.h:37</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -353,12 +357,12 @@ Protected Attributes</h2></td></tr>
 
 <p>Get the lower limit. </p>
 
-<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00076">76</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00078">78</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
 
 <p class="reference">References <a class="el" href="_variable_8h_source.html#l00031">lowerlimit</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_dalitz_plotter_8h_source.html#l00030">GooFit::DalitzPlotter::DalitzPlotter()</a>, <a class="el" href="_dalitz_plotter_8h_source.html#l00064">GooFit::DalitzPlotter::fillDataSetMC()</a>, <a class="el" href="_variable_8h_source.html#l00129">GooFit::Observable::getBinSize()</a>, <a class="el" href="_dalitz_plotter_8h_source.html#l00134">GooFit::DalitzPlotter::getM13()</a>, <a class="el" href="_unbinned_data_set_8cpp_source.html#l00067">GooFit::make_a_grid()</a>, <a class="el" href="_variable_8h_source.html#l00101">operator bool()</a>, and <a class="el" href="_variable_8cpp_source.html#l00036">GooFit::operator&lt;&lt;()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;{ <span class="keywordflow">return</span> *<a class="code" href="class_goo_fit_1_1_indexable.html#a2bb2b837ee0fbf5bc41185be9e735c93">lowerlimit</a>; }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a2bb2b837ee0fbf5bc41185be9e735c93"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a2bb2b837ee0fbf5bc41185be9e735c93">GooFit::Indexable::lowerlimit</a></div><div class="ttdeci">std::shared_ptr&lt; fptype &gt; lowerlimit</div><div class="ttdoc">The lower limit. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00031">Variable.h:31</a></div></div>
+<p class="reference">Referenced by <a class="el" href="_dalitz_plotter_8h_source.html#l00030">GooFit::DalitzPlotter::DalitzPlotter()</a>, <a class="el" href="_dalitz_plotter_8h_source.html#l00064">GooFit::DalitzPlotter::fillDataSetMC()</a>, <a class="el" href="_variable_8h_source.html#l00133">GooFit::Observable::getBinSize()</a>, <a class="el" href="_dalitz_plotter_8h_source.html#l00134">GooFit::DalitzPlotter::getM13()</a>, <a class="el" href="_unbinned_data_set_8cpp_source.html#l00067">GooFit::make_a_grid()</a>, <a class="el" href="_variable_8h_source.html#l00103">operator bool()</a>, and <a class="el" href="_variable_8cpp_source.html#l00036">GooFit::operator&lt;&lt;()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;{ <span class="keywordflow">return</span> *<a class="code" href="class_goo_fit_1_1_indexable.html#a2bb2b837ee0fbf5bc41185be9e735c93">lowerlimit</a>; }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a2bb2b837ee0fbf5bc41185be9e735c93"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a2bb2b837ee0fbf5bc41185be9e735c93">GooFit::Indexable::lowerlimit</a></div><div class="ttdeci">std::shared_ptr&lt; fptype &gt; lowerlimit</div><div class="ttdoc">The lower limit. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00031">Variable.h:31</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -387,12 +391,12 @@ Protected Attributes</h2></td></tr>
 
 <p>Get the name. </p>
 
-<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00061">61</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00063">63</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
 
 <p class="reference">References <a class="el" href="_variable_8h_source.html#l00025">name</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="_unbinned_data_set_8cpp_source.html#l00031">GooFit::UnbinnedDataSet::getValue()</a>, <a class="el" href="_variable_8cpp_source.html#l00036">GooFit::operator&lt;&lt;()</a>, <a class="el" href="_pdf_base_8cpp_source.html#l00134">GooFit::PdfBase::registerObservable()</a>, <a class="el" href="_pdf_base_8cpp_source.html#l00054">GooFit::PdfBase::registerParameter()</a>, and <a class="el" href="_pdf_base_8cpp_source.html#l00069">GooFit::PdfBase::unregisterParameter()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;{ <span class="keywordflow">return</span> <a class="code" href="class_goo_fit_1_1_indexable.html#ad6e8fae30ed3673dd99891a657c3c101">name</a>; }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_ad6e8fae30ed3673dd99891a657c3c101"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#ad6e8fae30ed3673dd99891a657c3c101">GooFit::Indexable::name</a></div><div class="ttdeci">std::string name</div><div class="ttdoc">The variable name. Should be unique. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00025">Variable.h:25</a></div></div>
+<div class="fragment"><div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;{ <span class="keywordflow">return</span> <a class="code" href="class_goo_fit_1_1_indexable.html#ad6e8fae30ed3673dd99891a657c3c101">name</a>; }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_ad6e8fae30ed3673dd99891a657c3c101"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#ad6e8fae30ed3673dd99891a657c3c101">GooFit::Indexable::name</a></div><div class="ttdeci">std::string name</div><div class="ttdoc">The variable name. Should be unique. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00025">Variable.h:25</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -421,12 +425,12 @@ Protected Attributes</h2></td></tr>
 
 <p>Get the upper limit. </p>
 
-<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00071">71</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00073">73</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
 
 <p class="reference">References <a class="el" href="_variable_8h_source.html#l00034">upperlimit</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_dalitz_plotter_8h_source.html#l00030">GooFit::DalitzPlotter::DalitzPlotter()</a>, <a class="el" href="_dalitz_plotter_8h_source.html#l00064">GooFit::DalitzPlotter::fillDataSetMC()</a>, <a class="el" href="_variable_8h_source.html#l00129">GooFit::Observable::getBinSize()</a>, <a class="el" href="_dalitz_plotter_8h_source.html#l00134">GooFit::DalitzPlotter::getM13()</a>, <a class="el" href="_unbinned_data_set_8cpp_source.html#l00067">GooFit::make_a_grid()</a>, <a class="el" href="_variable_8h_source.html#l00101">operator bool()</a>, and <a class="el" href="_variable_8cpp_source.html#l00036">GooFit::operator&lt;&lt;()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;{ <span class="keywordflow">return</span> *<a class="code" href="class_goo_fit_1_1_indexable.html#a4031e5bb09413b84520a58c9793fdd97">upperlimit</a>; }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a4031e5bb09413b84520a58c9793fdd97"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a4031e5bb09413b84520a58c9793fdd97">GooFit::Indexable::upperlimit</a></div><div class="ttdeci">std::shared_ptr&lt; fptype &gt; upperlimit</div><div class="ttdoc">The upper limit. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00034">Variable.h:34</a></div></div>
+<p class="reference">Referenced by <a class="el" href="_dalitz_plotter_8h_source.html#l00030">GooFit::DalitzPlotter::DalitzPlotter()</a>, <a class="el" href="_dalitz_plotter_8h_source.html#l00064">GooFit::DalitzPlotter::fillDataSetMC()</a>, <a class="el" href="_variable_8h_source.html#l00133">GooFit::Observable::getBinSize()</a>, <a class="el" href="_dalitz_plotter_8h_source.html#l00134">GooFit::DalitzPlotter::getM13()</a>, <a class="el" href="_unbinned_data_set_8cpp_source.html#l00067">GooFit::make_a_grid()</a>, <a class="el" href="_variable_8h_source.html#l00103">operator bool()</a>, and <a class="el" href="_variable_8cpp_source.html#l00036">GooFit::operator&lt;&lt;()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;{ <span class="keywordflow">return</span> *<a class="code" href="class_goo_fit_1_1_indexable.html#a4031e5bb09413b84520a58c9793fdd97">upperlimit</a>; }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a4031e5bb09413b84520a58c9793fdd97"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a4031e5bb09413b84520a58c9793fdd97">GooFit::Indexable::upperlimit</a></div><div class="ttdeci">std::shared_ptr&lt; fptype &gt; upperlimit</div><div class="ttdoc">The upper limit. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00034">Variable.h:34</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -455,12 +459,12 @@ Protected Attributes</h2></td></tr>
 
 <p>Get the value. </p>
 
-<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00066">66</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00068">68</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
 
 <p class="reference">References <a class="el" href="_variable_8h_source.html#l00028">value</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_dalitz_plotter_8h_source.html#l00030">GooFit::DalitzPlotter::DalitzPlotter()</a>, <a class="el" href="_unbinned_data_set_8cpp_source.html#l00067">GooFit::make_a_grid()</a>, <a class="el" href="_variable_8h_source.html#l00101">operator bool()</a>, <a class="el" href="_variable_8h_source.html#l00089">operator fptype()</a>, <a class="el" href="_variable_8cpp_source.html#l00036">GooFit::operator&lt;&lt;()</a>, and <a class="el" href="_unbinned_data_set_8cpp_source.html#l00051">GooFit::UnbinnedDataSet::setValueForAllEvents()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;{ <span class="keywordflow">return</span> *<a class="code" href="class_goo_fit_1_1_indexable.html#a0ceeff8d04de3868ee6c4a467aae6323">value</a>; }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a0ceeff8d04de3868ee6c4a467aae6323"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a0ceeff8d04de3868ee6c4a467aae6323">GooFit::Indexable::value</a></div><div class="ttdeci">std::shared_ptr&lt; fptype &gt; value</div><div class="ttdoc">The value of the variable. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00028">Variable.h:28</a></div></div>
+<p class="reference">Referenced by <a class="el" href="_dalitz_plotter_8h_source.html#l00030">GooFit::DalitzPlotter::DalitzPlotter()</a>, <a class="el" href="_unbinned_data_set_8cpp_source.html#l00067">GooFit::make_a_grid()</a>, <a class="el" href="_variable_8h_source.html#l00103">operator bool()</a>, <a class="el" href="_variable_8h_source.html#l00091">operator fptype()</a>, <a class="el" href="_variable_8cpp_source.html#l00036">GooFit::operator&lt;&lt;()</a>, and <a class="el" href="_unbinned_data_set_8cpp_source.html#l00051">GooFit::UnbinnedDataSet::setValueForAllEvents()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;{ <span class="keywordflow">return</span> *<a class="code" href="class_goo_fit_1_1_indexable.html#a0ceeff8d04de3868ee6c4a467aae6323">value</a>; }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a0ceeff8d04de3868ee6c4a467aae6323"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a0ceeff8d04de3868ee6c4a467aae6323">GooFit::Indexable::value</a></div><div class="ttdeci">std::shared_ptr&lt; fptype &gt; value</div><div class="ttdoc">The value of the variable. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00028">Variable.h:28</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -489,12 +493,12 @@ Protected Attributes</h2></td></tr>
 
 <p>Check to see if in range. </p>
 
-<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00101">101</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00103">103</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
 
-<p class="reference">References <a class="el" href="_variable_8h_source.html#l00076">getLowerLimit()</a>, <a class="el" href="_variable_8h_source.html#l00071">getUpperLimit()</a>, and <a class="el" href="_variable_8h_source.html#l00066">getValue()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;                          {</div><div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_goo_fit_1_1_indexable.html#a53ca2a1259cb0aeb2b6f13f0f0fae1af">getUpperLimit</a>() == <a class="code" href="class_goo_fit_1_1_indexable.html#a2523a298d8b1fed5c8d905d951c09143">getLowerLimit</a>() || (<a class="code" href="class_goo_fit_1_1_indexable.html#a59a5ace515148ae5f29bbfb7c229da55">getValue</a>() &lt;= <a class="code" href="class_goo_fit_1_1_indexable.html#a53ca2a1259cb0aeb2b6f13f0f0fae1af">getUpperLimit</a>() &amp;&amp; <a class="code" href="class_goo_fit_1_1_indexable.html#a59a5ace515148ae5f29bbfb7c229da55">getValue</a>() &gt;= <a class="code" href="class_goo_fit_1_1_indexable.html#a2523a298d8b1fed5c8d905d951c09143">getLowerLimit</a>());</div><div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a2523a298d8b1fed5c8d905d951c09143"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a2523a298d8b1fed5c8d905d951c09143">GooFit::Indexable::getLowerLimit</a></div><div class="ttdeci">fptype getLowerLimit() const</div><div class="ttdoc">Get the lower limit. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00076">Variable.h:76</a></div></div>
-<div class="ttc" id="class_goo_fit_1_1_indexable_html_a59a5ace515148ae5f29bbfb7c229da55"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a59a5ace515148ae5f29bbfb7c229da55">GooFit::Indexable::getValue</a></div><div class="ttdeci">fptype getValue() const</div><div class="ttdoc">Get the value. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00066">Variable.h:66</a></div></div>
-<div class="ttc" id="class_goo_fit_1_1_indexable_html_a53ca2a1259cb0aeb2b6f13f0f0fae1af"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a53ca2a1259cb0aeb2b6f13f0f0fae1af">GooFit::Indexable::getUpperLimit</a></div><div class="ttdeci">fptype getUpperLimit() const</div><div class="ttdoc">Get the upper limit. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00071">Variable.h:71</a></div></div>
+<p class="reference">References <a class="el" href="_variable_8h_source.html#l00078">getLowerLimit()</a>, <a class="el" href="_variable_8h_source.html#l00073">getUpperLimit()</a>, and <a class="el" href="_variable_8h_source.html#l00068">getValue()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;                          {</div><div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_goo_fit_1_1_indexable.html#a53ca2a1259cb0aeb2b6f13f0f0fae1af">getUpperLimit</a>() == <a class="code" href="class_goo_fit_1_1_indexable.html#a2523a298d8b1fed5c8d905d951c09143">getLowerLimit</a>() || (<a class="code" href="class_goo_fit_1_1_indexable.html#a59a5ace515148ae5f29bbfb7c229da55">getValue</a>() &lt;= <a class="code" href="class_goo_fit_1_1_indexable.html#a53ca2a1259cb0aeb2b6f13f0f0fae1af">getUpperLimit</a>() &amp;&amp; <a class="code" href="class_goo_fit_1_1_indexable.html#a59a5ace515148ae5f29bbfb7c229da55">getValue</a>() &gt;= <a class="code" href="class_goo_fit_1_1_indexable.html#a2523a298d8b1fed5c8d905d951c09143">getLowerLimit</a>());</div><div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a2523a298d8b1fed5c8d905d951c09143"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a2523a298d8b1fed5c8d905d951c09143">GooFit::Indexable::getLowerLimit</a></div><div class="ttdeci">fptype getLowerLimit() const</div><div class="ttdoc">Get the lower limit. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00078">Variable.h:78</a></div></div>
+<div class="ttc" id="class_goo_fit_1_1_indexable_html_a59a5ace515148ae5f29bbfb7c229da55"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a59a5ace515148ae5f29bbfb7c229da55">GooFit::Indexable::getValue</a></div><div class="ttdeci">fptype getValue() const</div><div class="ttdoc">Get the value. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00068">Variable.h:68</a></div></div>
+<div class="ttc" id="class_goo_fit_1_1_indexable_html_a53ca2a1259cb0aeb2b6f13f0f0fae1af"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a53ca2a1259cb0aeb2b6f13f0f0fae1af">GooFit::Indexable::getUpperLimit</a></div><div class="ttdeci">fptype getUpperLimit() const</div><div class="ttdoc">Get the upper limit. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00073">Variable.h:73</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -523,10 +527,10 @@ Protected Attributes</h2></td></tr>
 
 <p>Support fptype val = var. </p>
 
-<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00089">89</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00091">91</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
 
-<p class="reference">References <a class="el" href="_variable_8h_source.html#l00066">getValue()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;{ <span class="keywordflow">return</span> <a class="code" href="class_goo_fit_1_1_indexable.html#a59a5ace515148ae5f29bbfb7c229da55">getValue</a>(); }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a59a5ace515148ae5f29bbfb7c229da55"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a59a5ace515148ae5f29bbfb7c229da55">GooFit::Indexable::getValue</a></div><div class="ttdeci">fptype getValue() const</div><div class="ttdoc">Get the value. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00066">Variable.h:66</a></div></div>
+<p class="reference">References <a class="el" href="_variable_8h_source.html#l00068">getValue()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;{ <span class="keywordflow">return</span> <a class="code" href="class_goo_fit_1_1_indexable.html#a59a5ace515148ae5f29bbfb7c229da55">getValue</a>(); }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a59a5ace515148ae5f29bbfb7c229da55"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a59a5ace515148ae5f29bbfb7c229da55">GooFit::Indexable::getValue</a></div><div class="ttdeci">fptype getValue() const</div><div class="ttdoc">Get the value. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00068">Variable.h:68</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -556,10 +560,10 @@ Protected Attributes</h2></td></tr>
 
 <p>Support for comparison - only if really the same object, not just the same value. </p>
 
-<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00098">98</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00100">100</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
 
 <p class="reference">References <a class="el" href="_variable_8h_source.html#l00028">value</a>.</p>
-<div class="fragment"><div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;{ <span class="keywordflow">return</span> <a class="code" href="class_goo_fit_1_1_indexable.html#a0ceeff8d04de3868ee6c4a467aae6323">value</a>.get() != other.value.get(); }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a0ceeff8d04de3868ee6c4a467aae6323"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a0ceeff8d04de3868ee6c4a467aae6323">GooFit::Indexable::value</a></div><div class="ttdeci">std::shared_ptr&lt; fptype &gt; value</div><div class="ttdoc">The value of the variable. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00028">Variable.h:28</a></div></div>
+<div class="fragment"><div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;{ <span class="keywordflow">return</span> <a class="code" href="class_goo_fit_1_1_indexable.html#a0ceeff8d04de3868ee6c4a467aae6323">value</a>.get() != other.value.get(); }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a0ceeff8d04de3868ee6c4a467aae6323"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a0ceeff8d04de3868ee6c4a467aae6323">GooFit::Indexable::value</a></div><div class="ttdeci">std::shared_ptr&lt; fptype &gt; value</div><div class="ttdoc">The value of the variable. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00028">Variable.h:28</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -589,15 +593,43 @@ Protected Attributes</h2></td></tr>
 
 <p>Support for using as key in map - Notice this does NOT sort by index! </p>
 
-<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00092">92</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00094">94</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
 
 <p class="reference">References <a class="el" href="_variable_8h_source.html#l00028">value</a>.</p>
-<div class="fragment"><div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;{ <span class="keywordflow">return</span> <a class="code" href="class_goo_fit_1_1_indexable.html#a0ceeff8d04de3868ee6c4a467aae6323">value</a>.get() &lt; other.value.get(); }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a0ceeff8d04de3868ee6c4a467aae6323"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a0ceeff8d04de3868ee6c4a467aae6323">GooFit::Indexable::value</a></div><div class="ttdeci">std::shared_ptr&lt; fptype &gt; value</div><div class="ttdoc">The value of the variable. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00028">Variable.h:28</a></div></div>
+<div class="fragment"><div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;{ <span class="keywordflow">return</span> <a class="code" href="class_goo_fit_1_1_indexable.html#a0ceeff8d04de3868ee6c4a467aae6323">value</a>.get() &lt; other.value.get(); }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a0ceeff8d04de3868ee6c4a467aae6323"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a0ceeff8d04de3868ee6c4a467aae6323">GooFit::Indexable::value</a></div><div class="ttdeci">std::shared_ptr&lt; fptype &gt; value</div><div class="ttdoc">The value of the variable. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00028">Variable.h:28</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
+<a id="a254aa5598fea2691b102769a293bcdc4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a254aa5598fea2691b102769a293bcdc4">&#9670;&nbsp;</a></span>operator=() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_goo_fit_1_1_indexable.html">Indexable</a>&amp; GooFit::Indexable::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_goo_fit_1_1_indexable.html">Indexable</a> &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="reference">Referenced by <a class="el" href="_variable_8h_source.html#l00246">GooFit::EventNumber::EventNumber()</a>, <a class="el" href="_variable_8h_source.html#l00044">Indexable()</a>, <a class="el" href="_variable_8h_source.html#l00120">GooFit::Observable::Observable()</a>, and <a class="el" href="_variable_8h_source.html#l00179">GooFit::Variable::Variable()</a>.</p>
+
+</div>
+</div>
 <a id="a163b909fa9001d17ea7862a3be2b6903"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a163b909fa9001d17ea7862a3be2b6903">&#9670;&nbsp;</a></span>operator=()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a163b909fa9001d17ea7862a3be2b6903">&#9670;&nbsp;</a></span>operator=() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -622,10 +654,10 @@ Protected Attributes</h2></td></tr>
 
 <p>Support var = 3. </p>
 
-<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00081">81</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00083">83</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
 
-<p class="reference">References <a class="el" href="_variable_8h_source.html#l00068">setValue()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;                                                  {</div><div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        <a class="code" href="class_goo_fit_1_1_indexable.html#a964c5a2abef8873d6fed8a0d92d9548b">setValue</a>(val);</div><div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div><div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a964c5a2abef8873d6fed8a0d92d9548b"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a964c5a2abef8873d6fed8a0d92d9548b">GooFit::Indexable::setValue</a></div><div class="ttdeci">void setValue(fptype val)</div><div class="ttdoc">Set the value. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00068">Variable.h:68</a></div></div>
+<p class="reference">References <a class="el" href="_variable_8h_source.html#l00070">setValue()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;                                                  {</div><div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        <a class="code" href="class_goo_fit_1_1_indexable.html#a964c5a2abef8873d6fed8a0d92d9548b">setValue</a>(val);</div><div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div><div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a964c5a2abef8873d6fed8a0d92d9548b"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a964c5a2abef8873d6fed8a0d92d9548b">GooFit::Indexable::setValue</a></div><div class="ttdeci">void setValue(fptype val)</div><div class="ttdoc">Set the value. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00070">Variable.h:70</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -655,10 +687,10 @@ Protected Attributes</h2></td></tr>
 
 <p>Support for comparison - only if really the same object, not just the same value. </p>
 
-<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00095">95</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00097">97</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
 
 <p class="reference">References <a class="el" href="_variable_8h_source.html#l00028">value</a>.</p>
-<div class="fragment"><div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;{ <span class="keywordflow">return</span> <a class="code" href="class_goo_fit_1_1_indexable.html#a0ceeff8d04de3868ee6c4a467aae6323">value</a>.get() == other.value.get(); }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a0ceeff8d04de3868ee6c4a467aae6323"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a0ceeff8d04de3868ee6c4a467aae6323">GooFit::Indexable::value</a></div><div class="ttdeci">std::shared_ptr&lt; fptype &gt; value</div><div class="ttdoc">The value of the variable. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00028">Variable.h:28</a></div></div>
+<div class="fragment"><div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;{ <span class="keywordflow">return</span> <a class="code" href="class_goo_fit_1_1_indexable.html#a0ceeff8d04de3868ee6c4a467aae6323">value</a>.get() == other.value.get(); }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a0ceeff8d04de3868ee6c4a467aae6323"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a0ceeff8d04de3868ee6c4a467aae6323">GooFit::Indexable::value</a></div><div class="ttdeci">std::shared_ptr&lt; fptype &gt; value</div><div class="ttdoc">The value of the variable. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00028">Variable.h:28</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -688,12 +720,12 @@ Protected Attributes</h2></td></tr>
 
 <p>Set the <a class="el" href="namespace_goo_fit.html">GooFit</a> index. </p>
 
-<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00058">58</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00060">60</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
 
 <p class="reference">References <a class="el" href="_variable_8h_source.html#l00037">index</a>, and <a class="el" href="_variable_8h_source.html#l00028">value</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="_pdf_base_8cpp_source.html#l00054">GooFit::PdfBase::registerParameter()</a>, and <a class="el" href="_pdf_base_8cpp_source.html#l00069">GooFit::PdfBase::unregisterParameter()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;{ *<a class="code" href="class_goo_fit_1_1_indexable.html#a2fb396ae1cffa096329de13f4dd9a41b">index</a> = <a class="code" href="class_goo_fit_1_1_indexable.html#a0ceeff8d04de3868ee6c4a467aae6323">value</a>; }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a0ceeff8d04de3868ee6c4a467aae6323"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a0ceeff8d04de3868ee6c4a467aae6323">GooFit::Indexable::value</a></div><div class="ttdeci">std::shared_ptr&lt; fptype &gt; value</div><div class="ttdoc">The value of the variable. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00028">Variable.h:28</a></div></div>
+<div class="fragment"><div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;{ *<a class="code" href="class_goo_fit_1_1_indexable.html#a2fb396ae1cffa096329de13f4dd9a41b">index</a> = <a class="code" href="class_goo_fit_1_1_indexable.html#a0ceeff8d04de3868ee6c4a467aae6323">value</a>; }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a0ceeff8d04de3868ee6c4a467aae6323"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a0ceeff8d04de3868ee6c4a467aae6323">GooFit::Indexable::value</a></div><div class="ttdeci">std::shared_ptr&lt; fptype &gt; value</div><div class="ttdoc">The value of the variable. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00028">Variable.h:28</a></div></div>
 <div class="ttc" id="class_goo_fit_1_1_indexable_html_a2fb396ae1cffa096329de13f4dd9a41b"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a2fb396ae1cffa096329de13f4dd9a41b">GooFit::Indexable::index</a></div><div class="ttdeci">std::shared_ptr&lt; int &gt; index</div><div class="ttdoc">The goofit index, -1 if unset. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00037">Variable.h:37</a></div></div>
 </div><!-- fragment -->
 </div>
@@ -724,12 +756,12 @@ Protected Attributes</h2></td></tr>
 
 <p>Set the lower limit. </p>
 
-<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00078">78</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00080">80</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
 
 <p class="reference">References <a class="el" href="_variable_8h_source.html#l00031">lowerlimit</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="_functor_writer_8cpp_source.html#l00023">GooFit::readFromFile()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;{ *<a class="code" href="class_goo_fit_1_1_indexable.html#a2bb2b837ee0fbf5bc41185be9e735c93">lowerlimit</a> = val; }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a2bb2b837ee0fbf5bc41185be9e735c93"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a2bb2b837ee0fbf5bc41185be9e735c93">GooFit::Indexable::lowerlimit</a></div><div class="ttdeci">std::shared_ptr&lt; fptype &gt; lowerlimit</div><div class="ttdoc">The lower limit. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00031">Variable.h:31</a></div></div>
+<div class="fragment"><div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;{ *<a class="code" href="class_goo_fit_1_1_indexable.html#a2bb2b837ee0fbf5bc41185be9e735c93">lowerlimit</a> = val; }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a2bb2b837ee0fbf5bc41185be9e735c93"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a2bb2b837ee0fbf5bc41185be9e735c93">GooFit::Indexable::lowerlimit</a></div><div class="ttdeci">std::shared_ptr&lt; fptype &gt; lowerlimit</div><div class="ttdoc">The lower limit. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00031">Variable.h:31</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -759,12 +791,12 @@ Protected Attributes</h2></td></tr>
 
 <p>Set the upper limit. </p>
 
-<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00073">73</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00075">75</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
 
 <p class="reference">References <a class="el" href="_variable_8h_source.html#l00034">upperlimit</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="_functor_writer_8cpp_source.html#l00023">GooFit::readFromFile()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;{ *<a class="code" href="class_goo_fit_1_1_indexable.html#a4031e5bb09413b84520a58c9793fdd97">upperlimit</a> = val; }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a4031e5bb09413b84520a58c9793fdd97"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a4031e5bb09413b84520a58c9793fdd97">GooFit::Indexable::upperlimit</a></div><div class="ttdeci">std::shared_ptr&lt; fptype &gt; upperlimit</div><div class="ttdoc">The upper limit. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00034">Variable.h:34</a></div></div>
+<div class="fragment"><div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;{ *<a class="code" href="class_goo_fit_1_1_indexable.html#a4031e5bb09413b84520a58c9793fdd97">upperlimit</a> = val; }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a4031e5bb09413b84520a58c9793fdd97"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a4031e5bb09413b84520a58c9793fdd97">GooFit::Indexable::upperlimit</a></div><div class="ttdeci">std::shared_ptr&lt; fptype &gt; upperlimit</div><div class="ttdoc">The upper limit. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00034">Variable.h:34</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -794,10 +826,10 @@ Protected Attributes</h2></td></tr>
 
 <p>Set the value. </p>
 
-<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00068">68</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00070">70</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_dalitz_plotter_8h_source.html#l00030">GooFit::DalitzPlotter::DalitzPlotter()</a>, <a class="el" href="_dalitz_plotter_8h_source.html#l00064">GooFit::DalitzPlotter::fillDataSetMC()</a>, <a class="el" href="_unbinned_data_set_8cpp_source.html#l00067">GooFit::make_a_grid()</a>, <a class="el" href="_variable_8h_source.html#l00081">operator=()</a>, <a class="el" href="_variable_8h_source.html#l00135">GooFit::Observable::operator=()</a>, <a class="el" href="_variable_8h_source.html#l00212">GooFit::Variable::operator=()</a>, <a class="el" href="_variable_8h_source.html#l00250">GooFit::EventNumber::operator=()</a>, and <a class="el" href="_functor_writer_8cpp_source.html#l00023">GooFit::readFromFile()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;{ *<a class="code" href="class_goo_fit_1_1_indexable.html#a0ceeff8d04de3868ee6c4a467aae6323">value</a> = val; }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a0ceeff8d04de3868ee6c4a467aae6323"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a0ceeff8d04de3868ee6c4a467aae6323">GooFit::Indexable::value</a></div><div class="ttdeci">std::shared_ptr&lt; fptype &gt; value</div><div class="ttdoc">The value of the variable. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00028">Variable.h:28</a></div></div>
+<p class="reference">Referenced by <a class="el" href="_dalitz_plotter_8h_source.html#l00030">GooFit::DalitzPlotter::DalitzPlotter()</a>, <a class="el" href="_dalitz_plotter_8h_source.html#l00064">GooFit::DalitzPlotter::fillDataSetMC()</a>, <a class="el" href="_unbinned_data_set_8cpp_source.html#l00067">GooFit::make_a_grid()</a>, <a class="el" href="_variable_8h_source.html#l00083">operator=()</a>, <a class="el" href="_variable_8h_source.html#l00139">GooFit::Observable::operator=()</a>, <a class="el" href="_variable_8h_source.html#l00217">GooFit::Variable::operator=()</a>, <a class="el" href="_variable_8h_source.html#l00257">GooFit::EventNumber::operator=()</a>, and <a class="el" href="_functor_writer_8cpp_source.html#l00023">GooFit::readFromFile()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;{ *<a class="code" href="class_goo_fit_1_1_indexable.html#a0ceeff8d04de3868ee6c4a467aae6323">value</a> = val; }</div><div class="ttc" id="class_goo_fit_1_1_indexable_html_a0ceeff8d04de3868ee6c4a467aae6323"><div class="ttname"><a href="class_goo_fit_1_1_indexable.html#a0ceeff8d04de3868ee6c4a467aae6323">GooFit::Indexable::value</a></div><div class="ttdeci">std::shared_ptr&lt; fptype &gt; value</div><div class="ttdoc">The value of the variable. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00028">Variable.h:28</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -826,7 +858,7 @@ Protected Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00037">37</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_variable_8h_source.html#l00056">getIndex()</a>, and <a class="el" href="_variable_8h_source.html#l00058">setIndex()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_variable_8h_source.html#l00058">getIndex()</a>, and <a class="el" href="_variable_8h_source.html#l00060">setIndex()</a>.</p>
 
 </div>
 </div>
@@ -854,7 +886,7 @@ Protected Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00031">31</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_variable_8h_source.html#l00076">getLowerLimit()</a>, and <a class="el" href="_variable_8h_source.html#l00078">setLowerLimit()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_variable_8h_source.html#l00078">getLowerLimit()</a>, and <a class="el" href="_variable_8h_source.html#l00080">setLowerLimit()</a>.</p>
 
 </div>
 </div>
@@ -882,7 +914,7 @@ Protected Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00025">25</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_variable_8h_source.html#l00061">getName()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_variable_8h_source.html#l00063">getName()</a>.</p>
 
 </div>
 </div>
@@ -910,7 +942,7 @@ Protected Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00034">34</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_variable_8h_source.html#l00071">getUpperLimit()</a>, and <a class="el" href="_variable_8h_source.html#l00073">setUpperLimit()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_variable_8h_source.html#l00073">getUpperLimit()</a>, and <a class="el" href="_variable_8h_source.html#l00075">setUpperLimit()</a>.</p>
 
 </div>
 </div>
@@ -938,7 +970,7 @@ Protected Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00028">28</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_variable_8h_source.html#l00241">GooFit::EventNumber::EventNumber()</a>, <a class="el" href="_variable_8h_source.html#l00066">getValue()</a>, <a class="el" href="_variable_8h_source.html#l00098">operator!=()</a>, <a class="el" href="_variable_8h_source.html#l00092">operator&lt;()</a>, <a class="el" href="_variable_8h_source.html#l00095">operator==()</a>, <a class="el" href="_variable_8cpp_source.html#l00059">GooFit::operator&gt;&gt;()</a>, <a class="el" href="_variable_8h_source.html#l00191">GooFit::Variable::setFitterIndex()</a>, and <a class="el" href="_variable_8h_source.html#l00058">setIndex()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_variable_8h_source.html#l00246">GooFit::EventNumber::EventNumber()</a>, <a class="el" href="_variable_8h_source.html#l00068">getValue()</a>, <a class="el" href="_variable_8h_source.html#l00100">operator!=()</a>, <a class="el" href="_variable_8h_source.html#l00094">operator&lt;()</a>, <a class="el" href="_variable_8h_source.html#l00097">operator==()</a>, <a class="el" href="_variable_8cpp_source.html#l00059">GooFit::operator&gt;&gt;()</a>, <a class="el" href="_variable_8h_source.html#l00196">GooFit::Variable::setFitterIndex()</a>, and <a class="el" href="_variable_8h_source.html#l00060">setIndex()</a>.</p>
 
 </div>
 </div>
@@ -948,7 +980,7 @@ Protected Attributes</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Feb 21 2018 16:21:20 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Feb 23 2018 14:50:12 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

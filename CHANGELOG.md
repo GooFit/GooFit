@@ -9,6 +9,7 @@ GooFit has received even more Pythonization with the conversion of two more exam
 * Binned dataset access in Python improved ([#134])
 * Travis timeouts reduced by separating codecov run
 * Better error message if `Python.h` missing in Python build ([#136])
+* Variables can not longer overwrite existing variables
 
 [#133]: https://github.com/GooFit/GooFit/pull/133
 [#134]: https://github.com/GooFit/GooFit/pull/134

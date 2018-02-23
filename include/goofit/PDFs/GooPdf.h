@@ -35,12 +35,12 @@ struct ParameterContainer {
     fptype *observables;
     fptype *normalisations;
 
-    int parameterIdx;
-    int constantIdx;
-    int observableIdx;
-    int normalIdx;
+    int parameterIdx{0};
+    int constantIdx{0};
+    int observableIdx{0};
+    int normalIdx{0};
 
-    int funcIdx;
+    int funcIdx{0};
 
     inline __device__ fptype getParameter(const int i) { return RO_CACHE(parameters[parameterIdx + i + 1]); }
 
@@ -171,7 +171,7 @@ class GooPdf : public PdfBase {
 #endif
 
   protected:
-    __host__ virtual void setIndices();
+    __host__ void setIndices() override;
     __host__ virtual double sumOfNll(int numVars) const;
     std::shared_ptr<MetricTaker> logger;
 

@@ -8,8 +8,6 @@ namespace py = pybind11;
 using namespace pybind11::literals;
 
 void init_ResonancePdf(py::module &m) {
-    m.attr("MAXNKNOBS") = MAXNKNOBS;
-
     auto m_ls = m.def_submodule("Resonances");
 
     py::class_<ResonancePdf, GooPdf>(m, "ResonancePdf");

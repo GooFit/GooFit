@@ -77,7 +77,7 @@ class TddpPdf : public GooPdf {
     __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 5);
     __host__ void setForceIntegrals(bool f = true) { forceRedoIntegrals = f; }
 
-    __host__ virtual void recursiveSetIndices();
+    __host__ void recursiveSetIndices() override;
 
   protected:
   private:

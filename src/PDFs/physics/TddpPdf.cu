@@ -467,9 +467,9 @@ void TddpPdf::recursiveSetIndices() {
     host_parameters[totalParameters] = parametersList.size();
     parametersIdx                    = totalParameters;
     totalParameters++;
-    for(int i = 0; i < parametersList.size(); i++) {
+    for(auto &i : parametersList) {
         GOOFIT_TRACE("host_parameters[{}] = {}", totalParameters, parametersList[i].getValue());
-        host_parameters[totalParameters] = parametersList[i].getValue();
+        host_parameters[totalParameters] = i.getValue();
         totalParameters++;
     }
 
@@ -477,9 +477,9 @@ void TddpPdf::recursiveSetIndices() {
     host_constants[totalConstants] = constantsList.size();
     constantsIdx                   = totalConstants;
     totalConstants++;
-    for(int i = 0; i < constantsList.size(); i++) {
+    for(double i : constantsList) {
         GOOFIT_TRACE("host_constants[{}] = {}", totalConstants, constantsList[i]);
-        host_constants[totalConstants] = constantsList[i];
+        host_constants[totalConstants] = i;
         totalConstants++;
     }
 
@@ -487,9 +487,9 @@ void TddpPdf::recursiveSetIndices() {
     host_observables[totalObservables] = observablesList.size();
     observablesIdx                     = totalObservables;
     totalObservables++;
-    for(int i = 0; i < observablesList.size(); i++) {
+    for(auto &i : observablesList) {
         GOOFIT_TRACE("host_observables[{}] = {}", totalObservables, observablesList[i].getIndex());
-        host_observables[totalObservables] = observablesList[i].getIndex();
+        host_observables[totalObservables] = i.getIndex();
         totalObservables++;
     }
 

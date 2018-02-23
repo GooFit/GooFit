@@ -46,7 +46,7 @@ class DPPdf : public GooPdf {
         tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h>
         GenerateSig(unsigned int numEvents);
 
-    __host__ virtual void recursiveSetIndices();
+    __host__ void recursiveSetIndices() override;
 
   protected:
   private:
@@ -103,7 +103,7 @@ class SFCalculator : public thrust::unary_function<thrust::tuple<int, fptype *, 
 
   private:
     unsigned int dalitzFuncId;
-    unsigned int _spinfactor_i;
+    unsigned int _spinfactor_i{0};
 };
 
 class NormSpinCalculator
@@ -117,7 +117,7 @@ class NormSpinCalculator
 
   private:
     unsigned int dalitzFuncId;
-    unsigned int _spinfactor_i;
+    unsigned int _spinfactor_i{0};
 };
 
 class LSCalculator : public thrust::unary_function<thrust::tuple<int, fptype *, int>, fpcomplex> {
@@ -130,7 +130,7 @@ class LSCalculator : public thrust::unary_function<thrust::tuple<int, fptype *, 
 
   private:
     unsigned int dalitzFuncId;
-    unsigned int _resonance_i;
+    unsigned int _resonance_i{0};
 };
 
 class NormLSCalculator
@@ -150,7 +150,7 @@ class NormLSCalculator
 
   private:
     unsigned int dalitzFuncId;
-    unsigned int _resonance_i;
+    unsigned int _resonance_i{0};
 };
 
 class AmpCalc : public thrust::unary_function<unsigned int, fpcomplex> {

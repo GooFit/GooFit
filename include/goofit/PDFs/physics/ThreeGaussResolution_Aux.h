@@ -8,13 +8,13 @@ class ThreeGaussResolution : public MixingTimeResolution {
   public:
     ThreeGaussResolution(
         Variable cf, Variable tf, Variable cb, Variable cs, Variable tb, Variable ts, Variable ob, Variable os);
-    ~ThreeGaussResolution();
+    ~ThreeGaussResolution() override;
 
     fptype normalisation(
         fptype di1, fptype di2, fptype di3, fptype di4, fptype tau, fptype xmixing, fptype ymixing) const override;
     void createParameters(PdfBase *dis) override;
 
-    virtual void recursiveSetIndices();
+    void recursiveSetIndices() override;
 
   private:
     Variable coreFraction;

@@ -59,6 +59,6 @@ class SpinFactor : public GooPdf {
                 and S._P3 == _P3);
     }
 
-    __host__ virtual void recursiveSetIndices();
+    __host__ void recursiveSetIndices() override;
 };
 } // namespace GooFit

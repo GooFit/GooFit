@@ -37,7 +37,7 @@ class Lineshape : public GooPdf {
     /// Protected constructor, only for subclasses to use
     Lineshape(std::string name, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius);
 
-    __host__ virtual void recursiveSetIndices();
+    __host__ void recursiveSetIndices() override;
 
     unsigned int _L;
     unsigned int _Mpair;
@@ -244,7 +244,7 @@ class Amplitude : public GooPdf {
 
     bool operator==(const Amplitude &A) const;
 
-    __host__ virtual void recursiveSetIndices();
+    __host__ void recursiveSetIndices() override;
 
     std::vector<SpinFactor *> getSpinFactors() { return _SF; }
     std::vector<Lineshape *> getLineShapes() { return _LS; }

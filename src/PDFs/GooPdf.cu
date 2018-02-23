@@ -50,12 +50,7 @@ __device__ __host__ ParameterContainer::ParameterContainer()
     : parameters(d_parameters)
     , constants(d_constants)
     , observables(d_observables)
-    , normalisations(d_normalisations)
-    , parameterIdx(0)
-    , constantIdx(0)
-    , observableIdx(0)
-    , normalIdx(0)
-    , funcIdx(0) {}
+    , normalisations(d_normalisations) {}
 
 __device__ __host__ ParameterContainer::ParameterContainer(const ParameterContainer &pc)
     : parameters(d_parameters)

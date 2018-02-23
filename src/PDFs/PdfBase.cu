@@ -61,8 +61,8 @@ __host__ void PdfBase::initializeIndices() {
     host_parameters[totalParameters] = parametersList.size();
     parametersIdx                    = totalParameters;
     totalParameters++;
-    for(int i = 0; i < parametersList.size(); i++) {
-        host_parameters[totalParameters] = parametersList[i].getValue();
+    for(auto &i : parametersList) {
+        host_parameters[totalParameters] = i.getValue();
         totalParameters++;
     }
 
@@ -70,8 +70,8 @@ __host__ void PdfBase::initializeIndices() {
     host_constants[totalConstants] = constantsList.size();
     constantsIdx                   = totalConstants;
     totalConstants++;
-    for(int i = 0; i < constantsList.size(); i++) {
-        host_constants[totalConstants] = constantsList[i];
+    for(double i : constantsList) {
+        host_constants[totalConstants] = i;
         totalConstants++;
     }
 
@@ -79,8 +79,8 @@ __host__ void PdfBase::initializeIndices() {
     host_observables[totalObservables] = observablesList.size();
     observablesIdx                     = totalObservables;
     totalObservables++;
-    for(int i = 0; i < observablesList.size(); i++) {
-        host_observables[totalObservables] = observablesList[i].getValue();
+    for(auto &i : observablesList) {
+        host_observables[totalObservables] = i.getValue();
         totalObservables++;
     }
 
@@ -110,21 +110,21 @@ __host__ void PdfBase::recursiveSetIndices() {
 }
 
 __host__ void PdfBase::updateVariable(Variable var, fptype newValue) {
-    for(int i = 0; i < parametersList.size(); i++) {
-        if(parametersList[i].getName() == var.getName())
-            parametersList[i].setValue(newValue);
+    for(auto &i : parametersList) {
+        if(i.getName() == var.getName())
+            i.setValue(newValue);
     }
 
-    for(int i = 0; i < components.size(); i++)
-        components[i]->updateVariable(var, newValue);
+    for(auto &component : components)
+        component->updateVariable(var, newValue);
 }
 
 __host__ void PdfBase::updateParameters() {
     for(int i = 0; i < parametersList.size(); i++)
         host_parameters[parametersIdx + i + 1] = parametersList[i].getValue();
 
-    for(int i = 0; i < components.size(); i++)
-        components[i]->updateParameters();
+    for(auto &component : components)
+        component->updateParameters();
 
     // we need to memcpy to device.
     MEMCPY_TO_SYMBOL(d_parameters, host_parameters, totalParameters * sizeof(fptype), 0, cudaMemcpyHostToDevice);
@@ -139,9 +139,9 @@ __host__ void PdfBase::populateArrays() {
     host_parameters[totalParameters] = parametersList.size();
     parametersIdx                    = totalParameters;
     totalParameters++;
-    for(int i = 0; i < parametersList.size(); i++) {
+    for(auto &i : parametersList) {
         GOOFIT_TRACE("host_parameters[{}] = {}", totalParameters, parametersList[i].getValue());
-        host_parameters[totalParameters] = parametersList[i].getValue();
+        host_parameters[totalParameters] = i.getValue();
         totalParameters++;
     }
 
@@ -149,9 +149,9 @@ __host__ void PdfBase::populateArrays() {
     host_constants[totalConstants] = constantsList.size();
     constantsIdx                   = totalConstants;
     totalConstants++;
-    for(int i = 0; i < constantsList.size(); i++) {
+    for(double i : constantsList) {
         GOOFIT_TRACE("host_constants[{}] = {}", totalConstants, constantsList[i]);
-        host_constants[totalConstants] = constantsList[i];
+        host_constants[totalConstants] = i;
         totalConstants++;
     }
 
@@ -159,9 +159,9 @@ __host__ void PdfBase::populateArrays() {
     host_observables[totalObservables] = observablesList.size();
     observablesIdx                     = totalObservables;
     totalObservables++;
-    for(int i = 0; i < observablesList.size(); i++) {
+    for(auto &i : observablesList) {
         GOOFIT_TRACE("host_observables[{}] = {}", totalObservables, observablesList[i].getIndex());
-        host_observables[totalObservables] = observablesList[i].getIndex();
+        host_observables[totalObservables] = i.getIndex();
         totalObservables++;
     }
 
@@ -172,8 +172,8 @@ __host__ void PdfBase::populateArrays() {
     host_normalisations[totalNormalisations] = 0;
     totalNormalisations++;
 
-    for(unsigned int i = 0; i < components.size(); i++)
-        components[i]->recursiveSetIndices();
+    for(auto &component : components)
+        component->recursiveSetIndices();
 
     generateNormRange();
 }
@@ -219,7 +219,7 @@ __host__ void PdfBase::setData(DataSet *data) {
         numEntries = data->getNumEvents();
         numEvents  = numEntries;
 
-        int dimensions = observablesList.size();
+        size_t dimensions = observablesList.size();
 
 #ifdef GOOFIT_MPI
         // This fetches our rank and the total number of processes in the MPI call
@@ -335,7 +335,7 @@ __host__ void PdfBase::setData(DataSet *data) {
             displacements[i] = displacements[i - 1] + counts[i - 1];
 #endif
 
-        fptype *host_array = new fptype[numEntries * dimensions];
+        auto *host_array = new fptype[numEntries * dimensions];
 
 #ifdef GOOFIT_MPI
         // This is an array to track if we need to re-index the observable

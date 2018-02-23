@@ -14,7 +14,7 @@ class CompositePdf : public GooPdf {
     CompositePdf(std::string n, PdfBase *core, PdfBase *shell); // Where 'core' corresponds to 'g' and 'shell' to 'h'.
     __host__ fptype normalize() const override;
 
-    __host__ virtual void recursiveSetIndices();
+    __host__ void recursiveSetIndices() override;
 
   private:
 };

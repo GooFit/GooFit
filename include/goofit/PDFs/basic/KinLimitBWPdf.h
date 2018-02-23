@@ -10,7 +10,7 @@ class KinLimitBWPdf : public GooPdf {
     __host__ bool hasAnalyticIntegral() const override { return false; }
     __host__ void setMasses(fptype bigM, fptype smallM);
 
-    __host__ virtual void recursiveSetIndices();
+    __host__ void recursiveSetIndices() override;
 
   private:
 };

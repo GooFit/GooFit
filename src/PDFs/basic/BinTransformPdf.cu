@@ -39,8 +39,8 @@ __host__ BinTransformPdf::BinTransformPdf(std::string n,
     // auto *host_constants = new fptype[2 * obses.size()];
 
     // setup the observables
-    for(unsigned int i = 0; i < obses.size(); ++i)
-        registerObservable(obses[i]);
+    for(const auto &obse : obses)
+        registerObservable(obse);
 
     observablesList = getObservables();
 

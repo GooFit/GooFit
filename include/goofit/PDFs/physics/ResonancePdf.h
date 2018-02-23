@@ -37,7 +37,7 @@ class ResonancePdf : public GooPdf {
 
     __host__ virtual void recalculateCache() const {}
 
-    virtual void recursiveSetIndices();
+    void recursiveSetIndices() override;
 
   protected:
     /// Special constructor that subclasses use

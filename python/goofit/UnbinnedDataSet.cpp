@@ -44,6 +44,8 @@ void init_UnbinnedDataSet(py::module &m) {
              },
              R"raw(
             Convert a numpy array into data. Optional filter=True argument will remove values out of range.
+
+            This is deprecated in favor of to/from matrix.
             )raw",
              "array"_a,
              "filter"_a = false)

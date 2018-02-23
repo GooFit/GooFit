@@ -1,14 +1,10 @@
 #include <gtest/gtest.h>
 
+#include "testhelpers.h"
 #include <goofit/BinnedDataSet.h>
 #include <goofit/PDFs/basic/BinTransformPdf.h>
-#include <goofit/fitting/FitManagerMinuit1.h>
 
 #include <goofit/Variable.h>
-
-#include <iostream>
-#include <sys/time.h>
-#include <sys/times.h>
 
 #include <random>
 
@@ -58,9 +54,7 @@ TEST(BinTransformTest, SimpleFit) {
     BinTransformPdf bintransformpdf{"binlistindex", obslist, list1, list2, listindex};
     bintransformpdf.setData(&data);
 
-    GooFit::FitManagerMinuit1 fitter{&bintransformpdf};
-    fitter.setVerbosity(2);
-    fitter.fit();
+    bool fitter = test_fitter(&bintransformpdf);
 
     EXPECT_TRUE(fitter);
     // EXPECT_LT(bt_1.getError(), 1.01);

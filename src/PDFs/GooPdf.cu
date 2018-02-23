@@ -50,12 +50,7 @@ __device__ __host__ ParameterContainer::ParameterContainer()
     : parameters(d_parameters)
     , constants(d_constants)
     , observables(d_observables)
-    , normalisations(d_normalisations)
-    , parameterIdx(0)
-    , constantIdx(0)
-    , observableIdx(0)
-    , normalIdx(0)
-    , funcIdx(0) {}
+    , normalisations(d_normalisations) {}
 
 __device__ __host__ ParameterContainer::ParameterContainer(const ParameterContainer &pc)
     : parameters(d_parameters)
@@ -622,29 +617,11 @@ __host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
     return values;
 }
 
-// Utility function to make a grid of any dimisinion
-__host__ void make_a_grid(std::vector<Observable> ret, UnbinnedDataSet &grid) {
-    if(ret.empty()) {
-        grid.addEvent();
-        return;
-    }
-
-    Observable var = ret.back();
-    ret.pop_back(); // safe because this is a copy
-
-    for(int i = 0; i < var.getNumBins(); ++i) {
-        double step = (var.getUpperLimit() - var.getLowerLimit()) / var.getNumBins();
-        var.setValue(var.getLowerLimit() + (i + 0.5) * step);
-        make_a_grid(ret, grid);
-    }
-}
-
 __host__ UnbinnedDataSet GooPdf::makeGrid() {
     std::vector<Observable> ret = getObservables();
 
     UnbinnedDataSet grid{ret};
-
-    make_a_grid(ret, grid);
+    grid.fillWithGrid();
 
     return grid;
 }

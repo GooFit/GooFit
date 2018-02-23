@@ -145,8 +145,8 @@ void PdfBase::registerObservable(Observable obs) {
 
 void PdfBase::setupObservables() {
     int counter = 0;
-    for(size_t i = 0; i < observablesList.size(); ++i) {
-        observablesList[i].setIndex(counter);
+    for(auto &i : observablesList) {
+        i.setIndex(counter);
         counter++;
     }
 

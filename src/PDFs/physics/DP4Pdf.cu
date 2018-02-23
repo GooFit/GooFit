@@ -27,7 +27,7 @@ class.
 #include <goofit/PDFs/physics/DP4Pdf.h>
 #include <goofit/PDFs/physics/EvalVar.h>
 
-#include <stdarg.h>
+#include <cstdarg>
 
 namespace GooFit {
 
@@ -166,7 +166,7 @@ __host__ DPPdf::DPPdf(
     }
 
     for(int i = 0; i < components.size() - 1; ++i) {
-        Amplitude *amp  = dynamic_cast<Amplitude *>(components[i]);
+        auto *amp       = dynamic_cast<Amplitude *>(components[i]);
         redoIntegral[i] = true;
         cachedMasses[i] = -1;
         cachedWidths[i] = -1;
@@ -289,7 +289,7 @@ void DPPdf::recursiveSetIndices() {
     std::vector<unsigned int> amp_idx_start;
 
     for(int i = 0; i < components.size() - 1; ++i) {
-        Amplitude *amp = dynamic_cast<Amplitude *>(components[i]);
+        auto *amp = dynamic_cast<Amplitude *>(components[i]);
 
         std::vector<Lineshape *> lineshapes   = amp->getLineShapes();
         std::vector<SpinFactor *> spinfactors = amp->getSpinFactors();
@@ -450,7 +450,7 @@ __host__ fptype DPPdf::normalize() const {
     // auto AmpMapIt = AmpMap.begin();
 
     for(int i = 0; i < components.size() - 1; ++i) {
-        Amplitude *amp = dynamic_cast<Amplitude *>(components[i]);
+        auto *amp = dynamic_cast<Amplitude *>(components[i]);
 
         if(!redoIntegral[i])
             continue;
@@ -638,8 +638,7 @@ __host__
     return std::make_tuple(ParSet, VarSet, weights_h, flags_h);
 }
 
-SFCalculator::SFCalculator()
-    : _spinfactor_i(0) {}
+SFCalculator::SFCalculator() = default;
 
 __device__ fpcomplex SFCalculator::operator()(thrust::tuple<int, fptype *, int> t) const {
     int evtNum  = thrust::get<0>(t);
@@ -692,11 +691,10 @@ __device__ fpcomplex SFCalculator::operator()(thrust::tuple<int, fptype *, int> 
     auto func = reinterpret_cast<spin_function_ptr>(device_function_table[pc.funcIdx]);
     fptype sf = (*func)(vecs, pc);
     // printf("SpinFactors %i : %.7g\n",evtNum, sf );
-    return fpcomplex(sf, 0);
+    return {sf, 0.0};
 }
 
-NormSpinCalculator::NormSpinCalculator()
-    : _spinfactor_i(0) {}
+NormSpinCalculator::NormSpinCalculator() = default;
 
 __device__ fptype NormSpinCalculator::operator()(
     thrust::tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t)
@@ -748,8 +746,7 @@ __device__ fptype NormSpinCalculator::operator()(
     return sf;
 }
 
-LSCalculator::LSCalculator()
-    : _resonance_i(0) {}
+LSCalculator::LSCalculator() = default;
 
 __device__ fpcomplex LSCalculator::operator()(thrust::tuple<int, fptype *, int> t) const {
     // Calculates the BW values for a specific resonance.
@@ -812,8 +809,7 @@ __device__ fpcomplex LSCalculator::operator()(thrust::tuple<int, fptype *, int> 
     return ret;
 }
 
-NormLSCalculator::NormLSCalculator()
-    : _resonance_i(0) {}
+NormLSCalculator::NormLSCalculator() = default;
 
 __device__ fpcomplex NormLSCalculator::operator()(
     thrust::tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t)
@@ -920,7 +916,7 @@ __device__ fpcomplex AmpCalc::operator()(thrust::tuple<int, fptype *, int> t) co
     return returnVal;
 }
 
-NormIntegrator::NormIntegrator() {}
+NormIntegrator::NormIntegrator() = default;
 
 __device__ fptype NormIntegrator::operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const {
     ParameterContainer pc;

@@ -1,14 +1,10 @@
 #include <gtest/gtest.h>
 
+#include "testhelpers.h"
 #include <goofit/PDFs/basic/ExpGausPdf.h>
 #include <goofit/UnbinnedDataSet.h>
-#include <goofit/fitting/FitManagerMinuit1.h>
 
 #include <goofit/Variable.h>
-
-#include <iostream>
-#include <sys/time.h>
-#include <sys/times.h>
 
 #include <random>
 
@@ -46,9 +42,7 @@ TEST(ExpGausPdf, SimpleFit) {
     ExpGausPdf expgauspdf{"expgausspdf", xvar, alpha, sigma, beta};
     expgauspdf.setData(&data);
 
-    GooFit::FitManagerMinuit1 fitter{&expgauspdf};
-    fitter.setVerbosity(2);
-    fitter.fit();
+    bool fitter = test_fitter(&expgauspdf);
 
     EXPECT_TRUE(fitter);
     EXPECT_LT(alpha.getError(), 12.84);

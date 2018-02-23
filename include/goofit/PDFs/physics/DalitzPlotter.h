@@ -136,7 +136,7 @@ class DalitzPlotter {
 #if GOOFIT_ROOT_FOUND
     /// Produce a TH2F over the contained evaluation
     TH2F *make2D(std::string name = "dalitzplot", std::string title = "") {
-        TH2F *dalitzplot = new TH2F(name.c_str(),
+        auto *dalitzplot = new TH2F(name.c_str(),
                                     title.c_str(),
                                     m12.getNumBins(),
                                     m12.getLowerLimit(),

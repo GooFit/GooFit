@@ -1,14 +1,10 @@
 #include <gtest/gtest.h>
 
+#include "testhelpers.h"
 #include <goofit/PDFs/basic/BWPdf.h>
 #include <goofit/UnbinnedDataSet.h>
-#include <goofit/fitting/FitManagerMinuit1.h>
 
 #include <goofit/Variable.h>
-
-#include <iostream>
-#include <sys/time.h>
-#include <sys/times.h>
 
 #include <random>
 
@@ -44,9 +40,7 @@ TEST(BWTest, SimpleFit) {
     BWPdf bwpdf{"bwpdf", xvar, alpha, sigma};
     bwpdf.setData(&data);
 
-    GooFit::FitManagerMinuit1 fitter{&bwpdf};
-    fitter.setVerbosity(2);
-    fitter.fit();
+    bool fitter = test_fitter(&bwpdf);
 
     EXPECT_TRUE(fitter);
     EXPECT_LT(alpha.getError(), .1);

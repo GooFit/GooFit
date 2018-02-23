@@ -13,7 +13,7 @@ class BinTransformPdf : public GooPdf {
                     std::vector<fptype> binSizes,
                     std::vector<int> numBins);
 
-    __host__ virtual void recursiveSetIndices();
+    __host__ void recursiveSetIndices() override;
 
   private:
 };

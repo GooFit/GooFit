@@ -12,7 +12,7 @@ typedef fptype (*device_calc_tau_fcn_ptr)(fptype, fptype, fptype, fptype, fptype
 class MixingTimeResolution : public GooPdf {
   public:
     MixingTimeResolution();
-    virtual ~MixingTimeResolution();
+    ~MixingTimeResolution() override;
 
     void initIndex(void *dev_fcn_ptr = host_fcn_ptr);
 
@@ -23,7 +23,7 @@ class MixingTimeResolution : public GooPdf {
     int getCalcTauIdx() const { return resCalcTauFcnIdx; }
     void setCalcTauIdx(int idx) { resCalcTauFcnIdx = idx; }
 
-    virtual void recursiveSetIndices();
+    void recursiveSetIndices() override;
 
   private:
     int resFunctionIdx;

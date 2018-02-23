@@ -1,15 +1,11 @@
 #include <gtest/gtest.h>
 
+#include "testhelpers.h"
 #include <goofit/PDFs/basic/GaussianPdf.h>
 #include <goofit/PDFs/combine/CompositePdf.h>
 #include <goofit/UnbinnedDataSet.h>
-#include <goofit/fitting/FitManagerMinuit1.h>
 
 #include <goofit/Variable.h>
-
-#include <iostream>
-#include <sys/time.h>
-#include <sys/times.h>
 
 #include <random>
 
@@ -49,9 +45,7 @@ TEST(Composite, SimpleFit) {
     CompositePdf compositepdf{"compositepdf", &gauss1, &gauss2};
     compositepdf.setData(&data);
 
-    GooFit::FitManagerMinuit1 fitter{&compositepdf};
-    fitter.setVerbosity(2);
-    fitter.fit();
+    bool fitter = test_fitter(&compositepdf);
 
     EXPECT_TRUE(fitter);
     EXPECT_LT(alpha1.getError(), .1);

@@ -62,7 +62,7 @@ void getToyData(std::string toyFileName, GooFit::Application &app, DataSet &data
     Observable eventNumber = obs.at(2);
 
     TH2F dalitzplot("dalitzplot",
-                    "",
+                    "Original Data",
                     m12.getNumBins(),
                     m12.getLowerLimit(),
                     m12.getUpperLimit(),

@@ -11,7 +11,7 @@ class CrystalBallPdf : public GooPdf {
     __host__ fptype integrate(fptype lo, fptype hi) const override;
     //__host__ virtual bool hasAnalyticIntegral () const {return true;}
 
-    __host__ virtual void recursiveSetIndices();
+    __host__ void recursiveSetIndices() override;
 
   private:
 };

@@ -1,14 +1,10 @@
 #include <gtest/gtest.h>
 
+#include "testhelpers.h"
 #include <goofit/PDFs/basic/BifurGaussPdf.h>
 #include <goofit/UnbinnedDataSet.h>
-#include <goofit/fitting/FitManagerMinuit1.h>
 
 #include <goofit/Variable.h>
-
-#include <iostream>
-#include <sys/time.h>
-#include <sys/times.h>
 
 #include <random>
 
@@ -45,9 +41,7 @@ TEST(BifurGaussian, SimpleFit) {
     BifurGaussPdf bifurgausspdf{"bifurgausspdf", xvar, alpha, sl, sr};
     bifurgausspdf.setData(&data);
 
-    GooFit::FitManagerMinuit1 fitter{&bifurgausspdf};
-    fitter.setVerbosity(2);
-    fitter.fit();
+    bool fitter = test_fitter(&bifurgausspdf);
 
     EXPECT_TRUE(fitter);
     EXPECT_LT(alpha.getError(), .1);

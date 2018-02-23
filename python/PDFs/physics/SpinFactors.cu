@@ -7,6 +7,8 @@
 using namespace GooFit;
 namespace py = pybind11;
 
+using namespace pybind11::literals;
+
 void init_SpinFactors(py::module &m) {
     py::enum_<SF_4Body>(m, "SF_4Body", py::arithmetic())
         .value("DtoPP1_PtoSP2_StoP3P4", SF_4Body::DtoPP1_PtoSP2_StoP3P4)
@@ -27,12 +29,12 @@ void init_SpinFactors(py::module &m) {
         .value("ONE", SF_4Body::ONE);
 
     py::class_<SpinFactor, GooPdf>(m, "SpinFactor")
-        .def(py::init<std::string, SF_4Body, double, unsigned int, unsigned int, unsigned int, unsigned int>(),
-             "name",
-             "SF",
-             "mD0",
-             "P0",
-             "P1",
-             "P2",
-             "P3");
+        .def(py::init<std::string, SF_4Body, const fptype &, unsigned int, unsigned int, unsigned int, unsigned int>(),
+             "name"_a,
+             "SF"_a,
+             "mother_radius"_a,
+             "P0"_a,
+             "P1"_a,
+             "P2"_a,
+             "P3"_a);
 }

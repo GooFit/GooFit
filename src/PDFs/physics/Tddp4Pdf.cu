@@ -28,7 +28,7 @@ class.
 #include <mcbooster/Generate.h>
 #include <mcbooster/Vector4R.h>
 
-#include <stdarg.h>
+#include <cstdarg>
 
 namespace GooFit {
 
@@ -359,7 +359,7 @@ __host__ TDDP4::TDDP4(std::string n,
 
     // minus two, one for efficiency one for resolution
     for(int i = 0; i < components.size() - 2; ++i) {
-        Amplitude *amp = dynamic_cast<Amplitude *>(components[i]);
+        auto *amp = dynamic_cast<Amplitude *>(components[i]);
 
         redoIntegral[i] = true;
         cachedMasses[i] = -1;
@@ -459,7 +459,7 @@ __host__ void TDDP4::recursiveSetIndices() {
     std::vector<unsigned int> amp_idx_start;
 
     for(int i = 0; i < components.size() - 2; ++i) {
-        Amplitude *amp = dynamic_cast<Amplitude *>(components[i]);
+        auto *amp = dynamic_cast<Amplitude *>(components[i]);
 
         std::vector<Lineshape *> lineshapes   = amp->getLineShapes();
         std::vector<SpinFactor *> spinfactors = amp->getSpinFactors();
@@ -476,7 +476,7 @@ __host__ void TDDP4::recursiveSetIndices() {
             if(found != LineShapes.end()) {
                 amp_idx.push_back(std::distance(LineShapes.begin(), found));
             } else
-                printf("Shouldn't happen, could not find lineshape in array!\n");
+                GOOFIT_ERROR("Shouldn't happen, could not find lineshape in array!");
         }
 
         for(auto &SFIT : spinfactors) {
@@ -485,7 +485,7 @@ __host__ void TDDP4::recursiveSetIndices() {
             if(found != SpinFactors.end()) {
                 amp_idx.push_back(std::distance(SpinFactors.begin(), found));
             } else
-                printf("Shouldn't happen, could not find spin factor in array!\n");
+                GOOFIT_ERROR("Shouldn't happen, could not find spin factor in array!");
         }
     }
 
@@ -522,7 +522,7 @@ __host__ void TDDP4::setDataSize(unsigned int dataSize, unsigned int evtSize) {
     void *dummy = thrust::raw_pointer_cast(cachedResSF->data());
     MEMCPY_TO_SYMBOL(cResSF_TD, &dummy, sizeof(fpcomplex *), cacheToUse * sizeof(fpcomplex *), cudaMemcpyHostToDevice);
 
-    printf("cachedAmps size:%i, %i\n", dataSize, AmpCalcs.size());
+    GOOFIT_ERROR("cachedAmps size:{}, {}", dataSize, AmpCalcs.size());
 
     cachedAMPs   = new thrust::device_vector<fpcomplex>(dataSize * (AmpCalcs.size()));
     void *dummy2 = thrust::raw_pointer_cast(cachedAMPs->data());
@@ -631,7 +631,7 @@ __host__ fptype TDDP4::normalize() const {
     // auto AmpMapIt = AmpMap.begin();
 
     for(int i = 0; i < components.size() - 2; ++i) {
-        Amplitude *amp = dynamic_cast<Amplitude *>(components[i]);
+        auto *amp = dynamic_cast<Amplitude *>(components[i]);
         // std::vector<unsigned int> redoidx((*AmpMapIt).second.first);
 
         bool redo = false;
@@ -907,8 +907,7 @@ __host__
     return std::make_tuple(ParSet, VarSet, weights_h, flags_h);
 }
 
-SFCalculator_TD::SFCalculator_TD()
-    : _spinfactor_i(0) {}
+SFCalculator_TD::SFCalculator_TD() = default;
 
 __device__ fpcomplex SFCalculator_TD::operator()(thrust::tuple<int, fptype *, int> t) const {
     int evtNum  = thrust::get<0>(t);
@@ -959,11 +958,10 @@ __device__ fpcomplex SFCalculator_TD::operator()(thrust::tuple<int, fptype *, in
     auto func = reinterpret_cast<spin_function_ptr>(device_function_table[pc.funcIdx]);
     fptype sf = (*func)(vecs, pc);
     // printf("SpinFactors %i : %.7g\n",_spinfactor_i, sf );
-    return fpcomplex(sf, 0);
+    return {sf, 0.0};
 }
 
-NormSpinCalculator_TD::NormSpinCalculator_TD()
-    : _spinfactor_i(0) {}
+NormSpinCalculator_TD::NormSpinCalculator_TD() = default;
 
 __device__ fptype NormSpinCalculator_TD::operator()(
     thrust::tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t)
@@ -1014,8 +1012,7 @@ __device__ fptype NormSpinCalculator_TD::operator()(
     return sf;
 }
 
-LSCalculator_TD::LSCalculator_TD()
-    : _resonance_i(0) {}
+LSCalculator_TD::LSCalculator_TD() = default;
 
 __device__ fpcomplex LSCalculator_TD::operator()(thrust::tuple<int, fptype *, int> t) const {
     // Calculates the BW values for a specific resonance.
@@ -1086,8 +1083,7 @@ __device__ fpcomplex LSCalculator_TD::operator()(thrust::tuple<int, fptype *, in
     return ret;
 }
 
-NormLSCalculator_TD::NormLSCalculator_TD()
-    : _resonance_i(0) {}
+NormLSCalculator_TD::NormLSCalculator_TD() = default;
 
 __device__ fpcomplex NormLSCalculator_TD::operator()(
     thrust::tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t)
@@ -1199,7 +1195,7 @@ __device__ fpcomplex AmpCalc_TD::operator()(thrust::tuple<int, fptype *, int> t)
     return returnVal;
 }
 
-NormIntegrator_TD::NormIntegrator_TD() {}
+NormIntegrator_TD::NormIntegrator_TD() = default;
 
 __device__ thrust::tuple<fptype, fptype, fptype, fptype> NormIntegrator_TD::
 operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const {

@@ -15,7 +15,7 @@ class CorrGaussianPdf : public GooPdf {
                     Variable sigma2,
                     Variable correlation);
 
-    __host__ virtual void recursiveSetIndices();
+    __host__ void recursiveSetIndices() override;
 
   private:
 };

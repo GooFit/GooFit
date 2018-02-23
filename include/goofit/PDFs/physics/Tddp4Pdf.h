@@ -52,7 +52,7 @@ class TDDP4 : public GooPdf {
         tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::BoolVector_h>
         GenerateSig(unsigned int numEvents);
 
-    __host__ virtual void recursiveSetIndices();
+    __host__ void recursiveSetIndices() override;
 
   protected:
   private:
@@ -108,7 +108,7 @@ class SFCalculator_TD : public thrust::unary_function<thrust::tuple<int, fptype 
     __device__ fpcomplex operator()(thrust::tuple<int, fptype *, int> t) const;
 
   private:
-    unsigned int _spinfactor_i;
+    unsigned int _spinfactor_i{0};
     unsigned int dalitzFuncId;
 };
 
@@ -122,7 +122,7 @@ class NormSpinCalculator_TD
     __device__ fptype operator()(thrust::tuple<fptype, fptype, fptype, fptype, fptype> t) const;
 
   private:
-    unsigned int _spinfactor_i;
+    unsigned int _spinfactor_i{0};
     unsigned int dalitzFuncId;
 };
 
@@ -135,7 +135,7 @@ class LSCalculator_TD : public thrust::unary_function<thrust::tuple<int, fptype 
     __device__ fpcomplex operator()(thrust::tuple<int, fptype *, int> t) const;
 
   private:
-    unsigned int _resonance_i;
+    unsigned int _resonance_i{0};
     unsigned int dalitzFuncId;
 };
 
@@ -155,7 +155,7 @@ class NormLSCalculator_TD
         const;
 
   private:
-    unsigned int _resonance_i;
+    unsigned int _resonance_i{0};
     unsigned int dalitzFuncId;
 };
 
@@ -190,10 +190,10 @@ class FourDblTupleAdd : public thrust::binary_function<thrust::tuple<fptype, fpt
   public:
     __host__ __device__ thrust::tuple<fptype, fptype, fptype, fptype>
     operator()(thrust::tuple<fptype, fptype, fptype, fptype> one, thrust::tuple<fptype, fptype, fptype, fptype> two) {
-        return thrust::tuple<fptype, fptype, fptype, fptype>(thrust::get<0>(one) + thrust::get<0>(two),
-                                                             thrust::get<1>(one) + thrust::get<1>(two),
-                                                             thrust::get<2>(one) + thrust::get<2>(two),
-                                                             thrust::get<3>(one) + thrust::get<3>(two));
+        return {thrust::get<0>(one) + thrust::get<0>(two),
+                thrust::get<1>(one) + thrust::get<1>(two),
+                thrust::get<2>(one) + thrust::get<2>(two),
+                thrust::get<3>(one) + thrust::get<3>(two)};
     }
 };
 } // namespace GooFit

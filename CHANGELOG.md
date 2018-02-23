@@ -8,9 +8,11 @@ GooFit has received even more Pythonization with the conversion of two more exam
 * Some examples use numba for high-speed calculation of CPU code ([#134])
 * Binned dataset access in Python improved ([#134])
 * Travis timeouts reduced by separating codecov run
+* Better error message if `Python.h` missing in Python build ([#136])
 
 [#133]: https://github.com/GooFit/GooFit/pull/133
 [#134]: https://github.com/GooFit/GooFit/pull/134
+[#136]: https://github.com/GooFit/GooFit/pull/136
 
 ## v2.1.1: Better Python
 #### February 12, 2018

@@ -1,14 +1,10 @@
 #include <gtest/gtest.h>
 
+#include "testhelpers.h"
 #include <goofit/PDFs/basic/SmoothHistogramPdf.h>
 #include <goofit/UnbinnedDataSet.h>
-#include "testhelpers.h"
 
 #include <goofit/Variable.h>
-
-
-
-
 
 #include <random>
 
@@ -43,8 +39,6 @@ TEST(SmoothHistogram, SimpleFit) {
     pdf.setData(&data);
 
     bool fitter = test_fitter(&pdf);
-    
-    
 
     EXPECT_TRUE(fitter);
     // EXPECT_LT(smoothing.getError(), .9);

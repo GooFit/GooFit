@@ -638,7 +638,7 @@ __host__
     return std::make_tuple(ParSet, VarSet, weights_h, flags_h);
 }
 
-SFCalculator::SFCalculator() {}
+SFCalculator::SFCalculator() = default;
 
 __device__ fpcomplex SFCalculator::operator()(thrust::tuple<int, fptype *, int> t) const {
     int evtNum  = thrust::get<0>(t);
@@ -691,10 +691,10 @@ __device__ fpcomplex SFCalculator::operator()(thrust::tuple<int, fptype *, int> 
     auto func = reinterpret_cast<spin_function_ptr>(device_function_table[pc.funcIdx]);
     fptype sf = (*func)(vecs, pc);
     // printf("SpinFactors %i : %.7g\n",evtNum, sf );
-    return fpcomplex(sf, 0);
+    return {sf, 0.0};
 }
 
-NormSpinCalculator::NormSpinCalculator() {}
+NormSpinCalculator::NormSpinCalculator() = default;
 
 __device__ fptype NormSpinCalculator::operator()(
     thrust::tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t)
@@ -746,7 +746,7 @@ __device__ fptype NormSpinCalculator::operator()(
     return sf;
 }
 
-LSCalculator::LSCalculator() {}
+LSCalculator::LSCalculator() = default;
 
 __device__ fpcomplex LSCalculator::operator()(thrust::tuple<int, fptype *, int> t) const {
     // Calculates the BW values for a specific resonance.
@@ -809,7 +809,7 @@ __device__ fpcomplex LSCalculator::operator()(thrust::tuple<int, fptype *, int> 
     return ret;
 }
 
-NormLSCalculator::NormLSCalculator() {}
+NormLSCalculator::NormLSCalculator() = default;
 
 __device__ fpcomplex NormLSCalculator::operator()(
     thrust::tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t)

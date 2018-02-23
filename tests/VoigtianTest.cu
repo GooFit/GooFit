@@ -1,14 +1,10 @@
 #include <gtest/gtest.h>
 
+#include "testhelpers.h"
 #include <goofit/PDFs/basic/VoigtianPdf.h>
 #include <goofit/UnbinnedDataSet.h>
-#include "testhelpers.h"
 
 #include <goofit/Variable.h>
-
-
-
-
 
 #include <random>
 
@@ -45,8 +41,6 @@ TEST(Voigtian, SimpleFit) {
     pdf.setData(&data);
 
     bool fitter = test_fitter(&pdf);
-    
-    
 
     EXPECT_TRUE(fitter);
     EXPECT_LT(m.getError(), .1);

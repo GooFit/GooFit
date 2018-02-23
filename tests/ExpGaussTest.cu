@@ -1,14 +1,10 @@
 #include <gtest/gtest.h>
 
+#include "testhelpers.h"
 #include <goofit/PDFs/basic/ExpGausPdf.h>
 #include <goofit/UnbinnedDataSet.h>
-#include "testhelpers.h"
 
 #include <goofit/Variable.h>
-
-
-
-
 
 #include <random>
 
@@ -47,8 +43,6 @@ TEST(ExpGausPdf, SimpleFit) {
     expgauspdf.setData(&data);
 
     bool fitter = test_fitter(&expgauspdf);
-    
-    
 
     EXPECT_TRUE(fitter);
     EXPECT_LT(alpha.getError(), 12.84);

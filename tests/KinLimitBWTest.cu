@@ -1,14 +1,10 @@
 #include <gtest/gtest.h>
 
+#include "testhelpers.h"
 #include <goofit/PDFs/basic/KinLimitBWPdf.h>
 #include <goofit/UnbinnedDataSet.h>
-#include "testhelpers.h"
 
 #include <goofit/Variable.h>
-
-
-
-
 
 #include <random>
 
@@ -44,8 +40,6 @@ TEST(Gaussian, SimpleFit) {
     kinlimitbwpdf.setData(&data);
 
     bool fitter = test_fitter(&kinlimitbwpdf);
-    
-    
 
     EXPECT_TRUE(fitter);
     EXPECT_LT(alpha.getError(), .1);

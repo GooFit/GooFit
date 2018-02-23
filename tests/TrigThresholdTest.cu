@@ -1,14 +1,10 @@
 #include <gtest/gtest.h>
 
+#include "testhelpers.h"
 #include <goofit/PDFs/basic/TrigThresholdPdf.h>
 #include <goofit/UnbinnedDataSet.h>
-#include "testhelpers.h"
 
 #include <goofit/Variable.h>
-
-
-
-
 
 #include <random>
 
@@ -45,8 +41,6 @@ TEST(TrigThresholdUpper, SimpleFit) {
     pdf.setData(&data);
 
     bool fitter = test_fitter(&pdf);
-    
-    
 
     EXPECT_TRUE(fitter);
 }
@@ -81,8 +75,6 @@ TEST(TrigThresholdLower, SimpleFit) {
     pdf.setData(&data);
 
     bool fitter = test_fitter(&pdf);
-    
-    
 
     EXPECT_TRUE(fitter);
 }
@@ -120,8 +112,6 @@ TEST(TrigThresholdVeryUpper, SimpleFit) {
     pdf.setData(&data);
 
     bool fitter = test_fitter(&pdf);
-    
-    
 
     EXPECT_TRUE(fitter);
 }
@@ -159,8 +149,6 @@ TEST(TrigThresholdVeryLower, SimpleFit) {
     pdf.setData(&data);
 
     bool fitter = test_fitter(&pdf);
-    
-    
 
     EXPECT_TRUE(fitter);
 }

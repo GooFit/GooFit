@@ -1,14 +1,10 @@
 #include <gtest/gtest.h>
 
+#include "testhelpers.h"
 #include <goofit/PDFs/basic/BWPdf.h>
 #include <goofit/UnbinnedDataSet.h>
-#include "testhelpers.h"
 
 #include <goofit/Variable.h>
-
-
-
-
 
 #include <random>
 
@@ -45,8 +41,6 @@ TEST(BWTest, SimpleFit) {
     bwpdf.setData(&data);
 
     bool fitter = test_fitter(&bwpdf);
-    
-    
 
     EXPECT_TRUE(fitter);
     EXPECT_LT(alpha.getError(), .1);

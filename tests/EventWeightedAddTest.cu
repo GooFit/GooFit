@@ -1,15 +1,11 @@
 #include <gtest/gtest.h>
 
+#include "testhelpers.h"
 #include <goofit/PDFs/basic/GaussianPdf.h>
 #include <goofit/PDFs/combine/EventWeightedAddPdf.h>
 #include <goofit/UnbinnedDataSet.h>
-#include "testhelpers.h"
 
 #include <goofit/Variable.h>
-
-
-
-
 
 #include <random>
 
@@ -60,8 +56,6 @@ TEST(EventWeightedAdd, SimpleFit) {
     eventpdf.setData(&data);
 
     bool fitter = test_fitter(&eventpdf);
-    
-    
 
     EXPECT_TRUE(fitter);
     // EXPECT_LT(w1.getError(), .11);

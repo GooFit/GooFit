@@ -150,7 +150,7 @@ __device__ fpcomplex gaussian(fptype m12, fptype m13, fptype m23, ParameterConta
     // Ignore factor 1/sqrt(2pi).
     ret /= reswidth;
 
-    return fpcomplex(ret, 0);
+    return {ret, 0.0};
 }
 
 __device__ fptype hFun(double s, double daug2Mass, double daug3Mass) {
@@ -325,7 +325,7 @@ __device__ fpcomplex lass(fptype m12, fptype m13, fptype m23, ParameterContainer
 
 __device__ fpcomplex nonres(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) {
     pc.incrementIndex(1, 0, 0, 0, 1);
-    return fpcomplex(1, 0);
+    return {1.0, 0.0};
 }
 
 __device__ void

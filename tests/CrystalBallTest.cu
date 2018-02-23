@@ -1,14 +1,10 @@
 #include <gtest/gtest.h>
 
+#include "testhelpers.h"
 #include <goofit/PDFs/basic/CrystalBallPdf.h>
 #include <goofit/UnbinnedDataSet.h>
-#include "testhelpers.h"
 
 #include <goofit/Variable.h>
-
-
-
-
 
 #include <random>
 
@@ -46,8 +42,6 @@ TEST(Crystalball, SimpleFit) {
     pdf.setData(&data);
 
     bool fitter = test_fitter(&pdf);
-    
-    
 
     EXPECT_TRUE(fitter);
     // EXPECT_LT(alpha.getError(), .1);

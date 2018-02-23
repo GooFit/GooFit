@@ -1,14 +1,10 @@
 #include <gtest/gtest.h>
 
+#include "testhelpers.h"
 #include <goofit/PDFs/basic/CorrGaussianPdf.h>
 #include <goofit/UnbinnedDataSet.h>
-#include "testhelpers.h"
 
 #include <goofit/Variable.h>
-
-
-
-
 
 #include <random>
 
@@ -52,8 +48,6 @@ TEST(CorrGaussianPdf, SimpleFit) {
     corrgausspdf.setData(&data);
 
     bool fitter = test_fitter(&corrgausspdf);
-    
-    
 
     EXPECT_TRUE(fitter);
     // EXPECT_LT(mean1.getError(), .1);

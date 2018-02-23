@@ -1,14 +1,10 @@
 #include <gtest/gtest.h>
 
+#include "testhelpers.h"
 #include <goofit/PDFs/basic/ArgusPdf.h>
 #include <goofit/UnbinnedDataSet.h>
-#include "testhelpers.h"
 
 #include <goofit/Variable.h>
-
-
-
-
 
 #include <random>
 
@@ -45,8 +41,6 @@ TEST(ArgusUpper, SimpleFit) {
     arguspdf.setData(&data);
 
     bool fitter = test_fitter(&arguspdf);
-    
-    
 
     EXPECT_TRUE(fitter);
     EXPECT_LT(alpha.getError(), .1);
@@ -83,8 +77,6 @@ TEST(ArgusLower, SimpleFit) {
     arguspdf.setData(&data);
 
     bool fitter = test_fitter(&arguspdf);
-    
-    
 
     EXPECT_TRUE(fitter);
     EXPECT_LT(alpha.getError(), .1);

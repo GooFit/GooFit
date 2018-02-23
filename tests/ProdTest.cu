@@ -1,15 +1,11 @@
 #include <gtest/gtest.h>
 
+#include "testhelpers.h"
 #include <goofit/PDFs/basic/GaussianPdf.h>
 #include <goofit/PDFs/combine/ProdPdf.h>
 #include <goofit/UnbinnedDataSet.h>
-#include "testhelpers.h"
 
 #include <goofit/Variable.h>
-
-
-
-
 
 #include <random>
 
@@ -54,8 +50,6 @@ TEST(Prod, SimpleFit) {
     pdf.setData(&data);
 
     bool fitter = test_fitter(&pdf);
-    
-    
 
     EXPECT_TRUE(fitter);
 }

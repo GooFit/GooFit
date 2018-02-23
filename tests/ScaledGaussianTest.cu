@@ -1,14 +1,10 @@
 #include <gtest/gtest.h>
 
+#include "testhelpers.h"
 #include <goofit/PDFs/basic/ScaledGaussianPdf.h>
 #include <goofit/UnbinnedDataSet.h>
-#include "testhelpers.h"
 
 #include <goofit/Variable.h>
-
-
-
-
 
 #include <random>
 
@@ -48,8 +44,6 @@ TEST(ScaledGaussian, SimpleFit) {
     scaledgausspdf.setData(&data);
 
     bool fitter = test_fitter(&scaledgausspdf);
-    
-    
 
     EXPECT_TRUE(fitter);
     EXPECT_LT(alpha.getError(), .1);

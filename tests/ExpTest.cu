@@ -1,14 +1,10 @@
 #include <gtest/gtest.h>
 
+#include "testhelpers.h"
 #include <goofit/PDFs/basic/ExpPdf.h>
 #include <goofit/UnbinnedDataSet.h>
-#include "testhelpers.h"
 
 #include <goofit/Variable.h>
-
-
-
-
 
 #include <random>
 
@@ -44,9 +40,7 @@ TEST(Exp, SimpleFit) {
     ExpPdf exppdf{"exppdf", xvar, alpha, sigma};
     exppdf.setData(&data);
 
-    bool fitter =(&exppdf);
-    
-    
+    bool fitter = test_fitter(&exppdf);
 
     EXPECT_TRUE(fitter);
     // EXPECT_LT(alpha.getError(), .1);
@@ -88,8 +82,6 @@ TEST(ExpPoly, SimpleFit) {
     exppdf.setData(&data);
 
     bool fitter = test_fitter(&exppdf);
-    
-    
 
     EXPECT_TRUE(fitter);
     // EXPECT_LT(alpha.getError(), .1);
@@ -125,8 +117,6 @@ TEST(ExpOffset, SimpleFit) {
     exppdf.setData(&data);
 
     bool fitter = test_fitter(&exppdf);
-    
-    
 
     EXPECT_TRUE(fitter);
 }
@@ -166,8 +156,6 @@ TEST(ExpPolyOffset, SimpleFit) {
     exppdf.setData(&data);
 
     bool fitter = test_fitter(&exppdf);
-    
-    
 
     EXPECT_TRUE(fitter);
 }

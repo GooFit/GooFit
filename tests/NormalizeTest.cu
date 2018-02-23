@@ -8,10 +8,6 @@
 
 #include <goofit/Variable.h>
 
-
-
-
-
 #include <random>
 
 using namespace GooFit;
@@ -47,7 +43,6 @@ TEST(PDFComps, KnownNormalize) {
 
     FitManager fitter{&exppdf};
     fitter.setVerbosity(0);
-    
 
     EXPECT_FLOAT_EQ(exppdf.normalize(), 0.665099);
     EXPECT_FLOAT_EQ(exppdf.normalize(), 0.665099);

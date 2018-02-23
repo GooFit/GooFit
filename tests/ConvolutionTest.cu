@@ -1,15 +1,11 @@
 #include <gtest/gtest.h>
 
+#include "testhelpers.h"
 #include <goofit/PDFs/basic/GaussianPdf.h>
 #include <goofit/PDFs/combine/ConvolutionPdf.h>
 #include <goofit/UnbinnedDataSet.h>
-#include "testhelpers.h"
 
 #include <goofit/Variable.h>
-
-
-
-
 
 #include <random>
 
@@ -50,8 +46,6 @@ TEST(Convolution, SimpleFit) {
     pdf.setData(&data);
 
     bool fitter = test_fitter(&pdf);
-    
-    
 
     EXPECT_TRUE(fitter);
     // EXPECT_LT(a1.getError(), .1);

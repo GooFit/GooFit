@@ -1,16 +1,12 @@
 #include <gtest/gtest.h>
 
+#include "testhelpers.h"
 #include <goofit/PDFs/basic/GaussianPdf.h>
 #include <goofit/PDFs/physics/IncoherentSumPdf.h>
 #include <goofit/PDFs/physics/ResonancePdf.h>
 #include <goofit/UnbinnedDataSet.h>
-#include "testhelpers.h"
 
 #include <goofit/Variable.h>
-
-
-
-
 
 #include <random>
 
@@ -214,8 +210,6 @@ TEST(IncoherentSumPdf, SimpleFit) {
     pdf.setDataSize(data.getNumEvents(), 3);
 
     bool fitter = test_fitter(&pdf);
-    
-    
 
     EXPECT_TRUE(fitter);
     // EXPECT_LT(alpha.getError(), .1);

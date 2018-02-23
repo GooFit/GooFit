@@ -124,12 +124,12 @@ class SpecialDalitzIntegrator : public thrust::unary_function<thrust::tuple<int,
 class SpecialComplexSum : public thrust::binary_function<ThreeComplex, ThreeComplex, ThreeComplex> {
   public:
     __host__ __device__ ThreeComplex operator()(ThreeComplex one, ThreeComplex two) {
-        return ThreeComplex(thrust::get<0>(one) + thrust::get<0>(two),
-                            thrust::get<1>(one) + thrust::get<1>(two),
-                            thrust::get<2>(one) + thrust::get<2>(two),
-                            thrust::get<3>(one) + thrust::get<3>(two),
-                            thrust::get<4>(one) + thrust::get<4>(two),
-                            thrust::get<5>(one) + thrust::get<5>(two));
+        return {thrust::get<0>(one) + thrust::get<0>(two),
+                thrust::get<1>(one) + thrust::get<1>(two),
+                thrust::get<2>(one) + thrust::get<2>(two),
+                thrust::get<3>(one) + thrust::get<3>(two),
+                thrust::get<4>(one) + thrust::get<4>(two),
+                thrust::get<5>(one) + thrust::get<5>(two)};
     }
 };
 

@@ -63,7 +63,6 @@ class DalitzPlotter {
 
     /// Fill a dataset with MC events
     void fillDataSetMC(UnbinnedDataSet &dataset, size_t nTotal) {
-
         // Setup random numbers
         std::random_device rd;
         std::mt19937 gen(rd());

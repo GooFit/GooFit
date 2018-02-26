@@ -407,14 +407,8 @@ target_compile_options(FeatureDetector PRIVATE
     $<BUILD_INTERFACE:${GOOFIT_OPTI}>
     )
 
-## format (warning suppesion only needed until next release)
-if(NOT DEFINED CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
-    set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE BOOL "")
-    add_subdirectory("extern/fmt")
-    unset(CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
-else()
-    add_subdirectory("extern/fmt")
-endif()
+## Format
+add_subdirectory("extern/fmt")
 set_target_properties(fmt PROPERTIES FOLDER extern)
 mark_as_advanced(FMT_CPPFORMAT FMT_DOC FMT_INSTALL FMT_PEDANTIC FMT_TEST FMT_USE_CPP11)
 target_link_libraries(GooFit_Common INTERFACE fmt)

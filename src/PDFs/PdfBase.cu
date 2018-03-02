@@ -197,9 +197,6 @@ __host__ void PdfBase::setIndices() {
 }
 
 __host__ void PdfBase::setData(DataSet *data) {
-    
-
-    
     if(dev_event_array) {
         gooFree(dev_event_array);
         cudaDeviceSynchronize();
@@ -220,7 +217,7 @@ __host__ void PdfBase::setData(DataSet *data) {
     BinnedDataSet *binned_data;
 
     // Do nothing if passed a nullptr (makes setData(getData()) safe)
-    if (data == nullptr) {
+    if(data == nullptr) {
         return;
     } else if((unbinned_data = dynamic_cast<UnbinnedDataSet *>(data))) {
         numEntries = data->getNumEvents();

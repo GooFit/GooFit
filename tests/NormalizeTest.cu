@@ -38,15 +38,18 @@ TEST(PDFComps, KnownNormalize) {
     ExpPdf exppdf{"exppdf", xvar, alpha};
     exppdf.setData(&data);
 
-    EXPECT_FLOAT_EQ(exppdf.normalize(), 10);
-    EXPECT_FLOAT_EQ(exppdf.normalize(), 10); // Just verifying that it does not crash
+    EXPECT_FLOAT_EQ(exppdf.integrate(0, 10), .5);
+    EXPECT_FLOAT_EQ(exppdf.normalize(), .5);
+    EXPECT_FLOAT_EQ(exppdf.normalize(), .5); // Just verifying that it does not crash
 
     FitManager fitter{&exppdf};
     fitter.setVerbosity(0);
+    fitter.fit();
 
+    EXPECT_NEAR(alpha.getValue(), -1.5, .05);
     EXPECT_FLOAT_EQ(exppdf.normalize(), 0.665099);
     EXPECT_FLOAT_EQ(exppdf.normalize(), 0.665099);
-    ; // Just verifying that it does not crash
+    // Just verifying that it does not crash
     EXPECT_FLOAT_EQ(exppdf.normalize(), exppdf.integrate(0, 10));
 }
 

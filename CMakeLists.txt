@@ -156,9 +156,16 @@ endif()
 
 include(PatchOpenMPApple)
 
+if(CMAKE_VERSION VERSION_LESS 3.8)
+    set(NEW_CUDA OFF)
+else()
+    set(NEW_CUDA ON)
+endif()
+
 # Auto device selection
 if(GOOFIT_DEVICE STREQUAL Auto)
     if(NEW_CUDA)
+        include(CheckLanguage)
         check_language(CUDA)
     else()
         find_package(CUDA 7.0)
@@ -268,12 +275,6 @@ if(GOOFIT_MPI)
     message(STATUS "where PROCS is the number of processors on which to execute the program, EXECUTABLE is the MPI program, and ARGS are the arguments to pass to the MPI program.")
 endif()
 
-if(CMAKE_VERSION VERSION_LESS 3.8)
-    set(NEW_CUDA OFF)
-else()
-    set(NEW_CUDA ON)
-endif()
-
 if(GOOFIT_DEVICE STREQUAL CUDA)
     # The old FindCUDA method
     if(NOT NEW_CUDA)
@@ -319,6 +320,11 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
             message(STATUS "Found CUDA ${CMAKE_CUDA_COMPILER_VERSION} at ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}")
         endif()
 
+
+        set(CUDA_TOOLKIT_ROOT_DIR "${CMAKE_CUDA_COMPILER}")
+        get_filename_component(CUDA_TOOLKIT_ROOT_DIR "${CUDA_TOOLKIT_ROOT_DIR}" DIRECTORY)
+        get_filename_component(CUDA_TOOLKIT_ROOT_DIR "${CUDA_TOOLKIT_ROOT_DIR}" DIRECTORY)
+        find_package(CUDA REQUIRED)
         include(CUDA)
 
         set(cuda_lang "$<COMPILE_LANGUAGE:CUDA>")
@@ -416,14 +422,8 @@ target_compile_options(FeatureDetector PRIVATE
     $<BUILD_INTERFACE:${GOOFIT_OPTI}>
     )
 
-## format (warning suppesion only needed until next release)
-if(NOT DEFINED CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
-    set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE BOOL "")
-    add_subdirectory("extern/fmt")
-    unset(CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
-else()
-    add_subdirectory("extern/fmt")
-endif()
+## Format
+add_subdirectory("extern/fmt")
 set_target_properties(fmt PROPERTIES FOLDER extern)
 mark_as_advanced(FMT_CPPFORMAT FMT_DOC FMT_INSTALL FMT_PEDANTIC FMT_TEST FMT_USE_CPP11)
 target_link_libraries(GooFit_Common INTERFACE fmt)

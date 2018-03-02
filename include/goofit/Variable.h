@@ -47,6 +47,8 @@ class Indexable {
         , lowerlimit(std::make_shared<fptype>(lowerlimit))
         , upperlimit(std::make_shared<fptype>(upperlimit)) {}
 
+    Indexable &operator=(const Indexable &) = delete;
+
     virtual ~Indexable() {
         if(value.use_count() == 1)
             GOOFIT_DEBUG("Destroying Indexable: {}", name);
@@ -120,6 +122,8 @@ class Observable : public Indexable {
 
     ~Observable() override = default;
 
+    Observable &operator=(const Observable &) = delete;
+
     /// Set the number of bins
     void setNumBins(size_t num) { *numbins = num; }
     /// Get the number of bins
@@ -157,8 +161,7 @@ class Variable : public Indexable {
 
     // These classes can now be duplicated safely. No pointers needed.
     Variable(const Variable &) = default;
-    Variable &operator=(const Variable &) = default;
-    Variable(Variable &&)                 = default;
+    Variable(Variable &&)      = default;
 
     /// This is a constant variable
     Variable(std::string n, fptype v)
@@ -179,6 +182,8 @@ class Variable : public Indexable {
         , fixed(std::make_shared<bool>(fix)) {}
 
     ~Variable() override = default;
+
+    Variable &operator=(const Variable &) = delete;
 
     /// Get the error
     fptype getError() const { return *error; }
@@ -245,6 +250,8 @@ class EventNumber : public Observable {
     }
 
     ~EventNumber() override = default;
+
+    EventNumber &operator=(const EventNumber &) = delete;
 
     /// Support var = 3
     const EventNumber &operator=(const fptype &val) {

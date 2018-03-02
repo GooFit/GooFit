@@ -36,7 +36,7 @@ doing maximum-likelihood fits with a familiar syntax.
   
 * A compiler supporting OpenMP and C++11 (GCC 4.8+, Clang, and Intel 17 tested, GCC 4.7 not supported)
 * Note that TBB is also available as a backend, but it still requires OpenMP to be present.
-* On macOS, this backend requires `brew install cliutils/apple/libomp` or a custom compiler
+* On macOS, this backend requires `brew install libomp` or a custom compiler
   
 </p></details>
   

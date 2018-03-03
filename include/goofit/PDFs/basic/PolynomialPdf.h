@@ -13,7 +13,7 @@ class PolynomialPdf : public GooPdf {
                   std::vector<Observable> obses,
                   std::vector<Variable> coeffs,
                   std::vector<Variable> offsets,
-                  unsigned int maxDegree);
+                  unsigned int maxDegree=0);
     __host__ fptype integrate(fptype lo, fptype hi) const override;
     //__host__ virtual bool hasAnalyticIntegral () const {return (1 == observables.size());}
     __host__ fptype getCoefficient(int coef) const;

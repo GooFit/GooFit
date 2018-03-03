@@ -55,10 +55,11 @@ class DalitzPlotter {
             }
         }
 
+        auto old = overallSignal->getData();
         overallSignal->setData(&data);
         signalDalitz->setDataSize(data.getNumEvents());
-
         pdfValues = overallSignal->getCompProbsAtDataPoints();
+        overallSignal->setData(old);
     }
 
     /// Fill a dataset with MC events

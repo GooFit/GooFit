@@ -12,6 +12,9 @@ using namespace pybind11::literals;
 
 void init_GooPdf(py::module &m) {
     py::class_<GooPdf, PdfBase>(m, "GooPdf")
+        .def("normalize", &GooPdf::normalize)
+        .def("copyParams", (void (GooPdf::*)()) &GooPdf::copyParams)
+        .def("normalize", &GooPdf::copyNormFactors)
         .def("makeGrid", &GooPdf::makeGrid)
         .def("evaluateAtPoints", &GooPdf::evaluateAtPoints)
         .def("setParameterConstantness", &GooPdf::setParameterConstantness)

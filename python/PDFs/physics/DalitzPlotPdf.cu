@@ -18,8 +18,7 @@ void init_DalitzPlotPdf(py::module &m) {
              "m13",
              "eventNumber",
              "decay",
-             "eff",
-             py::keep_alive<1, 6>(),
+             "eff"
              py::keep_alive<1, 7>())
         .def("setDataSize", &DalitzPlotPdf::setDataSize, "dataSize"_a, "evtSize"_a = 3);
 }

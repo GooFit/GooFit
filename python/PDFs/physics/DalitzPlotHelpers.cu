@@ -51,7 +51,13 @@ void init_DalitzPlotHelpers(py::module &m) {
              [](DecayInfo3 &self, ResonancePdf *toadd) { self.resonances.push_back(toadd); },
              "Append a resonance",
              "resonance"_a,
-             py::keep_alive<1, 2>());
+             py::keep_alive<1, 2>())
+        .def("__str__",
+             [](DecayInfo3 &self){
+                 return fmt::format("M={} GeV\nm1={}\nGeV\nm2={}\nm3={}\nrad={}\nN res: {}",
+                                    self.motherMass, self.daug1Mass, self.daug2Mass, self.daug3Mass,
+                                    self.meson_radius, self.resonances.size());
+             });
 
     py::class_<DecayInfo3t, DecayInfo3>(m, "DecayInfo3t")
         .def(py::init<Variable, Variable, Variable>(), "tau"_a, "xmixing"_a, "ymixing"_a)

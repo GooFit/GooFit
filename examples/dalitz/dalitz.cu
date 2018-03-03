@@ -320,9 +320,9 @@ DalitzPlotPdf *makeSignalPdf(Observable m12, Observable m13, EventNumber eventNu
 
     if(!eff) {
         // By default create a constant efficiency.
-        vector<Variable> offsets = {constantZero, constantZero};
+        vector<Variable> offsets       = {constantZero, constantZero};
         vector<Observable> observables = {m12, m13};
-        vector<Variable> coefficients = {constantOne};
+        vector<Variable> coefficients  = {constantOne};
 
         eff = new PolynomialPdf("constantEff", observables, coefficients, offsets, 0);
     }

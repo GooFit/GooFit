@@ -36,11 +36,9 @@ class DalitzPlotter {
         eventNumber.setValue(0);
 
         for(size_t i = 0; i < m12.getNumBins(); ++i) {
-            m12.setValue(m12.getLowerLimit()
-                         + (m12.getUpperLimit() - m12.getLowerLimit()) * (i + 0.5) / m12.getNumBins());
+            m12.setValue(m12.getLowerLimit() + m12.getBinSize() * (i + 0.5));
             for(size_t j = 0; j < m13.getNumBins(); ++j) {
-                m13.setValue(m13.getLowerLimit()
-                             + (m13.getUpperLimit() - m13.getLowerLimit()) * (j + 0.5) / m13.getNumBins());
+                m13.setValue(m13.getLowerLimit() + m13.getBinSize() * (j + 0.5));
                 if(inDalitz(m12.getValue(),
                             m13.getValue(),
                             signalDalitz->decayInfo.motherMass,

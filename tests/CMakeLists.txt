@@ -33,6 +33,7 @@ goofit_add_test(UnbinnedTest)
 goofit_add_test(NormalizeTest)
 goofit_add_test(BlindTest)
 goofit_add_test(VectorsTest)
+goofit_add_test(MonteCarloTest)
 
 if(ROOT_FOUND)
     goofit_add_test(Minuit1Test)

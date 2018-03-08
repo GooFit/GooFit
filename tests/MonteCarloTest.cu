@@ -1,11 +1,11 @@
 #include <gtest/gtest.h>
 
-#include <goofit/detail/MonteCarlo.h>
-#include <goofit/UnbinnedDataSet.h>
 #include <goofit/FitManager.h>
 #include <goofit/PDFs/basic/ExpPdf.h>
 #include <goofit/PDFs/basic/GaussianPdf.h>
 #include <goofit/PDFs/combine/ProdPdf.h>
+#include <goofit/UnbinnedDataSet.h>
+#include <goofit/detail/MonteCarlo.h>
 
 #include <goofit/Variable.h>
 

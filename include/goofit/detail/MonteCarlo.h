@@ -1,8 +1,8 @@
 #pragma once
 
 #include <goofit/PDFs/GooPdf.h>
-#include <goofit/Variable.h>
 #include <goofit/UnbinnedDataSet.h>
+#include <goofit/Variable.h>
 
 #include <algorithm>
 #include <numeric>
@@ -15,8 +15,8 @@ inline void fillDataSetMC1D(GooPdf &pdf, Observable var, size_t nTotal, unsigned
     UnbinnedDataSet data{var};
     data.fillWithGrid();
     auto origdata = pdf.getData();
-    
-    if (origdata == nullptr)
+
+    if(origdata == nullptr)
         throw GeneralError("Can't run on a PDF with no DataSet to fill!");
 
     pdf.setData(&data);

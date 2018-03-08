@@ -14,6 +14,8 @@ numpy = "*"
 
 [dev-packages]
 
+numba = "*"
+uncertainties = "*"
 pytest = "*"
 matplotlib = "*"
 pandas = "*"

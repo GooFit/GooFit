@@ -140,7 +140,7 @@ __host__ void PdfBase::populateArrays() {
     parametersIdx                    = totalParameters;
     totalParameters++;
     for(auto &i : parametersList) {
-        GOOFIT_TRACE("host_parameters[{}] = {}", totalParameters, parametersList[i].getValue());
+        GOOFIT_TRACE("host_parameters[{}] = {}", totalParameters, i.getValue());
         host_parameters[totalParameters] = i.getValue();
         totalParameters++;
     }
@@ -150,7 +150,7 @@ __host__ void PdfBase::populateArrays() {
     constantsIdx                   = totalConstants;
     totalConstants++;
     for(double i : constantsList) {
-        GOOFIT_TRACE("host_constants[{}] = {}", totalConstants, constantsList[i]);
+        GOOFIT_TRACE("host_constants[{}] = {}", totalConstants, i);
         host_constants[totalConstants] = i;
         totalConstants++;
     }
@@ -160,7 +160,7 @@ __host__ void PdfBase::populateArrays() {
     observablesIdx                     = totalObservables;
     totalObservables++;
     for(auto &i : observablesList) {
-        GOOFIT_TRACE("host_observables[{}] = {}", totalObservables, observablesList[i].getIndex());
+        GOOFIT_TRACE("host_observables[{}] = {}", totalObservables, i.getIndex());
         host_observables[totalObservables] = i.getIndex();
         totalObservables++;
     }

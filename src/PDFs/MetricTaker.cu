@@ -31,8 +31,7 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, fptype *, int> t) c
 
     fptype events[10];
 
-// pack our events into the event shared memory.
-#pragma unroll
+    // pack our events into the event shared memory.
     for(int i = 0; i < abs(eventSize); i++)
         events[i] = eventAddress[i];
 

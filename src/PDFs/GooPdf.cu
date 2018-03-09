@@ -340,6 +340,10 @@ __host__ std::vector<fptype> GooPdf::evaluateAtPoints(Observable var) {
     auto old = getData();
     setData(&tempdata);
 
+    normalize();
+
+    MEMCPY(d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), cudaMemcpyHostToDevice);
+
     thrust::counting_iterator<int> eventIndex(0);
     thrust::constant_iterator<int> eventSize(observablesList.size());
     thrust::constant_iterator<fptype *> arrayAddress(dev_event_array);
@@ -365,7 +369,9 @@ __host__ std::vector<fptype> GooPdf::evaluateAtPoints(Observable var) {
     res.resize(var.getNumBins());
 
     for(int i = 0; i < var.getNumBins(); ++i) {
-        res[i] = h_results[i] * host_normalisations[normalIdx];
+        fptype n = host_normalisations[normalIdx + 1];
+        fptype v = h_results[i];
+        res[i] = v * n;
     }
 
     if (old != nullptr)

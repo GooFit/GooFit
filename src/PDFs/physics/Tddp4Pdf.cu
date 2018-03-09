@@ -276,12 +276,10 @@ __host__ TDDP4::TDDP4(std::string n,
         // nPermVec.push_back(i->_nPerm);
         ++coeff_counter;
         // AmpBuffer.push_back(i);
-        unsigned int flag = 0;
         auto inB = std::find_if(AmpsB.begin(), AmpsB.end(), [AmpsA, &i](const Amplitude *A) { return *i == (*A); });
 
         if(inB != AmpsB.end()) {
             // printf("Found in AmpsB as well: %s\n", (*inB)->_uniqueDecayStr.c_str());
-            flag = 2;
             registerParameter((*inB)->_ar);
             registerParameter((*inB)->_ai);
             ++coeff_counter;
@@ -289,7 +287,6 @@ __host__ TDDP4::TDDP4(std::string n,
     }
 
     for(auto &i : AmpsB) {
-        unsigned int flag = 1;
         auto inB
             = std::find_if(AmpBuffer.begin(), AmpBuffer.end(), [AmpsB, &i](const Amplitude *A) { return *i == (*A); });
 

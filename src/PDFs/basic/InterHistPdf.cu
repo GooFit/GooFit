@@ -24,8 +24,6 @@ __device__ fptype device_InterHistogram(fptype *evt, ParameterContainer &pc) {
     fptype binDistances[10];                  // Ten dimensions should be more than enough!
     // Distance from bin center in units of bin width in each dimension.
 
-    unsigned int observablesSeen = 0;
-
     for(int i = 0; i < numVars; ++i) {
         fptype currVariable   = 0;
         unsigned int varIndex = pc.getConstant(2 + i * 4); // constantindices[2 + 4 * i];
@@ -137,7 +135,6 @@ __host__
 InterHistPdf::InterHistPdf(std::string n, BinnedDataSet *x, std::vector<Variable> params, std::vector<Observable> obses)
     : GooPdf(n)
     , numVars(x->numVariables()) {
-    int numConstants                    = 2 * numVars;
     static unsigned int totalHistograms = 0;
     totalEvents                         = 0;
 

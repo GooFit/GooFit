@@ -888,7 +888,6 @@ Lineshapes::GSpline::GSpline(std::string name,
     registerConstant(std::get<1>(SplineInfo));
     registerConstant(std::get<2>(SplineInfo));
 
-    int i = 11;
     for(auto &par : AdditionalVars) {
         registerParameter(par);
     }

@@ -170,8 +170,9 @@ class GooPdf : public PdfBase {
     __host__ TH1D *plotToROOT(Observable var, double normFactor = 1, std::string name = "");
 #endif
 
-  protected:
     __host__ void setIndices() override;
+
+  protected:
     __host__ virtual double sumOfNll(int numVars) const;
     std::shared_ptr<MetricTaker> logger;
 

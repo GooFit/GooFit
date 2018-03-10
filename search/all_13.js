@@ -6,6 +6,7 @@ var searchData=
   ['readfromfile',['readFromFile',['../namespace_goo_fit.html#a9b397dcab30d59057b23dec6da865bda',1,'GooFit']]],
   ['readlistofnumbers',['readListOfNumbers',['../namespace_goo_fit.html#aa124832d8f3db7469774f8b985340742',1,'GooFit']]],
   ['recalculatecache',['recalculateCache',['../class_goo_fit_1_1_resonance_pdf.html#a82fc3750f58a527d41113d4740b1860b',1,'GooFit::ResonancePdf::recalculateCache()'],['../class_goo_fit_1_1_resonances_1_1_spline.html#ab52663e5a47ee98d1424950d765c184b',1,'GooFit::Resonances::Spline::recalculateCache()']]],
+  ['recorded_5f',['recorded_',['../class_goo_fit_1_1_params.html#aac23a3698f315aabffb72c282c79be1c',1,'GooFit::Params']]],
   ['recursivesetnormalisation',['recursiveSetNormalisation',['../class_goo_fit_1_1_pdf_base.html#a6e644b78f7f436ff8a74a2412d9d0a60',1,'GooFit::PdfBase']]],
   ['red',['red',['../namespace_goo_fit.html#a7e27700e0a78d83f9533cf7667cd79ce',1,'GooFit']]],
   ['redointegral',['redoIntegral',['../class_goo_fit_1_1_dalitz_plot_pdf.html#ae3ef756e05a6b936d2dda690661eecf2',1,'GooFit::DalitzPlotPdf']]],

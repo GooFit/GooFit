@@ -9,6 +9,7 @@ var searchData=
   ['get4vecs',['get4Vecs',['../namespace_goo_fit.html#a38601ad9248b99df601a6bb7df7dc5d8',1,'GooFit']]],
   ['get_5fdevice',['get_device',['../class_goo_fit_1_1_application.html#a387ef68f25993ba8a7bf80d7efe72d94',1,'GooFit::Application']]],
   ['get_5ffilename',['get_filename',['../class_goo_fit_1_1_application.html#a661f5cfdf8df10d282595e67a5ebcd55',1,'GooFit::Application']]],
+  ['get_5frecorded',['get_recorded',['../class_goo_fit_1_1_params.html#acb8e638cd5f3a028c6e0e5d00d9f5c27',1,'GooFit::Params']]],
   ['getbincenter',['getBinCenter',['../class_goo_fit_1_1_binned_data_set.html#acb70e70699b4a5aaa69a4daa047e8df8',1,'GooFit::BinnedDataSet::getBinCenter(size_t ivar, size_t bin) const'],['../class_goo_fit_1_1_binned_data_set.html#a844a231fea27cc21c9728373d589d496',1,'GooFit::BinnedDataSet::getBinCenter(const Observable &amp;var, size_t bin) const']]],
   ['getbincontent',['getBinContent',['../class_goo_fit_1_1_binned_data_set.html#a8c9701e88474d20ac28415767961be09',1,'GooFit::BinnedDataSet']]],
   ['getbinerror',['getBinError',['../class_goo_fit_1_1_binned_data_set.html#a8281ad3a8e1f7297b777ac6f19153f1d',1,'GooFit::BinnedDataSet']]],

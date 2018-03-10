@@ -407,6 +407,8 @@ Functions</h2></td></tr>
 <tr class="memitem:a79b59535641d513de11902a985f1573b"><td class="memTemplParams" colspan="2">template&lt;&gt; </td></tr>
 <tr class="memitem:a79b59535641d513de11902a985f1573b"><td class="memTemplItemLeft" align="right" valign="top">__device__ Eigen::Array&lt; <a class="el" href="namespace_goo_fit.html#a5acf073890ff28ad2205334dfef1e039">fpcomplex</a>, 5, 5 &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#a79b59535641d513de11902a985f1573b">compute_inverse5&lt;-1, -1, 0, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 &gt;</a> (const Eigen::Array&lt; <a class="el" href="namespace_goo_fit.html#a5acf073890ff28ad2205334dfef1e039">fpcomplex</a>, 5, 5 &gt; &amp;M)</td></tr>
 <tr class="separator:a79b59535641d513de11902a985f1573b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac5972acf571d781c53e769ed081a92af"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#ac5972acf571d781c53e769ed081a92af">fillDataSetMC1D</a> (<a class="el" href="class_goo_fit_1_1_goo_pdf.html">GooPdf</a> &amp;pdf, <a class="el" href="class_goo_fit_1_1_observable.html">Observable</a> var, size_t nTotal, unsigned int seed=0)</td></tr>
+<tr class="separator:ac5972acf571d781c53e769ed081a92af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2e91d2b0f03e8480ed41b1098a8092ee"><td class="memTemplParams" colspan="2">template&lt;typename M &gt; </td></tr>
 <tr class="memitem:a2e91d2b0f03e8480ed41b1098a8092ee"><td class="memTemplItemLeft" align="right" valign="top">M&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#a2e91d2b0f03e8480ed41b1098a8092ee">read_csv</a> (std::string name, bool comma=true)</td></tr>
 <tr class="separator:a2e91d2b0f03e8480ed41b1098a8092ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1341,6 +1343,58 @@ template&lt;typename E &gt; </div>
 <div class="ttc" id="namespace_goo_fit_html_a5acf073890ff28ad2205334dfef1e039"><div class="ttname"><a href="namespace_goo_fit.html#a5acf073890ff28ad2205334dfef1e039">GooFit::fpcomplex</a></div><div class="ttdeci">thrust::complex&lt; fptype &gt; fpcomplex</div><div class="ttdef"><b>Definition:</b> <a href="_complex_8h_source.html#l00008">Complex.h:8</a></div></div>
 <div class="ttc" id="_faddeeva_8cpp_html_a4aa2c43b09c1300c334821f5507d6f71"><div class="ttname"><a href="_faddeeva_8cpp.html#a4aa2c43b09c1300c334821f5507d6f71">M_2PI</a></div><div class="ttdeci">#define M_2PI</div><div class="ttdef"><b>Definition:</b> <a href="_faddeeva_8cpp_source.html#l00010">Faddeeva.cpp:10</a></div></div>
 </div><!-- fragment -->
+</div>
+</div>
+<a id="ac5972acf571d781c53e769ed081a92af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac5972acf571d781c53e769ed081a92af">&#9670;&nbsp;</a></span>fillDataSetMC1D()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void GooFit::fillDataSetMC1D </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_goo_fit_1_1_goo_pdf.html">GooPdf</a> &amp;&#160;</td>
+          <td class="paramname"><em>pdf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_goo_fit_1_1_observable.html">Observable</a>&#160;</td>
+          <td class="paramname"><em>var</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>nTotal</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>seed</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_monte_carlo_8h_source.html#l00013">13</a> of file <a class="el" href="_monte_carlo_8h_source.html">MonteCarlo.h</a>.</p>
+
+<p class="reference">References <a class="el" href="_variable_8h_source.html#l00133">GooFit::Observable::getBinSize()</a>, <a class="el" href="class_goo_fit_1_1_goo_pdf.html#a7a0442151f4342b83dd7c297bf61177f">GooFit::GooPdf::getCompProbsAtDataPoints()</a>, <a class="el" href="class_goo_fit_1_1_pdf_base.html#aabf3fa472f5389f8e0769081ceb9b94f">GooFit::PdfBase::getData()</a>, <a class="el" href="class_goo_fit_1_1_pdf_base.html#a66f4263c6f999d60594ac13320092525">GooFit::PdfBase::setData()</a>, and <a class="el" href="_variable_8h_source.html#l00070">GooFit::Indexable::setValue()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;                                                                                               {</div><div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <span class="comment">// Setup bins</span></div><div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    UnbinnedDataSet data{var};</div><div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    data.fillWithGrid();</div><div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <span class="keyword">auto</span> origdata = pdf.getData();</div><div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;</div><div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <span class="keywordflow">if</span>(origdata == <span class="keyword">nullptr</span>)</div><div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        <span class="keywordflow">throw</span> GeneralError(<span class="stringliteral">&quot;Can&#39;t run on a PDF with no DataSet to fill!&quot;</span>);</div><div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div><div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    pdf.setData(&amp;data);</div><div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    std::vector&lt;double&gt; pdfValues = pdf.getCompProbsAtDataPoints()[0];</div><div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div><div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="comment">// Setup random numbers</span></div><div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keywordflow">if</span>(seed == 0) {</div><div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        std::random_device rd;</div><div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        seed = rd();</div><div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    }</div><div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    std::mt19937 gen(seed);</div><div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;</div><div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="comment">// Poisson distribution</span></div><div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    std::poisson_distribution&lt;&gt; d(nTotal);</div><div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keywordtype">size_t</span> num_events = d(gen);</div><div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div><div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="comment">// Uniform distribution</span></div><div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    std::uniform_real_distribution&lt;&gt; unihalf(-.5, .5);</div><div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    std::uniform_real_distribution&lt;&gt; uniwhole(0.0, 1.0);</div><div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div><div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="comment">// CumSum in other languages</span></div><div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    std::vector&lt;double&gt; integral(pdfValues.size());</div><div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    std::partial_sum(pdfValues.begin(), pdfValues.end(), integral.begin());</div><div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div><div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="comment">// Make this a 0-1 fraction by dividing by the end value</span></div><div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    std::for_each(integral.begin(), integral.end(), [&amp;integral](<span class="keywordtype">double</span> &amp;val) { val /= integral.back(); });</div><div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div><div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keywordflow">for</span>(<span class="keywordtype">size_t</span> i = 0; i &lt; num_events; i++) {</div><div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        <span class="keywordtype">double</span> r = uniwhole(gen);</div><div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div><div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        <span class="comment">// Binary search for integral[cell-1] &lt; r &lt; integral[cell]</span></div><div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="keywordtype">size_t</span> j = std::lower_bound(integral.begin(), integral.end(), r) - integral.begin();</div><div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div><div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <span class="comment">// Fill in the grid randomly</span></div><div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="keywordtype">double</span> varValue = data.getValue(var, j) + var.getBinSize() * unihalf(gen);</div><div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div><div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        var.setValue(varValue);</div><div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        origdata-&gt;addEvent();</div><div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    }</div><div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div><div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    pdf.setData(origdata);</div><div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;}</div></div><!-- fragment -->
 </div>
 </div>
 <a id="a64cd6331a52b1575d81b77026db2eabf"></a>
@@ -2903,7 +2957,7 @@ template&lt;typename M &gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Mar 3 2018 22:09:42 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Mar 10 2018 13:25:10 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

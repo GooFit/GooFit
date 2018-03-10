@@ -7,6 +7,7 @@ var searchData=
   ['scaledgaussianpdf_2eh',['ScaledGaussianPdf.h',['../_scaled_gaussian_pdf_8h.html',1,'']]],
   ['scan',['scan',['../class_goo_fit_1_1_goo_pdf.html#a4bf13dd0561c0d3cc7804104a1f77533',1,'GooFit::GooPdf']]],
   ['set_5fdevice',['set_device',['../class_goo_fit_1_1_application.html#af3c0ae28c31017e3aa715b6343b1c603',1,'GooFit::Application']]],
+  ['set_5frecord',['set_record',['../class_goo_fit_1_1_params.html#a7f0e3806672a5060b36f800fa727ab4d',1,'GooFit::Params']]],
   ['setbincontent',['setBinContent',['../class_goo_fit_1_1_binned_data_set.html#a07d77884d01b8d008bfa468fb2d2943a',1,'GooFit::BinnedDataSet']]],
   ['setbinerror',['setBinError',['../class_goo_fit_1_1_binned_data_set.html#adaa83d2caad2113b6e589e167e4f3757',1,'GooFit::BinnedDataSet']]],
   ['setblind',['setBlind',['../class_goo_fit_1_1_variable.html#ae4fa039e4045f6b6c2b72b88eee5e0fe',1,'GooFit::Variable']]],

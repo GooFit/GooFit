@@ -36,6 +36,7 @@ var searchData=
   ['dim',['dim',['../namespace_goo_fit.html#aabadbc0fa259fdaa2578047fec769745',1,'GooFit']]],
   ['dim5',['Dim5',['../struct_goo_fit_1_1_dim5.html',1,'GooFit::Dim5'],['../struct_goo_fit_1_1_dim5.html#a7762f3110ef3c9da7c14d5dcacf2791e',1,'GooFit::Dim5::Dim5()']]],
   ['div',['div',['../class_goo_fit_1_1_lorentz_matrix.html#a8c4e27b8a3dc1993154c364beaa1a66d',1,'GooFit::LorentzMatrix::div()'],['../class_goo_fit_1_1_symm_lorentz_matrix.html#a08530995bbfadc10d0e552cae23833fa',1,'GooFit::SymmLorentzMatrix::div()']]],
+  ['do_5frecord_5f',['do_record_',['../class_goo_fit_1_1_params.html#abbc15a445ecbb867b0b85e7961b884af',1,'GooFit::Params']]],
   ['documentation_2emd',['documentation.md',['../documentation_8md.html',1,'']]],
   ['dot',['Dot',['../class_goo_fit_1_1_spin_sum_v.html#ac0ed64c5f5ae15b18d57af96fe98aceb',1,'GooFit::SpinSumV']]],
   ['dp4_2ecu',['DP4.cu',['../_d_p4_8cu.html',1,'']]],

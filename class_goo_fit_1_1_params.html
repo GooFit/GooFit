@@ -103,6 +103,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a8250f36a7b6b8981191c063eb5673bc7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_params.html#a8250f36a7b6b8981191c063eb5673bc7">from_minuit_vector</a> (const std::vector&lt; double &gt; &amp;values, bool force_changed=false)</td></tr>
 <tr class="memdesc:a8250f36a7b6b8981191c063eb5673bc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set from a minuit vector. Optional force_changed to force complete recalculation.  <a href="#a8250f36a7b6b8981191c063eb5673bc7">More...</a><br /></td></tr>
 <tr class="separator:a8250f36a7b6b8981191c063eb5673bc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7f0e3806672a5060b36f800fa727ab4d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_params.html#a7f0e3806672a5060b36f800fa727ab4d">set_record</a> (bool do_record=true)</td></tr>
+<tr class="memdesc:a7f0e3806672a5060b36f800fa727ab4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set recording of Minuit parameter changes.  <a href="#a7f0e3806672a5060b36f800fa727ab4d">More...</a><br /></td></tr>
+<tr class="separator:a7f0e3806672a5060b36f800fa727ab4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb8e638cd5f3a028c6e0e5d00d9f5c27"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_params.html#acb8e638cd5f3a028c6e0e5d00d9f5c27">get_recorded</a> () const</td></tr>
+<tr class="memdesc:acb8e638cd5f3a028c6e0e5d00d9f5c27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get recorded values array.  <a href="#acb8e638cd5f3a028c6e0e5d00d9f5c27">More...</a><br /></td></tr>
+<tr class="separator:acb8e638cd5f3a028c6e0e5d00d9f5c27"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -112,6 +118,10 @@ Protected Attributes</h2></td></tr>
 <tr class="separator:a7dceaced89f295da0d2c45e9416b9a4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a425b06f8f100140f17e26226846d404f"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_params.html#a425b06f8f100140f17e26226846d404f">num_</a></td></tr>
 <tr class="separator:a425b06f8f100140f17e26226846d404f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abbc15a445ecbb867b0b85e7961b884af"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_params.html#abbc15a445ecbb867b0b85e7961b884af">do_record_</a> {false}</td></tr>
+<tr class="separator:abbc15a445ecbb867b0b85e7961b884af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aac23a3698f315aabffb72c282c79be1c"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_params.html#aac23a3698f315aabffb72c282c79be1c">recorded_</a></td></tr>
+<tr class="separator:aac23a3698f315aabffb72c282c79be1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
@@ -173,13 +183,47 @@ Protected Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="_params_8cpp_source.html#l00047">47</a> of file <a class="el" href="_params_8cpp_source.html">Params.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="class_goo_fit_1_1_pdf_base.html#a64fbdf57c854f83ead4f9bb5f1b3d40a">GooFit::PdfBase::copyParams()</a>, <a class="el" href="_variable_8cpp_source.html#l00008">GooFit::max_index()</a>, <a class="el" href="_params_8h_source.html#l00023">pdf_</a>, and <a class="el" href="_params_8h_source.html#l00022">vars_</a>.</p>
+<p class="reference">References <a class="el" href="class_goo_fit_1_1_pdf_base.html#a64fbdf57c854f83ead4f9bb5f1b3d40a">GooFit::PdfBase::copyParams()</a>, <a class="el" href="_params_8h_source.html#l00026">do_record_</a>, <a class="el" href="_variable_8cpp_source.html#l00008">GooFit::max_index()</a>, <a class="el" href="_params_8h_source.html#l00023">pdf_</a>, <a class="el" href="_params_8h_source.html#l00027">recorded_</a>, and <a class="el" href="_params_8h_source.html#l00022">vars_</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_f_c_n_8cpp_source.html#l00018">GooFit::FCN::operator()()</a>, and <a class="el" href="_params_8h_source.html#l00035">size()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;                                                                                   {</div><div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    std::vector&lt;double&gt; gooPars(<a class="code" href="namespace_goo_fit.html#a323abe3905e3c715c631f9eb7ba47503">max_index</a>(<a class="code" href="class_goo_fit_1_1_params.html#afb2d6f6b59db0d24ec17466ebe25ee76">vars_</a>) + 1);</div><div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div><div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keywordflow">for</span>(Variable &amp;var : <a class="code" href="class_goo_fit_1_1_params.html#afb2d6f6b59db0d24ec17466ebe25ee76">vars_</a>) {</div><div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        var.setChanged(force_changed ? <span class="keyword">true</span> : var.getValue() != values.at(var.getFitterIndex()));</div><div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        gooPars.at(var.getIndex()) = values.at(var.getFitterIndex()) - var.getBlind(Variable::Key());</div><div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    }</div><div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div><div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <a class="code" href="class_goo_fit_1_1_params.html#a7dceaced89f295da0d2c45e9416b9a4d">pdf_</a>-&gt;<a class="code" href="class_goo_fit_1_1_pdf_base.html#a64fbdf57c854f83ead4f9bb5f1b3d40a">copyParams</a>(gooPars);</div><div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;}</div><div class="ttc" id="class_goo_fit_1_1_params_html_afb2d6f6b59db0d24ec17466ebe25ee76"><div class="ttname"><a href="class_goo_fit_1_1_params.html#afb2d6f6b59db0d24ec17466ebe25ee76">GooFit::Params::vars_</a></div><div class="ttdeci">std::vector&lt; Variable &gt; vars_</div><div class="ttdef"><b>Definition:</b> <a href="_params_8h_source.html#l00022">Params.h:22</a></div></div>
+<p class="reference">Referenced by <a class="el" href="_f_c_n_8cpp_source.html#l00018">GooFit::FCN::operator()()</a>, and <a class="el" href="_params_8h_source.html#l00038">size()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;                                                                                   {</div><div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    std::vector&lt;double&gt; gooPars(<a class="code" href="namespace_goo_fit.html#a323abe3905e3c715c631f9eb7ba47503">max_index</a>(<a class="code" href="class_goo_fit_1_1_params.html#afb2d6f6b59db0d24ec17466ebe25ee76">vars_</a>) + 1);</div><div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div><div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keywordflow">for</span>(Variable &amp;var : <a class="code" href="class_goo_fit_1_1_params.html#afb2d6f6b59db0d24ec17466ebe25ee76">vars_</a>) {</div><div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        var.setChanged(force_changed ? <span class="keyword">true</span> : var.getValue() != values.at(var.getFitterIndex()));</div><div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        gooPars.at(var.getIndex()) = values.at(var.getFitterIndex()) - var.getBlind(Variable::Key());</div><div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    }</div><div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div><div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordflow">if</span>(<a class="code" href="class_goo_fit_1_1_params.html#abbc15a445ecbb867b0b85e7961b884af">do_record_</a>)</div><div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        <a class="code" href="class_goo_fit_1_1_params.html#aac23a3698f315aabffb72c282c79be1c">recorded_</a>.push_back(values);</div><div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div><div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <a class="code" href="class_goo_fit_1_1_params.html#a7dceaced89f295da0d2c45e9416b9a4d">pdf_</a>-&gt;<a class="code" href="class_goo_fit_1_1_pdf_base.html#a64fbdf57c854f83ead4f9bb5f1b3d40a">copyParams</a>(gooPars);</div><div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;}</div><div class="ttc" id="class_goo_fit_1_1_params_html_afb2d6f6b59db0d24ec17466ebe25ee76"><div class="ttname"><a href="class_goo_fit_1_1_params.html#afb2d6f6b59db0d24ec17466ebe25ee76">GooFit::Params::vars_</a></div><div class="ttdeci">std::vector&lt; Variable &gt; vars_</div><div class="ttdef"><b>Definition:</b> <a href="_params_8h_source.html#l00022">Params.h:22</a></div></div>
 <div class="ttc" id="namespace_goo_fit_html_a323abe3905e3c715c631f9eb7ba47503"><div class="ttname"><a href="namespace_goo_fit.html#a323abe3905e3c715c631f9eb7ba47503">GooFit::max_index</a></div><div class="ttdeci">int max_index(const std::vector&lt; Variable &gt; &amp;vars)</div><div class="ttdoc">Get the max index of a variable from a list. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8cpp_source.html#l00008">Variable.cpp:8</a></div></div>
 <div class="ttc" id="class_goo_fit_1_1_params_html_a7dceaced89f295da0d2c45e9416b9a4d"><div class="ttname"><a href="class_goo_fit_1_1_params.html#a7dceaced89f295da0d2c45e9416b9a4d">GooFit::Params::pdf_</a></div><div class="ttdeci">PdfBase * pdf_</div><div class="ttdef"><b>Definition:</b> <a href="_params_8h_source.html#l00023">Params.h:23</a></div></div>
 <div class="ttc" id="class_goo_fit_1_1_pdf_base_html_a64fbdf57c854f83ead4f9bb5f1b3d40a"><div class="ttname"><a href="class_goo_fit_1_1_pdf_base.html#a64fbdf57c854f83ead4f9bb5f1b3d40a">GooFit::PdfBase::copyParams</a></div><div class="ttdeci">__host__ void copyParams(const std::vector&lt; double &gt; &amp;pars) const</div></div>
+<div class="ttc" id="class_goo_fit_1_1_params_html_aac23a3698f315aabffb72c282c79be1c"><div class="ttname"><a href="class_goo_fit_1_1_params.html#aac23a3698f315aabffb72c282c79be1c">GooFit::Params::recorded_</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; double &gt; &gt; recorded_</div><div class="ttdef"><b>Definition:</b> <a href="_params_8h_source.html#l00027">Params.h:27</a></div></div>
+<div class="ttc" id="class_goo_fit_1_1_params_html_abbc15a445ecbb867b0b85e7961b884af"><div class="ttname"><a href="class_goo_fit_1_1_params.html#abbc15a445ecbb867b0b85e7961b884af">GooFit::Params::do_record_</a></div><div class="ttdeci">bool do_record_</div><div class="ttdef"><b>Definition:</b> <a href="_params_8h_source.html#l00026">Params.h:26</a></div></div>
+</div><!-- fragment -->
+</div>
+</div>
+<a id="acb8e638cd5f3a028c6e0e5d00d9f5c27"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acb8e638cd5f3a028c6e0e5d00d9f5c27">&#9670;&nbsp;</a></span>get_recorded()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;std::vector&lt;double&gt; &gt; GooFit::Params::get_recorded </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get recorded values array. </p>
+
+<p class="definition">Definition at line <a class="el" href="_params_8h_source.html#l00050">50</a> of file <a class="el" href="_params_8h_source.html">Params.h</a>.</p>
+
+<p class="reference">References <a class="el" href="_params_8h_source.html#l00027">recorded_</a>.</p>
+<div class="fragment"><div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;{ <span class="keywordflow">return</span> <a class="code" href="class_goo_fit_1_1_params.html#aac23a3698f315aabffb72c282c79be1c">recorded_</a>; }</div><div class="ttc" id="class_goo_fit_1_1_params_html_aac23a3698f315aabffb72c282c79be1c"><div class="ttname"><a href="class_goo_fit_1_1_params.html#aac23a3698f315aabffb72c282c79be1c">GooFit::Params::recorded_</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; double &gt; &gt; recorded_</div><div class="ttdef"><b>Definition:</b> <a href="_params_8h_source.html#l00027">Params.h:27</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -204,9 +248,42 @@ Protected Attributes</h2></td></tr>
 
 <p class="reference">References <a class="el" href="_variable_8cpp_source.html#l00028">GooFit::max_fitter_index()</a>, and <a class="el" href="_params_8h_source.html#l00022">vars_</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_f_c_n_8cpp_source.html#l00030">GooFit::FCN::operator()()</a>, and <a class="el" href="_params_8h_source.html#l00035">size()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_f_c_n_8cpp_source.html#l00030">GooFit::FCN::operator()()</a>, and <a class="el" href="_params_8h_source.html#l00038">size()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;                                                   {</div><div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    std::vector&lt;double&gt; minuitPars(<a class="code" href="namespace_goo_fit.html#ad7210fce6024cc8e384f8ea3c3bd6304">max_fitter_index</a>(<a class="code" href="class_goo_fit_1_1_params.html#afb2d6f6b59db0d24ec17466ebe25ee76">vars_</a>) + 1);</div><div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="keywordflow">for</span>(<span class="keyword">const</span> Variable &amp;var : <a class="code" href="class_goo_fit_1_1_params.html#afb2d6f6b59db0d24ec17466ebe25ee76">vars_</a>) {</div><div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        minuitPars.at(var.getFitterIndex()) = var.getValue();</div><div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    }</div><div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="keywordflow">return</span> minuitPars;</div><div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;}</div><div class="ttc" id="class_goo_fit_1_1_params_html_afb2d6f6b59db0d24ec17466ebe25ee76"><div class="ttname"><a href="class_goo_fit_1_1_params.html#afb2d6f6b59db0d24ec17466ebe25ee76">GooFit::Params::vars_</a></div><div class="ttdeci">std::vector&lt; Variable &gt; vars_</div><div class="ttdef"><b>Definition:</b> <a href="_params_8h_source.html#l00022">Params.h:22</a></div></div>
 <div class="ttc" id="namespace_goo_fit_html_ad7210fce6024cc8e384f8ea3c3bd6304"><div class="ttname"><a href="namespace_goo_fit.html#ad7210fce6024cc8e384f8ea3c3bd6304">GooFit::max_fitter_index</a></div><div class="ttdeci">int max_fitter_index(const std::vector&lt; Variable &gt; &amp;vars)</div><div class="ttdoc">Get the max fitter index of a variable from a list. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8cpp_source.html#l00028">Variable.cpp:28</a></div></div>
+</div><!-- fragment -->
+</div>
+</div>
+<a id="a7f0e3806672a5060b36f800fa727ab4d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7f0e3806672a5060b36f800fa727ab4d">&#9670;&nbsp;</a></span>set_record()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void GooFit::Params::set_record </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>do_record</em> = <code>true</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set recording of Minuit parameter changes. </p>
+
+<p class="definition">Definition at line <a class="el" href="_params_8h_source.html#l00047">47</a> of file <a class="el" href="_params_8h_source.html">Params.h</a>.</p>
+
+<p class="reference">References <a class="el" href="_params_8h_source.html#l00026">do_record_</a>.</p>
+<div class="fragment"><div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;{ <a class="code" href="class_goo_fit_1_1_params.html#abbc15a445ecbb867b0b85e7961b884af">do_record_</a> = do_record; }</div><div class="ttc" id="class_goo_fit_1_1_params_html_abbc15a445ecbb867b0b85e7961b884af"><div class="ttname"><a href="class_goo_fit_1_1_params.html#abbc15a445ecbb867b0b85e7961b884af">GooFit::Params::do_record_</a></div><div class="ttdeci">bool do_record_</div><div class="ttdef"><b>Definition:</b> <a href="_params_8h_source.html#l00026">Params.h:26</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -260,14 +337,40 @@ Protected Attributes</h2></td></tr>
 
 <p>Get the number of params in the fit. </p>
 
-<p class="definition">Definition at line <a class="el" href="_params_8h_source.html#l00035">35</a> of file <a class="el" href="_params_8h_source.html">Params.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_params_8h_source.html#l00038">38</a> of file <a class="el" href="_params_8h_source.html">Params.h</a>.</p>
 
 <p class="reference">References <a class="el" href="_params_8cpp_source.html#l00047">from_minuit_vector()</a>, and <a class="el" href="_params_8cpp_source.html#l00039">make_minuit_vector()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;{ <span class="keywordflow">return</span> <a class="code" href="class_goo_fit_1_1_params.html#afb2d6f6b59db0d24ec17466ebe25ee76">vars_</a>.size(); };</div><div class="ttc" id="class_goo_fit_1_1_params_html_afb2d6f6b59db0d24ec17466ebe25ee76"><div class="ttname"><a href="class_goo_fit_1_1_params.html#afb2d6f6b59db0d24ec17466ebe25ee76">GooFit::Params::vars_</a></div><div class="ttdeci">std::vector&lt; Variable &gt; vars_</div><div class="ttdef"><b>Definition:</b> <a href="_params_8h_source.html#l00022">Params.h:22</a></div></div>
+<div class="fragment"><div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;{ <span class="keywordflow">return</span> <a class="code" href="class_goo_fit_1_1_params.html#afb2d6f6b59db0d24ec17466ebe25ee76">vars_</a>.size(); };</div><div class="ttc" id="class_goo_fit_1_1_params_html_afb2d6f6b59db0d24ec17466ebe25ee76"><div class="ttname"><a href="class_goo_fit_1_1_params.html#afb2d6f6b59db0d24ec17466ebe25ee76">GooFit::Params::vars_</a></div><div class="ttdeci">std::vector&lt; Variable &gt; vars_</div><div class="ttdef"><b>Definition:</b> <a href="_params_8h_source.html#l00022">Params.h:22</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
+<a id="abbc15a445ecbb867b0b85e7961b884af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abbc15a445ecbb867b0b85e7961b884af">&#9670;&nbsp;</a></span>do_record_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool GooFit::Params::do_record_ {false}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_params_8h_source.html#l00026">26</a> of file <a class="el" href="_params_8h_source.html">Params.h</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="_params_8cpp_source.html#l00047">from_minuit_vector()</a>, and <a class="el" href="_params_8h_source.html#l00047">set_record()</a>.</p>
+
+</div>
+</div>
 <a id="a425b06f8f100140f17e26226846d404f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a425b06f8f100140f17e26226846d404f">&#9670;&nbsp;</a></span>num_</h2>
 
@@ -318,6 +421,32 @@ Protected Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="aac23a3698f315aabffb72c282c79be1c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aac23a3698f315aabffb72c282c79be1c">&#9670;&nbsp;</a></span>recorded_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;std::vector&lt;double&gt; &gt; GooFit::Params::recorded_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_params_8h_source.html#l00027">27</a> of file <a class="el" href="_params_8h_source.html">Params.h</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="_params_8cpp_source.html#l00047">from_minuit_vector()</a>, and <a class="el" href="_params_8h_source.html#l00050">get_recorded()</a>.</p>
+
+</div>
+</div>
 <a id="afb2d6f6b59db0d24ec17466ebe25ee76"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afb2d6f6b59db0d24ec17466ebe25ee76">&#9670;&nbsp;</a></span>vars_</h2>
 
@@ -351,7 +480,7 @@ Protected Attributes</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Mar 3 2018 22:09:43 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Mar 10 2018 13:25:11 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

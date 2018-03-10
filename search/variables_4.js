@@ -8,5 +8,6 @@ var searchData=
   ['daug3mass',['daug3Mass',['../struct_goo_fit_1_1_decay_info3.html#a3fbe729bfdd8c719ab0c24dc4a787c9c',1,'GooFit::DecayInfo3']]],
   ['decayinfo',['decayInfo',['../class_goo_fit_1_1_dalitz_plot_pdf.html#a364121a06f72ce319be01843599ff030',1,'GooFit::DalitzPlotPdf']]],
   ['dev_5fevent_5farray',['dev_event_array',['../namespace_goo_fit.html#a4ad01ef84a1703f19e96a2eb711cf455',1,'GooFit']]],
-  ['dim',['dim',['../namespace_goo_fit.html#aabadbc0fa259fdaa2578047fec769745',1,'GooFit']]]
+  ['dim',['dim',['../namespace_goo_fit.html#aabadbc0fa259fdaa2578047fec769745',1,'GooFit']]],
+  ['do_5frecord_5f',['do_record_',['../class_goo_fit_1_1_params.html#abbc15a445ecbb867b0b85e7961b884af',1,'GooFit::Params']]]
 ];

@@ -114,7 +114,7 @@ To make a source package, start with a clean (such as new) git GooFit package wi
     git clone --branch=master --recursive --depth=10 git@github.com:GooFit/GooFit.git
     cd goofit
     python setup.py sdist
-    twine upload dist/*
+    python -m twine upload dist/*
 
 To make a binary package, use instead::
 

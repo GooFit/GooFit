@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.4)
 
 project(GOOFIT
-    VERSION 2.1.2
+    VERSION 2.1.3
     LANGUAGES CXX)
 
-#set(GOOFIT_TAG "dev")
+set(GOOFIT_TAG "dev")
 #set(GOOFIT_TAG "alpha")
 #set(GOOFIT_TAG "beta")
-set(GOOFIT_TAG "release")
+#set(GOOFIT_TAG "release")
 
 ### Require out-of-source builds
 file(TO_CMAKE_PATH "${PROJECT_BINARY_DIR}/CMakeLists.txt" LOC_PATH)

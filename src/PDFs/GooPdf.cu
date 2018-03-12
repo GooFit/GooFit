@@ -657,6 +657,8 @@ __host__ void GooPdf::setFitControl(std::shared_ptr<FitControl> fc) {
     fitControl = fc;
 
     setMetrics();
+
+    setIndices();
 }
 
 #ifdef ROOT_FOUND

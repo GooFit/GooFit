@@ -17,6 +17,7 @@ var searchData=
   ['getbinsize',['getBinSize',['../class_goo_fit_1_1_binned_data_set.html#a27239c10fcff2f991cd3503567190459',1,'GooFit::BinnedDataSet::getBinSize()'],['../class_goo_fit_1_1_observable.html#ad73a4551c32625c26f704c877dd16879',1,'GooFit::Observable::getBinSize()']]],
   ['getbinvolume',['getBinVolume',['../class_goo_fit_1_1_binned_data_set.html#adb5c37c6f88a73ff41a699ad8add9e6f',1,'GooFit::BinnedDataSet']]],
   ['getblind',['getBlind',['../class_goo_fit_1_1_variable.html#a978c8907bf6a00fda862363bee5a4e62',1,'GooFit::Variable']]],
+  ['getcachedwave',['getCachedWave',['../class_goo_fit_1_1_dalitz_plot_pdf.html#a45d732bf8be1ecfdced78d635680b647',1,'GooFit::DalitzPlotPdf']]],
   ['getcalctauidx',['getCalcTauIdx',['../class_goo_fit_1_1_mixing_time_resolution.html#a15a5003f49fe8ee4477e332bf7f342d8',1,'GooFit::MixingTimeResolution']]],
   ['getchanged',['getChanged',['../class_goo_fit_1_1_variable.html#a24213ebb2ac105c0d67e8bee3c022c1f',1,'GooFit::Variable']]],
   ['getcoefficient',['getCoefficient',['../class_goo_fit_1_1_polynomial_pdf.html#af1fc0b4bc63b6ecb061cab192dc21a5b',1,'GooFit::PolynomialPdf']]],

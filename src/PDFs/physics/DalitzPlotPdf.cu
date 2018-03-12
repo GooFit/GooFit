@@ -317,6 +317,14 @@ __host__ fptype DalitzPlotPdf::normalize() const {
     return ret;
 }
 
+__host__ fpcomplex DalitzPlotPdf::sumCachedWave(size_t i) const {
+    const thrust::device_vector<fpcomplex> &vec = getCachedWave(i);
+
+    fpcomplex ret = thrust::reduce(vec.begin(), vec.end(), fpcomplex(0, 0), thrust::plus<fpcomplex>());
+
+    return ret;
+}
+
 SpecialResonanceIntegrator::SpecialResonanceIntegrator(int pIdx, unsigned int ri, unsigned int rj)
     : resonance_i(ri)
     , resonance_j(rj)

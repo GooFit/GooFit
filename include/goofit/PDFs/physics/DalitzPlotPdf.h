@@ -27,6 +27,12 @@ class DalitzPlotPdf : public GooPdf {
     __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 3);
     __host__ void setForceIntegrals(bool f = true) { forceRedoIntegrals = f; }
 
+    // Get the cached wave (device) vectors
+    __host__ const thrust::device_vector<fpcomplex> &getCachedWave(size_t i) const { return *(cachedWaves[i]); }
+
+    // Sum up a cached wave
+    __host__ fpcomplex sumCachedWave(size_t i) const;
+
     friend DalitzPlotter;
 
   protected:

@@ -1,5 +1,8 @@
+#include <pybind11/complex.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+
+#include <thrust/copy.h>
 
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <goofit/PDFs/physics/DalitzPlotPdf.h>
@@ -21,5 +24,16 @@ void init_DalitzPlotPdf(py::module &m) {
              "eff",
              py::keep_alive<1, 6>(), // Important to keep decay alive, to keep PDFs alive
              py::keep_alive<1, 7>())
-        .def("setDataSize", &DalitzPlotPdf::setDataSize, "dataSize"_a, "evtSize"_a = 3);
+        .def("setDataSize", &DalitzPlotPdf::setDataSize, "dataSize"_a, "evtSize"_a = 3)
+        .def("getCachedWave",
+             [](DalitzPlotPdf &self, size_t i) {
+                 auto ret_thrust = self.getCachedWave(i);
+                 std::vector<std::complex<fptype>> ret(ret_thrust.size());
+                 thrust::copy(ret_thrust.begin(), ret_thrust.end(), ret.begin());
+                 return ret;
+             },
+             "i"_a)
+        .def("sumCachedWave",
+             [](DalitzPlotPdf &self, size_t i) { return std::complex<fptype>(self.sumCachedWave(i)); },
+             "i"_a);
 }

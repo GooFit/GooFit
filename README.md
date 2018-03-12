@@ -11,7 +11,7 @@
 GooFit is a massively-parallel framework, written using Thrust for CUDA and OpenMP, for
 doing maximum-likelihood fits with a familiar syntax.
 
-[What's new](./CHANGELOG.md)
+[What's new](./docs/CHANGELOG.md)
 • [Tutorials]
 • [API documentation]
 • [2.0 upgrade](./docs/CONVERTING20.md)
@@ -222,7 +222,7 @@ See [CLI11] for more details. The [pipipi0](./examples/pipipi0DPFit) example has
 
 The other key differences in code are the addition of the `GooFit` namespace (`using namespace GooFit` allows fast conversion), and the removal of direct access to members of `Variable` (using getters/setters, or directly treat the variable like its value).
 
-See Converting to [GooFit 2.0](./docs/CONVERTING20.md), [GooFit 2.1](./docs/CONVERTING21.md), and the [Changelog](./CHANGELOG.md).
+See Converting to [GooFit 2.0](./docs/CONVERTING20.md), [GooFit 2.1](./docs/CONVERTING21.md), and the [Changelog](./docs/CHANGELOG.md).
 
 </p></details>
 

@@ -1,8 +1,12 @@
 graft cmake
+graft docs
+prune docs/html
 graft extern
-graft python
-graft include
 graft goofit
+graft include
+graft python
+graft scripts
 graft src
 graft tests
-include CMakeLists.txt LICENSE CONTRIBUTING.md CHANGELOG.md Pipfile requirements.txt README.md
+recursive-exclude .git
+include CMakeLists.txt LICENSE Pipfile requirements.txt README.md setup.py

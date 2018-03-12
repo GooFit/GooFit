@@ -33,6 +33,7 @@ setup(
         ],
         cmake_args=[
             '-DGOOFIT_PYTHON=ON',
+            '-DGOOFIT_CERNROOT=OFF',
             '-DGOOFIT_EXAMPLES=OFF'],
         license="LGPL 3.0",
         packages=['goofit'],

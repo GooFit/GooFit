@@ -27,7 +27,7 @@
 	url = ../FeatureDetector.git
 [submodule "extern/fmt"]
 	path = extern/fmt
-	url = ../../fmtlib/fmt.git
+	url = https://github.com/fmtlib/fmt
 [submodule "extern/sanitizers"]
 	path = extern/sanitizers
 	url = ../../arsenm/sanitizers-cmake.git

@@ -5,6 +5,8 @@ except ImportError:
     print("Failed to find scikit-build, please run `pip install scikit-build cmake`")
     raise
 
+from setuptools import find_packages
+
 setup(
         name='goofit',
         version='2.1.2',
@@ -36,7 +38,7 @@ setup(
             '-DGOOFIT_CERNROOT=OFF',
             '-DGOOFIT_EXAMPLES=OFF'],
         license="LGPL 3.0",
-        packages=['goofit'],
+        packages=find_packages(),
         extras_require={
             'dev': [
                 'pytest',

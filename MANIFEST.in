@@ -8,5 +8,5 @@ graft python
 graft scripts
 graft src
 graft tests
-recursive-exclude .git
-include CMakeLists.txt LICENSE Pipfile requirements.txt README.md setup.py
+global-exclude .git*
+include CMakeLists.txt LICENSE Pipfile README.md setup.py

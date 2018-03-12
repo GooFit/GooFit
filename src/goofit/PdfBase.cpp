@@ -56,7 +56,7 @@ __host__ void PdfBase::recursiveSetNormalisation(fptype norm) const {
 }
 
 __host__ unsigned int PdfBase::registerParameter(Variable var) {
-    //if(find_in(parametersList, var))
+    // if(find_in(parametersList, var))
     //    throw GeneralError("This var {} was registered twice", var.getName());
 
     parametersList.push_back(var);

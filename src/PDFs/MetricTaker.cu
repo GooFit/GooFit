@@ -38,8 +38,8 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, fptype *, int> t) c
     int idx = abs(eventSize - 2);
     if(idx < 0)
         idx = 0;
-    fptype obs  = events[idx];
-    fptype norm = RO_CACHE(pc.normalisations[pc.normalIdx + 1]);
+    //fptype obs  = events[idx];
+    fptype norm = pc.getNormalisation(0);
 
     // Causes stack size to be statically undeterminable.
     fptype ret = callFunction(events, pc);
@@ -49,7 +49,7 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, fptype *, int> t) c
     // the structure of the event is (obs1 obs2... binentry binvolume), so that the array
     // passed to the metric consists of (binentry binvolume).
 
-    ret = (*(reinterpret_cast<device_metric_ptr>(device_function_table[pc.funcIdx])))(ret, obs, norm);
+    ret = (*(reinterpret_cast<device_metric_ptr>(device_function_table[pc.funcIdx])))(ret, eventAddress + (abs(eventSize) - 2), norm);
     return ret;
 }
 
@@ -80,7 +80,7 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, int, fptype *> t) c
         pc.incrementIndex(); // need to use the slow version, since we are not starting from index 0.
 
     // put our index here...
-    int id = RO_CACHE(pc.observables[pc.observableIdx + 1]);
+    int id = pc.getObservable(0);
 
     for(int i = 0; i < evtSize; ++i) {
         fptype lowerBound = thrust::get<2>(t)[3 * i + 0];

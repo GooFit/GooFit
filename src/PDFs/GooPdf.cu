@@ -39,6 +39,7 @@ __device__ fptype d_constants[maxParams];
 __device__ fptype d_observables[maxParams];
 __device__ fptype d_normalisations[maxParams];
 
+__constant__ unsigned int c_totalEvents;
 __constant__ fptype c_motherMass;
 __constant__ fptype c_daug1Mass;
 __constant__ fptype c_daug2Mass;
@@ -101,12 +102,12 @@ void printMemoryStatus(std::string file, int line) {
               << (memtotal - memfree) << std::endl;
 }
 
-__device__ fptype calculateEval(fptype rawPdf, fptype evtVal, fptype norm) {
+__device__ fptype calculateEval(fptype rawPdf, fptype *evtVal, fptype norm) {
     // Just return the raw PDF value, for use in (eg) normalisation.
     return rawPdf;
 }
 
-__device__ fptype calculateNLL(fptype rawPdf, fptype evtVal, fptype norm) {
+__device__ fptype calculateNLL(fptype rawPdf, fptype *evtVal, fptype norm) {
     // if ((10 > callnumber) && (THREADIDX < 10) && (BLOCKIDX == 0)) cuPrintf("calculateNll %i %f %f %f\n", callnumber,
     // rawPdf, normalisationFactors[par], rawPdf*normalisationFactors[par]);  if (THREADIDX < 50) printf("Thread %i %f
     // %f\n", THREADIDX, rawPdf, normalisationFactors[par]);
@@ -114,27 +115,27 @@ __device__ fptype calculateNLL(fptype rawPdf, fptype evtVal, fptype norm) {
     return rawPdf > 0.0 ? -log(rawPdf) : 0.0;
 }
 
-__device__ fptype calculateProb(fptype rawPdf, fptype evtVal, fptype norm) {
+__device__ fptype calculateProb(fptype rawPdf, fptype *evtVal, fptype norm) {
     // Return probability, ie normalized PDF value.
     return rawPdf * norm;
 }
 
-__device__ fptype calculateBinAvg(fptype rawPdf, fptype evtVal, fptype norm) {
+__device__ fptype calculateBinAvg(fptype rawPdf, fptype *evtVal, fptype norm) {
     // TODO:(brad) address these metric devices later
     rawPdf *= norm;
-    rawPdf *= evtVal; // Bin volume
+    rawPdf *= evtVal[1]; // Bin volume
 
     // Log-likelihood of numEvents with expectation of exp is (-exp + numEvents*ln(exp) - ln(numEvents!)).
     // The last is constant, so we drop it; and then multiply by minus one to get the negative log-likelihood.
     if(rawPdf > 0) {
-        // fptype expEvents = functorConstants[0]*rawPdf;
-        // return (expEvents - evtVal*log(expEvents));
+        fptype expEvents = c_totalEvents*rawPdf;
+        return (expEvents - evtVal[0]*log(expEvents));
     }
 
     return 0;
 }
 
-__device__ fptype calculateBinWithError(fptype rawPdf, fptype evtVal, fptype norm) {
+__device__ fptype calculateBinWithError(fptype rawPdf, fptype *evtVal, fptype norm) {
     // TODO:(brad) address these metric devices later
 
     // In this case interpret the rawPdf as just a number, not a number of events.
@@ -142,19 +143,18 @@ __device__ fptype calculateBinWithError(fptype rawPdf, fptype evtVal, fptype nor
     // and do not collect 200 dollars. evtVal should have the structure (bin entry, bin error).
     // printf("[%i, %i] ((%f - %f) / %f)^2 = %f\n", BLOCKIDX, THREADIDX, rawPdf, evtVal[0], evtVal[1], pow((rawPdf -
     // evtVal[0]) / evtVal[1], 2));
-    rawPdf -= evtVal; // Subtract observed value.
-    // rawPdf /= evtVal[1]; // Divide by error.
+    rawPdf -= evtVal[0]; // Subtract observed value.
+    rawPdf /= evtVal[1]; // Divide by error.
     rawPdf *= rawPdf;
     return rawPdf;
 }
 
-__device__ fptype calculateChisq(fptype rawPdf, fptype evtVal, fptype norm) {
+__device__ fptype calculateChisq(fptype rawPdf, fptype *evtVal, fptype norm) {
     // TODO:(brad) address these metric devices later
     rawPdf *= norm;
-    rawPdf *= evtVal; // Bin volume
+    rawPdf *= evtVal[1]; // Bin volume
 
-    // return POW2(rawPdf * functorConstants[0] - evtVal[0]) / (evtVal[0] > 1 ? evtVal[0] : 1);
-    return rawPdf;
+    return POW2(rawPdf * c_totalEvents - evtVal[0]) / (evtVal[0] > 1 ? evtVal[0] : 1);
 }
 
 __device__ device_metric_ptr ptr_to_Eval         = calculateEval;
@@ -191,6 +191,9 @@ __host__ void GooPdf::setIndices() {
     // If not set, perform unbinned Nll fit!
     if(!fitControl)
         setFitControl(std::make_shared<UnbinnedNllFit>());
+
+    //Ensure that we properly populate *logger with the correct metric
+    setMetrics();
 
     GOOFIT_DEBUG("GooPdf::setIndices!");
     PdfBase::setIndices();

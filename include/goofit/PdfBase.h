@@ -32,6 +32,7 @@ extern fptype host_constants[maxParams];
 extern fptype host_observables[maxParams];
 extern fptype host_normalisations[maxParams];
 
+extern __constant__ unsigned int c_totalEvents;
 extern int totalParameters;
 extern int totalConstants;
 extern int totalObservables;

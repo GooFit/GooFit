@@ -5,8 +5,6 @@ except ImportError:
     print("Failed to find scikit-build, please run `pip install scikit-build cmake`")
     raise
 
-from setuptools import find_packages
-
 setup(
         name='goofit',
         version='2.1.2',
@@ -38,7 +36,7 @@ setup(
             '-DGOOFIT_CERNROOT=OFF',
             '-DGOOFIT_EXAMPLES=OFF'],
         license="LGPL 3.0",
-        packages=find_packages(),
+        packages=['goofit'],
         extras_require={
             'dev': [
                 'pytest',
@@ -118,6 +116,18 @@ To make a source package, start with a clean (such as new) git GooFit package wi
     python setup.py sdist
     twine upload dist/*
 
+To make a binary package, use instead::
+
+    python setup.py bdist_wheel -- -DGOOFIT_OPTI="-march=core2"
+
 '''
         )
+
+# To set this up on Docker for linux, use::
+#
+#    docker run -it quay.io/pypa/manylinux1_x86_64 -v goofit-py:goofit-py
+#    export PATH=/opt/python/cp36-cp36m/bin:$PATH
+#    cd goofit-py
+#    python -m pip install scikit-build cmake
+#    python setup.py bdist_wheel -- -DGOOFIT_OPTI="-march=core2"
 

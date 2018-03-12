@@ -7,7 +7,7 @@ except ImportError:
 
 setup(
         name='goofit',
-        version='2.1.1',
+        version='2.1.2',
         description='GooFit fitting package',
         author='Henry Schreiner',
         author_email='hschrein@cern.ch',

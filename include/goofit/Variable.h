@@ -157,8 +157,6 @@ class Variable : public Indexable {
 
     // These classes can now be duplicated safely. No pointers needed.
     Variable(const Variable &) = default;
-    Variable &operator=(const Variable &) = default;
-    Variable(Variable &&)                 = default;
 
     /// This is a constant variable
     Variable(std::string n, fptype v)

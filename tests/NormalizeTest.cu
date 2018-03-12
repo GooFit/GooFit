@@ -37,6 +37,7 @@ TEST(PDFComps, KnownNormalize) {
     // GooPdf object
     ExpPdf exppdf{"exppdf", xvar, alpha};
     exppdf.setData(&data);
+    exppdf.copyParams();
 
     EXPECT_FLOAT_EQ(exppdf.integrate(0, 10), 0.5);
     EXPECT_FLOAT_EQ(exppdf.normalize(), 0.5);
@@ -46,9 +47,10 @@ TEST(PDFComps, KnownNormalize) {
     fitter.setVerbosity(0);
     fitter.fit();
 
+    EXPECT_NEAR(alpha.getValue(), -1.5, .05);
     EXPECT_FLOAT_EQ(exppdf.normalize(), 0.665099);
     EXPECT_FLOAT_EQ(exppdf.normalize(), 0.665099);
-    ; // Just verifying that it does not crash
+    // Just verifying that it does not crash
     EXPECT_FLOAT_EQ(exppdf.normalize(), exppdf.integrate(0, 10));
 }
 
@@ -180,7 +182,7 @@ TEST(PDFComps, OneDEval) {
     EXPECT_FLOAT_EQ(v[40], 0.157287605852);
     EXPECT_FLOAT_EQ(v[60], 0.0938855055588);
 
-    std::cout << gauss.normalize() << std::endl;
+    EXPECT_FLOAT_EQ(gauss.normalize(), 6.26657);
 
     xvar = 1.2;
     EXPECT_FLOAT_EQ(gauss.getValue(EvalFunc::Prob), 0.15843208471746245);

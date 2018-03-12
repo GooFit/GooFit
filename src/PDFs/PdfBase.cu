@@ -204,8 +204,9 @@ __host__ void PdfBase::setData(DataSet *data) {
         m_iEventsPerTask = 0;
     }
 
-    // fine to set static integer value for variables (prod->gauss [somVar->getObservableIndex()]
-    //                                                    ->exp [someVar->getObservableIndex()]
+    // fine to set static integer value for variables
+    // (prod->gauss [somVar->getObservableIndex()]
+    //    ->exp [someVar->getObservableIndex()]
     setupObservables();
     setIndices();
 
@@ -215,7 +216,10 @@ __host__ void PdfBase::setData(DataSet *data) {
     UnbinnedDataSet *unbinned_data;
     BinnedDataSet *binned_data;
 
-    if((unbinned_data = dynamic_cast<UnbinnedDataSet *>(data))) {
+    // Do nothing if passed a nullptr (makes setData(getData()) safe)
+    if(data == nullptr) {
+        return;
+    } else if((unbinned_data = dynamic_cast<UnbinnedDataSet *>(data))) {
         numEntries = data->getNumEvents();
         numEvents  = numEntries;
 

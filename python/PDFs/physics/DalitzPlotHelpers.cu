@@ -55,9 +55,9 @@ void init_DalitzPlotHelpers(py::module &m) {
 
     py::class_<DecayInfo3t, DecayInfo3>(m, "DecayInfo3t")
         .def(py::init<Variable, Variable, Variable>(), "tau"_a, "xmixing"_a, "ymixing"_a)
-        .def_readwrite("_tau", &DecayInfo3t::_tau)
-        .def_readwrite("_xmixing", &DecayInfo3t::_xmixing)
-        .def_readwrite("_ymixing", &DecayInfo3t::_ymixing);
+        .def_readonly("_tau", &DecayInfo3t::_tau)
+        .def_readonly("_xmixing", &DecayInfo3t::_xmixing)
+        .def_readonly("_ymixing", &DecayInfo3t::_ymixing);
 
     py::class_<DecayInfo4>(m, "DecayInfo4")
         .def(py::init<>())
@@ -76,8 +76,8 @@ void init_DalitzPlotHelpers(py::module &m) {
 
     py::class_<DecayInfo4t, DecayInfo4>(m, "DecayInfo4t")
         .def(py::init<Variable, Variable, Variable, Variable>(), "tau"_a, "xmixing"_a, "ymixing"_a, "SqWStoRSrate"_a)
-        .def_readwrite("_tau", &DecayInfo4t::_tau)
-        .def_readwrite("_xmixing", &DecayInfo4t::_xmixing)
-        .def_readwrite("_ymixing", &DecayInfo4t::_ymixing)
-        .def_readwrite("_SqWStoRSrate", &DecayInfo4t::_SqWStoRSrate);
+        .def_readonly("_tau", &DecayInfo4t::_tau)
+        .def_readonly("_xmixing", &DecayInfo4t::_xmixing)
+        .def_readonly("_ymixing", &DecayInfo4t::_ymixing)
+        .def_readonly("_SqWStoRSrate", &DecayInfo4t::_SqWStoRSrate);
 }

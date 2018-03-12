@@ -34,6 +34,7 @@ class DalitzPlotter {
         , data({m12, m13, eventNumber})
         , mother(signalDalitz->decayInfo.motherMass) {
         eventNumber.setValue(0);
+
         for(size_t i = 0; i < m12.getNumBins(); ++i) {
             m12.setValue(m12.getLowerLimit()
                          + (m12.getUpperLimit() - m12.getLowerLimit()) * (i + 0.5) / m12.getNumBins());
@@ -62,8 +63,6 @@ class DalitzPlotter {
 
     /// Fill a dataset with MC events
     void fillDataSetMC(UnbinnedDataSet &dataset, size_t nTotal) {
-        size_t num_cells = pdfValues[0].size();
-
         // Setup random numbers
         std::random_device rd;
         std::mt19937 gen(rd());
@@ -73,44 +72,30 @@ class DalitzPlotter {
         size_t num_events = d(gen);
 
         // Uniform distribution
-        std::uniform_real_distribution<> uni(-.5, .5);
+        std::uniform_real_distribution<> unihalf(-.5, .5);
+        std::uniform_real_distribution<> uniwhole(0.0, 1.0);
 
         // CumSum in other languages
-        std::vector<double> integral(num_cells);
+        std::vector<double> integral(pdfValues[0].size());
         std::partial_sum(pdfValues[0].begin(), pdfValues[0].end(), integral.begin());
 
         // Make this a 0-1 fraction by dividing by the end value
         std::for_each(integral.begin(), integral.end(), [&integral](double &val) { val /= integral.back(); });
 
         for(size_t i = 0; i < num_events; i++) {
-            double r = uni(gen);
+            double r = uniwhole(gen);
 
             // Binary search for integral[cell-1] < r < integral[cell]
-            size_t lo  = 0;
-            size_t mid = 0;
-            size_t hi  = num_cells - 1;
-
-            while(lo <= hi) {
-                mid = lo + (hi - lo) / 2;
-                if(r <= integral[mid] && (mid == 0 || r > integral[mid - 1]))
-                    break;
-                else if(r > integral[mid])
-                    lo = mid + 1;
-                else
-                    hi = mid - 1;
-            }
-            size_t j = mid;
-
-            assert(j == std::lower_bound(integral.begin(), integral.end(), r) - integral.begin());
+            size_t j = std::lower_bound(integral.begin(), integral.end(), r) - integral.begin();
 
             // Fill in the grid square randomly
-            double currm12 = data.getValue(m12, j);
-            currm12 += (m12.getUpperLimit() - m12.getLowerLimit()) * (uni(gen)) / m12.getNumBins();
-            double currm13 = data.getValue(m13, j);
-            currm13 += (m13.getUpperLimit() - m13.getLowerLimit()) * (uni(gen)) / m13.getNumBins();
+            double currm12 = data.getValue(m12, j) + m12.getBinSize() * unihalf(gen);
+            double currm13 = data.getValue(m13, j) + m13.getBinSize() * unihalf(gen);
 
+            m12.setValue(currm12);
+            m13.setValue(currm13);
             eventNumber.setValue(i);
-            data.addEvent();
+            dataset.addEvent();
         }
     }
 

@@ -29,6 +29,12 @@ class DalitzPlotPdf : public GooPdf {
 
     __host__ void recursiveSetIndices() override;
 
+    // Get the cached wave (device) vectors
+    __host__ const thrust::device_vector<fpcomplex> &getCachedWave(size_t i) const { return *(cachedWaves[i]); }
+
+    // Sum up a cached wave
+    __host__ fpcomplex sumCachedWave(size_t i) const;
+
     friend DalitzPlotter;
 
   protected:

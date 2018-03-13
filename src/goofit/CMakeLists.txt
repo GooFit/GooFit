@@ -50,6 +50,7 @@ goofit_add_library(PdfBase
     ${PROJECT_SOURCE_DIR}/include/goofit/detail/ThrustOverride.h
     ${PROJECT_BINARY_DIR}/include/goofit/detail/ThrustOverrideConfig.h
     ${PROJECT_BINARY_DIR}/include/goofit/detail/Backtrace.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/detail/MonteCarlo.h
     ${PROJECT_SOURCE_DIR}/include/goofit/detail/Macros.h
     ${PROJECT_SOURCE_DIR}/include/goofit/detail/Style.h
     ${PROJECT_SOURCE_DIR}/include/goofit/Error.h

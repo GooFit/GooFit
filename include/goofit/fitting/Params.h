@@ -23,6 +23,9 @@ class Params : public Minuit2::MnUserParameters {
     PdfBase *pdf_;
     size_t num_;
 
+    bool do_record_{false};
+    std::vector<std::vector<double>> recorded_;
+
   public:
     using MnUserParameters::MnUserParameters;
 
@@ -39,5 +42,11 @@ class Params : public Minuit2::MnUserParameters {
 
     /// Set from a minuit vector. Optional force_changed to force complete recalculation
     void from_minuit_vector(const std::vector<double> &values, bool force_changed = false);
+
+    /// Set recording of Minuit parameter changes
+    void set_record(bool do_record = true) { do_record_ = do_record; }
+
+    /// Get recorded values array
+    std::vector<std::vector<double>> get_recorded() const { return recorded_; }
 };
 } // namespace GooFit

@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.4)
 
 project(GOOFIT
-    VERSION 2.1.1
+    VERSION 2.1.3
     LANGUAGES CXX)
 
-#set(GOOFIT_TAG "dev")
+set(GOOFIT_TAG "dev")
 #set(GOOFIT_TAG "alpha")
 #set(GOOFIT_TAG "beta")
-set(GOOFIT_TAG "release")
+#set(GOOFIT_TAG "release")
 
 ### Require out-of-source builds
 file(TO_CMAKE_PATH "${PROJECT_BINARY_DIR}/CMakeLists.txt" LOC_PATH)
@@ -390,15 +390,19 @@ endif()
 
 
 # Include directories are not picked up by FindCUDA
-find_package(ROOT 6 COMPONENTS Minuit)
-if(ROOT_FOUND)
-    message(STATUS "Found ROOT ${ROOT_VERSION} at ${ROOT_INCLUDE_DIRS}")
-    if(ROOT_VERSION STREQUAL "6.10/00" )
-        message(WARNING "You have ROOT Version ${ROOT_VERSION}, which is known to have issues compiling with GooFit!")
+option(GOOFIT_CERNROOT "Look for the ROOT library (turned off for Python)" ON)
+if(GOOFIT_CERNROOT)
+    find_package(ROOT 6 COMPONENTS Minuit)
+    if(ROOT_FOUND)
+        message(STATUS "Found ROOT ${ROOT_VERSION} at ${ROOT_INCLUDE_DIRS}")
+        if(ROOT_VERSION STREQUAL "6.10/00" )
+            message(WARNING "You have ROOT Version ${ROOT_VERSION}, which is known to have issues compiling with GooFit!")
+        endif()
+        target_compile_definitions(GooFit_Common INTERFACE "-DROOT_FOUND")
+        target_link_libraries(GooFit_Common INTERFACE ROOT::ROOT ROOT::Minuit)
     endif()
-    target_compile_definitions(GooFit_Common INTERFACE "-DROOT_FOUND")
-    target_link_libraries(GooFit_Common INTERFACE ROOT::ROOT ROOT::Minuit)
 endif()
+mark_as_advanced(GOOFIT_CERNROOT)
 
 # If either ROOT not found or Minuit2 not included
 if(NOT ROOT_Minuit2_LIBRARY)
@@ -411,8 +415,8 @@ target_link_libraries(GooFit_Common INTERFACE ROOT::Minuit2)
 
 # Adding simple libraries
 add_subdirectory("extern/CLI11")
-mark_as_advanced(CLI_EXAMPLES CLI_SINGLE_FILE CLI_SINGLE_FILE_TESTS CLI_TESTING)
-target_link_libraries(GooFit_Common INTERFACE CLI11)
+mark_as_advanced(CLI_CXX_STD CLI_EXAMPLES CLI_SINGLE_FILE CLI_SINGLE_FILE_TESTS CLI_TESTING)
+target_link_libraries(GooFit_Common INTERFACE CLI11::CLI11)
 
 add_subdirectory("extern/FeatureDetector")
 set_target_properties(FeatureDetector PROPERTIES FOLDER extern)

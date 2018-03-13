@@ -30,5 +30,5 @@ void init_PolynomialPdf(py::module &m) {
              "obses"_a,
              "coeffs"_a,
              "offsets"_a,
-             "maxDegree"_a);
+             "maxDegree"_a = 0);
 }

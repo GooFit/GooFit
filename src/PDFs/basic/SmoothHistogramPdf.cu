@@ -224,7 +224,7 @@ __host__ fptype SmoothHistogramPdf::normalize() const {
 
     int obs = constantsList[0];
     for(unsigned int varIndex = 0; varIndex < observablesList.size(); ++varIndex) {
-        fptype binSize = constantsList[obs + 3 * varIndex + 3];
+        fptype binSize = constantsList[obs + 3 * varIndex + 2];
         ret *= binSize; // Bin size cached by constructor.
     }
 

@@ -19,6 +19,8 @@ add_library(landau MODULE extras/landau.cpp)
 process_pybind_module(landau)
 target_include_directories(landau PUBLIC ../include)
 
+add_subdirectory(Minuit2)
+
 goofit_add_library(_goofit MODULE
     goofit.cpp
     Minuit2/FunctionMinimum.cpp

@@ -24,7 +24,12 @@ void init_DalitzPlotter(py::module &m) {
              [](const DalitzPlotter &self) {
                  py::array_t<fptype> result{{self.getM12().getNumBins(), self.getM13().getNumBins()}};
 
-                 for(unsigned int j = 0; j < self.getNumEvents(); ++j) {
+                 // Setting this array to 0 is important, since not all values will be filled!
+                 for(size_t i = 0; i < self.getM12().getNumBins(); i++)
+                     for(size_t j = 0; j < self.getM13().getNumBins(); j++)
+                         result.mutable_at(i, j) = 0;
+
+                 for(size_t j = 0; j < self.getNumEvents(); ++j) {
                      size_t currm12                      = self.getX(j);
                      size_t currm13                      = self.getY(j);
                      double val                          = self.getVal(j);

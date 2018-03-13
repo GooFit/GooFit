@@ -2,8 +2,6 @@
 
 namespace py = pybind11;
 
-void init_FunctionMinimum(py::module &);
-
 void init_DataSet(py::module &);
 void init_BinnedDataSet(py::module &);
 void init_UnbinnedDataSet(py::module &);
@@ -67,7 +65,7 @@ void init_VariableBinTransform1DPdf(py::module &);
 PYBIND11_MODULE(_goofit, m) {
     m.doc() = "Python interface for GooFit";
 
-    init_FunctionMinimum(m);
+    py::module::import("goofit.minuit2");
 
     init_Variable(m);
     init_DataSet(m);

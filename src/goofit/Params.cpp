@@ -50,6 +50,9 @@ void Params::from_minuit_vector(const std::vector<double> &values, bool force_ch
         pdf_->updateVariable(var, values.at(var.getFitterIndex()) - var.getBlind(Variable::Key()));
     }
 
+    if(do_record_)
+        recorded_.push_back(values);
+
     pdf_->updateParameters();
 }
 

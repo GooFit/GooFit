@@ -1,19 +1,22 @@
-## v2.1.2: Even more Python
-#### In progress
+## v2.1.2: Live Python
+#### March 12, 2018
 
-GooFit has received even more Pythonization with the conversion of two more examples, ChiSquare and SimpleFit.
+GooFit has received even more Pythonization with the conversion of two more examples, ChiSquare and SimpleFit. It also has interactive Jupyter Notebook examples, where the plots update as you change the sliders.
 
 * Grids can now be produced from DataSets with event numbers  ([#133])
+* Far more of Minuit2 available from Python ([#138])
+* MC generator for 1D functions (useful for testing in future) ([#138])
 * Correlation matrices can now be accessed from Python ([#134])
 * Some examples use numba for high-speed calculation of CPU code ([#134])
 * Binned dataset access in Python improved ([#134])
 * Travis timeouts reduced by separating codecov run
 * Better error message if `Python.h` missing in Python build ([#136])
-* Variables can not longer overwrite existing variables
+* OpenMP and CUDA updates to build system
 
 [#133]: https://github.com/GooFit/GooFit/pull/133
 [#134]: https://github.com/GooFit/GooFit/pull/134
 [#136]: https://github.com/GooFit/GooFit/pull/136
+[#138]: https://github.com/GooFit/GooFit/pull/138
 
 ## v2.1.1: Better Python
 #### February 12, 2018

@@ -7,7 +7,7 @@ except ImportError:
 
 setup(
         name='goofit',
-        version='2.1.1',
+        version='2.1.2',
         description='GooFit fitting package',
         author='Henry Schreiner',
         author_email='hschrein@cern.ch',
@@ -33,6 +33,7 @@ setup(
         ],
         cmake_args=[
             '-DGOOFIT_PYTHON=ON',
+            '-DGOOFIT_CERNROOT=OFF',
             '-DGOOFIT_EXAMPLES=OFF'],
         license="LGPL 3.0",
         packages=['goofit'],
@@ -113,8 +114,20 @@ To make a source package, start with a clean (such as new) git GooFit package wi
     git clone --branch=master --recursive --depth=10 git@github.com:GooFit/GooFit.git
     cd goofit
     python setup.py sdist
-    twine upload dist/*
+    python -m twine upload dist/*
+
+To make a binary package, use instead::
+
+    python setup.py bdist_wheel -- -DGOOFIT_OPTI="-march=core2"
 
 '''
         )
+
+# To set this up on Docker for linux, use::
+#
+#    docker run -it quay.io/pypa/manylinux1_x86_64 -v goofit-py:goofit-py
+#    export PATH=/opt/python/cp36-cp36m/bin:$PATH
+#    cd goofit-py
+#    python -m pip install scikit-build cmake
+#    python setup.py bdist_wheel -- -DGOOFIT_OPTI="-march=core2"
 

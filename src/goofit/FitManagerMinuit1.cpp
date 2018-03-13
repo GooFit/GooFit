@@ -53,6 +53,7 @@ Int_t Minuit1::Eval(int npar, double *gin, double &fun, double *fp, int iflag) {
         var.setValue(pars.at(var.getFitterIndex()));
         // TODO: fix this to reflect Minuit2 updateVariable. Actually not needed...
         // gooPars.at(var->getIndex()) = var->getValue() - var->blind;
+        pdfPointer->updateVariable(var, var.getValue() - var.getBlind(Variable::Key()));
     }
 
     pdfPointer->updateParameters();

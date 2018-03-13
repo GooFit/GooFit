@@ -550,7 +550,8 @@ __device__ fptype callFunction(fptype *eventAddress, ParameterContainer &pc) {
 #endif
 
 __host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
-    // note, we need to overwrite what our metric operator is going to do!
+    // note, we need to overwrite what our metric operator is going to do, and restore previous
+    auto fc = fitControl;
     setFitControl(std::make_shared<ProbFit>());
 
     // make sure we get the appropriate functions passed!
@@ -610,6 +611,10 @@ __host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
             values[1 + i].push_back(host_results[j]);
         }
     }
+
+    //restore previous fit control
+    setFitControl(fc);
+
     return values;
 }
 

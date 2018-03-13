@@ -1,5 +1,7 @@
 #pragma once
 
+#if 0
+
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
 
 #include <thrust/detail/config.h>
@@ -13,7 +15,6 @@
 //#include <thrust/system/cuda/detail/execute_on_stream.h>
 //#include <thrust/system/cuda/detail/execution_policy.h>
 //
-#if 0
 
 #include <thrust/system/cuda/detail/bulk.h>
 

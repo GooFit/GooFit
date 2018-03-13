@@ -120,7 +120,7 @@ void *getMetricPointer(std::string name);
 /// Pass event, parameters, index into parameters.
 typedef fptype (*device_function_ptr)(fptype *, ParameterContainer &);
 
-typedef fptype (*device_metric_ptr)(fptype, fptype*, fptype);
+typedef fptype (*device_metric_ptr)(fptype, fptype *, fptype);
 
 extern void *host_fcn_ptr;
 

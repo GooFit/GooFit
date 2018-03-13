@@ -38,7 +38,7 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, fptype *, int> t) c
     int idx = abs(eventSize - 2);
     if(idx < 0)
         idx = 0;
-    //fptype obs  = events[idx];
+    // fptype obs  = events[idx];
     fptype norm = pc.getNormalisation(0);
 
     // Causes stack size to be statically undeterminable.
@@ -49,7 +49,8 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, fptype *, int> t) c
     // the structure of the event is (obs1 obs2... binentry binvolume), so that the array
     // passed to the metric consists of (binentry binvolume).
 
-    ret = (*(reinterpret_cast<device_metric_ptr>(device_function_table[pc.funcIdx])))(ret, eventAddress + (abs(eventSize) - 2), norm);
+    ret = (*(reinterpret_cast<device_metric_ptr>(device_function_table[pc.funcIdx])))(
+        ret, eventAddress + (abs(eventSize) - 2), norm);
     return ret;
 }
 

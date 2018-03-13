@@ -72,7 +72,7 @@ enum gooError { gooSuccess = 0, gooErrorMemoryAllocation };
         cudaError err = cudaMemcpyFromSymbol((void **)&host_fcn_ptr, fname, sizeof(void *));                           \
         if(err != cudaSuccess) {                                                                                       \
             printf("CUDA Error: %s at %s:%i\n", cudaGetErrorString(err), __FILE__, __LINE__);                          \
-        }\
+        }                                                                                                              \
         GOOFIT_DEBUG("Using function {} in {}, {}:{}", #fname, __func__, __FILE__, __LINE__);                          \
     }
 #define MEMCPY_FROM_SYMBOL(target, source, count, offset, direction)                                                   \

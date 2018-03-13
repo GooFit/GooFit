@@ -128,8 +128,8 @@ __device__ fptype calculateBinAvg(fptype rawPdf, fptype *evtVal, fptype norm) {
     // Log-likelihood of numEvents with expectation of exp is (-exp + numEvents*ln(exp) - ln(numEvents!)).
     // The last is constant, so we drop it; and then multiply by minus one to get the negative log-likelihood.
     if(rawPdf > 0) {
-        fptype expEvents = c_totalEvents*rawPdf;
-        return (expEvents - evtVal[0]*log(expEvents));
+        fptype expEvents = c_totalEvents * rawPdf;
+        return (expEvents - evtVal[0] * log(expEvents));
     }
 
     return 0;
@@ -192,7 +192,7 @@ __host__ void GooPdf::setIndices() {
     if(!fitControl)
         setFitControl(std::make_shared<UnbinnedNllFit>());
 
-    //Ensure that we properly populate *logger with the correct metric
+    // Ensure that we properly populate *logger with the correct metric
     setMetrics();
 
     GOOFIT_DEBUG("GooPdf::setIndices!");
@@ -374,10 +374,10 @@ __host__ std::vector<fptype> GooPdf::evaluateAtPoints(Observable var) {
     for(int i = 0; i < var.getNumBins(); ++i) {
         fptype n = host_normalisations[normalIdx + 1];
         fptype v = h_results[i];
-        res[i] = v * n;
+        res[i]   = v * n;
     }
 
-    if (old != nullptr)
+    if(old != nullptr)
         setData(old);
 
     return res;
@@ -407,18 +407,18 @@ __host__ void GooPdf::setParameterConstantness(bool constant) {
 }
 
 __host__ fptype GooPdf::getValue(EvalFunc evalfunc) {
-    if (evalfunc == EvalFunc::Prob)
+    if(evalfunc == EvalFunc::Prob)
         setFitControl(std::make_shared<ProbFit>());
-    if (evalfunc == EvalFunc::Eval)
+    if(evalfunc == EvalFunc::Eval)
         setFitControl(std::make_shared<EvalFit>());
-    if (evalfunc == EvalFunc::NLL)
+    if(evalfunc == EvalFunc::NLL)
         setFitControl(std::make_shared<UnbinnedNllFit>());
 
     setIndices();
 
     // Returns the value of the PDF at a single point.
     // Execute redundantly in all threads for OpenMP multiGPU case
-    //copyParams();
+    // copyParams();
     normalize();
     // MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0,
     // cudaMemcpyHostToDevice);
@@ -434,13 +434,13 @@ __host__ fptype GooPdf::getValue(EvalFunc evalfunc) {
     thrust::constant_iterator<fptype *> arrayAddress(dev_event_array);
     thrust::device_vector<fptype> results(1);
 
-    //MetricTaker evalor(this, getMetricPointer(evalfunc));
+    // MetricTaker evalor(this, getMetricPointer(evalfunc));
     thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
                       thrust::make_zip_iterator(thrust::make_tuple(eventIndex + 1, arrayAddress, eventSize)),
                       results.begin(),
                       *logger);
 
-    //if (old != nullptr)
+    // if (old != nullptr)
     //    setData(old);
 
     return results[0];
@@ -550,10 +550,10 @@ __device__ fptype callFunction(fptype *eventAddress, ParameterContainer &pc) {
 #endif
 
 __host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
-    //note, we need to overwrite what our metric operator is going to do! 
+    // note, we need to overwrite what our metric operator is going to do!
     setFitControl(std::make_shared<ProbFit>());
 
-    //make sure we get the appropriate functions passed!
+    // make sure we get the appropriate functions passed!
     setIndices();
 
     // copyParams();
@@ -574,7 +574,7 @@ __host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
     thrust::constant_iterator<int> eventSize(numVars);
     thrust::constant_iterator<fptype *> arrayAddress(dev_event_array);
     thrust::counting_iterator<int> eventIndex(0);
-    //MetricTaker evalor(this, getMetricPointer("ptr_to_Prob"));
+    // MetricTaker evalor(this, getMetricPointer("ptr_to_Prob"));
     thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
                       thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
                       results.begin(),
@@ -590,8 +590,8 @@ __host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
     }
 
     for(unsigned int i = 0; i < components.size(); ++i) {
-        //we need to recreate the indexing for each component 
-        //components[i]->setFitControl(std::make_shared<ProbFit>());
+        // we need to recreate the indexing for each component
+        // components[i]->setFitControl(std::make_shared<ProbFit>());
         components[i]->setIndices();
 
         components[i]->normalize();

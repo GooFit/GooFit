@@ -612,7 +612,7 @@ __host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
         }
     }
 
-    //restore previous fit control
+    // restore previous fit control
     setFitControl(fc);
 
     return values;

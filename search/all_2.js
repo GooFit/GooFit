@@ -22,6 +22,7 @@ var searchData=
   ['amplitudes',['amplitudes',['../struct_goo_fit_1_1_decay_info4.html#ae5491f56308e6b4ffe4bbad282ecf67e',1,'GooFit::DecayInfo4']]],
   ['amplitudes_5fb',['amplitudes_B',['../struct_goo_fit_1_1_decay_info4.html#a774ef7ba75204bf0e3a6b69ebe18249e',1,'GooFit::DecayInfo4']]],
   ['application',['Application',['../class_goo_fit_1_1_application.html',1,'GooFit::Application'],['../class_goo_fit_1_1_application.html#aef51b6419e7dae1667dcbdb9c163a18e',1,'GooFit::Application::Application(std::string discription, int argc, char **argv)'],['../class_goo_fit_1_1_application.html#ac5b20376503ea5481c26718cce1cf0b4',1,'GooFit::Application::Application(int argc, char **argv)']]],
+  ['application_2ecu',['Application.cu',['../_application_8cu.html',1,'']]],
   ['application_2eh',['Application.h',['../_application_8h.html',1,'']]],
   ['argc_5f',['argc_',['../class_goo_fit_1_1_application.html#aa594c4cddd83bcb0ea68c49593596766',1,'GooFit::Application']]],
   ['arguspdf',['ArgusPdf',['../class_goo_fit_1_1_argus_pdf.html',1,'GooFit::ArgusPdf'],['../class_goo_fit_1_1_argus_pdf.html#ab7238e495c57d3e85498a56efce39f2e',1,'GooFit::ArgusPdf::ArgusPdf(std::string n, Observable _x, Variable m, Variable s, bool upper)'],['../class_goo_fit_1_1_argus_pdf.html#ac25641cd6d3ddbab74eaaa9f46e32853',1,'GooFit::ArgusPdf::ArgusPdf(std::string n, Observable _x, Variable m, Variable s, bool upper, Variable power)']]],

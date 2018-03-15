@@ -395,9 +395,13 @@ Enumerations</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a5cd9a8ccab2b1f5f499f421f2fc8507f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#a5cd9a8ccab2b1f5f499f421f2fc8507f">signal_handler</a> (int s)</td></tr>
+<tr class="memdesc:a5cd9a8ccab2b1f5f499f421f2fc8507f"><td class="mdescLeft">&#160;</td><td class="mdescRight">will call the correct exit func, no unwinding of the stack though  <a href="#a5cd9a8ccab2b1f5f499f421f2fc8507f">More...</a><br /></td></tr>
 <tr class="separator:a5cd9a8ccab2b1f5f499f421f2fc8507f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afd0fb7f08a225be4ca1f9d9682970f08"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#afd0fb7f08a225be4ca1f9d9682970f08">print_splash</a> ()</td></tr>
 <tr class="separator:afd0fb7f08a225be4ca1f9d9682970f08"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f8baf8d48eb1cc05b96691bad8e31ce"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#a4f8baf8d48eb1cc05b96691bad8e31ce">print_goofit_info</a> ()</td></tr>
+<tr class="memdesc:a4f8baf8d48eb1cc05b96691bad8e31ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print out information about <a class="el" href="namespace_goo_fit.html">GooFit</a>.  <a href="#a4f8baf8d48eb1cc05b96691bad8e31ce">More...</a><br /></td></tr>
+<tr class="separator:a4f8baf8d48eb1cc05b96691bad8e31ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aff9f46a90d47aa752846f3acd5d211b6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#aff9f46a90d47aa752846f3acd5d211b6">abort</a> (std::string file, int line, std::string reason, const <a class="el" href="class_goo_fit_1_1_pdf_base.html">PdfBase</a> *pdf=nullptr)</td></tr>
 <tr class="memdesc:aff9f46a90d47aa752846f3acd5d211b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Smart abort that includes the file name and location, and prints a stack trace if possible.  <a href="#aff9f46a90d47aa752846f3acd5d211b6">More...</a><br /></td></tr>
 <tr class="separator:aff9f46a90d47aa752846f3acd5d211b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -2218,6 +2222,25 @@ template&lt;typename T &gt; </div>
 </div><!-- fragment -->
 </div>
 </div>
+<a id="a4f8baf8d48eb1cc05b96691bad8e31ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4f8baf8d48eb1cc05b96691bad8e31ce">&#9670;&nbsp;</a></span>print_goofit_info()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void GooFit::print_goofit_info </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Print out information about <a class="el" href="namespace_goo_fit.html">GooFit</a>. </p>
+
+</div>
+</div>
 <a id="afd0fb7f08a225be4ca1f9d9682970f08"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afd0fb7f08a225be4ca1f9d9682970f08">&#9670;&nbsp;</a></span>print_splash()</h2>
 
@@ -2234,15 +2257,6 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 <p>Optional print for splash Orignal: Slant Relief from <a href="http://patorjk.com/software/taag/#p=testall&f=Wavy&t=GooFit">http://patorjk.com/software/taag/#p=testall&amp;f=Wavy&amp;t=GooFit</a> (tightened a bit) New: Block letters </p>
 
-<p class="definition">Definition at line <a class="el" href="_application_8h_source.html#l00058">58</a> of file <a class="el" href="_application_8h_source.html">Application.h</a>.</p>
-
-<p class="reference">References <a class="el" href="_color_8h_source.html#l00018">dim</a>, <a class="el" href="_color_8h_source.html#l00010">green</a>, and <a class="el" href="_color_8h_source.html#l00016">reset</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="_application_8h_source.html#l00197">GooFit::Application::pre_callback()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;                    {</div><div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    std::cout &lt;&lt; <a class="code" href="namespace_goo_fit.html#aa65eefd41f0c68192969ff3ede4f979e">reset</a> &lt;&lt; <a class="code" href="namespace_goo_fit.html#acef7334d3b4902a01097779acea336fe">green</a> &lt;&lt; <span class="stringliteral">&quot;       Welcome to&quot;</span>;</div><div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="preprocessor">#if GOOFIT_SPLASH</span></div><div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    std::string splash = R<span class="stringliteral">&quot;raw(</span></div><div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="stringliteral">   ██████╗                 ████████╗</span></div><div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="stringliteral">  ██╔════╝  █████╗  █████╗ ██╔═════╝  ██╗</span></div><div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="stringliteral">  ██║  ███╗██╔══██╗██╔══██╗█████╗██╗██████╗</span></div><div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="stringliteral">  ██║   ██║██║  ██║██║  ██║██╔══╝██║╚═██╔═╝</span></div><div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="stringliteral">  ╚██████╔╝╚█████╔╝╚█████╔╝██║   ██║  ██║</span></div><div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="stringliteral">   ╚═════╝  ╚════╝  ╚════╝ ╚═╝   ╚═╝  ██║</span></div><div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="stringliteral">                                 ███████║</span></div><div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="stringliteral">                                 ╚══════╝</span></div><div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="stringliteral">)raw&quot;;</span></div><div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="stringliteral"></span></div><div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="stringliteral">    std::cout &lt;&lt; <a class="code" href="namespace_goo_fit.html#aa65eefd41f0c68192969ff3ede4f979e">reset</a> &lt;&lt; <a class="code" href="namespace_goo_fit.html#aabadbc0fa259fdaa2578047fec769745">dim</a>;</span></div><div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="stringliteral">    </span><span class="keywordtype">bool</span> cur_green = <span class="keyword">false</span>;</div><div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; splash.size(); i++) {</div><div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        std::string letter = splash.substr(i, 3);</div><div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <span class="keywordtype">bool</span> is_edge</div><div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;            = letter == <span class="stringliteral">&quot;╚&quot;</span> || letter == <span class="stringliteral">&quot;╝&quot;</span> || letter == <span class="stringliteral">&quot;╗&quot;</span> || letter == <span class="stringliteral">&quot;╔&quot;</span> || letter == <span class="stringliteral">&quot;║&quot;</span> || letter == <span class="stringliteral">&quot;═&quot;</span>;</div><div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        <span class="keywordtype">bool</span> is_block = letter == <span class="stringliteral">&quot;█&quot;</span>;</div><div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;</div><div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        <span class="keywordflow">if</span>(is_block &amp;&amp; !cur_green) {</div><div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;            std::cout &lt;&lt; <a class="code" href="namespace_goo_fit.html#aa65eefd41f0c68192969ff3ede4f979e">reset</a> &lt;&lt; <a class="code" href="namespace_goo_fit.html#acef7334d3b4902a01097779acea336fe">green</a>;</div><div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;            cur_green = <span class="keyword">true</span>;</div><div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        } <span class="keywordflow">else</span> <span class="keywordflow">if</span>(is_edge &amp;&amp; cur_green) {</div><div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;            std::cout &lt;&lt; <a class="code" href="namespace_goo_fit.html#aa65eefd41f0c68192969ff3ede4f979e">reset</a> &lt;&lt; <a class="code" href="namespace_goo_fit.html#aabadbc0fa259fdaa2578047fec769745">dim</a>;</div><div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;            cur_green = <span class="keyword">false</span>;</div><div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        }</div><div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        std::cout &lt;&lt; splash[i];</div><div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        <span class="keywordflow">if</span>(splash[i] == <span class="charliteral">&#39;\n&#39;</span>)</div><div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;            std::cout &lt;&lt; std::flush;</div><div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    }</div><div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="preprocessor">#else</span></div><div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    std::cout &lt;&lt; <span class="stringliteral">&quot; GooFit\n&quot;</span>;</div><div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="preprocessor">#endif</span></div><div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;</div><div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    std::cout &lt;&lt; <a class="code" href="namespace_goo_fit.html#aa65eefd41f0c68192969ff3ede4f979e">reset</a> &lt;&lt; std::flush;</div><div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;}</div><div class="ttc" id="namespace_goo_fit_html_aabadbc0fa259fdaa2578047fec769745"><div class="ttname"><a href="namespace_goo_fit.html#aabadbc0fa259fdaa2578047fec769745">GooFit::dim</a></div><div class="ttdeci">constexpr rang::style const dim</div><div class="ttdef"><b>Definition:</b> <a href="_color_8h_source.html#l00018">Color.h:18</a></div></div>
-<div class="ttc" id="namespace_goo_fit_html_aa65eefd41f0c68192969ff3ede4f979e"><div class="ttname"><a href="namespace_goo_fit.html#aa65eefd41f0c68192969ff3ede4f979e">GooFit::reset</a></div><div class="ttdeci">constexpr rang::style const reset</div><div class="ttdef"><b>Definition:</b> <a href="_color_8h_source.html#l00016">Color.h:16</a></div></div>
-<div class="ttc" id="namespace_goo_fit_html_acef7334d3b4902a01097779acea336fe"><div class="ttname"><a href="namespace_goo_fit.html#acef7334d3b4902a01097779acea336fe">GooFit::green</a></div><div class="ttdeci">constexpr rang::fg const green</div><div class="ttdef"><b>Definition:</b> <a href="_color_8h_source.html#l00010">Color.h:10</a></div></div>
-</div><!-- fragment -->
 </div>
 </div>
 <a id="a2e91d2b0f03e8480ed41b1098a8092ee"></a>
@@ -2357,15 +2371,8 @@ template&lt;typename M &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_application_8h_source.html#l00038">38</a> of file <a class="el" href="_application_8h_source.html">Application.h</a>.</p>
+<p>will call the correct exit func, no unwinding of the stack though </p>
 
-<p class="reference">References <a class="el" href="_color_8h_source.html#l00017">bold</a>, <a class="el" href="_color_8h_source.html#l00009">red</a>, and <a class="el" href="_color_8h_source.html#l00016">reset</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="_application_8h_source.html#l00112">GooFit::Application::Application()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;                           {</div><div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    std::cout &lt;&lt; std::endl &lt;&lt; <a class="code" href="namespace_goo_fit.html#aa65eefd41f0c68192969ff3ede4f979e">reset</a> &lt;&lt; <a class="code" href="namespace_goo_fit.html#a7e27700e0a78d83f9533cf7667cd79ce">red</a> &lt;&lt; <a class="code" href="namespace_goo_fit.html#a80e6f6c13fd60e59826e0e864c7e3bf6">bold</a>;</div><div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    std::cout &lt;&lt; <span class="stringliteral">&quot;GooFit: Control-C detected, exiting...&quot;</span> &lt;&lt; <a class="code" href="namespace_goo_fit.html#aa65eefd41f0c68192969ff3ede4f979e">reset</a> &lt;&lt; std::endl;</div><div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    std::exit(1); <span class="comment">// will call the correct exit func, no unwinding of the stack though</span></div><div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;}</div><div class="ttc" id="namespace_goo_fit_html_a80e6f6c13fd60e59826e0e864c7e3bf6"><div class="ttname"><a href="namespace_goo_fit.html#a80e6f6c13fd60e59826e0e864c7e3bf6">GooFit::bold</a></div><div class="ttdeci">constexpr rang::style const bold</div><div class="ttdef"><b>Definition:</b> <a href="_color_8h_source.html#l00017">Color.h:17</a></div></div>
-<div class="ttc" id="namespace_goo_fit_html_a7e27700e0a78d83f9533cf7667cd79ce"><div class="ttname"><a href="namespace_goo_fit.html#a7e27700e0a78d83f9533cf7667cd79ce">GooFit::red</a></div><div class="ttdeci">constexpr rang::fg const red</div><div class="ttdef"><b>Definition:</b> <a href="_color_8h_source.html#l00009">Color.h:9</a></div></div>
-<div class="ttc" id="namespace_goo_fit_html_aa65eefd41f0c68192969ff3ede4f979e"><div class="ttname"><a href="namespace_goo_fit.html#aa65eefd41f0c68192969ff3ede4f979e">GooFit::reset</a></div><div class="ttdeci">constexpr rang::style const reset</div><div class="ttdef"><b>Definition:</b> <a href="_color_8h_source.html#l00016">Color.h:16</a></div></div>
-</div><!-- fragment -->
 </div>
 </div>
 <a id="a707adf7643d054c85158dbf8b6524fd4"></a>
@@ -2588,8 +2595,6 @@ template&lt;typename M &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="_color_8h_source.html#l00012">12</a> of file <a class="el" href="_color_8h_source.html">Color.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_application_8h_source.html#l00261">GooFit::Application::exit()</a>.</p>
-
 </div>
 </div>
 <a id="a80e6f6c13fd60e59826e0e864c7e3bf6"></a>
@@ -2606,7 +2611,7 @@ template&lt;typename M &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="_color_8h_source.html#l00017">17</a> of file <a class="el" href="_color_8h_source.html">Color.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_abort_8cpp_source.html#l00009">abort()</a>, <a class="el" href="_fit_manager_minuit2_8cpp_source.html#l00019">GooFit::FitManagerMinuit2::fit()</a>, <a class="el" href="_fit_manager_minuit1_8cpp_source.html#l00065">GooFit::FitManagerMinuit1::fit()</a>, and <a class="el" href="_application_8h_source.html#l00038">signal_handler()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_abort_8cpp_source.html#l00009">abort()</a>, <a class="el" href="_fit_manager_minuit2_8cpp_source.html#l00019">GooFit::FitManagerMinuit2::fit()</a>, and <a class="el" href="_fit_manager_minuit1_8cpp_source.html#l00065">GooFit::FitManagerMinuit1::fit()</a>.</p>
 
 </div>
 </div>
@@ -2656,7 +2661,7 @@ template&lt;typename M &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="_color_8h_source.html#l00018">18</a> of file <a class="el" href="_color_8h_source.html">Color.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_eval_var_8h_source.html#l00020">GooFit::Dim5::Dim5()</a>, and <a class="el" href="_application_8h_source.html#l00058">print_splash()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_eval_var_8h_source.html#l00020">GooFit::Dim5::Dim5()</a>.</p>
 
 </div>
 </div>
@@ -2710,7 +2715,7 @@ template&lt;typename M &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="_color_8h_source.html#l00010">10</a> of file <a class="el" href="_color_8h_source.html">Color.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_fit_manager_minuit2_8cpp_source.html#l00019">GooFit::FitManagerMinuit2::fit()</a>, and <a class="el" href="_application_8h_source.html#l00058">print_splash()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_fit_manager_minuit2_8cpp_source.html#l00019">GooFit::FitManagerMinuit2::fit()</a>.</p>
 
 </div>
 </div>
@@ -2864,7 +2869,7 @@ template&lt;typename M &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="_color_8h_source.html#l00009">9</a> of file <a class="el" href="_color_8h_source.html">Color.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_abort_8cpp_source.html#l00009">abort()</a>, <a class="el" href="_application_8h_source.html#l00261">GooFit::Application::exit()</a>, <a class="el" href="_fit_manager_minuit2_8cpp_source.html#l00019">GooFit::FitManagerMinuit2::fit()</a>, <a class="el" href="_application_8h_source.html#l00197">GooFit::Application::pre_callback()</a>, and <a class="el" href="_application_8h_source.html#l00038">signal_handler()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_abort_8cpp_source.html#l00009">abort()</a>, and <a class="el" href="_fit_manager_minuit2_8cpp_source.html#l00019">GooFit::FitManagerMinuit2::fit()</a>.</p>
 
 </div>
 </div>
@@ -2882,7 +2887,7 @@ template&lt;typename M &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="_color_8h_source.html#l00016">16</a> of file <a class="el" href="_color_8h_source.html">Color.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_abort_8cpp_source.html#l00009">abort()</a>, <a class="el" href="_application_8h_source.html#l00112">GooFit::Application::Application()</a>, <a class="el" href="_application_8h_source.html#l00261">GooFit::Application::exit()</a>, <a class="el" href="_fit_manager_minuit2_8cpp_source.html#l00019">GooFit::FitManagerMinuit2::fit()</a>, <a class="el" href="_fit_manager_minuit1_8cpp_source.html#l00065">GooFit::FitManagerMinuit1::fit()</a>, <a class="el" href="_application_8h_source.html#l00197">GooFit::Application::pre_callback()</a>, <a class="el" href="_application_8h_source.html#l00058">print_splash()</a>, and <a class="el" href="_application_8h_source.html#l00038">signal_handler()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_abort_8cpp_source.html#l00009">abort()</a>, <a class="el" href="_fit_manager_minuit2_8cpp_source.html#l00019">GooFit::FitManagerMinuit2::fit()</a>, and <a class="el" href="_fit_manager_minuit1_8cpp_source.html#l00065">GooFit::FitManagerMinuit1::fit()</a>.</p>
 
 </div>
 </div>
@@ -2957,7 +2962,7 @@ template&lt;typename M &gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Mar 12 2018 15:37:39 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Mar 15 2018 16:37:46 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

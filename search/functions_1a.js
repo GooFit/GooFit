@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['_7eapplication',['~Application',['../class_goo_fit_1_1_application.html#a152fbec97149b3d163bf5b705ac298b3',1,'GooFit::Application']]],
+  ['_7eapplication',['~Application',['../class_goo_fit_1_1_application.html#a90b6cec0ebbceeb9eecc57c9e280d65f',1,'GooFit::Application']]],
   ['_7ebinneddataset',['~BinnedDataSet',['../class_goo_fit_1_1_binned_data_set.html#a486d017260289ca6a6c20acabe171be8',1,'GooFit::BinnedDataSet']]],
   ['_7ebugg',['~Bugg',['../class_goo_fit_1_1_lineshapes_1_1_bugg.html#af3ee22e18c6eb978ab5f0f8b714cd93f',1,'GooFit::Lineshapes::Bugg']]],
   ['_7ebugg3',['~Bugg3',['../class_goo_fit_1_1_lineshapes_1_1_bugg3.html#af8cf4ac1e005f116e5812771b1d3c64a',1,'GooFit::Lineshapes::Bugg3']]],

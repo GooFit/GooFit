@@ -1,3 +1,15 @@
+## v2.2.0: GPU performance
+#### March, 2018
+
+The internals of GooFit have been updated for GPU performance.  The new improvements will make PDF generation and debugging simpler.
+
+* Indexing improves performance and readability
+* A number of new tests demonstrating simple usage of each PDF.
+* Travis CI uses the additional tests to ensure changes work well.
+
+[#125]: https://github.com/GooFit/GooFit/pull/125
+
+
 ## v2.1.2: Live Python
 #### March 12, 2018
 

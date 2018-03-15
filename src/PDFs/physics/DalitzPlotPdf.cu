@@ -44,7 +44,7 @@ device_DalitzPlot_calcIntegrals(fptype m12, fptype m13, int res_i, int res_j, Pa
         = motherMass * motherMass + daug1Mass * daug1Mass + daug2Mass * daug2Mass + daug3Mass * daug3Mass - m12 - m13;
 
     ParameterContainer ipc = pc;
-    for(int i = 0; i < res_i; i++)
+    while(ipc.funcIdx < res_i)
         ipc.incrementIndex();
     // int parameter_i       = parIndexFromResIndex_DP(res_i);
     // unsigned int functn_i = RO_CACHE(indices[parameter_i + 2]);
@@ -53,7 +53,7 @@ device_DalitzPlot_calcIntegrals(fptype m12, fptype m13, int res_i, int res_j, Pa
     ret = getResonanceAmplitude(m12, m13, m23, ipc);
 
     ParameterContainer jpc = pc;
-    for(int i = 0; i < res_j; i++)
+    while(jpc.funcIdx < res_j)
         jpc.incrementIndex();
     // int parameter_j       = parIndexFromResIndex_DP(res_j);
     // unsigned int functn_j = RO_CACHE(indices[parameter_j + 2]);
@@ -437,7 +437,8 @@ __device__ fpcomplex SpecialResonanceIntegrator::operator()(thrust::tuple<int, f
     // int effFunctionIdx                   = parIndexFromResIndex_DP(numResonances);
 
     // increment until we are on the efficiency function (17)
-    while(pc.funcIdx < thrust::get<2>(t))
+    int effFunc = thrust::get<2>(t);
+    while(pc.funcIdx < effFunc)
         pc.incrementIndex();
 
     fptype eff = callFunction(events, pc);
@@ -484,7 +485,7 @@ __device__ fpcomplex SpecialResonanceCalculator::operator()(thrust::tuple<int, f
     fptype m23
         = motherMass * motherMass + daug1Mass * daug1Mass + daug2Mass * daug2Mass + daug3Mass * daug3Mass - m12 - m13;
 
-    for(int i = 0; i < resonance_i; i++)
+    while(pc.funcIdx < resonance_i)
         pc.incrementIndex();
 
     ret = getResonanceAmplitude(m12, m13, m23, pc);

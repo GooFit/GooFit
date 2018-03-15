@@ -16,6 +16,7 @@ doing maximum-likelihood fits with a familiar syntax.
 • [API documentation]
 • [2.0 upgrade](./docs/CONVERTING20.md)
 • [2.1 upgrade](./docs/CONVERTING21.md)
+• [2.2 upgrade](./docs/CONVERTING22.md)
 • [Build recipes](./docs/SYSTEM_INSTALL.md)
 • [Python](https://pypi.python.org/pypi/goofit/)
 
@@ -102,8 +103,6 @@ Other custom options supported along with the defaults:
 * `-DGOOFIT_TESTS=ON`: Build the GooFit tests
 * `-DGOOFIT_SEPARATE_COMP=ON`: Enable separable compilation of PDFs. Single core CUDA builds are faster with this off. The off mode is not well supported, especially on newer cards.
 * `-DGOOFIT_MPI=ON`: (OFF/ON.  With this feature on, GPU devices are selected automatically).  Tested with MVAPICH2/2.2 and OpenMPI.
-* `-DGOOFIT_CUDA_OR_GROUPSIZE:INT=128`: This sets the group size that thrust will use for distributing the problem.  This parameter can be thought of as 'Threads per block'.  These will be used after running 'find_optimal.py' to figure out the optimal size.
-* `-DGOOFIT_CUDA_OR_GRAINSIZE:INT=7`: This is the grain size thrust uses for distributing the problem.  This parameter can be thought of as 'Items per thread'.
 * `-DGOOFIT_MAXPAR=1800`: The maximum number of parameters to allow. May cause memory issues if too large.
 * You can enable sanitizers on non-CUDA builds with `-DSANITIZE_ADDRESS=ON`, `-DSANITIZE_MEMORY=ON`, `-DSANITIZE_THREAD=ON` or `-DSANITIZE_UNDEFINED=ON`.
 * If `clang-tidy` is available, it will automatically be used to check the source. If you set `-DGOOFIT_TIDY_FIX=ON`, fixes will be applied to the GooFit source.

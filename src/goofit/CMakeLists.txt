@@ -41,11 +41,9 @@ goofit_add_library(FunctorWriter
     ${PROJECT_SOURCE_DIR}/include/goofit/FunctorWriter.h
     )
 
-
-goofit_add_library(PdfBase
-    PdfBase.cpp
-    Abort.cpp
-    ${PROJECT_SOURCE_DIR}/include/goofit/detail/Abort.h
+goofit_add_library(Application
+    Application.cu
+    ${PROJECT_SOURCE_DIR}/include/goofit/Application.h
     ${PROJECT_SOURCE_DIR}/include/goofit/detail/Complex.h
     ${PROJECT_SOURCE_DIR}/include/goofit/detail/ThrustOverride.h
     ${PROJECT_BINARY_DIR}/include/goofit/detail/ThrustOverrideConfig.h
@@ -54,13 +52,19 @@ goofit_add_library(PdfBase
     ${PROJECT_SOURCE_DIR}/include/goofit/detail/Macros.h
     ${PROJECT_SOURCE_DIR}/include/goofit/detail/Style.h
     ${PROJECT_SOURCE_DIR}/include/goofit/Error.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PdfBase.h
     ${PROJECT_SOURCE_DIR}/include/goofit/FitControl.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/Application.h
     ${PROJECT_SOURCE_DIR}/include/goofit/Color.h
     ${PROJECT_SOURCE_DIR}/include/goofit/Log.h
     ${PROJECT_SOURCE_DIR}/include/goofit/Eigen.h
     ${PROJECT_SOURCE_DIR}/include/goofit/GlobalCudaDefines.h
+    )
+
+
+goofit_add_library(PdfBase
+    PdfBase.cpp
+    Abort.cpp
+    ${PROJECT_SOURCE_DIR}/include/goofit/PdfBase.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/detail/Abort.h
     )
 
 target_link_libraries(PdfBase PUBLIC backtrace)
@@ -70,6 +74,7 @@ target_link_libraries(PdfBase PUBLIC ROOT::Minuit2)
 
 # Note: order is important on Linux, derived classes first
 set(lib_list
+    Application
     Faddeeva
     FunctorWriter
     PdfBase

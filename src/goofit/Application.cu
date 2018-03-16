@@ -31,14 +31,14 @@ void print_splash() {
     std::cout << reset << green << "       Welcome to";
 #if GOOFIT_SPLASH
     std::string splash = R"raw(
-    ██████╗                 ████████╗
+     ██████╗                 ████████╗
     ██╔════╝  █████╗  █████╗ ██╔═════╝  ██╗
     ██║  ███╗██╔══██╗██╔══██╗█████╗██╗██████╗
     ██║   ██║██║  ██║██║  ██║██╔══╝██║╚═██╔═╝
     ╚██████╔╝╚█████╔╝╚█████╔╝██║   ██║  ██║
-    ╚═════╝  ╚════╝  ╚════╝ ╚═╝   ╚═╝  ██║
-    ███████║
-    ╚══════╝
+     ╚═════╝  ╚════╝  ╚════╝ ╚═╝   ╚═╝  ██║
+                                   ███████║
+                                   ╚══════╝
     )raw";
 
     std::cout << reset << dim;
@@ -74,7 +74,7 @@ void print_goofit_info(int gpuDev_) {
     cudaDeviceProp devProp;
     cudaGetDeviceProperties(&devProp, gpuDev_);
 
-    GOOFIT_INFO("CUDA: Device {}: {}", get_device(), devProp.name);
+    GOOFIT_INFO("CUDA: Device {}: {}", gpuDev_, devProp.name);
 
     GOOFIT_INFO("CUDA: Compute {}.{}", devProp.major, devProp.minor);
     GOOFIT_INFO("CUDA: Total global memory: {} GB", devProp.totalGlobalMem / 1.0e9);

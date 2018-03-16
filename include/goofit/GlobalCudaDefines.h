@@ -65,8 +65,10 @@ enum gooError { gooSuccess = 0, gooErrorMemoryAllocation };
 // This automatically selects the correct CUDA arch and expands the intrinsic to work on arbitrary types
 #ifdef __CUDACC__
 #include <generics/ldg.h>
-#endif
 #define RO_CACHE(x) __ldg(&x)
+#else
+#define RO_CACHE(x) x
+#endif
 #define GET_FUNCTION_ADDR(fname)                                                                                       \
     {                                                                                                                  \
         cudaError err = cudaMemcpyFromSymbol((void **)&host_fcn_ptr, fname, sizeof(void *));                           \

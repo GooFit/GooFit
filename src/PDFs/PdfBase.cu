@@ -308,7 +308,7 @@ __host__ void PdfBase::setData(DataSet *data) {
         MEMCPY(dev_event_array, host_array, dimensions * numEntries * sizeof(fptype), cudaMemcpyHostToDevice);
         delete[] host_array;
 #endif
-        MEMCPY_TO_SYMBOL(c_totalEvents, &numEntries, sizeof(unsigned int), 0, cudaMemcpyHostTo_Device);
+        MEMCPY_TO_SYMBOL(c_totalEvents, &numEntries, sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
     } else if((binned_data = dynamic_cast<BinnedDataSet *>(data))) {
         numEvents      = 0;
         numEntries     = binned_data->getNumBins();
@@ -399,7 +399,7 @@ __host__ void PdfBase::setData(DataSet *data) {
         MEMCPY(dev_event_array, host_array, dimensions * numEntries * sizeof(fptype), cudaMemcpyHostToDevice);
         delete[] host_array;
 #endif
-        MEMCPY_TO_SYMBOL(c_totalEvents, &numEntries, sizeof(unsigned int), 0, cudaMemcpyHostTo_Device);
+        MEMCPY_TO_SYMBOL(c_totalEvents, &numEntries, sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
     } else
         throw GooFit::GeneralError("Dataset must be binned or unbinned!");
 }

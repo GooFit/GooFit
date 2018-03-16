@@ -1,3 +1,4 @@
+#include <goofit/GlobalCudaDefines.h>
 #include <goofit/Application.h>
 
 #include <thrust/detail/config/device_system.h>
@@ -66,7 +67,7 @@ void print_splash() {
     std::cout << reset << std::flush;
 }
 
-void print_goofit_info() {
+void print_goofit_info(int gpuDev_) {
     GOOFIT_INFO("GooFit: Version {} ({}) Commit: {}", GOOFIT_VERSION, GOOFIT_TAG, GOOFIT_GIT_VERSION);
 
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
@@ -196,7 +197,7 @@ void Application::pre_callback() {
     if(!quiet_) {
         if(!splash_)
             print_splash();
-        print_goofit_info();
+        print_goofit_info(gpuDev_);
     }
 }
 

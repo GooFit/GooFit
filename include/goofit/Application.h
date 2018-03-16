@@ -6,7 +6,6 @@
 
 #include <goofit/Color.h>
 #include <goofit/Error.h>
-#include <goofit/GlobalCudaDefines.h>
 #include <goofit/Log.h>
 #include <goofit/Version.h>
 
@@ -39,7 +38,7 @@ using CLI::Success;
 void print_splash();
 
 /// Print out information about GooFit
-void print_goofit_info();
+void print_goofit_info(int gpuDev_ = 0);
 
 class Application : public CLI::App {
   protected:

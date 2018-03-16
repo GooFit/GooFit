@@ -1,3 +1,4 @@
+#include <goofit/GlobalCudaDefines.h>
 #include <goofit/Application.h>
 
 #include <thrust/detail/config/device_system.h>
@@ -30,14 +31,14 @@ void print_splash() {
     std::cout << reset << green << "       Welcome to";
 #if GOOFIT_SPLASH
     std::string splash = R"raw(
-    ██████╗                 ████████╗
+     ██████╗                 ████████╗
     ██╔════╝  █████╗  █████╗ ██╔═════╝  ██╗
     ██║  ███╗██╔══██╗██╔══██╗█████╗██╗██████╗
     ██║   ██║██║  ██║██║  ██║██╔══╝██║╚═██╔═╝
     ╚██████╔╝╚█████╔╝╚█████╔╝██║   ██║  ██║
-    ╚═════╝  ╚════╝  ╚════╝ ╚═╝   ╚═╝  ██║
-    ███████║
-    ╚══════╝
+     ╚═════╝  ╚════╝  ╚════╝ ╚═╝   ╚═╝  ██║
+                                   ███████║
+                                   ╚══════╝
     )raw";
 
     std::cout << reset << dim;
@@ -66,14 +67,14 @@ void print_splash() {
     std::cout << reset << std::flush;
 }
 
-void print_goofit_info() {
+void print_goofit_info(int gpuDev_) {
     GOOFIT_INFO("GooFit: Version {} ({}) Commit: {}", GOOFIT_VERSION, GOOFIT_TAG, GOOFIT_GIT_VERSION);
 
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
     cudaDeviceProp devProp;
     cudaGetDeviceProperties(&devProp, gpuDev_);
 
-    GOOFIT_INFO("CUDA: Device {}: {}", get_device(), devProp.name);
+    GOOFIT_INFO("CUDA: Device {}: {}", gpuDev_, devProp.name);
 
     GOOFIT_INFO("CUDA: Compute {}.{}", devProp.major, devProp.minor);
     GOOFIT_INFO("CUDA: Total global memory: {} GB", devProp.totalGlobalMem / 1.0e9);
@@ -196,7 +197,7 @@ void Application::pre_callback() {
     if(!quiet_) {
         if(!splash_)
             print_splash();
-        print_goofit_info();
+        print_goofit_info(gpuDev_);
     }
 }
 

@@ -1,4 +1,5 @@
 #include <goofit/PDFs/basic/NovosibirskPdf.h>
+#include <goofit/PDFs/ParameterContainer.h>
 
 namespace GooFit {
 

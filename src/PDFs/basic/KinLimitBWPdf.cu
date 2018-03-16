@@ -1,4 +1,5 @@
 #include <goofit/PDFs/basic/KinLimitBWPdf.h>
+#include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/Variable.h>
 
 namespace GooFit {

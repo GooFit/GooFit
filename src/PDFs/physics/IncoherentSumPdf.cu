@@ -1,4 +1,5 @@
 #include <goofit/Error.h>
+#include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/IncoherentSumPdf.h>
 #include <goofit/PDFs/physics/ResonancePdf.h>
 #include <thrust/complex.h>

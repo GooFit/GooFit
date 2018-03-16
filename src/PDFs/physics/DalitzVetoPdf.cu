@@ -1,5 +1,6 @@
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <goofit/PDFs/physics/DalitzVetoPdf.h>
+#include <goofit/PDFs/ParameterContainer.h>
 
 namespace GooFit {
 

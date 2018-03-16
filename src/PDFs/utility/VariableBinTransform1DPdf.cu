@@ -1,4 +1,5 @@
 #include <goofit/PDFs/utility/VariableBinTransform1DPdf.h>
+#include <goofit/PDFs/ParameterContainer.h>
 
 using namespace std;
 

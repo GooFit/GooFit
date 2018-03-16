@@ -1,4 +1,5 @@
 #include <goofit/PDFs/basic/BWPdf.h>
+#include <goofit/PDFs/ParameterContainer.h>
 
 namespace GooFit {
 

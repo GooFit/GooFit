@@ -1,5 +1,6 @@
 #include <goofit/Log.h>
 #include <goofit/PDFs/basic/PolynomialPdf.h>
+#include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/Variable.h>
 
 namespace GooFit {

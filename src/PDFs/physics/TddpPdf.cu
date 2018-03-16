@@ -1,5 +1,6 @@
 #include <goofit/Error.h>
 #include <goofit/PDFs/physics/TddpPdf.h>
+#include <goofit/PDFs/ParameterContainer.h>
 
 #include <thrust/transform_reduce.h>
 

@@ -25,6 +25,7 @@ class.
 
 #include <goofit/Error.h>
 #include <goofit/PDFs/physics/DP4Pdf.h>
+#include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/EvalVar.h>
 
 #include <cstdarg>

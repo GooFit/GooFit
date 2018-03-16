@@ -1,6 +1,7 @@
 set(GOOPDF_HEADERS
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/GooPdf.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/MetricTaker.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/ParameterContainer.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/basic/CrystalBallPdf.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/basic/BifurGaussPdf.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/LineshapesPdf.h
@@ -54,6 +55,7 @@ if(GOOFIT_SEPARATE_COMP)
     goofit_add_library(PDFs
         GooPdf.cu
         MetricTaker.cu
+        ParameterContainer.cu
         PdfBase.cu
         basic/CrystalBallPdf.cu
         basic/BifurGaussPdf.cu

@@ -1,5 +1,6 @@
 #include <goofit/GlobalCudaDefines.h>
 #include <goofit/PDFs/GooPdf.h>
+#include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/detail/ThrustOverride.h>
 
 #include <goofit/BinnedDataSet.h>
@@ -45,25 +46,6 @@ __constant__ fptype c_daug1Mass;
 __constant__ fptype c_daug2Mass;
 __constant__ fptype c_daug3Mass;
 __constant__ fptype c_meson_radius;
-
-// This has to be here, otherwise we can't initialize the pointers properly.
-__device__ __host__ ParameterContainer::ParameterContainer()
-    : parameters(d_parameters)
-    , constants(d_constants)
-    , observables(d_observables)
-    , normalisations(d_normalisations) {}
-
-__device__ __host__ ParameterContainer::ParameterContainer(const ParameterContainer &pc)
-    : parameters(d_parameters)
-    , constants(d_constants)
-    , observables(d_observables)
-    , normalisations(d_normalisations) {
-    parameterIdx  = pc.parameterIdx;
-    constantIdx   = pc.constantIdx;
-    observableIdx = pc.observableIdx;
-    normalIdx     = pc.normalIdx;
-    funcIdx       = pc.funcIdx;
-}
 
 // For debugging
 

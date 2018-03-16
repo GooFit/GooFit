@@ -2,6 +2,7 @@
 
 #include <goofit/GlobalCudaDefines.h>
 #include <goofit/PDFs/GooPdf.h>
+#include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/detail/ThrustOverride.h>
 
 #include <goofit/BinnedDataSet.h>

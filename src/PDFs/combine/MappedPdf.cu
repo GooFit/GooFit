@@ -1,4 +1,5 @@
 #include <goofit/PDFs/combine/MappedPdf.h>
+#include <goofit/PDFs/ParameterContainer.h>
 
 namespace GooFit {
 

@@ -1,4 +1,5 @@
 #include <goofit/PDFs/basic/CorrGaussianPdf.h>
+#include <goofit/PDFs/ParameterContainer.h>
 
 namespace GooFit {
 

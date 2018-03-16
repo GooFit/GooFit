@@ -27,7 +27,7 @@ var searchData=
   ['pow2',['POW2',['../_global_cuda_defines_8h.html#a1ac0abc7c913167ecaf81778d57e7a17',1,'GlobalCudaDefines.h']]],
   ['pow3',['POW3',['../_global_cuda_defines_8h.html#ab051a5ece45339feb3f4b19a4dddbcb2',1,'GlobalCudaDefines.h']]],
   ['pre_5fcallback',['pre_callback',['../class_goo_fit_1_1_application.html#ae6b257440c81e8529bd15606e9eb5f30',1,'GooFit::Application']]],
-  ['print_5fgoofit_5finfo',['print_goofit_info',['../namespace_goo_fit.html#a4f8baf8d48eb1cc05b96691bad8e31ce',1,'GooFit']]],
+  ['print_5fgoofit_5finfo',['print_goofit_info',['../namespace_goo_fit.html#a891cd0c357426896e119a7710781845c',1,'GooFit']]],
   ['print_5fsplash',['print_splash',['../namespace_goo_fit.html#afd0fb7f08a225be4ca1f9d9682970f08',1,'GooFit']]],
   ['printprofileinfo',['printProfileInfo',['../class_goo_fit_1_1_pdf_base.html#a4dd50cb70a4647f24975ffef59bfc437',1,'GooFit::PdfBase']]],
   ['prob',['Prob',['../namespace_goo_fit.html#a0b857aa4b1d7ac8a7e399132ae38d517ab6ccabb499827f639017c834d93d548d',1,'GooFit']]],

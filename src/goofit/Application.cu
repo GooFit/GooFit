@@ -1,5 +1,5 @@
-#include <goofit/GlobalCudaDefines.h>
 #include <goofit/Application.h>
+#include <goofit/GlobalCudaDefines.h>
 
 #include <thrust/detail/config/device_system.h>
 
@@ -30,6 +30,8 @@ void signal_handler(int s) {
 void print_splash() {
     std::cout << reset << green << "       Welcome to";
 #if GOOFIT_SPLASH
+    // Just in case, for clang format:
+    // clang-format off
     std::string splash = R"raw(
      ██████╗                 ████████╗
     ██╔════╝  █████╗  █████╗ ██╔═════╝  ██╗
@@ -40,6 +42,7 @@ void print_splash() {
                                    ███████║
                                    ╚══════╝
     )raw";
+    // clang-format on
 
     std::cout << reset << dim;
     bool cur_green = false;

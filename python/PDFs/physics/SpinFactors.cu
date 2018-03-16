@@ -29,10 +29,18 @@ void init_SpinFactors(py::module &m) {
         .value("ONE", SF_4Body::ONE);
 
     py::class_<SpinFactor, GooPdf>(m, "SpinFactor")
-        .def(py::init<std::string, SF_4Body, const fptype &, unsigned int, unsigned int, unsigned int, unsigned int>(),
+        .def(py::init<std::string, SF_4Body, fptype, unsigned int, unsigned int, unsigned int, unsigned int>(),
              "name"_a,
              "SF"_a,
              "mother_radius"_a,
+             "P0"_a,
+             "P1"_a,
+             "P2"_a,
+             "P3"_a)
+        .def(py::init<std::string, SF_4Body, unsigned int, unsigned int, unsigned int, unsigned int>(),
+             "Defaulting radius to 1.5",
+             "name"_a,
+             "SF"_a,
              "P0"_a,
              "P1"_a,
              "P2"_a,

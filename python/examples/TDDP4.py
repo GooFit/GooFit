@@ -52,20 +52,20 @@ def main():
     SFA1RD = (SpinFactor("SF", SF_4Body .DtoAP1_AtoVP2Dwave_VtoP3P4, _mD0, 2, 3, 0, 1),
               SpinFactor("SF", SF_4Body .DtoAP1_AtoVP2Dwave_VtoP3P4, _mD0, 2, 0, 3, 1))
 
-    LSKRS = (Lineshapes.RBW("rho(770)",RhoMass, RhoWidth, 1, M_12, FF .BL2),
-             Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_34, FF .BL2),
-             Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_24, FF .BL2),
-             Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_13, FF .BL2))
+    LSKRS = (Lineshapes.RBW("rho(770)",RhoMass, RhoWidth, 1, M_12),
+             Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_34),
+             Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_24),
+             Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_13))
 
-    LSKRP = (Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_12, FF .BL2),
-             Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_34, FF .BL2),
-             Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_24, FF .BL2),
-             Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_13, FF .BL2))
+    LSKRP = (Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_12),
+             Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_34),
+             Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_24),
+             Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_13))
 
-    LSKRD = (Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_12, FF .BL2),
-             Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_34, FF .BL2),
-             Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_24, FF .BL2),
-             Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_13, FF .BL2))
+    LSKRD = (Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_12),
+             Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_34),
+             Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_24),
+             Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_13))
 
     Bose_symmetrized_AMP_S = Amplitude("K*(892)rho(770)_S",
                                         Variable("amp_real1", 1.0),

@@ -1,6 +1,6 @@
 #include <goofit/Log.h>
-#include <goofit/PDFs/combine/ProdPdf.h>
 #include <goofit/PDFs/ParameterContainer.h>
+#include <goofit/PDFs/combine/ProdPdf.h>
 
 #include <algorithm>
 

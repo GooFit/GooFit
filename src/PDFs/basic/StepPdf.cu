@@ -1,5 +1,5 @@
-#include <goofit/PDFs/basic/StepPdf.h>
 #include <goofit/PDFs/ParameterContainer.h>
+#include <goofit/PDFs/basic/StepPdf.h>
 
 namespace GooFit {
 

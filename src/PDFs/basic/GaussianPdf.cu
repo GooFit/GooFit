@@ -1,6 +1,6 @@
 #include <goofit/Log.h>
-#include <goofit/PDFs/basic/GaussianPdf.h>
 #include <goofit/PDFs/ParameterContainer.h>
+#include <goofit/PDFs/basic/GaussianPdf.h>
 
 namespace GooFit {
 

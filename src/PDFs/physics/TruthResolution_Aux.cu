@@ -1,5 +1,5 @@
-#include <goofit/PDFs/physics/TruthResolution_Aux.h>
 #include <goofit/PDFs/ParameterContainer.h>
+#include <goofit/PDFs/physics/TruthResolution_Aux.h>
 
 namespace GooFit {
 

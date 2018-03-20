@@ -54,7 +54,7 @@ extern unsigned int num_device_functions;
 extern std::map<void *, int> functionAddressToDeviceIndexMap;
 //#endif
 
-//Forward declare
+// Forward declare
 class ParameterContainer;
 
 __device__ int dev_powi(int base, int exp); // Implemented in SmoothHistogramPdf.

@@ -21,4 +21,3 @@ __device__ __host__ ParameterContainer::ParameterContainer(const ParameterContai
 }
 
 } // namespace GooFit
-

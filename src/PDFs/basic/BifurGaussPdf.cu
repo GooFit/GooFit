@@ -1,5 +1,5 @@
-#include <goofit/PDFs/basic/BifurGaussPdf.h>
 #include <goofit/PDFs/ParameterContainer.h>
+#include <goofit/PDFs/basic/BifurGaussPdf.h>
 
 namespace GooFit {
 

@@ -1,5 +1,5 @@
-#include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <goofit/PDFs/ParameterContainer.h>
+#include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <goofit/PDFs/physics/ResonancePdf.h>
 
 namespace GooFit {

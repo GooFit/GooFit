@@ -5,9 +5,9 @@ The Spinfactors are an adaptation from the MINT implementation, by Jonas Rademac
 DISCLAIMER:
 This code is not sufficently tested yet and still under heavy development!
 */
+#include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/SpinFactors.h>
 #include <goofit/PDFs/physics/SpinHelper.h>
-#include <goofit/PDFs/ParameterContainer.h>
 
 namespace GooFit {
 

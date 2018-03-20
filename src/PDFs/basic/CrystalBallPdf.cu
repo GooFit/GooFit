@@ -1,5 +1,5 @@
-#include <goofit/PDFs/basic/CrystalBallPdf.h>
 #include <goofit/PDFs/ParameterContainer.h>
+#include <goofit/PDFs/basic/CrystalBallPdf.h>
 #include <goofit/Variable.h>
 
 namespace GooFit {

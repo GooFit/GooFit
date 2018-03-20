@@ -64,5 +64,4 @@ struct ParameterContainer {
     }
 };
 
-}
-
+} // namespace GooFit

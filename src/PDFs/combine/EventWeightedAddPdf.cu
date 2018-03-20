@@ -1,7 +1,7 @@
 #include <goofit/Error.h>
 #include <goofit/Log.h>
-#include <goofit/PDFs/combine/EventWeightedAddPdf.h>
 #include <goofit/PDFs/ParameterContainer.h>
+#include <goofit/PDFs/combine/EventWeightedAddPdf.h>
 
 namespace GooFit {
 

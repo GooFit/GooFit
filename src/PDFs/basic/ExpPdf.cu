@@ -1,6 +1,6 @@
 #include <goofit/Error.h>
-#include <goofit/PDFs/basic/ExpPdf.h>
 #include <goofit/PDFs/ParameterContainer.h>
+#include <goofit/PDFs/basic/ExpPdf.h>
 
 namespace GooFit {
 

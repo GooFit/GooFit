@@ -1,5 +1,5 @@
-#include <goofit/PDFs/basic/LandauPdf.h>
 #include <goofit/PDFs/ParameterContainer.h>
+#include <goofit/PDFs/basic/LandauPdf.h>
 
 namespace GooFit {
 

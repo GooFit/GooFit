@@ -1,5 +1,5 @@
-#include <goofit/PDFs/basic/ExpGausPdf.h>
 #include <goofit/PDFs/ParameterContainer.h>
+#include <goofit/PDFs/basic/ExpGausPdf.h>
 
 namespace GooFit {
 

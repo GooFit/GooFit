@@ -1,6 +1,6 @@
 #include <cmath>
-#include <goofit/PDFs/physics/ThreeGaussResolution_Aux.h>
 #include <goofit/PDFs/ParameterContainer.h>
+#include <goofit/PDFs/physics/ThreeGaussResolution_Aux.h>
 
 namespace GooFit {
 

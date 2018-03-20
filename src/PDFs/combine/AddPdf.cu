@@ -1,7 +1,7 @@
 #include <goofit/Error.h>
 #include <goofit/Log.h>
-#include <goofit/PDFs/combine/AddPdf.h>
 #include <goofit/PDFs/ParameterContainer.h>
+#include <goofit/PDFs/combine/AddPdf.h>
 #include <goofit/detail/ThrustOverride.h>
 
 #include <thrust/iterator/constant_iterator.h>

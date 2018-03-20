@@ -1,6 +1,6 @@
 #include <goofit/Faddeeva.h>
-#include <goofit/PDFs/basic/VoigtianPdf.h>
 #include <goofit/PDFs/ParameterContainer.h>
+#include <goofit/PDFs/basic/VoigtianPdf.h>
 #include <goofit/detail/Complex.h>
 #include <limits>
 

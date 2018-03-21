@@ -44,13 +44,8 @@ class SpinFactor : public GooPdf {
     unsigned int _P3;
 
   public:
-    SpinFactor(std::string name,
-               SF_4Body SF,
-               fptype mD0,
-               unsigned int P0,
-               unsigned int P1,
-               unsigned int P2,
-               unsigned int P3);
+    SpinFactor(
+        std::string name, SF_4Body SF, fptype mD0, unsigned int P0, unsigned int P1, unsigned int P2, unsigned int P3);
 
     SpinFactor(std::string name, SF_4Body SF, unsigned int P0, unsigned int P1, unsigned int P2, unsigned int P3)
         : SpinFactor(name, SF, 1.86484, P0, P1, P2, P3) {}

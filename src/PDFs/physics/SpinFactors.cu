@@ -518,13 +518,8 @@ __device__ spin_function_ptr ptr_to_FF_123_4_L1 = FF_123_4_L1;
 __device__ spin_function_ptr ptr_to_FF_123_4_L2 = FF_123_4_L2;
 __device__ spin_function_ptr ptr_to_ONE         = ONE;
 
-SpinFactor::SpinFactor(std::string name,
-                       SF_4Body SF,
-                       fptype mD0,
-                       unsigned int P0,
-                       unsigned int P1,
-                       unsigned int P2,
-                       unsigned int P3)
+SpinFactor::SpinFactor(
+    std::string name, SF_4Body SF, fptype mD0, unsigned int P0, unsigned int P1, unsigned int P2, unsigned int P3)
     : GooPdf(name)
     , _SF(SF)
     , _P0(P0)

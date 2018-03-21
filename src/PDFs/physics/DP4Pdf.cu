@@ -398,7 +398,7 @@ __host__ fptype DPPdf::normalize() const {
             unsigned int offset = SpinFactors.size();
             sfcalculators[i]->setDalitzId(getFunctionIndex());
             sfcalculators[i]->setSpinFactorId(SpinFactors[i]->getFunctionIndex());
-            unsigned int stride = 2 * SpinFactors.size();
+            unsigned int stride = 2 * (components.size() - 1) + SpinFactors.size();
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, dataArray, eventSize)),
@@ -434,7 +434,7 @@ __host__ fptype DPPdf::normalize() const {
             lscalculators[i]->setDalitzId(getFunctionIndex());
             lscalculators[i]->setResonanceId(LineShapes[i]->getFunctionIndex());
 
-            int stride = LineShapes.size() * 2;
+            unsigned int stride = 2 * (components.size() - 1) + SpinFactors.size();
 
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),

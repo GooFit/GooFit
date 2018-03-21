@@ -516,12 +516,18 @@ __host__ void TDDP4::setDataSize(unsigned int dataSize, unsigned int evtSize) {
 
     numEntries  = dataSize;
     cachedResSF = new thrust::device_vector<fpcomplex>(
-        dataSize * (2 * (components.size() - 2) + SpinFactors.size())); //   -2 because 1 component is efficiency and one is resolution
+        dataSize
+        * (2 * (components.size() - 2)
+           + SpinFactors.size())); //   -2 because 1 component is efficiency and one is resolution
     void *dummy = thrust::raw_pointer_cast(cachedResSF->data());
     MEMCPY_TO_SYMBOL(cResSF_TD, &dummy, sizeof(fpcomplex *), cacheToUse * sizeof(fpcomplex *), cudaMemcpyHostToDevice);
 
-    GOOFIT_ERROR("cachedAmps size:{}, {}, {}, {}, {}", dataSize,
-		AmpCalcs.size(), components.size () - 1, SpinFactors.size(), LineShapes.size());
+    GOOFIT_ERROR("cachedAmps size:{}, {}, {}, {}, {}",
+                 dataSize,
+                 AmpCalcs.size(),
+                 components.size() - 1,
+                 SpinFactors.size(),
+                 LineShapes.size());
 
     cachedAMPs   = new thrust::device_vector<fpcomplex>(dataSize * (AmpCalcs.size()));
     void *dummy2 = thrust::raw_pointer_cast(cachedAMPs->data());
@@ -569,7 +575,7 @@ __host__ fptype TDDP4::normalize() const {
             unsigned int offset = SpinFactors.size();
             unsigned int stride = 2 * (components.size() - 2) + SpinFactors.size();
 
-            //2 * (components.size() - 2) + SpinFactors.size())
+            // 2 * (components.size() - 2) + SpinFactors.size())
             GOOFIT_ERROR("SpinFactors - stride: {}", stride);
             sfcalculators[i]->setDalitzId(getFunctionIndex());
             sfcalculators[i]->setSpinFactorId(SpinFactors[i]->getFunctionIndex());
@@ -613,7 +619,7 @@ __host__ fptype TDDP4::normalize() const {
             lscalculators[i]->setDalitzId(getFunctionIndex());
             lscalculators[i]->setResonanceId(LineShapes[i]->getFunctionIndex());
 
-            //unsigned int stride = 2 * LineShapes.size();
+            // unsigned int stride = 2 * LineShapes.size();
             unsigned int stride = 2 * (components.size() - 2) + SpinFactors.size();
 
             GOOFIT_ERROR("LineShapes - stride: {}", stride);

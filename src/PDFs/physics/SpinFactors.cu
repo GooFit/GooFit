@@ -520,7 +520,7 @@ __device__ spin_function_ptr ptr_to_ONE         = ONE;
 
 SpinFactor::SpinFactor(std::string name,
                        SF_4Body SF,
-                       fptype mother_radius,
+                       fptype mD0,
                        unsigned int P0,
                        unsigned int P1,
                        unsigned int P2,
@@ -531,7 +531,7 @@ SpinFactor::SpinFactor(std::string name,
     , _P1(P1)
     , _P2(P2)
     , _P3(P3) {
-    registerConstant(mother_radius);
+    registerConstant(mD0);
     registerConstant(P0);
     registerConstant(P1);
     registerConstant(P2);

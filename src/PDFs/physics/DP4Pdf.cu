@@ -322,7 +322,7 @@ void DPPdf::recursiveSetIndices() {
 
     MEMCPY_TO_SYMBOL(AmpIndices,
                      &(amp_idx[0]),
-                     amp_idx_start.size() * sizeof(unsigned int),
+                     amp_idx.size() * sizeof(unsigned int),
                      amp_idx_start.size() * sizeof(unsigned int),
                      cudaMemcpyHostToDevice);
 
@@ -865,7 +865,7 @@ __device__ fpcomplex NormLSCalculator::operator()(
     return ret;
 }
 
-AmpCalc::AmpCalc(unsigned int amp, unsigned int nPerm)
+AmpCalc::AmpCalc(unsigned int nPerm, unsigned int amp)
     : _nPerm(nPerm)
     , _AmpIdx(amp) {}
 

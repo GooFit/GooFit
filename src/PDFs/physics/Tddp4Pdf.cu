@@ -480,7 +480,7 @@ __host__ void TDDP4::recursiveSetIndices() {
         std::vector<Lineshape *> lineshapes   = amp->getLineShapes();
         std::vector<SpinFactor *> spinfactors = amp->getSpinFactors();
 
-        //printf ("i=%i 0=%i 1=%i 2=%i 3=%i\n", i, amp_idx.size(), lineshapes.size(), spinfactors.size(), amp->_nPerm);
+        // printf ("i=%i 0=%i 1=%i 2=%i 3=%i\n", i, amp_idx.size(), lineshapes.size(), spinfactors.size(), amp->_nPerm);
         amp_idx_start.push_back(amp_idx.size());
 
         amp_idx.push_back(lineshapes.size());
@@ -534,8 +534,7 @@ __host__ void TDDP4::setDataSize(unsigned int dataSize, unsigned int evtSize) {
         delete cachedAMPs;
 
     numEntries  = dataSize;
-    cachedResSF = new thrust::device_vector<fpcomplex>(
-        dataSize * (2 * LineShapes.size() + SpinFactors.size()));
+    cachedResSF = new thrust::device_vector<fpcomplex>(dataSize * (2 * LineShapes.size() + SpinFactors.size()));
     void *dummy = thrust::raw_pointer_cast(cachedResSF->data());
     MEMCPY_TO_SYMBOL(cResSF_TD, &dummy, sizeof(fpcomplex *), cacheToUse * sizeof(fpcomplex *), cudaMemcpyHostToDevice);
 
@@ -1169,7 +1168,8 @@ __device__ fpcomplex NormLSCalculator_TD::operator()(
 }
 
 AmpCalc_TD::AmpCalc_TD(unsigned int nPerm, unsigned int ampIdx)
-    : _nPerm(nPerm), _AmpIdx(ampIdx) {}
+    : _nPerm(nPerm)
+    , _AmpIdx(ampIdx) {}
 
 __device__ fpcomplex AmpCalc_TD::operator()(thrust::tuple<int, fptype *, int> t) const {
     ParameterContainer pc;

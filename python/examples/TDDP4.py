@@ -134,9 +134,9 @@ def main():
     coefficients = (constantOne,)
 
 
-    dat = TruthResolution()
+    res = TruthResolution()
     eff = PolynomialPdf("constantEff", observables, coefficients, offsets, 0)
-    dp  = TDDP4("test", observables, DK3P_DI, dat, eff, None, 1)
+    dp  = TDDP4("test", observables, DK3P_DI, res, eff, None, 1)
 
 
     for k in range(10):

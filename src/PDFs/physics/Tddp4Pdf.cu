@@ -373,6 +373,24 @@ __host__ TDDP4::TDDP4(std::string n,
         amp_idx.push_back(amp->_nPerm);
 
         nPermVec.push_back(amp->_nPerm);
+
+        for(auto &LSIT : lineshapes) {
+            auto found = std::find_if(
+                LineShapes.begin(), LineShapes.end(), [&LSIT](const Lineshape *L) { return (*LSIT) == (*L); });
+            if(found != LineShapes.end()) {
+                amp_idx.push_back(std::distance(LineShapes.begin(), found));
+            } else
+                GOOFIT_ERROR("Shouldn't happen, could not find lineshape in array!");
+        }
+
+        for(auto &SFIT : spinfactors) {
+            auto found = std::find_if(
+                SpinFactors.begin(), SpinFactors.end(), [&SFIT](const SpinFactor *S) { return (*SFIT) == (*S); });
+            if(found != SpinFactors.end()) {
+                amp_idx.push_back(std::distance(SpinFactors.begin(), found));
+            } else
+                GOOFIT_ERROR("Shouldn't happen, could not find spin factor in array!");
+        }
     }
 
     MEMCPY_TO_SYMBOL(
@@ -388,7 +406,7 @@ __host__ TDDP4::TDDP4(std::string n,
     }
 
     for(int i = 0; i < components.size() - 2; ++i) {
-        AmpCalcs.push_back(new AmpCalc_TD(nPermVec[i]));
+        AmpCalcs.push_back(new AmpCalc_TD(nPermVec[i], amp_idx_start[i]));
     }
 
     // fprintf(stderr,"#Amp's %i, #LS %i, #SF %i \n", AmpMap.size(), components.size()-1, SpinFactors.size() );
@@ -462,6 +480,7 @@ __host__ void TDDP4::recursiveSetIndices() {
         std::vector<Lineshape *> lineshapes   = amp->getLineShapes();
         std::vector<SpinFactor *> spinfactors = amp->getSpinFactors();
 
+        //printf ("i=%i 0=%i 1=%i 2=%i 3=%i\n", i, amp_idx.size(), lineshapes.size(), spinfactors.size(), amp->_nPerm);
         amp_idx_start.push_back(amp_idx.size());
 
         amp_idx.push_back(lineshapes.size());
@@ -516,13 +535,11 @@ __host__ void TDDP4::setDataSize(unsigned int dataSize, unsigned int evtSize) {
 
     numEntries  = dataSize;
     cachedResSF = new thrust::device_vector<fpcomplex>(
-        dataSize
-        * (2 * (components.size() - 2)
-           + SpinFactors.size())); //   -2 because 1 component is efficiency and one is resolution
+        dataSize * (2 * LineShapes.size() + SpinFactors.size()));
     void *dummy = thrust::raw_pointer_cast(cachedResSF->data());
     MEMCPY_TO_SYMBOL(cResSF_TD, &dummy, sizeof(fpcomplex *), cacheToUse * sizeof(fpcomplex *), cudaMemcpyHostToDevice);
 
-    GOOFIT_ERROR("cachedAmps size:{}, {}, {}, {}, {}",
+    GOOFIT_TRACE("cachedAmps size:{}, {}, {}, {}, {}",
                  dataSize,
                  AmpCalcs.size(),
                  components.size() - 1,
@@ -573,10 +590,9 @@ __host__ fptype TDDP4::normalize() const {
     if(!SpinsCalculated) {
         for(int i = 0; i < SpinFactors.size(); ++i) {
             unsigned int offset = SpinFactors.size();
-            unsigned int stride = 2 * (components.size() - 2) + SpinFactors.size();
+            unsigned int stride = 2 * LineShapes.size() + SpinFactors.size();
 
-            // 2 * (components.size() - 2) + SpinFactors.size())
-            GOOFIT_ERROR("SpinFactors - stride: {}", stride);
+            GOOFIT_TRACE("SpinFactors - stride: {}", stride);
             sfcalculators[i]->setDalitzId(getFunctionIndex());
             sfcalculators[i]->setSpinFactorId(SpinFactors[i]->getFunctionIndex());
 
@@ -619,10 +635,9 @@ __host__ fptype TDDP4::normalize() const {
             lscalculators[i]->setDalitzId(getFunctionIndex());
             lscalculators[i]->setResonanceId(LineShapes[i]->getFunctionIndex());
 
-            // unsigned int stride = 2 * LineShapes.size();
-            unsigned int stride = 2 * (components.size() - 2) + SpinFactors.size();
+            unsigned int stride = 2 * LineShapes.size() + SpinFactors.size();
 
-            GOOFIT_ERROR("LineShapes - stride: {}", stride);
+            GOOFIT_TRACE("LineShapes - stride: {}", stride);
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, dataArray, eventSize)),
@@ -644,7 +659,7 @@ __host__ fptype TDDP4::normalize() const {
         // std::vector<unsigned int> redoidx((*AmpMapIt).second.first);
 
         bool redo = false;
-        for(unsigned int j = 0; j < components.size() - 1; j++) {
+        for(unsigned int j = 0; j < components.size() - 2; j++) {
             if(!redoIntegral[j])
                 continue;
             redo = true;
@@ -1153,8 +1168,8 @@ __device__ fpcomplex NormLSCalculator_TD::operator()(
     return ret;
 }
 
-AmpCalc_TD::AmpCalc_TD(unsigned int nPerm)
-    : _nPerm(nPerm) {}
+AmpCalc_TD::AmpCalc_TD(unsigned int nPerm, unsigned int ampIdx)
+    : _nPerm(nPerm), _AmpIdx(ampIdx) {}
 
 __device__ fpcomplex AmpCalc_TD::operator()(thrust::tuple<int, fptype *, int> t) const {
     ParameterContainer pc;

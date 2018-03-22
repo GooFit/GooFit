@@ -161,9 +161,9 @@ class NormLSCalculator_TD
 
 class AmpCalc_TD : public thrust::unary_function<unsigned int, fpcomplex> {
   public:
-    AmpCalc_TD(unsigned int nPerm);
+    AmpCalc_TD(unsigned int nPerm, unsigned int ampIdx);
     void setDalitzId(int idx) { dalitzFuncId = idx; }
-    void setAmplitudeId(int idx) { _AmpIdx = idx; }
+    //void setAmplitudeId(int idx) { _AmpIdx = idx; }
     // void setpIdx(unsigned int pIdx){_parameters = pIdx;}
     __device__ fpcomplex operator()(thrust::tuple<int, fptype *, int> t) const;
 

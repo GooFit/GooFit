@@ -28,10 +28,7 @@ eventNumber = EventNumber("eventNumber", 0, INT_MAX)
 currData = UnbinnedDataSet(m12, m34, cos12, cos34, phi, eventNumber)
 
 data = np.loadtxt(os.path.join(GDIR, "examples/DP4/ToyMC.txt"))
-print(data)
 currData.from_numpy(data.T)
-
-print("Read in {} events".format(len(currData)))
 
 DK3P_DI = DecayInfo4()
 DK3P_DI.meson_radius    = 1.5

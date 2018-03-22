@@ -155,7 +155,7 @@ class NormLSCalculator
 
 class AmpCalc : public thrust::unary_function<unsigned int, fpcomplex> {
   public:
-    AmpCalc(unsigned int amp, unsigned int nPerm);
+    AmpCalc(unsigned int nPerm, unsigned int ampIdx);
     // void setpIdx(unsigned int pIdx){_parameters = pIdx;}
     void setDalitzId(int idx) { dalitzFuncId = idx; }
     void setAmplitudeId(int idx) { _AmpIdx = idx; }

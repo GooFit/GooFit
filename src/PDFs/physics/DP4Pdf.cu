@@ -219,7 +219,7 @@ __host__ DPPdf::DPPdf(
     }
 
     for(int i = 0; i < components.size() - 1; ++i) {
-        AmpCalcs.push_back(new AmpCalc(amp_idx_start[i], nPermVec[i]));
+        AmpCalcs.push_back(new AmpCalc(nPermVec[i], amp_idx_start[i]));
     }
 
     // fprintf(stderr,"#Amp's %i, #LS %i, #SF %i \n", AmpMap.size(), components.size()-1, SpinFactors.size() );

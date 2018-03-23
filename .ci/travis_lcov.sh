@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+
+echo -en "travis_fold:start:script.lcov"
 set -evx
 
 cd ${TRAVIS_BUILD_DIR}
@@ -15,3 +17,5 @@ lcov --list coverage.info #debug info
 # Uploading report to CodeCov
 bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
 
+set +evx
+echo -en 'travis_fold:end:script.lcov\\r'

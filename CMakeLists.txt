@@ -156,6 +156,13 @@ endif()
 
 include(PatchOpenMPApple)
 
+# Add CCache if available
+find_program(CCACHE_PROGRAM ccache)
+if(CCACHE_PROGRAM)
+    set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
+    set(CMAKE_CUDA_COMPILER_LAUNCHER "${CCACHE_PROGRAM}") # CMake 3.9+
+endif()
+
 if(CMAKE_VERSION VERSION_LESS 3.8)
     set(NEW_CUDA OFF)
 else()

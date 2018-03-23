@@ -1,7 +1,7 @@
 set -evx
 
 LCOV_URL="http://ftp.de.debian.org/debian/pool/main/l/lcov/lcov_1.13.orig.tar.gz"
-cd "${DEPS_DIR}"
+pushd "${DEPS_DIR}"
 
 if [[ ! -f "${DEPS_DIR}/lcov/bin/lcov" ]] ; then
   echo "Downloading lcov"
@@ -10,5 +10,5 @@ if [[ ! -f "${DEPS_DIR}/lcov/bin/lcov" ]] ; then
 fi
 
 export PATH="${DEPS_DIR}/lcov/bin:${PATH}"
-cd "${TRAVIS_BUILD_DIR}"
+popd
 set +evx

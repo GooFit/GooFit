@@ -1,79 +1,76 @@
 language: cpp
 sudo: false
 dist: trusty
+
 cache:
   ccache: true
   apt: true
   directories:
   - ${TRAVIS_BUILD_DIR}/deps/root
   - ${TRAVIS_BUILD_DIR}/deps/doxygen
+
+# Pull requests and master only
 branches:
-  exclude:
-  - gh-pages
+  only:
+  - master
+
 env:
   global:
   - CTEST_OUTPUT_ON_FAILURE: 1
   - OMP_NUM_THREADS: 2
+  - DEPS_DIR: "${TRAVIS_BUILD_DIR}/deps"
   - secure: UxIkC5evjPTPkh4tG9VIK4Hjy0+Wbm69qu54jde0EMjlP3FzLrvXCKr1gh/Y6ywzQYSWE2fAsDWwQGmfqaphAFpjjT1S3Bwpa6ojTikjBe16jaCgIKtRiVXBr9LsNl3W7W9pDrXs1Ue40mSEksZJm8a9G7H4Ibb7K3izrllkhuQ=
+
 matrix:
   include:
+    # Clang check-format and tidy
   - compiler: clang
     env:
-    - COMPILER=5.0 CHECK_STYLE=yes
-    install:
-    - |
-      DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
-      cd "${TRAVIS_BUILD_DIR}" && . .ci/prepare_altern.sh
+    - CHECK_STYLE=yes
     script:
-    - cd "${TRAVIS_BUILD_DIR}" && scripts/check_style.sh
-    - cd "${TRAVIS_BUILD_DIR}" && .ci/check_tidy.sh
+    - scripts/check_style.sh
+    - .ci/check_tidy.sh
+
+    # Coverage
   - compiler: gcc
     addons:
       apt:
         packages:
-        - g++-4.8
-        - gcc-4.8
         - libx11-dev
         - libxpm-dev
         - libxft-dev
         - libxext-dev
-        - python-pip
-    env:
-    - COMPILER=4.8 DOXYFILE=$TRAVIS_BUILD_DIR/docs/Doxyfile
+    install:
+    - source .ci/build_lcov.sh
     script:
-    - cd "${TRAVIS_BUILD_DIR}" && .ci/travis_lcov.sh
-    after_success:
-    - echo "${TRAVIS_BRANCH} ${TRAVIS_PULL_REQUEST}"
+    - .ci/travis_lcov.sh
+
+    # Regular test set and doxygen
   - compiler: gcc
     addons:
       apt:
         packages:
         - doxygen-latex
         - graphviz
-        - g++-4.8
-        - gcc-4.8
         - libx11-dev
         - libxpm-dev
         - libxft-dev
         - libxext-dev
         - python-pip
     env:
-    - COMPILER=4.8 DOXYFILE=$TRAVIS_BUILD_DIR/docs/Doxyfile
-    script:
-    - cd "${TRAVIS_BUILD_DIR}" && .ci/travis.sh
+    - DOXYFILE=$TRAVIS_BUILD_DIR/docs/Doxyfile
+    install:
+    - pip install --user --upgrade pip
+    - pip install --user pytest numpy plumbum pandas matplotlib numba uncertainties
+    - source .ci/build_doxygen.sh
+    script: .ci/travis.sh
     after_success:
-    - echo "${TRAVIS_BRANCH} ${TRAVIS_PULL_REQUEST}"
-    - if [[ "${TRAVIS_BRANCH}" == "master" && "${TRAVIS_PULL_REQUEST}" == "false" ]] ; then echo "Updating docs" &&  cd "${TRAVIS_BUILD_DIR}" && .ci/build_docs.sh ; fi
+    - if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]] ; then echo "Updating docs" &&  cd "${TRAVIS_BUILD_DIR}" && .ci/build_docs.sh ; fi
 
-install:
-- |
-    DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
-    cd "${TRAVIS_BUILD_DIR}" && . .ci/prepare_altern.sh
-    cd "${TRAVIS_BUILD_DIR}" && . .ci/build_root.sh
-    cd "${TRAVIS_BUILD_DIR}" && . .ci/build_doxygen.sh
-    cd "${TRAVIS_BUILD_DIR}" && . .ci/build_lcov.sh
-    pip install --user --upgrade pip
-    pip install --user pytest numpy plumbum pandas matplotlib numba uncertainties
+before_install:
+- source .ci/build_root.sh
+
+install: skip
 
 notifications:
   webhooks:

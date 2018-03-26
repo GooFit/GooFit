@@ -212,12 +212,11 @@ int main(int argc, char **argv) {
         res->setParameterConstantness(true);
 
     Variable constantOne{"constantOne", 1};
-    Variable constantZero1{"constantZero1", 0};
-    Variable constantZero2{"constantZero2", 0};
+    Variable constantZero{"constantZero", 0};
 
     vector<Observable> observables = {m12, m34, cos12, cos34, phi, eventNumber};
     vector<Variable> coefficients  = {constantOne};
-    vector<Variable> offsets       = {constantZero1, constantZero2};
+    vector<Variable> offsets       = {constantZero, constantZero};
 
     PolynomialPdf eff{"constantEff", observables, coefficients, offsets, 0};
     DPPdf dp{"test", observables, DK3P_DI, &eff, 1000000};

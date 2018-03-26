@@ -135,13 +135,9 @@ Variable neutrlM("neutrlM", 0.1349766);
 Variable constantBigM("constantBigM", _mD02 + 2 * piPlusMass * piPlusMass + piZeroMass * piZeroMass);
 
 // Constants used in more than one PDF component.
-Variable constantOne1("constantOne1", 1);
-Variable constantOne2("constantOne2", 1);
-Variable constantOne3("constantOne3", 1);
-Variable constantOne4("constantOne4", 1);
+Variable constantZero("constantZero", 0);
+Variable constantOne("constantOne", 1);
 Variable constantTwo("constantTwo", 2);
-Variable constantZero1("constantZero1", 0);
-Variable constantZero2("constantZero2", 0);
 Variable constantMinusOne("constantMinusOne", -1);
 Variable minDalitzX("minDalitzX", pow(piPlusMass + piZeroMass, 2));
 Variable maxDalitzX("maxDalitzX", pow(_mD0 - piPlusMass, 2));
@@ -470,8 +466,8 @@ GooPdf *makeEfficiencyPoly() {
     vector<Variable> offsets;
     vector<Observable> observables;
     vector<Variable> coefficients;
-    offsets.push_back(constantOne1);
-    offsets.push_back(constantOne2);
+    offsets.push_back(constantOne);
+    offsets.push_back(constantOne);
 
     observables.push_back(*m12);
     observables.push_back(*m13);
@@ -744,9 +740,9 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
 
         observables.push_back(*m12);
         observables.push_back(*m13);
-        offsets.push_back(constantZero1);
-        offsets.push_back(constantZero2);
-        coefficients.push_back(constantOne1);
+        offsets.push_back(constantZero);
+        offsets.push_back(constantZero);
+        coefficients.push_back(constantOne);
         eff = new PolynomialPdf("constantEff", observables, coefficients, offsets, 0);
     }
 
@@ -765,13 +761,13 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
                 sprintf(strbuffer, "tailScaleFactor_%i", i);
                 Variable tailScaleFactor(strbuffer, 1.63, 0.001, 0.90, 6.00);
                 resolution = new ThreeGaussResolution(coreFrac,
-                                                      constantOne1,
+                                                      constantOne,
                                                       coreBias,
                                                       coreScaleFactor,
-                                                      constantZero1,
+                                                      constantZero,
                                                       tailScaleFactor,
-                                                      constantZero2,
-                                                      constantOne2);
+                                                      constantZero,
+                                                      constantOne);
                 resList.push_back(resolution);
             }
         } else {
@@ -792,25 +788,25 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
             //      constantZero, tailScaleFactor, constantZero, constantOne);
             if(!doToyStudy)
                 resolution = new ThreeGaussResolution(coreFrac,
-                                                      constantOne1,
+                                                      constantOne,
                                                       coreBias,
                                                       coreScaleFactor,
                                                       coreBias,
                                                       tailScaleFactor,
-                                                      constantZero1,
-                                                      constantOne2);
+                                                      constantZero,
+                                                      constantOne);
             else {
                 coreBias.setValue(0);
                 coreScaleFactor.setValue(1);
                 coreScaleFactor.setFixed(false);
-                resolution = new ThreeGaussResolution(constantOne1,
-                                                      constantOne2,
+                resolution = new ThreeGaussResolution(constantOne,
+                                                      constantOne,
                                                       coreBias,
                                                       coreScaleFactor,
-                                                      constantZero1,
-                                                      constantOne3,
-                                                      constantZero2,
-                                                      constantOne4);
+                                                      constantZero,
+                                                      constantOne,
+                                                      constantZero,
+                                                      constantOne);
             }
         }
     }
@@ -829,11 +825,11 @@ GooPdf *makeFlatBkgDalitzPdf(bool fixem = true) {
     vector<Variable> offsets;
     vector<Observable> observables;
     vector<Variable> coefficients;
-    offsets.push_back(constantZero1);
-    offsets.push_back(constantZero2);
+    offsets.push_back(constantZero);
+    offsets.push_back(constantZero);
     observables.push_back(*m12);
     observables.push_back(*m13);
-    coefficients.push_back(constantOne1);
+    coefficients.push_back(constantOne);
 
     PolynomialPdf *poly = new PolynomialPdf("flatbkgPdf", observables, coefficients, offsets, 0);
     Variable g_mean("g_mean", toyBkgTimeMean, 0.01, -0.2, 0.5);
@@ -881,7 +877,7 @@ int runToyFit(int ifile, int nfile, bool noPlots = true) {
     // TddpPdf* mixPdf = makeSignalPdf(dat);
     signalDalitz = makeSignalPdf();
     signalDalitz->setDataSize(data->getNumEvents(), 6); // Default 5 is fine for toys
-    sig0_jsugg = new ExpPdf("sig0_jsugg", *sigma, constantZero1);
+    sig0_jsugg = new ExpPdf("sig0_jsugg", *sigma, constantZero);
     //  sig0_jsugg = makeBkg_sigma_strips(0);
     sig0_jsugg->addSpecialMask(PdfBase::ForceSeparateNorm);
     sig0_jsugg->setParameterConstantness(true);
@@ -2496,8 +2492,8 @@ GooPdf *make_m23_transform() {
     coefficients.push_back(constantBigM);
     coefficients.push_back(constantMinusOne);
     coefficients.push_back(constantMinusOne);
-    offsets.push_back(constantZero1);
-    offsets.push_back(constantZero2);
+    offsets.push_back(constantZero);
+    offsets.push_back(constantZero);
     PolynomialPdf *m23_transform = new PolynomialPdf("m23_transform", obses, coefficients, offsets, 1);
 
     // Now create the BinTransform which will make bins out of m23 values.
@@ -2575,7 +2571,7 @@ GooPdf *makeSigmaHists() {
 
     for(int i = 0; i < m23Slices; ++i) {
         sprintf(strbuffer, "signal_sigma_hist_%i", i);
-        SmoothHistogramPdf *hist = new SmoothHistogramPdf(strbuffer, sigmaHists[i].get(), constantZero1);
+        SmoothHistogramPdf *hist = new SmoothHistogramPdf(strbuffer, sigmaHists[i].get(), constantZero);
         jsuList.push_back(hist);
     }
 
@@ -3298,8 +3294,8 @@ GooPdf *makeBkg2DalitzPdf(bool fixem = true) {
         vector<Variable> offsets;
         vector<Observable> observables;
         vector<Variable> coefficients;
-        offsets.push_back(constantOne1);
-        offsets.push_back(constantOne2);
+        offsets.push_back(constantOne);
+        offsets.push_back(constantOne);
         observables.push_back(*m12);
         observables.push_back(*m13);
         double weightOffset = 3;
@@ -3352,7 +3348,7 @@ GooPdf *makeBkg2DalitzPdf(bool fixem = true) {
         ResonancePdf *bkg2_rho_ref = new Resonances::Gauss(
             "bkg2_rho_ref",
             Variable("bkg2_rho_ref_amp", 0.00896 * weightOffset, 0.001, 0, 0.015 * weightOffset),
-            constantZero1,
+            constantZero,
             Variable("bkg2_rho_ref_mass", 0.53172),
             Variable("bkg2_rho_ref_width", 0.06426),
             PAIR_13);
@@ -3362,7 +3358,7 @@ GooPdf *makeBkg2DalitzPdf(bool fixem = true) {
         Variable bkg2_rho_poly_linear("bkg2_rho_poly_linear", 0);
         Variable bkg2_rho_poly_second("bkg2_rho_poly_second", -0.48166);
         weights.clear();
-        weights.push_back(constantOne1);
+        weights.push_back(constantOne);
         weights.push_back(bkg2_rho_poly_linear);
         weights.push_back(bkg2_rho_poly_second);
         PolynomialPdf *bkg2_rho_poly = new PolynomialPdf("bkg2_rho_poly", *m12, weights, bkg2_rho_poly_offset);
@@ -3384,7 +3380,7 @@ GooPdf *makeBkg2DalitzPdf(bool fixem = true) {
         ResonancePdf *bkg2_incRho0 = new Resonances::RBW(
             "bkg2_incRho0",
             Variable("bkg2_incRho0_amp", 0.00304 * weightOffset, 0.001, 0.0, 0.006 * weightOffset),
-            constantZero1,
+            constantZero,
             fixedRhoMass,
             fixedRhoWidth,
             0, // Incoherent rho has effective spin 0.
@@ -3394,7 +3390,7 @@ GooPdf *makeBkg2DalitzPdf(bool fixem = true) {
         ResonancePdf *bkg2_incRhoP = new Resonances::RBW(
             "bkg2_incRhoP",
             Variable("bkg2_incRhoP_amp", 0.00586 * weightOffset, 0.001, 0.0, 0.012 * weightOffset),
-            constantZero1,
+            constantZero,
             fixedRhoMass,
             fixedRhoWidth,
             0,
@@ -3404,7 +3400,7 @@ GooPdf *makeBkg2DalitzPdf(bool fixem = true) {
         ResonancePdf *bkg2_incRhoM = new Resonances::RBW(
             "bkg2_incRhoM",
             Variable("bkg2_incRhoM_amp", 0.00635 * weightOffset, 0.001, 0.0, 0.015 * weightOffset),
-            constantZero1,
+            constantZero,
             fixedRhoMass,
             fixedRhoWidth,
             0,
@@ -3419,9 +3415,9 @@ GooPdf *makeBkg2DalitzPdf(bool fixem = true) {
         incsum2 = new IncoherentSumPdf("incsum2", *m12, *m13, *eventNumber, incoherent_rho0s, bkg2_rho_mods2);
 
         weights.clear();
-        weights.push_back(constantOne1);
-        weights.push_back(constantOne2);
-        weights.push_back(constantOne3);
+        weights.push_back(constantOne);
+        weights.push_back(constantOne);
+        weights.push_back(constantOne);
         comps.clear();
         comps.push_back(poly_x_veto);
         comps.push_back(incsum1);
@@ -3623,8 +3619,8 @@ GooPdf *makeBackground3DalitzParam() {
     vector<Variable> offsets;
     vector<Observable> observables;
     vector<Variable> coefficients;
-    offsets.push_back(constantOne1);
-    offsets.push_back(constantOne2);
+    offsets.push_back(constantOne);
+    offsets.push_back(constantOne);
 
     observables.push_back(*m12);
     observables.push_back(*m13);
@@ -3690,7 +3686,7 @@ GooPdf *makeBackground3DalitzParam() {
     ResonancePdf *bkg3_pi0_ref = new Resonances::Gauss(
         "bkg3_pi0_ref",
         Variable("bkg3_pi0_ref_amp", 0.01189 * weightOffset, 0.01, 0.00 * weightOffset, 0.25 * weightOffset),
-        constantZero1,
+        constantZero,
         Variable("bkg3_pi0_ref_mass", 1.65766, 0.01, 1.4, 1.8),
         Variable("bkg3_pi0_ref_width", 0.05018, 0.01, 0.02, 0.20),
         PAIR_23);
@@ -3706,17 +3702,17 @@ GooPdf *makeBackground3DalitzParam() {
     observables.push_back(*m13);
     coefficients.push_back(bkg3_pi0_transZ_offset);
     coefficients.push_back(constantMinusOne);
-    coefficients.push_back(constantOne1);
-    offsets.push_back(constantZero1);
-    offsets.push_back(constantZero2);
+    coefficients.push_back(constantOne);
+    offsets.push_back(constantZero);
+    offsets.push_back(constantZero);
     PolynomialPdf *bkg3_pi0_transZ = new PolynomialPdf("bkg3_pi0_transZ", observables, coefficients, offsets, 1);
 
     // Now we're going to take (1 - tz^2 * (parameter)) and multiply that into the misID pi0.
     // Variable* bkg3_pi0_transZ_quad = new Variable("bkg3_pi0_transZ_quad", 2.12277, 0.01, -1.5, 6.0);
     Variable bkg3_pi0_transZ_quad("bkg3_pi0_transZ_quad", 2.12277);
     coefficients.clear();
-    coefficients.push_back(constantOne1);
-    coefficients.push_back(constantZero1);
+    coefficients.push_back(constantOne);
+    coefficients.push_back(constantZero);
     coefficients.push_back(bkg3_pi0_transZ_quad);
     // Notice the fake dependence of the polynomial on m12; in fact CompositePdf
     // will send it a fake event, we just have to supply a reasonable index.
@@ -3742,7 +3738,7 @@ GooPdf *makeBackground3DalitzParam() {
     ResonancePdf *bkg3_incRho0 = new Resonances::RBW(
         "bkg3_incRho0",
         Variable("bkg3_incRho0_amp", 0.00807 * weightOffset, 0.01, 0.00 * weightOffset, 0.25 * weightOffset),
-        constantZero1,
+        constantZero,
         Variable("bkg3_incRho0_mass", 0.800, 0.01, 0.6, 1.0),
         Variable("bkg3_incRho0_width", 0.15, 0.01, 0.10, 0.40),
         1, // These rhos are spin 1, being bad signal.
@@ -3752,7 +3748,7 @@ GooPdf *makeBackground3DalitzParam() {
     ResonancePdf *bkg3_incRhoP = new Resonances::RBW(
         "bkg3_incRhoP",
         Variable("bkg3_incRhoP_amp", 0.01683 * weightOffset, 0.01, 0.00 * weightOffset, 0.25 * weightOffset),
-        constantZero1,
+        constantZero,
         Variable("bkg3_incRhoP_mass", 0.800, 0.01, 0.6, 1.0),
         Variable("bkg3_incRhoP_width", 0.15, 0.01, 0.10, 0.40),
         1,
@@ -3762,7 +3758,7 @@ GooPdf *makeBackground3DalitzParam() {
     ResonancePdf *bkg3_incRhoM = new Resonances::RBW(
         "bkg3_incRhoM",
         Variable("bkg3_incRhoM_amp", 0.01645 * weightOffset, 0.01, 0.00 * weightOffset, 0.25 * weightOffset),
-        constantZero1,
+        constantZero,
         Variable("bkg3_incRhoM_mass", 0.900, 0.01, 0.6, 1.0),
         Variable("bkg3_incRhoM_width", 0.35, 0.01, 0.10, 0.60),
         1,
@@ -3779,7 +3775,7 @@ GooPdf *makeBackground3DalitzParam() {
     // incsum4 = new IncoherentSumPdf("incsum4", m12, m13, eventNumber, incoherent_rhos, kzero_veto);
 
     weights.clear();
-    weights.push_back(constantOne1);
+    weights.push_back(constantOne);
     // weights.push_back(constantOne);
     // weights.push_back(constantOne);
     comps.clear();
@@ -3796,8 +3792,8 @@ GooPdf *makeBackground4DalitzParam() {
     vector<Variable> offsets;
     vector<Observable> observables;
     vector<Variable> coefficients;
-    offsets.push_back(constantOne1);
-    offsets.push_back(constantOne2);
+    offsets.push_back(constantOne);
+    offsets.push_back(constantOne);
 
     observables.push_back(*m12);
     observables.push_back(*m13);
@@ -3851,7 +3847,7 @@ GooPdf *makeBackground4DalitzParam() {
 
     ResonancePdf *bkg4_pipi_ref = new Resonances::Gauss("bkg4_pipi_ref",
                                                         Variable("bkg4_pipi_ref_amp", 0.00147 * weightOffset),
-                                                        constantZero1,
+                                                        constantZero,
                                                         Variable("bkg4_pipi_ref_mass", 1.32447),
                                                         Variable("bkg4_pipi_ref_width", 0.04675),
                                                         PAIR_23);
@@ -3867,16 +3863,16 @@ GooPdf *makeBackground4DalitzParam() {
     observables.push_back(*m13);
     coefficients.push_back(bkg4_pipi_transZ_offset);
     coefficients.push_back(constantMinusOne);
-    coefficients.push_back(constantOne1);
-    offsets.push_back(constantZero1);
-    offsets.push_back(constantZero2);
+    coefficients.push_back(constantOne);
+    offsets.push_back(constantZero);
+    offsets.push_back(constantZero);
     PolynomialPdf *bkg4_pipi_transZ = new PolynomialPdf("bkg4_pipi_transZ", observables, coefficients, offsets, 1);
 
     // Now we're going to take (1 - tz^2 * (parameter)) and multiply that into the pipi bump.
     Variable bkg4_pipi_transZ_quad("bkg4_pipi_transZ_quad", -0.25640);
     coefficients.clear();
-    coefficients.push_back(constantOne1);
-    coefficients.push_back(constantZero1);
+    coefficients.push_back(constantOne);
+    coefficients.push_back(constantZero);
     coefficients.push_back(bkg4_pipi_transZ_quad);
     // Notice the fake dependence of the polynomial on m12; in fact CompositePdf
     // will send it a fake event, we just have to supply a reasonable index.
@@ -3902,7 +3898,7 @@ GooPdf *makeBackground4DalitzParam() {
 
     ResonancePdf *bkg4_incRho0 = new Resonances::RBW("bkg4_incRho0",
                                                      Variable("bkg4_incRho0_amp", 0.00429 * weightOffset),
-                                                     constantZero1,
+                                                     constantZero,
                                                      fixedRhoMass,
                                                      fixedRhoWidth,
                                                      0, // These rhos are spin 0.
@@ -3911,7 +3907,7 @@ GooPdf *makeBackground4DalitzParam() {
 
     ResonancePdf *bkg4_incRhoP = new Resonances::RBW("bkg4_incRhoP",
                                                      Variable("bkg4_incRhoP_amp", 0.00705 * weightOffset),
-                                                     constantZero1,
+                                                     constantZero,
                                                      fixedRhoMass,
                                                      fixedRhoWidth,
                                                      0,
@@ -3920,7 +3916,7 @@ GooPdf *makeBackground4DalitzParam() {
 
     ResonancePdf *bkg4_incRhoM = new Resonances::RBW("bkg4_incRhoM",
                                                      Variable("bkg4_incRhoM_amp", -0.00043 * weightOffset),
-                                                     constantZero1,
+                                                     constantZero,
                                                      fixedRhoMass,
                                                      fixedRhoWidth,
                                                      0,
@@ -3935,9 +3931,9 @@ GooPdf *makeBackground4DalitzParam() {
     // incsum6 = new IncoherentSumPdf("incsum6", m12, m13, eventNumber, incoherent_rho0s, kzero_veto);
 
     weights.clear();
-    weights.push_back(constantOne1);
-    weights.push_back(constantOne2);
-    weights.push_back(constantOne3);
+    weights.push_back(constantOne);
+    weights.push_back(constantOne);
+    weights.push_back(constantOne);
     comps.clear();
     comps.push_back(poly_x_veto);
     comps.push_back(incsum5);

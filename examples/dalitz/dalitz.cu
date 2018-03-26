@@ -46,8 +46,7 @@ Variable chargeM("chargeM", piPlusMass);
 Variable neutrlM("neutrlM", piZeroMass);
 Variable massSum("massSum", _mD0 *_mD0 + 2 * piPlusMass * piPlusMass + piZeroMass * piZeroMass); // = 3.53481
 Variable constantOne("constantOne", 1);
-Variable constantZero1("constantZero1", 0);
-Variable constantZero2("constantZero2", 0);
+Variable constantZero("constantZero", 0);
 
 fptype cpuGetM23(fptype massPZ, fptype massPM) {
     return (_mD02 + piZeroMass * piZeroMass + piPlusMass * piPlusMass + piPlusMass * piPlusMass - massPZ - massPM);
@@ -327,8 +326,8 @@ DalitzPlotPdf *makeSignalPdf(Observable m12, Observable m13, EventNumber eventNu
 
         observables.push_back(m12);
         observables.push_back(m13);
-        offsets.push_back(constantZero1);
-        offsets.push_back(constantZero2);
+        offsets.push_back(constantZero);
+        offsets.push_back(constantZero);
         coefficients.push_back(constantOne);
         eff = new PolynomialPdf("constantEff", observables, coefficients, offsets, 0);
     }

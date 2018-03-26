@@ -9,6 +9,7 @@ except ImportError:
     raise
 
 DIR = local.path(__file__).dirname
+
 conversion = dict()
 conversion['brackets'] = [
     (r'^#include\s+"(\S+)"', r'#include <\1>'),
@@ -256,6 +257,7 @@ class ModernizeGooFit(cli.Application):
                 src = [local.path(n) for n in
                         git('ls-files', '--', '*.cpp', '*.h', '*.cu').splitlines()]
         fix_files(src, self.set_version)
+
 
 
 if __name__ == '__main__':

@@ -39,6 +39,9 @@ class ResonancePdf : public GooPdf {
 
     void recursiveSetIndices() override;
 
+    __host__ Variable get_amp_real() const { return amp_real; }
+    __host__ Variable get_amp_img() const { return amp_imag; }
+
   protected:
     /// Special constructor that subclasses use
     ResonancePdf(std::string name, Variable ar, Variable ai)

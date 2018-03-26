@@ -9,6 +9,20 @@ The internals of GooFit have been updated for GPU performance.  The new improvem
 
 [#125]: https://github.com/GooFit/GooFit/pull/125
 
+## v2.1.3: Preparing for new indexing
+#### March 26, 2018
+
+This release is preparing for the major change in 2.2. The changes are small, but help with several key pieces of needed functionality from the NIPS project.
+
+* Using Application no longer requires NVCC compile ([#139])
+* Travis CI is much cleaner ([#140], [#141])
+* Adding a few 3-body utilities: `get_amp_real`/`imag` and `getDecayInfo` ([#142])
+* Generation no longer changes the number of events requested ([#142])
+
+[#139]: https://github.com/GooFit/GooFit/pull/139
+[#140]: https://github.com/GooFit/GooFit/pull/140
+[#141]: https://github.com/GooFit/GooFit/pull/141
+[#142]: https://github.com/GooFit/GooFit/pull/142
 
 ## v2.1.2: Live Python
 #### March 12, 2018

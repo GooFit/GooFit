@@ -66,10 +66,6 @@ class DalitzPlotter {
         std::random_device rd;
         std::mt19937 gen(rd());
 
-        // Poisson distribution
-        std::poisson_distribution<> d(nTotal);
-        size_t num_events = d(gen);
-
         // Uniform distribution
         std::uniform_real_distribution<> unihalf(-.5, .5);
         std::uniform_real_distribution<> uniwhole(0.0, 1.0);
@@ -81,7 +77,7 @@ class DalitzPlotter {
         // Make this a 0-1 fraction by dividing by the end value
         std::for_each(integral.begin(), integral.end(), [&integral](double &val) { val /= integral.back(); });
 
-        for(size_t i = 0; i < num_events; i++) {
+        for(size_t i = 0; i < nTotal; i++) {
             double r = uniwhole(gen);
 
             // Binary search for integral[cell-1] < r < integral[cell]

@@ -66,7 +66,7 @@ pip -v install git+https://github.com/GooFit/GooFit.git
 
 </p></details>
 
-<details><summary>Clang style checking on Alpine (click to expand)</summary><p>
+<details><summary>Clang-style checking on Alpine (click to expand)</summary><p>
 
 If you'd like to use LLVM's clang-format to check the style, probably the easiest way to do that is with Docker and Alpine, using the Edge repository to get a recent version (5.0) of clang-format. The following lines will run the style check for you:
 
@@ -80,13 +80,13 @@ cd GooFit
 
 </p></details>
 
-<details><summary>Ubuntu 16.04 (click to expand)</summary><p>
+<details><summary>Ubuntu 16.04 LTS (click to expand)</summary><p>
 
 Ubiquitous Ubuntu works also. Ubuntu was used for the NVidia Docker solution due to better support from NVidia. The following example uses `ninja-build` instead of make, but make works if you prefer it. You should also be able to use this recipe with  `docker run -it ubuntu` or
 an [nvidia-docker Ubuntu image](https://hub.docker.com/r/nvidia/cuda/) if you don't have Ubuntu installed.
 
 ```bash
-apt-get update && apt-get install -y git cmake ninja-build g++
+apt update && apt install -y git cmake ninja-build g++
 git clone --recursive https://github.com/GooFit/GooFit.git
 cd GooFit
 mkdir build
@@ -95,6 +95,8 @@ cmake ..
 cmake --build .
 ctest
 ```
+
+If you want Python bindings, add `python-dev` or `python3-dev` to the list.
 
 If you'd like to add ROOT, add the following lines before running CMake:
 ```bash

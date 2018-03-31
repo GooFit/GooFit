@@ -61,7 +61,11 @@ configuration options). Otherwise, you might wait a very long time without outpu
 Installation: pip
 =================
 
-Traditional pip install::
+Using pip  10+::
+
+    pip install -v goofit
+
+Using pip < 10`::
 
     pip install scikit-build cmake
     pip install -v goofit

@@ -1,3 +1,9 @@
+## v2.1.4: Finishing touches
+#### In progress
+
+* Can directly `pip install goofit` with Pip 10
+
+
 ## v2.1.3: Preparing for new indexing
 #### March 26, 2018
 

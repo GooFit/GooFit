@@ -1,11 +1,5 @@
-## v2.1.4: Finishing touches
-#### In progress
-
-* Can directly `pip install goofit` with Pip 10
-
-
 ## v2.1.3: Preparing for new indexing
-#### March 26, 2018
+#### In progress
 
 This release is preparing for the major change in 2.2. The changes are small, but help with several key pieces of needed functionality from the NIPS project.
 
@@ -13,6 +7,8 @@ This release is preparing for the major change in 2.2. The changes are small, bu
 * Travis CI is much cleaner ([#140], [#141])
 * Adding a few 3-body utilities: `get_amp_real`/`imag` and `getDecayInfo` ([#142])
 * Generation no longer changes the number of events requested ([#142])
+* CMake CUDA as a language improvements
+* Can directly `pip install goofit` with Pip 10
 
 [#139]: https://github.com/GooFit/GooFit/pull/139
 [#140]: https://github.com/GooFit/GooFit/pull/140

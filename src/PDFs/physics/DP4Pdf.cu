@@ -33,20 +33,19 @@ class.
 
 #include <cstdarg>
 
-std::string format (const char *fmt, ...)
-{
-        va_list args;
+std::string format(const char *fmt, ...) {
+    va_list args;
 
-        char buffer[2048];
-        memset (buffer, 0, 2048);
+    char buffer[2048];
+    memset(buffer, 0, 2048);
 
-        va_start (args, fmt);
+    va_start(args, fmt);
 
-        vsnprintf (buffer, sizeof (buffer), fmt, args);
+    vsnprintf(buffer, sizeof(buffer), fmt, args);
 
-        va_end (args);
+    va_end(args);
 
-        return std::string (buffer);
+    return std::string(buffer);
 }
 
 namespace GooFit {
@@ -136,7 +135,7 @@ __host__ DPPdf::DPPdf(
     // This is the start of reading in the amplitudes and adding the lineshapes and Spinfactors to this PDF
     // This is done in this way so we don't have multiple copies of one lineshape in one pdf.
     for(auto &amplitude : decayInfo.amplitudes) {
-        printf ("uniqueStr:%s\n", amplitude->_uniqueDecayStr.c_str());
+        printf("uniqueStr:%s\n", amplitude->_uniqueDecayStr.c_str());
         AmpMap[amplitude->_uniqueDecayStr] = std::make_pair(std::vector<unsigned int>(0), std::vector<unsigned int>(0));
 
         components.push_back(amplitude);
@@ -153,11 +152,10 @@ __host__ DPPdf::DPPdf(
 
             if(found != LineShapes.end()) {
                 AmpMap[amplitude->_uniqueDecayStr].first.push_back(std::distance(LineShapes.begin(), found));
-            }
-            else {
-                //components.push_back (LSIT);
+            } else {
+                // components.push_back (LSIT);
                 LineShapes.push_back(LSIT);
-                printf ("LS:%s\n", LSIT->getName().c_str());
+                printf("LS:%s\n", LSIT->getName().c_str());
                 AmpMap[amplitude->_uniqueDecayStr].first.push_back(components.size() - 1);
             }
         }
@@ -438,12 +436,12 @@ __host__ fptype DPPdf::normalize() const {
                     .begin(),
                 *(sfcalculators[i]));
 
-            //thrust::host_vector<std::complex<fptype>> hostResSF = *cachedResSF;
+            // thrust::host_vector<std::complex<fptype>> hostResSF = *cachedResSF;
 
-            //FILE *f = fopen (format("spin_factors_%i", i).c_str(), "w+");
-            //for (int i = 0; i < hostResSF.size(); i++)
+            // FILE *f = fopen (format("spin_factors_%i", i).c_str(), "w+");
+            // for (int i = 0; i < hostResSF.size(); i++)
             //    fprintf(f, "%i - %f.%f\n", i, hostResSF[i].real(), hostResSF[i].imag());
-            //fclose(f);
+            // fclose(f);
 
             if(!generation_no_norm) {
                 NormSpinCalculator nsc = NormSpinCalculator();
@@ -460,12 +458,12 @@ __host__ fptype DPPdf::normalize() const {
                     (norm_SF.begin() + (i * MCevents)),
                     nsc);
 
-                //thrust::host_vector<fptype> host_norm_SF = norm_SF;
+                // thrust::host_vector<fptype> host_norm_SF = norm_SF;
 
-                //FILE *f = fopen (format("norm_sf_%i", i).c_str(), "w+");
-                //for (int i = 0; i < host_norm_SF.size(); i++)
+                // FILE *f = fopen (format("norm_sf_%i", i).c_str(), "w+");
+                // for (int i = 0; i < host_norm_SF.size(); i++)
                 //    fprintf(f, "%i - %f\n", i, host_norm_SF[i]);
-                //fclose(f);
+                // fclose(f);
             }
         }
 
@@ -475,14 +473,14 @@ __host__ fptype DPPdf::normalize() const {
     // this calculates the values of the lineshapes and stores them in the array. It is recalculated every time
     // parameters change.
     for(int i = 0; i < components.size() - 1; ++i) {
-        //auto amp = dynamic_cast<Amplitude*> (components[i]);
-        
+        // auto amp = dynamic_cast<Amplitude*> (components[i]);
+
         if(redoIntegral[i]) {
-            //auto ls = amp->getLineShapes();
+            // auto ls = amp->getLineShapes();
             lscalculators[i]->setDalitzId(getFunctionIndex());
             lscalculators[i]->setResonanceId(LineShapes[i]->getFunctionIndex());
 
-            printf ("lineshape[%i]:%s\n", i, LineShapes[i]->getName().c_str());
+            printf("lineshape[%i]:%s\n", i, LineShapes[i]->getName().c_str());
 
             unsigned int stride = components.size() - 1 + SpinFactors.size();
 
@@ -494,12 +492,12 @@ __host__ fptype DPPdf::normalize() const {
                     .begin(),
                 *(lscalculators[i]));
 
-            //thrust::host_vector<std::complex<fptype>> hostResSF = *cachedResSF;
+            // thrust::host_vector<std::complex<fptype>> hostResSF = *cachedResSF;
 
-            //FILE *f = fopen (format("ls_calculators_%i", i).c_str(), "w+");
-            //for (int i = 0; i < hostResSF.size(); i++)
+            // FILE *f = fopen (format("ls_calculators_%i", i).c_str(), "w+");
+            // for (int i = 0; i < hostResSF.size(); i++)
             //    fprintf(f, "%i - %f.%f\n", i, hostResSF[i].real(), hostResSF[i].imag());
-            //fclose(f);
+            // fclose(f);
         }
     }
 
@@ -508,7 +506,7 @@ __host__ fptype DPPdf::normalize() const {
     // auto AmpMapIt = AmpMap.begin();
 
     for(int i = 0; i < components.size() - 1; ++i) {
-        printf ("amp calculator:%i\n", i);
+        printf("amp calculator:%i\n", i);
 
         if(!redoIntegral[i])
             continue;
@@ -524,8 +522,8 @@ __host__ fptype DPPdf::normalize() const {
 
         thrust::host_vector<fpcomplex> host_amps = *cachedAMPs;
 
-        FILE *f = fopen (format("amp_calcs_%i", i).c_str(), "w+");
-        for (int i = 0; i < host_amps.size(); i++)
+        FILE *f = fopen(format("amp_calcs_%i", i).c_str(), "w+");
+        for(int i = 0; i < host_amps.size(); i++)
             fprintf(f, "%i - %f.%f\n", i, host_amps[i].real(), host_amps[i].imag());
         fclose(f);
     }
@@ -550,12 +548,12 @@ __host__ fptype DPPdf::normalize() const {
                     norm_M12.end(), norm_M34.end(), norm_CosTheta12.end(), norm_CosTheta34.end(), norm_phi.end())),
                 (norm_LS.begin() + (i * MCevents)),
                 ns);
-            //thrust::host_vector<fptype> host_norm_SF = norm_SF;
+            // thrust::host_vector<fptype> host_norm_SF = norm_SF;
 
-            //FILE *f = fopen (format("norm_ls_calculator_%i", i).c_str(), "w+");
-            //for (int i = 0; i < host_norm_SF.size(); i++)
+            // FILE *f = fopen (format("norm_ls_calculator_%i", i).c_str(), "w+");
+            // for (int i = 0; i < host_norm_SF.size(); i++)
             //    fprintf(f, "%i - %f\n", i, host_norm_SF[i]);
-            //fclose(f);
+            // fclose(f);
         }
     }
 
@@ -685,8 +683,8 @@ __host__
     thrust::constant_iterator<fptype *> arrayAddress(dev_event_array);
     thrust::counting_iterator<int> eventIndex(0);
 
-    //TODO: need to call setIndices (or something) in order to point to ptr_to_Prob, and not ptr_to_Nll
-    //MetricTaker evalor(this, getMetricPointer("ptr_to_Prob"));
+    // TODO: need to call setIndices (or something) in order to point to ptr_to_Prob, and not ptr_to_Nll
+    // MetricTaker evalor(this, getMetricPointer("ptr_to_Prob"));
     auto fc = fitControl;
     setFitControl(std::make_shared<ProbFit>());
     thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),

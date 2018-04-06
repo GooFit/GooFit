@@ -1190,7 +1190,8 @@ void Amplitude::recursiveSetIndices() {
 }
 
 bool Amplitude::operator==(const Amplitude &A) const {
-    return _uniqueDecayStr == A._uniqueDecayStr && _ar == A._ar && _ai == A._ai && _LS == A._LS && _SF == A._SF && _nPerm == A._nPerm;
+    return _uniqueDecayStr == A._uniqueDecayStr && _ar == A._ar && _ai == A._ai && _LS == A._LS && _SF == A._SF
+           && _nPerm == A._nPerm;
 }
 
 } // namespace GooFit

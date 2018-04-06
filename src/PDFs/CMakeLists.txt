@@ -107,7 +107,7 @@ else()
     endif()
 
     target_include_directories(PDFs PUBLIC ${PROJECT_SOURCE_DIR}/src/PDFs)
-    
+
     goofit_add_library(PDFs AllPdfs.cu ${GOOPDF_HEADERS})
 
 endif()

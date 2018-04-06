@@ -166,8 +166,7 @@ int main(int argc, char **argv) {
     Observable phi("phi", -3.5, 3.5);
     EventNumber eventNumber("eventNumber");
     Variable constantOne("constantOne", 1);
-    Variable constantZero1("constantZero1", 0);
-    Variable constantZero2("constantZero2", 0);
+    Variable constantZero("constantZero", 0);
 
     vector<Observable> observables;
     vector<Variable> coefficients;
@@ -179,8 +178,8 @@ int main(int argc, char **argv) {
     observables.push_back(cos34);
     observables.push_back(phi);
     observables.push_back(eventNumber);
-    offsets.push_back(constantZero1);
-    offsets.push_back(constantZero2);
+    offsets.push_back(constantZero);
+    offsets.push_back(constantZero);
     coefficients.push_back(constantOne);
 
     PolynomialPdf *eff = new PolynomialPdf("constantEff", observables, coefficients, offsets, 0);

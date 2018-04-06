@@ -143,11 +143,10 @@ int main(int argc, char **argv) {
     Observable dtime{"dtime", 0, 10};
     Observable sigmat{"sigmat", -3, 3};
     Variable constantOne{"constantOne", 1};
-    Variable constantZero1{"constantZero1", 0};
-    Variable constantZero2{"constantZero2", 0};
+    Variable constantZero{"constantZero", 0};
 
     vector<Observable> observables{m12, m34, cos12, cos34, phi, eventNumber, dtime, sigmat};
-    vector<Variable> offsets{constantZero1, constantZero2};
+    vector<Variable> offsets{constantZero, constantZero};
     vector<Variable> coefficients{constantOne};
 
     TruthResolution dat;

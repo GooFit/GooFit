@@ -327,7 +327,6 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
         set(CUDA_TOOLKIT_ROOT_DIR "${CMAKE_CUDA_COMPILER}")
         get_filename_component(CUDA_TOOLKIT_ROOT_DIR "${CUDA_TOOLKIT_ROOT_DIR}" DIRECTORY)
         get_filename_component(CUDA_TOOLKIT_ROOT_DIR "${CUDA_TOOLKIT_ROOT_DIR}" DIRECTORY)
-        find_package(CUDA REQUIRED)
         include(CUDA)
 
         set(cuda_lang "$<COMPILE_LANGUAGE:CUDA>")

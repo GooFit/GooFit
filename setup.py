@@ -2,12 +2,25 @@
 try:
     from skbuild import setup
 except ImportError:
-    print("Failed to find scikit-build, please run `pip install scikit-build cmake`")
+    print("Failed to find scikit-build, please run `pip install scikit-build`")
     raise
+
+import subprocess
+
+# Add CMake as a build requirement if cmake is not installed or is too low a version
+setup_requires = []
+try:
+    cmake_version = subprocess.check_output(["cmake", "--version"])
+    cmake_version = [int(x) for x in cmake_version.splitlines()[0].split()[-1].split('.')]
+    if cmake_version < (3,4):
+        setup_requires.append('cmake')
+except OSError:
+    setup_requires.append('cmake')
+
 
 setup(
         name='goofit',
-        version='2.1.2',
+        version='2.1.3',
         description='GooFit fitting package',
         author='Henry Schreiner',
         author_email='hschrein@cern.ch',
@@ -37,12 +50,15 @@ setup(
             '-DGOOFIT_EXAMPLES=OFF'],
         license="LGPL 3.0",
         packages=['goofit'],
+        setup_requires=setup_requires,
         extras_require={
             'dev': [
                 'pytest',
                 'numpy',
                 'matplotlib',
-                'pandas'
+                'pandas',
+                'uncertainties',
+                'scipy'
             ]
         },
         long_description='''\
@@ -61,9 +77,13 @@ configuration options). Otherwise, you might wait a very long time without outpu
 Installation: pip
 =================
 
-Traditional pip install::
+Using pip 10+::
 
-    pip install scikit-build cmake
+    pip install -v goofit
+
+Using pip < 10`::
+
+    pip install scikit-build
     pip install -v goofit
 
 

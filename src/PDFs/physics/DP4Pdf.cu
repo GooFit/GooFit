@@ -15,6 +15,8 @@ class.
    Is this really worth the memory we lose by using a complex to store the SF?
 */
 
+#include <memory>
+
 #include <mcbooster/Evaluate.h>
 #include <mcbooster/EvaluateArray.h>
 #include <mcbooster/GContainers.h>
@@ -24,11 +26,28 @@ class.
 #include <mcbooster/Vector4R.h>
 
 #include <goofit/Error.h>
+#include <goofit/FitControl.h>
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/DP4Pdf.h>
 #include <goofit/PDFs/physics/EvalVar.h>
 
 #include <cstdarg>
+
+std::string format (const char *fmt, ...)
+{
+        va_list args;
+
+        char buffer[2048];
+        memset (buffer, 0, 2048);
+
+        va_start (args, fmt);
+
+        vsnprintf (buffer, sizeof (buffer), fmt, args);
+
+        va_end (args);
+
+        return std::string (buffer);
+}
 
 namespace GooFit {
 
@@ -117,6 +136,9 @@ __host__ DPPdf::DPPdf(
     // This is the start of reading in the amplitudes and adding the lineshapes and Spinfactors to this PDF
     // This is done in this way so we don't have multiple copies of one lineshape in one pdf.
     for(auto &amplitude : decayInfo.amplitudes) {
+        printf ("uniqueStr:%s\n", amplitude->_uniqueDecayStr.c_str());
+        AmpMap[amplitude->_uniqueDecayStr] = std::make_pair(std::vector<unsigned int>(0), std::vector<unsigned int>(0));
+
         components.push_back(amplitude);
 
         // register the parameters from the amplitudes here
@@ -127,10 +149,17 @@ __host__ DPPdf::DPPdf(
 
         for(auto &LSIT : LSvec) {
             auto found = std::find_if(
-                LineShapes.begin(), LineShapes.end(), [&LSIT](const Lineshape *L) { return (*LSIT) == (*L); });
+                LineShapes.begin(), LineShapes.end(), [&LSIT](const Lineshape *L) { return (*LSIT) == *(L); });
 
-            if(found == LineShapes.end())
+            if(found != LineShapes.end()) {
+                AmpMap[amplitude->_uniqueDecayStr].first.push_back(std::distance(LineShapes.begin(), found));
+            }
+            else {
+                //components.push_back (LSIT);
                 LineShapes.push_back(LSIT);
+                printf ("LS:%s\n", LSIT->getName().c_str());
+                AmpMap[amplitude->_uniqueDecayStr].first.push_back(components.size() - 1);
+            }
         }
 
         auto SFvec = amplitude->_SF;
@@ -145,7 +174,7 @@ __host__ DPPdf::DPPdf(
         }
     }
 
-    constantsList[lsidx]  = SpinFactors.size();
+    constantsList[lsidx]  = LineShapes.size();
     constantsList[sfidx]  = SpinFactors.size();
     constantsList[ampidx] = components.size();
 
@@ -267,6 +296,8 @@ __host__ DPPdf::DPPdf(
     Dim5 eval = Dim5();
     mcbooster::EvaluateArray<Dim5>(eval, pset, VarSet);
 
+    printf("nAcc:%i SpinFactors:%i\n", nAcc, SpinFactors.size());
+
     norm_SF  = mcbooster::RealVector_d(nAcc * SpinFactors.size());
     norm_LS  = mcbooster::mc_device_vector<fpcomplex>(nAcc * (LineShapes.size()));
     MCevents = nAcc;
@@ -348,7 +379,7 @@ __host__ void DPPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) {
 
     numEntries  = dataSize;
     cachedResSF = new thrust::device_vector<fpcomplex>(
-        dataSize * (2 * (components.size() - 1) + SpinFactors.size())); //   -1 because 1 component is efficiency
+        dataSize * (components.size() - 1 + SpinFactors.size())); //   -1 because 1 component is efficiency
     void *dummy = thrust::raw_pointer_cast(cachedResSF->data());
     MEMCPY_TO_SYMBOL(cResSF, &dummy, sizeof(fpcomplex *), cacheToUse * sizeof(fpcomplex *), cudaMemcpyHostToDevice);
 
@@ -395,10 +426,10 @@ __host__ fptype DPPdf::normalize() const {
     // it basically goes through the array by increasing the pointer by a certain amount instead of just one step.
     if(!SpinsCalculated) {
         for(int i = 0; i < SpinFactors.size(); ++i) {
-            unsigned int offset = SpinFactors.size();
+            unsigned int offset = components.size() - 1;
             sfcalculators[i]->setDalitzId(getFunctionIndex());
             sfcalculators[i]->setSpinFactorId(SpinFactors[i]->getFunctionIndex());
-            unsigned int stride = 2 * (components.size() - 1) + SpinFactors.size();
+            unsigned int stride = components.size() - 1 + SpinFactors.size();
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, dataArray, eventSize)),
@@ -406,6 +437,13 @@ __host__ fptype DPPdf::normalize() const {
                     cachedResSF->begin() + offset + i, cachedResSF->end(), stride)
                     .begin(),
                 *(sfcalculators[i]));
+
+            //thrust::host_vector<std::complex<fptype>> hostResSF = *cachedResSF;
+
+            //FILE *f = fopen (format("spin_factors_%i", i).c_str(), "w+");
+            //for (int i = 0; i < hostResSF.size(); i++)
+            //    fprintf(f, "%i - %f.%f\n", i, hostResSF[i].real(), hostResSF[i].imag());
+            //fclose(f);
 
             if(!generation_no_norm) {
                 NormSpinCalculator nsc = NormSpinCalculator();
@@ -421,6 +459,13 @@ __host__ fptype DPPdf::normalize() const {
                         norm_M12.end(), norm_M34.end(), norm_CosTheta12.end(), norm_CosTheta34.end(), norm_phi.end())),
                     (norm_SF.begin() + (i * MCevents)),
                     nsc);
+
+                //thrust::host_vector<fptype> host_norm_SF = norm_SF;
+
+                //FILE *f = fopen (format("norm_sf_%i", i).c_str(), "w+");
+                //for (int i = 0; i < host_norm_SF.size(); i++)
+                //    fprintf(f, "%i - %f\n", i, host_norm_SF[i]);
+                //fclose(f);
             }
         }
 
@@ -429,12 +474,17 @@ __host__ fptype DPPdf::normalize() const {
 
     // this calculates the values of the lineshapes and stores them in the array. It is recalculated every time
     // parameters change.
-    for(int i = 0; i < LineShapes.size(); ++i) {
+    for(int i = 0; i < components.size() - 1; ++i) {
+        //auto amp = dynamic_cast<Amplitude*> (components[i]);
+        
         if(redoIntegral[i]) {
+            //auto ls = amp->getLineShapes();
             lscalculators[i]->setDalitzId(getFunctionIndex());
             lscalculators[i]->setResonanceId(LineShapes[i]->getFunctionIndex());
 
-            unsigned int stride = 2 * (components.size() - 1) + SpinFactors.size();
+            printf ("lineshape[%i]:%s\n", i, LineShapes[i]->getName().c_str());
+
+            unsigned int stride = components.size() - 1 + SpinFactors.size();
 
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
@@ -443,6 +493,13 @@ __host__ fptype DPPdf::normalize() const {
                     cachedResSF->begin() + i, cachedResSF->end(), stride)
                     .begin(),
                 *(lscalculators[i]));
+
+            //thrust::host_vector<std::complex<fptype>> hostResSF = *cachedResSF;
+
+            //FILE *f = fopen (format("ls_calculators_%i", i).c_str(), "w+");
+            //for (int i = 0; i < hostResSF.size(); i++)
+            //    fprintf(f, "%i - %f.%f\n", i, hostResSF[i].real(), hostResSF[i].imag());
+            //fclose(f);
         }
     }
 
@@ -451,7 +508,7 @@ __host__ fptype DPPdf::normalize() const {
     // auto AmpMapIt = AmpMap.begin();
 
     for(int i = 0; i < components.size() - 1; ++i) {
-        auto *amp = dynamic_cast<Amplitude *>(components[i]);
+        printf ("amp calculator:%i\n", i);
 
         if(!redoIntegral[i])
             continue;
@@ -464,6 +521,13 @@ __host__ fptype DPPdf::normalize() const {
                               cachedAMPs->begin() + i, cachedAMPs->end(), AmpCalcs.size())
                               .begin(),
                           *(AmpCalcs[i]));
+
+        thrust::host_vector<fpcomplex> host_amps = *cachedAMPs;
+
+        FILE *f = fopen (format("amp_calcs_%i", i).c_str(), "w+");
+        for (int i = 0; i < host_amps.size(); i++)
+            fprintf(f, "%i - %f.%f\n", i, host_amps[i].real(), host_amps[i].imag());
+        fclose(f);
     }
 
     // lineshape value calculation for the normalisation, also recalculated every time parameter change
@@ -486,6 +550,12 @@ __host__ fptype DPPdf::normalize() const {
                     norm_M12.end(), norm_M34.end(), norm_CosTheta12.end(), norm_CosTheta34.end(), norm_phi.end())),
                 (norm_LS.begin() + (i * MCevents)),
                 ns);
+            //thrust::host_vector<fptype> host_norm_SF = norm_SF;
+
+            //FILE *f = fopen (format("norm_ls_calculator_%i", i).c_str(), "w+");
+            //for (int i = 0; i < host_norm_SF.size(); i++)
+            //    fprintf(f, "%i - %f\n", i, host_norm_SF[i]);
+            //fclose(f);
         }
     }
 
@@ -508,6 +578,7 @@ __host__ fptype DPPdf::normalize() const {
             0.,
             thrust::plus<fptype>());
 
+        printf("sumIntegral:%f", sumIntegral);
         GOOFIT_TRACE("sumIntegral={}", sumIntegral);
         // MCevents is the number of normalisation events.
         sumIntegral /= MCevents;
@@ -614,11 +685,14 @@ __host__
     thrust::constant_iterator<fptype *> arrayAddress(dev_event_array);
     thrust::counting_iterator<int> eventIndex(0);
 
-    MetricTaker evalor(this, getMetricPointer("ptr_to_Prob"));
+    //TODO: need to call setIndices (or something) in order to point to ptr_to_Prob, and not ptr_to_Nll
+    //MetricTaker evalor(this, getMetricPointer("ptr_to_Prob"));
+    auto fc = fitControl;
+    setFitControl(std::make_shared<ProbFit>());
     thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
                       thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEvents, arrayAddress, eventSize)),
                       results.begin(),
-                      evalor);
+                      *logger);
     cudaDeviceSynchronize();
     gooFree(dev_event_array);
 
@@ -636,6 +710,9 @@ __host__
     auto results_h = mcbooster::RealVector_h(results);
     auto flags_h   = mcbooster::BoolVector_h(flags);
     cudaDeviceSynchronize();
+
+    setFitControl(fc);
+
     return std::make_tuple(ParSet, VarSet, weights_h, flags_h);
 }
 

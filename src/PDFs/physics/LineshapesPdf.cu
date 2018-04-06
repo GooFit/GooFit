@@ -28,9 +28,11 @@ on the GPU
 #define NCHANNELS 5
 
 // TODO: These aren't the same as GooFit 2.0
-#define mPiPlus 0.13957018
+//#define mPiPlus 0.13957018
+#define mPiPlus 0.139570
 #define mKPlus 0.493677
-#define mEta 0.54751
+//#define mEta 0.54751
+#define mEta 0.547862
 #define mEtap 0.96778
 
 namespace GooFit {
@@ -1160,6 +1162,7 @@ Amplitude::Amplitude(std::string uniqueDecayStr,
                      std::vector<SpinFactor *> SF,
                      unsigned int nPerm)
     : GooPdf(uniqueDecayStr)
+    , _uniqueDecayStr(uniqueDecayStr)
     , _ar(ar)
     , _ai(ai)
     , _SF(std::move(SF))
@@ -1187,8 +1190,7 @@ void Amplitude::recursiveSetIndices() {
 }
 
 bool Amplitude::operator==(const Amplitude &A) const {
-    return _uniqueDecayStr == A._uniqueDecayStr && _ar == A._ar && _ai == A._ai && _LS == A._LS && _SF == A._SF
-           and _nPerm == A._nPerm;
+    return _uniqueDecayStr == A._uniqueDecayStr && _ar == A._ar && _ai == A._ai && _LS == A._LS && _SF == A._SF && _nPerm == A._nPerm;
 }
 
 } // namespace GooFit

@@ -887,7 +887,7 @@ Lineshapes::LASS::LASS(
 
     GOOFIT_ADD_CONST(7, radius, "radius");
 
-    GET_FUNCTION_ADDR(ptr_to_BW_DP4);
+    GET_FUNCTION_ADDR(ptr_to_lass);
 
     GOOFIT_FINALIZE_PDF;
 }

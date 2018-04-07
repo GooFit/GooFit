@@ -1,5 +1,5 @@
 [submodule "cmake"]
-	path = cmake
+	path = extern/cmake_utils
 	url = ../../CLIUtils/cmake.git
 [submodule "extern/generics"]
 	path = extern/generics
@@ -40,3 +40,6 @@
 [submodule "extern/Eigen"]
 	path = extern/Eigen
 	url = ../../eigenteam/eigen-git-mirror.git
+[submodule "extern/modern_cmake"]
+	path = extern/modern_cmake
+	url = ../../CLIUtils/modern_cmake.git

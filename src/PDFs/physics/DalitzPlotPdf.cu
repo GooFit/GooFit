@@ -223,16 +223,15 @@ __host__ fptype DalitzPlotPdf::normalize() const {
     }
 
     // This line runs once
-    static std::array<fptype, 6> host_norms{{0,0,0,0,0,0}};
-    
-    std::array<fptype, 6> current_host_norms {{
-        _m12.getLowerLimit(),
-        _m12.getUpperLimit(),
-        static_cast<fptype>(_m12.getNumBins()),
-        _m13.getLowerLimit(),
-        _m13.getUpperLimit(),
-        static_cast<fptype>(_m13.getNumBins())}};
-    
+    static std::array<fptype, 6> host_norms{{0, 0, 0, 0, 0, 0}};
+
+    std::array<fptype, 6> current_host_norms{{_m12.getLowerLimit(),
+                                              _m12.getUpperLimit(),
+                                              static_cast<fptype>(_m12.getNumBins()),
+                                              _m13.getLowerLimit(),
+                                              _m13.getUpperLimit(),
+                                              static_cast<fptype>(_m13.getNumBins())}};
+
     if(host_norms != current_host_norms) {
         host_norms = current_host_norms;
         MEMCPY(dalitzNormRange, host_norms.data(), 6 * sizeof(fptype), cudaMemcpyHostToDevice);

@@ -188,8 +188,10 @@ __host__ void DalitzPlotPdf::setDataSize(unsigned int dataSize, unsigned int evt
 
     // if (cachedWaves) delete cachedWaves;
     if(cachedWaves[0]) {
-        for(auto &cachedWave : cachedWaves)
+        for(auto &cachedWave : cachedWaves) {
             delete cachedWave;
+            cachedWave = nullptr;
+        }
     }
 
     numEntries = dataSize;
@@ -218,16 +220,22 @@ __host__ fptype DalitzPlotPdf::normalize() const {
 
     if(!dalitzNormRange) {
         gooMalloc((void **)&dalitzNormRange, 6 * sizeof(fptype));
+    }
 
-        auto *host_norms = new fptype[6];
-        host_norms[0]    = _m12.getLowerLimit();
-        host_norms[1]    = _m12.getUpperLimit();
-        host_norms[2]    = _m12.getNumBins();
-        host_norms[3]    = _m13.getLowerLimit();
-        host_norms[4]    = _m13.getUpperLimit();
-        host_norms[5]    = _m13.getNumBins();
-        MEMCPY(dalitzNormRange, host_norms, 6 * sizeof(fptype), cudaMemcpyHostToDevice);
-        delete[] host_norms;
+    // This line runs once
+    static std::array<fptype, 6> host_norms{{0,0,0,0,0,0}};
+    
+    std::array<fptype, 6> current_host_norms {{
+        _m12.getLowerLimit(),
+        _m12.getUpperLimit(),
+        static_cast<fptype>(_m12.getNumBins()),
+        _m13.getLowerLimit(),
+        _m13.getUpperLimit(),
+        static_cast<fptype>(_m13.getNumBins())}};
+    
+    if(host_norms != current_host_norms) {
+        host_norms = current_host_norms;
+        MEMCPY(dalitzNormRange, host_norms.data(), 6 * sizeof(fptype), cudaMemcpyHostToDevice);
     }
 
     for(unsigned int i = 0; i < decayInfo.resonances.size(); ++i) {

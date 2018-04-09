@@ -332,6 +332,64 @@ __host__ fpcomplex DalitzPlotPdf::sumCachedWave(size_t i) const {
     return ret;
 }
 
+__host__ std::vector<std::vector<fptype>> DalitzPlotPdf::fit_fractions() {
+    GOOFIT_DEBUG("Performing fit fraction calculation, should already have a cache (does not use normalization grid)");
+
+    size_t n_res    = getDecayInfo().resonances.size();
+    size_t nEntries = getCachedWave(0).size();
+
+    std::vector<fpcomplex> coefs(n_res);
+    std::transform(getDecayInfo().resonances.begin(),
+                   getDecayInfo().resonances.end(),
+                   coefs.begin(),
+                   [](ResonancePdf *res) { return fpcomplex(res->amp_real.getValue(), res->amp_imag.getValue()); });
+
+    fptype buffer_all = 0;
+    fptype buffer;
+    fpcomplex coef_i;
+    fpcomplex coef_j;
+    fpcomplex cached_i_val;
+    fpcomplex cached_j_val;
+
+    thrust::device_vector<fpcomplex> cached_i;
+    thrust::device_vector<fpcomplex> cached_j;
+    std::vector<std::vector<fptype>> Amps_int(n_res, std::vector<fptype>(n_res));
+
+    for(size_t i = 0; i < n_res; i++) {
+        for(size_t j = 0; j < n_res; j++) {
+            buffer   = 0;
+            cached_i = getCachedWave(i);
+            cached_j = getCachedWave(j);
+            coef_i   = coefs[i];
+            coef_j   = coefs[j];
+
+            buffer += thrust::transform_reduce(
+                thrust::make_zip_iterator(thrust::make_tuple(cached_i.begin(), cached_j.begin())),
+                thrust::make_zip_iterator(thrust::make_tuple(cached_i.end(), cached_j.end())),
+                [coef_i, coef_j] __device__(thrust::tuple<fpcomplex, fpcomplex> val) {
+                    return (coef_i * thrust::conj<fptype>(coef_j) * thrust::get<0>(val)
+                            * thrust::conj<fptype>(thrust::get<1>(val)))
+                        .real();
+                },
+                (fptype)0.0,
+                thrust::plus<fptype>());
+
+            buffer_all += buffer;
+            Amps_int[i][j] = (buffer / nEntries);
+        }
+    }
+
+    fptype total_PDF = buffer_all / nEntries;
+
+    std::vector<std::vector<fptype>> ff(n_res, std::vector<fptype>(n_res));
+
+    for(size_t i = 0; i < n_res; i++)
+        for(size_t j = 0; j < n_res; j++)
+            ff[i][j] = (Amps_int[i][j] / total_PDF);
+
+    return ff;
+}
+
 SpecialResonanceIntegrator::SpecialResonanceIntegrator(int pIdx, unsigned int ri, unsigned int rj)
     : resonance_i(ri)
     , resonance_j(rj)

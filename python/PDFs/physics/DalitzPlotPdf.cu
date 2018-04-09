@@ -35,5 +35,8 @@ void init_DalitzPlotPdf(py::module &m) {
              "i"_a)
         .def("sumCachedWave",
              [](DalitzPlotPdf &self, size_t i) { return std::complex<fptype>(self.sumCachedWave(i)); },
-             "i"_a);
+             "i"_a)
+        .def("fit_fractions",
+             &DalitzPlotPdf::fit_fractions,
+             "Using the current dataset, return the cached fit fraction values");
 }

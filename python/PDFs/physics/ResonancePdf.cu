@@ -15,7 +15,7 @@ void init_ResonancePdf(py::module &m) {
     py::class_<ResonancePdf, GooPdf>(m, "ResonancePdf");
 
     py::class_<Resonances::RBW, ResonancePdf>(m_ls, "RBW")
-        .def(py::init<std::string, Variable, Variable, Variable, Variable, unsigned int, unsigned int, bool>(),
+        .def(py::init<std::string, Variable, Variable, Variable, Variable, unsigned int, unsigned int>(),
              "Constructor for regular BW",
              "name"_a,
              "ar"_a,
@@ -24,14 +24,13 @@ void init_ResonancePdf(py::module &m) {
              "width"_a,
              "sp"_a,
              "cyc"_a,
-             "symmDP"_a = false,
              py::keep_alive<1, 3>(),
              py::keep_alive<1, 4>(),
              py::keep_alive<1, 5>(),
              py::keep_alive<1, 6>());
 
     py::class_<Resonances::GS, ResonancePdf>(m_ls, "GS")
-        .def(py::init<std::string, Variable, Variable, Variable, Variable, unsigned int, unsigned int, bool>(),
+        .def(py::init<std::string, Variable, Variable, Variable, Variable, unsigned int, unsigned int>(),
              "Constructor for regular Gounaris-Sakurai",
              "name"_a,
              "ar"_a,
@@ -40,14 +39,13 @@ void init_ResonancePdf(py::module &m) {
              "width"_a,
              "sp"_a,
              "cyc"_a,
-             "symmDP"_a = false,
              py::keep_alive<1, 3>(),
              py::keep_alive<1, 4>(),
              py::keep_alive<1, 5>(),
              py::keep_alive<1, 6>());
 
     py::class_<Resonances::LASS, ResonancePdf>(m_ls, "LASS")
-        .def(py::init<std::string, Variable, Variable, Variable, Variable, unsigned int, unsigned int, bool>(),
+        .def(py::init<std::string, Variable, Variable, Variable, Variable, unsigned int, unsigned int>(),
              "Constructor for LASS",
              "name"_a,
              "ar"_a,
@@ -56,7 +54,6 @@ void init_ResonancePdf(py::module &m) {
              "width"_a,
              "sp"_a,
              "cyc"_a,
-             "symmDP"_a = false,
              py::keep_alive<1, 3>(),
              py::keep_alive<1, 4>(),
              py::keep_alive<1, 5>(),

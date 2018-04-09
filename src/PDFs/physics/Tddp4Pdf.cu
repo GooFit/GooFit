@@ -16,6 +16,7 @@ class.
 */
 #include <goofit/Error.h>
 #include <goofit/Log.h>
+#include <goofit/FitControl.h>
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/DP4Pdf.h>
 #include <goofit/PDFs/physics/EvalVar.h>
@@ -30,6 +31,21 @@ class.
 #include <mcbooster/Vector4R.h>
 
 #include <cstdarg>
+
+std::string format(const char *fmt, ...) {
+    va_list args;
+
+    char buffer[2048];
+    memset(buffer, 0, 2048);
+
+    va_start(args, fmt);
+
+    vsnprintf(buffer, sizeof(buffer), fmt, args);
+
+    va_end(args);
+
+    return std::string(buffer);
+}
 
 namespace GooFit {
 
@@ -65,15 +81,11 @@ struct exp_functor {
         fptype *evt = thrust::get<2>(t) + (evtNum * thrust::get<3>(t));
         // unsigned int *indices = paramIndices + tmpparam;
 
-        ParameterContainer pc;
-
-        // TODO: loop to this object's location.
-
         // while
         //    fptype time = evt[indices[8 + indices[0]]];
 
-        int id      = pc.getObservable(0);
-        fptype time = evt[id];
+        //we are grabbing the time out
+        fptype time = evt[tmpparam];
 
         thrust::random::minstd_rand0 rand(1431655765);
         thrust::uniform_real_distribution<fptype> dist(0, 1);
@@ -107,8 +119,8 @@ __device__ fptype device_TDDP4(fptype *evt, ParameterContainer &pc) {
     auto evtNum = static_cast<int>(floor(0.5 + evt[id_evt]));
     // GOOFIT_TRACE("TDDP4: Number of events: {}", evtNum);
 
-    unsigned int cacheToUse = pc.getConstant(5);
-    unsigned int numAmps    = pc.getConstant(8);
+    unsigned int cacheToUse = pc.getConstant(6);
+    unsigned int numAmps    = pc.getConstant(9);
 
     fpcomplex AmpA(0, 0);
     fpcomplex AmpB(0, 0);
@@ -323,7 +335,7 @@ __host__ TDDP4::TDDP4(std::string n,
         }
     }
 
-    constantsList[lsidx]  = SpinFactors.size();
+    constantsList[lsidx]  = LineShapes.size();
     constantsList[sfidx]  = SpinFactors.size();
     constantsList[ampidx] = components.size();
 
@@ -534,7 +546,7 @@ __host__ void TDDP4::setDataSize(unsigned int dataSize, unsigned int evtSize) {
         delete cachedAMPs;
 
     numEntries  = dataSize;
-    cachedResSF = new thrust::device_vector<fpcomplex>(dataSize * (2 * LineShapes.size() + SpinFactors.size()));
+    cachedResSF = new thrust::device_vector<fpcomplex>(dataSize * (LineShapes.size() + SpinFactors.size()));
     void *dummy = thrust::raw_pointer_cast(cachedResSF->data());
     MEMCPY_TO_SYMBOL(cResSF_TD, &dummy, sizeof(fpcomplex *), cacheToUse * sizeof(fpcomplex *), cudaMemcpyHostToDevice);
 
@@ -588,8 +600,8 @@ __host__ fptype TDDP4::normalize() const {
     // it basically goes through the array by increasing the pointer by a certain amount instead of just one step.
     if(!SpinsCalculated) {
         for(int i = 0; i < SpinFactors.size(); ++i) {
-            unsigned int offset = SpinFactors.size();
-            unsigned int stride = 2 * LineShapes.size() + SpinFactors.size();
+            unsigned int offset = LineShapes.size();
+            unsigned int stride = LineShapes.size() + SpinFactors.size();
 
             GOOFIT_TRACE("SpinFactors - stride: {}", stride);
             sfcalculators[i]->setDalitzId(getFunctionIndex());
@@ -602,6 +614,13 @@ __host__ fptype TDDP4::normalize() const {
                     cachedResSF->begin() + offset + i, cachedResSF->end(), stride)
                     .begin(),
                 *(sfcalculators[i]));
+
+            thrust::host_vector<fpcomplex> host_cached_sf = *cachedResSF;
+
+            FILE *f = fopen (format("spinfactors_%i", i).c_str(), "w+");
+            for (int i = 0; i < host_cached_sf.size(); i++)
+                fprintf(f, "%i - %f\n", i, host_cached_sf[i]);
+            fclose(f);
 
             if(!generation_no_norm) {
                 NormSpinCalculator nsc = NormSpinCalculator();
@@ -619,6 +638,13 @@ __host__ fptype TDDP4::normalize() const {
                         norm_M12.end(), norm_M34.end(), norm_CosTheta12.end(), norm_CosTheta34.end(), norm_phi.end())),
                     (norm_SF.begin() + (i * MCevents)),
                     nsc);
+
+                thrust::host_vector<fptype> host_norm = norm_SF;
+
+                FILE *f = fopen (format("norm_sf_%i", i).c_str(), "w+");
+                for (int i = 0; i < host_norm.size(); i++)
+                    fprintf(f, "%i - %f\n", i, host_norm[i]);
+                fclose(f);
             }
         }
 
@@ -634,7 +660,7 @@ __host__ fptype TDDP4::normalize() const {
             lscalculators[i]->setDalitzId(getFunctionIndex());
             lscalculators[i]->setResonanceId(LineShapes[i]->getFunctionIndex());
 
-            unsigned int stride = 2 * LineShapes.size() + SpinFactors.size();
+            unsigned int stride = LineShapes.size() + SpinFactors.size();
 
             GOOFIT_TRACE("LineShapes - stride: {}", stride);
             thrust::transform(
@@ -644,6 +670,12 @@ __host__ fptype TDDP4::normalize() const {
                     cachedResSF->begin() + i, cachedResSF->end(), stride)
                     .begin(),
                 *(lscalculators[i]));
+            thrust::host_vector<fpcomplex> host_cached_sf = *cachedResSF;
+
+            FILE *f = fopen (format("ls_calculator_%i", i).c_str(), "w+");
+            for (int i = 0; i < host_cached_sf.size(); i++)
+                fprintf(f, "%i - %f\n", i, host_cached_sf[i]);
+            fclose(f);
         }
     }
 
@@ -667,6 +699,7 @@ __host__ fptype TDDP4::normalize() const {
 
         if(redo) {
             AmpCalcs[i]->setDalitzId(getFunctionIndex());
+            //AmpCalcs[i]->setResonanceId(LineShapes[i]->getFunctionIndex());
 
             thrust::transform(eventIndex,
                               eventIndex + numEntries,
@@ -674,6 +707,12 @@ __host__ fptype TDDP4::normalize() const {
                                   cachedAMPs->begin() + i, cachedAMPs->end(), AmpCalcs.size())
                                   .begin(),
                               *(AmpCalcs[i]));
+            thrust::host_vector<fpcomplex> host_cached_sf = *cachedAMPs;
+
+            FILE *f = fopen (format("amp_calcs_%i", i).c_str(), "w+");
+            for (int i = 0; i < host_cached_sf.size(); i++)
+                fprintf(f, "%i - %f\n", i, host_cached_sf[i]);
+            fclose(f);
         }
     }
 
@@ -725,7 +764,7 @@ __host__ fptype TDDP4::normalize() const {
             dummy,
             MyFourDoubleTupleAdditionFunctor);
 
-        // GOOFIT_TRACE("sumIntegral={}", sumIntegral);
+        GOOFIT_TRACE("sumIntegral={}", sumIntegral);
 
         // printf("normalize A2/#evts , B2/#evts: %.5g, %.5g\n",thrust::get<0>(sumIntegral)/MCevents,
         // thrust::get<1>(sumIntegral)/MCevents);
@@ -794,10 +833,10 @@ __host__
 
     thrust::counting_iterator<unsigned int> index_sequence_begin(0);
 
-    fptype tau      = parametersList[7];
-    fptype ymixing  = parametersList[9];
+    fptype tau      = parametersList[0].getValue();
+    fptype ymixing  = parametersList[2].getValue();
     fptype gammamin = 1.0 / tau - fabs(ymixing) / tau;
-    /*printf("hostparams: %f, %f", tau, ymixing);*/
+    printf("hostparams: %f, %f\n", tau, ymixing);
 
     thrust::transform(
         index_sequence_begin, index_sequence_begin + nAcc, dtime_d.begin(), genExp(generation_offset, gammamin));
@@ -871,12 +910,24 @@ __host__
     thrust::constant_iterator<fptype *> arrayAddress(dev_event_array);
     thrust::counting_iterator<int> eventIndex(0);
 
-    MetricTaker evalor(this, getMetricPointer("ptr_to_Prob"));
+    auto fc = fitControl;
+    setFitControl(std::make_shared<ProbFit>());
     thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
                       thrust::make_zip_iterator(thrust::make_tuple(eventIndex + nAcc, arrayAddress, eventSize)),
                       weights.begin(),
-                      evalor);
+                      *logger);
     cudaDeviceSynchronize();
+
+    { 
+        thrust::host_vector<fptype> host_weights = weights;
+        
+        FILE *f = fopen ("weights", "w+");
+        for (int i = 0; i < host_weights.size(); i++)
+            fprintf(f, "%i - %f\n", i, host_weights[i]);
+        fclose(f);
+    }
+
+    setFitControl(fc);
 
     fptype wmax = 1.1 * (fptype)*thrust::max_element(weights.begin(), weights.end());
 
@@ -898,7 +949,16 @@ __host__
     thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
                       thrust::make_zip_iterator(thrust::make_tuple(eventIndex + nAcc, arrayAddress, eventSize)),
                       results.begin(),
-                      evalor);
+                      *logger);
+
+    {
+        thrust::host_vector<fptype> host_results = results;
+
+        FILE *f = fopen ("results", "w+");
+        for (int i = 0; i < host_results.size(); i++)
+            fprintf(f, "%i - %f\n", i, host_results[i]);
+        fclose(f);
+    }
 
     cudaDeviceSynchronize();
 
@@ -909,7 +969,7 @@ __host__
     // we do not want to copy the whole class to the GPU so capturing *this is not a great option
     // therefore perpare local copies to capture the variables we need
     unsigned int tmpoff   = generation_offset;
-    unsigned int tmpparam = parameters;
+    unsigned int tmpparam = 6;
     wmax                  = maxWeight;
 
     thrust::transform(
@@ -920,7 +980,7 @@ __host__
 
     gooFree(dev_event_array);
 
-    /*printf("Offset: %i und wmax:%.5g\n",generation_offset, wmax );*/
+    printf("Offset: %i und wmax:%.5g\n",generation_offset, wmax );
 
     auto weights_h = mcbooster::RealVector_h(weights);
     auto results_h = mcbooster::RealVector_h(results);
@@ -1003,11 +1063,11 @@ __device__ fptype NormSpinCalculator_TD::operator()(
 
     ParameterContainer pc;
 
-    fptype M  = pc.getConstant(0);
-    fptype m1 = pc.getConstant(1);
-    fptype m2 = pc.getConstant(2);
-    fptype m3 = pc.getConstant(3);
-    fptype m4 = pc.getConstant(4);
+    fptype M  = pc.getConstant(1);
+    fptype m1 = pc.getConstant(2);
+    fptype m2 = pc.getConstant(3);
+    fptype m3 = pc.getConstant(4);
+    fptype m4 = pc.getConstant(5);
 
     // Increment to TDDP function:
     while(pc.funcIdx < dalitzFuncId)
@@ -1133,11 +1193,11 @@ __device__ fpcomplex NormLSCalculator_TD::operator()(
     fptype cos34 = (thrust::get<3>(t));
     fptype phi   = (thrust::get<4>(t));
 
-    fptype M  = pc.getConstant(0);
-    fptype m1 = pc.getConstant(1);
-    fptype m2 = pc.getConstant(2);
-    fptype m3 = pc.getConstant(3);
-    fptype m4 = pc.getConstant(4);
+    fptype M  = pc.getConstant(1);
+    fptype m1 = pc.getConstant(2);
+    fptype m2 = pc.getConstant(3);
+    fptype m3 = pc.getConstant(4);
+    fptype m4 = pc.getConstant(5);
 
     while(pc.funcIdx < _resonance_i)
         pc.incrementIndex();
@@ -1178,10 +1238,10 @@ __device__ fpcomplex AmpCalc_TD::operator()(thrust::tuple<int, fptype *, int> t)
     while(pc.funcIdx < dalitzFuncId)
         pc.incrementIndex();
 
-    unsigned int cacheToUse = pc.getConstant(5);
-    unsigned int totalLS    = pc.getConstant(6);
-    unsigned int totalSF    = pc.getConstant(7);
-    unsigned int totalAMP   = pc.getConstant(8);
+    unsigned int cacheToUse = pc.getConstant(6);
+    unsigned int totalLS    = pc.getConstant(7);
+    unsigned int totalSF    = pc.getConstant(8);
+    unsigned int totalAMP   = pc.getConstant(9);
     unsigned int offset     = totalLS + totalSF;
     unsigned int numLS      = AmpIndices[totalAMP + _AmpIdx];
     unsigned int numSF      = AmpIndices[totalAMP + _AmpIdx + 1];
@@ -1232,7 +1292,7 @@ operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const {
     while(pc.funcIdx < dalitzFuncId)
         pc.incrementIndex();
 
-    unsigned int totalAMP = pc.getConstant(8);
+    unsigned int totalAMP = pc.getConstant(9);
 
     unsigned int evtNum   = thrust::get<0>(t);
     unsigned int MCevents = thrust::get<1>(t);

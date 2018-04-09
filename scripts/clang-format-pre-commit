@@ -9,7 +9,7 @@ format_file() {
     file="${1}"
     case "$file" in
     *.hpp | *.cpp | .c | *.cc | *.cu | *.h )
-        echo "Fixing: $file"
+        echo "Formatting: $file"
         clang-format -i -style=file "${1}"
         git add "${1}"
         ;;

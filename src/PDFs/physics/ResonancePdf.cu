@@ -471,60 +471,36 @@ __device__ resonance_function_ptr ptr_to_SPLINE   = cubicspline;
 
 namespace Resonances {
 
-RBW::RBW(std::string name,
-         Variable ar,
-         Variable ai,
-         Variable mass,
-         Variable width,
-         unsigned int sp,
-         unsigned int cyc,
-         bool symmDP)
+RBW::RBW(std::string name, Variable ar, Variable ai, Variable mass, Variable width, unsigned int sp, unsigned int cyc)
     : ResonancePdf(name, ar, ai) {
     pindices.push_back(registerParameter(mass));
     pindices.push_back(registerParameter(width));
     pindices.push_back(sp);
     pindices.push_back(cyc);
-    pindices.push_back((unsigned int)symmDP);
 
     GET_FUNCTION_ADDR(ptr_to_RBW);
 
     initialize(pindices);
 }
 
-GS::GS(std::string name,
-       Variable ar,
-       Variable ai,
-       Variable mass,
-       Variable width,
-       unsigned int sp,
-       unsigned int cyc,
-       bool symmDP)
+GS::GS(std::string name, Variable ar, Variable ai, Variable mass, Variable width, unsigned int sp, unsigned int cyc)
     : ResonancePdf(name, ar, ai) {
     pindices.push_back(registerParameter(mass));
     pindices.push_back(registerParameter(width));
     pindices.push_back(sp);
     pindices.push_back(cyc);
-    pindices.push_back((unsigned int)symmDP);
 
     GET_FUNCTION_ADDR(ptr_to_GOUSAK);
 
     initialize(pindices);
 }
 
-LASS::LASS(std::string name,
-           Variable ar,
-           Variable ai,
-           Variable mass,
-           Variable width,
-           unsigned int sp,
-           unsigned int cyc,
-           bool symmDP)
+LASS::LASS(std::string name, Variable ar, Variable ai, Variable mass, Variable width, unsigned int sp, unsigned int cyc)
     : ResonancePdf(name, ar, ai) {
     pindices.push_back(registerParameter(mass));
     pindices.push_back(registerParameter(width));
     pindices.push_back(sp);
     pindices.push_back(cyc);
-    pindices.push_back((unsigned int)symmDP);
 
     GET_FUNCTION_ADDR(ptr_to_LASS);
 

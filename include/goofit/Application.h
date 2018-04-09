@@ -77,7 +77,7 @@ class Application : public CLI::App {
     void set_device() const;
 
     /// Cleanup MPI if needed
-    ~Application();
+    ~Application() override;
 
     /// Get a file from the current directory, looks up one and in the true current directory
     /// Base gives a relative path from the source directory

@@ -135,7 +135,7 @@ __host__ DPPdf::DPPdf(
     // This is the start of reading in the amplitudes and adding the lineshapes and Spinfactors to this PDF
     // This is done in this way so we don't have multiple copies of one lineshape in one pdf.
     for(auto &amplitude : decayInfo.amplitudes) {
-        //printf("uniqueStr:%s\n", amplitude->_uniqueDecayStr.c_str());
+        // printf("uniqueStr:%s\n", amplitude->_uniqueDecayStr.c_str());
         AmpMap[amplitude->_uniqueDecayStr] = std::make_pair(std::vector<unsigned int>(0), std::vector<unsigned int>(0));
 
         components.push_back(amplitude);
@@ -155,7 +155,7 @@ __host__ DPPdf::DPPdf(
             } else {
                 // components.push_back (LSIT);
                 LineShapes.push_back(LSIT);
-                //printf("LS:%s\n", LSIT->getName().c_str());
+                // printf("LS:%s\n", LSIT->getName().c_str());
                 AmpMap[amplitude->_uniqueDecayStr].first.push_back(components.size() - 1);
             }
         }

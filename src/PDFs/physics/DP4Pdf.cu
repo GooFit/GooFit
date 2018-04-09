@@ -516,12 +516,12 @@ __host__ fptype DPPdf::normalize() const {
                               .begin(),
                           *(AmpCalcs[i]));
 
-        //thrust::host_vector<fpcomplex> host_amps = *cachedAMPs;
+        // thrust::host_vector<fpcomplex> host_amps = *cachedAMPs;
 
-        //FILE *f = fopen(format("amp_calcs_%i", i).c_str(), "w+");
-        //for(int i = 0; i < host_amps.size(); i++)
+        // FILE *f = fopen(format("amp_calcs_%i", i).c_str(), "w+");
+        // for(int i = 0; i < host_amps.size(); i++)
         //    fprintf(f, "%i - %f.%f\n", i, host_amps[i].real(), host_amps[i].imag());
-        //fclose(f);
+        // fclose(f);
     }
 
     // lineshape value calculation for the normalisation, also recalculated every time parameter change

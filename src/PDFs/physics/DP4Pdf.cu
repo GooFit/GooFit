@@ -33,20 +33,20 @@ class.
 
 #include <cstdarg>
 
-std::string format(const char *fmt, ...) {
-    va_list args;
+//std::string format(const char *fmt, ...) {
+//    va_list args;
 
-    char buffer[2048];
-    memset(buffer, 0, 2048);
+//    char buffer[2048];
+//    memset(buffer, 0, 2048);
 
-    va_start(args, fmt);
+//    va_start(args, fmt);
 
-    vsnprintf(buffer, sizeof(buffer), fmt, args);
+//    vsnprintf(buffer, sizeof(buffer), fmt, args);
 
-    va_end(args);
+//    va_end(args);
 
-    return std::string(buffer);
-}
+//    return std::string(buffer);
+//}
 
 namespace GooFit {
 
@@ -375,7 +375,7 @@ __host__ void DPPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) {
 
     numEntries  = dataSize;
     cachedResSF = new thrust::device_vector<fpcomplex>(
-        dataSize * (components.size() - 1 + SpinFactors.size())); //   -1 because 1 component is efficiency
+        dataSize * (LineShapes.size() + SpinFactors.size())); //   -1 because 1 component is efficiency
     void *dummy = thrust::raw_pointer_cast(cachedResSF->data());
     MEMCPY_TO_SYMBOL(cResSF, &dummy, sizeof(fpcomplex *), cacheToUse * sizeof(fpcomplex *), cudaMemcpyHostToDevice);
 
@@ -422,10 +422,10 @@ __host__ fptype DPPdf::normalize() const {
     // it basically goes through the array by increasing the pointer by a certain amount instead of just one step.
     if(!SpinsCalculated) {
         for(int i = 0; i < SpinFactors.size(); ++i) {
-            unsigned int offset = components.size() - 1;
+            unsigned int offset = LineShapes.size();
             sfcalculators[i]->setDalitzId(getFunctionIndex());
             sfcalculators[i]->setSpinFactorId(SpinFactors[i]->getFunctionIndex());
-            unsigned int stride = components.size() - 1 + SpinFactors.size();
+            unsigned int stride = LineShapes.size() + SpinFactors.size();
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, dataArray, eventSize)),
@@ -470,7 +470,7 @@ __host__ fptype DPPdf::normalize() const {
 
     // this calculates the values of the lineshapes and stores them in the array. It is recalculated every time
     // parameters change.
-    for(int i = 0; i < components.size() - 1; ++i) {
+    for(int i = 0; i < LineShapes.size(); ++i) {
         // auto amp = dynamic_cast<Amplitude*> (components[i]);
 
         if(redoIntegral[i]) {
@@ -478,7 +478,7 @@ __host__ fptype DPPdf::normalize() const {
             lscalculators[i]->setDalitzId(getFunctionIndex());
             lscalculators[i]->setResonanceId(LineShapes[i]->getFunctionIndex());
 
-            unsigned int stride = components.size() - 1 + SpinFactors.size();
+            unsigned int stride = LineShapes.size() + SpinFactors.size();
 
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
@@ -501,7 +501,7 @@ __host__ fptype DPPdf::normalize() const {
     // if so recalculates that amplitude
     // auto AmpMapIt = AmpMap.begin();
 
-    for(int i = 0; i < components.size() - 1; ++i) {
+    for(int i = 0; i < LineShapes.size(); ++i) {
         if(!redoIntegral[i])
             continue;
 

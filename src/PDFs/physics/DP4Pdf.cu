@@ -294,8 +294,6 @@ __host__ DPPdf::DPPdf(
     Dim5 eval = Dim5();
     mcbooster::EvaluateArray<Dim5>(eval, pset, VarSet);
 
-    printf("nAcc:%i SpinFactors:%i\n", nAcc, SpinFactors.size());
-
     norm_SF  = mcbooster::RealVector_d(nAcc * SpinFactors.size());
     norm_LS  = mcbooster::mc_device_vector<fpcomplex>(nAcc * (LineShapes.size()));
     MCevents = nAcc;
@@ -480,8 +478,6 @@ __host__ fptype DPPdf::normalize() const {
             lscalculators[i]->setDalitzId(getFunctionIndex());
             lscalculators[i]->setResonanceId(LineShapes[i]->getFunctionIndex());
 
-            printf("lineshape[%i]:%s\n", i, LineShapes[i]->getName().c_str());
-
             unsigned int stride = components.size() - 1 + SpinFactors.size();
 
             thrust::transform(
@@ -520,12 +516,12 @@ __host__ fptype DPPdf::normalize() const {
                               .begin(),
                           *(AmpCalcs[i]));
 
-        thrust::host_vector<fpcomplex> host_amps = *cachedAMPs;
+        //thrust::host_vector<fpcomplex> host_amps = *cachedAMPs;
 
-        FILE *f = fopen(format("amp_calcs_%i", i).c_str(), "w+");
-        for(int i = 0; i < host_amps.size(); i++)
-            fprintf(f, "%i - %f.%f\n", i, host_amps[i].real(), host_amps[i].imag());
-        fclose(f);
+        //FILE *f = fopen(format("amp_calcs_%i", i).c_str(), "w+");
+        //for(int i = 0; i < host_amps.size(); i++)
+        //    fprintf(f, "%i - %f.%f\n", i, host_amps[i].real(), host_amps[i].imag());
+        //fclose(f);
     }
 
     // lineshape value calculation for the normalisation, also recalculated every time parameter change
@@ -576,7 +572,6 @@ __host__ fptype DPPdf::normalize() const {
             0.,
             thrust::plus<fptype>());
 
-        printf("sumIntegral:%f", sumIntegral);
         GOOFIT_TRACE("sumIntegral={}", sumIntegral);
         // MCevents is the number of normalisation events.
         sumIntegral /= MCevents;

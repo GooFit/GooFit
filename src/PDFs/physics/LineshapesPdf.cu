@@ -828,8 +828,12 @@ void Lineshape::recursiveSetIndices() {
         break;
 
     case 11:
+#if GOOFIT_KMATRIX
         GET_FUNCTION_ADDR(ptr_to_kMatrix);
         GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_kMatrix");
+#else
+        throw GeneralError("Impossible to use kMatrix without compiled kMatrix support");
+#endif
         break;
 
     case 12:

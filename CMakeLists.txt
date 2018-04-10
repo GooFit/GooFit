@@ -203,6 +203,13 @@ if(${GOOFIT_DEVICE} STREQUAL CUDA AND ${GOOFIT_HOST} STREQUAL OMP)
     message(FATAL_ERROR "OMP cannot be a host backend for CUDA")
 endif()
 
+if(GOOFIT_DEVICE STREQUAL CUDA)
+    set(IS_NOT_CUDA FALSE)
+else()
+    set(IS_NOT_CUDA TRUE)
+endif()
+
+option(GOOFIT_KMATRIX "Activate support for KMatrix (slower CUDA builds" ${IS_NOT_CUDA})
 option(GOOFIT_SEPARATE_COMP "Enable separate compilation of PDFs" ON)
 
 # This is the common library that holds definitions, etc.

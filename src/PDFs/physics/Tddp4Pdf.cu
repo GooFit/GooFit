@@ -160,8 +160,8 @@ __device__ fptype device_TDDP4(fptype *evt, ParameterContainer &pc) {
         }
     }
 
-    int id_time  = pc.getObservable(0);
-    int id_sigma = pc.getObservable(1);
+    int id_time  = pc.getObservable(6);
+    int id_sigma = pc.getObservable(7);
 
     fptype _tau          = pc.getParameter(0);
     fptype _xmixing      = pc.getParameter(1);
@@ -408,6 +408,9 @@ __host__ TDDP4::TDDP4(std::string n,
         lscalculators.push_back(new LSCalculator_TD());
     }
 
+    //for (int i = 0; i < amp_idx.size(); i++)
+    //    printf("%i - %i\n", i, amp_idx[i]);
+
     MEMCPY_TO_SYMBOL(
         AmpIndices, &(amp_idx_start[0]), amp_idx_start.size() * sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(AmpIndices,
@@ -622,7 +625,7 @@ __host__ fptype TDDP4::normalize() const {
 
             FILE *f = fopen(format("spinfactors_%i", i).c_str(), "w+");
             for(int i = 0; i < host_cached_sf.size(); i++)
-                fprintf(f, "%i - %f\n", i, host_cached_sf[i]);
+                fprintf(f, "%i - %f:%f\n", i, host_cached_sf[i].real(), host_cached_sf[i].imag());
             fclose(f);
 
             if(!generation_no_norm) {
@@ -677,7 +680,7 @@ __host__ fptype TDDP4::normalize() const {
 
             FILE *f = fopen(format("ls_calculator_%i", i).c_str(), "w+");
             for(int i = 0; i < host_cached_sf.size(); i++)
-                fprintf(f, "%i - %f\n", i, host_cached_sf[i]);
+                fprintf(f, "%i - %f:%f\n", i, host_cached_sf[i].real(), host_cached_sf[i].imag());
             fclose(f);
         }
     }
@@ -714,7 +717,7 @@ __host__ fptype TDDP4::normalize() const {
 
             FILE *f = fopen(format("amp_calcs_%i", i).c_str(), "w+");
             for(int i = 0; i < host_cached_sf.size(); i++)
-                fprintf(f, "%i - %f\n", i, host_cached_sf[i]);
+                fprintf(f, "%i - %f:%f\n", i, host_cached_sf[i].real(), host_cached_sf[i].imag());
             fclose(f);
         }
     }
@@ -788,7 +791,7 @@ __host__ fptype TDDP4::normalize() const {
     }
 
     host_normalisations[parameters] = 1.0 / ret;
-    // printf("end of normalize %f\n", ret);
+    printf("end of normalize %f\n", ret);
     return ret;
 }
 
@@ -930,8 +933,6 @@ __host__
         fclose(f);
     }
 
-    setFitControl(fc);
-
     fptype wmax = 1.1 * (fptype)*thrust::max_element(weights.begin(), weights.end());
 
     if(wmax > maxWeight && maxWeight != 0)
@@ -962,6 +963,8 @@ __host__
             fprintf(f, "%i - %f\n", i, host_results[i]);
         fclose(f);
     }
+
+    setFitControl(fc);
 
     cudaDeviceSynchronize();
 
@@ -1258,7 +1261,8 @@ __device__ fpcomplex AmpCalc_TD::operator()(thrust::tuple<int, fptype *, int> t)
         fpcomplex ret(1, 0);
 
         for(int j = i * LS_step; j < (i + 1) * LS_step; ++j) {
-            ret *= (cResSF_TD[cacheToUse][evtNum * offset + AmpIndices[totalAMP + _AmpIdx + 3 + j]]);
+            int idx = AmpIndices[totalAMP + _AmpIdx + 4 + j];
+            ret *= (cResSF_TD[cacheToUse][evtNum * offset + idx]);
             // printf("Lineshape %i = (%.7g, %.7g)\n", j, (cResSF_TD[cacheToUse][evtNum*offset + AmpIndices[totalAMP +
             // _AmpIdx + 4 + j]]).real, (cResSF_TD[cacheToUse][evtNum*offset + AmpIndices[totalAMP + _AmpIdx + 4 +
             // j]]).imag);
@@ -1266,8 +1270,8 @@ __device__ fpcomplex AmpCalc_TD::operator()(thrust::tuple<int, fptype *, int> t)
 
         // printf("Lineshape Product = (%.7g, %.7g)\n", ret.real, ret.imag);
         for(int j = i * SF_step; j < (i + 1) * SF_step; ++j) {
-            ret *= (cResSF_TD[cacheToUse][evtNum * offset + totalLS + AmpIndices[totalAMP + _AmpIdx + 3 + numLS + j]]
-                        .real());
+            int idx = AmpIndices[totalAMP + _AmpIdx + 4 + numLS + j];
+            ret *= (cResSF_TD[cacheToUse][evtNum * offset + totalLS + idx].real());
             // printf(" SF = %.7g\n", (cResSF_TD[cacheToUse][evtNum*offset + totalLS + AmpIndices[totalAMP + _AmpIdx + 4
             // + numLS + j]].real));
         }

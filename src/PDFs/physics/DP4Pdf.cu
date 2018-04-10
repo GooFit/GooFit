@@ -33,7 +33,7 @@ class.
 
 #include <cstdarg>
 
-//std::string format(const char *fmt, ...) {
+// std::string format(const char *fmt, ...) {
 //    va_list args;
 
 //    char buffer[2048];

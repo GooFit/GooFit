@@ -15,8 +15,8 @@ class.
    Is this really worth the memory we lose by using a complex to store the SF?
 */
 #include <goofit/Error.h>
-#include <goofit/Log.h>
 #include <goofit/FitControl.h>
+#include <goofit/Log.h>
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/DP4Pdf.h>
 #include <goofit/PDFs/physics/EvalVar.h>
@@ -84,7 +84,7 @@ struct exp_functor {
         // while
         //    fptype time = evt[indices[8 + indices[0]]];
 
-        //we are grabbing the time out
+        // we are grabbing the time out
         fptype time = evt[tmpparam];
 
         thrust::random::minstd_rand0 rand(1431655765);
@@ -244,7 +244,8 @@ __host__ TDDP4::TDDP4(std::string n,
     int lsidx  = registerConstant(0); //#LS
     int sfidx  = registerConstant(0); //#SF
     int ampidx = registerConstant(0); //# AMP
-    int coeffidx = registerConstant(0);              //Number of coefficients, because its not necessary to be equal to number of Amps.
+    int coeffidx
+        = registerConstant(0); // Number of coefficients, because its not necessary to be equal to number of Amps.
 
     // This is the start of reading in the amplitudes and adding the lineshapes and Spinfactors to this PDF
     // This is done in this way so we don't have multiple copies of one lineshape in one pdf.
@@ -277,8 +278,7 @@ __host__ TDDP4::TDDP4(std::string n,
 
             if(found != LineShapes.end()) {
                 AmpMap[i->_uniqueDecayStr].first.push_back(std::distance(LineShapes.begin(), found));
-            }
-            else {
+            } else {
                 LineShapes.push_back(LSIT);
                 AmpMap[i->_uniqueDecayStr].first.push_back(LineShapes.size() - 1);
             }
@@ -292,8 +292,7 @@ __host__ TDDP4::TDDP4(std::string n,
 
             if(found != SpinFactors.end()) {
                 AmpMap[i->_uniqueDecayStr].second.push_back(std::distance(SpinFactors.begin(), found));
-            }
-            else {
+            } else {
                 SpinFactors.push_back(SFIT);
                 AmpMap[i->_uniqueDecayStr].second.push_back(SpinFactors.size() - 1);
             }
@@ -378,12 +377,11 @@ __host__ TDDP4::TDDP4(std::string n,
         amp_idx.push_back(flag);
         amp_idx.insert(amp_idx.end(), ls.begin(), ls.end());
         amp_idx.insert(amp_idx.end(), sf.begin(), sf.end());
-
     }
 
-    constantsList[lsidx]  = LineShapes.size();
-    constantsList[sfidx]  = SpinFactors.size();
-    constantsList[ampidx] = components.size();
+    constantsList[lsidx]    = LineShapes.size();
+    constantsList[sfidx]    = SpinFactors.size();
+    constantsList[ampidx]   = components.size();
     constantsList[coeffidx] = coeff_counter;
 
     components.push_back(resolution);
@@ -622,8 +620,8 @@ __host__ fptype TDDP4::normalize() const {
 
             thrust::host_vector<fpcomplex> host_cached_sf = *cachedResSF;
 
-            FILE *f = fopen (format("spinfactors_%i", i).c_str(), "w+");
-            for (int i = 0; i < host_cached_sf.size(); i++)
+            FILE *f = fopen(format("spinfactors_%i", i).c_str(), "w+");
+            for(int i = 0; i < host_cached_sf.size(); i++)
                 fprintf(f, "%i - %f\n", i, host_cached_sf[i]);
             fclose(f);
 
@@ -646,8 +644,8 @@ __host__ fptype TDDP4::normalize() const {
 
                 thrust::host_vector<fptype> host_norm = norm_SF;
 
-                FILE *f = fopen (format("norm_sf_%i", i).c_str(), "w+");
-                for (int i = 0; i < host_norm.size(); i++)
+                FILE *f = fopen(format("norm_sf_%i", i).c_str(), "w+");
+                for(int i = 0; i < host_norm.size(); i++)
                     fprintf(f, "%i - %f\n", i, host_norm[i]);
                 fclose(f);
             }
@@ -677,8 +675,8 @@ __host__ fptype TDDP4::normalize() const {
                 *(lscalculators[i]));
             thrust::host_vector<fpcomplex> host_cached_sf = *cachedResSF;
 
-            FILE *f = fopen (format("ls_calculator_%i", i).c_str(), "w+");
-            for (int i = 0; i < host_cached_sf.size(); i++)
+            FILE *f = fopen(format("ls_calculator_%i", i).c_str(), "w+");
+            for(int i = 0; i < host_cached_sf.size(); i++)
                 fprintf(f, "%i - %f\n", i, host_cached_sf[i]);
             fclose(f);
         }
@@ -704,7 +702,7 @@ __host__ fptype TDDP4::normalize() const {
 
         if(redo) {
             AmpCalcs[i]->setDalitzId(getFunctionIndex());
-            //AmpCalcs[i]->setResonanceId(LineShapes[i]->getFunctionIndex());
+            // AmpCalcs[i]->setResonanceId(LineShapes[i]->getFunctionIndex());
 
             thrust::transform(eventIndex,
                               eventIndex + numEntries,
@@ -714,8 +712,8 @@ __host__ fptype TDDP4::normalize() const {
                               *(AmpCalcs[i]));
             thrust::host_vector<fpcomplex> host_cached_sf = *cachedAMPs;
 
-            FILE *f = fopen (format("amp_calcs_%i", i).c_str(), "w+");
-            for (int i = 0; i < host_cached_sf.size(); i++)
+            FILE *f = fopen(format("amp_calcs_%i", i).c_str(), "w+");
+            for(int i = 0; i < host_cached_sf.size(); i++)
                 fprintf(f, "%i - %f\n", i, host_cached_sf[i]);
             fclose(f);
         }
@@ -923,11 +921,11 @@ __host__
                       *logger);
     cudaDeviceSynchronize();
 
-    { 
+    {
         thrust::host_vector<fptype> host_weights = weights;
-        
-        FILE *f = fopen ("weights", "w+");
-        for (int i = 0; i < host_weights.size(); i++)
+
+        FILE *f = fopen("weights", "w+");
+        for(int i = 0; i < host_weights.size(); i++)
             fprintf(f, "%i - %f\n", i, host_weights[i]);
         fclose(f);
     }
@@ -959,8 +957,8 @@ __host__
     {
         thrust::host_vector<fptype> host_results = results;
 
-        FILE *f = fopen ("results", "w+");
-        for (int i = 0; i < host_results.size(); i++)
+        FILE *f = fopen("results", "w+");
+        for(int i = 0; i < host_results.size(); i++)
             fprintf(f, "%i - %f\n", i, host_results[i]);
         fclose(f);
     }
@@ -985,7 +983,7 @@ __host__
 
     gooFree(dev_event_array);
 
-    printf("Offset: %i und wmax:%.5g\n",generation_offset, wmax );
+    printf("Offset: %i und wmax:%.5g\n", generation_offset, wmax);
 
     auto weights_h = mcbooster::RealVector_h(weights);
     auto results_h = mcbooster::RealVector_h(results);

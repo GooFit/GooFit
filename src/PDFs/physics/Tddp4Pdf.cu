@@ -393,7 +393,7 @@ __host__ TDDP4::TDDP4(std::string n,
         lscalculators.push_back(new LSCalculator_TD());
     }
 
-    //for (int i = 0; i < amp_idx.size(); i++)
+    // for (int i = 0; i < amp_idx.size(); i++)
     //    printf("%i - %i\n", i, amp_idx[i]);
 
     MEMCPY_TO_SYMBOL(
@@ -750,7 +750,7 @@ __host__ fptype TDDP4::normalize() const {
     }
 
     host_normalisations[parameters] = 1.0 / ret;
-    //printf("end of normalize %f\n", ret);
+    // printf("end of normalize %f\n", ret);
     return ret;
 }
 
@@ -801,7 +801,7 @@ __host__
     fptype tau      = parametersList[0].getValue();
     fptype ymixing  = parametersList[2].getValue();
     fptype gammamin = 1.0 / tau - fabs(ymixing) / tau;
-    //printf("hostparams: %f, %f\n", tau, ymixing);
+    // printf("hostparams: %f, %f\n", tau, ymixing);
 
     thrust::transform(
         index_sequence_begin, index_sequence_begin + nAcc, dtime_d.begin(), genExp(generation_offset, gammamin));
@@ -927,7 +927,7 @@ __host__
 
     gooFree(dev_event_array);
 
-    //printf("Offset: %i und wmax:%.5g\n", generation_offset, wmax);
+    // printf("Offset: %i und wmax:%.5g\n", generation_offset, wmax);
 
     auto weights_h = mcbooster::RealVector_h(weights);
     auto results_h = mcbooster::RealVector_h(results);

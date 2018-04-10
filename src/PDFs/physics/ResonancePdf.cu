@@ -488,59 +488,35 @@ __device__ resonance_function_ptr ptr_to_SPLINE   = cubicspline;
 
 namespace Resonances {
 
-RBW::RBW(std::string name,
-         Variable ar,
-         Variable ai,
-         Variable mass,
-         Variable width,
-         unsigned int sp,
-         unsigned int cyc,
-         bool symmDP)
+RBW::RBW(std::string name, Variable ar, Variable ai, Variable mass, Variable width, unsigned int sp, unsigned int cyc)
     : ResonancePdf(name, ar, ai) {
     registerParameter(mass);
     registerParameter(width);
 
     registerConstant(sp);
     registerConstant(cyc);
-    registerConstant(symmDP);
 
     resonanceType = 0;
 }
 
-GS::GS(std::string name,
-       Variable ar,
-       Variable ai,
-       Variable mass,
-       Variable width,
-       unsigned int sp,
-       unsigned int cyc,
-       bool symmDP)
+GS::GS(std::string name, Variable ar, Variable ai, Variable mass, Variable width, unsigned int sp, unsigned int cyc)
     : ResonancePdf(name, ar, ai) {
     registerParameter(mass);
     registerParameter(width);
 
     registerConstant(sp);
     registerConstant(cyc);
-    registerConstant(symmDP);
 
     resonanceType = 1;
 }
 
-LASS::LASS(std::string name,
-           Variable ar,
-           Variable ai,
-           Variable mass,
-           Variable width,
-           unsigned int sp,
-           unsigned int cyc,
-           bool symmDP)
+LASS::LASS(std::string name, Variable ar, Variable ai, Variable mass, Variable width, unsigned int sp, unsigned int cyc)
     : ResonancePdf(name, ar, ai) {
     registerParameter(mass);
     registerParameter(width);
 
     registerConstant(sp);
     registerConstant(cyc);
-    registerConstant(symmDP);
 
     resonanceType = 2;
 }

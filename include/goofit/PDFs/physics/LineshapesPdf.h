@@ -12,6 +12,7 @@ See *.cu file for more details
 #include <goofit/PDFs/physics/ResonancePdf.h>
 #include <goofit/Variable.h>
 #include <goofit/detail/Complex.h>
+#include <goofit/Version.h>
 
 #include <array>
 
@@ -175,6 +176,7 @@ class FOCUS : public Lineshape {
     ~FOCUS() override = default;
 };
 
+#if GOOFIT_KMATRIX
 class kMatrix : public Lineshape {
   public:
     kMatrix(std::string name,
@@ -195,6 +197,7 @@ class kMatrix : public Lineshape {
 
     ~kMatrix() override = default;
 };
+#endif
 
 class GLASS : public Lineshape {
   public:

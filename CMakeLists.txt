@@ -44,7 +44,8 @@ else()
     set(GOOFIT_GIT_VERSION "unknown")
 endif()
 
-if(NOT EXISTS "${PROJECT_SOURCE_DIR}/cmake/FindThrust.cmake"
+if(NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/cmake_utils/FindThrust.cmake"
+OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/modern_cmake/ModernCMakeUtils.cmake"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/CLI11/CMakeLists.txt"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/Eigen/CMakeLists.txt"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/cuda_support/README.md"
@@ -54,7 +55,8 @@ OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/thrust/README.md")
     message(FATAL_ERROR "The submodules were not downloaded! GOOFIT_SUBMODULE was turned off or failed. Please update submodules and try again.")
 endif()
 
-set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/extern/cmake_utils" ${CMAKE_MODULE_PATH})
+include("${CMAKE_CURRENT_SOURCE_DIR}/extern/modern_cmake/ModernCMakeUtils.cmake")
 
 # Add support for better CUDA behaviour in CMake < 3.9
 if(CMAKE_VERSION VERSION_LESS 3.9)
@@ -154,8 +156,6 @@ if(NOT ${GOOFIT_HOST} IN_LIST HOST_LISTING)
     message(FATAL_ERROR "You must select a host from ${HOST_LISTING}, not ${HOST_DEVICE}")
 endif()
 
-include(PatchOpenMPApple)
-
 # Add CCache if available
 find_program(CCACHE_PROGRAM ccache)
 if(CCACHE_PROGRAM)
@@ -180,8 +180,8 @@ if(GOOFIT_DEVICE STREQUAL Auto)
     if(CUDA_FOUND OR CMAKE_CUDA_COMPILER)
         set(GOOFIT_DEVICE CUDA)
     else()
-        find_package(OpenMP QUIET)
-        if(OpenMP_CXX_FOUND OR OpenMP_FOUND)
+        find_modern_package(OpenMP QUIET)
+        if(TARGET OpenMP::OpenMP_CXX)
             set(GOOFIT_DEVICE OMP)
         else()
             set(GOOFIT_DEVICE CPP)
@@ -212,6 +212,13 @@ if(${GOOFIT_DEVICE} STREQUAL CUDA AND ${GOOFIT_HOST} STREQUAL OMP)
     message(FATAL_ERROR "OMP cannot be a host backend for CUDA")
 endif()
 
+if(GOOFIT_DEVICE STREQUAL CUDA)
+    set(IS_NOT_CUDA FALSE)
+else()
+    set(IS_NOT_CUDA TRUE)
+endif()
+
+option(GOOFIT_KMATRIX "Activate support for KMatrix (slower CUDA builds" ${IS_NOT_CUDA})
 option(GOOFIT_SEPARATE_COMP "Enable separate compilation of PDFs" ON)
 
 # This is the common library that holds definitions, etc.
@@ -262,20 +269,10 @@ option(GOOFIT_MPI "Turn on MPI for goofit" OFF)
 
 
 if(GOOFIT_MPI)
-    find_package(MPI REQUIRED)
-
-    # Added in CMake 3.9
-    if(NOT TARGET MPI::MPI_CXX)
-        add_library(MPI_MPI_CXX INTERFACE)
-        add_library(MPI::MPI_CXX ALIAS MPI_MPI_CXX)
-        target_compile_definitions(MPI::MPI_CXX INTERFACE "-DGOOFIT_MPI")
-        target_add_compile_options(MPI::MPI_CXX INTERFACE ${MPI_CXX_COMPILE_FLAGS})
-        target_include_directories(MPI::MPI_CXX INTERFACE ${MPI_CXX_INCLUDE_PATH})
-        list(APPEND CMAKE_EXE_LINKER_FLAGS ${MPI_CXX_LINK_FLAGS})
-        target_link_libraries(MPI::MPI_CXX INTERFACE ${MPI_CXX_LIBRARIES})
-    endif()
+    find_modern_package(MPI REQUIRED)
 
     target_link_libraries(GooFit_Common INTERFACE MPI::MPL_CXX)
+    target_compile_definitions(GooFit_Common INTERFACE "-DGOOFIT_MPI")
 
     message(STATUS "MPI found. Use the following to run your program")
     message(STATUS "${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} PROCS ${MPIEXEC_PREFLAGS} EXECUTABLE ${MPIEXEC_POSTFLAGS} ARGS")
@@ -371,15 +368,7 @@ target_include_directories(GooFit_Common SYSTEM INTERFACE "${THRUST_INCLUDE_DIRS
 message(STATUS "Found Thrust ${THRUST_VERSION} at ${THRUST_INCLUDE_DIRS}")
 
 if(GOOFIT_DEVICE STREQUAL OMP OR GOOFIT_HOST STREQUAL OMP OR GOOFIT_DEVICE STREQUAL TBB OR GOOFIT_HOST STREQUAL TBB)
-    find_package(OpenMP REQUIRED)
-    if(NOT TARGET OpenMP::OpenMP_CXX)
-        add_library(OpenMP_TARGET INTERFACE)
-        add_library(OpenMP::OpenMP_CXX ALIAS OpenMP_TARGET)
-        target_compile_options(OpenMP_TARGET INTERFACE ${OpenMP_CXX_FLAGS})
-        find_package(Threads REQUIRED)
-        target_link_libraries(OpenMP_TARGET INTERFACE Threads::Threads)
-        target_link_libraries(OpenMP_TARGET INTERFACE ${OpenMP_CXX_FLAGS})
-    endif()
+    find_modern_package(OpenMP REQUIRED)
 
     target_link_libraries(GooFit_Common INTERFACE OpenMP::OpenMP_CXX)
 endif()

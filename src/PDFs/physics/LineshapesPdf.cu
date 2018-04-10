@@ -12,8 +12,9 @@ on the GPU
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/LineshapesPdf.h>
 #include <goofit/PDFs/physics/SpinFactors.h>
+#include <goofit/Version.h>
 
-#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
+#if GOOFIT_KMATRIX && THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
 #include <goofit/detail/compute_inverse5.h>
 #endif
 
@@ -566,6 +567,8 @@ __device__ fptype phsp_fourPi(fptype s) {
                + 0.13655 * s * s * s * s * s + 1.07885 * s * s * s * s * s * s;
 }
 
+#if GOOFIT_KMATRIX
+
 __device__ Eigen::Array<fpcomplex, NCHANNELS, NCHANNELS>
 getPropagator(const Eigen::Array<fptype, NCHANNELS, NCHANNELS> &kMatrix,
               const Eigen::Matrix<fptype, 5, 1> &phaseSpace,
@@ -680,6 +683,7 @@ __device__ fpcomplex kMatrixFunction(fptype Mpair, fptype m1, fptype m2, Paramet
         return F(0, pterm) * (1 - s0_prod) / (s - s0_prod);
     }
 }
+#endif
 
 __device__ fptype phsp_FOCUS(fptype s, fptype m0, fptype m1) {
     fptype mp = (m0 + m1);
@@ -753,8 +757,10 @@ __device__ resonance_function_ptr ptr_to_SBW        = SBW;
 __device__ resonance_function_ptr ptr_to_NONRES_DP  = nonres_DP;
 __device__ resonance_function_ptr ptr_to_Flatte     = Flatte_MINT;
 __device__ resonance_function_ptr ptr_to_Spline     = Spline_TDP;
-__device__ resonance_function_ptr ptr_to_kMatrix    = kMatrixFunction;
 __device__ resonance_function_ptr ptr_to_FOCUS      = FOCUSFunction;
+#if GOOFIT_KMATRIX
+__device__ resonance_function_ptr ptr_to_kMatrix = kMatrixFunction;
+#endif
 
 // This constructor is protected
 Lineshape::Lineshape(std::string name, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
@@ -1108,6 +1114,7 @@ Lineshapes::FOCUS::FOCUS(std::string name,
     initialize();
 }
 
+#if GOOFIT_KMATRIX
 Lineshapes::kMatrix::kMatrix(std::string name,
                              unsigned int pterm,
                              bool is_pole,
@@ -1154,6 +1161,7 @@ Lineshapes::kMatrix::kMatrix(std::string name,
 
     initialize();
 }
+#endif
 
 Amplitude::Amplitude(std::string uniqueDecayStr,
                      Variable ar,

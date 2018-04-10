@@ -95,7 +95,7 @@ class TDDP4 : public GooPdf {
     int totalEventSize;
     int cacheToUse{0};
     unsigned int generation_offset{25031992};
-    double maxWeight;
+    double maxWeight{0};
 };
 
 class SFCalculator_TD : public thrust::unary_function<thrust::tuple<int, fptype *, int>, fpcomplex> {

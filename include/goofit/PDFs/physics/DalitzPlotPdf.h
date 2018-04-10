@@ -35,8 +35,11 @@ class DalitzPlotPdf : public GooPdf {
     /// Sum up a cached wave
     __host__ fpcomplex sumCachedWave(size_t i) const;
 
-    // Get the decay info struct
+    /// Get the decay info struct
     __host__ DecayInfo3 &getDecayInfo() { return decayInfo; }
+
+    /// Calculate fit fractions (Cache should be pre-filled)
+    __host__ std::vector<std::vector<fptype>> fit_fractions();
 
     friend DalitzPlotter;
 

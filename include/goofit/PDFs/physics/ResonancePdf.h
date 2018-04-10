@@ -63,42 +63,21 @@ namespace Resonances {
 /// Relativistic Breit-Wigner
 class RBW : public ResonancePdf {
   public:
-    RBW(std::string name,
-        Variable ar,
-        Variable ai,
-        Variable mass,
-        Variable width,
-        unsigned int sp,
-        unsigned int cyc,
-        bool symmDP = false);
+    RBW(std::string name, Variable ar, Variable ai, Variable mass, Variable width, unsigned int sp, unsigned int cyc);
     ~RBW() override = default;
 };
 
 /// LASS
 class LASS : public ResonancePdf {
   public:
-    LASS(std::string name,
-         Variable ar,
-         Variable ai,
-         Variable mass,
-         Variable width,
-         unsigned int sp,
-         unsigned int cyc,
-         bool symmDP = false);
+    LASS(std::string name, Variable ar, Variable ai, Variable mass, Variable width, unsigned int sp, unsigned int cyc);
     ~LASS() override = default;
 };
 
 /// Gounaris-Sakurai
 class GS : public ResonancePdf {
   public:
-    GS(std::string name,
-       Variable ar,
-       Variable ai,
-       Variable mass,
-       Variable width,
-       unsigned int sp,
-       unsigned int cyc,
-       bool symmDP = false);
+    GS(std::string name, Variable ar, Variable ai, Variable mass, Variable width, unsigned int sp, unsigned int cyc);
     ~GS() override = default;
 };
 

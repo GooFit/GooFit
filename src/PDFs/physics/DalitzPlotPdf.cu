@@ -227,8 +227,10 @@ __host__ void DalitzPlotPdf::setDataSize(unsigned int dataSize, unsigned int evt
 
     // if (cachedWaves) delete cachedWaves;
     if(cachedWaves[0]) {
-        for(auto &cachedWave : cachedWaves)
+        for(auto &cachedWave : cachedWaves) {
             delete cachedWave;
+            cachedWave = nullptr;
+        }
     }
 
     numEntries = dataSize;
@@ -259,16 +261,21 @@ __host__ fptype DalitzPlotPdf::normalize() const {
 
     if(!dalitzNormRange) {
         gooMalloc((void **)&dalitzNormRange, 6 * sizeof(fptype));
+    }
 
-        auto *host_norms = new fptype[6];
-        host_norms[0]    = _m12.getLowerLimit();
-        host_norms[1]    = _m12.getUpperLimit();
-        host_norms[2]    = _m12.getNumBins();
-        host_norms[3]    = _m13.getLowerLimit();
-        host_norms[4]    = _m13.getUpperLimit();
-        host_norms[5]    = _m13.getNumBins();
-        MEMCPY(dalitzNormRange, host_norms, 6 * sizeof(fptype), cudaMemcpyHostToDevice);
-        delete[] host_norms;
+    // This line runs once
+    static std::array<fptype, 6> host_norms{{0, 0, 0, 0, 0, 0}};
+
+    std::array<fptype, 6> current_host_norms{{_m12.getLowerLimit(),
+                                              _m12.getUpperLimit(),
+                                              static_cast<fptype>(_m12.getNumBins()),
+                                              _m13.getLowerLimit(),
+                                              _m13.getUpperLimit(),
+                                              static_cast<fptype>(_m13.getNumBins())}};
+
+    if(host_norms != current_host_norms) {
+        host_norms = current_host_norms;
+        MEMCPY(dalitzNormRange, host_norms.data(), 6 * sizeof(fptype), cudaMemcpyHostToDevice);
     }
 
     for(unsigned int i = 0; i < decayInfo.resonances.size(); ++i) {
@@ -377,6 +384,64 @@ __host__ fpcomplex DalitzPlotPdf::sumCachedWave(size_t i) const {
     fpcomplex ret = thrust::reduce(vec.begin(), vec.end(), fpcomplex(0, 0), thrust::plus<fpcomplex>());
 
     return ret;
+}
+
+__host__ std::vector<std::vector<fptype>> DalitzPlotPdf::fit_fractions() {
+    GOOFIT_DEBUG("Performing fit fraction calculation, should already have a cache (does not use normalization grid)");
+
+    size_t n_res    = getDecayInfo().resonances.size();
+    size_t nEntries = getCachedWave(0).size();
+
+    std::vector<fpcomplex> coefs(n_res);
+    std::transform(getDecayInfo().resonances.begin(),
+                   getDecayInfo().resonances.end(),
+                   coefs.begin(),
+                   [](ResonancePdf *res) { return fpcomplex(res->amp_real.getValue(), res->amp_imag.getValue()); });
+
+    fptype buffer_all = 0;
+    fptype buffer;
+    fpcomplex coef_i;
+    fpcomplex coef_j;
+    fpcomplex cached_i_val;
+    fpcomplex cached_j_val;
+
+    thrust::device_vector<fpcomplex> cached_i;
+    thrust::device_vector<fpcomplex> cached_j;
+    std::vector<std::vector<fptype>> Amps_int(n_res, std::vector<fptype>(n_res));
+
+    for(size_t i = 0; i < n_res; i++) {
+        for(size_t j = 0; j < n_res; j++) {
+            buffer   = 0;
+            cached_i = getCachedWave(i);
+            cached_j = getCachedWave(j);
+            coef_i   = coefs[i];
+            coef_j   = coefs[j];
+
+            buffer += thrust::transform_reduce(
+                thrust::make_zip_iterator(thrust::make_tuple(cached_i.begin(), cached_j.begin())),
+                thrust::make_zip_iterator(thrust::make_tuple(cached_i.end(), cached_j.end())),
+                [coef_i, coef_j] __device__(thrust::tuple<fpcomplex, fpcomplex> val) {
+                    return (coef_i * thrust::conj<fptype>(coef_j) * thrust::get<0>(val)
+                            * thrust::conj<fptype>(thrust::get<1>(val)))
+                        .real();
+                },
+                (fptype)0.0,
+                thrust::plus<fptype>());
+
+            buffer_all += buffer;
+            Amps_int[i][j] = (buffer / nEntries);
+        }
+    }
+
+    fptype total_PDF = buffer_all / nEntries;
+
+    std::vector<std::vector<fptype>> ff(n_res, std::vector<fptype>(n_res));
+
+    for(size_t i = 0; i < n_res; i++)
+        for(size_t j = 0; j < n_res; j++)
+            ff[i][j] = (Amps_int[i][j] / total_PDF);
+
+    return ff;
 }
 
 SpecialResonanceIntegrator::SpecialResonanceIntegrator(int pIdx, unsigned int ri, unsigned int rj)

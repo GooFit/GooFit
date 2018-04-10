@@ -48,6 +48,10 @@ set(GOOPDF_HEADERS
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/detail/ComplexUtils.h
 )
 
+if(GOOFIT_KMATRIX AND GOOFIT_DEVICE STREQUAL CUDA)
+    list(APPEND GOOPDF_HEADERS ${PROJECT_SOURCE_DIR}/include/goofit/detail/compute_inverse5.h)
+endif()
+
 get_property(goo_extra GLOBAL PROPERTY GOOFIT_EXTRA_PDFS)
 
 if(GOOFIT_SEPARATE_COMP)

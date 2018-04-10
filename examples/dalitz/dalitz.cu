@@ -128,6 +128,8 @@ void getToyData(std::string toyFileName, GooFit::Application &app, DataSet &data
         dalitzplot.Fill(m12.getValue(), m13.getValue());
     }
 
+    GOOFIT_INFO("Read in {} events", data.getNumEvents());
+
     TCanvas foo;
     dalitzplot.SetStats(false);
     dalitzplot.Draw("colz");

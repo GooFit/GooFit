@@ -244,7 +244,7 @@ __host__ TDDP4::TDDP4(std::string n,
     int lsidx  = registerConstant(0); //#LS
     int sfidx  = registerConstant(0); //#SF
     int ampidx = registerConstant(0); //# AMP
-    registerConstant(0);              // No idea what this is for....
+    int coeffidx = registerConstant(0);              //Number of coefficients, because its not necessary to be equal to number of Amps.
 
     // This is the start of reading in the amplitudes and adding the lineshapes and Spinfactors to this PDF
     // This is done in this way so we don't have multiple copies of one lineshape in one pdf.
@@ -254,7 +254,12 @@ __host__ TDDP4::TDDP4(std::string n,
     std::vector<Amplitude *> AmpsA = decayInfo.amplitudes;
     std::vector<Amplitude *> AmpsB = decayInfo.amplitudes_B;
 
+    std::vector<unsigned int> nPermVec;
+    std::vector<unsigned int> amp_idx;
+    std::vector<unsigned int> amp_idx_start;
+
     for(auto &i : AmpsA) {
+        AmpMap[i->_uniqueDecayStr] = std::make_pair(std::vector<unsigned int>(0), std::vector<unsigned int>(0));
         AmpBuffer.push_back(i);
 
         // adding amplitude to components
@@ -270,8 +275,12 @@ __host__ TDDP4::TDDP4(std::string n,
             auto found = std::find_if(
                 LineShapes.begin(), LineShapes.end(), [&LSIT](const Lineshape *L) { return (*LSIT) == (*L); });
 
-            if(found == LineShapes.end()) {
+            if(found != LineShapes.end()) {
+                AmpMap[i->_uniqueDecayStr].first.push_back(std::distance(LineShapes.begin(), found));
+            }
+            else {
                 LineShapes.push_back(LSIT);
+                AmpMap[i->_uniqueDecayStr].first.push_back(LineShapes.size() - 1);
             }
         }
 
@@ -281,14 +290,16 @@ __host__ TDDP4::TDDP4(std::string n,
             auto found = std::find_if(
                 SpinFactors.begin(), SpinFactors.end(), [&SFIT](const SpinFactor *S) { return (*SFIT) == (*S); });
 
-            if(found == SpinFactors.end()) {
+            if(found != SpinFactors.end()) {
+                AmpMap[i->_uniqueDecayStr].second.push_back(std::distance(SpinFactors.begin(), found));
+            }
+            else {
                 SpinFactors.push_back(SFIT);
+                AmpMap[i->_uniqueDecayStr].second.push_back(SpinFactors.size() - 1);
             }
         }
 
-        // nPermVec.push_back(i->_nPerm);
-        ++coeff_counter;
-        // AmpBuffer.push_back(i);
+        unsigned int flag = 0;
         auto inB = std::find_if(AmpsB.begin(), AmpsB.end(), [AmpsA, &i](const Amplitude *A) { return *i == (*A); });
 
         if(inB != AmpsB.end()) {
@@ -297,14 +308,30 @@ __host__ TDDP4::TDDP4(std::string n,
             registerParameter((*inB)->_ai);
             ++coeff_counter;
         }
+
+        nPermVec.push_back(i->_nPerm);
+        std::vector<unsigned int> ls = AmpMap[i->_uniqueDecayStr].first;
+        std::vector<unsigned int> sf = AmpMap[i->_uniqueDecayStr].second;
+        amp_idx_start.push_back(amp_idx.size());
+        amp_idx.push_back(ls.size());
+        amp_idx.push_back(sf.size());
+        amp_idx.push_back(i->_nPerm);
+        amp_idx.push_back(flag);
+        amp_idx.insert(amp_idx.end(), ls.begin(), ls.end());
+        amp_idx.insert(amp_idx.end(), sf.begin(), sf.end());
+        ++coeff_counter;
+        AmpBuffer.push_back(i);
     }
 
     for(auto &i : AmpsB) {
+        unsigned int flag = 1;
         auto inB
             = std::find_if(AmpBuffer.begin(), AmpBuffer.end(), [AmpsB, &i](const Amplitude *A) { return *i == (*A); });
 
         if(inB != AmpBuffer.end())
             continue;
+
+        AmpMap[i->_uniqueDecayStr] = std::make_pair(std::vector<unsigned int>(0), std::vector<unsigned int>(0));
 
         components.push_back(i);
         AmpBuffer.push_back(i);
@@ -318,8 +345,11 @@ __host__ TDDP4::TDDP4(std::string n,
             auto found = std::find_if(
                 LineShapes.begin(), LineShapes.end(), [&LSIT](const Lineshape *L) { return (*LSIT) == (*L); });
 
-            if(found == LineShapes.end()) {
+            if(found != LineShapes.end()) {
+                AmpMap[i->_uniqueDecayStr].first.push_back(std::distance(LineShapes.begin(), found));
+            } else {
                 LineShapes.push_back(LSIT);
+                AmpMap[i->_uniqueDecayStr].first.push_back(LineShapes.size() - 1);
             }
         }
 
@@ -329,15 +359,32 @@ __host__ TDDP4::TDDP4(std::string n,
             auto found = std::find_if(
                 SpinFactors.begin(), SpinFactors.end(), [&SFIT](const SpinFactor *S) { return (*SFIT) == (*S); });
 
-            if(found == SpinFactors.end()) {
+            if(found != SpinFactors.end()) {
+                AmpMap[i->_uniqueDecayStr].second.push_back(std::distance(SpinFactors.begin(), found));
+            } else {
                 SpinFactors.push_back(SFIT);
+                AmpMap[i->_uniqueDecayStr].second.push_back(SpinFactors.size() - 1);
             }
         }
+
+        nPermVec.push_back(i->_nPerm);
+        ++coeff_counter;
+        amp_idx_start.push_back(amp_idx.size());
+        std::vector<unsigned int> ls = AmpMap[i->_uniqueDecayStr].first;
+        std::vector<unsigned int> sf = AmpMap[i->_uniqueDecayStr].second;
+        amp_idx.push_back(ls.size());
+        amp_idx.push_back(sf.size());
+        amp_idx.push_back(i->_nPerm);
+        amp_idx.push_back(flag);
+        amp_idx.insert(amp_idx.end(), ls.begin(), ls.end());
+        amp_idx.insert(amp_idx.end(), sf.begin(), sf.end());
+
     }
 
     constantsList[lsidx]  = LineShapes.size();
     constantsList[sfidx]  = SpinFactors.size();
     constantsList[ampidx] = components.size();
+    constantsList[coeffidx] = coeff_counter;
 
     components.push_back(resolution);
     components.push_back(efficiency);
@@ -361,48 +408,6 @@ __host__ TDDP4::TDDP4(std::string n,
 
     for(auto lineshape : LineShapes) {
         lscalculators.push_back(new LSCalculator_TD());
-    }
-
-    std::vector<unsigned int> amp_idx;
-    std::vector<unsigned int> amp_idx_start;
-    std::vector<unsigned int> nPermVec;
-
-    // minus two, one for efficiency one for resolution
-    for(int i = 0; i < components.size() - 2; ++i) {
-        auto *amp = dynamic_cast<Amplitude *>(components[i]);
-
-        redoIntegral[i] = true;
-        cachedMasses[i] = -1;
-        cachedWidths[i] = -1;
-
-        std::vector<Lineshape *> lineshapes   = amp->getLineShapes();
-        std::vector<SpinFactor *> spinfactors = amp->getSpinFactors();
-
-        amp_idx_start.push_back(amp_idx.size());
-
-        amp_idx.push_back(lineshapes.size());
-        amp_idx.push_back(spinfactors.size());
-        amp_idx.push_back(amp->_nPerm);
-
-        nPermVec.push_back(amp->_nPerm);
-
-        for(auto &LSIT : lineshapes) {
-            auto found = std::find_if(
-                LineShapes.begin(), LineShapes.end(), [&LSIT](const Lineshape *L) { return (*LSIT) == (*L); });
-            if(found != LineShapes.end()) {
-                amp_idx.push_back(std::distance(LineShapes.begin(), found));
-            } else
-                GOOFIT_ERROR("Shouldn't happen, could not find lineshape in array!");
-        }
-
-        for(auto &SFIT : spinfactors) {
-            auto found = std::find_if(
-                SpinFactors.begin(), SpinFactors.end(), [&SFIT](const SpinFactor *S) { return (*SFIT) == (*S); });
-            if(found != SpinFactors.end()) {
-                amp_idx.push_back(std::distance(SpinFactors.begin(), found));
-            } else
-                GOOFIT_ERROR("Shouldn't happen, could not find spin factor in array!");
-        }
     }
 
     MEMCPY_TO_SYMBOL(

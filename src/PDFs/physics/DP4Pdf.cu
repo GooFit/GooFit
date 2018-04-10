@@ -33,21 +33,6 @@ class.
 
 #include <cstdarg>
 
-// std::string format(const char *fmt, ...) {
-//    va_list args;
-
-//    char buffer[2048];
-//    memset(buffer, 0, 2048);
-
-//    va_start(args, fmt);
-
-//    vsnprintf(buffer, sizeof(buffer), fmt, args);
-
-//    va_end(args);
-
-//    return std::string(buffer);
-//}
-
 namespace GooFit {
 
 // The function of this array is to hold all the cached waves; specific
@@ -434,13 +419,6 @@ __host__ fptype DPPdf::normalize() const {
                     .begin(),
                 *(sfcalculators[i]));
 
-            // thrust::host_vector<std::complex<fptype>> hostResSF = *cachedResSF;
-
-            // FILE *f = fopen (format("spin_factors_%i", i).c_str(), "w+");
-            // for (int i = 0; i < hostResSF.size(); i++)
-            //    fprintf(f, "%i - %f.%f\n", i, hostResSF[i].real(), hostResSF[i].imag());
-            // fclose(f);
-
             if(!generation_no_norm) {
                 NormSpinCalculator nsc = NormSpinCalculator();
                 nsc.setDalitzId(getFunctionIndex());
@@ -455,13 +433,6 @@ __host__ fptype DPPdf::normalize() const {
                         norm_M12.end(), norm_M34.end(), norm_CosTheta12.end(), norm_CosTheta34.end(), norm_phi.end())),
                     (norm_SF.begin() + (i * MCevents)),
                     nsc);
-
-                // thrust::host_vector<fptype> host_norm_SF = norm_SF;
-
-                // FILE *f = fopen (format("norm_sf_%i", i).c_str(), "w+");
-                // for (int i = 0; i < host_norm_SF.size(); i++)
-                //    fprintf(f, "%i - %f\n", i, host_norm_SF[i]);
-                // fclose(f);
             }
         }
 
@@ -487,13 +458,6 @@ __host__ fptype DPPdf::normalize() const {
                     cachedResSF->begin() + i, cachedResSF->end(), stride)
                     .begin(),
                 *(lscalculators[i]));
-
-            // thrust::host_vector<std::complex<fptype>> hostResSF = *cachedResSF;
-
-            // FILE *f = fopen (format("ls_calculators_%i", i).c_str(), "w+");
-            // for (int i = 0; i < hostResSF.size(); i++)
-            //    fprintf(f, "%i - %f.%f\n", i, hostResSF[i].real(), hostResSF[i].imag());
-            // fclose(f);
         }
     }
 
@@ -513,13 +477,6 @@ __host__ fptype DPPdf::normalize() const {
                               cachedAMPs->begin() + i, cachedAMPs->end(), AmpCalcs.size())
                               .begin(),
                           *(AmpCalcs[i]));
-
-        // thrust::host_vector<fpcomplex> host_amps = *cachedAMPs;
-
-        // FILE *f = fopen(format("amp_calcs_%i", i).c_str(), "w+");
-        // for(int i = 0; i < host_amps.size(); i++)
-        //    fprintf(f, "%i - %f.%f\n", i, host_amps[i].real(), host_amps[i].imag());
-        // fclose(f);
     }
 
     // lineshape value calculation for the normalisation, also recalculated every time parameter change
@@ -542,12 +499,6 @@ __host__ fptype DPPdf::normalize() const {
                     norm_M12.end(), norm_M34.end(), norm_CosTheta12.end(), norm_CosTheta34.end(), norm_phi.end())),
                 (norm_LS.begin() + (i * MCevents)),
                 ns);
-            // thrust::host_vector<fptype> host_norm_SF = norm_SF;
-
-            // FILE *f = fopen (format("norm_ls_calculator_%i", i).c_str(), "w+");
-            // for (int i = 0; i < host_norm_SF.size(); i++)
-            //    fprintf(f, "%i - %f\n", i, host_norm_SF[i]);
-            // fclose(f);
         }
     }
 

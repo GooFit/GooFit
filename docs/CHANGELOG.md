@@ -7,6 +7,10 @@ This release is preparing for the major change in 2.2. The changes are small, bu
 * Travis CI is much cleaner ([#140], [#141])
 * Adding a few 3-body utilities: `get_amp_real`/`imag` and `getDecayInfo` ([#142])
 * Generation no longer changes the number of events requested ([#142])
+* Allow changing the bin number for normalization without restarting GooFit ([#143])
+* Add support for fit fraction calculation (3 body only ATM) ([#143])
+* Dropped symmDP where not supported ([#143])
+* kMatrix is now optional, and off by default for CUDA (slow build) ([#143])
 * CMake CUDA as a language improvements
 * Can directly `pip install goofit` with Pip 10
 
@@ -14,6 +18,7 @@ This release is preparing for the major change in 2.2. The changes are small, bu
 [#140]: https://github.com/GooFit/GooFit/pull/140
 [#141]: https://github.com/GooFit/GooFit/pull/141
 [#142]: https://github.com/GooFit/GooFit/pull/142
+[#143]: https://github.com/GooFit/GooFit/pull/143
 
 
 ## v2.1.2: Live Python

@@ -178,8 +178,9 @@ dp  = DPPdf("test", observables, DK3P_DI, eff, 5)
 for k in range(4):
     numEvents = 1000000
     dp.setGenerationOffset(k * numEvents)
+    print("Using accept-reject method", end=" ")
     particles, variables, weights, flags = dp.GenerateSig(numEvents)
     accepted = int(np.sum(flags))
-    print("Using accept-reject method would leave you with", accepted, "out of", numEvents, "events")
+    print("would leave you with", accepted, "out of", numEvents, "events")
 
 

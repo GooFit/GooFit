@@ -7,6 +7,7 @@ var searchData=
   ['fillwithgrid',['fillWithGrid',['../class_goo_fit_1_1_unbinned_data_set.html#af80477885217f8fdd9d6d22cbfee5581',1,'GooFit::UnbinnedDataSet']]],
   ['findfunctionidx',['findFunctionIdx',['../class_goo_fit_1_1_goo_pdf.html#a3499e8807ca75fd3aee9bea74048899b',1,'GooFit::GooPdf']]],
   ['fit',['fit',['../class_goo_fit_1_1_fit_manager_minuit1.html#a04ac2082ecea8bf609a07809c73c28b3',1,'GooFit::FitManagerMinuit1::fit()'],['../class_goo_fit_1_1_fit_manager_minuit2.html#a027d883752759da2435dabb2396670b1',1,'GooFit::FitManagerMinuit2::fit()']]],
+  ['fit_5ffractions',['fit_fractions',['../class_goo_fit_1_1_dalitz_plot_pdf.html#a8a503d50a749bce89daf2e6823d5053b',1,'GooFit::DalitzPlotPdf']]],
   ['fitcontrol',['FitControl',['../class_goo_fit_1_1_fit_control.html#a3abfb280c96ed8519434128ce6fc455d',1,'GooFit::FitControl']]],
   ['fitmanagerminuit1',['FitManagerMinuit1',['../class_goo_fit_1_1_fit_manager_minuit1.html#a155a82794093d1981282e0686d2be056',1,'GooFit::FitManagerMinuit1']]],
   ['fitmanagerminuit2',['FitManagerMinuit2',['../class_goo_fit_1_1_fit_manager_minuit2.html#ac594da38a8551a78af54f081572b0a29',1,'GooFit::FitManagerMinuit2']]],

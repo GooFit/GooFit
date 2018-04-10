@@ -108,7 +108,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a89820c232c60135de63bb40c674030e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sum up a cached wave.  <a href="#a89820c232c60135de63bb40c674030e7">More...</a><br /></td></tr>
 <tr class="separator:a89820c232c60135de63bb40c674030e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae7d5beb4be737f2aefeb43d6b9067994"><td class="memItemLeft" align="right" valign="top">__host__ <a class="el" href="struct_goo_fit_1_1_decay_info3.html">DecayInfo3</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_dalitz_plot_pdf.html#ae7d5beb4be737f2aefeb43d6b9067994">getDecayInfo</a> ()</td></tr>
+<tr class="memdesc:ae7d5beb4be737f2aefeb43d6b9067994"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the decay info struct.  <a href="#ae7d5beb4be737f2aefeb43d6b9067994">More...</a><br /></td></tr>
 <tr class="separator:ae7d5beb4be737f2aefeb43d6b9067994"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a503d50a749bce89daf2e6823d5053b"><td class="memItemLeft" align="right" valign="top">__host__ std::vector&lt; std::vector&lt; <a class="el" href="namespace_goo_fit.html#a6f9643fed3185c9bcdfb118b67bb1b16">fptype</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_dalitz_plot_pdf.html#a8a503d50a749bce89daf2e6823d5053b">fit_fractions</a> ()</td></tr>
+<tr class="memdesc:a8a503d50a749bce89daf2e6823d5053b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate fit fractions (Cache should be pre-filled)  <a href="#a8a503d50a749bce89daf2e6823d5053b">More...</a><br /></td></tr>
+<tr class="separator:a8a503d50a749bce89daf2e6823d5053b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_goo_fit_1_1_goo_pdf"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_goo_fit_1_1_goo_pdf')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_goo_fit_1_1_goo_pdf.html">GooFit::GooPdf</a></td></tr>
 <tr class="memitem:a21cf7134aad33e891913d18fa6ea146e inherit pub_methods_class_goo_fit_1_1_goo_pdf"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_goo_fit_1_1_goo_pdf.html#a21cf7134aad33e891913d18fa6ea146e">calculateNLL</a> () const override</td></tr>
 <tr class="separator:a21cf7134aad33e891913d18fa6ea146e inherit pub_methods_class_goo_fit_1_1_goo_pdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -352,6 +356,27 @@ Additional Inherited Members</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a8a503d50a749bce89daf2e6823d5053b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8a503d50a749bce89daf2e6823d5053b">&#9670;&nbsp;</a></span>fit_fractions()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">__host__ std::vector&lt;std::vector&lt;<a class="el" href="namespace_goo_fit.html#a6f9643fed3185c9bcdfb118b67bb1b16">fptype</a>&gt; &gt; GooFit::DalitzPlotPdf::fit_fractions </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Calculate fit fractions (Cache should be pre-filled) </p>
+
+<p class="reference">Referenced by <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00037">getDecayInfo()</a>.</p>
+
+</div>
+</div>
 <a id="a45d732bf8be1ecfdced78d635680b647"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a45d732bf8be1ecfdced78d635680b647">&#9670;&nbsp;</a></span>getCachedWave()</h2>
 
@@ -380,8 +405,8 @@ Additional Inherited Members</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00031">31</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
 
-<p class="reference">References <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00050">cachedWaves</a>, and <a class="el" href="class_goo_fit_1_1_dalitz_plot_pdf.html#a89820c232c60135de63bb40c674030e7">sumCachedWave()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;{ <span class="keywordflow">return</span> *(<a class="code" href="class_goo_fit_1_1_dalitz_plot_pdf.html#adcb125dbc7326f809febb43111a037c0">cachedWaves</a>[i]); }</div><div class="ttc" id="class_goo_fit_1_1_dalitz_plot_pdf_html_adcb125dbc7326f809febb43111a037c0"><div class="ttname"><a href="class_goo_fit_1_1_dalitz_plot_pdf.html#adcb125dbc7326f809febb43111a037c0">GooFit::DalitzPlotPdf::cachedWaves</a></div><div class="ttdeci">thrust::device_vector&lt; fpcomplex &gt; * cachedWaves[16]</div><div class="ttdef"><b>Definition:</b> <a href="_dalitz_plot_pdf_8h_source.html#l00050">DalitzPlotPdf.h:50</a></div></div>
+<p class="reference">References <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00053">cachedWaves</a>, and <a class="el" href="class_goo_fit_1_1_dalitz_plot_pdf.html#a89820c232c60135de63bb40c674030e7">sumCachedWave()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;{ <span class="keywordflow">return</span> *(<a class="code" href="class_goo_fit_1_1_dalitz_plot_pdf.html#adcb125dbc7326f809febb43111a037c0">cachedWaves</a>[i]); }</div><div class="ttc" id="class_goo_fit_1_1_dalitz_plot_pdf_html_adcb125dbc7326f809febb43111a037c0"><div class="ttname"><a href="class_goo_fit_1_1_dalitz_plot_pdf.html#adcb125dbc7326f809febb43111a037c0">GooFit::DalitzPlotPdf::cachedWaves</a></div><div class="ttdeci">thrust::device_vector&lt; fpcomplex &gt; * cachedWaves[16]</div><div class="ttdef"><b>Definition:</b> <a href="_dalitz_plot_pdf_8h_source.html#l00053">DalitzPlotPdf.h:53</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -408,10 +433,12 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Get the decay info struct. </p>
+
 <p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00037">37</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
 
-<p class="reference">References <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00042">decayInfo</a>.</p>
-<div class="fragment"><div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;{ <span class="keywordflow">return</span> <a class="code" href="class_goo_fit_1_1_dalitz_plot_pdf.html#a364121a06f72ce319be01843599ff030">decayInfo</a>; }</div><div class="ttc" id="class_goo_fit_1_1_dalitz_plot_pdf_html_a364121a06f72ce319be01843599ff030"><div class="ttname"><a href="class_goo_fit_1_1_dalitz_plot_pdf.html#a364121a06f72ce319be01843599ff030">GooFit::DalitzPlotPdf::decayInfo</a></div><div class="ttdeci">DecayInfo3 decayInfo</div><div class="ttdef"><b>Definition:</b> <a href="_dalitz_plot_pdf_8h_source.html#l00042">DalitzPlotPdf.h:42</a></div></div>
+<p class="reference">References <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00045">decayInfo</a>, and <a class="el" href="class_goo_fit_1_1_dalitz_plot_pdf.html#a8a503d50a749bce89daf2e6823d5053b">fit_fractions()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;{ <span class="keywordflow">return</span> <a class="code" href="class_goo_fit_1_1_dalitz_plot_pdf.html#a364121a06f72ce319be01843599ff030">decayInfo</a>; }</div><div class="ttc" id="class_goo_fit_1_1_dalitz_plot_pdf_html_a364121a06f72ce319be01843599ff030"><div class="ttname"><a href="class_goo_fit_1_1_dalitz_plot_pdf.html#a364121a06f72ce319be01843599ff030">GooFit::DalitzPlotPdf::decayInfo</a></div><div class="ttdeci">DecayInfo3 decayInfo</div><div class="ttdef"><b>Definition:</b> <a href="_dalitz_plot_pdf_8h_source.html#l00045">DalitzPlotPdf.h:45</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -498,8 +525,8 @@ Additional Inherited Members</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00028">28</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
 
-<p class="reference">References <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00054">forceRedoIntegrals</a>.</p>
-<div class="fragment"><div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;{ <a class="code" href="class_goo_fit_1_1_dalitz_plot_pdf.html#ab08df43e4d2823a2b809c3e70d940737">forceRedoIntegrals</a> = f; }</div><div class="ttc" id="class_goo_fit_1_1_dalitz_plot_pdf_html_ab08df43e4d2823a2b809c3e70d940737"><div class="ttname"><a href="class_goo_fit_1_1_dalitz_plot_pdf.html#ab08df43e4d2823a2b809c3e70d940737">GooFit::DalitzPlotPdf::forceRedoIntegrals</a></div><div class="ttdeci">bool forceRedoIntegrals</div><div class="ttdef"><b>Definition:</b> <a href="_dalitz_plot_pdf_8h_source.html#l00054">DalitzPlotPdf.h:54</a></div></div>
+<p class="reference">References <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00057">forceRedoIntegrals</a>.</p>
+<div class="fragment"><div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;{ <a class="code" href="class_goo_fit_1_1_dalitz_plot_pdf.html#ab08df43e4d2823a2b809c3e70d940737">forceRedoIntegrals</a> = f; }</div><div class="ttc" id="class_goo_fit_1_1_dalitz_plot_pdf_html_ab08df43e4d2823a2b809c3e70d940737"><div class="ttname"><a href="class_goo_fit_1_1_dalitz_plot_pdf.html#ab08df43e4d2823a2b809c3e70d940737">GooFit::DalitzPlotPdf::forceRedoIntegrals</a></div><div class="ttdeci">bool forceRedoIntegrals</div><div class="ttdef"><b>Definition:</b> <a href="_dalitz_plot_pdf_8h_source.html#l00057">DalitzPlotPdf.h:57</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -546,7 +573,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00045">45</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00048">48</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
 
 </div>
 </div>
@@ -570,7 +597,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00043">43</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00046">46</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
 
 </div>
 </div>
@@ -594,7 +621,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00044">44</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00047">47</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
 
 </div>
 </div>
@@ -618,7 +645,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00055">55</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00058">58</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
 
 </div>
 </div>
@@ -642,7 +669,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00050">50</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00053">53</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00031">getCachedWave()</a>.</p>
 
@@ -668,7 +695,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00056">56</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00059">59</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
 
 </div>
 </div>
@@ -692,7 +719,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00058">58</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00061">61</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
 
 </div>
 </div>
@@ -716,7 +743,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00060">60</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00063">63</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
 
 </div>
 </div>
@@ -740,7 +767,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00046">46</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00049">49</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
 
 </div>
 </div>
@@ -756,7 +783,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00039">39</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00042">42</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
 
 </div>
 </div>
@@ -780,7 +807,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00042">42</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00045">45</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00037">getDecayInfo()</a>.</p>
 
@@ -806,7 +833,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00054">54</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00057">57</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00028">setForceIntegrals()</a>.</p>
 
@@ -832,7 +859,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00051">51</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00054">54</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
 
 </div>
 </div>
@@ -856,7 +883,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00059">59</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00062">62</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
 
 </div>
 </div>
@@ -880,7 +907,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00053">53</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00056">56</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
 
 </div>
 </div>
@@ -904,7 +931,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00057">57</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_dalitz_plot_pdf_8h_source.html#l00060">60</a> of file <a class="el" href="_dalitz_plot_pdf_8h_source.html">DalitzPlotPdf.h</a>.</p>
 
 </div>
 </div>
@@ -914,7 +941,7 @@ Additional Inherited Members</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Apr 7 2018 05:01:35 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Apr 10 2018 07:37:17 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

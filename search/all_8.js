@@ -107,7 +107,7 @@ var searchData=
   ['gpudev_5f',['gpuDev_',['../class_goo_fit_1_1_application.html#a5608dff1e411d423eb319a8956372dee',1,'GooFit::Application']]],
   ['gray',['gray',['../namespace_goo_fit.html#a88ae3a0192c1e4d0fc1e88078d05c0a4',1,'GooFit']]],
   ['green',['green',['../namespace_goo_fit.html#acef7334d3b4902a01097779acea336fe',1,'GooFit']]],
-  ['gs',['GS',['../class_goo_fit_1_1_resonances_1_1_g_s.html',1,'GooFit::Resonances::GS'],['../class_goo_fit_1_1_resonances_1_1_g_s.html#a83c33aaf6ff01511b9cab49e4c38a72e',1,'GooFit::Resonances::GS::GS()']]],
+  ['gs',['GS',['../class_goo_fit_1_1_resonances_1_1_g_s.html',1,'GooFit::Resonances::GS'],['../class_goo_fit_1_1_resonances_1_1_g_s.html#a2bce716da93e057c507df403904d368d',1,'GooFit::Resonances::GS::GS()']]],
   ['gspline',['GSpline',['../class_goo_fit_1_1_lineshapes_1_1_g_spline.html',1,'GooFit::Lineshapes::GSpline'],['../class_goo_fit_1_1_lineshapes_1_1_g_spline.html#a393471df53c7f936f7dcf2bd1ab1825d',1,'GooFit::Lineshapes::GSpline::GSpline()']]],
   ['lineshapes',['Lineshapes',['../namespace_goo_fit_1_1_lineshapes.html',1,'GooFit']]],
   ['literals',['literals',['../namespace_goo_fit_1_1literals.html',1,'GooFit']]],

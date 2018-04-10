@@ -69,6 +69,6 @@ var searchData=
   ['gmunu',['gmunu',['../class_goo_fit_1_1_symm_lorentz_matrix.html#acbf721c93e85d8519262e25b670584fd',1,'GooFit::SymmLorentzMatrix']]],
   ['goofree',['gooFree',['../namespace_goo_fit.html#afcbdef1d35a4393540bcc91d58c183f8',1,'GooFit']]],
   ['goomalloc',['gooMalloc',['../namespace_goo_fit.html#af2bcb27f8446f3950037de6ce8681ee1',1,'GooFit']]],
-  ['gs',['GS',['../class_goo_fit_1_1_resonances_1_1_g_s.html#a83c33aaf6ff01511b9cab49e4c38a72e',1,'GooFit::Resonances::GS']]],
+  ['gs',['GS',['../class_goo_fit_1_1_resonances_1_1_g_s.html#a2bce716da93e057c507df403904d368d',1,'GooFit::Resonances::GS']]],
   ['gspline',['GSpline',['../class_goo_fit_1_1_lineshapes_1_1_g_spline.html#a393471df53c7f936f7dcf2bd1ab1825d',1,'GooFit::Lineshapes::GSpline']]]
 ];

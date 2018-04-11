@@ -359,7 +359,7 @@ void getToyData(float sigweight = 0.9) {
         std::cout << buffer;
     }
 
-    TRandom3 donram(0);
+    TRandom3 donram(42);
 
     int nsig       = 0;
     double sigprob = 0;

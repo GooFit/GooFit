@@ -41,6 +41,7 @@
 #include <goofit/PDFs/physics/ThreeGaussResolution_Aux.h>
 #include <goofit/PDFs/physics/TruthResolution_Aux.h>
 #include <goofit/Variable.h>
+#include <goofit/detail/Uncertain.h>
 
 #include <goofit/fitting/FitManagerMinuit1.h>
 #include <goofit/fitting/FitManagerMinuit2.h>
@@ -902,14 +903,13 @@ int runToyFit(int ifile, int nfile, bool noPlots = true) {
         retval = datapdf;
     }
 
-    printf(
-        "Fit results:\ntau    : (%.3f $\\pm$ %.3f) fs\nxmixing: (%.3f $\\pm$ %.3f)%%\nymixing: (%.3f $\\pm$ %.3f)%%\n",
-        1000 * dtop0pp._tau.getValue(),
-        1000 * dtop0pp._tau.getError(),
-        100 * dtop0pp._xmixing.getValue(),
-        100 * dtop0pp._xmixing.getError(),
-        100 * dtop0pp._ymixing.getValue(),
-        100 * dtop0pp._ymixing.getError());
+    fmt::print("Fit results Toy fit:\n"
+               "tau    : ({:.3}) fs\n"
+               "xmixing: ({:.3})\%\n"
+               "ymixing: ({:.3})\%\n",
+               1000 * Uncertain(dtop0pp._tau),
+               100 * Uncertain(dtop0pp._xmixing),
+               100 * Uncertain(dtop0pp._ymixing));
 
     if(!noPlots)
         makeToyDalitzPlots(mixPdf);
@@ -2772,12 +2772,13 @@ int runTruthMCFit(std::string fname, bool noPlots = true) {
 
     // overallSignal->setDebugMask(0);
 
-    std::cout << "Fit results: \n"
-              << "tau    : " << dtop0pp._tau.getValue() << " $\\pm$ " << dtop0pp._tau.getError() << "\n"
-              << "xmixing: (" << 100 * dtop0pp._xmixing.getValue() << " $\\pm$ " << 100 * dtop0pp._xmixing.getError()
-              << ")%\n"
-              << "ymixing: (" << 100 * dtop0pp._ymixing.getValue() << " $\\pm$ " << 100 * dtop0pp._ymixing.getError()
-              << ")%\n";
+    fmt::print("Fit results Toy fit TruthMC fit:\n"
+               "tau    : {:.3}\n"
+               "xmixing: ({:.3})\%\n"
+               "ymixing: ({:.3})\%\n",
+               Uncertain(dtop0pp._tau),
+               100 * Uncertain(dtop0pp._xmixing),
+               100 * Uncertain(dtop0pp._ymixing));
 
     if(noPlots)
         return retval;
@@ -2972,12 +2973,13 @@ int runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
         retval = datapdf;
     }
 
-    std::cout << "Fit results: \n"
-              << "tau    : " << dtop0pp._tau.getValue() << " $\\pm$ " << dtop0pp._tau.getError() << "\n"
-              << "xmixing: (" << 100 * dtop0pp._xmixing.getValue() << " $\\pm$ " << 100 * dtop0pp._xmixing.getError()
-              << ")%\n"
-              << "ymixing: (" << 100 * dtop0pp._ymixing.getValue() << " $\\pm$ " << 100 * dtop0pp._ymixing.getError()
-              << ")%\n";
+    fmt::print("Fit results Canonical fit:\n"
+               "tau    : {:.3}\n"
+               "xmixing: ({:.3})\%\n"
+               "ymixing: ({:.3})\%\n",
+               Uncertain(dtop0pp._tau),
+               100 * Uncertain(dtop0pp._xmixing),
+               100 * Uncertain(dtop0pp._ymixing));
 
     // All this relies on exact formatting of the input data files; it's fragile.
     double inputx              = 1;
@@ -4151,14 +4153,13 @@ int runCanonicalFit(std::string fname, bool noPlots = true) {
     overallPdf->printProfileInfo();
 #endif
 
-    printf(
-        "Fit results:\ntau    : (%.3f $\\pm$ %.3f) fs\nxmixing: (%.3f $\\pm$ %.3f)%%\nymixing: (%.3f $\\pm$ %.3f)%%\n",
-        1000 * dtop0pp._tau.getValue(),
-        1000 * dtop0pp._tau.getError(),
-        100 * dtop0pp._xmixing.getValue(),
-        100 * dtop0pp._xmixing.getError(),
-        100 * dtop0pp._ymixing.getValue(),
-        100 * dtop0pp._ymixing.getError());
+    fmt::print("Fit results Canonical fit:\n"
+               "tau    : ({:.3}) fs\n"
+               "xmixing: ({:.3})\%\n"
+               "ymixing: ({:.3})\%\n",
+               1000 * Uncertain(dtop0pp._tau),
+               100 * Uncertain(dtop0pp._xmixing),
+               100 * Uncertain(dtop0pp._ymixing));
 
     /*
     std::cout << "Fit results: \n"

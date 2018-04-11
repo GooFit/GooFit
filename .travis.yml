@@ -31,20 +31,6 @@ matrix:
     - scripts/check_style.sh
     - .ci/check_tidy.sh
 
-    # Coverage
-  - compiler: gcc
-    addons:
-      apt:
-        packages:
-        - libx11-dev
-        - libxpm-dev
-        - libxft-dev
-        - libxext-dev
-    install:
-    - source .ci/build_lcov.sh
-    script:
-    - .ci/travis_lcov.sh
-
     # Regular test set and doxygen
   - compiler: gcc
     addons:

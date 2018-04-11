@@ -87,32 +87,19 @@ void getToyData(std::string toyFileName, GooFit::Application &app, DataSet &data
 
     double dummy = 0;
 
-    while(!reader.eof()) {
-        reader >> dummy;
-        reader >> dummy; // m23, m(pi+ pi-), called m12 in processToyRoot convention.
-        reader >> m12;   // Already swapped according to D* charge. m12 = m(pi+pi0)
-        reader >> m13;
+    while(reader >> dummy
+          // m23, m(pi+ pi-), called m12 in processToyRoot convention.
+          // Already swapped according to D* charge. m12 = m(pi+pi0)
+          >> dummy >> m12 >> m13
 
-        // Errors on Dalitz variables
-        reader >> dummy;
-        reader >> dummy;
-        reader >> dummy;
+          // Errors on Dalitz variables
+          >> dummy >> dummy >> dummy
 
-        reader >> dummy; // Decay time
-        reader >> dummy; // sigma_t
+          // Decay time, sigma_t
+          >> dummy >> dummy
 
-        reader >> dummy; // Md0
-        reader >> dummy; // deltaM
-        reader >> dummy; // ProbSig
-        reader >> dummy; // Dst charge
-        reader >> dummy; // Run
-        reader >> dummy; // Event
-        reader >> dummy; // Signal and four bkg fractions.
-        reader >> dummy;
-        reader >> dummy;
-        reader >> dummy;
-        reader >> dummy;
-
+          // Md0, deltaM, Prob, Sig, Dst charge, Run, Event, Signal and four bkg fractions
+          >> dummy >> dummy >> dummy >> dummy >> dummy >> dummy >> dummy >> dummy >> dummy >> dummy >> dummy) {
         // EXERCISE 1 (preliminary): Impose an artificial reconstruction efficiency
         // by throwing out events with a probability linear in m12.
         // NB! This exercise continues below.

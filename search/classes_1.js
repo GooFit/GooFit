@@ -1,6 +1,7 @@
 var searchData=
 [
   ['bifurgausspdf',['BifurGaussPdf',['../class_goo_fit_1_1_bifur_gauss_pdf.html',1,'GooFit']]],
+  ['bigbin',['BigBin',['../struct_big_bin.html',1,'']]],
   ['binnedchisqfit',['BinnedChisqFit',['../class_goo_fit_1_1_binned_chisq_fit.html',1,'GooFit']]],
   ['binneddataset',['BinnedDataSet',['../class_goo_fit_1_1_binned_data_set.html',1,'GooFit']]],
   ['binnederrorfit',['BinnedErrorFit',['../class_goo_fit_1_1_binned_error_fit.html',1,'GooFit']]],

@@ -1,10 +1,9 @@
 var searchData=
 [
-  ['name',['name',['../class_goo_fit_1_1_indexable.html#ad6e8fae30ed3673dd99891a657c3c101',1,'GooFit::Indexable']]],
-  ['normranges',['normRanges',['../class_goo_fit_1_1_pdf_base.html#a34d955ee7b60b0787ca668df400c1183',1,'GooFit::PdfBase']]],
-  ['num_5f',['num_',['../class_goo_fit_1_1_params.html#a425b06f8f100140f17e26226846d404f',1,'GooFit::Params']]],
-  ['numbins',['numbins',['../class_goo_fit_1_1_observable.html#a3c9cb7f0fb3755e1d9f71bda296a2ce1',1,'GooFit::Observable']]],
-  ['numentries',['numEntries',['../class_goo_fit_1_1_pdf_base.html#ae8c7c6c6091b0dacff3c77a4bd527f2d',1,'GooFit::PdfBase']]],
-  ['numevents',['numEvents',['../class_goo_fit_1_1_pdf_base.html#afd32cb89530b2ff409c3aea756e52f63',1,'GooFit::PdfBase']]],
-  ['numeventsadded',['numEventsAdded',['../class_goo_fit_1_1_data_set.html#aa4297c2522daae2edc05ff1c56791358',1,'GooFit::DataSet']]]
+  ['last',['last',['../class_goo_fit_1_1strided__range.html#a972bfe545e7a3e7cdf50eb6eab8c2e15',1,'GooFit::strided_range']]],
+  ['logger',['logger',['../class_goo_fit_1_1_goo_pdf.html#a4c703c843e911380d8e86cb5444ba3ec',1,'GooFit::GooPdf']]],
+  ['lom23sigma',['loM23Sigma',['../pipipi0_d_p_fit_8cpp.html#a7fa504796345278b612223badb7e72fe',1,'pipipi0DPFit.cpp']]],
+  ['lowerlimit',['lowerlimit',['../class_goo_fit_1_1_indexable.html#a2bb2b837ee0fbf5bc41185be9e735c93',1,'GooFit::Indexable']]],
+  ['lowertime',['lowerTime',['../pipipi0_d_p_fit_8cpp.html#a9b9d06140c4e4ff76aef673779ce851b',1,'pipipi0DPFit.cpp']]],
+  ['luckyfrac',['luckyFrac',['../pipipi0_d_p_fit_8cpp.html#a519c5e888c3280e719205c35f7288677',1,'pipipi0DPFit.cpp']]]
 ];

@@ -13,11 +13,15 @@ var searchData=
   ['lineshape',['Lineshape',['../class_goo_fit_1_1_lineshape.html',1,'GooFit::Lineshape'],['../class_goo_fit_1_1_lineshape.html#a0eefe78994d591fde77a3daa4cb7ef5a',1,'GooFit::Lineshape::Lineshape()']]],
   ['lineshapespdf_2ecu',['LineshapesPdf.cu',['../_lineshapes_pdf_8cu.html',1,'']]],
   ['lineshapespdf_2eh',['LineshapesPdf.h',['../_lineshapes_pdf_8h.html',1,'']]],
+  ['loaddatafile',['loadDataFile',['../pipipi0_d_p_fit_8cpp.html#a50985ee8995ec86a1ed88221c18bf664',1,'pipipi0DPFit.cpp']]],
   ['loadevent',['loadEvent',['../class_goo_fit_1_1_unbinned_data_set.html#a74c2d5e2885e7309b2e78c8d5b511767',1,'GooFit::UnbinnedDataSet']]],
   ['log_2eh',['Log.h',['../_log_8h.html',1,'']]],
   ['logger',['logger',['../class_goo_fit_1_1_goo_pdf.html#a4c703c843e911380d8e86cb5444ba3ec',1,'GooFit::GooPdf']]],
+  ['lom23sigma',['loM23Sigma',['../pipipi0_d_p_fit_8cpp.html#a7fa504796345278b612223badb7e72fe',1,'pipipi0DPFit.cpp']]],
   ['lorentzmatrix',['LorentzMatrix',['../class_goo_fit_1_1_lorentz_matrix.html',1,'GooFit::LorentzMatrix'],['../class_goo_fit_1_1_lorentz_matrix.html#a2c1a95b2de14b6f6c5c9e2b05011a323',1,'GooFit::LorentzMatrix::LorentzMatrix()=default'],['../class_goo_fit_1_1_lorentz_matrix.html#abd1f418cc4a6d414b69b35eea810ecec',1,'GooFit::LorentzMatrix::LorentzMatrix(const gpuLVec p[4])'],['../class_goo_fit_1_1_lorentz_matrix.html#a59265ce13cf1b705d2612f446d59525d',1,'GooFit::LorentzMatrix::LorentzMatrix(const LorentzMatrix &amp;other)']]],
   ['lowerlimit',['lowerlimit',['../class_goo_fit_1_1_indexable.html#a2bb2b837ee0fbf5bc41185be9e735c93',1,'GooFit::Indexable']]],
+  ['lowertime',['lowerTime',['../pipipi0_d_p_fit_8cpp.html#a9b9d06140c4e4ff76aef673779ce851b',1,'pipipi0DPFit.cpp']]],
   ['lscalculator',['LSCalculator',['../class_goo_fit_1_1_l_s_calculator.html',1,'GooFit::LSCalculator'],['../class_goo_fit_1_1_l_s_calculator.html#ac083b1cd114053cd3474a6f8ea70d8ec',1,'GooFit::LSCalculator::LSCalculator()']]],
-  ['lscalculator_5ftd',['LSCalculator_TD',['../class_goo_fit_1_1_l_s_calculator___t_d.html',1,'GooFit::LSCalculator_TD'],['../class_goo_fit_1_1_l_s_calculator___t_d.html#a1a292c93c8f1b7e3a221dc728eadab18',1,'GooFit::LSCalculator_TD::LSCalculator_TD()']]]
+  ['lscalculator_5ftd',['LSCalculator_TD',['../class_goo_fit_1_1_l_s_calculator___t_d.html',1,'GooFit::LSCalculator_TD'],['../class_goo_fit_1_1_l_s_calculator___t_d.html#a1a292c93c8f1b7e3a221dc728eadab18',1,'GooFit::LSCalculator_TD::LSCalculator_TD()']]],
+  ['luckyfrac',['luckyFrac',['../pipipi0_d_p_fit_8cpp.html#a519c5e888c3280e719205c35f7288677',1,'pipipi0DPFit.cpp']]]
 ];

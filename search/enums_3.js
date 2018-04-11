@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['mod',['Mod',['../class_goo_fit_1_1_lineshapes_1_1_f_o_c_u_s.html#a583d8ec0813737ff9970fb1e6c5296aa',1,'GooFit::Lineshapes::FOCUS']]]
+  ['ff',['FF',['../namespace_goo_fit.html#a08ab8dd8ee4b25e849b5a5eecf6ee48b',1,'GooFit']]],
+  ['fiterrors',['FitErrors',['../namespace_goo_fit.html#a145d35e8e46e921ed038de04120d4241',1,'GooFit']]]
 ];

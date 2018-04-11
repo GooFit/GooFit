@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['dplotres',['DplotRes',['../pipipi0_d_p_fit_8cpp.html#a669b525c3846e41b95573081bfcdf9efab96d797905c8668b12ed6d3fb9c30e61',1,'pipipi0DPFit.cpp']]],
   ['dtoap1_5fatosp2_5fstop3p4',['DtoAP1_AtoSP2_StoP3P4',['../namespace_goo_fit.html#afa87269656057f9a7bea45cfeae4dd03a70abcd2d44b821cf5d97cdd3e4fcd4e9',1,'GooFit']]],
   ['dtoap1_5fatovp2_5fvtop3p4',['DtoAP1_AtoVP2_VtoP3P4',['../namespace_goo_fit.html#afa87269656057f9a7bea45cfeae4dd03abe766af1dee52ab53a292b0d69f182d3',1,'GooFit']]],
   ['dtoap1_5fatovp2dwave_5fvtop3p4',['DtoAP1_AtoVP2Dwave_VtoP3P4',['../namespace_goo_fit.html#afa87269656057f9a7bea45cfeae4dd03aaf52e2845624c11217355a275c83ba61',1,'GooFit']]],

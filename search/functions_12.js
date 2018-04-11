@@ -4,6 +4,7 @@ var searchData=
   ['sbw',['SBW',['../class_goo_fit_1_1_lineshapes_1_1_s_b_w.html#a6590778552bbe6772d4bf49183a5e809',1,'GooFit::Lineshapes::SBW']]],
   ['scaledgaussianpdf',['ScaledGaussianPdf',['../class_goo_fit_1_1_scaled_gaussian_pdf.html#ad0af15957398667898b1dc063e214b4e',1,'GooFit::ScaledGaussianPdf']]],
   ['scan',['scan',['../class_goo_fit_1_1_goo_pdf.html#a4bf13dd0561c0d3cc7804104a1f77533',1,'GooFit::GooPdf']]],
+  ['set_5fbkg_5fmodel_5ffrom_5fstring',['set_bkg_model_from_string',['../pipipi0_d_p_fit_8cpp.html#a2321c020806eae9a23550e8fcdc7f84c',1,'pipipi0DPFit.cpp']]],
   ['set_5fdevice',['set_device',['../class_goo_fit_1_1_application.html#af3c0ae28c31017e3aa715b6343b1c603',1,'GooFit::Application']]],
   ['set_5frecord',['set_record',['../class_goo_fit_1_1_params.html#a7f0e3806672a5060b36f800fa727ab4d',1,'GooFit::Params']]],
   ['setbincontent',['setBinContent',['../class_goo_fit_1_1_binned_data_set.html#a07d77884d01b8d008bfa468fb2d2943a',1,'GooFit::BinnedDataSet']]],

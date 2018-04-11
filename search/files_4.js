@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['dalitz_2ecu',['dalitz.cu',['../dalitz_8cu.html',1,'']]],
+  ['dalitz_2ecpp',['dalitz.cpp',['../dalitz_8cpp.html',1,'']]],
   ['dalitzplothelpers_2ecu',['DalitzPlotHelpers.cu',['../_dalitz_plot_helpers_8cu.html',1,'']]],
   ['dalitzplothelpers_2eh',['DalitzPlotHelpers.h',['../_dalitz_plot_helpers_8h.html',1,'']]],
   ['dalitzplotpdf_2ecu',['DalitzPlotPdf.cu',['../_dalitz_plot_pdf_8cu.html',1,'']]],

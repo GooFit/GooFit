@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['keta',['KEta',['../class_goo_fit_1_1_lineshapes_1_1_f_o_c_u_s.html#a583d8ec0813737ff9970fb1e6c5296aaac2e5c6f11f8480a7583ca2e72f277a59',1,'GooFit::Lineshapes::FOCUS']]],
-  ['kpi',['Kpi',['../class_goo_fit_1_1_lineshapes_1_1_f_o_c_u_s.html#a583d8ec0813737ff9970fb1e6c5296aaac64314824f406c274b7735c4f888385c',1,'GooFit::Lineshapes::FOCUS']]]
+  ['i32',['I32',['../class_goo_fit_1_1_lineshapes_1_1_f_o_c_u_s.html#a583d8ec0813737ff9970fb1e6c5296aaad878ea6016bfe01729548bf442de5a8b',1,'GooFit::Lineshapes::FOCUS']]],
+  ['invalid',['InValid',['../namespace_goo_fit.html#a145d35e8e46e921ed038de04120d4241a05fe242e96a3e233fc27654efe32c3a6',1,'GooFit']]]
 ];

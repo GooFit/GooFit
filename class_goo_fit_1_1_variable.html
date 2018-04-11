@@ -582,7 +582,7 @@ Friends</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00189">189</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_variable_8cpp_source.html#l00036">GooFit::operator&lt;&lt;()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_variable_8cpp_source.html#l00036">GooFit::operator&lt;&lt;()</a>, <a class="el" href="pipipi0_d_p_fit_8cpp_source.html#l04036">runCanonicalFit()</a>, and <a class="el" href="pipipi0_d_p_fit_8cpp_source.html#l02790">runGeneratedMCFit()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;{ <span class="keywordflow">return</span> *<a class="code" href="class_goo_fit_1_1_variable.html#ab2846abfaba509c59e84179e25c1c076">error</a>; }</div><div class="ttc" id="class_goo_fit_1_1_variable_html_ab2846abfaba509c59e84179e25c1c076"><div class="ttname"><a href="class_goo_fit_1_1_variable.html#ab2846abfaba509c59e84179e25c1c076">GooFit::Variable::error</a></div><div class="ttdeci">std::shared_ptr&lt; fptype &gt; error</div><div class="ttdoc">The error. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00224">Variable.h:224</a></div></div>
 </div><!-- fragment -->
 </div>
@@ -737,6 +737,8 @@ Friends</h2></td></tr>
 <p>Hides the number; the real value is the result minus this value. Cannot be retreived once set. </p>
 
 <p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00211">211</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="pipipi0_d_p_fit_8cpp_source.html#l04036">runCanonicalFit()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;{ *<a class="code" href="class_goo_fit_1_1_variable.html#a6eef5bb08a3ba9489db7bfc6222aaaae">blind</a> = val; }</div><div class="ttc" id="class_goo_fit_1_1_variable_html_a6eef5bb08a3ba9489db7bfc6222aaaae"><div class="ttname"><a href="class_goo_fit_1_1_variable.html#a6eef5bb08a3ba9489db7bfc6222aaaae">GooFit::Variable::blind</a></div><div class="ttdeci">std::shared_ptr&lt; fptype &gt; blind</div><div class="ttdoc">A blinding value to add. </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00227">Variable.h:227</a></div></div>
 </div><!-- fragment -->
 </div>
@@ -868,6 +870,8 @@ Friends</h2></td></tr>
 <p>Set the fixedness of a variable. </p>
 
 <p class="definition">Definition at line <a class="el" href="_variable_8h_source.html#l00205">205</a> of file <a class="el" href="_variable_8h_source.html">Variable.h</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="zach_fit_8cpp_source.html#l00083">main()</a>, <a class="el" href="pipipi0_d_p_fit_8cpp_source.html#l01207">makeMikhailJSU_gg()</a>, <a class="el" href="pipipi0_d_p_fit_8cpp_source.html#l01123">makeSignalJSU_gg()</a>, and <a class="el" href="pipipi0_d_p_fit_8cpp_source.html#l00520">makeSignalPdf()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;{ *<a class="code" href="class_goo_fit_1_1_variable.html#a3fd1c5e1f575dea691541df86652f054">fixed</a> = fix; }</div><div class="ttc" id="class_goo_fit_1_1_variable_html_a3fd1c5e1f575dea691541df86652f054"><div class="ttname"><a href="class_goo_fit_1_1_variable.html#a3fd1c5e1f575dea691541df86652f054">GooFit::Variable::fixed</a></div><div class="ttdeci">std::shared_ptr&lt; bool &gt; fixed</div><div class="ttdoc">This &quot;fixes&quot; the variable (constant) </div><div class="ttdef"><b>Definition:</b> <a href="_variable_8h_source.html#l00233">Variable.h:233</a></div></div>
 </div><!-- fragment -->
 </div>
@@ -1052,7 +1056,7 @@ Friends</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Apr 10 2018 07:37:17 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Apr 11 2018 19:28:02 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

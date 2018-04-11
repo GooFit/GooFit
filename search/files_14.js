@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['zachfit_2ecu',['zachFit.cu',['../zach_fit_8cu.html',1,'']]]
+  ['zachfit_2ecpp',['zachFit.cpp',['../zach_fit_8cpp.html',1,'']]]
 ];

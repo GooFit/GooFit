@@ -1,10 +1,14 @@
 var searchData=
 [
+  ['calcgauinteg',['calcGauInteg',['../pipipi0_d_p_fit_8cpp.html#a5e3753b68cba8a0541945182f1f2b0c3',1,'pipipi0DPFit.cpp']]],
+  ['calctoyweight',['calcToyWeight',['../pipipi0_d_p_fit_8cpp.html#a5339eab7efd04cabaa31237f5c2d2f0b',1,'pipipi0DPFit.cpp']]],
   ['calculatenll',['calculateNLL',['../class_goo_fit_1_1_pdf_base.html#a84949c194544b1e7090c1620cc4a2273',1,'GooFit::PdfBase::calculateNLL()'],['../class_goo_fit_1_1_goo_pdf.html#a21cf7134aad33e891913d18fa6ea146e',1,'GooFit::GooPdf::calculateNLL()']]],
   ['callfunction',['callFunction',['../namespace_goo_fit.html#a87a68afb2dc5f613178ac1dea8a9955f',1,'GooFit']]],
   ['checkallvars',['checkAllVars',['../class_goo_fit_1_1_data_set.html#a7298e578fcb4ff2a4e3532e87334514d',1,'GooFit::DataSet']]],
   ['checkinitstatus',['checkInitStatus',['../class_goo_fit_1_1_pdf_base.html#add052f502b0a5f90f6f56b5ffef3c3bf',1,'GooFit::PdfBase']]],
+  ['chisqinfo',['ChisqInfo',['../struct_chisq_info.html#ab34cb77512bc8eddfd78b6e9322b6e62',1,'ChisqInfo']]],
   ['clearcurrentfit',['clearCurrentFit',['../class_goo_fit_1_1_pdf_base.html#a9fb19c954b5a3b73672b70cc54f2287a',1,'GooFit::PdfBase']]],
+  ['coarsebin',['coarseBin',['../pipipi0_d_p_fit_8cpp.html#abb235c105bafe200db0028cac4f82101',1,'pipipi0DPFit.cpp']]],
   ['complex_5fderivative',['complex_derivative',['../namespace_goo_fit.html#ad346b846632b154440f2f21649eef3b6',1,'GooFit']]],
   ['compositepdf',['CompositePdf',['../class_goo_fit_1_1_composite_pdf.html#a7033e422a5d95e9742eaa1f78f929280',1,'GooFit::CompositePdf']]],
   ['compute_5finverse5',['compute_inverse5',['../namespace_goo_fit.html#acabc4e54d7dc021978b6567131f331bf',1,'GooFit']]],
@@ -18,7 +22,12 @@ var searchData=
   ['copyparams',['copyParams',['../class_goo_fit_1_1_pdf_base.html#a64fbdf57c854f83ead4f9bb5f1b3d40a',1,'GooFit::PdfBase::copyParams(const std::vector&lt; double &gt; &amp;pars) const'],['../class_goo_fit_1_1_pdf_base.html#a39124a06e706a7cdf20a7033224b8c8f',1,'GooFit::PdfBase::copyParams()']]],
   ['corrgaussianpdf',['CorrGaussianPdf',['../class_goo_fit_1_1_corr_gaussian_pdf.html#acf10f089a5afe630b77fe7f7a131d15b',1,'GooFit::CorrGaussianPdf']]],
   ['coshelang',['cosHELANG',['../struct_goo_fit_1_1_dim5.html#a0c59b5c8fc0cc73702059e2fc04c4b3e',1,'GooFit::Dim5']]],
+  ['cpu_5fbw',['cpu_bw',['../convolution_8cpp.html#a60875a1cc697018e351950efdb3ce8e9',1,'convolution.cpp']]],
+  ['cpudalitz',['cpuDalitz',['../pipipi0_d_p_fit_8cpp.html#aadef74bfba6d2775f0adc898ccd3511d',1,'pipipi0DPFit.cpp']]],
+  ['cpugetm23',['cpuGetM23',['../dalitz_8cpp.html#aef1fc0077487228f8210b6f2359a82f2',1,'cpuGetM23(fptype massPZ, fptype massPM):&#160;dalitz.cpp'],['../pipipi0_d_p_fit_8cpp.html#aef1fc0077487228f8210b6f2359a82f2',1,'cpuGetM23(fptype massPZ, fptype massPM):&#160;pipipi0DPFit.cpp']]],
   ['cpuvoigtian',['cpuvoigtian',['../namespace_goo_fit.html#a9ab99bf4b1a456d8de22d03d944e5e50',1,'GooFit']]],
+  ['cpvfitfcn',['cpvFitFcn',['../chisquare_8cpp.html#ae358c07f88eec4a4577b637724000c57',1,'chisquare.cpp']]],
   ['createparameters',['createParameters',['../class_goo_fit_1_1_mixing_time_resolution.html#a11550c959bdf03f163d96bb2699676cd',1,'GooFit::MixingTimeResolution::createParameters()'],['../class_goo_fit_1_1_three_gauss_resolution.html#abb2b6f57112f39931e7c1004b3df04a6',1,'GooFit::ThreeGaussResolution::createParameters()'],['../class_goo_fit_1_1_truth_resolution.html#a76d7463ae329db57529307a017da2ca4',1,'GooFit::TruthResolution::createParameters()']]],
+  ['createweighthistogram',['createWeightHistogram',['../pipipi0_d_p_fit_8cpp.html#a76cd34cf699c553e0d9cbaa837674707',1,'pipipi0DPFit.cpp']]],
   ['crystalballpdf',['CrystalBallPdf',['../class_goo_fit_1_1_crystal_ball_pdf.html#ac7b6d4e42a7c638fc92fde0f0d178f3d',1,'GooFit::CrystalBallPdf::CrystalBallPdf(std::string n, Observable _x, Variable m, Variable s, Variable a)'],['../class_goo_fit_1_1_crystal_ball_pdf.html#a40765812fa8206a528d893e65e9e16c4',1,'GooFit::CrystalBallPdf::CrystalBallPdf(std::string n, Observable _x, Variable m, Variable s, Variable a, Variable power)']]]
 ];

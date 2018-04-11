@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['daughterpair',['DaughterPair',['../namespace_goo_fit.html#abc8117ef8b87f2a25c5db5190add7685',1,'GooFit']]],
-  ['dp4pair',['DP4Pair',['../namespace_goo_fit.html#ad43101d55f344c3bc53fedd1adb444aa',1,'GooFit']]]
+  ['bkg2model',['Bkg2Model',['../pipipi0_d_p_fit_8cpp.html#ac6a30472e15be9c67f92da60606a1fc4',1,'pipipi0DPFit.cpp']]]
 ];

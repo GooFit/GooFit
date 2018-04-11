@@ -21,4 +21,4 @@ endif()
 
 
 goofit_add_directory()
-goofit_add_example(zachFit TIME 288 ARGS 0 1)
+goofit_add_example(zachFit TIME 35 ARGS 0 1 --reduce 10)

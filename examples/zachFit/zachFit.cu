@@ -29,15 +29,19 @@
 using namespace fmt::literals;
 using namespace GooFit;
 
-TH1D *getMCData(DataSet *data, Observable var, std::string filename) {
+TH1D *getMCData(DataSet *data, Observable var, std::string filename, size_t reduce = 1) {
     TH1D *mchist = new TH1D{"mc_hist", "", 300, 0.1365, 0.1665};
     std::ifstream mcreader{filename};
 
+    size_t val_read_in = 0;
     while(mcreader >> var) {
         if(!var)
             continue;
-        data->addEvent();
-        mchist->Fill(var.getValue());
+        if(val_read_in % reduce == 0) {
+            data->addEvent();
+            mchist->Fill(var.getValue());
+        }
+        val_read_in++;
     }
 
     mchist->SetStats(false);
@@ -50,15 +54,19 @@ TH1D *getMCData(DataSet *data, Observable var, std::string filename) {
     return mchist;
 }
 
-TH1D *getData(DataSet *data, Observable var, std::string filename) {
+TH1D *getData(DataSet *data, Observable var, std::string filename, size_t reduce = 1) {
     TH1D *data_hist = new TH1D("data_hist", "", 300, 0.1365, 0.1665);
     std::ifstream datareader{filename};
 
+    size_t val_read_in = 0;
     while(datareader >> var) {
         if(!var)
             continue;
-        data->addEvent();
-        data_hist->Fill(var.getValue());
+        if(val_read_in % reduce == 0) {
+            data->addEvent();
+            data_hist->Fill(var.getValue());
+        }
+        val_read_in++;
     }
 
     data_hist->SetStats(false);
@@ -93,8 +101,10 @@ inverse femtobarn).
 
     int mode = 0, data = 0;
     bool plot;
-    app.add_set("-m,--mode,mode", mode, {0, 1, 2}, "Program mode: 0-unbinned, 1-binned, 2-binned chisq");
-    app.add_set("-d,--data,data", data, {0, 1, 2}, "Dataset: 0-simple, 1-kpi, 2-k3pi");
+    size_t reduce = 1;
+    app.add_set("-m,--mode,mode", mode, {0, 1, 2}, "Program mode: 0-unbinned, 1-binned, 2-binned chisq", true);
+    app.add_set("-d,--data,data", data, {0, 1, 2}, "Dataset: 0-simple, 1-kpi, 2-k3pi", true);
+    app.add_option("--reduce", reduce, "Load every X line of data", true);
     app.add_flag("-p,--plot", plot, "Make and save plots of results");
 
     GOOFIT_PARSE(app);
@@ -143,7 +153,7 @@ inverse femtobarn).
         data_dataset.reset(new BinnedDataSet{dm});
     }
 
-    TH1D *mc_hist = getMCData(mc_dataset.get(), dm, mcfile);
+    TH1D *mc_hist = getMCData(mc_dataset.get(), dm, mcfile, reduce);
 
     Variable mean1("kpi_mc_mean1", 0.145402, 0.00001, 0.143, 0.148);
     Variable mean2("kpi_mc_mean2", 0.145465, 0.00001, 0.145, 0.1465);
@@ -230,7 +240,7 @@ inverse femtobarn).
 
     Variable bkg_frac("kpi_rd_bkg_frac", 0.03, 0.0, 0.3);
 
-    TH1D *data_hist = getData(data_dataset.get(), dm, datafile);
+    TH1D *data_hist = getData(data_dataset.get(), dm, datafile, reduce);
 
     AddPdf total("total", {bkg_frac}, {&bkg, &signal});
 

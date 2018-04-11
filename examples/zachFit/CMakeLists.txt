@@ -1,6 +1,6 @@
 
 set(DATA_FILE "${CMAKE_CURRENT_SOURCE_DIR}/dataFiles_zachFit.tgz")
- 
+
 if(NOT EXISTS ${DATA_FILE})
     message(STATUS "Downloading zachFit data files")
     file(DOWNLOAD
@@ -10,7 +10,7 @@ if(NOT EXISTS ${DATA_FILE})
         )
 endif()
 
-if(NOT EXISTS 
+if(NOT EXISTS
         "${CMAKE_CURRENT_SOURCE_DIR}/datafiles/dstwidth_kpi_resMC.dat"
         )
     execute_process(
@@ -23,3 +23,5 @@ endif()
 goofit_add_directory()
 goofit_add_executable(zachFit zachFit.cu)
 set_target_properties(zachFit PROPERTIES FOLDER examples)
+
+add_test(NAME zachFit_Example COMMAND zachFit 0 1)

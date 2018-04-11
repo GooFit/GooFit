@@ -227,12 +227,14 @@ int Application::exit(const CLI::Error &e) {
     return rval;
 }
 
-Application::~Application() {
-// Only specialized finalize if MPI is present
 #ifdef GOOFIT_MPI
+Application::~Application() {
+    // Only specialized finalize if MPI is present
     MPI_Finalize();
-#endif
 }
+#else
+Application::~Application() = default;
+#endif
 
 std::string Application::get_filename(const std::string &input_str, std::string base) const {
     // Run from current directory

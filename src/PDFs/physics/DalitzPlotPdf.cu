@@ -11,15 +11,13 @@ struct CoefSumFunctor {
     fpcomplex coef_i;
     fpcomplex coef_j;
 
-    CoefSumFunctor(fpcomplex coef_i, fpcomplex coef_j) : coef_i(coef_i), coef_j(coef_j) {}
+    CoefSumFunctor(fpcomplex coef_i, fpcomplex coef_j)
+        : coef_i(coef_i)
+        , coef_j(coef_j) {}
 
-    __device__ fptype operator() (thrust::tuple<fpcomplex, fpcomplex> val) {
-        return (
-            coef_i
-            * thrust::conj<fptype>(coef_j)
-            * thrust::get<0>(val)
-            * thrust::conj<fptype>(thrust::get<1>(val))
-            ).real();
+    __device__ fptype operator()(thrust::tuple<fpcomplex, fpcomplex> val) {
+        return (coef_i * thrust::conj<fptype>(coef_j) * thrust::get<0>(val) * thrust::conj<fptype>(thrust::get<1>(val)))
+            .real();
     }
 };
 

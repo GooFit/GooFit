@@ -10,7 +10,7 @@ format_file() {
     case "$file" in
     *.hpp | *.cpp | .c | *.cc | *.cu | *.h )
         echo "Formatting: $file"
-        clang-format -i -style=file "${1}"
+        clang-format -i -style=file -sort-includes "${1}"
         git add "${1}"
         ;;
     *)

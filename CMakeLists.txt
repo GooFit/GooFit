@@ -465,13 +465,6 @@ function(goofit_add_library GNAME)
 
     if(GOOFIT_DEVICE STREQUAL CUDA)
         if(NOT NEW_CUDA)
-            foreach(N ${GOOFIT_LIB_UNPARSED_ARGUMENTS})
-                get_filename_component(NEXT ${N} EXT)
-                if(NEXT STREQUAL ".cc" OR NEXT STREQUAL ".cpp" OR NEXT STREQUAL ".cxx")
-                    set_source_files_properties(${N} PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
-                endif()
-            endforeach()
-
             cuda_add_library(${GNAME} ${GOOFIT_LIB_TYPE} ${GOOFIT_LIB_UNPARSED_ARGUMENTS} OPTIONS "-Xcompiler=-fPIC")
         else()
             add_library(${GNAME} ${GOOFIT_LIB_TYPE} ${GOOFIT_LIB_UNPARSED_ARGUMENTS})

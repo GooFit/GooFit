@@ -51,6 +51,7 @@ goofit_add_library(Application
     ${PROJECT_SOURCE_DIR}/include/goofit/detail/MonteCarlo.h
     ${PROJECT_SOURCE_DIR}/include/goofit/detail/Macros.h
     ${PROJECT_SOURCE_DIR}/include/goofit/detail/Style.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/detail/Uncertain.h
     ${PROJECT_SOURCE_DIR}/include/goofit/Error.h
     ${PROJECT_SOURCE_DIR}/include/goofit/FitControl.h
     ${PROJECT_SOURCE_DIR}/include/goofit/Color.h

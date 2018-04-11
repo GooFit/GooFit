@@ -134,12 +134,6 @@ if(GOOFIT_TIME_COMPILE)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "time")
 endif()
 
-# Code coverage
-if(CMAKE_BUILD_TYPE STREQUAL Coverage)
-    include(CodeCoverage)
-    setup_target_for_coverage(GooFit_coverage ctest coverage)
-endif()
-
 ### Options ###
 set(DEVICE_LISTING CUDA OMP CPP TBB Auto)
 set(HOST_LISTING OMP CPP TBB Auto)
@@ -476,13 +470,6 @@ function(goofit_add_library GNAME)
 
     if(GOOFIT_DEVICE STREQUAL CUDA)
         if(NOT NEW_CUDA)
-            foreach(N ${GOOFIT_LIB_UNPARSED_ARGUMENTS})
-                get_filename_component(NEXT ${N} EXT)
-                if(NEXT STREQUAL ".cc" OR NEXT STREQUAL ".cpp" OR NEXT STREQUAL ".cxx")
-                    set_source_files_properties(${N} PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
-                endif()
-            endforeach()
-
             cuda_add_library(${GNAME} ${GOOFIT_LIB_TYPE} ${GOOFIT_LIB_UNPARSED_ARGUMENTS} OPTIONS "-Xcompiler=-fPIC")
         else()
             add_library(${GNAME} ${GOOFIT_LIB_TYPE} ${GOOFIT_LIB_UNPARSED_ARGUMENTS})
@@ -613,6 +600,11 @@ add_library(goofit_lib INTERFACE)
 target_link_libraries(goofit_lib INTERFACE goofit_base PDFs GooFit::Common)
 add_library(GooFit::GooFit ALIAS goofit_lib)
 
+option(GOOFIT_TESTS "Build the goofit tests" ON)
+if(GOOFIT_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
 
 option(GOOFIT_EXAMPLES "Build the example programs" ON)
 if(GOOFIT_EXAMPLES)
@@ -660,8 +652,3 @@ if(GOOFIT_PYTHON)
     add_subdirectory(python)
 endif()
 
-option(GOOFIT_TESTS "Build the goofit tests" ON)
-if(GOOFIT_TESTS)
-    enable_testing()
-    add_subdirectory(tests)
-endif()

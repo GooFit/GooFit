@@ -24,12 +24,15 @@ This release is preparing for the major change in 2.2. The changes are small, bu
 * kMatrix is now optional, and off by default for CUDA (slow build) ([#143])
 * CMake CUDA as a language improvements
 * Can directly `pip install goofit` with Pip 10
+* Examples are part of tests now ([#144])
+* Dropped code coverage (test timeout issues when adding more tests) ([#144])
 
 [#139]: https://github.com/GooFit/GooFit/pull/139
 [#140]: https://github.com/GooFit/GooFit/pull/140
 [#141]: https://github.com/GooFit/GooFit/pull/141
 [#142]: https://github.com/GooFit/GooFit/pull/142
 [#143]: https://github.com/GooFit/GooFit/pull/143
+[#144]: https://github.com/GooFit/GooFit/pull/144
 
 ## v2.1.2: Live Python
 #### March 12, 2018

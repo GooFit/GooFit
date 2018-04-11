@@ -41,6 +41,7 @@
 #include <goofit/PDFs/physics/ThreeGaussResolution_Aux.h>
 #include <goofit/PDFs/physics/TruthResolution_Aux.h>
 #include <goofit/Variable.h>
+#include <goofit/detail/Uncertain.h>
 
 #include <goofit/fitting/FitManagerMinuit1.h>
 #include <goofit/fitting/FitManagerMinuit2.h>
@@ -127,6 +128,8 @@ const fptype _mD02inv   = 1. / _mD02;
 const fptype piPlusMass = 0.13957018;
 const fptype piZeroMass = 0.1349766;
 enum Resolutions { DplotRes = 1, TimeRes = 2, Efficiency = 4 };
+
+size_t maxEvents = 100000;
 
 Variable motherM("motherM", 1.86484);
 Variable chargeM1("chargeM1", 0.13957018);
@@ -360,42 +363,27 @@ void getToyData(float sigweight = 0.9) {
         std::cout << buffer;
     }
 
-    TRandom3 donram(0);
+    TRandom3 donram(42);
 
     int nsig       = 0;
     double sigprob = 0;
     double dummy   = 0;
     double md0     = md0_toy_mean;
 
-    while(!reader.eof()) {
-        reader >> dummy;
-        reader >> dummy; // m23, m(pi+ pi-), called m12 in processToyRoot convention.
-        reader >> *m12;  // Already swapped according to D* charge. m12 = m(pi+pi0)
-        reader >> *m13;
+    while(reader >> dummy
 
-        // Errors on Dalitz variables
-        reader >> dummy;
-        reader >> dummy;
-        reader >> dummy;
+          // Ignoring m23, m(pi+ pi-), called m12 in processToyRoot convention.
+          // Already swapped m12 m13 according to D* charge. m12 = m(pi+pi0)
+          >> dummy >> *m12 >> *m13
 
-        reader >> *dtime;
-        reader >> *sigma;
+          // Errors on Dalitz variables
+          >> dummy >> dummy >> dummy
 
-        reader >> dummy; // Md0
-        reader >> dummy; // deltaM
-        reader >> dummy; // ProbSig
-        reader >> dummy; // Dst charge
-        reader >> dummy; // Run
-        reader >> dummy; // Event
-        reader >> dummy; // Signal and four bkg fractions.
-        reader >> dummy;
-        reader >> dummy;
-        reader >> dummy;
-        reader >> dummy;
+          // Remaining two interesting values
+          >> *dtime >> *sigma
 
-        // if (dtime->getValue() < dtime->getLowerLimit()) continue;
-        // if (dtime->getValue() > dtime->getUpperLimit()) continue;
-
+          // Md0, deltaM, ProbSig, Dst charge, Run, Event, Signal and four bkg fractions
+          >> dummy >> dummy >> dummy >> dummy >> dummy >> dummy >> dummy >> dummy >> dummy >> dummy >> dummy) {
         double resolution = donram.Gaus(0, 1);
         dtime->setValue(dtime->getValue() + resolution * sigma->getValue());
 
@@ -416,8 +404,11 @@ void getToyData(float sigweight = 0.9) {
                       << dtime->getValue() << " " << sigma->getValue() << " " << std::endl;
         }
 
-        // else break;
+        if(data->getNumEvents() >= maxEvents)
+            break;
     }
+
+    GOOFIT_INFO("Read in {} events", data->getNumEvents())
 
     for(int ib = 0; ib < nsig * (1 - sigweight) / sigweight; ib++) {
         do {
@@ -913,14 +904,13 @@ int runToyFit(int ifile, int nfile, bool noPlots = true) {
         retval = datapdf;
     }
 
-    printf(
-        "Fit results:\ntau    : (%.3f $\\pm$ %.3f) fs\nxmixing: (%.3f $\\pm$ %.3f)%%\nymixing: (%.3f $\\pm$ %.3f)%%\n",
-        1000 * dtop0pp._tau.getValue(),
-        1000 * dtop0pp._tau.getError(),
-        100 * dtop0pp._xmixing.getValue(),
-        100 * dtop0pp._xmixing.getError(),
-        100 * dtop0pp._ymixing.getValue(),
-        100 * dtop0pp._ymixing.getError());
+    fmt::print("Fit results Toy fit:\n"
+               "tau    : ({:.3}) fs\n"
+               "xmixing: ({:.3})\%\n"
+               "ymixing: ({:.3})\%\n",
+               1000 * Uncertain(dtop0pp._tau),
+               100 * Uncertain(dtop0pp._xmixing),
+               100 * Uncertain(dtop0pp._ymixing));
 
     if(!noPlots)
         makeToyDalitzPlots(mixPdf);
@@ -2783,12 +2773,13 @@ int runTruthMCFit(std::string fname, bool noPlots = true) {
 
     // overallSignal->setDebugMask(0);
 
-    std::cout << "Fit results: \n"
-              << "tau    : " << dtop0pp._tau.getValue() << " $\\pm$ " << dtop0pp._tau.getError() << "\n"
-              << "xmixing: (" << 100 * dtop0pp._xmixing.getValue() << " $\\pm$ " << 100 * dtop0pp._xmixing.getError()
-              << ")%\n"
-              << "ymixing: (" << 100 * dtop0pp._ymixing.getValue() << " $\\pm$ " << 100 * dtop0pp._ymixing.getError()
-              << ")%\n";
+    fmt::print("Fit results Toy fit TruthMC fit:\n"
+               "tau    : {:.3}\n"
+               "xmixing: ({:.3})\%\n"
+               "ymixing: ({:.3})\%\n",
+               Uncertain(dtop0pp._tau),
+               100 * Uncertain(dtop0pp._xmixing),
+               100 * Uncertain(dtop0pp._ymixing));
 
     if(noPlots)
         return retval;
@@ -2983,12 +2974,13 @@ int runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
         retval = datapdf;
     }
 
-    std::cout << "Fit results: \n"
-              << "tau    : " << dtop0pp._tau.getValue() << " $\\pm$ " << dtop0pp._tau.getError() << "\n"
-              << "xmixing: (" << 100 * dtop0pp._xmixing.getValue() << " $\\pm$ " << 100 * dtop0pp._xmixing.getError()
-              << ")%\n"
-              << "ymixing: (" << 100 * dtop0pp._ymixing.getValue() << " $\\pm$ " << 100 * dtop0pp._ymixing.getError()
-              << ")%\n";
+    fmt::print("Fit results Canonical fit:\n"
+               "tau    : {:.3}\n"
+               "xmixing: ({:.3})\%\n"
+               "ymixing: ({:.3})\%\n",
+               Uncertain(dtop0pp._tau),
+               100 * Uncertain(dtop0pp._xmixing),
+               100 * Uncertain(dtop0pp._ymixing));
 
     // All this relies on exact formatting of the input data files; it's fragile.
     double inputx              = 1;
@@ -4162,14 +4154,13 @@ int runCanonicalFit(std::string fname, bool noPlots = true) {
     overallPdf->printProfileInfo();
 #endif
 
-    printf(
-        "Fit results:\ntau    : (%.3f $\\pm$ %.3f) fs\nxmixing: (%.3f $\\pm$ %.3f)%%\nymixing: (%.3f $\\pm$ %.3f)%%\n",
-        1000 * dtop0pp._tau.getValue(),
-        1000 * dtop0pp._tau.getError(),
-        100 * dtop0pp._xmixing.getValue(),
-        100 * dtop0pp._xmixing.getError(),
-        100 * dtop0pp._ymixing.getValue(),
-        100 * dtop0pp._ymixing.getError());
+    fmt::print("Fit results Canonical fit:\n"
+               "tau    : ({:.3}) fs\n"
+               "xmixing: ({:.3})\%\n"
+               "ymixing: ({:.3})\%\n",
+               1000 * Uncertain(dtop0pp._tau),
+               100 * Uncertain(dtop0pp._xmixing),
+               100 * Uncertain(dtop0pp._ymixing));
 
     /*
     std::cout << "Fit results: \n"
@@ -4962,6 +4953,7 @@ int main(int argc, char **argv) {
     auto toy = app.add_subcommand("toy", "Toy MC Performance evaluation");
     toy->add_option("-s,--sample,sample", sample, "Sample number to use", true);
     toy->add_option("-l,--load,load", load, "Number of times to load", true);
+    toy->add_option("-m,--max", maxEvents, "Maximum number of events to read", true);
     toy->add_flag("-p,--plot", plots, "Also make plots");
     toy->set_callback([&]() { retval = runToyFit(sample, load, plots); });
 

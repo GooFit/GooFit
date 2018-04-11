@@ -25,6 +25,7 @@ macro(goofit_add_test TESTNAME)
     target_link_libraries(${TESTNAME} PUBLIC gtest gmock gtest_main)
     add_test(${TESTNAME} ${TESTNAME})
     set_target_properties(${TESTNAME} PROPERTIES FOLDER tests)
+    set_property(TEST ${TESTNAME} PROPERTY COST 1000)
 endmacro()
 
 goofit_add_test(SimpleTest)

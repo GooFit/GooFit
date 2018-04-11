@@ -7,7 +7,22 @@
 
 namespace GooFit {
 
-const int resonanceOffset_DP = 4; // Offset of the first resonance into the parameter index array
+// Functor used for fit fraction sum
+struct CoefSumFunctor {
+    fpcomplex coef_i;
+    fpcomplex coef_j;
+
+    CoefSumFunctor(fpcomplex coef_i, fpcomplex coef_j)
+        : coef_i(coef_i)
+        , coef_j(coef_j) {}
+
+    __device__ fptype operator()(thrust::tuple<fpcomplex, fpcomplex> val) {
+        return (coef_i * thrust::conj<fptype>(coef_j) * thrust::get<0>(val) * thrust::conj<fptype>(thrust::get<1>(val)))
+            .real();
+    }
+};
+
+constexpr int resonanceOffset_DP = 4; // Offset of the first resonance into the parameter index array
 // Offset is number of parameters, constant index, number of resonances (not calculable
 // from nP because we don't know what the efficiency might need), and cache index. Efficiency
 // parameters are after the resonance information.
@@ -420,11 +435,7 @@ __host__ std::vector<std::vector<fptype>> DalitzPlotPdf::fit_fractions() {
             buffer += thrust::transform_reduce(
                 thrust::make_zip_iterator(thrust::make_tuple(cached_i.begin(), cached_j.begin())),
                 thrust::make_zip_iterator(thrust::make_tuple(cached_i.end(), cached_j.end())),
-                [coef_i, coef_j] __device__(thrust::tuple<fpcomplex, fpcomplex> val) {
-                    return (coef_i * thrust::conj<fptype>(coef_j) * thrust::get<0>(val)
-                            * thrust::conj<fptype>(thrust::get<1>(val)))
-                        .real();
-                },
+                CoefSumFunctor(coef_i, coef_j),
                 (fptype)0.0,
                 thrust::plus<fptype>());
 

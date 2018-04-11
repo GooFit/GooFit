@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 echo -en 'travis_fold:start:script.build\\r'
 echo "Building..."
 set -evx
@@ -18,18 +17,8 @@ set -evx
 
 ctest --output-on-failure
 
-
-
 set +evx
 echo -e 'travis_fold:end:script.test\\r'
-echo -en 'travis_fold:start:script.examples\\r'
-echo "Python testing..."
-set -evx
-
-./examples/RunAll.py
-
-set +evx
-echo -e 'travis_fold:end:script.examples\\r'
 echo -en 'travis_fold:start:script.pytest\\r'
 echo "Python testing..."
 set -evx

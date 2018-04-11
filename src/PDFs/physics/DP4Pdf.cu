@@ -595,8 +595,8 @@ __host__
     VarSet[3] = SigGen_CosTheta34_h;
     VarSet[4] = SigGen_phi_h;
 
-    auto weights = mcbooster::RealVector_d(phsp.GetWeights());
-    phsp.~PhaseSpace();
+    mcbooster::RealVector_d weights(phsp.GetWeights());
+    phsp.FreeResources();
 
     auto DS = new mcbooster::RealVector_d(6 * numEvents);
     thrust::counting_iterator<int> eventNumber(0);

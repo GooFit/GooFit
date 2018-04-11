@@ -1,5 +1,3 @@
-
-
 set(DATA_FILE "${CMAKE_CURRENT_SOURCE_DIR}/alltxtfiles4pipipi0DPFit.tgz")
 
 if(NOT EXISTS ${DATA_FILE})
@@ -22,8 +20,5 @@ if(NOT EXISTS
 endif()
 
 
-goofit_add_executable(pipipi0DPFit pipipi0DPFit.cu)
 goofit_add_directory()
-set_target_properties(pipipi0DPFit PROPERTIES FOLDER examples)
-
-add_test(NAME pipipi0DPFit_Example COMMAND pipipi0DPFit toy 0 1)
+goofit_add_example(pipipi0DPFit TIME 216 ARGS toy 0 1)

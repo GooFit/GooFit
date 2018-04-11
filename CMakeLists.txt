@@ -125,12 +125,6 @@ if(GOOFIT_TIME_COMPILE)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "time")
 endif()
 
-# Code coverage
-if(CMAKE_BUILD_TYPE STREQUAL Coverage)
-    include(CodeCoverage)
-    setup_target_for_coverage(GooFit_coverage ctest coverage)
-endif()
-
 ### Options ###
 set(DEVICE_LISTING CUDA OMP CPP TBB Auto)
 set(HOST_LISTING OMP CPP TBB Auto)

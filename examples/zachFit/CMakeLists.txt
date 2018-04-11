@@ -21,7 +21,4 @@ endif()
 
 
 goofit_add_directory()
-goofit_add_executable(zachFit zachFit.cu)
-set_target_properties(zachFit PROPERTIES FOLDER examples)
-
-add_test(NAME zachFit_Example COMMAND zachFit 0 1)
+goofit_add_example(zachFit TIME 288 ARGS 0 1)

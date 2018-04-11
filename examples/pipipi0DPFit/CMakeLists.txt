@@ -21,4 +21,4 @@ endif()
 
 
 goofit_add_directory()
-goofit_add_example(pipipi0DPFit TIME 216 ARGS toy 0 1)
+goofit_add_example(pipipi0DPFit TIME 32 ARGS toy -m 10000)

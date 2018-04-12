@@ -449,7 +449,8 @@ else()
     message(STATUS "Compiler supports IPO: ${SUPPORTS_IPO}")
 endif()
 
-function(goofit_add_library GNAME)
+
+function(GOOFIT_ADD_LIBRARY GNAME)
     set(options STATIC SHARED MODULE)
     set(oneValueArgs "")
     set(multiValueArgs "")
@@ -507,7 +508,7 @@ function(goofit_add_library GNAME)
     endif()
 endfunction()
 
-function(goofit_add_executable NAMEEXE)
+function(GOOFIT_ADD_EXECUTABLE NAMEEXE)
     if(GOOFIT_DEVICE STREQUAL CUDA)
         if(NOT NEW_CUDA)
             set(CUDA_SEPARABLE_COMPILATION OFF)
@@ -541,7 +542,8 @@ function(goofit_add_executable NAMEEXE)
     endif()
 endfunction()
 
-function(goofit_add_link)
+# This links a file
+function(GOOFIT_ADD_LINK)
     if(MSVC) # Not officially supported, but needed to even configure on Windows
         set(COMM copy)
     else()
@@ -564,8 +566,8 @@ function(goofit_add_link)
     endforeach()
 endfunction()
 
-
-function(goofit_add_directory)
+# This links all files in the current directory to the build directory
+function(GOOFIT_ADD_DIRECTORY)
     file(GLOB directory_listing RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *)
     set(skip_files CMakeLists.txt CMakeFiles Makefile makefile .gitignore .git)
 
@@ -575,6 +577,17 @@ function(goofit_add_directory)
         endif()
     endforeach()
 endfunction()
+
+# This allows goofit to add packages to the package registry and "short circuit" them if needed
+macro(GOOFIT_ADD_PACKAGE PACKAGE_NAME)
+    option("GOOFIT_PACKAGE_${PACKAGE_NAME}" "Enable building the ${PACKAGE_NAME} package" ON)
+
+    if(NOT "GOOFIT_PACKAGE_${PACKAGE_NAME}")
+        return()
+    endif()
+
+    goofit_add_directory()
+endmacro()
 
 
 # Adding global property to collect extra info for compilation

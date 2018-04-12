@@ -7,7 +7,6 @@
 #include <goofit/Color.h>
 #include <goofit/Error.h>
 #include <goofit/Log.h>
-#include <goofit/Version.h>
 
 #define GOOFIT_PARSE(app, ...)                                                                                         \
     try {                                                                                                              \

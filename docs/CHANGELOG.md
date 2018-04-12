@@ -10,22 +10,30 @@ The internals of GooFit have been updated for GPU performance.  The new improvem
 [#125]: https://github.com/GooFit/GooFit/pull/125
 
 ## v2.1.3: Preparing for new indexing
-#### In progress
+#### April 12, 2018
 
-This release is preparing for the major change in 2.2. The changes are small, but help with several key pieces of needed functionality from the NIPS project.
+This release is preparing for the major change in 2.2. The changes are mostly small, but help with several key pieces of needed functionality from the NIPS project. GooFit testing is significanly more stable.
 
-* Using Application no longer requires NVCC compile ([#139])
-* Travis CI is much cleaner ([#140], [#141])
+User facing:
+
 * Adding a few 3-body utilities: `get_amp_real`/`imag` and `getDecayInfo` ([#142])
 * Generation no longer changes the number of events requested ([#142])
-* Allow changing the bin number for normalization without restarting GooFit ([#143])
 * Add support for fit fraction calculation (3 body only ATM) ([#143])
-* Dropped symmDP where not supported ([#143])
 * kMatrix is now optional, and off by default for CUDA (slow build) ([#143])
-* CMake CUDA as a language improvements
 * Can directly `pip install goofit` with Pip 10
+* Packages can now be turned on and off individually (`goofit_add_package`)
+
+Backend:
+
+* Using Application no longer requires NVCC compile ([#139]), better C++ vs. CUDA separation
+* Travis CI is much cleaner ([#140], [#141]), 
 * Examples are part of tests now ([#144])
+* Allow changing the bin number for normalization without restarting GooFit ([#143])
+* Dropped symmDP where not supported ([#143])
 * Dropped code coverage (test timeout issues when adding more tests) ([#144])
+* Removed POSIX redefine warnings for Python, other warning fixes
+* Packages do not trigger main repo git in binary dir
+* Added feature summary
 
 [#139]: https://github.com/GooFit/GooFit/pull/139
 [#140]: https://github.com/GooFit/GooFit/pull/140
@@ -75,6 +83,7 @@ Many examples converted ([#118], [#120], [#126])
 
 
 Other Python additions:
+
 * Live printout in Python Notebooks ([#114])
 * Minuit2 wrapper started ([#115], [#128])
 * `print_goofit_info` (and `print_splash`) added to Python  ([#126])
@@ -82,6 +91,7 @@ Other Python additions:
 
 
 Major changes:
+
 * `Observable`s are now their own class, and `CountingVariable` is now `EventNumber` ([#123])
 * Variables are now passed by copy everywhere, handling smart pointers internally ([#124])
 * DecayInfo renamed and split ([#124])

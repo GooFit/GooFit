@@ -1,6 +1,6 @@
 # This macro sets up a goofit_add_example
 # First argument is the name of the target, and it is followed by the source files
-# If no source files present, assumes <name>.cu is a source file
+# If no source files present, assumes <name>.cu then <name>.cpp is a source file
 #
 # The options are:
 #   NO_TEST:            Do not add a test
@@ -22,7 +22,11 @@ function(GOOFIT_ADD_EXAMPLE EX_NAME)
         if(GOOEX_UNPARSED_ARGUMENTS)
             goofit_add_executable(${EX_NAME} ${GOOEX_UNPARSED_ARGUMENTS})
         else()
-            goofit_add_executable(${EX_NAME} ${EX_NAME}.cpp)
+            if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${EX_NAME}.cu")
+                goofit_add_executable(${EX_NAME} ${EX_NAME}.cu)
+            else()
+                goofit_add_executable(${EX_NAME} ${EX_NAME}.cpp)
+            endif()
         endif()
         set_target_properties(${EX_NAME} PROPERTIES FOLDER examples)
     endif()

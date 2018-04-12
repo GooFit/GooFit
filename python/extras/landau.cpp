@@ -1,7 +1,7 @@
-#include <goofit/cpp/landau.h>
-
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
+
+#include <goofit/cpp/landau.h>
 
 namespace py = pybind11;
 using namespace pybind11::literals;

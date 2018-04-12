@@ -1,5 +1,6 @@
 #include <goofit/Application.h>
 #include <goofit/GlobalCudaDefines.h>
+#include <goofit/Version.h>
 
 #include <thrust/detail/config/device_system.h>
 

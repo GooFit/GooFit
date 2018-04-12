@@ -4,10 +4,17 @@ project(GOOFIT
     VERSION 2.1.3
     LANGUAGES CXX)
 
-set(GOOFIT_TAG "dev")
+#set(GOOFIT_TAG "dev")
 #set(GOOFIT_TAG "alpha")
-#set(GOOFIT_TAG "beta")
+set(GOOFIT_TAG "beta")
 #set(GOOFIT_TAG "release")
+
+include(FeatureSummary)
+
+macro(FEATURE_OPTION NAME)
+    get_property(MSG CACHE ${NAME} PROPERTY HELPSTRING)
+    add_feature_info(${NAME} ${NAME} "${MSG}")
+endmacro()
 
 ### Require out-of-source builds
 file(TO_CMAKE_PATH "${PROJECT_BINARY_DIR}/CMakeLists.txt" LOC_PATH)
@@ -81,7 +88,16 @@ if(CMAKE_VERSION VERSION_GREATER 3.6)
     endif()
 endif()
 
-# Add Sanatizers
+# Add CCache if available and if supported
+if(NOT GOOFIT_TIDY_FIX)
+    find_program(CCACHE_PROGRAM ccache)
+    if(CCACHE_PROGRAM)
+        set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
+        set(CMAKE_CUDA_COMPILER_LAUNCHER "${CCACHE_PROGRAM}") # CMake 3.9+
+    endif()
+endif()
+
+# Add Sanitizers
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/extern/sanitizers/cmake" ${CMAKE_MODULE_PATH})
 find_package(Sanitizers)
 
@@ -148,13 +164,6 @@ if(NOT ${GOOFIT_DEVICE} IN_LIST DEVICE_LISTING)
 endif()
 if(NOT ${GOOFIT_HOST} IN_LIST HOST_LISTING)
     message(FATAL_ERROR "You must select a host from ${HOST_LISTING}, not ${HOST_DEVICE}")
-endif()
-
-# Add CCache if available
-find_program(CCACHE_PROGRAM ccache)
-if(CCACHE_PROGRAM)
-    set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
-    set(CMAKE_CUDA_COMPILER_LAUNCHER "${CCACHE_PROGRAM}") # CMake 3.9+
 endif()
 
 if(CMAKE_VERSION VERSION_LESS 3.8)
@@ -233,6 +242,7 @@ target_compile_definitions(GooFit_Common INTERFACE "-DTHRUST_HOST_SYSTEM=THRUST_
 
 option(GOOFIT_DEBUG "Print debugging messages" OFF)
 option(GOOFIT_TRACE "Print messages to trace the behavior of GooFit" OFF)
+
 if(GOOFIT_DEBUG)
     target_compile_definitions(GooFit_Common INTERFACE "-DGOOFIT_DEBUG_FLAG=1")
 endif()
@@ -359,7 +369,6 @@ if(NOT THRUST_FOUND)
     find_package(Thrust 1.8 REQUIRED)
 endif()
 target_include_directories(GooFit_Common SYSTEM INTERFACE "${THRUST_INCLUDE_DIRS}")
-message(STATUS "Found Thrust ${THRUST_VERSION} at ${THRUST_INCLUDE_DIRS}")
 
 if(GOOFIT_DEVICE STREQUAL OMP OR GOOFIT_HOST STREQUAL OMP OR GOOFIT_DEVICE STREQUAL TBB OR GOOFIT_HOST STREQUAL TBB)
     find_modern_package(OpenMP REQUIRED)
@@ -376,6 +385,7 @@ endif()
 
 # Include directories are not picked up by FindCUDA
 option(GOOFIT_CERNROOT "Look for the ROOT library (turned off for Python)" ON)
+
 if(GOOFIT_CERNROOT)
     find_package(ROOT 6 COMPONENTS Minuit)
     if(ROOT_FOUND)
@@ -452,7 +462,8 @@ else()
     message(STATUS "Compiler supports IPO: ${SUPPORTS_IPO}")
 endif()
 
-function(goofit_add_library GNAME)
+
+function(GOOFIT_ADD_LIBRARY GNAME)
     set(options STATIC SHARED MODULE)
     set(oneValueArgs "")
     set(multiValueArgs "")
@@ -510,7 +521,7 @@ function(goofit_add_library GNAME)
     endif()
 endfunction()
 
-function(goofit_add_executable NAMEEXE)
+function(GOOFIT_ADD_EXECUTABLE NAMEEXE)
     if(GOOFIT_DEVICE STREQUAL CUDA)
         if(NOT NEW_CUDA)
             set(CUDA_SEPARABLE_COMPILATION OFF)
@@ -544,7 +555,8 @@ function(goofit_add_executable NAMEEXE)
     endif()
 endfunction()
 
-function(goofit_add_link)
+# This links a file
+function(GOOFIT_ADD_LINK)
     if(MSVC) # Not officially supported, but needed to even configure on Windows
         set(COMM copy)
     else()
@@ -567,8 +579,8 @@ function(goofit_add_link)
     endforeach()
 endfunction()
 
-
-function(goofit_add_directory)
+# This links all files in the current directory to the build directory
+function(GOOFIT_ADD_DIRECTORY)
     file(GLOB directory_listing RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *)
     set(skip_files CMakeLists.txt CMakeFiles Makefile makefile .gitignore .git)
 
@@ -578,6 +590,23 @@ function(goofit_add_directory)
         endif()
     endforeach()
 endfunction()
+
+# This allows goofit to add packages to the package registry and "short circuit" them if needed
+macro(GOOFIT_ADD_PACKAGE PACKAGE_NAME)
+    option("GOOFIT_PACKAGE_${PACKAGE_NAME}" "Enable building the ${PACKAGE_NAME} package" ON)
+    feature_option("GOOFIT_PACKAGE_${PACKAGE_NAME}")
+
+    goofit_add_directory()
+
+    # Since you are not in the correct git directory,
+    # make sure git does not work inside the binary folder
+    execute_process(COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_CURRENT_BINARY_DIR}/.git")
+
+    if(NOT GOOFIT_PACKAGE_${PACKAGE_NAME})
+        return()
+    endif()
+
+endmacro()
 
 
 # Adding global property to collect extra info for compilation
@@ -652,3 +681,22 @@ if(GOOFIT_PYTHON)
     add_subdirectory(python)
 endif()
 
+add_feature_info("GOOFIT HOST=${GOOFIT_DEVICE}" ON "The device to compile for")
+add_feature_info("GOOFIT_DEVICE=${GOOFIT_HOST}" ON "The host system to compile for")
+add_feature_info("GOOFIT_MAXPAR=${GOOFIT_MAXPAR}" ON "The number of parameters to statically support")
+
+feature_option(GOOFIT_KMATRIX)
+feature_option(GOOFIT_SEPARATE_COMP)
+feature_option(GOOFIT_TRACE)
+feature_option(GOOFIT_DEBUG)
+feature_option(GOOFIT_MPI)
+feature_option(GOOFIT_CERNROOT)
+feature_option(GOOFIT_SPLASH)
+feature_option(GOOFIT_TESTS)
+feature_option(GOOFIT_EXAMPLES)
+feature_option(GOOFIT_PACKAGES)
+feature_option(GOOFIT_PYTHON)
+feature_option(GOOFIT_TIDY_FIX)
+
+feature_summary(WHAT ENABLED_FEATURES DISABLED_FEATURES PACKAGES_FOUND)
+feature_summary(FILENAME ${CMAKE_CURRENT_BINARY_DIR}/features.log WHAT ALL)

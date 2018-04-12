@@ -1,6 +1,3 @@
-
-#include <iostream>
-
 #include <pybind11/iostream.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -9,6 +6,8 @@
 #include <goofit/PdfBase.h>
 #include <goofit/UnbinnedDataSet.h>
 #include <goofit/Variable.h>
+
+#include <iostream>
 
 #include <Minuit2/FunctionMinimum.h>
 

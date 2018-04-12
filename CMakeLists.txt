@@ -10,6 +10,7 @@ set(GOOFIT_TAG "beta")
 #set(GOOFIT_TAG "release")
 
 include(FeatureSummary)
+#include(CMakePrintHelpers)
 
 macro(FEATURE_OPTION NAME)
     get_property(MSG CACHE ${NAME} PROPERTY HELPSTRING)
@@ -311,8 +312,6 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
     else()
         enable_language(CUDA)
 
-        include(CMakePrintHelpers)
-        cmake_print_variables(CMAKE_CUDA_COMPILER_LOADED)
         if(CMAKE_CUDA_COMPILER_VERSION VERSION_LESS 7.0)
             message(FATAL_ERROR "CUDA 7.0 or better required!")
         elseif(NOT CMAKE_CUDA_COMPILER_VERSION VERSION_LESS 9.0)

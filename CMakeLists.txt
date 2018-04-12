@@ -311,6 +311,8 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
     else()
         enable_language(CUDA)
 
+        include(CMakePrintHelpers)
+        cmake_print_variables(CMAKE_CUDA_COMPILER_LOADED)
         if(CMAKE_CUDA_COMPILER_VERSION VERSION_LESS 7.0)
             message(FATAL_ERROR "CUDA 7.0 or better required!")
         elseif(NOT CMAKE_CUDA_COMPILER_VERSION VERSION_LESS 9.0)
@@ -678,6 +680,9 @@ endif()
 
 add_feature_info("GOOFIT HOST=${GOOFIT_DEVICE}" ON "The device to compile for")
 add_feature_info("GOOFIT_DEVICE=${GOOFIT_HOST}" ON "The host system to compile for")
+if(GOOFIT_DEVICE STREQUAL CUDA)
+    add_feature_info("ARCH_FLAGS=${ARCH_FLAGS}" ON "")
+endif()
 add_feature_info("GOOFIT_MAXPAR=${GOOFIT_MAXPAR}" ON "The number of parameters to statically support")
 
 feature_option(GOOFIT_KMATRIX)

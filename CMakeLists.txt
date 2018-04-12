@@ -9,6 +9,13 @@ set(GOOFIT_TAG "dev")
 #set(GOOFIT_TAG "beta")
 #set(GOOFIT_TAG "release")
 
+include(FeatureSummary)
+
+macro(FEATURE_OPTION NAME)
+    get_property(MSG CACHE ${NAME} PROPERTY HELPSTRING)
+    add_feature_info(${NAME} ${NAME} "${MSG}")
+endmacro()
+
 ### Require out-of-source builds
 file(TO_CMAKE_PATH "${PROJECT_BINARY_DIR}/CMakeLists.txt" LOC_PATH)
 if(EXISTS "${LOC_PATH}")
@@ -90,7 +97,7 @@ if(NOT GOOFIT_TIDY_FIX)
     endif()
 endif()
 
-# Add Sanatizers
+# Add Sanitizers
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/extern/sanitizers/cmake" ${CMAKE_MODULE_PATH})
 find_package(Sanitizers)
 
@@ -226,6 +233,7 @@ target_compile_definitions(GooFit_Common INTERFACE "-DTHRUST_HOST_SYSTEM=THRUST_
 
 option(GOOFIT_DEBUG "Print debugging messages" OFF)
 option(GOOFIT_TRACE "Print messages to trace the behavior of GooFit" OFF)
+
 if(GOOFIT_DEBUG)
     target_compile_definitions(GooFit_Common INTERFACE "-DGOOFIT_DEBUG_FLAG=1")
 endif()
@@ -356,7 +364,6 @@ if(NOT THRUST_FOUND)
     find_package(Thrust 1.8 REQUIRED)
 endif()
 target_include_directories(GooFit_Common SYSTEM INTERFACE "${THRUST_INCLUDE_DIRS}")
-message(STATUS "Found Thrust ${THRUST_VERSION} at ${THRUST_INCLUDE_DIRS}")
 
 if(GOOFIT_DEVICE STREQUAL OMP OR GOOFIT_HOST STREQUAL OMP OR GOOFIT_DEVICE STREQUAL TBB OR GOOFIT_HOST STREQUAL TBB)
     find_modern_package(OpenMP REQUIRED)
@@ -373,6 +380,7 @@ endif()
 
 # Include directories are not picked up by FindCUDA
 option(GOOFIT_CERNROOT "Look for the ROOT library (turned off for Python)" ON)
+
 if(GOOFIT_CERNROOT)
     find_package(ROOT 6 COMPONENTS Minuit)
     if(ROOT_FOUND)
@@ -581,6 +589,7 @@ endfunction()
 # This allows goofit to add packages to the package registry and "short circuit" them if needed
 macro(GOOFIT_ADD_PACKAGE PACKAGE_NAME)
     option("GOOFIT_PACKAGE_${PACKAGE_NAME}" "Enable building the ${PACKAGE_NAME} package" ON)
+    feature_option("GOOFIT_PACKAGE_${PACKAGE_NAME}")
 
     if(NOT "GOOFIT_PACKAGE_${PACKAGE_NAME}")
         return()
@@ -662,3 +671,22 @@ if(GOOFIT_PYTHON)
     add_subdirectory(python)
 endif()
 
+add_feature_info("GOOFIT HOST=${GOOFIT_DEVICE}" ON "The device to compile for")
+add_feature_info("GOOFIT_DEVICE=${GOOFIT_HOST}" ON "The host system to compile for")
+add_feature_info("GOOFIT_MAXPAR=${GOOFIT_MAXPAR}" ON "The number of parameters to statically support")
+
+feature_option(GOOFIT_KMATRIX)
+feature_option(GOOFIT_SEPARATE_COMP)
+feature_option(GOOFIT_TRACE)
+feature_option(GOOFIT_DEBUG)
+feature_option(GOOFIT_MPI)
+feature_option(GOOFIT_CERNROOT)
+feature_option(GOOFIT_SPLASH)
+feature_option(GOOFIT_TESTS)
+feature_option(GOOFIT_EXAMPLES)
+feature_option(GOOFIT_PACKAGES)
+feature_option(GOOFIT_PYTHON)
+feature_option(GOOFIT_TIDY_FIX)
+
+feature_summary(WHAT ENABLED_FEATURES DISABLED_FEATURES PACKAGES_FOUND)
+feature_summary(FILENAME ${CMAKE_CURRENT_BINARY_DIR}/features.log WHAT ALL)

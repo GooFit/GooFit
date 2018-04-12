@@ -20,14 +20,13 @@ env:
   - CTEST_OUTPUT_ON_FAILURE: 1
   - OMP_NUM_THREADS: 2
   - DEPS_DIR: "${TRAVIS_BUILD_DIR}/deps"
+  - DOXYFILE: "$TRAVIS_BUILD_DIR/docs/Doxyfile"
   - secure: UxIkC5evjPTPkh4tG9VIK4Hjy0+Wbm69qu54jde0EMjlP3FzLrvXCKr1gh/Y6ywzQYSWE2fAsDWwQGmfqaphAFpjjT1S3Bwpa6ojTikjBe16jaCgIKtRiVXBr9LsNl3W7W9pDrXs1Ue40mSEksZJm8a9G7H4Ibb7K3izrllkhuQ=
 
 matrix:
   include:
     # Clang check-format and tidy
   - compiler: clang
-    env:
-    - CHECK_STYLE=yes
     script:
     - scripts/check_style.sh
     - .ci/check_tidy.sh
@@ -44,15 +43,13 @@ matrix:
         - libxft-dev
         - libxext-dev
         - python-pip
-    env:
-    - DOXYFILE=$TRAVIS_BUILD_DIR/docs/Doxyfile
     install:
     - pip install --user --upgrade pip
     - pip install --user pytest numpy plumbum pandas matplotlib numba uncertainties
     - source .ci/build_doxygen.sh
     script: .ci/travis.sh
     after_success:
-    - if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]] ; then echo "Updating docs" &&  cd "${TRAVIS_BUILD_DIR}" && .ci/build_docs.sh ; fi
+    - if [[ -n "${TRAVIS_TAG}" ]] ; then echo "Updating docs" &&  cd "${TRAVIS_BUILD_DIR}" && .ci/build_docs.sh ; fi
 
 before_install:
 - source .ci/build_root.sh

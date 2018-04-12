@@ -4,9 +4,9 @@ project(GOOFIT
     VERSION 2.1.3
     LANGUAGES CXX)
 
-set(GOOFIT_TAG "dev")
+#set(GOOFIT_TAG "dev")
 #set(GOOFIT_TAG "alpha")
-#set(GOOFIT_TAG "beta")
+set(GOOFIT_TAG "beta")
 #set(GOOFIT_TAG "release")
 
 include(FeatureSummary)

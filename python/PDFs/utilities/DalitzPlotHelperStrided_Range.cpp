@@ -1,5 +1,6 @@
-#include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <pybind11/pybind11.h>
+
+#include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 
 using namespace GooFit;
 namespace py = pybind11;

@@ -1,7 +1,8 @@
-#include <goofit/BinnedDataSet.h>
-#include <goofit/Variable.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+
+#include <goofit/BinnedDataSet.h>
+#include <goofit/Variable.h>
 
 #include "props.h"
 

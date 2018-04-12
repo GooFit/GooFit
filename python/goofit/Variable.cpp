@@ -1,4 +1,3 @@
-#include <goofit/Variable.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
@@ -7,6 +6,8 @@
 #include <fmt/format.h>
 #include <sstream>
 #include <string>
+
+#include <goofit/Variable.h>
 
 namespace py = pybind11;
 using namespace fmt::literals;

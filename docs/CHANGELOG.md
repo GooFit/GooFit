@@ -15,6 +15,10 @@ This release is preparing for the major change in 2.2. The changes are small, bu
 * Can directly `pip install goofit` with Pip 10
 * Examples are part of tests now ([#144])
 * Dropped code coverage (test timeout issues when adding more tests) ([#144])
+* Removed POSIX redefine warnings for Python
+* Packages can now be turned on and off individually (`goofit_add_package`)
+* Packages do not trigger main repo git in binary dir
+* Added feature summary
 
 [#139]: https://github.com/GooFit/GooFit/pull/139
 [#140]: https://github.com/GooFit/GooFit/pull/140

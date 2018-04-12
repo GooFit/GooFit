@@ -1,10 +1,11 @@
-#include <iostream>
 #include <pybind11/iostream.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
 #include <goofit/PdfBase.h>
 #include <goofit/fitting/FitManagerMinuit2.h>
+
+#include <iostream>
 
 #include "props.h"
 

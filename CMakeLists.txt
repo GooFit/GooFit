@@ -591,15 +591,16 @@ macro(GOOFIT_ADD_PACKAGE PACKAGE_NAME)
     option("GOOFIT_PACKAGE_${PACKAGE_NAME}" "Enable building the ${PACKAGE_NAME} package" ON)
     feature_option("GOOFIT_PACKAGE_${PACKAGE_NAME}")
 
+    goofit_add_directory()
+
     # Since you are not in the correct git directory,
     # make sure git does not work inside the binary folder
     execute_process(COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_CURRENT_BINARY_DIR}/.git")
 
-    if(NOT "GOOFIT_PACKAGE_${PACKAGE_NAME}")
+    if(NOT GOOFIT_PACKAGE_${PACKAGE_NAME})
         return()
     endif()
 
-    goofit_add_directory()
 endmacro()
 
 

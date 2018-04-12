@@ -9,10 +9,11 @@ cache:
   - ${TRAVIS_BUILD_DIR}/deps/root
   - ${TRAVIS_BUILD_DIR}/deps/doxygen
 
-# Pull requests and master only
+# Pull requests, version tags, and master only
 branches:
   only:
   - master
+  - /^v\d/
 
 env:
   global:

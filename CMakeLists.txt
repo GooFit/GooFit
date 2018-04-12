@@ -81,6 +81,15 @@ if(CMAKE_VERSION VERSION_GREATER 3.6)
     endif()
 endif()
 
+# Add CCache if available and if supported
+if(NOT GOOFIT_TIDY_FIX)
+    find_program(CCACHE_PROGRAM ccache)
+    if(CCACHE_PROGRAM)
+        set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
+        set(CMAKE_CUDA_COMPILER_LAUNCHER "${CCACHE_PROGRAM}") # CMake 3.9+
+    endif()
+endif()
+
 # Add Sanatizers
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/extern/sanitizers/cmake" ${CMAKE_MODULE_PATH})
 find_package(Sanitizers)
@@ -139,13 +148,6 @@ if(NOT ${GOOFIT_DEVICE} IN_LIST DEVICE_LISTING)
 endif()
 if(NOT ${GOOFIT_HOST} IN_LIST HOST_LISTING)
     message(FATAL_ERROR "You must select a host from ${HOST_LISTING}, not ${HOST_DEVICE}")
-endif()
-
-# Add CCache if available
-find_program(CCACHE_PROGRAM ccache)
-if(CCACHE_PROGRAM)
-    set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
-    set(CMAKE_CUDA_COMPILER_LAUNCHER "${CCACHE_PROGRAM}") # CMake 3.9+
 endif()
 
 if(CMAKE_VERSION VERSION_LESS 3.8)

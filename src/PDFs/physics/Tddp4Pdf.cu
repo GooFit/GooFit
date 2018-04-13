@@ -509,7 +509,7 @@ __host__ void TDDP4::recursiveSetIndices() {
         }
     }
 
-    //MEMCPY_TO_SYMBOL(AmpIndices,
+    // MEMCPY_TO_SYMBOL(AmpIndices,
     //                 &(amp_idx[0]),
     //                 amp_idx_start.size() * sizeof(unsigned int),
     //                 amp_idx_start.size() * sizeof(unsigned int),
@@ -729,7 +729,7 @@ __host__ fptype TDDP4::normalize() const {
             dummy,
             MyFourDoubleTupleAdditionFunctor);
 
-        //GOOFIT_TRACE("sumIntegral={}", sumIntegral);
+        // GOOFIT_TRACE("sumIntegral={}", sumIntegral);
 
         // printf("normalize A2/#evts , B2/#evts: %.5g, %.5g\n",thrust::get<0>(sumIntegral)/MCevents,
         // thrust::get<1>(sumIntegral)/MCevents);

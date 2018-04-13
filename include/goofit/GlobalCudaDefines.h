@@ -131,7 +131,7 @@ __host__ __device__ T rsqrt(T val) {
 
 // Fix for bug in pow(double,int) for CUDA 7 and 7.5
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA && __CUDACC_VER_MAJOR__ < 8
-//template <typename T>
+// template <typename T>
 //__host__ __device__ T pow(T x, int y) {
 //    return pow(x, (T)y);
 //}

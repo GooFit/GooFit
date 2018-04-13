@@ -323,7 +323,7 @@ __host__ fptype DalitzPlotPdf::normalize() const {
             fpcomplex amplitude_j(host_params[host_indices[param_j]], -host_params[host_indices[param_j + 1]]);
             // Notice complex conjugation
             // printf("%f %f %f %f %f %f\n", amplitude_i.real(), amplitude_i.imag(), amplitude_j.real(),
-            // amplitude_j.imag(), (*(integrals[i][j])).real, (*(integrals[i][j])).imag );
+            // amplitude_j.imag(), (*(integrals[i][j])).real(), (*(integrals[i][j])).imag() );
             sumIntegral += amplitude_i * amplitude_j * (*(integrals[i][j]));
         }
     }

@@ -213,7 +213,7 @@ else()
     set(IS_NOT_CUDA TRUE)
 endif()
 
-option(GOOFIT_KMATRIX "Activate support for KMatrix (slower CUDA builds" ${IS_NOT_CUDA})
+option(GOOFIT_KMATRIX "Activate support for KMatrix (slower CUDA builds)" ${IS_NOT_CUDA})
 option(GOOFIT_SEPARATE_COMP "Enable separate compilation of PDFs" ON)
 
 # This is the common library that holds definitions, etc.

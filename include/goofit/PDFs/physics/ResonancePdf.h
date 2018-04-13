@@ -91,7 +91,7 @@ class FLATTE : public ResonancePdf {
            Variable g1,
            Variable rg2og1,
            unsigned int cyc,
-           const bool symmDP);
+           bool symmDP);
     ~FLATTE() override = default;
 };
 
@@ -119,7 +119,7 @@ class Spline : public ResonancePdf {
            std::vector<Variable> &pwa_coefs_reals,
            std::vector<Variable> &pwa_coefs_imags,
            unsigned int cyc,
-           const bool symmDP = false);
+           bool symmDP = false);
     ~Spline() override = default;
 
     /// Recacluate the CACHE values before running

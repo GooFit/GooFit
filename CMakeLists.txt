@@ -10,6 +10,7 @@ set(GOOFIT_TAG "beta")
 #set(GOOFIT_TAG "release")
 
 include(FeatureSummary)
+#include(CMakePrintHelpers)
 
 macro(FEATURE_OPTION NAME)
     get_property(MSG CACHE ${NAME} PROPERTY HELPSTRING)
@@ -221,7 +222,7 @@ else()
     set(IS_NOT_CUDA TRUE)
 endif()
 
-option(GOOFIT_KMATRIX "Activate support for KMatrix (slower CUDA builds" ${IS_NOT_CUDA})
+option(GOOFIT_KMATRIX "Activate support for KMatrix (slower CUDA builds)" ${IS_NOT_CUDA})
 option(GOOFIT_SEPARATE_COMP "Enable separate compilation of PDFs" ON)
 
 # This is the common library that holds definitions, etc.
@@ -683,6 +684,9 @@ endif()
 
 add_feature_info("GOOFIT HOST=${GOOFIT_DEVICE}" ON "The device to compile for")
 add_feature_info("GOOFIT_DEVICE=${GOOFIT_HOST}" ON "The host system to compile for")
+if(GOOFIT_DEVICE STREQUAL CUDA)
+    add_feature_info("ARCH_FLAGS=${ARCH_FLAGS}" ON "")
+endif()
 add_feature_info("GOOFIT_MAXPAR=${GOOFIT_MAXPAR}" ON "The number of parameters to statically support")
 
 feature_option(GOOFIT_KMATRIX)

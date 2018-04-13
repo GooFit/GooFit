@@ -509,11 +509,11 @@ __host__ void TDDP4::recursiveSetIndices() {
         }
     }
 
-    MEMCPY_TO_SYMBOL(AmpIndices,
-                     &(amp_idx[0]),
-                     amp_idx_start.size() * sizeof(unsigned int),
-                     amp_idx_start.size() * sizeof(unsigned int),
-                     cudaMemcpyHostToDevice);
+    //MEMCPY_TO_SYMBOL(AmpIndices,
+    //                 &(amp_idx[0]),
+    //                 amp_idx_start.size() * sizeof(unsigned int),
+    //                 amp_idx_start.size() * sizeof(unsigned int),
+    //                 cudaMemcpyHostToDevice);
 
     // TODO: We need to expand populateArrays so we handle components correctly!
     efficiencyFunction = num_device_functions - 1;
@@ -607,7 +607,7 @@ __host__ fptype TDDP4::normalize() const {
                 *(sfcalculators[i]));
 
             if(!generation_no_norm) {
-                NormSpinCalculator nsc = NormSpinCalculator();
+                NormSpinCalculator_TD nsc = NormSpinCalculator_TD();
 
                 nsc.setDalitzId(getFunctionIndex());
                 nsc.setSpinFactorId(SpinFactors[i]->getFunctionIndex());
@@ -729,13 +729,13 @@ __host__ fptype TDDP4::normalize() const {
             dummy,
             MyFourDoubleTupleAdditionFunctor);
 
-        GOOFIT_TRACE("sumIntegral={}", sumIntegral);
+        //GOOFIT_TRACE("sumIntegral={}", sumIntegral);
 
         // printf("normalize A2/#evts , B2/#evts: %.5g, %.5g\n",thrust::get<0>(sumIntegral)/MCevents,
         // thrust::get<1>(sumIntegral)/MCevents);
-        fptype tau     = parametersList[5];
-        fptype xmixing = parametersList[8];
-        fptype ymixing = parametersList[9];
+        fptype tau     = parametersList[0];
+        fptype xmixing = parametersList[1];
+        fptype ymixing = parametersList[2];
 
         ret = resolution->normalisation(thrust::get<0>(sumIntegral),
                                         thrust::get<1>(sumIntegral),
@@ -749,7 +749,7 @@ __host__ fptype TDDP4::normalize() const {
         ret /= MCevents;
     }
 
-    host_normalisations[parameters] = 1.0 / ret;
+    host_normalisations[normalIdx + 1] = 1.0 / ret;
     // printf("end of normalize %f\n", ret);
     return ret;
 }
@@ -863,7 +863,7 @@ __host__
     dev_event_array = thrust::raw_pointer_cast(DS->data());
     setDataSize(nAcc, 8);
 
-    generation_no_norm = true; // we need no normalization for generation, but we do need to make sure that norm = 1;
+    generation_no_norm = false; // we need no normalization for generation, but we do need to make sure that norm = 1;
     SigGenSetIndices();
     normalize();
     setForceIntegrals();
@@ -1264,14 +1264,14 @@ operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const {
             fpcomplex ret(1, 0);
 
             for(int i = j * LS_step; i < (j + 1) * LS_step; ++i) {
-                fpcomplex matrixelement(LSnorm[AmpIndices[totalAMP + ampidx + 3 + i] * MCevents]);
+                fpcomplex matrixelement(LSnorm[AmpIndices[totalAMP + ampidx + 4 + i] * MCevents]);
                 // printf("Norm BW %i, %.5g, %.5g\n",AmpIndices[totalAMP + ampidx + 4 + i] , matrixelement.real,
                 // matrixelement.imag);
                 ret *= matrixelement;
             }
 
             for(int i = j * SF_step; i < (j + 1) * SF_step; ++i) {
-                fptype matrixelement = (SFnorm[AmpIndices[totalAMP + ampidx + 3 + numLS + i] * MCevents]);
+                fptype matrixelement = (SFnorm[AmpIndices[totalAMP + ampidx + 4 + numLS + i] * MCevents]);
                 // printf("Norm SF %i, %.5g\n",AmpIndices[totalAMP + ampidx + 4 + i] , matrixelement);
                 ret *= matrixelement;
             }
@@ -1284,26 +1284,26 @@ operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const {
 
         switch(flag) {
         case 0:
-            amp_A = fpcomplex(pc.getParameter(12 + 2 * (amp + k)), pc.getParameter(13 + 2 * (amp + k)));
+            amp_A = fpcomplex(pc.getParameter(4 + 2 * (amp + k)), pc.getParameter(5 + 2 * (amp + k)));
             AmpA += ret2 * amp_A;
             break;
 
         case 1:
-            amp_B = fpcomplex(pc.getParameter(12 + 2 * (amp + k)), pc.getParameter(13 + 2 * (amp + k)));
+            amp_B = fpcomplex(pc.getParameter(4 + 2 * (amp + k)), pc.getParameter(5 + 2 * (amp + k)));
             AmpB += ret2 * amp_B;
             break;
 
         case 2:
-            amp_A = fpcomplex(pc.getParameter(12 + 2 * (amp + k)), pc.getParameter(13 + 2 * (amp + k)));
+            amp_A = fpcomplex(pc.getParameter(4 + 2 * (amp + k)), pc.getParameter(5 + 2 * (amp + k)));
             AmpA += ret2 * amp_A;
             ++k;
-            amp_B = fpcomplex(pc.getParameter(12 + 2 * (amp + k)), pc.getParameter(13 + 2 * (amp + k)));
+            amp_B = fpcomplex(pc.getParameter(4 + 2 * (amp + k)), pc.getParameter(5 + 2 * (amp + k)));
             AmpB += ret2 * amp_B;
             break;
         }
     }
 
-    fptype _SqWStoRSrate = pc.getParameter(10);
+    fptype _SqWStoRSrate = pc.getParameter(3);
     AmpA *= _SqWStoRSrate;
 
     auto AmpAB = AmpA * conj(AmpB);

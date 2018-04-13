@@ -863,7 +863,7 @@ __host__
     dev_event_array = thrust::raw_pointer_cast(DS->data());
     setDataSize(nAcc, 8);
 
-    generation_no_norm = false; // we need no normalization for generation, but we do need to make sure that norm = 1;
+    generation_no_norm = true; // we need no normalization for generation, but we do need to make sure that norm = 1;
     SigGenSetIndices();
     normalize();
     setForceIntegrals();

@@ -6,7 +6,16 @@ namespace GooFit {
 
 __device__ fptype cDeriatives[2 * MAXNKNOBS];
 
-__device__ fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m) {
+__device__ fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m, fptype mR) {
+    fptype x = rMassSq;
+    fptype y = d1m * d1m;
+    fptype z = d2m * d2m;
+    double l = POW2(x - y - z) - 4 * y * z;
+
+    return sqrt(l) / (2 * mR);
+}
+
+__device__ fptype twoBodyCMmom(fptype rMassSq, fptype d1m, fptype d2m) {
     // For A -> B + C, calculate momentum of B and C in rest frame of A.
     // PDG 38.16.
 
@@ -18,6 +27,15 @@ __device__ fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m) {
     kin2        = kin2 >= 0 ? sqrt(kin2) : 1;
 
     return 0.5 * sqrt(rMassSq) * kin1 * kin2;
+}
+
+__device__ fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m, fptype mR) {
+    fptype x = rMassSq;
+    fptype y = d1m * d1m;
+    fptype z = d2m * d2m;
+    double l = POW2(x - y - z) - 4 * y * z;
+
+    return sqrt(l) / (2 * mR);
 }
 
 __device__ fptype dampingFactorSquare(const fptype &cmmom, const int &spin, const fptype &mRadius) {
@@ -89,6 +107,7 @@ __device__ fptype spinFactor(unsigned int spin,
     return sFactor;
 }
 
+template <int I>
 __device__ fpcomplex plainBW(fptype m12, fptype m13, fptype m23, unsigned int *indices) {
     fptype motherMass   = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 0]);
     fptype daug1Mass    = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 1]);
@@ -100,34 +119,71 @@ __device__ fpcomplex plainBW(fptype m12, fptype m13, fptype m23, unsigned int *i
     fptype reswidth           = RO_CACHE(cudaArray[RO_CACHE(indices[3])]);
     unsigned int spin         = RO_CACHE(indices[4]);
     unsigned int cyclic_index = RO_CACHE(indices[5]);
+    unsigned int symmDP       = RO_CACHE(indices[6]);
 
-    fptype rMassSq  = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
-    fptype frFactor = 1;
+    fpcomplex ret(0., 0.);
+    fptype resmassSq = POW2(resmass);
 
-    resmass *= resmass;
-    // Calculate momentum of the two daughters in the resonance rest frame; note symmetry under interchange (dm1 <->
-    // dm2).
-    fptype measureDaughterMoms = twoBodyCMmom(
-        rMassSq, (PAIR_23 == cyclic_index ? daug2Mass : daug1Mass), (PAIR_12 == cyclic_index ? daug2Mass : daug3Mass));
-    fptype nominalDaughterMoms = twoBodyCMmom(
-        resmass, (PAIR_23 == cyclic_index ? daug2Mass : daug1Mass), (PAIR_12 == cyclic_index ? daug2Mass : daug3Mass));
+#pragma unroll
+    for(int i = 0; i < I; i++) {
+        fptype rMassSq  = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
+        fptype rMass    = sqrt(rMassSq);
+        fptype frFactor = 1;
+        fptype fdFactor = 1;
 
-    if(0 != spin) {
-        frFactor = dampingFactorSquare(nominalDaughterMoms, spin, meson_radius);
-        frFactor /= dampingFactorSquare(measureDaughterMoms, spin, meson_radius);
+        // Calculate momentum of the two daughters in the resonance rest frame; note symmetry under interchange (dm1 <->
+        // dm2).
+        fptype measureDaughterMoms = twoBodyCMmom(rMassSq,
+                                                  (PAIR_23 == cyclic_index ? daug2Mass : daug1Mass),
+                                                  (PAIR_12 == cyclic_index ? daug2Mass : daug3Mass),
+                                                  rMass);
+        fptype nominalDaughterMoms = twoBodyCMmom(resmassSq,
+                                                  (PAIR_23 == cyclic_index ? daug2Mass : daug1Mass),
+                                                  (PAIR_12 == cyclic_index ? daug2Mass : daug3Mass));
+
+        if(0 != spin) {
+            frFactor = dampingFactorSquare(nominalDaughterMoms, spin, meson_radius);
+            frFactor /= dampingFactorSquare(measureDaughterMoms, spin, meson_radius);
+            // Form_Factor_Mother_Decay
+            fptype measureDaughterMoms2
+                = twoBodyCMmom(motherMass * motherMass,
+                               rMass,
+                               //					    (PAIR_23 == cyclic_index ? daug2Mass : daug1Mass),
+                               (PAIR_12 == cyclic_index ? daug3Mass : daug2Mass),
+                               rMass);
+            //                        motherMass);
+            fptype nominalDaughterMoms2
+                = twoBodyCMmom(motherMass * motherMass,
+                               resmass,
+                               //					    (PAIR_23 == cyclic_index ? daug2Mass : daug1Mass),
+                               (PAIR_12 == cyclic_index ? daug3Mass : daug2Mass),
+                               resmass);
+            //                        motherMass);
+
+            fdFactor = dampingFactorSquare(nominalDaughterMoms2, spin, 5.);
+            fdFactor /= dampingFactorSquare(measureDaughterMoms2, spin, 5.);
+        }
+
+        // RBW evaluation
+        fptype A = (resmassSq - rMassSq);
+        fptype B = resmassSq * reswidth * pow(measureDaughterMoms / nominalDaughterMoms, 2.0 * spin + 1) * frFactor
+                   / sqrt(rMassSq);
+        fptype C = 1.0 / (A * A + B * B);
+        fpcomplex retur(A * C, B * C); // Dropping F_D=1
+
+        retur *= sqrt(frFactor * fdFactor);
+        fptype spinF = spinFactor(spin, motherMass, daug1Mass, daug2Mass, daug3Mass, m12, m13, m23, cyclic_index);
+        //  fptype spinF = spinFactor(spin, motherMass, daug1Mass, daug2Mass, daug3Mass, m12, m13, m23, cyclic_index,
+        //  resmass);
+        retur *= spinF;
+        ret += retur;
+        if(I != 0) {
+            fptype swpmass = m12;
+            m12            = m13;
+            m13            = swpmass;
+        }
     }
 
-    // RBW evaluation
-    fptype A = (resmass - rMassSq);
-    fptype B = resmass * reswidth * pow(measureDaughterMoms / nominalDaughterMoms, 2.0 * spin + 1) * frFactor
-               / sqrt(rMassSq);
-    fptype C = 1.0 / (A * A + B * B);
-    fpcomplex ret(A * C, B * C); // Dropping F_D=1
-
-    ret *= sqrt(frFactor);
-    fptype spinF = spinFactor(spin, motherMass, daug1Mass, daug2Mass, daug3Mass, m12, m13, m23, cyclic_index);
-    ret *= spinF;
-    // printf("%f, %f, %f, %f\n",ret.real, ret.imag, m12, m13);
     return ret;
 }
 
@@ -322,7 +378,7 @@ __device__ fpcomplex flatte(fptype m12, fptype m13, fptype m23, unsigned int *in
     // indices[1] is unused constant index, for consistency with other function types.
     fptype resmass            = cudaArray[indices[2]];
     fptype g1                 = cudaArray[indices[3]];
-    fptype g2                 = cudaArray[indices[4]] * g1;
+    fptype g2                 = cudaArray[indices[4]];
     unsigned int cyclic_index = indices[5];
     unsigned int doSwap       = indices[6];
 
@@ -437,8 +493,7 @@ __device__ fpcomplex cubicspline(fptype m12, fptype m13, fptype m23, unsigned in
         bb   = 1 - aa;
         aa3  = aa * aa * aa;
         bb3  = bb * bb * bb;
-        //  ret += aa * pwa_coefs[kloAB] + bb * pwa_coefs[khiAB] + ((aa3 - aa)*pwa_coefs_prime[kloAB] + (bb3 - bb) *
-        //  pwa_coefs_prime[khiAB]) * (dmKK*dmKK)/6.0;
+
         ret.real(ret.real() + aa * pwa_coefs_real_kloAB + bb * pwa_coefs_real_khiAB
                  + ((aa3 - aa) * pwa_coefs_prime_real_kloAB + (bb3 - bb) * pwa_coefs_prime_real_khiAB) * (dmKK * dmKK)
                        / 6.0);
@@ -451,7 +506,8 @@ __device__ fpcomplex cubicspline(fptype m12, fptype m13, fptype m23, unsigned in
     return ret;
 }
 
-__device__ resonance_function_ptr ptr_to_RBW      = plainBW;
+__device__ resonance_function_ptr ptr_to_RBW      = plainBW<1>;
+__device__ resonance_function_ptr ptr_to_RBW_SYM  = plainBW<2>;
 __device__ resonance_function_ptr ptr_to_GOUSAK   = gouSak;
 __device__ resonance_function_ptr ptr_to_GAUSSIAN = gaussian;
 __device__ resonance_function_ptr ptr_to_NONRES   = nonres;
@@ -461,14 +517,26 @@ __device__ resonance_function_ptr ptr_to_SPLINE   = cubicspline;
 
 namespace Resonances {
 
-RBW::RBW(std::string name, Variable ar, Variable ai, Variable mass, Variable width, unsigned int sp, unsigned int cyc)
+RBW::RBW(std::string name,
+         Variable ar,
+         Variable ai,
+         Variable mass,
+         Variable width,
+         unsigned int sp,
+         unsigned int cyc,
+         bool symmDP)
     : ResonancePdf(name, ar, ai) {
     pindices.push_back(registerParameter(mass));
     pindices.push_back(registerParameter(width));
     pindices.push_back(sp);
     pindices.push_back(cyc);
+    pindices.push_back(symmDP);
 
-    GET_FUNCTION_ADDR(ptr_to_RBW);
+    if(symmDP) {
+        GET_FUNCTION_ADDR(ptr_to_RBW_SYM);
+    } else {
+        GET_FUNCTION_ADDR(ptr_to_RBW);
+    }
 
     initialize(pindices);
 }

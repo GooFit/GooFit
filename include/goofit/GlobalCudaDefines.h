@@ -130,5 +130,5 @@ __host__ __device__ T rsqrt(T val) {
 
 // Fix for bug in pow(double,int) for CUDA 7 and 7.5 (device problem only)
 #if defined(__CUDACC__) && __CUDACC_VER_MAJOR__ < 8
-__host__ __device__ fptype pow(fptype x, int y) { return pow(x, (fptype)y); }
+__host__ __device__ GooFit::fptype pow(GooFit::fptype x, int y) { return pow(x, (GooFit::fptype)y); }
 #endif

@@ -15,7 +15,7 @@ void init_ResonancePdf(py::module &m) {
     py::class_<ResonancePdf, GooPdf>(m, "ResonancePdf");
 
     py::class_<Resonances::RBW, ResonancePdf>(m_ls, "RBW")
-        .def(py::init<std::string, Variable, Variable, Variable, Variable, unsigned int, unsigned int>(),
+        .def(py::init<std::string, Variable, Variable, Variable, Variable, unsigned int, unsigned int, bool>(),
              "Constructor for regular BW",
              "name"_a,
              "ar"_a,
@@ -24,6 +24,7 @@ void init_ResonancePdf(py::module &m) {
              "width"_a,
              "sp"_a,
              "cyc"_a,
+             "sym"_a = false,
              py::keep_alive<1, 3>(),
              py::keep_alive<1, 4>(),
              py::keep_alive<1, 5>(),

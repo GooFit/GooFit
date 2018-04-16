@@ -55,8 +55,6 @@ inline void cudaDeviceSynchronize() {}
 #define RO_CACHE(x) x
 #endif
 
-// Thread utilities
-
 #ifdef _OPENMP
 #include <omp.h>
 #endif

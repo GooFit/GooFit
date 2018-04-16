@@ -43,21 +43,21 @@ goofit_add_library(FunctorWriter
 
 goofit_add_library(Application
     Application.cu
-    ${PROJECT_SOURCE_DIR}/include/goofit/Application.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/detail/Complex.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/detail/ThrustOverride.h
-    ${PROJECT_BINARY_DIR}/include/goofit/detail/ThrustOverrideConfig.h
     ${PROJECT_BINARY_DIR}/include/goofit/detail/Backtrace.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/detail/MonteCarlo.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/detail/Macros.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/detail/Style.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/detail/Uncertain.h
+    ${PROJECT_BINARY_DIR}/include/goofit/detail/ThrustOverrideConfig.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/Application.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/Color.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/Eigen.h
     ${PROJECT_SOURCE_DIR}/include/goofit/Error.h
     ${PROJECT_SOURCE_DIR}/include/goofit/FitControl.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/Color.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/Log.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/Eigen.h
     ${PROJECT_SOURCE_DIR}/include/goofit/GlobalCudaDefines.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/Log.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/detail/Complex.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/detail/Macros.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/detail/ThrustOverride.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/utilities/MonteCarlo.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/utilities/Style.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/utilities/Uncertain.h
     )
 
 

@@ -41,7 +41,7 @@
 #include <goofit/PDFs/physics/ThreeGaussResolution_Aux.h>
 #include <goofit/PDFs/physics/TruthResolution_Aux.h>
 #include <goofit/Variable.h>
-#include <goofit/detail/Uncertain.h>
+#include <goofit/utilities/Uncertain.h>
 
 #include <goofit/fitting/FitManagerMinuit1.h>
 #include <goofit/fitting/FitManagerMinuit2.h>

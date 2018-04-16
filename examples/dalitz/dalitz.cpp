@@ -26,7 +26,7 @@
 #include <goofit/PDFs/physics/ResonancePdf.h>
 #include <goofit/UnbinnedDataSet.h>
 #include <goofit/Variable.h>
-#include <goofit/detail/Style.h>
+#include <goofit/utilities/Style.h>
 
 using namespace std;
 using namespace GooFit;

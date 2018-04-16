@@ -5,7 +5,7 @@
 #include <goofit/PDFs/basic/GaussianPdf.h>
 #include <goofit/PDFs/combine/ProdPdf.h>
 #include <goofit/UnbinnedDataSet.h>
-#include <goofit/detail/MonteCarlo.h>
+#include <goofit/utilities/MonteCarlo.h>
 
 #include <goofit/Variable.h>
 

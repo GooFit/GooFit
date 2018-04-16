@@ -4,17 +4,15 @@
 #include <goofit/PDFs/basic/LandauPdf.h>
 #include <goofit/PDFs/basic/NovosibirskPdf.h>
 #include <goofit/UnbinnedDataSet.h>
-#include <goofit/detail/Style.h>
+#include <goofit/Variable.h>
+#include <goofit/utilities/Style.h>
 
 #include <TCanvas.h>
 #include <TH1F.h>
 #include <TRandom.h>
 #include <TStyle.h>
-#include <goofit/Variable.h>
 
 #include <iostream>
-#include <sys/time.h>
-#include <sys/times.h>
 
 using namespace std;
 using namespace GooFit;

@@ -394,26 +394,26 @@ __host__ void PdfBase::printProfileInfo(bool topLevel) {
 #endif
 }
 
-gooError gooMalloc(void **target, size_t bytes) {
+cudaError_t gooMalloc(void **target, size_t bytes) {
 #if THRUST_DEVICE_SYSTEM != THRUST_DEVICE_SYSTEM_CUDA
     target[0] = malloc(bytes);
 
     if(target[0])
-        return gooSuccess;
+        return cudaSuccess;
     else
-        return gooErrorMemoryAllocation;
+        return cudaErrorMemoryAllocation;
 
 #else
-    return (gooError)cudaMalloc(target, bytes);
+    return cudaMalloc(target, bytes);
 #endif
 }
 
-gooError gooFree(void *ptr) {
+cudaError_t gooFree(void *ptr) {
 #if THRUST_DEVICE_SYSTEM != THRUST_DEVICE_SYSTEM_CUDA
     free(ptr);
-    return gooSuccess;
+    return cudaSuccess;
 #else
-    return (gooError)cudaFree(ptr);
+    return cudaFree(ptr);
 #endif
 }
 } // namespace GooFit

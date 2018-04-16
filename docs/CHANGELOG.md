@@ -20,7 +20,7 @@ Backend:
 * Allow changing the bin number for normalization without restarting GooFit ([#143])
 * Dropped symmDP where not supported ([#143])
 * Dropped code coverage (test timeout issues when adding more tests) ([#144])
-* Removed POSIX redefine warnings for Python, other warning fixes
+* Removed POSIX redefine warnings for Python (except CUDA), other warning fixes
 * Packages do not trigger main repo git in binary dir
 * Added feature summary
 

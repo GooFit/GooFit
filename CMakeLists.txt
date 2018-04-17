@@ -314,6 +314,13 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
 
         set(THRUST_INCLUDE_DIR "${CUDA_TOOLKIT_ROOT_DIR}/include")
 
+        add_library(CUDA::Libs IMPORTED INTERFACE)
+        set_target_properties(CUDA::Libs PROPERTIES
+            INTERFACE_INCLUDE_DIRECTORIES
+                "${CUDA_INCLUDE_DIRS}"
+            INTERFACE_LINK_LIBRARIES
+                "${CUDA_LIBRARIES}")
+
     # The new language support
     else()
         enable_language(CUDA)
@@ -349,6 +356,20 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
         message(STATUS "Compiling for GPU arch: ${ARCH_FLAGS}")
 
         set(THRUST_INCLUDE_DIR "${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}")
+
+        find_library(CUDART_LIB cudart
+            HINTS
+            "${CUDA_TOOLKIT_ROOT_DIR}/lib64"
+            "${CUDA_TOOLKIT_ROOT_DIR}/lib"
+            "${CUDA_TOOLKIT_ROOT_DIR}"
+            )
+
+        add_library(CUDA::Libs IMPORTED INTERFACE)
+        set_target_properties(CUDA::Libs PROPERTIES
+            INTERFACE_INCLUDE_DIRECTORIES
+                "${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}"
+            INTERFACE_LINK_LIBRARIES
+                "${CUDART_LIB}")
     endif()
 endif()
 

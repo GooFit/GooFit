@@ -42,7 +42,7 @@ goofit_add_library(FunctorWriter
     )
 
 goofit_add_library(Application
-    Application.cu
+    Application.cpp
     ${PROJECT_BINARY_DIR}/include/goofit/detail/Backtrace.h
     ${PROJECT_BINARY_DIR}/include/goofit/detail/ThrustOverrideConfig.h
     ${PROJECT_SOURCE_DIR}/include/goofit/Application.h
@@ -60,6 +60,9 @@ goofit_add_library(Application
     ${PROJECT_SOURCE_DIR}/include/goofit/utilities/Uncertain.h
     )
 
+if(GOOFIT_DEVICE STREQUAL CUDA)
+    target_link_libraries(Application PRIVATE CUDA::Libs)
+endif()
 
 goofit_add_library(PdfBase
     PdfBase.cpp

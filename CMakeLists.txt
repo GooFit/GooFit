@@ -334,6 +334,7 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
         get_filename_component(CUDA_TOOLKIT_ROOT_DIR "${CUDA_TOOLKIT_ROOT_DIR}" DIRECTORY)
 
         include(CUDAUtils)
+        include(CUDA/protect_flags)
 
         set(cuda_lang "$<COMPILE_LANGUAGE:CUDA>")
 
@@ -700,7 +701,7 @@ if(GOOFIT_PYTHON)
         message(FATAL_ERROR "Did not find Python development libraries, make sure the development package for Python is installed or turn off Python bindings")
     endif()
     if(NEW_CUDA AND GOOFIT_DEVICE STREQUAL CUDA)
-        cuda_convert_flags(module)
+        cmake_cuda_convert_flags(INTERFACE_TARGET module)
     endif()
     add_subdirectory(python)
 endif()

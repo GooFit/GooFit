@@ -1,7 +1,8 @@
 #include <goofit/Error.h>
 #include <goofit/PDFs/physics/DalitzPlotPdf.h>
-
 #include <goofit/detail/Complex.h>
+
+#include <thrust/copy.h>
 #include <thrust/transform_reduce.h>
 
 namespace GooFit {
@@ -340,10 +341,17 @@ __host__ fptype DalitzPlotPdf::normalize() const {
 }
 
 __host__ fpcomplex DalitzPlotPdf::sumCachedWave(size_t i) const {
-    const thrust::device_vector<fpcomplex> &vec = getCachedWave(i);
+    const thrust::device_vector<fpcomplex> &vec = getCachedWaveNoCopy(i);
 
     fpcomplex ret = thrust::reduce(vec.begin(), vec.end(), fpcomplex(0, 0), thrust::plus<fpcomplex>());
 
+    return ret;
+}
+
+__host__ const std::vector<std::complex<fptype>> DalitzPlotPdf::getCachedWave(size_t i) const {
+    auto ret_thrust = getCachedWave(i);
+    std::vector<std::complex<fptype>> ret(ret_thrust.size());
+    thrust::copy(ret_thrust.begin(), ret_thrust.end(), ret.begin());
     return ret;
 }
 
@@ -351,7 +359,7 @@ __host__ std::vector<std::vector<fptype>> DalitzPlotPdf::fit_fractions() {
     GOOFIT_DEBUG("Performing fit fraction calculation, should already have a cache (does not use normalization grid)");
 
     size_t n_res    = getDecayInfo().resonances.size();
-    size_t nEntries = getCachedWave(0).size();
+    size_t nEntries = getCachedWaveNoCopy(0).size();
 
     std::vector<fpcomplex> coefs(n_res);
     std::transform(getDecayInfo().resonances.begin(),
@@ -373,8 +381,8 @@ __host__ std::vector<std::vector<fptype>> DalitzPlotPdf::fit_fractions() {
     for(size_t i = 0; i < n_res; i++) {
         for(size_t j = 0; j < n_res; j++) {
             buffer   = 0;
-            cached_i = getCachedWave(i);
-            cached_j = getCachedWave(j);
+            cached_i = getCachedWaveNoCopy(i);
+            cached_j = getCachedWaveNoCopy(j);
             coef_i   = coefs[i];
             coef_j   = coefs[j];
 

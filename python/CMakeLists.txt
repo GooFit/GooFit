@@ -33,7 +33,7 @@ goofit_add_library(_goofit MODULE
     goofit/Version.cpp
     goofit/FitControl.cpp
     goofit/Application.cpp
-    PDFs/GooPdf.cu
+    PDFs/GooPdf.cpp
     PDFs/basic/ArgusPdf.cpp
     PDFs/basic/BifurGaussPdf.cpp
     PDFs/basic/BinTransformPdf.cpp
@@ -60,21 +60,21 @@ goofit_add_library(_goofit MODULE
     PDFs/combine/EventWeightedAddPdf.cpp
     PDFs/combine/MappedPdf.cpp
     PDFs/combine/ProdPdf.cpp
-    PDFs/physics/DalitzPlotPdf.cu
-    PDFs/physics/DalitzVetoPdf.cu
-    PDFs/physics/DalitzPlotHelpers.cu
-    PDFs/physics/DalitzPlotter.cu
+    PDFs/physics/DalitzPlotPdf.cpp
+    PDFs/physics/DalitzVetoPdf.cpp
+    PDFs/physics/DalitzPlotHelpers.cpp
+    PDFs/physics/DalitzPlotter.cpp
     PDFs/physics/DP4Pdf.cu
-    PDFs/physics/IncoherentSumPdf.cu
-    PDFs/physics/LineshapesPdf.cu
-    PDFs/physics/MixingTimeResolution_Aux.cu
-    PDFs/physics/ResonancePdf.cu
-    PDFs/physics/SpinFactors.cu
+    PDFs/physics/IncoherentSumPdf.cpp
+    PDFs/physics/LineshapesPdf.cpp
+    PDFs/physics/MixingTimeResolution_Aux.cpp
+    PDFs/physics/ResonancePdf.cpp
+    PDFs/physics/SpinFactors.cpp
     PDFs/physics/Tddp4Pdf.cu
-    PDFs/physics/TddpPdf.cu
-    PDFs/physics/ThreeGaussResolution_Aux.cu
-    PDFs/physics/TruthResolution_Aux.cu
-    PDFs/utility/VariableBinTransform1DPdf.cu
+    PDFs/physics/TddpPdf.cpp
+    PDFs/physics/ThreeGaussResolution_Aux.cpp
+    PDFs/physics/TruthResolution_Aux.cpp
+    PDFs/utility/VariableBinTransform1DPdf.cpp
     goofit/FitManager.cpp)
 
 process_pybind_module(_goofit)

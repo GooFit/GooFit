@@ -56,7 +56,6 @@ if(NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/cmake_utils/FindThrust.cmake"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/modern_cmake/ModernCMakeUtils.cmake"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/CLI11/CMakeLists.txt"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/Eigen/CMakeLists.txt"
-OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/cuda_support/README.md"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/FeatureDetector/CMakeLists.txt"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/MCBooster/CMakeLists.txt"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/thrust/README.md")
@@ -65,11 +64,7 @@ endif()
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/extern/cmake_utils" ${CMAKE_MODULE_PATH})
 include("${CMAKE_CURRENT_SOURCE_DIR}/extern/modern_cmake/ModernCMakeUtils.cmake")
-
-# Add support for better CUDA behaviour in CMake < 3.9
-if(CMAKE_VERSION VERSION_LESS 3.9)
-    set(CMAKE_MODULE_PATH  "${PROJECT_SOURCE_DIR}/extern/cuda_support" ${CMAKE_MODULE_PATH})
-endif()
+include("${CMAKE_CURRENT_SOURCE_DIR}/extern/modern_cmake/ModernCUDA.cmake")
 
 # Add clang-tidy if available
 if(CMAKE_VERSION VERSION_GREATER 3.6)
@@ -337,7 +332,8 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
         set(CUDA_TOOLKIT_ROOT_DIR "${CMAKE_CUDA_COMPILER}")
         get_filename_component(CUDA_TOOLKIT_ROOT_DIR "${CUDA_TOOLKIT_ROOT_DIR}" DIRECTORY)
         get_filename_component(CUDA_TOOLKIT_ROOT_DIR "${CUDA_TOOLKIT_ROOT_DIR}" DIRECTORY)
-        include(CUDA)
+
+        include(CUDAUtils)
 
         set(cuda_lang "$<COMPILE_LANGUAGE:CUDA>")
 
@@ -345,13 +341,14 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
         set(CMAKE_CUDA_STANDARD_REQUIRED ON)
         set(CMAKE_CUDA_EXTENSIONS OFF)
 
-        if(CUDA_VERSION VERSION_LESS 7.5)
+        if(CMAKE_CUDA_COMPILER_VERSION VERSION_LESS 7.5)
             string(APPEND CMAKE_CUDA_FLAGS " --relaxed-constexpr")
         else()
             string(APPEND CMAKE_CUDA_FLAGS " --expt-relaxed-constexpr")
         endif()
 
-        cuda_detect_arch(${GOOFIT_ARCH} NVCC_FLAGS ARCH_FLAGS)
+        cmake_cuda_arch_detect(ARCH_FLAGS ARCH ${GOOFIT_ARCH})
+        string(REPLACE ";" " " ARCH_FLAGS "${ARCH_FLAGS}")
         string(APPEND CMAKE_CUDA_FLAGS " ${ARCH_FLAGS}")
         message(STATUS "Compiling for GPU arch: ${ARCH_FLAGS}")
 

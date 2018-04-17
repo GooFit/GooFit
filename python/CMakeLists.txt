@@ -34,32 +34,32 @@ goofit_add_library(_goofit MODULE
     goofit/FitControl.cpp
     goofit/Application.cpp
     PDFs/GooPdf.cu
-    PDFs/basic/ArgusPdf.cu
-    PDFs/basic/BifurGaussPdf.cu
-    PDFs/basic/BinTransformPdf.cu
-    PDFs/basic/BWPdf.cu
-    PDFs/basic/CorrGaussianPdf.cu
-    PDFs/basic/CrystalBallPdf.cu
-    PDFs/basic/ExpGausPdf.cu
-    PDFs/basic/ExpPdf.cu
-    PDFs/basic/GaussianPdf.cu
-    PDFs/basic/InterHistPdf.cu
-    PDFs/basic/JohnsonSUPdf.cu
-    PDFs/basic/KinLimitBWPdf.cu
-    PDFs/basic/LandauPdf.cu
-    PDFs/basic/NovosibirskPdf.cu
-    PDFs/basic/PolynomialPdf.cu
-    PDFs/basic/ScaledGaussianPdf.cu
-    PDFs/basic/SmoothHistogramPdf.cu
-    PDFs/basic/StepPdf.cu
-    PDFs/basic/TrigThresholdPdf.cu
-    PDFs/basic/VoigtianPdf.cu
-    PDFs/combine/AddPdf.cu
-    PDFs/combine/CompositePdf.cu
-    PDFs/combine/ConvolutionPdf.cu
-    PDFs/combine/EventWeightedAddPdf.cu
-    PDFs/combine/MappedPdf.cu
-    PDFs/combine/ProdPdf.cu
+    PDFs/basic/ArgusPdf.cpp
+    PDFs/basic/BifurGaussPdf.cpp
+    PDFs/basic/BinTransformPdf.cpp
+    PDFs/basic/BWPdf.cpp
+    PDFs/basic/CorrGaussianPdf.cpp
+    PDFs/basic/CrystalBallPdf.cpp
+    PDFs/basic/ExpGausPdf.cpp
+    PDFs/basic/ExpPdf.cpp
+    PDFs/basic/GaussianPdf.cpp
+    PDFs/basic/InterHistPdf.cpp
+    PDFs/basic/JohnsonSUPdf.cpp
+    PDFs/basic/KinLimitBWPdf.cpp
+    PDFs/basic/LandauPdf.cpp
+    PDFs/basic/NovosibirskPdf.cpp
+    PDFs/basic/PolynomialPdf.cpp
+    PDFs/basic/ScaledGaussianPdf.cpp
+    PDFs/basic/SmoothHistogramPdf.cpp
+    PDFs/basic/StepPdf.cpp
+    PDFs/basic/TrigThresholdPdf.cpp
+    PDFs/basic/VoigtianPdf.cpp
+    PDFs/combine/AddPdf.cpp
+    PDFs/combine/CompositePdf.cpp
+    PDFs/combine/ConvolutionPdf.cpp
+    PDFs/combine/EventWeightedAddPdf.cpp
+    PDFs/combine/MappedPdf.cpp
+    PDFs/combine/ProdPdf.cpp
     PDFs/physics/DalitzPlotPdf.cu
     PDFs/physics/DalitzVetoPdf.cu
     PDFs/physics/DalitzPlotHelpers.cu

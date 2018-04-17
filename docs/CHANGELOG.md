@@ -11,6 +11,8 @@ User facing:
 * kMatrix is now optional, and off by default for CUDA (slow build) ([#143])
 * Can directly `pip install goofit` with Pip 10
 * Packages can now be turned on and off individually (`goofit_add_package`)
+* Moved files users might use to `goofit/utilities` from `goofit/detail` ([#145])
+* Adds symmetrized support for RBW (no runtime impact if not requested!) ([#145])
 
 Backend:
 
@@ -21,8 +23,12 @@ Backend:
 * Dropped symmDP where not supported ([#143])
 * Dropped code coverage (test timeout issues when adding more tests) ([#144])
 * Removed POSIX redefine warnings for Python (except CUDA), other warning fixes
+* Build most examples and Python bindings with C++
 * Packages do not trigger main repo git in binary dir
 * Added feature summary
+* Cleaned up GlobalCudaDefines, dropped GooError in favor of CUDA naming ([#145])
+* Added some repairs for CUDA 7 ([#146])
+
 
 [#139]: https://github.com/GooFit/GooFit/pull/139
 [#140]: https://github.com/GooFit/GooFit/pull/140
@@ -30,6 +36,8 @@ Backend:
 [#142]: https://github.com/GooFit/GooFit/pull/142
 [#143]: https://github.com/GooFit/GooFit/pull/143
 [#144]: https://github.com/GooFit/GooFit/pull/144
+[#145]: https://github.com/GooFit/GooFit/pull/145
+[#146]: https://github.com/GooFit/GooFit/pull/146
 
 
 ## v2.1.2: Live Python

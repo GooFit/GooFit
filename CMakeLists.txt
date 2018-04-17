@@ -56,7 +56,6 @@ if(NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/cmake_utils/FindThrust.cmake"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/modern_cmake/ModernCMakeUtils.cmake"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/CLI11/CMakeLists.txt"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/Eigen/CMakeLists.txt"
-OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/cuda_support/README.md"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/FeatureDetector/CMakeLists.txt"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/MCBooster/CMakeLists.txt"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/thrust/README.md")
@@ -65,11 +64,7 @@ endif()
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/extern/cmake_utils" ${CMAKE_MODULE_PATH})
 include("${CMAKE_CURRENT_SOURCE_DIR}/extern/modern_cmake/ModernCMakeUtils.cmake")
-
-# Add support for better CUDA behaviour in CMake < 3.9
-if(CMAKE_VERSION VERSION_LESS 3.9)
-    set(CMAKE_MODULE_PATH  "${PROJECT_SOURCE_DIR}/extern/cuda_support" ${CMAKE_MODULE_PATH})
-endif()
+include("${CMAKE_CURRENT_SOURCE_DIR}/extern/modern_cmake/ModernCUDA.cmake")
 
 # Add clang-tidy if available
 if(CMAKE_VERSION VERSION_GREATER 3.6)
@@ -296,7 +291,13 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
             list(APPEND CUDA_NVCC_FLAGS ${MPI_CXX_COMPILE_FLAGS})
         endif()
 
-        list(APPEND CUDA_NVCC_FLAGS -std=c++11 --expt-relaxed-constexpr)
+        list(APPEND CUDA_NVCC_FLAGS -std=c++11)
+
+        if(CUDA_VERSION VERSION_LESS 7.5)
+            list(APPEND CUDA_NVCC_FLAGS --relaxed-constexpr)
+        else()
+            list(APPEND CUDA_NVCC_FLAGS --expt-relaxed-constexpr)
+        endif()
 
         if(GOOFIT_SEPARATE_COMP)
             set(CUDA_SEPARABLE_COMPILATION ON)
@@ -312,6 +313,13 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
         message(STATUS "Compiling for GPU arch: ${ARCH_FLAGS}")
 
         set(THRUST_INCLUDE_DIR "${CUDA_TOOLKIT_ROOT_DIR}/include")
+
+        add_library(CUDA::Libs IMPORTED INTERFACE)
+        set_target_properties(CUDA::Libs PROPERTIES
+            INTERFACE_INCLUDE_DIRECTORIES
+                "${CUDA_INCLUDE_DIRS}"
+            INTERFACE_LINK_LIBRARIES
+                "${CUDA_LIBRARIES}")
 
     # The new language support
     else()
@@ -329,7 +337,9 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
         set(CUDA_TOOLKIT_ROOT_DIR "${CMAKE_CUDA_COMPILER}")
         get_filename_component(CUDA_TOOLKIT_ROOT_DIR "${CUDA_TOOLKIT_ROOT_DIR}" DIRECTORY)
         get_filename_component(CUDA_TOOLKIT_ROOT_DIR "${CUDA_TOOLKIT_ROOT_DIR}" DIRECTORY)
-        include(CUDA)
+
+        include(CUDAUtils)
+        include(CUDA/protect_flags)
 
         set(cuda_lang "$<COMPILE_LANGUAGE:CUDA>")
 
@@ -337,13 +347,32 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
         set(CMAKE_CUDA_STANDARD_REQUIRED ON)
         set(CMAKE_CUDA_EXTENSIONS OFF)
 
-        string(APPEND CMAKE_CUDA_FLAGS " --expt-relaxed-constexpr")
+        if(CMAKE_CUDA_COMPILER_VERSION VERSION_LESS 7.5)
+            string(APPEND CMAKE_CUDA_FLAGS " --relaxed-constexpr")
+        else()
+            string(APPEND CMAKE_CUDA_FLAGS " --expt-relaxed-constexpr")
+        endif()
 
-        cuda_detect_arch(${GOOFIT_ARCH} NVCC_FLAGS ARCH_FLAGS)
+        cmake_cuda_arch_detect(ARCH_FLAGS ARCH ${GOOFIT_ARCH})
+        string(REPLACE ";" " " ARCH_FLAGS "${ARCH_FLAGS}")
         string(APPEND CMAKE_CUDA_FLAGS " ${ARCH_FLAGS}")
         message(STATUS "Compiling for GPU arch: ${ARCH_FLAGS}")
 
         set(THRUST_INCLUDE_DIR "${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}")
+
+        find_library(CUDART_LIB cudart
+            HINTS
+            "${CUDA_TOOLKIT_ROOT_DIR}/lib64"
+            "${CUDA_TOOLKIT_ROOT_DIR}/lib"
+            "${CUDA_TOOLKIT_ROOT_DIR}"
+            )
+
+        add_library(CUDA::Libs IMPORTED INTERFACE)
+        set_target_properties(CUDA::Libs PROPERTIES
+            INTERFACE_INCLUDE_DIRECTORIES
+                "${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}"
+            INTERFACE_LINK_LIBRARIES
+                "${CUDART_LIB}")
     endif()
 endif()
 
@@ -677,13 +706,13 @@ if(GOOFIT_PYTHON)
         message(FATAL_ERROR "Did not find Python development libraries, make sure the development package for Python is installed or turn off Python bindings")
     endif()
     if(NEW_CUDA AND GOOFIT_DEVICE STREQUAL CUDA)
-        cuda_convert_flags(module)
+        cmake_cuda_convert_flags(INTERFACE_TARGET module)
     endif()
     add_subdirectory(python)
 endif()
 
-add_feature_info("GOOFIT HOST=${GOOFIT_DEVICE}" ON "The device to compile for")
-add_feature_info("GOOFIT_DEVICE=${GOOFIT_HOST}" ON "The host system to compile for")
+add_feature_info("GOOFIT_DEVICE=${GOOFIT_DEVICE}" ON "The device to compile for")
+add_feature_info("GOOFIT_HOST=${GOOFIT_HOST}" ON "The host system to compile for")
 if(GOOFIT_DEVICE STREQUAL CUDA)
     add_feature_info("ARCH_FLAGS=${ARCH_FLAGS}" ON "")
 endif()

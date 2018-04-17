@@ -291,7 +291,13 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
             list(APPEND CUDA_NVCC_FLAGS ${MPI_CXX_COMPILE_FLAGS})
         endif()
 
-        list(APPEND CUDA_NVCC_FLAGS -std=c++11 --expt-relaxed-constexpr)
+        list(APPEND CUDA_NVCC_FLAGS -std=c++11)
+
+        if(CUDA_VERSION VERSION_LESS 7.5)
+            list(APPEND CUDA_NVCC_FLAGS --relaxed-constexpr)
+        else()
+            list(APPEND CUDA_NVCC_FLAGS --expt-relaxed-constexpr)
+        endif()
 
         if(GOOFIT_SEPARATE_COMP)
             set(CUDA_SEPARABLE_COMPILATION ON)
@@ -332,7 +338,11 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
         set(CMAKE_CUDA_STANDARD_REQUIRED ON)
         set(CMAKE_CUDA_EXTENSIONS OFF)
 
-        string(APPEND CMAKE_CUDA_FLAGS " --expt-relaxed-constexpr")
+        if(CUDA_VERSION VERSION_LESS 7.5)
+            string(APPEND CMAKE_CUDA_FLAGS " --relaxed-constexpr")
+        else()
+            string(APPEND CMAKE_CUDA_FLAGS " --expt-relaxed-constexpr")
+        endif()
 
         cuda_detect_arch(${GOOFIT_ARCH} NVCC_FLAGS ARCH_FLAGS)
         string(APPEND CMAKE_CUDA_FLAGS " ${ARCH_FLAGS}")

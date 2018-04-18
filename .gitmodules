@@ -1,4 +1,4 @@
-[submodule "cmake"]
+[submodule "extern/cmake"]
 	path = extern/cmake_utils
 	url = ../../CLIUtils/cmake.git
 [submodule "extern/generics"]
@@ -34,9 +34,6 @@
 [submodule "extern/MCBooster"]
 	path = extern/MCBooster
 	url = ../MCBooster.git
-[submodule "extern/cuda_support"]
-	path = extern/cuda_support
-	url = ../../CLIUtils/cuda_support.git
 [submodule "extern/Eigen"]
 	path = extern/Eigen
 	url = ../../eigenteam/eigen-git-mirror.git

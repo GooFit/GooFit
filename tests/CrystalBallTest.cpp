@@ -41,7 +41,7 @@ TEST(Crystalball, SimpleFit) {
     CrystalBallPdf pdf{"crystalballpdf", xvar, mean, sigma, alpha, power};
     pdf.setData(&data);
 
-    bool fitter = test_fitter(&pdf);
+    bool fitter = test_fitter_minuit1(&pdf);
 
     EXPECT_TRUE(fitter);
     // EXPECT_LT(alpha.getError(), .1);

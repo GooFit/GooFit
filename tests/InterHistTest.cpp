@@ -47,7 +47,7 @@ TEST(InterHistPdf, SimpleFit) {
     InterHistPdf pdf{"InterHistPdf", &data, var_list, obs_list};
     pdf.setData(&data);
 
-    bool fitter = test_fitter(&pdf);
+    bool fitter = test_fitter_minuit1(&pdf);
 
     // EXPECT_TRUE(fitter);
     // EXPECT_LT(alpha.getError(), .1);

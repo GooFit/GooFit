@@ -79,7 +79,6 @@ TEST(Simple, WithBlind) {
     EXPECT_LT(alpha.getError(), .01);
     EXPECT_NEAR(2.5, alpha.getValue(), alpha.getError() * 3);
 }
-
 #ifdef ROOT_FOUND
 TEST(Simple, Min1Blind) {
     // Independent variable.

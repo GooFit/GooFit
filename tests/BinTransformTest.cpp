@@ -54,7 +54,7 @@ TEST(BinTransformTest, SimpleFit) {
     BinTransformPdf bintransformpdf{"binlistindex", obslist, list1, list2, listindex};
     bintransformpdf.setData(&data);
 
-    bool fitter = test_fitter(&bintransformpdf);
+    bool fitter = test_fitter_minuit1(&bintransformpdf);
 
     EXPECT_TRUE(fitter);
     // EXPECT_LT(bt_1.getError(), 1.01);

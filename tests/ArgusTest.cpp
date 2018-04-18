@@ -40,7 +40,7 @@ TEST(ArgusUpper, SimpleFit) {
     ArgusPdf arguspdf{"Arguspdf", xvar, alpha, beta, false};
     arguspdf.setData(&data);
 
-    bool fitter = test_fitter(&arguspdf);
+    bool fitter = test_fitter_minuit1(&arguspdf);
 
     EXPECT_TRUE(fitter);
     EXPECT_LT(alpha.getError(), .1);
@@ -76,7 +76,7 @@ TEST(ArgusLower, SimpleFit) {
     ArgusPdf arguspdf{"Arguspdf", xvar, alpha, beta, true};
     arguspdf.setData(&data);
 
-    bool fitter = test_fitter(&arguspdf);
+    bool fitter = test_fitter_minuit1(&arguspdf);
 
     EXPECT_TRUE(fitter);
     EXPECT_LT(alpha.getError(), .1);

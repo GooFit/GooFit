@@ -40,7 +40,7 @@ TEST(Exp, SimpleFit) {
     ExpPdf exppdf{"exppdf", xvar, alpha, sigma};
     exppdf.setData(&data);
 
-    bool fitter = test_fitter(&exppdf);
+    bool fitter = test_fitter_minuit1(&exppdf);
 
     EXPECT_TRUE(fitter);
     // EXPECT_LT(alpha.getError(), .1);
@@ -81,7 +81,7 @@ TEST(ExpPoly, SimpleFit) {
     ExpPdf exppdf{"exppdf", xvar, weights};
     exppdf.setData(&data);
 
-    bool fitter = test_fitter(&exppdf);
+    bool fitter = test_fitter_minuit1(&exppdf);
 
     EXPECT_TRUE(fitter);
     // EXPECT_LT(alpha.getError(), .1);
@@ -116,7 +116,7 @@ TEST(ExpOffset, SimpleFit) {
     ExpPdf exppdf{"exppdf", xvar, alpha, offset};
     exppdf.setData(&data);
 
-    bool fitter = test_fitter(&exppdf);
+    bool fitter = test_fitter_minuit1(&exppdf);
 
     EXPECT_TRUE(fitter);
 }
@@ -155,7 +155,7 @@ TEST(ExpPolyOffset, SimpleFit) {
     ExpPdf exppdf{"exppdf", xvar, weights, offset};
     exppdf.setData(&data);
 
-    bool fitter = test_fitter(&exppdf);
+    bool fitter = test_fitter_minuit1(&exppdf);
 
     EXPECT_TRUE(fitter);
 }

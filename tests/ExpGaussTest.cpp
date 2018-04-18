@@ -42,7 +42,7 @@ TEST(ExpGausPdf, SimpleFit) {
     ExpGausPdf expgauspdf{"expgausspdf", xvar, alpha, sigma, beta};
     expgauspdf.setData(&data);
 
-    bool fitter = test_fitter(&expgauspdf);
+    bool fitter = test_fitter_minuit1(&expgauspdf);
 
     EXPECT_TRUE(fitter);
     EXPECT_LT(alpha.getError(), 12.84);

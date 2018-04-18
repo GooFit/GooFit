@@ -22,12 +22,12 @@ doing maximum-likelihood fits with a familiar syntax.
 ## Requirements
 
 * A recent version of CMake is required. The minimum is 3.4, but tested primarily with 3.6 and newer. CMake is incredibly easy to install (see [the system install page](./docs/SYSTEM_INSTALL.md)).
-* A ROOT 6 build highly recommended -- GooFit will use the included Minuit2 submodule if ROOT is not found, and the Minuit1 based fitter will not be available. For CUDA, please use 6.08 (newer versions crash the NVCC compiler).
+* A ROOT 6 build highly recommended -- GooFit will use the included Minuit2 submodule if ROOT is not found, and the Minuit1 based fitter will not be available.
 
 <details><summary>If using CUDA: (click to expand)</summary><p>
 
 * CMake 3.8+ highly recommended, but not required (yet)
-* CUDA 7.0-8.0. CUDA 9+ not yet supported. Requires ROOT 6.08 (6.10 and 6.12 crash NVCC when compiling).
+* CUDA 7.0-8.0. CUDA 9+ not yet supported.
 * An nVidia GPU supporting compute capability at least 2.0 (3.5+ recommended)
 
 </p></details>

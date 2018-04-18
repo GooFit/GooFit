@@ -10,7 +10,7 @@ set(GOOFIT_TAG "beta")
 #set(GOOFIT_TAG "release")
 
 include(FeatureSummary)
-#include(CMakePrintHelpers)
+include(CMakePrintHelpers)
 
 macro(FEATURE_OPTION NAME)
     get_property(MSG CACHE ${NAME} PROPERTY HELPSTRING)
@@ -305,7 +305,8 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
 
         cuda_select_nvcc_arch_flags(ARCH_FLAGS ${GOOFIT_ARCH})
         list(APPEND CUDA_NVCC_FLAGS ${ARCH_FLAGS})
-        message(STATUS "Compiling for GPU arch: ${ARCH_FLAGS}")
+        string(REPLACE ";" ", " READ_ARCH_FLAGS "${ARCH_FLAGS_readable}")
+        message(STATUS "Compiling for GPU arch: ${READ_ARCH_FLAGS}")
 
         set(THRUST_INCLUDE_DIR "${CUDA_TOOLKIT_ROOT_DIR}/include")
 
@@ -333,8 +334,7 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
         get_filename_component(CUDA_TOOLKIT_ROOT_DIR "${CUDA_TOOLKIT_ROOT_DIR}" DIRECTORY)
         get_filename_component(CUDA_TOOLKIT_ROOT_DIR "${CUDA_TOOLKIT_ROOT_DIR}" DIRECTORY)
 
-        include(CUDAUtils)
-        include(CUDA/protect_flags)
+        include(CUDAUtilities)
 
         set(cuda_lang "$<COMPILE_LANGUAGE:CUDA>")
 
@@ -348,10 +348,11 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
             string(APPEND CMAKE_CUDA_FLAGS " --expt-relaxed-constexpr")
         endif()
 
-        cmake_cuda_arch_detect(ARCH_FLAGS ARCH ${GOOFIT_ARCH})
+        cmake_cuda_arch_select(FLAGS ARCH_FLAGS READABLE ARCH_FLAGS_readable ARCH ${GOOFIT_ARCH})
+        string(REPLACE ";" ", " READ_ARCH_FLAGS "${ARCH_FLAGS_readable}")
         string(REPLACE ";" " " ARCH_FLAGS "${ARCH_FLAGS}")
         string(APPEND CMAKE_CUDA_FLAGS " ${ARCH_FLAGS}")
-        message(STATUS "Compiling for GPU arch: ${ARCH_FLAGS}")
+        message(STATUS "Compiling for GPU arch: ${READ_ARCH_FLAGS}")
 
         set(THRUST_INCLUDE_DIR "${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}")
 
@@ -709,7 +710,7 @@ endif()
 add_feature_info("GOOFIT_DEVICE=${GOOFIT_DEVICE}" ON "The device to compile for")
 add_feature_info("GOOFIT_HOST=${GOOFIT_HOST}" ON "The host system to compile for")
 if(GOOFIT_DEVICE STREQUAL CUDA)
-    add_feature_info("ARCH_FLAGS=${ARCH_FLAGS}" ON "")
+    add_feature_info("ARCH_FLAGS=${READ_ARCH_FLAGS}" ON "Readable GPU arch flags")
 endif()
 add_feature_info("GOOFIT_MAXPAR=${GOOFIT_MAXPAR}" ON "The number of parameters to statically support")
 

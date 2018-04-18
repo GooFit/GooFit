@@ -303,6 +303,9 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
         # Only needed to make FindCUDA provide nice flags
         set(CUDA_LINK_LIBRARIES_KEYWORD PUBLIC)
 
+        # GooFit isn't popular with nvlink
+        list(APPEND CUDA_NVCC_FLAGS -Xnvlink --disable-warnings)
+
         cuda_select_nvcc_arch_flags(ARCH_FLAGS ${GOOFIT_ARCH})
         list(APPEND CUDA_NVCC_FLAGS ${ARCH_FLAGS})
         string(REPLACE ";" ", " READ_ARCH_FLAGS "${ARCH_FLAGS_readable}")
@@ -347,6 +350,10 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
         else()
             string(APPEND CMAKE_CUDA_FLAGS " --expt-relaxed-constexpr")
         endif()
+
+        # GooFit isn't popular with nvlink
+        # Note that this should be the only nvlink command
+        string(APPEND CMAKE_CUDA_FLAGS " -Xnvlink --disable-warnings")
 
         cmake_cuda_arch_select(FLAGS ARCH_FLAGS READABLE ARCH_FLAGS_readable ARCH ${GOOFIT_ARCH})
         string(REPLACE ";" ", " READ_ARCH_FLAGS "${ARCH_FLAGS_readable}")

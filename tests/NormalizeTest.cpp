@@ -8,10 +8,6 @@
 
 #include <goofit/Variable.h>
 
-#include <iostream>
-#include <sys/time.h>
-#include <sys/times.h>
-
 #include <random>
 
 using namespace GooFit;
@@ -51,9 +47,10 @@ TEST(PDFComps, KnownNormalize) {
     fitter.setVerbosity(0);
     fitter.fit();
 
+    EXPECT_NEAR(alpha.getValue(), -1.5, .05);
     EXPECT_FLOAT_EQ(exppdf.normalize(), 0.665099);
     EXPECT_FLOAT_EQ(exppdf.normalize(), 0.665099);
-    ; // Just verifying that it does not crash
+    // Just verifying that it does not crash
     EXPECT_FLOAT_EQ(exppdf.normalize(), exppdf.integrate(0, 10));
 }
 

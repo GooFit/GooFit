@@ -8,16 +8,12 @@
 
 #include <goofit/Variable.h>
 
-#include <iostream>
-#include <sys/time.h>
-#include <sys/times.h>
-
 #include <random>
 
 using namespace std;
 using namespace GooFit;
 
-TEST(Minuit1, SimpleFit) {
+TEST(Minuit1, ExpFit) {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> d(1.5);

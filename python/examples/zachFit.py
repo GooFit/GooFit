@@ -5,25 +5,52 @@ from __future__ import print_function, division
 
 from goofit import *
 import numpy as np
+import sys
 
 print_goofit_info()
 
+
+def getData(data, dm, filename,mode, reduce = 1, keyw = "data_hist"):
+    raw = np.loadtxt(filename, unpack = True)
+
+    if mode==0:
+        data.from_matrix(raw[np.newaxis,:], filter=True)
+    else:
+
+        for value in raw[::reduce]:
+            dm.value = value
+
+            if dm:
+                data.addEvent()
+
+
 def main():
-    mode = 0, data = 0
-    plot
+    mode = 0
+    data = 0
+    reduce = 10
 
-    dm = Variable("dm", 0.1395, 0.1665)
-    dm.setNumBins(2700)
+    # Get the name of the files to use
+    if data == 0:
+        mcfile   = GOOFIT_SOURCE_DIR + "/examples/zachFit/dataFiles/dstwidth_kpi_resMC.dat"
+        datafile = GOOFIT_SOURCE_DIR + "/examples/zachFit/dataFiles/dstwidth_kpi_data.dat"
+    elif data == 1:
+        mcfile   = GOOFIT_SOURCE_DIR + "/examples/zachFit/dataFiles/DstarWidth_D0ToKpi_deltaM_MC.dat"
+        datafile = GOOFIT_SOURCE_DIR + "/examples/zachFit/dataFiles/DstarWidth_D0ToKpi_deltaM_Data.dat"
+    else:
+        mcfile   = GOOFIT_SOURCE_DIR + "/examples/zachFit/dataFiles/DstarWidth_D0ToK3pi_deltaM_MC.dat"
+        datafile = GOOFIT_SOURCE_DIR + "/examples/zachFit/dataFiles/DstarWidth_D0ToK3pi_deltaM_Data.dat"
 
-    mc_dataset = ()
-    data_dataset = ()
+    dm = Observable("dm", 0.1395, 0.1665)
+    dm.numbins = 2700
 
     if mode == 0:
-        mc_dataset.reset(UnbinnedDataSet(dm))
-        data_dataset.reset(UnbinnedDataSet(dm))
+        mc_dataset = UnbinnedDataSet(dm)
+        data_dataset = UnbinnedDataSet(dm)
     else:
-        mc_dataset.reset(BinnedDataSet(dm))
-        data_dataset.reset(BinnedDataSet(dm))
+        mc_dataset = BinnedDataSet(dm)
+        data_dataset = BinnedDataSet(dm)
+
+    mc_hist = getData(mc_dataset,dm,mcfile,mode, reduce, "mc_hist")
 
     mean1 = Variable("kpi_mc_mean1", 0.145402, 0.00001, 0.143, 0.148)
     mean2 = Variable("kpi_mc_mean2", 0.145465, 0.00001, 0.145, 0.1465)
@@ -43,13 +70,13 @@ def main():
     gauss1 = GaussianPdf("gauss1", dm, mean1, sigma1)
     gauss2 = GaussianPdf("gauss2", dm, mean2, sigma2)
     gauss3 = GaussianPdf("gauss3", dm, mean3, sigma3)
-    argus = ArgusPdf("argus", dm, pimass, aslope, false, apower)
+    argus = ArgusPdf("argus", dm, pimass, aslope, False, apower)
 
     resolution = AddPdf("resolution", (gfrac1, gfrac2, afrac), (gauss1, gauss2, argus, gauss3))
 
-    resolution.setData(mc_dataset.get())
+    resolution.setData(mc_dataset)
 
-    mcpdf = FitManagr(resolution)
+    mcpdf = FitManager(resolution)
     mcpdf.fit()
 
     # Locking the MC variables
@@ -90,20 +117,23 @@ def main():
     signal = AddPdf("signal", (gfrac1, gfrac2, afrac), (signal1, signal2, argus, signal3))
 
     slope = Variable("kpi_rd_slope", -1.0, 0.1, -35.0, 25.0)
-    bpower = nullptr
-    bkg = ArgusPdf("bkg", dm, pimass, slope, false, bpower)
+    #bpower = None
+    bkg = ArgusPdf("bkg", dm, pimass, slope, False)
     bkg_frac = Variable("kpi_rd_bkg_frac", 0.03, 0.0, 0.3)
-    total = AddPdf("total", (bkg_frac), (bkg, signal))
-    total.setData(data_dataset.get())
+
+    data_hist = getData(data_dataset,dm,datafile,mode, reduce, "data_hist")
+
+    total = AddPdf("total", (bkg_frac,), (bkg, signal))
+    total.setData(data_dataset)
 
     chi_control = ()
-    if(2 == mode) (
+    if 2 == mode:
         chi_control.reset(BinnedChisqFit)
         total.setFitControl(chi_control.get())
-    )
+    
 
-    FitManager datapdf(total)
+    datapdf = FitManager(total)
     datapdf.fit()
     return datapdf
-)
+
 main()

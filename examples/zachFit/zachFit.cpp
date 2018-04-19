@@ -36,13 +36,13 @@ TH1D *getData(DataSet *data, Observable var, std::string filename, size_t reduce
 
     size_t val_read_in = 0;
     while(reader >> var) {
-        if(!var)
-            continue;
-        if(val_read_in % reduce == 0) {
-            data->addEvent();
-            hist->Fill(var.getValue());
+        if(var) {
+            if(val_read_in % reduce == 0) {
+                data->addEvent();
+                hist->Fill(var.getValue());
+            }
+            val_read_in++;
         }
-        val_read_in++;
     }
 
     hist->SetStats(false);

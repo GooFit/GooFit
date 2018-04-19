@@ -165,7 +165,9 @@ endif()
 if(CMAKE_VERSION VERSION_LESS 3.8)
     set(NEW_CUDA OFF)
 else()
-    set(NEW_CUDA ON)
+    if(NOT DEFINED NEW_CUDA)
+        set(NEW_CUDA ON)
+    endif()
 endif()
 
 # Auto device selection
@@ -328,13 +330,14 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
     # The new language support
     else()
         enable_language(CUDA)
+        set(CUDA_VERSION ${CMAKE_CUDA_COMPILER_VERSION})
 
         if(CMAKE_CUDA_COMPILER_VERSION VERSION_LESS 7.0)
             message(FATAL_ERROR "CUDA 7.0 or better required!")
         elseif(NOT CMAKE_CUDA_COMPILER_VERSION VERSION_LESS 9.0)
             message(WARNING "You have a version of CUDA that is currently not supported by Eigen, build will fail")
         else()
-            message(STATUS "Found CUDA ${CMAKE_CUDA_COMPILER_VERSION} at ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}")
+            message(STATUS "Found CUDA LANGUAGE ${CMAKE_CUDA_COMPILER_VERSION} at ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}")
         endif()
 
 
@@ -691,8 +694,10 @@ endif()
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/extern/pybind11/tools" ${CMAKE_MODULE_PATH})
 find_package(PythonLibsNew)
 
-if(PYTHONLIBS_FOUND)
-    if(EXISTS ${PYTHON_LIBRARIES})
+if("${GOOFIT_DEVICE}" STREQUAL "CUDA" AND "${CUDA_VERSION}" VERSION_LESS "7.5")
+    option(GOOFIT_PYTHON "Python bindings for goofit" OFF)
+elseif(PYTHONLIBS_FOUND)
+    if(EXISTS "${PYTHON_LIBRARIES}")
         option(GOOFIT_PYTHON "Python bindings for goofit" ON)
     else()
         message(STATUS "Found Python, but library location ${PYTHON_LIBRARIES} does not exist")
@@ -704,15 +709,20 @@ else()
 endif()
 
 if(GOOFIT_PYTHON)
-    add_subdirectory("extern/pybind11")
-    if(PYTHONLIBS_FOUND AND EXISTS ${PYTHON_LIBRARIES})
+    if(GOOFIT_DEVICE STREQUAL "CUDA" AND CUDA_VERSION VERSION_LESS 7.5)
+        message(FATAL_ERROR "CUDA 7.0 does not work with PyBind11, please upgrade CUDA.")
+    elseif(PYTHONLIBS_FOUND AND EXISTS "${PYTHON_LIBRARIES}")
         message(STATUS "Found Python at ${PYTHON_LIBRARIES}, building bindings")
     else()
         message(FATAL_ERROR "Did not find Python development libraries, make sure the development package for Python is installed or turn off Python bindings")
     endif()
+
+    add_subdirectory("extern/pybind11")
+
     if(NEW_CUDA AND GOOFIT_DEVICE STREQUAL CUDA)
         cmake_cuda_convert_flags(INTERFACE_TARGET module)
     endif()
+
     add_subdirectory(python)
 endif()
 

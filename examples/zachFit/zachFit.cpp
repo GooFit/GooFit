@@ -29,55 +29,36 @@
 using namespace fmt::literals;
 using namespace GooFit;
 
-TH1D *getMCData(DataSet *data, Observable var, std::string filename, size_t reduce = 1) {
-    TH1D *mchist = new TH1D{"mc_hist", "", 300, 0.1365, 0.1665};
-    std::ifstream mcreader{filename};
+TH1D *getData(DataSet *data, Observable var, std::string filename, size_t reduce = 1, std::string keyw = "data_hist") {
+    TH1D *hist = new TH1D(keyw.c_str(), "", 300, 0.1365, 0.1665);
+
+    std::ifstream reader{filename};
 
     size_t val_read_in = 0;
-    while(mcreader >> var) {
+    while(reader >> var) {
         if(!var)
             continue;
         if(val_read_in % reduce == 0) {
             data->addEvent();
-            mchist->Fill(var.getValue());
+            hist->Fill(var.getValue());
         }
         val_read_in++;
     }
 
-    mchist->SetStats(false);
-    mchist->SetMarkerStyle(8);
-    mchist->SetMarkerSize(0.6);
+    hist->SetStats(false);
+    hist->SetMarkerStyle(8);
+    hist->SetMarkerSize(0.6);
 
-    GOOFIT_INFO("MC events: {}", data->getNumEvents());
+    std::size_t pos   = keyw.find("_");
+    std::string keywu = keyw.substr(0, pos);
+
+    std::string outp1 = keywu + " events: {}";
+    std::string outp2 = "No" + keywu + " events read in!";
+
+    GOOFIT_INFO(outp1, data->getNumEvents());
     if(data->getNumEvents() == 0)
-        throw GooFit::GeneralError("No MC events read in!");
-    return mchist;
-}
-
-TH1D *getData(DataSet *data, Observable var, std::string filename, size_t reduce = 1) {
-    TH1D *data_hist = new TH1D("data_hist", "", 300, 0.1365, 0.1665);
-    std::ifstream datareader{filename};
-
-    size_t val_read_in = 0;
-    while(datareader >> var) {
-        if(!var)
-            continue;
-        if(val_read_in % reduce == 0) {
-            data->addEvent();
-            data_hist->Fill(var.getValue());
-        }
-        val_read_in++;
-    }
-
-    data_hist->SetStats(false);
-    data_hist->SetMarkerStyle(8);
-    data_hist->SetMarkerSize(0.6);
-
-    GOOFIT_INFO("Data events: {}", data->getNumEvents());
-    if(data->getNumEvents() == 0)
-        throw GooFit::GeneralError("No Data events read in!");
-
-    return data_hist;
+        throw GooFit::GeneralError(outp2);
+    return hist;
 }
 
 int main(int argc, char **argv) {
@@ -153,7 +134,7 @@ inverse femtobarn).
         data_dataset.reset(new BinnedDataSet{dm});
     }
 
-    TH1D *mc_hist = getMCData(mc_dataset.get(), dm, mcfile, reduce);
+    TH1D *mc_hist = getData(mc_dataset.get(), dm, mcfile, reduce, "mc_hist");
 
     Variable mean1("kpi_mc_mean1", 0.145402, 0.00001, 0.143, 0.148);
     Variable mean2("kpi_mc_mean2", 0.145465, 0.00001, 0.145, 0.1465);
@@ -240,7 +221,7 @@ inverse femtobarn).
 
     Variable bkg_frac("kpi_rd_bkg_frac", 0.03, 0.0, 0.3);
 
-    TH1D *data_hist = getData(data_dataset.get(), dm, datafile, reduce);
+    TH1D *data_hist = getData(data_dataset.get(), dm, datafile, reduce, "data_hist");
 
     AddPdf total("total", {bkg_frac}, {&bkg, &signal});
 

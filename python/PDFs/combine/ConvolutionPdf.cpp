@@ -22,5 +22,9 @@ void init_ConvolutionPdf(py::module &m) {
              "resolution",
              "numOthers",
              py::keep_alive<1, 4>(),
-             py::keep_alive<1, 5>());
+             py::keep_alive<1, 5>())
+
+        .def("setIntegrationConstants", &ConvolutionPdf::setIntegrationConstants, "lo", "hi", "step")
+
+        ;
 }

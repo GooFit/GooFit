@@ -6,6 +6,7 @@ from __future__ import print_function, division
 from goofit import *
 import numpy as np
 import sys
+import argparse
 
 print_goofit_info()
 
@@ -14,20 +15,17 @@ def getData(data, dm, filename,mode, reduce = 1, keyw = "data_hist"):
     raw = np.loadtxt(filename, unpack = True)
 
     if mode==0:
-        data.from_matrix(raw[np.newaxis,:], filter=True)
+        data.from_matrix(raw[np.newaxis,::reduce], filter=True)
     else:
-
         for value in raw[::reduce]:
             dm.value = value
-
             if dm:
                 data.addEvent()
 
+    print("Read in events:", data.getNumEvents())
 
-def main():
-    mode = 0
-    data = 0
-    reduce = 10
+
+def main(mode = 0, data = 0, reduce = 10):
 
     # Get the name of the files to use
     if data == 0:
@@ -130,10 +128,24 @@ def main():
     if 2 == mode:
         chi_control.reset(BinnedChisqFit)
         total.setFitControl(chi_control.get())
-    
 
     datapdf = FitManager(total)
     datapdf.fit()
     return datapdf
 
-main()
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser("""\
+        Dataset descriptions:
+        0-simple   Early testing sample for GooFit before nominal dataset was released.
+        MC resolution sample and data for channel D*+ -> D0 pi+; D0 -> K- pi+
+        Samples are composed of events that pass the majority of selection criteria, but
+        fail at least one of the stricter tracking cuts. The resulting resolution is worse
+        than in the events of the nominal samples used in the official analysis/publication
+        marked below as data set options "1" and "2".
+        1-kpi      Nominal MC resolution sample and data for channel D*+ -> D0 pi+; D0 -> K- pi+
+        2-k3pi     Nominal MC resolution sample and data for channel D*+ -> D0 pi+; D0 -> K- pi+ pi- pi+""")
+    parser.add_argument("--mode", type=int, default=0, help="Program mode: 0-unbinned, 1-binned, 2-binned chisq")
+    parser.add_argument("--data", type=int, default=0, help="Dataset: 0-simple, 1-kpi, 2-k3pi")
+    parser.add_argument("--reduce", type=int, default=1, help="Load every X line of data")
+    args = parser.parse_args()
+    main(args.mode, args.data, args.reduce)

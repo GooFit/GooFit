@@ -26,7 +26,7 @@ doing maximum-likelihood fits with a familiar syntax.
 <details><summary>If using CUDA: (click to expand)</summary><p>
 
 * CMake 3.8+ highly recommended, but not required (yet)
-* CUDA 7.0-8.0. CUDA 9+ not yet supported. CUDA 7.5+ is required for Python bindings.
+* CUDA 7.0-8.0. CUDA 9+ not yet supported. CUDA 7.5+ is required for Python bindings or for using `NEW_CUDA=ON` (default in CMake 3.8+).
 * An nVidia GPU supporting compute capability at least 2.0 (3.5+ recommended)
 
 </p></details>
@@ -108,7 +108,7 @@ Other custom options supported along with the defaults:
 * If `clang-tidy` is available, it will automatically be used to check the source. If you set `-DGOOFIT_TIDY_FIX=ON`, fixes will be applied to the GooFit source.
 * `-DGOOFIT_SPLASH=ON`: Controls the unicode splash at the beginning.
 * `-DGOOFIT_CERNROOT=ON`: Allows you to disable the automatic search for ROOT (used by the PIP Python build)
-* `-DNEW_CUDA=OFF`: On CMake 3.9+, GooFit uses CUDA as a language. You can turn that off with this setting.
+* `-DNEW_CUDA=OFF`: On CMake 3.8+, GooFit uses CUDA as a language. You can turn that off with this setting. Make sure you have CUDA 7.5+.
 
 </p></details>
 

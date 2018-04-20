@@ -46,6 +46,7 @@ total = AddPdf("total", [sigfrac], [signal, backgr])
 total.fitTo(data)
 
 # Plot data
+print(dat, dat.shape)
 plt.hist(dat, bins='auto', label='data', normed=True)
 
 # Make grid and evaluate on it
@@ -61,3 +62,4 @@ plt.plot(xvals, np.array(flat)*(1-sigfrac.value), label='background')
 plt.legend()
 plt.savefig('addition_plot.pdf')
 #plt.show()
+

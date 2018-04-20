@@ -10,7 +10,7 @@ The internals of GooFit have been updated for GPU performance.  The new improvem
 [#125]: https://github.com/GooFit/GooFit/pull/125
 
 ## v2.1.3: Preparing for new indexing
-#### April 12, 2018
+#### April 20, 2018
 
 This release is preparing for the major change in 2.2. The changes are mostly small, but help with several key pieces of needed functionality from the NIPS project. GooFit testing is significanly more stable.
 
@@ -24,6 +24,8 @@ User facing:
 * Packages can now be turned on and off individually (`goofit_add_package`)
 * Moved files users might use to `goofit/utilities` from `goofit/detail` ([#145])
 * Adds symmetrized support for RBW (no runtime impact if not requested!) ([#145])
+* Python example available for Zachfit ([#149])
+
 
 Backend:
 
@@ -39,6 +41,8 @@ Backend:
 * Added feature summary
 * Cleaned up GlobalCudaDefines, dropped GooError in favor of CUDA naming ([#145])
 * Added some repairs for CUDA 7 ([#146])
+* Added some minor changes to C++ examples ([#149])
+* Binded setIntegrationconstant function ([#149])
 
 
 [#139]: https://github.com/GooFit/GooFit/pull/139

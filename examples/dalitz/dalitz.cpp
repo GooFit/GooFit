@@ -76,12 +76,9 @@ void getToyData(std::string toyFileName, GooFit::Application &app, DataSet &data
     std::ifstream reader(toyFileName);
     std::string buffer;
 
-    while(!reader.eof()) {
-        reader >> buffer;
-
+    while(reader >> buffer) {
         if(buffer == "====")
             break;
-
         std::cout << buffer;
     }
 

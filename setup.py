@@ -5,19 +5,6 @@ except ImportError:
     print("Failed to find scikit-build, please run `pip install scikit-build`")
     raise
 
-import subprocess
-
-# Add CMake as a build requirement if cmake is not installed or is too low a version
-setup_requires = []
-try:
-    cmake_version = subprocess.check_output(["cmake", "--version"])
-    cmake_version = [int(x) for x in cmake_version.splitlines()[0].split()[-1].split('.')]
-    if cmake_version < (3,4):
-        setup_requires.append('cmake')
-except OSError:
-    setup_requires.append('cmake')
-
-
 setup(
         name='goofit',
         version='2.1.3',
@@ -50,7 +37,6 @@ setup(
             '-DGOOFIT_EXAMPLES=OFF'],
         license="LGPL 3.0",
         packages=['goofit'],
-        setup_requires=setup_requires,
         extras_require={
             'dev': [
                 'pytest',

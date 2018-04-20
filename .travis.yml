@@ -1,20 +1,16 @@
 language: cpp
 sudo: false
 dist: trusty
-
 cache:
   ccache: true
   apt: true
   directories:
-  - ${TRAVIS_BUILD_DIR}/deps/root
-  - ${TRAVIS_BUILD_DIR}/deps/doxygen
-
-# Pull requests, version tags, and master only
+  - "${TRAVIS_BUILD_DIR}/deps/root"
+  - "${TRAVIS_BUILD_DIR}/deps/doxygen"
 branches:
   only:
   - master
-  - /^v\d/
-
+  - "/^v\\d/"
 env:
   global:
   - CTEST_OUTPUT_ON_FAILURE: 1
@@ -22,16 +18,14 @@ env:
   - DEPS_DIR: "${TRAVIS_BUILD_DIR}/deps"
   - DOXYFILE: "$TRAVIS_BUILD_DIR/docs/Doxyfile"
   - secure: UxIkC5evjPTPkh4tG9VIK4Hjy0+Wbm69qu54jde0EMjlP3FzLrvXCKr1gh/Y6ywzQYSWE2fAsDWwQGmfqaphAFpjjT1S3Bwpa6ojTikjBe16jaCgIKtRiVXBr9LsNl3W7W9pDrXs1Ue40mSEksZJm8a9G7H4Ibb7K3izrllkhuQ=
-
+  - secure: ZntCiCGTCKOEeo7uIz/5F/NZny2Ng2nHda6SQ6lQ8SsU6Moug7WsVzWGS7ZM/leAhKbDfYCHatyYjTorsh1SWhryKTJxElv6/vVR6f0SSxY6l+J2h/sbe56sZF/XISTc6xy5icGsEiciD4TYwHiCGuhVnV6hTkK3Y6/0PnuH/S0=
+  - secure: f9bVOvGDFhoi230dLjSd4UG/Z4/jZaCe3osdlMxkfnn6xKu93m4O528KLfmfXs4O5ngLjbXFe+5RlOSSi2IGphTH5r5o+pjYo0OebwIlyPUJ0W7EaXhkxhRhYBxZmxS3dJ1cCC0fucDVWLIzHeAAuaW08EuykRdoRPnHNGEDO+w=
 matrix:
   include:
-    # Clang check-format and tidy
   - compiler: clang
     script:
     - scripts/check_style.sh
-    - .ci/check_tidy.sh
-
-    # Regular test set and doxygen
+    - ".ci/check_tidy.sh"
   - compiler: gcc
     addons:
       apt:
@@ -45,17 +39,18 @@ matrix:
         - python-pip
     install:
     - pip install --user --upgrade pip
-    - pip install --user pytest numpy plumbum pandas matplotlib numba uncertainties
+    - pip install --user scikit-build pytest numpy plumbum pandas matplotlib numba
+      uncertainties
     - source .ci/build_doxygen.sh
-    script: .ci/travis.sh
+    script:
+    - if [[ -n "${TRAVIS_TAG}" ]] ; then python setup.py sdist && python -m twine upload dist/* ; fi
+    - ".ci/travis.sh"
     after_success:
-    - if [[ -n "${TRAVIS_TAG}" ]] ; then echo "Updating docs" &&  cd "${TRAVIS_BUILD_DIR}" && .ci/build_docs.sh ; fi
-
+    - if [[ -n "${TRAVIS_TAG}" ]] ; then echo "Updating docs" &&  cd "${TRAVIS_BUILD_DIR}"
+      && .ci/build_docs.sh ; fi
 before_install:
 - source .ci/build_root.sh
-
 install: skip
-
 notifications:
   webhooks:
     urls:

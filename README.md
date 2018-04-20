@@ -26,7 +26,7 @@ doing maximum-likelihood fits with a familiar syntax.
 <details><summary>If using CUDA: (click to expand)</summary><p>
 
 * CMake 3.8+ highly recommended, but not required (yet)
-* CUDA 7.0-8.0. CUDA 9+ not yet supported. CUDA 7.5+ is required for Python bindings or for using `NEW_CUDA=ON` (default in CMake 3.8+).
+* CUDA 7.0-8.0. CUDA 9+ not yet supported. CUDA 8 is required for Python bindings or for using `NEW_CUDA=ON` (default in CMake 3.8+).
 * An nVidia GPU supporting compute capability at least 2.0 (3.5+ recommended)
 
 </p></details>
@@ -50,7 +50,7 @@ doing maximum-likelihood fits with a familiar syntax.
 
 A list of exact commands required for several platforms is [available here](./docs/SYSTEM_INSTALL.md).
 
-There are also Python Bindings. This requires Python (2 or 3), [NumPy](http://www.numpy.org), [SciKit-Build](http://scikit-build.readthedocs.io), and CMake. CUDA 7.5+ is required if using CUDA. You can uses `pip install -v goofit`, or `pip install -v -e .` inside the repository. You can also direcly force the bindings from a normal build with `-DGOOFIT_PYTHON=ON`. You can check your install with `python -m goofit`. You can debug a goofit file named `python_script.py` with gcc using `gdb -ex r --args python python_script.py`.
+There are also Python Bindings. This requires Python (2 or 3), [NumPy](http://www.numpy.org), [SciKit-Build](http://scikit-build.readthedocs.io), and CMake. CUDA 8 is required if using CUDA. You can uses `pip install -v goofit`, or `pip install -v -e .` inside the repository. You can also direcly force the bindings from a normal build with `-DGOOFIT_PYTHON=ON`. You can check your install with `python -m goofit`. You can debug a goofit file named `python_script.py` with gcc using `gdb -ex r --args python python_script.py`.
 
 ## Getting the files
 

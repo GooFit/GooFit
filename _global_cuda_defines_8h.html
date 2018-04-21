@@ -28,6 +28,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">GooFit
+   &#160;<span id="projectnumber">v2.1.3</span>
    </div>
   </td>
  </tr>
@@ -82,7 +83,7 @@ $(function() {
 <code>#include &lt;thrust/system_error.h&gt;</code><br />
 <code>#include &lt;cmath&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
-<code>#include &lt;omp.h&gt;</code><br />
+<code>#include &lt;driver_types.h&gt;</code><br />
 </div>
 <p><a href="_global_cuda_defines_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -95,10 +96,22 @@ Namespaces</h2></td></tr>
 Macros</h2></td></tr>
 <tr class="memitem:a525335710b53cb064ca56b936120431e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_global_cuda_defines_8h.html#a525335710b53cb064ca56b936120431e">_USE_MATH_DEFINES</a></td></tr>
 <tr class="separator:a525335710b53cb064ca56b936120431e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a356b3000bc116118825831361f72eead"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_global_cuda_defines_8h.html#a356b3000bc116118825831361f72eead">MEMCPY</a>(target,  source,  count,  direction)&#160;&#160;&#160;memcpy((char *)target, source, count)</td></tr>
+<tr class="separator:a356b3000bc116118825831361f72eead"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a6a0125adda058aa16e31a29bb274b1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_global_cuda_defines_8h.html#a4a6a0125adda058aa16e31a29bb274b1">MEMCPY_TO_SYMBOL</a>(target,  source,  count,  offset,  direction)&#160;&#160;&#160;memcpy(((char *)target) + offset, source, count)</td></tr>
+<tr class="separator:a4a6a0125adda058aa16e31a29bb274b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a789c0090baa3533c4805086b2bacd72f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_global_cuda_defines_8h.html#a789c0090baa3533c4805086b2bacd72f">MEMCPY_FROM_SYMBOL</a>(target,  source,  count,  offset,  direction)&#160;&#160;&#160;memcpy((char *)target, ((char *)source) + offset, count)</td></tr>
+<tr class="separator:a789c0090baa3533c4805086b2bacd72f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae15318646bdb0ed12deef34f750623ff"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_global_cuda_defines_8h.html#ae15318646bdb0ed12deef34f750623ff">GET_FUNCTION_ADDR</a>(fname)</td></tr>
+<tr class="separator:ae15318646bdb0ed12deef34f750623ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a915885cae2ba858d87ed383462aa4d57"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_global_cuda_defines_8h.html#a915885cae2ba858d87ed383462aa4d57">RO_CACHE</a>(x)&#160;&#160;&#160;x</td></tr>
+<tr class="separator:a915885cae2ba858d87ed383462aa4d57"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a595c708029e8a814d1cc628efccae426"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_global_cuda_defines_8h.html#a595c708029e8a814d1cc628efccae426">THREADIDX</a>&#160;&#160;&#160;(omp_get_thread_num())</td></tr>
 <tr class="separator:a595c708029e8a814d1cc628efccae426"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a06dbd88a0344955413f99eead6231dc2"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_global_cuda_defines_8h.html#a06dbd88a0344955413f99eead6231dc2">BLOCKDIM</a>&#160;&#160;&#160;(omp_get_num_threads())</td></tr>
 <tr class="separator:a06dbd88a0344955413f99eead6231dc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af7e59e12e90accfc256b70ff077023fb"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_global_cuda_defines_8h.html#af7e59e12e90accfc256b70ff077023fb">BLOCKIDX</a>&#160;&#160;&#160;(0)</td></tr>
+<tr class="separator:af7e59e12e90accfc256b70ff077023fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad515070d237be85f5fbbb8a49b1ee44e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_global_cuda_defines_8h.html#ad515070d237be85f5fbbb8a49b1ee44e">THREAD_SYNCH</a>&#160;&#160;&#160;_Pragma(&quot;omp barrier&quot;)</td></tr>
 <tr class="separator:ad515070d237be85f5fbbb8a49b1ee44e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a73dc743cb2ae569c146a5018bd38e468"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_global_cuda_defines_8h.html#a73dc743cb2ae569c146a5018bd38e468">root2</a>&#160;&#160;&#160;1.4142135623730951</td></tr>
@@ -117,16 +130,13 @@ Typedefs</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:af2bcb27f8446f3950037de6ce8681ee1"><td class="memItemLeft" align="right" valign="top">gooError&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#af2bcb27f8446f3950037de6ce8681ee1">GooFit::gooMalloc</a> (void **target, size_t bytes)</td></tr>
-<tr class="separator:af2bcb27f8446f3950037de6ce8681ee1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afcbdef1d35a4393540bcc91d58c183f8"><td class="memItemLeft" align="right" valign="top">gooError&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#afcbdef1d35a4393540bcc91d58c183f8">GooFit::gooFree</a> (void *ptr)</td></tr>
-<tr class="separator:afcbdef1d35a4393540bcc91d58c183f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0cfc810709dd713ab8e13d7807032113"><td class="memItemLeft" align="right" valign="top">cudaError_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#a0cfc810709dd713ab8e13d7807032113">GooFit::gooMalloc</a> (void **target, size_t bytes)</td></tr>
+<tr class="separator:a0cfc810709dd713ab8e13d7807032113"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99ba75e03bd2d8a4e12eb5ac83dda90a"><td class="memItemLeft" align="right" valign="top">cudaError_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_goo_fit.html#a99ba75e03bd2d8a4e12eb5ac83dda90a">GooFit::gooFree</a> (void *ptr)</td></tr>
+<tr class="separator:a99ba75e03bd2d8a4e12eb5ac83dda90a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a52a60362b2be23ba4c8280e38e561b67"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a52a60362b2be23ba4c8280e38e561b67"><td class="memTemplItemLeft" align="right" valign="top">__host__ __device__ T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="_global_cuda_defines_8h.html#a52a60362b2be23ba4c8280e38e561b67">rsqrt</a> (T val)</td></tr>
 <tr class="separator:a52a60362b2be23ba4c8280e38e561b67"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3282a5cfe39f52044508cb8d8e62b9df"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a3282a5cfe39f52044508cb8d8e62b9df"><td class="memTemplItemLeft" align="right" valign="top">__host__ __device__ T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="_global_cuda_defines_8h.html#a3282a5cfe39f52044508cb8d8e62b9df">pow</a> (T x, int y)</td></tr>
-<tr class="separator:a3282a5cfe39f52044508cb8d8e62b9df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -162,7 +172,43 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00048">48</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00064">64</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+
+</div>
+</div>
+<a id="af7e59e12e90accfc256b70ff077023fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af7e59e12e90accfc256b70ff077023fb">&#9670;&nbsp;</a></span>BLOCKIDX</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define BLOCKIDX&#160;&#160;&#160;(0)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00065">65</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+
+</div>
+</div>
+<a id="ae15318646bdb0ed12deef34f750623ff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae15318646bdb0ed12deef34f750623ff">&#9670;&nbsp;</a></span>GET_FUNCTION_ADDR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define GET_FUNCTION_ADDR</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">fname</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">{                                                                                                                  \</div><div class="line">        host_fcn_ptr = (<span class="keywordtype">void</span> *)fname;                                                                                  \</div><div class="line">        GOOFIT_DEBUG(<span class="stringliteral">&quot;Using function {} in {}, {}:{}&quot;</span>, #fname, __func__, __FILE__, __LINE__);                          \</div><div class="line">    }</div></div><!-- fragment -->
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00050">50</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
 
 </div>
 </div>
@@ -179,6 +225,144 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00098">98</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+
+</div>
+</div>
+<a id="a356b3000bc116118825831361f72eead"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a356b3000bc116118825831361f72eead">&#9670;&nbsp;</a></span>MEMCPY</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MEMCPY</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">target, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">source, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">count, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">direction&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;memcpy((char *)target, source, count)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00046">46</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+
+</div>
+</div>
+<a id="a789c0090baa3533c4805086b2bacd72f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a789c0090baa3533c4805086b2bacd72f">&#9670;&nbsp;</a></span>MEMCPY_FROM_SYMBOL</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MEMCPY_FROM_SYMBOL</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">target, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">source, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">count, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">offset, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">direction&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;memcpy((char *)target, ((char *)source) + offset, count)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00048">48</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+
+</div>
+</div>
+<a id="a4a6a0125adda058aa16e31a29bb274b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4a6a0125adda058aa16e31a29bb274b1">&#9670;&nbsp;</a></span>MEMCPY_TO_SYMBOL</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MEMCPY_TO_SYMBOL</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">target, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">source, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">count, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">offset, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">direction&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;memcpy(((char *)target) + offset, source, count)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00047">47</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
 
 </div>
 </div>
@@ -224,6 +408,26 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="a915885cae2ba858d87ed383462aa4d57"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a915885cae2ba858d87ed383462aa4d57">&#9670;&nbsp;</a></span>RO_CACHE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define RO_CACHE</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">x</td><td>)</td>
+          <td>&#160;&#160;&#160;x</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00055">55</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+
+</div>
+</div>
 <a id="a73dc743cb2ae569c146a5018bd38e468"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a73dc743cb2ae569c146a5018bd38e468">&#9670;&nbsp;</a></span>root2</h2>
 
@@ -252,7 +456,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00049">49</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00066">66</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
 
 </div>
 </div>
@@ -268,46 +472,11 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00047">47</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00063">63</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a3282a5cfe39f52044508cb8d8e62b9df"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3282a5cfe39f52044508cb8d8e62b9df">&#9670;&nbsp;</a></span>pow()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">__host__ __device__ T pow </td>
-          <td>(</td>
-          <td class="paramtype">T&#160;</td>
-          <td class="paramname"><em>x</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>y</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00123">123</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="pipipi0_d_p_fit_8cpp_source.html#l00239">cpuDalitz()</a>, <a class="el" href="chisquare_8cpp_source.html#l00160">cpvFitFcn()</a>, <a class="el" href="chisquare_8cpp_source.html#l00076">fitRatio()</a>, <a class="el" href="chisquare_8cpp_source.html#l00177">fitRatioCPU()</a>, <a class="el" href="landau_8h_source.html#l00093">gaussPDF()</a>, and <a class="el" href="simple_fit_8cpp_source.html#l00023">novosib()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;                                      {</div><div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="_global_cuda_defines_8h.html#a3282a5cfe39f52044508cb8d8e62b9df">pow</a>(x, (T)y);</div><div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;}</div><div class="ttc" id="_global_cuda_defines_8h_html_a3282a5cfe39f52044508cb8d8e62b9df"><div class="ttname"><a href="_global_cuda_defines_8h.html#a3282a5cfe39f52044508cb8d8e62b9df">pow</a></div><div class="ttdeci">__host__ __device__ T pow(T x, int y)</div><div class="ttdef"><b>Definition:</b> <a href="_global_cuda_defines_8h_source.html#l00123">GlobalCudaDefines.h:123</a></div></div>
-</div><!-- fragment -->
-</div>
-</div>
 <a id="a52a60362b2be23ba4c8280e38e561b67"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a52a60362b2be23ba4c8280e38e561b67">&#9670;&nbsp;</a></span>rsqrt()</h2>
 
@@ -326,14 +495,14 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00115">115</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;                                   {</div><div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    <span class="keywordflow">return</span> 1.0 / sqrt(val);</div><div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;}</div></div><!-- fragment -->
+<p class="definition">Definition at line <a class="el" href="_global_cuda_defines_8h_source.html#l00116">116</a> of file <a class="el" href="_global_cuda_defines_8h_source.html">GlobalCudaDefines.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;                                   {</div><div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    <span class="keywordflow">return</span> 1.0 / sqrt(val);</div><div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;}</div></div><!-- fragment -->
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Apr 12 2018 07:38:40 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Apr 21 2018 20:13:18 for GooFit by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

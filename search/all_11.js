@@ -32,7 +32,6 @@ var searchData=
   ['polynomialpdf',['PolynomialPdf',['../class_goo_fit_1_1_polynomial_pdf.html',1,'GooFit::PolynomialPdf'],['../class_goo_fit_1_1_polynomial_pdf.html#a6f447a3d8bc0633b658a0c289a40b7ce',1,'GooFit::PolynomialPdf::PolynomialPdf(std::string n, Observable _x, std::vector&lt; Variable &gt; weights, unsigned int lowestDegree=0)'],['../class_goo_fit_1_1_polynomial_pdf.html#a2c7dc79848d4d3a38f12514d2330658d',1,'GooFit::PolynomialPdf::PolynomialPdf(std::string n, Observable _x, std::vector&lt; Variable &gt; weights, Variable x0, unsigned int lowestDegree=0)'],['../class_goo_fit_1_1_polynomial_pdf.html#a615c6058af1eb75f4dcd046f8d394bfe',1,'GooFit::PolynomialPdf::PolynomialPdf(std::string n, std::vector&lt; Observable &gt; obses, std::vector&lt; Variable &gt; coeffs, std::vector&lt; Variable &gt; offsets, unsigned int maxDegree=0)']]],
   ['polynomialpdf_2ecu',['PolynomialPdf.cu',['../_polynomial_pdf_8cu.html',1,'']]],
   ['polynomialpdf_2eh',['PolynomialPdf.h',['../_polynomial_pdf_8h.html',1,'']]],
-  ['pow',['pow',['../_global_cuda_defines_8h.html#a3282a5cfe39f52044508cb8d8e62b9df',1,'GlobalCudaDefines.h']]],
   ['pow2',['POW2',['../_global_cuda_defines_8h.html#a1ac0abc7c913167ecaf81778d57e7a17',1,'GlobalCudaDefines.h']]],
   ['pow3',['POW3',['../_global_cuda_defines_8h.html#ab051a5ece45339feb3f4b19a4dddbcb2',1,'GlobalCudaDefines.h']]],
   ['pre_5fcallback',['pre_callback',['../class_goo_fit_1_1_application.html#ae6b257440c81e8529bd15606e9eb5f30',1,'GooFit::Application']]],

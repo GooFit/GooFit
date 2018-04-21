@@ -15,7 +15,7 @@ var searchData=
   ['fitratio',['fitRatio',['../chisquare_8cpp.html#ae52f60f9945824c54fda1ba5e9ed1189',1,'chisquare.cpp']]],
   ['fitratiocpu',['fitRatioCPU',['../chisquare_8cpp.html#a115352c14bb3f872da1938a684e8ceeb',1,'chisquare.cpp']]],
   ['fitto',['fitTo',['../class_goo_fit_1_1_pdf_base.html#af912e8fc22654d71e7a40169b08971bc',1,'GooFit::PdfBase']]],
-  ['flatte',['Flatte',['../class_goo_fit_1_1_lineshapes_1_1_flatte.html#a0ce2b860abef4e0e85dba33600d16396',1,'GooFit::Lineshapes::Flatte::Flatte()'],['../class_goo_fit_1_1_resonances_1_1_f_l_a_t_t_e.html#a5584ceb2536fc0fe541d70c15d83a870',1,'GooFit::Resonances::FLATTE::FLATTE()']]],
+  ['flatte',['Flatte',['../class_goo_fit_1_1_lineshapes_1_1_flatte.html#a0ce2b860abef4e0e85dba33600d16396',1,'GooFit::Lineshapes::Flatte::Flatte()'],['../class_goo_fit_1_1_resonances_1_1_f_l_a_t_t_e.html#a436ba68870c9791a932a024887785373',1,'GooFit::Resonances::FLATTE::FLATTE()']]],
   ['flatten',['flatten',['../namespace_goo_fit.html#a64cd6331a52b1575d81b77026db2eabf',1,'GooFit']]],
   ['focus',['FOCUS',['../class_goo_fit_1_1_lineshapes_1_1_f_o_c_u_s.html#a41802c9adebe324b7542d5f56b1eb871',1,'GooFit::Lineshapes::FOCUS']]],
   ['format_5farg',['format_arg',['../namespace_goo_fit.html#a53184976df0bea2e224a359fb7e99b78',1,'GooFit']]],

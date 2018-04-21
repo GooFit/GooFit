@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['rbw',['RBW',['../class_goo_fit_1_1_lineshapes_1_1_r_b_w.html#a7d5fa5562a9f7fc30a198e4e15cf717d',1,'GooFit::Lineshapes::RBW::RBW()'],['../class_goo_fit_1_1_resonances_1_1_r_b_w.html#a545722e6e202f5fa6630cbac85e8350e',1,'GooFit::Resonances::RBW::RBW()']]],
+  ['rbw',['RBW',['../class_goo_fit_1_1_lineshapes_1_1_r_b_w.html#a7d5fa5562a9f7fc30a198e4e15cf717d',1,'GooFit::Lineshapes::RBW::RBW()'],['../class_goo_fit_1_1_resonances_1_1_r_b_w.html#a7c0e8a35a7124a7c5c0fe105ea5dbeb0',1,'GooFit::Resonances::RBW::RBW()']]],
   ['read_5fcsv',['read_csv',['../namespace_goo_fit.html#a2e91d2b0f03e8480ed41b1098a8092ee',1,'GooFit']]],
   ['readfromfile',['readFromFile',['../namespace_goo_fit.html#a9b397dcab30d59057b23dec6da865bda',1,'GooFit']]],
   ['readlistofnumbers',['readListOfNumbers',['../namespace_goo_fit.html#aa124832d8f3db7469774f8b985340742',1,'GooFit']]],

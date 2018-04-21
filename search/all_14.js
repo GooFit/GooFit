@@ -78,7 +78,7 @@ var searchData=
   ['spinsumt',['SpinSumT',['../class_goo_fit_1_1_spin_sum_t.html',1,'GooFit::SpinSumT'],['../class_goo_fit_1_1_spin_sum_t.html#a60a6cf5cdad1a0472ab449f420472ba9',1,'GooFit::SpinSumT::SpinSumT()']]],
   ['spinsumv',['SpinSumV',['../class_goo_fit_1_1_spin_sum_v.html',1,'GooFit::SpinSumV'],['../class_goo_fit_1_1_spin_sum_v.html#a0209ae80fca413fb45a582e9133f908c',1,'GooFit::SpinSumV::SpinSumV()']]],
   ['splash_5f',['splash_',['../class_goo_fit_1_1_application.html#ab51f487281173b8784113359574f9ada',1,'GooFit::Application']]],
-  ['spline',['Spline',['../class_goo_fit_1_1_resonances_1_1_spline.html',1,'GooFit::Resonances::Spline'],['../class_goo_fit_1_1_resonances_1_1_spline.html#acd0c909e939d8f1051d91f462dff8d5b',1,'GooFit::Resonances::Spline::Spline()']]],
+  ['spline',['Spline',['../class_goo_fit_1_1_resonances_1_1_spline.html',1,'GooFit::Resonances::Spline'],['../class_goo_fit_1_1_resonances_1_1_spline.html#a13c18e54c03663bb36f3a4b2dd1a0841',1,'GooFit::Resonances::Spline::Spline()']]],
   ['spline_5ft',['spline_t',['../namespace_goo_fit_1_1_lineshapes.html#a50bf28842be2e5fac0f30e9905675b8a',1,'GooFit::Lineshapes']]],
   ['steppdf',['StepPdf',['../class_goo_fit_1_1_step_pdf.html',1,'GooFit::StepPdf'],['../class_goo_fit_1_1_step_pdf.html#affec38d8fd4c3541fc4d31d7bcf957f3',1,'GooFit::StepPdf::StepPdf()']]],
   ['steppdf_2ecu',['StepPdf.cu',['../_step_pdf_8cu.html',1,'']]],

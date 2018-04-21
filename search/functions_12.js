@@ -53,7 +53,7 @@ var searchData=
   ['spinfactor',['SpinFactor',['../class_goo_fit_1_1_spin_factor.html#a9270aa448c2b617f3ce688896dcce54f',1,'GooFit::SpinFactor::SpinFactor()'],['../namespace_goo_fit.html#a707adf7643d054c85158dbf8b6524fd4',1,'GooFit::spinFactor()']]],
   ['spinsumt',['SpinSumT',['../class_goo_fit_1_1_spin_sum_t.html#a60a6cf5cdad1a0472ab449f420472ba9',1,'GooFit::SpinSumT']]],
   ['spinsumv',['SpinSumV',['../class_goo_fit_1_1_spin_sum_v.html#a0209ae80fca413fb45a582e9133f908c',1,'GooFit::SpinSumV']]],
-  ['spline',['Spline',['../class_goo_fit_1_1_resonances_1_1_spline.html#acd0c909e939d8f1051d91f462dff8d5b',1,'GooFit::Resonances::Spline']]],
+  ['spline',['Spline',['../class_goo_fit_1_1_resonances_1_1_spline.html#a13c18e54c03663bb36f3a4b2dd1a0841',1,'GooFit::Resonances::Spline']]],
   ['steppdf',['StepPdf',['../class_goo_fit_1_1_step_pdf.html#affec38d8fd4c3541fc4d31d7bcf957f3',1,'GooFit::StepPdf']]],
   ['stride_5ffunctor',['stride_functor',['../struct_goo_fit_1_1strided__range_1_1stride__functor.html#a2922f1fdd547a521b53b193767eab06b',1,'GooFit::strided_range::stride_functor']]],
   ['strided_5frange',['strided_range',['../class_goo_fit_1_1strided__range.html#aafb7844dbc9b57dd7605757418b12fd1',1,'GooFit::strided_range']]],

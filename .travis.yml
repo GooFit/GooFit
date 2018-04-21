@@ -38,8 +38,8 @@ matrix:
         - libxext-dev
         - python-pip
     install:
-    - pip install --user --upgrade pip
-    - pip install --user scikit-build pytest numpy plumbum pandas matplotlib numba
+    - python -m pip install --user --upgrade pip
+    - python -m pip install --user scikit-build pytest numpy plumbum pandas matplotlib numba twine
       uncertainties
     - source .ci/build_doxygen.sh
     script:

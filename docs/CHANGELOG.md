@@ -10,9 +10,9 @@ The internals of GooFit have been updated for GPU performance.  The new improvem
 [#125]: https://github.com/GooFit/GooFit/pull/125
 
 ## v2.1.3: Preparing for new indexing
-#### April 20, 2018
+#### April 21, 2018
 
-This release is preparing for the major change in 2.2. The changes are mostly small, but help with several key pieces of needed functionality from the NIPS project. GooFit testing is significanly more stable.
+This release is the last feature release for the 2.1 series. The changes are mostly focused on stability and support, but there are also several key pieces of needed functionality added from the NIPS project. GooFit testing is significantly more stable, C++/CUDA are better separated, one more C++ example is now available in Python, and 6.10 and 6.12 versions of ROOT are finally supported.
 
 User facing:
 
@@ -37,12 +37,13 @@ Backend:
 * Dropped code coverage (test timeout issues when adding more tests) ([#144])
 * Removed POSIX redefine warnings for Python (except CUDA), other warning fixes
 * Build most examples and Python bindings with C++
+* ROOT versions newer than 6.08 are now supported
 * Packages do not trigger main repo git in binary dir
 * Added feature summary
 * Cleaned up GlobalCudaDefines, dropped GooError in favor of CUDA naming ([#145])
 * Added some repairs for CUDA 7 ([#146])
 * Added some minor changes to C++ examples ([#149])
-* Binded setIntegrationconstant function ([#149])
+* `setIntegrationconstant` Python bindings added ([#149])
 
 
 [#139]: https://github.com/GooFit/GooFit/pull/139
@@ -53,6 +54,7 @@ Backend:
 [#144]: https://github.com/GooFit/GooFit/pull/144
 [#145]: https://github.com/GooFit/GooFit/pull/145
 [#146]: https://github.com/GooFit/GooFit/pull/146
+[#149]: https://github.com/GooFit/GooFit/pull/149
 
 ## v2.1.2: Live Python
 #### March 12, 2018

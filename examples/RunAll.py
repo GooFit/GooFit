@@ -43,7 +43,7 @@ def make_results(profile=False):
     results = [
         test('DP4'),
         test('SigGen'),
-#        test('2d_plot'),
+        test('2d_plot'),
         test('dalitz'),
         test('convolution'),
         test('addition'),

@@ -72,3 +72,5 @@ if(ROOT_FOUND)
 #   goofit_add_test(MappedTest)
 #   goofit_add_test(TrigThresholdTest)
 endif()
+
+goofit_add_link(RunAll.py)

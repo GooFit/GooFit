@@ -53,6 +53,14 @@ A list of exact commands required for several platforms is [available here](./do
 
 There are also Python Bindings. This requires Python (2 or 3), [NumPy](http://www.numpy.org), [SciKit-Build](http://scikit-build.readthedocs.io), and CMake. CUDA 8 is required if using CUDA. You can uses `pip install -v goofit`, or `pip install -v -e .` inside the repository. You can also direcly force the bindings from a normal build with `-DGOOFIT_PYTHON=ON`. You can check your install with `python -m goofit`. You can debug a goofit file named `python_script.py` with gcc using `gdb -ex r --args python python_script.py`.
 
+Other python requirements:
+numpy-1.11.1+
+pandas-0.15.1+
+uncertainties-3.0.2
+
+Optional:
+numba
+
 ## Getting the files
 
 * Clone with git:

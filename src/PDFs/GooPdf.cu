@@ -536,9 +536,6 @@ __host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
     auto fc = fitControl;
     setFitControl(std::make_shared<ProbFit>());
 
-    // make sure we get the appropriate functions passed!
-    setIndices();
-
     // copyParams();
     // double overall =
     normalize();
@@ -576,7 +573,6 @@ __host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
         // we need to recreate the indexing for each component
         // components[i]->setFitControl(std::make_shared<ProbFit>());
         components[i]->setIndices();
-
         components[i]->normalize();
 
         MEMCPY(d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), cudaMemcpyHostToDevice);

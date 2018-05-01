@@ -404,7 +404,7 @@ __host__ fptype GooPdf::getValue(EvalFunc evalfunc) {
     normalize();
     // MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0,
     // cudaMemcpyHostToDevice);
-    MEMCPY(d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
     UnbinnedDataSet point(observablesList);
     point.addEvent();
@@ -541,7 +541,7 @@ __host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
     normalize();
     // MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisations, totalParams*sizeof(fptype), 0,
     // cudaMemcpyHostToDevice);
-    MEMCPY(d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
     int numVars = observablesList.size();
 
@@ -575,7 +575,18 @@ __host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
         components[i]->setIndices();
         components[i]->normalize();
 
-        MEMCPY(d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), cudaMemcpyHostToDevice);
+        GOOFIT_TRACE("host_function_table[{}] = {}", num_device_functions, fitControl->getMetric());
+        host_function_table[num_device_functions] = getMetricPointer(fitControl->getMetric());
+        num_device_functions++;
+
+        // copy all the device functions over:
+        GOOFIT_DEBUG("Copying all host side parameters to device");
+        MEMCPY_TO_SYMBOL(
+            device_function_table, &host_function_table, num_device_functions * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+        MEMCPY_TO_SYMBOL(d_parameters, &host_parameters, totalParameters * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+        MEMCPY_TO_SYMBOL(d_constants, &host_constants, totalConstants * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+        MEMCPY_TO_SYMBOL(d_observables, &host_observables, totalObservables * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+        MEMCPY_TO_SYMBOL(d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
         thrust::counting_iterator<int> ceventIndex(0);
         thrust::transform(

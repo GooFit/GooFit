@@ -7,10 +7,12 @@ namespace GooFit {
 class TruthResolution : public MixingTimeResolution {
   public:
     TruthResolution();
-    ~TruthResolution();
+    ~TruthResolution() override;
 
     fptype normalisation(
         fptype di1, fptype di2, fptype di3, fptype di4, fptype tau, fptype xmixing, fptype ymixing) const override;
-    void createParameters(std::vector<unsigned int> &pindices, PdfBase *dis) override { pindices.push_back(0); }
+    void createParameters(PdfBase *dis) override {}
+
+    void recursiveSetIndices() override;
 };
 } // namespace GooFit

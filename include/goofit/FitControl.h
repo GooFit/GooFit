@@ -55,4 +55,16 @@ class BinnedChisqFit : public FitControl {
         : FitControl(true, "ptr_to_Chisq") {}
 };
 
+class ProbFit : public FitControl {
+  public:
+    ProbFit()
+        : FitControl(false, "ptr_to_Prob") {}
+};
+
+class EvalFit : public FitControl {
+  public:
+    EvalFit()
+        : FitControl(false, "ptr_to_Eval") {}
+};
+
 } // namespace GooFit

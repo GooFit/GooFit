@@ -12,6 +12,7 @@ class ConvolutionPdf : public GooPdf {
     __host__ fptype normalize() const override;
     __host__ void setIntegrationConstants(fptype lo, fptype hi, fptype step);
     __host__ void registerOthers(std::vector<ConvolutionPdf *> others);
+    __host__ void recursiveSetIndices() override;
 
   private:
     GooPdf *model;
@@ -22,6 +23,7 @@ class ConvolutionPdf : public GooPdf {
     thrust::device_vector<fptype> *modelWorkSpace;
     thrust::device_vector<fptype> *resolWorkSpace;
     int workSpaceIndex;
+    int ConvolveType;
 };
 
 } // namespace GooFit

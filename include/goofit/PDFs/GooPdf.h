@@ -2,6 +2,7 @@
 
 #include <thrust/functional.h>
 
+#include <goofit/Log.h>
 #include <goofit/PDFs/MetricTaker.h>
 #include <goofit/PdfBase.h>
 #include <goofit/UnbinnedDataSet.h>
@@ -19,37 +20,54 @@ constexpr const char *evalfunc_vals[]
 
 constexpr const char *evalfunc_to_string(EvalFunc val) { return evalfunc_vals[static_cast<size_t>(val)]; }
 
-#ifdef SEPARABLE
+void *getMetricPointer(std::string name);
+void *getMetricPointer(EvalFunc val);
+//#ifdef SEPARABLE
 
-/// Holds device-side fit parameters.
-extern __constant__ fptype cudaArray[maxParams];
+extern __device__ fptype d_parameters[maxParams];
+extern __device__ fptype d_constants[maxParams];
+extern __device__ fptype d_observables[maxParams];
+extern __device__ fptype d_normalisations[maxParams];
 
-/// Holds functor-specific indices into cudaArray. Also overloaded to hold integer constants (ie parameters that cannot
-/// vary.)
-extern __constant__ unsigned int paramIndices[maxParams];
+// a couple constants
+extern __constant__ fptype c_motherMass;
+extern __constant__ fptype c_daug1Mass;
+extern __constant__ fptype c_daug2Mass;
+extern __constant__ fptype c_daug3Mass;
+extern __constant__ fptype c_meson_radius;
 
-/// Holds non-integer constants. Notice that first entry is number of events.
-extern __constant__ fptype functorConstants[maxParams];
+// Holds device-side fit parameters.
+// extern __constant__ fptype cudaArray[maxParams];
 
-extern __constant__ fptype normalisationFactors[maxParams];
+// Holds functor-specific indices into cudaArray. Also overloaded to hold integer constants (ie parameters that cannot
+// vary.)
+// extern __constant__ unsigned int paramIndices[maxParams];
+
+// Holds non-integer constants. Notice that first entry is number of events.
+// extern __constant__ fptype functorConstants[maxParams];
+
+// extern __constant__ fptype normalisationFactors[maxParams];
 
 extern __device__ void *device_function_table[200];
 extern void *host_function_table[200];
 extern unsigned int num_device_functions;
 extern std::map<void *, int> functionAddressToDeviceIndexMap;
-#endif
+//#endif
+
+// Forward declare
+class ParameterContainer;
 
 __device__ int dev_powi(int base, int exp); // Implemented in SmoothHistogramPdf.
 void *getMetricPointer(std::string name);
 
 /// Pass event, parameters, index into parameters.
-typedef fptype (*device_function_ptr)(fptype *, fptype *, unsigned int *);
+typedef fptype (*device_function_ptr)(fptype *, ParameterContainer &);
 
-typedef fptype (*device_metric_ptr)(fptype, fptype *, unsigned int);
+typedef fptype (*device_metric_ptr)(fptype, fptype *, fptype);
 
 extern void *host_fcn_ptr;
 
-__device__ fptype callFunction(fptype *eventAddress, unsigned int functionIdx, unsigned int paramIdx);
+__device__ fptype callFunction(fptype *eventAddress, ParameterContainer &pc);
 
 class GooPdf : public PdfBase {
   public:
@@ -80,7 +98,7 @@ class GooPdf : public PdfBase {
     /// Set an equidistant grid based on the stored variable binning
     __host__ UnbinnedDataSet makeGrid();
 
-    __host__ void initialize(std::vector<unsigned int> pindices, void *dev_functionPtr = host_fcn_ptr);
+    __host__ void initialize();
     __host__ void scan(Observable var, std::vector<fptype> &values);
     __host__ void setFitControl(std::shared_ptr<FitControl> fc) override;
     __host__ virtual void setMetrics();
@@ -94,6 +112,8 @@ class GooPdf : public PdfBase {
     /// Plot a PDF to a ROOT histogram
     __host__ TH1D *plotToROOT(Observable var, double normFactor = 1, std::string name = "");
 #endif
+
+    __host__ void setIndices() override;
 
   protected:
     __host__ virtual double sumOfNll(int numVars) const;

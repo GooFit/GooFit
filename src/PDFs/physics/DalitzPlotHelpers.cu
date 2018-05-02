@@ -68,17 +68,16 @@ __device__ fptype VecDot(const fptype *P0, const fptype *P1) {
 }
 
 __device__ void get4Vecs(fptype *Vecs,
-                         const unsigned int &constants,
                          const fptype &m12,
                          const fptype &m34,
                          const fptype &cos12,
                          const fptype &cos34,
-                         const fptype &phi) {
-    fptype M  = functorConstants[constants + 1];
-    fptype m1 = functorConstants[constants + 2];
-    fptype m2 = functorConstants[constants + 3];
-    fptype m3 = functorConstants[constants + 4];
-    fptype m4 = functorConstants[constants + 5];
+                         const fptype &phi,
+                         const fptype M,
+                         const fptype m1,
+                         const fptype m2,
+                         const fptype m3,
+                         const fptype m4) {
     // printf("g4v %f, %f, %f, %f, %f\n",M, m1, m2, m3, m4 );
     fptype E1     = (m12 * m12 + m1 * m1 - m2 * m2) / (2 * m12);
     fptype E2     = (m12 * m12 - m1 * m1 + m2 * m2) / (2 * m12);

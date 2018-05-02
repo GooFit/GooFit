@@ -107,6 +107,15 @@ configure_file (
     "${PROJECT_BINARY_DIR}/include/goofit/detail/ThrustOverrideConfig.h"
 )
 
+include(WriteCompilerDetectionHeader)
+write_compiler_detection_header(
+    FILE include/goofit/detail/CompilerFeatures.h
+    PREFIX GOOFIT
+    COMPILERS GNU Clang AppleClang Intel
+    FEATURES cxx_attribute_deprecated
+)
+
+
 ### C++ settings ###
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -279,10 +288,6 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
             find_package(CUDA 7.0 REQUIRED)
         endif()
         message(STATUS "Found CUDA ${CUDA_VERSION_STRING} at ${CUDA_TOOLKIT_ROOT_DIR}")
-
-        if(NOT CUDA_VERSION VERSION_LESS 9.0)
-            message(WARNING "You have a version of CUDA that is currently not supported by Eigen, build will fail")
-        endif()
 
         if(GOOFIT_MPI)
             list(APPEND CUDA_NVCC_FLAGS ${MPI_CXX_COMPILE_FLAGS})

@@ -1,5 +1,7 @@
 #pragma once
 
+#if 0
+
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
 
 #include <thrust/detail/config.h>
@@ -8,10 +10,11 @@
 #include <thrust/detail/type_traits.h>
 #include <thrust/execution_policy.h>
 #include <thrust/reduce.h>
-#include <thrust/system/cuda/detail/bulk.h>
-#include <thrust/system/cuda/detail/decomposition.h>
-#include <thrust/system/cuda/detail/execute_on_stream.h>
-#include <thrust/system/cuda/detail/execution_policy.h>
+//#include <thrust/system/cuda/detail/bulk.h>
+//#include <thrust/system/cuda/detail/decomposition.h>
+//#include <thrust/system/cuda/detail/execute_on_stream.h>
+//#include <thrust/system/cuda/detail/execution_policy.h>
+//
 
 #include <thrust/system/cuda/detail/bulk.h>
 
@@ -100,5 +103,7 @@ reduce(goofit_policy &exec, InputIterator first, InputIterator last, OutputType 
 
     return get_value(exec, &partial_sums[0]);
 } // end goofit_reduce()
+
+#endif
 
 #endif

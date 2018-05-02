@@ -25,6 +25,9 @@ class MetricTaker : public thrust::unary_function<thrust::tuple<int, fptype *, i
     /// Event number, event size, normalisation ranges (for binned stuff, eg integration)
     __device__ fptype operator()(thrust::tuple<int, int, fptype *> t) const;
 
+    /// Update which index we need to use:
+    __host__ void setFunctionIndex(const int &id) { functionIdx = id; }
+
   private:
     /// Function-pointer index of processing function, eg logarithm, chi-square, other metric.
     unsigned int metricIndex;

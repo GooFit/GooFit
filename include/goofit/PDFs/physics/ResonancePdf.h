@@ -5,9 +5,7 @@
 
 namespace GooFit {
 
-#define MAXNKNOBS 1000
-
-typedef fpcomplex (*resonance_function_ptr)(fptype, fptype, fptype, unsigned int *);
+typedef fpcomplex (*resonance_function_ptr)(fptype, fptype, fptype, ParameterContainer &pc);
 
 __device__ fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m);
 
@@ -39,6 +37,8 @@ class ResonancePdf : public GooPdf {
 
     __host__ virtual void recalculateCache() const {}
 
+    void recursiveSetIndices() override;
+
     __host__ Variable get_amp_real() const { return amp_real; }
     __host__ Variable get_amp_img() const { return amp_imag; }
 
@@ -47,13 +47,7 @@ class ResonancePdf : public GooPdf {
     ResonancePdf(std::string name, Variable ar, Variable ai)
         : GooPdf(name)
         , amp_real(ar)
-        , amp_imag(ai) {
-        // Dummy index for constants - won't use it, but calling
-        // functions can't know that and will call setConstantIndex anyway.
-        pindices.push_back(0);
-    }
-
-    void setConstantIndex(unsigned int idx) { host_indices[parameters + 1] = idx; }
+        , amp_imag(ai) {}
 
     Variable amp_real;
     Variable amp_imag;
@@ -61,6 +55,8 @@ class ResonancePdf : public GooPdf {
     std::vector<unsigned int> pindices;
 
     std::vector<fptype> host_constants;
+
+    int resonanceType;
 };
 
 namespace Resonances {

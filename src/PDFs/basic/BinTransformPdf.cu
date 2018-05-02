@@ -1,25 +1,28 @@
+#include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/basic/BinTransformPdf.h>
 
 namespace GooFit {
 
-__device__ fptype device_BinTransform(fptype *evt, fptype *p, unsigned int *indices) {
+__device__ fptype device_BinTransform(fptype *evt, ParameterContainer &pc) {
     // Index structure: nP lim1 bin1 lim2 bin2 ... nO o1 o2
-    int numObservables = indices[1 + indices[0]];
+    int numConstants   = pc.getNumConstants();
+    int numObservables = pc.getNumObservables();
     int ret            = 0;
     int previousSize   = 1;
 
-    // printf("[%i, %i] Bin Transform: %i %i %f %f\n", THREADIDX, BLOCKIDX, numObservables, previousSize, evt[0],
-    // evt[1]);
     for(int i = 0; i < numObservables; ++i) {
-        fptype obsValue   = evt[indices[2 + indices[0] + i]];
-        fptype lowerLimit = functorConstants[indices[i * 3 + 1]];
-        fptype binSize    = functorConstants[indices[i * 3 + 2]];
-        int numBins       = indices[i * 3 + 3];
+        int id            = pc.getObservable(i);
+        fptype obsValue   = evt[id];
+        fptype lowerLimit = pc.getConstant(i * 3);
+        fptype binSize    = pc.getConstant(i * 3 + 1);
+        int numBins       = pc.getConstant(i * 3 + 2);
 
         auto localBin = static_cast<int>(floor((obsValue - lowerLimit) / binSize));
         ret += localBin * previousSize;
         previousSize *= numBins;
     }
+
+    pc.incrementIndex(1, 0, numConstants, numObservables, 1);
 
     return fptype(ret);
 }
@@ -33,29 +36,33 @@ __host__ BinTransformPdf::BinTransformPdf(std::string n,
                                           std::vector<fptype> binSizes,
                                           std::vector<int> numBins)
     : GooPdf(n) {
-    cIndex               = registerConstants(2 * obses.size());
-    auto *host_constants = new fptype[2 * obses.size()];
-    std::vector<unsigned int> pindices;
+    // cIndex               = registerConstants(2 * obses.size());
+    // auto *host_constants = new fptype[2 * obses.size()];
 
+    // setup the observables
+    for(const auto &obse : obses)
+        registerObservable(obse);
+
+    observablesList = getObservables();
+
+    // add limits for each observable (variable)
     for(unsigned int i = 0; i < obses.size(); ++i) {
-        registerObservable(obses[i]);
-        pindices.push_back(cIndex + 2 * i);
-        pindices.push_back(cIndex + 2 * i + 1);
-        pindices.push_back(numBins[i]);
-
-        host_constants[2 * i]     = limits[i]; // cIndex will be accounted for by offset in memcpy
-        host_constants[2 * i + 1] = binSizes[i];
+        registerConstant(limits[i]);
+        registerConstant(binSizes[i]);
+        registerConstant(numBins[i]);
     }
 
-    MEMCPY_TO_SYMBOL(functorConstants,
-                     host_constants,
-                     2 * obses.size() * sizeof(fptype),
-                     cIndex * sizeof(fptype),
-                     cudaMemcpyHostToDevice);
-    delete[] host_constants;
+    initialize();
+}
 
+__host__ void BinTransformPdf::recursiveSetIndices() {
     GET_FUNCTION_ADDR(ptr_to_BinTransform);
-    initialize(pindices);
+
+    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_BinTransform");
+    host_function_table[num_device_functions] = host_fcn_ptr;
+    functionIdx                               = num_device_functions++;
+
+    populateArrays();
 }
 
 } // namespace GooFit

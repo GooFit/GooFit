@@ -1,3 +1,4 @@
+#include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/basic/ScaledGaussianPdf.h>
 #include <goofit/Variable.h>
 
@@ -5,11 +6,15 @@
 
 namespace GooFit {
 
-__device__ fptype device_ScaledGaussian(fptype *evt, fptype *p, unsigned int *indices) {
-    fptype x     = evt[0];
-    fptype mean  = p[indices[1]] + p[indices[3]];
-    fptype sigma = p[indices[2]] * (1 + p[indices[4]]);
+__device__ fptype device_ScaledGaussian(fptype *evt, ParameterContainer &pc) {
+    int id = pc.getObservable(0);
+
+    fptype x     = evt[id];
+    fptype mean  = pc.getParameter(0) + pc.getParameter(2);
+    fptype sigma = pc.getParameter(1) * (1 + pc.getParameter(3));
     fptype ret   = exp(-0.5 * (x - mean) * (x - mean) / (sigma * sigma));
+
+    pc.incrementIndex(1, 4, 0, 1, 1);
 
     return ret;
 }
@@ -24,13 +29,17 @@ __host__ ScaledGaussianPdf::ScaledGaussianPdf(
     registerParameter(delta);
     registerParameter(epsilon);
 
-    std::vector<unsigned int> pindices;
-    pindices.push_back(mean.getIndex());
-    pindices.push_back(sigma.getIndex());
-    pindices.push_back(delta.getIndex());
-    pindices.push_back(epsilon.getIndex());
+    initialize();
+}
+
+__host__ void ScaledGaussianPdf::recursiveSetIndices() {
     GET_FUNCTION_ADDR(ptr_to_ScaledGaussian);
-    initialize(pindices);
+
+    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_ScaledGaussian");
+    host_function_table[num_device_functions] = host_fcn_ptr;
+    functionIdx                               = num_device_functions++;
+
+    populateArrays();
 }
 
 } // namespace GooFit

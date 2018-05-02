@@ -30,6 +30,7 @@ def getToyData(toyFileName):
     out = pd.read_csv(toyFileName,
             delim_whitespace=True,
             comment='=',
+	    skip_blank_lines=True,
             names='event m23 m12 m13 e23 e12 e13 tau sigma_t mD0 deltaM probSig dst_charge run event2 sig frac1 frac2 frac3 frac4'.split())
     out['vals'] = out.index
     print("Read in", len(out.index), "lines of data")

@@ -1,34 +1,42 @@
+#include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/basic/ArgusPdf.h>
 #include <goofit/Variable.h>
 
 namespace GooFit {
 
-__device__ fptype device_Argus_Upper(fptype *evt, fptype *p, unsigned int *indices) {
-    fptype x  = evt[indices[2 + indices[0]]];
-    fptype m0 = p[indices[1]];
+__device__ fptype device_Argus_Upper(fptype *evt, ParameterContainer &pc) {
+    int id = pc.getObservable(0);
+
+    fptype x  = evt[id];
+    fptype m0 = pc.getParameter(0);
 
     double t = x / m0;
+
+    fptype slope = pc.getParameter(1);
+    fptype power = pc.getParameter(2);
+
+    pc.incrementIndex(1, 3, 0, 1, 1);
 
     if(t >= 1)
         return 0;
 
-    fptype slope = p[indices[2]];
-    fptype power = p[indices[3]];
-    t            = 1 - t * t;
-    // printf("device_Argus_Upper %f %f %f %f %f\n", x, m0, slope, t, x * pow(t, power) * exp(slope * t));
+    t = 1 - t * t;
 
     return x * pow(t, power) * exp(slope * t);
 }
 
-__device__ fptype device_Argus_Lower(fptype *evt, fptype *p, unsigned int *indices) {
-    fptype x  = evt[indices[2 + indices[0]]];
-    fptype m0 = p[indices[1]];
+__device__ fptype device_Argus_Lower(fptype *evt, ParameterContainer &pc) {
+    int id = pc.getObservable(0);
 
-    // printf("Argus: %i %i %f %f\n", indices[0], indices[2 + indices[0]], x, m0);
-    // printf("Argus: %i %i\n", indices[0], indices[2 + indices[0]]);
-    // return 1;
+    fptype x  = evt[id];
+    fptype m0 = pc.getParameter(0);
 
     fptype t = x / m0;
+
+    fptype slope = pc.getParameter(1);
+    fptype power = pc.getParameter(2);
+
+    pc.incrementIndex(1, 3, 0, 1, 1);
 
     if(t <= 1)
         return 0;
@@ -36,15 +44,7 @@ __device__ fptype device_Argus_Lower(fptype *evt, fptype *p, unsigned int *indic
     t *= t;
     t -= 1;
 
-    fptype slope = p[indices[2]];
-    fptype power = p[indices[3]];
-    fptype ret   = x * pow(t, power) * exp(slope * t);
-    // if ((0 == THREADIDX) && (0 == BLOCKIDX) && (callnumber < 1)) cuPrintf("device_Argus_Lower %i %i %f %f %f %f
-    // %f\n", indices[1], indices[2], x, m0, slope, t, ret);
-    // if (isnan(ret)) printf("NaN Argus: %f %f %f %f %f %f %f\n", x, m0, t, slope, power, pow(t, power), exp(slope*t));
-    // if ((0 == THREADIDX) && (0 == BLOCKIDX) && (gpuDebug & 1))
-    // printf("(%i, %i) device_Argus_Lower %f %f %f %f %f\n", BLOCKIDX, THREADIDX, x, m0, slope, t, x * pow(t, power) *
-    // exp(slope * t));
+    fptype ret = x * pow(t, power) * exp(slope * t);
 
     return ret;
 }
@@ -59,20 +59,33 @@ __host__ ArgusPdf::ArgusPdf(std::string n, Observable _x, Variable m0, Variable 
     : GooPdf(n, _x) {
     registerParameter(m0);
     registerParameter(slope);
+
     registerParameter(power);
 
-    std::vector<unsigned int> pindices;
-    pindices.push_back(m0.getIndex());
-    pindices.push_back(slope.getIndex());
-    pindices.push_back(power.getIndex());
-
     if(upper) {
+        ArgusType = 1;
         GET_FUNCTION_ADDR(ptr_to_Argus_Upper);
     } else {
+        ArgusType = 0;
         GET_FUNCTION_ADDR(ptr_to_Argus_Lower);
     }
 
-    initialize(pindices);
+    initialize();
+}
+
+__host__ void ArgusPdf::recursiveSetIndices() {
+    if(ArgusType == 1) {
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Argus_Upper");
+        GET_FUNCTION_ADDR(ptr_to_Argus_Upper);
+    } else if(ArgusType == 0) {
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Argus_Lower");
+        GET_FUNCTION_ADDR(ptr_to_Argus_Lower);
+    }
+
+    host_function_table[num_device_functions] = host_fcn_ptr;
+    functionIdx                               = num_device_functions++;
+
+    populateArrays();
 }
 
 fptype argus_lower_helper(fptype x, fptype m0, fptype slope, fptype power) {
@@ -90,11 +103,10 @@ fptype argus_lower_helper(fptype x, fptype m0, fptype slope, fptype power) {
 }
 
 __host__ double ArgusPdf::integrate(fptype lo, fptype hi) const {
-    double norm           = 0;
-    unsigned int *indices = host_indices + parameters;
-    fptype m0             = host_params[indices[1]];
-    fptype slope          = host_params[indices[2]];
-    fptype power          = host_params[indices[3]];
+    double norm  = 0;
+    fptype m0    = host_parameters[parametersIdx + 1];
+    fptype slope = host_parameters[parametersIdx + 2];
+    fptype power = host_parameters[parametersIdx + 3];
 
     for(int j = 0; j < integrationBins; ++j) {
         double x = hi;

@@ -4,6 +4,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 set -evx
 cd $DIR
+python -V
 time python exponential.py
 time python plot_2d.py
 time python addition.py

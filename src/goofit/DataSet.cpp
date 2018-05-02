@@ -1,5 +1,6 @@
 #include <goofit/DataSet.h>
 #include <goofit/Error.h>
+#include <goofit/Log.h>
 #include <goofit/Variable.h>
 
 #include <climits>

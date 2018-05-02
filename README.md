@@ -15,6 +15,7 @@ doing maximum-likelihood fits with a familiar syntax.
 • [API documentation]
 • [2.0 upgrade](./docs/CONVERTING20.md)
 • [2.1 upgrade](./docs/CONVERTING21.md)
+• [2.2 upgrade](./docs/CONVERTING22.md)
 • [Build recipes](./docs/SYSTEM_INSTALL.md)
 • [Python](https://pypi.python.org/pypi/goofit/)
 
@@ -50,7 +51,17 @@ doing maximum-likelihood fits with a familiar syntax.
 
 A list of exact commands required for several platforms is [available here](./docs/SYSTEM_INSTALL.md).
 
-There are also Python Bindings. This requires Python (2 or 3), [NumPy](http://www.numpy.org), [SciKit-Build](http://scikit-build.readthedocs.io), and CMake. CUDA 8 is required if using CUDA. You can uses `pip install -v goofit`, or `pip install -v -e .` inside the repository. You can also direcly force the bindings from a normal build with `-DGOOFIT_PYTHON=ON`. You can check your install with `python -m goofit`. You can debug a goofit file named `python_script.py` with gcc using `gdb -ex r --args python python_script.py`.
+There are also Python Bindings. This requires Python (2 or 3), [NumPy](http://www.numpy.org), [SciKit-Build](http://scikit-build.readthedocs.io), and CMake. CUDA 8 is required if using CUDA. You can uses `pip install -v goofit`, or `pip install -v -e .` inside the repository. You can also directly force the bindings from a normal build with `-DGOOFIT_PYTHON=ON`. You can check your install with `python -m goofit`. You can debug a goofit file named `python_script.py` with gcc using `gdb -ex r --args python python_script.py`.
+
+Other python requirements for the examples (use `pipenv install --dev` to install all requirements at once in a pipenv environment):
+* numpy-1.11.1+
+* pandas-0.15.1+
+* uncertainties-3.0.2
+* matplotlib
+* plumbum
+
+Optional:
+* numba
 
 ## Getting the files
 
@@ -101,8 +112,6 @@ Other custom options supported along with the defaults:
 * `-DGOOFIT_TESTS=ON`: Build the GooFit tests
 * `-DGOOFIT_SEPARATE_COMP=ON`: Enable separable compilation of PDFs. Single core CUDA builds are faster with this off. The off mode is not well supported, especially on newer cards.
 * `-DGOOFIT_MPI=ON`: (OFF/ON.  With this feature on, GPU devices are selected automatically).  Tested with MVAPICH2/2.2 and OpenMPI.
-* `-DGOOFIT_CUDA_OR_GROUPSIZE:INT=128`: This sets the group size that thrust will use for distributing the problem.  This parameter can be thought of as 'Threads per block'.  These will be used after running 'find_optimal.py' to figure out the optimal size.
-* `-DGOOFIT_CUDA_OR_GRAINSIZE:INT=7`: This is the grain size thrust uses for distributing the problem.  This parameter can be thought of as 'Items per thread'.
 * `-DGOOFIT_MAXPAR=1800`: The maximum number of parameters to allow. May cause memory issues if too large.
 * You can enable sanitizers on non-CUDA builds with `-DSANITIZE_ADDRESS=ON`, `-DSANITIZE_MEMORY=ON`, `-DSANITIZE_THREAD=ON` or `-DSANITIZE_UNDEFINED=ON`.
 * If `clang-tidy` is available, it will automatically be used to check the source. If you set `-DGOOFIT_TIDY_FIX=ON`, fixes will be applied to the GooFit source.

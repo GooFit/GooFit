@@ -1,3 +1,4 @@
+#include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/basic/LandauPdf.h>
 
 namespace GooFit {
@@ -26,10 +27,13 @@ __constant__ fptype q6[5] = {1.0, 651.4101098, 56974.73333, 165917.4725, -281575
 __constant__ fptype a1[3] = {0.04166666667, -0.01996527778, 0.02709538966};
 __constant__ fptype a2[2] = {-1.845568670, -4.284640743};
 
-__device__ fptype device_Landau(fptype *evt, fptype *p, unsigned int *indices) {
-    fptype x     = evt[indices[2 + indices[0]]];
-    fptype mpv   = p[indices[1]];
-    fptype sigma = p[indices[2]];
+__device__ fptype device_Landau(fptype *evt, ParameterContainer &pc) {
+    int id       = pc.getObservable(0);
+    fptype x     = evt[id];
+    fptype mpv   = pc.getParameter(0);
+    fptype sigma = pc.getParameter(1);
+
+    pc.incrementIndex(1, 2, 0, 1, 1);
 
     if(sigma <= 0)
         return 0;
@@ -80,11 +84,20 @@ __device__ device_function_ptr ptr_to_Landau = device_Landau;
 
 __host__ LandauPdf::LandauPdf(std::string n, Observable _x, Variable mpv, Variable sigma)
     : GooPdf(n, _x) {
-    std::vector<unsigned int> pindices;
-    pindices.push_back(registerParameter(mpv));
-    pindices.push_back(registerParameter(sigma));
+    registerParameter(mpv);
+    registerParameter(sigma);
+
+    initialize();
+}
+
+__host__ void LandauPdf::recursiveSetIndices() {
+    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Landau");
     GET_FUNCTION_ADDR(ptr_to_Landau);
-    initialize(pindices);
+
+    host_function_table[num_device_functions] = host_fcn_ptr;
+    functionIdx                               = num_device_functions++;
+
+    populateArrays();
 }
 
 } // namespace GooFit

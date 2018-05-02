@@ -1,15 +1,21 @@
+#include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/basic/JohnsonSUPdf.h>
 
 namespace GooFit {
 
 const fptype SQRT2PI = 2.506628;
 
-__device__ fptype device_JohnsonSU(fptype *evt, fptype *p, unsigned int *indices) {
-    fptype _Jm = p[indices[1]];
-    fptype _Js = p[indices[2]];
-    fptype _Jg = p[indices[3]];
-    fptype _Jd = p[indices[4]];
-    fptype x   = evt[indices[2 + indices[0]]];
+__device__ fptype device_JohnsonSU(fptype *evt, ParameterContainer &pc) {
+    int id     = pc.getObservable(0);
+    fptype _Jm = pc.getParameter(0);
+    fptype _Js = pc.getParameter(1);
+    fptype _Jg = pc.getParameter(2);
+    fptype _Jd = pc.getParameter(3);
+
+    // we are using index 0.  If we need a different idx, we need to pass that information along.
+    fptype x = evt[id];
+
+    pc.incrementIndex(1, 4, 0, 1, 1);
 
     fptype px       = (x - _Jm) / _Js;
     fptype px2      = px * px;
@@ -30,13 +36,22 @@ __device__ device_function_ptr ptr_to_JohnsonSU = device_JohnsonSU;
 __host__
 JohnsonSUPdf::JohnsonSUPdf(std::string n, Observable _x, Variable mean, Variable sigma, Variable gamma, Variable delta)
     : GooPdf(n, _x) {
-    std::vector<unsigned int> pindices;
-    pindices.push_back(registerParameter(mean));
-    pindices.push_back(registerParameter(sigma));
-    pindices.push_back(registerParameter(gamma));
-    pindices.push_back(registerParameter(delta));
+    registerParameter(mean);
+    registerParameter(sigma);
+    registerParameter(gamma);
+    registerParameter(delta);
+
+    initialize();
+}
+
+__host__ void JohnsonSUPdf::recursiveSetIndices() {
     GET_FUNCTION_ADDR(ptr_to_JohnsonSU);
-    initialize(pindices);
+
+    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_JohnsonSU");
+    host_function_table[num_device_functions] = host_fcn_ptr;
+    functionIdx                               = num_device_functions++;
+
+    populateArrays();
 }
 
 __host__ fptype JohnsonSUPdf::integrate(fptype lo, fptype hi) const {

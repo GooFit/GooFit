@@ -1,49 +1,68 @@
 #include <goofit/Error.h>
+#include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/basic/ExpPdf.h>
 
 namespace GooFit {
 
-__device__ fptype device_Exp(fptype *evt, fptype *p, unsigned int *indices) {
-    fptype x     = evt[indices[2 + indices[0]]];
-    fptype alpha = p[indices[1]];
+__device__ fptype device_Exp(fptype *evt, ParameterContainer &pc) {
+    int id       = pc.getObservable(0);
+    fptype alpha = pc.getParameter(0);
+    fptype x     = evt[id];
 
     fptype ret = exp(alpha * x);
+
+    pc.incrementIndex(1, 1, 0, 1, 1);
+
     return ret;
 }
 
-__device__ fptype device_ExpOffset(fptype *evt, fptype *p, unsigned int *indices) {
-    fptype x = evt[indices[2 + indices[0]]];
-    x -= p[indices[1]];
-    fptype alpha = p[indices[2]];
+__device__ fptype device_ExpOffset(fptype *evt, ParameterContainer &pc) {
+    int id   = pc.getObservable(0);
+    fptype x = evt[id];
+    x -= pc.getParameter(0);
+    fptype alpha = pc.getParameter(1);
 
     fptype ret = exp(alpha * x);
+
+    pc.incrementIndex(1, 2, 0, 1, 1);
+
     return ret;
 }
 
-__device__ fptype device_ExpPoly(fptype *evt, fptype *p, unsigned int *indices) {
-    fptype x = evt[indices[2 + indices[0]]];
+__device__ fptype device_ExpPoly(fptype *evt, ParameterContainer &pc) {
+    int id   = pc.getObservable(0);
+    fptype x = evt[id];
 
     fptype exparg = 0;
 
-    for(int i = 0; i <= indices[0]; ++i) {
-        exparg += pow(x, i) * p[indices[i + 1]];
+    int np = pc.getNumParameters();
+    for(int i = 0; i < np; ++i) {
+        exparg += pow(x, i) * pc.getParameter(i);
     }
 
     fptype ret = exp(exparg);
+
+    pc.incrementIndex(1, np, 0, 1, 1);
+
     return ret;
 }
 
-__device__ fptype device_ExpPolyOffset(fptype *evt, fptype *p, unsigned int *indices) {
-    fptype x = evt[indices[2 + indices[0]]];
-    x -= p[indices[1]];
+__device__ fptype device_ExpPolyOffset(fptype *evt, ParameterContainer &pc) {
+    int id   = pc.getObservable(0);
+    fptype x = evt[id];
+    x -= pc.getParameter(0);
 
     fptype exparg = 0;
 
-    for(int i = 0; i <= indices[0]; ++i) {
-        exparg += pow(x, i) * p[indices[i + 2]];
+    int np = pc.getNumParameters();
+    for(int i = 1; i < np; ++i) {
+        exparg += pow(x, i) * pc.getParameter(i);
     }
 
     fptype ret = exp(exparg);
+
+    pc.incrementIndex(1, np, 0, 1, 1);
+
     return ret;
 }
 
@@ -52,59 +71,77 @@ __device__ device_function_ptr ptr_to_ExpPoly       = device_ExpPoly;
 __device__ device_function_ptr ptr_to_ExpOffset     = device_ExpOffset;
 __device__ device_function_ptr ptr_to_ExpPolyOffset = device_ExpPolyOffset;
 
-__host__ ExpPdf::ExpPdf(std::string n, Observable _x, Variable alpha)
-    : GooPdf(n, _x) {
-    std::vector<unsigned int> pindices;
-
-    pindices.push_back(registerParameter(alpha));
-    GET_FUNCTION_ADDR(ptr_to_Exp);
-    initialize(pindices);
-}
-
 __host__ ExpPdf::ExpPdf(std::string n, Observable _x, Variable alpha, Variable offset)
     : GooPdf(n, _x) {
-    std::vector<unsigned int> pindices;
+    registerParameter(offset);
+    registerParameter(alpha);
 
-    pindices.push_back(registerParameter(offset));
-    pindices.push_back(registerParameter(alpha));
-    GET_FUNCTION_ADDR(ptr_to_ExpOffset);
-    initialize(pindices);
+    ExpType = 1;
+
+    initialize();
 }
 
-__host__ ExpPdf::ExpPdf(std::string n, Observable _x, std::vector<Variable> &weights)
+__host__ ExpPdf::ExpPdf(std::string n, Observable _x, Variable alpha)
     : GooPdf(n, _x) {
-    std::vector<unsigned int> pindices;
+    registerParameter(alpha);
 
-    if(weights.empty())
-        throw GooFit::GeneralError("Weights are empty!");
+    ExpType = 0;
 
-    for(Variable &w : weights)
-        pindices.push_back(registerParameter(w));
-
-    GET_FUNCTION_ADDR(ptr_to_ExpPoly);
-
-    initialize(pindices);
+    initialize();
 }
 
 __host__ ExpPdf::ExpPdf(std::string n, Observable _x, std::vector<Variable> &weights, Variable offset)
     : GooPdf(n, _x) {
-    std::vector<unsigned int> pindices;
-
-    pindices.push_back(registerParameter(offset));
+    registerParameter(offset);
 
     if(weights.empty())
         throw GooFit::GeneralError("Weights are empty!");
 
     for(Variable &w : weights)
-        pindices.push_back(registerParameter(w));
+        registerParameter(w);
 
-    GET_FUNCTION_ADDR(ptr_to_ExpPolyOffset);
+    ExpType = 3;
 
-    initialize(pindices);
+    initialize();
+}
+
+__host__ ExpPdf::ExpPdf(std::string n, Observable _x, std::vector<Variable> &weights)
+    : GooPdf(n, _x) {
+    if(weights.empty())
+        throw GooFit::GeneralError("Weights are empty!");
+
+    for(Variable &w : weights)
+        registerParameter(w);
+
+    ExpType = 2;
+
+    initialize();
+}
+
+__host__ void ExpPdf::recursiveSetIndices() {
+    if(ExpType == 0) {
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Exp");
+        GET_FUNCTION_ADDR(ptr_to_Exp);
+    } else if(ExpType == 1) {
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_ExpOffset");
+        GET_FUNCTION_ADDR(ptr_to_ExpOffset);
+    } else if(ExpType == 2) {
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_ExpPoly");
+        GET_FUNCTION_ADDR(ptr_to_ExpPoly);
+    } else if(ExpType == 3) {
+        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_ExpPolyOffset");
+        GET_FUNCTION_ADDR(ptr_to_ExpPolyOffset);
+    }
+
+    host_function_table[num_device_functions] = host_fcn_ptr;
+    functionIdx                               = num_device_functions;
+    num_device_functions++;
+
+    populateArrays();
 }
 
 __host__ fptype ExpPdf::integrate(fptype lo, fptype hi) const {
-    fptype alpha = host_params[host_indices[parameters + 1]];
+    fptype alpha = host_parameters[parametersIdx + 1];
 
     if(0 == alpha) {
         // This gives a constant 1 all across the range

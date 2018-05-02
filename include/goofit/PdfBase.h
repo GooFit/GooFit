@@ -24,24 +24,19 @@ class FunctionMinimum;
 
 namespace GooFit {
 
-/* Future use, apperently:
-#include <thrust/device_vector.h>
-#include <thrust/iterator/constant_iterator.h>
-
-typedef thrust::counting_iterator<int> IndexIterator;
-typedef thrust::constant_iterator<fptype*> DataIterator;
-typedef thrust::constant_iterator<int> SizeIterator;
-typedef thrust::tuple<IndexIterator, DataIterator, SizeIterator> EventTuple;
-typedef thrust::zip_iterator<EventTuple> EventIterator;
-*/
-
 const int maxParams = GOOFIT_MAXPAR;
 extern fptype *dev_event_array;
-extern fptype host_normalisation[maxParams];
-extern fptype host_params[maxParams];
-extern unsigned int host_indices[maxParams];
-extern int totalParams;
+
+extern fptype host_parameters[maxParams];
+extern fptype host_constants[maxParams];
+extern fptype host_observables[maxParams];
+extern fptype host_normalisations[maxParams];
+
+extern __constant__ unsigned int c_totalEvents;
+extern int totalParameters;
 extern int totalConstants;
+extern int totalObservables;
+extern int totalNormalisations;
 
 class FitControl;
 
@@ -83,7 +78,7 @@ class PdfBase {
 
     __host__ virtual double calculateNLL() const = 0;
     __host__ virtual fptype normalize() const    = 0;
-    __host__ void initializeIndices(std::vector<unsigned int> pindices);
+    __host__ void initializeIndices();
 
     __host__ void addSpecialMask(int m) { specialMask |= m; }
     __host__ void copyParams(const std::vector<double> &pars) const;
@@ -99,7 +94,7 @@ class PdfBase {
     __host__ int getSpecialMask() const { return specialMask; }
 
     __host__ void setData(DataSet *data);
-    __host__ DataSet *getData();
+    __host__ DataSet *getData() { return data_; }
 
     __host__ virtual void setFitControl(std::shared_ptr<FitControl>) = 0;
     __host__ virtual bool hasAnalyticIntegral() const { return false; }
@@ -109,7 +104,11 @@ class PdfBase {
 
     __host__ unsigned int getFunctionIndex() const { return functionIdx; }
     __host__ unsigned int getParameterIndex() const { return parameters; }
+    // TODO: Make the return value void to find and cleanup old style access
+    /// This adds a parameter. The number returned should only be used for checking
     __host__ unsigned int registerParameter(Variable var);
+    /// The int value returned here is the constant number, for checking
+    __host__ unsigned int registerConstant(fptype value);
     __host__ unsigned int registerConstants(unsigned int amount);
     __host__ virtual void recursiveSetNormalisation(fptype norm = 1) const;
     __host__ void unregisterParameter(Variable var);
@@ -120,19 +119,35 @@ class PdfBase {
     __host__ bool parametersChanged() const;
 
     __host__ void checkInitStatus(std::vector<std::string> &unInited) const;
-    void clearCurrentFit();
-    __host__ void SigGenSetIndices() { setIndices(); }
+    __host__ void clearCurrentFit();
+    __host__ void SigGenSetIndices() {
+        setupObservables();
+        setIndices();
+    }
+
+    __host__ void updateVariable(Variable v, fptype newValue);
+    __host__ void updateParameters();
+
+    __host__ void setupObservables();
+
+    __host__ virtual void recursiveSetIndices();
+
+    __host__ virtual void setIndices();
 
   protected:
-    DataSet *data_ = nullptr;   //< Remember the original dataset
+    DataSet *data_ = nullptr; //< Remember the original dataset
+    // use this function to populate the arrays generically.
+    __host__ void populateArrays();
+
     fptype numEvents{0};        //< Non-integer to allow weighted events
     unsigned int numEntries{0}; //< Eg number of bins - not always the same as number of events, although it can be.
     fptype *normRanges{
         nullptr}; //< This is specific to functor instead of variable so that MetricTaker::operator needn't use indices.
     unsigned int parameters{0}; //< Stores index, in 'paramIndices', where this functor's information begins.
     unsigned int cIndex{1};     //< Stores location of constants.
-    std::vector<Observable> observables;
-    std::vector<Variable> parameterList;
+    std::vector<Observable> observablesList;
+    std::vector<Variable> parametersList;
+    std::vector<fptype> constantsList;
     std::shared_ptr<FitControl> fitControl;
     std::vector<PdfBase *> components;
     int integrationBins{-1};
@@ -141,6 +156,10 @@ class PdfBase {
 
     unsigned int functionIdx{0}; //< Stores index of device function pointer.
 
+    unsigned int parametersIdx{0};
+    unsigned int constantsIdx{0};
+    unsigned int observablesIdx{0};
+    unsigned int normalIdx{0};
     int m_iEventsPerTask{0};
 
     /// This needs to be set before a call to setData.
@@ -148,9 +167,6 @@ class PdfBase {
 
   private:
     std::string name;
-
-    __host__ void recursiveSetIndices();
-    __host__ void setIndices();
 };
 
 } // namespace GooFit

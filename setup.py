@@ -14,6 +14,9 @@ setup(
         url='https://goofit.github.io',
         platforms = ["POSIX"],
         provides = ["goofit"],
+        install_requires = [
+            'numpy>=1.11.1',
+        ],
         classifiers = [
             "Development Status :: 5 - Production/Stable",
             "Intended Audience :: Science/Research",
@@ -40,10 +43,9 @@ setup(
         extras_require={
             'dev': [
                 'pytest',
-                'numpy',
-                'matplotlib',
-                'pandas',
-                'uncertainties',
+                'matplotlib>=1.5',
+                'pandas>=0.15.1',
+                'uncertainties>=3.0.2',
                 'scipy'
             ]
         },

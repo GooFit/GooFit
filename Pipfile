@@ -4,19 +4,19 @@ url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
-
 [packages]
 
 scikit-build = "*"
 cmake = "*"
-numpy = "*"
+numpy = ">=1.11.1"
 
 [dev-packages]
 
+plumbum = "*"
 numba = "*"
-uncertainties = "*"
+uncertainties = ">=3.0.2"
 pytest = "*"
 matplotlib = "*"
-pandas = "*"
+pandas = ">=0.15.1"
 scipy = "*"
 jupyter = {extras = ["all"]}

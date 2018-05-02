@@ -50,7 +50,29 @@ doing maximum-likelihood fits with a familiar syntax.
 
 A list of exact commands required for several platforms is [available here](./docs/SYSTEM_INSTALL.md).
 
-There are also Python Bindings. This requires Python (2 or 3), [NumPy](http://www.numpy.org), [SciKit-Build](http://scikit-build.readthedocs.io), and CMake. CUDA 8 is required if using CUDA. You can uses `pip install -v goofit`, or `pip install -v -e .` inside the repository. You can also direcly force the bindings from a normal build with `-DGOOFIT_PYTHON=ON`. You can check your install with `python -m goofit`. You can debug a goofit file named `python_script.py` with gcc using `gdb -ex r --args python python_script.py`.
+<details><summary>Python Bindings: (click to expand)</summary><p>
+
+There are also Python Bindings. This requires Python (2 or 3), [NumPy](http://www.numpy.org), [SciKit-Build](http://scikit-build.readthedocs.io), and CMake. CUDA 8 is required if using CUDA. If you want the most recent stable release, use `pip install -v goofit` (If you have pip 9 or less, you'll need scikit build and cmake beforehand).
+
+Repository method:
+
+You can uses `pip install -v goofit`, or `pip install -v -e .` inside the repository. You can also directly force the bindings from a normal build with `-DGOOFIT_PYTHON=ON`. You can check your install with `python -m goofit`. You can debug a goofit file named `python_script.py` with gcc using `gdb -ex r --args python python_script.py`.
+
+Other python requirements for the examples (use `pipenv install --dev` to install all requirements at once in a pipenv environment):
+
+* numpy-1.11.1+
+* pandas-0.15.1+
+* uncertainties-3.0.2
+* matplotlib
+* plumbum
+
+Optional:
+
+* numba
+
+</p></details>
+
+<br/>
 
 ## Getting the files
 

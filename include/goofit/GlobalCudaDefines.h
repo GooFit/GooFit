@@ -25,16 +25,38 @@ inline void cudaDeviceSynchronize() {}
 
 // Specialty copies
 #ifdef __CUDACC__
-#define MEMCPY(target, source, count, direction) cudaMemcpy(target, source, count, direction)
-#define MEMCPY_TO_SYMBOL(target, source, count, offset, direction)                                                     \
-    cudaMemcpyToSymbol(target, source, count, offset, direction)
-#define GET_FUNCTION_ADDR(fname)                                                                                       \
+#define MEMCPY(target, source, count, direction)                                                                       \
     {                                                                                                                  \
-        cudaMemcpyFromSymbol((void **)&host_fcn_ptr, fname, sizeof(void *));                                           \
-        GOOFIT_DEBUG("Using function {} in {}, {}:{}", #fname, __func__, __FILE__, __LINE__);                          \
+        cudaError err = cudaMemcpy(target, source, count, direction);                                                  \
+        if(err != cudaSuccess) {                                                                                       \
+            printf("CUDA Error: %s at %s:%i\n", cudaGetErrorString(err), __FILE__, __LINE__);                          \
+        }                                                                                                              \
+        GOOFIT_DEBUG("Using function cudaMemcpy in {}, {}:{}", __func__, __FILE__, __LINE__);                          \
+    }
+#define MEMCPY_TO_SYMBOL(target, source, count, offset, direction)                                                     \
+    {                                                                                                                  \
+        cudaError err = cudaMemcpyToSymbol(target, source, count, offset, direction);                                  \
+        if(err != cudaSuccess) {                                                                                       \
+            printf("CUDA Error: %s at %s:%i\n", cudaGetErrorString(err), __FILE__, __LINE__);                          \
+        }                                                                                                              \
+        GOOFIT_DEBUG("Using function cudaMemcpyToSymbol in {}, {}:{}", __func__, __FILE__, __LINE__);                  \
     }
 #define MEMCPY_FROM_SYMBOL(target, source, count, offset, direction)                                                   \
     cudaMemcpyFromSymbol(target, source, count, offset, direction)
+#define GET_FUNCTION_ADDR(fname)                                                                                       \
+    {                                                                                                                  \
+        cudaError err = cudaMemcpyFromSymbol((void **)&host_fcn_ptr, fname, sizeof(void *));                           \
+        if(err != cudaSuccess) {                                                                                       \
+            printf("CUDA Error: %s at %s:%i\n", cudaGetErrorString(err), __FILE__, __LINE__);                          \
+        }                                                                                                              \
+        GOOFIT_DEBUG("Using function {} in {}, {}:{}", #fname, __func__, __FILE__, __LINE__);                          \
+    }
+#define ERROR_CHECK(x)                                                                                                 \
+    {                                                                                                                  \
+        cudaError err = x;                                                                                             \
+        if(err != cudaSuccess)                                                                                         \
+            printf("CUDA Error: %s at %s:%i\n", cudaGetErrorString(err), __FILE__, __LINE__);                          \
+    }
 
 // This automatically selects the correct CUDA arch and expands the __ldg intrinsic to work on arbitrary types
 // CUDACC only
@@ -44,7 +66,7 @@ inline void cudaDeviceSynchronize() {}
 #else
 
 #define MEMCPY(target, source, count, direction) memcpy((char *)target, source, count)
-#define MEMCPY_TO_SYMBOL(target, source, count, offset, direction) memcpy(((char *)target) + offset, source, count)
+#define MEMCPY_TO_SYMBOL(target, source, count, offset, direction) memcpy(((char *)&target) + offset, source, count)
 #define MEMCPY_FROM_SYMBOL(target, source, count, offset, direction)                                                   \
     memcpy((char *)target, ((char *)source) + offset, count)
 #define GET_FUNCTION_ADDR(fname)                                                                                       \
@@ -72,6 +94,7 @@ inline void cudaDeviceSynchronize() {}
 #define THREAD_SYNCH
 
 #elif THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
+
 #define THREADIDX (threadIdx.x)
 #define BLOCKDIM (blockDim.x)
 #define BLOCKIDX (blockIdx.x)

@@ -1,39 +1,25 @@
-#include <algorithm>
+#include <goofit/Log.h>
+#include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/combine/ProdPdf.h>
+
+#include <algorithm>
 
 namespace GooFit {
 
-__device__ fptype device_ProdPdfs(fptype *evt, fptype *p, unsigned int *indices) {
-    // Index structure is nP | F1 P1 | F2 P2 | ...
-    // where nP is number of parameters, Fs are function indices, and Ps are parameter indices
+__device__ fptype device_ProdPdfs(fptype *evt, ParameterContainer &pc) {
+    int numCons  = pc.getNumConstants();
+    int numComps = pc.getConstant(0);
+    int numObs   = pc.getNumObservables();
+    fptype ret   = 1;
 
-    int numParams = RO_CACHE(indices[0]);
-    fptype ret    = 1;
+    pc.incrementIndex(1, 0, numCons, numObs, 1);
+    // pc.incrementIndex();
+    for(int i = 0; i < numComps; i++) {
+        fptype norm = pc.getNormalisation(0);
+        fptype curr = callFunction(evt, pc);
 
-    for(int i = 1; i < numParams; i += 2) {
-        int fcnIdx = RO_CACHE(indices[i + 0]);
-        int parIdx = RO_CACHE(indices[i + 1]);
-
-        // fptype curr = (*(reinterpret_cast<device_function_ptr>(device_function_table[fcnIdx])))(evt, p, paramIndices
-        // + parIdx);
-        fptype curr = callFunction(evt, fcnIdx, parIdx);
-        curr *= normalisationFactors[parIdx];
-        // if ((isnan(ret)) || (isnan(curr)) || (isnan(normalisationFactors[parIdx])) || (isinf(ret)) || (isinf(curr)))
-        // printf("device_Prod 2: (%f %f %f %f %f) %f %f %f %i %i %i\n", evt[0], evt[1], evt[2], evt[3], evt[4], curr,
-        // ret, normalisationFactors[parIdx], i, parIdx, numParams);
+        curr *= norm;
         ret *= curr;
-
-        // if ((0 == THREADIDX) && (0 == BLOCKIDX) && (gpuDebug & 1) && (paramIndices + debugParamIndex == indices))
-        // if ((1 > (int) floor(0.5 + evt[8])) && (gpuDebug & 1) && (paramIndices + debugParamIndex == indices))
-        // if (0.0001 < ret)
-        // if ((gpuDebug & 1) && (isnan(curr)) && (paramIndices + debugParamIndex == indices))
-        // if ((isnan(ret)) || (isnan(curr)) || (isnan(normalisationFactors[parIdx])))
-        // printf("device_Prod: (%f %f %f %f %f) %f %f %f %i %i %i\n", evt[0], evt[1], evt[2], evt[3], evt[4], curr,
-        // ret, normalisationFactors[parIdx], i, parIdx, numParams);
-        // printf("(%i, %i) device_Prod: (%f %f %f %f) %f %f %f %i\n", BLOCKIDX, THREADIDX, evt[0], evt[8], evt[6],
-        // evt[7], curr, ret, normalisationFactors[parIdx], i);
-        // printf("(%i, %i) device_Prod: (%f %f) %f %f %f %i\n", BLOCKIDX, THREADIDX, evt[0], evt[1], curr, ret,
-        // normalisationFactors[parIdx], i);
     }
 
     return ret;
@@ -44,21 +30,20 @@ __device__ device_function_ptr ptr_to_ProdPdfs = device_ProdPdfs;
 ProdPdf::ProdPdf(std::string n, std::vector<PdfBase *> comps)
     : GooPdf(n)
     , varOverlaps(false) {
-    std::vector<unsigned int> pindices;
-
     for(PdfBase *p : comps) {
         components.push_back(p);
+        // we push a placeholder that is used to indicate
+        // constantsList.push_back (0);
     }
 
-    observables = getObservables(); // Gathers from components
+    observablesList = getObservables(); // Gathers from components
+
+    // Add that we have a components size
+    registerConstant(components.size());
 
     std::vector<Observable> observableCheck; // Use to check for overlap in observables
 
-    // Indices stores (function index)(function parameter index)(variable index) for each component.
     for(PdfBase *p : comps) {
-        pindices.push_back(p->getFunctionIndex());
-        pindices.push_back(p->getParameterIndex());
-
         if(varOverlaps)
             continue; // Only need to establish this once.
 
@@ -82,8 +67,16 @@ ProdPdf::ProdPdf(std::string n, std::vector<PdfBase *> comps)
         }
     }
 
+    initialize();
+}
+
+__host__ void ProdPdf::recursiveSetIndices() {
     GET_FUNCTION_ADDR(ptr_to_ProdPdfs);
-    initialize(pindices);
+    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_ProdPdfs");
+    host_function_table[num_device_functions] = host_fcn_ptr;
+    functionIdx                               = num_device_functions++;
+
+    populateArrays();
 }
 
 __host__ fptype ProdPdf::normalize() const {
@@ -92,7 +85,9 @@ __host__ fptype ProdPdf::normalize() const {
         // normalized, since \int A*B dx does not equal int A dx * int B dx.
         recursiveSetNormalisation(fptype(1.0));
         MEMCPY_TO_SYMBOL(
-            normalisationFactors, host_normalisation, totalParams * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+            d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+        // MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0,
+        // cudaMemcpyHostToDevice);
 
         // Normalize numerically.
         // std::cout << "Numerical normalisation of " << getName() << " due to varOverlaps.\n";
@@ -107,8 +102,9 @@ __host__ fptype ProdPdf::normalize() const {
         c->normalize();
     }
 
-    host_normalisation[parameters] = 1;
-    MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    host_normalisations[normalIdx + 1] = 1;
+    // MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0,
+    // cudaMemcpyHostToDevice);
 
     return 1.0;
 }

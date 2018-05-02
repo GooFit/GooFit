@@ -9,6 +9,8 @@ class ScaledGaussianPdf : public GooPdf {
     ScaledGaussianPdf(std::string n, Observable _x, Variable m, Variable s, Variable d, Variable e);
     __host__ bool hasAnalyticIntegral() const override { return false; }
 
+    __host__ void recursiveSetIndices() override;
+
   private:
 };
 } // namespace GooFit

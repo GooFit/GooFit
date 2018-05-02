@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
 
     // Set all host normalisation just to make sure no errors
     for(int i = 0; i < maxParams; i++)
-        host_normalisation[i] = -7;
+        host_normalisations[i] = -7;
 
     GOOFIT_PARSE(app, argc, argv);
 
@@ -68,29 +68,29 @@ int main(int argc, char **argv) {
     Variable K1430W{"K1430W", 0.29};
 
     // Spin factors: we have two due to the bose symmetrization of the two pi+
-    std::vector<SpinFactor *> SFKRS = {new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_S, 0, 1, 2, 3),
-                                       new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_S, 3, 1, 2, 0)};
+    std::vector<SpinFactor *> SFKRS = {new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_S, _mD0, 0, 1, 2, 3),
+                                       new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_S, _mD0, 3, 1, 2, 0)};
 
-    std::vector<SpinFactor *> SFKRP = {new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_P, 0, 1, 2, 3),
-                                       new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_P, 3, 1, 2, 0)};
+    std::vector<SpinFactor *> SFKRP = {new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_P, _mD0, 0, 1, 2, 3),
+                                       new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_P, _mD0, 3, 1, 2, 0)};
 
-    std::vector<SpinFactor *> SFKRD = {new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_D, 0, 1, 2, 3),
-                                       new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_D, 3, 1, 2, 0)};
+    std::vector<SpinFactor *> SFKRD = {new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_D, _mD0, 0, 1, 2, 3),
+                                       new SpinFactor("SF", SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_D, _mD0, 3, 1, 2, 0)};
 
-    std::vector<SpinFactor *> SFKF = {new SpinFactor("SF", SF_4Body::DtoVS_VtoP1P2_StoP3P4, 2, 3, 0, 1),
-                                      new SpinFactor("SF", SF_4Body::DtoVS_VtoP1P2_StoP3P4, 2, 0, 3, 1)};
+    std::vector<SpinFactor *> SFKF = {new SpinFactor("SF", SF_4Body::DtoVS_VtoP1P2_StoP3P4, _mD0, 2, 3, 0, 1),
+                                      new SpinFactor("SF", SF_4Body::DtoVS_VtoP1P2_StoP3P4, _mD0, 2, 0, 3, 1)};
 
-    std::vector<SpinFactor *> SFKK = {new SpinFactor("SF", SF_4Body::DtoAP1_AtoSP2_StoP3P4, 0, 1, 3, 2),
-                                      new SpinFactor("SF", SF_4Body::DtoAP1_AtoSP2_StoP3P4, 3, 1, 0, 2)};
+    std::vector<SpinFactor *> SFKK = {new SpinFactor("SF", SF_4Body::DtoAP1_AtoSP2_StoP3P4, _mD0, 0, 1, 3, 2),
+                                      new SpinFactor("SF", SF_4Body::DtoAP1_AtoSP2_StoP3P4, _mD0, 3, 1, 0, 2)};
 
-    std::vector<SpinFactor *> SFK1R = {new SpinFactor("SF", SF_4Body::DtoAP1_AtoVP2_VtoP3P4, 3, 2, 0, 1),
-                                       new SpinFactor("SF", SF_4Body::DtoAP1_AtoVP2_VtoP3P4, 0, 2, 3, 1)};
+    std::vector<SpinFactor *> SFK1R = {new SpinFactor("SF", SF_4Body::DtoAP1_AtoVP2_VtoP3P4, _mD0, 3, 2, 0, 1),
+                                       new SpinFactor("SF", SF_4Body::DtoAP1_AtoVP2_VtoP3P4, _mD0, 0, 2, 3, 1)};
 
-    std::vector<SpinFactor *> SFA1R = {new SpinFactor("SF", SF_4Body::DtoAP1_AtoVP2_VtoP3P4, 2, 3, 0, 1),
-                                       new SpinFactor("SF", SF_4Body::DtoAP1_AtoVP2_VtoP3P4, 2, 0, 3, 1)};
+    std::vector<SpinFactor *> SFA1R = {new SpinFactor("SF", SF_4Body::DtoAP1_AtoVP2_VtoP3P4, _mD0, 2, 3, 0, 1),
+                                       new SpinFactor("SF", SF_4Body::DtoAP1_AtoVP2_VtoP3P4, _mD0, 2, 0, 3, 1)};
 
-    std::vector<SpinFactor *> SFA1RD = {new SpinFactor("SF", SF_4Body::DtoAP1_AtoVP2Dwave_VtoP3P4, 2, 3, 0, 1),
-                                        new SpinFactor("SF", SF_4Body::DtoAP1_AtoVP2Dwave_VtoP3P4, 2, 0, 3, 1)};
+    std::vector<SpinFactor *> SFA1RD = {new SpinFactor("SF", SF_4Body::DtoAP1_AtoVP2Dwave_VtoP3P4, _mD0, 2, 3, 0, 1),
+                                        new SpinFactor("SF", SF_4Body::DtoAP1_AtoVP2Dwave_VtoP3P4, _mD0, 2, 0, 3, 1)};
 
     // Lineshapes, also for both pi+ configurations
     std::vector<Lineshape *> LSKRS = {new Lineshapes::RBW("rho(770)", RhoMass, RhoWidth, 1, M_12),

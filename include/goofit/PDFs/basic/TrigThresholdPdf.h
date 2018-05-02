@@ -17,6 +17,9 @@ class TrigThresholdPdf : public GooPdf {
                      Variable massConstant,
                      bool upper);
 
+    __host__ void recursiveSetIndices() override;
+
   private:
+    int trigThreshType;
 };
 } // namespace GooFit

@@ -32,46 +32,46 @@ K1430M   = Variable("K1430M", 1.414, 0.01, 1.4, 1.5)
 K1430W   = Variable("K1430W",.29, 0.01, 0.25, 0.35)
 
 # Spin factors: we have two due to the bose symmetrization of the two pi+
-SFKRS  = (SpinFactor("SF", SF_4Body.DtoV1V2_V1toP1P2_V2toP3P4_S, 0, 1, 2, 3),
-          SpinFactor("SF", SF_4Body.DtoV1V2_V1toP1P2_V2toP3P4_S, 3, 1, 2, 0))
+SFKRS  = (SpinFactor("SF", SF_4Body.DtoV1V2_V1toP1P2_V2toP3P4_S, _mD0, 0, 1, 2, 3),
+          SpinFactor("SF", SF_4Body.DtoV1V2_V1toP1P2_V2toP3P4_S, _mD0, 3, 1, 2, 0))
 
-SFKRP  = (SpinFactor("SF", SF_4Body.DtoV1V2_V1toP1P2_V2toP3P4_P, 0, 1, 2, 3),
-          SpinFactor("SF", SF_4Body.DtoV1V2_V1toP1P2_V2toP3P4_P, 3, 1, 2, 0))
+SFKRP  = (SpinFactor("SF", SF_4Body.DtoV1V2_V1toP1P2_V2toP3P4_P, _mD0, 0, 1, 2, 3),
+          SpinFactor("SF", SF_4Body.DtoV1V2_V1toP1P2_V2toP3P4_P, _mD0, 3, 1, 2, 0))
 
-SFKRD  = (SpinFactor("SF", SF_4Body.DtoV1V2_V1toP1P2_V2toP3P4_D, 0, 1, 2, 3),
-          SpinFactor("SF", SF_4Body.DtoV1V2_V1toP1P2_V2toP3P4_D, 3, 1, 2, 0))
+SFKRD  = (SpinFactor("SF", SF_4Body.DtoV1V2_V1toP1P2_V2toP3P4_D, _mD0, 0, 1, 2, 3),
+          SpinFactor("SF", SF_4Body.DtoV1V2_V1toP1P2_V2toP3P4_D, _mD0, 3, 1, 2, 0))
 
-SFKF   = (SpinFactor("SF", SF_4Body.DtoVS_VtoP1P2_StoP3P4, 2, 3, 0, 1),
-          SpinFactor("SF", SF_4Body.DtoVS_VtoP1P2_StoP3P4, 2, 0, 3, 1))
+SFKF   = (SpinFactor("SF", SF_4Body.DtoVS_VtoP1P2_StoP3P4, _mD0, 2, 3, 0, 1),
+          SpinFactor("SF", SF_4Body.DtoVS_VtoP1P2_StoP3P4, _mD0, 2, 0, 3, 1))
 
-SFKK   = (SpinFactor("SF", SF_4Body.DtoAP1_AtoSP2_StoP3P4, 0, 1, 3, 2),
-          SpinFactor("SF", SF_4Body.DtoAP1_AtoSP2_StoP3P4, 3, 1, 0, 2))
+SFKK   = (SpinFactor("SF", SF_4Body.DtoAP1_AtoSP2_StoP3P4, _mD0, 0, 1, 3, 2),
+          SpinFactor("SF", SF_4Body.DtoAP1_AtoSP2_StoP3P4, _mD0, 3, 1, 0, 2))
 
-SFK1R  = (SpinFactor("SF", SF_4Body.DtoAP1_AtoVP2_VtoP3P4, 3, 2, 0, 1),
-          SpinFactor("SF", SF_4Body.DtoAP1_AtoVP2_VtoP3P4, 0, 2, 3, 1))
+SFK1R  = (SpinFactor("SF", SF_4Body.DtoAP1_AtoVP2_VtoP3P4, _mD0, 3, 2, 0, 1),
+          SpinFactor("SF", SF_4Body.DtoAP1_AtoVP2_VtoP3P4, _mD0, 0, 2, 3, 1))
 
-SFA1R  = (SpinFactor("SF", SF_4Body.DtoAP1_AtoVP2_VtoP3P4, 2, 3, 0, 1),
-          SpinFactor("SF", SF_4Body.DtoAP1_AtoVP2_VtoP3P4, 2, 0, 3, 1))
+SFA1R  = (SpinFactor("SF", SF_4Body.DtoAP1_AtoVP2_VtoP3P4, _mD0, 2, 3, 0, 1),
+          SpinFactor("SF", SF_4Body.DtoAP1_AtoVP2_VtoP3P4, _mD0, 2, 0, 3, 1))
 
-SFA1RD = (SpinFactor("SF", SF_4Body.DtoAP1_AtoVP2Dwave_VtoP3P4, 2, 3, 0, 1),
-          SpinFactor("SF", SF_4Body.DtoAP1_AtoVP2Dwave_VtoP3P4, 2, 0, 3, 1))
+SFA1RD = (SpinFactor("SF", SF_4Body.DtoAP1_AtoVP2Dwave_VtoP3P4, _mD0, 2, 3, 0, 1),
+          SpinFactor("SF", SF_4Body.DtoAP1_AtoVP2Dwave_VtoP3P4, _mD0, 2, 0, 3, 1))
 
 
 # Lineshapes, also for both pi+ configurations
-LSKRS = (Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_12, FF.BL2),
-         Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_34, FF.BL2),
-         Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_24, FF.BL2),
-         Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_13, FF.BL2))
+LSKRS = (Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_12),
+         Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_34),
+         Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_24),
+         Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_13))
 
-LSKRP = (Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_12, FF.BL2),
-         Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_34, FF.BL2),
-         Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_24, FF.BL2),
-         Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_13, FF.BL2))
+LSKRP = (Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_12),
+         Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_34),
+         Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_24),
+         Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_13))
 
-LSKRD = (Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_12, FF.BL2),
-         Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_34, FF.BL2),
-         Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_24, FF.BL2),
-         Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_13, FF.BL2))
+LSKRD = (Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_12),
+         Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_34),
+         Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_24),
+         Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_13))
 
 LSKF = (Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_34),
         Lineshapes.Bugg("f600", f600M, f600W, 0, M_12),

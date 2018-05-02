@@ -12,10 +12,9 @@ See *.cu file for more details
 #include <goofit/PDFs/physics/ResonancePdf.h>
 #include <goofit/Variable.h>
 #include <goofit/Version.h>
+#include <goofit/detail/Complex.h>
 
 #include <array>
-
-#include <goofit/detail/Complex.h>
 
 namespace GooFit {
 
@@ -36,17 +35,22 @@ class Lineshape : public GooPdf {
     friend class DPPdf;
     friend class TDDP4;
 
-    std::vector<unsigned int> pindices{0};
-
     /// Protected constructor, only for subclasses to use
-    Lineshape(std::string name);
+    Lineshape(std::string name, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius);
+
+    __host__ void recursiveSetIndices() override;
+
+    unsigned int _L;
+    unsigned int _Mpair;
+    FF _FormFac;
+    fptype _radius;
 
   public:
     ~Lineshape() override = default;
 
-    void setConstantIndex(unsigned int idx) { host_indices[parameters + 1] = idx; }
+    bool operator==(const Lineshape &L) const { return L.getName() == getName(); }
 
-    bool operator==(const Lineshape &L) const { return (L.getName() == getName()); }
+    int lineShapeType;
 };
 
 namespace Lineshapes {
@@ -227,7 +231,7 @@ class GSpline : public Lineshape {
 };
 } // namespace Lineshapes
 
-class Amplitude {
+class Amplitude : public GooPdf {
     friend class DPPdf;
     friend class TDDP4;
 
@@ -240,6 +244,11 @@ class Amplitude {
               unsigned int nPerm = 1);
 
     bool operator==(const Amplitude &A) const;
+
+    __host__ void recursiveSetIndices() override;
+
+    std::vector<SpinFactor *> getSpinFactors() { return _SF; }
+    std::vector<Lineshape *> getLineShapes() { return _LS; }
 
   private:
     std::string _uniqueDecayStr;

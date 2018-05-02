@@ -1,4 +1,5 @@
 #include <goofit/Faddeeva.h>
+#include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/basic/VoigtianPdf.h>
 #include <goofit/detail/Complex.h>
 #include <limits>
@@ -274,15 +275,19 @@ __device__ fpcomplex device_Faddeeva_2(const fpcomplex &z) {
 }
 #endif
 
-__device__ fptype device_Voigtian(fptype *evt, fptype *p, unsigned int *indices) {
-    fptype x = evt[0];
-    fptype m = p[indices[1]];
-    fptype w = p[indices[2]];
-    fptype s = p[indices[3]];
+__device__ fptype device_Voigtian(fptype *evt, ParameterContainer &pc) {
+    int id = pc.getObservable(0);
+
+    fptype x = evt[id];
+    fptype m = pc.getParameter(0);
+    fptype w = pc.getParameter(1);
+    fptype s = pc.getParameter(2);
 
     // return constant for zero width and sigma
-    if((0 == s) && (0 == w))
+    if((0 == s) && (0 == w)) {
+        pc.incrementIndex(1, 3, 0, 1, 1);
         return 1;
+    }
 
     // assert(s > 0); // No device-side assert?!
     // assert(w > 0);
@@ -290,14 +295,20 @@ __device__ fptype device_Voigtian(fptype *evt, fptype *p, unsigned int *indices)
     fptype arg = x - m;
 
     // Breit-Wigner for zero sigma
-    if(0 == s)
+    if(0 == s) {
+        pc.incrementIndex(1, 3, 0, 1, 1);
         return (1 / (arg * arg + 0.25 * w * w));
+    }
 
     fptype coef = -0.5 / (s * s);
 
     // Gauss for zero width
-    if(0 == w)
+    if(0 == w) {
+        pc.incrementIndex(1, 3, 0, 1, 1);
         return exp(coef * arg * arg);
+    }
+
+    pc.incrementIndex(1, 3, 0, 1, 1);
 
     // actual Voigtian for non-trivial width and sigma
     // fptype c = 1./(ROOT2*s);
@@ -316,12 +327,21 @@ __device__ device_function_ptr ptr_to_Voigtian = device_Voigtian;
 
 __host__ VoigtianPdf::VoigtianPdf(std::string n, Observable _x, Variable m, Variable s, Variable w)
     : GooPdf(n, _x) {
-    std::vector<unsigned int> pindices;
-    pindices.push_back(registerParameter(m));
-    pindices.push_back(registerParameter(s));
-    pindices.push_back(registerParameter(w));
+    registerParameter(m);
+    registerParameter(s);
+    registerParameter(w);
+
+    initialize();
+}
+
+__host__ void VoigtianPdf::recursiveSetIndices() {
     GET_FUNCTION_ADDR(ptr_to_Voigtian);
-    initialize(pindices);
+
+    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Voigtian");
+    host_function_table[num_device_functions] = host_fcn_ptr;
+    functionIdx                               = num_device_functions++;
+
+    populateArrays();
 }
 
 } // namespace GooFit

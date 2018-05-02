@@ -42,7 +42,7 @@ goofit_add_test(MonteCarloTest)
 
 goofit_add_test(BifurGaussTest)
 
-# Segfault: goofit_add_test(CompositeTest)
+goofit_add_test(CompositeTest)
 goofit_add_test(ConvolutionTest)
 goofit_add_test(EventWeightedAddTest)
 goofit_add_test(GaussianTest)
@@ -72,3 +72,5 @@ if(ROOT_FOUND)
 #   goofit_add_test(MappedTest)
 #   goofit_add_test(TrigThresholdTest)
 endif()
+
+goofit_add_link(RunAll.py)

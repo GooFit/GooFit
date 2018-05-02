@@ -25,9 +25,22 @@ inline void cudaDeviceSynchronize() {}
 
 // Specialty copies
 #ifdef __CUDACC__
-#define MEMCPY(target, source, count, direction) cudaMemcpy(target, source, count, direction)
+#define MEMCPY(target, source, count, direction)                                                                       \
+    {                                                                                                                  \
+        cudaError err = cudaMemcpy(target, source, count, direction);                                                  \
+        if(err != cudaSuccess) {                                                                                       \
+            printf("CUDA Error: %s at %s:%i\n", cudaGetErrorString(err), __FILE__, __LINE__);                          \
+        }                                                                                                              \
+        GOOFIT_DEBUG("Using function cudaMemcpy in {}, {}:{}", __func__, __FILE__, __LINE__);                          \
+    }
 #define MEMCPY_TO_SYMBOL(target, source, count, offset, direction)                                                     \
-    cudaMemcpyToSymbol(target, source, count, offset, direction)
+    {                                                                                                                  \
+        cudaError err = cudaMemcpyToSymbol(target, source, count, offset, direction);                                  \
+        if(err != cudaSuccess) {                                                                                       \
+            printf("CUDA Error: %s at %s:%i\n", cudaGetErrorString(err), __FILE__, __LINE__);                          \
+        }                                                                                                              \
+        GOOFIT_DEBUG("Using function cudaMemcpyToSymbol in {}, {}:{}", __func__, __FILE__, __LINE__);                  \
+    }
 #define MEMCPY_FROM_SYMBOL(target, source, count, offset, direction)                                                   \
     cudaMemcpyFromSymbol(target, source, count, offset, direction)
 #define GET_FUNCTION_ADDR(fname)                                                                                       \

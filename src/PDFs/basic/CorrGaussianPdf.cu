@@ -17,8 +17,8 @@ __device__ fptype device_CorrGaussian(fptype *evt, ParameterContainer &pc) {
     fptype y = evt[idy];
 
     fptype x_dist = (x - mean1) / sigma1;
-    sigma2 *= (1 + corr * x_dist * x_dist);
-    fptype y_dist = (y - mean2) * (sigma2 == 0 ? 0 : (1.0 / sigma2));
+    sigma2 *= (1.0 + corr * x_dist * x_dist);
+    fptype y_dist = (y - mean2) * (sigma2 == 0.0 ? 0.0 : (1.0 / sigma2));
     fptype ret    = exp(-0.5 * (x_dist * x_dist + y_dist * y_dist));
 
     // if ((gpuDebug & 1) && (THREADIDX == 60)) printf("CorrGauss: %f %f %f %f %f %f %f %f %f %.12f\n", x, y, mean1,

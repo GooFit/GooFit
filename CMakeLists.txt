@@ -55,6 +55,7 @@ endif()
 if(NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/cmake_utils/FindThrust.cmake"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/modern_cmake/ModernCMakeUtils.cmake"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/CLI11/CMakeLists.txt"
+OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/catch2/CMakeLists.txt"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/Eigen/CMakeLists.txt"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/FeatureDetector/CMakeLists.txt"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/MCBooster/CMakeLists.txt"
@@ -672,6 +673,7 @@ add_library(GooFit::GooFit ALIAS goofit_lib)
 option(GOOFIT_TESTS "Build the goofit tests" ON)
 if(GOOFIT_TESTS)
     enable_testing()
+    add_subdirectory(extern/catch2)
     add_subdirectory(tests)
 endif()
 

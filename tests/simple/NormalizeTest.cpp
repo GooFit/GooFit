@@ -1,4 +1,4 @@
-#include <gtest/gtest.h>
+#include <goofit/Catch.h>
 
 #include <goofit/FitManager.h>
 #include <goofit/PDFs/basic/ExpPdf.h>
@@ -12,7 +12,7 @@
 
 using namespace GooFit;
 
-TEST(PDFComps, KnownNormalize) {
+TEST_CASE("Known Normalize", "[basic]") {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> d(1.5);
@@ -39,31 +39,34 @@ TEST(PDFComps, KnownNormalize) {
     exppdf.setData(&data);
     exppdf.copyParams();
 
-    EXPECT_FLOAT_EQ(exppdf.integrate(0, 10), 0.5);
-    EXPECT_FLOAT_EQ(exppdf.normalize(), 0.5);
-    EXPECT_FLOAT_EQ(exppdf.normalize(), 0.5); // Just verifying that it does not crash
+    CHECK(exppdf.integrate(0, 10) == Approx(0.5));
+    CHECK(exppdf.normalize() == Approx(0.5));
+    CHECK(exppdf.normalize() == Approx(0.5)); // Just verifying that it does not crash
 
     FitManager fitter{&exppdf};
     fitter.setVerbosity(0);
     fitter.fit();
 
-    EXPECT_NEAR(alpha.getValue(), -1.5, .05);
-    EXPECT_FLOAT_EQ(exppdf.normalize(), 0.665099);
-    EXPECT_FLOAT_EQ(exppdf.normalize(), 0.665099);
+    CHECK(alpha.getValue() == Approx(-1.5).epsilon(.05));
+    CHECK(exppdf.normalize() == Approx(0.665099));
+    CHECK(exppdf.normalize() == Approx(0.665099));
     // Just verifying that it does not crash
-    EXPECT_FLOAT_EQ(exppdf.normalize(), exppdf.integrate(0, 10));
+    CHECK(exppdf.normalize() == Approx(exppdf.integrate(0, 10)));
 }
 
-/*
- import numpy as np
- from scipy.stats import norm
- bin_centers = np.linspace(-5,10,101) + .15/2
- vv = norm.pdf(bin_centers,1.5,2.5)
- for i in range(0,80,20):
-     print(i, bin_centers[i], vv[i])
- */
+TEST_CASE("1D Grid", "[basic]") {
+    const char *info =
+        R"raw(Recreate in Python with:
 
-TEST(PDFComps, OneDGrid) {
+    import numpy as np
+    from scipy.stats import norm
+    bin_centers = np.linspace(-5,10,101) + .15/2
+    vv = norm.pdf(bin_centers,1.5,2.5)
+    for i in range(0,80,20):
+    print(i, bin_centers[i], vv[i]))raw";
+
+    INFO(info);
+
     // Independent variable.
     Observable xvar{"xvar", -5, 10};
 
@@ -78,43 +81,49 @@ TEST(PDFComps, OneDGrid) {
     auto dataset = gausspdf.makeGrid();
     gausspdf.setData(&dataset);
 
-    EXPECT_FLOAT_EQ(dataset.getValue(xvar, 0), -4.925);
-    EXPECT_FLOAT_EQ(dataset.getValue(xvar, 20), -1.925);
-    EXPECT_FLOAT_EQ(dataset.getValue(xvar, 40), 1.075);
-    EXPECT_FLOAT_EQ(dataset.getValue(xvar, 60), 4.075);
+    CHECK(dataset.getValue(xvar, 0) == Approx(-4.925));
+    CHECK(dataset.getValue(xvar, 20) == Approx(-1.925));
+    CHECK(dataset.getValue(xvar, 40) == 1.075_a);
+    CHECK(dataset.getValue(xvar, 60) == 4.075_a);
 
     // Compute probabilities at points
     auto vv = gausspdf.getCompProbsAtDataPoints();
 
     // Check
-    ASSERT_EQ(vv.size(), 1);
-    ASSERT_EQ(vv[0].size(), 100);
+    REQUIRE(vv.size() == 1);
+    REQUIRE(vv[0].size() == 100);
 
-    EXPECT_FLOAT_EQ(vv[0][0], 0.00587129964482);
-    EXPECT_FLOAT_EQ(vv[0][20], 0.0624318782242);
-    EXPECT_FLOAT_EQ(vv[0][40], 0.157287605852);
-    EXPECT_FLOAT_EQ(vv[0][60], 0.0938855055588);
+    CHECK(vv[0][0] == 0.00587129964482_a);
+    CHECK(vv[0][20] == 0.0624318782242_a);
+    CHECK(vv[0][40] == 0.157287605852_a);
+    CHECK(vv[0][60] == 0.0938855055588_a);
 }
 
 /*
- import numpy as np
- import matplotlib.pyplot as plt
- from scipy.stats import multivariate_normal
-
- bin_centers_x = np.linspace(-5,10,101) + .15/2
- bin_centers_y = np.linspace(-5,10,101) + .15/2
- X,Y = np.meshgrid(bin_centers_x, bin_centers_y)
-
- vv = multivariate_normal.pdf(np.stack([X,Y],-1),[1.5, -1],[2.5, .5])
-
- for i in range(0,101,20):
- for j in range(0,101,20):
- print(i, j, X[i,j], Y[i,j], vv[i,j])
-
- plt.contourf(X,Y,vv,40);
  */
 
-TEST(PDFComps, TwoDGrid) {
+TEST_CASE("2D Grid", "[basic]") {
+    const char *info =
+        R"raw(To recreate in Python:
+
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from scipy.stats import multivariate_normal
+
+    bin_centers_x = np.linspace(-5,10,101) + .15/2
+    bin_centers_y = np.linspace(-5,10,101) + .15/2
+    X,Y = np.meshgrid(bin_centers_x, bin_centers_y)
+
+    vv = multivariate_normal.pdf(np.stack([X,Y],-1),[1.5, -1],[2.5, .5])
+
+    for i in range(0,101,20):
+    for j in range(0,101,20):
+    print(i, j, X[i,j], Y[i,j], vv[i,j])
+
+    plt.contourf(X,Y,vv,40))raw";
+
+    INFO(info);
+
     // Independent variable.
     Observable xvar{"xvar", -5, 10};
     Observable yvar{"yvar", -5, 10};
@@ -135,36 +144,36 @@ TEST(PDFComps, TwoDGrid) {
     auto dataset = product.makeGrid();
     product.setData(&dataset);
 
-    EXPECT_FLOAT_EQ(dataset.getValue(xvar, 0), -4.925);
-    EXPECT_FLOAT_EQ(dataset.getValue(xvar, 20), -1.925);
-    EXPECT_FLOAT_EQ(dataset.getValue(xvar, 40), 1.075);
-    EXPECT_FLOAT_EQ(dataset.getValue(xvar, 60), 4.075);
+    CHECK(dataset.getValue(xvar, 0) == Approx(-4.925));
+    CHECK(dataset.getValue(xvar, 20) == Approx(-1.925));
+    CHECK(dataset.getValue(xvar, 40) == 1.075_a);
+    CHECK(dataset.getValue(xvar, 60) == 4.075_a);
 
-    EXPECT_FLOAT_EQ(dataset.getValue(yvar, 100 * 0), -4.925);
-    EXPECT_FLOAT_EQ(dataset.getValue(yvar, 100 * 20), -1.925);
-    EXPECT_FLOAT_EQ(dataset.getValue(yvar, 100 * 40), 1.075);
-    EXPECT_FLOAT_EQ(dataset.getValue(yvar, 100 * 60), 4.075);
+    CHECK(dataset.getValue(yvar, 100 * 0) == Approx(-4.925));
+    CHECK(dataset.getValue(yvar, 100 * 20) == Approx(-1.925));
+    CHECK(dataset.getValue(yvar, 100 * 40) == 1.075_a);
+    CHECK(dataset.getValue(yvar, 100 * 60) == 4.075_a);
 
     // Compute probabilities at points
     auto vv = product.getCompProbsAtDataPoints();
 
     // Check
-    ASSERT_EQ(vv.size(), 3);
-    ASSERT_EQ(vv[0].size(), 10000);
-    ASSERT_EQ(vv[1].size(), 10000);
-    ASSERT_EQ(vv[2].size(), 10000);
+    REQUIRE(vv.size() == 3);
+    REQUIRE(vv[0].size() == 10000);
+    REQUIRE(vv[1].size() == 10000);
+    REQUIRE(vv[2].size() == 10000);
 
-    EXPECT_FLOAT_EQ(vv[1][0], 0.00587129964482);
-    EXPECT_FLOAT_EQ(vv[1][20], 0.0624318782242);
-    EXPECT_FLOAT_EQ(vv[1][40], 0.157287605852);
-    EXPECT_FLOAT_EQ(vv[1][60], 0.0938855055588);
+    CHECK(vv[1][0] == 0.00587129964482_a);
+    CHECK(vv[1][20] == 0.0624318782242_a);
+    CHECK(vv[1][40] == 0.157287605852_a);
+    CHECK(vv[1][60] == 0.0938855055588_a);
 
     // EXPECT_FLOAT_EQ(vv[0][0], 7.53698529533e-12);
     // EXPECT_FLOAT_EQ(vv[0][20*100+20], 0.00579245632235);
     // EXPECT_FLOAT_EQ(vv[0][20*100+60], 0.0160636095436);
 }
 
-TEST(PDFComps, OneDEval) {
+TEST_CASE("1D Eval", "[basic]") {
     // Independent variable.
     Observable xvar{"xvar", -5, 10};
 
@@ -177,22 +186,22 @@ TEST(PDFComps, OneDEval) {
 
     auto v = gauss.evaluateAtPoints(xvar);
 
-    EXPECT_FLOAT_EQ(v[0], 0.00587129964482);
-    EXPECT_FLOAT_EQ(v[20], 0.0624318782242);
-    EXPECT_FLOAT_EQ(v[40], 0.157287605852);
-    EXPECT_FLOAT_EQ(v[60], 0.0938855055588);
+    CHECK(v[0] == 0.00587129964482_a);
+    CHECK(v[20] == 0.0624318782242_a);
+    CHECK(v[40] == 0.157287605852_a);
+    CHECK(v[60] == 0.0938855055588_a);
 
-    EXPECT_FLOAT_EQ(gauss.normalize(), 6.26657);
+    CHECK(gauss.normalize() == 6.26657_a);
 
     xvar = 1.2;
-    EXPECT_FLOAT_EQ(gauss.getValue(EvalFunc::Prob), 0.15843208471746245);
+    CHECK(gauss.getValue(EvalFunc::Prob) == 0.15843208471746245_a);
     // The default is to ignore the normalization factors, so I'm passing EvalFunc::Prob
 
     xvar = 7.2;
-    EXPECT_FLOAT_EQ(gauss.getValue(EvalFunc::Prob), 0.0118618339389365);
+    CHECK(gauss.getValue(EvalFunc::Prob) == 0.0118618339389365_a);
 }
 
-TEST(PDFComps, TwoDEval) {
+TEST_CASE("2D Eval", "[basic]") {
     // Independent variable.
     Observable xvar{"xvar", -5, 10};
     Observable yvar{"yvar", -5, 10};

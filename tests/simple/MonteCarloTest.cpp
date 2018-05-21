@@ -1,4 +1,4 @@
-#include <gtest/gtest.h>
+#include <goofit/Catch.h>
 
 #include <goofit/FitManager.h>
 #include <goofit/PDFs/basic/ExpPdf.h>
@@ -10,7 +10,7 @@
 
 using namespace GooFit;
 
-TEST(MonteCarlo, GaussianGenAndFit) {
+TEST_CASE("Monte Carlo Gaussian generate and fit", "[simple][gauss][fit][gen]") {
     // Independent variable.
     Observable var{"var", -10, 10};
     var.setNumBins(100);
@@ -38,9 +38,9 @@ TEST(MonteCarlo, GaussianGenAndFit) {
     FitManager fitter{&pdf};
     fitter.fit();
 
-    EXPECT_TRUE(fitter);
-    EXPECT_LT(mu.getError(), .1);
-    EXPECT_LT(sigma.getError(), .1);
-    EXPECT_NEAR(.5, mu.getValue(), mu.getError() * 3);
-    EXPECT_NEAR(.8, sigma.getValue(), sigma.getError() * 3);
+    CHECK(fitter);
+    CHECK(mu.getError() < .1);
+    CHECK(sigma.getError() < .1);
+    CHECK(mu.getValue() == Approx(.5).margin(.3));
+    CHECK(sigma.getValue() == Approx(.8).margin(.3));
 }

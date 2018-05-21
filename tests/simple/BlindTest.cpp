@@ -1,4 +1,4 @@
-#include <gtest/gtest.h>
+#include <goofit/Catch.h>
 
 #include <random>
 
@@ -13,7 +13,7 @@
 
 using namespace GooFit;
 
-TEST(Simple, NoBlind) {
+TEST_CASE("No blind Gaussian fit", "[simple][gauss][fit]") {
     // Independent variable.
     Observable xvar{"xvar", 0, 10};
 
@@ -41,11 +41,11 @@ TEST(Simple, NoBlind) {
     GaussianPdf gausspdf{"gausspdf", xvar, alpha, sigma};
     gausspdf.fitTo(&data);
 
-    EXPECT_LT(alpha.getError(), .01);
-    EXPECT_NEAR(1.5, alpha.getValue(), alpha.getError() * 3);
+    CHECK(alpha.getError() < .01);
+    CHECK(alpha.getValue() == Approx(1.5).margin(.03));
 }
 
-TEST(Simple, WithBlind) {
+TEST_CASE("Blind Gaussian fit", "[blind][simple][gauss][fit]") {
     // Independent variable.
     Observable xvar{"xvar", 0, 10};
 
@@ -74,47 +74,18 @@ TEST(Simple, WithBlind) {
 
     // GooPdf object
     GaussianPdf gausspdf{"gausspdf", xvar, alpha, sigma};
-    gausspdf.fitTo(&data);
 
-    EXPECT_LT(alpha.getError(), .01);
-    EXPECT_NEAR(2.5, alpha.getValue(), alpha.getError() * 3);
-}
+    SECTION("Minuit 2") { gausspdf.fitTo(&data); }
+
 #ifdef ROOT_FOUND
-TEST(Simple, Min1Blind) {
-    // Independent variable.
-    Observable xvar{"xvar", 0, 10};
-
-    // Data set
-    UnbinnedDataSet data{xvar};
-
-    // Random number generation
-    std::mt19937 gen(137);
-    std::normal_distribution<> d(1.5, .3);
-
-    // Generate toy events.
-    for(int i = 0; i < 100000; ++i) {
-        double val = d(gen);
-        if(std::fabs(val) < 10) {
-            xvar.setValue(val);
-            data.addEvent();
-        }
+    SECTION("Minuit 1") {
+        gausspdf.setData(&data);
+        GooFit::FitManagerMinuit1 fitman{&gausspdf};
+        fitman.fit();
+        CHECK(fitman);
     }
-
-    // Fit parameter
-    Variable alpha{"alpha", -2, -10, 10};
-    Variable sigma{"sigma", 1, 0, 3};
-
-    // Blinding (normally would be randomly generated)
-    alpha.setBlind(1);
-
-    // GooPdf object
-    GaussianPdf gausspdf{"gausspdf", xvar, alpha, sigma};
-    gausspdf.setData(&data);
-
-    GooFit::FitManagerMinuit1 fitman{&gausspdf};
-    fitman.fit();
-
-    EXPECT_LT(alpha.getError(), .01);
-    EXPECT_NEAR(2.5, alpha.getValue(), alpha.getError() * 3);
-}
 #endif
+
+    CHECK(alpha.getError() < .01);
+    CHECK(alpha.getValue() == Approx(2.5).margin(.03));
+}

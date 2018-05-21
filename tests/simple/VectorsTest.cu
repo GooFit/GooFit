@@ -1,4 +1,4 @@
-#include <gtest/gtest.h>
+#include <goofit/Catch.h>
 
 #include <Eigen/Dense>
 #include <goofit/PDFs/physics/EvalVar.h>
@@ -7,7 +7,7 @@
 
 using namespace GooFit;
 
-TEST(Vectors, Convert5param4bodySpace) {
+TEST_CASE("Convert 5 param to 4-body Space", "[unit][mcbooster]") {
     Eigen::Matrix<fptype, 10, 16> matI;
 
     matI << -0.0200374, 0.246687, 0.410008, 0.687807, 0.203659, -0.0540155, 0.125961, 0.282384, -0.30315, -0.14159,
@@ -74,19 +74,19 @@ TEST(Vectors, Convert5param4bodySpace) {
     mcbooster::RealVector_h h_phi(d_phi.begin(), d_phi.end());
 
     for(int i = 0; i < mat.cols(); i++) {
-        SCOPED_TRACE("i = " + std::to_string(i));
-        ASSERT_NEAR(h_m12[i], finals(0, i), .00001);
-        ASSERT_NEAR(h_m34[i], finals(1, i), .00001);
-        ASSERT_NEAR(h_cos12[i], finals(2, i), .00001);
-        ASSERT_NEAR(h_cos34[i], finals(3, i), .00001);
-        ASSERT_NEAR(h_phi[i], finals(4, i), .00001);
+        INFO("i = " << i);
+        CHECK(h_m12[i] == Approx(finals(0, i)).epsilon(.00001));
+        CHECK(h_m34[i] == Approx(finals(1, i)).epsilon(.00001));
+        CHECK(h_cos12[i] == Approx(finals(2, i)).epsilon(.00001));
+        CHECK(h_cos34[i] == Approx(finals(3, i)).epsilon(.00001));
+        CHECK(h_phi[i] == Approx(finals(4, i)).epsilon(.00001));
     }
 
     auto new_finals = to_5param(mat);
     for(int i = 0; i < 5; i++) {
         for(int j = 0; j < mat.cols(); j++) {
-            SCOPED_TRACE("i = " + std::to_string(i) + ", j = " + std::to_string(j));
-            ASSERT_NEAR(finals(i, j), new_finals(i, j), .00001);
+            INFO("i = " << i << ", j = " << j);
+            REQUIRE(finals(i, j) == Approx(new_finals(i, j)).epsilon(.00001));
         }
     }
 }

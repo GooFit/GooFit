@@ -173,7 +173,14 @@ __host__ void PdfBase::setNumPerTask(PdfBase *p, const int &c) {
 }
 
 __host__ ROOT::Minuit2::FunctionMinimum PdfBase::fitTo(DataSet *data, int verbosity) {
+    auto old = getData();
     setData(data);
+    auto funmin = fit(verbosity);
+    setData(old);
+    return funmin;
+}
+
+__host__ ROOT::Minuit2::FunctionMinimum PdfBase::fit(int verbosity) {
     FitManager fitter{this};
     fitter.setVerbosity(verbosity);
     return fitter.fit();

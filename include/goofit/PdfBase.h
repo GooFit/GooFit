@@ -104,6 +104,9 @@ class PdfBase {
     /// RooFit style fitting shortcut
     __host__ ROOT::Minuit2::FunctionMinimum fitTo(DataSet *data, int verbosity = 3);
 
+    /// Even shorter fitting shortcut
+    __host__ ROOT::Minuit2::FunctionMinimum fit(int verbosity = 3);
+
     __host__ unsigned int getFunctionIndex() const { return functionIdx; }
     __host__ unsigned int getParameterIndex() const { return parameters; }
     // TODO: Make the return value void to find and cleanup old style access

@@ -21,6 +21,12 @@ void init_PdfBase(py::module &m) {
         .def("getParameters", &PdfBase::getParameters)
         .def("getParameterByName", &PdfBase::getParameterByName)
         .def("getObservables", &PdfBase::getObservables)
+        .def("fillMCDataSimple",
+             &PdfBase::fillMCDataSimple,
+             "Fill in events in the dataset. Must have a dataset and"
+             " it will be appended to.",
+             "events"_a,
+             "seed"_a = 0)
         .def("fitTo",
              &PdfBase::fitTo,
              py::call_guard<py::scoped_ostream_redirect>(),

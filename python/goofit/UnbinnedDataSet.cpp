@@ -68,5 +68,6 @@ void init_UnbinnedDataSet(py::module &m) {
              "Append a matrix to a dataset. The final parameter will be a count if the matrix is missing one row."
              "matrix"_a,
              "filter"_a = false)
-        .def("loadEvent", &UnbinnedDataSet::loadEvent, "Load an event into the observables", "event_number"_a);
+        .def("loadEvent", &UnbinnedDataSet::loadEvent, "Load an event into the observables", "event_number"_a)
+        .def("clear", &UnbinnedDataSet::clear, "Clear the contents of a dataset");
 }

@@ -25,6 +25,13 @@ class UnbinnedDataSet : public DataSet {
 
     void addEvent() override;
 
+    /// Delete the current events
+    void clear() {
+        for(auto &dat : data)
+            dat.clear();
+        numEventsAdded = 0;
+    }
+
     /// Replace the current dataset with a grid
     void fillWithGrid();
 

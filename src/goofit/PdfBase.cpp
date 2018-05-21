@@ -6,11 +6,13 @@
 #include <goofit/Variable.h>
 
 #include <algorithm>
+#include <random>
 #include <set>
 #include <utility>
 
 #include <goofit/BinnedDataSet.h>
 #include <goofit/FitManager.h>
+#include <goofit/PDFs/GooPdf.h>
 #include <goofit/UnbinnedDataSet.h>
 
 #include <goofit/detail/CompilerFeatures.h>
@@ -175,5 +177,56 @@ __host__ ROOT::Minuit2::FunctionMinimum PdfBase::fitTo(DataSet *data, int verbos
     FitManager fitter{this};
     fitter.setVerbosity(verbosity);
     return fitter.fit();
+}
+
+void PdfBase::fillMCDataSimple(size_t events, unsigned int seed) {
+    // Setup bins
+    if(observablesList.size() != 1)
+        throw GeneralError("You can only fill MC on a 1D dataset with a simple fill");
+
+    Observable var = observablesList.at(0);
+
+    UnbinnedDataSet data{var};
+    data.fillWithGrid();
+    auto origdata = getData();
+
+    if(origdata == nullptr)
+        throw GeneralError("Can't run on a PDF with no DataSet to fill!");
+
+    setData(&data);
+    std::vector<double> pdfValues = dynamic_cast<GooPdf *>(this)->getCompProbsAtDataPoints()[0];
+
+    // Setup random numbers
+    if(seed == 0) {
+        std::random_device rd;
+        seed = rd();
+    }
+    std::mt19937 gen(seed);
+
+    // Uniform distribution
+    std::uniform_real_distribution<> unihalf(-.5, .5);
+    std::uniform_real_distribution<> uniwhole(0.0, 1.0);
+
+    // CumSum in other languages
+    std::vector<double> integral(pdfValues.size());
+    std::partial_sum(pdfValues.begin(), pdfValues.end(), integral.begin());
+
+    // Make this a 0-1 fraction by dividing by the end value
+    std::for_each(integral.begin(), integral.end(), [&integral](double &val) { val /= integral.back(); });
+
+    for(size_t i = 0; i < events; i++) {
+        double r = uniwhole(gen);
+
+        // Binary search for integral[cell-1] < r < integral[cell]
+        size_t j = std::lower_bound(integral.begin(), integral.end(), r) - integral.begin();
+
+        // Fill in the grid randomly
+        double varValue = data.getValue(var, j) + var.getBinSize() * unihalf(gen);
+
+        var.setValue(varValue);
+        origdata->addEvent();
+    }
+
+    setData(origdata);
 }
 } // namespace GooFit

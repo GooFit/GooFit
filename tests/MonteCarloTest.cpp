@@ -5,7 +5,6 @@
 #include <goofit/PDFs/basic/GaussianPdf.h>
 #include <goofit/PDFs/combine/ProdPdf.h>
 #include <goofit/UnbinnedDataSet.h>
-#include <goofit/utilities/MonteCarlo.h>
 
 #include <goofit/Variable.h>
 
@@ -28,7 +27,7 @@ TEST(MonteCarlo, GaussianGenAndFit) {
     pdf.setData(&data);
 
     // Generate toy events.
-    fillDataSetMC1D(pdf, var, 1000, /* seed */ 27);
+    pdf.fillMCDataSimple(1000, /* seed */ 27);
 
     fmt::print("Data set entries: {} \n", data.getNumEvents());
 

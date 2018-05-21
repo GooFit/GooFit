@@ -32,5 +32,10 @@ void init_PdfBase(py::module &m) {
              py::call_guard<py::scoped_ostream_redirect>(),
              "Quick way to fit a PDF. Use a FitManager for more control.",
              "data"_a,
+             "verbosity"_a = 3)
+        .def("fit",
+             &PdfBase::fit,
+             py::call_guard<py::scoped_ostream_redirect>(),
+             "Fit to an existing attached dataset.",
              "verbosity"_a = 3);
 }

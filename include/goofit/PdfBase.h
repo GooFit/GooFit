@@ -99,6 +99,8 @@ class PdfBase {
     __host__ virtual void setFitControl(std::shared_ptr<FitControl>) = 0;
     __host__ virtual bool hasAnalyticIntegral() const { return false; }
 
+    __host__ void fillMCDataSimple(size_t events, unsigned int seed = 0);
+
     /// RooFit style fitting shortcut
     __host__ ROOT::Minuit2::FunctionMinimum fitTo(DataSet *data, int verbosity = 3);
 

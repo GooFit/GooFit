@@ -9,9 +9,5 @@ class StepPdf : public GooPdf {
     StepPdf(std::string n, Observable _x, Variable x0);
     __host__ fptype integrate(fptype lo, fptype hi) const override;
     __host__ bool hasAnalyticIntegral() const override { return true; }
-
-    __host__ void recursiveSetIndices() override;
-
-  private:
 };
 } // namespace GooFit

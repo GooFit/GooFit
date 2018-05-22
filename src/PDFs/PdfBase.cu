@@ -103,18 +103,21 @@ __host__ void PdfBase::initializeIndices() {
 
 __host__ void PdfBase::recursiveSetIndices() {
     if(reflex_name_.empty() || function_ptr_ == nullptr)
-        throw GeneralError(
-            "A PDF must either provide a function name and function pointer or override recursiveSetIndices");
+        throw GeneralError("A PDF must either provide a function name and"
+                           " function pointer or override recursiveSetIndices\n"
+                           "Called by {}\n"
+                           "Make sure initilize is not called before registerFunction!",
+                           getName());
 
 #ifdef __CUDACC__
     cudaError err = cudaMemcpyFromSymbol((void **)&host_fcn_ptr, function_ptr_, sizeof(void *));
     if(err != cudaSuccess)
         throw GeneralError("CUDA Error: {} in {}", cudaGetErrorString(err), reflex_name_);
 #else
-    host_fcn_ptr = function_ptr_;
+    host_fcn_ptr = (void *)function_ptr_;
 #endif
 
-    GOOFIT_DEBUG("host_function_table[{}] = {} for {} from PDFBase::recursiveSetIndices",
+    GOOFIT_DEBUG("host_function_table[{}] = {} for \"{}\" from PDFBase::recursiveSetIndices",
                  num_device_functions,
                  reflex_name_,
                  getName());

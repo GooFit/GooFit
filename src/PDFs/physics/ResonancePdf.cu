@@ -505,8 +505,10 @@ RBW::RBW(std::string name,
     registerConstant(sp);
     registerConstant(cyc);
 
-    resonanceType = 0;
-    sym_          = sym;
+    if(sym)
+        registerResonanceFunction("ptr_to_RBW_Sym", ptr_to_RBW_Sym);
+    else
+        registerResonanceFunction("ptr_to_RBW", ptr_to_RBW);
 }
 
 GS::GS(std::string name, Variable ar, Variable ai, Variable mass, Variable width, unsigned int sp, unsigned int cyc)
@@ -517,7 +519,7 @@ GS::GS(std::string name, Variable ar, Variable ai, Variable mass, Variable width
     registerConstant(sp);
     registerConstant(cyc);
 
-    resonanceType = 1;
+    registerResonanceFunction("ptr_to_GOUSAK", ptr_to_GOUSAK);
 }
 
 LASS::LASS(std::string name, Variable ar, Variable ai, Variable mass, Variable width, unsigned int sp, unsigned int cyc)
@@ -528,7 +530,7 @@ LASS::LASS(std::string name, Variable ar, Variable ai, Variable mass, Variable w
     registerConstant(sp);
     registerConstant(cyc);
 
-    resonanceType = 2;
+    registerResonanceFunction("ptr_to_LASS", ptr_to_LASS);
 }
 
 // Constructor for regular BW,Gounaris-Sakurai,LASS
@@ -543,12 +545,12 @@ Gauss::Gauss(std::string name, Variable ar, Variable ai, Variable mass, Variable
 
     registerConstant(cyc);
 
-    resonanceType = 3;
+    registerResonanceFunction("ptr_to_GAUSSIAN", ptr_to_GAUSSIAN);
 }
 
 NonRes::NonRes(std::string name, Variable ar, Variable ai)
     : ResonancePdf(name, ar, ai) {
-    resonanceType = 4;
+    registerResonanceFunction("ptr_to_NONRES", ptr_to_NONRES);
 }
 
 FLATTE::FLATTE(std::string name,
@@ -567,7 +569,7 @@ FLATTE::FLATTE(std::string name,
     registerConstant(cyc);
     registerConstant(symmDP);
 
-    resonanceType = 5;
+    registerResonanceFunction("ptr_to_FLATTE", ptr_to_FLATTE);
 }
 
 Spline::Spline(std::string name,
@@ -591,7 +593,7 @@ Spline::Spline(std::string name,
         registerParameter(pwa_coefs_imags[i]);
     }
 
-    resonanceType = 6;
+    registerResonanceFunction("ptr_to_SPLINE", ptr_to_SPLINE);
 }
 
 __host__ void Spline::recalculateCache() const {
@@ -613,23 +615,5 @@ __host__ void Spline::recalculateCache() const {
 }
 
 } // namespace Resonances
-
-void ResonancePdf::recursiveSetIndices() {
-    if(resonanceType == 0) {
-        if(sym_) {
-            GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_RBW_Sym);
-        } else {
-            GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_RBW);
-        }
-    } else if(resonanceType == 1) {
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_GOUSAK);
-    } else if(resonanceType == 2) {
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_LASS);
-    } else if(resonanceType == 3) {
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_GAUSSIAN);
-    } else if(resonanceType == 4) {
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_NONRES);
-    }
-}
 
 } // namespace GooFit

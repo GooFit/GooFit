@@ -63,10 +63,10 @@ __host__ KinLimitBWPdf::KinLimitBWPdf(std::string n, Observable _x, Variable mea
     registerConstant(1.8645);
     registerConstant(0.13957);
 
+    registerFunction("ptr_to_KinLimitBW", ptr_to_KinLimitBW);
+
     initialize();
 }
-
-__host__ void KinLimitBWPdf::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_KinLimitBW); }
 
 __host__ void KinLimitBWPdf::setMasses(fptype bigM, fptype smallM) {
     constantsList[0] = bigM;

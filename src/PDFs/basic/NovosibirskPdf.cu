@@ -47,9 +47,9 @@ __host__ NovosibirskPdf::NovosibirskPdf(std::string n, Observable _x, Variable m
     registerParameter(sigma);
     registerParameter(tail);
 
+    registerFunction("ptr_to_Novosibirsk", ptr_to_Novosibirsk);
+
     initialize();
 }
-
-__host__ void NovosibirskPdf::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_Novosibirsk); }
 
 } // namespace GooFit

@@ -382,6 +382,8 @@ __host__ TDDP4::TDDP4(std::string n,
     // In case the resolution function needs parameters, this registers them.
     // resolution->createParameters(pindices, this);
 
+    registerFunction("ptr_to_TDDP4", ptr_to_TDDP4);
+
     initialize();
 
     Integrator   = new NormIntegrator_TD();
@@ -464,8 +466,8 @@ __host__ TDDP4::TDDP4(std::string n,
     addSpecialMask(PdfBase::ForceSeparateNorm);
 }
 
-__host__ void TDDP4::recursiveSetIndices() {
-    GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_TDDP4);
+__host__ void TDDP4::populateArrays() {
+    PdfBase::populateArrays();
 
     // go over our amplitudes and actually set index values, update.
     std::vector<unsigned int> amp_idx;

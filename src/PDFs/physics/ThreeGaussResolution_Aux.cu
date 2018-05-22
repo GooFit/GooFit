@@ -126,6 +126,8 @@ ThreeGaussResolution::ThreeGaussResolution(
     , outBias(ob)
     , outScaleFactor(os) {
     initIndex();
+
+    registerResFunction("ptr_to_threegauss", ptr_to_threegauss);
 }
 ThreeGaussResolution::~ThreeGaussResolution() = default;
 
@@ -139,8 +141,6 @@ void ThreeGaussResolution::createParameters(PdfBase *dis) {
     registerParameter(outBias);
     registerParameter(outScaleFactor);
 }
-
-void ThreeGaussResolution::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_threegauss); }
 
 fptype ThreeGaussResolution::normalisation(
     fptype di1, fptype di2, fptype di3, fptype di4, fptype tau, fptype xmixing, fptype ymixing) const {

@@ -32,7 +32,6 @@ __device__ fptype device_Landau(fptype *evt, ParameterContainer &pc) {
     fptype x     = evt[id];
     fptype mpv   = pc.getParameter(0);
     fptype sigma = pc.getParameter(1);
-
     pc.incrementIndex(1, 2, 0, 1, 1);
 
     if(sigma <= 0)
@@ -87,9 +86,9 @@ __host__ LandauPdf::LandauPdf(std::string n, Observable _x, Variable mpv, Variab
     registerParameter(mpv);
     registerParameter(sigma);
 
+    registerFunction("ptr_to_Landau", ptr_to_Landau);
+
     initialize();
 }
-
-__host__ void LandauPdf::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_Landau); }
 
 } // namespace GooFit

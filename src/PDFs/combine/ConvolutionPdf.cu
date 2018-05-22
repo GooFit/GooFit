@@ -164,11 +164,11 @@ ConvolutionPdf::ConvolutionPdf(std::string n, Observable x, GooPdf *m, GooPdf *r
     registerConstant(0.01);
     registerConstant(workSpaceIndex = totalConvolutions++);
 
+    registerFunction("ptr_to_ConvolvePdfs", ptr_to_ConvolvePdfs);
+
     initialize();
 
     setIntegrationConstants(-10, 10, 0.01);
-
-    ConvolveType = 0;
 }
 
 ConvolutionPdf::ConvolutionPdf(std::string n, Observable x, GooPdf *m, GooPdf *r, unsigned int numOthers)
@@ -213,18 +213,10 @@ ConvolutionPdf::ConvolutionPdf(std::string n, Observable x, GooPdf *m, GooPdf *r
         throw GooFit::GeneralError(
             "numOthers {} must be not be more than the cache size {}", numOthers, CONVOLUTION_CACHE_SIZE);
 
+    registerFunction("ptr_to_ConvolveSharedPdfs", ptr_to_ConvolveSharedPdfs);
+
     initialize();
     setIntegrationConstants(-10, 10, 0.01);
-
-    ConvolveType = 1;
-}
-
-__host__ void ConvolutionPdf::recursiveSetIndices() {
-    if(ConvolveType == 0) {
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_ConvolvePdfs);
-    } else if(ConvolveType == 1) {
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_ConvolveSharedPdfs);
-    }
 }
 
 __host__ void ConvolutionPdf::setIntegrationConstants(fptype lo, fptype hi, fptype step) {

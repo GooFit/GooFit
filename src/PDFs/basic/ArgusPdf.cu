@@ -7,15 +7,14 @@ namespace GooFit {
 __device__ fptype device_Argus_Upper(fptype *evt, ParameterContainer &pc) {
     int id = pc.getObservable(0);
 
-    fptype x  = evt[id];
-    fptype m0 = pc.getParameter(0);
-
-    double t = x / m0;
-
+    fptype x     = evt[id];
+    fptype m0    = pc.getParameter(0);
     fptype slope = pc.getParameter(1);
     fptype power = pc.getParameter(2);
 
     pc.incrementIndex(1, 3, 0, 1, 1);
+
+    double t = x / m0;
 
     if(t >= 1)
         return 0;
@@ -28,16 +27,14 @@ __device__ fptype device_Argus_Upper(fptype *evt, ParameterContainer &pc) {
 __device__ fptype device_Argus_Lower(fptype *evt, ParameterContainer &pc) {
     int id = pc.getObservable(0);
 
-    fptype x  = evt[id];
-    fptype m0 = pc.getParameter(0);
-
-    fptype t = x / m0;
-
+    fptype x     = evt[id];
+    fptype m0    = pc.getParameter(0);
     fptype slope = pc.getParameter(1);
     fptype power = pc.getParameter(2);
 
     pc.incrementIndex(1, 3, 0, 1, 1);
 
+    fptype t = x / m0;
     if(t <= 1)
         return 0;
 
@@ -59,26 +56,14 @@ __host__ ArgusPdf::ArgusPdf(std::string n, Observable _x, Variable m0, Variable 
     : GooPdf(n, _x) {
     registerParameter(m0);
     registerParameter(slope);
-
     registerParameter(power);
 
-    if(upper) {
-        ArgusType = 1;
-        GET_FUNCTION_ADDR(ptr_to_Argus_Upper);
-    } else {
-        ArgusType = 0;
-        GET_FUNCTION_ADDR(ptr_to_Argus_Lower);
-    }
+    if(upper)
+        registerFunction("ptr_to_Argus_Upper", ptr_to_Argus_Upper);
+    else
+        registerFunction("ptr_to_Argus_Lower", ptr_to_Argus_Lower);
 
     initialize();
-}
-
-__host__ void ArgusPdf::recursiveSetIndices() {
-    if(ArgusType == 1) {
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_Argus_Upper);
-    } else if(ArgusType == 0) {
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_Argus_Lower);
-    }
 }
 
 fptype argus_lower_helper(fptype x, fptype m0, fptype slope, fptype power) {

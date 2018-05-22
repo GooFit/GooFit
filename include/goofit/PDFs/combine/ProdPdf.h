@@ -10,8 +10,6 @@ class ProdPdf : public GooPdf {
     __host__ fptype normalize() const override;
     __host__ bool hasAnalyticIntegral() const override { return false; }
 
-    __host__ void recursiveSetIndices() override;
-
   private:
     bool varOverlaps; // True if any components share an observable.
 };

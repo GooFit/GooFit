@@ -31,10 +31,10 @@ __host__ BifurGaussPdf::BifurGaussPdf(std::string n, Observable _x, Variable mea
     registerParameter(sigmaL);
     registerParameter(sigmaR);
 
+    registerFunction("ptr_to_BifurGauss", ptr_to_BifurGauss);
+
     initialize();
 }
-
-__host__ void BifurGaussPdf::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_BifurGauss); }
 
 // q: how shall the normalization of a bifurcated gaussian be calculated?
 // a: a "sum" of two half-gaussians?

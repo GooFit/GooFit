@@ -61,8 +61,6 @@ __device__ int dev_powi(int base, int exp); // Implemented in SmoothHistogramPdf
 void *getMetricPointer(std::string name);
 
 /// Pass event, parameters, index into parameters.
-typedef fptype (*device_function_ptr)(fptype *, ParameterContainer &);
-
 typedef fptype (*device_metric_ptr)(fptype, fptype *, fptype);
 
 extern void *host_fcn_ptr;

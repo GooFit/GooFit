@@ -51,10 +51,10 @@ __host__ CrystalBallPdf::CrystalBallPdf(
     registerParameter(alpha);
     registerParameter(power);
 
+    registerFunction("ptr_to_CrystalBall", ptr_to_CrystalBall);
+
     initialize();
 }
-
-__host__ void CrystalBallPdf::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_CrystalBall); }
 
 __host__ fptype CrystalBallPdf::integrate(fptype lo, fptype hi) const {
     static const fptype sqrtPiOver2 = 1.2533141373;

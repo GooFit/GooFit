@@ -59,6 +59,9 @@ class SpinFactor : public GooPdf {
                 and S._P3 == _P3);
     }
 
-    __host__ void recursiveSetIndices() override;
+    __host__ void registerSpinFunction(std::string name, spin_function_ptr function) {
+        registerFunction(name, reinterpret_cast<device_function_ptr>(function));
+    }
 };
+
 } // namespace GooFit

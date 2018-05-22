@@ -775,62 +775,6 @@ Lineshape::Lineshape(std::string name, unsigned int L, unsigned int Mpair, FF Fo
     // which will tell this object where to find them by calling setConstantIndex.
 }
 
-void Lineshape::recursiveSetIndices() {
-    switch(lineShapeType) {
-    case 1:
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_LS_ONE);
-        break;
-
-    case 2:
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_BW_DP4);
-        break;
-
-    case 3:
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_lass);
-        break;
-
-    case 4:
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_glass3);
-        break;
-
-    case 5:
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_bugg_MINT);
-        break;
-
-    case 6:
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_bugg_MINT3);
-        break;
-
-    case 7:
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_SBW);
-        break;
-
-    case 8:
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_NONRES_DP);
-        break;
-
-    case 9:
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_Flatte);
-        break;
-
-    case 10:
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_Spline);
-        break;
-
-    case 11:
-#if GOOFIT_KMATRIX
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_kMatrix);
-#else
-        throw GeneralError("Impossible to use kMatrix without compiled kMatrix support");
-#endif
-        break;
-
-    case 12:
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_FOCUS);
-        break;
-    }
-}
-
 std::vector<fptype> make_spline_curvatures(std::vector<Variable> vars, Lineshapes::spline_t SplineInfo) {
     size_t size = std::get<2>(SplineInfo) - 2;
     Eigen::Matrix<fptype, Eigen::Dynamic, Eigen::Dynamic> m(size, size);
@@ -876,8 +820,6 @@ Lineshapes::GSpline::GSpline(std::string name,
 
     registerConstant(enum_to_underlying(FormFac));
 
-    lineShapeType = 10;
-
     if(std::get<2>(SplineInfo) != AdditionalVars.size())
         throw GeneralError("bins {} != vars {}", std::get<2>(SplineInfo), AdditionalVars.size());
     registerConstant(std::get<0>(SplineInfo));
@@ -894,6 +836,8 @@ Lineshapes::GSpline::GSpline(std::string name,
         // Calc curve
         registerConstant(par);
     }
+
+    registerResonanceFunction("ptr_to_Spline", ptr_to_Spline);
 
     initialize();
 }
@@ -922,11 +866,11 @@ Lineshapes::GLASS::GLASS(std::string name,
 
     registerConstant(enum_to_underlying(FormFac));
 
-    lineShapeType = 4;
-
     for(int i = 0; i < 5; i++) {
         registerParameter(AdditionalVars[i]);
     }
+
+    registerResonanceFunction("ptr_to_glass3", ptr_to_glass3);
 
     initialize();
 }
@@ -944,7 +888,7 @@ Lineshapes::One::One(
 
     registerConstant(enum_to_underlying(FormFac));
 
-    lineShapeType = 1;
+    registerResonanceFunction("ptr_to_LS_ONE", ptr_to_LS_ONE);
 
     initialize();
 }
@@ -962,7 +906,7 @@ Lineshapes::RBW::RBW(
 
     registerConstant(enum_to_underlying(FormFac));
 
-    lineShapeType = 2;
+    registerResonanceFunction("ptr_to_BW_DP4", ptr_to_BW_DP4);
 
     initialize();
 }
@@ -980,7 +924,7 @@ Lineshapes::LASS::LASS(
 
     constantsList.push_back(enum_to_underlying(FormFac));
 
-    lineShapeType = 3;
+    registerResonanceFunction("ptr_to_lass", ptr_to_lass);
 
     initialize();
 }
@@ -998,7 +942,7 @@ Lineshapes::NonRes::NonRes(
 
     registerConstant(enum_to_underlying(FormFac));
 
-    lineShapeType = 8;
+    registerResonanceFunction("ptr_to_NONRES_DP", ptr_to_NONRES_DP);
 
     initialize();
 }
@@ -1016,7 +960,7 @@ Lineshapes::Bugg::Bugg(
 
     registerConstant(enum_to_underlying(FormFac));
 
-    lineShapeType = 5;
+    registerResonanceFunction("ptr_to_bugg_MINT", ptr_to_bugg_MINT);
 
     initialize();
 }
@@ -1034,7 +978,7 @@ Lineshapes::Bugg3::Bugg3(
 
     registerConstant(enum_to_underlying(FormFac));
 
-    lineShapeType = 6;
+    registerResonanceFunction("ptr_to_bugg_MINT3", ptr_to_bugg_MINT3);
 
     initialize();
 }
@@ -1052,7 +996,7 @@ Lineshapes::Flatte::Flatte(
 
     registerConstant(enum_to_underlying(FormFac));
 
-    lineShapeType = 9;
+    registerResonanceFunction("ptr_to_Flatte", ptr_to_Flatte);
 
     initialize();
 }
@@ -1070,7 +1014,7 @@ Lineshapes::SBW::SBW(
 
     registerConstant(enum_to_underlying(FormFac));
 
-    lineShapeType = 7;
+    registerResonanceFunction("ptr_to_SBW", ptr_to_SBW);
 
     initialize();
 }
@@ -1096,7 +1040,7 @@ Lineshapes::FOCUS::FOCUS(std::string name,
 
     registerConstant(static_cast<unsigned int>(mod));
 
-    lineShapeType = 12;
+    registerResonanceFunction("ptr_to_FOCUS", ptr_to_FOCUS);
 
     initialize();
 }
@@ -1144,7 +1088,7 @@ Lineshapes::kMatrix::kMatrix(std::string name,
         registerParameter(poles.at(i));
     }
 
-    lineShapeType = 11;
+    registerResonanceFunction("ptr_to_kMatrix", ptr_to_kMatrix);
 
     initialize();
 }

@@ -111,6 +111,11 @@ AddPdf::AddPdf(std::string n, std::vector<Variable> weights, std::vector<PdfBase
         extended = false;
     }
 
+    if(extended)
+        registerFunction("ptr_to_AddPdfsExt", ptr_to_AddPdfsExt);
+    else
+        registerFunction("ptr_to_AddPdfs", ptr_to_AddPdfs);
+
     initialize();
 }
 
@@ -125,15 +130,9 @@ AddPdf::AddPdf(std::string n, Variable frac1, PdfBase *func1, PdfBase *func2)
 
     registerParameter(frac1);
 
-    initialize();
-}
+    registerFunction("ptr_to_AddPdfs", ptr_to_AddPdfs);
 
-__host__ void AddPdf::recursiveSetIndices() {
-    if(extended) {
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_AddPdfsExt);
-    } else {
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_AddPdfs);
-    }
+    initialize();
 }
 
 __host__ fptype AddPdf::normalize() const {

@@ -12,10 +12,5 @@ class ExpPdf : public GooPdf {
     ExpPdf(std::string n, Observable _x, std::vector<Variable> &weights, Variable offset);
     __host__ fptype integrate(fptype lo, fptype hi) const override;
     __host__ bool hasAnalyticIntegral() const override { return (1 == host_parameters[parametersIdx]); }
-
-    __host__ void recursiveSetIndices() override;
-
-  private:
-    int ExpType;
 };
 } // namespace GooFit

@@ -52,9 +52,9 @@ __host__ BinTransformPdf::BinTransformPdf(std::string n,
         registerConstant(numBins[i]);
     }
 
+    registerFunction("ptr_to_BinTransform", ptr_to_BinTransform);
+
     initialize();
 }
-
-__host__ void BinTransformPdf::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_BinTransform); }
 
 } // namespace GooFit

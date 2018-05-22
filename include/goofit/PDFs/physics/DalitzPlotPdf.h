@@ -27,7 +27,7 @@ class DalitzPlotPdf : public GooPdf {
     __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 3);
     __host__ void setForceIntegrals(bool f = true) { forceRedoIntegrals = f; }
 
-    __host__ void recursiveSetIndices() override;
+    __host__ void populateArrays() override;
 
     /// Get the cached wave (device) vectors
     __host__ const thrust::device_vector<fpcomplex> &getCachedWaveNoCopy(size_t i) const { return *(cachedWaves[i]); }

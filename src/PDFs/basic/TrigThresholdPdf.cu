@@ -91,11 +91,10 @@ __host__ TrigThresholdPdf::TrigThresholdPdf(
     registerParameter(trigConst);
     registerParameter(linConst);
 
-    if(upper) {
-        trigThreshType = 0;
-    } else {
-        trigThreshType = 1;
-    }
+    if(upper)
+        registerFunction("ptr_to_TrigThresholdUpper", ptr_to_TrigThresholdUpper);
+    else
+        registerFunction("ptr_to_TrigThresholdLower", ptr_to_TrigThresholdLower);
 
     initialize();
 }
@@ -114,25 +113,12 @@ __host__ TrigThresholdPdf::TrigThresholdPdf(std::string n,
     registerParameter(linConst);
     registerParameter(massConstant);
 
-    if(upper) {
-        trigThreshType = 2;
-    } else {
-        trigThreshType = 3;
-    }
+    if(upper)
+        registerFunction("ptr_to_VerySpecialEpisodeTrigThresholdUpper", ptr_to_VerySpecialEpisodeTrigThresholdUpper);
+    else
+        registerFunction("ptr_to_VerySpecialEpisodeTrigThresholdLower", ptr_to_VerySpecialEpisodeTrigThresholdLower);
 
     initialize();
-}
-
-void TrigThresholdPdf::recursiveSetIndices() {
-    if(trigThreshType == 0) {
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_TrigThresholdUpper);
-    } else if(trigThreshType == 1) {
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_TrigThresholdLower);
-    } else if(trigThreshType == 2) {
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_VerySpecialEpisodeTrigThresholdUpper);
-    } else if(trigThreshType == 3) {
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_VerySpecialEpisodeTrigThresholdLower);
-    }
 }
 
 } // namespace GooFit

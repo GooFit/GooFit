@@ -130,17 +130,10 @@ AddPdf::AddPdf(std::string n, Variable frac1, PdfBase *func1, PdfBase *func2)
 
 __host__ void AddPdf::recursiveSetIndices() {
     if(extended) {
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_AddPdfsExt");
-        GET_FUNCTION_ADDR(ptr_to_AddPdfsExt);
+        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_AddPdfsExt);
     } else {
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_AddPdfs");
-        GET_FUNCTION_ADDR(ptr_to_AddPdfs);
+        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_AddPdfs);
     }
-
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
 }
 
 __host__ fptype AddPdf::normalize() const {

@@ -50,14 +50,6 @@ __host__ NovosibirskPdf::NovosibirskPdf(std::string n, Observable _x, Variable m
     initialize();
 }
 
-__host__ void NovosibirskPdf::recursiveSetIndices() {
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Novosibirsk");
-    GET_FUNCTION_ADDR(ptr_to_Novosibirsk);
-
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
-}
+__host__ void NovosibirskPdf::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_Novosibirsk); }
 
 } // namespace GooFit

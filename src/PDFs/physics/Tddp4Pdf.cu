@@ -465,13 +465,7 @@ __host__ TDDP4::TDDP4(std::string n,
 }
 
 __host__ void TDDP4::recursiveSetIndices() {
-    GET_FUNCTION_ADDR(ptr_to_TDDP4);
-
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_TDDP4");
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
+    GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_TDDP4);
 
     // go over our amplitudes and actually set index values, update.
     std::vector<unsigned int> amp_idx;

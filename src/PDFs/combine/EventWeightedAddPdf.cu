@@ -153,19 +153,10 @@ __host__ fptype EventWeightedAddPdf::normalize() const {
 
 __host__ void EventWeightedAddPdf::recursiveSetIndices() {
     if(extended) {
-        GOOFIT_TRACE(
-            "host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_EventWeightedAddPdfsExt");
-        GET_FUNCTION_ADDR(ptr_to_EventWeightedAddPdfsExt);
+        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_EventWeightedAddPdfsExt);
     } else {
-        GOOFIT_TRACE(
-            "host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_EventWeightedAddPdfs");
-        GET_FUNCTION_ADDR(ptr_to_EventWeightedAddPdfs);
+        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_EventWeightedAddPdfs);
     }
-
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
 }
 
 } // namespace GooFit

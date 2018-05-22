@@ -27,14 +27,6 @@ __host__ BWPdf::BWPdf(std::string n, Observable _x, Variable mean, Variable widt
     initialize();
 }
 
-__host__ void BWPdf::recursiveSetIndices() {
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_BW");
-    GET_FUNCTION_ADDR(ptr_to_BW);
-
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
-}
+__host__ void BWPdf::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_BW); }
 
 } // namespace GooFit

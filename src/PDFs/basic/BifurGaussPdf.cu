@@ -34,15 +34,7 @@ __host__ BifurGaussPdf::BifurGaussPdf(std::string n, Observable _x, Variable mea
     initialize();
 }
 
-__host__ void BifurGaussPdf::recursiveSetIndices() {
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_BifurGauss");
-    GET_FUNCTION_ADDR(ptr_to_BifurGauss);
-
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
-}
+__host__ void BifurGaussPdf::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_BifurGauss); }
 
 // q: how shall the normalization of a bifurcated gaussian be calculated?
 // a: a "sum" of two half-gaussians?

@@ -67,13 +67,5 @@ __host__ DalitzVetoPdf::DalitzVetoPdf(std::string n,
     initialize();
 }
 
-void DalitzVetoPdf::recursiveSetIndices() {
-    GET_FUNCTION_ADDR(ptr_to_DalitzVeto);
-
-    GOOFIT_TRACE("host_function_table[{}]({})", num_device_functions, getName(), "ptr_to_DalitzVeto");
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
-}
+void DalitzVetoPdf::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_DalitzVeto); }
 } // namespace GooFit

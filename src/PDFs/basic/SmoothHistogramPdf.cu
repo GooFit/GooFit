@@ -164,15 +164,7 @@ __host__ SmoothHistogramPdf::SmoothHistogramPdf(std::string n, BinnedDataSet *hi
     initialize();
 }
 
-void SmoothHistogramPdf::recursiveSetIndices() {
-    GET_FUNCTION_ADDR(ptr_to_EvalHistogram);
-
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_EvalHistogram");
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
-}
+void SmoothHistogramPdf::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_EvalHistogram); }
 
 fptype *pointerToFirst(thrust::device_vector<fptype> *hist) { return (&((*hist)[0])).get(); }
 

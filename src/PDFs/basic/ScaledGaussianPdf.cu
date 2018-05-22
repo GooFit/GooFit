@@ -32,14 +32,6 @@ __host__ ScaledGaussianPdf::ScaledGaussianPdf(
     initialize();
 }
 
-__host__ void ScaledGaussianPdf::recursiveSetIndices() {
-    GET_FUNCTION_ADDR(ptr_to_ScaledGaussian);
-
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_ScaledGaussian");
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
-}
+__host__ void ScaledGaussianPdf::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_ScaledGaussian); }
 
 } // namespace GooFit

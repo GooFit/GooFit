@@ -287,13 +287,7 @@ __host__ DPPdf::DPPdf(
 }
 
 void DPPdf::recursiveSetIndices() {
-    GET_FUNCTION_ADDR(ptr_to_DP);
-
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_DP");
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
+    GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_DP);
 
     // save our efficiency function.  Resonance's are saved first, then the efficiency function.
 

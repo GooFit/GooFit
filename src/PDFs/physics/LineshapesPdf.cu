@@ -778,74 +778,57 @@ Lineshape::Lineshape(std::string name, unsigned int L, unsigned int Mpair, FF Fo
 void Lineshape::recursiveSetIndices() {
     switch(lineShapeType) {
     case 1:
-        GET_FUNCTION_ADDR(ptr_to_LS_ONE);
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_LS_ONE");
+        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_LS_ONE);
         break;
 
     case 2:
-        GET_FUNCTION_ADDR(ptr_to_BW_DP4);
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_BW_DP4");
+        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_BW_DP4);
         break;
 
     case 3:
-        GET_FUNCTION_ADDR(ptr_to_lass);
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_lass");
+        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_lass);
         break;
 
     case 4:
-        GET_FUNCTION_ADDR(ptr_to_glass3);
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_glass3");
+        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_glass3);
         break;
 
     case 5:
-        GET_FUNCTION_ADDR(ptr_to_bugg_MINT);
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_bugg_MINT");
+        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_bugg_MINT);
         break;
 
     case 6:
-        GET_FUNCTION_ADDR(ptr_to_bugg_MINT3);
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_bugg_MINT3");
+        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_bugg_MINT3);
         break;
 
     case 7:
-        GET_FUNCTION_ADDR(ptr_to_SBW);
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_SBW");
+        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_SBW);
         break;
 
     case 8:
-        GET_FUNCTION_ADDR(ptr_to_NONRES_DP);
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_NONRES_DP");
+        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_NONRES_DP);
         break;
 
     case 9:
-        GET_FUNCTION_ADDR(ptr_to_Flatte);
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Flatte");
+        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_Flatte);
         break;
 
     case 10:
-        GET_FUNCTION_ADDR(ptr_to_Spline);
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Spline");
+        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_Spline);
         break;
 
     case 11:
 #if GOOFIT_KMATRIX
-        GET_FUNCTION_ADDR(ptr_to_kMatrix);
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_kMatrix");
+        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_kMatrix);
 #else
         throw GeneralError("Impossible to use kMatrix without compiled kMatrix support");
 #endif
         break;
 
     case 12:
-        GET_FUNCTION_ADDR(ptr_to_FOCUS);
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_FOCUS");
+        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_FOCUS);
         break;
     }
-
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
 }
 
 std::vector<fptype> make_spline_curvatures(std::vector<Variable> vars, Lineshapes::spline_t SplineInfo) {

@@ -224,13 +224,7 @@ __host__ DalitzPlotPdf::DalitzPlotPdf(
 }
 
 void DalitzPlotPdf::recursiveSetIndices() {
-    GET_FUNCTION_ADDR(ptr_to_DalitzPlot);
-
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_DalitzPlot");
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
+    GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_DalitzPlot);
 
     // save our efficiency function.  Resonance's are saved first, then the efficiency function.  Take -1 as efficiency!
     efficiencyFunction = num_device_functions - 1;

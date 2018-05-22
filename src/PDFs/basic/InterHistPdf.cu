@@ -177,14 +177,6 @@ InterHistPdf::InterHistPdf(std::string n, BinnedDataSet *x, std::vector<Variable
     totalHistograms++;
 }
 
-void InterHistPdf::recursiveSetIndices() {
-    GET_FUNCTION_ADDR(ptr_to_InterHistogram);
-
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_InterHistogram");
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
-}
+void InterHistPdf::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_InterHistogram); }
 
 } // namespace GooFit

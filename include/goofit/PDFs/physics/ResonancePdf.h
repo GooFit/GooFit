@@ -57,6 +57,7 @@ class ResonancePdf : public GooPdf {
     std::vector<fptype> host_constants;
 
     int resonanceType;
+    bool sym_{false};
 };
 
 namespace Resonances {

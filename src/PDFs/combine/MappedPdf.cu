@@ -78,14 +78,7 @@ __host__ MappedPdf::MappedPdf(std::string n, GooPdf *m, std::vector<GooPdf *> &t
     initialize();
 }
 
-__host__ void MappedPdf::recursiveSetIndices() {
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Mapped");
-    GET_FUNCTION_ADDR(ptr_to_Mapped);
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
-}
+__host__ void MappedPdf::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_Mapped); }
 
 __host__ fptype MappedPdf::normalize() const {
     // std::cout << "Normalising MappedPdf " << getName() << std::endl;

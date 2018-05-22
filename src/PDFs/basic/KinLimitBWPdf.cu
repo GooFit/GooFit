@@ -66,15 +66,7 @@ __host__ KinLimitBWPdf::KinLimitBWPdf(std::string n, Observable _x, Variable mea
     initialize();
 }
 
-__host__ void KinLimitBWPdf::recursiveSetIndices() {
-    GET_FUNCTION_ADDR(ptr_to_KinLimitBW);
-
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_KinLimitBW");
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
-}
+__host__ void KinLimitBWPdf::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_KinLimitBW); }
 
 __host__ void KinLimitBWPdf::setMasses(fptype bigM, fptype smallM) {
     constantsList[0] = bigM;

@@ -26,14 +26,7 @@ __host__ GaussianPdf::GaussianPdf(std::string n, Observable _x, Variable mean, V
     initialize();
 }
 
-__host__ void GaussianPdf::recursiveSetIndices() {
-    GET_FUNCTION_ADDR(ptr_to_Gaussian);
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Gaussian");
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
-}
+__host__ void GaussianPdf::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_Gaussian); }
 
 __host__ fptype GaussianPdf::integrate(fptype lo, fptype hi) const {
     static const fptype rootPi = sqrt(atan2(0.0, -1.0));

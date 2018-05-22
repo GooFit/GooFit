@@ -140,17 +140,7 @@ void ThreeGaussResolution::createParameters(PdfBase *dis) {
     registerParameter(outScaleFactor);
 }
 
-void ThreeGaussResolution::recursiveSetIndices() {
-    GET_FUNCTION_ADDR(ptr_to_threegauss);
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions;
-    num_device_functions++;
-
-    // populate all the arrays
-    GOOFIT_DEBUG("Populating Arrays for {}(three_gauss_resolution)", getName());
-
-    populateArrays();
-}
+void ThreeGaussResolution::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_threegauss); }
 
 fptype ThreeGaussResolution::normalisation(
     fptype di1, fptype di2, fptype di3, fptype di4, fptype tau, fptype xmixing, fptype ymixing) const {

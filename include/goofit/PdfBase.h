@@ -141,8 +141,14 @@ class PdfBase {
 
   protected:
     DataSet *data_ = nullptr; //< Remember the original dataset
-    // use this function to populate the arrays generically.
-    __host__ void populateArrays();
+
+    std::string reflex_name_;     //< This is the name of the type of the PDF, for reflexion purposes. Must be set or
+                                  //RecursiveSetIndicies must be overloaded.
+    void *function_ptr_{nullptr}; //< This is the function pointer to set on the device. Must be set or
+                                  //RecursiveSetIndicies must be overloaded.
+
+    /// use this function to populate the arrays generically, or specialize as needed
+    virtual void populateArrays();
 
     fptype numEvents{0};        //< Non-integer to allow weighted events
     unsigned int numEntries{0}; //< Eg number of bins - not always the same as number of events, although it can be.

@@ -221,17 +221,10 @@ ConvolutionPdf::ConvolutionPdf(std::string n, Observable x, GooPdf *m, GooPdf *r
 
 __host__ void ConvolutionPdf::recursiveSetIndices() {
     if(ConvolveType == 0) {
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_ConvolvePdfs");
-        GET_FUNCTION_ADDR(ptr_to_ConvolvePdfs);
+        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_ConvolvePdfs);
     } else if(ConvolveType == 1) {
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_ConvolveSharedPdfs");
-        GET_FUNCTION_ADDR(ptr_to_ConvolveSharedPdfs);
+        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_ConvolveSharedPdfs);
     }
-
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
 }
 
 __host__ void ConvolutionPdf::setIntegrationConstants(fptype lo, fptype hi, fptype step) {

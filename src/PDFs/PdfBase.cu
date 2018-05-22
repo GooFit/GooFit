@@ -102,11 +102,25 @@ __host__ void PdfBase::initializeIndices() {
 }
 
 __host__ void PdfBase::recursiveSetIndices() {
-    // This function always needs to be overloaded.  The key component missing is assigning the function pointer, which
-    // is only available  in each source file.  Otherwise, we will set the values as follows:
+    if(reflex_name_.empty() || function_ptr_ == nullptr)
+        throw GeneralError(
+            "A PDF must either provide a function name and function pointer or override recursiveSetIndices");
 
-    // This is a helper function if the routine does nothing special.
-    // populateArrays ();
+#ifdef __CUDACC__
+    cudaError err = cudaMemcpyFromSymbol((void **)&host_fcn_ptr, function_ptr_, sizeof(void *));
+    if(err != cudaSuccess)
+        throw GeneralError("CUDA Error: {} in {}", cudaGetErrorString(err), reflex_name_);
+#else
+    host_fcn_ptr = function_ptr_;
+#endif
+
+    GOOFIT_DEBUG("host_function_table[{}] = {} for {} from PDFBase::recursiveSetIndices",
+                 num_device_functions,
+                 reflex_name_,
+                 getName());
+    host_function_table[num_device_functions] = host_fcn_ptr;
+    functionIdx                               = num_device_functions++;
+    populateArrays();
 }
 
 __host__ void PdfBase::updateVariable(Variable var, fptype newValue) {

@@ -505,13 +505,8 @@ RBW::RBW(std::string name,
     registerConstant(sp);
     registerConstant(cyc);
 
-    if(sym) {
-        GET_FUNCTION_ADDR(ptr_to_RBW_Sym);
-    } else {
-        GET_FUNCTION_ADDR(ptr_to_RBW);
-    }
-
     resonanceType = 0;
+    sym_          = sym;
 }
 
 GS::GS(std::string name, Variable ar, Variable ai, Variable mass, Variable width, unsigned int sp, unsigned int cyc)
@@ -621,26 +616,20 @@ __host__ void Spline::recalculateCache() const {
 
 void ResonancePdf::recursiveSetIndices() {
     if(resonanceType == 0) {
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_RBW");
-        GET_FUNCTION_ADDR(ptr_to_RBW);
+        if(sym_) {
+            GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_RBW_Sym);
+        } else {
+            GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_RBW);
+        }
     } else if(resonanceType == 1) {
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_GOUSAK");
-        GET_FUNCTION_ADDR(ptr_to_GOUSAK);
+        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_GOUSAK);
     } else if(resonanceType == 2) {
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_LASS");
-        GET_FUNCTION_ADDR(ptr_to_LASS);
+        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_LASS);
     } else if(resonanceType == 3) {
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_GAUSSIAN");
-        GET_FUNCTION_ADDR(ptr_to_GAUSSIAN);
+        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_GAUSSIAN);
     } else if(resonanceType == 4) {
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_NONRES");
-        GET_FUNCTION_ADDR(ptr_to_NONRES);
+        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_NONRES);
     }
-
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
 }
 
 } // namespace GooFit

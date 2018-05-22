@@ -450,16 +450,10 @@ __host__ TddpPdf::TddpPdf(std::string n,
     addSpecialMask(PdfBase::ForceSeparateNorm);
 }
 
-void TddpPdf::recursiveSetIndices() {
-    GET_FUNCTION_ADDR(ptr_to_Tddp);
+void TddpPdf::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_Tddp); }
 
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_DalitzPlot");
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    // Note: We need to manually populate the arrays so we can track the efficiency function!
-    // populateArrays();
-
+// Note: We need to manually populate the arrays so we can track the efficiency function!
+void TddpPdf::populateArrays() {
     // populate all the arrays
     GOOFIT_DEBUG("Populating Arrays for {}", getName());
 

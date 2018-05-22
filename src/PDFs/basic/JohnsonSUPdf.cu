@@ -44,15 +44,7 @@ JohnsonSUPdf::JohnsonSUPdf(std::string n, Observable _x, Variable mean, Variable
     initialize();
 }
 
-__host__ void JohnsonSUPdf::recursiveSetIndices() {
-    GET_FUNCTION_ADDR(ptr_to_JohnsonSU);
-
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_JohnsonSU");
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
-}
+__host__ void JohnsonSUPdf::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_JohnsonSU); }
 
 __host__ fptype JohnsonSUPdf::integrate(fptype lo, fptype hi) const {
     return 1.0; // Analytic integral included in device function! (Correct for minus to plus inf.)

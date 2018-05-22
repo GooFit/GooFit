@@ -75,17 +75,10 @@ __host__ ArgusPdf::ArgusPdf(std::string n, Observable _x, Variable m0, Variable 
 
 __host__ void ArgusPdf::recursiveSetIndices() {
     if(ArgusType == 1) {
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Argus_Upper");
-        GET_FUNCTION_ADDR(ptr_to_Argus_Upper);
+        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_Argus_Upper);
     } else if(ArgusType == 0) {
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Argus_Lower");
-        GET_FUNCTION_ADDR(ptr_to_Argus_Lower);
+        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_Argus_Lower);
     }
-
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
 }
 
 fptype argus_lower_helper(fptype x, fptype m0, fptype slope, fptype power) {

@@ -32,37 +32,13 @@ __device__ device_function_ptr ptr_to_VarBinTransform1D = device_VarBinTransform
 __host__ VariableBinTransform1DPdf::VariableBinTransform1DPdf(std::string n, Observable _x, vector<fptype> binlimits)
     : GooPdf(n, _x) {
     unsigned int numLimits = binlimits.size(); // Excluding the min & max values for _x
-    // cIndex                 = registerConstants(numLimits);
-    // std::vector<fptype> host_constants;
-    // std::vector<unsigned int> pindices{numLimits};
-    // for(size_t i = 0; i < numLimits; ++i) {
-    //    pindices.push_back(cIndex + i);
-    //    host_constants.push_back(binlimits[i]); // cIndex will be accounted for by offset in memcpy
-    //}
 
     constantsList.push_back(numLimits);
     for(size_t i = 0; i < numLimits; ++i) {
         constantsList.push_back(binlimits[i]);
     }
-
-    // MEMCPY_TO_SYMBOL(functorConstants,
-    //                 host_constants.data(),
-    //                 numLimits * sizeof(fptype),
-    //                 cIndex * sizeof(fptype),
-    //                 cudaMemcpyHostToDevice);
-
-    // GET_FUNCTION_ADDR(ptr_to_VarBinTransform1D);
-    // initialize(pindices);
 }
 
-void VariableBinTransform1DPdf::recursiveSetIndices() {
-    GET_FUNCTION_ADDR(ptr_to_VarBinTransform1D);
-
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_VarBinTransform1D");
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
-}
+void VariableBinTransform1DPdf::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_VarBinTransform1D); }
 
 } // namespace GooFit

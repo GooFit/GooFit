@@ -51,23 +51,6 @@ inline void cudaDeviceSynchronize() {}
         }                                                                                                              \
         GOOFIT_DEBUG("Using function {} in {}, {}:{}", #fname, __func__, __FILE__, __LINE__);                          \
     }
-#define GOOFIT_RECURSIVE_SET_INDICIES(fname)                                                                           \
-    {                                                                                                                  \
-        cudaError err = cudaMemcpyFromSymbol((void **)&host_fcn_ptr, fname, sizeof(void *));                           \
-        if(err != cudaSuccess) {                                                                                       \
-            printf("CUDA Error: %s at %s:%i\n", cudaGetErrorString(err), __FILE__, __LINE__);                          \
-        }                                                                                                              \
-        GOOFIT_DEBUG("host_function_table[{}] = {}({}) in {}, {}:{}",                                                  \
-                     num_device_functions,                                                                             \
-                     getName(),                                                                                        \
-                     #fname,                                                                                           \
-                     __func__,                                                                                         \
-                     __FILE__,                                                                                         \
-                     __LINE__);                                                                                        \
-        host_function_table[num_device_functions] = host_fcn_ptr;                                                      \
-        functionIdx                               = num_device_functions++;                                            \
-        populateArrays();                                                                                              \
-    }
 
 #define ERROR_CHECK(x)                                                                                                 \
     {                                                                                                                  \
@@ -92,21 +75,6 @@ inline void cudaDeviceSynchronize() {}
     {                                                                                                                  \
         host_fcn_ptr = (void *)fname;                                                                                  \
         GOOFIT_DEBUG("Using function {} in {}, {}:{}", #fname, __func__, __FILE__, __LINE__);                          \
-    }
-
-#define GOOFIT_RECURSIVE_SET_INDICIES(fname)                                                                           \
-    {                                                                                                                  \
-        host_fcn_ptr = (void *)fname;                                                                                  \
-        GOOFIT_DEBUG("host_function_table[{}] = {}({}) in {}, {}:{}",                                                  \
-                     num_device_functions,                                                                             \
-                     getName(),                                                                                        \
-                     #fname,                                                                                           \
-                     __func__,                                                                                         \
-                     __FILE__,                                                                                         \
-                     __LINE__);                                                                                        \
-        host_function_table[num_device_functions] = host_fcn_ptr;                                                      \
-        functionIdx                               = num_device_functions++;                                            \
-        populateArrays();                                                                                              \
     }
 
 #define RO_CACHE(x) x

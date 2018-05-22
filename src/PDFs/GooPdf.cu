@@ -148,26 +148,25 @@ __device__ device_metric_ptr ptr_to_Chisq        = calculateChisq;
 
 void *host_fcn_ptr = nullptr;
 
-void *getMetricPointer(std::string name) {
-#define CHOOSE_PTR(ptrname)                                                                                            \
-    if(name == #ptrname)                                                                                               \
-        GET_FUNCTION_ADDR(ptrname);
-    host_fcn_ptr = nullptr;
-    CHOOSE_PTR(ptr_to_Eval);
-    CHOOSE_PTR(ptr_to_NLL);
-    CHOOSE_PTR(ptr_to_Prob);
-    CHOOSE_PTR(ptr_to_BinAvg);
-    CHOOSE_PTR(ptr_to_BinWithError);
-    CHOOSE_PTR(ptr_to_Chisq);
-
-    if(host_fcn_ptr == nullptr)
-        throw GooFit::GeneralError("host_fcn_ptr is nullptr");
+void *getMetricPointer(EvalFunc val) {
+    if(val == EvalFunc::Eval) {
+        GET_FUNCTION_ADDR(ptr_to_Eval);
+    } else if(val == EvalFunc::NLL) {
+        GET_FUNCTION_ADDR(ptr_to_NLL);
+    } else if(val == EvalFunc::Prob) {
+        GET_FUNCTION_ADDR(ptr_to_Prob);
+    } else if(val == EvalFunc::BinAvg) {
+        GET_FUNCTION_ADDR(ptr_to_BinAvg);
+    } else if(val == EvalFunc::BinWithError) {
+        GET_FUNCTION_ADDR(ptr_to_BinWithError);
+    } else if(val == EvalFunc::Chisq) {
+        GET_FUNCTION_ADDR(ptr_to_Chisq);
+    } else {
+        throw GeneralError("Non-existent metric pointer choice");
+    }
 
     return host_fcn_ptr;
-#undef CHOOSE_PTR
 }
-
-void *getMetricPointer(EvalFunc val) { return getMetricPointer(evalfunc_to_string(val)); }
 
 __host__ void GooPdf::setIndices() {
     // If not set, perform unbinned Nll fit!
@@ -180,7 +179,7 @@ __host__ void GooPdf::setIndices() {
     GOOFIT_DEBUG("GooPdf::setIndices!");
     PdfBase::setIndices();
 
-    GOOFIT_TRACE("host_function_table[{}] = {}", num_device_functions, fitControl->getMetric());
+    GOOFIT_TRACE("host_function_table[{}] = {}", num_device_functions, fitControl->getName());
     host_function_table[num_device_functions] = getMetricPointer(fitControl->getMetric());
     num_device_functions++;
 
@@ -577,7 +576,7 @@ __host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
         components[i]->setIndices();
         components[i]->normalize();
 
-        GOOFIT_TRACE("host_function_table[{}] = {}", num_device_functions, fitControl->getMetric());
+        GOOFIT_TRACE("host_function_table[{}] = {}", num_device_functions, fitControl->getName());
         host_function_table[num_device_functions] = getMetricPointer(fitControl->getMetric());
         num_device_functions++;
 

@@ -2,6 +2,7 @@
 
 #include <thrust/functional.h>
 
+#include <goofit/FitControl.h>
 #include <goofit/Log.h>
 #include <goofit/PDFs/MetricTaker.h>
 #include <goofit/PdfBase.h>
@@ -13,14 +14,6 @@ class TH1D;
 
 namespace GooFit {
 
-enum class EvalFunc : size_t { Eval = 0, NLL, Prob, BinAvg, BinWithError, Chisq };
-
-constexpr const char *evalfunc_vals[]
-    = {"ptr_to_Eval", "ptr_to_NLL", "ptr_to_Prob", "ptr_to_BinAvg", "ptr_to_BinWithError", "ptr_to_Chisq"};
-
-constexpr const char *evalfunc_to_string(EvalFunc val) { return evalfunc_vals[static_cast<size_t>(val)]; }
-
-void *getMetricPointer(std::string name);
 void *getMetricPointer(EvalFunc val);
 //#ifdef SEPARABLE
 
@@ -58,7 +51,6 @@ extern std::map<void *, int> functionAddressToDeviceIndexMap;
 class ParameterContainer;
 
 __device__ int dev_powi(int base, int exp); // Implemented in SmoothHistogramPdf.
-void *getMetricPointer(std::string name);
 
 /// Pass event, parameters, index into parameters.
 typedef fptype (*device_metric_ptr)(fptype, fptype *, fptype);

@@ -8,43 +8,51 @@
 
 namespace GooFit {
 
+enum class EvalFunc : size_t { Eval = 0, NLL, Prob, BinAvg, BinWithError, Chisq };
+
+constexpr const char *evalfunc_vals[]
+    = {"ptr_to_Eval", "ptr_to_NLL", "ptr_to_Prob", "ptr_to_BinAvg", "ptr_to_BinWithError", "ptr_to_Chisq"};
+
+constexpr const char *evalfunc_to_string(EvalFunc val) { return evalfunc_vals[static_cast<size_t>(val)]; }
+
 class PdfBase;
 
 class FitControl {
   public:
-    FitControl(bool bin, std::string mn)
+    FitControl(bool bin, EvalFunc mn)
         : binned(bin)
-        , metricName(mn) {}
+        , metricFunc(mn) {}
 
     inline bool binnedFit() const { return binned; }
     inline bool binErrors() const { return errorsOnBins; }
     inline bool metricIsPdf() const { return !errorsOnBins; }
-    inline std::string getMetric() const { return metricName; }
+    inline EvalFunc getMetric() const { return metricFunc; }
+    inline std::string getName() const { return evalfunc_to_string(getMetric()); }
 
   protected:
     bool errorsOnBins{false};
 
   private:
     bool binned;
-    std::string metricName;
+    EvalFunc metricFunc;
 };
 
 class UnbinnedNllFit : public FitControl {
   public:
     UnbinnedNllFit()
-        : FitControl(false, "ptr_to_NLL") {}
+        : FitControl(false, EvalFunc::NLL) {}
 };
 
 class BinnedNllFit : public FitControl {
   public:
     BinnedNllFit()
-        : FitControl(true, "ptr_to_BinAvg") {}
+        : FitControl(true, EvalFunc::BinAvg) {}
 };
 
 class BinnedErrorFit : public FitControl {
   public:
     BinnedErrorFit()
-        : FitControl(true, "ptr_to_BinWithError") {
+        : FitControl(true, EvalFunc::BinWithError) {
         errorsOnBins = true;
     }
 };
@@ -52,19 +60,19 @@ class BinnedErrorFit : public FitControl {
 class BinnedChisqFit : public FitControl {
   public:
     BinnedChisqFit()
-        : FitControl(true, "ptr_to_Chisq") {}
+        : FitControl(true, EvalFunc::Chisq) {}
 };
 
 class ProbFit : public FitControl {
   public:
     ProbFit()
-        : FitControl(false, "ptr_to_Prob") {}
+        : FitControl(false, EvalFunc::Prob) {}
 };
 
 class EvalFit : public FitControl {
   public:
     EvalFit()
-        : FitControl(false, "ptr_to_Eval") {}
+        : FitControl(false, EvalFunc::Eval) {}
 };
 
 } // namespace GooFit

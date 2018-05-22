@@ -31,9 +31,9 @@ ExpGausPdf::ExpGausPdf(std::string n, Observable _x, Variable mean, Variable sig
     registerParameter(sigma);
     registerParameter(tau);
 
+    registerFunction("ptr_to_ExpGaus", ptr_to_ExpGaus);
+
     initialize();
 }
-
-__host__ void ExpGausPdf::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_ExpGaus); }
 
 } // namespace GooFit

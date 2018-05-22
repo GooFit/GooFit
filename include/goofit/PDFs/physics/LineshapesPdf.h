@@ -38,8 +38,6 @@ class Lineshape : public GooPdf {
     /// Protected constructor, only for subclasses to use
     Lineshape(std::string name, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius);
 
-    __host__ void recursiveSetIndices() override;
-
     unsigned int _L;
     unsigned int _Mpair;
     FF _FormFac;
@@ -48,9 +46,12 @@ class Lineshape : public GooPdf {
   public:
     ~Lineshape() override = default;
 
-    bool operator==(const Lineshape &L) const { return L.getName() == getName(); }
+    /// Ugly hack for the moment, due to the fact that all function pointers in GooFit are typeless
+    __host__ void registerResonanceFunction(std::string name, resonance_function_ptr function) {
+        registerFunction(name, reinterpret_cast<device_function_ptr>(function));
+    }
 
-    int lineShapeType;
+    bool operator==(const Lineshape &L) const { return L.getName() == getName(); }
 };
 
 namespace Lineshapes {

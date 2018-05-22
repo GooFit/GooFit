@@ -23,7 +23,9 @@ class MixingTimeResolution : public GooPdf {
     int getCalcTauIdx() const { return resCalcTauFcnIdx; }
     void setCalcTauIdx(int idx) { resCalcTauFcnIdx = idx; }
 
-    void recursiveSetIndices() override;
+    void registerResFunction(std::string name, device_resfunction_ptr function) {
+        registerFunction(name, reinterpret_cast<device_function_ptr>(function));
+    }
 
   private:
     int resFunctionIdx;

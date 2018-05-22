@@ -131,7 +131,7 @@ PolynomialPdf::PolynomialPdf(std::string n, Observable _x, std::vector<Variable>
         registerParameter(v);
     }
 
-    polyType = 0;
+    registerFunction("ptr_to_Polynomial", ptr_to_Polynomial);
 
     initialize();
 }
@@ -146,8 +146,9 @@ __host__ PolynomialPdf::PolynomialPdf(
         registerParameter(v);
     }
 
-    polyType = 1;
     registerParameter(x0);
+
+    registerFunction("ptr_to_OffsetPolynomial", ptr_to_OffsetPolynomial);
 
     initialize();
 }
@@ -203,18 +204,9 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n,
         registerParameter(coeff);
     }
 
-    polyType = 2;
-    initialize();
-}
+    registerFunction("ptr_to_MultiPolynomial", ptr_to_MultiPolynomial);
 
-__host__ void PolynomialPdf::recursiveSetIndices() {
-    if(polyType == 0) {
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_Polynomial);
-    } else if(polyType == 1) {
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_OffsetPolynomial);
-    } else if(polyType == 2) {
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_MultiPolynomial);
-    }
+    initialize();
 }
 
 __host__ fptype PolynomialPdf::integrate(fptype lo, fptype hi) const {

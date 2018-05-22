@@ -117,10 +117,12 @@ __host__ IncoherentSumPdf::IncoherentSumPdf(
     }
 
     addSpecialMask(PdfBase::ForceSeparateNorm);
+
+    registerFunction("ptr_to_incoherent", ptr_to_incoherent);
 }
 
-__host__ void IncoherentSumPdf::recursiveSetIndices() {
-    GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_incoherent);
+__host__ void IncoherentSumPdf::populateArrays() {
+    PdfBase::populateArrays();
 
     // save our efficiency function.  Resonance's are saved first, then the efficiency function.  Take -1 as efficiency!
     efficiencyFunction = num_device_functions - 1;

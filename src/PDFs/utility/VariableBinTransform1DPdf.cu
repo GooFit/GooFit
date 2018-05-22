@@ -37,8 +37,9 @@ __host__ VariableBinTransform1DPdf::VariableBinTransform1DPdf(std::string n, Obs
     for(size_t i = 0; i < numLimits; ++i) {
         constantsList.push_back(binlimits[i]);
     }
-}
 
-void VariableBinTransform1DPdf::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_VarBinTransform1D); }
+    registerFunction("ptr_to_VarBinTransform1D", ptr_to_VarBinTransform1D);
+    // initialize() ?
+}
 
 } // namespace GooFit

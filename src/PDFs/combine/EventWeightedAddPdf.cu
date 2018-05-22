@@ -134,6 +134,11 @@ EventWeightedAddPdf::EventWeightedAddPdf(std::string n, std::vector<Observable> 
 
     registerConstant(components.size());
 
+    if(extended)
+        registerFunction("ptr_to_EventWeightedAddPdfsExt", ptr_to_EventWeightedAddPdfsExt);
+    else
+        registerFunction("ptr_to_EventWeightedAddPdfs", ptr_to_EventWeightedAddPdfs);
+
     initialize();
 }
 
@@ -149,14 +154,6 @@ __host__ fptype EventWeightedAddPdf::normalize() const {
     host_normalisations[normalIdx + 1] = 1.0;
 
     return 1.0;
-}
-
-__host__ void EventWeightedAddPdf::recursiveSetIndices() {
-    if(extended) {
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_EventWeightedAddPdfsExt);
-    } else {
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_EventWeightedAddPdfs);
-    }
 }
 
 } // namespace GooFit

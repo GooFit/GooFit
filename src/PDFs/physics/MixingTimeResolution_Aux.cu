@@ -11,5 +11,4 @@ void MixingTimeResolution::initIndex(void *dev_fcn_ptr) { resFunctionIdx = GooPd
 
 void MixingTimeResolution::createParameters(GooFit::PdfBase *) {}
 
-void MixingTimeResolution::recursiveSetIndices() {}
 } // namespace GooFit

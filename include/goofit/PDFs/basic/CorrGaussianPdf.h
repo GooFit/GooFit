@@ -14,10 +14,6 @@ class CorrGaussianPdf : public GooPdf {
                     Variable mean2,
                     Variable sigma2,
                     Variable correlation);
-
-    __host__ void recursiveSetIndices() override;
-
-  private:
 };
 
 } // namespace GooFit

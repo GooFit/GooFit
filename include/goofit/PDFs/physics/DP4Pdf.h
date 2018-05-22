@@ -46,7 +46,7 @@ class DPPdf : public GooPdf {
         tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h>
         GenerateSig(unsigned int numEvents);
 
-    __host__ void recursiveSetIndices() override;
+    __host__ void populateArrays() override;
 
   protected:
   private:

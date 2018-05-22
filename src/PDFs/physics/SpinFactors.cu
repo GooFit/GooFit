@@ -532,74 +532,73 @@ SpinFactor::SpinFactor(
     registerConstant(P2);
     registerConstant(P3);
 
-    initialize();
-}
-void SpinFactor::recursiveSetIndices() {
-    switch(_SF) {
+    switch(SF) {
     case SF_4Body::DtoPP1_PtoSP2_StoP3P4:
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_DtoPP1_PtoSP2_StoP3P4);
+        registerSpinFunction("ptr_to_DtoPP1_PtoSP2_StoP3P4", ptr_to_DtoPP1_PtoSP2_StoP3P4);
         break;
 
     case SF_4Body::DtoPP1_PtoVP2_VtoP3P4:
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_DtoPP1_PtoVP2_VtoP3P4);
+        registerSpinFunction("ptr_to_DtoPP1_PtoVP2_VtoP3P4", ptr_to_DtoPP1_PtoVP2_VtoP3P4);
         break;
 
     case SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_S:
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_S);
+        registerSpinFunction("ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_S", ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_S);
         break;
 
     case SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_P:
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_P);
+        registerSpinFunction("ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_P", ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_P);
         break;
 
     case SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_D:
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_D);
+        registerSpinFunction("ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_D", ptr_to_DtoV1V2_V1toP1P2_V2toP3P4_D);
         break;
 
     case SF_4Body::DtoAP1_AtoVP2_VtoP3P4:
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_DtoAP1_AtoVP2_VtoP3P4);
+        registerSpinFunction("ptr_to_DtoAP1_AtoVP2_VtoP3P4", ptr_to_DtoAP1_AtoVP2_VtoP3P4);
         break;
 
     case SF_4Body::DtoAP1_AtoVP2Dwave_VtoP3P4:
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_DtoAP1_AtoVP2Dwave_VtoP3P4);
+        registerSpinFunction("ptr_to_DtoAP1_AtoVP2Dwave_VtoP3P4", ptr_to_DtoAP1_AtoVP2Dwave_VtoP3P4);
         break;
 
     case SF_4Body::DtoVS_VtoP1P2_StoP3P4:
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_DtoVS_VtoP1P2_StoP3P4);
+        registerSpinFunction("ptr_to_DtoVS_VtoP1P2_StoP3P4", ptr_to_DtoVS_VtoP1P2_StoP3P4);
         break;
 
     case SF_4Body::DtoV1P1_V1toV2P2_V2toP3P4:
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_DtoV1P1_V1toV2P2_V2toP3P4);
+        registerSpinFunction("ptr_to_DtoV1P1_V1toV2P2_V2toP3P4", ptr_to_DtoV1P1_V1toV2P2_V2toP3P4);
         break;
 
     case SF_4Body::DtoAP1_AtoSP2_StoP3P4:
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_DtoAP1_AtoSP2_StoP3P4);
+        registerSpinFunction("ptr_to_DtoAP1_AtoSP2_StoP3P4", ptr_to_DtoAP1_AtoSP2_StoP3P4);
         break;
 
     case SF_4Body::DtoTP1_TtoVP2_VtoP3P4:
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_DtoTP1_TtoVP2_VtoP3P4);
+        registerSpinFunction("ptr_to_DtoTP1_TtoVP2_VtoP3P4", ptr_to_DtoTP1_TtoVP2_VtoP3P4);
         break;
 
     case SF_4Body::FF_12_34_L1:
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_FF_12_34_L1);
+        registerSpinFunction("ptr_to_FF_12_34_L1", ptr_to_FF_12_34_L1);
         break;
 
     case SF_4Body::FF_12_34_L2:
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_FF_12_34_L2);
+        registerSpinFunction("ptr_to_FF_12_34_L2", ptr_to_FF_12_34_L2);
         break;
 
     case SF_4Body::FF_123_4_L1:
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_FF_123_4_L1);
+        registerSpinFunction("ptr_to_FF_123_4_L1", ptr_to_FF_123_4_L1);
         break;
 
     case SF_4Body::FF_123_4_L2:
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_FF_123_4_L2);
+        registerSpinFunction("ptr_to_FF_123_4_L2", ptr_to_FF_123_4_L2);
         break;
 
     case SF_4Body::ONE:
-        GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_ONE);
+        registerSpinFunction("ptr_to_ONE", ptr_to_ONE);
         break;
     }
+
+    initialize();
 }
 
 } // namespace GooFit

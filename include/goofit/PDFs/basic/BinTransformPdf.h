@@ -12,9 +12,5 @@ class BinTransformPdf : public GooPdf {
                     std::vector<fptype> limits,
                     std::vector<fptype> binSizes,
                     std::vector<int> numBins);
-
-    __host__ void recursiveSetIndices() override;
-
-  private:
 };
 } // namespace GooFit

@@ -46,10 +46,10 @@ __host__ CompositePdf::CompositePdf(std::string n, PdfBase *core, PdfBase *shell
 
     observablesList = getObservables();
 
+    registerFunction("ptr_to_Composite", ptr_to_Composite);
+
     initialize();
 }
-
-__host__ void CompositePdf::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_Composite); }
 
 __host__ fptype CompositePdf::normalize() const {
     recursiveSetNormalisation(1.0);

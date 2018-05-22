@@ -67,10 +67,10 @@ ProdPdf::ProdPdf(std::string n, std::vector<PdfBase *> comps)
         }
     }
 
+    registerFunction("ptr_to_ProdPdfs", ptr_to_ProdPdfs);
+
     initialize();
 }
-
-__host__ void ProdPdf::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_ProdPdfs); }
 
 __host__ fptype ProdPdf::normalize() const {
     if(varOverlaps) {

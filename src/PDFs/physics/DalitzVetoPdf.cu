@@ -64,8 +64,8 @@ __host__ DalitzVetoPdf::DalitzVetoPdf(std::string n,
         registerConstant(veto.cyclic_index);
     }
 
+    registerFunction("ptr_to_DalitzVeto", ptr_to_DalitzVeto);
+
     initialize();
 }
-
-void DalitzVetoPdf::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_DalitzVeto); }
 } // namespace GooFit

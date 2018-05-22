@@ -49,6 +49,8 @@ __device__ device_calc_tau_fcn_ptr ptr_to_calc_tau = device_truth_resolution_ave
 TruthResolution::TruthResolution()
     : MixingTimeResolution() {
     initIndex();
+
+    registerResFunction("ptr_to_truth", ptr_to_truth);
 }
 
 TruthResolution::~TruthResolution() = default;
@@ -67,7 +69,5 @@ fptype TruthResolution::normalisation(
 
     return ret;
 }
-
-void TruthResolution::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_truth); }
 
 } // namespace GooFit

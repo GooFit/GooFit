@@ -161,10 +161,10 @@ __host__ SmoothHistogramPdf::SmoothHistogramPdf(std::string n, BinnedDataSet *hi
         std::cout << "Warning: Empty histogram supplied to " << getName()
                   << " not copied to device. Expect copyHistogramToDevice call later.\n";
 
+    registerFunction("ptr_to_EvalHistogram", ptr_to_EvalHistogram);
+
     initialize();
 }
-
-void SmoothHistogramPdf::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_EvalHistogram); }
 
 fptype *pointerToFirst(thrust::device_vector<fptype> *hist) { return (&((*hist)[0])).get(); }
 

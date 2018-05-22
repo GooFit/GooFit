@@ -24,9 +24,9 @@ __host__ BWPdf::BWPdf(std::string n, Observable _x, Variable mean, Variable widt
     registerParameter(mean);
     registerParameter(width);
 
+    registerFunction("ptr_to_BW", ptr_to_BW);
+
     initialize();
 }
-
-__host__ void BWPdf::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_BW); }
 
 } // namespace GooFit

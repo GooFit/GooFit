@@ -172,11 +172,11 @@ InterHistPdf::InterHistPdf(std::string n, BinnedDataSet *x, std::vector<Variable
     MEMCPY_TO_SYMBOL(
         dev_base_interhists, dev_address, sizeof(fptype *), totalHistograms * sizeof(fptype *), cudaMemcpyHostToDevice);
 
+    registerFunction("ptr_to_InterHistogram", ptr_to_InterHistogram);
+
     initialize();
 
     totalHistograms++;
 }
-
-void InterHistPdf::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_InterHistogram); }
 
 } // namespace GooFit

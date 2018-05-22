@@ -44,18 +44,15 @@ __host__ CorrGaussianPdf::CorrGaussianPdf(std::string n,
                                           Variable sigma2,
                                           Variable correlation)
     : GooPdf(n, _x, _y) {
-    // registerObservable(_x);
-    // registerObservable(_y);
-
     registerParameter(mean1);
     registerParameter(sigma1);
     registerParameter(mean2);
     registerParameter(sigma2);
     registerParameter(correlation);
 
+    registerFunction("ptr_to_CorrGaussian", ptr_to_CorrGaussian);
+
     initialize();
 }
-
-__host__ void CorrGaussianPdf::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_CorrGaussian); }
 
 } // namespace GooFit

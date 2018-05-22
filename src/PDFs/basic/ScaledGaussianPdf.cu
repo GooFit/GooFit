@@ -29,9 +29,9 @@ __host__ ScaledGaussianPdf::ScaledGaussianPdf(
     registerParameter(delta);
     registerParameter(epsilon);
 
+    registerFunction("ptr_to_ScaledGaussian", ptr_to_ScaledGaussian);
+
     initialize();
 }
-
-__host__ void ScaledGaussianPdf::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_ScaledGaussian); }
 
 } // namespace GooFit

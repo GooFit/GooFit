@@ -331,9 +331,9 @@ __host__ VoigtianPdf::VoigtianPdf(std::string n, Observable _x, Variable m, Vari
     registerParameter(s);
     registerParameter(w);
 
+    registerFunction("ptr_to_Voigtian", ptr_to_Voigtian);
+
     initialize();
 }
-
-__host__ void VoigtianPdf::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_Voigtian); }
 
 } // namespace GooFit

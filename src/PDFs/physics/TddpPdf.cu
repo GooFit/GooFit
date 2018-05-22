@@ -319,6 +319,8 @@ __host__ TddpPdf::TddpPdf(std::string n,
     // TODO: Figure out what this needs?
     resolution->createParameters(this);
 
+    registerFunction("ptr_to_Tddp", ptr_to_Tddp);
+
     initialize();
 
     redoIntegral = new bool[decay.resonances.size()];
@@ -421,6 +423,8 @@ __host__ TddpPdf::TddpPdf(std::string n,
 
     components.push_back(efficiency);
 
+    registerFunction("ptr_to_Tddp", ptr_to_Tddp);
+
     initialize();
 
     // this is the funcID after the efficiency routine
@@ -450,10 +454,8 @@ __host__ TddpPdf::TddpPdf(std::string n,
     addSpecialMask(PdfBase::ForceSeparateNorm);
 }
 
-void TddpPdf::recursiveSetIndices() { GOOFIT_RECURSIVE_SET_INDICIES(ptr_to_Tddp); }
-
 // Note: We need to manually populate the arrays so we can track the efficiency function!
-void TddpPdf::populateArrays() {
+__host__ void TddpPdf::populateArrays() {
     // populate all the arrays
     GOOFIT_DEBUG("Populating Arrays for {}", getName());
 

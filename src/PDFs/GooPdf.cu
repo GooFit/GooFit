@@ -150,20 +150,21 @@ void *host_fcn_ptr = nullptr;
 
 void *getMetricPointer(EvalFunc val) {
     if(val == EvalFunc::Eval) {
-        GET_FUNCTION_ADDR(ptr_to_Eval);
+        host_fcn_ptr = get_device_symbol_address(ptr_to_Eval);
     } else if(val == EvalFunc::NLL) {
-        GET_FUNCTION_ADDR(ptr_to_NLL);
+        host_fcn_ptr = get_device_symbol_address(ptr_to_NLL);
     } else if(val == EvalFunc::Prob) {
-        GET_FUNCTION_ADDR(ptr_to_Prob);
+        host_fcn_ptr = get_device_symbol_address(ptr_to_Prob);
     } else if(val == EvalFunc::BinAvg) {
-        GET_FUNCTION_ADDR(ptr_to_BinAvg);
+        host_fcn_ptr = get_device_symbol_address(ptr_to_BinAvg);
     } else if(val == EvalFunc::BinWithError) {
-        GET_FUNCTION_ADDR(ptr_to_BinWithError);
+        host_fcn_ptr = get_device_symbol_address(ptr_to_BinWithError);
     } else if(val == EvalFunc::Chisq) {
-        GET_FUNCTION_ADDR(ptr_to_Chisq);
+        host_fcn_ptr = get_device_symbol_address(ptr_to_Chisq);
     } else {
         throw GeneralError("Non-existent metric pointer choice");
     }
+    GOOFIT_TRACE("Selecting {} for the metric pointer", evalfunc_to_string(val));
 
     return host_fcn_ptr;
 }
@@ -176,7 +177,7 @@ __host__ void GooPdf::setIndices() {
     // Ensure that we properly populate *logger with the correct metric
     setMetrics();
 
-    GOOFIT_DEBUG("GooPdf::setIndices!");
+    GOOFIT_TRACE("GooPdf::setIndices!");
     PdfBase::setIndices();
 
     GOOFIT_TRACE("host_function_table[{}] = {}", num_device_functions, fitControl->getName());
@@ -184,7 +185,7 @@ __host__ void GooPdf::setIndices() {
     num_device_functions++;
 
     // copy all the device functions over:
-    GOOFIT_DEBUG("Copying all host side parameters to device");
+    GOOFIT_TRACE("Copying all host side parameters to device");
     MEMCPY_TO_SYMBOL(
         device_function_table, &host_function_table, num_device_functions * sizeof(fptype), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(d_parameters, &host_parameters, totalParameters * sizeof(fptype), 0, cudaMemcpyHostToDevice);
@@ -311,7 +312,8 @@ __host__ std::vector<fptype> GooPdf::evaluateAtPoints(Observable var) {
 
     normalize();
 
-    MEMCPY(d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(
+        d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
     UnbinnedDataSet tempdata(observablesList);
 
     double step = var.getBinSize();
@@ -326,7 +328,8 @@ __host__ std::vector<fptype> GooPdf::evaluateAtPoints(Observable var) {
 
     normalize();
 
-    MEMCPY(d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(
+        d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
     thrust::counting_iterator<int> eventIndex(0);
     thrust::constant_iterator<int> eventSize(observablesList.size());

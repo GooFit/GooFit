@@ -121,9 +121,10 @@ class PdfBase {
     __host__ unsigned int registerConstants(unsigned int amount);
 
     /// Register a function for this PDF to use in evalution
-    __host__ void registerFunction(std::string name, device_function_ptr function) {
+    template <typename T>
+    __host__ void registerFunction(std::string name, const T &function) {
         reflex_name_  = name;
-        function_ptr_ = function;
+        function_ptr_ = get_device_symbol_address(function);
     }
 
     __host__ virtual void recursiveSetNormalisation(fptype norm = 1) const;
@@ -153,10 +154,10 @@ class PdfBase {
   protected:
     DataSet *data_ = nullptr; //< Remember the original dataset
 
-    std::string reflex_name_; //< This is the name of the type of the PDF, for reflexion purposes. Must be set or
-                              // RecursiveSetIndicies must be overloaded.
-    device_function_ptr function_ptr_{nullptr}; //< This is the function pointer to set on the device. Must be set or
-                                                // RecursiveSetIndicies must be overloaded.
+    std::string reflex_name_;     //< This is the name of the type of the PDF, for reflexion purposes. Must be set or
+                                  // RecursiveSetIndicies must be overloaded.
+    void *function_ptr_{nullptr}; //< This is the function pointer to set on the device. Must be set or
+                                  // RecursiveSetIndicies must be overloaded.
 
     /// use this function to populate the arrays generically, or specialize as needed
     virtual void populateArrays();

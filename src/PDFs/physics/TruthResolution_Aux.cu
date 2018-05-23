@@ -50,7 +50,7 @@ TruthResolution::TruthResolution()
     : MixingTimeResolution() {
     initIndex();
 
-    registerResFunction("ptr_to_truth", ptr_to_truth);
+    registerFunction("ptr_to_truth", ptr_to_truth);
 }
 
 TruthResolution::~TruthResolution() = default;

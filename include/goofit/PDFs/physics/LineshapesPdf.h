@@ -46,11 +46,6 @@ class Lineshape : public GooPdf {
   public:
     ~Lineshape() override = default;
 
-    /// Ugly hack for the moment, due to the fact that all function pointers in GooFit are typeless
-    __host__ void registerResonanceFunction(std::string name, resonance_function_ptr function) {
-        registerFunction(name, reinterpret_cast<device_function_ptr>(function));
-    }
-
     bool operator==(const Lineshape &L) const { return L.getName() == getName(); }
 };
 

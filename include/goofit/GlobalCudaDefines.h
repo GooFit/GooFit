@@ -3,6 +3,9 @@
 #include <thrust/detail/config.h> // __host__, __device__ defines
 #include <thrust/system_error.h>  // Error types
 
+#include <goofit/Error.h>
+#include <goofit/Log.h>
+
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <string>
@@ -25,39 +28,37 @@ inline void cudaDeviceSynchronize() {}
 
 // Specialty copies
 #ifdef __CUDACC__
-#define MEMCPY(target, source, count, direction)                                                                       \
+
+#define GOOFIT_CUDA_CHECK(function)                                                                                    \
     {                                                                                                                  \
-        cudaError err = cudaMemcpy(target, source, count, direction);                                                  \
+        cudaError err = function;                                                                                      \
         if(err != cudaSuccess) {                                                                                       \
-            printf("CUDA Error: %s at %s:%i\n", cudaGetErrorString(err), __FILE__, __LINE__);                          \
+            throw GooFit::GeneralError("CUDA Error: {}\n\twhen running {}\n\tin {}\n\tat {}:{}",                       \
+                                       cudaGetErrorString(err),                                                        \
+                                       #function,                                                                      \
+                                       __func__,                                                                       \
+                                       __FILE__,                                                                       \
+                                       __LINE__);                                                                      \
         }                                                                                                              \
-        GOOFIT_DEBUG("Using function cudaMemcpy in {}, {}:{}", __func__, __FILE__, __LINE__);                          \
-    }
-#define MEMCPY_TO_SYMBOL(target, source, count, offset, direction)                                                     \
-    {                                                                                                                  \
-        cudaError err = cudaMemcpyToSymbol(target, source, count, offset, direction);                                  \
-        if(err != cudaSuccess) {                                                                                       \
-            printf("CUDA Error: %s at %s:%i\n", cudaGetErrorString(err), __FILE__, __LINE__);                          \
-        }                                                                                                              \
-        GOOFIT_DEBUG("Using function cudaMemcpyToSymbol in {}, {}:{}", __func__, __FILE__, __LINE__);                  \
-    }
-#define MEMCPY_FROM_SYMBOL(target, source, count, offset, direction)                                                   \
-    cudaMemcpyFromSymbol(target, source, count, offset, direction)
-#define GET_FUNCTION_ADDR(fname)                                                                                       \
-    {                                                                                                                  \
-        cudaError err = cudaMemcpyFromSymbol((void **)&host_fcn_ptr, fname, sizeof(void *));                           \
-        if(err != cudaSuccess) {                                                                                       \
-            printf("CUDA Error: %s at %s:%i\n", cudaGetErrorString(err), __FILE__, __LINE__);                          \
-        }                                                                                                              \
-        GOOFIT_DEBUG("Using function {} in {}, {}:{}", #fname, __func__, __FILE__, __LINE__);                          \
+        GOOFIT_TRACE("Using function {} in {}, {}:{}", #function, __func__, __FILE__, __LINE__);                       \
     }
 
-#define ERROR_CHECK(x)                                                                                                 \
-    {                                                                                                                  \
-        cudaError err = x;                                                                                             \
-        if(err != cudaSuccess)                                                                                         \
-            printf("CUDA Error: %s at %s:%i\n", cudaGetErrorString(err), __FILE__, __LINE__);                          \
-    }
+#define MEMCPY(target, source, count, direction) GOOFIT_CUDA_CHECK(cudaMemcpy(target, source, count, direction));
+
+#define MEMCPY_TO_SYMBOL(target, source, count, offset, direction)                                                     \
+    GOOFIT_CUDA_CHECK(cudaMemcpyToSymbol(target, source, count, offset, direction));
+
+#define MEMCPY_FROM_SYMBOL(target, source, count, offset, direction)                                                   \
+    GOOFIT_CUDA_CHECK(cudaMemcpyFromSymbol(target, source, count, offset, direction));
+
+namespace GooFit {
+template <typename T>
+void *get_device_symbol_address(const T &symbol) {
+    void *result;
+    GOOFIT_CUDA_CHECK(cudaMemcpyFromSymbol(&result, symbol, sizeof(void *)));
+    return result;
+}
+} // namespace GooFit
 
 // This automatically selects the correct CUDA arch and expands the __ldg intrinsic to work on arbitrary types
 // CUDACC only
@@ -71,11 +72,12 @@ inline void cudaDeviceSynchronize() {}
 #define MEMCPY_FROM_SYMBOL(target, source, count, offset, direction)                                                   \
     memcpy((char *)target, ((char *)source) + offset, count)
 
-#define GET_FUNCTION_ADDR(fname)                                                                                       \
-    {                                                                                                                  \
-        host_fcn_ptr = (void *)fname;                                                                                  \
-        GOOFIT_DEBUG("Using function {} in {}, {}:{}", #fname, __func__, __FILE__, __LINE__);                          \
-    }
+namespace GooFit {
+template <typename T>
+void *get_device_symbol_address(const T &symbol) {
+    return reinterpret_cast<void *>(symbol);
+}
+} // namespace GooFit
 
 #define RO_CACHE(x) x
 #endif

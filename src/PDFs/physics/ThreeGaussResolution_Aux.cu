@@ -127,7 +127,7 @@ ThreeGaussResolution::ThreeGaussResolution(
     , outScaleFactor(os) {
     initIndex();
 
-    registerResFunction("ptr_to_threegauss", ptr_to_threegauss);
+    registerFunction("ptr_to_threegauss", ptr_to_threegauss);
 }
 ThreeGaussResolution::~ThreeGaussResolution() = default;
 

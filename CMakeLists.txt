@@ -125,8 +125,9 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
+set(GOOFIT_GCC_WARNINGS "-Wall -Wextra -Wno-unknown-pragmas -Wno-long-long -Wno-attributes -Wno-sign-compare -Wno-unused-parameter")
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unknown-pragmas -Wno-long-long -Wno-attributes -Wno-sign-compare -Wno-unused-parameter")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GOOFIT_GCC_WARNINGS}")
     # Helpful but irritating: -Wzero-as-null-pointer-constant -Wsuggest-override
     # no-sign-compare can be removed, but will take some work to clean up
     # Same is true for no-unused-parameter
@@ -362,7 +363,8 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
 
         # GooFit isn't popular with nvlink
         # Note that this should be the only nvlink command
-        string(APPEND CMAKE_CUDA_FLAGS " -Xnvlink --disable-warnings")
+        string(APPEND CMAKE_CUDA_FLAGS " -Xnvlink=--disable-warnings")
+        string(APPEND CMAKE_CUDA_FLAGS " -Xcompiler=-Wno-attributes")
 
         cmake_cuda_arch_select(FLAGS ARCH_FLAGS READABLE ARCH_FLAGS_readable ARCHS ${GOOFIT_ARCH})
         string(REPLACE ";" ", " READ_ARCH_FLAGS "${ARCH_FLAGS_readable}")

@@ -1,4 +1,4 @@
-#include <gtest/gtest.h>
+#include <goofit/Catch.h>
 
 #include "testhelpers.h"
 #include <goofit/PDFs/basic/ArgusPdf.h>
@@ -11,7 +11,7 @@
 using namespace std;
 using namespace GooFit;
 
-TEST(ArgusUpper, SimpleFit) {
+TEST_CASE("ArgusUpper", "[convert][fit]") {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> d(1.5);
@@ -42,12 +42,12 @@ TEST(ArgusUpper, SimpleFit) {
 
     bool fitter = test_fitter_minuit1(&arguspdf);
 
-    EXPECT_TRUE(fitter);
-    EXPECT_LT(alpha.getError(), .1);
-    EXPECT_NEAR(0.998854, alpha.getValue(), alpha.getError() * 3);
+    CHECK(fitter);
+    CHECK(alpha.getError() < .1);
+    CHECK(alpha.getValue() == Approx(0.998854).margin(alpha.getError() * 3));
 }
 
-TEST(ArgusLower, SimpleFit) {
+TEST_CASE("ArgusLower", "[convert][fit]") {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> d(1.5);
@@ -78,7 +78,7 @@ TEST(ArgusLower, SimpleFit) {
 
     bool fitter = test_fitter_minuit1(&arguspdf);
 
-    EXPECT_TRUE(fitter);
-    EXPECT_LT(alpha.getError(), .1);
-    EXPECT_NEAR(1.0012696, alpha.getValue(), alpha.getError() * 3);
+    CHECK(fitter);
+    CHECK(alpha.getError() < .1);
+    CHECK(alpha.getValue() == Approx(1.0012696).margin(alpha.getError() * 3));
 }

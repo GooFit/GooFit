@@ -13,9 +13,6 @@
 [submodule "extern/thrust"]
 	path = extern/thrust
 	url = ../../thrust/thrust.git
-[submodule "extern/googletest"]
-	path = extern/googletest
-	url = ../../google/googletest.git
 [submodule "extern/rang"]
 	path = extern/rang
 	url = ../../agauniyal/rang.git

@@ -1,4 +1,4 @@
-#include <gtest/gtest.h>
+#include <goofit/Catch.h>
 
 #include "testhelpers.h"
 #include <goofit/PDFs/basic/KinLimitBWPdf.h>
@@ -11,7 +11,7 @@
 using namespace std;
 using namespace GooFit;
 
-TEST(Gaussian, SimpleFit) {
+TEST_CASE("Gaussian", "[convert][fit]") {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> d(1.5);
@@ -41,7 +41,7 @@ TEST(Gaussian, SimpleFit) {
 
     bool fitter = test_fitter(&kinlimitbwpdf);
 
-    EXPECT_TRUE(fitter);
-    EXPECT_LT(alpha.getError(), .1);
-    EXPECT_NEAR(1, alpha.getValue(), alpha.getError() * 3);
+    CHECK(fitter);
+    CHECK(alpha.getError() < .1);
+    CHECK(alpha.getValue() == Approx(1).margin(alpha.getError() * 3));
 }

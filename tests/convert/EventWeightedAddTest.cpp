@@ -1,4 +1,4 @@
-#include <gtest/gtest.h>
+#include <goofit/Catch.h>
 
 #include "testhelpers.h"
 #include <goofit/PDFs/basic/GaussianPdf.h>
@@ -12,7 +12,7 @@
 using namespace std;
 using namespace GooFit;
 
-TEST(EventWeightedAdd, SimpleFit) {
+TEST_CASE("EventWeightedAdd", "[convert][fit]") {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> d(1.5);
@@ -57,9 +57,9 @@ TEST(EventWeightedAdd, SimpleFit) {
 
     bool fitter = test_fitter(&eventpdf);
 
-    EXPECT_TRUE(fitter);
-    // EXPECT_LT(w1.getError(), .11);
-    // EXPECT_NEAR(0.1, w1.getValue(), w1.getError() * 3);
-    // EXPECT_LT(w2.getError(), .11);
-    // EXPECT_NEAR(0.1, w2.getValue(), w2.getError() * 3);
+    CHECK(fitter);
+    // CHECK(w1.getError() ==  .11);
+    // CHECK(w1.getValue() == Approx(0.1).margin(w1.getError() * 3));
+    // CHECK(w2.getError() ==  .11);
+    // CHECK(w2.getValue() == Approx(0.1).margin(w2.getError() * 3));
 }

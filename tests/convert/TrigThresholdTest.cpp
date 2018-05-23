@@ -1,4 +1,4 @@
-#include <gtest/gtest.h>
+#include <goofit/Catch.h>
 
 #include "testhelpers.h"
 #include <goofit/PDFs/basic/TrigThresholdPdf.h>
@@ -11,7 +11,7 @@
 using namespace std;
 using namespace GooFit;
 
-TEST(TrigThresholdUpper, SimpleFit) {
+TEST_CASE("TrigThresholdUpper", "[convert][fit]") {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> d(1.5);
@@ -42,10 +42,10 @@ TEST(TrigThresholdUpper, SimpleFit) {
 
     bool fitter = test_fitter(&pdf);
 
-    EXPECT_TRUE(fitter);
+    CHECK(fitter);
 }
 
-TEST(TrigThresholdLower, SimpleFit) {
+TEST_CASE("TrigThresholdLower", "[convert][fit]") {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> d(1.5);
@@ -76,10 +76,10 @@ TEST(TrigThresholdLower, SimpleFit) {
 
     bool fitter = test_fitter(&pdf);
 
-    EXPECT_TRUE(fitter);
+    CHECK(fitter);
 }
 
-TEST(TrigThresholdVeryUpper, SimpleFit) {
+TEST_CASE("TrigThresholdVeryUpper", "[convert][fit]") {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> d(1.5);
@@ -113,10 +113,10 @@ TEST(TrigThresholdVeryUpper, SimpleFit) {
 
     bool fitter = test_fitter(&pdf);
 
-    EXPECT_TRUE(fitter);
+    CHECK(fitter);
 }
 
-TEST(TrigThresholdVeryLower, SimpleFit) {
+TEST_CASE("TrigThresholdVeryLower", "[convert][fit]") {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> d(1.5);
@@ -150,5 +150,5 @@ TEST(TrigThresholdVeryLower, SimpleFit) {
 
     bool fitter = test_fitter(&pdf);
 
-    EXPECT_TRUE(fitter);
+    CHECK(fitter);
 }

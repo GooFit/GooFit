@@ -1,4 +1,4 @@
-#include <gtest/gtest.h>
+#include <goofit/Catch.h>
 
 #include "testhelpers.h"
 #include <goofit/PDFs/basic/NovosibirskPdf.h>
@@ -11,7 +11,7 @@
 using namespace std;
 using namespace GooFit;
 
-TEST(Novosibirsk, SimpleFit) {
+TEST_CASE("Novosibirsk", "[convert][fit]") {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> d(1.5);
@@ -42,11 +42,11 @@ TEST(Novosibirsk, SimpleFit) {
 
     bool fitter = test_fitter(&novopdf);
 
-    EXPECT_TRUE(fitter);
-    EXPECT_LT(m.getError(), .1);
-    EXPECT_NEAR(0.1453, m.getValue(), m.getError() * 3);
-    EXPECT_LT(s.getError(), .1);
-    EXPECT_NEAR(0.2650, s.getValue(), s.getError() * 3);
-    EXPECT_LT(t.getError(), .1);
-    EXPECT_NEAR(0.8626, t.getValue(), t.getError() * 3);
+    CHECK(fitter);
+    CHECK(m.getError() < .1);
+    CHECK(m.getValue() == Approx(0.1453).margin(m.getError() * 3));
+    CHECK(s.getError() < .1);
+    CHECK(s.getValue() == Approx(0.2650).margin(s.getError() * 3));
+    CHECK(t.getError() < .1);
+    CHECK(t.getValue() == Approx(0.8626).margin(t.getError() * 3));
 }

@@ -1,4 +1,4 @@
-#include <gtest/gtest.h>
+#include <goofit/Catch.h>
 
 #include "testhelpers.h"
 #include <goofit/PDFs/basic/BWPdf.h>
@@ -11,7 +11,7 @@
 using namespace std;
 using namespace GooFit;
 
-TEST(BWTest, SimpleFit) {
+TEST_CASE("BWTest", "[convert][fit]") {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> d(1.5);
@@ -42,7 +42,7 @@ TEST(BWTest, SimpleFit) {
 
     bool fitter = test_fitter(&bwpdf);
 
-    EXPECT_TRUE(fitter);
-    EXPECT_LT(alpha.getError(), .1);
-    EXPECT_NEAR(0.42, alpha.getValue(), alpha.getError() * 3);
+    CHECK(fitter);
+    CHECK(alpha.getError() < .1);
+    CHECK(alpha.getValue() == Approx(0.42).margin(alpha.getError() * 3));
 }

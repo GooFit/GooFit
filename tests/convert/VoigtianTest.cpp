@@ -1,4 +1,4 @@
-#include <gtest/gtest.h>
+#include <goofit/Catch.h>
 
 #include "testhelpers.h"
 #include <goofit/PDFs/basic/VoigtianPdf.h>
@@ -11,7 +11,7 @@
 using namespace std;
 using namespace GooFit;
 
-TEST(Voigtian, SimpleFit) {
+TEST_CASE("Voigtian", "[convert][fit]") {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> d(1.5);
@@ -42,11 +42,11 @@ TEST(Voigtian, SimpleFit) {
 
     bool fitter = test_fitter(&pdf);
 
-    EXPECT_TRUE(fitter);
-    EXPECT_LT(m.getError(), .1);
-    EXPECT_NEAR(0.5801, m.getValue(), m.getError() * 3);
-    EXPECT_LT(s.getError(), .1);
-    EXPECT_NEAR(0.1515, s.getValue(), s.getError() * 3);
-    EXPECT_LT(w.getError(), .1);
-    EXPECT_NEAR(0.4343, w.getValue(), w.getError() * 3);
+    CHECK(fitter);
+    CHECK(m.getError() < .1);
+    CHECK(m.getValue() == Approx(0.5801).margin(m.getError() * 3));
+    CHECK(s.getError() < .1);
+    CHECK(s.getValue() == Approx(0.1515).margin(s.getError() * 3));
+    CHECK(w.getError() < .1);
+    CHECK(w.getValue() == Approx(0.4343).margin(w.getError() * 3));
 }

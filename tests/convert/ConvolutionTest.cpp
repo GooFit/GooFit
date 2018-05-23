@@ -1,4 +1,4 @@
-#include <gtest/gtest.h>
+#include <goofit/Catch.h>
 
 #include "testhelpers.h"
 #include <goofit/PDFs/basic/GaussianPdf.h>
@@ -12,7 +12,7 @@
 using namespace std;
 using namespace GooFit;
 
-TEST(Convolution, SimpleFit) {
+TEST_CASE("Convolution", "[convert][fit]") {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> d(1.5);
@@ -47,9 +47,9 @@ TEST(Convolution, SimpleFit) {
 
     bool fitter = test_fitter(&pdf);
 
-    EXPECT_TRUE(fitter);
-    // EXPECT_LT(a1.getError(), .1);
-    // EXPECT_NEAR(0.665178392, a1.getValue(), a1.getError() * 3);
-    // EXPECT_LT(a2.getError(), .1);
-    // EXPECT_NEAR(0.665178392, a2.getValue(), a2.getError() * 3);
+    CHECK(fitter);
+    // CHECK(a1.getError() ==  .1);
+    // CHECK(a1.getValue() == Approx(0.665178392).margin(a1.getError() * 3));
+    // CHECK(a2.getError() ==  .1);
+    // CHECK(a2.getValue() == Approx(0.665178392).margin(a2.getError() * 3));
 }

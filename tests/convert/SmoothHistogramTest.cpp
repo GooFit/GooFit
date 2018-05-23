@@ -1,4 +1,4 @@
-#include <gtest/gtest.h>
+#include <goofit/Catch.h>
 
 #include "testhelpers.h"
 #include <goofit/PDFs/basic/SmoothHistogramPdf.h>
@@ -11,7 +11,7 @@
 using namespace std;
 using namespace GooFit;
 
-TEST(SmoothHistogram, SimpleFit) {
+TEST_CASE("SmoothHistogram", "[convert][fit]") {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> d(1.5);
@@ -40,7 +40,7 @@ TEST(SmoothHistogram, SimpleFit) {
 
     bool fitter = test_fitter(&pdf);
 
-    EXPECT_TRUE(fitter);
-    // EXPECT_LT(smoothing.getError(), .9);
-    // EXPECT_NEAR(0.9, smoothing.getValue(), smoothing.getError() * 3);
+    CHECK(fitter);
+    // CHECK(smoothing.getError() ==  .9);
+    // CHECK(smoothing.getValue() == Approx(0.9).margin(smoothing.getError() * 3));
 }

@@ -1,4 +1,4 @@
-#include <gtest/gtest.h>
+#include <goofit/Catch.h>
 
 #include "testhelpers.h"
 #include <goofit/PDFs/basic/CorrGaussianPdf.h>
@@ -11,7 +11,7 @@
 using namespace std;
 using namespace GooFit;
 
-TEST(CorrGaussianPdf, SimpleFit) {
+TEST_CASE("CorrGaussianPdf", "[convert][fit]") {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> d(1.5);
@@ -49,9 +49,9 @@ TEST(CorrGaussianPdf, SimpleFit) {
 
     bool fitter = test_fitter(&corrgausspdf);
 
-    EXPECT_TRUE(fitter);
-    // EXPECT_LT(mean1.getError(), .1);
-    // EXPECT_NEAR(0.665178392, mean1.getValue(), mean1.getError() * 3);
-    // EXPECT_LT(mean2.getError(), .1);
-    // EXPECT_NEAR(0.6837, mean2.getValue(), mean2.getError() * 3);
+    CHECK(fitter);
+    // CHECK(mean1.getError() ==  .1);
+    // CHECK(mean1.getValue() == Approx(0.665178392).margin(mean1.getError() * 3));
+    // CHECK(mean2.getError() ==  .1);
+    // CHECK(mean2.getValue() == Approx(0.6837).margin(mean2.getError() * 3));
 }

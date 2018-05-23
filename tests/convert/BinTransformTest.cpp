@@ -1,4 +1,4 @@
-#include <gtest/gtest.h>
+#include <goofit/Catch.h>
 
 #include "testhelpers.h"
 #include <goofit/BinnedDataSet.h>
@@ -11,7 +11,7 @@
 using namespace std;
 using namespace GooFit;
 
-TEST(BinTransformTest, SimpleFit) {
+TEST_CASE("BinTransformTest", "[convert][fit]") {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> d(1.5);
@@ -56,7 +56,7 @@ TEST(BinTransformTest, SimpleFit) {
 
     bool fitter = test_fitter_minuit1(&bintransformpdf);
 
-    EXPECT_TRUE(fitter);
-    // EXPECT_LT(bt_1.getError(), 1.01);
-    // EXPECT_NEAR(2.01, bt_1.getValue(), bt_1.getError() * 3);
+    CHECK(fitter);
+    // CHECK(bt_1.getError() ==  1.01);
+    // CHECK(bt_1.getValue() == Approx(2.01).margin(bt_1.getError() * 3));
 }

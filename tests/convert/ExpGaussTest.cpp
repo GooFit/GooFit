@@ -1,4 +1,4 @@
-#include <gtest/gtest.h>
+#include <goofit/Catch.h>
 
 #include "testhelpers.h"
 #include <goofit/PDFs/basic/ExpGausPdf.h>
@@ -11,7 +11,7 @@
 using namespace std;
 using namespace GooFit;
 
-TEST(ExpGausPdf, SimpleFit) {
+TEST_CASE("ExpGausPdf", "[convert][fit]") {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> d(1.5);
@@ -44,7 +44,7 @@ TEST(ExpGausPdf, SimpleFit) {
 
     bool fitter = test_fitter_minuit1(&expgauspdf);
 
-    EXPECT_TRUE(fitter);
-    EXPECT_LT(alpha.getError(), 12.84);
-    EXPECT_NEAR(12.8379, alpha.getValue(), alpha.getError() * 3);
+    CHECK(fitter);
+    CHECK(alpha.getError() < 12.84);
+    CHECK(alpha.getValue() == Approx(12.8379).margin(alpha.getError() * 3));
 }

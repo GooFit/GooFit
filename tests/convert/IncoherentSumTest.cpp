@@ -1,4 +1,4 @@
-#include <gtest/gtest.h>
+#include <goofit/Catch.h>
 
 #include "testhelpers.h"
 #include <goofit/PDFs/basic/GaussianPdf.h>
@@ -13,7 +13,7 @@
 using namespace std;
 using namespace GooFit;
 
-TEST(IncoherentSumPdf, SimpleFit) {
+TEST_CASE("IncoherentSumPdf", "[convert][fit]") {
     const double _mD0     = 1.86484;
     const double _mD02    = _mD0 * _mD0;
     const double _mD02inv = 1.0 / _mD02;
@@ -211,7 +211,7 @@ TEST(IncoherentSumPdf, SimpleFit) {
 
     bool fitter = test_fitter(&pdf);
 
-    EXPECT_TRUE(fitter);
-    // EXPECT_LT(alpha.getError(), .1);
-    // EXPECT_NEAR(0.665178392, alpha.getValue(), alpha.getError() * 3);
+    CHECK(fitter);
+    // CHECK(alpha.getError() ==  .1);
+    // CHECK(alpha.getValue() == Approx(0.665178392).margin(alpha.getError() * 3));
 }

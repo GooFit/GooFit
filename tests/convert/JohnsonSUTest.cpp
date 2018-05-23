@@ -1,4 +1,4 @@
-#include <gtest/gtest.h>
+#include <goofit/Catch.h>
 
 #include "testhelpers.h"
 #include <goofit/PDFs/basic/JohnsonSUPdf.h>
@@ -11,7 +11,7 @@
 using namespace std;
 using namespace GooFit;
 
-TEST(JohnsonSU, SimpleFit) {
+TEST_CASE("JohnsonSU", "[convert][fit]") {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> d(1.5);
@@ -43,7 +43,7 @@ TEST(JohnsonSU, SimpleFit) {
 
     bool fitter = test_fitter(&johnsonpdf);
 
-    EXPECT_TRUE(fitter);
-    EXPECT_LT(m.getError(), .1);
-    EXPECT_NEAR(0.5, m.getValue(), m.getError() * 3);
+    CHECK(fitter);
+    CHECK(m.getError() < .1);
+    CHECK(m.getValue() == Approx(0.5).margin(m.getError() * 3));
 }

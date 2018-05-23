@@ -1,4 +1,4 @@
-#include <gtest/gtest.h>
+#include <goofit/Catch.h>
 
 #include "testhelpers.h"
 #include <goofit/PDFs/basic/ExpPdf.h>
@@ -11,7 +11,7 @@
 using namespace std;
 using namespace GooFit;
 
-TEST(Exp, SimpleFit) {
+TEST_CASE("Exp", "[convert][fit]") {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> d(1.5);
@@ -42,12 +42,12 @@ TEST(Exp, SimpleFit) {
 
     bool fitter = test_fitter_minuit1(&exppdf);
 
-    EXPECT_TRUE(fitter);
-    // EXPECT_LT(alpha.getError(), .1);
-    // EXPECT_NEAR(0.665178392, alpha.getValue(), alpha.getError() * 3);
+    CHECK(fitter);
+    // CHECK(alpha.getError() ==  .1);
+    // CHECK(alpha.getValue() == Approx(0.665178392).margin(alpha.getError() * 3));
 }
 
-TEST(ExpPoly, SimpleFit) {
+TEST_CASE("ExpPoly", "[convert][fit]") {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> d(1.5);
@@ -83,11 +83,11 @@ TEST(ExpPoly, SimpleFit) {
 
     bool fitter = test_fitter_minuit1(&exppdf);
 
-    EXPECT_TRUE(fitter);
-    // EXPECT_LT(alpha.getError(), .1);
+    CHECK(fitter);
+    // CHECK(alpha.getError() ==  .1);
 }
 
-TEST(ExpOffset, SimpleFit) {
+TEST_CASE("ExpOffset", "[convert][fit]") {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> d(1.5);
@@ -118,10 +118,10 @@ TEST(ExpOffset, SimpleFit) {
 
     bool fitter = test_fitter_minuit1(&exppdf);
 
-    EXPECT_TRUE(fitter);
+    CHECK(fitter);
 }
 
-TEST(ExpPolyOffset, SimpleFit) {
+TEST_CASE("ExpPolyOffset", "[convert][fit]") {
     // Random number generation
     std::mt19937 gen(137);
     std::exponential_distribution<> d(1.5);
@@ -157,5 +157,5 @@ TEST(ExpPolyOffset, SimpleFit) {
 
     bool fitter = test_fitter_minuit1(&exppdf);
 
-    EXPECT_TRUE(fitter);
+    CHECK(fitter);
 }

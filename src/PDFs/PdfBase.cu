@@ -109,18 +109,13 @@ __host__ void PdfBase::recursiveSetIndices() {
                            "Make sure initilize is not called before registerFunction!",
                            getName());
 
-#ifdef __CUDACC__
-    cudaError err = cudaMemcpyFromSymbol((void **)&host_fcn_ptr, function_ptr_, sizeof(void *));
-    if(err != cudaSuccess)
-        throw GeneralError("CUDA Error: {} in {}", cudaGetErrorString(err), reflex_name_);
-#else
-    host_fcn_ptr = (void *)function_ptr_;
-#endif
+    host_fcn_ptr = function_ptr_;
 
     GOOFIT_DEBUG("host_function_table[{}] = {} for \"{}\" from PDFBase::recursiveSetIndices",
                  num_device_functions,
                  reflex_name_,
                  getName());
+
     host_function_table[num_device_functions] = host_fcn_ptr;
     functionIdx                               = num_device_functions++;
     populateArrays();
@@ -209,8 +204,10 @@ __host__ void PdfBase::setIndices() {
     // set all associated functions parameters, constants, etc.
     recursiveSetIndices();
 
+#ifdef GOOFIT_DEBUG_FLAG
     if(checkParams != totalParameters)
-        GOOFIT_DEBUG("Error!  checkParams({}) != totalParameters({})", checkParams, totalParameters);
+        GOOFIT_WARN("checkParams({}) != totalParameters({})", checkParams, totalParameters);
+#endif
 }
 
 __host__ void PdfBase::setData(DataSet *data) {

@@ -837,7 +837,7 @@ Lineshapes::GSpline::GSpline(std::string name,
         registerConstant(par);
     }
 
-    registerResonanceFunction("ptr_to_Spline", ptr_to_Spline);
+    registerFunction("ptr_to_Spline", ptr_to_Spline);
 
     initialize();
 }
@@ -870,7 +870,7 @@ Lineshapes::GLASS::GLASS(std::string name,
         registerParameter(AdditionalVars[i]);
     }
 
-    registerResonanceFunction("ptr_to_glass3", ptr_to_glass3);
+    registerFunction("ptr_to_glass3", ptr_to_glass3);
 
     initialize();
 }
@@ -888,7 +888,7 @@ Lineshapes::One::One(
 
     registerConstant(enum_to_underlying(FormFac));
 
-    registerResonanceFunction("ptr_to_LS_ONE", ptr_to_LS_ONE);
+    registerFunction("ptr_to_LS_ONE", ptr_to_LS_ONE);
 
     initialize();
 }
@@ -906,7 +906,7 @@ Lineshapes::RBW::RBW(
 
     registerConstant(enum_to_underlying(FormFac));
 
-    registerResonanceFunction("ptr_to_BW_DP4", ptr_to_BW_DP4);
+    registerFunction("ptr_to_BW_DP4", ptr_to_BW_DP4);
 
     initialize();
 }
@@ -924,7 +924,7 @@ Lineshapes::LASS::LASS(
 
     constantsList.push_back(enum_to_underlying(FormFac));
 
-    registerResonanceFunction("ptr_to_lass", ptr_to_lass);
+    registerFunction("ptr_to_lass", ptr_to_lass);
 
     initialize();
 }
@@ -942,7 +942,7 @@ Lineshapes::NonRes::NonRes(
 
     registerConstant(enum_to_underlying(FormFac));
 
-    registerResonanceFunction("ptr_to_NONRES_DP", ptr_to_NONRES_DP);
+    registerFunction("ptr_to_NONRES_DP", ptr_to_NONRES_DP);
 
     initialize();
 }
@@ -960,7 +960,7 @@ Lineshapes::Bugg::Bugg(
 
     registerConstant(enum_to_underlying(FormFac));
 
-    registerResonanceFunction("ptr_to_bugg_MINT", ptr_to_bugg_MINT);
+    registerFunction("ptr_to_bugg_MINT", ptr_to_bugg_MINT);
 
     initialize();
 }
@@ -978,7 +978,7 @@ Lineshapes::Bugg3::Bugg3(
 
     registerConstant(enum_to_underlying(FormFac));
 
-    registerResonanceFunction("ptr_to_bugg_MINT3", ptr_to_bugg_MINT3);
+    registerFunction("ptr_to_bugg_MINT3", ptr_to_bugg_MINT3);
 
     initialize();
 }
@@ -996,7 +996,7 @@ Lineshapes::Flatte::Flatte(
 
     registerConstant(enum_to_underlying(FormFac));
 
-    registerResonanceFunction("ptr_to_Flatte", ptr_to_Flatte);
+    registerFunction("ptr_to_Flatte", ptr_to_Flatte);
 
     initialize();
 }
@@ -1014,7 +1014,7 @@ Lineshapes::SBW::SBW(
 
     registerConstant(enum_to_underlying(FormFac));
 
-    registerResonanceFunction("ptr_to_SBW", ptr_to_SBW);
+    registerFunction("ptr_to_SBW", ptr_to_SBW);
 
     initialize();
 }
@@ -1040,7 +1040,7 @@ Lineshapes::FOCUS::FOCUS(std::string name,
 
     registerConstant(static_cast<unsigned int>(mod));
 
-    registerResonanceFunction("ptr_to_FOCUS", ptr_to_FOCUS);
+    registerFunction("ptr_to_FOCUS", ptr_to_FOCUS);
 
     initialize();
 }
@@ -1088,7 +1088,7 @@ Lineshapes::kMatrix::kMatrix(std::string name,
         registerParameter(poles.at(i));
     }
 
-    registerResonanceFunction("ptr_to_kMatrix", ptr_to_kMatrix);
+    registerFunction("ptr_to_kMatrix", ptr_to_kMatrix);
 
     initialize();
 }

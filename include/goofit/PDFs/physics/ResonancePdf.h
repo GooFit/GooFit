@@ -40,11 +40,6 @@ class ResonancePdf : public GooPdf {
     __host__ Variable get_amp_real() const { return amp_real; }
     __host__ Variable get_amp_img() const { return amp_imag; }
 
-    /// Ugly hack for the moment, due to the fact that all function pointers in GooFit are typeless
-    __host__ void registerResonanceFunction(std::string name, resonance_function_ptr function) {
-        registerFunction(name, reinterpret_cast<device_function_ptr>(function));
-    }
-
   protected:
     /// Special constructor that subclasses use
     ResonancePdf(std::string name, Variable ar, Variable ai)

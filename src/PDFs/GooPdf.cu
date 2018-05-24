@@ -35,10 +35,10 @@ namespace GooFit {
 // Device-side, translation-unit constrained.  These were constant, removing const.
 // The reason is that this will make it much more difficult to fetch memory, since
 // it has less memory to work with limiting the constant amount.
-__device__ fptype d_parameters[maxParams];
-__device__ fptype d_constants[maxParams];
-__device__ fptype d_observables[maxParams];
-__device__ fptype d_normalisations[maxParams];
+__device__ fptype d_parameters[GOOFIT_MAXPAR];
+__device__ fptype d_constants[GOOFIT_MAXPAR];
+__device__ fptype d_observables[GOOFIT_MAXPAR];
+__device__ fptype d_normalisations[GOOFIT_MAXPAR];
 
 __constant__ unsigned int c_totalEvents;
 __constant__ fptype c_motherMass;

@@ -92,11 +92,11 @@ __host__ void PdfBase::initializeIndices() {
     host_normalisations[totalNormalisations] = 0;
     totalNormalisations++;
 
-    if(totalParameters >= maxParams)
+    if(totalParameters >= GOOFIT_MAXPAR)
         throw GooFit::GeneralError("{}: Set too many parameters, GooFit array more than {}. Increase max at compile "
                                    "time with -DGOOFIT_MAXPAR=N.",
                                    getName(),
-                                   maxParams);
+                                   GOOFIT_MAXPAR);
 
     // we rely on GooPdf::set to copy these values, this copyies every PDF which is unnecessary.
     // MEMCPY_TO_SYMBOL(paramIndices, host_indices, totalParams*sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
@@ -195,9 +195,6 @@ __host__ void PdfBase::populateArrays() {
 }
 
 __host__ void PdfBase::setIndices() {
-    // we should get the same amount after we flatten the tree!
-    int checkParams = totalParameters;
-
     // Flatten the tree by re-running through the whole PDF with everything zero'd.
     totalParameters      = 0;
     totalConstants       = 0;
@@ -207,11 +204,6 @@ __host__ void PdfBase::setIndices() {
 
     // set all associated functions parameters, constants, etc.
     recursiveSetIndices();
-
-#ifdef GOOFIT_DEBUG_FLAG
-    if(checkParams != totalParameters)
-        GOOFIT_WARN("checkParams({}) != totalParameters({})", checkParams, totalParameters);
-#endif
 }
 
 __host__ void PdfBase::setData(DataSet *data) {

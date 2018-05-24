@@ -18,10 +18,10 @@ namespace GooFit {
 void *getMetricPointer(EvalFunc val);
 //#ifdef SEPARABLE
 
-extern __device__ fptype d_parameters[maxParams];
-extern __device__ fptype d_constants[maxParams];
-extern __device__ fptype d_observables[maxParams];
-extern __device__ fptype d_normalisations[maxParams];
+extern __device__ fptype d_parameters[GOOFIT_MAXPAR];
+extern __device__ fptype d_constants[GOOFIT_MAXPAR];
+extern __device__ fptype d_observables[GOOFIT_MAXPAR];
+extern __device__ fptype d_normalisations[GOOFIT_MAXPAR];
 
 // a couple constants
 extern __constant__ fptype c_motherMass;
@@ -31,19 +31,19 @@ extern __constant__ fptype c_daug3Mass;
 extern __constant__ fptype c_meson_radius;
 
 // Holds device-side fit parameters.
-// extern __constant__ fptype cudaArray[maxParams];
+// extern __constant__ fptype cudaArray[];
 
 // Holds functor-specific indices into cudaArray. Also overloaded to hold integer constants (ie parameters that cannot
 // vary.)
-// extern __constant__ unsigned int paramIndices[maxParams];
+// extern __constant__ unsigned int paramIndices[];
 
 // Holds non-integer constants. Notice that first entry is number of events.
-// extern __constant__ fptype functorConstants[maxParams];
+// extern __constant__ fptype functorConstants[];
 
-// extern __constant__ fptype normalisationFactors[maxParams];
+// extern __constant__ fptype normalisationFactors[];
 
-extern __device__ void *device_function_table[];
-extern void *host_function_table[];
+extern __device__ void *device_function_table[GOOFIT_MAXFUNC];
+extern void *host_function_table[GOOFIT_MAXFUNC];
 extern unsigned int num_device_functions;
 extern std::map<void *, int> functionAddressToDeviceIndexMap;
 //#endif

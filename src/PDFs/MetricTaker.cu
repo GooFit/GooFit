@@ -115,6 +115,10 @@ MetricTaker::MetricTaker(PdfBase *dat, void *dev_functionPtr)
     if(localPos != functionAddressToDeviceIndexMap.end()) {
         metricIndex = (*localPos).second;
     } else {
+        if(num_device_functions >= GOOFIT_MAXFUNC)
+            throw GeneralError("Too many device functions! Set GOOFIT_MAXFUNC to a larger value than {}",
+                               GOOFIT_MAXFUNC);
+
         metricIndex                                      = num_device_functions;
         host_function_table[num_device_functions]        = dev_functionPtr;
         functionAddressToDeviceIndexMap[dev_functionPtr] = num_device_functions;

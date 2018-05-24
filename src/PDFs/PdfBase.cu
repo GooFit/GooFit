@@ -5,6 +5,7 @@
 #include <goofit/Log.h>
 #include <goofit/PDFs/GooPdf.h>
 #include <goofit/PdfBase.h>
+#include <goofit/Version.h>
 
 #ifdef GOOFIT_MPI
 #include <mpi.h>
@@ -115,6 +116,9 @@ __host__ void PdfBase::recursiveSetIndices() {
                  num_device_functions,
                  reflex_name_,
                  getName());
+
+    if(num_device_functions >= GOOFIT_MAXFUNC)
+        throw GeneralError("Too many device functions! Set GOOFIT_MAXFUNC to a larger value than {}", GOOFIT_MAXFUNC);
 
     host_function_table[num_device_functions] = host_fcn_ptr;
     functionIdx                               = num_device_functions++;

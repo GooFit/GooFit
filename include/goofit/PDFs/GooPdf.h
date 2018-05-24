@@ -7,6 +7,7 @@
 #include <goofit/PDFs/MetricTaker.h>
 #include <goofit/PdfBase.h>
 #include <goofit/UnbinnedDataSet.h>
+#include <goofit/Version.h>
 
 #ifdef ROOT_FOUND
 class TH1D;
@@ -41,8 +42,8 @@ extern __constant__ fptype c_meson_radius;
 
 // extern __constant__ fptype normalisationFactors[maxParams];
 
-extern __device__ void *device_function_table[200];
-extern void *host_function_table[200];
+extern __device__ void *device_function_table[];
+extern void *host_function_table[];
 extern unsigned int num_device_functions;
 extern std::map<void *, int> functionAddressToDeviceIndexMap;
 //#endif

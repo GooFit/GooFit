@@ -842,7 +842,7 @@ __host__
     VarSet[4] = SigGen_phi_h;
     VarSet[5] = dtime_h;
 
-    phsp.~PhaseSpace();
+    phsp.FreeResources();
 
     auto DS = new mcbooster::RealVector_d(8 * nAcc);
     thrust::counting_iterator<int> eventNumber(0);

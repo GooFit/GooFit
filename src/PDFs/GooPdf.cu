@@ -1,14 +1,14 @@
-#include <goofit/GlobalCudaDefines.h>
-#include <goofit/PDFs/GooPdf.h>
-#include <goofit/PDFs/ParameterContainer.h>
-#include <goofit/detail/ThrustOverride.h>
-
 #include <goofit/BinnedDataSet.h>
 #include <goofit/Error.h>
 #include <goofit/FitControl.h>
+#include <goofit/GlobalCudaDefines.h>
 #include <goofit/Log.h>
+#include <goofit/PDFs/GooPdf.h>
+#include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/UnbinnedDataSet.h>
 #include <goofit/Variable.h>
+#include <goofit/Version.h>
+#include <goofit/detail/ThrustOverride.h>
 
 #include <thrust/device_vector.h>
 #include <thrust/host_vector.h>
@@ -63,10 +63,10 @@ fptype host_timeHist[10000];
 #endif
 
 // Function-pointer related.
-__device__ void *device_function_table[200];
+void *host_function_table[GOOFIT_MAXFUNC];
+__device__ void *device_function_table[GOOFIT_MAXFUNC];
 // Not clear why this cannot be __constant__, but it causes crashes to declare it so.
 
-void *host_function_table[200];
 unsigned int num_device_functions = 0;
 std::map<void *, int> functionAddressToDeviceIndexMap;
 
@@ -181,6 +181,8 @@ __host__ void GooPdf::setIndices() {
     PdfBase::setIndices();
 
     GOOFIT_TRACE("host_function_table[{}] = {}", num_device_functions, fitControl->getName());
+    if(num_device_functions >= GOOFIT_MAXFUNC)
+        throw GeneralError("Too many device functions! Set GOOFIT_MAXFUNC to a larger value than {}", GOOFIT_MAXFUNC);
     host_function_table[num_device_functions] = getMetricPointer(fitControl->getMetric());
     num_device_functions++;
 
@@ -201,7 +203,9 @@ __host__ int GooPdf::findFunctionIdx(void *dev_functionPtr) {
         return (*localPos).second;
     }
 
-    int fIdx                                         = num_device_functions;
+    int fIdx = num_device_functions;
+    if(num_device_functions >= GOOFIT_MAXFUNC)
+        throw GeneralError("Too many device functions! Set GOOFIT_MAXFUNC to a larger value than {}", GOOFIT_MAXFUNC);
     host_function_table[num_device_functions]        = dev_functionPtr;
     functionAddressToDeviceIndexMap[dev_functionPtr] = num_device_functions;
     num_device_functions++;

@@ -99,6 +99,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/extern/sanitizers/cmake" ${CMAKE_MODU
 find_package(Sanitizers)
 
 set(GOOFIT_MAXPAR "1800" CACHE STRING "The number of parameters to statically support, can be increased but should not be too large.")
+set(GOOFIT_MAXFUNC "200" CACHE STRING "The number of functions to statically support")
 
 set(GOOFIT_CUDA_OR_GROUPSIZE "128" CACHE STRING "Overrides the default group distribution for Thrust's transform_reduce")
 set(GOOFIT_CUDA_OR_GRAINSIZE "7" CACHE STRING "Overrides the default grain size for Thrust's transform_reduce")
@@ -489,12 +490,6 @@ set(GOOFIT_ARCH_FLAGS ARCH_FLAGS)
 
 option(GOOFIT_SPLASH "Show a unicode splash or a small plain text one" ON)
 
-# Output the current GooFit version
-configure_file (
-    "${PROJECT_SOURCE_DIR}/include/goofit/Version.h.in"
-    "${PROJECT_BINARY_DIR}/include/goofit/Version.h"
-)
-
 if(CMAKE_VERSION VERSION_LESS 3.9)
     message(STATUS "CMake <3.9 will only enable IPO for Intel compilers on Linux")
     set(SUPPORTS_IPO TRUE)
@@ -695,6 +690,14 @@ if(GOOFIT_PACKAGES)
         add_subdirectory(${d})
     endforeach()
 endif()
+
+
+# Output the current GooFit version and compile time options
+# Placed after packages to allow packages to change GooFit cached values
+configure_file (
+    "${PROJECT_SOURCE_DIR}/include/goofit/Version.h.in"
+    "${PROJECT_BINARY_DIR}/include/goofit/Version.h"
+)
 
 # This allows GOOFIT_PYTHON to be automatic
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/extern/pybind11/tools" ${CMAKE_MODULE_PATH})

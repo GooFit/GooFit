@@ -3,7 +3,6 @@
 #include <goofit/GlobalCudaDefines.h>
 
 #include <goofit/Variable.h>
-#include <goofit/Version.h>
 #include <goofit/detail/Abort.h>
 #include <goofit/detail/Macros.h>
 
@@ -28,13 +27,12 @@ class ParameterContainer;
 
 typedef fptype (*device_function_ptr)(fptype *, ParameterContainer &);
 
-const int maxParams = GOOFIT_MAXPAR;
 extern fptype *dev_event_array;
 
-extern fptype host_parameters[maxParams];
-extern fptype host_constants[maxParams];
-extern fptype host_observables[maxParams];
-extern fptype host_normalisations[maxParams];
+extern fptype host_parameters[]; // GOOFIT_MAXPAR
+extern fptype host_constants[];
+extern fptype host_observables[];
+extern fptype host_normalisations[];
 
 extern __constant__ unsigned int c_totalEvents;
 extern int totalParameters;

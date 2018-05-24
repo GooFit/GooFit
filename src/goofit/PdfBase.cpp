@@ -29,10 +29,10 @@ bool find_in(std::vector<T> list, T item) {
 namespace GooFit {
 
 fptype *dev_event_array;
-fptype host_parameters[maxParams];
-fptype host_constants[maxParams];
-fptype host_observables[maxParams];
-fptype host_normalisations[maxParams];
+fptype host_parameters[GOOFIT_MAXPAR];
+fptype host_constants[GOOFIT_MAXPAR];
+fptype host_observables[GOOFIT_MAXPAR];
+fptype host_normalisations[GOOFIT_MAXPAR];
 
 int host_callnumber     = 0;
 int totalParameters     = 0;
@@ -130,9 +130,9 @@ __host__ std::vector<Observable> PdfBase::getObservables() const {
 }
 
 GOOFIT_DEPRECATED __host__ unsigned int PdfBase::registerConstants(unsigned int amount) {
-    if(totalConstants + amount >= maxParams)
+    if(totalConstants + amount >= GOOFIT_MAXPAR)
         throw GooFit::GeneralError(
-            "totalConstants {} + amount {} can not be more than {}", totalConstants, amount, maxParams);
+            "totalConstants {} + amount {} can not be more than {}", totalConstants, amount, GOOFIT_MAXPAR);
     cIndex = totalConstants;
     totalConstants += amount;
     return cIndex;

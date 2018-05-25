@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-#include "props.h"
+#include <goofit/PyProps.h>
 
 namespace py = pybind11;
 using namespace GooFit;

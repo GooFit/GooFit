@@ -4,7 +4,7 @@
 #include <goofit/BinnedDataSet.h>
 #include <goofit/Variable.h>
 
-#include "props.h"
+#include <goofit/PyProps.h>
 
 using namespace GooFit;
 using namespace pybind11::literals;

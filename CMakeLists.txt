@@ -647,6 +647,29 @@ macro(GOOFIT_ADD_PACKAGE PACKAGE_NAME)
 endmacro()
 
 
+function(GOOFIT_ADD_PDF_DOCS PDFNAME)
+    set(input_file "${GOOFIT_SOURCE_DIR}/docs/PDFs/${PDFNAME}.md")
+    set(output_file "${GOOFIT_BINARY_DIR}/include/goofit/docs/${PDFNAME}.h")
+    file(READ "${input_file}" INPUT_STR)
+    string(REPLACE [=[\f$]=] "$" INPUT_STR "${INPUT_STR}")
+    string(REPLACE [=[\f[]=] "$$" INPUT_STR "${INPUT_STR}")
+    string(REPLACE [=[\f]]=] "$$" INPUT_STR "${INPUT_STR}")
+    string(REGEX REPLACE "\\\\class [^\n]*" "" INPUT_STR "${INPUT_STR}")
+    string(CONCAT INPUT_STR  "#pragma once\n"
+                             "#include <string>\n"
+                             "const std::string ${PDFNAME}_docs = R\"raw("
+                             "${INPUT_STR}"
+                             ")raw\";\n")
+    if(EXISTS "${output_file}")
+        file(READ "${output_file}" OUTPUT_STR)
+        if(OUTPUT_STR STREQUAL INPUT_STR)
+            return()
+        endif()
+    endif()
+
+    file(WRITE "${output_file}" "${INPUT_STR}")
+endfunction()
+
 # Adding global property to collect extra info for compilation
 set_property(GLOBAL PROPERTY GOOFIT_EXTRA_PDFS "")
 macro(goofit_add_pdf)

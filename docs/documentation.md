@@ -1005,7 +1005,7 @@ any way. Usually they have a reasonably well-known given name, for
 example “the threshold function” or “a polynomial”. The canonical
 example is the Gaussian PDF.
 
--   `ArgusPdf`: Implements a threshold function 
+-  GooFit::ArgusPdf : Implements a threshold function 
 \f{align}{
     P(x;m_0,a,p) &=& \left\{ \begin{matrix}
     0 & x \le m_0 \\

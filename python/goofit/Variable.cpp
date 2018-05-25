@@ -1,7 +1,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-#include "props.h"
+#include <goofit/PyProps.h>
 
 #include <fmt/format.h>
 #include <sstream>

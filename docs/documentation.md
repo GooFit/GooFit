@@ -113,7 +113,7 @@ the user. Thus, to construct a simple Gaussian fit, merely declare three
 an appropriate `UnbinnedDataSet` to fit to:
 
 
-Simple Gaussian fit {#listinggaussfit} 
+Simple Gaussian fit {#listinggaussfit}
 -------------------
 
 ```{.cpp}
@@ -130,12 +130,12 @@ int main (int argc, char** argv) {
   }
 
 
-  // Create an object to represent the observable, 
+  // Create an object to represent the observable,
   // the number we have measured. Give it a name,
   // upper and lower bounds, and a number of bins
-  // to use in numerical integration. 
-  Variable xvar {"xvar", -5, 5}; 
-  xvar.setNumBins(1000); 
+  // to use in numerical integration.
+  Variable xvar {"xvar", -5, 5};
+  xvar.setNumBins(1000);
 
   // A data set to store our observations in.
   UnbinnedDataSet data {xvar};
@@ -144,35 +144,35 @@ int main (int argc, char** argv) {
   // to the data set, throwing out any events outside
   // the allowed range. In a real fit this step would
   // involve reading a previously created file of data
-  // from an _actual_ experiment. 
-  TRandom donram(42); 
+  // from an _actual_ experiment.
+  TRandom donram(42);
   for (int i = 0; i < 10000; ++i) {
     fptype val = donram.Gaus(0.2, 1.1);
-    if (fabs(val) > 5) {--i; continue;} 
-    data.addEvent(val); 
+    if (fabs(val) > 5) {--i; continue;}
+    data.addEvent(val);
   }
 
   // Variables to represent the mean and standard deviation
   // of the Gaussian PDF we're going to fit to the data.
-  // They take a name, starting value, optional initial 
+  // They take a name, starting value, optional initial
   // step size and upper and lower bounds. Notice that
   // here only the mean is given a step size; the sigma
   // will use the default step of one-tenth of its range.
   Variable mean {"mean", 0, 1, -10, 10};
-  Variable sigm {"sigm", 1, 0.5, 1.5}; 
+  Variable sigm {"sigm", 1, 0.5, 1.5};
 
   // The actual PDF. The Gaussian takes a name, an independent
-  // (ie observed) variable, and a mean and width. 
-  GaussianPdf gauss {"gauss", &xvar, &mean, &sigm}; 
+  // (ie observed) variable, and a mean and width.
+  GaussianPdf gauss {"gauss", &xvar, &mean, &sigm};
 
-  // Copy the data to the GPU. 
+  // Copy the data to the GPU.
   gauss.setData(&data);
 
   // A class that talks to MINUIT and GooFit. It needs
-  // to know what PDF it should set up in MINUIT. 
-  FitManager fitter {&gauss}; 
+  // to know what PDF it should set up in MINUIT.
+  FitManager fitter {&gauss};
 
-  // The actual fit. 
+  // The actual fit.
   fitter.fit();
   return 0;
 }
@@ -250,8 +250,8 @@ fit), you should create a suitable `FitControl` object and send it to
 the top-level `GooPdf`:
 
 ```{.cpp}
-Variable decayTime {"decayTime", 100, 0, 10}; 
-BinnedDataSet* ratioData {&decayTime}; 
+Variable decayTime {"decayTime", 100, 0, 10};
+BinnedDataSet* ratioData {&decayTime};
 for (int i = 0; i < 100; ++i) {
   ratioData.SetBinContent(getRatio(i));
   ratioData.SetBinError(getError(i));
@@ -262,9 +262,9 @@ weights.push_back(new Variable("constaCoef", 0.03, 0.01, -1, 1));
 weights.push_back(new Variable("linearCoef", 0, 0.01, -1, 1));
 weights.push_back(new Variable("secondCoef", 0, 0.01, -1, 1));
 
-PolynomialPdf poly {"poly", decayTime, weights}; 
-poly.setFitControl(new BinnedErrorFit()); 
-poly.setData(&ratioData); 
+PolynomialPdf poly {"poly", decayTime, weights};
+poly.setFitControl(new BinnedErrorFit());
+poly.setData(&ratioData);
 ```
 
 The `FitControl` classes are `UnbinnedNLLFit` (the default),
@@ -286,9 +286,9 @@ Signature of evaluation functions. {#listingfsign}
 -------------------------------------------
 
 ```{.cpp}
-__device__ fptype device_Gaussian (fptype* evt, 
-                                   fptype* p, 
-                                   unsigned int* indices); 
+__device__ fptype device_Gaussian (fptype* evt,
+                                   fptype* p,
+                                   unsigned int* indices);
 ```
 
 Notice that this is a standalone function, not part of any class; `nvcc`
@@ -298,15 +298,15 @@ man’s implementation of the virtual-function lookups built into C++.
 Second, we need a pointer to the evaluation function:
 
 ```{.cpp}
-__device__ device_function_ptr ptr_to_Gaussian = device_Gaussian; 
+__device__ device_function_ptr ptr_to_Gaussian = device_Gaussian;
 ```
 
 where `device_function_ptr` is defined (using `typedef`) as a pointer to
 a function with the signature shown in the listing [here](@ref listingfsign):
 
 ```{.cpp}
-typedef fptype (*device_function_ptr) (fptype*, 
-                                       fptype*, 
+typedef fptype (*device_function_ptr) (fptype*,
+                                       fptype*,
                                        unsigned int*);
 ```
 
@@ -352,19 +352,19 @@ An example may be useful at this point. Consider the simple Gaussian PDF
 constructor:
 
 ```{.cpp}
-GaussianPdf::GaussianPdf (std::string n, 
-                          Variable* _x, 
-                          Variable* mean, 
-                          Variable* sigma) 
-  : GooPdf(_x, n) 
+GaussianPdf::GaussianPdf (std::string n,
+                          Variable* _x,
+                          Variable* mean,
+                          Variable* sigma)
+  : GooPdf(_x, n)
 {
   std::vector<unsigned int> pindices;
   pindices.push_back(registerParameter(mean));
   pindices.push_back(registerParameter(sigma));
-  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, 
-                       ptr_to_Gaussian, 
+  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr,
+                       ptr_to_Gaussian,
                        sizeof(void*));
-  initialize(pindices); 
+  initialize(pindices);
 }
 ```
 
@@ -387,15 +387,15 @@ observable - which, as it is the only observable registered, must be 0.
 Now we can consider how the device-side code makes use of this:
 
 ```{.cpp}
-__device__ fptype device_Gaussian (fptype* evt, 
-                                   fptype* p, 
+__device__ fptype device_Gaussian (fptype* evt,
+                                   fptype* p,
                                    unsigned int* indices) {
-  fptype x = evt[indices[2 + indices[0]]]; 
+  fptype x = evt[indices[2 + indices[0]]];
   fptype mean = p[indices[1]];
   fptype sigma = p[indices[2]];
 
   fptype ret = exp(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
-  return ret; 
+  return ret;
 }
 ```
 
@@ -410,7 +410,7 @@ above:
 
 ```{.cpp}
 fptype mean = p[0];
-fptype sigma = p[1]; 
+fptype sigma = p[1];
 ```
 
 which is exactly what we want. The fetching of `x` appears a little more
@@ -430,7 +430,7 @@ and number-of-observables entries in the array. So, replacing the first
 level of lookup by the values, we have:
 
 ```{.cpp}
-fptype x = evt[indices[4]]; 
+fptype x = evt[indices[4]];
 ```
 
 and `indices[4]` is just 0; so in other words, `x` is the first
@@ -468,23 +468,23 @@ as a constant for use in the Gaussian. Then I would modify the
 constructor thus:
 
 ```{.cpp}
-__host__ GaussianPdf::GaussianPdf (std::string n, 
-                                   Variable* _x, 
-                                   Variable* mean, 
-                                   Variable* sigma) 
-  : GooPdf(_x, n) 
+__host__ GaussianPdf::GaussianPdf (std::string n,
+                                   Variable* _x,
+                                   Variable* mean,
+                                   Variable* sigma)
+  : GooPdf(_x, n)
 {
   std::vector<unsigned int> pindices;
   pindices.push_back(registerParameter(mean));
   pindices.push_back(registerParameter(sigma));
 
-  pindices.push_back(registerConstants(1)); 
+  pindices.push_back(registerConstants(1));
   fptype sqrt2pi = sqrt(2*M_PI);
-  MEMCPY_TO_SYMBOL(functorConstants, &sqrt2pi, sizeof(fptype), 
-                     cIndex*sizeof(fptype), cudaMemcpyHostToDevice); 
+  MEMCPY_TO_SYMBOL(functorConstants, &sqrt2pi, sizeof(fptype),
+                     cIndex*sizeof(fptype), cudaMemcpyHostToDevice);
 
   MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_Gaussian, sizeof(void*));
-  initialize(pindices); 
+  initialize(pindices);
 }
 ```
 
@@ -495,17 +495,17 @@ look it up as though it were a parameter, but the target array is
 `functorConstants` instead of the passed-in `p`:
 
 ```{.cpp}
-__device__ fptype device_Gaussian (fptype* evt, 
-                                   fptype* p, 
+__device__ fptype device_Gaussian (fptype* evt,
+                                   fptype* p,
                                    unsigned int* indices) {
-  fptype x = evt[indices[2 + indices[0]]]; 
+  fptype x = evt[indices[2 + indices[0]]];
   fptype mean = p[indices[1]];
   fptype sigma = p[indices[2]];
   fptype sqrt2pi = functorConstants[indices[3]];
 
   fptype ret = exp(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
-  ret /= sqrt2pi; 
-  return ret; 
+  ret /= sqrt2pi;
+  return ret;
 }
 ```
 
@@ -533,8 +533,8 @@ and look at what happens in these innocent-looking lines:
 
 ```{.cpp}
 gauss.setData(&data);
-FitManager fitter(&gauss); 
-fitter.fit(); 
+FitManager fitter(&gauss);
+fitter.fit();
 ```
 
 Copying data
@@ -549,21 +549,21 @@ Internals of the setData method {#listingsetData}
 ```{.cpp}
 setIndices();
 int dimensions = observables.size();
-numEntries = data->getNumEvents(); 
-numEvents = numEntries; 
+numEntries = data->getNumEvents();
+numEvents = numEntries;
 
 fptype* host_array = new fptype[numEntries*dimensions];
 for (int i = 0; i < numEntries; ++i) {
   for (obsIter v = obsBegin(); v != obsEnd(); ++v) {
     fptype currVal = data->getValue((*v), i);
-    host_array[i*dimensions + (*v)->index] = currVal; 
+    host_array[i*dimensions + (*v)->index] = currVal;
   }
 }
 
-gooMalloc((void**) &dev_event_array, dimensions*numEntries*sizeof(fptype)); 
+gooMalloc((void**) &dev_event_array, dimensions*numEntries*sizeof(fptype));
 cudaMemcpy(dev_event_array, host_array, dimensions*numEntries*sizeof(fptype), cudaMemcpyHostToDevice);
-MEMCPY_TO_SYMBOL(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice); 
-delete[] host_array; 
+MEMCPY_TO_SYMBOL(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice);
+delete[] host_array;
 ```
 
 Notice the call to `setIndices`; this is where the indices of
@@ -657,21 +657,21 @@ Normalisation code. {#listingnormalisation}
 ------------------------------------------
 
 ```{.cpp}
-fptype dummy = 0; 
+fptype dummy = 0;
 static plus<fptype> cudaPlus;
-constant_iterator<fptype*> arrayAddress(normRanges); 
+constant_iterator<fptype*> arrayAddress(normRanges);
 constant_iterator<int> eventSize(observables.size());
-counting_iterator<int> binIndex(0); 
+counting_iterator<int> binIndex(0);
 
 fptype sum = transform_reduce(make_zip_iterator(
-                               make_tuple(binIndex, 
-                                          eventSize, 
+                               make_tuple(binIndex,
+                                          eventSize,
                                           arrayAddress)),
                               make_zip_iterator(
-                               make_tuple(binIndex + totalBins, 
-                                          eventSize, 
+                               make_tuple(binIndex + totalBins,
+                                          eventSize,
                                           arrayAddress)),
-              *logger, dummy, cudaPlus); 
+              *logger, dummy, cudaPlus);
 ```
 
 Here `normRanges` is an array of triplets `lower, upper, bins` for each
@@ -736,25 +736,25 @@ Bin-center calculation {#listingbincenter}
 ```{.cpp}
 __shared__ fptype binCenters[1024*MAX_NUM_OBSERVABLES];
 
-// To convert global bin number to (x,y,z...) coordinates: 
-// For each dimension, take the mod with the number of bins 
-// in that dimension. Then divide by the number of bins, in 
-// effect collapsing so the grid has one fewer dimension. 
-// Rinse and repeat. 
+// To convert global bin number to (x,y,z...) coordinates:
+// For each dimension, take the mod with the number of bins
+// in that dimension. Then divide by the number of bins, in
+// effect collapsing so the grid has one fewer dimension.
+// Rinse and repeat.
 
 int offset = threadIdx.x*MAX_NUM_OBSERVABLES;
 unsigned int* indices = paramIndices + parameters;
 for (int i = 0; i < evtSize; ++i) {
   fptype lowerBound = thrust::get<2>(t)[3*i+0];
   fptype upperBound = thrust::get<2>(t)[3*i+1];
-  int numBins    = (int) floor(thrust::get<2>(t)[3*i+2] + 0.5); 
+  int numBins    = (int) floor(thrust::get<2>(t)[3*i+2] + 0.5);
   int localBin = binNumber % numBins;
 
-  fptype x = upperBound - lowerBound; 
+  fptype x = upperBound - lowerBound;
   x /= numBins;
-  x *= (localBin + 0.5); 
+  x *= (localBin + 0.5);
   x += lowerBound;
-  binCenters[indices[indices[0] + 2 + i]+offset] = x; 
+  binCenters[indices[indices[0] + 2 + i]+offset] = x;
   binNumber /= numBins;
 }
 ```
@@ -768,9 +768,9 @@ observable, and set the entries of the locally-owned part of
 evaluation:
 
 ```{.cpp}
-fptype ret = callFunction(binCenters+offset, 
-                          functionIdx, 
-                          parameters); 
+fptype ret = callFunction(binCenters+offset,
+                          functionIdx,
+                          parameters);
 ```
 
 where `callFunction` is just a wrapper for looking up the function
@@ -783,14 +783,14 @@ Code to call device-side PDF implementations (some lines broken up for clarity) 
 
 
 ```{.cpp}
-__device__ fptype callFunction (fptype* eventAddress, 
-                                unsigned int functionIdx, 
+__device__ fptype callFunction (fptype* eventAddress,
+                                unsigned int functionIdx,
                                 unsigned int paramIdx) {
   void* rawPtr = device_function_table[functionIdx];
   device_function_ptr fcn;
   fcn = reinterpret_cast<device_function_ptr>(rawPtr);
-  return (*fcn)(eventAddress, 
-                cudaArray, 
+  return (*fcn)(eventAddress,
+                cudaArray,
                 paramIndices + paramIdx);
 }
 ```
@@ -812,11 +812,11 @@ Goodness-of-fit evaluation {#listingnlleval}
 
 
 ```{.cpp}
-transform_reduce(make_zip_iterator(make_tuple(eventIndex, 
-                                              arrayAddress, 
+transform_reduce(make_zip_iterator(make_tuple(eventIndex,
+                                              arrayAddress,
                                               eventSize)),
-                 make_zip_iterator(make_tuple(eventIndex + numEntries, 
-                                              arrayAddress, 
+                 make_zip_iterator(make_tuple(eventIndex + numEntries,
+                                              arrayAddress,
                                               eventSize)),
                  *logger, dummy, cudaPlus);   
 ```
@@ -833,29 +833,29 @@ Main evaluation operator (some lines broken up for clarity) {#listingmaineval}
 ----------------------------------------------------------
 
 ```{.cpp}
-__device__ fptype MetricTaker::operator () 
+__device__ fptype MetricTaker::operator ()
   (thrust::tuple<int, fptype*, int> t) const {
-  // Calculate event offset for this thread. 
+  // Calculate event offset for this thread.
   int eventIndex = thrust::get<0>(t);
   int eventSize  = thrust::get<2>(t);
   fptype* eventAddress = thrust::get<1>(t);
-  eventAddress += (eventIndex * abs(eventSize)); 
+  eventAddress += (eventIndex * abs(eventSize));
 
   // Causes stack size to be statically undeterminable.
   fptype ret = callFunction(eventAddress, functionIdx, parameters);
 
-  // Notice assumption here! For unbinned fits the 
-  // eventAddress pointer won't be used in the metric, 
-  // so it doesn't matter what it is. For binned fits it 
-  // is assumed that the structure of the event is 
+  // Notice assumption here! For unbinned fits the
+  // eventAddress pointer won't be used in the metric,
+  // so it doesn't matter what it is. For binned fits it
+  // is assumed that the structure of the event is
   // (obs1 obs2... binentry binvolume), so that the array
-  // passed to the metric consists of (binentry binvolume). 
+  // passed to the metric consists of (binentry binvolume).
   void* fcnAddr = device_function_table[metricIndex];
   device_metric_ptr fcnPtr;
   fcnPtr = reinterpret_cast<device_metric_ptr>(fcnAddr);
   eventAddress += abs(eventSize)-2;
   ret = (*fcnPtr)(ret, eventAddress, parameters);
-  return ret; 
+  return ret;
 }
 ```
 
@@ -885,66 +885,66 @@ Metric-taking functions {#listingmetrics}
 -------
 
 ```{.cpp}
-__device__ fptype calculateEval (fptype rawPdf, 
-                                 fptype* evtVal, 
+__device__ fptype calculateEval (fptype rawPdf,
+                                 fptype* evtVal,
                                  unsigned int par) {
-  // Just return the raw PDF value, for use 
-  // in (eg) normalisation. 
-  return rawPdf; 
+  // Just return the raw PDF value, for use
+  // in (eg) normalisation.
+  return rawPdf;
 }
 
-__device__ fptype calculateNLL (fptype rawPdf, 
-                                 fptype* evtVal, 
+__device__ fptype calculateNLL (fptype rawPdf,
+                                 fptype* evtVal,
                                  unsigned int par) {
   rawPdf *= normalisationFactors[par];
-  return rawPdf > 0 ? -log(rawPdf) : 0; 
+  return rawPdf > 0 ? -log(rawPdf) : 0;
 }
 
-__device__ fptype calculateProb (fptype rawPdf, 
-                                 fptype* evtVal, 
+__device__ fptype calculateProb (fptype rawPdf,
+                                 fptype* evtVal,
                                  unsigned int par) {
   // Return probability, ie normalized PDF value.
   return rawPdf * normalisationFactors[par];
 }
 
-__device__ fptype calculateBinAvg (fptype rawPdf, 
-                                 fptype* evtVal, 
+__device__ fptype calculateBinAvg (fptype rawPdf,
+                                 fptype* evtVal,
                                  unsigned int par) {
   rawPdf *= normalisationFactors[par];
-  rawPdf *= evtVal[1]; // Bin volume 
-  // Log-likelihood of numEvents with expectation of exp 
-  // is (-exp + numEvents*ln(exp) - ln(numEvents!)). 
-  // The last is constant, so we drop it; and then multiply 
-  // by minus one to get the negative log-likelihood. 
+  rawPdf *= evtVal[1]; // Bin volume
+  // Log-likelihood of numEvents with expectation of exp
+  // is (-exp + numEvents*ln(exp) - ln(numEvents!)).
+  // The last is constant, so we drop it; and then multiply
+  // by minus one to get the negative log-likelihood.
   if (rawPdf > 0) {
     fptype expEvents = functorConstants[0]*rawPdf;
-    return (expEvents - evtVal[0]*log(expEvents)); 
+    return (expEvents - evtVal[0]*log(expEvents));
   }
-  return 0; 
+  return 0;
 }
 
-__device__ fptype calculateBinWithError (fptype rawPdf, 
-                                 fptype* evtVal, 
+__device__ fptype calculateBinWithError (fptype rawPdf,
+                                 fptype* evtVal,
                                  unsigned int par) {
-  // In this case interpret the rawPdf as just a number, 
-  // not a number of events. Do not divide by integral over 
-  // phase space, do not multiply by bin volume, and do not 
-  // collect 200 dollars. evtVal should have the structure 
-  // (bin entry, bin error). 
+  // In this case interpret the rawPdf as just a number,
+  // not a number of events. Do not divide by integral over
+  // phase space, do not multiply by bin volume, and do not
+  // collect 200 dollars. evtVal should have the structure
+  // (bin entry, bin error).
   rawPdf -= evtVal[0]; // Subtract observed value.
   rawPdf /= evtVal[1]; // Divide by error.
-  rawPdf *= rawPdf; 
-  return rawPdf; 
+  rawPdf *= rawPdf;
+  return rawPdf;
 }
 
-__device__ fptype calculateChisq (fptype rawPdf, 
-                                 fptype* evtVal, 
+__device__ fptype calculateChisq (fptype rawPdf,
+                                 fptype* evtVal,
                                  unsigned int par) {
   rawPdf *= normalisationFactors[par];
-  rawPdf *= evtVal[1]; // Bin volume 
+  rawPdf *= evtVal[1]; // Bin volume
 
   fptype ret = pow(rawPdf * functorConstants[0] - evtVal[0], 2);
-  ret /= (evtVal[0] > 1 ? evtVal[0] : 1); 
+  ret /= (evtVal[0] > 1 ? evtVal[0] : 1);
   return ret;
 }
 ```
@@ -1005,35 +1005,11 @@ any way. Usually they have a reasonably well-known given name, for
 example “the threshold function” or “a polynomial”. The canonical
 example is the Gaussian PDF.
 
--  GooFit::ArgusPdf : Implements a threshold function 
-\f{align}{
-    P(x;m_0,a,p) &=& \left\{ \begin{matrix}
-    0 & x \le m_0 \\
-    x\left(\frac{x^2-m_0^2}{m_0^2}\right)^p e^{a\frac{x^2-m_0^2}{m_0^2}} & x > m_0 \\
-    \end{matrix}
-    \right. 
-\f} where the power \f$p\f$ is, by default, fixed at
-    0.5. The constructor takes `Variable`s representing \f$x\f$, \f$m_0\f$, and
-    \f$a\f$, followed by a boolean indicating whether the threshold is an
-    upper or lower bound. The equation above shows the PDF for a lower
-    bound; for upper bounds, \f$x^2-m_0^2\f$ becomes instead \f$m_0^2-x^2\f$,
-    and the value is zero above rather than below \f$m_0\f$. The constructor
-    also takes an optional `Variable` representing the power \f$p\f$; if not
-    given, a default parameter with value 0.5 is created.
-
--   `BifurGaussPdf`: A two-sided Gaussian, with a \f$\sigma\f$ that varies
-    depending on which side of the mean you are on: 
-\f{align}{
-    P(x;m,\sigma_L,\sigma_R) &=& \left\{ \begin{matrix}
-    e^{-\frac{(x-m)^2}{2\sigma_L^2}} & x \le m \\
-    e^{-\frac{(x-m)^2}{2\sigma_R^2}} & x > m. \\
-    \end{matrix}
-    \right. 
-\f} The constructor takes the observable \f$x\f$,
-    mean \f$m\f$, and left and right sigmas \f$\sigma_{L,R}\f$.
+-  GooFit::ArgusPdf
+-  GooFit::BifurGaussPdf
 
 -   `BWPdf`: A non-relativistic Breit-Wigner function, sometimes called
-    a Cauchy function: 
+    a Cauchy function:
 \f{align}{
     P(x;m,\Gamma) &=& \frac{1}{2\sqrt{\pi}}\frac{\Gamma}{(x-m)^2 + \Gamma^2/4}
 \f}
@@ -1043,9 +1019,9 @@ example is the Gaussian PDF.
 -   `CorrGaussianPdf`: A correlated Gaussian - that is, a function of
     two variables \f$x\f$ and \f$y\f$, each described by a Gaussian
     distribution, but the width of the \f$y\f$ distribution depends on \f$x\f$:
-    
+
 \f{align}{
-    P(x,y;\bar x,\sigma_x,\bar y, \sigma_y, k) &=& 
+    P(x,y;\bar x,\sigma_x,\bar y, \sigma_y, k) &=&
     e^{-\frac{(x-\bar x)^2}{2\sigma_x^2}}e^{-\frac{(y-\bar y)^2}{2(1 + k(\frac{x-\bar x}{\sigma_x})^2)\sigma_y^2}}
 \f}
     In other words, the effective \f$\sigma_y\f$ grows quadratically in the
@@ -1057,14 +1033,14 @@ example is the Gaussian PDF.
     \f$P(x,y;\bar x,\sigma_x,\bar y, \sigma_y) = G(x;\bar x, \sigma_x)G(y;\bar y, \sigma_y)\f$.
 
 -   `CrystalBallPdf`: A Gaussian with a power-law tail on one side:
-    
+
 \f{align}{
     P(x;m,\sigma,\alpha,p) &=& \left\{ \begin{matrix}
     e^{-\frac{(x-m)^2}{2\sigma^2}} & \mathrm{sg}(\alpha)\frac{x - m}{\sigma} \le \mathrm{sg}(\alpha)\alpha \\
     e^{-\alpha^2/2}\left(\frac{p/\alpha}{p/\alpha - \alpha + \frac{x-m}{\sigma}}\right)^p
     & \mathrm{otherwise } (\alpha\ne 0). \\
     \end{matrix}
-    \right. 
+    \right.
 \f} The constructor takes the observable \f$x\f$,
     the mean \f$m\f$, width \f$\sigma\f$, cutoff \f$\alpha\f$, and power \f$p\f$. Note
     that if \f$\alpha\f$ is negative, the power-law tail is on the right; if
@@ -1072,7 +1048,7 @@ example is the Gaussian PDF.
     simple Gaussian in order to avoid \f$p/\alpha\f$ blowing up.
 
 -   `ExpGausPdf`: An exponential decay convolved with a Gaussian
-    resolution: 
+    resolution:
 \f{align}{
     P(t;m,\sigma,\tau) &=& e^{-t/\tau} \otimes e^{-\frac{(t-m)^2}{2\sigma^2}} \\
     &=& (\tau/2)e^{(\tau/2)(2m+\tau\sigma^2-2t}\mathrm{erfc}\left(\frac{m+\tau\sigma^2-t}{\sigma\sqrt{2}}\right)
@@ -1082,7 +1058,7 @@ example is the Gaussian PDF.
     of the resolution, and lifetime \f$\tau\f$. Note that the original decay
     function is zero for \f$t<0\f$.
 
--   `ExpPdf`: A plain exponential, 
+-   `ExpPdf`: A plain exponential,
 \f{align}{
     P(x;\alpha, x_0) &=& e^{\alpha(x-x_0)}
 \f} taking the
@@ -1090,7 +1066,7 @@ example is the Gaussian PDF.
     \f$x_0\f$. If \f$x_0\f$ is not specified it defaults to zero. A variant
     constructor takes, in place of \f$\alpha\f$, a `vector` of coefficients
     (in the order \f$\alpha_0\f$ to \f$\alpha_n\f$) to form a polynomial in the
-    exponent: 
+    exponent:
 \f{align}{
     P(x;\alpha_0, \alpha_1, \ldots \alpha_n, x_0) &=& e^{\alpha_0 + \alpha_1(x-x_0) + \alpha_2(x-x_0)^2 + \ldots + \alpha_n(x-x_0)^n}
 \f}
@@ -1098,14 +1074,14 @@ example is the Gaussian PDF.
 
 -   `GaussianPdf`: What can I say? It’s a normal distribution, the
     potato of PDFs. Kind of bland, but goes with anything. National
-    cuisines have been based on it. 
+    cuisines have been based on it.
 \f{align}{
     P(x;m,\sigma) &=& e^-\frac{(x-m)^2}{2\sigma^2}
 \f} The
     constructor takes the observable \f$x\f$, mean \f$m\f$, and width \f$\sigma\f$.
 
 -   `InterHistPdf`: An interpolating histogram; in one dimension:
-    
+
 \f{align}{
     P(x) &=& \frac{f(x, b(x))H[b(x)] + f(x, 1 + b(x))H[b(x) + 1]}{f(x, b(x)) + f(x, 1 + b(x))}
 \f}
@@ -1133,7 +1109,7 @@ example is the Gaussian PDF.
     observables.
 
 -   `JohnsonSUPdf`: Another modified Gaussian. You can eat potatoes a
-    lot of different ways: 
+    lot of different ways:
 \f{align}{
     P(x;m,\sigma,\gamma,\delta) &=&
     \frac{\delta}{\sigma\sqrt{2\pi(1+\frac{(x-m)^2}{\sigma^2})}}
@@ -1148,17 +1124,17 @@ example is the Gaussian PDF.
     \f$D^0\f$ masses is only slightly more than the pion mass. Consequently,
     the distribution of \f$\Delta m = m(D^*) - m(D^0)\f$ is slightly
     asymmetric: The left side of the peak, where the phase space narrows
-    rapidly, is less likely than the right side. 
+    rapidly, is less likely than the right side.
 \f{align}{
     P(x;x_0,\Gamma,M,m) &=& \left\{ \begin{matrix}
     0 & \lambda(x_0,M,m) \le 0 \\
     \frac{S(x,x_0,M,m)x_0'\Gamma^2}{\left(x_0'-x'^2\right)^2 + x_0'\Gamma^2S^2(x,x_0,M,m)} & \mathrm{otherwise.}
     \end{matrix}
-    \right. 
+    \right.
 \f} Here priming indicates addition of \f$M\f$, so
     that \f$x'=x+M\f$, \f$x_0'=x_0+M\f$; the phase-space function \f$S\f$ and its
     supporting characters \f$\lambda\f$, \f$p\f$, and \f$b_W\f$ are given by
-    
+
 \f{align}{
     S(x,x_0,M,m)   &=& \left(\frac{p(x,M,m)}{p(x_0,M,m)}\right)^3\left(\frac{b_W(x,M,m)}{b_W(x_0,M,m)}\right)^2 \\
     b_W(x,M,m)     &=& \frac{1}{\sqrt{1 + r^2p^2(x,M,m)}}\\
@@ -1177,7 +1153,7 @@ example is the Gaussian PDF.
 -   `LandauPdf`: A shape with a long right-hand tail - so long, in fact,
     that its moments are not defined. If the most probable value (note
     that this is not a mean) and the width are taken as 0 and 1, the PDF
-    is 
+    is
 \f{align}{
     P(x) &=& \frac{1}{\pi}\int_0^\infty e^{-t\log t - xt}\sin(t\pi)\mathrm{d}t
 \f}
@@ -1186,9 +1162,9 @@ example is the Gaussian PDF.
     (which shifts the above expression) and the width \f$\sigma\f$ (which
     scales it).
 
--   `NovosibirskPdf`: A custom shape with a long tail: 
+-   `NovosibirskPdf`: A custom shape with a long tail:
 \f{align}{
-    P(x;m,\sigma,t) &=& 
+    P(x;m,\sigma,t) &=&
     e^{-\frac{1}{2}\left(\log^2(1+t\frac{x-m}{\sigma}\frac{\sinh(t\sqrt{\log(4)})}{\sqrt{\log(4)}})/t + t^2\right)}
 \f}
     The constructor takes the observable \f$x\f$, mean \f$m\f$, width \f$\sigma\f$,
@@ -1200,7 +1176,7 @@ example is the Gaussian PDF.
 -   `PolynomialPdf`: If the Gaussian is the potato, what is the
     polynomial? Bread? Milk? Nothing exotic, at any rate. The GooFit
     version does have some subtleties, to allow for polynomials over an
-    arbitrary number (\ref footnote12 "12") of dimensions: 
+    arbitrary number (\ref footnote12 "12") of dimensions:
 \f{align}{
     P(\vec x; \vec a, \vec x_0, N) &=&
     \sum\limits_{p_1+p_2+\ldots+p_n \le N} a_{p_1p_2\ldots p_n} \prod\limits_{i=1}^n (\vec x - \vec x_0)_i^{p_i}
@@ -1211,7 +1187,7 @@ example is the Gaussian PDF.
     \f$\vec a\f$, a `vector` of optional offsets \f$\vec x_0\f$ (if not
     specified, these default to zero), and the maximum degree \f$N\f$. The
     coefficients are in the order
-    \f$a_{p_0p_0\ldots p_0}, a_{p_1p_0\ldots p_0}, \ldots a_{p_Np_0\ldots p_0}, a_{p_0p_1\ldots p_0}, a_{p_1p_1\ldots p_0}, 
+    \f$a_{p_0p_0\ldots p_0}, a_{p_1p_0\ldots p_0}, \ldots a_{p_Np_0\ldots p_0}, a_{p_0p_1\ldots p_0}, a_{p_1p_1\ldots p_0},
     \ldots a_{p_0p_0\ldots p_N}\f$. In other words, start at the index for
     the constant term, and increment the power of the leftmost
     observable. Every time the sum of the powers reaches \f$N\f$, reset the
@@ -1222,7 +1198,7 @@ example is the Gaussian PDF.
     \f$a_{00}, a_{10}, a_{20}, a_{30}, a_{01}, a_{11}, a_{21}, a_{02}, a_{12}, a_{03}\f$.
     This can be visualised as picking boxes out of a matrix and
     discarding the ones where the powers exceed the maximum:
-    
+
 \f[
 \begin{array}{cccc}
     9: x^0y^3 &    -      &    -      &    -      \\
@@ -1243,7 +1219,7 @@ example is the Gaussian PDF.
 
 -   `ScaledGaussianPdf`: Another Gaussian variant. This one moves its
     mean by a bias \f$b\f$ and scales its width by a scale factor
-    \f$\epsilon\f$: 
+    \f$\epsilon\f$:
 \f{align}{
     P(x;m,\sigma,b,\epsilon) &=& e^{-\frac{(x+b-m)^2}{2(\sigma(1+\epsilon))^2}}.
 \f}
@@ -1260,7 +1236,7 @@ example is the Gaussian PDF.
     \f$N\f$ of a one-dimensional histogram; then the returned value is a
     weighted average of bins \f$N-1\f$, \f$N\f$, and \f$N+1\f$. For multidimensional
     cases the weighted average is over all the neighbouring bins,
-    including diagonals: 
+    including diagonals:
 \f{align}{
     P(\vec x;s;H) &=& \frac{H(\mathrm{bin}(\vec x)) + s\sum\limits_{i=\mathrm{neighbours}}\delta{i}H(i)}{1 + s\sum\limits_{i=\mathrm{neighbours}}\delta{i}}
 \f}
@@ -1273,21 +1249,21 @@ example is the Gaussian PDF.
     the `copyHistogramToDevice` method.
 
 -   `StepPdf`: Also known as the Heaviside function. Zero up to a point,
-    then 1 after that point: 
+    then 1 after that point:
 \f{align}{
     P(x;x_0) &=& \left\{
     \begin{matrix}
-    0 & x \le x_0 \\ 
-    1 & x > x_0 
+    0 & x \le x_0 \\
+    1 & x > x_0
     \end{matrix}
     \right.
 \f} The constructor takes the observable \f$x\f$ and
     threshold \f$x_0\f$.
 
 -   `VoigtianPdf`: A convolution of a classical Breit-Wigner and a
-    Gaussian resolution: 
+    Gaussian resolution:
 \f{align}{
-    P(x;m,\sigma,\Gamma) &=& \int\limits_{-\infty}^\infty\frac{\Gamma}{(t-m)^2-\Gamma^2/4} e^{-\frac{(t-x)^2}{2\sigma^2}}\mathrm{d}t. 
+    P(x;m,\sigma,\Gamma) &=& \int\limits_{-\infty}^\infty\frac{\Gamma}{(t-m)^2-\Gamma^2/4} e^{-\frac{(t-x)^2}{2\sigma^2}}\mathrm{d}t.
 \f}
     The actual implementation is a horrible lookup-table-interpolation;
     had Lovecraft been aware of this sort of thing, he would not have
@@ -1309,10 +1285,10 @@ Gaussian to your fit.
     weights; in the unextended version the weights are probabilities
     (i.e., between 0 and 1) and \f$N\f$ PDFs have \f$N-1\f$ weights, with the
     probability of the last PDF being 1 minus the sum of the weights of
-    the others. 
+    the others.
 \f{align}{
     P(F_1,\ldots, F_n,w_1,\ldots,w_n) &=& w_1F_1 + \ldots + w_nF_n \\
-    P(F_1,\ldots, F_n,w_1,\ldots,w_{n-1}) &=& 
+    P(F_1,\ldots, F_n,w_1,\ldots,w_{n-1}) &=&
     w_1F_1 + \ldots + w_{n-1}F_{n-1}\\
     &&+ (1 - w_1 - \ldots - w_{n-1})F_n.
 \f} The constructor
@@ -1331,19 +1307,19 @@ Gaussian to your fit.
     Also note that if the `AddPdf`’s options mask (set by calling
     `setSpecialMask`) includes `ForceCommonNorm`, the normalisation
     changes. By default the components are normalized separately, so
-    that 
+    that
 \f{align}{
     P(x;\vec F, \vec w) &=& \sum\limits_i \frac{w_iF_i(x)}{\int F_i(x) \mathrm{d}x},
 \f}
     but with `ForceCommonNorm` set, the integral is instead taken at the
-    level of the sum: 
+    level of the sum:
 \f{align}{
     P(x;\vec F, \vec w) &=& \frac{\sum\limits_i w_iF_i(x)}{\int\sum\limits_i w_iF_i(x)\mathrm{d}x}.
 \f}
     The difference is subtle but sometimes important.
 
 -   `BinTransformPdf`: Returns the global bin of its argument; in one
-    dimension: 
+    dimension:
 \f{align}{
     P(x;l,s) &=& \mathrm{floor}\left(\frac{x-l}{s}\right)
 \f}
@@ -1359,7 +1335,7 @@ Gaussian to your fit.
     The last is used for converting local (i.e. one-dimensional) bins
     into global bins in the case of multiple dimensions.
 
--   `CompositePdf`: A chained function, 
+-   `CompositePdf`: A chained function,
 \f{align}{
     P(x) &=& h(g(x)).
 \f} The constructor takes the kernel
@@ -1368,7 +1344,7 @@ Gaussian to your fit.
     one argument. The core function \f$g\f$ can take any number.
 
 -   `ConvolutionPdf`: Numerically calculates a convolution integral
-    
+
 \f{align}{
     P(x;f,g) &=& f\otimes g = \int\limits_{-\infty}^\infty f(t) g(x-t) \mathrm{d}t.
 \f}
@@ -1392,7 +1368,7 @@ Gaussian to your fit.
     variants. Note that you should not mix-and-match; the weights must
     be either all observables or all fit parameters.
 
--   `MappedPdf`: A function having the form 
+-   `MappedPdf`: A function having the form
 \f{align}{
     F(x) &=& \left\{ \begin{matrix}
     F_1(x)   & x_0 \le x \le x_1 \\
@@ -1400,7 +1376,7 @@ Gaussian to your fit.
     (\ldots) & (\ldots)        \\
     F_n(x)   & x_{n-1} < x \le x_n \\
     \end{matrix}
-    \right. 
+    \right.
 \f} The constructor takes a *mapping function*
     \f$m\f$, which returns an index; and a `vector` of evaluation functions
     \f$\vec F\f$, so that if \f$m\f$ is zero, the PDF returns \f$F_0\f$, and so on.
@@ -1410,7 +1386,7 @@ Gaussian to your fit.
     whole number. The canonical example of a mapping function is
     `BinTransformPdf`.
 
--   `ProdPdf`: A product of two or more PDFs: 
+-   `ProdPdf`: A product of two or more PDFs:
 \f{align}{
     P(x; \vec F) &=& \prod\limits_i F_i(x).
 \f} The
@@ -1438,7 +1414,7 @@ Dalitz-plot analysis, you may find them, and conceivably even this
 documentation, helpful.
 
 -   `DalitzPlotPdf`: A time-independent description of the Dalitz plot
-    as a coherent sum of resonances: 
+    as a coherent sum of resonances:
 \f{align}{
     P(m^2_{12},m^2_{13};\vec\alpha) &=& \left|\sum\limits_i \alpha_i B_i(m^2_{12},m^2_{13})\right|^2\epsilon(m^2_{12},m^2_{13})
 \f}
@@ -1463,7 +1439,7 @@ documentation, helpful.
     upper bounds of the veto region.
 
 -   `IncoherentSumPdf`: Similar to `DalitzPlotPdf`, but the resonances
-    are added incoherently: 
+    are added incoherently:
 \f{align}{
     P(m^2_{12},m^2_{13};\vec\alpha) &=& \sum\limits_i \left|\alpha_i B_i(m^2_{12},m^2_{13})\right|^2\epsilon(m^2_{12},m^2_{13})
 \f}
@@ -1512,7 +1488,7 @@ documentation, helpful.
     path depends on the decay time, and quantum-mechanically interferes
     with the direct path. Consequently the full Time-Dependent
     Dalitz-Plot (Tddp) amplitude is (suppressing the dependence on
-    squared masses, for clarity): 
+    squared masses, for clarity):
 \f{align}{
     \label{eq:fullmix}
     P(m^2_{12}, m^2_{13}, t, \sigma_t;x,y,\tau,\vec\alpha) &=&
@@ -1521,10 +1497,10 @@ documentation, helpful.
     && - 2\Re(AB^*)\sinh(yt/\tau)\\
     && - 2\Im(AB^*)\sin(xt/\tau)\Big)
 \f} where (notice the
-    reversed masses in the \f$B\f$ calculation) 
+    reversed masses in the \f$B\f$ calculation)
 \f{align}{
     A &=& \sum\limits_i \alpha_iB_i(m^2_{12}, m^2_{13}) \\
-    B &=& \sum\limits_i \alpha_iB_i(m^2_{13}, m^2_{12}), 
+    B &=& \sum\limits_i \alpha_iB_i(m^2_{13}, m^2_{12}),
 \f}
     *convolved with* a time-resolution function and *multiplied by* an
     efficiency. The implementation involves a large amount of caching of
@@ -1560,13 +1536,13 @@ documentation, helpful.
 
 -   `TrigThresholdPdf`: Intended as part of an efficiency function,
     modelling a gradual fall-off near the edges of phase space:
-    
+
 \f{align}{
     P(x;a,b,t) &=& \left\{\begin{matrix}
     1 & d > 1/2 \\
     a + (1-a) \sin(d\pi) & \mathrm{otherwise}
     \end{matrix}
-    \right. 
+    \right.
 \f} where \f$d=b(x-t)\f$ or \f$d=b(t-x)\f$ depending on
     whether the function is modelling a lower or upper threshold. The
     constructor takes the observable \f$x\f$ (which will be either
@@ -1611,14 +1587,14 @@ documentation, helpful.
     variables. In two dimensions, with three bins in each of \f$x\f$ and
     \f$y\f$, the global bin is given by \f$3b_y+b_x\f$, where \f$b_{x,y}\f$ is the
     bin number in \f$x\f$ or \f$y\f$ respectively, as shown here:
-    
+
 \f[
 \begin{array}{l|ccc}
     2 & 6 & 7 & 8 \\
     1 & 3 & 4 & 5 \\
     0 & 0 & 1 & 2 \\
     \hline
-      & 0 & 1 & 2 
+      & 0 & 1 & 2
 \end{array}
 \f]
  where the leftmost column and bottom row indicate the

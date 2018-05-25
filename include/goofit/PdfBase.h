@@ -48,30 +48,72 @@ class UnbinnedDataSet;
 
 namespace {
 /// Utility to filter and pick out observables and variables
-[[ maybe_unused, gnu::unused ]] void filter_arguments(std::vector<Observable> &oblist) {}
-
-template <typename... Args>
-void filter_arguments(std::vector<Observable> &oblist, const Observable &obs, Args... args) {
-    oblist.push_back(obs);
-    return filter_arguments(oblist, args...);
+[[ maybe_unused, gnu::unused ]] void filter_arguments(std::vector<Observable> &oblist, std::vector<Variable> &varlist) {
 }
 
 template <typename... Args>
-void filter_arguments(std::vector<Observable> &oblist, const EventNumber &obs, Args... args) {
+void filter_arguments(std::vector<Observable> &oblist,
+                      std::vector<Variable> &varlist,
+                      const Observable &obs,
+                      Args... args);
+template <typename... Args>
+void filter_arguments(std::vector<Observable> &oblist,
+                      std::vector<Variable> &varlist,
+                      const EventNumber &obs,
+                      Args... args);
+template <typename... Args>
+void filter_arguments(std::vector<Observable> &oblist,
+                      std::vector<Variable> &varlist,
+                      const Variable &var,
+                      Args... args);
+
+/// Pick an Observable off the front
+template <typename... Args>
+void filter_arguments(std::vector<Observable> &oblist,
+                      std::vector<Variable> &varlist,
+                      const Observable &obs,
+                      Args... args) {
     oblist.push_back(obs);
-    return filter_arguments(oblist, args...);
+    return filter_arguments(oblist, varlist, args...);
+}
+
+/// Pick an EventNumber off the front
+template <typename... Args>
+void filter_arguments(std::vector<Observable> &oblist,
+                      std::vector<Variable> &varlist,
+                      const EventNumber &obs,
+                      Args... args) {
+    oblist.push_back(obs);
+    return filter_arguments(oblist, varlist, args...);
+}
+
+/// Pick an Variable (parameter) off the front
+template <typename... Args>
+void filter_arguments(std::vector<Observable> &oblist,
+                      std::vector<Variable> &varlist,
+                      const Variable &var,
+                      Args... args) {
+    varlist.push_back(var);
+    return filter_arguments(oblist, varlist, args...);
 }
 } // namespace
 
 class PdfBase {
+    friend std::ostream &operator<<(std::ostream &, const PdfBase &);
+
   public:
     template <typename... Args>
     explicit PdfBase(std::string n, Args... args)
         : name(std::move(n)) {
         std::vector<Observable> obs;
-        filter_arguments(obs, args...);
+        std::vector<Variable> vars;
+
+        filter_arguments(obs, vars, args...);
+
         for(auto &ob : obs)
             registerObservable(ob);
+        for(auto &var : vars)
+            registerParameter(var);
     }
 
     virtual ~PdfBase() = default;
@@ -189,5 +231,7 @@ class PdfBase {
   private:
     std::string name;
 };
+
+std::ostream &operator<<(std::ostream &, const PdfBase &);
 
 } // namespace GooFit

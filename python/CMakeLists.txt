@@ -13,6 +13,31 @@ function(process_pybind_module LNAME)
     install(TARGETS ${LNAME} LIBRARY DESTINATION goofit)
 endfunction()
 
+function(GOOFIT_ADD_PDF_DOCS PDFFILE)
+    get_filename_component(PDFNAME "${PDFFILE}" NAME_WE)
+    set(output_file "${GOOFIT_BINARY_DIR}/include/goofit/docs/${PDFNAME}.h")
+    file(READ "${PDFFILE}" INPUT_STR)
+    string(REGEX MATCH "/\\*\\*.*\\*\\*/[ \t\n]*class [a-zA-Z_]+" INPUT_STR "${INPUT_STR}")
+    string(REGEX REPLACE "/\\*\\*(.*)\\*\\*/[ \t\n]*class [a-zA-Z_]+" "\\1" INPUT_STR "${INPUT_STR}")
+    string(REPLACE [=[\f$]=] "$" INPUT_STR "${INPUT_STR}")
+    string(REPLACE [=[\f[]=] "$$" INPUT_STR "${INPUT_STR}")
+    string(REPLACE [=[\f]]=] "$$" INPUT_STR "${INPUT_STR}")
+    string(REGEX REPLACE "\\\\class [^\n]*" "" INPUT_STR "${INPUT_STR}")
+    string(CONCAT INPUT_STR  "#pragma once\n"
+                             "#include <string>\n"
+                             "const std::string ${PDFNAME}_docs = R\"raw("
+                             "${INPUT_STR}"
+                             ")raw\";\n")
+    if(EXISTS "${output_file}")
+        file(READ "${output_file}" OUTPUT_STR)
+        if(OUTPUT_STR STREQUAL INPUT_STR)
+            return()
+        endif()
+    endif()
+
+    file(WRITE "${output_file}" "${INPUT_STR}")
+endfunction()
+
 # Adding the Landau helper
 
 add_library(landau MODULE extras/landau.cpp)
@@ -79,7 +104,7 @@ goofit_add_library(_goofit MODULE
     goofit/FitManager.cpp)
 
 
-goofit_add_pdf_docs(ArgusPdf)
+goofit_add_pdf_docs(${GOOFIT_SOURCE_DIR}/include/goofit/PDFs/basic/ArgusPdf.h)
 
 process_pybind_module(_goofit)
 target_link_libraries(_goofit PUBLIC GooFit::GooFit)

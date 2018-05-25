@@ -96,6 +96,7 @@ goofit_add_library(_goofit MODULE
 
 
 goofit_add_pdf_docs(PDFs/basic/ArgusPdf.h)
+goofit_add_pdf_docs(PDFs/basic/BifurGaussPdf.h)
 
 process_pybind_module(_goofit)
 target_link_libraries(_goofit PUBLIC GooFit::GooFit)
@@ -141,4 +142,3 @@ if(NOT SKBUILD)
                        COMMAND ${CMAKE_COMMAND} -E cmake_echo_color --cyan
                        "Python bindings built, use: export PYTHONPATH=${PROJECT_BINARY_DIR}")
 endif()
-

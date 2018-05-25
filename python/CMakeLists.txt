@@ -22,9 +22,10 @@ target_include_directories(landau PUBLIC ../include)
 add_subdirectory(Minuit2)
 
 goofit_add_library(_goofit MODULE
+    include/goofit/PyProps.h
+    include/goofit/Python.h
     goofit.cpp
-    Minuit2/FunctionMinimum.cpp
-    goofit/props.h
+    goofit/HelpPrinter.cpp
     goofit/Variable.cpp
     goofit/DataSet.cpp
     goofit/BinnedDataSet.cpp
@@ -77,8 +78,12 @@ goofit_add_library(_goofit MODULE
     PDFs/utility/VariableBinTransform1DPdf.cpp
     goofit/FitManager.cpp)
 
+
+goofit_add_pdf_docs(ArgusPdf)
+
 process_pybind_module(_goofit)
 target_link_libraries(_goofit PUBLIC GooFit::GooFit)
+target_include_directories(_goofit PUBLIC include)
 
 # Only need to add CUDA incdir if built with FindCUDA
 

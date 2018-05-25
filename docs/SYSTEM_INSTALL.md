@@ -51,7 +51,7 @@ docker run -it alpine
 apk add --no-cache make cmake g++ git
 git clone https://github.com/GooFit/GooFit.git
 cd GooFit
-make
+make auto
 ```
 
 If you'd like to use the Python version:

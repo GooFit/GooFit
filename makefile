@@ -1,6 +1,7 @@
 .PHONY: default auto xcode omp cuda warning mpi docs
 
-default: auto warning
+default: warning
+	@echo "Use make auto instead of running make by itself"
 
 auto: 
 	@mkdir -p build
@@ -44,4 +45,5 @@ warning:
 	@echo ""
 	@echo "You can use 'make omp cuda' to setup or rebuild the build-cuda and build-omp directories."
 	@echo "On a Mac, you can also prepare the Xcode build with make xcode"
+	@echo "You can also use make docs, make mpi, and make clang-format"
 	@echo ""

@@ -15,16 +15,17 @@ endfunction()
 
 function(GOOFIT_ADD_PDF_DOCS PDFFILE)
     get_filename_component(PDFNAME "${PDFFILE}" NAME_WE)
-    set(output_file "${GOOFIT_BINARY_DIR}/include/goofit/docs/${PDFNAME}.h")
-    file(READ "${PDFFILE}" INPUT_STR)
+    set(output_file "${GOOFIT_BINARY_DIR}/include/goofit/docs/${PDFFILE}")
+    set(input_file "${GOOFIT_SOURCE_DIR}/include/goofit/${PDFFILE}")
+    file(READ "${input_file}" INPUT_STR)
     string(REGEX MATCH "/\\*\\*.*\\*\\*/[ \t\n]*class [a-zA-Z_]+" INPUT_STR "${INPUT_STR}")
     string(REGEX REPLACE "/\\*\\*(.*)\\*\\*/[ \t\n]*class [a-zA-Z_]+" "\\1" INPUT_STR "${INPUT_STR}")
     string(REPLACE [=[\f$]=] "$" INPUT_STR "${INPUT_STR}")
     string(REPLACE [=[\f[]=] "$$" INPUT_STR "${INPUT_STR}")
     string(REPLACE [=[\f]]=] "$$" INPUT_STR "${INPUT_STR}")
     string(REGEX REPLACE "\\\\class [^\n]*" "" INPUT_STR "${INPUT_STR}")
-    string(CONCAT INPUT_STR  "#pragma once\n"
-                             "#include <string>\n"
+    string(CONCAT INPUT_STR  "#pragma once\n\n"
+                             "#include <string>\n\n"
                              "const std::string ${PDFNAME}_docs = R\"raw("
                              "${INPUT_STR}"
                              ")raw\";\n")
@@ -104,7 +105,7 @@ goofit_add_library(_goofit MODULE
     goofit/FitManager.cpp)
 
 
-goofit_add_pdf_docs(${GOOFIT_SOURCE_DIR}/include/goofit/PDFs/basic/ArgusPdf.h)
+goofit_add_pdf_docs(PDFs/basic/ArgusPdf.h)
 
 process_pybind_module(_goofit)
 target_link_libraries(_goofit PUBLIC GooFit::GooFit)

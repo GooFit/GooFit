@@ -2,7 +2,7 @@
 
 #include <goofit/PDFs/basic/ArgusPdf.h>
 #include <goofit/Variable.h>
-#include <goofit/docs/ArgusPdf.h>
+#include <goofit/docs/PDFs/basic/ArgusPdf.h>
 
 using namespace GooFit;
 

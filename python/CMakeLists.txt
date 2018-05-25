@@ -14,29 +14,19 @@ function(process_pybind_module LNAME)
 endfunction()
 
 function(GOOFIT_ADD_PDF_DOCS PDFFILE)
-    get_filename_component(PDFNAME "${PDFFILE}" NAME_WE)
     set(output_file "${GOOFIT_BINARY_DIR}/include/goofit/docs/${PDFFILE}")
     set(input_file "${GOOFIT_SOURCE_DIR}/include/goofit/${PDFFILE}")
-    file(READ "${input_file}" INPUT_STR)
-    string(REGEX MATCH "/\\*\\*.*\\*\\*/[ \t\n]*class [a-zA-Z_]+" INPUT_STR "${INPUT_STR}")
-    string(REGEX REPLACE "/\\*\\*(.*)\\*\\*/[ \t\n]*class [a-zA-Z_]+" "\\1" INPUT_STR "${INPUT_STR}")
-    string(REPLACE [=[\f$]=] "$" INPUT_STR "${INPUT_STR}")
-    string(REPLACE [=[\f[]=] "$$" INPUT_STR "${INPUT_STR}")
-    string(REPLACE [=[\f]]=] "$$" INPUT_STR "${INPUT_STR}")
-    string(REGEX REPLACE "\\\\class [^\n]*" "" INPUT_STR "${INPUT_STR}")
-    string(CONCAT INPUT_STR  "#pragma once\n\n"
-                             "#include <string>\n\n"
-                             "const std::string ${PDFNAME}_docs = R\"raw("
-                             "${INPUT_STR}"
-                             ")raw\";\n")
-    if(EXISTS "${output_file}")
-        file(READ "${output_file}" OUTPUT_STR)
-        if(OUTPUT_STR STREQUAL INPUT_STR)
-            return()
-        endif()
-    endif()
 
-    file(WRITE "${output_file}" "${INPUT_STR}")
+    add_custom_command(
+      OUTPUT
+        "${output_file}"
+      COMMAND
+        ${CMAKE_COMMAND} -DOUTFILE=${output_file} -DINFILE=${input_file} -P "${CMAKE_CURRENT_LIST_DIR}/make_docs_header.cmake"
+      VERBATIM
+      MAIN_DEPENDENCY
+        "${input_file}")
+
+    target_sources(_goofit PRIVATE "${output_file}")
 endfunction()
 
 # Adding the Landau helper

@@ -23,7 +23,7 @@ class FunctionMinimum;
 
 namespace GooFit {
 
-class ParameterContainer;
+struct ParameterContainer;
 
 typedef fptype (*device_function_ptr)(fptype *, ParameterContainer &);
 

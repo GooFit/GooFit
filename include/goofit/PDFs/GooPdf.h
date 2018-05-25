@@ -49,7 +49,7 @@ extern std::map<void *, int> functionAddressToDeviceIndexMap;
 //#endif
 
 // Forward declare
-class ParameterContainer;
+struct ParameterContainer;
 
 __device__ int dev_powi(int base, int exp); // Implemented in SmoothHistogramPdf.
 

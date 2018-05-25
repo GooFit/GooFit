@@ -21,6 +21,12 @@ void init_PdfBase(py::module &m) {
         .def("getParameters", &PdfBase::getParameters)
         .def("getParameterByName", &PdfBase::getParameterByName)
         .def("getObservables", &PdfBase::getObservables)
+        .def("__str__",
+             [](const PdfBase &pdf) {
+                 std::stringstream str;
+                 str << pdf;
+                 return str.str();
+             })
         .def("fillMCDataSimple",
              &PdfBase::fillMCDataSimple,
              "Fill in events in the dataset. Must have a dataset and"

@@ -12,7 +12,9 @@ macro(goofit_catch_test TESTNAME)
     target_link_libraries(${TESTNAME} PUBLIC catch_main)
     target_include_directories(${TESTNAME} PUBLIC "${PROJECT_SOURCE_DIR}/tests/include")
     add_test(${TESTNAME} ${TESTNAME})
-    set_target_properties(${TESTNAME} PROPERTIES FOLDER tests)
+
+    get_filename_component(CURRENT_DIR_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+    set_target_properties(${TESTNAME} PROPERTIES FOLDER "tests/${CURRENT_DIR_NAME}")
     set_property(TEST ${TESTNAME} PROPERTY COST 1000)
 endmacro()
 

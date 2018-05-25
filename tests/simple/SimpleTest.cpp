@@ -1,9 +1,11 @@
 #include <goofit/Catch.h>
 
+#include <goofit/PDFs/basic/ArgusPdf.h>
 #include <goofit/UnbinnedDataSet.h>
 #include <goofit/Variable.h>
 
 using namespace GooFit;
+using Catch::Matchers::Contains;
 
 TEST_CASE("Adding values to unbinned dataset", "[simple][dataset]") {
     // Independent variable.
@@ -121,4 +123,26 @@ TEST_CASE("Make a grid with event number", "[simple][grid][dataset]") {
     CHECK(xvar.getValue() == 0.05_a);
     CHECK(yvar.getValue() == 0.15_a);
     CHECK(eventNumber.getValue() == 100.0);
+}
+
+TEST_CASE("Argus variable output", "[output]") {
+    Observable xvar{"xvar", 0, 1};
+    Variable c{"c", xvar.getUpperLimit()};
+    Variable xi{"xi", 0.25};
+    Variable power{"power", .75};
+
+    ArgusPdf argus{"argus", xvar, c, xi, true, power};
+
+    std::stringstream str;
+    str << argus;
+
+    std::string output = R"raw(GooPdf("argus") :
+    Device function: ptr_to_Argus_Upper
+Observable: xvar
+Parameters: c, xi, power
+    )raw";
+
+    CHECK(str.str() == output);
+
+    CHECK_THAT(str.str(), Contains("ptr_to_Argus_Upper"));
 }

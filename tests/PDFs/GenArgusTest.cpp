@@ -3,7 +3,7 @@
 
 #include <goofit/PDFs/basic/ArgusPdf.h>
 
-TEST_CASE_METHOD(PdfTest1D, "Argus", "[fit][argus]") {
+TEST_CASE_METHOD(PdfTest1D, "Argus generate and fit", "[gen][fit][argus]") {
     fptype answer;
 
     SECTION("Set to 1") { answer = 1.0; }

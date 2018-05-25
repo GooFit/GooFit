@@ -236,4 +236,22 @@ void PdfBase::fillMCDataSimple(size_t events, unsigned int seed) {
 
     setData(origdata);
 }
+
+std::ostream &operator<<(std::ostream &out, const PdfBase &pdf) {
+    out << "GooPdf(\"" << pdf.getName() << "\") :\n";
+    out << "  Device function: " << pdf.reflex_name_ << "\n";
+
+    out << "  Observable" << (pdf.observablesList.size() > 1 ? "s" : "") << ": ";
+    for(const auto &item : pdf.observablesList)
+        out << item.getName() << (item == pdf.observablesList.back() ? "" : ", ");
+    out << "\n";
+
+    out << "  Parameter" << (pdf.parametersList.size() > 1 ? "s" : "") << ": ";
+    for(const auto &item : pdf.parametersList)
+        out << item.getName() << (item == pdf.parametersList.back() ? "" : ", ");
+    out << "\n";
+
+    return out;
+}
+
 } // namespace GooFit

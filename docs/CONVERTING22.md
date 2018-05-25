@@ -15,31 +15,16 @@ host__ GaussianPdf::GaussianPdf(std::string n, Observable _x, Variable mean, Var
     : GooPdf(n, _x) {
     registerParameter(mean);
     registerParameter(sigma);
+    registerFunction("device_Gaussian", device_Gaussian);
 
     initialize();
 }
-
 ```
 
 In the above code, GooPdf will appropriately `registerObservable(_x)`, so the developer does not need to do this registration.
 
 Once everything has been registered, each constructor calls `initialize`.  This routine will setup each PDF with `setMetrics`, which is required to be done.
 
-Each PDF needs to overload the function `recursiveSetIndices`, which provides the conversion of all parameters, observable indices, constants into a list used within the device function.  Here is an example of how our implementation looks:
-
-```cpp
-__host__ void GaussianPdf::recursiveSetIndices() 
-{
-    GET_FUNCTION_ADDR(ptr_to_Gaussian);
-
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Gaussian");
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
-}
-
-```
 
 ## Device functions
 
@@ -49,7 +34,7 @@ When writing the device function, all parameters, observables, etc are accessibl
 
 Here is an example using a gaussian on how this is setup.
 
-```
+```cpp
 __device__ fptype device_Gaussian(fptype *evt, ParameterContainer &pc) {
     int id       = pc.getObservable(0);
     fptype mean  = pc.getParameter(0);

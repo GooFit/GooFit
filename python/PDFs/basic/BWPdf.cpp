@@ -1,12 +1,18 @@
-#include <pybind11/pybind11.h>
+#include <goofit/Python.h>
 
 #include <goofit/PDFs/basic/BWPdf.h>
 #include <goofit/Variable.h>
+#include <goofit/docs/PDFs/basic/BWPdf.h>
 
 using namespace GooFit;
-namespace py = pybind11;
 
 void init_BWPdf(py::module &m) {
     py::class_<BWPdf, GooPdf>(m, "BWPdf")
-        .def(py::init<std::string, Observable, Variable, Variable>(), "n", "_x", "m", "s");
+        .def(py::init<std::string, Observable, Variable, Variable>(),
+             "A non-relativistic Breit-Wigner function, sometimes called "
+             "a Cauchy function",
+             "name"_a,
+             "x"_a,
+             "mean"_a,
+             "Gamma"_a);
 }

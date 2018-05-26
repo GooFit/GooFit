@@ -136,11 +136,10 @@ TEST_CASE("Argus variable output", "[output]") {
     std::stringstream str;
     str << argus;
 
-    std::string output = R"raw(GooPdf("argus") :
-    Device function: ptr_to_Argus_Upper
-Observable: xvar
-Parameters: c, xi, power
-    )raw";
+    std::string output = "GooPdf(\"argus\") :\n"
+                         "  Device function: ptr_to_Argus_Upper\n"
+                         "  Observable: xvar\n"
+                         "  Parameters: c, xi, power\n";
 
     CHECK(str.str() == output);
 

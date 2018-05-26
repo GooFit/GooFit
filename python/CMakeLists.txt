@@ -101,6 +101,7 @@ goofit_add_pdf_docs(PDFs/basic/BWPdf.h)
 goofit_add_pdf_docs(PDFs/basic/CorrGaussianPdf.h)
 goofit_add_pdf_docs(PDFs/basic/CrystalBallPdf.h)
 goofit_add_pdf_docs(PDFs/basic/ExpGaussPdf.h)
+goofit_add_pdf_docs(PDFs/basic/ExpPdf.h)
 
 process_pybind_module(_goofit)
 target_link_libraries(_goofit PUBLIC GooFit::GooFit)

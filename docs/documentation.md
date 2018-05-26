@@ -1011,20 +1011,7 @@ example is the Gaussian PDF.
 - GooFit::CorrGaussianPdf
 - GooFit::CrystalBallPdf
 - GooFit::ExpGausPdf
-
--   `ExpPdf`: A plain exponential,
-\f{align}{
-    P(x;\alpha, x_0) &=& e^{\alpha(x-x_0)}
-\f} taking the
-    observable \f$x\f$, exponential constant \f$\alpha\f$, and optional offset
-    \f$x_0\f$. If \f$x_0\f$ is not specified it defaults to zero. A variant
-    constructor takes, in place of \f$\alpha\f$, a `vector` of coefficients
-    (in the order \f$\alpha_0\f$ to \f$\alpha_n\f$) to form a polynomial in the
-    exponent:
-\f{align}{
-    P(x;\alpha_0, \alpha_1, \ldots \alpha_n, x_0) &=& e^{\alpha_0 + \alpha_1(x-x_0) + \alpha_2(x-x_0)^2 + \ldots + \alpha_n(x-x_0)^n}
-\f}
-    The offset \f$x_0\f$ is again optional and defaults to zero.
+- GooFit::ExpPdf
 
 -   `GaussianPdf`: What can I say? It’s a normal distribution, the
     potato of PDFs. Kind of bland, but goes with anything. National

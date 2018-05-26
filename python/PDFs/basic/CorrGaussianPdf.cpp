@@ -12,12 +12,13 @@ void init_CorrGaussianPdf(py::module &m) {
              "A correlated Gaussian - that is, a function of "
              "two variables x and y, each described by a Gaussian "
              "distribution, but the width of the y distribution depends on x.",
-             "n",
-             "x",
-             "y",
-             "mean1",
-             "sigma1",
-             "mean2",
-             "sigma2",
-             "correlation");
+             "name",
+             "x"_a,
+             "y"_a,
+             "mean1"_a,
+             "sigma1"_a,
+             "mean2"_a,
+             "sigma2"_a,
+             "correlation"_a)
+        .def_static("help", []() { return HelpPrinter(CorrGaussianPdf_docs); });
 }

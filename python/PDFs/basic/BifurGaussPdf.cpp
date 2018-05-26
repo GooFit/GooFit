@@ -11,7 +11,7 @@ void init_BifurGaussPdf(py::module &m) {
         .def(py::init<std::string, Observable, Variable, Variable, Variable>(),
              "A two-sided Gaussian, with a sigma that varies "
              "depending on which side of the mean you are on",
-             "n"_a,
+             "name"_a,
              "x"_a,
              "m"_a,
              "sL"_a,

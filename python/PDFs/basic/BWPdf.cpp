@@ -14,5 +14,6 @@ void init_BWPdf(py::module &m) {
              "name"_a,
              "x"_a,
              "mean"_a,
-             "Gamma"_a);
+             "Gamma"_a)
+        .def_static("help", []() { return HelpPrinter(BWPdf_docs); });
 }

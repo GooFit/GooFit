@@ -99,6 +99,7 @@ goofit_add_pdf_docs(PDFs/basic/ArgusPdf.h)
 goofit_add_pdf_docs(PDFs/basic/BifurGaussPdf.h)
 goofit_add_pdf_docs(PDFs/basic/BWPdf.h)
 goofit_add_pdf_docs(PDFs/basic/CorrGaussianPdf.h)
+goofit_add_pdf_docs(PDFs/basic/CrystalBallPdf.h)
 
 process_pybind_module(_goofit)
 target_link_libraries(_goofit PUBLIC GooFit::GooFit)

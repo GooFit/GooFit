@@ -97,6 +97,7 @@ goofit_add_library(_goofit MODULE
 
 goofit_add_pdf_docs(PDFs/basic/ArgusPdf.h)
 goofit_add_pdf_docs(PDFs/basic/BifurGaussPdf.h)
+goofit_add_pdf_docs(PDFs/basic/BWPdf.h)
 
 process_pybind_module(_goofit)
 target_link_libraries(_goofit PUBLIC GooFit::GooFit)

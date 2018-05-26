@@ -1005,16 +1005,9 @@ any way. Usually they have a reasonably well-known given name, for
 example “the threshold function” or “a polynomial”. The canonical
 example is the Gaussian PDF.
 
--  GooFit::ArgusPdf
--  GooFit::BifurGaussPdf
-
--   `BWPdf`: A non-relativistic Breit-Wigner function, sometimes called
-    a Cauchy function:
-\f{align}{
-    P(x;m,\Gamma) &=& \frac{1}{2\sqrt{\pi}}\frac{\Gamma}{(x-m)^2 + \Gamma^2/4}
-\f}
-    The constructor takes the observable \f$x\f$, mean \f$m\f$, and width
-    \f$\Gamma\f$.
+- GooFit::ArgusPdf
+- GooFit::BifurGaussPdf
+- GooFit::BWPdf
 
 -   `CorrGaussianPdf`: A correlated Gaussian - that is, a function of
     two variables \f$x\f$ and \f$y\f$, each described by a Gaussian

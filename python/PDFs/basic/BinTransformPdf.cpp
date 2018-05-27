@@ -1,4 +1,5 @@
-#include <pybind11/pybind11.h>
+#include <goofit/Python.h>
+
 #include <pybind11/stl.h>
 
 #include <goofit/PDFs/basic/BinTransformPdf.h>
@@ -14,9 +15,10 @@ void init_BinTransformPdf(py::module &m) {
                       std::vector<fptype>,
                       std::vector<fptype>,
                       std::vector<int>>(),
-             "n",
-             "obses",
-             "limits",
-             "binSizes",
-             "numBins");
+             "Returns the global bin of its argument in one dimension.",
+             "name"_a,
+             "obses"_a,
+             "limits"_a,
+             "binSizes"_a,
+             "numBins"_a);
 }

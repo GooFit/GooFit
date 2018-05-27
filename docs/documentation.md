@@ -1025,10 +1025,8 @@ example is the Gaussian PDF.
 - GooFit::StepPdf
 - GooFit::VoigtianPdf
 
-And, these are physics functions that have no physics dependencies:
-
--  GooFit::TrigThresholdPdf
--  GooFit::BinTransformPdf
+-  GooFit::TrigThresholdPdf (was in physics)
+-  GooFit::BinTransformPdf (was in combination)
 
 Combination PDFs
 ----------------

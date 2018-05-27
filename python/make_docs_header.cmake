@@ -1,7 +1,7 @@
 # You should run this as:
 # cmake -DINFILE="input.h" -DOUTFILE="output.h" -P make_doc_headers.cmake
 
-set(OUTPUT_STR "#pragma once\n\n#include <string>\n\n"
+set(OUTPUT_STR "#pragma once\n\n#include <string>\n\n")
 
 file(READ "${INFILE}" INPUT_FULL_STR)
 

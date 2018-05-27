@@ -1,12 +1,10 @@
-#include <pybind11/pybind11.h>
+#include <goofit/Python.h>
 #include <pybind11/stl.h>
 
 #include <goofit/PDFs/basic/PolynomialPdf.h>
 #include <goofit/Variable.h>
 
 using namespace GooFit;
-namespace py = pybind11;
-using namespace pybind11::literals;
 
 void init_PolynomialPdf(py::module &m) {
     py::class_<PolynomialPdf, GooPdf>(m, "PolynomialPdf")

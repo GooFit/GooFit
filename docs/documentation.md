@@ -1013,83 +1013,10 @@ example is the Gaussian PDF.
 - GooFit::ExpGausPdf
 - GooFit::ExpPdf
 
--   `GaussianPdf`: What can I say? It’s a normal distribution, the
-    potato of PDFs. Kind of bland, but goes with anything. National
-    cuisines have been based on it.
-\f{align}{
-    P(x;m,\sigma) &=& e^-\frac{(x-m)^2}{2\sigma^2}
-\f} The
-    constructor takes the observable \f$x\f$, mean \f$m\f$, and width \f$\sigma\f$.
-
--   `InterHistPdf`: An interpolating histogram; in one dimension:
-
-\f{align}{
-    P(x) &=& \frac{f(x, b(x))H[b(x)] + f(x, 1 + b(x))H[b(x) + 1]}{f(x, b(x)) + f(x, 1 + b(x))}
-\f}
-    where \f$H\f$ is a histogram, \f$H[n]\f$ is the content of its bin with
-    index \f$n\f$, \f$b(x)\f$ is a function that returns the bin number that \f$x\f$
-    falls into, and \f$f(x, n)\f$ is the distance between \f$x\f$ and the center
-    of bin \f$n\f$. In other words, it does linear interpolation between
-    bins. However, there are two complicating factors. First, the
-    histogram may have up to ten (\ref footnote9 "9") dimensions. Second, the dimensions
-    may be either observables or fit parameters. So, for example,
-    suppose we want to fit for the width \f$\sigma\f$ of a Gaussian
-    distribution, without using the potato of PDFs. We can do this by
-    making a two-dimensional histogram: The \f$x\f$ dimension is the
-    observable, the \f$y\f$ is \f$\sigma\f$. Fill the histogram with the value
-    of the Gaussian (\ref footnote10 "10") at each \f$x\f$ given the \f$\sigma\f$ in that bin. Now
-    when the fit asks the PDF, “What is your value at \f$x\f$ given this
-    \f$\sigma\f$?”, the PDF responds by interpolating linearly between four
-    bins - ones that were precalculated with \f$\sigma\f$ values close to
-    what the fit is asking about. For the Gaussian this is rather
-    un-necessary, but may save some time for computationally expensive
-    functions.
-
-    The constructor takes a `BinnedDataSet` representing the underlying
-    histogram, a `vector` of fit parameters, and a `vector` of
-    observables.
-
--   `JohnsonSUPdf`: Another modified Gaussian. You can eat potatoes a
-    lot of different ways:
-\f{align}{
-    P(x;m,\sigma,\gamma,\delta) &=&
-    \frac{\delta}{\sigma\sqrt{2\pi(1+\frac{(x-m)^2}{\sigma^2})}}
-    e^{-\frac{1}{2}\left(\gamma + \delta\log(\frac{x-m}{\sigma}+\sqrt{1+\frac{(x-m)^2}{\sigma^2}})\right)^2}
-\f}
-    The constructor takes the observable \f$x\f$, mean \f$m\f$, width \f$\sigma\f$,
-    scale parameter \f$\gamma\f$, and shape parameter \f$\delta\f$.
-
--   `KinLimitBWPdf`: A relativistic Breit-Wigner function modified by a
-    factor accounting for limited phase space (\ref footnote11 "11"); for example, in the
-    decay \f$D^{*+}\to D^0\pi^+\f$, the difference between the \f$D^*\f$ and
-    \f$D^0\f$ masses is only slightly more than the pion mass. Consequently,
-    the distribution of \f$\Delta m = m(D^*) - m(D^0)\f$ is slightly
-    asymmetric: The left side of the peak, where the phase space narrows
-    rapidly, is less likely than the right side.
-\f{align}{
-    P(x;x_0,\Gamma,M,m) &=& \left\{ \begin{matrix}
-    0 & \lambda(x_0,M,m) \le 0 \\
-    \frac{S(x,x_0,M,m)x_0'\Gamma^2}{\left(x_0'-x'^2\right)^2 + x_0'\Gamma^2S^2(x,x_0,M,m)} & \mathrm{otherwise.}
-    \end{matrix}
-    \right.
-\f} Here priming indicates addition of \f$M\f$, so
-    that \f$x'=x+M\f$, \f$x_0'=x_0+M\f$; the phase-space function \f$S\f$ and its
-    supporting characters \f$\lambda\f$, \f$p\f$, and \f$b_W\f$ are given by
-
-\f{align}{
-    S(x,x_0,M,m)   &=& \left(\frac{p(x,M,m)}{p(x_0,M,m)}\right)^3\left(\frac{b_W(x,M,m)}{b_W(x_0,M,m)}\right)^2 \\
-    b_W(x,M,m)     &=& \frac{1}{\sqrt{1 + r^2p^2(x,M,m)}}\\
-    p(x,M,m)       &=& \sqrt{\lambda(x,M,m)/(2x)}\\
-    \lambda(x,M,m) &=& \left(x'^2-(M-m)^2\right)\left(x'^2-(M+m)^2\right).
-\f}
-    The radius \f$r\f$ that appears in \f$b_W\f$ (which does not stand for
-    Breit-Wigner, but Blatt-Weisskopf!) is hardcoded to be 1.6.
-
-    The constructor takes the observable \f$x\f$, mean \f$x_0\f$, and width
-    \f$\Gamma\f$. The large and small masses \f$M\f$ and \f$m\f$, which determine
-    the phase space, are by default 1.8645 (the \f$D^0\f$ mass) and 0.13957
-    (mass of a charged pion), but can be set with a call to `setMasses`.
-    Note that they are constants, not fit parameters.
+- GooFit::GaussianPdf
+- GooFit::InterHistPdf
+- GooFit::JohnsonSUPdf
+- GooFit::KinLimitBWPdf
 
 -   `LandauPdf`: A shape with a long right-hand tail - so long, in fact,
     that its moments are not defined. If the most probable value (note
@@ -1545,12 +1472,7 @@ documentation, helpful.
 
 \anchor footnote8 8: This is why `functorConstants[0]` is reserved for that value!
 
-\anchor footnote9 9: On the grounds that ten dimensions should be enough for anyone!
 
-\anchor footnote10 10: Oops, there’s that potato after all. It’s a contrived example.
-
-\anchor footnote11 11: If this seems complicated, spare a thought for the hapless
-ergrad who had to code the original CPU version.
 
 \anchor footnote12 12: Although being honest, just supporting the special cases of one
     and two would likely have sufficed.

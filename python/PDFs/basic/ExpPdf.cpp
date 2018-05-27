@@ -1,5 +1,7 @@
 #include <goofit/Python.h>
 
+#include <pybind11/stl.h>
+
 #include <goofit/PDFs/basic/ExpPdf.h>
 #include <goofit/Variable.h>
 #include <goofit/docs/PDFs/basic/ExpPdf.h>

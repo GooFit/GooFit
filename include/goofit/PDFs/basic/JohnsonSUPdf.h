@@ -7,7 +7,7 @@ namespace GooFit {
 /**
 Another modified Gaussian. You can eat potatoes a
 lot of different ways:
-    
+
 \f[
     P(x;m,\sigma,\gamma,\delta) &=&
     \frac{\delta}{\sigma\sqrt{2\pi(1+\frac{(x-m)^2}{\sigma^2})}}

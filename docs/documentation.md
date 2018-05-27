@@ -985,7 +985,7 @@ The GooFit PDFs, like ancient Gaul, are roughly divisible into three:
 -   Combiners, functions that take other functions as arguments and spit
     out some combination of the inputs, for example sums and products.
 
--   Specialised PDFs, written for the \f$D^0\to\pi\pi\pi^0\f$ mixing
+-   Specialized PDFs, written for the \f$D^0\to\pi\pi\pi^0\f$ mixing
     analysis that is the driving test case for GooFit’s capabilities.
 
 In the lists below, note that all the constructors take pointers to
@@ -1017,127 +1017,18 @@ example is the Gaussian PDF.
 - GooFit::InterHistPdf
 - GooFit::JohnsonSUPdf
 - GooFit::KinLimitBWPdf
+- GooFit::LandauPdf
+- GooFit::NovosibirskPdf
+- GooFit::PolynomialPdf
+- GooFit::ScaledGaussianPdf
+- GooFit::SmoothHistogramPdf
+- GooFit::StepPdf
+- GooFit::VoigtianPdf
 
--   `LandauPdf`: A shape with a long right-hand tail - so long, in fact,
-    that its moments are not defined. If the most probable value (note
-    that this is not a mean) and the width are taken as 0 and 1, the PDF
-    is
-\f{align}{
-    P(x) &=& \frac{1}{\pi}\int_0^\infty e^{-t\log t - xt}\sin(t\pi)\mathrm{d}t
-\f}
-    but the GooFit implementation is a lookup table stolen from CERNLIB.
-    The constructor takes the observable \f$x\f$, most probable value \f$\mu\f$
-    (which shifts the above expression) and the width \f$\sigma\f$ (which
-    scales it).
+And, these are physics functions that have no physics dependencies:
 
--   `NovosibirskPdf`: A custom shape with a long tail:
-\f{align}{
-    P(x;m,\sigma,t) &=&
-    e^{-\frac{1}{2}\left(\log^2(1+t\frac{x-m}{\sigma}\frac{\sinh(t\sqrt{\log(4)})}{\sqrt{\log(4)}})/t + t^2\right)}
-\f}
-    The constructor takes the observable \f$x\f$, mean \f$m\f$, width \f$\sigma\f$,
-    and tail factor \f$t\f$. If \f$t\f$ is less than \f$10^{-7}\f$, the function
-    returns a simple Gaussian, which probably indicates that it
-    approximates a Gaussian for small tail parameters, but I’d hate to
-    have to show such a thing.
-
--   `PolynomialPdf`: If the Gaussian is the potato, what is the
-    polynomial? Bread? Milk? Nothing exotic, at any rate. The GooFit
-    version does have some subtleties, to allow for polynomials over an
-    arbitrary number (\ref footnote12 "12") of dimensions:
-\f{align}{
-    P(\vec x; \vec a, \vec x_0, N) &=&
-    \sum\limits_{p_1+p_2+\ldots+p_n \le N} a_{p_1p_2\ldots p_n} \prod\limits_{i=1}^n (\vec x - \vec x_0)_i^{p_i}
-\f}
-    where \f$N\f$ is the highest degree of the polynomial and \f$n\f$ is the
-    number of dimensions. The constructor takes a `vector` of
-    observables, denoted \f$\vec x\f$ above; a `vector` of coefficients,
-    \f$\vec a\f$, a `vector` of optional offsets \f$\vec x_0\f$ (if not
-    specified, these default to zero), and the maximum degree \f$N\f$. The
-    coefficients are in the order
-    \f$a_{p_0p_0\ldots p_0}, a_{p_1p_0\ldots p_0}, \ldots a_{p_Np_0\ldots p_0}, a_{p_0p_1\ldots p_0}, a_{p_1p_1\ldots p_0},
-    \ldots a_{p_0p_0\ldots p_N}\f$. In other words, start at the index for
-    the constant term, and increment the power of the leftmost
-    observable. Every time the sum of the powers reaches \f$N\f$, reset the
-    leftmost power to zero and increment the next-leftmost. When the
-    next-leftmost reaches \f$N\f$, reset it to zero and increment the
-    third-leftmost, and so on. An example may be helpful; for two
-    dimensions \f$x\f$ and \f$y\f$, and a maximum power of 3, the order is
-    \f$a_{00}, a_{10}, a_{20}, a_{30}, a_{01}, a_{11}, a_{21}, a_{02}, a_{12}, a_{03}\f$.
-    This can be visualised as picking boxes out of a matrix and
-    discarding the ones where the powers exceed the maximum:
-
-\f[
-\begin{array}{cccc}
-    9: x^0y^3 &    -      &    -      &    -      \\
-    7: x^0y^2 & 8: x^1y^2 &    -      &    -      \\
-    4: x^0y^1 & 5: x^1y^1 & 6: x^2y^1 &    -      \\
-    0: x^0y^0 & 1: x^1y^0 & 2: x^2y^0 & 3: x^3y^0 \\
-\end{array}
-\f]
- starting in the lower-lefthand corner and going right,
-    then up.
-
-    There is also a simpler version of the constructor for the case of a
-    polynomial with only one dimension; it takes the observable, a
-    `vector` of coefficients, an optional offset, and the lowest (not
-    highest) degree of the polynomial; the latter two both default to
-    zero. In this case the order of the coefficients is from lowest to
-    highest power.
-
--   `ScaledGaussianPdf`: Another Gaussian variant. This one moves its
-    mean by a bias \f$b\f$ and scales its width by a scale factor
-    \f$\epsilon\f$:
-\f{align}{
-    P(x;m,\sigma,b,\epsilon) &=& e^{-\frac{(x+b-m)^2}{2(\sigma(1+\epsilon))^2}}.
-\f}
-    This has a somewhat specialised function: It allows fitting Monte
-    Carlo to, for example, a sum of two Gaussians, whose means and
-    widths are then frozen. Then real data can be fit for a common bias
-    and \f$\epsilon\f$.
-
-    The constructor takes the observable \f$x\f$, mean \f$m\f$, width \f$\sigma\f$,
-    bias \f$b\f$ and scale factor \f$\epsilon\f$.
-
--   `SmoothHistogramPdf`: Another histogram, but this one does smoothing
-    in place of interpolation. That is, suppose the event falls in bin
-    \f$N\f$ of a one-dimensional histogram; then the returned value is a
-    weighted average of bins \f$N-1\f$, \f$N\f$, and \f$N+1\f$. For multidimensional
-    cases the weighted average is over all the neighbouring bins,
-    including diagonals:
-\f{align}{
-    P(\vec x;s;H) &=& \frac{H(\mathrm{bin}(\vec x)) + s\sum\limits_{i=\mathrm{neighbours}}\delta{i}H(i)}{1 + s\sum\limits_{i=\mathrm{neighbours}}\delta{i}}
-\f}
-    where \f$\delta_i\f$ is zero for bins that fall outside the histogram
-    limits, and one otherwise. The constructor takes the underlying
-    histogram \f$H\f$ (which also defines the event vector \f$\vec x\f$) and the
-    smoothing factor \f$s\f$; notice that if \f$s\f$ is zero, the PDF reduces to
-    a simple histogram lookup. The `BinnedDataSet` representing \f$H\f$ may
-    be empty; in that case the lookup table should be set later using
-    the `copyHistogramToDevice` method.
-
--   `StepPdf`: Also known as the Heaviside function. Zero up to a point,
-    then 1 after that point:
-\f{align}{
-    P(x;x_0) &=& \left\{
-    \begin{matrix}
-    0 & x \le x_0 \\
-    1 & x > x_0
-    \end{matrix}
-    \right.
-\f} The constructor takes the observable \f$x\f$ and
-    threshold \f$x_0\f$.
-
--   `VoigtianPdf`: A convolution of a classical Breit-Wigner and a
-    Gaussian resolution:
-\f{align}{
-    P(x;m,\sigma,\Gamma) &=& \int\limits_{-\infty}^\infty\frac{\Gamma}{(t-m)^2-\Gamma^2/4} e^{-\frac{(t-x)^2}{2\sigma^2}}\mathrm{d}t.
-\f}
-    The actual implementation is a horrible lookup-table-interpolation;
-    had Lovecraft been aware of this sort of thing, he would not have
-    piffled about writing about mere incomprehensible horrors from the
-    depths of time. The constructor takes the observable \f$x\f$, mean \f$m\f$,
-    Gaussian resolution width \f$\sigma\f$, and Breit-Wigner width \f$\Gamma\f$.
+-  GooFit::TrigThresholdPdf
+-  GooFit::BinTransformPdf
 
 Combination PDFs
 ----------------
@@ -1185,23 +1076,6 @@ Gaussian to your fit.
     P(x;\vec F, \vec w) &=& \frac{\sum\limits_i w_iF_i(x)}{\int\sum\limits_i w_iF_i(x)\mathrm{d}x}.
 \f}
     The difference is subtle but sometimes important.
-
--   `BinTransformPdf`: Returns the global bin of its argument; in one
-    dimension:
-\f{align}{
-    P(x;l,s) &=& \mathrm{floor}\left(\frac{x-l}{s}\right)
-\f}
-    where \f$l\f$ is the lower limit and \f$s\f$ is the bin size. The utility of
-    this is perhaps not immediately obvious; one application is as an
-    intermediate step in a `MappedPdf`. For example, suppose I want to
-    model a \f$y\f$ distribution with a different set of parameters in five
-    slices of \f$x\f$; then I would use a `BinTransformPdf` to calculate
-    which slice each event is in.
-
-    The constructor takes `vector`s of the observables \f$\vec x\f$, lower
-    bounds \f$\vec l\f$, bin sizes \f$\vec b\f$, and number of bins \f$\vec n\f$.
-    The last is used for converting local (i.e. one-dimensional) bins
-    into global bins in the case of multiple dimensions.
 
 -   `CompositePdf`: A chained function,
 \f{align}{
@@ -1402,26 +1276,6 @@ documentation, helpful.
     to a page or so of algebra involving error functions. It is beyond
     the scope of this documentation.
 
--   `TrigThresholdPdf`: Intended as part of an efficiency function,
-    modelling a gradual fall-off near the edges of phase space:
-
-\f{align}{
-    P(x;a,b,t) &=& \left\{\begin{matrix}
-    1 & d > 1/2 \\
-    a + (1-a) \sin(d\pi) & \mathrm{otherwise}
-    \end{matrix}
-    \right.
-\f} where \f$d=b(x-t)\f$ or \f$d=b(t-x)\f$ depending on
-    whether the function is modelling a lower or upper threshold. The
-    constructor takes the observable \f$x\f$ (which will be either
-    \f$m^2_{12}\f$ or \f$m^2_{13}\f$), threshold value \f$t\f$, trig constant \f$b\f$,
-    linear constant \f$a\f$, and a boolean which if true indicates an upper
-    threshold. A variant constructor, for modelling a threshold in the
-    “third” Dalitz-plot dimension \f$m^2_{23}\f$, takes both \f$m^2_{12}\f$ and
-    \f$m^2_{13}\f$, and an additional mass constant \f$m\f$; it then forms
-    \f$x = m - m^2_{12} - m^2_{13}\f$, and otherwise does the same
-    calculation.
-
 -   `TruthResolution`: The simplest possible resolution function, a
     simple delta spike at zero - i.e., time is always measured
     perfectly. The constructor takes no arguments at all!
@@ -1471,8 +1325,3 @@ documentation, helpful.
 \anchor footnote7 7: That is, `__shared__` for the default CUDA target.
 
 \anchor footnote8 8: This is why `functorConstants[0]` is reserved for that value!
-
-
-
-\anchor footnote12 12: Although being honest, just supporting the special cases of one
-    and two would likely have sufficed.

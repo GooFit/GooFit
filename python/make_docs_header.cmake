@@ -26,10 +26,10 @@ string(REPLACE [=[\f[]=] "$$" INPUT_STR "${INPUT_STR}")
 string(REPLACE [=[\f]]=] "$$" INPUT_STR "${INPUT_STR}")
 
 # Footnotes
-# \anchor footnote1 1
+# \anchor footnote1 1 (: is in both)
 string(REGEX REPLACE
        [=[\anchor footnote([0-9]+) [0-9]+]]=]
-       "[^//1]:"
+       "[^//1]"
        INPUT_STR "${INPUT_STR}")
 # (\ref footnote2 "2")
 string(REGEX REPLACE
@@ -42,5 +42,5 @@ string(CONCAT OUTPUT_STR
        "const std::string ${PDFNAME}_docs = R\"raw("
        "${INPUT_STR}"
        ")raw\";\n")
-                     
+
 file(WRITE "${OUTFILE}" "${OUTPUT_STR}")

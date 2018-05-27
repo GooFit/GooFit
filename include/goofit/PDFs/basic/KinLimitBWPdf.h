@@ -12,7 +12,7 @@ decay \f$D^{*+}\to D^0\pi^+\f$, the difference between the \f$D^*\f$ and
 the distribution of \f$\Delta m = m(D^*) - m(D^0)\f$ is slightly
 asymmetric: The left side of the peak, where the phase space narrows
 rapidly, is less likely than the right side.
-    
+
 \f[
     P(x;x_0,\Gamma,M,m) &=& \left\{ \begin{matrix}
     0 & \lambda(x_0,M,m) \le 0 \\

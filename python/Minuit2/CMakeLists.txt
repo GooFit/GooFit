@@ -14,3 +14,4 @@ add_library(minuit2 MODULE
 
 process_pybind_module(minuit2)
 target_link_libraries(minuit2 PUBLIC ROOT::Minuit2)
+target_link_libraries(minuit2 PRIVATE pybind11::module)

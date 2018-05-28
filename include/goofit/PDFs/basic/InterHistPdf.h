@@ -10,7 +10,7 @@ namespace GooFit {
 An interpolating histogram; in one dimension:
 
 \f[
-    P(x) &=& \frac{f(x, b(x))H[b(x)] + f(x, 1 + b(x))H[b(x) + 1]}{f(x, b(x)) + f(x, 1 + b(x))}
+    P(x) = \frac{f(x, b(x))H[b(x)] + f(x, 1 + b(x))H[b(x) + 1]}{f(x, b(x)) + f(x, 1 + b(x))}
 \f]
 
 where \f$H\f$ is a histogram, \f$H[n]\f$ is the content of its bin with

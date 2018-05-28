@@ -14,11 +14,13 @@ asymmetric: The left side of the peak, where the phase space narrows
 rapidly, is less likely than the right side.
 
 \f[
+\begin{align}
     P(x;x_0,\Gamma,M,m) &=& \left\{ \begin{matrix}
     0 & \lambda(x_0,M,m) \le 0 \\
     \frac{S(x,x_0,M,m)x_0'\Gamma^2}{\left(x_0'-x'^2\right)^2 + x_0'\Gamma^2S^2(x,x_0,M,m)} & \mathrm{otherwise.}
     \end{matrix}
     \right.
+\end{align}
 \f]
 
 Here priming indicates addition of \f$M\f$, so

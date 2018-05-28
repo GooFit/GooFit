@@ -8,12 +8,14 @@ namespace GooFit {
 A Gaussian with a power-law tail on one side:
 
 \f[
+\begin{align}
     P(x;m,\sigma,\alpha,p) &=& \left\{ \begin{matrix}
     e^{-\frac{(x-m)^2}{2\sigma^2}} & \mathrm{sg}(\alpha)\frac{x - m}{\sigma} \le \mathrm{sg}(\alpha)\alpha \\
     e^{-\alpha^2/2}\left(\frac{p/\alpha}{p/\alpha - \alpha + \frac{x-m}{\sigma}}\right)^p
     & \mathrm{otherwise } (\alpha\ne 0). \\
     \end{matrix}
     \right.
+\end{align}
 \f]
 
 The constructor takes the observable \f$x\f$,

@@ -1038,130 +1038,14 @@ mixing in \f$D^0\to\pi\pi\pi^0\f$. Nonetheless, if you are doing a
 Dalitz-plot analysis, you may find them, and conceivably even this
 documentation, helpful.
 
--   `DalitzPlotPdf`: A time-independent description of the Dalitz plot
-    as a coherent sum of resonances:
-\f{align}{
-    P(m^2_{12},m^2_{13};\vec\alpha) &=& \left|\sum\limits_i \alpha_i B_i(m^2_{12},m^2_{13})\right|^2\epsilon(m^2_{12},m^2_{13})
-\f}
-    where \f$\alpha_i\f$ is a complex coefficient, \f$B_i\f$ is a resonance
-    parametrization (see `ResonancePdf`, below), and \f$\epsilon\f$ is a
-    real-valued efficiency function. The constructor takes the
-    squared-mass variables \f$m_{12}\f$ and \f$m_{13}\f$, an event index (this
-    is used in caching), a `DecayInfo` object which contains a `vector`
-    of `ResonancePdf`s as well as some global information like the
-    mother and daughter masses, and the efficiency function.
-
--   `DalitzVetoPdf`: Tests whether a point is in a particular region of
-    the Dalitz plot, and returns zero if so, one otherwise. Intended for
-    use as part of an efficiency function, excluding particular
-    regions - canonically the one containing the \f$K^0\to\pi\pi\f$ decay,
-    as a large source of backgrounds that proved hard to model. The
-    constructor takes the squared-mass variables \f$m_{12}\f$ and \f$m_{13}\f$,
-    the masses (contained in GooFit::Variables) of the mother and three
-    daughter particles involved in the decay, and a `vector` of
-    `VetoInfo` objects. The `VetoInfo` objects just contain a cyclic
-    index (either `PAIR_12`, `PAIR_13`, or `PAIR_23`) and the lower and
-    upper bounds of the veto region.
-
--   `IncoherentSumPdf`: Similar to `DalitzPlotPdf`, but the resonances
-    are added incoherently:
-\f{align}{
-    P(m^2_{12},m^2_{13};\vec\alpha) &=& \sum\limits_i \left|\alpha_i B_i(m^2_{12},m^2_{13})\right|^2\epsilon(m^2_{12},m^2_{13})
-\f}
-    The constructor is the same, but note that the `amp_imag` member of
-    `ResonancePdf` is not used, so the \f$\alpha\f$ are in effect
-    interpreted as real numbers.
-
--   `MixingTimeResolution`: (in `MixingTimeResolution_Aux.h`) The abstract base class of
-    `TruthResolution` and `ThreeGaussResolution`. Represents a
-    parametrization of the time resolution.
-
--   `ResonancePdf`: Represents a resonance-shape parametrization, the
-    \f$B_i\f$ that appear in the equations for `DalitzPlotPdf`,
-    `IncoherentSumPdf`, and `TddpPdf`. Canonically a relativistic
-    Breit-Wigner. The constructor takes the real and imaginary parts of
-    the coefficient \f$\alpha\f$ (note that this is actually used by the
-    containing function), and additional parameters depending on which
-    function the resonance is modelled by:
-
-    -   Relativistic Breit-Wigner: Mass, width, spin, and cyclic index.
-        The two last are integer constants. Only spins 0, 1, and 2 are
-        supported.
-
-    -   Gounaris-Sakurai parametrization: Spin, mass, width, and cyclic
-        index. Notice that this is the same list as for the relativistic
-        BW, just a different order.
-
-    -   Nonresonant component (ie, constant across the Dalitz plot):
-        Nothing additional.
-
-    -   Gaussian: Mean and width of the Gaussian, cyclic index. Notice
-        that the Gaussian takes the mass \f$m_{12,13,23}\f$ as its argument,
-        not the squared mass \f$m^2_{12,13,23}\f$ like the other
-        parametrizations.
-
--   `TddpPdf`: If the Gaussian is a potato, this is a five-course
-    banquet dinner involving entire roasted animals stuffed with other
-    animals, large dance troupes performing between the courses, an
-    orchestra playing in the background, and lengthy speeches. There
-    will not be a vegetarian option. Without going too deeply into the
-    physics, the function models a decay, eg \f$D^0\to\pi\pi\pi^0\f$, that
-    can happen either directly or through a mixed path
-    \f$D^0\to \overline{D^0}\to\pi\pi\pi^0\f$. (Although developed for the
-    \f$\pi\pi\pi^0\f$ case, it should be useful for any decay where the
-    final state is its own anti-state.) The probability of the mixing
-    path depends on the decay time, and quantum-mechanically interferes
-    with the direct path. Consequently the full Time-Dependent
-    Dalitz-Plot (Tddp) amplitude is (suppressing the dependence on
-    squared masses, for clarity):
-\f{align}{
-    \label{eq:fullmix}
-    P(m^2_{12}, m^2_{13}, t, \sigma_t;x,y,\tau,\vec\alpha) &=&
-    e^{-t/\tau}\Big(|A+B|^2\cosh(yt/\tau)\\
-    && + |A-B|^2\cos(xt/\tau)\\
-    && - 2\Re(AB^*)\sinh(yt/\tau)\\
-    && - 2\Im(AB^*)\sin(xt/\tau)\Big)
-\f} where (notice the
-    reversed masses in the \f$B\f$ calculation)
-\f{align}{
-    A &=& \sum\limits_i \alpha_iB_i(m^2_{12}, m^2_{13}) \\
-    B &=& \sum\limits_i \alpha_iB_i(m^2_{13}, m^2_{12}),
-\f}
-    *convolved with* a time-resolution function and *multiplied by* an
-    efficiency. The implementation involves a large amount of caching of
-    the intermediate \f$B_i\f$ values, because these are expected to change
-    slowly relative to the coefficients \f$\alpha\f$ (in many cases, not at
-    all, since masses and widths are often held constant) and are
-    relatively expensive to calculate.
-
-    The constructor takes the measured decay time \f$t\f$, error on decay
-    time \f$\sigma_t\f$, squared masses \f$m^2_{12}\f$ and \f$m^2_{13}\f$, event
-    number, decay information (the same class as in `DalitzPlotPdf`; it
-    also holds the mixing parameters \f$x\f$ and \f$y\f$ and lifetime \f$\tau\f$),
-    time-resolution function, efficiency, and optionally a mistag
-    fraction. A variant constructor takes, instead of a single
-    time-resolution function, a `vector` of functions and an additional
-    observable \f$m_{D^0}\f$; in this case the resolution function used
-    depends on which bin of \f$m_{D^0}\f$ the event is in, and the number of
-    bins is taken as equal to the number of resolution functions
-    supplied.
-
-    It is not suggested to try to use this thing from scratch. Start
-    with a working example and modify it gradually.
-
--   `ThreeGaussResolution`: A resolution functon consisting of a
-    sum of three Gaussians, referred to as the ‘core', ‘tail', and
-    ‘outlier' components. The constructor takes the core and tail
-    fractions (the outlier fraction is 1 minus the other two), core mean
-    and width, tail mean and width, and outlier mean and width. Notice
-    that this is a resolution function, so the full probability is found
-    by convolving Gaussians with Equation \f$\ref{eq:fullmix}\f$, and this runs
-    to a page or so of algebra involving error functions. It is beyond
-    the scope of this documentation.
-
--   `TruthResolution`: The simplest possible resolution function, a
-    simple delta spike at zero - i.e., time is always measured
-    perfectly. The constructor takes no arguments at all!
+-   GooFit::DalitzPlotPdf
+-   GooFit::DalitzVetoPdf
+-   GooFit::IncoherentSumPdf
+-   GooFit::MixingTimeResolution (in `MixingTimeResolution_Aux.h`)
+-   GooFit::ResonancePdf (subclasses not separately documented yet)
+-   GooFit::TddpPdf
+-   GooFit::ThreeGaussResolution
+-   GooFit::TruthResolution
 
 \anchor footnote1 1: Named in homage to RooFit, with the ‘G' standing for ‘GPU'.
 

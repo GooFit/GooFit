@@ -1,13 +1,10 @@
-#include <pybind11/pybind11.h>
+#include <goofit/Python.h>
 
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <goofit/PDFs/physics/SpinFactors.h>
 #include <goofit/Variable.h>
 
 using namespace GooFit;
-namespace py = pybind11;
-
-using namespace pybind11::literals;
 
 void init_SpinFactors(py::module &m) {
     py::enum_<SF_4Body>(m, "SF_4Body", py::arithmetic())
@@ -26,10 +23,13 @@ void init_SpinFactors(py::module &m) {
         .value("FF_12_34_L2", SF_4Body::FF_12_34_L2)
         .value("FF_123_4_L1", SF_4Body::FF_123_4_L1)
         .value("FF_123_4_L2", SF_4Body::FF_123_4_L2)
-        .value("ONE", SF_4Body::ONE);
+        .value("ONE", SF_4Body::ONE)
+
+        ;
 
     py::class_<SpinFactor, GooPdf>(m, "SpinFactor")
         .def(py::init<std::string, SF_4Body, fptype, unsigned int, unsigned int, unsigned int, unsigned int>(),
+             "Regular spin factor constructor",
              "name"_a,
              "SF"_a,
              "mD0"_a,
@@ -44,5 +44,7 @@ void init_SpinFactors(py::module &m) {
              "P0"_a,
              "P1"_a,
              "P2"_a,
-             "P3"_a);
+             "P3"_a)
+
+        ;
 }

@@ -1,15 +1,14 @@
+#include <goofit/Python.h>
+
 #include <pybind11/iostream.h>
-#include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
 #include <goofit/PdfBase.h>
+#include <goofit/PyProps.h>
 #include <goofit/fitting/FitManagerMinuit2.h>
 
 #include <iostream>
 
-#include <goofit/PyProps.h>
-
-namespace py = pybind11;
 using namespace GooFit;
 
 void init_FitManager(py::module &m) {

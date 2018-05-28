@@ -1,8 +1,6 @@
-#include <pybind11/pybind11.h>
+#include <goofit/Python.h>
 
 #include <goofit/Version.h>
-
-namespace py = pybind11;
 
 void init_Version(py::module &m) {
     m.attr("__version__")        = GOOFIT_VERSION;

@@ -1,16 +1,14 @@
-#include <pybind11/pybind11.h>
+#include <goofit/Python.h>
+
 #include <pybind11/stl.h>
 
 #include <goofit/PyProps.h>
+#include <goofit/Variable.h>
 
 #include <fmt/format.h>
 #include <sstream>
 #include <string>
 
-#include <goofit/Variable.h>
-
-namespace py = pybind11;
-using namespace fmt::literals;
 using namespace GooFit;
 
 void init_Variable(py::module &m) {
@@ -22,8 +20,10 @@ void init_Variable(py::module &m) {
         ADD_PROP(upperlimit, getUpperLimit, setUpperLimit, Indexable)
         ADD_PROP(lowerlimit, getLowerLimit, setLowerLimit, Indexable)
         // clang-format on
-        .def("__repr__", [](const Indexable &v) { return "<Indexable: {}>"_format(v.getName()); })
-        .def("__bool__", &Indexable::operator bool);
+        .def("__repr__", [](const Indexable &v) { return fmt::format("<Indexable: {}>", v.getName()); })
+        .def("__bool__", &Indexable::operator bool)
+
+        ;
 
     py::class_<Observable, Indexable>(m, "Observable")
         .def(py::init<std::string, fptype, fptype>()) // , "name"_a, "min"_a, "max"_a)
@@ -39,12 +39,15 @@ void init_Variable(py::module &m) {
                                    return centers;
                                    ;
                                })
-        .def("__repr__", [](const Observable &v) { return "<Observable: {}>"_format(v.getName()); })
-        .def("__str__", [](const Observable &v) {
-            std::stringstream os;
-            os << v;
-            return os.str();
-        });
+        .def("__repr__", [](const Observable &v) { return fmt::format("<Observable: {}>", v.getName()); })
+        .def("__str__",
+             [](const Observable &v) {
+                 std::stringstream os;
+                 os << v;
+                 return os.str();
+             })
+
+        ;
 
     py::class_<Variable, Indexable>(m, "Variable")
         .def(py::init<std::string, fptype>())
@@ -58,17 +61,22 @@ void init_Variable(py::module &m) {
         ADD_PROP_RO(fitterIndex, getFitterIndex, Variable)
         ADD_PROP_WO(blind, setBlind, Variable)
         // clang-format on
-        .def("__repr__", [](const Variable &v) { return "<Variable: {}>"_format(v.getName()); })
-        .def("__str__", [](const Variable &v) {
-            std::stringstream os;
-            os << v;
-            return os.str();
-        });
+        .def("__repr__", [](const Variable &v) { return fmt::format("<Variable: {}>", v.getName()); })
+        .def("__str__",
+             [](const Variable &v) {
+                 std::stringstream os;
+                 os << v;
+                 return os.str();
+             })
+
+        ;
 
     py::class_<EventNumber, Observable>(m, "EventNumber")
         .def(py::init<std::string>())
         .def(py::init<std::string, fptype, fptype>()) //, "Create a counting value for event numbers", "name"_a, "min"_a
                                                       //= 0., "max"_a = static_cast<fptype>(EventNumber::maxint))
         .def_property_readonly_static("maxint", [](py::object) { return EventNumber::maxint; })
-        .def("__repr__", [](const EventNumber &v) { return "<EventNumber: {}>"_format(v.getName()); });
+        .def("__repr__", [](const EventNumber &v) { return fmt::format("<EventNumber: {}>", v.getName()); })
+
+        ;
 }

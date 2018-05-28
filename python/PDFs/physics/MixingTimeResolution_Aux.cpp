@@ -1,9 +1,9 @@
-#include <pybind11/pybind11.h>
+#include <goofit/Python.h>
 
 #include <goofit/PDFs/physics/MixingTimeResolution_Aux.h>
+#include <goofit/docs/PDFs/physics/MixingTimeResolution_Aux.h>
 
 using namespace GooFit;
-namespace py = pybind11;
 
 template <class Base = GooFit::MixingTimeResolution>
 class PyMixingTimeResolution : public Base {
@@ -27,5 +27,9 @@ void init_MixingTimeResolution(py::module &m) {
     py::class_<MixingTimeResolution, PyMixingTimeResolution<>>(m, "MixingTimeResolution")
 
         .def("createParameters", &MixingTimeResolution::createParameters)
-        .def("normalisation", &MixingTimeResolution::normalisation);
+        .def("normalisation", &MixingTimeResolution::normalisation)
+
+        .def_static("help", []() { return HelpPrinter(MixingTimeResolution_docs); })
+
+        ;
 }

@@ -11,6 +11,25 @@ class SpecialResonanceIntegrator;
 class SpecialResonanceCalculator;
 class DalitzPlotter;
 
+/**
+A time-independent description of the Dalitz plot
+as a coherent sum of resonances:
+
+\f[
+P(m^2_{12},m^2_{13};\vec\alpha) = \left|\sum\limits_i
+\alpha_i B_i(m^2_{12},m^2_{13})\right|^2
+\epsilon(m^2_{12},m^2_{13})
+\f]
+
+where \f$\alpha_i\f$ is a complex coefficient, \f$B_i\f$ is a resonance
+parametrization (see Goofit::ResonancePdf), and \f$\epsilon\f$ is a
+real-valued efficiency function. The constructor takes the
+squared-mass variables \f$m_{12}\f$ and \f$m_{13}\f$, an event index (this
+is used in caching), a GooFit::DecayInfo3 object which contains a `vector`
+of GooFit::ResonancePdf's as well as some global information like the
+mother and daughter masses, and the efficiency function.
+**/
+
 class DalitzPlotPdf : public GooPdf {
   public:
     DalitzPlotPdf(std::string n,

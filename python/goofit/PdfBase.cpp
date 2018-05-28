@@ -1,5 +1,6 @@
+#include <goofit/Python.h>
+
 #include <pybind11/iostream.h>
-#include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
 #include <goofit/BinnedDataSet.h>
@@ -11,9 +12,7 @@
 
 #include <Minuit2/FunctionMinimum.h>
 
-namespace py = pybind11;
 using namespace GooFit;
-using namespace pybind11::literals;
 
 void init_PdfBase(py::module &m) {
     py::class_<PdfBase>(m, "PdfBase")

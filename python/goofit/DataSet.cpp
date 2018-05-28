@@ -1,10 +1,10 @@
-#include <pybind11/pybind11.h>
+#include <goofit/Python.h>
+
 #include <pybind11/stl.h>
 
 #include <goofit/DataSet.h>
 #include <goofit/Variable.h>
 
-namespace py = pybind11;
 using namespace GooFit;
 
 template <class DataSetBase = DataSet>
@@ -19,5 +19,7 @@ void init_DataSet(py::module &m) {
         .def("getNumEvents", &DataSet::getNumEvents)
         .def("__len__", &DataSet::getNumEvents) // Shortcut
         .def_property_readonly("name", &DataSet::getName)
-        .def_property_readonly("variables", &DataSet::getObservables);
+        .def_property_readonly("variables", &DataSet::getObservables)
+
+        ;
 }

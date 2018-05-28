@@ -1,15 +1,14 @@
+#include <goofit/Python.h>
+
 #include <pybind11/eigen.h>
 #include <pybind11/numpy.h>
-#include <pybind11/pybind11.h>
-
-#include <algorithm>
 
 #include <goofit/UnbinnedDataSet.h>
 #include <goofit/Variable.h>
 
-namespace py = pybind11;
+#include <algorithm>
+
 using namespace GooFit;
-using namespace pybind11::literals;
 
 void init_UnbinnedDataSet(py::module &m) {
     py::class_<UnbinnedDataSet, DataSet>(m, "UnbinnedDataSet")
@@ -69,5 +68,7 @@ void init_UnbinnedDataSet(py::module &m) {
              "matrix"_a,
              "filter"_a = false)
         .def("loadEvent", &UnbinnedDataSet::loadEvent, "Load an event into the observables", "event_number"_a)
-        .def("clear", &UnbinnedDataSet::clear, "Clear the contents of a dataset");
+        .def("clear", &UnbinnedDataSet::clear, "Clear the contents of a dataset")
+
+        ;
 }

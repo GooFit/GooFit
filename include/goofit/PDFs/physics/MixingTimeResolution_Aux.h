@@ -9,6 +9,12 @@ typedef fptype (*device_resfunction_ptr)(
     fptype, fptype, fptype, fptype, fptype, fptype, fptype, fptype, fptype, ParameterContainer &pc);
 typedef fptype (*device_calc_tau_fcn_ptr)(fptype, fptype, fptype, fptype, fptype, fptype, fptype);
 
+/**
+The abstract base class of
+GooFit::TruthResolution and GooFit::ThreeGaussResolution.
+Represents a parametrization of the time resolution.
+**/
+
 class MixingTimeResolution : public GooPdf {
   public:
     MixingTimeResolution();

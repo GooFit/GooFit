@@ -4,6 +4,12 @@
 
 namespace GooFit {
 
+/**
+The simplest possible resolution function, a
+simple delta spike at zero - i.e., time is always measured
+perfectly. The constructor takes no arguments at all!
+**/
+
 class TruthResolution : public MixingTimeResolution {
   public:
     TruthResolution();

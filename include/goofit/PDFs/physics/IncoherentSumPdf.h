@@ -6,15 +6,29 @@
 
 namespace GooFit {
 
-// Very similar class to TddpPdf, but without time dependence
-// (so no time resolution or mixing) and ignoring interference between
-// waves. This makes the code just different enough, the assumptions are
-// just enough changed, that it's not worth trying to modify or subclass
-// TddpPdf to deal with both cases. So instead we have a separate
-// class with fairly similar structure.
-
 class SpecialIncoherentIntegrator;
 class SpecialIncoherentResonanceCalculator;
+
+/**
+Similar to `DalitzPlotPdf`, but the resonances
+are added incoherently:
+
+\f[
+P(m^2_{12},m^2_{13};\vec\alpha) =
+\sum\limits_i \left|\alpha_i B_i(m^2_{12},m^2_{13})\right|^2\epsilon(m^2_{12},m^2_{13})
+\f]
+
+The constructor is the same, but note that the `amp_imag` member of
+GooFit::ResonancePdf is not used, so the \f$\alpha\f$ are in effect
+interpreted as real numbers.
+
+Very similar class to TddpPdf, but without time dependence
+(so no time resolution or mixing) and ignoring interference between
+waves. This makes the code just different enough, the assumptions are
+just enough changed, that it's not worth trying to modify or subclass
+TddpPdf to deal with both cases. So instead we have a separate
+class with fairly similar structure.
+**/
 
 class IncoherentSumPdf : public GooPdf {
   public:

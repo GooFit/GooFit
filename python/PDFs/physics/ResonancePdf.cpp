@@ -1,18 +1,19 @@
-#include <pybind11/pybind11.h>
+#include <goofit/Python.h>
 
 #include <goofit/PDFs/physics/ResonancePdf.h>
 #include <goofit/Variable.h>
+#include <goofit/docs/PDFs/physics/ResonancePdf.h>
 
 using namespace GooFit;
-namespace py = pybind11;
-using namespace pybind11::literals;
 
 void init_ResonancePdf(py::module &m) {
     // m.attr("MAXNKNOBS") = MAXNKNOBS;
 
     auto m_ls = m.def_submodule("Resonances");
 
-    py::class_<ResonancePdf, GooPdf>(m, "ResonancePdf");
+    py::class_<ResonancePdf, GooPdf>(m, "ResonancePdf").def_static("help", []() {
+        return HelpPrinter(ResonancePdf_docs);
+    });
 
     py::class_<Resonances::RBW, ResonancePdf>(m_ls, "RBW")
         .def(py::init<std::string, Variable, Variable, Variable, Variable, unsigned int, unsigned int, bool>(),

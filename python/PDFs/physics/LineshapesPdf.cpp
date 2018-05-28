@@ -1,4 +1,5 @@
-#include <pybind11/pybind11.h>
+#include <goofit/Python.h>
+
 #include <pybind11/stl.h>
 
 #include <goofit/PDFs/physics/LineshapesPdf.h>
@@ -7,15 +8,15 @@
 #include <goofit/Variable.h>
 
 using namespace GooFit;
-namespace py = pybind11;
-using namespace pybind11::literals;
 
 void init_LineshapesPdf(py::module &m) {
     py::enum_<FF>(m, "FF", py::arithmetic())
         .value("One", FF::One)
         .value("BL", FF::BL)
         .value("BL_Prime", FF::BL_Prime)
-        .value("BL2", FF::BL2);
+        .value("BL2", FF::BL2)
+
+        ;
 
     auto m_ls = m.def_submodule("Lineshapes");
 
@@ -75,7 +76,7 @@ void init_LineshapesPdf(py::module &m) {
 
     py::class_<Lineshapes::Bugg, Lineshape>(m_ls, "Bugg")
         .def(py::init<std::string, Variable, Variable, unsigned int, unsigned int, FF, fptype>(),
-             "Create a constant lineshape",
+             "Create a Bugg lineshape",
              "name"_a,
              "mass"_a,
              "width"_a,
@@ -88,7 +89,7 @@ void init_LineshapesPdf(py::module &m) {
 
     py::class_<Lineshapes::Bugg3, Lineshape>(m_ls, "Bugg3")
         .def(py::init<std::string, Variable, Variable, unsigned int, unsigned int, FF, fptype>(),
-             "Create a constant lineshape",
+             "Create a Bugg3 lineshape",
              "name"_a,
              "mass"_a,
              "width"_a,
@@ -150,7 +151,7 @@ void init_LineshapesPdf(py::module &m) {
                       fptype,
                       std::vector<Variable>,
                       Lineshapes::spline_t>(),
-             "Create a LASS lineshape",
+             "Create a GSpline lineshape",
              "name"_a,
              "mass"_a,
              "width"_a,

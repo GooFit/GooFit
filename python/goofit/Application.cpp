@@ -1,12 +1,11 @@
+#include <goofit/Python.h>
+
 #include <pybind11/iostream.h>
-#include <pybind11/pybind11.h>
 
 #include <goofit/Application.h>
 
 #include <iostream>
 
-namespace py = pybind11;
-using namespace pybind11::literals;
 using namespace GooFit;
 
 void init_Application(py::module &m) {
@@ -15,5 +14,7 @@ void init_Application(py::module &m) {
           &print_goofit_info,
           "Print GooFit information",
           "gpuDevice"_a = 0,
-          py::call_guard<py::scoped_ostream_redirect>());
+          py::call_guard<py::scoped_ostream_redirect>())
+
+        ;
 }

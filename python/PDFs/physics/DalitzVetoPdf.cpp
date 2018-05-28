@@ -1,10 +1,15 @@
-#include <pybind11/pybind11.h>
+#include <goofit/Python.h>
 
 #include <goofit/PDFs/physics/DalitzVetoPdf.h>
 #include <goofit/PDFs/physics/TddpPdf.h>
 #include <goofit/Variable.h>
+#include <goofit/docs/PDFs/physics/DalitzVetoPdf.h>
 
 using namespace GooFit;
-namespace py = pybind11;
 
-void init_DalitzVetoPdf(py::module &m) { py::class_<DalitzVetoPdf, GooPdf>(m, "DalitzVetoPdf"); }
+void init_DalitzVetoPdf(py::module &m) {
+    py::class_<DalitzVetoPdf, GooPdf>(m, "DalitzVetoPdf")
+        .def_static("help", []() { return HelpPrinter(DalitzVetoPdf_docs); })
+
+        ;
+}

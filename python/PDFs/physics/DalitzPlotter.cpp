@@ -1,5 +1,6 @@
+#include <goofit/Python.h>
+
 #include <pybind11/numpy.h>
-#include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
 #include <vector>
@@ -8,8 +9,6 @@
 #include <goofit/Variable.h>
 
 using namespace GooFit;
-namespace py = pybind11;
-using namespace pybind11::literals;
 
 void init_DalitzPlotter(py::module &m) {
     py::class_<DalitzPlotter>(m, "DalitzPlotter")

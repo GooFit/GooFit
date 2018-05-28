@@ -1,5 +1,6 @@
+#include <goofit/Python.h>
+
 #include <pybind11/numpy.h>
-#include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
 #include <goofit/DataSet.h>
@@ -9,24 +10,22 @@
 #include <goofit/Variable.h>
 
 using namespace GooFit;
-namespace py = pybind11;
-using namespace pybind11::literals;
 
 void init_DP4Pdf(py::module &m) {
     py::class_<DPPdf, GooPdf>(m, "DPPdf")
         .def(py::init<std::string, std::vector<Observable>, DecayInfo4, GooPdf *>(),
-             "n",
-             "observables",
-             "decay",
-             "eff",
+             "name"_a,
+             "observables"_a,
+             "decay"_a,
+             "eff"_a,
              py::keep_alive<1, 4>(),
              py::keep_alive<1, 5>())
         .def(py::init<std::string, std::vector<Observable>, DecayInfo4, GooPdf *, unsigned int>(),
-             "n",
-             "observables",
-             "decay",
-             "eff",
-             "MCeventsNorm",
+             "name"_a,
+             "observables"_a,
+             "decay"_a,
+             "eff"_a,
+             "MCeventsNorm"_a,
              py::keep_alive<1, 4>(),
              py::keep_alive<1, 5>())
         .def("normalize", &DPPdf::normalize)

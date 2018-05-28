@@ -12,4 +12,4 @@ add_library(_Core STATIC
 )
 
 target_link_libraries(_Core PRIVATE _goofit_python)
-set_target_properties(_Core PROPERTIES FOLDER python)
+set_target_properties(_Core PROPERTIES FOLDER python/PDFs)

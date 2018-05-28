@@ -24,7 +24,7 @@ constructor takes the observable \f$x\f$ (which will be either
 \f$m^2_{12}\f$ or \f$m^2_{13}\f$), threshold value \f$t\f$, trig constant \f$b\f$,
 linear constant \f$a\f$, and a boolean which if true indicates an upper
 threshold. A variant constructor, for modelling a threshold in the
-“third” Dalitz-plot dimension \f$m^2_{23}\f$, takes both \f$m^2_{12}\f$ and
+"third" Dalitz-plot dimension \f$m^2_{23}\f$, takes both \f$m^2_{12}\f$ and
 \f$m^2_{13}\f$, and an additional mass constant \f$m\f$; it then forms
 \f$x = m - m^2_{12} - m^2_{13}\f$, and otherwise does the same
 calculation.

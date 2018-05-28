@@ -11,7 +11,7 @@ Numerically calculates a convolution integral
 \f[
 \begin{align}
     P(x;f,g) &=&
-    f\otimes g //
+    f\otimes g \\
     &=&
     \int\limits_{-\infty}^\infty f(t) g(x-t) \mathrm{d}t.
 \end{align}

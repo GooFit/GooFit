@@ -10,7 +10,7 @@ two variables \f$x\f$ and \f$y\f$, each described by a Gaussian
 distribution, but the width of the \f$y\f$ distribution depends on \f$x\f$:
 
 \f[
-    P(x,y;\bar x,\sigma_x,\bar y, \sigma_y, k) &=&
+    P(x,y;\bar x,\sigma_x,\bar y, \sigma_y, k) =
     e^{-\frac{(x-\bar x)^2}{2\sigma_x^2}}e^{-\frac{(y-\bar y)^2}{2(1 + k(\frac{x-\bar x}{\sigma_x})^2)\sigma_y^2}}
 \f]
 

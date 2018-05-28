@@ -59,7 +59,11 @@ add_subdirectory(PDFs)
 
 process_pybind_module(_goofit)
 target_link_libraries(_goofit
-    PRIVATE _goofit_python _Core _Basic _Combine _Physics)
+    PRIVATE _goofit_python
+    _Core
+    _Basic
+    _Combine
+    _Physics)
 
 
 # Only need to add CUDA incdir if built with FindCUDA
@@ -104,5 +108,5 @@ set_target_properties(pygoofit_examples PROPERTIES FOLDER python)
 if(NOT SKBUILD)
     add_custom_command(TARGET _goofit POST_BUILD
                        COMMAND ${CMAKE_COMMAND} -E cmake_echo_color --cyan
-                       "Python bindings built, use: export PYTHONPATH=${PROJECT_BINARY_DIR}")
+                       "Python bindings for ${PYTHON_EXECUTABLE} built, use: export PYTHONPATH=${PROJECT_BINARY_DIR}")
 endif()

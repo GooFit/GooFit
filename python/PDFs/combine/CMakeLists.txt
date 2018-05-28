@@ -1,4 +1,4 @@
-goofit_add_library(_Combine STATIC
+add_library(_Combine STATIC
     AddPdf.cpp
     CompositePdf.cpp
     ConvolutionPdf.cpp

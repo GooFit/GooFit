@@ -1,4 +1,4 @@
-add_library(_Physics STATIC
+goofit_add_library(_Physics STATIC
     DalitzPlotPdf.cpp
     DalitzVetoPdf.cpp
     DalitzPlotHelpers.cpp

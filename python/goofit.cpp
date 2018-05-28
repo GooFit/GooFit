@@ -1,4 +1,7 @@
+#include <pybind11/eval.h>
 #include <pybind11/pybind11.h>
+
+#include <iostream>
 
 namespace py = pybind11;
 
@@ -128,4 +131,15 @@ PYBIND11_MODULE(_goofit, m) {
 
     // Utilities
     init_VariableBinTransform1DPdf(m);
+
+    // Setup for iPython
+    /*
+    py::object ipython = py::module::import("IPython");
+    std::cout << "Importing IPython" << std::endl;
+    if(ipython)
+        std::cout << "Done" << std::endl;
+    else
+        std::cout << "Not available" << std::endl;
+
+    */
 }

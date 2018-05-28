@@ -148,7 +148,7 @@ __host__ void PdfBase::updateParameters() {
 
 __host__ void PdfBase::populateArrays() {
     // populate all the arrays
-    GOOFIT_DEBUG("Populating Arrays for {}", getName());
+    GOOFIT_TRACE("Populating Arrays for {}", getName());
 
     // reconfigure the host_parameters array with the new indexing scheme.
     GOOFIT_TRACE("host_parameters[{}] = {}", totalParameters, parametersList.size());

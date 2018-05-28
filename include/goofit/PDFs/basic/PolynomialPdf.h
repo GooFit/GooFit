@@ -16,10 +16,8 @@ class PolynomialPdf : public GooPdf {
                   unsigned int maxDegree = 0);
     __host__ fptype integrate(fptype lo, fptype hi) const override;
     __host__ fptype getCoefficient(int coef) const;
-    __host__ void recursiveSetIndices() override;
 
   private:
     std::unique_ptr<Variable> center;
-    int polyType;
 };
 } // namespace GooFit

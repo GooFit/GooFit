@@ -319,6 +319,8 @@ __host__ TddpPdf::TddpPdf(std::string n,
     // TODO: Figure out what this needs?
     resolution->createParameters(this);
 
+    registerFunction("ptr_to_Tddp", ptr_to_Tddp);
+
     initialize();
 
     redoIntegral = new bool[decay.resonances.size()];
@@ -421,6 +423,8 @@ __host__ TddpPdf::TddpPdf(std::string n,
 
     components.push_back(efficiency);
 
+    registerFunction("ptr_to_Tddp", ptr_to_Tddp);
+
     initialize();
 
     // this is the funcID after the efficiency routine
@@ -450,18 +454,10 @@ __host__ TddpPdf::TddpPdf(std::string n,
     addSpecialMask(PdfBase::ForceSeparateNorm);
 }
 
-void TddpPdf::recursiveSetIndices() {
-    GET_FUNCTION_ADDR(ptr_to_Tddp);
-
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_DalitzPlot");
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    // Note: We need to manually populate the arrays so we can track the efficiency function!
-    // populateArrays();
-
+// Note: We need to manually populate the arrays so we can track the efficiency function!
+__host__ void TddpPdf::populateArrays() {
     // populate all the arrays
-    GOOFIT_DEBUG("Populating Arrays for {}", getName());
+    GOOFIT_DEBUG("TddpPdf: Populating Arrays for {}", getName());
 
     // reconfigure the host_parameters array with the new indexing scheme.
     GOOFIT_TRACE("host_parameters[{}] = {}", totalParameters, parametersList.size());

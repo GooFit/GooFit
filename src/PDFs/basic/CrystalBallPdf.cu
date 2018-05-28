@@ -51,17 +51,9 @@ __host__ CrystalBallPdf::CrystalBallPdf(
     registerParameter(alpha);
     registerParameter(power);
 
+    registerFunction("ptr_to_CrystalBall", ptr_to_CrystalBall);
+
     initialize();
-}
-
-__host__ void CrystalBallPdf::recursiveSetIndices() {
-    GET_FUNCTION_ADDR(ptr_to_CrystalBall);
-
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_CrystalBall");
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
 }
 
 __host__ fptype CrystalBallPdf::integrate(fptype lo, fptype hi) const {

@@ -75,16 +75,9 @@ __host__ MappedPdf::MappedPdf(std::string n, GooPdf *m, std::vector<GooPdf *> &t
     // add a constant value for the number of 't' functions, skipping 'm'.
     registerConstant(components.size() - 1);
 
+    registerFunction("ptr_to_Mapped", ptr_to_Mapped);
+
     initialize();
-}
-
-__host__ void MappedPdf::recursiveSetIndices() {
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Mapped");
-    GET_FUNCTION_ADDR(ptr_to_Mapped);
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
 }
 
 __host__ fptype MappedPdf::normalize() const {

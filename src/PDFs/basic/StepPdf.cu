@@ -18,6 +18,8 @@ __host__ StepPdf::StepPdf(std::string n, Observable _x, Variable x0)
     : GooPdf(n, _x) {
     registerParameter(x0);
 
+    registerFunction("ptr_to_Step", ptr_to_Step);
+
     initialize();
 }
 
@@ -25,16 +27,6 @@ __host__ fptype StepPdf::integrate(fptype lo, fptype hi) const {
     // unsigned int *indices = host_indices + parameters;
     fptype x0 = parametersList[0].getValue();
     return (hi - x0);
-}
-
-__host__ void StepPdf::recursiveSetIndices() {
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Step");
-    GET_FUNCTION_ADDR(ptr_to_Step);
-
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
 }
 
 } // namespace GooFit

@@ -164,11 +164,11 @@ ConvolutionPdf::ConvolutionPdf(std::string n, Observable x, GooPdf *m, GooPdf *r
     registerConstant(0.01);
     registerConstant(workSpaceIndex = totalConvolutions++);
 
+    registerFunction("ptr_to_ConvolvePdfs", ptr_to_ConvolvePdfs);
+
     initialize();
 
     setIntegrationConstants(-10, 10, 0.01);
-
-    ConvolveType = 0;
 }
 
 ConvolutionPdf::ConvolutionPdf(std::string n, Observable x, GooPdf *m, GooPdf *r, unsigned int numOthers)
@@ -213,25 +213,10 @@ ConvolutionPdf::ConvolutionPdf(std::string n, Observable x, GooPdf *m, GooPdf *r
         throw GooFit::GeneralError(
             "numOthers {} must be not be more than the cache size {}", numOthers, CONVOLUTION_CACHE_SIZE);
 
+    registerFunction("ptr_to_ConvolveSharedPdfs", ptr_to_ConvolveSharedPdfs);
+
     initialize();
     setIntegrationConstants(-10, 10, 0.01);
-
-    ConvolveType = 1;
-}
-
-__host__ void ConvolutionPdf::recursiveSetIndices() {
-    if(ConvolveType == 0) {
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_ConvolvePdfs");
-        GET_FUNCTION_ADDR(ptr_to_ConvolvePdfs);
-    } else if(ConvolveType == 1) {
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_ConvolveSharedPdfs");
-        GET_FUNCTION_ADDR(ptr_to_ConvolveSharedPdfs);
-    }
-
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
 }
 
 __host__ void ConvolutionPdf::setIntegrationConstants(fptype lo, fptype hi, fptype step) {
@@ -333,7 +318,7 @@ __host__ fptype ConvolutionPdf::normalize() const {
 
     if(model->parametersChanged()) {
         // Calculate model function at every point in integration space
-        MetricTaker modalor(model, getMetricPointer("ptr_to_Eval"));
+        MetricTaker modalor(model, getMetricPointer(EvalFunc::Eval));
         thrust::transform(
             thrust::make_zip_iterator(thrust::make_tuple(binIndex, eventSize, arrayAddress)),
             thrust::make_zip_iterator(thrust::make_tuple(binIndex + modelWorkSpace->size(), eventSize, arrayAddress)),
@@ -346,7 +331,7 @@ __host__ fptype ConvolutionPdf::normalize() const {
         // Same for resolution function.
         thrust::constant_iterator<fptype *> arrayAddress2(dev_iConsts + 3);
         thrust::constant_iterator<int> resFunc(resolution->getFunctionIndex());
-        MetricTaker resalor(resolution, getMetricPointer("ptr_to_Eval"));
+        MetricTaker resalor(resolution, getMetricPointer(EvalFunc::Eval));
         thrust::transform(
             thrust::make_zip_iterator(thrust::make_tuple(binIndex, eventSize, arrayAddress2)),
             thrust::make_zip_iterator(thrust::make_tuple(binIndex + resolWorkSpace->size(), eventSize, arrayAddress2)),

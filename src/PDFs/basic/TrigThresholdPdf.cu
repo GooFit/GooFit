@@ -91,11 +91,10 @@ __host__ TrigThresholdPdf::TrigThresholdPdf(
     registerParameter(trigConst);
     registerParameter(linConst);
 
-    if(upper) {
-        trigThreshType = 0;
-    } else {
-        trigThreshType = 1;
-    }
+    if(upper)
+        registerFunction("ptr_to_TrigThresholdUpper", ptr_to_TrigThresholdUpper);
+    else
+        registerFunction("ptr_to_TrigThresholdLower", ptr_to_TrigThresholdLower);
 
     initialize();
 }
@@ -114,40 +113,12 @@ __host__ TrigThresholdPdf::TrigThresholdPdf(std::string n,
     registerParameter(linConst);
     registerParameter(massConstant);
 
-    if(upper) {
-        trigThreshType = 2;
-    } else {
-        trigThreshType = 3;
-    }
+    if(upper)
+        registerFunction("ptr_to_VerySpecialEpisodeTrigThresholdUpper", ptr_to_VerySpecialEpisodeTrigThresholdUpper);
+    else
+        registerFunction("ptr_to_VerySpecialEpisodeTrigThresholdLower", ptr_to_VerySpecialEpisodeTrigThresholdLower);
 
     initialize();
-}
-
-void TrigThresholdPdf::recursiveSetIndices() {
-    if(trigThreshType == 0) {
-        GET_FUNCTION_ADDR(ptr_to_TrigThresholdUpper);
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_TrigThresholdUpper");
-    } else if(trigThreshType == 1) {
-        GET_FUNCTION_ADDR(ptr_to_TrigThresholdLower);
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_TrigThresholdLower");
-    } else if(trigThreshType == 2) {
-        GET_FUNCTION_ADDR(ptr_to_VerySpecialEpisodeTrigThresholdUpper);
-        GOOFIT_TRACE("host_function_table[{}] = {}({})",
-                     num_device_functions,
-                     getName(),
-                     "ptr_to_VerySpecialEpisodeTrigThresholdUpper");
-    } else if(trigThreshType == 3) {
-        GET_FUNCTION_ADDR(ptr_to_VerySpecialEpisodeTrigThresholdLower);
-        GOOFIT_TRACE("host_function_table[{}] = {}({})",
-                     num_device_functions,
-                     getName(),
-                     "ptr_to_VerySpecialEpisodeTrigThresholdLower");
-    }
-
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
 }
 
 } // namespace GooFit

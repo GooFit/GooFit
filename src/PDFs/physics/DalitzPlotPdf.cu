@@ -197,6 +197,8 @@ __host__ DalitzPlotPdf::DalitzPlotPdf(
 
     components.push_back(efficiency);
 
+    registerFunction("ptr_to_DalitzPlot", ptr_to_DalitzPlot);
+
     initialize();
 
     redoIntegral = new bool[decayInfo.resonances.size()];
@@ -223,14 +225,8 @@ __host__ DalitzPlotPdf::DalitzPlotPdf(
     addSpecialMask(PdfBase::ForceSeparateNorm);
 }
 
-void DalitzPlotPdf::recursiveSetIndices() {
-    GET_FUNCTION_ADDR(ptr_to_DalitzPlot);
-
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_DalitzPlot");
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
+void DalitzPlotPdf::populateArrays() {
+    PdfBase::populateArrays();
 
     // save our efficiency function.  Resonance's are saved first, then the efficiency function.  Take -1 as efficiency!
     efficiencyFunction = num_device_functions - 1;

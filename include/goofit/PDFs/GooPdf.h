@@ -2,10 +2,12 @@
 
 #include <thrust/functional.h>
 
+#include <goofit/FitControl.h>
 #include <goofit/Log.h>
 #include <goofit/PDFs/MetricTaker.h>
 #include <goofit/PdfBase.h>
 #include <goofit/UnbinnedDataSet.h>
+#include <goofit/Version.h>
 
 #ifdef ROOT_FOUND
 class TH1D;
@@ -13,21 +15,13 @@ class TH1D;
 
 namespace GooFit {
 
-enum class EvalFunc : size_t { Eval = 0, NLL, Prob, BinAvg, BinWithError, Chisq };
-
-constexpr const char *evalfunc_vals[]
-    = {"ptr_to_Eval", "ptr_to_NLL", "ptr_to_Prob", "ptr_to_BinAvg", "ptr_to_BinWithError", "ptr_to_Chisq"};
-
-constexpr const char *evalfunc_to_string(EvalFunc val) { return evalfunc_vals[static_cast<size_t>(val)]; }
-
-void *getMetricPointer(std::string name);
 void *getMetricPointer(EvalFunc val);
 //#ifdef SEPARABLE
 
-extern __device__ fptype d_parameters[maxParams];
-extern __device__ fptype d_constants[maxParams];
-extern __device__ fptype d_observables[maxParams];
-extern __device__ fptype d_normalisations[maxParams];
+extern __device__ fptype d_parameters[GOOFIT_MAXPAR];
+extern __device__ fptype d_constants[GOOFIT_MAXPAR];
+extern __device__ fptype d_observables[GOOFIT_MAXPAR];
+extern __device__ fptype d_normalisations[GOOFIT_MAXPAR];
 
 // a couple constants
 extern __constant__ fptype c_motherMass;
@@ -37,19 +31,19 @@ extern __constant__ fptype c_daug3Mass;
 extern __constant__ fptype c_meson_radius;
 
 // Holds device-side fit parameters.
-// extern __constant__ fptype cudaArray[maxParams];
+// extern __constant__ fptype cudaArray[];
 
 // Holds functor-specific indices into cudaArray. Also overloaded to hold integer constants (ie parameters that cannot
 // vary.)
-// extern __constant__ unsigned int paramIndices[maxParams];
+// extern __constant__ unsigned int paramIndices[];
 
 // Holds non-integer constants. Notice that first entry is number of events.
-// extern __constant__ fptype functorConstants[maxParams];
+// extern __constant__ fptype functorConstants[];
 
-// extern __constant__ fptype normalisationFactors[maxParams];
+// extern __constant__ fptype normalisationFactors[];
 
-extern __device__ void *device_function_table[200];
-extern void *host_function_table[200];
+extern __device__ void *device_function_table[GOOFIT_MAXFUNC];
+extern void *host_function_table[GOOFIT_MAXFUNC];
 extern unsigned int num_device_functions;
 extern std::map<void *, int> functionAddressToDeviceIndexMap;
 //#endif
@@ -58,11 +52,8 @@ extern std::map<void *, int> functionAddressToDeviceIndexMap;
 class ParameterContainer;
 
 __device__ int dev_powi(int base, int exp); // Implemented in SmoothHistogramPdf.
-void *getMetricPointer(std::string name);
 
 /// Pass event, parameters, index into parameters.
-typedef fptype (*device_function_ptr)(fptype *, ParameterContainer &);
-
 typedef fptype (*device_metric_ptr)(fptype, fptype *, fptype);
 
 extern void *host_fcn_ptr;

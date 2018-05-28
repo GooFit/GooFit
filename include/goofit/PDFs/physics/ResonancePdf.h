@@ -37,8 +37,6 @@ class ResonancePdf : public GooPdf {
 
     __host__ virtual void recalculateCache() const {}
 
-    void recursiveSetIndices() override;
-
     __host__ Variable get_amp_real() const { return amp_real; }
     __host__ Variable get_amp_img() const { return amp_imag; }
 
@@ -55,8 +53,6 @@ class ResonancePdf : public GooPdf {
     std::vector<unsigned int> pindices;
 
     std::vector<fptype> host_constants;
-
-    int resonanceType;
 };
 
 namespace Resonances {

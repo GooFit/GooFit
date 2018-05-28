@@ -31,17 +31,9 @@ ExpGausPdf::ExpGausPdf(std::string n, Observable _x, Variable mean, Variable sig
     registerParameter(sigma);
     registerParameter(tau);
 
+    registerFunction("ptr_to_ExpGaus", ptr_to_ExpGaus);
+
     initialize();
-}
-
-__host__ void ExpGausPdf::recursiveSetIndices() {
-    GET_FUNCTION_ADDR(ptr_to_ExpGaus);
-
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_ExpGaus");
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
 }
 
 } // namespace GooFit

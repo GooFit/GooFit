@@ -31,17 +31,9 @@ __host__ BifurGaussPdf::BifurGaussPdf(std::string n, Observable _x, Variable mea
     registerParameter(sigmaL);
     registerParameter(sigmaR);
 
+    registerFunction("ptr_to_BifurGauss", ptr_to_BifurGauss);
+
     initialize();
-}
-
-__host__ void BifurGaussPdf::recursiveSetIndices() {
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_BifurGauss");
-    GET_FUNCTION_ADDR(ptr_to_BifurGauss);
-
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
 }
 
 // q: how shall the normalization of a bifurcated gaussian be calculated?

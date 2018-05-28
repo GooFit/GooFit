@@ -46,17 +46,9 @@ __host__ CompositePdf::CompositePdf(std::string n, PdfBase *core, PdfBase *shell
 
     observablesList = getObservables();
 
+    registerFunction("ptr_to_Composite", ptr_to_Composite);
+
     initialize();
-}
-
-__host__ void CompositePdf::recursiveSetIndices() {
-    GET_FUNCTION_ADDR(ptr_to_Composite);
-
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Composite");
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
 }
 
 __host__ fptype CompositePdf::normalize() const {

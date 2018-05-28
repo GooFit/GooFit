@@ -382,6 +382,8 @@ __host__ TDDP4::TDDP4(std::string n,
     // In case the resolution function needs parameters, this registers them.
     // resolution->createParameters(pindices, this);
 
+    registerFunction("ptr_to_TDDP4", ptr_to_TDDP4);
+
     initialize();
 
     Integrator   = new NormIntegrator_TD();
@@ -464,14 +466,8 @@ __host__ TDDP4::TDDP4(std::string n,
     addSpecialMask(PdfBase::ForceSeparateNorm);
 }
 
-__host__ void TDDP4::recursiveSetIndices() {
-    GET_FUNCTION_ADDR(ptr_to_TDDP4);
-
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_TDDP4");
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
+__host__ void TDDP4::populateArrays() {
+    PdfBase::populateArrays();
 
     // go over our amplitudes and actually set index values, update.
     std::vector<unsigned int> amp_idx;
@@ -842,8 +838,6 @@ __host__
     VarSet[4] = SigGen_phi_h;
     VarSet[5] = dtime_h;
 
-    //delete doesn't work properly
-    //phsp.~PhaseSpace();
     phsp.FreeResources();
 
     auto DS = new mcbooster::RealVector_d(8 * nAcc);

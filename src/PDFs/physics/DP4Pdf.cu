@@ -163,6 +163,8 @@ __host__ DPPdf::DPPdf(
 
     components.push_back(efficiency);
 
+    registerFunction("ptr_to_DP", ptr_to_DP);
+
     initialize();
 
     Integrator   = new NormIntegrator();
@@ -286,16 +288,10 @@ __host__ DPPdf::DPPdf(
     addSpecialMask(PdfBase::ForceSeparateNorm);
 }
 
-void DPPdf::recursiveSetIndices() {
-    GET_FUNCTION_ADDR(ptr_to_DP);
+// save our efficiency function.  Resonance's are saved first, then the efficiency function.
 
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_DP");
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
-
-    // save our efficiency function.  Resonance's are saved first, then the efficiency function.
+__host__ void DPPdf::populateArrays() {
+    PdfBase::populateArrays();
 
     // go over our amplitudes and actually set index values, update.
     std::vector<unsigned int> amp_idx;

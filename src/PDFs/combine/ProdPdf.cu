@@ -67,16 +67,9 @@ ProdPdf::ProdPdf(std::string n, std::vector<PdfBase *> comps)
         }
     }
 
+    registerFunction("ptr_to_ProdPdfs", ptr_to_ProdPdfs);
+
     initialize();
-}
-
-__host__ void ProdPdf::recursiveSetIndices() {
-    GET_FUNCTION_ADDR(ptr_to_ProdPdfs);
-    GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_ProdPdfs");
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
 }
 
 __host__ fptype ProdPdf::normalize() const {

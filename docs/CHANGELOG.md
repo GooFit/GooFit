@@ -1,13 +1,21 @@
 ## v2.2.0: GPU performance
 #### March, 2018
 
-The internals of GooFit have been updated for GPU performance.  The new improvements will make PDF generation and debugging simpler.
+The internals of GooFit have been updated for GPU performance.  The new improvements will make PDF generation and debugging much simpler. [#125]
 
 * Indexing improves performance and readability
-* A number of new tests demonstrating simple usage of each PDF.
+* A number of new tests demonstrating simple usage of each PDF. [#148]
 * Travis CI uses the additional tests to ensure changes work well.
+* `registerFunction` simplifies PDF construction [#151]
+* The Catch2 test framework makes tests easier to write [#151]
+* 1D Monte Carlo is easy to generate, and test with [#151]
+* Lots of improvements to error checking, `GOOFIT_MAXFUNC` added [#151]
+* FitControl is always enum based now [#151]
+* Packages can now request changes on the current configure run (bugfix) [#151]
 
 [#125]: https://github.com/GooFit/GooFit/pull/125
+[#148]: https://github.com/GooFit/GooFit/pull/148
+[#151]: https://github.com/GooFit/GooFit/pull/151
 
 ## v2.1.3: Preparing for new indexing
 #### April 21, 2018

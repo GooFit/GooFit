@@ -1,14 +1,14 @@
-#include <goofit/GlobalCudaDefines.h>
-#include <goofit/PDFs/GooPdf.h>
-#include <goofit/PDFs/ParameterContainer.h>
-#include <goofit/detail/ThrustOverride.h>
-
 #include <goofit/BinnedDataSet.h>
 #include <goofit/Error.h>
 #include <goofit/FitControl.h>
+#include <goofit/GlobalCudaDefines.h>
 #include <goofit/Log.h>
+#include <goofit/PDFs/GooPdf.h>
+#include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/UnbinnedDataSet.h>
 #include <goofit/Variable.h>
+#include <goofit/Version.h>
+#include <goofit/detail/ThrustOverride.h>
 
 #include <thrust/device_vector.h>
 #include <thrust/host_vector.h>
@@ -35,10 +35,10 @@ namespace GooFit {
 // Device-side, translation-unit constrained.  These were constant, removing const.
 // The reason is that this will make it much more difficult to fetch memory, since
 // it has less memory to work with limiting the constant amount.
-__device__ fptype d_parameters[maxParams];
-__device__ fptype d_constants[maxParams];
-__device__ fptype d_observables[maxParams];
-__device__ fptype d_normalisations[maxParams];
+__device__ fptype d_parameters[GOOFIT_MAXPAR];
+__device__ fptype d_constants[GOOFIT_MAXPAR];
+__device__ fptype d_observables[GOOFIT_MAXPAR];
+__device__ fptype d_normalisations[GOOFIT_MAXPAR];
 
 __constant__ unsigned int c_totalEvents;
 __constant__ fptype c_motherMass;
@@ -63,10 +63,10 @@ fptype host_timeHist[10000];
 #endif
 
 // Function-pointer related.
-__device__ void *device_function_table[200];
+void *host_function_table[GOOFIT_MAXFUNC];
+__device__ void *device_function_table[GOOFIT_MAXFUNC];
 // Not clear why this cannot be __constant__, but it causes crashes to declare it so.
 
-void *host_function_table[200];
 unsigned int num_device_functions = 0;
 std::map<void *, int> functionAddressToDeviceIndexMap;
 
@@ -148,26 +148,26 @@ __device__ device_metric_ptr ptr_to_Chisq        = calculateChisq;
 
 void *host_fcn_ptr = nullptr;
 
-void *getMetricPointer(std::string name) {
-#define CHOOSE_PTR(ptrname)                                                                                            \
-    if(name == #ptrname)                                                                                               \
-        GET_FUNCTION_ADDR(ptrname);
-    host_fcn_ptr = nullptr;
-    CHOOSE_PTR(ptr_to_Eval);
-    CHOOSE_PTR(ptr_to_NLL);
-    CHOOSE_PTR(ptr_to_Prob);
-    CHOOSE_PTR(ptr_to_BinAvg);
-    CHOOSE_PTR(ptr_to_BinWithError);
-    CHOOSE_PTR(ptr_to_Chisq);
-
-    if(host_fcn_ptr == nullptr)
-        throw GooFit::GeneralError("host_fcn_ptr is nullptr");
+void *getMetricPointer(EvalFunc val) {
+    if(val == EvalFunc::Eval) {
+        host_fcn_ptr = get_device_symbol_address(ptr_to_Eval);
+    } else if(val == EvalFunc::NLL) {
+        host_fcn_ptr = get_device_symbol_address(ptr_to_NLL);
+    } else if(val == EvalFunc::Prob) {
+        host_fcn_ptr = get_device_symbol_address(ptr_to_Prob);
+    } else if(val == EvalFunc::BinAvg) {
+        host_fcn_ptr = get_device_symbol_address(ptr_to_BinAvg);
+    } else if(val == EvalFunc::BinWithError) {
+        host_fcn_ptr = get_device_symbol_address(ptr_to_BinWithError);
+    } else if(val == EvalFunc::Chisq) {
+        host_fcn_ptr = get_device_symbol_address(ptr_to_Chisq);
+    } else {
+        throw GeneralError("Non-existent metric pointer choice");
+    }
+    GOOFIT_TRACE("Selecting {} for the metric pointer", evalfunc_to_string(val));
 
     return host_fcn_ptr;
-#undef CHOOSE_PTR
 }
-
-void *getMetricPointer(EvalFunc val) { return getMetricPointer(evalfunc_to_string(val)); }
 
 __host__ void GooPdf::setIndices() {
     // If not set, perform unbinned Nll fit!
@@ -177,15 +177,17 @@ __host__ void GooPdf::setIndices() {
     // Ensure that we properly populate *logger with the correct metric
     setMetrics();
 
-    GOOFIT_DEBUG("GooPdf::setIndices!");
+    GOOFIT_TRACE("GooPdf::setIndices!");
     PdfBase::setIndices();
 
-    GOOFIT_TRACE("host_function_table[{}] = {}", num_device_functions, fitControl->getMetric());
+    GOOFIT_TRACE("host_function_table[{}] = {}", num_device_functions, fitControl->getName());
+    if(num_device_functions >= GOOFIT_MAXFUNC)
+        throw GeneralError("Too many device functions! Set GOOFIT_MAXFUNC to a larger value than {}", GOOFIT_MAXFUNC);
     host_function_table[num_device_functions] = getMetricPointer(fitControl->getMetric());
     num_device_functions++;
 
     // copy all the device functions over:
-    GOOFIT_DEBUG("Copying all host side parameters to device");
+    GOOFIT_TRACE("Copying all host side parameters to device");
     MEMCPY_TO_SYMBOL(
         device_function_table, &host_function_table, num_device_functions * sizeof(fptype), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(d_parameters, &host_parameters, totalParameters * sizeof(fptype), 0, cudaMemcpyHostToDevice);
@@ -201,7 +203,9 @@ __host__ int GooPdf::findFunctionIdx(void *dev_functionPtr) {
         return (*localPos).second;
     }
 
-    int fIdx                                         = num_device_functions;
+    int fIdx = num_device_functions;
+    if(num_device_functions >= GOOFIT_MAXFUNC)
+        throw GeneralError("Too many device functions! Set GOOFIT_MAXFUNC to a larger value than {}", GOOFIT_MAXFUNC);
     host_function_table[num_device_functions]        = dev_functionPtr;
     functionAddressToDeviceIndexMap[dev_functionPtr] = num_device_functions;
     num_device_functions++;
@@ -312,7 +316,8 @@ __host__ std::vector<fptype> GooPdf::evaluateAtPoints(Observable var) {
 
     normalize();
 
-    MEMCPY(d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(
+        d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
     UnbinnedDataSet tempdata(observablesList);
 
     double step = var.getBinSize();
@@ -327,7 +332,8 @@ __host__ std::vector<fptype> GooPdf::evaluateAtPoints(Observable var) {
 
     normalize();
 
-    MEMCPY(d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(
+        d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
     thrust::counting_iterator<int> eventIndex(0);
     thrust::constant_iterator<int> eventSize(observablesList.size());
@@ -577,7 +583,7 @@ __host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
         components[i]->setIndices();
         components[i]->normalize();
 
-        GOOFIT_TRACE("host_function_table[{}] = {}", num_device_functions, fitControl->getMetric());
+        GOOFIT_TRACE("host_function_table[{}] = {}", num_device_functions, fitControl->getName());
         host_function_table[num_device_functions] = getMetricPointer(fitControl->getMetric());
         num_device_functions++;
 

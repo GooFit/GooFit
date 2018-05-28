@@ -9,9 +9,5 @@ class KinLimitBWPdf : public GooPdf {
     KinLimitBWPdf(std::string n, Observable _x, Variable m, Variable s);
     __host__ bool hasAnalyticIntegral() const override { return false; }
     __host__ void setMasses(fptype bigM, fptype smallM);
-
-    __host__ void recursiveSetIndices() override;
-
-  private:
 };
 } // namespace GooFit

@@ -6,11 +6,13 @@
 #include <goofit/Variable.h>
 
 #include <algorithm>
+#include <random>
 #include <set>
 #include <utility>
 
 #include <goofit/BinnedDataSet.h>
 #include <goofit/FitManager.h>
+#include <goofit/PDFs/GooPdf.h>
 #include <goofit/UnbinnedDataSet.h>
 
 #include <goofit/detail/CompilerFeatures.h>
@@ -27,10 +29,10 @@ bool find_in(std::vector<T> list, T item) {
 namespace GooFit {
 
 fptype *dev_event_array;
-fptype host_parameters[maxParams];
-fptype host_constants[maxParams];
-fptype host_observables[maxParams];
-fptype host_normalisations[maxParams];
+fptype host_parameters[GOOFIT_MAXPAR];
+fptype host_constants[GOOFIT_MAXPAR];
+fptype host_observables[GOOFIT_MAXPAR];
+fptype host_normalisations[GOOFIT_MAXPAR];
 
 int host_callnumber     = 0;
 int totalParameters     = 0;
@@ -128,9 +130,9 @@ __host__ std::vector<Observable> PdfBase::getObservables() const {
 }
 
 GOOFIT_DEPRECATED __host__ unsigned int PdfBase::registerConstants(unsigned int amount) {
-    if(totalConstants + amount >= maxParams)
+    if(totalConstants + amount >= GOOFIT_MAXPAR)
         throw GooFit::GeneralError(
-            "totalConstants {} + amount {} can not be more than {}", totalConstants, amount, maxParams);
+            "totalConstants {} + amount {} can not be more than {}", totalConstants, amount, GOOFIT_MAXPAR);
     cIndex = totalConstants;
     totalConstants += amount;
     return cIndex;
@@ -171,9 +173,67 @@ __host__ void PdfBase::setNumPerTask(PdfBase *p, const int &c) {
 }
 
 __host__ ROOT::Minuit2::FunctionMinimum PdfBase::fitTo(DataSet *data, int verbosity) {
+    auto old = getData();
     setData(data);
+    auto funmin = fit(verbosity);
+    setData(old);
+    return funmin;
+}
+
+__host__ ROOT::Minuit2::FunctionMinimum PdfBase::fit(int verbosity) {
     FitManager fitter{this};
     fitter.setVerbosity(verbosity);
     return fitter.fit();
+}
+
+void PdfBase::fillMCDataSimple(size_t events, unsigned int seed) {
+    // Setup bins
+    if(observablesList.size() != 1)
+        throw GeneralError("You can only fill MC on a 1D dataset with a simple fill");
+
+    Observable var = observablesList.at(0);
+
+    UnbinnedDataSet data{var};
+    data.fillWithGrid();
+    auto origdata = getData();
+
+    if(origdata == nullptr)
+        throw GeneralError("Can't run on a PDF with no DataSet to fill!");
+
+    setData(&data);
+    std::vector<double> pdfValues = dynamic_cast<GooPdf *>(this)->getCompProbsAtDataPoints()[0];
+
+    // Setup random numbers
+    if(seed == 0) {
+        std::random_device rd;
+        seed = rd();
+    }
+    std::mt19937 gen(seed);
+
+    // Uniform distribution
+    std::uniform_real_distribution<> unihalf(-.5, .5);
+    std::uniform_real_distribution<> uniwhole(0.0, 1.0);
+
+    // CumSum in other languages
+    std::vector<double> integral(pdfValues.size());
+    std::partial_sum(pdfValues.begin(), pdfValues.end(), integral.begin());
+
+    // Make this a 0-1 fraction by dividing by the end value
+    std::for_each(integral.begin(), integral.end(), [&integral](double &val) { val /= integral.back(); });
+
+    for(size_t i = 0; i < events; i++) {
+        double r = uniwhole(gen);
+
+        // Binary search for integral[cell-1] < r < integral[cell]
+        size_t j = std::lower_bound(integral.begin(), integral.end(), r) - integral.begin();
+
+        // Fill in the grid randomly
+        double varValue = data.getValue(var, j) + var.getBinSize() * unihalf(gen);
+
+        var.setValue(varValue);
+        origdata->addEvent();
+    }
+
+    setData(origdata);
 }
 } // namespace GooFit

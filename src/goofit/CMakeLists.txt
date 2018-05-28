@@ -55,7 +55,6 @@ goofit_add_library(Application
     ${PROJECT_SOURCE_DIR}/include/goofit/detail/Complex.h
     ${PROJECT_SOURCE_DIR}/include/goofit/detail/Macros.h
     ${PROJECT_SOURCE_DIR}/include/goofit/detail/ThrustOverride.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/utilities/MonteCarlo.h
     ${PROJECT_SOURCE_DIR}/include/goofit/utilities/Style.h
     ${PROJECT_SOURCE_DIR}/include/goofit/utilities/Uncertain.h
     )

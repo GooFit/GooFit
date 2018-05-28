@@ -38,8 +38,6 @@ class Lineshape : public GooPdf {
     /// Protected constructor, only for subclasses to use
     Lineshape(std::string name, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius);
 
-    __host__ void recursiveSetIndices() override;
-
     unsigned int _L;
     unsigned int _Mpair;
     FF _FormFac;
@@ -49,8 +47,6 @@ class Lineshape : public GooPdf {
     ~Lineshape() override = default;
 
     bool operator==(const Lineshape &L) const { return L.getName() == getName(); }
-
-    int lineShapeType;
 };
 
 namespace Lineshapes {

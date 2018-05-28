@@ -13,9 +13,6 @@
 [submodule "extern/thrust"]
 	path = extern/thrust
 	url = ../../thrust/thrust.git
-[submodule "extern/googletest"]
-	path = extern/googletest
-	url = ../../google/googletest.git
 [submodule "extern/rang"]
 	path = extern/rang
 	url = ../../agauniyal/rang.git
@@ -40,3 +37,6 @@
 [submodule "extern/modern_cmake"]
 	path = extern/modern_cmake
 	url = ../../CLIUtils/modern_cmake.git
+[submodule "extern/catch2"]
+	path = extern/catch2
+	url = ../../catchorg/catch2.git

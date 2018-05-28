@@ -3,7 +3,6 @@
 #include <goofit/GlobalCudaDefines.h>
 
 #include <goofit/Variable.h>
-#include <goofit/Version.h>
 #include <goofit/detail/Abort.h>
 #include <goofit/detail/Macros.h>
 
@@ -24,13 +23,16 @@ class FunctionMinimum;
 
 namespace GooFit {
 
-const int maxParams = GOOFIT_MAXPAR;
+class ParameterContainer;
+
+typedef fptype (*device_function_ptr)(fptype *, ParameterContainer &);
+
 extern fptype *dev_event_array;
 
-extern fptype host_parameters[maxParams];
-extern fptype host_constants[maxParams];
-extern fptype host_observables[maxParams];
-extern fptype host_normalisations[maxParams];
+extern fptype host_parameters[]; // GOOFIT_MAXPAR
+extern fptype host_constants[];
+extern fptype host_observables[];
+extern fptype host_normalisations[];
 
 extern __constant__ unsigned int c_totalEvents;
 extern int totalParameters;
@@ -99,8 +101,13 @@ class PdfBase {
     __host__ virtual void setFitControl(std::shared_ptr<FitControl>) = 0;
     __host__ virtual bool hasAnalyticIntegral() const { return false; }
 
+    __host__ void fillMCDataSimple(size_t events, unsigned int seed = 0);
+
     /// RooFit style fitting shortcut
     __host__ ROOT::Minuit2::FunctionMinimum fitTo(DataSet *data, int verbosity = 3);
+
+    /// Even shorter fitting shortcut
+    __host__ ROOT::Minuit2::FunctionMinimum fit(int verbosity = 3);
 
     __host__ unsigned int getFunctionIndex() const { return functionIdx; }
     __host__ unsigned int getParameterIndex() const { return parameters; }
@@ -110,6 +117,14 @@ class PdfBase {
     /// The int value returned here is the constant number, for checking
     __host__ unsigned int registerConstant(fptype value);
     __host__ unsigned int registerConstants(unsigned int amount);
+
+    /// Register a function for this PDF to use in evalution
+    template <typename T>
+    __host__ void registerFunction(std::string name, const T &function) {
+        reflex_name_  = name;
+        function_ptr_ = get_device_symbol_address(function);
+    }
+
     __host__ virtual void recursiveSetNormalisation(fptype norm = 1) const;
     __host__ void unregisterParameter(Variable var);
     __host__ void registerObservable(Observable obs);
@@ -136,8 +151,14 @@ class PdfBase {
 
   protected:
     DataSet *data_ = nullptr; //< Remember the original dataset
-    // use this function to populate the arrays generically.
-    __host__ void populateArrays();
+
+    std::string reflex_name_;     //< This is the name of the type of the PDF, for reflexion purposes. Must be set or
+                                  // RecursiveSetIndicies must be overloaded.
+    void *function_ptr_{nullptr}; //< This is the function pointer to set on the device. Must be set or
+                                  // RecursiveSetIndicies must be overloaded.
+
+    /// use this function to populate the arrays generically, or specialize as needed
+    virtual void populateArrays();
 
     fptype numEvents{0};        //< Non-integer to allow weighted events
     unsigned int numEntries{0}; //< Eg number of bins - not always the same as number of events, although it can be.

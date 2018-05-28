@@ -1,76 +1,22 @@
 
-# Warning suppression only needed until next release
-if(NOT DEFINED CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
-    set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE BOOL "")
-    add_subdirectory("${PROJECT_SOURCE_DIR}/extern/googletest" "extern/googletest")
-    unset(CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
-else()
-    add_subdirectory("${PROJECT_SOURCE_DIR}/extern/googletest" "extern/googletest")
-endif()
+add_library(catch_main catch_main.cpp)
+target_link_libraries(catch_main PUBLIC Catch2::Catch)
+set_target_properties(catch_main PROPERTIES FOLDER tests)
 
-
-mark_as_advanced(
-    BUILD_GMOCK BUILD_GTEST BUILD_SHARED_LIBS
-    gmock_build_tests gtest_build_samples gtest_build_tests
-    gtest_disable_pthreads gtest_force_shared_crt gtest_hide_internal_symbols
-)
-
-set_target_properties(gtest PROPERTIES FOLDER extern)
-set_target_properties(gtest_main PROPERTIES FOLDER extern)
-set_target_properties(gmock PROPERTIES FOLDER extern)
-set_target_properties(gmock_main PROPERTIES FOLDER extern)
-
-macro(goofit_add_test TESTNAME)
+macro(goofit_catch_test TESTNAME)
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${TESTNAME}.cu")
-      goofit_add_executable(${TESTNAME} ${TESTNAME}.cu testhelpers.h)
+        goofit_add_executable(${TESTNAME} ${TESTNAME}.cu "${PROJECT_SOURCE_DIR}/tests/include/goofit/Catch.h" ${ARGN})
     else()
-      goofit_add_executable(${TESTNAME} ${TESTNAME}.cpp testhelpers.h)
+        goofit_add_executable(${TESTNAME} ${TESTNAME}.cpp "${PROJECT_SOURCE_DIR}/tests/include/goofit/Catch.h" ${ARGN})
     endif()
-    target_link_libraries(${TESTNAME} PUBLIC gtest gmock gtest_main)
+    target_link_libraries(${TESTNAME} PUBLIC catch_main)
+    target_include_directories(${TESTNAME} PUBLIC "${PROJECT_SOURCE_DIR}/tests/include")
     add_test(${TESTNAME} ${TESTNAME})
     set_target_properties(${TESTNAME} PROPERTIES FOLDER tests)
     set_property(TEST ${TESTNAME} PROPERTY COST 1000)
 endmacro()
 
-goofit_add_test(SimpleTest)
-goofit_add_test(BinnedTest)
-goofit_add_test(UnbinnedTest)
-goofit_add_test(NormalizeTest)
-goofit_add_test(BlindTest)
-goofit_add_test(VectorsTest)
-goofit_add_test(MonteCarloTest)
+add_subdirectory(simple)
+add_subdirectory(PDFs)
+add_subdirectory(convert)
 
-goofit_add_test(BifurGaussTest)
-
-goofit_add_test(CompositeTest)
-goofit_add_test(ConvolutionTest)
-goofit_add_test(EventWeightedAddTest)
-goofit_add_test(GaussianTest)
-goofit_add_test(JohnsonSUTest)
-goofit_add_test(KinLimitBWTest)
-goofit_add_test(LandauTest)
-goofit_add_test(NovosibirskTest)
-goofit_add_test(PolynomialTest)
-goofit_add_test(ProdTest)
-goofit_add_test(ScaledGaussianTest)
-goofit_add_test(SmoothHistogramTest)
-goofit_add_test(StepTest)
-goofit_add_test(VoigtianTest)
-
-if(ROOT_FOUND)
-    goofit_add_test(Minuit1Test)
-
-    goofit_add_test(ArgusTest)
-    goofit_add_test(BinTransformTest)
-    goofit_add_test(BWTest)
-    goofit_add_test(CorrGaussianTest)
-    goofit_add_test(CrystalBallTest)
-    goofit_add_test(ExpTest)
-    goofit_add_test(ExpGaussTest)
-#   goofit_add_test(IncoherentSumTest)
-    goofit_add_test(InterHistTest)
-#   goofit_add_test(MappedTest)
-#   goofit_add_test(TrigThresholdTest)
-endif()
-
-goofit_add_link(RunAll.py)

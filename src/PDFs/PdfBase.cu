@@ -5,6 +5,7 @@
 #include <goofit/Log.h>
 #include <goofit/PDFs/GooPdf.h>
 #include <goofit/PdfBase.h>
+#include <goofit/Version.h>
 
 #ifdef GOOFIT_MPI
 #include <mpi.h>
@@ -91,22 +92,37 @@ __host__ void PdfBase::initializeIndices() {
     host_normalisations[totalNormalisations] = 0;
     totalNormalisations++;
 
-    if(totalParameters >= maxParams)
+    if(totalParameters >= GOOFIT_MAXPAR)
         throw GooFit::GeneralError("{}: Set too many parameters, GooFit array more than {}. Increase max at compile "
                                    "time with -DGOOFIT_MAXPAR=N.",
                                    getName(),
-                                   maxParams);
+                                   GOOFIT_MAXPAR);
 
     // we rely on GooPdf::set to copy these values, this copyies every PDF which is unnecessary.
     // MEMCPY_TO_SYMBOL(paramIndices, host_indices, totalParams*sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
 }
 
 __host__ void PdfBase::recursiveSetIndices() {
-    // This function always needs to be overloaded.  The key component missing is assigning the function pointer, which
-    // is only available  in each source file.  Otherwise, we will set the values as follows:
+    if(reflex_name_.empty() || function_ptr_ == nullptr)
+        throw GeneralError("A PDF must either provide a function name and"
+                           " function pointer or override recursiveSetIndices\n"
+                           "Called by {}\n"
+                           "Make sure initilize is not called before registerFunction!",
+                           getName());
 
-    // This is a helper function if the routine does nothing special.
-    // populateArrays ();
+    host_fcn_ptr = function_ptr_;
+
+    GOOFIT_DEBUG("host_function_table[{}] = {} for \"{}\" from PDFBase::recursiveSetIndices",
+                 num_device_functions,
+                 reflex_name_,
+                 getName());
+
+    if(num_device_functions >= GOOFIT_MAXFUNC)
+        throw GeneralError("Too many device functions! Set GOOFIT_MAXFUNC to a larger value than {}", GOOFIT_MAXFUNC);
+
+    host_function_table[num_device_functions] = host_fcn_ptr;
+    functionIdx                               = num_device_functions++;
+    populateArrays();
 }
 
 __host__ void PdfBase::updateVariable(Variable var, fptype newValue) {
@@ -179,9 +195,6 @@ __host__ void PdfBase::populateArrays() {
 }
 
 __host__ void PdfBase::setIndices() {
-    // we should get the same amount after we flatten the tree!
-    int checkParams = totalParameters;
-
     // Flatten the tree by re-running through the whole PDF with everything zero'd.
     totalParameters      = 0;
     totalConstants       = 0;
@@ -191,9 +204,6 @@ __host__ void PdfBase::setIndices() {
 
     // set all associated functions parameters, constants, etc.
     recursiveSetIndices();
-
-    if(checkParams != totalParameters)
-        GOOFIT_DEBUG("Error!  checkParams({}) != totalParameters({})", checkParams, totalParameters);
 }
 
 __host__ void PdfBase::setData(DataSet *data) {

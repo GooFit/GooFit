@@ -55,6 +55,7 @@ endif()
 if(NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/cmake_utils/FindThrust.cmake"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/modern_cmake/ModernCMakeUtils.cmake"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/CLI11/CMakeLists.txt"
+OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/catch2/CMakeLists.txt"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/Eigen/CMakeLists.txt"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/FeatureDetector/CMakeLists.txt"
 OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/MCBooster/CMakeLists.txt"
@@ -98,6 +99,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/extern/sanitizers/cmake" ${CMAKE_MODU
 find_package(Sanitizers)
 
 set(GOOFIT_MAXPAR "1800" CACHE STRING "The number of parameters to statically support, can be increased but should not be too large.")
+set(GOOFIT_MAXFUNC "200" CACHE STRING "The number of functions to statically support")
 
 set(GOOFIT_CUDA_OR_GROUPSIZE "128" CACHE STRING "Overrides the default group distribution for Thrust's transform_reduce")
 set(GOOFIT_CUDA_OR_GRAINSIZE "7" CACHE STRING "Overrides the default grain size for Thrust's transform_reduce")
@@ -124,8 +126,9 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
+set(GOOFIT_GCC_WARNINGS "-Wall -Wextra -Wno-unknown-pragmas -Wno-long-long -Wno-attributes -Wno-sign-compare -Wno-unused-parameter")
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unknown-pragmas -Wno-long-long -Wno-attributes -Wno-sign-compare -Wno-unused-parameter")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GOOFIT_GCC_WARNINGS}")
     # Helpful but irritating: -Wzero-as-null-pointer-constant -Wsuggest-override
     # no-sign-compare can be removed, but will take some work to clean up
     # Same is true for no-unused-parameter
@@ -361,7 +364,8 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
 
         # GooFit isn't popular with nvlink
         # Note that this should be the only nvlink command
-        string(APPEND CMAKE_CUDA_FLAGS " -Xnvlink --disable-warnings")
+        string(APPEND CMAKE_CUDA_FLAGS " -Xnvlink=--disable-warnings")
+        string(APPEND CMAKE_CUDA_FLAGS " -Xcompiler=-Wno-attributes")
 
         cmake_cuda_arch_select(FLAGS ARCH_FLAGS READABLE ARCH_FLAGS_readable ARCHS ${GOOFIT_ARCH})
         string(REPLACE ";" ", " READ_ARCH_FLAGS "${ARCH_FLAGS_readable}")
@@ -488,12 +492,6 @@ endif()
 set(GOOFIT_ARCH_FLAGS ARCH_FLAGS)
 
 option(GOOFIT_SPLASH "Show a unicode splash or a small plain text one" ON)
-
-# Output the current GooFit version
-configure_file (
-    "${PROJECT_SOURCE_DIR}/include/goofit/Version.h.in"
-    "${PROJECT_BINARY_DIR}/include/goofit/Version.h"
-)
 
 if(CMAKE_VERSION VERSION_LESS 3.9)
     message(STATUS "CMake <3.9 will only enable IPO for Intel compilers on Linux")
@@ -675,6 +673,7 @@ add_library(GooFit::GooFit ALIAS goofit_lib)
 option(GOOFIT_TESTS "Build the goofit tests" ON)
 if(GOOFIT_TESTS)
     enable_testing()
+    add_subdirectory(extern/catch2)
     add_subdirectory(tests)
 endif()
 
@@ -694,6 +693,14 @@ if(GOOFIT_PACKAGES)
         add_subdirectory(${d})
     endforeach()
 endif()
+
+
+# Output the current GooFit version and compile time options
+# Placed after packages to allow packages to change GooFit cached values
+configure_file (
+    "${PROJECT_SOURCE_DIR}/include/goofit/Version.h.in"
+    "${PROJECT_BINARY_DIR}/include/goofit/Version.h"
+)
 
 # This allows GOOFIT_PYTHON to be automatic
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/extern/pybind11/tools" ${CMAKE_MODULE_PATH})

@@ -111,6 +111,11 @@ AddPdf::AddPdf(std::string n, std::vector<Variable> weights, std::vector<PdfBase
         extended = false;
     }
 
+    if(extended)
+        registerFunction("ptr_to_AddPdfsExt", ptr_to_AddPdfsExt);
+    else
+        registerFunction("ptr_to_AddPdfs", ptr_to_AddPdfs);
+
     initialize();
 }
 
@@ -125,22 +130,9 @@ AddPdf::AddPdf(std::string n, Variable frac1, PdfBase *func1, PdfBase *func2)
 
     registerParameter(frac1);
 
+    registerFunction("ptr_to_AddPdfs", ptr_to_AddPdfs);
+
     initialize();
-}
-
-__host__ void AddPdf::recursiveSetIndices() {
-    if(extended) {
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_AddPdfsExt");
-        GET_FUNCTION_ADDR(ptr_to_AddPdfsExt);
-    } else {
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_AddPdfs");
-        GET_FUNCTION_ADDR(ptr_to_AddPdfs);
-    }
-
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
 }
 
 __host__ fptype AddPdf::normalize() const {

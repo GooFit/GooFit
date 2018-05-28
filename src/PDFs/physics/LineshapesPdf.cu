@@ -775,79 +775,6 @@ Lineshape::Lineshape(std::string name, unsigned int L, unsigned int Mpair, FF Fo
     // which will tell this object where to find them by calling setConstantIndex.
 }
 
-void Lineshape::recursiveSetIndices() {
-    switch(lineShapeType) {
-    case 1:
-        GET_FUNCTION_ADDR(ptr_to_LS_ONE);
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_LS_ONE");
-        break;
-
-    case 2:
-        GET_FUNCTION_ADDR(ptr_to_BW_DP4);
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_BW_DP4");
-        break;
-
-    case 3:
-        GET_FUNCTION_ADDR(ptr_to_lass);
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_lass");
-        break;
-
-    case 4:
-        GET_FUNCTION_ADDR(ptr_to_glass3);
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_glass3");
-        break;
-
-    case 5:
-        GET_FUNCTION_ADDR(ptr_to_bugg_MINT);
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_bugg_MINT");
-        break;
-
-    case 6:
-        GET_FUNCTION_ADDR(ptr_to_bugg_MINT3);
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_bugg_MINT3");
-        break;
-
-    case 7:
-        GET_FUNCTION_ADDR(ptr_to_SBW);
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_SBW");
-        break;
-
-    case 8:
-        GET_FUNCTION_ADDR(ptr_to_NONRES_DP);
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_NONRES_DP");
-        break;
-
-    case 9:
-        GET_FUNCTION_ADDR(ptr_to_Flatte);
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Flatte");
-        break;
-
-    case 10:
-        GET_FUNCTION_ADDR(ptr_to_Spline);
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Spline");
-        break;
-
-    case 11:
-#if GOOFIT_KMATRIX
-        GET_FUNCTION_ADDR(ptr_to_kMatrix);
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_kMatrix");
-#else
-        throw GeneralError("Impossible to use kMatrix without compiled kMatrix support");
-#endif
-        break;
-
-    case 12:
-        GET_FUNCTION_ADDR(ptr_to_FOCUS);
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_FOCUS");
-        break;
-    }
-
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
-}
-
 std::vector<fptype> make_spline_curvatures(std::vector<Variable> vars, Lineshapes::spline_t SplineInfo) {
     size_t size = std::get<2>(SplineInfo) - 2;
     Eigen::Matrix<fptype, Eigen::Dynamic, Eigen::Dynamic> m(size, size);
@@ -893,8 +820,6 @@ Lineshapes::GSpline::GSpline(std::string name,
 
     registerConstant(enum_to_underlying(FormFac));
 
-    lineShapeType = 10;
-
     if(std::get<2>(SplineInfo) != AdditionalVars.size())
         throw GeneralError("bins {} != vars {}", std::get<2>(SplineInfo), AdditionalVars.size());
     registerConstant(std::get<0>(SplineInfo));
@@ -911,6 +836,8 @@ Lineshapes::GSpline::GSpline(std::string name,
         // Calc curve
         registerConstant(par);
     }
+
+    registerFunction("ptr_to_Spline", ptr_to_Spline);
 
     initialize();
 }
@@ -939,11 +866,11 @@ Lineshapes::GLASS::GLASS(std::string name,
 
     registerConstant(enum_to_underlying(FormFac));
 
-    lineShapeType = 4;
-
     for(int i = 0; i < 5; i++) {
         registerParameter(AdditionalVars[i]);
     }
+
+    registerFunction("ptr_to_glass3", ptr_to_glass3);
 
     initialize();
 }
@@ -961,7 +888,7 @@ Lineshapes::One::One(
 
     registerConstant(enum_to_underlying(FormFac));
 
-    lineShapeType = 1;
+    registerFunction("ptr_to_LS_ONE", ptr_to_LS_ONE);
 
     initialize();
 }
@@ -979,7 +906,7 @@ Lineshapes::RBW::RBW(
 
     registerConstant(enum_to_underlying(FormFac));
 
-    lineShapeType = 2;
+    registerFunction("ptr_to_BW_DP4", ptr_to_BW_DP4);
 
     initialize();
 }
@@ -997,7 +924,7 @@ Lineshapes::LASS::LASS(
 
     constantsList.push_back(enum_to_underlying(FormFac));
 
-    lineShapeType = 3;
+    registerFunction("ptr_to_lass", ptr_to_lass);
 
     initialize();
 }
@@ -1015,7 +942,7 @@ Lineshapes::NonRes::NonRes(
 
     registerConstant(enum_to_underlying(FormFac));
 
-    lineShapeType = 8;
+    registerFunction("ptr_to_NONRES_DP", ptr_to_NONRES_DP);
 
     initialize();
 }
@@ -1033,7 +960,7 @@ Lineshapes::Bugg::Bugg(
 
     registerConstant(enum_to_underlying(FormFac));
 
-    lineShapeType = 5;
+    registerFunction("ptr_to_bugg_MINT", ptr_to_bugg_MINT);
 
     initialize();
 }
@@ -1051,7 +978,7 @@ Lineshapes::Bugg3::Bugg3(
 
     registerConstant(enum_to_underlying(FormFac));
 
-    lineShapeType = 6;
+    registerFunction("ptr_to_bugg_MINT3", ptr_to_bugg_MINT3);
 
     initialize();
 }
@@ -1069,7 +996,7 @@ Lineshapes::Flatte::Flatte(
 
     registerConstant(enum_to_underlying(FormFac));
 
-    lineShapeType = 9;
+    registerFunction("ptr_to_Flatte", ptr_to_Flatte);
 
     initialize();
 }
@@ -1087,7 +1014,7 @@ Lineshapes::SBW::SBW(
 
     registerConstant(enum_to_underlying(FormFac));
 
-    lineShapeType = 7;
+    registerFunction("ptr_to_SBW", ptr_to_SBW);
 
     initialize();
 }
@@ -1113,7 +1040,7 @@ Lineshapes::FOCUS::FOCUS(std::string name,
 
     registerConstant(static_cast<unsigned int>(mod));
 
-    lineShapeType = 12;
+    registerFunction("ptr_to_FOCUS", ptr_to_FOCUS);
 
     initialize();
 }
@@ -1161,7 +1088,7 @@ Lineshapes::kMatrix::kMatrix(std::string name,
         registerParameter(poles.at(i));
     }
 
-    lineShapeType = 11;
+    registerFunction("ptr_to_kMatrix", ptr_to_kMatrix);
 
     initialize();
 }

@@ -71,21 +71,34 @@ __device__ device_function_ptr ptr_to_ExpPoly       = device_ExpPoly;
 __device__ device_function_ptr ptr_to_ExpOffset     = device_ExpOffset;
 __device__ device_function_ptr ptr_to_ExpPolyOffset = device_ExpPolyOffset;
 
+__host__ ExpPdf::ExpPdf(std::string n, Observable _x, Variable alpha)
+    : GooPdf(n, _x) {
+    registerParameter(alpha);
+
+    registerFunction("ptr_to_Exp", ptr_to_Exp);
+
+    initialize();
+}
+
 __host__ ExpPdf::ExpPdf(std::string n, Observable _x, Variable alpha, Variable offset)
     : GooPdf(n, _x) {
     registerParameter(offset);
     registerParameter(alpha);
 
-    ExpType = 1;
+    registerFunction("ptr_to_ExpOffset", ptr_to_ExpOffset);
 
     initialize();
 }
 
-__host__ ExpPdf::ExpPdf(std::string n, Observable _x, Variable alpha)
+__host__ ExpPdf::ExpPdf(std::string n, Observable _x, std::vector<Variable> &weights)
     : GooPdf(n, _x) {
-    registerParameter(alpha);
+    if(weights.empty())
+        throw GooFit::GeneralError("Weights are empty!");
 
-    ExpType = 0;
+    for(Variable &w : weights)
+        registerParameter(w);
+
+    registerFunction("ptr_to_ExpPoly", ptr_to_ExpPoly);
 
     initialize();
 }
@@ -100,44 +113,9 @@ __host__ ExpPdf::ExpPdf(std::string n, Observable _x, std::vector<Variable> &wei
     for(Variable &w : weights)
         registerParameter(w);
 
-    ExpType = 3;
+    registerFunction("ptr_to_ExpPolyOffset", ptr_to_ExpPolyOffset);
 
     initialize();
-}
-
-__host__ ExpPdf::ExpPdf(std::string n, Observable _x, std::vector<Variable> &weights)
-    : GooPdf(n, _x) {
-    if(weights.empty())
-        throw GooFit::GeneralError("Weights are empty!");
-
-    for(Variable &w : weights)
-        registerParameter(w);
-
-    ExpType = 2;
-
-    initialize();
-}
-
-__host__ void ExpPdf::recursiveSetIndices() {
-    if(ExpType == 0) {
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_Exp");
-        GET_FUNCTION_ADDR(ptr_to_Exp);
-    } else if(ExpType == 1) {
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_ExpOffset");
-        GET_FUNCTION_ADDR(ptr_to_ExpOffset);
-    } else if(ExpType == 2) {
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_ExpPoly");
-        GET_FUNCTION_ADDR(ptr_to_ExpPoly);
-    } else if(ExpType == 3) {
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_ExpPolyOffset");
-        GET_FUNCTION_ADDR(ptr_to_ExpPolyOffset);
-    }
-
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions;
-    num_device_functions++;
-
-    populateArrays();
 }
 
 __host__ fptype ExpPdf::integrate(fptype lo, fptype hi) const {

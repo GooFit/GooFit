@@ -64,16 +64,8 @@ __host__ DalitzVetoPdf::DalitzVetoPdf(std::string n,
         registerConstant(veto.cyclic_index);
     }
 
+    registerFunction("ptr_to_DalitzVeto", ptr_to_DalitzVeto);
+
     initialize();
-}
-
-void DalitzVetoPdf::recursiveSetIndices() {
-    GET_FUNCTION_ADDR(ptr_to_DalitzVeto);
-
-    GOOFIT_TRACE("host_function_table[{}]({})", num_device_functions, getName(), "ptr_to_DalitzVeto");
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
 }
 } // namespace GooFit

@@ -7,9 +7,5 @@ namespace GooFit {
 class ExpGausPdf : public GooPdf {
   public:
     ExpGausPdf(std::string n, Observable _x, Variable m, Variable s, Variable t);
-
-    __host__ void recursiveSetIndices() override;
-
-  private:
 };
 } // namespace GooFit

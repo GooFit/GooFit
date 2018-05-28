@@ -407,7 +407,7 @@ __device__ fpcomplex cubicspline(fptype m12, fptype m13, fptype m23, ParameterCo
     const unsigned int pwa_coefs_idx = idx;
     idx += 2 * nKnobs;
     // const fptype *mKKlimits = &(functorConstants[indices[idx]]);
-    fptype mAB = m12, mAC = m13, mBC = m23;
+    fptype mAB = m12, mAC = m13;
     switch(cyclic_index) {
     case PAIR_13:
         mAB = m13;
@@ -416,7 +416,6 @@ __device__ fpcomplex cubicspline(fptype m12, fptype m13, fptype m23, ParameterCo
     case PAIR_23:
         mAB = m23;
         mAC = m12;
-        mBC = m13;
         break;
     }
 
@@ -505,13 +504,10 @@ RBW::RBW(std::string name,
     registerConstant(sp);
     registerConstant(cyc);
 
-    if(sym) {
-        GET_FUNCTION_ADDR(ptr_to_RBW_Sym);
-    } else {
-        GET_FUNCTION_ADDR(ptr_to_RBW);
-    }
-
-    resonanceType = 0;
+    if(sym)
+        registerFunction("ptr_to_RBW_Sym", ptr_to_RBW_Sym);
+    else
+        registerFunction("ptr_to_RBW", ptr_to_RBW);
 }
 
 GS::GS(std::string name, Variable ar, Variable ai, Variable mass, Variable width, unsigned int sp, unsigned int cyc)
@@ -522,7 +518,7 @@ GS::GS(std::string name, Variable ar, Variable ai, Variable mass, Variable width
     registerConstant(sp);
     registerConstant(cyc);
 
-    resonanceType = 1;
+    registerFunction("ptr_to_GOUSAK", ptr_to_GOUSAK);
 }
 
 LASS::LASS(std::string name, Variable ar, Variable ai, Variable mass, Variable width, unsigned int sp, unsigned int cyc)
@@ -533,7 +529,7 @@ LASS::LASS(std::string name, Variable ar, Variable ai, Variable mass, Variable w
     registerConstant(sp);
     registerConstant(cyc);
 
-    resonanceType = 2;
+    registerFunction("ptr_to_LASS", ptr_to_LASS);
 }
 
 // Constructor for regular BW,Gounaris-Sakurai,LASS
@@ -548,12 +544,12 @@ Gauss::Gauss(std::string name, Variable ar, Variable ai, Variable mass, Variable
 
     registerConstant(cyc);
 
-    resonanceType = 3;
+    registerFunction("ptr_to_GAUSSIAN", ptr_to_GAUSSIAN);
 }
 
 NonRes::NonRes(std::string name, Variable ar, Variable ai)
     : ResonancePdf(name, ar, ai) {
-    resonanceType = 4;
+    registerFunction("ptr_to_NONRES", ptr_to_NONRES);
 }
 
 FLATTE::FLATTE(std::string name,
@@ -572,7 +568,7 @@ FLATTE::FLATTE(std::string name,
     registerConstant(cyc);
     registerConstant(symmDP);
 
-    resonanceType = 5;
+    registerFunction("ptr_to_FLATTE", ptr_to_FLATTE);
 }
 
 Spline::Spline(std::string name,
@@ -596,7 +592,7 @@ Spline::Spline(std::string name,
         registerParameter(pwa_coefs_imags[i]);
     }
 
-    resonanceType = 6;
+    registerFunction("ptr_to_SPLINE", ptr_to_SPLINE);
 }
 
 __host__ void Spline::recalculateCache() const {
@@ -618,29 +614,5 @@ __host__ void Spline::recalculateCache() const {
 }
 
 } // namespace Resonances
-
-void ResonancePdf::recursiveSetIndices() {
-    if(resonanceType == 0) {
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_RBW");
-        GET_FUNCTION_ADDR(ptr_to_RBW);
-    } else if(resonanceType == 1) {
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_GOUSAK");
-        GET_FUNCTION_ADDR(ptr_to_GOUSAK);
-    } else if(resonanceType == 2) {
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_LASS");
-        GET_FUNCTION_ADDR(ptr_to_LASS);
-    } else if(resonanceType == 3) {
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_GAUSSIAN");
-        GET_FUNCTION_ADDR(ptr_to_GAUSSIAN);
-    } else if(resonanceType == 4) {
-        GOOFIT_TRACE("host_function_table[{}] = {}({})", num_device_functions, getName(), "ptr_to_NONRES");
-        GET_FUNCTION_ADDR(ptr_to_NONRES);
-    }
-
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
-
-    populateArrays();
-}
 
 } // namespace GooFit

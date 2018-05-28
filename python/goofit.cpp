@@ -1,9 +1,8 @@
 #include <pybind11/eval.h>
 #include <pybind11/pybind11.h>
 
-#include <iostream>
-
 namespace py = pybind11;
+using namespace pybind11::literals;
 
 void init_HelpPrinter(py::module &);
 void init_DataSet(py::module &);
@@ -133,13 +132,19 @@ PYBIND11_MODULE(_goofit, m) {
     init_VariableBinTransform1DPdf(m);
 
     // Setup for iPython
-    /*
-    py::object ipython = py::module::import("IPython");
-    std::cout << "Importing IPython" << std::endl;
-    if(ipython)
-        std::cout << "Done" << std::endl;
-    else
-        std::cout << "Not available" << std::endl;
+    py::object ip = py::none();
 
-    */
+    try {
+        py::object ipython = py::module::import("IPython");
+        ip                 = ipython.attr("get_ipython")();
+    } catch(const py::error_already_set &) {
+    }
+
+    if(!ip.is_none()) {
+        py::object html_formatter = ip.attr("display_formatter").attr("formatters")["text/markdown"];
+        auto locals               = py::dict("html_formatter"_a = html_formatter, "m"_a = m);
+        py::exec("html_formatter.for_type(type(m.PdfBase), lambda x: repr(x.help()) if hasattr(x, 'help') else None)",
+                 py::globals(),
+                 locals);
+    }
 }

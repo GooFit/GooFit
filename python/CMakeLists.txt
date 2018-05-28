@@ -75,18 +75,7 @@ endif()
 
 # Create files in the python directory
 
-file(WRITE "${CMAKE_BINARY_DIR}/goofit/__init__.py" [=[
-from ._goofit import *
-try:
-    from IPython import get_ipython
-    ip = get_ipython()
-except ImportError:
-    ip = None
-
-if ip is not None:
-    html_formatter = ip.display_formatter.formatters['text/markdown']
-    html_formatter.for_type(type(PdfBase), lambda x: repr(x.help()) if hasattr(x, 'help') else None)
-]=])
+file(WRITE "${CMAKE_BINARY_DIR}/goofit/__init__.py" "from ._goofit import *")
 install(FILES "${CMAKE_BINARY_DIR}/goofit/__init__.py" DESTINATION "goofit")
 
 file(WRITE "${CMAKE_BINARY_DIR}/goofit/__main__.py" "from ._goofit import print_goofit_info; print_goofit_info()")

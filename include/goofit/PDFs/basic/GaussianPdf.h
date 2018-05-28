@@ -5,7 +5,7 @@
 namespace GooFit {
 
 /**
-What can I say? It’s a normal distribution, the
+What can I say? It's a normal distribution, the
 potato of PDFs. Kind of bland, but goes with anything. National
 cuisines have been based on it.
 

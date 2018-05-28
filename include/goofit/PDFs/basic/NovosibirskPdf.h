@@ -15,7 +15,7 @@ A custom shape with a long tail:
 The constructor takes the observable \f$x\f$, mean \f$m\f$, width \f$\sigma\f$,
 and tail factor \f$t\f$. If \f$t\f$ is less than \f$10^{-7}\f$, the function
 returns a simple Gaussian, which probably indicates that it
-approximates a Gaussian for small tail parameters, but I’d hate to
+approximates a Gaussian for small tail parameters, but I'd hate to
 have to show such a thing.
 **/
 

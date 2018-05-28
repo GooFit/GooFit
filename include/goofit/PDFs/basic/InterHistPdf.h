@@ -40,7 +40,7 @@ observables.
 
 \anchor footnote1 1: On the grounds that ten dimensions should be enough for anyone!
 
-\anchor footnote2 2: Oops, there’s that potato after all. It’s a contrived example.
+\anchor footnote2 2: Oops, there's that potato after all. It's a contrived example.
 **/
 
 class InterHistPdf : public GooPdf {

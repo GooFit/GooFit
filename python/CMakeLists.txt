@@ -116,6 +116,13 @@ goofit_add_pdf_docs(PDFs/basic/VoigtianPdf.h)
 goofit_add_pdf_docs(PDFs/basic/TrigThresholdPdf.h)
 goofit_add_pdf_docs(PDFs/basic/BinTransformPdf.h)
 
+goofit_add_pdf_docs(PDFs/combine/AddPdf.h)
+goofit_add_pdf_docs(PDFs/combine/CompositePdf.h)
+goofit_add_pdf_docs(PDFs/combine/ConvolutionPdf.h)
+goofit_add_pdf_docs(PDFs/combine/EventWeightedAddPdf.h)
+goofit_add_pdf_docs(PDFs/combine/MappedPdf.h)
+goofit_add_pdf_docs(PDFs/combine/ProdPdf.h)
+
 process_pybind_module(_goofit)
 target_link_libraries(_goofit PUBLIC GooFit::GooFit)
 target_include_directories(_goofit PUBLIC include)

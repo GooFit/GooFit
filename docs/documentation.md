@@ -41,8 +41,8 @@ Aside from considerations of the user's understanding, GooFit does
 require a CUDA-capable graphics card to run on, with compute capability
 at least 2.1. Further, you will need nVidia's CUDA SDK 7.0 or better, in particular
 the `nvcc` compiler. Aside from this, GooFit is known to compile and run
-on Fedora 14, Ubuntu 12.04, and OSX 10.8.4. It has been tested on the
-Tesla, Fermi, and Kepler generations of nVidia GPUs.
+on Fedora 14, Ubuntu 12.04, RHEL 6.9, RHEL 7.4, and OSX 10.8.4. It has been tested mostly on the
+Tesla product line of Fermi, Kepler, and Pascal generations of nVidia GPUs.
 
 Getting started
 ---------------
@@ -126,7 +126,6 @@ int main (int argc, char** argv) {
   // Run the application parser, setup MPI if
   // needed, and exit if parsing failed
   GOOFIT_PARSE(app);
-
 
   // Create an object to represent the observable,
   // the number we have measured. Give it a name,
@@ -271,9 +270,9 @@ Creating new PDF classes {#newpdfs}
 ========================
 
 The simplest way to create a new PDF is to take the existing
-GooFit::GaussianPdf class as a template. The existence of a `FooPdf.cu` file
-in the `FPOINTER` directory is, because of Makefile magic, sufficient to
-get the `Foo` PDF included in the GooFit library. However, a certain
+GooFit::GaussianPdf class as a template. It is recommended that the user place
+the `Foo` Pdf under the respective basic, combine, or physics directories.  Once placed,
+cmake will appropriately find and compile the PDF.  However, a certain
 amount of boilerplate is necessary to make the PDF actually work. First
 of all, it needs a device-side function with a particular signature:
 
@@ -283,8 +282,7 @@ Signature of evaluation functions. {#listingfsign}
 
 ```{.cpp}
 __device__ fptype device_Gaussian (fptype* evt,
-                                   fptype* p,
-                                   unsigned int* indices);
+                                   ParameterContainer &pc);
 ```
 
 Notice that this is a standalone function, not part of any class; `nvcc`
@@ -302,8 +300,7 @@ a function with the signature shown in the listing [here](@ref listingfsign):
 
 ```{.cpp}
 typedef fptype (*device_function_ptr) (fptype*,
-                                       fptype*,
-                                       unsigned int*);
+                                       ParameterContainer &pc);
 ```
 
 This pointer (\ref footnote4 "4") will be copied into the `device_function_table` array,
@@ -312,7 +309,7 @@ evaluation function".
 
 Finally, the new PDF needs a bog-standard C++ class definition,
 extending the GooFit::GooPdf superclass, which will allow it to be
-instantiated and passed around in user-level code. [The indeces section](@ref subindexarray)
+instantiated and passed around in user-level code. [The indices section](@ref subindexarray)
 discusses what should happen in the constructor;
 otherwise the class may have any supporting paraphernalia that are
 necessary or useful to its evaluation - caches, lists of components,
@@ -323,26 +320,28 @@ The indices array {#subindexarray}
 
 The heart of a PDF's organization is its index array, which appears in
 the arguments to its device-side evaluation function as
-`unsigned int* indices`. The index array stores the position of the
-parameters of the PDF within the global parameter array; this allows
-different PDFs to share the same parameters, as in two Gaussians with a
-common mean. It also stores the position of the event variables,
+`ParameterContainer &pc`. The `ParameterContainer` contains pointers to 
+arrays containing PDF specific information.  This allows for different PDFs to share 
+the same parameters, as in two Gaussians with a common mean. It also stores the position of the event variables,
 sometimes called observables, within the event array passed to the
-evaluation function; this is the argument `fptype* evt`.
+evaluation function; this is the argument `fptype* evt`. The ParameterContainer also contains 
+any constants and normalisation factors used within the PDF's normalisation or evaluation.
 
-The index array is created by the constructor of a PDF class; in
-particular, the constructor should call `registerParameter` so as to
-obtain the global indices of its parameters, store these numbers in a
-`vector<unsigned int>` (conventionally called `pindices`), and pass this
-`vector` to `initialize`. The PDF constructor should also call
-`registerObservable` on each of the event variables it depends on.
+Since each class will contain its 4 arrays of information, these arrays are populated by the 
+constructor of a PDF class; in particular, the constructor should call `registerParameter` 
+to add a given `Variable` that will be tracked by MINUIT and update the current value.  Internally, these numbers are stored in a 
+`vector<Variable>` (called `parametersList`). The `registerParameter` function will return the 
+index, which can be used for debugging purposes as the index returned will be the same index 
+used in the device function to acquire the same value.  The PDF constructor 
+should also call `registerObservable` on each of the event variables it depends on. 
 
-The `initialize` method constructs the array that is used on the GPU
-side, which consists of four parts. First is stored the number of
-parameters, which is equal to the size of the `pindices vector`. Next
-come the indices of the parameters, in the order they were put into
-`pindices`. Then comes the number of observables, and finally the
-indices of the observables, again in the order they were registered.
+The method used for the indices arrays favors using more memory to have more memory-coherent reads. GooFit v2.1 and below favored
+re-using memory as much as possible, which requires a larger amount of reads.  This method is used to provide better GPU
+performance.
+
+The `initialize` method configures the PDF to use a negative log-likelihood 
+fit if no fit is provided, and will configure the global metric taker to use this type of fit for the 
+given PDF.  The `initialize` method will also help the system determine the number of values used for the given fit.
 
 An example may be useful at this point. Consider the simple Gaussian PDF
 constructor:
@@ -360,28 +359,40 @@ GaussianPdf::GaussianPdf (std::string name,
 
 This is almost the simplest possible PDF: Two parameters, one
 observable, no messing about! Notice that the call to
-`registerFunction` sets the CUDA function this PDF is tied to. You can simply pass as many GooFit::Observable and GooFit::Variable parameters as you'd like to the parent constructor, or you can use `registerObservable` and `registerParameter` yourself.
+`registerFunction` sets the CUDA function this PDF is tied to. 
+You can simply pass as many GooFit::Observable and GooFit::Variable 
+parameters as you'd like to the parent constructor, or you can use 
+`registerObservable` and `registerParameter` yourself.  Take head the order that
+in which the items are passed, as that is the order in which they will be interpreted by
+the indexing system.
 
-The device-side index array for the Gaussian, assuming it is the only
+The ParameterContainer for the example Gaussian PDF contains five arrays; assuming it is the only
 PDF in the system, looks like this:
 
-    index  0 1 2 3 4
-    value  2 0 1 1 0
+    ParameterContainer
+	functions           0
+    parameters          2 3 4 
+    constants           0 
+	observableId's      1 0
+	normalisations      1 0
 
-Here the initial 2 is the number of parameters - mean and sigma. Then
-come their respective indices; since by assumption the Gaussian is the
-only PDF we're constructing, these will simply be 0 and 1. Then comes
-the number of observables, which is 1, and finally the index of the
-observable - which, as it is the only observable registered, must be 0.
-Now we can consider how the device-side code makes use of this:
+'Functions' contains only one item, which is the pointer to our `ptr_to_Gaussian` function. 
+Second, the parameters list contains two items, which you can find at array position 0. These two values
+are for our mean and sigma, in this case mean is 3 and sigma is 4. The gaussian PDF does not contain 
+constants, so the 0 position of the constants array contains the value 0. One Observable is used for
+the gaussian pdf, which will contain the index into our `evt` array.  Finally,
+the normalisation values are given last, which has one normalisation and the value is 0.
+
+Now we can consider how the device-side code makes use of this ParameterContainer in the following
+device function code for the gaussian PDF:
 
 ```{.cpp}
 __device__ fptype device_Gaussian (fptype* evt,
-                                   fptype* p,
-                                   unsigned int* indices) {
-  fptype x = evt[indices[2 + indices[0]]];
-  fptype mean = p[indices[1]];
-  fptype sigma = p[indices[2]];
+                                   ParameterContainer &pc) {
+  fptype x = evt[pc.getObservable(0)];
+  fptype mean = pc.getParameter(0);
+  fptype sigma = pc.getParameter(1);
+  pc.incrementIndex(1, 2, 0, 1, 1);
 
   fptype ret = exp(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
   return ret;
@@ -390,71 +401,54 @@ __device__ fptype device_Gaussian (fptype* evt,
 
 The calculation of the Gaussian is straightforward enough, but let's
 look at where the numbers `mean, sigma` and especially `x` come from.
-The function is passed a pointer to the particular event it is to
-calculate the value for, a global parameter array, and the index array.
-The parameter array, in the case of a single Gaussian, consists simply
-of the values for the mean and sigma in the current MINUIT iteration.
-Let us replace the index lookups in those lines with their values from
-above:
+The function is passed a pointer to the particular event array it is to
+calculate the value for called `evt` and the ParameterContainer `pc` which 
+contains all 5 separate arrays for access. The benefit of using this container 
+structure is that the index returned by the constructor will be the same index
+used to access the value in the device function.  This means that in order to 
+get the observable index, the function `pc.getObservable(0)` will add a `+1` to the 
+end, thus hiding unnecessary numerical counting on the developer. 
 
+Same goes for accessing the parameters. The mean is accessed with `pc.getParameter(0)`, 
+but internally it is looking at the parameters[0 + 1] and returning that value, which
+is 3.  
+
+If we look at the expanded constructure:
 ```{.cpp}
-fptype mean = p[0];
-fptype sigma = p[1];
+GaussianPdf::GaussianPdf (std::string name,
+                          Observable _x,
+                          Variable mean,
+                          Variable sigma)
+  : GooPdf(name) {
+  int idx_o_0 = registerObservable(_x);
+  int idx_p_0 = registerParameter(mean);
+  int idx_p_1 = registerParameter(sigma);
+  registerFunction("ptr_to_Gaussian", ptr_to_Gaussian);
+  initialize();
+}
 ```
 
-which is exactly what we want. The fetching of `x` appears a little more
-formidable, with its double `indices` lookup; it calls for some
-explanation. First, `indices[0]` is the number of parameters of the
-function; we want to skip ahead by this number to get to the ‘event'
-part of the array. In the Gaussian, this is known at compile-time to be
-2, but not every PDF writer is so fortunate; a polynomial PDF, for
-example, could have an arbitrary number of parameters. (Or it might
-specify a maximum number, say 10, and in most cases leave seven or eight
-of them fixed at zero - but then there would be a lot of wasted
-multiplications-by-zero and additions-of-zero.) Thus, as a convention,
-lookups of event variables should always use `indices[0]` even if the
-coder knows what that number is going to be. Then, 2 must be added to
-this number to account for the space taken by the number-of-parameters
-and number-of-observables entries in the array. So, replacing the first
-level of lookup by the values, we have:
+the `idx_o_0` will be 0, which is the correct value we want to pass to the `pc.getObservable` 
+function to retrieve this PDF's observable value.  The same applies with the parameters, so
+idx_p_0 is the index, which will be 0; idx_p_1 will be 1. If we looked up these values:
 
-```{.cpp}
-fptype x = evt[indices[4]];
-```
+mean = parameters[idx_p_0 + 1];
+sigma = parameters[idx_p_1 + 1];
 
-and `indices[4]` is just 0; so in other words, `x` is the first
-observable in the event. In the case of the single Gaussian, it is also
-the *only* observable, so we've done quite a bit of work to arrive at a
-zero that we knew from the start; but in more complex fits this would
-not be true. The `x` variable could be observable number 5, for all we
-know to the contrary in the general case. Likewise the mean and sigma
-could be stored at positions 80 and 101 of the global parameter array.
+We will get the appropriate values of mean = 3 and sigma = 4.
 
 Constants
 ---------
 
 There are two ways of storing constants, or three if we count
 registering a GooFit::Variable as a parameter and telling MINUIT to keep it
-fixed. For integer constants, we may simply store them in the index
-array; since it is up to the programmer to interpret the indices, there
-is no rule that says it absolutely must be taken as an offset into the
-global parameter array! An index can also store integers for any other
-purpose - the maximum degree of a polynomial, flagging the use of an
-optional parameter, or anything else you can think of. Indeed, this is
-exactly what the framework does in enforcing the convention that the
-first number in the index array is the number of parameters.
+fixed. Currently, no difference is made between an integer and floating constant. This is 
+potential room for optimization but differentiating, but currently is not done at this time.
 
-However, this will not serve for non-integer-valued constants. They must
-either go through MINUIT as fixed parameters, or else go into the
-`functorConstants` array. `functorConstants` works just like the global
-parameters array, except that it does not update on every MINUIT
-iteration since it is meant for storing constants. To use it, you should
-first reserve some space in it using the `registerConstants` method,
-which takes the number of constants you want as an argument and returns
-the index of the first one. Usually you will want to put that index in
-the `pindices` array. For example, suppose I want to store \f$\sqrt{2\pi}\f$
-as a constant for use in the Gaussian. Then I would modify the
-constructor thus:
+Registering a constant can be used for any purpose - the maximum degree of a 
+polynomial, flagging the use of an optional parameter, or anything else 
+you can think of as long as the value is converted appropriately.  To register a constant, simply
+call `registerConstant` with the value you wish to use within the device function.
 
 ```{.cpp}
 __host__ GaussianPdf::GaussianPdf (std::string n,
@@ -463,52 +457,205 @@ __host__ GaussianPdf::GaussianPdf (std::string n,
                                    Variable* sigma)
   : GooPdf(_x, n)
 {
-  std::vector<unsigned int> pindices;
-  pindices.push_back(registerParameter(mean));
-  pindices.push_back(registerParameter(sigma));
+  registerParameter(mean));
+  registerParameter(sigma));
 
-  pindices.push_back(registerConstants(1));
-  fptype sqrt2pi = sqrt(2*M_PI);
-  MEMCPY_TO_SYMBOL(functorConstants, &sqrt2pi, sizeof(fptype),
-                     cIndex*sizeof(fptype), cudaMemcpyHostToDevice);
+  registerConstants(1);
 
-  MEMCPY_FROM_SYMBOL((void**) &host_fcn_ptr, ptr_to_Gaussian, sizeof(void*));
-  initialize(pindices);
+  registerFunction("ptr_to_Gaussian", ptr_to_Gaussian);
+  initialize();
 }
 ```
 
-Notice the member variable `cIndex`, which is set (and returned) by
-`registerConstants`; it is the index of the first constant belonging to
-this object. To extract my constant for use in the device function, I
-look it up as though it were a parameter, but the target array is
-`functorConstants` instead of the passed-in `p`:
+This registers the integer as a floating point value 1.0 that can be queried by the device function
+using `pc.getConstant(0)`. If I had registered two constants instead of one, the second one would
+be looked up by `pc.getConstant(1)`. Remember, the `pc` is per PDF, so all values
+are passed to the ParameterContainer structure in the order they were added.  If
+any problems arise creating a new PDF, it is best to print out all values that are
+registered and compare those values to the device functions.
 
 ```{.cpp}
 __device__ fptype device_Gaussian (fptype* evt,
-                                   fptype* p,
-                                   unsigned int* indices) {
-  fptype x = evt[indices[2 + indices[0]]];
-  fptype mean = p[indices[1]];
-  fptype sigma = p[indices[2]];
-  fptype sqrt2pi = functorConstants[indices[3]];
+                                   ParameterContainer &pc) {
+  fptype x = evt[pc.getObservable(0)];
+  fptype mean = pc.getParameter(0);
+  fptype sigma = pc.getParameter(1);
+  fptype sqrt_2pi = pc.getConstant(0);
+  pc.incrementIndex(1, 2, 0, 1, 1);
 
   fptype ret = exp(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
-  ret /= sqrt2pi;
+  ret /= sqrt_2pi;
   return ret;
 }
 ```
 
-If I had registered two constants instead of one, the second one would
-be looked up by `functorConstants[indices[3] + 1]`, not the
-`functorConstants[indices[4]]` one might naively expect. This is because
-the constant is stored next to the first one registered, but its *index*
-is not stored at all; it has to be calculated from the index of the
-first constant. Thus the `+1` must go outside the indices lookup, not
-inside it! Keeping the levels of indirection straight when constructing
-this sort of code calls for some care and attention.
+A second method is to create a Variable through MINUIT as a fixed parameter.  This may not be
+the best way to organize constants however, as this will add more memory that needs to be updated and
+transferred each iteration even though the value is constant. Please refer to (#setIndices) for more
+information on what is happening.
 
-Note that `functorConstants[0]` is reserved for the number of events in
-the fit.
+The third option requires a significant amount of expertise with CUDA and constant memory, thus only recommend 
+for architects.  With this method, we are going to bypass the ParameterContainer structure. For example, 
+suppose I want to store \f$\sqrt{2\pi}\f$ as a constant for use in the Gaussian. Then I would modify the
+constructor thus:
+
+```{.cpp}
+__device__ constant fptype c_sqrt_2pi;
+
+__device__ fptype device_Gaussian (fptype* evt,
+                                   ParameterContainer &pc) {
+  fptype x = evt[pc.getObservable(0)];
+  fptype mean = pc.getParameter(0);
+  fptype sigma = pc.getParameter(1);
+  pc.incrementIndex(1, 2, 0, 1, 1);
+
+  fptype ret = exp(-0.5*(x-mean)*(x-mean)/(sigma*sigma));
+  ret /= c_sqrt_2pi;
+  return ret;
+}
+
+__host__ GaussianPdf::GaussianPdf (std::string n,
+                                   Variable* _x,
+                                   Variable* mean,
+                                   Variable* sigma)
+  : GooPdf(_x, n)
+{
+  registerParameter(mean));
+  registerParameter(sigma));
+
+  fptype sqrt2pi = sqrt(2*M_PI);
+  MEMCPY_TO_SYMBOL(c_sqrt_2pi, &sqrt2pi, sizeof(fptype), 0, cudaMemcpyHostToDevice);
+
+  registerFunction("ptr_to_Gaussian", ptr_to_Gaussian);
+  initialize();
+}
+```
+
+This provides a single location in which to get the value stored in `c_sqrt_2pi`, and share it.  This uses constant memory,
+however this is a precious resource that should not be used illegitametly. One good example of proper use is the constant
+`c_motherMass`, which is used by the DalitzPlotPdf and ResonancePdf. Instead of allocating 17 doubles for the DalitzPlotPdf and
+the 16 ResonancePdf's, we can allocate one double for all 17 PDF accesses.  This also applies to `c_daug1Mass`, `c_daug2Mass`, and
+`c_daug3Mass`.  
+
+Note that the variable `c_sqrt_2pi` is only exposed to the provided PDF and any other PDF 
+contained within the contained file. It will be up to the architect to add global constants 
+if it is determined to be optimal for performance. This provides a safe place to locate a 
+value that will be used frequently into a location that prioritizes multiple memory 
+accesses, and reduces memory and calls for the ParameterContainer.
+
+Not everything should fit into constant memory, only *values that will be accessed frequently 
+many times* (\ref footnote9 "9").  One may wish to immediately add all of
+the ParameterContainer as constant memory, however this will not be ideal: this causes
+the GPU memory to thrash, constantly fetching from global memory because not all of the parameter
+container will fit inside each GPU's L1 cache.
+
+setIndices {#setIndices}
+============
+
+This function will configure the global structures that will be used when performing the fit.  First, it will call
+the function `populateArrays` with itself, which involves adding the number Variables, and the values for each Variable
+into the host_parameters array.  Observables, constants, and normalisations are done the exact same way.  Once complete,
+it will add all component PDFs using the same `populateArrays` method.
+
+After all PDFs have been added, the metric operation is added last (#listingmetrics) and overrides the `*logger` component
+of the root PDF. 
+
+This function only needs to be called once per separate fit, which it is called automatically any time `setData` is called. 
+Each iteration that MINUIT updates, it will call `updateParameters` which will populate the values into all host_parameters, 
+then update device memory with the new values.
+
+ParameterContainer increment {#incrementIndex}
+============
+
+The ParameterContainer contains pointers to all index information that will be used by all PDFs. 
+Some PDFs will call other PDFs, thus a method for going to the next PDF is required for the ParameterContainer.  This method is called `incrementIndex`.  There are two 
+implementations for this function, one is a fast method that PDF developers should always try to use, and
+the second is a slow method for when it is impossible to know consecutive PDF's and their structure.
+When a user calls any function in which to return parameters, observable indices, constants, etc. it is
+important to note that information is provided for the *current* PDF only. Once we call incrementIndex, 
+we have told the container that the fetching current function's values is complete, update all internal
+counters to point to the next PDF.
+
+First lets look at the fast method of incrementIndex
+
+```{.cpp}
+void incrementIndex(const int funcs, const int parms, const int cons, const int obs, const int norms);
+```
+
+This function allows us to increment the counters based on the knowledge about the PDF. Unless there 
+is a conditional, all of this information should be known at compile-time with a few exceptions.  
+This method is preferred because it doesn't require any memory lookups to proceed; simply incrementing 
+internal counters by the provided numerical values that are passed to the `incrementIndex` will point 
+to the next function.
+
+Sometimes it is impossible to know totals until runtime; in that situation, it is much better to read 
+the total number than call the slow version.  As an example, Dalitz PDF showcases both situations. 
+Take a look at the following device function:
+
+```{.cpp}
+__device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
+    int num_obs = pc.getNumObservables();
+    int id_m12  = pc.getObservable(0);
+    int id_m13  = pc.getObservable(1);
+    int id_num  = pc.getObservable(2);
+
+    fptype m12 = evt[id_m12];
+    fptype m13 = evt[id_m13];
+
+    unsigned int numResonances = pc.getConstant(0);
+    unsigned int cacheToUse    = pc.getConstant(1);
+
+    if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass)) {
+        pc.incrementIndex(1, numResonances * 2, 2, num_obs, 1);
+
+        // loop over resonances and efficiency functions
+        for(int i = 0; i < numResonances; i++)
+            pc.incrementIndex();
+
+        // increment the efficiency function
+        pc.incrementIndex();
+        return 0;
+    }
+	
+	fptype evtIndex = evt[id_num];
+
+    auto evtNum = static_cast<int>(floor(0.5 + evtIndex));
+
+    fpcomplex totalAmp(0, 0);
+
+    for(int i = 0; i < numResonances; ++i) {
+        fpcomplex amp = fpcomplex(pc.getParameter(i * 2), pc.getParameter(i * 2 + 1));
+
+        fpcomplex me = RO_CACHE(cResonances[i][evtNum]);
+
+        totalAmp += amp * me;
+    }
+
+    fptype ret = thrust::norm(totalAmp);
+    pc.incrementIndex(1, numResonances * 2, 2, num_obs, 1);
+
+    // loop to efficiency idx
+    for(int i = 0; i < numResonances; i++)
+        pc.incrementIndex();
+
+    fptype eff = callFunction(evt, pc);
+    ret *= eff;
+
+    return ret;
+}
+```
+
+First thing to note is grabbing the number of resonances, which for this PDF is the first
+constant in the constant array `pc.getConstant(0);`.  We don't specifically know the number 
+of observables that were passed, but we can ask the `pc` object to give us the total
+amount with `pc.getNumObservables()` since it is stored in the constant array; then hold on to this value 
+for when we call incrementIndex. If possible, it is best to re-use information rather than fetch;
+it is expensive to fetch values from the ParameterContainer.
+
+When looping over the resonances PDFs, please note that we can't use the fast incrementIndex version.
+Some resonancePDF's take different inputs to `incrementIndex` so we can't used a fixed values. 
+The slow version of incrementIndex will look up the total value for the given PDF, and increment by 
+that amount, thus requiring 4x memory lookups in order to proceed.
 
 Program flow {#engine}
 ============
@@ -529,7 +676,7 @@ fitter.fit();
 Copying data
 ------------
 
-The `setData` method copies the contents of the supplied GooFit::DataSet to
+The `setData` method will setup all indexing buffers for the root PDF, and also copy the contents of the supplied GooFit::DataSet to
 the GPU:
 
 Internals of the setData method {#listingsetData}
@@ -551,13 +698,12 @@ for (int i = 0; i < numEntries; ++i) {
 
 gooMalloc((void**) &dev_event_array, dimensions*numEntries*sizeof(fptype));
 cudaMemcpy(dev_event_array, host_array, dimensions*numEntries*sizeof(fptype), cudaMemcpyHostToDevice);
-MEMCPY_TO_SYMBOL(functorConstants, &numEvents, sizeof(fptype), 0, cudaMemcpyHostToDevice);
 delete[] host_array;
 ```
 
 Notice the call to `setIndices`; this is where the indices of
 observables passed to the PDF are decided and copied into the indices
-array. This step cannot be done before all the subcomponents of the PDF
+array(#setIndices). This step cannot be done before all the subcomponents of the PDF
 have had a chance to register their observables. Hence `setData` should
 be called only after the creation of all PDF components, and only on the
 top-level PDF.
@@ -588,8 +734,9 @@ function-to-minimize, and calls MINUIT's `mnmigr` method.
 
 A few variants on the above procedure exist. Most obviously, ROOT
 contains three implementations of the MINUIT algorithm, named `TMinuit`,
-`TMinuit2`, and `TVirtualFitter` (\ref footnote5 "5"). GooFit provides the first two methods, and defaults to GooFit::FitManagerMinuit2. The interfaces differ, but the essential procedure is the
-one described above: Define parameters, set function-to-minimize, run
+`TMinuit2`, and `TVirtualFitter` (\ref footnote5 "5"). GooFit provides the 
+first two methods, and defaults to GooFit::FitManagerMinuit2. The interfaces 
+differ, but the essential procedure is the one described above: Define parameters, set function-to-minimize, run
 MIGRAD. (NB: As of v0.2, GooFit has not recently been tested with
 `MINUIT_VERSION` set to 2 or 3.) In the case of `TMinuit`, one can call
 `setMaxCalls` to override the usual MINUIT limitation on the number of
@@ -608,17 +755,18 @@ Program flow now passes to MINUIT, which for purposes of this
 documentation is a black box, for some time; it returns to GooFit by
 calling the `FitFun` method with a list of parameters for which MINUIT
 would like us to evaluate the NLL. `FitFun` translates MINUIT indices
-into GooFit indices, and calls `copyParams`, which eponymously copies
-the parameter array to `cudaArray` on the GPU. `FitFun` then returns the
-value from `GooPdf::calculateNLL` to MINUIT, which absorbs the number
-into its inner workings and eventually comes back with another set of
-parameters to be evaluated. Control continues to pass back and forth in
-this way until MINUIT converges or gives up, or until GooFit crashes.
+into GooFit indices, and calls `copyParams()`, which eponymously copies
+the value of each Variable, then updates the d_parameters with the newest 
+value. `FitFun` then returns the value from `GooPdf::calculateNLL` to 
+MINUIT, which absorbs the number into its inner workings and eventually 
+comes back with another set of parameters to be evaluated. Control 
+continues to pass back and forth in this way until MINUIT converges or 
+gives up, or until GooFit crashes.
 
 The `calculateNLL` method does two things: First it calls the
 `normalize` function of the PDF, which in turn will usually recursively
 normalize the components; the results of the `normalize` call are copied
-into the `normalizationFactors` array on the GPU. Next it calls
+into the `d_normalisations` array on the GPU. Next it calls
 `sumOfNll` and returns the resulting value. Particular PDF
 implementations may override `sumOfNll`; most notably `AddPdf` does so
 in order to have the option of returning an ‘extended' likelihood, with
@@ -673,7 +821,7 @@ variables merely indicate that Thrust should add (rather than, say,
 multiply) all the returned values, and that it should start the sum at
 zero. The `normalization` method returns this sum, but stores its
 inverse in the `host_normalization` array that will eventually be copied
-to `normalizationFactors` on the GPU; this is to allow the
+to `d_normalisations` on the GPU; this is to allow the
 micro-optimization of multiplying by the inverse rather than dividing in
 every thread.
 
@@ -694,8 +842,9 @@ the CPU.
 
 The `logger` object will appear again in the actual PDF evaluation,
 performing a very similar function, so it is worth taking a moment to
-consider in detail exactly what the `transform_reduce` call does. The
-first two parameters (involving `make_tuple` calls) define the range of
+consider in detail exactly what the `transform_reduce` call does. It is important
+to call setFitControl prior to the `transform_reduce` call if any changes to
+the type of fit are made! The first two parameters (involving `make_tuple` calls) define the range of
 evaluation: In this case, global bins (\ref footnote6 "6") 0 through \f$N-1\f$. They also
 specify which `operator` method of `MetricTaker` should be called: It is
 the one which takes as arguments two integers (the bin index and event
@@ -721,47 +870,56 @@ Bin-center calculation {#listingbincenter}
 ----------------------
 
 ```{.cpp}
-__shared__ fptype binCenters[1024*MAX_NUM_OBSERVABLES];
+#define MAX_NUM_OBSERVABLES 10
 
-// To convert global bin number to (x,y,z...) coordinates:
-// For each dimension, take the mod with the number of bins
-// in that dimension. Then divide by the number of bins, in
-// effect collapsing so the grid has one fewer dimension.
-// Rinse and repeat.
+...
 
-int offset = threadIdx.x*MAX_NUM_OBSERVABLES;
-unsigned int* indices = paramIndices + parameters;
-for (int i = 0; i < evtSize; ++i) {
-  fptype lowerBound = thrust::get<2>(t)[3*i+0];
-  fptype upperBound = thrust::get<2>(t)[3*i+1];
-  int numBins    = (int) floor(thrust::get<2>(t)[3*i+2] + 0.5);
-  int localBin = binNumber % numBins;
+	ParameterContainer pc;
 
-  fptype x = upperBound - lowerBound;
-  x /= numBins;
-  x *= (localBin + 0.5);
-  x += lowerBound;
-  binCenters[indices[indices[0] + 2 + i]+offset] = x;
-  binNumber /= numBins;
-}
+	//Note this was using shared memory, however this is not ideal as this limits the numbers
+	//of threads that can run due to the max shared memory size used.
+	fptype events[MAX_NUM_OBSERVABLES];
+
+	// To convert global bin number to (x,y,z...) coordinates:
+	// For each dimension, take the mod with the number of bins
+	// in that dimension. Then divide by the number of bins, in
+	// effect collapsing so the grid has one fewer dimension.
+	// Rinse and repeat.
+
+	// before we start, we need to progress ourselves based on the function we need to run
+	for(int i = 0; i < functionIdx; i++)
+		pc.incrementIndex(); // need to use the slow version, since we are not starting from index 0.
+
+	int id = pc.getObservable(0);
+   
+	for (int i = 0; i < evtSize; ++i) {
+	  fptype lowerBound = thrust::get<2>(t)[3*i+0];
+	  fptype upperBound = thrust::get<2>(t)[3*i+1];
+	  int numBins    = (int) floor(thrust::get<2>(t)[3*i+2] + 0.5);
+	  int localBin = binNumber % numBins;
+
+	  fptype x = upperBound - lowerBound;
+	  x /= numBins;
+	  x *= (localBin + 0.5);
+	  x += lowerBound;
+	  binCenters[id + i] = x;
+	  binNumber /= numBins;
+	}
 ```
 
 in the straightforward way, and stores the bin centers in a *fake
-event*. Since events are just lists of observables, all that's necessary
-is to keep track of which part of the `__shared__` (\ref footnote7 "7") `binCenters`
-array is owned by this thread, look up the index-within-events of each
+event*. Since events are just lists of observables, we will copy
+the value of the event into a temporary container, look up the index-within-events of each
 observable, and set the entries of the locally-owned part of
-`binCenters` accordingly. This fake event is then sent to the PDF for
+`binCenters` accordingly. This event is then sent to the PDF for
 evaluation:
 
 ```{.cpp}
-fptype ret = callFunction(binCenters+offset,
-                          functionIdx,
-                          parameters);
+fptype ret = callFunction(events, pc);
 ```
 
 where `callFunction` is just a wrapper for looking up the function
-referred to by `functionIdx` and calling it with the right part of the
+referred to by `pc.functionIdx` and calling it with the right part of the
 parameter array:
 
 
@@ -771,14 +929,11 @@ Code to call device-side PDF implementations (some lines broken up for clarity) 
 
 ```{.cpp}
 __device__ fptype callFunction (fptype* eventAddress,
-                                unsigned int functionIdx,
-                                unsigned int paramIdx) {
+                                ParameterContainer &pc) {
   void* rawPtr = device_function_table[functionIdx];
   device_function_ptr fcn;
   fcn = reinterpret_cast<device_function_ptr>(rawPtr);
-  return (*fcn)(eventAddress,
-                cudaArray,
-                paramIndices + paramIdx);
+  return (*fcn)(eventAddress, pc);
 }
 ```
 
@@ -822,6 +977,7 @@ Main evaluation operator (some lines broken up for clarity) {#listingmaineval}
 ```{.cpp}
 __device__ fptype MetricTaker::operator ()
   (thrust::tuple<int, fptype*, int> t) const {
+  ParameterContainer pc;
   // Calculate event offset for this thread.
   int eventIndex = thrust::get<0>(t);
   int eventSize  = thrust::get<2>(t);
@@ -829,7 +985,7 @@ __device__ fptype MetricTaker::operator ()
   eventAddress += (eventIndex * abs(eventSize));
 
   // Causes stack size to be statically undeterminable.
-  fptype ret = callFunction(eventAddress, functionIdx, parameters);
+  fptype ret = callFunction(eventAddress, pc);
 
   // Notice assumption here! For unbinned fits the
   // eventAddress pointer won't be used in the metric,
@@ -841,6 +997,7 @@ __device__ fptype MetricTaker::operator ()
   device_metric_ptr fcnPtr;
   fcnPtr = reinterpret_cast<device_metric_ptr>(fcnAddr);
   eventAddress += abs(eventSize)-2;
+  
   ret = (*fcnPtr)(ret, eventAddress, parameters);
   return ret;
 }
@@ -874,37 +1031,37 @@ Metric-taking functions {#listingmetrics}
 ```{.cpp}
 __device__ fptype calculateEval (fptype rawPdf,
                                  fptype* evtVal,
-                                 unsigned int par) {
+                                 fptype norm) {
   // Just return the raw PDF value, for use
   // in (eg) normalization.
   return rawPdf;
 }
 
 __device__ fptype calculateNLL (fptype rawPdf,
-                                 fptype* evtVal,
-                                 unsigned int par) {
-  rawPdf *= normalizationFactors[par];
+                                fptype* evtVal,
+                                fptype norm) {
+  rawPdf *= norm;
   return rawPdf > 0 ? -log(rawPdf) : 0;
 }
 
 __device__ fptype calculateProb (fptype rawPdf,
                                  fptype* evtVal,
-                                 unsigned int par) {
+                                 fptype norm) {
   // Return probability, ie normalized PDF value.
-  return rawPdf * normalizationFactors[par];
+  return rawPdf * norm;
 }
 
 __device__ fptype calculateBinAvg (fptype rawPdf,
-                                 fptype* evtVal,
-                                 unsigned int par) {
-  rawPdf *= normalizationFactors[par];
+                                   fptype* evtVal,
+                                   fptype norm) {
+  rawPdf *= norm;
   rawPdf *= evtVal[1]; // Bin volume
   // Log-likelihood of numEvents with expectation of exp
   // is (-exp + numEvents*ln(exp) - ln(numEvents!)).
   // The last is constant, so we drop it; and then multiply
   // by minus one to get the negative log-likelihood.
   if (rawPdf > 0) {
-    fptype expEvents = functorConstants[0]*rawPdf;
+    fptype expEvents = c_totalEvents*rawPdf;
     return (expEvents - evtVal[0]*log(expEvents));
   }
   return 0;
@@ -925,18 +1082,18 @@ __device__ fptype calculateBinWithError (fptype rawPdf,
 }
 
 __device__ fptype calculateChisq (fptype rawPdf,
-                                 fptype* evtVal,
-                                 unsigned int par) {
-  rawPdf *= normalizationFactors[par];
+                                  fptype* evtVal,
+                                  fptype norm) {
+  rawPdf *= norm;
   rawPdf *= evtVal[1]; // Bin volume
 
-  fptype ret = pow(rawPdf * functorConstants[0] - evtVal[0], 2);
+  fptype ret = pow(rawPdf * c_totalEvents - evtVal[0], 2);
   ret /= (evtVal[0] > 1 ? evtVal[0] : 1);
   return ret;
 }
 ```
 
-Notice the use of `normalizationFactors` in most of the metric
+Notice that the normalisation factor is looked up prior to the metric
 functions, and the special cases when the PDF or the observed number of
 events is zero.
 
@@ -1076,7 +1233,7 @@ documentation, helpful.
     variables. In two dimensions, with three bins in each of \f$x\f$ and
     \f$y\f$, the global bin is given by \f$3b_y+b_x\f$, where \f$b_{x,y}\f$ is the
     bin number in \f$x\f$ or \f$y\f$ respectively, as shown here:
-
+	
 \f[
 \begin{array}{l|ccc}
     2 & 6 & 7 & 8 \\
@@ -1092,3 +1249,8 @@ documentation, helpful.
 \anchor footnote7 7: That is, `__shared__` for the default CUDA target.
 
 \anchor footnote8 8: This is why `functorConstants[0]` is reserved for that value!
+
+\anchor footnote9 9: It is important to first profile before experimenting with these 
+	cases. Constants used for a single PDF are not appropriate, constants such as mother/daughter radius/mass
+	are very good uses as many PDFs need to look at those values and they never change throughout the duration
+	of a given fit.

@@ -23,8 +23,6 @@ on the GPU
 #include <Eigen/Core>
 #include <Eigen/LU>
 
-#include <goofit/detail/Macros.h>
-
 #define NPOLES 5
 #define NCHANNELS 5
 

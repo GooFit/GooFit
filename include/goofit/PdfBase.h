@@ -4,7 +4,6 @@
 
 #include <goofit/Variable.h>
 #include <goofit/detail/Abort.h>
-#include <goofit/detail/Macros.h>
 
 #include <algorithm>
 #include <map>

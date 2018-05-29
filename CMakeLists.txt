@@ -223,7 +223,6 @@ else()
 endif()
 
 option(GOOFIT_KMATRIX "Activate support for KMatrix (slower CUDA builds)" ${IS_NOT_CUDA})
-option(GOOFIT_SEPARATE_COMP "Enable separate compilation of PDFs" ON)
 
 # This is the common library that holds definitions, etc.
 add_library(GooFit_Common INTERFACE)
@@ -231,10 +230,6 @@ add_library(GooFit::Common ALIAS GooFit_Common)
 
 target_include_directories(GooFit_Common INTERFACE include)
 target_include_directories(GooFit_Common INTERFACE "${PROJECT_BINARY_DIR}/include")
-
-if(GOOFIT_SEPARATE_COMP)
-    target_compile_definitions(GooFit_Common INTERFACE "-DSEPARABLE")
-endif()
 
 target_compile_definitions(GooFit_Common INTERFACE "-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_${GOOFIT_DEVICE}")
 target_compile_definitions(GooFit_Common INTERFACE "-DMCBOOSTER_BACKEND=${GOOFIT_DEVICE}")
@@ -304,11 +299,7 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
             list(APPEND CUDA_NVCC_FLAGS --expt-relaxed-constexpr)
         endif()
 
-        if(GOOFIT_SEPARATE_COMP)
-            set(CUDA_SEPARABLE_COMPILATION ON)
-        else()
-            set(CUDA_SEPARABLE_COMPILATION OFF)
-        endif()
+        set(CUDA_SEPARABLE_COMPILATION ON)
 
         # Only needed to make FindCUDA provide nice flags
         set(CUDA_LINK_LIBRARIES_KEYWORD PUBLIC)
@@ -743,7 +734,6 @@ endif()
 add_feature_info("GOOFIT_MAXPAR=${GOOFIT_MAXPAR}" ON "The number of parameters to statically support")
 
 feature_option(GOOFIT_KMATRIX)
-feature_option(GOOFIT_SEPARATE_COMP)
 feature_option(GOOFIT_TRACE)
 feature_option(GOOFIT_DEBUG)
 feature_option(GOOFIT_MPI)

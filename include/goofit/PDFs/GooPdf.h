@@ -1,9 +1,6 @@
 #pragma once
 
-#include <thrust/functional.h>
-
 #include <goofit/FitControl.h>
-#include <goofit/Log.h>
 #include <goofit/PDFs/MetricTaker.h>
 #include <goofit/PdfBase.h>
 #include <goofit/UnbinnedDataSet.h>
@@ -16,7 +13,6 @@ class TH1D;
 namespace GooFit {
 
 void *getMetricPointer(EvalFunc val);
-//#ifdef SEPARABLE
 
 extern __device__ fptype d_parameters[GOOFIT_MAXPAR];
 extern __device__ fptype d_constants[GOOFIT_MAXPAR];
@@ -30,23 +26,10 @@ extern __constant__ fptype c_daug2Mass;
 extern __constant__ fptype c_daug3Mass;
 extern __constant__ fptype c_meson_radius;
 
-// Holds device-side fit parameters.
-// extern __constant__ fptype cudaArray[];
-
-// Holds functor-specific indices into cudaArray. Also overloaded to hold integer constants (ie parameters that cannot
-// vary.)
-// extern __constant__ unsigned int paramIndices[];
-
-// Holds non-integer constants. Notice that first entry is number of events.
-// extern __constant__ fptype functorConstants[];
-
-// extern __constant__ fptype normalisationFactors[];
-
 extern __device__ void *device_function_table[GOOFIT_MAXFUNC];
 extern void *host_function_table[GOOFIT_MAXFUNC];
 extern unsigned int num_device_functions;
 extern std::map<void *, int> functionAddressToDeviceIndexMap;
-//#endif
 
 // Forward declare
 struct ParameterContainer;
@@ -79,8 +62,8 @@ class GooPdf : public PdfBase {
     /// Just in case you are British and the previous spelling is offensive
     __host__ fptype normalise() const { return normalize(); }
 
-    __host__ virtual fptype integrate(fptype lo, fptype hi) const { return 0; }
-    __host__ bool hasAnalyticIntegral() const override { return false; }
+    __host__ virtual fptype integrate(fptype lo, fptype hi) const;
+    __host__ bool hasAnalyticIntegral() const override;
     __host__ fptype getValue(EvalFunc evalfunc = EvalFunc::Eval);
 
     /// Produce a list of probabilies at points
@@ -109,8 +92,6 @@ class GooPdf : public PdfBase {
   protected:
     __host__ virtual double sumOfNll(int numVars) const;
     std::shared_ptr<MetricTaker> logger;
-
-  private:
 };
 
 } // namespace GooFit

@@ -11,16 +11,13 @@
 #include <goofit/detail/ThrustOverride.h>
 
 #include <thrust/device_vector.h>
+#include <thrust/functional.h>
 #include <thrust/host_vector.h>
 #include <thrust/iterator/constant_iterator.h>
 #include <thrust/iterator/zip_iterator.h>
 #include <thrust/sequence.h>
 #include <thrust/transform.h>
 #include <thrust/transform_reduce.h>
-
-#ifdef ROOT_FOUND
-#include <TH1D.h>
-#endif
 
 #ifdef GOOFIT_MPI
 #include <mpi.h>
@@ -63,11 +60,9 @@ fptype host_timeHist[10000];
 #endif
 
 // Function-pointer related.
-void *host_function_table[GOOFIT_MAXFUNC];
 __device__ void *device_function_table[GOOFIT_MAXFUNC];
 // Not clear why this cannot be __constant__, but it causes crashes to declare it so.
 
-unsigned int num_device_functions = 0;
 std::map<void *, int> functionAddressToDeviceIndexMap;
 
 // For use in debugging memory issues
@@ -146,8 +141,6 @@ __device__ device_metric_ptr ptr_to_BinAvg       = calculateBinAvg;
 __device__ device_metric_ptr ptr_to_BinWithError = calculateBinWithError;
 __device__ device_metric_ptr ptr_to_Chisq        = calculateChisq;
 
-void *host_fcn_ptr = nullptr;
-
 void *getMetricPointer(EvalFunc val) {
     if(val == EvalFunc::Eval) {
         host_fcn_ptr = get_device_symbol_address(ptr_to_Eval);
@@ -219,16 +212,6 @@ __host__ int GooPdf::findFunctionIdx(void *dev_functionPtr) {
     return fIdx;
 }
 
-__host__ void GooPdf::initialize() {
-    if(!fitControl)
-        setFitControl(std::make_shared<UnbinnedNllFit>());
-
-    // MetricTaker must be created after PdfBase initialisation is done.
-    PdfBase::initializeIndices();
-
-    setMetrics();
-}
-
 __host__ void GooPdf::setDebugMask(int mask, bool setSpecific) const {
     cpuDebug = mask;
 #if THRUST_DEVICE_SYSTEM != THRUST_DEVICE_SYSTEM_CUDA
@@ -244,10 +227,6 @@ __host__ void GooPdf::setDebugMask(int mask, bool setSpecific) const {
         MEMCPY_TO_SYMBOL(debugParamIndex, &parameters, sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
 
 #endif
-}
-
-__host__ void GooPdf::setMetrics() {
-    logger = std::make_shared<MetricTaker>(this, getMetricPointer(fitControl->getMetric()));
 }
 
 __host__ double GooPdf::sumOfNll(int numVars) const {
@@ -370,29 +349,6 @@ __host__ std::vector<fptype> GooPdf::evaluateAtPoints(Observable var) {
         setData(old);
 
     return res;
-}
-
-__host__ void GooPdf::scan(Observable var, std::vector<fptype> &values) {
-    fptype step = var.getUpperLimit();
-    step -= var.getLowerLimit();
-    step /= var.getNumBins();
-    values.clear();
-
-    for(fptype v = var.getLowerLimit() + 0.5 * step; v < var.getUpperLimit(); v += step) {
-        var.setValue(v);
-        copyParams();
-        fptype curr = calculateNLL();
-        values.push_back(curr);
-    }
-}
-
-// TODO: is this needed?
-__host__ void GooPdf::setParameterConstantness(bool constant) {
-    std::vector<Variable> pars = getParameters();
-
-    for(Variable &p : pars) {
-        p.setFixed(constant);
-    }
 }
 
 __host__ fptype GooPdf::getValue(EvalFunc evalfunc) {
@@ -621,15 +577,6 @@ __host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
     return values;
 }
 
-__host__ UnbinnedDataSet GooPdf::makeGrid() {
-    std::vector<Observable> ret = getObservables();
-
-    UnbinnedDataSet grid{ret};
-    grid.fillWithGrid();
-
-    return grid;
-}
-
 // still need to add OpenMP/multi-GPU code here
 __host__ void GooPdf::transformGrid(fptype *host_output) {
     generateNormRange();
@@ -657,35 +604,4 @@ __host__ void GooPdf::transformGrid(fptype *host_output) {
         host_output[i] = h_vec[i];
 }
 
-__host__ void GooPdf::setFitControl(std::shared_ptr<FitControl> fc) {
-    for(auto &component : components) {
-        component->setFitControl(fc);
-    }
-
-    fitControl = fc;
-
-    setMetrics();
-
-    setIndices();
-}
-
-#ifdef ROOT_FOUND
-__host__ TH1D *GooPdf::plotToROOT(Observable var, double normFactor, std::string name) {
-    if(name.empty())
-        name = getName() + "_hist";
-
-    auto ret = new TH1D(name.c_str(), "", var.getNumBins(), var.getLowerLimit(), var.getUpperLimit());
-    std::vector<fptype> binValues = evaluateAtPoints(var);
-
-    double pdf_int = 0;
-
-    for(int i = 0; i < var.getNumBins(); ++i) {
-        pdf_int += binValues[i];
-    }
-
-    for(int i = 0; i < var.getNumBins(); ++i)
-        ret->SetBinContent(i + 1, binValues[i] * normFactor / pdf_int / var.getBinSize());
-    return ret;
-}
-#endif
 } // namespace GooFit

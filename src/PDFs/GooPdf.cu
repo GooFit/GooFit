@@ -180,11 +180,10 @@ __host__ void GooPdf::setIndices() {
     GOOFIT_TRACE("GooPdf::setIndices!");
     PdfBase::setIndices();
 
-    GOOFIT_TRACE("host_function_table[{}] = {}", num_device_functions, fitControl->getName());
+    GOOFIT_DEBUG("host_function_table[{}] = {} (fitControl)", num_device_functions, fitControl->getName());
     if(num_device_functions >= GOOFIT_MAXFUNC)
         throw GeneralError("Too many device functions! Set GOOFIT_MAXFUNC to a larger value than {}", GOOFIT_MAXFUNC);
-    host_function_table[num_device_functions] = getMetricPointer(fitControl->getMetric());
-    num_device_functions++;
+    host_function_table[num_device_functions++] = getMetricPointer(fitControl->getMetric());
 
     // copy all the device functions over:
     GOOFIT_TRACE("Copying all host side parameters to device");
@@ -282,8 +281,10 @@ __host__ double GooPdf::sumOfNll(int numVars) const {
 }
 
 __host__ double GooPdf::calculateNLL() const {
-    GOOFIT_DEBUG("GooPdf::calculateNLL calling normalize");
-    normalize();
+    fptype norm = normalize();
+    GOOFIT_TRACE("GooPdf::calculateNLL calling normalize: {} (host_norm should be 1: {})",
+                 norm,
+                 host_normalisations[normalIdx + 1]);
 
     if(host_normalisations[normalIdx + 1] <= 0)
         GooFit::abort(__FILE__, __LINE__, getName() + " non-positive normalisation", this);
@@ -300,8 +301,8 @@ __host__ double GooPdf::calculateNLL() const {
         numVars *= -1;
     }
 
-    GOOFIT_DEBUG("GooPdf::calculateNLL calling sumOfNll");
     fptype ret = sumOfNll(numVars);
+    GOOFIT_TRACE("GooPdf::calculateNLL calling sumOfNll = {}", ret);
 
     if(0.0 == ret)
         GooFit::abort(__FILE__, __LINE__, getName() + " zero NLL", this);

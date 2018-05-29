@@ -52,7 +52,7 @@ __host__ void PdfBase::initializeIndices() {
     // This is to allow index sharing between PDFs - all the PDFs must be constructed
     // before we know what observables exist.
 
-    GOOFIT_DEBUG("Initializing {}", getName());
+    GOOFIT_DEBUG("PdfBase::initializeIndices for \"{}\"", getName());
 
     // We are formulating the four buffers.  We first populate the lists based on what is currently in the appropriate
     // PDF buffers.  NOTE: This is not the actual buffer layout!!!!!!!  We are allocating placeholders for each PDF, but

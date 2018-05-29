@@ -52,7 +52,7 @@ __device__ fptype device_ConvolvePdfs(fptype *evt, ParameterContainer &pc) {
 
     // When the convolution is flattened, the model PDF and resolution PDF are maintained and linked.
     // These increments will skip the model & resolution PDF.  We will need to determine if we need a
-    // skip all chilren also event.  to be determined...
+    // skip all children also event.  To be determined...
     pc.incrementIndex(1, 0, 4, 1, 1);
 
     fptype norm1 = pc.getNormalisation(0);

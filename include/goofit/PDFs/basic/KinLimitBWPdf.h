@@ -6,7 +6,7 @@ namespace GooFit {
 
 /**
 A relativistic Breit-Wigner function modified by a
-factor accounting for limited phase space (\ref footnote1 "1"); for example, in the
+factor accounting for limited phase space (\ref footnote31 "1"); for example, in the
 decay \f$D^{*+}\to D^0\pi^+\f$, the difference between the \f$D^*\f$ and
 \f$D^0\f$ masses is only slightly more than the pion mass. Consequently,
 the distribution of \f$\Delta m = m(D^*) - m(D^0)\f$ is slightly
@@ -45,7 +45,7 @@ the phase space, are by default 1.8645 (the \f$D^0\f$ mass) and 0.13957
 (mass of a charged pion), but can be set with a call to `setMasses`.
 Note that they are constants, not fit parameters.
 
-\anchor footnote1 1: If this seems complicated, spare a thought for the hapless
+\anchor footnote31 1: If this seems complicated, spare a thought for the hapless
 ergrad who had to code the original CPU version.
 
 **/

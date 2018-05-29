@@ -8,7 +8,7 @@ namespace GooFit {
 If the Gaussian is the potato, what is the
 polynomial? Bread? Milk? Nothing exotic, at any rate. The GooFit
 version does have some subtleties, to allow for polynomials over an
-arbitrary number (\ref footnote1 "1") of dimensions:
+arbitrary number (\ref footnote41 "1") of dimensions:
 
 \f[
     P(\vec x; \vec a, \vec x_0, N) =
@@ -54,7 +54,8 @@ highest) degree of the polynomial; the latter two both default to
 zero. In this case the order of the coefficients is from lowest to
 highest power.
 
-\anchor footnote1 1: Although being honest, just supporting the special cases of one and two would likely have sufficed.
+\anchor footnote41 1: Although being honest, just supporting the special cases of one and two would likely have
+sufficed.
 **/
 
 class PolynomialPdf : public GooPdf {

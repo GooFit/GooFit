@@ -33,12 +33,12 @@ foreach(INPUT_STR IN LISTS INPUT_LIST)
     # Footnotes
     # \anchor footnote1 1 (: is in both)
     string(REGEX REPLACE
-           [=[\\anchor footnote([0-9]+) [0-9]+]=]
+           [=[\\anchor footnote[0-9]+ ([0-9]+)]=]
            "[^\\1]"
            INPUT_STR "${INPUT_STR}")
     # (\ref footnote2 "2")
     string(REGEX REPLACE
-           [=[ ?\(\\ref footnote([0-9]+) "[0-9]+"\)]=]
+           [=[ ?\(\\ref footnote[0-9]+ "([0-9]+)"\)]=]
            "[^\\1]"
            INPUT_STR "${INPUT_STR}")
 

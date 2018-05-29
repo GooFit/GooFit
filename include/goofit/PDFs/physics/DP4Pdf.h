@@ -17,9 +17,7 @@ See *.cu file for more details
 
 namespace GooFit {
 
-#ifdef SEPARABLE
 extern __constant__ unsigned int AmpIndices[500];
-#endif
 
 class LSCalculator;
 class AmpCalc;

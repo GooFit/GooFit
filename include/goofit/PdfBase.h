@@ -17,7 +17,7 @@ class TH1D;
 namespace ROOT {
 namespace Minuit2 {
 class FunctionMinimum;
-}
+} // namespace Minuit2
 } // namespace ROOT
 
 namespace GooFit {

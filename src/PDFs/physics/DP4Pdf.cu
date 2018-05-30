@@ -60,8 +60,9 @@ __device__ fptype device_DP(fptype *evt, ParameterContainer &pc) {
     auto evtNum = static_cast<int>(floor(0.5 + evt[id_num]));
     // printf("%i\n",evtNum );
     fpcomplex totalAmp(0, 0);
-    unsigned int cacheToUse = pc.getConstant(5);
-    unsigned int numAmps    = pc.getConstant(8);
+    unsigned int cacheToUse  = pc.getConstant(5);
+    unsigned int numAmps     = pc.getConstant(8);
+    unsigned int total_LS_SF = pc.getConstant(9);
 
     for(int i = 0; i < numAmps; ++i) {
         fpcomplex amp{pc.getParameter(2 * i), pc.getParameter(2 * i + 1)};
@@ -79,7 +80,7 @@ __device__ fptype device_DP(fptype *evt, ParameterContainer &pc) {
     pc.incrementIndex(1, numAmps * 2, 9, 6, 1);
 
     // Skip our line shapes and spin factors...
-    for(int i = 0; i < numAmps * 4 + numAmps * 2; i++)
+    for(int i = 0; i < total_LS_SF; i++)
         pc.incrementIndex();
 
     fptype eff = callFunction(evt, pc);
@@ -116,6 +117,9 @@ __host__ DPPdf::DPPdf(
     int lsidx  = registerConstant(0); //#LS
     int sfidx  = registerConstant(0); //#SF
     int ampidx = registerConstant(0); //#AMP
+    int ttlidx = registerConstant(0); // total line shapes and spin factors used
+
+    int total_lineshapes_spinfactors = 0;
 
     // This is the start of reading in the amplitudes and adding the lineshapes and Spinfactors to this PDF
     // This is done in this way so we don't have multiple copies of one lineshape in one pdf.
@@ -132,6 +136,7 @@ __host__ DPPdf::DPPdf(
         auto LSvec = amplitude->_LS;
 
         for(auto &LSIT : LSvec) {
+            total_lineshapes_spinfactors++;
             auto found = std::find_if(
                 LineShapes.begin(), LineShapes.end(), [&LSIT](const Lineshape *L) { return (*LSIT) == *(L); });
 
@@ -148,6 +153,7 @@ __host__ DPPdf::DPPdf(
         auto SFvec = amplitude->_SF;
 
         for(auto &spinfactor : SFvec) {
+            total_lineshapes_spinfactors++;
             auto found = std::find_if(SpinFactors.begin(), SpinFactors.end(), [&spinfactor](const SpinFactor *S) {
                 return (*spinfactor) == (*S);
             });
@@ -160,6 +166,7 @@ __host__ DPPdf::DPPdf(
     constantsList[lsidx]  = LineShapes.size();
     constantsList[sfidx]  = SpinFactors.size();
     constantsList[ampidx] = components.size();
+    constantsList[ttlidx] = total_lineshapes_spinfactors;
 
     components.push_back(efficiency);
 

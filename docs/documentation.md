@@ -116,7 +116,7 @@ an appropriate GooFit::UnbinnedDataSet to fit to:
 Simple Gaussian fit {#listinggaussfit}
 -------------------
 
-```{.cpp}
+```cpp
 int main (int argc, char** argv) {
 
   // Optional, but highly recommended. Based loosly
@@ -186,7 +186,7 @@ Data sets
 To create a data set with several dimensions, supply a `vector` of
 `Observable`s:
 
-```{.cpp}
+```cpp
 Observable xvar {"xvar", -10, 10};
 Observable yvar {"yvar", -10, 10};
 vector<Observable> vars {xvar, yvar};
@@ -196,7 +196,7 @@ UnbinnedDataSet data(vars);
 In this case, to fill the data set, set the GooFit::Variable values and call
 the `addEvent` method without arguments:
 
-```{.cpp}
+```cpp
 xvar.setValue(3);
 yvar.setValue(-2);
 data.addEvent();
@@ -244,7 +244,7 @@ the errors through the `setBinError` method in the case of the bin error
 fit), you should create a suitable `FitControl` object and send it to
 the top-level GooFit::GooPdf:
 
-```{.cpp}
+```cpp
 Variable decayTime {"decayTime", 100, 0, 10};
 BinnedDataSet* ratioData {&decayTime};
 for (int i = 0; i < 100; ++i) {
@@ -280,7 +280,7 @@ of all, it needs a device-side function with a particular signature:
 Signature of evaluation functions. {#listingfsign}
 -------------------------------------------
 
-```{.cpp}
+```cpp
 __device__ fptype device_Gaussian (fptype* evt,
                                    ParameterContainer &pc);
 ```
@@ -291,14 +291,14 @@ why we organize the code using a table of function pointers - a poor
 man's implementation of the virtual-function lookups built into C++.
 Second, we need a pointer to the evaluation function:
 
-```{.cpp}
+```cpp
 __device__ device_function_ptr ptr_to_Gaussian = device_Gaussian;
 ```
 
 where `device_function_ptr` is defined (using `typedef`) as a pointer to
 a function with the signature shown in the listing [here](@ref listingfsign):
 
-```{.cpp}
+```cpp
 typedef fptype (*device_function_ptr) (fptype*,
                                        ParameterContainer &pc);
 ```
@@ -346,7 +346,7 @@ given PDF.  The `initialize` method will also help the system determine the numb
 An example may be useful at this point. Consider the simple Gaussian PDF
 constructor:
 
-```{.cpp}
+```cpp
 GaussianPdf::GaussianPdf (std::string name,
                           Observable _x,
                           Variable mean,
@@ -386,7 +386,7 @@ the normalisation values are given last, which has one normalisation and the val
 Now we can consider how the device-side code makes use of this ParameterContainer in the following
 device function code for the gaussian PDF:
 
-```{.cpp}
+```cpp
 __device__ fptype device_Gaussian (fptype* evt,
                                    ParameterContainer &pc) {
   fptype x = evt[pc.getObservable(0)];
@@ -414,7 +414,7 @@ but internally it is looking at the parameters[0 + 1] and returning that value, 
 is 3.  
 
 If we look at the expanded constructure:
-```{.cpp}
+```cpp
 GaussianPdf::GaussianPdf (std::string name,
                           Observable _x,
                           Variable mean,
@@ -450,7 +450,7 @@ polynomial, flagging the use of an optional parameter, or anything else
 you can think of as long as the value is converted appropriately.  To register a constant, simply
 call `registerConstant` with the value you wish to use within the device function.
 
-```{.cpp}
+```cpp
 __host__ GaussianPdf::GaussianPdf (std::string n,
                                    Variable* _x,
                                    Variable* mean,
@@ -474,7 +474,7 @@ are passed to the ParameterContainer structure in the order they were added.  If
 any problems arise creating a new PDF, it is best to print out all values that are
 registered and compare those values to the device functions.
 
-```{.cpp}
+```cpp
 __device__ fptype device_Gaussian (fptype* evt,
                                    ParameterContainer &pc) {
   fptype x = evt[pc.getObservable(0)];
@@ -499,7 +499,7 @@ for architects.  With this method, we are going to bypass the ParameterContainer
 suppose I want to store \f$\sqrt{2\pi}\f$ as a constant for use in the Gaussian. Then I would modify the
 constructor thus:
 
-```{.cpp}
+```cpp
 __device__ constant fptype c_sqrt_2pi;
 
 __device__ fptype device_Gaussian (fptype* evt,
@@ -578,7 +578,7 @@ counters to point to the next PDF.
 
 First lets look at the fast method of incrementIndex
 
-```{.cpp}
+```cpp
 void incrementIndex(const int funcs, const int parms, const int cons, const int obs, const int norms);
 ```
 
@@ -592,7 +592,7 @@ Sometimes it is impossible to know totals until runtime; in that situation, it i
 the total number than call the slow version.  As an example, Dalitz PDF showcases both situations. 
 Take a look at the following device function:
 
-```{.cpp}
+```cpp
 __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
     int num_obs = pc.getNumObservables();
     int id_m12  = pc.getObservable(0);
@@ -667,7 +667,7 @@ and look at what happens in these innocent-looking lines:
 
 ## Data transfer and fit invocation {#listingactualfit}
 
-```{.cpp}
+```cpp
 gauss.setData(&data);
 FitManager fitter(&gauss);
 fitter.fit();
@@ -682,7 +682,7 @@ the GPU:
 Internals of the setData method {#listingsetData}
 --------------------------------------------------
 
-```{.cpp}
+```cpp
 setIndices();
 int dimensions = observables.size();
 numEntries = data->getNumEvents();
@@ -791,7 +791,7 @@ function is a call to `transform_reduce`:
 normalization code. {#listingnormalization}
 ------------------------------------------
 
-```{.cpp}
+```cpp
 fptype dummy = 0;
 static plus<fptype> cudaPlus;
 constant_iterator<fptype*> arrayAddress(normRanges);
@@ -869,7 +869,7 @@ each observable, of the global bin:
 Bin-center calculation {#listingbincenter}
 ----------------------
 
-```{.cpp}
+```cpp
 #define MAX_NUM_OBSERVABLES 10
 
 ...
@@ -914,7 +914,7 @@ observable, and set the entries of the locally-owned part of
 `binCenters` accordingly. This event is then sent to the PDF for
 evaluation:
 
-```{.cpp}
+```cpp
 fptype ret = callFunction(events, pc);
 ```
 
@@ -927,7 +927,7 @@ Code to call device-side PDF implementations (some lines broken up for clarity) 
 ----------------------------------
 
 
-```{.cpp}
+```cpp
 __device__ fptype callFunction (fptype* eventAddress,
                                 ParameterContainer &pc) {
   void* rawPtr = device_function_table[functionIdx];
@@ -953,7 +953,7 @@ Goodness-of-fit evaluation {#listingnlleval}
 -----------------
 
 
-```{.cpp}
+```cpp
 transform_reduce(make_zip_iterator(make_tuple(eventIndex,
                                               arrayAddress,
                                               eventSize)),
@@ -974,7 +974,7 @@ different `operator` method is called:
 Main evaluation operator (some lines broken up for clarity) {#listingmaineval}
 ----------------------------------------------------------
 
-```{.cpp}
+```cpp
 __device__ fptype MetricTaker::operator ()
   (thrust::tuple<int, fptype*, int> t) const {
   ParameterContainer pc;
@@ -1026,9 +1026,9 @@ PDF" function. The `metricIndex` member of `MetricTaker` is set by the
 functions:
 
 Metric-taking functions {#listingmetrics}
--------
+-----------------------
 
-```{.cpp}
+```cpp
 __device__ fptype calculateEval (fptype rawPdf,
                                  fptype* evtVal,
                                  fptype norm) {

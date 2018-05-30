@@ -66,11 +66,8 @@ struct Smoother {
         while(pc.funcIdx < funcIdx)
             pc.incrementIndex();
 
-        int numObs       = pc.getNumObservables();
-        int numVars      = pc.getConstant(0);
-        fptype smoothing = pc.getParameter(0);
-        // int histIndex         = RO_CACHE(indices[2]);
-        // brad: need to debug this variable.
+        int numVars         = pc.getConstant(0);
+        fptype smoothing    = pc.getParameter(0);
         int histIndex       = pc.getConstant(1);
         fptype *myHistogram = dev_base_histograms[histIndex];
         fptype centralValue = myHistogram[globalBin];

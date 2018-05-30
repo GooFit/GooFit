@@ -260,7 +260,7 @@ __host__ double GooPdf::sumOfNll(int numVars) const {
 }
 
 __host__ double GooPdf::calculateNLL() const {
-    fptype norm = normalize();
+    [[ maybe_unused, gnu::unused ]] fptype norm = normalize();
     GOOFIT_TRACE("GooPdf::calculateNLL calling normalize: {} (host_norm should be 1: {})",
                  norm,
                  host_normalisations[normalIdx + 1]);
@@ -273,7 +273,7 @@ __host__ double GooPdf::calculateNLL() const {
         d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
     // cudaDeviceSynchronize(); // Ensure normalisation integrals are finished
 
-    int numVars = observablesList.size();
+    auto numVars = (int)observablesList.size();
 
     if(fitControl->binnedFit()) {
         numVars += 2;
@@ -354,10 +354,12 @@ __host__ std::vector<fptype> GooPdf::evaluateAtPoints(Observable var) {
 __host__ fptype GooPdf::getValue(EvalFunc evalfunc) {
     if(evalfunc == EvalFunc::Prob)
         setFitControl(std::make_shared<ProbFit>());
-    if(evalfunc == EvalFunc::Eval)
+    else if(evalfunc == EvalFunc::Eval)
         setFitControl(std::make_shared<EvalFit>());
-    if(evalfunc == EvalFunc::NLL)
+    else if(evalfunc == EvalFunc::NLL)
         setFitControl(std::make_shared<UnbinnedNllFit>());
+    else
+        throw GeneralError("That EvalFunc is not supported");
 
     setIndices();
 
@@ -386,8 +388,8 @@ __host__ fptype GooPdf::getValue(EvalFunc evalfunc) {
                       results.begin(),
                       *logger);
 
-    // if (old != nullptr)
-    //    setData(old);
+    if(old != nullptr)
+        setData(old);
 
     return results[0];
 }

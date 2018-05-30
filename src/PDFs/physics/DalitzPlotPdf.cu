@@ -63,18 +63,13 @@ device_DalitzPlot_calcIntegrals(fptype m12, fptype m13, int res_i, int res_j, Pa
     ParameterContainer ipc = pc;
     while(ipc.funcIdx < res_i)
         ipc.incrementIndex();
-    // int parameter_i       = parIndexFromResIndex_DP(res_i);
-    // unsigned int functn_i = RO_CACHE(indices[parameter_i + 2]);
-    // unsigned int params_i = RO_CACHE(indices[parameter_i + 3]);
 
     ret = getResonanceAmplitude(m12, m13, m23, ipc);
 
     ParameterContainer jpc = pc;
     while(jpc.funcIdx < res_j)
         jpc.incrementIndex();
-    // int parameter_j       = parIndexFromResIndex_DP(res_j);
-    // unsigned int functn_j = RO_CACHE(indices[parameter_j + 2]);
-    // unsigned int params_j = RO_CACHE(indices[parameter_j + 3]);
+
     ret *= conj(getResonanceAmplitude(m12, m13, m23, jpc));
 
     return ret;
@@ -86,16 +81,11 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
     int id_m13  = pc.getObservable(1);
     int id_num  = pc.getObservable(2);
 
-    // fptype motherMass = c_motherMass;//RO_CACHE(pc.constants[pc.constantIdx + 4]);
-    // fptype daug1Mass  = c_daug1Mass;//RO_CACHE(pc.constants[pc.constantIdx + 5]);
-    // fptype daug2Mass  = c_daug2Mass;//RO_CACHE(pc.constants[pc.constantIdx + 6]);
-    // fptype daug3Mass  = c_daug3Mass;//RO_CACHE(pc.constants[pc.constantIdx + 7]);
-
     fptype m12 = evt[id_m12];
     fptype m13 = evt[id_m13];
 
     unsigned int numResonances = pc.getConstant(0);
-    unsigned int cacheToUse    = pc.getConstant(1);
+    // unsigned int cacheToUse    = pc.getConstant(1);
 
     if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass)) {
         pc.incrementIndex(1, numResonances * 2, 2, num_obs, 1);
@@ -116,8 +106,6 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
     fpcomplex totalAmp(0, 0);
 
     for(int i = 0; i < numResonances; ++i) {
-        // int paramIndex              = parIndexFromResIndex_DP(i);
-        // double2 *resPtr = reinterpret_cast<double2*> (cResonances[i]);
         fpcomplex amp = fpcomplex(pc.getParameter(i * 2), pc.getParameter(i * 2 + 1));
 
         // potential performance improvement by
@@ -134,8 +122,6 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
         // fpcomplex me = cResonances[i][evtNum];
         // fpcomplex me (me_real, me_imag);
         fpcomplex me = RO_CACHE(cResonances[i][evtNum]);
-
-        // fpcomplex me (v.x, v.y);
 
         totalAmp += amp * me;
     }
@@ -399,6 +385,7 @@ __host__ fpcomplex DalitzPlotPdf::sumCachedWave(size_t i) const {
 }
 
 __host__ const std::vector<std::complex<fptype>> DalitzPlotPdf::getCachedWave(size_t i) const {
+    // TODO: This calls itself immediatly ?
     auto ret_thrust = getCachedWave(i);
     std::vector<std::complex<fptype>> ret(ret_thrust.size());
     thrust::copy(ret_thrust.begin(), ret_thrust.end(), ret.begin());
@@ -541,7 +528,6 @@ __device__ fpcomplex SpecialResonanceCalculator::operator()(thrust::tuple<int, f
     // Calculates the BW values for a specific resonance.
     fpcomplex ret;
     int evtNum  = thrust::get<0>(t);
-    int evtSize = thrust::get<2>(t);
     fptype *evt = thrust::get<1>(t) + (evtNum * thrust::get<2>(t));
 
     ParameterContainer pc;

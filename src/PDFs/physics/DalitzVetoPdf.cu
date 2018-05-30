@@ -5,9 +5,6 @@
 namespace GooFit {
 
 __device__ fptype device_DalitzVeto(fptype *evt, ParameterContainer &pc) {
-    int numConstants   = pc.getNumConstants();
-    int numObservables = pc.getNumObservables();
-
     int idx1 = pc.getObservable(0);
     int idx2 = pc.getObservable(1);
 

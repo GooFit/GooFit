@@ -663,9 +663,6 @@ __host__ fptype TDDP4::normalize() const {
     // auto AmpMapIt = AmpMap.begin();
 
     for(int i = 0; i < components.size() - 2; ++i) {
-        auto *amp = dynamic_cast<Amplitude *>(components[i]);
-        // std::vector<unsigned int> redoidx((*AmpMapIt).second.first);
-
         bool redo = false;
         for(unsigned int j = 0; j < components.size() - 2; j++) {
             if(!redoIntegral[j])
@@ -676,7 +673,6 @@ __host__ fptype TDDP4::normalize() const {
 
         if(redo) {
             AmpCalcs[i]->setDalitzId(getFunctionIndex());
-            // AmpCalcs[i]->setResonanceId(LineShapes[i]->getFunctionIndex());
 
             thrust::transform(eventIndex,
                               eventIndex + numEntries,

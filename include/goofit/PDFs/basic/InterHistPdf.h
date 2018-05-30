@@ -50,7 +50,6 @@ class InterHistPdf : public GooPdf {
   private:
     thrust::device_vector<fptype> *dev_base_histogram;
     fptype totalEvents;
-    fptype *host_constants;
     int numVars;
 };
 

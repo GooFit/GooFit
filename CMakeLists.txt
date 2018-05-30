@@ -408,7 +408,10 @@ message(STATUS "Using Thrust from ${THRUST_INCLUDE_DIRS}")
 target_include_directories(GooFit_Common SYSTEM INTERFACE "${THRUST_INCLUDE_DIRS}")
 
 if(GOOFIT_DEVICE STREQUAL OMP OR GOOFIT_HOST STREQUAL OMP OR GOOFIT_DEVICE STREQUAL TBB OR GOOFIT_HOST STREQUAL TBB)
-    find_modern_package(OpenMP REQUIRED)
+    find_modern_package(OpenMP)
+    if(NOT TARGET OpenMP::OpenMP_CXX)
+        message(FATAL_ERROR "Requested OpenMP or TBB and OpenMP not found")
+    endif()
 
     target_link_libraries(GooFit_Common INTERFACE OpenMP::OpenMP_CXX)
 endif()

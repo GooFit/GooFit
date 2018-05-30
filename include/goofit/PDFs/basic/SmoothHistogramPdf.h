@@ -40,7 +40,6 @@ class SmoothHistogramPdf : public GooPdf {
     thrust::device_vector<fptype> *dev_base_histogram;
     thrust::device_vector<fptype> *dev_smoothed_histogram;
     fptype totalEvents;
-    fptype *host_constants;
 
     static unsigned int totalHistograms;
 };

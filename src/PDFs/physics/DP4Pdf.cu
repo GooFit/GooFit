@@ -273,7 +273,8 @@ __host__ DPPdf::DPPdf(
     norm_phi        = mcbooster::RealVector_d(nAcc);
 
     mcbooster::VariableSet_d VarSet(5);
-    VarSet[0] = &norm_M12, VarSet[1] = &norm_M34;
+    VarSet[0] = &norm_M12;
+    VarSet[1] = &norm_M34;
     VarSet[2] = &norm_CosTheta12;
     VarSet[3] = &norm_CosTheta34;
     VarSet[4] = &norm_phi;
@@ -560,7 +561,8 @@ __host__
     auto SigGen_phi_d        = mcbooster::RealVector_d(numEvents);
 
     mcbooster::VariableSet_d VarSet_d(5);
-    VarSet_d[0] = &SigGen_M12_d, VarSet_d[1] = &SigGen_M34_d;
+    VarSet_d[0] = &SigGen_M12_d;
+    VarSet_d[1] = &SigGen_M34_d;
     VarSet_d[2] = &SigGen_CosTheta12_d;
     VarSet_d[3] = &SigGen_CosTheta34_d;
     VarSet_d[4] = &SigGen_phi_d;
@@ -586,7 +588,8 @@ __host__
     auto SigGen_phi_h        = new mcbooster::RealVector_h(SigGen_phi_d);
 
     mcbooster::VariableSet_h VarSet(5);
-    VarSet[0] = SigGen_M12_h, VarSet[1] = SigGen_M34_h;
+    VarSet[0] = SigGen_M12_h;
+    VarSet[1] = SigGen_M34_h;
     VarSet[2] = SigGen_CosTheta12_h;
     VarSet[3] = SigGen_CosTheta34_h;
     VarSet[4] = SigGen_phi_h;
@@ -660,19 +663,11 @@ __device__ fpcomplex SFCalculator::operator()(thrust::tuple<int, fptype *, int> 
     int evtNum  = thrust::get<0>(t);
     fptype *evt = thrust::get<1>(t) + (evtNum * thrust::get<2>(t));
 
-    // unsigned int *indices = paramIndices + _parameters; // Jump to DALITZPLOT position within parameters array
-    // int parameter_i       = 6 + (2 * indices[5]) + (indices[3] * 2)
-    //                  + (_spinfactor_i * 2); // Find position of this resonance relative to DALITZPLOT start
-    // unsigned int functn_i = indices[parameter_i];
-    // unsigned int params_i = indices[parameter_i + 1];
-
     ParameterContainer pc;
 
     // Increment to DP
     while(pc.funcIdx < dalitzFuncId)
         pc.incrementIndex();
-
-    int numObs = pc.getNumObservables();
 
     int id_m12   = pc.getObservable(0);
     int id_m34   = pc.getObservable(1);
@@ -715,14 +710,6 @@ NormSpinCalculator::NormSpinCalculator() = default;
 __device__ fptype NormSpinCalculator::operator()(
     thrust::tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t)
     const {
-    // unsigned int *indices = paramIndices + _parameters; // Jump to DALITZPLOT position within parameters array
-    // unsigned int numLS    = indices[3];
-    // unsigned int numAmps  = indices[5];
-    // int parameter_i       = 6 + (2 * numAmps) + (numLS * 2)
-    //                  + (_spinfactor_i * 2); // Find position of this resonance relative to DALITZPLOT start
-    // unsigned int functn_i = indices[parameter_i];
-    // unsigned int params_i = indices[parameter_i + 1];
-
     fptype m12   = (thrust::get<0>(t));
     fptype m34   = (thrust::get<1>(t));
     fptype cos12 = (thrust::get<2>(t));
@@ -740,8 +727,6 @@ __device__ fptype NormSpinCalculator::operator()(
     fptype m3 = pc.getConstant(3);
     fptype m4 = pc.getConstant(4);
 
-    int numObs = pc.getNumObservables();
-
     fptype vecs[16];
     get4Vecs(vecs, m12, m34, cos12, cos34, phi, M, m1, m2, m3, m4);
 
@@ -758,7 +743,6 @@ __device__ fptype NormSpinCalculator::operator()(
 
     // printf("NormSF evt:%.5g, %.5g, %.5g, %.5g, %.5g\n", m12, m34, cos12, cos34, phi);
     // printf("NormSF %i, %.5g\n",_spinfactor_i, sf );
-    // THREAD_SYNCH
     return sf;
 }
 
@@ -776,8 +760,6 @@ __device__ fpcomplex LSCalculator::operator()(thrust::tuple<int, fptype *, int> 
     // Increment to DP
     while(pc.funcIdx < dalitzFuncId)
         pc.incrementIndex();
-
-    int numObs = pc.getNumObservables();
 
     int id_m12   = pc.getObservable(0);
     int id_m34   = pc.getObservable(1);
@@ -876,7 +858,6 @@ __device__ fpcomplex NormLSCalculator::operator()(
 
     // printf("m12 %f \n", m12); // %f %f %f (%f, %f)\n ", m12, m13, m23, ret.real, ret.imag);
     // printf("#Parameters %i, #LS %i, #SF %i, #AMP %i \n", indices[0], indices[3], indices[4], indices[5]);
-    // THREAD_SYNCH
     return ret;
 }
 

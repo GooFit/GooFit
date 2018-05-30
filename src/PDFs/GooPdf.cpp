@@ -23,6 +23,14 @@ __host__ void GooPdf::setMetrics() {
 }
 
 __host__ void GooPdf::initialize() {
+    GOOFIT_DEBUG("{} uses pc.incrementIndex({}, {}, {}, {}, {})",
+                 reflex_name_,
+                 "1?",
+                 parametersList.size(),
+                 constantsList.size(),
+                 observablesList.size(),
+                 "1?");
+
     if(!fitControl)
         setFitControl(std::make_shared<UnbinnedNllFit>());
 

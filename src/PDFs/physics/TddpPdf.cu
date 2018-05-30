@@ -120,11 +120,11 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
     fpcomplex sumRateAB(0, 0);
     fpcomplex sumRateBB(0, 0);
 
-    unsigned int cacheToUse = pc.getConstant(1);
-    fptype mistag           = pc.getConstant(2);
+    // unsigned int cacheToUse = pc.getConstant(1);
+    fptype mistag = pc.getConstant(2);
 
     for(int i = 0; i < numResonances; ++i) {
-        int paramIndex = parIndexFromResIndex(i);
+        // int paramIndex = parIndexFromResIndex(i);
         fpcomplex amp{pc.getParameter(i * 2 + 3), pc.getParameter(i * 2 + 4)};
 
         // fpcomplex matrixelement(thrust::get<0>(cWaves[cacheToUse][evtNum*numResonances + i]),

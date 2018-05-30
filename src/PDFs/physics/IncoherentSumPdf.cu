@@ -8,9 +8,10 @@
 
 namespace GooFit {
 
-const int resonanceOffset_incoherent = 4; // Offset of the first resonance into the parameter index array.
+// Offset of the first resonance into the parameter index array.
 // Notice that this is different from the TddpPdf case because there's no time information.
 // In particular the offset consists of nP, constant index, number of resonances, and cache index.
+const int resonanceOffset_incoherent = 4;
 
 __device__ fpcomplex *cResonanceValues[10];
 
@@ -20,7 +21,6 @@ __device__ inline int parIndexFromResIndex_incoherent(int resIndex) {
 
 __device__ fptype device_incoherent(fptype *evt, ParameterContainer &pc) {
     // Calculates the incoherent sum over the resonances.
-    int numObs  = pc.getNumObservables();
     int evtId   = pc.getObservable(2);
     auto evtNum = static_cast<int>(floor(0.5 + evt[evtId]));
 
@@ -29,8 +29,6 @@ __device__ fptype device_incoherent(fptype *evt, ParameterContainer &pc) {
     unsigned int cacheToUse    = pc.getConstant(5);
 
     for(int i = 0; i < numResonances; ++i) {
-        // int paramIndex   = parIndexFromResIndex_incoherent(i);
-        // fptype amplitude = p[indices[paramIndex + 0]];
         fptype amplitude = pc.getParameter(i);
 
         fpcomplex matrixelement = cResonanceValues[cacheToUse][evtNum * numResonances + i];

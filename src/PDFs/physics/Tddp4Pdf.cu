@@ -106,6 +106,7 @@ __device__ fptype device_TDDP4(fptype *evt, ParameterContainer &pc) {
 
     unsigned int cacheToUse = pc.getConstant(6);
     unsigned int numAmps    = pc.getConstant(9);
+    unsigned int totalSF_LS = pc.getConstant(11);
 
     fpcomplex AmpA(0, 0);
     fpcomplex AmpB(0, 0);
@@ -166,7 +167,8 @@ __device__ fptype device_TDDP4(fptype *evt, ParameterContainer &pc) {
     // increment Index
     pc.incrementIndex();
 
-    for(int i = 0; i < numAmps * 4 + numAmps * 2; i++)
+    // increment over all our lineshapes and spinfactors to get to the resolution function
+    for(int i = 0; i < totalSF_LS; i++)
         pc.incrementIndex();
 
     // int effFunctionIdx = 12 + 2 * indices[3] + 2 * indices[4] + 2 * indices[6];
@@ -231,6 +233,7 @@ __host__ TDDP4::TDDP4(std::string n,
     int ampidx = registerConstant(0); //# AMP
     int coeffidx
         = registerConstant(0); // Number of coefficients, because its not necessary to be equal to number of Amps.
+    int ttlidx = registerConstant(0);
 
     // This is the start of reading in the amplitudes and adding the lineshapes and Spinfactors to this PDF
     // This is done in this way so we don't have multiple copies of one lineshape in one pdf.
@@ -243,6 +246,8 @@ __host__ TDDP4::TDDP4(std::string n,
     std::vector<unsigned int> nPermVec;
     std::vector<unsigned int> amp_idx;
     std::vector<unsigned int> amp_idx_start;
+
+    unsigned int total_lineshapes_spinfactors = 0;
 
     for(auto &i : AmpsA) {
         AmpMap[i->_uniqueDecayStr] = std::make_pair(std::vector<unsigned int>(0), std::vector<unsigned int>(0));
@@ -258,6 +263,7 @@ __host__ TDDP4::TDDP4(std::string n,
         auto LSvec = i->_LS;
 
         for(auto &LSIT : LSvec) {
+            total_lineshapes_spinfactors++;
             auto found = std::find_if(
                 LineShapes.begin(), LineShapes.end(), [&LSIT](const Lineshape *L) { return (*LSIT) == (*L); });
 
@@ -272,6 +278,7 @@ __host__ TDDP4::TDDP4(std::string n,
         auto SFvec = i->_SF;
 
         for(auto &SFIT : SFvec) {
+            total_lineshapes_spinfactors++;
             auto found = std::find_if(
                 SpinFactors.begin(), SpinFactors.end(), [&SFIT](const SpinFactor *S) { return (*SFIT) == (*S); });
 
@@ -326,6 +333,7 @@ __host__ TDDP4::TDDP4(std::string n,
         auto LSvec = i->_LS;
 
         for(auto &LSIT : LSvec) {
+            total_lineshapes_spinfactors++;
             auto found = std::find_if(
                 LineShapes.begin(), LineShapes.end(), [&LSIT](const Lineshape *L) { return (*LSIT) == (*L); });
 
@@ -340,6 +348,7 @@ __host__ TDDP4::TDDP4(std::string n,
         auto SFvec = i->_SF;
 
         for(auto &SFIT : SFvec) {
+            total_lineshapes_spinfactors++;
             auto found = std::find_if(
                 SpinFactors.begin(), SpinFactors.end(), [&SFIT](const SpinFactor *S) { return (*SFIT) == (*S); });
 
@@ -368,6 +377,7 @@ __host__ TDDP4::TDDP4(std::string n,
     constantsList[sfidx]    = SpinFactors.size();
     constantsList[ampidx]   = components.size();
     constantsList[coeffidx] = coeff_counter;
+    constantsList[ttlidx]   = total_lineshapes_spinfactors;
 
     components.push_back(resolution);
     components.push_back(efficiency);

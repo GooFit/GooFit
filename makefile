@@ -1,4 +1,4 @@
-.PHONY: default auto xcode omp cuda warning mpi docs cmake base
+.PHONY: default auto xcode omp cuda info mpi docs cmake base
 	
 UNAME := $(shell uname)
 CMAKE_VER := 3.11.2
@@ -23,8 +23,7 @@ else
     CTEST_EXE := ctest
 endif
 
-default: warning
-	@echo "Use make auto instead of running make by itself"
+default: info 
 
 base:
 	@echo "Using: $(CMAKE_EXE)"
@@ -58,9 +57,9 @@ clang-format:
 ifeq ($(UNAME), Darwin)
 
 xcode: base
-	@mkdir -p xbuild
-	cd xbuild && cmake .. -GXcode
-	open xbuild/GOOFIT.xcodeproj
+	@mkdir -p build-xcode
+	cd build-xcode && cmake .. -GXcode
+	open build-xcode/GOOFIT.xcodeproj
 
 cmake:
 	@echo "CMake download on macOS not supported. Please use:"
@@ -82,17 +81,26 @@ $(CMAKE_DIR)/bin/cmake: | $(CMAKE_DIR)
 
 endif
 
-warning:
-	@echo "This project builds with CMake 3.4+."
-	@echo "This makefile is just a shortcut to prepare your build with CMake."
-	@echo "This is roughly equivelent to the standard CMake procedure::"
+info:
+	@echo "Shortcuts for the laziest of GooUsers:"
+	@echo "  auto  - Create a  best-available build in the build       directory"
+	@echo "  omp   - Create an     OpenMP     build in the build-omp   directory"
+	@echo "  cuda  - Create a       CUDA      build in the build-cuda  directory"
+	@echo "  cuda  - Create a        MPI      build in the build-mpi   directory"
+	@echo "  xcode - Create an  Xcode (macOS) build in the build-xcode directory"
+	@echo ""
+	@echo "Other functionalities:"
+	@echo "  cmake        - download CMake (on Linux systems)"
+	@echo "  docs         - Build the documentation in docs/html/index.html"
+	@echo "  clang-format - Run clang-format on the source code (modify inplace)"
+	@echo ""
+	@echo "Using the cmake target will cause subsequent make commands to use the"
+	@echo "local version of CMake instead of the system default."
+	@echo ""
+	@echo "The recommended way to build this package is direcclty with CMake 3.4+"
+	@echo "Using 'make auto' is equivelent to the standard CMake procedure:"
 	@echo "  mkdir build"
 	@echo "  cd build"
 	@echo "  cmake .."
 	@echo "  make"
 	@echo ""
-	@echo "You can use 'make omp cuda' to setup or rebuild the build-cuda and build-omp directories."
-	@echo "On a Mac, you can also prepare the Xcode build with make xcode"
-	@echo "You can also use make docs, make mpi, and make clang-format"
-	@echo ""
-

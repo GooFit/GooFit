@@ -403,9 +403,12 @@ find_package(Thrust 1.8 QUIET)
 if(NOT THRUST_FOUND)
     set(THRUST_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/extern/thrust")
     find_package(Thrust 1.8 REQUIRED)
+
+    #Force thrust to include first.
+    set(CUDA_NVCC_FLAGS "-I${THRUST_INCLUDE_DIR} ${CUDA_NVCC_FLAGS}")
 endif()
-message(STATUS "Using Thrust from ${THRUST_INCLUDE_DIRS}")
-target_include_directories(GooFit_Common SYSTEM INTERFACE "${THRUST_INCLUDE_DIRS}")
+message(STATUS "Using Thrust from ${THRUST_INCLUDE_DIR}")
+target_include_directories(GooFit_Common SYSTEM INTERFACE "${THRUST_INCLUDE_DIR}")
 
 if(GOOFIT_DEVICE STREQUAL OMP OR GOOFIT_HOST STREQUAL OMP OR GOOFIT_DEVICE STREQUAL TBB OR GOOFIT_HOST STREQUAL TBB)
     find_modern_package(OpenMP)

@@ -3,7 +3,7 @@ This example is to perform a Dalitz-plot for $D^0\to \pi^+\pi^-\pi^0$.
 
 ## Setup details:
 
-All of the data files are downloaded automatically by the CMake build system. 
+All of the data files are downloaded automatically by the CMake build system.
 
 
 ## Running the fits

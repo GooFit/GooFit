@@ -4,7 +4,7 @@
 ## Build system
 
 The build system underwent a major upgrade in the move to CMake.  You should remove your old Makefiles and use the new `CMakeFiles.txt` files provided in examples - this should require
-writing two lines of code instead of the 50 or so previously needed. 
+writing two lines of code instead of the 50 or so previously needed.
 
 An example of a `CMakeLists.txt` file:
 

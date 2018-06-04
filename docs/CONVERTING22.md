@@ -48,17 +48,17 @@ __device__ fptype device_Gaussian(fptype *evt, ParameterContainer &pc) {
 }
 ```
 
-The observable index is fetched, then the two parameters are accessed.  Since we know how much to increment our container, we can increment by 1 function, 2 parameters, 0, constants, 1 observable, and 1 normalization.  
+The observable index is fetched, then the two parameters are accessed.  Since we know how much to increment our container, we can increment by 1 function, 2 parameters, 0, constants, 1 observable, and 1 normalization.
 
 
 ## Advanced PDFs
 
 The above example PDF was quite simple, and didn't have anything complicated going on.  This section will discuss some of the problems and solutions encountered with integrating the DalitzPlotPdf.  This section will build off the previous section.
 
-The first problem encountered is with calculating and saving the cache.  Two operators work on the data, and store these values separately.  This is the Calculator and Integrator functions.  Since a resonance needs to inherit from a GooPdf because a resonance also contains two parameters, these 16 resonances need to exist within the PDF creation system.  When the Calculator and Integrator functions are called, first we need to seek to the appropriate dalitz PDF, then we need to seek to the appropriate resonance(s) functions to be called.  
+The first problem encountered is with calculating and saving the cache.  Two operators work on the data, and store these values separately.  This is the Calculator and Integrator functions.  Since a resonance needs to inherit from a GooPdf because a resonance also contains two parameters, these 16 resonances need to exist within the PDF creation system.  When the Calculator and Integrator functions are called, first we need to seek to the appropriate dalitz PDF, then we need to seek to the appropriate resonance(s) functions to be called.
 
 Under `device_dalitz`, the function needs to increment, skip over the resonance functions to be able to call the efficiency function.  Also, conditional code should be removed from this particular PDF for branching and for skipping.  need to be skipped in order to get to the efficiency function.  The c_motherMass, c_daug1Mass, etc. were moved to constant memory as an optimization.  Duplicating these at least 17x will be far too inefficient.
 
-One potential optimization is to pre-compute the 'resonance jump' such that we avoid using the `incrementIndex();` function.  
+One potential optimization is to pre-compute the 'resonance jump' such that we avoid using the `incrementIndex();` function.
 
 Another issue arises if the developer needs to track the `end of the efficiency function` or track the `index to start the efficiency function`.  The developer will need to overload the `recursiveSetIndices` to save these ID's, and utilize them appropriately.  In the case of the DalitzPlot, we need to increment our resonance functions, save our function ID to begin efficiency, then call recursiveSetIndices on the efficiency function.

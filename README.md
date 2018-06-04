@@ -33,13 +33,13 @@ doing maximum-likelihood fits with a familiar syntax.
 </p></details>
 
 <details><summary>If using OpenMP: (click to expand)</summary><p>
-  
+
 * A compiler supporting OpenMP and C++11 (GCC 4.8+, Clang, and Intel 17 tested, GCC 4.7 not supported)
 * Note that TBB is also available as a backend, but it still requires OpenMP to be present.
 * On macOS, this backend requires `brew install libomp` or a custom compiler
-  
+
 </p></details>
-  
+
 
 <details><summary>If using CPP: (click to expand)</summary><p>
 
@@ -262,7 +262,7 @@ A few notes about using the MPI version:
 
 <details><summary>Configuring group size and grain size: (click to expand)</summary><p>
 
-This advanced option is for GPU devices only. The script `scripts/find_optimal.py` will search a programmable group and grain space in order to find the optimal configuration for the particular PDFs.  This should be run after an example has been developed and tested.  Please look at `scripts/find_optimal.py` to see how to formulate a particular script.  Depending on the searchable space, this can take hours to days to compute.  
+This advanced option is for GPU devices only. The script `scripts/find_optimal.py` will search a programmable group and grain space in order to find the optimal configuration for the particular PDFs.  This should be run after an example has been developed and tested.  Please look at `scripts/find_optimal.py` to see how to formulate a particular script.  Depending on the searchable space, this can take hours to days to compute.
 The script will loop over the space and configure each parameter, then recompile and run the example a number of times.  A spreadsheet is calculated to help notice patterns, and the fastest version is printed to the user.
 
 </p></details>
@@ -271,7 +271,7 @@ The script will loop over the space and configure each parameter, then recompile
 ## Acknowledgement
 
 GooFit's development is supported by the National Science Foundation under grant number [1414736]
-and was developed under grant number [1005530]. 
+and was developed under grant number [1005530].
 Any opinions, findings, and conclusions or recommendations expressed in this material are those of the developers
 and do not necessarily reflect the views of the National Science Foundation.
 In addition, we thank the nVidia GPU Grant Program for donating hardware used in developing this framework.
@@ -296,5 +296,5 @@ In addition, we thank the nVidia GPU Grant Program for donating hardware used in
 [Tutorials]:         https://goofit.gitlab.io/Goo2Torial
 [pypi-status]:       https://img.shields.io/pypi/v/goofit.svg
 [pypi-link]:         https://pypi.python.org/pypi/goofit/
-[releases-badge]:    https://img.shields.io/github/release/GooFit/GooFit.svg 
+[releases-badge]:    https://img.shields.io/github/release/GooFit/GooFit.svg
 [releases-link]:     https://github.com/GooFit/GooFit/releases

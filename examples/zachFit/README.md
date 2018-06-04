@@ -28,11 +28,11 @@ Fit options can be viewed by using the `-h` option: `./zachFit -h`. The `-p` opt
 
 ## Data
 
-The data are stored in the GitHub releases mechinism and are available [here](https://github.com/GooFit/GooFit/releases/download/v1.0.0/dataFiles_zachFit.tgz). The data were recorded by the BaBar detector and correspond to approximately 477 inverse femtobarns at and 40 below the Upsilon(4S) resonance. 
+The data are stored in the GitHub releases mechinism and are available [here](https://github.com/GooFit/GooFit/releases/download/v1.0.0/dataFiles_zachFit.tgz). The data were recorded by the BaBar detector and correspond to approximately 477 inverse femtobarns at and 40 below the Upsilon(4S) resonance.
 
-The `.dat` files are delta M values for reconstructed `D*+ -> D0 pi+` events after selection criteria for the datasets that correspond to their filenames. The `D0` is reconstructed in the `D0 -> K- pi+` and `D0 -> K- pi+ pi- pi+` decay channels. Delta M is defined as the mass difference between the `D*+` and `D0` candidates. 
+The `.dat` files are delta M values for reconstructed `D*+ -> D0 pi+` events after selection criteria for the datasets that correspond to their filenames. The `D0` is reconstructed in the `D0 -> K- pi+` and `D0 -> K- pi+ pi- pi+` decay channels. Delta M is defined as the mass difference between the `D*+` and `D0` candidates.
 
-Each dataset has two files: a resolution sample of MC simulated events (using a Geant4 simulation) and the real data events. The figures were created by the PlotOriginalData notebook file (also provided in pdf form) using the `.dat` files and are named according to the corresponding figures in the PRD publication. 
+Each dataset has two files: a resolution sample of MC simulated events (using a Geant4 simulation) and the real data events. The figures were created by the PlotOriginalData notebook file (also provided in pdf form) using the `.dat` files and are named according to the corresponding figures in the PRD publication.
 
 
 ## Fit stages

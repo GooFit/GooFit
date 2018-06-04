@@ -17,7 +17,7 @@ void *getMetricPointer(EvalFunc val);
 extern __device__ fptype d_parameters[GOOFIT_MAXPAR];
 extern __device__ fptype d_constants[GOOFIT_MAXPAR];
 extern __device__ fptype d_observables[GOOFIT_MAXPAR];
-extern __device__ fptype d_normalisations[GOOFIT_MAXPAR];
+extern __device__ fptype d_normalizations[GOOFIT_MAXPAR];
 
 // a couple constants
 extern __constant__ fptype c_motherMass;

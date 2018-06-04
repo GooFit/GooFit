@@ -218,9 +218,9 @@ __host__ fptype SmoothHistogramPdf::normalize() const {
         ret *= binSize; // Bin size cached by constructor.
     }
 
-    // if (cpuDebug & 1) std::cout << "Normalising " << getName() << " " << host_params[host_indices[parameters + 1]] <<
+    // if (cpuDebug & 1) std::cout << "Normalizing " << getName() << " " << host_params[host_indices[parameters + 1]] <<
     // " " << ret << std::endl;
-    host_normalisations[normalIdx + 1] = 1.0 / ret;
+    host_normalizations[normalIdx + 1] = 1.0 / ret;
     return ret;
 }
 } // namespace GooFit

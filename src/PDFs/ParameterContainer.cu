@@ -6,13 +6,13 @@ __device__ __host__ ParameterContainer::ParameterContainer()
     : parameters(d_parameters)
     , constants(d_constants)
     , observables(d_observables)
-    , normalisations(d_normalisations) {}
+    , normalizations(d_normalizations) {}
 
 __device__ __host__ ParameterContainer::ParameterContainer(const ParameterContainer &pc)
     : parameters(d_parameters)
     , constants(d_constants)
     , observables(d_observables)
-    , normalisations(d_normalisations) {
+    , normalizations(d_normalizations) {
     parameterIdx  = pc.parameterIdx;
     constantIdx   = pc.constantIdx;
     observableIdx = pc.observableIdx;
@@ -27,7 +27,7 @@ ParameterContainer::incrementIndex(const int funcs, const int params, const int 
     if(funcs != 1)
         throw GeneralError("Haven't got a clue on how to procede with incrementIndex checking, sorry");
     if(parameters[parameterIdx] != params || constants[constantIdx] != cons || observables[observableIdx] != obs
-       || normalisations[normalIdx] != norms)
+       || normalizations[normalIdx] != norms)
         throw GeneralError(
             "Wrong parameters given to incrementIndex(1, {}, {}, {}, {}), should have been (1, {}, {}, {}, {})",
             params,
@@ -37,7 +37,7 @@ ParameterContainer::incrementIndex(const int funcs, const int params, const int 
             parameters[parameterIdx],
             constants[constantIdx],
             observables[observableIdx],
-            normalisations[normalIdx]);
+            normalizations[normalIdx]);
 #endif
 
     funcIdx += funcs;
@@ -53,7 +53,7 @@ __device__ void ParameterContainer::incrementIndex() {
     int np = parameters[parameterIdx];
     int nc = constants[constantIdx];
     int no = observables[observableIdx];
-    int nn = normalisations[normalIdx];
+    int nn = normalizations[normalIdx];
 
     parameterIdx += np + 1;
     constantIdx += nc + 1;

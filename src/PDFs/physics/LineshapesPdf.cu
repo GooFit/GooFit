@@ -38,7 +38,7 @@ namespace GooFit {
 
 // Lineshape base
 
-// Form factors as in pdg http://pdg.lbl.gov/2012/reviews/rpp2012-rev-dalitz-analysis-formalism.pdf
+// Form factors as in pdg http://pdg.lbl.gov/2012/reviews/rpp2012-rev-dalitz-analysis-formalizm.pdf
 __device__ fptype BL_PRIME(fptype z2, fptype z02, int L) {
     if(0 == L)
         return 1.0;

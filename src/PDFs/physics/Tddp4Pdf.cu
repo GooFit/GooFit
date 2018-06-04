@@ -566,12 +566,12 @@ __host__ fptype TDDP4::normalize() const {
     if(cachedResSF == nullptr)
         throw GeneralError("You must call dp.setDataSize(currData.getNumEvents(), N) first!");
     // fprintf(stderr, "start normalize\n");
-    recursiveSetNormalisation(1); // Not going to normalize efficiency,
-    // so set normalisation factor to 1 so it doesn't get multiplied by zero.
+    recursiveSetNormalization(1); // Not going to normalize efficiency,
+    // so set normalization factor to 1 so it doesn't get multiplied by zero.
     // Copy at this time to ensure that the SpecialResonanceCalculators, which need the efficiency,
     // don't get zeroes through multiplying by the normFactor.
     MEMCPY_TO_SYMBOL(
-        d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+        d_normalizations, host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
     // check if MINUIT changed any parameters and if so remember that so we know
     // we need to recalculate that lineshape and every amp, that uses that lineshape
@@ -592,7 +592,7 @@ __host__ fptype TDDP4::normalize() const {
     thrust::constant_iterator<int> eventSize(totalEventSize);
     thrust::counting_iterator<int> eventIndex(0);
 
-    // Calculate spinfactors only once for normalisation events and real events
+    // Calculate spinfactors only once for normalization events and real events
     // strided_range is a template implemented in DalitsPlotHelpers.hh
     // it basically goes through the array by increasing the pointer by a certain amount instead of just one step.
     if(!SpinsCalculated) {
@@ -685,7 +685,7 @@ __host__ fptype TDDP4::normalize() const {
 
     // fprintf(stderr, "normalize after Amps\n");
 
-    // lineshape value calculation for the normalisation, also recalculated every time parameter change
+    // lineshape value calculation for the normalization, also recalculated every time parameter change
     if(!generation_no_norm) {
         for(int i = 0; i < LineShapes.size(); ++i) {
             if(!redoIntegral[i])
@@ -739,7 +739,7 @@ __host__ fptype TDDP4::normalize() const {
         fptype xmixing = parametersList[1];
         fptype ymixing = parametersList[2];
 
-        ret = resolution->normalisation(thrust::get<0>(sumIntegral),
+        ret = resolution->normalization(thrust::get<0>(sumIntegral),
                                         thrust::get<1>(sumIntegral),
                                         thrust::get<2>(sumIntegral),
                                         thrust::get<3>(sumIntegral),
@@ -747,11 +747,11 @@ __host__ fptype TDDP4::normalize() const {
                                         xmixing,
                                         ymixing);
 
-        // MCevents is the number of normalisation events.
+        // MCevents is the number of normalization events.
         ret /= MCevents;
     }
 
-    host_normalisations[normalIdx + 1] = 1.0 / ret;
+    host_normalizations[normalIdx + 1] = 1.0 / ret;
     // printf("end of normalize %f\n", ret);
     return ret;
 }
@@ -870,7 +870,7 @@ __host__
     normalize();
     setForceIntegrals();
     MEMCPY_TO_SYMBOL(
-        d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+        d_normalizations, host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
     thrust::device_vector<fptype> weights(nAcc);
     thrust::constant_iterator<int> eventSize(8);

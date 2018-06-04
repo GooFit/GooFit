@@ -94,7 +94,7 @@ int main(int argc, char **argv) {
 
     // Independent variable.
     Observable xvar("xvar", -100, 100);
-    xvar.setNumBins(1000); // For such a large range, want more bins for better accuracy in normalisation.
+    xvar.setNumBins(1000); // For such a large range, want more bins for better accuracy in normalization.
 
     // Data sets for the three fits.
     UnbinnedDataSet landdata(xvar);

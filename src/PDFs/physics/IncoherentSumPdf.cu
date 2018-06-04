@@ -144,12 +144,12 @@ __host__ void IncoherentSumPdf::setDataSize(unsigned int dataSize, unsigned int 
 }
 
 __host__ fptype IncoherentSumPdf::normalize() const {
-    recursiveSetNormalisation(1); // Not going to normalize efficiency,
-    // so set normalisation factor to 1 so it doesn't get multiplied by zero.
+    recursiveSetNormalization(1); // Not going to normalize efficiency,
+    // so set normalization factor to 1 so it doesn't get multiplied by zero.
     // Copy at this time to ensure that the SpecialCalculators, which need the efficiency,
     // don't get zeroes through multiplying by the normFactor.
     MEMCPY_TO_SYMBOL(
-        d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+        d_normalizations, host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
     int totalBins = _m12.getNumBins() * _m13.getNumBins();
 
@@ -235,7 +235,7 @@ __host__ fptype IncoherentSumPdf::normalize() const {
     binSizeFactor *= _m13.getBinSize();
     ret *= binSizeFactor;
 
-    host_normalisations[normalIdx + 1] = 1.0 / ret;
+    host_normalizations[normalIdx + 1] = 1.0 / ret;
     return ret;
 }
 

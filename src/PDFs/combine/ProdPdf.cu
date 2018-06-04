@@ -15,7 +15,7 @@ __device__ fptype device_ProdPdfs(fptype *evt, ParameterContainer &pc) {
     pc.incrementIndex(1, 0, numCons, numObs, 1);
     // pc.incrementIndex();
     for(int i = 0; i < numComps; i++) {
-        fptype norm = pc.getNormalisation(0);
+        fptype norm = pc.getNormalization(0);
         fptype curr = callFunction(evt, pc);
 
         curr *= norm;
@@ -60,7 +60,7 @@ ProdPdf::ProdPdf(std::string n, std::vector<PdfBase *> comps)
         observableCheck = p->getObservables();
     }
 
-    if(varOverlaps) { // Check for components forcing separate normalisation
+    if(varOverlaps) { // Check for components forcing separate normalization
         for(PdfBase *p : comps) {
             if(p->getSpecialMask() & PdfBase::ForceSeparateNorm)
                 varOverlaps = false;
@@ -76,17 +76,17 @@ __host__ fptype ProdPdf::normalize() const {
     if(varOverlaps) {
         // Two or more components share an observable and cannot be separately
         // normalized, since \int A*B dx does not equal int A dx * int B dx.
-        recursiveSetNormalisation(fptype(1.0));
+        recursiveSetNormalization(fptype(1.0));
         MEMCPY_TO_SYMBOL(
-            d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
-        // MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0,
+            d_normalizations, host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+        // MEMCPY_TO_SYMBOL(normalizationFactors, host_normalization, totalParams*sizeof(fptype), 0,
         // cudaMemcpyHostToDevice);
 
         // Normalize numerically.
-        // std::cout << "Numerical normalisation of " << getName() << " due to varOverlaps.\n";
+        // std::cout << "Numerical normalization of " << getName() << " due to varOverlaps.\n";
         fptype ret = GooPdf::normalize();
         // if (cpuDebug & 1)
-        // std::cout << "ProdPdf " << getName() << " has normalisation " << ret << " " << host_callnumber << std::endl;
+        // std::cout << "ProdPdf " << getName() << " has normalization " << ret << " " << host_callnumber << std::endl;
         return ret;
     }
 
@@ -95,8 +95,8 @@ __host__ fptype ProdPdf::normalize() const {
         c->normalize();
     }
 
-    host_normalisations[normalIdx + 1] = 1;
-    // MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0,
+    host_normalizations[normalIdx + 1] = 1;
+    // MEMCPY_TO_SYMBOL(normalizationFactors, host_normalization, totalParams*sizeof(fptype), 0,
     // cudaMemcpyHostToDevice);
 
     return 1.0;

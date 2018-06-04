@@ -22,7 +22,7 @@ __device__ fptype device_EventWeightedAddPdfs(fptype *evt, ParameterContainer &p
         int id        = pc.getObservable(i);
         fptype weight = evt[id];
         totalWeight += weight;
-        fptype norm = pci.getNormalisation(0);
+        fptype norm = pci.getNormalization(0);
         fptype curr = callFunction(evt, pci);
         ret += weight * curr * norm;
     }
@@ -35,7 +35,7 @@ __device__ fptype device_EventWeightedAddPdfs(fptype *evt, ParameterContainer &p
     // paramIndices + indices[numParameters]);
 
     pc                = pci;
-    fptype normFactor = pc.getNormalisation(0);
+    fptype normFactor = pc.getNormalization(0);
 
     fptype last = callFunction(evt, pc);
     ret += (1 - totalWeight) * last * normFactor;
@@ -61,7 +61,7 @@ __device__ fptype device_EventWeightedAddPdfsExt(fptype *evt, ParameterContainer
 
     for(int i = 0; i < comps; ++i) {
         int id        = pc.getObservable(i);
-        fptype norm   = pc.getNormalisation(0);
+        fptype norm   = pc.getNormalization(0);
         fptype weight = evt[id];
         fptype curr   = callFunction(evt, pci);
         // if ((0 == BLOCKIDX) && (THREADIDX < 5) && (isnan(curr))) printf("NaN component %i %i\n", i, THREADIDX);
@@ -73,10 +73,10 @@ __device__ fptype device_EventWeightedAddPdfsExt(fptype *evt, ParameterContainer
         // if ((gpuDebug & 1) && (0 == THREADIDX) && (0 == BLOCKIDX))
         // printf("EventWeightedExt: %i %f %f | %f %f %f %f %f %f %f\n", i, curr, weight, evt[0], evt[1], evt[2],
         // evt[3], evt[4], evt[5], evt[6]);
-        // printf("EventWeightedExt: %i %f %f | %f %f \n", i, curr, weight, normalisationFactors[indices[2*(i+1)]], curr
-        // * normalisationFactors[indices[2*(i+1)]]);
+        // printf("EventWeightedExt: %i %f %f | %f %f \n", i, curr, weight, normalizationFactors[indices[2*(i+1)]], curr
+        // * normalizationFactors[indices[2*(i+1)]]);
         // printf("EventWeightedExt: %i : %i %.10f %.10f %.10f %f %f %f\n", (int) floor(0.5 + evt[8]), i, curr, weight,
-        // ret, normalisationFactors[indices[2*(i+1)]], evt[6], evt[7]);
+        // ret, normalizationFactors[indices[2*(i+1)]], evt[6], evt[7]);
     }
 
     ret /= totalWeight;
@@ -143,7 +143,7 @@ EventWeightedAddPdf::EventWeightedAddPdf(std::string n, std::vector<Observable> 
 }
 
 __host__ fptype EventWeightedAddPdf::normalize() const {
-    // if (cpuDebug & 1) std::cout << "Normalising EventWeightedAddPdf " << getName() << " " << components.size() <<
+    // if (cpuDebug & 1) std::cout << "Normalizing EventWeightedAddPdf " << getName() << " " << components.size() <<
     // std::endl;
 
     // Here the PDFs have per-event weights, so there is no per-PDF weight
@@ -151,7 +151,7 @@ __host__ fptype EventWeightedAddPdf::normalize() const {
     for(PdfBase *comp : components)
         comp->normalize();
 
-    host_normalisations[normalIdx + 1] = 1.0;
+    host_normalizations[normalIdx + 1] = 1.0;
 
     return 1.0;
 }

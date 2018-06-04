@@ -43,7 +43,7 @@ device_DalitzPlot_calcIntegrals(fptype m12, fptype m13, int res_i, int res_j, Pa
     // Calculates BW_i(m12, m13) * BW_j^*(m12, m13).
     // This calculation is in a separate function so
     // it can be cached. Note that this function expects
-    // to be called on a normalisation grid, not on
+    // to be called on a normalization grid, not on
     // observed points, that's why it doesn't use
     // cResonances. No need to cache the values at individual
     // grid points - we only care about totals.
@@ -247,13 +247,13 @@ __host__ void DalitzPlotPdf::setDataSize(unsigned int dataSize, unsigned int evt
 }
 
 __host__ fptype DalitzPlotPdf::normalize() const {
-    recursiveSetNormalisation(1); // Not going to normalize efficiency,
-    // so set normalisation factor to 1 so it doesn't get multiplied by zero.
+    recursiveSetNormalization(1); // Not going to normalize efficiency,
+    // so set normalization factor to 1 so it doesn't get multiplied by zero.
     // Copy at this time to ensure that the SpecialResonanceCalculators, which need the efficiency,
     // don't get zeroes through multiplying by the normFactor.
     // we need to update the normal here, as values are used at this point.
     MEMCPY_TO_SYMBOL(
-        d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+        d_normalizations, host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
     int totalBins = _m12.getNumBins() * _m13.getNumBins();
 
@@ -371,7 +371,7 @@ __host__ fptype DalitzPlotPdf::normalize() const {
     binSizeFactor *= _m13.getBinSize();
     ret *= binSizeFactor;
 
-    host_normalisations[normalIdx + 1] = 1.0 / ret;
+    host_normalizations[normalIdx + 1] = 1.0 / ret;
     // printf("%f %f\n", ret, binSizeFactor);
     return ret;
 }

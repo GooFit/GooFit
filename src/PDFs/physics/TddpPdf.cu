@@ -41,7 +41,7 @@ device_Tddp_calcIntegrals(fptype m12, fptype m13, int res_i, int res_j, Paramete
     // This function returns the above values at a single point.
     // NB: Multiplication by efficiency is done by the calling function.
     // Note that this function expects
-    // to be called on a normalisation grid, not on
+    // to be called on a normalization grid, not on
     // observed points, that's why it doesn't use
     // cWaves. No need to cache the values at individual
     // grid points - we only care about totals.
@@ -363,7 +363,7 @@ __host__ TddpPdf::TddpPdf(std::string n,
     , _m12(m12)
     , _m13(m13)
     , resolution(
-          r[0]) // Only used for normalisation, which only depends on x and y - it doesn't matter which one we use.
+          r[0]) // Only used for normalization, which only depends on x and y - it doesn't matter which one we use.
     , totalEventSize(6) // This case adds the D0 mass by default.
 {
     for(auto &cachedWave : cachedWaves)
@@ -490,12 +490,12 @@ __host__ void TddpPdf::populateArrays() {
         totalObservables++;
     }
 
-    GOOFIT_TRACE("host_normalisations[{}] = {}", totalNormalisations, 1);
-    host_normalisations[totalNormalisations] = 1;
-    normalIdx                                = totalNormalisations++;
-    GOOFIT_TRACE("host_normalisations[{}] = {}", totalNormalisations, 0);
-    host_normalisations[totalNormalisations] = 0;
-    totalNormalisations++;
+    GOOFIT_TRACE("host_normalizations[{}] = {}", totalNormalizations, 1);
+    host_normalizations[totalNormalizations] = 1;
+    normalIdx                                = totalNormalizations++;
+    GOOFIT_TRACE("host_normalizations[{}] = {}", totalNormalizations, 0);
+    host_normalizations[totalNormalizations] = 0;
+    totalNormalizations++;
 
     int numResonances = decayInfo.resonances.size();
 
@@ -567,13 +567,13 @@ __host__ void TddpPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) 
 }
 
 __host__ fptype TddpPdf::normalize() const {
-    recursiveSetNormalisation(1); // Not going to normalize efficiency,
-    // so set normalisation factor to 1 so it doesn't get multiplied by zero.
+    recursiveSetNormalization(1); // Not going to normalize efficiency,
+    // so set normalization factor to 1 so it doesn't get multiplied by zero.
     // Copy at this time to ensure that the SpecialWaveCalculators, which need the efficiency,
     // don't get zeroes through multiplying by the normFactor.
     MEMCPY_TO_SYMBOL(
-        d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    // std::cout << "TDDP normalisation " << getName() << std::endl;
+        d_normalizations, host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    // std::cout << "TDDP normalization " << getName() << std::endl;
 
     int totalBins = _m12.getNumBins() * _m13.getNumBins();
 
@@ -736,7 +736,7 @@ __host__ fptype TddpPdf::normalize() const {
     fptype xmixing = host_parameters[parametersIdx + 2];
     fptype ymixing = host_parameters[parametersIdx + 3];
 
-    fptype ret = resolution->normalisation(
+    fptype ret = resolution->normalization(
         dalitzIntegralOne, dalitzIntegralTwo, dalitzIntegralThr, dalitzIntegralFou, tau, xmixing, ymixing);
 
     double binSizeFactor = 1;
@@ -744,8 +744,8 @@ __host__ fptype TddpPdf::normalize() const {
     binSizeFactor *= ((_m13.getUpperLimit() - _m13.getLowerLimit()) / _m13.getNumBins());
     ret *= binSizeFactor;
 
-    host_normalisations[normalIdx + 1] = 1.0 / ret;
-    // std::cout << "End of TDDP normalisation: " << ret << " " << host_normalisation[parameters] << " " <<
+    host_normalizations[normalIdx + 1] = 1.0 / ret;
+    // std::cout << "End of TDDP normalization: " << ret << " " << host_normalization[parameters] << " " <<
     // binSizeFactor << std::endl;
     return ret;
 }

@@ -30,7 +30,7 @@ __device__ fptype device_AddPdfs(fptype *evt, ParameterContainer &pc) {
         totalWeight += weight;
 
         // This is the normal value for the 'callFunction' PDF, so we read from pci
-        fptype norm = pci.getNormalisation(0);
+        fptype norm = pci.getNormalization(0);
 
         // call the first function to add in our PDF.
         fptype curr = callFunction(evt, pci);
@@ -43,7 +43,7 @@ __device__ fptype device_AddPdfs(fptype *evt, ParameterContainer &pc) {
 
     // previous functions incremented the indices appropriately, so now we need to get the norm again
     // NOTE: this is the weight for the function about to be called.
-    fptype normFactor = pc.getNormalisation(0);
+    fptype normFactor = pc.getNormalization(0);
 
     fptype last = callFunction(evt, pc);
     ret += (1 - totalWeight) * last * normFactor;
@@ -65,7 +65,7 @@ __device__ fptype device_AddPdfsExt(fptype *evt, ParameterContainer &pc) {
     for(int i = 0; i < numParameters; i++) {
         // grab the weight value
         fptype weight     = pci.getParameter(i);
-        fptype normFactor = pci.getNormalisation(0);
+        fptype normFactor = pci.getNormalization(0);
 
         fptype curr = callFunction(evt, pci);
         ret += weight * curr * normFactor;
@@ -136,7 +136,7 @@ AddPdf::AddPdf(std::string n, Variable frac1, PdfBase *func1, PdfBase *func2)
 }
 
 __host__ fptype AddPdf::normalize() const {
-    // if (cpuDebug & 1) std::cout << "Normalising AddPdf " << getName() << std::endl;
+    // if (cpuDebug & 1) std::cout << "Normalizing AddPdf " << getName() << std::endl;
 
     fptype ret         = 0;
     fptype totalWeight = 0;
@@ -160,9 +160,9 @@ __host__ fptype AddPdf::normalize() const {
         ret += (1 - totalWeight) * last;
     }
 
-    host_normalisations[normalIdx + 1] = 1.0;
+    host_normalizations[normalIdx + 1] = 1.0;
 
-    // TODO: Unsure of the exact location for this normalise...
+    // TODO: Unsure of the exact location for this normalize...
     if(getSpecialMask() & PdfBase::ForceCommonNorm) {
         // Want to normalize this as
         // (f1 A + (1-f1) B) / int (f1 A + (1-f1) B)
@@ -170,7 +170,7 @@ __host__ fptype AddPdf::normalize() const {
         // (f1 A / int A) + ((1-f1) B / int B).
 
         for(auto component : components) {
-            host_normalisations[component->getParameterIndex()] = (1.0 / ret);
+            host_normalizations[component->getParameterIndex()] = (1.0 / ret);
         }
     }
 

@@ -849,7 +849,7 @@ int runToyFit(int ifile, int nfile, bool noPlots = true) {
     // sigma = new Variable("sigma", 0, 0.8);
     sigma = new Observable("sigma", 0.099, 0.101);
     sigma->setNumBins(1);
-    // Cheating way to avoid Punzi effect for toy MC. The normalisation integral is now a delta function!
+    // Cheating way to avoid Punzi effect for toy MC. The normalization integral is now a delta function!
     m12 = new Observable("m12", 0, 3);
     m12->setNumBins(240);
     m13 = new Observable("m13", 0, 3);
@@ -3324,7 +3324,7 @@ GooPdf *makeBkg2DalitzPdf(bool fixem = true) {
         comps.push_back(poly);
         comps.push_back(bkg2_loZ);
         comps.push_back(kzero_veto);
-        // Separate PDF to avoid triggering numerical normalisation over all four observables.
+        // Separate PDF to avoid triggering numerical normalization over all four observables.
         ProdPdf *poly_x_veto = new ProdPdf("poly_x_veto", comps);
         // poly_x_veto->setDebugMask(1);
 
@@ -3825,7 +3825,7 @@ GooPdf *makeBackground4DalitzParam() {
     comps.push_back(poly);
     comps.push_back(bkg4_loZ);
     comps.push_back(kzero_veto);
-    // Separate PDF to avoid triggering numerical normalisation over all four observables.
+    // Separate PDF to avoid triggering numerical normalization over all four observables.
     ProdPdf *poly_x_veto = new ProdPdf("poly_x_veto", comps);
 
     // One pipi bump.

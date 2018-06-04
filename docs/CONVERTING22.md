@@ -28,7 +28,7 @@ Once everything has been registered, each constructor calls `initialize`.  This 
 
 ## Device functions
 
-These are function implementations used in the minimization algorithm.  There are two passes currently performed.  First, is the normalisation phase.  This routine is run after updating all parameters from MINUIT.  The next function run is the summation of the negative log likeli-hood.  It is important to note the distinction, an example of this distinction is with the dalitz plot.  Caches are pre-calculated, and stored for use within the normalisation.
+These are function implementations used in the minimization algorithm.  There are two passes currently performed.  First, is the normalization phase.  This routine is run after updating all parameters from MINUIT.  The next function run is the summation of the negative log likeli-hood.  It is important to note the distinction, an example of this distinction is with the dalitz plot.  Caches are pre-calculated, and stored for use within the normalization.
 
 When writing the device function, all parameters, observables, etc are accessible through the ParameterContainer.  It is important as the developer to also increment the ParameterContainer using two helper functions, incrementIndex(func, parms, obs, cons, norms), and with incrementIndex().  If possible, please always use the first function, as the latter function requires four very slow memory reads.
 
@@ -48,7 +48,7 @@ __device__ fptype device_Gaussian(fptype *evt, ParameterContainer &pc) {
 }
 ```
 
-The observable index is fetched, then the two parameters are accessed.  Since we know how much to increment our container, we can increment by 1 function, 2 parameters, 0, constants, 1 observable, and 1 normalisation.  
+The observable index is fetched, then the two parameters are accessed.  Since we know how much to increment our container, we can increment by 1 function, 2 parameters, 0, constants, 1 observable, and 1 normalization.  
 
 
 ## Advanced PDFs

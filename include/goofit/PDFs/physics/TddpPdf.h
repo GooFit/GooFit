@@ -106,7 +106,7 @@ class TddpPdf : public GooPdf {
             Observable *mistag = nullptr);
     // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the
     // coherent sum. The caching method requires that it be done this way or the ProdPdf
-    // normalisation will get *really* confused and give wrong answers.
+    // normalization will get *really* confused and give wrong answers.
 
     // The mistag variable is the probability that an event has a mother particle
     // that was correctly reconstructed but wrongly tagged. Consider an analysis
@@ -128,7 +128,7 @@ class TddpPdf : public GooPdf {
     // or in other words, b is the fraction of signal + mistag that has the right
     // charge. It's up to the user to create this variable. The default is to take
     // b as 1, if 'mistag' is not supplied.
-    // Note that normalisation is not affected because the integrals of S and S'
+    // Note that normalization is not affected because the integrals of S and S'
     // are identical and the weights sum to one, and efficiency is not affected
     // because it depends on the momenta of the daughter tracks, which are not
     // affected by making the wrong charge assignment to the mother.

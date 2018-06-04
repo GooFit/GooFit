@@ -32,13 +32,13 @@ fptype *dev_event_array;
 fptype host_parameters[GOOFIT_MAXPAR];
 fptype host_constants[GOOFIT_MAXPAR];
 fptype host_observables[GOOFIT_MAXPAR];
-fptype host_normalisations[GOOFIT_MAXPAR];
+fptype host_normalizations[GOOFIT_MAXPAR];
 
 int host_callnumber     = 0;
 int totalParameters     = 0;
 int totalConstants      = 0;
 int totalObservables    = 0;
-int totalNormalisations = 0;
+int totalNormalizations = 0;
 
 __host__ void PdfBase::checkInitStatus(std::vector<std::string> &unInited) const {
     if(!properlyInitialised)
@@ -49,11 +49,11 @@ __host__ void PdfBase::checkInitStatus(std::vector<std::string> &unInited) const
     }
 }
 
-__host__ void PdfBase::recursiveSetNormalisation(fptype norm) const {
-    host_normalisations[normalIdx + 1] = norm;
+__host__ void PdfBase::recursiveSetNormalization(fptype norm) const {
+    host_normalizations[normalIdx + 1] = norm;
 
     for(auto component : components) {
-        component->recursiveSetNormalisation(norm);
+        component->recursiveSetNormalization(norm);
     }
 }
 

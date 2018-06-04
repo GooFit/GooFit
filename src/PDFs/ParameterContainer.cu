@@ -20,9 +20,10 @@ __device__ __host__ ParameterContainer::ParameterContainer(const ParameterContai
     funcIdx       = pc.funcIdx;
 }
 
+/// Only on CPU and with Trace enabled, this will run slowly but check to make sure you are correctly incrementing
+/// indices
 __device__ void
 ParameterContainer::incrementIndex(const int funcs, const int params, const int cons, const int obs, const int norms) {
-    // Only on CPU, slow
 #if !defined(__CUDACC__) && defined(GOOFIT_TRACE_FLAG)
     if(funcs != 1)
         throw GeneralError("Haven't got a clue on how to procede with incrementIndex checking, sorry");

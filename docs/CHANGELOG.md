@@ -38,7 +38,7 @@ User facing:
 Backend:
 
 * Using Application no longer requires NVCC compile ([#139]), better C++ vs. CUDA separation
-* Travis CI is much cleaner ([#140], [#141]), 
+* Travis CI is much cleaner ([#140], [#141]),
 * Examples are part of tests now ([#144])
 * Allow changing the bin number for normalization without restarting GooFit ([#143])
 * Dropped symmDP where not supported ([#143])
@@ -175,7 +175,7 @@ The file structure of GooFit and the build system have been completely revamped.
 
 A new feature of the CMake build system is GooFit Packages, which are complete packages that can be added to GooFit and built, allowing analysis code to live in a separate location from GooFit, rather than the old method of simply forking GooFit and adding your analysis manually. A GooFit Package can be made into an example trivially. See [this package](https://github.com/maddocbf/goofit_KKPiPi) for an example.
 
-GooFit 2.0 will receive continuing support while development on GooFit 2.1 presses on.  
+GooFit 2.0 will receive continuing support while development on GooFit 2.1 presses on.
 
 #### Key features:
 
@@ -184,7 +184,7 @@ GooFit 2.0 will receive continuing support while development on GooFit 2.1 press
 * Restructured files with script to aid in renaming includes, available for assisting existing projects in converting to 2.0
 * CMake build system: See [Issue 22](https://github.com/GooFit/GooFit/issues/22) and [PR 23](https://github.com/GooFit/GooFit/pull/23).
 	* Auto compute capability detection based on detected GPUs
-	* Auto CUDA/OMP selection 
+	* Auto CUDA/OMP selection
 	* Added CPP single threaded backend, support for macOS and IDEs/debuggers
 	* Separable compilation for PDFs
 	* Support for more compilers, such as Clang and Intel
@@ -225,7 +225,7 @@ This is the final release before the massive reworking of the build system. This
 
 The GitHub release includes the data needed for `pipipi0`.
 
-This release includes speed improvements for compute arch 3.5+ boards, see [PR 21](https://github.com/GooFit/GooFit/pull/21). 
+This release includes speed improvements for compute arch 3.5+ boards, see [PR 21](https://github.com/GooFit/GooFit/pull/21).
 
 ## v0.4: OMP Support
 #### October 3, 2013
@@ -242,14 +242,14 @@ when compiling GooFit, and add the options
 -fopenmp -DTHRUST_DEVICE_BACKEND=THRUST_DEVICE_BACKEND_OMP -lgomp
 ```
 
-when compiling your own source code. (In the case of `nvcc`, you must have `-Xcompiler` in front of the `-fopenmp`). The example Makefiles show how to do this. 
+when compiling your own source code. (In the case of `nvcc`, you must have `-Xcompiler` in front of the `-fopenmp`). The example Makefiles show how to do this.
 
 
 
 ## v0.3: The Great Rename
 #### September 11, 2013
 
-This changes the names of the core classes to better explain what they do. In particular `PdfBuilder` becomes `FitManager`; `ThrustPdfFunctor` becomes `GooPdf`; `FunctorBase` becomes `PdfBase`; the `FPOINTER` directory becomes PDFs; and `FooThrustFunctor` becomes `FooPdf`. 
+This changes the names of the core classes to better explain what they do. In particular `PdfBuilder` becomes `FitManager`; `ThrustPdfFunctor` becomes `GooPdf`; `FunctorBase` becomes `PdfBase`; the `FPOINTER` directory becomes PDFs; and `FooThrustFunctor` becomes `FooPdf`.
 
 NB! This breaks old code! To update your programs you can do this:
 
@@ -261,7 +261,7 @@ sed -i 's/FunctorBase/PdfBase/g' `grep -l FunctorBase *`
 sed -i 's:\([a-zA-Z][a-zA-Z]*\)ThrustFunctor:\1Pdf:g' `grep -l "[a-zA-Z][a-zA-Z]*ThrustFunctor" *`
 ```
 
-in that order. 
+in that order.
 
 ## v0.2: Docs and cleanup
 #### July 17, 2013

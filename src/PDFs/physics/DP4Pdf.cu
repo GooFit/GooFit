@@ -27,6 +27,7 @@ class.
 
 #include <goofit/Error.h>
 #include <goofit/FitControl.h>
+#include <goofit/Log.h>
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/DP4Pdf.h>
 #include <goofit/PDFs/physics/EvalVar.h>
@@ -77,7 +78,7 @@ __device__ fptype device_DP(fptype *evt, ParameterContainer &pc) {
 
     // TODO: we have increment through all our amps, so no need to find efficiency function
 
-    pc.incrementIndex(1, numAmps * 2, 9, 6, 1);
+    pc.incrementIndex(1, numAmps * 2, 10, 6, 1);
 
     // Skip our line shapes and spin factors...
     for(int i = 0; i < total_LS_SF; i++)
@@ -643,6 +644,8 @@ __host__
                       *logger);
     cudaDeviceSynchronize();
     gooFree(dev_event_array);
+
+    ranged_print("Results", results.begin(), results.begin() + 6);
 
     thrust::transform(
         results.begin(), results.end(), weights.begin(), weights.begin(), thrust::multiplies<mcbooster::GReal_t>());

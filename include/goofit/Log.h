@@ -129,4 +129,12 @@ namespace GooFit {
     {}
 #endif
 
+template <typename T>
+void ranged_print(std::string info, const T &begin, const T &end) {
+    std::cout << info;
+    for(auto it = begin; it != end; it++)
+        std::cout << " " << *it;
+    std::cout << std::endl;
+}
+
 } // namespace GooFit

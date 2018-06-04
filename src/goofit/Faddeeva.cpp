@@ -120,7 +120,7 @@ fpcomplex Faddeeva_2(const fpcomplex &z) {
 }
 
 fptype cpuvoigtian(fptype x, fptype m, fptype w, fptype s) {
-    // This calculation includes the normalisation - integral
+    // This calculation includes the normalization - integral
     // over the reals is equal to one.
 
     // return constant for zero width and sigma

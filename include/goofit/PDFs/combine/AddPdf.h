@@ -40,7 +40,7 @@ for fitting), an additional term for the number of events will be
 added to the NLL.
 
 Also note that if the `AddPdf`'s options mask (set by calling
-`setSpecialMask`) includes `ForceCommonNorm`, the normalisation
+`setSpecialMask`) includes `ForceCommonNorm`, the normalization
 changes. By default the components are normalized separately, so
 that
 

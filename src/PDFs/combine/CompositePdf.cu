@@ -10,7 +10,7 @@ __device__ fptype device_Composite(fptype *evt, ParameterContainer &pc) {
     // unsigned int shellParIndex = RO_CACHE(indices[4]);
     pc.incrementIndex();
 
-    // NB, not normalising core function, it is not being used as a PDF.
+    // NB, not normalizing core function, it is not being used as a PDF.
     // fptype coreValue = (*(reinterpret_cast<device_function_ptr>(device_function_table[coreFcnIndex])))(evt,
     // cudaArray, paramIndices+coreParIndex);
     fptype coreValue = callFunction(evt, pc);
@@ -25,7 +25,7 @@ __device__ fptype device_Composite(fptype *evt, ParameterContainer &pc) {
     fakeEvt[id] = coreValue;
 
     // Don't normalize shell either, since we don't know what composite function is being used for.
-    // It may not be a PDF. Normalising at this stage would be presumptuous.
+    // It may not be a PDF. Normalizing at this stage would be presumptuous.
     // fptype ret = (*(reinterpret_cast<device_function_ptr>(device_function_table[shellFcnIndex])))(fakeEvt, cudaArray,
     // shellParams);
     fptype ret = callFunction(fakeEvt, pc);
@@ -52,7 +52,7 @@ __host__ CompositePdf::CompositePdf(std::string n, PdfBase *core, PdfBase *shell
 }
 
 __host__ fptype CompositePdf::normalize() const {
-    recursiveSetNormalisation(1.0);
+    recursiveSetNormalization(1.0);
 
     // Note: Core is not normalized in composite calculation,
     // because it is not a PDF,
@@ -61,7 +61,7 @@ __host__ fptype CompositePdf::normalize() const {
     // Shell needn't be normalized either,
     // because we don't know that the composite
     // will be used as a PDF; and if it is, the
-    // normalisation should be applied at the level
+    // normalization should be applied at the level
     // of whatever calls the composite.
     // However: These functions may appear elsewhere
     // in the full function, and perhaps need to

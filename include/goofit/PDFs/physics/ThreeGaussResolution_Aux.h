@@ -22,7 +22,7 @@ class ThreeGaussResolution : public MixingTimeResolution {
         Variable cf, Variable tf, Variable cb, Variable cs, Variable tb, Variable ts, Variable ob, Variable os);
     ~ThreeGaussResolution() override;
 
-    fptype normalisation(
+    fptype normalization(
         fptype di1, fptype di2, fptype di3, fptype di4, fptype tau, fptype xmixing, fptype ymixing) const override;
     void createParameters(PdfBase *dis) override;
 

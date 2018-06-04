@@ -40,7 +40,7 @@ __host__ void PdfBase::copyParams() {
 }
 
 __host__ void PdfBase::copyNormFactors() const {
-    cudaDeviceSynchronize(); // Ensure normalisation integrals are finished
+    cudaDeviceSynchronize(); // Ensure normalization integrals are finished
 }
 
 __host__ void PdfBase::initializeIndices() {
@@ -85,12 +85,12 @@ __host__ void PdfBase::initializeIndices() {
         totalObservables++;
     }
 
-    // stick placeholders into our normalisation array
-    host_normalisations[totalNormalisations] = 1;
-    normalIdx                                = totalNormalisations;
-    totalNormalisations++;
-    host_normalisations[totalNormalisations] = 0;
-    totalNormalisations++;
+    // stick placeholders into our normalization array
+    host_normalizations[totalNormalizations] = 1;
+    normalIdx                                = totalNormalizations;
+    totalNormalizations++;
+    host_normalizations[totalNormalizations] = 0;
+    totalNormalizations++;
 
     if(totalParameters >= GOOFIT_MAXPAR)
         throw GooFit::GeneralError("{}: Set too many parameters, GooFit array more than {}. Increase max at compile "
@@ -181,12 +181,12 @@ __host__ void PdfBase::populateArrays() {
         totalObservables++;
     }
 
-    GOOFIT_TRACE("host_normalisations[{}] = {}", totalNormalisations, 1);
-    host_normalisations[totalNormalisations] = 1;
-    normalIdx                                = totalNormalisations++;
-    GOOFIT_TRACE("host_normalisations[{}] = {}", totalNormalisations, 0);
-    host_normalisations[totalNormalisations] = 0;
-    totalNormalisations++;
+    GOOFIT_TRACE("host_normalizations[{}] = {}", totalNormalizations, 1);
+    host_normalizations[totalNormalizations] = 1;
+    normalIdx                                = totalNormalizations++;
+    GOOFIT_TRACE("host_normalizations[{}] = {}", totalNormalizations, 0);
+    host_normalizations[totalNormalizations] = 0;
+    totalNormalizations++;
 
     for(auto &component : components)
         component->recursiveSetIndices();
@@ -199,7 +199,7 @@ __host__ void PdfBase::setIndices() {
     totalParameters      = 0;
     totalConstants       = 0;
     totalObservables     = 0;
-    totalNormalisations  = 0;
+    totalNormalizations  = 0;
     num_device_functions = 0;
 
     // set all associated functions parameters, constants, etc.

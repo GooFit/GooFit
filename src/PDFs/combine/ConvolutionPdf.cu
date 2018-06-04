@@ -55,12 +55,12 @@ __device__ fptype device_ConvolvePdfs(fptype *evt, ParameterContainer &pc) {
     // skip all children also event.  To be determined...
     pc.incrementIndex(1, 0, 4, 1, 1);
 
-    fptype norm1 = pc.getNormalisation(0);
+    fptype norm1 = pc.getNormalization(0);
     ret *= norm1;
 
     pc.incrementIndex();
 
-    fptype norm2 = pc.getNormalisation(0);
+    fptype norm2 = pc.getNormalization(0);
     ret *= norm2;
 
     pc.incrementIndex();
@@ -133,8 +133,8 @@ __device__ fptype device_ConvolveSharedPdfs(fptype *evt, ParameterContainer &pc)
     }
 
     // TODO: add increment here
-    ret *= pc.normalisations[pc.normalIdx + 1];
-    ret *= pc.normalisations[pc.normalIdx + 2];
+    ret *= pc.normalizations[pc.normalIdx + 1];
+    ret *= pc.normalizations[pc.normalIdx + 2];
 
     return ret;
 }
@@ -304,12 +304,12 @@ __host__ void ConvolutionPdf::registerOthers(std::vector<ConvolutionPdf *> other
 }
 
 __host__ fptype ConvolutionPdf::normalize() const {
-    // First set normalisation factors to one so we can evaluate convolution without getting zeroes
-    recursiveSetNormalisation(fptype(1.0));
+    // First set normalization factors to one so we can evaluate convolution without getting zeroes
+    recursiveSetNormalization(fptype(1.0));
 
     // we need to update the normal here, as values are used at this point.
     MEMCPY_TO_SYMBOL(
-        d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+        d_normalizations, host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
     // Next recalculate functions at each point, in preparation for convolution integral
     thrust::constant_iterator<fptype *> arrayAddress(dev_iConsts);

@@ -13,7 +13,7 @@ struct ParameterContainer {
     fptype *parameters;
     fptype *constants;
     fptype *observables;
-    fptype *normalisations;
+    fptype *normalizations;
 
     int parameterIdx{0};
     int constantIdx{0};
@@ -28,7 +28,7 @@ struct ParameterContainer {
 
     inline __device__ fptype getObservable(const int i) { return RO_CACHE(observables[observableIdx + i + 1]); }
 
-    inline __device__ fptype getNormalisation(const int i) { return RO_CACHE(normalisations[normalIdx + i + 1]); }
+    inline __device__ fptype getNormalization(const int i) { return RO_CACHE(normalizations[normalIdx + i + 1]); }
 
     inline __device__ int getNumParameters() { return (int)RO_CACHE(parameters[parameterIdx]); }
 
@@ -36,7 +36,7 @@ struct ParameterContainer {
 
     inline __device__ int getNumObservables() { return (int)RO_CACHE(observables[observableIdx]); }
 
-    inline __device__ int getNumNormalisations() { return (int)RO_CACHE(normalisations[normalIdx]); }
+    inline __device__ int getNumNormalizations() { return (int)RO_CACHE(normalizations[normalIdx]); }
 
     // each PDF needs to supply the amount of each array used.
     // This function automatically adds +1 for the size.

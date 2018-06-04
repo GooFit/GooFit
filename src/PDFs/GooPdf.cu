@@ -35,7 +35,7 @@ namespace GooFit {
 __device__ fptype d_parameters[GOOFIT_MAXPAR];
 __device__ fptype d_constants[GOOFIT_MAXPAR];
 __device__ fptype d_observables[GOOFIT_MAXPAR];
-__device__ fptype d_normalisations[GOOFIT_MAXPAR];
+__device__ fptype d_normalizations[GOOFIT_MAXPAR];
 
 __constant__ unsigned int c_totalEvents;
 __constant__ fptype c_motherMass;
@@ -80,14 +80,14 @@ void printMemoryStatus(std::string file, int line) {
 }
 
 __device__ fptype calculateEval(fptype rawPdf, fptype *evtVal, fptype norm) {
-    // Just return the raw PDF value, for use in (eg) normalisation.
+    // Just return the raw PDF value, for use in (eg) normalization.
     return rawPdf;
 }
 
 __device__ fptype calculateNLL(fptype rawPdf, fptype *evtVal, fptype norm) {
     // if ((10 > callnumber) && (THREADIDX < 10) && (BLOCKIDX == 0)) cuPrintf("calculateNll %i %f %f %f\n", callnumber,
-    // rawPdf, normalisationFactors[par], rawPdf*normalisationFactors[par]);  if (THREADIDX < 50) printf("Thread %i %f
-    // %f\n", THREADIDX, rawPdf, normalisationFactors[par]);
+    // rawPdf, normalizationFactors[par], rawPdf*normalizationFactors[par]);  if (THREADIDX < 50) printf("Thread %i %f
+    // %f\n", THREADIDX, rawPdf, normalizationFactors[par]);
     rawPdf *= norm;
     return rawPdf > 0.0 ? -log(rawPdf) : 0.0;
 }
@@ -260,18 +260,18 @@ __host__ double GooPdf::sumOfNll(int numVars) const {
 }
 
 __host__ double GooPdf::calculateNLL() const {
-    [[ maybe_unused, gnu::unused ]] fptype norm = normalize();
+    [[maybe_unused, gnu::unused]] fptype norm = normalize();
     GOOFIT_TRACE("GooPdf::calculateNLL calling normalize: {} (host_norm should be 1: {})",
                  norm,
-                 host_normalisations[normalIdx + 1]);
+                 host_normalizations[normalIdx + 1]);
 
-    if(host_normalisations[normalIdx + 1] <= 0)
-        GooFit::abort(__FILE__, __LINE__, getName() + " non-positive normalisation", this);
+    if(host_normalizations[normalIdx + 1] <= 0)
+        GooFit::abort(__FILE__, __LINE__, getName() + " non-positive normalization", this);
 
     // make this memcpy async
     MEMCPY_TO_SYMBOL(
-        d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    // cudaDeviceSynchronize(); // Ensure normalisation integrals are finished
+        d_normalizations, host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    // cudaDeviceSynchronize(); // Ensure normalization integrals are finished
 
     auto numVars = (int)observablesList.size();
 
@@ -297,7 +297,7 @@ __host__ std::vector<fptype> GooPdf::evaluateAtPoints(Observable var) {
     normalize();
 
     MEMCPY_TO_SYMBOL(
-        d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+        d_normalizations, host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
     UnbinnedDataSet tempdata(observablesList);
 
     double step = var.getBinSize();
@@ -313,7 +313,7 @@ __host__ std::vector<fptype> GooPdf::evaluateAtPoints(Observable var) {
     normalize();
 
     MEMCPY_TO_SYMBOL(
-        d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+        d_normalizations, host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
     thrust::counting_iterator<int> eventIndex(0);
     thrust::constant_iterator<int> eventSize(observablesList.size());
@@ -340,7 +340,7 @@ __host__ std::vector<fptype> GooPdf::evaluateAtPoints(Observable var) {
     res.resize(var.getNumBins());
 
     for(int i = 0; i < var.getNumBins(); ++i) {
-        fptype n = host_normalisations[normalIdx + 1];
+        fptype n = host_normalizations[normalIdx + 1];
         fptype v = h_results[i];
         res[i]   = v * n;
     }
@@ -366,10 +366,10 @@ __host__ fptype GooPdf::getValue(EvalFunc evalfunc) {
     // Execute redundantly in all threads for OpenMP multiGPU case
     // copyParams();
     normalize();
-    // MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisation, totalParams*sizeof(fptype), 0,
+    // MEMCPY_TO_SYMBOL(normalizationFactors, host_normalization, totalParams*sizeof(fptype), 0,
     // cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(
-        d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+        d_normalizations, host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
     UnbinnedDataSet point(observablesList);
     point.addEvent();
@@ -395,7 +395,7 @@ __host__ fptype GooPdf::getValue(EvalFunc evalfunc) {
 __host__ fptype GooPdf::normalize() const {
     if(!fitControl->metricIsPdf()) {
         GOOFIT_TRACE("{}: metricIsPdf, returning 1", getName());
-        host_normalisations[normalIdx + 1] = 1.0;
+        host_normalizations[normalIdx + 1] = 1.0;
         return 1.0;
     }
 
@@ -408,7 +408,7 @@ __host__ fptype GooPdf::normalize() const {
             ret *= integrate(v.getLowerLimit(), v.getUpperLimit());
         }
 
-        host_normalisations[normalIdx + 1] = 1.0 / ret;
+        host_normalizations[normalIdx + 1] = 1.0 / ret;
         GOOFIT_TRACE("{}: Param {} integral is = {}", getName(), parameters, ret);
 
         return ret;
@@ -457,9 +457,9 @@ __host__ fptype GooPdf::normalize() const {
 #endif
 
     if(std::isnan(sum)) {
-        GooFit::abort(__FILE__, __LINE__, getName() + " NaN in normalisation", this);
+        GooFit::abort(__FILE__, __LINE__, getName() + " NaN in normalization", this);
     } else if(0 >= sum) {
-        GooFit::abort(__FILE__, __LINE__, "Non-positive normalisation", this);
+        GooFit::abort(__FILE__, __LINE__, "Non-positive normalization", this);
     }
 
     ret *= sum;
@@ -468,7 +468,7 @@ __host__ fptype GooPdf::normalize() const {
         GooFit::abort(__FILE__, __LINE__, "Zero integral");
 
     GOOFIT_TRACE("{}: Param {} integral is ~= {}", getName(), normalIdx, ret);
-    host_normalisations[normalIdx + 1] = 1.0 / ret;
+    host_normalizations[normalIdx + 1] = 1.0 / ret;
     return (fptype)ret;
 }
 
@@ -503,10 +503,10 @@ __host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
     // copyParams();
     // double overall =
     normalize();
-    // MEMCPY_TO_SYMBOL(normalisationFactors, host_normalisations, totalParams*sizeof(fptype), 0,
+    // MEMCPY_TO_SYMBOL(normalizationFactors, host_normalizations, totalParams*sizeof(fptype), 0,
     // cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(
-        d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+        d_normalizations, host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
     int numVars = observablesList.size();
 
@@ -556,7 +556,7 @@ __host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
         MEMCPY_TO_SYMBOL(
             d_observables, &host_observables, totalObservables * sizeof(fptype), 0, cudaMemcpyHostToDevice);
         MEMCPY_TO_SYMBOL(
-            d_normalisations, host_normalisations, totalNormalisations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+            d_normalizations, host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
         thrust::counting_iterator<int> ceventIndex(0);
         thrust::transform(

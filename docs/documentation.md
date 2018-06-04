@@ -325,7 +325,7 @@ arrays containing PDF specific information.  This allows for different PDFs to s
 the same parameters, as in two Gaussians with a common mean. It also stores the position of the event variables,
 sometimes called observables, within the event array passed to the
 evaluation function; this is the argument `fptype* evt`. The ParameterContainer also contains 
-any constants and normalisation factors used within the PDF's normalisation or evaluation.
+any constants and normalization factors used within the PDF's normalization or evaluation.
 
 Since each class will contain its 4 arrays of information, these arrays are populated by the 
 constructor of a PDF class; in particular, the constructor should call `registerParameter` 
@@ -374,14 +374,14 @@ PDF in the system, looks like this:
     parameters          2 3 4 
     constants           0 
 	observableId's      1 0
-	normalisations      1 0
+	normalizations      1 0
 
 'Functions' contains only one item, which is the pointer to our `ptr_to_Gaussian` function. 
 Second, the parameters list contains two items, which you can find at array position 0. These two values
 are for our mean and sigma, in this case mean is 3 and sigma is 4. The gaussian PDF does not contain 
 constants, so the 0 position of the constants array contains the value 0. One Observable is used for
 the gaussian pdf, which will contain the index into our `evt` array.  Finally,
-the normalisation values are given last, which has one normalisation and the value is 0.
+the normalization values are given last, which has one normalization and the value is 0.
 
 Now we can consider how the device-side code makes use of this ParameterContainer in the following
 device function code for the gaussian PDF:
@@ -554,7 +554,7 @@ setIndices {#setIndices}
 
 This function will configure the global structures that will be used when performing the fit.  First, it will call
 the function `populateArrays` with itself, which involves adding the number Variables, and the values for each Variable
-into the host_parameters array.  Observables, constants, and normalisations are done the exact same way.  Once complete,
+into the host_parameters array.  Observables, constants, and normalizations are done the exact same way.  Once complete,
 it will add all component PDFs using the same `populateArrays` method.
 
 After all PDFs have been added, the metric operation is added last (#listingmetrics) and overrides the `*logger` component
@@ -766,7 +766,7 @@ gives up, or until GooFit crashes.
 The `calculateNLL` method does two things: First it calls the
 `normalize` function of the PDF, which in turn will usually recursively
 normalize the components; the results of the `normalize` call are copied
-into the `d_normalisations` array on the GPU. Next it calls
+into the `d_normalizations` array on the GPU. Next it calls
 `sumOfNll` and returns the resulting value. Particular PDF
 implementations may override `sumOfNll`; most notably `AddPdf` does so
 in order to have the option of returning an ‘extended' likelihood, with
@@ -821,7 +821,7 @@ variables merely indicate that Thrust should add (rather than, say,
 multiply) all the returned values, and that it should start the sum at
 zero. The `normalization` method returns this sum, but stores its
 inverse in the `host_normalization` array that will eventually be copied
-to `d_normalisations` on the GPU; this is to allow the
+to `d_normalizations` on the GPU; this is to allow the
 micro-optimization of multiplying by the inverse rather than dividing in
 every thread.
 
@@ -1093,7 +1093,7 @@ __device__ fptype calculateChisq (fptype rawPdf,
 }
 ```
 
-Notice that the normalisation factor is looked up prior to the metric
+Notice that the normalization factor is looked up prior to the metric
 functions, and the special cases when the PDF or the observed number of
 events is zero.
 

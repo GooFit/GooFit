@@ -34,7 +34,7 @@ __device__ fptype device_Mapped(fptype *evt, ParameterContainer &pc) {
 
     // fptype ret = (*(reinterpret_cast<device_function_ptr>(device_function_table[indices[targetFunction]])))(evt, p,
     // paramIndices + indices[targetFunction + 1]);
-    fptype norm = pc.getNormalisation(0);
+    fptype norm = pc.getNormalization(0);
     fptype ret  = callFunction(evt, pc);
     ret *= norm;
 
@@ -81,7 +81,7 @@ __host__ MappedPdf::MappedPdf(std::string n, GooPdf *m, std::vector<GooPdf *> &t
 }
 
 __host__ fptype MappedPdf::normalize() const {
-    // std::cout << "Normalising MappedPdf " << getName() << std::endl;
+    // std::cout << "Normalizing MappedPdf " << getName() << std::endl;
     fptype ret = 0;
 
     for(unsigned int i = 1; i < components.size(); ++i) { // No need to normalize mapping function.
@@ -89,7 +89,7 @@ __host__ fptype MappedPdf::normalize() const {
         ret += curr;
     }
 
-    host_normalisations[normalIdx + 1] = 1.0;
+    host_normalizations[normalIdx + 1] = 1.0;
     return ret;
 }
 } // namespace GooFit

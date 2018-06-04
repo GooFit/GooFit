@@ -40,7 +40,7 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, fptype *, int> t) c
     if(idx < 0)
         idx = 0;
     // fptype obs  = events[idx];
-    fptype norm = pc.getNormalisation(0);
+    fptype norm = pc.getNormalization(0);
 
     // Causes stack size to be statically undeterminable.
     fptype ret = callFunction(events, pc);

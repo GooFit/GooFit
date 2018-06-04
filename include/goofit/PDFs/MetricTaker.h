@@ -20,9 +20,9 @@ class MetricTaker : public thrust::unary_function<thrust::tuple<int, fptype *, i
     __device__ fptype operator()(thrust::tuple<int, fptype *, int> t) const;
 
     /// Operator for binned evaluation, no metric.
-    /// Used in normalisation.
+    /// Used in normalization.
     ///
-    /// Event number, event size, normalisation ranges (for binned stuff, eg integration)
+    /// Event number, event size, normalization ranges (for binned stuff, eg integration)
     __device__ fptype operator()(thrust::tuple<int, int, fptype *> t) const;
 
     /// Update which index we need to use:

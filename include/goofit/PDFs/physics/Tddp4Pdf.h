@@ -34,7 +34,7 @@ class TDDP4 : public GooPdf {
           unsigned int MCeventsNorm = 5e6);
     // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the
     // coherent sum. The caching method requires that it be done this way or the ProdPdf
-    // normalisation will get *really* confused and give wrong answers.
+    // normalization will get *really* confused and give wrong answers.
 
     __host__ fptype normalize() const override;
 

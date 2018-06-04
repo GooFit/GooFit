@@ -242,7 +242,7 @@ __host__ fptype PolynomialPdf::getCoefficient(int coef) const {
     // True function is, say, ax^2 + bx + c.
     // We express this as (a'x^2 + b'x + c')*N.
     // So to get the true coefficient, multiply the internal
-    // one by the normalisation. (In non-PDF cases the normalisation
+    // one by the normalization. (In non-PDF cases the normalization
     // equals one, which gives the same result.)
 
     // Structure is nP lowestdegree c1 c2 c3 nO o1

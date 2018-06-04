@@ -55,7 +55,7 @@ TruthResolution::TruthResolution()
 
 TruthResolution::~TruthResolution() = default;
 
-fptype TruthResolution::normalisation(
+fptype TruthResolution::normalization(
     fptype di1, fptype di2, fptype di3, fptype di4, fptype tau, fptype xmixing, fptype ymixing) const {
     fptype timeIntegralOne = tau / (1 - ymixing * ymixing);
     fptype timeIntegralTwo = tau / (1 + xmixing * xmixing);

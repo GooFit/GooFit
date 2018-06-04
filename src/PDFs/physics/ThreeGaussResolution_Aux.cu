@@ -142,7 +142,7 @@ void ThreeGaussResolution::createParameters(PdfBase *dis) {
     registerParameter(outScaleFactor);
 }
 
-fptype ThreeGaussResolution::normalisation(
+fptype ThreeGaussResolution::normalization(
     fptype di1, fptype di2, fptype di3, fptype di4, fptype tau, fptype xmixing, fptype ymixing) const {
     // NB! In thesis notation, A_1 = (A + B), A_2 = (A - B).
     // Here di1 = |A^2|, di2 = |B^2|, di3,4 = Re,Im(AB^*).

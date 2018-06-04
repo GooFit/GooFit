@@ -31,13 +31,13 @@ extern fptype *dev_event_array;
 extern fptype host_parameters[]; // GOOFIT_MAXPAR
 extern fptype host_constants[];
 extern fptype host_observables[];
-extern fptype host_normalisations[];
+extern fptype host_normalizations[];
 
 extern __constant__ unsigned int c_totalEvents;
 extern int totalParameters;
 extern int totalConstants;
 extern int totalObservables;
-extern int totalNormalisations;
+extern int totalNormalizations;
 
 class FitControl;
 
@@ -47,8 +47,7 @@ class UnbinnedDataSet;
 
 namespace {
 /// Utility to filter and pick out observables and variables
-[[ maybe_unused, gnu::unused ]] void filter_arguments(std::vector<Observable> &oblist, std::vector<Variable> &varlist) {
-}
+[[maybe_unused, gnu::unused]] void filter_arguments(std::vector<Observable> &oblist, std::vector<Variable> &varlist) {}
 
 template <typename... Args>
 void filter_arguments(std::vector<Observable> &oblist,
@@ -166,7 +165,7 @@ class PdfBase {
         function_ptr_ = get_device_symbol_address(function);
     }
 
-    __host__ virtual void recursiveSetNormalisation(fptype norm = 1) const;
+    __host__ virtual void recursiveSetNormalization(fptype norm = 1) const;
     __host__ void unregisterParameter(Variable var);
     __host__ void registerObservable(Observable obs);
     __host__ void setIntegrationFineness(int i);

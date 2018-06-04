@@ -345,8 +345,7 @@ __host__ std::vector<fptype> GooPdf::evaluateAtPoints(Observable var) {
         res[i]   = v * n;
     }
 
-    if(old != nullptr)
-        setData(old);
+    setData(old);
 
     return res;
 }
@@ -388,8 +387,7 @@ __host__ fptype GooPdf::getValue(EvalFunc evalfunc) {
                       results.begin(),
                       *logger);
 
-    if(old != nullptr)
-        setData(old);
+    setData(old);
 
     return results[0];
 }

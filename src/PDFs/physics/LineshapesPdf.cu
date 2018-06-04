@@ -84,7 +84,10 @@ __device__ fptype BL2(fptype z2, int L) {
     // Spin 3 and up not accounted for.
 }
 
-__device__ fpcomplex LS_ONE(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) { return {1., 0.}; }
+__device__ fpcomplex LS_ONE(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
+    pc.incrementIndex(1, 0, 0, 0, 1);
+    return {1., 0.};
+}
 
 // This function is modeled after BW_BW::getVal() in BW_BW.cpp from the MINT package written by Jonas Rademacker.
 __device__ fpcomplex BW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
@@ -92,7 +95,7 @@ __device__ fpcomplex BW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &
     fptype reswidth      = pc.getParameter(1);
     fptype meson_radius  = pc.getConstant(0);
     unsigned int orbital = pc.getConstant(1);
-    unsigned int FF      = pc.getConstant(3);
+    unsigned int FF      = pc.getConstant(2);
 
     const unsigned int to2Lplus1 = 2 * orbital + 1;
 
@@ -140,11 +143,7 @@ __device__ fpcomplex BW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &
     fpcomplex ret = (sqrt(k * frFactor)) / den * BW;
 
     pc.incrementIndex(1, 2, 3, 0, 1);
-    // printf("m1, m2, Mpair, to2Lplus1, GofM, thisFR, pratio, mratio, pABSq , prSqForGofM, FF, ret.real, ret.imag\n");
-    // printf("BW %.7g, %.7g, %.7g, %i, %i, %i, %i\n",meson_radius, resmass, reswidth, orbital, FF, indices[2],
-    // indices[3]);
-    // printf("BW %.7g, %.7g, %.7g, %i, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g, %.7g\n", m1, m2, Mpair,
-    // to2Lplus1, GofM, thisFR, pratio, mratio, pABSq, prSqForGofM, frFactor, ret.real, ret.imag );
+
     return ret;
 }
 
@@ -154,13 +153,7 @@ __device__ fpcomplex SBW(fptype Mpair, fptype m1, fptype m2, ParameterContainer 
     fptype reswidth      = pc.getParameter(1);
     fptype meson_radius  = pc.getConstant(0);
     unsigned int orbital = pc.getConstant(1);
-    unsigned int FF      = pc.getConstant(3);
-
-    // fptype meson_radius  = functorConstants[indices[7]];
-    // fptype resmass       = cudaArray[indices[2]];
-    // fptype reswidth      = cudaArray[indices[3]];
-    // unsigned int orbital = indices[4];
-    // unsigned int FF      = indices[6];
+    unsigned int FF      = pc.getConstant(2);
 
     fptype mass          = resmass;
     fptype width         = reswidth;
@@ -347,9 +340,8 @@ __device__ fpcomplex lass_MINT(fptype Mpair, fptype m1, fptype m2, ParameterCont
     fpcomplex BG        = SF / den;
     fpcomplex returnVal = BG + phaseshift * BW(Mpair, m1, m2, pc);
 
-    pc.incrementIndex(1, 2, 3, 0, 1);
-    // printf("Lass: %.5g %.5g %.5g %.5g %.5g %.5g\n",BG.real, BG.imag, phaseshift.real, phaseshift.imag,
-    // returnVal.real, returnVal.imag);
+    // pc.incrementIndex(1, 2, 3, 0, 1);
+    // The call to BW does the increment for us
 
     return returnVal;
 }
@@ -360,20 +352,16 @@ __device__ fpcomplex lass_MINT(fptype Mpair, fptype m1, fptype m2, ParameterCont
 __device__ fpcomplex glass_MINT3(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
     fptype meson_radius  = pc.getConstant(0);
     unsigned int orbital = pc.getConstant(1);
-    fptype resmass       = pc.getParameter(0);
-    fptype reswidth      = pc.getParameter(1);
-    fptype rMass2        = Mpair * Mpair;
 
-    // fptype a = 2.07;
-    // fptype r = 3.32;
-    // fptype phiF = 0.0;
-    // fptype phiR = 0.0;
-    // fptype F = 1.0;
-    fptype a    = pc.getParameter(2);
-    fptype r    = pc.getParameter(3);
-    fptype phiF = pc.getParameter(4);
-    fptype phiR = pc.getParameter(5);
-    fptype F    = pc.getParameter(6);
+    fptype resmass  = pc.getParameter(0);
+    fptype reswidth = pc.getParameter(1);
+    fptype a        = pc.getParameter(2);
+    fptype r        = pc.getParameter(3);
+    fptype phiF     = pc.getParameter(4);
+    fptype phiR     = pc.getParameter(5);
+    fptype F        = pc.getParameter(6);
+
+    fptype rMass2 = Mpair * Mpair;
 
     fptype R = 1.0;
     // printf("GLass: %.5g %.5g %.5g %.5g %.5g %.5g\n",a, r, phiF, phiR, F, R);
@@ -426,8 +414,9 @@ __device__ fpcomplex Flatte_MINT(fptype Mpair, fptype m1, fptype m2, ParameterCo
     fptype meson_radius  = pc.getConstant(0);
     unsigned int orbital = pc.getConstant(1);
     fptype resmass       = pc.getParameter(0);
-    fptype frFactor      = 1;
-    fptype rMass2        = Mpair * Mpair;
+
+    fptype frFactor = 1;
+    fptype rMass2   = Mpair * Mpair;
 
     // As far as I understand, this is only valid for the f980
     fptype gPi       = .165;
@@ -451,7 +440,8 @@ __device__ fpcomplex Flatte_MINT(fptype Mpair, fptype m1, fptype m2, ParameterCo
 
     frFactor     = BL2(pABSq * meson_radius * meson_radius, orbital);
     fpcomplex BW = sqrt(frFactor) / fpcomplex(resmass * resmass - rMass2, 0) - fpcomplex(0, 1) * resmass * FlatteWidth;
-    pc.incrementIndex(1, 2, 3, 0, 1);
+
+    pc.incrementIndex(1, 1, 2, 0, 1);
     return BW;
 }
 
@@ -549,7 +539,7 @@ __device__ fpcomplex nonres_DP(fptype Mpair, fptype m1, fptype m2, ParameterCont
     fptype pABSq      = num / (4 * mumsRecoMass2);
     fptype formfactor = sqrt(BL2(pABSq * meson_radius * meson_radius, orbital));
 
-    pc.incrementIndex(1, 2, 3, 0, 1);
+    pc.incrementIndex(1, 0, 2, 0, 1);
     // printf("NonRes q2:%.7g FF:%.7g, s %.7g m1 %.7g m2 %.7g r %.7g L %u \n",pABSq, formfactor, mumsRecoMass2,
     // m1,m2,meson_radius, orbital );
     return fpcomplex(1., 0.) * formfactor;
@@ -622,23 +612,24 @@ __device__ fpcomplex kMatrixFunction(fptype Mpair, fptype m1, fptype m2, Paramet
     unsigned int pterm = pc.getConstant(0);
     bool is_pole       = pc.getConstant(1) == 1;
 
-    fptype sA0      = pc.getConstant(2);
-    fptype sA       = pc.getConstant(3);
-    fptype s0_prod  = pc.getConstant(4);
-    fptype s0_scatt = pc.getConstant(5);
+    unsigned int idx = 0;
+    fptype sA0       = pc.getParameter(idx++);
+    fptype sA        = pc.getParameter(idx++);
+    fptype s0_prod   = pc.getParameter(idx++);
+    fptype s0_scatt  = pc.getParameter(idx++);
 
     Eigen::Array<fptype, NCHANNELS, 1> fscat;
     Eigen::Array<fptype, NPOLES, 1> pmasses;
     Eigen::Array<fptype, NPOLES, NPOLES> couplings;
 
     for(int i = 0; i < NCHANNELS; i++) {
-        fscat(i) = pc.constants[pc.constantIdx + 7 + i];
+        fscat(i) = pc.getParameter(idx++);
     }
 
     for(int i = 0; i < NPOLES; i++) {
         for(int j = 0; j < NPOLES; j++)
-            couplings(i, j) = pc.getConstant(13 + NCHANNELS + i * (NPOLES + 1) + j);
-        pmasses(i) = pc.getConstant(pc.constantIdx + 13 + NCHANNELS + i * (NPOLES + 1) + NPOLES);
+            couplings(i, j) = pc.getParameter(idx++);
+        pmasses(i) = pc.getParameter(idx++);
     }
 
     fptype s = POW2(Mpair);
@@ -668,7 +659,7 @@ __device__ fpcomplex kMatrixFunction(fptype Mpair, fptype m1, fptype m2, Paramet
     Eigen::Array<fpcomplex, NCHANNELS, NCHANNELS> F = getPropagator(kMatrix, phaseSpace, adlerTerm);
 
     // TODO: calculate out
-    pc.incrementIndex();
+    pc.incrementIndex(1, idx, 2, 0, 1);
 
     if(is_pole) { // pole
         fpcomplex M = 0;
@@ -691,8 +682,9 @@ __device__ fptype phsp_FOCUS(fptype s, fptype m0, fptype m1) {
 }
 
 __device__ fpcomplex FOCUSFunction(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
-    fptype s         = POW2(Mpair);
     unsigned int mod = pc.getConstant(0);
+
+    fptype s = POW2(Mpair);
 
     // mKPlus, mPiPlus, mEtap
     constexpr fptype sNorm = mKPlus * mKPlus + mPiPlus * mPiPlus;
@@ -733,7 +725,7 @@ __device__ fpcomplex FOCUSFunction(fptype Mpair, fptype m1, fptype m2, Parameter
 
     fpcomplex T32 = 1. / fpcomplex(1, -K32 * rho1);
 
-    pc.incrementIndex(1, 2, 3, 0, 1);
+    pc.incrementIndex(1, 0, 1, 0, 1);
 
     if(mod == static_cast<unsigned int>(Lineshapes::FOCUS::Mod::Kpi))
         return fpcomplex(K11, -rho2 * detK) / del;
@@ -815,7 +807,6 @@ Lineshapes::GSpline::GSpline(std::string name,
     registerConstant(radius);
     registerConstant(L);
     registerConstant(Mpair);
-
     registerConstant(enum_to_underlying(FormFac));
 
     if(std::get<2>(SplineInfo) != AdditionalVars.size())
@@ -856,17 +847,14 @@ Lineshapes::GLASS::GLASS(std::string name,
 
     registerParameter(mass);
     registerParameter(width);
+    for(int i = 0; i < 5; i++)
+        registerParameter(AdditionalVars[i]);
 
     registerConstant(radius);
-
     registerConstant(L);
-    registerConstant(Mpair);
-
-    registerConstant(enum_to_underlying(FormFac));
-
-    for(int i = 0; i < 5; i++) {
-        registerParameter(AdditionalVars[i]);
-    }
+    // TODO: Remove from signature
+    // registerConstant(Mpair);
+    // registerConstant(enum_to_underlying(FormFac));
 
     registerFunction("ptr_to_glass3", ptr_to_glass3);
 
@@ -876,15 +864,7 @@ Lineshapes::GLASS::GLASS(std::string name,
 Lineshapes::One::One(
     std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
     : Lineshape(name, L, Mpair, FormFac, radius) {
-    registerParameter(mass);
-    registerParameter(width);
-
-    registerConstant(radius);
-
-    registerConstant(L);
-    registerConstant(Mpair);
-
-    registerConstant(enum_to_underlying(FormFac));
+    // TODO: Simplify signature!
 
     registerFunction("ptr_to_LS_ONE", ptr_to_LS_ONE);
 
@@ -898,10 +878,9 @@ Lineshapes::RBW::RBW(
     registerParameter(width);
 
     registerConstant(radius);
-
     registerConstant(L);
-    registerConstant(Mpair);
-
+    // registerConstant(Mpair);
+    // TODO: Missing contant here
     registerConstant(enum_to_underlying(FormFac));
 
     registerFunction("ptr_to_BW_DP4", ptr_to_BW_DP4);
@@ -912,15 +891,14 @@ Lineshapes::RBW::RBW(
 Lineshapes::LASS::LASS(
     std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
     : Lineshape(name, L, Mpair, FormFac, radius) {
+    // This one must match RBW exactly, because it calls the same function at one point
+
     registerParameter(mass);
     registerParameter(width);
 
-    constantsList.push_back(radius);
-
-    constantsList.push_back(L);
-    constantsList.push_back(Mpair);
-
-    constantsList.push_back(enum_to_underlying(FormFac));
+    registerConstant(radius);
+    registerConstant(L);
+    registerConstant(enum_to_underlying(FormFac));
 
     registerFunction("ptr_to_lass", ptr_to_lass);
 
@@ -930,15 +908,10 @@ Lineshapes::LASS::LASS(
 Lineshapes::NonRes::NonRes(
     std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
     : Lineshape(name, L, Mpair, FormFac, radius) {
-    registerParameter(mass);
-    registerParameter(width);
+    // TODO: Clean up signature
 
     registerConstant(radius);
-
     registerConstant(L);
-    registerConstant(Mpair);
-
-    registerConstant(enum_to_underlying(FormFac));
 
     registerFunction("ptr_to_NONRES_DP", ptr_to_NONRES_DP);
 
@@ -948,15 +921,7 @@ Lineshapes::NonRes::NonRes(
 Lineshapes::Bugg::Bugg(
     std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
     : Lineshape(name, L, Mpair, FormFac, radius) {
-    registerParameter(mass);
-    registerParameter(width);
-
-    registerConstant(radius);
-
-    registerConstant(L);
-    registerConstant(Mpair);
-
-    registerConstant(enum_to_underlying(FormFac));
+    // TODO: Clean up signature
 
     registerFunction("ptr_to_bugg_MINT", ptr_to_bugg_MINT);
 
@@ -966,15 +931,7 @@ Lineshapes::Bugg::Bugg(
 Lineshapes::Bugg3::Bugg3(
     std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
     : Lineshape(name, L, Mpair, FormFac, radius) {
-    registerParameter(mass);
-    registerParameter(width);
-
-    registerConstant(radius);
-
-    registerConstant(L);
-    registerConstant(Mpair);
-
-    registerConstant(enum_to_underlying(FormFac));
+    // TODO: Clean up signature
 
     registerFunction("ptr_to_bugg_MINT3", ptr_to_bugg_MINT3);
 
@@ -984,15 +941,11 @@ Lineshapes::Bugg3::Bugg3(
 Lineshapes::Flatte::Flatte(
     std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
     : Lineshape(name, L, Mpair, FormFac, radius) {
+    // TODO: Clean up signature
     registerParameter(mass);
-    registerParameter(width);
 
     registerConstant(radius);
-
     registerConstant(L);
-    registerConstant(Mpair);
-
-    registerConstant(enum_to_underlying(FormFac));
 
     registerFunction("ptr_to_Flatte", ptr_to_Flatte);
 
@@ -1006,10 +959,8 @@ Lineshapes::SBW::SBW(
     registerParameter(width);
 
     registerConstant(radius);
-
     registerConstant(L);
-    registerConstant(Mpair);
-
+    // TODO: Mpair missing?
     registerConstant(enum_to_underlying(FormFac));
 
     registerFunction("ptr_to_SBW", ptr_to_SBW);
@@ -1026,16 +977,7 @@ Lineshapes::FOCUS::FOCUS(std::string name,
                          FF FormFac,
                          fptype radius)
     : Lineshape(name, L, Mpair, FormFac, radius) {
-    registerParameter(mass);
-    registerParameter(width);
-
-    registerConstant(radius);
-
-    registerConstant(L);
-    registerConstant(Mpair);
-
-    registerConstant(enum_to_underlying(FormFac));
-
+    // TODO: Clean up signature
     registerConstant(static_cast<unsigned int>(mod));
 
     registerFunction("ptr_to_FOCUS", ptr_to_FOCUS);
@@ -1060,16 +1002,6 @@ Lineshapes::kMatrix::kMatrix(std::string name,
                              FF FormFac,
                              fptype radius)
     : Lineshape(name, L, Mpair, FormFac, radius) {
-    registerParameter(mass);
-    registerParameter(width);
-
-    registerConstant(radius);
-
-    registerConstant(L);
-    registerConstant(Mpair);
-
-    registerConstant(enum_to_underlying(FormFac));
-
     registerConstant(pterm);
     registerConstant(is_pole ? 1 : 0);
 

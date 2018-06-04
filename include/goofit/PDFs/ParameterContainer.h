@@ -40,28 +40,10 @@ struct ParameterContainer {
 
     // each PDF needs to supply the amount of each array used.
     // This function automatically adds +1 for the size.
-    __device__ void incrementIndex(const int funcs, const int params, const int cons, const int obs, const int norms) {
-        funcIdx += funcs;
-        parameterIdx += params + 1;
-        constantIdx += cons + 1;
-        observableIdx += obs + 1;
-        normalIdx += norms + 1;
-    }
+    __device__ void incrementIndex(const int funcs, const int params, const int cons, const int obs, const int norms);
 
     // slow version, avoid at all costs!
-    __device__ void incrementIndex() {
-        funcIdx++;
-
-        int np = parameters[parameterIdx];
-        int nc = constants[constantIdx];
-        int no = observables[observableIdx];
-        int nn = normalisations[normalIdx];
-
-        parameterIdx += np + 1;
-        constantIdx += nc + 1;
-        observableIdx += no + 1;
-        normalIdx += nn + 1;
-    }
+    __device__ void incrementIndex();
 };
 
 } // namespace GooFit

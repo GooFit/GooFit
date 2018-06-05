@@ -185,6 +185,8 @@ __host__ void GooPdf::setIndices() {
     MEMCPY_TO_SYMBOL(d_parameters, &host_parameters, totalParameters * sizeof(fptype), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(d_constants, &host_constants, totalConstants * sizeof(fptype), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(d_observables, &host_observables, totalObservables * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(
+        d_normalizations, &host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
 }
 
 __host__ int GooPdf::findFunctionIdx(void *dev_functionPtr) {

@@ -193,12 +193,21 @@ TEST_CASE("1D Eval", "[basic]") {
 
     CHECK(gauss.normalize() == 6.26657_a);
 
+    // import numpy as np
+    // import matplotlib.pyplot as plt
+    // mean = 1.5
+    // sigma = 2.5
+    // x = np.arange(-8, 8, 0.0001)
+    // f = np.exp(-np.square(x - mean)/(sigma*sigma))
+    // plt.plot(x,f)
+    // plt.show()
+
     xvar = 1.2;
-    CHECK(gauss.getValue(EvalFunc::Prob) == 0.15843208471746245_a);
+    CHECK(gauss.getValue(EvalFunc::Prob) == 0.99282585_a);
     // The default is to ignore the normalization factors, so I'm passing EvalFunc::Prob
 
     xvar = 7.2;
-    CHECK(gauss.getValue(EvalFunc::Prob) == 0.0118618339389365_a);
+    CHECK(gauss.getValue(EvalFunc::Prob) == 0.074333020_a);
 }
 
 TEST_CASE("2D Eval", "[basic]") {

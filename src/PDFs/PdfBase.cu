@@ -185,7 +185,7 @@ __host__ void PdfBase::populateArrays() {
     host_normalizations[totalNormalizations] = 1;
     normalIdx                                = totalNormalizations++;
     GOOFIT_TRACE("host_normalizations[{}] = {}", totalNormalizations, 0);
-    host_normalizations[totalNormalizations] = 0;
+    host_normalizations[totalNormalizations] = 1.0;
     totalNormalizations++;
 
     for(auto &component : components)

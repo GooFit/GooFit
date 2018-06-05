@@ -17,7 +17,7 @@ __device__ fptype device_BifurGauss(fptype *evt, ParameterContainer &pc) {
     if(x > mean)
         sigma = sigmaRight;
 
-    pc.incrementIndex(1, 3, 2, 0, 1);
+    pc.incrementIndex(1, 3, 0, 1, 1);
 
     fptype ret = exp(-0.5 * (x - mean) * (x - mean) / (sigma * sigma));
     return ret;

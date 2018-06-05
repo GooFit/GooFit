@@ -260,7 +260,7 @@ __host__ double GooPdf::sumOfNll(int numVars) const {
 }
 
 __host__ double GooPdf::calculateNLL() const {
-    [[maybe_unused, gnu::unused]] fptype norm = normalize();
+    GOOFIT_MAYBE_UNUSED fptype norm = normalize();
     GOOFIT_TRACE("GooPdf::calculateNLL calling normalize: {} (host_norm should be 1: {})",
                  norm,
                  host_normalizations[normalIdx + 1]);

@@ -47,7 +47,7 @@ class UnbinnedDataSet;
 
 namespace {
 /// Utility to filter and pick out observables and variables
-[[maybe_unused, gnu::unused]] void filter_arguments(std::vector<Observable> &oblist, std::vector<Variable> &varlist) {}
+GOOFIT_MAYBE_UNUSED void filter_arguments(std::vector<Observable> &oblist, std::vector<Variable> &varlist) {}
 
 template <typename... Args>
 void filter_arguments(std::vector<Observable> &oblist,

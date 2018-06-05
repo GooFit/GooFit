@@ -10,6 +10,8 @@
 #include <cmath>
 #include <string>
 
+#define GOOFIT_MAYBE_UNUSED [[maybe_unused, gnu::unused]]
+
 namespace GooFit {
 extern int host_callnumber;
 }

@@ -134,7 +134,7 @@ __device__ fpcomplex plainBW(fptype m12, fptype m13, fptype m23, ParameterContai
             cyclic_index = cyclic_index + 1 % 3;
         }
     }
-    pc.incrementIndex(1, 2, 3, 0, 1);
+    pc.incrementIndex(1, 2, 2, 0, 1);
     return result;
 }
 
@@ -203,12 +203,6 @@ __device__ fptype fsFun(double s, double m2, double gam, double daug2Mass, doubl
 }
 
 __device__ fpcomplex gouSak(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) {
-    // fptype motherMass   = c_motherMass;//RO_CACHE(pc.constants[pc.constantIdx + 1]);
-    // fptype daug1Mass    = c_daug1Mass;//RO_CACHE(pc.constants[pc.constantIdx + 2]);
-    // fptype daug2Mass    = c_daug2Mass;//RO_CACHE(pc.constants[pc.constantIdx + 3]);
-    // fptype daug3Mass    = c_daug3Mass;//RO_CACHE(pc.constants[pc.constantIdx + 4]);
-    // fptype meson_radius = c_meson_radius;//RO_CACHE(pc.constants[pc.constantIdx + 5]);
-
     unsigned int spin         = pc.getConstant(0);
     unsigned int cyclic_index = pc.getConstant(1);
 
@@ -244,18 +238,12 @@ __device__ fpcomplex gouSak(fptype m12, fptype m13, fptype m23, ParameterContain
     retur *= sqrt(frFactor);
     retur *= spinFactor(spin, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass, m12, m13, m23, cyclic_index);
 
-    pc.incrementIndex(1, 2, 3, 0, 1);
+    pc.incrementIndex(1, 2, 2, 0, 1);
 
     return retur;
 }
 
 __device__ fpcomplex lass(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) {
-    // fptype motherMass   = c_motherMass;//RO_CACHE(pc.constants[pc.constantIdx + 1]);
-    // fptype daug1Mass    = c_daug1Mass;//RO_CACHE(pc.constants[pc.constantIdx + 2]);
-    // fptype daug2Mass    = c_daug2Mass;//RO_CACHE(pc.constants[pc.constantIdx + 3]);
-    // fptype daug3Mass    = c_daug3Mass;//RO_CACHE(pc.constants[pc.constantIdx + 4]);
-    // fptype meson_radius = c_meson_radius;//RO_CACHE(pc.constants[pc.constantIdx + 5]);
-
     unsigned int spin         = pc.getConstant(0);
     unsigned int cyclic_index = pc.getConstant(1);
 
@@ -320,7 +308,7 @@ __device__ fpcomplex lass(fptype m12, fptype m13, fptype m23, ParameterContainer
     resT *= sqrt(frFactor);
     resT *= spinFactor(spin, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass, m12, m13, m23, cyclic_index);
 
-    pc.incrementIndex(1, 2, 3, 0, 1);
+    pc.incrementIndex(1, 2, 2, 0, 1);
 
     return resT;
 }

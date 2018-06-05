@@ -10,7 +10,9 @@
 #include <cmath>
 #include <string>
 
+// clang-format off
 #define GOOFIT_MAYBE_UNUSED [[maybe_unused, gnu::unused]]
+// clang-format on
 
 namespace GooFit {
 extern int host_callnumber;

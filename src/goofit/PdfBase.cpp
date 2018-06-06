@@ -49,8 +49,9 @@ __host__ void PdfBase::checkInitStatus(std::vector<std::string> &unInited) const
     }
 }
 
-__host__ void PdfBase::recursiveSetNormalization(fptype norm) const {
+__host__ void PdfBase::recursiveSetNormalization(fptype norm) {
     host_normalizations[normalIdx + 1] = norm;
+    cachedNormalization                = norm;
 
     for(auto component : components) {
         component->recursiveSetNormalization(norm);

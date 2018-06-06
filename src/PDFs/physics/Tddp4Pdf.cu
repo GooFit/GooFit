@@ -562,7 +562,7 @@ __host__ void TDDP4::setDataSize(unsigned int dataSize, unsigned int evtSize) {
 }
 
 // this is where the actual magic happens. This function does all the calculations!
-__host__ fptype TDDP4::normalize() const {
+__host__ fptype TDDP4::normalize() {
     if(cachedResSF == nullptr)
         throw GeneralError("You must call dp.setDataSize(currData.getNumEvents(), N) first!");
     // fprintf(stderr, "start normalize\n");
@@ -752,6 +752,7 @@ __host__ fptype TDDP4::normalize() const {
     }
 
     host_normalizations[normalIdx + 1] = 1.0 / ret;
+    cachedNormalization                = 1.0 / ret;
     // printf("end of normalize %f\n", ret);
     return ret;
 }

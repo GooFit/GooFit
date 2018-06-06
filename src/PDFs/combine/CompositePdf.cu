@@ -51,7 +51,7 @@ __host__ CompositePdf::CompositePdf(std::string n, PdfBase *core, PdfBase *shell
     initialize();
 }
 
-__host__ fptype CompositePdf::normalize() const {
+__host__ fptype CompositePdf::normalize() {
     recursiveSetNormalization(1.0);
 
     // Note: Core is not normalized in composite calculation,

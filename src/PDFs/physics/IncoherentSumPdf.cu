@@ -143,7 +143,7 @@ __host__ void IncoherentSumPdf::setDataSize(unsigned int dataSize, unsigned int 
     setForceIntegrals();
 }
 
-__host__ fptype IncoherentSumPdf::normalize() const {
+__host__ fptype IncoherentSumPdf::normalize() {
     recursiveSetNormalization(1); // Not going to normalize efficiency,
     // so set normalization factor to 1 so it doesn't get multiplied by zero.
     // Copy at this time to ensure that the SpecialCalculators, which need the efficiency,
@@ -236,6 +236,7 @@ __host__ fptype IncoherentSumPdf::normalize() const {
     ret *= binSizeFactor;
 
     host_normalizations[normalIdx + 1] = 1.0 / ret;
+    cachedNormalization                = 1.0 / ret;
     return ret;
 }
 

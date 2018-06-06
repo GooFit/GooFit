@@ -72,7 +72,7 @@ ProdPdf::ProdPdf(std::string n, std::vector<PdfBase *> comps)
     initialize();
 }
 
-__host__ fptype ProdPdf::normalize() const {
+__host__ fptype ProdPdf::normalize() {
     if(varOverlaps) {
         // Two or more components share an observable and cannot be separately
         // normalized, since \int A*B dx does not equal int A dx * int B dx.
@@ -95,7 +95,8 @@ __host__ fptype ProdPdf::normalize() const {
         c->normalize();
     }
 
-    host_normalizations[normalIdx + 1] = 1;
+    host_normalizations[normalIdx + 1] = 1.0;
+    cachedNormalization                = 1.0;
     // MEMCPY_TO_SYMBOL(normalizationFactors, host_normalization, totalParams*sizeof(fptype), 0,
     // cudaMemcpyHostToDevice);
 

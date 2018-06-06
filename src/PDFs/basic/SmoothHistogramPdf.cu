@@ -202,7 +202,7 @@ __host__ void SmoothHistogramPdf::copyHistogramToDevice(thrust::host_vector<fpty
     }
 }
 
-__host__ fptype SmoothHistogramPdf::normalize() const {
+__host__ fptype SmoothHistogramPdf::normalize() {
     Smoother smoother;
     smoother.funcIdx = getFunctionIndex();
 
@@ -221,6 +221,7 @@ __host__ fptype SmoothHistogramPdf::normalize() const {
     // if (cpuDebug & 1) std::cout << "Normalizing " << getName() << " " << host_params[host_indices[parameters + 1]] <<
     // " " << ret << std::endl;
     host_normalizations[normalIdx + 1] = 1.0 / ret;
+    cachedNormalization                = 1.0 / ret;
     return ret;
 }
 } // namespace GooFit

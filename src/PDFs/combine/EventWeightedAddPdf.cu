@@ -142,7 +142,7 @@ EventWeightedAddPdf::EventWeightedAddPdf(std::string n, std::vector<Observable> 
     initialize();
 }
 
-__host__ fptype EventWeightedAddPdf::normalize() const {
+__host__ fptype EventWeightedAddPdf::normalize() {
     // if (cpuDebug & 1) std::cout << "Normalizing EventWeightedAddPdf " << getName() << " " << components.size() <<
     // std::endl;
 
@@ -152,6 +152,7 @@ __host__ fptype EventWeightedAddPdf::normalize() const {
         comp->normalize();
 
     host_normalizations[normalIdx + 1] = 1.0;
+    cachedNormalization                = 1.0;
 
     return 1.0;
 }

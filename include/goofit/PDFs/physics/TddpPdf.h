@@ -133,7 +133,7 @@ class TddpPdf : public GooPdf {
     // because it depends on the momenta of the daughter tracks, which are not
     // affected by making the wrong charge assignment to the mother.
 
-    __host__ fptype normalize() const override;
+    __host__ fptype normalize() override;
     __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 5);
     __host__ void setForceIntegrals(bool f = true) { forceRedoIntegrals = f; }
 

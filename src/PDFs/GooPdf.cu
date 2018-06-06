@@ -261,7 +261,7 @@ __host__ double GooPdf::sumOfNll(int numVars) const {
     return ret;
 }
 
-__host__ double GooPdf::calculateNLL() const {
+__host__ double GooPdf::calculateNLL() {
     GOOFIT_MAYBE_UNUSED fptype norm = normalize();
     GOOFIT_TRACE("GooPdf::calculateNLL calling normalize: {} (host_norm should be 1: {})",
                  norm,
@@ -394,10 +394,11 @@ __host__ fptype GooPdf::getValue(EvalFunc evalfunc) {
     return results[0];
 }
 
-__host__ fptype GooPdf::normalize() const {
+__host__ fptype GooPdf::normalize() {
     if(!fitControl->metricIsPdf()) {
         GOOFIT_TRACE("{}: metricIsPdf, returning 1", getName());
         host_normalizations[normalIdx + 1] = 1.0;
+        cachedNormalization                = 1.0;
         return 1.0;
     }
 
@@ -411,6 +412,7 @@ __host__ fptype GooPdf::normalize() const {
         }
 
         host_normalizations[normalIdx + 1] = 1.0 / ret;
+        cachedNormalization                = 1.0 / ret;
         GOOFIT_TRACE("{}: Param {} integral is = {}", getName(), parameters, ret);
 
         return ret;
@@ -471,6 +473,7 @@ __host__ fptype GooPdf::normalize() const {
 
     GOOFIT_TRACE("{}: Param {} integral is ~= {}", getName(), normalIdx, ret);
     host_normalizations[normalIdx + 1] = 1.0 / ret;
+    cachedNormalization                = 1.0 / ret;
     return (fptype)ret;
 }
 

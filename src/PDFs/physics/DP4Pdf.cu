@@ -377,7 +377,7 @@ __host__ void DPPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) {
 }
 
 // this is where the actual magic happens. This function does all the calculations!
-__host__ fptype DPPdf::normalize() const {
+__host__ fptype DPPdf::normalize() {
     // fprintf(stderr, "start normalize\n");
     recursiveSetNormalization(1); // Not going to normalize efficiency,
     // so set normalization factor to 1 so it doesn't get multiplied by zero.
@@ -536,6 +536,7 @@ __host__ fptype DPPdf::normalize() const {
         GooFit::abort(__FILE__, __LINE__, getName() + " NAN normalization in DPPdf", this);
 
     host_normalizations[normalIdx + 1] = 1.0 / ret;
+    cachedNormalization                = 1.0 / ret;
     // printf("end of normalize %f\n", ret);
     return ret;
 }

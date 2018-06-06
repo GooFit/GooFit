@@ -135,7 +135,7 @@ AddPdf::AddPdf(std::string n, Variable frac1, PdfBase *func1, PdfBase *func2)
     initialize();
 }
 
-__host__ fptype AddPdf::normalize() const {
+__host__ fptype AddPdf::normalize() {
     // if (cpuDebug & 1) std::cout << "Normalizing AddPdf " << getName() << std::endl;
 
     fptype ret         = 0;
@@ -161,6 +161,7 @@ __host__ fptype AddPdf::normalize() const {
     }
 
     host_normalizations[normalIdx + 1] = 1.0;
+    cachedNormalization                = 1.0;
 
     // TODO: Unsure of the exact location for this normalize...
     if(getSpecialMask() & PdfBase::ForceCommonNorm) {
@@ -171,6 +172,7 @@ __host__ fptype AddPdf::normalize() const {
 
         for(auto component : components) {
             host_normalizations[component->getParameterIndex()] = (1.0 / ret);
+            // component->cachedNormalization = 1.0 / ret;
         }
     }
 

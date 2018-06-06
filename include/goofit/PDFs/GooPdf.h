@@ -47,7 +47,7 @@ class GooPdf : public PdfBase {
   public:
     using PdfBase::PdfBase;
 
-    double calculateNLL() const override;
+    double calculateNLL() override;
 
     /// NB: This does not project correctly in multidimensional datasets, because all observables
     /// other than 'var' will have, for every event, whatever value they happened to get set to last
@@ -57,10 +57,10 @@ class GooPdf : public PdfBase {
     __host__ std::vector<fptype> evaluateAtPoints(Observable var);
 
     /// A normalize function. This fills in the host_normalize
-    __host__ fptype normalize() const override;
+    __host__ fptype normalize() override;
 
     /// Just in case you are British and the previous spelling is offensive
-    __host__ fptype normalise() const { return normalize(); }
+    __host__ fptype normalise() { return normalize(); }
 
     __host__ virtual fptype integrate(fptype lo, fptype hi) const;
     __host__ bool hasAnalyticIntegral() const override;

@@ -303,7 +303,7 @@ __host__ void ConvolutionPdf::registerOthers(std::vector<ConvolutionPdf *> other
     properlyInitialised = true;
 }
 
-__host__ fptype ConvolutionPdf::normalize() const {
+__host__ fptype ConvolutionPdf::normalize() {
     // First set normalization factors to one so we can evaluate convolution without getting zeroes
     recursiveSetNormalization(fptype(1.0));
 

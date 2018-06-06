@@ -80,7 +80,7 @@ __host__ MappedPdf::MappedPdf(std::string n, GooPdf *m, std::vector<GooPdf *> &t
     initialize();
 }
 
-__host__ fptype MappedPdf::normalize() const {
+__host__ fptype MappedPdf::normalize() {
     // std::cout << "Normalizing MappedPdf " << getName() << std::endl;
     fptype ret = 0;
 
@@ -90,6 +90,8 @@ __host__ fptype MappedPdf::normalize() const {
     }
 
     host_normalizations[normalIdx + 1] = 1.0;
+    cachedNormalization                = 1.0;
+
     return ret;
 }
 } // namespace GooFit

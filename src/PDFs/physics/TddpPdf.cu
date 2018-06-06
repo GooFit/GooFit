@@ -494,7 +494,7 @@ __host__ void TddpPdf::populateArrays() {
     host_normalizations[totalNormalizations] = 1;
     normalIdx                                = totalNormalizations++;
     GOOFIT_TRACE("host_normalizations[{}] = {}", totalNormalizations, 0);
-    host_normalizations[totalNormalizations] = 0;
+    host_normalizations[totalNormalizations] = cachedNormalization;
     totalNormalizations++;
 
     int numResonances = decayInfo.resonances.size();
@@ -566,7 +566,7 @@ __host__ void TddpPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) 
     setForceIntegrals();
 }
 
-__host__ fptype TddpPdf::normalize() const {
+__host__ fptype TddpPdf::normalize() {
     recursiveSetNormalization(1); // Not going to normalize efficiency,
     // so set normalization factor to 1 so it doesn't get multiplied by zero.
     // Copy at this time to ensure that the SpecialWaveCalculators, which need the efficiency,
@@ -745,6 +745,7 @@ __host__ fptype TddpPdf::normalize() const {
     ret *= binSizeFactor;
 
     host_normalizations[normalIdx + 1] = 1.0 / ret;
+    cachedNormalization                = 1.0 / ret;
     // std::cout << "End of TDDP normalization: " << ret << " " << host_normalization[parameters] << " " <<
     // binSizeFactor << std::endl;
     return ret;

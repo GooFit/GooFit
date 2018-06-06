@@ -231,7 +231,7 @@ __host__ fptype PolynomialPdf::integrate(fptype lo, fptype hi) const {
     return ret;
 }
 
-__host__ fptype PolynomialPdf::getCoefficient(int coef) const {
+__host__ fptype PolynomialPdf::getCoefficient(int coef) {
     // NB! This function only works for single polynomials.
     if(1 != observablesList.size()) {
         std::cout << "Warning: getCoefficient method of PolynomialPdf not implemented for multi-dimensional "

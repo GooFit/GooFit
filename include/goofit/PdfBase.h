@@ -118,8 +118,8 @@ class PdfBase {
 
     enum Specials { ForceSeparateNorm = 1, ForceCommonNorm = 2 };
 
-    __host__ virtual double calculateNLL() const = 0;
-    __host__ virtual fptype normalize() const    = 0;
+    __host__ virtual double calculateNLL() = 0;
+    __host__ virtual fptype normalize()    = 0;
     __host__ void initializeIndices();
 
     __host__ void addSpecialMask(int m) { specialMask |= m; }
@@ -165,7 +165,7 @@ class PdfBase {
         function_ptr_ = get_device_symbol_address(function);
     }
 
-    __host__ virtual void recursiveSetNormalization(fptype norm = 1) const;
+    __host__ virtual void recursiveSetNormalization(fptype norm = 1);
     __host__ void unregisterParameter(Variable var);
     __host__ void registerObservable(Observable obs);
     __host__ void setIntegrationFineness(int i);
@@ -209,6 +209,7 @@ class PdfBase {
     std::vector<Observable> observablesList;
     std::vector<Variable> parametersList;
     std::vector<fptype> constantsList;
+    fptype cachedNormalization{1.0};
     std::shared_ptr<FitControl> fitControl;
     std::vector<PdfBase *> components;
     int integrationBins{-1};

@@ -35,7 +35,7 @@ class DPPdf : public GooPdf {
     // coherent sum. The caching method requires that it be done this way or the ProdPdf
     // normalization will get *really* confused and give wrong answers.
 
-    __host__ fptype normalize() const override;
+    __host__ fptype normalize() override;
     __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 6);
     __host__ void setForceIntegrals(bool f = true) { forceRedoIntegrals = f; }
     __host__ int getMCevents() { return MCevents; }

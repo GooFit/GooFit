@@ -89,7 +89,7 @@ __host__ void PdfBase::initializeIndices() {
     host_normalizations[totalNormalizations] = 1;
     normalIdx                                = totalNormalizations;
     totalNormalizations++;
-    host_normalizations[totalNormalizations] = 0;
+    host_normalizations[totalNormalizations] = cachedNormalization;
     totalNormalizations++;
 
     if(totalParameters >= GOOFIT_MAXPAR)
@@ -185,7 +185,7 @@ __host__ void PdfBase::populateArrays() {
     host_normalizations[totalNormalizations] = 1;
     normalIdx                                = totalNormalizations++;
     GOOFIT_TRACE("host_normalizations[{}] = {}", totalNormalizations, 0);
-    host_normalizations[totalNormalizations] = 1.0;
+    host_normalizations[totalNormalizations] = cachedNormalization;
     totalNormalizations++;
 
     for(auto &component : components)

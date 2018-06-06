@@ -192,7 +192,6 @@ TEST_CASE("1D Eval", "[basic]") {
     CHECK(v[60] == 0.0938855055588_a);
 
     CHECK(gauss.normalize() == 6.26657_a);
-    CHECK(gauss.normalize() == 6.26657_a);
 
     /*
     import numpy as np
@@ -200,23 +199,23 @@ TEST_CASE("1D Eval", "[basic]") {
     mean = 1.5
     sigma = 2.5
     x = np.array((1.2, 7.2))
-    f = np.exp(-(x - mean)**2 / sigma**2)
+    f = np.exp(-0.5*(x - mean)**2 / sigma**2)
     fn = f / np.sqrt(2 * np.pi * sigma**2)
 
     print("g({}) = {} -> {} normalized".format(x[0], f[0], fn[0]))
     print("g({}) = {} -> {} normalized".format(x[1], f[1], fn[1]))
 
-    # g(1.2) = 0.985703184122443 -> 0.15729547042910427 normalized
-    # g(7.2) = 0.005525397988803928 -> 0.0008817259495115716 normalized
-     */
+    # g(1.2) = 0.9928258579038134 -> 0.158743208471746242 normalized
+    # g(7.2) = 0.07433302085078965 -> 0.011861833938936505 normalized
+    */
 
     xvar = 1.2;
-    CHECK(gauss.getValue(EvalFunc::Prob) == 0.99282585_a);
-    CHECK(gauss.getValue(EvalFunc::Eval) == 0.99282585_a);
+    CHECK(gauss.getValue(EvalFunc::Prob) == 0.15843208471746245_a);
+    CHECK(gauss.getValue(EvalFunc::Eval) == 0.99282585857903813_a);
 
     xvar = 7.2;
-    CHECK(gauss.getValue(EvalFunc::Prob) == 0.074333020_a);
-    CHECK(gauss.getValue(EvalFunc::Eval) == 0.074333020_a);
+    CHECK(gauss.getValue(EvalFunc::Prob) == 0.0118618339389365_a);
+    CHECK(gauss.getValue(EvalFunc::Eval) == 0.0743330208507896_a);
 }
 
 TEST_CASE("2D Eval", "[basic]") {

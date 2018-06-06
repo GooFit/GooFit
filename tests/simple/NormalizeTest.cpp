@@ -192,22 +192,31 @@ TEST_CASE("1D Eval", "[basic]") {
     CHECK(v[60] == 0.0938855055588_a);
 
     CHECK(gauss.normalize() == 6.26657_a);
+    CHECK(gauss.normalize() == 6.26657_a);
 
-    // import numpy as np
-    // import matplotlib.pyplot as plt
-    // mean = 1.5
-    // sigma = 2.5
-    // x = np.arange(-8, 8, 0.0001)
-    // f = np.exp(-np.square(x - mean)/(sigma*sigma))
-    // plt.plot(x,f)
-    // plt.show()
+    /*
+    import numpy as np
+
+    mean = 1.5
+    sigma = 2.5
+    x = np.array((1.2, 7.2))
+    f = np.exp(-(x - mean)**2 / sigma**2)
+    fn = f / np.sqrt(2 * np.pi * sigma**2)
+
+    print("g({}) = {} -> {} normalized".format(x[0], f[0], fn[0]))
+    print("g({}) = {} -> {} normalized".format(x[1], f[1], fn[1]))
+
+    # g(1.2) = 0.985703184122443 -> 0.15729547042910427 normalized
+    # g(7.2) = 0.005525397988803928 -> 0.0008817259495115716 normalized
+     */
 
     xvar = 1.2;
     CHECK(gauss.getValue(EvalFunc::Prob) == 0.99282585_a);
-    // The default is to ignore the normalization factors, so I'm passing EvalFunc::Prob
+    CHECK(gauss.getValue(EvalFunc::Eval) == 0.99282585_a);
 
     xvar = 7.2;
     CHECK(gauss.getValue(EvalFunc::Prob) == 0.074333020_a);
+    CHECK(gauss.getValue(EvalFunc::Eval) == 0.074333020_a);
 }
 
 TEST_CASE("2D Eval", "[basic]") {

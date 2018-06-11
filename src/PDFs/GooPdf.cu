@@ -235,10 +235,8 @@ __host__ double GooPdf::sumOfNll(int numVars) const {
     static thrust::plus<double> cudaPlus;
     thrust::constant_iterator<int> eventSize(numVars);
     thrust::constant_iterator<fptype *> arrayAddress(dev_event_array);
-    double dummy = 0;
-
-    // if (host_callnumber >= 2) GooFit::abort(__FILE__, __LINE__, getName() + " debug abort", this);
     thrust::counting_iterator<int> eventIndex(0);
+    double dummy = 0;
 
     double ret;
 #ifdef GOOFIT_MPI
@@ -273,7 +271,6 @@ __host__ double GooPdf::calculateNLL() {
     // make this memcpy async
     MEMCPY_TO_SYMBOL(
         d_normalizations, host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    // cudaDeviceSynchronize(); // Ensure normalization integrals are finished
 
     auto numVars = (int)observablesList.size();
 
@@ -363,13 +360,7 @@ __host__ fptype GooPdf::getValue(EvalFunc evalfunc) {
         throw GeneralError("That EvalFunc is not supported");
 
     setIndices();
-
-    // Returns the value of the PDF at a single point.
-    // Execute redundantly in all threads for OpenMP multiGPU case
-    // copyParams();
     normalize();
-    // MEMCPY_TO_SYMBOL(normalizationFactors, host_normalization, totalParams*sizeof(fptype), 0,
-    // cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(
         d_normalizations, host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
@@ -505,11 +496,7 @@ __host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
     auto fc = fitControl;
     setFitControl(std::make_shared<ProbFit>());
 
-    // copyParams();
-    // double overall =
     normalize();
-    // MEMCPY_TO_SYMBOL(normalizationFactors, host_normalizations, totalParams*sizeof(fptype), 0,
-    // cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(
         d_normalizations, host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
@@ -532,8 +519,6 @@ __host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
     std::vector<std::vector<fptype>> values;
     values.resize(components.size() + 1);
     thrust::host_vector<fptype> host_results = results;
-
-    //
 
     for(unsigned int i = 0; i < host_results.size(); ++i) {
         values[0].push_back(host_results[i]);
@@ -580,33 +565,6 @@ __host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
     setFitControl(fc);
 
     return values;
-}
-
-// still need to add OpenMP/multi-GPU code here
-__host__ void GooPdf::transformGrid(fptype *host_output) {
-    generateNormRange();
-    // normalize();
-    int totalBins = 1;
-
-    for(const Observable &v : observablesList) {
-        totalBins *= v.getNumBins();
-    }
-
-    thrust::constant_iterator<fptype *> arrayAddress(normRanges);
-    thrust::constant_iterator<int> eventSize(observablesList.size());
-    thrust::counting_iterator<int> binIndex(0);
-    thrust::device_vector<fptype> d_vec;
-    d_vec.resize(totalBins);
-
-    thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(binIndex, eventSize, arrayAddress)),
-                      thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, eventSize, arrayAddress)),
-                      d_vec.begin(),
-                      *logger);
-
-    thrust::host_vector<fptype> h_vec = d_vec;
-
-    for(unsigned int i = 0; i < totalBins; ++i)
-        host_output[i] = h_vec[i];
 }
 
 } // namespace GooFit

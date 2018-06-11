@@ -123,7 +123,6 @@ class PdfBase {
     __host__ void initializeIndices();
 
     __host__ void addSpecialMask(int m) { specialMask |= m; }
-    __host__ void copyParams(const std::vector<double> &pars) const;
     __host__ void copyParams();
     __host__ void copyNormFactors() const;
     __host__ void generateNormRange();
@@ -156,7 +155,6 @@ class PdfBase {
     __host__ unsigned int registerParameter(Variable var);
     /// The int value returned here is the constant number, for checking
     __host__ unsigned int registerConstant(fptype value);
-    __host__ unsigned int registerConstants(unsigned int amount);
 
     /// Register a function for this PDF to use in evalution
     template <typename T>

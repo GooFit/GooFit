@@ -78,7 +78,6 @@ class GooPdf : public PdfBase {
     __host__ virtual void setMetrics();
     __host__ void setParameterConstantness(bool constant = true);
 
-    __host__ virtual void transformGrid(fptype *host_output);
     static __host__ int findFunctionIdx(void *dev_functionPtr);
     __host__ void setDebugMask(int mask, bool setSpecific = true) const;
 

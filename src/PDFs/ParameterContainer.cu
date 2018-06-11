@@ -2,17 +2,14 @@
 
 namespace GooFit {
 
-__device__ __host__ ParameterContainer::ParameterContainer()
+__device__ ParameterContainer::ParameterContainer()
     : parameters(d_parameters)
     , constants(d_constants)
     , observables(d_observables)
     , normalizations(d_normalizations) {}
 
-__device__ __host__ ParameterContainer::ParameterContainer(const ParameterContainer &pc)
-    : parameters(d_parameters)
-    , constants(d_constants)
-    , observables(d_observables)
-    , normalizations(d_normalizations) {
+__device__ ParameterContainer::ParameterContainer(const ParameterContainer &pc)
+    : ParameterContainer() {
     parameterIdx  = pc.parameterIdx;
     constantIdx   = pc.constantIdx;
     observableIdx = pc.observableIdx;

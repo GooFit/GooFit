@@ -130,15 +130,6 @@ __host__ std::vector<Observable> PdfBase::getObservables() const {
     return ret;
 }
 
-GOOFIT_DEPRECATED __host__ unsigned int PdfBase::registerConstants(unsigned int amount) {
-    if(totalConstants + amount >= GOOFIT_MAXPAR)
-        throw GooFit::GeneralError(
-            "totalConstants {} + amount {} can not be more than {}", totalConstants, amount, GOOFIT_MAXPAR);
-    cIndex = totalConstants;
-    totalConstants += amount;
-    return cIndex;
-}
-
 void PdfBase::registerObservable(Observable obs) {
     if(find_in(observablesList, obs))
         return;

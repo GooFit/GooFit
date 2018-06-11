@@ -210,17 +210,13 @@ __host__ double AddPdf::sumOfNll(int numVars) const {
     if(extended) {
         fptype expEvents = 0;
 
-        // std::cout << "Weights:";
         for(unsigned int i = 0; i < components.size(); ++i) {
             expEvents += host_parameters[parametersIdx + 3 * (i + 1)];
-            // std::cout << " " << host_params[host_indices[parameters + 3*(i+1)]];
         }
 
         // Log-likelihood of numEvents with expectation of exp is (-exp + numEvents*ln(exp) - ln(numEvents!)).
         // The last is constant, so we drop it; and then multiply by minus one to get the negative log-likelihood.
         ret += (expEvents - numEvents * log(expEvents));
-        // std::cout << " " << expEvents << " " << numEvents << " " << (expEvents - numEvents*log(expEvents)) <<
-        // std::endl;
     }
 
     return ret;

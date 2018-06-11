@@ -468,28 +468,9 @@ __host__ fptype GooPdf::normalize() {
     return (fptype)ret;
 }
 
-#ifdef PROFILING
-__constant__ fptype conversion = (1.0 / CLOCKS_PER_SEC);
-__device__ fptype callFunction(fptype *eventAddress, unsigned int functionIdx, unsigned int paramIdx) {
-    clock_t start = clock();
-    fptype ret    = (*(reinterpret_cast<device_function_ptr>(device_function_table[functionIdx])))(
-        eventAddress, cudaArray, paramIndices + paramIdx);
-    clock_t stop = clock();
-
-    if((0 == THREADIDX + BLOCKIDX) && (stop > start)) {
-        // Avoid issue when stop overflows and start doesn't.
-        timeHistogram[functionIdx * 100 + paramIdx] += ((stop - start) * conversion);
-        // printf("Clock: %li %li %li | %u %f\n", (long) start, (long) stop, (long) (stop - start), functionIdx,
-        // timeHistogram[functionIdx]);
-    }
-
-    return ret;
-}
-#else
 __device__ fptype callFunction(fptype *eventAddress, ParameterContainer &pc) {
     return (*(reinterpret_cast<device_function_ptr>(device_function_table[pc.funcIdx])))(eventAddress, pc);
 }
-#endif
 
 __host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
     // note, we need to overwrite what our metric operator is going to do, and restore previous

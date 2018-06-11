@@ -566,7 +566,7 @@ __host__ fptype TDDP4::normalize() {
     if(cachedResSF == nullptr)
         throw GeneralError("You must call dp.setDataSize(currData.getNumEvents(), N) first!");
     // fprintf(stderr, "start normalize\n");
-    recursiveSetNormalization(1); // Not going to normalize efficiency,
+    recursiveSetNormalization(1.0); // Not going to normalize efficiency,
     // so set normalization factor to 1 so it doesn't get multiplied by zero.
     // Copy at this time to ensure that the SpecialResonanceCalculators, which need the efficiency,
     // don't get zeroes through multiplying by the normFactor.

@@ -305,7 +305,7 @@ __host__ void ConvolutionPdf::registerOthers(std::vector<ConvolutionPdf *> other
 
 __host__ fptype ConvolutionPdf::normalize() {
     // First set normalization factors to one so we can evaluate convolution without getting zeroes
-    recursiveSetNormalization(fptype(1.0));
+    recursiveSetNormalization(1.0);
 
     // we need to update the normal here, as values are used at this point.
     MEMCPY_TO_SYMBOL(

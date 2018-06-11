@@ -20,16 +20,6 @@ namespace GooFit {
 // off on its own in this inline-cuda file, which GooPdf.cu
 // should include.
 
-__host__ void PdfBase::copyParams(const std::vector<double> &pars) const {
-    // copyParams method performs eponymous action!
-
-    for(int i = 0; i < parametersList.size(); i++) {
-        GOOFIT_TRACE("fitter index {}", parametersList[i].getFitterIndex());
-        host_parameters[parametersIdx + i + 1] = pars[parametersList[i].getFitterIndex()];
-    }
-
-    MEMCPY(d_parameters, host_parameters, totalParameters * sizeof(fptype), cudaMemcpyHostToDevice);
-}
 
 __host__ void PdfBase::copyParams() {
     // Copies values of Variable objects

@@ -10,7 +10,12 @@ using namespace GooFit;
 
 void init_AddPdf(py::module &m) {
     py::class_<AddPdf, GooPdf>(m, "AddPdf")
-        .def(py::init<std::string, std::vector<Variable>, std::vector<PdfBase *>>(), "n", "weights", "comps")
+        .def(py::init<std::string, std::vector<Variable>, std::vector<PdfBase *>>(),
+             AddPdf_docs.c_str(),
+             "name"_a,
+             "weights"_a,
+             "comps"_a)
+
         .def(py::init<std::string, Variable, PdfBase *, PdfBase *>(),
              AddPdf_docs.c_str(),
              "name"_a,

@@ -567,13 +567,12 @@ __host__ void TddpPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) 
 }
 
 __host__ fptype TddpPdf::normalize() {
-    recursiveSetNormalization(1); // Not going to normalize efficiency,
+    recursiveSetNormalization(1.0); // Not going to normalize efficiency,
     // so set normalization factor to 1 so it doesn't get multiplied by zero.
     // Copy at this time to ensure that the SpecialWaveCalculators, which need the efficiency,
     // don't get zeroes through multiplying by the normFactor.
     MEMCPY_TO_SYMBOL(
         d_normalizations, host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    // std::cout << "TDDP normalization " << getName() << std::endl;
 
     int totalBins = _m12.getNumBins() * _m13.getNumBins();
 

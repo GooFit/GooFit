@@ -460,7 +460,7 @@ __host__ GaussianPdf::GaussianPdf (std::string n,
   registerParameter(mean));
   registerParameter(sigma));
 
-  registerConstants(1);
+  registerConstant(1.23);
 
   registerFunction("ptr_to_Gaussian", ptr_to_Gaussian);
   initialize();

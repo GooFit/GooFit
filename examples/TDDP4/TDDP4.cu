@@ -153,47 +153,45 @@ int main(int argc, char **argv) {
     PolynomialPdf eff{"constantEff", observables, coefficients, offsets, 0};
     TDDP4 dp{"test", observables, DK3P_DI, &dat, &eff, 0, 1};
 
-    TFile *file = new TFile(output, "RECREATE");
-    TTree *tree = new TTree("events", "events");
+    TFile file(output, "RECREATE");
+    TTree tree("events", "events");
 
     double tm12, tm34, tc12, tc34, tphi, tdtime, D0_E, D0_Px, D0_Py, D0_Pz, Kplus_E, Kplus_Px, Kplus_Py, Kplus_Pz,
         Piminus1_E, Piminus1_Px, Piminus1_Py, Piminus1_Pz, Piminus2_E, Piminus2_Px, Piminus2_Py, Piminus2_Pz, Piplus_E,
         Piplus_Px, Piplus_Py, Piplus_Pz;
     int D0_pdg, Kplus_pdg, Piminus1_pdg, Piminus2_pdg, Piplus_pdg;
 
-    tree->Branch("m12", &tm12, "m12/D");
-    tree->Branch("m34", &tm34, "m34/D");
-    tree->Branch("c12", &tc12, "c12/D");
-    tree->Branch("c34", &tc34, "c34/D");
-    tree->Branch("phi", &tphi, "phi/D");
-    tree->Branch("dtime", &tdtime, "dtime/D");
-    tree->Branch("D0_E", &D0_E, "D0_E/D");
-    tree->Branch("D0_Px", &D0_Px, "D0_Px/D");
-    tree->Branch("D0_Py", &D0_Py, "D0_Py/D");
-    tree->Branch("D0_Pz", &D0_Pz, "D0_Pz/D");
-    tree->Branch("D0_pdg", &D0_pdg, "D0_pdg/I");
-    tree->Branch("Kplus_E", &Kplus_E, "Kplus_E/D");
-    tree->Branch("Kplus_Px", &Kplus_Px, "Kplus_Px/D");
-    tree->Branch("Kplus_Py", &Kplus_Py, "Kplus_Py/D");
-    tree->Branch("Kplus_Pz", &Kplus_Pz, "Kplus_Pz/D");
-    tree->Branch("Kplus_pdg", &Kplus_pdg, "Kplus_pdg/I");
-    tree->Branch("Piminus1_E", &Piminus1_E, "Piminus1_E/D");
-    tree->Branch("Piminus1_Px", &Piminus1_Px, "Piminus1_Px/D");
-    tree->Branch("Piminus1_Py", &Piminus1_Py, "Piminus1_Py/D");
-    tree->Branch("Piminus1_Pz", &Piminus1_Pz, "Piminus1_Pz/D");
-    tree->Branch("Piminus1_pdg", &Piminus1_pdg, "Piminus1_pdg/I");
-    tree->Branch("Piminus2_E", &Piminus2_E, "Piminus2_E/D");
-    tree->Branch("Piminus2_Px", &Piminus2_Px, "Piminus2_Px/D");
-    tree->Branch("Piminus2_Py", &Piminus2_Py, "Piminus2_Py/D");
-    tree->Branch("Piminus2_Pz", &Piminus2_Pz, "Piminus2_Pz/D");
-    tree->Branch("Piminus2_pdg", &Piminus2_pdg, "Piminus2_pdg/I");
-    tree->Branch("Piplus_E", &Piplus_E, "Piplus_E/D");
-    tree->Branch("Piplus_Px", &Piplus_Px, "Piplus_Px/D");
-    tree->Branch("Piplus_Py", &Piplus_Py, "Piplus_Py/D");
-    tree->Branch("Piplus_Pz", &Piplus_Pz, "Piplus_Pz/D");
-    tree->Branch("Piplus_pdg", &Piplus_pdg, "Piplus_pdg/I");
-
-    int total_accepted = 0;
+    tree.Branch("m12", &tm12, "m12/D");
+    tree.Branch("m34", &tm34, "m34/D");
+    tree.Branch("c12", &tc12, "c12/D");
+    tree.Branch("c34", &tc34, "c34/D");
+    tree.Branch("phi", &tphi, "phi/D");
+    tree.Branch("dtime", &tdtime, "dtime/D");
+    tree.Branch("D0_E", &D0_E, "D0_E/D");
+    tree.Branch("D0_Px", &D0_Px, "D0_Px/D");
+    tree.Branch("D0_Py", &D0_Py, "D0_Py/D");
+    tree.Branch("D0_Pz", &D0_Pz, "D0_Pz/D");
+    tree.Branch("D0_pdg", &D0_pdg, "D0_pdg/I");
+    tree.Branch("Kplus_E", &Kplus_E, "Kplus_E/D");
+    tree.Branch("Kplus_Px", &Kplus_Px, "Kplus_Px/D");
+    tree.Branch("Kplus_Py", &Kplus_Py, "Kplus_Py/D");
+    tree.Branch("Kplus_Pz", &Kplus_Pz, "Kplus_Pz/D");
+    tree.Branch("Kplus_pdg", &Kplus_pdg, "Kplus_pdg/I");
+    tree.Branch("Piminus1_E", &Piminus1_E, "Piminus1_E/D");
+    tree.Branch("Piminus1_Px", &Piminus1_Px, "Piminus1_Px/D");
+    tree.Branch("Piminus1_Py", &Piminus1_Py, "Piminus1_Py/D");
+    tree.Branch("Piminus1_Pz", &Piminus1_Pz, "Piminus1_Pz/D");
+    tree.Branch("Piminus1_pdg", &Piminus1_pdg, "Piminus1_pdg/I");
+    tree.Branch("Piminus2_E", &Piminus2_E, "Piminus2_E/D");
+    tree.Branch("Piminus2_Px", &Piminus2_Px, "Piminus2_Px/D");
+    tree.Branch("Piminus2_Py", &Piminus2_Py, "Piminus2_Py/D");
+    tree.Branch("Piminus2_Pz", &Piminus2_Pz, "Piminus2_Pz/D");
+    tree.Branch("Piminus2_pdg", &Piminus2_pdg, "Piminus2_pdg/I");
+    tree.Branch("Piplus_E", &Piplus_E, "Piplus_E/D");
+    tree.Branch("Piplus_Px", &Piplus_Px, "Piplus_Px/D");
+    tree.Branch("Piplus_Py", &Piplus_Py, "Piplus_Py/D");
+    tree.Branch("Piplus_Pz", &Piplus_Pz, "Piplus_Pz/D");
+    tree.Branch("Piplus_pdg", &Piplus_pdg, "Piplus_pdg/I");
 
     for(int k = 0; k < trials; ++k) {
         int numEvents = 800000;
@@ -207,10 +205,14 @@ int main(int argc, char **argv) {
         std::tie(particles, variables, weights, flags) = dp.GenerateSig(numEvents);
 
         int accepted = thrust::count_if(flags.begin(), flags.end(), thrust::identity<bool>());
-        total_accepted += accepted;
 
         GOOFIT_INFO(
             "Run #{}: Using accept-reject method would leave you with {} out of {} events", k, accepted, numEvents);
+
+        if(accepted == 0) {
+            GOOFIT_ERROR("ERROR: Total accepted is 0! Something is wrong");
+            return 2;
+        }
 
         for(int i = 0; i < weights.size(); ++i) {
             if(flags[i] == 1) {
@@ -248,7 +250,7 @@ int main(int argc, char **argv) {
                 Piplus_Pz    = 1000 * (*(particles[1]))[i].get(3);
                 Piplus_pdg   = -211;
 
-                tree->Fill();
+                tree.Fill();
             }
         }
 
@@ -265,13 +267,7 @@ int main(int argc, char **argv) {
         delete particles[3];
     }
 
-    tree->Write();
-    file->Close();
+    tree.Write();
 
-    if(total_accepted > 0)
-        return 0;
-    else {
-        GOOFIT_ERROR("Total accepted was 0! Something is wrong.");
-        return 1;
-    }
+    return 0;
 }

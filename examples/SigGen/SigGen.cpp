@@ -182,18 +182,18 @@ int main(int argc, char **argv) {
     offsets.push_back(constantZero);
     coefficients.push_back(constantOne);
 
-    PolynomialPdf *eff = new PolynomialPdf("constantEff", observables, coefficients, offsets, 0);
-    DPPdf *dp          = new DPPdf("test", observables, DK3P_DI, eff, 5);
+    PolynomialPdf eff("constantEff", observables, coefficients, offsets, 0);
+    auto dp = new DPPdf("test", observables, DK3P_DI, &eff, 5);
 
-    TFile *file = new TFile("SigGen.root", "RECREATE");
-    TTree *tree = new TTree("events", "events");
+    TFile file("SigGen.root", "RECREATE");
+    TTree tree("events", "events");
 
     double tm12, tm34, tc12, tc34, tphi;
-    tree->Branch("m12", &tm12, "m12/D");
-    tree->Branch("m34", &tm34, "m34/D");
-    tree->Branch("c12", &tc12, "c12/D");
-    tree->Branch("c34", &tc34, "c34/D");
-    tree->Branch("phi", &tphi, "phi/D");
+    tree.Branch("m12", &tm12, "m12/D");
+    tree.Branch("m34", &tm34, "m34/D");
+    tree.Branch("c12", &tc12, "c12/D");
+    tree.Branch("c34", &tc34, "c34/D");
+    tree.Branch("phi", &tphi, "phi/D");
 
     for(int k = 0; k < 4; ++k) {
         int numEvents = 1e6;
@@ -215,7 +215,7 @@ int main(int argc, char **argv) {
                 tc12 = (*(variables[2]))[i];
                 tc34 = (*(variables[3]))[i];
                 tphi = (*(variables[4]))[i];
-                tree->Fill();
+                tree.Fill();
             }
         }
 
@@ -229,9 +229,13 @@ int main(int argc, char **argv) {
         delete particles[1];
         delete particles[2];
         delete particles[3];
+
+        if(accepted == 0) {
+            GOOFIT_ERROR("ERROR: 0 Events accepted! Something is wrong with PDF evaluation (probably)");
+            return 2;
+        }
     }
 
-    tree->Write();
-    file->Close();
+    tree.Write();
     return 0;
 }

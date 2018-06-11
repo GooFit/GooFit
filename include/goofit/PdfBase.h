@@ -167,7 +167,6 @@ class PdfBase {
     __host__ void unregisterParameter(Variable var);
     __host__ void registerObservable(Observable obs);
     __host__ void setIntegrationFineness(int i);
-    __host__ void printProfileInfo(bool topLevel = true);
 
     __host__ bool parametersChanged() const;
 

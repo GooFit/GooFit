@@ -4150,10 +4150,6 @@ int runCanonicalFit(std::string fname, bool noPlots = true) {
         retval = datapdf;
     }
 
-#ifdef PROFILING
-    overallPdf->printProfileInfo();
-#endif
-
     fmt::print("Fit results Canonical fit:\n"
                "tau    : ({:.3}) fs\n"
                "xmixing: ({:.3})\%\n"

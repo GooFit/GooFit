@@ -20,7 +20,6 @@ namespace GooFit {
 // off on its own in this inline-cuda file, which GooPdf.cu
 // should include.
 
-
 __host__ void PdfBase::copyParams() {
     // Copies values of Variable objects
     std::vector<Variable> pars = getParameters();
@@ -435,28 +434,6 @@ void PdfBase::clearCurrentFit() {
     totalParameters = 0;
     gooFree(dev_event_array);
     dev_event_array = nullptr;
-}
-
-__host__ void PdfBase::printProfileInfo(bool topLevel) {
-#ifdef PROFILING
-
-    if(topLevel) {
-        cudaError_t err = MEMCPY_FROM_SYMBOL(host_timeHist, timeHistogram, 10000 * sizeof(fptype), 0);
-
-        if(cudaSuccess != err) {
-            std::cout << "Error on copying timeHistogram: " << cudaGetErrorString(err) << std::endl;
-            return;
-        }
-
-        std::cout << getName() << " : " << getFunctionIndex() << " "
-                  << host_timeHist[100 * getFunctionIndex() + getParameterIndex()] << std::endl;
-
-        for(unsigned int i = 0; i < components.size(); ++i) {
-            components[i]->printProfileInfo(false);
-        }
-    }
-
-#endif
 }
 
 cudaError_t gooMalloc(void **target, size_t bytes) {

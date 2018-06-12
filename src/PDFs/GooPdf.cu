@@ -80,11 +80,6 @@ __host__ int GooPdf::findFunctionIdx(void *dev_functionPtr) {
     MEMCPY_TO_SYMBOL(
         device_function_table, host_function_table, num_device_functions * sizeof(void *), 0, cudaMemcpyHostToDevice);
 
-#ifdef PROFILING
-    host_timeHist[fIdx] = 0;
-    MEMCPY_TO_SYMBOL(timeHistogram, host_timeHist, 10000 * sizeof(fptype), 0);
-#endif
-
     return fIdx;
 }
 

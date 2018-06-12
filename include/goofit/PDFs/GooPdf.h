@@ -21,10 +21,38 @@ struct ParameterContainer;
 __device__ fptype callFunction(fptype *eventAddress, ParameterContainer &pc);
 
 class GooPdf : public PdfBase {
+  protected:
+    // These are helper methods that do all the work
+
+    /// This collects the number of variables for the thrust call
+    /// -(n+2) for binned evalutes
+    int get_event_size() const;
+
+    /// This is the total number of bins in the normalize grid
+    int get_bin_grid_size() const;
+
+    /// This is the total ND Volume of a cube in the normalize grid
+    fptype get_bin_grid_volume() const;
+
+    /// This reduces the current function over the data. Does *not* prepare
+    /// or normalize TODO: Remove const if caching added
+    __host__ double reduce_with_metric() const;
+
+    /// This reduces the current function over the bin grid. Does *not* prepare
+    /// or normalize. Used by normalize.  TODO: Remove const if caching added
+    __host__ double reduce_with_bins() const;
+
+    /// This evaluates the current function over the data. Does *not* prepare
+    /// or normalize  TODO: Remove const if caching added
+    __host__ void evaluate_with_metric(thrust::device_vector<fptype> &results) const;
+
+    /// Shortcut to allow .cpp files to use this if they need to
+    __host__ thrust::host_vector<fptype> evaluate_with_metric() const;
+
   public:
     using PdfBase::PdfBase;
 
-    double calculateNLL() override;
+    __host__ double calculateNLL() override;
 
     /// NB: This does not project correctly in multidimensional datasets, because all observables
     /// other than 'var' will have, for every event, whatever value they happened to get set to last
@@ -66,7 +94,6 @@ class GooPdf : public PdfBase {
     __host__ void setIndices() override;
 
   protected:
-    __host__ virtual double sumOfNll(int numVars) const;
     std::shared_ptr<MetricTaker> logger;
 };
 

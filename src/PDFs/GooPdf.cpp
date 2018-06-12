@@ -18,6 +18,37 @@ __host__ void GooPdf::setMetrics() {
     logger = std::make_shared<MetricTaker>(this, getMetricPointer(fitControl->getMetric()));
 }
 
+/// This collects the number of variables for the thrust call
+/// -(n+2) for binned evalutes
+__host__ int GooPdf::get_event_size() const {
+    int numVars = observablesList.size();
+
+    if(fitControl->binnedFit())
+        return -(numVars + 2);
+    else
+        return numVars;
+}
+
+int GooPdf::get_bin_grid_size() const {
+    size_t totalBins = 1;
+
+    for(const Observable &v : observablesList) {
+        totalBins *= integrationBins > 0 ? integrationBins : v.getNumBins();
+    }
+
+    return totalBins;
+}
+
+fptype GooPdf::get_bin_grid_volume() const {
+    fptype ret = 1.0;
+
+    for(const Observable &v : observablesList) {
+        ret *= v.getUpperLimit() - v.getLowerLimit();
+    }
+
+    return ret;
+}
+
 __host__ void GooPdf::initialize() {
     GOOFIT_DEBUG("{} uses pc.incrementIndex({}, {}, {}, {}, {})",
                  reflex_name_,

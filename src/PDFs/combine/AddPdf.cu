@@ -180,32 +180,8 @@ __host__ fptype AddPdf::normalize() {
     return ret;
 }
 
-__host__ double AddPdf::sumOfNll(int numVars) const {
-    static thrust::plus<double> cudaPlus;
-    thrust::constant_iterator<int> eventSize(numVars);
-    thrust::constant_iterator<fptype *> arrayAddress(dev_event_array);
-    double dummy = 0;
-
-    thrust::counting_iterator<int> eventIndex(0);
-
-    double ret;
-#ifdef GOOFIT_MPI
-    double r = thrust::transform_reduce(
-        thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
-        thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, arrayAddress, eventSize)),
-        *logger,
-        dummy,
-        cudaPlus);
-
-    MPI_Allreduce(&r, &ret, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-#else
-    ret = thrust::transform_reduce(
-        thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
-        thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
-        *logger,
-        dummy,
-        cudaPlus);
-#endif
+__host__ double AddPdf::calculateNLL() {
+    double ret = GooPdf::calculateNLL() / 2.0;
 
     if(extended) {
         fptype expEvents = 0;
@@ -219,6 +195,6 @@ __host__ double AddPdf::sumOfNll(int numVars) const {
         ret += (expEvents - numEvents * log(expEvents));
     }
 
-    return ret;
+    return ret * 2.0;
 }
 } // namespace GooFit

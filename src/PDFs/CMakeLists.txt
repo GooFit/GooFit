@@ -1,5 +1,7 @@
 set(GOOPDF_HEADERS
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/detail/Globals.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/GooPdf.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/MetricPointer.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/MetricTaker.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/ParameterContainer.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/basic/CrystalBallPdf.h
@@ -56,6 +58,9 @@ endif()
 get_property(goo_extra GLOBAL PROPERTY GOOFIT_EXTRA_PDFS)
 
 goofit_add_library(PDFs
+    detail/Globals.cu
+    detail/Globals.cpp
+    MetricPointer.cu
     GooPdf.cu
     GooPdf.cpp
     MetricTaker.cu

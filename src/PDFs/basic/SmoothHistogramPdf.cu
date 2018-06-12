@@ -8,15 +8,6 @@ __constant__ fptype *dev_base_histograms[100]; // Multiple histograms for the ca
 __constant__ fptype *dev_smoothed_histograms[100];
 unsigned int SmoothHistogramPdf::totalHistograms = 0;
 
-__device__ int dev_powi(int base, int exp) {
-    int ret = 1;
-
-    for(int i = 0; i < exp; ++i)
-        ret *= base;
-
-    return ret;
-}
-
 __device__ fptype device_EvalHistogram(fptype *evt, ParameterContainer &pc) {
     // Structure is
     // nP smoothingIndex totalHistograms (limit1 step1 bins1) (limit2 step2 bins2) nO o1 o2

@@ -10,10 +10,6 @@
 
 namespace GooFit {
 
-void *host_function_table[GOOFIT_MAXFUNC];
-void *host_fcn_ptr                = nullptr;
-unsigned int num_device_functions = 0;
-
 __host__ fptype GooPdf::integrate(fptype, fptype) const { return 0; }
 
 __host__ bool GooPdf::hasAnalyticIntegral() const { return false; }

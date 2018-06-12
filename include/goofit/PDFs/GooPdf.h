@@ -8,32 +8,16 @@
 #include <goofit/UnbinnedDataSet.h>
 #include <goofit/Version.h>
 
+#include <thrust/device_vector.h>
+
 #ifdef ROOT_FOUND
 class TH1D;
 #endif
 
 namespace GooFit {
 
-
-extern __device__ fptype d_parameters[GOOFIT_MAXPAR];
-extern __device__ fptype d_constants[GOOFIT_MAXPAR];
-extern __device__ fptype d_observables[GOOFIT_MAXPAR];
-extern __device__ fptype d_normalizations[GOOFIT_MAXPAR];
-
-// a couple constants
-extern __constant__ fptype c_motherMass;
-extern __constant__ fptype c_daug1Mass;
-extern __constant__ fptype c_daug2Mass;
-extern __constant__ fptype c_daug3Mass;
-extern __constant__ fptype c_meson_radius;
-
-extern __device__ void *device_function_table[GOOFIT_MAXFUNC];
-extern void *host_function_table[GOOFIT_MAXFUNC];
-extern unsigned int num_device_functions;
-
 // Forward declare
 struct ParameterContainer;
-
 __device__ fptype callFunction(fptype *eventAddress, ParameterContainer &pc);
 
 class GooPdf : public PdfBase {

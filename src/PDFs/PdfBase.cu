@@ -153,7 +153,7 @@ __host__ void PdfBase::populateArrays() {
     normalIdx = host_normalizations.size();
     host_normalizations.push_back(1.0);
     GOOFIT_TRACE("host_normalizations[{}] = {}", host_normalizations.size(), 0);
-    host_normalizations.push_back(0.0);
+    host_normalizations.push_back(cachedNormalization);
 
     for(auto &component : components)
         component->recursiveSetIndices();

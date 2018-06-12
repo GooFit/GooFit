@@ -43,6 +43,7 @@ goofit_add_library(FunctorWriter
 
 goofit_add_library(Application
     Application.cpp
+    ${PROJECT_SOURCE_DIR}/include/goofit/detail/SmartVector.h
     ${PROJECT_BINARY_DIR}/include/goofit/detail/Backtrace.h
     ${PROJECT_BINARY_DIR}/include/goofit/detail/ThrustOverrideConfig.h
     ${PROJECT_SOURCE_DIR}/include/goofit/Application.h

@@ -1,5 +1,6 @@
 #include <goofit/Application.h>
 #include <goofit/GlobalCudaDefines.h>
+#include <goofit/PDFs/detail/Globals.h>
 #include <goofit/Version.h>
 
 #include <thrust/detail/config/device_system.h>
@@ -25,6 +26,9 @@ namespace GooFit {
 void signal_handler(int s) {
     std::cout << std::endl << reset << red << bold;
     std::cout << "GooFit: Control-C detected, exiting..." << reset << std::endl;
+
+    cleanup();
+
     std::exit(1);
 }
 
@@ -228,14 +232,12 @@ int Application::exit(const CLI::Error &e) {
     return rval;
 }
 
-#ifdef GOOFIT_MPI
 Application::~Application() {
-    // Only specialized finalize if MPI is present
+    cleanup();
+#ifdef GOOFIT_MPI
     MPI_Finalize();
-}
-#else
-Application::~Application() = default;
 #endif
+}
 
 std::string Application::get_filename(const std::string &input_str, std::string base) const {
     // Run from current directory

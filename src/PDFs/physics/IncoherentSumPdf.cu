@@ -123,7 +123,7 @@ __host__ void IncoherentSumPdf::populateArrays() {
     PdfBase::populateArrays();
 
     // save our efficiency function.  Resonance's are saved first, then the efficiency function.  Take -1 as efficiency!
-    efficiencyFunction = num_device_functions - 1;
+    efficiencyFunction = host_function_table.size() - 1;
 }
 __host__ void IncoherentSumPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) {
     // Default 3 is m12, m13, evtNum
@@ -148,8 +148,8 @@ __host__ fptype IncoherentSumPdf::normalize() {
     // so set normalization factor to 1 so it doesn't get multiplied by zero.
     // Copy at this time to ensure that the SpecialCalculators, which need the efficiency,
     // don't get zeroes through multiplying by the normFactor.
-    MEMCPY_TO_SYMBOL(
-        d_normalizations, host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+
+    host_normalizations.sync(d_normalizations);
 
     int totalBins = _m12.getNumBins() * _m13.getNumBins();
 

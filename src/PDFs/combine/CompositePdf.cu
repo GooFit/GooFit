@@ -11,7 +11,7 @@ __device__ fptype device_Composite(fptype *evt, ParameterContainer &pc) {
     pc.incrementIndex();
 
     // NB, not normalizing core function, it is not being used as a PDF.
-    // fptype coreValue = (*(reinterpret_cast<device_function_ptr>(device_function_table[coreFcnIndex])))(evt,
+    // fptype coreValue = (*(reinterpret_cast<device_function_ptr>(d_function_table[coreFcnIndex])))(evt,
     // cudaArray, paramIndices+coreParIndex);
     fptype coreValue = callFunction(evt, pc);
 
@@ -26,7 +26,7 @@ __device__ fptype device_Composite(fptype *evt, ParameterContainer &pc) {
 
     // Don't normalize shell either, since we don't know what composite function is being used for.
     // It may not be a PDF. Normalizing at this stage would be presumptuous.
-    // fptype ret = (*(reinterpret_cast<device_function_ptr>(device_function_table[shellFcnIndex])))(fakeEvt, cudaArray,
+    // fptype ret = (*(reinterpret_cast<device_function_ptr>(d_function_table[shellFcnIndex])))(fakeEvt, cudaArray,
     // shellParams);
     fptype ret = callFunction(fakeEvt, pc);
 

@@ -12,14 +12,6 @@
 #include <goofit/UnbinnedDataSet.h>
 #include <goofit/Variable.h>
 
-#include <thrust/device_vector.h>
-#include <thrust/host_vector.h>
-#include <thrust/iterator/constant_iterator.h>
-#include <thrust/iterator/zip_iterator.h>
-#include <thrust/sequence.h>
-#include <thrust/transform.h>
-#include <thrust/transform_reduce.h>
-
 namespace GooFit {
 
 __device__ fptype MetricTaker::operator()(thrust::tuple<int, fptype *, int> t) const {
@@ -50,7 +42,7 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, fptype *, int> t) c
     // the structure of the event is (obs1 obs2... binentry binvolume), so that the array
     // passed to the metric consists of (binentry binvolume).
 
-    ret = (*(reinterpret_cast<device_metric_ptr>(device_function_table[pc.funcIdx])))(
+    ret = (*(reinterpret_cast<device_metric_ptr>(d_function_table[pc.funcIdx])))(
         ret, eventAddress + (abs(eventSize) - 2), norm);
     return ret;
 }
@@ -115,19 +107,10 @@ MetricTaker::MetricTaker(PdfBase *dat, void *dev_functionPtr)
     if(localPos != functionAddressToDeviceIndexMap.end()) {
         metricIndex = (*localPos).second;
     } else {
-        if(num_device_functions >= GOOFIT_MAXFUNC)
-            throw GeneralError("Too many device functions! Set GOOFIT_MAXFUNC to a larger value than {}",
-                               GOOFIT_MAXFUNC);
-
-        metricIndex                                      = num_device_functions;
-        host_function_table[num_device_functions]        = dev_functionPtr;
-        functionAddressToDeviceIndexMap[dev_functionPtr] = num_device_functions;
-        num_device_functions++;
-        MEMCPY_TO_SYMBOL(device_function_table,
-                         host_function_table,
-                         num_device_functions * sizeof(void *),
-                         0,
-                         cudaMemcpyHostToDevice);
+        metricIndex                                      = host_function_table.size();
+        functionAddressToDeviceIndexMap[dev_functionPtr] = host_function_table.size();
+        host_function_table.push_back(dev_functionPtr);
+        host_function_table.sync(d_function_table);
     }
 }
 

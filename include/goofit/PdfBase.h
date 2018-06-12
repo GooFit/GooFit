@@ -24,7 +24,9 @@ class FunctionMinimum;
 namespace GooFit {
 
 struct ParameterContainer;
+
 class FitControl;
+
 class DataSet;
 class BinnedDataSet;
 class UnbinnedDataSet;
@@ -147,7 +149,7 @@ class PdfBase {
         function_ptr_ = get_device_symbol_address(function);
     }
 
-    __host__ virtual void recursiveSetNormalization(fptype norm = 1);
+    __host__ void recursiveSetNormalization(fptype norm = 1.0, bool subpdf = false);
     __host__ void unregisterParameter(Variable var);
     __host__ void registerObservable(Observable obs);
     __host__ void setIntegrationFineness(int i);

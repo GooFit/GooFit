@@ -1,5 +1,6 @@
 #include <goofit/Color.h>
 #include <goofit/Error.h>
+#include <goofit/PDFs/GooPdf.h>
 #include <goofit/PdfBase.h>
 #include <goofit/detail/Abort.h>
 #include <goofit/detail/Backtrace.h>
@@ -21,10 +22,10 @@ void abort(std::string file, int line, std::string reason, const PdfBase *pdf) {
         }
     }
 
-    std::cout << "Parameters (" << totalParameters << ") :\n";
+    std::cout << "Parameters (" << host_parameters.size() << ") :\n";
 
-    for(int i = 0; i < totalParameters; ++i) {
-        std::cout << host_parameters[i] << " ";
+    for(const auto &val : host_parameters) {
+        std::cout << val << " ";
     }
 
 #if Backtrace_FOUND

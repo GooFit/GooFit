@@ -98,9 +98,6 @@ endif()
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/extern/sanitizers/cmake" ${CMAKE_MODULE_PATH})
 find_package(Sanitizers)
 
-set(GOOFIT_MAXPAR "1800" CACHE STRING "The number of parameters to statically support, can be increased but should not be too large.")
-set(GOOFIT_MAXFUNC "200" CACHE STRING "The number of functions to statically support")
-
 set(GOOFIT_CUDA_OR_GROUPSIZE "128" CACHE STRING "Overrides the default group distribution for Thrust's transform_reduce")
 set(GOOFIT_CUDA_OR_GRAINSIZE "7" CACHE STRING "Overrides the default grain size for Thrust's transform_reduce")
 
@@ -734,7 +731,6 @@ add_feature_info("GOOFIT_HOST=${GOOFIT_HOST}" ON "The host system to compile for
 if(GOOFIT_DEVICE STREQUAL CUDA)
     add_feature_info("ARCH_FLAGS=${READ_ARCH_FLAGS}" ON "Readable GPU arch flags")
 endif()
-add_feature_info("GOOFIT_MAXPAR=${GOOFIT_MAXPAR}" ON "The number of parameters to statically support")
 
 feature_option(GOOFIT_KMATRIX)
 feature_option(GOOFIT_TRACE)

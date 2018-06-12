@@ -28,7 +28,7 @@ __device__ WaveHolder_s *cWaves[16];
 __device__ inline int parIndexFromResIndex(int resIndex) { return resonanceOffset + resIndex * resonanceSize; }
 
 __device__ fpcomplex getResonanceAmplitude(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) {
-    auto func = reinterpret_cast<resonance_function_ptr>(device_function_table[pc.funcIdx]);
+    auto func = reinterpret_cast<resonance_function_ptr>(d_function_table[pc.funcIdx]);
     return (*func)(m12, m13, m23, pc);
 }
 
@@ -220,7 +220,7 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
     for(int i = 0; i < numResonances; i++)
         pc.incrementIndex();
 
-    ret = (*(reinterpret_cast<device_resfunction_ptr>(device_function_table[pc.funcIdx])))(
+    ret = (*(reinterpret_cast<device_resfunction_ptr>(d_function_table[pc.funcIdx])))(
         term1, term2, sumWavesA.real(), sumWavesA.imag(), _tau, _time, _xmixing, _ymixing, _sigma, pc);
 
     // For the reversed (mistagged) fraction, we make the
@@ -238,7 +238,7 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
         mistag = evt[id_mis];
         ret *= mistag;
         ret += (1 - mistag)
-               * (*(reinterpret_cast<device_resfunction_ptr>(device_function_table[pc.funcIdx])))(
+               * (*(reinterpret_cast<device_resfunction_ptr>(d_function_table[pc.funcIdx])))(
                      term1, -term2, sumWavesA.real(), -sumWavesA.imag(), _tau, _time, _xmixing, _ymixing, _sigma, pc);
     }
 
@@ -460,42 +460,35 @@ __host__ void TddpPdf::populateArrays() {
     GOOFIT_TRACE("TddpPdf: Populating Arrays for {}", getName());
 
     // reconfigure the host_parameters array with the new indexing scheme.
-    GOOFIT_TRACE("host_parameters[{}] = {}", totalParameters, parametersList.size());
-    host_parameters[totalParameters] = parametersList.size();
-    parametersIdx                    = totalParameters;
-    totalParameters++;
+    GOOFIT_TRACE("host_parameters[{}] = {}", host_parameters.size(), parametersList.size());
+    parametersIdx = host_parameters.size();
+    host_parameters.push_back(parametersList.size());
     for(auto &i : parametersList) {
-        GOOFIT_TRACE("host_parameters[{}] = {}", totalParameters, i.getValue());
-        host_parameters[totalParameters] = i.getValue();
-        totalParameters++;
+        GOOFIT_TRACE("host_parameters[{}] = {}", host_parameters.size(), i.getValue());
+        host_parameters.push_back(i.getValue());
     }
 
-    GOOFIT_TRACE("host_constants[{}] = {}", totalConstants, constantsList.size());
-    host_constants[totalConstants] = constantsList.size();
-    constantsIdx                   = totalConstants;
-    totalConstants++;
+    GOOFIT_TRACE("host_constants[{}] = {}", host_constants.size(), constantsList.size());
+    constantsIdx = host_constants.size();
+    host_constants.push_back(constantsList.size());
     for(double i : constantsList) {
-        GOOFIT_TRACE("host_constants[{}] = {}", totalConstants, i);
-        host_constants[totalConstants] = i;
-        totalConstants++;
+        GOOFIT_TRACE("host_constants[{}] = {}", host_constants.size(), i);
+        host_constants.push_back(i);
     }
 
-    GOOFIT_TRACE("host_observables[{}] = {}", totalObservables, observablesList.size());
-    host_observables[totalObservables] = observablesList.size();
-    observablesIdx                     = totalObservables;
-    totalObservables++;
+    GOOFIT_TRACE("host_observables[{}] = {}", host_observables.size(), observablesList.size());
+    observablesIdx = host_observables.size();
+    host_observables.push_back(observablesList.size());
     for(auto &i : observablesList) {
-        GOOFIT_TRACE("host_observables[{}] = {}", totalObservables, i.getIndex());
-        host_observables[totalObservables] = i.getIndex();
-        totalObservables++;
+        GOOFIT_TRACE("host_observables[{}] = {}", host_observables.size(), i.getIndex());
+        host_observables.push_back(i.getIndex());
     }
 
-    GOOFIT_TRACE("host_normalizations[{}] = {}", totalNormalizations, 1);
-    host_normalizations[totalNormalizations] = 1;
-    normalIdx                                = totalNormalizations++;
-    GOOFIT_TRACE("host_normalizations[{}] = {}", totalNormalizations, 0);
-    host_normalizations[totalNormalizations] = cachedNormalization;
-    totalNormalizations++;
+    GOOFIT_TRACE("host_normalizations[{}] = {}", host_normalizations.size(), 1);
+    normalIdx = host_normalizations.size();
+    host_normalizations.push_back(1.0);
+    GOOFIT_TRACE("host_normalizations[{}] = {}", host_normalizations.size(), 0);
+    host_normalizations.push_back(0.0);
 
     int numResonances = decayInfo.resonances.size();
 
@@ -504,21 +497,22 @@ __host__ void TddpPdf::populateArrays() {
         components[i]->recursiveSetIndices();
 
     // TODO: Add resolution function here
-    resolutionFunction = num_device_functions;
+    resolutionFunction = host_function_table.size();
     components[numResonances]->recursiveSetIndices();
 
     // Next index starts our efficiency function
-    efficiencyFunction = num_device_functions;
+    efficiencyFunction = host_function_table.size();
     for(unsigned int i = numResonances + 1; i < components.size(); i++)
         components[i]->recursiveSetIndices();
 
     // update constants
-    constantsList[constantsList.size() - 1] = num_device_functions;
+    constantsList[constantsList.size() - 1] = host_function_table.size();
     GOOFIT_TRACE("Rewriting constants!");
     for(int i = 0; i < constantsList.size(); i++) {
         GOOFIT_TRACE("host_constants[{}] = {}", constantsIdx, constantsList[i]);
         host_constants[constantsIdx + 1 + i] = constantsList[i];
     }
+    // TODO: This might be easy to clean up with the smart vectors.
 }
 __host__ void TddpPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) {
     // Default 5 is m12, m13, time, sigma_t, evtNum
@@ -571,8 +565,8 @@ __host__ fptype TddpPdf::normalize() {
     // so set normalization factor to 1 so it doesn't get multiplied by zero.
     // Copy at this time to ensure that the SpecialWaveCalculators, which need the efficiency,
     // don't get zeroes through multiplying by the normFactor.
-    MEMCPY_TO_SYMBOL(
-        d_normalizations, host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+
+    host_normalizations.sync(d_normalizations);
 
     int totalBins = _m12.getNumBins() * _m13.getNumBins();
 
@@ -743,8 +737,8 @@ __host__ fptype TddpPdf::normalize() {
     binSizeFactor *= ((_m13.getUpperLimit() - _m13.getLowerLimit()) / _m13.getNumBins());
     ret *= binSizeFactor;
 
-    host_normalizations[normalIdx + 1] = 1.0 / ret;
-    cachedNormalization                = 1.0 / ret;
+    host_normalizations.at(normalIdx + 1) = 1.0 / ret;
+    cachedNormalization                   = 1.0 / ret;
     // std::cout << "End of TDDP normalization: " << ret << " " << host_normalization[parameters] << " " <<
     // binSizeFactor << std::endl;
     return ret;
@@ -802,7 +796,7 @@ __device__ ThreeComplex SpecialDalitzIntegrator::operator()(thrust::tuple<int, f
     // unsigned int numResonances                               = indices[6];
     // int effFunctionIdx                                       = parIndexFromResIndex(numResonances);
     // if (thrust::get<0>(t) == 19840) {internalDebug1 = BLOCKIDX; internalDebug2 = THREADIDX;}
-    // fptype eff = (*(reinterpret_cast<device_function_ptr>(device_function_table[indices[effFunctionIdx]])))(fakeEvt,
+    // fptype eff = (*(reinterpret_cast<device_function_ptr>(d_function_table[indices[effFunctionIdx]])))(fakeEvt,
     // cudaArray, paramIndices + indices[effFunctionIdx + 1]);
     while(pc.funcIdx < thrust::get<2>(t))
         pc.incrementIndex();

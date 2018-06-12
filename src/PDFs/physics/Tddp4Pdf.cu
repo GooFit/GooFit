@@ -176,7 +176,7 @@ __device__ fptype device_TDDP4(fptype *evt, ParameterContainer &pc) {
     // int resfctpar      = effFunctionIdx + 2;
 
     // resolution function?
-    fptype ret = (*(reinterpret_cast<device_resfunction_ptr>(device_function_table[pc.funcIdx])))(
+    fptype ret = (*(reinterpret_cast<device_resfunction_ptr>(d_function_table[pc.funcIdx])))(
         term1, term2, term3.real(), term3.imag(), _tau, _time, _xmixing, _ymixing, _sigma, pc);
 
     // increment resolution function
@@ -522,7 +522,7 @@ __host__ void TDDP4::populateArrays() {
     //                 cudaMemcpyHostToDevice);
 
     // TODO: We need to expand populateArrays so we handle components correctly!
-    efficiencyFunction = num_device_functions - 1;
+    efficiencyFunction = host_function_table.size() - 1;
 }
 
 // makes the arrays to chache the lineshape values and spinfactors in CachedResSF and the values of the amplitudes in
@@ -570,8 +570,7 @@ __host__ fptype TDDP4::normalize() {
     // so set normalization factor to 1 so it doesn't get multiplied by zero.
     // Copy at this time to ensure that the SpecialResonanceCalculators, which need the efficiency,
     // don't get zeroes through multiplying by the normFactor.
-    MEMCPY_TO_SYMBOL(
-        d_normalizations, host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    host_normalizations.sync(d_normalizations);
 
     // check if MINUIT changed any parameters and if so remember that so we know
     // we need to recalculate that lineshape and every amp, that uses that lineshape
@@ -870,8 +869,7 @@ __host__
     SigGenSetIndices();
     normalize();
     setForceIntegrals();
-    MEMCPY_TO_SYMBOL(
-        d_normalizations, host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    host_normalizations.sync(d_normalizations);
 
     thrust::device_vector<fptype> weights(nAcc);
     thrust::constant_iterator<int> eventSize(8);
@@ -988,7 +986,7 @@ __device__ fpcomplex SFCalculator_TD::operator()(thrust::tuple<int, fptype *, in
     while(pc.funcIdx < _spinfactor_i)
         pc.incrementIndex();
 
-    auto func = reinterpret_cast<spin_function_ptr>(device_function_table[pc.funcIdx]);
+    auto func = reinterpret_cast<spin_function_ptr>(d_function_table[pc.funcIdx]);
     fptype sf = (*func)(vecs, pc);
     // printf("SpinFactors %i : %.7g\n",_spinfactor_i, sf );
     return {sf, 0.0};
@@ -1035,7 +1033,7 @@ __device__ fptype NormSpinCalculator_TD::operator()(
     while(pc.funcIdx < _spinfactor_i)
         pc.incrementIndex();
 
-    auto func = reinterpret_cast<spin_function_ptr>(device_function_table[pc.funcIdx]);
+    auto func = reinterpret_cast<spin_function_ptr>(d_function_table[pc.funcIdx]);
     fptype sf = (*func)(vecs, pc);
 
     // printf("NormSF evt:%.5g, %.5g, %.5g, %.5g, %.5g\n", m12, m34, cos12, cos34, phi);

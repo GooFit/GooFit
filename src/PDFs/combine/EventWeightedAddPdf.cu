@@ -31,7 +31,7 @@ __device__ fptype device_EventWeightedAddPdfs(fptype *evt, ParameterContainer &p
     // nP | F P | F P | nO | o1
     // in which nP = 4. and nO = 1. Therefore the parameter index for the last function pointer is nP, and the function
     // index is nP-1.
-    // fptype last = (*(reinterpret_cast<device_function_ptr>(device_function_table[indices[numParameters-1]])))(evt, p,
+    // fptype last = (*(reinterpret_cast<device_function_ptr>(d_function_table[indices[numParameters-1]])))(evt, p,
     // paramIndices + indices[numParameters]);
 
     pc                = pci;

@@ -303,7 +303,7 @@ typedef fptype (*device_function_ptr) (fptype*,
                                        ParameterContainer &pc);
 ```
 
-This pointer (\ref footnote4 "4") will be copied into the `device_function_table` array,
+This pointer (\ref footnote4 "4") will be copied into the `d_function_table` array,
 and its index in that array is the PDF's internal representation of "my
 evaluation function".
 
@@ -930,7 +930,7 @@ Code to call device-side PDF implementations (some lines broken up for clarity) 
 ```cpp
 __device__ fptype callFunction (fptype* eventAddress,
                                 ParameterContainer &pc) {
-  void* rawPtr = device_function_table[functionIdx];
+  void* rawPtr = d_function_table[functionIdx];
   device_function_ptr fcn;
   fcn = reinterpret_cast<device_function_ptr>(rawPtr);
   return (*fcn)(eventAddress, pc);
@@ -993,7 +993,7 @@ __device__ fptype MetricTaker::operator ()
   // is assumed that the structure of the event is
   // (obs1 obs2... binentry binvolume), so that the array
   // passed to the metric consists of (binentry binvolume).
-  void* fcnAddr = device_function_table[metricIndex];
+  void* fcnAddr = d_function_table[metricIndex];
   device_metric_ptr fcnPtr;
   fcnPtr = reinterpret_cast<device_metric_ptr>(fcnAddr);
   eventAddress += abs(eventSize)-2;
@@ -1019,7 +1019,7 @@ number of hits in the bin, which depends on the PDF value, the bin
 volume, and the total number of events (\ref footnote8 "8"), subtract the observed
 number, square, and divide by the observed number. Hence there is a
 second function-pointer lookup, but now the `void*` stored in
-`device_function_table` is to be interpreted as a different kind of
+`d_function_table` is to be interpreted as a different kind of
 function - a "take the metric" function rather than a "calculate the
 PDF" function. The `metricIndex` member of `MetricTaker` is set by the
 `FitControl` object of the PDF; it points to one of the `calculateFoo`
@@ -1105,7 +1105,7 @@ calculation of listing [Main Eval](@ref listingmaineval). For example, in
 Breit-Wigner, a Gaussian, a Flatte function, or more esoteric forms; so
 the main function is supplied with a list of function indices and
 parameter indices for them, and interprets the `void` pointer from
-`device_function_table` as a specialized function type taking
+`d_function_table` as a specialized function type taking
 Dalitz-plot location (rather than a generic event) as its argument. More
 prosaically, `AddPdf` simply carries a list of PDF function indices and
 indices of weights to assign them, and invokes `callFunction` several

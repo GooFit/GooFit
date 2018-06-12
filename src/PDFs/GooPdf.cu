@@ -8,6 +8,7 @@
 #include <goofit/UnbinnedDataSet.h>
 #include <goofit/Variable.h>
 #include <goofit/Version.h>
+#include <goofit/detail/SmartVector.h>
 #include <goofit/detail/ThrustOverride.h>
 
 #include <thrust/device_vector.h>
@@ -35,6 +36,9 @@ __constant__ int gpuDebug;
 __constant__ unsigned int debugParamIndex;
 
 int cpuDebug = 0;
+
+GooPdf::~GooPdf() { cleanup(); }
+
 // Reduce the PDFs to a single value based on metric taker
 // numVars will be different for binned or unbinned fit
 // This does NOT normalize!
@@ -140,7 +144,6 @@ __host__ thrust::host_vector<fptype> GooPdf::evaluate_with_metric() const {
     evaluate_with_metric(results);
     return thrust::host_vector<fptype>(results);
 }
-
 __host__ void GooPdf::setIndices() {
     // If not set, perform unbinned Nll fit!
     if(!fitControl)
@@ -152,20 +155,16 @@ __host__ void GooPdf::setIndices() {
     GOOFIT_TRACE("GooPdf::setIndices!");
     PdfBase::setIndices();
 
-    GOOFIT_DEBUG("host_function_table[{}] = {} (fitControl)", num_device_functions, fitControl->getName());
-    if(num_device_functions >= GOOFIT_MAXFUNC)
-        throw GeneralError("Too many device functions! Set GOOFIT_MAXFUNC to a larger value than {}", GOOFIT_MAXFUNC);
-    host_function_table[num_device_functions++] = getMetricPointer(fitControl->getMetric());
+    GOOFIT_DEBUG("host_function_table[{}] = {} (fitControl)", host_function_table.size(), fitControl->getName());
+    host_function_table.push_back(getMetricPointer(fitControl->getMetric()));
 
     // copy all the device functions over:
-    GOOFIT_TRACE("Copying all host side parameters to device");
-    MEMCPY_TO_SYMBOL(
-        device_function_table, &host_function_table, num_device_functions * sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    MEMCPY_TO_SYMBOL(d_parameters, &host_parameters, totalParameters * sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    MEMCPY_TO_SYMBOL(d_constants, &host_constants, totalConstants * sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    MEMCPY_TO_SYMBOL(d_observables, &host_observables, totalObservables * sizeof(fptype), 0, cudaMemcpyHostToDevice);
-    MEMCPY_TO_SYMBOL(
-        d_normalizations, &host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    GOOFIT_TRACE("Copying all host side parameters to device (not normalizations at this point)");
+    host_function_table.sync(d_function_table);
+    host_parameters.sync(d_parameters);
+    host_constants.sync(d_constants);
+    host_observables.sync(d_observables);
+    host_normalizations.sync(d_normalizations);
 }
 
 __host__ int GooPdf::findFunctionIdx(void *dev_functionPtr) {
@@ -176,14 +175,10 @@ __host__ int GooPdf::findFunctionIdx(void *dev_functionPtr) {
         return (*localPos).second;
     }
 
-    int fIdx = num_device_functions;
-    if(num_device_functions >= GOOFIT_MAXFUNC)
-        throw GeneralError("Too many device functions! Set GOOFIT_MAXFUNC to a larger value than {}", GOOFIT_MAXFUNC);
-    host_function_table[num_device_functions]        = dev_functionPtr;
-    functionAddressToDeviceIndexMap[dev_functionPtr] = num_device_functions;
-    num_device_functions++;
-    MEMCPY_TO_SYMBOL(
-        device_function_table, host_function_table, num_device_functions * sizeof(void *), 0, cudaMemcpyHostToDevice);
+    int fIdx = host_function_table.size();
+    host_function_table.push_back(dev_functionPtr);
+    functionAddressToDeviceIndexMap[dev_functionPtr] = fIdx;
+    host_function_table.sync(d_function_table);
 
     return fIdx;
 }
@@ -209,14 +204,13 @@ __host__ double GooPdf::calculateNLL() {
     GOOFIT_MAYBE_UNUSED fptype norm = normalize();
     GOOFIT_TRACE("GooPdf::calculateNLL calling normalize: {} (host_norm should be 1: {})",
                  norm,
-                 host_normalizations[normalIdx + 1]);
+                 host_normalizations.at(normalIdx + 1));
 
     if(host_normalizations[normalIdx + 1] <= 0)
         GooFit::abort(__FILE__, __LINE__, getName() + " non-positive normalization", this);
 
     // make this memcpy async
-    MEMCPY_TO_SYMBOL(
-        d_normalizations, host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    host_normalizations.sync(d_normalizations);
 
     fptype ret = reduce_with_metric();
     GOOFIT_TRACE("GooPdf::calculateNLL calling sumOfNll = {}", ret);
@@ -233,9 +227,8 @@ __host__ std::vector<fptype> GooPdf::evaluateAtPoints(Observable var) {
     setIndices();
 
     normalize();
+    host_normalizations.sync(d_normalizations);
 
-    MEMCPY_TO_SYMBOL(
-        d_normalizations, host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
     UnbinnedDataSet tempdata(observablesList);
 
     double step = var.getBinSize();
@@ -250,8 +243,7 @@ __host__ std::vector<fptype> GooPdf::evaluateAtPoints(Observable var) {
 
     normalize();
 
-    MEMCPY_TO_SYMBOL(
-        d_normalizations, host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    host_normalizations.sync(d_normalizations);
 
     // Note, This is not fully realized with MPI.  We need to copy each 'results' buffer to each other 'MPI_Scatterv',
     // then we can do the rest.
@@ -260,7 +252,7 @@ __host__ std::vector<fptype> GooPdf::evaluateAtPoints(Observable var) {
     res.resize(var.getNumBins());
 
     for(int i = 0; i < var.getNumBins(); ++i) {
-        fptype n = host_normalizations[normalIdx + 1];
+        fptype n = host_normalizations.at(normalIdx + 1);
         fptype v = h_results[i];
         res[i]   = v * n;
     }
@@ -282,8 +274,7 @@ __host__ fptype GooPdf::getValue(EvalFunc evalfunc) {
 
     setIndices();
     normalize();
-    MEMCPY_TO_SYMBOL(
-        d_normalizations, host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    host_normalizations.sync(d_normalizations);
 
     UnbinnedDataSet point(observablesList);
     point.addEvent();
@@ -300,7 +291,7 @@ __host__ fptype GooPdf::getValue(EvalFunc evalfunc) {
 __host__ fptype GooPdf::normalize() {
     if(!fitControl->metricIsPdf()) {
         GOOFIT_TRACE("{}: metricIsPdf, returning 1", getName());
-        host_normalizations[normalIdx + 1] = 1.0;
+        host_normalizations.at(normalIdx + 1) = 1.0;
         cachedNormalization                = 1.0;
         return 1.0;
     }
@@ -314,7 +305,7 @@ __host__ fptype GooPdf::normalize() {
             ret *= integrate(v.getLowerLimit(), v.getUpperLimit());
         }
 
-        host_normalizations[normalIdx + 1] = 1.0 / ret;
+        host_normalizations.at(normalIdx + 1) = 1.0 / ret;
         cachedNormalization                = 1.0 / ret;
         GOOFIT_TRACE("{}: Param {} integral is = {}", getName(), parameters, ret);
 
@@ -342,13 +333,13 @@ __host__ fptype GooPdf::normalize() {
         GooFit::abort(__FILE__, __LINE__, "Zero integral");
 
     GOOFIT_TRACE("{}: Param {} integral is ~= {}", getName(), normalIdx, ret);
-    host_normalizations[normalIdx + 1] = 1.0 / ret;
+    host_normalizations.at(normalIdx + 1) = 1.0 / ret;
     cachedNormalization                = 1.0 / ret;
     return (fptype)ret;
 }
 
 __device__ fptype callFunction(fptype *eventAddress, ParameterContainer &pc) {
-    return (*(reinterpret_cast<device_function_ptr>(device_function_table[pc.funcIdx])))(eventAddress, pc);
+    return (*(reinterpret_cast<device_function_ptr>(d_function_table[pc.funcIdx])))(eventAddress, pc);
 }
 
 __host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
@@ -357,8 +348,7 @@ __host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
     setFitControl(std::make_shared<ProbFit>());
 
     normalize();
-    MEMCPY_TO_SYMBOL(
-        d_normalizations, host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    host_normalizations.sync(d_normalizations);
 
     thrust::host_vector<fptype> host_results = evaluate_with_metric();
 
@@ -372,23 +362,16 @@ __host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
         components[i]->setIndices();
         components[i]->normalize();
 
-        GOOFIT_TRACE("host_function_table[{}] = {}", num_device_functions, fitControl->getName());
-        host_function_table[num_device_functions] = getMetricPointer(fitControl->getMetric());
-        num_device_functions++;
+        GOOFIT_TRACE("host_function_table[{}] = {}", host_function_table.size(), fitControl->getName());
+        host_function_table.push_back(getMetricPointer(fitControl->getMetric()));
 
         // copy all the device functions over:
-        GOOFIT_DEBUG("Copying all host side parameters to device");
-        MEMCPY_TO_SYMBOL(device_function_table,
-                         &host_function_table,
-                         num_device_functions * sizeof(fptype),
-                         0,
-                         cudaMemcpyHostToDevice);
-        MEMCPY_TO_SYMBOL(d_parameters, &host_parameters, totalParameters * sizeof(fptype), 0, cudaMemcpyHostToDevice);
-        MEMCPY_TO_SYMBOL(d_constants, &host_constants, totalConstants * sizeof(fptype), 0, cudaMemcpyHostToDevice);
-        MEMCPY_TO_SYMBOL(
-            d_observables, &host_observables, totalObservables * sizeof(fptype), 0, cudaMemcpyHostToDevice);
-        MEMCPY_TO_SYMBOL(
-            d_normalizations, host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+        GOOFIT_DEBUG("Copying all host side parameters to device (normalizations too)");
+        host_function_table.sync(d_function_table);
+        host_parameters.sync(d_parameters);
+        host_constants.sync(d_constants);
+        host_observables.sync(d_observables);
+        host_normalizations.sync(d_normalizations);
 
         auto result   = evaluate_with_metric();
         values[1 + i] = std::vector<fptype>(result.begin(), result.end());

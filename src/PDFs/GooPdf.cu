@@ -292,7 +292,7 @@ __host__ fptype GooPdf::normalize() {
     if(!fitControl->metricIsPdf()) {
         GOOFIT_TRACE("{}: metricIsPdf, returning 1", getName());
         host_normalizations.at(normalIdx + 1) = 1.0;
-        cachedNormalization                = 1.0;
+        cachedNormalization                   = 1.0;
         return 1.0;
     }
 
@@ -306,7 +306,7 @@ __host__ fptype GooPdf::normalize() {
         }
 
         host_normalizations.at(normalIdx + 1) = 1.0 / ret;
-        cachedNormalization                = 1.0 / ret;
+        cachedNormalization                   = 1.0 / ret;
         GOOFIT_TRACE("{}: Param {} integral is = {}", getName(), parameters, ret);
 
         return ret;
@@ -334,7 +334,7 @@ __host__ fptype GooPdf::normalize() {
 
     GOOFIT_TRACE("{}: Param {} integral is ~= {}", getName(), normalIdx, ret);
     host_normalizations.at(normalIdx + 1) = 1.0 / ret;
-    cachedNormalization                = 1.0 / ret;
+    cachedNormalization                   = 1.0 / ret;
     return (fptype)ret;
 }
 

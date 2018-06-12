@@ -51,7 +51,8 @@ class GooPdf : public PdfBase {
   public:
     using PdfBase::PdfBase;
 
-    ~GooPdf();
+    ~GooPdf() override;
+
     __host__ double calculateNLL() override;
 
     /// NB: This does not project correctly in multidimensional datasets, because all observables

@@ -1,7 +1,9 @@
 #pragma once
 
 #include <goofit/FitControl.h>
+#include <goofit/PDFs/MetricPointer.h>
 #include <goofit/PDFs/MetricTaker.h>
+#include <goofit/PDFs/detail/Globals.h>
 #include <goofit/PdfBase.h>
 #include <goofit/UnbinnedDataSet.h>
 #include <goofit/Version.h>
@@ -12,7 +14,6 @@ class TH1D;
 
 namespace GooFit {
 
-void *getMetricPointer(EvalFunc val);
 
 extern __device__ fptype d_parameters[GOOFIT_MAXPAR];
 extern __device__ fptype d_constants[GOOFIT_MAXPAR];
@@ -29,17 +30,9 @@ extern __constant__ fptype c_meson_radius;
 extern __device__ void *device_function_table[GOOFIT_MAXFUNC];
 extern void *host_function_table[GOOFIT_MAXFUNC];
 extern unsigned int num_device_functions;
-extern std::map<void *, int> functionAddressToDeviceIndexMap;
 
 // Forward declare
 struct ParameterContainer;
-
-__device__ int dev_powi(int base, int exp); // Implemented in SmoothHistogramPdf.
-
-/// Pass event, parameters, index into parameters.
-typedef fptype (*device_metric_ptr)(fptype, fptype *, fptype);
-
-extern void *host_fcn_ptr;
 
 __device__ fptype callFunction(fptype *eventAddress, ParameterContainer &pc);
 

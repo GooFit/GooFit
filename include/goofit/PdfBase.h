@@ -26,7 +26,6 @@ struct ParameterContainer;
 
 typedef fptype (*device_function_ptr)(fptype *, ParameterContainer &);
 
-extern fptype *dev_event_array;
 
 extern fptype host_parameters[]; // GOOFIT_MAXPAR
 extern fptype host_constants[];

@@ -124,7 +124,6 @@ Other custom options supported along with the defaults:
 * `-DGOOFIT_HOST=Auto`: This is CPP unless device is `OMP`, in which case it is also `OMP`. This changes `thrust::host_vector` calculations, and is not fully supported when set to a non-default setting.
 * `-DGOOFIT_TESTS=ON`: Build the GooFit tests
 * `-DGOOFIT_MPI=ON`: (OFF/ON.  With this feature on, GPU devices are selected automatically).  Tested with MVAPICH2/2.2 and OpenMPI.
-* `-DGOOFIT_MAXPAR=1800`: The maximum number of parameters to allow. May cause memory issues if too large.
 * You can enable sanitizers on non-CUDA builds with `-DSANITIZE_ADDRESS=ON`, `-DSANITIZE_MEMORY=ON`, `-DSANITIZE_THREAD=ON` or `-DSANITIZE_UNDEFINED=ON`.
 * If `clang-tidy` is available, it will automatically be used to check the source. If you set `-DGOOFIT_TIDY_FIX=ON`, fixes will be applied to the GooFit source.
 * `-DGOOFIT_SPLASH=ON`: Controls the unicode splash at the beginning.

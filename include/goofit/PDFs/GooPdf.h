@@ -6,9 +6,8 @@
 #include <goofit/PDFs/detail/Globals.h>
 #include <goofit/PdfBase.h>
 #include <goofit/UnbinnedDataSet.h>
-#include <goofit/Version.h>
-
 #include <thrust/device_vector.h>
+#include <thrust/host_vector.h>
 
 #ifdef ROOT_FOUND
 class TH1D;
@@ -52,6 +51,7 @@ class GooPdf : public PdfBase {
   public:
     using PdfBase::PdfBase;
 
+    ~GooPdf();
     __host__ double calculateNLL() override;
 
     /// NB: This does not project correctly in multidimensional datasets, because all observables

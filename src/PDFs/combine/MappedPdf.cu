@@ -15,7 +15,7 @@ __device__ fptype device_Mapped(fptype *evt, ParameterContainer &pc) {
 
     // This is an index into the MappedPdf's list of functions
     // int targetFunction = (int) floor(0.5 +
-    // (*(reinterpret_cast<device_function_ptr>(device_function_table[mapFunction])))(evt, p, paramIndices +
+    // (*(reinterpret_cast<device_function_ptr>(d_function_table[mapFunction])))(evt, p, paramIndices +
     // indices[2]));
     auto targetFunction = static_cast<int>(floor(0.5 + callFunction(evt, pc)));
 
@@ -32,7 +32,7 @@ __device__ fptype device_Mapped(fptype *evt, ParameterContainer &pc) {
     while(pc.funcIdx < funcIdx + targetFunction)
         pc.incrementIndex();
 
-    // fptype ret = (*(reinterpret_cast<device_function_ptr>(device_function_table[indices[targetFunction]])))(evt, p,
+    // fptype ret = (*(reinterpret_cast<device_function_ptr>(d_function_table[indices[targetFunction]])))(evt, p,
     // paramIndices + indices[targetFunction + 1]);
     fptype norm = pc.getNormalization(0);
     fptype ret  = callFunction(evt, pc);

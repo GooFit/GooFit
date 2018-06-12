@@ -48,44 +48,30 @@ __host__ void PdfBase::initializeIndices() {
     // they will be re-arranged when the tree is flattened.  Please follow  recursiveSetIndices()
 
     // stick placeholders into our parameter array
-    host_parameters[totalParameters] = parametersList.size();
-    parametersIdx                    = totalParameters;
-    totalParameters++;
+    parametersIdx = host_parameters.size();
+    host_parameters.push_back(host_parameters.size());
     for(auto &i : parametersList) {
-        host_parameters[totalParameters] = i.getValue();
-        totalParameters++;
+        host_parameters.push_back(i.getValue());
     }
 
     // stick placeholders into our constants array
-    host_constants[totalConstants] = constantsList.size();
-    constantsIdx                   = totalConstants;
-    totalConstants++;
+    constantsIdx = host_constants.size();
+    host_constants.push_back(constantsList.size());
     for(double i : constantsList) {
-        host_constants[totalConstants] = i;
-        totalConstants++;
+        host_constants.push_back(i);
     }
 
     // stick placeholders into our observable array
-    host_observables[totalObservables] = observablesList.size();
-    observablesIdx                     = totalObservables;
-    totalObservables++;
+    observablesIdx = host_observables.size();
+    host_observables.push_back(observablesList.size());
     for(auto &i : observablesList) {
-        host_observables[totalObservables] = i.getValue();
-        totalObservables++;
+        host_observables.push_back(i.getValue());
     }
 
     // stick placeholders into our normalization array
-    host_normalizations[totalNormalizations] = 1;
-    normalIdx                                = totalNormalizations;
-    totalNormalizations++;
-    host_normalizations[totalNormalizations] = cachedNormalization;
-    totalNormalizations++;
-
-    if(totalParameters >= GOOFIT_MAXPAR)
-        throw GooFit::GeneralError("{}: Set too many parameters, GooFit array more than {}. Increase max at compile "
-                                   "time with -DGOOFIT_MAXPAR=N.",
-                                   getName(),
-                                   GOOFIT_MAXPAR);
+    normalIdx = host_normalizations.size();
+    host_normalizations.push_back(1.0);
+    host_normalizations.push_back(0.0);
 
     // we rely on GooPdf::set to copy these values, this copyies every PDF which is unnecessary.
     // MEMCPY_TO_SYMBOL(paramIndices, host_indices, totalParams*sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
@@ -102,15 +88,14 @@ __host__ void PdfBase::recursiveSetIndices() {
     host_fcn_ptr = function_ptr_;
 
     GOOFIT_DEBUG("host_function_table[{}] = {} for \"{}\" from PDFBase::recursiveSetIndices",
-                 num_device_functions,
+                 host_function_table.size(),
                  reflex_name_,
                  getName());
 
-    if(num_device_functions >= GOOFIT_MAXFUNC)
-        throw GeneralError("Too many device functions! Set GOOFIT_MAXFUNC to a larger value than {}", GOOFIT_MAXFUNC);
+    functionIdx = host_function_table.size();
+    host_function_table.push_back(host_fcn_ptr);
 
-    host_function_table[num_device_functions] = host_fcn_ptr;
-    functionIdx                               = num_device_functions++;
+    // TODO: This one doesn't have a sync call. Fix and simplify all sync calls!
     populateArrays();
 }
 
@@ -126,13 +111,13 @@ __host__ void PdfBase::updateVariable(Variable var, fptype newValue) {
 
 __host__ void PdfBase::updateParameters() {
     for(int i = 0; i < parametersList.size(); i++)
-        host_parameters[parametersIdx + i + 1] = parametersList[i].getValue();
+        host_parameters.at(parametersIdx + i + 1) = parametersList[i].getValue();
 
     for(auto &component : components)
         component->updateParameters();
 
     // we need to memcpy to device.
-    MEMCPY_TO_SYMBOL(d_parameters, host_parameters, totalParameters * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    host_parameters.smart_sync(d_parameters);
 }
 
 __host__ void PdfBase::populateArrays() {
@@ -140,42 +125,35 @@ __host__ void PdfBase::populateArrays() {
     GOOFIT_TRACE("Populating Arrays for {}", getName());
 
     // reconfigure the host_parameters array with the new indexing scheme.
-    GOOFIT_TRACE("host_parameters[{}] = {}", totalParameters, parametersList.size());
-    host_parameters[totalParameters] = parametersList.size();
-    parametersIdx                    = totalParameters;
-    totalParameters++;
+    GOOFIT_TRACE("host_parameters[{}] = {}", host_parameters.size(), parametersList.size());
+
+    parametersIdx = host_parameters.size();
+    host_parameters.push_back(parametersList.size());
     for(auto &i : parametersList) {
-        GOOFIT_TRACE("host_parameters[{}] = {}", totalParameters, i.getValue());
-        host_parameters[totalParameters] = i.getValue();
-        totalParameters++;
+        GOOFIT_TRACE("host_parameters[{}] = {}", host_parameters.size(), i.getValue());
+        host_parameters.push_back(i.getValue());
     }
 
-    GOOFIT_TRACE("host_constants[{}] = {}", totalConstants, constantsList.size());
-    host_constants[totalConstants] = constantsList.size();
-    constantsIdx                   = totalConstants;
-    totalConstants++;
-    for(double i : constantsList) {
-        GOOFIT_TRACE("host_constants[{}] = {}", totalConstants, i);
-        host_constants[totalConstants] = i;
-        totalConstants++;
+    constantsIdx = host_constants.size();
+    host_constants.push_back(constantsList.size());
+
+    for(auto &i : constantsList) {
+        GOOFIT_TRACE("host_constants[{}] = {}", host_constants.size(), i);
+        host_constants.push_back(i);
     }
 
-    GOOFIT_TRACE("host_observables[{}] = {}", totalObservables, observablesList.size());
-    host_observables[totalObservables] = observablesList.size();
-    observablesIdx                     = totalObservables;
-    totalObservables++;
+    observablesIdx = host_observables.size();
+    host_observables.push_back(observablesList.size());
     for(auto &i : observablesList) {
-        GOOFIT_TRACE("host_observables[{}] = {}", totalObservables, i.getIndex());
-        host_observables[totalObservables] = i.getIndex();
-        totalObservables++;
+        GOOFIT_TRACE("host_observables[{}] = {}", host_observables.size(), i.getValue());
+        host_observables.push_back(i.getIndex());
     }
 
-    GOOFIT_TRACE("host_normalizations[{}] = {}", totalNormalizations, 1);
-    host_normalizations[totalNormalizations] = 1;
-    normalIdx                                = totalNormalizations++;
-    GOOFIT_TRACE("host_normalizations[{}] = {}", totalNormalizations, 0);
-    host_normalizations[totalNormalizations] = cachedNormalization;
-    totalNormalizations++;
+    GOOFIT_TRACE("host_normalizations[{}] = {}", host_normalizations.size(), 1);
+    normalIdx = host_normalizations.size();
+    host_normalizations.push_back(1.0);
+    GOOFIT_TRACE("host_normalizations[{}] = {}", host_normalizations.size(), 0);
+    host_normalizations.push_back(0.0);
 
     for(auto &component : components)
         component->recursiveSetIndices();
@@ -185,11 +163,11 @@ __host__ void PdfBase::populateArrays() {
 
 __host__ void PdfBase::setIndices() {
     // Flatten the tree by re-running through the whole PDF with everything zero'd.
-    totalParameters      = 0;
-    totalConstants       = 0;
-    totalObservables     = 0;
-    totalNormalizations  = 0;
-    num_device_functions = 0;
+    host_parameters.clear();
+    host_constants.clear();
+    host_observables.clear();
+    host_normalizations.clear();
+    host_function_table.clear();
 
     // set all associated functions parameters, constants, etc.
     recursiveSetIndices();
@@ -431,7 +409,7 @@ __host__ void PdfBase::generateNormRange() {
 }
 
 void PdfBase::clearCurrentFit() {
-    totalParameters = 0;
+    host_parameters.clear();
     gooFree(dev_event_array);
     dev_event_array = nullptr;
 }

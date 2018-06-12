@@ -28,6 +28,7 @@ bool find_in(std::vector<T> list, T item) {
 } // namespace
 namespace GooFit {
 
+
 __host__ void PdfBase::checkInitStatus(std::vector<std::string> &unInited) const {
     if(!properlyInitialised)
         unInited.push_back(getName());
@@ -37,13 +38,15 @@ __host__ void PdfBase::checkInitStatus(std::vector<std::string> &unInited) const
     }
 }
 
-__host__ void PdfBase::recursiveSetNormalization(fptype norm) {
-    host_normalizations[normalIdx + 1] = norm;
+__host__ void PdfBase::recursiveSetNormalization(fptype norm, bool subpdf) {
+    host_normalizations.at(normalIdx + 1) = norm;
     cachedNormalization                = norm;
 
     for(auto component : components) {
-        component->recursiveSetNormalization(norm);
+        component->recursiveSetNormalization(norm, true);
     }
+    if(!subpdf)
+        host_normalizations.sync(d_normalizations);
 }
 
 __host__ unsigned int PdfBase::registerParameter(Variable var) {

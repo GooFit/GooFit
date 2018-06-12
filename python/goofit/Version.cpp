@@ -5,8 +5,6 @@
 void init_Version(py::module &m) {
     m.attr("__version__")        = GOOFIT_VERSION;
     m.attr("GOOFIT_GIT_VERSION") = GOOFIT_GIT_VERSION;
-    m.attr("GOOFIT_MAXPAR")      = GOOFIT_MAXPAR;
-    m.attr("GOOFIT_MAXFUNC")     = GOOFIT_MAXFUNC;
     m.attr("GOOFIT_TAG")         = GOOFIT_TAG;
     m.attr("GOOFIT_SOURCE_DIR")  = GOOFIT_SOURCE_DIR;
 

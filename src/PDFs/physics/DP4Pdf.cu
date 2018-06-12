@@ -344,7 +344,7 @@ __host__ void DPPdf::populateArrays() {
                      cudaMemcpyHostToDevice);
 
     // TODO: We need to expand populateArrays so we handle components correctly!
-    efficiencyFunction = num_device_functions - 1;
+    efficiencyFunction = host_function_table.size() - 1;
 }
 // makes the arrays to chache the lineshape values and spinfactors in CachedResSF and the values of the amplitudes in
 // cachedAMPs
@@ -382,8 +382,7 @@ __host__ fptype DPPdf::normalize() {
     // so set normalization factor to 1 so it doesn't get multiplied by zero.
     // Copy at this time to ensure that the SpecialResonanceCalculators, which need the efficiency,
     // don't get zeroes through multiplying by the normFactor.
-    MEMCPY_TO_SYMBOL(
-        d_normalizations, host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    host_normalizations.sync(d_normalizations);
 
     // check if MINUIT changed any parameters and if so remember that so we know
     // we need to recalculate that lineshape and every amp, that uses that lineshape
@@ -534,8 +533,8 @@ __host__ fptype DPPdf::normalize() {
     if(std::isnan(ret))
         GooFit::abort(__FILE__, __LINE__, getName() + " NAN normalization in DPPdf", this);
 
-    host_normalizations[normalIdx + 1] = 1.0 / ret;
-    cachedNormalization                = 1.0 / ret;
+    host_normalizations.at(normalIdx + 1) = 1.0 / ret;
+    cachedNormalization                   = 1.0 / ret;
     return ret;
 }
 
@@ -625,8 +624,7 @@ __host__
     copyParams();
     normalize();
     setForceIntegrals();
-    MEMCPY_TO_SYMBOL(
-        d_normalizations, host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    host_normalizations.sync(d_normalizations);
 
     thrust::device_vector<fptype> results(numEvents);
     thrust::constant_iterator<int> eventSize(6);
@@ -708,7 +706,7 @@ __device__ fpcomplex SFCalculator::operator()(thrust::tuple<int, fptype *, int> 
     while(pc.funcIdx < _spinfactor_i)
         pc.incrementIndex();
 
-    auto func = reinterpret_cast<spin_function_ptr>(device_function_table[pc.funcIdx]);
+    auto func = reinterpret_cast<spin_function_ptr>(d_function_table[pc.funcIdx]);
     fptype sf = (*func)(vecs, pc);
     // printf("SpinFactors %i : %.7g\n",evtNum, sf );
     return {sf, 0.0};
@@ -747,7 +745,7 @@ __device__ fptype NormSpinCalculator::operator()(
     while(pc.funcIdx < _spinfactor_i)
         pc.incrementIndex();
 
-    auto func = reinterpret_cast<spin_function_ptr>(device_function_table[pc.funcIdx]);
+    auto func = reinterpret_cast<spin_function_ptr>(d_function_table[pc.funcIdx]);
     fptype sf = (*func)(vecs, pc);
 
     // printf("NormSF evt:%.5g, %.5g, %.5g, %.5g, %.5g\n", m12, m34, cos12, cos34, phi);

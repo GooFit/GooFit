@@ -77,8 +77,7 @@ __host__ fptype ProdPdf::normalize() {
         // Two or more components share an observable and cannot be separately
         // normalized, since \int A*B dx does not equal int A dx * int B dx.
         recursiveSetNormalization(1.0);
-        MEMCPY_TO_SYMBOL(
-            d_normalizations, host_normalizations, totalNormalizations * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+        host_normalizations.sync(d_normalizations);
 
         // Normalize numerically.
         // std::cout << "Numerical normalization of " << getName() << " due to varOverlaps.\n";
@@ -93,8 +92,8 @@ __host__ fptype ProdPdf::normalize() {
         c->normalize();
     }
 
-    host_normalizations[normalIdx + 1] = 1.0;
-    cachedNormalization                = 1.0;
+    host_normalizations.at(normalIdx + 1) = 1.0;
+    cachedNormalization                   = 1.0;
 
     return 1.0;
 }

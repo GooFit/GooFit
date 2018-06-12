@@ -1,7 +1,7 @@
 #pragma once
 
 #include <goofit/GlobalCudaDefines.h>
-#include <goofit/Version.h>
+#include <goofit/detail/SmartVector.h>
 
 #include <map>
 
@@ -11,24 +11,17 @@ struct ParameterContainer;
 
 typedef fptype (*device_function_ptr)(fptype *, ParameterContainer &);
 
-extern fptype host_parameters[]; // GOOFIT_MAXPAR
-extern fptype host_constants[];
-extern fptype host_observables[];
-extern fptype host_normalizations[];
+extern SmartVector<fptype> host_parameters;
+extern SmartVector<fptype> host_constants;
+extern SmartVector<fptype> host_observables;
+extern SmartVector<fptype> host_normalizations;
+extern SmartVector<void *> host_function_table;
 
-extern int totalParameters;
-extern int totalConstants;
-extern int totalObservables;
-extern int totalNormalizations;
-
-extern __device__ fptype d_parameters[GOOFIT_MAXPAR];
-extern __device__ fptype d_constants[GOOFIT_MAXPAR];
-extern __device__ fptype d_observables[GOOFIT_MAXPAR];
-extern __device__ fptype d_normalizations[GOOFIT_MAXPAR];
-
-extern __device__ void *device_function_table[GOOFIT_MAXFUNC];
-extern void *host_function_table[GOOFIT_MAXFUNC];
-extern unsigned int num_device_functions;
+extern __device__ fptype *d_parameters;
+extern __device__ fptype *d_constants;
+extern __device__ fptype *d_observables;
+extern __device__ fptype *d_normalizations;
+extern __device__ void **d_function_table;
 
 __host__ void cleanup();
 __device__ int dev_powi(int base, int exp); // Used in SmoothHistogramPdf and InterHistPdf

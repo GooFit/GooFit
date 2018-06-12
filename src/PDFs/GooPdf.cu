@@ -29,53 +29,12 @@ namespace GooFit {
 // or constrained to be in the CUDAglob translation unit by nvcc limitations; otherwise they
 // would be in PdfBase.
 
-// Device-side, translation-unit constrained.  These were constant, removing const.
-// The reason is that this will make it much more difficult to fetch memory, since
-// it has less memory to work with limiting the constant amount.
-__device__ fptype d_parameters[GOOFIT_MAXPAR];
-__device__ fptype d_constants[GOOFIT_MAXPAR];
-__device__ fptype d_observables[GOOFIT_MAXPAR];
-__device__ fptype d_normalizations[GOOFIT_MAXPAR];
-
 // For debugging
 
 __constant__ int gpuDebug;
 __constant__ unsigned int debugParamIndex;
 
-// Function-pointer related.
-__device__ void *device_function_table[GOOFIT_MAXFUNC];
-// Not clear why this cannot be __constant__, but it causes crashes to declare it so.
-
 int cpuDebug = 0;
-
-// For use in debugging memory issues
-void printMemoryStatus(std::string file, int line) {
-    size_t memfree  = 0;
-    size_t memtotal = 0;
-    cudaDeviceSynchronize();
-
-#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-    cudaMemGetInfo(&memfree, &memtotal);
-#endif
-    cudaDeviceSynchronize();
-    std::cout << "Memory status " << file << " " << line << " Free " << memfree << " Total " << memtotal << " Used "
-              << (memtotal - memfree) << std::endl;
-}
-
-
-
-
-
-
-}
-
-}
-
-
-    return POW2(rawPdf * c_totalEvents - evtVal[0]) / (evtVal[0] > 1 ? evtVal[0] : 1);
-}
-
-}
 
 __host__ void GooPdf::setIndices() {
     // If not set, perform unbinned Nll fit!

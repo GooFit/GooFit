@@ -2,6 +2,7 @@
 
 #include <goofit/GlobalCudaDefines.h>
 
+#include <goofit/PDFs/detail/Globals.h>
 #include <goofit/Variable.h>
 #include <goofit/detail/Abort.h>
 
@@ -23,23 +24,7 @@ class FunctionMinimum;
 namespace GooFit {
 
 struct ParameterContainer;
-
-typedef fptype (*device_function_ptr)(fptype *, ParameterContainer &);
-
-
-extern fptype host_parameters[]; // GOOFIT_MAXPAR
-extern fptype host_constants[];
-extern fptype host_observables[];
-extern fptype host_normalizations[];
-
-extern __constant__ unsigned int c_totalEvents;
-extern int totalParameters;
-extern int totalConstants;
-extern int totalObservables;
-extern int totalNormalizations;
-
 class FitControl;
-
 class DataSet;
 class BinnedDataSet;
 class UnbinnedDataSet;

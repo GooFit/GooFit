@@ -68,7 +68,7 @@ class AddPdf : public GooPdf {
     __host__ bool hasAnalyticIntegral() const override { return false; }
 
   protected:
-    __host__ double sumOfNll(int numVars) const override;
+    __host__ double calculateNLL() override;
 
   private:
     bool extended;

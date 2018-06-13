@@ -1,0 +1,37 @@
+goofit_add_library(PdfPhysics
+    DP4Pdf.cu
+    DalitzPlotHelpers.cu
+    Amp3Body.cu
+    SpecialResonanceIntegrator.cu
+    SpecialResonanceCalculator.cu
+    DalitzVetoPdf.cu
+    IncoherentSumPdf.cu
+    LineshapesPdf.cu
+    MixingTimeResolution_Aux.cu
+    ResonancePdf.cu
+    SpinFactors.cu
+    Tddp4Pdf.cu
+    TddpPdf.cu
+    ThreeGaussResolution_Aux.cu
+    TruthResolution_Aux.cu
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/DP4Pdf.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/DalitzPlotHelpers.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/DalitzPlotPdf.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/DalitzPlotter.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/DalitzVetoPdf.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/EvalVar.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/IncoherentSumPdf.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/LineshapesPdf.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/MixingTimeResolution_Aux.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/ResonancePdf.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/SpinFactors.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/SpinHelper.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Tddp4Pdf.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/TddpPdf.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/ThreeGaussResolution_Aux.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/TruthResolution_Aux.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/UserUtils.h
+)
+if(GOOFIT_KMATRIX AND GOOFIT_DEVICE STREQUAL CUDA)
+    target_sources(PdfPhysics PRIVATE ${PROJECT_SOURCE_DIR}/include/goofit/detail/compute_inverse5.h)
+endif()

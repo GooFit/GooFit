@@ -637,18 +637,6 @@ macro(GOOFIT_ADD_PACKAGE PACKAGE_NAME)
 
 endmacro()
 
-
-# Adding global property to collect extra info for compilation
-set_property(GLOBAL PROPERTY GOOFIT_EXTRA_PDFS "")
-macro(goofit_add_pdf)
-    foreach(N ${ARGN})
-        get_filename_component(N ${N} ABSOLUTE)
-        message(STATUS "Adding PDF: ${N}")
-        get_property(goo_extra GLOBAL PROPERTY GOOFIT_EXTRA_PDFS)
-        set_property(GLOBAL PROPERTY GOOFIT_EXTRA_PDFS ${goo_extra} ${N})
-    endforeach()
-endmacro()
-
 target_include_directories(GooFit_Common INTERFACE extern/MCBooster)
 target_include_directories(GooFit_Common INTERFACE extern/generics)
 

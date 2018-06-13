@@ -85,6 +85,14 @@ void filter_arguments(std::vector<Observable> &oblist,
 class PdfBase {
     friend std::ostream &operator<<(std::ostream &, const PdfBase &);
 
+  protected:
+    /// Runs once at the beginning of a run. Will always be called, so useful for setup. Inside things like fits, this
+    /// will not rerun, however, even if parameters change.
+    __host__ void pre_run();
+
+    /// This will run before each evaluation (after pre_run), always (even inside fits)
+    __host__ void pre_call();
+
   public:
     template <typename... Args>
     explicit PdfBase(std::string n, Args... args)

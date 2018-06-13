@@ -144,6 +144,7 @@ __host__ thrust::host_vector<fptype> GooPdf::evaluate_with_metric() const {
     evaluate_with_metric(results);
     return thrust::host_vector<fptype>(results);
 }
+
 __host__ void GooPdf::setIndices() {
     // If not set, perform unbinned Nll fit!
     if(!fitControl)
@@ -159,12 +160,7 @@ __host__ void GooPdf::setIndices() {
     host_function_table.push_back(getMetricPointer(fitControl->getMetric()));
 
     // copy all the device functions over:
-    GOOFIT_TRACE("Copying all host side parameters to device (not normalizations at this point)");
-    host_function_table.sync(d_function_table);
-    host_parameters.sync(d_parameters);
-    host_constants.sync(d_constants);
-    host_observables.sync(d_observables);
-    host_normalizations.sync(d_normalizations);
+    pre_run();
 }
 
 __host__ int GooPdf::findFunctionIdx(void *dev_functionPtr) {
@@ -367,11 +363,7 @@ __host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
 
         // copy all the device functions over:
         GOOFIT_DEBUG("Copying all host side parameters to device (normalizations too)");
-        host_function_table.sync(d_function_table);
-        host_parameters.sync(d_parameters);
-        host_constants.sync(d_constants);
-        host_observables.sync(d_observables);
-        host_normalizations.sync(d_normalizations);
+        pre_run();
 
         auto result   = evaluate_with_metric();
         values[1 + i] = std::vector<fptype>(result.begin(), result.end());

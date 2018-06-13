@@ -33,11 +33,11 @@ mother and daughter masses, and the efficiency function.
 class Amp3Body : public Amp3BodyBase {
   public:
     Amp3Body(std::string n,
-                  Observable m12,
-                  Observable m13,
-                  EventNumber eventNumber,
-                  DecayInfo3 decay,
-                  GooPdf *eff = nullptr);
+             Observable m12,
+             Observable m13,
+             EventNumber eventNumber,
+             DecayInfo3 decay,
+             GooPdf *eff = nullptr);
     // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the
     // coherent sum. The caching method requires that it be done this way or the ProdPdf
     // normalization will get *really* confused and give wrong answers.

@@ -1,9 +1,9 @@
 #include <goofit/Error.h>
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/Amp3Body.h>
-#include <goofit/detail/Complex.h>
 #include <goofit/PDFs/physics/SpecialResonanceCalculator.h>
 #include <goofit/PDFs/physics/SpecialResonanceIntegrator.h>
+#include <goofit/detail/Complex.h>
 
 #include <thrust/copy.h>
 #include <thrust/transform_reduce.h>
@@ -411,6 +411,5 @@ __host__ std::vector<std::vector<fptype>> Amp3Body::fit_fractions() {
 
     return ff;
 }
-
 
 } // namespace GooFit

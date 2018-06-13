@@ -1,6 +1,6 @@
-#include <goofit/PDFs/physics/SpecialWaveCalculator.h>
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/Amp3BodyT.h>
+#include <goofit/PDFs/physics/SpecialWaveCalculator.h>
 
 #include <thrust/transform_reduce.h>
 
@@ -70,4 +70,4 @@ __device__ WaveHolder_s SpecialWaveCalculator::operator()(thrust::tuple<int, fpt
     return ret;
 }
 
-} // namespace GooPdf
+} // namespace GooFit

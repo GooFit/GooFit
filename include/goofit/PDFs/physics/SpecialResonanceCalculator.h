@@ -1,23 +1,22 @@
 #pragma once
 
-#include <thrust/tuple.h>
 #include <goofit/detail/Complex.h>
+#include <thrust/tuple.h>
 
 namespace GooFit {
 
+class SpecialResonanceCalculator : public thrust::unary_function<thrust::tuple<int, fptype *, int>, fpcomplex> {
+  public:
+    // Used to create the cached BW values.
+    SpecialResonanceCalculator(int pIdx, unsigned int res_idx);
+    void setDalitzIndex(unsigned int id) { dalitz_i = id; }
+    void setResonanceIndex(unsigned int id) { resonance_i = id; }
+    __device__ fpcomplex operator()(thrust::tuple<int, fptype *, int> t) const;
 
-    class SpecialResonanceCalculator : public thrust::unary_function<thrust::tuple<int, fptype *, int>, fpcomplex> {
-      public:
-        // Used to create the cached BW values.
-        SpecialResonanceCalculator(int pIdx, unsigned int res_idx);
-        void setDalitzIndex(unsigned int id) { dalitz_i = id; }
-        void setResonanceIndex(unsigned int id) { resonance_i = id; }
-        __device__ fpcomplex operator()(thrust::tuple<int, fptype *, int> t) const;
+  private:
+    unsigned int dalitz_i;
+    unsigned int resonance_i;
+    unsigned int parameters;
+};
 
-      private:
-        unsigned int dalitz_i;
-        unsigned int resonance_i;
-        unsigned int parameters;
-    };
-
-} // namepace GooFit
+} // namespace GooFit

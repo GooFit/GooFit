@@ -1,45 +1,45 @@
-#include <goofit/PDFs/physics/SpecialResonanceIntegrator.h>
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
+#include <goofit/PDFs/physics/SpecialResonanceIntegrator.h>
 
 namespace GooFit {
 
-    __device__ fpcomplex
-    device_DalitzPlot_calcIntegrals(fptype m12, fptype m13, int res_i, int res_j, ParameterContainer &pc) {
-        // Calculates BW_i(m12, m13) * BW_j^*(m12, m13).
-        // This calculation is in a separate function so
-        // it can be cached. Note that this function expects
-        // to be called on a normalization grid, not on
-        // observed points, that's why it doesn't use
-        // cResonances. No need to cache the values at individual
-        // grid points - we only care about totals.
-        fptype motherMass = c_motherMass; // RO_CACHE(pc.constants[pc.constantIdx + 4]);
-        fptype daug1Mass  = c_daug1Mass;  // RO_CACHE(pc.constants[pc.constantIdx + 5]);
-        fptype daug2Mass  = c_daug2Mass;  // RO_CACHE(pc.constants[pc.constantIdx + 6]);
-        fptype daug3Mass  = c_daug3Mass;  // RO_CACHE(pc.constants[pc.constantIdx + 7]);
+__device__ fpcomplex
+device_DalitzPlot_calcIntegrals(fptype m12, fptype m13, int res_i, int res_j, ParameterContainer &pc) {
+    // Calculates BW_i(m12, m13) * BW_j^*(m12, m13).
+    // This calculation is in a separate function so
+    // it can be cached. Note that this function expects
+    // to be called on a normalization grid, not on
+    // observed points, that's why it doesn't use
+    // cResonances. No need to cache the values at individual
+    // grid points - we only care about totals.
+    fptype motherMass = c_motherMass; // RO_CACHE(pc.constants[pc.constantIdx + 4]);
+    fptype daug1Mass  = c_daug1Mass;  // RO_CACHE(pc.constants[pc.constantIdx + 5]);
+    fptype daug2Mass  = c_daug2Mass;  // RO_CACHE(pc.constants[pc.constantIdx + 6]);
+    fptype daug3Mass  = c_daug3Mass;  // RO_CACHE(pc.constants[pc.constantIdx + 7]);
 
-        fpcomplex ret;
+    fpcomplex ret;
 
-        if(!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass))
-            return ret;
-
-        fptype m23
-            = motherMass * motherMass + daug1Mass * daug1Mass + daug2Mass * daug2Mass + daug3Mass * daug3Mass - m12 - m13;
-
-        ParameterContainer ipc = pc;
-        while(ipc.funcIdx < res_i)
-            ipc.incrementIndex();
-
-        ret = getResonanceAmplitude(m12, m13, m23, ipc);
-
-        ParameterContainer jpc = pc;
-        while(jpc.funcIdx < res_j)
-            jpc.incrementIndex();
-
-        ret *= conj(getResonanceAmplitude(m12, m13, m23, jpc));
-
+    if(!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass))
         return ret;
-    }
+
+    fptype m23
+        = motherMass * motherMass + daug1Mass * daug1Mass + daug2Mass * daug2Mass + daug3Mass * daug3Mass - m12 - m13;
+
+    ParameterContainer ipc = pc;
+    while(ipc.funcIdx < res_i)
+        ipc.incrementIndex();
+
+    ret = getResonanceAmplitude(m12, m13, m23, ipc);
+
+    ParameterContainer jpc = pc;
+    while(jpc.funcIdx < res_j)
+        jpc.incrementIndex();
+
+    ret *= conj(getResonanceAmplitude(m12, m13, m23, jpc));
+
+    return ret;
+}
 
 SpecialResonanceIntegrator::SpecialResonanceIntegrator(int pIdx, unsigned int ri, unsigned int rj)
     : resonance_i(ri)

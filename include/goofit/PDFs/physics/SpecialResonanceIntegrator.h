@@ -1,7 +1,7 @@
 #pragma once
 
-#include <thrust/tuple.h>
 #include <goofit/detail/Complex.h>
+#include <thrust/tuple.h>
 
 namespace GooFit {
 
@@ -21,4 +21,4 @@ class SpecialResonanceIntegrator : public thrust::unary_function<thrust::tuple<i
     unsigned int parameters;
 };
 
-} // namepace GooFit
+} // namespace GooFit

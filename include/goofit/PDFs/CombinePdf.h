@@ -5,9 +5,8 @@
 namespace GooFit {
 
 class CombinePdf : public GooPdf {
-public:
+  public:
     using GooPdf::GooPdf;
 };
-
 
 } // namespace GooFit

@@ -1,9 +1,9 @@
 #include <goofit/Error.h>
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/Amp3BodyT.h>
+#include <goofit/PDFs/physics/SpecialComplexSum.h>
 #include <goofit/PDFs/physics/SpecialDalitzIntegrator.h>
 #include <goofit/PDFs/physics/SpecialWaveCalculator.h>
-#include <goofit/PDFs/physics/SpecialComplexSum.h>
 
 #include <thrust/transform_reduce.h>
 
@@ -214,15 +214,15 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
 __device__ device_function_ptr ptr_to_Tddp = device_Tddp;
 
 __host__ Amp3BodyT::Amp3BodyT(std::string n,
-                          Observable _dtime,
-                          Observable _sigmat,
-                          Observable m12,
-                          Observable m13,
-                          EventNumber eventNumber,
-                          DecayInfo3t decay,
-                          MixingTimeResolution *r,
-                          GooPdf *efficiency,
-                          Observable *mistag)
+                              Observable _dtime,
+                              Observable _sigmat,
+                              Observable m12,
+                              Observable m13,
+                              EventNumber eventNumber,
+                              DecayInfo3t decay,
+                              MixingTimeResolution *r,
+                              GooPdf *efficiency,
+                              Observable *mistag)
     : Amp3BodyBase(n, _dtime, _sigmat, m12, m13, eventNumber)
     , decayInfo(decay)
     , _m12(m12)
@@ -307,16 +307,16 @@ __host__ Amp3BodyT::Amp3BodyT(std::string n,
 }
 
 __host__ Amp3BodyT::Amp3BodyT(std::string n,
-                          Observable _dtime,
-                          Observable _sigmat,
-                          Observable m12,
-                          Observable m13,
-                          EventNumber eventNumber,
-                          DecayInfo3t decay,
-                          std::vector<MixingTimeResolution *> &r,
-                          GooPdf *efficiency,
-                          Observable md0,
-                          Observable *mistag)
+                              Observable _dtime,
+                              Observable _sigmat,
+                              Observable m12,
+                              Observable m13,
+                              EventNumber eventNumber,
+                              DecayInfo3t decay,
+                              std::vector<MixingTimeResolution *> &r,
+                              GooPdf *efficiency,
+                              Observable md0,
+                              Observable *mistag)
     : Amp3BodyBase(n, _dtime, _sigmat, m12, m13, eventNumber, md0)
     , decayInfo(decay)
     , _m12(m12)
@@ -632,7 +632,6 @@ __host__ fptype Amp3BodyT::normalize() {
                             * fpcomplex(thrust::get<2>(*(integrals[i][j])), thrust::get<3>(*(integrals[i][j]))));
             integralB_2 += (amplitude_i * amplitude_j
                             * fpcomplex(thrust::get<4>(*(integrals[i][j])), thrust::get<5>(*(integrals[i][j]))));
-
         }
     }
 
@@ -659,7 +658,5 @@ __host__ fptype Amp3BodyT::normalize() {
 
     return ret;
 }
-
-
 
 } // namespace GooFit

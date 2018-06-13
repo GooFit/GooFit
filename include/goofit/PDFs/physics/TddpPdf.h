@@ -4,6 +4,6 @@
 
 namespace GooFit {
 
-    using TddpPdf = Amp3BodyT;
+using TddpPdf = Amp3BodyT;
 
 }

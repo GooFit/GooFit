@@ -290,7 +290,7 @@ __host__ DPPdf::DPPdf(
     norm_LS  = mcbooster::mc_device_vector<fpcomplex>(nAcc * (LineShapes.size()));
     MCevents = nAcc;
 
-    addSpecialMask(PdfBase::ForceSeparateNorm);
+    setSeparateNorm();
 }
 
 // save our efficiency function.  Resonance's are saved first, then the efficiency function.

@@ -82,25 +82,51 @@ void filter_arguments(std::vector<Observable> &oblist,
 }
 } // namespace
 
+// This class never exists on the GPU
+
 class PdfBase {
     friend std::ostream &operator<<(std::ostream &, const PdfBase &);
-
-  public:
-    enum Specials { ForceSeparateNorm = 1, ForceCommonNorm = 2 };
 
   protected:
     /// Runs once at the beginning of a run. Will always be called, so useful for setup. Inside things like fits, this
     /// will not rerun, however, even if parameters change.
-    __host__ void pre_run();
+    void pre_run();
 
     /// This will run before each evaluation (after pre_run), always (even inside fits)
-    __host__ void pre_call();
+    void pre_call();
 
     /// use this function to populate the arrays generically, or specialize as needed
     virtual void populateArrays();
 
     /// This needs to be set before a call to setData.
     void setNumPerTask(PdfBase *p, const int &c);
+
+    /// Generate a range to integrate over
+    void generateNormRange();
+
+    // Registration
+
+    /// This adds a parameter.
+    void registerParameter(Variable var);
+
+    /// Remove a paramter
+    void unregisterParameter(Variable var);
+
+    /// Register a constant
+    void registerConstant(fptype value);
+
+    /// Register a function for this PDF to use in evalution
+    template <typename T>
+    void registerFunction(std::string name, const T &function) {
+        reflex_name_  = name;
+        function_ptr_ = get_device_symbol_address(function);
+    }
+
+    /// Register an observable (Usually done through constructor)
+    void registerObservable(Observable obs);
+
+    /// Force all normalization values to 1
+    void recursiveSetNormalization(fptype norm = 1.0, bool subpdf = false);
 
   public:
     template <typename... Args>
@@ -119,74 +145,67 @@ class PdfBase {
 
     virtual ~PdfBase() = default;
 
-    __host__ virtual double calculateNLL() = 0;
-    __host__ virtual fptype normalize()    = 0;
-    __host__ void initializeIndices();
+    // Standard entry functions
 
-    __host__ void addSpecialMask(int m) { specialMask |= m; }
-    __host__ void copyParams();
-    __host__ void copyNormFactors() const;
-    __host__ void generateNormRange();
-    __host__ std::string getName() const { return name; }
+    virtual double calculateNLL() = 0;
+    virtual fptype normalize()    = 0;
 
-    __host__ virtual std::vector<Observable> getObservables() const;
-    __host__ virtual std::vector<Variable> getParameters() const;
+    // TODO: Combine with pre_run and remove
+    void initializeIndices();
 
-    __host__ Variable *getParameterByName(std::string n);
-    __host__ int getSpecialMask() const { return specialMask; }
+    // TODO: Combine with pre_call and remove
+    void copyParams();
 
-    __host__ void setData(DataSet *data);
-    __host__ DataSet *getData() { return data_; }
+    std::string getName() const { return name; }
 
-    __host__ virtual void setFitControl(std::shared_ptr<FitControl>) = 0;
-    __host__ virtual bool hasAnalyticIntegral() const { return false; }
+    std::vector<Observable> getObservables() const;
+    std::vector<Variable> getParameters() const;
+    Variable *getParameterByName(std::string n);
 
-    __host__ void fillMCDataSimple(size_t events, unsigned int seed = 0);
+    // User level setup
+
+    void setData(DataSet *data);
+    DataSet *getData() { return data_; }
+
+    virtual void setFitControl(std::shared_ptr<FitControl>) = 0;
+
+    /// Override to indicate that this has an analytic integral
+    virtual bool hasAnalyticIntegral() const { return false; }
+
+    /// Currently only 1D filling supported
+    void fillMCDataSimple(size_t events, unsigned int seed = 0);
 
     /// RooFit style fitting shortcut
-    __host__ ROOT::Minuit2::FunctionMinimum fitTo(DataSet *data, int verbosity = 3);
+    ROOT::Minuit2::FunctionMinimum fitTo(DataSet *data, int verbosity = 3);
 
     /// Even shorter fitting shortcut
-    __host__ ROOT::Minuit2::FunctionMinimum fit(int verbosity = 3);
+    ROOT::Minuit2::FunctionMinimum fit(int verbosity = 3);
 
-    __host__ unsigned int getFunctionIndex() const { return functionIdx; }
-    __host__ unsigned int getParameterIndex() const { return parameters; }
+    unsigned int getFunctionIndex() const { return functionIdx; }
+    unsigned int getParameterIndex() const { return parameters; }
 
-    /// This adds a parameter. The number returned should only be used for checking
-    __host__ void registerParameter(Variable var);
+    /// Set a specific fineness for the integrator
+    void setIntegrationFineness(int i);
 
-    /// The int value returned here is the constant number, for checking
-    __host__ void registerConstant(fptype value);
+    /// Have the parameters changed since last evaluation?
+    bool parametersChanged() const;
 
-    /// Register a function for this PDF to use in evalution
-    template <typename T>
-    __host__ void registerFunction(std::string name, const T &function) {
-        reflex_name_  = name;
-        function_ptr_ = get_device_symbol_address(function);
-    }
+    void updateVariable(Variable v, fptype newValue);
+    void updateParameters();
 
-    /// Register an observable (Usually done through constructor)
-    __host__ void registerObservable(Observable obs);
-
-    __host__ void recursiveSetNormalization(fptype norm = 1.0, bool subpdf = false);
-    __host__ void unregisterParameter(Variable var);
-    __host__ void setIntegrationFineness(int i);
-
-    __host__ bool parametersChanged() const;
-
-    __host__ void SigGenSetIndices() {
+    // Setup
+    void SigGenSetIndices() {
         setupObservables();
         setIndices();
     }
+    void setupObservables();
+    virtual void recursiveSetIndices();
+    virtual void setIndices();
 
-    __host__ void updateVariable(Variable v, fptype newValue);
-    __host__ void updateParameters();
-
-    __host__ void setupObservables();
-
-    __host__ virtual void recursiveSetIndices();
-
-    __host__ virtual void setIndices();
+    void setCommonNorm(bool v = true) { commonNorm = v; };
+    void setSeparateNorm(bool v = true) { separateNorm = v; };
+    bool getCommonNorm() const { return commonNorm; };
+    bool getSeparateNorm() const { return separateNorm; };
 
   protected:
     DataSet *data_ = nullptr; //< Remember the original dataset
@@ -213,8 +232,7 @@ class PdfBase {
     std::vector<fptype> constantsList;
     std::vector<PdfBase *> components;
 
-    int integrationBins{-1}; //< Force a specific number of integration bins for all variables
-    int specialMask{0};      //< For storing information unique to PDFs, eg "Normalize me separately" for TddpPdf.
+    int integrationBins{-1};        //< Force a specific number of integration bins for all variables
     bool properlyInitialised{true}; //< Allows checking for required extra steps in, eg, Tddp and Convolution.
 
     unsigned int functionIdx{0}; //< Stores index of device function pointer.
@@ -223,6 +241,9 @@ class PdfBase {
     unsigned int constantsIdx{0};
     unsigned int observablesIdx{0};
     unsigned int normalIdx{0};
+
+    bool commonNorm{false};
+    bool separateNorm{false};
 
     int m_iEventsPerTask{0};
 

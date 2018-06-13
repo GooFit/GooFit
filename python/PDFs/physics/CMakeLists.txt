@@ -1,5 +1,6 @@
 goofit_add_library(_Physics STATIC
-    AmpNBody.cpp
+    AmpNBodyBase.cpp
+    Amp3BodyBase.cpp
     Amp3Body.cpp
     DalitzVetoPdf.cpp
     DalitzPlotHelpers.cpp

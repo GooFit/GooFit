@@ -109,7 +109,7 @@ __device__ device_function_ptr ptr_to_DalitzPlot = device_DalitzPlot;
 
 __host__ Amp3Body::Amp3Body(
     std::string n, Observable m12, Observable m13, EventNumber eventNumber, DecayInfo3 decay, GooPdf *efficiency)
-    : AmpNBody(n, m12, m13, eventNumber)
+    : Amp3BodyBase(n, m12, m13, eventNumber)
     , decayInfo(decay)
     , _m12(m12)
     , _m13(m13)

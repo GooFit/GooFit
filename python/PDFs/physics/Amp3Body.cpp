@@ -11,7 +11,7 @@
 using namespace GooFit;
 
 void init_Amp3Body(py::module &m) {
-    py::class_<Amp3Body, AmpNBody> cls(m, "Amp3Body");
+    py::class_<Amp3Body, Amp3BodyBase> cls(m, "Amp3Body");
     cls.def(py::init<std::string, Observable, Observable, EventNumber, DecayInfo3, GooPdf *>(),
              Amp3Body_docs.c_str(),
              "name"_a,

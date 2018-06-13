@@ -1,6 +1,6 @@
 #pragma once
 
-#include <goofit/PDFs/physics/AmpNBody.h>
+#include <goofit/PDFs/physics/Amp3BodyBase.h>
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 
 #include <goofit/detail/Complex.h>
@@ -30,7 +30,7 @@ of GooFit::ResonancePdf's as well as some global information like the
 mother and daughter masses, and the efficiency function.
 **/
 
-class Amp3Body : public AmpNBody {
+class Amp3Body : public Amp3BodyBase {
   public:
     Amp3Body(std::string n,
                   Observable m12,

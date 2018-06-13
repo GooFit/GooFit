@@ -12,10 +12,30 @@ The internals of GooFit have been updated for GPU performance.  The new improvem
 * Lots of improvements to error checking, `GOOFIT_MAXFUNC` added [#151]
 * FitControl is always enum based now [#151]
 * Packages can now request changes on the current configure run (bugfix) [#151]
+* Improved help, also with Jupyter notebook customization [#154], [#160]
+* Parameters can now be registered in the GooPdf Constructor [#154]
+* Separable compilation is now required, faster compile times [#159]
+* Nicer Makefile, fixed normalize (internal) spelling [#164]
+* ParameterContainer is checked when `GOOFIT_TRACE` is on and using CPU [#164]
+* Normalization improvements, PDFs store cache directly [#164]
+* Removed defunct code [#165]
+* Better file separation, better functional separation [#166]
+    * `sumOfNll` removed
+    * Added `get_event_size`, `get_bin_grid_size`, `reduce_with_metric`, `reduce_with_bins`, `evaluate_with_metric`
+* No longer limit the number of parameters and functions at compile time [#163]
+    * Deleting a PDF or an Application will clear the GPU parameter/function memory
+
 
 [#125]: https://github.com/GooFit/GooFit/pull/125
 [#148]: https://github.com/GooFit/GooFit/pull/148
 [#151]: https://github.com/GooFit/GooFit/pull/151
+[#154]: https://github.com/GooFit/GooFit/pull/154
+[#159]: https://github.com/GooFit/GooFit/pull/159
+[#160]: https://github.com/GooFit/GooFit/pull/160
+[#163]: https://github.com/GooFit/GooFit/pull/163
+[#164]: https://github.com/GooFit/GooFit/pull/164
+[#165]: https://github.com/GooFit/GooFit/pull/165
+[#166]: https://github.com/GooFit/GooFit/pull/166
 
 ## v2.1.3: Preparing for new indexing
 #### April 21, 2018

@@ -26,6 +26,7 @@ bool find_in(std::vector<T> list, T item) {
     return std::find_if(std::begin(list), std::end(list), [item](T p) { return p == item; }) != std::end(list);
 }
 } // namespace
+
 namespace GooFit {
 
 __host__ void PdfBase::checkInitStatus(std::vector<std::string> &unInited) const {

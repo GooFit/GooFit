@@ -20,6 +20,20 @@ namespace GooFit {
 // off on its own in this inline-cuda file, which GooPdf.cu
 // should include.
 
+__host__ void PdfBase::pre_run() {
+    GOOFIT_TRACE("GooPdf::pre_run");
+    host_function_table.sync(d_function_table);
+    host_parameters.sync(d_parameters);
+    host_constants.sync(d_constants);
+    host_observables.sync(d_observables);
+    host_normalizations.sync(d_normalizations);
+}
+
+__host__ void PdfBase::pre_call() {
+    GOOFIT_TRACE("GooPdf::pre_call");
+    host_parameters.smart_sync(d_parameters);
+}
+
 __host__ void PdfBase::copyParams() {
     // Copies values of Variable objects
     std::vector<Variable> pars = getParameters();
@@ -117,7 +131,7 @@ __host__ void PdfBase::updateParameters() {
         component->updateParameters();
 
     // we need to memcpy to device.
-    host_parameters.smart_sync(d_parameters);
+    pre_call();
 }
 
 __host__ void PdfBase::populateArrays() {

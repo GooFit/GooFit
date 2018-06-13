@@ -870,7 +870,7 @@ int runToyFit(int ifile, int nfile, bool noPlots = true) {
     signalDalitz->setDataSize(data->getNumEvents(), 6); // Default 5 is fine for toys
     sig0_jsugg = new ExpPdf("sig0_jsugg", *sigma, constantZero);
     //  sig0_jsugg = makeBkg_sigma_strips(0);
-    sig0_jsugg->addSpecialMask(PdfBase::ForceSeparateNorm);
+    sig0_jsugg->setSeparateNorm();
     sig0_jsugg->setParameterConstantness(true);
     comps.clear();
     comps.push_back(signalDalitz);
@@ -2721,7 +2721,7 @@ GooPdf *makeOverallSignal() {
     else
         sig0_jsugg = makeBkg_sigma_strips(0);
 
-    sig0_jsugg->addSpecialMask(PdfBase::ForceSeparateNorm);
+    sig0_jsugg->setSeparateNorm();
     // sig0_jsugg = makeSignalJSU_gg(-1, false);
 
     /*
@@ -3413,7 +3413,7 @@ GooPdf *makeBkg2DalitzPdf(bool fixem = true) {
         comps.push_back(incsum2);
 
         bkg2_dalitz = new AddPdf("bkg2_dalitz", weights, comps);
-        bkg2_dalitz->addSpecialMask(PdfBase::ForceCommonNorm);
+        bkg2_dalitz->setCommonNorm();
         // bkg2_dalitz->setDebugMask(1);
 
     } else if(Histogram == bkg2Model) {
@@ -3451,7 +3451,7 @@ GooPdf *makeBkg2DalitzPdf(bool fixem = true) {
     // Separate sigma_t distribution
     // bkg2_jsugg = makeBkg2_sigma();
     bkg2_jsugg = makeBkg_sigma_strips(2);
-    bkg2_jsugg->addSpecialMask(PdfBase::ForceSeparateNorm);
+    bkg2_jsugg->setSeparateNorm();
 
     // Finally create overall product.
     comps.clear();
@@ -3773,7 +3773,7 @@ GooPdf *makeBackground3DalitzParam() {
     // comps.push_back(incsum4);
 
     AddPdf *bkg3_dalitz = new AddPdf("bkg3_dalitz", weights, comps);
-    bkg3_dalitz->addSpecialMask(PdfBase::ForceCommonNorm);
+    bkg3_dalitz->setCommonNorm();
     return bkg3_dalitz;
 }
 
@@ -3929,7 +3929,7 @@ GooPdf *makeBackground4DalitzParam() {
     comps.push_back(incsum6);
 
     AddPdf *bkg4_dalitz = new AddPdf("bkg4_dalitz", weights, comps);
-    bkg4_dalitz->addSpecialMask(PdfBase::ForceCommonNorm);
+    bkg4_dalitz->setCommonNorm();
     return bkg4_dalitz;
 }
 
@@ -3966,7 +3966,7 @@ GooPdf *makeBkg3DalitzPdf(bool fixem = true) {
     // bkg3_jsugg = makeBkg3_sigma();
     // bkg3_jsugg = sig0_jsugg; // Mikhail uses same sigma distribution for everything.
     bkg3_jsugg = makeBkg_sigma_strips(3);
-    bkg3_jsugg->addSpecialMask(PdfBase::ForceSeparateNorm);
+    bkg3_jsugg->setSeparateNorm();
     // Otherwise ProdPdf tries to use the default overall integration,
     // because bkg3_jsugg depends on m12, m13 due to the striping, and that has
     // disastrous results for bkg3_dalitz. Note that this doesn't, actually,
@@ -4016,7 +4016,7 @@ GooPdf *makeBkg4DalitzPdf(bool fixem = true) {
     // bkg4_jsugg = makeBkg4_sigma();
     // bkg4_jsugg = sig0_jsugg; // Mikhail uses same sigma distribution for everything.
     bkg4_jsugg = makeBkg_sigma_strips(4);
-    bkg4_jsugg->addSpecialMask(PdfBase::ForceSeparateNorm); // See comments to bkg3_jsugg.
+    bkg4_jsugg->setSeparateNorm(); // See comments to bkg3_jsugg.
 
     comps.clear();
     comps.push_back(bkg4_dalitz);

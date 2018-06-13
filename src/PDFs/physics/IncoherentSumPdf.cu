@@ -110,7 +110,7 @@ __host__ IncoherentSumPdf::IncoherentSumPdf(
         calculators[i] = new SpecialIncoherentResonanceCalculator(parameters, i);
     }
 
-    addSpecialMask(PdfBase::ForceSeparateNorm);
+    setSeparateNorm();
 
     registerFunction("ptr_to_incoherent", ptr_to_incoherent);
 }

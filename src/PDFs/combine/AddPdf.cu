@@ -164,7 +164,7 @@ __host__ fptype AddPdf::normalize() {
     cachedNormalization                = 1.0;
 
     // TODO: Unsure of the exact location for this normalize...
-    if(getSpecialMask() & PdfBase::ForceCommonNorm) {
+    if(getCommonNorm()) {
         // Want to normalize this as
         // (f1 A + (1-f1) B) / int (f1 A + (1-f1) B)
         // instead of default

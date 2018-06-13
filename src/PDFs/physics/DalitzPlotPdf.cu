@@ -208,7 +208,7 @@ __host__ DalitzPlotPdf::DalitzPlotPdf(
         }
     }
 
-    addSpecialMask(PdfBase::ForceSeparateNorm);
+    setSeparateNorm();
 }
 
 void DalitzPlotPdf::populateArrays() {

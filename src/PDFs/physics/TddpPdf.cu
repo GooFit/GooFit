@@ -344,7 +344,7 @@ __host__ TddpPdf::TddpPdf(std::string n,
         }
     }
 
-    addSpecialMask(PdfBase::ForceSeparateNorm);
+    setSeparateNorm();
 }
 
 __host__ TddpPdf::TddpPdf(std::string n,
@@ -451,7 +451,7 @@ __host__ TddpPdf::TddpPdf(std::string n,
         }
     }
 
-    addSpecialMask(PdfBase::ForceSeparateNorm);
+    setSeparateNorm();
 }
 
 // Note: We need to manually populate the arrays so we can track the efficiency function!

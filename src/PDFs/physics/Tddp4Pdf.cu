@@ -467,7 +467,7 @@ __host__ TDDP4::TDDP4(std::string n,
     norm_LS  = mcbooster::mc_device_vector<fpcomplex>(nAcc * (components.size() - 1));
     MCevents = nAcc;
 
-    addSpecialMask(PdfBase::ForceSeparateNorm);
+    setSeparateNorm();
 }
 
 __host__ void TDDP4::populateArrays() {

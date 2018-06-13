@@ -42,10 +42,6 @@ __host__ void PdfBase::copyParams() {
     updateParameters();
 }
 
-__host__ void PdfBase::copyNormFactors() const {
-    cudaDeviceSynchronize(); // Ensure normalization integrals are finished
-}
-
 __host__ void PdfBase::initializeIndices() {
     // Structure of the individual index array: Number of parameters, then the indices
     // requested by the subclass (which will be interpreted by the subclass kernel),

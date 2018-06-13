@@ -29,15 +29,6 @@ bool find_in(std::vector<T> list, T item) {
 
 namespace GooFit {
 
-__host__ void PdfBase::checkInitStatus(std::vector<std::string> &unInited) const {
-    if(!properlyInitialised)
-        unInited.push_back(getName());
-
-    for(auto component : components) {
-        component->checkInitStatus(unInited);
-    }
-}
-
 __host__ void PdfBase::recursiveSetNormalization(fptype norm, bool subpdf) {
     host_normalizations.at(normalIdx + 1) = norm;
     cachedNormalization                   = norm;
@@ -49,20 +40,9 @@ __host__ void PdfBase::recursiveSetNormalization(fptype norm, bool subpdf) {
         host_normalizations.sync(d_normalizations);
 }
 
-__host__ unsigned int PdfBase::registerParameter(Variable var) {
-    // if(find_in(parametersList, var))
-    //    throw GeneralError("This var {} was registered twice", var.getName());
+__host__ void PdfBase::registerParameter(Variable var) { parametersList.push_back(var); }
 
-    parametersList.push_back(var);
-
-    return parametersList.size() - 1; // TODO: Make void
-}
-
-__host__ unsigned int PdfBase::registerConstant(fptype value) {
-    constantsList.push_back(value);
-    // Return the index that this variable is stored at, not the total!
-    return constantsList.size() - 1;
-}
+__host__ void PdfBase::registerConstant(fptype value) { constantsList.push_back(value); }
 
 __host__ void PdfBase::unregisterParameter(Variable var) {
     GOOFIT_DEBUG("{}: Removing {}", getName(), var.getName());

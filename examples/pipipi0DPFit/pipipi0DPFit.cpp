@@ -1321,7 +1321,6 @@ GooPdf *makeSigmaMap() {
                 currpdf.fit();
             }
             js->setParameterConstantness(true);
-            // js->clearCurrentFit();
             std::cout << "Done with sigma box " << i << "\n";
         }
     }
@@ -1398,7 +1397,6 @@ GooPdf *make1BinSigmaMap() {
                 currpdf.fit();
             }
             js->setParameterConstantness(true);
-            // js->clearCurrentFit();
             std::cout << "Done with sigma box " << i << "\n";
         }
     }
@@ -1477,7 +1475,6 @@ GooPdf *make4BinSigmaMap() {
                 currpdf.fit();
             }
             js->setParameterConstantness(true);
-            // js->clearCurrentFit();
             std::cout << "Done with sigma box " << i << "\n";
         }
     }

@@ -159,4 +159,18 @@ class strided_range {
     difference_type stride;
 };
 
+// From 3 body T
+
+// thrust::tuple can't go down the read-only cache pipeline, so we are creating a structure for this.
+typedef struct {
+    // note: combining these into a single transaction (double2) should improve memory performance
+    fptype ai_real;
+    fptype ai_imag;
+    fptype bi_real;
+    fptype bi_imag;
+} WaveHolder_s;
+
+typedef thrust::tuple<fptype, fptype, fptype, fptype> WaveHolder;
+typedef thrust::tuple<fptype, fptype, fptype, fptype, fptype, fptype> ThreeComplex;
+
 } // namespace GooFit

@@ -4,6 +4,8 @@ goofit_add_library(PdfPhysics
     Amp3Body.cu
     SpecialResonanceIntegrator.cu
     SpecialResonanceCalculator.cu
+    SpecialDalitzIntegrator.cu
+    SpecialWaveCalculator.cu
     DalitzVetoPdf.cu
     IncoherentSumPdf.cu
     LineshapesPdf.cu
@@ -11,9 +13,13 @@ goofit_add_library(PdfPhysics
     ResonancePdf.cu
     SpinFactors.cu
     Tddp4Pdf.cu
-    TddpPdf.cu
+    Amp3BodyT.cu
     ThreeGaussResolution_Aux.cu
     TruthResolution_Aux.cu
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/AmpNBodyBase.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Amp3BodyBase.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Amp3Body.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Amp3BodyT.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/DP4Pdf.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/DalitzPlotHelpers.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/DalitzPlotPdf.h
@@ -28,6 +34,9 @@ goofit_add_library(PdfPhysics
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/SpinHelper.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Tddp4Pdf.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/TddpPdf.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/SpecialDalitzIntegrator.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/SpecialWaveCalculator.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/SpecialComplexSum.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/ThreeGaussResolution_Aux.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/TruthResolution_Aux.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/UserUtils.h

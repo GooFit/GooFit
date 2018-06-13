@@ -4,14 +4,14 @@
 
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <goofit/PDFs/physics/MixingTimeResolution_Aux.h>
-#include <goofit/PDFs/physics/TddpPdf.h>
+#include <goofit/PDFs/physics/Amp3BodyT.h>
 #include <goofit/Variable.h>
-#include <goofit/docs/PDFs/physics/TddpPdf.h>
+#include <goofit/docs/PDFs/physics/Amp3BodyT.h>
 
 using namespace GooFit;
 
-void init_TddpPdf(py::module &m) {
-    py::class_<TddpPdf, GooPdf>(m, "TddpPdf")
+void init_Amp3BodyT(py::module &m) {
+    py::class_<Amp3BodyT, Amp3BodyBase>(m, "Amp3BodyT")
         .def(py::init<std::string,
                       Observable,
                       Observable,
@@ -109,7 +109,7 @@ void init_TddpPdf(py::module &m) {
              py::keep_alive<1, 10>(),
              py::keep_alive<1, 11>())
 
-        .def_static("help", []() { return HelpPrinter(TddpPdf_docs); })
+        .def_static("help", []() { return HelpPrinter(Amp3BodyT_docs); })
 
         ;
 }

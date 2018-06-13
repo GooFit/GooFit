@@ -1,6 +1,6 @@
 #pragma once
 
-#include <goofit/PDFs/GooPdf.h>
+#include <goofit/PDFs/CombinePdf.h>
 
 namespace GooFit {
 
@@ -29,7 +29,7 @@ whole number. The canonical example of a mapping function is
 GooFit::BinTransformPdf.
 **/
 
-class MappedPdf : public GooPdf {
+class MappedPdf : public CombinePdf {
   public:
     MappedPdf(std::string n, GooPdf *m, std::vector<GooPdf *> &t);
     // Map function m must be custom written to correspond to order of function list t.

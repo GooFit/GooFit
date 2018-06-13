@@ -1,6 +1,6 @@
 #pragma once
 
-#include <goofit/PDFs/GooPdf.h>
+#include <goofit/PDFs/CombinePdf.h>
 
 namespace GooFit {
 
@@ -27,7 +27,7 @@ product of two PDFs depending on the same variable in the first
 place.
 **/
 
-class ProdPdf : public GooPdf {
+class ProdPdf : public CombinePdf {
   public:
     ProdPdf(std::string n, std::vector<PdfBase *> comps);
     __host__ fptype normalize() override;

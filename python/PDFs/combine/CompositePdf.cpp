@@ -7,7 +7,7 @@
 using namespace GooFit;
 
 void init_CompositePdf(py::module &m) {
-    py::class_<CompositePdf, GooPdf>(m, "CompositePdf")
+    py::class_<CompositePdf, CombinePdf>(m, "CompositePdf")
         .def(py::init<std::string, PdfBase *, PdfBase *>(),
              CompositePdf_docs.c_str(),
              "name"_a,

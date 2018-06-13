@@ -1,6 +1,6 @@
 #pragma once
 
-#include <goofit/PDFs/GooPdf.h>
+#include <goofit/PDFs/CombinePdf.h>
 
 namespace GooFit {
 
@@ -59,7 +59,7 @@ P(x;\vec F, \vec w) =
 The difference is subtle but sometimes important.
 **/
 
-class AddPdf : public GooPdf {
+class AddPdf : public CombinePdf {
   public:
     AddPdf(std::string n, std::vector<Variable> weights, std::vector<PdfBase *> comps);
     AddPdf(std::string n, Variable frac1, PdfBase *func1, PdfBase *func2);

@@ -52,7 +52,7 @@ __device__ fptype device_Mapped(fptype *evt, ParameterContainer &pc) {
 __device__ device_function_ptr ptr_to_Mapped = device_Mapped;
 
 __host__ MappedPdf::MappedPdf(std::string n, GooPdf *m, std::vector<GooPdf *> &t)
-    : GooPdf(n) {
+    : CombinePdf(n) {
     components.push_back(m);
 
     std::set<int> functionIndicesUsed;

@@ -9,7 +9,7 @@
 using namespace GooFit;
 
 void init_AddPdf(py::module &m) {
-    py::class_<AddPdf, GooPdf>(m, "AddPdf")
+    py::class_<AddPdf, CombinePdf>(m, "AddPdf")
         .def(py::init<std::string, std::vector<Variable>, std::vector<PdfBase *>>(),
              AddPdf_docs.c_str(),
              "name"_a,

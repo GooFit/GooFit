@@ -12,6 +12,7 @@ void init_Variable(py::module &);
 void init_FitManager(py::module &);
 void init_PdfBase(py::module &);
 void init_GooPdf(py::module &);
+void init_CombinePdf(py::module &);
 void init_Version(py::module &);
 void init_FitControl(py::module &);
 void init_Application(py::module &);
@@ -78,6 +79,7 @@ PYBIND11_MODULE(_goofit, m) {
     init_FitManager(m);
     init_PdfBase(m);
     init_GooPdf(m);
+    init_CombinePdf(m);
     init_Version(m);
     init_FitControl(m);
     init_Application(m);

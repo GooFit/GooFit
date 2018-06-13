@@ -9,17 +9,17 @@ string(REPLACE ";" "_CMAKE_SIMICOLON_TOKEN_" INPUT_FULL_STR "${INPUT_FULL_STR}")
 
 # Class docs
 string(REGEX MATCHALL
-       "/\\*\\*.*\\*\\*/[ \t\n]*(class|struct) [a-zA-Z_]+"
+       "/\\*\\*.*\\*\\*/[ \t\n]*(class|struct) [a-zA-Z0-9_]+"
        INPUT_LIST "${INPUT_FULL_STR}")
 
 foreach(INPUT_STR IN LISTS INPUT_LIST)
     string(REPLACE "_CMAKE_SIMICOLON_TOKEN_" ";" INPUT_STR "${INPUT_STR}")
     string(REGEX REPLACE
-           "/\\*\\*.*\\*\\*/[ \t\n]*(class|struct) ([a-zA-Z_]+)"
+           "/\\*\\*.*\\*\\*/[ \t\n]*(class|struct) ([a-zA-Z0-9_]+)"
            "\\2"
            PDFNAME "${INPUT_STR}")
     string(REGEX REPLACE
-           "/\\*\\*(.*)\\*\\*/[ \t\n]*(class|struct) [a-zA-Z_]+"
+           "/\\*\\*(.*)\\*\\*/[ \t\n]*(class|struct) [a-zA-Z0-9_]+"
            "\\1"
            INPUT_STR "${INPUT_STR}")
 

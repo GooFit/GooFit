@@ -55,7 +55,7 @@ infrastructure, but will crash if used on its own.
 **/
 class ResonancePdf : public GooPdf {
     friend class TddpPdf;
-    friend class DalitzPlotPdf;
+    friend class Amp3Body;
     friend class IncoherentSumPdf;
 
   public:

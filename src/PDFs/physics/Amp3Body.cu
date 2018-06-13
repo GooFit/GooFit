@@ -1,7 +1,9 @@
 #include <goofit/Error.h>
 #include <goofit/PDFs/ParameterContainer.h>
-#include <goofit/PDFs/physics/DalitzPlotPdf.h>
+#include <goofit/PDFs/physics/Amp3Body.h>
 #include <goofit/detail/Complex.h>
+#include <goofit/PDFs/physics/SpecialResonanceCalculator.h>
+#include <goofit/PDFs/physics/SpecialResonanceIntegrator.h>
 
 #include <thrust/copy.h>
 #include <thrust/transform_reduce.h>
@@ -37,43 +39,6 @@ constexpr int resonanceOffset_DP = 4; // Offset of the first resonance into the 
 __device__ fpcomplex *cResonances[16];
 
 __device__ inline int parIndexFromResIndex_DP(int resIndex) { return resonanceOffset_DP + resIndex * resonanceSize; }
-
-__device__ fpcomplex
-device_DalitzPlot_calcIntegrals(fptype m12, fptype m13, int res_i, int res_j, ParameterContainer &pc) {
-    // Calculates BW_i(m12, m13) * BW_j^*(m12, m13).
-    // This calculation is in a separate function so
-    // it can be cached. Note that this function expects
-    // to be called on a normalization grid, not on
-    // observed points, that's why it doesn't use
-    // cResonances. No need to cache the values at individual
-    // grid points - we only care about totals.
-    fptype motherMass = c_motherMass; // RO_CACHE(pc.constants[pc.constantIdx + 4]);
-    fptype daug1Mass  = c_daug1Mass;  // RO_CACHE(pc.constants[pc.constantIdx + 5]);
-    fptype daug2Mass  = c_daug2Mass;  // RO_CACHE(pc.constants[pc.constantIdx + 6]);
-    fptype daug3Mass  = c_daug3Mass;  // RO_CACHE(pc.constants[pc.constantIdx + 7]);
-
-    fpcomplex ret;
-
-    if(!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass))
-        return ret;
-
-    fptype m23
-        = motherMass * motherMass + daug1Mass * daug1Mass + daug2Mass * daug2Mass + daug3Mass * daug3Mass - m12 - m13;
-
-    ParameterContainer ipc = pc;
-    while(ipc.funcIdx < res_i)
-        ipc.incrementIndex();
-
-    ret = getResonanceAmplitude(m12, m13, m23, ipc);
-
-    ParameterContainer jpc = pc;
-    while(jpc.funcIdx < res_j)
-        jpc.incrementIndex();
-
-    ret *= conj(getResonanceAmplitude(m12, m13, m23, jpc));
-
-    return ret;
-}
 
 __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
     int num_obs = pc.getNumObservables();
@@ -142,9 +107,9 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
 
 __device__ device_function_ptr ptr_to_DalitzPlot = device_DalitzPlot;
 
-__host__ DalitzPlotPdf::DalitzPlotPdf(
+__host__ Amp3Body::Amp3Body(
     std::string n, Observable m12, Observable m13, EventNumber eventNumber, DecayInfo3 decay, GooPdf *efficiency)
-    : GooPdf(n, m12, m13, eventNumber)
+    : AmpNBody(n, m12, m13, eventNumber)
     , decayInfo(decay)
     , _m12(m12)
     , _m13(m13)
@@ -211,13 +176,13 @@ __host__ DalitzPlotPdf::DalitzPlotPdf(
     setSeparateNorm();
 }
 
-void DalitzPlotPdf::populateArrays() {
+void Amp3Body::populateArrays() {
     PdfBase::populateArrays();
 
     // save our efficiency function.  Resonance's are saved first, then the efficiency function.  Take -1 as efficiency!
     efficiencyFunction = host_function_table.size() - 1;
 }
-__host__ void DalitzPlotPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) {
+__host__ void Amp3Body::setDataSize(unsigned int dataSize, unsigned int evtSize) {
     // Default 3 is m12, m13, evtNum
     totalEventSize = evtSize;
     if(totalEventSize < 3)
@@ -246,7 +211,7 @@ __host__ void DalitzPlotPdf::setDataSize(unsigned int dataSize, unsigned int evt
     setForceIntegrals();
 }
 
-__host__ fptype DalitzPlotPdf::normalize() {
+__host__ fptype Amp3Body::normalize() {
     recursiveSetNormalization(1.0); // Not going to normalize efficiency,
     // so set normalization factor to 1 so it doesn't get multiplied by zero.
     // Copy at this time to ensure that the SpecialResonanceCalculators, which need the efficiency,
@@ -377,7 +342,7 @@ __host__ fptype DalitzPlotPdf::normalize() {
     return ret;
 }
 
-__host__ fpcomplex DalitzPlotPdf::sumCachedWave(size_t i) const {
+__host__ fpcomplex Amp3Body::sumCachedWave(size_t i) const {
     const thrust::device_vector<fpcomplex> &vec = getCachedWaveNoCopy(i);
 
     fpcomplex ret = thrust::reduce(vec.begin(), vec.end(), fpcomplex(0, 0), thrust::plus<fpcomplex>());
@@ -385,7 +350,7 @@ __host__ fpcomplex DalitzPlotPdf::sumCachedWave(size_t i) const {
     return ret;
 }
 
-__host__ const std::vector<std::complex<fptype>> DalitzPlotPdf::getCachedWave(size_t i) const {
+__host__ const std::vector<std::complex<fptype>> Amp3Body::getCachedWave(size_t i) const {
     // TODO: This calls itself immediatly ?
     auto ret_thrust = getCachedWave(i);
     std::vector<std::complex<fptype>> ret(ret_thrust.size());
@@ -393,7 +358,7 @@ __host__ const std::vector<std::complex<fptype>> DalitzPlotPdf::getCachedWave(si
     return ret;
 }
 
-__host__ std::vector<std::vector<fptype>> DalitzPlotPdf::fit_fractions() {
+__host__ std::vector<std::vector<fptype>> Amp3Body::fit_fractions() {
     GOOFIT_DEBUG("Performing fit fraction calculation, should already have a cache (does not use normalization grid)");
 
     size_t n_res    = getDecayInfo().resonances.size();
@@ -447,118 +412,5 @@ __host__ std::vector<std::vector<fptype>> DalitzPlotPdf::fit_fractions() {
     return ff;
 }
 
-SpecialResonanceIntegrator::SpecialResonanceIntegrator(int pIdx, unsigned int ri, unsigned int rj)
-    : resonance_i(ri)
-    , resonance_j(rj)
-    , parameters(pIdx) {}
-
-__device__ fpcomplex SpecialResonanceIntegrator::operator()(thrust::tuple<int, fptype *, int> t) const {
-    //(brad): new indexing plan: bin number, function id, parameter id (not required), fptype with actual
-    // bins(needed???)
-    // Bin index, base address [lower, upper,getNumBins]
-    // Notice that this is basically MetricTaker::operator (binned) with the special-case knowledge
-    // that event size is two, and that the function to call is dev_DalitzPlot_calcIntegrals.
-
-    int globalBinNumber  = thrust::get<0>(t);
-    fptype lowerBoundM12 = thrust::get<1>(t)[0];
-    fptype upperBoundM12 = thrust::get<1>(t)[1];
-    auto numBinsM12      = static_cast<int>(floor(thrust::get<1>(t)[2] + 0.5));
-    int binNumberM12     = globalBinNumber % numBinsM12;
-    fptype binCenterM12  = upperBoundM12 - lowerBoundM12;
-    binCenterM12 /= numBinsM12;
-    binCenterM12 *= (binNumberM12 + 0.5);
-    binCenterM12 += lowerBoundM12;
-
-    globalBinNumber /= numBinsM12;
-    fptype lowerBoundM13 = thrust::get<1>(t)[3];
-    fptype upperBoundM13 = thrust::get<1>(t)[4];
-    auto numBinsM13      = static_cast<int>(floor(thrust::get<1>(t)[2] + 0.5));
-    fptype binCenterM13  = upperBoundM13 - lowerBoundM13;
-    binCenterM13 /= numBinsM13;
-    binCenterM13 *= (globalBinNumber + 0.5);
-    binCenterM13 += lowerBoundM13;
-
-    ParameterContainer pc;
-
-    fptype events[10];
-
-    while(pc.funcIdx < dalitz_i)
-        pc.incrementIndex();
-
-    fpcomplex ret = device_DalitzPlot_calcIntegrals(binCenterM12, binCenterM13, resonance_i, resonance_j, pc);
-
-    // TODO: read id's in in order to set them for the fake event.
-
-    int id_m12 = pc.getObservable(0);
-    int id_m13 = pc.getObservable(1);
-
-    // fptype fakeEvt[10]; // Need room for many observables in case m12 or m13 were assigned a high index in an
-    // event-weighted fit.
-    // fakeEvt[0] = 2;
-    // fakeEvt[id_m12] = binCenterM12;
-    // fakeEvt[id_m13] = binCenterM13;
-
-    events[0]      = 2;
-    events[id_m12] = binCenterM12;
-    events[id_m13] = binCenterM13;
-
-    // unsigned int numResonances           = indices[2];
-    // int effFunctionIdx                   = parIndexFromResIndex_DP(numResonances);
-
-    // increment until we are on the efficiency function (17)
-    int effFunc = thrust::get<2>(t);
-    while(pc.funcIdx < effFunc)
-        pc.incrementIndex();
-
-    fptype eff = callFunction(events, pc);
-
-    // Multiplication by eff, not sqrt(eff), is correct:
-    // These complex numbers will not be squared when they
-    // go into the integrals. They've been squared already,
-    // as it were.
-    ret *= eff;
-    // printf("ret %f %f %f %f %f\n",binCenterM12, binCenterM13, ret.real, ret.imag, eff );
-    return ret;
-}
-
-SpecialResonanceCalculator::SpecialResonanceCalculator(int pIdx, unsigned int res_idx)
-    : resonance_i(res_idx)
-    , parameters(pIdx) {}
-
-__device__ fpcomplex SpecialResonanceCalculator::operator()(thrust::tuple<int, fptype *, int> t) const {
-    // Calculates the BW values for a specific resonance.
-    fpcomplex ret;
-    int evtNum  = thrust::get<0>(t);
-    fptype *evt = thrust::get<1>(t) + (evtNum * thrust::get<2>(t));
-
-    ParameterContainer pc;
-
-    while(pc.funcIdx < dalitz_i)
-        pc.incrementIndex();
-
-    int id_m12 = pc.getObservable(0);
-    int id_m13 = pc.getObservable(1);
-
-    fptype m12 = evt[id_m12];
-    fptype m13 = evt[id_m13];
-
-    fptype motherMass = c_motherMass; // pc.constants[pc.constantIdx + 4];
-    fptype daug1Mass  = c_daug1Mass;  // pc.constants[pc.constantIdx + 5];
-    fptype daug2Mass  = c_daug2Mass;  // pc.constants[pc.constantIdx + 6];
-    fptype daug3Mass  = c_daug3Mass;  // pc.constants[pc.constantIdx + 7];
-
-    if(!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass))
-        return ret;
-
-    fptype m23
-        = motherMass * motherMass + daug1Mass * daug1Mass + daug2Mass * daug2Mass + daug3Mass * daug3Mass - m12 - m13;
-
-    while(pc.funcIdx < resonance_i)
-        pc.incrementIndex();
-
-    ret = getResonanceAmplitude(m12, m13, m23, pc);
-
-    return ret;
-}
 
 } // namespace GooFit

@@ -6,14 +6,14 @@
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <goofit/PDFs/physics/DalitzPlotPdf.h>
 #include <goofit/Variable.h>
-#include <goofit/docs/PDFs/physics/DalitzPlotPdf.h>
+#include <goofit/docs/PDFs/physics/Amp3Body.h>
 
 using namespace GooFit;
 
-void init_DalitzPlotPdf(py::module &m) {
-    py::class_<DalitzPlotPdf, GooPdf>(m, "DalitzPlotPdf")
-        .def(py::init<std::string, Observable, Observable, EventNumber, DecayInfo3, GooPdf *>(),
-             DalitzPlotPdf_docs.c_str(),
+void init_Amp3Body(py::module &m) {
+    py::class_<Amp3Body, AmpNBody> cls(m, "Amp3Body");
+    cls.def(py::init<std::string, Observable, Observable, EventNumber, DecayInfo3, GooPdf *>(),
+             Amp3Body_docs.c_str(),
              "name"_a,
              "m12"_a,
              "m13"_a,
@@ -30,7 +30,9 @@ void init_DalitzPlotPdf(py::module &m) {
         .def("fit_fractions",
              &DalitzPlotPdf::fit_fractions,
              "Using the current dataset, return the cached fit fraction values")
-        .def_static("help", []() { return HelpPrinter(DalitzPlotPdf_docs); })
+        .def_static("help", []() { return HelpPrinter(Amp3Body_docs); })
 
         ;
+
+    m.attr("DalitzPlotPdf") = cls;
 }

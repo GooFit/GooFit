@@ -53,7 +53,9 @@ goofit_add_library(PdfCombine
 goofit_add_library(PdfPhysics
     physics/DP4Pdf.cu
     physics/DalitzPlotHelpers.cu
-    physics/DalitzPlotPdf.cu
+    physics/Amp3Body.cu
+    physics/SpecialResonanceIntegrator.cu
+    physics/SpecialResonanceCalculator.cu
     physics/DalitzVetoPdf.cu
     physics/IncoherentSumPdf.cu
     physics/LineshapesPdf.cu

@@ -1,5 +1,6 @@
 goofit_add_library(_Physics STATIC
-    DalitzPlotPdf.cpp
+    AmpNBody.cpp
+    Amp3Body.cpp
     DalitzVetoPdf.cpp
     DalitzPlotHelpers.cpp
     DalitzPlotter.cpp
@@ -17,7 +18,7 @@ goofit_add_library(_Physics STATIC
 target_link_libraries(_Physics PRIVATE _goofit_python)
 set_target_properties(_Physics PROPERTIES FOLDER python/PDFs)
 
-goofit_add_python_docs(_Physics PDFs/physics/DalitzPlotPdf.h)
+goofit_add_python_docs(_Physics PDFs/physics/Amp3Body.h)
 goofit_add_python_docs(_Physics PDFs/physics/DalitzVetoPdf.h)
 goofit_add_python_docs(_Physics PDFs/physics/IncoherentSumPdf.h)
 goofit_add_python_docs(_Physics PDFs/physics/MixingTimeResolution_Aux.h)

@@ -7,7 +7,7 @@
 using namespace GooFit;
 
 void init_ConvolutionPdf(py::module &m) {
-    py::class_<ConvolutionPdf, GooPdf>(m, "ConvolutionPdf")
+    py::class_<ConvolutionPdf, CombinePdf>(m, "ConvolutionPdf")
         .def(py::init<std::string, Observable, GooPdf *, GooPdf *>(),
              ConvolutionPdf_docs.c_str(),
              "name"_a,

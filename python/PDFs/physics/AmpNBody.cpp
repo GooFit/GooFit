@@ -5,7 +5,7 @@
 using namespace GooFit;
 
 void init_AmpNBody(py::module &m) {
-    py::class_<AmpNBody, GooPdf>(m, "AmpNBody")
+    py::class_<AmpNBody, CombinePdf>(m, "AmpNBody")
 
         ;
 }

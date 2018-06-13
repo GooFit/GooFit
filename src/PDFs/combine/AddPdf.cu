@@ -83,7 +83,7 @@ __device__ device_function_ptr ptr_to_AddPdfs    = device_AddPdfs;
 __device__ device_function_ptr ptr_to_AddPdfsExt = device_AddPdfsExt;
 
 AddPdf::AddPdf(std::string n, std::vector<Variable> weights, std::vector<PdfBase *> comps)
-    : GooPdf(n)
+    : CombinePdf(n)
     , extended(true) {
     if(weights.size() != comps.size() && (weights.size() + 1) != comps.size())
         throw GooFit::GeneralError("Size of weights {} (+1) != comps {}", weights.size(), comps.size());
@@ -120,7 +120,7 @@ AddPdf::AddPdf(std::string n, std::vector<Variable> weights, std::vector<PdfBase
 }
 
 AddPdf::AddPdf(std::string n, Variable frac1, PdfBase *func1, PdfBase *func2)
-    : GooPdf(n)
+    : CombinePdf(n)
     , extended(false) {
     // Special-case constructor for common case of adding two functions.
     components.push_back(func1);

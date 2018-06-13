@@ -1,6 +1,6 @@
 #pragma once
 
-#include <goofit/PDFs/GooPdf.h>
+#include <goofit/PDFs/CombinePdf.h>
 #include <thrust/device_vector.h>
 
 namespace GooFit {
@@ -31,7 +31,7 @@ before, and an integer indicating how many other convolutions are
 going to be using the same cache space.
 **/
 
-class ConvolutionPdf : public GooPdf {
+class ConvolutionPdf : public CombinePdf {
   public:
     ConvolutionPdf(std::string n, Observable _x, GooPdf *model, GooPdf *resolution);
     ConvolutionPdf(std::string n, Observable _x, GooPdf *model, GooPdf *resolution, unsigned int numOthers);

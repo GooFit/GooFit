@@ -1,6 +1,6 @@
 #pragma once
 
-#include <goofit/PDFs/GooPdf.h>
+#include <goofit/PDFs/CombinePdf.h>
 
 namespace GooFit {
 
@@ -13,7 +13,7 @@ variants. Note that you should not mix-and-match; the weights must
 be either all observables or all fit parameters.
 **/
 
-class EventWeightedAddPdf : public GooPdf {
+class EventWeightedAddPdf : public CombinePdf {
   public:
     EventWeightedAddPdf(std::string n, std::vector<Observable> weights, std::vector<PdfBase *> comps);
     __host__ fptype normalize() override;

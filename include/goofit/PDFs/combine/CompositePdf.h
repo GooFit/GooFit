@@ -1,6 +1,6 @@
 #pragma once
 
-#include <goofit/PDFs/GooPdf.h>
+#include <goofit/PDFs/CombinePdf.h>
 
 namespace GooFit {
 
@@ -23,7 +23,7 @@ one argument. The core function \f$g\f$ can take any number.
 > Not implemented yet.
 **/
 
-class CompositePdf : public GooPdf {
+class CompositePdf : public CombinePdf {
   public:
     CompositePdf(std::string n, PdfBase *core, PdfBase *shell); // Where 'core' corresponds to 'g' and 'shell' to 'h'.
     __host__ fptype normalize() override;

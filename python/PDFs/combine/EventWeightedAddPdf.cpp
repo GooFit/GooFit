@@ -9,7 +9,7 @@
 using namespace GooFit;
 
 void init_EventWeightedAddPdf(py::module &m) {
-    py::class_<EventWeightedAddPdf, GooPdf>(m, "EventWeightedAddPdf")
+    py::class_<EventWeightedAddPdf, CombinePdf>(m, "EventWeightedAddPdf")
         .def(py::init<std::string, std::vector<Observable>, std::vector<PdfBase *>>(),
              EventWeightedAddPdf_docs.c_str(),
              "name"_a,

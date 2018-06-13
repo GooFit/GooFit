@@ -1,12 +1,12 @@
 #pragma once
 
-#include <goofit/PDFs/GooPdf.h>
+#include <goofit/PDFs/CombinePdf.h>
 
 namespace GooFit {
 
-class AmpNBody : public GooPdf {
+class AmpNBody : public CombinePdf {
 public:
-    using GooPdf::GooPdf;
+    using CombinePdf::CombinePdf;
 };
 
 

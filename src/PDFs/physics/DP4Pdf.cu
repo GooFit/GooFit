@@ -115,10 +115,6 @@ __host__ DPPdf::DPPdf(
     cacheToUse            = cacheCount++;
 
     registerConstant(cacheToUse);
-    int lsidx  = registerConstant(0); //#LS
-    int sfidx  = registerConstant(0); //#SF
-    int ampidx = registerConstant(0); //#AMP
-    int ttlidx = registerConstant(0); // total line shapes and spin factors used
 
     int total_lineshapes_spinfactors = 0;
 
@@ -164,10 +160,10 @@ __host__ DPPdf::DPPdf(
         }
     }
 
-    constantsList[lsidx]  = LineShapes.size();
-    constantsList[sfidx]  = SpinFactors.size();
-    constantsList[ampidx] = components.size();
-    constantsList[ttlidx] = total_lineshapes_spinfactors;
+    registerConstant(LineShapes.size());            //#LS
+    registerConstant(SpinFactors.size());           //#SF
+    registerConstant(components.size());            //#AMP
+    registerConstant(total_lineshapes_spinfactors); // total line shapes and spin factors used
 
     components.push_back(efficiency);
 
@@ -184,7 +180,7 @@ __host__ DPPdf::DPPdf(
     std::vector<unsigned int> amp_idx_start;
     std::vector<unsigned int> nPermVec;
 
-    for(auto &lineshape : LineShapes) {
+    for(int i = 0; i < LineShapes.size(); ++i) {
         lscalculators.push_back(new LSCalculator());
     }
 
@@ -394,8 +390,6 @@ __host__ fptype DPPdf::normalize() {
 
         redoIntegral[i] = true;
     }
-
-    // SigGenSetIndices();
 
     SpinsCalculated    = !forceRedoIntegrals;
     forceRedoIntegrals = false;

@@ -422,12 +422,6 @@ __host__ void PdfBase::generateNormRange() {
     delete[] host_norms;
 }
 
-void PdfBase::clearCurrentFit() {
-    host_parameters.clear();
-    gooFree(dev_event_array);
-    dev_event_array = nullptr;
-}
-
 cudaError_t gooMalloc(void **target, size_t bytes) {
 #if THRUST_DEVICE_SYSTEM != THRUST_DEVICE_SYSTEM_CUDA
     target[0] = malloc(bytes);

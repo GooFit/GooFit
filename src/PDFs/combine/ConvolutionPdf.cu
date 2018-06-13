@@ -232,8 +232,6 @@ __host__ void ConvolutionPdf::setIntegrationConstants(fptype lo, fptype hi, fpty
     constantsList[0] = lo;
     constantsList[1] = hi;
     constantsList[2] = step;
-    // MEMCPY_TO_SYMBOL(functorConstants, host_iConsts, 3 * sizeof(fptype), cIndex * sizeof(fptype),
-    // cudaMemcpyHostToDevice);
 
     if(modelWorkSpace) {
         delete modelWorkSpace;

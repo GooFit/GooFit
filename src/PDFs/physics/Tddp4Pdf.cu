@@ -228,12 +228,6 @@ __host__ TDDP4::TDDP4(std::string n,
                                    resolution->getDeviceFunction());
 
     registerConstant(cacheToUse);
-    int lsidx  = registerConstant(0); //#LS
-    int sfidx  = registerConstant(0); //#SF
-    int ampidx = registerConstant(0); //# AMP
-    int coeffidx
-        = registerConstant(0); // Number of coefficients, because its not necessary to be equal to number of Amps.
-    int ttlidx = registerConstant(0);
 
     // This is the start of reading in the amplitudes and adding the lineshapes and Spinfactors to this PDF
     // This is done in this way so we don't have multiple copies of one lineshape in one pdf.
@@ -373,11 +367,11 @@ __host__ TDDP4::TDDP4(std::string n,
         amp_idx.insert(amp_idx.end(), sf.begin(), sf.end());
     }
 
-    constantsList[lsidx]    = LineShapes.size();
-    constantsList[sfidx]    = SpinFactors.size();
-    constantsList[ampidx]   = components.size();
-    constantsList[coeffidx] = coeff_counter;
-    constantsList[ttlidx]   = total_lineshapes_spinfactors;
+    registerConstant(LineShapes.size());  //#LS
+    registerConstant(SpinFactors.size()); //#SF
+    registerConstant(components.size());  //# AMP
+    registerConstant(coeff_counter); // Number of coefficients, because its not necessary to be equal to number of Amps.
+    registerConstant(total_lineshapes_spinfactors);
 
     components.push_back(resolution);
     components.push_back(efficiency);

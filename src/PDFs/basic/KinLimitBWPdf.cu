@@ -71,7 +71,5 @@ __host__ KinLimitBWPdf::KinLimitBWPdf(std::string n, Observable _x, Variable mea
 __host__ void KinLimitBWPdf::setMasses(fptype bigM, fptype smallM) {
     constantsList[0] = bigM;
     constantsList[1] = smallM;
-    // MEMCPY_TO_SYMBOL(functorConstants, constants, 2 * sizeof(fptype), cIndex * sizeof(fptype),
-    // cudaMemcpyHostToDevice);
 }
 } // namespace GooFit

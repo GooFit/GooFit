@@ -5,9 +5,8 @@
 namespace GooFit {
 
 class AmpNBodyBase : public CombinePdf {
-public:
+  public:
     using CombinePdf::CombinePdf;
 };
-
 
 } // namespace GooFit

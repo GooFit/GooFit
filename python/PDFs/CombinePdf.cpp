@@ -7,5 +7,5 @@ using namespace GooFit;
 void init_CombinePdf(py::module &m) {
     py::class_<CombinePdf, GooPdf>(m, "CombinePdf")
 
-    ;
+        ;
 }

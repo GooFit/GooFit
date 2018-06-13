@@ -2,9 +2,9 @@
 
 #include <pybind11/stl.h>
 
+#include <goofit/PDFs/physics/Amp3BodyT.h>
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <goofit/PDFs/physics/MixingTimeResolution_Aux.h>
-#include <goofit/PDFs/physics/Amp3BodyT.h>
 #include <goofit/Variable.h>
 #include <goofit/docs/PDFs/physics/Amp3BodyT.h>
 

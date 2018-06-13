@@ -5,9 +5,8 @@
 namespace GooFit {
 
 class Amp3BodyBase : public AmpNBodyBase {
-public:
+  public:
     using AmpNBodyBase::AmpNBodyBase;
 };
-
 
 } // namespace GooFit

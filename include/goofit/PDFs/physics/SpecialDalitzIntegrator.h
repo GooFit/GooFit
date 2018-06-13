@@ -21,5 +21,4 @@ class SpecialDalitzIntegrator : public thrust::unary_function<thrust::tuple<int,
     unsigned int parameters;
 };
 
-
 } // namespace GooFit

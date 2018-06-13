@@ -5,9 +5,8 @@
 namespace GooFit {
 
 class ComplexComponent : public GooPdf {
-public:
+  public:
     using GooPdf::GooPdf;
 };
-
 
 } // namespace GooFit

@@ -54,8 +54,8 @@ GooPdf so as to take advantage of the
 infrastructure, but will crash if used on its own.
 **/
 class ResonancePdf : public GooPdf {
-    friend class TddpPdf;
     friend class Amp3Body;
+    friend class Amp3BodyT;
     friend class IncoherentSumPdf;
 
   public:

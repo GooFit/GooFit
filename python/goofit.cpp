@@ -49,7 +49,9 @@ void init_ProdPdf(py::module &);
 
 // Physics
 void init_DalitzPlotHelpers(py::module &);
-void init_DalitzPlotPdf(py::module &);
+void init_AmpNBodyBase(py::module &);
+void init_Amp3BodyBase(py::module &);
+void init_Amp3Body(py::module &);
 void init_DalitzPlotter(py::module &);
 void init_DalitzVetoPdf(py::module &);
 void init_DP4Pdf(py::module &);
@@ -117,7 +119,9 @@ PYBIND11_MODULE(_goofit, m) {
     // Physics
     init_DalitzPlotHelpers(m);
     init_DalitzPlotter(m);
-    init_DalitzPlotPdf(m);
+    init_AmpNBodyBase(m);
+    init_Amp3BodyBase(m);
+    init_Amp3Body(m);
     init_DalitzVetoPdf(m);
     init_DP4Pdf(m);
     init_IncoherentSumPdf(m);

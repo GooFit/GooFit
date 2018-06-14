@@ -1,10 +1,4 @@
-add_subdirectory(basic)
-
-add_subdirectory(combine)
-
-add_subdirectory(physics)
-
-goofit_add_library(PDFs
+goofit_add_library(PDFCore
     detail/Globals.cu
     detail/Globals.cpp
     MetricPointer.cu
@@ -25,5 +19,11 @@ goofit_add_library(PDFs
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/detail/ComplexUtils.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/utility/VariableBinTransform1DPdf.h
 )
+target_link_libraries(PDFCore PUBLIC goofit_base)
 
-target_link_libraries(PDFs PUBLIC PdfBasic PdfCombine PdfPhysics goofit_base)
+add_subdirectory(basic)
+add_subdirectory(combine)
+add_subdirectory(physics)
+
+add_library(PDFs INTERFACE)
+target_link_libraries(PDFs INTERFACE PdfBasic PdfCombine PdfPhysics)

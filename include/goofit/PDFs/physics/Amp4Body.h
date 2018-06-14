@@ -20,8 +20,6 @@ See *.cu file for more details
 
 namespace GooFit {
 
-extern __constant__ unsigned int AmpIndices[500];
-
 class LSCalculator;
 class AmpCalc;
 class SFCalculator;

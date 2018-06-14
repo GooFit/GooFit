@@ -3,6 +3,7 @@ goofit_add_library(PdfPhysics
     Amp3Body.cu
     Amp4BodyT.cu
     Amp3BodyT.cu
+    Amp4BodyGlobals.cu
     DalitzPlotHelpers.cu
     SpecialResonanceIntegrator.cu
     SpecialResonanceCalculator.cu
@@ -22,7 +23,13 @@ goofit_add_library(PdfPhysics
     NormLSCalculator.cu
     NormSpinCalculator.cu
     SFCalculator.cu
+    AmpCalc_TD.cu
+    FourDblTupleAdd.cu
+    LSCalculator_TD.cu
+    NormIntegrator_TD.cu
+    NormLSCalculator_TD.cu
     NormSpinCalculator_TD.cu
+    SFCalculator_TD.cu
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/AmpNBodyBase.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Amp3BodyBase.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Amp3Body.h

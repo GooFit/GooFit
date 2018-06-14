@@ -1,6 +1,7 @@
 #include <goofit/PDFs/physics/NormIntegrator.h>
 
 #include <goofit/PDFs/ParameterContainer.h>
+#include <goofit/PDFs/physics/Amp4BodyGlobals.h>
 #include <goofit/PDFs/physics/EvalVar.h>
 #include <goofit/PDFs/physics/SpinFactors.h>
 #include <goofit/detail/Complex.h>
@@ -8,8 +9,6 @@
 #include <thrust/functional.h>
 
 namespace GooFit {
-
-extern __constant__ unsigned int AmpIndices[500];
 
 NormIntegrator::NormIntegrator() = default;
 

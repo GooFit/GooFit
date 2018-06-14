@@ -1,5 +1,11 @@
 #pragma once
 
+#include <goofit/GlobalCudaDefines.h>
+#include <goofit/detail/Complex.h>
+
+#include <mcbooster/GTypes.h>
+
+#include <thrust/functional.h>
 #include <thrust/tuple.h>
 
 namespace GooFit {

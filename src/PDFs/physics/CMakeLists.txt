@@ -16,8 +16,13 @@ goofit_add_library(PdfPhysics
     SpinFactors.cu
     ThreeGaussResolution_Aux.cu
     TruthResolution_Aux.cu
+    AmpCalc.cu
+    LSCalculator.cu
+    NormIntegrator.cu
+    NormLSCalculator.cu
     NormSpinCalculator.cu
-    NormSpinCalculatorTD.cu
+    SFCalculator.cu
+    NormSpinCalculator_TD.cu
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/AmpNBodyBase.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Amp3BodyBase.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Amp3Body.h
@@ -26,7 +31,7 @@ goofit_add_library(PdfPhysics
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Amp4Body.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Amp4BodyT.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/NormSpinCalculator.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/NormSpinCalculatorTD.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/NormSpinCalculator_TD.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/DalitzPlotHelpers.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/DalitzPlotPdf.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/DalitzPlotter.h
@@ -45,6 +50,7 @@ goofit_add_library(PdfPhysics
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/TruthResolution_Aux.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/UserUtils.h
 )
+
 if(GOOFIT_KMATRIX AND GOOFIT_DEVICE STREQUAL CUDA)
     target_sources(PdfPhysics PRIVATE ${PROJECT_SOURCE_DIR}/include/goofit/detail/compute_inverse5.h)
 endif()

@@ -1,4 +1,4 @@
-#include <goofit/PDFs/physics/NormSpinCalculatorTD.h>
+#include <goofit/PDFs/physics/NormSpinCalculator_TD.h>
 
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/EvalVar.h>

@@ -13,7 +13,7 @@ See *.cu file for more details
 #include <goofit/PDFs/physics/MixingTimeResolution_Aux.h>
 #include <goofit/PDFs/physics/SpinFactors.h>
 
-#include <goofit/PDFs/physics/NormSpinCalculatorTD.h>
+#include <goofit/PDFs/physics/NormSpinCalculator_TD.h>
 
 #include <mcbooster/GContainers.h>
 

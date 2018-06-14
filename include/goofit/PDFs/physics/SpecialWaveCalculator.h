@@ -3,6 +3,9 @@
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <goofit/PDFs/physics/MixingTimeResolution_Aux.h>
 
+#include <thrust/functional.h>
+#include <thrust/tuple.h>
+
 namespace GooFit {
 
 class SpecialWaveCalculator : public thrust::unary_function<thrust::tuple<int, fptype *, int>, WaveHolder_s> {

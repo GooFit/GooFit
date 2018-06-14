@@ -40,3 +40,5 @@ goofit_add_library(PdfBasic
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/basic/TrigThresholdPdf.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/basic/VoigtianPdf.h
     )
+
+target_link_libraries(PdfBasic PUBLIC PDFCore)

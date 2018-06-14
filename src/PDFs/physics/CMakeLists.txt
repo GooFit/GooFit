@@ -44,3 +44,5 @@ goofit_add_library(PdfPhysics
 if(GOOFIT_KMATRIX AND GOOFIT_DEVICE STREQUAL CUDA)
     target_sources(PdfPhysics PRIVATE ${PROJECT_SOURCE_DIR}/include/goofit/detail/compute_inverse5.h)
 endif()
+
+target_link_libraries(PdfPhysics PUBLIC PDFCore)

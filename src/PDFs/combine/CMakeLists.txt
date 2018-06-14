@@ -12,3 +12,5 @@ goofit_add_library(PdfCombine
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/combine/MappedPdf.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/combine/ProdPdf.h
 )
+
+target_link_libraries(PdfCombine PUBLIC PDFCore)

@@ -32,6 +32,7 @@ class.
 #include <goofit/PDFs/physics/Amp4Body.h>
 #include <goofit/PDFs/physics/Amp4BodyGlobals.h>
 #include <goofit/PDFs/physics/AmpCalc.h>
+#include <goofit/PDFs/physics/Amplitude.h>
 #include <goofit/PDFs/physics/EvalVar.h>
 #include <goofit/PDFs/physics/LSCalculator.h>
 #include <goofit/PDFs/physics/NormIntegrator.h>

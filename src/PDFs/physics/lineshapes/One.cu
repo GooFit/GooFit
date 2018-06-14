@@ -1,6 +1,7 @@
 #include <goofit/PDFs/physics/lineshapes/One.h>
 
 #include <goofit/PDFs/ParameterContainer.h>
+#include <goofit/PDFs/physics/resonances/Resonance.h>
 
 namespace GooFit {
 

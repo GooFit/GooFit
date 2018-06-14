@@ -2,7 +2,7 @@
 
 #include <goofit/PDFs/physics/ResonancePdf.h>
 #include <goofit/Variable.h>
-#include <goofit/docs/PDFs/physics/ResonancePdf.h>
+#include <goofit/docs/PDFs/physics/resonances/Resonance.h>
 
 using namespace GooFit;
 

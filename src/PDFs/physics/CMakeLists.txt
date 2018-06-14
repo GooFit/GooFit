@@ -12,7 +12,6 @@ goofit_add_library(PdfPhysics
     DalitzVetoPdf.cu
     IncoherentSumPdf.cu
     MixingTimeResolution_Aux.cu
-    ResonancePdf.cu
     SpinFactors.cu
     ThreeGaussResolution_Aux.cu
     TruthResolution_Aux.cu
@@ -39,6 +38,14 @@ goofit_add_library(PdfPhysics
     lineshapes/GSpline.cu
     lineshapes/NonRes.cu
     lineshapes/One.cu
+    resonances/Resonance.cu
+    resonances/FLATTE.cu
+    resonances/Gauss.cu
+    resonances/GS.cu
+    resonances/LASS.cu
+    resonances/NonRes.cu
+    resonances/RBW.cu
+    resonances/Spline.cu
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/AmpNBodyBase.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Amp3BodyBase.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Amp3Body.h

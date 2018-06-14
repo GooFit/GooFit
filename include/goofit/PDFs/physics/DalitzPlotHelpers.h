@@ -9,13 +9,15 @@ See *.cu file for more details
 #pragma once
 
 #include <goofit/PDFs/GooPdf.h>
-#include <goofit/PDFs/physics/LineshapesPdf.h>
-#include <goofit/PDFs/physics/ResonancePdf.h>
+#include <goofit/detail/Complex.h>
 
 #include <thrust/device_vector.h>
 #include <thrust/iterator/constant_iterator.h>
 
 namespace GooFit {
+
+class ResonancePdf;
+class Amplitude;
 
 template <typename E>
 constexpr typename std::underlying_type<E>::type enum_to_underlying(E e) {

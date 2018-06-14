@@ -1,8 +1,10 @@
+#include <goofit/PDFs/physics/lineshapes/LASS.h>
 #include <goofit/PDFs/physics/lineshapes/RBW.h>
 #include <goofit/PDFs/physics/lineshapes/SBW.h>
 
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
+#include <goofit/PDFs/physics/resonances/Resonance.h>
 
 #include "Common.h"
 

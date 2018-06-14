@@ -4,6 +4,7 @@
 #include <goofit/PDFs/physics/SpecialComplexSum.h>
 #include <goofit/PDFs/physics/SpecialDalitzIntegrator.h>
 #include <goofit/PDFs/physics/SpecialWaveCalculator.h>
+#include <goofit/PDFs/physics/resonances/Resonance.h>
 
 #include <thrust/transform_reduce.h>
 

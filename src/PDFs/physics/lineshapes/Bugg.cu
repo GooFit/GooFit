@@ -2,6 +2,7 @@
 #include <goofit/PDFs/physics/lineshapes/Bugg3.h>
 
 #include <goofit/PDFs/ParameterContainer.h>
+#include <goofit/PDFs/physics/resonances/Resonance.h>
 
 #include "Common.h"
 

@@ -1,7 +1,7 @@
 #include <goofit/Python.h>
 
+#include <goofit/PDFs/physics/Amp3BodyT.h>
 #include <goofit/PDFs/physics/DalitzVetoPdf.h>
-#include <goofit/PDFs/physics/TddpPdf.h>
 #include <goofit/Variable.h>
 #include <goofit/docs/PDFs/physics/DalitzVetoPdf.h>
 

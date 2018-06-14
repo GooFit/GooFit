@@ -1,8 +1,8 @@
 #pragma once
 
 #include <goofit/PDFs/GooPdf.h>
+#include <goofit/PDFs/physics/Amp3Body.h>
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
-#include <goofit/PDFs/physics/DalitzPlotPdf.h>
 #include <goofit/Version.h>
 
 #include <algorithm>
@@ -27,7 +27,7 @@ class DalitzPlotter {
     fptype mother;
 
   public:
-    DalitzPlotter(GooPdf *overallSignal, DalitzPlotPdf *signalDalitz)
+    DalitzPlotter(GooPdf *overallSignal, Amp3Body *signalDalitz)
         : m12(signalDalitz->_m12)
         , m13(signalDalitz->_m13)
         , eventNumber(signalDalitz->_eventNumber)

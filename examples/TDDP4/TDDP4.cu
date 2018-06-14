@@ -7,8 +7,7 @@
 #include <goofit/Application.h>
 #include <goofit/PDFs/basic/PolynomialPdf.h>
 #include <goofit/PDFs/combine/AddPdf.h>
-#include <goofit/PDFs/physics/DP4Pdf.h>
-#include <goofit/PDFs/physics/Tddp4Pdf.h>
+#include <goofit/PDFs/physics/Amp4BodyT.h>
 #include <goofit/PDFs/physics/TruthResolution_Aux.h>
 #include <goofit/UnbinnedDataSet.h>
 #include <goofit/Variable.h>
@@ -151,7 +150,7 @@ int main(int argc, char **argv) {
 
     TruthResolution dat;
     PolynomialPdf eff{"constantEff", observables, coefficients, offsets, 0};
-    TDDP4 dp{"test", observables, DK3P_DI, &dat, &eff, 0, 1};
+    Amp4BodyT dp{"test", observables, DK3P_DI, &dat, &eff, 0, 1};
 
     TFile file(output, "RECREATE");
     TTree tree("events", "events");

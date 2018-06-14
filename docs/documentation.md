@@ -533,7 +533,7 @@ __host__ GaussianPdf::GaussianPdf (std::string n,
 
 This provides a single location in which to get the value stored in `c_sqrt_2pi`, and share it.  This uses constant memory,
 however this is a precious resource that should not be used illegitametly. One good example of proper use is the constant
-`c_motherMass`, which is used by the DalitzPlotPdf and ResonancePdf. Instead of allocating 17 doubles for the DalitzPlotPdf and
+`c_motherMass`, which is used by the Amp3Body and ResonancePdf. Instead of allocating 17 doubles for the Amp3Body and
 the 16 ResonancePdf's, we can allocate one double for all 17 PDF accesses.  This also applies to `c_daug1Mass`, `c_daug2Mass`, and
 `c_daug3Mass`.
 
@@ -828,7 +828,7 @@ every thread.
 PDF implementations may override the `normalization` method, and among
 the default PDFs, both `AddPdf` and `ProdPdf` do so to ensure that their
 components are correctly normalized. Among the more specialized
-implementations, `TddpPdf` overrides `normalize` so that it may cache
+implementations, `Amp3BodyT` overrides `normalize` so that it may cache
 the slowly-changing Breit-Wigner calculations, and also because its time
 dependence is analytically integrable and it is a good optimization to
 do only the Dalitz-plot part numerically. This points to a more general
@@ -1101,7 +1101,7 @@ It is worth noting that the PDF evaluation function may itself call
 other functions, either using `callFunction` or manually casting a
 function index into other kinds of functions, as in the metric
 calculation of listing [Main Eval](@ref listingmaineval). For example, in
-`DalitzPlotPdf`, each resonance may be parametrized by a relativistic
+`Amp3Body`, each resonance may be parametrized by a relativistic
 Breit-Wigner, a Gaussian, a Flatte function, or more esoteric forms; so
 the main function is supplied with a list of function indices and
 parameter indices for them, and interprets the `void` pointer from
@@ -1195,12 +1195,12 @@ mixing in \f$D^0\to\pi\pi\pi^0\f$. Nonetheless, if you are doing a
 Dalitz-plot analysis, you may find them, and conceivably even this
 documentation, helpful.
 
--   GooFit::DalitzPlotPdf
+-   GooFit::Amp3Body
 -   GooFit::DalitzVetoPdf
 -   GooFit::IncoherentSumPdf
 -   GooFit::MixingTimeResolution (in `MixingTimeResolution_Aux.h`)
 -   GooFit::ResonancePdf (subclasses not separately documented yet)
--   GooFit::TddpPdf
+-   GooFit::Amp3BodyT
 -   GooFit::ThreeGaussResolution
 -   GooFit::TruthResolution
 

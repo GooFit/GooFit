@@ -20,7 +20,7 @@
 #include <goofit/PDFs/basic/PolynomialPdf.h>
 #include <goofit/PDFs/combine/AddPdf.h>
 #include <goofit/PDFs/combine/ProdPdf.h>
-#include <goofit/PDFs/physics/DalitzPlotPdf.h>
+#include <goofit/PDFs/physics/Amp3Body.h>
 #include <goofit/PDFs/physics/DalitzPlotter.h>
 #include <goofit/PDFs/physics/DalitzVetoPdf.h>
 #include <goofit/PDFs/physics/ResonancePdf.h>
@@ -122,7 +122,7 @@ void getToyData(std::string toyFileName, GooFit::Application &app, DataSet &data
 
 void makeToyData(DalitzPlotter &dplotter, UnbinnedDataSet &data) {}
 
-DalitzPlotPdf *makeSignalPdf(Observable m12, Observable m13, EventNumber eventNumber, GooPdf *eff = 0) {
+Amp3Body *makeSignalPdf(Observable m12, Observable m13, EventNumber eventNumber, GooPdf *eff = 0) {
     DecayInfo3 dtop0pp;
     dtop0pp.motherMass   = _mD0;
     dtop0pp.daug1Mass    = piZeroMass;
@@ -318,10 +318,10 @@ DalitzPlotPdf *makeSignalPdf(Observable m12, Observable m13, EventNumber eventNu
         eff = new PolynomialPdf("constantEff", observables, coefficients, offsets, 0);
     }
 
-    return new DalitzPlotPdf("signalPDF", m12, m13, eventNumber, dtop0pp, eff);
+    return new Amp3Body("signalPDF", m12, m13, eventNumber, dtop0pp, eff);
 }
 
-int runToyFit(DalitzPlotPdf *signal, UnbinnedDataSet *data) {
+int runToyFit(Amp3Body *signal, UnbinnedDataSet *data) {
     // EXERCISE 1 (real part): Create a PolynomialPdf which models
     // the efficiency you imposed in the preliminary, and use it in constructing
     // the signal PDF.
@@ -374,7 +374,7 @@ int main(int argc, char **argv) {
     UnbinnedDataSet data({m12, m13, eventNumber});
 
     // Set up the model
-    DalitzPlotPdf *signal = makeSignalPdf(m12, m13, eventNumber);
+    Amp3Body *signal = makeSignalPdf(m12, m13, eventNumber);
 
     // A wrapper for plotting without complex number segfault
     ProdPdf prodpdf{"prodpdf", {signal}};

@@ -228,7 +228,7 @@ def makeSignalPdf(m12, m13, eventNumber, eff = None, fitMasses = False):
         coefficients = (constantOne,)
         eff = PolynomialPdf("constantEff", observables, coefficients, offsets, 0)
 
-    d = DalitzPlotPdf("signalPDF", m12, m13, eventNumber, dtop0pp, eff)
+    d = Amp3Body("signalPDF", m12, m13, eventNumber, dtop0pp, eff)
     return d
 
 def runToyFit(toyFileName):

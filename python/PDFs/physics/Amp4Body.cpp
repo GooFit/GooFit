@@ -11,8 +11,8 @@
 
 using namespace GooFit;
 
-void init_DP4Pdf(py::module &m) {
-    py::class_<DPPdf, GooPdf>(m, "DPPdf")
+void init_Amp4Body(py::module &m) {
+    py::class_<Amp4Body, Amp4BodyBase>(m, "Amp4Body")
         .def(py::init<std::string, std::vector<Observable>, DecayInfo4, GooPdf *>(),
              "name"_a,
              "observables"_a,

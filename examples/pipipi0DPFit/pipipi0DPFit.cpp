@@ -34,10 +34,10 @@
 #include <goofit/PDFs/combine/EventWeightedAddPdf.h>
 #include <goofit/PDFs/combine/MappedPdf.h>
 #include <goofit/PDFs/combine/ProdPdf.h>
+#include <goofit/PDFs/physics/Amp3BodyT.h>
 #include <goofit/PDFs/physics/DalitzVetoPdf.h>
 #include <goofit/PDFs/physics/IncoherentSumPdf.h>
 #include <goofit/PDFs/physics/ResonancePdf.h>
-#include <goofit/PDFs/physics/TddpPdf.h>
 #include <goofit/PDFs/physics/ThreeGaussResolution_Aux.h>
 #include <goofit/PDFs/physics/TruthResolution_Aux.h>
 #include <goofit/Variable.h>
@@ -156,7 +156,7 @@ std::vector<PdfBase *> comps;
 TH1F *dataTimePlot        = nullptr;
 TH1F *loM23Sigma          = nullptr;
 TH1F *hiM23Sigma          = nullptr;
-TddpPdf *signalDalitz     = nullptr;
+Amp3BodyT *signalDalitz   = nullptr;
 IncoherentSumPdf *incsum1 = nullptr;
 IncoherentSumPdf *incsum2 = nullptr;
 IncoherentSumPdf *incsum3 = nullptr;
@@ -518,7 +518,7 @@ DecayInfo3t dtop0pp{Variable("tau", 0.4101, 0.001, 0.300, 0.500),
                     Variable("xmixing", 0.0016, 0.001, 0, 0),
                     Variable("ymixing", 0.0055, 0.001, 0, 0)};
 
-TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
+Amp3BodyT *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
     dtop0pp.motherMass   = _mD0;
     dtop0pp.daug1Mass    = piZeroMass;
     dtop0pp.daug2Mass    = piPlusMass;
@@ -802,12 +802,13 @@ TddpPdf *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
         }
     }
 
-    TddpPdf *mixPdf = 0;
+    Amp3BodyT *mixPdf = 0;
 
     if(massd0)
-        mixPdf = new TddpPdf("mixPdf", *dtime, *sigma, *m12, *m13, *eventNumber, dtop0pp, resList, eff, *massd0, wBkg1);
+        mixPdf
+            = new Amp3BodyT("mixPdf", *dtime, *sigma, *m12, *m13, *eventNumber, dtop0pp, resList, eff, *massd0, wBkg1);
     else
-        mixPdf = new TddpPdf("mixPdf", *dtime, *sigma, *m12, *m13, *eventNumber, dtop0pp, resolution, eff, wBkg1);
+        mixPdf = new Amp3BodyT("mixPdf", *dtime, *sigma, *m12, *m13, *eventNumber, dtop0pp, resolution, eff, wBkg1);
 
     return mixPdf;
 }
@@ -865,7 +866,7 @@ int runToyFit(int ifile, int nfile, bool noPlots = true) {
     }
 
     // TruthResolution* dat = new TruthResolution();
-    // TddpPdf* mixPdf = makeSignalPdf(dat);
+    // Amp3BodyT* mixPdf = makeSignalPdf(dat);
     signalDalitz = makeSignalPdf();
     signalDalitz->setDataSize(data->getNumEvents(), 6); // Default 5 is fine for toys
     sig0_jsugg = new ExpPdf("sig0_jsugg", *sigma, constantZero);
@@ -1042,7 +1043,7 @@ void loadDataFile(std::string fname, UnbinnedDataSet **setToFill, int effSkip) {
         integralWeights[4] += wBkg4->getValue();
         eventNumber->setValue((*setToFill)->getNumEvents());
 
-        // See comments in TddpPdf.hh for explanation of this.
+        // See comments in Amp3BodyT.hh for explanation of this.
         double mistag = wSig0->getValue() + wBkg1->getValue() * luckyFrac;
         wSig0->setValue(wSig0->getValue() + wBkg1->getValue());
         wBkg1->setValue(mistag / wSig0->getValue());

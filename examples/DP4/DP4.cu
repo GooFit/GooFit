@@ -5,7 +5,7 @@
 #include <goofit/FitManager.h>
 #include <goofit/PDFs/basic/PolynomialPdf.h>
 #include <goofit/PDFs/combine/AddPdf.h>
-#include <goofit/PDFs/physics/DP4Pdf.h>
+#include <goofit/PDFs/physics/Amp4Body.h>
 #include <goofit/UnbinnedDataSet.h>
 #include <goofit/Variable.h>
 
@@ -215,7 +215,7 @@ int main(int argc, char **argv) {
     vector<Variable> offsets       = {constantZero, constantZero};
 
     PolynomialPdf eff{"constantEff", observables, coefficients, offsets, 0};
-    DPPdf dp{"test", observables, DK3P_DI, &eff, 1000000};
+    Amp4Body dp{"test", observables, DK3P_DI, &eff, 1000000};
 
     Variable constant{"constant", 0.1};
     Variable constant2{"constant2", 1.0};

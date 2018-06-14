@@ -192,6 +192,14 @@ conversion['2.1'] = [
     (r'vector<Variable>\s*observable', r'vector<Observable> observable'), # Common pattern
 ]
 
+conversion['2.2'] = [
+    (r'DalitzPlotPdf', r'Amp3Body'),
+    (r'TddpPdf', r'Amp3BodyT'),
+    (r'DPPdf', r'Amp4Body'),
+    (r'DP4Pdf', r'Amp4Body'),
+    (r'TDDP4', r'Amp4BodyT'),
+]
+
 def fix_text(contents, version='2.0'):
     r"""
     >>> text = '''

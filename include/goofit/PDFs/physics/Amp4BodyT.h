@@ -12,8 +12,13 @@ See *.cu file for more details
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <goofit/PDFs/physics/MixingTimeResolution_Aux.h>
 #include <goofit/PDFs/physics/SpinFactors.h>
+
+#include <goofit/PDFs/physics/NormSpinCalculatorTD.h>
+
 #include <mcbooster/GContainers.h>
+
 #include <thrust/remove.h>
+
 #include <tuple>
 
 namespace GooFit {
@@ -94,102 +99,4 @@ class Amp4BodyT : public Amp4BodyBase {
     double maxWeight{0};
 };
 
-class SFCalculator_TD : public thrust::unary_function<thrust::tuple<int, fptype *, int>, fpcomplex> {
-  public:
-    // Used to create the cached BW values.
-    SFCalculator_TD();
-
-    void setDalitzId(int idx) { dalitzFuncId = idx; }
-    void setSpinFactorId(int idx) { _spinfactor_i = idx; }
-    __device__ fpcomplex operator()(thrust::tuple<int, fptype *, int> t) const;
-
-  private:
-    unsigned int _spinfactor_i{0};
-    unsigned int dalitzFuncId;
-};
-
-class NormSpinCalculator_TD
-    : public thrust::unary_function<thrust::tuple<fptype, fptype, fptype, fptype, fptype>, fptype> {
-  public:
-    // Used to create the cached BW values.
-    NormSpinCalculator_TD();
-    void setDalitzId(int idx) { dalitzFuncId = idx; }
-    void setSpinFactorId(int idx) { _spinfactor_i = idx; }
-    __device__ fptype operator()(thrust::tuple<fptype, fptype, fptype, fptype, fptype> t) const;
-
-  private:
-    unsigned int _spinfactor_i{0};
-    unsigned int dalitzFuncId;
-};
-
-class LSCalculator_TD : public thrust::unary_function<thrust::tuple<int, fptype *, int>, fpcomplex> {
-  public:
-    // Used to create the cached BW values.
-    LSCalculator_TD();
-    void setDalitzId(int idx) { dalitzFuncId = idx; }
-    void setResonanceId(int idx) { _resonance_i = idx; }
-    __device__ fpcomplex operator()(thrust::tuple<int, fptype *, int> t) const;
-
-  private:
-    unsigned int _resonance_i{0};
-    unsigned int dalitzFuncId;
-};
-
-class NormLSCalculator_TD
-    : public thrust::unary_function<
-          thrust::
-              tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t>,
-          fpcomplex> {
-  public:
-    // Used to create the cached BW values.
-    NormLSCalculator_TD();
-    void setDalitzId(int idx) { dalitzFuncId = idx; }
-    void setResonanceId(int idx) { _resonance_i = idx; }
-    __device__ fpcomplex operator()(
-        thrust::
-            tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t)
-        const;
-
-  private:
-    unsigned int _resonance_i{0};
-    unsigned int dalitzFuncId;
-};
-
-class AmpCalc_TD : public thrust::unary_function<unsigned int, fpcomplex> {
-  public:
-    AmpCalc_TD(unsigned int nPerm, unsigned int ampIdx);
-    void setDalitzId(int idx) { dalitzFuncId = idx; }
-    // void setAmplitudeId(int idx) { _AmpIdx = idx; }
-    // void setpIdx(unsigned int pIdx){_parameters = pIdx;}
-    __device__ fpcomplex operator()(thrust::tuple<int, fptype *, int> t) const;
-
-  private:
-    unsigned int _nPerm;
-    unsigned int _AmpIdx;
-    unsigned int dalitzFuncId;
-};
-
-class NormIntegrator_TD : public thrust::unary_function<thrust::tuple<int, int, fptype *, fpcomplex *>, fptype> {
-  public:
-    NormIntegrator_TD();
-    void setDalitzId(int idx) { dalitzFuncId = idx; }
-    __device__ thrust::tuple<fptype, fptype, fptype, fptype>
-    operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const;
-
-  private:
-    unsigned int dalitzFuncId;
-};
-
-class FourDblTupleAdd : public thrust::binary_function<thrust::tuple<fptype, fptype, fptype, fptype>,
-                                                       thrust::tuple<fptype, fptype, fptype, fptype>,
-                                                       thrust::tuple<fptype, fptype, fptype, fptype>> {
-  public:
-    __host__ __device__ thrust::tuple<fptype, fptype, fptype, fptype>
-    operator()(thrust::tuple<fptype, fptype, fptype, fptype> one, thrust::tuple<fptype, fptype, fptype, fptype> two) {
-        return {thrust::get<0>(one) + thrust::get<0>(two),
-                thrust::get<1>(one) + thrust::get<1>(two),
-                thrust::get<2>(one) + thrust::get<2>(two),
-                thrust::get<3>(one) + thrust::get<3>(two)};
-    }
-};
 } // namespace GooFit

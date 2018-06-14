@@ -11,8 +11,11 @@ See *.cu file for more details
 #include <goofit/PDFs/physics/Amp4BodyBase.h>
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <goofit/PDFs/physics/SpinFactors.h>
+
 #include <mcbooster/GContainers.h>
+
 #include <thrust/remove.h>
+
 #include <tuple>
 
 namespace GooFit {
@@ -89,90 +92,6 @@ class Amp4Body : public Amp4BodyBase {
     int generation_offset{0};
 
     int efficiencyFunction;
-};
-
-class SFCalculator : public thrust::unary_function<thrust::tuple<int, fptype *, int>, fpcomplex> {
-  public:
-    // Used to create the cached BW values.
-    SFCalculator();
-    void setDalitzId(int idx) { dalitzFuncId = idx; }
-    void setSpinFactorId(int idx) { _spinfactor_i = idx; }
-    __device__ fpcomplex operator()(thrust::tuple<int, fptype *, int> t) const;
-
-  private:
-    unsigned int dalitzFuncId;
-    unsigned int _spinfactor_i{0};
-};
-
-class NormSpinCalculator
-    : public thrust::unary_function<thrust::tuple<fptype, fptype, fptype, fptype, fptype>, fptype> {
-  public:
-    // Used to create the cached BW values.
-    NormSpinCalculator();
-    void setDalitzId(int idx) { dalitzFuncId = idx; }
-    void setSpinFactorId(int idx) { _spinfactor_i = idx; }
-    __device__ fptype operator()(thrust::tuple<fptype, fptype, fptype, fptype, fptype> t) const;
-
-  private:
-    unsigned int dalitzFuncId;
-    unsigned int _spinfactor_i{0};
-};
-
-class LSCalculator : public thrust::unary_function<thrust::tuple<int, fptype *, int>, fpcomplex> {
-  public:
-    // Used to create the cached BW values.
-    LSCalculator();
-    void setDalitzId(int idx) { dalitzFuncId = idx; }
-    void setResonanceId(int idx) { _resonance_i = idx; }
-    __device__ fpcomplex operator()(thrust::tuple<int, fptype *, int> t) const;
-
-  private:
-    unsigned int dalitzFuncId;
-    unsigned int _resonance_i{0};
-};
-
-class NormLSCalculator
-    : public thrust::unary_function<
-          thrust::
-              tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t>,
-          fpcomplex> {
-  public:
-    // Used to create the cached BW values.
-    NormLSCalculator();
-    void setDalitzId(int idx) { dalitzFuncId = idx; }
-    void setResonanceId(int idx) { _resonance_i = idx; }
-    __device__ fpcomplex operator()(
-        thrust::
-            tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t)
-        const;
-
-  private:
-    unsigned int dalitzFuncId;
-    unsigned int _resonance_i{0};
-};
-
-class AmpCalc : public thrust::unary_function<unsigned int, fpcomplex> {
-  public:
-    AmpCalc(unsigned int nPerm, unsigned int ampIdx);
-    // void setpIdx(unsigned int pIdx){_parameters = pIdx;}
-    void setDalitzId(int idx) { dalitzFuncId = idx; }
-    void setAmplitudeId(int idx) { _AmpIdx = idx; }
-    __device__ fpcomplex operator()(thrust::tuple<int, fptype *, int> t) const;
-
-  private:
-    unsigned int dalitzFuncId;
-    unsigned int _nPerm;
-    unsigned int _AmpIdx;
-};
-
-class NormIntegrator : public thrust::unary_function<thrust::tuple<int, int, fptype *, fpcomplex *>, fptype> {
-  public:
-    NormIntegrator();
-    void setDalitzId(int idx) { dalitzFuncId = idx; }
-    __device__ fptype operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const;
-
-  private:
-    unsigned int dalitzFuncId;
 };
 
 } // namespace GooFit

@@ -2,14 +2,14 @@
 
 #include <pybind11/stl.h>
 
-#include <goofit/PDFs/physics/LineshapesPdf.h>
+#include <goofit/PDFs/physics/Lineshapes.h>
 #include <goofit/PDFs/physics/ResonancePdf.h>
 #include <goofit/PDFs/physics/SpinFactors.h>
 #include <goofit/Variable.h>
 
 using namespace GooFit;
 
-void init_LineshapesPdf(py::module &m) {
+void init_Lineshapes(py::module &m) {
     py::enum_<FF>(m, "FF", py::arithmetic())
         .value("One", FF::One)
         .value("BL", FF::BL)

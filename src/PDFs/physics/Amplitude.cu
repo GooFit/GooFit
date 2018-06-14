@@ -1,4 +1,6 @@
 #include <goofit/PDFs/physics/Amplitude.h>
+#include <goofit/PDFs/physics/SpinFactors.h>
+#include <goofit/PDFs/physics/lineshapes/Lineshape.h>
 
 namespace GooFit {
 

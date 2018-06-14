@@ -4,6 +4,7 @@ goofit_add_library(PdfPhysics
     Amp4BodyT.cu
     Amp3BodyT.cu
     Amp4BodyGlobals.cu
+    Amplitude.cu
     DalitzPlotHelpers.cu
     SpecialResonanceIntegrator.cu
     SpecialResonanceCalculator.cu
@@ -31,7 +32,7 @@ goofit_add_library(PdfPhysics
     lineshapes/Lineshape.cu
     lineshapes/BW.cu
     lineshapes/Common.cu
-    lineshapes/Focus.cu
+    lineshapes/FOCUS.cu
     lineshapes/Bugg.cu
     lineshapes/Flatte.cu
     lineshapes/GLASS.cu
@@ -61,7 +62,7 @@ goofit_add_library(PdfPhysics
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/DalitzVetoPdf.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/EvalVar.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/IncoherentSumPdf.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/LineshapesPdf.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Lineshapes.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/MixingTimeResolution_Aux.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/ResonancePdf.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/SpinFactors.h

@@ -3,10 +3,13 @@
 #include <goofit/PDFs/physics/Amp3Body.h>
 #include <goofit/PDFs/physics/SpecialResonanceCalculator.h>
 #include <goofit/PDFs/physics/SpecialResonanceIntegrator.h>
+#include <goofit/PDFs/physics/resonances/Resonance.h>
 #include <goofit/detail/Complex.h>
 
 #include <thrust/copy.h>
 #include <thrust/transform_reduce.h>
+
+#include <array>
 
 namespace GooFit {
 

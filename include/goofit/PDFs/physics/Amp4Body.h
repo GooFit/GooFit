@@ -24,6 +24,7 @@ class LSCalculator;
 class AmpCalc;
 class SFCalculator;
 class NormIntegrator;
+class Lineshape;
 
 class Amp4Body : public Amp4BodyBase {
   public:

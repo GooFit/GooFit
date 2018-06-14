@@ -32,11 +32,14 @@ class.
 
 #include <goofit/PDFs/physics/Amp4BodyGlobals.h>
 #include <goofit/PDFs/physics/AmpCalc_TD.h>
+#include <goofit/PDFs/physics/Amplitude.h>
 #include <goofit/PDFs/physics/FourDblTupleAdd.h>
 #include <goofit/PDFs/physics/LSCalculator_TD.h>
 #include <goofit/PDFs/physics/NormIntegrator_TD.h>
 #include <goofit/PDFs/physics/NormLSCalculator_TD.h>
 #include <goofit/PDFs/physics/SFCalculator_TD.h>
+#include <goofit/PDFs/physics/lineshapes/Lineshape.h>
+#include <goofit/PDFs/physics/resonances/Resonance.h>
 
 #include <cstdarg>
 

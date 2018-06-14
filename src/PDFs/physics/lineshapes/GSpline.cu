@@ -2,6 +2,7 @@
 
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
+#include <goofit/PDFs/physics/resonances/Resonance.h>
 
 #include <Eigen/Core>
 #include <Eigen/LU>

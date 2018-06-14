@@ -1,6 +1,7 @@
 #include <goofit/PDFs/physics/lineshapes/FOCUS.h>
 
 #include <goofit/PDFs/ParameterContainer.h>
+#include <goofit/PDFs/physics/resonances/Resonance.h>
 
 #include <Eigen/Core>
 #include <Eigen/LU>

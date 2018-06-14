@@ -11,7 +11,6 @@ goofit_add_library(PdfPhysics
     SpecialWaveCalculator.cu
     DalitzVetoPdf.cu
     IncoherentSumPdf.cu
-    LineshapesPdf.cu
     MixingTimeResolution_Aux.cu
     ResonancePdf.cu
     SpinFactors.cu
@@ -30,6 +29,16 @@ goofit_add_library(PdfPhysics
     NormLSCalculator_TD.cu
     NormSpinCalculator_TD.cu
     SFCalculator_TD.cu
+    lineshapes/Lineshape.cu
+    lineshapes/BW.cu
+    lineshapes/Common.cu
+    lineshapes/Focus.cu
+    lineshapes/Bugg.cu
+    lineshapes/Flatte.cu
+    lineshapes/GLASS.cu
+    lineshapes/GSpline.cu
+    lineshapes/NonRes.cu
+    lineshapes/One.cu
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/AmpNBodyBase.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Amp3BodyBase.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Amp3Body.h
@@ -59,7 +68,10 @@ goofit_add_library(PdfPhysics
 )
 
 if(GOOFIT_KMATRIX AND GOOFIT_DEVICE STREQUAL CUDA)
-    target_sources(PdfPhysics PRIVATE ${PROJECT_SOURCE_DIR}/include/goofit/detail/compute_inverse5.h)
+    target_sources(PdfPhysics PRIVATE
+        lineshapes/kMatrix.cu
+        ${PROJECT_SOURCE_DIR}/include/goofit/detail/compute_inverse5.h
+    )
 endif()
 
 target_link_libraries(PdfPhysics PUBLIC PDFCore)

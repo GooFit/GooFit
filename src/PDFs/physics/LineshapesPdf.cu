@@ -14,8 +14,11 @@ on the GPU
 #include <goofit/PDFs/physics/SpinFactors.h>
 #include <goofit/Version.h>
 
-#if GOOFIT_KMATRIX && THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
+#if GOOFIT_KMATRIX
+#include <goofit/PDFs/physics/lineshapes/kMatrix.h>
+#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
 #include <goofit/detail/compute_inverse5.h>
+#endif
 #endif
 
 #include <utility>

@@ -30,15 +30,15 @@ class.
 #include <goofit/Log.h>
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/Amp4Body.h>
-#include <goofit/PDFs/physics/EvalVar.h>
-
 #include <goofit/PDFs/physics/Amp4BodyGlobals.h>
 #include <goofit/PDFs/physics/AmpCalc.h>
+#include <goofit/PDFs/physics/EvalVar.h>
 #include <goofit/PDFs/physics/LSCalculator.h>
 #include <goofit/PDFs/physics/NormIntegrator.h>
 #include <goofit/PDFs/physics/NormLSCalculator.h>
 #include <goofit/PDFs/physics/NormSpinCalculator.h>
 #include <goofit/PDFs/physics/SFCalculator.h>
+#include <goofit/PDFs/physics/lineshapes/Lineshape.h>
 
 #include <cstdarg>
 

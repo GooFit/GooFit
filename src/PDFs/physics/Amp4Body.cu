@@ -32,6 +32,7 @@ class.
 #include <goofit/PDFs/physics/Amp4Body.h>
 #include <goofit/PDFs/physics/EvalVar.h>
 
+#include <goofit/PDFs/physics/Amp4BodyGlobals.h>
 #include <goofit/PDFs/physics/AmpCalc.h>
 #include <goofit/PDFs/physics/LSCalculator.h>
 #include <goofit/PDFs/physics/NormIntegrator.h>
@@ -42,21 +43,6 @@ class.
 #include <cstdarg>
 
 namespace GooFit {
-
-// The function of this array is to hold all the cached waves; specific
-// waves are recalculated when the corresponding resonance mass or width
-// changes. Note that in a multithread environment each thread needs its
-// own cache, hence the '10'. Ten threads should be enough for anyone!
-
-__device__ fpcomplex *cResSF[10];
-__device__ fpcomplex *Amps_DP[10];
-/*
-Constant memory array to hold specific info for amplitude calculation.
-First entries are the starting points in array, necessary, because number of Lineshapes(LS) or Spinfactors(SF) can vary
-|start of each Amplitude| #Linshapes | #Spinfactors | LS-indices | SF-indices|
-| 1 entry per Amplitude | 1 per Amp  | 1 per Amp    | #LS in Amp| #SF in Amp|
-*/
-__constant__ unsigned int AmpIndices[500];
 
 // This function gets called by the GooFit framework to get the value of the PDF.
 __device__ fptype device_DP(fptype *evt, ParameterContainer &pc) {

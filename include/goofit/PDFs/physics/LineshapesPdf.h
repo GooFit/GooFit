@@ -32,8 +32,8 @@ enum class FF : unsigned int { One = 0, BL, BL_Prime, BL2 };
 
 class Lineshape : public GooPdf {
   protected:
-    friend class DPPdf;
-    friend class TDDP4;
+    friend class Amp4Body;
+    friend class Amp4BodyT;
 
     /// Protected constructor, only for subclasses to use
     Lineshape(std::string name, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius);
@@ -228,8 +228,8 @@ class GSpline : public Lineshape {
 } // namespace Lineshapes
 
 class Amplitude : public GooPdf {
-    friend class DPPdf;
-    friend class TDDP4;
+    friend class Amp4Body;
+    friend class Amp4BodyT;
 
   public:
     Amplitude(std::string uniqueDecayStr,

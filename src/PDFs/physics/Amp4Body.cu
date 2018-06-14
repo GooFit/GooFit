@@ -29,7 +29,7 @@ class.
 #include <goofit/FitControl.h>
 #include <goofit/Log.h>
 #include <goofit/PDFs/ParameterContainer.h>
-#include <goofit/PDFs/physics/DP4Pdf.h>
+#include <goofit/PDFs/physics/Amp4Body.h>
 #include <goofit/PDFs/physics/EvalVar.h>
 
 #include <cstdarg>
@@ -93,9 +93,9 @@ __device__ fptype device_DP(fptype *evt, ParameterContainer &pc) {
 
 __device__ device_function_ptr ptr_to_DP = device_DP;
 
-__host__ DPPdf::DPPdf(
+__host__ Amp4Body::Amp4Body(
     std::string n, std::vector<Observable> observables, DecayInfo4 decay, GooPdf *efficiency, unsigned int MCeventsNorm)
-    : GooPdf(n)
+    : Amp4BodyBase(n)
     , decayInfo(decay)
     , totalEventSize(observables.size()) // number of observables plus eventnumber
 {
@@ -295,7 +295,7 @@ __host__ DPPdf::DPPdf(
 
 // save our efficiency function.  Resonance's are saved first, then the efficiency function.
 
-__host__ void DPPdf::populateArrays() {
+__host__ void Amp4Body::populateArrays() {
     PdfBase::populateArrays();
 
     // go over our amplitudes and actually set index values, update.
@@ -347,7 +347,7 @@ __host__ void DPPdf::populateArrays() {
 // I made the choice to have spinfactors necxt to the values of the lineshape in memory. I waste memory by doing this
 // because a spinfactor is saved as complex
 // It would be nice to test if this is better than having the spinfactors stored seperately.
-__host__ void DPPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) {
+__host__ void Amp4Body::setDataSize(unsigned int dataSize, unsigned int evtSize) {
     // Default 3 is m12, m13, evtNum for DP 2dim, 4-body decay has 5 independent vars plus evtNum = 6
     totalEventSize = evtSize;
     if(totalEventSize < 3)
@@ -373,7 +373,7 @@ __host__ void DPPdf::setDataSize(unsigned int dataSize, unsigned int evtSize) {
 }
 
 // this is where the actual magic happens. This function does all the calculations!
-__host__ fptype DPPdf::normalize() {
+__host__ fptype Amp4Body::normalize() {
     recursiveSetNormalization(1.0); // Not going to normalize efficiency,
     // so set normalization factor to 1 so it doesn't get multiplied by zero.
     // Copy at this time to ensure that the SpecialResonanceCalculators, which need the efficiency,
@@ -525,7 +525,7 @@ __host__ fptype DPPdf::normalize() {
     }
 
     if(std::isnan(ret))
-        GooFit::abort(__FILE__, __LINE__, getName() + " NAN normalization in DPPdf", this);
+        GooFit::abort(__FILE__, __LINE__, getName() + " NAN normalization in Amp4Body", this);
 
     host_normalizations.at(normalIdx + 1) = 1.0 / ret;
     cachedNormalization                   = 1.0 / ret;
@@ -534,7 +534,7 @@ __host__ fptype DPPdf::normalize() {
 
 __host__
     std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h>
-    DPPdf::GenerateSig(unsigned int numEvents) {
+    Amp4Body::GenerateSig(unsigned int numEvents) {
     // Must configure our functions before any calculations!
     // setupObservables();
     // setIndices();

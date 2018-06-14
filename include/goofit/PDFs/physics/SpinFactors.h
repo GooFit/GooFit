@@ -34,7 +34,7 @@ enum class SF_4Body {
 };
 
 class SpinFactor : public GooPdf {
-    friend class DPPdf;
+    friend class Amp4Body;
 
   private:
     SF_4Body _SF;

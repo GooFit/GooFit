@@ -12,7 +12,7 @@ using namespace GooFit;
 
 void init_DalitzPlotter(py::module &m) {
     py::class_<DalitzPlotter>(m, "DalitzPlotter")
-        .def(py::init<GooPdf *, DalitzPlotPdf *>())
+        .def(py::init<GooPdf *, Amp3Body *>())
         .def("getNumEvents", &DalitzPlotter::getNumEvents)
         .def("getX", &DalitzPlotter::getX, "event"_a)
         .def("getY", &DalitzPlotter::getY, "event"_a)

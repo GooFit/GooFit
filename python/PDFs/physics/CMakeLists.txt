@@ -3,16 +3,17 @@ goofit_add_library(_Physics STATIC
     Amp3BodyBase.cpp
     Amp3Body.cpp
     Amp3BodyT.cpp
+    Amp4BodyBase.cpp
+    Amp4Body.cpp
+    Amp4BodyT.cpp
     DalitzVetoPdf.cpp
     DalitzPlotHelpers.cpp
     DalitzPlotter.cpp
-    DP4Pdf.cu
     IncoherentSumPdf.cpp
     LineshapesPdf.cpp
     MixingTimeResolution_Aux.cpp
     ResonancePdf.cpp
     SpinFactors.cpp
-    Tddp4Pdf.cu
     ThreeGaussResolution_Aux.cpp
     TruthResolution_Aux.cpp
 )

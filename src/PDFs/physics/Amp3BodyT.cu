@@ -416,7 +416,7 @@ __host__ Amp3BodyT::Amp3BodyT(std::string n,
 // Note: We need to manually populate the arrays so we can track the efficiency function!
 __host__ void Amp3BodyT::populateArrays() {
     // populate all the arrays
-    GOOFIT_TRACE("TddpPdf: Populating Arrays for {}", getName());
+    GOOFIT_TRACE("Amp3BodyT: Populating Arrays for {}", getName());
 
     // reconfigure the host_parameters array with the new indexing scheme.
     GOOFIT_TRACE("host_parameters[{}] = {}", host_parameters.size(), parametersList.size());

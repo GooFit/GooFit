@@ -23,8 +23,8 @@ __device__ fptype spinFactor(unsigned int spin,
 
 /**
 Represents a resonance-shape parametrization, the
-\f$B_i\f$ that appear in the equations for GooFit::DalitzPlotPdf,
-GooFit::IncoherentSumPdf, and GooFit::TddpPdf. Canonically a relativistic
+\f$B_i\f$ that appear in the equations for GooFit::Amp3Body,
+GooFit::IncoherentSumPdf, and GooFit::Amp3BodyT. Canonically a relativistic
 Breit-Wigner. The constructor takes the real and imaginary parts of
 the coefficient \f$\alpha\f$ (note that this is actually used by the
 containing function), and additional parameters depending on which

@@ -4,10 +4,10 @@
 #include <pybind11/stl.h>
 
 #include <goofit/DataSet.h>
+#include <goofit/PDFs/physics/Amp4BodyT.h>
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <goofit/PDFs/physics/MixingTimeResolution_Aux.h>
 #include <goofit/PDFs/physics/SpinFactors.h>
-#include <goofit/PDFs/physics/Tddp4Pdf.h>
 #include <goofit/Variable.h>
 
 using namespace GooFit;
@@ -15,8 +15,8 @@ namespace py = pybind11;
 
 using namespace pybind11::literals;
 
-void init_Tddp4Pdf(py::module &m) {
-    py::class_<TDDP4, GooPdf>(m, "TDDP4")
+void init_Amp4BodyT(py::module &m) {
+    py::class_<Amp4BodyT, Amp4BodyBase>(m, "Amp4BodyT")
         .def(py::init<std::string,
                       std::vector<Observable>,
                       DecayInfo4t,
@@ -37,7 +37,7 @@ void init_Tddp4Pdf(py::module &m) {
              py::keep_alive<1, 7>())
 
         .def("GenerateSig",
-             [](TDDP4 &self, size_t numEvents) {
+             [](Amp4BodyT &self, size_t numEvents) {
                  mcbooster::ParticlesSet_h particles; // vector of pointers to vectors of 4R
                  mcbooster::VariableSet_h variables;  // vector of pointers to vectors of Grealt
                  mcbooster::RealVector_h weights;     // vector of greal t
@@ -86,5 +86,5 @@ void init_Tddp4Pdf(py::module &m) {
 
                  return std::make_tuple(pyparticles, pyvariables, pyweights, pyflags);
              })
-        .def("setGenerationOffset", &TDDP4::setGenerationOffset, "off"_a);
+        .def("setGenerationOffset", &Amp4BodyT::setGenerationOffset, "off"_a);
 }

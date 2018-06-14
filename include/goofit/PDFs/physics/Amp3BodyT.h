@@ -55,7 +55,7 @@ relatively expensive to calculate.
 
 The constructor takes the measured decay time \f$t\f$, error on decay
 time \f$\sigma_t\f$, squared masses \f$m^2_{12}\f$ and \f$m^2_{13}\f$, event
-number, decay information (the same class as in `DalitzPlotPdf`; it
+number, decay information (the same class as in `Amp3Body`; it
 also holds the mixing parameters \f$x\f$ and \f$y\f$ and lifetime \f$\tau\f$),
 time-resolution function, efficiency, and optionally a mistag
 fraction. A variant constructor takes, instead of a single

@@ -10,7 +10,7 @@ goofit_add_library(_Physics STATIC
     DalitzPlotHelpers.cpp
     DalitzPlotter.cpp
     IncoherentSumPdf.cpp
-    LineshapesPdf.cpp
+    Lineshapes.cpp
     MixingTimeResolution_Aux.cpp
     ResonancePdf.cpp
     SpinFactors.cpp

@@ -215,15 +215,15 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
 __device__ device_function_ptr ptr_to_Tddp = device_Tddp;
 
 __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
-                              Observable _dtime,
-                              Observable _sigmat,
-                              Observable m12,
-                              Observable m13,
-                              EventNumber eventNumber,
-                              DecayInfo3t decay,
-                              MixingTimeResolution *r,
-                              GooPdf *efficiency,
-                              Observable *mistag)
+                                  Observable _dtime,
+                                  Observable _sigmat,
+                                  Observable m12,
+                                  Observable m13,
+                                  EventNumber eventNumber,
+                                  DecayInfo3t decay,
+                                  MixingTimeResolution *r,
+                                  GooPdf *efficiency,
+                                  Observable *mistag)
     : Amp3BodyBase(n, _dtime, _sigmat, m12, m13, eventNumber)
     , decayInfo(decay)
     , _m12(m12)
@@ -308,16 +308,16 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
 }
 
 __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
-                              Observable _dtime,
-                              Observable _sigmat,
-                              Observable m12,
-                              Observable m13,
-                              EventNumber eventNumber,
-                              DecayInfo3t decay,
-                              std::vector<MixingTimeResolution *> &r,
-                              GooPdf *efficiency,
-                              Observable md0,
-                              Observable *mistag)
+                                  Observable _dtime,
+                                  Observable _sigmat,
+                                  Observable m12,
+                                  Observable m13,
+                                  EventNumber eventNumber,
+                                  DecayInfo3t decay,
+                                  std::vector<MixingTimeResolution *> &r,
+                                  GooPdf *efficiency,
+                                  Observable md0,
+                                  Observable *mistag)
     : Amp3BodyBase(n, _dtime, _sigmat, m12, m13, eventNumber, md0)
     , decayInfo(decay)
     , _m12(m12)

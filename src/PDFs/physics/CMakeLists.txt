@@ -1,34 +1,45 @@
+# This is only needed for IDE header display
+file(GLOB_RECURSE
+    GOOFIT_PHYSICS_HEADERS
+    "${PROJECT_SOURCE_DIR}/include/goofit/physics/*.h"
+)
+
 goofit_add_library(PdfPhysics
-    Amp4Body.cu
     Amp3Body.cu
-    Amp4Body_TD.cu
     Amp3Body_TD.cu
+    Amp3Body_IS.cu
+    Amp4Body.cu
+    Amp4Body_TD.cu
     Amp4BodyGlobals.cu
+    Amp3Body_IS.cu
     Amplitude.cu
     DalitzPlotHelpers.cu
-    SpecialResonanceIntegrator.cu
-    SpecialResonanceCalculator.cu
-    SpecialDalitzIntegrator.cu
-    SpecialWaveCalculator.cu
     DalitzVetoPdf.cu
-    IncoherentSumPdf.cu
-    MixingTimeResolution_Aux.cu
     SpinFactors.cu
-    ThreeGaussResolution_Aux.cu
-    TruthResolution_Aux.cu
-    AmpCalc.cu
-    LSCalculator.cu
-    NormIntegrator.cu
-    NormLSCalculator.cu
-    NormSpinCalculator.cu
-    SFCalculator.cu
-    AmpCalc_TD.cu
-    FourDblTupleAdd.cu
-    LSCalculator_TD.cu
-    NormIntegrator_TD.cu
-    NormLSCalculator_TD.cu
-    NormSpinCalculator_TD.cu
-    SFCalculator_TD.cu
+    MixingTimeResolution.cu
+    ThreeGaussResolution.cu
+    TruthResolution.cu
+
+    detail/AmpCalc.cu
+    detail/AmpCalc_TD.cu
+    detail/LSCalculator.cu
+    detail/LSCalculator_TD.cu
+    detail/NormIntegrator.cu
+    detail/NormIntegrator_TD.cu
+    detail/NormLSCalculator.cu
+    detail/NormLSCalculator_TD.cu
+    detail/NormSpinCalculator.cu
+    detail/NormSpinCalculator_TD.cu
+    detail/SFCalculator.cu
+    detail/SFCalculator_TD.cu
+    detail/FourDblTupleAdd.cu
+    detail/SpecialIncoherentIntegrator.cu
+    detail/SpecialIncoherentResonanceCalculator.cu
+    detail/SpecialResonanceIntegrator.cu
+    detail/SpecialResonanceCalculator.cu
+    detail/SpecialDalitzIntegrator.cu
+    detail/SpecialWaveCalculator.cu
+
     lineshapes/Lineshape.cu
     lineshapes/BW.cu
     lineshapes/Common.cu
@@ -39,6 +50,7 @@ goofit_add_library(PdfPhysics
     lineshapes/GSpline.cu
     lineshapes/NonRes.cu
     lineshapes/One.cu
+
     resonances/Resonance.cu
     resonances/FLATTE.cu
     resonances/Gauss.cu
@@ -47,38 +59,12 @@ goofit_add_library(PdfPhysics
     resonances/NonRes.cu
     resonances/RBW.cu
     resonances/Spline.cu
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/AmpNBodyBase.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Amp3BodyBase.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Amp3Body.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Amp3Body_TD.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Amp4BodyBase.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Amp4Body.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Amp4Body_TD.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/detail/NormSpinCalculator.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/detail/NormSpinCalculator_TD.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/DalitzPlotHelpers.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/DalitzPlotPdf.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/DalitzPlotter.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/DalitzVetoPdf.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/detail/EvalVar.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/IncoherentSumPdf.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Lineshapes.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/MixingTimeResolution.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/ResonancePdf.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/SpinFactors.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/detail/SpinHelper.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/detail/SpecialDalitzIntegrator.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/detail/SpecialWaveCalculator.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/detail/SpecialComplexSum.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/ThreeGaussResolution.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/TruthResolution.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/detail/UserUtils.h
+    ${GOOFIT_PHYSICS_HEADERS}
 )
 
 if(GOOFIT_KMATRIX AND GOOFIT_DEVICE STREQUAL CUDA)
     target_sources(PdfPhysics PRIVATE
         lineshapes/kMatrix.cu
-        ${PROJECT_SOURCE_DIR}/include/goofit/detail/compute_inverse5.h
     )
 endif()
 

@@ -31,8 +31,8 @@ class.
 #include <mcbooster/Vector4R.h>
 
 #include <goofit/PDFs/physics/Amp4BodyGlobals.h>
-#include <goofit/PDFs/physics/detail/AmpCalc_TD.h>
 #include <goofit/PDFs/physics/Amplitude.h>
+#include <goofit/PDFs/physics/detail/AmpCalc_TD.h>
 #include <goofit/PDFs/physics/detail/FourDblTupleAdd.h>
 #include <goofit/PDFs/physics/detail/LSCalculator_TD.h>
 #include <goofit/PDFs/physics/detail/NormIntegrator_TD.h>
@@ -204,12 +204,12 @@ __device__ fptype device_Amp4Body_TD(fptype *evt, ParameterContainer &pc) {
 __device__ device_function_ptr ptr_to_Amp4Body_TD = device_Amp4Body_TD;
 
 __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
-                              std::vector<Observable> observables,
-                              DecayInfo4t decay,
-                              MixingTimeResolution *Tres,
-                              GooPdf *efficiency,
-                              Observable *mistag,
-                              unsigned int MCeventsNorm)
+                                  std::vector<Observable> observables,
+                                  DecayInfo4t decay,
+                                  MixingTimeResolution *Tres,
+                                  GooPdf *efficiency,
+                                  Observable *mistag,
+                                  unsigned int MCeventsNorm)
     : Amp4BodyBase(n)
     , decayInfo(decay)
     , resolution(Tres)

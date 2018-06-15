@@ -15,7 +15,7 @@ namespace GooFit {
 
 // This constructor is protected
 Lineshape::Lineshape(std::string name, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
-    : GooPdf(name)
+    : AmpComponent(name)
     , _L(L)
     , _Mpair(Mpair)
     , _FormFac(FormFac)

@@ -11,8 +11,8 @@ See *.cu file for more details
 #include <goofit/PDFs/physics/Amp4BodyBase.h>
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <goofit/PDFs/physics/MixingTimeResolution.h>
-#include <goofit/PDFs/physics/detail/NormSpinCalculator_TD.h>
 #include <goofit/PDFs/physics/SpinFactors.h>
+#include <goofit/PDFs/physics/detail/NormSpinCalculator_TD.h>
 
 #include <mcbooster/GContainers.h>
 
@@ -31,12 +31,12 @@ class Lineshape;
 class Amp4Body_TD : public Amp4BodyBase {
   public:
     Amp4Body_TD(std::string n,
-              std::vector<Observable> observables,
-              DecayInfo4t decay,
-              MixingTimeResolution *r,
-              GooPdf *eff,
-              Observable *mistag,
-              unsigned int MCeventsNorm = 5e6);
+                std::vector<Observable> observables,
+                DecayInfo4t decay,
+                MixingTimeResolution *r,
+                GooPdf *eff,
+                Observable *mistag,
+                unsigned int MCeventsNorm = 5e6);
     // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the
     // coherent sum. The caching method requires that it be done this way or the ProdPdf
     // normalization will get *really* confused and give wrong answers.

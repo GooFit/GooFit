@@ -199,6 +199,7 @@ conversion['2.2'] = [
     (r'DP4Pdf', r'Amp4Body'),
     (r'TDDP4', r'Amp4Body_TD'),
     (r'LineshapesPdf', r'Lineshapes'),
+    (r'IncoherentSumPdf', r'Amp3Body_IS'),
 ]
 
 def fix_text(contents, version='2.0'):

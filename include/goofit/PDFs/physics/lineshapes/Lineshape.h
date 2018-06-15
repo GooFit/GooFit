@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <goofit/PDFs/GooPdf.h>
+#include <goofit/PDFs/physics/AmpComponent.h>
 #include <goofit/PDFs/physics/ResonancePdf.h>
 #include <goofit/Variable.h>
 #include <goofit/Version.h>
@@ -23,7 +23,7 @@ enum class FF : unsigned int { One = 0, BL, BL_Prime, BL2 };
 /// GooPdf so as to take advantage of the
 /// infrastructure, but will crash if used on its own.
 
-class Lineshape : public GooPdf {
+class Lineshape : public AmpComponent {
   protected:
     friend class Amp4Body;
     friend class Amp4Body_TD;

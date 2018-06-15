@@ -31,8 +31,8 @@ class.
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/Amp4Body.h>
 #include <goofit/PDFs/physics/Amp4BodyGlobals.h>
-#include <goofit/PDFs/physics/detail/AmpCalc.h>
 #include <goofit/PDFs/physics/Amplitude.h>
+#include <goofit/PDFs/physics/detail/AmpCalc.h>
 #include <goofit/PDFs/physics/detail/EvalVar.h>
 #include <goofit/PDFs/physics/detail/LSCalculator.h>
 #include <goofit/PDFs/physics/detail/NormIntegrator.h>

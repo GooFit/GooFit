@@ -1,6 +1,6 @@
 #pragma once
 
-#include <goofit/PDFs/GooPdf.h>
+#include <goofit/PDFs/physics/AmpComponent.h>
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <goofit/detail/Complex.h>
 
@@ -25,7 +25,7 @@ __device__ fptype spinFactor(unsigned int spin,
 /**
 Represents a resonance-shape parametrization, the
 \f$B_i\f$ that appear in the equations for GooFit::Amp3Body,
-GooFit::IncoherentSumPdf, and GooFit::Amp3Body_TD. Canonically a relativistic
+GooFit::Amp3Body_IS, and GooFit::Amp3Body_TD. Canonically a relativistic
 Breit-Wigner. The constructor takes the real and imaginary parts of
 the coefficient \f$\alpha\f$ (note that this is actually used by the
 containing function), and additional parameters depending on which
@@ -54,10 +54,10 @@ component in one of the friend classes. It extends
 GooPdf so as to take advantage of the
 infrastructure, but will crash if used on its own.
 **/
-class ResonancePdf : public GooPdf {
+class ResonancePdf : public AmpComponent {
     friend class Amp3Body;
     friend class Amp3Body_TD;
-    friend class IncoherentSumPdf;
+    friend class Amp3Body_IS;
 
   public:
     ~ResonancePdf() override = default;
@@ -70,7 +70,7 @@ class ResonancePdf : public GooPdf {
   protected:
     /// Special constructor that subclasses use
     ResonancePdf(std::string name, Variable ar, Variable ai)
-        : GooPdf(name)
+        : AmpComponent(name)
         , amp_real(ar)
         , amp_imag(ai) {}
 

@@ -6,6 +6,7 @@ This code is not sufficently tested yet and still under heavy development!
 Helper functions
 */
 
+#include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 
 namespace GooFit {

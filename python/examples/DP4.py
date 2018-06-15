@@ -224,7 +224,7 @@ coefficients = (constantOne,)
 offsets      = (constantZero, constantZero)
 
 eff = PolynomialPdf("constantEff", observables, coefficients, offsets, 0)
-dp = DPPdf("test", observables, DK3P_DI, eff, 1000000)
+dp = Amp4Body("test", observables, DK3P_DI, eff, 1000000)
 
 constant = (Variable("constant", 0.1),)
 constant2 = Variable("constant2", 1.0)

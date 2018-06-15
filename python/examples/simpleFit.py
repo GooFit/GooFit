@@ -67,7 +67,7 @@ def fitAndPlot(total, data, xvar, filename):
             bins=xvar.numbins,
             range=(xvar.lowerlimit, xvar.upperlimit),
             histtype='step',
-            normed=True)
+            density=True)
     ax.plot(xs.flatten(), pdfVals[0])
     plt.tight_layout()
     fig.savefig(filename)

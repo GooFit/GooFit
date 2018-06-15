@@ -173,7 +173,7 @@ offsets = (constantZero, constantZero,)
 coefficients = (constantOne,)
 
 eff = PolynomialPdf("constantEff", observables, coefficients, offsets, 0)
-dp  = DPPdf("test", observables, DK3P_DI, eff, 5)
+dp  = Amp4Body("test", observables, DK3P_DI, eff, 5)
 
 for k in range(4):
     numEvents = 1000000

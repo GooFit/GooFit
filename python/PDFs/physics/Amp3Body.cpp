@@ -34,5 +34,5 @@ void init_Amp3Body(py::module &m) {
 
         ;
 
-    m.attr("Amp3Body") = cls;
+    m.attr("DalitzPlotPdf") = cls;
 }

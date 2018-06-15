@@ -3,6 +3,12 @@ file(GLOB_RECURSE GOOFIT_PHYSICS_HEADERS
     "${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/*.h"
     )
 
+if(GOOFIT_KMATRIX)
+    set(GOOFIT_KMATRIX_SOURCE lineshapes/kMatrix.cu)
+else()
+    set(GOOFIT_KMATRIX_SOURCE )
+endif()
+
 goofit_add_library(PDFPhysics
     Amp3Body.cu
     Amp3Body_TD.cu
@@ -49,6 +55,7 @@ goofit_add_library(PDFPhysics
     lineshapes/GSpline.cu
     lineshapes/NonRes.cu
     lineshapes/One.cu
+    ${GOOFIT_KMATRIX_SOURCE}
 
     resonances/Resonance.cu
     resonances/FLATTE.cu
@@ -60,12 +67,6 @@ goofit_add_library(PDFPhysics
     resonances/Spline.cu
     ${GOOFIT_PHYSICS_HEADERS}
 )
-
-if(GOOFIT_KMATRIX AND GOOFIT_DEVICE STREQUAL CUDA)
-    target_sources(PDFPhysics PRIVATE
-        lineshapes/kMatrix.cu
-    )
-endif()
 
 set_target_properties(PDFPhysics PROPERTIES FOLDER "pdfs")
 

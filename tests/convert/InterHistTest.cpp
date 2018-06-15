@@ -49,7 +49,7 @@ TEST_CASE("InterHistPdf", "[convert][fit]") {
 
     bool fitter = test_fitter_minuit1(&pdf);
 
-    // CHECK(fitter);
+    CHECK(fitter);
     // CHECK(alpha.getError() ==  .1);
     // CHECK(alpha.getValue() == Approx(0.665178392).margin(alpha.getError() * 3));
 }

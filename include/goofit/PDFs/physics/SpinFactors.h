@@ -8,6 +8,7 @@ See *.cu file for more details
 
 #pragma once
 
+#include <goofit/PDFs/physics/AmpComponent.h>
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 
 namespace GooFit {
@@ -33,7 +34,7 @@ enum class SF_4Body {
     ONE
 };
 
-class SpinFactor : public GooPdf {
+class SpinFactor : public AmpComponent {
     friend class Amp4Body;
 
   private:

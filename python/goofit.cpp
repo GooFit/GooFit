@@ -58,7 +58,7 @@ void init_Amp4Body(py::module &);
 void init_Amp4Body_TD(py::module &);
 void init_DalitzPlotter(py::module &);
 void init_DalitzVetoPdf(py::module &);
-void init_IncoherentSumPdf(py::module &);
+void init_Amp3Body_IS(py::module &);
 void init_Lineshapes(py::module &);
 void init_MixingTimeResolution(py::module &);
 void init_ResonancePdf(py::module &);
@@ -128,7 +128,7 @@ PYBIND11_MODULE(_goofit, m) {
     init_Amp4Body(m);
     init_Amp4Body_TD(m);
     init_DalitzVetoPdf(m);
-    init_IncoherentSumPdf(m);
+    init_Amp3Body_IS(m);
     init_Lineshapes(m);
     init_MixingTimeResolution(m);
     init_ResonancePdf(m);

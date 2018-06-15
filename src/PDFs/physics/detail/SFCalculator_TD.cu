@@ -1,8 +1,8 @@
 #include <goofit/PDFs/physics/detail/SFCalculator_TD.h>
 
 #include <goofit/PDFs/ParameterContainer.h>
-#include <goofit/PDFs/physics/detail/EvalVar.h>
 #include <goofit/PDFs/physics/SpinFactors.h>
+#include <goofit/PDFs/physics/detail/EvalVar.h>
 
 namespace GooFit {
 

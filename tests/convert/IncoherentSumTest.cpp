@@ -2,7 +2,7 @@
 
 #include "testhelpers.h"
 #include <goofit/PDFs/basic/GaussianPdf.h>
-#include <goofit/PDFs/physics/IncoherentSumPdf.h>
+#include <goofit/PDFs/physics/Amp3Body_IS.h>
 #include <goofit/PDFs/physics/ResonancePdf.h>
 #include <goofit/UnbinnedDataSet.h>
 
@@ -13,7 +13,7 @@
 using namespace std;
 using namespace GooFit;
 
-TEST_CASE("IncoherentSumPdf", "[convert][fit]") {
+TEST_CASE("Amp3Body_IS", "[convert][fit]") {
     const double _mD0     = 1.86484;
     const double _mD02    = _mD0 * _mD0;
     const double _mD02inv = 1.0 / _mD02;
@@ -205,7 +205,7 @@ TEST_CASE("IncoherentSumPdf", "[convert][fit]") {
     GaussianPdf eff{"gauss", m12, alpha, sigma};
 
     // GooPdf object
-    IncoherentSumPdf pdf{"pdf", m12, m13, evtNum, di, &eff};
+    Amp3Body_IS pdf{"pdf", m12, m13, evtNum, di, &eff};
     pdf.setData(&data);
     pdf.setDataSize(data.getNumEvents(), 3);
 

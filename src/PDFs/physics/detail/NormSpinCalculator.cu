@@ -1,22 +1,16 @@
-#include <goofit/PDFs/physics/detail/NormSpinCalculator_TD.h>
+#include <goofit/PDFs/physics/detail/NormSpinCalculator.h>
 
 #include <goofit/PDFs/ParameterContainer.h>
-#include <goofit/PDFs/physics/detail/EvalVar.h>
 #include <goofit/PDFs/physics/SpinFactors.h>
+#include <goofit/PDFs/physics/detail/EvalVar.h>
 
 namespace GooFit {
 
-NormSpinCalculator_TD::NormSpinCalculator_TD() = default;
+NormSpinCalculator::NormSpinCalculator() = default;
 
-__device__ fptype NormSpinCalculator_TD::operator()(
+__device__ fptype NormSpinCalculator::operator()(
     thrust::tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t)
     const {
-    // unsigned int *indices = paramIndices + _parameters; // Jump to DALITZPLOT position within parameters array
-    // int parameter_i       = 12 + (2 * indices[6]) + (indices[3] * 2)
-    //                  + (_spinfactor_i * 2); // Find position of this resonance relative to DALITZPLOT start
-    // unsigned int functn_i = indices[parameter_i];
-    // unsigned int params_i = indices[parameter_i + 1];
-
     fptype m12   = (thrust::get<0>(t));
     fptype m34   = (thrust::get<1>(t));
     fptype cos12 = (thrust::get<2>(t));
@@ -25,15 +19,14 @@ __device__ fptype NormSpinCalculator_TD::operator()(
 
     ParameterContainer pc;
 
-    fptype M  = pc.getConstant(1);
-    fptype m1 = pc.getConstant(2);
-    fptype m2 = pc.getConstant(3);
-    fptype m3 = pc.getConstant(4);
-    fptype m4 = pc.getConstant(5);
-
-    // Increment to TDDP function:
     while(pc.funcIdx < dalitzFuncId)
         pc.incrementIndex();
+
+    fptype M  = pc.getConstant(0);
+    fptype m1 = pc.getConstant(1);
+    fptype m2 = pc.getConstant(2);
+    fptype m3 = pc.getConstant(3);
+    fptype m4 = pc.getConstant(4);
 
     fptype vecs[16];
     get4Vecs(vecs, m12, m34, cos12, cos34, phi, M, m1, m2, m3, m4);
@@ -43,7 +36,6 @@ __device__ fptype NormSpinCalculator_TD::operator()(
     //   printf("evt %i vec%i %.5g, %.5g, %.5g, %.5g\n", evtNum,2, vecs[8], vecs[9], vecs[10], vecs[11]);
     //   printf("evt %i vec%i %.5g, %.5g, %.5g, %.5g\n", evtNum,3, vecs[12], vecs[13], vecs[14], vecs[15]);
     // // }
-
     while(pc.funcIdx < _spinfactor_i)
         pc.incrementIndex();
 
@@ -51,8 +43,7 @@ __device__ fptype NormSpinCalculator_TD::operator()(
     fptype sf = (*func)(vecs, pc);
 
     // printf("NormSF evt:%.5g, %.5g, %.5g, %.5g, %.5g\n", m12, m34, cos12, cos34, phi);
-    // printf("NormSF %i, %.7g\n",_spinfactor_i, sf );
-    // THREAD_SYNCH
+    // printf("NormSF %i, %.5g\n",_spinfactor_i, sf );
     return sf;
 }
 

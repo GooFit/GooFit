@@ -1,12 +1,13 @@
 #pragma once
 
-#include <goofit/PDFs/GooPdf.h>
+#include <goofit/PDFs/Component.h>
+#include <goofit/detail/Complex.h>
 
 namespace GooFit {
 
-class ComplexComponent : public GooPdf {
+class ComplexComponent : public Component {
   public:
-    using GooPdf::GooPdf;
+    using Component::Component;
 };
 
 } // namespace GooFit

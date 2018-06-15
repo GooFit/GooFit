@@ -8,7 +8,8 @@ See *.cu file for more details
 
 #pragma once
 
-#include <goofit/PDFs/GooPdf.h>
+#include <goofit/GlobalCudaDefines.h>
+#include <goofit/Variable.h>
 #include <goofit/detail/Complex.h>
 
 #include <thrust/device_vector.h>
@@ -18,6 +19,7 @@ namespace GooFit {
 
 class ResonancePdf;
 class Amplitude;
+class ParameterContainer;
 
 template <typename E>
 constexpr typename std::underlying_type<E>::type enum_to_underlying(E e) {

@@ -34,12 +34,14 @@
 #include <goofit/PDFs/combine/EventWeightedAddPdf.h>
 #include <goofit/PDFs/combine/MappedPdf.h>
 #include <goofit/PDFs/combine/ProdPdf.h>
+#include <goofit/PDFs/physics/Amp3Body_IS.h>
 #include <goofit/PDFs/physics/Amp3Body_TD.h>
 #include <goofit/PDFs/physics/DalitzVetoPdf.h>
-#include <goofit/PDFs/physics/IncoherentSumPdf.h>
 #include <goofit/PDFs/physics/ResonancePdf.h>
 #include <goofit/PDFs/physics/ThreeGaussResolution.h>
 #include <goofit/PDFs/physics/TruthResolution.h>
+#include <goofit/PDFs/physics/detail/SpecialIncoherentIntegrator.h>
+#include <goofit/PDFs/physics/detail/SpecialIncoherentResonanceCalculator.h>
 #include <goofit/Variable.h>
 #include <goofit/utilities/Uncertain.h>
 
@@ -156,13 +158,13 @@ std::vector<PdfBase *> comps;
 TH1F *dataTimePlot        = nullptr;
 TH1F *loM23Sigma          = nullptr;
 TH1F *hiM23Sigma          = nullptr;
-Amp3Body_TD *signalDalitz   = nullptr;
-IncoherentSumPdf *incsum1 = nullptr;
-IncoherentSumPdf *incsum2 = nullptr;
-IncoherentSumPdf *incsum3 = nullptr;
-IncoherentSumPdf *incsum4 = nullptr;
-IncoherentSumPdf *incsum5 = nullptr;
-IncoherentSumPdf *incsum6 = nullptr;
+Amp3Body_TD *signalDalitz = nullptr;
+Amp3Body_IS *incsum1      = nullptr;
+Amp3Body_IS *incsum2      = nullptr;
+Amp3Body_IS *incsum3      = nullptr;
+Amp3Body_IS *incsum4      = nullptr;
+Amp3Body_IS *incsum5      = nullptr;
+Amp3Body_IS *incsum6      = nullptr;
 GooPdf *sig0_jsugg        = nullptr;
 GooPdf *bkg2_jsugg        = nullptr;
 GooPdf *bkg3_jsugg        = nullptr;
@@ -805,8 +807,8 @@ Amp3Body_TD *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0
     Amp3Body_TD *mixPdf = 0;
 
     if(massd0)
-        mixPdf
-            = new Amp3Body_TD("mixPdf", *dtime, *sigma, *m12, *m13, *eventNumber, dtop0pp, resList, eff, *massd0, wBkg1);
+        mixPdf = new Amp3Body_TD(
+            "mixPdf", *dtime, *sigma, *m12, *m13, *eventNumber, dtop0pp, resList, eff, *massd0, wBkg1);
     else
         mixPdf = new Amp3Body_TD("mixPdf", *dtime, *sigma, *m12, *m13, *eventNumber, dtop0pp, resolution, eff, wBkg1);
 
@@ -3357,7 +3359,7 @@ GooPdf *makeBkg2DalitzPdf(bool fixem = true) {
         comps.push_back(bkg2_rho_poly);
         comps.push_back(bkg2_loZ);
         ProdPdf *bkg2_rho_mods = new ProdPdf("bkg2_rho_mods", comps);
-        incsum1 = new IncoherentSumPdf("incsum1", *m12, *m13, *eventNumber, special_rho_decay, bkg2_rho_mods);
+        incsum1                = new Amp3Body_IS("incsum1", *m12, *m13, *eventNumber, special_rho_decay, bkg2_rho_mods);
 
         // Three spin-0 rho resonances to be added incoherently.
         DecayInfo3 incoherent_rho0s;
@@ -3402,7 +3404,7 @@ GooPdf *makeBkg2DalitzPdf(bool fixem = true) {
         comps.push_back(bkg2_loZ);
         ProdPdf *bkg2_rho_mods2 = new ProdPdf("bkg2_rho_mods2", comps);
 
-        incsum2 = new IncoherentSumPdf("incsum2", *m12, *m13, *eventNumber, incoherent_rho0s, bkg2_rho_mods2);
+        incsum2 = new Amp3Body_IS("incsum2", *m12, *m13, *eventNumber, incoherent_rho0s, bkg2_rho_mods2);
 
         weights.clear();
         weights.push_back(constantOne);
@@ -3715,7 +3717,7 @@ GooPdf *makeBackground3DalitzParam() {
     // comps.push_back(bkg3_eff);
     // comps.push_back(bkg3_loZ);
     // ProdPdf* bkg3_pi0_mods = new ProdPdf("bkg3_pi0_mods", comps);
-    // incsum3 = new IncoherentSumPdf("incsum3", m12, m13, eventNumber, special_pi0_decay, bkg3_pi0_mods);
+    // incsum3 = new Amp3Body_IS("incsum3", m12, m13, eventNumber, special_pi0_decay, bkg3_pi0_mods);
 
     // Three spin-1 rho resonances to be added incoherently.
     DecayInfo3 incoherent_rhos;
@@ -3761,8 +3763,8 @@ GooPdf *makeBackground3DalitzParam() {
     // comps.push_back(bkg3_eff);
     // ProdPdf* bkg3_rho_mods = new ProdPdf("bkg3_rho_mods", comps);
 
-    // incsum4 = new IncoherentSumPdf("incsum4", m12, m13, eventNumber, incoherent_rhos, bkg3_rho_mods);
-    // incsum4 = new IncoherentSumPdf("incsum4", m12, m13, eventNumber, incoherent_rhos, kzero_veto);
+    // incsum4 = new Amp3Body_IS("incsum4", m12, m13, eventNumber, incoherent_rhos, bkg3_rho_mods);
+    // incsum4 = new Amp3Body_IS("incsum4", m12, m13, eventNumber, incoherent_rhos, kzero_veto);
 
     weights.clear();
     weights.push_back(constantOne);
@@ -3876,7 +3878,7 @@ GooPdf *makeBackground4DalitzParam() {
     comps.push_back(bkg4_pipi_transZ_total);
 
     ProdPdf *bkg4_pipi_mods = new ProdPdf("bkg4_pipi_mods", comps);
-    incsum5 = new IncoherentSumPdf("incsum5", *m12, *m13, *eventNumber, special_pipi_decay, bkg4_pipi_mods);
+    incsum5                 = new Amp3Body_IS("incsum5", *m12, *m13, *eventNumber, special_pipi_decay, bkg4_pipi_mods);
 
     // Three spin-0 rho resonances to be added incoherently.
     DecayInfo3 incoherent_rho0s;
@@ -3917,8 +3919,8 @@ GooPdf *makeBackground4DalitzParam() {
     comps.push_back(kzero_veto);
     comps.push_back(bkg4_loZ);
     ProdPdf *bkg4_incrho_mods = new ProdPdf("bkg4_incrho_mods", comps);
-    incsum6 = new IncoherentSumPdf("incsum6", *m12, *m13, *eventNumber, incoherent_rho0s, bkg4_incrho_mods);
-    // incsum6 = new IncoherentSumPdf("incsum6", m12, m13, eventNumber, incoherent_rho0s, kzero_veto);
+    incsum6 = new Amp3Body_IS("incsum6", *m12, *m13, *eventNumber, incoherent_rho0s, bkg4_incrho_mods);
+    // incsum6 = new Amp3Body_IS("incsum6", m12, m13, eventNumber, incoherent_rho0s, kzero_veto);
 
     weights.clear();
     weights.push_back(constantOne);

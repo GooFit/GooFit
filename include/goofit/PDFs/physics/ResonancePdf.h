@@ -1,6 +1,5 @@
 #pragma once
 
-#include <goofit/PDFs/GooPdf.h>
 #include <goofit/detail/Complex.h>
 
 #include <goofit/PDFs/physics/resonances/Resonance.h>

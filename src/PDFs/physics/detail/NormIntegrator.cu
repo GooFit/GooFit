@@ -2,8 +2,8 @@
 
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/Amp4BodyGlobals.h>
-#include <goofit/PDFs/physics/detail/EvalVar.h>
 #include <goofit/PDFs/physics/SpinFactors.h>
+#include <goofit/PDFs/physics/detail/EvalVar.h>
 #include <goofit/detail/Complex.h>
 
 #include <thrust/functional.h>

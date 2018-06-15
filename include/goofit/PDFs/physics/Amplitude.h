@@ -1,6 +1,6 @@
 #pragma once
 
-#include <goofit/PDFs/GooPdf.h>
+#include <goofit/PDFs/physics/AmpComponent.h>
 #include <goofit/Variable.h>
 #include <goofit/detail/Complex.h>
 
@@ -11,7 +11,7 @@ namespace GooFit {
 class Lineshape;
 class SpinFactor;
 
-class Amplitude : public GooPdf {
+class Amplitude : public AmpComponent {
     friend class Amp4Body;
     friend class Amp4Body_TD;
 

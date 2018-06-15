@@ -1,3 +1,7 @@
+file(GLOB GOOFIT_EXTRA_HEADERS
+    "${PROJECT_SOURCE_DIR}/include/goofit/detail/*.h"
+    "${PROJECT_SOURCE_DIR}/include/goofit/utilities/*.h"
+    )
 
 if(ROOT_FOUND)
 goofit_add_library(FitManager1
@@ -43,9 +47,6 @@ goofit_add_library(FunctorWriter
 
 goofit_add_library(Application
     Application.cpp
-    ${PROJECT_SOURCE_DIR}/include/goofit/detail/SmartVector.h
-    ${PROJECT_BINARY_DIR}/include/goofit/detail/Backtrace.h
-    ${PROJECT_BINARY_DIR}/include/goofit/detail/ThrustOverrideConfig.h
     ${PROJECT_SOURCE_DIR}/include/goofit/Application.h
     ${PROJECT_SOURCE_DIR}/include/goofit/Color.h
     ${PROJECT_SOURCE_DIR}/include/goofit/Eigen.h
@@ -53,10 +54,7 @@ goofit_add_library(Application
     ${PROJECT_SOURCE_DIR}/include/goofit/FitControl.h
     ${PROJECT_SOURCE_DIR}/include/goofit/GlobalCudaDefines.h
     ${PROJECT_SOURCE_DIR}/include/goofit/Log.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/detail/Complex.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/detail/ThrustOverride.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/utilities/Style.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/utilities/Uncertain.h
+    ${GOOFIT_EXTRA_HEADERS}
     )
 
 if(GOOFIT_DEVICE STREQUAL CUDA)

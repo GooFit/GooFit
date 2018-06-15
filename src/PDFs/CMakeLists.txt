@@ -1,29 +1,28 @@
+# This is only needed for IDE header display
+file(GLOB GOOFIT_PDF_HEADERS
+    "${PROJECT_SOURCE_DIR}/include/goofit/PDFs/*.h"
+    "${PROJECT_SOURCE_DIR}/include/goofit/PDFs/detail/*.h"
+    "${PROJECT_SOURCE_DIR}/include/goofit/PDFs/utilities/*.h"
+    )
+
 goofit_add_library(PDFCore
     detail/Globals.cu
     detail/Globals.cpp
-    MetricPointer.cu
-    GooPdf.cu
     GooPdf.cpp
+    GooPdf.cu
+    MetricPointer.cu
     MetricTaker.cu
     ParameterContainer.cu
     PdfBase.cu
-    utility/VariableBinTransform1DPdf.cu
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/detail/Globals.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/GooPdf.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/CombinePdf.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/SimplePdf.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/ComplexComponent.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/MetricPointer.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/MetricTaker.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/ParameterContainer.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/detail/ComplexUtils.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/utility/VariableBinTransform1DPdf.h
+    utilities/VariableBinTransform1DPdf.cu
+    ${GOOFIT_PDF_HEADERS}
 )
 target_link_libraries(PDFCore PUBLIC goofit_base)
+set_target_properties(PDFCore PROPERTIES FOLDER "pdfs")
 
 add_subdirectory(basic)
 add_subdirectory(combine)
 add_subdirectory(physics)
 
 add_library(PDFs INTERFACE)
-target_link_libraries(PDFs INTERFACE PdfBasic PdfCombine PdfPhysics)
+target_link_libraries(PDFs INTERFACE PDFBasic PDFCombine PDFPhysics)

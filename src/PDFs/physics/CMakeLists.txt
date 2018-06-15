@@ -1,10 +1,9 @@
 # This is only needed for IDE header display
-file(GLOB_RECURSE
-    GOOFIT_PHYSICS_HEADERS
-    "${PROJECT_SOURCE_DIR}/include/goofit/physics/*.h"
-)
+file(GLOB_RECURSE GOOFIT_PHYSICS_HEADERS
+    "${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/*.h"
+    )
 
-goofit_add_library(PdfPhysics
+goofit_add_library(PDFPhysics
     Amp3Body.cu
     Amp3Body_TD.cu
     Amp3Body_IS.cu
@@ -63,9 +62,11 @@ goofit_add_library(PdfPhysics
 )
 
 if(GOOFIT_KMATRIX AND GOOFIT_DEVICE STREQUAL CUDA)
-    target_sources(PdfPhysics PRIVATE
+    target_sources(PDFPhysics PRIVATE
         lineshapes/kMatrix.cu
     )
 endif()
 
-target_link_libraries(PdfPhysics PUBLIC PDFCore)
+set_target_properties(PDFPhysics PROPERTIES FOLDER "pdfs")
+
+target_link_libraries(PDFPhysics PUBLIC PDFCore)

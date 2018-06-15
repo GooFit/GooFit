@@ -1,4 +1,9 @@
-goofit_add_library(PdfBasic
+# This is only needed for IDE header display
+file(GLOB_RECURSE GOOFIT_BASIC_HEADERS
+    "${PROJECT_SOURCE_DIR}/include/goofit/PDFs/basic/*.h"
+    )
+
+goofit_add_library(PDFBasic
     ArgusPdf.cu
     BWPdf.cu
     BifurGaussPdf.cu
@@ -19,26 +24,8 @@ goofit_add_library(PdfBasic
     StepPdf.cu
     TrigThresholdPdf.cu
     VoigtianPdf.cu
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/basic/ArgusPdf.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/basic/BWPdf.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/basic/BifurGaussPdf.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/basic/BinTransformPdf.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/basic/CorrGaussianPdf.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/basic/CrystalBallPdf.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/basic/ExpGausPdf.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/basic/ExpPdf.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/basic/GaussianPdf.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/basic/InterHistPdf.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/basic/JohnsonSUPdf.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/basic/KinLimitBWPdf.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/basic/LandauPdf.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/basic/NovosibirskPdf.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/basic/PolynomialPdf.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/basic/ScaledGaussianPdf.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/basic/SmoothHistogramPdf.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/basic/StepPdf.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/basic/TrigThresholdPdf.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/basic/VoigtianPdf.h
+    ${GOOFIT_BASIC_HEADERS}
     )
 
-target_link_libraries(PdfBasic PUBLIC PDFCore)
+set_target_properties(PDFBasic PROPERTIES FOLDER "pdfs")
+target_link_libraries(PDFBasic PUBLIC PDFCore)

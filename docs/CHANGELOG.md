@@ -24,7 +24,11 @@ The internals of GooFit have been updated for GPU performance.  The new improvem
     * Added `get_event_size`, `get_bin_grid_size`, `reduce_with_metric`, `reduce_with_bins`, `evaluate_with_metric`
 * No longer limit the number of parameters and functions at compile time [#163]
     * Deleting a PDF or an Application will clear the GPU parameter/function memory
-
+* Internal rename, PDF structure, and breaking up of files [#167]
+    * All the Dalitz PDFs are now in AmpNBody (Old names and includes still provided for compatibility)
+    * Resonances and Lineshapes are now one per file
+    * All helper classes are split out and available in `PDFs/physics/detail`
+    * Inheritance structure added
 
 [#125]: https://github.com/GooFit/GooFit/pull/125
 [#148]: https://github.com/GooFit/GooFit/pull/148
@@ -36,6 +40,7 @@ The internals of GooFit have been updated for GPU performance.  The new improvem
 [#164]: https://github.com/GooFit/GooFit/pull/164
 [#165]: https://github.com/GooFit/GooFit/pull/165
 [#166]: https://github.com/GooFit/GooFit/pull/166
+[#167]: https://github.com/GooFit/GooFit/pull/167
 
 ## v2.1.3: Preparing for new indexing
 #### April 21, 2018
@@ -288,4 +293,3 @@ in that order.
 
 ## v0.1: First release
 #### April 11, 2013
-

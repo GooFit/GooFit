@@ -12,14 +12,14 @@
 using namespace GooFit;
 
 void init_Amp4Body(py::module &m) {
-    py::class_<Amp4Body, Amp4BodyBase>(m, "Amp4Body")
-        .def(py::init<std::string, std::vector<Observable>, DecayInfo4, GooPdf *>(),
-             "name"_a,
-             "observables"_a,
-             "decay"_a,
-             "eff"_a,
-             py::keep_alive<1, 4>(),
-             py::keep_alive<1, 5>())
+    py::class_<Amp4Body, Amp4BodyBase> cls(m, "Amp4Body");
+    cls.def(py::init<std::string, std::vector<Observable>, DecayInfo4, GooPdf *>(),
+            "name"_a,
+            "observables"_a,
+            "decay"_a,
+            "eff"_a,
+            py::keep_alive<1, 4>(),
+            py::keep_alive<1, 5>())
         .def(py::init<std::string, std::vector<Observable>, DecayInfo4, GooPdf *, unsigned int>(),
              "name"_a,
              "observables"_a,
@@ -74,4 +74,6 @@ void init_Amp4Body(py::module &m) {
              })
 
         ;
+
+    m.attr("DPPdf") = cls;
 }

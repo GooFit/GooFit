@@ -16,25 +16,25 @@ namespace py = pybind11;
 using namespace pybind11::literals;
 
 void init_Amp4Body_TD(py::module &m) {
-    py::class_<Amp4Body_TD, Amp4BodyBase>(m, "Amp4Body_TD")
-        .def(py::init<std::string,
-                      std::vector<Observable>,
-                      DecayInfo4t,
-                      MixingTimeResolution *,
-                      GooPdf *,
-                      Observable *,
-                      unsigned int>(),
-             "n"_a,
-             "observables"_a,
-             "decay"_a,
-             "r"_a,
-             "eff"_a,
-             "mistag"_a       = nullptr,
-             "MCeventsNorm"_a = 5e6,
-             py::keep_alive<1, 4>(),
-             py::keep_alive<1, 5>(),
-             py::keep_alive<1, 6>(),
-             py::keep_alive<1, 7>())
+    py::class_<Amp4Body_TD, Amp4BodyBase> cls(m, "Amp4Body_TD");
+    cls.def(py::init<std::string,
+                     std::vector<Observable>,
+                     DecayInfo4t,
+                     MixingTimeResolution *,
+                     GooPdf *,
+                     Observable *,
+                     unsigned int>(),
+            "n"_a,
+            "observables"_a,
+            "decay"_a,
+            "r"_a,
+            "eff"_a,
+            "mistag"_a       = nullptr,
+            "MCeventsNorm"_a = 5e6,
+            py::keep_alive<1, 4>(),
+            py::keep_alive<1, 5>(),
+            py::keep_alive<1, 6>(),
+            py::keep_alive<1, 7>())
 
         .def("GenerateSig",
              [](Amp4Body_TD &self, size_t numEvents) {
@@ -86,5 +86,9 @@ void init_Amp4Body_TD(py::module &m) {
 
                  return std::make_tuple(pyparticles, pyvariables, pyweights, pyflags);
              })
-        .def("setGenerationOffset", &Amp4Body_TD::setGenerationOffset, "off"_a);
+        .def("setGenerationOffset", &Amp4Body_TD::setGenerationOffset, "off"_a)
+
+        ;
+
+    m.attr("TDDP4") = cls;
 }

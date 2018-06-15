@@ -47,7 +47,7 @@ total.fitTo(data)
 
 # Plot data
 print(dat, dat.shape)
-plt.hist(dat, bins='auto', label='data', normed=True)
+plt.hist(dat, bins='auto', label='data', density=True)
 
 # Make grid and evaluate on it
 grid = total.makeGrid()

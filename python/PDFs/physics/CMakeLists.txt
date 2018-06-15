@@ -5,8 +5,8 @@ goofit_add_library(_Physics STATIC
     Amp3Body_TD.cpp
     Amp3Body_IS.cpp
     Amp4BodyBase.cpp
-    Amp4Body.cpp
-    Amp4Body_TD.cpp
+    Amp4Body.cu
+    Amp4Body_TD.cu
     DalitzVetoPdf.cpp
     DalitzPlotHelpers.cpp
     DalitzPlotter.cpp

@@ -2,9 +2,9 @@
 
 #include <pybind11/stl.h>
 
-#include <goofit/PDFs/physics/ThreeGaussResolution_Aux.h>
+#include <goofit/PDFs/physics/ThreeGaussResolution.h>
 #include <goofit/Variable.h>
-#include <goofit/docs/PDFs/physics/ThreeGaussResolution_Aux.h>
+#include <goofit/docs/PDFs/physics/ThreeGaussResolution.h>
 
 using namespace GooFit;
 

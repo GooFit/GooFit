@@ -4,7 +4,7 @@
 
 #include <goofit/PDFs/physics/Amp3Body_TD.h>
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
-#include <goofit/PDFs/physics/MixingTimeResolution_Aux.h>
+#include <goofit/PDFs/physics/MixingTimeResolution.h>
 #include <goofit/Variable.h>
 #include <goofit/docs/PDFs/physics/Amp3Body_TD.h>
 

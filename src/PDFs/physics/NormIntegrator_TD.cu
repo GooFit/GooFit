@@ -1,8 +1,8 @@
-#include <goofit/PDFs/physics/NormIntegrator_TD.h>
+#include <goofit/PDFs/physics/detail/NormIntegrator_TD.h>
 
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/Amp4BodyGlobals.h>
-#include <goofit/PDFs/physics/EvalVar.h>
+#include <goofit/PDFs/physics/detail/EvalVar.h>
 #include <goofit/PDFs/physics/SpinFactors.h>
 #include <goofit/detail/Complex.h>
 

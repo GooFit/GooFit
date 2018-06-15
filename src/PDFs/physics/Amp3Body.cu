@@ -1,8 +1,8 @@
 #include <goofit/Error.h>
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/Amp3Body.h>
-#include <goofit/PDFs/physics/SpecialResonanceCalculator.h>
-#include <goofit/PDFs/physics/SpecialResonanceIntegrator.h>
+#include <goofit/PDFs/physics/detail/SpecialResonanceCalculator.h>
+#include <goofit/PDFs/physics/detail/SpecialResonanceIntegrator.h>
 #include <goofit/PDFs/physics/resonances/Resonance.h>
 #include <goofit/detail/Complex.h>
 

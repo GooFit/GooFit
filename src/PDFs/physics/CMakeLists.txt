@@ -54,25 +54,25 @@ goofit_add_library(PdfPhysics
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Amp4BodyBase.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Amp4Body.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Amp4Body_TD.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/NormSpinCalculator.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/NormSpinCalculator_TD.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/detail/NormSpinCalculator.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/detail/NormSpinCalculator_TD.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/DalitzPlotHelpers.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/DalitzPlotPdf.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/DalitzPlotter.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/DalitzVetoPdf.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/EvalVar.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/detail/EvalVar.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/IncoherentSumPdf.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Lineshapes.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/MixingTimeResolution_Aux.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/MixingTimeResolution.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/ResonancePdf.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/SpinFactors.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/SpinHelper.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/SpecialDalitzIntegrator.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/SpecialWaveCalculator.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/SpecialComplexSum.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/ThreeGaussResolution_Aux.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/TruthResolution_Aux.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/UserUtils.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/detail/SpinHelper.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/detail/SpecialDalitzIntegrator.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/detail/SpecialWaveCalculator.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/detail/SpecialComplexSum.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/ThreeGaussResolution.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/TruthResolution.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/detail/UserUtils.h
 )
 
 if(GOOFIT_KMATRIX AND GOOFIT_DEVICE STREQUAL CUDA)

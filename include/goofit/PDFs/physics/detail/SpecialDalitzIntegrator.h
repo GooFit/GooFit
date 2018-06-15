@@ -2,7 +2,7 @@
 
 #include <goofit/PDFs/GooPdf.h>
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
-#include <goofit/PDFs/physics/MixingTimeResolution_Aux.h>
+#include <goofit/PDFs/physics/MixingTimeResolution.h>
 
 namespace GooFit {
 

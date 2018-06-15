@@ -2,9 +2,9 @@
 
 #include <pybind11/stl.h>
 
-#include <goofit/PDFs/physics/TruthResolution_Aux.h>
+#include <goofit/PDFs/physics/TruthResolution.h>
 #include <goofit/Variable.h>
-#include <goofit/docs/PDFs/physics/TruthResolution_Aux.h>
+#include <goofit/docs/PDFs/physics/TruthResolution.h>
 
 using namespace GooFit;
 

@@ -1,8 +1,8 @@
 #include <goofit/Catch.h>
 
 #include <Eigen/Dense>
-#include <goofit/PDFs/physics/EvalVar.h>
-#include <goofit/PDFs/physics/UserUtils.h>
+#include <goofit/PDFs/physics/detail/EvalVar.h>
+#include <goofit/PDFs/physics/detail/UserUtils.h>
 #include <mcbooster/EvaluateArray.h>
 
 using namespace GooFit;

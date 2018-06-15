@@ -1,8 +1,8 @@
 goofit_add_library(PdfPhysics
     Amp4Body.cu
     Amp3Body.cu
-    Amp4BodyT.cu
-    Amp3BodyT.cu
+    Amp4Body_TD.cu
+    Amp3Body_TD.cu
     Amp4BodyGlobals.cu
     Amplitude.cu
     DalitzPlotHelpers.cu
@@ -50,10 +50,10 @@ goofit_add_library(PdfPhysics
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/AmpNBodyBase.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Amp3BodyBase.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Amp3Body.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Amp3BodyT.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Amp3Body_TD.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Amp4BodyBase.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Amp4Body.h
-    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Amp4BodyT.h
+    ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/Amp4Body_TD.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/NormSpinCalculator.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/NormSpinCalculator_TD.h
     ${PROJECT_SOURCE_DIR}/include/goofit/PDFs/physics/DalitzPlotHelpers.h

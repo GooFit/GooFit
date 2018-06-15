@@ -7,7 +7,7 @@
 #include <goofit/Application.h>
 #include <goofit/PDFs/basic/PolynomialPdf.h>
 #include <goofit/PDFs/combine/AddPdf.h>
-#include <goofit/PDFs/physics/Amp4BodyT.h>
+#include <goofit/PDFs/physics/Amp4Body_TD.h>
 #include <goofit/PDFs/physics/Lineshapes.h>
 #include <goofit/PDFs/physics/SpinFactors.h>
 #include <goofit/PDFs/physics/TruthResolution_Aux.h>
@@ -152,7 +152,7 @@ int main(int argc, char **argv) {
 
     TruthResolution dat;
     PolynomialPdf eff{"constantEff", observables, coefficients, offsets, 0};
-    Amp4BodyT dp{"test", observables, DK3P_DI, &dat, &eff, 0, 1};
+    Amp4Body_TD dp{"test", observables, DK3P_DI, &dat, &eff, 0, 1};
 
     TFile file(output, "RECREATE");
     TTree tree("events", "events");

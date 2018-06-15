@@ -69,9 +69,9 @@ It is not suggested to try to use this thing from scratch. Start
 with a working example and modify it gradually.
 **/
 
-class Amp3BodyT : public Amp3BodyBase {
+class Amp3Body_TD : public Amp3BodyBase {
   public:
-    Amp3BodyT(std::string n,
+    Amp3Body_TD(std::string n,
               Observable _dtime,
               Observable _sigmat,
               Observable m12,
@@ -81,7 +81,7 @@ class Amp3BodyT : public Amp3BodyBase {
               MixingTimeResolution *r,
               GooPdf *eff,
               Observable *mistag = nullptr);
-    Amp3BodyT(std::string n,
+    Amp3Body_TD(std::string n,
               Observable _dtime,
               Observable _sigmat,
               Observable m12,

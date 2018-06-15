@@ -136,7 +136,7 @@ def main():
 
     res = TruthResolution()
     eff = PolynomialPdf("constantEff", observables, coefficients, offsets, 0)
-    dp  = Amp4BodyT("test", observables, DK3P_DI, res, eff, None, 1)
+    dp  = Amp4Body_TD("test", observables, DK3P_DI, res, eff, None, 1)
 
 
     for k in range(10):

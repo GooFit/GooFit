@@ -194,10 +194,10 @@ conversion['2.1'] = [
 
 conversion['2.2'] = [
     (r'DalitzPlotPdf', r'Amp3Body'),
-    (r'TddpPdf', r'Amp3BodyT'),
+    (r'TddpPdf', r'Amp3Body_TD'),
     (r'DPPdf', r'Amp4Body'),
     (r'DP4Pdf', r'Amp4Body'),
-    (r'TDDP4', r'Amp4BodyT'),
+    (r'TDDP4', r'Amp4Body_TD'),
     (r'LineshapesPdf', r'Lineshapes'),
 ]
 

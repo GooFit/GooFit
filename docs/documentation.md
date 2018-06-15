@@ -828,7 +828,7 @@ every thread.
 PDF implementations may override the `normalization` method, and among
 the default PDFs, both `AddPdf` and `ProdPdf` do so to ensure that their
 components are correctly normalized. Among the more specialized
-implementations, `Amp3BodyT` overrides `normalize` so that it may cache
+implementations, `Amp3Body_TD` overrides `normalize` so that it may cache
 the slowly-changing Breit-Wigner calculations, and also because its time
 dependence is analytically integrable and it is a good optimization to
 do only the Dalitz-plot part numerically. This points to a more general
@@ -1200,7 +1200,7 @@ documentation, helpful.
 -   GooFit::IncoherentSumPdf
 -   GooFit::MixingTimeResolution (in `MixingTimeResolution_Aux.h`)
 -   GooFit::ResonancePdf (subclasses not separately documented yet)
--   GooFit::Amp3BodyT
+-   GooFit::Amp3Body_TD
 -   GooFit::ThreeGaussResolution
 -   GooFit::TruthResolution
 

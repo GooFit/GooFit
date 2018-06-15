@@ -1,6 +1,6 @@
 #include <goofit/Error.h>
 #include <goofit/PDFs/ParameterContainer.h>
-#include <goofit/PDFs/physics/Amp3BodyT.h>
+#include <goofit/PDFs/physics/Amp3Body_TD.h>
 #include <goofit/PDFs/physics/SpecialComplexSum.h>
 #include <goofit/PDFs/physics/SpecialDalitzIntegrator.h>
 #include <goofit/PDFs/physics/SpecialWaveCalculator.h>
@@ -214,7 +214,7 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
 
 __device__ device_function_ptr ptr_to_Tddp = device_Tddp;
 
-__host__ Amp3BodyT::Amp3BodyT(std::string n,
+__host__ Amp3Body_TD::Amp3Body_TD(std::string n,
                               Observable _dtime,
                               Observable _sigmat,
                               Observable m12,
@@ -307,7 +307,7 @@ __host__ Amp3BodyT::Amp3BodyT(std::string n,
     setSeparateNorm();
 }
 
-__host__ Amp3BodyT::Amp3BodyT(std::string n,
+__host__ Amp3Body_TD::Amp3Body_TD(std::string n,
                               Observable _dtime,
                               Observable _sigmat,
                               Observable m12,
@@ -415,9 +415,9 @@ __host__ Amp3BodyT::Amp3BodyT(std::string n,
 }
 
 // Note: We need to manually populate the arrays so we can track the efficiency function!
-__host__ void Amp3BodyT::populateArrays() {
+__host__ void Amp3Body_TD::populateArrays() {
     // populate all the arrays
-    GOOFIT_TRACE("Amp3BodyT: Populating Arrays for {}", getName());
+    GOOFIT_TRACE("Amp3Body_TD: Populating Arrays for {}", getName());
 
     // reconfigure the host_parameters array with the new indexing scheme.
     GOOFIT_TRACE("host_parameters[{}] = {}", host_parameters.size(), parametersList.size());
@@ -474,7 +474,7 @@ __host__ void Amp3BodyT::populateArrays() {
     }
     // TODO: This might be easy to clean up with the smart vectors.
 }
-__host__ void Amp3BodyT::setDataSize(unsigned int dataSize, unsigned int evtSize) {
+__host__ void Amp3Body_TD::setDataSize(unsigned int dataSize, unsigned int evtSize) {
     // Default 5 is m12, m13, time, sigma_t, evtNum
     totalEventSize = evtSize;
     if(totalEventSize < 5)
@@ -520,7 +520,7 @@ __host__ void Amp3BodyT::setDataSize(unsigned int dataSize, unsigned int evtSize
     setForceIntegrals();
 }
 
-__host__ fptype Amp3BodyT::normalize() {
+__host__ fptype Amp3Body_TD::normalize() {
     recursiveSetNormalization(1.0); // Not going to normalize efficiency,
     // so set normalization factor to 1 so it doesn't get multiplied by zero.
     // Copy at this time to ensure that the SpecialWaveCalculators, which need the efficiency,

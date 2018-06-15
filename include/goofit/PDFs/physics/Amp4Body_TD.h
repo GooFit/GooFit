@@ -28,9 +28,9 @@ class SFCalculator_TD;
 class NormIntegrator_TD;
 class Lineshape;
 
-class Amp4BodyT : public Amp4BodyBase {
+class Amp4Body_TD : public Amp4BodyBase {
   public:
-    Amp4BodyT(std::string n,
+    Amp4Body_TD(std::string n,
               std::vector<Observable> observables,
               DecayInfo4t decay,
               MixingTimeResolution *r,

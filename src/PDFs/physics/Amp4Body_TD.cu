@@ -19,7 +19,7 @@ class.
 #include <goofit/Log.h>
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/Amp4Body.h>
-#include <goofit/PDFs/physics/Amp4BodyT.h>
+#include <goofit/PDFs/physics/Amp4Body_TD.h>
 #include <goofit/PDFs/physics/EvalVar.h>
 #include <goofit/detail/Complex.h>
 #include <mcbooster/Evaluate.h>
@@ -105,14 +105,14 @@ First entries are the starting points in array, necessary, because number of Lin
 // __constant__ unsigned int AmpIndices_TD[100];
 
 // This function gets called by the GooFit framework to get the value of the PDF.
-__device__ fptype device_Amp4BodyT(fptype *evt, ParameterContainer &pc) {
+__device__ fptype device_Amp4Body_TD(fptype *evt, ParameterContainer &pc) {
     // printf("DalitzPlot evt %i zero: %i %i %f (%f, %f).\n", evtNum, numResonances, effFunctionIdx, eff, totalAmp.real,
     // totalAmp.imag);
 
     int id_evt = pc.getObservable(5);
 
     auto evtNum = static_cast<int>(floor(0.5 + evt[id_evt]));
-    // GOOFIT_TRACE("Amp4BodyT: Number of events: {}", evtNum);
+    // GOOFIT_TRACE("Amp4Body_TD: Number of events: {}", evtNum);
 
     unsigned int cacheToUse = pc.getConstant(6);
     unsigned int numAmps    = pc.getConstant(9);
@@ -201,9 +201,9 @@ __device__ fptype device_Amp4BodyT(fptype *evt, ParameterContainer &pc) {
     return ret;
 }
 
-__device__ device_function_ptr ptr_to_Amp4BodyT = device_Amp4BodyT;
+__device__ device_function_ptr ptr_to_Amp4Body_TD = device_Amp4Body_TD;
 
-__host__ Amp4BodyT::Amp4BodyT(std::string n,
+__host__ Amp4Body_TD::Amp4Body_TD(std::string n,
                               std::vector<Observable> observables,
                               DecayInfo4t decay,
                               MixingTimeResolution *Tres,
@@ -396,7 +396,7 @@ __host__ Amp4BodyT::Amp4BodyT(std::string n,
     // In case the resolution function needs parameters, this registers them.
     // resolution->createParameters(pindices, this);
 
-    registerFunction("ptr_to_Amp4BodyT", ptr_to_Amp4BodyT);
+    registerFunction("ptr_to_Amp4Body_TD", ptr_to_Amp4Body_TD);
 
     initialize();
 
@@ -480,7 +480,7 @@ __host__ Amp4BodyT::Amp4BodyT(std::string n,
     setSeparateNorm();
 }
 
-__host__ void Amp4BodyT::populateArrays() {
+__host__ void Amp4Body_TD::populateArrays() {
     PdfBase::populateArrays();
 
     // go over our amplitudes and actually set index values, update.
@@ -534,7 +534,7 @@ __host__ void Amp4BodyT::populateArrays() {
 // I made the choice to have spinfactors necxt to the values of the lineshape in memory. I waste memory by doing this
 // because a spinfactor is saved as complex
 // It would be nice to test if this is better than having the spinfactors stored seperately.
-__host__ void Amp4BodyT::setDataSize(unsigned int dataSize, unsigned int evtSize) {
+__host__ void Amp4Body_TD::setDataSize(unsigned int dataSize, unsigned int evtSize) {
     // Default 3 is m12, m13, evtNum for DP 2dim, 4-body decay has 5 independent vars plus evtNum = 6
     totalEventSize = evtSize;
     if(totalEventSize < 3)
@@ -566,7 +566,7 @@ __host__ void Amp4BodyT::setDataSize(unsigned int dataSize, unsigned int evtSize
 }
 
 // this is where the actual magic happens. This function does all the calculations!
-__host__ fptype Amp4BodyT::normalize() {
+__host__ fptype Amp4Body_TD::normalize() {
     if(cachedResSF == nullptr)
         throw GeneralError("You must call dp.setDataSize(currData.getNumEvents(), N) first!");
     // fprintf(stderr, "start normalize\n");
@@ -762,7 +762,7 @@ __host__ fptype Amp4BodyT::normalize() {
 
 __host__
     std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::BoolVector_h>
-    Amp4BodyT::GenerateSig(unsigned int numEvents) {
+    Amp4Body_TD::GenerateSig(unsigned int numEvents) {
     copyParams();
 
     std::vector<mcbooster::GReal_t> masses(decayInfo.particle_masses.begin() + 1, decayInfo.particle_masses.end());

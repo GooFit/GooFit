@@ -1,5 +1,5 @@
 #include <goofit/PDFs/ParameterContainer.h>
-#include <goofit/PDFs/physics/Amp3BodyT.h>
+#include <goofit/PDFs/physics/Amp3Body_TD.h>
 #include <goofit/PDFs/physics/SpecialDalitzIntegrator.h>
 #include <goofit/PDFs/physics/resonances/Resonance.h>
 

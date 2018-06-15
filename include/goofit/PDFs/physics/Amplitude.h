@@ -13,7 +13,7 @@ class SpinFactor;
 
 class Amplitude : public GooPdf {
     friend class Amp4Body;
-    friend class Amp4BodyT;
+    friend class Amp4Body_TD;
 
   public:
     Amplitude(std::string uniqueDecayStr,

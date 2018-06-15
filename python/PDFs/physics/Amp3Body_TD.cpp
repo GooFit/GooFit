@@ -2,16 +2,16 @@
 
 #include <pybind11/stl.h>
 
-#include <goofit/PDFs/physics/Amp3BodyT.h>
+#include <goofit/PDFs/physics/Amp3Body_TD.h>
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <goofit/PDFs/physics/MixingTimeResolution_Aux.h>
 #include <goofit/Variable.h>
-#include <goofit/docs/PDFs/physics/Amp3BodyT.h>
+#include <goofit/docs/PDFs/physics/Amp3Body_TD.h>
 
 using namespace GooFit;
 
-void init_Amp3BodyT(py::module &m) {
-    py::class_<Amp3BodyT, Amp3BodyBase>(m, "Amp3BodyT")
+void init_Amp3Body_TD(py::module &m) {
+    py::class_<Amp3Body_TD, Amp3BodyBase>(m, "Amp3Body_TD")
         .def(py::init<std::string,
                       Observable,
                       Observable,
@@ -109,7 +109,7 @@ void init_Amp3BodyT(py::module &m) {
              py::keep_alive<1, 10>(),
              py::keep_alive<1, 11>())
 
-        .def_static("help", []() { return HelpPrinter(Amp3BodyT_docs); })
+        .def_static("help", []() { return HelpPrinter(Amp3Body_TD_docs); })
 
         ;
 }

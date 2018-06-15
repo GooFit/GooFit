@@ -9,7 +9,7 @@
 namespace GooFit {
 
 // Offset of the first resonance into the parameter index array.
-// Notice that this is different from the Amp3BodyT case because there's no time information.
+// Notice that this is different from the Amp3Body_TD case because there's no time information.
 // In particular the offset consists of nP, constant index, number of resonances, and cache index.
 const int resonanceOffset_incoherent = 4;
 

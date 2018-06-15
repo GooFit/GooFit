@@ -1,7 +1,7 @@
 #pragma once
 
 #include <goofit/PDFs/GooPdf.h>
-#include <goofit/PDFs/physics/Amp3BodyT.h>
+#include <goofit/PDFs/physics/Amp3Body_TD.h>
 #include <goofit/detail/Complex.h>
 
 namespace GooFit {
@@ -22,11 +22,11 @@ The constructor is the same, but note that the `amp_imag` member of
 GooFit::ResonancePdf is not used, so the \f$\alpha\f$ are in effect
 interpreted as real numbers.
 
-Very similar class to Amp3BodyT, but without time dependence
+Very similar class to Amp3Body_TD, but without time dependence
 (so no time resolution or mixing) and ignoring interference between
 waves. This makes the code just different enough, the assumptions are
 just enough changed, that it's not worth trying to modify or subclass
-Amp3BodyT to deal with both cases. So instead we have a separate
+Amp3Body_TD to deal with both cases. So instead we have a separate
 class with fairly similar structure.
 **/
 

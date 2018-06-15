@@ -38,8 +38,8 @@
 #include <goofit/PDFs/physics/DalitzVetoPdf.h>
 #include <goofit/PDFs/physics/IncoherentSumPdf.h>
 #include <goofit/PDFs/physics/ResonancePdf.h>
-#include <goofit/PDFs/physics/ThreeGaussResolution_Aux.h>
-#include <goofit/PDFs/physics/TruthResolution_Aux.h>
+#include <goofit/PDFs/physics/ThreeGaussResolution.h>
+#include <goofit/PDFs/physics/TruthResolution.h>
 #include <goofit/Variable.h>
 #include <goofit/utilities/Uncertain.h>
 

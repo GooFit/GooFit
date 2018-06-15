@@ -31,14 +31,14 @@ class.
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/Amp4Body.h>
 #include <goofit/PDFs/physics/Amp4BodyGlobals.h>
-#include <goofit/PDFs/physics/AmpCalc.h>
+#include <goofit/PDFs/physics/detail/AmpCalc.h>
 #include <goofit/PDFs/physics/Amplitude.h>
-#include <goofit/PDFs/physics/EvalVar.h>
-#include <goofit/PDFs/physics/LSCalculator.h>
-#include <goofit/PDFs/physics/NormIntegrator.h>
-#include <goofit/PDFs/physics/NormLSCalculator.h>
-#include <goofit/PDFs/physics/NormSpinCalculator.h>
-#include <goofit/PDFs/physics/SFCalculator.h>
+#include <goofit/PDFs/physics/detail/EvalVar.h>
+#include <goofit/PDFs/physics/detail/LSCalculator.h>
+#include <goofit/PDFs/physics/detail/NormIntegrator.h>
+#include <goofit/PDFs/physics/detail/NormLSCalculator.h>
+#include <goofit/PDFs/physics/detail/NormSpinCalculator.h>
+#include <goofit/PDFs/physics/detail/SFCalculator.h>
 #include <goofit/PDFs/physics/lineshapes/Lineshape.h>
 
 #include <cstdarg>

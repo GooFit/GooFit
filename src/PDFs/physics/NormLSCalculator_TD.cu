@@ -1,7 +1,7 @@
-#include <goofit/PDFs/physics/NormLSCalculator_TD.h>
+#include <goofit/PDFs/physics/detail/NormLSCalculator_TD.h>
 
 #include <goofit/PDFs/ParameterContainer.h>
-#include <goofit/PDFs/physics/EvalVar.h>
+#include <goofit/PDFs/physics/detail/EvalVar.h>
 #include <goofit/PDFs/physics/SpinFactors.h>
 
 namespace GooFit {

@@ -1,7 +1,7 @@
 #include <goofit/Python.h>
 
-#include <goofit/PDFs/physics/MixingTimeResolution_Aux.h>
-#include <goofit/docs/PDFs/physics/MixingTimeResolution_Aux.h>
+#include <goofit/PDFs/physics/MixingTimeResolution.h>
+#include <goofit/docs/PDFs/physics/MixingTimeResolution.h>
 
 using namespace GooFit;
 

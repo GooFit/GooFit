@@ -1,4 +1,4 @@
-#include <goofit/PDFs/physics/FourDblTupleAdd.h>
+#include <goofit/PDFs/physics/detail/FourDblTupleAdd.h>
 
 namespace GooFit {
 

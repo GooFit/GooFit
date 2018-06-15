@@ -10,7 +10,7 @@
 #include <goofit/PDFs/physics/Amp4Body_TD.h>
 #include <goofit/PDFs/physics/Lineshapes.h>
 #include <goofit/PDFs/physics/SpinFactors.h>
-#include <goofit/PDFs/physics/TruthResolution_Aux.h>
+#include <goofit/PDFs/physics/TruthResolution.h>
 #include <goofit/UnbinnedDataSet.h>
 #include <goofit/Variable.h>
 #include <thrust/count.h>

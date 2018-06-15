@@ -1198,7 +1198,7 @@ documentation, helpful.
 -   GooFit::Amp3Body
 -   GooFit::DalitzVetoPdf
 -   GooFit::IncoherentSumPdf
--   GooFit::MixingTimeResolution (in `MixingTimeResolution_Aux.h`)
+-   GooFit::MixingTimeResolution (in `MixingTimeResolution.h`)
 -   GooFit::ResonancePdf (subclasses not separately documented yet)
 -   GooFit::Amp3Body_TD
 -   GooFit::ThreeGaussResolution

@@ -10,8 +10,8 @@ See *.cu file for more details
 
 #include <goofit/PDFs/physics/Amp4BodyBase.h>
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
-#include <goofit/PDFs/physics/MixingTimeResolution_Aux.h>
-#include <goofit/PDFs/physics/NormSpinCalculator_TD.h>
+#include <goofit/PDFs/physics/MixingTimeResolution.h>
+#include <goofit/PDFs/physics/detail/NormSpinCalculator_TD.h>
 #include <goofit/PDFs/physics/SpinFactors.h>
 
 #include <mcbooster/GContainers.h>

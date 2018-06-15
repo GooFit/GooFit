@@ -7,7 +7,7 @@ This code is not sufficently tested yet and still under heavy development!
 */
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/SpinFactors.h>
-#include <goofit/PDFs/physics/SpinHelper.h>
+#include <goofit/PDFs/physics/detail/SpinHelper.h>
 
 namespace GooFit {
 

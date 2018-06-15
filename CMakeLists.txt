@@ -535,12 +535,15 @@ function(GOOFIT_ADD_LIBRARY GNAME)
     set_target_properties(${GNAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION ${SUPPORTS_IPO})
 
     source_group("Source Files" REGULAR_EXPRESSION ".*\\.c[ucp]p?")
-    source_group("Basic\\Header Files" REGULAR_EXPRESSION ".*PDFs/basic/.*\\.h")
-    source_group("Basic\\Source Files" REGULAR_EXPRESSION ".*PDFs/basic/.*\\.c[ucp]p?")
-    source_group("Combine\\Header Files" REGULAR_EXPRESSION ".*PDFs/combine/.*\\.h")
-    source_group("Combine\\Source Files" REGULAR_EXPRESSION ".*PDFs/combine/.*\\.c[ucp]p?")
-    source_group("Physics\\Header Files" REGULAR_EXPRESSION ".*PDFs/physics/.*\\.h")
-    source_group("Physics\\Source Files" REGULAR_EXPRESSION ".*PDFs/physics/.*\\.c[ucp]p?")
+    source_group("Header Files\\detail" REGULAR_EXPRESSION ".*/detail/.*\\.h")
+    source_group("Header Files\\utilities" REGULAR_EXPRESSION ".*/utilities/.*\\.h")
+    source_group("Header Files\\lineshapes" REGULAR_EXPRESSION ".*/lineshapes/.*\\.h")
+    source_group("Header Files\\resonances" REGULAR_EXPRESSION ".*/resonances/.*\\.h")
+    source_group("Source Files\\detail" REGULAR_EXPRESSION ".*/detail/.*\\.c[ucp]p?")
+    source_group("Source Files\\utilities" REGULAR_EXPRESSION ".*/utilities/.*\\.c[ucp]p?")
+    source_group("Source Files\\lineshapes" REGULAR_EXPRESSION ".*/lineshapes/.*\\.c[ucp]p?")
+    source_group("Source Files\\resonances" REGULAR_EXPRESSION ".*/resonances/.*\\.c[ucp]p?")
+
 
     if(CLANG_TIDY_EXE)
         set_target_properties(

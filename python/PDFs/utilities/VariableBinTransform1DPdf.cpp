@@ -2,7 +2,7 @@
 
 #include <pybind11/stl.h>
 
-#include <goofit/PDFs/utility/VariableBinTransform1DPdf.h>
+#include <goofit/PDFs/utilities/VariableBinTransform1DPdf.h>
 #include <goofit/Variable.h>
 
 using namespace GooFit;

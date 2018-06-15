@@ -22,7 +22,7 @@ doing maximum-likelihood fits with a familiar syntax.
 ## Requirements
 
 * A recent version of CMake is required. The minimum is 3.4, but tested primarily with 3.6 and newer. CMake is incredibly easy to install (see [the system install page](./docs/SYSTEM_INSTALL.md)).
-* A ROOT 6 build highly recommended -- GooFit will use the included Minuit2 submodule if ROOT is not found, and the Minuit1 based fitter will not be available.
+* A ROOT 6 build highly recommended -- GooFit will use the included Minuit2 submodule if ROOT is not found, and the Minuit1 based fitter will not be available. Supports 6.06-6.14 (6.10+ recommended).
 
 <details><summary>If using CUDA: (click to expand)</summary><p>
 
@@ -39,7 +39,6 @@ doing maximum-likelihood fits with a familiar syntax.
 * On macOS, this backend requires `brew install libomp` or a custom compiler
 
 </p></details>
-
 
 <details><summary>If using CPP: (click to expand)</summary><p>
 

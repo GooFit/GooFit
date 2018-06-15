@@ -405,7 +405,7 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
     cachedMasses = new fptype[components.size() - 1];
     cachedWidths = new fptype[components.size() - 1];
 
-    for(auto lineshape : LineShapes) {
+    for(int i = 0; i < LineShapes.size(); i++) {
         lscalculators.push_back(new LSCalculator_TD());
     }
 

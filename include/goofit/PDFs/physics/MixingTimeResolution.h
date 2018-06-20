@@ -17,7 +17,7 @@ Represents a parametrization of the time resolution.
 
 class MixingTimeResolution : public GooPdf {
   public:
-    MixingTimeResolution();
+    MixingTimeResolution(std::string pdf_name);
     ~MixingTimeResolution() override;
 
     void initIndex(void *dev_fcn_ptr = host_fcn_ptr);

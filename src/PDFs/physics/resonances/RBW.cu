@@ -70,7 +70,7 @@ RBW::RBW(std::string name,
          unsigned int sp,
          unsigned int cyc,
          bool sym)
-    : ResonancePdf(name, ar, ai) {
+    : ResonancePdf("RBW", name, ar, ai) {
     registerParameter(mass);
     registerParameter(width);
 

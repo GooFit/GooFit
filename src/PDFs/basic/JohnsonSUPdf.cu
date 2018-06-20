@@ -27,7 +27,7 @@ __device__ device_function_ptr ptr_to_JohnsonSU = device_JohnsonSU;
 
 __host__
 JohnsonSUPdf::JohnsonSUPdf(std::string n, Observable _x, Variable mean, Variable sigma, Variable gamma, Variable delta)
-    : GooPdf(n, _x) {
+    : GooPdf("JohnsonSUPdf", n, _x) {
     registerParameter(mean);
     registerParameter(sigma);
     registerParameter(gamma);

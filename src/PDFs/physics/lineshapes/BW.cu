@@ -154,7 +154,7 @@ __device__ resonance_function_ptr ptr_to_lass   = lass_MINT;
 
 Lineshapes::RBW::RBW(
     std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
-    : Lineshape(name, L, Mpair, FormFac, radius) {
+    : Lineshape("RBW", name, L, Mpair, FormFac, radius) {
     registerParameter(mass);
     registerParameter(width);
 
@@ -171,7 +171,7 @@ Lineshapes::RBW::RBW(
 
 Lineshapes::SBW::SBW(
     std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
-    : Lineshape(name, L, Mpair, FormFac, radius) {
+    : Lineshape("SBW", name, L, Mpair, FormFac, radius) {
     registerParameter(mass);
     registerParameter(width);
 
@@ -187,7 +187,7 @@ Lineshapes::SBW::SBW(
 
 Lineshapes::LASS::LASS(
     std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
-    : Lineshape(name, L, Mpair, FormFac, radius) {
+    : Lineshape("LASS", name, L, Mpair, FormFac, radius) {
     // This one must match RBW exactly, because it calls the same function at one point
 
     registerParameter(mass);

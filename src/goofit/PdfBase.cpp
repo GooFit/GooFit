@@ -201,7 +201,7 @@ void PdfBase::fillMCDataSimple(size_t events, unsigned int seed) {
 }
 
 std::ostream &operator<<(std::ostream &out, const PdfBase &pdf) {
-    out << "GooPdf(\"" << pdf.getName() << "\") :\n";
+    out << "GooPdf::" << pdf.getPdfName() << "(\"" << pdf.getName() << "\") :\n";
     out << "  Device function: " << pdf.reflex_name_ << "\n";
 
     out << "  Observable" << (pdf.observablesList.size() > 1 ? "s" : "") << ": ";

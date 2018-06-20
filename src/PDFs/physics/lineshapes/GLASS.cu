@@ -71,7 +71,7 @@ Lineshapes::GLASS::GLASS(std::string name,
                          FF FormFac,
                          fptype radius,
                          std::vector<Variable> AdditionalVars)
-    : Lineshape(name, L, Mpair, FormFac, radius) {
+    : Lineshape("GLASS", name, L, Mpair, FormFac, radius) {
     if(5 != AdditionalVars.size()) {
         throw GeneralError("It seems you forgot to provide the vector with the five necessary variables for GLASS, a, "
                            "r, phiF, phiR and F (in that order)");

@@ -143,7 +143,7 @@ __device__ device_function_ptr ptr_to_ConvolvePdfs       = device_ConvolvePdfs;
 __device__ device_function_ptr ptr_to_ConvolveSharedPdfs = device_ConvolveSharedPdfs;
 
 ConvolutionPdf::ConvolutionPdf(std::string n, Observable x, GooPdf *m, GooPdf *r)
-    : CombinePdf(n, x)
+    : CombinePdf("ConvolutionPdf", n, x)
     , model(m)
     , resolution(r)
     , host_iConsts(nullptr)
@@ -172,7 +172,7 @@ ConvolutionPdf::ConvolutionPdf(std::string n, Observable x, GooPdf *m, GooPdf *r
 }
 
 ConvolutionPdf::ConvolutionPdf(std::string n, Observable x, GooPdf *m, GooPdf *r, unsigned int numOthers)
-    : CombinePdf(n, x)
+    : CombinePdf("ConvolutionPdf", n, x)
     , model(m)
     , resolution(r)
     , host_iConsts(nullptr)

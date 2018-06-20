@@ -99,7 +99,7 @@ Spline::Spline(std::string name,
                std::vector<Variable> &pwa_coefs_imags,
                unsigned int cyc,
                bool symmDP)
-    : ResonancePdf(name, ar, ai) {
+    : ResonancePdf("Spline", name, ar, ai) {
     const unsigned int nKnobs = HH_bin_limits.size();
 
     registerConstant(cyc);

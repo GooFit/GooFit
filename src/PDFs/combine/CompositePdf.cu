@@ -39,7 +39,7 @@ __device__ fptype device_Composite(fptype *evt, ParameterContainer &pc) {
 __device__ device_function_ptr ptr_to_Composite = device_Composite;
 
 __host__ CompositePdf::CompositePdf(std::string n, PdfBase *core, PdfBase *shell)
-    : CombinePdf(n) {
+    : CombinePdf("CompositePdf", n) {
     // Add as components so that observables and parameters will be registered.
     components.push_back(core);
     components.push_back(shell);

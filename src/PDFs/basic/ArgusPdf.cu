@@ -53,7 +53,7 @@ __host__ ArgusPdf::ArgusPdf(std::string n, Observable _x, Variable m0, Variable 
     : ArgusPdf(n, _x, m0, slope, upper, Variable(n + "powervar", 0.5)) {}
 
 __host__ ArgusPdf::ArgusPdf(std::string n, Observable _x, Variable m0, Variable slope, bool upper, Variable power)
-    : GooPdf(n, _x, m0, slope, power) {
+    : GooPdf("ArgusPdf", n, _x, m0, slope, power) {
     if(upper)
         registerFunction("ptr_to_Argus_Upper", ptr_to_Argus_Upper);
     else

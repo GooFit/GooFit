@@ -210,7 +210,7 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
                                   GooPdf *efficiency,
                                   Observable *mistag,
                                   unsigned int MCeventsNorm)
-    : Amp4BodyBase(n)
+    : Amp4BodyBase("Amp4Body_TD", n)
     , decayInfo(decay)
     , resolution(Tres)
     , totalEventSize(observables.size() + 2) // number of observables plus eventnumber

@@ -160,7 +160,7 @@ Lineshapes::kMatrix::kMatrix(std::string name,
                              unsigned int Mpair,
                              FF FormFac,
                              fptype radius)
-    : Lineshape(name, L, Mpair, FormFac, radius) {
+    : Lineshape("kMatrix", name, L, Mpair, FormFac, radius) {
     registerConstant(pterm);
     registerConstant(is_pole ? 1 : 0);
 

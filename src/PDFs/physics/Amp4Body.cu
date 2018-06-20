@@ -89,7 +89,7 @@ __device__ device_function_ptr ptr_to_DP = device_DP;
 
 __host__ Amp4Body::Amp4Body(
     std::string n, std::vector<Observable> observables, DecayInfo4 decay, GooPdf *efficiency, unsigned int MCeventsNorm)
-    : Amp4BodyBase(n)
+    : Amp4BodyBase("Amp4Body", n)
     , decayInfo(decay)
     , totalEventSize(observables.size()) // number of observables plus eventnumber
 {

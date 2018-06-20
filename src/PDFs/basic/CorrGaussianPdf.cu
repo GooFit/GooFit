@@ -43,7 +43,7 @@ __host__ CorrGaussianPdf::CorrGaussianPdf(std::string n,
                                           Variable mean2,
                                           Variable sigma2,
                                           Variable correlation)
-    : GooPdf(n, _x, _y) {
+    : GooPdf("CorrGaussianPdf", n, _x, _y) {
     registerParameter(mean1);
     registerParameter(sigma1);
     registerParameter(mean2);

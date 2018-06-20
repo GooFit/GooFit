@@ -23,7 +23,7 @@ __device__ device_function_ptr ptr_to_ScaledGaussian = device_ScaledGaussian;
 
 __host__ ScaledGaussianPdf::ScaledGaussianPdf(
     std::string n, Observable _x, Variable mean, Variable sigma, Variable delta, Variable epsilon)
-    : GooPdf(n, _x) {
+    : GooPdf("ScaledGaussianPdf", n, _x) {
     registerParameter(mean);
     registerParameter(sigma);
     registerParameter(delta);

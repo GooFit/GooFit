@@ -85,7 +85,7 @@ FLATTE::FLATTE(std::string name,
                Variable rg2og1,
                unsigned int cyc,
                bool symmDP)
-    : ResonancePdf(name, ar, ai) {
+    : ResonancePdf("FLATTE", name, ar, ai) {
     registerParameter(mean);
     registerParameter(g1);
     registerParameter(rg2og1);

@@ -268,7 +268,7 @@ option(GOOFIT_MPI "Turn on MPI for goofit" OFF)
 if(GOOFIT_MPI)
     find_modern_package(MPI REQUIRED)
 
-    target_link_libraries(GooFit_Common INTERFACE MPI::MPL_CXX)
+    target_link_libraries(GooFit_Common INTERFACE MPI::MPI_CXX)
     target_compile_definitions(GooFit_Common INTERFACE "-DGOOFIT_MPI")
 
     message(STATUS "MPI found. Use the following to run your program")

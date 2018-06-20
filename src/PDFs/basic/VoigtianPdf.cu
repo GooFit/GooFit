@@ -326,7 +326,7 @@ __device__ fptype device_Voigtian(fptype *evt, ParameterContainer &pc) {
 __device__ device_function_ptr ptr_to_Voigtian = device_Voigtian;
 
 __host__ VoigtianPdf::VoigtianPdf(std::string n, Observable _x, Variable m, Variable s, Variable w)
-    : GooPdf(n, _x) {
+    : GooPdf("VoigtianPdf", n, _x) {
     registerParameter(m);
     registerParameter(s);
     registerParameter(w);

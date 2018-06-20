@@ -28,7 +28,7 @@ __device__ fptype device_ProdPdfs(fptype *evt, ParameterContainer &pc) {
 __device__ device_function_ptr ptr_to_ProdPdfs = device_ProdPdfs;
 
 ProdPdf::ProdPdf(std::string n, std::vector<PdfBase *> comps)
-    : CombinePdf(n)
+    : CombinePdf("ProdPdf", n)
     , varOverlaps(false) {
     for(PdfBase *p : comps) {
         components.push_back(p);

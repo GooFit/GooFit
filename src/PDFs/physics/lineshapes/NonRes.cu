@@ -27,7 +27,7 @@ __device__ resonance_function_ptr ptr_to_NONRES_DP = nonres_DP;
 
 Lineshapes::NonRes::NonRes(
     std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
-    : Lineshape(name, L, Mpair, FormFac, radius) {
+    : Lineshape("NonRes", name, L, Mpair, FormFac, radius) {
     // TODO: Clean up signature
 
     registerConstant(radius);

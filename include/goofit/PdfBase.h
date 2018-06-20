@@ -130,8 +130,9 @@ class PdfBase {
 
   public:
     template <typename... Args>
-    explicit PdfBase(std::string n, Args... args)
-        : name(std::move(n)) {
+    explicit PdfBase(std::string pdf_name, std::string n, Args... args)
+        : pdf_name_(std::move(pdf_name))
+        , name(std::move(n)) {
         std::vector<Observable> obs;
         std::vector<Variable> vars;
 
@@ -207,6 +208,9 @@ class PdfBase {
     bool getCommonNorm() const { return commonNorm; };
     bool getSeparateNorm() const { return separateNorm; };
 
+    /// Get the current PDF name
+    std::string getPdfName() const { return pdf_name_; }
+
   protected:
     DataSet *data_ = nullptr; //< Remember the original dataset
 
@@ -249,6 +253,7 @@ class PdfBase {
 
   private:
     std::string name;
+    std::string pdf_name_;
 };
 
 std::ostream &operator<<(std::ostream &, const PdfBase &);

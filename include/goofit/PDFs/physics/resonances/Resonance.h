@@ -69,8 +69,8 @@ class ResonancePdf : public AmpComponent {
 
   protected:
     /// Special constructor that subclasses use
-    ResonancePdf(std::string name, Variable ar, Variable ai)
-        : AmpComponent(name)
+    ResonancePdf(std::string pdf_name, std::string name, Variable ar, Variable ai)
+        : AmpComponent("Resonances::" + pdf_name, name)
         , amp_real(ar)
         , amp_imag(ai) {}
 

@@ -132,7 +132,7 @@ __device__ resonance_function_ptr ptr_to_bugg_MINT  = bugg_MINT;
 
 Lineshapes::Bugg::Bugg(
     std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
-    : Lineshape(name, L, Mpair, FormFac, radius) {
+    : Lineshape("Bugg", name, L, Mpair, FormFac, radius) {
     // TODO: Clean up signature
 
     registerFunction("ptr_to_bugg_MINT", ptr_to_bugg_MINT);
@@ -142,7 +142,7 @@ Lineshapes::Bugg::Bugg(
 
 Lineshapes::Bugg3::Bugg3(
     std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
-    : Lineshape(name, L, Mpair, FormFac, radius) {
+    : Lineshape("Bugg3", name, L, Mpair, FormFac, radius) {
     // TODO: Clean up signature
 
     registerFunction("ptr_to_bugg_MINT3", ptr_to_bugg_MINT3);

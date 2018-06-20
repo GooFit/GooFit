@@ -15,7 +15,7 @@ __device__ resonance_function_ptr ptr_to_NONRES = nonres;
 namespace Resonances {
 
 NonRes::NonRes(std::string name, Variable ar, Variable ai)
-    : ResonancePdf(name, ar, ai) {
+    : ResonancePdf("NonRes", name, ar, ai) {
     registerFunction("ptr_to_NONRES", ptr_to_NONRES);
 }
 

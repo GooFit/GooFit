@@ -47,7 +47,7 @@ __device__ device_resfunction_ptr ptr_to_truth     = device_truth_resolution;
 __device__ device_calc_tau_fcn_ptr ptr_to_calc_tau = device_truth_resolution_average_tau;
 
 TruthResolution::TruthResolution()
-    : MixingTimeResolution() {
+    : MixingTimeResolution("TruthResolution") {
     initIndex();
 
     registerFunction("ptr_to_truth", ptr_to_truth);

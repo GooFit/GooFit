@@ -224,7 +224,7 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
                                   MixingTimeResolution *r,
                                   GooPdf *efficiency,
                                   Observable *mistag)
-    : Amp3BodyBase(n, _dtime, _sigmat, m12, m13, eventNumber)
+    : Amp3BodyBase("Amp3Body_TD", n, _dtime, _sigmat, m12, m13, eventNumber)
     , decayInfo(decay)
     , _m12(m12)
     , _m13(m13)
@@ -318,7 +318,7 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
                                   GooPdf *efficiency,
                                   Observable md0,
                                   Observable *mistag)
-    : Amp3BodyBase(n, _dtime, _sigmat, m12, m13, eventNumber, md0)
+    : Amp3BodyBase("Amp3Body_TD", n, _dtime, _sigmat, m12, m13, eventNumber, md0)
     , decayInfo(decay)
     , _m12(m12)
     , _m13(m13)

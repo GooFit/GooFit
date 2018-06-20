@@ -33,7 +33,7 @@ namespace Resonances {
 
 // Constructor for regular BW,Gounaris-Sakurai,LASS
 Gauss::Gauss(std::string name, Variable ar, Variable ai, Variable mass, Variable width, unsigned int cyc)
-    : ResonancePdf(name, ar, ai) {
+    : ResonancePdf("Gauss", name, ar, ai) {
     // Making room for index of decay-related constants. Assumption:
     // These are mother mass and three daughter masses in that order.
     // They will be registered by the object that uses this resonance,

@@ -42,7 +42,7 @@ __device__ fptype device_Novosibirsk(fptype *evt, ParameterContainer &pc) {
 __device__ device_function_ptr ptr_to_Novosibirsk = device_Novosibirsk;
 
 __host__ NovosibirskPdf::NovosibirskPdf(std::string n, Observable _x, Variable mean, Variable sigma, Variable tail)
-    : GooPdf(n, _x) {
+    : GooPdf("NovosibirskPdf", n, _x) {
     registerParameter(mean);
     registerParameter(sigma);
     registerParameter(tail);

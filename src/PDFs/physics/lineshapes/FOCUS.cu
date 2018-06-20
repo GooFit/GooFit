@@ -83,7 +83,7 @@ Lineshapes::FOCUS::FOCUS(std::string name,
                          unsigned int Mpair,
                          FF FormFac,
                          fptype radius)
-    : Lineshape(name, L, Mpair, FormFac, radius) {
+    : Lineshape("FOCUS", name, L, Mpair, FormFac, radius) {
     // TODO: Clean up signature
     registerConstant(static_cast<unsigned int>(mod));
 

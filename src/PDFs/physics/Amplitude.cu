@@ -10,7 +10,7 @@ Amplitude::Amplitude(std::string uniqueDecayStr,
                      std::vector<Lineshape *> LS,
                      std::vector<SpinFactor *> SF,
                      unsigned int nPerm)
-    : AmpComponent(uniqueDecayStr)
+    : AmpComponent("Amplitude", uniqueDecayStr)
     , _uniqueDecayStr(uniqueDecayStr)
     , _ar(ar)
     , _ai(ai)

@@ -52,7 +52,7 @@ __device__ resonance_function_ptr ptr_to_Flatte = Flatte_MINT;
 
 Lineshapes::Flatte::Flatte(
     std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
-    : Lineshape(name, L, Mpair, FormFac, radius) {
+    : Lineshape("Flatte", name, L, Mpair, FormFac, radius) {
     // TODO: Clean up signature
     registerParameter(mass);
 

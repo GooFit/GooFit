@@ -128,7 +128,7 @@ Lineshapes::GSpline::GSpline(std::string name,
                              fptype radius,
                              std::vector<Variable> AdditionalVars,
                              spline_t SplineInfo)
-    : Lineshape(name, L, Mpair, FormFac, radius) {
+    : Lineshape("GSpline", name, L, Mpair, FormFac, radius) {
     registerParameter(mass);
     registerParameter(width);
 

@@ -116,7 +116,7 @@ __device__ device_resfunction_ptr ptr_to_threegauss = device_threegauss_resoluti
 
 ThreeGaussResolution::ThreeGaussResolution(
     Variable cf, Variable tf, Variable cb, Variable cs, Variable tb, Variable ts, Variable ob, Variable os)
-    : MixingTimeResolution()
+    : MixingTimeResolution("ThreeGaussResolution")
     , coreFraction(cf)
     , tailFraction(tf)
     , coreBias(cb)

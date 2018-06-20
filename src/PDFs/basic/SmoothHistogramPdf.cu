@@ -110,7 +110,7 @@ struct Smoother {
 __device__ device_function_ptr ptr_to_EvalHistogram = device_EvalHistogram;
 
 __host__ SmoothHistogramPdf::SmoothHistogramPdf(std::string n, BinnedDataSet *hist, Variable smoothing)
-    : GooPdf(n) {
+    : GooPdf("SmoothHistogramPdf", n) {
     int numVars = hist->numVariables();
     totalEvents = 0;
 

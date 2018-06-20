@@ -14,8 +14,9 @@ on the GPU
 namespace GooFit {
 
 // This constructor is protected
-Lineshape::Lineshape(std::string name, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
-    : AmpComponent(name)
+Lineshape::Lineshape(
+    std::string pdf_name, std::string name, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
+    : AmpComponent("Lineshapes::" + pdf_name, name)
     , _L(L)
     , _Mpair(Mpair)
     , _FormFac(FormFac)

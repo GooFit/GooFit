@@ -3,8 +3,8 @@
 
 namespace GooFit {
 
-MixingTimeResolution::MixingTimeResolution()
-    : GooPdf("mixing_resolution") {}
+MixingTimeResolution::MixingTimeResolution(std::string pdf_name)
+    : GooPdf(pdf_name, "mixing_resolution") {}
 MixingTimeResolution::~MixingTimeResolution() = default;
 
 void MixingTimeResolution::initIndex(void *dev_fcn_ptr) { resFunctionIdx = GooPdf::findFunctionIdx(dev_fcn_ptr); }

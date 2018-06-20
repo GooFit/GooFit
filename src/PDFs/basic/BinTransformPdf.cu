@@ -35,7 +35,7 @@ __host__ BinTransformPdf::BinTransformPdf(std::string n,
                                           std::vector<fptype> limits,
                                           std::vector<fptype> binSizes,
                                           std::vector<int> numBins)
-    : GooPdf(n) {
+    : GooPdf("BinTransformPdf", n) {
     // setup the observables
     for(const auto &obse : obses)
         registerObservable(obse);

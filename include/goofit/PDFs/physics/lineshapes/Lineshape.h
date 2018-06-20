@@ -29,7 +29,7 @@ class Lineshape : public AmpComponent {
     friend class Amp4Body_TD;
 
     /// Protected constructor, only for subclasses to use
-    Lineshape(std::string name, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius);
+    Lineshape(std::string pdf_name, std::string name, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius);
 
     unsigned int _L;
     unsigned int _Mpair;

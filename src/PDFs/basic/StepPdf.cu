@@ -15,7 +15,7 @@ __device__ device_function_ptr ptr_to_Step = device_Step;
 device_function_ptr hptr_to_Step           = device_Step;
 
 __host__ StepPdf::StepPdf(std::string n, Observable _x, Variable x0)
-    : GooPdf(n, _x) {
+    : GooPdf("StepPdf", n, _x) {
     registerParameter(x0);
 
     registerFunction("ptr_to_Step", ptr_to_Step);

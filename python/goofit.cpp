@@ -4,6 +4,7 @@
 namespace py = pybind11;
 using namespace pybind11::literals;
 
+void init_Workspace(py::module &);
 void init_HelpPrinter(py::module &);
 void init_DataSet(py::module &);
 void init_BinnedDataSet(py::module &);
@@ -74,6 +75,7 @@ PYBIND11_MODULE(_goofit, m) {
 
     py::module::import("goofit.minuit2");
 
+    init_Workspace(m);
     init_HelpPrinter(m);
     init_Variable(m);
     init_DataSet(m);

@@ -1,4 +1,5 @@
 add_library(_Core STATIC
+    Workspace.cpp
     HelpPrinter.cpp
     Variable.cpp
     DataSet.cpp

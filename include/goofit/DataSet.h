@@ -3,6 +3,7 @@
 #include <goofit/GlobalCudaDefines.h>
 
 #include <initializer_list>
+#include <iostream>
 #include <set>
 #include <string>
 #include <vector>
@@ -65,5 +66,10 @@ class DataSet {
   protected:
     std::vector<Observable> observables;
 };
+
+inline std::ostream &operator<<(std::ostream &out, DataSet &dset) {
+    out << dset.getName() << "(" << dset.numVariables() << "D, " << dset.getNumEvents() << " entries)";
+    return out;
+}
 
 } // namespace GooFit

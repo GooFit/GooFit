@@ -57,6 +57,11 @@ goofit_add_library(Application
     ${GOOFIT_EXTRA_HEADERS}
     )
 
+goofit_add_library(Workspace
+    Workspace.cpp
+    ${PROJECT_SOURCE_DIR}/include/goofit/Workspace.h
+    )
+
 if(GOOFIT_DEVICE STREQUAL CUDA)
     target_link_libraries(Application PRIVATE CUDA::Libs)
 endif()
@@ -75,6 +80,7 @@ target_link_libraries(PdfBase PUBLIC ROOT::Minuit2)
 
 # Note: order is important on Linux, derived classes first
 set(lib_list
+    Workspace
     Application
     Faddeeva
     FunctorWriter

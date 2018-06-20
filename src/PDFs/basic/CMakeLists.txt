@@ -3,7 +3,7 @@ file(GLOB_RECURSE GOOFIT_BASIC_HEADERS
     "${PROJECT_SOURCE_DIR}/include/goofit/PDFs/basic/*.h"
     )
 
-goofit_add_library(PDFBasic
+goofit_add_pdf_library(PDFBasic
     ArgusPdf.cu
     BWPdf.cu
     BifurGaussPdf.cu
@@ -26,6 +26,3 @@ goofit_add_library(PDFBasic
     VoigtianPdf.cu
     ${GOOFIT_BASIC_HEADERS}
     )
-
-set_target_properties(PDFBasic PROPERTIES FOLDER "pdfs")
-target_link_libraries(PDFBasic PUBLIC PDFCore)

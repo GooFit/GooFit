@@ -9,14 +9,13 @@ else()
     set(GOOFIT_KMATRIX_SOURCE )
 endif()
 
-goofit_add_library(PDFPhysics
+goofit_add_pdf_library(PDFPhysics
     Amp3Body.cu
     Amp3Body_TD.cu
     Amp3Body_IS.cu
     Amp4Body.cu
     Amp4Body_TD.cu
     Amp4BodyGlobals.cu
-    Amp3Body_IS.cu
     Amplitude.cu
     DalitzPlotHelpers.cu
     DalitzVetoPdf.cu
@@ -68,6 +67,3 @@ goofit_add_library(PDFPhysics
     ${GOOFIT_PHYSICS_HEADERS}
 )
 
-set_target_properties(PDFPhysics PROPERTIES FOLDER "pdfs")
-
-target_link_libraries(PDFPhysics PUBLIC PDFCore)

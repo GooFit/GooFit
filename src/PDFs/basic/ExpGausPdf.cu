@@ -26,11 +26,7 @@ __device__ fptype device_ExpGaus(fptype *evt, ParameterContainer &pc) {
 __device__ device_function_ptr ptr_to_ExpGaus = device_ExpGaus;
 
 ExpGausPdf::ExpGausPdf(std::string n, Observable _x, Variable mean, Variable sigma, Variable tau)
-    : GooPdf("ExpGausPdf", n, _x) {
-    registerParameter(mean);
-    registerParameter(sigma);
-    registerParameter(tau);
-
+    : GooPdf("ExpGausPdf", n, _x, mean, sigma, tau) {
     registerFunction("ptr_to_ExpGaus", ptr_to_ExpGaus);
 
     initialize();

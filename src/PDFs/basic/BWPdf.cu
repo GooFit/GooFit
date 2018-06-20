@@ -20,10 +20,7 @@ __device__ fptype device_BW(fptype *evt, ParameterContainer &pc) {
 __device__ device_function_ptr ptr_to_BW = device_BW;
 
 __host__ BWPdf::BWPdf(std::string n, Observable _x, Variable mean, Variable width)
-    : GooPdf("BWPdf", n, _x) {
-    registerParameter(mean);
-    registerParameter(width);
-
+    : GooPdf("BWPdf", n, _x, mean, width) {
     registerFunction("ptr_to_BW", ptr_to_BW);
 
     initialize();

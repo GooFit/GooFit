@@ -12,16 +12,15 @@ Here is an example for creating the constructor of the class:
 
 ```cpp
 host__ GaussianPdf::GaussianPdf(std::string n, Observable _x, Variable mean, Variable sigma)
-    : GooPdf(n, _x) {
-    registerParameter(mean);
-    registerParameter(sigma);
+    : GooPdf("GaussianPdf", n, _x, mean, sigma) {
+
     registerFunction("device_Gaussian", device_Gaussian);
 
     initialize();
 }
 ```
 
-In the above code, GooPdf will appropriately `registerObservable(_x)`, so the developer does not need to do this registration.
+In the above code, GooPdf will appropriately `registerObservable(_x)` and `registerParameter`, so the developer does not need to do this registration. The first parameter is the Pdf class name.
 
 Once everything has been registered, each constructor calls `initialize`.  This routine will setup each PDF with `setMetrics`, which is required to be done.
 

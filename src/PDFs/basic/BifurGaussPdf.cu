@@ -26,11 +26,7 @@ __device__ fptype device_BifurGauss(fptype *evt, ParameterContainer &pc) {
 __device__ device_function_ptr ptr_to_BifurGauss = device_BifurGauss;
 
 __host__ BifurGaussPdf::BifurGaussPdf(std::string n, Observable _x, Variable mean, Variable sigmaL, Variable sigmaR)
-    : GooPdf("BifurGaussPdf", n, _x) {
-    registerParameter(mean);
-    registerParameter(sigmaL);
-    registerParameter(sigmaR);
-
+    : GooPdf("BifurGaussPdf", n, _x, mean, sigmaL, sigmaR) {
     registerFunction("ptr_to_BifurGauss", ptr_to_BifurGauss);
 
     initialize();

@@ -47,12 +47,7 @@ __host__ DalitzVetoPdf::DalitzVetoPdf(std::string n,
                                       Variable d2m,
                                       Variable d3m,
                                       std::vector<VetoInfo> vetos)
-    : GooPdf("DalitzVetoPdf", n, _x, _y) {
-    registerParameter(motherM);
-    registerParameter(d1m);
-    registerParameter(d2m);
-    registerParameter(d3m);
-
+    : GooPdf("DalitzVetoPdf", n, _x, _y, motherM, d1m, d2m, d3m) {
     registerConstant(vetos.size());
 
     for(auto &veto : vetos) {

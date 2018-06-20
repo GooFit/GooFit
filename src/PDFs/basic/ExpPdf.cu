@@ -72,19 +72,14 @@ __device__ device_function_ptr ptr_to_ExpOffset     = device_ExpOffset;
 __device__ device_function_ptr ptr_to_ExpPolyOffset = device_ExpPolyOffset;
 
 __host__ ExpPdf::ExpPdf(std::string n, Observable _x, Variable alpha)
-    : GooPdf("ExpPdf", n, _x) {
-    registerParameter(alpha);
-
+    : GooPdf("ExpPdf", n, _x, alpha) {
     registerFunction("ptr_to_Exp", ptr_to_Exp);
 
     initialize();
 }
 
 __host__ ExpPdf::ExpPdf(std::string n, Observable _x, Variable alpha, Variable offset)
-    : GooPdf("ExpPdf", n, _x) {
-    registerParameter(offset);
-    registerParameter(alpha);
-
+    : GooPdf("ExpPdf", n, _x, offset, alpha) {
     registerFunction("ptr_to_ExpOffset", ptr_to_ExpOffset);
 
     initialize();
@@ -104,9 +99,7 @@ __host__ ExpPdf::ExpPdf(std::string n, Observable _x, std::vector<Variable> &wei
 }
 
 __host__ ExpPdf::ExpPdf(std::string n, Observable _x, std::vector<Variable> &weights, Variable offset)
-    : GooPdf("ExpPdf", n, _x) {
-    registerParameter(offset);
-
+    : GooPdf("ExpPdf", n, _x, offset) {
     if(weights.empty())
         throw GooFit::GeneralError("Weights are empty!");
 

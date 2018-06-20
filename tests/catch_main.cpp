@@ -1,4 +1,4 @@
-#define CATCH_CONFIG_MAIN
+#define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
 #include <functional>
@@ -22,3 +22,25 @@ std::string capture_stdout(std::function<void()> &&func) {
     std::string text = buffer.str();
     return text;
 }
+
+#ifdef GOOFIT_MPI
+#include <mpi.h>
+#endif
+
+int main(int argc, char *argv[]) {
+
+#ifdef GOOFIT_MPI
+    printf ("MPI_Init!\n");
+    MPI_Init(&argc, &argv);
+#endif
+
+    int result = Catch::Session().run(argc, argv);
+
+#ifdef GOOFIT_MPI
+    printf ("MPI_Finalize\n");
+    MPI_Finalize();
+#endif
+
+    return result;
+}
+

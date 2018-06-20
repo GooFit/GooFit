@@ -120,15 +120,13 @@ AddPdf::AddPdf(std::string n, std::vector<Variable> weights, std::vector<PdfBase
 }
 
 AddPdf::AddPdf(std::string n, Variable frac1, PdfBase *func1, PdfBase *func2)
-    : CombinePdf("AddPdf", n)
+    : CombinePdf("AddPdf", n, frac1)
     , extended(false) {
     // Special-case constructor for common case of adding two functions.
     components.push_back(func1);
     components.push_back(func2);
 
     observablesList = getObservables();
-
-    registerParameter(frac1);
 
     registerFunction("ptr_to_AddPdfs", ptr_to_AddPdfs);
 

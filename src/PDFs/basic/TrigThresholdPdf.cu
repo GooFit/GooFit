@@ -86,11 +86,7 @@ __device__ device_function_ptr ptr_to_VerySpecialEpisodeTrigThresholdLower
 
 __host__ TrigThresholdPdf::TrigThresholdPdf(
     std::string n, Observable _x, Variable thresh, Variable trigConst, Variable linConst, bool upper)
-    : GooPdf("TrigThresholdPdf", n, _x) {
-    registerParameter(thresh);
-    registerParameter(trigConst);
-    registerParameter(linConst);
-
+    : GooPdf("TrigThresholdPdf", n, _x, thresh, trigConst, linConst) {
     if(upper)
         registerFunction("ptr_to_TrigThresholdUpper", ptr_to_TrigThresholdUpper);
     else
@@ -107,12 +103,7 @@ __host__ TrigThresholdPdf::TrigThresholdPdf(std::string n,
                                             Variable linConst,
                                             Variable massConstant,
                                             bool upper)
-    : GooPdf("TrigThresholdPdf", n, _x, _y) {
-    registerParameter(thresh);
-    registerParameter(trigConst);
-    registerParameter(linConst);
-    registerParameter(massConstant);
-
+    : GooPdf("TrigThresholdPdf", n, _x, _y, thresh, trigConst, linConst, massConstant) {
     if(upper)
         registerFunction("ptr_to_VerySpecialEpisodeTrigThresholdUpper", ptr_to_VerySpecialEpisodeTrigThresholdUpper);
     else

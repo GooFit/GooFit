@@ -45,12 +45,7 @@ __host__ CrystalBallPdf::CrystalBallPdf(std::string n, Observable _x, Variable m
 
 __host__ CrystalBallPdf::CrystalBallPdf(
     std::string n, Observable _x, Variable mean, Variable sigma, Variable alpha, Variable power)
-    : GooPdf("CrystalBallPdf", n, _x) {
-    registerParameter(mean);
-    registerParameter(sigma);
-    registerParameter(alpha);
-    registerParameter(power);
-
+    : GooPdf("CrystalBallPdf", n, _x, mean, sigma, alpha, power) {
     registerFunction("ptr_to_CrystalBall", ptr_to_CrystalBall);
 
     initialize();

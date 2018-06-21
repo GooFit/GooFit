@@ -46,12 +46,15 @@ class Application : public CLI::App {
     bool quiet_;
     bool splash_;
     int argc_;
-    char **argv_;
+    char **argv_ = nullptr;
 
     /// Handle control-c codes
     struct sigaction sigIntHandler;
 
   public:
+    /// Application that does not need a command line
+    Application(std::string discription = "");
+
     /// Make a new Application
     Application(std::string discription, int argc, char **argv);
 
@@ -63,7 +66,7 @@ class Application : public CLI::App {
     int get_device() const { return gpuDev_; }
 
     /// simple run since argc and argv are stored
-    void run() { parse(argc_, argv_); }
+    void run();
 
     /// Gets called in parse
     void pre_callback() override;

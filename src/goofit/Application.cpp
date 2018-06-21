@@ -125,10 +125,9 @@ void print_goofit_info(int gpuDev_) {
 #endif
 }
 
-Application::Application(std::string discription, int argc, char **argv)
-    : App(discription)
-    , argc_(argc)
-    , argv_(argv) {
+Application::Application(std::string discription)
+    : App(discription) {
+
 #ifdef GOOFIT_MPI
     MPI_Init(&argc_, &argv_);
 
@@ -173,6 +172,14 @@ Application::Application(std::string discription, int argc, char **argv)
 #endif
 #endif
 
+}
+
+Application::Application(std::string discription, int argc, char **argv)
+    : Application(discription) {
+
+    argc_ = argc;
+    argv_ = argv;
+
     // Fallthrough is useful for most models of GooFit subcommands
     fallthrough();
 
@@ -197,6 +204,13 @@ Application::Application(std::string discription, int argc, char **argv)
     sigIntHandler.sa_flags = 0;
     sigaction(SIGINT, &sigIntHandler, nullptr);
 #endif
+}
+
+void Application::run() {
+    if(argv_ != nullptr)
+        parse(argc_, argv_);
+    else
+        throw GeneralError("You cannot call run on an Application that did not receive argc and argv at creation");
 }
 
 void Application::pre_callback() {

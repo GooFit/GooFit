@@ -5,8 +5,8 @@
 #include <goofit/Log.h>
 #include <goofit/PDFs/GooPdf.h>
 #include <goofit/PdfBase.h>
-#include <goofit/Version.h>
 #include <goofit/Variable.h>
+#include <goofit/Version.h>
 
 #ifdef GOOFIT_MPI
 #include <mpi.h>
@@ -246,7 +246,7 @@ __host__ void PdfBase::setData(DataSet *data) {
 
         for(int i = 0; i < observablesList.size(); i++) {
             // We are casting the observable to a CountVariable
-            EventNumber* c = dynamic_cast<EventNumber*>(&observablesList[i]);
+            EventNumber *c = dynamic_cast<EventNumber *>(&observablesList[i]);
 
             // if it is true re-index
             if(c)

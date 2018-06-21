@@ -28,19 +28,17 @@ std::string capture_stdout(std::function<void()> &&func) {
 #endif
 
 int main(int argc, char *argv[]) {
-
 #ifdef GOOFIT_MPI
-    printf ("MPI_Init!\n");
+    printf("MPI_Init!\n");
     MPI_Init(&argc, &argv);
 #endif
 
     int result = Catch::Session().run(argc, argv);
 
 #ifdef GOOFIT_MPI
-    printf ("MPI_Finalize\n");
+    printf("MPI_Finalize\n");
     MPI_Finalize();
 #endif
 
     return result;
 }
-

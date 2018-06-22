@@ -611,14 +611,17 @@ function(GOOFIT_ADD_LINK)
     endforeach()
 endfunction()
 
+
 # This links all files in the current directory to the build directory
 function(GOOFIT_ADD_DIRECTORY)
-    file(GLOB directory_listing RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *)
+    file(GLOB directory_listing RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" *)
     set(skip_files CMakeLists.txt CMakeFiles Makefile makefile .gitignore .git)
 
     foreach(NAMELINK ${directory_listing})
-        if(NOT ${NAMELINK} IN_LIST skip_files)
-            goofit_add_link(${NAMELINK})
+        if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${NAMELINK}/CMakeLists.txt")
+            # Pass : this should not link subdirectories that are CMake packages
+        elseif(NOT "${NAMELINK}" IN_LIST skip_files)
+            goofit_add_link("${NAMELINK}")
         endif()
     endforeach()
 endfunction()

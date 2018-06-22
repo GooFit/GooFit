@@ -252,8 +252,8 @@ class PdfBase {
     int m_iEventsPerTask{0};
 
   private:
-    std::string name;
     std::string pdf_name_;
+    std::string name;
 };
 
 std::ostream &operator<<(std::ostream &, const PdfBase &);

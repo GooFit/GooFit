@@ -130,6 +130,7 @@ Application::Application(std::string discription, int argc, char **argv)
     , argc_(argc)
     , argv_(argv) {
 #ifdef GOOFIT_MPI
+    GOOFIT_TRACE ("MPI startup");
     MPI_Init(&argc_, &argv_);
 
     int myId, numProcs;

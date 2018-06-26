@@ -244,15 +244,12 @@ __host__ void PdfBase::setData(DataSet *data) {
         int fixme[observablesList.size()];
         memset(fixme, 0, sizeof(int) * observablesList.size());
 
-        for(int i = 0; i < observablesList.size(); i++) {
-            // We are casting the observable to a CountVariable
-            EventNumber *c = dynamic_cast<EventNumber *>(&observablesList[i]);
-
-            // if it is true re-index
-            if(c)
-                fixme[i] = 1;
+        int idx = 0;
+        for(auto o : observablesList) {
+            // We are casting the observable to a EventNumber
+            fixme[idx] = o.isEventNumber();
+            idx ++;
         }
-
 #endif
 
         // Transfer into our whole buffer
@@ -335,13 +332,11 @@ __host__ void PdfBase::setData(DataSet *data) {
         int fixme[observablesList.size()];
         memset(fixme, 0, sizeof(int) * observablesList.size());
 
-        for(int i = 0; i < observablesList.size(); i++) {
-            // We are casting the observable to a CountVariable
-            EventNumber *c = dynamic_cast<EventNumber *>(&observablesList[i]);
-
+        int idx = 0;
+        for(auto o : observablesList) {
             // if it is true re-index
-            if(c)
-                fixme[i] = 1;
+            fixme[idx] = o.isNumberEvent();
+            idx++;
         }
 #endif
 

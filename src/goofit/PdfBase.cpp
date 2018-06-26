@@ -133,6 +133,10 @@ __host__ void PdfBase::setNumPerTask(PdfBase *p, const int &c) {
         return;
 
     m_iEventsPerTask = c;
+
+    // we need to set all children components
+    for (int i = 0; i < components.size(); i++)
+        components[i]->setNumPerTask(components[i], c);
 }
 
 __host__ ROOT::Minuit2::FunctionMinimum PdfBase::fitTo(DataSet *data, int verbosity) {

@@ -637,7 +637,11 @@ macro(GOOFIT_ADD_PACKAGE PACKAGE_NAME)
     # make sure git does not work inside the binary folder
     execute_process(COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_CURRENT_BINARY_DIR}/.git")
 
+    set(OPTS "${ARGN}")
     if(NOT GOOFIT_PACKAGE_${PACKAGE_NAME})
+        return()
+    elseif(ROOT IN_LIST OPTS AND NOT ROOT_FOUND)
+        message(WARNING "Requested package ${PACKAGE_NAME} but ROOT was not found! Not building package.")
         return()
     endif()
 

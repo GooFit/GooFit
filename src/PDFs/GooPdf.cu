@@ -110,7 +110,7 @@ __host__ double GooPdf::reduce_with_bins() const {
 /// This evaluates the current function over the data. Does *not* prepare
 /// or normalize
 __host__ void GooPdf::evaluate_with_metric(thrust::device_vector<fptype> &results) const {
-    //if(results.size() != numEntries)
+    // if(results.size() != numEntries)
     //    results.resize(numEntries);
 
     thrust::constant_iterator<int> eventSize(observablesList.size());
@@ -136,9 +136,9 @@ __host__ void GooPdf::evaluate_with_metric(thrust::device_vector<fptype> &result
         results.begin(),
         *logger);
 
-    // We need to copy each 'results' buffer to each other 
+    // We need to copy each 'results' buffer to each other
 #ifdef GOOFIT_MPI
-    //copy our local device buffer to a temporary host_vector
+    // copy our local device buffer to a temporary host_vector
     thrust::host_vector<fptype> local_results = results;
 
     int myId, numProcs;
@@ -148,20 +148,27 @@ __host__ void GooPdf::evaluate_with_metric(thrust::device_vector<fptype> &result
     int counts[numProcs];
     int displs[numProcs];
 
-    //gather all our counts.
+    // gather all our counts.
     MPI_Allgather(&entries_to_process, 1, MPI_INT, &counts[0], 1, MPI_INT, MPI_COMM_WORLD);
 
-    //calculate our displs.
+    // calculate our displs.
     displs[0] = 0;
-    for (int i = 1; i < numProcs; i++)
+    for(int i = 1; i < numProcs; i++)
         displs[i] = displs[i - 1] + counts[i - 1];
 
     thrust::host_vector<fptype> total_results;
     total_results.resize(numEntries);
 
-    MPI_Allgatherv(&local_results[0], local_results.size(), MPI_DOUBLE, &total_results[0], &counts[0], &displs[0], MPI_DOUBLE, MPI_COMM_WORLD);
+    MPI_Allgatherv(&local_results[0],
+                   local_results.size(),
+                   MPI_DOUBLE,
+                   &total_results[0],
+                   &counts[0],
+                   &displs[0],
+                   MPI_DOUBLE,
+                   MPI_COMM_WORLD);
 
-    //copy our results back to our device_vector.
+    // copy our results back to our device_vector.
     results = total_results;
 #endif
 }

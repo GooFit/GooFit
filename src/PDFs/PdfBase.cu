@@ -248,7 +248,7 @@ __host__ void PdfBase::setData(DataSet *data) {
         for(auto o : observablesList) {
             // We are casting the observable to a EventNumber
             fixme[idx] = o.isEventNumber();
-            idx ++;
+            idx++;
         }
 #endif
 

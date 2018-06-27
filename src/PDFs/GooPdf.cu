@@ -110,8 +110,8 @@ __host__ double GooPdf::reduce_with_bins() const {
 /// This evaluates the current function over the data. Does *not* prepare
 /// or normalize
 __host__ void GooPdf::evaluate_with_metric(thrust::device_vector<fptype> &results) const {
-    if(results.size() != numEntries)
-        results.resize(numEntries);
+    //if(results.size() != numEntries)
+    //    results.resize(numEntries);
 
     thrust::constant_iterator<int> eventSize(observablesList.size());
     thrust::constant_iterator<fptype *> arrayAddress(dev_event_array);
@@ -122,6 +122,8 @@ __host__ void GooPdf::evaluate_with_metric(thrust::device_vector<fptype> &result
 #else
     size_t entries_to_process = numEntries;
 #endif
+
+    results.resize(entries_to_process);
 
     // Calls in parallel:
     // logger(0, arrayAddress, eventSize)
@@ -134,8 +136,34 @@ __host__ void GooPdf::evaluate_with_metric(thrust::device_vector<fptype> &result
         results.begin(),
         *logger);
 
-    // Note, This is not fully realized with MPI.
-    // We need to copy each 'results' buffer to each other 'MPI_Scatterv'
+    // We need to copy each 'results' buffer to each other 
+#ifdef GOOFIT_MPI
+    //copy our local device buffer to a temporary host_vector
+    thrust::host_vector<fptype> local_results = results;
+
+    int myId, numProcs;
+    MPI_Comm_size(MPI_COMM_WORLD, &numProcs);
+    MPI_Comm_rank(MPI_COMM_WORLD, &myId);
+
+    int counts[numProcs];
+    int displs[numProcs];
+
+    //gather all our counts.
+    MPI_Allgather(&entries_to_process, 1, MPI_INT, &counts[0], 1, MPI_INT, MPI_COMM_WORLD);
+
+    //calculate our displs.
+    displs[0] = 0;
+    for (int i = 1; i < numProcs; i++)
+        displs[i] = displs[i - 1] + counts[i - 1];
+
+    thrust::host_vector<fptype> total_results;
+    total_results.resize(numEntries);
+
+    MPI_Allgatherv(&local_results[0], local_results.size(), MPI_DOUBLE, &total_results[0], &counts[0], &displs[0], MPI_DOUBLE, MPI_COMM_WORLD);
+
+    //copy our results back to our device_vector.
+    results = total_results;
+#endif
 }
 
 __host__ thrust::host_vector<fptype> GooPdf::evaluate_with_metric() const {
@@ -241,8 +269,6 @@ __host__ std::vector<fptype> GooPdf::evaluateAtPoints(Observable var) {
 
     host_normalizations.sync(d_normalizations);
 
-    // Note, This is not fully realized with MPI.  We need to copy each 'results' buffer to each other 'MPI_Scatterv',
-    // then we can do the rest.
     thrust::host_vector<fptype> h_results = evaluate_with_metric();
     std::vector<fptype> res;
     res.resize(var.getNumBins());

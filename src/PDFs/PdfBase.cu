@@ -335,7 +335,7 @@ __host__ void PdfBase::setData(DataSet *data) {
         int idx = 0;
         for(auto o : observablesList) {
             // if it is true re-index
-            fixme[idx] = o.isNumberEvent();
+            fixme[idx] = o.isEventNumber();
             idx++;
         }
 #endif

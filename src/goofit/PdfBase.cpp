@@ -135,7 +135,7 @@ __host__ void PdfBase::setNumPerTask(PdfBase *p, const int &c) {
     m_iEventsPerTask = c;
 
     // we need to set all children components
-    for(auto & component : components)
+    for(auto &component : components)
         component->setNumPerTask(component, c);
 }
 

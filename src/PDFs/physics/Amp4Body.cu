@@ -43,6 +43,10 @@ class.
 
 #include <cstdarg>
 
+#ifdef GOOFIT_MPI
+#include <mpi.h>
+#endif
+
 namespace GooFit {
 
 // This function gets called by the GooFit framework to get the value of the PDF.
@@ -353,13 +357,37 @@ __host__ void Amp4Body::setDataSize(unsigned int dataSize, unsigned int evtSize)
     if(cachedAMPs)
         delete cachedAMPs;
 
-    numEntries  = dataSize;
+    numEntries = dataSize;
+
+#ifdef GOOFIT_MPI
+    int myId, numProcs;
+    MPI_Comm_size(MPI_COMM_WORLD, &numProcs);
+    MPI_Comm_rank(MPI_COMM_WORLD, &myId);
+    int perTask = numEntries / numProcs;
+
+    int counts[numProcs];
+    for(int i = 0; i < numProcs - 1; i++)
+        counts[i] = perTask;
+
+    counts[numProcs - 1] = numEntries - perTask * (numProcs - 1);
+
+    setNumPerTask(this, counts[myId]);
+#endif
+
     cachedResSF = new thrust::device_vector<fpcomplex>(
+#ifdef GOOFIT_MPI
+        m_iEventsPerTask * (LineShapes.size() + SpinFactors.size())); //   -1 because 1 component is efficiency
+#else
         dataSize * (LineShapes.size() + SpinFactors.size())); //   -1 because 1 component is efficiency
+#endif
     void *dummy = thrust::raw_pointer_cast(cachedResSF->data());
     MEMCPY_TO_SYMBOL(cResSF, &dummy, sizeof(fpcomplex *), cacheToUse * sizeof(fpcomplex *), cudaMemcpyHostToDevice);
 
-    cachedAMPs   = new thrust::device_vector<fpcomplex>(dataSize * (AmpCalcs.size()));
+#ifdef GOOFIT_MPI
+    cachedAMPs = new thrust::device_vector<fpcomplex>(m_iEventsPerTask * (AmpCalcs.size()));
+#else
+    cachedAMPs = new thrust::device_vector<fpcomplex>(dataSize * (AmpCalcs.size()));
+#endif
     void *dummy2 = thrust::raw_pointer_cast(cachedAMPs->data());
     MEMCPY_TO_SYMBOL(Amps_DP, &dummy2, sizeof(fpcomplex *), cacheToUse * sizeof(fpcomplex *), cudaMemcpyHostToDevice);
 
@@ -388,6 +416,12 @@ __host__ fptype Amp4Body::normalize() {
     SpinsCalculated    = !forceRedoIntegrals;
     forceRedoIntegrals = false;
 
+#ifdef GOOFIT_MPI
+    unsigned int events_to_process = m_iEventsPerTask;
+#else
+    unsigned int events_to_process = numEntries;
+#endif
+
     // just some thrust iterators for the calculation.
     thrust::constant_iterator<fptype *> dataArray(dev_event_array);
     thrust::constant_iterator<int> eventSize(totalEventSize);
@@ -402,9 +436,10 @@ __host__ fptype Amp4Body::normalize() {
             sfcalculators[i]->setDalitzId(getFunctionIndex());
             sfcalculators[i]->setSpinFactorId(SpinFactors[i]->getFunctionIndex());
             unsigned int stride = LineShapes.size() + SpinFactors.size();
+
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
-                thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, dataArray, eventSize)),
+                thrust::make_zip_iterator(thrust::make_tuple(eventIndex + events_to_process, dataArray, eventSize)),
                 strided_range<thrust::device_vector<fpcomplex>::iterator>(
                     cachedResSF->begin() + offset + i, cachedResSF->end(), stride)
                     .begin(),
@@ -444,7 +479,7 @@ __host__ fptype Amp4Body::normalize() {
 
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
-                thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, dataArray, eventSize)),
+                thrust::make_zip_iterator(thrust::make_tuple(eventIndex + events_to_process, dataArray, eventSize)),
                 strided_range<thrust::device_vector<fpcomplex>::iterator>(
                     cachedResSF->begin() + i, cachedResSF->end(), stride)
                     .begin(),
@@ -463,7 +498,7 @@ __host__ fptype Amp4Body::normalize() {
         AmpCalcs[i]->setDalitzId(getFunctionIndex());
         // AmpCalcs[i]->setAmplitudeId (amp->getFuncionIndex ());
         thrust::transform(eventIndex,
-                          eventIndex + numEntries,
+                          eventIndex + events_to_process,
                           strided_range<thrust::device_vector<fpcomplex>::iterator>(
                               cachedAMPs->begin() + i, cachedAMPs->end(), AmpCalcs.size())
                               .begin(),
@@ -614,21 +649,11 @@ __host__
     setForceIntegrals();
     host_normalizations.sync(d_normalizations);
 
-    thrust::device_vector<fptype> results(numEvents);
-    thrust::constant_iterator<int> eventSize(6);
-    thrust::constant_iterator<fptype *> arrayAddress(dev_event_array);
-    thrust::counting_iterator<int> eventIndex(0);
-
-    // TODO: need to call setIndices (or something) in order to point to ptr_to_Prob, and not ptr_to_Nll
-    // MetricTaker evalor(this, getMetricPointer("ptr_to_Prob"));
     auto fc = fitControl;
     setFitControl(std::make_shared<ProbFit>());
-    thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
-                      thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEvents, arrayAddress, eventSize)),
-                      results.begin(),
-                      *logger);
-    cudaDeviceSynchronize();
-    gooFree(dev_event_array);
+
+    thrust::device_vector<fptype> results;
+    GooPdf::evaluate_with_metric(results);
 
     ranged_print("Results", results.begin(), results.begin() + 6);
 

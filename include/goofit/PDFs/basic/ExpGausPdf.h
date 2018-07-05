@@ -12,7 +12,8 @@ resolution:
 \begin{align}
     P\left(t;m,\sigma,\tau\right)
     &=& e^{-t/\tau} \otimes e^{-\frac{(t-m)^2}{2\sigma^2}} \\
-    &=& \left(\tau/2\right)e^{\left(\tau/2\right)\left(2m+\tau\sigma^2-2t\right)}\mathrm{erfc}\left(\frac{m+\tau\sigma^2-t}{\sigma\sqrt{2}}\right)
+    &=&
+\left(\tau/2\right)e^{\left(\tau/2\right)\left(2m+\tau\sigma^2-2t\right)}\mathrm{erfc}\left(\frac{m+\tau\sigma^2-t}{\sigma\sqrt{2}}\right)
 \end{align}
 \f]
 where \f$\mathrm{erfc}\f$ is the complementary error function. The

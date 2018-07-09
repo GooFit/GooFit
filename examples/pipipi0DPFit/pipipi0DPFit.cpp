@@ -4951,25 +4951,25 @@ int main(int argc, char **argv) {
     toy->add_option("-l,--load,load", load, "Number of times to load", true);
     toy->add_option("-m,--max", maxEvents, "Maximum number of events to read", true);
     toy->add_flag("-p,--plot", plots, "Also make plots");
-    toy->set_callback([&]() { retval = runToyFit(sample, load, plots); });
+    toy->callback([&]() { retval = runToyFit(sample, load, plots); });
 
     auto truth_fit = app.add_subcommand("truth", "Truth Monte Carlo fit");
     truth_fit->add_option("-d,--data,data", data, "Data to use")->required()->check(GooFit::ExistingFile);
-    truth_fit->set_callback([&]() { retval = runTruthMCFit(data, false); });
+    truth_fit->callback([&]() { retval = runTruthMCFit(data, false); });
 
     auto sigma_fit = app.add_subcommand("sigma", "Run sigma fit");
     sigma_fit->add_option("-d,--data,data", data, "Data to use")->required()->check(GooFit::ExistingFile);
     sigma_fit->add_option("-s,--slices,slices", m23Slices, "m23 slices")->required();
-    sigma_fit->set_callback([&]() { retval = runSigmaFit(data.c_str()); });
+    sigma_fit->callback([&]() { retval = runSigmaFit(data.c_str()); });
 
     auto efficiency_fit = app.add_subcommand("efficiency", "Run efficiency fit");
     efficiency_fit->add_option("-s,--sample,sample", sample, "Sample number to use", true);
-    efficiency_fit->set_callback([&]() { retval = runEfficiencyFit(sample); });
+    efficiency_fit->callback([&]() { retval = runEfficiencyFit(sample); });
 
     auto canonical_fit = app.add_subcommand("canonical", "Run the canonical fit");
     canonical_fit->add_option("-d,--data,data", data, "Data to use")->required()->check(GooFit::ExistingFile);
     parseArg(canonical_fit);
-    canonical_fit->set_callback([&]() {
+    canonical_fit->callback([&]() {
         set_bkg_model_from_string();
         retval = runCanonicalFit(data, !makePlots);
     });
@@ -4977,24 +4977,24 @@ int main(int argc, char **argv) {
     auto background_dalitz_fit = app.add_subcommand("background_dalitz", "Run the background Dalitz fit");
     background_dalitz_fit->add_option("-s,--sample,sample", sample, "Sample number to use", true);
     parseArg(background_dalitz_fit);
-    background_dalitz_fit->set_callback([&]() {
+    background_dalitz_fit->callback([&]() {
         set_bkg_model_from_string();
         retval = runBackgroundDalitzFit(sample, true);
     });
 
     auto background_sigma_fit = app.add_subcommand("background_sigma", "Run background sigma fit");
     background_sigma_fit->add_option("-s,--sample,sample", sample, "Sample number to use", true);
-    background_sigma_fit->set_callback([&]() { retval = runBackgroundSigmaFit(sample); });
+    background_sigma_fit->callback([&]() { retval = runBackgroundSigmaFit(sample); });
 
     auto write_background_histograms = app.add_subcommand("background_histograms", "Write background histograms");
     write_background_histograms->add_option("-s,--sample,sample", sample, "Sample number to use", true);
-    write_background_histograms->set_callback([&]() { writeBackgroundHistograms(sample); });
+    write_background_histograms->callback([&]() { writeBackgroundHistograms(sample); });
 
     auto run_gen_mc_fit = app.add_subcommand("run_gen_mc", "Run generated Monte Carlo fit");
     run_gen_mc_fit->add_option("-d,--data,data", data, "Data to use")->required()->check(GooFit::ExistingFile);
     run_gen_mc_fit->add_option("-g,--genres,gen-resolutions", genResolutions)->required();
     run_gen_mc_fit->add_option("-p,--dplotres,dplotres", dplotres);
-    run_gen_mc_fit->set_callback([&]() {
+    run_gen_mc_fit->callback([&]() {
         if(!(DplotRes & genResolutions))
             dplotres = 0;
         retval = runGeneratedMCFit(data, genResolutions, dplotres);
@@ -5002,7 +5002,7 @@ int main(int argc, char **argv) {
 
     auto make_time_plots = app.add_subcommand("make_time_plots", "Make time plots");
     make_time_plots->add_option("-d,--data,data", data, "Data to use")->required()->check(GooFit::ExistingFile);
-    make_time_plots->set_callback([&]() { makeTimePlots(data); });
+    make_time_plots->callback([&]() { makeTimePlots(data); });
 
     GOOFIT_PARSE(app);
 

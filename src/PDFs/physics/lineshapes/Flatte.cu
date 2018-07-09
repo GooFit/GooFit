@@ -44,7 +44,7 @@ __device__ fpcomplex Flatte_MINT(fptype Mpair, fptype m1, fptype m2, ParameterCo
     frFactor     = BL2(pABSq * meson_radius * meson_radius, orbital);
     fpcomplex BW = sqrt(frFactor) / fpcomplex(resmass * resmass - rMass2, 0) - fpcomplex(0, 1) * resmass * FlatteWidth;
 
-    pc.incrementIndex(1, 1, 2, 0, 1);
+    pc.incrementIndex(1, 1, 3, 0, 1);
     return BW;
 }
 
@@ -56,8 +56,9 @@ Lineshapes::Flatte::Flatte(
     // TODO: Clean up signature
     registerParameter(mass);
 
-    registerConstant(radius);
-    registerConstant(L);
+    // registerConstant(radius);
+    // registerConstant(L);
+    // registerConstant(Mpair);
 
     registerFunction("ptr_to_Flatte", ptr_to_Flatte);
 

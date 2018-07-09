@@ -25,11 +25,11 @@ __device__ fptype NormSpinCalculator_TD::operator()(
 
     ParameterContainer pc;
 
-    fptype M  = pc.getConstant(1);
-    fptype m1 = pc.getConstant(2);
-    fptype m2 = pc.getConstant(3);
-    fptype m3 = pc.getConstant(4);
-    fptype m4 = pc.getConstant(5);
+    fptype M  = pc.getConstant(0);
+    fptype m1 = pc.getConstant(1);
+    fptype m2 = pc.getConstant(2);
+    fptype m3 = pc.getConstant(3);
+    fptype m4 = pc.getConstant(4);
 
     // Increment to TDDP function:
     while(pc.funcIdx < dalitzFuncId)

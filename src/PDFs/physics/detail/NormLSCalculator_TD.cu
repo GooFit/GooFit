@@ -32,11 +32,11 @@ __device__ fpcomplex NormLSCalculator_TD::operator()(
     fptype cos34 = (thrust::get<3>(t));
     fptype phi   = (thrust::get<4>(t));
 
-    fptype M  = pc.getConstant(1);
-    fptype m1 = pc.getConstant(2);
-    fptype m2 = pc.getConstant(3);
-    fptype m3 = pc.getConstant(4);
-    fptype m4 = pc.getConstant(5);
+    fptype M  = pc.getConstant(0);
+    fptype m1 = pc.getConstant(1);
+    fptype m2 = pc.getConstant(2);
+    fptype m3 = pc.getConstant(3);
+    fptype m4 = pc.getConstant(4);
 
     while(pc.funcIdx < _resonance_i)
         pc.incrementIndex();

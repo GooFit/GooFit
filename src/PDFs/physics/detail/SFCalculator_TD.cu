@@ -36,11 +36,11 @@ __device__ fpcomplex SFCalculator_TD::operator()(thrust::tuple<int, fptype *, in
     fptype cos34 = evt[id_cos34];
     fptype phi   = evt[id_phi];
 
-    fptype M  = pc.getConstant(1);
-    fptype m1 = pc.getConstant(2);
-    fptype m2 = pc.getConstant(3);
-    fptype m3 = pc.getConstant(4);
-    fptype m4 = pc.getConstant(5);
+    fptype M  = pc.getConstant(0);
+    fptype m1 = pc.getConstant(1);
+    fptype m2 = pc.getConstant(2);
+    fptype m3 = pc.getConstant(3);
+    fptype m4 = pc.getConstant(4);
 
     fptype vecs[16];
     get4Vecs(vecs, m12, m34, cos12, cos34, phi, M, m1, m2, m3, m4);

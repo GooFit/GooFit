@@ -273,11 +273,11 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
 
             if(found != LineShapes.end()) {
                 AmpMap[i->_uniqueDecayStr].first.push_back(std::distance(LineShapes.begin(), found));
-                //printf("LS %s found at %i\n",LSIT->getName().c_str(),std::distance(LineShapes.begin(), found));
+                // printf("LS %s found at %i\n",LSIT->getName().c_str(),std::distance(LineShapes.begin(), found));
             } else {
                 LineShapes.push_back(LSIT);
                 AmpMap[i->_uniqueDecayStr].first.push_back(LineShapes.size() - 1);
-                //printf("Adding LS %s\n",LSIT->getName().c_str());
+                // printf("Adding LS %s\n",LSIT->getName().c_str());
             }
         }
 
@@ -318,7 +318,7 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
         amp_idx.insert(amp_idx.end(), ls.begin(), ls.end());
         amp_idx.insert(amp_idx.end(), sf.begin(), sf.end());
         ++coeff_counter;
-        //AmpBuffer.push_back(i);
+        // AmpBuffer.push_back(i);
     }
 
     for(auto &i : AmpsB) {
@@ -332,7 +332,7 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
         AmpMap[i->_uniqueDecayStr] = std::make_pair(std::vector<unsigned int>(0), std::vector<unsigned int>(0));
 
         components.push_back(i);
-        //AmpBuffer.push_back(i);
+        // AmpBuffer.push_back(i);
 
         registerParameter(i->_ar);
         registerParameter(i->_ai);
@@ -346,11 +346,11 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
 
             if(found != LineShapes.end()) {
                 AmpMap[i->_uniqueDecayStr].first.push_back(std::distance(LineShapes.begin(), found));
-                //printf("LS %s found at %i\n",LSIT->getName().c_str(),std::distance(LineShapes.begin(), found));
+                // printf("LS %s found at %i\n",LSIT->getName().c_str(),std::distance(LineShapes.begin(), found));
             } else {
                 LineShapes.push_back(LSIT);
                 AmpMap[i->_uniqueDecayStr].first.push_back(LineShapes.size() - 1);
-                //printf("Adding LS %s\n",LSIT->getName().c_str());
+                // printf("Adding LS %s\n",LSIT->getName().c_str());
             }
         }
 
@@ -414,7 +414,7 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
         lscalculators.push_back(new LSCalculator_TD());
     }
 
-    for (int i = 0; i < amp_idx.size(); i++)
+    for(int i = 0; i < amp_idx.size(); i++)
         printf("%i - %i\n", i, amp_idx[i]);
 
     MEMCPY_TO_SYMBOL(
@@ -606,7 +606,8 @@ __host__ fptype Amp4Body_TD::normalize() {
     // parameters change.
     for(int i = 0; i < LineShapes.size(); ++i) {
         if(redoIntegral[i]) {
-            //printf ("components[%i]=%s {%i %i %f}\n", i, LineShapes[i]->getName().c_str(), LineShapes[i]->_L, LineShapes[i]->_Mpair, >_radius);
+            // printf ("components[%i]=%s {%i %i %f}\n", i, LineShapes[i]->getName().c_str(), LineShapes[i]->_L,
+            // LineShapes[i]->_Mpair, >_radius);
             lscalculators[i]->setDalitzId(getFunctionIndex());
             lscalculators[i]->setResonanceId(LineShapes[i]->getFunctionIndex());
 

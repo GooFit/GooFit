@@ -30,7 +30,7 @@ __device__ fptype getSpline(fptype x, bool continued, ParameterContainer &pc) {
     const fptype s_min       = pc.getConstant(3);
     const fptype s_max       = pc.getConstant(4);
     const unsigned int nBins = pc.getConstant(5);
-    const int numConstants = pc.getNumConstants();
+    const int numConstants   = pc.getNumConstants();
 
     // 11 is the first spine knot, 11+nBins is the first curvature
 
@@ -66,7 +66,7 @@ __device__ fpcomplex Spline_TDP(fptype Mpair, fptype m1, fptype m2, ParameterCon
     const fptype mass  = pc.getParameter(0);
     const fptype width = pc.getParameter(1);
     // const unsigned int L = GOOFIT_GET_INT(4);
-    const fptype radius = pc.getConstant(0);
+    const fptype radius    = pc.getConstant(0);
     const int numConstants = pc.getNumConstants();
 
     fptype s  = POW2(Mpair);
@@ -134,9 +134,9 @@ Lineshapes::GSpline::GSpline(std::string name,
     registerParameter(mass);
     registerParameter(width);
 
-    //registerConstant(radius);
-    //registerConstant(L);
-    //registerConstant(Mpair);
+    // registerConstant(radius);
+    // registerConstant(L);
+    // registerConstant(Mpair);
     registerConstant(enum_to_underlying(FormFac));
 
     if(std::get<2>(SplineInfo) != AdditionalVars.size())

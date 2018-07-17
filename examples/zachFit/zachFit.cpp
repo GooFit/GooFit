@@ -70,7 +70,7 @@ inverse femtobarn).
         argc,
         argv};
 
-    app.set_footer(R"raw(Dataset descriptions:
+    app.footer(R"raw(Dataset descriptions:
 0-simple   Early testing sample for GooFit before nominal dataset was released.
            MC resolution sample and data for channel D*+ -> D0 pi+; D0 -> K- pi+
            Samples are composed of events that pass the majority of selection criteria, but

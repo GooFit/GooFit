@@ -19,7 +19,7 @@ __device__ fpcomplex nonres_DP(fptype Mpair, fptype m1, fptype m2, ParameterCont
     fptype pABSq      = num / (4 * mumsRecoMass2);
     fptype formfactor = sqrt(BL2(pABSq * meson_radius * meson_radius, orbital));
 
-    pc.incrementIndex(1, 0, 2, 0, 1);
+    pc.incrementIndex(1, 0, 3, 0, 1);
     return fpcomplex(1., 0.) * formfactor;
 }
 
@@ -30,8 +30,8 @@ Lineshapes::NonRes::NonRes(
     : Lineshape("NonRes", name, L, Mpair, FormFac, radius) {
     // TODO: Clean up signature
 
-    registerConstant(radius);
-    registerConstant(L);
+    //registerConstant(radius);
+    //registerConstant(L);
 
     registerFunction("ptr_to_NONRES_DP", ptr_to_NONRES_DP);
 

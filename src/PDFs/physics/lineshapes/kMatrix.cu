@@ -129,7 +129,7 @@ __device__ fpcomplex kMatrixFunction(fptype Mpair, fptype m1, fptype m2, Paramet
     Eigen::Array<fpcomplex, NCHANNELS, NCHANNELS> F = getPropagator(kMatrix, phaseSpace, adlerTerm);
 
     // TODO: calculate out
-    pc.incrementIndex(1, idx, 2, 0, 1);
+    pc.incrementIndex(1, idx, 5, 0, 1);
 
     if(is_pole) { // pole
         fpcomplex M = 0;

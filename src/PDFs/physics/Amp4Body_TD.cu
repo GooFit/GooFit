@@ -414,9 +414,6 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
         lscalculators.push_back(new LSCalculator_TD());
     }
 
-    for (int i = 0; i < amp_idx.size(); i++)
-        printf("%i - %i\n", i, amp_idx[i]);
-
     MEMCPY_TO_SYMBOL(
         AmpIndices, &(amp_idx_start[0]), amp_idx_start.size() * sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(AmpIndices,
@@ -606,7 +603,6 @@ __host__ fptype Amp4Body_TD::normalize() {
     // parameters change.
     for(int i = 0; i < LineShapes.size(); ++i) {
         if(redoIntegral[i]) {
-            //printf ("components[%i]=%s {%i %i %f}\n", i, LineShapes[i]->getName().c_str(), LineShapes[i]->_L, LineShapes[i]->_Mpair, >_radius);
             lscalculators[i]->setDalitzId(getFunctionIndex());
             lscalculators[i]->setResonanceId(LineShapes[i]->getFunctionIndex());
 
@@ -771,7 +767,6 @@ __host__
     fptype tau      = parametersList[0].getValue();
     fptype ymixing  = parametersList[2].getValue();
     fptype gammamin = 1.0 / tau - fabs(ymixing) / tau;
-    // printf("hostparams: %f, %f\n", tau, ymixing);
 
     thrust::transform(
         index_sequence_begin, index_sequence_begin + nAcc, dtime_d.begin(), genExp(generation_offset, gammamin));

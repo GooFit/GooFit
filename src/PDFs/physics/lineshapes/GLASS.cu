@@ -82,8 +82,8 @@ Lineshapes::GLASS::GLASS(std::string name,
     for(int i = 0; i < 5; i++)
         registerParameter(AdditionalVars[i]);
 
-    //registerConstant(radius);
-    //registerConstant(L);
+    // registerConstant(radius);
+    // registerConstant(L);
     // TODO: Remove from signature
     // registerConstant(Mpair);
     // registerConstant(enum_to_underlying(FormFac));

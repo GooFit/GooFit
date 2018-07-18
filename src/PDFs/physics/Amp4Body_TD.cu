@@ -273,11 +273,11 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
 
             if(found != LineShapes.end()) {
                 AmpMap[i->_uniqueDecayStr].first.push_back(std::distance(LineShapes.begin(), found));
-                //printf("LS %s found at %i\n",LSIT->getName().c_str(),std::distance(LineShapes.begin(), found));
+                // printf("LS %s found at %i\n",LSIT->getName().c_str(),std::distance(LineShapes.begin(), found));
             } else {
                 LineShapes.push_back(LSIT);
                 AmpMap[i->_uniqueDecayStr].first.push_back(LineShapes.size() - 1);
-                //printf("Adding LS %s\n",LSIT->getName().c_str());
+                // printf("Adding LS %s\n",LSIT->getName().c_str());
             }
         }
 
@@ -318,7 +318,7 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
         amp_idx.insert(amp_idx.end(), ls.begin(), ls.end());
         amp_idx.insert(amp_idx.end(), sf.begin(), sf.end());
         ++coeff_counter;
-        //AmpBuffer.push_back(i);
+        // AmpBuffer.push_back(i);
     }
 
     for(auto &i : AmpsB) {
@@ -332,7 +332,7 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
         AmpMap[i->_uniqueDecayStr] = std::make_pair(std::vector<unsigned int>(0), std::vector<unsigned int>(0));
 
         components.push_back(i);
-        //AmpBuffer.push_back(i);
+        // AmpBuffer.push_back(i);
 
         registerParameter(i->_ar);
         registerParameter(i->_ai);
@@ -346,11 +346,11 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
 
             if(found != LineShapes.end()) {
                 AmpMap[i->_uniqueDecayStr].first.push_back(std::distance(LineShapes.begin(), found));
-                //printf("LS %s found at %i\n",LSIT->getName().c_str(),std::distance(LineShapes.begin(), found));
+                // printf("LS %s found at %i\n",LSIT->getName().c_str(),std::distance(LineShapes.begin(), found));
             } else {
                 LineShapes.push_back(LSIT);
                 AmpMap[i->_uniqueDecayStr].first.push_back(LineShapes.size() - 1);
-                //printf("Adding LS %s\n",LSIT->getName().c_str());
+                // printf("Adding LS %s\n",LSIT->getName().c_str());
             }
         }
 
@@ -414,6 +414,12 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
         lscalculators.push_back(new LSCalculator_TD());
     }
 
+<<<<<<< HEAD
+=======
+    for(int i = 0; i < amp_idx.size(); i++)
+        printf("%i - %i\n", i, amp_idx[i]);
+
+>>>>>>> 581d75ac33d412ad5dce04b571dfbc8740a1c777
     MEMCPY_TO_SYMBOL(
         AmpIndices, &(amp_idx_start[0]), amp_idx_start.size() * sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(AmpIndices,

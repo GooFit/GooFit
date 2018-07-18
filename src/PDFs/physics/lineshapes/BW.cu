@@ -158,9 +158,9 @@ Lineshapes::RBW::RBW(
     registerParameter(mass);
     registerParameter(width);
 
-    //registerConstant(radius);
-    //registerConstant(L);
-    //registerConstant(Mpair);
+    // registerConstant(radius);
+    // registerConstant(L);
+    // registerConstant(Mpair);
     // TODO: Missing contant here
     registerConstant(enum_to_underlying(FormFac));
 
@@ -175,9 +175,9 @@ Lineshapes::SBW::SBW(
     registerParameter(mass);
     registerParameter(width);
 
-    //registerConstant(radius);
-    //registerConstant(L);
-    //registerConstant(Mpair);
+    // registerConstant(radius);
+    // registerConstant(L);
+    // registerConstant(Mpair);
     // TODO: Mpair missing?
     registerConstant(enum_to_underlying(FormFac));
 
@@ -194,9 +194,9 @@ Lineshapes::LASS::LASS(
     registerParameter(mass);
     registerParameter(width);
 
-    //registerConstant(radius);
-    //registerConstant(L);
-    //registerConstant(Mpair);
+    // registerConstant(radius);
+    // registerConstant(L);
+    // registerConstant(Mpair);
     registerConstant(enum_to_underlying(FormFac));
 
     registerFunction("ptr_to_lass", ptr_to_lass);

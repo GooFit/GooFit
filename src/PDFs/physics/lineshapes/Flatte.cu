@@ -56,9 +56,9 @@ Lineshapes::Flatte::Flatte(
     // TODO: Clean up signature
     registerParameter(mass);
 
-    //registerConstant(radius);
-    //registerConstant(L);
-    //registerConstant(Mpair);
+    // registerConstant(radius);
+    // registerConstant(L);
+    // registerConstant(Mpair);
 
     registerFunction("ptr_to_Flatte", ptr_to_Flatte);
 

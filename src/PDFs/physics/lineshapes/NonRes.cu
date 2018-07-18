@@ -30,8 +30,8 @@ Lineshapes::NonRes::NonRes(
     : Lineshape("NonRes", name, L, Mpair, FormFac, radius) {
     // TODO: Clean up signature
 
-    //registerConstant(radius);
-    //registerConstant(L);
+    // registerConstant(radius);
+    // registerConstant(L);
 
     registerFunction("ptr_to_NONRES_DP", ptr_to_NONRES_DP);
 

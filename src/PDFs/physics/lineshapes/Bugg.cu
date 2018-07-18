@@ -135,10 +135,10 @@ Lineshapes::Bugg::Bugg(
     : Lineshape("Bugg", name, L, Mpair, FormFac, radius) {
     // TODO: Clean up signature
 
-    //registerConstant(radius);
-    //registerConstant(L);
-    //registerConstant(Mpair);
-    //registerConstant(FF);
+    // registerConstant(radius);
+    // registerConstant(L);
+    // registerConstant(Mpair);
+    // registerConstant(FF);
 
     registerFunction("ptr_to_bugg_MINT", ptr_to_bugg_MINT);
 
@@ -149,10 +149,10 @@ Lineshapes::Bugg3::Bugg3(
     std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
     : Lineshape("Bugg3", name, L, Mpair, FormFac, radius) {
     // TODO: Clean up signature
-    //registerConstant(radius);
-    //registerConstant(L);
-    //registerConstant(Mpair);
-    //registerConstant(FF);
+    // registerConstant(radius);
+    // registerConstant(L);
+    // registerConstant(Mpair);
+    // registerConstant(FF);
 
     registerFunction("ptr_to_bugg_MINT3", ptr_to_bugg_MINT3);
 

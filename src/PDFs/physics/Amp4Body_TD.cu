@@ -414,12 +414,6 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
         lscalculators.push_back(new LSCalculator_TD());
     }
 
-<<<<<<< HEAD
-=======
-    for(int i = 0; i < amp_idx.size(); i++)
-        printf("%i - %i\n", i, amp_idx[i]);
-
->>>>>>> 581d75ac33d412ad5dce04b571dfbc8740a1c777
     MEMCPY_TO_SYMBOL(
         AmpIndices, &(amp_idx_start[0]), amp_idx_start.size() * sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(AmpIndices,

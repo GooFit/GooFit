@@ -27,9 +27,10 @@ __device__ __thrust_forceinline__ fptype BlattWeisskopf_Norm(const fptype z2, co
 }
 
 __device__ fptype getSpline(fptype x, bool continued, ParameterContainer &pc) {
-    const fptype s_min       = pc.getConstant(0);
-    const fptype s_max       = pc.getConstant(1);
-    const unsigned int nBins = pc.getConstant(2);
+    const fptype s_min       = pc.getConstant(3);
+    const fptype s_max       = pc.getConstant(4);
+    const unsigned int nBins = pc.getConstant(5);
+    const int numConstants   = pc.getNumConstants();
 
     // 11 is the first spine knot, 11+nBins is the first curvature
 
@@ -49,7 +50,7 @@ __device__ fptype getSpline(fptype x, bool continued, ParameterContainer &pc) {
     fptype m_xf_1 = pc.getConstant(10 + bin + nBins + 1);
 
     // TODO: try to calculate this.
-    pc.incrementIndex();
+    pc.incrementIndex(1, 0, numConstants, 0, 1);
 
     return m_x_0 + dx * ((m_x_1 - m_x_0) / spacing - (m_xf_1 + 2 * m_xf_0) * spacing / 6) + dx * dx * m_xf_0
            + dx * dx * dx * (m_xf_1 - m_xf_0) / (6 * spacing);
@@ -65,7 +66,8 @@ __device__ fpcomplex Spline_TDP(fptype Mpair, fptype m1, fptype m2, ParameterCon
     const fptype mass  = pc.getParameter(0);
     const fptype width = pc.getParameter(1);
     // const unsigned int L = GOOFIT_GET_INT(4);
-    const fptype radius = pc.getConstant(0);
+    const fptype radius    = pc.getConstant(0);
+    const int numConstants = pc.getNumConstants();
 
     fptype s  = POW2(Mpair);
     fptype s1 = POW2(m1);
@@ -86,7 +88,7 @@ __device__ fpcomplex Spline_TDP(fptype Mpair, fptype m1, fptype m2, ParameterCon
     fptype running_width = width * width_shape / width_norm;
     fpcomplex iBW        = fpcomplex(POW2(mass) - s, -mass * running_width);
 
-    pc.incrementIndex(1, 2, 3, 0, 1);
+    pc.incrementIndex(1, 2, numConstants, 0, 1);
 
     return norm / iBW;
 }
@@ -132,9 +134,9 @@ Lineshapes::GSpline::GSpline(std::string name,
     registerParameter(mass);
     registerParameter(width);
 
-    registerConstant(radius);
-    registerConstant(L);
-    registerConstant(Mpair);
+    // registerConstant(radius);
+    // registerConstant(L);
+    // registerConstant(Mpair);
     registerConstant(enum_to_underlying(FormFac));
 
     if(std::get<2>(SplineInfo) != AdditionalVars.size())

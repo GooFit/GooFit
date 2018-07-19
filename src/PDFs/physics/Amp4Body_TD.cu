@@ -273,9 +273,11 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
 
             if(found != LineShapes.end()) {
                 AmpMap[i->_uniqueDecayStr].first.push_back(std::distance(LineShapes.begin(), found));
+                // printf("LS %s found at %i\n",LSIT->getName().c_str(),std::distance(LineShapes.begin(), found));
             } else {
                 LineShapes.push_back(LSIT);
                 AmpMap[i->_uniqueDecayStr].first.push_back(LineShapes.size() - 1);
+                // printf("Adding LS %s\n",LSIT->getName().c_str());
             }
         }
 
@@ -298,6 +300,7 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
         auto inB = std::find_if(AmpsB.begin(), AmpsB.end(), [AmpsA, &i](const Amplitude *A) { return *i == (*A); });
 
         if(inB != AmpsB.end()) {
+            flag = 2;
             // printf("Found in AmpsB as well: %s\n", (*inB)->_uniqueDecayStr.c_str());
             registerParameter((*inB)->_ar);
             registerParameter((*inB)->_ai);
@@ -315,7 +318,7 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
         amp_idx.insert(amp_idx.end(), ls.begin(), ls.end());
         amp_idx.insert(amp_idx.end(), sf.begin(), sf.end());
         ++coeff_counter;
-        AmpBuffer.push_back(i);
+        // AmpBuffer.push_back(i);
     }
 
     for(auto &i : AmpsB) {
@@ -329,7 +332,7 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
         AmpMap[i->_uniqueDecayStr] = std::make_pair(std::vector<unsigned int>(0), std::vector<unsigned int>(0));
 
         components.push_back(i);
-        AmpBuffer.push_back(i);
+        // AmpBuffer.push_back(i);
 
         registerParameter(i->_ar);
         registerParameter(i->_ai);
@@ -343,9 +346,11 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
 
             if(found != LineShapes.end()) {
                 AmpMap[i->_uniqueDecayStr].first.push_back(std::distance(LineShapes.begin(), found));
+                // printf("LS %s found at %i\n",LSIT->getName().c_str(),std::distance(LineShapes.begin(), found));
             } else {
                 LineShapes.push_back(LSIT);
                 AmpMap[i->_uniqueDecayStr].first.push_back(LineShapes.size() - 1);
+                // printf("Adding LS %s\n",LSIT->getName().c_str());
             }
         }
 
@@ -401,16 +406,13 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
     initialize();
 
     Integrator   = new NormIntegrator_TD();
-    redoIntegral = new bool[components.size() - 1];
-    cachedMasses = new fptype[components.size() - 1];
-    cachedWidths = new fptype[components.size() - 1];
+    redoIntegral = new bool[LineShapes.size()];
+    cachedMasses = new fptype[LineShapes.size()];
+    cachedWidths = new fptype[LineShapes.size()];
 
     for(int i = 0; i < LineShapes.size(); i++) {
         lscalculators.push_back(new LSCalculator_TD());
     }
-
-    // for (int i = 0; i < amp_idx.size(); i++)
-    //    printf("%i - %i\n", i, amp_idx[i]);
 
     MEMCPY_TO_SYMBOL(
         AmpIndices, &(amp_idx_start[0]), amp_idx_start.size() * sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
@@ -482,48 +484,6 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
 
 __host__ void Amp4Body_TD::populateArrays() {
     PdfBase::populateArrays();
-
-    // go over our amplitudes and actually set index values, update.
-    std::vector<unsigned int> amp_idx;
-    std::vector<unsigned int> amp_idx_start;
-
-    for(int i = 0; i < components.size() - 2; ++i) {
-        auto *amp = dynamic_cast<Amplitude *>(components[i]);
-
-        std::vector<Lineshape *> lineshapes   = amp->getLineShapes();
-        std::vector<SpinFactor *> spinfactors = amp->getSpinFactors();
-
-        // printf ("i=%i 0=%i 1=%i 2=%i 3=%i\n", i, amp_idx.size(), lineshapes.size(), spinfactors.size(), amp->_nPerm);
-        amp_idx_start.push_back(amp_idx.size());
-
-        amp_idx.push_back(lineshapes.size());
-        amp_idx.push_back(spinfactors.size());
-        amp_idx.push_back(amp->_nPerm);
-
-        for(auto &LSIT : lineshapes) {
-            auto found = std::find_if(
-                LineShapes.begin(), LineShapes.end(), [&LSIT](const Lineshape *L) { return (*LSIT) == (*L); });
-            if(found != LineShapes.end()) {
-                amp_idx.push_back(std::distance(LineShapes.begin(), found));
-            } else
-                GOOFIT_ERROR("Shouldn't happen, could not find lineshape in array!");
-        }
-
-        for(auto &SFIT : spinfactors) {
-            auto found = std::find_if(
-                SpinFactors.begin(), SpinFactors.end(), [&SFIT](const SpinFactor *S) { return (*SFIT) == (*S); });
-            if(found != SpinFactors.end()) {
-                amp_idx.push_back(std::distance(SpinFactors.begin(), found));
-            } else
-                GOOFIT_ERROR("Shouldn't happen, could not find spin factor in array!");
-        }
-    }
-
-    // MEMCPY_TO_SYMBOL(AmpIndices,
-    //                 &(amp_idx[0]),
-    //                 amp_idx_start.size() * sizeof(unsigned int),
-    //                 amp_idx_start.size() * sizeof(unsigned int),
-    //                 cudaMemcpyHostToDevice);
 
     // TODO: We need to expand populateArrays so we handle components correctly!
     efficiencyFunction = host_function_table.size() - 1;
@@ -648,7 +608,7 @@ __host__ fptype Amp4Body_TD::normalize() {
 
             unsigned int stride = LineShapes.size() + SpinFactors.size();
 
-            GOOFIT_TRACE("LineShapes - stride: {}", stride);
+            GOOFIT_TRACE("LineShape[{}] - stride: {}", LineShapes[i]->getName().c_str(), stride);
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, dataArray, eventSize)),
@@ -807,7 +767,6 @@ __host__
     fptype tau      = parametersList[0].getValue();
     fptype ymixing  = parametersList[2].getValue();
     fptype gammamin = 1.0 / tau - fabs(ymixing) / tau;
-    // printf("hostparams: %f, %f\n", tau, ymixing);
 
     thrust::transform(
         index_sequence_begin, index_sequence_begin + nAcc, dtime_d.begin(), genExp(generation_offset, gammamin));

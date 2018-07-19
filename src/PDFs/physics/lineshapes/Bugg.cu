@@ -72,7 +72,7 @@ __device__ fpcomplex bugg_MINT(fptype Mpair, fptype m1, fptype m2, ParameterCont
           - fpcomplex(0, 1) * M * Gamma_tot;
     fpcomplex returnVal = 1.0 / den;
 
-    pc.incrementIndex(1, 0, 0, 0, 1);
+    pc.incrementIndex(1, 0, 3, 0, 1);
     // printf("Bugg %.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g \n",gamma_2pi.real, gamma_2pi.imag, gamma_2K.real,
     // gamma_2K.imag, gamma_2eta.real, gamma_2eta.imag, gamma_4pi.real, gamma_4pi.imag);
     // printf("Bugg %.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g \n",Mpair, Gamma_tot.real, Gamma_tot.imag, g1sq, z,
@@ -118,7 +118,7 @@ __device__ fpcomplex bugg_MINT3(fptype Mpair, fptype m1, fptype m2, ParameterCon
     fpcomplex den       = fpcomplex(M * M - s - adlerZero * g1sq * z, 0) - fpcomplex(0, 1) * Gamma_tot;
     fpcomplex returnVal = 1.0 / den;
 
-    pc.incrementIndex(1, 0, 0, 0, 1);
+    pc.incrementIndex(1, 0, 3, 0, 1);
     // printf("Bugg %.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g \n",gamma_2pi.real, gamma_2pi.imag, gamma_2K.real,
     // gamma_2K.imag, gamma_2eta.real, gamma_2eta.imag, gamma_4pi.real, gamma_4pi.imag);
     // printf("Bugg %.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g %.5g \n",Mpair, Gamma_tot.real, Gamma_tot.imag, g1sq, z,
@@ -135,6 +135,11 @@ Lineshapes::Bugg::Bugg(
     : Lineshape("Bugg", name, L, Mpair, FormFac, radius) {
     // TODO: Clean up signature
 
+    // registerConstant(radius);
+    // registerConstant(L);
+    // registerConstant(Mpair);
+    // registerConstant(FF);
+
     registerFunction("ptr_to_bugg_MINT", ptr_to_bugg_MINT);
 
     initialize();
@@ -144,6 +149,10 @@ Lineshapes::Bugg3::Bugg3(
     std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
     : Lineshape("Bugg3", name, L, Mpair, FormFac, radius) {
     // TODO: Clean up signature
+    // registerConstant(radius);
+    // registerConstant(L);
+    // registerConstant(Mpair);
+    // registerConstant(FF);
 
     registerFunction("ptr_to_bugg_MINT3", ptr_to_bugg_MINT3);
 

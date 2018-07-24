@@ -29,6 +29,8 @@ The internals of GooFit have been updated for GPU performance.  The new improvem
     * Resonances and Lineshapes are now one per file
     * All helper classes are split out and available in `PDFs/physics/detail`
     * Inheritance structure added
+* Better testing for MPI [#169]
+* Partial support for CUDA 9.x [#172]
 
 [#125]: https://github.com/GooFit/GooFit/pull/125
 [#148]: https://github.com/GooFit/GooFit/pull/148
@@ -41,6 +43,8 @@ The internals of GooFit have been updated for GPU performance.  The new improvem
 [#165]: https://github.com/GooFit/GooFit/pull/165
 [#166]: https://github.com/GooFit/GooFit/pull/166
 [#167]: https://github.com/GooFit/GooFit/pull/167
+[#169]: https://github.com/GooFit/GooFit/pull/169
+[#172]: https://github.com/GooFit/GooFit/pull/172
 
 ## v2.1.3: Preparing for new indexing
 #### April 21, 2018

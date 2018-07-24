@@ -21,13 +21,17 @@ doing maximum-likelihood fits with a familiar syntax.
 
 ## Requirements
 
-* A recent version of CMake is required. The minimum is 3.4, but tested primarily with 3.6 and newer. CMake is incredibly easy to install (see [the system install page](./docs/SYSTEM_INSTALL.md)).
+* A recent version of CMake is required. The minimum is 3.4, but tested primarily with 3.6 and newer. CMake is incredibly easy to install, you can even use `pip` (see [the system install page](./docs/SYSTEM_INSTALL.md)). GooFit developers have supplied patches to CMake 3.12, so that is highly recommended.
 * A ROOT 6 build highly recommended -- GooFit will use the included Minuit2 submodule if ROOT is not found, and the Minuit1 based fitter will not be available. Supports 6.06-6.14 (6.10+ recommended).
 
 <details><summary>If using CUDA: (click to expand)</summary><p>
 
 * CMake 3.8+ highly recommended, but not required (yet)
-* CUDA 7.0-8.0. CUDA 9+ not yet supported. CUDA 8 is required for Python bindings or for using `NEW_CUDA=ON` (default in CMake 3.8+).
+* CUDA 7.0+ (with caviets below)
+    * CUDA 7.0: Requires CMake 3.12 or `NEW_CUDA=OFF`.
+    * CUDA 7.x: Python not supported.
+    * CUDA 8.0: Recommended and fully supported.
+    * CUDA 9.x: Partially supported but [has known issues](https://github.com/GooFit/GooFit/issues/173).
 * An nVidia GPU supporting compute capability at least 2.0 (3.5+ recommended)
 
 </p></details>

@@ -5,7 +5,7 @@ if(GOOFIT_MPI)
     target_link_libraries(catch_main PUBLIC MPI::MPI_CXX)
     target_compile_definitions(catch_main PUBLIC "-DGOOFIT_MPI")
 endif()
-target_link_libraries(catch_main PUBLIC Catch2::Catch)
+target_link_libraries(catch_main PUBLIC Catch2::Catch2)
 set_target_properties(catch_main PROPERTIES FOLDER tests)
 
 macro(goofit_catch_test TESTNAME)

@@ -38,8 +38,8 @@ Minuit2::FunctionMinimum FitManagerMinuit2::fit() {
     if(verbosity > 0) {
         std::cout << GooFit::reset << (min.IsValid() ? GooFit::green : GooFit::red);
         std::cout << min << GooFit::reset;
-        std::cout << GooFit::magenta << timer.to_string() << GooFit::reset << std::endl;
-        std::cout << (avetimer / min.NFcn()).to_string() << std::endl;
+        std::cout << GooFit::magenta << timer.to_string() << std::endl;
+        std::cout << (avetimer / min.NFcn()).to_string() << GooFit::reset << std::endl;
     }
 
     if(min.IsValid()) {

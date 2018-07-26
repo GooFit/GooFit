@@ -79,20 +79,22 @@ void print_goofit_info(int gpuDev_) {
     GOOFIT_INFO("GooFit: Version {} ({}) Commit: {}", GOOFIT_VERSION, GOOFIT_TAG, GOOFIT_GIT_VERSION);
 
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-    cudaDeviceProp devProp;
-    cudaGetDeviceProperties(&devProp, gpuDev_);
+    if(gpuDev_ >= 0) {
+        cudaDeviceProp devProp;
+        cudaGetDeviceProperties(&devProp, gpuDev_);
 
-    GOOFIT_INFO("CUDA: Device {}: {}", gpuDev_, devProp.name);
+        GOOFIT_INFO("CUDA: Device {}: {}", gpuDev_, devProp.name);
 
-    GOOFIT_INFO("CUDA: Compute {}.{}", devProp.major, devProp.minor);
-    GOOFIT_INFO("CUDA: Total global memory: {} GB", devProp.totalGlobalMem / 1.0e9);
-    GOOFIT_INFO("CUDA: Multiprocessors: {}", devProp.multiProcessorCount);
+        GOOFIT_INFO("CUDA: Compute {}.{}", devProp.major, devProp.minor);
+        GOOFIT_INFO("CUDA: Total global memory: {} GB", devProp.totalGlobalMem / 1.0e9);
+        GOOFIT_INFO("CUDA: Multiprocessors: {}", devProp.multiProcessorCount);
 
-    GOOFIT_DEBUG("CUDA: Total amount of shared memory per block: {}", devProp.sharedMemPerBlock);
-    GOOFIT_DEBUG("CUDA: Total registers per block: {}", devProp.regsPerBlock);
-    GOOFIT_DEBUG("CUDA: Warp size: {}", devProp.warpSize);
-    GOOFIT_DEBUG("CUDA: Maximum memory pitch: {}", devProp.memPitch);
-    GOOFIT_DEBUG("CUDA: Total amount of constant memory: {}", devProp.totalConstMem);
+        GOOFIT_DEBUG("CUDA: Total amount of shared memory per block: {}", devProp.sharedMemPerBlock);
+        GOOFIT_DEBUG("CUDA: Total registers per block: {}", devProp.regsPerBlock);
+        GOOFIT_DEBUG("CUDA: Warp size: {}", devProp.warpSize);
+        GOOFIT_DEBUG("CUDA: Maximum memory pitch: {}", devProp.memPitch);
+        GOOFIT_DEBUG("CUDA: Total amount of constant memory: {}", devProp.totalConstMem);
+    }
 
 #elif THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_OMP
     GOOFIT_INFO("OMP: Number of threads: {}", omp_get_max_threads());
@@ -120,7 +122,12 @@ void print_goofit_info(int gpuDev_) {
     for(int i = 0; i < deviceCount; i++) {
         cudaDeviceProp deviceProp;
         cudaGetDeviceProperties(&deviceProp, i);
-        GOOFIT_INFO("CUDA: Device {} has compute capability {}.{}", i, deviceProp.major, deviceProp.minor);
+        GOOFIT_INFO("CUDA: {} {}: Compute {}.{}; Memory {} GB",
+                    i,
+                    deviceProp.name,
+                    deviceProp.major,
+                    deviceProp.minor,
+                    deviceProp.totalGlobalMem / pow(1024.0, 3.0));
     }
 #endif
 }
@@ -181,7 +188,15 @@ Application::Application(std::string discription, int argc, char **argv)
 #ifndef GOOFIT_MPI
     add_option("--gpu-dev", gpuDev_, "GPU device to use", true)->group("GooFit");
 #endif
-    add_flag("--show-gpus", show_gpus_, "Show the available GPU devices and exit")->group("GooFit");
+    add_flag_function("--info-only",
+                      [this](int i) {
+                          print_splash();
+                          print_goofit_info(-1);
+                          throw CLI::Success();
+                      },
+                      "Show the available GPU devices and exit")
+        ->group("GooFit")
+        ->short_circuit();
 #endif
     auto quiet = add_flag("-q,--quiet", quiet_, "Reduce the verbosity of the Application")->group("GooFit");
 

@@ -31,6 +31,7 @@ The internals of GooFit have been updated for GPU performance.  The new improvem
     * Inheritance structure added
 * Better testing for MPI [#169]
 * Partial support for CUDA 9.x [#172]
+* External package support (BETA) [#174]
 
 [#125]: https://github.com/GooFit/GooFit/pull/125
 [#148]: https://github.com/GooFit/GooFit/pull/148
@@ -45,6 +46,7 @@ The internals of GooFit have been updated for GPU performance.  The new improvem
 [#167]: https://github.com/GooFit/GooFit/pull/167
 [#169]: https://github.com/GooFit/GooFit/pull/169
 [#172]: https://github.com/GooFit/GooFit/pull/172
+[#174]: https://github.com/GooFit/GooFit/pull/174
 
 ## v2.1.3: Preparing for new indexing
 #### April 21, 2018

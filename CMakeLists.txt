@@ -1,12 +1,16 @@
-cmake_minimum_required(VERSION 3.4)
+cmake_minimum_required(VERSION 3.4...3.12)
+
+if(${CMAKE_VERSION} VERSION_LESS 3.12)
+    cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
+endif()
 
 project(GOOFIT
     VERSION 2.2.0
     LANGUAGES CXX)
 
-set(GOOFIT_TAG "dev")
+#set(GOOFIT_TAG "dev")
 #set(GOOFIT_TAG "alpha")
-#set(GOOFIT_TAG "beta")
+set(GOOFIT_TAG "beta")
 #set(GOOFIT_TAG "release")
 
 include(FeatureSummary)
@@ -18,7 +22,7 @@ macro(FEATURE_OPTION NAME)
 endmacro()
 
 ### Require out-of-source builds
-file(TO_CMAKE_PATH "${PROJECT_BINARY_DIR}/CMakeLists.txt" LOC_PATH)
+file(TO_CMAKE_PATH "${GOOFIT_BINARY_DIR}/CMakeLists.txt" LOC_PATH)
 if(EXISTS "${LOC_PATH}")
     message(FATAL_ERROR "You cannot build in a source directory (or any directory with a CMakeLists.txt file). Please make a build subdirectory. Feel free to remove CMakeCache.txt and CMakeFiles.")
 endif()
@@ -26,46 +30,53 @@ endif()
 # Allow IDE's to group targets into folders
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+# Check to see if this is the master project
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+    set(CUR_PROJ ON)
+else()
+    set(CUR_PROJ OFF)
+endif()
+
 # Get the git command
 find_package(Git QUIET)
 
-if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
+if(GIT_FOUND AND EXISTS "${GOOFIT_SOURCE_DIR}/.git")
 # Update submodules as needed
     option(GOOFIT_SUBMODULE "Check submodules during build" ON)
     if(GOOFIT_SUBMODULE)
         message(STATUS "Submodule update")
         execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
-                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                        RESULT_VARIABLE GIT_SUBMOD_RESULT)
+            WORKING_DIRECTORY ${GOOFIT_SOURCE_DIR}
+            RESULT_VARIABLE GIT_SUBMOD_RESULT)
         if(NOT GIT_SUBMOD_RESULT EQUAL "0")
             message(FATAL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
         endif()
     endif()
 
     execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
-                    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-                    OUTPUT_VARIABLE GOOFIT_GIT_VERSION
-                    ERROR_QUIET
-                    OUTPUT_STRIP_TRAILING_WHITESPACE)
+        WORKING_DIRECTORY "${GOOFIT_SOURCE_DIR}"
+        OUTPUT_VARIABLE GOOFIT_GIT_VERSION
+        ERROR_QUIET
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 else()
     set(GOOFIT_GIT_VERSION "unknown")
 endif()
 
-if(NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/cmake_utils/FindThrust.cmake"
-OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/modern_cmake/ModernCMakeUtils.cmake"
-OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/CLI11/CMakeLists.txt"
-OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/catch2/CMakeLists.txt"
-OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/Eigen/CMakeLists.txt"
-OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/FeatureDetector/CMakeLists.txt"
-OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/MCBooster/CMakeLists.txt"
-OR NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/thrust/README.md")
+if(NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/cmake_utils/FindThrust.cmake"
+OR NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/modern_cmake/ModernCMakeUtils.cmake"
+OR NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/CLI11/CMakeLists.txt"
+OR NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/catch2/CMakeLists.txt"
+OR NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/Eigen/CMakeLists.txt"
+OR NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/FeatureDetector/CMakeLists.txt"
+OR NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/MCBooster/CMakeLists.txt"
+OR NOT EXISTS "${GOOFIT_SOURCE_DIR}/extern/thrust/README.md")
     message(FATAL_ERROR "The submodules were not downloaded! GOOFIT_SUBMODULE was turned off or failed. Please update submodules and try again.")
 endif()
 
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/extern/cmake_utils" ${CMAKE_MODULE_PATH})
-include("${CMAKE_CURRENT_SOURCE_DIR}/extern/modern_cmake/ModernCMakeUtils.cmake")
-include("${CMAKE_CURRENT_SOURCE_DIR}/extern/modern_cmake/ModernCUDA.cmake")
+set(CMAKE_MODULE_PATH "${GOOFIT_SOURCE_DIR}/extern/cmake_utils" ${CMAKE_MODULE_PATH})
+include("${GOOFIT_SOURCE_DIR}/extern/modern_cmake/ModernCMakeUtils.cmake")
+include("${GOOFIT_SOURCE_DIR}/extern/modern_cmake/ModernCUDA.cmake")
 
 # Add clang-tidy if available
 if(CMAKE_VERSION VERSION_GREATER 3.6)
@@ -95,15 +106,15 @@ if(NOT GOOFIT_TIDY_FIX)
 endif()
 
 # Add Sanitizers
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/extern/sanitizers/cmake" ${CMAKE_MODULE_PATH})
+set(CMAKE_MODULE_PATH "${GOOFIT_SOURCE_DIR}/extern/sanitizers/cmake" ${CMAKE_MODULE_PATH})
 find_package(Sanitizers)
 
 set(GOOFIT_CUDA_OR_GROUPSIZE "128" CACHE STRING "Overrides the default group distribution for Thrust's transform_reduce")
 set(GOOFIT_CUDA_OR_GRAINSIZE "7" CACHE STRING "Overrides the default grain size for Thrust's transform_reduce")
 
 configure_file (
-    "${PROJECT_SOURCE_DIR}/include/goofit/detail/ThrustOverrideConfig.h.in"
-    "${PROJECT_BINARY_DIR}/include/goofit/detail/ThrustOverrideConfig.h"
+    "${GOOFIT_SOURCE_DIR}/include/goofit/detail/ThrustOverrideConfig.h.in"
+    "${GOOFIT_BINARY_DIR}/include/goofit/detail/ThrustOverrideConfig.h"
 )
 
 include(WriteCompilerDetectionHeader)
@@ -163,10 +174,10 @@ if(NOT ${GOOFIT_HOST} IN_LIST HOST_LISTING)
 endif()
 
 if(CMAKE_VERSION VERSION_LESS 3.8)
-    set(NEW_CUDA OFF)
+    set(NEW_CUDA OFF CACHE INTERNAL "")
 else()
     if(NOT DEFINED NEW_CUDA)
-        set(NEW_CUDA ON)
+        set(NEW_CUDA ON CACHE INTERNAL "")
     endif()
 endif()
 
@@ -179,13 +190,13 @@ if(GOOFIT_DEVICE STREQUAL Auto)
         find_package(CUDA 7.0)
     endif()
     if(CUDA_FOUND OR CMAKE_CUDA_COMPILER)
-        set(GOOFIT_DEVICE CUDA)
+        set(GOOFIT_DEVICE CUDA CACHE STRING "The compute device, options are ${DEVICE_LISTING}" FORCE)
     else()
         find_modern_package(OpenMP QUIET)
         if(TARGET OpenMP::OpenMP_CXX)
-            set(GOOFIT_DEVICE OMP)
+            set(GOOFIT_DEVICE OMP CACHE STRING "The compute device, options are ${DEVICE_LISTING}" FORCE)
         else()
-            set(GOOFIT_DEVICE CPP)
+            set(GOOFIT_DEVICE CPP CACHE STRING "The compute device, options are ${DEVICE_LISTING}" FORCE)
         endif()
     endif()
     message(STATUS "Auto device selection: ${GOOFIT_DEVICE}")
@@ -201,6 +212,10 @@ if(GOOFIT_HOST STREQUAL Auto)
         set(GOOFIT_HOST CPP)
     endif()
 endif()
+
+# Nicer filling in for GUI
+set_property(CACHE GOOFIT_DEVICE PROPERTY STRINGS ${DEVICE_LISTING})
+set_property(CACHE GOOFIT_HOST PROPERTY STRINGS ${HOST_LISTING})
 
 # Checks for invalid combinations
 if(${GOOFIT_DEVICE} STREQUAL TBB AND ${GOOFIT_HOST} STREQUAL OMP)
@@ -226,7 +241,7 @@ add_library(GooFit_Common INTERFACE)
 add_library(GooFit::Common ALIAS GooFit_Common)
 
 target_include_directories(GooFit_Common INTERFACE include)
-target_include_directories(GooFit_Common INTERFACE "${PROJECT_BINARY_DIR}/include")
+target_include_directories(GooFit_Common INTERFACE "${GOOFIT_BINARY_DIR}/include")
 
 target_compile_definitions(GooFit_Common INTERFACE "-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_${GOOFIT_DEVICE}")
 target_compile_definitions(GooFit_Common INTERFACE "-DMCBOOSTER_BACKEND=${GOOFIT_DEVICE}")
@@ -254,8 +269,8 @@ if(Backtrace_FOUND)
     target_link_libraries(backtrace INTERFACE ${Backtrace_LIBRARIES})
 endif()
 configure_file(
-    "${PROJECT_SOURCE_DIR}/include/goofit/detail/Backtrace.h.in"
-    "${PROJECT_BINARY_DIR}/include/goofit/detail/Backtrace.h"
+    "${GOOFIT_SOURCE_DIR}/include/goofit/detail/Backtrace.h.in"
+    "${GOOFIT_BINARY_DIR}/include/goofit/detail/Backtrace.h"
 )
 
 
@@ -396,14 +411,14 @@ target_compile_options(GooFit_Common INTERFACE
 
 find_package(Thrust 1.8 QUIET)
 if(NOT THRUST_FOUND)
-    set(THRUST_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/extern/thrust")
+    set(THRUST_INCLUDE_DIR "${GOOFIT_SOURCE_DIR}/extern/thrust")
     find_package(Thrust 1.8 REQUIRED)
 endif()
 message(STATUS "Using Thrust from ${THRUST_INCLUDE_DIRS}")
 
 option(GOOFIT_FORCE_LOCAL_THRUST "GooFit will use the GitHub version of Thrust by default (CUDA 9.2's Thrust is buggy)" ON)
 if(GOOFIT_FORCE_LOCAL_THRUST)
-    target_include_directories(GooFit_Common SYSTEM INTERFACE "${PROJECT_SOURCE_DIR}/extern/thrust")
+    target_include_directories(GooFit_Common SYSTEM INTERFACE "${GOOFIT_SOURCE_DIR}/extern/thrust")
 endif()
 target_include_directories(GooFit_Common SYSTEM INTERFACE "${THRUST_INCLUDE_DIRS}")
 
@@ -467,12 +482,12 @@ target_link_libraries(GooFit_Common INTERFACE fmt)
 
 
 add_library(rang INTERFACE)
-target_include_directories(rang SYSTEM INTERFACE "${PROJECT_SOURCE_DIR}/extern/rang/include")
+target_include_directories(rang SYSTEM INTERFACE "${GOOFIT_SOURCE_DIR}/extern/rang/include")
 target_link_libraries(GooFit_Common INTERFACE rang)
 
 
 add_library(Eigen INTERFACE)
-target_include_directories(Eigen SYSTEM INTERFACE "${PROJECT_SOURCE_DIR}/extern/Eigen")
+target_include_directories(Eigen SYSTEM INTERFACE "${GOOFIT_SOURCE_DIR}/extern/Eigen")
 target_link_libraries(GooFit_Common INTERFACE Eigen)
 
 # This if(ROUND_FOUND) wrapper in theory should not be needed
@@ -486,13 +501,15 @@ option(GOOFIT_SPLASH "Show a unicode splash or a small plain text one" ON)
 
 if(CMAKE_VERSION VERSION_LESS 3.9)
     message(STATUS "CMake <3.9 will only enable IPO for Intel compilers on Linux")
-    set(SUPPORTS_IPO TRUE)
+    set(SUPPORTS_IPO_LOCAL TRUE)
 else()
-    cmake_policy(SET CMP0069 NEW)
+    # cmake_policy(SET CMP0069 NEW) (will be set by using latest CMake version policy already)
     include(CheckIPOSupported)
-    check_ipo_supported(RESULT SUPPORTS_IPO)
-    message(STATUS "Compiler supports IPO: ${SUPPORTS_IPO}")
+    check_ipo_supported(RESULT SUPPORTS_IPO_LOCAL)
+    message(STATUS "Compiler supports IPO: ${SUPPORTS_IPO_LOCAL}")
 endif()
+# Make this univerally available (even when using submodule)
+set(SUPPORTS_IPO "${SUPPORTS_IPO_LOCAL}" CACHE INTERNAL "")
 
 
 function(GOOFIT_ADD_LIBRARY GNAME)
@@ -623,6 +640,10 @@ function(GOOFIT_ADD_DIRECTORY)
     foreach(NAMELINK ${directory_listing})
         if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${NAMELINK}/CMakeLists.txt")
             # Pass : this should not link subdirectories that are CMake packages
+        elseif("${CMAKE_CURRENT_SOURCE_DIR}/${NAMELINK}" STREQUAL "${CMAKE_CURRENT_BINARY_DIR}")
+            # Pass : this should not link the current build directory
+        elseif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${NAMELINK}/CMakeCache.txt")
+            # Pass : this should not link subdirectories that are CMake build directories
         elseif(NOT "${NAMELINK}" IN_LIST skip_files)
             goofit_add_link("${NAMELINK}")
         endif()
@@ -653,7 +674,19 @@ macro(GOOFIT_ADD_PACKAGE PACKAGE_NAME)
         message(WARNING "Requested package ${PACKAGE_NAME} but NEW_CUDA is enabled! Not building package.")
         return()
     endif()
+endmacro()
 
+# This macro is designed for external packages to auto-add CUDA
+macro(GOOFIT_OPTIONAL_CUDA)
+    if(NEW_CUDA AND GOOFIT_DEVICE STREQUAL CUDA)
+        enable_language(CUDA)
+    endif()
+endmacro()
+
+# This is a prepare-all macro for external packages
+macro(GOOFIT_EXTERNAL_PACKAGE)
+    goofit_optional_cuda()
+    goofit_add_directory()
 endmacro()
 
 target_include_directories(GooFit_Common INTERFACE extern/MCBooster)
@@ -665,14 +698,14 @@ add_library(goofit_lib INTERFACE)
 target_link_libraries(goofit_lib INTERFACE goofit_base PDFs GooFit::Common)
 add_library(GooFit::GooFit ALIAS goofit_lib)
 
-option(GOOFIT_TESTS "Build the goofit tests" ON)
+option(GOOFIT_TESTS "Build the goofit tests" ${CUR_PROJ})
 if(GOOFIT_TESTS)
     enable_testing()
     add_subdirectory(extern/catch2)
     add_subdirectory(tests)
 endif()
 
-option(GOOFIT_EXAMPLES "Build the example programs" ON)
+option(GOOFIT_EXAMPLES "Build the example programs" ${CUR_PROJ})
 if(GOOFIT_EXAMPLES)
     add_subdirectory(examples)
 endif()
@@ -681,9 +714,9 @@ if(EXISTS work)
     add_subdirectory(work)
 endif()
 
-option(GOOFIT_PACKAGES "Build any goofit_* packages found" ON)
+option(GOOFIT_PACKAGES "Build any goofit_* packages found" ${CUR_PROJ})
 if(GOOFIT_PACKAGES)
-    file(GLOB list_of_packages RELATIVE ${PROJECT_SOURCE_DIR} goofit_*)
+    file(GLOB list_of_packages RELATIVE ${GOOFIT_SOURCE_DIR} goofit_*)
     foreach(d ${list_of_packages})
         add_subdirectory(${d})
     endforeach()
@@ -693,19 +726,19 @@ endif()
 # Output the current GooFit version and compile time options
 # Placed after packages to allow packages to change GooFit cached values
 configure_file (
-    "${PROJECT_SOURCE_DIR}/include/goofit/Version.h.in"
-    "${PROJECT_BINARY_DIR}/include/goofit/Version.h"
+    "${GOOFIT_SOURCE_DIR}/include/goofit/Version.h.in"
+    "${GOOFIT_BINARY_DIR}/include/goofit/Version.h"
 )
 
 # This allows GOOFIT_PYTHON to be automatic
-set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/extern/pybind11/tools" ${CMAKE_MODULE_PATH})
+set(CMAKE_MODULE_PATH "${GOOFIT_SOURCE_DIR}/extern/pybind11/tools" ${CMAKE_MODULE_PATH})
 find_package(PythonLibsNew)
 
 if(GOOFIT_DEVICE STREQUAL "CUDA" AND CUDA_VERSION VERSION_LESS 8.0)
     option(GOOFIT_PYTHON "Python bindings for goofit" OFF)
 elseif(PYTHONLIBS_FOUND)
     if(EXISTS "${PYTHON_LIBRARIES}")
-        option(GOOFIT_PYTHON "Python bindings for goofit" ON)
+        option(GOOFIT_PYTHON "Python bindings for goofit" ${CUR_PROJ})
     else()
         message(STATUS "Found Python, but library location ${PYTHON_LIBRARIES} does not exist")
         option(GOOFIT_PYTHON "Python bindings for goofit" OFF)
@@ -751,4 +784,4 @@ feature_option(GOOFIT_PYTHON)
 feature_option(GOOFIT_TIDY_FIX)
 
 feature_summary(WHAT ENABLED_FEATURES DISABLED_FEATURES PACKAGES_FOUND)
-feature_summary(FILENAME ${CMAKE_CURRENT_BINARY_DIR}/features.log WHAT ALL)
+feature_summary(FILENAME ${GOOFIT_BINARY_DIR}/features.log WHAT ALL)

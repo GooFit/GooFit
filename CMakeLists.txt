@@ -127,12 +127,15 @@ write_compiler_detection_header(
 
 
 ### C++ settings ###
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+macro(GOOFIT_SETUP_STD)
+    set(CMAKE_CXX_STANDARD 11)
+    set(CMAKE_CXX_EXTENSIONS OFF)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+    set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+endmacro()
 
-set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+goofit_setup_std()
 
 set(GOOFIT_GCC_WARNINGS "-Wall -Wextra -Wno-unknown-pragmas -Wno-long-long -Wno-attributes -Wno-sign-compare -Wno-unused-parameter")
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
@@ -291,6 +294,25 @@ if(GOOFIT_MPI)
     message(STATUS "where PROCS is the number of processors on which to execute the program, EXECUTABLE is the MPI program, and ARGS are the arguments to pass to the MPI program.")
 endif()
 
+
+# This macro is designed for external packages to auto-add CUDA
+# It is also used to setup up the NEW CUDA support
+macro(GOOFIT_OPTIONAL_CUDA)
+    if(NEW_CUDA AND GOOFIT_DEVICE STREQUAL CUDA)
+        enable_language(CUDA)
+        set(CMAKE_CUDA_STANDARD 11)
+        set(CMAKE_CUDA_STANDARD_REQUIRED ON)
+        set(CMAKE_CUDA_EXTENSIONS OFF)
+
+        if(CMAKE_CUDA_COMPILER_VERSION VERSION_LESS 7.5)
+            string(APPEND CMAKE_CUDA_FLAGS " --relaxed-constexpr")
+        else()
+            string(APPEND CMAKE_CUDA_FLAGS " --expt-relaxed-constexpr")
+        endif()
+
+    endif()
+endmacro()
+
 if(GOOFIT_DEVICE STREQUAL CUDA)
     # The old FindCUDA method
     if(NOT NEW_CUDA)
@@ -335,7 +357,7 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
 
     # The new language support
     else()
-        enable_language(CUDA)
+        goofit_optional_cuda()
         set(CUDA_VERSION ${CMAKE_CUDA_COMPILER_VERSION})
 
         if(CMAKE_CUDA_COMPILER_VERSION VERSION_LESS 7.0)
@@ -353,16 +375,6 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
 
         set(cuda_lang "$<COMPILE_LANGUAGE:CUDA>")
 
-        set(CMAKE_CUDA_STANDARD 11)
-        set(CMAKE_CUDA_STANDARD_REQUIRED ON)
-        set(CMAKE_CUDA_EXTENSIONS OFF)
-
-        if(CMAKE_CUDA_COMPILER_VERSION VERSION_LESS 7.5)
-            string(APPEND CMAKE_CUDA_FLAGS " --relaxed-constexpr")
-        else()
-            string(APPEND CMAKE_CUDA_FLAGS " --expt-relaxed-constexpr")
-        endif()
-
         # GooFit isn't popular with nvlink
         # Note that this should be the only nvlink command
         string(APPEND CMAKE_CUDA_FLAGS " -Xnvlink=--disable-warnings")
@@ -372,6 +384,7 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
         string(REPLACE ";" ", " READ_ARCH_FLAGS "${ARCH_FLAGS_readable}")
         string(REPLACE ";" " " ARCH_FLAGS "${ARCH_FLAGS}")
         string(APPEND CMAKE_CUDA_FLAGS " ${ARCH_FLAGS}")
+        set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS}" CACHE INTERNAL "")
         message(STATUS "Compiling for GPU arch: ${READ_ARCH_FLAGS}")
 
         set(THRUST_INCLUDE_DIR "${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}")
@@ -676,15 +689,9 @@ macro(GOOFIT_ADD_PACKAGE PACKAGE_NAME)
     endif()
 endmacro()
 
-# This macro is designed for external packages to auto-add CUDA
-macro(GOOFIT_OPTIONAL_CUDA)
-    if(NEW_CUDA AND GOOFIT_DEVICE STREQUAL CUDA)
-        enable_language(CUDA)
-    endif()
-endmacro()
-
 # This is a prepare-all macro for external packages
 macro(GOOFIT_EXTERNAL_PACKAGE)
+    goofit_setup_std()
     goofit_optional_cuda()
     goofit_add_directory()
 endmacro()

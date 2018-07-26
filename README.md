@@ -224,7 +224,7 @@ goofit_external_package()
 goofit_add_executable(myapp myapp.cpp)
 ```
 
-That's it! Just make a build directory and build. The `goofit_external_package()` command sets up optional CUDA, as well as links all reasonable files into your build directory. You can run `goofit_optional_cuda()` and `goofit_add_directory()` instead if you want.
+That's it! Just make a build directory and build. The `goofit_external_package()` command sets up optional CUDA, as well as links all reasonable files into your build directory. You can run `goofit_setup_std()`, `goofit_optional_cuda()` and `goofit_add_directory()` instead if you want.
 
 ### Classic method
 

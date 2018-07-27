@@ -22,7 +22,7 @@ operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const {
     while(pc.funcIdx < dalitzFuncId)
         pc.incrementIndex();
 
-    unsigned int totalAMP = pc.getConstant(9);
+    unsigned int totalAMP = pc.getConstant(8);
 
     unsigned int evtNum   = thrust::get<0>(t);
     unsigned int MCevents = thrust::get<1>(t);

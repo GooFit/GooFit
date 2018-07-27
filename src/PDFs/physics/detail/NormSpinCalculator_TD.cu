@@ -25,15 +25,15 @@ __device__ fptype NormSpinCalculator_TD::operator()(
 
     ParameterContainer pc;
 
-    fptype M  = pc.getConstant(1);
-    fptype m1 = pc.getConstant(2);
-    fptype m2 = pc.getConstant(3);
-    fptype m3 = pc.getConstant(4);
-    fptype m4 = pc.getConstant(5);
-
     // Increment to TDDP function:
     while(pc.funcIdx < dalitzFuncId)
         pc.incrementIndex();
+
+    fptype M  = pc.getConstant(0);
+    fptype m1 = pc.getConstant(1);
+    fptype m2 = pc.getConstant(2);
+    fptype m3 = pc.getConstant(3);
+    fptype m4 = pc.getConstant(4);
 
     fptype vecs[16];
     get4Vecs(vecs, m12, m34, cos12, cos34, phi, M, m1, m2, m3, m4);
@@ -51,7 +51,7 @@ __device__ fptype NormSpinCalculator_TD::operator()(
     fptype sf = (*func)(vecs, pc);
 
     // printf("NormSF evt:%.5g, %.5g, %.5g, %.5g, %.5g\n", m12, m34, cos12, cos34, phi);
-    // printf("NormSF %i, %.7g\n",_spinfactor_i, sf );
+    //printf("NormSF %i, %.7g\n",_spinfactor_i, sf );
     // THREAD_SYNCH
     return sf;
 }

@@ -51,7 +51,7 @@ __device__ fptype NormSpinCalculator_TD::operator()(
     fptype sf = (*func)(vecs, pc);
 
     // printf("NormSF evt:%.5g, %.5g, %.5g, %.5g, %.5g\n", m12, m34, cos12, cos34, phi);
-    //printf("NormSF %i, %.7g\n",_spinfactor_i, sf );
+    // printf("NormSF %i, %.7g\n",_spinfactor_i, sf );
     // THREAD_SYNCH
     return sf;
 }

@@ -55,7 +55,7 @@ __device__ fpcomplex AmpCalc_TD::operator()(thrust::tuple<int, fptype *, int> t)
     }
 
     returnVal *= (1 / sqrt(static_cast<fptype>(_nPerm)));
-    //printf("Amplitude Value = (%.7g, %.7g)\n", returnVal.real(), returnVal.imag());
+    // printf("Amplitude Value = (%.7g, %.7g)\n", returnVal.real(), returnVal.imag());
     return returnVal;
 }
 

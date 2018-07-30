@@ -60,7 +60,7 @@ __device__ fpcomplex NormLSCalculator_TD::operator()(
     // printf("%i, %i, %i, %i, %i \n",numLS, numSF, numAmps, offset, evtNum );
     // printf("NLS %i, %f, %f\n",_resonance_i,ret.real, ret.imag);
 
-    //printf("NormLSCalculator %i m12 %f (%f, %f)\n ", _resonance_i, m12, ret.real(), ret.imag());
+    // printf("NormLSCalculator %i m12 %f (%f, %f)\n ", _resonance_i, m12, ret.real(), ret.imag());
     // printf("#Parameters %i, #LS %i, #SF %i, #AMP %i \n", indices[0], indices[3], indices[4], indices[5]);
     // THREAD_SYNCH
     return ret;

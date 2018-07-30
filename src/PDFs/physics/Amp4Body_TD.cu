@@ -220,7 +220,7 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
         registerObservable(observable);
     }
 
-    //constantsList.push_back(decayInfo.meson_radius);
+    // constantsList.push_back(decayInfo.meson_radius);
 
     for(double &particle_masse : decayInfo.particle_masses) {
         registerConstant(particle_masse);

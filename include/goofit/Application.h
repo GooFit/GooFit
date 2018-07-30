@@ -42,7 +42,6 @@ void print_goofit_info(int gpuDev_ = 0);
 class Application : public CLI::App {
   protected:
     int gpuDev_ = 0;
-    bool show_gpus_;
     bool quiet_;
     bool splash_;
     int argc_;

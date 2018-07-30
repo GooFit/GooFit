@@ -201,7 +201,41 @@ target_link_libraries(MyNewExample Boost::filesystem ROOT::TreePlayer)
 
 <details><summary>Adding a new project: (click to expand)</summary><p>
 
-If you'd like to make a separate GooFit project, you can do so. Simply checkout your project inside GooFit, with the name `work` or `GooFit`+something. CMake will automatically pick up those directories and build them, and GooFit's git will ignore them. Otherwise, they act just like the example directory. If you add a new directory, you will need to explicitly rerun CMake, as that cannot be picked up by the makefile. The automatic search can be turned off with the `GOOFIT_PROJECTS` option.
+### External package (BETA)
+
+GooFit now requires seperable compilation, so it also now supports "external" packages, much like most other libraries. You can design your package with GooFit included as a subdirectory, and
+it should just work. You'll also save time by not building examples, python bindings, and tests. The recommmended procedure:
+
+```bash
+git add submodule <url to goofit> goofit
+git submodule update --init --recursive
+```
+
+Then, you'll need a CMakeLists that looks something like this:
+
+```bash
+cmake_minimum_required(VERSION 3.6...3.12)
+
+project(my_external_package LANGUAGES CXX)
+
+add_subdirectory(goofit)
+goofit_external_package()
+
+goofit_add_executable(myapp myapp.cpp)
+```
+
+That's it! Just make a build directory and build. The `goofit_external_package()` command sets up optional CUDA, as well as links all reasonable files into your build directory. You can run `goofit_setup_std()`, `goofit_optional_cuda()` and `goofit_add_directory()` instead if you want.
+
+### Classic method
+
+If you'd like to make a separate GooFit project, you can do so. Simply checkout your project inside GooFit, with the name `work` or `goofit_`+something. CMake will automatically pick up those directories and build them, and GooFit's git will ignore them. Otherwise, they act just like the example directory. If you add a new directory, you will need to explicitly rerun CMake, as that cannot be picked up by the makefile. The automatic search can be turned off with the `GOOFIT_PROJECTS` option, or by using `GOOFIT_PROJECT_<name>` for a specific package.
+GooFit packages should contain:
+
+```cmake
+goofit_add_package(MyPackageName)
+```
+
+After the package name, you can list `ROOT`, `NEW_CUDA`, or `OLD_CUDA` to require that ROOT or a specific style of CUDA is found. The package will be disabled if those parameters are not met.
 
 </p></details>
 

@@ -32,11 +32,11 @@ __device__ fpcomplex NormLSCalculator_TD::operator()(
     fptype cos34 = (thrust::get<3>(t));
     fptype phi   = (thrust::get<4>(t));
 
-    fptype M  = pc.getConstant(1);
-    fptype m1 = pc.getConstant(2);
-    fptype m2 = pc.getConstant(3);
-    fptype m3 = pc.getConstant(4);
-    fptype m4 = pc.getConstant(5);
+    fptype M  = pc.getConstant(0);
+    fptype m1 = pc.getConstant(1);
+    fptype m2 = pc.getConstant(2);
+    fptype m3 = pc.getConstant(3);
+    fptype m4 = pc.getConstant(4);
 
     while(pc.funcIdx < _resonance_i)
         pc.incrementIndex();
@@ -60,7 +60,7 @@ __device__ fpcomplex NormLSCalculator_TD::operator()(
     // printf("%i, %i, %i, %i, %i \n",numLS, numSF, numAmps, offset, evtNum );
     // printf("NLS %i, %f, %f\n",_resonance_i,ret.real, ret.imag);
 
-    // printf("m12 %f \n", m12); // %f %f %f (%f, %f)\n ", m12, m13, m23, ret.real, ret.imag);
+    // printf("NormLSCalculator %i m12 %f (%f, %f)\n ", _resonance_i, m12, ret.real(), ret.imag());
     // printf("#Parameters %i, #LS %i, #SF %i, #AMP %i \n", indices[0], indices[3], indices[4], indices[5]);
     // THREAD_SYNCH
     return ret;

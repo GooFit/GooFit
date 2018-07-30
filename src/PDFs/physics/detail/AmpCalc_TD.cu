@@ -17,10 +17,10 @@ __device__ fpcomplex AmpCalc_TD::operator()(thrust::tuple<int, fptype *, int> t)
     while(pc.funcIdx < dalitzFuncId)
         pc.incrementIndex();
 
-    unsigned int cacheToUse = pc.getConstant(6);
-    unsigned int totalLS    = pc.getConstant(7);
-    unsigned int totalSF    = pc.getConstant(8);
-    unsigned int totalAMP   = pc.getConstant(9);
+    unsigned int cacheToUse = pc.getConstant(5);
+    unsigned int totalLS    = pc.getConstant(6);
+    unsigned int totalSF    = pc.getConstant(7);
+    unsigned int totalAMP   = pc.getConstant(8);
     unsigned int offset     = totalLS + totalSF;
     unsigned int numLS      = AmpIndices[totalAMP + _AmpIdx];
     unsigned int numSF      = AmpIndices[totalAMP + _AmpIdx + 1];
@@ -55,7 +55,7 @@ __device__ fpcomplex AmpCalc_TD::operator()(thrust::tuple<int, fptype *, int> t)
     }
 
     returnVal *= (1 / sqrt(static_cast<fptype>(_nPerm)));
-    // printf("Amplitude Value = (%.7g, %.7g)\n", returnVal.real, returnVal.imag);
+    // printf("Amplitude Value = (%.7g, %.7g)\n", returnVal.real(), returnVal.imag());
     return returnVal;
 }
 

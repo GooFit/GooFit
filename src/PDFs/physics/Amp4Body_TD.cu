@@ -114,9 +114,9 @@ __device__ fptype device_Amp4Body_TD(fptype *evt, ParameterContainer &pc) {
     auto evtNum = static_cast<int>(floor(0.5 + evt[id_evt]));
     // GOOFIT_TRACE("Amp4Body_TD: Number of events: {}", evtNum);
 
-    unsigned int cacheToUse = pc.getConstant(6);
-    unsigned int numAmps    = pc.getConstant(9);
-    unsigned int totalSF_LS = pc.getConstant(11);
+    unsigned int cacheToUse = pc.getConstant(5);
+    unsigned int numAmps    = pc.getConstant(8);
+    unsigned int totalSF_LS = pc.getConstant(10);
 
     fpcomplex AmpA(0, 0);
     fpcomplex AmpB(0, 0);
@@ -220,7 +220,7 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
         registerObservable(observable);
     }
 
-    constantsList.push_back(decayInfo.meson_radius);
+    // constantsList.push_back(decayInfo.meson_radius);
 
     for(double &particle_masse : decayInfo.particle_masses) {
         registerConstant(particle_masse);

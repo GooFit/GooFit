@@ -1,7 +1,7 @@
-## v2.2.0: GPU performance
-#### March, 2018
+## v2.2.0: New indexing
+#### July 31, 2018
 
-The internals of GooFit have been updated for GPU performance.  The new improvements will make PDF generation and debugging much simpler. [#125]
+The internals of GooFit have been updated for GPU performance and much simpler PDF authoring.  The new improvements will make PDF generation and debugging much simpler. [#125] Lots of Python improvements are part of this change, as well, including the removal of several compile time limits. Much better Python help display. The Physics PDFs have undergone a rename, with a coherent naming scheme (old names still work for now).
 
 * Indexing improves performance and readability
 * A number of new tests demonstrating simple usage of each PDF. [#148]

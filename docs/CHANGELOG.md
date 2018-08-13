@@ -1,3 +1,7 @@
+## v2.2.1: Bugfixes
+
+* Fixed builds with CMake 3.5 (ROOT Docker uses this by default)
+
 ## v2.2.0: New indexing
 #### July 31, 2018
 

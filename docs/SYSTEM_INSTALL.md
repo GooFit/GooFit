@@ -23,7 +23,7 @@ make test
 If you'd like to add ROOT, add the following lines before running CMake:
 
 ```bash
-mkdir root-6 && curl https://root.cern.ch/download/root_v6.08.06.Linux-centos7-x86_64-gcc4.8.tar.gz | tar --strip-components=1 -xz -C root-6
+mkdir root-6 && curl https://root.cern.ch/download/root_v6.14.02.Linux-centos7-x86_64-gcc4.8.tar.gz | tar --strip-components=1 -xz -C root-6
 source root-6/bin/thisroot.sh
 ```
 </p></details>
@@ -80,7 +80,7 @@ cd GooFit
 
 </p></details>
 
-<details><summary>Ubuntu 16.04 LTS (click to expand)</summary><p>
+<details><summary>Ubuntu 18.04 LTS (click to expand)</summary><p>
 
 Ubiquitous Ubuntu works also. Ubuntu was used for the NVidia Docker solution due to better support from NVidia. The following example uses `ninja-build` instead of make, but make works if you prefer it. You should also be able to use this recipe with  `docker run -it ubuntu` or
 an [nvidia-docker Ubuntu image](https://hub.docker.com/r/nvidia/cuda/) if you don't have Ubuntu installed.
@@ -100,7 +100,7 @@ If you want Python bindings, add `python-dev` or `python3-dev` to the list.
 
 If you'd like to add ROOT, add the following lines before running CMake:
 ```bash
-mkdir root-6 && curl https://root.cern.ch/download/root_v6.08.06.Linux-ubuntu16-x86_64-gcc5.4.tar.gz | tar --strip-components=1 -xz -C root-6
+mkdir root-6 && curl https://root.cern.ch/download/root_v6.14.02.Linux-ubuntu18-x86_64-gcc7.3.tar.gz | tar --strip-components=1 -xz -C root-6
 source root-6/bin/thisroot.sh
 ```
 
@@ -127,17 +127,17 @@ As always, https://root.cern.ch/build-prerequisites#opensuse is a good resource,
 ```bash
 zypper install -y git bash cmake gcc-c++ gcc binutils xorg-x11-libX11-devel xorg-x11-libXpm-devel xorg-x11-devel xorg-x11-proto-devel xorg-x11-libXext-devel glu-devel
 zypper install -y ninja tar
-git clone --depth=1 --branch=v6-10-04 http://github.com/root-project/root.git root_git
+git clone --depth=1 --branch=v6-14-02 http://github.com/root-project/root.git root_git
 mkdir root_build
 cd root_build
-cmake ../root_git -GNinja -DCMAKE_INSTALL_PREFIX=/opt/root-6-10-04
+cmake ../root_git -GNinja -DCMAKE_INSTALL_PREFIX=/opt/root-6-14-02
 cmake --build . --target install
 ```
 
 Then, you can activated that copy of root with:
 
 ```bash
-source /opt/root-6-10-04/bin/thisroot.sh
+source /opt/root-6-14-02/bin/thisroot.sh
 ```
 
 You might want to add useful extra ROOT library: `-Droofit=ON -Dmathmore=ON -Dminuit2=ON`
@@ -149,8 +149,8 @@ You might want to add useful extra ROOT library: `-Droofit=ON -Dmathmore=ON -Dmi
 If you are interested in actually running on Docker, you can use the official GooFit Docker images:
 
 ```bash
-docker run -it goofit/goofit-omp
-nvidia-docker run -it goofit/goofit-cuda
+docker run --rm -it goofit/goofit-omp
+nvidia-docker run --rm -it goofit/goofit-cuda
 ```
 
 The CUDA version will need to build on your computer; the OMP version is prebuilt. You can also start with the ROOT Docker instance:
@@ -170,7 +170,7 @@ make
 While other install methods for CMake, like `pip`, are easier, this way should always work. On Linux, you can manually get a version of CMake using:
 
 ```bash
-mkdir cmake && wget -qO- "https://cmake.org/files/v3.9/cmake-3.9.4-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C cmake
+mkdir cmake && wget -qO- "https://cmake.org/files/v3.12/cmake-3.12.1-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C cmake
 export PATH=`pwd`/cmake/bin:$PATH
 ```
 
@@ -179,7 +179,7 @@ The second line will need to be rerun whenever use a new shell. Feel free to mak
 If you are a fan of using `~/.local` and already have `~/.local/bin` in your path, you can instead use:
 
 ```bash
-wget -qO- "https://cmake.org/files/v3.9/cmake-3.9.4-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C ~/.local
+wget -qO- "https://cmake.org/files/v3.12/cmake-3.12.1-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C ~/.local
 ```
 
 </p></details>

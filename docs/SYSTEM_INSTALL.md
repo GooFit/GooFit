@@ -28,7 +28,7 @@ source root-6/bin/thisroot.sh
 ```
 </p></details>
 
-<details><summary>Alpine Linux 3.7: (click to expand)</summary><p>
+<details><summary>Alpine Linux 3.8: (click to expand)</summary><p>
 
 A truly minimal system, Alpine gives you a working Docker system under 3 MB. Since it is unlikely that you'll be running Alpine outside of Docker, the Docker command is included.
 
@@ -48,7 +48,7 @@ In the spirit of minimality, this is less instructive and contains more magic, b
 
 ```bash
 docker run -it alpine
-apk add --no-cache make cmake g++ git
+apk add --no-cache build-base cmake git
 git clone https://github.com/GooFit/GooFit.git
 cd GooFit
 make auto
@@ -58,20 +58,21 @@ If you'd like to use the Python version:
 
 ```bash
 docker run -it alpine
-apk add --no-cache python-dev cmake ninja g++ git libexecinfo-dev
-python -m ensurepip
-pip install scikit-build
-pip -v install git+https://github.com/GooFit/GooFit.git
+apk add --no-cache python3-dev build-base cmake ninja git libexecinfo-dev
+pip3 install scikit-build
+pip3 -v install git+https://github.com/GooFit/GooFit.git
 ```
+
+If you want Python2 instead, either add the `py2-pip` package or the line `python2 -m ensurepip`. Python 3 comes with Pip in Alpine. You can also `pip install -v goofit` if you want the latest released PyPI version.
 
 </p></details>
 
 <details><summary>Clang-style checking on Alpine (click to expand)</summary><p>
 
-If you'd like to use LLVM's clang-format to check the style, probably the easiest way to do that is with Docker and Alpine, using the Edge repository to get a recent version (5.0) of clang-format. The following lines will run the style check for you:
+If you'd like to use LLVM's clang-format to check the style, probably the easiest way to do that is with Docker and Alpine. The following lines will run the style check for you:
 
 ```bash
-docker run -it alpine:edge
+docker run -it alpine
 apk add --no-cache clang git
 git clone https://github.com/GooFit/GooFit.git
 cd GooFit

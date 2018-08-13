@@ -9,4 +9,4 @@ graft scripts
 graft src
 graft tests
 global-exclude .git*
-include CMakeLists.txt LICENSE Pipfile README.md setup.py
+include CMakeLists.txt LICENSE Pipfile README.md setup.py pyproject.toml

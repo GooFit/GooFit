@@ -118,10 +118,18 @@ configure_file (
 )
 
 include(WriteCompilerDetectionHeader)
+
+set(COMPILER_LIST GNU Clang AppleClang)
+
+# Support for CMake 3.5 in ROOT Docker instance.
+if(NOT CMAKE_VERSION VERSION_LESS 3.6)
+    set(COMPILER_LIST ${COMPILER_LIST} Intel)
+endif()
+
 write_compiler_detection_header(
     FILE include/goofit/detail/CompilerFeatures.h
     PREFIX GOOFIT
-    COMPILERS GNU Clang AppleClang Intel
+    COMPILERS ${COMPILER_LIST}
     FEATURES cxx_attribute_deprecated
 )
 

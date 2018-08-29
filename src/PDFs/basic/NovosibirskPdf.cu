@@ -9,7 +9,7 @@ __device__ fptype device_Novosibirsk(fptype *evt, ParameterContainer &pc) {
     fptype _Mean  = pc.getParameter(0);
     fptype _Sigma = pc.getParameter(1);
     fptype _Tail  = pc.getParameter(2);
-    fptype x      = evt[id];
+    fptype x      = RO_CACHE(evt[id]);
 
     pc.incrementIndex(1, 3, 0, 1, 1);
 

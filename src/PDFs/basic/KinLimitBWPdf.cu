@@ -26,7 +26,7 @@ __device__ fptype bwFactor(const fptype &momentum) {
 __device__ fptype device_KinLimitBW(fptype *evt, ParameterContainer &pc) {
     int id = pc.getObservable(0);
 
-    fptype x      = evt[id];
+    fptype x      = RO_CACHE(evt[id]);
     fptype mean   = pc.getParameter(0);
     fptype width  = pc.getParameter(1);
     fptype d0mass = pc.getConstant(0);

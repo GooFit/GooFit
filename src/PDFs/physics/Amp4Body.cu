@@ -56,7 +56,7 @@ __device__ fptype device_DP(fptype *evt, ParameterContainer &pc) {
 
     // TODO: Figure out the offset for the event number observable.
     int id_num  = pc.getObservable(5);
-    auto evtNum = static_cast<int>(floor(0.5 + evt[id_num]));
+    auto evtNum = static_cast<int>(floor(0.5 + RO_CACHE(evt[id_num])));
     // printf("%i\n",evtNum );
     fpcomplex totalAmp(0, 0);
     unsigned int cacheToUse  = pc.getConstant(5);

@@ -7,7 +7,7 @@ const fptype SQRT2PI = 2.506628;
 
 __device__ fptype device_JohnsonSU(fptype *evt, ParameterContainer &pc) {
     int id     = pc.getObservable(0);
-    fptype x   = evt[id];
+    fptype x   = RO_CACHE(evt[id]);
     fptype _Jm = pc.getParameter(0);
     fptype _Js = pc.getParameter(1);
     fptype _Jg = pc.getParameter(2);

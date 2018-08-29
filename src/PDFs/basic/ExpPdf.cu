@@ -7,7 +7,7 @@ namespace GooFit {
 __device__ fptype device_Exp(fptype *evt, ParameterContainer &pc) {
     int id       = pc.getObservable(0);
     fptype alpha = pc.getParameter(0);
-    fptype x     = evt[id];
+    fptype x     = RO_CACHE(evt[id]);
 
     fptype ret = exp(alpha * x);
 
@@ -18,7 +18,7 @@ __device__ fptype device_Exp(fptype *evt, ParameterContainer &pc) {
 
 __device__ fptype device_ExpOffset(fptype *evt, ParameterContainer &pc) {
     int id   = pc.getObservable(0);
-    fptype x = evt[id];
+    fptype x = RO_CACHE(evt[id]);
     x -= pc.getParameter(0);
     fptype alpha = pc.getParameter(1);
 
@@ -31,7 +31,7 @@ __device__ fptype device_ExpOffset(fptype *evt, ParameterContainer &pc) {
 
 __device__ fptype device_ExpPoly(fptype *evt, ParameterContainer &pc) {
     int id   = pc.getObservable(0);
-    fptype x = evt[id];
+    fptype x = RO_CACHE(evt[id]);
 
     fptype exparg = 0;
 
@@ -49,7 +49,7 @@ __device__ fptype device_ExpPoly(fptype *evt, ParameterContainer &pc) {
 
 __device__ fptype device_ExpPolyOffset(fptype *evt, ParameterContainer &pc) {
     int id   = pc.getObservable(0);
-    fptype x = evt[id];
+    fptype x = RO_CACHE(evt[id]);
     x -= pc.getParameter(0);
 
     fptype exparg = 0;

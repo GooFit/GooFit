@@ -45,10 +45,10 @@ __device__ fptype SpecialIncoherentIntegrator::operator()(thrust::tuple<int, fpt
     if(!inDalitz(binCenterM12, binCenterM13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass))
         return 0;
 
-    int id_m12 = RO_CACHE(pc.observables[pc.observableIdx + 1]);
-    int id_m13 = RO_CACHE(pc.observables[pc.observableIdx + 2]);
+    int id_m12 = pc.getObservable(0);
+    int id_m13 = pc.getObservable(1);
 
-    int num_res = RO_CACHE(pc.constants[pc.constantIdx + 5]);
+    int num_res = pc.getConstant(4);
 
     // int parameter_i
     //    = parIndexFromResIndex_incoherent(resonance_i); // Find position of this resonance relative to TDDP start
@@ -66,13 +66,17 @@ __device__ fptype SpecialIncoherentIntegrator::operator()(thrust::tuple<int, fpt
         pc.incrementIndex();
 
     // unsigned int numResonances = indices[2];
-    fptype fakeEvt[10]; // Need room for many observables in case m12 or m13 were assigned a high index in an
-                        // event-weighted fit.
+    fptype *fakeEvt = new fptype[10]; 
+
+    // Need room for many observables in case m12 or m13 were assigned a high index in an
+    // event-weighted fit.
     fakeEvt[0]      = 2;
     fakeEvt[id_m12] = binCenterM12;
     fakeEvt[id_m13] = binCenterM13;
     // int effFunctionIdx                   = parIndexFromResIndex_incoherent(numResonances);
     fptype eff = callFunction(fakeEvt, pc);
+
+    delete[] fakeEvt;
 
     return thrust::norm(ret) * eff;
 }

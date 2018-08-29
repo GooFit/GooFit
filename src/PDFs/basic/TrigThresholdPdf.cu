@@ -11,7 +11,7 @@ __device__ fptype threshCalc(fptype distance, fptype linConst) {
 
 __device__ fptype device_TrigThresholdUpper(fptype *evt, ParameterContainer &pc) {
     int id           = pc.getObservable(0);
-    fptype x         = evt[id];
+    fptype x         = RO_CACHE(evt[id]);
     fptype thresh    = pc.getParameter(0);
     fptype trigConst = pc.getParameter(1);
     fptype linConst  = pc.getParameter(2);
@@ -24,7 +24,7 @@ __device__ fptype device_TrigThresholdUpper(fptype *evt, ParameterContainer &pc)
 
 __device__ fptype device_TrigThresholdLower(fptype *evt, ParameterContainer &pc) {
     int id           = pc.getObservable(0);
-    fptype x         = evt[id];
+    fptype x         = RO_CACHE(evt[id]);
     fptype thresh    = pc.getParameter(0);
     fptype trigConst = pc.getParameter(1);
     fptype linConst  = pc.getParameter(2);
@@ -40,8 +40,8 @@ __device__ fptype device_VerySpecialEpisodeTrigThresholdUpper(fptype *evt, Param
     int id_x = pc.getObservable(0);
     int id_y = pc.getObservable(1);
 
-    fptype x = evt[id_x];
-    fptype y = evt[id_y];
+    fptype x = RO_CACHE(evt[id_x]);
+    fptype y = RO_CACHE(evt[id_y]);
 
     fptype thresh    = pc.getParameter(0);
     fptype trigConst = pc.getParameter(1);
@@ -58,8 +58,8 @@ __device__ fptype device_VerySpecialEpisodeTrigThresholdLower(fptype *evt, Param
     int id_x = pc.getObservable(0);
     int id_y = pc.getObservable(1);
 
-    fptype x = evt[id_x];
-    fptype y = evt[id_y];
+    fptype x = RO_CACHE(evt[id_x]);
+    fptype y = RO_CACHE(evt[id_y]);
 
     fptype thresh    = pc.getParameter(0);
     fptype trigConst = pc.getParameter(1);

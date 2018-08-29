@@ -36,7 +36,7 @@ __device__ fptype device_InterHistogram(fptype *evt, ParameterContainer &pc) {
             // - all threads will hit the same index and
             // make the same decision.
             int id       = pc.getObservable(i);
-            currVariable = evt[id]; // evt[indices[indices[0] + 2 + observablesSeen++]];
+            currVariable = RO_CACHE(evt[id]); // evt[indices[indices[0] + 2 + observablesSeen++]];
         } else {
             // Interpret as parameter index.
             currVariable = pc.getParameter(varIndex);

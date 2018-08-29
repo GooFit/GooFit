@@ -21,7 +21,7 @@ __device__ fptype device_Composite(fptype *evt, ParameterContainer &pc) {
     // int obs = pc.constants[pc.constantIdx + 1];
     int id = pc.getObservable(0);
 
-    fptype fakeEvt[10]; // Allow plenty of space in case events are large.
+    fptype *fakeEvt = new fptype[10]; // Allow plenty of space in case events are large.
     fakeEvt[id] = coreValue;
 
     // Don't normalize shell either, since we don't know what composite function is being used for.
@@ -29,6 +29,7 @@ __device__ fptype device_Composite(fptype *evt, ParameterContainer &pc) {
     // fptype ret = (*(reinterpret_cast<device_function_ptr>(d_function_table[shellFcnIndex])))(fakeEvt, cudaArray,
     // shellParams);
     fptype ret = callFunction(fakeEvt, pc);
+    delete fakeEvt;
 
     // if (0 == THREADIDX)
     // printf("Composite: %f %f %f %f %f %f\n", evt[4], evt[5], evt[6], evt[7], coreValue, ret);

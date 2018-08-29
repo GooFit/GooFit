@@ -111,7 +111,7 @@ __device__ fptype device_Amp4Body_TD(fptype *evt, ParameterContainer &pc) {
 
     int id_evt = pc.getObservable(5);
 
-    auto evtNum = static_cast<int>(floor(0.5 + evt[id_evt]));
+    auto evtNum = static_cast<int>(floor(0.5 + RO_CACHE(evt[id_evt])));
     // GOOFIT_TRACE("Amp4Body_TD: Number of events: {}", evtNum);
 
     unsigned int cacheToUse = pc.getConstant(5);
@@ -163,8 +163,8 @@ __device__ fptype device_Amp4Body_TD(fptype *evt, ParameterContainer &pc) {
     fptype _xmixing      = pc.getParameter(1);
     fptype _ymixing      = pc.getParameter(2);
     fptype _SqWStoRSrate = pc.getParameter(3);
-    fptype _time         = evt[id_time];
-    fptype _sigma        = evt[id_sigma];
+    fptype _time         = RO_CACHE(evt[id_time]);
+    fptype _sigma        = RO_CACHE(evt[id_sigma]);
 
     AmpA *= _SqWStoRSrate;
     /*printf("%i read time: %.5g x: %.5g y: %.5g \n",evtNum, _time, _xmixing, _ymixing);*/

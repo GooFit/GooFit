@@ -5,7 +5,7 @@ namespace GooFit {
 
 __device__ fptype device_Step(fptype *evt, ParameterContainer &pc) {
     int id    = pc.getObservable(0);
-    fptype x  = evt[id];
+    fptype x  = RO_CACHE(evt[id]);
     fptype x0 = pc.getParameter(0);
     pc.incrementIndex(1, 1, 0, 1, 1);
     return (x > x0 ? 1 : 0);

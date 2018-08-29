@@ -22,12 +22,6 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, fptype *, int> t) c
     int eventSize        = thrust::get<2>(t);
     fptype *eventAddress = thrust::get<1>(t) + (eventIndex * abs(eventSize));
 
-    fptype events[10];
-
-    // pack our events into the event shared memory.
-    for(int i = 0; i < abs(eventSize); i++)
-        events[i] = eventAddress[i];
-
     int idx = abs(eventSize - 2);
     if(idx < 0)
         idx = 0;
@@ -35,7 +29,7 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, fptype *, int> t) c
     fptype norm = pc.getNormalization(0);
 
     // Causes stack size to be statically undeterminable.
-    fptype ret = callFunction(events, pc);
+    fptype ret = callFunction(eventAddress, pc);
 
     // Notice assumption here! For unbinned fits the 'eventAddress' pointer won't be used
     // in the metric, so it doesn't matter what it is. For binned fits it is assumed that
@@ -44,6 +38,7 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, fptype *, int> t) c
 
     ret = (*(reinterpret_cast<device_metric_ptr>(d_function_table[pc.funcIdx])))(
         ret, eventAddress + (abs(eventSize) - 2), norm);
+
     return ret;
 }
 
@@ -55,7 +50,7 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, int, fptype *> t) c
     int evtSize   = thrust::get<1>(t);
     int binNumber = thrust::get<0>(t);
 
-    fptype events[10];
+    fptype *events = new fptype[evtSize];
 
     // for (int i = 0; i < evtSize; i++)
     //    pc.events[i] =
@@ -93,6 +88,9 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, int, fptype *> t) c
 
     // Causes stack size to be statically undeterminable.
     fptype ret = callFunction(events, pc);
+
+    delete[] events;
+
     return ret;
 }
 

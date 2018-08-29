@@ -49,8 +49,8 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
     int id_m13  = pc.getObservable(1);
     int id_num  = pc.getObservable(2);
 
-    fptype m12 = evt[id_m12];
-    fptype m13 = evt[id_m13];
+    fptype m12 = RO_CACHE(evt[id_m12]);
+    fptype m13 = RO_CACHE(evt[id_m13]);
 
     unsigned int numResonances = pc.getConstant(0);
     // unsigned int cacheToUse    = pc.getConstant(1);
@@ -67,7 +67,7 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
         return 0;
     }
 
-    fptype evtIndex = evt[id_num];
+    fptype evtIndex = RO_CACHE(evt[id_num]);
 
     auto evtNum = static_cast<int>(floor(0.5 + evtIndex));
 

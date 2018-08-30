@@ -79,8 +79,8 @@ __device__ fpcomplex kMatrixFunction(fptype Mpair, fptype m1, fptype m2, Paramet
 
     // const fptype pTerm = GOOFIT_GET_INT();
 
-    unsigned int pterm = pc.getConstant(0);
-    bool is_pole       = pc.getConstant(1) == 1;
+    unsigned int pterm = pc.getConstant(1);
+    bool is_pole       = pc.getConstant(2) == 1;
 
     unsigned int idx = 0;
     fptype sA0       = pc.getParameter(idx++);
@@ -129,7 +129,7 @@ __device__ fpcomplex kMatrixFunction(fptype Mpair, fptype m1, fptype m2, Paramet
     Eigen::Array<fpcomplex, NCHANNELS, NCHANNELS> F = getPropagator(kMatrix, phaseSpace, adlerTerm);
 
     // TODO: calculate out
-    pc.incrementIndex(1, idx, 5, 0, 1);
+    pc.incrementIndex(1, idx, 3, 0, 1);
 
     if(is_pole) { // pole
         fpcomplex M = 0;

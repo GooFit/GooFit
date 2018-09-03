@@ -20,7 +20,7 @@ __device__ fptype device_EventWeightedAddPdfs(fptype *evt, ParameterContainer &p
 
     for(int i = 0; i < comps - 1; ++i) {
         int id        = pc.getObservable(i);
-        fptype norm = pci.getNormalization(0);
+        fptype norm   = pci.getNormalization(0);
         fptype weight = RO_CACHE(evt[id]);
         totalWeight += weight;
         fptype curr = callFunction(evt, pci);

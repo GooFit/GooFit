@@ -29,8 +29,8 @@ __device__ fpcomplex SpecialResonanceCalculator::operator()(thrust::tuple<int, f
     if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass))
         return ret;
 
-    fptype m23
-        = c_motherMass * c_motherMass + c_daug1Mass * c_daug1Mass + c_daug2Mass * c_daug2Mass + c_daug3Mass * c_daug3Mass - m12 - m13;
+    fptype m23 = c_motherMass * c_motherMass + c_daug1Mass * c_daug1Mass + c_daug2Mass * c_daug2Mass
+                 + c_daug3Mass * c_daug3Mass - m12 - m13;
 
     while(pc.funcIdx < resonance_i)
         pc.incrementIndex();

@@ -66,7 +66,7 @@ __device__ fptype SpecialIncoherentIntegrator::operator()(thrust::tuple<int, fpt
         pc.incrementIndex();
 
     // unsigned int numResonances = indices[2];
-    auto *fakeEvt = new fptype[10]; 
+    auto *fakeEvt = new fptype[10];
 
     // Need room for many observables in case m12 or m13 were assigned a high index in an
     // event-weighted fit.

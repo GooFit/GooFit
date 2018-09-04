@@ -21,7 +21,7 @@ __device__ fptype device_Composite(fptype *evt, ParameterContainer &pc) {
     // int obs = pc.constants[pc.constantIdx + 1];
     int id = pc.getObservable(0);
 
-    fptype *fakeEvt = new fptype[10]; // Allow plenty of space in case events are large.
+    auto *fakeEvt = new fptype[10]; // Allow plenty of space in case events are large.
     fakeEvt[id] = coreValue;
 
     // Don't normalize shell either, since we don't know what composite function is being used for.

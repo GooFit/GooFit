@@ -48,10 +48,10 @@ ParameterContainer::incrementIndex(const int funcs, const int params, const int 
 __device__ void ParameterContainer::incrementIndex() {
     funcIdx++;
 
-    int np = parameters[parameterIdx];
-    int nc = constants[constantIdx];
-    int no = observables[observableIdx];
-    int nn = normalizations[normalIdx];
+    int np = RO_CACHE(parameters[parameterIdx]);
+    int nc = RO_CACHE(constants[constantIdx]);
+    int no = RO_CACHE(observables[observableIdx]);
+    int nn = RO_CACHE(normalizations[normalIdx]);
 
     parameterIdx += np + 1;
     constantIdx += nc + 1;

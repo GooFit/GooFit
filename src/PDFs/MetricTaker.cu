@@ -50,7 +50,7 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, int, fptype *> t) c
     int evtSize   = thrust::get<1>(t);
     int binNumber = thrust::get<0>(t);
 
-    fptype *events = new fptype[evtSize];
+    auto *events = new fptype[evtSize];
 
     // for (int i = 0; i < evtSize; i++)
     //    pc.events[i] =

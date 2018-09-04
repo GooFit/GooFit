@@ -84,7 +84,7 @@ __device__ ThreeComplex SpecialDalitzIntegrator::operator()(thrust::tuple<int, f
     ParameterContainer pc;
 
     //TODO: should we pass in the evtSize?
-    fptype *events = new fptype[10];
+    auto *events = new fptype[10];
 
     // increment until we are at tddp index
     while(pc.funcIdx < tddp)

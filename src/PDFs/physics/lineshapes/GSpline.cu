@@ -63,8 +63,8 @@ __device__ fptype kFactor(fptype mass, fptype width) {
 }
 
 __device__ fpcomplex Spline_TDP(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
-    const fptype mass  = pc.getParameter(0);
-    const fptype width = pc.getParameter(1);
+    const fptype mass      = pc.getParameter(0);
+    const fptype width     = pc.getParameter(1);
     const fptype radius    = pc.getConstant(1);
     const int numConstants = pc.getNumConstants();
 

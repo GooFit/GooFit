@@ -25,6 +25,7 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, fptype *, int> t) c
     int idx = abs(eventSize - 2);
     if(idx < 0)
         idx = 0;
+
     // fptype obs  = events[idx];
     fptype norm = pc.getNormalization(0);
 
@@ -50,7 +51,7 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, int, fptype *> t) c
     int evtSize   = thrust::get<1>(t);
     int binNumber = thrust::get<0>(t);
 
-    auto *events = new fptype[evtSize];
+    auto *events = new fptype[10];
 
     // for (int i = 0; i < evtSize; i++)
     //    pc.events[i] =

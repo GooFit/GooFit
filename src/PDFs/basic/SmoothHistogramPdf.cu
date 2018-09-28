@@ -203,7 +203,6 @@ __host__ fptype SmoothHistogramPdf::normalize() {
 
     for(unsigned int varIndex = 0; varIndex < observablesList.size(); ++varIndex) {
         fptype binSize = constantsList[3 + 3 * varIndex + 2];
-        printf("binSize:%f\n", binSize);
         ret *= binSize; // Bin size cached by constructor.
     }
 

@@ -44,7 +44,7 @@ class Amp4Body : public Amp4BodyBase {
     __host__ void setGenerationOffset(int off) { generation_offset = off; }
     __host__ std::
         tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h>
-        GenerateSig(unsigned int numEvents);
+        GenerateSig(unsigned int numEvents, int seed = 0);
 
     __host__ void populateArrays() override;
 

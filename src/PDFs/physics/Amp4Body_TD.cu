@@ -722,11 +722,16 @@ __host__ fptype Amp4Body_TD::normalize() {
 
 __host__
     std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::BoolVector_h>
-    Amp4Body_TD::GenerateSig(unsigned int numEvents) {
+    Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) {
     copyParams();
 
     std::vector<mcbooster::GReal_t> masses(decayInfo.particle_masses.begin() + 1, decayInfo.particle_masses.end());
     mcbooster::PhaseSpace phsp(decayInfo.particle_masses[0], masses, numEvents, generation_offset);
+    if(seed != 0)
+        phsp.SetSeed(seed);
+    else
+        GOOFIT_INFO("Current generator seed {}, offset {}", phsp.GetSeed(), generation_offset);
+
     phsp.Generate(mcbooster::Vector4R(decayInfo.particle_masses[0], 0.0, 0.0, 0.0));
 
     phsp.Unweight();
@@ -890,8 +895,6 @@ __host__
         exp_functor(tmpparam, tmpoff, gammamin, wmax));
 
     gooFree(dev_event_array);
-
-    // printf("Offset: %i und wmax:%.5g\n", generation_offset, wmax);
 
     auto weights_h = mcbooster::RealVector_h(weights);
     auto results_h = mcbooster::RealVector_h(results);

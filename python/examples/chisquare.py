@@ -29,14 +29,14 @@ except ImportError:
 
 # Optional import of numba, if available
 # Make code much faster if found!
-try:
-    from numba import jit
-except ImportError:
-    def jit(*args, **kargs):
-        def copyf(function):
-            return function
-        return copyf
-    warnings.warn("Numba not found, will be 100x slower. Try `pip install numba` to install.", RuntimeWarning)
+#try:
+#    from numba import jit
+#except ImportError:
+#    def jit(*args, **kargs):
+#        def copyf(function):
+#            return function
+#        return copyf
+#    warnings.warn("Numba not found, will be 100x slower. Try `pip install numba` to install.", RuntimeWarning)
 
 # Simple timer in a context manager
 @contextmanager

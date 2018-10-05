@@ -3,8 +3,11 @@
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/lineshapes/Lineshape.h>
 #include <goofit/PDFs/physics/resonances/Resonance.h>
+#include <goofit/PDFs/detail/ComplexUtils.h>
 
 namespace GooFit {
+
+__device__ fptype cDeriatives[2 * 100];
 
 __device__ fpcomplex cubicspline(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) {
     fpcomplex ret(0, 0);
@@ -15,7 +18,6 @@ __device__ fpcomplex cubicspline(fptype m12, fptype m13, fptype m23, ParameterCo
     unsigned int i                   = 0;
     const unsigned int pwa_coefs_idx = idx;
     idx += 2 * nKnobs;
-    // const fptype *mKKlimits = &(functorConstants[indices[idx]]);
     fptype mAB = m12, mAC = m13;
     switch(cyclic_index) {
     case PAIR_13:
@@ -56,25 +58,17 @@ __device__ fpcomplex cubicspline(fptype m12, fptype m13, fptype m23, ParameterCo
         fptype pwa_coefs_real_khiAB = pc.getParameter(pwa_coefs_idx + twokhiAB);
         fptype pwa_coefs_imag_kloAB = pc.getParameter(pwa_coefs_idx + twokloAB + 1);
         fptype pwa_coefs_imag_khiAB = pc.getParameter(pwa_coefs_idx + twokhiAB + 1);
-        // fptype pwa_coefs_prime_real_kloAB = cDeriatives[twokloAB];
-        fptype pwa_coefs_prime_real_kloAB = 1.0;
-        fptype pwa_coefs_prime_real_khiAB = 1.0;
-        fptype pwa_coefs_prime_imag_kloAB = 1.0;
-        fptype pwa_coefs_prime_imag_khiAB = 1.0;
-        // fptype pwa_coefs_prime_real_khiAB = cDeriatives[twokhiAB];
-        // fptype pwa_coefs_prime_imag_kloAB = cDeriatives[twokloAB + 1];
-        // fptype pwa_coefs_prime_imag_khiAB = cDeriatives[twokhiAB + 1];
-        //  printf("m12: %f: %f %f %f %f %f %f %d %d %d\n", mAB, mKKlimits[0], mKKlimits[nKnobs-1],
-        //  pwa_coefs_real_khiAB, pwa_coefs_imag_khiAB, pwa_coefs_prime_real_khiAB, pwa_coefs_prime_imag_khiAB, khiAB,
-        //  khiAC, timestorun );
+
+        fptype pwa_coefs_prime_real_kloAB = cDeriatives[twokloAB];
+        fptype pwa_coefs_prime_real_khiAB = cDeriatives[twokhiAB];
+        fptype pwa_coefs_prime_imag_kloAB = cDeriatives[twokloAB + 1];
+        fptype pwa_coefs_prime_imag_khiAB = cDeriatives[twokhiAB + 1];
 
         dmKK = pc.getConstant(pc.constantIdx + khiAB) - pc.getConstant(pc.constantIdx + kloAB);
         aa   = (pc.getConstant(pc.constantIdx + khiAB) - mAB) / dmKK;
         bb   = 1 - aa;
         aa3  = aa * aa * aa;
         bb3  = bb * bb * bb;
-        //  ret += aa * pwa_coefs[kloAB] + bb * pwa_coefs[khiAB] + ((aa3 - aa)*pwa_coefs_prime[kloAB] + (bb3 - bb) *
-        //  pwa_coefs_prime[khiAB]) * (dmKK*dmKK)/6.0;
         ret.real(ret.real() + aa * pwa_coefs_real_kloAB + bb * pwa_coefs_real_khiAB
                  + ((aa3 - aa) * pwa_coefs_prime_real_kloAB + (bb3 - bb) * pwa_coefs_prime_real_khiAB) * (dmKK * dmKK)
                        / 6.0);
@@ -128,9 +122,9 @@ __host__ void Spline::recalculateCache() const {
         else
             y[idx].imag(value);
     }
-    // std::vector<fptype> y2_flat = flatten(complex_derivative(constantsList, y));
+    std::vector<fptype> y2_flat = flatten(complex_derivative(constantsList, y));
 
-    // MEMCPY_TO_SYMBOL(cDeriatives, y2_flat.data(), 2 * nKnobs * sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(cDeriatives, y2_flat.data(), 2 * nKnobs * sizeof(fptype), 0, cudaMemcpyHostToDevice);
 }
 
 } // namespace Resonances

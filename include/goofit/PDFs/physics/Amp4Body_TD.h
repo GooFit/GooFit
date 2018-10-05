@@ -51,7 +51,7 @@ class Amp4Body_TD : public Amp4BodyBase {
 
     __host__ std::
         tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::BoolVector_h>
-        GenerateSig(unsigned int numEvents);
+        GenerateSig(unsigned int numEvents, int seed = 0);
 
     __host__ void populateArrays() override;
 
@@ -95,7 +95,7 @@ class Amp4Body_TD : public Amp4BodyBase {
     fptype *cachedWidths;
     int totalEventSize;
     int cacheToUse{0};
-    unsigned int generation_offset{25031992};
+    unsigned int generation_offset{0};
     double maxWeight{0};
 };
 

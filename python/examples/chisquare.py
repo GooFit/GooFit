@@ -39,7 +39,7 @@ except ImportError:
 #    warnings.warn("Numba not found, will be 100x slower. Try `pip install numba` to install.", RuntimeWarning)
 
 # Simple timer in a context manager
-@contextmanager
+#@contextmanager
 def timed(msg):
     start = time()
     try:
@@ -48,19 +48,19 @@ def timed(msg):
         end = time()
         print(msg, end - start, "s")
 
-@jit(nopython=True)
+#@jit(nopython=True)
 def integralExpCon(lo, hi):
     return(np.exp(-lo) - np.exp(-hi))
 
-@jit(nopython=True)
+#@jit(nopython=True)
 def integralExpLin(lo, hi):
     return((lo + 1) * np.exp(-lo) - (hi + 1) * np.exp(-hi))
 
-@jit(nopython=True)
+#@jit(nopython=True)
 def integralExpSqu(lo, hi):
     return((lo * lo + 2 * lo + 2) * np.exp(-lo) - (hi * hi + 2 * hi + 2) * np.exp(-hi))
 
-@jit(nopython=True)
+#@jit(nopython=True)
 def generateEvents(numbins, lowerlimit, upperlimit, conCoef, linCoef, squCoef, eventsToGenerate):
 
     totalRSintegral = integralExpCon(0, 100)
@@ -207,9 +207,9 @@ def main():
     retval1 = fitRatio(decayTime, weights, dZeroEvtsRS, dZeroEvtsWS, "chisquare_dzeroEvtRatio_goo_python.png")
     retval2 = fitRatio(decayTime, weights, d0barEvtsRS, d0barEvtsWS, "chisquare_dzbarEvtRatio_goo_python.png")
 
-    with timed("Total CPU (2x fits)"):
-        fitRatioCPU(decayTime, dZeroEvtsRS, dZeroEvtsWS, "chisquare_dzeroEvtRatio_cpu_python.png")
-        fitRatioCPU(decayTime, d0barEvtsRS, d0barEvtsWS, "chisquare_dzbarEvtRatio_cpu_python.png")
+    #with timed("Total CPU (2x fits)"):
+    fitRatioCPU(decayTime, dZeroEvtsRS, dZeroEvtsWS, "chisquare_dzeroEvtRatio_cpu_python.png")
+    fitRatioCPU(decayTime, d0barEvtsRS, d0barEvtsWS, "chisquare_dzbarEvtRatio_cpu_python.png")
 
     print("Exit codes (should be 0):", int(retval1), "and", int(retval2))
 

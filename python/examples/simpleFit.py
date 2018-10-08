@@ -21,15 +21,15 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 # Optional import of numba, if available
-# Make code much faster if found!
-#try:
-#    from numba import jit
-#except ImportError:
-#    def jit(*args, **kargs):
-#        def copyf(function):
-#            return function
-#        return copyf
-#    warnings.warn("Numba not found, will be 100x slower", RuntimeWarning)
+ Make code much faster if found!
+try:
+    from numba import jit
+except ImportError:
+    def jit(*args, **kargs):
+        def copyf(function):
+            return function
+        return copyf
+    warnings.warn("Numba not found, will be 100x slower", RuntimeWarning)
 
 
 # Quick decorator to add a message and timer
@@ -73,7 +73,7 @@ def fitAndPlot(total, data, xvar, filename):
     fig.savefig(filename)
 
 
-#@jit(nopython=True)
+@jit(nopython=True)
 def novosib(x, peak, width, tail):
     'CPU-side Novosibirsk evaluation for use in generating toy MC'
 
@@ -94,7 +94,7 @@ def novosib(x, peak, width, tail):
     #---- Normalize the result
     return np.exp(-qc)
 
-#@jit(nopython=True)
+@jit(nopython=True)
 def novo_make_vector(peak, width, tail, maxNovo, lowerlimit, upperlimit, numevents):
     'Make a vector of entries'
     arr = np.empty(numevents, dtype=np.double)
@@ -143,7 +143,7 @@ def generate_landau(xvar, numevents):
 
 
 
-#@jit(nopython=True)
+@jit(nopython=True)
 def make_bifg(lowerlimit, upperlimit, numevents):
     'Make a Bifurcated Gaussian vector of events'
     arr = np.empty(numevents, dtype=np.double)

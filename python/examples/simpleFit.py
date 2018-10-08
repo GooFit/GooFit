@@ -21,7 +21,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 # Optional import of numba, if available
- Make code much faster if found!
+# Make code much faster if found!
 try:
     from numba import jit
 except ImportError:

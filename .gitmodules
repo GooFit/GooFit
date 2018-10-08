@@ -3,13 +3,13 @@
 	url = ../../CLIUtils/cmake.git
 [submodule "extern/generics"]
 	path = extern/generics
-	url = ../generics.git
+	url = ../../GooFit/generics.git
 [submodule "extern/CLI11"]
 	path = extern/CLI11
 	url = ../../CLIUtils/CLI11.git
 [submodule "extern/Minuit2"]
 	path = extern/Minuit2
-	url = ../Minuit2.git
+	url = ../../GooFit/Minuit2.git
 [submodule "extern/thrust"]
 	path = extern/thrust
 	url = ../../thrust/thrust.git
@@ -21,7 +21,7 @@
 	url = ../../pybind/pybind11.git
 [submodule "extern/FeatureDetector"]
 	path = extern/FeatureDetector
-	url = ../FeatureDetector.git
+	url = ../../GooFit/FeatureDetector.git
 [submodule "extern/fmt"]
 	path = extern/fmt
 	url = ../../fmtlib/fmt.git
@@ -30,7 +30,7 @@
 	url = ../../arsenm/sanitizers-cmake.git
 [submodule "extern/MCBooster"]
 	path = extern/MCBooster
-	url = ../MCBooster.git
+	url = ../../GooFit/MCBooster.git
 [submodule "extern/Eigen"]
 	path = extern/Eigen
 	url = ../../eigenteam/eigen-git-mirror.git

@@ -208,8 +208,8 @@ def main():
     retval2 = fitRatio(decayTime, weights, d0barEvtsRS, d0barEvtsWS, "chisquare_dzbarEvtRatio_goo_python.png")
 
     with timed("Total CPU (2x fits)"):
-    	fitRatioCPU(decayTime, dZeroEvtsRS, dZeroEvtsWS, "chisquare_dzeroEvtRatio_cpu_python.png")
-    	fitRatioCPU(decayTime, d0barEvtsRS, d0barEvtsWS, "chisquare_dzbarEvtRatio_cpu_python.png")
+        fitRatioCPU(decayTime, dZeroEvtsRS, dZeroEvtsWS, "chisquare_dzeroEvtRatio_cpu_python.png")
+        fitRatioCPU(decayTime, d0barEvtsRS, d0barEvtsWS, "chisquare_dzbarEvtRatio_cpu_python.png")
 
     print("Exit codes (should be 0):", int(retval1), "and", int(retval2))
 

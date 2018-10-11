@@ -133,10 +133,13 @@ write_compiler_detection_header(
     FEATURES cxx_attribute_deprecated
 )
 
+set(GOOFIT_CXX_STANDARD "11" CACHE STRING "Set a version of C++ standerd (11,14,...) to use. Must match ROOT if using ROOT.")
+set(GOOFIT_CXX_CUDA_STANDARD "11" CACHE STRING "Set a version of C++ standerd (11,14,...) to use in CUDA.")
+
 
 ### C++ settings ###
 macro(GOOFIT_SETUP_STD)
-    set(CMAKE_CXX_STANDARD 11)
+    set(CMAKE_CXX_STANDARD ${GOOFIT_CXX_STANDARD})
     set(CMAKE_CXX_EXTENSIONS OFF)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -308,7 +311,7 @@ endif()
 macro(GOOFIT_OPTIONAL_CUDA)
     if(NEW_CUDA AND GOOFIT_DEVICE STREQUAL CUDA)
         enable_language(CUDA)
-        set(CMAKE_CUDA_STANDARD 11)
+        set(CMAKE_CUDA_STANDARD ${GOOFIT_CXX_CUDA_STANDARD})
         set(CMAKE_CUDA_STANDARD_REQUIRED ON)
         set(CMAKE_CUDA_EXTENSIONS OFF)
 
@@ -333,7 +336,7 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
             list(APPEND CUDA_NVCC_FLAGS ${MPI_CXX_COMPILE_FLAGS})
         endif()
 
-        list(APPEND CUDA_NVCC_FLAGS -std=c++11)
+        list(APPEND CUDA_NVCC_FLAGS -std=c++${GOOFIT_CXX_CUDA_STANDARD})
 
         if(CUDA_VERSION VERSION_LESS 7.5)
             list(APPEND CUDA_NVCC_FLAGS --relaxed-constexpr)

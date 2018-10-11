@@ -64,7 +64,7 @@ __device__ fptype device_AddPdfsExt(fptype *evt, ParameterContainer &pc) {
 
     for(int i = 0; i < numParameters; i++) {
         // grab the weight parameter from addPdf
-        fptype weight     = pc.getParameter(i);
+        fptype weight = pc.getParameter(i);
         //  Grab the normalization for the specific component
         fptype normFactor = pci.getNormalization(0);
 

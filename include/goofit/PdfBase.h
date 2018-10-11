@@ -185,7 +185,10 @@ class PdfBase {
     unsigned int getFunctionIndex() const { return functionIdx; }
     unsigned int getParameterIndex() const { return parameters; }
 
-    void setNormalization(const fptype &v) { cachedNormalization = v; host_normalizations[normalIdx + 1] = v; }
+    void setNormalization(const fptype &v) {
+        cachedNormalization                = v;
+        host_normalizations[normalIdx + 1] = v;
+    }
     fptype getNormalization() const { return cachedNormalization; }
 
     /// Set a specific fineness for the integrator

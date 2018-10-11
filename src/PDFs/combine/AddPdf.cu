@@ -63,8 +63,9 @@ __device__ fptype device_AddPdfsExt(fptype *evt, ParameterContainer &pc) {
     pci.incrementIndex();
 
     for(int i = 0; i < numParameters; i++) {
-        // grab the weight value
-        fptype weight     = pci.getParameter(i);
+        // grab the weight parameter from addPdf
+        fptype weight = pc.getParameter(i);
+        //  Grab the normalization for the specific component
         fptype normFactor = pci.getNormalization(0);
 
         fptype curr = callFunction(evt, pci);
@@ -150,7 +151,8 @@ __host__ fptype AddPdf::normalize() {
     fptype last = components.back()->normalize();
 
     if(extended) {
-        fptype lastWeight = host_parameters[parametersIdx + 2];
+        // fptype lastWeight = host_parameters[parametersIdx + 2];
+        fptype lastWeight = parametersList[components.size() - 1];
         totalWeight += lastWeight;
         ret += last * lastWeight;
         ret /= totalWeight;
@@ -161,7 +163,6 @@ __host__ fptype AddPdf::normalize() {
     host_normalizations[normalIdx + 1] = 1.0;
     cachedNormalization                = 1.0;
 
-    // TODO: Unsure of the exact location for this normalize...
     if(getCommonNorm()) {
         // Want to normalize this as
         // (f1 A + (1-f1) B) / int (f1 A + (1-f1) B)
@@ -169,8 +170,8 @@ __host__ fptype AddPdf::normalize() {
         // (f1 A / int A) + ((1-f1) B / int B).
 
         for(auto component : components) {
-            host_normalizations[component->getParameterIndex()] = (1.0 / ret);
-            // component->cachedNormalization = 1.0 / ret;
+            // host_normalizations[component->getParameterIndex()] = (1.0 / ret);
+            component->setNormalization(1.0 / ret);
         }
     }
 
@@ -185,7 +186,8 @@ __host__ double AddPdf::calculateNLL() {
         fptype expEvents = 0;
 
         for(unsigned int i = 0; i < components.size(); ++i) {
-            expEvents += host_parameters[parametersIdx + 3 * (i + 1)];
+            // expEvents += host_parameters[parametersIdx + 3 * (i + 1)];
+            expEvents += parametersList[i].getValue();
         }
 
         // Log-likelihood of numEvents with expectation of exp is (-exp + numEvents*ln(exp) - ln(numEvents!)).

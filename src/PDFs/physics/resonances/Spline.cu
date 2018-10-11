@@ -11,10 +11,10 @@ __device__ fptype cDeriatives[2 * 100];
 
 __device__ fpcomplex cubicspline(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) {
     fpcomplex ret(0, 0);
-    unsigned int cyclic_index        = pc.getConstant(1);
-    unsigned int doSwap              = pc.getConstant(2);
-    const unsigned int nKnobs        = pc.getConstant(3);
-    unsigned int idx                 = 5; // Next index
+    unsigned int cyclic_index        = pc.getConstant(0);
+    unsigned int doSwap              = pc.getConstant(1);
+    const unsigned int nKnobs        = pc.getConstant(2);
+    unsigned int idx                 = 3; // Next index
     unsigned int i                   = 0;
     const unsigned int pwa_coefs_idx = idx;
     idx += 2 * nKnobs;
@@ -34,7 +34,7 @@ __device__ fpcomplex cubicspline(fptype m12, fptype m13, fptype m23, ParameterCo
     fptype dmKK, aa, bb, aa3, bb3;
     unsigned int timestorun = 1 + doSwap;
     while(khiAB < nKnobs) {
-        if(mAB < pc.constants[pc.constantIdx + khiAB])
+        if(mAB < pc.getConstant(3 + khiAB))
             break;
         khiAB++;
     }
@@ -42,7 +42,7 @@ __device__ fpcomplex cubicspline(fptype m12, fptype m13, fptype m23, ParameterCo
     if(khiAB <= 0 || khiAB == nKnobs)
         timestorun = 0;
     while(khiAC < nKnobs) {
-        if(mAC < pc.constants[pc.constantIdx + khiAC])
+        if(mAC < pc.getConstant(3 + khiAC))
             break;
         khiAC++;
     }
@@ -54,18 +54,18 @@ __device__ fpcomplex cubicspline(fptype m12, fptype m13, fptype m23, ParameterCo
         unsigned int kloAB          = khiAB - 1; //, kloAC = khiAC -1;
         unsigned int twokloAB       = kloAB + kloAB;
         unsigned int twokhiAB       = khiAB + khiAB;
-        fptype pwa_coefs_real_kloAB = pc.getParameter(pwa_coefs_idx + twokloAB);
-        fptype pwa_coefs_real_khiAB = pc.getParameter(pwa_coefs_idx + twokhiAB);
-        fptype pwa_coefs_imag_kloAB = pc.getParameter(pwa_coefs_idx + twokloAB + 1);
-        fptype pwa_coefs_imag_khiAB = pc.getParameter(pwa_coefs_idx + twokhiAB + 1);
+        fptype pwa_coefs_real_kloAB = pc.getParameter(twokloAB);
+        fptype pwa_coefs_real_khiAB = pc.getParameter(twokhiAB);
+        fptype pwa_coefs_imag_kloAB = pc.getParameter(twokloAB + 1);
+        fptype pwa_coefs_imag_khiAB = pc.getParameter(twokhiAB + 1);
 
         fptype pwa_coefs_prime_real_kloAB = cDeriatives[twokloAB];
         fptype pwa_coefs_prime_real_khiAB = cDeriatives[twokhiAB];
         fptype pwa_coefs_prime_imag_kloAB = cDeriatives[twokloAB + 1];
         fptype pwa_coefs_prime_imag_khiAB = cDeriatives[twokhiAB + 1];
 
-        dmKK = pc.getConstant(pc.constantIdx + khiAB) - pc.getConstant(pc.constantIdx + kloAB);
-        aa   = (pc.getConstant(pc.constantIdx + khiAB) - mAB) / dmKK;
+        dmKK = pc.getConstant(3 + khiAB) - pc.getConstant(3 + kloAB);
+        aa   = (pc.getConstant(3 + khiAB) - mAB) / dmKK;
         bb   = 1 - aa;
         aa3  = aa * aa * aa;
         bb3  = bb * bb * bb;

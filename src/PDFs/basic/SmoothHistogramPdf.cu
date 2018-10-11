@@ -201,9 +201,8 @@ __host__ fptype SmoothHistogramPdf::normalize() {
     // return totalEvents;
     fptype ret = thrust::reduce(dev_smoothed_histogram->begin(), dev_smoothed_histogram->end());
 
-    int obs = constantsList[0];
     for(unsigned int varIndex = 0; varIndex < observablesList.size(); ++varIndex) {
-        fptype binSize = constantsList[obs + 3 * varIndex + 2];
+        fptype binSize = constantsList[3 + 3 * varIndex + 2];
         ret *= binSize; // Bin size cached by constructor.
     }
 

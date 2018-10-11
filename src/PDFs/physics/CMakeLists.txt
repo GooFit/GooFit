@@ -67,3 +67,6 @@ goofit_add_pdf_library(PDFPhysics
     ${GOOFIT_PHYSICS_HEADERS}
 )
 
+if(IS_NOT_CUDA AND UNIX AND NOT APPLE)
+    target_link_libraries(PDFPhysics PRIVATE rt)
+endif()

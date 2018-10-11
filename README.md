@@ -32,6 +32,7 @@ doing maximum-likelihood fits with a familiar syntax.
     * CUDA 7.x: Python not supported.
     * CUDA 8.0: Recommended and fully supported.
     * CUDA 9.x: Partially supported but [has known issues](https://github.com/GooFit/GooFit/issues/173).
+    * CUDA 10: Believed to be similar to CUDA 9.
 * An nVidia GPU supporting compute capability at least 2.0 (3.5+ recommended)
 
 </p></details>

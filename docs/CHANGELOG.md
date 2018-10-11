@@ -1,6 +1,31 @@
 ## v2.2.1: Bugfixes
 
+This release contains some performance improvements [#176], and
+fixes some of the bugs present in the rewrite of 2.2.0:
+
+* Fixed bug with smooth histogram [#178]
+* Restored spline, derivatives are now properly calculated too [#181]
+* MCBooster seed now available [#177]
+
+It also fixes several building problems found by users:
+
 * Fixed builds with CMake 3.5 (ROOT Docker uses this by default)
+* Better Pip 10+ support
+* Docker is used to format if clang-format is not installed and docker is
+* Forking now supported again [#179], git without https access easier [#183]
+* Better CUDA 9+ support [#180]
+* LCG on SLC 6 supported [#185], [#184]
+* OpenMP supported again on latest macOS
+
+[#176]: https://github.com/GooFit/GooFit/pull/176
+[#177]: https://github.com/GooFit/GooFit/pull/177
+[#178]: https://github.com/GooFit/GooFit/pull/178
+[#179]: https://github.com/GooFit/GooFit/pull/179
+[#180]: https://github.com/GooFit/GooFit/pull/180
+[#181]: https://github.com/GooFit/GooFit/pull/181
+[#183]: https://github.com/GooFit/GooFit/pull/183
+[#184]: https://github.com/GooFit/GooFit/pull/184
+[#185]: https://github.com/GooFit/GooFit/pull/185
 
 ## v2.2.0: New indexing
 #### July 31, 2018

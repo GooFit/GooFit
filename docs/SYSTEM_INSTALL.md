@@ -166,6 +166,27 @@ make
 
 </p></details>
 
+<details><summary>SLC 6 with CVMFS (LxPlus 6): (click to expand)</summary><p>
+
+```
+# If you have not run this already (automatic on LxPlus):
+source /cvmfs/lhcb.cern.ch/group_login.sh
+
+# Set up LCG releases
+. /cvmfs/sft.cern.ch/lcg/views/LCG_94python3/x86_64-slc6-gcc62-opt/setup.sh
+
+# Download and build as usual (ssh download doesn't seem to
+# work properly due to bug on LxPlus)
+git clone --recursive https://github.com/GooFit/GooFit.git
+cd GooFit
+mkdir build
+cd build
+cmake ..
+make -j4
+```
+
+</p></details>
+
 <details><summary>Note about installing CMake: (click to expand)</summary><p>
 
 While other install methods for CMake, like `pip`, are easier, this way should always work. On Linux, you can manually get a version of CMake using:

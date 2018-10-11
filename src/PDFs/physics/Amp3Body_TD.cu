@@ -49,13 +49,13 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
     if(num_observables > 5)
         id_mis = pc.getObservable(5);
 
-    fptype m12 = evt[id_m12];
-    fptype m13 = evt[id_m13];
+    fptype m12 = RO_CACHE(evt[id_m12]);
+    fptype m13 = RO_CACHE(evt[id_m13]);
 
     unsigned int numResonances = pc.getConstant(0);
 
     if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass)) {
-        unsigned int endEfficiencyFunc = RO_CACHE(pc.constants[pc.constantIdx + 4]);
+        unsigned int endEfficiencyFunc = pc.getConstant(3);
         pc.incrementIndex(1, num_parameters, num_constants, num_observables, 1);
 
         // increment the resonances
@@ -72,7 +72,7 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
         return 0;
     }
 
-    auto evtNum = static_cast<int>(floor(0.5 + evt[id_num]));
+    auto evtNum = static_cast<int>(floor(0.5 + RO_CACHE(evt[id_num])));
 
     fpcomplex sumWavesA(0, 0);
     fpcomplex sumWavesB(0, 0);
@@ -103,15 +103,15 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
         sumWavesB += matrixelement;
     }
 
+    int id_time  = pc.getObservable(0);
+    int id_sigma = pc.getObservable(1);
+
     fptype _tau     = pc.getParameter(0);
     fptype _xmixing = pc.getParameter(1);
     fptype _ymixing = pc.getParameter(2);
 
-    int id_time  = pc.getObservable(0);
-    int id_sigma = pc.getObservable(1);
-
-    fptype _time  = evt[id_time];
-    fptype _sigma = evt[id_sigma];
+    fptype _time  = RO_CACHE(evt[id_time]);
+    fptype _sigma = RO_CACHE(evt[id_sigma]);
 
     // TODO: Test that we have a special flag by comparing size of numconstants?
     // fptype special_flag = pc.getConstant(3);

@@ -29,7 +29,7 @@ __constant__ fptype a2[2] = {-1.845568670, -4.284640743};
 
 __device__ fptype device_Landau(fptype *evt, ParameterContainer &pc) {
     int id       = pc.getObservable(0);
-    fptype x     = evt[id];
+    fptype x     = RO_CACHE(evt[id]);
     fptype mpv   = pc.getParameter(0);
     fptype sigma = pc.getParameter(1);
     pc.incrementIndex(1, 2, 0, 1, 1);

@@ -14,8 +14,8 @@ __device__ fpcomplex aSqrtTerm(const fptype &m0, const fptype &m) {
 }
 
 __device__ fpcomplex Flatte_MINT(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
-    fptype meson_radius  = pc.getConstant(0);
     unsigned int orbital = pc.getConstant(1);
+    fptype meson_radius  = pc.getConstant(2);
     fptype resmass       = pc.getParameter(0);
 
     fptype frFactor = 1;
@@ -56,9 +56,8 @@ Lineshapes::Flatte::Flatte(
     // TODO: Clean up signature
     registerParameter(mass);
 
-    // registerConstant(radius);
-    // registerConstant(L);
-    // registerConstant(Mpair);
+    registerConstant(L);
+    registerConstant(radius);
 
     registerFunction("ptr_to_Flatte", ptr_to_Flatte);
 

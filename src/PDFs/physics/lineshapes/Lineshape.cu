@@ -26,8 +26,6 @@ Lineshape::Lineshape(
     // They will be registered by the object that uses this resonance,
     // which will tell this object where to find them by calling setConstantIndex.
 
-    registerConstant(radius);
-    registerConstant(L);
     registerConstant(Mpair);
 }
 

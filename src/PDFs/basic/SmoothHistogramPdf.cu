@@ -25,7 +25,7 @@ __device__ fptype device_EvalHistogram(fptype *evt, ParameterContainer &pc) {
         int varIndex      = pc.getObservable(i);
         int lowerBoundIdx = 3 * (i + 1);
 
-        fptype currVariable = evt[varIndex];
+        fptype currVariable = RO_CACHE(evt[varIndex]);
         fptype lowerBound   = pc.getConstant(i * 3 + 4);
         fptype step         = pc.getConstant(i * 3 + 5);
 

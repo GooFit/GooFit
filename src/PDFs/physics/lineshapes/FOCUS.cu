@@ -18,7 +18,7 @@ __device__ fptype phsp_FOCUS(fptype s, fptype m0, fptype m1) {
 }
 
 __device__ fpcomplex FOCUSFunction(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
-    unsigned int mod = pc.getConstant(3);
+    unsigned int mod = pc.getConstant(1);
 
     fptype s = POW2(Mpair);
 
@@ -61,7 +61,7 @@ __device__ fpcomplex FOCUSFunction(fptype Mpair, fptype m1, fptype m2, Parameter
 
     fpcomplex T32 = 1. / fpcomplex(1, -K32 * rho1);
 
-    pc.incrementIndex(1, 0, 4, 0, 1);
+    pc.incrementIndex(1, 0, 2, 0, 1);
 
     if(mod == static_cast<unsigned int>(Lineshapes::FOCUS::Mod::Kpi))
         return fpcomplex(K11, -rho2 * detK) / del;

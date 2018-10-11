@@ -12,7 +12,7 @@ __device__ fptype device_BinTransform(fptype *evt, ParameterContainer &pc) {
 
     for(int i = 0; i < numObservables; ++i) {
         int id            = pc.getObservable(i);
-        fptype obsValue   = evt[id];
+        fptype obsValue   = RO_CACHE(evt[id]);
         fptype lowerLimit = pc.getConstant(i * 3);
         fptype binSize    = pc.getConstant(i * 3 + 1);
         int numBins       = pc.getConstant(i * 3 + 2);

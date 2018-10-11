@@ -12,7 +12,7 @@ __device__ fptype device_Polynomial(fptype *evt, ParameterContainer &pc) {
     int numParams    = pc.getNumParameters();
     int lowestDegree = pc.getConstant(0);
 
-    fptype x   = evt[id];
+    fptype x   = RO_CACHE(evt[id]);
     fptype ret = 0;
 
     // unsure why this starts at i=2...
@@ -31,7 +31,7 @@ __device__ fptype device_OffsetPolynomial(fptype *evt, ParameterContainer &pc) {
     int numParams    = pc.getNumParameters();
     int lowestDegree = pc.getConstant(0);
 
-    fptype x = evt[id];
+    fptype x = RO_CACHE(evt[id]);
     // TODO: Not sure where this is pointing...
     // x -= RO_CACHE(p[RO_CACHE(indices[numParams])]);
     fptype ret = 0;
@@ -80,7 +80,7 @@ __device__ fptype device_MultiPolynomial(fptype *evt, ParameterContainer &pc) {
         for(int j = 0; j < num_observables; ++j) {
             // TODO:Need to debug these
             int id        = pc.getObservable(j);
-            fptype x      = evt[id];            // x, y, z...
+            fptype x      = RO_CACHE(evt[id]);  // x, y, z...
             fptype offset = pc.getParameter(j); // x0, y0, z0...
             x -= offset;
             int currPower = currIndex % maxDegree;

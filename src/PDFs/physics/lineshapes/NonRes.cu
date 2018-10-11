@@ -8,8 +8,8 @@
 namespace GooFit {
 
 __device__ fpcomplex nonres_DP(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
-    fptype meson_radius  = pc.getConstant(0);
     unsigned int orbital = pc.getConstant(1);
+    fptype meson_radius  = pc.getConstant(2);
 
     fptype mumsRecoMass2 = Mpair * Mpair;
 
@@ -30,8 +30,8 @@ Lineshapes::NonRes::NonRes(
     : Lineshape("NonRes", name, L, Mpair, FormFac, radius) {
     // TODO: Clean up signature
 
-    // registerConstant(radius);
-    // registerConstant(L);
+    registerConstant(L);
+    registerConstant(radius);
 
     registerFunction("ptr_to_NONRES_DP", ptr_to_NONRES_DP);
 

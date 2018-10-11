@@ -24,7 +24,7 @@ __device__ inline int parIndexFromResIndex_incoherent(int resIndex) {
 __device__ fptype device_incoherent(fptype *evt, ParameterContainer &pc) {
     // Calculates the incoherent sum over the resonances.
     int evtId   = pc.getObservable(2);
-    auto evtNum = static_cast<int>(floor(0.5 + evt[evtId]));
+    auto evtNum = static_cast<int>(floor(0.5 + RO_CACHE(evt[evtId])));
 
     fptype ret                 = 0;
     unsigned int numResonances = pc.getConstant(4);

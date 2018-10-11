@@ -11,8 +11,8 @@ namespace GooFit {
 // lass as implemented in Mint3.
 // The difference between this and lass mint is not quite clear to me. need to get back to this later.
 __device__ fpcomplex glass_MINT3(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
-    fptype meson_radius  = pc.getConstant(0);
     unsigned int orbital = pc.getConstant(1);
+    fptype meson_radius  = pc.getConstant(2);
 
     fptype resmass  = pc.getParameter(0);
     fptype reswidth = pc.getParameter(1);
@@ -82,11 +82,8 @@ Lineshapes::GLASS::GLASS(std::string name,
     for(int i = 0; i < 5; i++)
         registerParameter(AdditionalVars[i]);
 
-    // registerConstant(radius);
-    // registerConstant(L);
-    // TODO: Remove from signature
-    // registerConstant(Mpair);
-    // registerConstant(enum_to_underlying(FormFac));
+    registerConstant(L);
+    registerConstant(radius);
 
     registerFunction("ptr_to_glass3", ptr_to_glass3);
 

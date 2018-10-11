@@ -14,9 +14,9 @@ namespace GooFit {
 __device__ fpcomplex BW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
     fptype resmass       = pc.getParameter(0);
     fptype reswidth      = pc.getParameter(1);
-    fptype meson_radius  = pc.getConstant(0);
     unsigned int orbital = pc.getConstant(1);
-    unsigned int FF      = pc.getConstant(3);
+    unsigned int FF      = pc.getConstant(2);
+    fptype meson_radius  = pc.getConstant(3);
 
     const unsigned int to2Lplus1 = 2 * orbital + 1;
 
@@ -72,9 +72,9 @@ __device__ fpcomplex BW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &
 __device__ fpcomplex SBW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
     fptype resmass       = pc.getParameter(0);
     fptype reswidth      = pc.getParameter(1);
-    fptype meson_radius  = pc.getConstant(0);
     unsigned int orbital = pc.getConstant(1);
-    unsigned int FF      = pc.getConstant(3);
+    unsigned int FF      = pc.getConstant(2);
+    fptype meson_radius  = pc.getConstant(3);
 
     fptype mass          = resmass;
     fptype width         = reswidth;
@@ -142,7 +142,7 @@ __device__ fpcomplex lass_MINT(fptype Mpair, fptype m1, fptype m2, ParameterCont
     fpcomplex BG        = SF / den;
     fpcomplex returnVal = BG + phaseshift * BW(Mpair, m1, m2, pc);
 
-    // pc.incrementIndex(1, 2, 3, 0, 1);
+    pc.incrementIndex(1, 2, 4, 0, 1);
     // The call to BW does the increment for us
 
     return returnVal;
@@ -158,11 +158,9 @@ Lineshapes::RBW::RBW(
     registerParameter(mass);
     registerParameter(width);
 
-    // registerConstant(radius);
-    // registerConstant(L);
-    // registerConstant(Mpair);
-    // TODO: Missing contant here
+    registerConstant(L);
     registerConstant(enum_to_underlying(FormFac));
+    registerConstant(radius);
 
     registerFunction("ptr_to_BW_DP4", ptr_to_BW_DP4);
 
@@ -175,11 +173,9 @@ Lineshapes::SBW::SBW(
     registerParameter(mass);
     registerParameter(width);
 
-    // registerConstant(radius);
-    // registerConstant(L);
-    // registerConstant(Mpair);
-    // TODO: Mpair missing?
+    registerConstant(L);
     registerConstant(enum_to_underlying(FormFac));
+    registerConstant(radius);
 
     registerFunction("ptr_to_SBW", ptr_to_SBW);
 
@@ -194,10 +190,9 @@ Lineshapes::LASS::LASS(
     registerParameter(mass);
     registerParameter(width);
 
-    // registerConstant(radius);
-    // registerConstant(L);
-    // registerConstant(Mpair);
+    registerConstant(L);
     registerConstant(enum_to_underlying(FormFac));
+    registerConstant(radius);
 
     registerFunction("ptr_to_lass", ptr_to_lass);
 

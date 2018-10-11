@@ -41,7 +41,7 @@ __device__ fpcomplex NormLSCalculator_TD::operator()(
     while(pc.funcIdx < _resonance_i)
         pc.incrementIndex();
 
-    unsigned int pair = pc.getConstant(2);
+    unsigned int pair = pc.getConstant(0);
 
     if(pair < 2) {
         fptype mres = pair == 0 ? m12 : m34;

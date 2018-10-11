@@ -13,8 +13,8 @@ __device__ fptype device_CorrGaussian(fptype *evt, ParameterContainer &pc) {
     fptype sigma2 = pc.getParameter(3);
     fptype corr   = pc.getParameter(4);
 
-    fptype x = evt[idx];
-    fptype y = evt[idy];
+    fptype x = RO_CACHE(evt[idx]);
+    fptype y = RO_CACHE(evt[idy]);
 
     fptype x_dist = (x - mean1) / sigma1;
     sigma2 *= (1.0 + corr * x_dist * x_dist);

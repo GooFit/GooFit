@@ -27,11 +27,6 @@ __device__ WaveHolder_s SpecialWaveCalculator::operator()(thrust::tuple<int, fpt
 
     ParameterContainer pc;
 
-    fptype events[10];
-
-    for(int i = 0; i < evtSize; i++)
-        events[i] = evt[i];
-
     // increment until we are at tddp index
     while(pc.funcIdx < tddp)
         pc.incrementIndex();
@@ -40,8 +35,8 @@ __device__ WaveHolder_s SpecialWaveCalculator::operator()(thrust::tuple<int, fpt
     int id_m13 = pc.getObservable(3);
 
     // Read these values as tddp.
-    fptype m12 = events[id_m12];
-    fptype m13 = events[id_m13];
+    fptype m12 = RO_CACHE(evt[id_m12]);
+    fptype m13 = RO_CACHE(evt[id_m13]);
 
     if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass))
         return ret;

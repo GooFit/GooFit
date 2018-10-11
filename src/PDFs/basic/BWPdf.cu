@@ -6,7 +6,7 @@ namespace GooFit {
 __device__ fptype device_BW(fptype *evt, ParameterContainer &pc) {
     int id = pc.getObservable(0);
 
-    fptype x      = evt[id];
+    fptype x      = RO_CACHE(evt[id]);
     fptype mean   = pc.getParameter(0);
     fptype gamma  = pc.getParameter(1);
     fptype rootPi = -2. * atan2(-1.0, 0.0);

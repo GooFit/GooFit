@@ -23,11 +23,11 @@ __device__ fpcomplex SpecialIncoherentResonanceCalculator::operator()(thrust::tu
     while(pc.funcIdx < incoherentSum)
         pc.incrementIndex();
 
-    int id_m12 = RO_CACHE(pc.observables[pc.observableIdx + 1]);
-    int id_m13 = RO_CACHE(pc.observables[pc.observableIdx + 2]);
+    int id_m12 = pc.getObservable(0);
+    int id_m13 = pc.getObservable(1);
 
-    fptype m12 = evt[id_m12];
-    fptype m13 = evt[id_m13];
+    fptype m12 = RO_CACHE(evt[id_m12]);
+    fptype m13 = RO_CACHE(evt[id_m13]);
 
     if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass))
         return {0.0, 0.0};

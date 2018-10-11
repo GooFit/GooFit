@@ -7,7 +7,7 @@ namespace GooFit {
 __device__ fptype device_Argus_Upper(fptype *evt, ParameterContainer &pc) {
     int id = pc.getObservable(0);
 
-    fptype x     = evt[id];
+    fptype x     = RO_CACHE(evt[id]);
     fptype m0    = pc.getParameter(0);
     fptype slope = pc.getParameter(1);
     fptype power = pc.getParameter(2);
@@ -27,7 +27,7 @@ __device__ fptype device_Argus_Upper(fptype *evt, ParameterContainer &pc) {
 __device__ fptype device_Argus_Lower(fptype *evt, ParameterContainer &pc) {
     int id = pc.getObservable(0);
 
-    fptype x     = evt[id];
+    fptype x     = RO_CACHE(evt[id]);
     fptype m0    = pc.getParameter(0);
     fptype slope = pc.getParameter(1);
     fptype power = pc.getParameter(2);

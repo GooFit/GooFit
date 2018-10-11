@@ -23,19 +23,14 @@ __device__ fpcomplex SpecialResonanceCalculator::operator()(thrust::tuple<int, f
     int id_m12 = pc.getObservable(0);
     int id_m13 = pc.getObservable(1);
 
-    fptype m12 = evt[id_m12];
-    fptype m13 = evt[id_m13];
+    fptype m12 = RO_CACHE(evt[id_m12]);
+    fptype m13 = RO_CACHE(evt[id_m13]);
 
-    fptype motherMass = c_motherMass; // pc.constants[pc.constantIdx + 4];
-    fptype daug1Mass  = c_daug1Mass;  // pc.constants[pc.constantIdx + 5];
-    fptype daug2Mass  = c_daug2Mass;  // pc.constants[pc.constantIdx + 6];
-    fptype daug3Mass  = c_daug3Mass;  // pc.constants[pc.constantIdx + 7];
-
-    if(!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass))
+    if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass))
         return ret;
 
-    fptype m23
-        = motherMass * motherMass + daug1Mass * daug1Mass + daug2Mass * daug2Mass + daug3Mass * daug3Mass - m12 - m13;
+    fptype m23 = c_motherMass * c_motherMass + c_daug1Mass * c_daug1Mass + c_daug2Mass * c_daug2Mass
+                 + c_daug3Mass * c_daug3Mass - m12 - m13;
 
     while(pc.funcIdx < resonance_i)
         pc.incrementIndex();

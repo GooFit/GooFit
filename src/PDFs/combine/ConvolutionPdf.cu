@@ -31,7 +31,7 @@ __device__ fptype device_ConvolvePdfs(fptype *evt, ParameterContainer &pc) {
     fptype loBound     = pc.getConstant(0); // RO_CACHE(pc.constants[pc.constantIdx + 2]);
     fptype hiBound     = pc.getConstant(1); // RO_CACHE(pc.constants[pc.constantIdx + 3]);
     fptype step        = pc.getConstant(2); // RO_CACHE(pc.constants[pc.constantIdx + 4]);
-    fptype x0          = evt[id];
+    fptype x0          = RO_CACHE(evt[id]);
     int workSpaceIndex = pc.getConstant(3);
 
     auto numbins = static_cast<int>(floor((hiBound - loBound) / step + 0.5));
@@ -74,7 +74,7 @@ __device__ fptype device_ConvolveSharedPdfs(fptype *evt, ParameterContainer &pc)
     fptype loBound              = pc.getConstant(0);
     fptype hiBound              = pc.getConstant(1);
     fptype step                 = pc.getConstant(2);
-    fptype x0                   = evt[id];
+    fptype x0                   = RO_CACHE(evt[id]);
     unsigned int workSpaceIndex = pc.getConstant(3);
     unsigned int numOthers      = pc.getConstant(4) + 1; // +1 for this PDF.
 

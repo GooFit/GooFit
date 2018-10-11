@@ -107,22 +107,29 @@ Spline::Spline(std::string name,
     }
 
     registerFunction("ptr_to_SPLINE", ptr_to_SPLINE);
+
+    recalculateCache();
 }
 
 __host__ void Spline::recalculateCache() const {
     auto params           = getParameters();
-    const unsigned nKnobs = params.size() / 2;
+    const unsigned nKnobs = constantsList[2];
+    std::vector<fptype> x(nKnobs);
     std::vector<fpcomplex> y(nKnobs);
     unsigned int i = 0;
     for(auto v = params.begin(); v != params.end(); ++v, ++i) {
         unsigned int idx = i / 2;
         fptype value     = parametersList[i];
-        if(i % 2 == 0)
+        if(i % 2 == 0) {
+            x[idx] = constantsList[3 + idx];
             y[idx].real(value);
+        }
         else
             y[idx].imag(value);
     }
-    std::vector<fptype> y2_flat = flatten(complex_derivative(constantsList, y));
+    
+    printf("%i %i\n", x.size(), y.size());
+    std::vector<fptype> y2_flat = flatten(complex_derivative(x, y));
 
     MEMCPY_TO_SYMBOL(cDeriatives, y2_flat.data(), 2 * nKnobs * sizeof(fptype), 0, cudaMemcpyHostToDevice);
 }

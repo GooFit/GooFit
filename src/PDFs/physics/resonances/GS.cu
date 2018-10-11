@@ -94,7 +94,7 @@ __device__ resonance_function_ptr ptr_to_GOUSAK = gouSak;
 
 namespace Resonances {
 
-GS::GS(std::string name, Variable ar, Variable ai, Variable mass, Variable width, unsigned int sp, unsigned int cyc)
+GS::GS(std::string name, Variable ar, Variable ai, Variable mass, Variable width, unsigned int sp, unsigned int cyc, bool sym)
     : ResonancePdf("GS", name, ar, ai) {
     registerParameter(mass);
     registerParameter(width);

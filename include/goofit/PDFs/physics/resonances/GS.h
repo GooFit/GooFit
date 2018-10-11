@@ -9,7 +9,7 @@ namespace Resonances {
 /// Gounaris-Sakurai
 class GS : public ResonancePdf {
   public:
-    GS(std::string name, Variable ar, Variable ai, Variable mass, Variable width, unsigned int sp, unsigned int cyc);
+    GS(std::string name, Variable ar, Variable ai, Variable mass, Variable width, unsigned int sp, unsigned int cyc, bool sym=false);
     ~GS() override = default;
 };
 

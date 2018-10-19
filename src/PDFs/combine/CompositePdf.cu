@@ -29,7 +29,7 @@ __device__ fptype device_Composite(fptype *evt, ParameterContainer &pc) {
     // fptype ret = (*(reinterpret_cast<device_function_ptr>(d_function_table[shellFcnIndex])))(fakeEvt, cudaArray,
     // shellParams);
     fptype ret = callFunction(fakeEvt, pc);
-    delete fakeEvt;
+    delete[] fakeEvt;
 
     // if (0 == THREADIDX)
     // printf("Composite: %f %f %f %f %f %f\n", evt[4], evt[5], evt[6], evt[7], coreValue, ret);

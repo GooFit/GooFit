@@ -127,7 +127,6 @@ __host__ void Spline::recalculateCache() const {
             y[idx].imag(value);
     }
 
-    printf("%i %i\n", x.size(), y.size());
     std::vector<fptype> y2_flat = flatten(complex_derivative(x, y));
 
     MEMCPY_TO_SYMBOL(cDeriatives, y2_flat.data(), 2 * nKnobs * sizeof(fptype), 0, cudaMemcpyHostToDevice);

@@ -36,6 +36,7 @@ setup(
         ],
         cmake_args=[
             '-DGOOFIT_PYTHON=ON',
+            '-DGOOFIT_TESTS=OFF',
             '-DGOOFIT_CERNROOT=OFF',
             '-DGOOFIT_EXAMPLES=OFF'],
         license="LGPL 3.0",
@@ -69,15 +70,15 @@ Using pip 10+::
 
     pip install -v goofit
 
-Using pip < 10`::
+Using pip < 10::
 
     pip install scikit-build
     pip install -v goofit
 
 
-If you want to send commands to CMake through PIP, use (for example)::
+If you want to send commands to CMake through PIP, you will need to pass each option through, starting with a ``--`` option. Pip will try to reuse the built version, so adding ``--no-cache-dir`` will ensure your options are used. For example, if you are on Anaconda and realize that GooFit and Anaconda are using different OpenMP libraries::
 
-    PIP_INSTALL_OPTIONS="-- -DGOOFIT_PACKAGES=OFF" pip install -v goofit
+    pip install -v goofit --no-cache-dir --install-option="--" --install-option="-DGOOFIT_DEVICE=CPP"
 
 
 Installation: local

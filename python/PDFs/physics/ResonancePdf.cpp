@@ -1,5 +1,7 @@
 #include <goofit/Python.h>
 
+#include <pybind11/stl.h>
+
 #include <goofit/PDFs/physics/ResonancePdf.h>
 #include <goofit/Variable.h>
 #include <goofit/docs/PDFs/physics/resonances/Resonance.h>
@@ -7,8 +9,6 @@
 using namespace GooFit;
 
 void init_ResonancePdf(py::module &m) {
-    // m.attr("MAXNKNOBS") = MAXNKNOBS;
-
     auto m_ls = m.def_submodule("Resonances");
 
     py::class_<ResonancePdf, GooPdf>(m, "ResonancePdf").def_static("help", []() {

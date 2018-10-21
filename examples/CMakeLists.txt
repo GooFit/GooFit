@@ -75,10 +75,8 @@ if(ROOT_FOUND)
     add_subdirectory(SigGen)
     add_subdirectory(simpleFit)
     add_subdirectory(zachFit)
-    if(NOT GOOFIT_DEVICE STREQUAL "CUDA" OR CUDA_VERSION VERSION_LESS 9.0)
-        add_subdirectory(TDDP4)
-        add_subdirectory(DP4)
-    endif()
+    add_subdirectory(DP4)
+    add_subdirectory(TDDP4)
 endif()
 
 # Root not required

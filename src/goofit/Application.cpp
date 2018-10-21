@@ -225,6 +225,8 @@ void Application::pre_callback() {
     }
 }
 
+void Application::run() { parse(argc_, argv_); }
+
 void Application::set_device() const {
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
     if(gpuDev_ != 0) {

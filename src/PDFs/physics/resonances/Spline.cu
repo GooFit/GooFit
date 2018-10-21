@@ -33,48 +33,44 @@ __device__ fpcomplex cubicspline(fptype m12, fptype m13, fptype m23, ParameterCo
     int khiAB = 0, khiAC = 0;
     fptype dmKK, aa, bb, aa3, bb3;
     unsigned int timestorun = 1 + doSwap;
-    while(khiAB < nKnobs) {
-        if(mAB < pc.getConstant(3 + khiAB))
-            break;
-        khiAB++;
-    }
 
-    if(khiAB <= 0 || khiAB == nKnobs)
-        timestorun = 0;
-    while(khiAC < nKnobs) {
-        if(mAC < pc.getConstant(3 + khiAC))
-            break;
-        khiAC++;
-    }
-
-    if(khiAC <= 0 || khiAC == nKnobs)
-        timestorun = 0;
-
+    // Run 0 and/or 1
     for(i = 0; i < timestorun; i++) {
-        unsigned int kloAB          = khiAB - 1; //, kloAC = khiAC -1;
-        unsigned int twokloAB       = kloAB + kloAB;
-        unsigned int twokhiAB       = khiAB + khiAB;
-        fptype pwa_coefs_real_kloAB = pc.getParameter(twokloAB);
-        fptype pwa_coefs_real_khiAB = pc.getParameter(twokhiAB);
-        fptype pwa_coefs_imag_kloAB = pc.getParameter(twokloAB + 1);
-        fptype pwa_coefs_imag_khiAB = pc.getParameter(twokhiAB + 1);
+        // Find the knots we are between
+        while(khiAB < nKnobs) {
+            if(mAB < pc.getConstant(3 + khiAB))
+                break;
+            khiAB++;
+        }
 
-        fptype pwa_coefs_prime_real_kloAB = cDeriatives[twokloAB];
-        fptype pwa_coefs_prime_real_khiAB = cDeriatives[twokhiAB];
-        fptype pwa_coefs_prime_imag_kloAB = cDeriatives[twokloAB + 1];
-        fptype pwa_coefs_prime_imag_khiAB = cDeriatives[twokhiAB + 1];
+        // Quit this iteration if outside
+        if(khiAB > 0 && khiAB < nKnobs) {
+            unsigned int kloAB          = khiAB - 1; //, kloAC = khiAC -1;
+            unsigned int twokloAB       = kloAB + kloAB;
+            unsigned int twokhiAB       = khiAB + khiAB;
+            fptype pwa_coefs_real_kloAB = pc.getParameter(twokloAB);
+            fptype pwa_coefs_real_khiAB = pc.getParameter(twokhiAB);
+            fptype pwa_coefs_imag_kloAB = pc.getParameter(twokloAB + 1);
+            fptype pwa_coefs_imag_khiAB = pc.getParameter(twokhiAB + 1);
 
-        dmKK = pc.getConstant(3 + khiAB) - pc.getConstant(3 + kloAB);
-        aa   = (pc.getConstant(3 + khiAB) - mAB) / dmKK;
-        bb   = 1 - aa;
-        aa3  = aa * aa * aa;
-        bb3  = bb * bb * bb;
-        ret.real(ret.real() + aa * pwa_coefs_real_kloAB + bb * pwa_coefs_real_khiAB
-                 + ((aa3 - aa) * pwa_coefs_prime_real_kloAB + (bb3 - bb) * pwa_coefs_prime_real_khiAB) * (dmKK * dmKK)
-                       / 6.0);
-        ret.imag(ret.imag() + aa * pwa_coefs_imag_kloAB + bb * pwa_coefs_imag_khiAB
-                 + ((aa3 - aa) * pwa_coefs_prime_imag_kloAB + (bb3 - bb) * pwa_coefs_prime_imag_khiAB) * (dmKK * dmKK)
-                       / 6.0);
+            fptype pwa_coefs_prime_real_kloAB = cDeriatives[twokloAB];
+            fptype pwa_coefs_prime_real_khiAB = cDeriatives[twokhiAB];
+            fptype pwa_coefs_prime_imag_kloAB = cDeriatives[twokloAB + 1];
+            fptype pwa_coefs_prime_imag_khiAB = cDeriatives[twokhiAB + 1];
+
+            dmKK = pc.getConstant(3 + khiAB) - pc.getConstant(3 + kloAB);
+            aa   = (pc.getConstant(3 + khiAB) - mAB) / dmKK;
+            bb   = 1 - aa;
+            aa3  = aa * aa * aa;
+            bb3  = bb * bb * bb;
+            ret.real(ret.real() + aa * pwa_coefs_real_kloAB + bb * pwa_coefs_real_khiAB
+                     + ((aa3 - aa) * pwa_coefs_prime_real_kloAB + (bb3 - bb) * pwa_coefs_prime_real_khiAB)
+                           * (dmKK * dmKK) / 6.0);
+            ret.imag(ret.imag() + aa * pwa_coefs_imag_kloAB + bb * pwa_coefs_imag_khiAB
+                     + ((aa3 - aa) * pwa_coefs_prime_imag_kloAB + (bb3 - bb) * pwa_coefs_prime_imag_khiAB)
+                           * (dmKK * dmKK) / 6.0);
+        }
+
         khiAB = khiAC;
         mAB   = mAC;
     }
@@ -127,7 +123,6 @@ __host__ void Spline::recalculateCache() const {
             y[idx].imag(value);
     }
 
-    printf("%i %i\n", x.size(), y.size());
     std::vector<fptype> y2_flat = flatten(complex_derivative(x, y));
 
     MEMCPY_TO_SYMBOL(cDeriatives, y2_flat.data(), 2 * nKnobs * sizeof(fptype), 0, cudaMemcpyHostToDevice);

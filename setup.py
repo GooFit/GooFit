@@ -76,9 +76,9 @@ Using pip < 10::
     pip install -v goofit
 
 
-If you want to send commands to CMake through PIP, you will need to pass each option through, starting with a ``--`` option. Pip will try to reuse the built version, so adding ``--no-cache-dir`` will ensure your options are used. For example, if you are on Anaconda and realize that GooFit and Anaconda are using different OpenMP libraries::
+If you want to send commands to CMake through PIP, you will need to pass each option through, starting with a ``--`` option. Pip will try to reuse the built version if you do not pass options, but will rebuild if you pass options. For example, if you are on Anaconda and realize that GooFit and Anaconda are using different OpenMP libraries::
 
-    pip install -v goofit --no-cache-dir --install-option="--" --install-option="-DGOOFIT_DEVICE=CPP"
+    pip install -v goofit --install-option="--" --install-option="-DGOOFIT_DEVICE=CPP"
 
 
 Installation: local
@@ -108,9 +108,9 @@ The normal install here works, though as usual you should include verbose output
     pip install -v .
 
 
-You can set the ``PIP_INSTALL_OPTIONS`` variable to pass through build command, for example::
+You can pass through options to the build command, for example::
 
-    PIP_INSTALL_OPTIONS="-- -DGOOFIT_PACKAGES=OFF" pip install -v .
+    pip install -v . --install-options="--" --install-options="-DGOOFIT_PACKAGES=OFF"
 
 
 Building a source package from git

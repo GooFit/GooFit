@@ -2,6 +2,7 @@
 #include <goofit/GlobalCudaDefines.h>
 #include <goofit/PDFs/detail/Globals.h>
 #include <goofit/Version.h>
+#include <goofit/VersionGit.h>
 
 #include <thrust/detail/config/device_system.h>
 
@@ -224,6 +225,8 @@ void Application::pre_callback() {
         print_goofit_info(gpuDev_);
     }
 }
+
+void Application::run() { parse(argc_, argv_); }
 
 void Application::set_device() const {
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA

@@ -4,18 +4,19 @@ This release contains some performance improvements [#176], and
 fixes some of the bugs present in the rewrite of 2.2.0:
 
 * Fixed bug with smooth histogram [#178]
-* Restored spline, derivatives are now properly calculated too [#181]
+* Restored spline, derivatives are now properly calculated too [#181], limits corrected [#188]
 * MCBooster seed now available [#177]
 
 It also fixes several building problems found by users:
 
 * Fixed builds with CMake 3.5 (ROOT Docker uses this by default)
-* Better Pip 10+ support
+* Better Pip 10+ support, limiting SciKit-Build version (0.7+ buggy on macOS) [#188]
 * Docker is used to format if clang-format is not installed and docker is
 * Forking now supported again [#179], git without https access easier [#183]
-* Better CUDA 9+ support [#180]
+* Better CUDA 9+ support [#180], followed by full CUDA 9+ support [#189]
 * LCG on SLC 6 supported [#185], [#184]
 * OpenMP supported again on latest macOS
+* Python binding bugfixes [#188]
 
 [#176]: https://github.com/GooFit/GooFit/pull/176
 [#177]: https://github.com/GooFit/GooFit/pull/177
@@ -26,6 +27,8 @@ It also fixes several building problems found by users:
 [#183]: https://github.com/GooFit/GooFit/pull/183
 [#184]: https://github.com/GooFit/GooFit/pull/184
 [#185]: https://github.com/GooFit/GooFit/pull/185
+[#188]: https://github.com/GooFit/GooFit/pull/188
+[#189]: https://github.com/GooFit/GooFit/pull/189
 
 ## v2.2.0: New indexing
 #### July 31, 2018

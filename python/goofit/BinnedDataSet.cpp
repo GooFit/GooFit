@@ -11,14 +11,15 @@ using namespace GooFit;
 void init_BinnedDataSet(py::module &m) {
     py::class_<BinnedDataSet, DataSet>(m, "BinnedDataSet")
         .def(py::init([](py::args args, py::kwargs kwargs) {
-            std::string name;
-            std::vector<Observable> vars;
-            for(auto arg : args)
-                vars.push_back(arg.cast<Observable>());
-            if(kwargs.contains("name"))
-                name = kwargs["name"].cast<std::string>();
-            return new BinnedDataSet(vars, name);
-        }))
+                 std::string name;
+                 std::vector<Observable> vars;
+                 for(auto arg : args)
+                     vars.push_back(arg.cast<Observable>());
+                 if(kwargs.contains("name"))
+                     name = kwargs["name"].cast<std::string>();
+                 return new BinnedDataSet(vars, name);
+             }),
+             "Takes an unlimited number of Observerables, use 'name=' to set a name if desired")
 
         .def("getBinCenter", (fptype(BinnedDataSet::*)(size_t, size_t) const) & BinnedDataSet::getBinCenter)
         .def_property_readonly("bin_center",

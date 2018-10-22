@@ -5,13 +5,13 @@ if(${CMAKE_VERSION} VERSION_LESS 3.12)
 endif()
 
 project(GOOFIT
-    VERSION 2.2.0
+    VERSION 2.2.1
     LANGUAGES CXX)
 
 #set(GOOFIT_TAG "dev")
 #set(GOOFIT_TAG "alpha")
-#set(GOOFIT_TAG "beta")
-set(GOOFIT_TAG "release")
+set(GOOFIT_TAG "beta")
+#set(GOOFIT_TAG "release")
 
 include(FeatureSummary)
 include(CMakePrintHelpers)
@@ -746,6 +746,11 @@ endif()
 configure_file (
     "${GOOFIT_SOURCE_DIR}/include/goofit/Version.h.in"
     "${GOOFIT_BINARY_DIR}/include/goofit/Version.h"
+)
+# This changes more often, so is kept separate to speed up rebuilds
+configure_file (
+    "${GOOFIT_SOURCE_DIR}/include/goofit/VersionGit.h.in"
+    "${GOOFIT_BINARY_DIR}/include/goofit/VersionGit.h"
 )
 
 # This allows GOOFIT_PYTHON to be automatic

@@ -62,7 +62,7 @@ class Application : public CLI::App {
     int get_device() const { return gpuDev_; }
 
     /// simple run since argc and argv are stored
-    void run() { parse(argc_, argv_); }
+    void run();
 
     /// Gets called in parse
     void pre_callback() override;

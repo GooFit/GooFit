@@ -13,14 +13,15 @@ using namespace GooFit;
 void init_UnbinnedDataSet(py::module &m) {
     py::class_<UnbinnedDataSet, DataSet>(m, "UnbinnedDataSet")
         .def(py::init([](py::args args, py::kwargs kwargs) {
-            std::string name;
-            std::vector<Observable> vars;
-            for(auto arg : args)
-                vars.push_back(arg.cast<Observable>());
-            if(kwargs.contains("name"))
-                name = kwargs["name"].cast<std::string>();
-            return new UnbinnedDataSet(vars, name);
-        }))
+                 std::string name;
+                 std::vector<Observable> vars;
+                 for(auto arg : args)
+                     vars.push_back(arg.cast<Observable>());
+                 if(kwargs.contains("name"))
+                     name = kwargs["name"].cast<std::string>();
+                 return new UnbinnedDataSet(vars, name);
+             }),
+             "Takes an unlimited number of Observerables, use 'name=' to set a name if desired")
         .def("__getitem__",
              [&m](const UnbinnedDataSet &instance, py::object value) {
                  auto numpy    = m.import("numpy");

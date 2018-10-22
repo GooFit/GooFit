@@ -2,6 +2,7 @@
 #include <goofit/GlobalCudaDefines.h>
 #include <goofit/PDFs/detail/Globals.h>
 #include <goofit/Version.h>
+#include <goofit/VersionGit.h>
 
 #include <thrust/detail/config/device_system.h>
 

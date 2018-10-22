@@ -26,7 +26,7 @@ void init_Variable(py::module &m) {
         ;
 
     py::class_<Observable, Indexable>(m, "Observable")
-        .def(py::init<std::string, fptype, fptype>()) // , "name"_a, "min"_a, "max"_a)
+        .def(py::init<std::string, fptype, fptype>(), "name"_a, "min"_a, "max"_a)
         .def_property_readonly("bin_size", &Observable::getBinSize)
         // clang-format off
         ADD_PROP(numbins, getNumBins, setNumBins, Observable)
@@ -50,11 +50,21 @@ void init_Variable(py::module &m) {
         ;
 
     py::class_<Variable, Indexable>(m, "Variable")
-        .def(py::init<std::string, fptype>())
-        .def(py::init<std::string, fptype, fptype, fptype>())
-        .def(py::init<std::string, fptype, fptype, fptype, fptype>())
-        .def(py::init<std::string, fptype, fptype, fptype, fptype, bool>())
-        // "name"_a, "value"_a, "error"_a, "min"_a, "max"_a, "fixed"_a=false)
+        .def(py::init<std::string, fptype>(), "A constant variable", "name"_a, "value"_a)
+        .def(py::init<std::string, fptype, fptype, fptype>(),
+             "Value with upper/lower limits",
+             "name"_a,
+             "value"_a,
+             "min"_a,
+             "max"_a)
+        .def(py::init<std::string, fptype, fptype, fptype, fptype, bool>(),
+             "Variable with error scale",
+             "name"_a,
+             "value"_a,
+             "error"_a,
+             "min"_a,
+             "max"_a,
+             "fixed"_a = false)
         // clang-format off
         ADD_PROP(error, getError, setError, Variable)
         ADD_PROP(fixed, IsFixed, setFixed, Variable)
@@ -72,9 +82,11 @@ void init_Variable(py::module &m) {
         ;
 
     py::class_<EventNumber, Observable>(m, "EventNumber")
-        .def(py::init<std::string>())
-        .def(py::init<std::string, fptype, fptype>()) //, "Create a counting value for event numbers", "name"_a, "min"_a
-                                                      //= 0., "max"_a = static_cast<fptype>(EventNumber::maxint))
+        .def(py::init<std::string, fptype, fptype>(),
+             "Create a counting value for event numbers",
+             "name"_a,
+             "min"_a = 0,
+             "max"_a = static_cast<fptype>(EventNumber::maxint))
         .def_property_readonly_static("maxint", [](py::object) { return EventNumber::maxint; })
         .def("__repr__", [](const EventNumber &v) { return fmt::format("<EventNumber: {}>", v.getName()); })
 

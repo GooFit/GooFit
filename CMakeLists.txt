@@ -747,6 +747,11 @@ configure_file (
     "${GOOFIT_SOURCE_DIR}/include/goofit/Version.h.in"
     "${GOOFIT_BINARY_DIR}/include/goofit/Version.h"
 )
+# This changes more often, so is kept separate to speed up rebuilds
+configure_file (
+    "${GOOFIT_SOURCE_DIR}/include/goofit/VersionGit.h.in"
+    "${GOOFIT_BINARY_DIR}/include/goofit/VersionGit.h"
+)
 
 # This allows GOOFIT_PYTHON to be automatic
 set(CMAKE_MODULE_PATH "${GOOFIT_SOURCE_DIR}/extern/pybind11/tools" ${CMAKE_MODULE_PATH})

@@ -1,0 +1,4 @@
+#pragma once
+
+#define GOOFIT_TAG "@GOOFIT_TAG@"
+#define GOOFIT_GIT_VERSION "@GOOFIT_GIT_VERSION@"

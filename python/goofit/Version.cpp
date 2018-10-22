@@ -1,6 +1,7 @@
 #include <goofit/Python.h>
 
 #include <goofit/Version.h>
+#include <goofit/VersionGit.h>
 
 void init_Version(py::module &m) {
     m.attr("__version__")        = GOOFIT_VERSION;

@@ -30,9 +30,10 @@ doing maximum-likelihood fits with a familiar syntax.
 * CUDA 7.0+ (with caviets below)
     * CUDA 7.0: Requires CMake 3.12 or `NEW_CUDA=OFF`.
     * CUDA 7.x: Python not supported.
-    * CUDA 8.0: Recommended and fully supported.
-    * CUDA 9.x: Partially supported but [has known issues](https://github.com/GooFit/GooFit/issues/173).
-    * CUDA 10: Believed to be similar to CUDA 9.
+    * CUDA 8: Reliable and fully supported
+    * CUDA 9.0: Buggy, see [known issues](https://github.com/GooFit/GooFit/issues/173)
+    * CUDA 9.1, 9.2: Supported as of GooFit v2.2.1
+    * CUDA 10: Believed to be similar to CUDA 9.2.
 * An nVidia GPU supporting compute capability at least 2.0 (3.5+ recommended)
 
 </p></details>
@@ -58,11 +59,11 @@ A list of exact commands required for several platforms is [available here](./do
 
 <details><summary>Python Bindings: (click to expand)</summary><p>
 
-There are also Python Bindings. This requires Python (2 or 3), [NumPy](http://www.numpy.org), [SciKit-Build](http://scikit-build.readthedocs.io), and CMake. CUDA 8 is required if using CUDA. If you want the most recent stable release, use `pip install -v goofit` (If you have pip 9 or less, you'll need scikit build and cmake beforehand).
+There are also Python Bindings. This requires Python (2 or 3), [NumPy](http://www.numpy.org), [SciKit-Build](http://scikit-build.readthedocs.io), and CMake. CUDA 8+ is required if using CUDA. If you want the most recent stable release, use `pip install -v goofit` (If you have pip 9 or less, you'll need scikit build and cmake beforehand).
 
 Repository method:
 
-You can uses `pip install -v goofit`, or `pip install -v -e .` inside the repository. You can also directly force the bindings from a normal build with `-DGOOFIT_PYTHON=ON`. You can check your install with `python -m goofit`. You can debug a goofit file named `python_script.py` with gcc using `gdb -ex r --args python python_script.py`.
+You can uses `pip install -v .` inside the repository. You can also directly force the bindings from a normal build with `-DGOOFIT_PYTHON=ON`. You can check your install with `python -m goofit`. You can debug a goofit file named `python_script.py` with gcc using `gdb -ex r --args python python_script.py`.
 
 Other python requirements for the examples (use `pipenv install --dev` to install all requirements at once in a pipenv environment):
 
@@ -93,7 +94,7 @@ You can either checkout a tagged version, or stay on the master for the latest a
 
 ## Building
 
-If you just want to get started as fast as possible, running `make`, `make omp`, or `make cuda` in the main directory will make a build directory for you, and will run CMake and make. It is recommended that you instead direcly use the CMake powered build system as discribed below, so that you will have a better understanding of what you are doing and more flexibility.
+If you just want to get started as fast as possible, running `make`, `make omp`, or `make cuda` in the main directory will make a build directory for you, and will run CMake and make. It is recommended that you instead directly use the CMake powered build system as described below, so that you will have a better understanding of what you are doing and more flexibility.
 
 The build system uses CMake. The procedure is standard for CMake builds:
 
@@ -205,7 +206,7 @@ target_link_libraries(MyNewExample Boost::filesystem ROOT::TreePlayer)
 ### External package (BETA)
 
 GooFit now requires seperable compilation, so it also now supports "external" packages, much like most other libraries. You can design your package with GooFit included as a subdirectory, and
-it should just work. You'll also save time by not building examples, python bindings, and tests. The recommmended procedure:
+it should just work. You'll also save time by not building examples, python bindings, and tests. The recommended procedure:
 
 ```bash
 git add submodule <url to goofit> goofit

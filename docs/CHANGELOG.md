@@ -1,4 +1,5 @@
 ## v2.2.1: Bugfixes
+#### October 23, 2018
 
 This release contains some performance improvements [#176], and
 fixes some of the bugs present in the rewrite of 2.2.0:
@@ -15,7 +16,7 @@ It also fixes several building problems found by users:
 * Forking now supported again [#179], git without https access easier [#183]
 * Better CUDA 9+ support [#180], followed by full CUDA 9+ support [#189]
 * LCG on SLC 6 supported [#185], [#184]
-* OpenMP supported again on latest macOS
+* OpenMP supported again on latest macOS (not on Anaconda)
 * Python binding bugfixes [#188]
 
 [#176]: https://github.com/GooFit/GooFit/pull/176

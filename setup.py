@@ -5,6 +5,21 @@ except ImportError:
     print("Failed to find scikit-build, please run `pip install scikit-build`")
     raise
 
+import os
+ITEMS = [
+    '-DGOOFIT_PYTHON=ON',
+    '-DGOOFIT_TESTS=OFF',
+    '-DGOOFIT_CERNROOT=OFF',
+    '-DGOOFIT_EXAMPLES=OFF',
+]
+
+# Add GOOFIT_* from env.
+for item in os.environ:
+    if item.startswith('GOOFIT_'):
+        ITEMS.append('-D{0}={1}'.format(item, os.environ[item]))
+
+
+
 setup(
         name='goofit',
         version='2.2.1',
@@ -34,11 +49,7 @@ setup(
             "Programming Language :: Python :: 3.7",
             "Topic :: Scientific/Engineering :: Physics"
         ],
-        cmake_args=[
-            '-DGOOFIT_PYTHON=ON',
-            '-DGOOFIT_TESTS=OFF',
-            '-DGOOFIT_CERNROOT=OFF',
-            '-DGOOFIT_EXAMPLES=OFF'],
+        cmake_args=ITEMS,
         license="LGPL 3.0",
         packages=['goofit'],
         extras_require={
@@ -76,15 +87,16 @@ Using pip < 10::
     pip install -v goofit
 
 
-If you want to send commands to CMake through PIP, you will need to pass each option through, starting with a ``--`` option. Pip will try to reuse the built version if you do not pass options, but will rebuild if you pass options. For example, if you are on Anaconda and realize that GooFit and Anaconda are using different OpenMP libraries::
+If you want to send commands to CMake through PIP, you will need to pass each option through, starting with a ``--`` option. Pip will try to reuse the built version if you do not pass options, but will rebuild if you pass options. For example, if you are on Anaconda and realize that GooFit and Anaconda are using different OpenMP libraries, you should set the device to CPP. If you have a GPU and CUDA, but don't want to use CUDA, you can set the device to OMP.
 
+    pip install -v goofit --install-option="--" --install-option="-DGOOFIT_DEVICE=OMP"
     pip install -v goofit --install-option="--" --install-option="-DGOOFIT_DEVICE=CPP"
 
 
 Installation: local
 ===================
 
-If you want to add PDFs to GooFit, or use GooFit pacakges, you should be working in a local directory using git. In the following example, I'm assuming you've set up SSH keys with GitHub; you can use https instead if you perfer by changing the URL to ``https://github.com/GooFit/GooFit.git``::
+If you want to add PDFs to GooFit, or use GooFit pacakges, you should be working in a local directory using git. In the following example, I'm assuming you've set up SSH keys with GitHub; you can use https instead if you prefer by changing the URL to ``https://github.com/GooFit/GooFit.git``::
 
     git clone --recursive git@github.com:GooFit/GooFit.git
     cd goofit

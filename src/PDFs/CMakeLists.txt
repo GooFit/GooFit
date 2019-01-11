@@ -19,7 +19,7 @@ set(GOOPDF_FILE_LISTING
     )
 
 
-if(NEW_CUDA)
+if(IS_NOT_CUDA OR NEW_CUDA)
     macro(goofit_add_pdf_library NAME)
         goofit_add_library(${NAME} ${ARGN})
         set_target_properties(${NAME} PROPERTIES FOLDER "pdfs")

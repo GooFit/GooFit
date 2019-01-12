@@ -101,11 +101,11 @@ inline std::ostream &operator<<(std::ostream &stream, Uncertain value) {
 
     if(err > 0 && err < 2.5) {
         auto numdig = size_t(-log10(err) + log10(2.5));
-        return stream << fmt::format("{0:.{numdig}f} ± {1:.{numdig}f}", val, err, numdig);
+        return stream << fmt::format("{0:.{2}f} +/- {1:.{2}f}", val, err, numdig);
     } else if(err >= 2.5) {
-        return stream << fmt::format("{0:.0f} ± {1:.0f}", val, err);
+        return stream << fmt::format("{0:.0f} +/- {1:.0f}", val, err);
     } else {
-        return stream << val << " ± " << err;
+        return stream << val << " +/- " << err;
     }
 }
 

@@ -197,9 +197,12 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
         // of having the correct sign, given that we have a correctly reconstructed D meson.
         mistag = evt[id_mis];
         ret *= mistag;
+        // The following formats differently in clang-format 8
+        // clang-format off
         ret += (1 - mistag)
                * (*(reinterpret_cast<device_resfunction_ptr>(d_function_table[pc.funcIdx])))(
-                term1, -term2, sumWavesA.real(), -sumWavesA.imag(), _tau, _time, _xmixing, _ymixing, _sigma, pc);
+                    term1, -term2, sumWavesA.real(), -sumWavesA.imag(), _tau, _time, _xmixing, _ymixing, _sigma, pc);
+        // clang-format on
     }
 
     // increment our resolution function

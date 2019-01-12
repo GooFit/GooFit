@@ -199,7 +199,7 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
         ret *= mistag;
         ret += (1 - mistag)
                * (*(reinterpret_cast<device_resfunction_ptr>(d_function_table[pc.funcIdx])))(
-                     term1, -term2, sumWavesA.real(), -sumWavesA.imag(), _tau, _time, _xmixing, _ymixing, _sigma, pc);
+                term1, -term2, sumWavesA.real(), -sumWavesA.imag(), _tau, _time, _xmixing, _ymixing, _sigma, pc);
     }
 
     // increment our resolution function

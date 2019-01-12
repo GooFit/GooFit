@@ -51,6 +51,11 @@ void init_Variable(py::module &m) {
 
     py::class_<Variable, Indexable>(m, "Variable")
         .def(py::init<std::string, fptype>(), "A constant variable", "name"_a, "value"_a)
+        .def(py::init<std::string, fptype, fptype>(),
+             "Value freely floating, with an error",
+             "name"_a,
+             "value"_a,
+             "error"_a)
         .def(py::init<std::string, fptype, fptype, fptype>(),
              "Value with upper/lower limits",
              "name"_a,

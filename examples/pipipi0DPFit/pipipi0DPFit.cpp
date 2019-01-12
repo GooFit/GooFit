@@ -908,9 +908,9 @@ int runToyFit(int ifile, int nfile, bool noPlots = true) {
     }
 
     fmt::print("Fit results Toy fit:\n"
-               "tau    : ({:.3}) fs\n"
-               "xmixing: ({:.3})\%\n"
-               "ymixing: ({:.3})\%\n",
+               "tau    : ({}) fs\n"
+               "xmixing: ({})\%\n"
+               "ymixing: ({})\%\n",
                1000 * Uncertain(dtop0pp._tau),
                100 * Uncertain(dtop0pp._xmixing),
                100 * Uncertain(dtop0pp._ymixing));
@@ -2774,9 +2774,9 @@ int runTruthMCFit(std::string fname, bool noPlots = true) {
     // overallSignal->setDebugMask(0);
 
     fmt::print("Fit results Toy fit TruthMC fit:\n"
-               "tau    : {:.3}\n"
-               "xmixing: ({:.3})\%\n"
-               "ymixing: ({:.3})\%\n",
+               "tau    : {}\n"
+               "xmixing: ({})\%\n"
+               "ymixing: ({})\%\n",
                Uncertain(dtop0pp._tau),
                100 * Uncertain(dtop0pp._xmixing),
                100 * Uncertain(dtop0pp._ymixing));
@@ -2975,9 +2975,9 @@ int runGeneratedMCFit(std::string fname, int genResolutions, double dplotres) {
     }
 
     fmt::print("Fit results Canonical fit:\n"
-               "tau    : {:.3}\n"
-               "xmixing: ({:.3})\%\n"
-               "ymixing: ({:.3})\%\n",
+               "tau    : {}\n"
+               "xmixing: ({})\%\n"
+               "ymixing: ({})\%\n",
                Uncertain(dtop0pp._tau),
                100 * Uncertain(dtop0pp._xmixing),
                100 * Uncertain(dtop0pp._ymixing));
@@ -4151,9 +4151,9 @@ int runCanonicalFit(std::string fname, bool noPlots = true) {
     }
 
     fmt::print("Fit results Canonical fit:\n"
-               "tau    : ({:.3}) fs\n"
-               "xmixing: ({:.3})\%\n"
-               "ymixing: ({:.3})\%\n",
+               "tau    : ({}) fs\n"
+               "xmixing: ({})\%\n"
+               "ymixing: ({})\%\n",
                1000 * Uncertain(dtop0pp._tau),
                100 * Uncertain(dtop0pp._xmixing),
                100 * Uncertain(dtop0pp._ymixing));

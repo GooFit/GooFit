@@ -25,6 +25,8 @@
 #pragma once
 
 #include <fmt/format.h>
+#include <fmt/ostream.h>
+
 #include <iosfwd>
 #include <stdexcept>
 #include <string>
@@ -66,48 +68,45 @@ class Uncertain {
 
     // Arithmetic operators
     Uncertain operator+(const Uncertain &other) const {
-        return Uncertain(m_value + other.m_value, m_uncertainty + other.m_uncertainty);
+        return {m_value + other.m_value, m_uncertainty + other.m_uncertainty};
     }
 
     Uncertain operator-(const Uncertain &other) const {
-        return Uncertain(m_value - other.m_value, m_uncertainty + other.m_uncertainty);
+        return {m_value - other.m_value, m_uncertainty + other.m_uncertainty};
     }
 
     Uncertain operator*(const Uncertain &other) const {
-        return Uncertain(m_value * other.m_value, get_relative_uncertainty() + other.get_relative_uncertainty());
+        return {m_value * other.m_value, get_relative_uncertainty() + other.get_relative_uncertainty()};
     }
 
     /// Allow int and float multiplies
-    Uncertain operator*(fptype other) const { return Uncertain(m_value * other, m_uncertainty * other); }
+    Uncertain operator*(fptype other) const { return {m_value * other, m_uncertainty * other}; }
 
     Uncertain operator/(const Uncertain &other) const {
-        return Uncertain(m_value / other.m_value, get_relative_uncertainty() + other.get_relative_uncertainty());
+        return {m_value / other.m_value, get_relative_uncertainty() + other.get_relative_uncertainty()};
     }
 
-    Uncertain operator/(const fptype &other) const { return Uncertain(m_value / other, m_uncertainty / other); }
+    Uncertain operator/(const fptype &other) const { return {m_value / other, m_uncertainty / other}; }
 };
 
 /// Allow int and float multiplies
 inline Uncertain operator*(fptype other, const Uncertain &self) {
-    return Uncertain(self.get_value() * other, self.get_uncertainty() * other);
+    return {self.get_value() * other, self.get_uncertainty() * other};
 }
 
-/// Simple << output
+/// Simple << output, will also support fmt printout
 inline std::ostream &operator<<(std::ostream &stream, Uncertain value) {
-    return stream << value.get_value() << " ± " << value.get_uncertainty();
-}
+    fptype val = value.get_value();
+    fptype err = value.get_uncertainty();
 
-/// fmt support
-inline void format_arg(fmt::BasicFormatter<char> &f, const char *&format_str, const Uncertain &s) {
-    std::string value{format_str};
-    auto end        = value.find('}');
-    std::string val = std::string{"{" + value.substr(0, end) + "}"};
-
-    f.writer().write(val.c_str(), s.get_value());
-    f.writer().write(" ± ");
-    f.writer().write(val.c_str(), s.get_uncertainty());
-
-    format_str += end + 1; // Remove :xxx}
+    if(err > 0 && err < 2.5) {
+        auto numdig = size_t(-log10(err) + log10(2.5));
+        return stream << fmt::format("{0:.{2}f} +/- {1:.{2}f}", val, err, numdig);
+    } else if(err >= 2.5) {
+        return stream << fmt::format("{0:.0f} +/- {1:.0f}", val, err);
+    } else {
+        return stream << val << " +/- " << err;
+    }
 }
 
 } // namespace GooFit

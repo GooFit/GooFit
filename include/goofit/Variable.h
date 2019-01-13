@@ -165,6 +165,13 @@ class Variable : public Indexable {
         *fixed = true;
     }
 
+    /// This is a free variable without limits
+    Variable(std::string n, fptype v, fptype err)
+        : Indexable(n, v, 0, 0)
+        , error(std::make_shared<fptype>(err)) {
+        *fixed = true;
+    }
+
     /// This is a normal variable, with value and upper/lower limits
     Variable(std::string n, fptype v, fptype dn, fptype up)
         : Indexable(n, v, dn, up)

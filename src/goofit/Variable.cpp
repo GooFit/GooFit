@@ -1,5 +1,6 @@
 #include <goofit/Error.h>
 #include <goofit/Variable.h>
+#include <goofit/utilities/Uncertain.h>
 
 #include <algorithm>
 
@@ -14,7 +15,10 @@ int max_fitter_index(const std::vector<Variable> &vars) {
 }
 
 std::ostream &operator<<(std::ostream &o, const GooFit::Variable &var) {
-    o << var.getName() << ": " << var.getValue() << " +/- " << var.getError();
+    o << var.getName() << ": ";
+
+    o << Uncertain(var.getValue(), var.getError());
+
     if(!var.IsFixed())
         o << " [" << var.getLowerLimit() << ", " << var.getUpperLimit() << "]";
     if(var.getIndex() >= 0)

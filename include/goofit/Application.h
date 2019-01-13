@@ -39,6 +39,12 @@ void print_splash();
 /// Print out information about GooFit
 void print_goofit_info(int gpuDev_ = 0);
 
+/// Get the version of GooFit as a string
+std::string goofit_info_version();
+
+/// Get the device information
+std::string goofit_info_device(int gpuDev_);
+
 class Application : public CLI::App {
   protected:
     int gpuDev_ = 0;

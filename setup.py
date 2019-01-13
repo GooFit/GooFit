@@ -6,6 +6,7 @@ except ImportError:
     raise
 
 import os
+
 ITEMS = [
     '-DGOOFIT_PYTHON=ON',
     '-DGOOFIT_TESTS=OFF',

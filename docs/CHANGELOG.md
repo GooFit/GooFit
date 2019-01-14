@@ -1,3 +1,20 @@
+## v2.2.2: Python access
+#### In progress
+
+This adds a few minor fixes.
+
+* Added M12 and M23 access to DalitzPlotter [#190]
+* Fix non-CUDA + CMake<3.8 build [#191]
+* Allow environment variables to set Python build [#192]
+* Better variable formatting, fixed `print_goofit_info` [#193]
+
+[#190]: https://github.com/GooFit/GooFit/pull/190
+[#191]: https://github.com/GooFit/GooFit/pull/191
+[#192]: https://github.com/GooFit/GooFit/pull/192
+[#193]: https://github.com/GooFit/GooFit/pull/193
+
+
+
 ## v2.2.1: Bugfixes
 #### October 23, 2018
 

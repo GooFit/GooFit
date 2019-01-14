@@ -88,10 +88,15 @@ Using pip < 10::
     pip install -v goofit
 
 
-If you want to send commands to CMake through PIP, you will need to pass each option through, starting with a ``--`` option. Pip will try to reuse the built version if you do not pass options, but will rebuild if you pass options. For example, if you are on Anaconda and realize that GooFit and Anaconda are using different OpenMP libraries, you should set the device to CPP. If you have a GPU and CUDA, but don't want to use CUDA, you can set the device to OMP.
+GooFit will automatically look for CUDA, and build in GPU mode if it finds CUDA. You can pick a specific version by passing through a CMake option (see below), or by setting an environment variable, `GOOFIT_DEVICE` before building. You may want to build with OpenMP as a backend to avoid using your GPU, or you might want the CPP version if you are using Anaconda on macOS. Here are the three common backends::
+
+    GOOFIT_DEVICE=CUDA pip install -v goofit
+    GOOFIT_DEVICE=OMP pip install -v goofit
+    GOOFIT_DEVICE=CPP pip install -v goofit
+
+If you want to send arbitrary commands to CMake through PIP, you will need to pass each option through, starting with a ``--`` option. Pip will try to reuse the built version if you do not pass options, but will rebuild if you pass options, so this works for a rebuild, unlike the lines above. This is how you would do this to set OMP as the backend:
 
     pip install -v goofit --install-option="--" --install-option="-DGOOFIT_DEVICE=OMP"
-    pip install -v goofit --install-option="--" --install-option="-DGOOFIT_DEVICE=CPP"
 
 
 Installation: local

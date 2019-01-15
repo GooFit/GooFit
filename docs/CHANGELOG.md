@@ -1,12 +1,13 @@
 ## v2.2.2: Python access
 #### In progress
 
-This adds a few minor fixes.
+This adds a few minor fixes and tools for easier debugging.
 
 * Added M12 and M23 access to DalitzPlotter [#190]
 * Fix non-CUDA + CMake<3.8 build [#191]
 * Allow environment variables to set Python build [#192]
 * Better variable formatting, fixed `print_goofit_info` [#193]
+* `app.set_floating_exceptions()` will cause floating point errors to throw for debugging
 
 [#190]: https://github.com/GooFit/GooFit/pull/190
 [#191]: https://github.com/GooFit/GooFit/pull/191

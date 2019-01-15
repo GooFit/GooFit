@@ -5,6 +5,7 @@
 #include <goofit/PDFs/detail/Globals.h>
 #include <goofit/Version.h>
 #include <goofit/VersionGit.h>
+#include <goofit/detail/fenv.h>
 
 #include <thrust/detail/config/device_system.h>
 
@@ -203,13 +204,14 @@ Application::Application(std::string discription, int argc, char **argv)
 #ifndef GOOFIT_MPI
     add_option("--gpu-dev", gpuDev_, "GPU device to use", true)->group("GooFit");
 #endif
-    add_flag_function("--info-only",
-                      [this](int i) {
-                          print_splash();
-                          print_goofit_info(-1);
-                          throw CLI::Success();
-                      },
-                      "Show the available GPU devices and exit")
+    add_flag_function(
+        "--info-only",
+        [this](int i) {
+            print_splash();
+            print_goofit_info(-1);
+            throw CLI::Success();
+        },
+        "Show the available GPU devices and exit")
         ->group("GooFit")
         ->short_circuit();
 #endif
@@ -269,6 +271,15 @@ Application::~Application() {
     cleanup();
 #ifdef GOOFIT_MPI
     MPI_Finalize();
+#endif
+}
+
+void Application::set_floating_exceptions() const {
+    // This is enabled for macOS, too. Will not have an affect for CUDA code.
+#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
+    GOOFIT_INFO("CUDA does not support floating point exceptions. Please recompile in OMP or CPP mode.");
+#else
+    feenableexcept(FE_DIVBYZERO | FE_INVALID);
 #endif
 }
 

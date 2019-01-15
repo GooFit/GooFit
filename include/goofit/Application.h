@@ -80,6 +80,10 @@ class Application : public CLI::App {
     /// For example, if explicitly using omp
     void set_device() const;
 
+    /// Set floating point errors to throw exceptions instead of NaNs
+    /// Does not work with CUDA mode.
+    void set_floating_exceptions() const;
+
     /// Cleanup MPI if needed
     ~Application() override;
 

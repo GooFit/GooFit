@@ -308,6 +308,13 @@ std::string Application::get_filename(const std::string &input_str, std::string 
         }
     }
 
+    // If in GooFit as a package, check the goofit parent dir
+    std::string new_input = std::string(GOOFIT_SOURCE_DIR) + "/../" + input_str;
+    if(CLI::ExistingFile(new_input).empty()) {
+        std::cout << "Found file at " << new_input << std::endl;
+        return new_input;
+    }
+
     // Could not find file
     throw GooFit::FileError(input_str);
 }

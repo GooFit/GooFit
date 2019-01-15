@@ -8,6 +8,7 @@ This adds a few minor fixes and tools for easier debugging.
 * Allow environment variables to set Python build [#192]
 * Better variable formatting, fixed `print_goofit_info` [#193]
 * `app.set_floating_exceptions()` will cause floating point errors to throw for debugging
+* `app.get_filename` now supports GooFit as a package
 
 [#190]: https://github.com/GooFit/GooFit/pull/190
 [#191]: https://github.com/GooFit/GooFit/pull/191

@@ -27,27 +27,32 @@ __device__ __thrust_forceinline__ fptype BlattWeisskopf_Norm(const fptype z2, co
 }
 
 __device__ fptype getSpline(fptype x, bool continued, ParameterContainer &pc) {
-    const fptype s_min       = pc.getConstant(3);
-    const fptype s_max       = pc.getConstant(4);
-    const unsigned int nBins = pc.getConstant(5);
+    const fptype s_min       = pc.getConstant(2);
+    const fptype s_max       = pc.getConstant(3);
+    const unsigned int nBins = pc.getConstant(4);
     const int numConstants   = pc.getNumConstants();
+
+    constexpr int start_index = 5;
 
     // 11 is the first spine knot, 11+nBins is the first curvature
 
-    if(x <= s_min)
-        return continued ? pc.getConstant(10 + 0) : 0;
-    if(x >= s_max)
-        return continued ? pc.getConstant(10 + nBins - 1) : 0;
+    if(x <= s_min) {
+        fptype m_x_0 = pc.getConstant(start_index + 0);
+        return continued ? m_x_0 : 0;
+    } else if(x >= s_max) {
+        fptype m_x_1 = pc.getConstant(start_index + nBins - 1);
+        return continued ? m_x_1 : 0;
+    }
 
     fptype spacing = (s_max - s_min) / (nBins - 1.);
     fptype dx      = fmod((x - s_min), spacing);
 
     auto bin = static_cast<unsigned int>((x - s_min) / spacing);
 
-    fptype m_x_0  = pc.getConstant(10 + bin);
-    fptype m_x_1  = pc.getConstant(10 + bin + 1);
-    fptype m_xf_0 = pc.getConstant(10 + bin + nBins);
-    fptype m_xf_1 = pc.getConstant(10 + bin + nBins + 1);
+    fptype m_x_0  = pc.getConstant(start_index + bin);
+    fptype m_x_1  = pc.getConstant(start_index + bin + 1);
+    fptype m_xf_0 = pc.getConstant(start_index + bin + nBins);
+    fptype m_xf_1 = pc.getConstant(start_index + bin + nBins + 1);
 
     // TODO: try to calculate this.
     pc.incrementIndex(1, 0, numConstants, 0, 1);
@@ -84,7 +89,7 @@ __device__ fpcomplex Spline_TDP(fptype Mpair, fptype m1, fptype m2, ParameterCon
     fptype width_norm  = width * getSpline(POW2(mass), false, pc);
 
     fptype norm          = kFactor(mass, width) * BF;
-    fptype running_width = width * width_shape / width_norm;
+    fptype running_width = width_norm == 0 ? 0 : width * width_shape / width_norm;
     fpcomplex iBW        = fpcomplex(POW2(mass) - s, -mass * running_width);
 
     pc.incrementIndex(1, 2, numConstants, 0, 1);

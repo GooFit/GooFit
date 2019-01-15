@@ -50,7 +50,7 @@ void print_splash() {
      ╚═════╝  ╚════╝  ╚════╝ ╚═╝   ╚═╝  ██║
                                    ███████║
                                    ╚══════╝
-    )raw";
+)raw";
     // clang-format on
 
     std::cout << reset << dim;
@@ -106,11 +106,11 @@ std::string goofit_info_device(int gpuDev_) {
     }
 
 #elif THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_OMP
-    GOOFIT_INFO("OMP: Number of threads: {}", omp_get_max_threads());
+    output += fmt::format("OMP: Number of threads: {}", omp_get_max_threads());
 #elif THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_TBB
-    GOOFIT_INFO("TBB: Backend selected");
+    output += fmt::format("TBB: Backend selected");
 #elif THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CPP
-    GOOFIT_INFO("CPP: Single threaded mode");
+    output += fmt::format("CPP: Single threaded mode");
 #endif
     return output;
 }

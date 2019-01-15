@@ -1,7 +1,6 @@
 #pragma once
 
-// Capture the system fenv.h as well
-#include_next <fenv.h>
+#include <cfenv>
 
 #if defined(__APPLE__) && defined(__MACH__)
 

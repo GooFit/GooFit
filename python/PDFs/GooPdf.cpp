@@ -21,8 +21,7 @@ void init_GooPdf(py::module &m) {
                  auto old_data = self.getData();
                  self.setData(&grid);
                  auto retval = self.evaluateAtPoints(var);
-                 if(old_data != nullptr)
-                     self.setData(old_data);
+                 self.setData(old_data); // Setting with nullptr is okay
                  return py::make_tuple(grid, retval);
              },
              R"raw(

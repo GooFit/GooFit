@@ -486,6 +486,7 @@ endif()
 target_link_libraries(GooFit_Common INTERFACE ROOT::Minuit2)
 
 # Adding simple libraries
+set(CLI11_TESTING OFF)
 add_subdirectory("extern/CLI11")
 mark_as_advanced(CLI_CXX_STD CLI_EXAMPLES CLI_SINGLE_FILE CLI_SINGLE_FILE_TESTS CLI_TESTING)
 target_link_libraries(GooFit_Common INTERFACE CLI11::CLI11)

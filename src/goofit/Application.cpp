@@ -211,8 +211,7 @@ Application::Application(std::string discription, int argc, char **argv)
                           throw CLI::Success();
                       },
                       "Show the available GPU devices and exit")
-        ->group("GooFit")
-        ->short_circuit();
+        ->group("GooFit");
 #endif
     auto quiet = add_flag("-q,--quiet", quiet_, "Reduce the verbosity of the Application")->group("GooFit");
 

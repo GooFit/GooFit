@@ -5,13 +5,13 @@ if(${CMAKE_VERSION} VERSION_LESS 3.12)
 endif()
 
 project(GOOFIT
-    VERSION 2.2.2
+    VERSION 2.2.3
     LANGUAGES CXX)
 
-#set(GOOFIT_TAG "dev")
+set(GOOFIT_TAG "dev")
 #set(GOOFIT_TAG "alpha")
 #set(GOOFIT_TAG "beta")
-set(GOOFIT_TAG "release")
+#set(GOOFIT_TAG "release")
 
 include(FeatureSummary)
 include(CMakePrintHelpers)

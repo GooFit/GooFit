@@ -1,7 +1,7 @@
-graft cmake
 graft docs
 prune docs/html
 graft extern
+prune extern/CLI11/extern
 graft goofit
 graft include
 graft python

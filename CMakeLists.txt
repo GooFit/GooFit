@@ -5,7 +5,7 @@ if(${CMAKE_VERSION} VERSION_LESS 3.12)
 endif()
 
 project(GOOFIT
-    VERSION 2.2.1
+    VERSION 2.2.2
     LANGUAGES CXX)
 
 #set(GOOFIT_TAG "dev")

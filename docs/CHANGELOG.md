@@ -1,20 +1,25 @@
 ## v2.2.2: Python access
-#### In progress
+#### February 1, 2019
 
 This adds a few minor fixes and tools for easier debugging.
 
 * Added M12 and M23 access to DalitzPlotter [#190]
-* Fix non-CUDA + CMake<3.8 build [#191]
+* Fix non-CUDA and older CMake builds [#191]
 * Allow environment variables to set Python build [#192]
-* Better variable formatting, fixed `print_goofit_info` [#193]
+* Better variable formatting, fixed `print_goofit_info` [#193], [#194], more information on CUDA and ROOT [#195]
 * `app.set_floating_exceptions()` will cause floating point errors to throw for debugging
 * `app.get_filename` now supports GooFit as a package
 * Fix for Python segfaulting when calling `evaluatePdf` multiple times
+* GSpline fixes [#194]
+* Support ROOT 6.04 [#195]
+* Uses CLI11 1.7.1 now [#195]
 
 [#190]: https://github.com/GooFit/GooFit/pull/190
 [#191]: https://github.com/GooFit/GooFit/pull/191
 [#192]: https://github.com/GooFit/GooFit/pull/192
 [#193]: https://github.com/GooFit/GooFit/pull/193
+[#194]: https://github.com/GooFit/GooFit/pull/194
+[#195]: https://github.com/GooFit/GooFit/pull/195
 
 
 

@@ -23,7 +23,7 @@ for item in os.environ:
 
 setup(
         name='goofit',
-        version='2.2.1',
+        version='2.2.2',
         description='GooFit fitting package',
         author='Henry Schreiner',
         author_email='hschrein@cern.ch',

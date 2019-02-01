@@ -60,7 +60,7 @@ __host__ void PdfBase::initializeIndices() {
 
     // stick placeholders into our parameter array
     parametersIdx = host_parameters.size();
-    host_parameters.push_back(host_parameters.size());
+    host_parameters.push_back(parametersList.size());
     for(auto &i : parametersList) {
         host_parameters.push_back(i.getValue());
     }

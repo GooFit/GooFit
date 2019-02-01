@@ -20,10 +20,11 @@ void setROOTStyle() {
     gStyle->SetOptStat(0);
     gStyle->SetPadRightMargin(.13);
 
-    if(ROOT_VERSION_CODE < ROOT_VERSION(6, 6, 0))
-        gStyle->SetPalette(kRainBow, 0);
-    else
-        gStyle->SetPalette(kViridis, 0);
+#if ROOT_VERSION_CODE < ROOT_VERSION(6, 6, 0)
+    gStyle->SetPalette(55, 0); // kRainBow == 55, but is not defined in ROOT < 6.06
+#else
+    gStyle->SetPalette(kViridis, 0);
+#endif
 }
 
 #endif

@@ -17,6 +17,10 @@
 #include <mpi.h>
 #endif
 
+#if GOOFIT_ROOT_FOUND
+#include <RVersion.h>
+#endif
+
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
 #include <cuda_runtime.h>
 #endif
@@ -90,6 +94,7 @@ std::string goofit_info_device(int gpuDev_) {
         cudaDeviceProp devProp;
         cudaGetDeviceProperties(&devProp, gpuDev_);
 
+        output += fmt::format("CUDA {}.{}\n", CUDART_VERSION / 1000, (CUDART_VERSION % 100) / 10.);
         output += fmt::format("CUDA: Device {}: {}\n", gpuDev_, devProp.name);
 
         output += fmt::format("CUDA: Compute {}.{}\n", devProp.major, devProp.minor);
@@ -121,7 +126,7 @@ void print_goofit_info(int gpuDev_) {
     std::cout << goofit_info_device(gpuDev_) << std::endl << reset;
 
 #if GOOFIT_ROOT_FOUND
-    GOOFIT_INFO("ROOT: Found");
+    GOOFIT_INFO("ROOT: {}.{}.{}", ROOT_VERSION_CODE / 65536, ROOT_VERSION_CODE / 256 % 256, ROOT_VERSION_CODE % 256);
 #else
     GOOFIT_INFO("ROOT: Not found");
 #endif

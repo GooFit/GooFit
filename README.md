@@ -22,7 +22,7 @@ doing maximum-likelihood fits with a familiar syntax.
 ## Requirements
 
 * A recent version of CMake is required. The minimum is 3.4, but tested primarily with 3.6 and newer. CMake is incredibly easy to install, you can even use `pip` (see [the system install page](./docs/SYSTEM_INSTALL.md)). GooFit developers have supplied patches to CMake 3.12, so that is highly recommended.
-* A ROOT 6 build highly recommended -- GooFit will use the included Minuit2 submodule if ROOT is not found, and the Minuit1 based fitter will not be available. Supports 6.06-6.14 (6.10+ recommended).
+* A ROOT 6 build highly recommended -- GooFit will use the included Minuit2 submodule if ROOT is not found, and the Minuit1 based fitter will not be available. Supports 6.04-6.16 (6.10+ recommended).
 
 <details><summary>If using CUDA: (click to expand)</summary><p>
 

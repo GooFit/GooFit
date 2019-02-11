@@ -122,7 +122,7 @@ Other custom options supported along with the defaults:
 * `-DGOOFIT_EXAMPLES=ON`: Build the examples
 * `-DGOOFIT_PACKAGES=ON`: Build any packages found with the name `goofit_*`
 * `-DGOOFIT_DEBUG=ON` and `-DGOOFIT_TRACE=ON` will enable the matching printout macros
-* `-DGOOFIT_PYTHON=ON`: Include the python bindings using [PyBind11] if Python found.
+* `-DGOOFIT_PYTHON=ON`: Include the python bindings using [PyBind11] if Python found (use `-DPYTHON_EXECUTABLE=$(which python3)` to use a specific interpreter).
 
 <details><summary>Advanced Options: (click to expand)</summary><p>
 

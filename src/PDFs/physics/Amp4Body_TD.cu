@@ -723,7 +723,6 @@ __host__ fptype Amp4Body_TD::normalize() {
 __host__
     std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::BoolVector_h>
     Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) {
-    
     initialize();
     copyParams();
 

@@ -567,6 +567,8 @@ __host__
     // Must configure our functions before any calculations!
     // setupObservables();
     // setIndices();
+        
+    initialize();
 
     std::vector<mcbooster::GReal_t> masses(decayInfo.particle_masses.begin() + 1, decayInfo.particle_masses.end());
     mcbooster::PhaseSpace phsp(decayInfo.particle_masses[0], masses, numEvents, generation_offset);

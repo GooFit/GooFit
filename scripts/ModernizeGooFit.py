@@ -202,6 +202,10 @@ conversion['2.2'] = [
     (r'IncoherentSumPdf', r'Amp3Body_IS'),
 ]
 
+conversion['2.3'] = [
+    (r'EvalVar.h', r'Dim5.h'),
+]
+
 def fix_text(contents, version='2.0'):
     r"""
     >>> text = '''

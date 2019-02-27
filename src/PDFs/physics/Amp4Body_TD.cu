@@ -20,7 +20,7 @@ class.
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/Amp4Body.h>
 #include <goofit/PDFs/physics/Amp4Body_TD.h>
-#include <goofit/PDFs/physics/detail/EvalVar.h>
+#include <goofit/PDFs/physics/detail/Dim5.h>
 #include <goofit/detail/Complex.h>
 #include <mcbooster/Evaluate.h>
 #include <mcbooster/EvaluateArray.h>

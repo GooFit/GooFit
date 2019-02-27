@@ -6,10 +6,10 @@
 void init_Version(py::module &m) {
     m.attr("__version__")          = py::make_tuple(GOOFIT_VERSION_MAJOR, GOOFIT_VERSION_MINOR, GOOFIT_VERSION_PATCH);
     m.attr("GOOFIT_VERSION_TUPLE") = py::make_tuple(GOOFIT_VERSION_MAJOR, GOOFIT_VERSION_MINOR, GOOFIT_VERSION_PATCH);
-    m.attr("GOOFIT_VERSION")     = GOOFIT_VERSION;
-    m.attr("GOOFIT_GIT_VERSION") = GOOFIT_GIT_VERSION;
-    m.attr("GOOFIT_TAG")         = GOOFIT_TAG;
-    m.attr("GOOFIT_SOURCE_DIR")  = GOOFIT_SOURCE_DIR;
+    m.attr("GOOFIT_VERSION")       = GOOFIT_VERSION;
+    m.attr("GOOFIT_GIT_VERSION")   = GOOFIT_GIT_VERSION;
+    m.attr("GOOFIT_TAG")           = GOOFIT_TAG;
+    m.attr("GOOFIT_SOURCE_DIR")    = GOOFIT_SOURCE_DIR;
 
     m.attr("CMAKE_CXX_FLAGS")  = CMAKE_CXX_FLAGS;
     m.attr("CMAKE_BUILD_TYPE") = CMAKE_BUILD_TYPE;

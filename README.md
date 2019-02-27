@@ -27,13 +27,13 @@ doing maximum-likelihood fits with a familiar syntax.
 <details><summary>If using CUDA: (click to expand)</summary><p>
 
 * CMake 3.8+ highly recommended, but not required (yet)
-* CUDA 7.0+ (with caviets below)
+* CUDA 7.0+ (with caveats below)
     * CUDA 7.0: Requires CMake 3.12 or `NEW_CUDA=OFF`.
     * CUDA 7.x: Python not supported.
-    * CUDA 8: Reliable and fully supported
+    * CUDA 8: Supported
     * CUDA 9.0: Buggy, see [known issues](https://github.com/GooFit/GooFit/issues/173)
-    * CUDA 9.1, 9.2: Supported as of GooFit v2.2.1
-    * CUDA 10: Believed to be similar to CUDA 9.2.
+    * CUDA 9.1, 9.2: Supported as of GooFit v2.2.1 (minor warnings about `extern declaration`)
+    * CUDA 10: Supported (minor warnings from Eigen)
 * An nVidia GPU supporting compute capability at least 2.0 (3.5+ recommended)
 
 </p></details>

@@ -1,3 +1,8 @@
+## v2.2.3: IN PROGRESS
+
+* Update externals, verify compatibility with CUDA 10
+* GooFit version is now available as a Python tuple
+
 ## v2.2.2: Python access
 #### February 1, 2019
 

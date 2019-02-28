@@ -42,7 +42,7 @@ Minuit2::FunctionMinimum FitManagerMinuit2::fit() {
         std::cout << (avetimer / min.NFcn()).to_string() << GooFit::reset << std::endl;
     }
 
-    if(min.IsValid()) {
+    if(min.IsValid() && min.HasCovariance() && !min.IsAboveMaxEdm() && !min.HasReachedCallLimit()) {
         retval_ = FitErrors::Valid;
     } else {
         if(verbosity > 0) {

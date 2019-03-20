@@ -13,6 +13,7 @@ using namespace GooFit;
 
 void init_Variable(py::module &m) {
     py::class_<Indexable>(m, "Indexable")
+        .def("getName", &Indexable::getName)
         .def_property_readonly("name", &Indexable::getName)
         // clang-format off
         ADD_PROP(value, getValue, setValue, Indexable)

@@ -94,9 +94,11 @@ GooFit will automatically look for CUDA, and build in GPU mode if it finds CUDA.
     GOOFIT_DEVICE=OMP pip install -v goofit
     GOOFIT_DEVICE=CPP pip install -v goofit
 
-If you want to send arbitrary commands to CMake through PIP, you will need to pass each option through, starting with a ``--`` option. Pip will try to reuse the built version if you do not pass options, but will rebuild if you pass options, so this works for a rebuild, unlike the lines above. This is how you would do this to set OMP as the backend:
+If you want to send arbitrary commands to CMake through PIP, you will need to pass each option through, starting with a ``--`` option. Pip will try to reuse the built version if you do not pass options, but will rebuild if you pass options, so this works for a rebuild, unlike the lines above. This is how you would do this to set OMP as the backend::
 
     pip install -v goofit --install-option="--" --install-option="-DGOOFIT_DEVICE=OMP"
+    # OR
+    PIP_INSTALL_OPTION="-- -DGOOFIT_DEVICE=OMP" pip install -v goofit
 
 
 Installation: local
@@ -128,7 +130,9 @@ The normal install here works, though as usual you should include verbose output
 
 You can pass through options to the build command, for example::
 
-    pip install -v . --install-options="--" --install-options="-DGOOFIT_PACKAGES=OFF"
+    pip install -v . --install-option="--" --install-option="-DGOOFIT_PACKAGES=OFF"
+    # OR
+    PIP_INSTALL_OPTION="-- -DGOOFIT_PACKAGES=OFF" pip install -v .
 
 
 Building a source package from git

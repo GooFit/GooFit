@@ -13,9 +13,6 @@ goofit_add_pdf_library(PDFPhysics
     Amp3Body.cu
     Amp3Body_TD.cu
     Amp3Body_IS.cu
-    Amp4Body.cu
-    Amp4Body_TD.cu
-    Amp4BodyGlobals.cu
     Amplitude.cu
     DalitzPlotHelpers.cu
     DalitzVetoPdf.cu
@@ -24,12 +21,8 @@ goofit_add_pdf_library(PDFPhysics
     ThreeGaussResolution.cu
     TruthResolution.cu
 
-    detail/AmpCalc.cu
-    detail/AmpCalc_TD.cu
     detail/LSCalculator.cu
     detail/LSCalculator_TD.cu
-    detail/NormIntegrator.cu
-    detail/NormIntegrator_TD.cu
     detail/NormLSCalculator.cu
     detail/NormLSCalculator_TD.cu
     detail/NormSpinCalculator.cu

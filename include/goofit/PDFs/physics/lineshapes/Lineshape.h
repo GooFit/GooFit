@@ -25,8 +25,8 @@ enum class FF : unsigned int { One = 0, BL, BL_Prime, BL2 };
 
 class Lineshape : public AmpComponent {
   protected:
-    friend class Amp4Body;
-    friend class Amp4Body_TD;
+//    friend class Amp4Body;
+//    friend class Amp4Body_TD;
 
     /// Protected constructor, only for subclasses to use
     Lineshape(std::string pdf_name, std::string name, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius);

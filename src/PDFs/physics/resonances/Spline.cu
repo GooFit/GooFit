@@ -29,7 +29,7 @@ __device__ fpcomplex cubicspline(fptype m12, fptype m13, fptype m23, ParameterCo
         mAC = m12;
         break;
     }
-
+    mAB = sqrt(mAB); mAC = sqrt(mAC); 
     int khiAB = 0, khiAC = 0;
     fptype dmKK, aa, bb, aa3, bb3;
     unsigned int timestorun = 1 + doSwap;
@@ -42,16 +42,23 @@ __device__ fpcomplex cubicspline(fptype m12, fptype m13, fptype m23, ParameterCo
                 break;
             khiAB++;
         }
+        if (khiAB<=0)  khiAB = 1; 
+        else if (khiAB==nKnobs)  khiAB --; 
+
 
         // Quit this iteration if outside
         if(khiAB > 0 && khiAB < nKnobs) {
             unsigned int kloAB          = khiAB - 1; //, kloAC = khiAC -1;
             unsigned int twokloAB       = kloAB + kloAB;
             unsigned int twokhiAB       = khiAB + khiAB;
-            fptype pwa_coefs_real_kloAB = pc.getParameter(twokloAB);
-            fptype pwa_coefs_real_khiAB = pc.getParameter(twokhiAB);
-            fptype pwa_coefs_imag_kloAB = pc.getParameter(twokloAB + 1);
-            fptype pwa_coefs_imag_khiAB = pc.getParameter(twokhiAB + 1);
+            fptype pwa_coefs_mag_kloAB = pc.getParameter(twokloAB);
+            fptype pwa_coefs_mag_khiAB = pc.getParameter(twokhiAB);
+            fptype pwa_coefs_phase_kloAB = pc.getParameter(twokloAB + 1);
+            fptype pwa_coefs_phase_khiAB = pc.getParameter(twokhiAB + 1);
+            fptype pwa_coefs_real_kloAB = pwa_coefs_mag_kloAB*cos(pwa_coefs_phase_kloAB);
+            fptype pwa_coefs_real_khiAB = pwa_coefs_mag_khiAB*cos(pwa_coefs_phase_khiAB);
+            fptype pwa_coefs_imag_kloAB = pwa_coefs_mag_kloAB*sin(pwa_coefs_phase_kloAB);
+            fptype pwa_coefs_imag_khiAB = pwa_coefs_mag_khiAB*sin(pwa_coefs_phase_khiAB);
 
             fptype pwa_coefs_prime_real_kloAB = cDeriatives[twokloAB];
             fptype pwa_coefs_prime_real_khiAB = cDeriatives[twokhiAB];
@@ -113,14 +120,19 @@ __host__ void Spline::recalculateCache() const {
     std::vector<fptype> x(nKnobs);
     std::vector<fpcomplex> y(nKnobs);
     unsigned int i = 0;
+    fptype prevvalue = 0;
+    fptype prevang = 0;
     for(auto v = params.begin(); v != params.end(); ++v, ++i) {
         unsigned int idx = i / 2;
         fptype value     = parametersList[i];
         if(i % 2 == 0) {
             x[idx] = constantsList[3 + idx];
-            y[idx].real(value);
-        } else
-            y[idx].imag(value);
+        } else{
+            prevang = value;
+            y[idx].real((prevvalue)*cos(prevang));
+            y[idx].imag((prevvalue)*sin(prevang));            
+        }
+        prevvalue = value;
     }
 
     std::vector<fptype> y2_flat = flatten(complex_derivative(x, y));

@@ -12,8 +12,8 @@ class Lineshape;
 class SpinFactor;
 
 class Amplitude : public AmpComponent {
-    friend class Amp4Body;
-    friend class Amp4Body_TD;
+//    friend class Amp4Body;
+//    friend class Amp4Body_TD;
 
   public:
     Amplitude(std::string uniqueDecayStr,

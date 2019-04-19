@@ -35,7 +35,7 @@ enum class SF_4Body {
 };
 
 class SpinFactor : public AmpComponent {
-    friend class Amp4Body;
+//    friend class Amp4Body;
 
   private:
     SF_4Body _SF;

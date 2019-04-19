@@ -9,6 +9,7 @@ namespace GooFit {
 typedef fpcomplex (*resonance_function_ptr)(fptype, fptype, fptype, ParameterContainer &pc);
 
 __device__ fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m);
+__device__ fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m, fptype mR);
 
 __device__ fptype dampingFactorSquare(const fptype &cmmom, const int &spin, const fptype &mRadius);
 

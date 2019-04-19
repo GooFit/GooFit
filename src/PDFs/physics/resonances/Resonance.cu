@@ -16,6 +16,17 @@ __device__ fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m) {
     return 0.5 * sqrt(rMassSq) * kin1 * kin2;
 }
 
+__device__ fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m, fptype mR) {
+    // For A -> B + C, calculate momentum of B and C in rest frame of A.
+    // PDG 38.16.
+
+    fptype x = rMassSq;
+    fptype y = d1m*d1m;
+    fptype z = d2m*d2m;
+    double l = (x - y - z)*(x - y - z) - 4*y*z;
+    return sqrt(l)/(2*mR);
+}
+
 __device__ fptype dampingFactorSquare(const fptype &cmmom, const int &spin, const fptype &mRadius) {
     fptype square = mRadius * mRadius * cmmom * cmmom;
     fptype dfsq   = 1 + square; // This accounts for spin 1
@@ -48,26 +59,25 @@ __device__ fptype spinFactor(unsigned int spin,
 
     fptype _mAC = (PAIR_12 == cyclic_index ? m13 : (PAIR_13 == cyclic_index ? m12 : m12));
     fptype _mBC = (PAIR_12 == cyclic_index ? m23 : (PAIR_13 == cyclic_index ? m23 : m13));
-    fptype _mAB = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
+    fptype _mAB = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));*/
 
     // The above, collapsed into single tests where possible.
-    fptype _mA = (PAIR_13 == cyclic_index ? daug3Mass : daug2Mass);
-    fptype _mB = (PAIR_23 == cyclic_index ? daug2Mass : daug1Mass);
-    fptype _mC = (PAIR_12 == cyclic_index ? daug3Mass : (PAIR_13 == cyclic_index ? daug2Mass : daug1Mass));
+    fptype _mA = (PAIR_23 == cyclic_index ? daug2Mass : daug1Mass);
+    fptype _mB = (PAIR_12 == cyclic_index ? daug2Mass : daug3Mass);
+    fptype _mC = (PAIR_23 == cyclic_index ? daug1Mass : (PAIR_13 == cyclic_index ? daug2Mass : daug3Mass));
 
-    fptype _mAC = (PAIR_23 == cyclic_index ? m13 : m23);
-    fptype _mBC = (PAIR_12 == cyclic_index ? m13 : m12);
-    fptype _mAB = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
-    */
+    fptype _mBC = (PAIR_23 == cyclic_index ? m13 : m23);
+    fptype _mAC = (PAIR_12 == cyclic_index ? m13 : m12);
+    fptype _mAB = (PAIR_23 == cyclic_index ? m23 : (PAIR_13 == cyclic_index ? m13 : m12));
 
     // Copied from EvtDalitzReso, with assumption that pairAng convention matches pipipi0 from EvtD0mixDalitz.
     // Again, all threads should get the same branch.
-    fptype _mA  = (PAIR_12 == cyclic_index ? daug1Mass : (PAIR_13 == cyclic_index ? daug3Mass : daug2Mass));
+/*    fptype _mA  = (PAIR_12 == cyclic_index ? daug1Mass : (PAIR_13 == cyclic_index ? daug3Mass : daug2Mass));
     fptype _mB  = (PAIR_12 == cyclic_index ? daug2Mass : (PAIR_13 == cyclic_index ? daug1Mass : daug3Mass));
     fptype _mC  = (PAIR_12 == cyclic_index ? daug3Mass : (PAIR_13 == cyclic_index ? daug2Mass : daug1Mass));
     fptype _mAC = (PAIR_12 == cyclic_index ? m13 : (PAIR_13 == cyclic_index ? m23 : m12));
     fptype _mBC = (PAIR_12 == cyclic_index ? m23 : (PAIR_13 == cyclic_index ? m12 : m13));
-    fptype _mAB = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
+    fptype _mAB = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));*/
 
     fptype massFactor = 1.0 / _mAB;
     fptype sFactor    = -1;

@@ -20,10 +20,13 @@ __device__ fpcomplex plainBW(fptype m12, fptype m13, fptype m23, ParameterContai
 #pragma unroll
     for(size_t i = 0; i < I; i++) {
         fptype rMassSq    = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
+        fptype rMass = sqrt(rMassSq);
         fptype mass_daug1 = PAIR_23 == cyclic_index ? c_daug2Mass : c_daug1Mass;
         fptype mass_daug2 = PAIR_12 == cyclic_index ? c_daug2Mass : c_daug3Mass;
+        fptype mass_daug3 = PAIR_23 == cyclic_index ? c_daug1Mass : (PAIR_13 == cyclic_index?c_daug2Mass:c_daug3Mass);
 
         fptype frFactor = 1;
+        fptype fdFactor = 1;
 
         // Calculate momentum of the two daughters in the resonance rest frame
         // Note symmetry under interchange (dm1 <-> dm2)
@@ -34,6 +37,10 @@ __device__ fpcomplex plainBW(fptype m12, fptype m13, fptype m23, ParameterContai
         if(0 != spin) {
             frFactor = dampingFactorSquare(nominalDaughterMoms, spin, c_meson_radius)
                        / dampingFactorSquare(measureDaughterMoms, spin, c_meson_radius);
+            fptype measureDaughterMoms2 = twoBodyCMmom(c_motherMass*c_motherMass, rMass, mass_daug3, rMass);
+            fptype nominalDaughterMoms2 = twoBodyCMmom(c_motherMass*c_motherMass, resmass, mass_daug3, resmass);
+            fdFactor =  dampingFactorSquare(nominalDaughterMoms2, spin, 5.)
+                / dampingFactorSquare(measureDaughterMoms2, spin, 5.);
         }
 
         // RBW evaluation
@@ -44,7 +51,7 @@ __device__ fpcomplex plainBW(fptype m12, fptype m13, fptype m23, ParameterContai
 
         fpcomplex ret(A * C, B * C); // Dropping F_D=1
 
-        ret *= sqrt(frFactor);
+        ret *= sqrt(frFactor*fdFactor);
         ret *= spinFactor(spin, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass, m12, m13, m23, cyclic_index);
 
         result += ret;

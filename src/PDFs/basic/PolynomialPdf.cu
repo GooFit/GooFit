@@ -20,7 +20,7 @@ __device__ fptype device_Polynomial(fptype *evt, ParameterContainer &pc) {
         fptype param = pc.getParameter(i);
         ret += param * pow(x, lowestDegree + i);
     }
-
+    ret = ret<0?0:ret;
     pc.incrementIndex(1, numParams, 1, 1, 1);
     return ret;
 }
@@ -40,6 +40,7 @@ __device__ fptype device_OffsetPolynomial(fptype *evt, ParameterContainer &pc) {
         ret += pc.getParameter(i) * pow(x, lowestDegree + i - 2);
     }
 
+    ret = ret<0?0:ret;
     pc.incrementIndex(1, numParams, 1, 1, 1);
     return ret;
 }
@@ -112,6 +113,7 @@ __device__ fptype device_MultiPolynomial(fptype *evt, ParameterContainer &pc) {
         ret += currTerm;
     }
 
+    ret = ret<0?0:ret;
     pc.incrementIndex(1, num_parameters, num_constants, num_observables, 1);
 
     return ret;

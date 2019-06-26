@@ -70,9 +70,9 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, int, fptype *> t) c
         pc.incrementIndex(); // need to use the slow version, since we are not starting from index 0.
 
     // put our index here...
-    int id = pc.getObservable(0);
 
     for(int i = 0; i < evtSize; ++i) {
+        int id = pc.getObservable(i);
         fptype lowerBound = thrust::get<2>(t)[3 * i + 0];
         fptype upperBound = thrust::get<2>(t)[3 * i + 1];
         auto numBins      = static_cast<int>(floor(thrust::get<2>(t)[3 * i + 2] + 0.5));

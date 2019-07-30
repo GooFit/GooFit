@@ -13,9 +13,9 @@ using namespace GooFit;
 
 void init_Variable(py::module &m) {
     py::class_<Indexable>(m, "Indexable")
-        .def("getName", &Indexable::getName)
         .def_property_readonly("name", &Indexable::getName)
         // clang-format off
+        ADD_PROP_RO(name, getName, Indexable)
         ADD_PROP(value, getValue, setValue, Indexable)
         ADD_PROP(index, getIndex, setIndex, Indexable)
         ADD_PROP(upperlimit, getUpperLimit, setUpperLimit, Indexable)

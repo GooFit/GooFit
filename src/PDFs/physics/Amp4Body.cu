@@ -667,13 +667,8 @@ __host__
 
     thrust::transform(
         results.begin(), results.end(), weights.begin(), weights.begin(), thrust::multiplies<mcbooster::GReal_t>());
-    mcbooster::BoolVector_d flags(numEvents);
 
-    thrust::counting_iterator<mcbooster::GLong_t> first(0);
-    thrust::counting_iterator<mcbooster::GLong_t> last = first + numEvents;
-
-    auto max = thrust::max_element(weights.begin(), weights.end());
-    thrust::transform(first, last, weights.begin(), flags.begin(), mcbooster::FlagAcceptReject((fptype)*max));
+    mcbooster::BoolVector_d flags = makeMCFlags(weights, numEvents);
 
     auto weights_h = mcbooster::RealVector_h(weights);
     auto results_h = mcbooster::RealVector_h(results);

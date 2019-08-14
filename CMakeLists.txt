@@ -481,7 +481,6 @@ if(GOOFIT_CERNROOT)
         target_link_libraries(GooFit_Common INTERFACE ROOT::Libraries ROOT::Minuit)
     endif()
 endif()
-mark_as_advanced(GOOFIT_CERNROOT)
 
 # If either ROOT not found or Minuit2 not included
 if(NOT TARGET ROOT::Minuit2)

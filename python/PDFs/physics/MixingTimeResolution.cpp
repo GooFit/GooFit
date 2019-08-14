@@ -25,6 +25,7 @@ class PyMixingTimeResolution : public Base {
 
 void init_MixingTimeResolution(py::module &m) {
     py::class_<MixingTimeResolution, PyMixingTimeResolution<>>(m, "MixingTimeResolution")
+        .def(py::init<std::string>(), "n"_a)
 
         .def("createParameters", &MixingTimeResolution::createParameters)
         .def("normalization", &MixingTimeResolution::normalization)

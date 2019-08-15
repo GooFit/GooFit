@@ -71,6 +71,5 @@ void init_UnbinnedDataSet(py::module &m) {
         .def("loadEvent", &UnbinnedDataSet::loadEvent, "Load an event into the observables", "event_number"_a)
         .def("clear", &UnbinnedDataSet::clear, "Clear the contents of a dataset")
         .def("fillWithGrid", &UnbinnedDataSet::fillWithGrid)
-        .def("getValue", &UnbinnedDataSet::getValue, "var"_a, "idx"_a)
-        ;
+        .def("getValue", &UnbinnedDataSet::getValue, "var"_a, "idx"_a);
 }

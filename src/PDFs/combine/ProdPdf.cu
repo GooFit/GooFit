@@ -62,7 +62,7 @@ ProdPdf::ProdPdf(std::string n, std::vector<PdfBase *> comps)
 
     if(varOverlaps) { // Check for components forcing separate normalization
         for(PdfBase *p : comps) {
-            if(getSeparateNorm())
+            if(p->getSeparateNorm())
                 varOverlaps = false;
         }
     }

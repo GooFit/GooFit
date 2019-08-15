@@ -7,6 +7,10 @@
 #include <goofit/PDFs/physics/SpinFactors.h>
 #include <goofit/Variable.h>
 
+#ifdef GOOFIT_KMATRIX
+#include <goofit/PDFs/physics/lineshapes/kMatrix.h>
+#endif
+
 using namespace GooFit;
 
 void init_Lineshapes(py::module &m) {
@@ -44,6 +48,7 @@ void init_Lineshapes(py::module &m) {
              "FormFac"_a = FF::BL_Prime,
              "radius"_a  = 1.5);
 
+#ifdef GOOFIT_KMATRIX
     py::class_<Lineshapes::kMatrix, Lineshape>(m_ls, "kMatrix")
         .def(py::init<std::string,
                       unsigned int,
@@ -52,8 +57,8 @@ void init_Lineshapes(py::module &m) {
                       Variable,
                       Variable,
                       Variable,
-                      std::array<Variable, 5>,
-                      std::array<Variable, 5 * 6>,
+                      std::vector<Variable>,
+                      std::vector<Variable>,
                       Variable,
                       Variable,
                       unsigned int,
@@ -76,6 +81,7 @@ void init_Lineshapes(py::module &m) {
              "Mpair"_a,
              "FormFac"_a = FF::BL_Prime,
              "radius"_a  = 1.5);
+#endif
 
     py::class_<Lineshapes::NonRes, Lineshape>(m_ls, "NonRes")
         .def(py::init<std::string, Variable, Variable, unsigned int, unsigned int, FF, fptype>(),

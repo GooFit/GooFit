@@ -32,7 +32,7 @@ void init_Amp3Body(py::module &m) {
              "Using the current dataset, return the cached fit fraction values")
         .def("getDecayInfo", &Amp3Body::getDecayInfo, "Return DecayInfo")
         .def_static("help", []() { return HelpPrinter(Amp3Body_docs); })
-
+        .def("getDecayInfo", &Amp3Body::getDecayInfo, "Return DecayInfo")
         ;
 
     m.attr("DalitzPlotPdf") = cls;

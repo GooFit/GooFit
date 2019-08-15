@@ -10,7 +10,8 @@ class Amp4BodyBase : public AmpNBodyBase {
     using AmpNBodyBase::AmpNBodyBase;
 
     /// Make the accept/reject flags from weights
-    __host__ mcbooster::BoolVector_d makeMCFlags(const mcbooster::RealVector_d &weights, unsigned int numEvents);
+    __host__ void
+    fillMCFlags(mcbooster::BoolVector_d &flags, const mcbooster::RealVector_d &weights, unsigned int numEvents);
 };
 
 } // namespace GooFit

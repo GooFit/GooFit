@@ -668,7 +668,8 @@ __host__
     thrust::transform(
         results.begin(), results.end(), weights.begin(), weights.begin(), thrust::multiplies<mcbooster::GReal_t>());
 
-    mcbooster::BoolVector_d flags = makeMCFlags(weights, numEvents);
+    mcbooster::BoolVector_d flags(numEvents);
+    fillMCFlags(flags, weights, numEvents);
 
     auto weights_h = mcbooster::RealVector_h(weights);
     auto results_h = mcbooster::RealVector_h(results);

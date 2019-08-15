@@ -1,5 +1,10 @@
-# Function to make adding a pybind_module easy and language agnostic
+# Python 2 will not be compatible with C++17, but let's not be reminded of that over and over again here.
+if("${PYTHON_VERSION_MAJOR}" LESS 3 AND "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+     message(STATUS "Suppressing Python2 warnings about C++17 not being supported")
+     add_compile_options(-Wno-deprecated-register)
+endif()
 
+# Function to make adding a pybind_module easy and language agnostic
 function(process_pybind_module LNAME)
     set_target_properties(${LNAME} PROPERTIES PREFIX "${PYTHON_MODULE_PREFIX}"
                                              SUFFIX "${PYTHON_MODULE_EXTENSION}")
@@ -56,6 +61,8 @@ goofit_add_library(_goofit MODULE
 
 add_subdirectory(goofit)
 add_subdirectory(PDFs)
+
+
 
 process_pybind_module(_goofit)
 target_link_libraries(_goofit

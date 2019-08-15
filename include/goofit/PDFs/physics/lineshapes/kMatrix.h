@@ -4,6 +4,9 @@
 
 #include <array>
 
+#define NPOLES 5
+#define NCHANNELS 5
+
 namespace GooFit {
 namespace Lineshapes {
 
@@ -16,8 +19,8 @@ class kMatrix : public Lineshape {
             Variable sA,
             Variable s0_prod,
             Variable s0_scatt,
-            std::array<Variable, 5> f,
-            std::array<Variable, 5 * 6> poles,
+            std::vector<Variable> fscat,
+            std::vector<Variable> poles,
             Variable mass,
             Variable width,
             unsigned int L,

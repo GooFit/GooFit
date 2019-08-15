@@ -153,7 +153,7 @@ set(GOOFIT_GCC_WARNINGS "-Wall -Wextra -Wno-unknown-pragmas -Wno-long-long -Wno-
 
 # Python 2 will not be compatible with C++17, but let's not be reminded of that over and over again here.
 if("${PYTHON_VERSION_MAJOR}" LESS 3 AND "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-     set(GOOFIT_GCC_WARNINGS "${GOOFIT_GCC_WARNINGS} -Wno-deprecated-register")
+     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-register")
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)

@@ -28,10 +28,10 @@ class GooPdf : public PdfBase {
     int get_event_size() const;
 
     /// This is the total number of bins in the normalize grid
-    int get_bin_grid_size() const;
+    // int get_bin_grid_size() const;
 
     /// This is the total ND Volume of a cube in the normalize grid
-    fptype get_bin_grid_volume() const;
+    // fptype get_bin_grid_volume() const;
 
     /// This reduces the current function over the data. Does *not* prepare
     /// or normalize TODO: Remove const if caching added
@@ -39,7 +39,7 @@ class GooPdf : public PdfBase {
 
     /// This reduces the current function over the bin grid. Does *not* prepare
     /// or normalize. Used by normalize.  TODO: Remove const if caching added
-    __host__ double reduce_with_bins() const;
+    //__host__ double reduce_with_bins() const;
 
     /// This evaluates the current function over the data. Does *not* prepare
     /// or normalize  TODO: Remove const if caching added
@@ -52,6 +52,12 @@ class GooPdf : public PdfBase {
     using PdfBase::PdfBase;
 
     ~GooPdf() override;
+
+    __host__ int get_bin_grid_size() const;
+
+    __host__ fptype get_bin_grid_volume() const;
+
+    __host__ double reduce_with_bins() const;
 
     __host__ double calculateNLL() override;
 

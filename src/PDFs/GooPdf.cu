@@ -367,8 +367,9 @@ __host__ fptype GooPdf::normalize() {
 
     ret *= sum;
 
-    if(0 == ret)
+    if(0 == ret) {
         GooFit::abort(__FILE__, __LINE__, "Zero integral");
+    }
 
     GOOFIT_TRACE("{}: Param {} integral is ~= {}", getName(), normalIdx, ret);
     host_normalizations.at(normalIdx + 1) = 1.0 / ret;

@@ -11,3 +11,4 @@
 #include <goofit/PDFs/physics/resonances/NonRes.h>
 #include <goofit/PDFs/physics/resonances/RBW.h>
 #include <goofit/PDFs/physics/resonances/Spline.h>
+#include <goofit/PDFs/physics/resonances/kMatrix.h>

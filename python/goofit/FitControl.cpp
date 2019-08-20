@@ -16,6 +16,7 @@ using namespace pybind11::literals;
 
 void init_FitControl(py::module &m) {
     py::class_<FitControl, std::shared_ptr<FitControl>>(m, "FitControl")
+        .def("metricIsPdf", &FitControl::metricIsPdf)
         .def("binnedFit", &FitControl::binnedFit)
         .def("binErrors", &FitControl::binErrors)
         .def("metricIsPdf", &FitControl::metricIsPdf)

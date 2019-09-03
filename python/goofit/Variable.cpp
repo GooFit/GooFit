@@ -47,6 +47,7 @@ void init_Variable(py::module &m) {
                  os << v;
                  return os.str();
              })
+        .def("getBinSize", &Observable::getBinSize)
 
         ;
 

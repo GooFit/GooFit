@@ -1,5 +1,6 @@
-//#ifndef SQUAREDALITZEFF_PDF_HH
-//#define SQUAREDALITZEFF_PDF_HH
+
+#pragma once
+
 
 #include <vector>
 
@@ -23,4 +24,3 @@ private:
 
 }
 
-//#endif

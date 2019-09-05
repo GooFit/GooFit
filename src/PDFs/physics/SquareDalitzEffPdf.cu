@@ -1,5 +1,7 @@
 #include <goofit/PDFs/physics/SquareDalitzEffPdf.h>
 
+#include <goofit/GlobalCudaDefines.h>
+
 __host__ fptype inPS(fptype m12, fptype m13, fptype mD, fptype mKS0, fptype mh1, fptype mh2) {
 
   if (m12 < pow(mKS0 + mh1, 2)) return 0;

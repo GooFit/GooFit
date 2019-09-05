@@ -3,6 +3,7 @@
 
 #include <vector>
 
+#include <goofit/GlobalCudaDefines.h> // Need this for 'fptype'
 
 #include <goofit/PDFs/GooPdf.h>
 

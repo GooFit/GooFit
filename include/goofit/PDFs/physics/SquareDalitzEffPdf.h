@@ -1,17 +1,25 @@
 //#ifndef SQUAREDALITZEFF_PDF_HH
 //#define SQUAREDALITZEFF_PDF_HH
 
+#include <vector>
+
+
 #include <goofit/PDFs/GooPdf.h>
+
+
+namespace GooFit{
 
 class SquareDalitzEffPdf : public GooPdf {
 
 public:
   // Very specific efficiency parametrisation for semileptonically-tagged D0->KSPiPi decays as determined from data
   // Uses variables of square Dalitz plot - m' and theta' 
-  SquareDalitzEffPdf (std::string n, vector<Variable*> obses, vector<Variable*> coeffs, vector<Variable*> constvals); 
+    SquareDalitzEffPdf (std::string n, std::vector<Variable*> obses, std::vector<Variable*> coeffs, std::vector<Variable*> constvals); 
 
 private:
 
 };
 
-#endif
+}
+
+//#endif

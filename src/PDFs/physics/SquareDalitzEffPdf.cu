@@ -22,10 +22,10 @@ __device__ fptype inPS(fptype m12, fptype m13, fptype mD, fptype mKS0, fptype mh
 __device__ fptype mprime (fptype m12, fptype m13, fptype mD, fptype mKS0, fptype mh1, fptype mh2) {
   // Helper function to calculate m'^2
   fptype m23 = mD*mD + mKS0*mKS0 + mh1*mh1 + mh2*mh2 - m12 - m13; 
-  fptype rootPi = -2.*ATAN2(-1.0,0.0); // Pi
+  //fptype rootPi = -2.*ATAN2(-1.0,0.0); // Pi
 
   if (m23 < 0) return -99;
-  fptype tmp = ((2.0*(SQRT(m23) - (mh1 + mh2))/(mD - mKS0 - (mh1 + mh2))) - 1.0);
+  fptype tmp = ((2.0*(sqrt(m23) - (mh1 + mh2))/(mD - mKS0 - (mh1 + mh2))) - 1.0);
   if (isnan(tmp)) tmp = -99;
   return tmp;
 }
@@ -36,7 +36,7 @@ __device__ fptype thetaprime (fptype m12, fptype m13, fptype mD, fptype mKS0, fp
   if (m23 < 0) return -99;
 
   fptype num = m23*( m12 - m13) + (mh2*mh2 - mh1*mh1)*(mD*mD - mKS0*mKS0);
-  fptype denum = SQRT(((m23 - mh1*mh1 + mh2*mh2)*(m23 - mh1*mh1 + mh2*mh2) - 4*m23*mh2*mh2))*SQRT(((mD*mD - mKS0*mKS0 - m23)*(mD*mD - mKS0*mKS0 -m23) - 4*m23*mKS0*mKS0));
+  fptype denum = sqrt(((m23 - mh1*mh1 + mh2*mh2)*(m23 - mh1*mh1 + mh2*mh2) - 4*m23*mh2*mh2))*sqrt(((mD*mD - mKS0*mKS0 - m23)*(mD*mD - mKS0*mKS0 -m23) - 4*m23*mKS0*mKS0));
   fptype theta = -99 ;
   if (isnan(denum)) return -99;
 
@@ -82,9 +82,9 @@ __device__ fptype device_SquareDalitzEff (fptype* evt, fptype* p, unsigned int* 
   return ret; 
 }
 
-MEM_DEVICE device_function_ptr ptr_to_SquareDalitzEff = device_SquareDalitzEff; 
+__device__ device_function_ptr ptr_to_SquareDalitzEff = device_SquareDalitzEff; 
 
-__device__ SquareDalitzEffPdf::SquareDalitzEffPdf (std::string n, vector<Variable*> obses, vector<Variable*> coeffs, vector<Variable*> constvals) 
+__host__ SquareDalitzEffPdf::SquareDalitzEffPdf (std::string n, vector<Variable*> obses, vector<Variable*> coeffs, vector<Variable*> constvals) 
   : GooPdf(0, n) 
 {
   // Register observables - here m12, m13 and dtime
@@ -102,8 +102,12 @@ __device__ SquareDalitzEffPdf::SquareDalitzEffPdf (std::string n, vector<Variabl
     pindices.push_back(registerParameter(*c));
   }
 
-  GET_FUNCTION_ADDR(ptr_to_SquareDalitzEff);
-  initialise(pindices);
+  registerFunction("ptr_to_SquareDalitzEff", ptr_to_SquareDalitzEff);
+
+  initialize()
+
+  //GET_FUNCTION_ADDR(ptr_to_SquareDalitzEff);
+  //initialise(pindices);
 }
 
 } // namespace GooFit

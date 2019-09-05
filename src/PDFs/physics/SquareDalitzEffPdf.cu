@@ -1,8 +1,6 @@
-#pragma once
-
 #include <goofit/PDFs/physics/SquareDalitzEffPdf.h>
 
-#include <goofit/GlobalCudaDefines.h>
+namespace GooFit {
 
 __device__ fptype inPS(fptype m12, fptype m13, fptype mD, fptype mKS0, fptype mh1, fptype mh2) {
 
@@ -107,3 +105,5 @@ __device__ SquareDalitzEffPdf::SquareDalitzEffPdf (std::string n, vector<Variabl
   GET_FUNCTION_ADDR(ptr_to_SquareDalitzEff);
   initialise(pindices);
 }
+
+} // namespace GooFit

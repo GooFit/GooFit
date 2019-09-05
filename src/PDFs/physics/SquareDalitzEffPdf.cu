@@ -1,8 +1,10 @@
+#pragma once
+
 #include <goofit/PDFs/physics/SquareDalitzEffPdf.h>
 
 #include <goofit/GlobalCudaDefines.h>
 
-__host__ fptype inPS(fptype m12, fptype m13, fptype mD, fptype mKS0, fptype mh1, fptype mh2) {
+__device__ fptype inPS(fptype m12, fptype m13, fptype mD, fptype mKS0, fptype mh1, fptype mh2) {
 
   if (m12 < pow(mKS0 + mh1, 2)) return 0;
   if (m12 > pow(mD - mh2, 2)) return 0;
@@ -19,7 +21,7 @@ __host__ fptype inPS(fptype m12, fptype m13, fptype mD, fptype mKS0, fptype mh1,
   return 1;
 }
 
-__host__ fptype mprime (fptype m12, fptype m13, fptype mD, fptype mKS0, fptype mh1, fptype mh2) {
+__device__ fptype mprime (fptype m12, fptype m13, fptype mD, fptype mKS0, fptype mh1, fptype mh2) {
   // Helper function to calculate m'^2
   fptype m23 = mD*mD + mKS0*mKS0 + mh1*mh1 + mh2*mh2 - m12 - m13; 
   fptype rootPi = -2.*ATAN2(-1.0,0.0); // Pi
@@ -30,7 +32,7 @@ __host__ fptype mprime (fptype m12, fptype m13, fptype mD, fptype mKS0, fptype m
   return tmp;
 }
 
-__host__ fptype thetaprime (fptype m12, fptype m13, fptype mD, fptype mKS0, fptype mh1, fptype mh2) {
+__device__ fptype thetaprime (fptype m12, fptype m13, fptype mD, fptype mKS0, fptype mh1, fptype mh2) {
   // Helper function to calculate theta'
   fptype m23 = mD*mD + mKS0*mKS0 + mh1*mh1 + mh2*mh2 - m12 - m13; 
   if (m23 < 0) return -99;
@@ -47,7 +49,7 @@ __host__ fptype thetaprime (fptype m12, fptype m13, fptype mD, fptype mKS0, fpty
   return theta;
 }
 
-__host__ fptype device_SquareDalitzEff (fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_SquareDalitzEff (fptype* evt, fptype* p, unsigned int* indices) {
 
   // Define observables 
   fptype x = evt[indices[2 + indices[0] + 0]]; // m12   
@@ -84,7 +86,7 @@ __host__ fptype device_SquareDalitzEff (fptype* evt, fptype* p, unsigned int* in
 
 MEM_DEVICE device_function_ptr ptr_to_SquareDalitzEff = device_SquareDalitzEff; 
 
-__host__ SquareDalitzEffPdf::SquareDalitzEffPdf (std::string n, vector<Variable*> obses, vector<Variable*> coeffs, vector<Variable*> constvals) 
+__device__ SquareDalitzEffPdf::SquareDalitzEffPdf (std::string n, vector<Variable*> obses, vector<Variable*> coeffs, vector<Variable*> constvals) 
   : GooPdf(0, n) 
 {
   // Register observables - here m12, m13 and dtime

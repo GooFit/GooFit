@@ -5,7 +5,8 @@
 #include <vector>
 
 #include <goofit/GlobalCudaDefines.h> // Need this for 'fptype'
-
+#include <goofit/Variable.h>
+#include <goofit/detail/Complex.h>
 #include <goofit/PDFs/GooPdf.h>
 
 

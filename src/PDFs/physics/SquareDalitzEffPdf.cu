@@ -1,6 +1,6 @@
 #include <goofit/PDFs/physics/SquareDalitzEffPdf.h>
 
-EXEC_TARGET fptype inPS(fptype m12, fptype m13, fptype mD, fptype mKS0, fptype mh1, fptype mh2) {
+__host__ fptype inPS(fptype m12, fptype m13, fptype mD, fptype mKS0, fptype mh1, fptype mh2) {
 
   if (m12 < pow(mKS0 + mh1, 2)) return 0;
   if (m12 > pow(mD - mh2, 2)) return 0;
@@ -17,7 +17,7 @@ EXEC_TARGET fptype inPS(fptype m12, fptype m13, fptype mD, fptype mKS0, fptype m
   return 1;
 }
 
-EXEC_TARGET fptype mprime (fptype m12, fptype m13, fptype mD, fptype mKS0, fptype mh1, fptype mh2) {
+__host__ fptype mprime (fptype m12, fptype m13, fptype mD, fptype mKS0, fptype mh1, fptype mh2) {
   // Helper function to calculate m'^2
   fptype m23 = mD*mD + mKS0*mKS0 + mh1*mh1 + mh2*mh2 - m12 - m13; 
   fptype rootPi = -2.*ATAN2(-1.0,0.0); // Pi
@@ -28,7 +28,7 @@ EXEC_TARGET fptype mprime (fptype m12, fptype m13, fptype mD, fptype mKS0, fptyp
   return tmp;
 }
 
-EXEC_TARGET fptype thetaprime (fptype m12, fptype m13, fptype mD, fptype mKS0, fptype mh1, fptype mh2) {
+__host__ fptype thetaprime (fptype m12, fptype m13, fptype mD, fptype mKS0, fptype mh1, fptype mh2) {
   // Helper function to calculate theta'
   fptype m23 = mD*mD + mKS0*mKS0 + mh1*mh1 + mh2*mh2 - m12 - m13; 
   if (m23 < 0) return -99;
@@ -45,7 +45,7 @@ EXEC_TARGET fptype thetaprime (fptype m12, fptype m13, fptype mD, fptype mKS0, f
   return theta;
 }
 
-EXEC_TARGET fptype device_SquareDalitzEff (fptype* evt, fptype* p, unsigned int* indices) {
+__host__ fptype device_SquareDalitzEff (fptype* evt, fptype* p, unsigned int* indices) {
 
   // Define observables 
   fptype x = evt[indices[2 + indices[0] + 0]]; // m12   

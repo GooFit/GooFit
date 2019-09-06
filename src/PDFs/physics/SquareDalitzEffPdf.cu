@@ -47,19 +47,38 @@ __device__ fptype thetaprime (fptype m12, fptype m13, fptype mD, fptype mKS0, fp
   return theta;
 }
 
-__device__ fptype device_SquareDalitzEff (fptype* evt, fptype* p, unsigned int* indices) {
+__device__ fptype device_SquareDalitzEff (fptype* evt, ParameterContainer &pc) {
 
   // Define observables 
-  fptype x = evt[indices[2 + indices[0] + 0]]; // m12   
-  fptype y = evt[indices[2 + indices[0] + 1]]; // m13   
+  fptype x = evt[pc.getObservable(0)];
+  fptype y = evt[pc.getObservable(1)];
+
+  //fptype x = evt[indices[2 + indices[0] + 0]]; // m12   
+  //fptype y = evt[indices[2 + indices[0] + 1]]; // m13   
 
   // Define constvals
+  fptype mD = pc.getConstant(0);
+  fptype mKS0 = pc.getConstant(1);
+  fptype mh1 = pc.getConstant(2);
+  fptype mh2 = pc.getConstant(3);
+
+  /*
   fptype mD   = p[indices[1]];
   fptype mKS0 = p[indices[2]];
   fptype mh1  = p[indices[3]];
   fptype mh2  = p[indices[4]];
+  */
 
   // Define coefficients
+  fptype c0 = pc.getParameter(0);
+  fptype c1 = pc.getParameter(1);
+  fptype c2 = pc.getParameter(2);
+  fptype c3 = pc.getParameter(3);
+  fptype c4 = pc.getParameter(4);
+  fptype c5 = pc.getParameter(5);
+  fptype c6 = pc.getParameter(6);
+
+  /*
   fptype c0 = p[indices[5]];   //m23^2 term
   fptype c1 = p[indices[6]];   //m23 term
   fptype c2 = p[indices[7]];   //m23*cos(theta)^2 term
@@ -67,6 +86,8 @@ __device__ fptype device_SquareDalitzEff (fptype* evt, fptype* p, unsigned int* 
   fptype c4 = p[indices[9]];   //cos(theta) term
   fptype c5 = p[indices[10]];  //constant term
   fptype c6 = p[indices[11]];  //m23*cos(theta) term (only non-zero for alternative model)
+  */
+
   // Check phase space
   if (inPS == 0) return 0;
   
@@ -84,7 +105,10 @@ __device__ fptype device_SquareDalitzEff (fptype* evt, fptype* p, unsigned int* 
 
 __device__ device_function_ptr ptr_to_SquareDalitzEff = device_SquareDalitzEff; 
 
-__host__ SquareDalitzEffPdf::SquareDalitzEffPdf (std::string n, vector<Variable*> obses, vector<Variable*> coeffs, vector<Variable*> constvals) 
+__host__ SquareDalitzEffPdf::SquareDalitzEffPdf (std::string n, 
+				        vector<Variable*> obses, 
+					vector<Variable*> coeffs, 
+					vector<Variable*> constvals) 
   : GooPdf("SquareDalitzEffPdf", n, obses, coeffs, constvals) {
 
   // Register observables - here m12, m13 and dtime
@@ -92,14 +116,17 @@ __host__ SquareDalitzEffPdf::SquareDalitzEffPdf (std::string n, vector<Variable*
     registerObservable(obses[i]);
   }
 
-  std::vector<unsigned int> pindices;
+  //std::vector<unsigned int> pindices;
   // Register constvals
   for (vector<Variable*>::iterator v = constvals.begin(); v != constvals.end(); ++v) {
-    pindices.push_back(registerParameter(*v));
+    //pindices.push_back(registerParameter(*v));
+    registerParameter(*v);
   }
+
   // Register coefficients
   for (vector<Variable*>::iterator c = coeffs.begin(); c != coeffs.end(); ++c) {
-    pindices.push_back(registerParameter(*c));
+    //pindices.push_back(registerParameter(*c));
+    registerParameter(*c);
   }
 
   registerFunction("ptr_to_SquareDalitzEff", ptr_to_SquareDalitzEff);

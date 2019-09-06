@@ -1,5 +1,6 @@
 #include <goofit/PDFs/physics/SquareDalitzEffPdf.h>
 #include <goofit/PDFs/ParameterContainer.h>
+#include <vector>
 
 
 namespace GooFit {
@@ -109,7 +110,7 @@ __device__ fptype device_SquareDalitzEff (fptype* evt, ParameterContainer &pc) {
 
 __device__ device_function_ptr ptr_to_SquareDalitzEff = device_SquareDalitzEff; 
 
-__device__ SquareDalitzEffPdf::SquareDalitzEffPdf (std::string n, 
+__host__ __device__ SquareDalitzEffPdf::SquareDalitzEffPdf (std::string n, 
 				        std::vector<Observable> obses, 
 					std::vector<Variable*> coeffs, 
 					std::vector<Variable*> constvals) 
@@ -122,13 +123,13 @@ __device__ SquareDalitzEffPdf::SquareDalitzEffPdf (std::string n,
 
   //std::vector<unsigned int> pindices;
   // Register constvals
-  for (vector<Variable*>::iterator v = constvals.begin(); v != constvals.end(); ++v) {
+  for (std::vector<Variable*>::iterator v = constvals.begin(); v != constvals.end(); ++v) {
     //pindices.push_back(registerParameter(*v));
     registerParameter(*v);
   }
 
   // Register coefficients
-  for (vector<Variable*>::iterator c = coeffs.begin(); c != coeffs.end(); ++c) {
+  for (std::vector<Variable*>::iterator c = coeffs.begin(); c != coeffs.end(); ++c) {
     //pindices.push_back(registerParameter(*c));
     registerParameter(*c);
   }

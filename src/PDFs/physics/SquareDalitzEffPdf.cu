@@ -1,4 +1,6 @@
 #include <goofit/PDFs/physics/SquareDalitzEffPdf.h>
+#include <goofit/PDFs/ParameterContainer.h>
+
 
 namespace GooFit {
 
@@ -50,8 +52,10 @@ __device__ fptype thetaprime (fptype m12, fptype m13, fptype mD, fptype mKS0, fp
 __device__ fptype device_SquareDalitzEff (fptype* evt, ParameterContainer &pc) {
 
   // Define observables 
-  fptype x = evt[pc.getObservable(0)];
-  fptype y = evt[pc.getObservable(1)];
+  int idx = pc.getObservable(0);
+  int idy = pc.getObservable(1);
+  fptype x = RO_CACHE(evt[idx]);
+  fptype y = RO_CACHE(evt[idy]);
 
   //fptype x = evt[indices[2 + indices[0] + 0]]; // m12   
   //fptype y = evt[indices[2 + indices[0] + 1]]; // m13   
@@ -106,9 +110,9 @@ __device__ fptype device_SquareDalitzEff (fptype* evt, ParameterContainer &pc) {
 __device__ device_function_ptr ptr_to_SquareDalitzEff = device_SquareDalitzEff; 
 
 __host__ SquareDalitzEffPdf::SquareDalitzEffPdf (std::string n, 
-				        vector<Variable*> obses, 
-					vector<Variable*> coeffs, 
-					vector<Variable*> constvals) 
+				        std::vector<Variable*> obses, 
+					std::vector<Variable*> coeffs, 
+					std::vector<Variable*> constvals) 
   : GooPdf("SquareDalitzEffPdf", n, obses, coeffs, constvals) {
 
   // Register observables - here m12, m13 and dtime

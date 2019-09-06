@@ -109,8 +109,8 @@ __device__ fptype device_SquareDalitzEff (fptype* evt, ParameterContainer &pc) {
 
 __device__ device_function_ptr ptr_to_SquareDalitzEff = device_SquareDalitzEff; 
 
-__host__ SquareDalitzEffPdf::SquareDalitzEffPdf (std::string n, 
-				        std::vector<Variable*> obses, 
+__device__ SquareDalitzEffPdf::SquareDalitzEffPdf (std::string n, 
+				        std::vector<Observable> obses, 
 					std::vector<Variable*> coeffs, 
 					std::vector<Variable*> constvals) 
   : GooPdf("SquareDalitzEffPdf", n, obses, coeffs, constvals) {

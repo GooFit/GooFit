@@ -85,8 +85,8 @@ __device__ fptype device_SquareDalitzEff (fptype* evt, fptype* p, unsigned int* 
 __device__ device_function_ptr ptr_to_SquareDalitzEff = device_SquareDalitzEff; 
 
 __host__ SquareDalitzEffPdf::SquareDalitzEffPdf (std::string n, vector<Variable*> obses, vector<Variable*> coeffs, vector<Variable*> constvals) 
-  : GooPdf(0, n) 
-{
+  : GooPdf("SquareDalitzEffPdf", n, obses, coeffs, constvals) {
+
   // Register observables - here m12, m13 and dtime
   for (unsigned int i = 0; i < obses.size(); ++i) {
     registerObservable(obses[i]);
@@ -104,7 +104,7 @@ __host__ SquareDalitzEffPdf::SquareDalitzEffPdf (std::string n, vector<Variable*
 
   registerFunction("ptr_to_SquareDalitzEff", ptr_to_SquareDalitzEff);
 
-  initialize()
+  initialize();
 
   //GET_FUNCTION_ADDR(ptr_to_SquareDalitzEff);
   //initialise(pindices);

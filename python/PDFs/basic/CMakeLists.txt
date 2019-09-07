@@ -24,6 +24,9 @@ add_library(_Basic STATIC
 
 target_link_libraries(_Basic PRIVATE _goofit_python)
 set_target_properties(_Basic PROPERTIES FOLDER python/PDFs)
+if(GOOFIT_KMATRIX)		
+    target_compile_definitions(_Physics PRIVATE GOOFIT_KMATRIX)		
+endif()
 
 goofit_add_python_docs(_Basic PDFs/basic/ArgusPdf.h)
 goofit_add_python_docs(_Basic PDFs/basic/BifurGaussPdf.h)

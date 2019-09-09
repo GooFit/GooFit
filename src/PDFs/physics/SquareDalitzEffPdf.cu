@@ -59,7 +59,7 @@ __device__ fptype device_SquareDalitzEff (fptype* evt, ParameterContainer &pc) {
 
   fptype x = RO_CACHE(evt[idx]);
   fptype y = RO_CACHE(evt[idy]);
-  fptype evtIndex RO_CACHE(evt[id_num]);
+  fptype evtIndex = RO_CACHE(evt[id_num]);
 
   // Define coefficients
   fptype c0 = pc.getParameter(0);
@@ -108,12 +108,12 @@ __host__ __device__ SquareDalitzEffPdf::SquareDalitzEffPdf (std::string n,
 
   // Register constvals
   for (std::vector<Variable>::iterator v = constvals.begin(); v != constvals.end(); ++v) {
-    registerParameter(*v);
+    registerParameter(v);
   }
 
   // Register coefficients
   for (std::vector<Variable>::iterator c = coeffs.begin(); c != coeffs.end(); ++c) {
-    registerParameter(*c);
+    registerParameter(c);
   }
 
   registerFunction("ptr_to_SquareDalitzEff", ptr_to_SquareDalitzEff);

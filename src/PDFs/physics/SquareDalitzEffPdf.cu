@@ -50,7 +50,7 @@ __device__ fptype thetaprime (fptype m12, fptype m13, fptype mD, fptype mKS0, fp
   return theta;
 }
 
-__device__ fptype device_SquareDalitzEff (fptype* evt, ParameterContainer &pc) {
+__device__ fptype device_SquareDalitzEff (fptype *evt, ParameterContainer &pc) {
 
   // Define observables 
   int idx = pc.getObservable(0);
@@ -69,15 +69,8 @@ __device__ fptype device_SquareDalitzEff (fptype* evt, ParameterContainer &pc) {
   fptype c4 = pc.getParameter(4);
   fptype c5 = pc.getParameter(5);
   fptype c6 = pc.getParameter(6);
+  fptype c7 = pc.getParameter(7);
 
-  // Define constvals
-  /*
-  fptype mD = pc.getParameter(7);
-  fptype mKS0 = pc.getParameter(8);
-  fptype mh1 = pc.getParameter(9);
-  fptype mh2 = pc.getParameter(10);
-  */
-  
   fptype mD = 1.86483;
   fptype mKS0 = 0.497611;
   fptype mh1 = 1.3957;
@@ -95,18 +88,28 @@ __device__ fptype device_SquareDalitzEff (fptype* evt, ParameterContainer &pc) {
   fptype m23 = mD*mD + mKS0*mKS0 + mh1*mh1 + mh2*mh2 - x - y; 
   if (m23 < 0) return 0;
 
-  fptype ret = c0*m23*m23 + c1*m23 + c2*m23*thetap*thetap + c3*thetap*thetap + c4*thetap + c5 + c6*m23*thetap; 
-  
+  fptype ret = c0*m23*m23 + c1*m23 + c2*m23*thetap*thetap + c3*thetap*thetap + c4*thetap + c5 + c6*m23*m23*m23*m23 + c7*m23*m23*m23;
+
   return ret; 
 }
 
 __device__ device_function_ptr ptr_to_SquareDalitzEff = device_SquareDalitzEff; 
 
 __host__ __device__ SquareDalitzEffPdf::SquareDalitzEffPdf (std::string n, 
-				        std::vector<Observable> obses, 
-					std::vector<Variable> coeffs) 
-  : GooPdf("SquareDalitzEffPdf", n, obses, coeffs) {
+				        Observable m12,
+					Observable m13,
+					Variable c0,
+					Variable c1,
+					Variable c2,
+					Variable c3,
+					Variable c4,
+					Variable c5,
+					Variable c6,
+					Variable c7)
 
+  : GooPdf("SquareDalitzEffPdf", n, m12, m13, c0, c1, c2, c3, c4, c5, c6, c7) {
+
+  /*
   // Register observables - here m12, m13 and dtime
   for (auto &ob : obses) {
     registerObservable(ob);
@@ -117,14 +120,8 @@ __host__ __device__ SquareDalitzEffPdf::SquareDalitzEffPdf (std::string n,
   for (auto &coef : coeffs) {
     registerParameter(coef);
   }
-  
-  /*
-  // Register coefficients
-  for (auto &cons : constvals) {
-    registerParameter(cons);
-  }
   */
-
+  
   registerFunction("ptr_to_SquareDalitzEff", ptr_to_SquareDalitzEff);
 
   initialize();

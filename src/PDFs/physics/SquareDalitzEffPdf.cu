@@ -71,10 +71,17 @@ __device__ fptype device_SquareDalitzEff (fptype* evt, ParameterContainer &pc) {
   fptype c6 = pc.getParameter(6);
 
   // Define constvals
+  /*
   fptype mD = pc.getParameter(7);
   fptype mKS0 = pc.getParameter(8);
   fptype mh1 = pc.getParameter(9);
   fptype mh2 = pc.getParameter(10);
+  */
+  
+  fptype mD = 1.86483;
+  fptype mKS0 = 0.497611;
+  fptype mh1 = 1.3957;
+  fptype mh2 = 1.3957;
 
   pc.incrementIndex(1, pc.getNumParameters(), pc.getNumConstants(), pc.getNumObservables(), 1);
 
@@ -97,24 +104,26 @@ __device__ device_function_ptr ptr_to_SquareDalitzEff = device_SquareDalitzEff;
 
 __host__ __device__ SquareDalitzEffPdf::SquareDalitzEffPdf (std::string n, 
 				        std::vector<Observable> obses, 
-					std::vector<Variable> coeffs, 
-					std::vector<Variable> constvals) 
-  : GooPdf("SquareDalitzEffPdf", n, obses, coeffs, constvals) {
+					std::vector<Variable> coeffs) 
+  : GooPdf("SquareDalitzEffPdf", n, obses, coeffs) {
 
   // Register observables - here m12, m13 and dtime
-  for (unsigned int i = 0; i < obses.size(); ++i) {
-    registerObservable(obses[i]);
+  for (auto &ob : obses) {
+    registerObservable(ob);
   }
 
+  
   // Register constvals
-  for (std::vector<Variable>::iterator v = constvals.begin(); v != constvals.end(); ++v) {
-    registerParameter(v);
+  for (auto &coef : coeffs) {
+    registerParameter(coef);
   }
-
+  
+  /*
   // Register coefficients
-  for (std::vector<Variable>::iterator c = coeffs.begin(); c != coeffs.end(); ++c) {
-    registerParameter(c);
+  for (auto &cons : constvals) {
+    registerParameter(cons);
   }
+  */
 
   registerFunction("ptr_to_SquareDalitzEff", ptr_to_SquareDalitzEff);
 

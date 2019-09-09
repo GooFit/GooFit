@@ -17,7 +17,17 @@ class SquareDalitzEffPdf : public GooPdf {
 public:
   // Very specific efficiency parametrisation for semileptonically-tagged D0->KSPiPi decays as determined from data
   // Uses variables of square Dalitz plot - m' and theta' 
-    SquareDalitzEffPdf (std::string n, std::vector<Observable> obses, std::vector<Variable> coeffs); 
+    SquareDalitzEffPdf (std::string n, 
+			Observable m12, 
+			Observable m13, 
+			Variable c0,
+			Variable c1,
+			Variable c2,
+			Variable c3,
+			Variable c4,
+			Variable c5,
+			Variable c6,
+			Variable c7); 
 
 private:
 

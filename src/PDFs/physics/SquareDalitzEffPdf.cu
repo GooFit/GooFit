@@ -109,19 +109,6 @@ __host__ __device__ SquareDalitzEffPdf::SquareDalitzEffPdf (std::string n,
 
   : GooPdf("SquareDalitzEffPdf", n, m12, m13, c0, c1, c2, c3, c4, c5, c6, c7) {
 
-  /*
-  // Register observables - here m12, m13 and dtime
-  for (auto &ob : obses) {
-    registerObservable(ob);
-  }
-
-  
-  // Register constvals
-  for (auto &coef : coeffs) {
-    registerParameter(coef);
-  }
-  */
-  
   registerFunction("ptr_to_SquareDalitzEff", ptr_to_SquareDalitzEff);
 
   initialize();

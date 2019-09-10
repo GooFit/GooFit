@@ -1,37 +1,11 @@
 #include <goofit/PDFs/physics/SquareDalitzEffPdf.h>
 #include <goofit/PDFs/ParameterContainer.h>
+#include <goofit/PDFs/physics/DalitzPlotHelpers.h>
+
 #include <vector>
 
 
 namespace GooFit {
-
-__device__ fptype inPS(fptype m12, fptype m13, fptype mD, fptype mKS0, fptype mh1, fptype mh2) {
-
-  if (m12 < pow(mKS0 + mh1, 2)) return 0;
-  if (m12 > pow(mD - mh2, 2)) return 0;
-
-  // Calculate energies of 1 and 3 particles in m12 rest frame. 
-  fptype e1star = 0.5 * (m12 - mh1*mh1 + mKS0*mKS0) / sqrt(m12);
-  fptype e3star = 0.5 * (mD*mD - m12 - mh2*mh2) / sqrt(m12);
-
-  fptype minimum = pow(e1star + e3star, 2) - pow(sqrt(e1star*e1star - mKS0*mKS0) + sqrt(e3star*e3star - mh2*mh2), 2);
-  if (m13 < minimum) return 0;
-  fptype maximum = pow(e1star + e3star, 2) - pow(sqrt(e1star*e1star - mKS0*mKS0) - sqrt(e3star*e3star - mh2*mh2), 2);
-  if (m13 > maximum) return 0;
-
-  return 1;
-}
-
-__device__ fptype mprime (fptype m12, fptype m13, fptype mD, fptype mKS0, fptype mh1, fptype mh2) {
-  // Helper function to calculate m'^2
-  fptype m23 = mD*mD + mKS0*mKS0 + mh1*mh1 + mh2*mh2 - m12 - m13; 
-  //fptype rootPi = -2.*ATAN2(-1.0,0.0); // Pi
-
-  if (m23 < 0) return -99;
-  fptype tmp = ((2.0*(sqrt(m23) - (mh1 + mh2))/(mD - mKS0 - (mh1 + mh2))) - 1.0);
-  if (isnan(tmp)) tmp = -99;
-  return tmp;
-}
 
 __device__ fptype thetaprime (fptype m12, fptype m13, fptype mD, fptype mKS0, fptype mh1, fptype mh2) {
   // Helper function to calculate theta'
@@ -79,14 +53,14 @@ __device__ fptype device_SquareDalitzEff (fptype *evt, ParameterContainer &pc) {
   pc.incrementIndex(1, pc.getNumParameters(), pc.getNumConstants(), pc.getNumObservables(), 1);
 
   // Check phase space
-  if (inPS == 0) return 0;
+  if (!inDalitz(x, y, mD, mKS0, mh1, mh2)) return 0;
   
   // Call helper functions
   fptype thetap = thetaprime(x,y,mD,mKS0,mh1,mh2); 
   if (thetap > 1. || thetap < -1.) return 0; 
 
   fptype m23 = mD*mD + mKS0*mKS0 + mh1*mh1 + mh2*mh2 - x - y; 
-  if (m23 < 0) return 0;
+  if (m23 < 0 || m23 > 2) return 0;
 
   fptype ret = c0*m23*m23 + c1*m23 + c2*m23*thetap*thetap + c3*thetap*thetap + c4*thetap + c5 + c6*m23*m23*m23*m23 + c7*m23*m23*m23;
 

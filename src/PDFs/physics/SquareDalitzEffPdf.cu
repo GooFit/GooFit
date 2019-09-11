@@ -10,18 +10,23 @@ namespace GooFit {
 __device__ fptype thetaprime (fptype m12, fptype m13, fptype mD, fptype mKS0, fptype mh1, fptype mh2) {
   // Helper function to calculate theta'
   fptype m23 = mD*mD + mKS0*mKS0 + mh1*mh1 + mh2*mh2 - m12 - m13; 
-  if (m23 < 0) return -99;
+  if (m23 < 0) return 0;
 
-  fptype num = m23*( m12 - m13) + (mh2*mh2 - mh1*mh1)*(mD*mD - mKS0*mKS0);
+  fptype num = m23*( m12 - m13);
   fptype denum = sqrt(((m23 - mh1*mh1 + mh2*mh2)*(m23 - mh1*mh1 + mh2*mh2) - 4*m23*mh2*mh2))*sqrt(((mD*mD - mKS0*mKS0 - m23)*(mD*mD - mKS0*mKS0 -m23) - 4*m23*mKS0*mKS0));
-  fptype theta = -99 ;
-  if (isnan(denum)) return -99;
-
-  if (denum != 0.){
-    theta = num/denum;
+  
+  //fptype theta = -99 ;
+  if (isnan(denum)) {
+    GOOFIT_TRACE("WARNING NAN.");
+    return 0;
   }
-
-  return theta;
+  if (denum != 0.){
+    return num/denum;
+  }
+  else {
+  GOOFIT_TRACE("WARNING deunum is zero.");
+  return 0;
+  }
 }
 
 __device__ fptype device_SquareDalitzEff (fptype *evt, ParameterContainer &pc) {

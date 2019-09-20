@@ -4,7 +4,6 @@
 
 #include <vector>
 
-
 namespace GooFit {
 
 __device__ fptype thetaprime (fptype m12, fptype m13, fptype mD, fptype mKS0, fptype mh1, fptype mh2) {
@@ -15,17 +14,16 @@ __device__ fptype thetaprime (fptype m12, fptype m13, fptype mD, fptype mKS0, fp
   fptype num = m23*( m12 - m13);
   fptype denum = sqrt(((m23 - mh1*mh1 + mh2*mh2)*(m23 - mh1*mh1 + mh2*mh2) - 4*m23*mh2*mh2))*sqrt(((mD*mD - mKS0*mKS0 - m23)*(mD*mD - mKS0*mKS0 -m23) - 4*m23*mKS0*mKS0));
   
-  //fptype theta = -99 ;
   if (isnan(denum)) {
     GOOFIT_TRACE("WARNING NAN.");
-    return 0;
+    return -99;
   }
   if (denum != 0.){
     return num/denum;
   }
   else {
   GOOFIT_TRACE("WARNING deunum is zero.");
-  return 0;
+  return -99;
   }
 }
 
@@ -55,8 +53,6 @@ __device__ fptype device_SquareDalitzEff (fptype *evt, ParameterContainer &pc) {
   fptype mh1 = 1.3957;
   fptype mh2 = 1.3957;
 
-  pc.incrementIndex(1, pc.getNumParameters(), pc.getNumConstants(), pc.getNumObservables(), 1);
-
   // Check phase space
   if (!inDalitz(x, y, mD, mKS0, mh1, mh2)) return 0;
   
@@ -67,16 +63,21 @@ __device__ fptype device_SquareDalitzEff (fptype *evt, ParameterContainer &pc) {
   fptype m23 = mD*mD + mKS0*mKS0 + mh1*mh1 + mh2*mh2 - x - y; 
   if (m23 < 0 || m23 > 2) return 0;
 
-  fptype ret = c0*m23*m23 + c1*m23 + c2*m23*thetap*thetap + c3*thetap*thetap + c4*thetap + c5 + c6*m23*m23*m23*m23 + c7*m23*m23*m23;
+  //fptype ret = c0*m23*m23 + c1*m23 + c2*m23*thetap*thetap + c3*thetap*thetap + c4*thetap + c5 + c6*m23*m23*m23*m23 + c7*m23*m23*m23;
+  fptype ret = c5;
+
+  pc.incrementIndex(1, pc.getNumParameters(), pc.getNumConstants(), pc.getNumObservables(), 1);
 
   return ret; 
+
 }
 
 __device__ device_function_ptr ptr_to_SquareDalitzEff = device_SquareDalitzEff; 
 
-__host__ __device__ SquareDalitzEffPdf::SquareDalitzEffPdf (std::string n, 
+__host__ SquareDalitzEffPdf::SquareDalitzEffPdf (std::string n, 
 				        Observable m12,
 					Observable m13,
+					Observable eventNumber,
 					Variable c0,
 					Variable c1,
 					Variable c2,
@@ -86,7 +87,20 @@ __host__ __device__ SquareDalitzEffPdf::SquareDalitzEffPdf (std::string n,
 					Variable c6,
 					Variable c7)
 
-  : GooPdf("SquareDalitzEffPdf", n, m12, m13, c0, c1, c2, c3, c4, c5, c6, c7) {
+  : GooPdf("SquareDalitzEffPdf", n) {
+
+  registerParameter(c0);
+  registerParameter(c1);
+  registerParameter(c2);
+  registerParameter(c3);
+  registerParameter(c4);
+  registerParameter(c5);
+  registerParameter(c6);
+  registerParameter(c7);
+
+  registerObservable(m12);
+  registerObservable(m13);
+  registerObservable(eventNumber);
 
   registerFunction("ptr_to_SquareDalitzEff", ptr_to_SquareDalitzEff);
 

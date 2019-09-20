@@ -20,6 +20,7 @@ public:
     SquareDalitzEffPdf (std::string n, 
 			Observable m12, 
 			Observable m13, 
+			Observable eventNumber,
 			Variable c0,
 			Variable c1,
 			Variable c2,

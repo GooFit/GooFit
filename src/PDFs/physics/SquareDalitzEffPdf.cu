@@ -66,7 +66,7 @@ __device__ fptype device_SquareDalitzEff (fptype *evt, ParameterContainer &pc) {
   //fptype ret = c0*m23*m23 + c1*m23 + c2*m23*thetap*thetap + c3*thetap*thetap + c4*thetap + c5 + c6*m23*m23*m23*m23 + c7*m23*m23*m23;
   fptype ret = c5;
 
-  pc.incrementIndex(1, pc.getNumParameters(), pc.getNumConstants(), pc.getNumObservables(), 1);
+  pc.incrementIndex(1, 8, 0, 2, 1);
 
   return ret; 
 
@@ -77,7 +77,6 @@ __device__ device_function_ptr ptr_to_SquareDalitzEff = device_SquareDalitzEff;
 __host__ SquareDalitzEffPdf::SquareDalitzEffPdf (std::string n, 
 				        Observable m12,
 					Observable m13,
-					Observable eventNumber,
 					Variable c0,
 					Variable c1,
 					Variable c2,
@@ -100,7 +99,6 @@ __host__ SquareDalitzEffPdf::SquareDalitzEffPdf (std::string n,
 
   registerObservable(m12);
   registerObservable(m13);
-  registerObservable(eventNumber);
 
   registerFunction("ptr_to_SquareDalitzEff", ptr_to_SquareDalitzEff);
 

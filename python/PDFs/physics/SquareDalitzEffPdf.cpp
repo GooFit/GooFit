@@ -9,11 +9,10 @@ using namespace GooFit;
 
 void init_SquareDalitzEffPdf(py::module &m) {
   py::class_<SquareDalitzEffPdf, GooPdf>(m, "SquareDalitzEffPdf")
-    .def(py::init<std::string, Observable, Observable, Observable, Variable, Variable, Variable, Variable, Variable, Variable, Variable, Variable>(),
+    .def(py::init<std::string,Observable, Observable, Variable, Variable, Variable, Variable, Variable, Variable, Variable, Variable>(),
 	 "name"_a,
 	 "m12"_a,
 	 "m13"_a,
-	 "eventNumber"_a,
 	 "c0"_a,
 	 "c1"_a,
 	 "c2"_a,

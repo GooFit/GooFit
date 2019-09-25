@@ -106,4 +106,8 @@ __host__ SquareDalitzEffPdf::SquareDalitzEffPdf (std::string n,
 
 }
 
+__host__ fptype SquareDalitzEffPdf::normalize() {
+    return 1;
+}
+
 } // namespace GooFit

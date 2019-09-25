@@ -29,6 +29,8 @@ public:
 			Variable c6,
 			Variable c7); 
 
+    __host__ fptype normalize() override;
+
 private:
 
 };

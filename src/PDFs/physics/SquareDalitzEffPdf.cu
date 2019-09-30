@@ -29,14 +29,16 @@ __device__ fptype thetaprime(fptype m12, fptype m13, fptype mD, fptype mKS0, fpt
 }
 
 __device__ fptype device_SquareDalitzEff(fptype *evt, ParameterContainer &pc) {
+    int num_constants  = pc.getNumConstants();
+    int num_parameters = pc.getNumParameters();
+    int num_observables = pc.getNumObservables();
+
     // Define observables
     int idx    = pc.getObservable(0);
     int idy    = pc.getObservable(1);
-    int id_num = pc.getObservable(2);
 
     fptype x        = RO_CACHE(evt[idx]);
     fptype y        = RO_CACHE(evt[idy]);
-    fptype evtIndex = RO_CACHE(evt[id_num]);
 
     // Define coefficients
     fptype c0 = pc.getParameter(0);
@@ -70,7 +72,8 @@ __device__ fptype device_SquareDalitzEff(fptype *evt, ParameterContainer &pc) {
     // + c7*m23*m23*m23;
     fptype ret = c5;
 
-    pc.incrementIndex(1, 8, 0, 2, 1);
+    pc.incrementIndex(1, num_parameters, num_constants, num_observables, 1);
+
 
     return ret;
 }

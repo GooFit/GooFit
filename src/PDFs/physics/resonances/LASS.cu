@@ -13,6 +13,13 @@ __device__ fpcomplex lass(fptype m12, fptype m13, fptype m23, ParameterContainer
     fptype resmass  = pc.getParameter(0);
     fptype reswidth = pc.getParameter(1);
 
+    fptype _a    = pc.getParameter(2);
+    fptype _r    = pc.getParameter(3);
+    fptype _R    = pc.getParameter(4);
+    fptype _phiR = pc.getParameter(5);
+    fptype _B    = pc.getParameter(6);
+    fptype _phiB = pc.getParameter(7);
+
     fptype rMassSq  = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
     fptype frFactor = 1;
 
@@ -45,12 +52,14 @@ __device__ fpcomplex lass(fptype m12, fptype m13, fptype m23, ParameterContainer
     fptype q = measureDaughterMoms;
     fptype g = reswidth * pow(measureDaughterMoms / nominalDaughterMoms, 2.0 * spin + 1) * frFactor / sqrt(rMassSq);
 
-    fptype _a    = 0.22357;
-    fptype _r    = -15.042;
-    fptype _R    = 1; // ?
-    fptype _phiR = 1.10644;
-    fptype _B    = 0.614463;
-    fptype _phiB = -0.0981907;
+    /*
+    fptype _a    = 0.113; //0.22357;
+    fptype _r    = -33.8; //-15.042;
+    fptype _R    = 1; // ? Fixed
+    fptype _phiR = -1.91463; //1.10644;
+    fptype _B    = 0.96; //0.614463;
+    fptype _phiB = 0.00174533; //-0.0981907;
+    */
 
     // background phase motion
     fptype cot_deltaB  = (1.0 / (_a * q)) + 0.5 * _r * q;
@@ -80,10 +89,29 @@ __device__ resonance_function_ptr ptr_to_LASS = lass;
 
 namespace Resonances {
 
-LASS::LASS(std::string name, Variable ar, Variable ai, Variable mass, Variable width, unsigned int sp, unsigned int cyc)
+LASS::LASS(std::string name, 
+           Variable ar, 
+           Variable ai, 
+           Variable mass, 
+           Variable width,
+           Variable _a,
+           Variable _r,
+           Variable _R,
+           Variable _phiR,
+           Variable _B,
+           Variable _phiB,
+           unsigned int sp, 
+           unsigned int cyc)
     : ResonancePdf("LASS", name, ar, ai) {
     registerParameter(mass);
     registerParameter(width);
+    registerParameter(_a);
+    registerParameter(_r);
+    registerParameter(_R);
+    registerParameter(_phiR);
+    registerParameter(_B);
+    registerParameter(_phiB);
+
 
     registerConstant(sp);
     registerConstant(cyc);

@@ -86,8 +86,9 @@ void init_Amp4Body_TD(py::module &m) {
 
                  return std::make_tuple(pyparticles, pyvariables, pyweights, pyflags);
              })
+        .def("setDataSize", &Amp4Body_TD::setDataSize, "dataSize"_a, "evtSize"_a)
         .def("setGenerationOffset", &Amp4Body_TD::setGenerationOffset, "off"_a)
-
+      
         ;
 
     m.attr("TDDP4") = cls;

@@ -37,19 +37,20 @@ void init_Amp4Body_TD(py::module &m) {
             py::keep_alive<1, 7>())
 
         .def("GenerateSig",
-             [](Amp4Body_TD &self, size_t numEvents) {
+             [](Amp4Body_TD &self, size_t numEvents, size_t seed) {
                  mcbooster::ParticlesSet_h particles; // vector of pointers to vectors of 4R
                  mcbooster::VariableSet_h variables;  // vector of pointers to vectors of Grealt
                  mcbooster::RealVector_h weights;     // vector of greal t
                  mcbooster::BoolVector_h flags;       // vector of gboolt
 
-                 std::tie(particles, variables, weights, flags) = self.GenerateSig(numEvents);
-
-                 py::array_t<fptype> pyparticles{{(size_t)4 * 4, numEvents}};
+                 std::tie(particles, variables, weights, flags) = self.GenerateSig(numEvents,seed);
+		 //change to potential typo
+		 py::array_t<fptype> pyparticles{{(size_t)4, 4 * numEvents}};
+                 //py::array_t<fptype> pyparticles{{(size_t)4 * 4, numEvents}};
                  py::array_t<fptype> pyvariables{{(size_t)6, numEvents}};
                  py::array_t<fptype> pyweights{numEvents};
                  py::array_t<bool> pyflags{numEvents};
-
+		 /*
                  for(int i = 0; i < 4; i++) {
                      for(int j = 0; j < weights.size(); j++) {
                          pyparticles.mutable_at(i * 4, j)     = (*(particles[i]))[j].get(0);
@@ -57,6 +58,15 @@ void init_Amp4Body_TD(py::module &m) {
                          pyparticles.mutable_at(i * 4 + 2, j) = (*(particles[i]))[j].get(2);
                          pyparticles.mutable_at(i * 4 + 3, j) = (*(particles[i]))[j].get(3);
                      }
+                 }
+		 */
+		 for(int i = 0; i < 4; i++) {
+		   for(int j = 0, k = 0; j < numEvents; j++, k = k + 4) {
+		     pyparticles.mutable_at(i, k)     = (*(particles[i]))[j].get(0);
+		     pyparticles.mutable_at(i, k + 1) = (*(particles[i]))[j].get(1);
+		     pyparticles.mutable_at(i, k + 2) = (*(particles[i]))[j].get(2);
+		     pyparticles.mutable_at(i, k + 3) = (*(particles[i]))[j].get(3);
+		   }
                  }
 
                  for(int i = 0; i < 6; i++) {
@@ -86,8 +96,10 @@ void init_Amp4Body_TD(py::module &m) {
 
                  return std::make_tuple(pyparticles, pyvariables, pyweights, pyflags);
              })
-        .def("setDataSize", &Amp4Body_TD::setDataSize, "dataSize"_a, "evtSize"_a)
-        .def("setGenerationOffset", &Amp4Body_TD::setGenerationOffset, "off"_a)
+      .def("setDataSize", &Amp4Body_TD::setDataSize, "dataSize"_a, "evtSize"_a)
+      .def("setGenerationOffset", &Amp4Body_TD::setGenerationOffset, "off"_a)
+      .def("populateArrays",&Amp4Body_TD::populateArrays)
+      .def("normalize",&Amp4Body_TD::normalize)
       
         ;
 

@@ -9,6 +9,8 @@
 #include <goofit/PDFs/physics/MixingTimeResolution.h>
 #include <goofit/PDFs/physics/SpinFactors.h>
 #include <goofit/Variable.h>
+#include <goofit/PDFs/physics/detail/NormSpinCalculator_TD.h>
+#include <thrust/count.h>
 
 using namespace GooFit;
 namespace py = pybind11;
@@ -35,22 +37,29 @@ void init_Amp4Body_TD(py::module &m) {
             py::keep_alive<1, 5>(),
             py::keep_alive<1, 6>(),
             py::keep_alive<1, 7>())
-
+        
+        .def("setDataSize", &Amp4Body_TD::setDataSize, "dataSize"_a, "evtSize"_a)
+        .def("setGenerationOffset", &Amp4Body_TD::setGenerationOffset, "off"_a)
+        .def("populateArrays",&Amp4Body_TD::populateArrays)
+        .def("normalize",&Amp4Body_TD::normalize)
+        .def("setForceIntegrals",&Amp4Body_TD::setForceIntegrals)
+        .def("getMCevents",&Amp4Body_TD::getMCevents)
+        .def("setMaxWeight",&Amp4Body_TD::setMaxWeight,"wmax"_a)
         .def("GenerateSig",
-             [](Amp4Body_TD &self, size_t numEvents, size_t seed) {
+             [](Amp4Body_TD &self, size_t numEvents) {
                  mcbooster::ParticlesSet_h particles; // vector of pointers to vectors of 4R
                  mcbooster::VariableSet_h variables;  // vector of pointers to vectors of Grealt
                  mcbooster::RealVector_h weights;     // vector of greal t
                  mcbooster::BoolVector_h flags;       // vector of gboolt
 
-                 std::tie(particles, variables, weights, flags) = self.GenerateSig(numEvents,seed);
-		 //change to potential typo
-		 py::array_t<fptype> pyparticles{{(size_t)4, 4 * numEvents}};
-                 //py::array_t<fptype> pyparticles{{(size_t)4 * 4, numEvents}};
+                 std::tie(particles, variables, weights, flags) = self.GenerateSig(numEvents);
+		 py::array_t<fptype> pyparticles{{(size_t)4 * 4, numEvents}};
                  py::array_t<fptype> pyvariables{{(size_t)6, numEvents}};
                  py::array_t<fptype> pyweights{numEvents};
-                 py::array_t<bool> pyflags{numEvents};
-		 /*
+                 py::array_t<fptype> pyflags{numEvents};
+		 int accepted = thrust::count_if(flags.begin(), flags.end(), thrust::identity<bool>());
+		 std::cout << "nAcc (from length of weights vector is " << weights.size() << std::endl;
+		 std::cout << "Number of accepted flags: " << accepted << std::endl;
                  for(int i = 0; i < 4; i++) {
                      for(int j = 0; j < weights.size(); j++) {
                          pyparticles.mutable_at(i * 4, j)     = (*(particles[i]))[j].get(0);
@@ -59,16 +68,8 @@ void init_Amp4Body_TD(py::module &m) {
                          pyparticles.mutable_at(i * 4 + 3, j) = (*(particles[i]))[j].get(3);
                      }
                  }
-		 */
-		 for(int i = 0; i < 4; i++) {
-		   for(int j = 0, k = 0; j < numEvents; j++, k = k + 4) {
-		     pyparticles.mutable_at(i, k)     = (*(particles[i]))[j].get(0);
-		     pyparticles.mutable_at(i, k + 1) = (*(particles[i]))[j].get(1);
-		     pyparticles.mutable_at(i, k + 2) = (*(particles[i]))[j].get(2);
-		     pyparticles.mutable_at(i, k + 3) = (*(particles[i]))[j].get(3);
-		   }
-                 }
-
+		 
+		 
                  for(int i = 0; i < 6; i++) {
                      for(int j = 0; j < weights.size(); j++) {
                          pyvariables.mutable_at(i, j) = (*(variables[i]))[j];
@@ -82,6 +83,10 @@ void init_Amp4Body_TD(py::module &m) {
                  for(int i = 0; i < weights.size(); i++) {
                      pyflags.mutable_at(i) = flags[i];
                  }
+		 std::cout << "Check to see what weights have been initialized with" << std::endl;
+		 for(int i = weights.size() -1; i < weights.size() + 10; i++){
+		   std::cout << "Flag value: " << flags[i] << std::endl;
+		 }
                  delete variables[0];
                  delete variables[1];
                  delete variables[2];
@@ -96,11 +101,7 @@ void init_Amp4Body_TD(py::module &m) {
 
                  return std::make_tuple(pyparticles, pyvariables, pyweights, pyflags);
              })
-      .def("setDataSize", &Amp4Body_TD::setDataSize, "dataSize"_a, "evtSize"_a)
-      .def("setGenerationOffset", &Amp4Body_TD::setGenerationOffset, "off"_a)
-      .def("populateArrays",&Amp4Body_TD::populateArrays)
-      .def("normalize",&Amp4Body_TD::normalize)
-      
+            
         ;
 
     m.attr("TDDP4") = cls;

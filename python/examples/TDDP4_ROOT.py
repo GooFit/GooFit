@@ -24,10 +24,10 @@ def main():
     DK3P_DI.particle_masses = (_mD0,piPlusMass,piPlusMass,KmMass,piPlusMass)
 
     
-    RhoMass  = Variable("rho_mass", 0.77526, 0.01, 0.7, 0.8)
-    RhoWidth = Variable("rho_width", 0.1478, 0.01, 0.1, 0.2)
-    KstarM   = Variable("KstarM", 0.89581, 0.01, 0.9, 0.1)
-    KstarW   = Variable("KstarW", 0.0474, 0.01, 0.1, 0.2)
+    RhoMass  = Variable("rho_mass", 0.77526)
+    RhoWidth = Variable("rho_width", 0.1478)
+    KstarM   = Variable("KstarM", 0.89581)
+    KstarW   = Variable("KstarW", 0.0474)
 
 
     SFKRS  = (SpinFactor("SF", SF_4Body .DtoV1V2_V1toP1P2_V2toP3P4_S, _mD0, 0, 1, 2, 3),
@@ -54,20 +54,20 @@ def main():
     SFA1RD = (SpinFactor("SF", SF_4Body .DtoAP1_AtoVP2Dwave_VtoP3P4, _mD0, 2, 3, 0, 1),
               SpinFactor("SF", SF_4Body .DtoAP1_AtoVP2Dwave_VtoP3P4, _mD0, 2, 0, 3, 1))
 
-    LSKRS = (Lineshapes.RBW("rho(770)",RhoMass, RhoWidth, 1, M_12),
-             Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_34),
-             Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_24),
-             Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_13))
+    LSKRS = (Lineshapes.RBW("rho(770)",RhoMass, RhoWidth, 1, M_12,FF.BL2),
+             Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_34,FF.BL2),
+             Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_24,FF.BL2),
+             Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_13,FF.BL2))
 
-    LSKRP = (Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_12),
-             Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_34),
-             Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_24),
-             Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_13))
+    LSKRP = (Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_12,FF.BL2),
+             Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_34,FF.BL2),
+             Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_24,FF.BL2),
+             Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_13,FF.BL2))
 
-    LSKRD = (Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_12),
-             Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_34),
-             Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_24),
-             Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_13))
+    LSKRD = (Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_12,FF.BL2),
+             Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_34,FF.BL2),
+             Lineshapes.RBW("rho(770)", RhoMass, RhoWidth, 1, M_24,FF.BL2),
+             Lineshapes.RBW("K*(892)bar", KstarM, KstarW, 1, M_13,FF.BL2))
 
     Bose_symmetrized_AMP_S = Amplitude("K*(892)rho(770)_S",
                                         Variable("amp_real1", 1.0),
@@ -110,13 +110,13 @@ def main():
                                           LSKRD,
                                           SFKRD,
                                           2)
-
-    DK3P_DI.amplitudes_B = (Bose_symmetrized_AMP_S,
+    DK3P_DI.amplitudes = (Bose_symmetrized_AMP_S,
                             Bose_symmetrized_AMP_P,
-                            Bose_symmetrized_AMP_D,
-                            Bose_symmetrized_AMP_S_B,
-                            Bose_symmetrized_AMP_P_B,
-                            Bose_symmetrized_AMP_D_B)
+                            Bose_symmetrized_AMP_D)
+
+    DK3P_DI.amplitudes_B = ( Bose_symmetrized_AMP_S_B,
+                           Bose_symmetrized_AMP_P_B,
+                           Bose_symmetrized_AMP_D_B)
 
 
     m12                 = Observable("m12", 0, 3)
@@ -149,17 +149,22 @@ def main():
 
     data_dict = {'m12':m12arr,'m34':m34arr,'c12':c12arr,'c34':c34arr,'phi':phiarr,'dtime':dtimearr}
     
-    for k in range(2,10):
+    for k in range(10):
         numEvents = 800000
 
         dp.setGenerationOffset(k * numEvents)
-        print("Generating events with seed {}".format(k))
-        particles, variables, weights, flags = dp.GenerateSig(numEvents,k)
+        particles, variables, weights, flags = dp.GenerateSig(numEvents)
         #print(particles)
         #print(weights)
-        
-        for i in range(len(variables[0])):
-            if((flags[i] == True) and (variables[0][i] > 0.0) and (variables[1][i] > 0.0)):
+        nAcc = np.sum(flags)
+        print("Flags array shape: {} ".format(flags.shape))
+        print("Len of weights array: {} ".format(len(weights)))
+        print("Number of accepted flags in python array : {}".format(nAcc))
+        print("Number of flags exactly equal to 1: {}".format(np.count_nonzero(flags == 1)))
+        for i in range(len(weights)):
+            
+            if((flags[i] == 1.0) and (variables[0][i] > 0.0) and (variables[1][i] > 0.0)):
+            #if(flags[i] == 1.0): 
                 m12arr.append(variables[0][i])
                 m34arr.append(variables[1][i])
                 c12arr.append(variables[2][i])
@@ -169,13 +174,18 @@ def main():
         
         #print(particles)
         #print(variables)
+        
+
+    
     df = pd.DataFrame(data_dict)
         
     print("Generate {} events".format(len(df.index)))
-    df.to_root("output.root")
+    df.to_root("output_TD.root")
    
-    print(DK3P_DI.amplitudes)
-    print(DK3P_DI.amplitudes_B)
+    #print(DK3P_DI.amplitudes)
+    #print(DK3P_DI.amplitudes_B)
+
+    
     return 0
 
 if __name__ == "__main__":

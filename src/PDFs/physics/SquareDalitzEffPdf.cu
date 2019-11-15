@@ -1,7 +1,7 @@
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <goofit/PDFs/physics/SquareDalitzEffPdf.h>
-
+#include <cmath>
 #include <vector>
 
 namespace GooFit {
@@ -16,7 +16,7 @@ __device__ fptype thetaprime(fptype m12, fptype m13, fptype mD, fptype mKS0, fpt
     fptype denum = sqrt(((m23 - mh1 * mh1 + mh2 * mh2) * (m23 - mh1 * mh1 + mh2 * mh2) - 4 * m23 * mh2 * mh2))
                    * sqrt(((mD * mD - mKS0 * mKS0 - m23) * (mD * mD - mKS0 * mKS0 - m23) - 4 * m23 * mKS0 * mKS0));
 
-    if(std::isnan(denum)) {
+    if(isnan(denum)) {
         GOOFIT_TRACE("WARNING NAN.");
         return -99;
     }
@@ -112,3 +112,4 @@ __host__ SquareDalitzEffPdf::SquareDalitzEffPdf(std::string n,
 __host__ fptype SquareDalitzEffPdf::normalize() { return 1; }
 
 } // namespace GooFit
+

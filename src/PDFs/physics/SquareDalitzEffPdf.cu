@@ -16,7 +16,7 @@ __device__ fptype thetaprime(fptype m12, fptype m13, fptype mD, fptype mKS0, fpt
     fptype denum = sqrt(((m23 - mh1 * mh1 + mh2 * mh2) * (m23 - mh1 * mh1 + mh2 * mh2) - 4 * m23 * mh2 * mh2))
                    * sqrt(((mD * mD - mKS0 * mKS0 - m23) * (mD * mD - mKS0 * mKS0 - m23) - 4 * m23 * mKS0 * mKS0));
 
-    if(isnan(denum)) {
+    if(std::isnan(denum)) {
         GOOFIT_TRACE("WARNING NAN.");
         return -99;
     }

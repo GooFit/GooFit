@@ -1,0 +1,22 @@
+name: Simple build
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    container:
+      image: rootproject/root:latest
+    
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        submodules: recursive
+
+    - name: Configure
+      run: cmake -S . -B build -DGOOFIT_DEVICE=OMP -DGOOFIT_CXX_STANDARD=14
+    - name: Build
+      run: cmake --build build -j10
+    - name: Run Tests
+      run: cmake --build build --target tests

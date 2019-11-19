@@ -102,9 +102,6 @@ void *get_device_symbol_address(const T &symbol) {
 #define BLOCKIDX (0)
 #define THREAD_SYNCH
 
-// Adding this to make sure isnan works on all builds
-using std::isnan;
-
 #elif THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
 
 #define THREADIDX (threadIdx.x)

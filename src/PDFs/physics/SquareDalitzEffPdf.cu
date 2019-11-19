@@ -12,9 +12,10 @@ __device__ fptype thetaprime(fptype m12, fptype m13, fptype mD, fptype mKS0, fpt
         return 0;
 
     fptype num   = m23 * (m12 - m13);
-    fptype denum = sqrt(((m23 - mh1 * mh1 + mh2 * mh2) * (m23 - mh1 * mh1 + mh2 * mh2) - 4 * m23 * mh2 * mh2))
-                   * sqrt(((mD * mD - mKS0 * mKS0 - m23) * (mD * mD - mKS0 * mKS0 - m23) - 4 * m23 * mKS0 * mKS0));
-    if( isnan(denum)) {
+    fptype lambda1 = ((m23 - mh1 * mh1 + mh2 * mh2) * (m23 - mh1 * mh1 + mh2 * mh2) - 4 * m23 * mh2 * mh2);
+    fptype lambda2 = ((mD * mD - mKS0 * mKS0 - m23) * (mD * mD - mKS0 * mKS0 - m23) - 4 * m23 * mKS0 * mKS0);
+    fptype denum = sqrt(lambda1)*sqrt(lambda2);
+    if(lambda1 >= 0. && lambda2 >= 0.) {
         GOOFIT_TRACE("WARNING NAN.");
         return -99;
     }
@@ -66,9 +67,8 @@ __device__ fptype device_SquareDalitzEff(fptype *evt, ParameterContainer &pc) {
     if(m23 < 0 || m23 > 2)
         return 0;
 
-    // fptype ret = c0*m23*m23 + c1*m23 + c2*m23*thetap*thetap + c3*thetap*thetap + c4*thetap + c5 + c6*m23*m23*m23*m23
-    // + c7*m23*m23*m23;
-    fptype ret = c5;
+    fptype ret = c0*m23*m23 + c1*m23 + c2*m23*thetap*thetap + c3*thetap*thetap + c4*thetap + c5 + c6*m23*m23*m23*m23
+    + c7*m23*m23*m23;
 
     pc.incrementIndex(1, num_parameters, num_constants, num_observables, 1);
 

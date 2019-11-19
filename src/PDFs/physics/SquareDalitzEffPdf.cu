@@ -15,7 +15,7 @@ __device__ fptype thetaprime(fptype m12, fptype m13, fptype mD, fptype mKS0, fpt
     fptype lambda1 = ((m23 - mh1 * mh1 + mh2 * mh2) * (m23 - mh1 * mh1 + mh2 * mh2) - 4 * m23 * mh2 * mh2);
     fptype lambda2 = ((mD * mD - mKS0 * mKS0 - m23) * (mD * mD - mKS0 * mKS0 - m23) - 4 * m23 * mKS0 * mKS0);
     fptype denum = sqrt(lambda1)*sqrt(lambda2);
-    if(lambda1 >= 0. && lambda2 >= 0.) {
+    if(lambda1 < 0. || lambda2 < 0.) {
         GOOFIT_TRACE("WARNING NAN.");
         return -99;
     }

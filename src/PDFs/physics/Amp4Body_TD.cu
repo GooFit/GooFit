@@ -14,6 +14,11 @@ class.
   -For example the way Spinfactors are stored in the same array as the Lineshape values.
    Is this really worth the memory we lose by using a complex to store the SF?
 */
+
+
+
+//#include <pybind11/pybind11.h>
+
 #include <goofit/Error.h>
 #include <goofit/FitControl.h>
 #include <goofit/Log.h>
@@ -42,6 +47,7 @@ class.
 #include <goofit/PDFs/physics/resonances/Resonance.h>
 
 #include <cstdarg>
+
 
 namespace GooFit {
 
@@ -165,10 +171,7 @@ __device__ fptype device_Amp4Body_TD(fptype *evt, ParameterContainer &pc) {
     fptype _SqWStoRSrate = pc.getParameter(3);
     fptype _time         = RO_CACHE(evt[id_time]);
     fptype _sigma        = RO_CACHE(evt[id_sigma]);
-    fptype wSig = 1.0;
-    if(numObs > 8){
-      fptype wSig = RO_CACHE(evt[id_wsig]);
-    }
+    fptype wSig = RO_CACHE(evt[id_wsig]);
 
     AmpA *= _SqWStoRSrate;
     /*printf("%i read time: %.5g x: %.5g y: %.5g \n",evtNum, _time, _xmixing, _ymixing);*/
@@ -198,10 +201,11 @@ __device__ fptype device_Amp4Body_TD(fptype *evt, ParameterContainer &pc) {
     
     // efficiency function?
     fptype eff = callFunction(evt, pc);
-    /*printf("%i result %.7g, eff %.7g\n",evtNum, ret, eff);*/
+    //printf("%i result %.7g, eff %.7g, weight %.7g\n",evtNum, ret, eff,wSig);
     
     //get the weight for the event and multiply
     ret *= wSig;
+    //printf("multipled by weight:%lf /n",wSig);
     ret *= eff;
     /*printf("in prob: %f\n", ret);*/
     return ret;
@@ -480,7 +484,12 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
 
     Dim5 eval = Dim5();
     mcbooster::EvaluateArray<Dim5>(eval, pset, VarSet);
-
+    //calculate the weights using the BDT for the normalisation events
+    //std::cout << "This is from the c++ host!" << std::endl;
+    //PyObject* pInt;
+    //Py_Initialize();
+    //PyRun_SimpleString("print('Hello World from Embedded Python!!!')");
+    //Py_Finalize();
     norm_SF  = mcbooster::RealVector_d(nAcc * SpinFactors.size());
     norm_LS  = mcbooster::mc_device_vector<fpcomplex>(nAcc * (components.size() - 1));
     MCevents = nAcc;

@@ -16,6 +16,7 @@ goofit_add_library(_Physics STATIC
     SpinFactors.cpp
     ThreeGaussResolution.cpp
     TruthResolution.cpp
+    SquareDalitzEffPdf.cpp
 )
 target_link_libraries(_Physics PRIVATE _goofit_python)
 set_target_properties(_Physics PROPERTIES FOLDER python/PDFs)
@@ -28,3 +29,4 @@ goofit_add_python_docs(_Physics PDFs/physics/MixingTimeResolution.h)
 goofit_add_python_docs(_Physics PDFs/physics/resonances/Resonance.h)
 goofit_add_python_docs(_Physics PDFs/physics/ThreeGaussResolution.h)
 goofit_add_python_docs(_Physics PDFs/physics/TruthResolution.h)
+goofit_add_python_docs(_Physics PDFs/physics/SquareDalitzEffPdf.h)

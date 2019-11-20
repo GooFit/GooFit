@@ -17,6 +17,6 @@ jobs:
     - name: Configure
       run: cmake -S . -B build -DGOOFIT_DEVICE=OMP -DGOOFIT_CXX_STANDARD=14
     - name: Build
-      run: cmake --build build -j10
+      run: cmake --build build -j "$(getconf _NPROCESSORS_ONLN)"
     - name: Run Tests
       run: cmake --build build --target tests

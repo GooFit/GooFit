@@ -48,6 +48,42 @@ class Amp4Body_TD : public Amp4BodyBase {
     __host__ int getMCevents() { return MCevents; }
     __host__ void setGenerationOffset(int off) { generation_offset = off; }
     __host__ void setMaxWeight(fptype wmax) { maxWeight = wmax; }
+    
+    __host__ void set_use_bdt_weights(bool use = true){use_bdt_weights = use;}
+    
+    //functions to get the normalization variables
+    //this means copying to host from device and vice-versa but there doesn't seem to be an alternative
+    __host__ mcbooster::RealVector_h get_norm_m12(){
+      auto host_norm_m12 = mcbooster::RealVector_h(norm_M12);
+      return host_norm_m12;
+    }
+    __host__ mcbooster::RealVector_h get_norm_m34()
+    {
+      auto host_norm_m34 = mcbooster::RealVector_h(norm_M34);
+      return host_norm_m34;
+    }
+    __host__ mcbooster::RealVector_h get_norm_c12(){
+      auto host_norm_c12 = mcbooster::RealVector_h(norm_CosTheta12);
+      return host_norm_c12;
+    }
+    __host__ mcbooster::RealVector_h get_norm_c34(){
+      auto host_norm_c34 = mcbooster::RealVector_h(norm_CosTheta34);
+      return host_norm_c34;
+    }
+    __host__ mcbooster::RealVector_h get_norm_phi(){
+      auto host_norm_phi = mcbooster::RealVector_h(norm_phi);
+      return host_norm_phi;
+
+    }
+
+    __host__ mcbooster::RealVector_h get_norm_dtime(){
+      auto host_norm_dtime = mcbooster::RealVector_h(norm_dtime);
+      return host_norm_dtime;
+    }
+
+    __host__ void set_norm_weights(mcbooster::RealVector_h host_weights){
+      norm_bdt_weights = host_weights;
+    }
 
     __host__ std::
         tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::BoolVector_h>
@@ -76,10 +112,14 @@ class Amp4Body_TD : public Amp4BodyBase {
     mcbooster::RealVector_d norm_CosTheta12;
     mcbooster::RealVector_d norm_CosTheta34;
     mcbooster::RealVector_d norm_phi;
+    mcbooster::RealVector_d norm_dtime;
+    
+    mcbooster::RealVector_d norm_bdt_weights;
+    
     // store spin and lineshape values for normalization
     mutable mcbooster::RealVector_d norm_SF;
     mutable mcbooster::mc_device_vector<fpcomplex> norm_LS;
-
+    mutable bool use_bdt_weights{true};
     DecayInfo4t decayInfo;
     MixingTimeResolution *resolution;
     int MCevents;

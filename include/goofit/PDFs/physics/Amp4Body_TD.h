@@ -80,11 +80,17 @@ class Amp4Body_TD : public Amp4BodyBase {
       return host_norm_dtime;
     }
 
+    __host__ mcbooster::RealVector_h get_norm_eff(){
+      auto host_norm_eff = mcbooster::RealVector_h(norm_eff);
+      return host_norm_eff;
+    }
+
     __host__ void set_norm_dtime(mcbooster::RealVector_h norm_dtime_h){
       norm_dtime = norm_dtime_h;
     }
-    __host__ void set_norm_weights(mcbooster::RealVector_h host_weights){
-      norm_bdt_weights = host_weights;
+       
+    __host__ void set_norm_eff(mcbooster::RealVector_h norm_eff_h){
+      norm_eff = norm_eff_h;
     }
 
     __host__ std::
@@ -120,7 +126,9 @@ class Amp4Body_TD : public Amp4BodyBase {
     mcbooster::RealVector_d norm_CosTheta34;
     mcbooster::RealVector_d norm_phi;
     mcbooster::RealVector_d norm_dtime;
-    
+    mcbooster::RealVector_d norm_eff;
+
+
     /*
     mcbooster::RealVector_d norm_m12_with_time;
     mcbooster::RealVector_d norm_m34_with_time;
@@ -128,7 +136,7 @@ class Amp4Body_TD : public Amp4BodyBase {
     mcbooster::RealVector_d norm_costheta34_with_time;
     mcbooster::RealVector_d norm_phi_with_time;
     */
-    mcbooster::RealVector_d norm_bdt_weights;
+    
     
     // store spin and lineshape values for normalization
     mutable mcbooster::RealVector_d norm_SF;

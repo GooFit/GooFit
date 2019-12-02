@@ -475,6 +475,7 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
     norm_CosTheta34 = mcbooster::RealVector_d(nAcc);
     norm_phi        = mcbooster::RealVector_d(nAcc);
     norm_dtime = mcbooster::RealVector_d(nAcc);
+    norm_eff = mcbooster::RealVector_d(nAcc);
     //use python to set the dtime values by sampling from the importance function
     //Do this straight after intialisation
     thrust::counting_iterator<unsigned int> index_sequence_begin(0);

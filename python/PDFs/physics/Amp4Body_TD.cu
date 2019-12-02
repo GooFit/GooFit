@@ -45,6 +45,87 @@ void init_Amp4Body_TD(py::module &m) {
         .def("setForceIntegrals",&Amp4Body_TD::setForceIntegrals)
         .def("getMCevents",&Amp4Body_TD::getMCevents)
         .def("setMaxWeight",&Amp4Body_TD::setMaxWeight,"wmax"_a)
+        .def("set_norm_dtime",[](Amp4Body_TD &self,py::array_t<fptype> pydtime){
+	    mcbooster::RealVector_h norm_dtime_h = self.get_norm_dtime();
+	    for(int i =0; i < norm_dtime_h.size();i++){
+	      norm_dtime_h[i] = pydtime.mutable_at(i);
+	    }
+	    //copy back over to device
+	    self.set_norm_dtime(norm_dtime_h);
+	  })
+        .def("set_norm_eff",[](Amp4Body_TD &self, py::array_t<fptype> pyeff){
+	    mcbooster::RealVector_h norm_eff_h = self.get_norm_eff();
+	    for(int i = 0; i < norm_eff_h.size();i++){
+	      norm_eff_h[i] = pyeff.mutable_at(i);
+	    }
+	    self.set_norm_eff(norm_eff_h);
+	  })
+        .def("get_norm_eff",[](Amp4Body_TD &self){
+	    mcbooster::RealVector_h norm_eff = self.get_norm_eff();
+	    py::array_t<fptype> pyeff{norm_eff.size()};
+	    for(int i = 0 ;i < norm_eff.size();i++){
+	      pyeff.mutable_at(i) = norm_eff[i];
+	    }
+	    return pyeff;
+	  })
+        .def("get_norm_m12",
+	     [](Amp4Body_TD &self){
+	       mcbooster::RealVector_h m12 = self.get_norm_m12();
+	       py::array_t<fptype> pym12{m12.size()};
+	       for(int i = 0; i < m12.size();i++){
+		 pym12.mutable_at(i) = m12[i];
+	       }
+	       return pym12;
+	     })
+         .def("get_norm_m34",
+	     [](Amp4Body_TD &self){
+	       mcbooster::RealVector_h m34 = self.get_norm_m34();
+	       py::array_t<fptype> pym34{m34.size()};
+	       for(int i = 0; i < m34.size();i++){
+		 pym34.mutable_at(i) = m34[i];
+	       } 
+	        return pym34;
+	     })
+
+         .def("get_norm_c34",
+	      [](Amp4Body_TD &self){
+		mcbooster::RealVector_h c34 = self.get_norm_c34();
+		py::array_t<fptype> pyc34{c34.size()};
+		for(int i = 0; i < c34.size();i++){
+		  pyc34.mutable_at(i) = c34[i];
+		}  
+		return pyc34;
+	      })
+         .def("get_norm_c12",
+	      [](Amp4Body_TD &self){
+		mcbooster::RealVector_h c12 = self.get_norm_c12();
+		py::array_t<fptype> pyc12{c12.size()};
+		for(int i = 0; i < c12.size();i++){
+		  pyc12.mutable_at(i) = c12[i];
+		}  
+		return pyc12;
+	      })
+
+         .def("get_norm_phi",
+	      [](Amp4Body_TD &self){
+		mcbooster::RealVector_h phi = self.get_norm_phi();
+		py::array_t<fptype> pyphi{phi.size()};
+		for(int i = 0; i < phi.size();i++){
+		  pyphi.mutable_at(i) = phi[i];
+		}  
+		return pyphi;
+	      })
+
+          .def("get_norm_dtime",
+	       [](Amp4Body_TD &self){
+		 mcbooster::RealVector_h dtime = self.get_norm_dtime();
+		 py::array_t<fptype> pydtime{dtime.size()};
+		 for(int i = 0; i < dtime.size();i++){
+		   pydtime.mutable_at(i) = dtime[i];
+		 }
+		 return pydtime;
+	       })
+
         .def("GenerateSig",
              [](Amp4Body_TD &self, size_t numEvents) {
                  mcbooster::ParticlesSet_h particles; // vector of pointers to vectors of 4R

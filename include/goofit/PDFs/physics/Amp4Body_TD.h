@@ -73,7 +73,6 @@ class Amp4Body_TD : public Amp4BodyBase {
     __host__ mcbooster::RealVector_h get_norm_phi(){
       auto host_norm_phi = mcbooster::RealVector_h(norm_phi);
       return host_norm_phi;
-
     }
 
     __host__ mcbooster::RealVector_h get_norm_dtime(){
@@ -81,6 +80,9 @@ class Amp4Body_TD : public Amp4BodyBase {
       return host_norm_dtime;
     }
 
+    __host__ void set_norm_dtime(mcbooster::RealVector_h norm_dtime_h){
+      norm_dtime = norm_dtime_h;
+    }
     __host__ void set_norm_weights(mcbooster::RealVector_h host_weights){
       norm_bdt_weights = host_weights;
     }
@@ -89,6 +91,11 @@ class Amp4Body_TD : public Amp4BodyBase {
         tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::BoolVector_h>
         GenerateSig(unsigned int numEvents, int seed = 0);
 
+    /*
+    __host__ std::
+      tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::BoolVector_h>
+      GenerateNormEventsWithTime(unsigned int numEvents, int seed = 0);
+    */
     __host__ void populateArrays() override;
 
   protected:
@@ -114,6 +121,13 @@ class Amp4Body_TD : public Amp4BodyBase {
     mcbooster::RealVector_d norm_phi;
     mcbooster::RealVector_d norm_dtime;
     
+    /*
+    mcbooster::RealVector_d norm_m12_with_time;
+    mcbooster::RealVector_d norm_m34_with_time;
+    mcbooster::RealVector_d norm_costheta12_with_time;
+    mcbooster::RealVector_d norm_costheta34_with_time;
+    mcbooster::RealVector_d norm_phi_with_time;
+    */
     mcbooster::RealVector_d norm_bdt_weights;
     
     // store spin and lineshape values for normalization

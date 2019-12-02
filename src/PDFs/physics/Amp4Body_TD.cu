@@ -47,7 +47,7 @@ class.
 #include <goofit/PDFs/physics/resonances/Resonance.h>
 
 #include <cstdarg>
-
+#include <fstream>
 
 namespace GooFit {
 
@@ -64,7 +64,6 @@ struct genExp {
         thrust::uniform_real_distribution<fptype> dist(0, 1);
 
         rand.discard(x + offset);
-
         return -log(dist(rand)) / gamma;
     }
 };
@@ -92,10 +91,11 @@ struct exp_functor {
         thrust::random::minstd_rand0 rand(1431655765);
         thrust::uniform_real_distribution<fptype> dist(0, 1);
         rand.discard(tmpoff + evtNum);
-
-        return (dist(rand) * exp(-time * gammamin) * wmax) < thrust::get<1>(t);
+        fptype result = (dist(rand) * exp(-time * gammamin) * wmax);
+        return result < thrust::get<1>(t);
     }
 };
+
 
 // The function of this array is to hold all the cached waves; specific
 // waves are recalculated when the corresponding resonance mass or width
@@ -474,22 +474,31 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
     norm_CosTheta12 = mcbooster::RealVector_d(nAcc);
     norm_CosTheta34 = mcbooster::RealVector_d(nAcc);
     norm_phi        = mcbooster::RealVector_d(nAcc);
+    norm_dtime = mcbooster::RealVector_d(nAcc);
+    //use python to set the dtime values by sampling from the importance function
+    //Do this straight after intialisation
+    thrust::counting_iterator<unsigned int> index_sequence_begin(0);
 
+    fptype tau      = parametersList[0].getValue();
+    //adding the x mixing term to see if this affects the accept reject numbers 
+    fptype xmixing = parametersList[1].getValue();
+    fptype ymixing  = parametersList[2].getValue();
+    fptype gammamin = 1.0 / tau - fabs(ymixing) / tau;
+    thrust::transform(
+		      index_sequence_begin, index_sequence_begin + nAcc, norm_dtime.begin(), genExp(generation_offset, gammamin));
+    
+    //cache a list of normalisation events
     mcbooster::VariableSet_d VarSet(5);
     VarSet[0] = &norm_M12;
     VarSet[1] = &norm_M34;
     VarSet[2] = &norm_CosTheta12;
     VarSet[3] = &norm_CosTheta34;
     VarSet[4] = &norm_phi;
+    
 
     Dim5 eval = Dim5();
     mcbooster::EvaluateArray<Dim5>(eval, pset, VarSet);
-    //calculate the weights using the BDT for the normalisation events
-    //std::cout << "This is from the c++ host!" << std::endl;
-    //PyObject* pInt;
-    //Py_Initialize();
-    //PyRun_SimpleString("print('Hello World from Embedded Python!!!')");
-    //Py_Finalize();
+    
     norm_SF  = mcbooster::RealVector_d(nAcc * SpinFactors.size());
     norm_LS  = mcbooster::mc_device_vector<fpcomplex>(nAcc * (components.size() - 1));
     MCevents = nAcc;
@@ -727,6 +736,8 @@ __host__ fptype Amp4Body_TD::normalize() {
 
         // MCevents is the number of normalization events.
         ret /= MCevents;
+
+	
     }
 
     host_normalizations[normalIdx + 1] = 1.0 / ret;
@@ -769,7 +780,6 @@ __host__
     d2.erase(thrust::get<1>(new_end.get_iterator_tuple()), d2.end());
     d3.erase(thrust::get<2>(new_end.get_iterator_tuple()), d3.end());
     d4.erase(thrust::get<3>(new_end.get_iterator_tuple()), d4.end());
-
     mcbooster::ParticlesSet_d pset(4);
     pset[0] = &d1;
     pset[1] = &d2;
@@ -791,6 +801,9 @@ __host__
 
     thrust::transform(
         index_sequence_begin, index_sequence_begin + nAcc, dtime_d.begin(), genExp(generation_offset, gammamin));
+
+    
+    
 
     mcbooster::VariableSet_d VarSet_d(5);
     VarSet_d[0] = &SigGen_M12_d;
@@ -820,6 +833,16 @@ __host__
     auto SigGen_phi_h        = new mcbooster::RealVector_h(SigGen_phi_d);
     auto dtime_h             = new mcbooster::RealVector_h(dtime_d);
 
+    //output the decay times generated in order to make a fit and compare with the accepted decay times
+    /*
+    std::ofstream myfile;
+    myfile.open ("generated_decay_times.txt");
+    for(int i = 0; i < dtime_d.size();i++){
+        double dtime_val = dtime_d[i];
+        myfile << dtime_val << std::endl;
+    }
+    myfile.close();
+    */
     mcbooster::VariableSet_h VarSet(6);
     VarSet[0] = SigGen_M12_h;
     VarSet[1] = SigGen_M34_h;
@@ -909,7 +932,7 @@ __host__
         thrust::make_zip_iterator(thrust::make_tuple(eventIndex + nAcc, results.end(), arrayAddress, eventSize)),
         flag2.begin(),
         exp_functor(tmpparam, tmpoff, gammamin, wmax));
-
+    
     gooFree(dev_event_array);
 
     auto weights_h = mcbooster::RealVector_h(weights);
@@ -919,5 +942,6 @@ __host__
 
     return std::make_tuple(ParSet, VarSet, weights_h, flags_h);
 }
+
 
 } // namespace GooFit

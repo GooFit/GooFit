@@ -89,10 +89,10 @@ __device__ resonance_function_ptr ptr_to_LASS = lass;
 
 namespace Resonances {
 
-LASS::LASS(std::string name, 
-           Variable ar, 
-           Variable ai, 
-           Variable mass, 
+LASS::LASS(std::string name,
+           Variable ar,
+           Variable ai,
+           Variable mass,
            Variable width,
            Variable _a,
            Variable _r,
@@ -100,7 +100,7 @@ LASS::LASS(std::string name,
            Variable _phiR,
            Variable _B,
            Variable _phiB,
-           unsigned int sp, 
+           unsigned int sp,
            unsigned int cyc)
     : ResonancePdf("LASS", name, ar, ai) {
     registerParameter(mass);
@@ -111,7 +111,6 @@ LASS::LASS(std::string name,
     registerParameter(_phiR);
     registerParameter(_B);
     registerParameter(_phiB);
-
 
     registerConstant(sp);
     registerConstant(cyc);

@@ -16,7 +16,8 @@ __device__ void gaussian(fptype &_P1,
                          fptype adjTime,
                          fptype xmixing,
                          fptype ymixing,
-                         fptype adjSigma) {
+                         fptype adjSigma,
+                         fptype selbias) {
     fptype _1oSqrtA  = adjSigma * M_SQRT2;
     fptype _1oSigma  = 1 / adjSigma;
     fptype _1o2SqrtA = 0.5 * _1oSqrtA;
@@ -29,7 +30,7 @@ __device__ void gaussian(fptype &_P1,
     fptype _Gamma = 1 / _tau;
     fptype _B     = _Gamma + _Bgn;
 
-    fptype _u0  = _1o2SqrtA * _B;
+    fptype _u0  = _1o2SqrtA * (_B + selbias);
     fptype _u02 = _u0 * _u0;
     fptype _F   = _1oSqrtA * exp(-_C + _u02);
 
@@ -49,8 +50,8 @@ __device__ void gaussian(fptype &_P1,
     _P2 = _NormG * (_It0 - 0.5 * _It2);
     _P4 = _NormG * (_It1 - R1o6 * _It3);
 
-    fptype _u0py = _1o2SqrtA * (_B - ymixing * _Gamma);
-    fptype _u0my = _1o2SqrtA * (_B + ymixing * _Gamma);
+    fptype _u0py = _1o2SqrtA * (_B - ymixing * _Gamma + selbias);
+    fptype _u0my = _1o2SqrtA * (_B + ymixing * _Gamma + selbias);
     fptype _Fpy  = _1oSqrtA * exp(-_C + _u0py * _u0py);
     fptype _Fmy  = _1oSqrtA * exp(-_C + _u0my * _u0my);
     fptype _Ipy  = _Fpy * SQRTPIo2 * erfc(_u0py);
@@ -78,22 +79,23 @@ __device__ fptype device_threegauss_resolution(fptype coshterm,
     fptype tailScaleFactor = pc.getParameter(5);
     fptype outlBias        = pc.getParameter(6);
     fptype outlScaleFactor = pc.getParameter(7);
+    fptype selbias         = pc.getParameter(8);
 
     fptype cp1 = 0;
     fptype cp2 = 0;
     fptype cp3 = 0;
     fptype cp4 = 0;
-    gaussian(cp1, cp2, cp3, cp4, tau, dtime - coreBias * sigma, xmixing, ymixing, coreScaleFactor * sigma);
+    gaussian(cp1, cp2, cp3, cp4, tau, dtime - coreBias * sigma, xmixing, ymixing, coreScaleFactor * sigma, selbias);
     fptype tp1 = 0;
     fptype tp2 = 0;
     fptype tp3 = 0;
     fptype tp4 = 0;
-    gaussian(tp1, tp2, tp3, tp4, tau, dtime - tailBias * sigma, xmixing, ymixing, tailScaleFactor * sigma);
+    gaussian(tp1, tp2, tp3, tp4, tau, dtime - tailBias * sigma, xmixing, ymixing, tailScaleFactor * sigma, selbias);
     fptype op1 = 0;
     fptype op2 = 0;
     fptype op3 = 0;
     fptype op4 = 0;
-    gaussian(op1, op2, op3, op4, tau, dtime - outlBias * sigma, xmixing, ymixing, outlScaleFactor * sigma);
+    gaussian(op1, op2, op3, op4, tau, dtime - outlBias * sigma, xmixing, ymixing, outlScaleFactor * sigma, selbias);
 
     fptype _P1 = coreFraction * cp1 + tailFraction * tp1 + outlFraction * op1;
     fptype _P2 = coreFraction * cp2 + tailFraction * tp2 + outlFraction * op2;
@@ -115,7 +117,7 @@ __device__ fptype device_threegauss_resolution(fptype coshterm,
 __device__ device_resfunction_ptr ptr_to_threegauss = device_threegauss_resolution;
 
 ThreeGaussResolution::ThreeGaussResolution(
-    Variable cf, Variable tf, Variable cb, Variable cs, Variable tb, Variable ts, Variable ob, Variable os)
+    Variable cf, Variable tf, Variable cb, Variable cs, Variable tb, Variable ts, Variable ob, Variable os, Variable sb)
     : MixingTimeResolution("ThreeGaussResolution")
     , coreFraction(cf)
     , tailFraction(tf)
@@ -124,7 +126,8 @@ ThreeGaussResolution::ThreeGaussResolution(
     , tailBias(tb)
     , tailScaleFactor(ts)
     , outBias(ob)
-    , outScaleFactor(os) {
+    , outScaleFactor(os)
+    , selectionBias(sb) {
     initIndex();
 
     registerFunction("ptr_to_threegauss", ptr_to_threegauss);
@@ -140,6 +143,7 @@ void ThreeGaussResolution::createParameters(PdfBase *dis) {
     registerParameter(tailScaleFactor);
     registerParameter(outBias);
     registerParameter(outScaleFactor);
+    registerParameter(selectionBias);
 }
 
 fptype ThreeGaussResolution::normalization(
@@ -149,10 +153,20 @@ fptype ThreeGaussResolution::normalization(
     // Distinction between numerical subscribts and A,B is crucial
     // for comparing thesis math to this math!
 
-    fptype timeIntegralOne = tau / (1 - ymixing * ymixing);
-    fptype timeIntegralTwo = tau / (1 + xmixing * xmixing);
-    fptype timeIntegralThr = ymixing * timeIntegralOne;
-    fptype timeIntegralFou = xmixing * timeIntegralTwo;
+    // fptype timeIntegralOne = tau / (1 - ymixing * ymixing);
+    // fptype timeIntegralTwo = tau / (1 + xmixing * xmixing);
+    // fptype timeIntegralThr = ymixing * timeIntegralOne;
+    // fptype timeIntegralFou = xmixing * timeIntegralTwo;
+
+    fptype selBias = selectionBias.getValue();
+    fptype timeIntegralOne
+        = (selBias + 1 / tau) / (selBias * selBias + 2 * selBias / tau + (1 - ymixing * ymixing) / (tau * tau));
+    fptype timeIntegralTwo
+        = (selBias + 1 / tau) / (selBias * selBias + 2 * selBias / tau + (1 + xmixing * xmixing) / (tau * tau));
+    fptype timeIntegralThr
+        = (ymixing / tau) / (selBias * selBias + 2 * selBias / tau + (1 - ymixing * ymixing) / (tau * tau));
+    fptype timeIntegralFou
+        = (xmixing / tau) / (selBias * selBias + 2 * selBias / tau + (1 + xmixing * xmixing) / (tau * tau));
 
     fptype ret = timeIntegralOne * (di1 + di2); // ~ |A|^2 + |B|^2
     ret += timeIntegralTwo * (di1 - di2);       // ~ Re(A_1 A_2^*)

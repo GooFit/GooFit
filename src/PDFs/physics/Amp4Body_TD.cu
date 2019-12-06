@@ -41,6 +41,7 @@ class.
 #include <goofit/PDFs/physics/detail/FourDblTupleAdd.h>
 #include <goofit/PDFs/physics/detail/LSCalculator_TD.h>
 #include <goofit/PDFs/physics/detail/NormIntegrator_TD.h>
+#include <goofit/PDFs/physics/detail/NormIntegrator_6DTD.h>
 #include <goofit/PDFs/physics/detail/NormLSCalculator_TD.h>
 #include <goofit/PDFs/physics/detail/SFCalculator_TD.h>
 #include <goofit/PDFs/physics/lineshapes/Lineshape.h>
@@ -415,11 +416,13 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
 
     initialize();
 
-    Integrator   = new NormIntegrator_TD();
+    //set the specialIntegral
+    Integrator   = new NormIntegrator_TD(specialIntegral);
+    //Integrator_6D = new NormIntegrator_6DTD();
     redoIntegral = new bool[LineShapes.size()];
     cachedMasses = new fptype[LineShapes.size()];
     cachedWidths = new fptype[LineShapes.size()];
-
+  
     for(int i = 0; i < LineShapes.size(); i++) {
         lscalculators.push_back(new LSCalculator_TD());
     }
@@ -482,12 +485,14 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
 
     fptype tau      = parametersList[0].getValue();
     //adding the x mixing term to see if this affects the accept reject numbers 
-    fptype xmixing = parametersList[1].getValue();
+    //fptype xmixing = parametersList[1].getValue();
     fptype ymixing  = parametersList[2].getValue();
     fptype gammamin = 1.0 / tau - fabs(ymixing) / tau;
+    //randomly generate decay times for the normalisation events
     thrust::transform(
 		      index_sequence_begin, index_sequence_begin + nAcc, norm_dtime.begin(), genExp(generation_offset, gammamin));
-    
+    //fill the normalisation vectors with ones to avoid any errors involving multiplying by 0
+    thrust::fill(norm_eff.begin(),norm_eff.end(),1.);
     //cache a list of normalisation events
     mcbooster::VariableSet_d VarSet(5);
     VarSet[0] = &norm_M12;
@@ -710,7 +715,7 @@ __host__ fptype Amp4Body_TD::normalize() {
         thrust::tuple<fptype, fptype, fptype, fptype> sumIntegral;
 
         Integrator->setDalitzId(getFunctionIndex());
-
+	/*
         sumIntegral = thrust::transform_reduce(
             thrust::make_zip_iterator(thrust::make_tuple(eventIndex, NumNormEvents, normSFaddress, normLSaddress)),
             thrust::make_zip_iterator(
@@ -718,7 +723,13 @@ __host__ fptype Amp4Body_TD::normalize() {
             *Integrator,
             dummy,
             MyFourDoubleTupleAdditionFunctor);
+	*/
 
+	sumIntegral = thrust::transform_reduce(
+					       thrust::make_zip_iterator(thrust::make_tuple(eventIndex, NumNormEvents, normSFaddress, normLSaddress,norm_dtime.begin(),norm_eff.begin())),thrust::make_zip_iterator(thrust::make_tuple(eventIndex + MCevents, NumNormEvents, normSFaddress, normLSaddress,norm_dtime.end(),norm_eff.end())),
+	   *Integrator,                                        
+	   dummy,                                             
+	   MyFourDoubleTupleAdditionFunctor);    
         // GOOFIT_TRACE("sumIntegral={}", sumIntegral);
 
         // printf("normalize A2/#evts , B2/#evts: %.5g, %.5g\n",thrust::get<0>(sumIntegral)/MCevents,
@@ -726,7 +737,12 @@ __host__ fptype Amp4Body_TD::normalize() {
         fptype tau     = parametersList[0];
         fptype xmixing = parametersList[1];
         fptype ymixing = parametersList[2];
-
+	if(specialIntegral){
+	  const double uniformNorm = 1.;
+	  ret = thrust::get<0>(sumIntegral) * uniformNorm;
+	  
+	}
+	else{
         ret = resolution->normalization(thrust::get<0>(sumIntegral),
                                         thrust::get<1>(sumIntegral),
                                         thrust::get<2>(sumIntegral),
@@ -734,13 +750,13 @@ __host__ fptype Amp4Body_TD::normalize() {
                                         tau,
                                         xmixing,
                                         ymixing);
-
+	}
         // MCevents is the number of normalization events.
         ret /= MCevents;
 
 	
     }
-
+    
     host_normalizations[normalIdx + 1] = 1.0 / ret;
     cachedNormalization                = 1.0 / ret;
     // printf("end of normalize %f\n", ret);

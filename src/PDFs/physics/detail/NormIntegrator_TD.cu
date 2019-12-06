@@ -5,15 +5,27 @@
 #include <goofit/PDFs/physics/SpinFactors.h>
 #include <goofit/PDFs/physics/detail/Dim5.h>
 #include <goofit/detail/Complex.h>
+#include <mcbooster/Evaluate.h>
+#include <mcbooster/EvaluateArray.h>
+#include <mcbooster/GContainers.h>
+#include <mcbooster/GFunctional.h>
+#include <mcbooster/GTypes.h>
+#include <mcbooster/Generate.h>
+#include <mcbooster/Vector4R.h>
 
 #include <thrust/functional.h>
 
 namespace GooFit {
 
-NormIntegrator_TD::NormIntegrator_TD() = default;
+  //NormIntegrator_TD::NormIntegrator_TD() = default;
+  NormIntegrator_TD::NormIntegrator_TD(bool SpecInt): _SpecInt(SpecInt){}
 
-__device__ thrust::tuple<fptype, fptype, fptype, fptype> NormIntegrator_TD::
-operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const {
+  //__device__ thrust::tuple<fptype, fptype, fptype, fptype> NormIntegrator_TD::
+  //operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const {
+  __device__ thrust::tuple<fptype, fptype, fptype, fptype> NormIntegrator_TD::
+  operator()(thrust::tuple<int, int, fptype *, thrust::complex<fptype> *,
+	     mcbooster::GReal_t, mcbooster::GReal_t> t) const {
+
     // unsigned int *indices = paramIndices + _parameters;
     // unsigned int totalAMP = indices[5];
 
@@ -28,6 +40,8 @@ operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const {
     unsigned int MCevents = thrust::get<1>(t);
     fptype *SFnorm        = thrust::get<2>(t) + evtNum;
     fpcomplex *LSnorm     = thrust::get<3>(t) + evtNum;
+
+    //evtNum is the evtNum of the normalisation events
 
     fpcomplex AmpA(0, 0);
     fpcomplex AmpB(0, 0);
@@ -95,7 +109,24 @@ operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const {
     AmpA *= _SqWStoRSrate;
 
     auto AmpAB = AmpA * conj(AmpB);
-    return {thrust::norm(AmpA), thrust::norm(AmpB), AmpAB.real(), AmpAB.imag()};
+    
+    if(_SpecInt){
+      fptype _tau          = pc.getParameter(0);
+      fptype _xmixing      = pc.getParameter(1);
+      fptype _ymixing      = pc.getParameter(2);
+      fptype _time = thrust::get<4>(t);
+      fptype _eff = thrust::get<5>(t);
+      fptype term1 = thrust::norm(AmpA) + thrust::norm(AmpB);
+      fptype term2 = thrust::norm(AmpA) - thrust::norm(AmpB);
+      fptype ret = (*(reinterpret_cast<device_resfunction_ptr>(d_function_table[pc.funcIdx])))(term1, term2, AmpAB.real(), AmpAB.imag(), _tau, _time, _xmixing, _ymixing, 0, pc);
+      ret *= _eff;
+      return thrust::tuple<fptype,fptype,fptype,fptype>(ret,thrust::norm(AmpA),thrust::norm(AmpB),1);
+    }
+    else {
+      return {thrust::norm(AmpA), thrust::norm(AmpB), AmpAB.real(), AmpAB.imag()};
+}
+  
+  
 }
 
 } // namespace GooFit

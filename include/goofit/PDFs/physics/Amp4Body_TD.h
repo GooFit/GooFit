@@ -13,7 +13,7 @@ See *.cu file for more details
 #include <goofit/PDFs/physics/MixingTimeResolution.h>
 #include <goofit/PDFs/physics/SpinFactors.h>
 #include <goofit/PDFs/physics/detail/NormSpinCalculator_TD.h>
-
+#include <goofit/PDFs/physics/detail/NormIntegrator_6DTD.h>
 #include <mcbooster/GContainers.h>
 
 #include <thrust/remove.h>
@@ -27,6 +27,7 @@ class AmpCalc_TD;
 class SFCalculator_TD;
 class NormIntegrator_TD;
 class Lineshape;
+//class NormIntegrator_6DTD;
 
 class Amp4Body_TD : public Amp4BodyBase {
   public:
@@ -114,6 +115,7 @@ class Amp4Body_TD : public Amp4BodyBase {
     std::vector<Lineshape *> LineShapes;
     std::vector<AmpCalc_TD *> AmpCalcs;
     NormIntegrator_TD *Integrator;
+    //NormIntegrator_6DTD *Integrator_6D;
     std::vector<SFCalculator_TD *> sfcalculators;
     std::vector<LSCalculator_TD *> lscalculators;
 
@@ -149,6 +151,8 @@ class Amp4Body_TD : public Amp4BodyBase {
     // change infrequently while amplitudes, only used in adding BW results together, change rapidly.
     thrust::device_vector<fpcomplex> *cachedResSF{nullptr}; // Caches the BW values and Spins for each event.
     thrust::device_vector<fpcomplex> *cachedAMPs{nullptr};  // cache Amplitude values for each event.
+    //boolean variable to decide if we want to do 6D numerical integral
+    mutable bool specialIntegral{false};
     mutable bool generation_no_norm{false};
     mutable bool SpinsCalculated{false};
     bool *redoIntegral;

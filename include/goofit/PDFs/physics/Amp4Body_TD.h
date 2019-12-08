@@ -152,7 +152,7 @@ class Amp4Body_TD : public Amp4BodyBase {
     thrust::device_vector<fpcomplex> *cachedResSF{nullptr}; // Caches the BW values and Spins for each event.
     thrust::device_vector<fpcomplex> *cachedAMPs{nullptr};  // cache Amplitude values for each event.
     //boolean variable to decide if we want to do 6D numerical integral
-    mutable bool specialIntegral{false};
+    mutable bool specialIntegral{true};
     mutable bool generation_no_norm{false};
     mutable bool SpinsCalculated{false};
     bool *redoIntegral;

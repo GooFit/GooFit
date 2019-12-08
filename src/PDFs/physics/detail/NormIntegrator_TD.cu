@@ -118,7 +118,24 @@ namespace GooFit {
       fptype _eff = thrust::get<5>(t);
       fptype term1 = thrust::norm(AmpA) + thrust::norm(AmpB);
       fptype term2 = thrust::norm(AmpA) - thrust::norm(AmpB);
+      
+      unsigned int totalSF_LS = pc.getConstant(10);
+      /*
+      for(int i = 0; i < totalSF_LS; i++)
+        pc.incrementIndex();
+      printf("Accessing resolution index: %n",(int)pc.funcIdx );
       fptype ret = (*(reinterpret_cast<device_resfunction_ptr>(d_function_table[pc.funcIdx])))(term1, term2, AmpAB.real(), AmpAB.imag(), _tau, _time, _xmixing, _ymixing, 0, pc);
+      pc.incrementIndex();
+      */
+      fptype ret = 0.;
+      _time /= _tau;
+      ret += term1 * cosh(_ymixing * _time);
+      ret += term2 * cos(_xmixing * _time);
+      ret -= 2 * AmpAB.real() * sinh(_ymixing * _time);
+      ret -= 2 * AmpAB.imag()
+      * sin(_xmixing * _time); // Notice sign difference wrt to Mikhail's code, because I have AB* and he has A*B.                                                                                      
+      ret *= exp(-_time);
+
       ret *= _eff;
       return thrust::tuple<fptype,fptype,fptype,fptype>(ret,thrust::norm(AmpA),thrust::norm(AmpB),1);
     }

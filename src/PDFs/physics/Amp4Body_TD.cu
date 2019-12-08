@@ -192,7 +192,6 @@ __device__ fptype device_Amp4Body_TD(fptype *evt, ParameterContainer &pc) {
     // int effFunctionIdx = 12 + 2 * indices[3] + 2 * indices[4] + 2 * indices[6];
     // int resfctidx      = indices[11];
     // int resfctpar      = effFunctionIdx + 2;
-
     // resolution function?
     fptype ret = (*(reinterpret_cast<device_resfunction_ptr>(d_function_table[pc.funcIdx])))(
         term1, term2, term3.real(), term3.imag(), _tau, _time, _xmixing, _ymixing, _sigma, pc);
@@ -724,7 +723,7 @@ __host__ fptype Amp4Body_TD::normalize() {
             dummy,
             MyFourDoubleTupleAdditionFunctor);
 	*/
-
+	
 	sumIntegral = thrust::transform_reduce(
 					       thrust::make_zip_iterator(thrust::make_tuple(eventIndex, NumNormEvents, normSFaddress, normLSaddress,norm_dtime.begin(),norm_eff.begin())),thrust::make_zip_iterator(thrust::make_tuple(eventIndex + MCevents, NumNormEvents, normSFaddress, normLSaddress,norm_dtime.end(),norm_eff.end())),
 	   *Integrator,                                        
@@ -753,7 +752,9 @@ __host__ fptype Amp4Body_TD::normalize() {
 	}
         // MCevents is the number of normalization events.
         ret /= MCevents;
-
+	if(specialIntegral){
+	  printf("normalizatio value:%.7g ",ret);
+	}
 	
     }
     

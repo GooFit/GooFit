@@ -7,6 +7,7 @@
 #include <thrust/tuple.h>
 #include <mcbooster/GContainers.h>
 #include <goofit/PDFs/physics/MixingTimeResolution.h>
+
 namespace GooFit {
 
 class NormIntegrator_TD :
@@ -25,6 +26,7 @@ class NormIntegrator_TD :
   private:
     unsigned int dalitzFuncId;
     bool _SpecInt;
+
 };
 
 } // namespace GooFit

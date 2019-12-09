@@ -69,6 +69,14 @@ struct genExp {
     }
 };
 
+struct get_pdf_val {
+  __host__ __device__ fptype operator()(thrust::tuple<fptype,fptype,fptype,fptype> t){
+    fptype pdf_val = thrust::get<0>(t);
+    return pdf_val;
+  }
+
+};
+
 struct exp_functor {
     size_t tmpparam, tmpoff;
     fptype gammamin, wmax;
@@ -210,6 +218,7 @@ __device__ fptype device_Amp4Body_TD(fptype *evt, ParameterContainer &pc) {
     /*printf("in prob: %f\n", ret);*/
     return ret;
 }
+
 
 __device__ device_function_ptr ptr_to_Amp4Body_TD = device_Amp4Body_TD;
 
@@ -478,7 +487,7 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
     norm_phi        = mcbooster::RealVector_d(nAcc);
     norm_dtime = mcbooster::RealVector_d(nAcc);
     norm_eff = mcbooster::RealVector_d(nAcc);
-    //use python to set the dtime values by sampling from the importance function
+    norm_weight = mcbooster::RealVector_d(nAcc);
     //Do this straight after intialisation
     thrust::counting_iterator<unsigned int> index_sequence_begin(0);
 
@@ -487,9 +496,10 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
     //fptype xmixing = parametersList[1].getValue();
     fptype ymixing  = parametersList[2].getValue();
     fptype gammamin = 1.0 / tau - fabs(ymixing) / tau;
-    //randomly generate decay times for the normalisation events
-    thrust::transform(
-		      index_sequence_begin, index_sequence_begin + nAcc, norm_dtime.begin(), genExp(generation_offset, gammamin));
+    //fill the normalisation decay times with zero initially to calculate the value of the PDF at t=0
+    thrust::fill(norm_dtime.begin(),norm_dtime.end(),0.);
+    //fill the normalisation weights with 1
+    thrust::fill(norm_weight.begin(),norm_weight.end(),1.);
     //fill the normalisation vectors with ones to avoid any errors involving multiplying by 0
     thrust::fill(norm_eff.begin(),norm_eff.end(),1.);
     //cache a list of normalisation events
@@ -507,6 +517,12 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
     norm_SF  = mcbooster::RealVector_d(nAcc * SpinFactors.size());
     norm_LS  = mcbooster::mc_device_vector<fpcomplex>(nAcc * (components.size() - 1));
     MCevents = nAcc;
+
+    //use python to set the dtime values by sampling from the importance function                                                                                                                          
+    //randomly generate decay times for the normalisation events (temporary until set by python bindings                                                                                                   
+    thrust::transform(
+		      index_sequence_begin, index_sequence_begin + nAcc, norm_dtime.begin(), genExp(generation_offset, gammamin));
+    
 
     setSeparateNorm();
 }
@@ -709,11 +725,48 @@ __host__ fptype Amp4Body_TD::normalize() {
     auto ret = 1.0;
 
     if(!generation_no_norm) {
+
+       
+	
         thrust::tuple<fptype, fptype, fptype, fptype> dummy(0, 0, 0, 0);
         FourDblTupleAdd MyFourDoubleTupleAdditionFunctor;
         thrust::tuple<fptype, fptype, fptype, fptype> sumIntegral;
 
         Integrator->setDalitzId(getFunctionIndex());
+
+	//calculate the normalisation weights first                                                                                                                                                         
+        if(!calculated_norm_weights){
+	  thrust::device_vector<thrust::tuple<fptype,fptype,fptype,fptype>> pdf_vals_tuple(MCevents);
+	  printf("Calculating norm_weights for events");
+
+	  //copy the set decay times to a temporary vector 
+	  mcbooster::RealVector_d temp_dtime(norm_dtime);
+
+	  //set the decay times to be zero in order to find the max weight
+	  thrust::fill(norm_dtime.begin(),norm_dtime.end(),0.);
+
+	  //calculate the weight for each normalization event
+	  thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex,NumNormEvents,normSFaddress,normLSaddress,norm_dtime.begin(),norm_eff.begin(),norm_weight.begin())),thrust::make_zip_iterator(thrust::make_tuple(eventIndex + MCevents,NumNormEvents,normSFaddress,normLSaddress,norm_dtime.end(),norm_eff.end(),norm_weight.end())),pdf_vals_tuple.begin(),*Integrator);
+	  thrust::device_vector<fptype> pdf_vals(MCevents);
+	  thrust::transform(pdf_vals_tuple.begin(),pdf_vals_tuple.end(),pdf_vals.begin(),get_pdf_val());
+	  
+	  fptype wmax_norm = 1.1 * (fptype)*thrust::max_element(pdf_vals.begin(), pdf_vals.end());
+	  //reset the decay times
+	  norm_dtime = temp_dtime;
+
+	  //check to see if PDF value calcualted correctly
+	  /*
+	  for(int i = 0; i < 10;i++){
+	    //this is a tuple object
+	    printf("norm pdf element \n");
+	    fptype temp_pdf_val = (fptype) pdf_vals[i];
+	    printf("%.7g \n",temp_pdf_val);
+	  }
+	  */
+	  
+	  printf("Calculated weights");
+        }
+	calculated_norm_weights = true;
 	/*
         sumIntegral = thrust::transform_reduce(
             thrust::make_zip_iterator(thrust::make_tuple(eventIndex, NumNormEvents, normSFaddress, normLSaddress)),
@@ -725,7 +778,7 @@ __host__ fptype Amp4Body_TD::normalize() {
 	*/
 	
 	sumIntegral = thrust::transform_reduce(
-					       thrust::make_zip_iterator(thrust::make_tuple(eventIndex, NumNormEvents, normSFaddress, normLSaddress,norm_dtime.begin(),norm_eff.begin())),thrust::make_zip_iterator(thrust::make_tuple(eventIndex + MCevents, NumNormEvents, normSFaddress, normLSaddress,norm_dtime.end(),norm_eff.end())),
+					       thrust::make_zip_iterator(thrust::make_tuple(eventIndex, NumNormEvents, normSFaddress, normLSaddress,norm_dtime.begin(),norm_eff.begin(),norm_weight.begin())),thrust::make_zip_iterator(thrust::make_tuple(eventIndex + MCevents, NumNormEvents, normSFaddress, normLSaddress,norm_dtime.end(),norm_eff.end(),norm_weight.end())),
 	   *Integrator,                                        
 	   dummy,                                             
 	   MyFourDoubleTupleAdditionFunctor);    

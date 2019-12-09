@@ -27,6 +27,8 @@ class AmpCalc_TD;
 class SFCalculator_TD;
 class NormIntegrator_TD;
 class Lineshape;
+
+
 //class NormIntegrator_6DTD;
 
 class Amp4Body_TD : public Amp4BodyBase {
@@ -105,6 +107,7 @@ class Amp4Body_TD : public Amp4BodyBase {
     */
     __host__ void populateArrays() override;
 
+    
   protected:
   private:
     std::map<std::string, std::pair<std::vector<unsigned int>, std::vector<unsigned int>>> AmpMap;
@@ -115,6 +118,7 @@ class Amp4Body_TD : public Amp4BodyBase {
     std::vector<Lineshape *> LineShapes;
     std::vector<AmpCalc_TD *> AmpCalcs;
     NormIntegrator_TD *Integrator;
+    
     //NormIntegrator_6DTD *Integrator_6D;
     std::vector<SFCalculator_TD *> sfcalculators;
     std::vector<LSCalculator_TD *> lscalculators;
@@ -129,7 +133,7 @@ class Amp4Body_TD : public Amp4BodyBase {
     mcbooster::RealVector_d norm_phi;
     mcbooster::RealVector_d norm_dtime;
     mcbooster::RealVector_d norm_eff;
-
+    mcbooster::RealVector_d norm_weight;
 
     /*
     mcbooster::RealVector_d norm_m12_with_time;
@@ -155,6 +159,7 @@ class Amp4Body_TD : public Amp4BodyBase {
     mutable bool specialIntegral{true};
     mutable bool generation_no_norm{false};
     mutable bool SpinsCalculated{false};
+    mutable bool calculated_norm_weights{false};
     bool *redoIntegral;
     mutable bool forceRedoIntegrals{true};
     fptype *cachedMasses;

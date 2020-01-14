@@ -28,7 +28,6 @@ __device__ fptype thetaprime(fptype m12, fptype m13, fptype mD, fptype mKS0, fpt
 }
 
 __device__ fptype device_SquareDalitzEff(fptype *evt, ParameterContainer &pc) {
-
     // Define observables
     int idx = pc.getObservable(0);
     int idy = pc.getObservable(1);
@@ -50,7 +49,7 @@ __device__ fptype device_SquareDalitzEff(fptype *evt, ParameterContainer &pc) {
     fptype mKS0 = 0.497611;
     fptype mh1  = 1.3957;
     fptype mh2  = 1.3957;
-    
+
     pc.incrementIndex(1, 8, 0, 2, 1);
 
     // Check phase space
@@ -87,7 +86,6 @@ __host__ SquareDalitzEffPdf::SquareDalitzEffPdf(std::string n,
                                                 Variable c7)
 
     : GooPdf("SquareDalitzEffPdf", n, m12, m13, c0, c1, c2, c3, c4, c5, c6, c7) {
-
     registerFunction("ptr_to_SquareDalitzEff", ptr_to_SquareDalitzEff);
 
     initialize();

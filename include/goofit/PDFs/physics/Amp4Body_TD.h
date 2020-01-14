@@ -87,6 +87,16 @@ class Amp4Body_TD : public Amp4BodyBase {
       auto host_norm_eff = mcbooster::RealVector_h(norm_eff);
       return host_norm_eff;
     }
+    
+    __host__ mcbooster::RealVector_h get_norm_pdf_weights(){
+      auto host_norm_weight = mcbooster::RealVector_h(norm_pdf_weight);
+      return host_norm_weight;
+    }
+    
+    __host__ mcbooster::RealVector_h get_norm_importance_weights(){
+      auto host_importance_weight = mcbooster::RealVector_h(norm_importance_weight);
+      return host_importance_weight;
+    }
 
     __host__ void set_norm_dtime(mcbooster::RealVector_h norm_dtime_h){
       norm_dtime = norm_dtime_h;
@@ -95,10 +105,23 @@ class Amp4Body_TD : public Amp4BodyBase {
     __host__ void set_norm_eff(mcbooster::RealVector_h norm_eff_h){
       norm_eff = norm_eff_h;
     }
+    
+    __host__ void set_norm_pdf_weights(mcbooster::RealVector_h norm_weight_h){
+      norm_pdf_weight = norm_weight_h;
+    }
+
+    __host__ void set_norm_importance_weights(mcbooster::RealVector_h norm_importance_h){
+      norm_importance_weight = norm_importance_h;
+    }
 
     __host__ std::
         tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::BoolVector_h>
         GenerateSig(unsigned int numEvents, int seed = 0);
+    
+    //set whether to do the integral numerically or analytically
+    __host__ void set_special_integral(bool special){
+      specialIntegral = special;
+    }
 
     /*
     __host__ std::
@@ -132,9 +155,12 @@ class Amp4Body_TD : public Amp4BodyBase {
     mcbooster::RealVector_d norm_CosTheta34;
     mcbooster::RealVector_d norm_phi;
     mcbooster::RealVector_d norm_dtime;
+    //efficiency weight given by BDT
     mcbooster::RealVector_d norm_eff;
-    mcbooster::RealVector_d norm_weight;
-
+    //weight from pdf normalisation
+    mcbooster::RealVector_d norm_pdf_weight;
+    //weights from Importance Sampling stays constant throughout 
+    mcbooster::RealVector_d norm_importance_weight;
     /*
     mcbooster::RealVector_d norm_m12_with_time;
     mcbooster::RealVector_d norm_m34_with_time;

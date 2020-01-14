@@ -37,7 +37,8 @@ void init_Amp4Body_TD(py::module &m) {
             py::keep_alive<1, 5>(),
             py::keep_alive<1, 6>(),
             py::keep_alive<1, 7>())
-        
+
+        .def("set_special_integral", &Amp4Body_TD::set_special_integral,"special"_a)
         .def("setDataSize", &Amp4Body_TD::setDataSize, "dataSize"_a, "evtSize"_a)
         .def("setGenerationOffset", &Amp4Body_TD::setGenerationOffset, "off"_a)
         .def("populateArrays",&Amp4Body_TD::populateArrays)
@@ -53,6 +54,14 @@ void init_Amp4Body_TD(py::module &m) {
 	    //copy back over to device
 	    self.set_norm_dtime(norm_dtime_h);
 	  })
+        .def("set_norm_pdf_weights",[](Amp4Body_TD &self,py::array_t<fptype> pyweight){
+	    mcbooster::RealVector_h norm_weight_h = self.get_norm_pdf_weights();
+	  for(int i =0; i < norm_weight_h.size();i++){
+	    norm_weight_h[i] = pyweight.mutable_at(i);
+	  }
+	  //copy back over to device                                                                                               
+	  self.set_norm_pdf_weights(norm_weight_h);
+	})
         .def("set_norm_eff",[](Amp4Body_TD &self, py::array_t<fptype> pyeff){
 	    mcbooster::RealVector_h norm_eff_h = self.get_norm_eff();
 	    for(int i = 0; i < norm_eff_h.size();i++){
@@ -60,6 +69,15 @@ void init_Amp4Body_TD(py::module &m) {
 	    }
 	    self.set_norm_eff(norm_eff_h);
 	  })
+        .def("set_norm_importance_weights",[](Amp4Body_TD &self,py::array_t<fptype> pyweight){
+	    mcbooster::RealVector_h norm_weight_h = self.get_norm_importance_weights();
+	    for(int i =0; i < norm_weight_h.size();i++){
+	      norm_weight_h[i] = pyweight.mutable_at(i);
+	    }
+	    //copy back over to device                                                                                                                                                                        
+	    self.set_norm_importance_weights(norm_weight_h);
+	  })
+
         .def("get_norm_eff",[](Amp4Body_TD &self){
 	    mcbooster::RealVector_h norm_eff = self.get_norm_eff();
 	    py::array_t<fptype> pyeff{norm_eff.size()};
@@ -125,6 +143,24 @@ void init_Amp4Body_TD(py::module &m) {
 		 }
 		 return pydtime;
 	       })
+      .def("get_norm_pdf_weights",
+	   [](Amp4Body_TD &self){
+	     mcbooster::RealVector_h weight = self.get_norm_pdf_weights();
+	     py::array_t<fptype> pyweight{weight.size()};
+	     for(int i = 0; i < weight.size();i++){
+	       pyweight.mutable_at(i) = weight[i];
+	     }
+	     return pyweight;
+	   })
+      .def("get_norm_importance_weights",
+           [](Amp4Body_TD &self){
+	     mcbooster::RealVector_h weight = self.get_norm_importance_weights();
+	     py::array_t<fptype> pyweight{weight.size()};
+             for(int i = 0; i < weight.size();i++){
+               pyweight.mutable_at(i) = weight[i];
+             }
+             return pyweight;
+           })
 
         .def("GenerateSig",
              [](Amp4Body_TD &self, size_t numEvents) {

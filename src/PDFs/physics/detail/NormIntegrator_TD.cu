@@ -19,12 +19,16 @@ namespace GooFit {
 
   //NormIntegrator_TD::NormIntegrator_TD() = default;
   NormIntegrator_TD::NormIntegrator_TD(bool SpecInt): _SpecInt(SpecInt){}
+  //argument takes 6 dimesnions + efficiency
+  //  __device__ fptype NormIntegrator_TD::operator()(thrust::tuple<fptype,fptype,fptype,fptype,fptype,fptype,fptype> t)const {
+    
+  //}
 
   //__device__ thrust::tuple<fptype, fptype, fptype, fptype> NormIntegrator_TD::
   //operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const {
   __device__ thrust::tuple<fptype, fptype, fptype, fptype> NormIntegrator_TD::
   operator()(thrust::tuple<int, int, fptype *, thrust::complex<fptype> *,
-	     mcbooster::GReal_t, mcbooster::GReal_t> t) const {
+	     mcbooster::GReal_t, mcbooster::GReal_t,mcbooster::GReal_t,mcbooster::GReal_t> t) const {
 
     // unsigned int *indices = paramIndices + _parameters;
     // unsigned int totalAMP = indices[5];
@@ -116,6 +120,10 @@ namespace GooFit {
       fptype _ymixing      = pc.getParameter(2);
       fptype _time = thrust::get<4>(t);
       fptype _eff = thrust::get<5>(t);
+      //pdf weight
+      fptype _weight = thrust::get<6>(t);
+      //importance weight 
+      fptype _importance_weight = thrust::get<7>(t);
       fptype term1 = thrust::norm(AmpA) + thrust::norm(AmpB);
       fptype term2 = thrust::norm(AmpA) - thrust::norm(AmpB);
       
@@ -137,7 +145,10 @@ namespace GooFit {
       ret *= exp(-_time);
 
       ret *= _eff;
-      return thrust::tuple<fptype,fptype,fptype,fptype>(ret,thrust::norm(AmpA),thrust::norm(AmpB),1);
+      ret *= _weight;
+      ret /= _importance_weight;
+      
+      return thrust::tuple<fptype,fptype,fptype,fptype>(ret,thrust::norm(AmpA)/_weight,thrust::norm(AmpB)/_weight,1);
     }
     else {
       return {thrust::norm(AmpA), thrust::norm(AmpB), AmpAB.real(), AmpAB.imag()};

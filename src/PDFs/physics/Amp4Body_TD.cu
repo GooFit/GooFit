@@ -77,6 +77,15 @@ struct get_pdf_val {
 
 };
 
+struct get_norm_pdf_weight{
+  fptype wmax;
+  __host__ __device__ get_norm_pdf_weight(fptype _wmax)
+    : wmax(_wmax){};
+  __host__ __device__ fptype operator()(fptype pdf_val){
+    return (fptype)(pdf_val/wmax);
+  }
+};
+
 struct exp_functor {
     size_t tmpparam, tmpoff;
     fptype gammamin, wmax;
@@ -486,8 +495,12 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
     norm_CosTheta34 = mcbooster::RealVector_d(nAcc);
     norm_phi        = mcbooster::RealVector_d(nAcc);
     norm_dtime = mcbooster::RealVector_d(nAcc);
+    //efficiency weight from BDT for the normalisation events
     norm_eff = mcbooster::RealVector_d(nAcc);
-    norm_weight = mcbooster::RealVector_d(nAcc);
+    //weight associated from the pdf value in place of an accept-reject
+    norm_pdf_weight = mcbooster::RealVector_d(nAcc);
+    //weight from importance sampling
+    norm_importance_weight = mcbooster::RealVector_d(nAcc);
     //Do this straight after intialisation
     thrust::counting_iterator<unsigned int> index_sequence_begin(0);
 
@@ -499,7 +512,8 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
     //fill the normalisation decay times with zero initially to calculate the value of the PDF at t=0
     thrust::fill(norm_dtime.begin(),norm_dtime.end(),0.);
     //fill the normalisation weights with 1
-    thrust::fill(norm_weight.begin(),norm_weight.end(),1.);
+    thrust::fill(norm_pdf_weight.begin(),norm_pdf_weight.end(),1.);
+    thrust::fill(norm_importance_weight.begin(),norm_importance_weight.end(),1.);
     //fill the normalisation vectors with ones to avoid any errors involving multiplying by 0
     thrust::fill(norm_eff.begin(),norm_eff.end(),1.);
     //cache a list of normalisation events
@@ -583,13 +597,16 @@ __host__ fptype Amp4Body_TD::normalize() {
 
     // check if MINUIT changed any parameters and if so remember that so we know
     // we need to recalculate that lineshape and every amp, that uses that lineshape
+    bool changed = false;
     for(unsigned int i = 0; i < components.size() - 1; ++i) {
         redoIntegral[i] = forceRedoIntegrals;
-
+	
         if(!(components[i]->parametersChanged()))
             continue;
 
         redoIntegral[i] = true;
+	//one or more of the components has changed so the integrals are being recalculated
+	changed = true;
     }
 
     SpinsCalculated    = !forceRedoIntegrals;
@@ -735,25 +752,29 @@ __host__ fptype Amp4Body_TD::normalize() {
         Integrator->setDalitzId(getFunctionIndex());
 
 	//calculate the normalisation weights first                                                                                                                                                         
-        if(!calculated_norm_weights){
+        //if(!(calculated_norm_weights) or changed){
+	if(false){
 	  thrust::device_vector<thrust::tuple<fptype,fptype,fptype,fptype>> pdf_vals_tuple(MCevents);
 	  printf("Calculating norm_weights for events");
-
+	  
 	  //copy the set decay times to a temporary vector 
 	  mcbooster::RealVector_d temp_dtime(norm_dtime);
 
 	  //set the decay times to be zero in order to find the max weight
 	  thrust::fill(norm_dtime.begin(),norm_dtime.end(),0.);
 
-	  //calculate the weight for each normalization event
-	  thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex,NumNormEvents,normSFaddress,normLSaddress,norm_dtime.begin(),norm_eff.begin(),norm_weight.begin())),thrust::make_zip_iterator(thrust::make_tuple(eventIndex + MCevents,NumNormEvents,normSFaddress,normLSaddress,norm_dtime.end(),norm_eff.end(),norm_weight.end())),pdf_vals_tuple.begin(),*Integrator);
+	  //calculate the weight for the pdf value for each normalization event
+	  thrust::transform(thrust::make_zip_iterator(thrust::make_tuple(eventIndex,NumNormEvents,normSFaddress,normLSaddress,norm_dtime.begin(),norm_eff.begin(),norm_pdf_weight.begin(),norm_importance_weight.begin())),thrust::make_zip_iterator(thrust::make_tuple(eventIndex + MCevents,NumNormEvents,normSFaddress,normLSaddress,norm_dtime.end(),norm_eff.end(),norm_pdf_weight.end(),norm_importance_weight.end())),pdf_vals_tuple.begin(),*Integrator);
 	  thrust::device_vector<fptype> pdf_vals(MCevents);
 	  thrust::transform(pdf_vals_tuple.begin(),pdf_vals_tuple.end(),pdf_vals.begin(),get_pdf_val());
 	  
-	  fptype wmax_norm = 1.1 * (fptype)*thrust::max_element(pdf_vals.begin(), pdf_vals.end());
+	  //fptype wmax_norm = 1.1 * (fptype)*thrust::max_element(pdf_vals.begin(), pdf_vals.end());
+	  //hard coding a large max weight. Should be able to ignore weights larger than 1 as they are very rare
+	  fptype wmax_norm = 35.0;
+	  thrust::transform(pdf_vals.begin(),pdf_vals.end(),norm_pdf_weight.begin(),get_norm_pdf_weight(wmax_norm));
 	  //reset the decay times
 	  norm_dtime = temp_dtime;
-
+	  
 	  //check to see if PDF value calcualted correctly
 	  /*
 	  for(int i = 0; i < 10;i++){
@@ -778,7 +799,7 @@ __host__ fptype Amp4Body_TD::normalize() {
 	*/
 	
 	sumIntegral = thrust::transform_reduce(
-					       thrust::make_zip_iterator(thrust::make_tuple(eventIndex, NumNormEvents, normSFaddress, normLSaddress,norm_dtime.begin(),norm_eff.begin(),norm_weight.begin())),thrust::make_zip_iterator(thrust::make_tuple(eventIndex + MCevents, NumNormEvents, normSFaddress, normLSaddress,norm_dtime.end(),norm_eff.end(),norm_weight.end())),
+					       thrust::make_zip_iterator(thrust::make_tuple(eventIndex, NumNormEvents, normSFaddress, normLSaddress,norm_dtime.begin(),norm_eff.begin(),norm_pdf_weight.begin(),norm_importance_weight.begin())),thrust::make_zip_iterator(thrust::make_tuple(eventIndex + MCevents, NumNormEvents, normSFaddress, normLSaddress,norm_dtime.end(),norm_eff.end(),norm_pdf_weight.end(),norm_importance_weight.end())),
 	   *Integrator,                                        
 	   dummy,                                             
 	   MyFourDoubleTupleAdditionFunctor);    
@@ -791,6 +812,7 @@ __host__ fptype Amp4Body_TD::normalize() {
         fptype ymixing = parametersList[2];
 	if(specialIntegral){
 	  const double uniformNorm = 1.;
+	  //const double uniformNorm = 3.26 - 0.18;
 	  ret = thrust::get<0>(sumIntegral) * uniformNorm;
 	  
 	}

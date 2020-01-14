@@ -100,7 +100,6 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
     // loop to efficiency idx
     for(int i = 0; i < numResonances; i++)
         pc.incrementIndex();
-    // pc.incrementIndex (16, 45, 45, 15, 31);
 
     fptype eff = callFunction(evt, pc);
     ret *= eff;

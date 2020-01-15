@@ -47,8 +47,8 @@ __device__ fptype device_SquareDalitzEff(fptype *evt, ParameterContainer &pc) {
 
     fptype mD   = 1.86483;
     fptype mKS0 = 0.497611;
-    fptype mh1  = 1.3957;
-    fptype mh2  = 1.3957;
+    fptype mh1  = 0.13957;
+    fptype mh2  = 0.13957;
 
     pc.incrementIndex(1, 8, 0, 2, 1);
 

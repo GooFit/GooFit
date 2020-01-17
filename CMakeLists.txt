@@ -79,7 +79,8 @@ include("${GOOFIT_SOURCE_DIR}/extern/modern_cmake/ModernCMakeUtils.cmake")
 include("${GOOFIT_SOURCE_DIR}/extern/modern_cmake/ModernCUDA.cmake")
 
 # Add clang-tidy if available
-if(CMAKE_VERSION VERSION_GREATER 3.6)
+option(GOOFIT_TIDY "Add clang-tidy")
+if(CMAKE_VERSION VERSION_GREATER 3.6 AND GOOFIT_TIDY OR GOOFIT_TIDY_FIX)
     option(GOOFIT_TIDY_FIX "Perform fixes for Clang-Tidy - changes source inplace" OFF)
     find_program(
         CLANG_TIDY_EXE

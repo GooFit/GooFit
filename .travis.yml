@@ -1,6 +1,6 @@
 language: cpp
 sudo: false
-dist: trusty
+dist: bionic
 cache:
   ccache: true
   apt: true

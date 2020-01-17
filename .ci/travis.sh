@@ -7,7 +7,7 @@ set -evx
 mkdir -p build
 cd build
 cmake -DGOOFIT_DEVICE=OMP -DCMAKE_BUILD_TYPE=RelWithDebInfo -DGOOFIT_PYTHON=ON -DGOOFIT_SPLASH=OFF ..
-VERBOSE=1 cmake --build . -- -j2
+cmake --build . -- -j2
 
 set +evx
 echo -e 'travis_fold:end:script.build\\r'

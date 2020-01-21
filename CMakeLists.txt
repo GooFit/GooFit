@@ -79,8 +79,9 @@ include("${GOOFIT_SOURCE_DIR}/extern/modern_cmake/ModernCMakeUtils.cmake")
 include("${GOOFIT_SOURCE_DIR}/extern/modern_cmake/ModernCUDA.cmake")
 
 # Add clang-tidy if available
-if(CMAKE_VERSION VERSION_GREATER 3.6)
-    option(GOOFIT_TIDY_FIX "Perform fixes for Clang-Tidy - changes source inplace" OFF)
+option(GOOFIT_TIDY "Add clang-tidy")
+option(GOOFIT_TIDY_FIX "Perform fixes for Clang-Tidy - changes source inplace")
+if(CMAKE_VERSION VERSION_GREATER 3.6 AND (GOOFIT_TIDY OR GOOFIT_TIDY_FIX))
     find_program(
         CLANG_TIDY_EXE
         NAMES "clang-tidy"
@@ -481,6 +482,11 @@ if(NOT TARGET ROOT::Minuit2)
     add_subdirectory("extern/Minuit2")
     set_target_properties(Minuit2 PROPERTIES FOLDER extern)
     set_target_properties(Minuit2Math PROPERTIES FOLDER extern)
+    target_compile_definitions(
+     Minuit2Math
+       PUBLIC
+         MATHCORE_STANDALONE
+     )
     add_library(ROOT::Minuit2 ALIAS Minuit2)
 endif()
 target_link_libraries(GooFit_Common INTERFACE ROOT::Minuit2)

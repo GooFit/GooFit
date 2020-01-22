@@ -88,6 +88,7 @@ struct exp_functor {
         rand.discard(tmpoff + evtNum);
 
         return (dist(rand) * exp(-time * gammamin) * wmax) < thrust::get<1>(t);
+        // Should be something like: return thrust::get<1>(t) / exp(-time * gammamin);
     }
 };
 
@@ -879,7 +880,7 @@ __host__
 
     cudaDeviceSynchronize();
 
-    thrust::device_vector<fptype> flag2(nAcc);
+    thrust::device_vector<fptype> flag2(nAcc); // Should be weight2
     thrust::counting_iterator<mcbooster::GLong_t> first(0);
     // thrust::counting_iterator<mcbooster::GLong_t> last = first + nAcc;
 
@@ -892,8 +893,14 @@ __host__
     thrust::transform(
         thrust::make_zip_iterator(thrust::make_tuple(eventIndex, results.begin(), arrayAddress, eventSize)),
         thrust::make_zip_iterator(thrust::make_tuple(eventIndex + nAcc, results.end(), arrayAddress, eventSize)),
-        flag2.begin(),
+        flag2.begin(), // Should be weight2
         exp_functor(tmpparam, tmpoff, gammamin, wmax));
+
+    // set weights with weight2
+
+    // Maybe max goes here now
+
+    // Include code from Amp4Body regular here
 
     gooFree(dev_event_array);
 

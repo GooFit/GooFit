@@ -150,6 +150,7 @@ endmacro()
 goofit_setup_std()
 
 set(GOOFIT_GCC_WARNINGS "-Wall -Wextra -Wno-unknown-pragmas -Wno-long-long -Wno-attributes -Wno-sign-compare -Wno-unused-parameter")
+
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GOOFIT_GCC_WARNINGS}")
     # Helpful but irritating: -Wzero-as-null-pointer-constant -Wsuggest-override
@@ -475,7 +476,6 @@ if(GOOFIT_CERNROOT)
         target_link_libraries(GooFit_Common INTERFACE ROOT::Libraries ROOT::Minuit)
     endif()
 endif()
-mark_as_advanced(GOOFIT_CERNROOT)
 
 # If either ROOT not found or Minuit2 not included
 if(NOT TARGET ROOT::Minuit2)

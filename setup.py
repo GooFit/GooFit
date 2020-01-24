@@ -12,6 +12,7 @@ ITEMS = [
     '-DGOOFIT_TESTS=OFF',
     '-DGOOFIT_CERNROOT=OFF',
     '-DGOOFIT_EXAMPLES=OFF',
+    '-DCMAKE_UNITY_BUILD=ON', # Faster build on CMake 3.16+
 ]
 
 # Add GOOFIT_* from env.

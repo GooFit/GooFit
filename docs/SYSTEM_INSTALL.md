@@ -194,8 +194,18 @@ docker run --rm -v $PWD:/goofit -it nvidia/cuda:9.2-devel-ubuntu18.04 bash
 apt update && apt install -y cmake
 mkdir build
 cd build
-cmake ../goofit
+cmake ../goofit -DGOOFIT_ARCH=3.5
 make -j4
+```
+
+Or, to select a newer version of CMake:
+
+```bash
+docker run --rm -v $PWD:/goofit -it nvidia/cuda:9.2-devel-ubuntu18.04 bash
+apt update && apt install -y wget
+wget -qO- "https://cmake.org/files/v3.16/cmake-3.16.3-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C /usr/local
+cmake -S goofit -B build -DGOOFIT_ARCH=3.5
+cmake --build build -j4
 ```
 
 </p></details>

@@ -79,8 +79,9 @@ include("${GOOFIT_SOURCE_DIR}/extern/modern_cmake/ModernCMakeUtils.cmake")
 include("${GOOFIT_SOURCE_DIR}/extern/modern_cmake/ModernCUDA.cmake")
 
 # Add clang-tidy if available
-if(CMAKE_VERSION VERSION_GREATER 3.6)
-    option(GOOFIT_TIDY_FIX "Perform fixes for Clang-Tidy - changes source inplace" OFF)
+option(GOOFIT_TIDY "Add clang-tidy")
+option(GOOFIT_TIDY_FIX "Perform fixes for Clang-Tidy - changes source inplace")
+if(CMAKE_VERSION VERSION_GREATER 3.6 AND (GOOFIT_TIDY OR GOOFIT_TIDY_FIX))
     find_program(
         CLANG_TIDY_EXE
         NAMES "clang-tidy"
@@ -149,6 +150,7 @@ endmacro()
 goofit_setup_std()
 
 set(GOOFIT_GCC_WARNINGS "-Wall -Wextra -Wno-unknown-pragmas -Wno-long-long -Wno-attributes -Wno-sign-compare -Wno-unused-parameter")
+
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GOOFIT_GCC_WARNINGS}")
     # Helpful but irritating: -Wzero-as-null-pointer-constant -Wsuggest-override
@@ -391,12 +393,16 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
         string(APPEND CMAKE_CUDA_FLAGS " -Xnvlink=--disable-warnings")
         string(APPEND CMAKE_CUDA_FLAGS " -Xcompiler=-Wno-attributes")
 
-        cmake_cuda_arch_select(FLAGS ARCH_FLAGS READABLE ARCH_FLAGS_readable ARCHS ${GOOFIT_ARCH})
-        string(REPLACE ";" ", " READ_ARCH_FLAGS "${ARCH_FLAGS_readable}")
-        string(REPLACE ";" " " ARCH_FLAGS "${ARCH_FLAGS}")
-        string(APPEND CMAKE_CUDA_FLAGS " ${ARCH_FLAGS}")
-        set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS}" CACHE INTERNAL "")
-        message(STATUS "Compiling for GPU arch: ${READ_ARCH_FLAGS}")
+        if(NOT DEFINED GOOFIT_ARCH OR GOOFIT_ARCH)
+            cmake_cuda_arch_select(FLAGS ARCH_FLAGS READABLE ARCH_FLAGS_readable ARCHS ${GOOFIT_ARCH})
+            string(REPLACE ";" ", " READ_ARCH_FLAGS "${ARCH_FLAGS_readable}")
+            string(REPLACE ";" " " ARCH_FLAGS "${ARCH_FLAGS}")
+            string(APPEND CMAKE_CUDA_FLAGS " ${ARCH_FLAGS}")
+            set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS}" CACHE INTERNAL "")
+            message(STATUS "Compiling for GPU arch: ${READ_ARCH_FLAGS}")
+        else()
+            message(STATUS "Not compiling for a specific GPU arch")
+        endif()
 
         set(THRUST_INCLUDE_DIR "${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}")
 
@@ -438,13 +444,21 @@ if(NOT THRUST_FOUND)
     set(THRUST_INCLUDE_DIR "${GOOFIT_SOURCE_DIR}/extern/thrust")
     find_package(Thrust 1.8 REQUIRED)
 endif()
-message(STATUS "Using Thrust from ${THRUST_INCLUDE_DIRS}")
 
-option(GOOFIT_FORCE_LOCAL_THRUST "GooFit will use the GitHub version of Thrust by default (CUDA 9.2's Thrust is buggy)" ON)
+option(GOOFIT_FORCE_LOCAL_THRUST "GooFit will use the GitHub version of Thrust by default (CUDA 9 and 10's Thrust is buggy)" ON)
 if(GOOFIT_FORCE_LOCAL_THRUST)
-    target_include_directories(GooFit_Common SYSTEM INTERFACE "${GOOFIT_SOURCE_DIR}/extern/thrust")
+    message(STATUS "Forcing local thrust. GOOFIT_FORCE_LOCAL_THRUST=OFF to disable. Requires CUDA < 10.2")
+    message(STATUS "Using CUDA from ${THRUST_INCLUDE_DIRS}")
+    target_include_directories(GooFit_Common SYSTEM BEFORE INTERFACE "${GOOFIT_SOURCE_DIR}/extern/thrust")
+    if(GOOFIT_DEVICE STREQUAL CUDA AND NEW_CUDA)
+        target_compile_options(GooFit_Common INTERFACE "-isystem=${THRUST_INCLUDE_DIRS}")
+    else()
+        target_include_directories(GooFit_Common SYSTEM INTERFACE "${THRUST_INCLUDE_DIRS}")
+    endif()
+else()
+    target_include_directories(GooFit_Common SYSTEM INTERFACE "${THRUST_INCLUDE_DIRS}")
+    message(STATUS "Using Thrust and CUDA from ${THRUST_INCLUDE_DIRS}")
 endif()
-target_include_directories(GooFit_Common SYSTEM INTERFACE "${THRUST_INCLUDE_DIRS}")
 
 if(GOOFIT_DEVICE STREQUAL OMP OR GOOFIT_HOST STREQUAL OMP OR GOOFIT_DEVICE STREQUAL TBB OR GOOFIT_HOST STREQUAL TBB)
     find_modern_package(OpenMP)
@@ -474,13 +488,17 @@ if(GOOFIT_CERNROOT)
         target_link_libraries(GooFit_Common INTERFACE ROOT::Libraries ROOT::Minuit)
     endif()
 endif()
-mark_as_advanced(GOOFIT_CERNROOT)
 
 # If either ROOT not found or Minuit2 not included
 if(NOT TARGET ROOT::Minuit2)
     add_subdirectory("extern/Minuit2")
     set_target_properties(Minuit2 PROPERTIES FOLDER extern)
     set_target_properties(Minuit2Math PROPERTIES FOLDER extern)
+    target_compile_definitions(
+     Minuit2Math
+       PUBLIC
+         MATHCORE_STANDALONE
+     )
     add_library(ROOT::Minuit2 ALIAS Minuit2)
 endif()
 target_link_libraries(GooFit_Common INTERFACE ROOT::Minuit2)

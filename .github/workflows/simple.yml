@@ -1,6 +1,13 @@
 name: Simple build
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
+      - v*
+  pull_request:
+    branches:
+      - master
 
 jobs:
   build:
@@ -19,4 +26,30 @@ jobs:
     - name: Build
       run: cmake --build build -j "$(getconf _NPROCESSORS_ONLN)"
     - name: Run Tests
-      run: cmake --build build --target tests
+      run: cmake --build build --target test
+
+
+  cuda-build:
+    name: CUDA build only
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        cuda:
+          - 8.0-devel-ubuntu16.04
+          - 9.0-devel-ubuntu16.04
+          - 9.2-devel-ubuntu18.04
+          - 10.0-devel-ubuntu18.04
+        
+    container: nvidia/cuda:10.0-devel-ubuntu18.04
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        submodules: true
+    - name: Add wget
+      run: apt-get update && apt-get install -y wget
+    - name: Install Modern CMake
+      run: wget -qO- "https://cmake.org/files/v3.16/cmake-3.16.3-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C /usr/local
+    - name: Configure
+      run: cmake -S . -B build -DGOOFIT_ARCH=3.5
+    - name: Build
+      run: cmake --build build -j2 -v

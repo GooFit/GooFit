@@ -168,7 +168,7 @@ make
 
 <details><summary>SLC 6 with CVMFS (LxPlus 6): (click to expand)</summary><p>
 
-```
+```bash
 # If you have not run this already (automatic on LxPlus):
 source /cvmfs/lhcb.cern.ch/group_login.sh
 
@@ -187,12 +187,35 @@ make -j4
 
 </p></details>
 
+<details><summary>NVidia (click to expand)</summary><p>
+
+```bash
+docker run --rm -v $PWD:/goofit -it nvidia/cuda:9.2-devel-ubuntu18.04 bash
+apt update && apt install -y cmake
+mkdir build
+cd build
+cmake ../goofit -DGOOFIT_ARCH=3.5
+make -j4
+```
+
+Or, to select a newer version of CMake:
+
+```bash
+docker run --rm -v $PWD:/goofit -it nvidia/cuda:9.2-devel-ubuntu18.04 bash
+apt update && apt install -y wget
+wget -qO- "https://cmake.org/files/v3.16/cmake-3.16.3-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C /usr/local
+cmake -S goofit -B build -DGOOFIT_ARCH=3.5
+cmake --build build -j4
+```
+
+</p></details>
+
 <details><summary>Note about installing CMake: (click to expand)</summary><p>
 
 While other install methods for CMake, like `pip`, are easier, this way should always work. On Linux, you can manually get a version of CMake using:
 
 ```bash
-mkdir cmake && wget -qO- "https://cmake.org/files/v3.12/cmake-3.12.1-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C cmake
+mkdir cmake && wget -qO- "https://cmake.org/files/v3.16/cmake-3.16.3-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C cmake
 export PATH=`pwd`/cmake/bin:$PATH
 ```
 
@@ -201,7 +224,7 @@ The second line will need to be rerun whenever use a new shell. Feel free to mak
 If you are a fan of using `~/.local` and already have `~/.local/bin` in your path, you can instead use:
 
 ```bash
-wget -qO- "https://cmake.org/files/v3.12/cmake-3.12.1-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C ~/.local
+wget -qO- "https://cmake.org/files/v3.16/cmake-3.16.3-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C ~/.local
 ```
 
 </p></details>

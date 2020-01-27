@@ -28,10 +28,6 @@ __device__ fptype thetaprime(fptype m12, fptype m13, fptype mD, fptype mKS0, fpt
 }
 
 __device__ fptype device_SquareDalitzEff(fptype *evt, ParameterContainer &pc) {
-    int num_constants   = pc.getNumConstants();
-    int num_parameters  = pc.getNumParameters();
-    int num_observables = pc.getNumObservables();
-
     // Define observables
     int idx = pc.getObservable(0);
     int idy = pc.getObservable(1);
@@ -51,8 +47,10 @@ __device__ fptype device_SquareDalitzEff(fptype *evt, ParameterContainer &pc) {
 
     fptype mD   = 1.86483;
     fptype mKS0 = 0.497611;
-    fptype mh1  = 1.3957;
-    fptype mh2  = 1.3957;
+    fptype mh1  = 0.13957;
+    fptype mh2  = 0.13957;
+
+    pc.incrementIndex(1, 8, 0, 2, 1);
 
     // Check phase space
     if(!inDalitz(x, y, mD, mKS0, mh1, mh2))
@@ -69,8 +67,6 @@ __device__ fptype device_SquareDalitzEff(fptype *evt, ParameterContainer &pc) {
 
     fptype ret = c0 * m23 * m23 + c1 * m23 + c2 * m23 * thetap * thetap + c3 * thetap * thetap + c4 * thetap + c5
                  + c6 * m23 * m23 * m23 * m23 + c7 * m23 * m23 * m23;
-
-    pc.incrementIndex(1, num_parameters, num_constants, num_observables, 1);
 
     return ret;
 }
@@ -89,24 +85,12 @@ __host__ SquareDalitzEffPdf::SquareDalitzEffPdf(std::string n,
                                                 Variable c6,
                                                 Variable c7)
 
-    : GooPdf("SquareDalitzEffPdf", n) {
-    registerParameter(c0);
-    registerParameter(c1);
-    registerParameter(c2);
-    registerParameter(c3);
-    registerParameter(c4);
-    registerParameter(c5);
-    registerParameter(c6);
-    registerParameter(c7);
-
-    registerObservable(m12);
-    registerObservable(m13);
-
+    : GooPdf("SquareDalitzEffPdf", n, m12, m13, c0, c1, c2, c3, c4, c5, c6, c7) {
     registerFunction("ptr_to_SquareDalitzEff", ptr_to_SquareDalitzEff);
 
     initialize();
 }
 
-__host__ fptype SquareDalitzEffPdf::normalize() { return 1; }
+// __host__ fptype SquareDalitzEffPdf::normalize() { return 1; }
 
 } // namespace GooFit

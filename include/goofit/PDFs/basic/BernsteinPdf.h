@@ -4,7 +4,6 @@
 
 namespace GooFit {
 
-
 /**
 A Bernstein polynomial, named after Sergei Natanovich Bernstein, is a polynomial
 in the Bernstein form, that is a linear combination of Bernstein basis polynomials.
@@ -12,11 +11,10 @@ in the Bernstein form, that is a linear combination of Bernstein basis polynomia
 **/
 class BernsteinPdf : public GooPdf {
   public:
-    BernsteinPdf(std::string n, Observable vars, std::vector<Variable> coeffs,unsigned int mindeg = 0);
+    BernsteinPdf(std::string n, Observable vars, std::vector<Variable> coeffs, unsigned int mindeg = 0);
     __host__ bool hasAnalyticIntegral() const override { return false; }
 
   private:
-    fptype* host_constants;
-
+    fptype *host_constants;
 };
 } // namespace GooFit

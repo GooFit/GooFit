@@ -14,6 +14,7 @@ goofit_add_pdf_library(PDFPhysics
     Amp3Body_TD.cu
     Amp3Body_IS.cu
     Amp4Body.cu
+    Amp4BodyBase.cu
     Amp4Body_TD.cu
     Amp4BodyGlobals.cu
     Amplitude.cu
@@ -23,6 +24,7 @@ goofit_add_pdf_library(PDFPhysics
     MixingTimeResolution.cu
     ThreeGaussResolution.cu
     TruthResolution.cu
+    SquareDalitzEffPdf.cu
 
     detail/AmpCalc.cu
     detail/AmpCalc_TD.cu

@@ -21,20 +21,19 @@ doing maximum-likelihood fits with a familiar syntax.
 
 ## Requirements
 
-* A recent version of CMake is required. The minimum is 3.4, but tested primarily with 3.6 and newer. CMake is incredibly easy to install, you can even use `pip` (see [the system install page](./docs/SYSTEM_INSTALL.md)). GooFit developers have supplied patches to CMake 3.12, so that is highly recommended.
-* A ROOT 6 build highly recommended -- GooFit will use the included Minuit2 submodule if ROOT is not found, and the Minuit1 based fitter will not be available. Supports 6.04-6.16 (6.10+ recommended).
+* A recent version of CMake is required. The minimum is 3.4, but tested primarily with 3.9 and newer. CMake is incredibly easy to install, you can even use `pip` (see [the system install page](./docs/SYSTEM_INSTALL.md)). GooFit developers have supplied patches to CMake 3.12, so that is highly recommended.
+* A ROOT 6 build highly recommended -- GooFit will use the included Minuit2 submodule if ROOT is not found, and the Minuit1 based fitter will not be available. Supports 6.04-6.18 (6.10+ recommended).
 
 <details><summary>If using CUDA: (click to expand)</summary><p>
 
 * CMake 3.8+ highly recommended, but not required (yet)
 * CUDA 7.0+ (with caveats below)
-    * CUDA 7.0: Requires CMake 3.12 or `NEW_CUDA=OFF`.
+    * CUDA 7.0: Requires CMake 3.12+ or `NEW_CUDA=OFF`.
     * CUDA 7.x: Python not supported.
     * CUDA 8: Supported
-    * CUDA 9.0: Buggy, see [known issues](https://github.com/GooFit/GooFit/issues/173)
-    * CUDA 9.1, 9.2: Supported as of GooFit v2.2.1 (minor warnings about `extern declaration`)
-    * CUDA 10: Supported (minor warnings from Eigen)
-    * CUDA 10.1: Not yet supported due to Thrust 1.8 incompatibility
+    * CUDA 9.0, 9.2, 10.0: Some warnings from Eigen, supported
+    * CUDA 9.1: Buggy, see [known issues](https://github.com/GooFit/GooFit/issues/173)
+    * CUDA 10.1, 10.2: Not yet supported due to Thrust 1.8 incompatibility
 * An nVidia GPU supporting compute capability at least 2.0 (3.5+ recommended)
 
 </p></details>
@@ -119,7 +118,7 @@ Valid options are `CUDA` (device only), `OMP`, `TBB`, and `CPP`. The Thrust `TBB
 Other custom options supported along with the defaults:
 
 * `-DGOOFIT_DEVICE=Auto`: The device to use for computation (`CUDA`, `OMP`, `TBB`, or `CPP`). Default setting of `Auto` looks for CUDA first, then OpenMP, then CPP.
-* `-DGOOFIT_ARCH=Auto`: (`Auto`, `Common`, `All`, valid number(s) or name(s)): sets the compute architecture. See [CUDA_SELECT_NVCC_ARCH_FLAGS].
+* `-DGOOFIT_ARCH=Auto`: (`Auto`, `Common`, `All`, valid number(s) or name(s)): sets the compute architecture. See [CUDA_SELECT_NVCC_ARCH_FLAGS][]. Can be set to `OFF` to avoid adding any flags.
 * `-DGOOFIT_EXAMPLES=ON`: Build the examples
 * `-DGOOFIT_PACKAGES=ON`: Build any packages found with the name `goofit_*`
 * `-DGOOFIT_DEBUG=ON` and `-DGOOFIT_TRACE=ON` will enable the matching printout macros
@@ -135,6 +134,7 @@ Other custom options supported along with the defaults:
 * `-DGOOFIT_SPLASH=ON`: Controls the unicode splash at the beginning.
 * `-DGOOFIT_CERNROOT=ON`: Allows you to disable the automatic search for ROOT (used by the PIP Python build)
 * `-DNEW_CUDA=OFF`: On CMake 3.8+, GooFit uses CUDA as a language. You can turn that off with this setting. Make sure you have CUDA 7.5+.
+* `-DCMAKE_UNITY_BUILD=OFF`: Turn on Unity builds in CMake 3.16+. Should be a bit faster (does not speed up CUDA portions of builds).
 
 </p></details>
 

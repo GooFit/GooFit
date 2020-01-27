@@ -1,8 +1,7 @@
+#include <goofit/Python.h>
+
 #include <pybind11/eval.h>
 #include <pybind11/pybind11.h>
-
-namespace py = pybind11;
-using namespace pybind11::literals;
 
 void init_HelpPrinter(py::module &);
 void init_DataSet(py::module &);
@@ -65,6 +64,7 @@ void init_ResonancePdf(py::module &);
 void init_SpinFactors(py::module &);
 void init_ThreeGaussResolution(py::module &);
 void init_TruthResolution(py::module &);
+void init_SquareDalitzEffPdf(py::module &);
 
 // Utilities
 void init_VariableBinTransform1DPdf(py::module &);
@@ -135,6 +135,7 @@ PYBIND11_MODULE(_goofit, m) {
     init_SpinFactors(m);
     init_ThreeGaussResolution(m);
     init_TruthResolution(m);
+    init_SquareDalitzEffPdf(m);
 
     // Utilities
     init_VariableBinTransform1DPdf(m);

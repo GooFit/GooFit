@@ -1,7 +1,21 @@
 ## v2.2.3: IN PROGRESS
 
-* Update externals, verify compatibility with CUDA 10
 * GooFit version is now available as a Python tuple
+* Check CUDA 8.0, 9.0, 9.2, and 10.0 builds on GHA [#224][]
+* Support `GOOFIT_ARCH=OFF`, fix `FORCE_LOCAL_THRUST` for CMake 3.12+ [#224][]
+* Bump vendored library versions [#223][], [#225][]
+* Square Dalitz [#207][]
+* Added `setDataSize`, `getName`, `getBinSize` to Python bindings
+* CrystalBall fixes [#200][]
+* 2D MC bound [#196][]
+
+[#196]: https://github.com/GooFit/GooFit/pull/196
+[#200]: https://github.com/GooFit/GooFit/pull/200
+[#207]: https://github.com/GooFit/GooFit/pull/207
+[#223]: https://github.com/GooFit/GooFit/pull/223
+[#224]: https://github.com/GooFit/GooFit/pull/224
+[#225]: https://github.com/GooFit/GooFit/pull/225
+
 
 ## v2.2.2: Python access
 #### February 1, 2019

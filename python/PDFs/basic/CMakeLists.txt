@@ -2,6 +2,7 @@ add_library(_Basic STATIC
     ArgusPdf.cpp
     BifurGaussPdf.cpp
     BinTransformPdf.cpp
+    BernsteinPdf.cpp
     BWPdf.cpp
     CorrGaussianPdf.cpp
     CrystalBallPdf.cpp
@@ -26,6 +27,7 @@ set_target_properties(_Basic PROPERTIES FOLDER python/PDFs)
 
 goofit_add_python_docs(_Basic PDFs/basic/ArgusPdf.h)
 goofit_add_python_docs(_Basic PDFs/basic/BifurGaussPdf.h)
+goofit_add_python_docs(_Basic PDFs/basic/BernsteinPdf.h)
 goofit_add_python_docs(_Basic PDFs/basic/BWPdf.h)
 goofit_add_python_docs(_Basic PDFs/basic/CorrGaussianPdf.h)
 goofit_add_python_docs(_Basic PDFs/basic/CrystalBallPdf.h)

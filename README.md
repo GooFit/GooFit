@@ -4,6 +4,7 @@
 [![License: LGPL v3][license-badge]](./LICENSE)
 [![Latest release][releases-badge]][releases-link]
 [![PyPI Status][pypi-status]][pypi-link]
+[![conda-forge Status][conda-forge-status]][conda-forge-link]
 [![DOI][DOI-badge]][DOI-link]
 [![Scikit-HEP][sk-badge]](https://scikit-hep.org/)
 
@@ -345,6 +346,8 @@ In addition, we thank the nVidia GPU Grant Program for donating hardware used in
 [Tutorials]:         https://goofit.gitlab.io/Goo2Torial
 [pypi-status]:       https://img.shields.io/pypi/v/goofit.svg
 [pypi-link]:         https://pypi.python.org/pypi/goofit/
+[pypi-status]:       https://img.shields.io/conda/vn/conda-forge/goofit.svg?logo=Conda-Forge&logoColor=white
+[pypi-link]:         https://github.com/conda-forge/goofit-split-feedstock
 [releases-badge]:    https://img.shields.io/github/release/GooFit/GooFit.svg
 [releases-link]:     https://github.com/GooFit/GooFit/releases
 [sk-badge]:          https://scikit-hep.org/assets/images/Scikit--HEP-Affiliated-blue.svg

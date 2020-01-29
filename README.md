@@ -7,7 +7,9 @@
 [![DOI][DOI-badge]][DOI-link]
 [![Scikit-HEP][sk-badge]](https://scikit-hep.org/)
 
-![GooFit logo](./docs/GooFitLogo.png)
+<p align="center">
+  <img width="495" height="220" src="https://raw.githubusercontent.com/GooFit/GooFit/master/docs/GooFitLogo.png"/>
+</p>
 
 GooFit is a massively-parallel framework, written using Thrust for CUDA and OpenMP, for
 doing maximum-likelihood fits with a familiar syntax.
@@ -23,15 +25,15 @@ doing maximum-likelihood fits with a familiar syntax.
 
 ## Requirements
 
-* A recent version of CMake is required. The minimum is 3.4, but tested primarily with 3.9 and newer. CMake is incredibly easy to install, you can even use `pip` (see [the system install page](./docs/SYSTEM_INSTALL.md)). GooFit developers have supplied patches to CMake 3.12, so that is highly recommended.
+* A recent version of CMake is required. The minimum is 3.4, but tested primarily with 3.9 and newer. CMake is incredibly easy to install, you can even use `pip` (see [the system install page](./docs/SYSTEM_INSTALL.md)). GooFit developers have supplied patches to CMake 3.12, so at least that is highly recommended. Version 2.3 will drop support for older CMake versions.
 * A ROOT 6 build highly recommended -- GooFit will use the included Minuit2 submodule if ROOT is not found, and the Minuit1 based fitter will not be available. Supports 6.04-6.18 (6.10+ recommended).
 
 <details><summary>If using CUDA: (click to expand)</summary><p>
 
 * CMake 3.8+ highly recommended, but not required (yet)
 * CUDA 7.0+ (with caveats below)
-    * CUDA 7.0: Requires CMake 3.12+ or `NEW_CUDA=OFF`.
-    * CUDA 7.x: Python not supported.
+    * CUDA 7.0: Requires CMake 3.12+ or `NEW_CUDA=OFF`. Will be removed in 2.3.
+    * CUDA 7.x: Python not supported. Will be removed in 2.3.
     * CUDA 8: Supported
     * CUDA 9.0, 9.2, 10.0: Some warnings from Eigen, supported
     * CUDA 9.1: Buggy, see [known issues](https://github.com/GooFit/GooFit/issues/173)
@@ -44,7 +46,7 @@ doing maximum-likelihood fits with a familiar syntax.
 
 * A compiler supporting OpenMP and C++11 (GCC 4.8+, Clang, and Intel 17 tested, GCC 4.7 not supported)
 * Note that TBB is also available as a backend, but it still requires OpenMP to be present.
-* On macOS, this backend requires `brew install libomp` or a custom compiler
+* On macOS, this backend requires `brew install libomp` or a custom compiler.
 
 </p></details>
 
@@ -61,13 +63,13 @@ A list of exact commands required for several platforms is [available here](./do
 
 <details><summary>Python Bindings: (click to expand)</summary><p>
 
-There are also Python Bindings. This requires Python (2 or 3), [NumPy](http://www.numpy.org), [SciKit-Build](http://scikit-build.readthedocs.io), and CMake. CUDA 8+ is required if using CUDA. If you want the most recent stable release, use `pip install -v goofit` (If you have pip 9 or less, you'll need scikit build and cmake beforehand).
+There are also Python Bindings. This requires Python (2 or 3), [NumPy](http://www.numpy.org), [SciKit-Build](http://scikit-build.readthedocs.io), and CMake. CUDA 8+ is required if using CUDA. If you want the most recent stable release, use `pip install -v goofit` (If you have pip 9 or less, you'll need scikit-build and cmake installed beforehand).
 
 Repository method:
 
 You can uses `pip install -v .` inside the repository. You can also directly force the bindings from a normal build with `-DGOOFIT_PYTHON=ON`. You can check your install with `python -m goofit`. You can debug a goofit file named `python_script.py` with gcc using `gdb -ex r --args python python_script.py`.
 
-Other python requirements for the examples (use `pipenv install --dev` to install all requirements at once in a pipenv environment):
+Other python requirements for the examples:
 
 * numpy-1.11.1+
 * pandas-0.15.1+
@@ -101,10 +103,15 @@ If you just want to get started as fast as possible, running `make`, `make omp`,
 The build system uses CMake. The procedure is standard for CMake builds:
 
 ```bash
+# Classic method
 mkdir build
 cd build
 cmake ..
-make
+make -j4 # 4 threads, adjust as needed
+
+# Newer method (CMake 3.13+)
+cmake -S . -B build
+cmake --build build -j4 # 4 threads, adjust as needed
 ```
 
 If you don't have a modern CMake, Kitware provides installers for every OS. You can even get a copy using python: `pip install cmake` or locally with `pip install --user cmake`.

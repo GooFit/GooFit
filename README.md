@@ -344,7 +344,7 @@ In addition, we thank the nVidia GPU Grant Program for donating hardware used in
 [PyBind11]:          http://pybind11.readthedocs.io/en/master
 [ROOT]:              https://root.cern.ch
 [Tutorials]:         https://goofit.gitlab.io/Goo2Torial
-[pypi-status]:       https://img.shields.io/pypi/v/goofit.svg
+[pypi-status]:       https://img.shields.io/pypi/v/goofit.svg?logo=PyPI&logoColor=white
 [pypi-link]:         https://pypi.python.org/pypi/goofit/
 [cf-status]:         https://img.shields.io/conda/vn/conda-forge/goofit.svg?logo=Conda-Forge&logoColor=white
 [cf-link]:           https://github.com/conda-forge/goofit-split-feedstock

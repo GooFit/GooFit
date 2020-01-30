@@ -52,7 +52,7 @@ jobs:
     - name: Install Modern CMake
       run: wget -qO- "https://cmake.org/files/v3.14/cmake-3.14.3-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C /usr/local
     - name: Configure
-      run: cmake -S . -B build -DGOOFIT_ARCH=3.5
+      run: cmake -S . -B build -DGOOFIT_ARCH=3.5 -DGOOFIT_SPLASH=OFF
     - name: Build
       run: cmake --build build -j2 -v
     - name: Test

@@ -34,6 +34,7 @@ jobs:
     name: CUDA / Build
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         cuda:
           - 8.0-devel-ubuntu16.04
@@ -54,3 +55,5 @@ jobs:
       run: cmake -S . -B build -DGOOFIT_ARCH=3.5
     - name: Build
       run: cmake --build build -j2 -v
+    - name: Test
+      run: PYTHONPATH=./build python3 -m goofit

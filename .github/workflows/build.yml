@@ -20,6 +20,14 @@ jobs:
       with:
         submodules: true
 
+    - uses: actions/setup-python@v1
+
+    - name: Install requirements
+      run: python -m pip install scikit-build==0.10.0
+
+    - name: Build sdist for Python
+      run: python setup.py sdist
+
     - name: Prepare CMake config
       run: cmake -S . -B build
 
@@ -34,8 +42,13 @@ jobs:
 
     - uses: actions/upload-artifact@v1
       with:
-        name: GooFit-Source
+        name: GooFit Source
         path: GooFit-Source
+
+    - uses: actions/upload-artifact@v1
+      with:
+        name: Python SDist
+        path: dist
 
     - name: Release
       uses: softprops/action-gh-release@v1

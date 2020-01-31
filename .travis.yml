@@ -40,7 +40,6 @@ matrix:
     - python -m pip install --user --upgrade pip
     - python -m pip install --user plumbum pandas matplotlib numba uncertainties scikit-build pytest numpy twine
     script:
-    - if [[ -n "${TRAVIS_TAG}" ]] ; then python setup.py sdist && python -m twine upload dist/* ; fi
     - ".ci/travis.sh"
     after_success:
     - if [[ -n "${TRAVIS_TAG}" ]] ; then echo "Updating docs" &&  cd "${TRAVIS_BUILD_DIR}"

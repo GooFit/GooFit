@@ -50,9 +50,15 @@ jobs:
         name: Python SDist
         path: dist
 
+    - name: Publish to PyPI
+      if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+      uses: pypa/gh-action-pypi-publish@master
+      with:
+        password: ${{ secrets.pypi_password }}
+
     - name: Release
       uses: softprops/action-gh-release@v1
-      if: startsWith(github.ref, 'refs/tags/')
+      if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
       with:
         files: |
           GooFit-*-Source.tar.gz

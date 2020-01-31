@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.4...3.13)
+cmake_minimum_required(VERSION 3.4...3.15)
 
 if(${CMAKE_VERSION} VERSION_LESS 3.12)
     cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
@@ -8,10 +8,10 @@ project(GooFit
     VERSION 2.2.3
     LANGUAGES CXX)
 
-set(GOOFIT_TAG "dev")
+#set(GOOFIT_TAG "dev")
 #set(GOOFIT_TAG "alpha")
 #set(GOOFIT_TAG "beta")
-#set(GOOFIT_TAG "release")
+set(GOOFIT_TAG "release")
 
 include(FeatureSummary)
 include(CMakePrintHelpers)

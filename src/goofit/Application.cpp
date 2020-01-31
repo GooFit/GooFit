@@ -91,10 +91,9 @@ std::string goofit_info_device(int gpuDev_) {
     std::string output;
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
     if(gpuDev_ >= 0) {
-
         output += fmt::format("CUDA {}.{}\n", CUDART_VERSION / 1000, (CUDART_VERSION % 100) / 10.);
 
-        int nDev=0;
+        int nDev = 0;
         cudaGetDeviceCount(&nDev);
         output += fmt::format("CUDA: Number of devices: {}", nDev);
 

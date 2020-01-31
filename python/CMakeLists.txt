@@ -85,7 +85,12 @@ endif()
 file(WRITE "${CMAKE_BINARY_DIR}/goofit/__init__.py" "from ._goofit import *")
 install(FILES "${CMAKE_BINARY_DIR}/goofit/__init__.py" DESTINATION "goofit")
 
-file(WRITE "${CMAKE_BINARY_DIR}/goofit/__main__.py" "from ._goofit import print_goofit_info; print_goofit_info()")
+file(WRITE "${CMAKE_BINARY_DIR}/goofit/__main__.py" [=[
+from __future__ import print_function
+from ._goofit import goofit_info
+print(goofit_info())
+]=])
+
 install(FILES "${CMAKE_BINARY_DIR}/goofit/__main__.py" DESTINATION "goofit")
 
 

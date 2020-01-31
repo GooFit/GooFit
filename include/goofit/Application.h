@@ -32,7 +32,7 @@ using CLI::ParseError;
 using CLI::Success;
 
 /// Optional print for splash
-/// Orignal: Slant Relief from http://patorjk.com/software/taag/#p=testall&f=Wavy&t=GooFit (tightened a bit)
+/// Original: Slant Relief from http://patorjk.com/software/taag/#p=testall&f=Wavy&t=GooFit (tightened a bit)
 /// New: Block letters
 void print_splash();
 

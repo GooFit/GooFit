@@ -861,4 +861,4 @@ set(CPACK_SOURCE_IGNORE_FILES
     /.pre-commit.*yaml
     /*.env
 )
-include(CPACK)
+include(CPack)

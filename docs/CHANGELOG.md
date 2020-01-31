@@ -1,13 +1,19 @@
-## v2.2.3: IN PROGRESS
+## v2.2.3: Python builds
+## January 31, 2020
+
+This release sees a huge increase in platforms built on CI, and lots
+of fixes to assist the new conda-forge package.
 
 * GooFit version is now available as a Python tuple
 * Check CUDA 8.0, 9.0, 9.2, and 10.0 builds on GHA [#224][]
+* Allow `goofit -m python` when no GPU present [#229][]
 * Support `GOOFIT_ARCH=OFF`, fix `FORCE_LOCAL_THRUST` for CMake 3.12+ [#224][]
 * Bump vendored library versions [#223][], [#225][]
-* Square Dalitz [#207][]
+* Square Dalitz added [#207][]
 * Added `setDataSize`, `getName`, `getBinSize` to Python bindings
 * CrystalBall fixes [#200][]
 * 2D MC bound [#196][]
+* Make standalone source package available on GitHub [#232][]
 
 [#196]: https://github.com/GooFit/GooFit/pull/196
 [#200]: https://github.com/GooFit/GooFit/pull/200
@@ -15,6 +21,8 @@
 [#223]: https://github.com/GooFit/GooFit/pull/223
 [#224]: https://github.com/GooFit/GooFit/pull/224
 [#225]: https://github.com/GooFit/GooFit/pull/225
+[#229]: https://github.com/GooFit/GooFit/pull/229
+[#232]: https://github.com/GooFit/GooFit/pull/232
 
 
 ## v2.2.2: Python access

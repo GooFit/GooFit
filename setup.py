@@ -24,7 +24,7 @@ for item in os.environ:
 
 setup(
         name='goofit',
-        version='2.2.2',
+        version='2.2.3',
         description='GooFit fitting package',
         author='Henry Schreiner',
         author_email='hschrein@cern.ch',
@@ -59,7 +59,8 @@ setup(
                 'matplotlib>=1.5',
                 'pandas>=0.15.1',
                 'uncertainties>=3.0.2',
-                'scipy'
+                'scipy',
+                'plumbum'
             ]
         },
         long_description='''\
@@ -71,8 +72,12 @@ GooFit is a highly parallel fitting framework originally designed for High Energ
 Installation basics
 ===================
 
-This package can be installed with pip, but uses SciKit-Build, and is build, fully optimized, on your system. Because of this, there are a few caveats when running a pip install. Make sure you have SciKit-Build (``pip install scikit-build``) before you attempt an install. Also, if you don't have a recent version of CMake (3.8 or better recommended), also run ``pip install cmake``. When you build, you should also use pip's ``-v`` flag, so that you can see it build (and observe the
-configuration options). Otherwise, you might wait a very long time without output (especially if CUDA was found).
+This package can be installed with pip, but uses SciKit-Build, and is build,
+fully optimized, on your system. Because of this, there are a few caveats when
+running a pip install if you use an old version of pip. When you build, you
+should also use pip's ``-v`` flag, so that you can see it build (and observe
+the configuration options). Otherwise, you might wait a very long time without
+output (especially if CUDA was found).
 
 
 Installation: pip
@@ -84,7 +89,7 @@ Using pip 10+::
 
 Using pip < 10::
 
-    pip install scikit-build
+    pip install scikit-build # optionally cmake ninja
     pip install -v goofit
 
 
@@ -94,7 +99,7 @@ GooFit will automatically look for CUDA, and build in GPU mode if it finds CUDA.
     GOOFIT_DEVICE=OMP pip install -v goofit
     GOOFIT_DEVICE=CPP pip install -v goofit
 
-If you want to send arbitrary commands to CMake through PIP, you will need to pass each option through, starting with a ``--`` option. Pip will try to reuse the built version if you do not pass options, but will rebuild if you pass options, so this works for a rebuild, unlike the lines above. This is how you would do this to set OMP as the backend::
+The lines above use environment variables; GooFit will find any environment variables that start with ``GOOFIT_*`` and set them as CMake defines. If you want to send arbitrary commands to CMake through PIP, you will need to pass each option through, starting with a ``--`` option. Pip will try to reuse the built version if you do not pass options, but will rebuild if you pass options, so this works for a rebuild, unlike the lines above. This is how you would do this to set OMP as the backend::
 
     pip install -v goofit --install-option="--" --install-option="-DGOOFIT_DEVICE=OMP"
     # OR
@@ -109,51 +114,34 @@ If you want to add PDFs to GooFit, or use GooFit pacakges, you should be working
     git clone --recursive git@github.com:GooFit/GooFit.git
     cd goofit
 
-Pipenv
-~~~~~~
-
-You can set up a quick environment using pipenv::
-
-    pipenv install --dev
-
-Then activate that environment::
-
-    pipenv shell
-
 Local pip
 ~~~~~~~~~
 
-The normal install here works, though as usual you should include verbose output::
+The normal install here works, though as usual you should include verbose output and you should be in a virtual environment (standard practice)::
 
     pip install -v .
-
-
-You can pass through options to the build command, for example::
-
-    pip install -v . --install-option="--" --install-option="-DGOOFIT_PACKAGES=OFF"
-    # OR
-    PIP_INSTALL_OPTION="-- -DGOOFIT_PACKAGES=OFF" pip install -v .
-
-
-Building a source package from git
-==================================
-
-For developers only:
-
-To make a source package, start with a clean (such as new) git GooFit package with all submodules checked out::
-
-    git clone --branch=master --recursive --depth=10 git@github.com:GooFit/GooFit.git
-    cd goofit
-    python setup.py sdist
-    python -m twine upload dist/*
-
-To make a binary package, use instead::
-
-    python setup.py bdist_wheel -- -DGOOFIT_OPTI="-march=core2"
 
 '''
         )
 
+
+
+# Building a source package from git
+# ==================================
+# 
+# For developers only:
+# 
+# To make a source package, start with a clean (such as new) git GooFit package with all submodules checked out::
+# 
+#     git clone --branch=master --recursive --depth=10 git@github.com:GooFit/GooFit.git
+#     cd goofit
+#     python setup.py sdist
+#     python -m twine upload dist/*
+# 
+# To make a binary package, use instead::
+# 
+#     GOOFIT_OPTI="" python setup.py bdist_wheel
+# 
 # To set this up on Docker for linux, use::
 #
 #    docker run -it quay.io/pypa/manylinux1_x86_64 -v goofit-py:goofit-py

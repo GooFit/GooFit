@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.4...3.13)
+cmake_minimum_required(VERSION 3.4...3.15)
 
 if(${CMAKE_VERSION} VERSION_LESS 3.12)
     cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
@@ -8,10 +8,10 @@ project(GOOFIT
     VERSION 2.2.3
     LANGUAGES CXX)
 
-set(GOOFIT_TAG "dev")
+#set(GOOFIT_TAG "dev")
 #set(GOOFIT_TAG "alpha")
 #set(GOOFIT_TAG "beta")
-#set(GOOFIT_TAG "release")
+set(GOOFIT_TAG "release")
 
 include(FeatureSummary)
 include(CMakePrintHelpers)
@@ -827,3 +827,38 @@ feature_option(GOOFIT_TIDY_FIX)
 
 feature_summary(WHAT ENABLED_FEATURES DISABLED_FEATURES PACKAGES_FOUND)
 feature_summary(FILENAME ${GOOFIT_BINARY_DIR}/features.log WHAT ALL)
+
+# Packaging support
+set(CPACK_PACKAGE_NAME "GooFit")
+set(CPACK_PACKAGE_VENDOR "github.com/GooFit/GooFit")
+set(CPACK_PACKAGE_CONTACT "https://${CPACK_PACKAGE_VENDOR}")
+set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "GPU/OpenMP fitting package")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+set(CPACK_SOURCE_GENERATOR "TGZ")
+# CPack collects *everything* except what's listed here.
+set(CPACK_SOURCE_IGNORE_FILES
+    /.git
+    /dist
+    /.*build.*
+    /\\\\.DS_Store
+    /.*\\\\.egg-info
+    /var
+    /azure-pipelines.yml
+    /.ci
+    /.travis.yml
+    /examples
+    /python/examples
+    /extern/CLI11/extern
+    /extern/catch2/projects
+    /extern/fmt/doc
+    /extern/pybind11/docs
+    /extern/Eigen/doc
+    .swp
+    /.all-contributorsrc
+    /.appveyor.yml
+    /.pre-commit.*yaml
+    /*.env
+)
+include(CPack)

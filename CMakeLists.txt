@@ -4,7 +4,7 @@ if(${CMAKE_VERSION} VERSION_LESS 3.12)
     cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
 endif()
 
-project(GOOFIT
+project(GooFit
     VERSION 2.2.3
     LANGUAGES CXX)
 
@@ -828,7 +828,6 @@ feature_option(GOOFIT_TIDY_FIX)
 feature_summary(WHAT ENABLED_FEATURES DISABLED_FEATURES PACKAGES_FOUND)
 feature_summary(FILENAME ${GOOFIT_BINARY_DIR}/features.log WHAT ALL)
 
-# Packaging support
 # Packaging support
 set(CPACK_PACKAGE_VENDOR "github.com/GooFit/GooFit")
 set(CPACK_PACKAGE_CONTACT "https://${CPACK_PACKAGE_VENDOR}")

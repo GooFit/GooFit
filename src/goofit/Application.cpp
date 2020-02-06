@@ -95,7 +95,7 @@ std::string goofit_info_device(int gpuDev_) {
 
         int nDev = 0;
         cudaGetDeviceCount(&nDev);
-        output += fmt::format("CUDA: Number of devices: {}", nDev);
+        output += fmt::format("CUDA: Number of devices: {}\n", nDev);
 
         if(nDev > 0) {
             cudaDeviceProp devProp;

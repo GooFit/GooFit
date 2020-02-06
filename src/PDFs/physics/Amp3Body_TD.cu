@@ -279,9 +279,6 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
     // this is the funcID after the efficiency routine
     registerConstant(0);
 
-    // TODO: Figure out what this needs?
-    resolution->createParameters(this);
-
     registerFunction("ptr_to_Tddp", ptr_to_Tddp);
 
     initialize();
@@ -377,9 +374,6 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
     for(auto &i : r) {
         if(i->getDeviceFunction() < 0)
             throw GooFit::GeneralError("Device function index {} must be more than 0", i->getDeviceFunction());
-
-        // TODO:
-        i->createParameters(this);
 
         components.push_back(i);
     }

@@ -39,13 +39,31 @@ void init_ResonancePdf(py::module &m) {
              "cyc"_a);
 
     py::class_<Resonances::LASS, ResonancePdf>(m_ls, "LASS")
-        .def(py::init<std::string, Variable, Variable, Variable, Variable, unsigned int, unsigned int>(),
+        .def(py::init<std::string,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      unsigned int,
+                      unsigned int>(),
              "Constructor for LASS",
              "name"_a,
              "ar"_a,
              "ai"_a,
              "mass"_a,
              "width"_a,
+             "_a"_a,
+             "_r"_a,
+             "_R"_a,
+             "_phiR"_a,
+             "_B"_a,
+             "_phiB"_a,
              "sp"_a,
              "cyc"_a);
 

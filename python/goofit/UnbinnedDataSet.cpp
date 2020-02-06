@@ -29,28 +29,27 @@ void init_UnbinnedDataSet(py::module &m) {
                  auto pymatrix = py::cast(matrix);
                  return pymatrix.attr("__getitem__")(value);
              })
-        .def(
-            "from_numpy",
-            [](UnbinnedDataSet &instance,
-               py::array_t<fptype, py::array::c_style | py::array::forcecast> array,
-               bool filter) {
-                auto vars = instance.getObservables();
-                for(int j = 0; j < array.shape(1); j++) {
-                    for(int i = 0; i < array.shape(0); i++) {
-                        vars.at(i).setValue(array.at(i, j));
-                    }
-                    if(!filter
-                       || std::all_of(std::begin(vars), std::end(vars), [](Observable var) { return bool(var); }))
-                        instance.addEvent();
-                }
-            },
-            R"raw(
+        .def("from_numpy",
+             [](UnbinnedDataSet &instance,
+                py::array_t<fptype, py::array::c_style | py::array::forcecast> array,
+                bool filter) {
+                 auto vars = instance.getObservables();
+                 for(int j = 0; j < array.shape(1); j++) {
+                     for(int i = 0; i < array.shape(0); i++) {
+                         vars.at(i).setValue(array.at(i, j));
+                     }
+                     if(!filter
+                        || std::all_of(std::begin(vars), std::end(vars), [](Observable var) { return bool(var); }))
+                         instance.addEvent();
+                 }
+             },
+             R"raw(
             Convert a numpy array into data. Optional filter=True argument will remove values out of range.
 
             This is deprecated in favor of to/from matrix.
             )raw",
-            "array"_a,
-            "filter"_a = false)
+             "array"_a,
+             "filter"_a = false)
         .def("to_numpy",
              [](UnbinnedDataSet &instance) {
                  size_t cols = instance.getObservables().size();

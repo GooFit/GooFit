@@ -118,33 +118,13 @@ __device__ device_resfunction_ptr ptr_to_threegauss = device_threegauss_resoluti
 
 ThreeGaussResolution::ThreeGaussResolution(
     Variable cf, Variable tf, Variable cb, Variable cs, Variable tb, Variable ts, Variable ob, Variable os, Variable sb)
-    : MixingTimeResolution("ThreeGaussResolution")
-    , coreFraction(cf)
-    , tailFraction(tf)
-    , coreBias(cb)
-    , coreScaleFactor(cs)
-    , tailBias(tb)
-    , tailScaleFactor(ts)
-    , outBias(ob)
-    , outScaleFactor(os)
+    : MixingTimeResolution("ThreeGaussResolution", cf, tf, cb, cs, tb, ts, ob, os, sb)
     , selectionBias(sb) {
     initIndex();
 
     registerFunction("ptr_to_threegauss", ptr_to_threegauss);
 }
 ThreeGaussResolution::~ThreeGaussResolution() = default;
-
-void ThreeGaussResolution::createParameters(PdfBase *dis) {
-    registerParameter(coreFraction);
-    registerParameter(tailFraction);
-    registerParameter(coreBias);
-    registerParameter(coreScaleFactor);
-    registerParameter(tailBias);
-    registerParameter(tailScaleFactor);
-    registerParameter(outBias);
-    registerParameter(outScaleFactor);
-    registerParameter(selectionBias);
-}
 
 fptype ThreeGaussResolution::normalization(
     fptype di1, fptype di2, fptype di3, fptype di4, fptype tau, fptype xmixing, fptype ymixing) const {

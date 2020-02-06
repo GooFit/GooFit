@@ -44,17 +44,15 @@ void init_DalitzPlotHelpers(py::module &m) {
         .def_readwrite("daug2Mass", &DecayInfo3::daug2Mass)
         .def_readwrite("daug3Mass", &DecayInfo3::daug3Mass)
         .def_readwrite("meson_radius", &DecayInfo3::meson_radius)
-        .def_property(
-            "resonances",
-            [](DecayInfo3 &self) { return self.resonances; },
-            py::cpp_function([](DecayInfo3 &self, std::vector<ResonancePdf *> val) { self.resonances = val; },
-                             py::keep_alive<1, 2>()))
-        .def(
-            "add_resonance",
-            [](DecayInfo3 &self, ResonancePdf *toadd) { self.resonances.push_back(toadd); },
-            "Append a resonance",
-            "resonance"_a,
-            py::keep_alive<1, 2>())
+        .def_property("resonances",
+                      [](DecayInfo3 &self) { return self.resonances; },
+                      py::cpp_function([](DecayInfo3 &self, std::vector<ResonancePdf *> val) { self.resonances = val; },
+                                       py::keep_alive<1, 2>()))
+        .def("add_resonance",
+             [](DecayInfo3 &self, ResonancePdf *toadd) { self.resonances.push_back(toadd); },
+             "Append a resonance",
+             "resonance"_a,
+             py::keep_alive<1, 2>())
         .def("__str__", [](DecayInfo3 &self) {
             return fmt::format("M={} GeV\nm1={}\nGeV\nm2={}\nm3={}\nrad={}\nN res: {}",
                                self.motherMass,
@@ -77,16 +75,14 @@ void init_DalitzPlotHelpers(py::module &m) {
         .def_readwrite("meson_radius", &DecayInfo4::meson_radius)
         .def_readwrite("amplitudes", &DecayInfo4::amplitudes)
         .def_readwrite("amplitudes_B", &DecayInfo4::amplitudes_B)
-        .def_property(
-            "amplitudes",
-            [](DecayInfo4 &self) { return self.amplitudes; },
-            py::cpp_function([](DecayInfo4 &self, std::vector<Amplitude *> val) { self.amplitudes = val; },
-                             py::keep_alive<1, 2>()))
-        .def_property(
-            "amplitudes_B",
-            [](DecayInfo4 &self) { return self.amplitudes_B; },
-            py::cpp_function([](DecayInfo4 &self, std::vector<Amplitude *> val) { self.amplitudes_B = val; },
-                             py::keep_alive<1, 2>()));
+        .def_property("amplitudes",
+                      [](DecayInfo4 &self) { return self.amplitudes; },
+                      py::cpp_function([](DecayInfo4 &self, std::vector<Amplitude *> val) { self.amplitudes = val; },
+                                       py::keep_alive<1, 2>()))
+        .def_property("amplitudes_B",
+                      [](DecayInfo4 &self) { return self.amplitudes_B; },
+                      py::cpp_function([](DecayInfo4 &self, std::vector<Amplitude *> val) { self.amplitudes_B = val; },
+                                       py::keep_alive<1, 2>()));
 
     py::class_<DecayInfo4t, DecayInfo4>(m, "DecayInfo4t")
         .def(py::init<Variable, Variable, Variable, Variable>(), "tau"_a, "xmixing"_a, "ymixing"_a, "SqWStoRSrate"_a)

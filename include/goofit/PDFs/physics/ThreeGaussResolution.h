@@ -31,17 +31,8 @@ class ThreeGaussResolution : public MixingTimeResolution {
 
     fptype normalization(
         fptype di1, fptype di2, fptype di3, fptype di4, fptype tau, fptype xmixing, fptype ymixing) const override;
-    void createParameters(PdfBase *dis) override;
 
   private:
-    Variable coreFraction;
-    Variable tailFraction;
-    Variable coreBias;
-    Variable coreScaleFactor;
-    Variable tailBias;
-    Variable tailScaleFactor;
-    Variable outBias;
-    Variable outScaleFactor;
     Variable selectionBias;
 };
 } // namespace GooFit

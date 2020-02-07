@@ -42,7 +42,7 @@ jobs:
           - 9.2-devel-ubuntu18.04
           - 10.0-devel-ubuntu18.04
         
-    container: nvidia/cuda:10.0-devel-ubuntu18.04
+    container: "nvidia/cuda:${{matrix.cuda}}"
     steps:
     - uses: actions/checkout@v1
       with:

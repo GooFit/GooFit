@@ -66,7 +66,6 @@ goofit_add_pdf_library(PDFPhysics
     resonances/NonRes.cu
     resonances/RBW.cu
     resonances/Spline.cu
-    ${GOOFIT_KMATRIX_RES}
     ${GOOFIT_PHYSICS_HEADERS}
 )
 

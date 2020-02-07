@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.4...3.15)
+cmake_minimum_required(VERSION 3.9...3.15)
 
 if(${CMAKE_VERSION} VERSION_LESS 3.12)
     cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
@@ -81,7 +81,7 @@ include("${GOOFIT_SOURCE_DIR}/extern/modern_cmake/ModernCUDA.cmake")
 # Add clang-tidy if available
 option(GOOFIT_TIDY "Add clang-tidy")
 option(GOOFIT_TIDY_FIX "Perform fixes for Clang-Tidy - changes source inplace")
-if(CMAKE_VERSION VERSION_GREATER 3.6 AND (GOOFIT_TIDY OR GOOFIT_TIDY_FIX))
+if(GOOFIT_TIDY OR GOOFIT_TIDY_FIX)
     find_program(
         CLANG_TIDY_EXE
         NAMES "clang-tidy"
@@ -123,9 +123,6 @@ include(WriteCompilerDetectionHeader)
 set(COMPILER_LIST GNU Clang AppleClang)
 
 # Support for CMake 3.5 in ROOT Docker instance.
-if(NOT CMAKE_VERSION VERSION_LESS 3.6)
-    set(COMPILER_LIST ${COMPILER_LIST} Intel)
-endif()
 
 write_compiler_detection_header(
     FILE include/goofit/detail/CompilerFeatures.h
@@ -189,26 +186,14 @@ if(NOT ${GOOFIT_HOST} IN_LIST HOST_LISTING)
     message(FATAL_ERROR "You must select a host from ${HOST_LISTING}, not ${HOST_DEVICE}")
 endif()
 
-if(CMAKE_VERSION VERSION_LESS 3.8)
-    set(NEW_CUDA OFF CACHE INTERNAL "")
-else()
-    if(NOT DEFINED NEW_CUDA)
-        set(NEW_CUDA ON CACHE INTERNAL "")
-    endif()
-endif()
-
 # Auto device selection
 if(GOOFIT_DEVICE STREQUAL Auto)
-    if(NEW_CUDA)
-        include(CheckLanguage)
-        check_language(CUDA)
-    else()
-        find_package(CUDA 7.0)
-    endif()
+    include(CheckLanguage)
+    check_language(CUDA)
     if(CUDA_FOUND OR CMAKE_CUDA_COMPILER)
         set(GOOFIT_DEVICE CUDA CACHE STRING "The compute device, options are ${DEVICE_LISTING}" FORCE)
     else()
-        find_modern_package(OpenMP QUIET)
+        find_package(OpenMP QUIET)
         if(TARGET OpenMP::OpenMP_CXX)
             set(GOOFIT_DEVICE OMP CACHE STRING "The compute device, options are ${DEVICE_LISTING}" FORCE)
         else()
@@ -297,7 +282,7 @@ option(GOOFIT_MPI "Turn on MPI for goofit" OFF)
 
 
 if(GOOFIT_MPI)
-    find_modern_package(MPI REQUIRED)
+    find_package(MPI REQUIRED)
 
     target_link_libraries(GooFit_Common INTERFACE MPI::MPI_CXX)
     target_compile_definitions(GooFit_Common INTERFACE "-DGOOFIT_MPI")
@@ -311,115 +296,64 @@ endif()
 # This macro is designed for external packages to auto-add CUDA
 # It is also used to setup up the NEW CUDA support
 macro(GOOFIT_OPTIONAL_CUDA)
-    if(NEW_CUDA AND GOOFIT_DEVICE STREQUAL CUDA)
+    if(GOOFIT_DEVICE STREQUAL CUDA)
         enable_language(CUDA)
         set(CMAKE_CUDA_STANDARD ${GOOFIT_CXX_CUDA_STANDARD})
         set(CMAKE_CUDA_STANDARD_REQUIRED ON)
         set(CMAKE_CUDA_EXTENSIONS OFF)
 
-        if(CMAKE_CUDA_COMPILER_VERSION VERSION_LESS 7.5)
-            string(APPEND CMAKE_CUDA_FLAGS " --relaxed-constexpr")
-        else()
-            string(APPEND CMAKE_CUDA_FLAGS " --expt-relaxed-constexpr")
-        endif()
+	string(APPEND CMAKE_CUDA_FLAGS " --expt-relaxed-constexpr")
 
     endif()
 endmacro()
 
 if(GOOFIT_DEVICE STREQUAL CUDA)
     # The old FindCUDA method
-    if(NOT NEW_CUDA)
-        if(NOT CUDA_FOUND)
-            find_package(CUDA 7.0 REQUIRED)
-        endif()
-        message(STATUS "Found CUDA ${CUDA_VERSION_STRING} at ${CUDA_TOOLKIT_ROOT_DIR}")
+    goofit_optional_cuda()
+    set(CUDA_VERSION ${CMAKE_CUDA_COMPILER_VERSION})
 
-        if(GOOFIT_MPI)
-            list(APPEND CUDA_NVCC_FLAGS ${MPI_CXX_COMPILE_FLAGS})
-        endif()
+    message(STATUS "Found CUDA LANGUAGE ${CMAKE_CUDA_COMPILER_VERSION} at ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}")
 
-        list(APPEND CUDA_NVCC_FLAGS -std=c++${GOOFIT_CXX_CUDA_STANDARD})
 
-        if(CUDA_VERSION VERSION_LESS 7.5)
-            list(APPEND CUDA_NVCC_FLAGS --relaxed-constexpr)
-        else()
-            list(APPEND CUDA_NVCC_FLAGS --expt-relaxed-constexpr)
-        endif()
+    set(CUDA_TOOLKIT_ROOT_DIR "${CMAKE_CUDA_COMPILER}")
+    get_filename_component(CUDA_TOOLKIT_ROOT_DIR "${CUDA_TOOLKIT_ROOT_DIR}" DIRECTORY)
+    get_filename_component(CUDA_TOOLKIT_ROOT_DIR "${CUDA_TOOLKIT_ROOT_DIR}" DIRECTORY)
 
-        set(CUDA_SEPARABLE_COMPILATION ON)
+    include(CUDAUtilities)
 
-        # Only needed to make FindCUDA provide nice flags
-        set(CUDA_LINK_LIBRARIES_KEYWORD PUBLIC)
+    set(cuda_lang "$<COMPILE_LANGUAGE:CUDA>")
 
-        # GooFit isn't popular with nvlink
-        list(APPEND CUDA_NVCC_FLAGS -Xnvlink --disable-warnings)
+    # GooFit isn't popular with nvlink
+    # Note that this should be the only nvlink command
+    string(APPEND CMAKE_CUDA_FLAGS " -Xnvlink=--disable-warnings")
+    string(APPEND CMAKE_CUDA_FLAGS " -Xcompiler=-Wno-attributes")
 
-        cuda_select_nvcc_arch_flags(ARCH_FLAGS ${GOOFIT_ARCH})
-        list(APPEND CUDA_NVCC_FLAGS ${ARCH_FLAGS})
+    if(NOT DEFINED GOOFIT_ARCH OR GOOFIT_ARCH)
+        cmake_cuda_arch_select(FLAGS ARCH_FLAGS READABLE ARCH_FLAGS_readable ARCHS ${GOOFIT_ARCH})
         string(REPLACE ";" ", " READ_ARCH_FLAGS "${ARCH_FLAGS_readable}")
+        string(REPLACE ";" " " ARCH_FLAGS "${ARCH_FLAGS}")
+        string(APPEND CMAKE_CUDA_FLAGS " ${ARCH_FLAGS}")
+        set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS}" CACHE INTERNAL "")
         message(STATUS "Compiling for GPU arch: ${READ_ARCH_FLAGS}")
-
-        set(THRUST_INCLUDE_DIR "${CUDA_TOOLKIT_ROOT_DIR}/include")
-
-        add_library(CUDA::Libs IMPORTED INTERFACE)
-        set_target_properties(CUDA::Libs PROPERTIES
-            INTERFACE_INCLUDE_DIRECTORIES
-                "${CUDA_INCLUDE_DIRS}"
-            INTERFACE_LINK_LIBRARIES
-                "${CUDA_LIBRARIES}")
-
-    # The new language support
     else()
-        goofit_optional_cuda()
-        set(CUDA_VERSION ${CMAKE_CUDA_COMPILER_VERSION})
-
-        if(CMAKE_CUDA_COMPILER_VERSION VERSION_LESS 7.0)
-            message(FATAL_ERROR "CUDA 7.0 or better required!")
-        else()
-            message(STATUS "Found CUDA LANGUAGE ${CMAKE_CUDA_COMPILER_VERSION} at ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}")
-        endif()
-
-
-        set(CUDA_TOOLKIT_ROOT_DIR "${CMAKE_CUDA_COMPILER}")
-        get_filename_component(CUDA_TOOLKIT_ROOT_DIR "${CUDA_TOOLKIT_ROOT_DIR}" DIRECTORY)
-        get_filename_component(CUDA_TOOLKIT_ROOT_DIR "${CUDA_TOOLKIT_ROOT_DIR}" DIRECTORY)
-
-        include(CUDAUtilities)
-
-        set(cuda_lang "$<COMPILE_LANGUAGE:CUDA>")
-
-        # GooFit isn't popular with nvlink
-        # Note that this should be the only nvlink command
-        string(APPEND CMAKE_CUDA_FLAGS " -Xnvlink=--disable-warnings")
-        string(APPEND CMAKE_CUDA_FLAGS " -Xcompiler=-Wno-attributes")
-
-        if(NOT DEFINED GOOFIT_ARCH OR GOOFIT_ARCH)
-            cmake_cuda_arch_select(FLAGS ARCH_FLAGS READABLE ARCH_FLAGS_readable ARCHS ${GOOFIT_ARCH})
-            string(REPLACE ";" ", " READ_ARCH_FLAGS "${ARCH_FLAGS_readable}")
-            string(REPLACE ";" " " ARCH_FLAGS "${ARCH_FLAGS}")
-            string(APPEND CMAKE_CUDA_FLAGS " ${ARCH_FLAGS}")
-            set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS}" CACHE INTERNAL "")
-            message(STATUS "Compiling for GPU arch: ${READ_ARCH_FLAGS}")
-        else()
-            message(STATUS "Not compiling for a specific GPU arch")
-        endif()
-
-        set(THRUST_INCLUDE_DIR "${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}")
-
-        find_library(CUDART_LIB cudart
-            HINTS
-            "${CUDA_TOOLKIT_ROOT_DIR}/lib64"
-            "${CUDA_TOOLKIT_ROOT_DIR}/lib"
-            "${CUDA_TOOLKIT_ROOT_DIR}"
-            )
-
-        add_library(CUDA::Libs IMPORTED INTERFACE)
-        set_target_properties(CUDA::Libs PROPERTIES
-            INTERFACE_INCLUDE_DIRECTORIES
-                "${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}"
-            INTERFACE_LINK_LIBRARIES
-                "${CUDART_LIB}")
+        message(STATUS "Not compiling for a specific GPU arch")
     endif()
+
+    set(THRUST_INCLUDE_DIR "${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}")
+
+    find_library(CUDART_LIB cudart
+        HINTS
+        "${CUDA_TOOLKIT_ROOT_DIR}/lib64"
+        "${CUDA_TOOLKIT_ROOT_DIR}/lib"
+        "${CUDA_TOOLKIT_ROOT_DIR}"
+        )
+
+    add_library(CUDA::Libs IMPORTED INTERFACE)
+    set_target_properties(CUDA::Libs PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES
+            "${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}"
+        INTERFACE_LINK_LIBRARIES
+            "${CUDART_LIB}")
 endif()
 
 if(NOT DEFINED cuda_lang)
@@ -450,7 +384,7 @@ if(GOOFIT_FORCE_LOCAL_THRUST)
     message(STATUS "Forcing local thrust. GOOFIT_FORCE_LOCAL_THRUST=OFF to disable. Requires CUDA < 10.1")
     message(STATUS "Using CUDA from ${THRUST_INCLUDE_DIRS}")
     target_include_directories(GooFit_Common SYSTEM BEFORE INTERFACE "${GOOFIT_SOURCE_DIR}/extern/thrust")
-    if(GOOFIT_DEVICE STREQUAL CUDA AND NEW_CUDA AND NOT CMAKE_VERSION VERSION_LESS 3.12)
+    if(GOOFIT_DEVICE STREQUAL CUDA  AND NOT CMAKE_VERSION VERSION_LESS 3.12)
         target_compile_options(GooFit_Common INTERFACE "SHELL:-isystem ${THRUST_INCLUDE_DIRS}")
     else()
         target_include_directories(GooFit_Common SYSTEM INTERFACE "${THRUST_INCLUDE_DIRS}")
@@ -461,7 +395,7 @@ else()
 endif()
 
 if(GOOFIT_DEVICE STREQUAL OMP OR GOOFIT_HOST STREQUAL OMP OR GOOFIT_DEVICE STREQUAL TBB OR GOOFIT_HOST STREQUAL TBB)
-    find_modern_package(OpenMP)
+    find_package(OpenMP)
     if(NOT TARGET OpenMP::OpenMP_CXX)
         message(FATAL_ERROR "Requested OpenMP or TBB and OpenMP not found")
     endif()
@@ -481,7 +415,6 @@ option(GOOFIT_CERNROOT "Look for the ROOT library (turned off for Python)" ON)
 
 if(GOOFIT_CERNROOT)
     find_package(ROOT 6 COMPONENTS Minuit)
-    # find_modern_package(ROOT 6 CONFIG COMPONENTS Minuit)
     if(ROOT_FOUND)
         message(STATUS "Found ROOT ${ROOT_VERSION} at ${ROOT_INCLUDE_DIRS}")
         target_compile_definitions(GooFit_Common INTERFACE "-DROOT_FOUND")
@@ -542,15 +475,11 @@ set(GOOFIT_ARCH_FLAGS ARCH_FLAGS)
 
 option(GOOFIT_SPLASH "Show a unicode splash or a small plain text one" ON)
 
-if(CMAKE_VERSION VERSION_LESS 3.9)
-    message(STATUS "CMake <3.9 will only enable IPO for Intel compilers on Linux")
-    set(SUPPORTS_IPO_LOCAL TRUE)
-else()
-    # cmake_policy(SET CMP0069 NEW) (will be set by using latest CMake version policy already)
-    include(CheckIPOSupported)
-    check_ipo_supported(RESULT SUPPORTS_IPO_LOCAL)
-    message(STATUS "Compiler supports IPO: ${SUPPORTS_IPO_LOCAL}")
-endif()
+# cmake_policy(SET CMP0069 NEW) (will be set by using latest CMake version policy already)
+include(CheckIPOSupported)
+check_ipo_supported(RESULT SUPPORTS_IPO_LOCAL)
+message(STATUS "Compiler supports IPO: ${SUPPORTS_IPO_LOCAL}")
+
 # Make this univerally available (even when using submodule)
 set(SUPPORTS_IPO "${SUPPORTS_IPO_LOCAL}" CACHE INTERNAL "")
 
@@ -572,13 +501,9 @@ function(GOOFIT_ADD_LIBRARY GNAME)
     endif()
 
     if(GOOFIT_DEVICE STREQUAL CUDA)
-        if(NOT NEW_CUDA)
-            cuda_add_library(${GNAME} ${GOOFIT_LIB_TYPE} ${GOOFIT_LIB_UNPARSED_ARGUMENTS} OPTIONS "-Xcompiler=-fPIC")
-        else()
-            add_library(${GNAME} ${GOOFIT_LIB_TYPE} ${GOOFIT_LIB_UNPARSED_ARGUMENTS})
-            set_target_properties(${GNAME} PROPERTIES
-                CUDA_SEPARABLE_COMPILATION ON)
-        endif()
+        add_library(${GNAME} ${GOOFIT_LIB_TYPE} ${GOOFIT_LIB_UNPARSED_ARGUMENTS})
+	set_target_properties(${GNAME} PROPERTIES
+	CUDA_SEPARABLE_COMPILATION ON)
     else()
         foreach(N ${GOOFIT_LIB_UNPARSED_ARGUMENTS})
             get_filename_component(NEXT ${N} EXT)
@@ -618,13 +543,7 @@ endfunction()
 
 function(GOOFIT_ADD_EXECUTABLE NAMEEXE)
     if(GOOFIT_DEVICE STREQUAL CUDA)
-        if(NOT NEW_CUDA)
-            set(CUDA_SEPARABLE_COMPILATION OFF)
-            cuda_add_executable(${NAMEEXE} ${ARGN})
-            set(CUDA_SEPARABLE_COMPILATION ON)
-        else()
-            add_executable(${NAMEEXE} ${ARGN})
-        endif()
+        add_executable(${NAMEEXE} ${ARGN})
     else()
         foreach(N ${ARGN})
             get_filename_component(NEXT ${N} EXT)
@@ -710,10 +629,7 @@ macro(GOOFIT_ADD_PACKAGE PACKAGE_NAME)
     elseif(ROOT IN_LIST OPTS AND NOT ROOT_FOUND)
         message(WARNING "Requested package ${PACKAGE_NAME} but ROOT was not found! Not building package.")
         return()
-    elseif(NEW_CUDA IN_LIST OPTS AND GOOFIT_DEVICE STREQUAL CUDA AND NOT NEW_CUDA)
-        message(WARNING "Requested package ${PACKAGE_NAME} but NEW_CUDA is not enabled! Not building package.")
-        return()
-    elseif(OLD_CUDA IN_LIST OPTS AND GOOFIT_DEVICE STREQUAL CUDA AND NEW_CUDA)
+    elseif(OLD_CUDA IN_LIST OPTS AND GOOFIT_DEVICE STREQUAL CUDA)
         message(WARNING "Requested package ${PACKAGE_NAME} but NEW_CUDA is enabled! Not building package.")
         return()
     endif()
@@ -776,9 +692,7 @@ configure_file (
 set(CMAKE_MODULE_PATH "${GOOFIT_SOURCE_DIR}/extern/pybind11/tools" ${CMAKE_MODULE_PATH})
 find_package(PythonLibsNew)
 
-if(GOOFIT_DEVICE STREQUAL "CUDA" AND CUDA_VERSION VERSION_LESS 8.0)
-    option(GOOFIT_PYTHON "Python bindings for goofit" OFF)
-elseif(PYTHONLIBS_FOUND)
+if(PYTHONLIBS_FOUND)
     if(EXISTS "${PYTHON_LIBRARIES}")
         option(GOOFIT_PYTHON "Python bindings for goofit" ${CUR_PROJ})
     else()
@@ -791,9 +705,7 @@ else()
 endif()
 
 if(GOOFIT_PYTHON)
-    if(GOOFIT_DEVICE STREQUAL "CUDA" AND CUDA_VERSION VERSION_LESS 8.0)
-        message(FATAL_ERROR "CUDA 7 does not work with PyBind11, please upgrade CUDA.")
-    elseif(PYTHONLIBS_FOUND AND EXISTS "${PYTHON_LIBRARIES}")
+    if(PYTHONLIBS_FOUND AND EXISTS "${PYTHON_LIBRARIES}")
         message(STATUS "Found Python at ${PYTHON_LIBRARIES}, building bindings")
     else()
         message(FATAL_ERROR "Did not find Python development libraries, make sure the development package for Python is installed or turn off Python bindings")
@@ -801,7 +713,7 @@ if(GOOFIT_PYTHON)
 
     add_subdirectory("extern/pybind11")
 
-    if(NEW_CUDA AND GOOFIT_DEVICE STREQUAL CUDA)
+    if(GOOFIT_DEVICE STREQUAL CUDA)
         cmake_cuda_convert_flags(INTERFACE_TARGET module)
     endif()
 

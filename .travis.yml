@@ -23,7 +23,6 @@ matrix:
   include:
   - compiler: clang
     script:
-    - scripts/check_style.sh
     - ".ci/check_tidy.sh"
   - compiler: gcc
     addons:

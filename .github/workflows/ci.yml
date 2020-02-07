@@ -38,7 +38,6 @@ jobs:
       matrix:
         cuda:
           - 8.0-devel-ubuntu16.04
-          - 9.0-devel-ubuntu16.04
           - 9.2-devel-ubuntu18.04
           - 10.0-devel-ubuntu18.04
         

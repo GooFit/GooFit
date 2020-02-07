@@ -7,7 +7,7 @@ RUN apt-get update \
         libidn11=1.33-2.1ubuntu1.2 \
         ca-certificates=20180409 \
         make=4.1-9.1ubuntu1 \
-        python3-dev=3.6.9-1~18.04 \
+        python3-dev=3.6.9-1 \
         git=1:2.17.1-1ubuntu0.5 \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*

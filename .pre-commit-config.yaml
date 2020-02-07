@@ -19,9 +19,7 @@ repos:
   - id: docker-clang-format
     name: Docker Clang Format
     language: docker_image
-    types:
-    - c++
-    - cuda
+    files: "\\.(cu|hpp|cpp|cu|h)$"
     entry: unibeautify/clang-format:latest
     args:
     - -style=file

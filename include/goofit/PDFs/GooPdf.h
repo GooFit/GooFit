@@ -27,7 +27,6 @@ class GooPdf : public PdfBase {
     /// -(n+2) for binned evalutes
     int get_event_size() const;
 
-
     /// This reduces the current function over the data. Does *not* prepare
     /// or normalize TODO: Remove const if caching added
     __host__ double reduce_with_metric() const;
@@ -43,7 +42,7 @@ class GooPdf : public PdfBase {
     using PdfBase::PdfBase;
 
     ~GooPdf() override;
-    
+
     /// This is the total number of bins in the normalize grid
     __host__ int get_bin_grid_size() const;
 

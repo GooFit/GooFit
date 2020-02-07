@@ -9,7 +9,6 @@
 
 namespace GooFit {
 
-
 // For kMatrix
 __device__ fptype phsp_twoBody(fptype s, fptype m0, fptype m1) { return sqrt(1. - POW2(m0 + m1) / s); }
 

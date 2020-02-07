@@ -6,7 +6,7 @@
 #include <goofit/Variable.h>
 #include <goofit/docs/PDFs/physics/resonances/Resonance.h>
 
-#ifdef GOOFIT_KMATRIX
+#if GOOFIT_KMATRIX
 #include <goofit/PDFs/physics/resonances/kMatrix.h>
 #endif
 
@@ -72,7 +72,7 @@ void init_ResonancePdf(py::module &m) {
              "sp"_a,
              "cyc"_a);
 
-#ifdef GOOFIT_KMATRIX
+#if GOOFIT_KMATRIX
     py::class_<Resonances::kMatrix, ResonancePdf>(m_ls, "kMatrix")
         .def(py::init<std::string,
                       unsigned int,

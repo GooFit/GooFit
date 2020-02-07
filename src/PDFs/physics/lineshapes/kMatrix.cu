@@ -1,6 +1,7 @@
 #include <goofit/PDFs/physics/lineshapes/kMatrix.h>
 
 #include <goofit/PDFs/ParameterContainer.h>
+#include <goofit/PDFs/physics/kMatrixUtils.h>
 #include <goofit/PDFs/physics/resonances/Resonance.h>
 
 #include <Eigen/Core>

@@ -4,11 +4,9 @@ file(GLOB_RECURSE GOOFIT_PHYSICS_HEADERS
     )
 
 if(GOOFIT_KMATRIX)
-    set(GOOFIT_KMATRIX_SOURCE lineshapes/kMatrix.cu)
-    set(GOOFIT_KMATRIX_RES resonances/kMatrix.cu)
+    set(GOOFIT_KMATRIX_SOURCE lineshapes/kMatrix.cu resonances/kMatrix.cu)
 else()
     set(GOOFIT_KMATRIX_SOURCE )
-    set(GOOFIT_KMATRIX_RES )
 endif()
 
 goofit_add_pdf_library(PDFPhysics

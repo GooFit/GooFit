@@ -9,7 +9,6 @@ add_library(_Core STATIC
     FitControl.cpp
     Application.cpp
     FitManager.cpp
-    Abort.cpp
 )
 
 target_link_libraries(_Core PRIVATE _goofit_python)

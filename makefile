@@ -1,5 +1,5 @@
 .PHONY: default auto xcode omp cuda info mpi docs cmake base
-	
+
 UNAME := $(shell uname)
 CMAKE_VER := 3.11.2
 CMAKE_BASE := $(basename $(CMAKE_VER))
@@ -23,7 +23,7 @@ else
     CTEST_EXE := ctest
 endif
 
-default: info 
+default: info
 
 base:
 	@echo "Using: $(CMAKE_EXE)"

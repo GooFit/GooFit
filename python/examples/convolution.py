@@ -8,11 +8,13 @@ import numpy as np
 
 print_goofit_info()
 
+
 def cpu_bw(x, x0, gamma):
     ret = gamma
-    ret /= (2 * np.sqrt(np.pi))
-    ret /= ((x - x0) * (x - x0) + 0.25 * gamma * gamma)
+    ret /= 2 * np.sqrt(np.pi)
+    ret /= (x - x0) * (x - x0) + 0.25 * gamma * gamma
     return ret
+
 
 xvar = Observable("xvar", -10, 10)
 gamma = Variable("gamma", 2, 0.1, 0.1, 5)
@@ -25,19 +27,18 @@ data = UnbinnedDataSet(xvar)
 
 i = -1
 while i < 100000:
-    i=i+1
+    i = i + 1
 
     xvar.value = np.random.uniform(1, 20) - 10
 
-    bwvalue = cpu_bw(xvar.value,  x0.value, gamma.value)
-    roll    = np.random.uniform() * (2.0 / (np.sqrt(np.pi) * gamma.value))
+    bwvalue = cpu_bw(xvar.value, x0.value, gamma.value)
+    roll = np.random.uniform() * (2.0 / (np.sqrt(np.pi) * gamma.value))
 
     if roll > bwvalue:
         i -= 1
         continue
 
-
-    xvar.value = xvar.value  + np.random.normal(loc = 0.0,scale = sigma.value)
+    xvar.value = xvar.value + np.random.normal(loc=0.0, scale=sigma.value)
 
     if xvar.value < -10 or xvar.value > 10:
         i -= 1
@@ -46,10 +47,8 @@ while i < 100000:
     data.addEvent()
 
 
-
-
 breit = BWPdf("breit", xvar, x0, gamma)
-gauss  = GaussianPdf("gauss",xvar,zero,sigma)
+gauss = GaussianPdf("gauss", xvar, zero, sigma)
 
 
 convolution = ConvolutionPdf("convolution", xvar, breit, gauss)
@@ -57,5 +56,3 @@ convolution.setData(data)
 
 fitter = FitManager(convolution)
 fitter.fit()
-
-

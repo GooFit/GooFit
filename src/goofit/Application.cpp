@@ -217,13 +217,14 @@ Application::Application(std::string discription, int argc, char **argv)
 #ifndef GOOFIT_MPI
     add_option("--gpu-dev", gpuDev_, "GPU device to use", true)->group("GooFit");
 #endif
-    add_flag_function("--info-only",
-                      [this](int i) {
-                          print_splash();
-                          print_goofit_info(-1);
-                          throw CLI::Success();
-                      },
-                      "Show the available GPU devices and exit")
+    add_flag_function(
+        "--info-only",
+        [this](int i) {
+            print_splash();
+            print_goofit_info(-1);
+            throw CLI::Success();
+        },
+        "Show the available GPU devices and exit")
         ->group("GooFit");
 #endif
     auto quiet = add_flag("-q,--quiet", quiet_, "Reduce the verbosity of the Application")->group("GooFit");

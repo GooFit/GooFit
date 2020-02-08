@@ -28,6 +28,7 @@ void init_Variable(py::module &m) {
 
     py::class_<Observable, Indexable>(m, "Observable")
         .def(py::init<std::string, fptype, fptype>(), "name"_a, "min"_a, "max"_a)
+        .def("getBinSize", &Observable::getBinSize)
         .def_property_readonly("bin_size", &Observable::getBinSize)
         // clang-format off
         ADD_PROP(numbins, getNumBins, setNumBins, Observable)

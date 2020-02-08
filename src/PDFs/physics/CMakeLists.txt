@@ -4,7 +4,11 @@ file(GLOB_RECURSE GOOFIT_PHYSICS_HEADERS
     )
 
 if(GOOFIT_KMATRIX)
-    set(GOOFIT_KMATRIX_SOURCE lineshapes/kMatrix.cu)
+    set(GOOFIT_KMATRIX_SOURCE
+        lineshapes/kMatrix.cu
+        resonances/kMatrix.cu
+        kMatrixUtils.cu
+        )
 else()
     set(GOOFIT_KMATRIX_SOURCE )
 endif()

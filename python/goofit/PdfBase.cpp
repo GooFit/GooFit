@@ -22,6 +22,7 @@ void init_PdfBase(py::module &m) {
         .def("getParameters", &PdfBase::getParameters)
         .def("getParameterByName", &PdfBase::getParameterByName)
         .def("getObservables", &PdfBase::getObservables)
+        .def("getFunctionIndex", &PdfBase::getFunctionIndex)
         .def("__str__",
              [](const PdfBase &pdf) {
                  std::stringstream str;

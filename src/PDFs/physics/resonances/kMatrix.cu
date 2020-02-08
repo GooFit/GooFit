@@ -1,13 +1,14 @@
-#include <goofit/PDFs/physics/lineshapes/kMatrix.h>
+#include <goofit/PDFs/physics/resonances/kMatrix.h>
 
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/kMatrixUtils.h>
+#include <goofit/PDFs/physics/lineshapes/Lineshape.h>
 #include <goofit/PDFs/physics/resonances/Resonance.h>
 
 #include <Eigen/Core>
 #include <Eigen/LU>
 
-#include "Common.h"
+#include "../lineshapes/Common.h"
 
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
 #include <goofit/detail/compute_inverse5.h>
@@ -15,14 +16,7 @@
 
 namespace GooFit {
 
-__device__ fpcomplex kMatrixFunction(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
-    // const fptype mass  = GOOFIT_GET_PARAM(2);
-    // const fptype width = GOOFIT_GET_PARAM(3);
-    // const unsigned int L = GOOFIT_GET_INT(4);
-    // const fptype radius = GOOFIT_GET_CONST(7);
-
-    // const fptype pTerm = GOOFIT_GET_INT();
-
+__device__ fpcomplex kMatrixRes(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) {
     unsigned int pterm = pc.getConstant(1);
     bool is_pole       = pc.getConstant(2) == 1;
 
@@ -46,7 +40,7 @@ __device__ fpcomplex kMatrixFunction(fptype Mpair, fptype m1, fptype m2, Paramet
         pmasses(i) = pc.getParameter(idx++);
     }
 
-    fptype s = POW2(Mpair);
+    fptype s = POW2(mPiPlus);
 
     // constructKMatrix
 
@@ -58,7 +52,7 @@ __device__ fpcomplex kMatrixFunction(fptype Mpair, fptype m1, fptype m2, Paramet
     for(int i = 0; i < 5; i++) {
         for(int j = 0; j < 5; j++) {
             for(int k = 0; k < 5; k++)
-                kMatrix(i, j) += couplings(k, i) * couplings(k, j) / (pmasses(k) - s);
+                kMatrix(i, j) += couplings(k, i) * couplings(k, j) / (POW2(pmasses(k)) - s);
             if(i == 0 || j == 0) // Scattering term
                 kMatrix(i, j) += fscat(i + j) * (1 - s0_scatt) / (s - s0_scatt);
         }
@@ -82,29 +76,30 @@ __device__ fpcomplex kMatrixFunction(fptype Mpair, fptype m1, fptype m2, Paramet
             M += F(0, i) * pole;
         }
         return M / (POW2(pmasses(pterm)) - s);
+
     } else { // prod
         return F(0, pterm) * (1 - s0_prod) / (s - s0_prod);
     }
-}
+} // kMatrixFunction
 
-__device__ resonance_function_ptr ptr_to_kMatrix = kMatrixFunction;
+__device__ resonance_function_ptr ptr_to_kMatrix_res = kMatrixRes;
 
-Lineshapes::kMatrix::kMatrix(std::string name,
-                             unsigned int pterm,
-                             bool is_pole,
-                             Variable sA0,
-                             Variable sA,
-                             Variable s0_prod,
-                             Variable s0_scatt,
-                             std::vector<Variable> fscat,
-                             std::vector<Variable> poles,
-                             Variable mass,
-                             Variable width,
-                             unsigned int L,
-                             unsigned int Mpair,
-                             FF FormFac,
-                             fptype radius)
-    : Lineshape("kMatrix", name, L, Mpair, FormFac, radius) {
+namespace Resonances {
+
+kMatrix::kMatrix(std::string name,
+                 unsigned int pterm,
+                 bool is_pole,
+                 Variable a_r,
+                 Variable a_i,
+                 Variable sA0,
+                 Variable sA,
+                 Variable s0_prod,
+                 Variable s0_scatt,
+                 std::vector<Variable> fscat,
+                 std::vector<Variable> poles,
+                 unsigned int L,
+                 unsigned int Mpair)
+    : ResonancePdf("kMatrix", name, a_r, a_i) {
     if(fscat.size() != NCHANNELS)
         throw GooFit::GeneralError("You must have {} channels in fscat, not {}", NCHANNELS, fscat.size());
 
@@ -127,9 +122,10 @@ Lineshapes::kMatrix::kMatrix(std::string name,
         registerParameter(poles.at(i));
     }
 
-    registerFunction("ptr_to_kMatrix", ptr_to_kMatrix);
+    registerFunction("ptr_to_kMatrix_res", ptr_to_kMatrix_res);
 
     initialize();
 }
 
+} // namespace Resonances
 } // namespace GooFit

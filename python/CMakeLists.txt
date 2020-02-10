@@ -73,13 +73,6 @@ target_link_libraries(_goofit
     _Physics)
 
 
-# Only need to add CUDA incdir if built with FindCUDA
-
-if(GOOFIT_DEVICE STREQUAL CUDA AND NOT NEW_CUDA)
-    target_include_directories(_goofit PUBLIC ${CUDA_INCLUDE_DIRS})
-endif()
-
-
 # Create files in the python directory
 
 file(WRITE "${CMAKE_BINARY_DIR}/goofit/__init__.py" "from ._goofit import *")

@@ -82,7 +82,7 @@ class Application : public CLI::App {
 
     /// Set floating point errors to throw exceptions instead of NaNs
     /// Does not work with CUDA mode.
-    void set_floating_exceptions() const;
+    static void set_floating_exceptions();
 
     /// Cleanup MPI if needed
     ~Application() override;

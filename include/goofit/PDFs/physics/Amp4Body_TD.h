@@ -57,10 +57,6 @@ class Amp4Body_TD : public Amp4BodyBase {
 
   protected:
   private:
-    std::map<std::string, std::pair<std::vector<unsigned int>, std::vector<unsigned int>>> AmpMap;
-    std::map<std::string, unsigned int> compMap;
-    // std::map<unsigned int, unsigned int> massmap;
-    std::map<std::string, unsigned int> SpinMap;
     std::vector<SpinFactor *> SpinFactors;
     std::vector<Lineshape *> LineShapes;
     std::vector<AmpCalc_TD *> AmpCalcs;

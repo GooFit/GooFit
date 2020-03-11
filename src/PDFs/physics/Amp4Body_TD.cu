@@ -42,6 +42,7 @@ class.
 #include <goofit/PDFs/physics/resonances/Resonance.h>
 
 #include <cstdarg>
+#include <map>
 
 namespace GooFit {
 
@@ -246,6 +247,8 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
     std::vector<Amplitude *> AmpBuffer;
     std::vector<Amplitude *> AmpsA = decayInfo.amplitudes;
     std::vector<Amplitude *> AmpsB = decayInfo.amplitudes_B;
+
+    std::map<std::string, std::pair<std::vector<unsigned int>, std::vector<unsigned int>>> AmpMap;
 
     std::vector<unsigned int> nPermVec;
     std::vector<unsigned int> amp_idx;

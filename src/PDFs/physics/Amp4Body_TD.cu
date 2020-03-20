@@ -858,12 +858,14 @@ __host__
     fptype wmax = 1.1 * (fptype)*thrust::max_element(weights.begin(), weights.end());
 
     if(wmax > maxWeight && maxWeight != 0)
-        fprintf(stderr,
-                "WARNING: you just encountered a higher maximum weight than observed in previous iterations.\n"
-                "WARNING: Consider recalculating your AccRej flags and acceping based upon these.\n"
-                "WARNING: previous weight: %.4g, new weight: %.4g\n",
-                maxWeight,
-                wmax);
+    {
+      throw GooFit::GeneralError(
+				 "WARNING: you just encountered a higher maximum weight than observed in previous iterations.\n"
+				 "WARNING: Consider recalculating your AccRej flags and acceping based upon these.\n"
+				 "WARNING: previous weight: {}, new weight: {}\n",
+				 maxWeight,
+				 wmax);
+    }
 
     maxWeight = wmax > maxWeight ? wmax : maxWeight;
 

@@ -46,11 +46,14 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
     int id_m13 = pc.getObservable(3);
     int id_num = pc.getObservable(4);
     int id_mis = 0;
+    int id_tag = 0;
     if(num_observables > 5)
         id_mis = pc.getObservable(5);
+	id_tag = pc.getObservable(6);
 
     fptype m12 = RO_CACHE(evt[id_m12]);
     fptype m13 = RO_CACHE(evt[id_m13]);
+    int _charmtag = RO_CACHE(evt[id_tag]);
 
     unsigned int numResonances = pc.getConstant(0);
 
@@ -107,8 +110,20 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
     int id_sigma = pc.getObservable(1);
 
     fptype _tau     = pc.getParameter(0);
-    fptype _xmixing = pc.getParameter(1);
-    fptype _ymixing = pc.getParameter(2);
+    //fptype _xmixing = pc.getParameter(1);
+    //fptype _ymixing = pc.getParameter(2);
+    fptype _xmixing0 = pc.getParameter(1);
+    fptype _ymixing0 = pc.getParameter(2);
+    fptype _deltax   = pc.getParameter(3);
+    fptype _deltay   = pc.getParameter(4);
+    fptype _xmixing = 0;
+    fptype _ymixing = 0;
+    if(_charmtag ==1)
+        _xmixing = _xmixing0 + _deltax;
+	_ymixing = _ymixing0 + _deltay;
+    else if(_charmtag==-1)
+        _xmixing = _xmixing0 - _deltax;
+        _ymixing = _ymixing0 - _deltay;
 
     fptype _time  = RO_CACHE(evt[id_time]);
     fptype _sigma = RO_CACHE(evt[id_sigma]);
@@ -226,7 +241,8 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
                                   DecayInfo3t decay,
                                   MixingTimeResolution *r,
                                   GooPdf *efficiency,
-                                  Observable *mistag)
+                                  Observable *mistag,
+				  Observable *charmtag)
     : Amp3BodyBase("Amp3Body_TD", n, _dtime, _sigmat, m12, m13, eventNumber)
     , decayInfo(decay)
     , _m12(m12)
@@ -242,6 +258,9 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
         totalEventSize = 6;
     }
 
+    registerObservable(*charmtag);
+    totalEventSize++;
+
     MEMCPY_TO_SYMBOL(c_motherMass, &decay.motherMass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(c_daug1Mass, &decay.daug1Mass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(c_daug2Mass, &decay.daug2Mass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
@@ -249,8 +268,10 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
     MEMCPY_TO_SYMBOL(c_meson_radius, &decay.meson_radius, sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
     registerParameter(decay._tau);
-    registerParameter(decay._xmixing);
-    registerParameter(decay._ymixing);
+    registerParameter(decay._xmixing0);
+    registerParameter(decay._ymixing0);
+    registerParameter(decay._deltax);
+    registerParameter(decay._deltay);
 
     if(resolution->getDeviceFunction() < 0)
         throw GooFit::GeneralError("The resolution device function index {} must be more than 0",
@@ -317,7 +338,8 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
                                   std::vector<MixingTimeResolution *> &r,
                                   GooPdf *efficiency,
                                   Observable md0,
-                                  Observable *mistag)
+                                  Observable *mistag,
+				  Observable *charmtag)
     : Amp3BodyBase("Amp3Body_TD", n, _dtime, _sigmat, m12, m13, eventNumber, md0)
     , decayInfo(decay)
     , _m12(m12)
@@ -334,6 +356,8 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
         totalEventSize++;
     }
 
+    registerObservable(*charmtag);
+
     MEMCPY_TO_SYMBOL(c_motherMass, &decay.motherMass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(c_daug1Mass, &decay.daug1Mass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(c_daug2Mass, &decay.daug2Mass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
@@ -341,8 +365,10 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
     MEMCPY_TO_SYMBOL(c_meson_radius, &decay.meson_radius, sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
     registerParameter(decay._tau);
-    registerParameter(decay._xmixing);
-    registerParameter(decay._ymixing);
+    registerParameter(decay._xmixing0);
+    registerParameter(decay._ymixing0);
+    registerParameter(decay._deltax);
+    registerParameter(decay._deltay);
     printf("Multiple resolution functions not supported yet!\n");
 
     registerConstant(decayInfo.resonances.size());
@@ -639,12 +665,24 @@ __host__ fptype Amp3Body_TD::normalize() {
     double dalitzIntegralThr = integralABs.real();
     double dalitzIntegralFou = integralABs.imag();
 
-    fptype tau     = host_parameters[parametersIdx + 1];
-    fptype xmixing = host_parameters[parametersIdx + 2];
-    fptype ymixing = host_parameters[parametersIdx + 3];
+    fptype tau      = host_parameters[parametersIdx + 1];
+    fptype xmixing0 = host_parameters[parametersIdx + 2];
+    fptype ymixing0 = host_parameters[parametersIdx + 3];
+    fptype deltax   = host_parameters[parametersIdx + 4];
+    fptype deltay   = host_parameters[parametersIdx + 5];
+    fptype xmixing_D0 = xmixing0 + deltax;
+    fptype ymixing_D0 = ymixing0 + deltay;
+    fptype xmixing_D0bar = xmixing0 - deltax;
+    fptype ymixing_D0bar = ymixing0 - deltay;
 
-    fptype ret = resolution->normalization(
-        dalitzIntegralOne, dalitzIntegralTwo, dalitzIntegralThr, dalitzIntegralFou, tau, xmixing, ymixing);
+    fptype ret_D0 = resolution->normalization(
+        dalitzIntegralOne, dalitzIntegralTwo, dalitzIntegralThr, dalitzIntegralFou, tau, xmixing_D0, ymixing_D0);
+
+    fptype ret_D0bar = resolution->normalization(
+        dalitzIntegralOne, dalitzIntegralTwo, dalitzIntegralThr, dalitzIntegralFou, tau, xmixing_D0bar, ymixing_D0bar);
+
+    fptype _D0Fraction = 0.5; // Set D0 fraction to 0.5 for now.
+    fptype ret = _D0Fraction * ret_D0 + (1. - _D0Fraction) * ret_D0bar;
 
     double binSizeFactor = 1;
     binSizeFactor *= ((_m12.getUpperLimit() - _m12.getLowerLimit()) / _m12.getNumBins());

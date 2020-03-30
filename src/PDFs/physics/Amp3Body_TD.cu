@@ -118,12 +118,14 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
     fptype _deltay   = pc.getParameter(4);
     fptype _xmixing = 0;
     fptype _ymixing = 0;
-    if(_charmtag ==1)
+    if(_charmtag ==1){
         _xmixing = _xmixing0 + _deltax;
 	_ymixing = _ymixing0 + _deltay;
-    else if(_charmtag==-1)
+    }
+    else if(_charmtag==-1){
         _xmixing = _xmixing0 - _deltax;
         _ymixing = _ymixing0 - _deltay;
+    }
 
     fptype _time  = RO_CACHE(evt[id_time]);
     fptype _sigma = RO_CACHE(evt[id_sigma]);

@@ -80,7 +80,8 @@ class Amp3Body_TD : public Amp3BodyBase {
                 DecayInfo3t decay,
                 MixingTimeResolution *r,
                 GooPdf *eff,
-                Observable *mistag = nullptr);
+                Observable *mistag = nullptr,
+		Observable *charmtag = nullptr);
     Amp3Body_TD(std::string n,
                 Observable _dtime,
                 Observable _sigmat,
@@ -91,7 +92,8 @@ class Amp3Body_TD : public Amp3BodyBase {
                 std::vector<MixingTimeResolution *> &r,
                 GooPdf *eff,
                 Observable md0,
-                Observable *mistag = nullptr);
+                Observable *mistag = nullptr,
+		Observable *charmtag = nullptr);
     // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the
     // coherent sum. The caching method requires that it be done this way or the ProdPdf
     // normalization will get *really* confused and give wrong answers.

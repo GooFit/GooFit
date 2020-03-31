@@ -47,10 +47,10 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
     int id_num = pc.getObservable(4);
     int id_mis = 0;
     int id_tag = 0;
-    if(num_observables > 5)
+    if(num_observables > 5){
         id_mis = pc.getObservable(5);
 	id_tag = pc.getObservable(6);
-
+    }
     fptype m12 = RO_CACHE(evt[id_m12]);
     fptype m13 = RO_CACHE(evt[id_m13]);
     int _charmtag = evt[id_tag];

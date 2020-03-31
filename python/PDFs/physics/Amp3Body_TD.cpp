@@ -59,7 +59,8 @@ void init_Amp3Body_TD(py::module &m) {
              py::keep_alive<1, 8>(),
              py::keep_alive<1, 9>(),
              py::keep_alive<1, 10>(),
-             py::keep_alive<1, 11>())
+             py::keep_alive<1, 11>(),
+             py::keep_alive<1, 12>())
         .def(py::init<std::string,
                       Observable,
                       Observable,
@@ -111,7 +112,8 @@ void init_Amp3Body_TD(py::module &m) {
              py::keep_alive<1, 8>(),
              py::keep_alive<1, 9>(),
              py::keep_alive<1, 10>(),
-             py::keep_alive<1, 11>())
+             py::keep_alive<1, 11>(),
+             py::keep_alive<1, 12>())
 
         .def("setDataSize", &Amp3Body_TD::setDataSize, "dataSize"_a, "evtSize"_a = 5)
 

@@ -53,11 +53,11 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
 
     fptype m12 = RO_CACHE(evt[id_m12]);
     fptype m13 = RO_CACHE(evt[id_m13]);
-    //int _charmtag = RO_CACHE(evt[id_tag]);
-    int _charmtag = 1;
+    int _charmtag = evt[id_tag];
+    //int _charmtag = 1;
 
-    //unsigned int numResonances = pc.getConstant(0);
-    int numResonances = 1;
+    unsigned int numResonances = pc.getConstant(0);
+    //int numResonances = 1;
 
     if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass)) {
         unsigned int endEfficiencyFunc = pc.getConstant(3);
@@ -120,14 +120,14 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
     fptype _deltay   = pc.getParameter(4);
     fptype _xmixing = 0;
     fptype _ymixing = 0;
-//    if(_charmtag ==1){
-    _xmixing = _xmixing0 + _deltax;
-    _ymixing = _ymixing0 + _deltay;
-    //}
-//    else if(_charmtag==-1){
-//        _xmixing = _xmixing0 - _deltax;
-//        _ymixing = _ymixing0 - _deltay;
-//    }
+    if(_charmtag ==1){
+        _xmixing = _xmixing0 + _deltax;
+        _ymixing = _ymixing0 + _deltay;
+    }
+    else if(_charmtag==-1){
+        _xmixing = _xmixing0 - _deltax;
+        _ymixing = _ymixing0 - _deltay;
+    }
 
     fptype _time  = RO_CACHE(evt[id_time]);
     fptype _sigma = RO_CACHE(evt[id_sigma]);

@@ -651,11 +651,11 @@ __host__ fptype Amp3Body_TD::normalize() {
     fpcomplex integralABs(0, 0);
 
     for(unsigned int i = 0; i < decayInfo.resonances.size(); ++i) {
-        fpcomplex amplitude_i(host_parameters[parametersIdx + i * 2 + 4], host_parameters[parametersIdx + i * 2 + 5]);
+        fpcomplex amplitude_i(host_parameters[parametersIdx + i * 2 + 6], host_parameters[parametersIdx + i * 2 + 7]);
 
         for(unsigned int j = 0; j < decayInfo.resonances.size(); ++j) {
-            fpcomplex amplitude_j(host_parameters[parametersIdx + j * 2 + 4],
-                                  -host_parameters[parametersIdx + j * 2 + 5]); // Notice complex conjugation
+            fpcomplex amplitude_j(host_parameters[parametersIdx + j * 2 + 6],
+                                  -host_parameters[parametersIdx + j * 2 + 7]); // Notice complex conjugation
 
             integralA_2 += (amplitude_i * amplitude_j
                             * fpcomplex(thrust::get<0>(*(integrals[i][j])), thrust::get<1>(*(integrals[i][j]))));

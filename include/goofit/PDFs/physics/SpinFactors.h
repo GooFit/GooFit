@@ -37,6 +37,8 @@ enum class SF_4Body {
 class SpinFactor : public AmpComponent {
     friend class Amp4Body;
 
+    friend std::ostream &operator<<(std::ostream &out, const SpinFactor &obj);
+
   private:
     SF_4Body _SF;
     unsigned int _P0;
@@ -60,5 +62,8 @@ class SpinFactor : public AmpComponent {
                 and S._P3 == _P3);
     }
 };
+
+std::ostream &operator<<(std::ostream &out, const SpinFactor &obj);
+std::ostream &operator<<(std::ostream &out, const SF_4Body &obj);
 
 } // namespace GooFit

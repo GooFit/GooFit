@@ -55,6 +55,13 @@ class Amp4Body_TD : public Amp4BodyBase {
 
     __host__ void populateArrays() override;
 
+    void printAmpMappings() const;
+
+    void printSelectedLineshapes(const std::vector<unsigned int>& lsIndices) const;
+
+    void printSelectedSFs(const std::vector<unsigned int>& sfIndices) const;
+
+
   protected:
   private:
     std::vector<SpinFactor *> SpinFactors;
@@ -85,7 +92,6 @@ class Amp4Body_TD : public Amp4BodyBase {
     thrust::device_vector<fpcomplex> *cachedAMPs{nullptr};  // cache Amplitude values for each event.
     mutable bool generation_no_norm{false};
     mutable bool SpinsCalculated{false};
-    bool *redoIntegral;
     mutable bool forceRedoIntegrals{true};
     fptype *cachedMasses;
     fptype *cachedWidths;
@@ -93,6 +99,7 @@ class Amp4Body_TD : public Amp4BodyBase {
     int cacheToUse{0};
     unsigned int generation_offset{0};
     double maxWeight{0};
+    unsigned int _NUM_AMPLITUDES;
 };
 
 } // namespace GooFit

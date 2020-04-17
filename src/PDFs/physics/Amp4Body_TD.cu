@@ -92,6 +92,50 @@ struct exp_functor {
     }
 };
 
+
+void Amp4Body_TD::printSelectedLineshapes(const std::vector<unsigned int>& lsIndices) const
+{
+  std::cout << "Lineshapes:" << std::endl;
+  for (int l = 0; l < lsIndices.size(); l++)
+  {
+    int index = lsIndices[l];
+    std::cout << "LS #" << index << ": " << LineShapes[index]->getName() << std::endl;
+  }
+}
+
+
+void Amp4Body_TD::printSelectedSFs(const std::vector<unsigned int>& sfIndices) const
+{
+  std::cout << "Spin factors:" << std::endl;
+  for (int s = 0; s < sfIndices.size(); s++)
+  {
+    int index = sfIndices[s];
+    std::cout << "SF #" << index << ": " << *(SpinFactors[index]) << std::endl;
+  }
+}
+
+
+void Amp4Body_TD::printAmpMappings() const
+{
+  std::cout << "Amplitudes included in Amp4Body_TD model:" << std::endl << std::endl;
+
+  for (int a = 0; a < AmpCalcs.size(); a++)
+  {
+    AmpCalc_TD* ampCalc = AmpCalcs[a];
+    Amplitude* amp = dynamic_cast<Amplitude*>(components[a]);
+    std::cout << "Amplitude # " << a << "(" << amp->_uniqueDecayStr << "):" << std::endl;
+
+    std::vector<unsigned int> lsIndices = ampCalc->getLineshapeIndices(_NUM_AMPLITUDES);
+    printSelectedLineshapes(lsIndices);
+
+    std::vector<unsigned int> sfIndices = ampCalc->getSpinFactorIndices(_NUM_AMPLITUDES);
+    printSelectedSFs(sfIndices);
+
+    std::cout << std::endl;
+  } // end loop over amps
+}
+
+
 // The function of this array is to hold all the cached waves; specific
 // waves are recalculated when the corresponding resonance mass or width
 // changes. Note that in a multithread environment each thread needs its
@@ -322,6 +366,11 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
         amp_idx.insert(amp_idx.end(), sf.begin(), sf.end());
         ++coeff_counter;
         // AmpBuffer.push_back(i);
+	
+	//std::cout << "Amplitude " << i->_uniqueDecayStr << std::endl;
+	//printSelectedLineshapes(ls);
+	//printSelectedSFs(sf);
+	//std::cout << std::endl;
     }
 
     for(auto &i : AmpsB) {
@@ -383,11 +432,17 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
         amp_idx.push_back(flag);
         amp_idx.insert(amp_idx.end(), ls.begin(), ls.end());
         amp_idx.insert(amp_idx.end(), sf.begin(), sf.end());
+
+	//std::cout << "Amplitude " << i->_uniqueDecayStr << std::endl;
+        //printSelectedLineshapes(ls);
+        //printSelectedSFs(sf);
+	//std::cout << std::endl;
     }
 
     registerConstant(LineShapes.size());  //#LS
     registerConstant(SpinFactors.size()); //#SF
-    registerConstant(components.size());  //# AMP
+    _NUM_AMPLITUDES = components.size();
+    registerConstant(_NUM_AMPLITUDES);  //# AMP
     registerConstant(coeff_counter); // Number of coefficients, because its not necessary to be equal to number of Amps.
     registerConstant(total_lineshapes_spinfactors);
 
@@ -409,7 +464,6 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
     initialize();
 
     Integrator   = new NormIntegrator_TD();
-    redoIntegral = new bool[LineShapes.size()];
     cachedMasses = new fptype[LineShapes.size()];
     cachedWidths = new fptype[LineShapes.size()];
 
@@ -429,7 +483,7 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
         sfcalculators.push_back(new SFCalculator_TD());
     }
 
-    for(int i = 0; i < components.size() - 2; ++i) {
+    for(int i = 0; i < _NUM_AMPLITUDES; ++i) {
         AmpCalcs.push_back(new AmpCalc_TD(nPermVec[i], amp_idx_start[i]));
     }
 
@@ -479,10 +533,17 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
     mcbooster::EvaluateArray<Dim5>(eval, pset, VarSet);
 
     norm_SF  = mcbooster::RealVector_d(nAcc * SpinFactors.size());
-    norm_LS  = mcbooster::mc_device_vector<fpcomplex>(nAcc * (components.size() - 1));
+    norm_LS  = mcbooster::mc_device_vector<fpcomplex>(nAcc * LineShapes.size());
     MCevents = nAcc;
 
     setSeparateNorm();
+    
+    GOOFIT_INFO("Lineshapes size (# unique LS): {}", LineShapes.size());
+    GOOFIT_INFO("Components size: {}", components.size());
+    GOOFIT_INFO("Num. amplitudes: {}", _NUM_AMPLITUDES);
+    GOOFIT_INFO("Num. amp. calcs: {}", AmpCalcs.size());
+
+    printAmpMappings();
 }
 
 __host__ void Amp4Body_TD::populateArrays() {
@@ -532,7 +593,7 @@ __host__ void Amp4Body_TD::setDataSize(unsigned int dataSize, unsigned int evtSi
 __host__ fptype Amp4Body_TD::normalize() {
     if(cachedResSF == nullptr)
         throw GeneralError("You must call dp.setDataSize(currData.getNumEvents(), N) first!");
-    // fprintf(stderr, "start normalize\n");
+    
     recursiveSetNormalization(1.0); // Not going to normalize efficiency,
     // so set normalization factor to 1 so it doesn't get multiplied by zero.
     // Copy at this time to ensure that the SpecialResonanceCalculators, which need the efficiency,
@@ -541,13 +602,34 @@ __host__ fptype Amp4Body_TD::normalize() {
 
     // check if MINUIT changed any parameters and if so remember that so we know
     // we need to recalculate that lineshape and every amp, that uses that lineshape
-    for(unsigned int i = 0; i < components.size() - 1; ++i) {
-        redoIntegral[i] = forceRedoIntegrals;
+    std::vector<bool> lineshapeChanged(LineShapes.size(), forceRedoIntegrals);
+    if (!forceRedoIntegrals)
+    {
+      for (int l = 0; l < LineShapes.size(); l++)
+      {
+	if (LineShapes[l]->parametersChanged())
+	{
+	  lineshapeChanged[l] = true;
+	}
+      }
+    }
 
-        if(!(components[i]->parametersChanged()))
-            continue;
-
-        redoIntegral[i] = true;
+    std::vector<bool> amplitudeComponentChanged(_NUM_AMPLITUDES, forceRedoIntegrals);
+    if (!forceRedoIntegrals)
+    {
+      for (int a = 0; a < _NUM_AMPLITUDES; a++)
+      {
+	Amplitude* amp = dynamic_cast<Amplitude*>(components[a]);
+	if (amp == NULL)
+	{
+	  throw GeneralError("Error retrieving amplitude components.");
+	}
+      
+	if (amp->lineshapeParametersChanged())
+	{
+	  amplitudeComponentChanged[a] = true;
+	}
+      }
     }
 
     SpinsCalculated    = !forceRedoIntegrals;
@@ -600,12 +682,10 @@ __host__ fptype Amp4Body_TD::normalize() {
         SpinsCalculated = true;
     }
 
-    // fprintf(stderr, "normalize after spins\n");
-
     // this calculates the values of the lineshapes and stores them in the array. It is recalculated every time
     // parameters change.
     for(int i = 0; i < LineShapes.size(); ++i) {
-        if(redoIntegral[i]) {
+        if(lineshapeChanged[i]) {
             lscalculators[i]->setDalitzId(getFunctionIndex());
             lscalculators[i]->setResonanceId(LineShapes[i]->getFunctionIndex());
 
@@ -622,39 +702,26 @@ __host__ fptype Amp4Body_TD::normalize() {
         }
     }
 
-    // fprintf(stderr, "normalize after LS\n");
+    // checks if the amplitude includes one of the recalculated lineshapes and if so recalculates that amplitude
+    for(int a = 0; a < _NUM_AMPLITUDES; ++a) 
+    {
+      if (amplitudeComponentChanged[a] == false)
+      {   
+	continue;
+      }   
 
-    // this is a little messy but it basically checks if the amplitude includes one of the recalculated lineshapes and
-    // if so recalculates that amplitude
-    // auto AmpMapIt = AmpMap.begin();
+      AmpCalcs[a]->setDalitzId(getFunctionIndex());
 
-    for(int i = 0; i < components.size() - 2; ++i) {
-        bool redo = false;
-        for(unsigned int j = 0; j < components.size() - 2; j++) {
-            if(!redoIntegral[j])
-                continue;
-            redo = true;
-            break;
-        }
-
-        if(redo) {
-            AmpCalcs[i]->setDalitzId(getFunctionIndex());
-
-            thrust::transform(eventIndex,
-                              eventIndex + numEntries,
-                              strided_range<thrust::device_vector<fpcomplex>::iterator>(
-                                  cachedAMPs->begin() + i, cachedAMPs->end(), AmpCalcs.size())
-                                  .begin(),
-                              *(AmpCalcs[i]));
-        }
-    }
-
-    // fprintf(stderr, "normalize after Amps\n");
+      thrust::transform(eventIndex,
+			eventIndex + numEntries,
+			strided_range<thrust::device_vector<fpcomplex>::iterator>(cachedAMPs->begin() + a, cachedAMPs->end(), AmpCalcs.size()).begin(),
+			*(AmpCalcs[a]));
+    } // end loop over amps
 
     // lineshape value calculation for the normalization, also recalculated every time parameter change
     if(!generation_no_norm) {
         for(int i = 0; i < LineShapes.size(); ++i) {
-            if(!redoIntegral[i])
+            if(!lineshapeChanged[i])
                 continue;
 
             NormLSCalculator_TD ns;
@@ -719,7 +786,7 @@ __host__ fptype Amp4Body_TD::normalize() {
 
     host_normalizations[normalIdx + 1] = 1.0 / ret;
     cachedNormalization                = 1.0 / ret;
-    // printf("end of normalize %f\n", ret);
+   
     return ret;
 }
 

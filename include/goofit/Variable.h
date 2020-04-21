@@ -52,6 +52,8 @@ class Indexable {
             GOOFIT_DEBUG("Destroying Indexable: {}", name);
     }
 
+    bool isEqualNameValLimits(const Indexable& other) const;
+
     /// Get the GooFit index
     int getIndex() const { return *index; }
     /// Set the GooFit index
@@ -184,6 +186,8 @@ class Variable : public Indexable {
         , fixed(std::make_shared<bool>(fix)) {}
 
     ~Variable() override = default;
+
+    bool isEqualNameValLimitsErrBlindFixed(const Variable& other) const;
 
     /// Get the error
     fptype getError() const { return *error; }

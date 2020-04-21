@@ -73,6 +73,9 @@ enum DP4Pair {
     M_24_3,
     M_34_2
 };
+
+std::ostream &operator<<(std::ostream &out, const DP4Pair &obj);
+
 enum DaughterPair { PAIR_12 = 0, PAIR_13, PAIR_23 };
 
 const int resonanceSize = 4; // Number of parameters to describe one resonance.

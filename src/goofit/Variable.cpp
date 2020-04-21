@@ -6,6 +6,26 @@
 
 namespace GooFit {
 
+bool Indexable::isEqualNameValLimits(const Indexable& other) const
+{
+  return
+    this->name == other.name
+    && this->value.get() == other.value.get()
+    && this->lowerlimit.get() == other.lowerlimit.get()
+    && this->upperlimit.get() == other.upperlimit.get();
+}
+
+
+bool Variable::isEqualNameValLimitsErrBlindFixed(const Variable& other) const
+{
+  return 
+    this->isEqualNameValLimits(other)
+    && this->error.get() == other.error.get()
+    && this->blind.get() == other.blind.get()
+    && this->fixed.get() == other.fixed.get();
+}
+
+
 int max_fitter_index(const std::vector<Variable> &vars) {
     const Variable max_ind_ptr
         = *std::max_element(std::begin(vars), std::end(vars), [](const Variable &a, const Variable &b) {

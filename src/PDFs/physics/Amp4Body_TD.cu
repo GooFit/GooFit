@@ -99,7 +99,7 @@ void Amp4Body_TD::printSelectedLineshapes(const std::vector<unsigned int>& lsInd
   for (int l = 0; l < lsIndices.size(); l++)
   {
     int index = lsIndices[l];
-    std::cout << "LS #" << index << ": " << LineShapes[index]->getName() << std::endl;
+    std::cout << "LS #" << index << ": " << *LineShapes[index] << std::endl;
   }
 }
 
@@ -117,13 +117,13 @@ void Amp4Body_TD::printSelectedSFs(const std::vector<unsigned int>& sfIndices) c
 
 void Amp4Body_TD::printAmpMappings() const
 {
-  std::cout << "Amplitudes included in Amp4Body_TD model:" << std::endl << std::endl;
+  std::cout << "\nAmplitudes included in Amp4Body_TD model:" << std::endl << std::endl;
 
   for (int a = 0; a < AmpCalcs.size(); a++)
   {
     AmpCalc_TD* ampCalc = AmpCalcs[a];
     Amplitude* amp = dynamic_cast<Amplitude*>(components[a]);
-    std::cout << "Amplitude # " << a << "(" << amp->_uniqueDecayStr << "):" << std::endl;
+    std::cout << "Amplitude # " << a << " (" << amp->_uniqueDecayStr << "):" << std::endl;
 
     std::vector<unsigned int> lsIndices = ampCalc->getLineshapeIndices(_NUM_AMPLITUDES);
     printSelectedLineshapes(lsIndices);
@@ -532,16 +532,17 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
     Dim5 eval = Dim5();
     mcbooster::EvaluateArray<Dim5>(eval, pset, VarSet);
 
+    GOOFIT_INFO("Lineshapes size (# unique LS): {}", LineShapes.size());
+    GOOFIT_INFO("SpinFactors size (# unique SF): {}", SpinFactors.size());
+    GOOFIT_INFO("Components size: {}", components.size());
+    GOOFIT_INFO("Num. amplitudes: {}", _NUM_AMPLITUDES);
+    GOOFIT_INFO("Num. amp. calcs: {}", AmpCalcs.size());
+
     norm_SF  = mcbooster::RealVector_d(nAcc * SpinFactors.size());
     norm_LS  = mcbooster::mc_device_vector<fpcomplex>(nAcc * LineShapes.size());
     MCevents = nAcc;
 
     setSeparateNorm();
-    
-    GOOFIT_INFO("Lineshapes size (# unique LS): {}", LineShapes.size());
-    GOOFIT_INFO("Components size: {}", components.size());
-    GOOFIT_INFO("Num. amplitudes: {}", _NUM_AMPLITUDES);
-    GOOFIT_INFO("Num. amp. calcs: {}", AmpCalcs.size());
 
     printAmpMappings();
 }

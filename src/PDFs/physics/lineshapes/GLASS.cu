@@ -90,4 +90,44 @@ Lineshapes::GLASS::GLASS(std::string name,
     initialize();
 }
 
+
+std::ostream& Lineshapes::GLASS::print(std::ostream& out) const
+{
+  std::string paramNames = "";
+  std::string lassParamNames = "";
+  for (int p = 0; p < this->getParameters().size(); p++)
+  {
+    if (p > 1)
+    {
+      lassParamNames += this->getParameters()[p].getName();
+      if (p < this->getParameters().size()-1)
+      {
+	lassParamNames += ", ";
+      }
+    }
+    else
+    {
+      paramNames += this->getParameters()[p].getName() + ", ";
+    }
+  }
+
+  DP4Pair mpairEnum = static_cast<DP4Pair>(this->_Mpair);
+  
+  out << this->getPdfName() << ", "
+      << this->getName() << ", "
+      << paramNames
+      << this->_L << ", "
+      << mpairEnum << ", "
+      << this->_FormFac << ", "
+      << this->_radius << ", "
+      << lassParamNames;
+  return out;
+}
+
+
+bool Lineshapes::GLASS::isEqualByValue(const Lineshape& other) const 
+{
+  return this->Lineshape::isEqualByValue(other);
+}
+
 } // namespace GooFit

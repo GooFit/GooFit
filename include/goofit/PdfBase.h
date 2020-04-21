@@ -217,6 +217,8 @@ class PdfBase {
     /// Get the current PDF name
     std::string getPdfName() const { return pdf_name_; }
 
+    bool areParamsandConstantsEqualByVal(const PdfBase& other) const;
+   
   protected:
     DataSet *data_ = nullptr; //< Remember the original dataset
 

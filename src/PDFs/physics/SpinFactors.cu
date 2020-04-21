@@ -76,7 +76,13 @@ std::ostream &operator<<(std::ostream &out, const SF_4Body &obj)
 
 std::ostream &operator<<(std::ostream &out, const SpinFactor &obj) 
 {
-  out << obj.getName() << " " << obj._SF << " " << obj._P0 << " " << obj._P1 << " " << obj._P2 << " " << obj._P3;
+  out << "\"" << obj.getName() << "\"" << ", " 
+      << obj._SF << ", " 
+      << obj.constantsList[0] << ", "
+      << obj._P0 << ", " 
+      << obj._P1 << ", " 
+      << obj._P2 << ", " 
+      << obj._P3;
   return out;
 }
 

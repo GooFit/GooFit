@@ -268,4 +268,75 @@ __device__ fptype getmass(const unsigned int &pair,
 
     return mpair;
 }
+
+
+std::ostream &operator<<(std::ostream &out, const DP4Pair &obj)
+{
+  std::string dp4PairName;
+  
+  switch (obj)
+  {
+  case DP4Pair::M_12:
+    dp4PairName = "M_12";
+    break;
+  case DP4Pair::M_34:
+    dp4PairName = "M_34";
+    break;
+  case DP4Pair::M_13:
+    dp4PairName = "M_13";
+    break;
+  case DP4Pair::M_14:
+    dp4PairName = "M_14";
+    break;
+  case DP4Pair::M_23:
+    dp4PairName = "M_23";
+    break;
+  case DP4Pair::M_24:
+    dp4PairName = "M_24";
+    break;
+  case DP4Pair::M_12_3:
+    dp4PairName = "M_12_3";
+    break;
+  case DP4Pair::M_13_2:
+    dp4PairName = "M_13_2";
+    break;
+  case DP4Pair::M_23_1:
+    dp4PairName = "M_23_1";
+    break;
+  case DP4Pair::M_12_4:
+    dp4PairName = "M_12_4";
+    break;
+  case DP4Pair::M_14_2:
+    dp4PairName = "M_14_2";
+    break;
+  case DP4Pair::M_24_1:
+    dp4PairName = "M_24_1";
+    break;
+  case DP4Pair::M_13_4:
+    dp4PairName = "M_13_4";
+    break;
+  case DP4Pair::M_14_3:
+    dp4PairName = "M_14_3";
+    break;
+  case DP4Pair::M_34_1:
+    dp4PairName = "M_34_1";
+    break;
+  case DP4Pair::M_23_4:
+    dp4PairName = "M_23_4";
+    break;
+  case DP4Pair::M_24_3:
+    dp4PairName = "M_24_3";
+    break;
+  case DP4Pair::M_34_2:
+    dp4PairName = "M_34_2";
+    break;
+  default:
+    dp4PairName = "UNKNOWN";
+    break;
+  }
+  
+  out << dp4PairName;
+  return out;
+}
+
 } // namespace GooFit

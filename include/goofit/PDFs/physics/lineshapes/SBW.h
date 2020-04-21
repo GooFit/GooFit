@@ -16,6 +16,8 @@ class SBW : public Lineshape {
         fptype radius = 1.5);
 
     ~SBW() override = default;
+
+    virtual bool isEqualByValue(const Lineshape& other) const override;
 };
 
 } // namespace Lineshapes

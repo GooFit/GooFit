@@ -1,11 +1,16 @@
-[![Build Status][travis-badge]][travis-link]
+[![Actions Status][actions-badge]][actions-link]
+[![Travis Status][travis-badge]][travis-link]
 [![Join the chat at https://gitter.im/GooFit/Lobby][gitter-badge]][gitter-link]
 [![License: LGPL v3][license-badge]](./LICENSE)
 [![Latest release][releases-badge]][releases-link]
 [![PyPI Status][pypi-status]][pypi-link]
+[![Conda-Forge Status][cf-status]][cf-link]
 [![DOI][DOI-badge]][DOI-link]
+[![Scikit-HEP][sk-badge]](https://scikit-hep.org/)
 
-![GooFit logo](./docs/GooFitLogo.png)
+<p align="center">
+  <img width="495" height="220" src="https://raw.githubusercontent.com/GooFit/GooFit/master/docs/GooFitLogo.png"/>
+</p>
 
 GooFit is a massively-parallel framework, written using Thrust for CUDA and OpenMP, for
 doing maximum-likelihood fits with a familiar syntax.
@@ -21,20 +26,18 @@ doing maximum-likelihood fits with a familiar syntax.
 
 ## Requirements
 
-* A recent version of CMake is required. The minimum is 3.4, but tested primarily with 3.6 and newer. CMake is incredibly easy to install, you can even use `pip` (see [the system install page](./docs/SYSTEM_INSTALL.md)). GooFit developers have supplied patches to CMake 3.12, so that is highly recommended.
-* A ROOT 6 build highly recommended -- GooFit will use the included Minuit2 submodule if ROOT is not found, and the Minuit1 based fitter will not be available. Supports 6.04-6.16 (6.10+ recommended).
+* A recent version of CMake is required. The minimum is 3.9. CMake is incredibly easy to install, you can even use `pip` (see [the system install page](./docs/SYSTEM_INSTALL.md)). GooFit developers have supplied patches to CMake 3.12, so at least that is highly recommended. CMake 3.16 does not currently work with the Python bindings.
+* A ROOT 6 build highly recommended -- GooFit will use the included Minuit2 submodule if ROOT is not found, and the Minuit1 based fitter will not be available. Supports 6.04-6.18 (6.10+ recommended).
 
 <details><summary>If using CUDA: (click to expand)</summary><p>
 
-* CMake 3.8+ highly recommended, but not required (yet)
-* CUDA 7.0+ (with caviets below)
-    * CUDA 7.0: Requires CMake 3.12 or `NEW_CUDA=OFF`.
-    * CUDA 7.x: Python not supported.
-    * CUDA 8: Reliable and fully supported
-    * CUDA 9.0: Buggy, see [known issues](https://github.com/GooFit/GooFit/issues/173)
-    * CUDA 9.1, 9.2: Supported as of GooFit v2.2.1
-    * CUDA 10: Believed to be similar to CUDA 9.2.
-* An nVidia GPU supporting compute capability at least 2.0 (3.5+ recommended)
+* CMake 3.9+
+* CUDA 8.0+ (with caveats below)
+    * CUDA 8: Supported
+    * CUDA 9.2, 10.0: Some warnings from Eigen, supported
+    * CUDA 9.0, 9.1: Buggy, see [known issues](https://github.com/GooFit/GooFit/issues/173)
+    * CUDA 10.1, 10.2: Not yet supported due to Thrust 1.8 incompatibility
+* An nVidia GPU supporting compute capability at least 3.0 (3.5+ recommended)
 
 </p></details>
 
@@ -42,7 +45,7 @@ doing maximum-likelihood fits with a familiar syntax.
 
 * A compiler supporting OpenMP and C++11 (GCC 4.8+, Clang, and Intel 17 tested, GCC 4.7 not supported)
 * Note that TBB is also available as a backend, but it still requires OpenMP to be present.
-* On macOS, this backend requires `brew install libomp` or a custom compiler
+* On macOS, this backend requires `brew install libomp` or a custom compiler.
 
 </p></details>
 
@@ -59,13 +62,13 @@ A list of exact commands required for several platforms is [available here](./do
 
 <details><summary>Python Bindings: (click to expand)</summary><p>
 
-There are also Python Bindings. This requires Python (2 or 3), [NumPy](http://www.numpy.org), [SciKit-Build](http://scikit-build.readthedocs.io), and CMake. CUDA 8+ is required if using CUDA. If you want the most recent stable release, use `pip install -v goofit` (If you have pip 9 or less, you'll need scikit build and cmake beforehand).
+There are also Python Bindings. This requires Python (2 or 3), [NumPy](http://www.numpy.org), [SciKit-Build](http://scikit-build.readthedocs.io), and CMake. CUDA 8+ is required if using CUDA. If you want the most recent stable release, use `pip install -v goofit` (If you have pip 9 or less, you'll need scikit-build and cmake installed beforehand).
 
 Repository method:
 
 You can uses `pip install -v .` inside the repository. You can also directly force the bindings from a normal build with `-DGOOFIT_PYTHON=ON`. You can check your install with `python -m goofit`. You can debug a goofit file named `python_script.py` with gcc using `gdb -ex r --args python python_script.py`.
 
-Other python requirements for the examples (use `pipenv install --dev` to install all requirements at once in a pipenv environment):
+Other python requirements for the examples:
 
 * numpy-1.11.1+
 * pandas-0.15.1+
@@ -99,10 +102,15 @@ If you just want to get started as fast as possible, running `make`, `make omp`,
 The build system uses CMake. The procedure is standard for CMake builds:
 
 ```bash
+# Classic method
 mkdir build
 cd build
 cmake ..
-make
+make -j4 # 4 threads, adjust as needed
+
+# Newer method (CMake 3.13+)
+cmake -S . -B build
+cmake --build build -j4 # 4 threads, adjust as needed
 ```
 
 If you don't have a modern CMake, Kitware provides installers for every OS. You can even get a copy using python: `pip install cmake` or locally with `pip install --user cmake`.
@@ -118,11 +126,11 @@ Valid options are `CUDA` (device only), `OMP`, `TBB`, and `CPP`. The Thrust `TBB
 Other custom options supported along with the defaults:
 
 * `-DGOOFIT_DEVICE=Auto`: The device to use for computation (`CUDA`, `OMP`, `TBB`, or `CPP`). Default setting of `Auto` looks for CUDA first, then OpenMP, then CPP.
-* `-DGOOFIT_ARCH=Auto`: (`Auto`, `Common`, `All`, valid number(s) or name(s)): sets the compute architecture. See [CUDA_SELECT_NVCC_ARCH_FLAGS].
+* `-DGOOFIT_ARCH=Auto`: (`Auto`, `Common`, `All`, valid number(s) or name(s)): sets the compute architecture. See [CUDA_SELECT_NVCC_ARCH_FLAGS][]. Can be set to `OFF` to avoid adding any flags.
 * `-DGOOFIT_EXAMPLES=ON`: Build the examples
 * `-DGOOFIT_PACKAGES=ON`: Build any packages found with the name `goofit_*`
 * `-DGOOFIT_DEBUG=ON` and `-DGOOFIT_TRACE=ON` will enable the matching printout macros
-* `-DGOOFIT_PYTHON=ON`: Include the python bindings using [PyBind11] if Python found.
+* `-DGOOFIT_PYTHON=ON`: Include the python bindings using [PyBind11] if Python found (use `-DPYTHON_EXECUTABLE=$(which python3)` to use a specific interpreter).
 
 <details><summary>Advanced Options: (click to expand)</summary><p>
 
@@ -133,7 +141,7 @@ Other custom options supported along with the defaults:
 * If `clang-tidy` is available, it will automatically be used to check the source. If you set `-DGOOFIT_TIDY_FIX=ON`, fixes will be applied to the GooFit source.
 * `-DGOOFIT_SPLASH=ON`: Controls the unicode splash at the beginning.
 * `-DGOOFIT_CERNROOT=ON`: Allows you to disable the automatic search for ROOT (used by the PIP Python build)
-* `-DNEW_CUDA=OFF`: On CMake 3.8+, GooFit uses CUDA as a language. You can turn that off with this setting. Make sure you have CUDA 7.5+.
+* `-DCMAKE_UNITY_BUILD=OFF`: Turn on Unity builds in CMake 3.16+. Should be a bit faster (does not speed up CUDA portions of builds).
 
 </p></details>
 
@@ -216,7 +224,7 @@ git submodule update --init --recursive
 Then, you'll need a CMakeLists that looks something like this:
 
 ```bash
-cmake_minimum_required(VERSION 3.6...3.12)
+cmake_minimum_required(VERSION 3.9...3.16)
 
 project(my_external_package LANGUAGES CXX)
 
@@ -237,7 +245,7 @@ GooFit packages should contain:
 goofit_add_package(MyPackageName)
 ```
 
-After the package name, you can list `ROOT`, `NEW_CUDA`, or `OLD_CUDA` to require that ROOT or a specific style of CUDA is found. The package will be disabled if those parameters are not met.
+After the package name, you can list `ROOT` to require that ROOT. The package will be disabled if ROOT is not found.
 
 </p></details>
 
@@ -314,7 +322,8 @@ Any opinions, findings, and conclusions or recommendations expressed in this mat
 and do not necessarily reflect the views of the National Science Foundation.
 In addition, we thank the nVidia GPU Grant Program for donating hardware used in developing this framework.
 
-
+[actions-badge]:     https://github.com/GooFit/GooFit/workflows/CI/badge.svg
+[actions-link]:      https://github.com/GooFit/GooFit/actions
 [DOI-badge]:         https://zenodo.org/badge/9017446.svg
 [DOI-link]:          https://zenodo.org/badge/latestdoi/9017446
 [API documentation]: https://GooFit.github.io/GooFit
@@ -332,7 +341,10 @@ In addition, we thank the nVidia GPU Grant Program for donating hardware used in
 [PyBind11]:          http://pybind11.readthedocs.io/en/master
 [ROOT]:              https://root.cern.ch
 [Tutorials]:         https://goofit.gitlab.io/Goo2Torial
-[pypi-status]:       https://img.shields.io/pypi/v/goofit.svg
+[pypi-status]:       https://img.shields.io/pypi/v/goofit.svg?logo=PyPI&logoColor=white
 [pypi-link]:         https://pypi.python.org/pypi/goofit/
+[cf-status]:         https://img.shields.io/conda/vn/conda-forge/goofit.svg?logo=Conda-Forge&logoColor=white
+[cf-link]:           https://github.com/conda-forge/goofit-split-feedstock
 [releases-badge]:    https://img.shields.io/github/release/GooFit/GooFit.svg
 [releases-link]:     https://github.com/GooFit/GooFit/releases
+[sk-badge]:          https://scikit-hep.org/assets/images/Scikit--HEP-Affiliated-blue.svg

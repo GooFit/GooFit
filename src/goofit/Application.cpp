@@ -91,23 +91,29 @@ std::string goofit_info_device(int gpuDev_) {
     std::string output;
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
     if(gpuDev_ >= 0) {
-        cudaDeviceProp devProp;
-        cudaGetDeviceProperties(&devProp, gpuDev_);
-
         output += fmt::format("CUDA {}.{}\n", CUDART_VERSION / 1000, (CUDART_VERSION % 100) / 10.);
-        output += fmt::format("CUDA: Device {}: {}\n", gpuDev_, devProp.name);
 
-        output += fmt::format("CUDA: Compute {}.{}\n", devProp.major, devProp.minor);
-        output += fmt::format("CUDA: Total global memory: {} GB\n", devProp.totalGlobalMem / 1.0e9);
-        output += fmt::format("CUDA: Multiprocessors: {}", devProp.multiProcessorCount);
+        int nDev = 0;
+        cudaGetDeviceCount(&nDev);
+        output += fmt::format("CUDA: Number of devices: {}\n", nDev);
+
+        if(nDev > 0) {
+            cudaDeviceProp devProp;
+            cudaGetDeviceProperties(&devProp, gpuDev_);
+            output += fmt::format("CUDA: Device {}: {}\n", gpuDev_, devProp.name);
+
+            output += fmt::format("CUDA: Compute {}.{}\n", devProp.major, devProp.minor);
+            output += fmt::format("CUDA: Total global memory: {} GB\n", devProp.totalGlobalMem / 1.0e9);
+            output += fmt::format("CUDA: Multiprocessors: {}", devProp.multiProcessorCount);
 
 #ifdef GOOFIT_DEBUG_FLAG
-        output += fmt::format("\nCUDA: Total amount of shared memory per block: {}\n", devProp.sharedMemPerBlock);
-        output += fmt::format("CUDA: Total registers per block: {}\n", devProp.regsPerBlock);
-        output += fmt::format("CUDA: Warp size: {}\n", devProp.warpSize);
-        output += fmt::format("CUDA: Maximum memory pitch: {}\n", devProp.memPitch);
-        output += fmt::format("CUDA: Total amount of constant memory: {}", devProp.totalConstMem);
+            output += fmt::format("\nCUDA: Total amount of shared memory per block: {}\n", devProp.sharedMemPerBlock);
+            output += fmt::format("CUDA: Total registers per block: {}\n", devProp.regsPerBlock);
+            output += fmt::format("CUDA: Warp size: {}\n", devProp.warpSize);
+            output += fmt::format("CUDA: Maximum memory pitch: {}\n", devProp.memPitch);
+            output += fmt::format("CUDA: Total amount of constant memory: {}", devProp.totalConstMem);
 #endif
+        }
     }
 
 #elif THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_OMP
@@ -181,7 +187,9 @@ Application::Application(std::string discription, int argc, char **argv)
     int localRank    = myId % procsPerNode;
 
     // Note, this will (probably) be overwritten by gpu-set-device calls...
-    if(deviceCount == 1 && localRank > 1) {
+    if(deviceCount == 0) {
+        throw GooFit::Error("Cannot run with no GPUs");
+    } else if(deviceCount == 1 && localRank > 1) {
         // Multi-process to one GPU!
         gpuDev_ = 0;
     } else if(procsPerNode > 1 && deviceCount > 1) {
@@ -209,13 +217,14 @@ Application::Application(std::string discription, int argc, char **argv)
 #ifndef GOOFIT_MPI
     add_option("--gpu-dev", gpuDev_, "GPU device to use", true)->group("GooFit");
 #endif
-    add_flag_function("--info-only",
-                      [this](int i) {
-                          print_splash();
-                          print_goofit_info(-1);
-                          throw CLI::Success();
-                      },
-                      "Show the available GPU devices and exit")
+    add_flag_function(
+        "--info-only",
+        [this](int i) {
+            print_splash();
+            print_goofit_info(-1);
+            throw CLI::Success();
+        },
+        "Show the available GPU devices and exit")
         ->group("GooFit");
 #endif
     auto quiet = add_flag("-q,--quiet", quiet_, "Reduce the verbosity of the Application")->group("GooFit");
@@ -249,7 +258,7 @@ void Application::run() { parse(argc_, argv_); }
 
 void Application::set_device() const {
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-    if(gpuDev_ != 0) {
+    if(gpuDev_ >= 0) {
         cudaSetDevice(gpuDev_);
     }
 #endif
@@ -278,7 +287,7 @@ Application::~Application() {
 }
 
 // This function call is enabled for macOS, too. Will not have an affect for CUDA code.
-void Application::set_floating_exceptions() const {
+void Application::set_floating_exceptions() {
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
     GOOFIT_INFO("CUDA does not support floating point exceptions. Please recompile in OMP or CPP mode.");
 #else

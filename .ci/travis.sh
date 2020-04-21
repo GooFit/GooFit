@@ -11,14 +11,6 @@ cmake --build . -- -j2
 
 set +evx
 echo -e 'travis_fold:end:script.build\\r'
-echo -en 'travis_fold:start:script.test\\r'
-echo "Testing..."
-set -evx
-
-ctest --output-on-failure
-
-set +evx
-echo -e 'travis_fold:end:script.test\\r'
 echo -en 'travis_fold:start:script.pytest\\r'
 echo "Python testing..."
 set -evx

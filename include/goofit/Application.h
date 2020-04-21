@@ -32,7 +32,7 @@ using CLI::ParseError;
 using CLI::Success;
 
 /// Optional print for splash
-/// Orignal: Slant Relief from http://patorjk.com/software/taag/#p=testall&f=Wavy&t=GooFit (tightened a bit)
+/// Original: Slant Relief from http://patorjk.com/software/taag/#p=testall&f=Wavy&t=GooFit (tightened a bit)
 /// New: Block letters
 void print_splash();
 
@@ -82,7 +82,7 @@ class Application : public CLI::App {
 
     /// Set floating point errors to throw exceptions instead of NaNs
     /// Does not work with CUDA mode.
-    void set_floating_exceptions() const;
+    static void set_floating_exceptions();
 
     /// Cleanup MPI if needed
     ~Application() override;

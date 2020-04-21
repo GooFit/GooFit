@@ -760,7 +760,8 @@ Amp3Body_TD *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0
                                                       constantZero,
                                                       tailScaleFactor,
                                                       constantZero,
-                                                      constantOne);
+                                                      constantOne,
+                                                      constantZero);
                 resList.push_back(resolution);
             }
         } else {
@@ -787,7 +788,8 @@ Amp3Body_TD *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0
                                                       coreBias,
                                                       tailScaleFactor,
                                                       constantZero,
-                                                      constantOne);
+                                                      constantOne,
+                                                      constantZero);
             else {
                 coreBias.setValue(0);
                 coreScaleFactor.setValue(1);
@@ -799,7 +801,8 @@ Amp3Body_TD *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0
                                                       constantZero,
                                                       constantOne,
                                                       constantZero,
-                                                      constantOne);
+                                                      constantOne,
+                                                      constantZero);
             }
         }
     }

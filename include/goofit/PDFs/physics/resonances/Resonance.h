@@ -4,6 +4,8 @@
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <goofit/detail/Complex.h>
 
+#define NCHANNELS 5
+
 namespace GooFit {
 
 typedef fpcomplex (*resonance_function_ptr)(fptype, fptype, fptype, ParameterContainer &pc);
@@ -21,6 +23,15 @@ __device__ fptype spinFactor(unsigned int spin,
                              fptype m13,
                              fptype m23,
                              unsigned int cyclic_index);
+
+__device__ fptype phsp_twoBody(fptype s, fptype m0, fptype m1);
+
+__device__ fptype phsp_fourPi(fptype s);
+
+__device__ Eigen::Array<fpcomplex, NCHANNELS, NCHANNELS>
+getPropagator(const Eigen::Array<fptype, NCHANNELS, NCHANNELS> &kMatrix,
+              const Eigen::Matrix<fptype, 5, 1> &phaseSpace,
+              fptype adlerTerm);
 
 /**
 Represents a resonance-shape parametrization, the

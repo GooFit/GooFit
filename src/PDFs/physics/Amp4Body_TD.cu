@@ -20,7 +20,7 @@ class.
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/Amp4Body.h>
 #include <goofit/PDFs/physics/Amp4Body_TD.h>
-#include <goofit/PDFs/physics/detail/EvalVar.h>
+#include <goofit/PDFs/physics/detail/Dim5.h>
 #include <goofit/detail/Complex.h>
 #include <mcbooster/Evaluate.h>
 #include <mcbooster/EvaluateArray.h>
@@ -89,6 +89,7 @@ struct exp_functor {
         rand.discard(tmpoff + evtNum);
 
         return (dist(rand) * exp(-time * gammamin) * wmax) < thrust::get<1>(t);
+        // Should be something like: return thrust::get<1>(t) / exp(-time * gammamin);
     }
 };
 
@@ -794,6 +795,7 @@ __host__ fptype Amp4Body_TD::normalize() {
 __host__
     std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::BoolVector_h>
     Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) {
+    initialize();
     copyParams();
 
     std::vector<mcbooster::GReal_t> masses(decayInfo.particle_masses.begin() + 1, decayInfo.particle_masses.end());
@@ -951,7 +953,7 @@ __host__
 
     cudaDeviceSynchronize();
 
-    thrust::device_vector<fptype> flag2(nAcc);
+    thrust::device_vector<fptype> flag2(nAcc); // Should be weight2
     thrust::counting_iterator<mcbooster::GLong_t> first(0);
     // thrust::counting_iterator<mcbooster::GLong_t> last = first + nAcc;
 
@@ -964,8 +966,14 @@ __host__
     thrust::transform(
         thrust::make_zip_iterator(thrust::make_tuple(eventIndex, results.begin(), arrayAddress, eventSize)),
         thrust::make_zip_iterator(thrust::make_tuple(eventIndex + nAcc, results.end(), arrayAddress, eventSize)),
-        flag2.begin(),
+        flag2.begin(), // Should be weight2
         exp_functor(tmpparam, tmpoff, gammamin, wmax));
+
+    // set weights with weight2
+
+    // Maybe max goes here now
+
+    // Include code from Amp4Body regular here
 
     gooFree(dev_event_array);
 

@@ -5,6 +5,7 @@
 #include <goofit/PDFs/physics/SpinFactors.h>
 #include <goofit/PDFs/physics/detail/EvalVar.h>
 #include "goofit/utilities/DebugTools.h"
+#include <goofit/PDFs/physics/detail/Dim5.h>
 
 namespace GooFit {
 

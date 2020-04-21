@@ -11,10 +11,10 @@ __device__ fptype device_CrystalBall(fptype *evt, ParameterContainer &pc) {
     int id = pc.getObservable(0);
 
     fptype x     = RO_CACHE(evt[id]);
-    fptype mean  = pc.getParameter(1);
-    fptype sigma = pc.getParameter(2);
-    fptype alpha = pc.getParameter(3);
-    fptype power = pc.getParameter(4);
+    fptype mean  = pc.getParameter(0);
+    fptype sigma = pc.getParameter(1);
+    fptype alpha = pc.getParameter(2);
+    fptype power = pc.getParameter(3);
     fptype rx    = (sigma != 0) ? (x - mean) / sigma : 0;
     fptype ret   = 0;
 

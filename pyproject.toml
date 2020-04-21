@@ -1,2 +1,2 @@
 [build-system]
-requires = ["setuptools", "wheel", "scikit-build==0.6.1"]
+requires = ["setuptools==45.1.0", "wheel==0.34.2", "scikit-build==0.6.1", "cmake==3.15.3", "ninja==1.9.0"]

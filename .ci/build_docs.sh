@@ -29,7 +29,7 @@ __AUTHOR__="Jeroen de Bruijn"
 # the gh-pages branch of a repository specified by GH_REPO_REF.
 # Before this script is used there should already be a gh-pages branch in the
 # repository.
-# 
+#
 ################################################################################
 
 ################################################################################

@@ -6,14 +6,19 @@
 #include <goofit/Variable.h>
 #include <goofit/docs/PDFs/physics/resonances/Resonance.h>
 
+#if GOOFIT_KMATRIX
+#include <goofit/PDFs/physics/resonances/kMatrix.h>
+#endif
+
 using namespace GooFit;
 
 void init_ResonancePdf(py::module &m) {
     auto m_ls = m.def_submodule("Resonances");
 
-    py::class_<ResonancePdf, GooPdf>(m, "ResonancePdf").def_static("help", []() {
-        return HelpPrinter(ResonancePdf_docs);
-    });
+    py::class_<ResonancePdf, GooPdf>(m, "ResonancePdf")
+        .def("get_amp_real", &ResonancePdf::get_amp_real)
+        .def("get_amp_img", &ResonancePdf::get_amp_img)
+        .def_static("help", []() { return HelpPrinter(ResonancePdf_docs); });
 
     py::class_<Resonances::RBW, ResonancePdf>(m_ls, "RBW")
         .def(py::init<std::string, Variable, Variable, Variable, Variable, unsigned int, unsigned int, bool>(),
@@ -39,15 +44,64 @@ void init_ResonancePdf(py::module &m) {
              "cyc"_a);
 
     py::class_<Resonances::LASS, ResonancePdf>(m_ls, "LASS")
-        .def(py::init<std::string, Variable, Variable, Variable, Variable, unsigned int, unsigned int>(),
+        .def(py::init<std::string,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      unsigned int,
+                      unsigned int>(),
              "Constructor for LASS",
              "name"_a,
              "ar"_a,
              "ai"_a,
              "mass"_a,
              "width"_a,
+             "_a"_a,
+             "_r"_a,
+             "_R"_a,
+             "_phiR"_a,
+             "_B"_a,
+             "_phiB"_a,
              "sp"_a,
              "cyc"_a);
+
+#if GOOFIT_KMATRIX
+    py::class_<Resonances::kMatrix, ResonancePdf>(m_ls, "kMatrix")
+        .def(py::init<std::string,
+                      unsigned int,
+                      bool,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      std::vector<Variable>,
+                      std::vector<Variable>,
+                      unsigned int,
+                      unsigned int>(),
+             "kMatrix resonance pdf",
+             "name"_a,
+             "pterm"_a,
+             "is_pole"_a,
+             "beta1_r"_a,
+             "beta2_r"_a,
+             "sA0"_a,
+             "sA"_a,
+             "s0_prod"_a,
+             "s0_scatt"_a,
+             "fscat"_a,
+             "poles"_a,
+             "L"_a,
+             "Mpair"_a);
+#endif
 
     py::class_<Resonances::NonRes, ResonancePdf>(m_ls, "NonRes")
         .def(py::init<std::string, Variable, Variable>(), "Constructor for NonResonant", "name"_a, "ar"_a, "ai"_a);

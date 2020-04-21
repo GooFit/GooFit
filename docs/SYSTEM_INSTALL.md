@@ -4,7 +4,7 @@ The following commands show you how to get a *minimal* install of GooFit on a va
 
 <details><summary>CentOS 7: (click to expand)</summary><p>
 
-For simplicity, this uses EPEL to get access to `python-pip`, and uses the pip version of CMake. Feel free to download CMake directly from Kitware instead. If you want to use Docker, you can start with `docker run -it centos`.
+For simplicity, this uses EPEL to get access to `python-pip`, and uses the pip version of CMake. Feel free to download CMake directly from Kitware instead. If you want to use Docker, you can start with `docker run --rm -it centos`.
 You can also use this recipe with an [nvidia-docker CentOS image](https://hub.docker.com/r/nvidia/cuda/).
 
 ```bash
@@ -33,8 +33,8 @@ source root-6/bin/thisroot.sh
 A truly minimal system, Alpine gives you a working Docker system under 3 MB. Since it is unlikely that you'll be running Alpine outside of Docker, the Docker command is included.
 
 ```bash
-docker run -it alpine
-apk add --no-cache make cmake g++ git libexecinfo-dev
+docker run --rm -it alpine
+apk add make cmake g++ git libexecinfo-dev
 git clone --recursive https://github.com/GooFit/GooFit.git
 cd GooFit
 mkdir build
@@ -47,8 +47,8 @@ ctest
 In the spirit of minimality, this is less instructive and contains more magic, but also would also work:
 
 ```bash
-docker run -it alpine
-apk add --no-cache build-base cmake git
+docker run --rm -it alpine
+apk add build-base cmake git
 git clone https://github.com/GooFit/GooFit.git
 cd GooFit
 make auto
@@ -57,8 +57,8 @@ make auto
 If you'd like to use the Python version:
 
 ```bash
-docker run -it alpine
-apk add --no-cache python3-dev build-base cmake ninja git libexecinfo-dev
+docker run --rm -it alpine
+apk add python3-dev build-base cmake ninja git libexecinfo-dev
 pip3 install scikit-build
 pip3 -v install git+https://github.com/GooFit/GooFit.git
 ```
@@ -72,8 +72,8 @@ If you want Python2 instead, either add the `py2-pip` package or the line `pytho
 If you'd like to use LLVM's clang-format to check the style, probably the easiest way to do that is with Docker and Alpine. The following lines will run the style check for you:
 
 ```bash
-docker run -it alpine
-apk add --no-cache clang git
+docker run --rm -it alpine
+apk add clang git
 git clone https://github.com/GooFit/GooFit.git
 cd GooFit
 ./scripts/check_style.sh
@@ -157,7 +157,7 @@ nvidia-docker run --rm -it goofit/goofit-cuda
 The CUDA version will need to build on your computer; the OMP version is prebuilt. You can also start with the ROOT Docker instance:
 
 ```
-docker run -it rootproject/root-ubuntu16 bash
+docker run --rm -it rootproject/root-ubuntu16 bash
 cd
 git clone --recursive https://github.com/GooFit/GooFit.git
 cd GooFit
@@ -168,7 +168,7 @@ make
 
 <details><summary>SLC 6 with CVMFS (LxPlus 6): (click to expand)</summary><p>
 
-```
+```bash
 # If you have not run this already (automatic on LxPlus):
 source /cvmfs/lhcb.cern.ch/group_login.sh
 
@@ -187,12 +187,35 @@ make -j4
 
 </p></details>
 
+<details><summary>NVidia (click to expand)</summary><p>
+
+```bash
+docker run --rm -v $PWD:/goofit -it nvidia/cuda:9.2-devel-ubuntu18.04 bash
+apt update && apt install -y cmake
+mkdir build
+cd build
+cmake ../goofit -DGOOFIT_ARCH=3.5
+make -j4
+```
+
+Or, to select a newer version of CMake:
+
+```bash
+docker run --rm -v $PWD:/goofit -it nvidia/cuda:9.2-devel-ubuntu18.04 bash
+apt update && apt install -y wget
+wget -qO- "https://cmake.org/files/v3.16/cmake-3.16.3-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C /usr/local
+cmake -S goofit -B build -DGOOFIT_ARCH=3.5
+cmake --build build -j4
+```
+
+</p></details>
+
 <details><summary>Note about installing CMake: (click to expand)</summary><p>
 
 While other install methods for CMake, like `pip`, are easier, this way should always work. On Linux, you can manually get a version of CMake using:
 
 ```bash
-mkdir cmake && wget -qO- "https://cmake.org/files/v3.12/cmake-3.12.1-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C cmake
+mkdir cmake && wget -qO- "https://cmake.org/files/v3.16/cmake-3.16.3-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C cmake
 export PATH=`pwd`/cmake/bin:$PATH
 ```
 
@@ -201,7 +224,7 @@ The second line will need to be rerun whenever use a new shell. Feel free to mak
 If you are a fan of using `~/.local` and already have `~/.local/bin` in your path, you can instead use:
 
 ```bash
-wget -qO- "https://cmake.org/files/v3.12/cmake-3.12.1-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C ~/.local
+wget -qO- "https://cmake.org/files/v3.16/cmake-3.16.3-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C ~/.local
 ```
 
 </p></details>

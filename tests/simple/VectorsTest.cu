@@ -1,7 +1,7 @@
 #include <goofit/Catch.h>
 
 #include <Eigen/Dense>
-#include <goofit/PDFs/physics/detail/EvalVar.h>
+#include <goofit/PDFs/physics/detail/Dim5.h>
 #include <goofit/PDFs/physics/detail/UserUtils.h>
 #include <mcbooster/EvaluateArray.h>
 

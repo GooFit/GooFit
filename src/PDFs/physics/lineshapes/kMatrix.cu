@@ -1,6 +1,7 @@
 #include <goofit/PDFs/physics/lineshapes/kMatrix.h>
 
 #include <goofit/PDFs/ParameterContainer.h>
+#include <goofit/PDFs/physics/kMatrixUtils.h>
 #include <goofit/PDFs/physics/resonances/Resonance.h>
 
 #include <Eigen/Core>
@@ -12,64 +13,7 @@
 #include <goofit/detail/compute_inverse5.h>
 #endif
 
-#define NPOLES 5
-#define NCHANNELS 5
-
 namespace GooFit {
-
-__device__ fptype phsp_twoBody(fptype s, fptype m0, fptype m1) { return sqrt(1. - POW2(m0 + m1) / s); }
-
-__device__ fptype phsp_fourPi(fptype s) {
-    if(s > 1)
-        return phsp_twoBody(s, 2 * mPiPlus, 2 * mPiPlus);
-    else
-        return 0.00051 + -0.01933 * s + 0.13851 * s * s + -0.20840 * s * s * s + -0.29744 * s * s * s * s
-               + 0.13655 * s * s * s * s * s + 1.07885 * s * s * s * s * s * s;
-}
-
-__device__ Eigen::Array<fpcomplex, NCHANNELS, NCHANNELS>
-getPropagator(const Eigen::Array<fptype, NCHANNELS, NCHANNELS> &kMatrix,
-              const Eigen::Matrix<fptype, 5, 1> &phaseSpace,
-              fptype adlerTerm) {
-    Eigen::Array<fpcomplex, NCHANNELS, NCHANNELS> tMatrix;
-
-    for(unsigned int i = 0; i < NCHANNELS; ++i) {
-        for(unsigned int j = 0; j < NCHANNELS; ++j) {
-            tMatrix(i, j) = (i == j ? 1. : 0.) - fpcomplex(0, adlerTerm) * kMatrix(i, j) * phaseSpace(j);
-        }
-    }
-
-#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-    // Here we assume that some values are 0
-    return compute_inverse5<-1,
-                            -1,
-                            0,
-                            -1,
-                            -1,
-                            -1,
-                            -1,
-                            0,
-                            -1,
-                            -1,
-                            -1,
-                            -1,
-                            -1,
-                            -1,
-                            -1,
-                            -1,
-                            -1,
-                            -1,
-                            -1,
-                            -1,
-                            -1,
-                            -1,
-                            -1,
-                            -1,
-                            -1>(tMatrix);
-#else
-    return Eigen::inverse(tMatrix);
-#endif
-}
 
 __device__ fpcomplex kMatrixFunction(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
     // const fptype mass  = GOOFIT_GET_PARAM(2);
@@ -152,8 +96,8 @@ Lineshapes::kMatrix::kMatrix(std::string name,
                              Variable sA,
                              Variable s0_prod,
                              Variable s0_scatt,
-                             std::array<Variable, NCHANNELS> fscat,
-                             std::array<Variable, NPOLES *(NPOLES + 1)> poles,
+                             std::vector<Variable> fscat,
+                             std::vector<Variable> poles,
                              Variable mass,
                              Variable width,
                              unsigned int L,
@@ -161,6 +105,12 @@ Lineshapes::kMatrix::kMatrix(std::string name,
                              FF FormFac,
                              fptype radius)
     : Lineshape("kMatrix", name, L, Mpair, FormFac, radius) {
+    if(fscat.size() != NCHANNELS)
+        throw GooFit::GeneralError("You must have {} channels in fscat, not {}", NCHANNELS, fscat.size());
+
+    if(poles.size() != NPOLES * (NPOLES + 1))
+        throw GooFit::GeneralError("You must have {}x{} channels in poles, not {}", NPOLES, NPOLES + 1, poles.size());
+
     registerConstant(pterm);
     registerConstant(is_pole ? 1 : 0);
 

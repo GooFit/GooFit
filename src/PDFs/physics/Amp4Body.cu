@@ -33,7 +33,7 @@ class.
 #include <goofit/PDFs/physics/Amp4BodyGlobals.h>
 #include <goofit/PDFs/physics/Amplitude.h>
 #include <goofit/PDFs/physics/detail/AmpCalc.h>
-#include <goofit/PDFs/physics/detail/EvalVar.h>
+#include <goofit/PDFs/physics/detail/Dim5.h>
 #include <goofit/PDFs/physics/detail/LSCalculator.h>
 #include <goofit/PDFs/physics/detail/NormIntegrator.h>
 #include <goofit/PDFs/physics/detail/NormLSCalculator.h>
@@ -568,6 +568,8 @@ __host__
     // setupObservables();
     // setIndices();
 
+    initialize();
+
     std::vector<mcbooster::GReal_t> masses(decayInfo.particle_masses.begin() + 1, decayInfo.particle_masses.end());
     mcbooster::PhaseSpace phsp(decayInfo.particle_masses[0], masses, numEvents, generation_offset);
 
@@ -665,13 +667,9 @@ __host__
 
     thrust::transform(
         results.begin(), results.end(), weights.begin(), weights.begin(), thrust::multiplies<mcbooster::GReal_t>());
+
     mcbooster::BoolVector_d flags(numEvents);
-
-    thrust::counting_iterator<mcbooster::GLong_t> first(0);
-    thrust::counting_iterator<mcbooster::GLong_t> last = first + numEvents;
-
-    auto max = thrust::max_element(weights.begin(), weights.end());
-    thrust::transform(first, last, weights.begin(), flags.begin(), mcbooster::FlagAcceptReject((fptype)*max));
+    fillMCFlags(flags, weights, numEvents);
 
     auto weights_h = mcbooster::RealVector_h(weights);
     auto results_h = mcbooster::RealVector_h(results);

@@ -6,6 +6,7 @@ file(GLOB_RECURSE GOOFIT_BASIC_HEADERS
 goofit_add_pdf_library(PDFBasic
     ArgusPdf.cu
     BWPdf.cu
+    BernsteinPdf.cu
     BifurGaussPdf.cu
     BinTransformPdf.cu
     CorrGaussianPdf.cu

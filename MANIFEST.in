@@ -1,12 +1,36 @@
-graft cmake
 graft docs
 prune docs/html
+
 graft extern
+
+prune extern/CLI11/extern
+prune extern/CLI11/tests
+prune extern/CLI11/examples
+prune extern/CLI11/docs
+
+prune extern/Eigen/bench
+prune extern/Eigen/debug
+prune extern/Eigen/doc
+prune extern/Eigen/test
+prune extern/Eigen/failtest
+prune extern/Eigen/unsupported
+
+prune extern/fmt/doc
+prune extern/fmt/test
+
+prune extern/pybind11/tests
+prune extern/pybind11/docs
+
+prune extern/thrust
+graft extern/thrust/thrust
+include extern/thrust/README.md
+
 graft goofit
 graft include
 graft python
 graft scripts
 graft src
-graft tests
+
 global-exclude .git*
+
 include CMakeLists.txt LICENSE Pipfile README.md setup.py pyproject.toml

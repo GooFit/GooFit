@@ -344,11 +344,20 @@ __host__ fptype GooPdf::normalize() {
     GOOFIT_TRACE("{}, Computing integral without analytic help", getName());
 
     size_t totalBins = get_bin_grid_size();
+
+    GOOFIT_TRACE("Total Bins: {}", totalBins);
+
     ret *= get_bin_grid_volume();
+
+    GOOFIT_TRACE("Bin volume: {}", ret);
 
     ret /= totalBins;
 
+    GOOFIT_TRACE("Total bin volume: {}", ret);
+
     fptype sum = reduce_with_bins();
+
+    GOOFIT_TRACE("Sum: {}", sum);
 
     if(std::isnan(sum)) {
         GooFit::abort(__FILE__, __LINE__, getName() + " NaN in normalization", this);

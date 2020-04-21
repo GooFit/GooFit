@@ -15,6 +15,7 @@ void init_Variable(py::module &m) {
     py::class_<Indexable>(m, "Indexable")
         .def_property_readonly("name", &Indexable::getName)
         // clang-format off
+        ADD_PROP_RO(name, getName, Indexable)
         ADD_PROP(value, getValue, setValue, Indexable)
         ADD_PROP(index, getIndex, setIndex, Indexable)
         ADD_PROP(upperlimit, getUpperLimit, setUpperLimit, Indexable)
@@ -27,6 +28,7 @@ void init_Variable(py::module &m) {
 
     py::class_<Observable, Indexable>(m, "Observable")
         .def(py::init<std::string, fptype, fptype>(), "name"_a, "min"_a, "max"_a)
+        .def("getBinSize", &Observable::getBinSize)
         .def_property_readonly("bin_size", &Observable::getBinSize)
         // clang-format off
         ADD_PROP(numbins, getNumBins, setNumBins, Observable)
@@ -46,6 +48,7 @@ void init_Variable(py::module &m) {
                  os << v;
                  return os.str();
              })
+        .def("getBinSize", &Observable::getBinSize)
 
         ;
 

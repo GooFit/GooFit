@@ -1,5 +1,10 @@
-# Function to make adding a pybind_module easy and language agnostic
+# Python 2 will not be compatible with C++17, but let's not be reminded of that over and over again here.
+if("${PYTHON_VERSION_MAJOR}" LESS 3 AND "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+     message(STATUS "Suppressing Python2 warnings about C++17 not being supported")
+     add_compile_options(-Wno-deprecated-register)
+endif()
 
+# Function to make adding a pybind_module easy and language agnostic
 function(process_pybind_module LNAME)
     set_target_properties(${LNAME} PROPERTIES PREFIX "${PYTHON_MODULE_PREFIX}"
                                              SUFFIX "${PYTHON_MODULE_EXTENSION}")
@@ -57,6 +62,8 @@ goofit_add_library(_goofit MODULE
 add_subdirectory(goofit)
 add_subdirectory(PDFs)
 
+
+
 process_pybind_module(_goofit)
 target_link_libraries(_goofit
     PRIVATE _goofit_python
@@ -66,19 +73,17 @@ target_link_libraries(_goofit
     _Physics)
 
 
-# Only need to add CUDA incdir if built with FindCUDA
-
-if(GOOFIT_DEVICE STREQUAL CUDA AND NOT NEW_CUDA)
-    target_include_directories(_goofit PUBLIC ${CUDA_INCLUDE_DIRS})
-endif()
-
-
 # Create files in the python directory
 
 file(WRITE "${CMAKE_BINARY_DIR}/goofit/__init__.py" "from ._goofit import *")
 install(FILES "${CMAKE_BINARY_DIR}/goofit/__init__.py" DESTINATION "goofit")
 
-file(WRITE "${CMAKE_BINARY_DIR}/goofit/__main__.py" "from ._goofit import print_goofit_info; print_goofit_info()")
+file(WRITE "${CMAKE_BINARY_DIR}/goofit/__main__.py" [=[
+from __future__ import print_function
+from ._goofit import goofit_info
+print(goofit_info())
+]=])
+
 install(FILES "${CMAKE_BINARY_DIR}/goofit/__main__.py" DESTINATION "goofit")
 
 

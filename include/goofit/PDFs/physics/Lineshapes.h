@@ -21,3 +21,6 @@ See *.cu file for more details
 #include <goofit/PDFs/physics/lineshapes/One.h>
 #include <goofit/PDFs/physics/lineshapes/RBW.h>
 #include <goofit/PDFs/physics/lineshapes/SBW.h>
+#if GOOFIT_KMATRIX
+#include <goofit/PDFs/physics/lineshapes/kMatrix.h>
+#endif

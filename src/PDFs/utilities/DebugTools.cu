@@ -6,7 +6,7 @@
 
 namespace GooFit {
 
-__host__ std::vector<unsigned int> DebugTools::copyAmpIndicesToHost()
+std::vector<unsigned int> DebugTools::copyAmpIndicesToHost()
 {
   std::vector<unsigned int> hostAmpIndices(500);
 

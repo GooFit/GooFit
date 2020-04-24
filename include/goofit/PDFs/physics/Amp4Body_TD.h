@@ -36,7 +36,8 @@ class Amp4Body_TD : public Amp4BodyBase {
                 MixingTimeResolution *r,
                 GooPdf *eff,
                 Observable *mistag,
-                unsigned int MCeventsNorm = 5e6);
+		long normSeed,
+                unsigned int MCeventsNorm);
     // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the
     // coherent sum. The caching method requires that it be done this way or the ProdPdf
     // normalization will get *really* confused and give wrong answers.
@@ -45,7 +46,7 @@ class Amp4Body_TD : public Amp4BodyBase {
 
     __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 8);
     __host__ void setForceIntegrals(bool f = true) { forceRedoIntegrals = f; }
-    __host__ int getMCevents() { return MCevents; }
+    __host__ int getNumAccNormEvents() const { return MCevents; } 
     __host__ void setGenerationOffset(int off) { generation_offset = off; }
     __host__ void setMaxWeight(fptype wmax) { maxWeight = wmax; }
 

@@ -40,6 +40,7 @@ class.
 #include <goofit/PDFs/physics/detail/SFCalculator_TD.h>
 #include <goofit/PDFs/physics/lineshapes/Lineshape.h>
 #include <goofit/PDFs/physics/resonances/Resonance.h>
+#include <goofit/utilities/DebugTools.h>
 
 #include <cstdarg>
 #include <map>
@@ -255,6 +256,7 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
                                   MixingTimeResolution *Tres,
                                   GooPdf *efficiency,
                                   Observable *mistag,
+				  long normSeed,
                                   unsigned int MCeventsNorm)
     : Amp4BodyBase("Amp4Body_TD", n)
     , decayInfo(decay)
@@ -491,7 +493,7 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
     // fprintf(stderr,"#Amp's %i, #LS %i, #SF %i \n", AmpMap.size(), components.size()-1, SpinFactors.size() );
 
     std::vector<mcbooster::GReal_t> masses(decayInfo.particle_masses.begin() + 1, decayInfo.particle_masses.end());
-    mcbooster::PhaseSpace phsp(decayInfo.particle_masses[0], masses, MCeventsNorm, generation_offset);
+    mcbooster::PhaseSpace phsp(decayInfo.particle_masses[0], masses, MCeventsNorm, normSeed);
     phsp.Generate(mcbooster::Vector4R(decayInfo.particle_masses[0], 0.0, 0.0, 0.0));
     phsp.Unweight();
 
@@ -542,6 +544,8 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
     norm_SF  = mcbooster::RealVector_d(nAcc * SpinFactors.size());
     norm_LS  = mcbooster::mc_device_vector<fpcomplex>(nAcc * LineShapes.size());
     MCevents = nAcc;
+
+    GOOFIT_INFO("Num of accepted MC events used for normalization: {}", nAcc);
 
     setSeparateNorm();
 
@@ -679,6 +683,12 @@ __host__ fptype Amp4Body_TD::normalize() {
                     (norm_SF.begin() + (i * MCevents)),
                     nsc);
             }
+
+	    //DebugTools::printDeviceVecComplexVals(cachedResSF->begin()+offset+i,
+	    //      cachedResSF->end(),
+	    //      stride, 
+	    //      "Cached res SF (in SF block)",
+	    //      INT_MAX, 20);
         }
 
         SpinsCalculated = true;
@@ -701,6 +711,12 @@ __host__ fptype Amp4Body_TD::normalize() {
                     cachedResSF->begin() + i, cachedResSF->end(), stride)
                     .begin(),
                 *(lscalculators[i]));
+
+	    // DebugTools::printDeviceVecComplexVals(cachedResSF->begin()+i,
+	    //                        cachedResSF->end(),
+	    //      stride,
+	    //      "Cached res SF (in LS block)",
+	    // INT_MAX, 20);
         }
     }
 
@@ -718,6 +734,12 @@ __host__ fptype Amp4Body_TD::normalize() {
 			eventIndex + numEntries,
 			strided_range<thrust::device_vector<fpcomplex>::iterator>(cachedAMPs->begin() + a, cachedAMPs->end(), AmpCalcs.size()).begin(),
 			*(AmpCalcs[a]));
+
+      // DebugTools::printDeviceVecComplexVals(cachedAMPs->begin()+a,
+      //      cachedAMPs->end(),
+      //      AmpCalcs.size(),
+      //      "Cached AMPs (in AMP block)",
+      // INT_MAX, 20);
     } // end loop over amps
 
     // lineshape value calculation for the normalization, also recalculated every time parameter change
@@ -782,6 +804,8 @@ __host__ fptype Amp4Body_TD::normalize() {
                                         xmixing,
                                         ymixing);
 
+	GOOFIT_DEBUG("Norm value before divide: {:.20f}", ret);
+
         // MCevents is the number of normalization events.
         ret /= MCevents;
     }
@@ -789,6 +813,8 @@ __host__ fptype Amp4Body_TD::normalize() {
     host_normalizations[normalIdx + 1] = 1.0 / ret;
     cachedNormalization                = 1.0 / ret;
    
+    GOOFIT_DEBUG("Norm value: {:.20f}\n", ret);
+
     return ret;
 }
 

@@ -28,7 +28,7 @@ class SFCalculator_TD;
 class NormIntegrator_TD;
 class Lineshape;
 
-class Amp4Body_TD : public Amp4BodyBase {
+class Amp4Body_TD final : public Amp4BodyBase {
   public:
     Amp4Body_TD(std::string n,
                 std::vector<Observable> observables,
@@ -45,8 +45,8 @@ class Amp4Body_TD : public Amp4BodyBase {
     __host__ fptype normalize() override;
 
     __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 8);
-    __host__ void setForceIntegrals(bool f = true) { forceRedoIntegrals = f; }
-    __host__ int getNumAccNormEvents() const { return MCevents; } 
+    __host__ void setForceIntegrals(bool f = true) { _forceRedoIntegrals = f; }
+    __host__ int getNumAccNormEvents() const { return _nAcc_Norm_Events; } 
     __host__ void setGenerationOffset(int off) { generation_offset = off; }
     __host__ void setMaxWeight(fptype wmax) { maxWeight = wmax; }
 
@@ -62,45 +62,54 @@ class Amp4Body_TD : public Amp4BodyBase {
 
     void printSelectedSFs(const std::vector<unsigned int>& sfIndices) const;
 
-
   protected:
   private:
-    std::vector<SpinFactor *> SpinFactors;
-    std::vector<Lineshape *> LineShapes;
-    std::vector<AmpCalc_TD *> AmpCalcs;
-    NormIntegrator_TD *Integrator;
-    std::vector<SFCalculator_TD *> sfcalculators;
-    std::vector<LSCalculator_TD *> lscalculators;
+    __host__ void computeCachedNormValues(const std::vector<bool>& lineshapeChanged);
+
+    __host__ void computeCachedValues(const std::vector<bool>& lineshapeChanged, const std::vector<bool>& amplitudeComponentChanged);
+
+    __host__ std::vector<bool> areLineshapesChanged() const;
+
+    __host__ std::vector<bool> areAmplitudeComponentsChanged() const;
+
+    __host__ void generateAndSetNormEvents();
+
+    std::vector<SpinFactor *> _SpinFactors;
+    std::vector<Lineshape *> _LineShapes;
+    std::vector<AmpCalc_TD *> _AmpCalcs;
+    NormIntegrator_TD *_Integrator;
+    std::vector<SFCalculator_TD *> _sfcalculators;
+    std::vector<LSCalculator_TD *> _lscalculators;
 
     unsigned int efficiencyFunction;
 
     // store normalization events
-    mcbooster::RealVector_d norm_M12;
-    mcbooster::RealVector_d norm_M34;
-    mcbooster::RealVector_d norm_CosTheta12;
-    mcbooster::RealVector_d norm_CosTheta34;
-    mcbooster::RealVector_d norm_phi;
+    mcbooster::RealVector_d _norm_M12;
+    mcbooster::RealVector_d _norm_M34;
+    mcbooster::RealVector_d _norm_CosTheta12;
+    mcbooster::RealVector_d _norm_CosTheta34;
+    mcbooster::RealVector_d _norm_phi;
     // store spin and lineshape values for normalization
-    mutable mcbooster::RealVector_d norm_SF;
-    mutable mcbooster::mc_device_vector<fpcomplex> norm_LS;
+    mutable mcbooster::RealVector_d _norm_SF;
+    mutable mcbooster::mc_device_vector<fpcomplex> _norm_LS;
 
-    DecayInfo4t decayInfo;
+    DecayInfo4t _decayInfo;
     MixingTimeResolution *resolution;
-    int MCevents;
+    int _nAcc_Norm_Events;
     // Following variables are useful if masses and widths, involved in difficult BW calculation,
     // change infrequently while amplitudes, only used in adding BW results together, change rapidly.
-    thrust::device_vector<fpcomplex> *cachedResSF{nullptr}; // Caches the BW values and Spins for each event.
-    thrust::device_vector<fpcomplex> *cachedAMPs{nullptr};  // cache Amplitude values for each event.
-    mutable bool generation_no_norm{false};
-    mutable bool SpinsCalculated{false};
-    mutable bool forceRedoIntegrals{true};
-    fptype *cachedMasses;
-    fptype *cachedWidths;
-    int totalEventSize;
+    thrust::device_vector<fpcomplex> *_cachedResSF{nullptr}; // Caches the BW values and Spins for each event.
+    thrust::device_vector<fpcomplex> *_cachedAMPs{nullptr};  // cache Amplitude values for each event.
+    mutable bool _generation_no_norm{false};
+    mutable bool _SpinsCalculated{false};
+    mutable bool _forceRedoIntegrals{true};
+    int _totalEventSize;
     int cacheToUse{0};
     unsigned int generation_offset{0};
     double maxWeight{0};
     unsigned int _NUM_AMPLITUDES;
+    const long _NORM_SEED;
+    const int _NUM_NORM_EVENTS_TO_GEN;
 };
 
 } // namespace GooFit

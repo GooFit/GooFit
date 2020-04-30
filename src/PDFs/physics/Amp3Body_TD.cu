@@ -46,15 +46,13 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
     int id_m13 = pc.getObservable(3);
     int id_num = pc.getObservable(4);
     int id_mis = 0;
-    int id_tag = 0;
-    if(num_observables > 5){
-        id_mis = pc.getObservable(5);
-	id_tag = pc.getObservable(6);
-    }
+    //int id_tag = 0;
+    //if(num_observables > 5){
+    id_mis = pc.getObservable(5);
+
+    //}
     fptype m12 = RO_CACHE(evt[id_m12]);
     fptype m13 = RO_CACHE(evt[id_m13]);
-    int _charmtag = evt[id_tag];
-    //int _charmtag = 1;
 
     unsigned int numResonances = pc.getConstant(0);
     //int numResonances = 1;
@@ -110,6 +108,7 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
 
     int id_time  = pc.getObservable(0);
     int id_sigma = pc.getObservable(1);
+    int id_tag = pc.getObservable(6);
 
     fptype _tau     = pc.getParameter(0);
     //fptype _xmixing = pc.getParameter(1);
@@ -120,6 +119,10 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
     fptype _deltay   = pc.getParameter(4);
     fptype _xmixing = 0;
     fptype _ymixing = 0;
+    //int _charmtag = evt[id_tag];
+    //auto _charmtag = static_cast<int>(floor(0.5 + RO_CACHE(evt[id_tag])));
+    int _charmtag = RO_CACHE(evt[id_tag]);
+
     if(_charmtag ==1){
         _xmixing = _xmixing0 + _deltax;
         _ymixing = _ymixing0 + _deltay;
@@ -688,7 +691,7 @@ __host__ fptype Amp3Body_TD::normalize() {
     fptype ret_D0bar = resolution->normalization(
         dalitzIntegralOne, dalitzIntegralTwo, dalitzIntegralThr, dalitzIntegralFou, tau, xmixing_D0bar, ymixing_D0bar);
 
-    fptype _D0Fraction = 1; // Set D0 fraction to 1 for now.
+    fptype _D0Fraction = 0.5; // Set D0 fraction to 1 for now.
     fptype ret = _D0Fraction * ret_D0 + (1. - _D0Fraction) * ret_D0bar;
 
     double binSizeFactor = 1;

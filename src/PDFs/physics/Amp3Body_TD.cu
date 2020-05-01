@@ -281,6 +281,8 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
     registerParameter(decay._deltax);
     registerParameter(decay._deltay);
 
+    setD0Fraction(0.5);
+
     if(resolution->getDeviceFunction() < 0)
         throw GooFit::GeneralError("The resolution device function index {} must be more than 0",
                                    resolution->getDeviceFunction());
@@ -553,6 +555,16 @@ __host__ void Amp3Body_TD::setDataSize(unsigned int dataSize, unsigned int evtSi
     setForceIntegrals();
 }
 
+__host__ void Amp3Body_TD::setD0Fraction( fptype d0fraction) {
+    _D0Fraction = d0fraction;
+    assert(_D0Fraction >= 0);
+    assert(_D0Fraction <= 1);
+}
+
+__host__ fptype Amp3Body_TD::getD0Fraction() {
+    return _D0Fraction;
+}
+
 __host__ fptype Amp3Body_TD::normalize() {
     recursiveSetNormalization(1.0); // Not going to normalize efficiency,
     // so set normalization factor to 1 so it doesn't get multiplied by zero.
@@ -691,7 +703,7 @@ __host__ fptype Amp3Body_TD::normalize() {
     fptype ret_D0bar = resolution->normalization(
         dalitzIntegralOne, dalitzIntegralTwo, dalitzIntegralThr, dalitzIntegralFou, tau, xmixing_D0bar, ymixing_D0bar);
 
-    fptype _D0Fraction = 0.5; // Set D0 fraction to 1 for now.
+    //fptype _D0Fraction = 0.5; // Set D0 fraction to 1 for now.
     fptype ret = _D0Fraction * ret_D0 + (1. - _D0Fraction) * ret_D0bar;
 
     double binSizeFactor = 1;

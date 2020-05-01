@@ -116,6 +116,8 @@ void init_Amp3Body_TD(py::module &m) {
              py::keep_alive<1, 12>())
 
         .def("setDataSize", &Amp3Body_TD::setDataSize, "dataSize"_a, "evtSize"_a = 5)
+        .def("getD0Fraction", &Amp3Body_TD::getD0Fraction)
+        .def("setD0Fraction", &Amp3Body_TD::setD0Fraction, "d0fraction"_a)
 
         .def_static("help", []() { return HelpPrinter(Amp3Body_TD_docs); })
 

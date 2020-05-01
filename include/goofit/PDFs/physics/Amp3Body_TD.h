@@ -125,6 +125,8 @@ class Amp3Body_TD : public Amp3BodyBase {
 
     __host__ fptype normalize() override;
     __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 5);
+    __host__ void setD0Fraction(fptype d0fraction);
+    __host__ fptype getD0Fraction();
     __host__ void setForceIntegrals(bool f = true) { forceRedoIntegrals = f; }
 
     __host__ void populateArrays() override;

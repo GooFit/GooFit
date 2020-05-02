@@ -156,6 +156,8 @@ class Amp3Body_TD : public Amp3BodyBase {
     int cacheToUse{0};
     SpecialDalitzIntegrator ***integrators{nullptr};
     SpecialWaveCalculator **calculators{nullptr};
+
+    fptype _D0Fraction;
 };
 
 } // namespace GooFit

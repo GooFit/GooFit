@@ -15,6 +15,8 @@ See *.cu file for more details
 #include <thrust/device_vector.h>
 #include <thrust/iterator/constant_iterator.h>
 
+#include <TH2F.h>
+
 namespace GooFit {
 
 class ResonancePdf;
@@ -26,7 +28,7 @@ constexpr typename std::underlying_type<E>::type enum_to_underlying(E e) {
     return static_cast<typename std::underlying_type<E>::type>(e);
 }
 
-__host__ __device__ int getDalitzBin(const fptype &m12, const fptype &m13);
+__host__ int getDalitzBin(const fptype &m12, const fptype &m13);
 
 __host__ __device__ bool inDalitz(
     const fptype &m12, const fptype &m13, const fptype &bigM, const fptype &dm1, const fptype &dm2, const fptype &dm3);
@@ -167,7 +169,7 @@ class strided_range {
     Iterator first;
     Iterator last;
     difference_type stride;
-};
+ };
 
 // From 3 body T
 
@@ -182,5 +184,7 @@ typedef struct {
 
 typedef thrust::tuple<fptype, fptype, fptype, fptype> WaveHolder;
 typedef thrust::tuple<fptype, fptype, fptype, fptype, fptype, fptype> ThreeComplex;
+
+inline TH2F *h_dalitz;
 
 } // namespace GooFit

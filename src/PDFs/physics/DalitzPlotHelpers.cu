@@ -9,7 +9,19 @@ Helper functions
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 
+#include <TFile.h>
+#include <TH2D.h>
+
+
 namespace GooFit {
+
+__host__ __device__ int getDalitzBin(const fptype &m12, const fptype &m13){
+    TFile *file_dalitz_plot = new TFile("/hepgpu4-data1/mhilton/KSpipi/GooFit/BinningLUT_K0Spipi_BABAR2008_EqualDeltadeltaD.root", "READ");
+    TH2D *h_dalitz_bins = (TH2D*)file_dalitz_plot->Get("h_BinningLUT_K0Spipi_BABAR2008_EqualDeltadeltaD");
+    int bin = h_dalitz_bins->GetBinContent(h_dalitz_bins->FindBin(m12, m13));
+
+    return bin;
+}
 
 __host__ __device__ bool inDalitz(
     const fptype &m12, const fptype &m13, const fptype &bigM, const fptype &dm1, const fptype &dm2, const fptype &dm3) {

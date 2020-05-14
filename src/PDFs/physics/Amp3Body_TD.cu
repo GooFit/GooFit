@@ -12,14 +12,7 @@
 #include <mpi.h>
 #endif
 
-#include <TH2F.h>
-#include <TROOT.h>
-
 namespace GooFit {
-
-__host__ void Amp3Body_TD::getDalitzHist(TH2F *hist) {
-    h_dalitz = hist;
-}
 
 const int resonanceOffset = 10; // Offset of the first resonance into the parameter index array
 // Offset is number of parameters, constant index, indices for tau, xmix, and ymix, index

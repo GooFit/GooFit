@@ -4,8 +4,6 @@
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <goofit/PDFs/physics/MixingTimeResolution.h>
 
-#include <TH2F.h>
-
 namespace GooFit {
 
 class SpecialDalitzIntegrator;
@@ -132,8 +130,6 @@ class Amp3Body_TD : public Amp3BodyBase {
     __host__ void setForceIntegrals(bool f = true) { forceRedoIntegrals = f; }
 
     __host__ void populateArrays() override;
-
-    __host__ void getDalitzHist(TH2F *hist);
 
   protected:
   private:

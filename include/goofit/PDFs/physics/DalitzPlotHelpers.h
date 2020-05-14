@@ -15,8 +15,6 @@ See *.cu file for more details
 #include <thrust/device_vector.h>
 #include <thrust/iterator/constant_iterator.h>
 
-#include <TH2F.h>
-
 namespace GooFit {
 
 class ResonancePdf;
@@ -184,7 +182,5 @@ typedef struct {
 
 typedef thrust::tuple<fptype, fptype, fptype, fptype> WaveHolder;
 typedef thrust::tuple<fptype, fptype, fptype, fptype, fptype, fptype> ThreeComplex;
-
-inline TH2F *h_dalitz;
 
 } // namespace GooFit

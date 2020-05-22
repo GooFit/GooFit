@@ -59,8 +59,8 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
 
     int bin = getDalitzBin(m12, m13);
 
-    //if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass)) {
-    if (!(bin == 1)) {
+    if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass) || !(bin==4.)) {
+
         unsigned int endEfficiencyFunc = pc.getConstant(3);
         pc.incrementIndex(1, num_parameters, num_constants, num_observables, 1);
 

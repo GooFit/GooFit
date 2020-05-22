@@ -26,7 +26,7 @@ constexpr typename std::underlying_type<E>::type enum_to_underlying(E e) {
     return static_cast<typename std::underlying_type<E>::type>(e);
 }
 
-__host__ int getDalitzBin(const fptype &m12, const fptype &m13);
+__host__ __device__ int getDalitzBin(const fptype &m12, const fptype &m13);
 
 __host__ __device__ bool inDalitz(
     const fptype &m12, const fptype &m13, const fptype &bigM, const fptype &dm1, const fptype &dm2, const fptype &dm3);

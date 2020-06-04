@@ -124,6 +124,7 @@ class Amp3Body_TD : public Amp3BodyBase {
     // affected by making the wrong charge assignment to the mother.
 
     __host__ fptype normalize() override;
+    __host__ fptype dummy_normalize();
     __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 5);
     __host__ void setD0Fraction(fptype d0fraction);
     __host__ fptype getD0Fraction();

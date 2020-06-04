@@ -59,7 +59,7 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
 
     int bin = getDalitzBin(m12, m13);
 
-    if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass) || !(bin==4.)) {
+    if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass) ) {
 
         unsigned int endEfficiencyFunc = pc.getConstant(3);
         pc.incrementIndex(1, num_parameters, num_constants, num_observables, 1);
@@ -717,7 +717,163 @@ __host__ fptype Amp3Body_TD::normalize() {
     host_normalizations.at(normalIdx + 1) = 1.0 / ret;
     cachedNormalization                   = 1.0 / ret;
 
+
+    GOOFIT_TRACE("Normalisation: {}", ret);
+
     return ret;
 }
+
+__host__ fptype Amp3Body_TD::dummy_normalize() {
+    recursiveSetNormalization(1.0); // Not going to normalize efficiency,
+    // so set normalization factor to 1 so it doesn't get multiplied by zero.
+    // Copy at this time to ensure that the SpecialWaveCalculators, which need the efficiency,
+    // don't get zeroes through multiplying by the normFactor.
+
+    host_normalizations.sync(d_normalizations);
+
+    int totalBins = _m12.getNumBins() * _m13.getNumBins();
+
+    if(!dalitzNormRange) {
+        gooMalloc((void **)&dalitzNormRange, 6 * sizeof(fptype));
+
+        auto *host_norms = new fptype[6];
+        host_norms[0]    = _m12.getLowerLimit();
+        host_norms[1]    = _m12.getUpperLimit();
+        host_norms[2]    = _m12.getNumBins();
+        host_norms[3]    = _m13.getLowerLimit();
+        host_norms[4]    = _m13.getUpperLimit();
+        host_norms[5]    = _m13.getNumBins();
+        MEMCPY(dalitzNormRange, host_norms, 6 * sizeof(fptype), cudaMemcpyHostToDevice);
+        delete[] host_norms;
+    }
+
+    for(unsigned int i = 0; i < decayInfo.resonances.size(); ++i) {
+        redoIntegral[i] = forceRedoIntegrals;
+
+        if(!(decayInfo.resonances[i]->parametersChanged()))
+            continue;
+
+        redoIntegral[i] = true;
+    }
+
+    forceRedoIntegrals = false;
+
+    // Only do this bit if masses or widths have changed.
+    thrust::constant_iterator<fptype *> arrayAddress(dalitzNormRange);
+    thrust::counting_iterator<int> binIndex(0);
+
+    // NB, SpecialWaveCalculator assumes that fit is unbinned!
+    // And it needs to know the total event size, not just observables
+    // for this particular PDF component.
+    thrust::constant_iterator<fptype *> dataArray(dev_event_array);
+    thrust::constant_iterator<int> eventSize(totalEventSize);
+    thrust::counting_iterator<int> eventIndex(0);
+
+    static int normCall = 0;
+    normCall++;
+
+    for(int i = 0; i < decayInfo.resonances.size(); ++i) {
+        // printf("calculate i=%i, res_i=%i\n", i, decayInfo->resonances[i]->getFunctionIndex());
+        calculators[i]->setTddpIndex(getFunctionIndex());
+        calculators[i]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
+        if(redoIntegral[i]) {
+#ifdef GOOFIT_MPI
+            thrust::transform(
+                thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
+                thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, arrayAddress, eventSize)),
+                strided_range<thrust::device_vector<WaveHolder_s>::iterator>(
+                    cachedWaves[i]->begin(), cachedWaves[i]->end(), 1)
+                    .begin(),
+                *(calculators[i]));
+#else
+            thrust::transform(
+                thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
+                thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
+                strided_range<thrust::device_vector<WaveHolder_s>::iterator>(
+                    cachedWaves[i]->begin(), cachedWaves[i]->end(), 1)
+                    .begin(),
+                *(calculators[i]));
+#endif
+        }
+
+        // Possibly this can be done more efficiently by exploiting symmetry?
+        for(int j = 0; j < decayInfo.resonances.size(); ++j) {
+            if((!redoIntegral[i]) && (!redoIntegral[j]))
+                continue;
+
+            integrators[i][j]->setTddpIndex(getFunctionIndex());
+            integrators[i][j]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
+            integrators[i][j]->setEfficiencyIndex(decayInfo.resonances[j]->getFunctionIndex());
+
+            ThreeComplex dummy(0, 0, 0, 0, 0, 0);
+            SpecialComplexSum complexSum;
+            thrust::constant_iterator<int> effFunc(efficiencyFunction);
+            (*(integrals[i][j])) = thrust::transform_reduce(
+                thrust::make_zip_iterator(thrust::make_tuple(binIndex, arrayAddress, effFunc)),
+                thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, arrayAddress, effFunc)),
+                *(integrators[i][j]),
+                dummy,
+                complexSum);
+        }
+    }
+
+    // End of time-consuming integrals.
+
+    fpcomplex integralA_2(0, 0);
+    fpcomplex integralB_2(0, 0);
+    fpcomplex integralABs(0, 0);
+
+    for(unsigned int i = 0; i < decayInfo.resonances.size(); ++i) {
+        fpcomplex amplitude_i(host_parameters[parametersIdx + i * 2 + 6], host_parameters[parametersIdx + i * 2 + 7]);
+
+        for(unsigned int j = 0; j < decayInfo.resonances.size(); ++j) {
+            fpcomplex amplitude_j(host_parameters[parametersIdx + j * 2 + 6],
+                                  -host_parameters[parametersIdx + j * 2 + 7]); // Notice complex conjugation
+
+            integralA_2 += (amplitude_i * amplitude_j
+                            * fpcomplex(thrust::get<0>(*(integrals[i][j])), thrust::get<1>(*(integrals[i][j]))));
+            integralABs += (amplitude_i * amplitude_j
+                            * fpcomplex(thrust::get<2>(*(integrals[i][j])), thrust::get<3>(*(integrals[i][j]))));
+            integralB_2 += (amplitude_i * amplitude_j
+                            * fpcomplex(thrust::get<4>(*(integrals[i][j])), thrust::get<5>(*(integrals[i][j]))));
+        }
+    }
+
+    double dalitzIntegralOne = integralA_2.real(); // Notice that this is already the abs2, so it's real by
+                                                   // construction; but the compiler doesn't know that.
+    double dalitzIntegralTwo = integralB_2.real();
+    double dalitzIntegralThr = integralABs.real();
+    double dalitzIntegralFou = integralABs.imag();
+
+    fptype tau      = host_parameters[parametersIdx + 1];
+    fptype xmixing0 = host_parameters[parametersIdx + 2];
+    fptype ymixing0 = host_parameters[parametersIdx + 3];
+    fptype deltax   = host_parameters[parametersIdx + 4];
+    fptype deltay   = host_parameters[parametersIdx + 5];
+    fptype xmixing_D0 = xmixing0 + deltax;
+    fptype ymixing_D0 = ymixing0 + deltay;
+    fptype xmixing_D0bar = xmixing0 - deltax;
+    fptype ymixing_D0bar = ymixing0 - deltay;
+
+    fptype ret_D0 = resolution->normalization(
+        dalitzIntegralOne, dalitzIntegralTwo, dalitzIntegralThr, dalitzIntegralFou, tau, xmixing_D0, ymixing_D0);
+
+    fptype ret_D0bar = resolution->normalization(
+        dalitzIntegralOne, dalitzIntegralTwo, dalitzIntegralThr, dalitzIntegralFou, tau, xmixing_D0bar, ymixing_D0bar);
+
+    //fptype _D0Fraction = 0.5; // Set D0 fraction to 1 for now.
+    fptype ret = _D0Fraction * ret_D0 + (1. - _D0Fraction) * ret_D0bar;
+
+    double binSizeFactor = 1;
+    binSizeFactor *= ((_m12.getUpperLimit() - _m12.getLowerLimit()) / _m12.getNumBins());
+    binSizeFactor *= ((_m13.getUpperLimit() - _m13.getLowerLimit()) / _m13.getNumBins());
+    ret *= binSizeFactor;
+
+    host_normalizations.at(normalIdx + 1) = 1.0 / ret;
+    cachedNormalization                   = 1.0 / ret;
+
+    return ret;
+}
+
 
 } // namespace GooFit

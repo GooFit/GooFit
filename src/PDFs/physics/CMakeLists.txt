@@ -34,6 +34,9 @@ goofit_add_pdf_library(PDFPhysics
     detail/AmpCalc_TD.cu
     detail/LSCalculator.cu
     detail/LSCalculator_TD.cu
+    detail/NormEvents_4Body_Base.cu
+    detail/NormEvents_4Body_DeviceCached.cu
+    detail/NormEvents_4Body_HostCached.cu
     detail/NormIntegrator.cu
     detail/NormIntegrator_TD.cu
     detail/NormLSCalculator.cu

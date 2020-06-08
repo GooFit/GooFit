@@ -14,6 +14,9 @@ class.
   -For example the way Spinfactors are stored in the same array as the Lineshape values.
    Is this really worth the memory we lose by using a complex to store the SF?
 */
+
+#include <memory>
+
 #include <goofit/Error.h>
 #include <goofit/FitControl.h>
 #include <goofit/Log.h>
@@ -41,6 +44,8 @@ class.
 #include <goofit/PDFs/physics/lineshapes/Lineshape.h>
 #include <goofit/PDFs/physics/resonances/Resonance.h>
 #include <goofit/utilities/DebugTools.h>
+#include <goofit/PDFs/physics/detail/NormEvents_4Body_DeviceCached.h>
+#include <goofit/PDFs/physics/detail/NormEvents_4Body_HostCached.h>
 
 #include <cstdarg>
 #include <map>
@@ -250,20 +255,72 @@ __device__ fptype device_Amp4Body_TD(fptype *evt, ParameterContainer &pc) {
 
 __device__ device_function_ptr ptr_to_Amp4Body_TD = device_Amp4Body_TD;
 
+
+// Build Amp4Body_TD where the MC events used for normalization are stored on the host side
+// and where normalization computations are done in batches.
+// This is much slower than the other case (where the events used for normalization are stored on the device side)
+// but allows you to use a larger # of events for normalization than would otherwise would be possible.
+__host__ Amp4Body_TD::Amp4Body_TD(
+				  std::string n,
+				  std::vector<Observable> observables,
+				  DecayInfo4t decay,
+				  MixingTimeResolution *Tres,
+				  GooPdf *efficiency,
+				  Observable *mistag,
+				  const std::vector<long>& normSeeds,
+				  unsigned int numNormEventsToGenPerBatch)
+  : Amp4Body_TD(
+		n, 
+		observables,
+		decay, 
+		Tres, 
+		efficiency, 
+		mistag, 
+		new NormEvents_4Body_HostCached(normSeeds, numNormEventsToGenPerBatch, decay.particle_masses))
+{
+  GOOFIT_INFO("Built Amp4Body_TD model where the MC events used for normalization are stored on the host side.");
+  GOOFIT_INFO("This may result in much longer computation times!");
+  GOOFIT_INFO("Use the alternate Amp4Body_TD constructor for maximum speed!");
+}
+
+
+// Build Amp4Body_TD where the MC events used for normalization are stored on the device side.
+// This is much faster than the other case (where the events used for normalization are stored on the host side)
+// but places a lower limit on the maximum # of events that can be used for normalization.
+__host__ Amp4Body_TD::Amp4Body_TD(
+				  std::string n,
+				  std::vector<Observable> observables,
+				  DecayInfo4t decay,
+				  MixingTimeResolution *Tres,
+				  GooPdf *efficiency,
+				  Observable *mistag,
+				  long normSeed,
+				  unsigned int numNormEventsToGen)
+  : Amp4Body_TD(
+		n,
+		observables, 
+		decay,
+		Tres,
+		efficiency, 
+		mistag, 
+		new NormEvents_4Body_DeviceCached(decay.particle_masses, normSeed, numNormEventsToGen))
+{
+}
+
+
+// Does common initialization
 __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
                                   std::vector<Observable> observables,
                                   DecayInfo4t decay,
                                   MixingTimeResolution *Tres,
                                   GooPdf *efficiency,
                                   Observable *mistag,
-				  long normSeed,
-                                  unsigned int MCeventsNorm)
+				  const NormEvents_4Body_Base* const normEvents)
     : Amp4BodyBase("Amp4Body_TD", n)
     , _decayInfo(decay)
     , resolution(Tres)
     , _totalEventSize(observables.size() + 2) // number of observables plus eventnumber
-    , _NORM_SEED(normSeed)
-    , _NUM_NORM_EVENTS_TO_GEN(MCeventsNorm)
+    , _NORM_EVENTS(std::unique_ptr<const NormEvents_4Body_Base>(normEvents))
 {
     // should include m12, m34, cos12, cos34, phi, eventnumber, dtime, sigmat. In this order!
     for(auto &observable : observables) {
@@ -498,66 +555,12 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
     GOOFIT_INFO("Num. amplitudes: {}", _NUM_AMPLITUDES);
     GOOFIT_INFO("Num. amp. calcs: {}", _AmpCalcs.size());
 
-    generateAndSetNormEvents();
-    _norm_SF  = mcbooster::RealVector_d(_nAcc_Norm_Events * _SpinFactors.size());
-    _norm_LS  = mcbooster::mc_device_vector<fpcomplex>(_nAcc_Norm_Events * _LineShapes.size());
+    _norm_SF  = mcbooster::RealVector_d(getNumAccNormEvents() * _SpinFactors.size());
+    _norm_LS  = mcbooster::mc_device_vector<fpcomplex>(getNumAccNormEvents() * _LineShapes.size());
 
     setSeparateNorm();
 
     printAmpMappings();
-}
-
-
-__host__ void Amp4Body_TD::generateAndSetNormEvents()
-{
-  std::vector<mcbooster::GReal_t> masses(_decayInfo.particle_masses.begin() + 1, _decayInfo.particle_masses.end());
-  mcbooster::PhaseSpace phsp(_decayInfo.particle_masses[0], masses, _NUM_NORM_EVENTS_TO_GEN, _NORM_SEED);
-  phsp.Generate(mcbooster::Vector4R(_decayInfo.particle_masses[0], 0.0, 0.0, 0.0));
-  phsp.Unweight();
-
-  auto nAcc                     = phsp.GetNAccepted();
-  mcbooster::BoolVector_d flags = phsp.GetAccRejFlags();
-  auto d1                       = phsp.GetDaughters(0);
-  auto d2                       = phsp.GetDaughters(1);
-  auto d3                       = phsp.GetDaughters(2);
-  auto d4                       = phsp.GetDaughters(3);
-
-  auto zip_begin = thrust::make_zip_iterator(thrust::make_tuple(d1.begin(), d2.begin(), d3.begin(), d4.begin()));
-  auto zip_end   = zip_begin + d1.size();
-  auto new_end   = thrust::remove_if(zip_begin, zip_end, flags.begin(), thrust::logical_not<bool>());
-
-  d1.erase(thrust::get<0>(new_end.get_iterator_tuple()), d1.end());
-  d2.erase(thrust::get<1>(new_end.get_iterator_tuple()), d2.end());
-  d3.erase(thrust::get<2>(new_end.get_iterator_tuple()), d3.end());
-  d4.erase(thrust::get<3>(new_end.get_iterator_tuple()), d4.end());
-
-  mcbooster::ParticlesSet_d pset(4);
-  pset[0] = &d1;
-  pset[1] = &d2;
-  pset[2] = &d3;
-  pset[3] = &d4;
-
-  _norm_M12        = mcbooster::RealVector_d(nAcc);
-  _norm_M34        = mcbooster::RealVector_d(nAcc);
-  _norm_CosTheta12 = mcbooster::RealVector_d(nAcc);
-  _norm_CosTheta34 = mcbooster::RealVector_d(nAcc);
-  _norm_phi        = mcbooster::RealVector_d(nAcc);
-
-  mcbooster::VariableSet_d VarSet(5);
-  VarSet[0] = &_norm_M12;
-  VarSet[1] = &_norm_M34;
-  VarSet[2] = &_norm_CosTheta12;
-  VarSet[3] = &_norm_CosTheta34;
-  VarSet[4] = &_norm_phi;
-
-  Dim5 eval = Dim5();
-  mcbooster::EvaluateArray<Dim5>(eval, pset, VarSet);
-  
-  _nAcc_Norm_Events = nAcc;
-
-  GOOFIT_INFO("Num of accepted MC events used for normalization: {}", _nAcc_Norm_Events);
-
-  phsp.FreeResources();
 }
 
 
@@ -567,6 +570,7 @@ __host__ void Amp4Body_TD::populateArrays() {
     // TODO: We need to expand populateArrays so we handle components correctly!
     efficiencyFunction = host_function_table.size() - 1;
 }
+
 
 // makes the arrays to chache the lineshape values and spinfactors in CachedResSF and the values of the amplitudes in
 // _cachedAMPs
@@ -607,9 +611,27 @@ __host__ void Amp4Body_TD::setDataSize(unsigned int dataSize, unsigned int evtSi
 
 __host__ void Amp4Body_TD::computeCachedNormValues(const std::vector<bool>& lineshapeChanged)
 {
+  bool cachedValuesUnchanged = _SpinsCalculated && std::all_of(lineshapeChanged.cbegin(), lineshapeChanged.cend(), [](bool v) { return !v; });
+  if (cachedValuesUnchanged)
+  {
+    return;
+  }
+
+  for (unsigned int b = 0; b < _NORM_EVENTS->getNumBatches(); b++)
+  {
+    computeCachedNormValuesForBatch(lineshapeChanged, b);
+  }
+}
+
+
+__host__ void Amp4Body_TD::computeCachedNormValuesForBatch(const std::vector<bool>& lineshapeChanged, unsigned int batchNum)
+{
+  const NormEvents_4Body_Batch BATCH = _NORM_EVENTS->getBatch(batchNum);
+
   // Calculate spinfactors only once for normalization events and real events
   // strided_range is a template implemented in DalitsPlotHelpers.hh
   // it basically goes through the array by increasing the pointer by a certain amount instead of just one step.
+  unsigned int outputBeginOffsetSF = _SpinFactors.size() * BATCH._NUM_ACC_BEFORE_THIS_BATCH;
   if (!_SpinsCalculated)
   {
     for(int i = 0; i < _SpinFactors.size(); ++i)
@@ -620,19 +642,24 @@ __host__ void Amp4Body_TD::computeCachedNormValues(const std::vector<bool>& line
       nsc.setSpinFactorId(_SpinFactors[i]->getFunctionIndex());
 
       thrust::transform(
-			thrust::make_zip_iterator(thrust::make_tuple(_norm_M12.begin(),
-								     _norm_M34.begin(),
-								     _norm_CosTheta12.begin(),
-								     _norm_CosTheta34.begin(),
-								     _norm_phi.begin())),
+			thrust::make_zip_iterator(thrust::make_tuple(BATCH._NORM_M12.cbegin(),
+								     BATCH._NORM_M34.cbegin(),
+								     BATCH._NORM_COSTHETA12.cbegin(),
+								     BATCH._NORM_COSTHETA34.cbegin(),
+								     BATCH._NORM_PHI.cbegin())),
 			thrust::make_zip_iterator(thrust::make_tuple(
-								     _norm_M12.end(), _norm_M34.end(), _norm_CosTheta12.end(), _norm_CosTheta34.end(), _norm_phi.end())),
-			(_norm_SF.begin() + (i * _nAcc_Norm_Events)),
+								     BATCH._NORM_M12.cend(), 
+								     BATCH._NORM_M34.cend(),
+								     BATCH._NORM_COSTHETA12.cend(),
+								     BATCH._NORM_COSTHETA34.cend(),
+								     BATCH._NORM_PHI.cend())),
+			(_norm_SF.begin() + outputBeginOffsetSF + (i*BATCH._NUM_ACC_THIS_BATCH)),
 			nsc);
     }
   }
 
   // lineshape value calculation for the normalization, also recalculated every time parameter change
+  unsigned int outputBeginOffsetLS = _LineShapes.size() * BATCH._NUM_ACC_BEFORE_THIS_BATCH;
   for(int i = 0; i < _LineShapes.size(); ++i) 
   {
     if(!lineshapeChanged[i])
@@ -643,14 +670,18 @@ __host__ void Amp4Body_TD::computeCachedNormValues(const std::vector<bool>& line
     ns.setResonanceId(_LineShapes[i]->getFunctionIndex());
 
     thrust::transform(
-		      thrust::make_zip_iterator(thrust::make_tuple(_norm_M12.begin(),
-								   _norm_M34.begin(),
-								   _norm_CosTheta12.begin(),
-								   _norm_CosTheta34.begin(),
-								   _norm_phi.begin())),
+		      thrust::make_zip_iterator(thrust::make_tuple(BATCH._NORM_M12.cbegin(),
+								   BATCH._NORM_M34.cbegin(),
+								   BATCH._NORM_COSTHETA12.cbegin(),
+								   BATCH._NORM_COSTHETA34.cbegin(),
+								   BATCH._NORM_PHI.cbegin())),
 		      thrust::make_zip_iterator(thrust::make_tuple(
-								   _norm_M12.end(), _norm_M34.end(), _norm_CosTheta12.end(), _norm_CosTheta34.end(), _norm_phi.end())),
-		      (_norm_LS.begin() + (i * _nAcc_Norm_Events)),
+								   BATCH._NORM_M12.cend(), 
+								   BATCH._NORM_M34.cend(),
+								   BATCH._NORM_COSTHETA12.cend(),
+								   BATCH._NORM_COSTHETA34.cend(),
+								   BATCH._NORM_PHI.cend())),
+		      (_norm_LS.begin() + outputBeginOffsetLS + (i*BATCH._NUM_ACC_THIS_BATCH)),
 		      ns);
   }
 }
@@ -828,7 +859,7 @@ __host__ fptype Amp4Body_TD::normalize()
   {
     thrust::constant_iterator<fptype *> normSFaddress(thrust::raw_pointer_cast(_norm_SF.data()));
     thrust::constant_iterator<fpcomplex *> normLSaddress(thrust::raw_pointer_cast(_norm_LS.data()));
-    thrust::constant_iterator<int> NumNormEvents(_nAcc_Norm_Events);
+    thrust::constant_iterator<int> NumNormEvents(getNumAccNormEvents());
     thrust::counting_iterator<int> eventIndex(0);
 
     thrust::tuple<fptype, fptype, fptype, fptype> dummy(0, 0, 0, 0);
@@ -840,7 +871,7 @@ __host__ fptype Amp4Body_TD::normalize()
     sumIntegral = thrust::transform_reduce(
 					   thrust::make_zip_iterator(thrust::make_tuple(eventIndex, NumNormEvents, normSFaddress, normLSaddress)),
 					   thrust::make_zip_iterator(
-								     thrust::make_tuple(eventIndex + _nAcc_Norm_Events, NumNormEvents, normSFaddress, normLSaddress)),
+								     thrust::make_tuple(eventIndex + getNumAccNormEvents(), NumNormEvents, normSFaddress, normLSaddress)),
 					   *_Integrator,
 					   dummy,
 					   MyFourDoubleTupleAdditionFunctor);
@@ -864,7 +895,7 @@ __host__ fptype Amp4Body_TD::normalize()
     GOOFIT_DEBUG("Norm value before divide: {:.20f}", ret);
 
     // _nAcc_Norm_Events is the number of normalization events.
-    ret /= _nAcc_Norm_Events;
+    ret /= getNumAccNormEvents();
   }
 
   host_normalizations[normalIdx + 1] = 1.0 / ret;

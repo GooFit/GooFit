@@ -38,7 +38,7 @@ class Amp4Body_TD final : public Amp4BodyBase {
   Amp4Body_TD(Amp4Body_TD&& moveMe) = delete;
   Amp4Body_TD& operator=(const Amp4Body_TD& copyMe) = delete;
   Amp4Body_TD& operator=(Amp4Body_TD&& moveMe) = delete;
-  ~Amp4Body_TD() override = default;
+  virtual ~Amp4Body_TD() override = default;
 
   // Build Amp4Body_TD where the MC events used for normalization are stored on the host side
   // and where normalization computations are done in batches.
@@ -73,7 +73,7 @@ class Amp4Body_TD final : public Amp4BodyBase {
 
     __host__ void setForceIntegrals(bool f = true) { _forceRedoIntegrals = f; }
 
-    __host__ int getNumAccNormEvents() const { return _NORM_EVENTS->getNumAccNormEvents(); } 
+    __host__ int getNumAccNormEvents() const { return _normEvents->getNumAccNormEvents(); } 
 
     __host__ void setGenerationOffset(int off) { generation_offset = off; }
 
@@ -101,14 +101,10 @@ class Amp4Body_TD final : public Amp4BodyBase {
 			 MixingTimeResolution *Tres,
 			 GooPdf *efficiency,
 			 Observable *mistag,
-			 const NormEvents_4Body_Base* const normEvents);
+			 NormEvents_4Body_Base* const normEvents);
     // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the
     // coherent sum. The caching method requires that it be done this way or the ProdPdf
     // normalization will get *really* confused and give wrong answers.
-
-    __host__ void computeCachedNormValues(const std::vector<bool>& lineshapeChanged);
-
-    __host__ void computeCachedNormValuesForBatch(const std::vector<bool>& lineshapeChanged, unsigned int batchNum);
 
     __host__ void computeCachedValues(const std::vector<bool>& lineshapeChanged, const std::vector<bool>& amplitudeComponentChanged);
 
@@ -116,19 +112,19 @@ class Amp4Body_TD final : public Amp4BodyBase {
 
     __host__ std::vector<bool> areAmplitudeComponentsChanged() const;
 
+    __host__ std::vector<unsigned int> getSFFunctionIndices() const;
+
+    __host__ std::vector<unsigned int> getLSFunctionIndices() const;
+
     std::vector<SpinFactor *> _SpinFactors;
     std::vector<Lineshape *> _LineShapes;
-    std::vector<AmpCalc_TD *> _AmpCalcs;
-    NormIntegrator_TD *_Integrator;
+    std::vector<AmpCalc_TD *> _AmpCalcs;   
     std::vector<SFCalculator_TD *> _sfcalculators;
     std::vector<LSCalculator_TD *> _lscalculators;
     unsigned int efficiencyFunction;
-    const std::unique_ptr<const NormEvents_4Body_Base> _NORM_EVENTS;
-    // store spin and lineshape values for normalization
-    mutable mcbooster::RealVector_d _norm_SF;
-    mutable mcbooster::mc_device_vector<fpcomplex> _norm_LS;
-    DecayInfo4t _decayInfo;
-    MixingTimeResolution *resolution;
+    const std::unique_ptr<NormEvents_4Body_Base> _normEvents;
+    const DecayInfo4t _DECAY_INFO;
+    MixingTimeResolution* _resolution;
     // Following variables are useful if masses and widths, involved in difficult BW calculation,
     // change infrequently while amplitudes, only used in adding BW results together, change rapidly.
     thrust::device_vector<fpcomplex> *_cachedResSF{nullptr}; // Caches the BW values and Spins for each event.

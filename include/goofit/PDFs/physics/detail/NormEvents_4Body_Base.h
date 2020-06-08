@@ -4,47 +4,12 @@
 
 #include <mcbooster/GContainers.h>
 
+#include <goofit/detail/Complex.h>
 #include <goofit/GlobalCudaDefines.h>
+#include <goofit/PDFs/physics/MixingTimeResolution.h>
+
 
 namespace GooFit {
-
-  class NormEvents_4Body_Batch final {
-  public:
-    NormEvents_4Body_Batch(
-			   const mcbooster::RealVector_d& norm_M12,
-			   const mcbooster::RealVector_d& norm_M34,
-			   const mcbooster::RealVector_d& norm_CosTheta12,
-			   const mcbooster::RealVector_d& norm_CosTheta34,
-			   const mcbooster::RealVector_d& norm_phi,
-			   unsigned int numAccThisBatch,
-			   unsigned int numAccBeforeThisBatch)
-      : _NORM_M12(norm_M12),
-      _NORM_M34(norm_M34),
-      _NORM_COSTHETA12(norm_CosTheta12),
-      _NORM_COSTHETA34(norm_CosTheta34),
-      _NORM_PHI(norm_phi),
-      _NUM_ACC_THIS_BATCH(numAccThisBatch),
-      _NUM_ACC_BEFORE_THIS_BATCH(numAccBeforeThisBatch) {}
-
-    NormEvents_4Body_Batch() = default;
-    NormEvents_4Body_Batch(const NormEvents_4Body_Batch& copyMe) = default;
-    NormEvents_4Body_Batch(NormEvents_4Body_Batch&& moveMe) = default;
-    ~NormEvents_4Body_Batch() = default;
-    NormEvents_4Body_Batch& operator=(const NormEvents_4Body_Batch& copyMe) = default;
-    NormEvents_4Body_Batch& operator=(NormEvents_4Body_Batch&& moveMe) = default;
-
-    const mcbooster::RealVector_d _NORM_M12;
-    const mcbooster::RealVector_d _NORM_M34;
-    const mcbooster::RealVector_d _NORM_COSTHETA12;
-    const mcbooster::RealVector_d _NORM_COSTHETA34;
-    const mcbooster::RealVector_d _NORM_PHI;
-    const unsigned int _NUM_ACC_THIS_BATCH;
-    const unsigned int _NUM_ACC_BEFORE_THIS_BATCH;
-  protected:
-
-  private:
-  };
-
 
   class NormEvents_4Body_Base {
   public:
@@ -59,12 +24,19 @@ namespace GooFit {
 
     int getNumBatches() const { return _numBatches; }
 
-    __host__ virtual NormEvents_4Body_Batch getBatch(unsigned int batchNum) const = 0;
+    __host__ virtual fptype computeNorm_TD(
+					   bool noCachedNormValuesToCompute,
+					   const MixingTimeResolution* const resolution,
+					   fptype tau,
+					   fptype xmixing,
+					   fptype ymixing,
+					   unsigned int dalitzId,
+					   bool spinsCalculated,
+					   const std::vector<bool>& lineshapeChanged,
+					   const std::vector<unsigned int>& sfFunctionIndices,
+					   const std::vector<unsigned int>& lsFunctionIndices) = 0;
 
   protected:
-    unsigned int _totNumAccNormEvents;
-    unsigned int _numBatches;
-
     __host__ static unsigned int generate4BodyNormEvents(
 							 long normSeed,
 							 unsigned int numNormEventsToGen,
@@ -74,6 +46,46 @@ namespace GooFit {
 							 mcbooster::RealVector_d& norm_CosTheta12,
 							 mcbooster::RealVector_d& norm_CosTheta34,
 							 mcbooster::RealVector_d& norm_phi);
+
+    __host__ static bool computeCachedLSValuesForBatch_TD(
+							  const std::vector<bool>& lineshapeChanged,
+							  unsigned int dalitzId,
+							  const std::vector<unsigned int>& lsFunctionIndices,
+							  unsigned int numAccThisBatch,
+							  const mcbooster::RealVector_d& batchNormM12_d,
+							  const mcbooster::RealVector_d& batchNormM34_d,
+							  const mcbooster::RealVector_d& batchNormCosTheta12_d,
+							  const mcbooster::RealVector_d& batchNormCosTheta34_d,
+							  const mcbooster::RealVector_d& batchNormPhi_d,
+							  unsigned int resultOffset,
+							  mcbooster::mc_device_vector<fpcomplex>& ls_batchResult_d);
+
+
+    __host__ static bool computeCachedSFValuesForBatch_TD(
+							  bool spinsCalculated,
+							  unsigned int dalitzId,
+							  const std::vector<unsigned int>& sfFunctionIndices,
+							  unsigned int numAccThisBatch,
+							  const mcbooster::RealVector_d& batchNormM12_d,
+							  const mcbooster::RealVector_d& batchNormM34_d,
+							  const mcbooster::RealVector_d& batchNormCosTheta12_d,
+							  const mcbooster::RealVector_d& batchNormCosTheta34_d,
+							  const mcbooster::RealVector_d& batchNormPhi_d,
+							  unsigned int resultOffset,
+							  mcbooster::RealVector_d& sf_batchResult_d);
+
+    __host__ static fptype doNormIntegral_TD(
+					     const MixingTimeResolution* const resolution,
+					     fptype tau,
+					     fptype xmixing,
+					     fptype ymixing,
+					     unsigned int dalitzId,
+					     unsigned int numAccThisBatch,
+					     mcbooster::RealVector_d& batchSF_d,
+					     mcbooster::mc_device_vector<fpcomplex>& batchLS_d);
+
+    unsigned int _totNumAccNormEvents;
+    unsigned int _numBatches;
 
   private:
   };

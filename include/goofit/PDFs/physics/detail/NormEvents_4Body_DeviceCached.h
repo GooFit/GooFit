@@ -2,8 +2,10 @@
 
 #include <mcbooster/GContainers.h>
 
+#include <goofit/detail/Complex.h>
 #include <goofit/GlobalCudaDefines.h>
 #include <goofit/PDFs/physics/detail/NormEvents_4Body_Base.h>
+#include <goofit/PDFs/physics/MixingTimeResolution.h>
 
 namespace GooFit {
 
@@ -12,7 +14,7 @@ namespace GooFit {
     NormEvents_4Body_DeviceCached() = delete;
     NormEvents_4Body_DeviceCached(const NormEvents_4Body_DeviceCached& copyMe) = default;
     NormEvents_4Body_DeviceCached(NormEvents_4Body_DeviceCached&& moveMe) = default;
-    ~NormEvents_4Body_DeviceCached() override = default;
+    virtual ~NormEvents_4Body_DeviceCached() override = default;
     NormEvents_4Body_DeviceCached& operator=(const NormEvents_4Body_DeviceCached& copyMe) = default;
     NormEvents_4Body_DeviceCached& operator=(NormEvents_4Body_DeviceCached&& moveMe) = default;
 
@@ -21,7 +23,17 @@ namespace GooFit {
 				  long normSeed,
 				  unsigned int numNormEventsToGen);    
 
-    __host__ virtual NormEvents_4Body_Batch getBatch(unsigned int batchNum) const override;
+    __host__ fptype virtual computeNorm_TD(
+					   bool noCachedNormValuesToCompute,
+					   const MixingTimeResolution* const resolution,
+					   fptype tau,
+					   fptype xmixing,
+					   fptype ymixing,
+					   unsigned int dalitzId,
+					   bool spinsCalculated,
+					   const std::vector<bool>& lineshapeChanged,
+					   const std::vector<unsigned int>& sfFunctionIndices,
+					   const std::vector<unsigned int>& lsFunctionIndices) override;
 
   protected:
 
@@ -32,6 +44,9 @@ namespace GooFit {
     mcbooster::RealVector_d _norm_CosTheta12_d;
     mcbooster::RealVector_d _norm_CosTheta34_d;
     mcbooster::RealVector_d _norm_phi_d;
+    // store spin and lineshape values for normalization
+    mcbooster::RealVector_d _norm_SF_d;
+    mcbooster::mc_device_vector<fpcomplex> _norm_LS_d;
   };
 
 } // end namespace GooFit

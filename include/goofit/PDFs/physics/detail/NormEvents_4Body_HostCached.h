@@ -4,6 +4,7 @@
 
 #include <mcbooster/GContainers.h>
 
+#include <goofit/detail/Complex.h>
 #include <goofit/GlobalCudaDefines.h>
 #include <goofit/PDFs/physics/detail/NormEvents_4Body_Base.h>
 
@@ -14,7 +15,7 @@ namespace GooFit {
     NormEvents_4Body_HostCached() = delete;
     NormEvents_4Body_HostCached(const NormEvents_4Body_HostCached& copyMe) = default;
     NormEvents_4Body_HostCached(NormEvents_4Body_HostCached&& moveMe) = default;
-    ~NormEvents_4Body_HostCached() override = default;
+    virtual ~NormEvents_4Body_HostCached() override = default;
     NormEvents_4Body_HostCached& operator=(const NormEvents_4Body_HostCached& copyMe) = default;
     NormEvents_4Body_HostCached& operator=(NormEvents_4Body_HostCached&& moveMe) = default;
 
@@ -23,11 +24,23 @@ namespace GooFit {
 				unsigned int numNormEventsToGenPerBatch,
 				const std::vector<mcbooster::GReal_t>& motherAndDaughterMasses);
 
-    __host__ virtual NormEvents_4Body_Batch getBatch(unsigned int batchNum) const override;
+    __host__ virtual fptype computeNorm_TD(
+				   bool noCachedNormValuesToCompute,
+				   const MixingTimeResolution* const resolution,
+				   fptype tau,
+				   fptype xmixing,
+				   fptype ymixing,
+				   unsigned int dalitzId,
+				   bool spinsCalculated,
+				   const std::vector<bool>& lineshapeChanged,
+				   const std::vector<unsigned int>& sfFunctionIndices,
+				   const std::vector<unsigned int>& lsFunctionIndices) override;
 
   protected:
 
   private:
+    unsigned int getNumAccBeforeThisBatch(unsigned int batchNum) const;
+
     std::vector<unsigned int> _numAccPerBatch;
     // store normalization events
     mcbooster::RealVector_h _norm_M12_h;
@@ -35,8 +48,9 @@ namespace GooFit {
     mcbooster::RealVector_h _norm_CosTheta12_h;
     mcbooster::RealVector_h _norm_CosTheta34_h;
     mcbooster::RealVector_h _norm_phi_h;
-
-    unsigned int getBatchOffset(unsigned int batchNum) const;
+    // store spin and lineshape values for normalization
+    mcbooster::RealVector_h _norm_SF_h;
+    mcbooster::mc_host_vector<fpcomplex> _norm_LS_h;
   };
 
 } // end namespace GooFit

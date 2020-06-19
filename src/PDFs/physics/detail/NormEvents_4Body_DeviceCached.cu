@@ -3,13 +3,29 @@
 
 namespace GooFit {
 
+  std::vector<NormEvents_4Body_Base*> NormEvents_4Body_DeviceCached::buildBatches(
+										  const std::vector<long>& normSeeds,
+										  unsigned int numNormEventsToGenPerBatch,
+										  const std::vector<mcbooster::GReal_t>& motherAndDaughterMasses)
+  {
+    std::vector<NormEvents_4Body_Base*> ret(normSeeds.size());
+    
+    for (int n = 0; n < normSeeds.size(); n++)
+    {
+      ret[n] = new NormEvents_4Body_DeviceCached(motherAndDaughterMasses,
+						 normSeeds[n],
+						 numNormEventsToGenPerBatch);
+    }
+    
+    return ret;
+  }
+
+
   __host__ NormEvents_4Body_DeviceCached::NormEvents_4Body_DeviceCached(
 									const std::vector<mcbooster::GReal_t>& motherAndDaughterMasses,
 									long normSeed,
 									unsigned int numNormEventsToGen)
   {
-    _numBatches = 1;
-
     _norm_M12_d = mcbooster::RealVector_d(0);
     _norm_M34_d = mcbooster::RealVector_d(0);
     _norm_CosTheta12_d = mcbooster::RealVector_d(0);
@@ -30,69 +46,6 @@ namespace GooFit {
 
     GOOFIT_INFO("# of accepted MC events used for normalization: {}", getNumAccNormEvents());
   }
-
-
-  /* for testing, to compare results with normevents_4body_hostcached */
-  /* __host__ NormEvents_4Body_DeviceCached::NormEvents_4Body_DeviceCached( */
-  /* 									const std::vector<mcbooster::GReal_t>& motherAndDaughterMasses, */
-  /* 									long normSeed, */
-  /* 									unsigned int numNormEventsToGen) */
-  /* { */
-  /*   _numBatches = 1; */
-  /*   _norm_M12_d = mcbooster::RealVector_d(0); */
-  /*   _norm_M34_d = mcbooster::RealVector_d(0); */
-  /*   _norm_CosTheta12_d = mcbooster::RealVector_d(0); */
-  /*   _norm_CosTheta34_d = mcbooster::RealVector_d(0); */
-  /*   _norm_phi_d = mcbooster::RealVector_d(0); */
-  /*   _norm_SF_d = mcbooster::RealVector_d(0); */
-  /*   _norm_LS_d = mcbooster::mc_device_vector<fpcomplex>(0); */
-
-  /*   unsigned int numAccSoFar = 0; */
-  /*   for (int b = 0; b < 3; b++) */
-  /*   { */
-  /*     mcbooster::RealVector_d temp_norm_M12_d(0); */
-  /*     mcbooster::RealVector_d temp_norm_M34_d(0); */
-  /*     mcbooster::RealVector_d temp_norm_CosTheta12_d(0); */
-  /*     mcbooster::RealVector_d temp_norm_CosTheta34_d(0); */
-  /*     mcbooster::RealVector_d temp_norm_phi_d(0); */
-
-  /*     unsigned int nAccThisBatch = NormEvents_4Body_Base::generate4BodyNormEvents(normSeed+b, */
-  /* 										  numNormEventsToGen, */
-  /* 										  motherAndDaughterMasses, */
-  /* 										  temp_norm_M12_d, */
-  /* 										  temp_norm_M34_d, */
-  /* 										  temp_norm_CosTheta12_d, */
-  /* 										  temp_norm_CosTheta34_d, */
-  /* 										  temp_norm_phi_d); */
-  /*     unsigned int numAccBeforeThisBatch = numAccSoFar; */
-  /*     numAccSoFar += nAccThisBatch; */
-
-  /*     _norm_M12_d.resize(numAccSoFar); */
-  /*     _norm_M34_d.resize(numAccSoFar); */
-  /*     _norm_CosTheta12_d.resize(numAccSoFar); */
-  /*     _norm_CosTheta34_d.resize(numAccSoFar); */
-  /*     _norm_phi_d.resize(numAccSoFar); */
-
-  /*     thrust::copy_n(temp_norm_M12_d.cbegin(), */
-  /* 		     nAccThisBatch, */
-  /* 		     _norm_M12_d.begin()+numAccBeforeThisBatch); */
-  /*     thrust::copy_n(temp_norm_M34_d.cbegin(), */
-  /*                    nAccThisBatch, */
-  /*                    _norm_M34_d.begin()+numAccBeforeThisBatch); */
-  /*     thrust::copy_n(temp_norm_CosTheta12_d.cbegin(), */
-  /*                    nAccThisBatch, */
-  /*                    _norm_CosTheta12_d.begin()+numAccBeforeThisBatch); */
-  /*     thrust::copy_n(temp_norm_CosTheta34_d.cbegin(), */
-  /*                    nAccThisBatch, */
-  /*                    _norm_CosTheta34_d.begin()+numAccBeforeThisBatch); */
-  /*     thrust::copy_n(temp_norm_phi_d.cbegin(), */
-  /*                    nAccThisBatch, */
-  /*                    _norm_phi_d.begin()+numAccBeforeThisBatch); */
-  /*   } */
-
-  /*   _totNumAccNormEvents = numAccSoFar; */
-  /*   GOOFIT_INFO("# of accepted MC events used for normalization: {}", getNumAccNormEvents()); */
-  /* } */
 
 
   __host__ fptype NormEvents_4Body_DeviceCached::computeNorm_TD(
@@ -161,7 +114,7 @@ namespace GooFit {
 							  _norm_SF_d,
 							  _norm_LS_d);
 
-    return normResult / _totNumAccNormEvents;
+    return normResult;
   }
 
 } // end namespace GooFit

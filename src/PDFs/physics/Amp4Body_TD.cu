@@ -46,6 +46,7 @@ class.
 #include <goofit/utilities/DebugTools.h>
 #include <goofit/PDFs/physics/detail/NormEvents_4Body_DeviceCached.h>
 #include <goofit/PDFs/physics/detail/NormEvents_4Body_HostCached.h>
+#include <goofit/MathUtils.h>
 
 #include <cstdarg>
 #include <map>
@@ -276,7 +277,7 @@ __host__ Amp4Body_TD::Amp4Body_TD(
 		Tres, 
 		efficiency, 
 		mistag, 
-		new NormEvents_4Body_HostCached(normSeeds, numNormEventsToGenPerBatch, decay.particle_masses))
+		NormEvents_4Body_HostCached::buildBatches(normSeeds, numNormEventsToGenPerBatch, decay.particle_masses))
 {
   GOOFIT_INFO("Built Amp4Body_TD model where the MC events used for normalization are stored on the host side.");
   GOOFIT_INFO("This may result in much longer computation times!");
@@ -303,25 +304,30 @@ __host__ Amp4Body_TD::Amp4Body_TD(
 		Tres,
 		efficiency, 
 		mistag, 
-		new NormEvents_4Body_DeviceCached(decay.particle_masses, normSeed, numNormEventsToGen))
+		NormEvents_4Body_DeviceCached::buildBatches({normSeed}, numNormEventsToGen, decay.particle_masses))
 {
 }
 
 
 // Does common initialization
 __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
-                                  std::vector<Observable> observables,
-                                  DecayInfo4t decay,
-                                  MixingTimeResolution *Tres,
-                                  GooPdf *efficiency,
-                                  Observable *mistag,
-				  NormEvents_4Body_Base* const normEvents)
-    : Amp4BodyBase("Amp4Body_TD", n)
-    , _DECAY_INFO(decay)
-    , _resolution(Tres)
-    , _totalEventSize(observables.size() + 2) // number of observables plus eventnumber
-    , _normEvents(std::unique_ptr<NormEvents_4Body_Base>(normEvents))
+				  std::vector<Observable> observables,
+				  DecayInfo4t decay,
+				  MixingTimeResolution *Tres,
+				  GooPdf *efficiency,
+				  Observable *mistag,
+				  const std::vector<NormEvents_4Body_Base*>& normEvents)
+  : Amp4BodyBase("Amp4Body_TD", n)
+  , _DECAY_INFO(decay)
+  , _resolution(Tres)
+  , _totalEventSize(observables.size() + 2) // number of observables plus eventnumber
 {
+  _normEvents.resize(normEvents.size());
+  for (int n = 0; n < normEvents.size(); n++)
+  {
+    _normEvents[n] = std::unique_ptr<NormEvents_4Body_Base>(normEvents[n]);
+  }
+
     // should include m12, m34, cos12, cos34, phi, eventnumber, dtime, sigmat. In this order!
     for(auto &observable : observables) {
         registerObservable(observable);
@@ -741,6 +747,17 @@ __host__ std::vector<bool> Amp4Body_TD::areAmplitudeComponentsChanged() const
 }
 
 
+__host__ int Amp4Body_TD::getNumAccNormEvents() const 
+{
+  unsigned int totNumAccNormEvents = 0;
+  for (auto const &n : _normEvents)
+  {
+    totNumAccNormEvents += n->getNumAccNormEvents();
+  }
+  return totNumAccNormEvents;
+}
+
+
 // this is where the actual magic happens. This function does all the calculations!
 __host__ fptype Amp4Body_TD::normalize() 
 {
@@ -772,18 +789,24 @@ __host__ fptype Amp4Body_TD::normalize()
     fptype tau     = parametersList[0];
     fptype xmixing = parametersList[1];
     fptype ymixing = parametersList[2];
-    
-    ret = _normEvents->computeNorm_TD(
-				      noCachedNormValuesToCompute,
-				      _resolution,
-				      tau,
-				      xmixing,
-				      ymixing,
-				      getFunctionIndex(),			
-				      _SpinsCalculated,
-				      lineshapeChanged,
-				      getSFFunctionIndices(),
-				      getLSFunctionIndices());
+
+    std::vector<fptype> normResults(_normEvents.size());
+    for (int n = 0; n < _normEvents.size(); n++)
+    {
+      normResults[n] = _normEvents[n]->computeNorm_TD(
+						      noCachedNormValuesToCompute,
+						      _resolution,
+						      tau,
+						      xmixing,
+						      ymixing,
+						      getFunctionIndex(),			
+						      _SpinsCalculated,
+						      lineshapeChanged,
+						      getSFFunctionIndices(),
+						      getLSFunctionIndices());
+    }
+    fptype normResultsSum = MathUtils::doNeumaierSummation(normResults);
+    ret = normResultsSum / getNumAccNormEvents();
   }
  
   _SpinsCalculated = true;

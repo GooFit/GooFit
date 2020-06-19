@@ -18,6 +18,11 @@ namespace GooFit {
     NormEvents_4Body_DeviceCached& operator=(const NormEvents_4Body_DeviceCached& copyMe) = default;
     NormEvents_4Body_DeviceCached& operator=(NormEvents_4Body_DeviceCached&& moveMe) = default;
 
+    static std::vector<NormEvents_4Body_Base*> buildBatches(
+                                                            const std::vector<long>& normSeeds,
+                                                            unsigned int numNormEventsToGenPerBatch,
+                                                            const std::vector<mcbooster::GReal_t>& motherAndDaughterMasses);
+
     __host__ NormEvents_4Body_DeviceCached(
 				  const std::vector<mcbooster::GReal_t>& motherAndDaughterMasses,
 				  long normSeed,

@@ -73,7 +73,7 @@ class Amp4Body_TD final : public Amp4BodyBase {
 
     __host__ void setForceIntegrals(bool f = true) { _forceRedoIntegrals = f; }
 
-    __host__ int getNumAccNormEvents() const { return _normEvents->getNumAccNormEvents(); } 
+    __host__ int getNumAccNormEvents() const;
 
     __host__ void setGenerationOffset(int off) { generation_offset = off; }
 
@@ -101,7 +101,7 @@ class Amp4Body_TD final : public Amp4BodyBase {
 			 MixingTimeResolution *Tres,
 			 GooPdf *efficiency,
 			 Observable *mistag,
-			 NormEvents_4Body_Base* const normEvents);
+			 const std::vector<NormEvents_4Body_Base*>& normEvents);
     // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the
     // coherent sum. The caching method requires that it be done this way or the ProdPdf
     // normalization will get *really* confused and give wrong answers.
@@ -122,7 +122,7 @@ class Amp4Body_TD final : public Amp4BodyBase {
     std::vector<SFCalculator_TD *> _sfcalculators;
     std::vector<LSCalculator_TD *> _lscalculators;
     unsigned int efficiencyFunction;
-    const std::unique_ptr<NormEvents_4Body_Base> _normEvents;
+    std::vector<std::unique_ptr<NormEvents_4Body_Base>> _normEvents;
     const DecayInfo4t _DECAY_INFO;
     MixingTimeResolution* _resolution;
     // Following variables are useful if masses and widths, involved in difficult BW calculation,

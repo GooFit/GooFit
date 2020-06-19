@@ -22,8 +22,6 @@ namespace GooFit {
 
     int getNumAccNormEvents() const { return _totNumAccNormEvents; } 
 
-    int getNumBatches() const { return _numBatches; }
-
     __host__ virtual fptype computeNorm_TD(
 					   bool noCachedNormValuesToCompute,
 					   const MixingTimeResolution* const resolution,
@@ -85,7 +83,6 @@ namespace GooFit {
 					     mcbooster::mc_device_vector<fpcomplex>& batchLS_d);
 
     unsigned int _totNumAccNormEvents;
-    unsigned int _numBatches;
 
   private:
   };

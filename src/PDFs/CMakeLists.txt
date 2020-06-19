@@ -15,6 +15,7 @@ set(GOOPDF_FILE_LISTING
     ParameterContainer.cu
     PdfBase.cu
     utilities/VariableBinTransform1DPdf.cu
+    utilities/DebugTools.cu
     ${GOOFIT_PDF_HEADERS}
     )
 

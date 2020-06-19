@@ -221,4 +221,38 @@ std::ostream &operator<<(std::ostream &out, const PdfBase &pdf) {
     return out;
 }
 
+
+bool PdfBase::areParamsandConstantsEqualByVal(const PdfBase& other) const 
+{
+  if (this->getParameters().size() != other.getParameters().size())
+  {
+    return false;
+  }
+  for (int p = 0; p < this->getParameters().size(); p++)
+  {
+    Variable thisParam = this->getParameters()[p];
+    Variable otherParam = other.getParameters()[p];
+    if (!thisParam.isEqualNameValLimits(otherParam))
+    {
+      return false;
+    }
+  }
+
+  if (this->constantsList.size() != other.constantsList.size())
+  {
+    return false;
+  }
+  for (int c = 0; c < this->constantsList.size(); c++)
+  {
+    fptype thisConst = this->constantsList[c];
+    fptype otherConst = other.constantsList[c];
+    if (thisConst != otherConst)
+    {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 } // namespace GooFit

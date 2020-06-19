@@ -45,6 +45,11 @@ goofit_add_library(FunctorWriter
     ${PROJECT_SOURCE_DIR}/include/goofit/FunctorWriter.h
     )
 
+goofit_add_library(MathUtils
+    MathUtils.cpp
+    ${PROJECT_SOURCE_DIR}/include/goofit/MathUtils.h
+    )
+
 goofit_add_library(Application
     Application.cpp
     ${PROJECT_SOURCE_DIR}/include/goofit/Application.h
@@ -82,6 +87,7 @@ set(lib_list
     FitManager2
     DataSet
     Variable
+    MathUtils
     )
 
 if(ROOT_FOUND)

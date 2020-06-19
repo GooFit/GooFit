@@ -5,7 +5,7 @@
 namespace GooFit {
 namespace Lineshapes {
 
-class LASS : public Lineshape {
+class LASS final : public Lineshape {
   public:
     LASS(std::string name,
          Variable mass,
@@ -16,6 +16,8 @@ class LASS : public Lineshape {
          fptype radius = 1.5);
 
     ~LASS() override = default;
+
+    virtual bool isEqualByValue(const Lineshape& other) const override;
 };
 
 } // namespace Lineshapes

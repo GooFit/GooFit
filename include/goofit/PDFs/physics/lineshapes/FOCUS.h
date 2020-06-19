@@ -5,7 +5,7 @@
 namespace GooFit {
 namespace Lineshapes {
 
-class FOCUS : public Lineshape {
+class FOCUS final : public Lineshape {
   public:
     enum class Mod { Kpi = 0, KEta, I32 };
 
@@ -19,6 +19,8 @@ class FOCUS : public Lineshape {
           fptype radius = 1.5);
 
     ~FOCUS() override = default;
+
+    virtual bool isEqualByValue(const Lineshape& other) const override;
 };
 
 } // namespace Lineshapes

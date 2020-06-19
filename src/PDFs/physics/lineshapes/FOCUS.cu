@@ -92,4 +92,10 @@ Lineshapes::FOCUS::FOCUS(std::string name,
     initialize();
 }
 
+
+bool Lineshapes::FOCUS::isEqualByValue(const Lineshape& other) const
+{
+  return this->Lineshape::isEqualByValue(other);
+}
+
 } // namespace GooFit

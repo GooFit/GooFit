@@ -162,4 +162,10 @@ Lineshapes::GSpline::GSpline(std::string name,
     initialize();
 }
 
+
+bool Lineshapes::GSpline::isEqualByValue(const Lineshape& other) const 
+{
+  return this->Lineshape::isEqualByValue(other);
+}
+
 } // namespace GooFit

@@ -5,7 +5,7 @@
 namespace GooFit {
 namespace Lineshapes {
 
-class One : public Lineshape {
+class One final : public Lineshape {
   public:
     One(std::string name,
         Variable mass,
@@ -16,6 +16,8 @@ class One : public Lineshape {
         fptype radius = 1.5);
 
     ~One() override = default;
+
+    virtual bool isEqualByValue(const Lineshape& other) const override;
 };
 
 } // namespace Lineshapes

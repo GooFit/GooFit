@@ -17,6 +17,7 @@ goofit_add_library(_Physics STATIC
     ThreeGaussResolution.cpp
     TruthResolution.cpp
     SquareDalitzEffPdf.cpp
+    StaircasePdf.cpp
 )
 
 target_link_libraries(_Physics PRIVATE _goofit_python)

@@ -217,18 +217,20 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
 
     // fptype mistag = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 5]);
 
-    if(mistag > 0) { // This should be either true or false for all events, so no branch is caused.
+    mistag = evt[id_mis];
+
+    //if(mistag > 0) { // This should be either true or false for all events, so no branch is caused.
         // See header file for explanation of 'mistag' variable - it is actually the probability
         // of having the correct sign, given that we have a correctly reconstructed D meson.
-        mistag = evt[id_mis];
-        ret *= mistag;
+        //mistag = evt[id_mis];
+        ret *= (1 - mistag);
         // The following formats differently in clang-format 8
         // clang-format off
-        ret += (1 - mistag)
+        ret += mistag
                * (*(reinterpret_cast<device_resfunction_ptr>(d_function_table[pc.funcIdx])))(
                     term1, -term2, sumWavesA.real(), -sumWavesA.imag(), _tau, _time, _xmixing, _ymixing, _sigma, pc);
         // clang-format on
-    }
+    //}
 
     // increment our resolution function
     pc.incrementIndex();

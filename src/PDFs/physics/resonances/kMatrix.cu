@@ -60,6 +60,8 @@ __device__ fpcomplex kMatrixRes(fptype m12, fptype m13, fptype m23, ParameterCon
     fptype hMass      = 0.54775;  // using PDG value
     fptype hprimeMass = 0.95778;
 
+    printf("test 0");
+
     // Invariant mass squared of resonant particles (pi+ pi- = m23)
     fptype rMassSq = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
 
@@ -89,6 +91,7 @@ __device__ fpcomplex kMatrixRes(fptype m12, fptype m13, fptype m23, ParameterCon
     Fsc_matrix[4]  = 0.35412;
     Fsc_matrix[20] = 0.35412;
 
+    printf("test 1");
     // all other terms are zero
     for(int i = 1; i <= 4; i++) {
         for(int j = 1; j <= 4; j++) {
@@ -172,27 +175,39 @@ __device__ fpcomplex kMatrixRes(fptype m12, fptype m13, fptype m23, ParameterCon
     // Calculating pseudo propagator (I - iKp)^-1
     // Calculating Phase Spaces (p = \rho)
     fpcomplex rho[5];
+    printf("test 1.9");
     for(int d = 0; d <= 4; d++) {
         rho[d] = fpcomplex(0.0, 0.0);
+        printf("rho[%i] = (%f,%f)\n", d, rho[d].real(), rho[d].imag());
     }
 
+    printf("test 2");
     rho[0] = rhoF(2 * pionMass, rMassSq);
+    printf("rho[0] = (%f,%f)\n", rho[0].real(), rho[0].imag());
     rho[1] = rhoF(2 * kMass, rMassSq);
+    printf("rho[1] = (%f,%f)\n", rho[1].real(), rho[1].imag());
     rho[2] = rhoFourPiF(pionMass, rMassSq);
+    printf("rho[2] = (%f,%f)\n", rho[2].real(), rho[2].imag());
     rho[3] = rhoF(2 * hMass, rMassSq);
+    printf("rho[3] = (%f,%f)\n", rho[3].real(), rho[3].imag());
     rho[4] = rhoF(hMass + hprimeMass, rMassSq);
+    printf("rho[4] = (%f,%f)\n", rho[4].real(), rho[4].imag());
 
     // Multiplying iK by diagonal -p matrix
     for(irow = 0; irow <= 4; irow++) {
         for(jcol = 0; jcol <= 4; jcol++) {
             iK_matrix[5 * irow + jcol] *= rho[irow];
             iK_matrix[5 * irow + jcol] *= -1;
+            printf("irow = %i, jcol = %i\n", irow, jcol);
         }
     }
     // Adding Identity matrix to obtain I-iKp
     for(int d = 0; d < 5; d++) {
+        printf("d = %i\n", d);
         iK_matrix[d * 6] = fpcomplex(smallTerm * 1.0, 0.0) + iK_matrix[d * 6];
+        printf("iK_matrix = (%f,%f)\n", iK_matrix[d * 6].real(), iK_matrix[d * 6].imag());
     }
+    printf("test 2.5");
     // Explicitly Defining Matrix to be Inverted
     fpcomplex n11 = iK_matrix[0];
     fpcomplex n12 = iK_matrix[1];
@@ -206,23 +221,29 @@ __device__ fpcomplex kMatrixRes(fptype m12, fptype m13, fptype m23, ParameterCon
     fpcomplex n24 = iK_matrix[8];
     fpcomplex n25 = iK_matrix[9];
 
+    printf("test 2.5.0");
     fpcomplex n31 = iK_matrix[10];
     fpcomplex n32 = iK_matrix[11];
     fpcomplex n33 = iK_matrix[12];
     fpcomplex n34 = iK_matrix[13];
     fpcomplex n35 = iK_matrix[14];
+    printf("test 2.5.1");
 
     fpcomplex n41 = iK_matrix[15];
     fpcomplex n42 = iK_matrix[16];
     fpcomplex n43 = iK_matrix[17];
     fpcomplex n44 = iK_matrix[18];
     fpcomplex n45 = iK_matrix[19];
+    printf("test 2.5.2\n");
 
     fpcomplex n51 = iK_matrix[20];
     fpcomplex n52 = iK_matrix[21];
     fpcomplex n53 = iK_matrix[22];
     fpcomplex n54 = iK_matrix[23];
+    printf("test 2.5.3\n");
     fpcomplex n55 = iK_matrix[24];
+    printf("n55 =(%f,%f)\n", n55.real(), n55.imag());
+
     // Computing elements of the first row of (I-iKp)^-1
     // Formulae for inverted matrix elements obtained from Maple
 
@@ -232,6 +253,7 @@ __device__ fpcomplex kMatrixRes(fptype m12, fptype m13, fptype m23, ParameterCon
     fpcomplex inv14(0.0, 0.0);
     fpcomplex inv15(0.0, 0.0);
 
+    printf("test 3");
     inv11 += (n25 * n34 * n43 * n52 - n24 * n35 * n43 * n52 - n25 * n33 * n44 * n52 + n23 * n35 * n44 * n52
               + n24 * n33 * n45 * n52 - n23 * n34 * n45 * n52 - n25 * n34 * n42 * n53 + n24 * n35 * n42 * n53
               + n25 * n32 * n44 * n53 - n22 * n35 * n44 * n53 - n24 * n32 * n45 * n53 + n22 * n34 * n45 * n53
@@ -471,6 +493,7 @@ __device__ fpcomplex kMatrixRes(fptype m12, fptype m13, fptype m23, ParameterCon
     // **** Loop over six components (beta1-5, fprod)
     // ****************************************************
 
+    printf("test 4");
     fptype temp = smallTerm * (1.0 - Spr0) / (rMassSq - Spr0);
 
     // Running total
@@ -484,7 +507,7 @@ __device__ fpcomplex kMatrixRes(fptype m12, fptype m13, fptype m23, ParameterCon
 
     fpcomplex _beta_amp;
 
-    pc.incrementIndex(1, 37, 3, 0, 1);
+    pc.incrementIndex(1, 38, 2, 0, 1);
 
     for(int term = 0; term < 6; term++) { // 0: fprod, 1-5: beta1-5
 
@@ -545,6 +568,7 @@ __device__ fpcomplex kMatrixRes(fptype m12, fptype m13, fptype m23, ParameterCon
 
         F0_all += F0;
     }
+    printf("test 5");
 
     return F0_all;
 }

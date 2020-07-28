@@ -7,7 +7,7 @@ namespace GooFit {
 
 class StaircasePdf : public GooPdf {
  public:
-  StaircasePdf (std::string n, Observable _x, std::vector<Variable> x0list);
+  StaircasePdf (std::string n, Observable _x, std::vector<Variable*> x0list);
 
  private:
 };

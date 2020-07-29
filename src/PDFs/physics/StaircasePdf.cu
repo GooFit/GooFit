@@ -19,8 +19,6 @@ __device__ fptype device_Staircase (fptype* evt, ParameterContainer &pc)
 
   fptype ret = 0;
 
-  pc.incrementIndex(1, 8, num_constants, num_observables, 1);
-
   for(unsigned int i = 0; i < num_parameters; i++)
   {
     fptype param = pc.getParameter(i);
@@ -31,6 +29,9 @@ __device__ fptype device_Staircase (fptype* evt, ParameterContainer &pc)
     }
   }
 
+  pc.incrementIndex(1, num_parameters, num_constants, num_observables, 1);
+
+
   return ret;
 }
 
@@ -38,15 +39,15 @@ __device__ device_function_ptr ptr_to_Staircase = device_Staircase;
 device_function_ptr hptr_to_Staircase = device_Staircase;
 
 __host__ StaircasePdf::StaircasePdf(std::string n, Observable _x, std::vector<Variable*> x0list)
-  : GooPdf("StaircasePdf", n) 
+  : GooPdf("StaircasePdf", n, _x) 
 {
 
-  registerObservable(_x);
+  //registerObservable(_x);
 
   for(Variable* &x0: x0list)
     registerParameter(*x0);
 
-  registerConstant(x0list.size());
+  //registerConstant(x0list.size());
   
   registerFunction("ptr_to_Staircase", ptr_to_Staircase);
 

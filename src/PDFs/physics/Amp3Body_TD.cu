@@ -298,10 +298,10 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
     cacheToUse            = cacheCount++;
     registerConstant(cacheToUse);
 
-    if(mistag == nullptr)
-        registerConstant(1);
-    else
-        registerConstant(0);
+    //if(mistag == nullptr)
+    //    registerConstant(1);
+    //else
+    registerConstant(0);
 
     for(auto &resonance : decay.resonances) {
         registerParameter(resonance->amp_real);
@@ -394,10 +394,10 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
     cacheToUse            = cacheCount++;
     registerConstant(cacheToUse);
 
-    if(mistag)
-        registerConstant(1);
-    else
-        registerConstant(0);
+    //if(mistag)
+    registerConstant(1);
+    //else
+    //    registerConstant(0);
 
     registerConstant(SPECIAL_RESOLUTION_FLAG);
 

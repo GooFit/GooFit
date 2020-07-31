@@ -5,13 +5,14 @@
 #define NCHANNELS 5
 
 namespace GooFit {
-__device__ fptype phsp_twoBody(fptype s, fptype m0, fptype m1);
+__device__ fpcomplex phsp_twoBody(fptype s, fptype m0, fptype m1);
 
-__device__ fptype phsp_fourPi(fptype s);
+__device__ fpcomplex phsp_fourPi(fptype s);
 
-__device__ Eigen::Array<fpcomplex, NCHANNELS, NCHANNELS>
+__device__ void
 getPropagator(const Eigen::Array<fptype, NCHANNELS, NCHANNELS> &kMatrix,
-              const Eigen::Matrix<fptype, 5, 1> &phaseSpace,
+              const Eigen::Matrix<fpcomplex, 5, 1> &phaseSpace,
+              Eigen::Matrix<fpcomplex, NCHANNELS, NCHANNELS> &F,
               fptype adlerTerm);
 
 } // namespace GooFit

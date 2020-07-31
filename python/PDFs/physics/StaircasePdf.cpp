@@ -11,7 +11,7 @@ using namespace GooFit;
 
 void init_StaircasePdf(py::module &m) {
   py::class_<StaircasePdf, GooPdf>(m, "StaircasePdf")
-    .def(py::init<std::string, Observable, std::vector<Variable*>>(),
+    .def(py::init<std::string, Observable, std::vector<Variable>>(),
 	 "name"_a,
 	 "_x"_a,
 	 "x0list"_a);

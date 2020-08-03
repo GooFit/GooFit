@@ -8,18 +8,13 @@ namespace GooFit {
 
 __device__ fptype device_Staircase (fptype* evt, ParameterContainer &pc)
 {
-  int num_constants   = pc.getNumConstants();
-  int num_parameters  = pc.getNumParameters();
-  int num_observables = pc.getNumObservables();
-
-  int numComps = pc.getConstant(0);
 
   int id = pc.getObservable(0);
   fptype x   = RO_CACHE(evt[id]);
 
   fptype ret = 0;
 
-  for(unsigned int i = 0; i < num_parameters; i++)
+  for(unsigned int i = 0; i < 2; i++)
   {
     fptype param = pc.getParameter(i);
     if(x < param)
@@ -29,8 +24,7 @@ __device__ fptype device_Staircase (fptype* evt, ParameterContainer &pc)
     }
   }
 
-  pc.incrementIndex(1, num_parameters, num_constants, num_observables, 1);
-
+  pc.incrementIndex(1, 2, 0, 0, 1);
 
   return ret;
 }
@@ -38,17 +32,13 @@ __device__ fptype device_Staircase (fptype* evt, ParameterContainer &pc)
 __device__ device_function_ptr ptr_to_Staircase = device_Staircase;
 device_function_ptr hptr_to_Staircase = device_Staircase;
 
-__host__ StaircasePdf::StaircasePdf(std::string n, Observable _x, std::vector<Variable*> x0list)
+__host__ StaircasePdf::StaircasePdf(std::string n, Observable _x, std::vector<Variable> x0list)
   : GooPdf("StaircasePdf", n, _x) 
 {
 
-  //registerObservable(_x);
+  for(Variable &x0: x0list)
+    registerParameter(x0);
 
-  for(Variable* &x0: x0list)
-    registerParameter(*x0);
-
-  //registerConstant(x0list.size());
-  
   registerFunction("ptr_to_Staircase", ptr_to_Staircase);
 
   initialize();

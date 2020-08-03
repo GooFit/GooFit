@@ -223,7 +223,7 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
     fptype yfix   = 0.0065;
     fptype taufix = 0.4101;
 
-    //if(mistag > 0) { // This should be either true or false for all events, so no branch is caused.
+    if(mistag > 0) { // This should be either true or false for all events, so no branch is caused.
         // See header file for explanation of 'mistag' variable - it is actually the probability
         // of having the correct sign, given that we have a correctly reconstructed D meson.
         //mistag = evt[id_mis];
@@ -238,7 +238,7 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
                     term1, term2, sumWavesA.real(), sumWavesA.imag(), taufix, _time, xfix, yfix, _sigma, pc);
 
         // clang-format on
-    //}
+    }
 
     // increment our resolution function
     pc.incrementIndex();

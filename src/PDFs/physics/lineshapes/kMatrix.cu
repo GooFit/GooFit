@@ -66,7 +66,7 @@ __device__ fpcomplex kMatrixFunction(fptype Mpair, fptype m1, fptype m2, Paramet
 
     fptype adlerTerm = (1. - sA0) * (s - sA * mPiPlus * mPiPlus / 2) / (s - sA0);
 
-    Eigen::Matrix<fptype, 5, 1> phaseSpace;
+    Eigen::Matrix<fpcomplex, 5, 1> phaseSpace;
     phaseSpace << phsp_twoBody(s, mPiPlus, mPiPlus), phsp_twoBody(s, mKPlus, mKPlus), phsp_fourPi(s),
         phsp_twoBody(s, mEta, mEta), phsp_twoBody(s, mEta, mEtap);
 

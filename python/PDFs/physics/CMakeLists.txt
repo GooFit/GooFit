@@ -17,6 +17,7 @@ goofit_add_library(_Physics STATIC
     ThreeGaussResolution.cpp
     TruthResolution.cpp
     SquareDalitzEffPdf.cpp
+    StaircasePdf.cpp
 )
 
 target_link_libraries(_Physics PRIVATE _goofit_python)
@@ -34,3 +35,4 @@ goofit_add_python_docs(_Physics PDFs/physics/resonances/Resonance.h)
 goofit_add_python_docs(_Physics PDFs/physics/ThreeGaussResolution.h)
 goofit_add_python_docs(_Physics PDFs/physics/TruthResolution.h)
 goofit_add_python_docs(_Physics PDFs/physics/SquareDalitzEffPdf.h)
+goofit_add_python_docs(_Physics PDFs/physics/StaircasePdf.h)

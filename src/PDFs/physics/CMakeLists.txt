@@ -29,6 +29,7 @@ goofit_add_pdf_library(PDFPhysics
     ThreeGaussResolution.cu
     TruthResolution.cu
     SquareDalitzEffPdf.cu
+    StaircasePdf.cu
 
     detail/AmpCalc.cu
     detail/AmpCalc_TD.cu

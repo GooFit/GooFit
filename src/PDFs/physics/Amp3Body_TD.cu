@@ -218,6 +218,7 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
     // fptype mistag = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 5]);
 
     mistag = evt[id_mis];
+    //mistag = 0;
 
     fptype xfix   = 0.0039;
     fptype yfix   = 0.0065;
@@ -268,6 +269,7 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
     , _m12(m12)
     , _m13(m13)
     , resolution(r)
+    , _mistag(*mistag)
     , totalEventSize(6) // Default 5 = m12, m13, time, sigma_t, evtNum
 {
     for(auto &cachedWave : cachedWaves)
@@ -369,6 +371,7 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
     , _m13(m13)
     , resolution(
           r[0]) // Only used for normalization, which only depends on x and y - it doesn't matter which one we use.
+    , _mistag(*mistag)
     , totalEventSize(6) // This case adds the D0 mass by default.
 {
     for(auto &cachedWave : cachedWaves)
@@ -718,6 +721,16 @@ __host__ fptype Amp3Body_TD::normalize() {
 
     //fptype _D0Fraction = 0.5; // Set D0 fraction to 1 for now.
     fptype ret = _D0Fraction * ret_D0 + (1. - _D0Fraction) * ret_D0bar;
+
+    fptype xfix   = 0.0039;
+    fptype yfix   = 0.0065;
+    fptype taufix = 0.4101;
+
+    ret *= (1-2*_mistag.getValue());
+    ret += _mistag.getValue() * resolution->normalization(
+        dalitzIntegralOne, dalitzIntegralTwo, dalitzIntegralThr, dalitzIntegralFou, taufix, xfix, yfix);
+    ret += _mistag.getValue() * resolution->normalization(
+        dalitzIntegralTwo, dalitzIntegralOne, dalitzIntegralThr, -dalitzIntegralFou, taufix, xfix, yfix);
 
     double binSizeFactor = 1;
     binSizeFactor *= ((_m12.getUpperLimit() - _m12.getLowerLimit()) / _m12.getNumBins());

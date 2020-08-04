@@ -137,6 +137,7 @@ class Amp3Body_TD : public Amp3BodyBase {
     DecayInfo3t decayInfo;
     Observable _m12;
     Observable _m13;
+    Observable _mistag;
     fptype *dalitzNormRange{nullptr};
 
     // Following variables are useful if masses and widths, involved in difficult BW calculation,

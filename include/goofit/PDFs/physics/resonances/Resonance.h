@@ -24,9 +24,9 @@ __device__ fptype spinFactor(unsigned int spin,
                              fptype m23,
                              unsigned int cyclic_index);
 
-__device__ fpcomplex phsp_twoBody(fptype s, fptype m0, fptype m1);
+__device__ fptype phsp_twoBody(fptype s, fptype m0, fptype m1);
 
-__device__ fpcomplex phsp_fourPi(fptype s);
+__device__ fptype phsp_fourPi(fptype s);
 
 __device__ Eigen::Array<fpcomplex, NCHANNELS, NCHANNELS>
 getPropagator(const Eigen::Array<fptype, NCHANNELS, NCHANNELS> &kMatrix,

@@ -10,31 +10,164 @@
 namespace GooFit {
 
 // For kMatrix
-__device__ fptype phsp_twoBody(fptype s, fptype m0, fptype m1) { return sqrt(1. - POW2(m0 + m1) / s); }
-
-__device__ fptype phsp_fourPi(fptype s) {
-    if(s > 1)
-        return phsp_twoBody(s, 2 * mPiPlus, 2 * mPiPlus);
+__device__ fpcomplex phsp_twoBody(fptype s, fptype m0, fptype m1) {
+    if(1. - POW2(m0 + m1) / s > 0)
+        return fpcomplex(sqrt(1. - POW2(m0 + m1) / s), 0);
     else
-        return 0.00051 + -0.01933 * s + 0.13851 * s * s + -0.20840 * s * s * s + -0.29744 * s * s * s * s
-               + 0.13655 * s * s * s * s * s + 1.07885 * s * s * s * s * s * s;
+        return fpcomplex(0, sqrt(-(1. - POW2(m0 + m1) / s)));
 }
 
-__device__ Eigen::Array<fpcomplex, NCHANNELS, NCHANNELS>
-getPropagator(const Eigen::Array<fptype, NCHANNELS, NCHANNELS> &kMatrix,
-              const Eigen::Matrix<fptype, 5, 1> &phaseSpace,
+__device__ fpcomplex phsp_fourPi(fptype s) {
+    if(s > 1)
+        return phsp_twoBody(s, 2 * mPiPlus, 2 * mPiPlus);
+    else if(0.00051 + -0.01933 * s + 0.13851 * s * s + -0.20840 * s * s * s + -0.29744 * s * s * s * s
+                + 0.13655 * s * s * s * s * s + 1.07885 * s * s * s * s * s * s
+            >= 0)
+        return fpcomplex(0.00051 + -0.01933 * s + 0.13851 * s * s + -0.20840 * s * s * s + -0.29744 * s * s * s * s
+                             + 0.13655 * s * s * s * s * s + 1.07885 * s * s * s * s * s * s,
+                         0);
+    else
+        return fpcomplex(0,
+                         0.00051 + -0.01933 * s + 0.13851 * s * s + -0.20840 * s * s * s + -0.29744 * s * s * s * s
+                             + 0.13655 * s * s * s * s * s + 1.07885 * s * s * s * s * s * s);
+}
+
+__device__ void getCofactor(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex temp[NCHANNELS][NCHANNELS], int p, int q, int n) 
+{ 
+    int i = 0, j = 0; 
+  
+    // Looping for each element of the matrix 
+    for (int row = 0; row < n; row++) 
+    { 
+        for (int col = 0; col < n; col++) 
+        { 
+            //  Copying into temporary matrix only those element 
+            //  which are not in given row and column 
+            if (row != p && col != q) 
+            { 
+                temp[i][j++] = A[row][col]; 
+  
+                // Row is filled, so increase row index and 
+                // reset col index 
+                if (j == n - 1) 
+                { 
+                    j = 0; 
+                    i++; 
+                } 
+            } 
+        } 
+    } 
+} 
+  
+/* Recursive function for finding determinant of matrix. 
+   n is current dimension of A[][]. */
+__device__ fpcomplex determinant(fpcomplex A[NCHANNELS][NCHANNELS], int n) 
+{ 
+    fpcomplex D = 0; // Initialize result 
+  
+    //  Base case : if matrix contains single element 
+    if (n == 1) 
+        return A[0][0]; 
+  
+    fpcomplex temp[NCHANNELS][NCHANNELS]; // To store cofactors 
+  
+    int sign = 1;  // To store sign multiplier 
+  
+     // Iterate for each element of first row 
+    for (int f = 0; f < n; f++) 
+    { 
+        // Getting Cofactor of A[0][f] 
+        getCofactor(A, temp, 0, f, n); 
+        D += fptype(sign) * A[0][f] * determinant(temp, n - 1); 
+  
+        // terms are to be added with alternate sign 
+        sign = -sign; 
+    } 
+  
+    return D; 
+} 
+  
+// Function to get adjoint of A[N][N] in adj[N][N]. 
+__device__ void adjoint(fpcomplex A[NCHANNELS][NCHANNELS],fpcomplex adj[NCHANNELS][NCHANNELS]) 
+{ 
+    if (NCHANNELS == 1) 
+    { 
+        adj[0][0] = 1; 
+        return; 
+    } 
+  
+    // temp is used to store cofactors of A[][] 
+    int sign = 1; 
+    fpcomplex temp[NCHANNELS][NCHANNELS]; 
+  
+    for (int i=0; i<NCHANNELS; i++) 
+    { 
+        for (int j=0; j<NCHANNELS; j++) 
+        { 
+            // Get cofactor of A[i][j] 
+            getCofactor(A, temp, i, j, NCHANNELS); 
+  
+            // sign of adj[j][i] positive if sum of row 
+            // and column indexes is even. 
+            sign = ((i+j)%2==0)? 1: -1; 
+  
+            // Interchanging rows and columns to get the 
+            // transpose of the cofactor matrix 
+            adj[j][i] = fptype(sign)*(determinant(temp, NCHANNELS-1)); 
+        } 
+    } 
+} 
+  
+// Function to calculate and store inverse, returns false if 
+// matrix is singular 
+__device__ bool inverse(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex inverse[NCHANNELS][NCHANNELS]) 
+{ 
+    // Find determinant of A[][] 
+    fpcomplex det = determinant(A, NCHANNELS); 
+    if (det == fpcomplex(0,0)) 
+    { 
+        printf("Singular matrix, can't find its inverse"); 
+        return false; 
+    } 
+  
+    // Find adjoint 
+    fpcomplex adj[NCHANNELS][NCHANNELS]; 
+    adjoint(A, adj); 
+  
+    // Find Inverse using formula "inverse(A) = adj(A)/det(A)" 
+    for (int i=0; i<NCHANNELS; i++) 
+        for (int j=0; j<NCHANNELS; j++) 
+            inverse[i][j] = adj[i][j]/det; 
+  
+    return true; 
+} 
+
+__device__ void
+getPropagator(const fptype kMatrix[NCHANNELS][NCHANNELS],
+              const fpcomplex phaseSpace[NCHANNELS],
+              fpcomplex F[NCHANNELS][NCHANNELS],
               fptype adlerTerm) {
-    Eigen::Array<fpcomplex, NCHANNELS, NCHANNELS> tMatrix;
+    fpcomplex tMatrix[NCHANNELS][NCHANNELS];
 
     for(unsigned int i = 0; i < NCHANNELS; ++i) {
         for(unsigned int j = 0; j < NCHANNELS; ++j) {
-            tMatrix(i, j) = (i == j ? 1. : 0.) - fpcomplex(0, adlerTerm) * kMatrix(i, j) * phaseSpace(j);
+            tMatrix[i][j] = (i == j ? 1. : 0.) - fpcomplex(0, adlerTerm) * kMatrix[i][j] * phaseSpace[j];
+            //printf("tMatrix(%i,%i) = (%f,%f), kMatrix(%i,%i) = %f, phaseSpace = (%f,%f) \n",
+            //       i,
+            //       j,
+            //       tMatrix[i][j].real(),
+            //       tMatrix[i][j].imag(),
+            //       i,
+            //       j,
+            //       kMatrix[i][j],
+            //       phaseSpace[j].real(),
+            //       phaseSpace[j].imag());
         }
     }
 
-#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-    // Here we assume that some values are 0
-    return compute_inverse5<-1,
+/*#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
+// Here we assume that some values are 0
+    F = compute_inverse5<-1,
                             -1,
                             0,
                             -1,
@@ -60,8 +193,10 @@ getPropagator(const Eigen::Array<fptype, NCHANNELS, NCHANNELS> &kMatrix,
                             -1,
                             -1>(tMatrix);
 #else
-    return Eigen::inverse(tMatrix);
-#endif
+*/
+    inverse(tMatrix,F);
+return;
+//#endif
 }
 
 } // namespace GooFit

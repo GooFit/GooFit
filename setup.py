@@ -30,7 +30,9 @@ setup(
     url="https://goofit.github.io",
     platforms=["POSIX"],
     provides=["goofit"],
-    install_requires=["numpy>=1.11.1",],
+    install_requires=[
+        "numpy>=1.11.1",
+    ],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Science/Research",

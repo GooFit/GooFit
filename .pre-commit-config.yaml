@@ -1,11 +1,11 @@
 exclude: '^.ci/azure-wheel-helpers/*'
 repos:
 - repo: https://github.com/psf/black
-  rev: 19.10b0
+  rev: 20.8b1
   hooks:
   - id: black
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v2.5.0
+  rev: v3.2.0
   hooks:
   - id: check-added-large-files
   - id: mixed-line-ending

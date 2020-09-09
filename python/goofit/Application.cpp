@@ -23,6 +23,10 @@ void init_Application(py::module &m) {
         "Print GooFit information (same as goofit_info, kept for legacy code. Please use print(goofit_info) instead.)",
         "gpuDevice"_a = 0);
 
+    m.def("set_floating_exceptions",
+          &Application::set_floating_exceptions,
+          "Enable floating point exceptions as Exceptions");
+
     m.def(
         "__main__", []() { print_goofit_info(0); }, py::call_guard<py::scoped_ostream_redirect>());
 }

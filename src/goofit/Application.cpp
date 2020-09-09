@@ -287,7 +287,7 @@ Application::~Application() {
 }
 
 // This function call is enabled for macOS, too. Will not have an affect for CUDA code.
-void Application::set_floating_exceptions() const {
+void Application::set_floating_exceptions() {
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
     GOOFIT_INFO("CUDA does not support floating point exceptions. Please recompile in OMP or CPP mode.");
 #else

@@ -26,20 +26,18 @@ doing maximum-likelihood fits with a familiar syntax.
 
 ## Requirements
 
-* A recent version of CMake is required. The minimum is 3.4, but tested primarily with 3.9 and newer. CMake is incredibly easy to install, you can even use `pip` (see [the system install page](./docs/SYSTEM_INSTALL.md)). GooFit developers have supplied patches to CMake 3.12, so at least that is highly recommended. Version 2.3 will drop support for older CMake versions.
+* A recent version of CMake is required. The minimum is 3.9. CMake is incredibly easy to install, you can even use `pip` (see [the system install page](./docs/SYSTEM_INSTALL.md)). GooFit developers have supplied patches to CMake 3.12, so at least that is highly recommended. CMake 3.16 does not currently work with the Python bindings.
 * A ROOT 6 build highly recommended -- GooFit will use the included Minuit2 submodule if ROOT is not found, and the Minuit1 based fitter will not be available. Supports 6.04-6.18 (6.10+ recommended).
 
 <details><summary>If using CUDA: (click to expand)</summary><p>
 
-* CMake 3.8+ highly recommended, but not required (yet)
-* CUDA 7.0+ (with caveats below)
-    * CUDA 7.0: Requires CMake 3.12+ or `NEW_CUDA=OFF`. Will be removed in 2.3.
-    * CUDA 7.x: Python not supported. Will be removed in 2.3.
+* CMake 3.9+
+* CUDA 8.0+ (with caveats below)
     * CUDA 8: Supported
-    * CUDA 9.0, 9.2, 10.0: Some warnings from Eigen, supported
-    * CUDA 9.1: Buggy, see [known issues](https://github.com/GooFit/GooFit/issues/173)
+    * CUDA 9.2, 10.0: Some warnings from Eigen, supported
+    * CUDA 9.0, 9.1: Buggy, see [known issues](https://github.com/GooFit/GooFit/issues/173)
     * CUDA 10.1, 10.2: Not yet supported due to Thrust 1.8 incompatibility
-* An nVidia GPU supporting compute capability at least 2.0 (3.5+ recommended)
+* An nVidia GPU supporting compute capability at least 3.0 (3.5+ recommended)
 
 </p></details>
 
@@ -143,7 +141,6 @@ Other custom options supported along with the defaults:
 * If `clang-tidy` is available, it will automatically be used to check the source. If you set `-DGOOFIT_TIDY_FIX=ON`, fixes will be applied to the GooFit source.
 * `-DGOOFIT_SPLASH=ON`: Controls the unicode splash at the beginning.
 * `-DGOOFIT_CERNROOT=ON`: Allows you to disable the automatic search for ROOT (used by the PIP Python build)
-* `-DNEW_CUDA=OFF`: On CMake 3.8+, GooFit uses CUDA as a language. You can turn that off with this setting. Make sure you have CUDA 7.5+.
 * `-DCMAKE_UNITY_BUILD=OFF`: Turn on Unity builds in CMake 3.16+. Should be a bit faster (does not speed up CUDA portions of builds).
 
 </p></details>
@@ -227,7 +224,7 @@ git submodule update --init --recursive
 Then, you'll need a CMakeLists that looks something like this:
 
 ```bash
-cmake_minimum_required(VERSION 3.6...3.12)
+cmake_minimum_required(VERSION 3.9...3.16)
 
 project(my_external_package LANGUAGES CXX)
 
@@ -248,7 +245,7 @@ GooFit packages should contain:
 goofit_add_package(MyPackageName)
 ```
 
-After the package name, you can list `ROOT`, `NEW_CUDA`, or `OLD_CUDA` to require that ROOT or a specific style of CUDA is found. The package will be disabled if those parameters are not met.
+After the package name, you can list `ROOT` to require that ROOT. The package will be disabled if ROOT is not found.
 
 </p></details>
 

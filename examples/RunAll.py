@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 # This is a python script to test the output of the files.
 # It requires plumbum (pip install plumbum or conda install -c conda-forge plumbum)

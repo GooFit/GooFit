@@ -21,4 +21,3 @@ fi
 git diff --exit-code --color
 
 set +evx
-

@@ -75,4 +75,3 @@ $ ./pipipi0DPFit canonical dataFiles/cocktail_pp_0.txt --blindSeed=0
 ```
 
 The canonical subcommand calls for a "canonical" DP fit over the given "data" stored in "dataFiles/cocktail_pp_0.txt" as the third argument. The last argument is to disable the blinding of mixing parameters x and y which is only necessary for real data. The "data" in "dataFiles/cocktail_pp_0.txt" is completely from the simulation (MC cocktails of signals / different background sources). The included signals events are simulated with the input of x = y = +1%. The statistics of this sample is comparable to that of real data.
-

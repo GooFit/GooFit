@@ -10,7 +10,7 @@ import os
 print_goofit_info()
 
 GDIR = os.path.dirname(os.path.abspath(__file__))
-for i in range(2):
+for _ in range(2):
     GDIR = os.path.dirname(GDIR)  # up to goofit dir
 
 # Constants used in more than one PDF component.

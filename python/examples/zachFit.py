@@ -5,7 +5,6 @@ from __future__ import print_function, division
 
 from goofit import *
 import numpy as np
-import sys
 import argparse
 
 print_goofit_info()
@@ -64,7 +63,7 @@ def main(mode=0, data=0, reduce=10):
         mc_dataset = BinnedDataSet(dm)
         data_dataset = BinnedDataSet(dm)
 
-    mc_hist = getData(mc_dataset, dm, mcfile, mode, reduce, "mc_hist")
+    getData(mc_dataset, dm, mcfile, mode, reduce, "mc_hist")
 
     mean1 = Variable("kpi_mc_mean1", 0.145402, 0.00001, 0.143, 0.148)
     mean2 = Variable("kpi_mc_mean2", 0.145465, 0.00001, 0.145, 0.1465)
@@ -145,7 +144,7 @@ def main(mode=0, data=0, reduce=10):
     bkg = ArgusPdf("bkg", dm, pimass, slope, False)
     bkg_frac = Variable("kpi_rd_bkg_frac", 0.03, 0.0, 0.3)
 
-    data_hist = getData(data_dataset, dm, datafile, mode, reduce, "data_hist")
+    getData(data_dataset, dm, datafile, mode, reduce, "data_hist")
 
     total = AddPdf("total", (bkg_frac,), (bkg, signal))
     total.setData(data_dataset)

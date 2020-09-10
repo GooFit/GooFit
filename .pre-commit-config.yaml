@@ -4,6 +4,7 @@ repos:
   rev: 20.8b1
   hooks:
   - id: black
+
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v3.2.0
   hooks:
@@ -14,6 +15,13 @@ repos:
   - id: check-case-conflict
   - id: check-symlinks
   - id: check-yaml
+
+- repo: https://gitlab.com/pycqa/flake8
+  rev: 3.8.3
+  hooks:
+  - id: flake8
+    additional_dependencies: [flake8-bugbear]
+
 - repo: local
   hooks:
   - id: docker-clang-format

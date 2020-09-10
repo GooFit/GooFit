@@ -2,7 +2,7 @@
 
 from __future__ import print_function
 
-from plumbum import local, cli
+from plumbum import cli
 import re
 
 expr = re.compile(r"#include")

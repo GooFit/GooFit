@@ -15,6 +15,7 @@ except ImportError:
     raise
 import time
 
+
 # Simple timer
 class Timer:
     def __enter__(self):

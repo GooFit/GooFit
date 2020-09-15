@@ -3,6 +3,10 @@
 #include <goofit/PDFs/physics/Amp3BodyBase.h>
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 
+#include <mcbooster/GContainers.h>
+
+#include <tuple>
+
 #include <goofit/detail/Complex.h>
 
 namespace GooFit {
@@ -46,6 +50,12 @@ class Amp3Body : public Amp3BodyBase {
     __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 3);
     __host__ void setForceIntegrals(bool f = true) { forceRedoIntegrals = f; }
 
+    __host__ void setGenerationOffset(int off) { generation_offset = off; }
+    __host__ int  getGenerationOffset() { return generation_offset ; }
+    __host__ std::
+        tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h>
+        GenerateSig(unsigned int numEvents, int seed = 0);
+
     __host__ void populateArrays() override;
 
     /// Get the cached wave (device) vectors
@@ -76,12 +86,14 @@ class Amp3Body : public Amp3BodyBase {
     thrust::device_vector<fpcomplex> *cachedWaves[16]; // Caches the BW values for each event.
     fpcomplex ***integrals; // Caches the integrals of the BW waves for each combination of resonances.
 
+    mutable bool generation_no_norm{false};
     bool *redoIntegral;
     mutable bool forceRedoIntegrals;
     fptype *cachedMasses;
     fptype *cachedWidths;
     int totalEventSize;
     int cacheToUse;
+    int generation_offset{0};
     SpecialResonanceIntegrator ***integrators;
     SpecialResonanceCalculator **calculators;
 

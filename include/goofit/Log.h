@@ -9,13 +9,9 @@ namespace GooFit {
 
 #define GOOFIT_INFO(...)                                                                                               \
     {                                                                                                                  \
-        printf("teste 0.3.0");                                                                                          \
         std::cout << GooFit::reset << GooFit::blue;                                                                    \
-        printf("teste 0.3.1");                                                                                          \
         fmt::print(__VA_ARGS__);                                                                                       \
-        printf("teste 0.3.2");                                                                                          \
         std::cout << GooFit::reset << std::endl;                                                                       \
-        printf("teste 0.3.3");                                                                                          \
     }
 #define GOOFIT_INFO_F(...)                                                                                             \
     {                                                                                                                  \

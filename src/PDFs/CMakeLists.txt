@@ -1,9 +1,7 @@
 # This is only needed for IDE header display
-file(GLOB GOOFIT_PDF_HEADERS
-    "${PROJECT_SOURCE_DIR}/include/goofit/PDFs/*.h"
-    "${PROJECT_SOURCE_DIR}/include/goofit/PDFs/detail/*.h"
-    "${PROJECT_SOURCE_DIR}/include/goofit/PDFs/utilities/*.h"
-    )
+file(GLOB GOOFIT_PDF_HEADERS "${PROJECT_SOURCE_DIR}/include/goofit/PDFs/*.h"
+     "${PROJECT_SOURCE_DIR}/include/goofit/PDFs/detail/*.h"
+     "${PROJECT_SOURCE_DIR}/include/goofit/PDFs/utilities/*.h")
 
 set(GOOPDF_FILE_LISTING
     detail/Globals.cu
@@ -15,14 +13,12 @@ set(GOOPDF_FILE_LISTING
     ParameterContainer.cu
     PdfBase.cu
     utilities/VariableBinTransform1DPdf.cu
-    ${GOOFIT_PDF_HEADERS}
-    )
-
+    ${GOOFIT_PDF_HEADERS})
 
 macro(goofit_add_pdf_library NAME)
-    goofit_add_library(${NAME} ${ARGN})
-    set_target_properties(${NAME} PROPERTIES FOLDER "pdfs")
-    target_link_libraries(${NAME} PUBLIC PDFCore)
+  goofit_add_library(${NAME} ${ARGN})
+  set_target_properties(${NAME} PROPERTIES FOLDER "pdfs")
+  target_link_libraries(${NAME} PUBLIC PDFCore)
 endmacro()
 
 goofit_add_library(PDFCore ${GOOPDF_FILE_LISTING})

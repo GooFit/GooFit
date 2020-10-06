@@ -27,6 +27,3 @@ These are passed around by copy; but warning; they do hold raw pointers (explici
 ## Resonances and Lineshapes
 
 Resonances and Lineshapes are now separate constructors in `Resonances::` and `Lineshapes::`. The old enums were removed.
-
-
-

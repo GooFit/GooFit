@@ -1,8 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 
 import os
 import sys
-import time
 import ctypes
 
 # importing ctypes time to have a higher resolution
@@ -22,16 +23,12 @@ def monotonic_time():
     t = timespec()
     if clock_gettime(CLOCK_MONOTONIC_RAW, ctypes.pointer(t)) != 0:
         errno_ = ctypes.get_errno()
-        raise OSError(errno, os.strerror(errno_))
+        raise OSError(errno_, os.strerror(errno_))
     return t.tv_sec + t.tv_nsec * 1e-9
 
 
-filename = os.environ.get("PYTHONSTARTUP")
-if filename and os.path.isfile(filename):
-    execfile(filename)
-
 if len(sys.argv) != 6:
-    print "./find_optimal [path] [range start] [range stop] [range increment] [output]"
+    print("./find_optimal [path] [range start] [range stop] [range increment] [output]")
     sys.exit(-1)
 
 # this is our goofit directory to find optimal
@@ -117,6 +114,6 @@ for s in strings:
 
 timing.close()
 
-print "Group: " + minGroup + " Grain: " + minGrain + "\n"
+print("Group: " + minGroup + " Grain: " + minGrain + "\n")
 
-print "Done"
+print("Done")

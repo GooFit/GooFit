@@ -16,18 +16,18 @@ class kMatrix : public ResonancePdf {
     kMatrix(std::string name,
             Variable a_r,
             Variable a_i,
-	    Variable sA0,
-	    Variable sA,
-	    Variable s0_prod,
-	    Variable s0_scatt,
-	    std::vector<Variable> beta_r,
-	    std::vector<Variable> beta_i,
-	    std::vector<Variable> f_prod_r,
-	    std::vector<Variable> f_prod_i,
-	    std::vector<Variable> fscat,
-	    std::vector<Variable> poles,
-	    unsigned int L,
-	    unsigned int Mpair);
+            Variable sA0,
+            Variable sA,
+            Variable s0_prod,
+            Variable s0_scatt,
+            std::vector<Variable> beta_r,
+            std::vector<Variable> beta_i,
+            std::vector<Variable> f_prod_r,
+            std::vector<Variable> f_prod_i,
+            std::vector<Variable> fscat,
+            std::vector<Variable> poles,
+            unsigned int L,
+            unsigned int Mpair);
 
     ~kMatrix() override = default;
 };

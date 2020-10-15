@@ -37,7 +37,7 @@ matrix:
         - python-pip
     install:
     - python -m pip install --user --upgrade pip
-    - python -m pip install --user plumbum pandas matplotlib numba uncertainties scikit-build pytest numpy twine
+    - python -m pip install --user plumbum pandas matplotlib "llvmlite==0.30.*" "numba==0.46.*" uncertainties scikit-build pytest numpy twine
     script:
     - ".ci/travis.sh"
     after_success:

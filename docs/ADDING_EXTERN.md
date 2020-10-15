@@ -25,5 +25,3 @@ The DownloadPackage cmake file is part of the `/cmake` submodule. The `AddX.cmak
 ## FindPackage
 
 This is the "standard" method for adding cmake packages, but requires that the library already be available. It is used for ROOT and CUDA currently.
-
-

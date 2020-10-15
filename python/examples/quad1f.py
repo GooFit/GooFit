@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 This is the Quad1F example from Minuit2, implemented in Python.
 """

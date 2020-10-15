@@ -77,4 +77,3 @@ included during the convolution to allow for possible differences
 between resolutions in data and simulation. The widths of the Gaussians
 found in Stage 1 are scaled by a common factor (1 + epsilon). The means of the Gaussians
 found in Stage 1 are allowed a common offset delta.
-

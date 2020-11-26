@@ -12,6 +12,8 @@ SpecialResonanceCalculator::SpecialResonanceCalculator(int pIdx, unsigned int re
 __device__ fpcomplex SpecialResonanceCalculator::operator()(thrust::tuple<int, fptype *, int> t) const {
     // Calculates the BW values for a specific resonance.
     fpcomplex ret;
+    fpcomplex ret_mt;
+
     int evtNum  = thrust::get<0>(t);
     fptype *evt = thrust::get<1>(t) + (evtNum * thrust::get<2>(t));
 
@@ -35,7 +37,16 @@ __device__ fpcomplex SpecialResonanceCalculator::operator()(thrust::tuple<int, f
     while(pc.funcIdx < resonance_i)
         pc.incrementIndex();
 
-    ret = getResonanceAmplitude(m12, m13, m23, pc);
+    fptype mistag = 0.005;
+
+    ParameterContainer tmp = pc;
+    ret                    = getResonanceAmplitude(m12, m13, m23, tmp);
+    tmp                    = pc;
+    ret_mt                 = getResonanceAmplitude(m13, m12, m23, tmp);
+
+    ret *= (1-mistag);
+    ret_mt *= mistag;
+    ret += ret_mt;
 
     return ret;
 }

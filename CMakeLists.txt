@@ -739,10 +739,6 @@ if(GOOFIT_PYTHON)
 
   add_subdirectory("extern/pybind11")
 
-  if(GOOFIT_DEVICE STREQUAL CUDA)
-    cmake_cuda_convert_flags(INTERFACE_TARGET module)
-  endif()
-
   add_subdirectory(python)
 endif()
 

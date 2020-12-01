@@ -26,18 +26,15 @@ __device__ fpcomplex SpecialResonanceCalculator::operator()(thrust::tuple<int, f
     fptype m12 = RO_CACHE(evt[id_m12]);
     fptype m13 = RO_CACHE(evt[id_m13]);
 
-    //printf("SpecialResonanceCalculator - m12 = %f, m13 = %f\n", m12,m13);
-
     if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass))
         return ret;
 
+    // This was being calculated with invariant masses instead of squared invariante masses and without taking the sqrt. Now fixed.
     fptype m23 = sqrt(c_motherMass * c_motherMass + c_daug1Mass * c_daug1Mass + c_daug2Mass * c_daug2Mass
                  + c_daug3Mass * c_daug3Mass - m12*m12 - m13*m13);
 
     while(pc.funcIdx < resonance_i)
         pc.incrementIndex();
-
-    //printf("SpecialResonanceCalculator - m12 = %f, m13 = %f, m23 = %f, c_daug1Mass = %f, c_daug2Mass = %f, c_daug3Mass = %f, c_motherMass = %f \n",m12,m13,m23, c_daug1Mass, c_daug2Mass, c_daug3Mass, c_motherMass); 
 
     ret = getResonanceAmplitude(m12, m13, m23, pc);
 

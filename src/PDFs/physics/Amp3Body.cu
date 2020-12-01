@@ -429,7 +429,7 @@ __host__
 
     initialize();
 
-    //Defining phase space
+    // Defining phase space
     std::vector<mcbooster::GReal_t> masses{decayInfo.daug1Mass, decayInfo.daug2Mass, decayInfo.daug3Mass};
     mcbooster::PhaseSpace phsp(decayInfo.motherMass, masses, numEvents, generation_offset);
 
@@ -439,8 +439,8 @@ __host__
         GOOFIT_INFO("Current generator seed {}, offset {}", phsp.GetSeed(), generation_offset);
     }
 
-    // Generating numEvents events. Events are all generated inside the phase space with uniform distribution in momentum space. 
-    // Events must be weighted to have phase space distribution
+    // Generating numEvents events. Events are all generated inside the phase space with uniform distribution in
+    // momentum space. Events must be weighted to have phase space distribution
     phsp.Generate(mcbooster::Vector4R(decayInfo.motherMass, 0.0, 0.0, 0.0));
 
     auto d1 = phsp.GetDaughters(0);
@@ -504,7 +504,8 @@ __host__
     mcbooster::strided_range<mcbooster::RealVector_d::iterator> sr(DS->begin() + 2, DS->end(), 3);
     thrust::copy(eventNumber, eventNumber + numEvents, sr.begin());
 
-    // Giving events to GooFit. Format of dev_evt_array must be (s12, s13, eventNumber). s23 is calculated automatically in src/PDFs/physics/detail/SpecialResonanceCalculator.cu 
+    // Giving events to GooFit. Format of dev_evt_array must be (s12, s13, eventNumber). s23 is calculated automatically
+    // in src/PDFs/physics/detail/SpecialResonanceCalculator.cu
     dev_event_array = thrust::raw_pointer_cast(DS->data());
     setDataSize(numEvents, 3);
 

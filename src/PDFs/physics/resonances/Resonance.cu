@@ -69,9 +69,13 @@ __device__ fptype spinFactor(unsigned int spin,
     fptype _mBC = (PAIR_12 == cyclic_index ? m23 : (PAIR_13 == cyclic_index ? m12 : m13));
     fptype _mAB = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
 
-    fptype massFactor = 1.0 / _mAB;
+    fptype massFactor = 1.0 / (_mAB*_mAB);
     fptype sFactor    = -1;
-    sFactor *= ((_mBC - _mAC) + (massFactor * (motherMass * motherMass - _mC * _mC) * (_mA * _mA - _mB * _mB)));
+    sFactor *= ((_mBC*_mBC - _mAC*_mAC) + (massFactor * (motherMass * motherMass - _mC * _mC) * (_mA * _mA - _mB * _mB)));
+
+    fptype D0Mass = sqrt(_mAB*_mAB + _mBC*_mBC + _mAC*_mAC - _mA*_mA - _mB*_mB + _mC*_mC);
+
+//    if(_mAB > 0.89 && _mAB < 0.90) printf("_mAB = %f _mBC = %f, _mAC = %f, massFactor = %f, sFactor = %f, M = %f\n", _mAB, _mBC, _mAC, massFactor, sFactor,D0Mass);
 
     if(2 == spin) {
         sFactor *= sFactor;

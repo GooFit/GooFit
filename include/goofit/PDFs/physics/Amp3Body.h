@@ -51,7 +51,7 @@ class Amp3Body : public Amp3BodyBase {
     __host__ void setForceIntegrals(bool f = true) { forceRedoIntegrals = f; }
 
     __host__ void setGenerationOffset(int off) { generation_offset = off; }
-    __host__ int  getGenerationOffset() { return generation_offset ; }
+    __host__ int getGenerationOffset() { return generation_offset; }
     __host__ std::
         tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h>
         GenerateSig(unsigned int numEvents, int seed = 0);

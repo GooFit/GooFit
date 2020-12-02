@@ -37,45 +37,43 @@ void init_Amp3Body(py::module &m) {
         .def_static("help", []() { return HelpPrinter(Amp3Body_docs); })
         .def("setGenerationOffset", &Amp3Body::setGenerationOffset, "off"_a)
         .def("getGenerationOffset", &Amp3Body::getGenerationOffset, pybind11::return_value_policy::copy)
-        .def("GenerateSig",
-             [](Amp3Body &self, size_t numEvents) {
-                 mcbooster::ParticlesSet_h particles; // typedef for std::vector<Particles_h *>,
-                 mcbooster::VariableSet_h variables;
-                 mcbooster::RealVector_h weights;
-                 mcbooster::BoolVector_h flags;
+        .def("GenerateSig", [](Amp3Body &self, size_t numEvents) {
+            mcbooster::ParticlesSet_h particles; // typedef for std::vector<Particles_h *>,
+            mcbooster::VariableSet_h variables;
+            mcbooster::RealVector_h weights;
+            mcbooster::BoolVector_h flags;
 
-                 std::tie(particles, variables, weights, flags) = self.GenerateSig(numEvents);
+            std::tie(particles, variables, weights, flags) = self.GenerateSig(numEvents);
 
-                 py::array_t<fptype> pyparticles{{(size_t)3, 3 * numEvents}};
-                 py::array_t<fptype> pyvariables{{(size_t)3, numEvents}};
-                 py::array_t<fptype> pyweights{numEvents};
-                 py::array_t<fptype> pyflags{numEvents};
+            py::array_t<fptype> pyparticles{{(size_t)3, 3 * numEvents}};
+            py::array_t<fptype> pyvariables{{(size_t)3, numEvents}};
+            py::array_t<fptype> pyweights{numEvents};
+            py::array_t<fptype> pyflags{numEvents};
 
-                 for(int i = 0; i < 3; i++) {
-                     for(int j = 0, k = 0; j < numEvents; j++, k = k + 3) {
-                         pyparticles.mutable_at(i, k)     = (*(particles[i]))[j].get(0);
-                         pyparticles.mutable_at(i, k + 1) = (*(particles[i]))[j].get(1);
-                         pyparticles.mutable_at(i, k + 2) = (*(particles[i]))[j].get(2);
-                     }
-                 }
+            for(int i = 0; i < 3; i++) {
+                for(int j = 0, k = 0; j < numEvents; j++, k = k + 3) {
+                    pyparticles.mutable_at(i, k)     = (*(particles[i]))[j].get(0);
+                    pyparticles.mutable_at(i, k + 1) = (*(particles[i]))[j].get(1);
+                    pyparticles.mutable_at(i, k + 2) = (*(particles[i]))[j].get(2);
+                }
+            }
 
-                 for(int i = 0; i < 3; i++) {
-                     for(int j = 0; j < numEvents; j++) {
-                         pyvariables.mutable_at(i, j) = (*(variables[i]))[j];
-                     }
-                 }
+            for(int i = 0; i < 3; i++) {
+                for(int j = 0; j < numEvents; j++) {
+                    pyvariables.mutable_at(i, j) = (*(variables[i]))[j];
+                }
+            }
 
-                 for(int i = 0; i < numEvents; i++) {
-                     pyweights.mutable_at(i) = weights[i];
-                 }
+            for(int i = 0; i < numEvents; i++) {
+                pyweights.mutable_at(i) = weights[i];
+            }
 
-                 for(int i = 0; i < numEvents; i++) {
-                     pyflags.mutable_at(i) = flags[i];
-                 }
+            for(int i = 0; i < numEvents; i++) {
+                pyflags.mutable_at(i) = flags[i];
+            }
 
-                 return std::make_tuple(pyparticles, pyvariables, pyweights, pyflags);
-             });
-
+            return std::make_tuple(pyparticles, pyvariables, pyweights, pyflags);
+        });
 
     m.attr("DalitzPlotPdf") = cls;
 }

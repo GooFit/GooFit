@@ -47,8 +47,8 @@ void init_Amp4Body_TD(py::module &m) {
 
                  py::array_t<fptype> pyparticles{{(size_t)4 * 4, numEvents}};
                  py::array_t<fptype> pyvariables{{(size_t)6, numEvents}};
-                 py::array_t<fptype> pyweights{numEvents};
-                 py::array_t<bool> pyflags{numEvents};
+                 py::array_t<fptype> pyweights{static_cast<py::ssize_t>(numEvents)};
+                 py::array_t<bool> pyflags{static_cast<py::ssize_t>(numEvents)};
 
                  for(int i = 0; i < 4; i++) {
                      for(int j = 0; j < weights.size(); j++) {

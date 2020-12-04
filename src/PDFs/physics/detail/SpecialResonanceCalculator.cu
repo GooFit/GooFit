@@ -29,8 +29,10 @@ __device__ fpcomplex SpecialResonanceCalculator::operator()(thrust::tuple<int, f
     if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass))
         return ret;
 
-    fptype m23 = c_motherMass * c_motherMass + c_daug1Mass * c_daug1Mass + c_daug2Mass * c_daug2Mass
-                 + c_daug3Mass * c_daug3Mass - m12 - m13;
+    // This was being calculated with invariant masses instead of squared invariante masses and without taking the sqrt.
+    // Now fixed.
+    fptype m23 = sqrt(c_motherMass * c_motherMass + c_daug1Mass * c_daug1Mass + c_daug2Mass * c_daug2Mass
+                      + c_daug3Mass * c_daug3Mass - m12 * m12 - m13 * m13);
 
     while(pc.funcIdx < resonance_i)
         pc.incrementIndex();

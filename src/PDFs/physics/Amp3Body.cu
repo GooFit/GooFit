@@ -1,6 +1,16 @@
+#include <mcbooster/Evaluate.h>
+#include <mcbooster/EvaluateArray.h>
+#include <mcbooster/GContainers.h>
+#include <mcbooster/GFunctional.h>
+#include <mcbooster/GTypes.h>
+#include <mcbooster/Generate.h>
+#include <mcbooster/Vector4R.h>
+
 #include <goofit/Error.h>
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/Amp3Body.h>
+#include <goofit/PDFs/physics/Amp3BodyBase.h>
+#include <goofit/PDFs/physics/detail/Dim2.h>
 #include <goofit/PDFs/physics/detail/SpecialResonanceCalculator.h>
 #include <goofit/PDFs/physics/detail/SpecialResonanceIntegrator.h>
 #include <goofit/PDFs/physics/resonances/Resonance.h>
@@ -10,6 +20,7 @@
 #include <thrust/transform_reduce.h>
 
 #include <array>
+#include <vector>
 
 namespace GooFit {
 
@@ -317,16 +328,12 @@ __host__ fptype Amp3Body::normalize() {
         // int param_i = parameters + resonanceOffset_DP + resonanceSize * i;
         fpcomplex amplitude_i(host_parameters[parametersIdx + i * 2 + 1], host_parameters[parametersIdx + i * 2 + 2]);
 
-        // printf("i:%i - %f,%f\n", i, amplitude_i.real(), amplitude_i.imag());
-
         for(unsigned int j = 0; j < decayInfo.resonances.size(); ++j) {
             // int param_j = parameters + resonanceOffset_DP + resonanceSize * j;
             fpcomplex amplitude_j(host_parameters[parametersIdx + j * 2 + 1],
                                   -host_parameters[parametersIdx + j * 2 + 2]);
 
-            // printf("j:%i - %f,%f\n", j, amplitude_j.real(), amplitude_j.imag());
             // Notice complex conjugation
-            // printf("%f %f %f %f %f %f\n", amplitude_i.real(), amplitude_i.imag(), amplitude_j.real(),
             // amplitude_j.imag(), (*(integrals[i][j])).real(), (*(integrals[i][j])).imag() );
             sumIntegral += amplitude_i * amplitude_j * (*(integrals[i][j]));
         }
@@ -340,7 +347,6 @@ __host__ fptype Amp3Body::normalize() {
 
     host_normalizations[normalIdx + 1] = 1.0 / ret;
     cachedNormalization                = 1.0 / ret;
-    // printf("%f %f\n", ret, binSizeFactor);
     return ret;
 }
 
@@ -414,4 +420,123 @@ __host__ std::vector<std::vector<fptype>> Amp3Body::fit_fractions() {
     return ff;
 }
 
+__host__
+    std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h>
+    Amp3Body::GenerateSig(unsigned int numEvents, int seed) {
+    // Must configure our functions before any calculations!
+    // setupObservables();
+    // setIndices();
+
+    initialize();
+
+    // Defining phase space
+    std::vector<mcbooster::GReal_t> masses{decayInfo.daug1Mass, decayInfo.daug2Mass, decayInfo.daug3Mass};
+    mcbooster::PhaseSpace phsp(decayInfo.motherMass, masses, numEvents, generation_offset);
+
+    if(seed != 0) {
+        phsp.SetSeed(seed);
+    } else {
+        GOOFIT_INFO("Current generator seed {}, offset {}", phsp.GetSeed(), generation_offset);
+    }
+
+    // Generating numEvents events. Events are all generated inside the phase space with uniform distribution in
+    // momentum space. Events must be weighted to have phase space distribution
+    phsp.Generate(mcbooster::Vector4R(decayInfo.motherMass, 0.0, 0.0, 0.0));
+
+    auto d1 = phsp.GetDaughters(0);
+    auto d2 = phsp.GetDaughters(1);
+    auto d3 = phsp.GetDaughters(2);
+
+    mcbooster::ParticlesSet_d pset(3);
+    pset[0] = &d1;
+    pset[1] = &d2;
+    pset[2] = &d3;
+
+    auto SigGen_M12_d = mcbooster::RealVector_d(numEvents);
+    auto SigGen_M13_d = mcbooster::RealVector_d(numEvents);
+    auto SigGen_M23_d = mcbooster::RealVector_d(numEvents);
+
+    mcbooster::VariableSet_d VarSet_d(3);
+    VarSet_d[0] = &SigGen_M12_d;
+    VarSet_d[1] = &SigGen_M23_d;
+    VarSet_d[2] = &SigGen_M13_d;
+
+    // Evaluating invariant masses for each event
+    Dim2 eval = Dim2();
+    mcbooster::EvaluateArray<Dim2>(eval, pset, VarSet_d);
+
+    mcbooster::VariableSet_d GooVarSet_d(3);
+    GooVarSet_d[0] = VarSet_d[0];
+    GooVarSet_d[1] = VarSet_d[2];
+    GooVarSet_d[2] = VarSet_d[1];
+
+    auto h1 = new mcbooster::Particles_h(d1);
+    auto h2 = new mcbooster::Particles_h(d2);
+    auto h3 = new mcbooster::Particles_h(d3);
+
+    mcbooster::ParticlesSet_h ParSet(3);
+    ParSet[0] = h1;
+    ParSet[1] = h2;
+    ParSet[2] = h3;
+
+    auto SigGen_M12_h = new mcbooster::RealVector_h(SigGen_M12_d);
+    auto SigGen_M23_h = new mcbooster::RealVector_h(SigGen_M23_d);
+    auto SigGen_M13_h = new mcbooster::RealVector_h(SigGen_M13_d);
+
+    mcbooster::VariableSet_h VarSet(3);
+    VarSet[0] = SigGen_M12_h;
+    VarSet[1] = SigGen_M23_h;
+    VarSet[2] = SigGen_M13_h;
+
+    mcbooster::RealVector_d weights(phsp.GetWeights());
+    phsp.FreeResources();
+
+    auto DS = new mcbooster::RealVector_d(3 * numEvents);
+    thrust::counting_iterator<int> eventNumber(0);
+
+#pragma unroll
+
+    for(int i = 0; i < 2; ++i) {
+        mcbooster::strided_range<mcbooster::RealVector_d::iterator> sr(DS->begin() + i, DS->end(), 3);
+        thrust::copy(GooVarSet_d[i]->begin(), GooVarSet_d[i]->end(), sr.begin());
+    }
+
+    mcbooster::strided_range<mcbooster::RealVector_d::iterator> sr(DS->begin() + 2, DS->end(), 3);
+    thrust::copy(eventNumber, eventNumber + numEvents, sr.begin());
+
+    // Giving events to GooFit. Format of dev_evt_array must be (s12, s13, eventNumber). s23 is calculated automatically
+    // in src/PDFs/physics/detail/SpecialResonanceCalculator.cu
+    dev_event_array = thrust::raw_pointer_cast(DS->data());
+    setDataSize(numEvents, 3);
+
+    generation_no_norm = true; // we need no normalization for generation, but we do need to make sure that norm = 1;
+    SigGenSetIndices();
+    copyParams();
+    normalize();
+    setForceIntegrals();
+    host_normalizations.sync(d_normalizations);
+
+    auto fc = fitControl;
+    setFitControl(std::make_shared<ProbFit>());
+
+    thrust::device_vector<fptype> results;
+    GooPdf::evaluate_with_metric(results);
+
+    // evaluating amplitudes for generated events, amplitudes are incorporated in weights
+    thrust::transform(
+        results.begin(), results.end(), weights.begin(), weights.begin(), thrust::multiplies<mcbooster::GReal_t>());
+
+    // Filing accept/reject flags for resonant distribution for each generated event
+    mcbooster::BoolVector_d flags(numEvents);
+    fillMCFlags(flags, weights, numEvents);
+
+    auto weights_h = mcbooster::RealVector_h(weights);
+    auto results_h = mcbooster::RealVector_h(results);
+    auto flags_h   = mcbooster::BoolVector_h(flags);
+    cudaDeviceSynchronize();
+
+    setFitControl(fc);
+
+    return std::make_tuple(ParSet, VarSet, weights_h, flags_h);
+}
 } // namespace GooFit

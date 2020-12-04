@@ -8,8 +8,8 @@
 
 #include <goofit/Error.h>
 #include <goofit/PDFs/ParameterContainer.h>
-#include <goofit/PDFs/physics/Amp3BodyBase.h>
 #include <goofit/PDFs/physics/Amp3Body.h>
+#include <goofit/PDFs/physics/Amp3BodyBase.h>
 #include <goofit/PDFs/physics/detail/Dim2.h>
 #include <goofit/PDFs/physics/detail/SpecialResonanceCalculator.h>
 #include <goofit/PDFs/physics/detail/SpecialResonanceIntegrator.h>

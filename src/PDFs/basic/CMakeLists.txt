@@ -12,6 +12,7 @@ goofit_add_pdf_library(
   CrystalBallPdf.cu
   ExpGausPdf.cu
   ExpPdf.cu
+  GSLExpPdf.cu
   GaussianPdf.cu
   InterHistPdf.cu
   JohnsonSUPdf.cu

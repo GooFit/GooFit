@@ -1,0 +1,4 @@
+format:
+  line_width: 99
+markup:
+  enable_markup: false

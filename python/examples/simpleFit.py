@@ -11,7 +11,7 @@ from time import time
 
 # GooFit packages
 from goofit import *
-from goofit.landau import landau_quantile  # Copy of C++ lambda function in PyBind11
+from goofit.landau import landau_quantile  # Copy of C++ lambda function in pybind11
 
 import numpy as np
 

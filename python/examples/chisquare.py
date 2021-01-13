@@ -45,6 +45,7 @@ except ImportError:
         RuntimeWarning,
     )
 
+
 # Simple timer in a context manager
 @contextmanager
 def timed(msg):

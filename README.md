@@ -130,7 +130,7 @@ Other custom options supported along with the defaults:
 * `-DGOOFIT_EXAMPLES=ON`: Build the examples
 * `-DGOOFIT_PACKAGES=ON`: Build any packages found with the name `goofit_*`
 * `-DGOOFIT_DEBUG=ON` and `-DGOOFIT_TRACE=ON` will enable the matching printout macros
-* `-DGOOFIT_PYTHON=ON`: Include the python bindings using [PyBind11] if Python found (use `-DPYTHON_EXECUTABLE=$(which python3)` to use a specific interpreter).
+* `-DGOOFIT_PYTHON=ON`: Include the python bindings using [pybind11] if Python found (use `-DPYTHON_EXECUTABLE=$(which python3)` to use a specific interpreter).
 
 <details><summary>Advanced Options: (click to expand)</summary><p>
 
@@ -338,7 +338,7 @@ In addition, we thank the nVidia GPU Grant Program for donating hardware used in
 [Plumbum]:           https://plumbum.readthedocs.io/en/latest/
 [FindBoost]:         https://cmake.org/cmake/help/v3.7/module/FindBoost.html
 [CLI11]:             https://github.com/CLIUtils/CLI11
-[PyBind11]:          http://pybind11.readthedocs.io/en/master
+[pybind11]:          http://pybind11.readthedocs.io/en/master
 [ROOT]:              https://root.cern.ch
 [Tutorials]:         https://goofit.gitlab.io/Goo2Torial
 [pypi-status]:       https://img.shields.io/pypi/v/goofit.svg?logo=PyPI&logoColor=white

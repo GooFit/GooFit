@@ -71,12 +71,13 @@ __device__ fptype spinFactor(unsigned int spin,
 
     // This factor was being calculated using invariant masses instead of squared invariant masses. Now fixed.
 
-    fptype massFactor = 1.0 / (_mAB * _mAB);
+    //fptype massFactor = 1.0 / (_mAB * _mAB);
+    fptype massFactor = 1.0 / _mAB;
     fptype sFactor    = -1;
-    sFactor *= ((_mBC * _mBC - _mAC * _mAC)
+    sFactor *= ((_mBC - _mAC)
                 + (massFactor * (motherMass * motherMass - _mC * _mC) * (_mA * _mA - _mB * _mB)));
 
-    fptype D0Mass = sqrt(_mAB * _mAB + _mBC * _mBC + _mAC * _mAC - _mA * _mA - _mB * _mB + _mC * _mC);
+    fptype D0Mass = sqrt(_mAB + _mBC + _mAC - _mA * _mA - _mB * _mB - _mC * _mC);
 
     if(2 == spin) {
         sFactor *= sFactor;

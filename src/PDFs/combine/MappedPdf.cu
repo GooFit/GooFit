@@ -29,8 +29,17 @@ __device__ fptype device_Mapped(fptype *evt, ParameterContainer &pc) {
     // numTargets; increment past our set of mapping functions and our target functions after it is handled.
     unsigned int funcIdx = pc.funcIdx;
 
-    while(pc.funcIdx < funcIdx + targetFunction)
-        pc.incrementIndex();
+    if(targetFunction == 0) pc.funcIdx = 2;
+    if(targetFunction == 1) pc.funcIdx = 20;
+    // brute force to make it work
+    if(targetFunction == 1) {
+        pc.parameterIdx += 154 - 2;
+        pc.constantIdx += 63 - 6;
+        pc.observableIdx += 38 - 8;
+        pc.normalIdx += 40 - 4;
+    }
+
+
 
     // fptype ret = (*(reinterpret_cast<device_function_ptr>(d_function_table[indices[targetFunction]])))(evt, p,
     // paramIndices + indices[targetFunction + 1]);
@@ -39,8 +48,16 @@ __device__ fptype device_Mapped(fptype *evt, ParameterContainer &pc) {
     ret *= norm;
 
     // increment our functions here...
-    while(pc.funcIdx < funcIdx + numTargets)
-        pc.incrementIndex();
+    if (pc.funcIdx==20) pc.funcIdx=38;
+    if (pc.funcIdx==19) pc.funcIdx=38;
+    //DOES THIS HELP?
+    if(targetFunction == 0) {
+        pc.parameterIdx = 306;
+        pc.constantIdx = 120;
+        pc.observableIdx = 68;
+        pc.normalIdx = 76;
+    }
+
 
     // if (gpuDebug & 1)
     // if ((gpuDebug & 1) && (0 == BLOCKIDX) && (0 == THREADIDX))

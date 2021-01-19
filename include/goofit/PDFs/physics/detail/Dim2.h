@@ -29,9 +29,9 @@ struct Dim2 : public mcbooster::IFunctionArray {
         mcbooster::Vector4R p23 = p2 + p3;
         mcbooster::Vector4R p13 = p1 + p3;
 
-        variables[0] = p12.mass();
-        variables[1] = p23.mass();
-        variables[2] = p13.mass();
+        variables[0] = p12.mass2();
+        variables[1] = p23.mass2();
+        variables[2] = p13.mass2();
     }
 };
 

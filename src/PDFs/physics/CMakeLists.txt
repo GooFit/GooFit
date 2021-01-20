@@ -10,6 +10,7 @@ endif()
 goofit_add_pdf_library(
   PDFPhysics
   Amp3Body.cu
+  Amp3BodyBase.cu
   Amp3Body_TD.cu
   Amp3Body_IS.cu
   Amp4Body.cu

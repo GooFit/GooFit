@@ -1,6 +1,5 @@
 #include <goofit/PDFs/basic/GSLExpPdf.h>
 #include <goofit/PDFs/ParameterContainer.h>
-#include <gsl/gsl_sf_exp.h>
 
 using namespace std;
 

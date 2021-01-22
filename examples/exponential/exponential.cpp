@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
     std::cout << GooFit::magenta << gen_timer << GooFit::reset << std::endl;
 
     // Fit parameter
-    GooFit::Variable alpha{"alpha", -2, 0.1, -10, 10};
+    GooFit::Variable alpha{"alpha", 3, 0.001, -2, 2};
     // GooPdf object
     GooFit::ExpPdf exppdf{"exppdf", xvar, alpha};
     exppdf.setData(&data);

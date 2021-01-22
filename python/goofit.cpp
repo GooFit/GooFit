@@ -27,6 +27,7 @@ void init_CrystalBallPdf(py::module &);
 void init_ExpGausPdf(py::module &);
 void init_ExpPdf(py::module &);
 void init_GSLExpPdf(py::module &);
+void init_LegendrePdf(py::module &);
 void init_GaussianPdf(py::module &);
 void init_InterHistPdf(py::module &);
 void init_JohnsonSUPdf(py::module &);
@@ -100,6 +101,7 @@ PYBIND11_MODULE(_goofit, m) {
     init_ExpGausPdf(m);
     init_ExpPdf(m);
     init_GSLExpPdf(m);
+    init_LegendrePdf(m);
     init_GaussianPdf(m);
     init_InterHistPdf(m);
     init_JohnsonSUPdf(m);

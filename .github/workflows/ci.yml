@@ -26,7 +26,7 @@ jobs:
       image: rootproject/root:latest
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
       with:
         submodules: recursive
 
@@ -56,8 +56,10 @@ jobs:
         submodules: true
     - name: Add wget and python3
       run: apt-get update && apt-get install -y wget python3-dev
-    - name: Install Modern CMake
-      run: wget -qO- "https://cmake.org/files/v3.15/cmake-3.15.6-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C /usr/local
+    - name: Setup CMake 3.18
+      uses: jwlawson/actions-setup-cmake@v1.3
+      with:
+        cmake-version: 3.18
     - name: Configure
       run: cmake -S . -B build -DGOOFIT_ARCH=3.5 -DGOOFIT_SPLASH=OFF
     - name: Build
@@ -174,5 +176,31 @@ jobs:
       uses: ./.github/actions/cmake_config
       with:
         version: 3.16.4
+        options: -DGOOFIT_DEVICE=CUDA
+      if: success() || failure()
+    
+    - name: CMake 3.17 OMP
+      uses: ./.github/actions/cmake_config
+      with:
+        version: 3.17.3
+        options: -DGOOFIT_DEVICE=OMP
+      if: success() || failure()
+    - name: CMake 3.17 CUDA
+      uses: ./.github/actions/cmake_config
+      with:
+        version: 3.17.3
+        options: -DGOOFIT_DEVICE=CUDA
+      if: success() || failure()
+
+    - name: CMake 3.18 OMP
+      uses: ./.github/actions/cmake_config
+      with:
+        version: 3.18.0
+        options: -DGOOFIT_DEVICE=OMP
+      if: success() || failure()
+    - name: CMake 3.18 CUDA
+      uses: ./.github/actions/cmake_config
+      with:
+        version: 3.18.0
         options: -DGOOFIT_DEVICE=CUDA
       if: success() || failure()

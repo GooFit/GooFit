@@ -69,8 +69,6 @@ __device__ fptype spinFactor(unsigned int spin,
     fptype _mBC = (PAIR_12 == cyclic_index ? m23 : (PAIR_13 == cyclic_index ? m12 : m13));
     fptype _mAB = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
 
-    // This factor was being calculated using invariant masses instead of squared invariant masses. Now fixed.
-
     fptype massFactor = 1.0 / (_mAB);
     fptype sFactor    = -1;
     sFactor *= ((_mBC - _mAC) + (massFactor * (motherMass * motherMass - _mC * _mC) * (_mA * _mA - _mB * _mB)));

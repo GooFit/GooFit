@@ -14,14 +14,16 @@ namespace Resonances {
 class kMatrix : public ResonancePdf {
   public:
     kMatrix(std::string name,
-            unsigned int pterm, //< 0 or 1
-            bool is_pole,       //< False for prod
             Variable a_r,
             Variable a_i,
             Variable sA0,
             Variable sA,
             Variable s0_prod,
             Variable s0_scatt,
+            std::vector<Variable> beta_r,
+            std::vector<Variable> beta_i,
+            std::vector<Variable> f_prod_r,
+            std::vector<Variable> f_prod_i,
             std::vector<Variable> fscat,
             std::vector<Variable> poles,
             unsigned int L,

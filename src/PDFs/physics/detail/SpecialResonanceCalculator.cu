@@ -32,7 +32,7 @@ __device__ fpcomplex SpecialResonanceCalculator::operator()(thrust::tuple<int, f
     // m12, m23 and m13 stand for the squared invariant masses.
     // Now fixed.
     fptype m23 = c_motherMass * c_motherMass + c_daug1Mass * c_daug1Mass + c_daug2Mass * c_daug2Mass
-                 + c_daug3Mass * c_daug3Mass - m12 - m13;
+                      + c_daug3Mass * c_daug3Mass - m12 - m13;
 
     while(pc.funcIdx < resonance_i)
         pc.incrementIndex();

@@ -14,7 +14,7 @@
 
 namespace GooFit {
 
-const int resonanceOffset = 8; // Offset of the first resonance into the parameter index array
+const int resonanceOffset = 10; // Offset of the first resonance into the parameter index array
 // Offset is number of parameters, constant index, indices for tau, xmix, and ymix, index
 // of resolution function, and finally number of resonances (not calculable from nP
 // because we don't know what the efficiency and time resolution might need). Efficiency
@@ -46,15 +46,21 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
     int id_m13 = pc.getObservable(3);
     int id_num = pc.getObservable(4);
     int id_mis = 0;
-    if(num_observables > 5)
-        id_mis = pc.getObservable(5);
+    //int id_tag = 0;
+    //if(num_observables > 5){
+    id_mis = pc.getObservable(5);
 
+    //}
     fptype m12 = RO_CACHE(evt[id_m12]);
     fptype m13 = RO_CACHE(evt[id_m13]);
 
     unsigned int numResonances = pc.getConstant(0);
+    //int numResonances = 1;
 
-    if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass)) {
+    int bin = getDalitzBin(m12, m13);
+
+    if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass) ) {
+
         unsigned int endEfficiencyFunc = pc.getConstant(3);
         pc.incrementIndex(1, num_parameters, num_constants, num_observables, 1);
 
@@ -85,7 +91,7 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
 
     for(int i = 0; i < numResonances; ++i) {
         // int paramIndex = parIndexFromResIndex(i);
-        fpcomplex amp{pc.getParameter(i * 2 + 3), pc.getParameter(i * 2 + 4)};
+        fpcomplex amp{pc.getParameter(i * 2 + 5), pc.getParameter(i * 2 + 6)};
 
         // fpcomplex matrixelement(thrust::get<0>(cWaves[cacheToUse][evtNum*numResonances + i]),
         //				     thrust::get<1>(cWaves[cacheToUse][evtNum*numResonances + i]));
@@ -105,10 +111,29 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
 
     int id_time  = pc.getObservable(0);
     int id_sigma = pc.getObservable(1);
+    int id_tag = pc.getObservable(6);
 
     fptype _tau     = pc.getParameter(0);
-    fptype _xmixing = pc.getParameter(1);
-    fptype _ymixing = pc.getParameter(2);
+    //fptype _xmixing = pc.getParameter(1);
+    //fptype _ymixing = pc.getParameter(2);
+    fptype _xmixing0 = pc.getParameter(1);
+    fptype _ymixing0 = pc.getParameter(2);
+    fptype _deltax   = pc.getParameter(3);
+    fptype _deltay   = pc.getParameter(4);
+    fptype _xmixing = 0;
+    fptype _ymixing = 0;
+    //int _charmtag = evt[id_tag];
+    //auto _charmtag = static_cast<int>(floor(0.5 + RO_CACHE(evt[id_tag])));
+    int _charmtag = RO_CACHE(evt[id_tag]);
+
+    if(_charmtag ==1){
+        _xmixing = _xmixing0 + _deltax;
+        _ymixing = _ymixing0 + _deltay;
+    }
+    else if(_charmtag==-1){
+        _xmixing = _xmixing0 - _deltax;
+        _ymixing = _ymixing0 - _deltay;
+    }
 
     fptype _time  = RO_CACHE(evt[id_time]);
     fptype _sigma = RO_CACHE(evt[id_sigma]);
@@ -192,16 +217,27 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
 
     // fptype mistag = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 5]);
 
+    mistag = evt[id_mis];
+    //mistag = 0;
+
+    fptype xfix   = 0.0039;
+    fptype yfix   = 0.0065;
+    fptype taufix = 0.4101;
+
     if(mistag > 0) { // This should be either true or false for all events, so no branch is caused.
         // See header file for explanation of 'mistag' variable - it is actually the probability
         // of having the correct sign, given that we have a correctly reconstructed D meson.
-        mistag = evt[id_mis];
-        ret *= mistag;
+        //mistag = evt[id_mis];
+        ret *= (1 - 2*mistag);
         // The following formats differently in clang-format 8
         // clang-format off
-        ret += (1 - mistag)
+        ret += mistag
                * (*(reinterpret_cast<device_resfunction_ptr>(d_function_table[pc.funcIdx])))(
-                    term1, -term2, sumWavesA.real(), -sumWavesA.imag(), _tau, _time, _xmixing, _ymixing, _sigma, pc);
+                    term1, -term2, sumWavesA.real(), -sumWavesA.imag(), taufix, _time, xfix, yfix, _sigma, pc);
+        ret += mistag
+               * (*(reinterpret_cast<device_resfunction_ptr>(d_function_table[pc.funcIdx])))(
+                    term1, term2, sumWavesA.real(), sumWavesA.imag(), taufix, _time, xfix, yfix, _sigma, pc);
+
         // clang-format on
     }
 
@@ -226,21 +262,27 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
                                   DecayInfo3t decay,
                                   MixingTimeResolution *r,
                                   GooPdf *efficiency,
-                                  Observable *mistag)
+                                  Observable *mistag,
+				  Observable *charmtag)
     : Amp3BodyBase("Amp3Body_TD", n, _dtime, _sigmat, m12, m13, eventNumber)
     , decayInfo(decay)
     , _m12(m12)
     , _m13(m13)
     , resolution(r)
+    , _mistag(*mistag)
     , totalEventSize(6) // Default 5 = m12, m13, time, sigma_t, evtNum
 {
     for(auto &cachedWave : cachedWaves)
         cachedWave = nullptr;
 
-    if(mistag) {
-        registerObservable(*mistag);
-        totalEventSize = 6;
-    }
+    //if(mistag) {
+    registerObservable(*mistag);
+    //totalEventSize = 6;
+    totalEventSize++;
+    //}
+
+    registerObservable(*charmtag);
+    totalEventSize++;
 
     MEMCPY_TO_SYMBOL(c_motherMass, &decay.motherMass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(c_daug1Mass, &decay.daug1Mass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
@@ -249,8 +291,12 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
     MEMCPY_TO_SYMBOL(c_meson_radius, &decay.meson_radius, sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
     registerParameter(decay._tau);
-    registerParameter(decay._xmixing);
-    registerParameter(decay._ymixing);
+    registerParameter(decay._xmixing0);
+    registerParameter(decay._ymixing0);
+    registerParameter(decay._deltax);
+    registerParameter(decay._deltay);
+
+    setD0Fraction(0.5);
 
     if(resolution->getDeviceFunction() < 0)
         throw GooFit::GeneralError("The resolution device function index {} must be more than 0",
@@ -262,10 +308,10 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
     cacheToUse            = cacheCount++;
     registerConstant(cacheToUse);
 
-    if(mistag == nullptr)
-        registerConstant(1);
-    else
-        registerConstant(0);
+    //if(mistag == nullptr)
+    //    registerConstant(1);
+    //else
+    registerConstant(0);
 
     for(auto &resonance : decay.resonances) {
         registerParameter(resonance->amp_real);
@@ -317,22 +363,28 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
                                   std::vector<MixingTimeResolution *> &r,
                                   GooPdf *efficiency,
                                   Observable md0,
-                                  Observable *mistag)
+                                  Observable *mistag,
+				  Observable *charmtag)
     : Amp3BodyBase("Amp3Body_TD", n, _dtime, _sigmat, m12, m13, eventNumber, md0)
     , decayInfo(decay)
     , _m12(m12)
     , _m13(m13)
     , resolution(
           r[0]) // Only used for normalization, which only depends on x and y - it doesn't matter which one we use.
+    , _mistag(*mistag)
     , totalEventSize(6) // This case adds the D0 mass by default.
 {
     for(auto &cachedWave : cachedWaves)
         cachedWave = nullptr;
 
-    if(mistag) {
-        registerObservable(*mistag);
-        totalEventSize++;
-    }
+    
+    //if(mistag) {
+    registerObservable(*mistag);
+    totalEventSize++;
+    //}
+
+    registerObservable(*charmtag);
+    totalEventSize++;
 
     MEMCPY_TO_SYMBOL(c_motherMass, &decay.motherMass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(c_daug1Mass, &decay.daug1Mass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
@@ -341,8 +393,10 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
     MEMCPY_TO_SYMBOL(c_meson_radius, &decay.meson_radius, sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
     registerParameter(decay._tau);
-    registerParameter(decay._xmixing);
-    registerParameter(decay._ymixing);
+    registerParameter(decay._xmixing0);
+    registerParameter(decay._ymixing0);
+    registerParameter(decay._deltax);
+    registerParameter(decay._deltay);
     printf("Multiple resolution functions not supported yet!\n");
 
     registerConstant(decayInfo.resonances.size());
@@ -351,10 +405,10 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
     cacheToUse            = cacheCount++;
     registerConstant(cacheToUse);
 
-    if(mistag)
-        registerConstant(1);
-    else
-        registerConstant(0);
+    //if(mistag)
+    registerConstant(1);
+    //else
+    //    registerConstant(0);
 
     registerConstant(SPECIAL_RESOLUTION_FLAG);
 
@@ -517,6 +571,16 @@ __host__ void Amp3Body_TD::setDataSize(unsigned int dataSize, unsigned int evtSi
     setForceIntegrals();
 }
 
+__host__ void Amp3Body_TD::setD0Fraction( fptype d0fraction) {
+    _D0Fraction = d0fraction;
+    assert(_D0Fraction >= 0);
+    assert(_D0Fraction <= 1);
+}
+
+__host__ fptype Amp3Body_TD::getD0Fraction() {
+    return _D0Fraction;
+}
+
 __host__ fptype Amp3Body_TD::normalize() {
     recursiveSetNormalization(1.0); // Not going to normalize efficiency,
     // so set normalization factor to 1 so it doesn't get multiplied by zero.
@@ -618,11 +682,11 @@ __host__ fptype Amp3Body_TD::normalize() {
     fpcomplex integralABs(0, 0);
 
     for(unsigned int i = 0; i < decayInfo.resonances.size(); ++i) {
-        fpcomplex amplitude_i(host_parameters[parametersIdx + i * 2 + 4], host_parameters[parametersIdx + i * 2 + 5]);
+        fpcomplex amplitude_i(host_parameters[parametersIdx + i * 2 + 6], host_parameters[parametersIdx + i * 2 + 7]);
 
         for(unsigned int j = 0; j < decayInfo.resonances.size(); ++j) {
-            fpcomplex amplitude_j(host_parameters[parametersIdx + j * 2 + 4],
-                                  -host_parameters[parametersIdx + j * 2 + 5]); // Notice complex conjugation
+            fpcomplex amplitude_j(host_parameters[parametersIdx + j * 2 + 6],
+                                  -host_parameters[parametersIdx + j * 2 + 7]); // Notice complex conjugation
 
             integralA_2 += (amplitude_i * amplitude_j
                             * fpcomplex(thrust::get<0>(*(integrals[i][j])), thrust::get<1>(*(integrals[i][j]))));
@@ -639,12 +703,189 @@ __host__ fptype Amp3Body_TD::normalize() {
     double dalitzIntegralThr = integralABs.real();
     double dalitzIntegralFou = integralABs.imag();
 
-    fptype tau     = host_parameters[parametersIdx + 1];
-    fptype xmixing = host_parameters[parametersIdx + 2];
-    fptype ymixing = host_parameters[parametersIdx + 3];
+    fptype tau      = host_parameters[parametersIdx + 1];
+    fptype xmixing0 = host_parameters[parametersIdx + 2];
+    fptype ymixing0 = host_parameters[parametersIdx + 3];
+    fptype deltax   = host_parameters[parametersIdx + 4];
+    fptype deltay   = host_parameters[parametersIdx + 5];
+    fptype xmixing_D0 = xmixing0 + deltax;
+    fptype ymixing_D0 = ymixing0 + deltay;
+    fptype xmixing_D0bar = xmixing0 - deltax;
+    fptype ymixing_D0bar = ymixing0 - deltay;
 
-    fptype ret = resolution->normalization(
-        dalitzIntegralOne, dalitzIntegralTwo, dalitzIntegralThr, dalitzIntegralFou, tau, xmixing, ymixing);
+    fptype ret_D0 = resolution->normalization(
+        dalitzIntegralOne, dalitzIntegralTwo, dalitzIntegralThr, dalitzIntegralFou, tau, xmixing_D0, ymixing_D0);
+
+    fptype ret_D0bar = resolution->normalization(
+        dalitzIntegralOne, dalitzIntegralTwo, dalitzIntegralThr, dalitzIntegralFou, tau, xmixing_D0bar, ymixing_D0bar);
+
+    //fptype _D0Fraction = 0.5; // Set D0 fraction to 1 for now.
+    fptype ret = _D0Fraction * ret_D0 + (1. - _D0Fraction) * ret_D0bar;
+
+    fptype xfix   = 0.0039;
+    fptype yfix   = 0.0065;
+    fptype taufix = 0.4101;
+
+    ret *= (1-2*_mistag.getValue());
+    ret += _mistag.getValue() * resolution->normalization(
+        dalitzIntegralOne, dalitzIntegralTwo, dalitzIntegralThr, dalitzIntegralFou, taufix, xfix, yfix);
+    ret += _mistag.getValue() * resolution->normalization(
+        dalitzIntegralTwo, dalitzIntegralOne, dalitzIntegralThr, -dalitzIntegralFou, taufix, xfix, yfix);
+
+    double binSizeFactor = 1;
+    binSizeFactor *= ((_m12.getUpperLimit() - _m12.getLowerLimit()) / _m12.getNumBins());
+    binSizeFactor *= ((_m13.getUpperLimit() - _m13.getLowerLimit()) / _m13.getNumBins());
+    ret *= binSizeFactor;
+
+    host_normalizations.at(normalIdx + 1) = 1.0 / ret;
+    cachedNormalization                   = 1.0 / ret;
+
+
+    GOOFIT_TRACE("Normalisation: {}", ret);
+
+    return ret;
+}
+
+__host__ fptype Amp3Body_TD::dummy_normalize() {
+    recursiveSetNormalization(1.0); // Not going to normalize efficiency,
+    // so set normalization factor to 1 so it doesn't get multiplied by zero.
+    // Copy at this time to ensure that the SpecialWaveCalculators, which need the efficiency,
+    // don't get zeroes through multiplying by the normFactor.
+
+    host_normalizations.sync(d_normalizations);
+
+    int totalBins = _m12.getNumBins() * _m13.getNumBins();
+
+    if(!dalitzNormRange) {
+        gooMalloc((void **)&dalitzNormRange, 6 * sizeof(fptype));
+
+        auto *host_norms = new fptype[6];
+        host_norms[0]    = _m12.getLowerLimit();
+        host_norms[1]    = _m12.getUpperLimit();
+        host_norms[2]    = _m12.getNumBins();
+        host_norms[3]    = _m13.getLowerLimit();
+        host_norms[4]    = _m13.getUpperLimit();
+        host_norms[5]    = _m13.getNumBins();
+        MEMCPY(dalitzNormRange, host_norms, 6 * sizeof(fptype), cudaMemcpyHostToDevice);
+        delete[] host_norms;
+    }
+
+    for(unsigned int i = 0; i < decayInfo.resonances.size(); ++i) {
+        redoIntegral[i] = forceRedoIntegrals;
+
+        if(!(decayInfo.resonances[i]->parametersChanged()))
+            continue;
+
+        redoIntegral[i] = true;
+    }
+
+    forceRedoIntegrals = false;
+
+    // Only do this bit if masses or widths have changed.
+    thrust::constant_iterator<fptype *> arrayAddress(dalitzNormRange);
+    thrust::counting_iterator<int> binIndex(0);
+
+    // NB, SpecialWaveCalculator assumes that fit is unbinned!
+    // And it needs to know the total event size, not just observables
+    // for this particular PDF component.
+    thrust::constant_iterator<fptype *> dataArray(dev_event_array);
+    thrust::constant_iterator<int> eventSize(totalEventSize);
+    thrust::counting_iterator<int> eventIndex(0);
+
+    static int normCall = 0;
+    normCall++;
+
+    for(int i = 0; i < decayInfo.resonances.size(); ++i) {
+        // printf("calculate i=%i, res_i=%i\n", i, decayInfo->resonances[i]->getFunctionIndex());
+        calculators[i]->setTddpIndex(getFunctionIndex());
+        calculators[i]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
+        if(redoIntegral[i]) {
+#ifdef GOOFIT_MPI
+            thrust::transform(
+                thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
+                thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, arrayAddress, eventSize)),
+                strided_range<thrust::device_vector<WaveHolder_s>::iterator>(
+                    cachedWaves[i]->begin(), cachedWaves[i]->end(), 1)
+                    .begin(),
+                *(calculators[i]));
+#else
+            thrust::transform(
+                thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
+                thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
+                strided_range<thrust::device_vector<WaveHolder_s>::iterator>(
+                    cachedWaves[i]->begin(), cachedWaves[i]->end(), 1)
+                    .begin(),
+                *(calculators[i]));
+#endif
+        }
+
+        // Possibly this can be done more efficiently by exploiting symmetry?
+        for(int j = 0; j < decayInfo.resonances.size(); ++j) {
+            if((!redoIntegral[i]) && (!redoIntegral[j]))
+                continue;
+
+            integrators[i][j]->setTddpIndex(getFunctionIndex());
+            integrators[i][j]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
+            integrators[i][j]->setEfficiencyIndex(decayInfo.resonances[j]->getFunctionIndex());
+
+            ThreeComplex dummy(0, 0, 0, 0, 0, 0);
+            SpecialComplexSum complexSum;
+            thrust::constant_iterator<int> effFunc(efficiencyFunction);
+            (*(integrals[i][j])) = thrust::transform_reduce(
+                thrust::make_zip_iterator(thrust::make_tuple(binIndex, arrayAddress, effFunc)),
+                thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, arrayAddress, effFunc)),
+                *(integrators[i][j]),
+                dummy,
+                complexSum);
+        }
+    }
+
+    // End of time-consuming integrals.
+
+    fpcomplex integralA_2(0, 0);
+    fpcomplex integralB_2(0, 0);
+    fpcomplex integralABs(0, 0);
+
+    for(unsigned int i = 0; i < decayInfo.resonances.size(); ++i) {
+        fpcomplex amplitude_i(host_parameters[parametersIdx + i * 2 + 6], host_parameters[parametersIdx + i * 2 + 7]);
+
+        for(unsigned int j = 0; j < decayInfo.resonances.size(); ++j) {
+            fpcomplex amplitude_j(host_parameters[parametersIdx + j * 2 + 6],
+                                  -host_parameters[parametersIdx + j * 2 + 7]); // Notice complex conjugation
+
+            integralA_2 += (amplitude_i * amplitude_j
+                            * fpcomplex(thrust::get<0>(*(integrals[i][j])), thrust::get<1>(*(integrals[i][j]))));
+            integralABs += (amplitude_i * amplitude_j
+                            * fpcomplex(thrust::get<2>(*(integrals[i][j])), thrust::get<3>(*(integrals[i][j]))));
+            integralB_2 += (amplitude_i * amplitude_j
+                            * fpcomplex(thrust::get<4>(*(integrals[i][j])), thrust::get<5>(*(integrals[i][j]))));
+        }
+    }
+
+    double dalitzIntegralOne = integralA_2.real(); // Notice that this is already the abs2, so it's real by
+                                                   // construction; but the compiler doesn't know that.
+    double dalitzIntegralTwo = integralB_2.real();
+    double dalitzIntegralThr = integralABs.real();
+    double dalitzIntegralFou = integralABs.imag();
+
+    fptype tau      = host_parameters[parametersIdx + 1];
+    fptype xmixing0 = host_parameters[parametersIdx + 2];
+    fptype ymixing0 = host_parameters[parametersIdx + 3];
+    fptype deltax   = host_parameters[parametersIdx + 4];
+    fptype deltay   = host_parameters[parametersIdx + 5];
+    fptype xmixing_D0 = xmixing0 + deltax;
+    fptype ymixing_D0 = ymixing0 + deltay;
+    fptype xmixing_D0bar = xmixing0 - deltax;
+    fptype ymixing_D0bar = ymixing0 - deltay;
+
+    fptype ret_D0 = resolution->normalization(
+        dalitzIntegralOne, dalitzIntegralTwo, dalitzIntegralThr, dalitzIntegralFou, tau, xmixing_D0, ymixing_D0);
+
+    fptype ret_D0bar = resolution->normalization(
+        dalitzIntegralOne, dalitzIntegralTwo, dalitzIntegralThr, dalitzIntegralFou, tau, xmixing_D0bar, ymixing_D0bar);
+
+    //fptype _D0Fraction = 0.5; // Set D0 fraction to 1 for now.
+    fptype ret = _D0Fraction * ret_D0 + (1. - _D0Fraction) * ret_D0bar;
 
     double binSizeFactor = 1;
     binSizeFactor *= ((_m12.getUpperLimit() - _m12.getLowerLimit()) / _m12.getNumBins());
@@ -656,5 +897,6 @@ __host__ fptype Amp3Body_TD::normalize() {
 
     return ret;
 }
+
 
 } // namespace GooFit

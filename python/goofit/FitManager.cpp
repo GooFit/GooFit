@@ -24,6 +24,7 @@ void init_FitManager(py::module &m) {
     py::class_<FitManagerMinuit2>(m, "FitManager")
         .def(py::init<PdfBase *>())
         .def("fit", &FitManagerMinuit2::fit, py::call_guard<py::scoped_ostream_redirect>())
+        .def("getMnScan", &FitManagerMinuit2::getMnScan)
         .def("__int__", &FitManagerMinuit2::operator int)
         .def("__bool__", &FitManagerMinuit2::operator bool)    // Py3
         .def("__nonzero__", &FitManagerMinuit2::operator bool) // Py2

@@ -19,6 +19,7 @@ device_DalitzPlot_calcIntegrals(fptype m12, fptype m13, int res_i, int res_j, Pa
     fptype daug3Mass  = c_daug3Mass;  // RO_CACHE(pc.constants[pc.constantIdx + 7]);
 
     fpcomplex ret;
+    fpcomplex ret_mt;
 
     if(!inDalitz(m12, m13, motherMass, daug1Mass, daug2Mass, daug3Mass))
         return ret;
@@ -30,13 +31,38 @@ device_DalitzPlot_calcIntegrals(fptype m12, fptype m13, int res_i, int res_j, Pa
     while(ipc.funcIdx < res_i)
         ipc.incrementIndex();
 
-    ret = getResonanceAmplitude(m12, m13, m23, ipc);
+    fptype mistag = 0.005;
+
+    ParameterContainer t = ipc;
+    ret                  = getResonanceAmplitude(m12, m13, m23, t);
+    t                    = ipc;
+    ret_mt               = getResonanceAmplitude(m13, m12, m23, t);
+
+    //ret *= (1-mistag);
+    //ret_mt *= mistag;
+    //ret += ret_mt;
 
     ParameterContainer jpc = pc;
     while(jpc.funcIdx < res_j)
         jpc.incrementIndex();
 
-    ret *= conj(getResonanceAmplitude(m12, m13, m23, jpc));
+    //ret *= conj(getResonanceAmplitude(m12, m13, m23, jpc));
+
+    t                     = jpc;
+    fpcomplex ret_conj    = conj(getResonanceAmplitude(m12, m13, m23, t));    
+    t                     = jpc;
+    fpcomplex ret_mt_conj = conj(getResonanceAmplitude(m13, m12, m23, t));
+
+    //ret_conj *= (1-mistag);
+    //ret_mt_conj *= mistag;
+
+    //ret_conj += ret_mt_conj;
+    
+    ret    *= ret_conj;
+    ret_mt *= ret_mt_conj;
+    ret    *= (1-mistag);
+    ret_mt *= mistag;
+    ret += ret_mt;
 
     return ret;
 }
@@ -78,6 +104,7 @@ __device__ fpcomplex SpecialResonanceIntegrator::operator()(thrust::tuple<int, f
 
     while(pc.funcIdx < dalitz_i)
         pc.incrementIndex();
+
 
     fpcomplex ret = device_DalitzPlot_calcIntegrals(binCenterM12, binCenterM13, resonance_i, resonance_j, pc);
 

@@ -7,6 +7,7 @@
 #include <Minuit2/MnPrint.h>
 #include <Minuit2/MnUserParameterState.h>
 #include <Minuit2/MnUserParameters.h>
+#include <Minuit2/MnScan.h>
 
 #include <CLI/Timer.hpp>
 
@@ -67,6 +68,12 @@ Minuit2::FunctionMinimum FitManagerMinuit2::fit() {
 
     Minuit2::MnPrint::SetLevel(val);
     return min;
+}
+
+Minuit2::MnScan FitManagerMinuit2::getMnScan() {
+    Minuit2::MnScan mnscan{fcn_, upar_};
+
+    return mnscan;
 }
 
 } // namespace GooFit

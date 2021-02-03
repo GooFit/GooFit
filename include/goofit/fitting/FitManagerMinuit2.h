@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Minuit2/FunctionMinimum.h>
+#include <Minuit2/MnScan.h>
 
 #include <memory>
 
@@ -28,6 +29,8 @@ class FitManagerMinuit2 {
 
     /// Get a pointer to the fcn
     FCN *getFCN() { return &fcn_; }
+
+    ROOT::Minuit2::MnScan getMnScan();
 
     /// Check to see if fit is valid
     operator bool() const { return retval_ == FitErrors::Valid; }

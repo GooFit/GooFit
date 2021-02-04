@@ -34,6 +34,7 @@ void init_JohnsonSUPdf(py::module &);
 void init_KinLimitBWPdf(py::module &);
 void init_LandauPdf(py::module &);
 void init_NovosibirskPdf(py::module &);
+void init_PoissonPdf(py::module &);
 void init_PolynomialPdf(py::module &);
 void init_ScaledGaussianPdf(py::module &);
 void init_SmoothHistogramPdf(py::module &);
@@ -73,93 +74,94 @@ void init_SquareDalitzEffPdf(py::module &);
 void init_VariableBinTransform1DPdf(py::module &);
 
 PYBIND11_MODULE(_goofit, m) {
-    m.doc() = "Python interface for GooFit";
+	m.doc() = "Python interface for GooFit";
 
-    py::module::import("goofit.minuit2");
+	py::module::import("goofit.minuit2");
 
-    init_HelpPrinter(m);
-    init_Variable(m);
-    init_DataSet(m);
-    init_BinnedDataSet(m);
-    init_UnbinnedDataSet(m);
-    init_FitManager(m);
-    init_PdfBase(m);
-    init_GooPdf(m);
-    init_CombinePdf(m);
-    init_Version(m);
-    init_FitControl(m);
-    init_Application(m);
+	init_HelpPrinter(m);
+	init_Variable(m);
+	init_DataSet(m);
+	init_BinnedDataSet(m);
+	init_UnbinnedDataSet(m);
+	init_FitManager(m);
+	init_PdfBase(m);
+	init_GooPdf(m);
+	init_CombinePdf(m);
+	init_Version(m);
+	init_FitControl(m);
+	init_Application(m);
 
-    // Basic
-    init_ArgusPdf(m);
-    init_BifurGaussPdf(m);
-    init_BinTransformPdf(m);
-    init_BernsteinPdf(m);
-    init_BWPdf(m);
-    init_CorrGaussianPdf(m);
-    init_CrystalBallPdf(m);
-    init_ExpGausPdf(m);
-    init_ExpPdf(m);
-    init_GSLExpPdf(m);
-    init_LegendrePdf(m);
-    init_GaussianPdf(m);
-    init_InterHistPdf(m);
-    init_JohnsonSUPdf(m);
-    init_KinLimitBWPdf(m);
-    init_LandauPdf(m);
-    init_NovosibirskPdf(m);
-    init_PolynomialPdf(m);
-    init_ScaledGaussianPdf(m);
-    init_SmoothHistogramPdf(m);
-    init_StepPdf(m);
-    init_TrigThresholdPdf(m);
-    init_VoigtianPdf(m);
+	// Basic
+	init_ArgusPdf(m);
+	init_BifurGaussPdf(m);
+	init_BinTransformPdf(m);
+	init_BernsteinPdf(m);
+	init_BWPdf(m);
+	init_CorrGaussianPdf(m);
+	init_CrystalBallPdf(m);
+	init_ExpGausPdf(m);
+	init_ExpPdf(m);
+	init_GSLExpPdf(m);
+	init_LegendrePdf(m);
+	init_GaussianPdf(m);
+	init_InterHistPdf(m);
+	init_JohnsonSUPdf(m);
+	init_KinLimitBWPdf(m);
+	init_LandauPdf(m);
+	init_NovosibirskPdf(m);
+	init_PoissonPdf(m);    
+	init_PolynomialPdf(m);
+	init_ScaledGaussianPdf(m);
+	init_SmoothHistogramPdf(m);
+	init_StepPdf(m);
+	init_TrigThresholdPdf(m);
+	init_VoigtianPdf(m);
 
-    // Combine
-    init_AddPdf(m);
-    init_CompositePdf(m);
-    init_ConvolutionPdf(m);
-    init_EventWeightedAddPdf(m);
-    init_MappedPdf(m);
-    init_ProdPdf(m);
+	// Combine
+	init_AddPdf(m);
+	init_CompositePdf(m);
+	init_ConvolutionPdf(m);
+	init_EventWeightedAddPdf(m);
+	init_MappedPdf(m);
+	init_ProdPdf(m);
 
-    // Physics
-    init_DalitzPlotHelpers(m);
-    init_DalitzPlotter(m);
-    init_AmpNBodyBase(m);
-    init_Amp3BodyBase(m);
-    init_Amp3Body(m);
-    init_Amp3Body_TD(m);
-    init_Amp4BodyBase(m);
-    init_Amp4Body(m);
-    init_Amp4Body_TD(m);
-    init_DalitzVetoPdf(m);
-    init_Amp3Body_IS(m);
-    init_Lineshapes(m);
-    init_MixingTimeResolution(m);
-    init_ResonancePdf(m);
-    init_SpinFactors(m);
-    init_ThreeGaussResolution(m);
-    init_TruthResolution(m);
-    init_SquareDalitzEffPdf(m);
+	// Physics
+	init_DalitzPlotHelpers(m);
+	init_DalitzPlotter(m);
+	init_AmpNBodyBase(m);
+	init_Amp3BodyBase(m);
+	init_Amp3Body(m);
+	init_Amp3Body_TD(m);
+	init_Amp4BodyBase(m);
+	init_Amp4Body(m);
+	init_Amp4Body_TD(m);
+	init_DalitzVetoPdf(m);
+	init_Amp3Body_IS(m);
+	init_Lineshapes(m);
+	init_MixingTimeResolution(m);
+	init_ResonancePdf(m);
+	init_SpinFactors(m);
+	init_ThreeGaussResolution(m);
+	init_TruthResolution(m);
+	init_SquareDalitzEffPdf(m);
 
-    // Utilities
-    init_VariableBinTransform1DPdf(m);
+	// Utilities
+	init_VariableBinTransform1DPdf(m);
 
-    // Setup for iPython
-    py::object ip = py::none();
+	// Setup for iPython
+	py::object ip = py::none();
 
-    try {
-        py::object ipython = py::module::import("IPython");
-        ip                 = ipython.attr("get_ipython")();
-    } catch(const py::error_already_set &) {
-    }
+	try {
+		py::object ipython = py::module::import("IPython");
+		ip                 = ipython.attr("get_ipython")();
+	} catch(const py::error_already_set &) {
+	}
 
-    if(!ip.is_none()) {
-        py::object html_formatter = ip.attr("display_formatter").attr("formatters")["text/markdown"];
-        auto locals               = py::dict("html_formatter"_a = html_formatter, "m"_a = m);
-        py::exec("html_formatter.for_type(type(m.PdfBase), lambda x: repr(x.help()) if hasattr(x, 'help') else None)",
-                 py::globals(),
-                 locals);
-    }
+	if(!ip.is_none()) {
+		py::object html_formatter = ip.attr("display_formatter").attr("formatters")["text/markdown"];
+		auto locals               = py::dict("html_formatter"_a = html_formatter, "m"_a = m);
+		py::exec("html_formatter.for_type(type(m.PdfBase), lambda x: repr(x.help()) if hasattr(x, 'help') else None)",
+				py::globals(),
+				locals);
+	}
 }

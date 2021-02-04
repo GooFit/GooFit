@@ -19,6 +19,7 @@ goofit_add_pdf_library(
   KinLimitBWPdf.cu
   LandauPdf.cu
   NovosibirskPdf.cu
+  PoissonPdf.cu  
   PolynomialPdf.cu
   ScaledGaussianPdf.cu
   SmoothHistogramPdf.cu

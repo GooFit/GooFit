@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
 	std::cout << GooFit::magenta << gen_timer << GooFit::reset << std::endl;
 
 	// Fit parameter
-	GooFit::Variable lambda{"lambda", 3, 0.001, -11, 11};
+	GooFit::Variable lambda{"lambda", 9, 0.001, 5, 15};
 	// GooPdf object
 	GooFit::PoissonPdf poissonpdf{"poissonpdf", xvar, lambda};
 	poissonpdf.setData(&data);

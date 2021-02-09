@@ -10,14 +10,20 @@ namespace GooFit {
 		fptype lambda = pc.getParameter(0);
 		fptype x = RO_CACHE(evt[id]);
 		pc.incrementIndex(1,1,0,1,1);
-		return exp(-1*lambda)*pow(lambda,x)/tgamma(x+1); //doubt this will be final return statement, do I need to define another function to get this to work? I don't know if tgamma works, it might not.
+		fptype ret =  exp(-1*lambda)*pow(lambda,x)/tgamma(x+1); //doubt this will be final return statement, do I need to define another function to get this to work? I don't know if tgamma works, it might not.
+		printf("ret = %f\n",ret);
+		printf("lambda = %f\n",lambda);
+		printf("x = %f\n",x);
+		printf("Num = %f\n",(pow(lambda,x)*exp(lambda*-1)));
+		printf("Den = %f\n",tgamma(x+1));
+		return ret;
 	}
 
 
 __device__ device_function_ptr ptr_to_PoissonPdf = device_PoissonPdf;
 
 __host__ PoissonPdf::PoissonPdf(std::string n, Observable _x, Variable lambda) : GooPdf("PoissonPdf",n,_x,lambda) {
-	registerParameter(lambda);
+	//registerParameter(lambda);
 	registerFunction("ptr_to_PoissonPdf",ptr_to_PoissonPdf);
 	initialize();
 } 

@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
 	GooFit::Observable xvar{"xvar", 0, 20}; //change xvar range? 
 	double x[1000];
 	const double e = 2.718281828459045235360287471352;
-	std::vector<double> x_passed;
+	vector<double> x_passed;
 	const double xmin = 0.0;
 	const double xmax = 20.0;
 	double f = 0.0;
@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
 		if (fmax < (pow(Lambda,x[j])*pow(e,-1*Lambda)/tgamma(x[j]+1))) { fmax=x[j];}
 	}
 	for (int k = 0; k < 1000; k++) { 
-		r = rand();
+		r = (double)rand()/RAND_MAX;
 		if (r < (pow(Lambda,x[k])*pow(e,-1*Lambda)/(tgamma(x[k]+1)*fmax))) {
 			xvar.setValue(x[k]);
 			data.addEvent();

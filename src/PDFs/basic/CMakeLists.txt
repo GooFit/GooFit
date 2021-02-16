@@ -8,6 +8,7 @@ goofit_add_pdf_library(
   BernsteinPdf.cu
   BifurGaussPdf.cu
   BinTransformPdf.cu
+  chebyshevPdf.cu
   CorrGaussianPdf.cu
   CrystalBallPdf.cu
   ExpGausPdf.cu

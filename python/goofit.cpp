@@ -22,6 +22,7 @@ void init_BifurGaussPdf(py::module &);
 void init_BernsteinPdf(py::module &);
 void init_BinTransformPdf(py::module &);
 void init_BWPdf(py::module &);
+void init_chebyshevPdf(py::module &);
 void init_CorrGaussianPdf(py::module &);
 void init_CrystalBallPdf(py::module &);
 void init_ExpGausPdf(py::module &);
@@ -97,6 +98,7 @@ PYBIND11_MODULE(_goofit, m) {
 	init_BinTransformPdf(m);
 	init_BernsteinPdf(m);
 	init_BWPdf(m);
+	init_chebyshevPdf(m);
 	init_CorrGaussianPdf(m);
 	init_CrystalBallPdf(m);
 	init_ExpGausPdf(m);

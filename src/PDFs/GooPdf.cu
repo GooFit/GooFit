@@ -356,7 +356,7 @@ __host__ fptype GooPdf::normalize() {
     GOOFIT_TRACE("Total bin volume: {}", ret);
 
     fptype sum = reduce_with_bins();
-
+    printf("%f \n",sum);
     GOOFIT_TRACE("Sum: {}", sum);
 
     if(std::isnan(sum)) {

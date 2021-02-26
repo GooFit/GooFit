@@ -10,7 +10,8 @@ namespace GooFit {
 		fptype c = 1.0;
 		fptype s = 0.0;
 		c = 1/((pow(2,max))*Factorial(max));                    
-		fptype p[(2 * max) + 1];
+		const int index = (2*max)+1;
+		fptype p[index];
 
 		for (int i=0;i <= max;i++)
 		{

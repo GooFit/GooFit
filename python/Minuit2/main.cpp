@@ -12,6 +12,7 @@ void init_MnApplication(py::module &);
 void init_MnMigrad(py::module &);
 void init_MnPrint(py::module &);
 void init_MnScan(py::module &);
+void init_MnMinos(py::module &);
 
 PYBIND11_MODULE(minuit2, m) {
     m.doc() = "Python interface for Minuit2";
@@ -26,4 +27,5 @@ PYBIND11_MODULE(minuit2, m) {
     init_MnMigrad(m);
     init_MnPrint(m);
     init_MnScan(m);
+    init_MnMinos(m);
 }

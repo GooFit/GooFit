@@ -10,7 +10,8 @@ add_library(
   MnUserCovariance.cpp
   MnUserParameterState.cpp
   MnUserParameters.cpp
-  MnScan.cpp)
+  MnScan.cpp
+  MnMinos.cpp)
 
 process_pybind_module(minuit2)
 target_link_libraries(minuit2 PUBLIC ROOT::Minuit2)

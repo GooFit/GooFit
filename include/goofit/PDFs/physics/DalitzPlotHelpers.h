@@ -86,6 +86,8 @@ struct DecayInfo3 {
     fptype daug2Mass;
     fptype daug3Mass;
     fptype meson_radius;
+    fptype mother_meson_radius;
+
 
     std::vector<ResonancePdf *> resonances;
 };

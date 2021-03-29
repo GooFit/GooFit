@@ -20,10 +20,11 @@ __device__ fpcomplex lass(fptype m12, fptype m13, fptype m23, ParameterContainer
     fptype _B    = pc.getParameter(6);
     fptype _phiB = pc.getParameter(7);
 
-    fptype rMassSq  = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
-    fptype bachelorMass = (PAIR_12 == cyclic_index ? c_daug3Mass : (PAIR_13 == cyclic_index ? c_daug2Mass : c_daug1Mass));
-    fptype frFactor = 1;
-    fptype frFactorD = 1; 
+    fptype rMassSq = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
+    fptype bachelorMass
+        = (PAIR_12 == cyclic_index ? c_daug3Mass : (PAIR_13 == cyclic_index ? c_daug2Mass : c_daug1Mass));
+    fptype frFactor  = 1;
+    fptype frFactorD = 1;
 
     resmass *= resmass;
     // Calculate momentum of the two daughters in the resonance rest frame; note symmetry under interchange (dm1 <->
@@ -43,8 +44,8 @@ __device__ fpcomplex lass(fptype m12, fptype m13, fptype m23, ParameterContainer
         frFactor = dampingFactorSquare(nominalDaughterMoms, spin, c_meson_radius);
         frFactor /= dampingFactorSquare(measureDaughterMoms, spin, c_meson_radius);
 
-    	frFactorD =  dampingFactorSquare(nominalDaughterMomsD, spin, c_mother_meson_radius);
-    	frFactorD /= dampingFactorSquare(measureDaughterMomsD, spin, c_mother_meson_radius);    
+        frFactorD = dampingFactorSquare(nominalDaughterMomsD, spin, c_mother_meson_radius);
+        frFactorD /= dampingFactorSquare(measureDaughterMomsD, spin, c_mother_meson_radius);
     }
 
     // Implement LASS:

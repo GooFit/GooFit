@@ -73,7 +73,8 @@ int main(int argc, char **argv) {
 	CLI::Timer gen_timer{"Generating took"};
 	for(int i = 0; i < 100000; ++i) {
 		try {
-			xvar.setValue(xvar.getLowerLimit() - (rand()*(xvar.getUpperLimit() - xvar.getLowerLimit())));
+			xvar.setValue(xvar.getLowerLimit() - (((double)rand()/RAND_MAX)*(xvar.getUpperLimit() - xvar.getLowerLimit())));
+			std::cout << "x = " << xvar.getValue() << endl;
 			data.addEvent();
 			legHist.Fill(xvar.getValue());
 			ne++;

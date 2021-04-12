@@ -50,16 +50,16 @@ __device__ fpcomplex plainBW(fptype m12, fptype m13, fptype m23, ParameterContai
             // D0 meson has same spin than resonance
             if(norm) {
                 // normalized form factors
-                frFactor = dampingFactorSquare(nominalDaughterMoms, spin, c_meson_radius)
-                           / dampingFactorSquare(measureDaughterMoms, spin, c_meson_radius);
+                frFactor = dampingFactorSquareNorm(nominalDaughterMoms, spin, c_meson_radius)
+                           / dampingFactorSquareNorm(measureDaughterMoms, spin, c_meson_radius);
 
                 frFactorMother = dampingFactorSquareNorm(nominalDaughterMomsMother, spin, c_mother_meson_radius)
                                  / dampingFactorSquareNorm(measureDaughterMomsMother, spin, c_mother_meson_radius);
             }
             // unnormalized form factors
             else {
-                frFactor       = dampingFactorSquareNorm(measureDaughterMoms, spin, c_meson_radius);
-                frFactorMother = dampingFactorSquareNorm(measureDaughterMomsMother, spin, c_mother_meson_radius);
+                frFactor       = dampingFactorSquare(measureDaughterMoms, spin, c_meson_radius);
+                frFactorMother = dampingFactorSquare(measureDaughterMomsMother, spin, c_mother_meson_radius);
             }
         }
 

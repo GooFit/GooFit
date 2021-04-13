@@ -57,7 +57,6 @@ int main(int argc, char **argv) {
 	GooFit::Application app("Legendre example", argc, argv);
 
 	GOOFIT_PARSE(app);
-	int ne = 0; //To count the number of events that passed the "try" statement
 
 	// Independent variable.
 	GooFit::Observable xvar{"xvar", -1, 1};
@@ -73,15 +72,12 @@ int main(int argc, char **argv) {
 	CLI::Timer gen_timer{"Generating took"};
 	for(int i = 0; i < 100000; ++i) {
 		try {
-			xvar.setValue(xvar.getLowerLimit() - (((double)rand()/RAND_MAX)*(xvar.getUpperLimit() - xvar.getLowerLimit())));
-			std::cout << "x = " << xvar.getValue() << endl;
+			xvar.setValue(xvar.getLowerLimit() + (((double)rand()/RAND_MAX)*(xvar.getUpperLimit() - xvar.getLowerLimit())));
 			data.addEvent();
 			legHist.Fill(xvar.getValue());
-			ne++;
 		} catch(const GooFit::OutOfRange &) {
 		}
 	}
-	std::cout << "Number of passed events = " << ne << endl;
 	std::cout << GooFit::magenta << gen_timer << GooFit::reset << std::endl;
 
 	// Fit parameter

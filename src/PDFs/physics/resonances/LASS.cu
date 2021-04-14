@@ -54,8 +54,8 @@ __device__ fpcomplex lass(fptype m12, fptype m13, fptype m23, ParameterContainer
         frFactor = dampingFactorSquare(nominalDaughterMoms, spin, c_meson_radius);
         frFactor /= dampingFactorSquare(measureDaughterMoms, spin, c_meson_radius);
 
-    	frFactorD =  dampingFactorSquare(nominalDaughterMomsD, spin, c_mother_meson_radius);
-    	frFactorD /= dampingFactorSquare(measureDaughterMomsD, spin, c_mother_meson_radius);    
+    	frFactorD =  dampingFactorSquare(nominalDaughterMomsMother, spin, c_mother_meson_radius);
+    	frFactorD /= dampingFactorSquare(measureDaughterMomsMother, spin, c_mother_meson_radius);    
         if(norm) {
             // normalized form factors
             frFactor = dampingFactorSquareNorm(nominalDaughterMoms, spin, c_meson_radius)

@@ -58,16 +58,16 @@ __device__ fpcomplex lass(fptype m12, fptype m13, fptype m23, ParameterContainer
     	frFactorD /= dampingFactorSquare(measureDaughterMomsD, spin, c_mother_meson_radius);    
         if(norm) {
             // normalized form factors
-            frFactor = dampingFactorSquare(nominalDaughterMoms, spin, c_meson_radius)
-                       / dampingFactorSquare(measureDaughterMoms, spin, c_meson_radius);
+            frFactor = dampingFactorSquareNorm(nominalDaughterMoms, spin, c_meson_radius)
+                       / dampingFactorSquareNorm(measureDaughterMoms, spin, c_meson_radius);
 
             frFactorD = dampingFactorSquareNorm(nominalDaughterMomsMother, spin, c_mother_meson_radius)
                         / dampingFactorSquareNorm(measureDaughterMomsMother, spin, c_mother_meson_radius);
         }
         // unnormalized form factors
         else {
-            frFactor  = dampingFactorSquareNorm(measureDaughterMoms, spin, c_meson_radius);
-            frFactorD = dampingFactorSquareNorm(measureDaughterMomsMother, spin, c_mother_meson_radius);
+            frFactor  = dampingFactorSquare(measureDaughterMoms, spin, c_meson_radius);
+            frFactorD = dampingFactorSquare(measureDaughterMomsMother, spin, c_mother_meson_radius);
         }
     }
 
@@ -113,7 +113,7 @@ __device__ fpcomplex lass(fptype m12, fptype m13, fptype m23, ParameterContainer
     resT *= sqrt(frFactorD);
     resT *= spinFactor(spin, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass, m12, m13, m23, cyclic_index);
 
-    pc.incrementIndex(1, 8, 2, 0, 1);
+    pc.incrementIndex(1, 8, 3, 0, 1);
 
     return resT;
 }

@@ -73,7 +73,7 @@ void init_ResonancePdf(py::module &m) {
              "_phiB"_a,
              "sp"_a,
              "cyc"_a,
-             "norm"_a = false);
+             "norm"_a = true);
 
 #if GOOFIT_KMATRIX
     py::class_<Resonances::kMatrix, ResonancePdf>(m_ls, "kMatrix")

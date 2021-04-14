@@ -81,7 +81,7 @@ __device__ fpcomplex plainBW(fptype m12, fptype m13, fptype m23, ParameterContai
             cyclic_index = cyclic_index + 1 % 3;
         }
     }
-    pc.incrementIndex(1, 2, 2, 0, 1);
+    pc.incrementIndex(1, 2, 3, 0, 1);
     return result;
 }
 

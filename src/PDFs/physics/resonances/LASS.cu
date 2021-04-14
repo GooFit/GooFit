@@ -113,7 +113,7 @@ __device__ fpcomplex lass(fptype m12, fptype m13, fptype m23, ParameterContainer
     resT *= sqrt(frFactorD);
     resT *= spinFactor(spin, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass, m12, m13, m23, cyclic_index);
 
-    pc.incrementIndex(1, 8, 2, 0, 1);
+    pc.incrementIndex(1, 8, 3, 0, 1);
 
     return resT;
 }

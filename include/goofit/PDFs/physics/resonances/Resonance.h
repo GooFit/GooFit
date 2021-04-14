@@ -12,9 +12,11 @@ typedef fpcomplex (*resonance_function_ptr)(fptype, fptype, fptype, ParameterCon
 
 __device__ fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m);
 
-__device__ fptype twoBodyCMmomD (fptype rMassSq, fptype dm, fptype d3m);
+__device__ fptype twoBodyCMMothermom(fptype rMassSq, fptype dm, fptype d3m);
 
 __device__ fptype dampingFactorSquare(const fptype &cmmom, const int &spin, const fptype &mRadius);
+
+__device__ fptype dampingFactorSquareNorm(const fptype &cmmom, const int &spin, const fptype &mRadius);
 
 __device__ fptype spinFactor(unsigned int spin,
                              fptype motherMass,
@@ -26,13 +28,22 @@ __device__ fptype spinFactor(unsigned int spin,
                              fptype m23,
                              unsigned int cyclic_index);
 
-__device__ fptype phsp_twoBody(fptype s, fptype m0, fptype m1);
+__device__ fpcomplex phsp_twoBody(fptype s, fptype m0, fptype m1);
 
-__device__ fptype phsp_fourPi(fptype s);
+__device__ fpcomplex phsp_fourPi(fptype s);
 
-__device__ Eigen::Array<fpcomplex, NCHANNELS, NCHANNELS>
-getPropagator(const Eigen::Array<fptype, NCHANNELS, NCHANNELS> &kMatrix,
-              const Eigen::Matrix<fptype, 5, 1> &phaseSpace,
+__device__ void getCofactor(fptype A[NCHANNELS][NCHANNELS], fptype temp[NCHANNELS][NCHANNELS], int p, int q, int n); 
+
+__device__ fptype determinant(fptype A[NCHANNELS][NCHANNELS], int n); 
+
+__device__ void adjoint(fptype A[NCHANNELS][NCHANNELS],fptype adj[NCHANNELS][NCHANNELS]); 
+
+__device__ bool inverse(fptype A[NCHANNELS][NCHANNELS], fptype inverse[NCHANNELS][NCHANNELS]);
+
+__device__ void
+getPropagator(const fptype kMatrix[NCHANNELS][NCHANNELS],
+              const  fpcomplex phaseSpace[NCHANNELS],
+              fpcomplex F[NCHANNELS][NCHANNELS],
               fptype adlerTerm);
 
 /**

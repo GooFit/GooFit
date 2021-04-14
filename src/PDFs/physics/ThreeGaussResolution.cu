@@ -71,7 +71,8 @@ __device__ fptype device_threegauss_resolution(fptype coshterm,
                                                fptype sigma,
                                                ParameterContainer &pc) {
     fptype coreFraction    = pc.getParameter(0);
-    fptype tailFraction    = (1 - coreFraction) * pc.getParameter(1);
+    fptype tailFraction    = pc.getParameter(1);
+    //fptype tailFraction    = (1 - coreFraction) * pc.getParameter(1);
     fptype outlFraction    = 1 - coreFraction - tailFraction;
     fptype coreBias        = pc.getParameter(2);
     fptype coreScaleFactor = pc.getParameter(3);

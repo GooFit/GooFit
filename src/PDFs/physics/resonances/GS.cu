@@ -57,10 +57,10 @@ __device__ fpcomplex gouSak(fptype m12, fptype m13, fptype m23, ParameterContain
     fptype resmass  = pc.getParameter(0);
     fptype reswidth = pc.getParameter(1);
 
-    fptype rMassSq  = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
+    fptype rMassSq = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
     fptype bachelorMass
         = (PAIR_12 == cyclic_index ? c_daug3Mass : (PAIR_13 == cyclic_index ? c_daug2Mass : c_daug1Mass));
-    fptype frFactor = 1;
+    fptype frFactor  = 1;
     fptype frFactorD = 1;
 
     resmass *= resmass;
@@ -75,19 +75,18 @@ __device__ fpcomplex gouSak(fptype m12, fptype m13, fptype m23, ParameterContain
 
     fptype measureDaughterMomsMother;
     fptype nominalDaughterMomsMother;
-					      
-    if (norm) {
+
+    if(norm) {
         // Mother momentum for normalized Blatt-Weisskopf form factors calculated in the resonance rest frame
         measureDaughterMomsMother = twoBodyCMMothermom(rMassSq, c_motherMass, bachelorMass);
         nominalDaughterMomsMother = twoBodyCMMothermom(resmass, c_motherMass, bachelorMass);
-    }
-    else {
+    } else {
         // Mother momentum for unnormalized Blatt-Weisskopf form factors calculated in mother rest frame
         measureDaughterMomsMother = twoBodyCMmom(c_motherMass * c_motherMass, sqrt(rMassSq), bachelorMass);
     }
 
     if(0 != spin) {
-        if (norm) {
+        if(norm) {
             frFactor = dampingFactorSquareNorm(nominalDaughterMoms, spin, c_meson_radius);
             frFactor /= dampingFactorSquareNorm(measureDaughterMoms, spin, c_meson_radius);
 

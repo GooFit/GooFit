@@ -44,7 +44,7 @@ void init_ResonancePdf(py::module &m) {
              "sp"_a,
   	     "cyc"_a,
 	     "norm"_a = true,
-	     "sym"_a = false);
+	     "sym"_a  = false);
 
     py::class_<Resonances::LASS, ResonancePdf>(m_ls, "LASS")
         .def(py::init<std::string,

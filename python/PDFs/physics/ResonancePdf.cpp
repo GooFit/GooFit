@@ -34,7 +34,7 @@ void init_ResonancePdf(py::module &m) {
              "sym"_a  = false);
 
     py::class_<Resonances::GS, ResonancePdf>(m_ls, "GS")
-        .def(py::init<std::string, Variable, Variable, Variable, Variable, unsigned int, unsigned int>(),
+      .def(py::init<std::string, Variable, Variable, Variable, Variable, unsigned int, unsigned int, bool, bool>(),
              "Constructor for regular Gounaris-Sakurai",
              "name"_a,
              "ar"_a,
@@ -42,7 +42,9 @@ void init_ResonancePdf(py::module &m) {
              "mass"_a,
              "width"_a,
              "sp"_a,
-             "cyc"_a);
+  	     "cyc"_a,
+	     "norm"_a = true,
+	     "sym"_a = false);
 
     py::class_<Resonances::LASS, ResonancePdf>(m_ls, "LASS")
         .def(py::init<std::string,

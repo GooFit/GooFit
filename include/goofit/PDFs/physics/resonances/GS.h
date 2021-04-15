@@ -16,6 +16,7 @@ class GS : public ResonancePdf {
        Variable width,
        unsigned int sp,
        unsigned int cyc,
+       bool norm = true,
        bool sym = false);
     ~GS() override = default;
 };

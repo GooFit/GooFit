@@ -31,9 +31,9 @@ namespace GooFit {
 		while (k <= max) 
 		{
 			s += p[k]*(pow(x,k));
-			//cout << p[k] << " ";
 			k += 1;
 		}
+		printf("P(x) = %f \n",s); 
 		return s;
 	}
 
@@ -53,8 +53,7 @@ namespace GooFit {
 		int id       = pc.getObservable(0);
 		fptype ret = 0;
 		int max = pc.getConstant(0);         //What'll the max variable be? Do I get it from pc?
-		printf("Constant is %d \n",pc.getConstant(0));
-		printf("Offset is %d \n",pc.getParameter(0));
+		printf("Constant #2 is %f \n",pc.getParameter(1));
 		fptype x     = RO_CACHE(evt[id]); //The legendre fitting, I think, starts from PolynomialPdf
 		//From there, it goes backwards to determine the closest sum of Legendre Polynomials.
 		/*But the Polynomial fit uses an array of coefficients, how will that be passed? 
@@ -72,11 +71,11 @@ namespace GooFit {
 
 	__host__ LegendrePdf::LegendrePdf(std::string n, Observable _x, std::vector<Variable> weights,  unsigned int max)
 		: GooPdf("LegendrePdf", n, _x) { //Do I need 6 or 5 params?
-			registerFunction("ptr_to_Legendre", ptr_to_LegendrePdf);
 			registerConstant(max);
 			for(Variable &v : weights) {
 				registerParameter(v);
 			}
+			registerFunction("ptr_to_Legendre", ptr_to_LegendrePdf);
 			initialize();
 		}
 

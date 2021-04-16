@@ -81,10 +81,12 @@ int main(int argc, char **argv) {
 	std::cout << GooFit::magenta << gen_timer << GooFit::reset << std::endl;
 
 	// Fit parameter
-	GooFit::Variable weight0{"weight0",1,0.1,-1000,1000};
-	GooFit::Variable weight1{"weight1",2,0.1,-1000,1000};
-	GooFit::Variable weight2{"weight2",2,0.1,-1000,1000};
+	GooFit::Variable weight0{"weight0",0,0.1,-1000,1000};
+	GooFit::Variable weight1{"weight1",1,0.1,-1000,1000};
+	GooFit::Variable weight2{"weight2",0,0.1,-1000,1000};
 	weight0.setFixed(1);
+	weight1.setFixed(1);
+	weight2.setFixed(1);
 	std::vector<GooFit::Variable> weights;
 	weights.push_back(weight0);
 	weights.push_back(weight1);

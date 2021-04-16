@@ -17,7 +17,7 @@ class GS : public ResonancePdf {
        unsigned int sp,
        unsigned int cyc,
        bool norm = true,
-       bool sym = false);
+       bool sym  = false);
     ~GS() override = default;
 };
 

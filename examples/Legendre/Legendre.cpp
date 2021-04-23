@@ -13,9 +13,13 @@
 
 using namespace std;
 
-void fitAndPlot(GooFit::LegendrePdf *total, GooFit::UnbinnedDataSet *data, TH1F &dataHist, GooFit::Observable xvar, const char *fname) {
+void fitAndPlot(GooFit::LegendrePdf *total,
+                GooFit::UnbinnedDataSet *data,
+                TH1F &dataHist,
+                GooFit::Observable xvar,
+                const char *fname) {
     TCanvas *foo = 0;
-    foo = new TCanvas();
+    foo          = new TCanvas();
     total->setData(data);
     GooFit::FitManager fitter(total);
     fitter.fit();
@@ -54,52 +58,54 @@ void fitAndPlot(GooFit::LegendrePdf *total, GooFit::UnbinnedDataSet *data, TH1F 
     foo->SaveAs(fname);
 }
 int main(int argc, char **argv) {
-	GooFit::Application app("Legendre example", argc, argv);
+    GooFit::Application app("Legendre example", argc, argv);
 
-	GOOFIT_PARSE(app);
+    GOOFIT_PARSE(app);
 
-	// Independent variable.
-	GooFit::Observable xvar{"xvar", -1, 1};
+    // Independent variable.
+    GooFit::Observable xvar{"xvar", -1, 1};
 
-	//Histogram declarations 
-	TH1F legHist("LegendreHist","",xvar.getNumBins(),xvar.getLowerLimit(),xvar.getUpperLimit());
-	legHist.SetStats(false);
+    // Histogram declarations
+    TH1F legHist("LegendreHist", "", xvar.getNumBins(), xvar.getLowerLimit(), xvar.getUpperLimit());
+    legHist.SetStats(false);
 
-	// Data set
-	GooFit::UnbinnedDataSet data(xvar);
+    // Data set
+    GooFit::UnbinnedDataSet data(xvar);
 
-	// Generate toy events
-	CLI::Timer gen_timer{"Generating took"};
-	for(int i = 0; i < 100000; ++i) {
-		try {
-			xvar.setValue(xvar.getLowerLimit() + (((double)rand()/RAND_MAX)*(xvar.getUpperLimit() - xvar.getLowerLimit())));
-			data.addEvent();
-			legHist.Fill(xvar.getValue());
-		} catch(const GooFit::OutOfRange &) {
-		}
-	}
-	std::cout << GooFit::magenta << gen_timer << GooFit::reset << std::endl;
+    // Generate toy events
+    CLI::Timer gen_timer{"Generating took"};
+    for(int i = 0; i < 100000; ++i) {
+        try {
+            xvar.setValue(xvar.getLowerLimit()
+                          + ((sqrt((double)rand() / RAND_MAX)) * (xvar.getUpperLimit() - xvar.getLowerLimit())));
+            data.addEvent();
+            legHist.Fill(xvar.getValue());
+        } catch(const GooFit::OutOfRange &) {
+        }
+    }
+    std::cout << GooFit::magenta << gen_timer << GooFit::reset << std::endl;
 
-	// Fit parameter
-	GooFit::Variable weight0{"weight0",0,0.1,-1000,1000};
-	GooFit::Variable weight1{"weight1",1,0.1,-1000,1000};
-	GooFit::Variable weight2{"weight2",0,0.1,-1000,1000};
-	weight0.setFixed(1);
-	weight1.setFixed(1);
-	weight2.setFixed(1);
-	std::vector<GooFit::Variable> weights;
-	weights.push_back(weight0);
-	weights.push_back(weight1);
-	weights.push_back(weight2);    
-	unsigned int max = 3;
-	// GooPdf object
-	GooFit::LegendrePdf *Legpdf = new GooFit::LegendrePdf{"Legpdf", xvar, weights, max};
-	Legpdf->setData(&data);
-	fitAndPlot(Legpdf, &data, legHist, xvar, "legendre_fit_cpp.png");
-//	GooFit::FitManager fitter{&Legpdf};
-//	fitter.fit();
-//The above 2 lines are commented out because they were previously used for fitting the legendre plot without saving it to an image, and they become redundant with the function fitAndPlot
+    // Fit parameter
+    GooFit::Variable weight0{"weight0", 1, 0.1, -1000, 1000};
+    GooFit::Variable weight1{"weight1", 0, 0.1, -1000, 1000};
+    GooFit::Variable weight2{"weight2", 0, 0.1, 0, 1000};
+    weight0.setFixed(1);
+    weight1.setFixed(1);
+    weight2.setFixed(0);
+    std::vector<GooFit::Variable> weights;
+    weights.push_back(weight0);
+    weights.push_back(weight1);
+    weights.push_back(weight2);
+    unsigned int max = 3;
+    // GooPdf object
+    GooFit::LegendrePdf *Legpdf = new GooFit::LegendrePdf{"Legpdf", xvar, weights, max};
+    Legpdf->setData(&data);
+    fitAndPlot(Legpdf, &data, legHist, xvar, "legendre_fit_cpp.png");
+    //	GooFit::FitManager fitter{&Legpdf};
+    //	fitter.fit();
+    // The above 2 lines are commented out because they were previously used for fitting the legendre plot without
+    // saving it to an image, and they become redundant with the function fitAndPlot
 
-//	return fitter;
-	return 0;
+    //	return fitter;
+    return 0;
 }

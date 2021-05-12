@@ -15,10 +15,11 @@ __host__ __device__ bool inDalitz(
     const fptype &m12, const fptype &m13, const fptype &bigM, const fptype &dm1, const fptype &dm2, const fptype &dm3) {
     fptype dm1pdm2  = dm1 + dm2;
     fptype bigMmdm3 = bigM - dm3;
+    fptype bigMmdm1 = bigM - dm1;
 
     fptype m23
         = bigM * bigM + dm1 * dm1 + dm2 * dm2 + dm3 * dm3 - m12 - m13;
-    if(m23 < 0.) return false;
+    if(m23 < 0. || m23 > bigMmdm1*bigMmdm1) return false;
 
     bool m12less = (m12 < dm1pdm2 * dm1pdm2) ? false : true;
     // if (m12 < dm1pdm2*dm1pdm2) return false; // This m12 cannot exist, it's less than the square of the (1,2)

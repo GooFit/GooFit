@@ -61,7 +61,7 @@ __device__ fptype device_EventWeightedAddPdfsExt(fptype *evt, ParameterContainer
 
     for(int i = 0; i < comps; ++i) {
         int id        = pc.getObservable(i);
-        fptype norm   = pc.getNormalization(0);
+        fptype norm   = pci.getNormalization(0);
         fptype weight = RO_CACHE(evt[id]);
         fptype curr   = callFunction(evt, pci);
         // if ((0 == BLOCKIDX) && (THREADIDX < 5) && (isnan(curr))) printf("NaN component %i %i\n", i, THREADIDX);

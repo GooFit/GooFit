@@ -59,43 +59,58 @@ void fitAndPlot(GooFit::LegendrePdf *total,
 }
 int main(int argc, char **argv) {
     GooFit::Application app("Legendre example", argc, argv);
-
     GOOFIT_PARSE(app);
-
     // Independent variable.
     GooFit::Observable xvar{"xvar", -1, 1};
-
+    xvar.setNumBins(20);
     // Histogram declarations
+    double x[1000];
+    double f,fmax = 0.0;
     TH1F legHist("LegendreHist", "", xvar.getNumBins(), xvar.getLowerLimit(), xvar.getUpperLimit());
     legHist.SetStats(false);
-
     // Data set
     GooFit::UnbinnedDataSet data(xvar);
 
     // Generate toy events
     CLI::Timer gen_timer{"Generating took"};
-    for(int i = 0; i < 100000; ++i) {
-        try {
+    //Data generation
+    for(int i = 0; i < 1000; ++i) {
+	f = (double)rand()/RAND_MAX;
+	x[i] = xvar.getLowerLimit() + f*(xvar.getUpperLimit()-xvar.getLowerLimit());
+	if (fmax < (x[i]*x[i])) {fmax = (x[i]*x[i]);}
+/*        try {
             xvar.setValue(xvar.getLowerLimit()
-                          + ((sqrt((double)rand() / RAND_MAX)) * (xvar.getUpperLimit() - xvar.getLowerLimit())));
-            data.addEvent();
+                          + (sqrt((double)rand()/RAND_MAX) * (xvar.getUpperLimit() - xvar.getLowerLimit())));
+	    data.addEvent();
             legHist.Fill(xvar.getValue());
         } catch(const GooFit::OutOfRange &) {
         }
+*/  }
+    cout << "fmax = " << fmax << endl; 
+    for (int k = 0; k < 1000; k++) {
+	f=(double)rand()/RAND_MAX;
+	if (f<((x[k]*x[k])/fmax)) {
+		xvar.setValue(x[k]);
+		data.addEvent();
+		legHist.Fill(xvar.getValue());
+	}
     }
     std::cout << GooFit::magenta << gen_timer << GooFit::reset << std::endl;
 
     // Fit parameter
-    GooFit::Variable weight0{"weight0", 1, 0.1, -1000, 1000};
+    GooFit::Variable weight0{"weight0", 0, 0.1, -1000, 1000};
     GooFit::Variable weight1{"weight1", 0, 0.1, -1000, 1000};
-    GooFit::Variable weight2{"weight2", 0, 0.1, 0, 1000};
+    GooFit::Variable weight2{"weight2", 0.5, 0.1, 0, 1000};
+    GooFit::Variable weight3{"weight3", 0, 0.1, -1000, 1000};
     weight0.setFixed(1);
     weight1.setFixed(1);
     weight2.setFixed(0);
+    weight3.setFixed(1);
     std::vector<GooFit::Variable> weights;
     weights.push_back(weight0);
     weights.push_back(weight1);
     weights.push_back(weight2);
+    weights.push_back(weight3);
     unsigned int max = 3;
     // GooPdf object
     GooFit::LegendrePdf *Legpdf = new GooFit::LegendrePdf{"Legpdf", xvar, weights, max};

@@ -75,7 +75,6 @@ class Amp3Body : public Amp3BodyBase {
     __host__ std::vector<std::vector<fptype>> fit_fractions();
 
     friend DalitzPlotter;
-    int countnorm = 0;
   protected:
     DecayInfo3 decayInfo;
     Observable _m12;

@@ -235,9 +235,6 @@ __host__ fptype Amp3Body::normalize() {
     // Copy at this time to ensure that the SpecialResonanceCalculators, which need the efficiency,
     // don't get zeroes through multiplying by the normFactor.
     // we need to update the normal here, as values are used at this point.
-    //printf("+++++++++++ %d \n", numEntries);
-    //printf("calling normalize for %d time \n", countnorm);
-    countnorm++;
     host_normalizations.sync(d_normalizations);
 
     int totalBins = _m12.getNumBins() * _m13.getNumBins();
@@ -284,7 +281,6 @@ __host__ fptype Amp3Body::normalize() {
     thrust::counting_iterator<int> eventIndex(eventOffset);
 
     for(int i = 0; i < decayInfo.resonances.size(); ++i) {
-        //printf("resonance %d %d %d \n", i, numEntries, efficiencyFunction);
         // grab the index for this resonance.
         calculators[i]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
         calculators[i]->setDalitzIndex(getFunctionIndex());
@@ -307,7 +303,6 @@ __host__ fptype Amp3Body::normalize() {
                     cachedWaves[i]->begin(), cachedWaves[i]->end(), 1)
                     .begin(),
                 *(calculators[i]));
-            //printf("-------------\n");
 #endif
         }
 
@@ -346,7 +341,6 @@ __host__ fptype Amp3Body::normalize() {
 
             // Notice complex conjugation
             // amplitude_j.imag(), (*(integrals[i][j])).real(), (*(integrals[i][j])).imag() );
-            //printf("sum integrals %d %d %f %f %f %f %f %f %f %f \n", i, j, amplitude_i.real(), amplitude_i.imag(), amplitude_j.real(), amplitude_j.imag(), (*(integrals[i][j])).real(), (*(integrals[i][j])).imag(), sumIntegral.real(), sumIntegral.imag());
             sumIntegral += amplitude_i * amplitude_j * (*(integrals[i][j]));
             
         }
@@ -357,13 +351,8 @@ __host__ fptype Amp3Body::normalize() {
     binSizeFactor *= _m12.getBinSize();
     binSizeFactor *= _m13.getBinSize();
     ret *= binSizeFactor;
-    //if(ret.real() <= 0. || std::isnan(ret)) ret = 1.;
-    //printf("indices %d %d \n", parametersIdx, normalIdx );
     host_normalizations[normalIdx + 1] = 1.0 / ret;
-    //printf("normalizeAmp3Body  %f %f \n", ret, 1./ret);
     cachedNormalization                = 1.0 / ret;
-    //printf("--------------\n");
-    //printf("+++++++\n");
     return ret;
 }
 

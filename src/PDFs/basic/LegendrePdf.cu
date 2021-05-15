@@ -15,19 +15,19 @@ __device__ fptype Legendre(int max, fptype x) {
         p[2 * i]       = c * BinomCoeff(max, i) * (pow(-1, max - i));
         p[1 + (2 * i)] = 0;
     } // Expands polynomial out before taking the derivatives
-    for(int j = max; j <= 2 * max + 1; j++) {
+    for(int j = max; j <= (2 * max) + 1; j++) {
         p[j - max] = p[j] * (Factorial(j) / Factorial(j - max));
         if(max != 0) {
             p[j] = 0;
         } else {
             p[j] = 1;
+	    break;
         }
     } // Calculates the coefficients to each polynomial term after all derivations
     while(k <= max) {
-	printf("p[k](pow(%f,%i) = %f \n ", x, k, p[2*k]*pow(x,k));
-        s += p[2*k] * (pow(x, k));
-	printf("s = %f \n",s);
+        s += p[k] * (pow(x, k));
         k += 1;
+	printf("p[%i] = %f, s = %f \n", k-1, p[k-1], s);
     }
     //		printf("P(x) = %f \n",s);
     return s;
@@ -59,8 +59,8 @@ __device__ fptype device_LegendrePdf(fptype *evt, ParameterContainer &pc) {
      */
     for(int j = 0; j <= max; j++) { // What'll the loop limit be?
         fptype p = pc.getParameter(j);
-	printf("p is %f, ",p);
         ret += p * Legendre(j, x);
+	printf("Parameter is %f, x = %f, Ret = %f \n ", p, x, ret);
     }
     pc.incrementIndex(1, max, 1, 1, 1);
     return ret;

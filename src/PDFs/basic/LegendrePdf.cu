@@ -21,13 +21,13 @@ __device__ fptype Legendre(int max, fptype x) {
             p[j] = 0;
         } else {
             p[j] = 1;
-	    break;
+            break;
         }
     } // Calculates the coefficients to each polynomial term after all derivations
     while(k <= max) {
         s += p[k] * (pow(x, k));
         k += 1;
-	printf("p[%i] = %f, s = %f \n", k-1, p[k-1], s);
+        // printf("p[%i] = %f, s = %f \n", k-1, p[k-1], s);
     }
     //		printf("P(x) = %f \n",s);
     return s;
@@ -46,7 +46,7 @@ __device__ fptype BinomCoeff(int n, int k) { return (Factorial(n) / (Factorial(k
 __device__ fptype device_LegendrePdf(fptype *evt, ParameterContainer &pc) {
     int id     = pc.getObservable(0);
     fptype ret = 0;
-    int max    = (int)pc.getConstant(0); 
+    int max    = (int)pc.getConstant(0);
     // What'll the max variable be? Do I get it from pc?
     //		printf("Constant #0 is %i \n",max);
     //		printf("Parameter #0 is %f \n",pc.getParameter(0));
@@ -60,7 +60,7 @@ __device__ fptype device_LegendrePdf(fptype *evt, ParameterContainer &pc) {
     for(int j = 0; j <= max; j++) { // What'll the loop limit be?
         fptype p = pc.getParameter(j);
         ret += p * Legendre(j, x);
-	printf("Parameter is %f, x = %f, Ret = %f \n ", p, x, ret);
+        printf("Parameter is %f, x = %f, Ret = %f \n ", p, x, ret);
     }
     pc.incrementIndex(1, max, 1, 1, 1);
     return ret;
@@ -71,7 +71,7 @@ __device__ device_function_ptr ptr_to_LegendrePdf = device_LegendrePdf;
 __host__ LegendrePdf::LegendrePdf(std::string n, Observable _x, std::vector<Variable> weights, unsigned int max)
     : GooPdf("LegendrePdf", n, _x) { // Do I need 6 or 5 params?
     registerConstant(max);
-   // printf("Constant #0 is %i \n", max);
+    // printf("Constant #0 is %i \n", max);
     for(Variable &v : weights) {
         registerParameter(v);
     }

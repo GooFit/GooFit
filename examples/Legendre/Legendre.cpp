@@ -54,7 +54,7 @@ void fitAndPlot(GooFit::LegendrePdf *total,
     dataHist.Draw("e p");
     pdfHist.SetLineColor(kBlue);
     pdfHist.SetLineWidth(3);
-    pdfHist.Draw("lsame");
+    pdfHist.Draw("same");
     foo->SaveAs(fname);
 }
 int main(int argc, char **argv) {
@@ -64,8 +64,8 @@ int main(int argc, char **argv) {
     GooFit::Observable xvar{"xvar", -1, 1};
     xvar.setNumBins(20);
     // Histogram declarations
-    double x[1000];
-    double f,fmax = 0.0;
+    double x[100000];
+    double f, fmax = 0.0;
     TH1F legHist("LegendreHist", "", xvar.getNumBins(), xvar.getLowerLimit(), xvar.getUpperLimit());
     legHist.SetStats(false);
     // Data set
@@ -73,11 +73,13 @@ int main(int argc, char **argv) {
 
     // Generate toy events
     CLI::Timer gen_timer{"Generating took"};
-    //Data generation
-    for(int i = 0; i < 1000; ++i) {
-	f = (double)rand()/RAND_MAX;
-	x[i] = xvar.getLowerLimit() + f*(xvar.getUpperLimit()-xvar.getLowerLimit());
-	if (fmax < (x[i]*x[i])) {fmax = (x[i]*x[i]);}
+    // Data generation
+    for(int i = 0; i < 100000; ++i) {
+        f    = (double)rand() / RAND_MAX;
+        x[i] = xvar.getLowerLimit() + f * (xvar.getUpperLimit() - xvar.getLowerLimit());
+        if(fmax < (1 / 2 * (3 * x[i] * x[i] - 1))) {
+            fmax = (1 / 2 * (3 * x[i] * x[i] - 1));
+        }
 /*        try {
             xvar.setValue(xvar.getLowerLimit()
                           + (sqrt((double)rand()/RAND_MAX) * (xvar.getUpperLimit() - xvar.getLowerLimit())));
@@ -86,41 +88,41 @@ int main(int argc, char **argv) {
         } catch(const GooFit::OutOfRange &) {
         }
 */  }
-    cout << "fmax = " << fmax << endl; 
-    for (int k = 0; k < 1000; k++) {
-	f=(double)rand()/RAND_MAX;
-	if (f<((x[k]*x[k])/fmax)) {
-		xvar.setValue(x[k]);
-		data.addEvent();
-		legHist.Fill(xvar.getValue());
-	}
+cout << "fmax = " << fmax << endl;
+for(int k = 0; k < 100000; k++) {
+    f = (double)rand() / RAND_MAX;
+    if(f < ((1 / 2 * (3 * x[k] * x[k] - 1)) / fmax)) {
+        xvar.setValue(x[k]);
+        data.addEvent();
+        legHist.Fill(xvar.getValue());
     }
-    std::cout << GooFit::magenta << gen_timer << GooFit::reset << std::endl;
+}
+std::cout << GooFit::magenta << gen_timer << GooFit::reset << std::endl;
 
-    // Fit parameter
-    GooFit::Variable weight0{"weight0", 1, 0.1, 0, 1000};
-    GooFit::Variable weight1{"weight1", 0, 0.1, -1000, 1000};
-    GooFit::Variable weight2{"weight2", 1.3, 0.1, 0, 1000};
-    GooFit::Variable weight3{"weight3", 0, 0.1, -1000, 1000};
-    weight0.setFixed(0);
-    weight1.setFixed(1);
-    weight2.setFixed(0);
-    weight3.setFixed(1);
-    std::vector<GooFit::Variable> weights;
-    weights.push_back(weight0);
-    weights.push_back(weight1);
-    weights.push_back(weight2);
-    weights.push_back(weight3);
-    unsigned int max = 3;
-    // GooPdf object
-    GooFit::LegendrePdf *Legpdf = new GooFit::LegendrePdf{"Legpdf", xvar, weights, max};
-    Legpdf->setData(&data);
-    fitAndPlot(Legpdf, &data, legHist, xvar, "legendre_fit_cpp.png");
-    //	GooFit::FitManager fitter{&Legpdf};
-    //	fitter.fit();
-    // The above 2 lines are commented out because they were previously used for fitting the legendre plot without
-    // saving it to an image, and they become redundant with the function fitAndPlot
+// Fit parameter
+GooFit::Variable weight0{"weight0", 1, 0.1, 0, 1000};
+GooFit::Variable weight1{"weight1", 0, 0.1, -1000, 1000};
+GooFit::Variable weight2{"weight2", 1.3, 0.1, 0, 1000};
+GooFit::Variable weight3{"weight3", 0, 0.1, -1000, 1000};
+weight0.setFixed(0);
+weight1.setFixed(1);
+weight2.setFixed(0);
+weight3.setFixed(1);
+std::vector<GooFit::Variable> weights;
+weights.push_back(weight0);
+weights.push_back(weight1);
+weights.push_back(weight2);
+weights.push_back(weight3);
+unsigned int max = 3;
+// GooPdf object
+GooFit::LegendrePdf *Legpdf = new GooFit::LegendrePdf{"Legpdf", xvar, weights, max};
+Legpdf->setData(&data);
+fitAndPlot(Legpdf, &data, legHist, xvar, "legendre_fit_cpp.png");
+//	GooFit::FitManager fitter{&Legpdf};
+//	fitter.fit();
+// The above 2 lines are commented out because they were previously used for fitting the legendre plot without
+// saving it to an image, and they become redundant with the function fitAndPlot
 
-    //	return fitter;
-    return 0;
+//	return fitter;
+return 0;
 }

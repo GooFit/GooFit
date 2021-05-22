@@ -103,7 +103,7 @@ __host__ double GooPdf::reduce_with_bins() const {
         *logger,
         start,
         thrust::plus<double>());
-
+//    printf("event size = %i, reduce_with_bins sum = %f \n", eventSize[1], sum);
     return sum;
 }
 

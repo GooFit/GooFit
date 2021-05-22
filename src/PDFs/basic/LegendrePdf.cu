@@ -60,7 +60,7 @@ __device__ fptype device_LegendrePdf(fptype *evt, ParameterContainer &pc) {
     for(int j = 0; j <= max; j++) { // What'll the loop limit be?
         fptype p = pc.getParameter(j);
         ret += p * Legendre(j, x);
-        printf("Parameter is %f, x = %f, Ret = %f \n ", p, x, ret);
+//        printf("Parameter is %f, x = %f, Ret = %f \n ", p, x, ret);
     }
     pc.incrementIndex(1, max, 1, 1, 1);
     return ret;

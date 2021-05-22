@@ -64,7 +64,7 @@ int main(int argc, char **argv) {
     GooFit::Observable xvar{"xvar", -1, 1};
     xvar.setNumBins(20);
     // Histogram declarations
-    double x[100000];
+    double x[1000000];
     double f, fmax = 0.0;
     TH1F legHist("LegendreHist", "", xvar.getNumBins(), xvar.getLowerLimit(), xvar.getUpperLimit());
     legHist.SetStats(false);
@@ -74,11 +74,11 @@ int main(int argc, char **argv) {
     // Generate toy events
     CLI::Timer gen_timer{"Generating took"};
     // Data generation
-    for(int i = 0; i < 100000; ++i) {
+    for(int i = 0; i < 1000000; ++i) {
         f    = (double)rand() / RAND_MAX;
         x[i] = xvar.getLowerLimit() + f * (xvar.getUpperLimit() - xvar.getLowerLimit());
-        if(fmax < (1 / 2 * (3 * x[i] * x[i] - 1))) {
-            fmax = (1 / 2 * (3 * x[i] * x[i] - 1));
+        if(fmax < 1 + ((0.5) *(((3 * x[i] * x[i]) - 1)))) {
+            fmax = 1 + (0.5 * (3 * x[i] * x[i] - 1));
         }
 /*        try {
             xvar.setValue(xvar.getLowerLimit()
@@ -88,10 +88,9 @@ int main(int argc, char **argv) {
         } catch(const GooFit::OutOfRange &) {
         }
 */  }
-cout << "fmax = " << fmax << endl;
-for(int k = 0; k < 100000; k++) {
+for(int k = 0; k < 1000000; k++) {
     f = (double)rand() / RAND_MAX;
-    if(f < ((1 / 2 * (3 * x[k] * x[k] - 1)) / fmax)) {
+    if(f < (((1 + (0.5 * (3 * x[k] * x[k] - 1))) / fmax))) {
         xvar.setValue(x[k]);
         data.addEvent();
         legHist.Fill(xvar.getValue());
@@ -102,12 +101,19 @@ std::cout << GooFit::magenta << gen_timer << GooFit::reset << std::endl;
 // Fit parameter
 GooFit::Variable weight0{"weight0", 1, 0.1, 0, 1000};
 GooFit::Variable weight1{"weight1", 0, 0.1, -1000, 1000};
-GooFit::Variable weight2{"weight2", 1.3, 0.1, 0, 1000};
+GooFit::Variable weight2{"weight2", 1.5, 0.1, 0, 1000};
 GooFit::Variable weight3{"weight3", 0, 0.1, -1000, 1000};
-weight0.setFixed(0);
+weight0.setFixed(1);
 weight1.setFixed(1);
 weight2.setFixed(0);
 weight3.setFixed(1);
+/*
+Note: The data generated is in the form of 3x^2 + 0.5, which should fit to 1*P_0 + 1*P_2.  
+However, for whatever reason, weight 2 has to start under 2.0.
+Otherwise, the convergence either fails or causes weight2 to reach the upper bound by the time
+the execution finishes. Even if it finishes, the plot will not have an accurate fit.
+I haven't been able to get a more generalized form of this code to work yet.
+ */
 std::vector<GooFit::Variable> weights;
 weights.push_back(weight0);
 weights.push_back(weight1);

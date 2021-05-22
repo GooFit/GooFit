@@ -35,7 +35,7 @@ namespace GooFit {
 		 */
 		for(int j = 0; j <= max; j++) { //What'll the loop limit be? 
 			fptype p = pc.getParameter(j);
-			ret += p*chebyshev(x,j);
+			ret += p*chebyshev(j,x);
 		}
 		pc.incrementIndex(1, max, 1, 1, 1);
 		return ret;
@@ -45,11 +45,11 @@ namespace GooFit {
 
 	__host__ chebyshevPdf::chebyshevPdf(std::string n, Observable _x, std::vector<Variable> weights,  unsigned int max)
 		: GooPdf("chebyshevPdf", n, _x) { //Do I need 6 or 5 params?
-			registerFunction("ptr_to_chebyshev", ptr_to_chebyshevPdf);
 			registerConstant(max);
 			for(Variable &v : weights) {
 				registerParameter(v);
 			}
+			registerFunction("ptr_to_chebyshev", ptr_to_chebyshevPdf);
 			initialize();
 		}
 

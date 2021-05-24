@@ -213,7 +213,7 @@ class PdfBase {
     void setSeparateNorm(bool v = true) { separateNorm = v; };
     bool getCommonNorm() const { return commonNorm; };
     bool getSeparateNorm() const { return separateNorm; };
-    std::vector<PdfBase *> getComponents() { return components;};
+    std::vector<PdfBase *> getComponents() { return components; };
 
     /// Get the current PDF name
     std::string getPdfName() const { return pdf_name_; }

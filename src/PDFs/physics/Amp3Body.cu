@@ -251,7 +251,6 @@ __host__ fptype Amp3Body::normalize() {
 
     if(host_norms != current_host_norms) {
         host_norms = current_host_norms;
-        
     }
     MEMCPY(dalitzNormRange, host_norms.data(), 6 * sizeof(fptype), cudaMemcpyHostToDevice);
     for(unsigned int i = 0; i < decayInfo.resonances.size(); ++i) {

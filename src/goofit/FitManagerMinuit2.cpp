@@ -17,8 +17,9 @@ FitManagerMinuit2::FitManagerMinuit2(PdfBase *dat)
     , fcn_(upar_) {}
 
 Minuit2::FunctionMinimum FitManagerMinuit2::fit() {
-    auto val = Minuit2::MnPrint::Level();
-    Minuit2::MnPrint::SetLevel(verbosity);
+    Minuit2::MnPrint MnPr;
+    auto val = MnPr.Level();
+    MnPr.SetLevel(verbosity);
 
     // Setting global call number to 0
     host_callnumber = 0;
@@ -65,7 +66,7 @@ Minuit2::FunctionMinimum FitManagerMinuit2::fit() {
     // Set the parameters in GooFit to the new values
     upar_.SetGooFitParams(min.UserState());
 
-    Minuit2::MnPrint::SetLevel(val);
+    MnPr.SetLevel(val);
     return min;
 }
 

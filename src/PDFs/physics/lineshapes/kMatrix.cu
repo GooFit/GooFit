@@ -18,7 +18,6 @@ namespace GooFit {
 __device__ fpcomplex kMatrixFunction(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
     // kMatrix amplitude as described in https://arxiv.org/pdf/0804.2089.pdf, compared with AmpGen implementation
 
-
     // parameter index
     unsigned int idx = 0;
 
@@ -86,7 +85,6 @@ __device__ fpcomplex kMatrixFunction(fptype Mpair, fptype m1, fptype m2, Paramet
 
     fpcomplex F[NCHANNELS][NCHANNELS];
     getPropagator(kMatrix, phaseSpace, F, adlerTerm);
-
 
     // calculates output
     pc.incrementIndex(1, idx, 1, 0, 1);

@@ -70,11 +70,11 @@ class Amp3Body : public Amp3BodyBase {
     __host__ DecayInfo3 &getDecayInfo() { return decayInfo; }
     __host__ static void resetCacheCounter() { cacheCount = 0; }
 
-
     /// Calculate fit fractions (Cache should be pre-filled)
     __host__ std::vector<std::vector<fptype>> fit_fractions();
 
     friend DalitzPlotter;
+
   protected:
     DecayInfo3 decayInfo;
     Observable _m12;

@@ -89,7 +89,6 @@ __device__ fpcomplex kMatrixRes(fptype m12, fptype m13, fptype m23, ParameterCon
     fpcomplex F[NCHANNELS][NCHANNELS];
     getPropagator(kMatrix, phaseSpace, F, adlerTerm);
 
-
     // calculates output
     pc.incrementIndex(1, idx, 1, 0, 1);
 

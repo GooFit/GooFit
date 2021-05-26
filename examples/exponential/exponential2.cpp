@@ -2,6 +2,7 @@
 #include <goofit/PDFs/basic/ExpPdf.h>
 #include <goofit/UnbinnedDataSet.h>
 #include <goofit/Variable.h>
+#include <goofit/Version.h>
 #include <goofit/fitting/FCN.h>
 #include <goofit/fitting/Params.h>
 
@@ -9,6 +10,12 @@
 #include <Minuit2/MnMigrad.h>
 #include <Minuit2/MnPrint.h>
 #include <Minuit2/MnUserParameters.h>
+
+#ifdef MATHCORE_STANDALONE
+#define ROOT_VERSION(x, y, z) 0
+#else
+#include <RVersion.h>
+#endif
 
 #include <iostream>
 
@@ -20,7 +27,11 @@ int main(int argc, char **argv) {
 
     GOOFIT_PARSE(app);
 
+#if !defined(MATHCORE_STANDALONE) && GOOFIT_ROOT_FOUND && ROOT_VERSION_CODE < ROOT_VERSION(6, 24, 0)
+    Minuit2::MnPrint::SetLevel(3);
+#else
     Minuit2::MnPrint::SetGlobalLevel(3);
+#endif
 
     // Independent variable.
     Observable xvar{"xvar", 0, log(1 + RAND_MAX / 2)};

@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
 import nox
 import multiprocessing
+
 
 @nox.session
 def test(session):

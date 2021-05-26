@@ -6,11 +6,13 @@
 * 3-body preliminary kMatrix [#209][]
 * 3 gauss resolution updates (now has one extra param) [#218][]
 * LASS parameters now settable [#218][]
+* Changed to Level to GlobalLevel for ROOT 2.24 [#266][]
 
 [#218]: https://github.com/GooFit/GooFit/pull/218
 [#209]: https://github.com/GooFit/GooFit/pull/209
 [#240]: https://github.com/GooFit/GooFit/pull/240
 [#241]: https://github.com/GooFit/GooFit/pull/241
+[#266]: https://github.com/GooFit/GooFit/pull/266
 
 ## v2.2.3: Python builds
 ## January 31, 2020

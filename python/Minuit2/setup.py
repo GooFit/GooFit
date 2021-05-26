@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup
-import sys
-import setuptools
 
 from pybind11.setup_helpers import Pybind11Extension
 
@@ -120,7 +118,6 @@ ext_modules = [
         define_macros=[("WARNINGMSG", None), ("MATH_NO_PLUGIN_MANAGER", None)],
     ),
 ]
-
 
 
 setup(

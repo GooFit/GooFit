@@ -1,12 +1,12 @@
 exclude: '^.ci/azure-wheel-helpers/.*'
 repos:
 - repo: https://github.com/psf/black
-  rev: 20.8b1
+  rev: 21.5b1
   hooks:
   - id: black
 
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v3.3.0
+  rev: v4.0.1
   hooks:
   - id: check-added-large-files
   - id: check-case-conflict
@@ -21,7 +21,7 @@ repos:
   - id: fix-encoding-pragma
 
 - repo: https://gitlab.com/pycqa/flake8
-  rev: 3.8.4
+  rev: 3.9.2
   hooks:
   - id: flake8
     additional_dependencies: [flake8-bugbear]

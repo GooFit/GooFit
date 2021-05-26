@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
 
     GOOFIT_PARSE(app);
 
-    Minuit2::MnPrint::SetLevel(3);
+    Minuit2::MnPrint::SetGlobalLevel(3);
 
     // Independent variable.
     Observable xvar{"xvar", 0, log(1 + RAND_MAX / 2)};

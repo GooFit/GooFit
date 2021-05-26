@@ -9,8 +9,8 @@ using namespace pybind11::literals;
 using namespace ROOT::Minuit2;
 
 void init_MnPrint(py::module &m) {
-    auto m_ls = m.def_submodule("MnPrint");
+    py::class_<MnPrint> m_ls(m, "m_ls");
 
-    m_ls.def("Level", &MnPrint::Level);
-    m_ls.def("SetLevel", &MnPrint::SetLevel);
+    m_ls.def_static("GlobalLevel", &MnPrint::GlobalLevel);
+    m_ls.def_static("SetGlobalLevel", &MnPrint::SetGlobalLevel);
 }

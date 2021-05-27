@@ -12,7 +12,11 @@ typedef fpcomplex (*resonance_function_ptr)(fptype, fptype, fptype, ParameterCon
 
 __device__ fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m);
 
+__device__ fptype twoBodyCMMothermom(fptype rMassSq, fptype dm, fptype d3m);
+
 __device__ fptype dampingFactorSquare(const fptype &cmmom, const int &spin, const fptype &mRadius);
+
+__device__ fptype dampingFactorSquareNorm(const fptype &cmmom, const int &spin, const fptype &mRadius);
 
 __device__ fptype spinFactor(unsigned int spin,
                              fptype motherMass,

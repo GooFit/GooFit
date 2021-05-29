@@ -119,7 +119,7 @@ weights.push_back(weight0);
 weights.push_back(weight1);
 weights.push_back(weight2);
 weights.push_back(weight3);
-unsigned int max = 3;
+const unsigned int max = 3;
 // GooPdf object
 GooFit::LegendrePdf *Legpdf = new GooFit::LegendrePdf{"Legpdf", xvar, weights, max};
 Legpdf->setData(&data);

@@ -1,15 +1,18 @@
 #include <goofit/PDFs/basic/Legendre.h>
 #include <goofit/PDFs/ParameterContainer.h>
+#include <vector>
+#include <iostream>
 
 namespace GooFit {
 
-__device__ fptype Legendre(int max, fptype x) {
+__device__ fptype Legendre(const int max, fptype x) {
     int k           = 0;
     fptype c        = 1.0;
     fptype s        = 0.0;
     c               = 1 / ((pow(2, max)) * Factorial(max));
-    const int index = (2 * max) + 1;
-    fptype p[index];
+//    const int index = (2 * max) + 1;
+    fptype p[7];
+// I have the array size hard-coded because, for some currently unknown reason, defining the array with const int index fails, says the expression needs constant index
 
     for(int i = 0; i <= max; i++) {
         p[2 * i]       = c * BinomCoeff(max, i) * (pow(-1, max - i));

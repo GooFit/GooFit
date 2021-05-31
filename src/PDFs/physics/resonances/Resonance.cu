@@ -16,7 +16,33 @@ __device__ fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m) {
     return 0.5 * sqrt(rMassSq) * kin1 * kin2;
 }
 
+__device__ fptype twoBodyCMMothermom(fptype rMassSq, fptype dm, fptype d3m) {
+    fptype kin1 = 1 - POW2(dm + d3m) / rMassSq;
+    if(kin1 >= 0)
+        kin1 = sqrt(kin1);
+    else
+        kin1 = 1;
+    fptype kin2 = 1 - POW2(dm - d3m) / rMassSq;
+    if(kin2 >= 0)
+        kin2 = sqrt(kin2);
+    else
+        kin2 = 1;
+
+    return 0.5 * rMassSq * kin1 * kin2 / dm;
+}
+
 __device__ fptype dampingFactorSquare(const fptype &cmmom, const int &spin, const fptype &mRadius) {
+    fptype square = mRadius * mRadius * cmmom * cmmom;
+    fptype dfsq   = 2 * square; // This accounts for spin 1
+    // if (2 == spin) dfsq += 8 + 2*square + square*square; // Coefficients are 9, 3, 1.
+    fptype dfsqres = 13 * square / pow(square - 3, 2) + 9 * square * square;
+
+    // Spin 3 and up not accounted for.
+    // return dfsq;
+    return (spin == 2) ? dfsqres : dfsq;
+}
+
+__device__ fptype dampingFactorSquareNorm(const fptype &cmmom, const int &spin, const fptype &mRadius) {
     fptype square = mRadius * mRadius * cmmom * cmmom;
     fptype dfsq   = 1 + square; // This accounts for spin 1
     // if (2 == spin) dfsq += 8 + 2*square + square*square; // Coefficients are 9, 3, 1.
@@ -68,8 +94,6 @@ __device__ fptype spinFactor(unsigned int spin,
     fptype _mAC = (PAIR_12 == cyclic_index ? m13 : (PAIR_13 == cyclic_index ? m23 : m12));
     fptype _mBC = (PAIR_12 == cyclic_index ? m23 : (PAIR_13 == cyclic_index ? m12 : m13));
     fptype _mAB = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
-
-    // This factor was being calculated using invariant masses instead of squared invariant masses. Now fixed.
 
     fptype massFactor = 1.0 / (_mAB);
     fptype sFactor    = -1;

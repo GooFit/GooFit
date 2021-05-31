@@ -1,4 +1,5 @@
 #include <goofit/fitting/FitManagerMinuit2.h>
+#include <goofit/fitting/Params.h>
 
 #include <goofit/Color.h>
 
@@ -7,8 +8,13 @@
 #include <Minuit2/MnPrint.h>
 #include <Minuit2/MnUserParameterState.h>
 #include <Minuit2/MnUserParameters.h>
+#include <Minuit2/MnScan.h>
+#include <Minuit2/MnMinos.h>
 
 #include <CLI/Timer.hpp>
+
+#include <iostream>
+#include <vector>
 
 namespace GooFit {
 
@@ -33,6 +39,28 @@ Minuit2::FunctionMinimum FitManagerMinuit2::fit() {
 
     CLI::Timer avetimer{"Average time per call"};
     Minuit2::FunctionMinimum min = migrad(maxfcn_);
+
+    if (minos) {
+      Minuit2::MnMinos minos{fcn_, min}; // Create MINOS errors 
+      std::vector<Variable> variables = upar_.GetGooFitParams();
+      for(Variable &var : variables) {
+        if(var.IsFixed()) continue;
+        else {
+	  minos_errors.push_back( minos(var.getFitterIndex()));
+        }
+      }
+      // output
+      int counter = 0;
+      std::cout<<"1-sigma minos errors: "<<std::endl;
+      for(Variable &var : variables) {
+        if(var.IsFixed()) continue;
+        else {
+	  std::cout<<var.getName()<< ": "
+		   <<minos_errors[counter].first<<" "<<minos_errors[counter].second<<std::endl;
+	  counter +=1;
+	}
+      }
+    }
 
     // Print nice output
     if(verbosity > 0) {
@@ -67,6 +95,12 @@ Minuit2::FunctionMinimum FitManagerMinuit2::fit() {
 
     Minuit2::MnPrint::SetLevel(val);
     return min;
+}
+
+Minuit2::MnScan FitManagerMinuit2::getMnScan() {
+    Minuit2::MnScan mnscan{fcn_, upar_};
+
+    return mnscan;
 }
 
 } // namespace GooFit

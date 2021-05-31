@@ -44,6 +44,7 @@ void init_DalitzPlotHelpers(py::module &m) {
         .def_readwrite("daug2Mass", &DecayInfo3::daug2Mass)
         .def_readwrite("daug3Mass", &DecayInfo3::daug3Mass)
         .def_readwrite("meson_radius", &DecayInfo3::meson_radius)
+        .def_readwrite("mother_meson_radius", &DecayInfo3::mother_meson_radius)
         .def_property(
             "resonances",
             [](DecayInfo3 &self) { return self.resonances; },
@@ -66,10 +67,12 @@ void init_DalitzPlotHelpers(py::module &m) {
         });
 
     py::class_<DecayInfo3t, DecayInfo3>(m, "DecayInfo3t")
-        .def(py::init<Variable, Variable, Variable>(), "tau"_a, "xmixing"_a, "ymixing"_a)
+      .def(py::init<Variable, Variable, Variable, Variable, Variable>(), "tau"_a, "xmixing0"_a, "ymixing0"_a, "deltax"_a, "deltay"_a)
         .def_readonly("_tau", &DecayInfo3t::_tau)
-        .def_readonly("_xmixing", &DecayInfo3t::_xmixing)
-        .def_readonly("_ymixing", &DecayInfo3t::_ymixing);
+        .def_readonly("_xmixing0", &DecayInfo3t::_xmixing0)
+        .def_readonly("_ymixing0", &DecayInfo3t::_ymixing0)
+        .def_readonly("_deltax", &DecayInfo3t::_deltax)
+        .def_readonly("_deltay", &DecayInfo3t::_deltay);
 
     py::class_<DecayInfo4>(m, "DecayInfo4")
         .def(py::init<>())

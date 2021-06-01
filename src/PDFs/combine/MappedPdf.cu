@@ -6,7 +6,7 @@ namespace GooFit {
 __device__ fptype device_Mapped(fptype *evt, ParameterContainer &pc) {
     // Structure : nP mapFunctionIndex mapParamIndex functionIndex1 parameterIndex1 functionIndex2 parameterIndex2 ...
     // Find mapping between event variables and function to evaluate
-    auto numConstants       = pc.getNumConstants();
+    auto numConstants = pc.getNumConstants();
 
     auto pc_mapped = pc;
 
@@ -23,8 +23,8 @@ __device__ fptype device_Mapped(fptype *evt, ParameterContainer &pc) {
     auto target_funcIdx = cur_funcIdx + indicestoskip;
     while(pc.funcIdx < target_funcIdx)
         pc.incrementIndex();
-    fptype norm          = pc.getNormalization(0);
-    fptype ret           = callFunction(evt, pc);
+    fptype norm = pc.getNormalization(0);
+    fptype ret  = callFunction(evt, pc);
     ret *= norm;
     int finalIndex = cur_funcIdx;
     // now need to increase index until end

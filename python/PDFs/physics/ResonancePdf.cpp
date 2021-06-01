@@ -21,7 +21,7 @@ void init_ResonancePdf(py::module &m) {
         .def_static("help", []() { return HelpPrinter(ResonancePdf_docs); });
 
     py::class_<Resonances::RBW, ResonancePdf>(m_ls, "RBW")
-        .def(py::init<std::string, Variable, Variable, Variable, Variable, unsigned int, unsigned int, bool>(),
+        .def(py::init<std::string, Variable, Variable, Variable, Variable, unsigned int, unsigned int, bool, bool>(),
              "Constructor for regular BW",
              "name"_a,
              "ar"_a,
@@ -30,10 +30,11 @@ void init_ResonancePdf(py::module &m) {
              "width"_a,
              "sp"_a,
              "cyc"_a,
-             "sym"_a = false);
+             "norm"_a = true,
+             "sym"_a  = false);
 
     py::class_<Resonances::GS, ResonancePdf>(m_ls, "GS")
-        .def(py::init<std::string, Variable, Variable, Variable, Variable, unsigned int, unsigned int>(),
+        .def(py::init<std::string, Variable, Variable, Variable, Variable, unsigned int, unsigned int, bool, bool>(),
              "Constructor for regular Gounaris-Sakurai",
              "name"_a,
              "ar"_a,
@@ -41,7 +42,9 @@ void init_ResonancePdf(py::module &m) {
              "mass"_a,
              "width"_a,
              "sp"_a,
-             "cyc"_a);
+             "cyc"_a,
+             "norm"_a = true,
+             "sym"_a  = false);
 
     py::class_<Resonances::LASS, ResonancePdf>(m_ls, "LASS")
         .def(py::init<std::string,
@@ -56,7 +59,8 @@ void init_ResonancePdf(py::module &m) {
                       Variable,
                       Variable,
                       unsigned int,
-                      unsigned int>(),
+                      unsigned int,
+                      bool>(),
              "Constructor for LASS",
              "name"_a,
              "ar"_a,
@@ -70,7 +74,8 @@ void init_ResonancePdf(py::module &m) {
              "_B"_a,
              "_phiB"_a,
              "sp"_a,
-             "cyc"_a);
+             "cyc"_a,
+             "norm"_a = true);
 
 #if GOOFIT_KMATRIX
     py::class_<Resonances::kMatrix, ResonancePdf>(m_ls, "kMatrix")

@@ -52,12 +52,16 @@ __device__ fptype fsFun(double s, double m2, double gam, double daug2Mass, doubl
 __device__ fpcomplex gouSak(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) {
     unsigned int spin         = pc.getConstant(0);
     unsigned int cyclic_index = pc.getConstant(1);
+    bool norm                 = pc.getConstant(2);
 
     fptype resmass  = pc.getParameter(0);
     fptype reswidth = pc.getParameter(1);
 
-    fptype rMassSq  = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
-    fptype frFactor = 1;
+    fptype rMassSq = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
+    fptype bachelorMass
+        = (PAIR_12 == cyclic_index ? c_daug3Mass : (PAIR_13 == cyclic_index ? c_daug2Mass : c_daug1Mass));
+    fptype frFactor  = 1;
+    fptype frFactorD = 1;
 
     resmass *= resmass;
     // Calculate momentum of the two daughters in the resonance rest frame; note symmetry under interchange (dm1 <->
@@ -69,9 +73,31 @@ __device__ fpcomplex gouSak(fptype m12, fptype m13, fptype m23, ParameterContain
                                               (PAIR_23 == cyclic_index ? c_daug2Mass : c_daug1Mass),
                                               (PAIR_12 == cyclic_index ? c_daug2Mass : c_daug3Mass));
 
+    fptype measureDaughterMomsMother;
+    fptype nominalDaughterMomsMother;
+
+    if(norm) {
+        // Mother momentum for normalized Blatt-Weisskopf form factors calculated in the resonance rest frame
+        measureDaughterMomsMother = twoBodyCMMothermom(rMassSq, c_motherMass, bachelorMass);
+        nominalDaughterMomsMother = twoBodyCMMothermom(resmass, c_motherMass, bachelorMass);
+    } else {
+        // Mother momentum for unnormalized Blatt-Weisskopf form factors calculated in mother rest frame
+        measureDaughterMomsMother = twoBodyCMmom(c_motherMass * c_motherMass, sqrt(rMassSq), bachelorMass);
+    }
+
     if(0 != spin) {
-        frFactor = dampingFactorSquare(nominalDaughterMoms, spin, c_meson_radius);
-        frFactor /= dampingFactorSquare(measureDaughterMoms, spin, c_meson_radius);
+        if(norm) {
+            frFactor = dampingFactorSquareNorm(nominalDaughterMoms, spin, c_meson_radius);
+            frFactor /= dampingFactorSquareNorm(measureDaughterMoms, spin, c_meson_radius);
+
+            frFactorD = dampingFactorSquareNorm(nominalDaughterMomsMother, spin, c_mother_meson_radius);
+            frFactorD /= dampingFactorSquareNorm(measureDaughterMomsMother, spin, c_mother_meson_radius);
+        }
+        // unnormalized form factors
+        else {
+            frFactor  = dampingFactorSquare(measureDaughterMoms, spin, c_meson_radius);
+            frFactorD = dampingFactorSquare(measureDaughterMomsMother, spin, c_mother_meson_radius);
+        }
     }
 
     // Implement Gou-Sak:
@@ -83,9 +109,10 @@ __device__ fpcomplex gouSak(fptype m12, fptype m13, fptype m23, ParameterContain
     D /= (E * E + F * F);
     fpcomplex retur(D * E, D * F); // Dropping F_D=1
     retur *= sqrt(frFactor);
+    retur *= sqrt(frFactorD);
     retur *= spinFactor(spin, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass, m12, m13, m23, cyclic_index);
 
-    pc.incrementIndex(1, 2, 2, 0, 1);
+    pc.incrementIndex(1, 2, 3, 0, 1);
 
     return retur;
 }
@@ -101,6 +128,7 @@ GS::GS(std::string name,
        Variable width,
        unsigned int sp,
        unsigned int cyc,
+       bool norm,
        bool sym)
     : ResonancePdf("GS", name, ar, ai) {
     registerParameter(mass);
@@ -108,6 +136,7 @@ GS::GS(std::string name,
 
     registerConstant(sp);
     registerConstant(cyc);
+    registerConstant(norm);
 
     registerFunction("ptr_to_GOUSAK", ptr_to_GOUSAK);
 }

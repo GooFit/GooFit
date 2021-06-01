@@ -21,7 +21,8 @@ class LASS : public ResonancePdf {
          Variable _B,
          Variable _phiB,
          unsigned int sp,
-         unsigned int cyc);
+         unsigned int cyc,
+         bool norm = true);
     ~LASS() override = default;
 };
 

@@ -37,19 +37,19 @@ __device__ auto kMatrixRes(fptype m12, fptype m13, fptype m23, ParameterContaine
     fpcomplex beta[NCHANNELS];
     fpcomplex f_prod[NCHANNELS];
 
-    for(double & i : fscat) {
+    for(double &i : fscat) {
         i = pc.getParameter(idx++);
     }
 
     // in the next two sets of parameters the index is used two times in the same line, therefore it must be incremented
     // two times afterwards
-    for(auto & i : beta) {
+    for(auto &i : beta) {
         i = fpcomplex(pc.getParameter(idx), pc.getParameter(idx + 1));
         idx++;
         idx++;
     }
 
-    for(auto & i : f_prod) {
+    for(auto &i : f_prod) {
         i = fpcomplex(pc.getParameter(idx), pc.getParameter(idx + 1));
         idx++;
         idx++;

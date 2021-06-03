@@ -54,14 +54,14 @@ __device__ auto dampingFactorSquareNorm(const fptype &cmmom, const int &spin, co
 }
 
 __device__ auto spinFactor(unsigned int spin,
-                             fptype motherMass,
-                             fptype daug1Mass,
-                             fptype daug2Mass,
-                             fptype daug3Mass,
-                             fptype m12,
-                             fptype m13,
-                             fptype m23,
-                             unsigned int cyclic_index) -> fptype {
+                           fptype motherMass,
+                           fptype daug1Mass,
+                           fptype daug2Mass,
+                           fptype daug3Mass,
+                           fptype m12,
+                           fptype m13,
+                           fptype m23,
+                           unsigned int cyclic_index) -> fptype {
     if(0 == spin)
         return 1; // Should not cause branching since every thread evaluates the same resonance at the same time.
 

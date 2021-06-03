@@ -4,15 +4,15 @@
 namespace GooFit {
 
 __device__ auto device_truth_resolution(fptype coshterm,
-                                          fptype costerm,
-                                          fptype sinhterm,
-                                          fptype sinterm,
-                                          fptype tau,
-                                          fptype dtime,
-                                          fptype xmixing,
-                                          fptype ymixing,
-                                          fptype /*sigma*/,
-                                          ParameterContainer &pc) -> fptype {
+                                        fptype costerm,
+                                        fptype sinhterm,
+                                        fptype sinterm,
+                                        fptype tau,
+                                        fptype dtime,
+                                        fptype xmixing,
+                                        fptype ymixing,
+                                        fptype /*sigma*/,
+                                        ParameterContainer &pc) -> fptype {
     fptype ret = 0;
     dtime /= tau;
     ret += coshterm * cosh(ymixing * dtime);

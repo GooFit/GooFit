@@ -13,8 +13,9 @@ class FourDblTupleAdd : public thrust::binary_function<thrust::tuple<fptype, fpt
                                                        thrust::tuple<fptype, fptype, fptype, fptype>,
                                                        thrust::tuple<fptype, fptype, fptype, fptype>> {
   public:
-    __host__ __device__ auto
-    operator()(thrust::tuple<fptype, fptype, fptype, fptype> one, thrust::tuple<fptype, fptype, fptype, fptype> two) -> thrust::tuple<fptype, fptype, fptype, fptype>;
+    __host__ __device__ auto operator()(thrust::tuple<fptype, fptype, fptype, fptype> one,
+                                        thrust::tuple<fptype, fptype, fptype, fptype> two)
+        -> thrust::tuple<fptype, fptype, fptype, fptype>;
 };
 
 } // namespace GooFit

@@ -4,8 +4,8 @@
 
 namespace GooFit {
 
-__device__ auto
-device_DalitzPlot_calcIntegrals(fptype m12, fptype m13, int res_i, int res_j, ParameterContainer &pc) -> fpcomplex {
+__device__ auto device_DalitzPlot_calcIntegrals(fptype m12, fptype m13, int res_i, int res_j, ParameterContainer &pc)
+    -> fpcomplex {
     // Calculates BW_i(m12, m13) * BW_j^*(m12, m13).
     // This calculation is in a separate function so
     // it can be cached. Note that this function expects

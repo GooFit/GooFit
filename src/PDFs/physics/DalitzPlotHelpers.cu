@@ -12,7 +12,8 @@ Helper functions
 namespace GooFit {
 
 __host__ __device__ auto inDalitz(
-    const fptype &m12, const fptype &m13, const fptype &bigM, const fptype &dm1, const fptype &dm2, const fptype &dm3) -> bool {
+    const fptype &m12, const fptype &m13, const fptype &bigM, const fptype &dm1, const fptype &dm2, const fptype &dm3)
+    -> bool {
     fptype dm1pdm2  = dm1 + dm2;
     fptype bigMmdm3 = bigM - dm3;
 
@@ -159,13 +160,13 @@ __device__ void get4Vecs(fptype *Vecs,
 }
 
 __device__ auto getmass(const unsigned int &pair,
-                          fptype &d1,
-                          fptype &d2,
-                          const fptype *vecs,
-                          const fptype &m1,
-                          const fptype &m2,
-                          const fptype &m3,
-                          const fptype &m4) -> fptype {
+                        fptype &d1,
+                        fptype &d2,
+                        const fptype *vecs,
+                        const fptype &m1,
+                        const fptype &m2,
+                        const fptype &m3,
+                        const fptype &m4) -> fptype {
     const fptype *P1 = vecs;
     const fptype *P2 = (vecs + 4);
     const fptype *P3 = (vecs + 8);

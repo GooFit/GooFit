@@ -52,14 +52,15 @@ class Amp3Body : public Amp3BodyBase {
 
     __host__ void setGenerationOffset(int off) { generation_offset = off; }
     __host__ auto getGenerationOffset() -> int { return generation_offset; }
-    __host__ auto
-        GenerateSig(unsigned int numEvents, int seed = 0) -> std::
+    __host__ auto GenerateSig(unsigned int numEvents, int seed = 0) -> std::
         tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h>;
 
     __host__ void populateArrays() override;
 
     /// Get the cached wave (device) vectors
-    __host__ auto getCachedWaveNoCopy(size_t i) const -> const thrust::device_vector<fpcomplex> & { return *(cachedWaves[i]); }
+    __host__ auto getCachedWaveNoCopy(size_t i) const -> const thrust::device_vector<fpcomplex> & {
+        return *(cachedWaves[i]);
+    }
 
     __host__ auto getCachedWave(size_t i) const -> const std::vector<std::complex<fptype>>;
 

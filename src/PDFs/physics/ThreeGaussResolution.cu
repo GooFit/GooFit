@@ -61,15 +61,15 @@ __device__ void gaussian(fptype &_P1,
 }
 
 __device__ auto device_threegauss_resolution(fptype coshterm,
-                                               fptype costerm,
-                                               fptype sinhterm,
-                                               fptype sinterm,
-                                               fptype tau,
-                                               fptype dtime,
-                                               fptype xmixing,
-                                               fptype ymixing,
-                                               fptype sigma,
-                                               ParameterContainer &pc) -> fptype {
+                                             fptype costerm,
+                                             fptype sinhterm,
+                                             fptype sinterm,
+                                             fptype tau,
+                                             fptype dtime,
+                                             fptype xmixing,
+                                             fptype ymixing,
+                                             fptype sigma,
+                                             ParameterContainer &pc) -> fptype {
     fptype coreFraction    = pc.getParameter(0);
     fptype tailFraction    = (1 - coreFraction) * pc.getParameter(1);
     fptype outlFraction    = 1 - coreFraction - tailFraction;

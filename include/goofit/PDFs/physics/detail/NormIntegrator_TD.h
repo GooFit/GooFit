@@ -12,8 +12,8 @@ class NormIntegrator_TD : public thrust::unary_function<thrust::tuple<int, int, 
   public:
     NormIntegrator_TD();
     void setDalitzId(int idx) { dalitzFuncId = idx; }
-    __device__ auto
-    operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const -> thrust::tuple<fptype, fptype, fptype, fptype>;
+    __device__ auto operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const
+        -> thrust::tuple<fptype, fptype, fptype, fptype>;
 
   private:
     unsigned int dalitzFuncId;

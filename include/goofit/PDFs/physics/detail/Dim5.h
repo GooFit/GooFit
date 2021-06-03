@@ -19,8 +19,9 @@ namespace GooFit {
 struct Dim5 : public mcbooster::IFunctionArray {
     Dim5() { dim = 4; }
 
-    __host__ __device__ auto
-    cosHELANG(const mcbooster::Vector4R p, const mcbooster::Vector4R q, const mcbooster::Vector4R d) -> mcbooster::GReal_t {
+    __host__ __device__ auto cosHELANG(const mcbooster::Vector4R p,
+                                       const mcbooster::Vector4R q,
+                                       const mcbooster::Vector4R d) -> mcbooster::GReal_t {
         mcbooster::GReal_t pd  = p * d;
         mcbooster::GReal_t pq  = p * q;
         mcbooster::GReal_t qd  = q * d;
@@ -32,10 +33,10 @@ struct Dim5 : public mcbooster::IFunctionArray {
     }
 
     __host__ __device__ auto phi(const mcbooster::Vector4R &p4_p,
-                                               const mcbooster::Vector4R &p4_d1,
-                                               const mcbooster::Vector4R &p4_d2,
-                                               const mcbooster::Vector4R &p4_h1,
-                                               const mcbooster::Vector4R &p4_h2) -> mcbooster::GReal_t {
+                                 const mcbooster::Vector4R &p4_d1,
+                                 const mcbooster::Vector4R &p4_d2,
+                                 const mcbooster::Vector4R &p4_h1,
+                                 const mcbooster::Vector4R &p4_h2) -> mcbooster::GReal_t {
         mcbooster::Vector4R p4_d1p, p4_h1p, p4_h2p, p4_d2p;
 
         mcbooster::Vector4R d1_perp, d1_prime, h1_perp;

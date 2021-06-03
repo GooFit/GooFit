@@ -26,7 +26,8 @@ class MixingTimeResolution : public GooPdf {
     void initIndex(void *dev_fcn_ptr = host_fcn_ptr);
 
     virtual auto
-    normalization(fptype di1, fptype di2, fptype di3, fptype di4, fptype tau, fptype xmixing, fptype ymixing) const -> fptype = 0;
+    normalization(fptype di1, fptype di2, fptype di3, fptype di4, fptype tau, fptype xmixing, fptype ymixing) const
+        -> fptype = 0;
 
     auto getDeviceFunction() const -> int { return resFunctionIdx; }
     auto getCalcTauIdx() const -> int { return resCalcTauFcnIdx; }

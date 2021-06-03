@@ -52,7 +52,9 @@ constexpr int resonanceOffset_DP = 4; // Offset of the first resonance into the 
 // NOTE: This is does not support ten instances (ten threads) of resoncances now, only one set of resonances.
 __device__ fpcomplex *cResonances[16];
 
-__device__ inline auto parIndexFromResIndex_DP(int resIndex) -> int { return resonanceOffset_DP + resIndex * resonanceSize; }
+__device__ inline auto parIndexFromResIndex_DP(int resIndex) -> int {
+    return resonanceOffset_DP + resIndex * resonanceSize;
+}
 
 __device__ auto device_DalitzPlot(fptype *evt, ParameterContainer &pc) -> fptype {
     int num_obs = pc.getNumObservables();
@@ -420,9 +422,8 @@ __host__ auto Amp3Body::fit_fractions() -> std::vector<std::vector<fptype>> {
     return ff;
 }
 
-__host__
-    auto
-    Amp3Body::GenerateSig(unsigned int numEvents, int seed) -> std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h> {
+__host__ auto Amp3Body::GenerateSig(unsigned int numEvents, int seed) -> std::
+    tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h> {
     // Must configure our functions before any calculations!
     // setupObservables();
     // setIndices();

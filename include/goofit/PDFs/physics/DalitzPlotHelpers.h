@@ -27,7 +27,8 @@ constexpr auto enum_to_underlying(E e) -> typename std::underlying_type<E>::type
 }
 
 __host__ __device__ auto inDalitz(
-    const fptype &m12, const fptype &m13, const fptype &bigM, const fptype &dm1, const fptype &dm2, const fptype &dm3) -> bool;
+    const fptype &m12, const fptype &m13, const fptype &bigM, const fptype &dm1, const fptype &dm2, const fptype &dm3)
+    -> bool;
 
 __device__ auto getResonanceAmplitude(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) -> fpcomplex;
 
@@ -44,13 +45,13 @@ __device__ void get4Vecs(fptype *Vecs,
                          const fptype m4);
 
 __device__ auto getmass(const unsigned int &pair,
-                          fptype &d1,
-                          fptype &d2,
-                          const fptype *vecs,
-                          const fptype &m1,
-                          const fptype &m2,
-                          const fptype &m3,
-                          const fptype &m4) -> fptype;
+                        fptype &d1,
+                        fptype &d2,
+                        const fptype *vecs,
+                        const fptype &m1,
+                        const fptype &m2,
+                        const fptype &m3,
+                        const fptype &m4) -> fptype;
 
 // in case of 3 particles the first two are the resonance.
 enum DP4Pair {

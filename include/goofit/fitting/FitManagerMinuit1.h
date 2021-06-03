@@ -16,12 +16,12 @@ class Minuit1 : public TMinuit {
     Minuit1(PdfBase *pdfPointer);
     /// Fit function for Minuit
     auto Eval(Int_t npar,     //< The number of parameters
-               Double_t *grad, //< The derivatives can be stored here if flag is 2 (output)
-               Double_t &fval, //< The value of the function at this point (output)
-               Double_t *par,  //< The input parameters
-               Int_t flag      //< This is 1 the first time, 2, for derivatives, and 3 after the fit is finished. It
-                               // is something else if computing.
-               ) -> Int_t override;
+              Double_t *grad, //< The derivatives can be stored here if flag is 2 (output)
+              Double_t &fval, //< The value of the function at this point (output)
+              Double_t *par,  //< The input parameters
+              Int_t flag      //< This is 1 the first time, 2, for derivatives, and 3 after the fit is finished. It
+                              // is something else if computing.
+              ) -> Int_t override;
 
     // Get a copy of the list of variables
     auto getVaraibles() const -> std::vector<Variable> { return vars; };

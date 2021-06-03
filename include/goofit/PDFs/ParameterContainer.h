@@ -28,7 +28,9 @@ struct ParameterContainer {
 
     inline __device__ auto getObservable(const int i) -> fptype { return RO_CACHE(observables[observableIdx + i + 1]); }
 
-    inline __device__ auto getNormalization(const int i) -> fptype { return RO_CACHE(normalizations[normalIdx + i + 1]); }
+    inline __device__ auto getNormalization(const int i) -> fptype {
+        return RO_CACHE(normalizations[normalIdx + i + 1]);
+    }
 
     inline __device__ auto getNumParameters() -> int { return (int)RO_CACHE(parameters[parameterIdx]); }
 

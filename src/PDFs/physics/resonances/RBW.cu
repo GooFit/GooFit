@@ -7,7 +7,7 @@
 namespace GooFit {
 
 template <int I>
-__device__ fpcomplex plainBW(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) {
+__device__ auto plainBW(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) -> fpcomplex {
     unsigned int spin         = pc.getConstant(0);
     unsigned int cyclic_index = pc.getConstant(1);
     bool norm                 = pc.getConstant(2);

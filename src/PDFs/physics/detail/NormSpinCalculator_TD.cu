@@ -8,9 +8,9 @@ namespace GooFit {
 
 NormSpinCalculator_TD::NormSpinCalculator_TD() = default;
 
-__device__ fptype NormSpinCalculator_TD::operator()(
+__device__ auto NormSpinCalculator_TD::operator()(
     thrust::tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t)
-    const {
+    const -> fptype {
     // unsigned int *indices = paramIndices + _parameters; // Jump to DALITZPLOT position within parameters array
     // int parameter_i       = 12 + (2 * indices[6]) + (indices[3] * 2)
     //                  + (_spinfactor_i * 2); // Find position of this resonance relative to DALITZPLOT start

@@ -17,13 +17,13 @@ class MetricTaker : public thrust::unary_function<thrust::tuple<int, fptype *, i
     /// to get the goodness-of-prediction number which is returned to MINUIT.
     ///
     /// Event number, dev_event_array (pass this way for nvcc reasons), event size
-    __device__ fptype operator()(thrust::tuple<int, fptype *, int> t) const;
+    __device__ auto operator()(thrust::tuple<int, fptype *, int> t) const -> fptype;
 
     /// Operator for binned evaluation, no metric.
     /// Used in normalization.
     ///
     /// Event number, event size, normalization ranges (for binned stuff, eg integration)
-    __device__ fptype operator()(thrust::tuple<int, int, fptype *> t) const;
+    __device__ auto operator()(thrust::tuple<int, int, fptype *> t) const -> fptype;
 
     /// Update which index we need to use:
     __host__ void setFunctionIndex(const int &id) { functionIdx = id; }

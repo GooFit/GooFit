@@ -9,11 +9,11 @@
 
 namespace GooFit {
 
-__device__ __thrust_forceinline__ fptype Q2(fptype Msq, fptype M1sq, fptype M2sq) {
+__device__ __thrust_forceinline__ auto Q2(fptype Msq, fptype M1sq, fptype M2sq) -> fptype {
     return (Msq / 4. - (M1sq + M2sq) / 2. + (M1sq - M2sq) * (M1sq - M2sq) / (4 * Msq));
 }
 
-__device__ __thrust_forceinline__ fptype BlattWeisskopf_Norm(const fptype z2, const fptype z02, unsigned int L) {
+__device__ __thrust_forceinline__ auto BlattWeisskopf_Norm(const fptype z2, const fptype z02, unsigned int L) -> fptype {
     if(L == 0)
         return 1;
     else if(L == 1)
@@ -26,7 +26,7 @@ __device__ __thrust_forceinline__ fptype BlattWeisskopf_Norm(const fptype z2, co
     }
 }
 
-__device__ fptype getSpline(fptype x, bool continued, ParameterContainer &pc) {
+__device__ auto getSpline(fptype x, bool continued, ParameterContainer &pc) -> fptype {
     const fptype s_min       = pc.getConstant(2);
     const fptype s_max       = pc.getConstant(3);
     const unsigned int nBins = pc.getConstant(4);
@@ -61,13 +61,13 @@ __device__ fptype getSpline(fptype x, bool continued, ParameterContainer &pc) {
            + dx * dx * dx * (m_xf_1 - m_xf_0) / (6 * spacing);
 }
 
-__device__ fptype kFactor(fptype mass, fptype width) {
+__device__ auto kFactor(fptype mass, fptype width) -> fptype {
     fptype gamma = mass * sqrt(POW2(mass) + POW2(width));
     fptype k     = 2 * sqrt(2.) * mass * width * gamma / (M_PI * sqrt(POW2(mass) + gamma));
     return sqrt(k);
 }
 
-__device__ fpcomplex Spline_TDP(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
+__device__ auto Spline_TDP(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) -> fpcomplex {
     const fptype mass      = pc.getParameter(0);
     const fptype width     = pc.getParameter(1);
     const fptype radius    = pc.getConstant(1);
@@ -99,7 +99,7 @@ __device__ fpcomplex Spline_TDP(fptype Mpair, fptype m1, fptype m2, ParameterCon
 
 __device__ resonance_function_ptr ptr_to_Spline = Spline_TDP;
 
-std::vector<fptype> make_spline_curvatures(std::vector<Variable> vars, Lineshapes::spline_t SplineInfo) {
+auto make_spline_curvatures(std::vector<Variable> vars, Lineshapes::spline_t SplineInfo) -> std::vector<fptype> {
     size_t size = std::get<2>(SplineInfo) - 2;
     Eigen::Matrix<fptype, Eigen::Dynamic, Eigen::Dynamic> m(size, size);
     for(size_t i = 0; i < size; i++) {

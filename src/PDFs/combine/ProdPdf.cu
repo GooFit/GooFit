@@ -6,7 +6,7 @@
 
 namespace GooFit {
 
-__device__ fptype device_ProdPdfs(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_ProdPdfs(fptype *evt, ParameterContainer &pc) -> fptype {
     int numCons  = pc.getNumConstants();
     int numComps = pc.getConstant(0);
     int numObs   = pc.getNumObservables();
@@ -72,7 +72,7 @@ ProdPdf::ProdPdf(std::string n, std::vector<PdfBase *> comps)
     initialize();
 }
 
-__host__ fptype ProdPdf::normalize() {
+__host__ auto ProdPdf::normalize() -> fptype {
     if(varOverlaps) {
         // Two or more components share an observable and cannot be separately
         // normalized, since \int A*B dx does not equal int A dx * int B dx.

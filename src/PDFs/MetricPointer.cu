@@ -5,22 +5,22 @@
 
 namespace GooFit {
 
-__device__ fptype calculateEval(fptype rawPdf, fptype *evtVal, fptype norm) {
+__device__ auto calculateEval(fptype rawPdf, fptype *evtVal, fptype norm) -> fptype {
     // Just return the raw PDF value, for use in (eg) normalization.
     return rawPdf;
 }
 
-__device__ fptype calculateNLL(fptype rawPdf, fptype *evtVal, fptype norm) {
+__device__ auto calculateNLL(fptype rawPdf, fptype *evtVal, fptype norm) -> fptype {
     rawPdf *= norm;
     return rawPdf > 0.0 ? -log(rawPdf) : 0.0;
 }
 
-__device__ fptype calculateProb(fptype rawPdf, fptype *evtVal, fptype norm) {
+__device__ auto calculateProb(fptype rawPdf, fptype *evtVal, fptype norm) -> fptype {
     // Return probability, ie normalized PDF value.
     return rawPdf * norm;
 }
 
-__device__ fptype calculateBinAvg(fptype rawPdf, fptype *evtVal, fptype norm) {
+__device__ auto calculateBinAvg(fptype rawPdf, fptype *evtVal, fptype norm) -> fptype {
     // TODO:(brad) address these metric devices later
     rawPdf *= norm;
     rawPdf *= evtVal[1]; // Bin volume
@@ -35,7 +35,7 @@ __device__ fptype calculateBinAvg(fptype rawPdf, fptype *evtVal, fptype norm) {
     return 0;
 }
 
-__device__ fptype calculateBinWithError(fptype rawPdf, fptype *evtVal, fptype norm) {
+__device__ auto calculateBinWithError(fptype rawPdf, fptype *evtVal, fptype norm) -> fptype {
     // TODO:(brad) address these metric devices later
 
     // In this case interpret the rawPdf as just a number, not a number of events.
@@ -49,7 +49,7 @@ __device__ fptype calculateBinWithError(fptype rawPdf, fptype *evtVal, fptype no
     return rawPdf;
 }
 
-__device__ fptype calculateChisq(fptype rawPdf, fptype *evtVal, fptype norm) {
+__device__ auto calculateChisq(fptype rawPdf, fptype *evtVal, fptype norm) -> fptype {
     // TODO:(brad) address these metric devices later
     rawPdf *= norm;
     rawPdf *= evtVal[1]; // Bin volume
@@ -64,7 +64,7 @@ __device__ device_metric_ptr ptr_to_BinAvg       = calculateBinAvg;
 __device__ device_metric_ptr ptr_to_BinWithError = calculateBinWithError;
 __device__ device_metric_ptr ptr_to_Chisq        = calculateChisq;
 
-void *getMetricPointer(EvalFunc val) {
+auto getMetricPointer(EvalFunc val) -> void * {
     if(val == EvalFunc::Eval) {
         host_fcn_ptr = get_device_symbol_address(ptr_to_Eval);
     } else if(val == EvalFunc::NLL) {

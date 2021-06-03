@@ -12,7 +12,7 @@ in the Bernstein form, that is a linear combination of Bernstein basis polynomia
 class BernsteinPdf : public GooPdf {
   public:
     BernsteinPdf(std::string n, Observable vars, std::vector<Variable> coeffs, unsigned int mindeg = 0);
-    __host__ bool hasAnalyticIntegral() const override { return false; }
+    __host__ auto hasAnalyticIntegral() const -> bool override { return false; }
 
   private:
     fptype *host_constants;

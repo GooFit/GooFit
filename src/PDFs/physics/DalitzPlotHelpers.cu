@@ -11,8 +11,8 @@ Helper functions
 
 namespace GooFit {
 
-__host__ __device__ bool inDalitz(
-    const fptype &m12, const fptype &m13, const fptype &bigM, const fptype &dm1, const fptype &dm2, const fptype &dm3) {
+__host__ __device__ auto inDalitz(
+    const fptype &m12, const fptype &m13, const fptype &bigM, const fptype &dm1, const fptype &dm2, const fptype &dm3) -> bool {
     fptype dm1pdm2  = dm1 + dm2;
     fptype bigMmdm3 = bigM - dm3;
 
@@ -56,19 +56,19 @@ __host__ __device__ bool inDalitz(
     return m12less && m12grea && m13less && m13grea;
 }
 
-__device__ fptype Mass(const fptype *P0) {
+__device__ auto Mass(const fptype *P0) -> fptype {
     return sqrt(-P0[0] * P0[0] - P0[1] * P0[1] - P0[2] * P0[2] + P0[3] * P0[3]);
 }
-__device__ fptype Mass(const fptype *P0, const fptype *P1) {
+__device__ auto Mass(const fptype *P0, const fptype *P1) -> fptype {
     return sqrt(-((P0[0] + P1[0]) * (P0[0] + P1[0])) - ((P0[1] + P1[1]) * (P0[1] + P1[1]))
                 - ((P0[2] + P1[2]) * (P0[2] + P1[2])) + ((P0[3] + P1[3]) * (P0[3] + P1[3])));
 }
-__device__ fptype Mass(const fptype *P0, const fptype *P1, const fptype *P2) {
+__device__ auto Mass(const fptype *P0, const fptype *P1, const fptype *P2) -> fptype {
     return sqrt(
         -((P0[0] + P1[0] + P2[0]) * (P0[0] + P1[0] + P2[0])) - ((P0[1] + P1[1] + P2[1]) * (P0[1] + P1[1] + P2[1]))
         - ((P0[2] + P1[2] + P2[2]) * (P0[2] + P1[2] + P2[2])) + ((P0[3] + P1[3] + P2[3]) * (P0[3] + P1[3] + P2[3])));
 }
-__device__ fptype VecDot(const fptype *P0, const fptype *P1) {
+__device__ auto VecDot(const fptype *P0, const fptype *P1) -> fptype {
     return (P0[0] * P1[0] + P0[1] + P1[1] + P0[2] + P1[2] + P0[3] + P1[3]);
 }
 
@@ -158,14 +158,14 @@ __device__ void get4Vecs(fptype *Vecs,
     Vecs[5] = cosphi * Vecs[5];
 }
 
-__device__ fptype getmass(const unsigned int &pair,
+__device__ auto getmass(const unsigned int &pair,
                           fptype &d1,
                           fptype &d2,
                           const fptype *vecs,
                           const fptype &m1,
                           const fptype &m2,
                           const fptype &m3,
-                          const fptype &m4) {
+                          const fptype &m4) -> fptype {
     const fptype *P1 = vecs;
     const fptype *P2 = (vecs + 4);
     const fptype *P3 = (vecs + 8);

@@ -14,7 +14,7 @@ class LSCalculator_TD : public thrust::unary_function<thrust::tuple<int, fptype 
     LSCalculator_TD();
     void setDalitzId(int idx) { dalitzFuncId = idx; }
     void setResonanceId(int idx) { _resonance_i = idx; }
-    __device__ fpcomplex operator()(thrust::tuple<int, fptype *, int> t) const;
+    __device__ auto operator()(thrust::tuple<int, fptype *, int> t) const -> fpcomplex;
 
   private:
     unsigned int _resonance_i{0};

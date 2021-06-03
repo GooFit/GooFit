@@ -7,8 +7,8 @@
 
 namespace GooFit {
 
-__device__ ThreeComplex
-device_Tddp_calcIntegrals(fptype m12, fptype m13, int res_i, int res_j, ParameterContainer &pc) {
+__device__ auto
+device_Tddp_calcIntegrals(fptype m12, fptype m13, int res_i, int res_j, ParameterContainer &pc) -> ThreeComplex {
     // For calculating Dalitz-plot integrals. What's needed is the products
     // AiAj*, AiBj*, and BiBj*, where
     // Ai = BW_i(x, y) + BW_i(y, x)
@@ -57,7 +57,7 @@ SpecialDalitzIntegrator::SpecialDalitzIntegrator(int pIdx, unsigned int ri, unsi
     , resonance_j(rj)
     , parameters(pIdx) {}
 
-__device__ ThreeComplex SpecialDalitzIntegrator::operator()(thrust::tuple<int, fptype *, int> t) const {
+__device__ auto SpecialDalitzIntegrator::operator()(thrust::tuple<int, fptype *, int> t) const -> ThreeComplex {
     // Bin index, base address [lower, upper,getNumBins]
     // Notice that this is basically MetricTaker::operator (binned) with the special-case knowledge
     // that event size is two, and that the function to call is dev_Tddp_calcIntegrals.

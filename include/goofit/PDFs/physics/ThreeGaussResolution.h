@@ -29,8 +29,8 @@ class ThreeGaussResolution : public MixingTimeResolution {
                          Variable sb);
     ~ThreeGaussResolution() override;
 
-    fptype normalization(
-        fptype di1, fptype di2, fptype di3, fptype di4, fptype tau, fptype xmixing, fptype ymixing) const override;
+    auto normalization(
+        fptype di1, fptype di2, fptype di3, fptype di4, fptype tau, fptype xmixing, fptype ymixing) const -> fptype override;
 
   private:
     Variable selectionBias;

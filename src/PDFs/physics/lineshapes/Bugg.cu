@@ -8,26 +8,26 @@
 
 namespace GooFit {
 
-__device__ fpcomplex bugg_rho2(const fptype &s, const fptype m) {
+__device__ auto bugg_rho2(const fptype &s, const fptype m) -> fpcomplex {
     fptype rho_squared  = 1. - 4. * m * m / s;
     fpcomplex returnVal = (rho_squared >= 0) ? fpcomplex(1, 0) : fpcomplex(0, 1);
     rho_squared         = (rho_squared >= 0) ? sqrt(rho_squared) : sqrt(-rho_squared);
     return rho_squared * returnVal;
 }
 
-__device__ fptype bugg_j1(const fptype &s, const fptype m) {
+__device__ auto bugg_j1(const fptype &s, const fptype m) -> fptype {
     fptype rho_pipi  = bugg_rho2(s, m).real();
     fptype returnVal = 2.;
     returnVal += (rho_pipi > 0.) ? rho_pipi * log((1. - rho_pipi) / (1. + rho_pipi)) : 0;
     return returnVal / M_PI;
 }
 
-__device__ fptype bugg_Gamma_4pi(const fptype &s,
+__device__ auto bugg_Gamma_4pi(const fptype &s,
                                  const fptype mpi,
                                  const fptype &g_4pi,
                                  const fptype &M,
                                  const fptype &lambda_4pi,
-                                 const fptype &s0_4pi) {
+                                 const fptype &s0_4pi) -> fptype {
     fptype returnVal = (s < (16. * mpi * mpi)) ? 0
                                                : g_4pi * (1. / (1 + exp(lambda_4pi * (s0_4pi - s))))
                                                      / (1. / (1 + exp(lambda_4pi * (s0_4pi - M * M))));
@@ -36,7 +36,7 @@ __device__ fptype bugg_Gamma_4pi(const fptype &s,
 
 // This function is an adaptation from the bugg lineshape implemented in the MINT package written by Jonas Rademacker.
 // this lineshape is not tested yet!
-__device__ fpcomplex bugg_MINT(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
+__device__ auto bugg_MINT(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) -> fpcomplex {
     fptype s = Mpair * Mpair;
 
     fptype M          = 0.953;
@@ -84,7 +84,7 @@ __device__ fpcomplex bugg_MINT(fptype Mpair, fptype m1, fptype m2, ParameterCont
     return returnVal * sqrt(1000.0);
 }
 
-__device__ fpcomplex bugg_MINT3(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
+__device__ auto bugg_MINT3(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) -> fpcomplex {
     fptype s          = Mpair * Mpair;
     fptype M          = 0.953;
     fptype b1         = 1.302;

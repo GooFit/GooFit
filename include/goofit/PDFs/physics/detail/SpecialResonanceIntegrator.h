@@ -15,7 +15,7 @@ class SpecialResonanceIntegrator : public thrust::unary_function<thrust::tuple<i
     void setDalitzIndex(unsigned int id) { dalitz_i = id; }
     void setResonanceIndex(unsigned int id) { resonance_i = id; }
     void setEfficiencyIndex(unsigned int id) { resonance_j = id; }
-    __device__ fpcomplex operator()(thrust::tuple<int, fptype *, int> t) const;
+    __device__ auto operator()(thrust::tuple<int, fptype *, int> t) const -> fpcomplex;
 
   private:
     unsigned int dalitz_i;

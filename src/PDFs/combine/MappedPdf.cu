@@ -3,7 +3,7 @@
 
 namespace GooFit {
 
-__device__ fptype device_Mapped(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_Mapped(fptype *evt, ParameterContainer &pc) -> fptype {
     // Structure : nP mapFunctionIndex mapParamIndex functionIndex1 parameterIndex1 functionIndex2 parameterIndex2 ...
     // Find mapping between event variables and function to evaluate
     auto numConstants = pc.getNumConstants();
@@ -39,7 +39,7 @@ __device__ fptype device_Mapped(fptype *evt, ParameterContainer &pc) {
 
 __device__ device_function_ptr ptr_to_Mapped = device_Mapped;
 
-__host__ int countComponents(PdfBase *func) {
+__host__ auto countComponents(PdfBase *func) -> int {
     auto subcomponents = func->getComponents();
     int n_components   = 0;
     if(subcomponents.size() > 0) {
@@ -81,7 +81,7 @@ __host__ MappedPdf::MappedPdf(std::string n, GooPdf *m, std::vector<GooPdf *> &t
     initialize();
 }
 
-__host__ fptype MappedPdf::normalize() {
+__host__ auto MappedPdf::normalize() -> fptype {
     fptype ret = 0;
 
     for(unsigned int i = 1; i < components.size(); ++i) { // No need to normalize mapping function.

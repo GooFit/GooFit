@@ -6,7 +6,7 @@
 
 namespace GooFit {
 
-__device__ fpcomplex gaussian(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) {
+__device__ auto gaussian(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) -> fpcomplex {
     // indices[1] is unused constant index, for consistency with other function types.
     fptype resmass  = pc.getParameter(0);
     fptype reswidth = pc.getParameter(1);

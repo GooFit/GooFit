@@ -5,7 +5,7 @@
 
 namespace GooFit {
 
-__device__ fptype device_EventWeightedAddPdfs(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_EventWeightedAddPdfs(fptype *evt, ParameterContainer &pc) -> fptype {
     int numConstants = pc.getNumConstants();
     int numObs       = pc.getNumObservables();
 
@@ -43,7 +43,7 @@ __device__ fptype device_EventWeightedAddPdfs(fptype *evt, ParameterContainer &p
     return ret;
 }
 
-__device__ fptype device_EventWeightedAddPdfsExt(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_EventWeightedAddPdfsExt(fptype *evt, ParameterContainer &pc) -> fptype {
     // numParameters does not count itself. So the array structure for two functions is
     // nP | F P | F P | nO | o1 o2
     // in which nP = 4, nO = 2.
@@ -142,7 +142,7 @@ EventWeightedAddPdf::EventWeightedAddPdf(std::string n, std::vector<Observable> 
     initialize();
 }
 
-__host__ fptype EventWeightedAddPdf::normalize() {
+__host__ auto EventWeightedAddPdf::normalize() -> fptype {
     // if (cpuDebug & 1) std::cout << "Normalizing EventWeightedAddPdf " << getName() << " " << components.size() <<
     // std::endl;
 

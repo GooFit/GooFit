@@ -5,7 +5,7 @@
 
 namespace GooFit {
 
-__device__ fpcomplex nonres(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) {
+__device__ auto nonres(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) -> fpcomplex {
     pc.incrementIndex(1, 0, 0, 0, 1);
     return {1.0, 0.0};
 }

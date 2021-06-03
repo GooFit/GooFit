@@ -4,7 +4,7 @@
 
 namespace GooFit {
 
-__device__ fptype device_Gaussian(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_Gaussian(fptype *evt, ParameterContainer &pc) -> fptype {
     int id       = pc.getObservable(0);
     fptype x     = RO_CACHE(evt[id]);
     fptype mean  = pc.getParameter(0);
@@ -25,7 +25,7 @@ __host__ GaussianPdf::GaussianPdf(std::string n, Observable _x, Variable mean, V
     initialize();
 }
 
-__host__ fptype GaussianPdf::integrate(fptype lo, fptype hi) const {
+__host__ auto GaussianPdf::integrate(fptype lo, fptype hi) const -> fptype {
     static const fptype rootPi = sqrt(atan2(0.0, -1.0));
 
     // Integral over all R.

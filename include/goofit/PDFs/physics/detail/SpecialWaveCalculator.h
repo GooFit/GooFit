@@ -13,7 +13,7 @@ class SpecialWaveCalculator : public thrust::unary_function<thrust::tuple<int, f
     SpecialWaveCalculator(int pIdx, unsigned int res_idx);
     void setTddpIndex(unsigned int id) { tddp = id; }
     void setResonanceIndex(unsigned int id) { resonance_i = id; }
-    __device__ WaveHolder_s operator()(thrust::tuple<int, fptype *, int> t) const;
+    __device__ auto operator()(thrust::tuple<int, fptype *, int> t) const -> WaveHolder_s;
 
   private:
     unsigned int tddp;

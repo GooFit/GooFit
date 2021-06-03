@@ -10,7 +10,7 @@ namespace GooFit {
 // generalized lass lineshape as implemented in MINT3 by Tim Evans. if F=R=1 and phiF=phiR=0 this is equal to normal
 // lass as implemented in Mint3.
 // The difference between this and lass mint is not quite clear to me. need to get back to this later.
-__device__ fpcomplex glass_MINT3(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
+__device__ auto glass_MINT3(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) -> fpcomplex {
     unsigned int orbital = pc.getConstant(1);
     fptype meson_radius  = pc.getConstant(2);
 

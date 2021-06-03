@@ -10,14 +10,14 @@
 namespace GooFit {
 
 // For kMatrix
-__device__ fpcomplex phsp_twoBody(fptype s, fptype m0, fptype m1) {
+__device__ auto phsp_twoBody(fptype s, fptype m0, fptype m1) -> fpcomplex {
     if(1. - POW2(m0 + m1) / s > 0)
         return fpcomplex(sqrt(1. - POW2(m0 + m1) / s), 0);
     else
         return fpcomplex(0, sqrt(-(1. - POW2(m0 + m1) / s)));
 }
 
-__device__ fpcomplex phsp_fourPi(fptype s) {
+__device__ auto phsp_fourPi(fptype s) -> fpcomplex {
     if(s > 1)
         return phsp_twoBody(s, 2 * mPiPlus, 2 * mPiPlus);
     else if(0.00051 + -0.01933 * s + 0.13851 * s * s + -0.20840 * s * s * s + -0.29744 * s * s * s * s
@@ -57,7 +57,7 @@ getCofactor(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex temp[NCHANNELS][NCHANNE
 
 /* Recursive function for finding determinant of matrix.
    n is current dimension of A[][]. */
-__device__ fpcomplex determinant(fpcomplex A[NCHANNELS][NCHANNELS], int n) {
+__device__ auto determinant(fpcomplex A[NCHANNELS][NCHANNELS], int n) -> fpcomplex {
     fpcomplex D = 0; // Initialize result
 
     //  Base case : if matrix contains single element
@@ -110,7 +110,7 @@ __device__ void adjoint(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex adj[NCHANNE
 
 // Function to calculate and store inverse, returns false if
 // matrix is singular
-__device__ bool inverse(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex inverse[NCHANNELS][NCHANNELS]) {
+__device__ auto inverse(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex inverse[NCHANNELS][NCHANNELS]) -> bool {
     // Find determinant of A[][]
     fpcomplex det = determinant(A, NCHANNELS);
     if(det == fpcomplex(0, 0)) {

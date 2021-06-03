@@ -10,13 +10,13 @@ class PyMixingTimeResolution : public Base {
   public:
     using Base::Base;
 
-    GooFit::fptype normalization(GooFit::fptype di1,
+    auto normalization(GooFit::fptype di1,
                                  GooFit::fptype di2,
                                  GooFit::fptype di3,
                                  GooFit::fptype di4,
                                  GooFit::fptype tau,
                                  GooFit::fptype xmixing,
-                                 GooFit::fptype ymixing) const override {
+                                 GooFit::fptype ymixing) const -> GooFit::fptype override {
         PYBIND11_OVERLOAD_PURE(GooFit::fptype, Base, normalization, di1, di2, di3, di4, tau, xmixing, ymixing);
     }
 };

@@ -15,7 +15,7 @@
 
 namespace GooFit {
 
-__device__ fpcomplex kMatrixFunction(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
+__device__ auto kMatrixFunction(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) -> fpcomplex {
     // kMatrix amplitude as described in https://arxiv.org/pdf/0804.2089.pdf, compared with AmpGen implementation
 
     // parameter index
@@ -34,20 +34,20 @@ __device__ fpcomplex kMatrixFunction(fptype Mpair, fptype m1, fptype m2, Paramet
     fpcomplex beta[NCHANNELS];
     fpcomplex f_prod[NCHANNELS];
 
-    for(int i = 0; i < NCHANNELS; i++) {
-        fscat[i] = pc.getParameter(idx++);
+    for(double & i : fscat) {
+        i = pc.getParameter(idx++);
     }
 
     // in the next two sets of parameters the index is used two times in the same line, therefore it must be incremented
     // two times afterwards
-    for(int i = 0; i < NCHANNELS; i++) {
-        beta[i] = fpcomplex(pc.getParameter(idx), pc.getParameter(idx + 1));
+    for(auto & i : beta) {
+        i = fpcomplex(pc.getParameter(idx), pc.getParameter(idx + 1));
         idx++;
         idx++;
     }
 
-    for(int i = 0; i < NCHANNELS; i++) {
-        f_prod[i] = fpcomplex(pc.getParameter(idx), pc.getParameter(idx + 1));
+    for(auto & i : f_prod) {
+        i = fpcomplex(pc.getParameter(idx), pc.getParameter(idx + 1));
         idx++;
         idx++;
     }

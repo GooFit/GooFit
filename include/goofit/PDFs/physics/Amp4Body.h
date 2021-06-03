@@ -37,14 +37,14 @@ class Amp4Body : public Amp4BodyBase {
     // coherent sum. The caching method requires that it be done this way or the ProdPdf
     // normalization will get *really* confused and give wrong answers.
 
-    __host__ fptype normalize() override;
+    __host__ auto normalize() -> fptype override;
     __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 6);
     __host__ void setForceIntegrals(bool f = true) { forceRedoIntegrals = f; }
-    __host__ int getMCevents() { return MCevents; }
+    __host__ auto getMCevents() -> int { return MCevents; }
     __host__ void setGenerationOffset(int off) { generation_offset = off; }
-    __host__ std::
-        tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h>
-        GenerateSig(unsigned int numEvents, int seed = 0);
+    __host__ auto
+        GenerateSig(unsigned int numEvents, int seed = 0) -> std::
+        tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h>;
 
     __host__ void populateArrays() override;
 

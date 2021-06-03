@@ -4,7 +4,7 @@
 
 namespace GooFit {
 
-__device__ fptype device_Argus_Upper(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_Argus_Upper(fptype *evt, ParameterContainer &pc) -> fptype {
     int id = pc.getObservable(0);
 
     fptype x     = RO_CACHE(evt[id]);
@@ -24,7 +24,7 @@ __device__ fptype device_Argus_Upper(fptype *evt, ParameterContainer &pc) {
     return x * pow(t, power) * exp(slope * t);
 }
 
-__device__ fptype device_Argus_Lower(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_Argus_Lower(fptype *evt, ParameterContainer &pc) -> fptype {
     int id = pc.getObservable(0);
 
     fptype x     = RO_CACHE(evt[id]);
@@ -62,7 +62,7 @@ __host__ ArgusPdf::ArgusPdf(std::string n, Observable _x, Variable m0, Variable 
     initialize();
 }
 
-fptype argus_lower_helper(fptype x, fptype m0, fptype slope, fptype power) {
+auto argus_lower_helper(fptype x, fptype m0, fptype slope, fptype power) -> fptype {
     fptype t = x / m0;
 
     if(t <= 1)
@@ -76,7 +76,7 @@ fptype argus_lower_helper(fptype x, fptype m0, fptype slope, fptype power) {
     return ret;
 }
 
-__host__ double ArgusPdf::integrate(fptype lo, fptype hi) const {
+__host__ auto ArgusPdf::integrate(fptype lo, fptype hi) const -> double {
     double norm  = 0;
     fptype m0    = host_parameters[parametersIdx + 1];
     fptype slope = host_parameters[parametersIdx + 2];

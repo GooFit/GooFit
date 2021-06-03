@@ -16,7 +16,7 @@ class NormSpinCalculator
     NormSpinCalculator();
     void setDalitzId(int idx) { dalitzFuncId = idx; }
     void setSpinFactorId(int idx) { _spinfactor_i = idx; }
-    __device__ fptype operator()(thrust::tuple<fptype, fptype, fptype, fptype, fptype> t) const;
+    __device__ auto operator()(thrust::tuple<fptype, fptype, fptype, fptype, fptype> t) const -> fptype;
 
   private:
     unsigned int dalitzFuncId;

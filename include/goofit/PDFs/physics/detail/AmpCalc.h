@@ -16,7 +16,7 @@ class AmpCalc : public thrust::unary_function<unsigned int, fpcomplex> {
     // void setpIdx(unsigned int pIdx){_parameters = pIdx;}
     void setDalitzId(int idx) { dalitzFuncId = idx; }
     void setAmplitudeId(int idx) { _AmpIdx = idx; }
-    __device__ fpcomplex operator()(thrust::tuple<int, fptype *, int> t) const;
+    __device__ auto operator()(thrust::tuple<int, fptype *, int> t) const -> fpcomplex;
 
   private:
     unsigned int dalitzFuncId;

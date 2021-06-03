@@ -28,7 +28,8 @@ const unsigned int SPECIAL_RESOLUTION_FLAG = 999999999;
 // own cache, hence the '10'. Ten threads should be enough for anyone!
 
 // NOTE: only one set of wave holders is supported currently.
-__device__ WaveHolder_s *cWaves[16];
+//this needs to be large enough to hold all samples
+__device__ WaveHolder_s *cWaves[16*20];
 
 __device__ inline int parIndexFromResIndex(int resIndex) { return resonanceOffset + resIndex * resonanceSize; }
 
@@ -86,7 +87,7 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
     fpcomplex sumRateAB(0, 0);
     fpcomplex sumRateBB(0, 0);
 
-    // unsigned int cacheToUse = pc.getConstant(1);
+    unsigned int cacheToUse = pc.getConstant(1);
     fptype mistag = pc.getConstant(2);
 
     for(int i = 0; i < numResonances; ++i) {
@@ -97,8 +98,9 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
         //				     thrust::get<1>(cWaves[cacheToUse][evtNum*numResonances + i]));
         // Note, to make this more efficient we should change it to only an array of fptype's, and read double2 at a
         // time.
-        fpcomplex ai{RO_CACHE(cWaves[i][evtNum].ai_real), RO_CACHE(cWaves[i][evtNum].ai_imag)};
-        fpcomplex bi{RO_CACHE(cWaves[i][evtNum].bi_real), RO_CACHE(cWaves[i][evtNum].bi_imag)};
+        int index_cWave = i + (16 * cacheToUse);
+        fpcomplex ai{RO_CACHE(cWaves[index_cWave][evtNum].ai_real), RO_CACHE(cWaves[index_cWave][evtNum].ai_imag)};
+        fpcomplex bi{RO_CACHE(cWaves[index_cWave][evtNum].bi_real), RO_CACHE(cWaves[index_cWave][evtNum].bi_imag)};
 
         fpcomplex matrixelement = ai * amp;
         sumWavesA += matrixelement;
@@ -251,6 +253,7 @@ __device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
     return ret;
 }
 
+int Amp3Body_TD::cacheCount = 0;
 __device__ device_function_ptr ptr_to_Tddp = device_Tddp;
 
 __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
@@ -305,7 +308,6 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
 
     registerConstant(decay.resonances.size());
 
-    static int cacheCount = 0;
     cacheToUse            = cacheCount++;
     registerConstant(cacheToUse);
 
@@ -403,7 +405,6 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
 
     registerConstant(decayInfo.resonances.size());
 
-    static int cacheCount = 0;
     cacheToUse            = cacheCount++;
     registerConstant(cacheToUse);
 
@@ -527,7 +528,7 @@ __host__ void Amp3Body_TD::populateArrays() {
     }
     // TODO: This might be easy to clean up with the smart vectors.
 }
-__host__ void Amp3Body_TD::setDataSize(unsigned int dataSize, unsigned int evtSize) {
+__host__ void Amp3Body_TD::setDataSize(unsigned int dataSize, unsigned int evtSize, unsigned int offset) {
     // Default 5 is m12, m13, time, sigma_t, evtNum
     totalEventSize = evtSize;
     if(totalEventSize < 5)
@@ -539,6 +540,7 @@ __host__ void Amp3Body_TD::setDataSize(unsigned int dataSize, unsigned int evtSi
     }
 
     numEntries = dataSize;
+    eventOffset = offset;
 
 // Ideally this would not be required, this would be called AFTER setData which will set m_iEventsPerTask
 #ifdef GOOFIT_MPI
@@ -567,7 +569,7 @@ __host__ void Amp3Body_TD::setDataSize(unsigned int dataSize, unsigned int evtSi
         cachedWaves[i] = new thrust::device_vector<WaveHolder_s>(dataSize);
 #endif
         void *dummy = thrust::raw_pointer_cast(cachedWaves[i]->data());
-        MEMCPY_TO_SYMBOL(cWaves, &dummy, sizeof(WaveHolder_s *), i * sizeof(WaveHolder_s *), cudaMemcpyHostToDevice);
+        MEMCPY_TO_SYMBOL(cWaves, &dummy, sizeof(WaveHolder_s *), ((16 * cacheToUse) + i) * sizeof(WaveHolder_s *), cudaMemcpyHostToDevice);
     }
 
     setForceIntegrals();
@@ -627,7 +629,7 @@ __host__ fptype Amp3Body_TD::normalize() {
     // for this particular PDF component.
     thrust::constant_iterator<fptype *> dataArray(dev_event_array);
     thrust::constant_iterator<int> eventSize(totalEventSize);
-    thrust::counting_iterator<int> eventIndex(0);
+    thrust::counting_iterator<int> eventIndex(eventOffset);
 
     static int normCall = 0;
     normCall++;
@@ -640,7 +642,7 @@ __host__ fptype Amp3Body_TD::normalize() {
 #ifdef GOOFIT_MPI
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
-                thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, arrayAddress, eventSize)),
+                thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, dataArray, eventSize)),
                 strided_range<thrust::device_vector<WaveHolder_s>::iterator>(
                     cachedWaves[i]->begin(), cachedWaves[i]->end(), 1)
                     .begin(),
@@ -648,7 +650,7 @@ __host__ fptype Amp3Body_TD::normalize() {
 #else
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
-                thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
+                thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, dataArray, eventSize)),
                 strided_range<thrust::device_vector<WaveHolder_s>::iterator>(
                     cachedWaves[i]->begin(), cachedWaves[i]->end(), 1)
                     .begin(),

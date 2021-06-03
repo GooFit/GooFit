@@ -125,10 +125,12 @@ class Amp3Body_TD : public Amp3BodyBase {
 
     __host__ fptype normalize() override;
     __host__ fptype dummy_normalize();
-    __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 5);
+    __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 5, unsigned int offset = 0);
     __host__ void setD0Fraction(fptype d0fraction);
     __host__ fptype getD0Fraction();
     __host__ void setForceIntegrals(bool f = true) { forceRedoIntegrals = f; }
+    __host__ static void resetCacheCounter() { cacheCount = 0; }
+
 
     __host__ void populateArrays() override;
 
@@ -137,6 +139,7 @@ class Amp3Body_TD : public Amp3BodyBase {
     DecayInfo3t decayInfo;
     Observable _m12;
     Observable _m13;
+    MixingTimeResolution *resolution;
     Observable _mistag;
     fptype *dalitzNormRange{nullptr};
 
@@ -149,13 +152,15 @@ class Amp3Body_TD : public Amp3BodyBase {
     mutable bool forceRedoIntegrals{true};
     fptype *cachedMasses;
     fptype *cachedWidths;
-    MixingTimeResolution *resolution;
+    
 
     unsigned int resolutionFunction;
     unsigned int efficiencyFunction;
 
     int totalEventSize;
+    int eventOffset;
     int cacheToUse{0};
+    static int cacheCount;
     SpecialDalitzIntegrator ***integrators{nullptr};
     SpecialWaveCalculator **calculators{nullptr};
 

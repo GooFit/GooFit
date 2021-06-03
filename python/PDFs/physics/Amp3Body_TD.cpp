@@ -115,7 +115,8 @@ void init_Amp3Body_TD(py::module &m) {
              py::keep_alive<1, 11>(),
              py::keep_alive<1, 12>())
 
-        .def("setDataSize", &Amp3Body_TD::setDataSize, "dataSize"_a, "evtSize"_a = 5)
+        .def("setDataSize", &Amp3Body_TD::setDataSize, "dataSize"_a, "evtSize"_a = 5, "offset"_a=0)
+        .def_static("resetCacheCounter", &Amp3Body_TD::resetCacheCounter)
         .def("getD0Fraction", &Amp3Body_TD::getD0Fraction)
         .def("setD0Fraction", &Amp3Body_TD::setD0Fraction, "d0fraction"_a)
         .def("dummy_normalize", &Amp3Body_TD::dummy_normalize)

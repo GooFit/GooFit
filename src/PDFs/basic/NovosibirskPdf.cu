@@ -3,7 +3,7 @@
 
 namespace GooFit {
 
-__device__ fptype device_Novosibirsk(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_Novosibirsk(fptype *evt, ParameterContainer &pc) -> fptype {
     int id = pc.getObservable(0);
 
     fptype _Mean  = pc.getParameter(0);

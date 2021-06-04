@@ -3,7 +3,7 @@
 
 namespace GooFit {
 
-__device__ fptype device_Step(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_Step(fptype *evt, ParameterContainer &pc) -> fptype {
     int id    = pc.getObservable(0);
     fptype x  = RO_CACHE(evt[id]);
     fptype x0 = pc.getParameter(0);
@@ -21,7 +21,7 @@ __host__ StepPdf::StepPdf(std::string n, Observable _x, Variable x0)
     initialize();
 }
 
-__host__ fptype StepPdf::integrate(fptype lo, fptype hi) const {
+__host__ auto StepPdf::integrate(fptype lo, fptype hi) const -> fptype {
     // unsigned int *indices = host_indices + parameters;
     fptype x0 = parametersList[0].getValue();
     return (hi - x0);

@@ -94,28 +94,28 @@ class DalitzPlotter {
         }
     }
 
-    size_t getNumEvents() const { return data.getNumEvents(); }
+    auto getNumEvents() const -> size_t { return data.getNumEvents(); }
 
-    size_t getX(size_t event) const { return xbins.at(event); }
+    auto getX(size_t event) const -> size_t { return xbins.at(event); }
 
-    size_t getY(size_t event) const { return ybins.at(event); }
+    auto getY(size_t event) const -> size_t { return ybins.at(event); }
 
-    fptype getXval(size_t event) const { return data.getValue(m12, event); }
+    auto getXval(size_t event) const -> fptype { return data.getValue(m12, event); }
 
-    fptype getYval(size_t event) const { return data.getValue(m13, event); }
+    auto getYval(size_t event) const -> fptype { return data.getValue(m13, event); }
 
-    fptype getZval(size_t event) const { return POW2(mother) - POW2(getXval(event)) - POW2(getYval(event)); }
+    auto getZval(size_t event) const -> fptype { return POW2(mother) - POW2(getXval(event)) - POW2(getYval(event)); }
 
-    fptype getVal(size_t event, size_t num = 0) const { return pdfValues.at(num).at(event); }
+    auto getVal(size_t event, size_t num = 0) const -> fptype { return pdfValues.at(num).at(event); }
 
-    UnbinnedDataSet *getDataSet() { return &data; }
+    auto getDataSet() -> UnbinnedDataSet * { return &data; }
 
-    const Observable &getM12() const { return m12; }
-    const Observable &getM13() const { return m13; }
+    auto getM12() const -> const Observable & { return m12; }
+    auto getM13() const -> const Observable & { return m13; }
 
 #if GOOFIT_ROOT_FOUND
     /// Produce a TH2F over the contained evaluation
-    TH2F *make2D(std::string name = "dalitzplot", std::string title = "") {
+    auto make2D(std::string name = "dalitzplot", std::string title = "") -> TH2F * {
         auto *dalitzplot = new TH2F(name.c_str(),
                                     title.c_str(),
                                     m12.getNumBins(),

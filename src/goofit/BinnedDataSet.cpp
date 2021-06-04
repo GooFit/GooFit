@@ -55,13 +55,13 @@ void BinnedDataSet::collectBins() {
         binsizes.push_back(var.getNumBins());
 }
 
-size_t BinnedDataSet::getBinNumber() const {
+auto BinnedDataSet::getBinNumber() const -> size_t {
     std::vector<fptype> vals   = getCurrentValues();
     std::vector<size_t> locals = convertValuesToBins(vals);
     return localToGlobal(locals);
 }
 
-size_t BinnedDataSet::localToGlobal(const std::vector<size_t> &locals) const {
+auto BinnedDataSet::localToGlobal(const std::vector<size_t> &locals) const -> size_t {
     unsigned int priorMatrixSize = 1;
     unsigned int ret             = 0;
 
@@ -74,7 +74,7 @@ size_t BinnedDataSet::localToGlobal(const std::vector<size_t> &locals) const {
     return ret;
 }
 
-std::vector<size_t> BinnedDataSet::globalToLocal(size_t global) const {
+auto BinnedDataSet::globalToLocal(size_t global) const -> std::vector<size_t> {
     std::vector<size_t> locals;
 
     // To convert global bin number to (x,y,z...) coordinates: For each dimension, take the mod
@@ -89,7 +89,7 @@ std::vector<size_t> BinnedDataSet::globalToLocal(size_t global) const {
     return locals;
 }
 
-fptype BinnedDataSet::getBinCenter(size_t ivar, size_t bin) const {
+auto BinnedDataSet::getBinCenter(size_t ivar, size_t bin) const -> fptype {
     std::vector<size_t> locals = globalToLocal(bin);
     size_t localBin            = locals.at(ivar);
 
@@ -99,16 +99,16 @@ fptype BinnedDataSet::getBinCenter(size_t ivar, size_t bin) const {
     return ret;
 }
 
-fptype BinnedDataSet::getBinCenter(const Observable &var, size_t bin) const {
+auto BinnedDataSet::getBinCenter(const Observable &var, size_t bin) const -> fptype {
     size_t ivar = indexOfVariable(var);
     return getBinCenter(ivar, bin);
 }
 
-fptype BinnedDataSet::getBinSize(size_t ivar) const {
+auto BinnedDataSet::getBinSize(size_t ivar) const -> fptype {
     return (observables.at(ivar).getUpperLimit() - observables[ivar].getLowerLimit()) / binsizes[ivar];
 }
 
-fptype BinnedDataSet::getBinVolume(size_t bin) const {
+auto BinnedDataSet::getBinVolume(size_t bin) const -> fptype {
     fptype ret = 1;
 
     for(size_t i = 0; i < observables.size(); i++) {
@@ -118,7 +118,7 @@ fptype BinnedDataSet::getBinVolume(size_t bin) const {
     return ret;
 }
 
-fptype BinnedDataSet::getBinError(size_t bin) const {
+auto BinnedDataSet::getBinError(size_t bin) const -> fptype {
     if(0 == binerrors.size())
         return sqrt(binvalues.at(bin));
 
@@ -132,15 +132,15 @@ void BinnedDataSet::setBinError(unsigned int bin, fptype error) {
     binerrors.at(bin) = error;
 }
 
-size_t BinnedDataSet::getNumBins() const {
+auto BinnedDataSet::getNumBins() const -> size_t {
     return std::accumulate(std::begin(binsizes), std::end(binsizes), 1, std::multiplies<size_t>());
 }
 
-fptype BinnedDataSet::getNumWeightedEvents() const {
+auto BinnedDataSet::getNumWeightedEvents() const -> fptype {
     return std::accumulate(std::begin(binvalues), std::end(binvalues), 0);
 }
 
-std::vector<size_t> BinnedDataSet::convertValuesToBins(const std::vector<fptype> &vals) const {
+auto BinnedDataSet::convertValuesToBins(const std::vector<fptype> &vals) const -> std::vector<size_t> {
     if(vals.size() != observables.size())
         throw GooFit::GeneralError("Incorrect number of bins {} for {} variables", vals.size(), observables.size());
 

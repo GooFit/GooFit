@@ -13,7 +13,7 @@ enum class EvalFunc : size_t { Eval = 0, NLL, Prob, BinAvg, BinWithError, Chisq 
 constexpr const char *evalfunc_vals[]
     = {"ptr_to_Eval", "ptr_to_NLL", "ptr_to_Prob", "ptr_to_BinAvg", "ptr_to_BinWithError", "ptr_to_Chisq"};
 
-constexpr const char *evalfunc_to_string(EvalFunc val) { return evalfunc_vals[static_cast<size_t>(val)]; }
+constexpr auto evalfunc_to_string(EvalFunc val) -> const char * { return evalfunc_vals[static_cast<size_t>(val)]; }
 
 class PdfBase;
 
@@ -23,11 +23,11 @@ class FitControl {
         : binned(bin)
         , metricFunc(mn) {}
 
-    inline bool binnedFit() const { return binned; }
-    inline bool binErrors() const { return errorsOnBins; }
-    inline bool metricIsPdf() const { return !errorsOnBins; }
-    inline EvalFunc getMetric() const { return metricFunc; }
-    inline std::string getName() const { return evalfunc_to_string(getMetric()); }
+    inline auto binnedFit() const -> bool { return binned; }
+    inline auto binErrors() const -> bool { return errorsOnBins; }
+    inline auto metricIsPdf() const -> bool { return !errorsOnBins; }
+    inline auto getMetric() const -> EvalFunc { return metricFunc; }
+    inline auto getName() const -> std::string { return evalfunc_to_string(getMetric()); }
 
   protected:
     bool errorsOnBins{false};

@@ -3,7 +3,7 @@
 
 namespace GooFit {
 
-__device__ fptype device_BinTransform(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_BinTransform(fptype *evt, ParameterContainer &pc) -> fptype {
     // Index structure: nP lim1 bin1 lim2 bin2 ... nO o1 o2
     int numConstants   = pc.getNumConstants();
     int numObservables = pc.getNumObservables();

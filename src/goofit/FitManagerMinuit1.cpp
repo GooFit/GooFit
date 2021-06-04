@@ -39,7 +39,7 @@ Minuit1::Minuit1(PdfBase *pdfPointer)
     pdfPointer->copyParams();
 }
 
-Int_t Minuit1::Eval(int npar, double *gin, double &fun, double *fp, int iflag) {
+auto Minuit1::Eval(int npar, double *gin, double &fun, double *fp, int iflag) -> Int_t {
     std::vector<double> pars{fp, fp + GetNumPars()};
 
     std::vector<double> gooPars;

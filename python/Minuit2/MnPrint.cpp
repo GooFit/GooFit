@@ -23,11 +23,17 @@ void init_MnPrint(py::module &m) {
     m_ls.def("GlobalLevel", &MnPrint::Level);
     m_ls.def("SetGlobalLevel", &MnPrint::SetLevel);
 
-#else
+#elif !defined(MATHCORE_STANDALONE) && GOOFIT_ROOT_FOUND && ROOT_VERSION_CODE >= ROOT_VERSION(6, 24, 0)
     py::class_<MnPrint> m_ls(m, "m_ls");
 
     m_ls.def_static("GlobalLevel", &MnPrint::GlobalLevel);
     m_ls.def_static("SetGlobalLevel", &MnPrint::SetGlobalLevel);
+
+#else 
+    auto m_ls = m.def_submodule("MnPrint");
+
+    m_ls.def("GlobalLevel", &MnPrint::Level);
+    m_ls.def("SetGlobalLevel", &MnPrint::SetLevel);
 
 #endif
 }

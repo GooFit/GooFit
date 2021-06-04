@@ -27,9 +27,12 @@ auto FitManagerMinuit2::fit() -> Minuit2::FunctionMinimum {
 #if !defined(MATHCORE_STANDALONE) && GOOFIT_ROOT_FOUND && ROOT_VERSION_CODE < ROOT_VERSION(6, 24, 0)
     auto val = Minuit2::MnPrint::Level();
     Minuit2::MnPrint::SetLevel(verbosity);
-#else
+#elif !defined(MATHCORE_STANDALONE) && GOOFIT_ROOT_FOUND && ROOT_VERSION_CODE >= ROOT_VERSION(6, 24, 0)
     auto val = Minuit2::MnPrint::GlobalLevel();
     Minuit2::MnPrint::SetGlobalLevel(verbosity);
+#else
+    auto val = Minuit2::MnPrint::Level();
+    Minuit2::MnPrint::SetLevel(verbosity);
 #endif
 
     // Setting global call number to 0
@@ -79,7 +82,7 @@ auto FitManagerMinuit2::fit() -> Minuit2::FunctionMinimum {
 
 #if !defined(MATHCORE_STANDALONE) && GOOFIT_ROOT_FOUND && ROOT_VERSION_CODE < ROOT_VERSION(6, 24, 0)
     Minuit2::MnPrint::SetLevel(val);
-#elif !defined(MATHCORE_STANDALONE) && GOOFIT_ROOT_FOUND && ROOT_VERSION_CODE > ROOT_VERSION(6, 24, 0)
+#elif !defined(MATHCORE_STANDALONE) && GOOFIT_ROOT_FOUND && ROOT_VERSION_CODE >= ROOT_VERSION(6, 24, 0)
     Minuit2::MnPrint::SetGlobalLevel(val);
 #else
     Minuit2::MnPrint::SetLevel(val);

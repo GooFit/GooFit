@@ -23,7 +23,7 @@ FitManagerMinuit2::FitManagerMinuit2(PdfBase *dat)
     : upar_(*dat)
     , fcn_(upar_) {}
 
-Minuit2::FunctionMinimum FitManagerMinuit2::fit() {
+auto FitManagerMinuit2::fit() -> Minuit2::FunctionMinimum {
 #if !defined(MATHCORE_STANDALONE) && GOOFIT_ROOT_FOUND && ROOT_VERSION_CODE < ROOT_VERSION(6, 24, 0)
     auto val = Minuit2::MnPrint::Level();
     Minuit2::MnPrint::SetLevel(verbosity);

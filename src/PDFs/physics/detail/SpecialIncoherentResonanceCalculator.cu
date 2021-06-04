@@ -10,7 +10,8 @@ SpecialIncoherentResonanceCalculator::SpecialIncoherentResonanceCalculator(int p
     : resonance_i(res_idx)
     , parameters(pIdx) {}
 
-__device__ fpcomplex SpecialIncoherentResonanceCalculator::operator()(thrust::tuple<int, fptype *, int> t) const {
+__device__ auto SpecialIncoherentResonanceCalculator::operator()(thrust::tuple<int, fptype *, int> t) const
+    -> fpcomplex {
     // Returns the BW, or other resonance function, for a specific resonance.
     // Is special because the value is expected to change slowly, so it's
     // useful to cache the result.

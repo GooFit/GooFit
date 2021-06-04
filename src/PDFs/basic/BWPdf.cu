@@ -3,7 +3,7 @@
 
 namespace GooFit {
 
-__device__ fptype device_BW(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_BW(fptype *evt, ParameterContainer &pc) -> fptype {
     int id = pc.getObservable(0);
 
     fptype x      = RO_CACHE(evt[id]);

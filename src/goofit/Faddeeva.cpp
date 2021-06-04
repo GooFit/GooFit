@@ -43,7 +43,7 @@ static fptype e2[12] = {0.7551038420890235,
 static fptype C[7] = {65536.0, -2885792.0, 69973904.0, -791494704.0, 8962513560.0, -32794651890.0, 175685635125.0};
 static fptype D[7] = {192192.0, 8648640.0, 183783600.0, 2329725600.0, 18332414100.0, 84329104860.0, 175685635125.0};
 
-fpcomplex Faddeeva_2(const fpcomplex &z) {
+auto Faddeeva_2(const fpcomplex &z) -> fpcomplex {
     fptype *n, *e, t, u, r, s, d, f, g, h;
     fpcomplex c, d2, v, w;
     int i;
@@ -119,7 +119,7 @@ fpcomplex Faddeeva_2(const fpcomplex &z) {
     return c;
 }
 
-fptype cpuvoigtian(fptype x, fptype m, fptype w, fptype s) {
+auto cpuvoigtian(fptype x, fptype m, fptype w, fptype s) -> fptype {
     // This calculation includes the normalization - integral
     // over the reals is equal to one.
 

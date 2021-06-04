@@ -28,7 +28,7 @@ UnbinnedDataSet::UnbinnedDataSet(std::initializer_list<Observable> vars, std::st
     data.resize(vars.size());
 }
 
-fptype UnbinnedDataSet::getValue(const Observable &var, size_t idx) const {
+auto UnbinnedDataSet::getValue(const Observable &var, size_t idx) const -> fptype {
     if(idx >= getNumEvents()) {
         throw GooFit::GeneralError("UnbinnedDataSet: Attepted to find {} in event {} when only {} events exits",
                                    var.getName(),

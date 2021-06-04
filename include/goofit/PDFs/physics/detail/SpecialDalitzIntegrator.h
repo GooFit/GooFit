@@ -12,7 +12,7 @@ class SpecialDalitzIntegrator : public thrust::unary_function<thrust::tuple<int,
     void setTddpIndex(unsigned int id) { tddp = id; }
     void setResonanceIndex(unsigned int id) { resonance_i = id; }
     void setEfficiencyIndex(unsigned int id) { resonance_j = id; }
-    __device__ ThreeComplex operator()(thrust::tuple<int, fptype *, int> t) const;
+    __device__ auto operator()(thrust::tuple<int, fptype *, int> t) const -> ThreeComplex;
 
   private:
     unsigned int tddp;

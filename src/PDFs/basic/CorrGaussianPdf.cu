@@ -3,7 +3,7 @@
 
 namespace GooFit {
 
-__device__ fptype device_CorrGaussian(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_CorrGaussian(fptype *evt, ParameterContainer &pc) -> fptype {
     int idx = pc.getObservable(0);
     int idy = pc.getObservable(1);
 

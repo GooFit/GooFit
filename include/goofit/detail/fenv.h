@@ -9,7 +9,7 @@
 // Fenv wrapper from:
 // https://github.com/ArduPilot/ardupilot/blob/master/libraries/AP_Common/missing/fenv.h
 
-inline int feenableexcept(unsigned int excepts) {
+inline auto feenableexcept(unsigned int excepts) -> int {
     static fenv_t fenv;
     unsigned int new_excepts = excepts & FE_ALL_EXCEPT;
 
@@ -28,7 +28,7 @@ inline int feenableexcept(unsigned int excepts) {
     return fesetenv(&fenv) ? -1 : old_excepts;
 }
 
-inline int fedisableexcept(unsigned int excepts) {
+inline auto fedisableexcept(unsigned int excepts) -> int {
     static fenv_t fenv;
     unsigned int new_excepts = excepts & FE_ALL_EXCEPT;
     // all previous masks

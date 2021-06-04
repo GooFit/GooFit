@@ -83,11 +83,11 @@ void print_splash() {
     std::cout << reset << std::flush;
 }
 
-std::string goofit_info_version() {
+auto goofit_info_version() -> std::string {
     return fmt::format("GooFit: Version {} ({}) Commit: {}", GOOFIT_VERSION, GOOFIT_TAG, GOOFIT_GIT_VERSION);
 }
 
-std::string goofit_info_device(int gpuDev_) {
+auto goofit_info_device(int gpuDev_) -> std::string {
     std::string output;
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
     if(gpuDev_ >= 0) {
@@ -264,7 +264,7 @@ void Application::set_device() const {
 #endif
 }
 
-int Application::exit(const CLI::Error &e) {
+auto Application::exit(const CLI::Error &e) -> int {
 #ifdef GOOFIT_MPI
     int myId;
     MPI_Comm_rank(MPI_COMM_WORLD, &myId);
@@ -295,7 +295,7 @@ void Application::set_floating_exceptions() {
 #endif
 }
 
-std::string Application::get_filename(const std::string &input_str, std::string base) const {
+auto Application::get_filename(const std::string &input_str, std::string base) const -> std::string {
     // Run from current directory
     if(CLI::ExistingFile(input_str).empty())
         return input_str;

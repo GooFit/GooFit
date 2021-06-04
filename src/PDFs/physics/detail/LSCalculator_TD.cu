@@ -8,7 +8,7 @@ namespace GooFit {
 
 LSCalculator_TD::LSCalculator_TD() = default;
 
-__device__ fpcomplex LSCalculator_TD::operator()(thrust::tuple<int, fptype *, int> t) const {
+__device__ auto LSCalculator_TD::operator()(thrust::tuple<int, fptype *, int> t) const -> fpcomplex {
     // Calculates the BW values for a specific resonance.
     fpcomplex ret;
 

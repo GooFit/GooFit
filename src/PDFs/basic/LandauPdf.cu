@@ -27,7 +27,7 @@ __constant__ fptype q6[5] = {1.0, 651.4101098, 56974.73333, 165917.4725, -281575
 __constant__ fptype a1[3] = {0.04166666667, -0.01996527778, 0.02709538966};
 __constant__ fptype a2[2] = {-1.845568670, -4.284640743};
 
-__device__ fptype device_Landau(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_Landau(fptype *evt, ParameterContainer &pc) -> fptype {
     int id       = pc.getObservable(0);
     fptype x     = RO_CACHE(evt[id]);
     fptype mpv   = pc.getParameter(0);

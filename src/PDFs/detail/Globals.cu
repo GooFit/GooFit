@@ -35,7 +35,7 @@ __host__ void cleanup() {
     host_function_table.clear_device();
 }
 
-__device__ int dev_powi(int base, int exp) {
+__device__ auto dev_powi(int base, int exp) -> int {
     int ret = 1;
 
     for(int i = 0; i < exp; ++i)

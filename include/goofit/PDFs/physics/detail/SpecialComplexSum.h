@@ -8,7 +8,7 @@ namespace GooFit {
 
 class SpecialComplexSum : public thrust::binary_function<ThreeComplex, ThreeComplex, ThreeComplex> {
   public:
-    __host__ __device__ ThreeComplex operator()(ThreeComplex one, ThreeComplex two) {
+    __host__ __device__ auto operator()(ThreeComplex one, ThreeComplex two) -> ThreeComplex {
         return {thrust::get<0>(one) + thrust::get<0>(two),
                 thrust::get<1>(one) + thrust::get<1>(two),
                 thrust::get<2>(one) + thrust::get<2>(two),

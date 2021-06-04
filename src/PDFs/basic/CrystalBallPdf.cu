@@ -4,7 +4,7 @@
 
 namespace GooFit {
 
-__device__ fptype device_CrystalBall(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_CrystalBall(fptype *evt, ParameterContainer &pc) -> fptype {
     // Left-hand tail if alpha is less than 0,
     // right-hand tail if greater, pure Gaussian if 0.
     // return 1;
@@ -51,7 +51,7 @@ __host__ CrystalBallPdf::CrystalBallPdf(
     initialize();
 }
 
-__host__ fptype CrystalBallPdf::integrate(fptype lo, fptype hi) const {
+__host__ auto CrystalBallPdf::integrate(fptype lo, fptype hi) const -> fptype {
     static const fptype sqrtPiOver2 = 1.2533141373;
     static const fptype sqrt2       = 1.4142135624;
 

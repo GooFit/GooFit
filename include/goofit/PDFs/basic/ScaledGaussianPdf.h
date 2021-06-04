@@ -25,6 +25,6 @@ bias \f$b\f$ and scale factor \f$\epsilon\f$.
 class ScaledGaussianPdf : public GooPdf {
   public:
     ScaledGaussianPdf(std::string n, Observable _x, Variable m, Variable s, Variable d, Variable e);
-    __host__ bool hasAnalyticIntegral() const override { return false; }
+    __host__ auto hasAnalyticIntegral() const -> bool override { return false; }
 };
 } // namespace GooFit

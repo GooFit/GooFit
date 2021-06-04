@@ -53,7 +53,7 @@ ergrad who had to code the original CPU version.
 class KinLimitBWPdf : public GooPdf {
   public:
     KinLimitBWPdf(std::string n, Observable _x, Variable m, Variable s);
-    __host__ bool hasAnalyticIntegral() const override { return false; }
+    __host__ auto hasAnalyticIntegral() const -> bool override { return false; }
     __host__ void setMasses(fptype bigM, fptype smallM);
 };
 } // namespace GooFit

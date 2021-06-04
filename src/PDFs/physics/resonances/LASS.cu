@@ -6,7 +6,7 @@
 
 namespace GooFit {
 
-__device__ fpcomplex lass(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) {
+__device__ auto lass(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) -> fpcomplex {
     unsigned int spin         = pc.getConstant(0);
     unsigned int cyclic_index = pc.getConstant(1);
     bool norm                 = pc.getConstant(2);

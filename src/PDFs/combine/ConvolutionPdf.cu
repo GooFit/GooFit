@@ -24,7 +24,7 @@ __constant__ fptype *dev_resWorkSpace[100];
 // It is equal to the maximum possible value of x0, ie maxX, in bins.
 __constant__ int modelOffset[100];
 
-__device__ fptype device_ConvolvePdfs(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_ConvolvePdfs(fptype *evt, ParameterContainer &pc) -> fptype {
     int id = pc.getObservable(0);
 
     fptype ret         = 0;
@@ -68,7 +68,7 @@ __device__ fptype device_ConvolvePdfs(fptype *evt, ParameterContainer &pc) {
     return ret;
 }
 
-__device__ fptype device_ConvolveSharedPdfs(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_ConvolveSharedPdfs(fptype *evt, ParameterContainer &pc) -> fptype {
     int id                      = pc.getObservable(0);
     fptype ret                  = 0;
     fptype loBound              = pc.getConstant(0);
@@ -301,7 +301,7 @@ __host__ void ConvolutionPdf::registerOthers(std::vector<ConvolutionPdf *> other
     properlyInitialised = true;
 }
 
-__host__ fptype ConvolutionPdf::normalize() {
+__host__ auto ConvolutionPdf::normalize() -> fptype {
     // First set normalization factors to one so we can evaluate convolution without getting zeroes
     recursiveSetNormalization(1.0);
 

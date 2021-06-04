@@ -26,6 +26,6 @@ one argument. The core function \f$g\f$ can take any number.
 class CompositePdf : public CombinePdf {
   public:
     CompositePdf(std::string n, PdfBase *core, PdfBase *shell); // Where 'core' corresponds to 'g' and 'shell' to 'h'.
-    __host__ fptype normalize() override;
+    __host__ auto normalize() -> fptype override;
 };
 } // namespace GooFit

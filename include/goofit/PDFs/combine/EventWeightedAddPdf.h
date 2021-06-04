@@ -16,8 +16,8 @@ be either all observables or all fit parameters.
 class EventWeightedAddPdf : public CombinePdf {
   public:
     EventWeightedAddPdf(std::string n, std::vector<Observable> weights, std::vector<PdfBase *> comps);
-    __host__ fptype normalize() override;
-    __host__ bool hasAnalyticIntegral() const override { return false; }
+    __host__ auto normalize() -> fptype override;
+    __host__ auto hasAnalyticIntegral() const -> bool override { return false; }
 
   protected:
     bool extended;

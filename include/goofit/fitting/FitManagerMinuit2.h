@@ -18,16 +18,16 @@ class FitManagerMinuit2 {
     FitManagerMinuit2(PdfBase *dat);
 
     /// This runs the fit
-    ROOT::Minuit2::FunctionMinimum fit();
+    auto fit() -> ROOT::Minuit2::FunctionMinimum;
 
     /// Set the maximum number of calls. 0 for Minuit2 default.
     void setMaxCalls(unsigned int max_calls = 0) { maxfcn_ = max_calls; }
 
     /// Get a pointer to the params
-    Params *getParams() { return &upar_; }
+    auto getParams() -> Params * { return &upar_; }
 
     /// Get a pointer to the fcn
-    FCN *getFCN() { return &fcn_; }
+    auto getFCN() -> FCN * { return &fcn_; }
 
     /// Check to see if fit is valid
     operator bool() const { return retval_ == FitErrors::Valid; }
@@ -39,7 +39,7 @@ class FitManagerMinuit2 {
     void setVerbosity(int value) { verbosity = value; }
 
     /// Get the fitting verbosity
-    int getVerbosity() const { return verbosity; }
+    auto getVerbosity() const -> int { return verbosity; }
 
   private:
     Params upar_;

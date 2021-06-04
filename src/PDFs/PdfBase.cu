@@ -414,7 +414,7 @@ __host__ void PdfBase::generateNormRange() {
     delete[] host_norms;
 }
 
-cudaError_t gooMalloc(void **target, size_t bytes) {
+auto gooMalloc(void **target, size_t bytes) -> cudaError_t {
 #if THRUST_DEVICE_SYSTEM != THRUST_DEVICE_SYSTEM_CUDA
     target[0] = malloc(bytes);
 
@@ -428,7 +428,7 @@ cudaError_t gooMalloc(void **target, size_t bytes) {
 #endif
 }
 
-cudaError_t gooFree(void *ptr) {
+auto gooFree(void *ptr) -> cudaError_t {
 #if THRUST_DEVICE_SYSTEM != THRUST_DEVICE_SYSTEM_CUDA
     free(ptr);
     return cudaSuccess;

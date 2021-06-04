@@ -9,7 +9,7 @@ namespace GooFit {
 
 __device__ fptype cDeriatives[2 * 100];
 
-__device__ fpcomplex cubicspline(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) {
+__device__ auto cubicspline(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) -> fpcomplex {
     fpcomplex ret(0, 0);
     unsigned int cyclic_index        = pc.getConstant(0);
     unsigned int doSwap              = pc.getConstant(1);

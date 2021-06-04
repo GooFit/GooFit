@@ -16,7 +16,7 @@ getAmplitudeCoefficients(fpcomplex a1, fpcomplex a2, fptype &a1sq, fptype &a2sq,
     a1a2imag = a1.imag();
 }
 
-__device__ fpcomplex flatte(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) {
+__device__ auto flatte(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) -> fpcomplex {
     // indices[1] is unused constant index, for consistency with other function types.
     fptype resmass            = pc.getParameter(0);
     fptype g1                 = pc.getParameter(1);

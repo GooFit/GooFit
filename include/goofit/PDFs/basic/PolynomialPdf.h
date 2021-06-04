@@ -68,8 +68,8 @@ class PolynomialPdf : public GooPdf {
                   std::vector<Variable> coeffs,
                   std::vector<Variable> offsets,
                   unsigned int maxDegree = 0);
-    __host__ fptype integrate(fptype lo, fptype hi) const override;
-    __host__ fptype getCoefficient(int coef);
+    __host__ auto integrate(fptype lo, fptype hi) const -> fptype override;
+    __host__ auto getCoefficient(int coef) -> fptype;
 
   private:
     std::unique_ptr<Variable> center;

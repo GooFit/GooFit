@@ -15,7 +15,7 @@ class TruthResolution : public MixingTimeResolution {
     TruthResolution();
     ~TruthResolution() override;
 
-    fptype normalization(
-        fptype di1, fptype di2, fptype di3, fptype di4, fptype tau, fptype xmixing, fptype ymixing) const override;
+    auto normalization(fptype di1, fptype di2, fptype di3, fptype di4, fptype tau, fptype xmixing, fptype ymixing) const
+        -> fptype override;
 };
 } // namespace GooFit

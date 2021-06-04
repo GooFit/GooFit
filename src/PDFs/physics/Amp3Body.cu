@@ -33,7 +33,7 @@ struct CoefSumFunctor {
         : coef_i(coef_i)
         , coef_j(coef_j) {}
 
-    __device__ fptype operator()(thrust::tuple<fpcomplex, fpcomplex> val) {
+    __device__ auto operator()(thrust::tuple<fpcomplex, fpcomplex> val) -> fptype {
         return (coef_i * thrust::conj<fptype>(coef_j) * thrust::get<0>(val) * thrust::conj<fptype>(thrust::get<1>(val)))
             .real();
     }
@@ -53,9 +53,11 @@ constexpr int resonanceOffset_DP = 4; // Offset of the first resonance into the 
 // this needs to be large enough to hold all samples
 __device__ fpcomplex *cResonances[16 * 20];
 
-__device__ inline int parIndexFromResIndex_DP(int resIndex) { return resonanceOffset_DP + resIndex * resonanceSize; }
+__device__ inline auto parIndexFromResIndex_DP(int resIndex) -> int {
+    return resonanceOffset_DP + resIndex * resonanceSize;
+}
 
-__device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_DalitzPlot(fptype *evt, ParameterContainer &pc) -> fptype {
     int num_obs = pc.getNumObservables();
     int id_m12  = pc.getObservable(0);
     int id_m13  = pc.getObservable(1);
@@ -232,7 +234,7 @@ __host__ void Amp3Body::setDataSize(unsigned int dataSize, unsigned int evtSize,
     setForceIntegrals();
 }
 
-__host__ fptype Amp3Body::normalize() {
+__host__ auto Amp3Body::normalize() -> fptype {
     recursiveSetNormalization(1.0); // Not going to normalize efficiency,
     // so set normalization factor to 1 so it doesn't get multiplied by zero.
     // Copy at this time to ensure that the SpecialResonanceCalculators, which need the efficiency,
@@ -357,7 +359,7 @@ __host__ fptype Amp3Body::normalize() {
     return ret;
 }
 
-__host__ fpcomplex Amp3Body::sumCachedWave(size_t i) const {
+__host__ auto Amp3Body::sumCachedWave(size_t i) const -> fpcomplex {
     const thrust::device_vector<fpcomplex> &vec = getCachedWaveNoCopy(i);
 
     fpcomplex ret = thrust::reduce(vec.begin(), vec.end(), fpcomplex(0, 0), thrust::plus<fpcomplex>());
@@ -365,7 +367,7 @@ __host__ fpcomplex Amp3Body::sumCachedWave(size_t i) const {
     return ret;
 }
 
-__host__ const std::vector<std::complex<fptype>> Amp3Body::getCachedWave(size_t i) const {
+__host__ auto Amp3Body::getCachedWave(size_t i) const -> const std::vector<std::complex<fptype>> {
     // TODO: This calls itself immediatly ?
     auto ret_thrust = getCachedWave(i);
     std::vector<std::complex<fptype>> ret(ret_thrust.size());
@@ -373,7 +375,7 @@ __host__ const std::vector<std::complex<fptype>> Amp3Body::getCachedWave(size_t 
     return ret;
 }
 
-__host__ std::vector<std::vector<fptype>> Amp3Body::fit_fractions() {
+__host__ auto Amp3Body::fit_fractions() -> std::vector<std::vector<fptype>> {
     GOOFIT_DEBUG("Performing fit fraction calculation, should already have a cache (does not use normalization grid)");
 
     size_t n_res    = getDecayInfo().resonances.size();
@@ -427,9 +429,8 @@ __host__ std::vector<std::vector<fptype>> Amp3Body::fit_fractions() {
     return ff;
 }
 
-__host__
-    std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h>
-    Amp3Body::GenerateSig(unsigned int numEvents, int seed) {
+__host__ auto Amp3Body::GenerateSig(unsigned int numEvents, int seed) -> std::
+    tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h> {
     // Must configure our functions before any calculations!
     // setupObservables();
     // setIndices();

@@ -79,8 +79,10 @@ Minuit2::FunctionMinimum FitManagerMinuit2::fit() {
 
 #if !defined(MATHCORE_STANDALONE) && GOOFIT_ROOT_FOUND && ROOT_VERSION_CODE < ROOT_VERSION(6, 24, 0)
     Minuit2::MnPrint::SetLevel(val);
-#else
+#elif !defined(MATHCORE_STANDALONE) && GOOFIT_ROOT_FOUND && ROOT_VERSION_CODE > ROOT_VERSION(6, 24, 0)
     Minuit2::MnPrint::SetGlobalLevel(val);
+#else
+    Minuit2::MnPrint::SetLevel(val);
 #endif
     return min;
 }

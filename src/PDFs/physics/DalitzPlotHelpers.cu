@@ -22,9 +22,6 @@ __host__ __device__ auto inDalitz(
     if(m23 < 0. || m23 > bigMmdm1 * bigMmdm1)
         return false;
 
-    fptype m23 = bigM * bigM + dm1 * dm1 + dm2 * dm2 + dm3 * dm3 - m12 - m13;
-    if(m23 < 0.)
-        return false;
 
     bool m12less = (m12 < dm1pdm2 * dm1pdm2) ? false : true;
     // if (m12 < dm1pdm2*dm1pdm2) return false; // This m12 cannot exist, it's less than the square of the (1,2)

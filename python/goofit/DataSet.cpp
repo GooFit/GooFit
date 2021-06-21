@@ -21,6 +21,7 @@ void init_DataSet(py::module &m) {
         .def_property_readonly("name", &DataSet::getName)
         .def_property_readonly("variables", &DataSet::getObservables)
         .def("getObservables", &DataSet::getObservables)
+        .def("getName", &DataSet::getName)
 
         ;
 }

@@ -12,6 +12,8 @@ SpecialResonanceCalculator::SpecialResonanceCalculator(int pIdx, unsigned int re
 __device__ auto SpecialResonanceCalculator::operator()(thrust::tuple<int, fptype *, int> t) const -> fpcomplex {
     // Calculates the BW values for a specific resonance.
     fpcomplex ret;
+    fpcomplex ret_mt;
+
     int evtNum  = thrust::get<0>(t);
     fptype *evt = thrust::get<1>(t) + (evtNum * thrust::get<2>(t));
 
@@ -32,12 +34,21 @@ __device__ auto SpecialResonanceCalculator::operator()(thrust::tuple<int, fptype
     // m12, m23 and m13 stand for the squared invariant masses.
     // Now fixed.
     fptype m23 = c_motherMass * c_motherMass + c_daug1Mass * c_daug1Mass + c_daug2Mass * c_daug2Mass
-                 + c_daug3Mass * c_daug3Mass - m12 - m13;
+                      + c_daug3Mass * c_daug3Mass - m12 - m13;
 
     while(pc.funcIdx < resonance_i)
         pc.incrementIndex();
 
-    ret = getResonanceAmplitude(m12, m13, m23, pc);
+    fptype mistag = 0.005;
+
+    ParameterContainer tmp = pc;
+    ret                    = getResonanceAmplitude(m12, m13, m23, tmp);
+    tmp                    = pc;
+    ret_mt                 = getResonanceAmplitude(m13, m12, m23, tmp);
+
+    ret *= (1-mistag);
+    ret_mt *= mistag;
+    ret += ret_mt;
 
     return ret;
 }

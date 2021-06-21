@@ -8,17 +8,34 @@ Helper functions
 
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
+#include <goofit/PDFs/physics/Amp3Body_TD.h>
 
 namespace GooFit {
+
+__host__ __device__ int getDalitzBin(const fptype &m12, const fptype &m13){
+    fptype mD0 = 1.86486;
+    fptype mKS = 0.497614;
+    fptype mPi = 0.13957;
+    fptype m23 = pow(mD0, 2.) + pow(mKS, 2.) + 2*pow(mPi, 2.) - m12 - m13;
+
+    int bin;
+    if (m23 < 0.5) bin = 1.;
+    else if (m23 > 0.5 && m23 < 1.0) bin = 2.;
+    else if (m23 > 1.0 && m23 < 1.5) bin = 3.;
+    else if (m23 > 1.5) bin = 4.;
+
+    return bin;
+}
 
 __host__ __device__ auto inDalitz(
     const fptype &m12, const fptype &m13, const fptype &bigM, const fptype &dm1, const fptype &dm2, const fptype &dm3)
     -> bool {
     fptype dm1pdm2  = dm1 + dm2;
     fptype bigMmdm3 = bigM - dm3;
+    fptype bigMmdm1 = bigM - dm1;
 
     fptype m23 = bigM * bigM + dm1 * dm1 + dm2 * dm2 + dm3 * dm3 - m12 - m13;
-    if(m23 < 0.)
+    if(m23 < 0. || m23 > bigMmdm1 * bigMmdm1)
         return false;
 
     bool m12less = (m12 < dm1pdm2 * dm1pdm2) ? false : true;

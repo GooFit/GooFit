@@ -42,6 +42,7 @@ __device__ auto dampingFactorSquare(const fptype &cmmom, const int &spin, const 
     return (spin == 2) ? dfsqres : dfsq;
 }
 
+
 __device__ auto dampingFactorSquareNorm(const fptype &cmmom, const int &spin, const fptype &mRadius) -> fptype {
     fptype square = mRadius * mRadius * cmmom * cmmom;
     fptype dfsq   = 1 + square; // This accounts for spin 1

@@ -14,7 +14,7 @@ __device__ auto twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m) -> fptype;
 
 __device__ auto twoBodyCMMothermom(fptype rMassSq, fptype dm, fptype d3m) -> fptype;
 
-__device__ auto dampingFactorSquare(const fptype &cmmom, const int &spin, const fptype &mRadius) -> fptype;
+__device__ fptype dampingFactorSquare(const fptype &cmmom, const int &spin, const fptype &mRadius);
 
 __device__ auto dampingFactorSquareNorm(const fptype &cmmom, const int &spin, const fptype &mRadius) -> fptype;
 
@@ -27,6 +27,9 @@ __device__ auto spinFactor(unsigned int spin,
                            fptype m13,
                            fptype m23,
                            unsigned int cyclic_index) -> fptype;
+
+
+
 
 __device__ auto phsp_twoBody(fptype s, fptype m0, fptype m1) -> fpcomplex;
 

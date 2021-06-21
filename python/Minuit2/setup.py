@@ -15,6 +15,7 @@ minuit2_pybind_sources = [
     "FunctionMinimum.cpp",
     "MnApplication.cpp",
     "MnMigrad.cpp",
+    "MnMinos.cpp",
     "MnPrint.cpp",
     "main.cpp",
 ]

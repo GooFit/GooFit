@@ -10,7 +10,7 @@ SpecialWaveCalculator::SpecialWaveCalculator(int pIdx, unsigned int res_idx)
     : resonance_i(res_idx)
     , parameters(pIdx) {}
 
-__device__ WaveHolder_s SpecialWaveCalculator::operator()(thrust::tuple<int, fptype *, int> t) const {
+__device__ auto SpecialWaveCalculator::operator()(thrust::tuple<int, fptype *, int> t) const -> WaveHolder_s {
     // Calculates the BW values for a specific resonance.
     // The 'A' wave stores the value at each point, the 'B'
     // at the opposite (reversed) point.

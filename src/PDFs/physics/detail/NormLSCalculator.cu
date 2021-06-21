@@ -8,9 +8,9 @@ namespace GooFit {
 
 NormLSCalculator::NormLSCalculator() = default;
 
-__device__ fpcomplex NormLSCalculator::operator()(
+__device__ auto NormLSCalculator::operator()(
     thrust::tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t)
-    const {
+    const -> fpcomplex {
     // Calculates the BW values for a specific resonance.
     fpcomplex ret;
 

@@ -4,7 +4,7 @@
 
 namespace GooFit {
 
-__device__ fptype getMomentum(const fptype &mass, const fptype &pimass, const fptype &d0mass) {
+__device__ auto getMomentum(const fptype &mass, const fptype &pimass, const fptype &d0mass) -> fptype {
     if(mass <= 0)
         return 0;
 
@@ -18,12 +18,12 @@ __device__ fptype getMomentum(const fptype &mass, const fptype &pimass, const fp
     return sqrt(0.5 * lambda / mass);
 }
 
-__device__ fptype bwFactor(const fptype &momentum) {
+__device__ auto bwFactor(const fptype &momentum) -> fptype {
     // 2.56 = 1.6^2, comes from radius for spin-1 particle
     return 1 / sqrt(1.0 + 2.56 * momentum * momentum);
 }
 
-__device__ fptype device_KinLimitBW(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_KinLimitBW(fptype *evt, ParameterContainer &pc) -> fptype {
     int id = pc.getObservable(0);
 
     fptype x      = RO_CACHE(evt[id]);

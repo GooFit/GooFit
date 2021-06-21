@@ -10,7 +10,7 @@ SpecialIncoherentIntegrator::SpecialIncoherentIntegrator(int pIdx, unsigned int 
     : resonance_i(ri)
     , parameters(pIdx) {}
 
-__device__ fptype SpecialIncoherentIntegrator::operator()(thrust::tuple<int, fptype *> t) const {
+__device__ auto SpecialIncoherentIntegrator::operator()(thrust::tuple<int, fptype *> t) const -> fptype {
     // Returns integral of specific BW over Dalitz plot, to be cached and
     // multiplied by rapidly-changing amplitude.
 

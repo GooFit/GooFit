@@ -23,12 +23,12 @@ class Amplitude : public AmpComponent {
               std::vector<SpinFactor *> SF,
               unsigned int nPerm = 1);
 
-    bool operator==(const Amplitude &A) const;
+    auto operator==(const Amplitude &A) const -> bool;
 
     __host__ void recursiveSetIndices() override;
 
-    std::vector<SpinFactor *> getSpinFactors() { return _SF; }
-    std::vector<Lineshape *> getLineShapes() { return _LS; }
+    auto getSpinFactors() -> std::vector<SpinFactor *> { return _SF; }
+    auto getLineShapes() -> std::vector<Lineshape *> { return _LS; }
 
   private:
     std::string _uniqueDecayStr;

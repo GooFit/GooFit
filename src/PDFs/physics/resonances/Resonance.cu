@@ -2,7 +2,7 @@
 
 namespace GooFit {
 
-__device__ fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m) {
+__device__ auto twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m) -> fptype {
     // For A -> B + C, calculate momentum of B and C in rest frame of A.
     // PDG 38.16.
 
@@ -16,7 +16,7 @@ __device__ fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m) {
     return 0.5 * sqrt(rMassSq) * kin1 * kin2;
 }
 
-__device__ fptype twoBodyCMMothermom(fptype rMassSq, fptype dm, fptype d3m) {
+__device__ auto twoBodyCMMothermom(fptype rMassSq, fptype dm, fptype d3m) -> fptype {
     fptype kin1 = 1 - POW2(dm + d3m) / rMassSq;
     if(kin1 >= 0)
         kin1 = sqrt(kin1);
@@ -31,7 +31,7 @@ __device__ fptype twoBodyCMMothermom(fptype rMassSq, fptype dm, fptype d3m) {
     return 0.5 * rMassSq * kin1 * kin2 / dm;
 }
 
-__device__ fptype dampingFactorSquare(const fptype &cmmom, const int &spin, const fptype &mRadius) {
+__device__ auto dampingFactorSquare(const fptype &cmmom, const int &spin, const fptype &mRadius) -> fptype {
     fptype square = mRadius * mRadius * cmmom * cmmom;
     fptype dfsq   = 2 * square; // This accounts for spin 1
     // if (2 == spin) dfsq += 8 + 2*square + square*square; // Coefficients are 9, 3, 1.
@@ -42,7 +42,8 @@ __device__ fptype dampingFactorSquare(const fptype &cmmom, const int &spin, cons
     return (spin == 2) ? dfsqres : dfsq;
 }
 
-__device__ fptype dampingFactorSquareNorm(const fptype &cmmom, const int &spin, const fptype &mRadius) {
+
+__device__ auto dampingFactorSquareNorm(const fptype &cmmom, const int &spin, const fptype &mRadius) -> fptype {
     fptype square = mRadius * mRadius * cmmom * cmmom;
     fptype dfsq   = 1 + square; // This accounts for spin 1
     // if (2 == spin) dfsq += 8 + 2*square + square*square; // Coefficients are 9, 3, 1.
@@ -53,15 +54,15 @@ __device__ fptype dampingFactorSquareNorm(const fptype &cmmom, const int &spin, 
     return (spin == 2) ? dfsqres : dfsq;
 }
 
-__device__ fptype spinFactor(unsigned int spin,
-                             fptype motherMass,
-                             fptype daug1Mass,
-                             fptype daug2Mass,
-                             fptype daug3Mass,
-                             fptype m12,
-                             fptype m13,
-                             fptype m23,
-                             unsigned int cyclic_index) {
+__device__ auto spinFactor(unsigned int spin,
+                           fptype motherMass,
+                           fptype daug1Mass,
+                           fptype daug2Mass,
+                           fptype daug3Mass,
+                           fptype m12,
+                           fptype m13,
+                           fptype m23,
+                           unsigned int cyclic_index) -> fptype {
     if(0 == spin)
         return 1; // Should not cause branching since every thread evaluates the same resonance at the same time.
 

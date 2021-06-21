@@ -23,7 +23,7 @@ void init_Amp3Body(py::module &m) {
             "eff"_a,
             py::keep_alive<1, 6>(), // Important to keep decay alive, to keep PDFs alive
             py::keep_alive<1, 7>())
-        .def("setDataSize", &Amp3Body::setDataSize, "dataSize"_a, "evtSize"_a = 3, "offset"_a=0)
+        .def("setDataSize", &Amp3Body::setDataSize, "dataSize"_a, "evtSize"_a = 3, "offset"_a = 0)
         .def("getCachedWave", &Amp3Body::getCachedWave, "i"_a)
         .def(
             "sumCachedWave",

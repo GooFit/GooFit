@@ -5,7 +5,7 @@
 
 namespace GooFit {
 
-__device__ fpcomplex LS_ONE(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
+__device__ auto LS_ONE(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) -> fpcomplex {
     pc.incrementIndex(1, 0, 1, 0, 1);
     return {1., 0.};
 }

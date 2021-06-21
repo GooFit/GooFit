@@ -3,7 +3,7 @@
 
 namespace GooFit {
 
-__device__ fptype device_BifurGauss(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_BifurGauss(fptype *evt, ParameterContainer &pc) -> fptype {
     int id = pc.getObservable(0);
 
     fptype x          = RO_CACHE(evt[id]);
@@ -34,7 +34,7 @@ __host__ BifurGaussPdf::BifurGaussPdf(std::string n, Observable _x, Variable mea
 
 // q: how shall the normalization of a bifurcated gaussian be calculated?
 // a: a "sum" of two half-gaussians?
-__host__ fptype BifurGaussPdf::integrate(fptype lo, fptype hi) const {
+__host__ auto BifurGaussPdf::integrate(fptype lo, fptype hi) const -> fptype {
     fptype sL = host_parameters[parametersIdx + 2];
     fptype sR = host_parameters[parametersIdx + 3];
 

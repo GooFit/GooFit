@@ -38,10 +38,10 @@ class Params : public Minuit2::MnUserParameters {
     void SetGooFitParams(const Minuit2::MnUserParameterState &input);
 
     /// Get the number of params in the fit
-    size_t size() const { return vars_.size(); };
+    auto size() const -> size_t { return vars_.size(); };
 
     /// Make a parameter array with the current variable values
-    std::vector<double> make_minuit_vector() const;
+    auto make_minuit_vector() const -> std::vector<double>;
 
     /// Set from a minuit vector. Optional force_changed to force complete recalculation
     void from_minuit_vector(const std::vector<double> &values, bool force_changed = false);
@@ -50,6 +50,6 @@ class Params : public Minuit2::MnUserParameters {
     void set_record(bool do_record = true) { do_record_ = do_record; }
 
     /// Get recorded values array
-    std::vector<std::vector<double>> get_recorded() const { return recorded_; }
+    auto get_recorded() const -> std::vector<std::vector<double>> { return recorded_; }
 };
 } // namespace GooFit

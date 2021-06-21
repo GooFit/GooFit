@@ -11,7 +11,7 @@ AmpCalc_TD::AmpCalc_TD(unsigned int nPerm, unsigned int ampIdx)
     : _nPerm(nPerm)
     , _AmpIdx(ampIdx) {}
 
-__device__ fpcomplex AmpCalc_TD::operator()(thrust::tuple<int, fptype *, int> t) const {
+__device__ auto AmpCalc_TD::operator()(thrust::tuple<int, fptype *, int> t) const -> fpcomplex {
     ParameterContainer pc;
 
     while(pc.funcIdx < dalitzFuncId)

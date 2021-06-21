@@ -15,7 +15,7 @@ class SFCalculator_TD : public thrust::unary_function<thrust::tuple<int, fptype 
 
     void setDalitzId(int idx) { dalitzFuncId = idx; }
     void setSpinFactorId(int idx) { _spinfactor_i = idx; }
-    __device__ fpcomplex operator()(thrust::tuple<int, fptype *, int> t) const;
+    __device__ auto operator()(thrust::tuple<int, fptype *, int> t) const -> fpcomplex;
 
   private:
     unsigned int _spinfactor_i{0};

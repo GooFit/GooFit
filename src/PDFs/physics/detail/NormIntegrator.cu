@@ -12,7 +12,7 @@ namespace GooFit {
 
 NormIntegrator::NormIntegrator() = default;
 
-__device__ fptype NormIntegrator::operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const {
+__device__ auto NormIntegrator::operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const -> fptype {
     ParameterContainer pc;
 
     while(pc.funcIdx < dalitzFuncId)

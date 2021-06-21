@@ -2,6 +2,7 @@
 #include <goofit/fitting/Params.h>
 
 #include <goofit/Color.h>
+#include <goofit/Version.h>
 
 #include <Minuit2/FunctionMinimum.h>
 #include <Minuit2/MnMigrad.h>
@@ -15,6 +16,11 @@
 
 #include <iostream>
 #include <vector>
+#ifdef MATHCORE_STANDALONE
+#define ROOT_VERSION(x, y, z) 0
+#else
+#include <RVersion.h>
+#endif
 
 namespace GooFit {
 
@@ -22,9 +28,17 @@ FitManagerMinuit2::FitManagerMinuit2(PdfBase *dat)
     : upar_(*dat)
     , fcn_(upar_) {}
 
-Minuit2::FunctionMinimum FitManagerMinuit2::fit() {
+auto FitManagerMinuit2::fit() -> Minuit2::FunctionMinimum {
+#if !defined(MATHCORE_STANDALONE) && GOOFIT_ROOT_FOUND && ROOT_VERSION_CODE < ROOT_VERSION(6, 24, 0)
     auto val = Minuit2::MnPrint::Level();
     Minuit2::MnPrint::SetLevel(verbosity);
+#elif !defined(MATHCORE_STANDALONE) && GOOFIT_ROOT_FOUND && ROOT_VERSION_CODE >= ROOT_VERSION(6, 24, 0)
+    auto val = Minuit2::MnPrint::GlobalLevel();
+    Minuit2::MnPrint::SetGlobalLevel(verbosity);
+#else
+    auto val = Minuit2::MnPrint::Level();
+    Minuit2::MnPrint::SetLevel(verbosity);
+#endif
 
     // Setting global call number to 0
     host_callnumber = 0;
@@ -93,7 +107,13 @@ Minuit2::FunctionMinimum FitManagerMinuit2::fit() {
     // Set the parameters in GooFit to the new values
     upar_.SetGooFitParams(min.UserState());
 
+#if !defined(MATHCORE_STANDALONE) && GOOFIT_ROOT_FOUND && ROOT_VERSION_CODE < ROOT_VERSION(6, 24, 0)
     Minuit2::MnPrint::SetLevel(val);
+#elif !defined(MATHCORE_STANDALONE) && GOOFIT_ROOT_FOUND && ROOT_VERSION_CODE >= ROOT_VERSION(6, 24, 0)
+    Minuit2::MnPrint::SetGlobalLevel(val);
+#else
+    Minuit2::MnPrint::SetLevel(val);
+#endif
     return min;
 }
 

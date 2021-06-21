@@ -6,7 +6,7 @@
 
 namespace GooFit {
 
-__device__ fpcomplex lass(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) {
+__device__ auto lass(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) -> fpcomplex {
     unsigned int spin         = pc.getConstant(0);
     unsigned int cyclic_index = pc.getConstant(1);
     bool norm                 = pc.getConstant(2);
@@ -54,8 +54,8 @@ __device__ fpcomplex lass(fptype m12, fptype m13, fptype m23, ParameterContainer
         frFactor = dampingFactorSquare(nominalDaughterMoms, spin, c_meson_radius);
         frFactor /= dampingFactorSquare(measureDaughterMoms, spin, c_meson_radius);
 
-    	frFactorD =  dampingFactorSquare(nominalDaughterMomsMother, spin, c_mother_meson_radius);
-    	frFactorD /= dampingFactorSquare(measureDaughterMomsMother, spin, c_mother_meson_radius);    
+        frFactorD = dampingFactorSquare(nominalDaughterMomsMother, spin, c_mother_meson_radius);
+        frFactorD /= dampingFactorSquare(measureDaughterMomsMother, spin, c_mother_meson_radius);
         if(norm) {
             // normalized form factors
             frFactor = dampingFactorSquareNorm(nominalDaughterMoms, spin, c_meson_radius)
@@ -112,6 +112,7 @@ __device__ fpcomplex lass(fptype m12, fptype m13, fptype m23, ParameterContainer
     resT *= sqrt(frFactor);
     resT *= sqrt(frFactorD);
     resT *= spinFactor(spin, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass, m12, m13, m23, cyclic_index);
+
     pc.incrementIndex(1, 8, 3, 0, 1);
 
     return resT;

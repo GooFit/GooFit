@@ -33,7 +33,7 @@ struct CoefSumFunctor {
         : coef_i(coef_i)
         , coef_j(coef_j) {}
 
-    __device__ fptype operator()(thrust::tuple<fpcomplex, fpcomplex> val) {
+    __device__ auto operator()(thrust::tuple<fpcomplex, fpcomplex> val) -> fptype {
         return (coef_i * thrust::conj<fptype>(coef_j) * thrust::get<0>(val) * thrust::conj<fptype>(thrust::get<1>(val)))
             .real();
     }
@@ -50,13 +50,14 @@ constexpr int resonanceOffset_DP = 4; // Offset of the first resonance into the 
 // own cache, hence the '10'. Ten threads should be enough for anyone!
 
 // NOTE: This is does not support ten instances (ten threads) of resoncances now, only one set of resonances.
-//this needs to be large enough to hold all samples
-__device__ fpcomplex *cResonances[16*20];
+// this needs to be large enough to hold all samples
+__device__ fpcomplex *cResonances[16 * 20];
 
+__device__ inline auto parIndexFromResIndex_DP(int resIndex) -> int {
+    return resonanceOffset_DP + resIndex * resonanceSize;
+}
 
-__device__ inline int parIndexFromResIndex_DP(int resIndex) { return resonanceOffset_DP + resIndex * resonanceSize; }
-
-__device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_DalitzPlot(fptype *evt, ParameterContainer &pc) -> fptype {
     int num_obs = pc.getNumObservables();
     int id_m12  = pc.getObservable(0);
     int id_m13  = pc.getObservable(1);
@@ -66,7 +67,7 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
     fptype m13 = RO_CACHE(evt[id_m13]);
 
     unsigned int numResonances = pc.getConstant(0);
-     unsigned int cacheToUse    = pc.getConstant(1);
+    unsigned int cacheToUse    = pc.getConstant(1);
 
     if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass)) {
         pc.incrementIndex(1, numResonances * 2, 2, num_obs, 1);
@@ -120,7 +121,7 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
     return ret;
 }
 
-int Amp3Body::cacheCount = 0;
+int Amp3Body::cacheCount                         = 0;
 __device__ device_function_ptr ptr_to_DalitzPlot = device_DalitzPlot;
 
 __host__ Amp3Body::Amp3Body(
@@ -151,8 +152,8 @@ __host__ Amp3Body::Amp3Body(
 
     // registered to 0 position
     registerConstant(decayInfo.resonances.size());
-    
-    cacheToUse            = cacheCount++;
+
+    cacheToUse = cacheCount++;
     // registered to 1 position
     registerConstant(cacheToUse);
 
@@ -213,9 +214,8 @@ __host__ void Amp3Body::setDataSize(unsigned int dataSize, unsigned int evtSize,
         }
     }
 
-    numEntries = dataSize;
+    numEntries  = dataSize;
     eventOffset = offset;
-
 
     for(int i = 0; i < 16; i++) {
 #ifdef GOOFIT_MPI
@@ -224,13 +224,17 @@ __host__ void Amp3Body::setDataSize(unsigned int dataSize, unsigned int evtSize,
         cachedWaves[i] = new thrust::device_vector<fpcomplex>(dataSize);
 #endif
         void *dummy = thrust::raw_pointer_cast(cachedWaves[i]->data());
-        MEMCPY_TO_SYMBOL(cResonances, &dummy, sizeof(fpcomplex *),  ((16 * cacheToUse) + i) * sizeof(fpcomplex *), cudaMemcpyHostToDevice);
+        MEMCPY_TO_SYMBOL(cResonances,
+                         &dummy,
+                         sizeof(fpcomplex *),
+                         ((16 * cacheToUse) + i) * sizeof(fpcomplex *),
+                         cudaMemcpyHostToDevice);
     }
-   
+
     setForceIntegrals();
 }
 
-__host__ fptype Amp3Body::normalize() {
+__host__ auto Amp3Body::normalize() -> fptype {
     recursiveSetNormalization(1.0); // Not going to normalize efficiency,
     // so set normalization factor to 1 so it doesn't get multiplied by zero.
     // Copy at this time to ensure that the SpecialResonanceCalculators, which need the efficiency,
@@ -256,7 +260,6 @@ __host__ fptype Amp3Body::normalize() {
 
     if(host_norms != current_host_norms) {
         host_norms = current_host_norms;
-        
     }
     MEMCPY(dalitzNormRange, host_norms.data(), 6 * sizeof(fptype), cudaMemcpyHostToDevice);
     for(unsigned int i = 0; i < decayInfo.resonances.size(); ++i) {
@@ -297,8 +300,8 @@ __host__ fptype Amp3Body::normalize() {
 #else
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
-                //was this correct before?
-                //thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, dataArray, eventSize)),
+                // was this correct before?
+                // thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, dataArray, eventSize)),
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
                 strided_range<thrust::device_vector<fpcomplex>::iterator>(
                     cachedWaves[i]->begin(), cachedWaves[i]->end(), 1)
@@ -343,7 +346,6 @@ __host__ fptype Amp3Body::normalize() {
             // Notice complex conjugation
             // amplitude_j.imag(), (*(integrals[i][j])).real(), (*(integrals[i][j])).imag() );
             sumIntegral += amplitude_i * amplitude_j * (*(integrals[i][j]));
-            
         }
     }
 
@@ -357,7 +359,7 @@ __host__ fptype Amp3Body::normalize() {
     return ret;
 }
 
-__host__ fpcomplex Amp3Body::sumCachedWave(size_t i) const {
+__host__ auto Amp3Body::sumCachedWave(size_t i) const -> fpcomplex {
     const thrust::device_vector<fpcomplex> &vec = getCachedWaveNoCopy(i);
 
     fpcomplex ret = thrust::reduce(vec.begin(), vec.end(), fpcomplex(0, 0), thrust::plus<fpcomplex>());
@@ -365,7 +367,7 @@ __host__ fpcomplex Amp3Body::sumCachedWave(size_t i) const {
     return ret;
 }
 
-__host__ const std::vector<std::complex<fptype>> Amp3Body::getCachedWave(size_t i) const {
+__host__ auto Amp3Body::getCachedWave(size_t i) const -> const std::vector<std::complex<fptype>> {
     // TODO: This calls itself immediatly ?
     auto ret_thrust = getCachedWave(i);
     std::vector<std::complex<fptype>> ret(ret_thrust.size());
@@ -373,7 +375,7 @@ __host__ const std::vector<std::complex<fptype>> Amp3Body::getCachedWave(size_t 
     return ret;
 }
 
-__host__ std::vector<std::vector<fptype>> Amp3Body::fit_fractions() {
+__host__ auto Amp3Body::fit_fractions() -> std::vector<std::vector<fptype>> {
     GOOFIT_DEBUG("Performing fit fraction calculation, should already have a cache (does not use normalization grid)");
 
     size_t n_res    = getDecayInfo().resonances.size();
@@ -427,9 +429,8 @@ __host__ std::vector<std::vector<fptype>> Amp3Body::fit_fractions() {
     return ff;
 }
 
-__host__
-    std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h>
-    Amp3Body::GenerateSig(unsigned int numEvents, int seed) {
+__host__ auto Amp3Body::GenerateSig(unsigned int numEvents, int seed) -> std::
+    tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h> {
     // Must configure our functions before any calculations!
     // setupObservables();
     // setIndices();

@@ -33,6 +33,6 @@ class MappedPdf : public CombinePdf {
   public:
     MappedPdf(std::string n, GooPdf *m, std::vector<GooPdf *> &t);
     // Map function m must be custom written to correspond to order of function list t.
-    __host__ fptype normalize() override;
+    __host__ auto normalize() -> fptype override;
 };
 } // namespace GooFit

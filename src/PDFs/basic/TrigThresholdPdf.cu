@@ -3,13 +3,13 @@
 
 namespace GooFit {
 
-__device__ fptype threshCalc(fptype distance, fptype linConst) {
+__device__ auto threshCalc(fptype distance, fptype linConst) -> fptype {
     fptype ret
         = (distance > fptype(0.5) ? fptype(1) : (linConst + (1 - linConst) * sin(distance * fptype(3.14159265))));
     return ret;
 }
 
-__device__ fptype device_TrigThresholdUpper(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_TrigThresholdUpper(fptype *evt, ParameterContainer &pc) -> fptype {
     int id           = pc.getObservable(0);
     fptype x         = RO_CACHE(evt[id]);
     fptype thresh    = pc.getParameter(0);
@@ -22,7 +22,7 @@ __device__ fptype device_TrigThresholdUpper(fptype *evt, ParameterContainer &pc)
     return threshCalc(trigConst, linConst);
 }
 
-__device__ fptype device_TrigThresholdLower(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_TrigThresholdLower(fptype *evt, ParameterContainer &pc) -> fptype {
     int id           = pc.getObservable(0);
     fptype x         = RO_CACHE(evt[id]);
     fptype thresh    = pc.getParameter(0);
@@ -35,7 +35,7 @@ __device__ fptype device_TrigThresholdLower(fptype *evt, ParameterContainer &pc)
     return threshCalc(trigConst, linConst);
 }
 
-__device__ fptype device_VerySpecialEpisodeTrigThresholdUpper(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_VerySpecialEpisodeTrigThresholdUpper(fptype *evt, ParameterContainer &pc) -> fptype {
     // Annoying special case for use with Mikhail's efficiency function across the Dalitz plot
     int id_x = pc.getObservable(0);
     int id_y = pc.getObservable(1);
@@ -54,7 +54,7 @@ __device__ fptype device_VerySpecialEpisodeTrigThresholdUpper(fptype *evt, Param
     return threshCalc(trigConst, linConst);
 }
 
-__device__ fptype device_VerySpecialEpisodeTrigThresholdLower(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_VerySpecialEpisodeTrigThresholdLower(fptype *evt, ParameterContainer &pc) -> fptype {
     int id_x = pc.getObservable(0);
     int id_y = pc.getObservable(1);
 

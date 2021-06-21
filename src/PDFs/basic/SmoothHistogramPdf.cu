@@ -8,7 +8,7 @@ __constant__ fptype *dev_base_histograms[100]; // Multiple histograms for the ca
 __constant__ fptype *dev_smoothed_histograms[100];
 unsigned int SmoothHistogramPdf::totalHistograms = 0;
 
-__device__ fptype device_EvalHistogram(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_EvalHistogram(fptype *evt, ParameterContainer &pc) -> fptype {
     // Structure is
     // nP smoothingIndex totalHistograms (limit1 step1 bins1) (limit2 step2 bins2) nO o1 o2
     // where limit and step are indices into functorConstants.
@@ -51,7 +51,7 @@ __device__ fptype device_EvalHistogram(fptype *evt, ParameterContainer &pc) {
 struct Smoother {
     int funcIdx;
 
-    __device__ fptype operator()(int globalBin) {
+    __device__ auto operator()(int globalBin) -> fptype {
         ParameterContainer pc;
 
         while(pc.funcIdx < funcIdx)
@@ -152,9 +152,9 @@ __host__ SmoothHistogramPdf::SmoothHistogramPdf(std::string n, BinnedDataSet *hi
     initialize();
 }
 
-fptype *pointerToFirst(thrust::device_vector<fptype> *hist) { return (&((*hist)[0])).get(); }
+auto pointerToFirst(thrust::device_vector<fptype> *hist) -> fptype * { return (&((*hist)[0])).get(); }
 
-fptype *pointerToFirst(thrust::host_vector<fptype> *hist) {
+auto pointerToFirst(thrust::host_vector<fptype> *hist) -> fptype * {
     // (*hist) is the host_vector.
     // (*hist)[0] is a 'reference' - Thrust class, not ordinary C++ reference -
     // to the first element of the vector.
@@ -191,7 +191,7 @@ __host__ void SmoothHistogramPdf::copyHistogramToDevice(thrust::host_vector<fpty
     }
 }
 
-__host__ fptype SmoothHistogramPdf::normalize() {
+__host__ auto SmoothHistogramPdf::normalize() -> fptype {
     Smoother smoother;
     smoother.funcIdx = getFunctionIndex();
 

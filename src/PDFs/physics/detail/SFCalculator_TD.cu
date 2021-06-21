@@ -8,7 +8,7 @@ namespace GooFit {
 
 SFCalculator_TD::SFCalculator_TD() = default;
 
-__device__ fpcomplex SFCalculator_TD::operator()(thrust::tuple<int, fptype *, int> t) const {
+__device__ auto SFCalculator_TD::operator()(thrust::tuple<int, fptype *, int> t) const -> fpcomplex {
     int evtNum  = thrust::get<0>(t);
     fptype *evt = thrust::get<1>(t) + (evtNum * thrust::get<2>(t));
 

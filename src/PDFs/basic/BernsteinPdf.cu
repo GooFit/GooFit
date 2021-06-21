@@ -5,14 +5,14 @@
 
 namespace GooFit {
 
-__device__ int factorial(int n) {
+__device__ auto factorial(int n) -> int {
     if(n == 0)
         return 1;
     else
         return n * factorial(n - 1);
 }
 
-__device__ fptype binomial(int k, int n) {
+__device__ auto binomial(int k, int n) -> fptype {
     if(k > n)
         return 0;
     else {
@@ -23,7 +23,7 @@ __device__ fptype binomial(int k, int n) {
 }
 
 //__device__ fptype device_BernsteinPdf (fptype* evt, fptype* p, unsigned int* indices) {
-__device__ fptype device_BernsteinPdf(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_BernsteinPdf(fptype *evt, ParameterContainer &pc) -> fptype {
     // nP (lowX uppX ord) c0 .. cn nO (o1 o2 o3 o4)
 
     int id = pc.getObservable(0);

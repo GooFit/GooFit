@@ -1,3 +1,7 @@
+ci:
+  autoupdate_commit_msg: 'chore(style): pre-commit autoupdate'
+  skip:
+    - docker-clang-format
 exclude: '^.ci/azure-wheel-helpers/.*'
 repos:
 - repo: https://github.com/psf/black

@@ -38,6 +38,7 @@ jobs:
       run: cmake --build build --target test
       env:
         CTEST_OUTPUT_ON_FAILURE: true
+        GTEST_COLOR: true
 
   clang-tidy:
     runs-on: ubuntu-latest

@@ -39,6 +39,21 @@ jobs:
       env:
         CTEST_OUTPUT_ON_FAILURE: true
 
+  clang-tidy:
+    runs-on: ubuntu-latest
+    container: silkeh/clang:12
+    steps:
+    - uses: actions/checkout@v2
+    - name: Configure
+      run: >
+        cmake -S . -B build
+        -DCMAKE_CXX_CLANG_TIDY="$(which clang-tidy)"
+        -DDOWNLOAD_EIGEN=ON
+        -DDOWNLOAD_CATCH=ON
+        -DCMAKE_CXX_STANDARD=17
+    - name: Build
+      run: cmake --build build -j 2 -- --keep-going
+
 
 
   cuda-build:

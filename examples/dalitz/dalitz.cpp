@@ -22,6 +22,7 @@
 #include <goofit/PDFs/combine/ProdPdf.h>
 #include <goofit/PDFs/physics/Amp3Body.h>
 #include <goofit/PDFs/physics/DalitzPlotter.h>
+#include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 #include <goofit/PDFs/physics/DalitzVetoPdf.h>
 #include <goofit/PDFs/physics/ResonancePdf.h>
 #include <goofit/UnbinnedDataSet.h>
@@ -115,12 +116,69 @@ void getToyData(std::string toyFileName, GooFit::Application &app, DataSet &data
     GOOFIT_INFO("Read in {} events", data.getNumEvents());
 
     TCanvas foo;
+    foo.SetCanvasSize(555,532);
     dalitzplot.SetStats(false);
     dalitzplot.Draw("colz");
-    foo.SaveAs("dalitzplot.png");
+    foo.SaveAs("dalitzplot_toy_mcMag.png");
 }
 
-void makeToyData(DalitzPlotter &dplotter, UnbinnedDataSet &data) {}
+void makeToyData(DalitzPlotter &dplotter, UnbinnedDataSet &data, Amp3Body *signal) {
+
+    Observable m12{"m12", 0, 5};
+    Observable m13{"m13", 0, 5};
+    bool indal;
+    TRandom donram(42);
+    // Data set
+    TH2F dalitzplot("dalitzplot",
+                    "Original Data",
+                    1000000,
+                    m12.getLowerLimit(),
+                    m12.getUpperLimit(),
+                    1000000,
+                    m13.getLowerLimit(),
+                    m13.getUpperLimit());
+    // Generate toy events.
+    for(int i = 0; i < 1000000; ++i) {
+        m12.setValue(donram.Uniform(5) + 0.08);
+        m13.setValue(donram.Uniform(5) + 0.08);
+	printf("Generated %ith number! \n", i);
+//        double bwvalue12 = cpu_bw(m12.getValue(), m12_0.getValue(), gamma.getValue());
+//        double bwvalue13 = cpu_bw(m13.getValue(), m13_0.getValue(), gamma.getValue());
+//       double roll    = donram.Uniform() * (2.0 / (sqrt(M_PI) * gamma.getValue()));
+
+//        if(roll > bwvalue) {
+//            --i;
+//            continue;
+//        }
+	indal = inDalitz(m12.getValue(), m13.getValue(), _mD0, piZeroMass, piPlusMass, piPlusMass);
+	std::cout << "indal = " << indal << " m12 = " << m12.getValue() << " m13 = " << m13.getValue() << endl;
+	if(indal){
+		--i;
+		continue;
+	}
+//        xvar.setValue(xvar.getValue() + donram.Gaus(0, sigma.getValue()));
+
+//        if((xvar.getValue() < xvar.getLowerLimit()) || (xvar.getValue() > xvar.getUpperLimit())) {
+//            --i;
+//            continue;
+//        }
+
+        data.addEvent();
+    
+
+//        eventNumber.setValue(data.getNumEvents());
+//        data.addEvent();
+
+        dalitzplot.Fill(m12.getValue(), m13.getValue());
+    }
+
+    TCanvas foo;
+    foo.SetCanvasSize(555,532);
+    dalitzplot.SetStats(false);
+    dalitzplot.Draw("colz");
+    foo.SaveAs("dalitzplot_toy_MCjtf1.png");
+
+}
 
 Amp3Body *makeSignalPdf(Observable m12, Observable m13, EventNumber eventNumber, GooPdf *eff = 0) {
     DecayInfo3 dtop0pp;
@@ -133,7 +191,7 @@ Amp3Body *makeSignalPdf(Observable m12, Observable m13, EventNumber eventNumber,
     ResonancePdf *rhop = new Resonances::RBW(
         "rhop", Variable("rhop_amp_real", 1), Variable("rhop_amp_imag", 0), fixedRhoMass, fixedRhoWidth, 1, PAIR_12);
 
-    bool fixAmps = false; // Takes ~400x longer
+    bool fixAmps = true; // Takes ~400x longer
 
     ResonancePdf *rhom = new Resonances::RBW(
         "rhom",
@@ -188,8 +246,8 @@ Amp3Body *makeSignalPdf(Observable m12, Observable m13, EventNumber eventNumber,
 
     ResonancePdf *rhop_1700 = new Resonances::RBW(
         "rhop_1700",
-        fixAmps ? Variable("rhop_1700_amp_real", 2.151) : Variable("rhop_1700_amp_real", 2.151, 0.001, 0, 0),
-        fixAmps ? Variable("rhop_1700_amp_imag", -0.658) : Variable("rhop_1700_amp_imag", -0.658, 0.1, 0, 0),
+        fixAmps ? Variable("rhop_1700_amp_real", -8.604) : Variable("rhop_1700_amp_real", -8.604, 0.001, 0, 0),
+        fixAmps ? Variable("rhop_1700_amp_imag", 2.632) : Variable("rhop_1700_amp_imag", 2.632, 0.1, 0, 0),
         sharedMass2,
         shareWidth2,
         1,
@@ -330,11 +388,9 @@ int runToyFit(Amp3Body *signal, UnbinnedDataSet *data) {
 
     // EXERCISE 3: Make the efficiency a product of the two functions
     // from the previous exercises.
-
     signal->setData(data);
     signal->setDataSize(data->getNumEvents());
     FitManager datapdf(signal);
-
     datapdf.fit();
 
     ProdPdf prodpdf{"prodpdf", {signal}};
@@ -342,10 +398,13 @@ int runToyFit(Amp3Body *signal, UnbinnedDataSet *data) {
     DalitzPlotter plotter(&prodpdf, signal);
 
     TCanvas foo;
+    foo.SetCanvasSize(555,532);
     TH2F *dalitzplot = plotter.make2D();
     dalitzplot->Draw("colz");
-
-    foo.SaveAs("dalitzpdf.png");
+    dalitzplot->GetXaxis()->SetTitle("M_12 (GeV)");
+    dalitzplot->GetYaxis()->SetTitle("M_13 (GeV)");
+    dalitzplot->SetTitle("Dalitz Plot (D0->pi+pi-pi0, rho+_1700, toy_mc, Mag 1, phase 0)");
+    foo.SaveAs("dalitzpdf_toy_mc1.png");
 
     return datapdf;
 }
@@ -384,7 +443,9 @@ int main(int argc, char **argv) {
 
     // Read in data
     if(make_toy) {
-        dplotter.fillDataSetMC(data, 1000000);
+//        dplotter.fillDataSetMC(data, 1000000);
+	makeToyData(dplotter, data, signal);
+	printf("Making toy data \n");
     } else {
         getToyData(filename, app, data);
     }

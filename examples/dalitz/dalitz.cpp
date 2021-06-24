@@ -122,26 +122,25 @@ void getToyData(std::string toyFileName, GooFit::Application &app, DataSet &data
     foo.SaveAs("dalitzplot_toy_mcMag.png");
 }
 
-void makeToyData(DalitzPlotter &dplotter, UnbinnedDataSet &data, Amp3Body *signal) {
+void makeToyData(DalitzPlotter &dplotter, UnbinnedDataSet &data) {
 
-    Observable m12{"m12", 0, 5};
-    Observable m13{"m13", 0, 5};
+    Observable m12{"m12", 0.0001, 3.5};
+    Observable m13{"m13", 0.0001, 3.5};
     bool indal;
     TRandom donram(42);
     // Data set
-    TH2F dalitzplot("dalitzplot",
+    TH2F *dalitzplot = new TH2F("dalitzplot",
                     "Original Data",
-                    1000000,
+                    240,
                     m12.getLowerLimit(),
                     m12.getUpperLimit(),
-                    1000000,
+                    240,
                     m13.getLowerLimit(),
                     m13.getUpperLimit());
     // Generate toy events.
     for(int i = 0; i < 1000000; ++i) {
-        m12.setValue(donram.Uniform(5) + 0.08);
-        m13.setValue(donram.Uniform(5) + 0.08);
-	printf("Generated %ith number! \n", i);
+        m12.setValue(donram.Uniform(4) + 0.08);
+        m13.setValue(donram.Uniform(4) + 0.08);
 //        double bwvalue12 = cpu_bw(m12.getValue(), m12_0.getValue(), gamma.getValue());
 //        double bwvalue13 = cpu_bw(m13.getValue(), m13_0.getValue(), gamma.getValue());
 //       double roll    = donram.Uniform() * (2.0 / (sqrt(M_PI) * gamma.getValue()));
@@ -151,8 +150,7 @@ void makeToyData(DalitzPlotter &dplotter, UnbinnedDataSet &data, Amp3Body *signa
 //            continue;
 //        }
 	indal = inDalitz(m12.getValue(), m13.getValue(), _mD0, piZeroMass, piPlusMass, piPlusMass);
-	std::cout << "indal = " << indal << " m12 = " << m12.getValue() << " m13 = " << m13.getValue() << endl;
-	if(indal){
+	if(indal==0){
 		--i;
 		continue;
 	}
@@ -169,13 +167,13 @@ void makeToyData(DalitzPlotter &dplotter, UnbinnedDataSet &data, Amp3Body *signa
 //        eventNumber.setValue(data.getNumEvents());
 //        data.addEvent();
 
-        dalitzplot.Fill(m12.getValue(), m13.getValue());
+        dalitzplot->Fill(m12.getValue(), m13.getValue(), 1.);
     }
 
     TCanvas foo;
     foo.SetCanvasSize(555,532);
-    dalitzplot.SetStats(false);
-    dalitzplot.Draw("colz");
+    dalitzplot->SetStats(false);
+    dalitzplot->Draw("colz");
     foo.SaveAs("dalitzplot_toy_MCjtf1.png");
 
 }
@@ -191,7 +189,7 @@ Amp3Body *makeSignalPdf(Observable m12, Observable m13, EventNumber eventNumber,
     ResonancePdf *rhop = new Resonances::RBW(
         "rhop", Variable("rhop_amp_real", 1), Variable("rhop_amp_imag", 0), fixedRhoMass, fixedRhoWidth, 1, PAIR_12);
 
-    bool fixAmps = true; // Takes ~400x longer
+    bool fixAmps = false; // Takes ~400x longer
 
     ResonancePdf *rhom = new Resonances::RBW(
         "rhom",
@@ -392,13 +390,14 @@ int runToyFit(Amp3Body *signal, UnbinnedDataSet *data) {
     signal->setDataSize(data->getNumEvents());
     FitManager datapdf(signal);
     datapdf.fit();
-
+    printf("Made it past fit! \n");
     ProdPdf prodpdf{"prodpdf", {signal}};
 
     DalitzPlotter plotter(&prodpdf, signal);
 
     TCanvas foo;
     foo.SetCanvasSize(555,532);
+    printf("Canvas size set! \n");
     TH2F *dalitzplot = plotter.make2D();
     dalitzplot->Draw("colz");
     dalitzplot->GetXaxis()->SetTitle("M_12 (GeV)");
@@ -444,8 +443,7 @@ int main(int argc, char **argv) {
     // Read in data
     if(make_toy) {
 //        dplotter.fillDataSetMC(data, 1000000);
-	makeToyData(dplotter, data, signal);
-	printf("Making toy data \n");
+	makeToyData(dplotter, data);
     } else {
         getToyData(filename, app, data);
     }
@@ -454,6 +452,6 @@ int main(int argc, char **argv) {
         return runToyFit(signal, &data);
     } catch(const std::runtime_error &e) {
         std::cerr << e.what() << std::endl;
-        return 7;
+	return 7;
     }
 }

@@ -73,7 +73,6 @@ __host__ double GooPdf::reduce_with_metric() const {
     double r = ret;
     MPI_Allreduce(&r, &ret, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 #endif
-
     return ret;
 }
 

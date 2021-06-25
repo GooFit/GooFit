@@ -138,7 +138,7 @@ void makeToyData(DalitzPlotter &dplotter, UnbinnedDataSet &data) {
                     m13.getLowerLimit(),
                     m13.getUpperLimit());
     // Generate toy events.
-    for(int i = 0; i < 1000000; ++i) {
+    for(int i = 0; i < 10000000; ++i) {
         m12.setValue(donram.Uniform(4) + 0.08);
         m13.setValue(donram.Uniform(4) + 0.08);
 //        double bwvalue12 = cpu_bw(m12.getValue(), m12_0.getValue(), gamma.getValue());
@@ -207,7 +207,7 @@ Amp3Body *makeSignalPdf(Observable m12, Observable m13, EventNumber eventNumber,
         fixedRhoMass,
         fixedRhoWidth,
         1,
-        PAIR_23);
+        PAIR_23);  
 
     Variable sharedMass("rhop_1450_mass", 1.465, 0.01, 1.0, 2.0);
     Variable shareWidth("rhop_1450_width", 0.400, 0.01, 0.01, 5.0);
@@ -335,22 +335,22 @@ Amp3Body *makeSignalPdf(Observable m12, Observable m13, EventNumber eventNumber,
         fixAmps ? Variable("nonr_amp_real", 0.5595 * (-1)) : Variable("nonr_amp_real", 0.5595 * (-1), 0.001, 0, 0),
         fixAmps ? Variable("nonr_amp_imag", -0.108761 * (-1)) : Variable("nonr_amp_imag", -0.108761 * (-1), 0.1, 0, 0));
 
-    dtop0pp.resonances.push_back(nonr);
-    dtop0pp.resonances.push_back(rhop);
-    dtop0pp.resonances.push_back(rho0);
-    dtop0pp.resonances.push_back(rhom);
-    dtop0pp.resonances.push_back(rhop_1450);
-    dtop0pp.resonances.push_back(rho0_1450);
-    dtop0pp.resonances.push_back(rhom_1450);
-    dtop0pp.resonances.push_back(rhop_1700);
-    dtop0pp.resonances.push_back(rho0_1700);
-    dtop0pp.resonances.push_back(rhom_1700);
+/*    dtop0pp.resonances.push_back(nonr); 
+    dtop0pp.resonances.push_back(rhop); 
+    dtop0pp.resonances.push_back(rho0); 
+    dtop0pp.resonances.push_back(rhom); 
+    dtop0pp.resonances.push_back(rhop_1450); 
+    dtop0pp.resonances.push_back(rho0_1450); 
+    dtop0pp.resonances.push_back(rhom_1450); 
+    dtop0pp.resonances.push_back(rhop_1700); 
+    dtop0pp.resonances.push_back(rho0_1700); 
+    dtop0pp.resonances.push_back(rhom_1700); */
     dtop0pp.resonances.push_back(f0_980);
-    dtop0pp.resonances.push_back(f0_1370);
+/*    dtop0pp.resonances.push_back(f0_1370);
     dtop0pp.resonances.push_back(f0_1500);
     dtop0pp.resonances.push_back(f0_1710);
     dtop0pp.resonances.push_back(f2_1270);
-    dtop0pp.resonances.push_back(f0_600);
+    dtop0pp.resonances.push_back(f0_600); */
 
     bool fitMasses = false;
 
@@ -402,8 +402,8 @@ int runToyFit(Amp3Body *signal, UnbinnedDataSet *data) {
     dalitzplot->Draw("colz");
     dalitzplot->GetXaxis()->SetTitle("M_12 (GeV)");
     dalitzplot->GetYaxis()->SetTitle("M_13 (GeV)");
-    dalitzplot->SetTitle("Dalitz Plot (D0->pi+pi-pi0, rho+_1700, toy_mc, Mag 1, phase 0)");
-    foo.SaveAs("dalitzpdf_toy_mc1.png");
+    dalitzplot->SetTitle("Dalitz Plot (D0->pi+pi-pi0, f0 980 only, Mag 1, toy data)");
+    foo.SaveAs("dalitzpdf_f0_980_only.png");
 
     return datapdf;
 }
@@ -427,7 +427,7 @@ int main(int argc, char **argv) {
     EventNumber eventNumber("eventNumber");
     m12.setNumBins(240);
     m13.setNumBins(240);
-
+    std::cout << "makeToy = " << make_toy << endl;
     // Prepare the data
     UnbinnedDataSet data({m12, m13, eventNumber});
 
@@ -445,6 +445,7 @@ int main(int argc, char **argv) {
 //        dplotter.fillDataSetMC(data, 1000000);
 	makeToyData(dplotter, data);
     } else {
+	printf("Retrieving data!");
         getToyData(filename, app, data);
     }
 

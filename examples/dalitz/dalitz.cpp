@@ -124,79 +124,67 @@ void getToyData(std::string toyFileName, GooFit::Application &app, DataSet &data
 
 void makeToyData(UnbinnedDataSet &data, Observable &m12, Observable &m13, Amp3Body *signal) {
 
-    Observable m12d{"m12", 0.0001, 3.5};
-    Observable m13d{"m13", 0.0001, 3.5};
-    double m12val[10000000];
-    double m13val[10000000];
+    printf("Made it to the function call! \n");
+    double m12val[10];
+    double m13val[10];
     EventNumber eventNumber("eventNumber");
+    printf("Declared the EventNumber variable! \n");
     bool indal;
     int ne = 0;
     UnbinnedDataSet data1({m12, m13, eventNumber});
+    printf("Declared the dummy dataset! \n");
     std::vector<std::vector<double>> pdfvals;
     TRandom donram(42);
+    printf("Set the seed for the RNG! \n");
     fptype f, fmax = 0.0;
-//    Amp3Body *amp3 = dplotter.signalDalitz();
+
     // Data set
     TH2F *dalitzplot = new TH2F("dalitzplot",
                     "Original Data",
                     240,
-                    m12d.getLowerLimit(),
-                    m12d.getUpperLimit(),
+                    m12.getLowerLimit(),
+                    m12.getUpperLimit(),
                     240,
-                    m13d.getLowerLimit(),
-                    m13d.getUpperLimit());
+                    m13.getLowerLimit(),
+                    m13.getUpperLimit());
+    printf("Declared the 2-D Histogram! \n");
     // Generate toy events.
-    for(int i = 0; i < 10000000; ++i) {
-        m12d.setValue(donram.Uniform(4) + 0.08);
-        m13d.setValue(donram.Uniform(4) + 0.08);
-//        double bwvalue12 = cpu_bw(m12.getValue(), m12_0.getValue(), gamma.getValue());
-//        double bwvalue13 = cpu_bw(m13.getValue(), m13_0.getValue(), gamma.getValue());
-//       double roll    = donram.Uniform() * (2.0 / (sqrt(M_PI) * gamma.getValue()));
-
-//        if(roll > bwvalue) {
-//            --i;
-//            continue;
-//        }
-	indal = inDalitz(m12d.getValue(), m13d.getValue(), _mD0, piZeroMass, piPlusMass, piPlusMass);
+    for(int i = 0; i < 10; ++i) {
+        m12.setValue(donram.Uniform(4) + 0.08);
+        m13.setValue(donram.Uniform(4) + 0.08);
+	indal = inDalitz(m12.getValue(), m13.getValue(), _mD0, piZeroMass, piPlusMass, piPlusMass);
 	if(indal==0){
 		--i;
 		continue;
 	}
-//        xvar.setValue(xvar.getValue() + donram.Gaus(0, sigma.getValue()));
-
-//        if((xvar.getValue() < xvar.getLowerLimit()) || (xvar.getValue() > xvar.getUpperLimit())) {
-//            --i;
-//            continue;
-//        }
-//	if(fmax < dplotter->signalDalitz(m12.getValue(),m13.getValue())){
-//		fmax = dplotter->signalDalitz(m12.getValue(),m13.getValue());
-//	}
 	data1.addEvent();    
-	m12val[i] = m12d.getValue();
-	m13val[i] = m13d.getValue();
-//        eventNumber.setValue(data.getNumEvents());
-//        data.addEvent();
-
-//        dalitzplot->Fill(m12.getValue(), m13.getValue(), 1.);
+	m12val[i] = m12.getValue();
+	m13val[i] = m13.getValue();
+	std::cout << "m12val[" << i << "] = " << m12val[i] << endl;
+	std::cout << "m13val[" << i << "] = " << m13val[i] << endl;
     }
-//    amp3->setData(&data1);
-//    amp3->setDataSize(10000000);
     ProdPdf *prod = new ProdPdf{"prod",{signal}};
+    printf("About to set data! \n");
     prod->setData(&data1);
+    printf("About to get pdfvals and find fmax! \n");
     pdfvals = prod->getCompProbsAtDataPoints();
-    for (int j = 0; j < 10000000; ++j) {
+    for (int j = 0; j < 10; ++j) {
 	std::cout << pdfvals[0][j] << endl;
 	if (fmax - pdfvals[0][j] < 0){
 		fmax = pdfvals[0][j];
 	}
     } 
-    for (int k = 0; k < 10000000; ++k) {
+    printf("Found fmax!");
+    std::cout << "fmax = " << fmax << endl;
+    for (int k = 0; k < 10; ++k) {
 	f = (double)rand()/RAND_MAX;
+	std::cout << "f = " << f << endl;
 	if (f < pdfvals[0][k]/fmax) {
 		m12.setValue(m12val[k]);
 		m13.setValue(m13val[k]);
 		data.addEvent();
 		ne++;
+        	dalitzplot->Fill(m12.getValue(), m13.getValue(), 1.);
 	}
     } 
     TCanvas foo;
@@ -419,20 +407,20 @@ int runToyFit(Amp3Body *signal, UnbinnedDataSet *data) {
     signal->setDataSize(data->getNumEvents());
     FitManager datapdf(signal);
     datapdf.fit();
-    printf("Made it past fit! \n");
+//    printf("Made it past fit! \n");
     ProdPdf prodpdf{"prodpdf", {signal}};
 
     DalitzPlotter plotter(&prodpdf, signal);
 
     TCanvas foo;
     foo.SetCanvasSize(555,532);
-    printf("Canvas size set! \n");
+//    printf("Canvas size set! \n");
     TH2F *dalitzplot = plotter.make2D();
     dalitzplot->Draw("colz");
     dalitzplot->GetXaxis()->SetTitle("M_12 (GeV)");
     dalitzplot->GetYaxis()->SetTitle("M_13 (GeV)");
     dalitzplot->SetTitle("Dalitz Plot (D0->pi+pi-pi0, rho(p+m) data, Phase 270, Mag 1, toy data)");
-    foo.SaveAs("dalitzpdf_rhop_rhom_p270.png");
+    foo.SaveAs("dalitzpdf_toyMC_jtf1.png");
 
     return datapdf;
 }
@@ -446,7 +434,7 @@ int main(int argc, char **argv) {
 
     bool make_toy;
     app.add_flag("-m,--make-toy", make_toy, "Make a toy instead of reading a file in");
-    printf("Made it past flag declaration! \n");
+//    printf("Made it past flag declaration! \n");
     GOOFIT_PARSE(app);
 
     GooFit::setROOTStyle();
@@ -458,32 +446,27 @@ int main(int argc, char **argv) {
     m13.setNumBins(240);
     std::cout << "makeToy = " << make_toy << endl;
 
-
-    Observable m12d{"m12", 0.0001, 3.5};
-    Observable m13d{"m13", 0.0001, 3.5};
-    m12d.setNumBins(240);
-    m13d.setNumBins(240);
-    double m12val[10000000];
-    double m13val[10000000];
+    double m12val[10000];
+    double m13val[10000];
     EventNumber eventNumber("eventNumber");
     bool indal;
     int ne = 0;
     std::vector<std::vector<double>> pdfvals;
     TRandom donram(42);
     fptype f, fmax = 0.0;
-    UnbinnedDataSet data1({m12d, m13d, eventNumber});
     printf("About to generate dalitzplot \n");
-    TH2F *dalitzplot = new TH2F("dalitzplot",
+    TH2F *dalitzp = new TH2F("dalitzplot",
                     "Original Data",
-                    240,
-                    m12d.getLowerLimit(),
-                    m12d.getUpperLimit(),
-                    240,
-                    m13d.getLowerLimit(),
-		    m13d.getUpperLimit());
+                    20,
+                    m12.getLowerLimit(),
+                    m12.getUpperLimit(),
+                    20,
+                    m13.getLowerLimit(),
+		    m13.getUpperLimit());
+
     // Prepare the data
     UnbinnedDataSet data({m12, m13, eventNumber});
-
+    UnbinnedDataSet data1({m12, m13, eventNumber});
     // Set up the model
     Amp3Body *signal = makeSignalPdf(m12, m13, eventNumber);
 
@@ -495,54 +478,56 @@ int main(int argc, char **argv) {
 
     // Read in data
     if(make_toy) {
-//        dplotter.fillDataSetMC(data, 1000000);
+//        dplotter.fillDataSetMC(data, 10);
 	printf("Generating data! \n");
 //	makeToyData(data, m12, m13, signal); 
 
     // Generate toy events.
-    	for(int i = 0; i < 10000000; ++i) {
-        	m12d.setValue(donram.Uniform(4) + 0.08);
-        	m13d.setValue(donram.Uniform(4) + 0.08);
-		indal = inDalitz(m12d.getValue(), m13d.getValue(), _mD0, piZeroMass, piPlusMass, piPlusMass);
+    	for(int i = 0; i < 10000; ++i) {
+        	m12.setValue(donram.Uniform(3) + 0.08);
+        	m13.setValue(donram.Uniform(3) + 0.08);
+		indal = inDalitz(m12.getValue(), m13.getValue(), _mD0, piZeroMass, piPlusMass, piPlusMass);
 		if(indal==0){
 			--i;
 			continue;
 		}	
-
+		eventNumber.setValue(data1.getNumEvents());
 		data1.addEvent();    
-		m12val[i] = m12d.getValue();
-		m13val[i] = m13d.getValue();
-//        eventNumber.setValue(data.getNumEvents());
-//        data.addEvent();
-
-//        dalitzplot->Fill(m12.getValue(), m13.getValue(), 1.);
+		m12val[i] = m12.getValue();
+		m13val[i] = m13.getValue();
+//		std::cout << "m12val[" << i << "] = " << m12val[i] << endl;
+//		std::cout << "m13val[" << i << "] = " << m13val[i] << endl;
     	}
-//    amp3->setData(&data1);
-//    amp3->setDataSize(10000000);
-    	printf("About to set the data! \n");
+//    	printf("About to set the data! \n");
 	prodpdf.setData(&data1);
-	printf("About to get PDF values! \n");
+//	printf("About to get PDF values! \n");
     	pdfvals = prodpdf.getCompProbsAtDataPoints();
-	printf("About to find fmax! \n");
-    	for (int j = 0; j < 10000000; ++j) {
-		std::cout << pdfvals[0][j] << endl;
+//	printf("About to find fmax! \n");
+    	for (int j = 0; j < 10000; ++j) {
+//		std::cout << "pdf values = " << pdfvals[0][j] << endl;
 		if (fmax - pdfvals[0][j] < 0){
 			fmax = pdfvals[0][j];
 		}
     	} 
-/*    	for (int k = 0; k < 10000000; ++k) {
+  	std::cout << "fmax = " << fmax << endl;
+	for (int k = 0; k < 10000; ++k) {
+//		std::cout << "k = " << k << endl;
 		f = (double)rand()/RAND_MAX;
 		if (f < pdfvals[0][k]/fmax) {
 			m12.setValue(m12val[k]);
 			m13.setValue(m13val[k]);
+			dalitzp->Fill(m12.getValue(),m13.getValue(),1.);
+			eventNumber.setValue(data.getNumEvents());
 			data.addEvent();
 			ne++;
 		}
     	} 
-*/    	TCanvas foo;
-    	foo.SetCanvasSize(555,532);
-    	dalitzplot->SetStats(false);
-    	dalitzplot->Draw("colz");
+
+	printf("ne = %i \n", ne);
+    	TCanvas foo;
+  	foo.SetCanvasSize(555,532);
+    	dalitzp->SetStats(false);
+    	dalitzp->Draw("colz");
     	foo.SaveAs("dalitzplot_toy_MCjtf1.png");
 
     	} else {

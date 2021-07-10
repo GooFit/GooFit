@@ -101,7 +101,7 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
         // fpcomplex me = cResonances[i][evtNum];
         // fpcomplex me (me_real, me_imag);
         fpcomplex me = RO_CACHE(cResonances[i][evtNum]);
-
+	
         totalAmp += amp * me;
     }
 
@@ -114,7 +114,6 @@ __device__ fptype device_DalitzPlot(fptype *evt, ParameterContainer &pc) {
 
     fptype eff = callFunction(evt, pc);
     ret *= eff;
-
     return ret;
 }
 

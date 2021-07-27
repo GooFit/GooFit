@@ -53,7 +53,7 @@ struct genExp {
         : gamma(d)
         , offset(c){};
 
-    __host__ __device__ fptype operator()(unsigned int x) const {
+    __host__ __device__ auto operator()(unsigned int x) const -> fptype {
         thrust::random::default_random_engine rand(1431655765);
         thrust::uniform_real_distribution<fptype> dist(0, 1);
 
@@ -72,7 +72,7 @@ struct exp_functor {
         , gammamin(gammamin)
         , wmax(wmax) {}
 
-    __device__ fptype operator()(thrust::tuple<unsigned int, fptype, fptype *, unsigned int> t) {
+    __device__ auto operator()(thrust::tuple<unsigned int, fptype, fptype *, unsigned int> t) -> fptype {
         int evtNum  = thrust::get<0>(t);
         fptype *evt = thrust::get<2>(t) + (evtNum * thrust::get<3>(t));
         // unsigned int *indices = paramIndices + tmpparam;
@@ -106,7 +106,7 @@ First entries are the starting points in array, necessary, because number of Lin
 // __constant__ unsigned int AmpIndices_TD[100];
 
 // This function gets called by the GooFit framework to get the value of the PDF.
-__device__ fptype device_Amp4Body_TD(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_Amp4Body_TD(fptype *evt, ParameterContainer &pc) -> fptype {
     // printf("DalitzPlot evt %i zero: %i %i %f (%f, %f).\n", evtNum, numResonances, effFunctionIdx, eff, totalAmp.real,
     // totalAmp.imag);
 
@@ -527,7 +527,7 @@ __host__ void Amp4Body_TD::setDataSize(unsigned int dataSize, unsigned int evtSi
 }
 
 // this is where the actual magic happens. This function does all the calculations!
-__host__ fptype Amp4Body_TD::normalize() {
+__host__ auto Amp4Body_TD::normalize() -> fptype {
     if(cachedResSF == nullptr)
         throw GeneralError("You must call dp.setDataSize(currData.getNumEvents(), N) first!");
     // fprintf(stderr, "start normalize\n");
@@ -721,9 +721,8 @@ __host__ fptype Amp4Body_TD::normalize() {
     return ret;
 }
 
-__host__
-    std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::BoolVector_h>
-    Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) {
+__host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std::
+    tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::BoolVector_h> {
     initialize();
     copyParams();
 

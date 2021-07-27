@@ -13,7 +13,7 @@ using namespace pybind11::literals;
 
 struct HelpPrinter {
     std::string help_str;
-    std::string getHelp() const { return help_str; }
+    auto getHelp() const -> std::string { return help_str; }
     HelpPrinter(std::string input)
         : help_str(input) {}
 };

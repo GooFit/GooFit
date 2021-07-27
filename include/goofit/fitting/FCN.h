@@ -17,15 +17,15 @@ class FCN : public Minuit2::FCNBase {
     FCN(Params &params);
 
     /// Run the fit (used by Minuit2 class)
-    double operator()(const std::vector<double> &pars) const override;
+    auto operator()(const std::vector<double> &pars) const -> double override;
 
     /// produce the FCN value for the current values of the parameters
-    double operator()() const;
+    auto operator()() const -> double;
 
     /// This value is 0.5 for ll, 1 for chi2
-    double Up() const override { return 0.5; }
+    auto Up() const -> double override { return 0.5; }
 
     /// Get a pointer to the parameters
-    Params *GetParams();
+    auto GetParams() -> Params *;
 };
 } // namespace GooFit

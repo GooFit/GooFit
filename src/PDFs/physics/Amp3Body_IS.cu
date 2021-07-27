@@ -17,11 +17,11 @@ const int resonanceOffset_incoherent = 4;
 
 __device__ fpcomplex *cResonanceValues[10];
 
-__device__ inline int parIndexFromResIndex_incoherent(int resIndex) {
+__device__ inline auto parIndexFromResIndex_incoherent(int resIndex) -> int {
     return resonanceOffset_incoherent + resIndex * resonanceSize;
 }
 
-__device__ fptype device_incoherent(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_incoherent(fptype *evt, ParameterContainer &pc) -> fptype {
     // Calculates the incoherent sum over the resonances.
     int evtId   = pc.getObservable(2);
     auto evtNum = static_cast<int>(floor(0.5 + RO_CACHE(evt[evtId])));
@@ -141,7 +141,7 @@ __host__ void Amp3Body_IS::setDataSize(unsigned int dataSize, unsigned int evtSi
     setForceIntegrals();
 }
 
-__host__ fptype Amp3Body_IS::normalize() {
+__host__ auto Amp3Body_IS::normalize() -> fptype {
     recursiveSetNormalization(1.0); // Not going to normalize efficiency,
     // so set normalization factor to 1 so it doesn't get multiplied by zero.
     // Copy at this time to ensure that the SpecialCalculators, which need the efficiency,

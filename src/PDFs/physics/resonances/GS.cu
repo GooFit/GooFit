@@ -6,7 +6,7 @@
 
 namespace GooFit {
 
-__device__ fptype hFun(double s, double daug2Mass, double daug3Mass) {
+__device__ auto hFun(double s, double daug2Mass, double daug3Mass) -> fptype {
     // Last helper function
     const fptype _pi = 3.14159265359;
     double sm        = daug2Mass + daug3Mass;
@@ -16,7 +16,7 @@ __device__ fptype hFun(double s, double daug2Mass, double daug3Mass) {
     return ((2 / _pi) * (k_s / sqrt_s) * log((sqrt_s + 2 * k_s) / (sm)));
 }
 
-__device__ fptype dh_dsFun(double s, double daug2Mass, double daug3Mass) {
+__device__ auto dh_dsFun(double s, double daug2Mass, double daug3Mass) -> fptype {
     // Yet another helper function
     const fptype _pi = 3.14159265359;
     double k_s       = twoBodyCMmom(s, daug2Mass, daug3Mass);
@@ -24,7 +24,7 @@ __device__ fptype dh_dsFun(double s, double daug2Mass, double daug3Mass) {
     return hFun(s, daug2Mass, daug3Mass) * (1.0 / (8.0 * POW2(k_s)) - 1.0 / (2.0 * s)) + 1.0 / (2.0 * _pi * s);
 }
 
-__device__ fptype dFun(double s, double daug2Mass, double daug3Mass) {
+__device__ auto dFun(double s, double daug2Mass, double daug3Mass) -> fptype {
     // Helper function used in Gronau-Sakurai
     const fptype _pi = 3.14159265359;
     double sm        = daug2Mass + daug3Mass;
@@ -36,7 +36,7 @@ __device__ fptype dFun(double s, double daug2Mass, double daug3Mass) {
            - sm24 * m / (_pi * POW3(k_m2));
 }
 
-__device__ fptype fsFun(double s, double m2, double gam, double daug2Mass, double daug3Mass) {
+__device__ auto fsFun(double s, double m2, double gam, double daug2Mass, double daug3Mass) -> fptype {
     // Another G-S helper function
 
     double k_s   = twoBodyCMmom(s, daug2Mass, daug3Mass);
@@ -49,7 +49,7 @@ __device__ fptype fsFun(double s, double m2, double gam, double daug2Mass, doubl
     return f;
 }
 
-__device__ fpcomplex gouSak(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) {
+__device__ auto gouSak(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) -> fpcomplex {
     unsigned int spin         = pc.getConstant(0);
     unsigned int cyclic_index = pc.getConstant(1);
     bool norm                 = pc.getConstant(2);

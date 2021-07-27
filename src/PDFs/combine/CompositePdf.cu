@@ -3,7 +3,7 @@
 
 namespace GooFit {
 
-__device__ fptype device_Composite(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_Composite(fptype *evt, ParameterContainer &pc) -> fptype {
     // unsigned int coreFcnIndex  = RO_CACHE(indices[1]);
     // unsigned int coreParIndex  = RO_CACHE(indices[2]);
     // unsigned int shellFcnIndex = RO_CACHE(indices[3]);
@@ -52,7 +52,7 @@ __host__ CompositePdf::CompositePdf(std::string n, PdfBase *core, PdfBase *shell
     initialize();
 }
 
-__host__ fptype CompositePdf::normalize() {
+__host__ auto CompositePdf::normalize() -> fptype {
     recursiveSetNormalization(1.0);
 
     // Note: Core is not normalized in composite calculation,

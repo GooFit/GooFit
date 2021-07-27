@@ -5,7 +5,7 @@ namespace GooFit {
 
 const fptype SQRT2PI = 2.506628;
 
-__device__ fptype device_JohnsonSU(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_JohnsonSU(fptype *evt, ParameterContainer &pc) -> fptype {
     int id     = pc.getObservable(0);
     fptype x   = RO_CACHE(evt[id]);
     fptype _Jm = pc.getParameter(0);
@@ -33,7 +33,7 @@ JohnsonSUPdf::JohnsonSUPdf(std::string n, Observable _x, Variable mean, Variable
     initialize();
 }
 
-__host__ fptype JohnsonSUPdf::integrate(fptype lo, fptype hi) const {
+__host__ auto JohnsonSUPdf::integrate(fptype lo, fptype hi) const -> fptype {
     return 1.0; // Analytic integral included in device function! (Correct for minus to plus inf.)
 }
 } // namespace GooFit

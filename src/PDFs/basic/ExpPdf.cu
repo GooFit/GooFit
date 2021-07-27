@@ -4,7 +4,7 @@
 
 namespace GooFit {
 
-__device__ fptype device_Exp(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_Exp(fptype *evt, ParameterContainer &pc) -> fptype {
     int id       = pc.getObservable(0);
     fptype alpha = pc.getParameter(0);
     fptype x     = RO_CACHE(evt[id]);
@@ -16,7 +16,7 @@ __device__ fptype device_Exp(fptype *evt, ParameterContainer &pc) {
     return ret;
 }
 
-__device__ fptype device_ExpOffset(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_ExpOffset(fptype *evt, ParameterContainer &pc) -> fptype {
     int id   = pc.getObservable(0);
     fptype x = RO_CACHE(evt[id]);
     x -= pc.getParameter(0);
@@ -29,7 +29,7 @@ __device__ fptype device_ExpOffset(fptype *evt, ParameterContainer &pc) {
     return ret;
 }
 
-__device__ fptype device_ExpPoly(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_ExpPoly(fptype *evt, ParameterContainer &pc) -> fptype {
     int id   = pc.getObservable(0);
     fptype x = RO_CACHE(evt[id]);
 
@@ -47,7 +47,7 @@ __device__ fptype device_ExpPoly(fptype *evt, ParameterContainer &pc) {
     return ret;
 }
 
-__device__ fptype device_ExpPolyOffset(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_ExpPolyOffset(fptype *evt, ParameterContainer &pc) -> fptype {
     int id   = pc.getObservable(0);
     fptype x = RO_CACHE(evt[id]);
     x -= pc.getParameter(0);
@@ -111,7 +111,7 @@ __host__ ExpPdf::ExpPdf(std::string n, Observable _x, std::vector<Variable> &wei
     initialize();
 }
 
-__host__ fptype ExpPdf::integrate(fptype lo, fptype hi) const {
+__host__ auto ExpPdf::integrate(fptype lo, fptype hi) const -> fptype {
     fptype alpha = host_parameters[parametersIdx + 1];
 
     if(0 == alpha) {

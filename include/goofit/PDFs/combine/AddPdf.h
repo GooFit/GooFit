@@ -63,11 +63,11 @@ class AddPdf : public CombinePdf {
   public:
     AddPdf(std::string n, std::vector<Variable> weights, std::vector<PdfBase *> comps);
     AddPdf(std::string n, Variable frac1, PdfBase *func1, PdfBase *func2);
-    __host__ fptype normalize() override;
-    __host__ bool hasAnalyticIntegral() const override { return false; }
+    __host__ auto normalize() -> fptype override;
+    __host__ auto hasAnalyticIntegral() const -> bool override { return false; }
 
   protected:
-    __host__ double calculateNLL() override;
+    __host__ auto calculateNLL() -> double override;
 
   private:
     bool extended;

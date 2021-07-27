@@ -5,7 +5,7 @@
 namespace GooFit {
 
 // Form factors as in pdg http://pdg.lbl.gov/2012/reviews/rpp2012-rev-dalitz-analysis-formalizm.pdf
-__device__ fptype BL_PRIME(fptype z2, fptype z02, int L) {
+__device__ auto BL_PRIME(fptype z2, fptype z02, int L) -> fptype {
     if(0 == L)
         return 1.0;
     else if(1 == L)
@@ -20,7 +20,7 @@ __device__ fptype BL_PRIME(fptype z2, fptype z02, int L) {
     // Spin 3 and up not accounted for.
 }
 
-__device__ fptype BL(fptype z2, int L) {
+__device__ auto BL(fptype z2, int L) -> fptype {
     if(0 == L)
         return 1.0;
     else if(1 == L)
@@ -35,7 +35,7 @@ __device__ fptype BL(fptype z2, int L) {
     // Spin 3 and up not accounted for.
 }
 
-__device__ fptype BL2(fptype z2, int L) {
+__device__ auto BL2(fptype z2, int L) -> fptype {
     if(0 == L)
         return 1.0;
     else if(1 == L)

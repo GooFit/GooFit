@@ -85,7 +85,7 @@ void filter_arguments(std::vector<Observable> &oblist,
 // This class never exists on the GPU
 
 class PdfBase {
-    friend std::ostream &operator<<(std::ostream &, const PdfBase &);
+    friend auto operator<<(std::ostream &, const PdfBase &) -> std::ostream &;
 
   protected:
     /// Runs once at the beginning of a run. Will always be called, so useful for setup. Inside things like fits, this
@@ -148,8 +148,8 @@ class PdfBase {
 
     // Standard entry functions
 
-    virtual double calculateNLL() = 0;
-    virtual fptype normalize()    = 0;
+    virtual auto calculateNLL() -> double = 0;
+    virtual auto normalize() -> fptype    = 0;
 
     // TODO: Combine with pre_run and remove
     void initializeIndices();
@@ -157,45 +157,45 @@ class PdfBase {
     // TODO: Combine with pre_call and remove
     void copyParams();
 
-    std::string getName() const { return name; }
+    auto getName() const -> std::string { return name; }
 
-    std::vector<Observable> getObservables() const;
-    std::vector<Variable> getParameters() const;
-    Variable *getParameterByName(std::string n);
+    auto getObservables() const -> std::vector<Observable>;
+    auto getParameters() const -> std::vector<Variable>;
+    auto getParameterByName(std::string n) -> Variable *;
 
     // User level setup
 
     void setData(DataSet *data);
-    DataSet *getData() { return data_; }
+    auto getData() -> DataSet * { return data_; }
 
     virtual void setFitControl(std::shared_ptr<FitControl>) = 0;
 
     /// Override to indicate that this has an analytic integral
-    virtual bool hasAnalyticIntegral() const { return false; }
+    virtual auto hasAnalyticIntegral() const -> bool { return false; }
 
     /// Currently only 1D filling supported
     void fillMCDataSimple(size_t events, unsigned int seed = 0);
 
     /// RooFit style fitting shortcut
-    ROOT::Minuit2::FunctionMinimum fitTo(DataSet *data, int verbosity = 3);
+    auto fitTo(DataSet *data, int verbosity = 3) -> ROOT::Minuit2::FunctionMinimum;
 
     /// Even shorter fitting shortcut
-    ROOT::Minuit2::FunctionMinimum fit(int verbosity = 3);
+    auto fit(int verbosity = 3) -> ROOT::Minuit2::FunctionMinimum;
 
-    unsigned int getFunctionIndex() const { return functionIdx; }
-    unsigned int getParameterIndex() const { return parameters; }
+    auto getFunctionIndex() const -> unsigned int { return functionIdx; }
+    auto getParameterIndex() const -> unsigned int { return parameters; }
 
     void setNormalization(const fptype &v) {
         cachedNormalization                = v;
         host_normalizations[normalIdx + 1] = v;
     }
-    fptype getNormalization() const { return cachedNormalization; }
+    auto getNormalization() const -> fptype { return cachedNormalization; }
 
     /// Set a specific fineness for the integrator
     void setIntegrationFineness(int i);
 
     /// Have the parameters changed since last evaluation?
-    bool parametersChanged() const;
+    auto parametersChanged() const -> bool;
 
     void updateVariable(Variable v, fptype newValue);
     void updateParameters();
@@ -211,12 +211,12 @@ class PdfBase {
 
     void setCommonNorm(bool v = true) { commonNorm = v; };
     void setSeparateNorm(bool v = true) { separateNorm = v; };
-    bool getCommonNorm() const { return commonNorm; };
-    bool getSeparateNorm() const { return separateNorm; };
-    std::vector<PdfBase *> getComponents() { return components;};
+    auto getCommonNorm() const -> bool { return commonNorm; };
+    auto getSeparateNorm() const -> bool { return separateNorm; };
+    auto getComponents() -> std::vector<PdfBase *> { return components; };
 
     /// Get the current PDF name
-    std::string getPdfName() const { return pdf_name_; }
+    auto getPdfName() const -> std::string { return pdf_name_; }
 
   protected:
     DataSet *data_ = nullptr; //< Remember the original dataset
@@ -263,6 +263,6 @@ class PdfBase {
     std::string name;
 };
 
-std::ostream &operator<<(std::ostream &, const PdfBase &);
+auto operator<<(std::ostream &, const PdfBase &) -> std::ostream &;
 
 } // namespace GooFit

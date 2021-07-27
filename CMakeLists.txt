@@ -469,6 +469,7 @@ if(NOT TARGET ROOT::Minuit2)
   set_target_properties(Minuit2Math PROPERTIES FOLDER extern)
   target_compile_definitions(Minuit2Math PUBLIC MATHCORE_STANDALONE)
   add_library(ROOT::Minuit2 ALIAS Minuit2)
+  message(STATUS "Using standalone Minuit2")
 endif()
 target_link_libraries(GooFit_Common INTERFACE ROOT::Minuit2)
 

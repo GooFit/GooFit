@@ -3,16 +3,16 @@
 
 namespace GooFit {
 
-__device__ fptype device_truth_resolution(fptype coshterm,
-                                          fptype costerm,
-                                          fptype sinhterm,
-                                          fptype sinterm,
-                                          fptype tau,
-                                          fptype dtime,
-                                          fptype xmixing,
-                                          fptype ymixing,
-                                          fptype /*sigma*/,
-                                          ParameterContainer &pc) {
+__device__ auto device_truth_resolution(fptype coshterm,
+                                        fptype costerm,
+                                        fptype sinhterm,
+                                        fptype sinterm,
+                                        fptype tau,
+                                        fptype dtime,
+                                        fptype xmixing,
+                                        fptype ymixing,
+                                        fptype /*sigma*/,
+                                        ParameterContainer &pc) -> fptype {
     fptype ret = 0;
     dtime /= tau;
     ret += coshterm * cosh(ymixing * dtime);
@@ -26,8 +26,8 @@ __device__ fptype device_truth_resolution(fptype coshterm,
     return ret;
 }
 
-__device__ fptype device_truth_resolution_average_tau(
-    fptype A2, fptype B2, fptype ABr, fptype ABi, fptype xmixing, fptype ymixing, fptype tau) {
+__device__ auto device_truth_resolution_average_tau(
+    fptype A2, fptype B2, fptype ABr, fptype ABi, fptype xmixing, fptype ymixing, fptype tau) -> fptype {
     fptype a          = A2 - B2;
     fptype b          = 2 * ABi;
     fptype c          = A2 + B2;
@@ -55,8 +55,8 @@ TruthResolution::TruthResolution()
 
 TruthResolution::~TruthResolution() = default;
 
-fptype TruthResolution::normalization(
-    fptype di1, fptype di2, fptype di3, fptype di4, fptype tau, fptype xmixing, fptype ymixing) const {
+auto TruthResolution::normalization(
+    fptype di1, fptype di2, fptype di3, fptype di4, fptype tau, fptype xmixing, fptype ymixing) const -> fptype {
     fptype timeIntegralOne = tau / (1 - ymixing * ymixing);
     fptype timeIntegralTwo = tau / (1 + xmixing * xmixing);
     fptype timeIntegralThr = ymixing * timeIntegralOne;

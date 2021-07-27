@@ -4,6 +4,6 @@
 
 namespace GooFit {
 
-fptype cpuvoigtian(fptype x, fptype m, fptype w, fptype s);
+auto cpuvoigtian(fptype x, fptype m, fptype w, fptype s) -> fptype;
 
 } // namespace GooFit

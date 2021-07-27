@@ -9,7 +9,7 @@ SpecialResonanceCalculator::SpecialResonanceCalculator(int pIdx, unsigned int re
     : resonance_i(res_idx)
     , parameters(pIdx) {}
 
-__device__ fpcomplex SpecialResonanceCalculator::operator()(thrust::tuple<int, fptype *, int> t) const {
+__device__ auto SpecialResonanceCalculator::operator()(thrust::tuple<int, fptype *, int> t) const -> fpcomplex {
     // Calculates the BW values for a specific resonance.
     fpcomplex ret;
     fpcomplex ret_mt;

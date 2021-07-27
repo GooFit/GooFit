@@ -22,7 +22,7 @@
 namespace {
 
 template <typename T>
-bool find_in(std::vector<T> list, T item) {
+auto find_in(std::vector<T> list, T item) -> bool {
     return std::find_if(std::begin(list), std::end(list), [item](T p) { return p == item; }) != std::end(list);
 }
 } // namespace
@@ -57,7 +57,7 @@ __host__ void PdfBase::unregisterParameter(Variable var) {
     }
 }
 
-__host__ std::vector<Variable> PdfBase::getParameters() const {
+__host__ auto PdfBase::getParameters() const -> std::vector<Variable> {
     std::vector<Variable> ret;
     for(const Variable &param : parametersList)
         ret.push_back(param);
@@ -71,7 +71,7 @@ __host__ std::vector<Variable> PdfBase::getParameters() const {
     return ret;
 }
 
-__host__ Variable *PdfBase::getParameterByName(std::string n) {
+__host__ auto PdfBase::getParameterByName(std::string n) -> Variable * {
     for(Variable &p : parametersList) {
         if(p.getName() == n)
             return &p;
@@ -87,7 +87,7 @@ __host__ Variable *PdfBase::getParameterByName(std::string n) {
     return nullptr;
 }
 
-__host__ std::vector<Observable> PdfBase::getObservables() const {
+__host__ auto PdfBase::getObservables() const -> std::vector<Observable> {
     std::vector<Observable> ret;
     for(const Observable &obs : observablesList)
         ret.push_back(obs);
@@ -123,7 +123,7 @@ __host__ void PdfBase::setIntegrationFineness(int i) {
     generateNormRange();
 }
 
-__host__ bool PdfBase::parametersChanged() const {
+__host__ auto PdfBase::parametersChanged() const -> bool {
     return std::any_of(
         std::begin(parametersList), std::end(parametersList), [](const Variable &v) { return v.getChanged(); });
 }
@@ -139,7 +139,7 @@ __host__ void PdfBase::setNumPerTask(PdfBase *p, const int &c) {
         component->setNumPerTask(component, c);
 }
 
-__host__ ROOT::Minuit2::FunctionMinimum PdfBase::fitTo(DataSet *data, int verbosity) {
+__host__ auto PdfBase::fitTo(DataSet *data, int verbosity) -> ROOT::Minuit2::FunctionMinimum {
     auto old = getData();
     setData(data);
     auto funmin = fit(verbosity);
@@ -147,7 +147,7 @@ __host__ ROOT::Minuit2::FunctionMinimum PdfBase::fitTo(DataSet *data, int verbos
     return funmin;
 }
 
-__host__ ROOT::Minuit2::FunctionMinimum PdfBase::fit(int verbosity) {
+__host__ auto PdfBase::fit(int verbosity) -> ROOT::Minuit2::FunctionMinimum {
     FitManager fitter{this};
     fitter.setVerbosity(verbosity);
     return fitter.fit();
@@ -204,7 +204,7 @@ void PdfBase::fillMCDataSimple(size_t events, unsigned int seed) {
     setData(origdata);
 }
 
-std::ostream &operator<<(std::ostream &out, const PdfBase &pdf) {
+auto operator<<(std::ostream &out, const PdfBase &pdf) -> std::ostream & {
     out << "GooPdf::" << pdf.getPdfName() << "(\"" << pdf.getName() << "\") :\n";
     out << "  Device function: " << pdf.reflex_name_ << "\n";
 

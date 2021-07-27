@@ -53,17 +53,6 @@ __device__ auto dampingFactorSquareNorm(const fptype &cmmom, const int &spin, co
     return (spin == 2) ? dfsqres : dfsq;
 }
 
-__device__ fptype dampingFactorSquareNorm(const fptype &cmmom, const int &spin, const fptype &mRadius) {
-    fptype square = mRadius * mRadius * cmmom * cmmom;
-    fptype dfsq   = 1 + square; // This accounts for spin 1
-    // if (2 == spin) dfsq += 8 + 2*square + square*square; // Coefficients are 9, 3, 1.
-    fptype dfsqres = dfsq + 8 + 2 * square + square * square;
-
-    // Spin 3 and up not accounted for.
-    // return dfsq;
-    return (spin == 2) ? dfsqres : dfsq;
-}
-
 __device__ auto spinFactor(unsigned int spin,
                            fptype motherMass,
                            fptype daug1Mass,

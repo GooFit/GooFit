@@ -58,8 +58,6 @@ __device__ auto device_Tddp(fptype *evt, ParameterContainer &pc) -> fptype {
     unsigned int numResonances = pc.getConstant(0);
     //int numResonances = 1;
 
-    int bin = getDalitzBin(m12, m13);
-
     if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass) ) {
 
         unsigned int endEfficiencyFunc = pc.getConstant(3);

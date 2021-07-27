@@ -70,10 +70,6 @@ class Amp3Body : public Amp3BodyBase {
     /// Get the decay info struct
     __host__ auto getDecayInfo() -> DecayInfo3 & { return decayInfo; }
     __host__ static void resetCacheCounter() { cacheCount = 0; }
-<<<<<<< HEAD
-
-=======
->>>>>>> f1d380bfa1427985e77e61e37d6e42560a78c6d5
 
     /// Calculate fit fractions (Cache should be pre-filled)
     __host__ auto fit_fractions() -> std::vector<std::vector<fptype>>;

@@ -16,15 +16,7 @@ __device__ auto twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m) -> fptype {
     return 0.5 * sqrt(rMassSq) * kin1 * kin2;
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-__device__ fptype twoBodyCMMothermom(fptype rMassSq, fptype dm, fptype d3m) {
-=======
 __device__ auto twoBodyCMMothermom(fptype rMassSq, fptype dm, fptype d3m) -> fptype {
->>>>>>> 717cce559d9bbc09ace1755ae8936ce209643103
-=======
-__device__ auto twoBodyCMMothermom(fptype rMassSq, fptype dm, fptype d3m) -> fptype {
->>>>>>> f1d380bfa1427985e77e61e37d6e42560a78c6d5
     fptype kin1 = 1 - POW2(dm + d3m) / rMassSq;
     if(kin1 >= 0)
         kin1 = sqrt(kin1);

@@ -50,9 +50,8 @@ constexpr int resonanceOffset_DP = 4; // Offset of the first resonance into the 
 // own cache, hence the '10'. Ten threads should be enough for anyone!
 
 // NOTE: This is does not support ten instances (ten threads) of resoncances now, only one set of resonances.
-//this needs to be large enough to hold all samples
-__device__ fpcomplex *cResonances[16*20];
-
+// this needs to be large enough to hold all samples
+__device__ fpcomplex *cResonances[16 * 20];
 
 __device__ inline auto parIndexFromResIndex_DP(int resIndex) -> int {
     return resonanceOffset_DP + resIndex * resonanceSize;
@@ -68,7 +67,7 @@ __device__ auto device_DalitzPlot(fptype *evt, ParameterContainer &pc) -> fptype
     fptype m13 = RO_CACHE(evt[id_m13]);
 
     unsigned int numResonances = pc.getConstant(0);
-     unsigned int cacheToUse    = pc.getConstant(1);
+    unsigned int cacheToUse    = pc.getConstant(1);
 
     if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass)) {
         pc.incrementIndex(1, numResonances * 2, 2, num_obs, 1);
@@ -122,7 +121,7 @@ __device__ auto device_DalitzPlot(fptype *evt, ParameterContainer &pc) -> fptype
     return ret;
 }
 
-int Amp3Body::cacheCount = 0;
+int Amp3Body::cacheCount                         = 0;
 __device__ device_function_ptr ptr_to_DalitzPlot = device_DalitzPlot;
 
 __host__ Amp3Body::Amp3Body(
@@ -153,8 +152,8 @@ __host__ Amp3Body::Amp3Body(
 
     // registered to 0 position
     registerConstant(decayInfo.resonances.size());
-    
-    cacheToUse            = cacheCount++;
+
+    cacheToUse = cacheCount++;
     // registered to 1 position
     registerConstant(cacheToUse);
 
@@ -215,9 +214,8 @@ __host__ void Amp3Body::setDataSize(unsigned int dataSize, unsigned int evtSize,
         }
     }
 
-    numEntries = dataSize;
+    numEntries  = dataSize;
     eventOffset = offset;
-
 
     for(int i = 0; i < 16; i++) {
 #ifdef GOOFIT_MPI
@@ -226,9 +224,13 @@ __host__ void Amp3Body::setDataSize(unsigned int dataSize, unsigned int evtSize,
         cachedWaves[i] = new thrust::device_vector<fpcomplex>(dataSize);
 #endif
         void *dummy = thrust::raw_pointer_cast(cachedWaves[i]->data());
-        MEMCPY_TO_SYMBOL(cResonances, &dummy, sizeof(fpcomplex *),  ((16 * cacheToUse) + i) * sizeof(fpcomplex *), cudaMemcpyHostToDevice);
+        MEMCPY_TO_SYMBOL(cResonances,
+                         &dummy,
+                         sizeof(fpcomplex *),
+                         ((16 * cacheToUse) + i) * sizeof(fpcomplex *),
+                         cudaMemcpyHostToDevice);
     }
-   
+
     setForceIntegrals();
 }
 
@@ -258,10 +260,6 @@ __host__ auto Amp3Body::normalize() -> fptype {
 
     if(host_norms != current_host_norms) {
         host_norms = current_host_norms;
-<<<<<<< HEAD
-        
-=======
->>>>>>> 717cce559d9bbc09ace1755ae8936ce209643103
     }
     MEMCPY(dalitzNormRange, host_norms.data(), 6 * sizeof(fptype), cudaMemcpyHostToDevice);
     for(unsigned int i = 0; i < decayInfo.resonances.size(); ++i) {
@@ -302,8 +300,8 @@ __host__ auto Amp3Body::normalize() -> fptype {
 #else
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
-                //was this correct before?
-                //thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, dataArray, eventSize)),
+                // was this correct before?
+                // thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, dataArray, eventSize)),
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
                 strided_range<thrust::device_vector<fpcomplex>::iterator>(
                     cachedWaves[i]->begin(), cachedWaves[i]->end(), 1)
@@ -348,7 +346,6 @@ __host__ auto Amp3Body::normalize() -> fptype {
             // Notice complex conjugation
             // amplitude_j.imag(), (*(integrals[i][j])).real(), (*(integrals[i][j])).imag() );
             sumIntegral += amplitude_i * amplitude_j * (*(integrals[i][j]));
-            
         }
     }
 

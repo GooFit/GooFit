@@ -17,10 +17,14 @@ __device__ auto twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m) -> fptype {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 __device__ fptype twoBodyCMMothermom(fptype rMassSq, fptype dm, fptype d3m) {
 =======
 __device__ auto twoBodyCMMothermom(fptype rMassSq, fptype dm, fptype d3m) -> fptype {
 >>>>>>> 717cce559d9bbc09ace1755ae8936ce209643103
+=======
+__device__ auto twoBodyCMMothermom(fptype rMassSq, fptype dm, fptype d3m) -> fptype {
+>>>>>>> f1d380bfa1427985e77e61e37d6e42560a78c6d5
     fptype kin1 = 1 - POW2(dm + d3m) / rMassSq;
     if(kin1 >= 0)
         kin1 = sqrt(kin1);
@@ -48,9 +52,9 @@ __device__ auto dampingFactorSquare(const fptype &cmmom, const int &spin, const 
 
 __device__ auto dampingFactorSquareNorm(const fptype &cmmom, const int &spin, const fptype &mRadius) -> fptype {
     fptype square = mRadius * mRadius * cmmom * cmmom;
-    fptype dfsq   = 2 * square; // This accounts for spin 1
+    fptype dfsq   = 1 + square; // This accounts for spin 1
     // if (2 == spin) dfsq += 8 + 2*square + square*square; // Coefficients are 9, 3, 1.
-    fptype dfsqres = 13 * square / pow(square - 3, 2) + 9 * square * square;
+    fptype dfsqres = dfsq + 8 + 2 * square + square * square;
 
     // Spin 3 and up not accounted for.
     // return dfsq;

@@ -46,13 +46,8 @@ class Amp3Body : public Amp3BodyBase {
     // coherent sum. The caching method requires that it be done this way or the ProdPdf
     // normalization will get *really* confused and give wrong answers.
 
-<<<<<<< HEAD
-    __host__ fptype normalize() override;
-    __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 3, unsigned int offset = 0);
-=======
     __host__ auto normalize() -> fptype override;
-    __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 3);
->>>>>>> 717cce559d9bbc09ace1755ae8936ce209643103
+    __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 3, unsigned int offset = 0);
     __host__ void setForceIntegrals(bool f = true) { forceRedoIntegrals = f; }
 
     __host__ void setGenerationOffset(int off) { generation_offset = off; }
@@ -75,12 +70,16 @@ class Amp3Body : public Amp3BodyBase {
     /// Get the decay info struct
     __host__ auto getDecayInfo() -> DecayInfo3 & { return decayInfo; }
     __host__ static void resetCacheCounter() { cacheCount = 0; }
+<<<<<<< HEAD
 
+=======
+>>>>>>> f1d380bfa1427985e77e61e37d6e42560a78c6d5
 
     /// Calculate fit fractions (Cache should be pre-filled)
     __host__ auto fit_fractions() -> std::vector<std::vector<fptype>>;
 
     friend DalitzPlotter;
+
   protected:
     DecayInfo3 decayInfo;
     Observable _m12;

@@ -249,7 +249,7 @@ __host__ auto GooPdf::calculateNLL() -> double {
     if(0.0 == ret)
         GooFit::abort(__FILE__, __LINE__, getName() + " zero NLL", this);
 
-    return 2.0 * ret;
+    return ret;
 }
 
 __host__ auto GooPdf::evaluateAtPoints(Observable var) -> std::vector<fptype> {

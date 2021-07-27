@@ -165,6 +165,7 @@ class Amp3Body_TD : public Amp3BodyBase {
 
     int totalEventSize;
     int cacheToUse{0};
+    static int cacheCount;
     SpecialDalitzIntegrator ***integrators{nullptr};
     SpecialWaveCalculator **calculators{nullptr};
 

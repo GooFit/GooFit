@@ -129,6 +129,15 @@ class Amp3Body_TD : public Amp3BodyBase {
     __host__ void setD0Fraction(fptype d0fraction);
     __host__ fptype getD0Fraction();
     __host__ void setForceIntegrals(bool f = true) { forceRedoIntegrals = f; }
+    __host__ static void resetCacheCounter() { cacheCount = 0; }
+
+    /// Get the decay info struct
+    __host__ DecayInfo3t &getDecayInfo() { return decayInfo; }
+    /// Get the cached wave (device) vectors
+    __host__ const thrust::device_vector<WaveHolder_s> &getCachedWaveNoCopy(size_t i) const { return *(cachedWaves[i]); }
+    /// Calculate fit fractions (Cache should be pre-filled)
+    __host__ std::vector<std::vector<fptype>> getFractions() ;
+
 
     __host__ void populateArrays() override;
 

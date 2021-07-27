@@ -16,7 +16,7 @@
 
 namespace GooFit {
 
-__device__ fpcomplex kMatrixRes(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) {
+__device__ auto kMatrixRes(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) -> fpcomplex {
     // kMatrix amplitude as described in https://arxiv.org/pdf/0804.2089.pdf, compared with AmpGen implementation
 
     unsigned int Mpair = pc.getConstant(0);
@@ -37,20 +37,20 @@ __device__ fpcomplex kMatrixRes(fptype m12, fptype m13, fptype m23, ParameterCon
     fpcomplex beta[NCHANNELS];
     fpcomplex f_prod[NCHANNELS];
 
-    for(int i = 0; i < NCHANNELS; i++) {
-        fscat[i] = pc.getParameter(idx++);
+    for(double &i : fscat) {
+        i = pc.getParameter(idx++);
     }
 
     // in the next two sets of parameters the index is used two times in the same line, therefore it must be incremented
     // two times afterwards
-    for(int i = 0; i < NCHANNELS; i++) {
-        beta[i] = fpcomplex(pc.getParameter(idx), pc.getParameter(idx + 1));
+    for(auto &i : beta) {
+        i = fpcomplex(pc.getParameter(idx), pc.getParameter(idx + 1));
         idx++;
         idx++;
     }
 
-    for(int i = 0; i < NCHANNELS; i++) {
-        f_prod[i] = fpcomplex(pc.getParameter(idx), pc.getParameter(idx + 1));
+    for(auto &i : f_prod) {
+        i = fpcomplex(pc.getParameter(idx), pc.getParameter(idx + 1));
         idx++;
         idx++;
     }
@@ -88,7 +88,6 @@ __device__ fpcomplex kMatrixRes(fptype m12, fptype m13, fptype m23, ParameterCon
 
     fpcomplex F[NCHANNELS][NCHANNELS];
     getPropagator(kMatrix, phaseSpace, F, adlerTerm);
-
 
     // calculates output
     pc.incrementIndex(1, idx, 1, 0, 1);

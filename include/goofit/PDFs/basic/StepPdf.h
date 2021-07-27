@@ -24,7 +24,7 @@ threshold \f$x_0\f$.
 class StepPdf : public GooPdf {
   public:
     StepPdf(std::string n, Observable _x, Variable x0);
-    __host__ fptype integrate(fptype lo, fptype hi) const override;
-    __host__ bool hasAnalyticIntegral() const override { return true; }
+    __host__ auto integrate(fptype lo, fptype hi) const -> fptype override;
+    __host__ auto hasAnalyticIntegral() const -> bool override { return true; }
 };
 } // namespace GooFit

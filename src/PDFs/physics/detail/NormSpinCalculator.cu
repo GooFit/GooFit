@@ -8,9 +8,9 @@ namespace GooFit {
 
 NormSpinCalculator::NormSpinCalculator() = default;
 
-__device__ fptype NormSpinCalculator::operator()(
+__device__ auto NormSpinCalculator::operator()(
     thrust::tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t)
-    const {
+    const -> fptype {
     fptype m12   = (thrust::get<0>(t));
     fptype m34   = (thrust::get<1>(t));
     fptype cos12 = (thrust::get<2>(t));

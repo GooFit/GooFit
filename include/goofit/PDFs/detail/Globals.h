@@ -24,7 +24,7 @@ extern __device__ fptype *d_normalizations;
 extern __device__ void **d_function_table;
 
 __host__ void cleanup();
-__device__ int dev_powi(int base, int exp); // Used in SmoothHistogramPdf and InterHistPdf
+__device__ auto dev_powi(int base, int exp) -> int; // Used in SmoothHistogramPdf and InterHistPdf
 
 // a couple constants
 extern __constant__ fptype c_motherMass;

@@ -6,7 +6,7 @@
 
 namespace GooFit {
 
-__device__ fptype device_ScaledGaussian(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_ScaledGaussian(fptype *evt, ParameterContainer &pc) -> fptype {
     int id = pc.getObservable(0);
 
     fptype x     = RO_CACHE(evt[id]);

@@ -13,7 +13,7 @@
 
 namespace GooFit {
 
-__device__ fptype device_AddPdfs(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_AddPdfs(fptype *evt, ParameterContainer &pc) -> fptype {
     int numParameters  = pc.getNumParameters();
     fptype ret         = 0;
     fptype totalWeight = 0;
@@ -51,7 +51,7 @@ __device__ fptype device_AddPdfs(fptype *evt, ParameterContainer &pc) {
     return ret;
 }
 
-__device__ fptype device_AddPdfsExt(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_AddPdfsExt(fptype *evt, ParameterContainer &pc) -> fptype {
     int numParameters  = pc.getNumParameters();
     fptype ret         = 0;
     fptype totalWeight = 0;
@@ -134,7 +134,7 @@ AddPdf::AddPdf(std::string n, Variable frac1, PdfBase *func1, PdfBase *func2)
     initialize();
 }
 
-__host__ fptype AddPdf::normalize() {
+__host__ auto AddPdf::normalize() -> fptype {
     // if (cpuDebug & 1) std::cout << "Normalizing AddPdf " << getName() << std::endl;
 
     fptype ret         = 0;
@@ -179,7 +179,7 @@ __host__ fptype AddPdf::normalize() {
     return ret;
 }
 
-__host__ double AddPdf::calculateNLL() {
+__host__ auto AddPdf::calculateNLL() -> double {
     double ret = GooPdf::calculateNLL() / 2.0;
 
     if(extended) {

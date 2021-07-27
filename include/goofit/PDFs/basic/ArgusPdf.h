@@ -31,8 +31,8 @@ class ArgusPdf : public GooPdf {
   public:
     ArgusPdf(std::string n, Observable _x, Variable m, Variable s, bool upper);
     ArgusPdf(std::string n, Observable _x, Variable m, Variable s, bool upper, Variable power);
-    __host__ bool hasAnalyticIntegral() const override { return false; }
-    __host__ fptype integrate(fptype lo, fptype hi) const override;
+    __host__ auto hasAnalyticIntegral() const -> bool override { return false; }
+    __host__ auto integrate(fptype lo, fptype hi) const -> fptype override;
 };
 
 } // namespace GooFit

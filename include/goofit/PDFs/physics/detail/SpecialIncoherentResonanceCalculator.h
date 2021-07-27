@@ -13,7 +13,7 @@ class SpecialIncoherentResonanceCalculator
     SpecialIncoherentResonanceCalculator(int pIdx, unsigned int res_idx);
     void setIncoherentIndex(const unsigned int idx) { incoherentSum = idx; }
     void setResonanceIndex(const unsigned int res) { resonance_i = res; }
-    __device__ fpcomplex operator()(thrust::tuple<int, fptype *, int> t) const;
+    __device__ auto operator()(thrust::tuple<int, fptype *, int> t) const -> fpcomplex;
 
   private:
     unsigned int incoherentSum;

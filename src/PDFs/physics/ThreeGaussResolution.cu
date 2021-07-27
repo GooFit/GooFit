@@ -60,16 +60,16 @@ __device__ void gaussian(fptype &_P1,
     _P3          = _NormG * 0.5 * (_Ipy - _Imy);
 }
 
-__device__ fptype device_threegauss_resolution(fptype coshterm,
-                                               fptype costerm,
-                                               fptype sinhterm,
-                                               fptype sinterm,
-                                               fptype tau,
-                                               fptype dtime,
-                                               fptype xmixing,
-                                               fptype ymixing,
-                                               fptype sigma,
-                                               ParameterContainer &pc) {
+__device__ auto device_threegauss_resolution(fptype coshterm,
+                                             fptype costerm,
+                                             fptype sinhterm,
+                                             fptype sinterm,
+                                             fptype tau,
+                                             fptype dtime,
+                                             fptype xmixing,
+                                             fptype ymixing,
+                                             fptype sigma,
+                                             ParameterContainer &pc) -> fptype {
     fptype coreFraction    = pc.getParameter(0);
     fptype tailFraction    = pc.getParameter(1);
     //fptype tailFraction    = (1 - coreFraction) * pc.getParameter(1);
@@ -127,8 +127,8 @@ ThreeGaussResolution::ThreeGaussResolution(
 }
 ThreeGaussResolution::~ThreeGaussResolution() = default;
 
-fptype ThreeGaussResolution::normalization(
-    fptype di1, fptype di2, fptype di3, fptype di4, fptype tau, fptype xmixing, fptype ymixing) const {
+auto ThreeGaussResolution::normalization(
+    fptype di1, fptype di2, fptype di3, fptype di4, fptype tau, fptype xmixing, fptype ymixing) const -> fptype {
     // NB! In thesis notation, A_1 = (A + B), A_2 = (A - B).
     // Here di1 = |A^2|, di2 = |B^2|, di3,4 = Re,Im(AB^*).
     // Distinction between numerical subscribts and A,B is crucial

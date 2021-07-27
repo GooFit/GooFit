@@ -39,7 +39,7 @@ class Lineshape : public AmpComponent {
   public:
     ~Lineshape() override = default;
 
-    bool operator==(const Lineshape &L) const { return L.getName() == getName(); }
+    auto operator==(const Lineshape &L) const -> bool { return L.getName() == getName(); }
 };
 
 } // namespace GooFit

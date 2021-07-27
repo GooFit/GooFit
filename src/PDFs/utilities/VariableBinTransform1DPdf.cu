@@ -5,7 +5,7 @@ using namespace std;
 
 namespace GooFit {
 
-__device__ fptype device_VarBinTransform1D(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_VarBinTransform1D(fptype *evt, ParameterContainer &pc) -> fptype {
     // Index structure: nP lim1 lim2 ...
     int ret = 0;
     // int previousSize = 1;

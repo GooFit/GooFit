@@ -458,7 +458,6 @@ int main(int argc, char **argv) {
 
     // Add nice tool for making data or plotting
     DalitzPlotter dplotter{&prodpdf, signal};
-i
     // Read in data
     if(make_toy) {
 	

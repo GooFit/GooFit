@@ -480,7 +480,7 @@ int main(int argc, char **argv) {
     if(make_toy) {
 //        dplotter.fillDataSetMC(data, 10);
 	printf("Generating data! \n");
-//	makeToyData(data, m12, m13, signal); 
+	makeToyData(data, m12, m13, signal); 
 
     // Generate toy events.
     	for(int i = 0; i < 10000; ++i) {

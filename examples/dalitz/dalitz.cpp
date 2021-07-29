@@ -352,22 +352,22 @@ Amp3Body *makeSignalPdf(Observable m12, Observable m13, EventNumber eventNumber,
         fixAmps ? Variable("nonr_amp_real", 0.5595 * (-1)) : Variable("nonr_amp_real", 0.5595 * (-1), 0.001, 0, 0),
         fixAmps ? Variable("nonr_amp_imag", -0.108761 * (-1)) : Variable("nonr_amp_imag", -0.108761 * (-1), 0.1, 0, 0));
 
-    dtop0pp.resonances.push_back(nonr); 
+//    dtop0pp.resonances.push_back(nonr); 
     dtop0pp.resonances.push_back(rhop); 
-    dtop0pp.resonances.push_back(rho0); 
-    dtop0pp.resonances.push_back(rhom); 
-    dtop0pp.resonances.push_back(rhop_1450); 
-    dtop0pp.resonances.push_back(rho0_1450); 
-    dtop0pp.resonances.push_back(rhom_1450); 
-    dtop0pp.resonances.push_back(rhop_1700); 
-    dtop0pp.resonances.push_back(rho0_1700); 
-    dtop0pp.resonances.push_back(rhom_1700); 
-    dtop0pp.resonances.push_back(f0_980); 
-    dtop0pp.resonances.push_back(f0_1370); 
-    dtop0pp.resonances.push_back(f0_1500); 
-    dtop0pp.resonances.push_back(f0_1710); 
-    dtop0pp.resonances.push_back(f2_1270); 
-    dtop0pp.resonances.push_back(f0_600); 
+//    dtop0pp.resonances.push_back(rho0); 
+//    dtop0pp.resonances.push_back(rhom); 
+//    dtop0pp.resonances.push_back(rhop_1450); 
+//    dtop0pp.resonances.push_back(rho0_1450); 
+//    dtop0pp.resonances.push_back(rhom_1450); 
+//    dtop0pp.resonances.push_back(rhop_1700); 
+//    dtop0pp.resonances.push_back(rho0_1700); 
+//    dtop0pp.resonances.push_back(rhom_1700); 
+//    dtop0pp.resonances.push_back(f0_980); 
+//    dtop0pp.resonances.push_back(f0_1370); 
+//    dtop0pp.resonances.push_back(f0_1500); 
+//    dtop0pp.resonances.push_back(f0_1710); 
+//    dtop0pp.resonances.push_back(f2_1270); 
+//    dtop0pp.resonances.push_back(f0_600); 
 
     bool fitMasses = false;
 
@@ -490,19 +490,24 @@ int main(int argc, char **argv) {
 		if(indal==0){
 			--i;
 			continue;
-		}	
+		}
+                	
 		eventNumber.setValue(data1.getNumEvents());
 		data1.addEvent();    
 		m12val[i] = m12.getValue();
 		m13val[i] = m13.getValue();
-//		std::cout << "m12val[" << i << "] = " << m12val[i] << endl;
-//		std::cout << "m13val[" << i << "] = " << m13val[i] << endl;
+		//std::cout << "data1.getNumEvents() = " << data1.getNumEvents() << endl;
+		//std::cout << "m12val[" << i << "] = " << m12val[i] << endl;
+		//std::cout << "m13val[" << i << "] = " << m13val[i] << endl;
     	}
-//    	printf("About to set the data! \n");
+    	printf("About to set the data! \n");
 	prodpdf.setData(&data1);
-//	printf("About to get PDF values! \n");
+	printf("number of events in data1 = %i\n", data1.getNumEvents());
+	printf("number of events in prodpdf = %i\n", prodpdf.getData()->getNumEvents());
+        signal->setDataSize(data1.getNumEvents(), 6);
+	printf("About to get PDF values! \n");
     	pdfvals = prodpdf.getCompProbsAtDataPoints();
-//	printf("About to find fmax! \n");
+	printf("About to find fmax! \n");
     	for (int j = 0; j < 10000; ++j) {
 //		std::cout << "pdf values = " << pdfvals[0][j] << endl;
 		if (fmax - pdfvals[0][j] < 0){

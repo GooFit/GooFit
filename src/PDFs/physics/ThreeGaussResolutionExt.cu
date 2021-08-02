@@ -201,43 +201,54 @@ __device__ fptype device_threegauss_resolutionext(fptype coshterm,
     fptype tailScaleFactor = pc.getParameter(5);
     fptype outlBias        = pc.getParameter(6);
     fptype outlScaleFactor = pc.getParameter(7);
-    fptype selbias         = pc.getParameter(8);
+    fptype selbias_low         = pc.getParameter(8);
+    fptype selbias_high         = pc.getParameter(9);
+    fptype Tthreshold  = pc.getParameter(10);
+    fptype constantC = pc.getParameter(11);
 
-    fptype cp1 = 0;
-    fptype cp2 = 0;
-    fptype cp3 = 0;
-    fptype cp4 = 0;
-    fptype tp1 = 0;
-    fptype tp2 = 0;
-    fptype tp3 = 0;
-    fptype tp4 = 0;
-    fptype op1 = 0;
-    fptype op2 = 0;
-    fptype op3 = 0;
-    fptype op4 = 0;
+    fptype cp1_low = 0;
+    fptype cp2_low = 0;
+    fptype cp3_low = 0;
+    fptype cp4_low = 0;
+    fptype tp1_low = 0;
+    fptype tp2_low = 0;
+    fptype tp3_low = 0;
+    fptype tp4_low = 0;
+    fptype op1_low = 0;
+    fptype op2_low = 0;
+    fptype op3_low = 0;
+    fptype op4_low = 0;
 
-    //for the moment, hardcode threshold and constants
-    fptype Tthreshold = 0.30017307;
-    fptype constantC =  1.56960984;
-    fptype alow = 0.03474107;
-    fptype ahigh = 0.28254782;
+
+    fptype cp1_high = 0;
+    fptype cp2_high = 0;
+    fptype cp3_high = 0;
+    fptype cp4_high = 0;
+    fptype tp1_high = 0;
+    fptype tp2_high = 0;
+    fptype tp3_high = 0;
+    fptype tp4_high = 0;
+    fptype op1_high = 0;
+    fptype op2_high = 0;
+    fptype op3_high = 0;
+    fptype op4_high = 0;
+
       
-    if (dtime < Tthreshold) {
-        gaussian_low(cp1, cp2, cp3, cp4, tau, dtime - coreBias * sigma, xmixing, ymixing, coreScaleFactor * sigma, alow, Tthreshold, constantC);
-        gaussian_low(tp1, tp2, tp3, tp4, tau, dtime - tailBias * sigma, xmixing, ymixing, tailScaleFactor * sigma, alow, Tthreshold, constantC);
-        gaussian_low(op1, op2, op3, op4, tau, dtime - outlBias * sigma, xmixing, ymixing, outlScaleFactor * sigma, alow, Tthreshold, constantC);
-    }
-    else {
-        gaussian_high(cp1, cp2, cp3, cp4, tau, dtime - coreBias * sigma, xmixing, ymixing, coreScaleFactor * sigma, ahigh, Tthreshold, constantC);
-        gaussian_high(tp1, tp2, tp3, tp4, tau, dtime - tailBias * sigma, xmixing, ymixing, tailScaleFactor * sigma, ahigh, Tthreshold, constantC);
-        gaussian_high(op1, op2, op3, op4, tau, dtime - outlBias * sigma, xmixing, ymixing, outlScaleFactor * sigma, ahigh, Tthreshold, constantC);
-    }
+
+    gaussian_low(cp1_low, cp2_low, cp3_low, cp4_low, tau, dtime - coreBias * sigma, xmixing, ymixing, coreScaleFactor * sigma, selbias_low, Tthreshold, constantC);
+    gaussian_low(tp1_low, tp2_low, tp3_low, tp4_low, tau, dtime - tailBias * sigma, xmixing, ymixing, tailScaleFactor * sigma, selbias_low, Tthreshold, constantC);
+    gaussian_low(op1_low, op2_low, op3_low, op4_low, tau, dtime - outlBias * sigma, xmixing, ymixing, outlScaleFactor * sigma, selbias_low, Tthreshold, constantC);
+
+    gaussian_high(cp1_high, cp2_high, cp3_high, cp4_high, tau, dtime - coreBias * sigma, xmixing, ymixing, coreScaleFactor * sigma, selbias_high, Tthreshold, constantC);
+    gaussian_high(tp1_high, tp2_high, tp3_high, tp4_high, tau, dtime - tailBias * sigma, xmixing, ymixing, tailScaleFactor * sigma, selbias_high, Tthreshold, constantC);
+    gaussian_high(op1_high, op2_high, op3_high, op4_high, tau, dtime - outlBias * sigma, xmixing, ymixing, outlScaleFactor * sigma, selbias_high, Tthreshold, constantC);
 
 
-    fptype _P1 = coreFraction * cp1 + tailFraction * tp1 + outlFraction * op1;
-    fptype _P2 = coreFraction * cp2 + tailFraction * tp2 + outlFraction * op2;
-    fptype _P3 = coreFraction * cp3 + tailFraction * tp3 + outlFraction * op3;
-    fptype _P4 = coreFraction * cp4 + tailFraction * tp4 + outlFraction * op4;
+
+    fptype _P1 = coreFraction * (cp1_low+cp1_high) + tailFraction * (tp1_low+tp1_high) + outlFraction * (op1_low+op1_high);
+    fptype _P2 = coreFraction * (cp2_low+cp2_high) + tailFraction * (tp2_low+tp2_high) + outlFraction * (op2_low+op2_high);
+    fptype _P3 = coreFraction * (cp3_low+cp3_high) + tailFraction * (tp3_low+tp3_high) + outlFraction * (op3_low+op3_high);
+    fptype _P4 = coreFraction * (cp4_low+cp4_high) + tailFraction * (tp4_low+tp4_high) + outlFraction * (op4_low+op4_high);
 
     fptype ret = 0;
     ret += coshterm * _P1;
@@ -254,9 +265,9 @@ __device__ fptype device_threegauss_resolutionext(fptype coshterm,
 __device__ device_resfunction_ptr ptr_to_threegaussext = device_threegauss_resolutionext;
 
 ThreeGaussResolutionExt::ThreeGaussResolutionExt(
-    Variable cf, Variable tf, Variable cb, Variable cs, Variable tb, Variable ts, Variable ob, Variable os, Variable sb)
-    : MixingTimeResolution("ThreeGaussResolutionExt", cf, tf, cb, cs, tb, ts, ob, os, sb)
-    , selectionBias(sb) {
+    Variable cf, Variable tf, Variable cb, Variable cs, Variable tb, Variable ts, Variable ob, Variable os, Variable sb_low, Variable sb_high, Variable Tthres, Variable constantC)
+    : MixingTimeResolution("ThreeGaussResolutionExt", cf, tf, cb, cs, tb, ts, ob, os, sb_low, sb_high, Tthres, constantC)
+    , selectionBias_low(sb_low), selectionBias_high(sb_high), mTthreshold(Tthres), mConstantC(constantC) {
     initIndex();
 
     registerFunction("ptr_to_threegaussext", ptr_to_threegaussext);
@@ -265,6 +276,7 @@ ThreeGaussResolutionExt::~ThreeGaussResolutionExt() = default;
 
 fptype ThreeGaussResolutionExt::normalization(
     fptype di1, fptype di2, fptype di3, fptype di4, fptype tau, fptype xmixing, fptype ymixing) const {
+    
     // NB! In thesis notation, A_1 = (A + B), A_2 = (A - B).
     // Here di1 = |A^2|, di2 = |B^2|, di3,4 = Re,Im(AB^*).
     // Distinction between numerical subscribts and A,B is crucial
@@ -275,15 +287,47 @@ fptype ThreeGaussResolutionExt::normalization(
     // fptype timeIntegralThr = ymixing * timeIntegralOne;
     // fptype timeIntegralFou = xmixing * timeIntegralTwo;
 
-    fptype selBias = selectionBias.getValue();
-    fptype timeIntegralOne
-        = (selBias + 1 / tau) / (selBias * selBias + 2 * selBias / tau + (1 - ymixing * ymixing) / (tau * tau));
-    fptype timeIntegralTwo
-        = (selBias + 1 / tau) / (selBias * selBias + 2 * selBias / tau + (1 + xmixing * xmixing) / (tau * tau));
-    fptype timeIntegralThr
-        = (ymixing / tau) / (selBias * selBias + 2 * selBias / tau + (1 - ymixing * ymixing) / (tau * tau));
-    fptype timeIntegralFou
-        = (xmixing / tau) / (selBias * selBias + 2 * selBias / tau + (1 + xmixing * xmixing) / (tau * tau));
+    fptype selBias_low = selectionBias_low.getValue();
+    fptype selBias_high = selectionBias_high.getValue();
+    fptype Tthres = mTthreshold.getValue();
+    fptype C = mConstantC.getValue();
+    fptype preConst_low = C * exp(selBias_low * Tthres);
+    fptype preConst_high = C * exp(selBias_high * Tthres);
+
+    fptype Gamma = 1./tau; 
+    fptype gammaPlusBias = Gamma + selBias_low;
+
+    fptype timeIntegralOne_low = 0.5*preConst_low * (  1./(ymixing*Gamma - Gamma - selBias_low)  * (   exp( Tthres * (ymixing*Gamma - Gamma - selBias_low) )  - 1  )  +
+        1./(-ymixing*Gamma - Gamma -selBias_low)  * (   exp( Tthres * (-ymixing*Gamma - Gamma - selBias_low) )  - 1  )  );
+
+    fptype timeIntegralThr_low = 0.5*preConst_low * (  1./(ymixing*Gamma - Gamma - selBias_low)  * (   exp( Tthres * (ymixing*Gamma - Gamma - selBias_low) )  - 1  )  -
+        1./(-ymixing*Gamma - Gamma -selBias_low)  * (   exp( Tthres * (-ymixing*Gamma - Gamma - selBias_low) )  - 1  )  );
+
+    fptype timeIntegralTwo_low = preConst_low * (exp(-gammaPlusBias * Tthres) / (gammaPlusBias*gammaPlusBias + xmixing*xmixing *Gamma*Gamma) * ( -gammaPlusBias * cos(xmixing *Gamma * Tthres)  + xmixing*Gamma*sin(xmixing*Gamma*Tthres)) - (-gammaPlusBias)/(gammaPlusBias*gammaPlusBias + xmixing*xmixing *Gamma*Gamma) );
+
+    fptype timeIntegralFour_low = preConst_low * (exp(-gammaPlusBias * Tthres) / (gammaPlusBias*gammaPlusBias + xmixing*xmixing *Gamma*Gamma) * ( -gammaPlusBias * sin(xmixing *Gamma * Tthres)  - xmixing*Gamma*cos(xmixing*Gamma*Tthres)) - (-xmixing*Gamma)/(gammaPlusBias*gammaPlusBias + xmixing*xmixing *Gamma*Gamma) );
+
+
+    gammaPlusBias = Gamma + selBias_high;
+
+    fptype timeIntegralOne_high = 0.5*preConst_high * (  -1./(ymixing*Gamma - Gamma - selBias_high)  * (   exp( Tthres * (ymixing*Gamma - Gamma - selBias_high) )   )  -
+        1./(-ymixing*Gamma - Gamma -selBias_high)  * (   exp( Tthres * (-ymixing*Gamma - Gamma - selBias_high) )   )  );
+
+    fptype timeIntegralThr_high = 0.5*preConst_high * (  -1./(ymixing*Gamma - Gamma - selBias_high)  * (   exp( Tthres * (ymixing*Gamma - Gamma - selBias_high) )    )  +
+        1./(-ymixing*Gamma - Gamma -selBias_high)  * (   exp( Tthres * (-ymixing*Gamma - Gamma - selBias_high) )   )  );
+
+
+    fptype timeIntegralTwo_high = preConst_high * (-exp(-gammaPlusBias * Tthres) / (gammaPlusBias*gammaPlusBias + xmixing*xmixing *Gamma*Gamma) * ( -gammaPlusBias * cos(xmixing *Gamma * Tthres)  + xmixing*Gamma*sin(xmixing*Gamma*Tthres))  );
+
+    fptype timeIntegralFour_high = preConst_high * (-exp(-gammaPlusBias * Tthres) / (gammaPlusBias*gammaPlusBias + xmixing*xmixing *Gamma*Gamma) * ( -gammaPlusBias * sin(xmixing *Gamma * Tthres)  - xmixing*Gamma*cos(xmixing*Gamma*Tthres))  );
+
+
+
+
+    fptype timeIntegralOne =  timeIntegralOne_low + timeIntegralOne_high;
+    fptype timeIntegralTwo = timeIntegralTwo_low + timeIntegralTwo_high;
+    fptype timeIntegralThr = timeIntegralThr_low + timeIntegralThr_high;
+    fptype timeIntegralFou = timeIntegralFour_low + timeIntegralFour_high;
 
     fptype ret = timeIntegralOne * (di1 + di2); // ~ |A|^2 + |B|^2
     ret += timeIntegralTwo * (di1 - di2);       // ~ Re(A_1 A_2^*)

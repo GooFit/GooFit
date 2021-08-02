@@ -10,7 +10,7 @@ using namespace GooFit;
 
 void init_ThreeGaussResolutionExt(py::module &m) {
     py::class_<ThreeGaussResolutionExt, MixingTimeResolution>(m, "ThreeGaussResolutionExt")
-        .def(py::init<Variable, Variable, Variable, Variable, Variable, Variable, Variable, Variable, Variable>(),
+        .def(py::init<Variable, Variable, Variable, Variable, Variable, Variable, Variable, Variable, Variable, Variable, Variable, Variable>(),
              "cf"_a,
              "tf"_a,
              "cb"_a,
@@ -19,7 +19,9 @@ void init_ThreeGaussResolutionExt(py::module &m) {
              "ts"_a,
              "ob"_a,
              "os"_a,
-             "sb"_a)
-
+             "sb_low"_a,
+             "sb_high"_a,
+             "Tthres"_a,
+             "constantC"_a)
         .def_static("help", []() { return HelpPrinter(ThreeGaussResolutionExt_docs); });
 }

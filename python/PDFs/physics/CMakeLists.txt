@@ -17,6 +17,7 @@ goofit_add_library(
   ResonancePdf.cpp
   SpinFactors.cpp
   ThreeGaussResolution.cpp
+  ThreeGaussResolutionExt.cpp
   TruthResolution.cpp
   SquareDalitzEffPdf.cpp)
 
@@ -33,5 +34,6 @@ goofit_add_python_docs(_Physics PDFs/physics/DalitzVetoPdf.h)
 goofit_add_python_docs(_Physics PDFs/physics/MixingTimeResolution.h)
 goofit_add_python_docs(_Physics PDFs/physics/resonances/Resonance.h)
 goofit_add_python_docs(_Physics PDFs/physics/ThreeGaussResolution.h)
+goofit_add_python_docs(_Physics PDFs/physics/ThreeGaussResolutionExt.h)
 goofit_add_python_docs(_Physics PDFs/physics/TruthResolution.h)
 goofit_add_python_docs(_Physics PDFs/physics/SquareDalitzEffPdf.h)

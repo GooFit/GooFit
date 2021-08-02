@@ -64,6 +64,7 @@ void init_MixingTimeResolution(py::module &);
 void init_ResonancePdf(py::module &);
 void init_SpinFactors(py::module &);
 void init_ThreeGaussResolution(py::module &);
+void init_ThreeGaussResolutionExt(py::module &);
 void init_TruthResolution(py::module &);
 void init_SquareDalitzEffPdf(py::module &);
 
@@ -136,6 +137,7 @@ PYBIND11_MODULE(_goofit, m) {
     init_ResonancePdf(m);
     init_SpinFactors(m);
     init_ThreeGaussResolution(m);
+    init_ThreeGaussResolutionExt(m);
     init_TruthResolution(m);
     init_SquareDalitzEffPdf(m);
 

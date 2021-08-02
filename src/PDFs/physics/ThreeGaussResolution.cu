@@ -150,9 +150,9 @@ auto ThreeGaussResolution::normalization(
         = (xmixing / tau) / (selBias * selBias + 2 * selBias / tau + (1 + xmixing * xmixing) / (tau * tau));
 
     fptype ret = timeIntegralOne * (di1 + di2); // ~ |A|^2 + |B|^2
-    ret += timeIntegralTwo * (di1 - di2);       // ~ Re(A_1 A_2^*)
-    ret -= 2 * timeIntegralThr * di3;           // ~ |A|^2 - |B|^2
-    ret -= 2 * timeIntegralFou * di4;           // ~ Im(A_1 A_2^*)
+    ret += timeIntegralTwo * (di1 - di2);       // ~ |A|^2 - |B|^2
+    ret -= 2 * timeIntegralThr * di3;           // ~ Re(A B^*)
+    ret -= 2 * timeIntegralFou * di4;           // ~ Im(A B^*)
 
     return ret;
 }

@@ -14,6 +14,21 @@
 
 namespace GooFit {
 
+// Functor used for fit fraction sum
+struct CoefSumFunctor {
+    fpcomplex coef_i;
+    fpcomplex coef_j;
+
+    CoefSumFunctor(fpcomplex coef_i, fpcomplex coef_j)
+        : coef_i(coef_i)
+        , coef_j(coef_j) {}
+
+    __device__ fptype operator()(thrust::tuple<fpcomplex, fpcomplex> val) {
+        return (coef_i * thrust::conj<fptype>(coef_j) * thrust::get<0>(val) * thrust::conj<fptype>(thrust::get<1>(val)))
+            .real();
+    }
+};
+
 const int resonanceOffset = 10; // Offset of the first resonance into the parameter index array
 // Offset is number of parameters, constant index, indices for tau, xmix, and ymix, index
 // of resolution function, and finally number of resonances (not calculable from nP
@@ -899,6 +914,157 @@ __host__ fptype Amp3Body_TD::dummy_normalize() {
 
     return ret;
 }
+
+__host__ std::vector<std::vector<fptype>> Amp3Body_TD::getFractions()  {
+    recursiveSetNormalization(1.0); // Not going to normalize efficiency,
+    // so set normalization factor to 1 so it doesn't get multiplied by zero.
+    // Copy at this time to ensure that the SpecialWaveCalculators, which need the efficiency,
+    // don't get zeroes through multiplying by the normFactor.
+
+    host_normalizations.sync(d_normalizations);
+
+    int totalBins = _m12.getNumBins() * _m13.getNumBins();
+
+    if(!dalitzNormRange) {
+        gooMalloc((void **)&dalitzNormRange, 6 * sizeof(fptype));
+
+        auto *host_norms = new fptype[6];
+        host_norms[0]    = _m12.getLowerLimit();
+        host_norms[1]    = _m12.getUpperLimit();
+        host_norms[2]    = _m12.getNumBins();
+        host_norms[3]    = _m13.getLowerLimit();
+        host_norms[4]    = _m13.getUpperLimit();
+        host_norms[5]    = _m13.getNumBins();
+        MEMCPY(dalitzNormRange, host_norms, 6 * sizeof(fptype), cudaMemcpyHostToDevice);
+        delete[] host_norms;
+    }
+
+    std::vector<fptype> fracLists;
+    fracLists.clear();
+    
+    for(unsigned int i = 0; i < decayInfo.resonances.size(); ++i) {
+        redoIntegral[i] = forceRedoIntegrals;
+
+        if(!(decayInfo.resonances[i]->parametersChanged()))
+            continue;
+
+        redoIntegral[i] = true;
+    }
+
+    forceRedoIntegrals = false;
+
+    // Only do this bit if masses or widths have changed.
+    thrust::constant_iterator<fptype *> arrayAddress(dalitzNormRange);
+    thrust::counting_iterator<int> binIndex(0);
+
+    // NB, SpecialWaveCalculator assumes that fit is unbinned!
+    // And it needs to know the total event size, not just observables
+    // for this particular PDF component.
+    thrust::constant_iterator<fptype *> dataArray(dev_event_array);
+    thrust::constant_iterator<int> eventSize(totalEventSize);
+    thrust::counting_iterator<int> eventIndex(0);
+
+    static int normCall = 0;
+    normCall++;
+
+    for(int i = 0; i < decayInfo.resonances.size(); ++i) {
+        // printf("calculate i=%i, res_i=%i\n", i, decayInfo->resonances[i]->getFunctionIndex());
+        calculators[i]->setTddpIndex(getFunctionIndex());
+        calculators[i]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
+        if(redoIntegral[i]) {
+            #ifdef GOOFIT_MPI
+            thrust::transform(
+                thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
+                thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, arrayAddress, eventSize)),
+                strided_range<thrust::device_vector<WaveHolder_s>::iterator>(
+                    cachedWaves[i]->begin(), cachedWaves[i]->end(), 1)
+                    .begin(),
+                *(calculators[i]));
+            #else
+            thrust::transform(
+                thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
+                thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
+                strided_range<thrust::device_vector<WaveHolder_s>::iterator>(
+                    cachedWaves[i]->begin(), cachedWaves[i]->end(), 1)
+                    .begin(),
+                *(calculators[i]));
+            #endif
+        }
+        // Possibly this can be done more efficiently by exploiting symmetry?
+        for(int j = 0; j < decayInfo.resonances.size(); ++j) {
+            if((!redoIntegral[i]) && (!redoIntegral[j]))
+                continue;
+
+            integrators[i][j]->setTddpIndex(getFunctionIndex());
+            integrators[i][j]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
+            integrators[i][j]->setEfficiencyIndex(decayInfo.resonances[j]->getFunctionIndex());
+
+            ThreeComplex dummy(0, 0, 0, 0, 0, 0);
+            SpecialComplexSum complexSum;
+            thrust::constant_iterator<int> effFunc(efficiencyFunction);
+            (*(integrals[i][j])) = thrust::transform_reduce(
+                thrust::make_zip_iterator(thrust::make_tuple(binIndex, arrayAddress, effFunc)),
+                thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, arrayAddress, effFunc)),
+                *(integrators[i][j]),
+                dummy,
+                complexSum);
+                if (i!=j) (*(integrals[j][i])) = ThreeComplex(
+                                  thrust::get<0>(*(integrals[i][j])),
+                                  -thrust::get<1>(*(integrals[i][j])),
+                                  thrust::get<2>(*(integrals[i][j])),
+                                  -thrust::get<3>(*(integrals[i][j])),
+                                  thrust::get<4>(*(integrals[i][j])),
+                                  -thrust::get<5>(*(integrals[i][j]))
+                                  );            
+        }
+    }
+
+    // End of time-consuming integrals.
+
+    fpcomplex integralA_2(0, 0);
+    const unsigned int nres = decayInfo.resonances.size();
+    fptype matdiag[nres]; 
+//    fptype matdiag_int[nres][nres]; 
+    std::vector<std::vector<fptype>> matdiag_int(nres, std::vector<fptype>(nres));
+
+    for(unsigned int i = 0; i < decayInfo.resonances.size(); ++i) {
+        fpcomplex amplitude_i(host_parameters[parametersIdx + i * 2 + 6], host_parameters[parametersIdx + i * 2 + 7]);
+        std::string resname = decayInfo.resonances[i]->getName();
+
+        for(unsigned int j = 0; j < decayInfo.resonances.size(); ++j) {
+            fpcomplex amplitude_j(host_parameters[parametersIdx + j * 2 + 6],
+                                  -host_parameters[parametersIdx + j * 2 + 7]); // Notice complex conjugation
+
+            integralA_2 += (amplitude_i * amplitude_j
+                            * fpcomplex(thrust::get<0>(*(integrals[i][j])), thrust::get<1>(*(integrals[i][j]))));
+            if (i==j) matdiag[i] = (amplitude_i * amplitude_j * fpcomplex(thrust::get<0>(*(integrals[i][j])), 
+                                thrust::get<1>(*(integrals[i][j])))).real();
+            matdiag_int[i][j] = (amplitude_i * amplitude_j * fpcomplex(thrust::get<0>(*(integrals[i][j])), 
+                                thrust::get<1>(*(integrals[i][j])))).real(); //for reporting interference fractions
+    
+        }
+    }
+
+  std::streamsize ss = std::cout.precision();
+
+  for (unsigned int i = 0; i < decayInfo.resonances.size(); ++i) {
+    std::cout << std::setprecision(4) << "Integral contribution for res # " << i << " ( " << decayInfo.resonances[i]->getName() << ") : "<< (matdiag[i] / (integralA_2).real())*100. << "%." << std::endl;
+      fracLists.push_back(matdiag[i] / (integralA_2).real());
+  }
+
+  //MW 2 Aug 2016. Add interference fractions.
+  for (unsigned int i = 0; i < decayInfo.resonances.size(); ++i) {
+    for (unsigned int j = i+1; j < decayInfo.resonances.size(); ++j) {
+      std::cout << std::setprecision(4) << "Integral interference fraction for resonances " << i << ", " << j << " ( " << decayInfo.resonances[i]->getName() << ", " << decayInfo.resonances[j]->getName() << ") : "<< (matdiag_int[i][j] / (integralA_2).real())*100. << "%." << std::endl;
+    }
+  }
+  std::cout.precision (ss);
+
+
+  //return (integralA_2).real();
+  return matdiag_int;
+}
+
 
 
 } // namespace GooFit

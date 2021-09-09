@@ -145,11 +145,11 @@ write_compiler_detection_header(
   FEATURES cxx_attribute_deprecated)
 
 set(GOOFIT_CXX_STANDARD
-    "11"
+    "14"
     CACHE STRING
           "Set a version of C++ standerd (11,14,...) to use. Must match ROOT if using ROOT.")
 set(GOOFIT_CXX_CUDA_STANDARD
-    "11"
+    "14"
     CACHE STRING "Set a version of C++ standerd (11,14,...) to use in CUDA.")
 
 ### C++ settings ###
@@ -407,7 +407,7 @@ target_compile_options(
   GooFit_Common INTERFACE $<${cxx_lang_rel}:$<BUILD_INTERFACE:${GOOFIT_OPTI}>>
                           $<${cuda_lang_rel}:$<BUILD_INTERFACE:-Xcompiler=${GOOFIT_OPTI_CUDA}>>)
 
-find_package(Thrust 1.8 QUIET)
+find_package(Thrust QUIET)
 if(NOT THRUST_FOUND)
   set(THRUST_INCLUDE_DIR "${GOOFIT_SOURCE_DIR}/extern/thrust")
   find_package(Thrust 1.8 REQUIRED)

@@ -40,11 +40,11 @@ TEST_CASE("EventWeightedAdd", "[convert][fit]") {
 
     // Fit parameter
     Variable a1{"a1", 1, 0.1, -10, 10};
-    Variable s1{"s1", 1, 0, 3};
+    Variable s1{"s1", 1, 0, 5};
     GaussianPdf gauss1{"gauss1", w1, a1, s1};
 
     Variable a2{"a2", 1, 0.1, -10, 10};
-    Variable s2{"s2", 1, 0, 3};
+    Variable s2{"s2", 1, 0, 5};
     GaussianPdf gauss2{"gauss2", w2, a2, s2};
 
     std::vector<PdfBase *> pdfs;

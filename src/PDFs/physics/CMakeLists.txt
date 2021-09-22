@@ -62,6 +62,7 @@ goofit_add_pdf_library(
   resonances/LASS.cu
   resonances/NonRes.cu
   resonances/RBW.cu
+  resonances/RhoOmegaMix.cu
   resonances/Spline.cu
   ${GOOFIT_PHYSICS_HEADERS})
 

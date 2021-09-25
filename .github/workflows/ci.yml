@@ -23,7 +23,7 @@ jobs:
 
     runs-on: ubuntu-latest
     container:
-      image: rootproject/root:latest
+      image: rootproject/root:6.24.06-ubuntu20.04
 
     steps:
     - uses: actions/checkout@v1
@@ -31,7 +31,7 @@ jobs:
         submodules: recursive
 
     - name: Configure
-      run: cmake -S . -B build -DGOOFIT_DEVICE=OMP -DGOOFIT_CXX_STANDARD=17
+      run: cmake -S . -B build -DGOOFIT_DEVICE=OMP -DGOOFIT_CXX_STANDARD=14
     - name: Build
       run: cmake --build build -j "$(getconf _NPROCESSORS_ONLN)"
     - name: Run Tests

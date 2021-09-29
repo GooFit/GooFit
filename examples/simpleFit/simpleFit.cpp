@@ -86,7 +86,7 @@ int main(int argc, char **argv) {
     GooFit::Application app("Simple fit example", argc, argv);
 
     size_t numevents = 100000;
-    app.add_option("-n,--num", numevents, "Number of events", true);
+    app.add_option("-n,--num", numevents, "Number of events")->capture_default_str();
 
     GOOFIT_PARSE(app);
 

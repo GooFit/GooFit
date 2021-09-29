@@ -1,8 +1,7 @@
 ci:
-  autoupdate_commit_msg: 'chore(style): pre-commit autoupdate'
-  skip:
-    - docker-clang-format
-exclude: '^.ci/azure-wheel-helpers/.*'
+  autoupdate_commit_msg: "chore: update pre-commit hooks"
+  autofix_commit_msg: "style: pre-commit fixes"
+
 repos:
 - repo: https://github.com/psf/black
   rev: 21.6b0
@@ -46,13 +45,7 @@ repos:
     entry: PyBind|Numpy|Cmake
     exclude: .pre-commit-config.yaml
 
-- repo: local
+- repo: https://github.com/ssciwr/clang-format-hook
+  rev: v12.0.1
   hooks:
-  - id: docker-clang-format
-    name: Docker Clang Format
-    language: docker_image
-    files: "\\.(cu|hpp|cpp|cu|h)$"
-    entry: unibeautify/clang-format:latest
-    args:
-    - -style=file
-    - -i
+   - id: clang-format

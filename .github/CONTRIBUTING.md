@@ -5,8 +5,7 @@ See [`docs/SYSTEM_INSTALL.md`](../docs/SYSTEM_INSTALL.md) for help building and 
 ## Development
 
 All formatting is done with [pre-commit][]. Install with brew (`brew install
-pre-commit`) (macOS) or pip (any OS). You will need docker as well for
-pre-commit to run the clang-format step.
+pre-commit`) (macOS) or pipx/pip (any OS).
 
 [pre-commit]: https://pre-commit.com
 

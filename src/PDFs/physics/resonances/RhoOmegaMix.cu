@@ -41,7 +41,7 @@ __device__ auto rhoomgamix(fptype m12, fptype m13, fptype m23, ParameterContaine
             = (PAIR_12 == cyclic_index ? c_daug3Mass : (PAIR_13 == cyclic_index ? c_daug2Mass : c_daug1Mass));
 
         fptype frFactor       = 1;
-        fptype frFactorMother = 1; 
+        fptype frFactorMother = 1;
 
         // Calculate momentum of the two daughters in the resonance rest frame
         // Note symmetry under interchange (dm1 <-> dm2)
@@ -130,7 +130,7 @@ __device__ auto rhoomgamix(fptype m12, fptype m13, fptype m23, ParameterContaine
 
         //rho-omega mix
         fpcomplex mixingTerm = Bterm*omega + unity;
-        result += rho*mixingTerm; 
+        result += rho*mixingTerm;
 
     }
     pc.incrementIndex(1, 7, 3, 0, 1);

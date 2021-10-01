@@ -96,11 +96,19 @@ struct DecayInfo3t : public DecayInfo3 {
     Variable _tau;
     Variable _xmixing;
     Variable _ymixing;
+    Variable _deltax;
+    Variable _deltay;
 
-    DecayInfo3t(Variable _tau, Variable _xmixing, Variable _ymixing)
+ DecayInfo3t(Variable _tau,
+             Variable _xmixing,
+             Variable _ymixing,
+             Variable *_deltax = nullptr,
+             Variable *_deltay = nullptr)
         : _tau(_tau)
-        , _xmixing(_xmixing)
-        , _ymixing(_ymixing) {}
+        , _xmixing0(_xmixing)
+        , _ymixing0(_ymixing)
+        , _deltax(nullptr)
+        , _deltay(nullptr) {}
 };
 
 struct DecayInfo4 {

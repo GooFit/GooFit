@@ -119,7 +119,6 @@ void init_Amp3Body_TD(py::module &m) {
         .def_static("resetCacheCounter", &Amp3Body_TD::resetCacheCounter)
         .def("getD0Fraction", &Amp3Body_TD::getD0Fraction)
         .def("setD0Fraction", &Amp3Body_TD::setD0Fraction, "d0fraction"_a)
-        .def("dummy_normalize", &Amp3Body_TD::dummy_normalize)
         .def("getFractions",
              &Amp3Body_TD::getFractions,
              "Using the current dataset, return the cached fit fraction values")

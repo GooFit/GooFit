@@ -42,8 +42,8 @@ void init_Amp3Body_TD(py::module &m) {
                       DecayInfo3t,
                       MixingTimeResolution *,
                       GooPdf *,
-	              Observable *,
-	              Observable * >(),
+                      Observable *,
+                      Observable *>(),
              "name"_a,
              "dtime"_a,
              "sigmat"_a,
@@ -54,7 +54,7 @@ void init_Amp3Body_TD(py::module &m) {
              "r"_a,
              "eff"_a,
              "mistag"_a,
-	     "charmtag"_a,
+             "charmtag"_a,
              py::keep_alive<1, 7>(),
              py::keep_alive<1, 8>(),
              py::keep_alive<1, 9>(),
@@ -94,8 +94,8 @@ void init_Amp3Body_TD(py::module &m) {
                       std::vector<MixingTimeResolution *> &,
                       GooPdf *,
                       Observable,
-	              Observable *,
-	              Observable * >(),
+                      Observable *,
+                      Observable *>(),
              "name"_a,
              "dtime"_a,
              "sigmat"_a,
@@ -107,7 +107,7 @@ void init_Amp3Body_TD(py::module &m) {
              "eff"_a,
              "md0"_a,
              "mistag"_a,
-	     "charmtag"_a,
+             "charmtag"_a,
              py::keep_alive<1, 7>(),
              py::keep_alive<1, 8>(),
              py::keep_alive<1, 9>(),
@@ -115,7 +115,7 @@ void init_Amp3Body_TD(py::module &m) {
              py::keep_alive<1, 11>(),
              py::keep_alive<1, 12>())
 
-        .def("setDataSize", &Amp3Body_TD::setDataSize, "dataSize"_a, "evtSize"_a = 5, "offset"_a=0)
+        .def("setDataSize", &Amp3Body_TD::setDataSize, "dataSize"_a, "evtSize"_a = 5, "offset"_a = 0)
         .def_static("resetCacheCounter", &Amp3Body_TD::resetCacheCounter)
         .def("getD0Fraction", &Amp3Body_TD::getD0Fraction)
         .def("setD0Fraction", &Amp3Body_TD::setD0Fraction, "d0fraction"_a)

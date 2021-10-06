@@ -379,7 +379,7 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
     for(auto &cachedWave : cachedWaves)
         cachedWave = nullptr;
 
-    
+
     if(mistag) {
         registerObservable(*mistag);
         totalEventSize++;
@@ -409,7 +409,7 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
     cacheToUse            = cacheCount++;
     registerConstant(cacheToUse);
 
-    if(mistag) 
+    if(mistag)
         registerConstant(1);
     else
         registerConstant(0);
@@ -777,7 +777,7 @@ __host__ std::vector<std::vector<fptype>> Amp3Body_TD::getFractions()  {
 
     std::vector<fptype> fracLists;
     fracLists.clear();
-    
+
     for(unsigned int i = 0; i < decayInfo.resonances.size(); ++i) {
         redoIntegral[i] = forceRedoIntegrals;
 
@@ -851,7 +851,7 @@ __host__ std::vector<std::vector<fptype>> Amp3Body_TD::getFractions()  {
                                   -thrust::get<3>(*(integrals[i][j])),
                                   thrust::get<4>(*(integrals[i][j])),
                                   -thrust::get<5>(*(integrals[i][j]))
-                                  );            
+                                  );
         }
     }
 
@@ -859,8 +859,8 @@ __host__ std::vector<std::vector<fptype>> Amp3Body_TD::getFractions()  {
 
     fpcomplex integralA_2(0, 0);
     const unsigned int nres = decayInfo.resonances.size();
-    fptype matdiag[nres]; 
-//    fptype matdiag_int[nres][nres]; 
+    fptype matdiag[nres];
+//    fptype matdiag_int[nres][nres];
     std::vector<std::vector<fptype>> matdiag_int(nres, std::vector<fptype>(nres));
 
     for(unsigned int i = 0; i < decayInfo.resonances.size(); ++i) {
@@ -873,11 +873,11 @@ __host__ std::vector<std::vector<fptype>> Amp3Body_TD::getFractions()  {
 
             integralA_2 += (amplitude_i * amplitude_j
                             * fpcomplex(thrust::get<0>(*(integrals[i][j])), thrust::get<1>(*(integrals[i][j]))));
-            if (i==j) matdiag[i] = (amplitude_i * amplitude_j * fpcomplex(thrust::get<0>(*(integrals[i][j])), 
+            if (i==j) matdiag[i] = (amplitude_i * amplitude_j * fpcomplex(thrust::get<0>(*(integrals[i][j])),
                                 thrust::get<1>(*(integrals[i][j])))).real();
-            matdiag_int[i][j] = (amplitude_i * amplitude_j * fpcomplex(thrust::get<0>(*(integrals[i][j])), 
+            matdiag_int[i][j] = (amplitude_i * amplitude_j * fpcomplex(thrust::get<0>(*(integrals[i][j])),
                                 thrust::get<1>(*(integrals[i][j])))).real(); //for reporting interference fractions
-    
+
         }
     }
 

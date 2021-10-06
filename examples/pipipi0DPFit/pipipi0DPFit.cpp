@@ -518,7 +518,9 @@ GooPdf *makeEfficiencyPoly() {
 
 DecayInfo3t dtop0pp{Variable("tau", 0.4101, 0.001, 0.300, 0.500),
                     Variable("xmixing", 0.0016, 0.001, 0, 0),
-                    Variable("ymixing", 0.0055, 0.001, 0, 0)};
+                    Variable("ymixing", 0.0055, 0.001, 0, 0),
+                    Variable("deltax", 0),
+                    Variable("deltay", 0)};
 
 Amp3Body_TD *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
     dtop0pp.motherMass   = _mD0;

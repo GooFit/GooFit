@@ -4,7 +4,7 @@ ci:
 
 repos:
 - repo: https://github.com/psf/black
-  rev: 21.6b0
+  rev: 21.9b0
   hooks:
   - id: black
 
@@ -23,7 +23,7 @@ repos:
   - id: trailing-whitespace
   - id: fix-encoding-pragma
 
-- repo: https://gitlab.com/pycqa/flake8
+- repo: https://github.com/PyCQA/flake8
   rev: 3.9.2
   hooks:
   - id: flake8
@@ -46,6 +46,6 @@ repos:
     exclude: .pre-commit-config.yaml
 
 - repo: https://github.com/ssciwr/clang-format-hook
-  rev: v12.0.1
+  rev: v13.0.0
   hooks:
    - id: clang-format

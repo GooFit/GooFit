@@ -15,8 +15,6 @@
 #include <goofit/PDFs/GooPdf.h>
 #include <goofit/UnbinnedDataSet.h>
 
-#include <goofit/detail/CompilerFeatures.h>
-
 #include <Minuit2/FunctionMinimum.h>
 
 namespace {

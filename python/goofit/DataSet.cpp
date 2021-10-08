@@ -15,7 +15,7 @@ class PyDataSet : public DataSetBase {
 
 void init_DataSet(py::module &m) {
     py::class_<DataSet, PyDataSet<>>(m, "DataSet")
-        .def("addEvent", (void (DataSet::*)()) & DataSet::addEvent)
+        .def("addEvent", (void(DataSet::*)()) & DataSet::addEvent)
         .def("getNumEvents", &DataSet::getNumEvents)
         .def("__len__", &DataSet::getNumEvents) // Shortcut
         .def_property_readonly("name", &DataSet::getName)

@@ -132,17 +132,6 @@ set(GOOFIT_CUDA_OR_GRAINSIZE
 configure_file("${GOOFIT_SOURCE_DIR}/include/goofit/detail/ThrustOverrideConfig.h.in"
                "${GOOFIT_BINARY_DIR}/include/goofit/detail/ThrustOverrideConfig.h")
 
-include(WriteCompilerDetectionHeader)
-
-set(COMPILER_LIST GNU Clang AppleClang)
-
-# Support for CMake 3.5 in ROOT Docker instance.
-
-write_compiler_detection_header(
-  FILE include/goofit/detail/CompilerFeatures.h PREFIX GOOFIT
-  COMPILERS ${COMPILER_LIST}
-  FEATURES cxx_attribute_deprecated)
-
 set(GOOFIT_CXX_STANDARD
     "14"
     CACHE STRING

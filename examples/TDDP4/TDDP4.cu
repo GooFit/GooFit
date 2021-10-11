@@ -27,10 +27,10 @@ int main(int argc, char **argv) {
     GooFit::Application app("Time dependent Dalitz plot, 4 particles", argc, argv);
 
     TString output = "test_10_15.output";
-    app.add_option("-o,--output,output", output, "File to output", true)->check(GooFit::NonexistentPath);
+    app.add_option("-o,--output,output", output, "File to output")->capture_default_str()->check(GooFit::NonexistentPath);
 
     int trials = 100;
-    app.add_option("-t,--trials,output", trials, "Number of trials", true);
+    app.add_option("-t,--trials,output", trials, "Number of trials")->capture_default_str();
 
     GOOFIT_PARSE(app);
 

@@ -215,7 +215,7 @@ Application::Application(std::string discription, int argc, char **argv)
 
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
 #ifndef GOOFIT_MPI
-    add_option("--gpu-dev", gpuDev_, "GPU device to use", true)->group("GooFit");
+    add_option("--gpu-dev", gpuDev_, "GPU device to use")->capture_default_str()->group("GooFit");
 #endif
     add_flag_function(
         "--info-only",

@@ -18,7 +18,7 @@ Represents a parametrization of the time resolution.
 class MixingTimeResolution : public GooPdf {
   public:
     template <class... Args>
-    MixingTimeResolution(std::string pdf_name, Args &&... args)
+    MixingTimeResolution(std::string pdf_name, Args &&...args)
         : GooPdf(pdf_name, "mixing_resolution", std::forward<Args>(args)...) {}
 
     ~MixingTimeResolution() override;

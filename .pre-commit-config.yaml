@@ -1,11 +1,10 @@
 ci:
-  autoupdate_commit_msg: 'chore(style): pre-commit autoupdate'
-  skip:
-    - docker-clang-format
-exclude: '^.ci/azure-wheel-helpers/.*'
+  autoupdate_commit_msg: "chore: update pre-commit hooks"
+  autofix_commit_msg: "style: pre-commit fixes"
+
 repos:
 - repo: https://github.com/psf/black
-  rev: 21.6b0
+  rev: 21.9b0
   hooks:
   - id: black
 
@@ -24,7 +23,7 @@ repos:
   - id: trailing-whitespace
   - id: fix-encoding-pragma
 
-- repo: https://gitlab.com/pycqa/flake8
+- repo: https://github.com/PyCQA/flake8
   rev: 3.9.2
   hooks:
   - id: flake8
@@ -46,13 +45,7 @@ repos:
     entry: PyBind|Numpy|Cmake
     exclude: .pre-commit-config.yaml
 
-- repo: local
+- repo: https://github.com/ssciwr/clang-format-hook
+  rev: v13.0.0
   hooks:
-  - id: docker-clang-format
-    name: Docker Clang Format
-    language: docker_image
-    files: "\\.(cu|hpp|cpp|cu|h)$"
-    entry: unibeautify/clang-format:latest
-    args:
-    - -style=file
-    - -i
+   - id: clang-format

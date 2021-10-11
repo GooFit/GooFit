@@ -46,6 +46,37 @@ void init_ResonancePdf(py::module &m) {
              "norm"_a = true,
              "sym"_a  = false);
 
+    py::class_<Resonances::RhoOmegaMix, ResonancePdf>(m_ls, "RhoOmegaMix")
+        .def(py::init<std::string,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      unsigned int,
+                      unsigned int,
+                      bool,
+                      bool>(),
+             "Constructor for rho omega mixing",
+             "name"_a,
+             "ar"_a,
+             "ai"_a,
+             "omega_mass"_a,
+             "omega_width"_a,
+             "rho_mass"_a,
+             "rho_width"_a,
+             "real"_a,
+             "imag"_a,
+             "delta"_a,
+             "sp"_a,
+             "cyc"_a,
+             "norm"_a = true,
+             "sym"_a  = false);
+
     py::class_<Resonances::LASS, ResonancePdf>(m_ls, "LASS")
         .def(py::init<std::string,
                       Variable,

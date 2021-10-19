@@ -144,11 +144,11 @@ write_compiler_detection_header(
   FEATURES cxx_attribute_deprecated)
 
 set(GOOFIT_CXX_STANDARD
-    "14"
+    "11"
     CACHE STRING
           "Set a version of C++ standerd (11,14,...) to use. Must match ROOT if using ROOT.")
 set(GOOFIT_CXX_CUDA_STANDARD
-    "14"
+    "11"
     CACHE STRING "Set a version of C++ standerd (11,14,...) to use in CUDA.")
 
 ### C++ settings ###

@@ -54,6 +54,67 @@ class Amp4Body_TD : public Amp4BodyBase {
 
     __host__ void populateArrays() override;
 
+    __host__ mcbooster::RealVector_h get_norm_m12(){
+      auto host_norm_m12 = mcbooster::RealVector_h(norm_M12);
+      return host_norm_m12;
+    }
+     __host__ mcbooster::RealVector_h get_norm_m34()
+    {
+      auto host_norm_m34 = mcbooster::RealVector_h(norm_M34);
+      return host_norm_m34;
+    }
+    __host__ mcbooster::RealVector_h get_norm_c12(){
+      auto host_norm_c12 = mcbooster::RealVector_h(norm_CosTheta12);
+      return host_norm_c12;
+    }
+    __host__ mcbooster::RealVector_h get_norm_c34(){
+      auto host_norm_c34 = mcbooster::RealVector_h(norm_CosTheta34);
+      return host_norm_c34;
+    }
+    __host__ mcbooster::RealVector_h get_norm_phi(){
+      auto host_norm_phi = mcbooster::RealVector_h(norm_phi);
+      return host_norm_phi;
+    }
+
+    __host__ mcbooster::RealVector_h get_norm_dtime(){
+      auto host_norm_dtime = mcbooster::RealVector_h(norm_dtime);
+      return host_norm_dtime;
+    }
+
+    __host__ mcbooster::RealVector_h get_norm_eff(){
+      auto host_norm_eff = mcbooster::RealVector_h(norm_eff);
+      return host_norm_eff;
+    }
+
+    __host__ mcbooster::RealVector_h get_norm_pdf_weights(){
+      auto host_norm_weight = mcbooster::RealVector_h(norm_pdf_weight);
+      return host_norm_weight;
+    }
+
+    __host__ mcbooster::RealVector_h get_norm_importance_weights(){
+      auto host_importance_weight = mcbooster::RealVector_h(norm_importance_weight);
+      return host_importance_weight;
+    }
+
+    __host__ void set_norm_dtime(mcbooster::RealVector_h norm_dtime_h){
+      norm_dtime = norm_dtime_h;
+    }
+
+    __host__ void set_norm_eff(mcbooster::RealVector_h norm_eff_h){
+      norm_eff = norm_eff_h;
+    }
+
+    __host__ void set_norm_pdf_weights(mcbooster::RealVector_h norm_weight_h){
+      norm_pdf_weight = norm_weight_h;
+    }
+
+    __host__ void set_norm_importance_weights(mcbooster::RealVector_h norm_importance_h){
+      norm_importance_weight = norm_importance_h;
+    }
+
+     __host__ void set_special_integral(bool special){
+      specialIntegral = special;
+    }
   protected:
   private:
     std::map<std::string, std::pair<std::vector<unsigned int>, std::vector<unsigned int>>> AmpMap;
@@ -75,6 +136,16 @@ class Amp4Body_TD : public Amp4BodyBase {
     mcbooster::RealVector_d norm_CosTheta12;
     mcbooster::RealVector_d norm_CosTheta34;
     mcbooster::RealVector_d norm_phi;
+    mcbooster::RealVector_d norm_dtime;
+    //efficiency weight given by BDT
+    mcbooster::RealVector_d norm_eff;
+    //weight from pdf normalisation
+    mcbooster::RealVector_d norm_pdf_weight;
+    //weights from Importance Sampling stays constant throughout 
+    mcbooster::RealVector_d norm_importance_weight;
+    //determine whether to use full numerical integration for per-event efficiencies
+    mutable bool specialIntegral{true};
+    mutable bool calculated_norm_weights{false};
     // store spin and lineshape values for normalization
     mutable mcbooster::RealVector_d norm_SF;
     mutable mcbooster::mc_device_vector<fpcomplex> norm_LS;

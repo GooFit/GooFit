@@ -427,8 +427,7 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
     registerFunction("ptr_to_Amp4Body_TD", ptr_to_Amp4Body_TD);
 
     initialize();
-
-    Integrator   = new NormIntegrator_TD(false);
+    Integrator   = new NormIntegrator_TD(Amp4Body_TD::specialIntegral);
     redoIntegral = new bool[LineShapes.size()];
     cachedMasses = new fptype[LineShapes.size()];
     cachedWidths = new fptype[LineShapes.size()];
@@ -500,7 +499,7 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
     thrust::counting_iterator<unsigned int> index_sequence_begin(0);
 
     fptype tau      = parametersList[0].getValue();
-    //adding the x mixing term to see if this affects the accept reject numbers 
+    //adding the x mixing term to see if this affects the accept reject numbers in gammamin
     //fptype xmixing = parametersList[1].getValue();
     fptype ymixing  = parametersList[2].getValue();
     fptype gammamin = 1.0 / tau - fabs(ymixing) / tau;
@@ -740,7 +739,7 @@ __host__ auto Amp4Body_TD::normalize() -> fptype {
 	    //calculate the normalisation weights first                                                                                                                                                         
         //if(!(calculated_norm_weights) or changed){
         
-        if(false){
+        if(specialIntegral){
             thrust::device_vector<thrust::tuple<fptype,fptype,fptype,fptype>> pdf_vals_tuple(MCevents);
             printf("Calculating norm_weights for events");
         
@@ -788,17 +787,28 @@ __host__ auto Amp4Body_TD::normalize() -> fptype {
         fptype tau     = parametersList[0];
         fptype xmixing = parametersList[1];
         fptype ymixing = parametersList[2];
+        if(specialIntegral){
+            const double uniformNorm = 1.;
+            //const double uniformNorm = 3.26 - 0.18;
+            ret = thrust::get<0>(sumIntegral) * uniformNorm;
+            
+          }
+          else {
+            ret = resolution->normalization(thrust::get<0>(sumIntegral),
+            thrust::get<1>(sumIntegral),
+            thrust::get<2>(sumIntegral),
+            thrust::get<3>(sumIntegral),
+            tau,
+            xmixing,
+            ymixing);
 
-        ret = resolution->normalization(thrust::get<0>(sumIntegral),
-                                        thrust::get<1>(sumIntegral),
-                                        thrust::get<2>(sumIntegral),
-                                        thrust::get<3>(sumIntegral),
-                                        tau,
-                                        xmixing,
-                                        ymixing);
+          }
 
         // MCevents is the number of normalization events.
         ret /= MCevents;
+        if(specialIntegral){
+            printf("normalizatio value:%.7g ",ret);
+          }
     }
 
     host_normalizations[normalIdx + 1] = 1.0 / ret;

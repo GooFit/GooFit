@@ -24,6 +24,7 @@ goofit_add_pdf_library(
   MixingTimeResolution.cu
   ThreeGaussResolution.cu
   ThreeGaussResolutionExt.cu
+  ThreeGaussResolutionSplice.cu
   TruthResolution.cu
   SquareDalitzEffPdf.cu
   detail/AmpCalc.cu

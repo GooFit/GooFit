@@ -1,4 +1,5 @@
- #script to generate a WS model sample which we will then use to fit with the numerical renormalization method and what is currently done
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 from __future__ import print_function, division
 
@@ -27,47 +28,68 @@ c34label = r'$cos(\theta_{2})$ [rad]'
 philabel = r'$\phi$ [rad]' 
 dTimeLabel = r'$D^{0}$ Decay Time [ns]'
 
-columns = ['m12','m34','c12','c34','phi','dtime']
-def draw_distributions(original, columns=columns,fig_name="plots/amp4body_generated_events_python.png"):
-    plt.figure(figsize=[16, 8])
-    for id, column in enumerate(columns, 1):
-        xlim = np.percentile(np.hstack([original[column]]), [0.01, 99.99])
-        plt.subplot(2, 3, id)
-        plt.hist(original[column], range=xlim, bins=100,histtype='step')
-        if column == 'm12' or 'm12' in column:
-            plt.xlabel(m12label,fontsize=14)
-        if column == 'm34' or 'm34' in column:
-            plt.xlabel(m34label,fontsize=14)
-        if column == 'c12' or 'c12' in column:
-            plt.xlabel(c12label,fontsize=14)
-        if column == 'c34' or 'c34' in column:
-            plt.xlabel(c34label,fontsize=14)
-        if column == 'phi' or 'phi' in column:
-            plt.xlabel(philabel,fontsize=14)
-        if column == 'dtime':
-            plt.xlabel(dTimeLabel,fontsize=14)
-    plt.savefig(fig_name)
+rs_frame = ROOT.RDataFrame("DecayTree",["/hepgpu6-data1/johncob/K3Pi/k3pi_scripts/k3pi_workflow_notebooks/root_files/rs_selected_single_candidates.root"])
+rs_selected_frame = rs_frame.Filter('Dst_ReFit_D0_M_best >= 1855 && Dst_ReFit_D0_M_best <= 1875').Filter('deltam_ReFit >= 144.5 && deltam_ReFit <= 146.5')
+
+data_dtime = rs_selected_frame.AsNumpy(columns=["D0_Loki_BPVLTIME"])["D0_Loki_BPVLTIME"]
+
 
 label_dict = {"m12":m12label,"m34":m34label,"c12":c12label,"c34":c34label,"phi":philabel,"dtime":dTimeLabel}
+imp_samp_time=1.
+#this function calculates the corresponding importance sampled weight using the triangular function generated decay times
+def two_parts(xs, turn=0.6):
+    ys = np.ones(len(xs))
+    ys[xs<turn] = xs[xs<turn]*np.exp(-turn/imp_samp_time)/turn
+    ys[xs>=turn] = np.exp(-xs[xs>=turn]/imp_samp_time)
+    norm = 0.5*np.exp(-turn/imp_samp_time)/turn*turn**2 - 0.5*np.exp(-turn/imp_samp_time)/turn*0.1725**2
+    norm += (-imp_samp_time*np.exp(-3.26/imp_samp_time)+imp_samp_time*np.exp(-turn/imp_samp_time))
+    return ys/norm
 
+#this generates the decay time distribution for the normalisation events
+def two_parts_generate(turn=0.6, size=1):
+    int_left = 0.5*np.exp(-turn/imp_samp_time)/turn*turn**2 - 0.5*np.exp(-turn/imp_samp_time)/turn*0.1725**2
+    int_right = (-imp_samp_time*np.exp(-3.26/imp_samp_time)+imp_samp_time*np.exp(-turn/imp_samp_time))
+    print(int_left, int_right)
+    fl = int_left/(int_left+int_right)
+    print(fl)
+    left = np.random.triangular(0, turn, turn, size=int(fl*size*3.0))
+    left = left[left>0.1725][:int(fl*size)]
+    right = np.random.exponential(imp_samp_time, size=int((size-int(fl*size))*1.4)) + turn
+    return np.append(left, right[right<3.26][:size-int(fl*size)])
 
-#order of variables array: m12, m34, c12, c34, phi, dtime 
-def process_generated_sample(variables,flags):
-    m12 = []
-    m34 = []
-    c12 = []
-    c34 = []
-    phi = []
-    dtime = []
-    for i in range(len(flags)):
-        if flags[i] == True:
-            m12.append(variables[0][i])
-            m34.append(variables[1][i])
-            c12.append(variables[2][i])
-            c34.append(variables[3][i])
-            phi.append(variables[4][i])
-            dtime.append(variables[5][i])
-    return pd.DataFrame({"m12":m12,"m34":m34,"c12":c12,"c34":c34,"phi":phi,"dtime":dtime})
+def get_bdt_weights(df):
+    bdt_model = joblib.load("/hepgpu6-data1/johncob/K3Pi/k3pi_scripts/k3pi_workflow_notebooks/bdt_models/rs_efficiency_model_kfolded_6d_ord_full_stats.sav")
+    training_vars_ord = ["m12_ord","m34_ord","cos12_ord","cos34_ord","phi_ord","log_dtime"]
+    bdt_df = df.rename(columns={"m12":"m12_ord","m34":"m34_ord","c12":"cos12_ord","c34":"cos34_ord","phi":"phi_ord"})
+    bdt_weights = bdt_model.predict_weights(bdt_df[training_vars_ord])
+    return bdt_weights
+
+#argument is a pandas dataframe of normalisation events
+def plot_normalisation_events(norm_events,reweighted=False):
+    plt.subplots(2,3,figsize=(20,12))
+    column_vars = ["m12","m34","c12","c34","phi","dtime"]
+
+    if reweighted:
+        for id,column in enumerate(column_vars,1):
+            ax = plt.subplot(2,3,id)
+            xlim = np.percentile(np.hstack([norm_events[column]]), [0.01, 99.99])
+            n1,bins1,patches1 = plt.hist(norm_events[column],weights=(1.0/ norm_events["bdt_weight"])*norm_events["importance_weight"], bins=100,range=xlim,density=True,histtype='step')
+            plt.xlabel(label_dict[column])
+        plt.savefig("plots/norm_events_distributions_reweighted.png")
+    else:
+        for id,column in enumerate(column_vars,1):
+            ax = plt.subplot(2,3,id)
+            xlim = np.percentile(np.hstack([norm_events[column]]), [0.01, 99.99])
+            n1,bins1,patches1 = plt.hist(norm_events[column], bins=100,range=xlim,density=True,histtype='step')
+            plt.xlabel(label_dict[column])
+        plt.savefig("plots/norm_events_distributions.png")
+
+def plot_decay_time_distribution(df):
+    plt.hist(df['dtime'],bins=100,histtype="step",label="Generated Norm Events",density=True,range=[0.0,4.])
+    plt.hist(data_dtime*1000,bins=100,label="RS Data",density=True,alpha=0.6,range=[0.0,4.])
+    plt.legend(loc="best")
+    plt.xlabel(dTimeLabel)
+    plt.savefig("plots/decay_time_importance_function.png")
 
 def main():
     DK3P_DI = DecayInfo4t(
@@ -193,18 +215,36 @@ def main():
 
     res = TruthResolution()
     eff = PolynomialPdf("constantEff", observables, coefficients, offsets, 0)
-    dp  = Amp4Body_TD("test", observables, DK3P_DI, res, eff, None, 1)
+    dp  = Amp4Body_TD("test", observables, DK3P_DI, res, eff, None, 5000000)
 
-    n_toys = 1
-    numEvents = 800000
-    particles, variables, weights, flags = dp.GenerateSig(numEvents)
-    df = pd.DataFrame({'m12':variables[0],'m34':variables[1],'c12':variables[2],'c34':variables[3],'phi':variables[4],'dtime':variables[5],'flags':flags})
-    print(df.head())
+    #do the integration normally without modifying the renormalization events
+    dp.set_special_integral(False)
+    m12_arr = dp.get_norm_m12()
+    m34_arr = dp.get_norm_m34()
+    c12_arr = dp.get_norm_c12()
+    c34_arr = dp.get_norm_c34()
+    phi_arr = dp.get_norm_phi()
+    dtime_arr = dp.get_norm_dtime()
+    importance_weights = dp.get_norm_importance_weights() #importance weights for decay time importance sampling
+    eff_weights = dp.get_norm_eff()
+    columns = {"m12":m12_arr,"m34":m34_arr,"c12":c12_arr,"c34":c34_arr,"phi":phi_arr,"dtime":dtime_arr,"importance_weight":importance_weights,"eff_weights":eff_weights}
+    norm_events_df = pd.DataFrame(columns)
 
-    draw_distributions(df.query('flags == 1'),columns,"plots/amp4body_generated_events_python_true.png")
-    draw_distributions(df.query('flags == 0'),columns,"plots/amp4body_generated_events_python_false.png")
+    print("generating weights and decay times")
+    norm_events_df['dtime'] = two_parts_generate(size=len(norm_events_df))
+    norm_events_df['importance_weight'] = two_parts(norm_events_df['dtime'])
+    norm_events_df['log_dtime'] = np.log(norm_events_df['dtime'])
+    norm_events_df["bdt_weight"] = get_bdt_weights(norm_events_df)
+    #copy back generated data
+    print("copying back modified arrays")
+    dp.set_norm_dtime(norm_events_df.dtime.values)
+    dp.set_norm_eff(norm_events_df.bdt_weight.values)
+    dp.set_norm_importance_weights(norm_events_df.importance_weight.values)
+    print("Performing fit")
+    #plot_decay_time_distribution(norm_events_df)
+    #plot_normalisation_events(norm_events_df,reweighted=True)
 
-    print(f"Efficiency of generation:{len(df.query('flags == 1'))/len(df)}")
+
     return 0
 
 if __name__ == "__main__":

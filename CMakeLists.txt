@@ -686,6 +686,7 @@ option(GOOFIT_EXAMPLES "Build the example programs" ${CUR_PROJ})
 if(GOOFIT_EXAMPLES)
   add_subdirectory(examples)
 endif()
+add_subdirectory(k3pi_goofit_scripts)
 
 if(EXISTS work)
   add_subdirectory(work)

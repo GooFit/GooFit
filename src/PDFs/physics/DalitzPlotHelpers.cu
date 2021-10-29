@@ -16,9 +16,10 @@ __host__ __device__ auto inDalitz(
     -> bool {
     fptype dm1pdm2  = dm1 + dm2;
     fptype bigMmdm3 = bigM - dm3;
+    fptype bigMmdm1 = bigM - dm1;
 
     fptype m23 = bigM * bigM + dm1 * dm1 + dm2 * dm2 + dm3 * dm3 - m12 - m13;
-    if(m23 < 0.)
+    if(m23 < 0. || m23 > bigMmdm1 * bigMmdm1)
         return false;
 
     bool m12less = (m12 < dm1pdm2 * dm1pdm2) ? false : true;

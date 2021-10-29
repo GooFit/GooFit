@@ -283,7 +283,7 @@ __host__ auto Amp3Body::normalize() -> fptype {
     thrust::constant_iterator<fptype *> dataArray(dev_event_array);
     thrust::constant_iterator<int> eventSize(totalEventSize);
     thrust::counting_iterator<int> eventIndex(eventOffset);
-
+    printf("looping over resonances and calling thrust::transform\n");
     for(int i = 0; i < decayInfo.resonances.size(); ++i) {
         // grab the index for this resonance.
         calculators[i]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
@@ -297,7 +297,8 @@ __host__ auto Amp3Body::normalize() -> fptype {
                     cachedWaves[i]->begin(), cachedWaves[i]->end(), 1)
                     .begin(),
                 *(calculators[i]));
-#else
+#else   
+            printf("calling thrust::transform for resonance %d \n", i);
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
                 // was this correct before?
@@ -309,7 +310,7 @@ __host__ auto Amp3Body::normalize() -> fptype {
                 *(calculators[i]));
 #endif
         }
-
+        printf("finished calling thrust::transform\n");
         // Possibly this can be done more efficiently by exploiting symmetry?
         for(int j = 0; j < decayInfo.resonances.size(); ++j) {
             if((!redoIntegral[i]) && (!redoIntegral[j]))
@@ -330,6 +331,7 @@ __host__ auto Amp3Body::normalize() -> fptype {
                 complexSum);
         }
     }
+    printf("finished looping over resonances\n");
 
     // End of time-consuming integrals.
     fpcomplex sumIntegral(0, 0);

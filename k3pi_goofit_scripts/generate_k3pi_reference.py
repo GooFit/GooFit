@@ -196,13 +196,20 @@ def main():
     dp  = Amp4Body_TD("test", observables, DK3P_DI, res, eff, None, 1)
 
     n_toys = 1
-    numEvents = 800000
-    particles, variables, weights, flags = dp.GenerateSig(numEvents)
-    df = pd.DataFrame({'m12':variables[0],'m34':variables[1],'c12':variables[2],'c34':variables[3],'phi':variables[4],'dtime':variables[5],'flags':flags})
-    print(df.head())
+    appended_data = []
+   # numEvents = 800000
+    #particles, variables, weights, flags = dp.GenerateSig(numEvents)
+    for k in range(10):
+        numEvents = 800000
 
-    draw_distributions(df.query('flags == 1'),columns,"plots/amp4body_generated_events_python_true.png")
-    draw_distributions(df.query('flags == 0'),columns,"plots/amp4body_generated_events_python_false.png")
+        dp.setGenerationOffset(k * numEvents)
+        particles, variables, weights, flags = dp.GenerateSig(numEvents)
+        df = pd.DataFrame({'m12':variables[0],'m34':variables[1],'c12':variables[2],'c34':variables[3],'phi':variables[4],'dtime':variables[5],'flags':flags})
+        appended_data.append(df)
+
+    appended_data = pd.concat(appended_data)
+    draw_distributions(appended_data.query('flags == 1'),columns,"plots/amp4body_generated_events_python_true.png")
+    draw_distributions(appended_data.query('flags == 0'),columns,"plots/amp4body_generated_events_python_false.png")
 
     print(f"Efficiency of generation:{len(df.query('flags == 1'))/len(df)}")
     return 0

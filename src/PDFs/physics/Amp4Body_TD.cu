@@ -185,6 +185,7 @@ __device__ auto device_Amp4Body_TD(fptype *evt, ParameterContainer &pc) -> fptyp
     fptype _SqWStoRSrate = pc.getParameter(3);
     fptype _time         = RO_CACHE(evt[id_time]);
     fptype _sigma        = RO_CACHE(evt[id_sigma]);
+    //std::cout << "reading time: " << _time << "with resolution: " << _sigma << std::endl;
     //wSig is the weight associated with a per event relative efficiency
     fptype wSig = RO_CACHE(evt[id_wsig]);
     AmpA *= _SqWStoRSrate;

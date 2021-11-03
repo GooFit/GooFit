@@ -153,7 +153,7 @@ int main(int argc, char **argv) {
 
     TruthResolution dat;
     PolynomialPdf eff{"constantEff", observables, coefficients, offsets, 0};
-    Amp4Body_TD dp{"test", observables, DK3P_DI, &dat, &eff, 0, 10000000};
+    Amp4Body_TD dp{"test", observables, DK3P_DI, &dat, &eff, 0, 20000000};
     
     UnbinnedDataSet fit_data = UnbinnedDataSet(observables);
 

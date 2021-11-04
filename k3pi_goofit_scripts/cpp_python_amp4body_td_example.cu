@@ -153,7 +153,6 @@ int main(int argc, char **argv) {
 
     TruthResolution dat;
     PolynomialPdf eff{"constantEff", observables, coefficients, offsets, 0};
-    Amp4Body_TD dp{"test", observables, DK3P_DI, &dat, &eff, 0, 20000000};
     
     UnbinnedDataSet fit_data = UnbinnedDataSet(observables);
 
@@ -185,7 +184,16 @@ int main(int argc, char **argv) {
     mc_file.close();
 
 
-    dp.setData(&fit_data);
+    Amp4Body_TD dp{"test", observables, DK3P_DI, &dat, &eff, 0, 20000000};
+    dp.set_special_integral(true);
+    Variable constant("constant1", 1.0);
+    Variable constant2("constant2", 1.0);
+    std::vector<Variable> backgrVars = {constant};
+    PolynomialPdf backgr("backgr", m12, backgrVars);
+    AddPdf signal("signal", constant2, &dp, &backgr);
+    signal.setData(&fit_data);
+
+    //dp.setData(&fit_data);
     dp.setDataSize(fit_data.getNumEvents(),9);
     std::cout << "Fitting data" << std::endl;
     FitManager datapdf(&dp);

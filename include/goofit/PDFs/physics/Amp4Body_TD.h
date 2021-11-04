@@ -144,7 +144,7 @@ class Amp4Body_TD : public Amp4BodyBase {
     //weights from Importance Sampling stays constant throughout 
     mcbooster::RealVector_d norm_importance_weight;
     //determine whether to use full numerical integration for per-event efficiencies
-    mutable bool specialIntegral{true};
+    mutable bool specialIntegral{false};
     mutable bool calculated_norm_weights{false};
     // store spin and lineshape values for normalization
     mutable mcbooster::RealVector_d norm_SF;

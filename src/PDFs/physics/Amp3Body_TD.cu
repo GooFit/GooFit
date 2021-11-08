@@ -223,9 +223,10 @@ __device__ auto device_Tddp(fptype *evt, ParameterContainer &pc) -> fptype {
     // which don't change even though we tagged a D0 as D0bar.
 
     // fptype mistag = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 5]);
-
-    mistag = evt[id_mis];
-    //mistag = 0;
+    mistag = 0;
+    if(num_observables > 5){
+        mistag = evt[id_mis];
+    }//mistag = 0;
 
     fptype xfix   = 0.0039;
     fptype yfix   = 0.0065;

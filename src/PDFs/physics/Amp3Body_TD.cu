@@ -47,7 +47,7 @@ __device__ auto device_Tddp(fptype *evt, ParameterContainer &pc) -> fptype {
     int id_m13 = pc.getObservable(3);
     int id_num = pc.getObservable(4);
     int id_mis = 0;
-    //int id_tag = 0;
+    int id_tag = 0;
     if(num_observables > 5){
         id_mis = pc.getObservable(5);
     }
@@ -111,8 +111,9 @@ __device__ auto device_Tddp(fptype *evt, ParameterContainer &pc) -> fptype {
 
     int id_time  = pc.getObservable(0);
     int id_sigma = pc.getObservable(1);
-    int id_tag = pc.getObservable(6);
-
+    if(num_observables > 6){
+       id_tag = pc.getObservable(6);
+    }
     fptype _tau     = pc.getParameter(0);
     //fptype _xmixing = pc.getParameter(1);
     //fptype _ymixing = pc.getParameter(2);
@@ -124,8 +125,10 @@ __device__ auto device_Tddp(fptype *evt, ParameterContainer &pc) -> fptype {
     fptype _ymixing = 0;
     //int _charmtag = evt[id_tag];
     //auto _charmtag = static_cast<int>(floor(0.5 + RO_CACHE(evt[id_tag])));
-    int _charmtag = RO_CACHE(evt[id_tag]);
-
+    int _charmtag = 0;
+    if(num_observables > 6){
+        _charmtag = RO_CACHE(evt[id_tag]);
+    }
     if(_charmtag ==1){
         _xmixing = _xmixing0 + _deltax;
         _ymixing = _ymixing0 + _deltay;
@@ -133,6 +136,10 @@ __device__ auto device_Tddp(fptype *evt, ParameterContainer &pc) -> fptype {
     else if(_charmtag==-1){
         _xmixing = _xmixing0 - _deltax;
         _ymixing = _ymixing0 - _deltay;
+    }
+    else{
+        _xmixing = _xmixing0;
+        _ymixing = _ymixing0;
     }
 
     fptype _time  = RO_CACHE(evt[id_time]);

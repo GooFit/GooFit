@@ -86,7 +86,8 @@ __device__ auto device_Tddp(fptype *evt, ParameterContainer &pc) -> fptype {
     fpcomplex sumRateBB(0, 0);
 
     unsigned int cacheToUse = pc.getConstant(1);
-    fptype mistag = pc.getConstant(2);
+    fptype mistag = 0;
+    //fptype mistag = pc.getConstant(2);
 
     for(int i = 0; i < numResonances; ++i) {
         // int paramIndex = parIndexFromResIndex(i);
@@ -279,20 +280,17 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
     , _m13(m13)
     , resolution(r)
     , _mistag(*mistag)
+    , _charmtag(*charmtag)
     , totalEventSize(6) // Default 5 = m12, m13, time, sigma_t, evtNum
 {
     for(auto &cachedWave : cachedWaves)
         cachedWave = nullptr;
 
-    if(mistag) {
-        registerObservable(*mistag);
-        totalEventSize++;
-    }
+    registerObservable(*mistag);
+    totalEventSize++;
 
-    if(charmtag){
-        registerObservable(*charmtag);
-        totalEventSize++;
-    }
+    registerObservable(*charmtag);
+    totalEventSize++;
 
     MEMCPY_TO_SYMBOL(c_motherMass, &decay.motherMass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(c_daug1Mass, &decay.daug1Mass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
@@ -318,7 +316,7 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
     cacheToUse            = cacheCount++;
     registerConstant(cacheToUse);
 
-    if(mistag)
+    if(mistag == nullptr)
         registerConstant(1);
     else
         registerConstant(0);
@@ -381,22 +379,19 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
     , _m13(m13)
     , resolution(
           r[0]) // Only used for normalization, which only depends on x and y - it doesn't matter which one we use.
-    , _mistag(*mistag)
+        , _mistag(*mistag)
+    , _charmtag(*charmtag)
     , totalEventSize(6) // This case adds the D0 mass by default.
 {
     for(auto &cachedWave : cachedWaves)
         cachedWave = nullptr;
 
 
-    if(mistag) {
-        registerObservable(*mistag);
-        totalEventSize++;
-    }
+    registerObservable(*mistag);
+    totalEventSize++;
 
-    if(charmtag) {
-        registerObservable(*charmtag);
-        totalEventSize++;
-    }
+    registerObservable(*charmtag);
+    totalEventSize++;
 
     MEMCPY_TO_SYMBOL(c_motherMass, &decay.motherMass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(c_daug1Mass, &decay.daug1Mass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
@@ -739,11 +734,13 @@ __host__ auto Amp3Body_TD::normalize() -> fptype {
     fptype yfix   = 0.0065;
     fptype taufix = 0.4101;
 
-    ret *= (1-2*_mistag.getValue());
-    ret += _mistag.getValue() * resolution->normalization(
-        dalitzIntegralOne, dalitzIntegralTwo, dalitzIntegralThr, dalitzIntegralFou, taufix, xfix, yfix);
-    ret += _mistag.getValue() * resolution->normalization(
-        dalitzIntegralTwo, dalitzIntegralOne, dalitzIntegralThr, -dalitzIntegralFou, taufix, xfix, yfix);
+    if (_mistag){
+        ret *= (1-2*_mistag.getValue());
+        ret += _mistag.getValue() * resolution->normalization(
+            dalitzIntegralOne, dalitzIntegralTwo, dalitzIntegralThr, dalitzIntegralFou, taufix, xfix, yfix);
+        ret += _mistag.getValue() * resolution->normalization(
+            dalitzIntegralTwo, dalitzIntegralOne, dalitzIntegralThr, -dalitzIntegralFou, taufix, xfix, yfix);
+    }
 
     double binSizeFactor = 1;
     binSizeFactor *= ((_m12.getUpperLimit() - _m12.getLowerLimit()) / _m12.getNumBins());

@@ -80,6 +80,8 @@ Observable *wBkg1        = nullptr;
 Observable *wBkg2        = nullptr;
 Observable *wBkg3        = nullptr;
 Observable *wBkg4        = nullptr;
+Observable *mtag         = nullptr;
+Observable *d0tag        = nullptr;
 
 bool fitMasses = false;
 Variable fixedRhoMass("rho_mass", 0.7758, 0.01, 0.7, 0.8);
@@ -349,6 +351,8 @@ void getToyData(float sigweight = 0.9) {
         vars.push_back(*wSig0);
         //  vars.push_back(wBkg1);
         //  vars.push_back(wBkg2);
+        vars.push_back(*mtag);
+        vars.push_back(*d0tag);
         data = new UnbinnedDataSet(vars);
     }
 
@@ -398,6 +402,8 @@ void getToyData(float sigweight = 0.9) {
         //    wSig0->getValue() = sigweight;
         wSig0->setValue(calcToyWeight(sigweight, md0));
         sigprob += wSig0->getValue();
+        mtag->setValue(0);
+        d0tag->setValue(0);
         data->addEvent();
         nsig++;
 
@@ -427,6 +433,8 @@ void getToyData(float sigweight = 0.9) {
         //    wSig0->getValue() = sigweight;
         wSig0->setValue(calcToyWeight(sigweight, md0));
         sigprob += wSig0->getValue();
+        mtag->setValue(0);
+        d0tag->setValue(0);
         data->addEvent();
     }
 
@@ -813,9 +821,9 @@ Amp3Body_TD *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0
 
     if(massd0)
         mixPdf = new Amp3Body_TD(
-            "mixPdf", *dtime, *sigma, *m12, *m13, *eventNumber, dtop0pp, resList, eff, *massd0, wBkg1);
+            "mixPdf", *dtime, *sigma, *m12, *m13, *eventNumber, dtop0pp, resList, eff, *massd0, mtag, d0tag);
     else
-        mixPdf = new Amp3Body_TD("mixPdf", *dtime, *sigma, *m12, *m13, *eventNumber, dtop0pp, resolution, eff, wBkg1);
+        mixPdf = new Amp3Body_TD("mixPdf", *dtime, *sigma, *m12, *m13, *eventNumber, dtop0pp, resolution, eff, mtag, d0tag);
 
     return mixPdf;
 }
@@ -864,6 +872,8 @@ int runToyFit(int ifile, int nfile, bool noPlots = true) {
     m13->setNumBins(240);
     eventNumber = new EventNumber("eventNumber", 0, INT_MAX);
     wSig0       = new Observable("wSig0", 0, 1);
+    mtag        = new Observable("mtag", 0, 1);
+    d0tag       = new Observable("d0tag",-1, 1);
 
     for(int i = 0; i < nfile; i++) {
         //      sprintf(strbuffer, "dataFiles/toyPipipi0/dalitz_toyMC_%03d.txt", (i+ifile)%100);
@@ -875,7 +885,7 @@ int runToyFit(int ifile, int nfile, bool noPlots = true) {
     // TruthResolution* dat = new TruthResolution();
     // Amp3Body_TD* mixPdf = makeSignalPdf(dat);
     signalDalitz = makeSignalPdf();
-    signalDalitz->setDataSize(data->getNumEvents(), 6); // Default 5 is fine for toys
+    signalDalitz->setDataSize(data->getNumEvents(), 8); // Default 5 is fine for toys
     sig0_jsugg = new ExpPdf("sig0_jsugg", *sigma, constantZero);
     //  sig0_jsugg = makeBkg_sigma_strips(0);
     sig0_jsugg->setSeparateNorm();
@@ -1792,9 +1802,13 @@ void makeToyDalitzPlots(GooPdf *overallSignal, std::string plotdir) {
     vars.push_back(*sigma);
     vars.push_back(*eventNumber);
     vars.push_back(*wSig0);
+    vars.push_back(*mtag);
+    vars.push_back(*d0tag);
     UnbinnedDataSet currData(vars);
     sigma->setValue(0.1);
     wSig0->setValue(totalSigProb / totalDat);
+    mtag->setValue(0);
+    d0tag->setValue(0);
     int evtCounter = 0;
 
     for(int i = 0; i < m12->getNumBins(); ++i) {
@@ -1821,7 +1835,7 @@ void makeToyDalitzPlots(GooPdf *overallSignal, std::string plotdir) {
     GOOFIT_INFO("Adding {} signal events from toy", currData.getNumEvents());
 
     overallSignal->setData(&currData);
-    signalDalitz->setDataSize(currData.getNumEvents(), 6);
+    signalDalitz->setDataSize(currData.getNumEvents(), 8);
     std::vector<std::vector<double>> pdfValues = overallSignal->getCompProbsAtDataPoints();
 
     for(unsigned int j = 0; j < pdfValues[0].size(); ++j) {

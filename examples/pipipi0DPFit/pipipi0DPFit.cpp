@@ -823,7 +823,8 @@ Amp3Body_TD *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0
         mixPdf = new Amp3Body_TD(
             "mixPdf", *dtime, *sigma, *m12, *m13, *eventNumber, dtop0pp, resList, eff, *massd0, mtag, d0tag);
     else
-        mixPdf = new Amp3Body_TD("mixPdf", *dtime, *sigma, *m12, *m13, *eventNumber, dtop0pp, resolution, eff, mtag, d0tag);
+        mixPdf = new Amp3Body_TD(
+            "mixPdf", *dtime, *sigma, *m12, *m13, *eventNumber, dtop0pp, resolution, eff, mtag, d0tag);
 
     return mixPdf;
 }
@@ -873,7 +874,7 @@ int runToyFit(int ifile, int nfile, bool noPlots = true) {
     eventNumber = new EventNumber("eventNumber", 0, INT_MAX);
     wSig0       = new Observable("wSig0", 0, 1);
     mtag        = new Observable("mtag", 0, 1);
-    d0tag       = new Observable("d0tag",-1, 1);
+    d0tag       = new Observable("d0tag", -1, 1);
 
     for(int i = 0; i < nfile; i++) {
         //      sprintf(strbuffer, "dataFiles/toyPipipi0/dalitz_toyMC_%03d.txt", (i+ifile)%100);

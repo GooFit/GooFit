@@ -147,7 +147,9 @@ class Amp3Body_TD : public Amp3BodyBase {
     Observable _m12;
     Observable _m13;
     MixingTimeResolution *resolution;
+    GooPdf *_efficiency;
     Observable _mistag;
+    Observable _charmtag;
     fptype *dalitzNormRange{nullptr};
 
     // Following variables are useful if masses and widths, involved in difficult BW calculation,

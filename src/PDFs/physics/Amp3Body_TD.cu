@@ -34,6 +34,17 @@ __device__ inline auto parIndexFromResIndex(int resIndex) -> int { return resona
 
 __device__ auto getResonanceAmplitude(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) -> fpcomplex {
     auto func = reinterpret_cast<resonance_function_ptr>(d_function_table[pc.funcIdx]);
+      printf("getResonanceAmplitude:\n");
+      printf("     device func = %p  \n",func) ;
+      printf("     Number of Pars = %i \n", pc.getNumParameters());
+      for(int i = 0; i < pc.getNumParameters(); ++i)  printf("         Pars[%i]  = %f\n", i, pc.getParameter(i));
+      printf("     Number of Consts = %i \n", pc.getNumConstants());
+      for(int i = 0; i < pc.getNumConstants(); ++i)  printf("         Const[%i]  = %f\n", i, pc.getConstant(i));
+      printf("     Number of Obs = %i \n", pc.getNumObservables());
+      for(int i = 0; i < pc.getNumObservables(); ++i)  printf("         Obs[%i]  = %f\n", i, pc.getObservable(i));
+
+      printf("&pc = %p\n",&pc);
+      printf("parameters = %p \n", pc.parameters);
     return (*func)(m12, m13, m23, pc);
 }
 

@@ -218,6 +218,8 @@ class PdfBase {
     /// Get the current PDF name
     auto getPdfName() const -> std::string { return pdf_name_; }
 
+    void status();
+
   protected:
     DataSet *data_ = nullptr; //< Remember the original dataset
 
@@ -257,6 +259,7 @@ class PdfBase {
     bool separateNorm{false};
 
     int m_iEventsPerTask{0};
+
 
   private:
     std::string pdf_name_;

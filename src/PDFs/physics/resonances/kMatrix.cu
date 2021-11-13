@@ -18,8 +18,14 @@ namespace GooFit {
 
 __device__ auto kMatrixRes(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) -> fpcomplex {
     // kMatrix amplitude as described in https://arxiv.org/pdf/0804.2089.pdf, compared with AmpGen implementation
+    printf("-------------------------------\n");
+    printf("just entered kMatrix\n");
+    printf("&pc = %p",&pc);
+    printf("parameters = %p \n", pc.parameters);
 
     unsigned int Mpair = pc.getConstant(0);
+    
+    printf("Mpair = %i \n\n",Mpair);
 
     // parameter index
     unsigned int idx = 0;
@@ -30,6 +36,13 @@ __device__ auto kMatrixRes(fptype m12, fptype m13, fptype m23, ParameterContaine
     fptype s0_prod  = pc.getParameter(idx++);
     fptype s0_scatt = pc.getParameter(idx++);
 
+    printf("sA0 = %f \n",sA0);
+    printf("sA = %f \n",sA);
+    printf("s0_prod = %f \n",s0_prod);
+    printf("s0_scatt = %f \n",s0_scatt);
+
+    printf("\n");
+
     fptype fscat[NCHANNELS];
     fptype pmasses[NCHANNELS];
     fptype couplings[NCHANNELS][NCHANNELS];
@@ -39,7 +52,10 @@ __device__ auto kMatrixRes(fptype m12, fptype m13, fptype m23, ParameterContaine
 
     for(double &i : fscat) {
         i = pc.getParameter(idx++);
+        printf("fscat = %f , idx = %i \n", i, idx);
     }
+
+    printf("\n");
 
     // in the next two sets of parameters the index is used two times in the same line, therefore it must be incremented
     // two times afterwards
@@ -47,20 +63,31 @@ __device__ auto kMatrixRes(fptype m12, fptype m13, fptype m23, ParameterContaine
         i = fpcomplex(pc.getParameter(idx), pc.getParameter(idx + 1));
         idx++;
         idx++;
+        printf("beta = (%f,%f) , idx = %i \n", i.real(), i.imag(), idx);
+
     }
+
+    printf("\n");
 
     for(auto &i : f_prod) {
         i = fpcomplex(pc.getParameter(idx), pc.getParameter(idx + 1));
         idx++;
         idx++;
+        printf("fprod = (%f,%f) , idx = %i \n", i.real(), i.imag(), idx);
     }
+
+    printf("\n");
 
     for(int i = 0; i < NPOLES; i++) {
         for(int j = 0; j < NPOLES; j++) {
             couplings[i][j] = pc.getParameter(idx++);
+            printf("couplings = %f , idx = %i \n", couplings[i][j], idx);
         }
         pmasses[i] = pc.getParameter(idx++);
+        printf("pmasses = %f , idx = %i \n", pmasses[i], idx);
     }
+
+    printf("read input parameters\n\n");
 
     fptype s = (PAIR_12 == Mpair ? m12 : (PAIR_13 == Mpair ? m13 : m23));
 
@@ -77,6 +104,8 @@ __device__ auto kMatrixRes(fptype m12, fptype m13, fptype m23, ParameterContaine
         }
     }
 
+    printf("calculated kMatrix elements\n\n");
+
     fptype adlerTerm = (1. - sA0) * (s - sA * mPiPlus * mPiPlus / 2) / (s - sA0);
 
     fpcomplex phaseSpace[NCHANNELS];
@@ -88,6 +117,8 @@ __device__ auto kMatrixRes(fptype m12, fptype m13, fptype m23, ParameterContaine
 
     fpcomplex F[NCHANNELS][NCHANNELS];
     getPropagator(kMatrix, phaseSpace, F, adlerTerm);
+
+    printf("Calculated F matrix\n\n");
 
     // calculates output
     pc.incrementIndex(1, idx, 1, 0, 1);
@@ -106,6 +137,8 @@ __device__ auto kMatrixRes(fptype m12, fptype m13, fptype m23, ParameterContaine
         prod = F[0][pterm] * (1 - s0_prod) / (s - s0_prod);
         ret  = ret + f_prod[pterm] * prod;
     }
+
+    printf("returning\n\n");
 
     return ret;
 } // kMatrixFunction

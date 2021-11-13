@@ -103,6 +103,8 @@ __host__ void PdfBase::recursiveSetIndices() {
                  reflex_name_,
                  getName());
 
+    PdfBase::status();
+
     functionIdx = host_function_table.size();
     host_function_table.push_back(host_fcn_ptr);
 
@@ -385,6 +387,59 @@ __host__ void PdfBase::setData(DataSet *data) {
         MEMCPY_TO_SYMBOL(c_totalEvents, &numEntries, sizeof(unsigned int), 0, cudaMemcpyHostToDevice);
     } else
         throw GooFit::GeneralError("Dataset must be binned or unbinned!");
+}
+
+__host__ void PdfBase::status() {
+    std::cout << "  ** entered PdfBase::status()  \n";
+    for (auto &i : parametersList) {
+        auto pName = i.getName();
+        std::cout << " parameter name = " << pName << "\n";
+    }
+
+    for (auto &component : components) {
+      std::cout << " component = " << component 
+                << ",  getName() =  " << getName()
+                << ",  reflex_name_ = " << reflex_name_ << "\n";
+    }
+
+    auto n_host_function_table = host_function_table.size();
+    auto n_host_parameters     = host_parameters.size();
+    auto n_host_constants      = host_constants.size();
+    auto n_host_observables    = host_observables.size();
+    std::cout << " --> n_ host_function_table, parameters, constants, observables = \n"
+              << " -->   " <<  n_host_function_table << "  "
+                           <<  n_host_parameters << "  "
+                           <<  n_host_constants << "  "
+                           <<  n_host_observables << "\n\n";
+
+    for (int ii = 0; ii < n_host_function_table; ii++) {
+      auto host_function = host_function_table[ii];
+/*      std::cout << "  host_function  " << ii << "  =  " << host_function << "\n"; 
+      auto device_fcn_ptr = d_function_table[ii];
+      std::cout << "   device_fcn_ptr       " << device_fcn_ptr << "\n";
+      auto fIdx = GooPdf::findFunctionIdx(device_fcn_ptr);
+     std::cout << "   fIdx = " << fIdx << "\n";
+*/    }
+
+//  host_function->getName() should get the "name"
+//  host_function->reflex_name_
+
+    for (int ii = 0; ii < n_host_parameters; ii++) {
+      auto host_parameter = host_parameters[ii];
+      std::cout << "  host_parameter  " << ii << "  =  " << host_parameter << "\n";
+    }
+
+    for (int ii = 0; ii < n_host_constants; ii++) {
+      auto host_constant = host_constants[ii];
+      std::cout << "  host_constant  " << ii << "  =  " << host_constant << "\n";
+    }
+
+    for (int ii = 0; ii < n_host_observables; ii++) {
+      auto host_observable = host_observables[ii];
+      std::cout << "  host_observable  " << ii << "  =  " << host_observable << "\n";
+    }
+
+    std::cout <<    "** about to depart PdfBase::status()  \n";
 }
 
 __host__ void PdfBase::generateNormRange() {

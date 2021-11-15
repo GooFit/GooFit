@@ -332,7 +332,7 @@ fptype NormTermY(fptype tlow, fptype thigh, fptype yterm, fptype Gamma, int k) {
     return res;
 }
 
-/*
+
 fptype ThreeGaussResolutionSplice::normalization(
     fptype di1, fptype di2, fptype di3, fptype di4, fptype tau, fptype xmixing, fptype ymixing) const {
 
@@ -397,68 +397,6 @@ fptype ThreeGaussResolutionSplice::normalization(
 
 
 }
-*/
-fptype ThreeGaussResolutionSplice::normalization(
-    fptype di1, fptype di2, fptype di3, fptype di4, fptype tau, fptype xmixing, fptype ymixing) const {
-    
-    // NB! In thesis notation, A_1 = (A + B), A_2 = (A - B).
-    // Here di1 = |A^2|, di2 = |B^2|, di3,4 = Re,Im(AB^*).
-    // Distinction between numerical subscribts and A,B is crucial
-    // for comparing thesis math to this math!
 
-    // fptype timeIntegralOne = tau / (1 - ymixing * ymixing);
-    // fptype timeIntegralTwo = tau / (1 + xmixing * xmixing);
-    // fptype timeIntegralThr = ymixing * timeIntegralOne;
-    // fptype timeIntegralFou = xmixing * timeIntegralTwo;
-
-    fptype selBias_low = selectionBias_low.getValue();
-    fptype selBias_high = selectionBias_high.getValue();
-    fptype Tthres = mTthreshold.getValue();
-    fptype C = mConstantC.getValue();
-    fptype preConst_low = C * exp(selBias_low * Tthres);
-    fptype preConst_high = C * exp(selBias_high * Tthres);
-
-    fptype Gamma = 1./tau; 
-    fptype gammaPlusBias = Gamma + selBias_low;
-
-    fptype timeIntegralOne_low = 0.5*preConst_low * (  1./(ymixing*Gamma - Gamma - selBias_low)  * (   exp( Tthres * (ymixing*Gamma - Gamma - selBias_low) )  - 1  )  +
-        1./(-ymixing*Gamma - Gamma -selBias_low)  * (   exp( Tthres * (-ymixing*Gamma - Gamma - selBias_low) )  - 1  )  );
-
-    fptype timeIntegralThr_low = 0.5*preConst_low * (  1./(ymixing*Gamma - Gamma - selBias_low)  * (   exp( Tthres * (ymixing*Gamma - Gamma - selBias_low) )  - 1  )  -
-        1./(-ymixing*Gamma - Gamma -selBias_low)  * (   exp( Tthres * (-ymixing*Gamma - Gamma - selBias_low) )  - 1  )  );
-
-    fptype timeIntegralTwo_low = preConst_low * (exp(-gammaPlusBias * Tthres) / (gammaPlusBias*gammaPlusBias + xmixing*xmixing *Gamma*Gamma) * ( -gammaPlusBias * cos(xmixing *Gamma * Tthres)  + xmixing*Gamma*sin(xmixing*Gamma*Tthres)) - (-gammaPlusBias)/(gammaPlusBias*gammaPlusBias + xmixing*xmixing *Gamma*Gamma) );
-
-    fptype timeIntegralFour_low = preConst_low * (exp(-gammaPlusBias * Tthres) / (gammaPlusBias*gammaPlusBias + xmixing*xmixing *Gamma*Gamma) * ( -gammaPlusBias * sin(xmixing *Gamma * Tthres)  - xmixing*Gamma*cos(xmixing*Gamma*Tthres)) - (-xmixing*Gamma)/(gammaPlusBias*gammaPlusBias + xmixing*xmixing *Gamma*Gamma) );
-
-
-    gammaPlusBias = Gamma + selBias_high;
-
-    fptype timeIntegralOne_high = 0.5*preConst_high * (  -1./(ymixing*Gamma - Gamma - selBias_high)  * (   exp( Tthres * (ymixing*Gamma - Gamma - selBias_high) )   )  -
-        1./(-ymixing*Gamma - Gamma -selBias_high)  * (   exp( Tthres * (-ymixing*Gamma - Gamma - selBias_high) )   )  );
-
-    fptype timeIntegralThr_high = 0.5*preConst_high * (  -1./(ymixing*Gamma - Gamma - selBias_high)  * (   exp( Tthres * (ymixing*Gamma - Gamma - selBias_high) )    )  +
-        1./(-ymixing*Gamma - Gamma -selBias_high)  * (   exp( Tthres * (-ymixing*Gamma - Gamma - selBias_high) )   )  );
-
-
-    fptype timeIntegralTwo_high = preConst_high * (-exp(-gammaPlusBias * Tthres) / (gammaPlusBias*gammaPlusBias + xmixing*xmixing *Gamma*Gamma) * ( -gammaPlusBias * cos(xmixing *Gamma * Tthres)  + xmixing*Gamma*sin(xmixing*Gamma*Tthres))  );
-
-    fptype timeIntegralFour_high = preConst_high * (-exp(-gammaPlusBias * Tthres) / (gammaPlusBias*gammaPlusBias + xmixing*xmixing *Gamma*Gamma) * ( -gammaPlusBias * sin(xmixing *Gamma * Tthres)  - xmixing*Gamma*cos(xmixing*Gamma*Tthres))  );
-
-
-
-
-    fptype timeIntegralOne =  timeIntegralOne_low + timeIntegralOne_high;
-    fptype timeIntegralTwo = timeIntegralTwo_low + timeIntegralTwo_high;
-    fptype timeIntegralThr = timeIntegralThr_low + timeIntegralThr_high;
-    fptype timeIntegralFou = timeIntegralFour_low + timeIntegralFour_high;
-
-    fptype ret = timeIntegralOne * (di1 + di2); // ~ |A|^2 + |B|^2
-    ret += timeIntegralTwo * (di1 - di2);        // ~ |A|^2 - |B|^2
-    ret -= 2 * timeIntegralThr * di3;          // ~ Re(A_1 A_2^*)
-    ret -= 2 * timeIntegralFou * di4;           // ~ Im(A_1 A_2^*)
-
-    return ret;
-}
 
 } // namespace GooFit

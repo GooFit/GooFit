@@ -92,6 +92,23 @@ struct exp_functor {
     }
 };
 
+struct get_pdf_val {
+    __host__ __device__ fptype operator()(thrust::tuple<fptype,fptype,fptype,fptype> t){
+      fptype pdf_val = thrust::get<0>(t);
+      return pdf_val;
+    }
+
+  };
+
+struct get_norm_pdf_weight{
+    fptype wmax;
+    __host__ __device__ get_norm_pdf_weight(fptype _wmax)
+      : wmax(_wmax){};
+    __host__ __device__ fptype operator()(fptype pdf_val){
+      return (fptype)(pdf_val/wmax);
+    }
+  };
+
 // The function of this array is to hold all the cached waves; specific
 // waves are recalculated when the corresponding resonance mass or width
 // changes. Note that in a multithread environment each thread needs its
@@ -159,6 +176,7 @@ __device__ auto device_Amp4Body_TD(fptype *evt, ParameterContainer &pc) -> fptyp
 
     int id_time  = pc.getObservable(6);
     int id_sigma = pc.getObservable(7);
+    int id_wsig = pc.getObservable(8);
 
     fptype _tau          = pc.getParameter(0);
     fptype _xmixing      = pc.getParameter(1);
@@ -166,6 +184,11 @@ __device__ auto device_Amp4Body_TD(fptype *evt, ParameterContainer &pc) -> fptyp
     fptype _SqWStoRSrate = pc.getParameter(3);
     fptype _time         = RO_CACHE(evt[id_time]);
     fptype _sigma        = RO_CACHE(evt[id_sigma]);
+
+    //std::cout << "reading time: " << _time << "with resolution: " << _sigma << std::endl;
+    //wSig is the weight associated with a per event relative efficiency
+    
+    fptype wSig = RO_CACHE(evt[id_wsig]);
 
     AmpA *= _SqWStoRSrate;
     /*printf("%i read time: %.5g x: %.5g y: %.5g \n",evtNum, _time, _xmixing, _ymixing);*/
@@ -196,6 +219,7 @@ __device__ auto device_Amp4Body_TD(fptype *evt, ParameterContainer &pc) -> fptyp
     // efficiency function?
     fptype eff = callFunction(evt, pc);
     /*printf("%i result %.7g, eff %.7g\n",evtNum, ret, eff);*/
+    ret *= wSig;
 
     ret *= eff;
     /*printf("in prob: %f\n", ret);*/
@@ -407,6 +431,7 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
     initialize();
 
     Integrator   = new NormIntegrator_TD();
+    //Integrator = new NormIntegrator_TD(Amp4Body_TD::specialIntegral);
     redoIntegral = new bool[LineShapes.size()];
     cachedMasses = new fptype[LineShapes.size()];
     cachedWidths = new fptype[LineShapes.size()];
@@ -465,6 +490,33 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
     norm_CosTheta12 = mcbooster::RealVector_d(nAcc);
     norm_CosTheta34 = mcbooster::RealVector_d(nAcc);
     norm_phi        = mcbooster::RealVector_d(nAcc);
+
+    //normalistion generated decay time
+    norm_dtime = mcbooster::RealVector_d(nAcc);
+    //efficiency weight from BDT for the normalisation events
+    norm_eff = mcbooster::RealVector_d(nAcc);
+    //weight associated from the pdf value in place of an accept-reject
+    norm_pdf_weight = mcbooster::RealVector_d(nAcc);
+    //weight from importance sampling the decay time distribution
+    norm_importance_weight = mcbooster::RealVector_d(nAcc);
+    //Do this straight after intialisation
+    thrust::counting_iterator<unsigned int> index_sequence_begin(0);
+
+    fptype tau      = parametersList[0].getValue();
+    //adding the x mixing term to see if this affects the accept reject numbers in gammamin
+    //fptype xmixing = parametersList[1].getValue();
+    fptype ymixing  = parametersList[2].getValue();
+    fptype gammamin = 1.0 / tau - fabs(ymixing) / tau;
+    //fill the normalisation decay times with zero initially to calculate the value of the PDF at t=0
+    thrust::fill(norm_dtime.begin(),norm_dtime.end(),0.);
+    //fill the normalisation weights with 1
+    thrust::fill(norm_pdf_weight.begin(),norm_pdf_weight.end(),1.);
+    thrust::fill(norm_importance_weight.begin(),norm_importance_weight.end(),1.);
+    //fill the normalisation vectors with ones to avoid any errors involving multiplying by 0
+    thrust::fill(norm_eff.begin(),norm_eff.end(),1.);
+
+    thrust::transform(
+        index_sequence_begin, index_sequence_begin + nAcc, norm_dtime.begin(), genExp(generation_offset, gammamin));
 
     mcbooster::VariableSet_d VarSet(5);
     VarSet[0] = &norm_M12;

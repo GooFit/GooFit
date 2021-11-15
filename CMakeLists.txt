@@ -8,7 +8,6 @@ project(
   GOOFIT
   VERSION 2.2.3
   LANGUAGES CXX)
-
 #set(GOOFIT_TAG "dev")
 #set(GOOFIT_TAG "alpha")
 #set(GOOFIT_TAG "beta")
@@ -132,6 +131,17 @@ set(GOOFIT_CUDA_OR_GRAINSIZE
 
 configure_file("${GOOFIT_SOURCE_DIR}/include/goofit/detail/ThrustOverrideConfig.h.in"
                "${GOOFIT_BINARY_DIR}/include/goofit/detail/ThrustOverrideConfig.h")
+
+include(WriteCompilerDetectionHeader)
+
+set(COMPILER_LIST GNU Clang AppleClang)
+
+# Support for CMake 3.5 in ROOT Docker instance.
+
+write_compiler_detection_header(
+  FILE include/goofit/detail/CompilerFeatures.h PREFIX GOOFIT
+  COMPILERS ${COMPILER_LIST}
+  FEATURES cxx_attribute_deprecated)
 
 set(GOOFIT_CXX_STANDARD
     "11"
@@ -396,7 +406,7 @@ target_compile_options(
   GooFit_Common INTERFACE $<${cxx_lang_rel}:$<BUILD_INTERFACE:${GOOFIT_OPTI}>>
                           $<${cuda_lang_rel}:$<BUILD_INTERFACE:-Xcompiler=${GOOFIT_OPTI_CUDA}>>)
 
-find_package(Thrust 1.8 QUIET)
+find_package(Thrust QUIET)
 if(NOT THRUST_FOUND)
   set(THRUST_INCLUDE_DIR "${GOOFIT_SOURCE_DIR}/extern/thrust")
   find_package(Thrust 1.8 REQUIRED)
@@ -676,6 +686,7 @@ option(GOOFIT_EXAMPLES "Build the example programs" ${CUR_PROJ})
 if(GOOFIT_EXAMPLES)
   add_subdirectory(examples)
 endif()
+add_subdirectory(k3pi_goofit_scripts)
 
 if(EXISTS work)
   add_subdirectory(work)

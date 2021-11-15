@@ -26,19 +26,22 @@ class ThreeGaussResolutionSplice : public MixingTimeResolution {
                          Variable ts,
                          Variable ob,
                          Variable os,
-                         Variable sb_low,
-                         Variable sb_high,
-                         Variable Tthres,
-                         Variable constantC);
+                         std::vector<Variable> knots,
+                         std::vector<Variable> a0,
+                         std::vector<Variable> a1,
+                         std::vector<Variable> a2,
+                         std::vector<Variable> a3);
     ~ThreeGaussResolutionSplice() override;
 
     fptype normalization(
         fptype di1, fptype di2, fptype di3, fptype di4, fptype tau, fptype xmixing, fptype ymixing) const override;
 
   private:
-    Variable selectionBias_low;
-    Variable selectionBias_high;
-    Variable mTthreshold;
-    Variable mConstantC;
+    std::vector<Variable> m_knots;
+    std::vector<Variable> m_a0;
+    std::vector<Variable> m_a1;
+    std::vector<Variable> m_a2;
+    std::vector<Variable> m_a3;
+    
 };
 } // namespace GooFit

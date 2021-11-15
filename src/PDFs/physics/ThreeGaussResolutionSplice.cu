@@ -239,57 +239,59 @@ __device__ fptype device_threegauss_resolutionSplice(fptype coshterm,
     fptype tailScaleFactor = pc.getParameter(5);
     fptype outlBias        = pc.getParameter(6);
     fptype outlScaleFactor = pc.getParameter(7);
-    fptype selbias_low         = pc.getParameter(8);
-    fptype selbias_high         = pc.getParameter(9);
-    fptype Tthreshold  = pc.getParameter(10);
-    fptype constantC = pc.getParameter(11);
-
-    fptype cp1_low = 0;
-    fptype cp2_low = 0;
-    fptype cp3_low = 0;
-    fptype cp4_low = 0;
-    fptype tp1_low = 0;
-    fptype tp2_low = 0;
-    fptype tp3_low = 0;
-    fptype tp4_low = 0;
-    fptype op1_low = 0;
-    fptype op2_low = 0;
-    fptype op3_low = 0;
-    fptype op4_low = 0;
-
-
-    fptype cp1_high = 0;
-    fptype cp2_high = 0;
-    fptype cp3_high = 0;
-    fptype cp4_high = 0;
-    fptype tp1_high = 0;
-    fptype tp2_high = 0;
-    fptype tp3_high = 0;
-    fptype tp4_high = 0;
-    fptype op1_high = 0;
-    fptype op2_high = 0;
-    fptype op3_high = 0;
-    fptype op4_high = 0;
-    int nKnots = 8;
-    // upper splice end should probably not be to large, as fucntion might become negative
-    fptype knots[] = {0., 0.2,  0.35, 0.5,  0.65, 1.05, 2.1,  4.5};
-    fptype  spline_0[] = {0.03765277000655794, 0.03765277000655794, 0.033653622225172486, 0.05183326055919843, 0.037589800853886655, 0.03943035933470114, 0.03461351985201154};
-    fptype  spline_1[] = {0.008125428187878276, 0.00812542818787828, 0.04240383774261078, -0.06667399226154494, -0.0009349474677982864, -0.006193685984411092, -0.005360727973783324};
-    fptype  spline_2[] = {-0.026572145610579714, -0.02657214561057973, -0.12451045862410115, 0.09364520138421031, -0.007491790606169145, -0.002483468209395046, 0.0};
-    fptype  spline_3[] = {0.0027387047655195807, 0.0027387047655195998, 0.09601328858792094, -0.049423818084286704, 0.0024413060133437765, 0.000851362395320254, 0.0};
-      
-
-    gaussian_splice(cp1_low, cp2_low, cp3_low, cp4_low, tau, dtime - coreBias * sigma, xmixing, ymixing, coreScaleFactor * sigma, nKnots, knots, spline_0, spline_1, spline_2, spline_3);
-    gaussian_splice(tp1_low, tp2_low, tp3_low, tp4_low, tau, dtime - tailBias * sigma, xmixing, ymixing, tailScaleFactor * sigma, nKnots, knots, spline_0, spline_1, spline_2, spline_3);
-    gaussian_splice(op1_low, op2_low, op3_low, op4_low, tau, dtime - outlBias * sigma, xmixing, ymixing, outlScaleFactor * sigma, nKnots, knots, spline_0, spline_1, spline_2, spline_3);
+ 
 
 
 
+    int nKnots = pc.getConstant(0);
+    int nSplines = nKnots - 1;
+    // TODO: upper splice end should probably not be to large, as fucntion might become negative
+    //TODO: at the moment support up to 8 knots/ 7 splines!
+    fptype knots[8];
+    fptype spline_0[8];
+    fptype spline_1[7];
+    fptype spline_2[7];
+    fptype spline_3[7];
+    for(int i = 0; i < nKnots; i++) {
+        knots[i] = pc.getParameter(8+i);
 
-    fptype _P1 = coreFraction * (cp1_low) + tailFraction * (tp1_low) + outlFraction * (op1_low);
-    fptype _P2 = coreFraction * (cp2_low) + tailFraction * (tp2_low) + outlFraction * (op2_low);
-    fptype _P3 = coreFraction * (cp3_low) + tailFraction * (tp3_low) + outlFraction * (op3_low);
-    fptype _P4 = coreFraction * (cp4_low) + tailFraction * (tp4_low) + outlFraction * (op4_low);
+    }
+    for(int i = 0; i < nSplines; i++) {
+        int offset = 8 + nKnots + i;
+        spline_0[i] = pc.getParameter(offset);
+        spline_1[i] = pc.getParameter(offset + nSplines);
+        spline_2[i] = pc.getParameter(offset + 2*nSplines);
+        spline_3[i] = pc.getParameter(offset + 3*nSplines);
+
+    }
+
+
+    fptype cp1;
+    fptype cp2;
+    fptype cp3;
+    fptype cp4;
+
+    fptype tp1;
+    fptype tp2;
+    fptype tp3;
+    fptype tp4;
+
+    fptype op1;
+    fptype op2;
+    fptype op3;
+    fptype op4;
+
+    gaussian_splice(cp1, cp2, cp3, cp4, tau, dtime - coreBias * sigma, xmixing, ymixing, coreScaleFactor * sigma, nKnots, knots, spline_0, spline_1, spline_2, spline_3);
+    gaussian_splice(tp1, tp2, tp3, tp4, tau, dtime - tailBias * sigma, xmixing, ymixing, tailScaleFactor * sigma, nKnots, knots, spline_0, spline_1, spline_2, spline_3);
+    gaussian_splice(op1, op2, op3, op4, tau, dtime - outlBias * sigma, xmixing, ymixing, outlScaleFactor * sigma, nKnots, knots, spline_0, spline_1, spline_2, spline_3);
+
+
+
+
+    fptype _P1 = coreFraction * (cp1) + tailFraction * (tp1) + outlFraction * (op1);
+    fptype _P2 = coreFraction * (cp2) + tailFraction * (tp2) + outlFraction * (op2);
+    fptype _P3 = coreFraction * (cp3) + tailFraction * (tp3) + outlFraction * (op3);
+    fptype _P4 = coreFraction * (cp4) + tailFraction * (tp4) + outlFraction * (op4);
 
     fptype ret = 0;
     ret += coshterm * _P1;
@@ -307,10 +309,16 @@ __device__ fptype device_threegauss_resolutionSplice(fptype coshterm,
 __device__ device_resfunction_ptr ptr_to_threegaussSplice = device_threegauss_resolutionSplice;
 
 ThreeGaussResolutionSplice::ThreeGaussResolutionSplice(
-    Variable cf, Variable tf, Variable cb, Variable cs, Variable tb, Variable ts, Variable ob, Variable os, Variable sb_low, Variable sb_high, Variable Tthres, Variable constantC)
-    : MixingTimeResolution("ThreeGaussResolutionSplice", cf, tf, cb, cs, tb, ts, ob, os, sb_low, sb_high, Tthres, constantC)
-    , selectionBias_low(sb_low), selectionBias_high(sb_high), mTthreshold(Tthres), mConstantC(constantC) {
+    Variable cf, Variable tf, Variable cb, Variable cs, Variable tb, Variable ts, Variable ob, Variable os, std::vector<Variable> knots, std::vector<Variable> a0, std::vector<Variable> a1, std::vector<Variable> a2, std::vector<Variable> a3)
+    : MixingTimeResolution("ThreeGaussResolutionSplice", cf, tf, cb, cs, tb, ts, ob, os)
+    , m_knots(knots), m_a0(a0), m_a1(a1), m_a2(a2), m_a3(a3) {
     initIndex();
+    registerConstant(knots.size());
+    for (auto knot : knots) registerParameter(knot);
+    for (auto i : a0) registerParameter(i);
+    for (auto i : a1) registerParameter(i);
+    for (auto i : a2) registerParameter(i);
+    for (auto i : a3) registerParameter(i);
 
     registerFunction("ptr_to_threegaussSplice", ptr_to_threegaussSplice);
 }
@@ -347,14 +355,29 @@ fptype ThreeGaussResolutionSplice::normalization(
     // fptype timeIntegralThr = ymixing * timeIntegralOne;
     // fptype timeIntegralFou = xmixing * timeIntegralTwo;
 
-    int nKnots = 8;
+    auto nKnots = m_knots.size();
     // upper splice end should probably not be to large, as fucntion might become negative
-    fptype knots[] = {0., 0.2,  0.35, 0.5,  0.65, 1.05, 2.1,  4.5};
+    std::vector<fptype> knots;
+    std::vector<fptype>  spline_0;
+    std::vector<fptype>  spline_1;
+    std::vector<fptype>  spline_2;
+    std::vector<fptype>  spline_3;
+    for(auto i : m_knots) {
+        knots.push_back(i.getValue());
+    }
+    for(auto i : m_a0) spline_0.push_back(i.getValue());
+    for(auto i : m_a1) spline_1.push_back(i.getValue());
+    for(auto i : m_a2) spline_2.push_back(i.getValue());
+    for(auto i : m_a3) spline_3.push_back(i.getValue());
+
+    /*
+    0., 0.2,  0.35, 0.5,  0.65, 1.05, 2.1,  4.5
     fptype  spline_0[] = {0.03765277000655794, 0.03765277000655794, 0.033653622225172486, 0.05183326055919843, 0.037589800853886655, 0.03943035933470114, 0.03461351985201154};
     fptype  spline_1[] = {0.008125428187878276, 0.00812542818787828, 0.04240383774261078, -0.06667399226154494, -0.0009349474677982864, -0.006193685984411092, -0.005360727973783324};
     fptype  spline_2[] = {-0.026572145610579714, -0.02657214561057973, -0.12451045862410115, 0.09364520138421031, -0.007491790606169145, -0.002483468209395046, 0.0};
     fptype  spline_3[] = {0.0027387047655195807, 0.0027387047655195998, 0.09601328858792094, -0.049423818084286704, 0.0024413060133437765, 0.000851362395320254, 0.0};
-
+    */
+    
 
 
 
@@ -366,25 +389,25 @@ fptype ThreeGaussResolutionSplice::normalization(
     fptype timeIntegralFour =  0.;
     // 1. - ymixing or ymixing - 1.
     for (int i = 0; i < nKnots-1; i++ ) {
-        timeIntegralOne += spline_0[i] * (0.5 * NormTermY(knots[i], knots[i+1], 1. - ymixing, Gamma, 0) + 0.5 * NormTermY(knots[i], knots[i+1], ymixing + 1., Gamma, 0) );
-        timeIntegralOne += spline_1[i] * (0.5 * NormTermY(knots[i], knots[i+1], 1. - ymixing, Gamma, 1) + 0.5 * NormTermY(knots[i], knots[i+1], ymixing + 1., Gamma, 1) );
-        timeIntegralOne += spline_2[i] * (0.5 * NormTermY(knots[i], knots[i+1], 1. - ymixing, Gamma, 2) + 0.5 * NormTermY(knots[i], knots[i+1], ymixing + 1., Gamma, 2) );
-        timeIntegralOne += spline_3[i] * (0.5 * NormTermY(knots[i], knots[i+1], 1. - ymixing, Gamma, 3) + 0.5 * NormTermY(knots[i], knots[i+1], ymixing + 1., Gamma, 3) );
+        timeIntegralOne += spline_0.at(i) * (0.5 * NormTermY(knots.at(i), knots.at(i+1), 1. - ymixing, Gamma, 0) + 0.5 * NormTermY(knots.at(i), knots.at(i+1), ymixing + 1., Gamma, 0) );
+        timeIntegralOne += spline_1.at(i) * (0.5 * NormTermY(knots.at(i), knots.at(i+1), 1. - ymixing, Gamma, 1) + 0.5 * NormTermY(knots.at(i), knots.at(i+1), ymixing + 1., Gamma, 1) );
+        timeIntegralOne += spline_2.at(i) * (0.5 * NormTermY(knots.at(i), knots.at(i+1), 1. - ymixing, Gamma, 2) + 0.5 * NormTermY(knots.at(i), knots.at(i+1), ymixing + 1., Gamma, 2) );
+        timeIntegralOne += spline_3.at(i) * (0.5 * NormTermY(knots.at(i), knots.at(i+1), 1. - ymixing, Gamma, 3) + 0.5 * NormTermY(knots.at(i), knots.at(i+1), ymixing + 1., Gamma, 3) );
 
-        timeIntegralThree += spline_0[i] * (0.5 * NormTermY(knots[i], knots[i+1], 1. - ymixing, Gamma, 0) - 0.5 * NormTermY(knots[i], knots[i+1], ymixing + 1., Gamma, 0) );
-        timeIntegralThree += spline_1[i] * (0.5 * NormTermY(knots[i], knots[i+1], 1. - ymixing, Gamma, 1) - 0.5 * NormTermY(knots[i], knots[i+1], ymixing + 1., Gamma, 1) );
-        timeIntegralThree += spline_2[i] * (0.5 * NormTermY(knots[i], knots[i+1], 1. - ymixing, Gamma, 2) - 0.5 * NormTermY(knots[i], knots[i+1], ymixing + 1., Gamma, 2) );
-        timeIntegralThree += spline_3[i] * (0.5 * NormTermY(knots[i], knots[i+1], 1. - ymixing, Gamma, 3) - 0.5 * NormTermY(knots[i], knots[i+1], ymixing + 1., Gamma, 3) );
+        timeIntegralThree += spline_0.at(i) * (0.5 * NormTermY(knots.at(i), knots.at(i+1), 1. - ymixing, Gamma, 0) - 0.5 * NormTermY(knots.at(i), knots.at(i+1), ymixing + 1., Gamma, 0) );
+        timeIntegralThree += spline_1.at(i) * (0.5 * NormTermY(knots.at(i), knots.at(i+1), 1. - ymixing, Gamma, 1) - 0.5 * NormTermY(knots.at(i), knots.at(i+1), ymixing + 1., Gamma, 1) );
+        timeIntegralThree += spline_2.at(i) * (0.5 * NormTermY(knots.at(i), knots.at(i+1), 1. - ymixing, Gamma, 2) - 0.5 * NormTermY(knots.at(i), knots.at(i+1), ymixing + 1., Gamma, 2) );
+        timeIntegralThree += spline_3.at(i) * (0.5 * NormTermY(knots.at(i), knots.at(i+1), 1. - ymixing, Gamma, 3) - 0.5 * NormTermY(knots.at(i), knots.at(i+1), ymixing + 1., Gamma, 3) );
 
-        timeIntegralTwo += spline_0[i] * (NormTermY(knots[i], knots[i+1], 1., Gamma, 0) - 0.5 * pow(xmixing*Gamma,2) * NormTermY(knots[i], knots[i+1], 1., Gamma, 2) );
-        timeIntegralTwo += spline_1[i] * (NormTermY(knots[i], knots[i+1], 1., Gamma, 1) - 0.5 * pow(xmixing*Gamma,2) * NormTermY(knots[i], knots[i+1], 1., Gamma, 3) );
-        timeIntegralTwo += spline_2[i] * (NormTermY(knots[i], knots[i+1], 1., Gamma, 2) - 0.5 * pow(xmixing*Gamma,2) * NormTermY(knots[i], knots[i+1], 1., Gamma, 4) );
-        timeIntegralTwo += spline_3[i] * (NormTermY(knots[i], knots[i+1], 1., Gamma, 3) - 0.5 * pow(xmixing*Gamma,2) * NormTermY(knots[i], knots[i+1], 1., Gamma, 5) );
+        timeIntegralTwo += spline_0.at(i) * (NormTermY(knots.at(i), knots.at(i+1), 1., Gamma, 0) - 0.5 * pow(xmixing*Gamma,2) * NormTermY(knots.at(i), knots.at(i+1), 1., Gamma, 2) );
+        timeIntegralTwo += spline_1.at(i) * (NormTermY(knots.at(i), knots.at(i+1), 1., Gamma, 1) - 0.5 * pow(xmixing*Gamma,2) * NormTermY(knots.at(i), knots.at(i+1), 1., Gamma, 3) );
+        timeIntegralTwo += spline_2.at(i) * (NormTermY(knots.at(i), knots.at(i+1), 1., Gamma, 2) - 0.5 * pow(xmixing*Gamma,2) * NormTermY(knots.at(i), knots.at(i+1), 1., Gamma, 4) );
+        timeIntegralTwo += spline_3.at(i) * (NormTermY(knots.at(i), knots.at(i+1), 1., Gamma, 3) - 0.5 * pow(xmixing*Gamma,2) * NormTermY(knots.at(i), knots.at(i+1), 1., Gamma, 5) );
 
-        timeIntegralFour += spline_0[i] * (xmixing*Gamma*NormTermY(knots[i], knots[i+1], 1., Gamma, 1) - 1./6. * pow(xmixing*Gamma,3) * NormTermY(knots[i], knots[i+1], 1., Gamma, 3) );
-        timeIntegralFour += spline_1[i] * (xmixing*Gamma*NormTermY(knots[i], knots[i+1], 1., Gamma, 2) - 1./6. * pow(xmixing*Gamma,3) * NormTermY(knots[i], knots[i+1], 1., Gamma, 4) );
-        timeIntegralFour += spline_2[i] * (xmixing*Gamma*NormTermY(knots[i], knots[i+1], 1., Gamma, 3) - 1./6. * pow(xmixing*Gamma,3) * NormTermY(knots[i], knots[i+1], 1., Gamma, 5) );
-        timeIntegralFour += spline_3[i] * (xmixing*Gamma*NormTermY(knots[i], knots[i+1], 1., Gamma, 4) - 1./6. * pow(xmixing*Gamma,3) * NormTermY(knots[i], knots[i+1], 1., Gamma, 6) );
+        timeIntegralFour += spline_0.at(i) * (xmixing*Gamma*NormTermY(knots.at(i), knots.at(i+1), 1., Gamma, 1) - 1./6. * pow(xmixing*Gamma,3) * NormTermY(knots.at(i), knots.at(i+1), 1., Gamma, 3) );
+        timeIntegralFour += spline_1.at(i) * (xmixing*Gamma*NormTermY(knots.at(i), knots.at(i+1), 1., Gamma, 2) - 1./6. * pow(xmixing*Gamma,3) * NormTermY(knots.at(i), knots.at(i+1), 1., Gamma, 4) );
+        timeIntegralFour += spline_2.at(i) * (xmixing*Gamma*NormTermY(knots.at(i), knots.at(i+1), 1., Gamma, 3) - 1./6. * pow(xmixing*Gamma,3) * NormTermY(knots.at(i), knots.at(i+1), 1., Gamma, 5) );
+        timeIntegralFour += spline_3.at(i) * (xmixing*Gamma*NormTermY(knots.at(i), knots.at(i+1), 1., Gamma, 4) - 1./6. * pow(xmixing*Gamma,3) * NormTermY(knots.at(i), knots.at(i+1), 1., Gamma, 6) );
 
     }
 

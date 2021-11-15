@@ -10,10 +10,11 @@
 
 namespace GooFit {
 
-NormIntegrator_TD::NormIntegrator_TD() = default;
-
-__device__ auto NormIntegrator_TD::operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const
-    -> thrust::tuple<fptype, fptype, fptype, fptype> {
+ //NormIntegrator_TD::NormIntegrator_TD() = default;
+ NormIntegrator_TD::NormIntegrator_TD(bool SpecInt): _SpecInt(SpecInt){}
+ __device__ thrust::tuple<fptype, fptype, fptype, fptype> NormIntegrator_TD::
+ operator()(thrust::tuple<int, int, fptype *, fpcomplex *,
+        mcbooster::GReal_t, mcbooster::GReal_t,mcbooster::GReal_t,mcbooster::GReal_t> t) const {
     // unsigned int *indices = paramIndices + _parameters;
     // unsigned int totalAMP = indices[5];
 
@@ -95,7 +96,38 @@ __device__ auto NormIntegrator_TD::operator()(thrust::tuple<int, int, fptype *, 
     AmpA *= _SqWStoRSrate;
 
     auto AmpAB = AmpA * conj(AmpB);
-    return {thrust::norm(AmpA), thrust::norm(AmpB), AmpAB.real(), AmpAB.imag()};
+    if(_SpecInt){
+        fptype _tau          = pc.getParameter(0);
+        fptype _xmixing      = pc.getParameter(1);
+        fptype _ymixing      = pc.getParameter(2);
+        fptype _time = thrust::get<4>(t);
+        fptype _eff = thrust::get<5>(t);
+        //pdf weight
+        fptype _weight = thrust::get<6>(t);
+        //importance weight 
+        fptype _importance_weight = thrust::get<7>(t);
+        fptype term1 = thrust::norm(AmpA) + thrust::norm(AmpB);
+        fptype term2 = thrust::norm(AmpA) - thrust::norm(AmpB);
+  
+        unsigned int totalSF_LS = pc.getConstant(10);
+        fptype ret = 0.;
+        _time /= _tau;
+        ret += term1 * cosh(_ymixing * _time);
+        ret += term2 * cos(_xmixing * _time);
+        ret -= 2 * AmpAB.real() * sinh(_ymixing * _time);
+        ret -= 2 * AmpAB.imag()
+        * sin(_xmixing * _time); // Notice sign difference wrt to Mikhail's code, because I have AB* and he has A*B.                                                                                      
+        ret *= exp(-_time);
+  
+        ret *= _eff;
+        ret *= _weight;
+        ret /= _importance_weight;
+  
+        return thrust::tuple<fptype,fptype,fptype,fptype>(ret,thrust::norm(AmpA)/_weight,thrust::norm(AmpB)/_weight,1);
+      }
+      else {
+        return {thrust::norm(AmpA), thrust::norm(AmpB), AmpAB.real(), AmpAB.imag()};
+        }
 }
 
 } // namespace GooFit

@@ -3,6 +3,8 @@
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/SpinFactors.h>
 #include <goofit/PDFs/physics/detail/Dim5.h>
+#include <mcbooster/GContainers.h>
+#include <goofit/PDFs/physics/MixingTimeResolution.h>
 
 namespace GooFit {
 

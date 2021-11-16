@@ -755,8 +755,8 @@ __host__ auto Amp4Body_TD::normalize() -> fptype {
 
             //fptype wmax_norm = 1.1 * (fptype)*thrust::max_element(pdf_vals.begin(), pdf_vals.end());
             //hard coding a large max weight. Should be able to ignore weights larger than 1 as they are very rare
-            fptype wmax_norm = 35.0;
-            thrust::transform(pdf_vals.begin(),pdf_vals.end(),norm_pdf_weight.begin(),get_norm_pdf_weight(wmax_norm));
+            fptype wmax_norm = 100.0;
+            //thrust::transform(pdf_vals.begin(),pdf_vals.end(),norm_pdf_weight.begin(),get_norm_pdf_weight(wmax_norm));
             //reset the decay times
             norm_dtime = temp_dtime;
 
@@ -787,7 +787,19 @@ __host__ auto Amp4Body_TD::normalize() -> fptype {
             const double uniformNorm = 1.;
             //const double uniformNorm = 3.26 - 0.18;
             ret = thrust::get<0>(sumIntegral) * uniformNorm;
-
+            auto ratioNormBA = thrust::get<2>(sumIntegral) / thrust::get<1>(sumIntegral);
+            fprintf(stderr, "SpecInt normalize A2/#evts , B2/#evts, ratio: %.5g, %.5g, %.5g\n",
+                  thrust::get<1>(sumIntegral)/MCevents, thrust::get<2>(sumIntegral)/MCevents, ratioNormBA);
+            // needed in the case of eff_weights = 1
+            
+            ret = resolution->normalization(thrust::get<0>(sumIntegral),
+            thrust::get<1>(sumIntegral),
+            thrust::get<2>(sumIntegral),
+            thrust::get<3>(sumIntegral),
+            tau,
+            xmixing,
+            ymixing);
+            
           }
           else {
             ret = resolution->normalization(thrust::get<0>(sumIntegral),
@@ -804,7 +816,7 @@ __host__ auto Amp4Body_TD::normalize() -> fptype {
         // MCevents is the number of normalization events.
         ret /= MCevents;
         if(specialIntegral){
-            printf("normalizatio value:%.7g ",ret);
+            printf("normalizatio value:%.7g \n",ret);
           }
     }
 

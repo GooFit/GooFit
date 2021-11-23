@@ -97,7 +97,7 @@ namespace GooFit {
     //printf("Before if statement\n");
     auto AmpAB = AmpA * conj(AmpB);
     if(_SpecInt){
-        //printf("Inside if statement\n");
+        printf("Inside if statement\n");
         fptype _tau          = pc.getParameter(0);
         fptype _xmixing      = pc.getParameter(1);
         fptype _ymixing      = pc.getParameter(2);
@@ -114,14 +114,13 @@ namespace GooFit {
         //printf("Calling resolution function\n");
         //ret = (*(reinterpret_cast<device_resfunction_ptr>(d_function_table[pc.funcIdx])))(
         //term1, term2, AmpAB.real(), AmpAB.imag(), _tau, _time, _xmixing, _ymixing,0.0, pc);
-        /*
+        
         _time /= _tau;
         ret += term1 * cosh(_ymixing * _time);
         ret += term2 * cos(_xmixing * _time);
         ret -= 2 * AmpAB.real() * sinh(_ymixing * _time);
         ret -= 2 * AmpAB.imag()* sin(_xmixing * _time); // Notice sign difference wrt to Mikhail's code, because I have AB* and he has A*B.                                                                                      
         ret *= exp(-_time);
-        */;
         //printf("Called resolution function\n");
         //printf("ret step 1: %f\n",ret);
         ret *= _eff;

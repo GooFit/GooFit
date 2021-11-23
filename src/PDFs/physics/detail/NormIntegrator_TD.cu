@@ -5,19 +5,18 @@
 #include <goofit/PDFs/physics/SpinFactors.h>
 #include <goofit/PDFs/physics/detail/Dim5.h>
 #include <goofit/detail/Complex.h>
-#include <goofit/PDFs/physics/MixingTimeResolution.h>
+
 #include <thrust/functional.h>
 
 namespace GooFit {
 
- //NormIntegrator_TD::NormIntegrator_TD() = default;
- NormIntegrator_TD::NormIntegrator_TD(bool SpecInt): _SpecInt(SpecInt){}
+NormIntegrator_TD::NormIntegrator_TD(bool SpecInt): _SpecInt(SpecInt){}
  __device__ thrust::tuple<fptype, fptype, fptype, fptype> NormIntegrator_TD::
  operator()(thrust::tuple<int, int, fptype *, fpcomplex *,
-        mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t) const {
+        mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t) const { 
     // unsigned int *indices = paramIndices + _parameters;
     // unsigned int totalAMP = indices[5];
-    //printf("Norm integrator operator()\n");
+
     ParameterContainer pc;
 
     while(pc.funcIdx < dalitzFuncId)
@@ -94,10 +93,10 @@ namespace GooFit {
 
     fptype _SqWStoRSrate = pc.getParameter(3);
     AmpA *= _SqWStoRSrate;
-    //printf("Before if statement\n");
+
     auto AmpAB = AmpA * conj(AmpB);
     if(_SpecInt){
-        printf("Inside if statement\n");
+        //printf("Inside if statement\n");
         fptype _tau          = pc.getParameter(0);
         fptype _xmixing      = pc.getParameter(1);
         fptype _ymixing      = pc.getParameter(2);
@@ -127,19 +126,6 @@ namespace GooFit {
         //printf("ret step 2: %f\n",ret);
         ret *= _importance_weight;
         //printf("ret step 3: %f\n",ret);
-
-        /*
-        fptype integral1 = _tau / (1 - _ymixing * _ymixing);
-        fptype integral2 = _tau / (1 + _xmixing * _xmixing);
-        fptype integral3 = _ymixing * integral1;
-        fptype integral4 = _xmixing * integral2;
-        ret += integral2 * (thrust::norm(AmpA) -  thrust::norm(AmpB));
-        ret -= 2 * integral3 * AmpAB.real();
-        ret -= 2 * integral4 * AmpAB.imag();
-        ret *= _eff;
-        ret *= _weight;
-        ret /= _importance_weight;
-        */
   
         return thrust::tuple<fptype,fptype,fptype,fptype>(ret,thrust::norm(AmpA)/_importance_weight,thrust::norm(AmpB)/_importance_weight,1);
       }

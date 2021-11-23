@@ -53,8 +53,7 @@ class Amp4Body_TD : public Amp4BodyBase {
         tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::BoolVector_h>;
 
     __host__ void populateArrays() override;
-
-    __host__ mcbooster::RealVector_h get_norm_m12(){
+        __host__ mcbooster::RealVector_h get_norm_m12(){
       auto host_norm_m12 = mcbooster::RealVector_h(norm_M12);
       return host_norm_m12;
     }
@@ -86,11 +85,6 @@ class Amp4Body_TD : public Amp4BodyBase {
       return host_norm_eff;
     }
 
-    __host__ mcbooster::RealVector_h get_norm_pdf_weights(){
-      auto host_norm_weight = mcbooster::RealVector_h(norm_pdf_weight);
-      return host_norm_weight;
-    }
-
     __host__ mcbooster::RealVector_h get_norm_importance_weights(){
       auto host_importance_weight = mcbooster::RealVector_h(norm_importance_weight);
       return host_importance_weight;
@@ -102,10 +96,6 @@ class Amp4Body_TD : public Amp4BodyBase {
 
     __host__ void set_norm_eff(mcbooster::RealVector_h norm_eff_h){
       norm_eff = norm_eff_h;
-    }
-
-    __host__ void set_norm_pdf_weights(mcbooster::RealVector_h norm_weight_h){
-      norm_pdf_weight = norm_weight_h;
     }
 
     __host__ void set_norm_importance_weights(mcbooster::RealVector_h norm_importance_h){
@@ -140,14 +130,10 @@ class Amp4Body_TD : public Amp4BodyBase {
     mcbooster::RealVector_d norm_dtime;
     //efficiency weight given by BDT
     mcbooster::RealVector_d norm_eff;
-    //weight from pdf normalisation
-    mcbooster::RealVector_d norm_pdf_weight;
     //weights from Importance Sampling stays constant throughout 
     mcbooster::RealVector_d norm_importance_weight;
     //determine whether to use full numerical integration for per-event efficiencies
-    mutable bool specialIntegral{false};
-    mutable bool calculated_norm_weights{false};
-
+    mutable bool specialIntegral{true};
     // store spin and lineshape values for normalization
     mutable mcbooster::RealVector_d norm_SF;
     mutable mcbooster::mc_device_vector<fpcomplex> norm_LS;

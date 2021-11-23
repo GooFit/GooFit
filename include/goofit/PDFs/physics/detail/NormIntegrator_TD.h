@@ -14,7 +14,7 @@ namespace GooFit {
 class NormIntegrator_TD :
   // public thrust::unary_function<thrust::tuple<int, int, fptype *, fpcomplex *>, fptype> 
   public thrust::unary_function< thrust::tuple<int, int, fptype *, fpcomplex*,
-  mcbooster::GReal_t, mcbooster::GReal_t,mcbooster::GReal_t>,
+  mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t>,
   thrust::tuple<fptype, fptype, fptype, fptype>>{
   public:
     NormIntegrator_TD(bool SpecInt);
@@ -23,7 +23,7 @@ class NormIntegrator_TD :
     //operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const;
     __device__ thrust::tuple<fptype, fptype, fptype, fptype>
       operator()(thrust::tuple<int, int, fptype *, thrust::complex<fptype>*,
-		 mcbooster::GReal_t, mcbooster::GReal_t,mcbooster::GReal_t,mcbooster::GReal_t> t) const;
+		 mcbooster::GReal_t, mcbooster::GReal_t,mcbooster::GReal_t> t) const;
   private:
     unsigned int dalitzFuncId;
     bool _SpecInt;

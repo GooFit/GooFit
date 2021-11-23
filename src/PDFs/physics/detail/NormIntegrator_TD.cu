@@ -5,7 +5,7 @@
 #include <goofit/PDFs/physics/SpinFactors.h>
 #include <goofit/PDFs/physics/detail/Dim5.h>
 #include <goofit/detail/Complex.h>
-
+#include <goofit/PDFs/physics/MixingTimeResolution.h>
 #include <thrust/functional.h>
 
 namespace GooFit {
@@ -14,10 +14,10 @@ namespace GooFit {
  NormIntegrator_TD::NormIntegrator_TD(bool SpecInt): _SpecInt(SpecInt){}
  __device__ thrust::tuple<fptype, fptype, fptype, fptype> NormIntegrator_TD::
  operator()(thrust::tuple<int, int, fptype *, fpcomplex *,
-        mcbooster::GReal_t, mcbooster::GReal_t,mcbooster::GReal_t,mcbooster::GReal_t> t) const {
+        mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t) const {
     // unsigned int *indices = paramIndices + _parameters;
     // unsigned int totalAMP = indices[5];
-
+    //printf("Norm integrator operator()\n");
     ParameterContainer pc;
 
     while(pc.funcIdx < dalitzFuncId)
@@ -94,36 +94,55 @@ namespace GooFit {
 
     fptype _SqWStoRSrate = pc.getParameter(3);
     AmpA *= _SqWStoRSrate;
-
+    //printf("Before if statement\n");
     auto AmpAB = AmpA * conj(AmpB);
     if(_SpecInt){
+        //printf("Inside if statement\n");
         fptype _tau          = pc.getParameter(0);
         fptype _xmixing      = pc.getParameter(1);
         fptype _ymixing      = pc.getParameter(2);
         fptype _time = thrust::get<4>(t);
         fptype _eff = thrust::get<5>(t);
-        //pdf weight
-        fptype _weight = thrust::get<6>(t);
         //importance weight 
-        fptype _importance_weight = thrust::get<7>(t);
+        fptype _importance_weight = thrust::get<6>(t);
         fptype term1 = thrust::norm(AmpA) + thrust::norm(AmpB);
         fptype term2 = thrust::norm(AmpA) - thrust::norm(AmpB);
   
         unsigned int totalSF_LS = pc.getConstant(10);
         fptype ret = 0.;
+      
+        //printf("Calling resolution function\n");
+        //ret = (*(reinterpret_cast<device_resfunction_ptr>(d_function_table[pc.funcIdx])))(
+        //term1, term2, AmpAB.real(), AmpAB.imag(), _tau, _time, _xmixing, _ymixing,0.0, pc);
+        /*
         _time /= _tau;
         ret += term1 * cosh(_ymixing * _time);
         ret += term2 * cos(_xmixing * _time);
         ret -= 2 * AmpAB.real() * sinh(_ymixing * _time);
-        ret -= 2 * AmpAB.imag()
-        * sin(_xmixing * _time); // Notice sign difference wrt to Mikhail's code, because I have AB* and he has A*B.                                                                                      
+        ret -= 2 * AmpAB.imag()* sin(_xmixing * _time); // Notice sign difference wrt to Mikhail's code, because I have AB* and he has A*B.                                                                                      
         ret *= exp(-_time);
-  
+        */;
+        //printf("Called resolution function\n");
+        //printf("ret step 1: %f\n",ret);
+        ret *= _eff;
+        //printf("ret step 2: %f\n",ret);
+        ret *= _importance_weight;
+        //printf("ret step 3: %f\n",ret);
+
+        /*
+        fptype integral1 = _tau / (1 - _ymixing * _ymixing);
+        fptype integral2 = _tau / (1 + _xmixing * _xmixing);
+        fptype integral3 = _ymixing * integral1;
+        fptype integral4 = _xmixing * integral2;
+        ret += integral2 * (thrust::norm(AmpA) -  thrust::norm(AmpB));
+        ret -= 2 * integral3 * AmpAB.real();
+        ret -= 2 * integral4 * AmpAB.imag();
         ret *= _eff;
         ret *= _weight;
         ret /= _importance_weight;
+        */
   
-        return thrust::tuple<fptype,fptype,fptype,fptype>(ret,thrust::norm(AmpA)/_weight,thrust::norm(AmpB)/_weight,1);
+        return thrust::tuple<fptype,fptype,fptype,fptype>(ret,thrust::norm(AmpA)/_importance_weight,thrust::norm(AmpB)/_importance_weight,1);
       }
       else {
         return {thrust::norm(AmpA), thrust::norm(AmpB), AmpAB.real(), AmpAB.imag()};

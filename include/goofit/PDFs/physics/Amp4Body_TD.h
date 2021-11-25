@@ -36,7 +36,7 @@ class Amp4Body_TD : public Amp4BodyBase {
                 MixingTimeResolution *r,
                 GooPdf *eff,
                 Observable *mistag,
-                unsigned int MCeventsNorm = 5e6);
+                unsigned int MCeventsNorm = 5e6,bool special_integration=false);
     // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the
     // coherent sum. The caching method requires that it be done this way or the ProdPdf
     // normalization will get *really* confused and give wrong answers.
@@ -133,7 +133,7 @@ class Amp4Body_TD : public Amp4BodyBase {
     //weights from Importance Sampling stays constant throughout 
     mcbooster::RealVector_d norm_importance_weight;
     //determine whether to use full numerical integration for per-event efficiencies
-    mutable bool specialIntegral{true};
+    mutable bool specialIntegral{false};
     // store spin and lineshape values for normalization
     mutable mcbooster::RealVector_d norm_SF;
     mutable mcbooster::mc_device_vector<fpcomplex> norm_LS;

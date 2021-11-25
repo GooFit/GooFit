@@ -24,7 +24,8 @@ const fptype ChristophModel::SQ_WS_TO_RS_RATE = 1.0 / sqrt(300.0);
 
 ChristophModel::ChristophModel(const fptype xMixingValue,
                                const fptype yMixingValue,
-                               const unsigned int modelMCEventsNorm)
+                               const unsigned int modelMCEventsNorm,
+                               bool special_integral)
     : _dk3piTau("tau", ChristophModel::D0_TAU),
       _dk3piXMixing("xmixing", xMixingValue),
       _dk3piYMixing("ymixing", yMixingValue),
@@ -44,7 +45,7 @@ ChristophModel::ChristophModel(const fptype xMixingValue,
                                     std::end(_ws_amplitudes));
 
   _dp = new TDDP4("test_TD", _modelVars, _dk3piDecayInfo, &_dat, &_eff, 0,
-                  modelMCEventsNorm);
+                  modelMCEventsNorm,special_integral);
 }
 
 void ChristophModel::setXMixingRangeForFit(const fptype error,
@@ -88,7 +89,7 @@ ChristophModel::generateSig(const int batchSize, const int seed) {
 void ChristophModel::addEventToCurrentDataToFit(double m12, double m34,
                                                 double cos12, double cos34,
                                                 double phi, double dt,
-                                                double sigmaT, int eventNum) {
+                                                double sigmaT, int eventNum, double eff) {
   _model_m12.setValue(m12);
   _model_m34.setValue(m34);
   _model_cos12.setValue(cos12);
@@ -97,6 +98,7 @@ void ChristophModel::addEventToCurrentDataToFit(double m12, double m34,
   _model_eventNumber.setValue(eventNum);
   _model_dtime.setValue(dt);
   _model_sigmat.setValue(sigmaT);
+  _model_eff.setValue(eff);
   _currentDataToFit.addEvent();
 
   // std::cout<<"Added event with:"<<std::endl;
@@ -127,7 +129,7 @@ void ChristophModel::fitCurrentData(unsigned int sampleNum,
   // set current data
   std::cout << "Setting current data..." << std::endl;
   signal.setData(&_currentDataToFit);
-  _dp->setDataSize(_currentDataToFit.getNumEvents(), 8);
+  _dp->setDataSize(_currentDataToFit.getNumEvents(), 9);
 
   // do fitting
   std::cout << "Fitting data (" << _currentDataToFit.getNumEvents()

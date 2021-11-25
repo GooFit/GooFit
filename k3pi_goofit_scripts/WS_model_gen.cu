@@ -59,6 +59,8 @@ int main(int argc, char **argv) {
   int generatedEvents = 0;
   int RunNum = 0;
   unsigned int generationOffset = 0;    
+  //create output filestream
+  ofstream output_file(root_filename);
 
   while (generatedEvents < genEvts) {
     // update generation offset
@@ -77,6 +79,25 @@ int main(int argc, char **argv) {
     int accepted =
         thrust::count_if(flags.begin(), flags.end(), thrust::identity<bool>());
     ++RunNum;
+        fmt::print("Flags size: {}, accepted {}\n", flags.size(), accepted);
+
+    double m12,m34,c12,c34,phi,dtime;
+    for (int i = 0; i < flags.size(); ++i) {
+      if (generatedEvents < genEvts && flags[i] == 1) {
+        ++generatedEvents;
+        ++keptEvts;
+        m12 = (*(variables[0]))[i];
+        m34 = (*(variables[1]))[i];
+        c12 = (*(variables[2]))[i];
+        c34 = (*(variables[3]))[i];
+        phi = (*(variables[4]))[i];
+        dtime = (*(variables[5]))[i];
+        if(output_file.is_open()){output_file << m12 << " " << m34 << " " << c12 << " " << c34 << " " << phi << " " << dtime << "\n";}
+        else{
+          std::cerr << "Unable to open output file!" << std::endl;
+        }
+      }
+    }
     // print status and update generation offset to be used for next batch
     generationOffset += BatchSize;
     fmt::print("Run # {}: x={:.6} y={:.6} Using accept-reject method leaves "
@@ -84,5 +105,6 @@ int main(int argc, char **argv) {
                RunNum, xmixing_value, ymixing_value, keptEvts, BatchSize,
                generatedEvents * 100.0 / genEvts);
   }
+output_file.close();
 return 0;
 }

@@ -15,7 +15,7 @@ namespace GooFit {
 class ChristophModel final {
 public:
   ChristophModel(const fptype xMixingValue, const fptype yMixingValue,
-                 const unsigned int modelMCEventsNorm);
+                 const unsigned int modelMCEventsNorm, bool special_integral=false);
   ~ChristophModel();
 
   void setXMixingRangeForFit(const fptype error, const fptype lowerLimit,
@@ -34,7 +34,7 @@ public:
 
   void addEventToCurrentDataToFit(double m12, double m34, double cos12,
                                   double cos34, double phi, double dt,
-                                  double sigmaT, int eventNum);
+                                  double sigmaT, int eventNum, double eff = 1.);
 
   void fitCurrentData(unsigned int sampleNum, const std::string &outFile);
 
@@ -519,9 +519,12 @@ private:
   EventNumber _model_eventNumber = EventNumber("eventNumber");
   Observable _model_dtime = Observable("dtime", 0, 10);
   Observable _model_sigmat = Observable("sigmat", -3, 3);
+  Observable _model_eff = Observable("eff", -1000, 1000);
+
   std::vector<Observable> _modelVars = {
       _model_m12, _model_m34,         _model_cos12, _model_cos34,
-      _model_phi, _model_eventNumber, _model_dtime, _model_sigmat};
+      _model_phi, _model_eventNumber, _model_dtime, _model_sigmat,
+      _model_eff};
 
   UnbinnedDataSet _currentDataToFit = UnbinnedDataSet(_modelVars);
 

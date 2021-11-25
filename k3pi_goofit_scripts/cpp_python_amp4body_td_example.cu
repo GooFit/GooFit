@@ -187,7 +187,7 @@ int main(int argc, char **argv) {
     mc_file.close();
 
 
-    Amp4Body_TD dp{"test", observables, DK3P_DI, &dat, &eff, 0, 18000000};
+    Amp4Body_TD dp{"test", observables, DK3P_DI, &dat, &eff, 0, 18000000,true};
     std::cout << "Setting special integral flag" << std::endl;
     //dp.set_special_integral(true);
     Variable constant("constant1", 1.0);

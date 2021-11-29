@@ -224,12 +224,14 @@ __host__ Amp4Body_TD::Amp4Body_TD(std::string n,
                                   GooPdf *efficiency,
                                   Observable *mistag,
                                   unsigned int MCeventsNorm,
-                                  bool special_integral)
+                                  bool special_integral,
+                                  unsigned int generationOffset)
     : Amp4BodyBase("Amp4Body_TD", n)
     , decayInfo(decay)
     , resolution(Tres)
     , totalEventSize(observables.size() + 2) // number of observables plus eventnumber
-    , specialIntegral(special_integral) 
+    , specialIntegral(special_integral)
+    , generation_offset(generationOffset) 
 {
     // should include m12, m34, cos12, cos34, phi, eventnumber, dtime, sigmat. In this order!
     for(auto &observable : observables) {

@@ -36,7 +36,9 @@ class Amp4Body_TD : public Amp4BodyBase {
                 MixingTimeResolution *r,
                 GooPdf *eff,
                 Observable *mistag,
-                unsigned int MCeventsNorm = 5e6,bool special_integration=false);
+                unsigned int MCeventsNorm = 5e6,
+                bool special_integration=false,
+                unsigned int generationOffset=0);
     // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the
     // coherent sum. The caching method requires that it be done this way or the ProdPdf
     // normalization will get *really* confused and give wrong answers.
@@ -52,6 +54,7 @@ class Amp4Body_TD : public Amp4BodyBase {
     __host__ auto GenerateSig(unsigned int numEvents, int seed = 0) -> std::
         tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::BoolVector_h>;
 
+    __host__ unsigned int getGenerationOffset(){return generation_offset;}
     __host__ void populateArrays() override;
         __host__ mcbooster::RealVector_h get_norm_m12(){
       auto host_norm_m12 = mcbooster::RealVector_h(norm_M12);

@@ -25,7 +25,8 @@ const fptype ChristophModel::SQ_WS_TO_RS_RATE = 1.0 / sqrt(300.0);
 ChristophModel::ChristophModel(const fptype xMixingValue,
                                const fptype yMixingValue,
                                const unsigned int modelMCEventsNorm,
-                               bool special_integral)
+                               bool special_integral,
+                               unsigned int generation_offset)
     : _dk3piTau("tau", ChristophModel::D0_TAU),
       _dk3piXMixing("xmixing", xMixingValue),
       _dk3piYMixing("ymixing", yMixingValue),
@@ -45,7 +46,7 @@ ChristophModel::ChristophModel(const fptype xMixingValue,
                                     std::end(_ws_amplitudes));
 
   _dp = new TDDP4("test_TD", _modelVars, _dk3piDecayInfo, &_dat, &_eff, 0,
-                  modelMCEventsNorm,special_integral);
+                  modelMCEventsNorm,special_integral,generation_offset);
 }
 
 void ChristophModel::setXMixingRangeForFit(const fptype error,
@@ -71,6 +72,120 @@ void ChristophModel::setYMixingRangeForFit(const fptype error,
   _dk3piDecayInfo._ymixing.setLowerLimit(lowerLimit);
   _dk3piDecayInfo._ymixing.setUpperLimit(upperLimit);
 }
+
+void ChristophModel::allowDCSCoeffFloat(const fptype error)
+{
+  _floatingDCSCoeffs = true;
+
+  _ws_K892_rho770_S_real.setFixed(true);
+  _ws_K892_rho770_S_real.setValue(1.0); // These should be fixed
+  _ws_K892_rho770_S_real.setError(error);
+  _ws_K892_rho770_S_real.setUpperLimit(0.0); // set upper and lower limit to 0 to let var be free
+  _ws_K892_rho770_S_real.setLowerLimit(0.0);
+
+  _ws_K892_rho770_S_imag.setFixed(true);
+  _ws_K892_rho770_S_imag.setValue(0.0);
+  _ws_K892_rho770_S_imag.setError(error);
+  _ws_K892_rho770_S_imag.setUpperLimit(0.0);
+  _ws_K892_rho770_S_imag.setLowerLimit(0.0);
+
+  _ws_K892_rho770_P_real.setFixed(false);
+  _ws_K892_rho770_P_real.setValue(_ws_K892_rho770_P_real.getValue());
+  _ws_K892_rho770_P_real.setError(error);
+  _ws_K892_rho770_P_real.setUpperLimit(0.0);
+  _ws_K892_rho770_P_real.setLowerLimit(0.0);
+
+  _ws_K892_rho770_P_imag.setFixed(false);
+  _ws_K892_rho770_P_imag.setValue(_ws_K892_rho770_P_imag.getValue());
+  _ws_K892_rho770_P_imag.setError(error);
+  _ws_K892_rho770_P_imag.setUpperLimit(0.0);
+  _ws_K892_rho770_P_imag.setLowerLimit(0.0);
+
+  _ws_K892_rho770_D_real.setFixed(false);
+  _ws_K892_rho770_D_real.setValue(_ws_K892_rho770_D_real.getValue());
+  _ws_K892_rho770_D_real.setError(error);
+  _ws_K892_rho770_D_real.setUpperLimit(0.0);
+  _ws_K892_rho770_D_real.setLowerLimit(0.0);
+
+  _ws_K892_rho770_D_imag.setFixed(false);
+  _ws_K892_rho770_D_imag.setValue(_ws_K892_rho770_D_imag.getValue());
+  _ws_K892_rho770_D_imag.setError(error);
+  _ws_K892_rho770_D_imag.setUpperLimit(0.0);
+  _ws_K892_rho770_D_imag.setLowerLimit(0.0);
+
+  _ws_rho1450_K0_1430_real.setFixed(false);
+  _ws_rho1450_K0_1430_real.setValue(_ws_rho1450_K0_1430_real.getValue());
+  _ws_rho1450_K0_1430_real.setError(error);
+  _ws_rho1450_K0_1430_real.setUpperLimit(0.0);
+  _ws_rho1450_K0_1430_real.setLowerLimit(0.0);
+
+  _ws_rho1450_K0_1430_imag.setFixed(false);
+  _ws_rho1450_K0_1430_imag.setValue(_ws_rho1450_K0_1430_imag.getValue());
+  _ws_rho1450_K0_1430_imag.setError(error);
+  _ws_rho1450_K0_1430_imag.setUpperLimit(0.0);
+  _ws_rho1450_K0_1430_imag.setLowerLimit(0.0);
+
+  _ws_K1_1270_K892_real.setFixed(false);
+  _ws_K1_1270_K892_real.setValue(_ws_K1_1270_K892_real.getValue());
+  _ws_K1_1270_K892_real.setError(error);
+  _ws_K1_1270_K892_real.setUpperLimit(0.0);
+  _ws_K1_1270_K892_real.setLowerLimit(0.0);
+
+  _ws_K1_1270_K892_imag.setFixed(false);
+  _ws_K1_1270_K892_imag.setValue(_ws_K1_1270_K892_imag.getValue());
+  _ws_K1_1270_K892_imag.setError(error);
+  _ws_K1_1270_K892_imag.setUpperLimit(0.0);
+  _ws_K1_1270_K892_imag.setLowerLimit(0.0);
+
+  _ws_K1_1270_rho770_real.setFixed(false);
+  _ws_K1_1270_rho770_real.setValue(_ws_K1_1270_rho770_real.getValue());
+  _ws_K1_1270_rho770_real.setError(error);
+  _ws_K1_1270_rho770_real.setUpperLimit(0.0);
+  _ws_K1_1270_rho770_real.setLowerLimit(0.0);
+
+  _ws_K1_1270_rho770_imag.setFixed(false);
+  _ws_K1_1270_rho770_imag.setValue(_ws_K1_1270_rho770_imag.getValue());
+  _ws_K1_1270_rho770_imag.setError(error);
+  _ws_K1_1270_rho770_imag.setUpperLimit(0.0);
+  _ws_K1_1270_rho770_imag.setLowerLimit(0.0);
+
+  _ws_K1_1270_K0_1430_real.setFixed(false);
+  _ws_K1_1270_K0_1430_real.setValue(_ws_K1_1270_K0_1430_real.getValue());
+  _ws_K1_1270_K0_1430_real.setError(error);
+  _ws_K1_1270_K0_1430_real.setUpperLimit(0.0);
+  _ws_K1_1270_K0_1430_real.setLowerLimit(0.0);
+
+  _ws_K1_1270_K0_1430_imag.setFixed(false);
+  _ws_K1_1270_K0_1430_imag.setValue(_ws_K1_1270_K0_1430_imag.getValue());
+  _ws_K1_1270_K0_1430_imag.setError(error);
+  _ws_K1_1270_K0_1430_imag.setUpperLimit(0.0);
+  _ws_K1_1270_K0_1430_imag.setLowerLimit(0.0);
+  
+  _ws_K1_1400_K892_real.setFixed(false);
+  _ws_K1_1400_K892_real.setValue(_ws_K1_1400_K892_real.getValue());
+  _ws_K1_1400_K892_real.setError(error);
+  _ws_K1_1400_K892_real.setUpperLimit(0.0);
+  _ws_K1_1400_K892_real.setLowerLimit(0.0);
+
+  _ws_K1_1400_K892_imag.setFixed(false);
+  _ws_K1_1400_K892_imag.setValue(_ws_K1_1400_K892_imag.getValue());
+  _ws_K1_1400_K892_imag.setError(error);
+  _ws_K1_1400_K892_imag.setUpperLimit(0.0);
+  _ws_K1_1400_K892_imag.setLowerLimit(0.0);
+
+  _ws_nonRes_real.setFixed(false);
+  _ws_nonRes_real.setValue(_ws_nonRes_real.getValue());
+  _ws_nonRes_real.setError(error);
+  _ws_nonRes_real.setUpperLimit(0.0);
+  _ws_nonRes_real.setLowerLimit(0.0);
+
+  _ws_nonRes_imag.setFixed(false);
+  _ws_nonRes_imag.setValue(_ws_nonRes_imag.getValue());
+  _ws_nonRes_imag.setError(error);
+  _ws_nonRes_imag.setUpperLimit(0.0);
+  _ws_nonRes_imag.setLowerLimit(0.0);
+}
+
 
 void ChristophModel::setModelMaxWeight(const fptype wmax) {
   _dp->setMaxWeight(wmax);
@@ -161,6 +276,29 @@ void ChristophModel::fitCurrentData(unsigned int sampleNum,
       << _dk3piDecayInfo._ymixing.getValue() << " "
       << _dk3piDecayInfo._ymixing.getError() << " " << convergedStatus << " "
       << covStatus << std::endl;
+      if (_floatingDCSCoeffs == true)
+  {
+    out << " "; // add a delim after last entry
+
+    out << _ws_K892_rho770_S_real.getValue() << " " << _ws_K892_rho770_S_real.getError()  << " "
+	<< _ws_K892_rho770_S_imag.getValue() << " " << _ws_K892_rho770_S_imag.getError()  << " "
+	<< _ws_K892_rho770_P_real.getValue() << " " << _ws_K892_rho770_P_real.getError()  << " "
+	<< _ws_K892_rho770_P_imag.getValue() << " " << _ws_K892_rho770_P_imag.getError()  << " "
+	<< _ws_K892_rho770_D_real.getValue() << " " << _ws_K892_rho770_D_real.getError()  << " "
+	<< _ws_K892_rho770_D_imag.getValue() << " " << _ws_K892_rho770_D_imag.getError()  << " "
+	<< _ws_rho1450_K0_1430_real.getValue() << " " << _ws_rho1450_K0_1430_real.getError()  << " "
+	<< _ws_rho1450_K0_1430_imag.getValue() << " " << _ws_rho1450_K0_1430_imag.getError()  << " "
+	<< _ws_K1_1270_K892_real.getValue() << " " << _ws_K1_1270_K892_real.getError()  << " "
+	<< _ws_K1_1270_K892_imag.getValue() << " " << _ws_K1_1270_K892_imag.getError()  << " "
+	<< _ws_K1_1270_rho770_real.getValue() << " " << _ws_K1_1270_rho770_real.getError()  << " "
+	<< _ws_K1_1270_rho770_imag.getValue() << " " << _ws_K1_1270_rho770_imag.getError()  << " "
+	<< _ws_K1_1270_K0_1430_real.getValue() << " " << _ws_K1_1270_K0_1430_real.getError()  << " "
+	<< _ws_K1_1270_K0_1430_imag.getValue() << " " << _ws_K1_1270_K0_1430_imag.getError()  << " "
+	<< _ws_K1_1400_K892_real.getValue() << " " << _ws_K1_1400_K892_real.getError()  << " "
+	<< _ws_K1_1400_K892_imag.getValue() << " " << _ws_K1_1400_K892_imag.getError()  << " "
+	<< _ws_nonRes_real.getValue() << " " << _ws_nonRes_real.getError()  << " "
+	<< _ws_nonRes_imag.getValue() << " " << _ws_nonRes_imag.getError()  << " ";
+  }
   out.close();
 }
 

@@ -15,7 +15,7 @@ namespace GooFit {
 class ChristophModel final {
 public:
   ChristophModel(const fptype xMixingValue, const fptype yMixingValue,
-                 const unsigned int modelMCEventsNorm, bool special_integral=false);
+                 const unsigned int modelMCEventsNorm, bool special_integral=false, unsigned int generation_offset=0);
   ~ChristophModel();
 
   void setXMixingRangeForFit(const fptype error, const fptype lowerLimit,
@@ -25,6 +25,8 @@ public:
                              const fptype upperLimit);
 
   void setModelMaxWeight(const fptype wmax);
+
+  void allowDCSCoeffFloat(const fptype error);
 
   void setGenerationOffset(const unsigned int generationOffset);
 
@@ -39,6 +41,8 @@ public:
   void fitCurrentData(unsigned int sampleNum, const std::string &outFile);
 
 private:
+
+  bool _floatingDCSCoeffs = false; // flag used for fitting
   static const fptype D0_MASS;
   static const fptype PI_MASS;
   static const fptype K_MASS;

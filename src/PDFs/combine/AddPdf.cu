@@ -18,32 +18,30 @@ __device__ auto device_AddPdfs(fptype *evt, ParameterContainer &pc) -> fptype {
     fptype ret         = 0;
     fptype totalWeight = 0;
 
-    // make a copy of our parameter container
-    ParameterContainer pci = pc;
+    // Make a copy of our parameter container so we can continue to refer to
+    // our own parameters even though pc is moving forward.
+    const ParameterContainer local_pc = pc;
 
-    // We only call increment once we read our weight/norm for the first iteration.
-    pci.incrementIndex();
+    // We start by moving to the next function in the call chain
+    pc.incrementIndex();
 
     for(int i = 0; i < numParameters; i++) {
         // fetch our values from AddPdf
-        fptype weight = pc.getParameter(i);
+        fptype weight = local_pc.getParameter(i);
         totalWeight += weight;
 
         // This is the normal value for the 'callFunction' PDF, so we read from pci
-        fptype norm = pci.getNormalization(0);
+        fptype norm = pc.getNormalization(0);
 
         // call the first function to add in our PDF.
-        fptype curr = callFunction(evt, pci);
+        fptype curr = callFunction(evt, pc);
 
         ret += weight * curr * norm;
     }
 
-    // restore our new parameter container object
-    pc = pci;
-
     // previous functions incremented the indices appropriately, so now we need to get the norm again
     // NOTE: this is the weight for the function about to be called.
-    fptype normFactor = pc.getNormalization(0);
+    fptype normFactor = local_pc.getNormalization(0);
 
     fptype last = callFunction(evt, pc);
     ret += (1 - totalWeight) * last * normFactor;
@@ -56,25 +54,25 @@ __device__ auto device_AddPdfsExt(fptype *evt, ParameterContainer &pc) -> fptype
     fptype ret         = 0;
     fptype totalWeight = 0;
 
-    // make a copy of our parameter container
-    ParameterContainer pci = pc;
+    // Make a copy of our parameter container so we can continue to refer to
+    // our own parameters even though pc is moving forward.
+    const ParameterContainer local_pc = pc;
 
     // We only call increment once we read our weight/norm for the first iteration.
-    pci.incrementIndex();
+    pc.incrementIndex();
 
     for(int i = 0; i < numParameters; i++) {
         // grab the weight parameter from addPdf
-        fptype weight = pc.getParameter(i);
+        fptype weight = local_pc.getParameter(i);
         //  Grab the normalization for the specific component
-        fptype normFactor = pci.getNormalization(0);
+        fptype normFactor = pc.getNormalization(0);
 
-        fptype curr = callFunction(evt, pci);
+        fptype curr = callFunction(evt, pc);
         ret += weight * curr * normFactor;
 
         totalWeight += weight;
     }
 
-    pc = pci;
     ret /= totalWeight;
 
     return ret;

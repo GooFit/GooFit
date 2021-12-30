@@ -727,6 +727,7 @@ if(GOOFIT_PYTHON)
     )
   endif()
 
+  unset(PYTHON_VERSION)
   add_subdirectory("extern/pybind11")
 
   add_subdirectory(python)

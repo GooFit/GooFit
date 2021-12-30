@@ -29,10 +29,8 @@ int main(int argc, char **argv) {
 
 #if !defined(MATHCORE_STANDALONE) && GOOFIT_ROOT_FOUND && ROOT_VERSION_CODE < ROOT_VERSION(6, 24, 0)
     Minuit2::MnPrint::SetLevel(3);
-#elif !defined(MATHCORE_STANDALONE) && GOOFIT_ROOT_FOUND && ROOT_VERSION_CODE >= ROOT_VERSION(6, 24, 0)
-    Minuit2::MnPrint::SetGlobalLevel(3);
 #else
-    Minuit2::MnPrint::SetLevel(3);
+    Minuit2::MnPrint::SetGlobalLevel(3);
 #endif
 
     // Independent variable.

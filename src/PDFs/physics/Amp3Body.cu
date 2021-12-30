@@ -368,7 +368,7 @@ __host__ auto Amp3Body::sumCachedWave(size_t i) const -> fpcomplex {
 }
 
 __host__ auto Amp3Body::getCachedWave(size_t i) const -> const std::vector<std::complex<fptype>> {
-    // TODO: This calls itself immediatly ?
+    // TODO: This calls itself immediately ?
     auto ret_thrust = getCachedWave(i);
     std::vector<std::complex<fptype>> ret(ret_thrust.size());
     thrust::copy(ret_thrust.begin(), ret_thrust.end(), ret.begin());

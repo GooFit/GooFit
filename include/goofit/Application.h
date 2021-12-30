@@ -58,7 +58,7 @@ class Application : public CLI::App {
 
   public:
     /// Make a new Application
-    Application(std::string discription, int argc, char **argv);
+    Application(std::string description, int argc, char **argv);
 
     /// Shortcut for the lazy
     Application(int argc, char **argv)

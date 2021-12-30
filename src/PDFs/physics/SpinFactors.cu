@@ -3,7 +3,7 @@
 The Spinfactors are an adaptation from the MINT implementation, by Jonas Rademacker.
 
 DISCLAIMER:
-This code is not sufficently tested yet and still under heavy development!
+This code is not sufficiently tested yet and still under heavy development!
 */
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/SpinFactors.h>

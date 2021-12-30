@@ -19,7 +19,7 @@ ITEMS = [
 # Add GOOFIT_* from env.
 for item in os.environ:
     if item.startswith("GOOFIT_"):
-        ITEMS.append("-D{0}={1}".format(item, os.environ[item]))
+        ITEMS.append("-D{}={}".format(item, os.environ[item]))
 
 
 setup(
@@ -90,7 +90,7 @@ The lines above use environment variables; GooFit will find any environment vari
 Installation: local
 ===================
 
-If you want to add PDFs to GooFit, or use GooFit pacakges, you should be working in a local directory using git. In the following example, I'm assuming you've set up SSH keys with GitHub; you can use https instead if you prefer by changing the URL to ``https://github.com/GooFit/GooFit.git``::
+If you want to add PDFs to GooFit, or use GooFit packages, you should be working in a local directory using git. In the following example, I'm assuming you've set up SSH keys with GitHub; you can use https instead if you prefer by changing the URL to ``https://github.com/GooFit/GooFit.git``::
 
     git clone --recursive git@github.com:GooFit/GooFit.git
     cd goofit

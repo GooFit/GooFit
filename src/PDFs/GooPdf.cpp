@@ -19,7 +19,7 @@ __host__ void GooPdf::setMetrics() {
 }
 
 /// This collects the number of variables for the thrust call
-/// -(n+2) for binned evalutes
+/// -(n+2) for binned evalute's
 __host__ auto GooPdf::get_event_size() const -> int {
     int numVars = observablesList.size();
 

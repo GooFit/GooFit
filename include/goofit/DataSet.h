@@ -57,7 +57,7 @@ class DataSet {
     void checkAllVars() const;
 
   private:
-    /// Make a name, does not change the exising name. Called by all constructors.
+    /// Make a name, does not change the existing name. Called by all constructors.
     void generateName();
 
     std::string name;

@@ -159,8 +159,8 @@ void print_goofit_info(int gpuDev_) {
 #endif
 }
 
-Application::Application(std::string discription, int argc, char **argv)
-    : App(discription)
+Application::Application(std::string description, int argc, char **argv)
+    : App(description)
     , argc_(argc)
     , argv_(argv) {
 #ifdef GOOFIT_MPI

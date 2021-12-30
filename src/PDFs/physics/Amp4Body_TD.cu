@@ -2,7 +2,7 @@
 04/05/2016 Christoph Hasse
 DISCLAIMER:
 
-This code is not sufficently tested yet and still under heavy development!
+This code is not sufficiently tested yet and still under heavy development!
 
 TODO:
 - Test lineshapes, only done for BW_DP and BW_MINT so far
@@ -490,11 +490,11 @@ __host__ void Amp4Body_TD::populateArrays() {
     efficiencyFunction = host_function_table.size() - 1;
 }
 
-// makes the arrays to chache the lineshape values and spinfactors in CachedResSF and the values of the amplitudes in
+// makes the arrays to cache the lineshape values and spinfactors in CachedResSF and the values of the amplitudes in
 // cachedAMPs
-// I made the choice to have spinfactors necxt to the values of the lineshape in memory. I waste memory by doing this
+// I made the choice to have spinfactors next to the values of the lineshape in memory. I waste memory by doing this
 // because a spinfactor is saved as complex
-// It would be nice to test if this is better than having the spinfactors stored seperately.
+// It would be nice to test if this is better than having the spinfactors stored separately.
 __host__ void Amp4Body_TD::setDataSize(unsigned int dataSize, unsigned int evtSize) {
     // Default 3 is m12, m13, evtNum for DP 2dim, 4-body decay has 5 independent vars plus evtNum = 6
     totalEventSize = evtSize;

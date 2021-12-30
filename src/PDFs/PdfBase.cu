@@ -93,7 +93,7 @@ __host__ void PdfBase::recursiveSetIndices() {
         throw GeneralError("A PDF must either provide a function name and"
                            " function pointer or override recursiveSetIndices\n"
                            "Called by {}\n"
-                           "Make sure initilize is not called before registerFunction!",
+                           "Make sure initialize is not called before registerFunction!",
                            getName());
 
     host_fcn_ptr = function_ptr_;

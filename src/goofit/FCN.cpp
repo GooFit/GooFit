@@ -10,7 +10,7 @@ FCN::FCN(Params &params)
     : params_(&params) {
     host_callnumber = 0;
 
-    // Verify that all varaibles need to be recached
+    // Verify that all variables need to be recached
     for(Variable &var : params_->vars_)
         var.setChanged(true);
 }

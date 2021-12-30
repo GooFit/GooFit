@@ -207,7 +207,7 @@ class Variable : public Indexable {
     /// Check to see if this has been changed since last iteration
     void setChanged(bool val = true) { *changed_ = val; }
 
-    /// Hides the number; the real value is the result minus this value. Cannot be retreived once set.
+    /// Hides the number; the real value is the result minus this value. Cannot be retrieved once set.
     void setBlind(fptype val) { *blind = val; }
 
     /// Protected by special locked key, only a few classes have access to create a Key

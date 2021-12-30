@@ -14,7 +14,7 @@ namespace GooFit {
 /// Version will remain valid (but static)
 /// between syncs. This could be corrected,
 /// but you should not be touching this
-/// inbetween sync and "device" usage, so it
+/// in between sync and "device" usage, so it
 /// is safe.
 template <typename T>
 class SmartVector : public std::vector<T> {

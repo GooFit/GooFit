@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
 
+import ctypes
 import os
 import sys
-import ctypes
 
 # importing ctypes time to have a higher resolution
 CLOCK_MONOTONIC_RAW = 4

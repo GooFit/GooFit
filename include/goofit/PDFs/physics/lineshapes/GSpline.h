@@ -9,7 +9,7 @@ namespace Lineshapes {
 
 using spline_t = std::tuple<fptype, fptype, unsigned int>;
 
-/// A spline implementaiton for the width (Gamma = G)
+/// A spline implementation for the width (Gamma = G)
 class GSpline : public Lineshape {
   public:
     /// The spline

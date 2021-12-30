@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-from setuptools import setup
-
 from pybind11.setup_helpers import Pybind11Extension
+from setuptools import setup
 
 __version__ = "6.24.00"
 

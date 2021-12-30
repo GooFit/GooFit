@@ -4884,7 +4884,7 @@ void parseArg(GooFit::App *app) {
     app->add_option("--normBins", normBinning);
     app->add_option("--blindSeed", blindSeed);
     app->add_option("--mdslices", mdslices);
-    app->add_option("--offset", md0offset, "Offest in GeV");
+    app->add_option("--offset", md0offset, "Offset in GeV");
     // Previously in MeV
     app->add_option("--upper_window", md0_upper_window);
     app->add_option("--lower_window", md0_lower_window);

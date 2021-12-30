@@ -2,7 +2,7 @@
 04/05/2016 Christoph Hasse
 DISCLAIMER:
 
-This code is not sufficently tested yet and still under heavy development!
+This code is not sufficiently tested yet and still under heavy development!
 
 This file includes some lineshapes and spinfactors.
 Also right now it is the home to some helper functions needed and an implementation of a simple 4-vec class that works

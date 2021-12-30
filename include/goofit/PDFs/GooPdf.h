@@ -24,7 +24,7 @@ class GooPdf : public PdfBase {
     // These are helper methods that do all the work
 
     /// This collects the number of variables for the thrust call
-    /// -(n+2) for binned evalutes
+    /// -(n+2) for binned evalute's
     auto get_event_size() const -> int;
 
     /// This reduces the current function over the data. Does *not* prepare

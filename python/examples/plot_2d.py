@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, division
-
-from goofit import *
-import numpy as np
+from __future__ import division, print_function
 
 import matplotlib
+import numpy as np
+
+from goofit import *
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt

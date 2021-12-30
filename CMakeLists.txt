@@ -296,7 +296,7 @@ configure_file("${GOOFIT_SOURCE_DIR}/include/goofit/detail/Backtrace.h.in"
 
 set(GOOFIT_ARCH
     Auto
-    CACHE STRING "The GPU Archetecture, can be Auto, All, Common, a number, or a name")
+    CACHE STRING "The GPU Architecture, can be Auto, All, Common, a number, or a name")
 
 option(GOOFIT_MPI "Turn on MPI for goofit" OFF)
 
@@ -502,7 +502,7 @@ include(CheckIPOSupported)
 check_ipo_supported(RESULT SUPPORTS_IPO_LOCAL)
 message(STATUS "Compiler supports IPO: ${SUPPORTS_IPO_LOCAL}")
 
-# Make this univerally available (even when using submodule)
+# Make this universally available (even when using submodule)
 set(SUPPORTS_IPO
     "${SUPPORTS_IPO_LOCAL}"
     CACHE INTERNAL "")

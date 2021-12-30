@@ -5,10 +5,11 @@
 # It requires plumbum (pip install plumbum or conda install -c conda-forge plumbum)
 
 from __future__ import print_function
+
 import re
 
 try:
-    from plumbum import local, cli, TEE, colors
+    from plumbum import TEE, cli, colors, local
 except ImportError:
     print(
         "This file uses the plumbum library. Install with pip or conda (user directory or virtual environment OK)."
@@ -106,7 +107,7 @@ class RunAll(cli.Application):
             colors.success.print("All programs completed.")
 
         print()
-        colors.info.print("{0:20}:\tTotal time (s)\tFit times".format("Program"))
+        colors.info.print("{:20}:\tTotal time (s)\tFit times".format("Program"))
         for result in successes:
             fit = ", ".join(MIN_TIME.findall(result["stdout"]))
             print(

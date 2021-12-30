@@ -109,13 +109,13 @@ class PdfBase {
     /// This adds a parameter.
     void registerParameter(Variable var);
 
-    /// Remove a paramter
+    /// Remove a parameter
     void unregisterParameter(Variable var);
 
     /// Register a constant
     void registerConstant(fptype value);
 
-    /// Register a function for this PDF to use in evalution
+    /// Register a function for this PDF to use in evaluation
     template <typename T>
     void registerFunction(std::string name, const T &function) {
         reflex_name_  = name;

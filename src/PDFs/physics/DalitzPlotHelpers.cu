@@ -1,7 +1,7 @@
 /*
 04/05/2016 Christoph Hasse
 DISCLAIMER:
-This code is not sufficently tested yet and still under heavy development!
+This code is not sufficiently tested yet and still under heavy development!
 
 Helper functions
 */

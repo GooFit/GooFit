@@ -19,6 +19,8 @@ void init_GooPdf(py::module &m) {
         .def("evaluateAtPoints", &GooPdf::evaluateAtPoints)
         .def("setParameterConstantness", &GooPdf::setParameterConstantness)
         .def("hasAnalyticIntegral", &GooPdf::hasAnalyticIntegral)
+        .def("calculateNLL", &GooPdf::calculateNLL)
+        .def("scan", &GooPdf::scan)
         .def(
             "evaluatePdf",
             [](GooPdf &self, Observable &var) {

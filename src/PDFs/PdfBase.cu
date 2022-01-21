@@ -61,8 +61,10 @@ __host__ void PdfBase::initializeIndices() {
     // stick placeholders into our parameter array
     parametersIdx = host_parameters.size();
     host_parameters.push_back(parametersList.size());
+    host_parameter_name.push_back("nParam");
     for(auto &i : parametersList) {
         host_parameters.push_back(i.getValue());
+        host_parameter_name.push_back(i.getName());
     }
 
     // stick placeholders into our constants array
@@ -75,8 +77,10 @@ __host__ void PdfBase::initializeIndices() {
     // stick placeholders into our observable array
     observablesIdx = host_observables.size();
     host_observables.push_back(observablesList.size());
+    host_observable_name.push_back("nObs");
     for(auto &i : observablesList) {
         host_observables.push_back(i.getValue());
+        host_observable_name.push_back(i.getName());
     }
 
     // stick placeholders into our normalization array
@@ -96,6 +100,8 @@ __host__ void PdfBase::recursiveSetIndices() {
                            "Make sure initialize is not called before registerFunction!",
                            getName());
 
+
+
     host_fcn_ptr = function_ptr_;
 
     GOOFIT_DEBUG("host_function_table[{}] = {} for \"{}\" from PDFBase::recursiveSetIndices",
@@ -104,10 +110,28 @@ __host__ void PdfBase::recursiveSetIndices() {
                  getName());
 
     functionIdx = host_function_table.size();
+
+
+//-----------------------------------
+    auto n_host_function_table = host_function_table.size();
+    auto n_host_function_names = host_function_name.size();
+// mds     std::cout << " before push_back n_host_function_table & n_host_function_names = "
+// mds               <<  n_host_function_table << "  &  "
+// mds               <<  n_host_function_names << "\n";
+
     host_function_table.push_back(host_fcn_ptr);
+    std::string pdfName = getName();
+    host_function_name.push_back(pdfName);
+
+    n_host_function_table = host_function_table.size();
+    n_host_function_names = host_function_name.size();
+// mds   std::cout << " -------- about to call populateArrays()  -------- \n";
+// mds    std::cout << "\n";
+
 
     // TODO: This one doesn't have a sync call. Fix and simplify all sync calls!
     populateArrays();
+// mds    PdfBase::status(" in recursiveSetIndices, after populateArrays() ");
 }
 
 __host__ void PdfBase::updateVariable(Variable var, fptype newValue) {
@@ -131,6 +155,176 @@ __host__ void PdfBase::updateParameters() {
     pre_call();
 }
 
+
+// listComponents is meant to query a Pdf object and its progeny
+// and print out their object names, the names of their Pdf
+// classes and the device function pointer values (which
+// are also the values stored in the host_function_table (just saying)
+// mds not for CUDA __host__ void PdfBase::listComponents() {
+// mds not for CUDA 
+// mds not for CUDA     auto host_fcn_ptr = function_ptr_;
+// mds not for CUDA     std::cout << " in listComponents, host_fcn_ptr = "<< host_fcn_ptr << "\n";
+// mds not for CUDA     int fIdx = -99;
+// mds not for CUDA     auto n_host_function_table = host_function_table.size();
+// mds not for CUDA     for (int ii = 0; ii < n_host_function_table; ii++) {
+// mds not for CUDA       auto device_fcn_ptr = d_function_table[ii];
+// mds not for CUDA       if (host_fcn_ptr == device_fcn_ptr) {
+// mds not for CUDA         fIdx = ii;
+// mds not for CUDA         break;
+// mds not for CUDA       }
+// mds not for CUDA     }
+// mds not for CUDA     std::cout << "    fIdx, getName(), reflex_name_ = " << fIdx 
+// mds not for CUDA               <<  ",  " << getName() << ",  " << reflex_name_ << "\n";
+// mds not for CUDA }
+
+__host__ void PdfBase::status() {
+    std::cout << "  ** entered PdfBase::status()  \n";
+    for (auto &i : parametersList) {
+        auto pName = i.getName();
+        std::cout << " parameter name = " << pName << "\n";
+    }
+
+    std::cout << "about to print components  \n";
+    for (auto &component : components) {
+      std::cout << " component = " << component 
+                << ",  getName() =  " << getName()
+                << ",  reflex_name_ = " << reflex_name_ << "\n";
+    }
+    std::cout << "   done printing components  \n";
+
+    auto n_host_function_table = host_function_table.size();
+    auto n_host_parameters     = host_parameters.size();
+    auto n_host_constants      = host_constants.size();
+    auto n_host_observables    = host_observables.size();
+    std::cout << " --> n_ host_function_table, parameters, constants, observables = \n"
+              << " -->   " <<  n_host_function_table << "  "
+                           <<  n_host_parameters << "  "
+                           <<  n_host_constants << "  "
+                           <<  n_host_observables << "\n\n";
+
+    for (int ii = 0; ii < n_host_function_table; ii++) {
+      auto host_function = host_function_table[ii];
+      std::cout << "  host_function  " << ii << "  =  " << host_function << "\n"; 
+      auto device_fcn_ptr = d_function_table[ii];
+      std::cout << "   device_fcn_ptr       " << device_fcn_ptr << "\n";
+      auto fIdx = GooPdf::lookUpFunctionIdx(device_fcn_ptr);
+      std::cout << "   fIdx = " << fIdx << "\n";
+    }
+
+//  host_function->getName() should get the "name"
+//  host_function->reflex_name_
+
+    for (int ii = 0; ii < n_host_parameters; ii++) {
+      auto host_parameter = host_parameters[ii];
+      std::cout << "  host_parameter  " << ii << "  =  " << host_parameter << "\n";
+    }
+
+    for (int ii = 0; ii < n_host_constants; ii++) {
+      auto host_constant = host_constants[ii];
+      std::cout << "  host_constant  " << ii << "  =  " << host_constant << "\n";
+    }
+
+// mds dec23    for (int ii = 0; ii < n_host_observables; ii++) {
+// mds dec23      auto host_observable = host_observables[ii];
+// mds dec23      std::cout << "  host_observable  " << ii << "  =  " << host_observable << "\n";
+// mds dec23    }
+
+    std::cout << "\n" << "  functionPtrToNameMap contains " << "\n";
+    std::map<void *, std::string>::iterator it = functionPtrToNameMap.begin();
+    while  (it != functionPtrToNameMap.end()) {
+        std::cout<<it->first<<" :: "<<it->second<<std::endl;
+        it++;
+    }
+
+    std::cout <<    "** about to depart PdfBase::status()  \n";
+}
+
+// add a version which takes a string as an argument so we can 
+// more easily track the program flow
+__host__ void PdfBase::status(std::string caller) {
+    std::cout << "  ** entered PdfBase::status()  " + caller + "  \n";
+
+    std::cout << "parameter names  \n";
+    for (auto &i : parametersList) {
+        auto pName =  i.getName();
+        auto pValue = i.getValue();
+        std::cout << "   parameter name = " << pName << "  =  " << pValue <<  "\n";
+    }
+
+    std::cout << "observable names:  \n";
+    for (auto &i : observablesList) {
+        auto pName =  i.getName();
+        auto pValue = i.getValue();
+        std::cout << "   observable name = " << pName << "  =  " << pValue << "\n";
+    }
+
+    std::cout << "constants  \n";
+    for (auto &cValue : constantsList) {
+        std::cout << "   constant value = " << cValue << "\n";
+    }
+
+
+    std::cout << "about to print components  \n";
+    for (auto &component : components) {
+      std::cout << " component = " << component 
+                << ",  getName() =  " << getName()
+                << ",  reflex_name_ = " << reflex_name_ << "\n";
+      std::cout << "     *component = " << *component << "\n";
+    }
+    std::cout << "   done printing components  \n";
+
+{
+    std::cout << "  in PdfBase::status(caller) with caller =  " << caller << "   \n";
+    auto size_of_host_function_name = host_function_name.size();
+    for (int ii=0; ii<size_of_host_function_name; ii++) {
+      auto aString = host_function_name[ii];
+      auto device_fcn_ptr = d_function_table[ii];
+
+      std::string device_fcn_ptr_name = "not assigned yet";
+      std::map<void *, std::string>::iterator it = functionPtrToNameMap.begin();
+      while  (it != functionPtrToNameMap.end()) {
+        if (device_fcn_ptr == it->first) {
+            device_fcn_ptr_name = it->second;
+        }
+        it++;
+      }
+//  mds      auto device_fcn_ptr_name =  functionPtrToNameMap[device_fcn_ptr];
+      auto fIdx = GooPdf::lookUpFunctionIdx(device_fcn_ptr);
+      std::cout << "  host_function_name  " << ii << "  =  " << aString
+                << ",  ptr =  " << host_function_table[ii]
+                <<  "     with device_fcn_ptr_name   " << device_fcn_ptr_name <<"\n";
+    }
+    std::cout << "  \n";
+    auto size_of_host_parameters = host_parameters.size();
+    for (int ii=0; ii<size_of_host_parameters; ii++) {
+      auto aString = host_parameter_name[ii];
+      std::cout << "  host_parameter_name  " << ii << "  =  " << aString
+                << "  = " << host_parameters[ii] << "\n";
+    }
+
+
+// mds dec23   std::cout << "  \n";
+// mds dec23    auto size_of_host_observables = host_observables.size();
+// mds dec23    for (int ii=0; ii<size_of_host_observables; ii++) {
+// mds dec23      auto aString = host_observable_name[ii];
+// mds dec23      std::cout << "  host_observable_name  " << ii << "  =  " << aString
+// mds dec23                << "  = " << host_observables[ii] << "\n";
+// mds dec23    }
+
+   std::cout << "\n" << "  functionPtrToNameMap contains " << "\n";
+   std::map<void *, std::string>::iterator it = functionPtrToNameMap.begin();
+    while  (it != functionPtrToNameMap.end()) {
+        std::cout<<it->first<<" :: "<<it->second<<std::endl;
+        it++;
+    }
+
+    std::cout << " -------- about to exit   PdfBase::status()  " + caller + "  \n";
+    std::cout << "\n";
+}
+}
+
+    
+
 __host__ void PdfBase::populateArrays() {
     // populate all the arrays
     GOOFIT_TRACE("Populating Arrays for {}", getName());
@@ -140,9 +334,11 @@ __host__ void PdfBase::populateArrays() {
 
     parametersIdx = host_parameters.size();
     host_parameters.push_back(parametersList.size());
+    host_parameter_name.push_back("nParam");
     for(auto &i : parametersList) {
         GOOFIT_TRACE("host_parameters[{}] = {}", host_parameters.size(), i.getValue());
         host_parameters.push_back(i.getValue());
+        host_parameter_name.push_back(i.getName());
     }
 
     constantsIdx = host_constants.size();
@@ -155,9 +351,11 @@ __host__ void PdfBase::populateArrays() {
 
     observablesIdx = host_observables.size();
     host_observables.push_back(observablesList.size());
+    host_observable_name.push_back("nObs");
     for(auto &i : observablesList) {
         GOOFIT_TRACE("host_observables[{}] = {}", host_observables.size(), i.getValue());
         host_observables.push_back(i.getIndex());
+        host_observable_name.push_back(i.getName());
     }
 
     GOOFIT_TRACE("host_normalizations[{}] = {}", host_normalizations.size(), 1);
@@ -179,6 +377,10 @@ __host__ void PdfBase::setIndices() {
     host_observables.clear();
     host_normalizations.clear();
     host_function_table.clear();
+
+    host_function_name.clear();
+    host_parameter_name.clear();
+    host_observable_name.clear();
 
     // set all associated functions parameters, constants, etc.
     recursiveSetIndices();

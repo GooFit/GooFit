@@ -27,7 +27,7 @@ data = UnbinnedDataSet(xvar)
 
 
 i = -1
-while i < 100000:
+while i < 1000:
     i = i + 1
 
     xvar.value = np.random.uniform(1, 20) - 10

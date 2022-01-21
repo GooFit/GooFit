@@ -57,14 +57,18 @@ __host__ void GooPdf::initialize() {
                  constantsList.size(),
                  observablesList.size(),
                  "1?");
+// mds     std::cout << " entered initialize() with parametersList.size(), constantsList.size() = "
+// mds               <<   parametersList.size() << ",  " << constantsList.size() << "\n";
 
     if(!fitControl)
         setFitControl(std::make_shared<UnbinnedNllFit>());
 
     // MetricTaker must be created after PdfBase initialisation is done.
+// mds    PdfBase::status(" in initialize(), before initializeIndices();  \n");
     PdfBase::initializeIndices();
-
+// mds    PdfBase::status(" in initialize(), before setMetrics();  \n");
     setMetrics();
+// mds    PdfBase::status(" in initialize(), AFTER setMetrics();  \n");
 }
 
 __host__ void GooPdf::scan(Observable var, std::vector<fptype> &values) {
@@ -99,8 +103,43 @@ __host__ auto GooPdf::makeGrid() -> UnbinnedDataSet {
     return grid;
 }
 
-__host__ void GooPdf::setFitControl(std::shared_ptr<FitControl> fc) {
+__host__ void GooPdf::setFitControl_A(std::shared_ptr<FitControl> fc, std::string caller) {
+    std::cout << " entered GooPdf::setFitControl_A(std::shared_ptr<FitControl> fc) with fc = "
+              << fc << "\n";
+    std::cout << "  fc->getName() =  " << fc->getName() << "\n";
+    std::cout << " caller:  " << caller << "\n";
     for(auto &component : components) {
+        std::cout << "     AA   inside components loop, component = "
+                  << component << "    *component  = "
+                  << *component << "\n";
+        auto componentIdx = GooPdf::lookUpFunctionIdx(component);
+        std::cout << "  componentIdx =  " << componentIdx << "\n";
+        auto componentName = component->getPdfName();
+        component->setFitControl_A(fc, componentName);
+    }
+
+    std::cout << " about to execute fitControl = fc;  \n";
+    fitControl = fc;
+
+    std::cout << " about to execute setMetrics();  \n";
+    setMetrics();
+    std::cout << "returned from setMetrics \n";
+
+    std::cout << " about to execute setIndices()  \n";
+    setIndices();
+    std::cout << " returned from setIndices; end of setFitControl_A  \n";
+}
+__host__ void GooPdf::setFitControl(std::shared_ptr<FitControl> fc) {
+// mds     std::cout << " entered GooPdf::setFitControl(std::shared_ptr<FitControl> fc) with fc = "
+// mds               << fc << "\n";
+// mds     std::cout << "  fc->getName() =  " << fc->getName() << "\n";
+    for(auto &component : components) {
+// mds         std::cout << "     AA   inside components loop, component = "
+// mds                   << component << "    *component  = "
+// mds                   << *component << "\n";
+        auto componentIdx = GooPdf::lookUpFunctionIdx(component);
+        auto componentName = component->getPdfName();
+// mds        component->setFitControl_A(fc, componentName);
         component->setFitControl(fc);
     }
 
@@ -110,6 +149,7 @@ __host__ void GooPdf::setFitControl(std::shared_ptr<FitControl> fc) {
 
     setIndices();
 }
+
 
 #ifdef ROOT_FOUND
 __host__ auto GooPdf::plotToROOT(Observable var, double normFactor, std::string name) -> TH1D * {

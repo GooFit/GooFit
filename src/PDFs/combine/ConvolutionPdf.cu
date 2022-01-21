@@ -58,12 +58,14 @@ __device__ auto device_ConvolvePdfs(fptype *evt, ParameterContainer &pc) -> fpty
     fptype norm1 = pc.getNormalization(0);
     ret *= norm1;
 
-    pc.incrementIndex();
+// mds    pc.incrementIndex();
+    callFunction(evt, pc);
 
     fptype norm2 = pc.getNormalization(0);
     ret *= norm2;
 
-    pc.incrementIndex();
+// mds    pc.incrementIndex();
+    callFunction(evt, pc);
 
     return ret;
 }

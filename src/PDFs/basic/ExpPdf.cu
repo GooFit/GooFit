@@ -9,6 +9,9 @@ __device__ auto device_Exp(fptype *evt, ParameterContainer &pc) -> fptype {
     fptype alpha = pc.getParameter(0);
     fptype x     = RO_CACHE(evt[id]);
 
+//  mds    std::cout << " in device_Exp:  id, alpha, x =  \n "
+//               << id << "  " << x << "  " << alpha << "\n";
+
     fptype ret = exp(alpha * x);
 
     pc.incrementIndex(1, 1, 0, 1, 1);
@@ -17,10 +20,17 @@ __device__ auto device_Exp(fptype *evt, ParameterContainer &pc) -> fptype {
 }
 
 __device__ auto device_ExpOffset(fptype *evt, ParameterContainer &pc) -> fptype {
+// mds     std::cout << "entered device_ExpOffset  \n";
+// mds     std::cout << " --- pc.getParameter(0) & pc.getParameter(1) =  "
+// mds               << pc.getParameter(0)  << ";   " << pc.getParameter(1) << "\n";
+// mds     std::cout << " ---  pc.getObservable(0) = " << pc.getObservable(0) << "\n";
     int id   = pc.getObservable(0);
     fptype x = RO_CACHE(evt[id]);
     x -= pc.getParameter(0);
     fptype alpha = pc.getParameter(1);
+
+// mds     std::cout << " in device_ExpOffset:  id, x, alpha =  \n "
+// mds               << id << "  " << x << "  " << alpha << "\n";
 
     fptype ret = exp(alpha * x);
 
@@ -73,16 +83,30 @@ __device__ device_function_ptr ptr_to_ExpPolyOffset = device_ExpPolyOffset;
 
 __host__ ExpPdf::ExpPdf(std::string n, Observable _x, Variable alpha)
     : GooPdf("ExpPdf", n, _x, alpha) {
+// mds     PdfBase::status("   entered ExpPdf::ExpPdf");
+
     registerFunction("ptr_to_Exp", ptr_to_Exp);
+// mds    std::cout << "  in __host__ ExpPdf::ExpPdf:  ptr_to_Exp = " << ptr_to_Exp << "\n\n";
+    host_fcn_ptr = get_device_symbol_address(ptr_to_Exp);
+    functionPtrToNameMap[host_fcn_ptr] = "device_Exp";
 
     initialize();
+// mds    std::cout << " about to leave ExpPdf::ExpPdf \n";
+// mds    PdfBase::status("  about to leave ExpPdf::ExpPdf ");
 }
 
 __host__ ExpPdf::ExpPdf(std::string n, Observable _x, Variable alpha, Variable offset)
     : GooPdf("ExpPdf", n, _x, offset, alpha) {
-    registerFunction("ptr_to_ExpOffset", ptr_to_ExpOffset);
 
+// mds     std::cout << "entered ExpPdf::ExpPdf  \n";
+// mds     PdfBase::status("  entered ExpPdf::ExpPdf (with offset) ");
+    registerFunction("ptr_to_ExpOffset", ptr_to_ExpOffset);
+    host_fcn_ptr = get_device_symbol_address(ptr_to_ExpOffset);
+    functionPtrToNameMap[host_fcn_ptr] = "device_ExpOffset";
+// mds    PdfBase::status(" in ExpPdf::ExpPdf (with offset) after execute registerFunction");
     initialize();
+// mds     PdfBase::status("    in ExpPdf::ExpPdf (with offset) after execute initialize() ");
+// mds     std::cout << " about to leave ExpPdf::ExpPdf \n";
 }
 
 __host__ ExpPdf::ExpPdf(std::string n, Observable _x, std::vector<Variable> &weights)
@@ -94,6 +118,8 @@ __host__ ExpPdf::ExpPdf(std::string n, Observable _x, std::vector<Variable> &wei
         registerParameter(w);
 
     registerFunction("ptr_to_ExpPoly", ptr_to_ExpPoly);
+    host_fcn_ptr = get_device_symbol_address(ptr_to_ExpPoly);
+    functionPtrToNameMap[host_fcn_ptr] = "device_ExpPoly";
 
     initialize();
 }
@@ -107,6 +133,9 @@ __host__ ExpPdf::ExpPdf(std::string n, Observable _x, std::vector<Variable> &wei
         registerParameter(w);
 
     registerFunction("ptr_to_ExpPolyOffset", ptr_to_ExpPolyOffset);
+    host_fcn_ptr = get_device_symbol_address(ptr_to_ExpPolyOffset);
+    functionPtrToNameMap[host_fcn_ptr] = "device_ExpPolyOffset";
+
 
     initialize();
 }

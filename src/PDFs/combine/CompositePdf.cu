@@ -8,6 +8,7 @@ __device__ auto device_Composite(fptype *evt, ParameterContainer &pc) -> fptype 
     // unsigned int coreParIndex  = RO_CACHE(indices[2]);
     // unsigned int shellFcnIndex = RO_CACHE(indices[3]);
     // unsigned int shellParIndex = RO_CACHE(indices[4]);
+
     pc.incrementIndex();
 
     // NB, not normalizing core function, it is not being used as a PDF.
@@ -45,7 +46,11 @@ __host__ CompositePdf::CompositePdf(std::string n, PdfBase *core, PdfBase *shell
     components.push_back(core);
     components.push_back(shell);
 
+
+    std::cout << "  __host__ CompositePdf::CompositePdf( ... )  \n";
+
     observablesList = getObservables();
+    std::cout << "  ## observablesList.size() =  " << observablesList.size() << "\n";
 
     registerFunction("ptr_to_Composite", ptr_to_Composite);
 

@@ -12,6 +12,13 @@ SmartVector<fptype> host_observables{"d_observables"};
 SmartVector<fptype> host_normalizations{"d_normalizations"};
 SmartVector<void *> host_function_table{"d_function_table"};
 
+///  mds 211217
+std::vector<std::string> host_function_name;
+std::vector<std::string> host_function_pdf;
+std::vector<std::string> host_parameter_name;
+std::vector<std::string> host_observable_name;
+///
+
 __device__ fptype *d_parameters;
 __device__ fptype *d_constants;
 __device__ fptype *d_observables;

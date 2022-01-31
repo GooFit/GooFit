@@ -89,16 +89,11 @@ AddPdf::AddPdf(std::string n, std::vector<Variable> weights, std::vector<PdfBase
 
     // Indices stores (function index)(function parameter index)(weight index) triplet for each component.
     // Last component has no weight index unless function is extended.
-// mds    std::cout << "in AddPdf::AddPdf   \n";
     for(PdfBase *p : comps) {
-// mds         std::cout << "*p = \n" << *p << "\n";
         components.push_back(p);
         if(components.back() == nullptr)
             throw GooFit::GeneralError("Invalid component");
     }
-// mds     std::cout << " about to execute PdfBase::listComponents(); \n";
-// mds     PdfBase::listComponents();
-// mds     PdfBase::status("in AddPdf::AddPdf, point A");
 
     observablesList = getObservables();
 
@@ -118,16 +113,13 @@ AddPdf::AddPdf(std::string n, std::vector<Variable> weights, std::vector<PdfBase
     if(extended) {
         registerFunction("ptr_to_AddPdfsExt", ptr_to_AddPdfsExt);
         host_fcn_ptr = get_device_symbol_address(ptr_to_AddPdfsExt);
-        functionPtrToNameMap[host_fcn_ptr] = "device_AddPdfsExt";}
+        functionPtrToNameMap[host_fcn_ptr] = "AddPdfsExt";}
     else {
         registerFunction("ptr_to_AddPdfs", ptr_to_AddPdfs);
         host_fcn_ptr = get_device_symbol_address(ptr_to_AddPdfs);
-        functionPtrToNameMap[host_fcn_ptr] = "device_AddPdfs";}
+        functionPtrToNameMap[host_fcn_ptr] = "AddPdfs";}
 
     initialize();
-// mds     std::cout << " about to leave AddPdf  \n";
-// mds     PdfBase::listComponents();
-// mds     PdfBase::status("in AddPdf::AddPdf, about to return");
 }
 
 AddPdf::AddPdf(std::string n, Variable frac1, PdfBase *func1, PdfBase *func2)
@@ -141,7 +133,7 @@ AddPdf::AddPdf(std::string n, Variable frac1, PdfBase *func1, PdfBase *func2)
 
     registerFunction("ptr_to_AddPdfs", ptr_to_AddPdfs);
     host_fcn_ptr = get_device_symbol_address(ptr_to_AddPdfs);
-    functionPtrToNameMap[host_fcn_ptr] = "device_AddPdfs";
+    functionPtrToNameMap[host_fcn_ptr] = "AddPdfs";
 
     initialize();
 }
@@ -163,7 +155,6 @@ __host__ auto AddPdf::normalize() -> fptype {
     fptype last = components.back()->normalize();
 
     if(extended) {
-        // fptype lastWeight = host_parameters[parametersIdx + 2];
         fptype lastWeight = parametersList[components.size() - 1];
         totalWeight += lastWeight;
         ret += last * lastWeight;

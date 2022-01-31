@@ -50,7 +50,7 @@ __host__ StepPdf::StepPdf(std::string n, Observable _x, Variable x0, int Up)
     
     registerFunction("ptr_to_Step", ptr_to_Step);
     host_fcn_ptr = get_device_symbol_address(ptr_to_Step);
-    functionPtrToNameMap[host_fcn_ptr] = "device_Step";
+    functionPtrToNameMap[host_fcn_ptr] = "StepPdf";
     registerConstant(Up);
 
     initialize();

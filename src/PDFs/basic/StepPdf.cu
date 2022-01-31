@@ -41,12 +41,6 @@ device_function_ptr hptr_to_Step           = device_Step;
 
 __host__ StepPdf::StepPdf(std::string n, Observable _x, Variable x0, int Up)
     : GooPdf("StepPdf", n, _x, x0) {
-    if (!(1==Up || 0==Up)) {
-      std::cout << "value of Up parameter in StepPdf = " << Up << ".\n";
-      std::cout << "should be 1 or 0  \n";
-      std::cout << "error leads to assert";
-      assert(0);
-    }
     
     registerFunction("ptr_to_Step", ptr_to_Step);
     host_fcn_ptr = get_device_symbol_address(ptr_to_Step);

@@ -95,17 +95,6 @@ auto getMetricPointer(EvalFunc val) -> void * {
         throw GeneralError("Non-existent metric pointer choice");
     }
     GOOFIT_TRACE("Selecting {} for the metric pointer", evalfunc_to_string(val));
-// mds     std::cout << "   ===>  in getMetricPointer, evalfunc_to_string(val) =  "
-// mds              << evalfunc_to_string(val) << "\n";
-// mds 
-// mds     std::cout << "\n" << "  functionPtrToNameMap contains " << "\n";
-// mds     std::map<void *, std::string>::iterator it = functionPtrToNameMap.begin();
-// mds     while  (it != functionPtrToNameMap.end()) {
-// mds         std::cout<<it->first<<" :: "<<it->second<<std::endl;
-// mds         it++;
-// mds     }
-
-// mds    std::cout << " \n";
 
     return host_fcn_ptr;
 }

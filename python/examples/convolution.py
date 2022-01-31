@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import division, print_function
-
-import numpy as np
+from __future__ import print_function, division
 
 from goofit import *
+import numpy as np
 
 print_goofit_info()
 
@@ -27,7 +26,7 @@ data = UnbinnedDataSet(xvar)
 
 
 i = -1
-while i < 1000:
+while i < 100000:
     i = i + 1
 
     xvar.value = np.random.uniform(1, 20) - 10

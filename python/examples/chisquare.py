@@ -107,7 +107,7 @@ def produce_hist(rsEvts, wsEvts):
     ratio = wsEvts / rsEvts
     wsEvts[wsEvts == 0] = 1  # Avoid zero errors
 
-    error = np.sqrt(wsEvts / rsEvts ** 2 + wsEvts ** 2 / rsEvts ** 3)
+    error = np.sqrt(wsEvts / rsEvts**2 + wsEvts**2 / rsEvts**3)
     return ratio, error
 
 

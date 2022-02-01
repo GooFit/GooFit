@@ -100,7 +100,6 @@ __host__ auto GooPdf::makeGrid() -> UnbinnedDataSet {
 
 __host__ void GooPdf::setFitControl_A(std::shared_ptr<FitControl> fc, std::string caller) {
     for(auto &component : components) {
-        auto componentIdx = GooPdf::lookUpFunctionIdx(component);
         auto componentName = component->getPdfName();
         component->setFitControl_A(fc, componentName);
     }
@@ -113,7 +112,6 @@ __host__ void GooPdf::setFitControl_A(std::shared_ptr<FitControl> fc, std::strin
 }
 __host__ void GooPdf::setFitControl(std::shared_ptr<FitControl> fc) {
     for(auto &component : components) {
-        auto componentIdx = GooPdf::lookUpFunctionIdx(component);
         auto componentName = component->getPdfName();
         component->setFitControl(fc);
     }

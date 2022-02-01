@@ -150,7 +150,7 @@ namespace GooFit {
 
         std::cout << "about to print components  \n";
         for (auto &component : components) {
-            std::cout << " component = " << component 
+            std::cout << " component = " << component
                 << ",  getName() =  " << getName()
                 << ",  reflex_name_ = " << reflex_name_ << "\n";
         }
@@ -168,7 +168,7 @@ namespace GooFit {
 
         for (int ii = 0; ii < n_host_function_table; ii++) {
             auto host_function = host_function_table[ii];
-            std::cout << "  host_function  " << ii << "  =  " << host_function << "\n"; 
+            std::cout << "  host_function  " << ii << "  =  " << host_function << "\n";
             auto device_fcn_ptr = d_function_table[ii];
             std::cout << "   device_fcn_ptr       " << device_fcn_ptr << "\n";
             auto fIdx = GooPdf::lookUpFunctionIdx(device_fcn_ptr);
@@ -198,7 +198,7 @@ namespace GooFit {
         std::cout <<    "** about to depart PdfBase::status()  \n";
     }
 
-    // add a version which takes a string as an argument so we can 
+    // add a version which takes a string as an argument so we can
     // more easily track the program flow
     __host__ void PdfBase::status(std::string caller) {
         std::cout << "  ** entered PdfBase::status()  " + caller + "  \n";
@@ -225,7 +225,7 @@ namespace GooFit {
 
         std::cout << "about to print components  \n";
         for (auto &component : components) {
-            std::cout << " component = " << component 
+            std::cout << " component = " << component
                 << ",  getName() =  " << getName()
                 << ",  reflex_name_ = " << reflex_name_ << "\n";
             std::cout << "     *component = " << *component << "\n";

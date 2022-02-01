@@ -120,9 +120,9 @@ class PdfBase {
     void registerFunction(std::string name, const T &function) {
         reflex_name_  = name;
         function_ptr_ = get_device_symbol_address(function);
-// add the following 211222 to keep track of the correspondence
-// between function pointer values and their names to make
-// debugging/tracking the executionn of the code easier.  mds
+        // add the following 211222 to keep track of the correspondence
+        // between function pointer values and their names to make
+        // debugging/tracking the executionn of the code easier.  mds
         functionPtrToNameMap[function_ptr_] = name;
     }
 
@@ -132,14 +132,14 @@ class PdfBase {
     /// Force all normalization values to 1
     void recursiveSetNormalization(fptype norm = 1.0, bool subpdf = false);
 
-   /// Report the status of the components, observablesList, etc.
-   /// added 2101023 mds for debugging
-   void status();
-   void status(std::string caller);
-   // for any Pdf object, print out its name, the name of its class,
-   // and the value of the corresponding device function pointer.
-   //  added 211026 for debugging
-   void listComponents();
+    /// Report the status of the components, observablesList, etc.
+    /// added 2101023 mds for debugging
+    void status();
+    void status(std::string caller);
+    // for any Pdf object, print out its name, the name of its class,
+    // and the value of the corresponding device function pointer.
+    //  added 211026 for debugging
+    void listComponents();
 
   public:
     template <typename... Args>
@@ -182,8 +182,8 @@ class PdfBase {
     auto getData() -> DataSet * { return data_; }
 
     virtual void setFitControl(std::shared_ptr<FitControl>) = 0;
-//  for debugging, add a version with an argument that allows
-//  us to track who called this method  mds 211220
+    //  for debugging, add a version with an argument that allows
+    //  us to track who called this method  mds 211220
     virtual void setFitControl_A(std::shared_ptr<FitControl>, std::string caller) = 0;
 
     /// Override to indicate that this has an analytic integral

@@ -171,8 +171,8 @@ namespace GooFit {
             std::cout << "  host_function  " << ii << "  =  " << host_function << "\n"; 
             auto device_fcn_ptr = d_function_table[ii];
             std::cout << "   device_fcn_ptr       " << device_fcn_ptr << "\n";
-            auto fIdx = GooPdf::lookUpFunctionIdx(device_fcn_ptr);
-            std::cout << "   fIdx = " << fIdx << "\n";
+//            auto fIdx = GooPdf::lookUpFunctionIdx(device_fcn_ptr);
+//            std::cout << "   fIdx = " << fIdx << "\n";
         }
 
         //  host_function->getName() should get the "name"
@@ -246,7 +246,7 @@ namespace GooFit {
                 }
                 it++;
             }
-            auto fIdx = GooPdf::lookUpFunctionIdx(device_fcn_ptr);
+//            auto fIdx = GooPdf::lookUpFunctionIdx(device_fcn_ptr);
             std::cout << "  host_function_name  " << ii << "  =  " << aString
                 << ",  ptr =  " << host_function_table[ii]
                 <<  "     with device_fcn_ptr_name   " << device_fcn_ptr_name <<"\n";

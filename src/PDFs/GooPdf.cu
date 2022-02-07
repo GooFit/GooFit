@@ -42,7 +42,7 @@ GooPdf::~GooPdf() { cleanup(); }
 // Reduce the PDFs to a single value based on metric taker
 // numVars will be different for binned or unbinned fit
 // This does NOT normalize!
-__host__ auto GooPdf::reduce_with_metric() const -> double {
+__host__ double GooPdf::reduce_with_metric() const {
     double ret;
 
     double start = 0.0;
@@ -80,7 +80,7 @@ __host__ auto GooPdf::reduce_with_metric() const -> double {
 // Reduce the PDFs to a single value based on metric taker
 // numVars will be different for binned or unbinned fit
 // This does NOT normalize!
-__host__ auto GooPdf::reduce_with_bins() const -> double {
+__host__ double GooPdf::reduce_with_bins() const {
     double sum;
     double start = 0.0;
 
@@ -172,7 +172,7 @@ __host__ void GooPdf::evaluate_with_metric(thrust::device_vector<fptype> &result
 #endif
 }
 
-__host__ auto GooPdf::evaluate_with_metric() const -> thrust::host_vector<fptype> {
+__host__ thrust::host_vector<fptype> GooPdf::evaluate_with_metric() const {
     thrust::device_vector<fptype> results;
     results.resize(numEntries);
     evaluate_with_metric(results);
@@ -182,7 +182,6 @@ __host__ auto GooPdf::evaluate_with_metric() const -> thrust::host_vector<fptype
 __host__ void GooPdf::setIndices() {
     // If not set, perform unbinned Nll fit!
     if(!fitControl){
-        std::string callerA =  "   inside setIndices ";
         setFitControl(std::make_shared<UnbinnedNllFit>());}
 
     // Ensure that we properly populate *logger with the correct metric
@@ -199,7 +198,7 @@ __host__ void GooPdf::setIndices() {
     pre_run();
 }
 
-__host__ auto GooPdf::findFunctionIdx(void *dev_functionPtr) -> int {
+__host__ int GooPdf::findFunctionIdx(void *dev_functionPtr) {
     // Code specific to function-pointer implementation
     auto localPos = functionAddressToDeviceIndexMap.find(dev_functionPtr);
 
@@ -216,7 +215,7 @@ __host__ auto GooPdf::findFunctionIdx(void *dev_functionPtr) -> int {
     return fIdx;
 }
 
-__host__ auto GooPdf::lookUpFunctionIdx(void *dev_functionPtr) -> int {
+/*__host__ auto GooPdf::lookUpFunctionIdx(void *dev_functionPtr) -> int {
     // 211218 mds
     // derived from findFunctionIdx, but only looks up value
     // returns -99 if not found; does not add anything to
@@ -233,7 +232,7 @@ __host__ auto GooPdf::lookUpFunctionIdx(void *dev_functionPtr) -> int {
 
     return fIdx;
 }
-
+*/
 __host__ void GooPdf::setDebugMask(int mask, bool setSpecific) const {
     cpuDebug = mask;
 #if THRUST_DEVICE_SYSTEM != THRUST_DEVICE_SYSTEM_CUDA
@@ -251,7 +250,7 @@ __host__ void GooPdf::setDebugMask(int mask, bool setSpecific) const {
 #endif
 }
 
-__host__ auto GooPdf::calculateNLL() -> double {
+__host__ double GooPdf::calculateNLL() {
     GOOFIT_MAYBE_UNUSED fptype norm = normalize();
     GOOFIT_TRACE("GooPdf::calculateNLL calling normalize: {} (host_norm should be 1: {})",
                  norm,
@@ -272,8 +271,7 @@ __host__ auto GooPdf::calculateNLL() -> double {
     return 2.0 * ret;
 }
 
-__host__ auto GooPdf::evaluateAtPoints(Observable var) -> std::vector<fptype> {
-    std::string caller =  "   inside evaluateAtPoints";
+__host__ std::vector<fptype> GooPdf::evaluateAtPoints(Observable var) {
     setFitControl(std::make_shared<EvalFit>());
 
     setIndices();
@@ -312,16 +310,12 @@ __host__ auto GooPdf::evaluateAtPoints(Observable var) -> std::vector<fptype> {
     return res;
 }
 
-__host__ auto GooPdf::getValue(EvalFunc evalfunc) -> fptype {
-    std::string caller;
+__host__ fptype GooPdf::getValue(EvalFunc evalfunc) {
     if(evalfunc == EvalFunc::Prob) {
-        caller = "   inside getValue(evalfunc == EvalFunc::Prob) ";
         setFitControl(std::make_shared<ProbFit>());}
     else if(evalfunc == EvalFunc::Eval) {
-        caller = "   inside getValue(evalfunc == EvalFunc::Eval) ";
         setFitControl(std::make_shared<EvalFit>()); }
     else if(evalfunc == EvalFunc::NLL) {
-        caller = "   inside getValue(evalfunc == EvalFunc::NLL) ";
         setFitControl(std::make_shared<UnbinnedNllFit>());}
     else
         throw GeneralError("That EvalFunc is not supported");
@@ -342,7 +336,7 @@ __host__ auto GooPdf::getValue(EvalFunc evalfunc) -> fptype {
     return results[0];
 }
 
-__host__ auto GooPdf::normalize() -> fptype {
+__host__ fptype GooPdf::normalize() {
     if(!fitControl->metricIsPdf()) {
         GOOFIT_TRACE("{}: metricIsPdf, returning 1", getName());
         host_normalizations.at(normalIdx + 1) = 1.0;
@@ -402,14 +396,13 @@ __host__ auto GooPdf::normalize() -> fptype {
     return (fptype)ret;
 }
 
-__device__ auto callFunction(fptype *eventAddress, ParameterContainer &pc) -> fptype {
+__device__ double callFunction(fptype *eventAddress, ParameterContainer &pc) {
     return (*(reinterpret_cast<device_function_ptr>(d_function_table[pc.funcIdx])))(eventAddress, pc);
 }
 
-__host__ auto GooPdf::getCompProbsAtDataPoints() -> std::vector<std::vector<fptype>> {
+__host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
     // note, we need to overwrite what our metric operator is going to do, and restore previous
     auto fc = fitControl;
-    std::string caller = "   in getCompProbsAtDataPoints()";
     setFitControl(std::make_shared<ProbFit>());
     normalize();
     host_normalizations.sync(d_normalizations);
@@ -441,7 +434,7 @@ __host__ auto GooPdf::getCompProbsAtDataPoints() -> std::vector<std::vector<fpty
     setFitControl(fc);
     return values;
 }
-
+/*
 __host__ void GooPdf::listAllComponents(PdfBase* someComponent) {
 
    auto moreComponents = someComponent->getComponents();
@@ -451,4 +444,5 @@ __host__ void GooPdf::listAllComponents(PdfBase* someComponent) {
      listAllComponents(mComponent);
    }
 }
+*/
 } // namespace GooFit

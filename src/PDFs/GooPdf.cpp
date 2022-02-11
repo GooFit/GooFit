@@ -123,7 +123,6 @@ __host__ void GooPdf::setFitControl(std::shared_ptr<FitControl> fc) {
     setIndices();
 }
 
-
 #ifdef ROOT_FOUND
 __host__ auto GooPdf::plotToROOT(Observable var, double normFactor, std::string name) -> TH1D * {
     if(name.empty())

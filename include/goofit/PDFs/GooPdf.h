@@ -72,7 +72,7 @@ class GooPdf : public PdfBase {
     __host__ auto hasAnalyticIntegral() const -> bool override;
     __host__ auto getValue(EvalFunc evalfunc = EvalFunc::Eval) -> fptype;
 
-    __host__ void listAllComponents(PdfBase* someComponent);
+    __host__ void listAllComponents(PdfBase *someComponent);
 
     /// Produce a list of probabilies at points
     __host__ auto getCompProbsAtDataPoints() -> std::vector<std::vector<fptype>>;
@@ -83,8 +83,8 @@ class GooPdf : public PdfBase {
     __host__ void initialize();
     __host__ void scan(Observable var, std::vector<fptype> &values);
     __host__ void setFitControl(std::shared_ptr<FitControl> fc) override;
-//  for debugging, add a version with an argument that allows
-//  us to track who called this method  mds 211220
+    //  for debugging, add a version with an argument that allows
+    //  us to track who called this method  mds 211220
     __host__ void setFitControl_A(std::shared_ptr<FitControl>, std::string caller) override;
     __host__ virtual void setMetrics();
     __host__ void setParameterConstantness(bool constant = true);
@@ -99,7 +99,6 @@ class GooPdf : public PdfBase {
 #endif
 
     __host__ void setIndices() override;
-
 
   protected:
     std::shared_ptr<MetricTaker> logger;

@@ -110,10 +110,14 @@ AddPdf::AddPdf(std::string n, std::vector<Variable> weights, std::vector<PdfBase
         extended = false;
     }
 
-    if(extended)
+    if(extended) {
         registerFunction("ptr_to_AddPdfsExt", ptr_to_AddPdfsExt);
-    else
+        host_fcn_ptr = get_device_symbol_address(ptr_to_AddPdfsExt);
+        functionPtrToNameMap[host_fcn_ptr] = "AddPdfsExt";}
+    else {
         registerFunction("ptr_to_AddPdfs", ptr_to_AddPdfs);
+        host_fcn_ptr = get_device_symbol_address(ptr_to_AddPdfs);
+        functionPtrToNameMap[host_fcn_ptr] = "AddPdfs";}
 
     initialize();
 }
@@ -128,6 +132,8 @@ AddPdf::AddPdf(std::string n, Variable frac1, PdfBase *func1, PdfBase *func2)
     observablesList = getObservables();
 
     registerFunction("ptr_to_AddPdfs", ptr_to_AddPdfs);
+    host_fcn_ptr = get_device_symbol_address(ptr_to_AddPdfs);
+    functionPtrToNameMap[host_fcn_ptr] = "AddPdfs";
 
     initialize();
 }
@@ -149,7 +155,6 @@ __host__ auto AddPdf::normalize() -> fptype {
     fptype last = components.back()->normalize();
 
     if(extended) {
-        // fptype lastWeight = host_parameters[parametersIdx + 2];
         fptype lastWeight = parametersList[components.size() - 1];
         totalWeight += lastWeight;
         ret += last * lastWeight;

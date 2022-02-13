@@ -42,7 +42,7 @@ GooPdf::~GooPdf() { cleanup(); }
 // Reduce the PDFs to a single value based on metric taker
 // numVars will be different for binned or unbinned fit
 // This does NOT normalize!
-__host__ auto GooPdf::reduce_with_metric() const -> double {
+__host__ double GooPdf::reduce_with_metric() const {
     double ret;
 
     double start = 0.0;
@@ -80,7 +80,7 @@ __host__ auto GooPdf::reduce_with_metric() const -> double {
 // Reduce the PDFs to a single value based on metric taker
 // numVars will be different for binned or unbinned fit
 // This does NOT normalize!
-__host__ auto GooPdf::reduce_with_bins() const -> double {
+__host__ double GooPdf::reduce_with_bins() const {
     double sum;
     double start = 0.0;
 
@@ -129,7 +129,6 @@ __host__ void GooPdf::evaluate_with_metric(thrust::device_vector<fptype> &result
     // logger(0, arrayAddress, eventSize)
     // logger(1, arrayAddress, eventSize)
     // ...
-
     thrust::transform(
         thrust::make_zip_iterator(thrust::make_tuple(eventIndex, arrayAddress, eventSize)),
         thrust::make_zip_iterator(thrust::make_tuple(eventIndex + entries_to_process, arrayAddress, eventSize)),
@@ -173,7 +172,7 @@ __host__ void GooPdf::evaluate_with_metric(thrust::device_vector<fptype> &result
 #endif
 }
 
-__host__ auto GooPdf::evaluate_with_metric() const -> thrust::host_vector<fptype> {
+__host__ thrust::host_vector<fptype> GooPdf::evaluate_with_metric() const {
     thrust::device_vector<fptype> results;
     results.resize(numEntries);
     evaluate_with_metric(results);
@@ -182,23 +181,24 @@ __host__ auto GooPdf::evaluate_with_metric() const -> thrust::host_vector<fptype
 
 __host__ void GooPdf::setIndices() {
     // If not set, perform unbinned Nll fit!
-    if(!fitControl)
-        setFitControl(std::make_shared<UnbinnedNllFit>());
+    if(!fitControl){
+        setFitControl(std::make_shared<UnbinnedNllFit>());}
 
     // Ensure that we properly populate *logger with the correct metric
     setMetrics();
 
-    GOOFIT_TRACE("GooPdf::setIndices!");
     PdfBase::setIndices();
 
     GOOFIT_DEBUG("host_function_table[{}] = {} (fitControl)", host_function_table.size(), fitControl->getName());
+
     host_function_table.push_back(getMetricPointer(fitControl->getMetric()));
+    host_function_name.push_back(fitControl->getName());
 
     // copy all the device functions over:
     pre_run();
 }
 
-__host__ auto GooPdf::findFunctionIdx(void *dev_functionPtr) -> int {
+__host__ int GooPdf::findFunctionIdx(void *dev_functionPtr) {
     // Code specific to function-pointer implementation
     auto localPos = functionAddressToDeviceIndexMap.find(dev_functionPtr);
 
@@ -208,12 +208,31 @@ __host__ auto GooPdf::findFunctionIdx(void *dev_functionPtr) -> int {
 
     int fIdx = host_function_table.size();
     host_function_table.push_back(dev_functionPtr);
+    host_function_name.push_back("findFunctionIdx");
     functionAddressToDeviceIndexMap[dev_functionPtr] = fIdx;
     host_function_table.sync(d_function_table);
 
     return fIdx;
 }
 
+/*__host__ auto GooPdf::lookUpFunctionIdx(void *dev_functionPtr) -> int {
+    // 211218 mds
+    // derived from findFunctionIdx, but only looks up value
+    // returns -99 if not found; does not add anything to
+    // host_function_table or host_function_name
+
+    // Code specific to function-pointer implementation
+    auto localPos = functionAddressToDeviceIndexMap.find(dev_functionPtr);
+
+    if(localPos != functionAddressToDeviceIndexMap.end()) {
+        return (*localPos).second;
+    }
+
+    int fIdx = -99;
+
+    return fIdx;
+}
+*/
 __host__ void GooPdf::setDebugMask(int mask, bool setSpecific) const {
     cpuDebug = mask;
 #if THRUST_DEVICE_SYSTEM != THRUST_DEVICE_SYSTEM_CUDA
@@ -231,7 +250,7 @@ __host__ void GooPdf::setDebugMask(int mask, bool setSpecific) const {
 #endif
 }
 
-__host__ auto GooPdf::calculateNLL() -> double {
+__host__ double GooPdf::calculateNLL() {
     GOOFIT_MAYBE_UNUSED fptype norm = normalize();
     GOOFIT_TRACE("GooPdf::calculateNLL calling normalize: {} (host_norm should be 1: {})",
                  norm,
@@ -252,7 +271,7 @@ __host__ auto GooPdf::calculateNLL() -> double {
     return 2.0 * ret;
 }
 
-__host__ auto GooPdf::evaluateAtPoints(Observable var) -> std::vector<fptype> {
+__host__ std::vector<fptype> GooPdf::evaluateAtPoints(Observable var) {
     setFitControl(std::make_shared<EvalFit>());
 
     setIndices();
@@ -291,13 +310,13 @@ __host__ auto GooPdf::evaluateAtPoints(Observable var) -> std::vector<fptype> {
     return res;
 }
 
-__host__ auto GooPdf::getValue(EvalFunc evalfunc) -> fptype {
-    if(evalfunc == EvalFunc::Prob)
-        setFitControl(std::make_shared<ProbFit>());
-    else if(evalfunc == EvalFunc::Eval)
-        setFitControl(std::make_shared<EvalFit>());
-    else if(evalfunc == EvalFunc::NLL)
-        setFitControl(std::make_shared<UnbinnedNllFit>());
+__host__ fptype GooPdf::getValue(EvalFunc evalfunc) {
+    if(evalfunc == EvalFunc::Prob) {
+        setFitControl(std::make_shared<ProbFit>());}
+    else if(evalfunc == EvalFunc::Eval) {
+        setFitControl(std::make_shared<EvalFit>()); }
+    else if(evalfunc == EvalFunc::NLL) {
+        setFitControl(std::make_shared<UnbinnedNllFit>());}
     else
         throw GeneralError("That EvalFunc is not supported");
 
@@ -317,7 +336,7 @@ __host__ auto GooPdf::getValue(EvalFunc evalfunc) -> fptype {
     return results[0];
 }
 
-__host__ auto GooPdf::normalize() -> fptype {
+__host__ fptype GooPdf::normalize() {
     if(!fitControl->metricIsPdf()) {
         GOOFIT_TRACE("{}: metricIsPdf, returning 1", getName());
         host_normalizations.at(normalIdx + 1) = 1.0;
@@ -348,7 +367,6 @@ __host__ auto GooPdf::normalize() -> fptype {
     GOOFIT_TRACE("Total Bins: {}", totalBins);
 
     ret *= get_bin_grid_volume();
-
     GOOFIT_TRACE("Bin volume: {}", ret);
 
     ret /= totalBins;
@@ -359,10 +377,12 @@ __host__ auto GooPdf::normalize() -> fptype {
 
     GOOFIT_TRACE("Sum: {}", sum);
 
+
+
     if(std::isnan(sum)) {
         GooFit::abort(__FILE__, __LINE__, getName() + " NaN in normalization", this);
     } else if(0 >= sum) {
-        GooFit::abort(__FILE__, __LINE__, "Non-positive normalization", this);
+        GooFit::abort(__FILE__, __LINE__, "Non-positive normalization (mds) ", this);
     }
 
     ret *= sum;
@@ -376,18 +396,16 @@ __host__ auto GooPdf::normalize() -> fptype {
     return (fptype)ret;
 }
 
-__device__ auto callFunction(fptype *eventAddress, ParameterContainer &pc) -> fptype {
+__device__ double callFunction(fptype *eventAddress, ParameterContainer &pc) {
     return (*(reinterpret_cast<device_function_ptr>(d_function_table[pc.funcIdx])))(eventAddress, pc);
 }
 
-__host__ auto GooPdf::getCompProbsAtDataPoints() -> std::vector<std::vector<fptype>> {
+__host__ std::vector<std::vector<fptype>> GooPdf::getCompProbsAtDataPoints() {
     // note, we need to overwrite what our metric operator is going to do, and restore previous
     auto fc = fitControl;
     setFitControl(std::make_shared<ProbFit>());
-
     normalize();
     host_normalizations.sync(d_normalizations);
-
     thrust::host_vector<fptype> host_results = evaluate_with_metric();
 
     std::vector<std::vector<fptype>> values;
@@ -402,6 +420,7 @@ __host__ auto GooPdf::getCompProbsAtDataPoints() -> std::vector<std::vector<fpty
 
         GOOFIT_TRACE("host_function_table[{}] = {}", host_function_table.size(), fitControl->getName());
         host_function_table.push_back(getMetricPointer(fitControl->getMetric()));
+        host_function_name.push_back(fitControl->getName());
 
         // copy all the device functions over:
         GOOFIT_DEBUG("Copying all host side parameters to device (normalizations too)");
@@ -413,8 +432,17 @@ __host__ auto GooPdf::getCompProbsAtDataPoints() -> std::vector<std::vector<fpty
 
     // restore previous fit control
     setFitControl(fc);
-
     return values;
 }
+/*
+__host__ void GooPdf::listAllComponents(PdfBase* someComponent) {
 
+   auto moreComponents = someComponent->getComponents();
+   for (auto &mComponent : moreComponents) {
+     std::cout << " mComponent = " << mComponent << std::endl;
+     std::cout << "  *mComponent = " << *mComponent << std::endl;
+     listAllComponents(mComponent);
+   }
+}
+*/
 } // namespace GooFit

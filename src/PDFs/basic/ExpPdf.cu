@@ -73,15 +73,20 @@ __device__ device_function_ptr ptr_to_ExpPolyOffset = device_ExpPolyOffset;
 
 __host__ ExpPdf::ExpPdf(std::string n, Observable _x, Variable alpha)
     : GooPdf("ExpPdf", n, _x, alpha) {
+
     registerFunction("ptr_to_Exp", ptr_to_Exp);
+    host_fcn_ptr = get_device_symbol_address(ptr_to_Exp);
+    functionPtrToNameMap[host_fcn_ptr] = "Exp";
 
     initialize();
 }
 
 __host__ ExpPdf::ExpPdf(std::string n, Observable _x, Variable alpha, Variable offset)
     : GooPdf("ExpPdf", n, _x, offset, alpha) {
-    registerFunction("ptr_to_ExpOffset", ptr_to_ExpOffset);
 
+    registerFunction("ptr_to_ExpOffset", ptr_to_ExpOffset);
+    host_fcn_ptr = get_device_symbol_address(ptr_to_ExpOffset);
+    functionPtrToNameMap[host_fcn_ptr] = "ExpOffset";
     initialize();
 }
 
@@ -94,6 +99,8 @@ __host__ ExpPdf::ExpPdf(std::string n, Observable _x, std::vector<Variable> &wei
         registerParameter(w);
 
     registerFunction("ptr_to_ExpPoly", ptr_to_ExpPoly);
+    host_fcn_ptr = get_device_symbol_address(ptr_to_ExpPoly);
+    functionPtrToNameMap[host_fcn_ptr] = "ExpPoly";
 
     initialize();
 }
@@ -107,6 +114,9 @@ __host__ ExpPdf::ExpPdf(std::string n, Observable _x, std::vector<Variable> &wei
         registerParameter(w);
 
     registerFunction("ptr_to_ExpPolyOffset", ptr_to_ExpPolyOffset);
+    host_fcn_ptr = get_device_symbol_address(ptr_to_ExpPolyOffset);
+    functionPtrToNameMap[host_fcn_ptr] = "ExpPolyOffset";
+
 
     initialize();
 }

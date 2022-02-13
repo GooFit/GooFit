@@ -10,10 +10,10 @@ namespace GooFit {
 
 enum class EvalFunc : size_t { Eval = 0, NLL, Prob, BinAvg, BinWithError, Chisq };
 
-constexpr const char *evalfunc_vals[]
+static const char *evalfunc_vals[]
     = {"ptr_to_Eval", "ptr_to_NLL", "ptr_to_Prob", "ptr_to_BinAvg", "ptr_to_BinWithError", "ptr_to_Chisq"};
 
-constexpr auto evalfunc_to_string(EvalFunc val) -> const char * { return evalfunc_vals[static_cast<size_t>(val)]; }
+static auto evalfunc_to_string(EvalFunc val) -> const char * { return evalfunc_vals[static_cast<size_t>(val)]; }
 
 class PdfBase;
 

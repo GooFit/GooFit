@@ -63,7 +63,6 @@ __host__ void GooPdf::initialize() {
 
     // MetricTaker must be created after PdfBase initialisation is done.
     PdfBase::initializeIndices();
-
     setMetrics();
 }
 
@@ -99,8 +98,21 @@ __host__ auto GooPdf::makeGrid() -> UnbinnedDataSet {
     return grid;
 }
 
+__host__ void GooPdf::setFitControl_A(std::shared_ptr<FitControl> fc, std::string caller) {
+    for(auto &component : components) {
+        auto componentName = component->getPdfName();
+        component->setFitControl_A(fc, componentName);
+    }
+
+    fitControl = fc;
+
+    setMetrics();
+
+    setIndices();
+}
 __host__ void GooPdf::setFitControl(std::shared_ptr<FitControl> fc) {
     for(auto &component : components) {
+        auto componentName = component->getPdfName();
         component->setFitControl(fc);
     }
 

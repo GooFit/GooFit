@@ -193,7 +193,7 @@ __device__ fptype device_threegauss_resolutionext(fptype coshterm,
                                                fptype sigma,
                                                ParameterContainer &pc) {
     fptype coreFraction    = pc.getParameter(0);
-    fptype tailFraction    = (1 - coreFraction) * pc.getParameter(1);
+    fptype tailFraction    = pc.getParameter(1);
     fptype outlFraction    = 1 - coreFraction - tailFraction;
     fptype coreBias        = pc.getParameter(2);
     fptype coreScaleFactor = pc.getParameter(3);
@@ -233,7 +233,7 @@ __device__ fptype device_threegauss_resolutionext(fptype coshterm,
     fptype op3_high = 0;
     fptype op4_high = 0;
 
-      
+
 
     gaussian_low(cp1_low, cp2_low, cp3_low, cp4_low, tau, dtime - coreBias * sigma, xmixing, ymixing, coreScaleFactor * sigma, selbias_low, Tthreshold, constantC);
     gaussian_low(tp1_low, tp2_low, tp3_low, tp4_low, tau, dtime - tailBias * sigma, xmixing, ymixing, tailScaleFactor * sigma, selbias_low, Tthreshold, constantC);
@@ -276,7 +276,7 @@ ThreeGaussResolutionExt::~ThreeGaussResolutionExt() = default;
 
 fptype ThreeGaussResolutionExt::normalization(
     fptype di1, fptype di2, fptype di3, fptype di4, fptype tau, fptype xmixing, fptype ymixing) const {
-    
+
     // NB! In thesis notation, A_1 = (A + B), A_2 = (A - B).
     // Here di1 = |A^2|, di2 = |B^2|, di3,4 = Re,Im(AB^*).
     // Distinction between numerical subscribts and A,B is crucial
@@ -294,7 +294,7 @@ fptype ThreeGaussResolutionExt::normalization(
     fptype preConst_low = C * exp(selBias_low * Tthres);
     fptype preConst_high = C * exp(selBias_high * Tthres);
 
-    fptype Gamma = 1./tau; 
+    fptype Gamma = 1./tau;
     fptype gammaPlusBias = Gamma + selBias_low;
 
     fptype timeIntegralOne_low = 0.5*preConst_low * (  1./(ymixing*Gamma - Gamma - selBias_low)  * (   exp( Tthres * (ymixing*Gamma - Gamma - selBias_low) )  - 1  )  +
@@ -330,8 +330,8 @@ fptype ThreeGaussResolutionExt::normalization(
     fptype timeIntegralFou = timeIntegralFour_low + timeIntegralFour_high;
 
     fptype ret = timeIntegralOne * (di1 + di2); // ~ |A|^2 + |B|^2
-    ret += timeIntegralTwo * (di1 - di2);       // ~ Re(A_1 A_2^*)
-    ret -= 2 * timeIntegralThr * di3;           // ~ |A|^2 - |B|^2
+    ret += timeIntegralTwo * (di1 - di2);        // ~ |A|^2 - |B|^2
+    ret -= 2 * timeIntegralThr * di3;          // ~ Re(A_1 A_2^*)
     ret -= 2 * timeIntegralFou * di4;           // ~ Im(A_1 A_2^*)
 
     return ret;

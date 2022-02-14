@@ -48,10 +48,9 @@ __device__ void adjoint(fptype A[NCHANNELS][NCHANNELS], fptype adj[NCHANNELS][NC
 
 __device__ auto inverse(fptype A[NCHANNELS][NCHANNELS], fptype inverse[NCHANNELS][NCHANNELS]) -> bool;
 
-__device__ void getPropagator(const fptype kMatrix[NCHANNELS][NCHANNELS],
-                              const fpcomplex phaseSpace[NCHANNELS],
-                              fpcomplex F[NCHANNELS][NCHANNELS],
-                              fptype adlerTerm);
+__device__ void getPropagator(const fptype kMatrix[NCHANNELS][NCHANNELS]);
+
+__device__ void getPropagator2(fptype bla);
 
 /**
 Represents a resonance-shape parametrization, the

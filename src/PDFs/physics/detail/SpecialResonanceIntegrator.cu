@@ -26,10 +26,11 @@ __device__ auto device_DalitzPlot_calcIntegrals(fptype m12, fptype m13, int res_
     fptype m23
         = motherMass * motherMass + daug1Mass * daug1Mass + daug2Mass * daug2Mass + daug3Mass * daug3Mass - m12 - m13;
 
-    ParameterContainer ipc = pc;
+    ParameterContainer ipc;
     while(ipc.funcIdx < res_i)
         ipc.incrementIndex();
 
+    printf("try to call resonance function in SpecialResonanceIntegrator %f %f %f  %d %d %d %d %d %d  \n", m12, m13, m23, ipc.funcIdx, ipc.observableIdx, ipc.parameterIdx, ipc.constantIdx, ipc.normalIdx);
     ret = getResonanceAmplitude(m12, m13, m23, ipc);
 
     ParameterContainer jpc = pc;

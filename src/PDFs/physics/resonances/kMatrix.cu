@@ -22,9 +22,12 @@ __device__ auto kMatrixRes(fptype m12, fptype m13, fptype m23, ParameterContaine
     unsigned int Mpair = pc.getConstant(0);
 
     // parameter index
-    unsigned int idx = 0;
+    int idx = 0;
 
     // Read parameters, in the same order as they are registered at the bottom of this file
+    for(int i = 0; i < pc.getNumParameters(); i++) {
+        printf("par %d %f \n", i, pc.getParameter(i));
+    }
     fptype sA0      = pc.getParameter(idx++);
     fptype sA       = pc.getParameter(idx++);
     fptype s0_prod  = pc.getParameter(idx++);
@@ -33,38 +36,50 @@ __device__ auto kMatrixRes(fptype m12, fptype m13, fptype m23, ParameterContaine
     fptype fscat[NCHANNELS];
     fptype pmasses[NCHANNELS];
     fptype couplings[NCHANNELS][NCHANNELS];
+    fptype myfscat = 0;
 
-    fpcomplex beta[NCHANNELS];
+    fpcomplex beta[20];
     fpcomplex f_prod[NCHANNELS];
-
-    for(double &i : fscat) {
-        i = pc.getParameter(idx++);
+    int counter = 0;
+     printf("couter %d\n",counter);
+    for(int i = 0; i < NCHANNELS; i++) {
+        
+        fscat[i] = pc.getParameter(idx);
+        printf("couter %d %f\n",counter, fscat[i]);
+        idx++;
+        counter++;
     }
 
     // in the next two sets of parameters the index is used two times in the same line, therefore it must be incremented
     // two times afterwards
-    for(auto &i : beta) {
-        i = fpcomplex(pc.getParameter(idx), pc.getParameter(idx + 1));
+    counter = 0;
+     printf("couter %d\n",counter);
+    for(int i = 0; i < NCHANNELS; i++) {
+        beta[i] = fpcomplex(pc.getParameter(idx), pc.getParameter(idx + 1));
+         printf("beta %d %f %f\n",i, beta[i].real(), beta[i].imag());
+        idx++;
+        idx++;
+    }
+    for(int i = 0; i < NCHANNELS; i++) {
+        f_prod[i] = fpcomplex(pc.getParameter(idx), pc.getParameter(idx + 1));
+        printf("f_prod %d %f %f\n",i, f_prod[i].real(), f_prod[i].imag());
         idx++;
         idx++;
     }
 
-    for(auto &i : f_prod) {
-        i = fpcomplex(pc.getParameter(idx), pc.getParameter(idx + 1));
-        idx++;
-        idx++;
-    }
 
     for(int i = 0; i < NPOLES; i++) {
         for(int j = 0; j < NPOLES; j++) {
             couplings[i][j] = pc.getParameter(idx++);
+            printf("couplings %d %d %f \n", i, j, couplings[i][j]);
         }
         pmasses[i] = pc.getParameter(idx++);
+        printf("masses %d %f \n", i, pmasses[i]);
     }
 
     fptype s = (PAIR_12 == Mpair ? m12 : (PAIR_13 == Mpair ? m13 : m23));
 
-    // constructKMatrix
+        // constructKMatrix
     fptype kMatrix[NCHANNELS][NCHANNELS];
 
     for(int i = 0; i < 5; i++) {
@@ -72,11 +87,24 @@ __device__ auto kMatrixRes(fptype m12, fptype m13, fptype m23, ParameterContaine
             kMatrix[i][j] = 0;
             for(int k = 0; k < 5; k++)
                 kMatrix[i][j] += couplings[k][i] * couplings[k][j] / (POW2(pmasses[k]) - s);
-            if(i == 0 || j == 0) // Scattering term
-                kMatrix[i][j] += fscat[i + j] * (1 - s0_scatt) / (s - s0_scatt);
+            int blub = i+j;
+            //if(i == 0 || j == 0) printf("i j %d %d %d \n", i,j,blub); // Scattering term
+            //    kMatrix[i][j] += fscat[i + j] * (1 - s0_scatt) / (s - s0_scatt);
+            printf("kamtrix %d %d %f \n", i, j, kMatrix[i][j]);
         }
     }
 
+    for(int i = 0; i < 5; i++) {
+        kMatrix[i][0] += fscat[i] * (1 - s0_scatt) / (s - s0_scatt);
+        kMatrix[0][i] += fscat[i] * (1 - s0_scatt) / (s - s0_scatt);
+    }
+
+for(int i = 0; i < 5; i++) {
+        for(int j = 0; j < 5; j++) {
+            printf("kamtrix2 %d %d %f \n", i, j, kMatrix[i][j]);
+        }}
+
+/*
     fptype adlerTerm = (1. - sA0) * (s - sA * mPiPlus * mPiPlus / 2) / (s - sA0);
 
     fpcomplex phaseSpace[NCHANNELS];
@@ -90,7 +118,7 @@ __device__ auto kMatrixRes(fptype m12, fptype m13, fptype m23, ParameterContaine
     getPropagator(kMatrix, phaseSpace, F, adlerTerm);
 
     // calculates output
-    pc.incrementIndex(1, idx, 1, 0, 1);
+
 
     fpcomplex ret(0, 0), pole(0, 0), prod(0, 0);
 
@@ -105,8 +133,13 @@ __device__ auto kMatrixRes(fptype m12, fptype m13, fptype m23, ParameterContaine
 
         prod = F[0][pterm] * (1 - s0_prod) / (s - s0_prod);
         ret  = ret + f_prod[pterm] * prod;
-    }
 
+    }
+*/
+
+
+    //pc.incrementIndex();
+fpcomplex ret(kMatrix[0][0], kMatrix[1][3]);
     return ret;
 } // kMatrixFunction
 
@@ -121,12 +154,12 @@ kMatrix::kMatrix(std::string name,
                  Variable sA,
                  Variable s0_prod,
                  Variable s0_scatt,
-                 std::vector<Variable> beta_r,
-                 std::vector<Variable> beta_i,
-                 std::vector<Variable> f_prod_r,
-                 std::vector<Variable> f_prod_i,
-                 std::vector<Variable> fscat,
-                 std::vector<Variable> poles,
+                 std::vector<Variable> & fscat,
+                 std::vector<Variable> & beta_r,
+                 std::vector<Variable> & beta_i,
+                 std::vector<Variable> & f_prod_r,
+                 std::vector<Variable> & f_prod_i,
+                 std::vector<Variable> & poles,
                  unsigned int L,
                  unsigned int Mpair)
     : ResonancePdf("kMatrix", name, a_r, a_i) {
@@ -163,7 +196,7 @@ kMatrix::kMatrix(std::string name,
 
     registerFunction("ptr_to_kMatrix_res", ptr_to_kMatrix_res);
 
-    initialize();
+    //initialize();
 }
 
 } // namespace Resonances

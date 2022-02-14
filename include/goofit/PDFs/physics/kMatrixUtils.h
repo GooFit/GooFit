@@ -22,4 +22,6 @@ __device__ void getPropagator(const fptype kMatrix[NCHANNELS][NCHANNELS],
                               fpcomplex F[NCHANNELS][NCHANNELS],
                               fptype adlerTerm);
 
+
+
 } // namespace GooFit

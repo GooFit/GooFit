@@ -352,6 +352,7 @@ if(GOOFIT_DEVICE STREQUAL CUDA)
   # Note that this should be the only nvlink command
   string(APPEND CMAKE_CUDA_FLAGS " -Xnvlink=--disable-warnings")
   string(APPEND CMAKE_CUDA_FLAGS " -Xcompiler=-Wno-attributes")
+  string(APPEND CMAKE_CUDA_FLAGS " -lineinfo")
 
   if(NOT DEFINED GOOFIT_ARCH OR GOOFIT_ARCH)
     cmake_cuda_arch_select(FLAGS ARCH_FLAGS READABLE ARCH_FLAGS_readable ARCHS ${GOOFIT_ARCH})

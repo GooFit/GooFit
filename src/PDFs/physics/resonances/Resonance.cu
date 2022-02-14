@@ -154,4 +154,8 @@ __device__ auto spinFactor(unsigned int spin,
     return sFactor;
 }
 
+__device__ void getPropagator2(fptype bla) {
+return; 
+}
+
 } // namespace GooFit

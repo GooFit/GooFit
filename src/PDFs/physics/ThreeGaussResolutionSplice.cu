@@ -72,7 +72,7 @@ __device__ fptype FactorialEven(int n, fptype u0, fptype u1) {
     for (int j = 0; j <= k; j++) {
         res = res + 1./DoubleFactorial(2*j + 1) * (-SmallPhi(u1)*pow(u1, 2*j + 1) + SmallPhi(u0)*pow(u0, 2*j + 1));
     }
-
+   
    res = res + BigPhi(u1) - BigPhi(u0);
    res = res *  constFactorial;
    //printf("FactorialOdd finish \n");
@@ -115,14 +115,18 @@ __device__ fptype EvaluateAcceptance(int n, fptype r, fptype u0, fptype tlow, fp
 }
 
 __device__ void EvaluateKnot(fptype &_P1, fptype &_P3, fptype Gamma, fptype knot_low, fptype knot_high, fptype a0, fptype a1, fptype a2, fptype a3, fptype tprime, fptype sigma, fptype y) {
-    fptype r = 1./sigma/sigma;
-    fptype p_plus  = 2*Gamma*(1.-y) - 2*(tprime)/sigma/sigma;
-    fptype p_minus = 2*Gamma*(1.+y) - 2*(tprime)/sigma/sigma;
-    fptype q = (tprime)*(tprime)/sigma/sigma;
-    fptype u0_plus  = p_plus/(2.*sqrt(r));
-    fptype u0_minus = p_minus/(2.*sqrt(r));
+    fptype _1oSigma2 = 1./sigma/sigma;
+    // r = 1/sigma^2
+    fptype r = _1oSigma2;
+    fptype _1osqrtr= 1./sqrt(r);
+    fptype p_common = 2.*(tprime) * _1oSigma2;
+    fptype p_plus  = 2*Gamma*(1.-y) - p_common;
+    fptype p_minus = 2*Gamma*(1.+y) - p_common;
+    fptype q = (tprime)*(tprime) * _1oSigma2;
+    fptype u0_plus  = 2. * p_plus * _1osqrtr;
+    fptype u0_minus = 2  * p_minus * _1osqrtr;
     //factor 1/sqrt(2PI) absorbed in small phi?
-    fptype preFactor = 0.5/sqrt(r)/sigma;
+    fptype preFactor = 0.5 * _1osqrtr  /sigma;
     fptype preFactor_plus = exp(-0.5*(q - u0_plus*u0_plus));
     fptype preFactor_minus = exp(-0.5*(q - u0_minus*u0_minus));
     fptype Ipy_0  = EvaluateAcceptance(0, r, u0_plus, knot_low, knot_high);
@@ -197,7 +201,7 @@ __device__ void EvaluateKnotSinCos(fptype &_P2, fptype &_P4, fptype Gamma, fptyp
 
 
 
-
+    
     fptype Ig0 = a0 * Ig0_0 + a1 * Ig0_1  + a2 * Ig0_2 + a3 * Ig0_3;
     //Ig0 *= pow(commonFactor, 0);
     fptype Ig1 = a0 * Ig1_0 + a1 * Ig1_1  + a2 * Ig1_2 + a3 * Ig1_3;
@@ -240,66 +244,16 @@ __device__ void gaussian_splice(fptype &_P1,
     _P3 = 0.;
     _P4 = 0.;
     for (int i = 0; i < nKnots-1; i++) {
-       EvaluateKnot(_P1, _P3, Gamma, knots[i], knots[i+1], spline_0[i], spline_1[i], spline_2[i], spline_3[i], adjTime, adjSigma, ymixing);
+       EvaluateKnot(_P1, _P3, Gamma, knots[i], knots[i+1], spline_0[i], spline_1[i], spline_2[i], spline_3[i], adjTime, adjSigma, ymixing); 
        EvaluateKnotSinCos(_P2, _P4, Gamma, knots[i], knots[i+1], spline_0[i], spline_1[i], spline_2[i], spline_3[i], adjTime, adjSigma, xmixing);
     }
-
-
+    
+    
 }
 
 
 
-__device__ void mytmpgaussian(fptype &_P1,
-                         fptype &_P2,
-                         fptype &_P3,
-                         fptype &_P4,
-                         fptype _tau,
-                         fptype adjTime,
-                         fptype xmixing,
-                         fptype ymixing,
-                         fptype adjSigma,
-                         fptype selbias) {
-    fptype _1oSqrtA  = adjSigma * M_SQRT2;
-    fptype _1oSigma  = 1 / adjSigma;
-    fptype _1o2SqrtA = 0.5 * _1oSqrtA;
-    fptype _1oSigma2 = _1oSigma * _1oSigma;
-    fptype _NormG    = SQRT1o2PI * _1oSigma;
 
-    fptype _C   = 0.5 * adjTime * adjTime * _1oSigma2;
-    fptype _Bgn = -adjTime * _1oSigma2;
-
-    fptype _Gamma = 1 / _tau;
-    fptype _B     = _Gamma + _Bgn;
-
-    fptype _u0  = _1o2SqrtA * (_B + selbias);
-    fptype _u02 = _u0 * _u0;
-    fptype _F   = _1oSqrtA * exp(-_C + _u02);
-
-    fptype _Ig0 = SQRTPIo2 * erfc(_u0);
-    fptype _Ig1 = 0.5 * exp(-_u02);
-    fptype _Ig2 = _Ig1 * _u0 + 0.5 * _Ig0;
-    fptype _Ig3 = _Ig1 * (_u02 + 1);
-
-    fptype _R   = xmixing * _Gamma * _1oSqrtA;
-    fptype _R2  = _R * _R;
-    fptype _It0 = _F * _Ig0;
-    fptype _It1 = _F * _R * (_Ig1 - _u0 * _Ig0);
-    fptype _It2 = _F * _R2 * (_Ig2 - _u0 * _Ig1 * 2 + _u02 * _Ig0);
-    fptype _It3 = _F * _R2 * _R * (_Ig3 - _u0 * _Ig2 * 3 + _u02 * _Ig1 * 3 - _u0 * _u02 * _Ig0);
-
-    // fptype _P0   = _NormG *  _It0;
-    _P2 = _NormG * (_It0 - 0.5 * _It2);
-    _P4 = _NormG * (_It1 - R1o6 * _It3);
-
-    fptype _u0py = _1o2SqrtA * (_B - ymixing * _Gamma + selbias);
-    fptype _u0my = _1o2SqrtA * (_B + ymixing * _Gamma + selbias);
-    fptype _Fpy  = _1oSqrtA * exp(-_C + _u0py * _u0py);
-    fptype _Fmy  = _1oSqrtA * exp(-_C + _u0my * _u0my);
-    fptype _Ipy  = _Fpy * SQRTPIo2 * erfc(_u0py);
-    fptype _Imy  = _Fmy * SQRTPIo2 * erfc(_u0my);
-    _P1          = _NormG * 0.5 * (_Ipy + _Imy);
-    _P3          = _NormG * 0.5 * (_Ipy - _Imy);
-}
 
 
 
@@ -374,7 +328,7 @@ __device__ fptype device_threegauss_resolutionSplice(fptype coshterm,
                                                fptype sigma,
                                                ParameterContainer &pc) {
     fptype coreFraction    = pc.getParameter(0);
-    fptype tailFraction    = pc.getParameter(1);
+    fptype tailFraction    = (1 - coreFraction) * pc.getParameter(1);
     fptype outlFraction    = 1 - coreFraction - tailFraction;
     fptype coreBias        = pc.getParameter(2);
     fptype coreScaleFactor = pc.getParameter(3);
@@ -382,7 +336,7 @@ __device__ fptype device_threegauss_resolutionSplice(fptype coshterm,
     fptype tailScaleFactor = pc.getParameter(5);
     fptype outlBias        = pc.getParameter(6);
     fptype outlScaleFactor = pc.getParameter(7);
-
+ 
 
 
 
@@ -438,44 +392,10 @@ __device__ fptype device_threegauss_resolutionSplice(fptype coshterm,
     gaussian_splice(op1, op2, op3, op4, tau, dtime - outlBias * sigma , xmixing, ymixing, outlScaleFactor * sigma, nKnots, knots, spline_0, spline_1, spline_2, spline_3);
 
     mygaussian_high(cp1, cp2, cp3, cp4, tau, dtime - coreBias * sigma, xmixing, ymixing, coreScaleFactor * sigma, expSlope, lastKnot, expConst);
-    mygaussian_high(tp1, tp2, tp3, tp4, tau, dtime - tailBias * sigma, xmixing, ymixing, tailScaleFactor * sigma, expSlope, lastKnot, expConst);
-    mygaussian_high(op1, op2, op3, op4, tau, dtime - outlBias * sigma, xmixing, ymixing, outlScaleFactor * sigma, expSlope, lastKnot, expConst);
+    mygaussian_high(tp1, tp2, tp3, tp4, tau, dtime - tailBias * sigma, xmixing, ymixing, coreScaleFactor * sigma, expSlope, lastKnot, expConst);
+    mygaussian_high(op1, op2, op3, op4, tau, dtime - outlBias * sigma, xmixing, ymixing, coreScaleFactor * sigma, expSlope, lastKnot, expConst);
 
 
-    fptype selbias = 0.22279996981546918;
-    fptype cp1_tmp = 0;
-    fptype cp2_tmp = 0;
-    fptype cp3_tmp = 0;
-    fptype cp4_tmp = 0;
-    mytmpgaussian(cp1_tmp, cp2_tmp, cp3_tmp, cp4_tmp, tau, dtime - coreBias * sigma, xmixing, ymixing, coreScaleFactor * sigma, selbias);
-    fptype tp1_tmp = 0;
-    fptype tp2_tmp = 0;
-    fptype tp3_tmp = 0;
-    fptype tp4_tmp = 0;
-    mytmpgaussian(tp1_tmp, tp2_tmp, tp3_tmp, tp4_tmp, tau, dtime - tailBias * sigma, xmixing, ymixing, tailScaleFactor * sigma, selbias);
-    fptype op1_tmp = 0;
-    fptype op2_tmp = 0;
-    fptype op3_tmp = 0;
-    fptype op4_tmp = 0;
-    mytmpgaussian(op1_tmp, op2_tmp, op3_tmp, op4_tmp, tau, dtime - outlBias * sigma, xmixing, ymixing, outlScaleFactor * sigma, selbias);
-
-    /*
-    printf("CP1: %f %f %f \n", cp1_tmp, cp1, cp1/cp1_tmp);
-    printf("TP1: %f %f %f \n", tp1_tmp, op1, tp1/tp1_tmp);
-    printf("OP1: %f %f %f \n", op1_tmp, tp1, op1/op1_tmp);
-
-    printf("CP2: %f %f %f \n", cp2_tmp, cp2, cp2/cp2_tmp);
-    printf("TP2: %f %f %f \n", tp2_tmp, op2, tp2/tp2_tmp);
-    printf("OP2: %f %f %f \n", op2_tmp, tp2, op2/op2_tmp);
-
-    printf("CP3: %f %f %f \n", cp3_tmp, cp3, cp3/cp3_tmp);
-    printf("TP3: %f %f %f \n", tp3_tmp, op3, tp3/tp3_tmp);
-    printf("OP3: %f %f %f \n", op3_tmp, tp3, op3/op3_tmp);
-
-    printf("CP4: %f %f %f \n", cp4_tmp, cp4, cp4/cp4_tmp);
-    printf("TP4: %f %f %f \n", tp4_tmp, op4, tp4/tp4_tmp);
-    printf("OP4: %f %f %f \n", op4_tmp, tp4, op4/op4_tmp);
-    */
 
 
 
@@ -583,14 +503,6 @@ fptype ThreeGaussResolutionSplice::normalization(
     fptype expSlope = fDeriv/fVal;
     fptype expConst = fVal/exp(expSlope * lastKnot);
 
-    /*
-    0., 0.2,  0.35, 0.5,  0.65, 1.05, 2.1,  4.5
-    fptype  spline_0[] = {0.03765277000655794, 0.03765277000655794, 0.033653622225172486, 0.05183326055919843, 0.037589800853886655, 0.03943035933470114, 0.03461351985201154};
-    fptype  spline_1[] = {0.008125428187878276, 0.00812542818787828, 0.04240383774261078, -0.06667399226154494, -0.0009349474677982864, -0.006193685984411092, -0.005360727973783324};
-    fptype  spline_2[] = {-0.026572145610579714, -0.02657214561057973, -0.12451045862410115, 0.09364520138421031, -0.007491790606169145, -0.002483468209395046, 0.0};
-    fptype  spline_3[] = {0.0027387047655195807, 0.0027387047655195998, 0.09601328858792094, -0.049423818084286704, 0.0024413060133437765, 0.000851362395320254, 0.0};
-    */
-
 
 
 
@@ -613,7 +525,7 @@ fptype ThreeGaussResolutionSplice::normalization(
         timeIntegralThree += spline_3.at(i) * (0.5 * NormTermY(knots.at(i), knots.at(i+1), 1. - ymixing, Gamma, 3) - 0.5 * NormTermY(knots.at(i), knots.at(i+1), ymixing + 1., Gamma, 3) );
 
 
-
+       
         timeIntegralTwo += spline_0.at(i) * (NormTermY(knots.at(i), knots.at(i+1), 1., Gamma, 0) - 0.5 * pow(xmixing*Gamma,2) * NormTermY(knots.at(i), knots.at(i+1), 1., Gamma, 2) + 1./24.*pow(xmixing*Gamma,4) * NormTermY(knots.at(i), knots.at(i+1), 1., Gamma, 4) );
         timeIntegralTwo += spline_1.at(i) * (NormTermY(knots.at(i), knots.at(i+1), 1., Gamma, 1) - 0.5 * pow(xmixing*Gamma,2) * NormTermY(knots.at(i), knots.at(i+1), 1., Gamma, 3) + 1./24.*pow(xmixing*Gamma,4) * NormTermY(knots.at(i), knots.at(i+1), 1., Gamma, 5) );
         timeIntegralTwo += spline_2.at(i) * (NormTermY(knots.at(i), knots.at(i+1), 1., Gamma, 2) - 0.5 * pow(xmixing*Gamma,2) * NormTermY(knots.at(i), knots.at(i+1), 1., Gamma, 4) + 1./24.*pow(xmixing*Gamma,4) * NormTermY(knots.at(i), knots.at(i+1), 1., Gamma, 6));
@@ -624,21 +536,6 @@ fptype ThreeGaussResolutionSplice::normalization(
         timeIntegralFour += spline_2.at(i) * (xmixing*Gamma*NormTermY(knots.at(i), knots.at(i+1), 1., Gamma, 3) - 1./6. * pow(xmixing*Gamma,3) * NormTermY(knots.at(i), knots.at(i+1), 1., Gamma, 5) + 1./120. * pow(xmixing*Gamma,5) * NormTermY(knots.at(i), knots.at(i+1), 1., Gamma, 7));
         timeIntegralFour += spline_3.at(i) * (xmixing*Gamma*NormTermY(knots.at(i), knots.at(i+1), 1., Gamma, 4) - 1./6. * pow(xmixing*Gamma,3) * NormTermY(knots.at(i), knots.at(i+1), 1., Gamma, 6) + 1./120. * pow(xmixing*Gamma,5) * NormTermY(knots.at(i), knots.at(i+1), 1., Gamma, 8));
 
-        /*
-        fpcomplex imag_x = {0., xmixing}
-         for (int i = 0; i < nKnots-1; i++ ) {
-        }
-        timeIntegralTwo += spline_0.at(i) * (0.5 * NormTermX(knots.at(i), knots.at(i+1), 1. - imag_x, Gamma, 0) + 0.5 * NormTermX(knots.at(i), knots.at(i+1), imag_x + 1., Gamma, 0) );
-        timeIntegralTwo += spline_1.at(i) * (0.5 * NormTermX(knots.at(i), knots.at(i+1), 1. - imag_x, Gamma, 1) + 0.5 * NormTermX(knots.at(i), knots.at(i+1), imag_x + 1., Gamma, 1) );
-        timeIntegralTwo += spline_2.at(i) * (0.5 * NormTermX(knots.at(i), knots.at(i+1), 1. - imag_x, Gamma, 2) + 0.5 * NormTermX(knots.at(i), knots.at(i+1), imag_x+ 1., Gamma, 2) );
-        timeIntegralTwo += spline_3.at(i) * (0.5 * NormTermX(knots.at(i), knots.at(i+1), 1. - imag_x, Gamma, 3) + 0.5 * NormTermX(knots.at(i), knots.at(i+1), imag_x+ 1., Gamma, 3) );
-
-        timeIntegralFour += spline_0.at(i) * (0.5 * NormTermX(knots.at(i), knots.at(i+1), 1. - imag_x, Gamma, 0) - 0.5 * NormTermX(knots.at(i), knots.at(i+1), imag_x + 1., Gamma, 0) );
-        timeIntegralFour += spline_1.at(i) * (0.5 * NormTermX(knots.at(i), knots.at(i+1), 1. - imag_x, Gamma, 1) - 0.5 * NormTermX(knots.at(i), knots.at(i+1), imag_x + 1., Gamma, 1) );
-        timeIntegralFour += spline_2.at(i) * (0.5 * NormTermX(knots.at(i), knots.at(i+1), 1. - imag_x, Gamma, 2) - 0.5 * NormTermX(knots.at(i), knots.at(i+1), imag_x + 1., Gamma, 2) );
-        timeIntegralFour += spline_3.at(i) * (0.5 * NormTermX(knots.at(i), knots.at(i+1), 1. - imag_x, Gamma, 3) - 0.5 * NormTermX(knots.at(i), knots.at(i+1), imag_x + 1., Gamma, 3) );
-        */
-
     }
 
     fptype selBias_high = expSlope;
@@ -646,7 +543,7 @@ fptype ThreeGaussResolutionSplice::normalization(
     fptype preConst_high = expConst;
 
     fptype gammaPlusBias = Gamma + selBias_high;
-
+    
 
     fptype timeIntegralOne_high = 0.5*preConst_high * (  -1./(ymixing*Gamma - Gamma - selBias_high)  * (   exp( Tthres * (ymixing*Gamma - Gamma - selBias_high) )   )  -
         1./(-ymixing*Gamma - Gamma -selBias_high)  * (   exp( Tthres * (-ymixing*Gamma - Gamma - selBias_high) )   )  );
@@ -672,21 +569,6 @@ fptype ThreeGaussResolutionSplice::normalization(
 
 
 
-    fptype selBias = 0.22279996981546918;
-    fptype timeIntegralOne_old
-        = (selBias + 1 / tau) / (selBias * selBias + 2 * selBias / tau + (1 - ymixing * ymixing) / (tau * tau));
-    fptype timeIntegralTwo_old
-        = (selBias + 1 / tau) / (selBias * selBias + 2 * selBias / tau + (1 + xmixing * xmixing) / (tau * tau));
-    fptype timeIntegralThr_old
-        = (ymixing / tau) / (selBias * selBias + 2 * selBias / tau + (1 - ymixing * ymixing) / (tau * tau));
-    fptype timeIntegralFou_old
-        = (xmixing / tau) / (selBias * selBias + 2 * selBias / tau + (1 + xmixing * xmixing) / (tau * tau));
-    /*
-    printf("timeIntegralOne: %f %f %f \n", timeIntegralOne_old, timeIntegralOne, timeIntegralOne/timeIntegralOne_old);
-    printf("timeIntegralTwo: %f %f %f \n", timeIntegralTwo_old, timeIntegralTwo, timeIntegralTwo/timeIntegralTwo_old);
-    printf("timeIntegralThree: %f %f %f \n", timeIntegralThr_old, timeIntegralThree, timeIntegralThree/timeIntegralThr_old);
-    printf("timeIntegralThree: %f %f %f \n", timeIntegralFou_old, timeIntegralFour, timeIntegralFour/timeIntegralFou_old);
-    */
     return ret;
 
 

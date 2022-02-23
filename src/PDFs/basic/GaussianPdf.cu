@@ -11,7 +11,12 @@ __device__ auto device_Gaussian(fptype *evt, ParameterContainer &pc) -> fptype {
     fptype sigma = pc.getParameter(1);
     pc.incrementIndex(1, 2, 0, 1, 1);
 
-    fptype ret = exp(-0.5 * (x - mean) * (x - mean) / (sigma * sigma));
+// mds fptype ret = exp(-0.5 * (x - mean) * (x - mean) / (sigma * sigma));
+// to avoid potential problems with very, very small values,
+// set all values for arg more than 10 sigma from center to be 2x10e-9
+// [which is just below exp(-20.)]
+    double arg = -0.5 * (x - mean) * (x - mean) / (sigma * sigma);
+    fptype ret = (arg < -20.)?0.000000002:exp(arg);
 // mds     std::cout << "in device_Gaussian: x, mean, sigma, ret = " <<
 // mds                   x << " " << mean << "  " << sigma << "  " << ret << "\n";
 

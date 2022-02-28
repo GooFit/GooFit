@@ -8,7 +8,6 @@ namespace GooFit {
 
 template <int I>
 __device__ auto rhoomgamix(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) -> fpcomplex {
-
     unsigned int spin         = pc.getConstant(0);
     unsigned int cyclic_index = pc.getConstant(1);
     bool norm                 = pc.getConstant(2);
@@ -20,21 +19,21 @@ __device__ auto rhoomgamix(fptype m12, fptype m13, fptype m23, ParameterContaine
 
     fpcomplex result{0.0, 0.0};
     fptype omega_mass2 = POW2(omega_mass);
-    fptype rho_mass2 = POW2(rho_mass);
+    fptype rho_mass2   = POW2(rho_mass);
 
     fptype real  = pc.getParameter(4);
     fptype img   = pc.getParameter(5);
     fptype delta = pc.getParameter(6);
 
-    fptype Delta_= delta*(rho_mass + omega_mass);
-    fpcomplex Bterm(real,img);
-    Bterm*=Delta_;
-    fpcomplex unity(1.0,0.0);
+    fptype Delta_ = delta * (rho_mass + omega_mass);
+    fpcomplex Bterm(real, img);
+    Bterm *= Delta_;
+    fpcomplex unity(1.0, 0.0);
 
 #pragma unroll
     for(size_t i = 0; i < I; i++) {
         fptype rMassSq    = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
-        fptype m = sqrt(rMassSq);
+        fptype m          = sqrt(rMassSq);
         fptype mass_daug1 = PAIR_23 == cyclic_index ? c_daug2Mass : c_daug1Mass;
         fptype mass_daug2 = PAIR_12 == cyclic_index ? c_daug2Mass : c_daug3Mass;
         fptype bachelorMass
@@ -88,9 +87,10 @@ __device__ auto rhoomgamix(fptype m12, fptype m13, fptype m23, ParameterContaine
         omega *= sqrt(frFactor);
         omega *= sqrt(frFactorMother);
         omega *= spinFactor(spin, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass, m12, m13, m23, cyclic_index);
-	    fptype angular = spinFactor(spin, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass, m12, m13, m23, cyclic_index);
+        fptype angular
+            = spinFactor(spin, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass, m12, m13, m23, cyclic_index);
 
-        //Rho GS evaluation
+        // Rho GS evaluation
         nominalDaughterMoms = twoBodyCMmom(rho_mass2, mass_daug1, mass_daug2);
 
         if(norm) {
@@ -111,7 +111,7 @@ __device__ auto rhoomgamix(fptype m12, fptype m13, fptype m23, ParameterContaine
             }
             // unnormalized form factors
             else {
-                frFactor  = dampingFactorSquare(measureDaughterMoms, spin, c_meson_radius);
+                frFactor       = dampingFactorSquare(measureDaughterMoms, spin, c_meson_radius);
                 frFactorMother = dampingFactorSquare(measureDaughterMomsMother, spin, c_mother_meson_radius);
             }
         }
@@ -119,43 +119,43 @@ __device__ auto rhoomgamix(fptype m12, fptype m13, fptype m23, ParameterContaine
 
         fptype D = (1.0 + dFun(rho_mass2, c_daug2Mass, c_daug3Mass) * rho_width / sqrt(rho_mass2));
         fptype E = rho_mass2 - rMassSq + fsFun(rMassSq, rho_mass2, rho_width, c_daug2Mass, c_daug3Mass);
-        fptype F = sqrt(rho_mass2) * rho_width * pow(measureDaughterMoms / nominalDaughterMoms, 2.0 * spin + 1) * frFactor;
+        fptype F
+            = sqrt(rho_mass2) * rho_width * pow(measureDaughterMoms / nominalDaughterMoms, 2.0 * spin + 1) * frFactor;
 
         D /= (E * E + F * F);
         fpcomplex rho(D * E, D * F); // Dropping F_D=1
         rho *= sqrt(frFactor);
         rho *= sqrt(frFactorMother);
         rho *= spinFactor(spin, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass, m12, m13, m23, cyclic_index);
-        //end of Gousak
+        // end of Gousak
 
-        //rho-omega mix
-        fpcomplex mixingTerm = Bterm*omega + unity;
-        result += rho*mixingTerm;
-
+        // rho-omega mix
+        fpcomplex mixingTerm = Bterm * omega + unity;
+        result += rho * mixingTerm;
     }
     pc.incrementIndex(1, 7, 3, 0, 1);
     return result;
 
 } // RhoOmegaMix
 
-__device__ resonance_function_ptr ptr_to_RHOOMEGAMIX      = rhoomgamix<1>;
+__device__ resonance_function_ptr ptr_to_RHOOMEGAMIX = rhoomgamix<1>;
 
 namespace Resonances {
 
 RhoOmegaMix::RhoOmegaMix(std::string name,
-         Variable ar,
-         Variable ai,
-         Variable omega_mass,
-         Variable omega_width,
-         Variable rho_mass,
-         Variable rho_width,
-         Variable real,
-         Variable imag,
-         Variable delta,
-         unsigned int sp,
-         unsigned int cyc,
-         bool norm,
-         bool sym)
+                         Variable ar,
+                         Variable ai,
+                         Variable omega_mass,
+                         Variable omega_width,
+                         Variable rho_mass,
+                         Variable rho_width,
+                         Variable real,
+                         Variable imag,
+                         Variable delta,
+                         unsigned int sp,
+                         unsigned int cyc,
+                         bool norm,
+                         bool sym)
     : ResonancePdf("RHOOMEGAMIX", name, ar, ai) {
     registerParameter(omega_mass);
     registerParameter(omega_width);
@@ -177,4 +177,4 @@ RhoOmegaMix::RhoOmegaMix(std::string name,
 }
 
 } // namespace Resonances
-}
+} // namespace GooFit

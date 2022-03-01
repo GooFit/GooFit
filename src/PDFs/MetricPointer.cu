@@ -74,22 +74,22 @@ __device__ device_metric_ptr ptr_to_Chisq        = calculateChisq;
 
 auto getMetricPointer(EvalFunc val) -> void * {
     if(val == EvalFunc::Eval) {
-        host_fcn_ptr = get_device_symbol_address(ptr_to_Eval);
+        host_fcn_ptr                       = get_device_symbol_address(ptr_to_Eval);
         functionPtrToNameMap[host_fcn_ptr] = "calculateEval";
     } else if(val == EvalFunc::NLL) {
-        host_fcn_ptr = get_device_symbol_address(ptr_to_NLL);
+        host_fcn_ptr                       = get_device_symbol_address(ptr_to_NLL);
         functionPtrToNameMap[host_fcn_ptr] = "calculateNLL";
     } else if(val == EvalFunc::Prob) {
-        host_fcn_ptr = get_device_symbol_address(ptr_to_Prob);
+        host_fcn_ptr                       = get_device_symbol_address(ptr_to_Prob);
         functionPtrToNameMap[host_fcn_ptr] = "calculateProb";
     } else if(val == EvalFunc::BinAvg) {
-        host_fcn_ptr = get_device_symbol_address(ptr_to_BinAvg);
+        host_fcn_ptr                       = get_device_symbol_address(ptr_to_BinAvg);
         functionPtrToNameMap[host_fcn_ptr] = "calculateBinAvg";
     } else if(val == EvalFunc::BinWithError) {
-        host_fcn_ptr = get_device_symbol_address(ptr_to_BinWithError);
+        host_fcn_ptr                       = get_device_symbol_address(ptr_to_BinWithError);
         functionPtrToNameMap[host_fcn_ptr] = "calculateBinWithError";
     } else if(val == EvalFunc::Chisq) {
-        host_fcn_ptr = get_device_symbol_address(ptr_to_Chisq);
+        host_fcn_ptr                       = get_device_symbol_address(ptr_to_Chisq);
         functionPtrToNameMap[host_fcn_ptr] = "calculateChisq";
     } else {
         throw GeneralError("Non-existent metric pointer choice");

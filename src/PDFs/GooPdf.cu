@@ -181,8 +181,9 @@ __host__ thrust::host_vector<fptype> GooPdf::evaluate_with_metric() const {
 
 __host__ void GooPdf::setIndices() {
     // If not set, perform unbinned Nll fit!
-    if(!fitControl){
-        setFitControl(std::make_shared<UnbinnedNllFit>());}
+    if(!fitControl) {
+        setFitControl(std::make_shared<UnbinnedNllFit>());
+    }
 
     // Ensure that we properly populate *logger with the correct metric
     setMetrics();
@@ -312,12 +313,12 @@ __host__ std::vector<fptype> GooPdf::evaluateAtPoints(Observable var) {
 
 __host__ fptype GooPdf::getValue(EvalFunc evalfunc) {
     if(evalfunc == EvalFunc::Prob) {
-        setFitControl(std::make_shared<ProbFit>());}
-    else if(evalfunc == EvalFunc::Eval) {
-        setFitControl(std::make_shared<EvalFit>()); }
-    else if(evalfunc == EvalFunc::NLL) {
-        setFitControl(std::make_shared<UnbinnedNllFit>());}
-    else
+        setFitControl(std::make_shared<ProbFit>());
+    } else if(evalfunc == EvalFunc::Eval) {
+        setFitControl(std::make_shared<EvalFit>());
+    } else if(evalfunc == EvalFunc::NLL) {
+        setFitControl(std::make_shared<UnbinnedNllFit>());
+    } else
         throw GeneralError("That EvalFunc is not supported");
 
     setIndices();
@@ -376,8 +377,6 @@ __host__ fptype GooPdf::normalize() {
     fptype sum = reduce_with_bins();
 
     GOOFIT_TRACE("Sum: {}", sum);
-
-
 
     if(std::isnan(sum)) {
         GooFit::abort(__FILE__, __LINE__, getName() + " NaN in normalization", this);

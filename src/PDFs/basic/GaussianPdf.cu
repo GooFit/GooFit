@@ -20,8 +20,6 @@ __device__ device_function_ptr ptr_to_Gaussian = device_Gaussian;
 
 __host__ GaussianPdf::GaussianPdf(std::string n, Observable _x, Variable mean, Variable sigma)
     : GooPdf("GaussianPdf", n, _x, mean, sigma) {
-
-
     registerFunction("ptr_to_Gaussian", ptr_to_Gaussian);
 
     initialize();

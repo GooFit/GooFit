@@ -55,32 +55,6 @@ getCofactor(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex temp[NCHANNELS][NCHANNE
     }
 }
 
-/* Recursive function for finding determinant of matrix.
-   n is current dimension of A[][]. */
-__device__ auto determinant(fpcomplex A[NCHANNELS][NCHANNELS], int n) -> fpcomplex {
-    fpcomplex D = 0; // Initialize result
-
-    //  Base case : if matrix contains single element
-    if(n == 1)
-        return A[0][0];
-
-    fpcomplex temp[NCHANNELS][NCHANNELS]; // To store cofactors
-
-    int sign = 1; // To store sign multiplier
-
-    // Iterate for each element of first row
-    for(int f = 0; f < n; f++) {
-        // Getting Cofactor of A[0][f]
-        getCofactor(A, temp, 0, f, n);
-        D += fptype(sign) * A[0][f] * determinant(temp, n - 1);
-
-        // terms are to be added with alternate sign
-        sign = -sign;
-    }
-
-    return D;
-}
-
 // Function to get adjoint of A[N][N] in adj[N][N].
 __device__ void adjoint(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex adj[NCHANNELS][NCHANNELS]) {
     if(NCHANNELS == 1) {
@@ -103,7 +77,7 @@ __device__ void adjoint(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex adj[NCHANNE
 
             // Interchanging rows and columns to get the
             // transpose of the cofactor matrix
-            adj[j][i] = fptype(sign) * (determinant(temp, NCHANNELS - 1));
+            adj[j][i] = fptype(sign) * (determinant<NCHANNELS - 1>(temp));
         }
     }
 }
@@ -112,7 +86,7 @@ __device__ void adjoint(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex adj[NCHANNE
 // matrix is singular
 __device__ auto inverse(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex inverse[NCHANNELS][NCHANNELS]) -> bool {
     // Find determinant of A[][]
-    fpcomplex det = determinant(A, NCHANNELS);
+    fpcomplex det = determinant<NCHANNELS>(A);
     if(det == fpcomplex(0, 0)) {
         printf("Singular matrix, can't find its inverse");
         return false;

@@ -17,10 +17,8 @@ class RBW : public Lineshape {
 
     ~RBW() override = default;
 
-    virtual bool isEqualByValue(const Lineshape& other) const override;
+    virtual bool isEqualByValue(const Lineshape &other) const override;
 };
-
-
 
 } // namespace Lineshapes
 } // namespace GooFit

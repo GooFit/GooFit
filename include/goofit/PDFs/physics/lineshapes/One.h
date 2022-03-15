@@ -17,7 +17,7 @@ class One final : public Lineshape {
 
     ~One() override = default;
 
-    virtual bool isEqualByValue(const Lineshape& other) const override;
+    virtual bool isEqualByValue(const Lineshape &other) const override;
 };
 
 } // namespace Lineshapes

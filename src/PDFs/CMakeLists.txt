@@ -14,9 +14,7 @@ set(GOOPDF_FILE_LISTING
     PdfBase.cu
     utilities/VariableBinTransform1DPdf.cu
     utilities/DebugTools.cu
-    ${GOOFIT_PDF_HEADERS}
-    )
-
+    ${GOOFIT_PDF_HEADERS})
 
 macro(goofit_add_pdf_library NAME)
   goofit_add_library(${NAME} ${ARGN})

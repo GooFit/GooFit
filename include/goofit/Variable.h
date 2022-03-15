@@ -52,7 +52,7 @@ class Indexable {
             GOOFIT_DEBUG("Destroying Indexable: {}", name);
     }
 
-    bool isEqualNameValLimits(const Indexable& other) const;
+    bool isEqualNameValLimits(const Indexable &other) const;
 
     /// Get the GooFit index
     auto getIndex() const -> int { return *index; }
@@ -187,7 +187,7 @@ class Variable : public Indexable {
 
     ~Variable() override = default;
 
-    bool isEqualNameValLimitsErrBlindFixed(const Variable& other) const;
+    bool isEqualNameValLimitsErrBlindFixed(const Variable &other) const;
 
     /// Get the error
     auto getError() const -> fptype { return *error; }

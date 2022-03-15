@@ -5,7 +5,7 @@
 
 namespace GooFit {
 
-__device__ fptype thetaprime(fptype m12, fptype m13, fptype mD, fptype mKS0, fptype mh1, fptype mh2) {
+__device__ auto thetaprime(fptype m12, fptype m13, fptype mD, fptype mKS0, fptype mh1, fptype mh2) -> fptype {
     // Helper function to calculate theta'
     fptype m23 = mD * mD + mKS0 * mKS0 + mh1 * mh1 + mh2 * mh2 - m12 - m13;
     if(m23 < 0)
@@ -27,7 +27,7 @@ __device__ fptype thetaprime(fptype m12, fptype m13, fptype mD, fptype mKS0, fpt
     }
 }
 
-__device__ fptype device_SquareDalitzEff(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_SquareDalitzEff(fptype *evt, ParameterContainer &pc) -> fptype {
     // Define observables
     int idx = pc.getObservable(0);
     int idy = pc.getObservable(1);

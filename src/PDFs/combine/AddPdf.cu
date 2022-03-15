@@ -13,37 +13,35 @@
 
 namespace GooFit {
 
-__device__ fptype device_AddPdfs(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_AddPdfs(fptype *evt, ParameterContainer &pc) -> fptype {
     int numParameters  = pc.getNumParameters();
     fptype ret         = 0;
     fptype totalWeight = 0;
 
-    // make a copy of our parameter container
-    ParameterContainer pci = pc;
+    // Make a copy of our parameter container so we can continue to refer to
+    // our own parameters even though pc is moving forward.
+    const ParameterContainer local_pc = pc;
 
-    // We only call increment once we read our weight/norm for the first iteration.
-    pci.incrementIndex();
+    // We start by moving to the next function in the call chain
+    pc.incrementIndex();
 
     for(int i = 0; i < numParameters; i++) {
         // fetch our values from AddPdf
-        fptype weight = pc.getParameter(i);
+        fptype weight = local_pc.getParameter(i);
         totalWeight += weight;
 
         // This is the normal value for the 'callFunction' PDF, so we read from pci
-        fptype norm = pci.getNormalization(0);
+        fptype norm = pc.getNormalization(0);
 
         // call the first function to add in our PDF.
-        fptype curr = callFunction(evt, pci);
+        fptype curr = callFunction(evt, pc);
 
         ret += weight * curr * norm;
     }
 
-    // restore our new parameter container object
-    pc = pci;
-
     // previous functions incremented the indices appropriately, so now we need to get the norm again
     // NOTE: this is the weight for the function about to be called.
-    fptype normFactor = pc.getNormalization(0);
+    fptype normFactor = local_pc.getNormalization(0);
 
     fptype last = callFunction(evt, pc);
     ret += (1 - totalWeight) * last * normFactor;
@@ -51,30 +49,30 @@ __device__ fptype device_AddPdfs(fptype *evt, ParameterContainer &pc) {
     return ret;
 }
 
-__device__ fptype device_AddPdfsExt(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_AddPdfsExt(fptype *evt, ParameterContainer &pc) -> fptype {
     int numParameters  = pc.getNumParameters();
     fptype ret         = 0;
     fptype totalWeight = 0;
 
-    // make a copy of our parameter container
-    ParameterContainer pci = pc;
+    // Make a copy of our parameter container so we can continue to refer to
+    // our own parameters even though pc is moving forward.
+    const ParameterContainer local_pc = pc;
 
     // We only call increment once we read our weight/norm for the first iteration.
-    pci.incrementIndex();
+    pc.incrementIndex();
 
     for(int i = 0; i < numParameters; i++) {
         // grab the weight parameter from addPdf
-        fptype weight = pc.getParameter(i);
+        fptype weight = local_pc.getParameter(i);
         //  Grab the normalization for the specific component
-        fptype normFactor = pci.getNormalization(0);
+        fptype normFactor = pc.getNormalization(0);
 
-        fptype curr = callFunction(evt, pci);
+        fptype curr = callFunction(evt, pc);
         ret += weight * curr * normFactor;
 
         totalWeight += weight;
     }
 
-    pc = pci;
     ret /= totalWeight;
 
     return ret;
@@ -112,10 +110,15 @@ AddPdf::AddPdf(std::string n, std::vector<Variable> weights, std::vector<PdfBase
         extended = false;
     }
 
-    if(extended)
+    if(extended) {
         registerFunction("ptr_to_AddPdfsExt", ptr_to_AddPdfsExt);
-    else
+        host_fcn_ptr                       = get_device_symbol_address(ptr_to_AddPdfsExt);
+        functionPtrToNameMap[host_fcn_ptr] = "AddPdfsExt";
+    } else {
         registerFunction("ptr_to_AddPdfs", ptr_to_AddPdfs);
+        host_fcn_ptr                       = get_device_symbol_address(ptr_to_AddPdfs);
+        functionPtrToNameMap[host_fcn_ptr] = "AddPdfs";
+    }
 
     initialize();
 }
@@ -130,11 +133,13 @@ AddPdf::AddPdf(std::string n, Variable frac1, PdfBase *func1, PdfBase *func2)
     observablesList = getObservables();
 
     registerFunction("ptr_to_AddPdfs", ptr_to_AddPdfs);
+    host_fcn_ptr                       = get_device_symbol_address(ptr_to_AddPdfs);
+    functionPtrToNameMap[host_fcn_ptr] = "AddPdfs";
 
     initialize();
 }
 
-__host__ fptype AddPdf::normalize() {
+__host__ auto AddPdf::normalize() -> fptype {
     // if (cpuDebug & 1) std::cout << "Normalizing AddPdf " << getName() << std::endl;
 
     fptype ret         = 0;
@@ -151,7 +156,6 @@ __host__ fptype AddPdf::normalize() {
     fptype last = components.back()->normalize();
 
     if(extended) {
-        // fptype lastWeight = host_parameters[parametersIdx + 2];
         fptype lastWeight = parametersList[components.size() - 1];
         totalWeight += lastWeight;
         ret += last * lastWeight;
@@ -179,7 +183,7 @@ __host__ fptype AddPdf::normalize() {
     return ret;
 }
 
-__host__ double AddPdf::calculateNLL() {
+__host__ auto AddPdf::calculateNLL() -> double {
     double ret = GooPdf::calculateNLL() / 2.0;
 
     if(extended) {

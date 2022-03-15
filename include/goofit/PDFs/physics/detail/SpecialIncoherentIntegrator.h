@@ -11,7 +11,7 @@ class SpecialIncoherentIntegrator : public thrust::unary_function<thrust::tuple<
     void setIncoherentIndex(const unsigned int idx) { incoherentSum = idx; }
     void setEfficiencyIndex(const unsigned int eff) { efficiency = eff; }
     void setResonanceIndex(const unsigned int res) { resonance_i = res; }
-    __device__ fptype operator()(thrust::tuple<int, fptype *> t) const;
+    __device__ auto operator()(thrust::tuple<int, fptype *> t) const -> fptype;
 
   private:
     unsigned int incoherentSum;

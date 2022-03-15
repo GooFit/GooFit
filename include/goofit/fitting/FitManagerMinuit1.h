@@ -15,16 +15,16 @@ class Minuit1 : public TMinuit {
   public:
     Minuit1(PdfBase *pdfPointer);
     /// Fit function for Minuit
-    Int_t Eval(Int_t npar,     //< The number of parameters
-               Double_t *grad, //< The derivatives can be stored here if flag is 2 (output)
-               Double_t &fval, //< The value of the function at this point (output)
-               Double_t *par,  //< The input parameters
-               Int_t flag      //< This is 1 the first time, 2, for derivatives, and 3 after the fit is finished. It
-                               // is something else if computing.
-               ) override;
+    auto Eval(Int_t npar,     //< The number of parameters
+              Double_t *grad, //< The derivatives can be stored here if flag is 2 (output)
+              Double_t &fval, //< The value of the function at this point (output)
+              Double_t *par,  //< The input parameters
+              Int_t flag      //< This is 1 the first time, 2, for derivatives, and 3 after the fit is finished. It
+                              // is something else if computing.
+              ) -> Int_t override;
 
     // Get a copy of the list of variables
-    std::vector<Variable> getVaraibles() const { return vars; };
+    auto getVaraibles() const -> std::vector<Variable> { return vars; };
 };
 
 class FitManagerMinuit1 {
@@ -45,7 +45,7 @@ class FitManagerMinuit1 {
     // This runs the fit
     void fit();
 
-    Minuit1 *getMinuitObject() { return &minuit_; }
+    auto getMinuitObject() -> Minuit1 * { return &minuit_; }
 
     void getMinuitStatus(double &fmin, double &fedm, double &errdef, int &npari, int &nparx, int &istat);
 

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 This is the Quad1F example from Minuit2, implemented in Python.
 """
@@ -19,7 +20,7 @@ upar = minuit2.MnUserParameters()
 upar.Add("x", 1.0, 0.1)
 migrad = minuit2.MnMigrad(fcn, upar)
 
-minuit2.MnPrint.SetLevel(3)
+minuit2.MnPrint.SetGlobalLevel(3)
 
 min = migrad()
 

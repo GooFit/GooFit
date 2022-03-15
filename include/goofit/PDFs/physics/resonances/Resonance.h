@@ -10,28 +10,48 @@ namespace GooFit {
 
 typedef fpcomplex (*resonance_function_ptr)(fptype, fptype, fptype, ParameterContainer &pc);
 
-__device__ fptype twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m);
+__device__ auto dh_dsFun(double s, double daug2Mass, double daug3Mass) -> fptype;
 
-__device__ fptype dampingFactorSquare(const fptype &cmmom, const int &spin, const fptype &mRadius);
+__device__ auto hFun(double s, double daug2Mass, double daug3Mass) -> fptype;
 
-__device__ fptype spinFactor(unsigned int spin,
-                             fptype motherMass,
-                             fptype daug1Mass,
-                             fptype daug2Mass,
-                             fptype daug3Mass,
-                             fptype m12,
-                             fptype m13,
-                             fptype m23,
-                             unsigned int cyclic_index);
+__device__ auto fsFun(double s, double m2, double gam, double daug2Mass, double daug3Mass) -> fptype;
 
-__device__ fptype phsp_twoBody(fptype s, fptype m0, fptype m1);
+__device__ auto dFun(double s, double daug2Mass, double daug3Mass) -> fptype;
 
-__device__ fptype phsp_fourPi(fptype s);
+__device__ auto twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m) -> fptype;
 
-__device__ Eigen::Array<fpcomplex, NCHANNELS, NCHANNELS>
-getPropagator(const Eigen::Array<fptype, NCHANNELS, NCHANNELS> &kMatrix,
-              const Eigen::Matrix<fptype, 5, 1> &phaseSpace,
-              fptype adlerTerm);
+__device__ auto twoBodyCMMothermom(fptype rMassSq, fptype dm, fptype d3m) -> fptype;
+
+__device__ auto dampingFactorSquare(const fptype &cmmom, const int &spin, const fptype &mRadius) -> fptype;
+
+__device__ auto dampingFactorSquareNorm(const fptype &cmmom, const int &spin, const fptype &mRadius) -> fptype;
+
+__device__ auto spinFactor(unsigned int spin,
+                           fptype motherMass,
+                           fptype daug1Mass,
+                           fptype daug2Mass,
+                           fptype daug3Mass,
+                           fptype m12,
+                           fptype m13,
+                           fptype m23,
+                           unsigned int cyclic_index) -> fptype;
+
+__device__ auto phsp_twoBody(fptype s, fptype m0, fptype m1) -> fpcomplex;
+
+__device__ auto phsp_fourPi(fptype s) -> fpcomplex;
+
+__device__ void getCofactor(fptype A[NCHANNELS][NCHANNELS], fptype temp[NCHANNELS][NCHANNELS], int p, int q, int n);
+
+__device__ auto determinant(fptype A[NCHANNELS][NCHANNELS], int n) -> fptype;
+
+__device__ void adjoint(fptype A[NCHANNELS][NCHANNELS], fptype adj[NCHANNELS][NCHANNELS]);
+
+__device__ auto inverse(fptype A[NCHANNELS][NCHANNELS], fptype inverse[NCHANNELS][NCHANNELS]) -> bool;
+
+__device__ void getPropagator(const fptype kMatrix[NCHANNELS][NCHANNELS],
+                              const fpcomplex phaseSpace[NCHANNELS],
+                              fpcomplex F[NCHANNELS][NCHANNELS],
+                              fptype adlerTerm);
 
 /**
 Represents a resonance-shape parametrization, the
@@ -75,8 +95,8 @@ class ResonancePdf : public AmpComponent {
 
     __host__ virtual void recalculateCache() const {}
 
-    __host__ Variable get_amp_real() const { return amp_real; }
-    __host__ Variable get_amp_img() const { return amp_imag; }
+    __host__ auto get_amp_real() const -> Variable { return amp_real; }
+    __host__ auto get_amp_img() const -> Variable { return amp_imag; }
 
   protected:
     /// Special constructor that subclasses use

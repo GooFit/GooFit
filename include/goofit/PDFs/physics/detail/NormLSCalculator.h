@@ -20,10 +20,10 @@ class NormLSCalculator
     NormLSCalculator();
     void setDalitzId(int idx) { dalitzFuncId = idx; }
     void setResonanceId(int idx) { _resonance_i = idx; }
-    __device__ fpcomplex operator()(
+    __device__ auto operator()(
         thrust::
             tuple<mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t, mcbooster::GReal_t> t)
-        const;
+        const -> fpcomplex;
 
   private:
     unsigned int dalitzFuncId;

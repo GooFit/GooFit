@@ -28,7 +28,7 @@ fork and make pull requests.
 Use the [git help](http://git-scm.com/documentation) and [GitHub help](https://help.github.com) pages
 or Google if you don't remember how to do something or get an error.
 
-If you want to make a small change you can use the GitHub to edit or create files on the GitHub web page as described [here](https://help.github.com/articles/creating-and-editing-files-in-your-repository). The advantage is that you don't need to know git and it's quick, the disadvantage is that you can't test your changes on your local computer, so this is not useful to code on GooFit. The built in Travis CI tests do not check CUDA code, so it is recomended that you test your code with
+If you want to make a small change you can use the GitHub to edit or create files on the GitHub web page as described [here](https://help.github.com/articles/creating-and-editing-files-in-your-repository). The advantage is that you don't need to know git and it's quick, the disadvantage is that you can't test your changes on your local computer, so this is not useful to code on GooFit. The built in Travis CI tests do not check CUDA code, so it is recommended that you test your code with
 CUDA locally as well if you are making changes to computations in GooFit.
 
 There are many great git and github tutorials out there, e.g.:

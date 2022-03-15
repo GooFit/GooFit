@@ -66,7 +66,7 @@ $./pipipi0DPFit toy 0 1
 
 The first argument is to call for the toy fit function, and the second points to the zeroth toy sample file "dataFiles/toyPipipi0/dalitz_toyMC_000.txt". The third and last argument is the number of times this toy sample is to be loaded. That is to say, the larger this number is, the longer the fitting procedure takes to complete. Roughly, for N times the toy sample file is loaded, the mixing fit would last N x 20 seconds on one computer tested.
 
-### Canoncial
+### Canonical
 
 For the executable "pipipi0DPFit", it takes several command-line arguments, and will fail if the arguments are not properly given. Now only for the demonstration of Dalitz plot fits, you just run:
 
@@ -75,4 +75,3 @@ $ ./pipipi0DPFit canonical dataFiles/cocktail_pp_0.txt --blindSeed=0
 ```
 
 The canonical subcommand calls for a "canonical" DP fit over the given "data" stored in "dataFiles/cocktail_pp_0.txt" as the third argument. The last argument is to disable the blinding of mixing parameters x and y which is only necessary for real data. The "data" in "dataFiles/cocktail_pp_0.txt" is completely from the simulation (MC cocktails of signals / different background sources). The included signals events are simulated with the input of x = y = +1%. The statistics of this sample is comparable to that of real data.
-

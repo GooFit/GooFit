@@ -3,7 +3,7 @@
 The Spinfactors are an adaptation from the MINT implementation, by Jonas Rademacker.
 
 DISCLAIMER:
-This code is not sufficently tested yet and still under heavy development!
+This code is not sufficiently tested yet and still under heavy development!
 */
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/SpinFactors.h>
@@ -89,17 +89,17 @@ std::ostream &operator<<(std::ostream &out, const SpinFactor &obj)
 
 #define ZEMACH 1
 
-__device__ fptype DtoPP1_PtoSP2_StoP3P4(fptype *Vecs, ParameterContainer &pc) {
+__device__ auto DtoPP1_PtoSP2_StoP3P4(fptype *Vecs, ParameterContainer &pc) -> fptype {
     pc.incrementIndex();
     return 1.0;
 }
 
-__device__ fptype ONE(fptype *Vecs, ParameterContainer &pc) {
+__device__ auto ONE(fptype *Vecs, ParameterContainer &pc) -> fptype {
     pc.incrementIndex();
     return 1.0;
 }
 
-__device__ fptype FF_12_34_L1(fptype *Vecs, ParameterContainer &pc) {
+__device__ auto FF_12_34_L1(fptype *Vecs, ParameterContainer &pc) -> fptype {
     fptype mother_radius = pc.getConstant(0);
     unsigned int p1      = pc.getConstant(1);
     unsigned int p2      = pc.getConstant(2);
@@ -124,7 +124,7 @@ __device__ fptype FF_12_34_L1(fptype *Vecs, ParameterContainer &pc) {
     return sqrt(ff);
 }
 
-__device__ fptype FF_12_34_L2(fptype *Vecs, ParameterContainer &pc) {
+__device__ auto FF_12_34_L2(fptype *Vecs, ParameterContainer &pc) -> fptype {
     fptype mother_radius = pc.getConstant(0);
     unsigned int p1      = pc.getConstant(1);
     unsigned int p2      = pc.getConstant(2);
@@ -148,7 +148,7 @@ __device__ fptype FF_12_34_L2(fptype *Vecs, ParameterContainer &pc) {
     return sqrt(ff);
 }
 
-__device__ fptype FF_123_4_L1(fptype *Vecs, ParameterContainer &pc) {
+__device__ auto FF_123_4_L1(fptype *Vecs, ParameterContainer &pc) -> fptype {
     fptype mother_radius = pc.getConstant(0);
     unsigned int p1      = pc.getConstant(1);
     unsigned int p2      = pc.getConstant(2);
@@ -172,7 +172,7 @@ __device__ fptype FF_123_4_L1(fptype *Vecs, ParameterContainer &pc) {
     return sqrt(ff);
 }
 
-__device__ fptype FF_123_4_L2(fptype *Vecs, ParameterContainer &pc) {
+__device__ auto FF_123_4_L2(fptype *Vecs, ParameterContainer &pc) -> fptype {
     fptype mother_radius = pc.getConstant(0);
     unsigned int p1      = pc.getConstant(1);
     unsigned int p2      = pc.getConstant(2);
@@ -196,7 +196,7 @@ __device__ fptype FF_123_4_L2(fptype *Vecs, ParameterContainer &pc) {
     return sqrt(ff);
 }
 
-__device__ fptype DtoPP1_PtoVP2_VtoP3P4(fptype *Vecs, ParameterContainer &pc) {
+__device__ auto DtoPP1_PtoVP2_VtoP3P4(fptype *Vecs, ParameterContainer &pc) -> fptype {
     unsigned int p1 = pc.getConstant(1);
     unsigned int p2 = pc.getConstant(2);
     unsigned int p3 = pc.getConstant(3);
@@ -226,7 +226,7 @@ __device__ fptype DtoPP1_PtoVP2_VtoP3P4(fptype *Vecs, ParameterContainer &pc) {
 #endif
 }
 
-__device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_S(fptype *Vecs, ParameterContainer &pc) {
+__device__ auto DtoV1V2_V1toP1P2_V2toP3P4_S(fptype *Vecs, ParameterContainer &pc) -> fptype {
     unsigned int p1 = pc.getConstant(1);
     unsigned int p2 = pc.getConstant(2);
     unsigned int p3 = pc.getConstant(3);
@@ -258,7 +258,7 @@ __device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_S(fptype *Vecs, ParameterContainer &
     return returnVal;
 }
 
-__device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_P(fptype *Vecs, ParameterContainer &pc) {
+__device__ auto DtoV1V2_V1toP1P2_V2toP3P4_P(fptype *Vecs, ParameterContainer &pc) -> fptype {
     unsigned int p1 = pc.getConstant(1);
     unsigned int p2 = pc.getConstant(2);
     unsigned int p3 = pc.getConstant(3);
@@ -294,7 +294,7 @@ __device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_P(fptype *Vecs, ParameterContainer &
 #endif
 }
 
-__device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_D(fptype *Vecs, ParameterContainer &pc) {
+__device__ auto DtoV1V2_V1toP1P2_V2toP3P4_D(fptype *Vecs, ParameterContainer &pc) -> fptype {
     unsigned int p1 = pc.getConstant(1);
     unsigned int p2 = pc.getConstant(2);
     unsigned int p3 = pc.getConstant(3);
@@ -338,7 +338,7 @@ __device__ fptype DtoV1V2_V1toP1P2_V2toP3P4_D(fptype *Vecs, ParameterContainer &
 #endif
 }
 
-__device__ fptype DtoV1P1_V1toV2P2_V2toP3P4(fptype *Vecs, ParameterContainer &pc) {
+__device__ auto DtoV1P1_V1toV2P2_V2toP3P4(fptype *Vecs, ParameterContainer &pc) -> fptype {
     unsigned int p1 = pc.getConstant(1);
     unsigned int p2 = pc.getConstant(2);
     unsigned int p3 = pc.getConstant(3);
@@ -383,7 +383,7 @@ __device__ fptype DtoV1P1_V1toV2P2_V2toP3P4(fptype *Vecs, ParameterContainer &pc
 #endif
 }
 
-__device__ fptype DtoVS_VtoP1P2_StoP3P4(fptype *Vecs, ParameterContainer &pc) {
+__device__ auto DtoVS_VtoP1P2_StoP3P4(fptype *Vecs, ParameterContainer &pc) -> fptype {
     unsigned int p1 = pc.getConstant(1);
     unsigned int p2 = pc.getConstant(2);
     unsigned int p3 = pc.getConstant(3);
@@ -420,7 +420,7 @@ __device__ fptype DtoVS_VtoP1P2_StoP3P4(fptype *Vecs, ParameterContainer &pc) {
 #endif
 }
 
-__device__ fptype DtoAP1_AtoSP2_StoP3P4(fptype *Vecs, ParameterContainer &pc) {
+__device__ auto DtoAP1_AtoSP2_StoP3P4(fptype *Vecs, ParameterContainer &pc) -> fptype {
     unsigned int p1 = pc.getConstant(1);
     unsigned int p2 = pc.getConstant(2);
     unsigned int p3 = pc.getConstant(3);
@@ -456,7 +456,7 @@ __device__ fptype DtoAP1_AtoSP2_StoP3P4(fptype *Vecs, ParameterContainer &pc) {
 #endif
 }
 
-__device__ fptype DtoAP1_AtoVP2_VtoP3P4(fptype *Vecs, ParameterContainer &pc) {
+__device__ auto DtoAP1_AtoVP2_VtoP3P4(fptype *Vecs, ParameterContainer &pc) -> fptype {
     unsigned int p1 = pc.getConstant(1);
     unsigned int p2 = pc.getConstant(2);
     unsigned int p3 = pc.getConstant(3);
@@ -494,7 +494,7 @@ __device__ fptype DtoAP1_AtoVP2_VtoP3P4(fptype *Vecs, ParameterContainer &pc) {
 #endif
 }
 
-__device__ fptype DtoAP1_AtoVP2Dwave_VtoP3P4(fptype *Vecs, ParameterContainer &pc) {
+__device__ auto DtoAP1_AtoVP2Dwave_VtoP3P4(fptype *Vecs, ParameterContainer &pc) -> fptype {
     unsigned int p1 = pc.getConstant(1);
     unsigned int p2 = pc.getConstant(2);
     unsigned int p3 = pc.getConstant(3);
@@ -534,7 +534,7 @@ __device__ fptype DtoAP1_AtoVP2Dwave_VtoP3P4(fptype *Vecs, ParameterContainer &p
 #endif
 }
 
-__device__ fptype DtoTP1_TtoVP2_VtoP3P4(fptype *Vecs, ParameterContainer &pc) {
+__device__ auto DtoTP1_TtoVP2_VtoP3P4(fptype *Vecs, ParameterContainer &pc) -> fptype {
     unsigned int p1 = pc.getConstant(1);
     unsigned int p2 = pc.getConstant(2);
     unsigned int p3 = pc.getConstant(3);

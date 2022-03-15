@@ -10,12 +10,12 @@ FCN::FCN(Params &params)
     : params_(&params) {
     host_callnumber = 0;
 
-    // Verify that all varaibles need to be recached
+    // Verify that all variables need to be recached
     for(Variable &var : params_->vars_)
         var.setChanged(true);
 }
 
-double FCN::operator()(const std::vector<double> &pars) const {
+auto FCN::operator()(const std::vector<double> &pars) const -> double {
     // Translate from Minuit indexing to GooFit indexing
     params_->from_minuit_vector(pars);
 
@@ -27,7 +27,7 @@ double FCN::operator()(const std::vector<double> &pars) const {
     return nll;
 }
 
-double FCN::operator()() const {
+auto FCN::operator()() const -> double {
     // Make a vector of current values, then force the recalculation step
     std::vector<double> pars = params_->make_minuit_vector();
     params_->from_minuit_vector(pars, true);
@@ -41,6 +41,6 @@ double FCN::operator()() const {
 }
 
 // Get the number of variable parameters
-Params *FCN::GetParams() { return params_; }
+auto FCN::GetParams() -> Params * { return params_; }
 
 } // namespace GooFit

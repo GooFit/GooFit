@@ -10,14 +10,14 @@
 
 namespace GooFit {
 
-__device__ fptype phsp_FOCUS(fptype s, fptype m0, fptype m1) {
+__device__ auto phsp_FOCUS(fptype s, fptype m0, fptype m1) -> fptype {
     fptype mp = (m0 + m1);
     fptype mm = (m0 - m1);
     fptype a2 = (1.0 - mp * mp / s) * (1.0 - mm * mm / s);
     return sqrt(a2);
 }
 
-__device__ fpcomplex FOCUSFunction(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
+__device__ auto FOCUSFunction(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) -> fpcomplex {
     unsigned int mod = pc.getConstant(1);
 
     fptype s = POW2(Mpair);

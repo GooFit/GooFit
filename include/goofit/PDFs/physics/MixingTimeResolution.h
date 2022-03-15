@@ -18,18 +18,19 @@ Represents a parametrization of the time resolution.
 class MixingTimeResolution : public GooPdf {
   public:
     template <class... Args>
-    MixingTimeResolution(std::string pdf_name, Args &&... args)
+    MixingTimeResolution(std::string pdf_name, Args &&...args)
         : GooPdf(pdf_name, "mixing_resolution", std::forward<Args>(args)...) {}
 
     ~MixingTimeResolution() override;
 
     void initIndex(void *dev_fcn_ptr = host_fcn_ptr);
 
-    virtual fptype
-    normalization(fptype di1, fptype di2, fptype di3, fptype di4, fptype tau, fptype xmixing, fptype ymixing) const = 0;
+    virtual auto
+    normalization(fptype di1, fptype di2, fptype di3, fptype di4, fptype tau, fptype xmixing, fptype ymixing) const
+        -> fptype = 0;
 
-    int getDeviceFunction() const { return resFunctionIdx; }
-    int getCalcTauIdx() const { return resCalcTauFcnIdx; }
+    auto getDeviceFunction() const -> int { return resFunctionIdx; }
+    auto getCalcTauIdx() const -> int { return resCalcTauFcnIdx; }
     void setCalcTauIdx(int idx) { resCalcTauFcnIdx = idx; }
 
   private:

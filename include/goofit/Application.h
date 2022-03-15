@@ -40,10 +40,10 @@ void print_splash();
 void print_goofit_info(int gpuDev_ = 0);
 
 /// Get the version of GooFit as a string
-std::string goofit_info_version();
+auto goofit_info_version() -> std::string;
 
 /// Get the device information
-std::string goofit_info_device(int gpuDev_);
+auto goofit_info_device(int gpuDev_) -> std::string;
 
 class Application : public CLI::App {
   protected:
@@ -58,14 +58,14 @@ class Application : public CLI::App {
 
   public:
     /// Make a new Application
-    Application(std::string discription, int argc, char **argv);
+    Application(std::string description, int argc, char **argv);
 
     /// Shortcut for the lazy
     Application(int argc, char **argv)
         : Application("", argc, argv) {}
 
     /// Get the set GPU device
-    int get_device() const { return gpuDev_; }
+    auto get_device() const -> int { return gpuDev_; }
 
     /// simple run since argc and argv are stored
     void run();
@@ -74,7 +74,7 @@ class Application : public CLI::App {
     void pre_callback() override;
 
     /// Exit
-    int exit(const CLI::Error &e);
+    auto exit(const CLI::Error &e) -> int;
 
     /// Call if the application might fork, otherwise automatic
     /// For example, if explicitly using omp
@@ -89,6 +89,6 @@ class Application : public CLI::App {
 
     /// Get a file from the current directory, looks up one and in the true current directory
     /// Base gives a relative path from the source directory
-    std::string get_filename(const std::string &input_str, std::string base = "") const;
+    auto get_filename(const std::string &input_str, std::string base = "") const -> std::string;
 };
 } // namespace GooFit

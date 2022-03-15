@@ -55,32 +55,32 @@ class Indexable {
     bool isEqualNameValLimits(const Indexable& other) const;
 
     /// Get the GooFit index
-    int getIndex() const { return *index; }
+    auto getIndex() const -> int { return *index; }
     /// Set the GooFit index
     void setIndex(int value) { *index = value; }
 
     /// Get the name
-    const std::string &getName() const { return name; }
+    auto getName() const -> const std::string & { return name; }
     // The name cannot be changed
     // void setName(const std::string &val) { name = val; }
 
     /// Get the value
-    fptype getValue() const { return *value; }
+    auto getValue() const -> fptype { return *value; }
     /// Set the value
     void setValue(fptype val) { *value = val; }
 
     /// Get the upper limit
-    fptype getUpperLimit() const { return *upperlimit; }
+    auto getUpperLimit() const -> fptype { return *upperlimit; }
     /// Set the upper limit
     void setUpperLimit(fptype val) { *upperlimit = val; }
 
     /// Get the lower limit
-    fptype getLowerLimit() const { return *lowerlimit; }
+    auto getLowerLimit() const -> fptype { return *lowerlimit; }
     /// Set the lower limit
     void setLowerLimit(fptype val) { *lowerlimit = val; }
 
     /// Support var = 3
-    const Indexable &operator=(const fptype &val) {
+    auto operator=(const fptype &val) -> const Indexable & {
         setValue(val);
         return *this;
     }
@@ -91,13 +91,13 @@ class Indexable {
     operator fptype() const { return getValue(); }
 
     /// Support for using as key in map - Notice this does NOT sort by index!
-    bool operator<(const Indexable &other) const { return value.get() < other.value.get(); }
+    auto operator<(const Indexable &other) const -> bool { return value.get() < other.value.get(); }
 
     /// Support for comparison - only if really the same object, not just the same value
-    bool operator==(const Indexable &other) const { return value.get() == other.value.get(); }
+    auto operator==(const Indexable &other) const -> bool { return value.get() == other.value.get(); }
 
     /// Support for comparison - only if really the same object, not just the same value
-    bool operator!=(const Indexable &other) const { return value.get() != other.value.get(); }
+    auto operator!=(const Indexable &other) const -> bool { return value.get() != other.value.get(); }
 
     /// Check to see if in range
     operator bool() const {
@@ -107,7 +107,7 @@ class Indexable {
 
 /// Special class for observables. Used in DataSets.
 class Observable : public Indexable {
-    friend std::istream &operator>>(std::istream &o, Observable &var);
+    friend auto operator>>(std::istream &o, Observable &var) -> std::istream &;
 
   protected:
     /// The number of bins (mostly for BinnedData, or plotting help)
@@ -125,16 +125,16 @@ class Observable : public Indexable {
     /// Set the number of bins
     void setNumBins(size_t num) { *numbins = num; }
     /// Get the number of bins
-    size_t getNumBins() const { return *numbins; }
+    auto getNumBins() const -> size_t { return *numbins; }
 
     /// Get the bin size, (upper-lower) / bins
-    fptype getBinSize() const { return (getUpperLimit() - getLowerLimit()) / getNumBins(); }
+    auto getBinSize() const -> fptype { return (getUpperLimit() - getLowerLimit()) / getNumBins(); }
 
     /// Check to see if this is an event number
-    bool isEventNumber() const { return is_event_number; }
+    auto isEventNumber() const -> bool { return is_event_number; }
 
     /// Support var = 3
-    const Observable &operator=(const fptype &val) {
+    auto operator=(const fptype &val) -> const Observable & {
         setValue(val);
         return *this;
     }
@@ -145,7 +145,7 @@ class Observable : public Indexable {
 /// data set. The index can refer either to cudaArray
 /// or to an event.
 class Variable : public Indexable {
-    friend std::ostream &operator<<(std::ostream &o, const Variable &var);
+    friend auto operator<<(std::ostream &o, const Variable &var) -> std::ostream &;
 
   public:
     /// This provides a key for some special classes to access blind info (passkey)
@@ -190,20 +190,20 @@ class Variable : public Indexable {
     bool isEqualNameValLimitsErrBlindFixed(const Variable& other) const;
 
     /// Get the error
-    fptype getError() const { return *error; }
+    auto getError() const -> fptype { return *error; }
     /// Set the error
     void setError(fptype val) { *error = val; }
 
     /// Get the index from the fitter
-    int getFitterIndex() const { return *fitter_index; }
+    auto getFitterIndex() const -> int { return *fitter_index; }
     /// Set the index (should be done by the fitter)
     void setFitterIndex(int value) { *fitter_index = value; }
 
     /// Check to see if the value has changed this iteration (always true the first time)
-    bool getChanged() const { return *changed_; }
+    auto getChanged() const -> bool { return *changed_; }
 
     /// Check to see if this is a constant
-    bool IsFixed() const { return *fixed; }
+    auto IsFixed() const -> bool { return *fixed; }
 
     /// Set the fixedness of a variable
     void setFixed(bool fix) { *fixed = fix; }
@@ -211,14 +211,14 @@ class Variable : public Indexable {
     /// Check to see if this has been changed since last iteration
     void setChanged(bool val = true) { *changed_ = val; }
 
-    /// Hides the number; the real value is the result minus this value. Cannot be retreived once set.
+    /// Hides the number; the real value is the result minus this value. Cannot be retrieved once set.
     void setBlind(fptype val) { *blind = val; }
 
     /// Protected by special locked key, only a few classes have access to create a Key
-    fptype getBlind(const Key &) { return *blind; }
+    auto getBlind(const Key &) -> fptype { return *blind; }
 
     /// Support var = 3
-    const Variable &operator=(const fptype &val) {
+    auto operator=(const fptype &val) -> const Variable & {
         setValue(val);
         return *this;
     }
@@ -256,25 +256,25 @@ class EventNumber : public Observable {
     ~EventNumber() override = default;
 
     /// Support var = 3
-    const EventNumber &operator=(const fptype &val) {
+    auto operator=(const fptype &val) -> const EventNumber & {
         setValue(val);
         return *this;
     }
 };
 
 /// Get the max index of a variable from a list
-int max_index(const std::vector<Variable> &vars);
-int max_index(const std::vector<Observable> &vars);
+auto max_index(const std::vector<Variable> &vars) -> int;
+auto max_index(const std::vector<Observable> &vars) -> int;
 
 /// Get the max fitter index of a variable from a list
-int max_fitter_index(const std::vector<Variable> &vars);
+auto max_fitter_index(const std::vector<Variable> &vars) -> int;
 
 /// Nice print of Variable
-std::ostream &operator<<(std::ostream &o, const GooFit::Variable &var);
+auto operator<<(std::ostream &o, const GooFit::Variable &var) -> std::ostream &;
 
 /// Nice print of Observable
-std::ostream &operator<<(std::ostream &o, const GooFit::Observable &var);
+auto operator<<(std::ostream &o, const GooFit::Observable &var) -> std::ostream &;
 
 /// Allow Observable to be read in
-std::istream &operator>>(std::istream &i, GooFit::Observable &var);
+auto operator>>(std::istream &i, GooFit::Observable &var) -> std::istream &;
 } // namespace GooFit

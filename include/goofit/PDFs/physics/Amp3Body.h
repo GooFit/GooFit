@@ -3,6 +3,10 @@
 #include <goofit/PDFs/physics/Amp3BodyBase.h>
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
 
+#include <mcbooster/GContainers.h>
+
+#include <tuple>
+
 #include <goofit/detail/Complex.h>
 
 namespace GooFit {
@@ -42,25 +46,33 @@ class Amp3Body : public Amp3BodyBase {
     // coherent sum. The caching method requires that it be done this way or the ProdPdf
     // normalization will get *really* confused and give wrong answers.
 
-    __host__ fptype normalize() override;
-    __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 3);
+    __host__ auto normalize() -> fptype override;
+    __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 3, unsigned int offset = 0);
     __host__ void setForceIntegrals(bool f = true) { forceRedoIntegrals = f; }
+
+    __host__ void setGenerationOffset(int off) { generation_offset = off; }
+    __host__ auto getGenerationOffset() -> int { return generation_offset; }
+    __host__ auto GenerateSig(unsigned int numEvents, int seed = 0) -> std::
+        tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h>;
 
     __host__ void populateArrays() override;
 
     /// Get the cached wave (device) vectors
-    __host__ const thrust::device_vector<fpcomplex> &getCachedWaveNoCopy(size_t i) const { return *(cachedWaves[i]); }
+    __host__ auto getCachedWaveNoCopy(size_t i) const -> const thrust::device_vector<fpcomplex> & {
+        return *(cachedWaves[i]);
+    }
 
-    __host__ const std::vector<std::complex<fptype>> getCachedWave(size_t i) const;
+    __host__ auto getCachedWave(size_t i) const -> const std::vector<std::complex<fptype>>;
 
     /// Sum up a cached wave
-    __host__ fpcomplex sumCachedWave(size_t i) const;
+    __host__ auto sumCachedWave(size_t i) const -> fpcomplex;
 
     /// Get the decay info struct
-    __host__ DecayInfo3 &getDecayInfo() { return decayInfo; }
+    __host__ auto getDecayInfo() -> DecayInfo3 & { return decayInfo; }
+    __host__ static void resetCacheCounter() { cacheCount = 0; }
 
     /// Calculate fit fractions (Cache should be pre-filled)
-    __host__ std::vector<std::vector<fptype>> fit_fractions();
+    __host__ auto fit_fractions() -> std::vector<std::vector<fptype>>;
 
     friend DalitzPlotter;
 
@@ -76,12 +88,16 @@ class Amp3Body : public Amp3BodyBase {
     thrust::device_vector<fpcomplex> *cachedWaves[16]; // Caches the BW values for each event.
     fpcomplex ***integrals; // Caches the integrals of the BW waves for each combination of resonances.
 
+    mutable bool generation_no_norm{false};
     bool *redoIntegral;
     mutable bool forceRedoIntegrals;
     fptype *cachedMasses;
     fptype *cachedWidths;
     int totalEventSize;
+    int eventOffset;
     int cacheToUse;
+    static int cacheCount;
+    int generation_offset{0};
     SpecialResonanceIntegrator ***integrators;
     SpecialResonanceCalculator **calculators;
 

@@ -23,32 +23,32 @@ class BinnedDataSet : public DataSet {
     void addWeightedEvent(double weight) override;
 
     /// Get the content of a bin
-    fptype getBinContent(size_t bin) const { return binvalues.at(bin); }
-    fptype getBinCenter(size_t ivar, size_t bin) const;
-    fptype getBinCenter(const Observable &var, size_t bin) const;
+    auto getBinContent(size_t bin) const -> fptype { return binvalues.at(bin); }
+    auto getBinCenter(size_t ivar, size_t bin) const -> fptype;
+    auto getBinCenter(const Observable &var, size_t bin) const -> fptype;
 
     /// Get the size of a bin
-    fptype getBinSize(size_t ivar) const;
+    auto getBinSize(size_t ivar) const -> fptype;
 
-    size_t getBinNumber() const;
-    fptype getBinVolume(size_t bin) const;
-    fptype getBinError(size_t bin) const;
+    auto getBinNumber() const -> size_t;
+    auto getBinVolume(size_t bin) const -> fptype;
+    auto getBinError(size_t bin) const -> fptype;
 
     /// Get the size of each diminsion
-    std::vector<size_t> getDiminsions() const { return binsizes; }
+    auto getDiminsions() const -> std::vector<size_t> { return binsizes; }
 
-    size_t getNumBins() const;
+    auto getNumBins() const -> size_t;
 
     /// This includes weights
-    fptype getNumWeightedEvents() const;
+    auto getNumWeightedEvents() const -> fptype;
 
     void setBinContent(unsigned int bin, fptype value) { binvalues.at(bin) = value; }
     void setBinError(unsigned int bin, fptype value);
 
   private:
-    std::vector<size_t> convertValuesToBins(const std::vector<fptype> &vals) const;
-    size_t localToGlobal(const std::vector<size_t> &locals) const;
-    std::vector<size_t> globalToLocal(size_t global) const;
+    auto convertValuesToBins(const std::vector<fptype> &vals) const -> std::vector<size_t>;
+    auto localToGlobal(const std::vector<size_t> &locals) const -> size_t;
+    auto globalToLocal(size_t global) const -> std::vector<size_t>;
 
     /// Capture the number of bins on all variables
     void collectBins();

@@ -18,4 +18,3 @@
 #cmakedefine01 GOOFIT_ROOT_FOUND
 #cmakedefine01 GOOFIT_SPLASH
 #cmakedefine01 GOOFIT_KMATRIX
-

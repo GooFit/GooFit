@@ -10,17 +10,17 @@
 
 namespace GooFit {
 
-__host__ fptype GooPdf::integrate(fptype, fptype) const { return 0; }
+__host__ auto GooPdf::integrate(fptype, fptype) const -> fptype { return 0; }
 
-__host__ bool GooPdf::hasAnalyticIntegral() const { return false; }
+__host__ auto GooPdf::hasAnalyticIntegral() const -> bool { return false; }
 
 __host__ void GooPdf::setMetrics() {
     logger = std::make_shared<MetricTaker>(this, getMetricPointer(fitControl->getMetric()));
 }
 
 /// This collects the number of variables for the thrust call
-/// -(n+2) for binned evalutes
-__host__ int GooPdf::get_event_size() const {
+/// -(n+2) for binned evalute's
+__host__ auto GooPdf::get_event_size() const -> int {
     int numVars = observablesList.size();
 
     if(fitControl->binnedFit())
@@ -29,7 +29,7 @@ __host__ int GooPdf::get_event_size() const {
         return numVars;
 }
 
-int GooPdf::get_bin_grid_size() const {
+auto GooPdf::get_bin_grid_size() const -> int {
     size_t totalBins = 1;
 
     for(const Observable &v : observablesList) {
@@ -39,7 +39,7 @@ int GooPdf::get_bin_grid_size() const {
     return totalBins;
 }
 
-fptype GooPdf::get_bin_grid_volume() const {
+auto GooPdf::get_bin_grid_volume() const -> fptype {
     fptype ret = 1.0;
 
     for(const Observable &v : observablesList) {
@@ -63,7 +63,6 @@ __host__ void GooPdf::initialize() {
 
     // MetricTaker must be created after PdfBase initialisation is done.
     PdfBase::initializeIndices();
-
     setMetrics();
 }
 
@@ -90,7 +89,7 @@ __host__ void GooPdf::setParameterConstantness(bool constant) {
     }
 }
 
-__host__ UnbinnedDataSet GooPdf::makeGrid() {
+__host__ auto GooPdf::makeGrid() -> UnbinnedDataSet {
     std::vector<Observable> ret = getObservables();
 
     UnbinnedDataSet grid{ret};
@@ -99,8 +98,21 @@ __host__ UnbinnedDataSet GooPdf::makeGrid() {
     return grid;
 }
 
+__host__ void GooPdf::setFitControl_A(std::shared_ptr<FitControl> fc, std::string caller) {
+    for(auto &component : components) {
+        auto componentName = component->getPdfName();
+        component->setFitControl_A(fc, componentName);
+    }
+
+    fitControl = fc;
+
+    setMetrics();
+
+    setIndices();
+}
 __host__ void GooPdf::setFitControl(std::shared_ptr<FitControl> fc) {
     for(auto &component : components) {
+        auto componentName = component->getPdfName();
         component->setFitControl(fc);
     }
 
@@ -112,7 +124,7 @@ __host__ void GooPdf::setFitControl(std::shared_ptr<FitControl> fc) {
 }
 
 #ifdef ROOT_FOUND
-__host__ TH1D *GooPdf::plotToROOT(Observable var, double normFactor, std::string name) {
+__host__ auto GooPdf::plotToROOT(Observable var, double normFactor, std::string name) -> TH1D * {
     if(name.empty())
         name = getName() + "_hist";
 

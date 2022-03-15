@@ -5,7 +5,7 @@
 
 namespace GooFit {
 
-__device__ fptype device_EventWeightedAddPdfs(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_EventWeightedAddPdfs(fptype *evt, ParameterContainer &pc) -> fptype {
     int numConstants = pc.getNumConstants();
     int numObs       = pc.getNumObservables();
 
@@ -43,7 +43,7 @@ __device__ fptype device_EventWeightedAddPdfs(fptype *evt, ParameterContainer &p
     return ret;
 }
 
-__device__ fptype device_EventWeightedAddPdfsExt(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_EventWeightedAddPdfsExt(fptype *evt, ParameterContainer &pc) -> fptype {
     // numParameters does not count itself. So the array structure for two functions is
     // nP | F P | F P | nO | o1 o2
     // in which nP = 4, nO = 2.
@@ -61,7 +61,7 @@ __device__ fptype device_EventWeightedAddPdfsExt(fptype *evt, ParameterContainer
 
     for(int i = 0; i < comps; ++i) {
         int id        = pc.getObservable(i);
-        fptype norm   = pc.getNormalization(0);
+        fptype norm   = pci.getNormalization(0);
         fptype weight = RO_CACHE(evt[id]);
         fptype curr   = callFunction(evt, pci);
         // if ((0 == BLOCKIDX) && (THREADIDX < 5) && (isnan(curr))) printf("NaN component %i %i\n", i, THREADIDX);
@@ -124,7 +124,7 @@ EventWeightedAddPdf::EventWeightedAddPdf(std::string n, std::vector<Observable> 
 
     if(weights.size() < components.size()) {
         extended = false;
-        // TODO:adding componenents as parameters to get them to be used (for nwo)
+        // TODO:adding componenents as parameters to get them to be used (for now)
         // parametersList.push_back(0);
     }
 
@@ -142,7 +142,7 @@ EventWeightedAddPdf::EventWeightedAddPdf(std::string n, std::vector<Observable> 
     initialize();
 }
 
-__host__ fptype EventWeightedAddPdf::normalize() {
+__host__ auto EventWeightedAddPdf::normalize() -> fptype {
     // if (cpuDebug & 1) std::cout << "Normalizing EventWeightedAddPdf " << getName() << " " << components.size() <<
     // std::endl;
 

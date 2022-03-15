@@ -2,7 +2,7 @@
 04/05/2016 Christoph Hasse
 DISCLAIMER:
 
-This code is not sufficently tested yet and still under heavy development!
+This code is not sufficiently tested yet and still under heavy development!
 See *.cu file for more details
 */
 
@@ -22,14 +22,15 @@ class Amplitude;
 struct ParameterContainer;
 
 template <typename E>
-constexpr typename std::underlying_type<E>::type enum_to_underlying(E e) {
+constexpr auto enum_to_underlying(E e) -> typename std::underlying_type<E>::type {
     return static_cast<typename std::underlying_type<E>::type>(e);
 }
 
-__host__ __device__ bool inDalitz(
-    const fptype &m12, const fptype &m13, const fptype &bigM, const fptype &dm1, const fptype &dm2, const fptype &dm3);
+__host__ __device__ auto inDalitz(
+    const fptype &m12, const fptype &m13, const fptype &bigM, const fptype &dm1, const fptype &dm2, const fptype &dm3)
+    -> bool;
 
-__device__ fpcomplex getResonanceAmplitude(fptype m12, fptype m13, fptype m23, ParameterContainer &pc);
+__device__ auto getResonanceAmplitude(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) -> fpcomplex;
 
 __device__ void get4Vecs(fptype *Vecs,
                          const fptype &m12,
@@ -43,14 +44,14 @@ __device__ void get4Vecs(fptype *Vecs,
                          const fptype m3,
                          const fptype m4);
 
-__device__ fptype getmass(const unsigned int &pair,
-                          fptype &d1,
-                          fptype &d2,
-                          const fptype *vecs,
-                          const fptype &m1,
-                          const fptype &m2,
-                          const fptype &m3,
-                          const fptype &m4);
+__device__ auto getmass(const unsigned int &pair,
+                        fptype &d1,
+                        fptype &d2,
+                        const fptype *vecs,
+                        const fptype &m1,
+                        const fptype &m2,
+                        const fptype &m3,
+                        const fptype &m4) -> fptype;
 
 // in case of 3 particles the first two are the resonance.
 enum DP4Pair {
@@ -89,6 +90,7 @@ struct DecayInfo3 {
     fptype daug2Mass;
     fptype daug3Mass;
     fptype meson_radius;
+    fptype mother_meson_radius;
 
     std::vector<ResonancePdf *> resonances;
 };
@@ -139,7 +141,7 @@ class strided_range {
         stride_functor(difference_type stride)
             : stride(stride) {}
 
-        __host__ __device__ difference_type operator()(const difference_type &i) const { return stride * i; }
+        __host__ __device__ auto operator()(const difference_type &i) const -> difference_type { return stride * i; }
     };
     typedef typename thrust::counting_iterator<difference_type> CountingIterator;
     typedef typename thrust::transform_iterator<stride_functor, CountingIterator> TransformIterator;
@@ -154,11 +156,11 @@ class strided_range {
         , last(last)
         , stride(stride) {}
 
-    iterator begin() const {
+    auto begin() const -> iterator {
         return PermutationIterator(first, TransformIterator(CountingIterator(0), stride_functor(stride)));
     }
 
-    iterator end() const { return begin() + ((last - first) + (stride - 1)) / stride; }
+    auto end() const -> iterator { return begin() + ((last - first) + (stride - 1)) / stride; }
 
   protected:
     Iterator first;

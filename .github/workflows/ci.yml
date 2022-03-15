@@ -9,27 +9,17 @@ on:
     branches:
       - master
 
-jobs:
-  pre-commit:
-    name: Formatting
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-python@v1
-    - name: set PY
-      run: echo "::set-env name=PY::$(python --version --version | sha256sum | cut -d' ' -f1)"
-    - uses: actions/cache@v1
-      with:
-        path: ~/.cache/pre-commit
-        key: pre-commit|${{ env.PY }}|${{ hashFiles('.pre-commit-config.yaml') }}
-    - uses: pre-commit/action@v1.0.0
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
+jobs:
   build:
     name: OMP / Test
 
     runs-on: ubuntu-latest
     container:
-      image: rootproject/root:latest
+      image: rootproject/root:6.24.06-ubuntu20.04
 
     steps:
     - uses: actions/checkout@v1
@@ -42,6 +32,25 @@ jobs:
       run: cmake --build build -j "$(getconf _NPROCESSORS_ONLN)"
     - name: Run Tests
       run: cmake --build build --target test
+      env:
+        CTEST_OUTPUT_ON_FAILURE: true
+        GTEST_COLOR: true
+
+  clang-tidy:
+    runs-on: ubuntu-latest
+    container: silkeh/clang:12
+    steps:
+    - uses: actions/checkout@v2
+    - name: Configure
+      run: >
+        cmake -S . -B build
+        -DCMAKE_CXX_CLANG_TIDY="$(which clang-tidy)"
+        -DDOWNLOAD_EIGEN=ON
+        -DDOWNLOAD_CATCH=ON
+        -DCMAKE_CXX_STANDARD=17
+    - name: Build
+      run: cmake --build build -j 2 -- --keep-going
+
 
 
   cuda-build:

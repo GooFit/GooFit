@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, division
+from __future__ import division, print_function
 
 # Standard library stuff
 import sys
@@ -9,14 +9,13 @@ import warnings
 from functools import wraps
 from time import time
 
-# GooFit packages
-from goofit import *
-from goofit.landau import landau_quantile  # Copy of C++ lambda function in PyBind11
-
-import numpy as np
-
 # Protect the matplotlib call for systems with no graphics
 import matplotlib
+import numpy as np
+from goofit.landau import landau_quantile  # Copy of C++ lambda function in pybind11
+
+# GooFit packages
+from goofit import *
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt

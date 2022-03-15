@@ -12,6 +12,13 @@ SmartVector<fptype> host_observables{"d_observables"};
 SmartVector<fptype> host_normalizations{"d_normalizations"};
 SmartVector<void *> host_function_table{"d_function_table"};
 
+///  mds 211217
+std::vector<std::string> host_function_name;
+std::vector<std::string> host_function_pdf;
+std::vector<std::string> host_parameter_name;
+std::vector<std::string> host_observable_name;
+///
+
 __device__ fptype *d_parameters;
 __device__ fptype *d_constants;
 __device__ fptype *d_observables;
@@ -24,6 +31,7 @@ __constant__ fptype c_daug1Mass;
 __constant__ fptype c_daug2Mass;
 __constant__ fptype c_daug3Mass;
 __constant__ fptype c_meson_radius;
+__constant__ fptype c_mother_meson_radius;
 
 /// Clear all device memory (call before exit!)
 __host__ void cleanup() {
@@ -34,7 +42,7 @@ __host__ void cleanup() {
     host_function_table.clear_device();
 }
 
-__device__ int dev_powi(int base, int exp) {
+__device__ auto dev_powi(int base, int exp) -> int {
     int ret = 1;
 
     for(int i = 0; i < exp; ++i)

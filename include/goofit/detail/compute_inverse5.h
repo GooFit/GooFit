@@ -30,11 +30,11 @@ template <int,
           int,
           int,
           int>
-__device__ Eigen::Array<fpcomplex, 5, 5> compute_inverse5(const Eigen::Array<fpcomplex, 5, 5> &m);
+__device__ auto compute_inverse5(const Eigen::Array<fpcomplex, 5, 5> &m) -> Eigen::Array<fpcomplex, 5, 5>;
 template <>
-__device__ inline Eigen::Array<fpcomplex, 5, 5>
+__device__ inline auto
 compute_inverse5<-1, -1, 0, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1>(
-    const Eigen::Array<fpcomplex, 5, 5> &M) {
+    const Eigen::Array<fpcomplex, 5, 5> &M) -> Eigen::Array<fpcomplex, 5, 5> {
     Eigen::Array<fpcomplex, 5, 5> O;
 
     O(0, 0) = (M(1, 1) * M(2, 2) * M(3, 3) * M(4, 4) - M(1, 1) * M(2, 2) * M(3, 4) * M(4, 3)

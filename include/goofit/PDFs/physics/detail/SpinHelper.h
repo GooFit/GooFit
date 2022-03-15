@@ -3,7 +3,7 @@
 GPU Adaptation of classes provided in the MINT2 package by Jonas Rademacker.
 They are needed for the calculation of the spin factors.
 DISCLAIMER:
-This code is not sufficently tested yet and still under heavy development!
+This code is not sufficiently tested yet and still under heavy development!
 */
 
 #pragma once
@@ -34,34 +34,34 @@ class __align__(16) gpuLVec {
         E = e;
     }
 
-    __device__ fptype Dot(const gpuLVec &rhs) const { return E * rhs.E - X * rhs.X - Y * rhs.Y - Z * rhs.Z; }
-    __device__ inline fptype GetX() const { return X; }
-    __device__ inline fptype GetY() const { return Y; }
-    __device__ inline fptype GetZ() const { return Z; }
-    __device__ inline fptype GetE() const { return E; }
+    __device__ auto Dot(const gpuLVec &rhs) const->fptype { return E * rhs.E - X * rhs.X - Y * rhs.Y - Z * rhs.Z; }
+    __device__ inline auto GetX() const->fptype { return X; }
+    __device__ inline auto GetY() const->fptype { return Y; }
+    __device__ inline auto GetZ() const->fptype { return Z; }
+    __device__ inline auto GetE() const->fptype { return E; }
 
-    __device__ inline fptype Mag2() const { return this->Dot(*this); }
-    __device__ inline fptype M() const { return sqrt(this->Mag2()); }
+    __device__ inline auto Mag2() const->fptype { return this->Dot(*this); }
+    __device__ inline auto M() const->fptype { return sqrt(this->Mag2()); }
     __device__ inline void SetX(fptype a) { X = a; }
     __device__ inline void SetY(fptype a) { Y = a; }
     __device__ inline void SetZ(fptype a) { Z = a; }
     __device__ inline void SetE(fptype a) { E = a; }
 
-    __device__ gpuLVec &operator+=(const gpuLVec &rhs) {
+    __device__ auto operator+=(const gpuLVec &rhs)->gpuLVec & {
         X += rhs.X;
         Y += rhs.Y;
         Z += rhs.Z;
         E += rhs.E;
         return *this;
     }
-    __device__ gpuLVec &operator-=(const gpuLVec &rhs) {
+    __device__ auto operator-=(const gpuLVec &rhs)->gpuLVec & {
         X -= rhs.X;
         Y -= rhs.Y;
         Z -= rhs.Z;
         E -= rhs.E;
         return *this;
     }
-    __device__ gpuLVec &operator*=(const fptype rhs) {
+    __device__ auto operator*=(const fptype rhs)->gpuLVec & {
         X *= rhs;
         Y *= rhs;
         Z *= rhs;
@@ -69,10 +69,10 @@ class __align__(16) gpuLVec {
         return *this;
     }
 };
-__device__ gpuLVec operator+(gpuLVec lhs, const gpuLVec &rhs) { return lhs += rhs; }
-__device__ gpuLVec operator-(gpuLVec lhs, const gpuLVec &rhs) { return lhs -= rhs; }
-__device__ gpuLVec operator*(gpuLVec lhs, fptype rhs) { return lhs *= rhs; }
-__device__ gpuLVec operator*(fptype lhs, gpuLVec rhs) { return rhs *= lhs; }
+__device__ auto operator+(gpuLVec lhs, const gpuLVec &rhs) -> gpuLVec { return lhs += rhs; }
+__device__ auto operator-(gpuLVec lhs, const gpuLVec &rhs) -> gpuLVec { return lhs -= rhs; }
+__device__ auto operator*(gpuLVec lhs, fptype rhs) -> gpuLVec { return lhs *= rhs; }
+__device__ auto operator*(fptype lhs, gpuLVec rhs) -> gpuLVec { return rhs *= lhs; }
 
 class ZTspin1 : public gpuLVec {
   public:
@@ -80,7 +80,7 @@ class ZTspin1 : public gpuLVec {
     __device__ ZTspin1(const gpuLVec &q, const gpuLVec &p, fptype mR)
         : gpuLVec(q - q.Dot(p) * p * (1. / (mR * mR))) {}
 
-    __device__ fptype Contract(const gpuLVec &rhs) const { return this->Dot(rhs); }
+    __device__ auto Contract(const gpuLVec &rhs) const -> fptype { return this->Dot(rhs); }
 };
 
 class SpinSumV { // spin sum for Vector->PP
@@ -92,8 +92,8 @@ class SpinSumV { // spin sum for Vector->PP
         : _p(p)
         , _mR(mR) {}
 
-    __device__ gpuLVec Dot(const gpuLVec &rhs) const { return -1.0 * rhs + _p * (_p.Dot(rhs) / (_mR * _mR)); }
-    __device__ fptype Sandwich(const gpuLVec &lhs, const gpuLVec &rhs) const { return lhs.Dot(this->Dot(rhs)); }
+    __device__ auto Dot(const gpuLVec &rhs) const -> gpuLVec { return -1.0 * rhs + _p * (_p.Dot(rhs) / (_mR * _mR)); }
+    __device__ auto Sandwich(const gpuLVec &lhs, const gpuLVec &rhs) const -> fptype { return lhs.Dot(this->Dot(rhs)); }
 };
 
 class SpinSumT {
@@ -103,7 +103,7 @@ class SpinSumT {
   public:
     __device__ SpinSumT(const gpuLVec &p, fptype mR)
         : _sv(p, mR) {}
-    __device__ fptype Sandwich(const gpuLVec &lm, const gpuLVec &ln, const gpuLVec &ra, const gpuLVec &rb) {
+    __device__ auto Sandwich(const gpuLVec &lm, const gpuLVec &ln, const gpuLVec &ra, const gpuLVec &rb) -> fptype {
         fptype manb = _sv.Sandwich(lm, ra) * _sv.Sandwich(ln, rb);
         fptype mbna = _sv.Sandwich(lm, rb) * _sv.Sandwich(ln, ra);
         fptype mnab = _sv.Sandwich(lm, ln) * _sv.Sandwich(ra, rb);
@@ -116,7 +116,7 @@ class LorentzMatrix {
   protected:
     gpuLVec _v[4];
     // we'll follow the x, y, z, E convention, i.e. E is 4
-    __device__ bool makeZero() {
+    __device__ auto makeZero() -> bool {
         X().SetXYZE(0, 0, 0, 0);
         Y().SetXYZE(0, 0, 0, 0);
         Z().SetXYZE(0, 0, 0, 0);
@@ -125,7 +125,7 @@ class LorentzMatrix {
     }
 
   public:
-    __device__ const gpuLVec &v(int i) const { return _v[i]; }
+    __device__ auto v(int i) const -> const gpuLVec & { return _v[i]; }
 
     __device__ LorentzMatrix() = default;
 
@@ -137,70 +137,70 @@ class LorentzMatrix {
         for(int i = 0; i < 4; i++)
             _v[i] = other._v[i];
     }
-    __device__ const gpuLVec &X() const { return _v[0]; }
-    __device__ const gpuLVec &Y() const { return _v[1]; }
-    __device__ const gpuLVec &Z() const { return _v[2]; }
-    __device__ const gpuLVec &E() const { return _v[3]; }
+    __device__ auto X() const -> const gpuLVec & { return _v[0]; }
+    __device__ auto Y() const -> const gpuLVec & { return _v[1]; }
+    __device__ auto Z() const -> const gpuLVec & { return _v[2]; }
+    __device__ auto E() const -> const gpuLVec & { return _v[3]; }
 
-    __device__ gpuLVec &X() { return _v[0]; }
-    __device__ gpuLVec &Y() { return _v[1]; }
-    __device__ gpuLVec &Z() { return _v[2]; }
-    __device__ gpuLVec &E() { return _v[3]; }
+    __device__ auto X() -> gpuLVec & { return _v[0]; }
+    __device__ auto Y() -> gpuLVec & { return _v[1]; }
+    __device__ auto Z() -> gpuLVec & { return _v[2]; }
+    __device__ auto E() -> gpuLVec & { return _v[3]; }
 
-    __device__ const gpuLVec &operator[](int i) const { return _v[i]; }
-    __device__ gpuLVec &operator[](int i) { return _v[i]; }
+    __device__ auto operator[](int i) const -> const gpuLVec & { return _v[i]; }
+    __device__ auto operator[](int i) -> gpuLVec & { return _v[i]; }
 
-    __device__ LorentzMatrix &add(const LorentzMatrix &other) {
+    __device__ auto add(const LorentzMatrix &other) -> LorentzMatrix & {
         for(int i = 0; i < 4; i++)
             _v[i] += other._v[i];
 
         return *this;
     }
-    __device__ LorentzMatrix &subtract(const LorentzMatrix &other) {
+    __device__ auto subtract(const LorentzMatrix &other) -> LorentzMatrix & {
         for(int i = 0; i < 4; i++)
             _v[i] -= other._v[i];
 
         return *this;
     }
-    __device__ LorentzMatrix &mult(fptype s) {
+    __device__ auto mult(fptype s) -> LorentzMatrix & {
         for(auto &i : _v)
             i *= s;
 
         return *this;
     }
-    __device__ LorentzMatrix &div(fptype s) {
+    __device__ auto div(fptype s) -> LorentzMatrix & {
         for(auto &i : _v)
             i *= (1. / s);
 
         return *this;
     }
 
-    __device__ LorentzMatrix &operator+=(const LorentzMatrix &rhs) { return add(rhs); }
-    __device__ LorentzMatrix &operator*=(fptype rhs) { return mult(rhs); }
-    __device__ LorentzMatrix &operator-=(const LorentzMatrix &rhs) { return subtract(rhs); }
-    __device__ LorentzMatrix &operator/=(fptype rhs) { return div(rhs); }
-    __device__ LorentzMatrix &operator=(const LorentzMatrix &other) {
+    __device__ auto operator+=(const LorentzMatrix &rhs) -> LorentzMatrix & { return add(rhs); }
+    __device__ auto operator*=(fptype rhs) -> LorentzMatrix & { return mult(rhs); }
+    __device__ auto operator-=(const LorentzMatrix &rhs) -> LorentzMatrix & { return subtract(rhs); }
+    __device__ auto operator/=(fptype rhs) -> LorentzMatrix & { return div(rhs); }
+    __device__ auto operator=(const LorentzMatrix &other) -> LorentzMatrix & {
         for(int i = 0; i < 4; i++)
             _v[i] = other._v[i];
 
         return *this;
     }
-    __device__ LorentzMatrix operator+(const LorentzMatrix &rhs) const {
+    __device__ auto operator+(const LorentzMatrix &rhs) const -> LorentzMatrix {
         LorentzMatrix returnVal(*this);
         returnVal += rhs;
         return returnVal;
     }
-    __device__ LorentzMatrix operator-(const LorentzMatrix &rhs) const {
+    __device__ auto operator-(const LorentzMatrix &rhs) const -> LorentzMatrix {
         LorentzMatrix returnVal(*this);
         returnVal -= rhs;
         return returnVal;
     }
-    __device__ LorentzMatrix operator*(fptype rhs) const {
+    __device__ auto operator*(fptype rhs) const -> LorentzMatrix {
         LorentzMatrix returnVal(*this);
         returnVal *= rhs;
         return returnVal;
     }
-    __device__ LorentzMatrix operator/(fptype rhs) const {
+    __device__ auto operator/(fptype rhs) const -> LorentzMatrix {
         LorentzMatrix returnVal(*this);
         returnVal /= rhs;
         return returnVal;
@@ -212,7 +212,7 @@ class SymmLorentzMatrix : public LorentzMatrix {
     // SymmLorentzMatrix __gmunu;
 
     // we'll follow the x, y, z, E convention, i.e. E is 4
-    __device__ bool symmetrize() {
+    __device__ auto symmetrize() -> bool {
         // clumsy but save
         X().SetY(Y().GetX());
         X().SetZ(Z().GetX());
@@ -231,7 +231,7 @@ class SymmLorentzMatrix : public LorentzMatrix {
         E().SetZ(Z().GetE());
         return true;
     }
-    __device__ bool makeZero() {
+    __device__ auto makeZero() -> bool {
         X().SetXYZE(0, 0, 0, 0);
         Y().SetXYZE(0, 0, 0, 0);
         Z().SetXYZE(0, 0, 0, 0);
@@ -246,7 +246,7 @@ class SymmLorentzMatrix : public LorentzMatrix {
         Z().SetXYZE(0, 0, -1, 0);
         E().SetXYZE(0, 0, 0, 1);
     }
-    __device__ const SymmLorentzMatrix &gmunu();
+    __device__ auto gmunu() -> const SymmLorentzMatrix &;
     __device__ SymmLorentzMatrix()
         : LorentzMatrix() {}
     __device__ SymmLorentzMatrix(const gpuLVec p[4])
@@ -275,38 +275,38 @@ class SymmLorentzMatrix : public LorentzMatrix {
     }
     __device__ SymmLorentzMatrix(const SymmLorentzMatrix &other) = default;
 
-    __device__ SymmLorentzMatrix &add(const SymmLorentzMatrix &other) {
+    __device__ auto add(const SymmLorentzMatrix &other) -> SymmLorentzMatrix & {
         for(int i = 0; i < 4; i++)
             _v[i] += other._v[i];
 
         return *this;
     }
-    __device__ SymmLorentzMatrix &subtract(const SymmLorentzMatrix &other) {
+    __device__ auto subtract(const SymmLorentzMatrix &other) -> SymmLorentzMatrix & {
         for(int i = 0; i < 4; i++)
             _v[i] -= other._v[i];
 
         return *this;
     }
-    __device__ SymmLorentzMatrix &mult(fptype s) {
+    __device__ auto mult(fptype s) -> SymmLorentzMatrix & {
         for(auto &i : _v)
             i *= s;
 
         return *this;
     }
-    __device__ SymmLorentzMatrix &div(fptype s) {
+    __device__ auto div(fptype s) -> SymmLorentzMatrix & {
         for(auto &i : _v)
             i *= (1. / s);
 
         return *this;
     }
-    __device__ gpuLVec Contract(const gpuLVec &vec) {
+    __device__ auto Contract(const gpuLVec &vec) -> gpuLVec {
         // M^{mu nu} g_{nu alpha} v^{alpha}
         // M^{mu nu} v_{alpha}
         return vec.GetE() * E() - vec.GetX() * X() - vec.GetY() * Y() - vec.GetZ() * Z();
     }
-    __device__ LorentzMatrix Contract_1(const SymmLorentzMatrix &M) {
+    __device__ auto Contract_1(const SymmLorentzMatrix &M) -> LorentzMatrix {
         // One pair of indices gets contracted. Since
-        // both matrices are symmetric, it doesnt matter which.
+        // both matrices are symmetric, it doesn't matter which.
         //
         // O^{mu alpha} g_{alpha beta} M^{beta nu} = R^{mu nu}
         // O^{mu alpha} M_{beta}^{nu}
@@ -318,7 +318,7 @@ class SymmLorentzMatrix : public LorentzMatrix {
 
         return R;
     }
-    __device__ fptype Contract_2(const SymmLorentzMatrix &M) {
+    __device__ auto Contract_2(const SymmLorentzMatrix &M) -> fptype {
         // Both pairs of indices are contracted.
         // since the matrices are symmetric, it does
         // not matter which index from this with which form M.
@@ -334,32 +334,32 @@ class SymmLorentzMatrix : public LorentzMatrix {
         return tt - xx - yy - zz; // signs?
     }
 
-    __device__ SymmLorentzMatrix &operator+=(const SymmLorentzMatrix &rhs) { return add(rhs); }
-    __device__ SymmLorentzMatrix &operator*=(fptype rhs) { return mult(rhs); }
-    __device__ SymmLorentzMatrix &operator-=(const SymmLorentzMatrix &rhs) { return subtract(rhs); }
-    __device__ SymmLorentzMatrix &operator/=(fptype rhs) { return div(rhs); }
-    __device__ SymmLorentzMatrix &operator=(const SymmLorentzMatrix &other) {
+    __device__ auto operator+=(const SymmLorentzMatrix &rhs) -> SymmLorentzMatrix & { return add(rhs); }
+    __device__ auto operator*=(fptype rhs) -> SymmLorentzMatrix & { return mult(rhs); }
+    __device__ auto operator-=(const SymmLorentzMatrix &rhs) -> SymmLorentzMatrix & { return subtract(rhs); }
+    __device__ auto operator/=(fptype rhs) -> SymmLorentzMatrix & { return div(rhs); }
+    __device__ auto operator=(const SymmLorentzMatrix &other) -> SymmLorentzMatrix & {
         for(int i = 0; i < 4; i++)
             _v[i] = other._v[i];
 
         return *this;
     }
-    __device__ SymmLorentzMatrix operator+(const SymmLorentzMatrix &rhs) const {
+    __device__ auto operator+(const SymmLorentzMatrix &rhs) const -> SymmLorentzMatrix {
         SymmLorentzMatrix returnVal(*this);
         returnVal += rhs;
         return returnVal;
     }
-    __device__ SymmLorentzMatrix operator-(const SymmLorentzMatrix &rhs) const {
+    __device__ auto operator-(const SymmLorentzMatrix &rhs) const -> SymmLorentzMatrix {
         SymmLorentzMatrix returnVal(*this);
         returnVal -= rhs;
         return returnVal;
     }
-    __device__ SymmLorentzMatrix operator*(fptype rhs) const {
+    __device__ auto operator*(fptype rhs) const -> SymmLorentzMatrix {
         SymmLorentzMatrix returnVal(*this);
         returnVal *= rhs;
         return returnVal;
     }
-    __device__ SymmLorentzMatrix operator/(fptype rhs) const {
+    __device__ auto operator/(fptype rhs) const -> SymmLorentzMatrix {
         SymmLorentzMatrix returnVal(*this);
         returnVal /= rhs;
         return returnVal;
@@ -369,12 +369,12 @@ class SymmLorentzMatrix : public LorentzMatrix {
 // __device__ SymmLorentzMatrix operator*(fptype lhs, const SymmLorentzMatrix& rhs);
 // __device__ SymmLorentzMatrix operator/(fptype lhs, const SymmLorentzMatrix& rhs);
 
-__device__ SymmLorentzMatrix operator*(fptype lhs, const SymmLorentzMatrix &rhs) {
+__device__ auto operator*(fptype lhs, const SymmLorentzMatrix &rhs) -> SymmLorentzMatrix {
     SymmLorentzMatrix returnVal(rhs);
     returnVal *= lhs;
     return returnVal;
 }
-__device__ SymmLorentzMatrix operator/(fptype lhs, const SymmLorentzMatrix &rhs) {
+__device__ auto operator/(fptype lhs, const SymmLorentzMatrix &rhs) -> SymmLorentzMatrix {
     SymmLorentzMatrix returnVal(rhs);
     returnVal /= lhs;
     return returnVal;
@@ -395,7 +395,7 @@ class ZTspin2 : public SymmLorentzMatrix {
         // eq 6 in PhysRevD.51.2247
     }
 
-    __device__ ZTspin2 &operator=(const SymmLorentzMatrix &other) {
+    __device__ auto operator=(const SymmLorentzMatrix &other) -> ZTspin2 & {
         for(int i = 0; i < 4; i++)
             _v[i] = other.v(i);
 
@@ -403,7 +403,7 @@ class ZTspin2 : public SymmLorentzMatrix {
     }
 };
 
-__device__ fptype LeviCivita(const gpuLVec &p1, const gpuLVec &p2, const gpuLVec &p3, const gpuLVec &p4) {
+__device__ auto LeviCivita(const gpuLVec &p1, const gpuLVec &p2, const gpuLVec &p3, const gpuLVec &p4) -> fptype {
     // this calculates the determinant of the 4x4 matrix build out of p1,p2,p3,p4
     return p1.GetZ() * p2.GetY() * p3.GetX() * p4.GetE() - p1.GetY() * p2.GetZ() * p3.GetX() * p4.GetE()
            - p1.GetZ() * p2.GetX() * p3.GetY() * p4.GetE() + p1.GetX() * p2.GetZ() * p3.GetY() * p4.GetE()
@@ -419,7 +419,7 @@ __device__ fptype LeviCivita(const gpuLVec &p1, const gpuLVec &p2, const gpuLVec
            - p1.GetX() * p2.GetE() * p3.GetY() * p4.GetZ() + p1.GetE() * p2.GetX() * p3.GetY() * p4.GetZ();
 }
 
-__device__ inline gpuLVec LeviCivita(const gpuLVec &a, const gpuLVec &b, const gpuLVec &c) {
+__device__ inline auto LeviCivita(const gpuLVec &a, const gpuLVec &b, const gpuLVec &c) -> gpuLVec {
     gpuLVec v;
 
     v.SetE(-1. * a.GetX() * (b.GetY() * c.GetZ() - b.GetZ() * c.GetY())

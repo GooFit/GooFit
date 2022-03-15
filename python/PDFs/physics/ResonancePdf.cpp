@@ -21,7 +21,7 @@ void init_ResonancePdf(py::module &m) {
         .def_static("help", []() { return HelpPrinter(ResonancePdf_docs); });
 
     py::class_<Resonances::RBW, ResonancePdf>(m_ls, "RBW")
-        .def(py::init<std::string, Variable, Variable, Variable, Variable, unsigned int, unsigned int, bool>(),
+        .def(py::init<std::string, Variable, Variable, Variable, Variable, unsigned int, unsigned int, bool, bool>(),
              "Constructor for regular BW",
              "name"_a,
              "ar"_a,
@@ -30,10 +30,11 @@ void init_ResonancePdf(py::module &m) {
              "width"_a,
              "sp"_a,
              "cyc"_a,
-             "sym"_a = false);
+             "norm"_a = true,
+             "sym"_a  = false);
 
     py::class_<Resonances::GS, ResonancePdf>(m_ls, "GS")
-        .def(py::init<std::string, Variable, Variable, Variable, Variable, unsigned int, unsigned int>(),
+        .def(py::init<std::string, Variable, Variable, Variable, Variable, unsigned int, unsigned int, bool, bool>(),
              "Constructor for regular Gounaris-Sakurai",
              "name"_a,
              "ar"_a,
@@ -41,7 +42,40 @@ void init_ResonancePdf(py::module &m) {
              "mass"_a,
              "width"_a,
              "sp"_a,
-             "cyc"_a);
+             "cyc"_a,
+             "norm"_a = true,
+             "sym"_a  = false);
+
+    py::class_<Resonances::RhoOmegaMix, ResonancePdf>(m_ls, "RhoOmegaMix")
+        .def(py::init<std::string,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      unsigned int,
+                      unsigned int,
+                      bool,
+                      bool>(),
+             "Constructor for rho omega mixing",
+             "name"_a,
+             "ar"_a,
+             "ai"_a,
+             "omega_mass"_a,
+             "omega_width"_a,
+             "rho_mass"_a,
+             "rho_width"_a,
+             "real"_a,
+             "imag"_a,
+             "delta"_a,
+             "sp"_a,
+             "cyc"_a,
+             "norm"_a = true,
+             "sym"_a  = false);
 
     py::class_<Resonances::LASS, ResonancePdf>(m_ls, "LASS")
         .def(py::init<std::string,
@@ -56,7 +90,8 @@ void init_ResonancePdf(py::module &m) {
                       Variable,
                       Variable,
                       unsigned int,
-                      unsigned int>(),
+                      unsigned int,
+                      bool>(),
              "Constructor for LASS",
              "name"_a,
              "ar"_a,
@@ -70,33 +105,38 @@ void init_ResonancePdf(py::module &m) {
              "_B"_a,
              "_phiB"_a,
              "sp"_a,
-             "cyc"_a);
+             "cyc"_a,
+             "norm"_a = true);
 
 #if GOOFIT_KMATRIX
     py::class_<Resonances::kMatrix, ResonancePdf>(m_ls, "kMatrix")
         .def(py::init<std::string,
-                      unsigned int,
-                      bool,
                       Variable,
                       Variable,
                       Variable,
                       Variable,
                       Variable,
                       Variable,
+                      std::vector<Variable>,
+                      std::vector<Variable>,
+                      std::vector<Variable>,
+                      std::vector<Variable>,
                       std::vector<Variable>,
                       std::vector<Variable>,
                       unsigned int,
                       unsigned int>(),
              "kMatrix resonance pdf",
              "name"_a,
-             "pterm"_a,
-             "is_pole"_a,
-             "beta1_r"_a,
-             "beta2_r"_a,
+             "a_r"_a,
+             "a_i"_a,
              "sA0"_a,
              "sA"_a,
              "s0_prod"_a,
              "s0_scatt"_a,
+             "beta_r"_a,
+             "beta_i"_a,
+             "f_prod_r"_a,
+             "f_prod_i"_a,
              "fscat"_a,
              "poles"_a,
              "L"_a,

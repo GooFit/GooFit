@@ -5,22 +5,22 @@
 
 namespace GooFit {
 
-__device__ fptype calculateEval(fptype rawPdf, fptype *evtVal, fptype norm) {
+__device__ auto calculateEval(fptype rawPdf, fptype *evtVal, fptype norm) -> fptype {
     // Just return the raw PDF value, for use in (eg) normalization.
     return rawPdf;
 }
 
-__device__ fptype calculateNLL(fptype rawPdf, fptype *evtVal, fptype norm) {
+__device__ auto calculateNLL(fptype rawPdf, fptype *evtVal, fptype norm) -> fptype {
     rawPdf *= norm;
     return rawPdf > 0.0 ? -log(rawPdf) : 0.0;
 }
 
-__device__ fptype calculateProb(fptype rawPdf, fptype *evtVal, fptype norm) {
+__device__ auto calculateProb(fptype rawPdf, fptype *evtVal, fptype norm) -> fptype {
     // Return probability, ie normalized PDF value.
     return rawPdf * norm;
 }
 
-__device__ fptype calculateBinAvg(fptype rawPdf, fptype *evtVal, fptype norm) {
+__device__ auto calculateBinAvg(fptype rawPdf, fptype *evtVal, fptype norm) -> fptype {
     // TODO:(brad) address these metric devices later
     rawPdf *= norm;
     rawPdf *= evtVal[1]; // Bin volume
@@ -35,7 +35,7 @@ __device__ fptype calculateBinAvg(fptype rawPdf, fptype *evtVal, fptype norm) {
     return 0;
 }
 
-__device__ fptype calculateBinWithError(fptype rawPdf, fptype *evtVal, fptype norm) {
+__device__ auto calculateBinWithError(fptype rawPdf, fptype *evtVal, fptype norm) -> fptype {
     // TODO:(brad) address these metric devices later
 
     // In this case interpret the rawPdf as just a number, not a number of events.
@@ -49,7 +49,7 @@ __device__ fptype calculateBinWithError(fptype rawPdf, fptype *evtVal, fptype no
     return rawPdf;
 }
 
-__device__ fptype calculateChisq(fptype rawPdf, fptype *evtVal, fptype norm) {
+__device__ auto calculateChisq(fptype rawPdf, fptype *evtVal, fptype norm) -> fptype {
     // TODO:(brad) address these metric devices later
     rawPdf *= norm;
     rawPdf *= evtVal[1]; // Bin volume
@@ -64,19 +64,33 @@ __device__ device_metric_ptr ptr_to_BinAvg       = calculateBinAvg;
 __device__ device_metric_ptr ptr_to_BinWithError = calculateBinWithError;
 __device__ device_metric_ptr ptr_to_Chisq        = calculateChisq;
 
-void *getMetricPointer(EvalFunc val) {
+// 211222 mds functionPtrToNameMap is declared in Globals.cpp
+// it is a map of the device pointer vaues to the names of the methods;
+// meant to be used for debugging/tracking logic; it is not used
+// in any calculations.
+
+// fill the map each time a host_fcn_ptr is created
+// so we can access the name later
+
+auto getMetricPointer(EvalFunc val) -> void * {
     if(val == EvalFunc::Eval) {
-        host_fcn_ptr = get_device_symbol_address(ptr_to_Eval);
+        host_fcn_ptr                       = get_device_symbol_address(ptr_to_Eval);
+        functionPtrToNameMap[host_fcn_ptr] = "calculateEval";
     } else if(val == EvalFunc::NLL) {
-        host_fcn_ptr = get_device_symbol_address(ptr_to_NLL);
+        host_fcn_ptr                       = get_device_symbol_address(ptr_to_NLL);
+        functionPtrToNameMap[host_fcn_ptr] = "calculateNLL";
     } else if(val == EvalFunc::Prob) {
-        host_fcn_ptr = get_device_symbol_address(ptr_to_Prob);
+        host_fcn_ptr                       = get_device_symbol_address(ptr_to_Prob);
+        functionPtrToNameMap[host_fcn_ptr] = "calculateProb";
     } else if(val == EvalFunc::BinAvg) {
-        host_fcn_ptr = get_device_symbol_address(ptr_to_BinAvg);
+        host_fcn_ptr                       = get_device_symbol_address(ptr_to_BinAvg);
+        functionPtrToNameMap[host_fcn_ptr] = "calculateBinAvg";
     } else if(val == EvalFunc::BinWithError) {
-        host_fcn_ptr = get_device_symbol_address(ptr_to_BinWithError);
+        host_fcn_ptr                       = get_device_symbol_address(ptr_to_BinWithError);
+        functionPtrToNameMap[host_fcn_ptr] = "calculateBinWithError";
     } else if(val == EvalFunc::Chisq) {
-        host_fcn_ptr = get_device_symbol_address(ptr_to_Chisq);
+        host_fcn_ptr                       = get_device_symbol_address(ptr_to_Chisq);
+        functionPtrToNameMap[host_fcn_ptr] = "calculateChisq";
     } else {
         throw GeneralError("Non-existent metric pointer choice");
     }

@@ -85,7 +85,7 @@ void filter_arguments(std::vector<Observable> &oblist,
 // This class never exists on the GPU
 
 class PdfBase {
-    friend std::ostream &operator<<(std::ostream &, const PdfBase &);
+    friend auto operator<<(std::ostream &, const PdfBase &) -> std::ostream &;
 
   protected:
     /// Runs once at the beginning of a run. Will always be called, so useful for setup. Inside things like fits, this
@@ -109,17 +109,21 @@ class PdfBase {
     /// This adds a parameter.
     void registerParameter(Variable var);
 
-    /// Remove a paramter
+    /// Remove a parameter
     void unregisterParameter(Variable var);
 
     /// Register a constant
     void registerConstant(fptype value);
 
-    /// Register a function for this PDF to use in evalution
+    /// Register a function for this PDF to use in evaluation
     template <typename T>
     void registerFunction(std::string name, const T &function) {
         reflex_name_  = name;
         function_ptr_ = get_device_symbol_address(function);
+        // add the following 211222 to keep track of the correspondence
+        // between function pointer values and their names to make
+        // debugging/tracking the executionn of the code easier.  mds
+        functionPtrToNameMap[function_ptr_] = name;
     }
 
     /// Register an observable (Usually done through constructor)
@@ -127,6 +131,15 @@ class PdfBase {
 
     /// Force all normalization values to 1
     void recursiveSetNormalization(fptype norm = 1.0, bool subpdf = false);
+
+    /// Report the status of the components, observablesList, etc.
+    /// added 2101023 mds for debugging
+    void status();
+    void status(std::string caller);
+    // for any Pdf object, print out its name, the name of its class,
+    // and the value of the corresponding device function pointer.
+    //  added 211026 for debugging
+    void listComponents();
 
   public:
     template <typename... Args>
@@ -148,8 +161,8 @@ class PdfBase {
 
     // Standard entry functions
 
-    virtual double calculateNLL() = 0;
-    virtual fptype normalize()    = 0;
+    virtual auto calculateNLL() -> double = 0;
+    virtual auto normalize() -> fptype    = 0;
 
     // TODO: Combine with pre_run and remove
     void initializeIndices();
@@ -157,45 +170,48 @@ class PdfBase {
     // TODO: Combine with pre_call and remove
     void copyParams();
 
-    std::string getName() const { return name; }
+    auto getName() const -> std::string { return name; }
 
-    std::vector<Observable> getObservables() const;
-    std::vector<Variable> getParameters() const;
-    Variable *getParameterByName(std::string n);
+    auto getObservables() const -> std::vector<Observable>;
+    auto getParameters() const -> std::vector<Variable>;
+    auto getParameterByName(std::string n) -> Variable *;
 
     // User level setup
 
     void setData(DataSet *data);
-    DataSet *getData() { return data_; }
+    auto getData() -> DataSet * { return data_; }
 
     virtual void setFitControl(std::shared_ptr<FitControl>) = 0;
+    //  for debugging, add a version with an argument that allows
+    //  us to track who called this method  mds 211220
+    virtual void setFitControl_A(std::shared_ptr<FitControl>, std::string caller) = 0;
 
     /// Override to indicate that this has an analytic integral
-    virtual bool hasAnalyticIntegral() const { return false; }
+    virtual auto hasAnalyticIntegral() const -> bool { return false; }
 
     /// Currently only 1D filling supported
     void fillMCDataSimple(size_t events, unsigned int seed = 0);
 
     /// RooFit style fitting shortcut
-    ROOT::Minuit2::FunctionMinimum fitTo(DataSet *data, int verbosity = 3);
+    auto fitTo(DataSet *data, int verbosity = 3) -> ROOT::Minuit2::FunctionMinimum;
 
     /// Even shorter fitting shortcut
-    ROOT::Minuit2::FunctionMinimum fit(int verbosity = 3);
+    auto fit(int verbosity = 3) -> ROOT::Minuit2::FunctionMinimum;
 
-    unsigned int getFunctionIndex() const { return functionIdx; }
-    unsigned int getParameterIndex() const { return parameters; }
+    auto getFunctionIndex() const -> unsigned int { return functionIdx; }
+    auto getParameterIndex() const -> unsigned int { return parameters; }
 
     void setNormalization(const fptype &v) {
         cachedNormalization                = v;
         host_normalizations[normalIdx + 1] = v;
     }
-    fptype getNormalization() const { return cachedNormalization; }
+    auto getNormalization() const -> fptype { return cachedNormalization; }
 
     /// Set a specific fineness for the integrator
     void setIntegrationFineness(int i);
 
     /// Have the parameters changed since last evaluation?
-    bool parametersChanged() const;
+    auto parametersChanged() const -> bool;
 
     void updateVariable(Variable v, fptype newValue);
     void updateParameters();
@@ -211,11 +227,12 @@ class PdfBase {
 
     void setCommonNorm(bool v = true) { commonNorm = v; };
     void setSeparateNorm(bool v = true) { separateNorm = v; };
-    bool getCommonNorm() const { return commonNorm; };
-    bool getSeparateNorm() const { return separateNorm; };
+    auto getCommonNorm() const -> bool { return commonNorm; };
+    auto getSeparateNorm() const -> bool { return separateNorm; };
+    auto getComponents() -> std::vector<PdfBase *> { return components; };
 
     /// Get the current PDF name
-    std::string getPdfName() const { return pdf_name_; }
+    auto getPdfName() const -> std::string { return pdf_name_; }
 
     bool areParamsandConstantsEqualByVal(const PdfBase& other) const;
    
@@ -264,6 +281,6 @@ class PdfBase {
     std::string name;
 };
 
-std::ostream &operator<<(std::ostream &, const PdfBase &);
+auto operator<<(std::ostream &, const PdfBase &) -> std::ostream &;
 
 } // namespace GooFit

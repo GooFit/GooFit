@@ -13,12 +13,14 @@ void init_GooPdf(py::module &m) {
         .def("get_bin_grid_volume", &GooPdf::get_bin_grid_volume)
         .def("reduce_with_bins", &GooPdf::reduce_with_bins)
         .def("normalize", &GooPdf::normalize)
-        .def("copyParams", (void (GooPdf::*)()) & GooPdf::copyParams)
+        .def("copyParams", (void(GooPdf::*)()) & GooPdf::copyParams)
         .def("normalize", &GooPdf::normalize)
         .def("makeGrid", &GooPdf::makeGrid)
         .def("evaluateAtPoints", &GooPdf::evaluateAtPoints)
         .def("setParameterConstantness", &GooPdf::setParameterConstantness)
         .def("hasAnalyticIntegral", &GooPdf::hasAnalyticIntegral)
+        .def("calculateNLL", &GooPdf::calculateNLL)
+        .def("scan", &GooPdf::scan)
         .def(
             "evaluatePdf",
             [](GooPdf &self, Observable &var) {

@@ -13,7 +13,7 @@ __constant__ fptype *dev_base_interhists[100]; // Multiple histograms for the ca
 
 // dev_powi is implemented in SmoothHistogramPdf.cu.
 
-__device__ fptype device_InterHistogram(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_InterHistogram(fptype *evt, ParameterContainer &pc) -> fptype {
     // Structure is
     // nP totalHistograms (idx1 limit1 step1 bins1) (idx2 limit2 step2 bins2) nO o1 o2
     // where limit and step are indices into functorConstants.
@@ -114,9 +114,9 @@ __device__ fptype device_InterHistogram(fptype *evt, ParameterContainer &pc) {
         }
 
         // Only interpolate the four closest boxes (in two dimensions; more in three dimensions).
-        currentWeight = currentWeight > 0
-                            ? (currentWeight <= sqrt(static_cast<fptype>(numVars)) ? 1 / sqrt(currentWeight) : 0)
-                            : 0;
+        currentWeight       = currentWeight > 0
+                                  ? (currentWeight <= sqrt(static_cast<fptype>(numVars)) ? 1 / sqrt(currentWeight) : 0)
+                                  : 0;
         fptype currentEntry = offSomeAxis ? 0 : myHistogram[currBin];
         ret += currentWeight * currentEntry;
         totalWeight += currentWeight;

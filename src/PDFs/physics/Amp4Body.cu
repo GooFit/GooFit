@@ -2,7 +2,7 @@
 04/05/2016 Christoph Hasse
 DISCLAIMER:
 
-This code is not sufficently tested yet and still under heavy development!
+This code is not sufficiently tested yet and still under heavy development!
 
 TODO:
 - Test lineshapes, only done for BW_DP and BW_MINT so far
@@ -50,7 +50,7 @@ class.
 namespace GooFit {
 
 // This function gets called by the GooFit framework to get the value of the PDF.
-__device__ fptype device_DP(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_DP(fptype *evt, ParameterContainer &pc) -> fptype {
     // printf("DalitzPlot evt %i zero: %i %i %f (%f, %f).\n", evtNum, numResonances, effFunctionIdx, eff, totalAmp.real,
     // totalAmp.imag);
 
@@ -340,11 +340,11 @@ __host__ void Amp4Body::populateArrays() {
     // TODO: We need to expand populateArrays so we handle components correctly!
     efficiencyFunction = host_function_table.size() - 1;
 }
-// makes the arrays to chache the lineshape values and spinfactors in CachedResSF and the values of the amplitudes in
+// makes the arrays to cache the lineshape values and spinfactors in CachedResSF and the values of the amplitudes in
 // cachedAMPs
 // I made the choice to have spinfactors necxt to the values of the lineshape in memory. I waste memory by doing this
 // because a spinfactor is saved as complex
-// It would be nice to test if this is better than having the spinfactors stored seperately.
+// It would be nice to test if this is better than having the spinfactors stored separately.
 __host__ void Amp4Body::setDataSize(unsigned int dataSize, unsigned int evtSize) {
     // Default 3 is m12, m13, evtNum for DP 2dim, 4-body decay has 5 independent vars plus evtNum = 6
     totalEventSize = evtSize;
@@ -395,7 +395,7 @@ __host__ void Amp4Body::setDataSize(unsigned int dataSize, unsigned int evtSize)
 }
 
 // this is where the actual magic happens. This function does all the calculations!
-__host__ fptype Amp4Body::normalize() {
+__host__ auto Amp4Body::normalize() -> fptype {
     recursiveSetNormalization(1.0); // Not going to normalize efficiency,
     // so set normalization factor to 1 so it doesn't get multiplied by zero.
     // Copy at this time to ensure that the SpecialResonanceCalculators, which need the efficiency,
@@ -561,9 +561,8 @@ __host__ fptype Amp4Body::normalize() {
     return ret;
 }
 
-__host__
-    std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h>
-    Amp4Body::GenerateSig(unsigned int numEvents, int seed) {
+__host__ auto Amp4Body::GenerateSig(unsigned int numEvents, int seed) -> std::
+    tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h> {
     // Must configure our functions before any calculations!
     // setupObservables();
     // setIndices();

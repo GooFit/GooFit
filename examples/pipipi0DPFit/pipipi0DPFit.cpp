@@ -4879,23 +4879,23 @@ void set_bkg_model_from_string() {
 }
 
 void parseArg(GooFit::App *app) {
-    app->add_option("--luckyFrac", luckyFrac, "", true);
-    app->add_option("--mesonRad", mesonRad, "", true);
-    app->add_option("--normBins", normBinning, "", true);
-    app->add_option("--blindSeed", blindSeed, "", true);
-    app->add_option("--mdslices", mdslices, "", true);
-    app->add_option("--offset", md0offset, "Offest in GeV", true);
+    app->add_option("--luckyFrac", luckyFrac);
+    app->add_option("--mesonRad", mesonRad);
+    app->add_option("--normBins", normBinning);
+    app->add_option("--blindSeed", blindSeed);
+    app->add_option("--mdslices", mdslices);
+    app->add_option("--offset", md0offset, "Offset in GeV");
     // Previously in MeV
-    app->add_option("--upper_window", md0_upper_window, "", true);
-    app->add_option("--lower_window", md0_lower_window, "", true);
-    app->add_option("--upper_delta_window", deltam_upper_window, "", true);
-    app->add_option("--lower_delta_window", deltam_lower_window, "", true);
-    app->add_option("--upperTime", upperTime, "", true);
-    app->add_option("--lowerTime", lowerTime, "", true);
-    app->add_option("--maxSigma", maxSigma, "", true);
-    app->add_option("--polyEff", polyEff, "", true);
-    app->add_option("--m23Slices", m23Slices, "", true);
-    app->add_option("--bkgRandSeed", bkgHistRandSeed, "", true);
+    app->add_option("--upper_window", md0_upper_window);
+    app->add_option("--lower_window", md0_lower_window);
+    app->add_option("--upper_delta_window", deltam_upper_window);
+    app->add_option("--lower_delta_window", deltam_lower_window);
+    app->add_option("--upperTime", upperTime);
+    app->add_option("--lowerTime", lowerTime);
+    app->add_option("--maxSigma", maxSigma);
+    app->add_option("--polyEff", polyEff);
+    app->add_option("--m23Slices", m23Slices);
+    app->add_option("--bkgRandSeed", bkgHistRandSeed);
 
     app->add_flag("--drop-rho_1450", drop_rho_1450);
     app->add_flag("--drop-rho_1700", drop_rho_1700);
@@ -4908,12 +4908,12 @@ void parseArg(GooFit::App *app) {
 
     app->add_flag("--histSigma", useHistogramSigma);
     app->add_flag("--makePlots", makePlots);
-    app->add_set("--mkg2Model", bkg2Model_str, {"histogram", "parameter", "sideband"}, "", true);
+    app->add_option("--mkg2Model", bkg2Model_str)->check(CLI::IsMember({"histogram", "parameter", "sideband"}));
     app->add_flag("--bkg3Hist", notUseBackground3Hist);
     app->add_flag("--bkg4Hist", notUseBackground4Hist);
-    app->add_option("--bkgHistBins", bkgHistBins, "", true);
-    app->add_option("--varyParameterUp", paramUp, "", true);
-    app->add_option("--varyParameterDn", paramDn, "", true);
+    app->add_option("--bkgHistBins", bkgHistBins);
+    app->add_option("--varyParameterUp", paramUp);
+    app->add_option("--varyParameterDn", paramDn);
     app->add_flag("--mikhail", mikhailSetup);
 }
 
@@ -4937,6 +4937,7 @@ int main(int argc, char **argv) {
     int retval = 0;
 
     GooFit::Application app("pipipi0 Dalitz fit example", argc, argv);
+    app.option_defaults()->always_capture_default();
     app_ptr = &app;
     app.require_subcommand();
 
@@ -4950,9 +4951,9 @@ int main(int argc, char **argv) {
     double dplotres    = 0;
 
     auto toy = app.add_subcommand("toy", "Toy MC Performance evaluation");
-    toy->add_option("-s,--sample,sample", sample, "Sample number to use", true);
-    toy->add_option("-l,--load,load", load, "Number of times to load", true);
-    toy->add_option("-m,--max", maxEvents, "Maximum number of events to read", true);
+    toy->add_option("-s,--sample,sample", sample, "Sample number to use");
+    toy->add_option("-l,--load,load", load, "Number of times to load");
+    toy->add_option("-m,--max", maxEvents, "Maximum number of events to read");
     toy->add_flag("-p,--plot", plots, "Also make plots");
     toy->callback([&]() { retval = runToyFit(sample, load, plots); });
 
@@ -4966,7 +4967,7 @@ int main(int argc, char **argv) {
     sigma_fit->callback([&]() { retval = runSigmaFit(data.c_str()); });
 
     auto efficiency_fit = app.add_subcommand("efficiency", "Run efficiency fit");
-    efficiency_fit->add_option("-s,--sample,sample", sample, "Sample number to use", true);
+    efficiency_fit->add_option("-s,--sample,sample", sample, "Sample number to use");
     efficiency_fit->callback([&]() { retval = runEfficiencyFit(sample); });
 
     auto canonical_fit = app.add_subcommand("canonical", "Run the canonical fit");
@@ -4978,7 +4979,7 @@ int main(int argc, char **argv) {
     });
 
     auto background_dalitz_fit = app.add_subcommand("background_dalitz", "Run the background Dalitz fit");
-    background_dalitz_fit->add_option("-s,--sample,sample", sample, "Sample number to use", true);
+    background_dalitz_fit->add_option("-s,--sample,sample", sample, "Sample number to use");
     parseArg(background_dalitz_fit);
     background_dalitz_fit->callback([&]() {
         set_bkg_model_from_string();
@@ -4986,11 +4987,11 @@ int main(int argc, char **argv) {
     });
 
     auto background_sigma_fit = app.add_subcommand("background_sigma", "Run background sigma fit");
-    background_sigma_fit->add_option("-s,--sample,sample", sample, "Sample number to use", true);
+    background_sigma_fit->add_option("-s,--sample,sample", sample, "Sample number to use");
     background_sigma_fit->callback([&]() { retval = runBackgroundSigmaFit(sample); });
 
     auto write_background_histograms = app.add_subcommand("background_histograms", "Write background histograms");
-    write_background_histograms->add_option("-s,--sample,sample", sample, "Sample number to use", true);
+    write_background_histograms->add_option("-s,--sample,sample", sample, "Sample number to use");
     write_background_histograms->callback([&]() { writeBackgroundHistograms(sample); });
 
     auto run_gen_mc_fit = app.add_subcommand("run_gen_mc", "Run generated Monte Carlo fit");

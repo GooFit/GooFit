@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 set -evx
 
 pushd "${DEPS_DIR}"

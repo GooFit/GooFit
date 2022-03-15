@@ -40,24 +40,24 @@ class DataSet {
         addEvent();
     }
 
-    const std::vector<Observable> &getObservables() const;
+    auto getObservables() const -> const std::vector<Observable> &;
 
-    size_t numVariables() const { return observables.size(); }
+    auto numVariables() const -> size_t { return observables.size(); }
 
-    size_t getNumEvents() const { return numEventsAdded; }
+    auto getNumEvents() const -> size_t { return numEventsAdded; }
 
-    std::string getName() const { return name; }
+    auto getName() const -> std::string { return name; }
 
   protected:
-    std::vector<fptype> getCurrentValues() const;
-    size_t indexOfVariable(const Observable &var) const;
+    auto getCurrentValues() const -> std::vector<fptype>;
+    auto indexOfVariable(const Observable &var) const -> size_t;
     size_t numEventsAdded{0};
 
     /// Throw an error if any variables are out of range, call in addEvent
     void checkAllVars() const;
 
   private:
-    /// Make a name, does not change the exising name. Called by all constructors.
+    /// Make a name, does not change the existing name. Called by all constructors.
     void generateName();
 
     std::string name;

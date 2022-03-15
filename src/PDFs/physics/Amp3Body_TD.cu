@@ -30,14 +30,14 @@ const unsigned int SPECIAL_RESOLUTION_FLAG = 999999999;
 // NOTE: only one set of wave holders is supported currently.
 __device__ WaveHolder_s *cWaves[16];
 
-__device__ inline int parIndexFromResIndex(int resIndex) { return resonanceOffset + resIndex * resonanceSize; }
+__device__ inline auto parIndexFromResIndex(int resIndex) -> int { return resonanceOffset + resIndex * resonanceSize; }
 
-__device__ fpcomplex getResonanceAmplitude(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) {
+__device__ auto getResonanceAmplitude(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) -> fpcomplex {
     auto func = reinterpret_cast<resonance_function_ptr>(d_function_table[pc.funcIdx]);
     return (*func)(m12, m13, m23, pc);
 }
 
-__device__ fptype device_Tddp(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_Tddp(fptype *evt, ParameterContainer &pc) -> fptype {
     int num_parameters  = pc.getNumParameters();
     int num_constants   = pc.getNumConstants();
     int num_observables = pc.getNumObservables();
@@ -247,6 +247,7 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
     MEMCPY_TO_SYMBOL(c_daug2Mass, &decay.daug2Mass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(c_daug3Mass, &decay.daug3Mass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(c_meson_radius, &decay.meson_radius, sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(c_mother_meson_radius, &decay.mother_meson_radius, sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
     registerParameter(decay._tau);
     registerParameter(decay._xmixing);
@@ -339,6 +340,7 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
     MEMCPY_TO_SYMBOL(c_daug2Mass, &decay.daug2Mass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(c_daug3Mass, &decay.daug3Mass, sizeof(fptype), 0, cudaMemcpyHostToDevice);
     MEMCPY_TO_SYMBOL(c_meson_radius, &decay.meson_radius, sizeof(fptype), 0, cudaMemcpyHostToDevice);
+    MEMCPY_TO_SYMBOL(c_mother_meson_radius, &decay.mother_meson_radius, sizeof(fptype), 0, cudaMemcpyHostToDevice);
 
     registerParameter(decay._tau);
     registerParameter(decay._xmixing);
@@ -517,7 +519,7 @@ __host__ void Amp3Body_TD::setDataSize(unsigned int dataSize, unsigned int evtSi
     setForceIntegrals();
 }
 
-__host__ fptype Amp3Body_TD::normalize() {
+__host__ auto Amp3Body_TD::normalize() -> fptype {
     recursiveSetNormalization(1.0); // Not going to normalize efficiency,
     // so set normalization factor to 1 so it doesn't get multiplied by zero.
     // Copy at this time to ensure that the SpecialWaveCalculators, which need the efficiency,

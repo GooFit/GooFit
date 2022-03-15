@@ -11,7 +11,7 @@
 namespace GooFit {
 
 // This function is modeled after BW_BW::getVal() in BW_BW.cpp from the MINT package written by Jonas Rademacker.
-__device__ fpcomplex BW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
+__device__ auto BW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) -> fpcomplex {
     fptype resmass       = pc.getParameter(0);
     fptype reswidth      = pc.getParameter(1);
     unsigned int orbital = pc.getConstant(1);
@@ -69,7 +69,7 @@ __device__ fpcomplex BW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &
 }
 
 // This function is modeled after SBW from the MINT package written by Jonas Rademacker.
-__device__ fpcomplex SBW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
+__device__ auto SBW(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) -> fpcomplex {
     fptype resmass       = pc.getParameter(0);
     fptype reswidth      = pc.getParameter(1);
     unsigned int orbital = pc.getConstant(1);
@@ -115,7 +115,7 @@ __device__ fpcomplex SBW(fptype Mpair, fptype m1, fptype m2, ParameterContainer 
     return ret;
 }
 
-__device__ fpcomplex lass_MINT(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
+__device__ auto lass_MINT(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) -> fpcomplex {
     fptype resmass  = pc.getParameter(0);
     fptype reswidth = pc.getParameter(1);
     fptype rMass2   = Mpair * Mpair;

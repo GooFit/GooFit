@@ -30,8 +30,8 @@ place.
 class ProdPdf : public CombinePdf {
   public:
     ProdPdf(std::string n, std::vector<PdfBase *> comps);
-    __host__ fptype normalize() override;
-    __host__ bool hasAnalyticIntegral() const override { return false; }
+    __host__ auto normalize() -> fptype override;
+    __host__ auto hasAnalyticIntegral() const -> bool override { return false; }
 
   private:
     bool varOverlaps; // True if any components share an observable.

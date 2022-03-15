@@ -78,7 +78,7 @@ void *get_device_symbol_address(const T &symbol) {
 
 namespace GooFit {
 template <typename T>
-void *get_device_symbol_address(const T &symbol) {
+auto get_device_symbol_address(const T &symbol) -> void * {
     return reinterpret_cast<void *>(symbol);
 }
 } // namespace GooFit
@@ -110,7 +110,7 @@ void *get_device_symbol_address(const T &symbol) {
 #define THREAD_SYNCH __syncthreads();
 #endif
 
-// CUDA errors (only needed for explicit memory tranfers)
+// CUDA errors (only needed for explicit memory transfers)
 // For CUDA case, just use existing errors
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
 #include <driver_types.h>
@@ -119,8 +119,8 @@ enum cudaError_t { cudaSuccess, cudaErrorMemoryAllocation };
 #endif
 
 namespace GooFit {
-cudaError_t gooMalloc(void **target, size_t bytes);
-cudaError_t gooFree(void *ptr);
+auto gooMalloc(void **target, size_t bytes) -> cudaError_t;
+auto gooFree(void *ptr) -> cudaError_t;
 
 // Allow a switch to control single vs. double precision
 #ifndef GOOFIT_SINGLES
@@ -145,7 +145,7 @@ typedef float fptype;
 // Add rsqrt for everyone
 #if !defined(__CUDA_ARCH__) || (__CUDA_ARCH__ < 350)
 template <typename T>
-__host__ __device__ T rsqrt(T val) {
+__host__ __device__ auto rsqrt(T val) -> T {
     return 1.0 / sqrt(val);
 }
 #endif

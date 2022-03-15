@@ -1,25 +1,23 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, division
+from __future__ import division, print_function
 
 # Standard library stuff
 import re
 import warnings
-from time import time
 from contextlib import contextmanager
+from time import time
+
+# Protect the matplotlib call for systems with no graphics
+import matplotlib
+import numpy as np
 
 # GooFit package
 from goofit import *
 
-import numpy as np
-
-# Protect the matplotlib call for systems with no graphics
-import matplotlib
-
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-
 
 try:
     import uncertainties as unc
@@ -44,6 +42,7 @@ except ImportError:
         "Numba not found, will be 100x slower. Try `pip install numba` to install.",
         RuntimeWarning,
     )
+
 
 # Simple timer in a context manager
 @contextmanager
@@ -108,7 +107,7 @@ def produce_hist(rsEvts, wsEvts):
     ratio = wsEvts / rsEvts
     wsEvts[wsEvts == 0] = 1  # Avoid zero errors
 
-    error = np.sqrt(wsEvts / rsEvts ** 2 + wsEvts ** 2 / rsEvts ** 3)
+    error = np.sqrt(wsEvts / rsEvts**2 + wsEvts**2 / rsEvts**3)
     return ratio, error
 
 

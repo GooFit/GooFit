@@ -7,7 +7,7 @@
 
 namespace GooFit {
 
-__device__ fpcomplex nonres_DP(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
+__device__ auto nonres_DP(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) -> fpcomplex {
     unsigned int orbital = pc.getConstant(1);
     fptype meson_radius  = pc.getConstant(2);
 

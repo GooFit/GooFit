@@ -7,13 +7,13 @@
 
 namespace GooFit {
 
-__device__ fpcomplex aSqrtTerm(const fptype &m0, const fptype &m) {
+__device__ auto aSqrtTerm(const fptype &m0, const fptype &m) -> fpcomplex {
     fptype a2           = 1 - (2 * m0 / m) * (2 * m0 / m);
     fpcomplex returnVal = a2 > 0 ? fpcomplex(sqrt(a2), 0) : fpcomplex(0, sqrt(-a2));
     return returnVal;
 }
 
-__device__ fpcomplex Flatte_MINT(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) {
+__device__ auto Flatte_MINT(fptype Mpair, fptype m1, fptype m2, ParameterContainer &pc) -> fpcomplex {
     unsigned int orbital = pc.getConstant(1);
     fptype meson_radius  = pc.getConstant(2);
     fptype resmass       = pc.getParameter(0);

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 try:
     from skbuild import setup
 except ImportError:
@@ -18,7 +19,7 @@ ITEMS = [
 # Add GOOFIT_* from env.
 for item in os.environ:
     if item.startswith("GOOFIT_"):
-        ITEMS.append("-D{0}={1}".format(item, os.environ[item]))
+        ITEMS.append("-D{}={}".format(item, os.environ[item]))
 
 
 setup(
@@ -30,23 +31,6 @@ setup(
     url="https://goofit.github.io",
     platforms=["POSIX"],
     provides=["goofit"],
-    install_requires=["numpy>=1.11.1",],
-    classifiers=[
-        "Development Status :: 5 - Production/Stable",
-        "Intended Audience :: Science/Research",
-        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
-        "Natural Language :: English",
-        "Operating System :: Unix",
-        "Programming Language :: C++",
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
-        "Topic :: Scientific/Engineering :: Physics",
-    ],
     cmake_args=ITEMS,
     license="LGPL 3.0",
     packages=["goofit"],
@@ -106,7 +90,7 @@ The lines above use environment variables; GooFit will find any environment vari
 Installation: local
 ===================
 
-If you want to add PDFs to GooFit, or use GooFit pacakges, you should be working in a local directory using git. In the following example, I'm assuming you've set up SSH keys with GitHub; you can use https instead if you prefer by changing the URL to ``https://github.com/GooFit/GooFit.git``::
+If you want to add PDFs to GooFit, or use GooFit packages, you should be working in a local directory using git. In the following example, I'm assuming you've set up SSH keys with GitHub; you can use https instead if you prefer by changing the URL to ``https://github.com/GooFit/GooFit.git``::
 
     git clone --recursive git@github.com:GooFit/GooFit.git
     cd goofit

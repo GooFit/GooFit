@@ -5,7 +5,7 @@
 
 namespace GooFit {
 
-__device__ fptype device_Polynomial(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_Polynomial(fptype *evt, ParameterContainer &pc) -> fptype {
     int id = pc.getObservable(0);
     // Structure is nP lowestdegree c1 c2 c3 nO o1
 
@@ -25,7 +25,7 @@ __device__ fptype device_Polynomial(fptype *evt, ParameterContainer &pc) {
     return ret;
 }
 
-__device__ fptype device_OffsetPolynomial(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_OffsetPolynomial(fptype *evt, ParameterContainer &pc) -> fptype {
     int id = pc.getObservable(0);
 
     int numParams    = pc.getNumParameters();
@@ -44,7 +44,7 @@ __device__ fptype device_OffsetPolynomial(fptype *evt, ParameterContainer &pc) {
     return ret;
 }
 
-__device__ fptype device_MultiPolynomial(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_MultiPolynomial(fptype *evt, ParameterContainer &pc) -> fptype {
     int num_constants  = pc.getNumConstants();
     int num_parameters = pc.getNumParameters();
     // Structure is nP, maxDegree, offset1, offset2, ..., coeff1, coeff2, ..., nO, o1, o2, ...
@@ -209,7 +209,7 @@ __host__ PolynomialPdf::PolynomialPdf(std::string n,
     initialize();
 }
 
-__host__ fptype PolynomialPdf::integrate(fptype lo, fptype hi) const {
+__host__ auto PolynomialPdf::integrate(fptype lo, fptype hi) const -> fptype {
     // This is *still* wrong. (13 Feb 2013.)
     fptype lowestDegree = host_constants[constantsIdx + 1];
 
@@ -231,7 +231,7 @@ __host__ fptype PolynomialPdf::integrate(fptype lo, fptype hi) const {
     return ret;
 }
 
-__host__ fptype PolynomialPdf::getCoefficient(int coef) {
+__host__ auto PolynomialPdf::getCoefficient(int coef) -> fptype {
     // NB! This function only works for single polynomials.
     if(1 != observablesList.size()) {
         std::cout << "Warning: getCoefficient method of PolynomialPdf not implemented for multi-dimensional "

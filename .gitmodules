@@ -33,7 +33,7 @@
 	url = ../../GooFit/MCBooster.git
 [submodule "extern/Eigen"]
 	path = extern/Eigen
-	url = ../../eigenteam/eigen-git-mirror.git
+	url = https://gitlab.com/libeigen/eigen.git
 [submodule "extern/modern_cmake"]
 	path = extern/modern_cmake
 	url = ../../CLIUtils/modern_cmake.git

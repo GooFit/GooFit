@@ -12,8 +12,8 @@ namespace GooFit {
 
 NormIntegrator_TD::NormIntegrator_TD() = default;
 
-__device__ thrust::tuple<fptype, fptype, fptype, fptype> NormIntegrator_TD::
-operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const {
+__device__ auto NormIntegrator_TD::operator()(thrust::tuple<int, int, fptype *, fpcomplex *> t) const
+    -> thrust::tuple<fptype, fptype, fptype, fptype> {
     // unsigned int *indices = paramIndices + _parameters;
     // unsigned int totalAMP = indices[5];
 

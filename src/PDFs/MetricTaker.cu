@@ -14,7 +14,7 @@
 
 namespace GooFit {
 
-__device__ fptype MetricTaker::operator()(thrust::tuple<int, fptype *, int> t) const {
+__device__ auto MetricTaker::operator()(thrust::tuple<int, fptype *, int> t) const -> fptype {
     ParameterContainer pc;
 
     // Calculate event offset for this thread.
@@ -45,7 +45,7 @@ __device__ fptype MetricTaker::operator()(thrust::tuple<int, fptype *, int> t) c
 
 #define MAX_NUM_OBSERVABLES 10
 
-__device__ fptype MetricTaker::operator()(thrust::tuple<int, int, fptype *> t) const {
+__device__ auto MetricTaker::operator()(thrust::tuple<int, int, fptype *> t) const -> fptype {
     ParameterContainer pc;
 
     int evtSize   = thrust::get<1>(t);

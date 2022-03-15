@@ -2,7 +2,7 @@
 04/05/2016 Christoph Hasse
 DISCLAIMER:
 
-This code is not sufficently tested yet and still under heavy development!
+This code is not sufficiently tested yet and still under heavy development!
 See *.cu file for more details
 */
 
@@ -57,15 +57,9 @@ class SpinFactor final : public AmpComponent {
         // host_indices[parameters + 1] = idx;
     }
 
-    bool operator==(const SpinFactor &S) const {
-        return 
-	(S.getName() == getName() 
-	 and S._SF == _SF 
-	 and S._P0 == _P0 
-	 and S._P1 == _P1 
-	 and S._P2 == _P2
-	 and S._P3 == _P3
-	 and this->areParamsandConstantsEqualByVal(S));
+    auto operator==(const SpinFactor &S) const -> bool {
+        return (S.getName() == getName() and S._SF == _SF and S._P0 == _P0 and S._P1 == _P1 and S._P2 == _P2
+                and S._P3 == _P3 and this->areParamsandConstantsEqualByVal(S));
     }
 };
 

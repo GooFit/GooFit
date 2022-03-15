@@ -9,7 +9,7 @@ SpecialResonanceCalculator::SpecialResonanceCalculator(int pIdx, unsigned int re
     : resonance_i(res_idx)
     , parameters(pIdx) {}
 
-__device__ fpcomplex SpecialResonanceCalculator::operator()(thrust::tuple<int, fptype *, int> t) const {
+__device__ auto SpecialResonanceCalculator::operator()(thrust::tuple<int, fptype *, int> t) const -> fpcomplex {
     // Calculates the BW values for a specific resonance.
     fpcomplex ret;
     int evtNum  = thrust::get<0>(t);
@@ -29,6 +29,8 @@ __device__ fpcomplex SpecialResonanceCalculator::operator()(thrust::tuple<int, f
     if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass))
         return ret;
 
+    // m12, m23 and m13 stand for the squared invariant masses.
+    // Now fixed.
     fptype m23 = c_motherMass * c_motherMass + c_daug1Mass * c_daug1Mass + c_daug2Mass * c_daug2Mass
                  + c_daug3Mass * c_daug3Mass - m12 - m13;
 

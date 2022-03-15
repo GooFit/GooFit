@@ -1,9 +1,11 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 from __future__ import print_function
 
-from plumbum import local, cli
 import re
+
+from plumbum import cli
 
 expr = re.compile(r"#include")
 

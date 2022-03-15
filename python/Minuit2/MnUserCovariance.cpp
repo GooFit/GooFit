@@ -14,8 +14,7 @@ void init_MnUserCovariance(py::module &m) {
     py::class_<MnUserCovariance>(m, "MnUserCovariance")
         .def("Nrow", &MnUserCovariance::Nrow)
         .def("size", &MnUserCovariance::size)
-        .def("__call__",
-             (double (MnUserCovariance::*)(unsigned int, unsigned int) const) & MnUserCovariance::operator())
+        .def("__call__", (double(MnUserCovariance::*)(unsigned int, unsigned int) const) & MnUserCovariance::operator())
         .def("to_matrix", [](const MnUserCovariance &self) {
             size_t n = self.Nrow();
             py::array_t<double> matrix({n, n});

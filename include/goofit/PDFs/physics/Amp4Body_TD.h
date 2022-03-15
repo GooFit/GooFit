@@ -2,7 +2,7 @@
 04/05/2016 Christoph Hasse
 DISCLAIMER:
 
-This code is not sufficently tested yet and still under heavy development!
+This code is not sufficiently tested yet and still under heavy development!
 See *.cu file for more details
 */
 
@@ -67,7 +67,7 @@ class Amp4Body_TD final : public Amp4BodyBase {
 			 long normSeed,
 			 unsigned int numNormEventsToGen);
 
-    __host__ fptype normalize() override;
+    __host__ auto normalize() -> fptype override;
 
     __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 8);
 
@@ -75,13 +75,14 @@ class Amp4Body_TD final : public Amp4BodyBase {
 
     __host__ int getNumAccNormEvents() const;
 
+    
+    __host__ auto getMCevents() -> int { return MCevents; }
     __host__ void setGenerationOffset(int off) { generation_offset = off; }
 
     __host__ void setMaxWeight(fptype wmax) { maxWeight = wmax; }
 
-    __host__ std::
-        tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::BoolVector_h>
-        GenerateSig(unsigned int numEvents, int seed = 0);
+    __host__ auto GenerateSig(unsigned int numEvents, int seed = 0) -> std::
+        tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::BoolVector_h>;
 
     __host__ void populateArrays() override;
 

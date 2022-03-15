@@ -2,7 +2,7 @@
 04/05/2016 Christoph Hasse
 DISCLAIMER:
 
-This code is not sufficently tested yet and still under heavy development!
+This code is not sufficiently tested yet and still under heavy development!
 
 TODO:
 - Test lineshapes, only done for BW_DP and BW_MINT so far
@@ -61,7 +61,7 @@ struct genExp {
         : gamma(d)
         , offset(c){};
 
-    __host__ __device__ fptype operator()(unsigned int x) const {
+    __host__ __device__ auto operator()(unsigned int x) const -> fptype {
         thrust::random::default_random_engine rand(1431655765);
         thrust::uniform_real_distribution<fptype> dist(0, 1);
 
@@ -80,7 +80,7 @@ struct exp_functor {
         , gammamin(gammamin)
         , wmax(wmax) {}
 
-    __device__ fptype operator()(thrust::tuple<unsigned int, fptype, fptype *, unsigned int> t) {
+    __device__ auto operator()(thrust::tuple<unsigned int, fptype, fptype *, unsigned int> t) -> fptype {
         int evtNum  = thrust::get<0>(t);
         fptype *evt = thrust::get<2>(t) + (evtNum * thrust::get<3>(t));
         // unsigned int *indices = paramIndices + tmpparam;
@@ -158,7 +158,7 @@ First entries are the starting points in array, necessary, because number of Lin
 // __constant__ unsigned int AmpIndices_TD[100];
 
 // This function gets called by the GooFit framework to get the value of the PDF.
-__device__ fptype device_Amp4Body_TD(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_Amp4Body_TD(fptype *evt, ParameterContainer &pc) -> fptype {
     // printf("DalitzPlot evt %i zero: %i %i %f (%f, %f).\n", evtNum, numResonances, effFunctionIdx, eff, totalAmp.real,
     // totalAmp.imag);
 
@@ -577,7 +577,7 @@ __host__ void Amp4Body_TD::populateArrays() {
 // _cachedAMPs
 // I made the choice to have spinfactors necxt to the values of the lineshape in memory. I waste memory by doing this
 // because a spinfactor is saved as complex
-// It would be nice to test if this is better than having the spinfactors stored seperately.
+// It would be nice to test if this is better than having the spinfactors stored separately.
 __host__ void Amp4Body_TD::setDataSize(unsigned int dataSize, unsigned int evtSize) {
     // Default 3 is m12, m13, evtNum for DP 2dim, 4-body decay has 5 independent vars plus evtNum = 6
     _totalEventSize = evtSize;
@@ -759,7 +759,7 @@ __host__ int Amp4Body_TD::getNumAccNormEvents() const
 
 
 // this is where the actual magic happens. This function does all the calculations!
-__host__ fptype Amp4Body_TD::normalize() 
+__host__ auto Amp4Body_TD::normalize() -> fptype 
 {
   if(_cachedResSF == nullptr)
     throw GeneralError("You must call dp.setDataSize(currData.getNumEvents(), N) first!");
@@ -850,9 +850,8 @@ __host__ std::vector<unsigned int> Amp4Body_TD::getLSFunctionIndices() const
 }
 
 
-__host__
-    std::tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::BoolVector_h>
-    Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) {
+__host__ auto Amp4Body_TD::GenerateSig(unsigned int numEvents, int seed) -> std::
+    tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::BoolVector_h> {
     initialize();
     copyParams();
 

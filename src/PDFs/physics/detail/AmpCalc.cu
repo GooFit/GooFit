@@ -11,7 +11,7 @@ AmpCalc::AmpCalc(unsigned int nPerm, unsigned int amp)
     : _nPerm(nPerm)
     , _AmpIdx(amp) {}
 
-__device__ fpcomplex AmpCalc::operator()(thrust::tuple<int, fptype *, int> t) const {
+__device__ auto AmpCalc::operator()(thrust::tuple<int, fptype *, int> t) const -> fpcomplex {
     ParameterContainer pc;
 
     while(pc.funcIdx < dalitzFuncId)

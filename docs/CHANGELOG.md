@@ -6,11 +6,13 @@
 * 3-body preliminary kMatrix [#209][]
 * 3 gauss resolution updates (now has one extra param) [#218][]
 * LASS parameters now settable [#218][]
+* Changed to Level to GlobalLevel for ROOT 2.24 [#266][]
 
 [#218]: https://github.com/GooFit/GooFit/pull/218
 [#209]: https://github.com/GooFit/GooFit/pull/209
 [#240]: https://github.com/GooFit/GooFit/pull/240
 [#241]: https://github.com/GooFit/GooFit/pull/241
+[#266]: https://github.com/GooFit/GooFit/pull/266
 
 ## v2.2.3: Python builds
 ## January 31, 2020
@@ -230,7 +232,7 @@ GooFit has received a few bugfixes that needed to be made available before the 2
 #### December 7, 2017
 
 
-GooFit now has working, fully supported Python bindings using PyBind11. All PDFs have been bound ([#92]). Python bindings now build by default if Python development files are found ([#93]). Pythonization additions, such as supporting the same shortcuts for Variables as C++, from/to numpy converters, and more, was added in ([#99], [#109]). Pip install is now supported using SciKit-Build, and source releases are being made on PyPI ([#107]). The build will use CUDA if found, and OpenMP otherwise.
+GooFit now has working, fully supported Python bindings using pybind11. All PDFs have been bound ([#92]). Python bindings now build by default if Python development files are found ([#93]). Pythonization additions, such as supporting the same shortcuts for Variables as C++, from/to NumPy converters, and more, was added in ([#99], [#109]). Pip install is now supported using SciKit-Build, and source releases are being made on PyPI ([#107]). The build will use CUDA if found, and OpenMP otherwise.
 Many examples converted ([#118], [#120], [#126])
 
 
@@ -337,7 +339,7 @@ GooFit 2.0 will receive continuing support while development on GooFit 2.1 press
 * Support for Minuit2 (default and available without ROOT) joins Minuit1, rebuilt fitters provide better output and automatic timing information
 * CountingVariable added for MPI ready event numbers
 * Added MPI support in [PR 51](https://github.com/GooFit/GooFit/pull/51), supporting multiple GPUs per node and multiple nodes
-* Added preliminary Python bindings using [PyBind11](http://pybind11.readthedocs.io/en/master/)
+* Added preliminary Python bindings using [pybind11](http://pybind11.readthedocs.io/en/master/)
 * Started a new tutorial series, [GooFit 2torial](https://henryiii.gitbooks.io/goofit/content/), to replace [GooTorial](https://github.com/GooFit/GooTorial)
 * Added a changelog and version information
 

@@ -1,16 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, division
+from __future__ import division, print_function
+
+import os
+
+import numpy as np
 
 from goofit import *
-import numpy as np
-import os
 
 print_goofit_info()
 
 GDIR = os.path.dirname(os.path.abspath(__file__))
-for i in range(2):
+for _ in range(2):
     GDIR = os.path.dirname(GDIR)  # up to goofit dir
 
 # Constants used in more than one PDF component.

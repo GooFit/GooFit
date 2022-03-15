@@ -46,7 +46,7 @@ class Lineshape : public AmpComponent {
 
     virtual std::ostream& print(std::ostream& out) const;
 
-    bool operator==(const Lineshape &L) const 
+    auto operator==(const Lineshape &L) const -> bool
     { 
       //bool namesEqual = this->getName() == L.getName();
       //std::cout << "Names equal? " << namesEqual << std::endl;

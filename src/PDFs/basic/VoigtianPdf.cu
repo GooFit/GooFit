@@ -48,7 +48,7 @@ __constant__ fptype e2[12] = {0.7551038420890235,
                               1.733038792213266e-15,
                               2.709954036083074e-18};
 
-__device__ fpcomplex device_Faddeeva_2(const fpcomplex &z) {
+__device__ auto device_Faddeeva_2(const fpcomplex &z) -> fpcomplex {
     fptype *n, *e, t, u, r, s, d, f, g, h;
     fpcomplex c, d2, v;
     int i;
@@ -275,7 +275,7 @@ __device__ fpcomplex device_Faddeeva_2(const fpcomplex &z) {
 }
 #endif
 
-__device__ fptype device_Voigtian(fptype *evt, ParameterContainer &pc) {
+__device__ auto device_Voigtian(fptype *evt, ParameterContainer &pc) -> fptype {
     int id = pc.getObservable(0);
 
     fptype x = RO_CACHE(evt[id]);

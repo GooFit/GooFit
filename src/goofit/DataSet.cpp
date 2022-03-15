@@ -37,7 +37,7 @@ void DataSet::addWeightedEvent(fptype) {
     throw GooFit::GeneralError("AddWeightedEvent not implemented for this type of DataSet");
 }
 
-std::vector<fptype> DataSet::getCurrentValues() const {
+auto DataSet::getCurrentValues() const -> std::vector<fptype> {
     std::vector<fptype> values;
 
     for(const Observable &v : observables) {
@@ -47,9 +47,9 @@ std::vector<fptype> DataSet::getCurrentValues() const {
     return values;
 }
 
-const std::vector<Observable> &DataSet::getObservables() const { return observables; }
+auto DataSet::getObservables() const -> const std::vector<Observable> & { return observables; }
 
-size_t DataSet::indexOfVariable(const Observable &var) const {
+auto DataSet::indexOfVariable(const Observable &var) const -> size_t {
     for(size_t i = 0; i < observables.size(); ++i)
         if(var == observables[i])
             return i;

@@ -53,49 +53,49 @@ class Uncertain {
         : Uncertain(val.getValue(), val.getError()) {}
 
     // Class getters
-    fptype get_value() const { return m_value; }
+    auto get_value() const -> fptype { return m_value; }
 
-    fptype get_uncertainty() const { return m_uncertainty; }
+    auto get_uncertainty() const -> fptype { return m_uncertainty; }
 
-    fptype get_relative_uncertainty() const { return m_uncertainty / m_value; }
+    auto get_relative_uncertainty() const -> fptype { return m_uncertainty / m_value; }
 
     // Equality operators
-    bool operator==(const Uncertain &other) const {
+    auto operator==(const Uncertain &other) const -> bool {
         return (m_value == other.m_value) && (m_uncertainty == other.m_uncertainty);
     }
 
-    bool operator!=(const Uncertain &other) const { return !operator==(other); }
+    auto operator!=(const Uncertain &other) const -> bool { return !operator==(other); }
 
     // Arithmetic operators
-    Uncertain operator+(const Uncertain &other) const {
+    auto operator+(const Uncertain &other) const -> Uncertain {
         return {m_value + other.m_value, m_uncertainty + other.m_uncertainty};
     }
 
-    Uncertain operator-(const Uncertain &other) const {
+    auto operator-(const Uncertain &other) const -> Uncertain {
         return {m_value - other.m_value, m_uncertainty + other.m_uncertainty};
     }
 
-    Uncertain operator*(const Uncertain &other) const {
+    auto operator*(const Uncertain &other) const -> Uncertain {
         return {m_value * other.m_value, get_relative_uncertainty() + other.get_relative_uncertainty()};
     }
 
     /// Allow int and float multiplies
-    Uncertain operator*(fptype other) const { return {m_value * other, m_uncertainty * other}; }
+    auto operator*(fptype other) const -> Uncertain { return {m_value * other, m_uncertainty * other}; }
 
-    Uncertain operator/(const Uncertain &other) const {
+    auto operator/(const Uncertain &other) const -> Uncertain {
         return {m_value / other.m_value, get_relative_uncertainty() + other.get_relative_uncertainty()};
     }
 
-    Uncertain operator/(const fptype &other) const { return {m_value / other, m_uncertainty / other}; }
+    auto operator/(const fptype &other) const -> Uncertain { return {m_value / other, m_uncertainty / other}; }
 };
 
 /// Allow int and float multiplies
-inline Uncertain operator*(fptype other, const Uncertain &self) {
+inline auto operator*(fptype other, const Uncertain &self) -> Uncertain {
     return {self.get_value() * other, self.get_uncertainty() * other};
 }
 
 /// Simple << output, will also support fmt printout
-inline std::ostream &operator<<(std::ostream &stream, Uncertain value) {
+inline auto operator<<(std::ostream &stream, Uncertain value) -> std::ostream & {
     fptype val = value.get_value();
     fptype err = value.get_uncertainty();
 

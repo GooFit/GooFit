@@ -73,7 +73,6 @@ class Amp4Body_TD final : public Amp4BodyBase {
 
     __host__ int getNumAccNormEvents() const;
 
-    __host__ auto getMCevents() -> int { return MCevents; }
     __host__ void setGenerationOffset(int off) { generation_offset = off; }
 
     __host__ void setMaxWeight(fptype wmax) { maxWeight = wmax; }

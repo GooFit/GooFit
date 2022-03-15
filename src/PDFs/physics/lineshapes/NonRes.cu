@@ -38,10 +38,6 @@ Lineshapes::NonRes::NonRes(
     initialize();
 }
 
-
-bool Lineshapes::NonRes::isEqualByValue(const Lineshape& other) const
-{
-  return this->Lineshape::isEqualByValue(other);
-}
+bool Lineshapes::NonRes::isEqualByValue(const Lineshape &other) const { return this->Lineshape::isEqualByValue(other); }
 
 } // namespace GooFit

@@ -17,7 +17,7 @@ class NonRes final : public Lineshape {
 
     ~NonRes() override = default;
 
-    virtual bool isEqualByValue(const Lineshape& other) const override;
+    virtual bool isEqualByValue(const Lineshape &other) const override;
 };
 
 } // namespace Lineshapes

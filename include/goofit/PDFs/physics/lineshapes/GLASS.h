@@ -20,9 +20,9 @@ class GLASS final : public Lineshape {
 
     ~GLASS() override = default;
 
-    virtual bool isEqualByValue(const Lineshape& other) const override;
+    virtual bool isEqualByValue(const Lineshape &other) const override;
 
-    virtual std::ostream& print(std::ostream& out) const override;
+    virtual std::ostream &print(std::ostream &out) const override;
 };
 
 } // namespace Lineshapes

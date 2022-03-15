@@ -41,10 +41,8 @@ auto Amplitude::operator==(const Amplitude &A) const -> bool {
            && _nPerm == A._nPerm;
 }
 
-bool Amplitude::lineshapeParametersChanged() const 
-{
-  return std::any_of(
-		     _LS.cbegin(), _LS.cend(), [](const Lineshape* const p) { return p->parametersChanged(); });
+bool Amplitude::lineshapeParametersChanged() const {
+    return std::any_of(_LS.cbegin(), _LS.cend(), [](const Lineshape *const p) { return p->parametersChanged(); });
 }
 
 } // namespace GooFit

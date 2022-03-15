@@ -219,38 +219,30 @@ auto operator<<(std::ostream &out, const PdfBase &pdf) -> std::ostream & {
     return out;
 }
 
-
-bool PdfBase::areParamsandConstantsEqualByVal(const PdfBase& other) const 
-{
-  if (this->getParameters().size() != other.getParameters().size())
-  {
-    return false;
-  }
-  for (int p = 0; p < this->getParameters().size(); p++)
-  {
-    Variable thisParam = this->getParameters()[p];
-    Variable otherParam = other.getParameters()[p];
-    if (!thisParam.isEqualNameValLimits(otherParam))
-    {
-      return false;
+bool PdfBase::areParamsandConstantsEqualByVal(const PdfBase &other) const {
+    if(this->getParameters().size() != other.getParameters().size()) {
+        return false;
     }
-  }
-
-  if (this->constantsList.size() != other.constantsList.size())
-  {
-    return false;
-  }
-  for (int c = 0; c < this->constantsList.size(); c++)
-  {
-    fptype thisConst = this->constantsList[c];
-    fptype otherConst = other.constantsList[c];
-    if (thisConst != otherConst)
-    {
-      return false;
+    for(int p = 0; p < this->getParameters().size(); p++) {
+        Variable thisParam  = this->getParameters()[p];
+        Variable otherParam = other.getParameters()[p];
+        if(!thisParam.isEqualNameValLimits(otherParam)) {
+            return false;
+        }
     }
-  }
 
-  return true;
+    if(this->constantsList.size() != other.constantsList.size()) {
+        return false;
+    }
+    for(int c = 0; c < this->constantsList.size(); c++) {
+        fptype thisConst  = this->constantsList[c];
+        fptype otherConst = other.constantsList[c];
+        if(thisConst != otherConst) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 } // namespace GooFit

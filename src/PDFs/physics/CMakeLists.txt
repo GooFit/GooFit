@@ -67,8 +67,7 @@ goofit_add_pdf_library(
   ${GOOFIT_PHYSICS_HEADERS}
   detail/NormEvents_4Body_Base.cu
   detail/NormEvents_4Body_DeviceCached.cu
-  detail/NormEvents_4Body_HostCached.cu
-)
+  detail/NormEvents_4Body_HostCached.cu)
 
 if(IS_NOT_CUDA
    AND UNIX

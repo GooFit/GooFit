@@ -31,7 +31,7 @@ void init_Amp4Body_TD(py::module &m) {
             "r"_a,
             "eff"_a,
             "mistag"_a       = nullptr,
-            "normSeed" = 0,
+            "normSeed"       = 0,
             "MCeventsNorm"_a = 5e6,
             py::keep_alive<1, 4>(),
             py::keep_alive<1, 5>(),

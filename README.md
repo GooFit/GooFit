@@ -24,6 +24,9 @@ doing maximum-likelihood fits with a familiar syntax.
 • [Build recipes](./docs/SYSTEM_INSTALL.md)
 • [Python](https://pypi.python.org/pypi/goofit/)
 
+## Known issues
+https://github.com/GooFit/GooFit/labels/critical
+
 ## Requirements
 
 * A recent version of CMake is required. The minimum is 3.9. CMake is incredibly easy to install, you can even use `pip` (see [the system install page](./docs/SYSTEM_INSTALL.md)). GooFit developers have supplied patches to CMake 3.12, so at least that is highly recommended. CMake 3.16 does not currently work with the Python bindings.

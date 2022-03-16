@@ -25,7 +25,7 @@ doing maximum-likelihood fits with a familiar syntax.
 • [Python](https://pypi.python.org/pypi/goofit/)
 
 ## Known issues
-https://github.com/GooFit/GooFit/labels/critical
+https://github.com/GooFit/GooFit/labels/critical https://github.com/GooFit/GooFit/labels/amplitude%20analysis https://github.com/GooFit/GooFit/labels/cuda
 
 ## Requirements
 

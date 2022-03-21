@@ -56,7 +56,7 @@ __device__ fptype FactorialOdd(int n, fptype u0, fptype u1) {
     fptype constFactorial = DoubleFactorial(2*k);
     fptype res = 0.;
     for (int j = 0; j <= k; j++) {
-        res = res + 1./DoubleFactorial(j) * (-SmallPhi(u1)*pow(u1, 2*j) + SmallPhi(u0)*pow(u0, 2*j));
+        res = res + 1./DoubleFactorial(2*j) * (-SmallPhi(u1)*pow(u1, 2*j) + SmallPhi(u0)*pow(u0, 2*j));
     }
     res = res * constFactorial;
     //printf("FactorialOdd finish \n");
@@ -414,8 +414,8 @@ __device__ fptype device_threegauss_resolutionSplice(fptype coshterm,
     fptype lastKnot = knots[nKnots-1];
     fptype fVal = m * lastKnot + b;
     fptype fDeriv = m;
-    fptype expSlope = fDeriv/fVal;
-    fptype expConst = fVal/exp(expSlope * lastKnot);
+    fptype expSlope = -fDeriv/fVal;
+    fptype expConst = fVal/exp(-expSlope * lastKnot)/exp(expSlope * lastKnot);
 
 
     fptype cp1;
@@ -442,7 +442,7 @@ __device__ fptype device_threegauss_resolutionSplice(fptype coshterm,
     mygaussian_high(op1, op2, op3, op4, tau, dtime - outlBias * sigma, xmixing, ymixing, outlScaleFactor * sigma, expSlope, lastKnot, expConst);
 
 
-    fptype selbias = 0.22279996981546918;
+    fptype selbias = expSlope;
     fptype cp1_tmp = 0;
     fptype cp2_tmp = 0;
     fptype cp3_tmp = 0;
@@ -574,14 +574,20 @@ fptype ThreeGaussResolutionSplice::normalization(
     for(auto i : m_a2) spline_2.push_back(i.getValue());
     for(auto i : m_a3) spline_3.push_back(i.getValue());
 
+
+    /*copying the code from ThreeGaussResolutionExt
+    the exponential there is of the form expCosnt * exp(-expSlope(t - Tthres))
+    */
     auto nSplines = nKnots - 1;
     fptype m = spline_1[nSplines-1];
     fptype b = spline_0[nSplines-1];
     fptype lastKnot = knots[nKnots-1];
     fptype fVal = m * lastKnot + b;
     fptype fDeriv = m;
-    fptype expSlope = fDeriv/fVal;
-    fptype expConst = fVal/exp(expSlope * lastKnot);
+    fptype expSlope = -fDeriv/fVal;
+    //can simplify
+    //fptype expConst = fVal/exp(-expSlope * lastKnot)/exp(expSlope * lastKnot);
+    fptype expConst = fVal;
 
     /*
     0., 0.2,  0.35, 0.5,  0.65, 1.05, 2.1,  4.5
@@ -643,7 +649,8 @@ fptype ThreeGaussResolutionSplice::normalization(
 
     fptype selBias_high = expSlope;
     fptype Tthres = knots[nKnots-1];
-    fptype preConst_high = expConst;
+    fptype preConst_high = expConst * exp(selBias_high * Tthres);
+
 
     fptype gammaPlusBias = Gamma + selBias_high;
 
@@ -672,7 +679,7 @@ fptype ThreeGaussResolutionSplice::normalization(
 
 
 
-    fptype selBias = 0.22279996981546918;
+    fptype selBias = expSlope;
     fptype timeIntegralOne_old
         = (selBias + 1 / tau) / (selBias * selBias + 2 * selBias / tau + (1 - ymixing * ymixing) / (tau * tau));
     fptype timeIntegralTwo_old
@@ -681,6 +688,9 @@ fptype ThreeGaussResolutionSplice::normalization(
         = (ymixing / tau) / (selBias * selBias + 2 * selBias / tau + (1 - ymixing * ymixing) / (tau * tau));
     fptype timeIntegralFou_old
         = (xmixing / tau) / (selBias * selBias + 2 * selBias / tau + (1 + xmixing * xmixing) / (tau * tau));
+
+
+
     /*
     printf("timeIntegralOne: %f %f %f \n", timeIntegralOne_old, timeIntegralOne, timeIntegralOne/timeIntegralOne_old);
     printf("timeIntegralTwo: %f %f %f \n", timeIntegralTwo_old, timeIntegralTwo, timeIntegralTwo/timeIntegralTwo_old);

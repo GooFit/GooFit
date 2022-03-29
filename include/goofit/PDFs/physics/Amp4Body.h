@@ -90,6 +90,7 @@ class Amp4Body : public Amp4BodyBase {
     int generation_offset{0};
 
     int efficiencyFunction;
+    unsigned int _NUM_AMPLITUDES;
 };
 
 } // namespace GooFit

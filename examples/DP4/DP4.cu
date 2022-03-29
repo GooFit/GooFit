@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
     Observable m12{"m12", 0, 3};
     Observable m34{"m34", 0, 3};
     Observable cos12{"cos12", -1, 1};
-    Observable cos34{"m12", -1, 1};
+    Observable cos34{"co34", -1, 1};
     Observable phi{"phi", -3.5, 3.5};
     EventNumber eventNumber{"eventNumber", 0, INT_MAX};
 
@@ -186,6 +186,7 @@ int main(int argc, char **argv) {
                           &Bose_symmetrized_A1R,
                           &Bose_symmetrized_A1RD};
 
+
     for(auto res : LSKF)
         res->setParameterConstantness(true);
 
@@ -228,7 +229,7 @@ int main(int argc, char **argv) {
     signal.setData(&currData);
 
     dp.setDataSize(currData.getNumEvents(), 6);
-
+    GOOFIT_INFO("Starting fit {}", currData.getNumEvents());
     FitManager datapdf{&signal};
     datapdf.fit();
 

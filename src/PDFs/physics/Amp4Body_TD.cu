@@ -551,7 +551,7 @@ __host__ void Amp4Body_TD::populateArrays() {
     efficiencyFunction = host_function_table.size() - 1;
 }
 
-// makes the arrays to chache the lineshape values and spinfactors in CachedResSF and the values of the amplitudes in
+// makes the arrays to cache the lineshape values and spinfactors in CachedResSF and the values of the amplitudes in
 // _cachedAMPs
 // I made the choice to have spinfactors necxt to the values of the lineshape in memory. I waste memory by doing this
 // because a spinfactor is saved as complex

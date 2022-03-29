@@ -186,7 +186,6 @@ int main(int argc, char **argv) {
                           &Bose_symmetrized_A1R,
                           &Bose_symmetrized_A1RD};
 
-
     for(auto res : LSKF)
         res->setParameterConstantness(true);
 

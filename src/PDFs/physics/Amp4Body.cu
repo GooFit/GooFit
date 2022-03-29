@@ -160,7 +160,7 @@ __host__ Amp4Body::Amp4Body(
     _NUM_AMPLITUDES = components.size();
     registerConstant(LineShapes.size());            //#LS
     registerConstant(SpinFactors.size());           //#SF
-    registerConstant(_NUM_AMPLITUDES);            //#AMP
+    registerConstant(_NUM_AMPLITUDES);              //#AMP
     registerConstant(total_lineshapes_spinfactors); // total line shapes and spin factors used
 
     components.push_back(efficiency);

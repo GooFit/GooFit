@@ -88,7 +88,7 @@ __device__ auto inverse(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex inverse[NCH
     // Find determinant of A[][]
     fpcomplex det = determinant<NCHANNELS>(A);
     if(det == fpcomplex(0, 0)) {
-        printf("Singular matrix, can't find its inverse");
+        printf("Singular matrix, can't find its inverse\n");
         return false;
     }
 

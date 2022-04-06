@@ -34,7 +34,7 @@ inline __device__ auto determinant(fpcomplex A[NCHANNELS][NCHANNELS]) -> fpcompl
         // Getting Cofactor of A[0][f]
         getCofactor(A, temp, 0, f, N);
         D += fptype(sign) * A[0][f] * determinant<N - 1>(temp);
-        
+
         // terms are to be added with alternate sign
         sign = -sign;
     }

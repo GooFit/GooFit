@@ -49,7 +49,7 @@ void init_Amp3Body(py::module &m) {
             py::array_t<fptype> pyparticles{{(size_t)3, numEvents, (size_t)3}};
             py::array_t<fptype> pyvariables{{(size_t)3, numEvents}};
             py::array_t<fptype> pyweights{static_cast<ssize_t>(numEvents)};
-            py::array_t<fptype> pyflags{static_cast<ssize_t>(numEvents)};
+            py::array_t<bool>   pyflags{static_cast<ssize_t>(numEvents)};
 
             for(int i = 0; i < 3; i++) {
                 for(int j = 0; j < numEvents; j++) {

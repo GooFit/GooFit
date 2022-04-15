@@ -61,16 +61,16 @@ void init_Amp4Body_TD(py::module &m) {
                  }
 
                  for(int i = 0; i < 6; i++) {
-                     for(int j = 0; j < weights.size(); j++) {
+                     for(int j = 0; j < numEvents; j++) {
                          pyvariables.mutable_at(i, j) = (*(variables[i]))[j];
                      }
                  }
 
-                 for(int i = 0; i < weights.size(); i++) {
+                 for(int i = 0; i < numEvents; i++) {
                      pyweights.mutable_at(i) = weights[i];
                  }
 
-                 for(int i = 0; i < weights.size(); i++) {
+                 for(int i = 0; i < numEvents; i++) {
                      pyflags.mutable_at(i) = flags[i];
                  }
                  delete variables[0];

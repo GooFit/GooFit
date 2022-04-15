@@ -19,10 +19,10 @@ jobs:
 
     runs-on: ubuntu-latest
     container:
-      image: rootproject/root:6.24.06-ubuntu20.04
+      image: rootproject/root:6.26.02-ubuntu20.04
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v3
       with:
         submodules: true
 

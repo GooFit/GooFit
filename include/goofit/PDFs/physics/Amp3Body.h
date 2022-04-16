@@ -87,6 +87,7 @@ class Amp3Body : public Amp3BodyBase {
     // change infrequently while amplitudes, only used in adding BW results together, change rapidly.
     thrust::device_vector<fpcomplex> *cachedWaves[16]; // Caches the BW values for each event.
     fpcomplex ***integrals; // Caches the integrals of the BW waves for each combination of resonances.
+    fpcomplex ***integrals_ff; // Caches the integrals of the BW waves for each combination of resonances (for the fit fractions).
 
     mutable bool generation_no_norm{false};
     bool *redoIntegral;
@@ -99,7 +100,10 @@ class Amp3Body : public Amp3BodyBase {
     static int cacheCount;
     int generation_offset{0};
     SpecialResonanceIntegrator ***integrators;
+    SpecialResonanceIntegrator ***integrators_ff;
     SpecialResonanceCalculator **calculators;
+
+    fptype totalFF_integral;
 
     unsigned int efficiencyFunction;
 };

@@ -9,6 +9,7 @@
 #include <goofit/PDFs/physics/resonances/Gauss.h>
 #include <goofit/PDFs/physics/resonances/LASS.h>
 #include <goofit/PDFs/physics/resonances/NonRes.h>
+#include <goofit/PDFs/physics/resonances/NonRes_B2KKK.h>
 #include <goofit/PDFs/physics/resonances/RBW.h>
 #include <goofit/PDFs/physics/resonances/RhoOmegaMix.h>
 #include <goofit/PDFs/physics/resonances/Spline.h>

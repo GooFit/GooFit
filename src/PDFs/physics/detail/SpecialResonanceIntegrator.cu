@@ -106,6 +106,8 @@ __device__ auto SpecialResonanceIntegrator::operator()(thrust::tuple<int, fptype
 
     fptype eff = callFunction(events, pc);
 
+    if(m_no_eff) eff=1.;
+
     // Multiplication by eff, not sqrt(eff), is correct:
     // These complex numbers will not be squared when they
     // go into the integrals. They've been squared already,

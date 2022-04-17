@@ -74,6 +74,10 @@ class Amp3Body : public Amp3BodyBase {
     /// Calculate fit fractions (Cache should be pre-filled)
     __host__ auto fit_fractions() -> std::vector<std::vector<fptype>>;
 
+    __host__ auto getFFTotalIntegral() const -> fptype{
+        return totalFF_integral;
+    }
+
     friend DalitzPlotter;
 
   protected:

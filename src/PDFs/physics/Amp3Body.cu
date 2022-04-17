@@ -467,7 +467,7 @@ __host__ auto Amp3Body::fit_fractions() -> std::vector<std::vector<fptype>> {
     }
 
 	totalFF_integral  = sumIntegral.real();
-
+ 
 	for(int i=0; i<n_res; i++){
 		for(int j=0; j<=i; j++){
 				AmpIntegral[i][j] /= totalFF_integral;

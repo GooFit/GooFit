@@ -18,6 +18,17 @@ __device__ auto plainBW(fptype m12, fptype m13, fptype m23, ParameterContainer &
     fpcomplex result{0.0, 0.0};
     fptype resmass2 = POW2(resmass);
 
+    if(resmass < 1.e-10){
+        GOOFIT_TRACE("Resonance Mass zero!");
+        return result;
+    }
+
+    if(reswidth < 1.e-10){
+        GOOFIT_TRACE("Resonance Width zero!");
+        return result;
+    }
+
+
 #pragma unroll
     for(size_t i = 0; i < I; i++) {
         fptype rMassSq    = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));

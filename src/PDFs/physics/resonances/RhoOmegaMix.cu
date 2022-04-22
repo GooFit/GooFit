@@ -132,6 +132,12 @@ __device__ auto rhoomgamix(fptype m12, fptype m13, fptype m23, ParameterContaine
         // rho-omega mix
         fpcomplex mixingTerm = Bterm * omega + unity;
         result += rho * mixingTerm;
+
+        if(I > 1) {
+             fptype swpmass = m12;
+            m12            = m13;
+            m13            = swpmass;
+        }
     }
     pc.incrementIndex(1, 7, 3, 0, 1);
     return result;
@@ -139,6 +145,7 @@ __device__ auto rhoomgamix(fptype m12, fptype m13, fptype m23, ParameterContaine
 } // RhoOmegaMix
 
 __device__ resonance_function_ptr ptr_to_RHOOMEGAMIX = rhoomgamix<1>;
+__device__ resonance_function_ptr ptr_to_RHOOMEGAMIX_SYM = rhoomgamix<2>;
 
 namespace Resonances {
 
@@ -171,7 +178,7 @@ RhoOmegaMix::RhoOmegaMix(std::string name,
     registerConstant(norm);
 
     if(sym)
-        registerFunction("ptr_to_RHOOMEGAMIX", ptr_to_RHOOMEGAMIX);
+        registerFunction("ptr_to_RHOOMEGAMIX", ptr_to_RHOOMEGAMIX_SYM);
     else
         registerFunction("ptr_to_RHOOMEGAMIX", ptr_to_RHOOMEGAMIX);
 }

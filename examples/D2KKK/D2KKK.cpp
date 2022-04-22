@@ -352,13 +352,8 @@ int main(int argc, char **argv){
 		std::cout << "Fit Fractions Interference" << '\n';
 		
 		//signal->normalize();
-		auto frac = signal->fit_fractions();
-		auto nres = signal->getDecayInfo().resonances.size();
-		Eigen::MatrixXd m(nres,nres);
-		for(int i=0; i < nres; i++)
-			m.row(i) = Eigen::Map<Eigen::VectorXd>(&frac[i][0],nres);
-
-        std::cout << std::fixed << m << std::endl;
+		auto frac = signal->fit_fractions(true);
+		
 
 		return 0;
     }   

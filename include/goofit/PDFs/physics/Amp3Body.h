@@ -9,6 +9,11 @@
 
 #include <goofit/detail/Complex.h>
 
+
+//Matrix 
+#include <Eigen/Core>
+#include <Eigen/LU>
+
 namespace GooFit {
 
 class SpecialResonanceIntegrator;
@@ -72,7 +77,7 @@ class Amp3Body : public Amp3BodyBase {
     __host__ static void resetCacheCounter() { cacheCount = 0; }
 
     /// Calculate fit fractions (Cache should be pre-filled)
-    __host__ auto fit_fractions() -> std::vector<std::vector<fptype>>;
+    __host__ auto fit_fractions(bool print=false) -> std::vector<std::vector<fptype>>;
 
     __host__ auto getFFTotalIntegral() const -> fptype{
         return totalFF_integral;

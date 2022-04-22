@@ -382,7 +382,7 @@ __host__ auto Amp3Body::getCachedWave(size_t i) const -> const std::vector<std::
     return ret;
 }
 
-__host__ auto Amp3Body::fit_fractions() -> std::vector<std::vector<fptype>> {
+__host__ auto Amp3Body::fit_fractions(bool print) -> std::vector<std::vector<fptype>> {
     recursiveSetNormalization(1.0); // Not going to normalize efficiency,
     // so set normalization factor to 1 so it doesn't get multiplied by zero.
     // Copy at this time to ensure that the SpecialResonanceCalculators, which need the efficiency,
@@ -474,6 +474,18 @@ __host__ auto Amp3Body::fit_fractions() -> std::vector<std::vector<fptype>> {
                 AmpIntegral[i][j]*=100;
 		}
 	}	
+
+   
+    if(print){
+        std::cout << "Fit Fractions Matrix (%): \n";
+        std::cout << "*Note: the order of diag FFs is equal to the order that which resonances are pushed into the resonance vector. \n";
+        Eigen::MatrixXd m(n_res,n_res);
+        for(int i=0; i < n_res; i++)
+            m.row(i) = Eigen::Map<Eigen::VectorXd>(&AmpIntegral[i][0],n_res);
+
+        std::cout << std::fixed << m << std::endl;
+        std::cout << "\n";
+    }
 
 	return AmpIntegral;
 

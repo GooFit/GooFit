@@ -484,6 +484,10 @@ __host__ auto Amp3Body::fit_fractions(bool print) -> std::vector<std::vector<fpt
             m.row(i) = Eigen::Map<Eigen::VectorXd>(&AmpIntegral[i][0],n_res);
 
         std::cout << std::fixed << m << std::endl;
+        fptype sumdiagffs = 0.;
+        for(int i=0; i<n_res; i++)
+            sumdiagffs+=m(i,i);
+        std::cout << "Sum of Diag FFs: " << sumdiagffs << "\n";
         std::cout << "\n";
     }
 

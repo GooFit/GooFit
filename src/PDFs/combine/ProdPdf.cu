@@ -10,12 +10,15 @@ __device__ auto device_ProdPdfs(fptype *evt, ParameterContainer &pc) -> fptype {
     int numCons  = pc.getNumConstants();
     int numComps = pc.getConstant(0);
     int numObs   = pc.getNumObservables();
+    int numNormalizations   = pc.getNumNormalizations();
+    int numParameters   = pc.getNumParameters();
     fptype ret   = 1;
 
-    pc.incrementIndex(1, 0, numCons, numObs, 1);
-    // pc.incrementIndex();
+    pc.incrementIndex(1, numParameters, numCons, numObs, numNormalizations);
+   
     for(int i = 0; i < numComps; i++) {
         fptype norm = pc.getNormalization(0);
+       
         fptype curr = callFunction(evt, pc);
 
         curr *= norm;
@@ -80,8 +83,11 @@ __host__ auto ProdPdf::normalize() -> fptype {
         host_normalizations.sync(d_normalizations);
 
         // Normalize numerically.
-        // std::cout << "Numerical normalization of " << getName() << " due to varOverlaps.\n";
+        //std::cout << "Numerical normalization of " << getName() << " due to varOverlaps.\n";
+
+      
         fptype ret = GooPdf::normalize();
+
         // if (cpuDebug & 1)
         // std::cout << "ProdPdf " << getName() << " has normalization " << ret << " " << host_callnumber << std::endl;
         return ret;

@@ -105,53 +105,34 @@ __device__ auto spinFactor(unsigned int spin,
                            fptype m13,
                            fptype m23,
                            unsigned int cyclic_index) -> fptype {
-    if(0 == spin)
-        return 1; // Should not cause branching since every thread evaluates the same resonance at the same time.
+    auto ret = 1.;
 
-    /*
-    // Copied from BdkDMixDalitzAmp
+    auto const _mA  = (PAIR_12 == cyclic_index ? daug1Mass : (PAIR_13 == cyclic_index ? daug3Mass : daug2Mass));
+    auto const _mB  = (PAIR_12 == cyclic_index ? daug2Mass : (PAIR_13 == cyclic_index ? daug1Mass : daug3Mass));
+    auto const _mC  = (PAIR_12 == cyclic_index ? daug3Mass : (PAIR_13 == cyclic_index ? daug2Mass : daug1Mass));
+    auto const _mAC = (PAIR_12 == cyclic_index ? m13 : (PAIR_13 == cyclic_index ? m23 : m12));
+    auto const _mBC = (PAIR_12 == cyclic_index ? m23 : (PAIR_13 == cyclic_index ? m12 : m13));
+    auto const _mAB = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
 
-    fptype _mA = (PAIR_12 == cyclic_index ? daug1Mass : (PAIR_13 == cyclic_index ? daug1Mass : daug3Mass));
-    fptype _mB = (PAIR_12 == cyclic_index ? daug2Mass : (PAIR_13 == cyclic_index ? daug3Mass : daug3Mass));
-    fptype _mC = (PAIR_12 == cyclic_index ? daug3Mass : (PAIR_13 == cyclic_index ? daug2Mass : daug1Mass));
+    if(1 == spin){
 
-    fptype _mAC = (PAIR_12 == cyclic_index ? m13 : (PAIR_13 == cyclic_index ? m12 : m12));
-    fptype _mBC = (PAIR_12 == cyclic_index ? m23 : (PAIR_13 == cyclic_index ? m23 : m13));
-    fptype _mAB = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
-
-    // The above, collapsed into single tests where possible.
-    fptype _mA = (PAIR_13 == cyclic_index ? daug3Mass : daug2Mass);
-    fptype _mB = (PAIR_23 == cyclic_index ? daug2Mass : daug1Mass);
-    fptype _mC = (PAIR_12 == cyclic_index ? daug3Mass : (PAIR_13 == cyclic_index ? daug2Mass : daug1Mass));
-
-    fptype _mAC = (PAIR_23 == cyclic_index ? m13 : m23);
-    fptype _mBC = (PAIR_12 == cyclic_index ? m13 : m12);
-    fptype _mAB = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
-    */
-
-    // Copied from EvtDalitzReso, with assumption that pairAng convention matches pipipi0 from EvtD0mixDalitz.
-    // Again, all threads should get the same branch.
-    fptype _mA  = (PAIR_12 == cyclic_index ? daug1Mass : (PAIR_13 == cyclic_index ? daug3Mass : daug2Mass));
-    fptype _mB  = (PAIR_12 == cyclic_index ? daug2Mass : (PAIR_13 == cyclic_index ? daug1Mass : daug3Mass));
-    fptype _mC  = (PAIR_12 == cyclic_index ? daug3Mass : (PAIR_13 == cyclic_index ? daug2Mass : daug1Mass));
-    fptype _mAC = (PAIR_12 == cyclic_index ? m13 : (PAIR_13 == cyclic_index ? m23 : m12));
-    fptype _mBC = (PAIR_12 == cyclic_index ? m23 : (PAIR_13 == cyclic_index ? m12 : m13));
-    fptype _mAB = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
-
-    fptype massFactor = 1.0 / (_mAB);
-    fptype sFactor    = -1;
-    sFactor *= ((_mBC - _mAC) + (massFactor * (motherMass * motherMass - _mC * _mC) * (_mA * _mA - _mB * _mB)));
-
+        auto const massFactor = 1.0 / _mAB;
+        ret = ((_mBC - _mAC) + (massFactor * (motherMass * motherMass - _mC * _mC) * (_mA * _mA - _mB * _mB)));
+        
+    }
+    
+    
     if(2 == spin) {
-        sFactor *= sFactor;
-        fptype extraterm = ((_mAB - (2 * motherMass * motherMass) - (2 * _mC * _mC))
-                            + massFactor * POW2(motherMass * motherMass - _mC * _mC));
-        extraterm *= ((_mAB - (2 * _mA * _mA) - (2 * _mB * _mB)) + massFactor * POW2(_mA * _mA - _mB * _mB));
-        extraterm /= 3;
-        sFactor -= extraterm;
+        auto const massFactor = 1.0 / _mAB;
+        auto const a1 = ((_mBC - _mAC) + (massFactor * (motherMass * motherMass - _mC * _mC) * (_mA * _mA - _mB * _mB)));
+        auto const a2 = ((_mAB - (2 * motherMass * motherMass) - (2 * _mC * _mC)) + massFactor * POW2(motherMass * motherMass - _mC * _mC));
+        auto const a3 = ((_mAB - (2 * _mA * _mA) - (2 * _mB * _mB)) + massFactor * POW2(_mA * _mA - _mB * _mB));
+        
+        ret = POW2(a1) - a2*a3/3;
+        
     }
 
-    return sFactor;
+    return ret;
 }
 
 } // namespace GooFit

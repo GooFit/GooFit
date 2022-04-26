@@ -495,5 +495,7 @@ int main(int argc, char **argv){
 
 		std::cout << "norm = " << output_signal->normalize() << std::endl;
     }
+
+	//implement GenFit
         
 }

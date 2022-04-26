@@ -44,7 +44,7 @@ class DalitzPlotter {
                             signalDalitz->decayInfo.motherMass,
                             signalDalitz->decayInfo.daug1Mass,
                             signalDalitz->decayInfo.daug2Mass,
-                            signalDalitz->decayInfo.daug3Mass)) {
+                            signalDalitz->decayInfo.daug3Mass) ) {
                     xbins.push_back(i);
                     ybins.push_back(j);
                     data.addEvent();

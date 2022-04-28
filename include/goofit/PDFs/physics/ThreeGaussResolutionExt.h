@@ -19,17 +19,17 @@ the scope of this documentation.
 class ThreeGaussResolutionExt : public MixingTimeResolution {
   public:
     ThreeGaussResolutionExt(Variable cf,
-                         Variable tf,
-                         Variable cb,
-                         Variable cs,
-                         Variable tb,
-                         Variable ts,
-                         Variable ob,
-                         Variable os,
-                         Variable sb_low,
-                         Variable sb_high,
-                         Variable Tthres,
-                         Variable constantC);
+                            Variable tf,
+                            Variable cb,
+                            Variable cs,
+                            Variable tb,
+                            Variable ts,
+                            Variable ob,
+                            Variable os,
+                            Variable sb_low,
+                            Variable sb_high,
+                            Variable Tthres,
+                            Variable constantC);
     ~ThreeGaussResolutionExt() override;
 
     fptype normalization(

@@ -10,7 +10,19 @@ using namespace GooFit;
 
 void init_ThreeGaussResolutionSplice(py::module &m) {
     py::class_<ThreeGaussResolutionSplice, MixingTimeResolution>(m, "ThreeGaussResolutionSplice")
-        .def(py::init<Variable, Variable, Variable, Variable, Variable, Variable, Variable, Variable, std::vector<Variable>, std::vector<Variable>, std::vector<Variable>, std::vector<Variable>, std::vector<Variable>>(),
+        .def(py::init<Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      Variable,
+                      std::vector<Variable>,
+                      std::vector<Variable>,
+                      std::vector<Variable>,
+                      std::vector<Variable>,
+                      std::vector<Variable>>(),
              "cf"_a,
              "tf"_a,
              "cb"_a,

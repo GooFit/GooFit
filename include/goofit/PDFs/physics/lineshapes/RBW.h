@@ -16,6 +16,8 @@ class RBW : public Lineshape {
         fptype radius = 1.5);
 
     ~RBW() override = default;
+
+    virtual bool isEqualByValue(const Lineshape &other) const override;
 };
 
 } // namespace Lineshapes

@@ -34,8 +34,10 @@ enum class SF_4Body {
     ONE
 };
 
-class SpinFactor : public AmpComponent {
+class SpinFactor final : public AmpComponent {
     friend class Amp4Body;
+
+    friend std::ostream &operator<<(std::ostream &out, const SpinFactor &obj);
 
   private:
     SF_4Body _SF;
@@ -57,8 +59,11 @@ class SpinFactor : public AmpComponent {
 
     auto operator==(const SpinFactor &S) const -> bool {
         return (S.getName() == getName() and S._SF == _SF and S._P0 == _P0 and S._P1 == _P1 and S._P2 == _P2
-                and S._P3 == _P3);
+                and S._P3 == _P3 and this->areParamsandConstantsEqualByVal(S));
     }
 };
+
+std::ostream &operator<<(std::ostream &out, const SpinFactor &obj);
+std::ostream &operator<<(std::ostream &out, const SF_4Body &obj);
 
 } // namespace GooFit

@@ -157,10 +157,10 @@ __host__ Amp4Body::Amp4Body(
                 SpinFactors.push_back(spinfactor);
         }
     }
-
+    _NUM_AMPLITUDES = components.size();
     registerConstant(LineShapes.size());            //#LS
     registerConstant(SpinFactors.size());           //#SF
-    registerConstant(components.size());            //#AMP
+    registerConstant(_NUM_AMPLITUDES);              //#AMP
     registerConstant(total_lineshapes_spinfactors); // total line shapes and spin factors used
 
     components.push_back(efficiency);
@@ -234,7 +234,7 @@ __host__ Amp4Body::Amp4Body(
         sfcalculators.push_back(new SFCalculator());
     }
 
-    for(int i = 0; i < components.size() - 1; ++i) {
+    for(int i = 0; i < _NUM_AMPLITUDES; ++i) {
         AmpCalcs.push_back(new AmpCalc(nPermVec[i], amp_idx_start[i]));
     }
 
@@ -421,7 +421,6 @@ __host__ auto Amp4Body::normalize() -> fptype {
 #else
     unsigned int events_to_process = numEntries;
 #endif
-
     // just some thrust iterators for the calculation.
     thrust::constant_iterator<fptype *> dataArray(dev_event_array);
     thrust::constant_iterator<int> eventSize(totalEventSize);
@@ -464,7 +463,6 @@ __host__ auto Amp4Body::normalize() -> fptype {
 
         SpinsCalculated = true;
     }
-
     // this calculates the values of the lineshapes and stores them in the array. It is recalculated every time
     // parameters change.
     for(int i = 0; i < LineShapes.size(); ++i) {
@@ -486,12 +484,10 @@ __host__ auto Amp4Body::normalize() -> fptype {
                 *(lscalculators[i]));
         }
     }
-
     // this is a little messy but it basically checks if the amplitude includes one of the recalculated lineshapes and
     // if so recalculates that amplitude
     // auto AmpMapIt = AmpMap.begin();
-
-    for(int i = 0; i < LineShapes.size(); ++i) {
+    for(int i = 0; i < _NUM_AMPLITUDES; ++i) {
         if(!redoIntegral[i])
             continue;
 

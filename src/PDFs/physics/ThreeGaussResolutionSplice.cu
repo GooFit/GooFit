@@ -415,7 +415,7 @@ __device__ fptype device_threegauss_resolutionSplice(fptype coshterm,
 
     int nKnots   = pc.getConstant(0);
     int nSplines = nKnots - 1;
-    // TODO: upper splice end should probably not be to large, as fucntion might become negative
+    // TODO: upper splice end should probably not be to large, as function might become negative
     // TODO: at the moment support up to 8 knots/ 7 splines!
     fptype knots[8];
     fptype spline_0[8];
@@ -708,7 +708,7 @@ fptype ThreeGaussResolutionSplice::normalization(
     // fptype timeIntegralFou = xmixing * timeIntegralTwo;
 
     auto nKnots = m_knots.size();
-    // upper splice end should probably not be to large, as fucntion might become negative
+    // upper splice end should probably not be to large, as function might become negative
     std::vector<fptype> knots;
     std::vector<fptype> spline_0;
     std::vector<fptype> spline_1;

@@ -19,7 +19,7 @@ __device__ fptype BigPhi(fptype u0, fptype u1) {
 }
 
 __device__ fptype BigPhi(fptype x) {
-    fptype res = 0.5 * (1. + erf(x / sqrt(2)));
+    fptype res = 0.5 * (1. + erf(x / sqrt(2.)));
     return res;
 }
 

@@ -88,7 +88,7 @@ __device__ fptype EvaluateConvo(int n, fptype u0, fptype u1) {
         return FactorialOdd(n, u0, u1);
 }
 
-__device__ fptype Factorial(int j) {
+__host__ __device__ fptype Factorial(int j) {
     if(j == 0)
         return 1.;
     // printf("evaluating factorial of %d \n", j);
@@ -668,7 +668,7 @@ ThreeGaussResolutionSplice::ThreeGaussResolutionSplice(Variable cf,
 }
 ThreeGaussResolutionSplice::~ThreeGaussResolutionSplice() = default;
 
-fptype NormTermY(fptype tlow, fptype thigh, fptype yterm, fptype Gamma, int k) {
+__host__ __device__ fptype NormTermY(fptype tlow, fptype thigh, fptype yterm, fptype Gamma, int k) {
     // k: order of polynomial term
     fptype res = 0.;
     for(int i = 0; i <= k; i++) {

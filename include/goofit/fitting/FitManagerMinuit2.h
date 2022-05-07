@@ -1,7 +1,8 @@
 #pragma once
 
 #include <Minuit2/FunctionMinimum.h>
-
+#include <Minuit2/MnScan.h>
+#include <Minuit2/MnPlot.h>
 #include <memory>
 
 #include <goofit/GlobalCudaDefines.h>
@@ -24,6 +25,9 @@ class FitManagerMinuit2 {
 
     /// This runs the fit
     auto fit() -> ROOT::Minuit2::FunctionMinimum;
+
+    // This runs the scan
+    auto scan(unsigned int par_i,unsigned int maxsteps = 41, fptype low = 0., fptype high = 0.) -> std::vector<std::pair<fptype, fptype>>;
 
     auto getPdf() const -> PdfBase* { return pdfPointer;}
 

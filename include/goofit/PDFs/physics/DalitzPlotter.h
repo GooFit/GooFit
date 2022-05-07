@@ -61,10 +61,15 @@ class DalitzPlotter {
     }
 
     /// Fill a dataset with MC events
-    void fillDataSetMC(UnbinnedDataSet &dataset, size_t nTotal) {
+    void fillDataSetMC(UnbinnedDataSet &dataset, size_t nTotal, unsigned int seed=0, bool poison=false) {
         // Setup random numbers
         std::random_device rd;
-        std::mt19937 gen(rd());
+        std::mt19937 gen;
+
+        if(seed==0)
+            gen.seed(seed);
+        else    
+            gen.seed(rd());
 
         // Uniform distribution
         std::uniform_real_distribution<> unihalf(-.5, .5);
@@ -76,6 +81,13 @@ class DalitzPlotter {
 
         // Make this a 0-1 fraction by dividing by the end value
         std::for_each(integral.begin(), integral.end(), [&integral](double &val) { val /= integral.back(); });
+
+        if(poison){
+            std::poisson_distribution<> d(nTotal);
+            nTotal=d(gen);
+        }
+
+            
 
         for(size_t i = 0; i < nTotal; i++) {
             double r = uniwhole(gen);

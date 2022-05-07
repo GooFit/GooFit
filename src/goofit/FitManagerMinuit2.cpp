@@ -43,7 +43,7 @@ auto FitManagerMinuit2::fit() -> Minuit2::FunctionMinimum {
 
     CLI::Timer timer{"The minimization took"};
 
-    Minuit2::MnMigrad migrad{fcn_, upar_};
+    Minuit2::MnMigrad migrad{fcn_, upar_,1};
 
         
   
@@ -95,6 +95,23 @@ auto FitManagerMinuit2::fit() -> Minuit2::FunctionMinimum {
     Minuit2::MnPrint::SetGlobalLevel(val);
 #endif
     return min;
+}
+
+
+auto FitManagerMinuit2::scan(unsigned int par_i,unsigned int maxsteps , fptype low, fptype high )-> std::vector<std::pair<fptype, fptype>> {
+
+	std::cout << "\t Scanning Parameter "  << upar_.GetName(par_i) << "\n";
+
+    Minuit2::MnScan scan(fcn_, upar_);
+
+	auto vec = scan.Scan(par_i,maxsteps,low,high);
+
+	Minuit2::MnPlot plot;
+
+	plot(vec);
+
+	return vec;
+
 }
 
 void FitManagerMinuit2::printCovMat()

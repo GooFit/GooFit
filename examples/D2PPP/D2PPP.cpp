@@ -20,6 +20,7 @@
 	//Minuit
 	#include <Minuit2/MnStrategy.h>
 	#include <Minuit2/Minuit2Minimizer.h>
+	#include <Minuit2/MnContours.h>
 
 	// System stuff
 	#include <CLI/Timer.hpp>
@@ -69,7 +70,7 @@
 	Variable Daughter3_Mass("DecayProduct_3_Mass",d3_MASS);
 
 	//Bins for grid normalization
-	const int bins = 500;
+	const int bins = 200;
 
 	//Dalitz Limits
 	const fptype s12_min = (d1_MASS  + d2_MASS)*(d1_MASS  + d2_MASS);
@@ -285,7 +286,7 @@ void getData(std::string toyFileName, GooFit::Application &app, DataSet &data, b
             &&(s13.getValue()>s13.getLowerLimit()))
         {
             data.addEvent();
-            if(j<10) printf("[%d] = (%f , %f)\n",i,s12.getValue(),s13.getValue());
+            if(j<10) printf("[%zu] = (%f , %f)\n",i,s12.getValue(),s13.getValue());
             j++;
         }
     }
@@ -303,9 +304,9 @@ void to_root(UnbinnedDataSet& toyMC , std::string name ){
     double _s12, _s13,_s23;
     auto f = new TFile(name.c_str(),"recreate");
     auto t = new TTree("DecayTree","toyMC");
-    auto b_s12 = t->Branch("s12",&_s12,"s12/D");
-    auto b_s13 = t->Branch("s13",&_s13,"s13/D");
-    auto b_s23 = t->Branch("s23",&_s23,"s23/D");
+    t->Branch("s12",&_s12,"s12/D");
+    t->Branch("s13",&_s13,"s13/D");
+    t->Branch("s23",&_s23,"s23/D");
 
    
     for(int i = 0; i < toyMC.getNumEvents(); i++){
@@ -325,27 +326,59 @@ void to_root(UnbinnedDataSet& toyMC , std::string name ){
 
 }
 
-Amp3Body* runFit(GooPdf *totalPdf, Amp3Body *signal, UnbinnedDataSet *data, std::string name) {
+void printContours(FCN fcn , ROOT::Minuit2::FunctionMinimum min, unsigned int par1, unsigned int par2, unsigned int pts){
+
+	ROOT::Minuit2::MnContours cont(fcn,min);
+
+	fcn.SetErrorDef(0.5);
+
+	auto cont_1 = cont(par1,par2,pts);
+
+	fcn.SetErrorDef(4.);
+
+	auto cont_4 = cont(par1,par2,pts);
+
+	ROOT::Minuit2::MnPlot plot;
+
+	cont_4.insert(cont_4.end(), cont_1.begin(), cont_1.end());
+
+	plot(min.UserState().Value(par1), min.UserState().Value(par2), cont_4);
+
+
+}
+
+Amp3Body* runFit(GooPdf *totalPdf, Amp3Body *signal, UnbinnedDataSet *data, std::string name, bool genfit, unsigned int verbosity) {
 //This function run the data fit
 
     //Setting data and EventNumber
     totalPdf->setData(data);
     signal->setDataSize(data->getNumEvents());
 
-	auto output = fmt::format("Fit/{0}/fit_result_before.txt",name.c_str());
-    writeToFile(totalPdf, output.c_str());
+
+	std::string output;
+
+	if(genfit){
+		output = fmt::format("Fit/{0}/fit_result_before.txt",name.c_str());
+		writeToFile(totalPdf, output.c_str());
+	}
 
     //Fitter (it uses ROOT::FunctionMinimum API)
     FitManager datapdf(totalPdf);
-    datapdf.setVerbosity(2);
+    datapdf.setVerbosity(verbosity);
     datapdf.setMaxCalls(200000);
 
     //Start fit
     auto func_min = datapdf.fit();
 
+	auto fcn = *datapdf.getFCN();
 
-	output = fmt::format("Fit/{0}/fit_result_fitted.txt",name.c_str());
-    writeToFile(totalPdf, output.c_str());
+	//test
+	//printContours(fcn ,func_min , 0, 1, 20);
+
+	if(genfit){
+		output = fmt::format("Fit/{0}/fit_result_fitted.txt",name.c_str());
+    	writeToFile(totalPdf, output.c_str());
+	}
 
     return signal;
 }
@@ -357,30 +390,29 @@ int main(int argc, char **argv){
     
     std::string input_data_name = "input.root";
     std::string fit_name = "Fit";
-	std::string acc_file = "acc_hist_0_Smoothed.root";
-    std::string bkg_file = "bkg_hist_0_Smoothed.root";
     std::string toyName = "MC.root";
     bool save_toy = false;
     bool is_toy = false;
-    bool no_acc_and_bkg = true;
-    size_t Nevents=1000000;
+    size_t Nevents=10000;
+	size_t nfits = 2;
+	unsigned int verbosity = 2;
 
     auto fit = app.add_subcommand("fit","fit data");
     fit->add_option("-f,--file",input_data_name,"name_of_file.root");
     fit->add_option("-t,--isToy", is_toy, "Get toyData for fit") ;
     fit->add_option("-s,--saveToy",save_toy,"save toy in root file");
+	fit->add_option("-v,--verbosity",verbosity,"verbosity");
     fit->add_option("-n,--fitName",fit_name,"name of this fit(useful to save results)")->required(true);
-	fit->add_option("-a,--acc",acc_file,"name of acc file");
-    fit->add_option("-b,--bkg",bkg_file,"name of bkg file"); 
-    fit->add_option("-d,--disable-acc-bkg",no_acc_and_bkg,"disable-acc-bkg"); 
     
     auto makeToy = app.add_subcommand("makeToy","make a toy");
     makeToy->add_option("-e,--nevents",Nevents,"number of events");
     makeToy->add_option("-n,--name",toyName,"output_toy_name.root");
     makeToy->add_option("-s,--saveToy",save_toy,"save toy in root file");	
-    makeToy->add_option("-a,--acc",acc_file,"name of acc file");
-    makeToy->add_option("-b,--bkg",bkg_file,"name of bkg file");
-    makeToy->add_option("-d,--disable-acc-bkg",no_acc_and_bkg,"disable-acc-bkg"); 
+
+	auto genfit = app.add_subcommand("genfit","genfit");
+    genfit->add_option("-n,--n-fits",nfits,"number of fits");
+	genfit->add_option("-e,--nevents",Nevents,"number of events");
+	genfit->add_option("-v,--verbosity",verbosity,"verbosity");
 
     app.require_subcommand();
 
@@ -401,17 +433,9 @@ int main(int argc, char **argv){
     s13.setNumBins(bins);
     
     auto efficiency = polyEff(s12,s13);
-    auto background = nullptr;
+ 
     GooPdf* totalpdf = nullptr;
     
-    // to be implemented...
-    /*if(!no_acc_and_bkg){
-         efficiency = makeHistogramPdf(efffile,effhist,s12,s13,true,false,false);
-         background = makeHistogramPdf(bkgfile,bkghist,s12,s13,false,false,false);
-         auto signal = makesignalpdf(s12, s13, eventNumber,efficiency);
-         totalpdf = new AddPdf("totalpdf", Variable("frac",0.93), signal, background) ;
-    
-    }*/
    
     auto signal = makesignalpdf(s12, s13, eventNumber,efficiency);
     totalpdf = new ProdPdf("totalpdf", {signal}) ;
@@ -430,10 +454,7 @@ int main(int argc, char **argv){
 		    std::cout <<   toyName << " root file was saved in MC folder" << std::endl;
         	std::cout << "----------------------------------------------------------" << std::endl;
         }
-		
-		std::cout << "Fit Fractions Interference" << '\n';
-		
-		//signal->normalize();
+	
 		auto frac = signal->fit_fractions(true);
 
 
@@ -441,42 +462,7 @@ int main(int argc, char **argv){
     }   
 
 
-	/* it uses accept and reject method (very inefficient for B phase space)
-	if(*makeToy) {
-		auto tuple = signal->GenerateSig(Nevents,200323);
-		if(save_toy) {
-		    auto name= fmt::format("MC/{0}",toyName);
-			double _s12, _s13,_s23;
-
-			auto f = new TFile(name.c_str(),"recreate");
-			auto t = new TTree("DecayTree","toyMC");
-			auto b_s12 = t->Branch("s12",&_s12,"s12/D");
-			auto b_s13 = t->Branch("s13",&_s13,"s13/D");
-			auto b_s23 = t->Branch("s23",&_s23,"s23/D");
-
-			auto variables = std::get<1>(tuple);
-			auto weights   = std::get<2>(tuple);
-			auto flags     = std::get<3>(tuple);
-
-			for(int i = 0; i < weights.size(); i++){
-				if(flags[i] == 1) {
-					t->GetEntry(i);
-					_s12 = (*(variables[0]))[i];
-					_s13 = (*(variables[2]))[i];
-					_s23 = (*(variables[1]))[i];
-					t->Fill();
-				}
-			}
-			t->Write("",TObject::kOverwrite);
-			f->Write();
-			f->Close();
-			std::cout << "------------------------------------------" << std::endl;
-			std::cout << "toyMC --> " << name.c_str() << " was saved!" << std::endl;
-			std::cout << "------------------------------------------" << std::endl;
-		}
-		return 0;
-    }*/
-
+	
     if(*fit){
 
 	    auto command = fmt::format("mkdir -p Fit/{0}",fit_name);
@@ -491,11 +477,79 @@ int main(int argc, char **argv){
         std::cout << "------------------------------------------" << std::endl;
         std::cout << "Num Entries Loaded =  " << data.getNumEvents()       << std::endl; 
         std::cout << "------------------------------------------" << std::endl;
-        auto output_signal = runFit(totalpdf,signal, &data,fit_name);
+        auto output_signal = runFit(totalpdf,signal, &data,fit_name,true,verbosity);
+
+		auto frac = signal->fit_fractions(true);
 
 		std::cout << "norm = " << output_signal->normalize() << std::endl;
     }
 
-	//implement GenFit
+
+	if(*genfit){
+
+	    auto command = fmt::format("mkdir -p GenFit");
+    	if(system(command.c_str()) != 0)
+        	throw GooFit::GeneralError("Making directory failed");
+
+		std::vector<TH1F*> hist_vector; 
+		std::vector<TH1F*> hist_error_vector;
+		std::vector<Variable> vec_nominal;
+		std::vector<std::vector<Variable>> vec_fits;
+
+		TCanvas foo;
+		TFile f("GenFit/GenFit_Hists.root","recreate");
+		UnbinnedDataSet data({s12, s13, eventNumber});
+
+	
+		for(size_t i=0; i<nfits; i++){
+
+			std::cout <<"Fitting Sample " << i << std::endl;
+			auto signal = makesignalpdf(s12, s13, eventNumber,efficiency);
+			totalpdf = new ProdPdf("totalpdf", {signal}) ;
+			vec_nominal = signal->getParameters();
+			DalitzPlotter dplotter{totalpdf, signal};
+			
+			if(i==0){
+				for(int i=0; i<vec_nominal.size();i++){
+					hist_vector.push_back(new TH1F(vec_nominal[i].getName().c_str(),"",100,-5,5));
+				}
+			}
+
+			s12.setNumBins(1000);
+    		s13.setNumBins(1000);
+			dplotter.fillDataSetMC(data, Nevents,(i+10)*2,true);
+			s12.setNumBins(bins);
+    		s13.setNumBins(bins);
+			auto output_signal = runFit(totalpdf,signal, &data,"foo",false,verbosity);
+			vec_fits.push_back(output_signal->getParameters());
+
+			signal->resetCacheCounter();
+			//output_signal->resetCacheCounter();
+			data.clear();
+		}
+		gStyle->SetOptFit(1);
+		
+		for(size_t i=0; i<vec_nominal.size(); i++){
+			
+			for(size_t j=0; j<nfits ; j++){
+				hist_vector[i]->Fill((vec_fits[j][i].getValue()- vec_nominal[i].getValue())/vec_fits[j][i].getError());
+				
+			}
+			
+			if(!vec_nominal[i].IsFixed()){
+				auto ret = hist_vector[i]->Fit("gaus","LLS");
+				hist_vector[i]->Draw("");
+				foo.SaveAs(fmt::format("GenFit/{0}.png",vec_nominal[i].getName()).c_str());
+				hist_vector[i]->Write();
+				
+			}
+		}
+
+		f.Close();
+
+    }
+
         
 }
+
+

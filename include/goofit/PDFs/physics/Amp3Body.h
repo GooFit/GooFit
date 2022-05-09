@@ -47,7 +47,7 @@ class Amp3Body : public Amp3BodyBase {
     // normalization will get *really* confused and give wrong answers.
 
     __host__ auto normalize() -> fptype override;
-    __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 3, unsigned int offset = 0);
+    __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 3);
     __host__ void setForceIntegrals(bool f = true) { forceRedoIntegrals = f; }
 
     __host__ void setGenerationOffset(int off) { generation_offset = off; }
@@ -69,7 +69,6 @@ class Amp3Body : public Amp3BodyBase {
 
     /// Get the decay info struct
     __host__ auto getDecayInfo() -> DecayInfo3 & { return decayInfo; }
-    __host__ static void resetCacheCounter() { cacheCount = 0; }
 
     /// Calculate fit fractions (Cache should be pre-filled)
     __host__ auto fit_fractions() -> std::vector<std::vector<fptype>>;
@@ -94,9 +93,7 @@ class Amp3Body : public Amp3BodyBase {
     fptype *cachedMasses;
     fptype *cachedWidths;
     int totalEventSize;
-    int eventOffset;
     int cacheToUse;
-    static int cacheCount;
     int generation_offset{0};
     SpecialResonanceIntegrator ***integrators;
     SpecialResonanceCalculator **calculators;

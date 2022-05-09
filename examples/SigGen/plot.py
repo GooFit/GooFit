@@ -3,8 +3,8 @@
 import matplotlib
 
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
 
 m = np.genfromtxt("../DP4/ToyMC.txt", skip_header=1)
 sig = np.genfromtxt("SigGen.txt", skip_header=2)

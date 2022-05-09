@@ -18,30 +18,32 @@ __device__ auto device_AddPdfs(fptype *evt, ParameterContainer &pc) -> fptype {
     fptype ret         = 0;
     fptype totalWeight = 0;
 
-    // Make a copy of our parameter container so we can continue to refer to
-    // our own parameters even though pc is moving forward.
-    const ParameterContainer local_pc = pc;
+    // make a copy of our parameter container
+    ParameterContainer pci = pc;
 
-    // We start by moving to the next function in the call chain
-    pc.incrementIndex();
+    // We only call increment once we read our weight/norm for the first iteration.
+    pci.incrementIndex();
 
     for(int i = 0; i < numParameters; i++) {
         // fetch our values from AddPdf
-        fptype weight = local_pc.getParameter(i);
+        fptype weight = pc.getParameter(i);
         totalWeight += weight;
 
         // This is the normal value for the 'callFunction' PDF, so we read from pci
-        fptype norm = pc.getNormalization(0);
+        fptype norm = pci.getNormalization(0);
 
         // call the first function to add in our PDF.
-        fptype curr = callFunction(evt, pc);
+        fptype curr = callFunction(evt, pci);
 
         ret += weight * curr * norm;
     }
 
+    // restore our new parameter container object
+    pc = pci;
+
     // previous functions incremented the indices appropriately, so now we need to get the norm again
     // NOTE: this is the weight for the function about to be called.
-    fptype normFactor = local_pc.getNormalization(0);
+    fptype normFactor = pc.getNormalization(0);
 
     fptype last = callFunction(evt, pc);
     ret += (1 - totalWeight) * last * normFactor;
@@ -54,25 +56,25 @@ __device__ auto device_AddPdfsExt(fptype *evt, ParameterContainer &pc) -> fptype
     fptype ret         = 0;
     fptype totalWeight = 0;
 
-    // Make a copy of our parameter container so we can continue to refer to
-    // our own parameters even though pc is moving forward.
-    const ParameterContainer local_pc = pc;
+    // make a copy of our parameter container
+    ParameterContainer pci = pc;
 
     // We only call increment once we read our weight/norm for the first iteration.
-    pc.incrementIndex();
+    pci.incrementIndex();
 
     for(int i = 0; i < numParameters; i++) {
         // grab the weight parameter from addPdf
-        fptype weight = local_pc.getParameter(i);
+        fptype weight = pc.getParameter(i);
         //  Grab the normalization for the specific component
-        fptype normFactor = pc.getNormalization(0);
+        fptype normFactor = pci.getNormalization(0);
 
-        fptype curr = callFunction(evt, pc);
+        fptype curr = callFunction(evt, pci);
         ret += weight * curr * normFactor;
 
         totalWeight += weight;
     }
 
+    pc = pci;
     ret /= totalWeight;
 
     return ret;
@@ -110,15 +112,10 @@ AddPdf::AddPdf(std::string n, std::vector<Variable> weights, std::vector<PdfBase
         extended = false;
     }
 
-    if(extended) {
+    if(extended)
         registerFunction("ptr_to_AddPdfsExt", ptr_to_AddPdfsExt);
-        host_fcn_ptr                       = get_device_symbol_address(ptr_to_AddPdfsExt);
-        functionPtrToNameMap[host_fcn_ptr] = "AddPdfsExt";
-    } else {
+    else
         registerFunction("ptr_to_AddPdfs", ptr_to_AddPdfs);
-        host_fcn_ptr                       = get_device_symbol_address(ptr_to_AddPdfs);
-        functionPtrToNameMap[host_fcn_ptr] = "AddPdfs";
-    }
 
     initialize();
 }
@@ -133,8 +130,6 @@ AddPdf::AddPdf(std::string n, Variable frac1, PdfBase *func1, PdfBase *func2)
     observablesList = getObservables();
 
     registerFunction("ptr_to_AddPdfs", ptr_to_AddPdfs);
-    host_fcn_ptr                       = get_device_symbol_address(ptr_to_AddPdfs);
-    functionPtrToNameMap[host_fcn_ptr] = "AddPdfs";
 
     initialize();
 }
@@ -156,6 +151,7 @@ __host__ auto AddPdf::normalize() -> fptype {
     fptype last = components.back()->normalize();
 
     if(extended) {
+        // fptype lastWeight = host_parameters[parametersIdx + 2];
         fptype lastWeight = parametersList[components.size() - 1];
         totalWeight += lastWeight;
         ret += last * lastWeight;

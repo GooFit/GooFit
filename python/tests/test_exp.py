@@ -5,9 +5,9 @@ import sys
 
 sys.path.append(".")
 
-import numpy as np
-
 from goofit import *
+
+import numpy as np
 
 
 def test_exp():

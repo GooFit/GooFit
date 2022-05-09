@@ -28,5 +28,6 @@ void init_MnPrint(py::module &m) {
 
     m_ls.def_static("GlobalLevel", &MnPrint::GlobalLevel);
     m_ls.def_static("SetGlobalLevel", &MnPrint::SetGlobalLevel);
+
 #endif
 }

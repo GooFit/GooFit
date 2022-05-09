@@ -23,7 +23,7 @@ void init_Amp3Body(py::module &m) {
             "eff"_a,
             py::keep_alive<1, 6>(), // Important to keep decay alive, to keep PDFs alive
             py::keep_alive<1, 7>())
-        .def("setDataSize", &Amp3Body::setDataSize, "dataSize"_a, "evtSize"_a = 3, "offset"_a = 0)
+        .def("setDataSize", &Amp3Body::setDataSize, "dataSize"_a, "evtSize"_a = 3)
         .def("getCachedWave", &Amp3Body::getCachedWave, "i"_a)
         .def(
             "sumCachedWave",
@@ -33,7 +33,6 @@ void init_Amp3Body(py::module &m) {
              &Amp3Body::fit_fractions,
              "Using the current dataset, return the cached fit fraction values")
         .def("getDecayInfo", &Amp3Body::getDecayInfo, "Return DecayInfo")
-        .def_static("resetCacheCounter", &Amp3Body::resetCacheCounter)
         .def("normalize", &Amp3Body::normalize)
         .def_static("help", []() { return HelpPrinter(Amp3Body_docs); })
         .def("setGenerationOffset", &Amp3Body::setGenerationOffset, "off"_a)

@@ -22,6 +22,4 @@ Lineshapes::One::One(
     initialize();
 }
 
-bool Lineshapes::One::isEqualByValue(const Lineshape &other) const { return this->Lineshape::isEqualByValue(other); }
-
 } // namespace GooFit

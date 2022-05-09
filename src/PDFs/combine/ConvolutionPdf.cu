@@ -58,18 +58,12 @@ __device__ auto device_ConvolvePdfs(fptype *evt, ParameterContainer &pc) -> fpty
     fptype norm1 = pc.getNormalization(0);
     ret *= norm1;
 
-    // pc.incrementIndex(), which neglected incrementing the indices for components of combined
-    // PDFs, such as AddPdf and ConvolutionPdf, was replaced by callFunction(evt, pc);
-
-    callFunction(evt, pc);
+    pc.incrementIndex();
 
     fptype norm2 = pc.getNormalization(0);
     ret *= norm2;
 
-    // pc.incrementIndex(), which neglected incrementing the indices for components of combined
-    // PDFs, such as AddPdf, was replaced by callFunction(evt, pc);
-
-    callFunction(evt, pc);
+    pc.incrementIndex();
 
     return ret;
 }

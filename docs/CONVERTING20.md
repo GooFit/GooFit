@@ -39,7 +39,7 @@ The new `GooFit::Application`, which is not required but provides GooFit options
 #include "goofit/Application.h"
 
 // Place this at the beginning of main
-GooFit::Application app{"Optional description", argc, argv};
+GooFit::Application app{"Optional discription", argc, argv};
 
 // Command line options can be added here.
 

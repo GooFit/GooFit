@@ -119,7 +119,7 @@ Simple Gaussian fit {#listinggaussfit}
 ```cpp
 int main (int argc, char** argv) {
 
-  // Optional, but highly recommended. Based loosely
+  // Optional, but highly recommended. Based loosly
   // on TApplication.
   GooFit::Application app {"Simple Gaussian Fit", argc, argv};
 
@@ -413,7 +413,7 @@ Same goes for accessing the parameters. The mean is accessed with `pc.getParamet
 but internally it is looking at the parameters[0 + 1] and returning that value, which
 is 3.
 
-If we look at the expanded constructor:
+If we look at the expanded constructure:
 ```cpp
 GaussianPdf::GaussianPdf (std::string name,
                           Observable _x,

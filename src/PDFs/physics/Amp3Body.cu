@@ -50,8 +50,7 @@ constexpr int resonanceOffset_DP = 4; // Offset of the first resonance into the 
 // own cache, hence the '10'. Ten threads should be enough for anyone!
 
 // NOTE: This is does not support ten instances (ten threads) of resoncances now, only one set of resonances.
-// this needs to be large enough to hold all samples
-__device__ fpcomplex *cResonances[16 * 20];
+__device__ fpcomplex *cResonances[16];
 
 __device__ inline auto parIndexFromResIndex_DP(int resIndex) -> int {
     return resonanceOffset_DP + resIndex * resonanceSize;
@@ -67,7 +66,7 @@ __device__ auto device_DalitzPlot(fptype *evt, ParameterContainer &pc) -> fptype
     fptype m13 = RO_CACHE(evt[id_m13]);
 
     unsigned int numResonances = pc.getConstant(0);
-    unsigned int cacheToUse    = pc.getConstant(1);
+    // unsigned int cacheToUse    = pc.getConstant(1);
 
     if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass)) {
         pc.incrementIndex(1, numResonances * 2, 2, num_obs, 1);
@@ -103,7 +102,7 @@ __device__ auto device_DalitzPlot(fptype *evt, ParameterContainer &pc) -> fptype
         // fptype me_imag = cResonances[i][evtNum].imag();
         // fpcomplex me = cResonances[i][evtNum];
         // fpcomplex me (me_real, me_imag);
-        fpcomplex me = RO_CACHE(cResonances[i + (16 * cacheToUse)][evtNum]);
+        fpcomplex me = RO_CACHE(cResonances[i][evtNum]);
 
         totalAmp += amp * me;
     }
@@ -121,7 +120,6 @@ __device__ auto device_DalitzPlot(fptype *evt, ParameterContainer &pc) -> fptype
     return ret;
 }
 
-int Amp3Body::cacheCount                         = 0;
 __device__ device_function_ptr ptr_to_DalitzPlot = device_DalitzPlot;
 
 __host__ Amp3Body::Amp3Body(
@@ -152,8 +150,8 @@ __host__ Amp3Body::Amp3Body(
 
     // registered to 0 position
     registerConstant(decayInfo.resonances.size());
-
-    cacheToUse = cacheCount++;
+    static int cacheCount = 0;
+    cacheToUse            = cacheCount++;
     // registered to 1 position
     registerConstant(cacheToUse);
 
@@ -200,7 +198,7 @@ void Amp3Body::populateArrays() {
     // save our efficiency function.  Resonance's are saved first, then the efficiency function.  Take -1 as efficiency!
     efficiencyFunction = host_function_table.size() - 1;
 }
-__host__ void Amp3Body::setDataSize(unsigned int dataSize, unsigned int evtSize, unsigned int offset) {
+__host__ void Amp3Body::setDataSize(unsigned int dataSize, unsigned int evtSize) {
     // Default 3 is m12, m13, evtNum
     totalEventSize = evtSize;
     if(totalEventSize < 3)
@@ -214,8 +212,7 @@ __host__ void Amp3Body::setDataSize(unsigned int dataSize, unsigned int evtSize,
         }
     }
 
-    numEntries  = dataSize;
-    eventOffset = offset;
+    numEntries = dataSize;
 
     for(int i = 0; i < 16; i++) {
 #ifdef GOOFIT_MPI
@@ -224,11 +221,7 @@ __host__ void Amp3Body::setDataSize(unsigned int dataSize, unsigned int evtSize,
         cachedWaves[i] = new thrust::device_vector<fpcomplex>(dataSize);
 #endif
         void *dummy = thrust::raw_pointer_cast(cachedWaves[i]->data());
-        MEMCPY_TO_SYMBOL(cResonances,
-                         &dummy,
-                         sizeof(fpcomplex *),
-                         ((16 * cacheToUse) + i) * sizeof(fpcomplex *),
-                         cudaMemcpyHostToDevice);
+        MEMCPY_TO_SYMBOL(cResonances, &dummy, sizeof(fpcomplex *), i * sizeof(fpcomplex *), cudaMemcpyHostToDevice);
     }
 
     setForceIntegrals();
@@ -240,6 +233,7 @@ __host__ auto Amp3Body::normalize() -> fptype {
     // Copy at this time to ensure that the SpecialResonanceCalculators, which need the efficiency,
     // don't get zeroes through multiplying by the normFactor.
     // we need to update the normal here, as values are used at this point.
+
     host_normalizations.sync(d_normalizations);
 
     int totalBins = _m12.getNumBins() * _m13.getNumBins();
@@ -282,7 +276,7 @@ __host__ auto Amp3Body::normalize() -> fptype {
     // for this particular PDF component.
     thrust::constant_iterator<fptype *> dataArray(dev_event_array);
     thrust::constant_iterator<int> eventSize(totalEventSize);
-    thrust::counting_iterator<int> eventIndex(eventOffset);
+    thrust::counting_iterator<int> eventIndex(0);
 
     for(int i = 0; i < decayInfo.resonances.size(); ++i) {
         // grab the index for this resonance.
@@ -292,7 +286,7 @@ __host__ auto Amp3Body::normalize() -> fptype {
 #ifdef GOOFIT_MPI
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
-                thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, dataArray, eventSize)),
+                thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, arrayAddress, eventSize)),
                 strided_range<thrust::device_vector<fpcomplex>::iterator>(
                     cachedWaves[i]->begin(), cachedWaves[i]->end(), 1)
                     .begin(),
@@ -300,8 +294,6 @@ __host__ auto Amp3Body::normalize() -> fptype {
 #else
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
-                // was this correct before?
-                // thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, dataArray, eventSize)),
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
                 strided_range<thrust::device_vector<fpcomplex>::iterator>(
                     cachedWaves[i]->begin(), cachedWaves[i]->end(), 1)
@@ -354,6 +346,7 @@ __host__ auto Amp3Body::normalize() -> fptype {
     binSizeFactor *= _m12.getBinSize();
     binSizeFactor *= _m13.getBinSize();
     ret *= binSizeFactor;
+
     host_normalizations[normalIdx + 1] = 1.0 / ret;
     cachedNormalization                = 1.0 / ret;
     return ret;
@@ -368,7 +361,7 @@ __host__ auto Amp3Body::sumCachedWave(size_t i) const -> fpcomplex {
 }
 
 __host__ auto Amp3Body::getCachedWave(size_t i) const -> const std::vector<std::complex<fptype>> {
-    // TODO: This calls itself immediately ?
+    // TODO: This calls itself immediatly ?
     auto ret_thrust = getCachedWave(i);
     std::vector<std::complex<fptype>> ret(ret_thrust.size());
     thrust::copy(ret_thrust.begin(), ret_thrust.end(), ret.begin());

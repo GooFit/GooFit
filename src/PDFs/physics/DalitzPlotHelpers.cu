@@ -1,13 +1,14 @@
 /*
 04/05/2016 Christoph Hasse
 DISCLAIMER:
-This code is not sufficiently tested yet and still under heavy development!
+This code is not sufficently tested yet and still under heavy development!
 
 Helper functions
 */
 
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/DalitzPlotHelpers.h>
+#include <goofit/PDFs/physics/Amp3Body_TD.h>
 
 namespace GooFit {
 
@@ -16,10 +17,9 @@ __host__ __device__ auto inDalitz(
     -> bool {
     fptype dm1pdm2  = dm1 + dm2;
     fptype bigMmdm3 = bigM - dm3;
-    fptype bigMmdm1 = bigM - dm1;
 
     fptype m23 = bigM * bigM + dm1 * dm1 + dm2 * dm2 + dm3 * dm3 - m12 - m13;
-    if(m23 < 0. || m23 > bigMmdm1 * bigMmdm1)
+    if(m23 < 0.)
         return false;
 
     bool m12less = (m12 < dm1pdm2 * dm1pdm2) ? false : true;
@@ -274,72 +274,4 @@ __device__ auto getmass(const unsigned int &pair,
 
     return mpair;
 }
-
-std::ostream &operator<<(std::ostream &out, const DP4Pair &obj) {
-    std::string dp4PairName;
-
-    switch(obj) {
-    case DP4Pair::M_12:
-        dp4PairName = "M_12";
-        break;
-    case DP4Pair::M_34:
-        dp4PairName = "M_34";
-        break;
-    case DP4Pair::M_13:
-        dp4PairName = "M_13";
-        break;
-    case DP4Pair::M_14:
-        dp4PairName = "M_14";
-        break;
-    case DP4Pair::M_23:
-        dp4PairName = "M_23";
-        break;
-    case DP4Pair::M_24:
-        dp4PairName = "M_24";
-        break;
-    case DP4Pair::M_12_3:
-        dp4PairName = "M_12_3";
-        break;
-    case DP4Pair::M_13_2:
-        dp4PairName = "M_13_2";
-        break;
-    case DP4Pair::M_23_1:
-        dp4PairName = "M_23_1";
-        break;
-    case DP4Pair::M_12_4:
-        dp4PairName = "M_12_4";
-        break;
-    case DP4Pair::M_14_2:
-        dp4PairName = "M_14_2";
-        break;
-    case DP4Pair::M_24_1:
-        dp4PairName = "M_24_1";
-        break;
-    case DP4Pair::M_13_4:
-        dp4PairName = "M_13_4";
-        break;
-    case DP4Pair::M_14_3:
-        dp4PairName = "M_14_3";
-        break;
-    case DP4Pair::M_34_1:
-        dp4PairName = "M_34_1";
-        break;
-    case DP4Pair::M_23_4:
-        dp4PairName = "M_23_4";
-        break;
-    case DP4Pair::M_24_3:
-        dp4PairName = "M_24_3";
-        break;
-    case DP4Pair::M_34_2:
-        dp4PairName = "M_34_2";
-        break;
-    default:
-        dp4PairName = "UNKNOWN";
-        break;
-    }
-
-    out << dp4PairName;
-    return out;
-}
-
 } // namespace GooFit

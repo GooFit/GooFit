@@ -27,12 +27,10 @@ int main(int argc, char **argv) {
     GooFit::Application app("Time dependent Dalitz plot, 4 particles", argc, argv);
 
     TString output = "test_10_15.output";
-    app.add_option("-o,--output,output", output, "File to output")
-        ->capture_default_str()
-        ->check(GooFit::NonexistentPath);
+    app.add_option("-o,--output,output", output, "File to output", true)->check(GooFit::NonexistentPath);
 
     int trials = 100;
-    app.add_option("-t,--trials,output", trials, "Number of trials")->capture_default_str();
+    app.add_option("-t,--trials,output", trials, "Number of trials", true);
 
     GOOFIT_PARSE(app);
 
@@ -154,7 +152,7 @@ int main(int argc, char **argv) {
 
     TruthResolution dat;
     PolynomialPdf eff{"constantEff", observables, coefficients, offsets, 0};
-    Amp4Body_TD dp{"test", observables, DK3P_DI, &dat, &eff, 0, 1, 1000};
+    Amp4Body_TD dp{"test", observables, DK3P_DI, &dat, &eff, 0, 1};
 
     TFile file(output, "RECREATE");
     TTree tree("events", "events");

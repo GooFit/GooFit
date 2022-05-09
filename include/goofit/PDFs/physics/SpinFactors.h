@@ -2,7 +2,7 @@
 04/05/2016 Christoph Hasse
 DISCLAIMER:
 
-This code is not sufficiently tested yet and still under heavy development!
+This code is not sufficently tested yet and still under heavy development!
 See *.cu file for more details
 */
 
@@ -34,10 +34,8 @@ enum class SF_4Body {
     ONE
 };
 
-class SpinFactor final : public AmpComponent {
+class SpinFactor : public AmpComponent {
     friend class Amp4Body;
-
-    friend std::ostream &operator<<(std::ostream &out, const SpinFactor &obj);
 
   private:
     SF_4Body _SF;
@@ -59,11 +57,8 @@ class SpinFactor final : public AmpComponent {
 
     auto operator==(const SpinFactor &S) const -> bool {
         return (S.getName() == getName() and S._SF == _SF and S._P0 == _P0 and S._P1 == _P1 and S._P2 == _P2
-                and S._P3 == _P3 and this->areParamsandConstantsEqualByVal(S));
+                and S._P3 == _P3);
     }
 };
-
-std::ostream &operator<<(std::ostream &out, const SpinFactor &obj);
-std::ostream &operator<<(std::ostream &out, const SF_4Body &obj);
 
 } // namespace GooFit

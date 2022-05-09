@@ -2,7 +2,7 @@
 04/05/2016 Christoph Hasse
 DISCLAIMER:
 
-This code is not sufficiently tested yet and still under heavy development!
+This code is not sufficently tested yet and still under heavy development!
 
 TODO:
 - Test lineshapes, only done for BW_DP and BW_MINT so far
@@ -157,10 +157,10 @@ __host__ Amp4Body::Amp4Body(
                 SpinFactors.push_back(spinfactor);
         }
     }
-    _NUM_AMPLITUDES = components.size();
+
     registerConstant(LineShapes.size());            //#LS
     registerConstant(SpinFactors.size());           //#SF
-    registerConstant(_NUM_AMPLITUDES);              //#AMP
+    registerConstant(components.size());            //#AMP
     registerConstant(total_lineshapes_spinfactors); // total line shapes and spin factors used
 
     components.push_back(efficiency);
@@ -234,7 +234,7 @@ __host__ Amp4Body::Amp4Body(
         sfcalculators.push_back(new SFCalculator());
     }
 
-    for(int i = 0; i < _NUM_AMPLITUDES; ++i) {
+    for(int i = 0; i < components.size() - 1; ++i) {
         AmpCalcs.push_back(new AmpCalc(nPermVec[i], amp_idx_start[i]));
     }
 
@@ -340,11 +340,11 @@ __host__ void Amp4Body::populateArrays() {
     // TODO: We need to expand populateArrays so we handle components correctly!
     efficiencyFunction = host_function_table.size() - 1;
 }
-// makes the arrays to cache the lineshape values and spinfactors in CachedResSF and the values of the amplitudes in
+// makes the arrays to chache the lineshape values and spinfactors in CachedResSF and the values of the amplitudes in
 // cachedAMPs
 // I made the choice to have spinfactors necxt to the values of the lineshape in memory. I waste memory by doing this
 // because a spinfactor is saved as complex
-// It would be nice to test if this is better than having the spinfactors stored separately.
+// It would be nice to test if this is better than having the spinfactors stored seperately.
 __host__ void Amp4Body::setDataSize(unsigned int dataSize, unsigned int evtSize) {
     // Default 3 is m12, m13, evtNum for DP 2dim, 4-body decay has 5 independent vars plus evtNum = 6
     totalEventSize = evtSize;
@@ -421,6 +421,7 @@ __host__ auto Amp4Body::normalize() -> fptype {
 #else
     unsigned int events_to_process = numEntries;
 #endif
+
     // just some thrust iterators for the calculation.
     thrust::constant_iterator<fptype *> dataArray(dev_event_array);
     thrust::constant_iterator<int> eventSize(totalEventSize);
@@ -463,6 +464,7 @@ __host__ auto Amp4Body::normalize() -> fptype {
 
         SpinsCalculated = true;
     }
+
     // this calculates the values of the lineshapes and stores them in the array. It is recalculated every time
     // parameters change.
     for(int i = 0; i < LineShapes.size(); ++i) {
@@ -484,10 +486,12 @@ __host__ auto Amp4Body::normalize() -> fptype {
                 *(lscalculators[i]));
         }
     }
+
     // this is a little messy but it basically checks if the amplitude includes one of the recalculated lineshapes and
     // if so recalculates that amplitude
     // auto AmpMapIt = AmpMap.begin();
-    for(int i = 0; i < _NUM_AMPLITUDES; ++i) {
+
+    for(int i = 0; i < LineShapes.size(); ++i) {
         if(!redoIntegral[i])
             continue;
 

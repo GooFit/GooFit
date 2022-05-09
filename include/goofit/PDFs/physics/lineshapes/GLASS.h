@@ -7,7 +7,7 @@
 namespace GooFit {
 namespace Lineshapes {
 
-class GLASS final : public Lineshape {
+class GLASS : public Lineshape {
   public:
     GLASS(std::string name,
           Variable mass,
@@ -19,10 +19,6 @@ class GLASS final : public Lineshape {
           std::vector<Variable> AdditionalVars);
 
     ~GLASS() override = default;
-
-    virtual bool isEqualByValue(const Lineshape &other) const override;
-
-    virtual std::ostream &print(std::ostream &out) const override;
 };
 
 } // namespace Lineshapes

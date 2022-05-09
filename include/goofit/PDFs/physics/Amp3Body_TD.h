@@ -80,8 +80,8 @@ class Amp3Body_TD : public Amp3BodyBase {
                 DecayInfo3t decay,
                 MixingTimeResolution *r,
                 GooPdf *eff,
-                Observable *mistag   = nullptr,
-                Observable *charmtag = nullptr);
+                Observable *mistag = nullptr,
+		Observable *charmtag = nullptr);
     Amp3Body_TD(std::string n,
                 Observable _dtime,
                 Observable _sigmat,
@@ -92,8 +92,8 @@ class Amp3Body_TD : public Amp3BodyBase {
                 std::vector<MixingTimeResolution *> &r,
                 GooPdf *eff,
                 Observable md0,
-                Observable *mistag   = nullptr,
-                Observable *charmtag = nullptr);
+                Observable *mistag = nullptr,
+		Observable *charmtag = nullptr);
     // Note that 'efficiency' refers to anything which depends on (m12, m13) and multiplies the
     // coherent sum. The caching method requires that it be done this way or the ProdPdf
     // normalization will get *really* confused and give wrong answers.
@@ -124,7 +124,8 @@ class Amp3Body_TD : public Amp3BodyBase {
     // affected by making the wrong charge assignment to the mother.
 
     __host__ auto normalize() -> fptype override;
-    __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 5, unsigned int offset = 0);
+    __host__ fptype dummy_normalize();
+    __host__ void setDataSize(unsigned int dataSize, unsigned int evtSize = 5);
     __host__ void setD0Fraction(fptype d0fraction);
     __host__ fptype getD0Fraction();
     __host__ void setForceIntegrals(bool f = true) { forceRedoIntegrals = f; }
@@ -133,11 +134,10 @@ class Amp3Body_TD : public Amp3BodyBase {
     /// Get the decay info struct
     __host__ DecayInfo3t &getDecayInfo() { return decayInfo; }
     /// Get the cached wave (device) vectors
-    __host__ const thrust::device_vector<WaveHolder_s> &getCachedWaveNoCopy(size_t i) const {
-        return *(cachedWaves[i]);
-    }
+    __host__ const thrust::device_vector<WaveHolder_s> &getCachedWaveNoCopy(size_t i) const { return *(cachedWaves[i]); }
     /// Calculate fit fractions (Cache should be pre-filled)
-    __host__ std::vector<std::vector<fptype>> getFractions();
+    __host__ std::vector<std::vector<fptype>> getFractions() ;
+
 
     __host__ void populateArrays() override;
 
@@ -146,10 +146,7 @@ class Amp3Body_TD : public Amp3BodyBase {
     DecayInfo3t decayInfo;
     Observable _m12;
     Observable _m13;
-    MixingTimeResolution *resolution;
-    GooPdf *_efficiency;
     Observable _mistag;
-    Observable _charmtag;
     fptype *dalitzNormRange{nullptr};
 
     // Following variables are useful if masses and widths, involved in difficult BW calculation,
@@ -161,12 +158,12 @@ class Amp3Body_TD : public Amp3BodyBase {
     mutable bool forceRedoIntegrals{true};
     fptype *cachedMasses;
     fptype *cachedWidths;
+    MixingTimeResolution *resolution;
 
     unsigned int resolutionFunction;
     unsigned int efficiencyFunction;
 
     int totalEventSize;
-    int eventOffset;
     int cacheToUse{0};
     static int cacheCount;
     SpecialDalitzIntegrator ***integrators{nullptr};

@@ -114,9 +114,9 @@ __device__ auto device_InterHistogram(fptype *evt, ParameterContainer &pc) -> fp
         }
 
         // Only interpolate the four closest boxes (in two dimensions; more in three dimensions).
-        currentWeight       = currentWeight > 0
-                                  ? (currentWeight <= sqrt(static_cast<fptype>(numVars)) ? 1 / sqrt(currentWeight) : 0)
-                                  : 0;
+        currentWeight = currentWeight > 0
+                            ? (currentWeight <= sqrt(static_cast<fptype>(numVars)) ? 1 / sqrt(currentWeight) : 0)
+                            : 0;
         fptype currentEntry = offSomeAxis ? 0 : myHistogram[currBin];
         ret += currentWeight * currentEntry;
         totalWeight += currentWeight;

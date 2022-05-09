@@ -24,7 +24,7 @@ class GooPdf : public PdfBase {
     // These are helper methods that do all the work
 
     /// This collects the number of variables for the thrust call
-    /// -(n+2) for binned evalute's
+    /// -(n+2) for binned evalutes
     auto get_event_size() const -> int;
 
     /// This reduces the current function over the data. Does *not* prepare
@@ -72,8 +72,6 @@ class GooPdf : public PdfBase {
     __host__ auto hasAnalyticIntegral() const -> bool override;
     __host__ auto getValue(EvalFunc evalfunc = EvalFunc::Eval) -> fptype;
 
-    __host__ void listAllComponents(PdfBase *someComponent);
-
     /// Produce a list of probabilies at points
     __host__ auto getCompProbsAtDataPoints() -> std::vector<std::vector<fptype>>;
 
@@ -83,14 +81,10 @@ class GooPdf : public PdfBase {
     __host__ void initialize();
     __host__ void scan(Observable var, std::vector<fptype> &values);
     __host__ void setFitControl(std::shared_ptr<FitControl> fc) override;
-    //  for debugging, add a version with an argument that allows
-    //  us to track who called this method  mds 211220
-    __host__ void setFitControl_A(std::shared_ptr<FitControl>, std::string caller) override;
     __host__ virtual void setMetrics();
     __host__ void setParameterConstantness(bool constant = true);
 
     static __host__ auto findFunctionIdx(void *dev_functionPtr) -> int;
-    static __host__ auto lookUpFunctionIdx(void *dev_functionPtr) -> int;
     __host__ void setDebugMask(int mask, bool setSpecific = true) const;
 
 #ifdef ROOT_FOUND

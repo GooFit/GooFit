@@ -110,7 +110,7 @@ auto get_device_symbol_address(const T &symbol) -> void * {
 #define THREAD_SYNCH __syncthreads();
 #endif
 
-// CUDA errors (only needed for explicit memory transfers)
+// CUDA errors (only needed for explicit memory tranfers)
 // For CUDA case, just use existing errors
 #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
 #include <driver_types.h>

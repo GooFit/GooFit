@@ -62,12 +62,8 @@ goofit_add_pdf_library(
   resonances/LASS.cu
   resonances/NonRes.cu
   resonances/RBW.cu
-  resonances/RhoOmegaMix.cu
   resonances/Spline.cu
-  ${GOOFIT_PHYSICS_HEADERS}
-  detail/NormEvents_4Body_Base.cu
-  detail/NormEvents_4Body_DeviceCached.cu
-  detail/NormEvents_4Body_HostCached.cu)
+  ${GOOFIT_PHYSICS_HEADERS})
 
 if(IS_NOT_CUDA
    AND UNIX

@@ -9,8 +9,8 @@ namespace Lineshapes {
 
 using spline_t = std::tuple<fptype, fptype, unsigned int>;
 
-/// A spline implementation for the width (Gamma = G)
-class GSpline final : public Lineshape {
+/// A spline implementaiton for the width (Gamma = G)
+class GSpline : public Lineshape {
   public:
     /// The spline
     GSpline(std::string name,
@@ -24,8 +24,6 @@ class GSpline final : public Lineshape {
             spline_t SplineInfo);
 
     ~GSpline() override = default;
-
-    virtual bool isEqualByValue(const Lineshape &other) const override;
 };
 } // namespace Lineshapes
 

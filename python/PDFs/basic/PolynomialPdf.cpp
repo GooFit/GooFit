@@ -19,7 +19,7 @@ void init_PolynomialPdf(py::module &m) {
              "lowestDegree"_a = 0)
         .def(py::init<std::string, Observable, std::vector<Variable>, unsigned int>(),
              PolynomialPdf_docs.c_str(),
-             "name"_a,
+             "nane"_a,
              "x"_a,
              "weights"_a,
              "lowestDegree"_a = 0)

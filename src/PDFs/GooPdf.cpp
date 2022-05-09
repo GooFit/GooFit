@@ -19,7 +19,7 @@ __host__ void GooPdf::setMetrics() {
 }
 
 /// This collects the number of variables for the thrust call
-/// -(n+2) for binned evalute's
+/// -(n+2) for binned evalutes
 __host__ auto GooPdf::get_event_size() const -> int {
     int numVars = observablesList.size();
 
@@ -63,6 +63,7 @@ __host__ void GooPdf::initialize() {
 
     // MetricTaker must be created after PdfBase initialisation is done.
     PdfBase::initializeIndices();
+
     setMetrics();
 }
 
@@ -98,21 +99,8 @@ __host__ auto GooPdf::makeGrid() -> UnbinnedDataSet {
     return grid;
 }
 
-__host__ void GooPdf::setFitControl_A(std::shared_ptr<FitControl> fc, std::string caller) {
-    for(auto &component : components) {
-        auto componentName = component->getPdfName();
-        component->setFitControl_A(fc, componentName);
-    }
-
-    fitControl = fc;
-
-    setMetrics();
-
-    setIndices();
-}
 __host__ void GooPdf::setFitControl(std::shared_ptr<FitControl> fc) {
     for(auto &component : components) {
-        auto componentName = component->getPdfName();
         component->setFitControl(fc);
     }
 

@@ -5,7 +5,7 @@
 namespace GooFit {
 namespace Lineshapes {
 
-class Flatte final : public Lineshape {
+class Flatte : public Lineshape {
   public:
     Flatte(std::string name,
            Variable mass,
@@ -16,8 +16,6 @@ class Flatte final : public Lineshape {
            fptype radius = 1.5);
 
     ~Flatte() override = default;
-
-    virtual bool isEqualByValue(const Lineshape &other) const override;
 };
 
 } // namespace Lineshapes

@@ -3,7 +3,7 @@
 GPU Adaptation of classes provided in the MINT2 package by Jonas Rademacker.
 They are needed for the calculation of the spin factors.
 DISCLAIMER:
-This code is not sufficiently tested yet and still under heavy development!
+This code is not sufficently tested yet and still under heavy development!
 */
 
 #pragma once
@@ -306,7 +306,7 @@ class SymmLorentzMatrix : public LorentzMatrix {
     }
     __device__ auto Contract_1(const SymmLorentzMatrix &M) -> LorentzMatrix {
         // One pair of indices gets contracted. Since
-        // both matrices are symmetric, it doesn't matter which.
+        // both matrices are symmetric, it doesnt matter which.
         //
         // O^{mu alpha} g_{alpha beta} M^{beta nu} = R^{mu nu}
         // O^{mu alpha} M_{beta}^{nu}

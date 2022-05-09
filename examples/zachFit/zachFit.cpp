@@ -83,13 +83,9 @@ inverse femtobarn).
     int mode = 0, data = 0;
     bool plot;
     size_t reduce = 1;
-    app.add_option("-m,--mode,mode", mode, "Program mode: 0-unbinned, 1-binned, 2-binned chisq")
-        ->check(CLI::IsMember({0, 1, 2}))
-        ->capture_default_str();
-    app.add_option("-d,--data,data", data, "Dataset: 0-simple, 1-kpi, 2-k3pi")
-        ->check(CLI::IsMember({0, 1, 2}))
-        ->capture_default_str();
-    app.add_option("--reduce", reduce, "Load every X line of data")->capture_default_str();
+    app.add_set("-m,--mode,mode", mode, {0, 1, 2}, "Program mode: 0-unbinned, 1-binned, 2-binned chisq", true);
+    app.add_set("-d,--data,data", data, {0, 1, 2}, "Dataset: 0-simple, 1-kpi, 2-k3pi", true);
+    app.add_option("--reduce", reduce, "Load every X line of data", true);
     app.add_flag("-p,--plot", plot, "Make and save plots of results");
 
     GOOFIT_PARSE(app);

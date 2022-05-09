@@ -21,7 +21,7 @@ goofit_add_library(
   SquareDalitzEffPdf.cpp)
 
 target_link_libraries(_Physics PRIVATE _goofit_python)
-set_target_properties(_Physics PROPERTIES FOLDER python/PDFs CUDA_RESOLVE_DEVICE_SYMBOLS ON)
+set_target_properties(_Physics PROPERTIES FOLDER python/PDFs)
 if(GOOFIT_KMATRIX)
   target_compile_definitions(_Physics PRIVATE GOOFIT_KMATRIX)
 endif()

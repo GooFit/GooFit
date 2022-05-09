@@ -10,14 +10,6 @@ namespace GooFit {
 
 typedef fpcomplex (*resonance_function_ptr)(fptype, fptype, fptype, ParameterContainer &pc);
 
-__device__ auto dh_dsFun(double s, double daug2Mass, double daug3Mass) -> fptype;
-
-__device__ auto hFun(double s, double daug2Mass, double daug3Mass) -> fptype;
-
-__device__ auto fsFun(double s, double m2, double gam, double daug2Mass, double daug3Mass) -> fptype;
-
-__device__ auto dFun(double s, double daug2Mass, double daug3Mass) -> fptype;
-
 __device__ auto twoBodyCMmom(double rMassSq, fptype d1m, fptype d2m) -> fptype;
 
 __device__ auto twoBodyCMMothermom(fptype rMassSq, fptype dm, fptype d3m) -> fptype;

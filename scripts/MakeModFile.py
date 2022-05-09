@@ -4,7 +4,7 @@
 from __future__ import print_function
 
 try:
-    from plumbum import cli, local
+    from plumbum import local, cli
 except ImportError:
     print(
         "This file uses the plumbum library. Install with pip or conda (user directory or virtual environment OK)."

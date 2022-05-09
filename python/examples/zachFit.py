@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import division, print_function
-
-import argparse
-
-import numpy as np
+from __future__ import print_function, division
 
 from goofit import *
+import numpy as np
+import argparse
 
 print_goofit_info()
 

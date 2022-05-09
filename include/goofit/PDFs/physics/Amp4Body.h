@@ -2,7 +2,7 @@
 04/05/2016 Christoph Hasse
 DISCLAIMER:
 
-This code is not sufficiently tested yet and still under heavy development!
+This code is not sufficently tested yet and still under heavy development!
 See *.cu file for more details
 */
 
@@ -90,7 +90,6 @@ class Amp4Body : public Amp4BodyBase {
     int generation_offset{0};
 
     int efficiencyFunction;
-    unsigned int _NUM_AMPLITUDES;
 };
 
 } // namespace GooFit

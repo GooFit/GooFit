@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-from pybind11.setup_helpers import Pybind11Extension
 from setuptools import setup
+
+from pybind11.setup_helpers import Pybind11Extension
 
 __version__ = "6.24.00"
 
@@ -14,6 +15,7 @@ minuit2_pybind_sources = [
     "FunctionMinimum.cpp",
     "MnApplication.cpp",
     "MnMigrad.cpp",
+    "MnMinos.cpp",
     "MnPrint.cpp",
     "main.cpp",
 ]

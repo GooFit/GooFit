@@ -159,8 +159,4 @@ Lineshapes::Bugg3::Bugg3(
     initialize();
 }
 
-bool Lineshapes::Bugg::isEqualByValue(const Lineshape &other) const { return this->Lineshape::isEqualByValue(other); }
-
-bool Lineshapes::Bugg3::isEqualByValue(const Lineshape &other) const { return this->Lineshape::isEqualByValue(other); }
-
 } // namespace GooFit

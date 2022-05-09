@@ -24,9 +24,6 @@ doing maximum-likelihood fits with a familiar syntax.
 • [Build recipes](./docs/SYSTEM_INSTALL.md)
 • [Python](https://pypi.python.org/pypi/goofit/)
 
-## Known issues
-https://github.com/GooFit/GooFit/labels/critical https://github.com/GooFit/GooFit/labels/amplitude%20analysis https://github.com/GooFit/GooFit/labels/cuda
-
 ## Requirements
 
 * A recent version of CMake is required. The minimum is 3.9. CMake is incredibly easy to install, you can even use `pip` (see [the system install page](./docs/SYSTEM_INSTALL.md)). GooFit developers have supplied patches to CMake 3.12, so at least that is highly recommended. CMake 3.16 does not currently work with the Python bindings.
@@ -216,7 +213,7 @@ target_link_libraries(MyNewExample Boost::filesystem ROOT::TreePlayer)
 
 ### External package (BETA)
 
-GooFit now requires separable compilation, so it also now supports "external" packages, much like most other libraries. You can design your package with GooFit included as a subdirectory, and
+GooFit now requires seperable compilation, so it also now supports "external" packages, much like most other libraries. You can design your package with GooFit included as a subdirectory, and
 it should just work. You'll also save time by not building examples, python bindings, and tests. The recommended procedure:
 
 ```bash
@@ -281,7 +278,7 @@ The new `GooFit::Application`, which is not required but provides GooFit options
 using namespace GooFit;
 
 // Place this at the beginning of main
-Application app{"Optional description", argc, argv};
+Application app{"Optional discription", argc, argv};
 
 // Command line options can be added here.
 

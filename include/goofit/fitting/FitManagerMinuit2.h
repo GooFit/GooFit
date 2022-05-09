@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Minuit2/FunctionMinimum.h>
+#include <Minuit2/MnScan.h>
 
 #include <memory>
 
@@ -29,6 +30,8 @@ class FitManagerMinuit2 {
     /// Get a pointer to the fcn
     auto getFCN() -> FCN * { return &fcn_; }
 
+    ROOT::Minuit2::MnScan getMnScan();
+
     /// Check to see if fit is valid
     operator bool() const { return retval_ == FitErrors::Valid; }
 
@@ -41,11 +44,19 @@ class FitManagerMinuit2 {
     /// Get the fitting verbosity
     auto getVerbosity() const -> int { return verbosity; }
 
+    // Get the minos errors
+    std::vector<std::pair<double,double>> getMinosErrors() const { return minos_errors; }
+
+    // Run Minos error calculation
+    void setMinos(bool minos_flag = 1) { minos = minos_flag; }
+
   private:
     Params upar_;
     FCN fcn_;
     unsigned int maxfcn_{0};
     FitErrors retval_{FitErrors::NotRun};
     int verbosity{3};
+    std::vector<std::pair<double,double>> minos_errors;
+    bool minos{0};
 };
 } // namespace GooFit

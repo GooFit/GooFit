@@ -213,10 +213,10 @@ int main(int argc, char **argv) {
     GooFit::Application app("Chi-square example", argc, argv);
 
     int numbins = 100;
-    app.add_option("-n,--numbins", numbins, "Number of bins")->capture_default_str();
+    app.add_option("-n,--numbins", numbins, "Number of bins", true);
 
     int eventsToGenerate = 10000000;
-    app.add_option("-e,--events", eventsToGenerate, "Events to generate")->capture_default_str();
+    app.add_option("-e,--events", eventsToGenerate, "Events to generate", true);
 
     GOOFIT_PARSE(app);
 

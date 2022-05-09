@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
-
 import re
 
 try:
-    from plumbum import cli, local
+    from plumbum import local, cli
 except ImportError:
     print(
         "This file uses the plumbum library. Install with pip or conda (user directory or virtual environment OK)."
@@ -269,7 +268,7 @@ def fix_text(contents, version="2.0"):
         after = r[1]
         before = re.compile(r[0], re.MULTILINE | re.VERBOSE)
         if before.search(contents):
-            print("  Converting {} -> {}".format(r[0], after))
+            print("  Converting {0} -> {1}".format(r[0], after))
             contents = before.sub(after, contents)
     return contents
 
@@ -280,7 +279,7 @@ def fix_files(src, version):
             contents = f.read()
         new_contents = fix_text(contents, version)
         if contents != new_contents:
-            print("Converted: {}".format(name))
+            print("Converted: {0}".format(name))
             with name.open("w") as f:
                 f.write(new_contents)
 

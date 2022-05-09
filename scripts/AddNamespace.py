@@ -3,9 +3,8 @@
 
 from __future__ import print_function
 
-import re
-
 from plumbum import cli
+import re
 
 expr = re.compile(r"#include")
 

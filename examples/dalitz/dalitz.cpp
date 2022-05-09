@@ -354,9 +354,7 @@ int main(int argc, char **argv) {
     GooFit::Application app("Dalitz example", argc, argv);
 
     std::string filename = "dalitz_toyMC_000.txt";
-    app.add_option("-f,--filename,filename", filename, "File to read in")
-        ->capture_default_str()
-        ->check(GooFit::ExistingFile);
+    app.add_option("-f,--filename,filename", filename, "File to read in", true)->check(GooFit::ExistingFile);
 
     bool make_toy;
     app.add_flag("-m,--make-toy", make_toy, "Make a toy instead of reading a file in");

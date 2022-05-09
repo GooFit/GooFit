@@ -32,8 +32,6 @@ goofit_add_library(Variable Variable.cpp ${PROJECT_SOURCE_DIR}/include/goofit/Va
 goofit_add_library(FunctorWriter FunctorWriter.cpp
                    ${PROJECT_SOURCE_DIR}/include/goofit/FunctorWriter.h)
 
-goofit_add_library(MathUtils MathUtils.cpp ${PROJECT_SOURCE_DIR}/include/goofit/MathUtils.h)
-
 goofit_add_library(
   Application
   Application.cpp
@@ -65,8 +63,7 @@ set(lib_list
     PdfBase
     FitManager2
     DataSet
-    Variable
-    MathUtils)
+    Variable)
 
 if(ROOT_FOUND)
   list(INSERT lib_list 0 FitManager1)

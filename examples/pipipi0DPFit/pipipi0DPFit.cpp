@@ -80,8 +80,6 @@ Observable *wBkg1        = nullptr;
 Observable *wBkg2        = nullptr;
 Observable *wBkg3        = nullptr;
 Observable *wBkg4        = nullptr;
-Observable *mtag         = nullptr;
-Observable *d0tag        = nullptr;
 
 bool fitMasses = false;
 Variable fixedRhoMass("rho_mass", 0.7758, 0.01, 0.7, 0.8);
@@ -351,8 +349,6 @@ void getToyData(float sigweight = 0.9) {
         vars.push_back(*wSig0);
         //  vars.push_back(wBkg1);
         //  vars.push_back(wBkg2);
-        vars.push_back(*mtag);
-        vars.push_back(*d0tag);
         data = new UnbinnedDataSet(vars);
     }
 
@@ -402,8 +398,6 @@ void getToyData(float sigweight = 0.9) {
         //    wSig0->getValue() = sigweight;
         wSig0->setValue(calcToyWeight(sigweight, md0));
         sigprob += wSig0->getValue();
-        mtag->setValue(0);
-        d0tag->setValue(0);
         data->addEvent();
         nsig++;
 
@@ -433,8 +427,6 @@ void getToyData(float sigweight = 0.9) {
         //    wSig0->getValue() = sigweight;
         wSig0->setValue(calcToyWeight(sigweight, md0));
         sigprob += wSig0->getValue();
-        mtag->setValue(0);
-        d0tag->setValue(0);
         data->addEvent();
     }
 
@@ -526,9 +518,7 @@ GooPdf *makeEfficiencyPoly() {
 
 DecayInfo3t dtop0pp{Variable("tau", 0.4101, 0.001, 0.300, 0.500),
                     Variable("xmixing", 0.0016, 0.001, 0, 0),
-                    Variable("ymixing", 0.0055, 0.001, 0, 0),
-                    Variable("deltax", 0),
-                    Variable("deltay", 0)};
+                    Variable("ymixing", 0.0055, 0.001, 0, 0)};
 
 Amp3Body_TD *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0) {
     dtop0pp.motherMass   = _mD0;
@@ -821,10 +811,9 @@ Amp3Body_TD *makeSignalPdf(MixingTimeResolution *resolution = 0, GooPdf *eff = 0
 
     if(massd0)
         mixPdf = new Amp3Body_TD(
-            "mixPdf", *dtime, *sigma, *m12, *m13, *eventNumber, dtop0pp, resList, eff, *massd0, mtag, d0tag);
+            "mixPdf", *dtime, *sigma, *m12, *m13, *eventNumber, dtop0pp, resList, eff, *massd0, wBkg1);
     else
-        mixPdf = new Amp3Body_TD(
-            "mixPdf", *dtime, *sigma, *m12, *m13, *eventNumber, dtop0pp, resolution, eff, mtag, d0tag);
+        mixPdf = new Amp3Body_TD("mixPdf", *dtime, *sigma, *m12, *m13, *eventNumber, dtop0pp, resolution, eff, wBkg1);
 
     return mixPdf;
 }
@@ -873,8 +862,6 @@ int runToyFit(int ifile, int nfile, bool noPlots = true) {
     m13->setNumBins(240);
     eventNumber = new EventNumber("eventNumber", 0, INT_MAX);
     wSig0       = new Observable("wSig0", 0, 1);
-    mtag        = new Observable("mtag", 0, 1);
-    d0tag       = new Observable("d0tag", -1, 1);
 
     for(int i = 0; i < nfile; i++) {
         //      sprintf(strbuffer, "dataFiles/toyPipipi0/dalitz_toyMC_%03d.txt", (i+ifile)%100);
@@ -886,7 +873,7 @@ int runToyFit(int ifile, int nfile, bool noPlots = true) {
     // TruthResolution* dat = new TruthResolution();
     // Amp3Body_TD* mixPdf = makeSignalPdf(dat);
     signalDalitz = makeSignalPdf();
-    signalDalitz->setDataSize(data->getNumEvents(), 8); // Default 5 is fine for toys
+    signalDalitz->setDataSize(data->getNumEvents(), 6); // Default 5 is fine for toys
     sig0_jsugg = new ExpPdf("sig0_jsugg", *sigma, constantZero);
     //  sig0_jsugg = makeBkg_sigma_strips(0);
     sig0_jsugg->setSeparateNorm();
@@ -1803,13 +1790,9 @@ void makeToyDalitzPlots(GooPdf *overallSignal, std::string plotdir) {
     vars.push_back(*sigma);
     vars.push_back(*eventNumber);
     vars.push_back(*wSig0);
-    vars.push_back(*mtag);
-    vars.push_back(*d0tag);
     UnbinnedDataSet currData(vars);
     sigma->setValue(0.1);
     wSig0->setValue(totalSigProb / totalDat);
-    mtag->setValue(0);
-    d0tag->setValue(0);
     int evtCounter = 0;
 
     for(int i = 0; i < m12->getNumBins(); ++i) {
@@ -1836,7 +1819,7 @@ void makeToyDalitzPlots(GooPdf *overallSignal, std::string plotdir) {
     GOOFIT_INFO("Adding {} signal events from toy", currData.getNumEvents());
 
     overallSignal->setData(&currData);
-    signalDalitz->setDataSize(currData.getNumEvents(), 8);
+    signalDalitz->setDataSize(currData.getNumEvents(), 6);
     std::vector<std::vector<double>> pdfValues = overallSignal->getCompProbsAtDataPoints();
 
     for(unsigned int j = 0; j < pdfValues[0].size(); ++j) {
@@ -4896,23 +4879,23 @@ void set_bkg_model_from_string() {
 }
 
 void parseArg(GooFit::App *app) {
-    app->add_option("--luckyFrac", luckyFrac);
-    app->add_option("--mesonRad", mesonRad);
-    app->add_option("--normBins", normBinning);
-    app->add_option("--blindSeed", blindSeed);
-    app->add_option("--mdslices", mdslices);
-    app->add_option("--offset", md0offset, "Offset in GeV");
+    app->add_option("--luckyFrac", luckyFrac, "", true);
+    app->add_option("--mesonRad", mesonRad, "", true);
+    app->add_option("--normBins", normBinning, "", true);
+    app->add_option("--blindSeed", blindSeed, "", true);
+    app->add_option("--mdslices", mdslices, "", true);
+    app->add_option("--offset", md0offset, "Offest in GeV", true);
     // Previously in MeV
-    app->add_option("--upper_window", md0_upper_window);
-    app->add_option("--lower_window", md0_lower_window);
-    app->add_option("--upper_delta_window", deltam_upper_window);
-    app->add_option("--lower_delta_window", deltam_lower_window);
-    app->add_option("--upperTime", upperTime);
-    app->add_option("--lowerTime", lowerTime);
-    app->add_option("--maxSigma", maxSigma);
-    app->add_option("--polyEff", polyEff);
-    app->add_option("--m23Slices", m23Slices);
-    app->add_option("--bkgRandSeed", bkgHistRandSeed);
+    app->add_option("--upper_window", md0_upper_window, "", true);
+    app->add_option("--lower_window", md0_lower_window, "", true);
+    app->add_option("--upper_delta_window", deltam_upper_window, "", true);
+    app->add_option("--lower_delta_window", deltam_lower_window, "", true);
+    app->add_option("--upperTime", upperTime, "", true);
+    app->add_option("--lowerTime", lowerTime, "", true);
+    app->add_option("--maxSigma", maxSigma, "", true);
+    app->add_option("--polyEff", polyEff, "", true);
+    app->add_option("--m23Slices", m23Slices, "", true);
+    app->add_option("--bkgRandSeed", bkgHistRandSeed, "", true);
 
     app->add_flag("--drop-rho_1450", drop_rho_1450);
     app->add_flag("--drop-rho_1700", drop_rho_1700);
@@ -4925,12 +4908,12 @@ void parseArg(GooFit::App *app) {
 
     app->add_flag("--histSigma", useHistogramSigma);
     app->add_flag("--makePlots", makePlots);
-    app->add_option("--mkg2Model", bkg2Model_str)->check(CLI::IsMember({"histogram", "parameter", "sideband"}));
+    app->add_set("--mkg2Model", bkg2Model_str, {"histogram", "parameter", "sideband"}, "", true);
     app->add_flag("--bkg3Hist", notUseBackground3Hist);
     app->add_flag("--bkg4Hist", notUseBackground4Hist);
-    app->add_option("--bkgHistBins", bkgHistBins);
-    app->add_option("--varyParameterUp", paramUp);
-    app->add_option("--varyParameterDn", paramDn);
+    app->add_option("--bkgHistBins", bkgHistBins, "", true);
+    app->add_option("--varyParameterUp", paramUp, "", true);
+    app->add_option("--varyParameterDn", paramDn, "", true);
     app->add_flag("--mikhail", mikhailSetup);
 }
 
@@ -4954,7 +4937,6 @@ int main(int argc, char **argv) {
     int retval = 0;
 
     GooFit::Application app("pipipi0 Dalitz fit example", argc, argv);
-    app.option_defaults()->always_capture_default();
     app_ptr = &app;
     app.require_subcommand();
 
@@ -4968,9 +4950,9 @@ int main(int argc, char **argv) {
     double dplotres    = 0;
 
     auto toy = app.add_subcommand("toy", "Toy MC Performance evaluation");
-    toy->add_option("-s,--sample,sample", sample, "Sample number to use");
-    toy->add_option("-l,--load,load", load, "Number of times to load");
-    toy->add_option("-m,--max", maxEvents, "Maximum number of events to read");
+    toy->add_option("-s,--sample,sample", sample, "Sample number to use", true);
+    toy->add_option("-l,--load,load", load, "Number of times to load", true);
+    toy->add_option("-m,--max", maxEvents, "Maximum number of events to read", true);
     toy->add_flag("-p,--plot", plots, "Also make plots");
     toy->callback([&]() { retval = runToyFit(sample, load, plots); });
 
@@ -4984,7 +4966,7 @@ int main(int argc, char **argv) {
     sigma_fit->callback([&]() { retval = runSigmaFit(data.c_str()); });
 
     auto efficiency_fit = app.add_subcommand("efficiency", "Run efficiency fit");
-    efficiency_fit->add_option("-s,--sample,sample", sample, "Sample number to use");
+    efficiency_fit->add_option("-s,--sample,sample", sample, "Sample number to use", true);
     efficiency_fit->callback([&]() { retval = runEfficiencyFit(sample); });
 
     auto canonical_fit = app.add_subcommand("canonical", "Run the canonical fit");
@@ -4996,7 +4978,7 @@ int main(int argc, char **argv) {
     });
 
     auto background_dalitz_fit = app.add_subcommand("background_dalitz", "Run the background Dalitz fit");
-    background_dalitz_fit->add_option("-s,--sample,sample", sample, "Sample number to use");
+    background_dalitz_fit->add_option("-s,--sample,sample", sample, "Sample number to use", true);
     parseArg(background_dalitz_fit);
     background_dalitz_fit->callback([&]() {
         set_bkg_model_from_string();
@@ -5004,11 +4986,11 @@ int main(int argc, char **argv) {
     });
 
     auto background_sigma_fit = app.add_subcommand("background_sigma", "Run background sigma fit");
-    background_sigma_fit->add_option("-s,--sample,sample", sample, "Sample number to use");
+    background_sigma_fit->add_option("-s,--sample,sample", sample, "Sample number to use", true);
     background_sigma_fit->callback([&]() { retval = runBackgroundSigmaFit(sample); });
 
     auto write_background_histograms = app.add_subcommand("background_histograms", "Write background histograms");
-    write_background_histograms->add_option("-s,--sample,sample", sample, "Sample number to use");
+    write_background_histograms->add_option("-s,--sample,sample", sample, "Sample number to use", true);
     write_background_histograms->callback([&]() { writeBackgroundHistograms(sample); });
 
     auto run_gen_mc_fit = app.add_subcommand("run_gen_mc", "Run generated Monte Carlo fit");

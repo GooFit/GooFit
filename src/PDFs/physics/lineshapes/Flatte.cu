@@ -64,6 +64,4 @@ Lineshapes::Flatte::Flatte(
     initialize();
 }
 
-bool Lineshapes::Flatte::isEqualByValue(const Lineshape &other) const { return this->Lineshape::isEqualByValue(other); }
-
 } // namespace GooFit

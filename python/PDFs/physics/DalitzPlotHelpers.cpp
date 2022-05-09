@@ -67,15 +67,10 @@ void init_DalitzPlotHelpers(py::module &m) {
         });
 
     py::class_<DecayInfo3t, DecayInfo3>(m, "DecayInfo3t")
-        .def(py::init<Variable, Variable, Variable, Variable, Variable>(),
-             "tau"_a,
-             "xmixing"_a,
-             "ymixing"_a,
-             "deltax"_a,
-             "deltay"_a)
+      .def(py::init<Variable, Variable, Variable, Variable, Variable>(), "tau"_a, "xmixing0"_a, "ymixing0"_a, "deltax"_a, "deltay"_a)
         .def_readonly("_tau", &DecayInfo3t::_tau)
-        .def_readonly("_xmixing", &DecayInfo3t::_xmixing)
-        .def_readonly("_ymixing", &DecayInfo3t::_ymixing)
+        .def_readonly("_xmixing0", &DecayInfo3t::_xmixing0)
+        .def_readonly("_ymixing0", &DecayInfo3t::_ymixing0)
         .def_readonly("_deltax", &DecayInfo3t::_deltax)
         .def_readonly("_deltay", &DecayInfo3t::_deltay);
 

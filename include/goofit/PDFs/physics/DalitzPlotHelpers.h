@@ -2,7 +2,7 @@
 04/05/2016 Christoph Hasse
 DISCLAIMER:
 
-This code is not sufficiently tested yet and still under heavy development!
+This code is not sufficently tested yet and still under heavy development!
 See *.cu file for more details
 */
 
@@ -74,9 +74,6 @@ enum DP4Pair {
     M_24_3,
     M_34_2
 };
-
-std::ostream &operator<<(std::ostream &out, const DP4Pair &obj);
-
 enum DaughterPair { PAIR_12 = 0, PAIR_13, PAIR_23 };
 
 const int resonanceSize = 4; // Number of parameters to describe one resonance.
@@ -97,15 +94,15 @@ struct DecayInfo3 {
 
 struct DecayInfo3t : public DecayInfo3 {
     Variable _tau;
-    Variable _xmixing;
-    Variable _ymixing;
+    Variable _xmixing0;
+    Variable _ymixing0;
     Variable _deltax;
     Variable _deltay;
 
-    DecayInfo3t(Variable _tau, Variable _xmixing, Variable _ymixing, Variable _deltax, Variable _deltay)
+ DecayInfo3t(Variable _tau, Variable _xmixing0, Variable _ymixing0, Variable _deltax, Variable _deltay)
         : _tau(_tau)
-        , _xmixing(_xmixing)
-        , _ymixing(_ymixing)
+        , _xmixing0(_xmixing0)
+        , _ymixing0(_ymixing0)
         , _deltax(_deltax)
         , _deltay(_deltay) {}
 };
@@ -170,7 +167,7 @@ class strided_range {
     Iterator first;
     Iterator last;
     difference_type stride;
-};
+ };
 
 // From 3 body T
 

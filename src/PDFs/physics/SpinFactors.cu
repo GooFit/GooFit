@@ -3,80 +3,13 @@
 The Spinfactors are an adaptation from the MINT implementation, by Jonas Rademacker.
 
 DISCLAIMER:
-This code is not sufficiently tested yet and still under heavy development!
+This code is not sufficently tested yet and still under heavy development!
 */
 #include <goofit/PDFs/ParameterContainer.h>
 #include <goofit/PDFs/physics/SpinFactors.h>
 #include <goofit/PDFs/physics/detail/SpinHelper.h>
 
 namespace GooFit {
-
-std::ostream &operator<<(std::ostream &out, const SF_4Body &obj) {
-    std::string sfName;
-    switch(obj) {
-    case SF_4Body::DtoPP1_PtoSP2_StoP3P4:
-        sfName = "SF_4Body::DtoPP1_PtoSP2_StoP3P4";
-        break;
-    case SF_4Body::DtoPP1_PtoVP2_VtoP3P4:
-        sfName = "SF_4Body::DtoPP1_PtoVP2_VtoP3P4";
-        break;
-    case SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_S:
-        sfName = "SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_S";
-        break;
-    case SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_P:
-        sfName = "SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_P";
-        break;
-    case SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_D:
-        sfName = "SF_4Body::DtoV1V2_V1toP1P2_V2toP3P4_D";
-        break;
-    case SF_4Body::DtoAP1_AtoVP2_VtoP3P4:
-        sfName = "SF_4Body::DtoAP1_AtoVP2_VtoP3P4";
-        break;
-    case SF_4Body::DtoAP1_AtoVP2Dwave_VtoP3P4:
-        sfName = "SF_4Body::DtoAP1_AtoVP2Dwave_VtoP3P4";
-        break;
-    case SF_4Body::DtoVS_VtoP1P2_StoP3P4:
-        sfName = "SF_4Body::DtoVS_VtoP1P2_StoP3P4";
-        break;
-    case SF_4Body::DtoV1P1_V1toV2P2_V2toP3P4:
-        sfName = "SF_4Body::DtoV1P1_V1toV2P2_V2toP3P4";
-        break;
-    case SF_4Body::DtoAP1_AtoSP2_StoP3P4:
-        sfName = "SF_4Body::DtoAP1_AtoSP2_StoP3P4";
-        break;
-    case SF_4Body::DtoTP1_TtoVP2_VtoP3P4:
-        sfName = "SF_4Body::DtoTP1_TtoVP2_VtoP3P4";
-        break;
-    case SF_4Body::FF_12_34_L1:
-        sfName = "SF_4Body::FF_12_34_L1";
-        break;
-    case SF_4Body::FF_12_34_L2:
-        sfName = "SF_4Body::FF_12_34_L2";
-        break;
-    case SF_4Body::FF_123_4_L1:
-        sfName = "SF_4Body::FF_123_4_L1";
-        break;
-    case SF_4Body::FF_123_4_L2:
-        sfName = "SF_4Body::FF_123_4_L2";
-        break;
-    case SF_4Body::ONE:
-        sfName = "SF_4Body::ONE";
-        break;
-    default:
-        sfName = "UNKNOWN";
-        break;
-    }
-
-    out << sfName;
-    return out;
-}
-
-std::ostream &operator<<(std::ostream &out, const SpinFactor &obj) {
-    out << "\"" << obj.getName() << "\""
-        << ", " << obj._SF << ", " << obj.constantsList[0] << ", " << obj._P0 << ", " << obj._P1 << ", " << obj._P2
-        << ", " << obj._P3;
-    return out;
-}
 
 #define ZEMACH 1
 

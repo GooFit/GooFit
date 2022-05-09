@@ -23,7 +23,7 @@ add_library(
   VoigtianPdf.cpp)
 
 target_link_libraries(_Basic PRIVATE _goofit_python)
-set_target_properties(_Basic PROPERTIES FOLDER python/PDFs CUDA_RESOLVE_DEVICE_SYMBOLS ON)
+set_target_properties(_Basic PROPERTIES FOLDER python/PDFs)
 
 goofit_add_python_docs(_Basic PDFs/basic/ArgusPdf.h)
 goofit_add_python_docs(_Basic PDFs/basic/BifurGaussPdf.h)

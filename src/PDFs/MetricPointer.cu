@@ -64,33 +64,19 @@ __device__ device_metric_ptr ptr_to_BinAvg       = calculateBinAvg;
 __device__ device_metric_ptr ptr_to_BinWithError = calculateBinWithError;
 __device__ device_metric_ptr ptr_to_Chisq        = calculateChisq;
 
-// 211222 mds functionPtrToNameMap is declared in Globals.cpp
-// it is a map of the device pointer vaues to the names of the methods;
-// meant to be used for debugging/tracking logic; it is not used
-// in any calculations.
-
-// fill the map each time a host_fcn_ptr is created
-// so we can access the name later
-
 auto getMetricPointer(EvalFunc val) -> void * {
     if(val == EvalFunc::Eval) {
-        host_fcn_ptr                       = get_device_symbol_address(ptr_to_Eval);
-        functionPtrToNameMap[host_fcn_ptr] = "calculateEval";
+        host_fcn_ptr = get_device_symbol_address(ptr_to_Eval);
     } else if(val == EvalFunc::NLL) {
-        host_fcn_ptr                       = get_device_symbol_address(ptr_to_NLL);
-        functionPtrToNameMap[host_fcn_ptr] = "calculateNLL";
+        host_fcn_ptr = get_device_symbol_address(ptr_to_NLL);
     } else if(val == EvalFunc::Prob) {
-        host_fcn_ptr                       = get_device_symbol_address(ptr_to_Prob);
-        functionPtrToNameMap[host_fcn_ptr] = "calculateProb";
+        host_fcn_ptr = get_device_symbol_address(ptr_to_Prob);
     } else if(val == EvalFunc::BinAvg) {
-        host_fcn_ptr                       = get_device_symbol_address(ptr_to_BinAvg);
-        functionPtrToNameMap[host_fcn_ptr] = "calculateBinAvg";
+        host_fcn_ptr = get_device_symbol_address(ptr_to_BinAvg);
     } else if(val == EvalFunc::BinWithError) {
-        host_fcn_ptr                       = get_device_symbol_address(ptr_to_BinWithError);
-        functionPtrToNameMap[host_fcn_ptr] = "calculateBinWithError";
+        host_fcn_ptr = get_device_symbol_address(ptr_to_BinWithError);
     } else if(val == EvalFunc::Chisq) {
-        host_fcn_ptr                       = get_device_symbol_address(ptr_to_Chisq);
-        functionPtrToNameMap[host_fcn_ptr] = "calculateChisq";
+        host_fcn_ptr = get_device_symbol_address(ptr_to_Chisq);
     } else {
         throw GeneralError("Non-existent metric pointer choice");
     }

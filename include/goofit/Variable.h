@@ -52,8 +52,6 @@ class Indexable {
             GOOFIT_DEBUG("Destroying Indexable: {}", name);
     }
 
-    bool isEqualNameValLimits(const Indexable &other) const;
-
     /// Get the GooFit index
     auto getIndex() const -> int { return *index; }
     /// Set the GooFit index
@@ -187,8 +185,6 @@ class Variable : public Indexable {
 
     ~Variable() override = default;
 
-    bool isEqualNameValLimitsErrBlindFixed(const Variable &other) const;
-
     /// Get the error
     auto getError() const -> fptype { return *error; }
     /// Set the error
@@ -211,7 +207,7 @@ class Variable : public Indexable {
     /// Check to see if this has been changed since last iteration
     void setChanged(bool val = true) { *changed_ = val; }
 
-    /// Hides the number; the real value is the result minus this value. Cannot be retrieved once set.
+    /// Hides the number; the real value is the result minus this value. Cannot be retreived once set.
     void setBlind(fptype val) { *blind = val; }
 
     /// Protected by special locked key, only a few classes have access to create a Key

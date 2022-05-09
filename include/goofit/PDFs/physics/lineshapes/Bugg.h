@@ -5,7 +5,7 @@
 namespace GooFit {
 namespace Lineshapes {
 
-class Bugg final : public Lineshape {
+class Bugg : public Lineshape {
   public:
     Bugg(std::string name,
          Variable mass,
@@ -16,8 +16,6 @@ class Bugg final : public Lineshape {
          fptype radius = 1.5);
 
     ~Bugg() override = default;
-
-    virtual bool isEqualByValue(const Lineshape &other) const override;
 };
 
 } // namespace Lineshapes

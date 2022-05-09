@@ -9,7 +9,7 @@ __AUTHOR__="Jeroen de Bruijn"
 #   must be installed.
 # - Doxygen configuration file must have the destination directory empty and
 #   source code directory with a $(TRAVIS_BUILD_DIR) prefix.
-# - An gh-pages branch should already exist. See below for more info on how to
+# - An gh-pages branch should already exist. See below for mor info on hoe to
 #   create a gh-pages branch.
 #
 # Required global variables:
@@ -38,14 +38,14 @@ echo 'Setting up the script...'
 # Exit with nonzero exit code if anything fails
 set -e
 
-GH_REPO_ORG=$(echo $TRAVIS_REPO_SLUG | cut -d "/" -f 1)
-GH_REPO_NAME=$(echo $TRAVIS_REPO_SLUG | cut -d "/" -f 2)
+GH_REPO_ORG=`echo $TRAVIS_REPO_SLUG | cut -d "/" -f 1`
+GH_REPO_NAME=`echo $TRAVIS_REPO_SLUG | cut -d "/" -f 2`
 GH_REPO_REF="github.com/$GH_REPO_ORG/$GH_REPO_NAME.git"
 
 # Create a clean working directory for this script.
 # Get the current gh-pages branch
 cd docs
-git clone -b gh-pages "https://git@$GH_REPO_REF" html
+git clone -b gh-pages https://git@$GH_REPO_REF html
 cd html
 
 ##### Configure git.
@@ -95,7 +95,7 @@ if [ -d "html" ] && [ -f "html/index.html" ]; then
     git commit -m "Deploy code docs to GitHub Pages Travis build: ${TRAVIS_BUILD_NUMBER}" -m "Commit: ${TRAVIS_COMMIT}"
 
     # Force push to the remote gh-pages branch.
-    # The output is redirected to /dev/null to hide any sensitive credential data
+    # The ouput is redirected to /dev/null to hide any sensitive credential data
     # that might otherwise be exposed.
     git push --force "https://${GH_REPO_TOKEN}@${GH_REPO_REF}" > /dev/null 2>&1
 else

@@ -12,12 +12,12 @@ namespace GooFit {
 
 class NormEvents_4Body_Base {
   public:
-    NormEvents_4Body_Base()                                    = default;
-    NormEvents_4Body_Base(const NormEvents_4Body_Base &copyMe) = default;
-    NormEvents_4Body_Base(NormEvents_4Body_Base &&moveMe)      = default;
-    virtual ~NormEvents_4Body_Base()                           = default;
+    NormEvents_4Body_Base()                                               = default;
+    NormEvents_4Body_Base(const NormEvents_4Body_Base &copyMe)            = default;
+    NormEvents_4Body_Base(NormEvents_4Body_Base &&moveMe)                 = default;
+    virtual ~NormEvents_4Body_Base()                                      = default;
     NormEvents_4Body_Base &operator=(const NormEvents_4Body_Base &copyMe) = default;
-    NormEvents_4Body_Base &operator=(NormEvents_4Body_Base &&moveMe) = default;
+    NormEvents_4Body_Base &operator=(NormEvents_4Body_Base &&moveMe)      = default;
 
     int getNumAccNormEvents() const { return _totNumAccNormEvents; }
 

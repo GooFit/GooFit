@@ -12,14 +12,13 @@
 
 #include <CLI/Timer.hpp>
 
+#include <random>
+
 
 #ifdef MATHCORE_STANDALONE
 #define ROOT_VERSION(x, y, z) 0
-#include <TRandom3.h>
 #else
 #include <RVersion.h>
-#include <TRandom3.h>
-#include <TMath.h>
 #endif
 
 namespace GooFit {
@@ -218,8 +217,9 @@ std::vector <std::vector<fptype>> FitManagerMinuit2::printParams()
 
 
 void FitManagerMinuit2::setRandMinuitValues (size_t nSamples){
-    TRandom3 rnd;
-	rnd.SetSeed(nSamples+7436);
+    std::random_device rd{};
+    std::mt19937 gen{rd()};
+
 	std::vector<fptype> floatVarVal;
 	floatVarVal.clear();
 	std::vector<fptype> floatVarErr;
@@ -238,7 +238,8 @@ void FitManagerMinuit2::setRandMinuitValues (size_t nSamples){
 
 	for (int ii=0;ii<nSamples;ii++){
 		for (int i=0;i<nFPars;i++){ 
-			vy(i) = rnd.Gaus(floatVarVal[i],1);
+			std::normal_distribution<> d{floatVarVal[i],1};
+			vy(i) = d(gen);
 		}
 	
 		samples.emplace_back(vy);

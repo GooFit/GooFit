@@ -34,6 +34,8 @@ class FitManagerMinuit2 {
     /// Set the maximum number of calls. 0 for Minuit2 default.
     void setMaxCalls(unsigned int max_calls = 0) { maxfcn_ = max_calls; }
 
+    void setStrategy(unsigned int str) { strategy = str; }
+
     /// Get a pointer to the params
     auto getParams() -> Params * { return &upar_; }
 
@@ -69,6 +71,7 @@ class FitManagerMinuit2 {
     void loadSample(size_t iSample);
 
   private:
+    unsigned int strategy = 1;
     Params upar_;
     PdfBase *pdfPointer;
     FCN fcn_;

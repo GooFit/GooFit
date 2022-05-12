@@ -42,7 +42,7 @@ auto FitManagerMinuit2::fit() -> Minuit2::FunctionMinimum {
 
     CLI::Timer timer{"The minimization took"};
 
-    Minuit2::MnMigrad migrad{fcn_, upar_,1};
+    Minuit2::MnMigrad migrad{fcn_, upar_,strategy};
 
         
   

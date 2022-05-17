@@ -13,12 +13,5 @@ using namespace ROOT::Minuit2;
 
 void init_MnScan(py::module &m) {
     py::class_<MnScan>(m, "MnScan")
-        .def("Scan", 
-	     &MnScan::Scan,
-	     "Scan parameter.",
-	     "par"_a,
-	     "maxsteps"_a = 41,
-	     "low"_a = 0,
-	     "high"_a = 0);
-
+        .def("Scan", &MnScan::Scan, "Scan parameter.", "par"_a, "maxsteps"_a = 41, "low"_a = 0, "high"_a = 0);
 }

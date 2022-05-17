@@ -16,9 +16,7 @@
 using namespace GooFit;
 
 void init_FitManager(py::module &m) {
-  py::class_<FCN, Minuit2::FCNBase>(m, "FCN")
-        .def(py::init<Params &>(), "params"_a)
-        ;
+    py::class_<FCN, Minuit2::FCNBase>(m, "FCN").def(py::init<Params &>(), "params"_a);
 
     py::class_<Params, Minuit2::MnUserParameters>(m, "Params")
         .def(py::init<PdfBase &>(), "pdf"_a)

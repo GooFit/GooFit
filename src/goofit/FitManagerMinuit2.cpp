@@ -51,26 +51,28 @@ auto FitManagerMinuit2::fit() -> Minuit2::FunctionMinimum {
     CLI::Timer avetimer{"Average time per call"};
     Minuit2::FunctionMinimum min = migrad(maxfcn_);
 
-    if (minos) {
-      Minuit2::MnMinos minos{fcn_, min}; // Create MINOS errors 
-      std::vector<Variable> variables = upar_.GetGooFitParams();
-      for(Variable &var : variables) {
-        if(var.IsFixed()) continue;
-        else {
-	  minos_errors.push_back( minos(var.getFitterIndex()));
+    if(minos) {
+        Minuit2::MnMinos minos{fcn_, min}; // Create MINOS errors
+        std::vector<Variable> variables = upar_.GetGooFitParams();
+        for(Variable &var : variables) {
+            if(var.IsFixed())
+                continue;
+            else {
+                minos_errors.push_back(minos(var.getFitterIndex()));
+            }
         }
-      }
-      // output
-      int counter = 0;
-      std::cout<<"1-sigma minos errors: "<<std::endl;
-      for(Variable &var : variables) {
-        if(var.IsFixed()) continue;
-        else {
-	  std::cout<<var.getName()<< ": "
-		   <<minos_errors[counter].first<<" "<<minos_errors[counter].second<<std::endl;
-	  counter +=1;
-	}
-      }
+        // output
+        int counter = 0;
+        std::cout << "1-sigma minos errors: " << std::endl;
+        for(Variable &var : variables) {
+            if(var.IsFixed())
+                continue;
+            else {
+                std::cout << var.getName() << ": " << minos_errors[counter].first << " " << minos_errors[counter].second
+                          << std::endl;
+                counter += 1;
+            }
+        }
     }
 
     // Print nice output

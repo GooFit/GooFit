@@ -45,7 +45,7 @@ class FitManagerMinuit2 {
     auto getVerbosity() const -> int { return verbosity; }
 
     // Get the minos errors
-    std::vector<std::pair<double,double>> getMinosErrors() const { return minos_errors; }
+    std::vector<std::pair<double, double>> getMinosErrors() const { return minos_errors; }
 
     // Run Minos error calculation
     void setMinos(bool minos_flag = 1) { minos = minos_flag; }
@@ -56,7 +56,7 @@ class FitManagerMinuit2 {
     unsigned int maxfcn_{0};
     FitErrors retval_{FitErrors::NotRun};
     int verbosity{3};
-    std::vector<std::pair<double,double>> minos_errors;
+    std::vector<std::pair<double, double>> minos_errors;
     bool minos{0};
 };
 } // namespace GooFit

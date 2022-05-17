@@ -32,7 +32,7 @@ class Params : public Minuit2::MnUserParameters {
     Params(PdfBase &pdf);
 
     // Get vector of GooFit Variables.
-    std::vector<Variable> GetGooFitParams() const {return vars_; }
+    std::vector<Variable> GetGooFitParams() const { return vars_; }
 
     /// Read the values back into GooFit
     void SetGooFitParams(const Minuit2::MnUserParameterState &input);

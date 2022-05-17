@@ -107,12 +107,12 @@ __device__ fptype BinomCoeff(int n, int k) {
     return res;
 }
 
-__device__ fptype EvaluateAcceptance(int n, fptype r, fptype u0, fptype tlow, fptype thigh) {
+__device__ fptype EvaluateAcceptance(int n, fptype _sqrt_r, fptype * _evaluatedConvo, fptype * _evaluatedPowU0) {
     fptype res = 0.;
     for(int k = 0; k <= n; k++) {
-        res += BinomCoeff(n, k) * EvaluateConvo(n - k, sqrt(r) * tlow + u0, sqrt(r) * thigh + u0) * pow(-u0, k);
+        res += BinomCoeff(n, k) * _evaluatedConvo[n - k] * _evaluatedPowU0[k];
     }
-    res = res * pow(1. / sqrt(r), n);
+    res = res * pow(1. / _sqrt_r, n);
     return res;
 }
 
@@ -127,26 +127,64 @@ __device__ void EvaluateKnot(fptype &_P1,
                              fptype a3,
                              fptype tprime,
                              fptype sigma,
-                             fptype y) {
-    fptype r        = 1. / sigma / sigma;
-    fptype p_plus   = 2 * Gamma * (1. - y) - 2 * (tprime) / sigma / sigma;
-    fptype p_minus  = 2 * Gamma * (1. + y) - 2 * (tprime) / sigma / sigma;
-    fptype q        = (tprime) * (tprime) / sigma / sigma;
-    fptype u0_plus  = p_plus / (2. * sqrt(r));
-    fptype u0_minus = p_minus / (2. * sqrt(r));
+                             fptype y)  {
+    // sqrt_r = 1/sigma
+    fptype sqrt_r = 1./sigma;
+    // r = 1/sigma^2
+    fptype r = sqrt_r*sqrt_r;
+    fptype p_plus   = 2 * Gamma * (1. - y) - 2 * (tprime) * r;
+    fptype p_minus  = 2 * Gamma * (1. + y) - 2 * (tprime) * r;
+    fptype q        = (tprime) * (tprime) * r;
+    fptype u0_plus  = p_plus / (2. * sqrt_r);
+    fptype u0_minus = p_minus / (2. * sqrt_r);
     // factor 1/sqrt(2PI) absorbed in small phi?
-    fptype preFactor       = 0.5 / sqrt(r) / sigma;
+    fptype preFactor       = 0.5 / sqrt_r / sigma;
     fptype preFactor_plus  = exp(-0.5 * (q - u0_plus * u0_plus));
     fptype preFactor_minus = exp(-0.5 * (q - u0_minus * u0_minus));
-    fptype Ipy_0           = EvaluateAcceptance(0, r, u0_plus, knot_low, knot_high);
-    fptype Ipy_1           = EvaluateAcceptance(1, r, u0_plus, knot_low, knot_high);
-    fptype Ipy_2           = EvaluateAcceptance(2, r, u0_plus, knot_low, knot_high);
-    fptype Ipy_3           = EvaluateAcceptance(3, r, u0_plus, knot_low, knot_high);
 
-    fptype Imy_0 = EvaluateAcceptance(0, r, u0_minus, knot_low, knot_high);
-    fptype Imy_1 = EvaluateAcceptance(1, r, u0_minus, knot_low, knot_high);
-    fptype Imy_2 = EvaluateAcceptance(2, r, u0_minus, knot_low, knot_high);
-    fptype Imy_3 = EvaluateAcceptance(3, r, u0_minus, knot_low, knot_high);
+    
+    fptype lowLim = sqrt_r * knot_low +  u0_plus;
+    fptype highLim = sqrt_r * knot_high +  u0_plus;
+    fptype evaluatedConvo[4];
+    fptype evaluatedPowU0[4];
+    for (int i = 0; i<4;i++){
+       evaluatedConvo[i] = EvaluateConvo(i, lowLim, highLim);
+       
+    }
+    evaluatedPowU0[0] = 1.;
+    for(int i = 1; i<4; i++) {
+        evaluatedPowU0[i] = evaluatedPowU0[i-1] * -u0_plus;
+    }
+    
+    /*
+    fptype evaluatedAcceptance[4];
+    evaluatedAcceptance[0] = BinomCoeff(0, 0) * EvaluateConvo(0, sqrt_r * knot_low+  u0_plus, _sqrt_r * knot_high +  u0_plus) * pow(- u0_plus, 0);
+    for(int i = 1; i<4; i++) {
+        evaluatedAcceptance[i] = evaluatedAcceptance[i-1] + BinomCoeff(n, k) * EvaluateConvo(n - k, _sqrt_r * tlow + u0, _sqrt_r * thigh + u0) * pow(-u0, k);
+    }
+    */
+    
+    fptype Ipy_0           = EvaluateAcceptance(0, sqrt_r, evaluatedConvo, evaluatedPowU0);
+    fptype Ipy_1           = EvaluateAcceptance(1, sqrt_r, evaluatedConvo, evaluatedPowU0);
+    fptype Ipy_2           = EvaluateAcceptance(2, sqrt_r, evaluatedConvo, evaluatedPowU0);
+    fptype Ipy_3           = EvaluateAcceptance(3, sqrt_r, evaluatedConvo, evaluatedPowU0);
+
+
+    lowLim = sqrt_r * knot_low +  u0_minus;
+    highLim = sqrt_r * knot_high +  u0_minus;
+    for (int i = 0; i<4;i++){
+       evaluatedConvo[i] = EvaluateConvo(i, lowLim, highLim);
+       
+    }
+    evaluatedPowU0[0] = 1.;
+    for(int i = 1; i<4; i++) {
+        evaluatedPowU0[i] = evaluatedPowU0[i-1] * -u0_minus;
+    }
+
+    fptype Imy_0 = EvaluateAcceptance(0, sqrt_r, evaluatedConvo, evaluatedPowU0);
+    fptype Imy_1 = EvaluateAcceptance(1, sqrt_r, evaluatedConvo, evaluatedPowU0);
+    fptype Imy_2 = EvaluateAcceptance(2, sqrt_r, evaluatedConvo, evaluatedPowU0);
+    fptype Imy_3 = EvaluateAcceptance(3, sqrt_r, evaluatedConvo, evaluatedPowU0);
     fptype Ipy   = a0 * Ipy_0 + a1 * Ipy_1 + a2 * Ipy_2 + a3 * Ipy_3;
     fptype Imy   = a0 * Imy_0 + a1 * Imy_1 + a2 * Imy_2 + a3 * Imy_3;
     // fudge factor 10 by comparison with old values. Need to really understand what is missing
@@ -154,15 +192,15 @@ __device__ void EvaluateKnot(fptype &_P1,
     _P3 += 1. * preFactor * (preFactor_plus * Ipy - preFactor_minus * Imy);
 }
 
-__device__ fptype EvaluateAcceptanceGn(int n, int k, fptype r, fptype u0, fptype tlow, fptype thigh) {
+__device__ fptype EvaluateAcceptanceGn(int n, int k, fptype _sqrt_r, fptype * _evaluatedConvo, fptype * _evaluatedPowU) {
     // n : I_gn
     // k: order of polynmoial term
     fptype res = 0.;
     for(int i = 0; i <= n + k; i++) {
-        res += BinomCoeff(n + k, i) * EvaluateConvo(n + k - i, sqrt(r) * tlow + u0, sqrt(r) * thigh + u0) * pow(-u0, i);
+        res += BinomCoeff(n + k, i) * _evaluatedConvo[n + k - i] * _evaluatedPowU[i];
     }
     // is this term double-counted? ALready considered in EvaluateKnotSinCos? -> no, it's correct
-    res = res * pow(1. / sqrt(r), k);
+    res = res * pow(1. / _sqrt_r, k);
     return res;
 }
 
@@ -178,55 +216,74 @@ __device__ void EvaluateKnotSinCos(fptype &_P2,
                                    fptype tprime,
                                    fptype sigma,
                                    fptype x) {
-    fptype r  = 1. / sigma / sigma;
-    fptype p  = 2 * Gamma - 2 * (tprime) / sigma / sigma;
-    fptype q  = (tprime) * (tprime) / sigma / sigma;
-    fptype u0 = p / (2. * sqrt(r));
+    // sqrt_r = 1/sigma
+    fptype sqrt_r = 1./sigma;
+    // r = 1/sigma^2
+    fptype r = sqrt_r*sqrt_r;
+    fptype p  = 2 * Gamma - 2 * (tprime) * r;
+    fptype q  = (tprime) * (tprime) * r;
+    fptype u0 = p / (2. * sqrt_r);
     // factor 1/sqrt(2PI) absorbed in small phi?
-    fptype preFactor    = 1. / sqrt(r) / sigma * exp(-0.5 * (q - u0 * u0));
-    fptype commonFactor = (x * Gamma / sqrt(r));
-    fptype Ig0_0        = EvaluateAcceptanceGn(0, 0, r, u0, knot_low, knot_high);
-    fptype Ig0_1        = EvaluateAcceptanceGn(0, 1, r, u0, knot_low, knot_high);
-    fptype Ig0_2        = EvaluateAcceptanceGn(0, 2, r, u0, knot_low, knot_high);
-    fptype Ig0_3        = EvaluateAcceptanceGn(0, 3, r, u0, knot_low, knot_high);
+    fptype preFactor    = 1. / sqrt_r / sigma * exp(-0.5 * (q - u0 * u0));
+    fptype commonFactor = (x * Gamma / sqrt_r);
 
-    fptype Ig1_0 = EvaluateAcceptanceGn(1, 0, r, u0, knot_low, knot_high);
-    fptype Ig1_1 = EvaluateAcceptanceGn(1, 1, r, u0, knot_low, knot_high);
-    fptype Ig1_2 = EvaluateAcceptanceGn(1, 2, r, u0, knot_low, knot_high);
-    fptype Ig1_3 = EvaluateAcceptanceGn(1, 3, r, u0, knot_low, knot_high);
+    fptype evaluatedConvo[9];
+    fptype evaluatedPowU0[9];
+    fptype lowLim = sqrt_r * knot_low +  u0;
+    fptype highLim = sqrt_r * knot_high +  u0;
+    for (int i = 0; i < 9; i++){
+       evaluatedConvo[i] = EvaluateConvo(i, lowLim, highLim);
+    }
+    evaluatedPowU0[0] = 1.;
+    for(int i = 1; i<9; i++) {
+        evaluatedPowU0[i] = evaluatedPowU0[i-1] * -u0;
+    }
+    fptype Ig0_0        = EvaluateAcceptanceGn(0, 0, sqrt_r, evaluatedConvo, evaluatedPowU0);
+    fptype Ig0_1        = EvaluateAcceptanceGn(0, 1, sqrt_r, evaluatedConvo, evaluatedPowU0);
+    fptype Ig0_2        = EvaluateAcceptanceGn(0, 2, sqrt_r, evaluatedConvo, evaluatedPowU0);
+    fptype Ig0_3        = EvaluateAcceptanceGn(0, 3, sqrt_r, evaluatedConvo, evaluatedPowU0);
 
-    fptype Ig2_0 = EvaluateAcceptanceGn(2, 0, r, u0, knot_low, knot_high);
-    fptype Ig2_1 = EvaluateAcceptanceGn(2, 1, r, u0, knot_low, knot_high);
-    fptype Ig2_2 = EvaluateAcceptanceGn(2, 2, r, u0, knot_low, knot_high);
-    fptype Ig2_3 = EvaluateAcceptanceGn(2, 3, r, u0, knot_low, knot_high);
+    fptype Ig1_0 = EvaluateAcceptanceGn(1, 0, sqrt_r, evaluatedConvo, evaluatedPowU0);
+    fptype Ig1_1 = EvaluateAcceptanceGn(1, 1, sqrt_r, evaluatedConvo, evaluatedPowU0);
+    fptype Ig1_2 = EvaluateAcceptanceGn(1, 2, sqrt_r, evaluatedConvo, evaluatedPowU0);
+    fptype Ig1_3 = EvaluateAcceptanceGn(1, 3, sqrt_r, evaluatedConvo, evaluatedPowU0);
 
-    fptype Ig3_0 = EvaluateAcceptanceGn(3, 0, r, u0, knot_low, knot_high);
-    fptype Ig3_1 = EvaluateAcceptanceGn(3, 1, r, u0, knot_low, knot_high);
-    fptype Ig3_2 = EvaluateAcceptanceGn(3, 2, r, u0, knot_low, knot_high);
-    fptype Ig3_3 = EvaluateAcceptanceGn(3, 3, r, u0, knot_low, knot_high);
+    fptype Ig2_0 = EvaluateAcceptanceGn(2, 0, sqrt_r, evaluatedConvo, evaluatedPowU0);
+    fptype Ig2_1 = EvaluateAcceptanceGn(2, 1, sqrt_r, evaluatedConvo, evaluatedPowU0);
+    fptype Ig2_2 = EvaluateAcceptanceGn(2, 2, sqrt_r, evaluatedConvo, evaluatedPowU0);
+    fptype Ig2_3 = EvaluateAcceptanceGn(2, 3, sqrt_r, evaluatedConvo, evaluatedPowU0);
 
-    fptype Ig4_0 = EvaluateAcceptanceGn(4, 0, r, u0, knot_low, knot_high);
-    fptype Ig4_1 = EvaluateAcceptanceGn(4, 1, r, u0, knot_low, knot_high);
-    fptype Ig4_2 = EvaluateAcceptanceGn(4, 2, r, u0, knot_low, knot_high);
-    fptype Ig4_3 = EvaluateAcceptanceGn(4, 3, r, u0, knot_low, knot_high);
+    fptype Ig3_0 = EvaluateAcceptanceGn(3, 0, sqrt_r, evaluatedConvo, evaluatedPowU0);
+    fptype Ig3_1 = EvaluateAcceptanceGn(3, 1, sqrt_r, evaluatedConvo, evaluatedPowU0);
+    fptype Ig3_2 = EvaluateAcceptanceGn(3, 2, sqrt_r, evaluatedConvo, evaluatedPowU0);
+    fptype Ig3_3 = EvaluateAcceptanceGn(3, 3, sqrt_r, evaluatedConvo, evaluatedPowU0);
 
-    fptype Ig5_0 = EvaluateAcceptanceGn(5, 0, r, u0, knot_low, knot_high);
-    fptype Ig5_1 = EvaluateAcceptanceGn(5, 1, r, u0, knot_low, knot_high);
-    fptype Ig5_2 = EvaluateAcceptanceGn(5, 2, r, u0, knot_low, knot_high);
-    fptype Ig5_3 = EvaluateAcceptanceGn(5, 3, r, u0, knot_low, knot_high);
+    fptype Ig4_0 = EvaluateAcceptanceGn(4, 0, sqrt_r, evaluatedConvo, evaluatedPowU0);
+    fptype Ig4_1 = EvaluateAcceptanceGn(4, 1, sqrt_r, evaluatedConvo, evaluatedPowU0);
+    fptype Ig4_2 = EvaluateAcceptanceGn(4, 2, sqrt_r, evaluatedConvo, evaluatedPowU0);
+    fptype Ig4_3 = EvaluateAcceptanceGn(4, 3, sqrt_r, evaluatedConvo, evaluatedPowU0);
+
+    fptype Ig5_0 = EvaluateAcceptanceGn(5, 0, sqrt_r, evaluatedConvo, evaluatedPowU0);
+    fptype Ig5_1 = EvaluateAcceptanceGn(5, 1, sqrt_r, evaluatedConvo, evaluatedPowU0);
+    fptype Ig5_2 = EvaluateAcceptanceGn(5, 2, sqrt_r, evaluatedConvo, evaluatedPowU0);
+    fptype Ig5_3 = EvaluateAcceptanceGn(5, 3, sqrt_r, evaluatedConvo, evaluatedPowU0);
 
     fptype Ig0 = a0 * Ig0_0 + a1 * Ig0_1 + a2 * Ig0_2 + a3 * Ig0_3;
     // Ig0 *= pow(commonFactor, 0);
     fptype Ig1 = a0 * Ig1_0 + a1 * Ig1_1 + a2 * Ig1_2 + a3 * Ig1_3;
     Ig1 *= commonFactor;
     fptype Ig2 = a0 * Ig2_0 + a1 * Ig2_1 + a2 * Ig2_2 + a3 * Ig2_3;
-    Ig2 *= pow(commonFactor, 2);
+    commonFactor *= commonFactor;
+    Ig2 *= commonFactor;
     fptype Ig3 = a0 * Ig3_0 + a1 * Ig3_1 + a2 * Ig3_2 + a3 * Ig3_3;
-    Ig3 *= pow(commonFactor, 3);
+    commonFactor *= commonFactor;
+    Ig3 *= commonFactor;
     fptype Ig4 = a0 * Ig4_0 + a1 * Ig4_1 + a2 * Ig4_2 + a3 * Ig4_3;
-    Ig4 *= pow(commonFactor, 4);
+    commonFactor *= commonFactor;
+    Ig4 *= commonFactor;
     fptype Ig5 = a0 * Ig5_0 + a1 * Ig5_1 + a2 * Ig5_2 + a3 * Ig5_3;
-    Ig5 *= pow(commonFactor, 5);
+    commonFactor *= commonFactor;
+    Ig5 *= commonFactor;
 
     // fudge factor 20 by comparison with old values. Need to really understand what is missing -> had a factor 0.5 in
     // preFactor which should not have been there

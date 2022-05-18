@@ -24,7 +24,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
       with:
-        submodules: recursive
+        submodules: true
 
     - name: Configure
       run: cmake -S . -B build -DGOOFIT_DEVICE=OMP -DGOOFIT_CXX_STANDARD=14
@@ -40,7 +40,9 @@ jobs:
     runs-on: ubuntu-latest
     container: silkeh/clang:12
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
     - name: Configure
       run: >
         cmake -S . -B build
@@ -84,7 +86,7 @@ jobs:
     name: Configure
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v3
       with:
         submodules: true
 

@@ -64,7 +64,7 @@ jobs:
         cuda:
           - 8.0-devel-ubuntu16.04
           - 9.2-devel-ubuntu18.04
-          - 10.0-devel-ubuntu18.04
+          # - 11.2.2-devel-ubuntu18.04 - needs built-in thrust support
 
     container: "nvidia/cuda:${{matrix.cuda}}"
     steps:
@@ -74,7 +74,7 @@ jobs:
     - name: Add wget and python3
       run: apt-get update && apt-get install -y wget python3-dev
     - name: Install Modern CMake
-      run: wget -qO- "https://cmake.org/files/v3.15/cmake-3.15.6-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C /usr/local
+      run: wget -qO- "https://cmake.org/files/v3.23/cmake-3.23.1-linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C /usr/local
     - name: Configure
       run: cmake -S . -B build -DGOOFIT_ARCH=3.5 -DGOOFIT_SPLASH=OFF
     - name: Build

@@ -28,8 +28,8 @@ const unsigned int SPECIAL_RESOLUTION_FLAG = 999999999;
 // own cache, hence the '10'. Ten threads should be enough for anyone!
 
 // NOTE: only one set of wave holders is supported currently.
-//this needs to be large enough to hold all samples
-__device__ WaveHolder_s *cWaves[16*20];
+// this needs to be large enough to hold all samples
+__device__ WaveHolder_s *cWaves[16 * 20];
 
 __device__ inline auto parIndexFromResIndex(int resIndex) -> int { return resonanceOffset + resIndex * resonanceSize; }
 
@@ -48,7 +48,7 @@ __device__ auto device_Tddp(fptype *evt, ParameterContainer &pc) -> fptype {
     int id_num = pc.getObservable(4);
     int id_mis = 0;
     int id_tag = 0;
-    if(num_observables > 5){
+    if(num_observables > 5) {
         id_mis = pc.getObservable(5);
     }
 
@@ -56,10 +56,9 @@ __device__ auto device_Tddp(fptype *evt, ParameterContainer &pc) -> fptype {
     fptype m13 = RO_CACHE(evt[id_m13]);
 
     unsigned int numResonances = pc.getConstant(0);
-    //int numResonances = 1;
+    // int numResonances = 1;
 
-    if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass) ) {
-
+    if(!inDalitz(m12, m13, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass)) {
         unsigned int endEfficiencyFunc = pc.getConstant(3);
         pc.incrementIndex(1, num_parameters, num_constants, num_observables, 1);
 
@@ -86,8 +85,8 @@ __device__ auto device_Tddp(fptype *evt, ParameterContainer &pc) -> fptype {
     fpcomplex sumRateBB(0, 0);
 
     unsigned int cacheToUse = pc.getConstant(1);
-    fptype mistag = 0;
-    //fptype mistag = pc.getConstant(2);
+    fptype mistag           = 0;
+    // fptype mistag = pc.getConstant(2);
 
     for(int i = 0; i < numResonances; ++i) {
         // int paramIndex = parIndexFromResIndex(i);
@@ -112,33 +111,31 @@ __device__ auto device_Tddp(fptype *evt, ParameterContainer &pc) -> fptype {
 
     int id_time  = pc.getObservable(0);
     int id_sigma = pc.getObservable(1);
-    if(num_observables > 6){
-       id_tag = pc.getObservable(6);
+    if(num_observables > 6) {
+        id_tag = pc.getObservable(6);
     }
-    fptype _tau     = pc.getParameter(0);
-    //fptype _xmixing = pc.getParameter(1);
-    //fptype _ymixing = pc.getParameter(2);
+    fptype _tau = pc.getParameter(0);
+    // fptype _xmixing = pc.getParameter(1);
+    // fptype _ymixing = pc.getParameter(2);
     fptype _xmixing0 = pc.getParameter(1);
     fptype _ymixing0 = pc.getParameter(2);
     fptype _deltax   = pc.getParameter(3);
     fptype _deltay   = pc.getParameter(4);
-    fptype _xmixing = 0;
-    fptype _ymixing = 0;
-    //int _charmtag = evt[id_tag];
-    //auto _charmtag = static_cast<int>(floor(0.5 + RO_CACHE(evt[id_tag])));
+    fptype _xmixing  = 0;
+    fptype _ymixing  = 0;
+    // int _charmtag = evt[id_tag];
+    // auto _charmtag = static_cast<int>(floor(0.5 + RO_CACHE(evt[id_tag])));
     int _charmtag = 0;
-    if(num_observables > 6){
+    if(num_observables > 6) {
         _charmtag = RO_CACHE(evt[id_tag]);
     }
-    if(_charmtag ==1){
+    if(_charmtag == 1) {
         _xmixing = _xmixing0 + _deltax;
         _ymixing = _ymixing0 + _deltay;
-    }
-    else if(_charmtag==-1){
+    } else if(_charmtag == -1) {
         _xmixing = _xmixing0 - _deltax;
         _ymixing = _ymixing0 - _deltay;
-    }
-    else{
+    } else {
         _xmixing = _xmixing0;
         _ymixing = _ymixing0;
     }
@@ -225,9 +222,9 @@ __device__ auto device_Tddp(fptype *evt, ParameterContainer &pc) -> fptype {
 
     // fptype mistag = RO_CACHE(functorConstants[RO_CACHE(indices[1]) + 5]);
     mistag = 0;
-    if(num_observables > 5){
+    if(num_observables > 5) {
         mistag = evt[id_mis];
-    }//mistag = 0;
+    } // mistag = 0;
 
     fptype xfix   = 0.0039;
     fptype yfix   = 0.0065;
@@ -236,8 +233,8 @@ __device__ auto device_Tddp(fptype *evt, ParameterContainer &pc) -> fptype {
     if(mistag > 0) { // This should be either true or false for all events, so no branch is caused.
         // See header file for explanation of 'mistag' variable - it is actually the probability
         // of having the correct sign, given that we have a correctly reconstructed D meson.
-        //mistag = evt[id_mis];
-        ret *= (1 - 2*mistag);
+        // mistag = evt[id_mis];
+        ret *= (1 - 2 * mistag);
         // The following formats differently in clang-format 8
         // clang-format off
         ret += mistag
@@ -260,7 +257,7 @@ __device__ auto device_Tddp(fptype *evt, ParameterContainer &pc) -> fptype {
     return ret;
 }
 
-int Amp3Body_TD::cacheCount = 0;
+int Amp3Body_TD::cacheCount                = 0;
 __device__ device_function_ptr ptr_to_Tddp = device_Tddp;
 
 __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
@@ -273,7 +270,7 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
                                   MixingTimeResolution *r,
                                   GooPdf *efficiency,
                                   Observable *mistag,
-				                  Observable *charmtag)
+                                  Observable *charmtag)
     : Amp3BodyBase("Amp3Body_TD", n, _dtime, _sigmat, m12, m13, eventNumber)
     , decayInfo(decay)
     , _m12(m12)
@@ -313,7 +310,7 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
 
     registerConstant(decay.resonances.size());
 
-    cacheToUse            = cacheCount++;
+    cacheToUse = cacheCount++;
     registerConstant(cacheToUse);
 
     if(mistag == nullptr)
@@ -372,20 +369,19 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
                                   GooPdf *efficiency,
                                   Observable md0,
                                   Observable *mistag,
-				                  Observable *charmtag)
+                                  Observable *charmtag)
     : Amp3BodyBase("Amp3Body_TD", n, _dtime, _sigmat, m12, m13, eventNumber, md0)
     , decayInfo(decay)
     , _m12(m12)
     , _m13(m13)
     , resolution(
           r[0]) // Only used for normalization, which only depends on x and y - it doesn't matter which one we use.
-        , _mistag(*mistag)
+    , _mistag(*mistag)
     , _charmtag(*charmtag)
     , totalEventSize(6) // This case adds the D0 mass by default.
 {
     for(auto &cachedWave : cachedWaves)
         cachedWave = nullptr;
-
 
     registerObservable(*mistag);
     totalEventSize++;
@@ -409,7 +405,7 @@ __host__ Amp3Body_TD::Amp3Body_TD(std::string n,
 
     registerConstant(decayInfo.resonances.size());
 
-    cacheToUse            = cacheCount++;
+    cacheToUse = cacheCount++;
     registerConstant(cacheToUse);
 
     if(mistag)
@@ -543,7 +539,7 @@ __host__ void Amp3Body_TD::setDataSize(unsigned int dataSize, unsigned int evtSi
             delete cachedWave;
     }
 
-    numEntries = dataSize;
+    numEntries  = dataSize;
     eventOffset = offset;
 
 // Ideally this would not be required, this would be called AFTER setData which will set m_iEventsPerTask
@@ -573,21 +569,23 @@ __host__ void Amp3Body_TD::setDataSize(unsigned int dataSize, unsigned int evtSi
         cachedWaves[i] = new thrust::device_vector<WaveHolder_s>(dataSize);
 #endif
         void *dummy = thrust::raw_pointer_cast(cachedWaves[i]->data());
-        MEMCPY_TO_SYMBOL(cWaves, &dummy, sizeof(WaveHolder_s *), ((16 * cacheToUse) + i) * sizeof(WaveHolder_s *), cudaMemcpyHostToDevice);
+        MEMCPY_TO_SYMBOL(cWaves,
+                         &dummy,
+                         sizeof(WaveHolder_s *),
+                         ((16 * cacheToUse) + i) * sizeof(WaveHolder_s *),
+                         cudaMemcpyHostToDevice);
     }
 
     setForceIntegrals();
 }
 
-__host__ void Amp3Body_TD::setD0Fraction( fptype d0fraction) {
+__host__ void Amp3Body_TD::setD0Fraction(fptype d0fraction) {
     _D0Fraction = d0fraction;
     assert(_D0Fraction >= 0);
     assert(_D0Fraction <= 1);
 }
 
-__host__ fptype Amp3Body_TD::getD0Fraction() {
-    return _D0Fraction;
-}
+__host__ fptype Amp3Body_TD::getD0Fraction() { return _D0Fraction; }
 
 __host__ auto Amp3Body_TD::normalize() -> fptype {
     recursiveSetNormalization(1.0); // Not going to normalize efficiency,
@@ -711,13 +709,13 @@ __host__ auto Amp3Body_TD::normalize() -> fptype {
     double dalitzIntegralThr = integralABs.real();
     double dalitzIntegralFou = integralABs.imag();
 
-    fptype tau      = host_parameters[parametersIdx + 1];
-    fptype xmixing0 = host_parameters[parametersIdx + 2];
-    fptype ymixing0 = host_parameters[parametersIdx + 3];
-    fptype deltax   = host_parameters[parametersIdx + 4];
-    fptype deltay   = host_parameters[parametersIdx + 5];
-    fptype xmixing_D0 = xmixing0 + deltax;
-    fptype ymixing_D0 = ymixing0 + deltay;
+    fptype tau           = host_parameters[parametersIdx + 1];
+    fptype xmixing0      = host_parameters[parametersIdx + 2];
+    fptype ymixing0      = host_parameters[parametersIdx + 3];
+    fptype deltax        = host_parameters[parametersIdx + 4];
+    fptype deltay        = host_parameters[parametersIdx + 5];
+    fptype xmixing_D0    = xmixing0 + deltax;
+    fptype ymixing_D0    = ymixing0 + deltay;
     fptype xmixing_D0bar = xmixing0 - deltax;
     fptype ymixing_D0bar = ymixing0 - deltay;
 
@@ -727,19 +725,21 @@ __host__ auto Amp3Body_TD::normalize() -> fptype {
     fptype ret_D0bar = resolution->normalization(
         dalitzIntegralOne, dalitzIntegralTwo, dalitzIntegralThr, dalitzIntegralFou, tau, xmixing_D0bar, ymixing_D0bar);
 
-    //fptype _D0Fraction = 0.5; // Set D0 fraction to 1 for now.
+    // fptype _D0Fraction = 0.5; // Set D0 fraction to 1 for now.
     fptype ret = _D0Fraction * ret_D0 + (1. - _D0Fraction) * ret_D0bar;
 
     fptype xfix   = 0.0039;
     fptype yfix   = 0.0065;
     fptype taufix = 0.4101;
 
-    if (_mistag){
-        ret *= (1-2*_mistag.getValue());
-        ret += _mistag.getValue() * resolution->normalization(
-            dalitzIntegralOne, dalitzIntegralTwo, dalitzIntegralThr, dalitzIntegralFou, taufix, xfix, yfix);
-        ret += _mistag.getValue() * resolution->normalization(
-            dalitzIntegralTwo, dalitzIntegralOne, dalitzIntegralThr, -dalitzIntegralFou, taufix, xfix, yfix);
+    if(_mistag) {
+        ret *= (1 - 2 * _mistag.getValue());
+        ret += _mistag.getValue()
+               * resolution->normalization(
+                   dalitzIntegralOne, dalitzIntegralTwo, dalitzIntegralThr, dalitzIntegralFou, taufix, xfix, yfix);
+        ret += _mistag.getValue()
+               * resolution->normalization(
+                   dalitzIntegralTwo, dalitzIntegralOne, dalitzIntegralThr, -dalitzIntegralFou, taufix, xfix, yfix);
     }
 
     double binSizeFactor = 1;
@@ -750,13 +750,12 @@ __host__ auto Amp3Body_TD::normalize() -> fptype {
     host_normalizations.at(normalIdx + 1) = 1.0 / ret;
     cachedNormalization                   = 1.0 / ret;
 
-
     GOOFIT_TRACE("Normalisation: {}", ret);
 
     return ret;
 }
 
-__host__ std::vector<std::vector<fptype>> Amp3Body_TD::getFractions()  {
+__host__ std::vector<std::vector<fptype>> Amp3Body_TD::getFractions() {
     recursiveSetNormalization(1.0); // Not going to normalize efficiency,
     // so set normalization factor to 1 so it doesn't get multiplied by zero.
     // Copy at this time to ensure that the SpecialWaveCalculators, which need the efficiency,
@@ -813,7 +812,7 @@ __host__ std::vector<std::vector<fptype>> Amp3Body_TD::getFractions()  {
         calculators[i]->setTddpIndex(getFunctionIndex());
         calculators[i]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
         if(redoIntegral[i]) {
-            #ifdef GOOFIT_MPI
+#ifdef GOOFIT_MPI
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex + m_iEventsPerTask, arrayAddress, eventSize)),
@@ -821,7 +820,7 @@ __host__ std::vector<std::vector<fptype>> Amp3Body_TD::getFractions()  {
                     cachedWaves[i]->begin(), cachedWaves[i]->end(), 1)
                     .begin(),
                 *(calculators[i]));
-            #else
+#else
             thrust::transform(
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, arrayAddress, eventSize)),
@@ -829,7 +828,7 @@ __host__ std::vector<std::vector<fptype>> Amp3Body_TD::getFractions()  {
                     cachedWaves[i]->begin(), cachedWaves[i]->end(), 1)
                     .begin(),
                 *(calculators[i]));
-            #endif
+#endif
         }
         // Possibly this can be done more efficiently by exploiting symmetry?
         for(int j = 0; j < decayInfo.resonances.size(); ++j) {
@@ -849,14 +848,13 @@ __host__ std::vector<std::vector<fptype>> Amp3Body_TD::getFractions()  {
                 *(integrators[i][j]),
                 dummy,
                 complexSum);
-                if (i!=j) (*(integrals[j][i])) = ThreeComplex(
-                                  thrust::get<0>(*(integrals[i][j])),
-                                  -thrust::get<1>(*(integrals[i][j])),
-                                  thrust::get<2>(*(integrals[i][j])),
-                                  -thrust::get<3>(*(integrals[i][j])),
-                                  thrust::get<4>(*(integrals[i][j])),
-                                  -thrust::get<5>(*(integrals[i][j]))
-                                  );
+            if(i != j)
+                (*(integrals[j][i])) = ThreeComplex(thrust::get<0>(*(integrals[i][j])),
+                                                    -thrust::get<1>(*(integrals[i][j])),
+                                                    thrust::get<2>(*(integrals[i][j])),
+                                                    -thrust::get<3>(*(integrals[i][j])),
+                                                    thrust::get<4>(*(integrals[i][j])),
+                                                    -thrust::get<5>(*(integrals[i][j])));
         }
     }
 
@@ -865,7 +863,7 @@ __host__ std::vector<std::vector<fptype>> Amp3Body_TD::getFractions()  {
     fpcomplex integralA_2(0, 0);
     const unsigned int nres = decayInfo.resonances.size();
     fptype matdiag[nres];
-//    fptype matdiag_int[nres][nres];
+    //    fptype matdiag_int[nres][nres];
     std::vector<std::vector<fptype>> matdiag_int(nres, std::vector<fptype>(nres));
 
     for(unsigned int i = 0; i < decayInfo.resonances.size(); ++i) {
@@ -878,34 +876,38 @@ __host__ std::vector<std::vector<fptype>> Amp3Body_TD::getFractions()  {
 
             integralA_2 += (amplitude_i * amplitude_j
                             * fpcomplex(thrust::get<0>(*(integrals[i][j])), thrust::get<1>(*(integrals[i][j]))));
-            if (i==j) matdiag[i] = (amplitude_i * amplitude_j * fpcomplex(thrust::get<0>(*(integrals[i][j])),
-                                thrust::get<1>(*(integrals[i][j])))).real();
-            matdiag_int[i][j] = (amplitude_i * amplitude_j * fpcomplex(thrust::get<0>(*(integrals[i][j])),
-                                thrust::get<1>(*(integrals[i][j])))).real(); //for reporting interference fractions
-
+            if(i == j)
+                matdiag[i] = (amplitude_i * amplitude_j
+                              * fpcomplex(thrust::get<0>(*(integrals[i][j])), thrust::get<1>(*(integrals[i][j]))))
+                                 .real();
+            matdiag_int[i][j] = (amplitude_i * amplitude_j
+                                 * fpcomplex(thrust::get<0>(*(integrals[i][j])),
+                                             thrust::get<1>(*(integrals[i][j]))))
+                                    .real(); // for reporting interference fractions
         }
     }
 
-  std::streamsize ss = std::cout.precision();
+    std::streamsize ss = std::cout.precision();
 
-  for (unsigned int i = 0; i < decayInfo.resonances.size(); ++i) {
-    std::cout << std::setprecision(4) << "Integral contribution for res # " << i << " ( " << decayInfo.resonances[i]->getName() << ") : "<< (matdiag[i] / (integralA_2).real())*100. << "%." << std::endl;
-      fracLists.push_back(matdiag[i] / (integralA_2).real());
-  }
-
-  //MW 2 Aug 2016. Add interference fractions.
-  for (unsigned int i = 0; i < decayInfo.resonances.size(); ++i) {
-    for (unsigned int j = i+1; j < decayInfo.resonances.size(); ++j) {
-      std::cout << std::setprecision(4) << "Integral interference fraction for resonances " << i << ", " << j << " ( " << decayInfo.resonances[i]->getName() << ", " << decayInfo.resonances[j]->getName() << ") : "<< (matdiag_int[i][j] / (integralA_2).real())*100. << "%." << std::endl;
+    for(unsigned int i = 0; i < decayInfo.resonances.size(); ++i) {
+        std::cout << std::setprecision(4) << "Integral contribution for res # " << i << " ( "
+                  << decayInfo.resonances[i]->getName() << ") : " << (matdiag[i] / (integralA_2).real()) * 100. << "%."
+                  << std::endl;
+        fracLists.push_back(matdiag[i] / (integralA_2).real());
     }
-  }
-  std::cout.precision (ss);
 
+    // MW 2 Aug 2016. Add interference fractions.
+    for(unsigned int i = 0; i < decayInfo.resonances.size(); ++i) {
+        for(unsigned int j = i + 1; j < decayInfo.resonances.size(); ++j) {
+            std::cout << std::setprecision(4) << "Integral interference fraction for resonances " << i << ", " << j
+                      << " ( " << decayInfo.resonances[i]->getName() << ", " << decayInfo.resonances[j]->getName()
+                      << ") : " << (matdiag_int[i][j] / (integralA_2).real()) * 100. << "%." << std::endl;
+        }
+    }
+    std::cout.precision(ss);
 
-  //return (integralA_2).real();
-  return matdiag_int;
+    // return (integralA_2).real();
+    return matdiag_int;
 }
-
-
 
 } // namespace GooFit

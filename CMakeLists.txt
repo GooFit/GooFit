@@ -397,10 +397,10 @@ target_compile_options(
   GooFit_Common INTERFACE $<${cxx_lang_rel}:$<BUILD_INTERFACE:${GOOFIT_OPTI}>>
                           $<${cuda_lang_rel}:$<BUILD_INTERFACE:-Xcompiler=${GOOFIT_OPTI_CUDA}>>)
 
-find_package(Thrust 1.8 QUIET)
+find_package(Thrust QUIET)
 if(NOT THRUST_FOUND)
   set(THRUST_INCLUDE_DIR "${GOOFIT_SOURCE_DIR}/extern/thrust")
-  find_package(Thrust 1.8 REQUIRED)
+  find_package(Thrust REQUIRED)
 endif()
 
 option(GOOFIT_FORCE_LOCAL_THRUST

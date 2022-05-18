@@ -47,13 +47,14 @@ endif()
 # Get the git command
 find_package(Git QUIET)
 
-if(GIT_FOUND AND EXISTS "${GOOFIT_SOURCE_DIR}/.git")
+set(GIT_DIR "${GOOFIT_SOURCE_DIR}/.git")
+if(GIT_FOUND AND EXISTS "${GIT_DIR}")
   # Update submodules as needed
-  option(GOOFIT_SUBMODULE "Check submodules during build" ON)
+  option(GOOFIT_SUBMODULE "Check submodules during build" OFF)
   if(GOOFIT_SUBMODULE)
     message(STATUS "Submodule update")
     execute_process(
-      COMMAND ${GIT_EXECUTABLE} submodule update --init
+      COMMAND ${GIT_EXECUTABLE} --git-dir="${GIT_DIR}" submodule update --init
       WORKING_DIRECTORY ${GOOFIT_SOURCE_DIR}
       RESULT_VARIABLE GIT_SUBMOD_RESULT)
     if(NOT GIT_SUBMOD_RESULT EQUAL "0")
@@ -65,7 +66,7 @@ if(GIT_FOUND AND EXISTS "${GOOFIT_SOURCE_DIR}/.git")
   endif()
 
   execute_process(
-    COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
+    COMMAND ${GIT_EXECUTABLE} --git-dir="${GIT_DIR}" rev-parse --short HEAD
     WORKING_DIRECTORY "${GOOFIT_SOURCE_DIR}"
     OUTPUT_VARIABLE GOOFIT_GIT_VERSION
     ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)

@@ -30,7 +30,7 @@ https://github.com/GooFit/GooFit/labels/critical https://github.com/GooFit/GooFi
 ## Requirements
 
 * A recent version of CMake is required. The minimum is 3.9. CMake is incredibly easy to install, you can even use `pip` (see [the system install page](./docs/SYSTEM_INSTALL.md)). GooFit developers have supplied patches to CMake 3.12, so at least that is highly recommended. CMake 3.16 does not currently work with the Python bindings.
-* A ROOT 6 build highly recommended -- GooFit will use the included Minuit2 submodule if ROOT is not found, and the Minuit1 based fitter will not be available. Supports 6.04-6.18 (6.10+ recommended).
+* A ROOT 6 build highly recommended -- GooFit will use the included Minuit2 submodule if ROOT is not found, and the Minuit1 based fitter will not be available. Supports 6.04-6.24 (6.10+ recommended).
 
 <details><summary>If using CUDA: (click to expand)</summary><p>
 
@@ -65,7 +65,7 @@ A list of exact commands required for several platforms is [available here](./do
 
 <details><summary>Python Bindings: (click to expand)</summary><p>
 
-There are also Python Bindings. This requires Python (2 or 3), [NumPy](http://www.numpy.org), [SciKit-Build](http://scikit-build.readthedocs.io), and CMake. CUDA 8+ is required if using CUDA. If you want the most recent stable release, use `pip install -v goofit` (If you have pip 9 or less, you'll need scikit-build and cmake installed beforehand).
+There are also Python Bindings. This requires Python (2 or 3), [NumPy](http://www.numpy.org), [SciKit-Build](http://scikit-build.readthedocs.io), and CMake. CUDA 8+ is required if using CUDA. If you want the most recent stable release, use `pip install -v goofit` (If you have pip 9 or less, you'll need scikit-build and cmake installed beforehand). Python 2 will be removed soon.
 
 Repository method:
 
@@ -120,7 +120,8 @@ If you don't have a modern CMake, Kitware provides installers for every OS. You 
 On a Mac, you can also use any package manager, such as Homebrew: `brew install cmake`.
 
 If you want to change compiler, set `CC` and `CXX` to appropriate defaults *before* you run CMake either inline or in your environment. You can also set `CMAKE_C_COMPILER` and `CMAKE_CXX_COMPILER` directly on the command line with `-D`. If you want to set the host and device backends, you can set those options. The defaults are:
-```
+
+```bash
 cmake .. -DGOOFIT_DEVICE=CUDA -DGOOFIT_HOST=CPP
 ```
 

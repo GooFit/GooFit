@@ -26,24 +26,9 @@ setup(
     name="goofit",
     version="2.2.3",
     description="GooFit fitting package",
-    author="Henry Schreiner",
-    author_email="hschrein@cern.ch",
-    url="https://goofit.github.io",
-    platforms=["POSIX"],
     provides=["goofit"],
     cmake_args=ITEMS,
-    license="LGPL 3.0",
     packages=["goofit"],
-    extras_require={
-        "dev": [
-            "pytest",
-            "matplotlib>=1.5",
-            "pandas>=0.15.1",
-            "uncertainties>=3.0.2",
-            "scipy",
-            "plumbum",
-        ]
-    },
     long_description="""\
 GooFit for Python
 -----------------
@@ -115,17 +100,17 @@ The normal install here works, though as usual you should include verbose output
 #
 #     git clone --branch=master --recursive --depth=10 git@github.com:GooFit/GooFit.git
 #     cd goofit
-#     python setup.py sdist
-#     python -m twine upload dist/*
+#     pipx run build --sdist
+#     pipx run twine upload dist/*
 #
 # To make a binary package, use instead::
 #
-#     GOOFIT_OPTI="" python setup.py bdist_wheel
+#     GOOFIT_OPTI="" pipx run build --wheel
 #
 # To set this up on Docker for linux, use::
 #
 #    docker run -it quay.io/pypa/manylinux1_x86_64 -v goofit-py:goofit-py
 #    export PATH=/opt/python/cp36-cp36m/bin:$PATH
 #    cd goofit-py
-#    python -m pip install scikit-build cmake
+#    python -m pip install scikit-build cmake build
 #    python setup.py bdist_wheel -- -DGOOFIT_OPTI="-march=core2"

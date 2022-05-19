@@ -104,27 +104,25 @@ __device__ auto inverse(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex inverse[NCH
     return true;
 }
 
-__device__ void luDecomposition(fpcomplex A[NCHANNELS][NCHANNELS], 
-                                fpcomplex U[NCHANNELS][NCHANNELS], 
+__device__ void luDecomposition(fpcomplex A[NCHANNELS][NCHANNELS],
+                                fpcomplex U[NCHANNELS][NCHANNELS],
                                 fpcomplex L[NCHANNELS][NCHANNELS]) {
-
-    for (unsigned i = 0; i < NCHANNELS; i++) {
+    for(unsigned i = 0; i < NCHANNELS; i++) {
         // Upper triangular matrix
-        for (unsigned k = i; k < NCHANNELS; k++) {
+        for(unsigned k = i; k < NCHANNELS; k++) {
             fpcomplex sum(0, 0);
-            for (unsigned j = 0; j < i; j++) 
+            for(unsigned j = 0; j < i; j++)
                 sum += L[i][j] * U[j][k];
             U[i][k] = A[i][k] - sum;
         }
 
         // Lower triangular.
-        for (unsigned k = i; k < NCHANNELS; k++) {
-            if (i == k) {
+        for(unsigned k = i; k < NCHANNELS; k++) {
+            if(i == k) {
                 L[i][i] = 1;
-            }
-            else {
+            } else {
                 fpcomplex sum(0, 0);
-                for (unsigned j = 0; j < i; j++)
+                for(unsigned j = 0; j < i; j++)
                     sum += L[k][j] * U[j][i];
                 L[k][i] = (A[k][i] - sum) / U[i][i];
             }
@@ -139,11 +137,11 @@ __device__ bool luInverse(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex inverse[N
     luDecomposition(A, U, L);
 
     // Compute intermediate matrix Linv.
-    for (int col = 0; col < NCHANNELS; col++) {
-        for (int row = 0; row < NCHANNELS; row++) {
+    for(int col = 0; col < NCHANNELS; col++) {
+        for(int row = 0; row < NCHANNELS; row++) {
             fpcomplex sum(0, 0);
-            for (int i = 0; i < NCHANNELS; i++) {
-                if (i != row) {
+            for(int i = 0; i < NCHANNELS; i++) {
+                if(i != row) {
                     sum += L[row][i] * Linv[i][col];
                 }
             }
@@ -153,11 +151,11 @@ __device__ bool luInverse(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex inverse[N
 
     // Calculate the inverse.
     // TODO: Can this whole calculation be done in-place?
-    for (int col = 0; col < NCHANNELS; col++) {
-        for (int row = NCHANNELS - 1; row >= 0; row--) {
+    for(int col = 0; col < NCHANNELS; col++) {
+        for(int row = NCHANNELS - 1; row >= 0; row--) {
             fpcomplex sum(0, 0);
-            for (int i = 0; i < NCHANNELS; i++) {
-                if (i != row) {
+            for(int i = 0; i < NCHANNELS; i++) {
+                if(i != row) {
                     sum += U[row][i] * inverse[i][col];
                 }
             }
@@ -173,7 +171,7 @@ __device__ void getPropagator(const fptype kMatrix[NCHANNELS][NCHANNELS],
                               fpcomplex F[NCHANNELS][NCHANNELS],
                               fptype adlerTerm) {
     fpcomplex tMatrix[NCHANNELS][NCHANNELS];
-    tMatrix[0][0] = fpcomplex(0,0);
+    tMatrix[0][0] = fpcomplex(0, 0);
 
     for(unsigned int i = 0; i < NCHANNELS; ++i) {
         for(unsigned int j = 0; j < NCHANNELS; ++j) {
@@ -220,7 +218,7 @@ __device__ void getPropagator(const fptype kMatrix[NCHANNELS][NCHANNELS],
                                 -1>(tMatrix);
     #else
     */
-    
+
     luInverse(tMatrix, F);
     return;
     //#endif

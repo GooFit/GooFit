@@ -14,7 +14,7 @@ getCofactor(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex temp[NCHANNELS][NCHANNE
 
 __device__ void adjoint(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex adj[NCHANNELS][NCHANNELS]);
 
-__device__ auto inverse(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex inverse[NCHANNELS][NCHANNELS]) -> bool;
+__device__ bool inverse(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex inverse[NCHANNELS][NCHANNELS]);
 
 __device__ void getPropagator(const fptype kMatrix[NCHANNELS][NCHANNELS],
                               const fpcomplex phaseSpace[NCHANNELS],
@@ -22,7 +22,7 @@ __device__ void getPropagator(const fptype kMatrix[NCHANNELS][NCHANNELS],
                               fptype adlerTerm);
 
 template <int N>
-inline __device__ auto determinant(fpcomplex A[NCHANNELS][NCHANNELS]) -> fpcomplex {
+inline __device__ fpcomplex determinant(fpcomplex A[NCHANNELS][NCHANNELS]) {
     fpcomplex D = 0; // Initialize result
 
     fpcomplex temp[NCHANNELS][NCHANNELS]; // To store cofactors

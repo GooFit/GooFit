@@ -1,7 +1,7 @@
 [![Actions Status][actions-badge]][actions-link]
 [![Travis Status][travis-badge]][travis-link]
 [![Join the chat at https://gitter.im/GooFit/Lobby][gitter-badge]][gitter-link]
-[![License: LGPL v3][license-badge]](./LICENSE)
+[![License: BSD][license-badge]](./LICENSE)
 [![Latest release][releases-badge]][releases-link]
 [![PyPI Status][pypi-status]][pypi-link]
 [![Conda-Forge Status][cf-status]][cf-link]
@@ -326,6 +326,9 @@ Any opinions, findings, and conclusions or recommendations expressed in this mat
 and do not necessarily reflect the views of the National Science Foundation.
 In addition, we thank the nVidia GPU Grant Program for donating hardware used in developing this framework.
 
+GooFit is available under the BSD license, except for the Landau distribution & MINUIT code. You must remove these
+to get a permissive version of GooFit.
+
 [actions-badge]:     https://github.com/GooFit/GooFit/workflows/CI/badge.svg
 [actions-link]:      https://github.com/GooFit/GooFit/actions
 [DOI-badge]:         https://zenodo.org/badge/9017446.svg
@@ -335,7 +338,7 @@ In addition, we thank the nVidia GPU Grant Program for donating hardware used in
 [travis-link]:       https://travis-ci.org/GooFit/GooFit
 [gitter-badge]:      https://badges.gitter.im/GooFit/GooFit.svg
 [gitter-link]:       https://gitter.im/GooFit/Lobby
-[license-badge]:     https://img.shields.io/badge/License-LGPL%20v3-blue.svg
+[license-badge]:     https://img.shields.io/badge/License-BSD-blue.svg
 [1005530]:           https://nsf.gov/awardsearch/showAward?AWD_ID=1005530
 [1414736]:           https://nsf.gov/awardsearch/showAward?AWD_ID=1414736
 [CUDA_SELECT_NVCC_ARCH_FLAGS]: https://cmake.org/cmake/help/v3.7/module/FindCUDA.html

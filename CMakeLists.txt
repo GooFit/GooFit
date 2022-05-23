@@ -6,7 +6,7 @@ endif()
 
 project(
   GOOFIT
-  VERSION 2.2.3
+  VERSION 2.3.0
   LANGUAGES CXX)
 
 #set(GOOFIT_TAG "dev")

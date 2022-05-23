@@ -25,13 +25,6 @@ function(GOOFIT_ADD_PYTHON_DOCS TARGET PDFFILE)
   target_sources(${TARGET} PRIVATE "${output_file}")
 endfunction()
 
-# Adding the Landau helper
-
-add_library(landau MODULE extras/landau.cpp)
-process_pybind_module(landau)
-target_link_libraries(landau PRIVATE pybind11::module)
-target_include_directories(landau PUBLIC ../include)
-
 # Adding Minuit2
 
 add_subdirectory(Minuit2)

@@ -13,7 +13,6 @@ add_library(
   InterHistPdf.cpp
   JohnsonSUPdf.cpp
   KinLimitBWPdf.cpp
-  LandauPdf.cpp
   NovosibirskPdf.cpp
   PolynomialPdf.cpp
   ScaledGaussianPdf.cpp
@@ -37,7 +36,6 @@ goofit_add_python_docs(_Basic PDFs/basic/GaussianPdf.h)
 goofit_add_python_docs(_Basic PDFs/basic/InterHistPdf.h)
 goofit_add_python_docs(_Basic PDFs/basic/JohnsonSUPdf.h)
 goofit_add_python_docs(_Basic PDFs/basic/KinLimitBWPdf.h)
-goofit_add_python_docs(_Basic PDFs/basic/LandauPdf.h)
 goofit_add_python_docs(_Basic PDFs/basic/NovosibirskPdf.h)
 goofit_add_python_docs(_Basic PDFs/basic/PolynomialPdf.h)
 goofit_add_python_docs(_Basic PDFs/basic/ScaledGaussianPdf.h)

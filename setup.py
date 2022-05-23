@@ -24,7 +24,7 @@ for item in os.environ:
 
 setup(
     name="goofit",
-    version="2.2.3",
+    version="2.3.0",
     description="GooFit fitting package",
     provides=["goofit"],
     cmake_args=ITEMS,

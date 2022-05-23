@@ -15,7 +15,6 @@ time python TDDP4.py
 time python SigGen.py
 time python dalitz.py
 time python chisquare.py
-time python simpleFit.py
 time python zachFit.py --reduce 10
 #time python pipipi0.py
 set +evx

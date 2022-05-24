@@ -456,7 +456,10 @@ endif()
 if(NOT TARGET ROOT::Minuit2)
   # Minuit2_ROOT should be set
   find_package(Minuit2 CONFIG REQUIRED)
-  get_property(minuit_include_dir TARGET Minuit2::Minuit2 PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
+  get_property(
+    minuit_include_dir
+    TARGET Minuit2::Minuit2
+    PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
   message(STATUS "Found Minuit2 at ${minuit_include_dir}")
   message(STATUS "Using standalone Minuit2")
   add_library(ROOT::Minuit2 ALIAS Minuit2::Minuit2)

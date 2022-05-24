@@ -107,7 +107,7 @@ __device__ fptype BinomCoeff(int n, int k) {
     return res;
 }
 
-__device__ fptype EvaluateAcceptance(int n, fptype _sqrt_r, fptype * _evaluatedConvo, fptype * _evaluatedPowU0) {
+__device__ fptype EvaluateAcceptance(int n, fptype _sqrt_r, fptype *_evaluatedConvo, fptype *_evaluatedPowU0) {
     fptype res = 0.;
     for(int k = 0; k <= n; k++) {
         res += BinomCoeff(n, k) * _evaluatedConvo[n - k] * _evaluatedPowU0[k];
@@ -127,14 +127,14 @@ __device__ void EvaluateKnot(fptype &_P1,
                              fptype a3,
                              fptype tprime,
                              fptype sigma,
-                             fptype y)  {
+                             fptype y) {
     // sqrt_r = 1/sigma
-    fptype sqrt_r = 1./sigma;
+    fptype sqrt_r = 1. / sigma;
     // r = 1/sigma^2
-    fptype r = sqrt_r*sqrt_r;
-    fptype p_plus   = 2 * Gamma * (1. - y) - 2 * (tprime) * r;
-    fptype p_minus  = 2 * Gamma * (1. + y) - 2 * (tprime) * r;
-    fptype q        = (tprime) * (tprime) * r;
+    fptype r        = sqrt_r * sqrt_r;
+    fptype p_plus   = 2 * Gamma * (1. - y) - 2 * (tprime)*r;
+    fptype p_minus  = 2 * Gamma * (1. + y) - 2 * (tprime)*r;
+    fptype q        = (tprime) * (tprime)*r;
     fptype u0_plus  = p_plus / (2. * sqrt_r);
     fptype u0_minus = p_minus / (2. * sqrt_r);
     // factor 1/sqrt(2PI) absorbed in small phi?
@@ -142,43 +142,39 @@ __device__ void EvaluateKnot(fptype &_P1,
     fptype preFactor_plus  = exp(-0.5 * (q - u0_plus * u0_plus));
     fptype preFactor_minus = exp(-0.5 * (q - u0_minus * u0_minus));
 
-    
-    fptype lowLim = sqrt_r * knot_low +  u0_plus;
-    fptype highLim = sqrt_r * knot_high +  u0_plus;
+    fptype lowLim  = sqrt_r * knot_low + u0_plus;
+    fptype highLim = sqrt_r * knot_high + u0_plus;
     fptype evaluatedConvo[4];
     fptype evaluatedPowU0[4];
-    for (int i = 0; i<4;i++){
-       evaluatedConvo[i] = EvaluateConvo(i, lowLim, highLim);
-       
+    for(int i = 0; i < 4; i++) {
+        evaluatedConvo[i] = EvaluateConvo(i, lowLim, highLim);
     }
     evaluatedPowU0[0] = 1.;
-    for(int i = 1; i<4; i++) {
-        evaluatedPowU0[i] = evaluatedPowU0[i-1] * -u0_plus;
+    for(int i = 1; i < 4; i++) {
+        evaluatedPowU0[i] = evaluatedPowU0[i - 1] * -u0_plus;
     }
-    
+
     /*
     fptype evaluatedAcceptance[4];
-    evaluatedAcceptance[0] = BinomCoeff(0, 0) * EvaluateConvo(0, sqrt_r * knot_low+  u0_plus, _sqrt_r * knot_high +  u0_plus) * pow(- u0_plus, 0);
-    for(int i = 1; i<4; i++) {
-        evaluatedAcceptance[i] = evaluatedAcceptance[i-1] + BinomCoeff(n, k) * EvaluateConvo(n - k, _sqrt_r * tlow + u0, _sqrt_r * thigh + u0) * pow(-u0, k);
+    evaluatedAcceptance[0] = BinomCoeff(0, 0) * EvaluateConvo(0, sqrt_r * knot_low+  u0_plus, _sqrt_r * knot_high +
+    u0_plus) * pow(- u0_plus, 0); for(int i = 1; i<4; i++) { evaluatedAcceptance[i] = evaluatedAcceptance[i-1] +
+    BinomCoeff(n, k) * EvaluateConvo(n - k, _sqrt_r * tlow + u0, _sqrt_r * thigh + u0) * pow(-u0, k);
     }
     */
-    
-    fptype Ipy_0           = EvaluateAcceptance(0, sqrt_r, evaluatedConvo, evaluatedPowU0);
-    fptype Ipy_1           = EvaluateAcceptance(1, sqrt_r, evaluatedConvo, evaluatedPowU0);
-    fptype Ipy_2           = EvaluateAcceptance(2, sqrt_r, evaluatedConvo, evaluatedPowU0);
-    fptype Ipy_3           = EvaluateAcceptance(3, sqrt_r, evaluatedConvo, evaluatedPowU0);
 
+    fptype Ipy_0 = EvaluateAcceptance(0, sqrt_r, evaluatedConvo, evaluatedPowU0);
+    fptype Ipy_1 = EvaluateAcceptance(1, sqrt_r, evaluatedConvo, evaluatedPowU0);
+    fptype Ipy_2 = EvaluateAcceptance(2, sqrt_r, evaluatedConvo, evaluatedPowU0);
+    fptype Ipy_3 = EvaluateAcceptance(3, sqrt_r, evaluatedConvo, evaluatedPowU0);
 
-    lowLim = sqrt_r * knot_low +  u0_minus;
-    highLim = sqrt_r * knot_high +  u0_minus;
-    for (int i = 0; i<4;i++){
-       evaluatedConvo[i] = EvaluateConvo(i, lowLim, highLim);
-       
+    lowLim  = sqrt_r * knot_low + u0_minus;
+    highLim = sqrt_r * knot_high + u0_minus;
+    for(int i = 0; i < 4; i++) {
+        evaluatedConvo[i] = EvaluateConvo(i, lowLim, highLim);
     }
     evaluatedPowU0[0] = 1.;
-    for(int i = 1; i<4; i++) {
-        evaluatedPowU0[i] = evaluatedPowU0[i-1] * -u0_minus;
+    for(int i = 1; i < 4; i++) {
+        evaluatedPowU0[i] = evaluatedPowU0[i - 1] * -u0_minus;
     }
 
     fptype Imy_0 = EvaluateAcceptance(0, sqrt_r, evaluatedConvo, evaluatedPowU0);
@@ -192,7 +188,7 @@ __device__ void EvaluateKnot(fptype &_P1,
     _P3 += 1. * preFactor * (preFactor_plus * Ipy - preFactor_minus * Imy);
 }
 
-__device__ fptype EvaluateAcceptanceGn(int n, int k, fptype _sqrt_r, fptype * _evaluatedConvo, fptype * _evaluatedPowU) {
+__device__ fptype EvaluateAcceptanceGn(int n, int k, fptype _sqrt_r, fptype *_evaluatedConvo, fptype *_evaluatedPowU) {
     // n : I_gn
     // k: order of polynmoial term
     fptype res = 0.;
@@ -217,11 +213,11 @@ __device__ void EvaluateKnotSinCos(fptype &_P2,
                                    fptype sigma,
                                    fptype x) {
     // sqrt_r = 1/sigma
-    fptype sqrt_r = 1./sigma;
+    fptype sqrt_r = 1. / sigma;
     // r = 1/sigma^2
-    fptype r = sqrt_r*sqrt_r;
-    fptype p  = 2 * Gamma - 2 * (tprime) * r;
-    fptype q  = (tprime) * (tprime) * r;
+    fptype r  = sqrt_r * sqrt_r;
+    fptype p  = 2 * Gamma - 2 * (tprime)*r;
+    fptype q  = (tprime) * (tprime)*r;
     fptype u0 = p / (2. * sqrt_r);
     // factor 1/sqrt(2PI) absorbed in small phi?
     fptype preFactor    = 1. / sqrt_r / sigma * exp(-0.5 * (q - u0 * u0));
@@ -229,19 +225,19 @@ __device__ void EvaluateKnotSinCos(fptype &_P2,
 
     fptype evaluatedConvo[9];
     fptype evaluatedPowU0[9];
-    fptype lowLim = sqrt_r * knot_low +  u0;
-    fptype highLim = sqrt_r * knot_high +  u0;
-    for (int i = 0; i < 9; i++){
-       evaluatedConvo[i] = EvaluateConvo(i, lowLim, highLim);
+    fptype lowLim  = sqrt_r * knot_low + u0;
+    fptype highLim = sqrt_r * knot_high + u0;
+    for(int i = 0; i < 9; i++) {
+        evaluatedConvo[i] = EvaluateConvo(i, lowLim, highLim);
     }
     evaluatedPowU0[0] = 1.;
-    for(int i = 1; i<9; i++) {
-        evaluatedPowU0[i] = evaluatedPowU0[i-1] * -u0;
+    for(int i = 1; i < 9; i++) {
+        evaluatedPowU0[i] = evaluatedPowU0[i - 1] * -u0;
     }
-    fptype Ig0_0        = EvaluateAcceptanceGn(0, 0, sqrt_r, evaluatedConvo, evaluatedPowU0);
-    fptype Ig0_1        = EvaluateAcceptanceGn(0, 1, sqrt_r, evaluatedConvo, evaluatedPowU0);
-    fptype Ig0_2        = EvaluateAcceptanceGn(0, 2, sqrt_r, evaluatedConvo, evaluatedPowU0);
-    fptype Ig0_3        = EvaluateAcceptanceGn(0, 3, sqrt_r, evaluatedConvo, evaluatedPowU0);
+    fptype Ig0_0 = EvaluateAcceptanceGn(0, 0, sqrt_r, evaluatedConvo, evaluatedPowU0);
+    fptype Ig0_1 = EvaluateAcceptanceGn(0, 1, sqrt_r, evaluatedConvo, evaluatedPowU0);
+    fptype Ig0_2 = EvaluateAcceptanceGn(0, 2, sqrt_r, evaluatedConvo, evaluatedPowU0);
+    fptype Ig0_3 = EvaluateAcceptanceGn(0, 3, sqrt_r, evaluatedConvo, evaluatedPowU0);
 
     fptype Ig1_0 = EvaluateAcceptanceGn(1, 0, sqrt_r, evaluatedConvo, evaluatedPowU0);
     fptype Ig1_1 = EvaluateAcceptanceGn(1, 1, sqrt_r, evaluatedConvo, evaluatedPowU0);
@@ -596,51 +592,51 @@ __device__ fptype device_threegauss_resolutionSplice(fptype coshterm,
                     expSlope,
                     lastKnot,
                     expConst);
-  /*
-    fptype selbias = 0.21868332187637923;
-    fptype cp1_tmp = 0;
-    fptype cp2_tmp = 0;
-    fptype cp3_tmp = 0;
-    fptype cp4_tmp = 0;
-    mytmpgaussian(cp1_tmp,
-                  cp2_tmp,
-                  cp3_tmp,
-                  cp4_tmp,
-                  tau,
-                  dtime - coreBias * sigma,
-                  xmixing,
-                  ymixing,
-                  coreScaleFactor * sigma,
-                  selbias);
-    fptype tp1_tmp = 0;
-    fptype tp2_tmp = 0;
-    fptype tp3_tmp = 0;
-    fptype tp4_tmp = 0;
-    mytmpgaussian(tp1_tmp,
-                  tp2_tmp,
-                  tp3_tmp,
-                  tp4_tmp,
-                  tau,
-                  dtime - tailBias * sigma,
-                  xmixing,
-                  ymixing,
-                  tailScaleFactor * sigma,
-                  selbias);
-    fptype op1_tmp = 0;
-    fptype op2_tmp = 0;
-    fptype op3_tmp = 0;
-    fptype op4_tmp = 0;
-    mytmpgaussian(op1_tmp,
-                  op2_tmp,
-                  op3_tmp,
-                  op4_tmp,
-                  tau,
-                  dtime - outlBias * sigma,
-                  xmixing,
-                  ymixing,
-                  outlScaleFactor * sigma,
-                  selbias);
-    */
+    /*
+      fptype selbias = 0.21868332187637923;
+      fptype cp1_tmp = 0;
+      fptype cp2_tmp = 0;
+      fptype cp3_tmp = 0;
+      fptype cp4_tmp = 0;
+      mytmpgaussian(cp1_tmp,
+                    cp2_tmp,
+                    cp3_tmp,
+                    cp4_tmp,
+                    tau,
+                    dtime - coreBias * sigma,
+                    xmixing,
+                    ymixing,
+                    coreScaleFactor * sigma,
+                    selbias);
+      fptype tp1_tmp = 0;
+      fptype tp2_tmp = 0;
+      fptype tp3_tmp = 0;
+      fptype tp4_tmp = 0;
+      mytmpgaussian(tp1_tmp,
+                    tp2_tmp,
+                    tp3_tmp,
+                    tp4_tmp,
+                    tau,
+                    dtime - tailBias * sigma,
+                    xmixing,
+                    ymixing,
+                    tailScaleFactor * sigma,
+                    selbias);
+      fptype op1_tmp = 0;
+      fptype op2_tmp = 0;
+      fptype op3_tmp = 0;
+      fptype op4_tmp = 0;
+      mytmpgaussian(op1_tmp,
+                    op2_tmp,
+                    op3_tmp,
+                    op4_tmp,
+                    tau,
+                    dtime - outlBias * sigma,
+                    xmixing,
+                    ymixing,
+                    outlScaleFactor * sigma,
+                    selbias);
+      */
     /*
     cp2 = 0.05 * cp2_tmp;
     tp2 = 0.05 * tp2_tmp;
@@ -726,11 +722,12 @@ ThreeGaussResolutionSplice::ThreeGaussResolutionSplice(Variable cf,
 }
 ThreeGaussResolutionSplice::~ThreeGaussResolutionSplice() = default;
 
-__host__ __device__ fptype NormTermY(fptype tlow, fptype thigh, fptype yterm, fptype Gamma, int k, fptype * evaluatedPowGammaYTerm) {
+__host__ __device__ fptype
+NormTermY(fptype tlow, fptype thigh, fptype yterm, fptype Gamma, int k, fptype *evaluatedPowGammaYTerm) {
     // k: order of polynomial term
     fptype res = 0.;
     for(int i = 0; i <= k; i++) {
-        fptype preFactor = -1. / evaluatedPowGammaYTerm[i+1] * Factorial(k) / Factorial(k - i);
+        fptype preFactor = -1. / evaluatedPowGammaYTerm[i + 1] * Factorial(k) / Factorial(k - i);
         fptype curIntegral
             = (pow(thigh, k - i) * exp(-thigh * Gamma * yterm)) - (pow(tlow, k - i) * exp(-tlow * Gamma * yterm));
         res += preFactor * curIntegral;
@@ -816,84 +813,104 @@ fptype ThreeGaussResolutionSplice::normalization(
     fptype evaluatedPowGammaYPlus[10];
     fptype evaluatedPowGammaYMinus[10];
     fptype evaluatedPowGamma[10];
-    evaluatedPowGammaYPlus[0] = 1.;
+    evaluatedPowGammaYPlus[0]  = 1.;
     evaluatedPowGammaYMinus[0] = 1.;
-    evaluatedPowGamma[0] = 1.;
-    for(int i = 1; i<10; i++) {
-        evaluatedPowGammaYPlus[i] = evaluatedPowGammaYPlus[i-1] * Gamma * (ymixing + 1.);
-        evaluatedPowGammaYMinus[i] = evaluatedPowGammaYMinus[i-1] * Gamma * (1. - ymixing);
-        evaluatedPowGamma[i] = evaluatedPowGamma[i-1] * Gamma;
+    evaluatedPowGamma[0]       = 1.;
+    for(int i = 1; i < 10; i++) {
+        evaluatedPowGammaYPlus[i]  = evaluatedPowGammaYPlus[i - 1] * Gamma * (ymixing + 1.);
+        evaluatedPowGammaYMinus[i] = evaluatedPowGammaYMinus[i - 1] * Gamma * (1. - ymixing);
+        evaluatedPowGamma[i]       = evaluatedPowGamma[i - 1] * Gamma;
     }
 
     // 1. - ymixing or ymixing - 1.
     for(int i = 0; i < nKnots - 1; i++) {
-        timeIntegralOne += spline_0.at(i)
-                           * (0.5 * NormTermY(knots.at(i), knots.at(i + 1), 1. - ymixing, Gamma, 0,  evaluatedPowGammaYMinus)
-                              + 0.5 * NormTermY(knots.at(i), knots.at(i + 1), ymixing + 1., Gamma, 0,  evaluatedPowGammaYPlus));
-        timeIntegralOne += spline_1.at(i)
-                           * (0.5 * NormTermY(knots.at(i), knots.at(i + 1), 1. - ymixing, Gamma, 1,  evaluatedPowGammaYMinus)
-                              + 0.5 * NormTermY(knots.at(i), knots.at(i + 1), ymixing + 1., Gamma, 1,  evaluatedPowGammaYPlus));
-        timeIntegralOne += spline_2.at(i)
-                           * (0.5 * NormTermY(knots.at(i), knots.at(i + 1), 1. - ymixing, Gamma, 2,  evaluatedPowGammaYMinus)
-                              + 0.5 * NormTermY(knots.at(i), knots.at(i + 1), ymixing + 1., Gamma, 2,  evaluatedPowGammaYPlus));
-        timeIntegralOne += spline_3.at(i)
-                           * (0.5 * NormTermY(knots.at(i), knots.at(i + 1), 1. - ymixing, Gamma, 3,  evaluatedPowGammaYMinus)
-                              + 0.5 * NormTermY(knots.at(i), knots.at(i + 1), ymixing + 1., Gamma, 3,  evaluatedPowGammaYPlus));
-
-        timeIntegralThree += spline_0.at(i)
-                             * (0.5 * NormTermY(knots.at(i), knots.at(i + 1), 1. - ymixing, Gamma, 0,  evaluatedPowGammaYMinus)
-                                - 0.5 * NormTermY(knots.at(i), knots.at(i + 1), ymixing + 1., Gamma, 0,  evaluatedPowGammaYPlus));
-        timeIntegralThree += spline_1.at(i)
-                             * (0.5 * NormTermY(knots.at(i), knots.at(i + 1), 1. - ymixing, Gamma, 1,  evaluatedPowGammaYMinus)
-                                - 0.5 * NormTermY(knots.at(i), knots.at(i + 1), ymixing + 1., Gamma, 1,  evaluatedPowGammaYPlus));
-        timeIntegralThree += spline_2.at(i)
-                             * (0.5 * NormTermY(knots.at(i), knots.at(i + 1), 1. - ymixing, Gamma, 2,  evaluatedPowGammaYMinus)
-                                - 0.5 * NormTermY(knots.at(i), knots.at(i + 1), ymixing + 1., Gamma, 2,  evaluatedPowGammaYPlus));
-        timeIntegralThree += spline_3.at(i)
-                             * (0.5 * NormTermY(knots.at(i), knots.at(i + 1), 1. - ymixing, Gamma, 3,  evaluatedPowGammaYMinus)
-                                - 0.5 * NormTermY(knots.at(i), knots.at(i + 1), ymixing + 1., Gamma, 3,  evaluatedPowGammaYPlus));
-
-        timeIntegralTwo
+        timeIntegralOne
             += spline_0.at(i)
-               * (NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 0,  evaluatedPowGamma)
-                  - 0.5 * pow(xmixing * Gamma, 2) * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 2,  evaluatedPowGamma)
-                  + 1. / 24. * pow(xmixing * Gamma, 4) * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 4,  evaluatedPowGamma));
-        timeIntegralTwo
+               * (0.5 * NormTermY(knots.at(i), knots.at(i + 1), 1. - ymixing, Gamma, 0, evaluatedPowGammaYMinus)
+                  + 0.5 * NormTermY(knots.at(i), knots.at(i + 1), ymixing + 1., Gamma, 0, evaluatedPowGammaYPlus));
+        timeIntegralOne
             += spline_1.at(i)
-               * (NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 1,  evaluatedPowGamma)
-                  - 0.5 * pow(xmixing * Gamma, 2) * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 3,  evaluatedPowGamma)
-                  + 1. / 24. * pow(xmixing * Gamma, 4) * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 5,  evaluatedPowGamma));
-        timeIntegralTwo
+               * (0.5 * NormTermY(knots.at(i), knots.at(i + 1), 1. - ymixing, Gamma, 1, evaluatedPowGammaYMinus)
+                  + 0.5 * NormTermY(knots.at(i), knots.at(i + 1), ymixing + 1., Gamma, 1, evaluatedPowGammaYPlus));
+        timeIntegralOne
             += spline_2.at(i)
-               * (NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 2,  evaluatedPowGamma)
-                  - 0.5 * pow(xmixing * Gamma, 2) * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 4,  evaluatedPowGamma)
-                  + 1. / 24. * pow(xmixing * Gamma, 4) * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 6,  evaluatedPowGamma));
-        timeIntegralTwo
+               * (0.5 * NormTermY(knots.at(i), knots.at(i + 1), 1. - ymixing, Gamma, 2, evaluatedPowGammaYMinus)
+                  + 0.5 * NormTermY(knots.at(i), knots.at(i + 1), ymixing + 1., Gamma, 2, evaluatedPowGammaYPlus));
+        timeIntegralOne
             += spline_3.at(i)
-               * (NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 3,  evaluatedPowGamma)
-                  - 0.5 * pow(xmixing * Gamma, 2) * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 5,  evaluatedPowGamma)
-                  + 1. / 24. * pow(xmixing * Gamma, 4) * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 7,  evaluatedPowGamma));
+               * (0.5 * NormTermY(knots.at(i), knots.at(i + 1), 1. - ymixing, Gamma, 3, evaluatedPowGammaYMinus)
+                  + 0.5 * NormTermY(knots.at(i), knots.at(i + 1), ymixing + 1., Gamma, 3, evaluatedPowGammaYPlus));
+
+        timeIntegralThree
+            += spline_0.at(i)
+               * (0.5 * NormTermY(knots.at(i), knots.at(i + 1), 1. - ymixing, Gamma, 0, evaluatedPowGammaYMinus)
+                  - 0.5 * NormTermY(knots.at(i), knots.at(i + 1), ymixing + 1., Gamma, 0, evaluatedPowGammaYPlus));
+        timeIntegralThree
+            += spline_1.at(i)
+               * (0.5 * NormTermY(knots.at(i), knots.at(i + 1), 1. - ymixing, Gamma, 1, evaluatedPowGammaYMinus)
+                  - 0.5 * NormTermY(knots.at(i), knots.at(i + 1), ymixing + 1., Gamma, 1, evaluatedPowGammaYPlus));
+        timeIntegralThree
+            += spline_2.at(i)
+               * (0.5 * NormTermY(knots.at(i), knots.at(i + 1), 1. - ymixing, Gamma, 2, evaluatedPowGammaYMinus)
+                  - 0.5 * NormTermY(knots.at(i), knots.at(i + 1), ymixing + 1., Gamma, 2, evaluatedPowGammaYPlus));
+        timeIntegralThree
+            += spline_3.at(i)
+               * (0.5 * NormTermY(knots.at(i), knots.at(i + 1), 1. - ymixing, Gamma, 3, evaluatedPowGammaYMinus)
+                  - 0.5 * NormTermY(knots.at(i), knots.at(i + 1), ymixing + 1., Gamma, 3, evaluatedPowGammaYPlus));
+
+        timeIntegralTwo += spline_0.at(i)
+                           * (NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 0, evaluatedPowGamma)
+                              - 0.5 * pow(xmixing * Gamma, 2)
+                                    * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 2, evaluatedPowGamma)
+                              + 1. / 24. * pow(xmixing * Gamma, 4)
+                                    * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 4, evaluatedPowGamma));
+        timeIntegralTwo += spline_1.at(i)
+                           * (NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 1, evaluatedPowGamma)
+                              - 0.5 * pow(xmixing * Gamma, 2)
+                                    * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 3, evaluatedPowGamma)
+                              + 1. / 24. * pow(xmixing * Gamma, 4)
+                                    * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 5, evaluatedPowGamma));
+        timeIntegralTwo += spline_2.at(i)
+                           * (NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 2, evaluatedPowGamma)
+                              - 0.5 * pow(xmixing * Gamma, 2)
+                                    * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 4, evaluatedPowGamma)
+                              + 1. / 24. * pow(xmixing * Gamma, 4)
+                                    * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 6, evaluatedPowGamma));
+        timeIntegralTwo += spline_3.at(i)
+                           * (NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 3, evaluatedPowGamma)
+                              - 0.5 * pow(xmixing * Gamma, 2)
+                                    * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 5, evaluatedPowGamma)
+                              + 1. / 24. * pow(xmixing * Gamma, 4)
+                                    * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 7, evaluatedPowGamma));
 
         timeIntegralFour
             += spline_0.at(i)
-               * (xmixing * Gamma * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 1,  evaluatedPowGamma)
-                  - 1. / 6. * pow(xmixing * Gamma, 3) * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 3,  evaluatedPowGamma)
-                  + 1. / 120. * pow(xmixing * Gamma, 5) * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 5,  evaluatedPowGamma));
+               * (xmixing * Gamma * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 1, evaluatedPowGamma)
+                  - 1. / 6. * pow(xmixing * Gamma, 3)
+                        * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 3, evaluatedPowGamma)
+                  + 1. / 120. * pow(xmixing * Gamma, 5)
+                        * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 5, evaluatedPowGamma));
         timeIntegralFour
             += spline_1.at(i)
-               * (xmixing * Gamma * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 2,  evaluatedPowGamma)
-                  - 1. / 6. * pow(xmixing * Gamma, 3) * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 4,  evaluatedPowGamma)
-                  + 1. / 120. * pow(xmixing * Gamma, 5) * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 6,  evaluatedPowGamma));
+               * (xmixing * Gamma * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 2, evaluatedPowGamma)
+                  - 1. / 6. * pow(xmixing * Gamma, 3)
+                        * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 4, evaluatedPowGamma)
+                  + 1. / 120. * pow(xmixing * Gamma, 5)
+                        * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 6, evaluatedPowGamma));
         timeIntegralFour
             += spline_2.at(i)
-               * (xmixing * Gamma * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 3,  evaluatedPowGamma)
-                  - 1. / 6. * pow(xmixing * Gamma, 3) * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 5,  evaluatedPowGamma)
-                  + 1. / 120. * pow(xmixing * Gamma, 5) * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 7,  evaluatedPowGamma));
+               * (xmixing * Gamma * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 3, evaluatedPowGamma)
+                  - 1. / 6. * pow(xmixing * Gamma, 3)
+                        * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 5, evaluatedPowGamma)
+                  + 1. / 120. * pow(xmixing * Gamma, 5)
+                        * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 7, evaluatedPowGamma));
         timeIntegralFour
             += spline_3.at(i)
-               * (xmixing * Gamma * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 4,  evaluatedPowGamma)
-                  - 1. / 6. * pow(xmixing * Gamma, 3) * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 6,  evaluatedPowGamma)
-                  + 1. / 120. * pow(xmixing * Gamma, 5) * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 8,  evaluatedPowGamma));
+               * (xmixing * Gamma * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 4, evaluatedPowGamma)
+                  - 1. / 6. * pow(xmixing * Gamma, 3)
+                        * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 6, evaluatedPowGamma)
+                  + 1. / 120. * pow(xmixing * Gamma, 5)
+                        * NormTermY(knots.at(i), knots.at(i + 1), 1., Gamma, 8, evaluatedPowGamma));
 
         /*
         fpcomplex imag_x = {0., xmixing}

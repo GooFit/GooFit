@@ -7,9 +7,6 @@
 [submodule "extern/CLI11"]
 	path = extern/CLI11
 	url = ../../CLIUtils/CLI11.git
-[submodule "extern/Minuit2"]
-	path = extern/Minuit2
-	url = ../../GooFit/Minuit2.git
 [submodule "extern/thrust"]
 	path = extern/thrust
 	url = ../../thrust/thrust.git

@@ -3,7 +3,6 @@
 -Iextern/thrust
 -Iextern/rang/include
 -Iextern/MCBooster
--Iextern/Minuit2/inc
 -Iextern/generics
 -Iextern/googletest
 -Iextern/FeatureDetector/src

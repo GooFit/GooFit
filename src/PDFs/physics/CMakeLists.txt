@@ -23,6 +23,8 @@ goofit_add_pdf_library(
   SpinFactors.cu
   MixingTimeResolution.cu
   ThreeGaussResolution.cu
+  ThreeGaussResolutionExt.cu
+  ThreeGaussResolutionSplice.cu
   TruthResolution.cu
   SquareDalitzEffPdf.cu
   detail/AmpCalc.cu

@@ -12,12 +12,12 @@ namespace GooFit {
 
 class NormEvents_4Body_HostCached final : public NormEvents_4Body_Base {
   public:
-    NormEvents_4Body_HostCached()                                          = delete;
-    NormEvents_4Body_HostCached(const NormEvents_4Body_HostCached &copyMe) = default;
-    NormEvents_4Body_HostCached(NormEvents_4Body_HostCached &&moveMe)      = default;
-    virtual ~NormEvents_4Body_HostCached() override                        = default;
+    NormEvents_4Body_HostCached()                                                     = delete;
+    NormEvents_4Body_HostCached(const NormEvents_4Body_HostCached &copyMe)            = default;
+    NormEvents_4Body_HostCached(NormEvents_4Body_HostCached &&moveMe)                 = default;
+    virtual ~NormEvents_4Body_HostCached() override                                   = default;
     NormEvents_4Body_HostCached &operator=(const NormEvents_4Body_HostCached &copyMe) = default;
-    NormEvents_4Body_HostCached &operator=(NormEvents_4Body_HostCached &&moveMe) = default;
+    NormEvents_4Body_HostCached &operator=(NormEvents_4Body_HostCached &&moveMe)      = default;
 
     static std::vector<NormEvents_4Body_Base *>
     buildBatches(const std::vector<long> &normSeeds,

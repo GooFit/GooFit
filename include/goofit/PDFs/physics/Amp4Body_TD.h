@@ -33,12 +33,12 @@ class Lineshape;
 
 class Amp4Body_TD final : public Amp4BodyBase {
   public:
-    Amp4Body_TD()                          = delete;
-    Amp4Body_TD(const Amp4Body_TD &copyMe) = delete;
-    Amp4Body_TD(Amp4Body_TD &&moveMe)      = delete;
+    Amp4Body_TD()                                     = delete;
+    Amp4Body_TD(const Amp4Body_TD &copyMe)            = delete;
+    Amp4Body_TD(Amp4Body_TD &&moveMe)                 = delete;
     Amp4Body_TD &operator=(const Amp4Body_TD &copyMe) = delete;
-    Amp4Body_TD &operator=(Amp4Body_TD &&moveMe) = delete;
-    virtual ~Amp4Body_TD() override              = default;
+    Amp4Body_TD &operator=(Amp4Body_TD &&moveMe)      = delete;
+    virtual ~Amp4Body_TD() override                   = default;
 
     // Build Amp4Body_TD where the MC events used for normalization are stored on the host side
     // and where normalization computations are done in batches.

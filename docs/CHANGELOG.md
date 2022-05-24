@@ -1,21 +1,36 @@
-## v2.3.0: IN DEVELOPMENT
+## v2.3.0: Lots of polish
+## May 23, 2022
+
+Several years of fixes, updates, and polish. GooFit's core is now
+BSD licensed (still uses LGPL Landau & Minuit code).
 
 * Minimum supported CUDA version: 8.0
 * Minimum required CMake version: 3.9 (matches ROOT) [#240][]
+* Lots of dependent version updates (pybind11, CLI11, etc)
 * All files formatted with pre-commit [#241][]
 * 3-body preliminary kMatrix [#209][]
 * 3 gauss resolution updates (now has one extra param) [#218][]
 * LASS parameters now settable [#218][]
-* Changed to Level to GlobalLevel for ROOT 2.24 [#266][]
+* Changed to Level to GlobalLevel for ROOT 6.24 [#266][]
+* GeneateSig available on Amp3Body [#254][]
+* Added rho omega lineshape [#278][]
+* New `PdfBase::status` for debugging [#298][]
+* Nicer particle array access from Python [#307][]
 
 [#218]: https://github.com/GooFit/GooFit/pull/218
 [#209]: https://github.com/GooFit/GooFit/pull/209
 [#240]: https://github.com/GooFit/GooFit/pull/240
 [#241]: https://github.com/GooFit/GooFit/pull/241
+[#254]: https://github.com/GooFit/GooFit/pull/254
 [#266]: https://github.com/GooFit/GooFit/pull/266
+[#278]: https://github.com/GooFit/GooFit/pull/278
+[#278]: https://github.com/GooFit/GooFit/pull/278
+[#298]: https://github.com/GooFit/GooFit/pull/298
+[#307]: https://github.com/GooFit/GooFit/pull/307
+
 
 ## v2.2.3: Python builds
-## January 31, 2020
+#### January 31, 2020
 
 This release sees a huge increase in platforms built on CI, and lots
 of fixes to assist the new conda-forge package.

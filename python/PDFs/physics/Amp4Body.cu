@@ -42,17 +42,16 @@ void init_Amp4Body(py::module &m) {
 
                  std::tie(particles, variables, weights, flags) = self.GenerateSig(numEvents);
 
-                 py::array_t<fptype> pyparticles{{(size_t)4, 4 * numEvents}};
+                 py::array_t<fptype> pyparticles{{(size_t)4, numEvents, (size_t)4}};
                  py::array_t<fptype> pyvariables{{(size_t)5, numEvents}};
                  py::array_t<fptype> pyweights{(py::ssize_t)numEvents};
-                 py::array_t<fptype> pyflags{(py::ssize_t)numEvents};
+                 py::array_t<bool> pyflags{(py::ssize_t)numEvents};
 
                  for(int i = 0; i < 4; i++) {
-                     for(int j = 0, k = 0; j < numEvents; j++, k = k + 4) {
-                         pyparticles.mutable_at(i, k)     = (*(particles[i]))[j].get(0);
-                         pyparticles.mutable_at(i, k + 1) = (*(particles[i]))[j].get(1);
-                         pyparticles.mutable_at(i, k + 2) = (*(particles[i]))[j].get(2);
-                         pyparticles.mutable_at(i, k + 3) = (*(particles[i]))[j].get(3);
+                     for(int j = 0; j < numEvents; j++) {
+                         for(int k = 0; k < 4; k++) {
+                             pyparticles.mutable_at(i, j, k) = (*(particles[i]))[j].get(k);
+                         }
                      }
                  }
 

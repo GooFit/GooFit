@@ -55,32 +55,6 @@ getCofactor(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex temp[NCHANNELS][NCHANNE
     }
 }
 
-/* Recursive function for finding determinant of matrix.
-   n is current dimension of A[][]. */
-__device__ auto determinant(fpcomplex A[NCHANNELS][NCHANNELS], int n) -> fpcomplex {
-    fpcomplex D = 0; // Initialize result
-
-    //  Base case : if matrix contains single element
-    if(n == 1)
-        return A[0][0];
-
-    fpcomplex temp[NCHANNELS][NCHANNELS]; // To store cofactors
-
-    int sign = 1; // To store sign multiplier
-
-    // Iterate for each element of first row
-    for(int f = 0; f < n; f++) {
-        // Getting Cofactor of A[0][f]
-        getCofactor(A, temp, 0, f, n);
-        D += fptype(sign) * A[0][f] * determinant(temp, n - 1);
-
-        // terms are to be added with alternate sign
-        sign = -sign;
-    }
-
-    return D;
-}
-
 // Function to get adjoint of A[N][N] in adj[N][N].
 __device__ void adjoint(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex adj[NCHANNELS][NCHANNELS]) {
     if(NCHANNELS == 1) {
@@ -103,7 +77,7 @@ __device__ void adjoint(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex adj[NCHANNE
 
             // Interchanging rows and columns to get the
             // transpose of the cofactor matrix
-            adj[j][i] = fptype(sign) * (determinant(temp, NCHANNELS - 1));
+            adj[j][i] = fptype(sign) * (determinant<NCHANNELS - 1>(temp));
         }
     }
 }
@@ -112,9 +86,9 @@ __device__ void adjoint(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex adj[NCHANNE
 // matrix is singular
 __device__ auto inverse(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex inverse[NCHANNELS][NCHANNELS]) -> bool {
     // Find determinant of A[][]
-    fpcomplex det = determinant(A, NCHANNELS);
+    fpcomplex det = determinant<NCHANNELS>(A);
     if(det == fpcomplex(0, 0)) {
-        printf("Singular matrix, can't find its inverse");
+        printf("Singular matrix, can't find its inverse\n");
         return false;
     }
 
@@ -130,11 +104,74 @@ __device__ auto inverse(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex inverse[NCH
     return true;
 }
 
+__device__ void luDecomposition(fpcomplex A[NCHANNELS][NCHANNELS],
+                                fpcomplex U[NCHANNELS][NCHANNELS],
+                                fpcomplex L[NCHANNELS][NCHANNELS]) {
+    for(unsigned i = 0; i < NCHANNELS; i++) {
+        // Upper triangular matrix
+        for(unsigned k = i; k < NCHANNELS; k++) {
+            fpcomplex sum(0, 0);
+            for(unsigned j = 0; j < i; j++)
+                sum += L[i][j] * U[j][k];
+            U[i][k] = A[i][k] - sum;
+        }
+
+        // Lower triangular.
+        for(unsigned k = i; k < NCHANNELS; k++) {
+            if(i == k) {
+                L[i][i] = 1;
+            } else {
+                fpcomplex sum(0, 0);
+                for(unsigned j = 0; j < i; j++)
+                    sum += L[k][j] * U[j][i];
+                L[k][i] = (A[k][i] - sum) / U[i][i];
+            }
+        }
+    }
+}
+
+__device__ bool luInverse(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex inverse[NCHANNELS][NCHANNELS]) {
+    fpcomplex U[NCHANNELS][NCHANNELS];
+    fpcomplex L[NCHANNELS][NCHANNELS];
+    fpcomplex Linv[NCHANNELS][NCHANNELS];
+    luDecomposition(A, U, L);
+
+    // Compute intermediate matrix Linv.
+    for(int col = 0; col < NCHANNELS; col++) {
+        for(int row = 0; row < NCHANNELS; row++) {
+            fpcomplex sum(0, 0);
+            for(int i = 0; i < NCHANNELS; i++) {
+                if(i != row) {
+                    sum += L[row][i] * Linv[i][col];
+                }
+            }
+            Linv[row][col] = ((row == col ? 1. : 0.) - sum) / L[row][row];
+        }
+    }
+
+    // Calculate the inverse.
+    // TODO: Can this whole calculation be done in-place?
+    for(int col = 0; col < NCHANNELS; col++) {
+        for(int row = NCHANNELS - 1; row >= 0; row--) {
+            fpcomplex sum(0, 0);
+            for(int i = 0; i < NCHANNELS; i++) {
+                if(i != row) {
+                    sum += U[row][i] * inverse[i][col];
+                }
+            }
+            inverse[row][col] = (Linv[row][col] - sum) / U[row][row];
+        }
+    }
+
+    return true;
+}
+
 __device__ void getPropagator(const fptype kMatrix[NCHANNELS][NCHANNELS],
                               const fpcomplex phaseSpace[NCHANNELS],
                               fpcomplex F[NCHANNELS][NCHANNELS],
                               fptype adlerTerm) {
     fpcomplex tMatrix[NCHANNELS][NCHANNELS];
+    tMatrix[0][0] = fpcomplex(0, 0);
 
     for(unsigned int i = 0; i < NCHANNELS; ++i) {
         for(unsigned int j = 0; j < NCHANNELS; ++j) {
@@ -181,7 +218,8 @@ __device__ void getPropagator(const fptype kMatrix[NCHANNELS][NCHANNELS],
                                 -1>(tMatrix);
     #else
     */
-    inverse(tMatrix, F);
+
+    luInverse(tMatrix, F);
     return;
     //#endif
 }

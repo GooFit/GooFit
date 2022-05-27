@@ -720,9 +720,6 @@ endif()
 
 add_feature_info("GOOFIT_DEVICE=${GOOFIT_DEVICE}" ON "The device to compile for")
 add_feature_info("GOOFIT_HOST=${GOOFIT_HOST}" ON "The host system to compile for")
-if(GOOFIT_DEVICE STREQUAL CUDA)
-  add_feature_info("ARCH_FLAGS=${READ_ARCH_FLAGS}" ON "Readable GPU arch flags")
-endif()
 
 feature_option(GOOFIT_KMATRIX)
 feature_option(GOOFIT_TRACE)

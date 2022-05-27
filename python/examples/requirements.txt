@@ -1,0 +1,6 @@
+pytest
+matplotlib
+pandas
+uncertainties
+scipy
+plumbum

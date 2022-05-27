@@ -74,5 +74,6 @@ endif()
 
 # Root not required
 add_subdirectory(exponential)
+add_subdirectory(kmatrix)
 
 goofit_add_link(RunAll.py)

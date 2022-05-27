@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16...3.23)
+cmake_minimum_required(VERSION 3.18...3.23)
 
 project(
   GOOFIT
@@ -133,11 +133,11 @@ configure_file("${GOOFIT_SOURCE_DIR}/include/goofit/detail/ThrustOverrideConfig.
                "${GOOFIT_BINARY_DIR}/include/goofit/detail/ThrustOverrideConfig.h")
 
 set(CMAKE_CXX_STANDARD
-    "11"
+    "14"
     CACHE STRING
           "Set a version of C++ standard (11,14,...) to use. Must match ROOT if using ROOT.")
 set(CMAKE_CUDA_STANDARD
-    "11"
+    "14"
     CACHE STRING "Set a version of C++ standard (11,14,...) to use in CUDA.")
 
 ### C++ settings ###

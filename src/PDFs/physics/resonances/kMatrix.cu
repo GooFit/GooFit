@@ -16,6 +16,90 @@
 
 namespace GooFit {
 
+
+__device__ auto inverse3(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex inverse[NCHANNELS][NCHANNELS]) -> bool {
+    
+    // Find determinant of A[][]
+    fpcomplex det = determinant(A, NCHANNELS);
+    if(det == fpcomplex(0, 0)) {
+        printf("Singular matrix, can't find its inverse");
+        return false;
+    }
+
+    // Find adjoint
+    fpcomplex adj[NCHANNELS][NCHANNELS];
+    adjoint(A, adj);
+
+    // Find Inverse using formula "inverse(A) = adj(A)/det(A)"
+    for(int i = 0; i < NCHANNELS; i++)
+        for(int j = 0; j < NCHANNELS; j++)
+            inverse[i][j] = adj[i][j] / det;
+
+    return true;
+}
+
+__device__ void getPropagator3(const fptype kMatrix[NCHANNELS][NCHANNELS],
+                              const fpcomplex phaseSpace[NCHANNELS],
+                              fpcomplex F[NCHANNELS][NCHANNELS],
+                              fptype adlerTerm) {
+
+    fpcomplex tMatrix[NCHANNELS][NCHANNELS];
+
+    for(unsigned int i = 0; i < NCHANNELS; ++i) {
+        for(unsigned int j = 0; j < NCHANNELS; ++j) {
+            //tMatrix[i][j] = (i == j ? 1. : 0.) - fpcomplex(0, adlerTerm) * kMatrix[i][j] * phaseSpace[j];
+            tMatrix[i][j] =  - fpcomplex(0, adlerTerm) * kMatrix[i][j] * phaseSpace[j];
+            // printf("tMatrix(%i,%i) = (%f,%f), kMatrix(%i,%i) = %f, phaseSpace = (%f,%f) \n",
+            //       i,
+            //       j,
+            //       tMatrix[i][j].real(),
+            //       tMatrix[i][j].imag(),
+            //       i,
+            //       j,
+            //       kMatrix[i][j],
+            //       phaseSpace[j].real(),
+            //       phaseSpace[j].imag());
+        }
+    } 
+
+
+   
+
+    /*#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
+    // Here we assume that some values are 0
+        F = compute_inverse5<-1,
+                                -1,
+                                0,
+                                -1,
+                                -1,
+                                -1,
+                                -1,
+                                0,
+                                -1,
+                                -1,
+                                -1,
+                                -1,
+                                -1,
+                                -1,
+                                -1,
+                                -1,
+                                -1,
+                                -1,
+                                -1,
+                                -1,
+                                -1,
+                                -1,
+                                -1,
+                                -1,
+                                -1>(tMatrix);
+    #else
+    */
+    inverse3(tMatrix, F);
+    return;
+    //#endif
+    
+}
+
 __device__ auto kMatrixRes(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) -> fpcomplex {
     // kMatrix amplitude as described in https://arxiv.org/pdf/0804.2089.pdf, compared with AmpGen implementation
 
@@ -104,7 +188,7 @@ for(int i = 0; i < 5; i++) {
             printf("kamtrix2 %d %d %f \n", i, j, kMatrix[i][j]);
         }}
 
-/*
+
     fptype adlerTerm = (1. - sA0) * (s - sA * mPiPlus * mPiPlus / 2) / (s - sA0);
 
     fpcomplex phaseSpace[NCHANNELS];
@@ -113,10 +197,13 @@ for(int i = 0; i < 5; i++) {
     phaseSpace[2] = phsp_fourPi(s);
     phaseSpace[3] = phsp_twoBody(s, mEta, mEta);
     phaseSpace[4] = phsp_twoBody(s, mEta, mEtap);
-
+    for(int i = 0; i < NCHANNELS; i++){
+        printf("phasepace %d %f %f \n", i, phaseSpace[i].real(), phaseSpace[i].imag());
+    }
+    
     fpcomplex F[NCHANNELS][NCHANNELS];
-    getPropagator(kMatrix, phaseSpace, F, adlerTerm);
-
+    getPropagator3(kMatrix, phaseSpace, F, adlerTerm);
+    
     // calculates output
 
 
@@ -135,11 +222,11 @@ for(int i = 0; i < 5; i++) {
         ret  = ret + f_prod[pterm] * prod;
 
     }
-*/
+
 
 
     //pc.incrementIndex();
-fpcomplex ret(kMatrix[0][0], kMatrix[1][3]);
+//fpcomplex ret(kMatrix[0][0] + phaseSpace[0].real(), kMatrix[1][3]);
     return ret;
 } // kMatrixFunction
 

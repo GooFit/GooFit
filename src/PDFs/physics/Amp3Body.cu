@@ -299,7 +299,7 @@ __host__ auto Amp3Body::normalize() -> fptype {
 #else   
             printf("calling thrust::transform for resonance %d \n", i);
             thrust::transform(
-                thrust::device,
+                //thrust::device,
                 thrust::make_zip_iterator(thrust::make_tuple(eventIndex, dataArray, eventSize)),
                 // was this correct before?
                 // thrust::make_zip_iterator(thrust::make_tuple(eventIndex + numEntries, dataArray, eventSize)),
@@ -335,7 +335,7 @@ __host__ auto Amp3Body::normalize() -> fptype {
                 *(integrators[i][j]));
             */
             (*(integrals[i][j])) = thrust::transform_reduce(
-                thrust::device,
+                //thrust::device,
                 thrust::make_zip_iterator(thrust::make_tuple(binIndex, arrayAddress, effFunc)),
                 thrust::make_zip_iterator(thrust::make_tuple(binIndex + totalBins, arrayAddress, effFunc)),
                 *(integrators[i][j]),

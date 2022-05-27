@@ -39,7 +39,7 @@ __device__ auto SpecialResonanceCalculator::operator()(thrust::tuple<int, fptype
     while(pc.funcIdx < resonance_i)
         pc.incrementIndex();
 
-    printf("try to call resonance function in SpecialResonanceCalculator::operator  %d %d %d %d %d %d \n", pc.funcIdx, pc.observableIdx, pc.parameterIdx, pc.constantIdx, pc.normalIdx);
+    printf("try to call resonance function in SpecialResonanceCalculator::operator %f %f %f %d %d %d %d %d %d \n", m12,m13,m23, pc.funcIdx, pc.observableIdx, pc.parameterIdx, pc.constantIdx, pc.normalIdx);
     ret = getResonanceAmplitude(m12, m13, m23, pc);
     printf("finished with SpecialResonanceCalculator::operator \n");
     return ret;

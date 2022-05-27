@@ -122,15 +122,6 @@ endif()
 set(CMAKE_MODULE_PATH "${GOOFIT_SOURCE_DIR}/extern/sanitizers/cmake" ${CMAKE_MODULE_PATH})
 find_package(Sanitizers)
 
-set(GOOFIT_CUDA_OR_GROUPSIZE
-    "128"
-    CACHE STRING "Overrides the default group distribution for Thrust's transform_reduce")
-set(GOOFIT_CUDA_OR_GRAINSIZE
-    "7"
-    CACHE STRING "Overrides the default grain size for Thrust's transform_reduce")
-
-configure_file("${GOOFIT_SOURCE_DIR}/include/goofit/detail/ThrustOverrideConfig.h.in"
-               "${GOOFIT_BINARY_DIR}/include/goofit/detail/ThrustOverrideConfig.h")
 
 set(GOOFIT_CXX_STANDARD
     "14"

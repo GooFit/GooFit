@@ -16,9 +16,6 @@
 //#include <thrust/system/cuda/detail/execution_policy.h>
 //
 
-#include <thrust/system/cuda/detail/bulk.h>
-
-#include <goofit/detail/ThrustOverrideConfig.h>
 
 #ifndef OR_GROUPSIZE
 #define OR_GROUPSIZE 128
@@ -38,7 +35,7 @@ __host__ __device__ OutputType transform_reduce(goofit_policy &exec,
                                                 UnaryFunction unary_op,
                                                 OutputType init,
                                                 BinaryFunction binary_op) {
-    // printf ("goofit transform_reduce\n");
+    printf ("goofit transform_reduce\n");
     thrust::transform_iterator<UnaryFunction, InputIterator, OutputType> xfrm_first(first, unary_op);
     thrust::transform_iterator<UnaryFunction, InputIterator, OutputType> xfrm_last(last, unary_op);
 

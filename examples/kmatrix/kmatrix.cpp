@@ -348,7 +348,12 @@ int main(int argc, char **argv) {
 
     // Prepare the data
     UnbinnedDataSet data({m12, m13, eventNumber});
-
+     m12.setValue(1.5);
+           m13.setValue(1.5);
+           eventNumber.setValue(0);
+           data.addEvent();
+            
+  /*
     for(int i=0; i<m12.getNumBins(); i++) {
         for(int j=0; j<m13.getNumBins(); j++) {
            m12.setValue(m12.getLowerLimit() + m12.getBinSize() * (i + 0.5));
@@ -357,6 +362,7 @@ int main(int argc, char **argv) {
             eventNumber.setValue(eventNumber.getValue() + 1);
         }
     }
+    */
 
                 
 

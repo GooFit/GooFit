@@ -74,6 +74,9 @@ enum DP4Pair {
     M_24_3,
     M_34_2
 };
+
+std::ostream &operator<<(std::ostream &out, const DP4Pair &obj);
+
 enum DaughterPair { PAIR_12 = 0, PAIR_13, PAIR_23 };
 
 const int resonanceSize = 4; // Number of parameters to describe one resonance.
@@ -96,11 +99,15 @@ struct DecayInfo3t : public DecayInfo3 {
     Variable _tau;
     Variable _xmixing;
     Variable _ymixing;
+    Variable _deltax;
+    Variable _deltay;
 
-    DecayInfo3t(Variable _tau, Variable _xmixing, Variable _ymixing)
+    DecayInfo3t(Variable _tau, Variable _xmixing, Variable _ymixing, Variable _deltax, Variable _deltay)
         : _tau(_tau)
         , _xmixing(_xmixing)
-        , _ymixing(_ymixing) {}
+        , _ymixing(_ymixing)
+        , _deltax(_deltax)
+        , _deltay(_deltay) {}
 };
 
 struct DecayInfo4 {

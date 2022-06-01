@@ -30,6 +30,9 @@ class Amplitude : public AmpComponent {
     auto getSpinFactors() -> std::vector<SpinFactor *> { return _SF; }
     auto getLineShapes() -> std::vector<Lineshape *> { return _LS; }
 
+    // have the lineshape parameters changed since the last evaluation?
+    bool lineshapeParametersChanged() const;
+
   private:
     std::string _uniqueDecayStr;
     Variable _ar;

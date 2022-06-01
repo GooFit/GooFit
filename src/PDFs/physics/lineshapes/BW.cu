@@ -167,6 +167,8 @@ Lineshapes::RBW::RBW(
     initialize();
 }
 
+bool Lineshapes::RBW::isEqualByValue(const Lineshape &other) const { return this->Lineshape::isEqualByValue(other); }
+
 Lineshapes::SBW::SBW(
     std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
     : Lineshape("SBW", name, L, Mpair, FormFac, radius) {
@@ -181,6 +183,8 @@ Lineshapes::SBW::SBW(
 
     initialize();
 }
+
+bool Lineshapes::SBW::isEqualByValue(const Lineshape &other) const { return this->Lineshape::isEqualByValue(other); }
 
 Lineshapes::LASS::LASS(
     std::string name, Variable mass, Variable width, unsigned int L, unsigned int Mpair, FF FormFac, fptype radius)
@@ -198,5 +202,7 @@ Lineshapes::LASS::LASS(
 
     initialize();
 }
+
+bool Lineshapes::LASS::isEqualByValue(const Lineshape &other) const { return this->Lineshape::isEqualByValue(other); }
 
 } // namespace GooFit

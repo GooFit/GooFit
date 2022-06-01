@@ -46,16 +46,16 @@ void init_Amp3Body(py::module &m) {
 
             std::tie(particles, variables, weights, flags) = self.GenerateSig(numEvents);
 
-            py::array_t<fptype> pyparticles{{(size_t)3, 3 * numEvents}};
+            py::array_t<fptype> pyparticles{{(size_t)3, numEvents, (size_t)3}};
             py::array_t<fptype> pyvariables{{(size_t)3, numEvents}};
             py::array_t<fptype> pyweights{static_cast<ssize_t>(numEvents)};
-            py::array_t<fptype> pyflags{static_cast<ssize_t>(numEvents)};
+            py::array_t<bool> pyflags{static_cast<ssize_t>(numEvents)};
 
             for(int i = 0; i < 3; i++) {
-                for(int j = 0, k = 0; j < numEvents; j++, k = k + 3) {
-                    pyparticles.mutable_at(i, k)     = (*(particles[i]))[j].get(0);
-                    pyparticles.mutable_at(i, k + 1) = (*(particles[i]))[j].get(1);
-                    pyparticles.mutable_at(i, k + 2) = (*(particles[i]))[j].get(2);
+                for(int j = 0; j < numEvents; j++) {
+                    for(int k = 0; k < 3; k++) {
+                        pyparticles.mutable_at(i, j, k) = (*(particles[i]))[j].get(k);
+                    }
                 }
             }
 

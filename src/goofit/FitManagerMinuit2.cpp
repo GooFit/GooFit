@@ -1,14 +1,19 @@
 #include <goofit/fitting/FitManagerMinuit2.h>
+#include <goofit/fitting/Params.h>
 
 #include <goofit/Color.h>
 #include <goofit/Version.h>
+
+#include <goofit/PdfBase.h>
 
 #include <Minuit2/FunctionMinimum.h>
 #include <Minuit2/MnMigrad.h>
 #include <Minuit2/MnPrint.h>
 #include <Minuit2/MnUserParameterState.h>
 #include <Minuit2/MnUserParameters.h>
-#include <goofit/PdfBase.h>
+
+#include <Minuit2/MnScan.h>
+#include <Minuit2/MnMinos.h>
 
 #include <CLI/Timer.hpp>
 
@@ -20,6 +25,8 @@
 #else
 #include <RVersion.h>
 #endif
+#include <iostream>
+#include <vector>
 
 namespace GooFit {
 
@@ -54,8 +61,34 @@ auto FitManagerMinuit2::fit() -> Minuit2::FunctionMinimum {
     CLI::Timer avetimer{"Average time per call"};
     Minuit2::FunctionMinimum min = migrad(maxfcn_);
 
+
       //Cov Matrix
     matCov = migrad.Covariance();
+
+    if(minos) {
+        Minuit2::MnMinos minos{fcn_, min}; // Create MINOS errors
+        std::vector<Variable> variables = upar_.GetGooFitParams();
+        for(Variable &var : variables) {
+            if(var.IsFixed())
+                continue;
+            else {
+                minos_errors.push_back(minos(var.getFitterIndex()));
+            }
+        }
+        // output
+        int counter = 0;
+        std::cout << "1-sigma minos errors: " << std::endl;
+        for(Variable &var : variables) {
+            if(var.IsFixed())
+                continue;
+            else {
+                std::cout << var.getName() << ": " << minos_errors[counter].first << " " << minos_errors[counter].second
+                          << std::endl;
+                counter += 1;
+            }
+        }
+    }
+
 
     // Print nice output
     if(verbosity > 0) {
@@ -95,7 +128,6 @@ auto FitManagerMinuit2::fit() -> Minuit2::FunctionMinimum {
 #endif
     return min;
 }
-
 
 auto FitManagerMinuit2::scan(unsigned int par_i,unsigned int maxsteps , fptype low, fptype high )-> std::vector<std::pair<fptype, fptype>> {
 
@@ -255,6 +287,12 @@ void FitManagerMinuit2::loadSample (size_t iSample){
 		pdfPointer->updateVariable(var[i],samples[iSample](counter));
 		counter++;
 	}
+
+Minuit2::MnScan FitManagerMinuit2::getMnScan() {
+    Minuit2::MnScan mnscan{fcn_, upar_};
+
+    return mnscan;
+
 }
 
 } // namespace GooFit

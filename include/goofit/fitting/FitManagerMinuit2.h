@@ -3,6 +3,7 @@
 #include <Minuit2/FunctionMinimum.h>
 #include <Minuit2/MnScan.h>
 #include <Minuit2/MnPlot.h>
+
 #include <memory>
 
 #include <goofit/GlobalCudaDefines.h>
@@ -42,6 +43,8 @@ class FitManagerMinuit2 {
     /// Get a pointer to the fcn
     auto getFCN() -> FCN * { return &fcn_; }
 
+    ROOT::Minuit2::MnScan getMnScan();
+
     /// Check to see if fit is valid
     operator bool() const { return retval_ == FitErrors::Valid; }
 
@@ -70,6 +73,12 @@ class FitManagerMinuit2 {
     void setRandMinuitValues (size_t nSamples);
     void loadSample(size_t iSample);
 
+    // Get the minos errors
+    std::vector<std::pair<double, double>> getMinosErrors() const { return minos_errors; }
+
+    // Run Minos error calculation
+    void setMinos(bool minos_flag = 1) { minos = minos_flag; }
+
   private:
     unsigned int strategy = 1;
     Params upar_;
@@ -78,9 +87,13 @@ class FitManagerMinuit2 {
     unsigned int maxfcn_{0};
     FitErrors retval_{FitErrors::NotRun};
     int verbosity{3};
+
     fptype tolerance_{0.1};
     Minuit2::MnUserCovariance matCov;
     MatrixXd* sqrtCov;
     std::vector<VectorXd> samples;
+
+    std::vector<std::pair<double, double>> minos_errors;
+    bool minos{0};
 };
 } // namespace GooFit

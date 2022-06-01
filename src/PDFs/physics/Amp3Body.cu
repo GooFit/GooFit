@@ -155,6 +155,7 @@ __host__ Amp3Body::Amp3Body(
     // registered to 0 position
     registerConstant(decayInfo.resonances.size());
 
+    // TODO increase after registerConstant?
     cacheToUse = cacheCount++;
     // registered to 1 position
     registerConstant(cacheToUse);

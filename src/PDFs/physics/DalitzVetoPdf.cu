@@ -19,12 +19,12 @@ __device__ auto device_DalitzVeto(fptype *evt, ParameterContainer &pc) -> fptype
     fptype massSum = motherM * motherM + d1m * d1m + d2m * d2m + d3m * d3m;
     fptype z       = massSum - x - y;
 
-    fptype ret            = inDalitz(x, y, motherM, d1m, d2m, d3m) ? 1.0 : 0.0;
-    int numVetos = pc.getConstant(0);
+    fptype ret    = inDalitz(x, y, motherM, d1m, d2m, d3m) ? 1.0 : 0.0;
+    int numVetos  = pc.getConstant(0);
     int numParams = pc.getNumParameters();
-    int numCons  = pc.getNumConstants();
-    int numObs   = pc.getNumObservables();
-    int numNorms = pc.getNumNormalizations();
+    int numCons   = pc.getNumConstants();
+    int numObs    = pc.getNumObservables();
+    int numNorms  = pc.getNumNormalizations();
 
     for(int i = 0; i < numVetos; ++i) {
         unsigned int varIndex = pc.getConstant(1 + i);
@@ -36,7 +36,7 @@ __device__ auto device_DalitzVeto(fptype *evt, ParameterContainer &pc) -> fptype
     }
 
     // TODO: Prefer this function, not incrementIndex();
-    //pc.incrementIndex(1, numParams, numVetos, numObs, numNorms);
+    // pc.incrementIndex(1, numParams, numVetos, numObs, numNorms);
     pc.incrementIndex();
     return ret;
 }

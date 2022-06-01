@@ -9,7 +9,13 @@ namespace Resonances {
 /// Gaussian constructor
 class Gauss : public ResonancePdf {
   public:
-    Gauss(std::string name, Variable ar, Variable ai, Variable mean, Variable sigma, unsigned int cyc,bool symmDP=false);
+    Gauss(std::string name,
+          Variable ar,
+          Variable ai,
+          Variable mean,
+          Variable sigma,
+          unsigned int cyc,
+          bool symmDP = false);
     ~Gauss() override = default;
 };
 

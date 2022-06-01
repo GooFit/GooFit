@@ -23,8 +23,6 @@ __device__ auto device_AddPdfs(fptype *evt, ParameterContainer &pc) -> fptype {
     int numObs   = pc.getNumObservables();
     int numNorms = pc.getNumNormalizations();
 
-
-
     // Make a copy of our parameter container so we can continue to refer to
     // our own parameters even though pc is moving forward.
     const ParameterContainer local_pc = pc;
@@ -33,14 +31,12 @@ __device__ auto device_AddPdfs(fptype *evt, ParameterContainer &pc) -> fptype {
     pc.incrementIndex(1, numParameters, numCons, numObs, numNorms);
 
     for(int i = 0; i < numParameters; i++) {
-
-        
         // fetch our values from AddPdf
         fptype weight = local_pc.getParameter(i);
         totalWeight += weight;
         // This is the normal value for the 'callFunction' PDF, so we read from pci
         fptype norm = pc.getNormalization(0);
-        
+
         // call the first function to add in our PDF.
         fptype curr = callFunction(evt, pc);
 
@@ -66,8 +62,6 @@ __device__ auto device_AddPdfsExt(fptype *evt, ParameterContainer &pc) -> fptype
     int numComps = pc.getConstant(0);
     int numObs   = pc.getNumObservables();
     int numNorms = pc.getNumNormalizations();
-
-
 
     // Make a copy of our parameter container so we can continue to refer to
     // our own parameters even though pc is moving forward.

@@ -134,7 +134,7 @@ __device__ auto rhoomgamix(fptype m12, fptype m13, fptype m23, ParameterContaine
         result += rho * mixingTerm;
 
         if(I > 1) {
-             fptype swpmass = m12;
+            fptype swpmass = m12;
             m12            = m13;
             m13            = swpmass;
         }
@@ -144,7 +144,7 @@ __device__ auto rhoomgamix(fptype m12, fptype m13, fptype m23, ParameterContaine
 
 } // RhoOmegaMix
 
-__device__ resonance_function_ptr ptr_to_RHOOMEGAMIX = rhoomgamix<1>;
+__device__ resonance_function_ptr ptr_to_RHOOMEGAMIX     = rhoomgamix<1>;
 __device__ resonance_function_ptr ptr_to_RHOOMEGAMIX_SYM = rhoomgamix<2>;
 
 namespace Resonances {

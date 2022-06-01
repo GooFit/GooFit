@@ -16,12 +16,10 @@ class SpecialResonanceCalculator : public thrust::unary_function<thrust::tuple<i
     void setResonanceIndex(unsigned int id) { resonance_i = id; }
     __device__ auto operator()(thrust::tuple<int, fptype *, int> t) const -> fpcomplex;
 
-
   private:
     unsigned int dalitz_i;
     unsigned int resonance_i;
     unsigned int parameters;
-
 };
 
 } // namespace GooFit

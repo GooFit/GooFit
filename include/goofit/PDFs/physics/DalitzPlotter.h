@@ -44,7 +44,7 @@ class DalitzPlotter {
                             signalDalitz->decayInfo.motherMass,
                             signalDalitz->decayInfo.daug1Mass,
                             signalDalitz->decayInfo.daug2Mass,
-                            signalDalitz->decayInfo.daug3Mass) ) {
+                            signalDalitz->decayInfo.daug3Mass)) {
                     xbins.push_back(i);
                     ybins.push_back(j);
                     data.addEvent();
@@ -61,14 +61,14 @@ class DalitzPlotter {
     }
 
     /// Fill a dataset with MC events
-    void fillDataSetMC(UnbinnedDataSet &dataset, size_t nTotal, unsigned int seed=0, bool poison=false) {
+    void fillDataSetMC(UnbinnedDataSet &dataset, size_t nTotal, unsigned int seed = 0, bool poison = false) {
         // Setup random numbers
         std::random_device rd;
         std::mt19937 gen;
 
-        if(seed==0)
+        if(seed == 0)
             gen.seed(seed);
-        else    
+        else
             gen.seed(rd());
 
         // Uniform distribution
@@ -82,12 +82,10 @@ class DalitzPlotter {
         // Make this a 0-1 fraction by dividing by the end value
         std::for_each(integral.begin(), integral.end(), [&integral](double &val) { val /= integral.back(); });
 
-        if(poison){
+        if(poison) {
             std::poisson_distribution<> d(nTotal);
-            nTotal=d(gen);
+            nTotal = d(gen);
         }
-
-            
 
         for(size_t i = 0; i < nTotal; i++) {
             double r = uniwhole(gen);

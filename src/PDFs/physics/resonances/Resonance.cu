@@ -114,22 +114,20 @@ __device__ auto spinFactor(unsigned int spin,
     auto const _mBC = (PAIR_12 == cyclic_index ? m23 : (PAIR_13 == cyclic_index ? m12 : m13));
     auto const _mAB = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
 
-    if(1 == spin){
-
+    if(1 == spin) {
         auto const massFactor = 1.0 / _mAB;
         ret = ((_mBC - _mAC) + (massFactor * (motherMass * motherMass - _mC * _mC) * (_mA * _mA - _mB * _mB)));
-        
     }
-    
-    
+
     if(2 == spin) {
         auto const massFactor = 1.0 / _mAB;
-        auto const a1 = ((_mBC - _mAC) + (massFactor * (motherMass * motherMass - _mC * _mC) * (_mA * _mA - _mB * _mB)));
-        auto const a2 = ((_mAB - (2 * motherMass * motherMass) - (2 * _mC * _mC)) + massFactor * POW2(motherMass * motherMass - _mC * _mC));
+        auto const a1
+            = ((_mBC - _mAC) + (massFactor * (motherMass * motherMass - _mC * _mC) * (_mA * _mA - _mB * _mB)));
+        auto const a2 = ((_mAB - (2 * motherMass * motherMass) - (2 * _mC * _mC))
+                         + massFactor * POW2(motherMass * motherMass - _mC * _mC));
         auto const a3 = ((_mAB - (2 * _mA * _mA) - (2 * _mB * _mB)) + massFactor * POW2(_mA * _mA - _mB * _mB));
-        
-        ret = POW2(a1) - a2*a3/3;
-        
+
+        ret = POW2(a1) - a2 * a3 / 3;
     }
 
     return ret;

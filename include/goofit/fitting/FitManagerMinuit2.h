@@ -28,9 +28,10 @@ class FitManagerMinuit2 {
     auto fit() -> ROOT::Minuit2::FunctionMinimum;
 
     // This runs the scan
-    auto scan(unsigned int par_i,unsigned int maxsteps = 41, fptype low = 0., fptype high = 0.) -> std::vector<std::pair<fptype, fptype>>;
+    auto scan(unsigned int par_i, unsigned int maxsteps = 41, fptype low = 0., fptype high = 0.)
+        -> std::vector<std::pair<fptype, fptype>>;
 
-    auto getPdf() const -> PdfBase* { return pdfPointer;}
+    auto getPdf() const -> PdfBase * { return pdfPointer; }
 
     /// Set the maximum number of calls. 0 for Minuit2 default.
     void setMaxCalls(unsigned int max_calls = 0) { maxfcn_ = max_calls; }
@@ -57,20 +58,20 @@ class FitManagerMinuit2 {
     /// Get the fitting verbosity
     auto getVerbosity() const -> int { return verbosity; }
 
-    //Set minuit tolerance
-    void setTolerance(fptype tolerance){ tolerance_=tolerance;}
+    // Set minuit tolerance
+    void setTolerance(fptype tolerance) { tolerance_ = tolerance; }
 
-    auto getTolerance() const -> fptype{return tolerance_;}
+    auto getTolerance() const -> fptype { return tolerance_; }
 
-    //Convert real and imag coefs to mag and phase.
+    // Convert real and imag coefs to mag and phase.
     void printCovMat();
     auto dpda(fptype, fptype) -> fptype;
     auto dpdb(fptype, fptype) -> fptype;
     auto dmda(fptype, fptype) -> fptype;
     auto dmdb(fptype, fptype) -> fptype;
-    std::vector <std::vector<fptype>> printParams();
+    std::vector<std::vector<fptype>> printParams();
     void printOriginalParams();
-    void setRandMinuitValues (size_t nSamples);
+    void setRandMinuitValues(size_t nSamples);
     void loadSample(size_t iSample);
 
     // Get the minos errors
@@ -90,7 +91,7 @@ class FitManagerMinuit2 {
 
     fptype tolerance_{0.1};
     Minuit2::MnUserCovariance matCov;
-    MatrixXd* sqrtCov;
+    MatrixXd *sqrtCov;
     std::vector<VectorXd> samples;
 
     std::vector<std::pair<double, double>> minos_errors;

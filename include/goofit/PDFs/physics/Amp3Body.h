@@ -9,8 +9,7 @@
 
 #include <goofit/detail/Complex.h>
 
-
-//Matrix 
+// Matrix
 #include <Eigen/Core>
 #include <Eigen/LU>
 
@@ -77,11 +76,9 @@ class Amp3Body : public Amp3BodyBase {
     __host__ static void resetCacheCounter() { cacheCount = 0; }
 
     /// Calculate fit fractions (Cache should be pre-filled)
-    __host__ auto fit_fractions(bool print=false) -> std::vector<std::vector<fptype>>;
+    __host__ auto fit_fractions(bool print = false) -> std::vector<std::vector<fptype>>;
 
-    __host__ auto getFFTotalIntegral() const -> fptype{
-        return totalFF_integral;
-    }
+    __host__ auto getFFTotalIntegral() const -> fptype { return totalFF_integral; }
 
     friend DalitzPlotter;
 
@@ -95,8 +92,9 @@ class Amp3Body : public Amp3BodyBase {
     // Following variables are useful if masses and widths, involved in difficult BW calculation,
     // change infrequently while amplitudes, only used in adding BW results together, change rapidly.
     thrust::device_vector<fpcomplex> *cachedWaves[16]; // Caches the BW values for each event.
-    fpcomplex ***integrals; // Caches the integrals of the BW waves for each combination of resonances.
-    fpcomplex ***integrals_ff; // Caches the integrals of the BW waves for each combination of resonances (for the fit fractions).
+    fpcomplex ***integrals;    // Caches the integrals of the BW waves for each combination of resonances.
+    fpcomplex ***integrals_ff; // Caches the integrals of the BW waves for each combination of resonances (for the fit
+                               // fractions).
 
     mutable bool generation_no_norm{false};
     bool *redoIntegral;

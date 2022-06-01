@@ -173,14 +173,14 @@ __host__ Amp3Body::Amp3Body(
 
     initialize();
 
-    redoIntegral = new bool[decayInfo.resonances.size()];
-    cachedMasses = new fptype[decayInfo.resonances.size()];
-    cachedWidths = new fptype[decayInfo.resonances.size()];
-    integrals    = new fpcomplex **[decayInfo.resonances.size()];
-    integrators  = new SpecialResonanceIntegrator **[decayInfo.resonances.size()];
+    redoIntegral   = new bool[decayInfo.resonances.size()];
+    cachedMasses   = new fptype[decayInfo.resonances.size()];
+    cachedWidths   = new fptype[decayInfo.resonances.size()];
+    integrals      = new fpcomplex **[decayInfo.resonances.size()];
+    integrators    = new SpecialResonanceIntegrator **[decayInfo.resonances.size()];
     integrals_ff   = new fpcomplex **[decayInfo.resonances.size()];
-    integrators_ff  = new SpecialResonanceIntegrator **[decayInfo.resonances.size()];
-    calculators  = new SpecialResonanceCalculator *[decayInfo.resonances.size()];
+    integrators_ff = new SpecialResonanceIntegrator **[decayInfo.resonances.size()];
+    calculators    = new SpecialResonanceCalculator *[decayInfo.resonances.size()];
 
     for(int i = 0; i < decayInfo.resonances.size(); ++i) {
         redoIntegral[i] = true;
@@ -190,14 +190,14 @@ __host__ Amp3Body::Amp3Body(
         calculators[i]  = new SpecialResonanceCalculator(parameters, i);
         integrals[i]    = new fpcomplex *[decayInfo.resonances.size()];
 
-        integrals_ff[i]=new fpcomplex *[decayInfo.resonances.size()];
-		integrators_ff[i] = new SpecialResonanceIntegrator *[decayInfo.resonances.size()];
+        integrals_ff[i]   = new fpcomplex *[decayInfo.resonances.size()];
+        integrators_ff[i] = new SpecialResonanceIntegrator *[decayInfo.resonances.size()];
 
         for(int j = 0; j < decayInfo.resonances.size(); ++j) {
-            integrals[i][j]   = new fpcomplex(0, 0);
-            integrators[i][j] = new SpecialResonanceIntegrator(parameters, i, j);
+            integrals[i][j]      = new fpcomplex(0, 0);
+            integrators[i][j]    = new SpecialResonanceIntegrator(parameters, i, j);
             integrals_ff[i][j]   = new fpcomplex(0, 0);
-			integrators_ff[i][j] = new SpecialResonanceIntegrator(parameters, i, j);	
+            integrators_ff[i][j] = new SpecialResonanceIntegrator(parameters, i, j);
         }
     }
 
@@ -353,7 +353,8 @@ __host__ auto Amp3Body::normalize() -> fptype {
             fpcomplex amplitude_j(host_parameters[parametersIdx + j * 2 + 1],
                                   -host_parameters[parametersIdx + j * 2 + 2]);
 
-            sumIntegral += j<i ? 2.*amplitude_i * amplitude_j * (*(integrals[i][j])): (i==j ? amplitude_i * amplitude_j * (*(integrals[i][j])) : fpcomplex(0.,0.)) ;
+            sumIntegral += j < i ? 2. * amplitude_i * amplitude_j * (*(integrals[i][j]))
+                                 : (i == j ? amplitude_i * amplitude_j * (*(integrals[i][j])) : fpcomplex(0., 0.));
         }
     }
 
@@ -391,7 +392,7 @@ __host__ auto Amp3Body::fit_fractions(bool print) -> std::vector<std::vector<fpt
     // we need to update the normal here, as values are used at this point.
     host_normalizations.sync(d_normalizations);
 
-    size_t n_res    = getDecayInfo().resonances.size();
+    size_t n_res     = getDecayInfo().resonances.size();
     size_t totalBins = _m12.getNumBins() * _m13.getNumBins();
 
     if(!dalitzNormRange) {
@@ -399,7 +400,7 @@ __host__ auto Amp3Body::fit_fractions(bool print) -> std::vector<std::vector<fpt
     }
 
     // This line runs once
-	static std::array<fptype, 6> host_norms{{0, 0, 0, 0, 0, 0}};
+    static std::array<fptype, 6> host_norms{{0, 0, 0, 0, 0, 0}};
 
     std::array<fptype, 6> current_host_norms{{_m12.getLowerLimit(),
                                               _m12.getUpperLimit(),
@@ -413,9 +414,9 @@ __host__ auto Amp3Body::fit_fractions(bool print) -> std::vector<std::vector<fpt
     }
 
     MEMCPY(dalitzNormRange, host_norms.data(), 6 * sizeof(fptype), cudaMemcpyHostToDevice);
-    
+
     for(unsigned int i = 0; i < decayInfo.resonances.size(); ++i) {
-       redoIntegral[i] = forceRedoIntegrals;
+        redoIntegral[i] = forceRedoIntegrals;
 
         if(!(decayInfo.resonances[i]->parametersChanged()))
             continue;
@@ -424,12 +425,12 @@ __host__ auto Amp3Body::fit_fractions(bool print) -> std::vector<std::vector<fpt
     }
 
     forceRedoIntegrals = false;
-   
-    // Only do this bit if masses or widths have changed.
-	thrust::constant_iterator<fptype *> arrayAddress(dalitzNormRange);
-	thrust::counting_iterator<int> binIndex(0);
 
-    for(int i = 0; i<n_res; ++i){
+    // Only do this bit if masses or widths have changed.
+    thrust::constant_iterator<fptype *> arrayAddress(dalitzNormRange);
+    thrust::counting_iterator<int> binIndex(0);
+
+    for(int i = 0; i < n_res; ++i) {
         for(int j = 0; j <= i; ++j) {
             integrators_ff[i][j]->setDalitzIndex(getFunctionIndex());
             integrators_ff[i][j]->setResonanceIndex(decayInfo.resonances[i]->getFunctionIndex());
@@ -448,54 +449,52 @@ __host__ auto Amp3Body::fit_fractions(bool print) -> std::vector<std::vector<fpt
     }
 
     // End of time-consuming integrals.
-	fpcomplex sumIntegral(0, 0);
-	std::vector<std::vector<fptype>> AmpIntegral(n_res,std::vector<fptype>(n_res));
+    fpcomplex sumIntegral(0, 0);
+    std::vector<std::vector<fptype>> AmpIntegral(n_res, std::vector<fptype>(n_res));
 
     for(unsigned int i = 0; i < n_res; ++i) {
         fpcomplex amplitude_i(host_parameters[parametersIdx + i * 2 + 1], host_parameters[parametersIdx + i * 2 + 2]);
-        fpcomplex buffer(0.,0.);
+        fpcomplex buffer(0., 0.);
 
         for(unsigned int j = 0; j <= i; ++j) {
+            fpcomplex amplitude_j(host_parameters[parametersIdx + j * 2 + 1],
+                                  -host_parameters[parametersIdx + j * 2 + 2]);
 
-            fpcomplex amplitude_j(host_parameters[parametersIdx + j * 2 + 1],-host_parameters[parametersIdx + j * 2 + 2]);
+            buffer = j < i ? 2. * amplitude_i * amplitude_j * (*(integrals_ff[i][j]))
+                           : (i == j ? amplitude_i * amplitude_j * (*(integrals_ff[i][j])) : fpcomplex(0., 0.));
 
-            buffer = j<i ? 2.*amplitude_i * amplitude_j * (*(integrals_ff[i][j])) : ( i==j ? amplitude_i * amplitude_j * (*(integrals_ff[i][j])): fpcomplex(0.,0.) );
-    
             AmpIntegral[i][j] = buffer.real();
             sumIntegral += buffer;
-
         }
     }
 
-	totalFF_integral  = sumIntegral.real();
- 
-	for(int i=0; i<n_res; i++){
-		for(int j=0; j<=i; j++){
-				AmpIntegral[i][j] /= totalFF_integral;
-                AmpIntegral[i][j]*=100;
-		}
-	}	
+    totalFF_integral = sumIntegral.real();
 
-   
-    if(print){
+    for(int i = 0; i < n_res; i++) {
+        for(int j = 0; j <= i; j++) {
+            AmpIntegral[i][j] /= totalFF_integral;
+            AmpIntegral[i][j] *= 100;
+        }
+    }
+
+    if(print) {
         std::cout << "Fit Fractions Matrix (%): \n";
-        std::cout << "*Note: the order of diag FFs is equal to the order that which resonances are pushed into the resonance vector. \n";
-        Eigen::MatrixXd m(n_res,n_res);
-        for(int i=0; i < n_res; i++)
-            m.row(i) = Eigen::Map<Eigen::VectorXd>(&AmpIntegral[i][0],n_res);
+        std::cout << "*Note: the order of diag FFs is equal to the order that which resonances are pushed into the "
+                     "resonance vector. \n";
+        Eigen::MatrixXd m(n_res, n_res);
+        for(int i = 0; i < n_res; i++)
+            m.row(i) = Eigen::Map<Eigen::VectorXd>(&AmpIntegral[i][0], n_res);
 
         std::cout << std::fixed << m << std::endl;
         fptype sumdiagffs = 0.;
-        for(int i=0; i<n_res; i++)
-            sumdiagffs+=m(i,i);
+        for(int i = 0; i < n_res; i++)
+            sumdiagffs += m(i, i);
         std::cout << "Sum of Diag FFs: " << sumdiagffs << "\n";
         std::cout << "\n";
     }
 
-	return AmpIntegral;
-
+    return AmpIntegral;
 }
-
 
 __host__ auto Amp3Body::GenerateSig(unsigned int numEvents, int seed) -> std::
     tuple<mcbooster::ParticlesSet_h, mcbooster::VariableSet_h, mcbooster::RealVector_h, mcbooster::RealVector_h> {

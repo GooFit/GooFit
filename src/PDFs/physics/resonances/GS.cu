@@ -6,8 +6,6 @@
 
 namespace GooFit {
 
-
-
 __device__ auto gouSak(fptype m12, fptype m13, fptype m23, ParameterContainer &pc) -> fpcomplex {
     unsigned int spin         = pc.getConstant(0);
     unsigned int cyclic_index = pc.getConstant(1);
@@ -21,8 +19,7 @@ __device__ auto gouSak(fptype m12, fptype m13, fptype m23, ParameterContainer &p
     fptype resmass2 = POW2(resmass);
 
 #pragma unroll
-    for(size_t i = 0; i < (1+doSwap); i++) {
-
+    for(size_t i = 0; i < (1 + doSwap); i++) {
         fptype rMassSq    = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
         fptype mass_daug1 = PAIR_23 == cyclic_index ? c_daug2Mass : c_daug1Mass;
         fptype mass_daug2 = PAIR_12 == cyclic_index ? c_daug2Mass : c_daug3Mass;
@@ -70,7 +67,8 @@ __device__ auto gouSak(fptype m12, fptype m13, fptype m23, ParameterContainer &p
 
         fptype D = (1.0 + dFun(resmass2, c_daug2Mass, c_daug3Mass) * reswidth / sqrt(resmass2));
         fptype E = resmass2 - rMassSq + fsFun(rMassSq, resmass2, reswidth, c_daug2Mass, c_daug3Mass);
-        fptype F = sqrt(resmass2) * reswidth * pow(measureDaughterMoms / nominalDaughterMoms, 2.0 * spin + 1) * frFactor;
+        fptype F
+            = sqrt(resmass2) * reswidth * pow(measureDaughterMoms / nominalDaughterMoms, 2.0 * spin + 1) * frFactor;
 
         D /= (E * E + F * F);
         fpcomplex ret(D * E, D * F); // Dropping F_D=1
@@ -79,7 +77,7 @@ __device__ auto gouSak(fptype m12, fptype m13, fptype m23, ParameterContainer &p
         ret *= spinFactor(spin, c_motherMass, c_daug1Mass, c_daug2Mass, c_daug3Mass, m12, m13, m23, cyclic_index);
 
         result += ret;
-        
+
         if(doSwap) {
             fptype swpmass = m12;
             m12            = m13;

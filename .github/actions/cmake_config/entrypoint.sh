@@ -8,7 +8,12 @@ mkdir -p cmake_sources
 rm -rf cmake_dir/* build_tmp/*
 
 v=$1
-fn=cmake-$v-Linux-x86_64.tar.gz
+
+if [[ $v == 3.2* ]]; then
+    fn=cmake-$v-linux-x86_64.tar.gz
+else
+    fn=cmake-$v-Linux-x86_64.tar.gz
+fi
 
 if [ ! -f "cmake_souces/$fn" ]; then
     wget -qO "cmake_sources/$fn" "https://cmake.org/files/v${v%.*}/$fn"

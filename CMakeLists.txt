@@ -384,9 +384,7 @@ if(NOT THRUST_FOUND)
   find_package(Thrust REQUIRED)
 endif()
 
-option(GOOFIT_FORCE_LOCAL_THRUST
-       "GooFit will use the GitHub version of Thrust by default (CUDA 9 and 10's Thrust is buggy)"
-       ON)
+option(GOOFIT_FORCE_LOCAL_THRUST "GooFit can force a local thrust" OFF)
 if(GOOFIT_FORCE_LOCAL_THRUST)
   message(
     STATUS "Forcing local thrust. GOOFIT_FORCE_LOCAL_THRUST=OFF to disable. Requires CUDA < 10.1")

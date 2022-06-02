@@ -27,7 +27,9 @@ void init_DalitzPlotter(py::module &m) {
              &DalitzPlotter::fillDataSetMC,
              "Fill an unbinned dataset with values from a simple grid based MC fill."
              "dataset"_a,
-             "nTotal"_a)
+             "nTotal"_a,
+             "seed"_a   = 0,
+             "poison"_a = false)
         .def(
             "make2D",
             [](const DalitzPlotter &self) {

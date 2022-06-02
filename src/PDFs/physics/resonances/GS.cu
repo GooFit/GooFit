@@ -18,7 +18,6 @@ __device__ auto gouSak(fptype m12, fptype m13, fptype m23, ParameterContainer &p
     fpcomplex result{0.0, 0.0};
     fptype resmass2 = POW2(resmass);
 
-#pragma unroll
     for(size_t i = 0; i < (1 + doSwap); i++) {
         fptype rMassSq    = (PAIR_12 == cyclic_index ? m12 : (PAIR_13 == cyclic_index ? m13 : m23));
         fptype mass_daug1 = PAIR_23 == cyclic_index ? c_daug2Mass : c_daug1Mass;

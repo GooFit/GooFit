@@ -190,7 +190,7 @@ std::vector<std::vector<fptype>> FitManagerMinuit2::printParams() {
     vec_phi.clear();
     vec_phi_err.clear();
     std::cout << "Fit Parameters Mag and Phase(Degrees) \n";
-    std::cout << "*Note: this fuction runs over all free parameters, if you have other parameters than real and "
+    std::cout << "*Note: this function runs over all free parameters, if you have other parameters than real and "
                  "imaginary coefs fix them before call this function!  \n";
     std::cout << "free parameter resonance: " << floatVarVal.size() / 2 << std::endl;
     std::cout << std::fixed << std::setprecision(8);
@@ -279,11 +279,12 @@ void FitManagerMinuit2::loadSample(size_t iSample) {
         pdfPointer->updateVariable(var[i], samples[iSample](counter));
         counter++;
     }
+}
 
-    Minuit2::MnScan FitManagerMinuit2::getMnScan() {
-        Minuit2::MnScan mnscan{fcn_, upar_};
+Minuit2::MnScan FitManagerMinuit2::getMnScan() {
+    Minuit2::MnScan mnscan{fcn_, upar_};
 
-        return mnscan;
-    }
+    return mnscan;
+}
 
 } // namespace GooFit

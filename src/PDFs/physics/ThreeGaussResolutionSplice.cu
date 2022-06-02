@@ -592,59 +592,6 @@ __device__ fptype device_threegauss_resolutionSplice(fptype coshterm,
                     expSlope,
                     lastKnot,
                     expConst);
-    /*
-      fptype selbias = 0.21868332187637923;
-      fptype cp1_tmp = 0;
-      fptype cp2_tmp = 0;
-      fptype cp3_tmp = 0;
-      fptype cp4_tmp = 0;
-      mytmpgaussian(cp1_tmp,
-                    cp2_tmp,
-                    cp3_tmp,
-                    cp4_tmp,
-                    tau,
-                    dtime - coreBias * sigma,
-                    xmixing,
-                    ymixing,
-                    coreScaleFactor * sigma,
-                    selbias);
-      fptype tp1_tmp = 0;
-      fptype tp2_tmp = 0;
-      fptype tp3_tmp = 0;
-      fptype tp4_tmp = 0;
-      mytmpgaussian(tp1_tmp,
-                    tp2_tmp,
-                    tp3_tmp,
-                    tp4_tmp,
-                    tau,
-                    dtime - tailBias * sigma,
-                    xmixing,
-                    ymixing,
-                    tailScaleFactor * sigma,
-                    selbias);
-      fptype op1_tmp = 0;
-      fptype op2_tmp = 0;
-      fptype op3_tmp = 0;
-      fptype op4_tmp = 0;
-      mytmpgaussian(op1_tmp,
-                    op2_tmp,
-                    op3_tmp,
-                    op4_tmp,
-                    tau,
-                    dtime - outlBias * sigma,
-                    xmixing,
-                    ymixing,
-                    outlScaleFactor * sigma,
-                    selbias);
-      */
-    /*
-    cp2 = 0.05 * cp2_tmp;
-    tp2 = 0.05 * tp2_tmp;
-    op2 = 0.05 * op2_tmp;
-    cp4 = 0.05 * cp4_tmp;
-    tp4 = 0.05 * tp4_tmp;
-    op4 = 0.05 * op4_tmp;
-    */
 
     /*
     printf("------------ \n");

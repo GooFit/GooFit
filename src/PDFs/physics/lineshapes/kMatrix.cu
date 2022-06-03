@@ -84,7 +84,7 @@ __device__ auto kMatrixFunction(fptype Mpair, fptype m1, fptype m2, ParameterCon
     phaseSpace[4] = phsp_twoBody(s, mEta, mEtap);
 
     fpcomplex F[NCHANNELS][NCHANNELS];
-    getPropagator(kMatrix, phaseSpace, F, adlerTerm);
+    // getPropagator(kMatrix, phaseSpace, F, adlerTerm);
 
     // calculates output
     pc.incrementIndex(1, idx, 1, 0, 1);

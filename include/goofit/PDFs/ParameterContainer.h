@@ -40,10 +40,49 @@ struct ParameterContainer {
 
     // each PDF needs to supply the amount of each array used.
     // This function automatically adds +1 for the size.
-    __device__ void incrementIndex(const int funcs, const int params, const int cons, const int obs, const int norms);
+    // __device__ void incrementIndex(const int funcs, const int params, const int cons, const int obs, const int norms);
+
+    inline __device__ void
+    incrementIndex(const int funcs, const int params, const int cons, const int obs, const int norms) {
+#if !defined(__CUDACC__) && defined(GOOFIT_TRACE_FLAG)
+        if(funcs != 1)
+            throw GeneralError("Haven't got a clue on how to proceed with incrementIndex checking, sorry");
+        if(parameters[parameterIdx] != params || constants[constantIdx] != cons || observables[observableIdx] != obs
+        || normalizations[normalIdx] != norms)
+            throw GeneralError(
+                "Wrong parameters given to incrementIndex(1, {}, {}, {}, {}), should have been (1, {}, {}, {}, {})",
+                params,
+                cons,
+                obs,
+                norms,
+                parameters[parameterIdx],
+                constants[constantIdx],
+                observables[observableIdx],
+                normalizations[normalIdx]);
+#endif
+
+        funcIdx += funcs;
+        parameterIdx += params + 1;
+        constantIdx += cons + 1;
+        observableIdx += obs + 1;
+        normalIdx += norms + 1;
+    }
+
 
     // slow version, avoid at all costs!
-    __device__ void incrementIndex();
+    inline __device__ void incrementIndex() {
+        funcIdx++;
+
+        int np = parameters[parameterIdx];
+        int nc = constants[constantIdx];
+        int no = observables[observableIdx];
+        int nn = normalizations[normalIdx];
+
+        parameterIdx += np + 1;
+        constantIdx += nc + 1;
+        observableIdx += no + 1;
+        normalIdx += nn + 1;
+    }
 };
 
 } // namespace GooFit

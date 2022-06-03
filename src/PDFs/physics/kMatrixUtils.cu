@@ -104,37 +104,46 @@ __device__ auto inverse(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex inverse[NCH
     return true;
 }
 
-__device__ void luDecomposition(fpcomplex A[NCHANNELS][NCHANNELS],
-                                fpcomplex U[NCHANNELS][NCHANNELS],
-                                fpcomplex L[NCHANNELS][NCHANNELS]) {
+__device__ void luDecomposition(fpcomplex* A, fpcomplex* U, fpcomplex* L) {
+    MatrixView<fpcomplex> AView(A);
+    memset(U, 0, NCHANNELS*NCHANNELS*sizeof(fpcomplex));
+    memset(L, 0, NCHANNELS*NCHANNELS*sizeof(fpcomplex));
+    MatrixView<fpcomplex> UView(U);
+    MatrixView<fpcomplex> LView(L);
+
     for(unsigned i = 0; i < NCHANNELS; i++) {
         // Upper triangular matrix
         for(unsigned k = i; k < NCHANNELS; k++) {
             fpcomplex sum(0, 0);
             for(unsigned j = 0; j < i; j++)
-                sum += L[i][j] * U[j][k];
-            U[i][k] = A[i][k] - sum;
+                sum += LView(i, j) * UView(j, k);
+            UView(i, k) = AView(i, k) - sum;
         }
 
         // Lower triangular.
         for(unsigned k = i; k < NCHANNELS; k++) {
             if(i == k) {
-                L[i][i] = 1;
+                LView(i, i) = 1;
             } else {
                 fpcomplex sum(0, 0);
                 for(unsigned j = 0; j < i; j++)
-                    sum += L[k][j] * U[j][i];
-                L[k][i] = (A[k][i] - sum) / U[i][i];
+                    sum += LView(k, j) * UView(j, i);
+                LView(k, i) = (AView(k, i) - sum) / UView(i, i);
             }
         }
     }
 }
 
-__device__ bool luInverse(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex inverse[NCHANNELS][NCHANNELS]) {
-    fpcomplex U[NCHANNELS][NCHANNELS];
-    fpcomplex L[NCHANNELS][NCHANNELS];
-    fpcomplex Linv[NCHANNELS][NCHANNELS];
+__device__ bool luInverse(fpcomplex* A, fpcomplex* inverse) {
+    fpcomplex* U = (fpcomplex*)malloc(NCHANNELS*NCHANNELS*sizeof(fpcomplex));
+    fpcomplex* L = (fpcomplex*)malloc(NCHANNELS*NCHANNELS*sizeof(fpcomplex));
+    fpcomplex* Linv = (fpcomplex*)malloc(NCHANNELS*NCHANNELS*sizeof(fpcomplex));
     luDecomposition(A, U, L);
+    MatrixView<fpcomplex> AView(A);
+    MatrixView<fpcomplex> UView(U);
+    MatrixView<fpcomplex> LView(L);
+    MatrixView<fpcomplex> LinvView(Linv);
+    MatrixView<fpcomplex> inverseView(inverse);
 
     // Compute intermediate matrix Linv.
     for(int col = 0; col < NCHANNELS; col++) {
@@ -142,10 +151,10 @@ __device__ bool luInverse(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex inverse[N
             fpcomplex sum(0, 0);
             for(int i = 0; i < NCHANNELS; i++) {
                 if(i != row) {
-                    sum += L[row][i] * Linv[i][col];
+                    sum += LView(row, i) * LinvView(i, col);
                 }
             }
-            Linv[row][col] = ((row == col ? 1. : 0.) - sum) / L[row][row];
+            LinvView(row, col) = ((row == col ? 1. : 0.) - sum) / LView(row, row);
         }
     }
 
@@ -156,12 +165,16 @@ __device__ bool luInverse(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex inverse[N
             fpcomplex sum(0, 0);
             for(int i = 0; i < NCHANNELS; i++) {
                 if(i != row) {
-                    sum += U[row][i] * inverse[i][col];
+                    sum += UView(row, i) * inverseView(i, col);
                 }
             }
-            inverse[row][col] = (Linv[row][col] - sum) / U[row][row];
+            inverseView(row, col) = (LinvView(row, col) - sum) / UView(row, row);            
         }
     }
+
+    free(U);
+    free(L);
+    free(Linv);
 
     return true;
 }
@@ -178,6 +191,7 @@ __device__ void getPropagator(
 
     MatrixView<fptype> kMatrixView(kMatrix);
     MatrixView<fpcomplex> FView(F);
+
     // fpcomplex tMatrix[NCHANNELS][NCHANNELS];
     fpcomplex* tMatrix = (fpcomplex*)malloc(NCHANNELS*NCHANNELS*sizeof(fpcomplex));
     MatrixView<fpcomplex> tMatrixView(tMatrix);
@@ -188,50 +202,11 @@ __device__ void getPropagator(
         for(unsigned int j = 0; j < NCHANNELS; ++j) {
             tMatrixView(i, j) = (i == j ? 1. : 0.) - fpcomplex(0, adlerTerm) * kMatrixView(i, j) * phaseSpace[j];
             FView(i, j) = tMatrixView(i, j);
-            // printf("tMatrix(%i,%i) = (%f,%f), kMatrix(%i,%i) = %f, phaseSpace = (%f,%f) \n",
-            //       i,
-            //       j,
-            //       tMatrix[i][j].real(),
-            //       tMatrix[i][j].imag(),
-            //       i,
-            //       j,
-            //       kMatrix[i][j],
-            //       phaseSpace[j].real(),
-            //       phaseSpace[j].imag());
         }
     }
 
-    /*#if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_CUDA
-    // Here we assume that some values are 0
-        F = compute_inverse5<-1,
-                                -1,
-                                0,
-                                -1,
-                                -1,
-                                -1,
-                                -1,
-                                0,
-                                -1,
-                                -1,
-                                -1,
-                                -1,
-                                -1,
-                                -1,
-                                -1,
-                                -1,
-                                -1,
-                                -1,
-                                -1,
-                                -1,
-                                -1,
-                                -1,
-                                -1,
-                                -1,
-                                -1>(tMatrix);
-    #else
-    */
-
-    // luInverse(tMatrix, F);
+    luInverse(tMatrix, F);
+    free(tMatrix);
     return;
     //#endif
 }

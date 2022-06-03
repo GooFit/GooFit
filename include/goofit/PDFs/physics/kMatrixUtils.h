@@ -5,6 +5,14 @@
 #define NCHANNELS 5
 
 namespace GooFit {
+
+template<typename T>
+struct MatrixView {
+    T* m_arr;
+    __device__ MatrixView(T* arr) : m_arr(arr) {}
+    __device__ T& operator()(int i, int j) { return m_arr[NCHANNELS*i + j]; }
+};
+
 __device__ auto phsp_twoBody(fptype s, fptype m0, fptype m1) -> fpcomplex;
 
 __device__ auto phsp_fourPi(fptype s) -> fpcomplex;
@@ -16,10 +24,16 @@ __device__ void adjoint(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex adj[NCHANNE
 
 __device__ bool inverse(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex inverse[NCHANNELS][NCHANNELS]);
 
-__device__ void getPropagator(const fptype kMatrix[NCHANNELS][NCHANNELS],
-                              const fpcomplex phaseSpace[NCHANNELS],
-                              fpcomplex F[NCHANNELS][NCHANNELS],
-                              fptype adlerTerm);
+// __device__ void getPropagator(const fptype kMatrix[NCHANNELS][NCHANNELS],
+//                               const fpcomplex phaseSpace[NCHANNELS],
+//                               fpcomplex F[NCHANNELS][NCHANNELS],
+//                               fptype adlerTerm);
+
+__device__ void getPropagator(
+    fptype* kMatrix, 
+    fpcomplex* phaseSpace,
+    fpcomplex* F,
+    fptype adlerTerm);
 
 template <int N>
 inline __device__ fpcomplex determinant(fpcomplex A[NCHANNELS][NCHANNELS]) {

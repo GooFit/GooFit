@@ -166,16 +166,28 @@ __device__ bool luInverse(fpcomplex A[NCHANNELS][NCHANNELS], fpcomplex inverse[N
     return true;
 }
 
-__device__ void getPropagator(const fptype kMatrix[NCHANNELS][NCHANNELS],
-                              const fpcomplex phaseSpace[NCHANNELS],
-                              fpcomplex F[NCHANNELS][NCHANNELS],
-                              fptype adlerTerm) {
-    fpcomplex tMatrix[NCHANNELS][NCHANNELS];
-    tMatrix[0][0] = fpcomplex(0, 0);
+// __device__ void getPropagator(const fptype kMatrix[NCHANNELS][NCHANNELS],
+//                               const fpcomplex phaseSpace[NCHANNELS],
+//                               fpcomplex F[NCHANNELS][NCHANNELS],
+//                               fptype adlerTerm) {
+__device__ void getPropagator(
+    fptype* kMatrix,
+    fpcomplex* phaseSpace,
+    fpcomplex* F,
+    fptype adlerTerm) {
+
+    MatrixView<fptype> kMatrixView(kMatrix);
+    MatrixView<fpcomplex> FView(F);
+    // fpcomplex tMatrix[NCHANNELS][NCHANNELS];
+    fpcomplex* tMatrix = (fpcomplex*)malloc(NCHANNELS*NCHANNELS*sizeof(fpcomplex));
+    MatrixView<fpcomplex> tMatrixView(tMatrix);
+
+    tMatrixView(0, 0) = fpcomplex(0, 0);
 
     for(unsigned int i = 0; i < NCHANNELS; ++i) {
         for(unsigned int j = 0; j < NCHANNELS; ++j) {
-            tMatrix[i][j] = (i == j ? 1. : 0.) - fpcomplex(0, adlerTerm) * kMatrix[i][j] * phaseSpace[j];
+            tMatrixView(i, j) = (i == j ? 1. : 0.) - fpcomplex(0, adlerTerm) * kMatrixView(i, j) * phaseSpace[j];
+            FView(i, j) = tMatrixView(i, j);
             // printf("tMatrix(%i,%i) = (%f,%f), kMatrix(%i,%i) = %f, phaseSpace = (%f,%f) \n",
             //       i,
             //       j,
@@ -219,7 +231,7 @@ __device__ void getPropagator(const fptype kMatrix[NCHANNELS][NCHANNELS],
     #else
     */
 
-    luInverse(tMatrix, F);
+    // luInverse(tMatrix, F);
     return;
     //#endif
 }

@@ -9,7 +9,6 @@
 
 #include <random>
 
-using namespace std;
 using namespace GooFit;
 
 TEST_CASE("Composite", "[convert][fit]") {

@@ -19,7 +19,6 @@
 
 #include <iostream>
 
-using namespace std;
 using namespace GooFit;
 
 int main(int argc, char **argv) {

@@ -14,7 +14,6 @@
 
 #include <iostream>
 
-using namespace std;
 using namespace GooFit;
 
 // CPU-side Novosibirsk evaluation for use in generating toy MC.
@@ -31,13 +30,13 @@ double novosib(double x, double peak, double width, double tail) {
 
         //---- Cutting curve from right side
         if(qy > 1.E-7)
-            qc = 0.5 * (pow((log(qy) / tail), 2) + tail * tail);
+            qc = 0.5 * (std::pow((std::log(qy) / tail), 2) + tail * tail);
         else
             qc = 15.0;
     }
 
     //---- Normalize the result
-    return exp(-qc);
+    return std::exp(-qc);
 }
 
 TCanvas *foo = 0;

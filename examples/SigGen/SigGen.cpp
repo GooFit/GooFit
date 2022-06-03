@@ -12,7 +12,6 @@
 
 #include <thrust/count.h>
 
-using namespace std;
 using namespace GooFit;
 
 // Constants used in more than one PDF component.
@@ -168,9 +167,9 @@ int main(int argc, char **argv) {
     Variable constantOne("constantOne", 1);
     Variable constantZero("constantZero", 0);
 
-    vector<Observable> observables;
-    vector<Variable> coefficients;
-    vector<Variable> offsets;
+    std::vector<Observable> observables;
+    std::vector<Variable> coefficients;
+    std::vector<Variable> offsets;
 
     observables.push_back(m12);
     observables.push_back(m34);

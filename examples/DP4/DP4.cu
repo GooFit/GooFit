@@ -12,7 +12,6 @@
 #include <goofit/UnbinnedDataSet.h>
 #include <goofit/Variable.h>
 
-using namespace std;
 using namespace GooFit;
 
 const fptype _mD0       = 1.8645;
@@ -39,7 +38,7 @@ int main(int argc, char **argv) {
     std::string input_str = app.get_filename("ToyMC.txt", "examples/DP4");
 
     { // FStream block
-        fstream input(input_str, std::ios_base::in);
+        std::fstream input(input_str, std::ios_base::in);
 
         while(input >> m12 >> m34 >> cos12 >> cos34 >> phi) {
             eventNumber.setValue(MCevents++);
@@ -213,9 +212,9 @@ int main(int argc, char **argv) {
     Variable constantOne{"constantOne", 1};
     Variable constantZero{"constantZero", 0};
 
-    vector<Observable> observables = {m12, m34, cos12, cos34, phi, eventNumber};
-    vector<Variable> coefficients  = {constantOne};
-    vector<Variable> offsets       = {constantZero, constantZero};
+    std::vector<Observable> observables = {m12, m34, cos12, cos34, phi, eventNumber};
+    std::vector<Variable> coefficients  = {constantOne};
+    std::vector<Variable> offsets       = {constantZero, constantZero};
 
     PolynomialPdf eff{"constantEff", observables, coefficients, offsets, 0};
     Amp4Body dp{"test", observables, DK3P_DI, &eff, 1000000};

@@ -28,7 +28,6 @@
 #include <goofit/Variable.h>
 #include <goofit/utilities/Style.h>
 
-using namespace std;
 using namespace GooFit;
 
 Variable fixedRhoMass("rho_mass", 0.7758, 0.01, 0.7, 0.8);
@@ -299,16 +298,17 @@ Amp3Body *makeSignalPdf(Observable m12, Observable m13, EventNumber eventNumber,
     bool fitMasses = false;
 
     if(!fitMasses) {
-        for(vector<ResonancePdf *>::iterator res = dtop0pp.resonances.begin(); res != dtop0pp.resonances.end(); ++res) {
+        for(std::vector<ResonancePdf *>::iterator res = dtop0pp.resonances.begin(); res != dtop0pp.resonances.end();
+            ++res) {
             (*res)->setParameterConstantness(true);
         }
     }
 
     if(!eff) {
         // By default create a constant efficiency.
-        vector<Variable> offsets;
-        vector<Observable> observables;
-        vector<Variable> coefficients;
+        std::vector<Variable> offsets;
+        std::vector<Observable> observables;
+        std::vector<Variable> coefficients;
 
         observables.push_back(m12);
         observables.push_back(m13);

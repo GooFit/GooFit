@@ -8,7 +8,6 @@
 
 #include <random>
 
-using namespace std;
 using namespace GooFit;
 
 TEST_CASE("Gaussian", "[convert][fit]") {

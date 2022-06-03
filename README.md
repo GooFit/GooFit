@@ -29,24 +29,21 @@ https://github.com/GooFit/GooFit/labels/critical https://github.com/GooFit/GooFi
 
 ## Requirements
 
-* A recent version of CMake is required. The minimum is 3.9. CMake is incredibly easy to install, you can even use `pip` (see [the system install page](./docs/SYSTEM_INSTALL.md)). GooFit developers have supplied patches to CMake 3.12, so at least that is highly recommended. CMake 3.16 does not currently work with the Python bindings.
-* A ROOT 6 build highly recommended -- GooFit will use the included Minuit2 submodule if ROOT is not found, and the Minuit1 based fitter will not be available. Supports 6.04-6.24 (6.10+ recommended).
+* CMake 3.18 or newer is required. CMake is incredibly easy to install, you can even use `pip` (see [the system install page](./docs/SYSTEM_INSTALL.md)).
+* A ROOT 6 build highly recommended -- GooFit will use the included Minuit2 submodule if ROOT is not found, and the Minuit1 based fitter will not be available.Probably supports 6.04+ (but only 6.26 tested / recommended).
+* A compiler supporting C++14+.
 
 <details><summary>If using CUDA: (click to expand)</summary><p>
 
-* CMake 3.9+
-* CUDA 8.0+ (with caveats below)
-    * CUDA 8: Supported
-    * CUDA 9.2, 10.0: Some warnings from Eigen, supported
-    * CUDA 9.0, 9.1: Buggy, see [known issues](https://github.com/GooFit/GooFit/issues/173)
-    * CUDA 10.1, 10.2: Not yet supported due to Thrust 1.8 incompatibility
-* An nVidia GPU supporting compute capability at least 3.0 (3.5+ recommended)
+* CMake 3.18+
+* CUDA 11.0+ (older versions might be supported)
+* A host compiler supporting C++14 or C++17
+* An nVidia GPU
 
 </p></details>
 
 <details><summary>If using OpenMP: (click to expand)</summary><p>
 
-* A compiler supporting OpenMP and C++11 (GCC 4.8+, Clang, and Intel 17 tested, GCC 4.7 not supported)
 * Note that TBB is also available as a backend, but it still requires OpenMP to be present.
 * On macOS, this backend requires `brew install libomp` or a custom compiler.
 
@@ -65,7 +62,7 @@ A list of exact commands required for several platforms is [available here](./do
 
 <details><summary>Python Bindings: (click to expand)</summary><p>
 
-There are also Python Bindings. This requires Python (2 or 3), [NumPy](http://www.numpy.org), [SciKit-Build](http://scikit-build.readthedocs.io), and CMake. CUDA 8+ is required if using CUDA. If you want the most recent stable release, use `pip install -v goofit` (If you have pip 9 or less, you'll need scikit-build and cmake installed beforehand). Python 2 will be removed soon.
+There are also Python Bindings. This requires Python 3, [NumPy](http://www.numpy.org), [SciKit-Build](http://scikit-build.readthedocs.io), and CMake.  If you want the most recent stable release, use `pip install -v goofit` (If you have pip 9 or less, you'll need scikit-build and cmake installed beforehand).
 
 Repository method:
 
